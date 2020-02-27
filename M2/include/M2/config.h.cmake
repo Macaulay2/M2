@@ -1,18 +1,27 @@
 /* include/M2/config.h is generated from config.h.cmake by cmake.  */
 /* include/M2/config.h.cmake is created manually.  */
 
-// TODO: remove the following four?
+// TODO: remove the following five? Currently they are hardcoded.
+// See https://gist.github.com/stalkerg/7a1e891a887b65823ef9.
+
+// one of: 'int' 'unsigned int' 'unsigned long long'
 /* type of arg 1 of accept() */
-#cmakedefine ACCEPT_TYPE_ARG1 int
+#define ACCEPT_TYPE_ARG1 int
 
+// one of: 'struct sockaddr *' 'void *'
 /* type of arg 2 of accept() */
-#cmakedefine ACCEPT_TYPE_ARG2 struct sockaddr *
+#define ACCEPT_TYPE_ARG2 struct sockaddr *
 
+// one of: 'socklen_t *' 'size_t *' 'unsigned int *' 'int *'
 /* type of arg 3 of accept() */
-#cmakedefine ACCEPT_TYPE_ARG3 socklen_t *
+#define ACCEPT_TYPE_ARG3 socklen_t *
 
+// one of: 'int' 'unsigned long long'
 /* type of return value of accept() */
-#cmakedefine ACCEPT_TYPE_RETURN int
+#define ACCEPT_TYPE_RETURN int
+
+/* socket length type used by accept() */
+#define SOCKLEN_T socklen_t
 
 /* machine hardware type */
 #define ARCH "${CMAKE_SYSTEM_PROCESSOR}"
@@ -23,11 +32,11 @@
 
 // TODO: used in Macaulay2/d/M2lib.c. What is it?
 /* Define if __builtin_return_address accepts a non-zero argument */
-/* #undef BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT */
+#cmakedefine BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT 1
 
 // TODO: not as applicable for CMAKE. Remove from Macaulay2/d/version.dd?
 /* arguments used for configure */
-#cmakedefine CONFIG_ARGS " [CMAKE BUILD] "
+#define CONFIG_ARGS " [CMAKE BUILD] "
 
 /* whether to build a development version */
 #cmakedefine DEVELOPMENT 1
@@ -171,15 +180,6 @@
 /* Define to 1 if you have the `kill' function. */
 #cmakedefine HAVE_KILL 1
 
-/* Define to 1 if you have the <libxml2/libxml/xmlexports.h> header file. */
-#cmakedefine HAVE_LIBXML2_LIBXML_XMLEXPORTS_H 1
-
-/* Define to 1 if you have the <libxml/parser.h> header file. */
-#cmakedefine HAVE_LIBXML_PARSER_H 1
-
-/* Define to 1 if you have the <libxml/xmlexports.h> header file. */
-#cmakedefine HAVE_LIBXML_XMLEXPORTS_H 1
-
 // TODO: used in Macaulay2/d/version.dd. Still needed?
 /* whether we are linking with the linbox library */
 #cmakedefine HAVE_LINBOX 1
@@ -319,7 +319,7 @@
 
 // TODO: used in Macaulay2/d/M2lib.c. Still needed?
 /* Define to 1 if you have the `_setmode' function. */
-/* #undef HAVE__SETMODE */
+#cmakedefine HAVE__SETMODE 1
 
 /* whether to instantiate templates implicitly */
 #cmakedefine IMPLINST 1
@@ -348,25 +348,23 @@
 #define NODENAME "${NODENAME}"
 
 /* the list of packages included with the release of Macaulay2 */
-#define PACKAGES	"${PACKAGES}"
+#define PACKAGES "${PACKAGES}"
 
 /* Define to the full name of this package. */
-#define PACKAGE_NAME	"${PROJECT_NAME}"
+#define PACKAGE_NAME "${PROJECT_NAME}"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION	"${PROJECT_VERSION}"
+#define PACKAGE_VERSION "${PROJECT_VERSION}"
 
+// TODO: why does M2lib.c fail if this isn't defined?
 /* whether profiling has been enabled */
-#cmakedefine PROFILING 1
+#define PROFILING ${PROFILING_STRING}
 
 /* The size of `int *', as computed by sizeof. */
 #cmakedefine SIZEOF_INT_P 8
 
 /* The size of `long', as computed by sizeof. */
 #cmakedefine SIZEOF_LONG 8
-
-/* socket length type used by accept() */
-#cmakedefine SOCKLEN_T socklen_t
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
@@ -396,4 +394,4 @@
 
 // TODO
 /* Define to `unsigned int' if <sys/types.h> does not define. */
-/* #undef size_t */
+#cmakedefine size_t ${CMAKE_HOST_SYSTEM}

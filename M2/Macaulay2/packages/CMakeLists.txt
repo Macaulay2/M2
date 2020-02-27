@@ -29,6 +29,7 @@ set(M2_RerunExamples           "false" CACHE STRING "rerun example outpuat files
 #################################################################################
 
 ## eg: Style.m2 Macaulay2Doc.m2 ...
+string(REPLACE " " ";" PACKAGES "${PACKAGES}")
 list(TRANSFORM PACKAGES APPEND ".m2" OUTPUT_VARIABLE PACKAGE_OUTPUTS)
 
 ## Copy packages and auxiliary files to the destination

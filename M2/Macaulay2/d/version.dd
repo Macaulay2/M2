@@ -4,13 +4,6 @@ use M2;
 use hashtables;
 
 declarations "
-   #ifdef HAVE_WINSOCK2_H
-    #include <winsock2.h>
-      /* under mingw64 winsock2.h should be included before including windows.h
-	  pthread.h includes windows.h
-	   therefore winsock2.h should be included before pthread */
-    #undef ERROR
-   #endif
    #if USE_MYSQL
      #include <mysql/mysql.h>
    #endif

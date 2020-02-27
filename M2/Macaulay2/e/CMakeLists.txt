@@ -296,11 +296,10 @@ target_link_libraries(M2-engine Eigen3::Eigen)
 #    $<INSTALL_INTERFACE:include>
 target_include_directories(M2-engine
   PUBLIC
-    ${BOOTSTRAP}/usr-host/include
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_BINARY_DIR}/include
     ${CMAKE_SOURCE_DIR}/Macaulay2/e
     ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
-    ${CMAKE_SOURCE_DIR}/include
-    ${BOOTSTRAP}/include
     ${BOOTSTRAP}/usr-host/include
     ${BOOTSTRAP}/usr-host/include/cdd
   PRIVATE

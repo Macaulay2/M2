@@ -10,8 +10,8 @@ extern int num_testStrings;
 
 cached_file startupFile =
   {
-@STARTUP_M2_ADDR@,
-@STARTUP_M2_CONTENT@
+   @STARTUP_M2_ADDR@,
+   @STARTUP_M2_CONTENT@
   };
 
 cached_file testStrings[] =

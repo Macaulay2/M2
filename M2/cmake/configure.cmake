@@ -1,5 +1,12 @@
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
+# FIXME: currently various pieces and libraries are not built by cmake
+# BUILD/cmake-bootstrap should be a symlink to an existing build directory
+message("## Bootstrapping from previous build in ${BOOTSTRAP}")
+set(BOOTSTRAP ${CMAKE_SOURCE_DIR}/BUILD/cmake-bootstrap)
+
+################################################################
+
 ## Summary of git status
 # old output: git describe --dirty --long --always --abbrev=40 --tags --match "version-*"
 execute_process(
@@ -41,8 +48,8 @@ set(EXEEXT   "${CMAKE_EXECUTABLE_SUFFIX}") # DEPRECATE: used in config.h.cmake, 
 set(EXE      "-binary${M2SUFFIX}${CMAKE_EXECUTABLE_SUFFIX}")
 
 ################################################################
-
 ## Configure options
+
 option(SHARED       "build shared libraries"              ON)
 option(OPTIMIZE     "enable optimization"                 ON)
 option(PROFILING    "enable profiling"                   OFF)
@@ -57,9 +64,25 @@ option(ENABLE_STRIP "discard symbols from object files"  OFF)
 #option(ALTIVEC      "compile with '-faltivec' option"    OFF)
 #option(XCODE        "build Macaulay2/d/interpret.a"      OFF)
 
-################################################################
+# TODO: what is the default? mpir currently fails
+set(MP_LIBRARY "gmp" CACHE STRING "specify the big integer package to use (mpir or gmp)")
 
+################################################################
 ## Setting compiler flags
+
+# TODO: how do we not include gmp? Factory always includes it!
+if(${MP_LIBRARY} STREQUAL "mpir")
+  set(USING_MPIR 1)
+else()
+  set(USING_MPIR 0)
+endif()
+
+# TODO: easier way to do this? generator expressions don't work at configure time
+if(${PROFILING})
+  set(PROFILING_STRING 1)
+else()
+  set(PROFILING_STRING 0)
+endif()
 
 # TODO: unnecessary?
 if("${OS}" STREQUAL "Darwin")
@@ -133,6 +156,181 @@ endif()
 #endif()
 
 ################################################################
+## Look for packages and libraries using CMake or pkg-config
+
+# FIXME: should these stay here or go to bin/CMakeLists.txt?
+# TODO: which ones need to be patched and built?
+## Find libraries available as CMake modules
+find_package(BLAS    3.8 REQUIRED)
+find_package(LAPACK  3.8 REQUIRED)
+find_package(Eigen3  3.3 REQUIRED NO_MODULE)
+find_package(LibXml2 2.9 REQUIRED) # need xmlNewNode
+find_package(Threads 2.1 REQUIRED) # pthread
+find_package(Curses  6.1 REQUIRED) # ncurses
+find_package(LibLZMA 5.2 REQUIRED) # need lzma_end
+find_package(GLPK   4.59 REQUIRED) # cmake/FindGLPK.cmake
+find_package(MPIR    3.0)          # cmake/FindMPIR.cmake
+# OpenMP is required for building the library csdp and good for building the library normaliz
+find_package(OpenMP      REQUIRED) # TODO: use OPENMP_LIBS/CXXFLAGS for csdb
+find_package(PkgConfig   REQUIRED QUIET)
+
+if(NOT ${MPIR_FOUND})
+  set(USING_MPIR 0)
+endif()
+
+## Set paths for pkg-config
+set(ENV{PKG_CONFIG_PATH} "${BOOTSTRAP}/usr-host/lib/pkgconfig:${BOOTSTRAP}/submodules/mathicgb/build/autotools:${BOOTSTRAP}/submodules/mathic/build/autotools:${BOOTSTRAP}/submodules/memtailor/build/autotools")
+
+## Find libraries available via pkg-config
+## tip: use cmake -LA to list resolved variables
+# TODO: use foo>=VERSION to specify version
+pkg_search_module(GIVARO    REQUIRED givaro                   IMPORTED_TARGET)
+pkg_search_module(MATHICGB  REQUIRED mathicgb                 IMPORTED_TARGET)
+# TODO: investigate error when factory-devel package is installed:
+# sample Factory finite field addition table file missing, needed for factorization:
+# /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist//usr/share/factory/
+pkg_search_module(FACTORY   REQUIRED factory singular-factory IMPORTED_TARGET)
+# To fix the error, change the givaro requirement in ${BOOTSTRAP}/usr-host/lib/pkgconfig/fflas-ffpack.pc to 4.0.2
+#pkg_search_module(FFLAS              fflas-ffpack             IMPORTED_TARGET)
+pkg_search_module(READLINE           readline                 IMPORTED_TARGET)
+# TODO: should we export GC_LARGE_ALLOC_WARN_INTERVAL=1?
+pkg_search_module(GC        REQUIRED bdw-gc                   IMPORTED_TARGET)
+
+## Find all other libraries
+find_library(LIBHISTORY history)
+find_library(LIBFROBBY frobby)
+find_library(LIBGDBM gdbm)
+#find_library(LIBCDD cdd)
+find_library(LIBMPC mpc)
+find_library(LIBM m) # need pow from math.h
+find_library(LIBC c)
+find_library(LIBZ z) # need gzopen
+
+# TODO:
+#test:
+#	: "PKG_CONFIG_PATH    = $(PKG_CONFIG_PATH)"
+#	: "M2_PKG_CONFIG_PATH = $(M2_PKG_CONFIG_PATH)"
+#	:
+#	: "GIVARO_CXXFLAGS       = $(GIVARO_CXXFLAGS)"
+#	: "FFLAS_FFPACK_CXXFLAGS = $(FFLAS_FFPACK_CXXFLAGS)"
+#	: "M2_CXXFLAGS           = $(M2_CXXFLAGS)"
+#	: "M2_BOTH               = $(M2_BOTH)"
+#	:
+#	: "GIVARO_LIBS           = $(GIVARO_LIBS)"
+#	: "FFLAS_FFPACK_LIBS     = $(FFLAS_FFPACK_LIBS)"
+#	: "M2_LIBRARIES          = $(M2_LIBRARIES)"
+
+################################################################
+## Check for certain header files, functions
+
+include(CheckTypeSize)
+check_type_size("int *" SIZEOF_INT_P)
+check_type_size("long" SIZEOF_LONG)
+
+include(CheckSymbolExists)
+CHECK_SYMBOL_EXISTS(ADDR_NO_RANDOMIZE "linux/personality.h" HAVE_DECL_ADDR_NO_RANDOMIZE)
+CHECK_SYMBOL_EXISTS(herror       "stdlib.h;stdio.h;errno.h" HAVE_DECL_HERROR) # TODO: can stdlib.h always be included?
+CHECK_SYMBOL_EXISTS(environ                      "unistd.h" HAVE_DECL_ENVIRON)
+CHECK_SYMBOL_EXISTS(_environ                     "unistd.h" HAVE_DECL__ENVIRON)
+CHECK_SYMBOL_EXISTS(__environ                    "unistd.h" HAVE_DECL___ENVIRON)
+
+include(CheckLibraryExists)
+check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
+check_library_exists(resolv hstrerror "" HAVE_HSTRERROR)
+
+include(CheckCSourceCompiles)
+check_c_source_compiles("int main(){__builtin_return_address(1);return 0;}" BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT)
+
+#AC_DEFINE([HAVE_GIVARO_isunit],,[whether givaro has isunit]) # otherwise
+#AC_DEFINE(HAVE_LINBOX,1,[whether we are linking with the linbox library])
+#AC_DEFINE(HAVE_FPLLL,1,[whether we are linking with the fplll library])
+#AC_DEFINE([HAVE_FACTORY_PREM],[1],[whether Prem() from factory is public])
+#AC_DEFINE([FACTORY_STREAMIO],[1],[whether factory was built with --enable-streamio])
+
+#AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])
+#AC_DEFINE_UNQUOTED(AUTOINST,$val,whether to instantiate templates automatically)
+#AC_DEFINE_UNQUOTED(IMPLINST,$val,whether to instantiate templates implicitly)
+#AC_DEFINE_UNQUOTED(WITH_NEWLINE_CRLF,$WITH_NEWLINE_CRLF,[whether newline is cr lf])
+#AC_DEFINE_UNQUOTED(WITH_NEWLINE_CR, $WITH_NEWLINE_CR,   [whether newline is cr])
+
+include(CheckIncludeFiles)
+# TODO: are all still relevant?
+check_include_files(arpa/inet.h	HAVE_ARPA_INET_H)
+check_include_files(assert.h	HAVE_ASSERT_H)
+check_include_files(dlfcn.h	HAVE_DLFCN_H)
+check_include_files(elf.h	HAVE_ELF_H)
+check_include_files(execinfo.h	HAVE_EXECINFO_H)
+check_include_files(inttypes.h	HAVE_INTTYPES_H)
+check_include_files(io.h	HAVE_IO_H)
+check_include_files(linux/personality.h	HAVE_LINUX_PERSONALITY_H)
+check_include_files(malloc.h	HAVE_MALLOC_H)
+check_include_files(math.h	HAVE_MATH_H)
+check_include_files(memory.h	HAVE_MEMORY_H)
+check_include_files(netdb.h	HAVE_NETDB_H)
+check_include_files(netinet/in.h	HAVE_NETINET_IN_H)
+check_include_files(pthread.h	HAVE_PTHREAD_H)
+check_include_files(stddef.h	HAVE_STDDEF_H)
+check_include_files(stdint.h	HAVE_STDINT_H)
+check_include_files(stdlib.h	HAVE_STDLIB_H)
+check_include_files(strings.h	HAVE_STRINGS_H)
+check_include_files(string.h	HAVE_STRING_H)
+check_include_files(syscall.h	HAVE_SYSCALL_H)
+check_include_files(sys/ioctl.h	HAVE_SYS_IOCTL_H)
+check_include_files(sys/mman.h	HAVE_SYS_MMAN_H)
+check_include_files(sys/resource.h	HAVE_SYS_RESOURCE_H)
+check_include_files(sys/socket.h	HAVE_SYS_SOCKET_H)
+check_include_files(sys/stat.h	HAVE_SYS_STAT_H)
+check_include_files(sys/time.h	HAVE_SYS_TIME_H)
+check_include_files(sys/types.h	HAVE_SYS_TYPES_H)
+check_include_files(sys/wait.h	HAVE_SYS_WAIT_H)
+check_include_files(termios.h	HAVE_TERMIOS_H)
+check_include_files(time.h	HAVE_TIME_H)
+check_include_files(unistd.h	HAVE_UNISTD_H)
+
+include(CheckFunctionExists)
+# TODO: can't getaddrinfo
+check_function_exists(herror	HAVE_HERROR)
+check_function_exists(error	HAVE_ERROR)
+check_function_exists(backtrace	HAVE_BACKTRACE)
+check_function_exists(clock_gettime	HAVE_CLOCK_GETTIME)
+check_function_exists(__environ	HAVE___ENVIRON)
+check_function_exists(_environ	HAVE__ENVIRON)
+check_function_exists(environ	HAVE_ENVIRON)
+check_function_exists(_setmode	HAVE__SETMODE)
+check_function_exists(getaddrinfo	HAVE_GETADDRINFO)
+check_function_exists(hstrerror	HAVE_HSTRERROR)
+check_function_exists(sync	HAVE_SYNC)
+check_function_exists(getpgrp	HAVE_GETPGRP)
+check_function_exists(setpgid	HAVE_SETPGID)
+check_function_exists(fchmod	HAVE_FCHMOD)
+check_function_exists(pipe	HAVE_PIPE)
+check_function_exists(waitpid	HAVE_WAITPID)
+check_function_exists(setrlimit	HAVE_SETRLIMIT)
+check_function_exists(alarm	HAVE_ALARM)
+check_function_exists(fork	HAVE_FORK)
+check_function_exists(sigprocmask	HAVE_SIGPROCMASK)
+check_function_exists(kill	HAVE_KILL)
+check_function_exists(longjmp	HAVE_LONGJMP)
+check_function_exists(siglongjmp	HAVE_SIGLONGJMP)
+check_function_exists(sigaction	HAVE_SIGACTION)
+check_function_exists(wait4	HAVE_WAIT4)
+check_function_exists(readlink	HAVE_READLINK)
+check_function_exists(lstat	HAVE_LSTAT)
+check_function_exists(realpath	HAVE_REALPATH)
+check_function_exists(mkdir	HAVE_MKDIR)
+check_function_exists(link	HAVE_LINK)
+check_function_exists(symlink	HAVE_SYMLINK)
+check_function_exists(socket	HAVE_SOCKET)
+check_function_exists(accept	HAVE_ACCEPT)
+check_function_exists(fcntl	HAVE_FCNTL)
+check_function_exists(personality	HAVE_PERSONALITY)
+check_function_exists(ioctl	HAVE_IOCTL)
+
+# this is an alternative for AC_FUNC_ALLOCA()
+check_function_exists(alloca HAVE_ALLOCA)
+check_include_files(alloca.h HAVE_ALLOCA_H)
+
+################################################################
 
 message("## Operating system information:
      ISSUE             = ${ISSUE}
@@ -143,87 +341,6 @@ message("## Operating system information:
      DEBUG             = ${DEBUG}
      GIT_DESCRIPTION   = ${GIT_DESCRIPTION}
      USING_MPIR        = ${USING_MPIR}")
-
-################################################################
-
-# FIXME
-#AC_FUNC_ACCEPT_ARGTYPES()
-
-#WITH_NEWLINE_CR=0
-#WITH_NEWLINE_CRLF=0
-#AC_ARG_WITH(newline, AS_HELP_STRING([--with-newline=...], [crlf, cr, or lf (the default)]),
-#    [ case $withval in
-#	  crlf) WITH_NEWLINE_CRLF=1 WITH_NEWLINE_CR=0 ;;
-#	  cr)   WITH_NEWLINE_CR=1 WITH_NEWLINE_CRLF=0 ;;
-#	  lf)   WITH_NEWLINE_CR=0 WITH_NEWLINE_CRLF=0 ;;
-#	  *)    AC_MSG_ERROR([--with-newline expected crlf, cr, or lf]) ;;
-#      esac ])
-
-#AC_LANG(C)
-#AC_MSG_CHECKING([whether getaddrinfo can handle numeric service (port) numbers])
-#AC_RUN_IFELSE([AC_LANG_SOURCE([
-#    #include <sys/types.h>
-#    #ifdef HAVE_SYS_SOCKET_H
-#     #include <sys/socket.h>
-#    #endif
-#    #ifdef HAVE_WINSOCK2_H
-#     #include <winsock2.h>
-#    #endif
-#    #ifdef HAVE_NETDB_H
-#     #include <netdb.h>
-#    #endif
-#    main() {
-#       struct addrinfo *addr;
-#       return 0 != getaddrinfo("1.2.3.4", "80", 0, &addr) ? 99 : 0 ;
-#       }
-#    ])],
-#    [AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])] [AC_MSG_RESULT(yes)],
-#    [if test $? = 99 ; then AC_MSG_RESULT(no) ; else AC_MSG_ERROR([test file failed to compile]) ; fi],
-#    [AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])] [AC_MSG_RESULT([probably (cross-compiling, not tested)])])
-
-################################################################
-
-## Definitions in M2/config.h
-
-#AC_DEFINE(HAVE_XML,1,[whether we are linking with the xml library])
-#AC_DEFINE_UNQUOTED(USE_MYSQL,$USE_MYSQL,[whether we are linking with the mysql library])
-#AC_DEFINE(HAVE_PYTHON,1,[whether we are linking with the python library])
-
-#AC_DEFINE(USING_MPIR,1,[Whether we use MPIR (instead of GMP)])
-#AC_DEFINE([HAVE_GIVARO_isunit],,[whether givaro has isunit]) # otherwise
-#AC_DEFINE(HAVE_LINBOX,1,[whether we are linking with the linbox library])
-#AC_DEFINE(HAVE_FPLLL,1,[whether we are linking with the fplll library])
-#AC_DEFINE([HAVE_FACTORY_PREM],[1],[whether Prem() from factory is public])
-#AC_DEFINE([FACTORY_STREAMIO],[1],[whether factory was built with --enable-streamio])
-#AC_DEFINE(HAVE_MPACK,1,[whether we are linking with the mpack library])
-
-#AC_DEFINE(M2_CONFIG_H,1,a macro definition to ensure our config.h was the one loaded)
-#AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$C_CONFIG_ARGS",arguments used for configure)
-
-#AC_DEFINE_UNQUOTED(SOCKLEN_T,[`echo "$ac_cv_func_accept_arg3" | sed 's/ \*$//'`],[socket length type used by accept()])
-#AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])
-#AC_DEFINE(BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT,1,[Define if __builtin_return_address accepts a non-zero argument])
-
-#AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s, perhaps modified])
-#AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
-#AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
-#AC_DEFINE_UNQUOTED(ISSUE,"$ISSUE",[issue (flavor) of operating system, if any])
-#AC_DEFINE_UNQUOTED(MACHINE,"$MACHINE",[complete machine description (to appear in name of tar file)])
-#AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
-#AC_DEFINE_UNQUOTED(GIT_DESCRIPTION,"$GIT_DESCRIPTION",[summary of git status])
-#AC_DEFINE_UNQUOTED(M2SUFFIX,"$M2SUFFIX",[suffix to append to executable name M2])
-#AC_DEFINE_UNQUOTED(EXEEXT,"$EXEEXT",[suffix the compiler appends to executable filenames])
-#AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list of packages included with the release of Macaulay2)
-
-#AC_DEFINE_UNQUOTED(PROFILING, $val,whether profiling has been enabled)
-#AC_DEFINE_UNQUOTED(EXPERIMENT,$val,whether experimental code has been enabled)
-#AC_DEFINE_UNQUOTED(DEVELOPMENT,1,whether to build a development version)
-
-#AC_DEFINE_UNQUOTED(AUTOINST,$val,whether to instantiate templates automatically)
-#AC_DEFINE_UNQUOTED(IMPLINST,$val,whether to instantiate templates implicitly)
-
-#AC_DEFINE_UNQUOTED(WITH_NEWLINE_CRLF,$WITH_NEWLINE_CRLF,[whether newline is cr lf])
-#AC_DEFINE_UNQUOTED(WITH_NEWLINE_CR, $WITH_NEWLINE_CR,   [whether newline is cr])
 
 ################################################################
 
@@ -274,6 +391,22 @@ message("## Operating system information:
 
 #### STILL LEFT TO PROCESS ####
 
+
+#AC_DEFINE([FACTORY_STREAMIO], [1],
+#    [whether factory was built with --enable-streamio])
+#if test $BUILD_factory = no
+#then
+#    AC_MSG_CHECKING([whether factory was built with --enable-streamio])
+#    AC_LANG([C++])
+#    AC_COMPILE_IFELSE(
+#	[AC_LANG_PROGRAM(
+#	    [#include <factory/factory.h>],
+#	    [Variable x; x = Variable(); std::cout << x])],
+#	[AC_MSG_RESULT([yes])],
+#	[AC_MSG_RESULT([no])
+#	 AC_DEFINE([FACTORY_STREAMIO], [0])])
+#fi
+
 #AC_CHECK_PROGS(ETAGS,etags ctags,false)
 #if test "$ETAGS" = false; then AC_MSG_WARN(without etags no TAGS files will be made); fi
 
@@ -287,61 +420,39 @@ message("## Operating system information:
 #     AC_SUBST(STRIP_REMOVE_SECTION,$val)
 #fi
 
-#AC_MSG_CHECKING(whether $MAKE is GNU make)
-#if "$MAKE" --version | head -1 | grep GNU >/dev/null 2>&1
-#then AC_MSG_RESULT(yes)
-#else AC_MSG_RESULT(no)
-#     AC_MSG_ERROR($MAKE: GNU make is required)
-#fi
-
-#AC_VALIDATE_CACHED_SYSTEM_TUPLE()
-#dnl AC_ARG_VAR(CC,C compiler to use)
-#dnl AC_ARG_VAR(CXX,C++ compiler to use)
+#AC_LANG(C)
+#AC_MSG_CHECKING([whether getaddrinfo can handle numeric service (port) numbers])
+#AC_RUN_IFELSE([AC_LANG_SOURCE([
+#    #include <sys/types.h>
+#    #ifdef HAVE_SYS_SOCKET_H
+#     #include <sys/socket.h>
+#    #endif
+#    #ifdef HAVE_WINSOCK2_H
+#     #include <winsock2.h>
+#    #endif
+#    #ifdef HAVE_NETDB_H
+#     #include <netdb.h>
+#    #endif
+#    main() {
+#       struct addrinfo *addr;
+#       return 0 != getaddrinfo("1.2.3.4", "80", 0, &addr) ? 99 : 0 ;
+#       }
+#    ])],
+#    [AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])] [AC_MSG_RESULT(yes)],
+#    [if test $? = 99 ; then AC_MSG_RESULT(no) ; else AC_MSG_ERROR([test file failed to compile]) ; fi],
+#    [AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])] [AC_MSG_RESULT([probably (cross-compiling, not tested)])])
 
 #AC_SUBST(M2_CPPFLAGS,)
 #AC_SUBST(M2_CFLAGS,)
 #AC_SUBST(M2_CXXFLAGS,)
 
-#AC_CHECK_SIZEOF([int *])
-#AC_SUBST(SIZEOF_INT_P,$ac_cv_sizeof_int_p)
-#AC_CHECK_SIZEOF([long])
-#AC_SUBST(SIZEOF_LONG,$ac_cv_sizeof_long)
 
-#AC_HEADER_TIME()
-#AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h elf.h execinfo.h stdlib.h syscall.h sys/types.h sys/stat.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
-#AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
-#dnl winsock2.h should be included before including windows.h
-#dnl  pthread.h includes windows.h
-#dnl   therefore winsock2.h should be included before pthread
-#AC_SEARCH_LIBS(clock_gettime,rt)
-#dnl winsock2.h should be used with ws2_32.lib; it defines:
-#dnl 	accept bind closesocket connect freeaddrinfo getaddrinfo gethostbyaddr
-#dnl 	gethostbyname gethostname getnameinfo getpeername getprotobyname
-#dnl 	getprotobynumber getservbyname getservbyport getsockname getsockopt htonl htons
-#dnl 	inet_addr inet_ntoa inet_ntop inet_pton ioctlsocket listen ntohl ntohs recv
-#dnl 	recvfrom select send sendto setsockopt shutdown socket
-#AC_SEARCH_LIBS(socket,socket ws2_32) dnl ws2_32 is used under mingw64
-#AC_SEARCH_LIBS(hstrerror,resolv)
-#AC_SEARCH_LIBS(dlopen,dl)
-#AC_SEARCH_LIBS(gethostbyname,nsl)
-#AC_SUBST(HAVE_LIBTBB,no)
-#AC_SUBST(LIBTBB,)
-#   AC_LANG(C++)
-#   AC_CHECK_HEADER(tbb/tbb.h,
-#      [AC_SEARCH_LIBS(TBB_runtime_interface_version,tbb,
-#	 LIBTBB=$ac_cv_search_TBB_runtime_interface_version
-#	 HAVE_LIBTBB=yes)])
-#   AC_LANG(C)
-#AC_CHECK_FUNCS([herror error backtrace clock_gettime __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality ioctl])
-
-#AC_SUBST(HAVE_PERSONALITY,$ac_cv_func_personality)
-
-#AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
-#AC_CHECK_DECLS([herror],,,[
-#	#ifdef HAVE_STDLIB_H
-#	 #include <stdlib.h>
-#	#endif
-#	#include <stdio.h>
-#	#include <errno.h>
-#	])
-#AC_CHECK_DECLS([__environ,_environ,environ],,,[#include <unistd.h>])
+#WITH_NEWLINE_CR=0
+#WITH_NEWLINE_CRLF=0
+#AC_ARG_WITH(newline, AS_HELP_STRING([--with-newline=...], [crlf, cr, or lf (the default)]),
+#    [ case $withval in
+#	  crlf) WITH_NEWLINE_CRLF=1 WITH_NEWLINE_CR=0 ;;
+#	  cr)   WITH_NEWLINE_CR=1 WITH_NEWLINE_CRLF=0 ;;
+#	  lf)   WITH_NEWLINE_CR=0 WITH_NEWLINE_CRLF=0 ;;
+#	  *)    AC_MSG_ERROR([--with-newline expected crlf, cr, or lf]) ;;
+#      esac ])

@@ -40,12 +40,11 @@ add_executable(scc1
 target_include_directories(scc1
   PUBLIC
     .
-    # TODO: which one?
     ${CMAKE_SOURCE_DIR}/include
-#    ${CMAKE_BINARY_DIR}/include
-    ${BOOTSTRAP}/include
-    ${BOOTSTRAP}/usr-host/include
+    ${CMAKE_BINARY_DIR}/include
     /usr/local/include
+  PRIVATE
+    ${BOOTSTRAP}/usr-host/include
   )
 
 # FIXME: what library is missing that requires usr-host/lib?

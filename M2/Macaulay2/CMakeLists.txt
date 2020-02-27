@@ -5,7 +5,8 @@ configure_file(README.in README)
 
 ## eg: Style Macaulay2Doc ...
 ## This will be used by d/ and packages/
-file(STRINGS "packages/\=distributed-packages" DISTRIBUTED_PACKAGES)
+file(STRINGS "packages/\=distributed-packages" DISTRIBUTED_PACKAGES REGEX "^[a-zA-Z0-9]+$")
+list(JOIN DISTRIBUTED_PACKAGES " " DISTRIBUTED_PACKAGES)
 
 # TODO:
 #add_subdirectory(util)

@@ -91,14 +91,12 @@ target_include_directories(interpreter
   PUBLIC
     .
     ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_BINARY_DIR}/include
     ${CMAKE_SOURCE_DIR}/Macaulay2/regex
     ${CMAKE_SOURCE_DIR}/Macaulay2/e
     ${CMAKE_SOURCE_DIR}/Macaulay2/c
     ${CMAKE_BINARY_DIR}/Macaulay2/d
     ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
-    # Order matters here
-    ${BOOTSTRAP}/include
-#    ${CMAKE_BINARY_DIR}/include
     /usr/local/include
   PRIVATE
     ${LIBXML2_INCLUDE_DIR}

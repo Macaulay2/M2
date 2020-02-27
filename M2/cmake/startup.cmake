@@ -8,27 +8,33 @@ MACRO (_STARTUP_REGEX input retval with_newline)
   STRING (STRIP "${input}" _output)
   string(      REPLACE "\\" "\\\\"    _output "${_output}") # sed -e 's/\\/\\\\/g'
   string(REGEX REPLACE "\"" "\\\\\""  _output "${_output}") # set -e 's/"/\\"/g'
-  string(PREPEND _output "\"")
-  string(APPEND  _output "\\n\"")
   # Note: we could use s/(.*)\n/.../g but for now string(REGEX REPLACE) behave differently than `sed -e`
   # See https://gitlab.kitware.com/cmake/cmake/issues/16899
+  string(PREPEND _output "\"")
   if("${with_newline}")
-    string(REGEX REPLACE "\n" [[\\n"\n"]] _output "${_output}") # sed -e 's/\(.*\)/"\1\\n"/'
+    string(REGEX REPLACE "\n" [[\\n"\n   "]] _output "${_output}") # sed -e 's/\(.*\)/"\1\\n"/'
+    string(APPEND  _output "\\n\"")
   else()
-    string(REGEX REPLACE "\n"    [["\n"]] _output "${_output}") # sed -e 's/\(.*\)/"\1"/'
+    string(REGEX REPLACE "\n"    [["\n   "]] _output "${_output}") # sed -e 's/\(.*\)/"\1"/'
+    string(APPEND  _output "\"")
   endif()
   STRING (STRIP "${_output}" ${retval})
 ENDMACRO (_STARTUP_REGEX)
 
 ## test for regex macro
-set(_STARTUP_REGEX_TEST "\nA-B\n\nA\\;\"B\n")
-_STARTUP_REGEX([[${_STARTUP_REGEX_TEST}]] _STARTUP_REGEX_TEST YES)
-if(NOT "${_STARTUP_REGEX_TEST}" STREQUAL "\"A-B\\n\"\n\"\\n\"\n\"A\\\\;\\\"B\\n\"")
-#  message(ERROR "_STARTUP_MACTO_TEST failed: ${_STARTUP_REGEX_TEST}")
+set(_STARTUP_REGEX_TEST_YES "\nA-B\n\nA\\;\"B\n")
+set(_STARTUP_REGEX_TEST_NO "A-BA\\;\"B.m2")
+_STARTUP_REGEX([[${_STARTUP_REGEX_TEST_YES}]] _STARTUP_REGEX_TEST_YES YES)
+if(NOT "${_STARTUP_REGEX_TEST_YES}" STREQUAL "\"A-B\\n\"\n   \"\\n\"\n   \"A\\\\;\\\"B\\n\"")
+  message(ERROR "_STARTUP_MACTO_TEST_YES failed: ${_STARTUP_REGEX_TEST_YES}")
+endif()
+_STARTUP_REGEX([[${_STARTUP_REGEX_TEST_NO}]] _STARTUP_REGEX_TEST_NO  NO)
+if(NOT "${_STARTUP_REGEX_TEST_NO}"  STREQUAL "\"A-BA\\\\;\\\"B.m2\"")
+  message(ERROR "_STARTUP_MACTO_TEST_NO failed: ${_STARTUP_REGEX_TEST_NO}")
 endif()
 
 ## read startup.m2.in and apply regex to address and content
-file(TO_NATIVE_PATH "startup.m2.in"      STARTUP_M2_ADDR)
+file(GLOB STARTUP_M2_ADDR "startup.m2.in")
 file(READ           "startup.m2.in"      STARTUP_M2_CONTENT)
 _STARTUP_REGEX([[${STARTUP_M2_ADDR}]]    STARTUP_M2_ADDR    NO)
 _STARTUP_REGEX([[${STARTUP_M2_CONTENT}]] STARTUP_M2_CONTENT YES)
