@@ -68,6 +68,8 @@ inw (Matrix, List) := (m, w) -> (
      --	    and HOMOGENIZATION is turned off
      else if not getHomSwitch() and all(toList(0..(#W.dpairInds#0)-1), 
 	       i -> w#(W.dpairInds#0#i) + w#(W.dpairInds#1#i) == 0) then (
+    	  if numrows m > 1 then 
+	  error "some functions are not implemented for noncyclic D-modules (matrix with one row expected)"; 
 	  -- Make the homogenizing Weyl algebra
      	  if not W.?HomWeylAlgebra then
      	  createHomWeylAlgebra (ring m);
@@ -84,6 +86,8 @@ inw (Matrix, List) := (m, w) -> (
      -- case 3: use homogeneous Weyl algebras if some component of (u+v) is zero
      --	    and HOMOGENIZATION is turned on
      else (
+    	  if numrows m > 1 then 
+	  error "some functions are not implemented for noncyclic D-modules (matrix with one row expected)"; 
 	  h := symbol h;
 	  Wh := (coefficientRing W)(monoid [(entries vars W)#0, h,
 	       WeylAlgebra => append(W.monoid.Options.WeylAlgebra, h),
