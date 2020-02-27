@@ -1,8 +1,6 @@
 #include "../text-io.hpp"
 #include "NCAlgebras/NCF4.hpp"
 
-int badCount = 0;
-
 NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,
            int hardDegreeLimit,
@@ -61,11 +59,11 @@ void NCF4::compute(int softDegreeLimit)
 
 void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
 {
-  badCount = 0;
   buildF4Matrix(overlapsToProcess);
   sortF4Matrix();
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
   reduceF4Matrix();
+  if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
 
   // auto-reduce the new elements
   
@@ -76,7 +74,6 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
       addToGroebnerBasis(f);
       updateOverlaps(f);
     }
-  std::cout << "badCount : " << badCount << std::endl;
 }
 
 void NCF4::addToGroebnerBasis(const Poly * toAdd)
@@ -142,6 +139,7 @@ void NCF4::matrixReset()
   mColumns.clear();
   mColumnMonomials.clear();
   mRows.clear();
+  mPreRows.clear();
   mOverlaps.clear();
   mFirstOverlap = 0;
   mMonomialSpace.deallocateAll();
@@ -168,8 +166,8 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   // LM(gbLeft) = x^a x^b
   // LM(gbRight) = x^b x^c
   // overlapPos = starting position of x^b in gbLeft.
-  // first prerow will be: (1, gbLeftIndex, x^c)
-  // second prerow will be: (x^a, gbRightIndex, 1)
+  // one prerow will be: (1, gbLeftIndex, x^c)
+  // another prerow will be: (x^a, gbRightIndex, 1)
       
   Word leadWordLeft = freeAlgebra().lead_word(*mGroebner[gbLeftIndex]);
   Word leadWordRight = freeAlgebra().lead_word(*mGroebner[gbRightIndex]);
@@ -277,23 +275,31 @@ NCF4::Row NCF4::processPreRow(PreRow r)
           std::copy(m.begin(), m.end(), rg.first);
           Monom newmon = Monom(rg.first);
           auto divresult = findDivisor(newmon);
-          int divisornum = (divresult.first ? mReducersTodo.size() : -1);
+          int divisornum = -1; // -1 indicates no divisor was found
+          if (divresult.first)
+            {
+              // here, a divisor in the word table was found for this monomial.
+              // before adding a prerow to be processed, we must make sure
+              // it is not present.  If it is, we must tag this column with the
+              // index of the existing prerow.
+              auto pr_it = mPreRows.find(divresult.second);
+              if (pr_it == mPreRows.end())
+                {
+                  // not found.  add it to list and tag column with mReducersTodo.size().
+                  divisornum = mReducersTodo.size();
+                  mPreRows.insert({divresult.second,divisornum});
+                  mReducersTodo.push_back(divresult.second);
+                }
+              else
+                {
+                  // found.  tag column with the index of this prerow, which is the value
+                  // of the map mPreRows associated to this key.
+                  // *do not* create a new prerow for this monomial
+                  divisornum = (*pr_it).second;
+                }
+            }
           int newColumnIndex = mColumnMonomials.size();
           mColumnMonomials.insert({newmon, {newColumnIndex, divisornum}});
-          int index = -1;
-          if (divresult.first) index = prerowInReducersTodo(divresult.second);
-          if (divresult.first) mReducersTodo.push_back(divresult.second);
-          if (divresult.first and gbIndex >= 0 and index >= 0)
-            {
-              // these are the prerows missed when excluding the lead term.
-              // if we leave out this term but the divresult code didn't pick this
-              // way to write the term as a multiple of an element of the word table
-              // then it won't reduce properly.
-              badCount++;
-              std::cout << "(" << std::get<0>(divresult.second) << ","
-                               << std::get<1>(divresult.second) << ","
-                               << std::get<2>(divresult.second) << ")" << std::endl;
-            }
           *nextcolloc++ = newColumnIndex;
         }
       else
