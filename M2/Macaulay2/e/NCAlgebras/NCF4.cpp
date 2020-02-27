@@ -1,6 +1,8 @@
 #include "../text-io.hpp"
 #include "NCAlgebras/NCF4.hpp"
 
+int badCount = 0;
+
 NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,
            int hardDegreeLimit,
@@ -59,6 +61,7 @@ void NCF4::compute(int softDegreeLimit)
 
 void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
 {
+  badCount = 0;
   buildF4Matrix(overlapsToProcess);
   sortF4Matrix();
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
@@ -73,6 +76,7 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
       addToGroebnerBasis(f);
       updateOverlaps(f);
     }
+  std::cout << "badCount : " << badCount << std::endl;
 }
 
 void NCF4::addToGroebnerBasis(const Poly * toAdd)
@@ -267,7 +271,6 @@ NCF4::Row NCF4::processPreRow(PreRow r)
     {
       Monom m = i.monom();
       auto it = mColumnMonomials.find(m);
-      //auto tempColMons = mColumnMonomials;
       if (it == mColumnMonomials.end())
         {
           auto rg = mMonomialSpace.allocateArray<int>(m.size());
@@ -277,23 +280,20 @@ NCF4::Row NCF4::processPreRow(PreRow r)
           int divisornum = (divresult.first ? mReducersTodo.size() : -1);
           int newColumnIndex = mColumnMonomials.size();
           mColumnMonomials.insert({newmon, {newColumnIndex, divisornum}});
+          int index = -1;
+          if (divresult.first) index = prerowInReducersTodo(divresult.second);
           if (divresult.first) mReducersTodo.push_back(divresult.second);
-          /*
-          if (divresult.first and divresult.second != r and gbIndex >= 0 and i == elem.cbegin())
+          if (divresult.first and gbIndex >= 0 and index >= 0)
             {
               // these are the prerows missed when excluding the lead term.
               // if we leave out this term but the divresult code didn't pick this
               // way to write the term as a multiple of an element of the word table
               // then it won't reduce properly.
-              std::cout << "\nLooked For " << m << " in {";
-              for (auto mp : tempColMons) std::cout << mp.first; std::cout << "}" << std::endl;
-
-              std::cout << "(" << left << "," << gbIndex << "," << right << ") ";
+              badCount++;
               std::cout << "(" << std::get<0>(divresult.second) << ","
                                << std::get<1>(divresult.second) << ","
                                << std::get<2>(divresult.second) << ")" << std::endl;
             }
-          */
           *nextcolloc++ = newColumnIndex;
         }
       else
