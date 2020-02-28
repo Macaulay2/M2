@@ -62,6 +62,7 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   buildF4Matrix(overlapsToProcess);
   sortF4Matrix();
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
+  else if (M2_gbTrace >= 2) displayF4MatrixSize(std::cout);
   reduceF4Matrix();
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
 
@@ -418,7 +419,7 @@ void NCF4::reduceF4Matrix()
     }
 }
 
-void NCF4::displayF4Matrix(std::ostream& o) const
+void NCF4::displayF4MatrixSize(std::ostream & o) const
 {
   // Display sizes:
   o << "(#cols, #reducer rows, #spair rows) = ("
@@ -427,6 +428,12 @@ void NCF4::displayF4Matrix(std::ostream& o) const
     << mRows.size() - mFirstOverlap << ")"
     << std::endl
     << "  ";
+}
+
+
+void NCF4::displayF4Matrix(std::ostream& o) const
+{
+  displayF4MatrixSize(o);
   // Now column monomials
   for (auto i : mColumnMonomials)
     {
@@ -467,13 +474,7 @@ void NCF4::displayF4Matrix(std::ostream& o) const
 
 void NCF4::displayFullF4Matrix(std::ostream& o) const
 {
-  // Display sizes:
-  o << "(#cols, #reducer rows, #spair rows) = ("
-    << mColumnMonomials.size() << ", "
-    << mFirstOverlap << ", "
-    << mRows.size() - mFirstOverlap << ")"
-    << std::endl
-    << "  ";
+  displayF4MatrixSize(o);
   // Now column monomials
   for (auto i : mColumnMonomials)
     {

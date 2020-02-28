@@ -33,7 +33,6 @@ private:
   // memory space for monomials and words for F4 matrix.
   // PreRow is the prefix, gb element and suffix for a reducer or overlap.
   using PreRow = std::tuple<Word, int, Word>;
-
   using Row = std::pair<Range<ring_elem>,
                         Range<int>>; // components corresponding to monomials appearing
   using Column = std::pair<Monom, int>; // monomial, pivot row for this monomial (if not -1).
@@ -43,20 +42,34 @@ private:
   public:
     PreRowHash() {};
 
-  size_t operator() (const PreRow a) const
-    {
-      // is this a good hash? I have no idea...
-      return std::hash<const int*>{}(std::get<0>(a).begin()) +
-             std::hash<int>{}(std::get<1>(a)) +
-             std::hash<const int*>{}(std::get<2>(a).begin());
-    }
+    size_t operator() (const PreRow a) const
+      {
+        // this hash is very bad because the pointers will all be different
+        // so multiple will be stored anyway.
+        return std::hash<const int *>{}(std::get<0>(a).begin()) +
+               std::hash<int>{}(std::get<1>(a)) +
+               std::hash<const int *>{}(std::get<2>(a).begin());
+      }
   };
 
+  class MonomHash
+  {
+  public:
+    MonomHash() {};
+
+    size_t operator() (const Monom m) const
+    {
+      // the class using this should store all monomials in unique locations
+      // so we may just hash on the pointer itself
+      return std::hash<const int *>{}(m.begin());
+    }
+  };
 
   MemoryBlock mMonomialSpace;
   MonomEq mMonomEq;
   std::map<Monom, std::pair<int,int>, MonomEq> mColumnMonomials;
   std::unordered_map<PreRow,int,PreRowHash> mPreRows;
+  //std::unordered_map<Monom,int,PreRowHash> mPreRows;
   std::vector<PreRow> mReducersTodo;
   std::vector<PreRow> mOverlapsTodo;
   std::vector<Column> mColumns; // mColumns[c].second is the row which will reduce the c'th monomial (unless it is -1).
@@ -83,6 +96,8 @@ public:
   void displayF4Matrix(std::ostream& o) const;
 
   void displayFullF4Matrix(std::ostream& o) const;
+
+  void displayF4MatrixSize(std::ostream & o) const;
 
 private:
   void process(const std::deque<Overlap>& overlapsToProcess);
