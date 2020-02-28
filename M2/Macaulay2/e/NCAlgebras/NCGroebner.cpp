@@ -30,7 +30,7 @@ void NCGroebner::computeHomogeneous(int softDegreeLimit)
           if (std::get<1>(overlap) != -1 && !isOverlapNecessary(overlap))
             {
               toBeProcessed->pop_front();
-              if (M2_gbTrace >= 2)
+              if (M2_gbTrace >= 3)
                 {
                   std::cout << "Reduction avoided using 2nd criterion." << std::endl;
                   std::cout << "table after pop:";

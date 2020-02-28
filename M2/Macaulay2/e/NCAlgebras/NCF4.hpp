@@ -37,39 +37,9 @@ private:
                         Range<int>>; // components corresponding to monomials appearing
   using Column = std::pair<Monom, int>; // monomial, pivot row for this monomial (if not -1).
 
-  class PreRowHash
-  {
-  public:
-    PreRowHash() {};
-
-    size_t operator() (const PreRow a) const
-      {
-        // this hash is very bad because the pointers will all be different
-        // so multiple will be stored anyway.
-        return std::hash<const int *>{}(std::get<0>(a).begin()) +
-               std::hash<int>{}(std::get<1>(a)) +
-               std::hash<const int *>{}(std::get<2>(a).begin());
-      }
-  };
-
-  class MonomHash
-  {
-  public:
-    MonomHash() {};
-
-    size_t operator() (const Monom m) const
-    {
-      // the class using this should store all monomials in unique locations
-      // so we may just hash on the pointer itself
-      return std::hash<const int *>{}(m.begin());
-    }
-  };
-
   MemoryBlock mMonomialSpace;
   MonomEq mMonomEq;
   std::map<Monom, std::pair<int,int>, MonomEq> mColumnMonomials;
-  std::unordered_map<PreRow,int,PreRowHash> mPreRows;
-  //std::unordered_map<Monom,int,PreRowHash> mPreRows;
   std::vector<PreRow> mReducersTodo;
   std::vector<PreRow> mOverlapsTodo;
   std::vector<Column> mColumns; // mColumns[c].second is the row which will reduce the c'th monomial (unless it is -1).
@@ -108,6 +78,10 @@ private:
 
   void reduceF4Matrix();
   
+  // brought over from NCGrobner.  They should be reworked here, no doubt.
+  auto createOverlapLeadWord(Poly& wordAsPoly, Overlap o) const -> void;
+  auto isOverlapNecessary(Overlap o) const -> bool;
+
   void matrixReset();
 
   int prerowInReducersTodo(PreRow pr) const;

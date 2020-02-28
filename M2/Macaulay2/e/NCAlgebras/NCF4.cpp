@@ -60,11 +60,14 @@ void NCF4::compute(int softDegreeLimit)
 void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
 {
   buildF4Matrix(overlapsToProcess);
+  if (M2_gbTrace >= 200) displayFullF4Matrix(std::cout);
   sortF4Matrix();
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
+  else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
   else if (M2_gbTrace >= 2) displayF4MatrixSize(std::cout);
   reduceF4Matrix();
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
+  else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
 
   // auto-reduce the new elements
   
@@ -114,9 +117,45 @@ auto NCF4::overlapHeft(Overlap o) const -> int
 auto NCF4::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
 {
    for (auto newOverlap : newOverlaps)
+   {
+     if (std::get<1>(newOverlap) != -1 && !isOverlapNecessary(newOverlap))
+       {
+         if (M2_gbTrace >= 3)
+           std::cout << "Reduction avoided using 2nd criterion." << std::endl;
+         // TODO: is this logic correct?  Is the overlap actually skipped?
+         continue;
+       }
      mOverlapTable.insert(overlapHeft(newOverlap),
                           false,
                           newOverlap);
+   }
+}
+
+auto NCF4::isOverlapNecessary(Overlap o) const -> bool
+{
+  // this function tests if the lead word of the overlap polynomial
+  // of o is a multiple of another pattern in the word table.
+
+  // need to be careful, however, since an overlap lead word is trivially
+  // a multiple of the words used to build it.  These possibilities must be discarded
+  bool retval;
+  auto A = freeAlgebra();
+  Poly tmp;
+  Word w;
+  
+  createOverlapLeadWord(tmp,o);
+  w = A.lead_word(tmp);
+  retval = !mWordTable.isNontrivialSuperword(w, std::get<0>(o), std::get<2>(o));
+  return retval;
+}
+
+auto NCF4::createOverlapLeadWord(Poly& wordAsPoly, Overlap o) const -> void
+{
+  auto A = freeAlgebra();
+  Poly tmp;
+  Word prefix = A.lead_word_prefix(*mGroebner[std::get<0>(o)], std::get<1>(o));
+  A.lead_term_as_poly(tmp, *mGroebner[std::get<2>(o)]);
+  A.mult_by_term_left(wordAsPoly, tmp, A.coefficientRing()->from_long(1), prefix);
 }
 
 ConstPolyList NCF4::newGBelements()  // From current F4 matrix.
@@ -140,7 +179,6 @@ void NCF4::matrixReset()
   mColumns.clear();
   mColumnMonomials.clear();
   mRows.clear();
-  mPreRows.clear();
   mOverlaps.clear();
   mFirstOverlap = 0;
   mMonomialSpace.deallocateAll();
@@ -180,22 +218,35 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   Word suffix1(leadWordRight.begin() + overlapLen, leadWordRight.end());
   Word prefix1 {}; // trivial word
   
+  // need to add in the lead monomial to the mColumnMonomials list now
+  // so they know which row reduces them
+  int monomOffset = freeAlgebra().monoid().numWeights() + 1;
+  auto rg = mMonomialSpace.allocateArray<int>(leadWordLeft.size() + suffix1.size() + monomOffset);
+  rg.first[0] = leadWordLeft.size() + suffix1.size() + monomOffset;
+  std::copy(leadWordLeft.begin(), leadWordLeft.end(), rg.first + monomOffset);
+  std::copy(suffix1.begin(), suffix1.end(), rg.first + monomOffset + leadWordLeft.size());
+  Monom newmon = Monom(rg.first);
+  freeAlgebra().monoid().setWeights(newmon);
+  auto it = mColumnMonomials.find(newmon);
+  
+  // This overlap may already have lead term in table.
+  // Only have to add it in if it is not yet present.
+  if (it == mColumnMonomials.cend())
+    mColumnMonomials.insert({newmon, {mColumnMonomials.size(), mReducersTodo.size()}});
+
   // it *matters* which one is a reducer and which one is an overlap.
   // this is due to how the word table lookup works -- it searches them
   // in the order that they were entered into the word table, which may
   // not be sorted in term order.
-
-  PreRow pr1 = PreRow(prefix1, gbLeftIndex, suffix1);
-  PreRow pr2 = PreRow(prefix2, gbRightIndex, suffix2);
   if (gbLeftIndex > gbRightIndex)
     {
-      mReducersTodo.push_back(pr2);
-      mOverlapsTodo.push_back(pr1);
+      mReducersTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2));
+      mOverlapsTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1));
     }
   else
     {  
-      mReducersTodo.push_back(pr1);
-      mOverlapsTodo.push_back(pr2);
+      mReducersTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1));
+      mOverlapsTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2));
     }
 }
 
@@ -244,6 +295,8 @@ NCF4::Row NCF4::processPreRow(PreRow r)
   int gbIndex = std::get<1>(r);
   Word right = std::get<2>(r);
 
+  if (M2_gbTrace >= 100) std::cout << "Processing PreRow: (" << left << "," << gbIndex << "," << right << ")" << std::endl;
+
   Poly elem;
   if (gbIndex < 0)
     {
@@ -271,7 +324,7 @@ NCF4::Row NCF4::processPreRow(PreRow r)
       Monom m = i.monom();
       auto it = mColumnMonomials.find(m);
       if (it == mColumnMonomials.end())
-        {
+        { 
           auto rg = mMonomialSpace.allocateArray<int>(m.size());
           std::copy(m.begin(), m.end(), rg.first);
           Monom newmon = Monom(rg.first);
@@ -279,25 +332,8 @@ NCF4::Row NCF4::processPreRow(PreRow r)
           int divisornum = -1; // -1 indicates no divisor was found
           if (divresult.first)
             {
-              // here, a divisor in the word table was found for this monomial.
-              // before adding a prerow to be processed, we must make sure
-              // it is not present.  If it is, we must tag this column with the
-              // index of the existing prerow.
-              auto pr_it = mPreRows.find(divresult.second);
-              if (pr_it == mPreRows.end())
-                {
-                  // not found.  add it to list and tag column with mReducersTodo.size().
-                  divisornum = mReducersTodo.size();
-                  mPreRows.insert({divresult.second,divisornum});
-                  mReducersTodo.push_back(divresult.second);
-                }
-              else
-                {
-                  // found.  tag column with the index of this prerow, which is the value
-                  // of the map mPreRows associated to this key.
-                  // *do not* create a new prerow for this monomial
-                  divisornum = (*pr_it).second;
-                }
+              divisornum = mReducersTodo.size();
+              mReducersTodo.push_back(divresult.second);
             }
           int newColumnIndex = mColumnMonomials.size();
           mColumnMonomials.insert({newmon, {newColumnIndex, divisornum}});
@@ -456,7 +492,7 @@ void NCF4::displayF4Matrix(std::ostream& o) const
       PreRow pr = mReducersTodo[count];
       o << count << " ("<< std::get<0>(pr) << ", "
         << std::get<1>(pr) << ", "
-        << std::get<2>(pr) << ") ";
+        << std::get<2>(pr) << ")";
       if (mRows[count].first.size() != mRows[count].second.size())
         {
           o << "***ERROR*** expected coefficient array and components array to have the same length" << std::endl;
@@ -496,7 +532,7 @@ void NCF4::displayFullF4Matrix(std::ostream& o) const
       PreRow pr = mReducersTodo[count];
       o << count << " ("<< std::get<0>(pr) << ", "
         << std::get<1>(pr) << ", "
-        << std::get<2>(pr) << ") ";
+        << std::get<2>(pr) << ")";
       int count2 = 0;
       for (int i=0; i < mColumnMonomials.size(); i++)
         {

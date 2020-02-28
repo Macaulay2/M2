@@ -121,9 +121,13 @@ public:
 
   int wordHeft(Word& word) const { return wordWeight(word, mHeftDegrees, 0); }
   int wordHeft(Word& word, int start_index) const { return wordWeight(word, mHeftDegrees, start_index); }
+
+  // FM: As of now, this is only used by NCF4 class outside of this one.  Considering
+  // adding some other functionality to avoid this.
+  void setWeights(Monom&m ) const; // assumes length and word are already in place.
+
 private:
   int wordLength(const Monom&m) const { return m[0] - mNumWeights - 1; }
-  void setWeights(Monom&m ) const; // assumes length and word are already in place.
 
   int weightOfVar(int v, int wt) const { return mWeightVectors[v+wt*numVars()]; }
   int heftOfVar(int v) const { return mHeftDegrees[v]; }
