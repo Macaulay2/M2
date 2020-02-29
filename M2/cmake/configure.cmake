@@ -2,13 +2,14 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 # FIXME: currently various pieces and libraries are not built by cmake
 # BUILD/cmake-bootstrap should be a symlink to an existing build directory
-message("## Bootstrapping from previous build in ${BOOTSTRAP}")
 set(BOOTSTRAP ${CMAKE_SOURCE_DIR}/BUILD/cmake-bootstrap)
+message("## Bootstrapping from previous build in ${BOOTSTRAP}")
 
 ################################################################
 
 ## Summary of git status
 # old output: git describe --dirty --long --always --abbrev=40 --tags --match "version-*"
+find_package(Git QUIET)
 execute_process(
   COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -17,7 +18,7 @@ execute_process(
   )
 
 # TODO: when this is stable, use STATUS instead of ##
-message("## Configuring Macaulay2 version ${PROJECT_VERSION} from commit ${GIT_DESCRIPTION}")
+message("## Configuring Macaulay2 version ${PROJECT_VERSION} from commit ${GIT_DESCRIPTION} for ${CMAKE_SYSTEM_NAME}")
 
 ################################################################
 
@@ -25,7 +26,7 @@ message("## Configuring Macaulay2 version ${PROJECT_VERSION} from commit ${GIT_D
 ## Relevant environment variable values, if any:
 foreach(X CC CXX AR CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION PKG_CONFIG_PATH GFTABLESDIR)
   if(NOT ("$ENV{${X}}" STREQUAL ""))
-    set(${X} "$ENV{${X}}" CACHE STRING "")
+    set(${X} "$ENV{${X}}" CACHE STRING "set via environment variable at configure time")
     message("## Set via environment:   ${X} = ${${X}}")
   endif()
 endforeach()
@@ -161,17 +162,15 @@ endif()
 # FIXME: should these stay here or go to bin/CMakeLists.txt?
 # TODO: which ones need to be patched and built?
 ## Find libraries available as CMake modules
-find_package(BLAS    3.8 REQUIRED)
-find_package(LAPACK  3.8 REQUIRED)
-find_package(Eigen3  3.3 REQUIRED NO_MODULE)
-find_package(LibXml2 2.9 REQUIRED) # need xmlNewNode
-find_package(Threads 2.1 REQUIRED) # pthread
-find_package(Curses  6.1 REQUIRED) # ncurses
-find_package(LibLZMA 5.2 REQUIRED) # need lzma_end
-find_package(GLPK   4.59 REQUIRED) # cmake/FindGLPK.cmake
-find_package(MPIR    3.0)          # cmake/FindMPIR.cmake
+find_package(BLAS    3.8 REQUIRED QUIET)
+find_package(LAPACK  3.8 REQUIRED QUIET) # TODO: both?
+find_package(Eigen3  3.3 REQUIRED QUIET NO_MODULE)
+find_package(LibXml2 2.9 REQUIRED QUIET) # need xmlNewNode
+find_package(Threads 2.1 REQUIRED QUIET) # pthread
+find_package(LibLZMA 5.2 REQUIRED QUIET) # need lzma_end
+find_package(MPIR    3.0          QUIET)          # cmake/FindMPIR.cmake
 # OpenMP is required for building the library csdp and good for building the library normaliz
-find_package(OpenMP      REQUIRED) # TODO: use OPENMP_LIBS/CXXFLAGS for csdb
+find_package(OpenMP      REQUIRED QUIET) # TODO: use OPENMP_LIBS/CXXFLAGS for csdb
 find_package(PkgConfig   REQUIRED QUIET)
 
 if(NOT ${MPIR_FOUND})
@@ -191,7 +190,7 @@ pkg_search_module(MATHICGB  REQUIRED mathicgb                 IMPORTED_TARGET)
 # /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist//usr/share/factory/
 pkg_search_module(FACTORY   REQUIRED factory singular-factory IMPORTED_TARGET)
 # To fix the error, change the givaro requirement in ${BOOTSTRAP}/usr-host/lib/pkgconfig/fflas-ffpack.pc to 4.0.2
-#pkg_search_module(FFLAS              fflas-ffpack             IMPORTED_TARGET)
+pkg_search_module(FFLAS_FFPACK       fflas-ffpack             IMPORTED_TARGET)
 pkg_search_module(READLINE           readline                 IMPORTED_TARGET)
 # TODO: should we export GC_LARGE_ALLOC_WARN_INTERVAL=1?
 pkg_search_module(GC        REQUIRED bdw-gc                   IMPORTED_TARGET)
@@ -200,11 +199,8 @@ pkg_search_module(GC        REQUIRED bdw-gc                   IMPORTED_TARGET)
 find_library(LIBHISTORY history)
 find_library(LIBFROBBY frobby)
 find_library(LIBGDBM gdbm)
-#find_library(LIBCDD cdd)
-find_library(LIBMPC mpc)
 find_library(LIBM m) # need pow from math.h
 find_library(LIBC c)
-find_library(LIBZ z) # need gzopen
 
 # TODO:
 #test:
@@ -213,8 +209,6 @@ find_library(LIBZ z) # need gzopen
 #	:
 #	: "GIVARO_CXXFLAGS       = $(GIVARO_CXXFLAGS)"
 #	: "FFLAS_FFPACK_CXXFLAGS = $(FFLAS_FFPACK_CXXFLAGS)"
-#	: "M2_CXXFLAGS           = $(M2_CXXFLAGS)"
-#	: "M2_BOTH               = $(M2_BOTH)"
 #	:
 #	: "GIVARO_LIBS           = $(GIVARO_LIBS)"
 #	: "FFLAS_FFPACK_LIBS     = $(FFLAS_FFPACK_LIBS)"
@@ -222,6 +216,8 @@ find_library(LIBZ z) # need gzopen
 
 ################################################################
 ## Check for certain header files, functions
+
+# TODO: use CMAKE_REQUIRED_QUIET?
 
 include(CheckTypeSize)
 check_type_size("int *" SIZEOF_INT_P)
@@ -332,7 +328,10 @@ check_include_files(alloca.h HAVE_ALLOCA_H)
 
 ################################################################
 
-message("## Operating system information:
+# TODO
+# message("## Host operating system information:")
+
+message("## Target operating system information:
      ISSUE             = ${ISSUE}
      NODENAME          = ${NODENAME}
      OS REL            = ${OS} ${REL}
@@ -341,6 +340,38 @@ message("## Operating system information:
      DEBUG             = ${DEBUG}
      GIT_DESCRIPTION   = ${GIT_DESCRIPTION}
      USING_MPIR        = ${USING_MPIR}")
+
+################################################################
+## Setting variables for installation directories and Macaulay2 Layout
+# TODO: where should these be set? most are only used in startup.m2, so could move there
+# if they weren't prefixed with common and exec they would be more useful
+
+## Only overwrite the default prefix, not one provided via command line
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/usr-dist CACHE PATH "..." FORCE)
+endif()
+
+set(M2_INSTALL_PREFIX	${CMAKE_INSTALL_PREFIX})
+set(M2_COMMON_PREFIX	${M2_INSTALL_PREFIX}/common)     # staging area for common files as in layout.m2.in
+set(M2_EXEC_PREFIX	${M2_INSTALL_PREFIX}/${MACHINE}) # staging area for arch. dep. files as in layout.m2.in
+set(M2_PACKAGE_DIR	${M2_COMMON_PREFIX}/share/Macaulay2)
+set(M2_CORE_DIR		${M2_PACKAGE_DIR}/Core)
+
+## Rewrite this so that GNUInstallDirs module can use it to generate architecture independent directories
+set(CMAKE_INSTALL_PREFIX ${M2_EXEC_PREFIX})
+# Possible alternative:
+#set(CMAKE_INSTALL_DATAROOTDIR common/share) # ${MACHINE}/common will be a symlink to ../common
+
+## This is using https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html#module:GNUInstallDirs
+## Which follows https://www.gnu.org/prep/standards/html_node/Directory-Variables.html
+## Also see FHS  https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html
+include(GNUInstallDirs)
+
+message("## Staging area directory:
+     common:	${M2_COMMON_PREFIX}
+     exec:	${M2_EXEC_PREFIX}")
+
+# TODO: install in /opt instead?
 
 ################################################################
 
@@ -384,8 +415,6 @@ message("## Operating system information:
 #mathicgb version = 1.0
 #VERSION = 1.15.0.1
 #compile node name = noether
-
-
 
 ################################################################
 

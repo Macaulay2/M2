@@ -44,10 +44,12 @@ if("${ISSUE}" STREQUAL "")
       OUTPUT_VARIABLE ISSUE_RELEASE
       ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
   elseif(EXISTS ${SYSTEM_RELEASE_FOUND})
+    # TODO
     #system-release
     #     then ISSUE_FLAVOR=[`</etc/system-release  head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
     #          ISSUE_RELEASE=[`</etc/system-release head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
   elseif(EXISTS ${ISSUE_FILE_FOUND})
+    # TODO
     file(READ ${ISSUE_FILE} ISSUE_FILE_CONTENT)
     #string(REGEX REPLACE ISSUE_FLAVOR=[`</etc/issue           head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
     #string(REGEX REPLACE ISSUE_RELEASE=[`</etc/issue          head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]

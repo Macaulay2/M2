@@ -26,12 +26,5 @@ add_subdirectory(emacs)
 #add_subdirectory(tests)
 #add_subdirectory(book)
 
-# TODO: Do we need these?
-#add_subdirectory(include)
-#include ../include/config.Makefile
-#add_subdirectory(usr-host)
-# Also: mathic, mathicgb, memtailor, fflas_ffpack
-
-# TODO
-# Macaulay2/Makefile
-# Macaulay2/README
+# TODO: TYPE DOC is easier but doesn't work because of the common prefix :/ How to make it work?
+install(FILES COPYING-GPL-2 COPYING-GPL-3 DESTINATION ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_DOCDIR})

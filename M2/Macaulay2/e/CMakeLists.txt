@@ -296,22 +296,19 @@ target_link_libraries(M2-engine Eigen3::Eigen)
 #    $<INSTALL_INTERFACE:include>
 target_include_directories(M2-engine
   PUBLIC
+    .
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR}/include
-    ${CMAKE_SOURCE_DIR}/Macaulay2/e
     ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
-    ${BOOTSTRAP}/usr-host/include
-    ${BOOTSTRAP}/usr-host/include/cdd
   PRIVATE
-    ${LIBXML2_INCLUDE_DIR}
     ${EIGEN3_INCLUDE_DIR}
+    ${LIBXML2_INCLUDE_DIR}
+    ${FFLAS_FFPACK_INCLUDE_DIRS}
+    ${CMAKE_BINARY_DIR}/Macaulay2/d
+    ${CMAKE_SOURCE_DIR}/Macaulay2/c # TODO: engine should not depend on scc1
     ${CMAKE_SOURCE_DIR}/submodules/memtailor/src
     ${CMAKE_SOURCE_DIR}/submodules/mathic/src
     ${CMAKE_SOURCE_DIR}/submodules/mathicgb/src
-    SYSTEM ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/src
-    ${CMAKE_BINARY_DIR}/Macaulay2/d
-    ${CMAKE_SOURCE_DIR}/Macaulay2/c
-    SYSTEM /usr/local/include
   )
 
 # TODO: enable INTERPROCEDURAL_OPTIMIZATION?

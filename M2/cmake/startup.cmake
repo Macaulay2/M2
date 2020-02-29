@@ -1,6 +1,3 @@
-################################################################
-#### Configuring Macaulay2/d/startup.c
-
 ## regex macro for C-style character escaping
 ## escapes / and "
 ## converts each line to "CONTENT" if with_newline is NO or "CONTENT\n" if it is YES
@@ -20,6 +17,41 @@ MACRO (_STARTUP_REGEX input retval with_newline)
   endif()
   STRING (STRIP "${_output}" ${retval})
 ENDMACRO (_STARTUP_REGEX)
+
+################################################################
+#### Setting the Layout strings for startupString
+
+## These are literal strings which startup.m2 replaces at runtime
+set(prefix	[[${prefix}]])
+set(exec_prefix	[[${exec_prefix}]])
+## CMake knows about these locations for each platform
+set(bindir	${exec_prefix}/${CMAKE_INSTALL_BINDIR})
+set(libdir	${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
+set(libexecdir	${exec_prefix}/${CMAKE_INSTALL_LIBEXECDIR})
+set(datadir	${prefix}/${CMAKE_INSTALL_DATADIR})
+set(infodir	${prefix}/${CMAKE_INSTALL_INFODIR})
+set(mandir	${prefix}/${CMAKE_INSTALL_MANDIR})
+set(docdir	${prefix}/${CMAKE_INSTALL_DOCDIR})
+## These locations are Macaulay2 conventions
+set(libm2dir	${libdir}/Macaulay2)
+set(emacsdir	${datadir}/emacs/site-lisp)
+set(gftablesdir	${datadir}/Macaulay2/Core/factory/)
+set(packagesdir	${datadir}/Macaulay2)
+set(programsdir	${libexecdir}/Macaulay2/bin)
+set(licensesdir	${libexecdir}/Macaulay2/program-licenses)
+set(librariesdir ${libm2dir}/lib)
+
+if(DEFINED CACHE{GFTABLESDIR})
+  set(gftablesdir ${GFTABLESDIR})
+endif()
+
+# TODO: any need for these?
+#SHAREDSTATEDIR: modifiable architecture-independent data (com)
+#LOCALSTATEDIR:  modifiable single-machine data (var)
+#RUNSTATEDIR:    run-time variable data (LOCALSTATEDIR/run)
+
+################################################################
+#### Configuring Macaulay2/d/startup.c
 
 ## test for regex macro
 set(_STARTUP_REGEX_TEST_YES "\nA-B\n\nA\\;\"B\n")

@@ -27,10 +27,14 @@ set(CMAKE_C_STANDARD 11)
 
 ## Specify a few build configurations
 set(CMAKE_BUILD_TYPE		Debug) # TODO: Release
-set(CMAKE_VERBOSE_MAKEFILE	OFF) # Useful for debugging build system issues
+set(CMAKE_VERBOSE_MAKEFILE	OFF)   # Useful for debugging build system issues
 
-set(CMAKE_INSTALL_PREFIX	${CMAKE_BINARY_DIR}/usr-dist) # must come before project()
-#set(CMAKE_STAGING_PREFIX	${CMAKE_BINARY_DIR}/usr-dist)
+## TODO: cross-compile for Darwin from Linux. Currently not working.
+if("${CMAKE_BINARY_DIR}" MATCHES ".*(apple|darwin).*")
+  set(TOOLCHAIN ${CMAKE_CURRENT_LIST_DIR}/cmake/darwin.cmake)
+  message("## Cross-compiling from toolchain file: ${TOOLCHAIN}")
+  set(CMAKE_TOOLCHAIN_FILE ${TOOLCHAIN})
+endif()
 
 ## Enable support for folders in IDEs
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -51,7 +55,6 @@ project(Macaulay2
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(configure)	## CMake script for configuring various variables
 include(prechecks)	## CMake script for preprocessor tests and linting
-include(distributions)	## CMake script for making distribution packages
 
 ## Configure M2/config.h
 configure_file(include/M2/config.h.cmake include/M2/config.h)
@@ -66,34 +69,28 @@ add_subdirectory(Macaulay2)
 ## Find or download and build external libraries and executables
 add_subdirectory(libraries)
 
+## Kick off making distribution packages for Macaulay2
+#add_subdirectory(distributions)
+
 ###############################################################################
 ## This section is temporary hacks, will be gone soon.
 
-set(SUPPRESS_COMPILER_WARNINGS	ON) # Mahrud: this is just for me to work on CMake issues
+# This is just for Mahrud to work on CMake issues without messy compiler errors
+set(SUPPRESS_COMPILER_WARNINGS ON)
 
-# FIXME
+# TODO: this should be done somewhere else, perhaps install, but at build time, not install time
 execute_process(
-  COMMAND ${CMAKE_COMMAND} -E copy ${BOOTSTRAP}/config.status ${CMAKE_BINARY_DIR}
-  COMMAND ln -fs                             ${DIST_DIR}/common/share ${SHARE_DIR}
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${DIST_DIR}/common/share
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${DIST_DIR}/common/share/man
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${DIST_DIR}/common/share/info
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${DIST_DIR}/common/share/Macaulay2
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${DIST_DIR}/common/share/doc/Macaulay2
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_CORE_DIR}
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_INFODIR}
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_DOCDIR}
   )
 
-# FIXME
-add_custom_target(copy_licenses ALL
-  COMMAND ${CMAKE_COMMAND} -E copy ${BOOTSTRAP}/usr-dist/common/share/doc/Macaulay2/COPYING-GPL-2 ${DIST_DIR}/common/share/doc/Macaulay2/
-  COMMAND ${CMAKE_COMMAND} -E copy ${BOOTSTRAP}/usr-dist/common/share/doc/Macaulay2/COPYING-GPL-3 ${DIST_DIR}/common/share/doc/Macaulay2/
-  DEPENDS ${DIST_DIR}/common/share/doc/Macaulay2/
+# FIXME: this hack is needed because for some reason the path prefix
+# in the binary is Macaulay2/share instead of usr-dist/common/share and
+execute_process(
+  COMMAND ln -fs ${M2_COMMON_PREFIX}/share Macaulay2/share
+  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${MACHINE}/${CMAKE_INSTALL_LIBDIR}     ${CMAKE_BINARY_DIR}/Macaulay2/
+  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${MACHINE}/${CMAKE_INSTALL_LIBEXECDIR} ${CMAKE_BINARY_DIR}/Macaulay2/
   )
 
-# FIXME
-add_custom_target(generate_symlinks ALL
-  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${MACHINE}/lib      ${CMAKE_BINARY_DIR}/Macaulay2/
-  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${MACHINE}/lib64    ${CMAKE_BINARY_DIR}/Macaulay2/
-  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${MACHINE}/libexec  ${CMAKE_BINARY_DIR}/Macaulay2/
-  COMMAND ln -fs ${CMAKE_BINARY_DIR}/Macaulay2/bin/M2-binary ${CMAKE_BINARY_DIR}/M2
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CORE_DIR}
-  )
+execute_process(COMMAND ln -fs ${CMAKE_BINARY_DIR}/Macaulay2/bin/M2-binary ${CMAKE_BINARY_DIR}/M2)

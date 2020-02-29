@@ -21,9 +21,10 @@ add_custom_command(OUTPUT M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2
   DEPENDS Core
   )
 
-# TODO
-#install -c -d "${DIST_DIR}/common/share/emacs/site-lisp"
-#install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/M2-mode.el ${DIST_DIR}/common/share/emacs/site-lisp)
-#install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/M2.el
-#install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/M2-README
-#install(FILES M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2 M2-init.el)
+install(FILES
+  M2-mode.el M2.el M2-README
+  ${CMAKE_CURRENT_BINARY_DIR}/M2-symbols.el
+  ${CMAKE_CURRENT_BINARY_DIR}/M2-emacs-hlp.txt
+  ${CMAKE_CURRENT_BINARY_DIR}/M2-emacs.m2
+  ${CMAKE_CURRENT_BINARY_DIR}/M2-init.el
+  DESTINATION ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_DATADIR}/emacs/site-lisp)

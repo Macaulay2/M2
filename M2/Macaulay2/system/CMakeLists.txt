@@ -1,5 +1,6 @@
-#set(CMAKE_VERBOSE_MAKEFILE on)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
+# TODO: add necessary header files to this list
 add_library(system OBJECT
   supervisor.cpp
   m2file.cpp
@@ -9,15 +10,12 @@ add_library(system OBJECT
 target_include_directories(system
   PUBLIC
     .
-    /usr/local/include
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR}/include
-    ${CMAKE_SOURCE_DIR}/Macaulay2/c
-    ${CMAKE_SOURCE_DIR}/Macaulay2/e
-    ${CMAKE_BINARY_DIR}/Macaulay2/d
+    ${CMAKE_SOURCE_DIR}/Macaulay2/c # needs scc-core.h
+    ${CMAKE_SOURCE_DIR}/Macaulay2/e # needs newdelete.hpp
+    ${CMAKE_BINARY_DIR}/Macaulay2/d # needs pthread-exports.h
     ${LIBXML2_INCLUDE_DIR}
-  PRIVATE
-    ${BOOTSTRAP}/usr-host/include
   )
 
-add_dependencies(system interpreter) # needs pthread-exports.h
+add_dependencies(system interpreter)

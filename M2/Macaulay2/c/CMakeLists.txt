@@ -4,7 +4,7 @@
 
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
-find_package(BISON REQUIRED)
+find_package(BISON REQUIRED QUIET)
 BISON_TARGET(scc1 ${CMAKE_CURRENT_SOURCE_DIR}/grammar.y ${CMAKE_CURRENT_BINARY_DIR}/grammar.c
   DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/grammar.h
   COMPILE_FLAGS -yvdlt)
@@ -43,13 +43,8 @@ target_include_directories(scc1
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR}/include
     /usr/local/include
-  PRIVATE
-    ${BOOTSTRAP}/usr-host/include
   )
-
-# FIXME: what library is missing that requires usr-host/lib?
-target_link_directories(scc1 PUBLIC /usr/local/lib) # ${BOOTSTRAP}/usr-host/lib)
-target_link_libraries(scc1 gdbm gc)
+target_link_libraries(scc1 PkgConfig::GC ${LIBGDBM})
 
 # Why do we do this?
 # CC scc-core.c

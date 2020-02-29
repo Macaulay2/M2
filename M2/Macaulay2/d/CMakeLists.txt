@@ -1,7 +1,8 @@
 #set(CMAKE_VERBOSE_MAKEFILE on)
 
 # FIXME: for some reason scc1 fails if run in parallel: failed to open typecode.db
-set(CMAKE_BUILD_PARALLEL_LEVEL 1)
+# TODO: this isn't working
+set(ENV{CMAKE_BUILD_PARALLEL_LEVEL} 1)
 
 ################################################################
 ## Configure startup.c at the destination
@@ -11,7 +12,7 @@ configure_file(startup.c.cmake startup.c @ONLY)
 ## Configure distributed-packages.h at the destination
 string(REPLACE ";" " " PACKAGES "${DISTRIBUTED_PACKAGES}")
 # TODO: configure this header directly in version.dd?
-file(WRITE distributed-packages.h "#define DISTRIBUTED_PACKAGES \"${PACKAGES}\"")
+file(GENERATE OUTPUT distributed-packages.h CONTENT "#define DISTRIBUTED_PACKAGES \"${PACKAGES}\"")
 
 ## Configure version.dd at the destination
 #configure_file(version.dd.in version.dd #ONLY)

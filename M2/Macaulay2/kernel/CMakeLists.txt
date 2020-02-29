@@ -1,4 +1,4 @@
-#set(CMAKE_VERBOSE_MAKEFILE on)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 add_library(kernel OBJECT
   bibasis/bibasis.cpp
@@ -13,16 +13,13 @@ add_library(kernel OBJECT
 
 target_include_directories(kernel
   PUBLIC
-    /usr/local/include
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR}/include
-    ${CMAKE_BINARY_DIR}/Macaulay2/d
     ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
-    ${CMAKE_SOURCE_DIR}/include
+    # TODO: why does putting c before e cause errors?
     ${CMAKE_SOURCE_DIR}/Macaulay2/e
-    ${CMAKE_SOURCE_DIR}/Macaulay2/c
-  PRIVATE
-    ${BOOTSTRAP}/usr-host/include
+    ${CMAKE_SOURCE_DIR}/Macaulay2/c # needs scc-core.h
+    ${CMAKE_BINARY_DIR}/Macaulay2/d
   )
 
 add_dependencies(kernel interpreter) # needs pthread-exports.h

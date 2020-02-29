@@ -5,8 +5,6 @@
 ## Note that options prefixed with M2_* are sticky. Use -U to revert to default:
 ## $ cmake -UM2_RerunExamples .
 
-set(PACKAGE_DIR ${CMAKE_BINARY_DIR}/Macaulay2/share/Macaulay2)
-
 ## Package options
 ## The default is to install all distributed packages
 set(PACKAGES "${DISTRIBUTED_PACKAGES}" CACHE INTERNAL "the list of packages to install")
@@ -36,14 +34,14 @@ list(TRANSFORM PACKAGES APPEND ".m2" OUTPUT_VARIABLE PACKAGE_OUTPUTS)
 add_custom_target(copy-packages ALL DEPENDS ${PACKAGE_OUTPUTS})
 
 foreach(PACKAGE ${PACKAGES})
-  add_custom_command(OUTPUT ${PACKAGE_DIR}/${PACKAGE}.m2
+  add_custom_command(OUTPUT ${M2_PACKAGE_DIR}/${PACKAGE}.m2
     COMMENT
       "Copying package ${PACKAGE}"
     COMMAND
-      ${CMAKE_COMMAND} -E copy_if_different ${PACKAGE}.m2 ${PACKAGE_DIR}
+      ${CMAKE_COMMAND} -E copy_if_different ${PACKAGE}.m2 ${M2_PACKAGE_DIR}
     COMMAND
       if [ -d "${PACKAGE}" ] \; then
-        ${CMAKE_COMMAND} -E copy_directory  ${PACKAGE}    ${PACKAGE_DIR}/${PACKAGE} \;
+        ${CMAKE_COMMAND} -E copy_directory  ${PACKAGE}    ${M2_PACKAGE_DIR}/${PACKAGE} \;
       fi
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS Core
@@ -70,7 +68,6 @@ list(TRANSFORM PACKAGES PREPEND "uninstall-" OUTPUT_VARIABLE UNINSTALL_TARGETS)
 ## Uninstall packages
 add_custom_target(uninstall-packages DEPENDS ${UNINSTALL_TARGETS})
 
-
 ## Arguments for M2-binary and installPackage
 set(M2_ARGS -q --stop --silent -e errorDepth=${M2_errorDepth} -e debugLevel=${M2_debugLevel})
 set(M2_INSTALL_ARGS
@@ -79,7 +76,7 @@ set(M2_INSTALL_ARGS
   CheckDocumentation     => ${M2_CheckDocumentation},
   IgnoreExampleErrors    => ${M2_IgnoreExampleErrors},
   RemakeAllDocumentation => ${M2_RemakeAllDocumentation},
-  InstallPrefix          => \\"${DIST_DIR}/\\",
+  InstallPrefix          => \\"${M2_INSTALL_PREFIX}/\\",
   UserMode               => false,
   SeparateExec           => true,
   DebuggingMode          => true
