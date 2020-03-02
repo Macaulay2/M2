@@ -298,6 +298,49 @@ int FreeMonoid::wordWeight(Word& word, const std::vector<int>& weight, int start
   return result;
 }
 
+  // some functions to create monoms from words and monoms
+Monom FreeMonoid::wordProductAsMonom(const Word& left, const Word& right, MemoryBlock& memBlock) const
+{
+  int monomOffset = numWeights() + 1;
+  int sz = left.size() + right.size() + numWeights() + 1;
+  auto rg = memBlock.allocateArray<int>(sz);
+  rg.first[0] = sz;
+  std::copy(left.begin(), left.end(), rg.first + monomOffset);
+  std::copy(right.begin(), right.end(), rg.first + monomOffset + left.size());
+  Monom newmon = Monom(rg.first);
+  setWeights(newmon);
+  return newmon;
+}
+
+Monom FreeMonoid::wordProductAsMonom(const Word& left, const Monom& mid, const Word& right, MemoryBlock & memBlock) const
+{
+  int monomOffset = numWeights() + 1;
+  int sz = left.size() + mid.size() + right.size();
+  auto rg = memBlock.allocateArray<int>(sz);
+  rg.first[0] = sz;
+  std::copy(left.begin(), left.end(), rg.first + monomOffset);
+  std::copy(mid.begin()+monomOffset, mid.end(), rg.first + left.size() + monomOffset);
+  std::copy(right.begin(), right.end(), rg.first + left.size() + mid.size());
+  Monom newmon = Monom(rg.first);
+  setWeights(newmon);
+  return newmon;
+}
+
+Monom FreeMonoid::wordProductAsMonom(const Word& left, const Word& mid, const Word& right, MemoryBlock & memBlock) const
+{
+  int monomOffset = numWeights() + 1;
+  int sz = left.size() + mid.size() + right.size() + monomOffset;
+  auto rg = memBlock.allocateArray<int>(sz);
+  rg.first[0] = sz;
+  std::copy(left.begin(), left.end(), rg.first + monomOffset);
+  std::copy(mid.begin(), mid.end(), rg.first + left.size() + monomOffset);
+  std::copy(right.begin(), right.end(), rg.first + left.size() + mid.size() + monomOffset);
+  Monom newmon = Monom(rg.first);
+  setWeights(newmon);
+  return newmon;
+}
+ 
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

@@ -220,17 +220,11 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   
   // need to add in the lead monomial to the mColumnMonomials list now
   // so they know which row reduces them
-  int monomOffset = freeAlgebra().monoid().numWeights() + 1;
-  auto rg = mMonomialSpace.allocateArray<int>(leadWordLeft.size() + suffix1.size() + monomOffset);
-  rg.first[0] = leadWordLeft.size() + suffix1.size() + monomOffset;
-  std::copy(leadWordLeft.begin(), leadWordLeft.end(), rg.first + monomOffset);
-  std::copy(suffix1.begin(), suffix1.end(), rg.first + monomOffset + leadWordLeft.size());
-  Monom newmon = Monom(rg.first);
-  freeAlgebra().monoid().setWeights(newmon);
-  auto it = mColumnMonomials.find(newmon);
-  
+  Monom newmon = freeAlgebra().monoid().wordProductAsMonom(leadWordLeft, suffix1, mMonomialSpace);
+
   // This overlap may already have lead term in table.
   // Only have to add it in if it is not yet present.
+  auto it = mColumnMonomials.find(newmon);
   if (it == mColumnMonomials.cend())
     mColumnMonomials.insert({newmon, {mColumnMonomials.size(), mReducersTodo.size()}});
 
@@ -291,20 +285,23 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
 
 NCF4::Row NCF4::processPreRow(PreRow r)
 {
+  // note: left and right should be the empty word if gbIndex < 0 indicating
+  // an input polynomial.
   Word left = std::get<0>(r);
   int gbIndex = std::get<1>(r);
   Word right = std::get<2>(r);
 
   if (M2_gbTrace >= 100) std::cout << "Processing PreRow: (" << left << "," << gbIndex << "," << right << ")" << std::endl;
 
-  Poly elem;
+  //Poly elem;
+  const Poly* elem;
   if (gbIndex < 0)
     {
-      freeAlgebra().copy(elem, *mInput[-gbIndex-1]);
+      elem = mInput[-gbIndex-1];
     }
   else
     {
-      freeAlgebra().mult_by_term_left_and_right(elem, *mGroebner[gbIndex], left, right);
+      elem = mGroebner[gbIndex];
     }
 
   // loop through all monomials of the product
@@ -316,19 +313,20 @@ NCF4::Row NCF4::processPreRow(PreRow r)
   //        and search for divisor for it.
   //        
 
-  int nterms = elem.numTerms();
+  // would like to rewrite the below where we don't mult_by_term_left_and_right
+  // but instead build the monomial directly.  The code to do this is essentially
+  // above in prerowsFromOverlap
+
+  int nterms = elem->numTerms();
   auto componentRange = mMonomialSpace.allocateArray<int>(nterms);
   int* nextcolloc = componentRange.first;
-  for (auto i = elem.cbegin(); i != elem.cend(); ++i)
+  for (auto i = elem->cbegin(); i != elem->cend(); ++i)
     {
-      Monom m = i.monom();
+      Monom m = freeAlgebra().monoid().wordProductAsMonom(left,i.monom(),right,mMonomialSpace);
       auto it = mColumnMonomials.find(m);
       if (it == mColumnMonomials.end())
         { 
-          auto rg = mMonomialSpace.allocateArray<int>(m.size());
-          std::copy(m.begin(), m.end(), rg.first);
-          Monom newmon = Monom(rg.first);
-          auto divresult = findDivisor(newmon);
+          auto divresult = findDivisor(m);
           int divisornum = -1; // -1 indicates no divisor was found
           if (divresult.first)
             {
@@ -336,7 +334,7 @@ NCF4::Row NCF4::processPreRow(PreRow r)
               mReducersTodo.push_back(divresult.second);
             }
           int newColumnIndex = mColumnMonomials.size();
-          mColumnMonomials.insert({newmon, {newColumnIndex, divisornum}});
+          mColumnMonomials.insert({m, {newColumnIndex, divisornum}});
           *nextcolloc++ = newColumnIndex;
         }
       else
@@ -344,9 +342,9 @@ NCF4::Row NCF4::processPreRow(PreRow r)
           *nextcolloc++ = (*it).second.first;
         }
     }
-  ring_elem* ptr = newarray(ring_elem, elem.getCoeffVector().size());
-  Range<ring_elem> coeffrange(ptr, ptr + elem.getCoeffVector().size());
-  std::copy(elem.getCoeffVector().cbegin(), elem.getCoeffVector().cend(), coeffrange.begin());
+  ring_elem* ptr = newarray(ring_elem, elem->getCoeffVector().size());
+  Range<ring_elem> coeffrange(ptr, ptr + elem->getCoeffVector().size());
+  std::copy(elem->getCoeffVector().cbegin(), elem->getCoeffVector().cend(), coeffrange.begin());
   return(Row(coeffrange, componentRange));
 }
 
