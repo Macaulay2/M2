@@ -108,8 +108,8 @@ auto NCF4::overlapHeft(Overlap o) const -> int
 // o = triple (index of left GB element, pos, index of right GB element,
 //   pos is the location in left GB element where s starts.
 {
-  Word tmpL = freeAlgebra().lead_word(*mGroebner[std::get<0>(o)]);
-  Word tmpR = freeAlgebra().lead_word(*mGroebner[std::get<2>(o)]);
+  Word tmpL = mWordTable[std::get<0>(o)];
+  Word tmpR = mWordTable[std::get<2>(o)];
   int len_of_s = tmpL.size() - std::get<1>(o);
   return freeAlgebra().monoid().wordHeft(tmpL) +
     freeAlgebra().monoid().wordHeft(tmpR, len_of_s);
@@ -213,8 +213,8 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   // one prerow will be: (1, gbLeftIndex, x^c)
   // another prerow will be: (x^a, gbRightIndex, 1)
       
-  Word leadWordLeft = freeAlgebra().lead_word(*mGroebner[gbLeftIndex]);
-  Word leadWordRight = freeAlgebra().lead_word(*mGroebner[gbRightIndex]);
+  Word leadWordLeft = mWordTable[gbLeftIndex];
+  Word leadWordRight = mWordTable[gbRightIndex];
   int overlapLen = leadWordLeft.size() - overlapPos;
 
   Word suffix2 {}; // trivial word
@@ -316,7 +316,6 @@ NCF4::Row NCF4::processPreRow(PreRow r)
   //        and place this monomial into mColumns.
   //        and search for divisor for it.
   //        
-
   int nterms = elem->numTerms();
   auto componentRange = mMonomialSpace.allocateArray<int>(nterms);
   int* nextcolloc = componentRange.first;
