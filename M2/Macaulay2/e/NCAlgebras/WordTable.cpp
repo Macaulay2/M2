@@ -192,7 +192,7 @@ auto WordTable::isNontrivialSuperword(Word word, int index1, int index2) const -
       for (auto j : start_indices)
         {
           if (i != index1 && i != index2) return true;
-          // these commands handle when the overlap is trivially a multiple of one of
+          // these commands handle when the overlap is *trivially* a multiple of one of
           // the monomials in index1 or index2
           if (j == 0 && i != index1) return true;
           if (j == word.size() - mMonomials[index2].size() && i != index2) return true;

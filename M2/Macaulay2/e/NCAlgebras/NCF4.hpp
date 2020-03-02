@@ -78,9 +78,12 @@ private:
 
   void reduceF4Matrix();
   
-  // brought over from NCGrobner.  They should be reworked here, no doubt.
-  auto createOverlapLeadWord(Poly& wordAsPoly, Overlap o) const -> void;
-  auto isOverlapNecessary(Overlap o) const -> bool;
+  // FM : I had to discard const qualifiers here because I used mMonomialSpace.
+  // Should I be doing this?  Two questions:  Should we make mMonomialSpace
+  // mutable so changes don't trigger const errors, and should I really be
+  // using mMonomialSpace anyway?
+  Word createOverlapLeadWord(Overlap o);
+  auto isOverlapNecessary(Overlap o) -> bool;
 
   void matrixReset();
 

@@ -78,6 +78,7 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
       addToGroebnerBasis(f);
       updateOverlaps(f);
     }
+  matrixReset();
 }
 
 void NCF4::addToGroebnerBasis(const Poly * toAdd)
@@ -131,7 +132,7 @@ auto NCF4::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
    }
 }
 
-auto NCF4::isOverlapNecessary(Overlap o) const -> bool
+auto NCF4::isOverlapNecessary(Overlap o) -> bool
 {
   // this function tests if the lead word of the overlap polynomial
   // of o is a multiple of another pattern in the word table.
@@ -140,22 +141,26 @@ auto NCF4::isOverlapNecessary(Overlap o) const -> bool
   // a multiple of the words used to build it.  These possibilities must be discarded
   bool retval;
   auto A = freeAlgebra();
-  Poly tmp;
+
   Word w;
   
-  createOverlapLeadWord(tmp,o);
-  w = A.lead_word(tmp);
+  w = createOverlapLeadWord(o);
   retval = !mWordTable.isNontrivialSuperword(w, std::get<0>(o), std::get<2>(o));
   return retval;
 }
 
-auto NCF4::createOverlapLeadWord(Poly& wordAsPoly, Overlap o) const -> void
+Word NCF4::createOverlapLeadWord(Overlap o) 
 {
-  auto A = freeAlgebra();
-  Poly tmp;
-  Word prefix = A.lead_word_prefix(*mGroebner[std::get<0>(o)], std::get<1>(o));
-  A.lead_term_as_poly(tmp, *mGroebner[std::get<2>(o)]);
-  A.mult_by_term_left(wordAsPoly, tmp, A.coefficientRing()->from_long(1), prefix);
+  // this function adds the return value to mMemoryBlock, so should only be used
+  // when running a GB since it will be subsequently cleared.
+  Word left(mWordTable[std::get<0>(o)].begin(),
+            mWordTable[std::get<0>(o)].begin()+std::get<1>(o));
+  Word right = mWordTable[std::get<2>(o)];
+  int sz = left.size() + right.size();
+  auto rg = mMonomialSpace.allocateArray<int>(sz);
+  std::copy(left.begin(),left.end(),rg.first);
+  std::copy(right.begin(),right.end(),rg.first+left.size());
+  return Word(rg.first, rg.second);
 }
 
 ConstPolyList NCF4::newGBelements()  // From current F4 matrix.
@@ -293,7 +298,6 @@ NCF4::Row NCF4::processPreRow(PreRow r)
 
   if (M2_gbTrace >= 100) std::cout << "Processing PreRow: (" << left << "," << gbIndex << "," << right << ")" << std::endl;
 
-  //Poly elem;
   const Poly* elem;
   if (gbIndex < 0)
     {
@@ -312,10 +316,6 @@ NCF4::Row NCF4::processPreRow(PreRow r)
   //        and place this monomial into mColumns.
   //        and search for divisor for it.
   //        
-
-  // would like to rewrite the below where we don't mult_by_term_left_and_right
-  // but instead build the monomial directly.  The code to do this is essentially
-  // above in prerowsFromOverlap
 
   int nterms = elem->numTerms();
   auto componentRange = mMonomialSpace.allocateArray<int>(nterms);
@@ -377,7 +377,7 @@ std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
   if (not found)
     return std::make_pair(false, PreRow(Word(), 0, Word()));
   Word prefix = Word(newword.begin(), newword.begin() + divisorInfo.second);
-  Word divisorWord = freeAlgebra().lead_word(*mGroebner[divisorInfo.first]);
+  Word divisorWord = mWordTable[divisorInfo.first];
   Word suffix = Word(newword.begin() + divisorInfo.second + divisorWord.size(),
                      newword.end());
   return std::make_pair(true, PreRow(prefix, divisorInfo.first, suffix));
