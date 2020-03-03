@@ -11,7 +11,7 @@ set(TARFILES
   cohomcalg 367c52b99c0b0a4794b215181439bf54abe4998872d3ef25d793bc13c4d40e42 cohomCalg-0.32.tar.gz
   csdp      7f202a15f33483ee205dcfbd0573fdbd74911604bb739a04f8baa35f8a055c5b Csdp-6.2.0.tgz
   factory   9dd84d11204e1457dac0a0d462a78d4cd4103c14cbf792b83d488aa529ad5724 factory-4.1.1.tar.gz 
-  flint     cbf1fe0034533c53c5c41761017065f85207a1b770483e98b2392315f6575e87 flint-2.5.2.tar.gz
+#  flint     cbf1fe0034533c53c5c41761017065f85207a1b770483e98b2392315f6575e87 flint-2.5.2.tar.gz
 #  frobby    af092383e6dc849c86f4e79747ae0e5cd309a690747230e10aa38d60640062df frobby_v0.9.0.tar.gz
 #  gc        436a0ddc67b1ac0b0405b61a9675bca9e075c8156f4debd1d06f3a56c7cd289d gc-8.0.4.tar.gz
   gfan      a674d5e5dc43634397de0d55dd5da3c32bd358d05f72b73a50e62c1a1686f10a gfan0.6.2.tar.gz
@@ -194,13 +194,6 @@ message("## Linker information:
 #then BUILTLIBS="-lcdd $BUILTLIBS"
 #else LIBS="-lcdd $LIBS"
 #fi
-
-#AC_LANG(C)
-#AC_CHECK_HEADER(flint/flint.h,LIBS="-lflint -lgmp $LIBS",BUILD_flint=yes)
-#if test $BUILD_flint = yes
-#then BUILTLIBS="-lflint $BUILTLIBS"
-#fi
-#AC_SUBST(BUILD_flint)		dnl factory needs to know
 
 #AC_LANG(C)
 #AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
@@ -387,7 +380,7 @@ ExternalProject_Add(gftables
 #then BUILTLIBS="-lgivaro $BUILTLIBS"
 #fi
 
-ExternalProject_Add(givaro
+ExternalProject_Add(libgivaro
   URL               ${M2_SOURCE_URL}/givaro-4.0.3.tar.gz
   URL_HASH          SHA256=19101e41161db46a925a0d055cf530c6d731b0dcc79e69f4358e483778306d16
   PREFIX            givaro
@@ -400,10 +393,31 @@ ExternalProject_Add(givaro
   INSTALL_COMMAND   ""
   )
 
+#AC_LANG(C)
+#AC_CHECK_HEADER(flint/flint.h,LIBS="-lflint -lgmp $LIBS",BUILD_flint=yes)
+#if test $BUILD_flint = yes
+#then BUILTLIBS="-lflint $BUILTLIBS"
+#fi
+#AC_SUBST(BUILD_flint)		dnl factory needs to know
+
+# TODO: use flint2 from https://github.com/Macaulay2/flint2.git ??
+ExternalProject_Add(libflint
+  URL               ${M2_SOURCE_URL}/flint-2.5.2.tar.gz
+  URL_HASH          SHA256=cbf1fe0034533c53c5c41761017065f85207a1b770483e98b2392315f6575e87 
+  PREFIX            flint
+  SOURCE_DIR        flint/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/usr-host
+  BUILD_COMMAND     ${MAKE_EXE} -j4
+        COMMAND     ${MAKE_EXE} install
+  INSTALL_COMMAND   ""
+  )
+
 # FIXME: permissions on the installed files are wrong
 # TODO: which flags are important??
 # TODO: AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby -lgmpxx -lgmp $LIBS",BUILD_frobby=yes)
-ExternalProject_Add(frobby
+ExternalProject_Add(libfrobby
   URL               ${M2_SOURCE_URL}/frobby_v0.9.0.tar.gz
   URL_HASH          SHA256=af092383e6dc849c86f4e79747ae0e5cd309a690747230e10aa38d60640062df 
   PREFIX            frobby
@@ -413,37 +427,21 @@ ExternalProject_Add(frobby
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/frobby/patch-0.9.0
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ${MAKE_EXE} -j4
-    prefix=${CMAKE_BINARY_DIR}/usr-host
-    GMP_INC_DIR=${CMAKE_BINARY_DIR}/usr-host/include
-    RANLIB=${CMAKE_RANLIB} library
-#    'CXXFLAGS=-std=gnu++11 -g3 -O2  -Wno-mismatched-tags -w' CXX=g++
-#    'LDFLAGS=-L${CMAKE_BINARY_DIR}/usr-host/lib 
-#    -l${CMAKE_BINARY_DIR}/submodules/memtailor/.libs 
-#    -l${CMAKE_BINARY_DIR}/submodules/mathic/.libs 
-#    -l${CMAKE_BINARY_DIR}/submodules/mathicgb/.libs -g3'
-#    'CPPFLAGS=-I${CMAKE_BINARY_DIR}/../../../include
-#    -I${CMAKE_BINARY_DIR}/include
-#    -I${CMAKE_BINARY_DIR}/usr-host/include
-#    -I${CMAKE_BINARY_DIR}/usr-host/include/cdd 
-#    -I${CMAKE_BINARY_DIR}/../../../submodules/memtailor/src 
-#    -I${CMAKE_BINARY_DIR}/../../../submodules/mathic/src 
-#    -I${CMAKE_BINARY_DIR}/../../../submodules/mathicgb/src
-#    -isystem /usr/include/libxml2
-#    -DNDEBUG
-#    -I/usr/include/eigen3'
-        COMMAND
-          /usr/bin/install -c -d ${CMAKE_BINARY_DIR}/usr-host/lib &&
-          /usr/bin/install -c -d ${CMAKE_BINARY_DIR}/usr-host/include &&
-          cp bin/libfrobby.a ${CMAKE_BINARY_DIR}/usr-host/lib/libfrobby.a &&
-          cp src/frobby.h ${CMAKE_BINARY_DIR}/usr-host/include/frobby.h &&
-          cp src/stdinc.h ${CMAKE_BINARY_DIR}/usr-host/include/stdinc.h
+                    prefix=${CMAKE_BINARY_DIR}/usr-host
+		    GMP_INC_DIR=${CMAKE_BINARY_DIR}/usr-host/include
+		    RANLIB=${CMAKE_RANLIB} library
+        COMMAND     /usr/bin/install -c -d ${CMAKE_BINARY_DIR}/usr-host/lib &&
+                    /usr/bin/install -c -d ${CMAKE_BINARY_DIR}/usr-host/include &&
+		    cp bin/libfrobby.a ${CMAKE_BINARY_DIR}/usr-host/lib/libfrobby.a &&
+		    cp src/frobby.h ${CMAKE_BINARY_DIR}/usr-host/include/frobby.h &&
+		    cp src/stdinc.h ${CMAKE_BINARY_DIR}/usr-host/include/stdinc.h
   INSTALL_COMMAND   ""
   )
 
 #################################################################################
 ## git submodules section
 
-# TODO: do we actually need googletest installed, or just gtest-all.cc?
+# TODO: do we actually need it built?
 ExternalProject_Add(googletest
   GIT_REPOSITORY    https://github.com/google/googletest.git 
   GIT_TAG           release-1.10.0 # 42bc671f
@@ -451,10 +449,9 @@ ExternalProject_Add(googletest
   SOURCE_DIR        googletest/build
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
 #  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/usr-host -DBUILD_GMOCK=OFF # -DINSTALL_GTEST=OFF
-  STEP_TARGETS      download
   )
 set(GTEST_PATH  ${CMAKE_BINARY_DIR}/libraries/googletest/build/googletest) # ${CMAKE_BINARY_DIR}/usr-host/include/gtest
 
@@ -478,24 +475,24 @@ ExternalProject_Add(bdwgc
   )
 
 # TODO: PATCHFILE = libraries/fflas_ffpack/patch-2.2.2
-ExternalProject_Add(fflas_ffpack
+ExternalProject_Add(libfflas_ffpack
   GIT_REPOSITORY    https://github.com/Macaulay2/fflas-ffpack.git
   GIT_TAG           712cef0e
   PREFIX            fflas_ffpack
   SOURCE_DIR        fflas_ffpack/build
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND autoreconf -vif
-            COMMAND PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${CMAKE_BINARY_DIR}/usr-host
+                    COMMAND PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${CMAKE_BINARY_DIR}/usr-host
+                    AR=${CMAKE_AR} OBJDUMP=${CMAKE_OBJDUMP} # AS=${CMAKE_AS} DLLTOOL=${CMAKE_DLLTOOL}
+		    STRIP=${CMAKE_STRIP} RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE_EXE}
         COMMAND     ${MAKE_EXE} install
   INSTALL_COMMAND   ""
-  DEPENDS           givaro
+  DEPENDS           libgivaro
   )
 
-# flint2 https://github.com/Macaulay2/flint2.git ??
-
 # TODO: would it be better to use FetchContent_Declare instead?
-ExternalProject_Add(memtailor
+ExternalProject_Add(libmemtailor
   GIT_REPOSITORY    https://github.com/mahrud/memtailor.git
   GIT_TAG           4fb227410ca7e37baf4451a1540e349536dd3cde # original: e85453b
   PREFIX            memtailor
@@ -506,7 +503,7 @@ ExternalProject_Add(memtailor
   DEPENDS           googletest
   )
 
-ExternalProject_Add(mathic
+ExternalProject_Add(libmathic
   GIT_REPOSITORY    https://github.com/mahrud/mathic.git
   GIT_TAG           master # 5ac885917c89a2356c410d84e5f518e3cd0b67ed # original: 023afcf
   PREFIX            mathic
@@ -514,10 +511,10 @@ ExternalProject_Add(mathic
   BUILD_IN_SOURCE   ON
   CMAKE_ARGS        -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/usr-host -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/usr-host
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake -DPACKAGE_TESTS=OFF
-  DEPENDS           memtailor
+  DEPENDS           libmemtailor
   )
 
-ExternalProject_Add(mathicgb
+ExternalProject_Add(libmathicgb
   GIT_REPOSITORY    https://github.com/mahrud/mathicgb.git
   GIT_TAG           2dad1309e3afb659b29d9b76033263543e711f9f # original: bd634c8
   PREFIX            mathicgb
@@ -525,7 +522,7 @@ ExternalProject_Add(mathicgb
   BUILD_IN_SOURCE   ON
   CMAKE_ARGS        -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/usr-host -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/usr-host
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake -DPACKAGE_TESTS=OFF
-  DEPENDS           mathic
+  DEPENDS           libmathic
   )
 
 # mpir https://github.com/Macaulay2/mpir.git 82816d99

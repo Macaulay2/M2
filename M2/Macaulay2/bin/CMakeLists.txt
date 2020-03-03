@@ -16,27 +16,29 @@ target_link_libraries(M2-binary
   ${LIBXML2_LIBRARIES}
   ${LZMA_LIBRARIES}
 
-  PkgConfig::MATHICGB # mathicgb depends on mathic and memtailor
-  # memtailor mathic mathicgb
+  mathicgb # mathicgb depends on mathic and memtailor
   PkgConfig::FACTORY # factory depends on flint mpfr ntl gmp
-#  PkgConfig::FFLAS_FFPACK # fflas-ffpack depends on openmp, givaro, gmp, and gmpxx
-  PkgConfig::GIVARO # givaro depends on gmpxx and gmp
-  gc # PkgConfig::GC
+#  fflas-ffpack # fflas-ffpack depends on openmp, givaro, gmp, and gmpxx
+  givaro # givaro depends on gmpxx and gmp (or mpir and mpirxx)
+  gc
+  frobby
 
   $<IF:${USING_MPIR},${MPIR_LIBRARIES},>
   $<IF:$<BOOL:UNIX>,PkgConfig::READLINE,"readline termcap">
-  $<IF:$<BOOL:UNIX>,${LIBFROBBY},"frobby">
   $<IF:$<BOOL:UNIX>,${LIBHISTORY},"history">
+
   ${LIBGDBM} ${LIBM} ${LIBC} ${CMAKE_DL_LIBS}
   # ${LIBCDD}
   )
 
 target_link_directories(M2-binary PUBLIC
-  ${MATHICGB_LIBRARY_DIRS}
-  ${CMAKE_BUILD_DIR}/usr-host/lib
-  ${BOOTSTRAP}/submodules/memtailor/.libs
-  ${BOOTSTRAP}/submodules/mathic/.libs
-  ${BOOTSTRAP}/submodules/mathicgb/.libs
+  ${CMAKE_BINARY_DIR}/usr-host/lib
+  ${CMAKE_BINARY_DIR}/usr-host/lib64
+#  ${BOOTSTRAP}/usr-host/lib
+  )
+
+target_include_directories(M2-binary PUBLIC
+  ${CMAKE_BINARY_DIR}/usr-host/include
   )
 
 # TODO

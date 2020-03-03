@@ -170,13 +170,20 @@ find_package(Threads 2.1 REQUIRED QUIET) # pthread
 find_package(LibLZMA 5.2 REQUIRED QUIET) # need lzma_end
 # OpenMP is required for building the library csdp and good for building the library normaliz
 find_package(OpenMP      REQUIRED QUIET) # TODO: use OPENMP_LIBS/CXXFLAGS for csdb
+
 ## We provide modules for finding these libraries in cmake/
-## They are not required, but we will build them if they are not found.
-find_package(MPIR 3.0.0 QUIET)
+## They are not required because we can build them if they are not found.
 #find_package(GMP  6.1.0 QUIET)
 #find_package(MPC  1.1.0 QUIET)
 #find_package(MPFR 4.0.2 QUIET)
 #find_package(GLPK 4.59  QUIET)
+find_package(MPIR 3.0.0 QUIET)
+find_package(Mathicgb   QUIET)
+
+#find_library(GIVARO    libfrobby.a REQUIRED givaro                   IMPORTED_TARGET)
+#find_library(LIBFROBBY libfrobby.a frobby PATHS ${CMAKE_BINARY_DIR}/usr-host/lib)
+#pkg_search_module(FFLAS_FFPACK       fflas-ffpack             IMPORTED_TARGET)
+#pkg_search_module(GC                 bdw-gc                   IMPORTED_TARGET)
 
 if(NOT ${MPIR_FOUND})
   set(USING_MPIR 0)
@@ -185,26 +192,18 @@ endif()
 ## For everything else, we can use pkg-config
 find_package(PkgConfig   REQUIRED QUIET)
 
-## Set paths for pkg-config
-set(ENV{PKG_CONFIG_PATH} "${BOOTSTRAP}/usr-host/lib/pkgconfig:${BOOTSTRAP}/submodules/mathicgb/build/autotools:${BOOTSTRAP}/submodules/mathic/build/autotools:${BOOTSTRAP}/submodules/memtailor/build/autotools")
-
 ## Find libraries available via pkg-config
 ## tip: use cmake -LA to list resolved variables
 # TODO: use foo>=VERSION to specify version
-pkg_search_module(GIVARO    REQUIRED givaro                   IMPORTED_TARGET)
-pkg_search_module(MATHICGB  REQUIRED mathicgb                 IMPORTED_TARGET)
 # TODO: investigate error when factory-devel package is installed:
 # sample Factory finite field addition table file missing, needed for factorization:
 # /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist//usr/share/factory/
 pkg_search_module(FACTORY   REQUIRED factory singular-factory IMPORTED_TARGET)
 # To fix the error, change the givaro requirement in ${BOOTSTRAP}/usr-host/lib/pkgconfig/fflas-ffpack.pc to 4.0.2
-pkg_search_module(FFLAS_FFPACK       fflas-ffpack             IMPORTED_TARGET)
 pkg_search_module(READLINE           readline                 IMPORTED_TARGET)
-#pkg_search_module(GC                 bdw-gc                   IMPORTED_TARGET)
 
 ## Find all other libraries
 find_library(LIBHISTORY history)
-find_library(LIBFROBBY libfrobby.a frobby PATHS ${CMAKE_BINARY_DIR}/usr-host/lib)
 
 find_library(LIBGDBM gdbm)
 find_library(LIBM m) # need pow from math.h
