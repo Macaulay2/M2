@@ -21,7 +21,7 @@ target_link_libraries(M2-binary
   PkgConfig::FACTORY # factory depends on flint mpfr ntl gmp
 #  PkgConfig::FFLAS_FFPACK # fflas-ffpack depends on openmp, givaro, gmp, and gmpxx
   PkgConfig::GIVARO # givaro depends on gmpxx and gmp
-  PkgConfig::GC
+  gc # PkgConfig::GC
 
   $<IF:${USING_MPIR},${MPIR_LIBRARIES},>
   $<IF:$<BOOL:UNIX>,PkgConfig::READLINE,"readline termcap">
@@ -33,6 +33,7 @@ target_link_libraries(M2-binary
 
 target_link_directories(M2-binary PUBLIC
   ${MATHICGB_LIBRARY_DIRS}
+  ${CMAKE_BUILD_DIR}/usr-host/lib
   ${BOOTSTRAP}/submodules/memtailor/.libs
   ${BOOTSTRAP}/submodules/mathic/.libs
   ${BOOTSTRAP}/submodules/mathicgb/.libs

@@ -168,14 +168,22 @@ find_package(Eigen3  3.3 REQUIRED QUIET NO_MODULE)
 find_package(LibXml2 2.9 REQUIRED QUIET) # need xmlNewNode
 find_package(Threads 2.1 REQUIRED QUIET) # pthread
 find_package(LibLZMA 5.2 REQUIRED QUIET) # need lzma_end
-find_package(MPIR    3.0          QUIET)          # cmake/FindMPIR.cmake
 # OpenMP is required for building the library csdp and good for building the library normaliz
 find_package(OpenMP      REQUIRED QUIET) # TODO: use OPENMP_LIBS/CXXFLAGS for csdb
-find_package(PkgConfig   REQUIRED QUIET)
+## We provide modules for finding these libraries in cmake/
+## They are not required, but we will build them if they are not found.
+find_package(MPIR 3.0.0 QUIET)
+#find_package(GMP  6.1.0 QUIET)
+#find_package(MPC  1.1.0 QUIET)
+#find_package(MPFR 4.0.2 QUIET)
+#find_package(GLPK 4.59  QUIET)
 
 if(NOT ${MPIR_FOUND})
   set(USING_MPIR 0)
 endif()
+
+## For everything else, we can use pkg-config
+find_package(PkgConfig   REQUIRED QUIET)
 
 ## Set paths for pkg-config
 set(ENV{PKG_CONFIG_PATH} "${BOOTSTRAP}/usr-host/lib/pkgconfig:${BOOTSTRAP}/submodules/mathicgb/build/autotools:${BOOTSTRAP}/submodules/mathic/build/autotools:${BOOTSTRAP}/submodules/memtailor/build/autotools")
@@ -192,12 +200,12 @@ pkg_search_module(FACTORY   REQUIRED factory singular-factory IMPORTED_TARGET)
 # To fix the error, change the givaro requirement in ${BOOTSTRAP}/usr-host/lib/pkgconfig/fflas-ffpack.pc to 4.0.2
 pkg_search_module(FFLAS_FFPACK       fflas-ffpack             IMPORTED_TARGET)
 pkg_search_module(READLINE           readline                 IMPORTED_TARGET)
-# TODO: should we export GC_LARGE_ALLOC_WARN_INTERVAL=1?
-pkg_search_module(GC        REQUIRED bdw-gc                   IMPORTED_TARGET)
+#pkg_search_module(GC                 bdw-gc                   IMPORTED_TARGET)
 
 ## Find all other libraries
 find_library(LIBHISTORY history)
-find_library(LIBFROBBY frobby)
+find_library(LIBFROBBY libfrobby.a frobby PATHS ${CMAKE_BINARY_DIR}/usr-host/lib)
+
 find_library(LIBGDBM gdbm)
 find_library(LIBM m) # need pow from math.h
 find_library(LIBC c)
@@ -420,6 +428,21 @@ message("## Staging area directory:
 
 #### STILL LEFT TO PROCESS ####
 
+
+#AC_DEFINE([HAVE_FACTORY_PREM], [1],
+#    [whether Prem() from factory is public])
+#if test $BUILD_factory = no
+#then
+#    AC_MSG_CHECKING([whether Prem() from factory is public])
+#    AC_LANG([C++])
+#    AC_COMPILE_IFELSE(
+#	[AC_LANG_PROGRAM(
+#	    [#include <factory/factory.h>],
+#	    [CanonicalForm p,q; Prem(p,q)])],
+#	[AC_MSG_RESULT([yes])],
+#	[AC_MSG_RESULT([no])
+#	 AC_DEFINE([HAVE_FACTORY_PREM], [0])])
+#fi
 
 #AC_DEFINE([FACTORY_STREAMIO], [1],
 #    [whether factory was built with --enable-streamio])

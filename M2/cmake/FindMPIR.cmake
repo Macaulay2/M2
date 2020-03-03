@@ -1,7 +1,7 @@
 # Try to find the MPIR librairies
 # See http://www.mpir.org/
 #
-# This file sets up GLPK for CMake. Once done this will define
+# This file sets up MPIR for CMake. Once done this will define
 #  MPIR_FOUND             - system has MPIR lib
 #  MPIR_INCLUDE_DIR       - the MPIR include directory
 #  MPIR_LIBRARIES         - Libraries needed to use MPIR
