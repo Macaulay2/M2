@@ -157,9 +157,8 @@
 /* Define to 1 if you have the `getpgrp' function. */
 #cmakedefine HAVE_GETPGRP 1
 
-// TODO: as opposed to isUnit?
-/* whether givaro has isunit */
-#cmakedefine HAVE_GIVARO_isunit 1
+/* whether givaro has isunit (as opposed to isUnit) */
+#define HAVE_GIVARO_isunit ${GIVARO_isunit_STRING}
 
 /* Define to 1 if you have the `herror' function. */
 #cmakedefine HAVE_HERROR 1

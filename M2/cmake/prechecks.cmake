@@ -1,5 +1,3 @@
-set(CMAKE_VERBOSE_MAKEFILE OFF)
-
 # TODO
 ## Static checks
 #set(CMAKE_LINK_WHAT_YOU_USE TRUE)

@@ -24,7 +24,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_C_STANDARD 11)
 
 ###############################################################################
-
 ## Specify a few build configurations
 set(CMAKE_BUILD_TYPE		Debug) # TODO: Release
 set(CMAKE_VERBOSE_MAKEFILE	OFF)   # Useful for debugging build system issues
@@ -40,7 +39,6 @@ endif()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 ###############################################################################
-
 ## Set the project name, version, and languages
 ## This is the source of truth for the version number
 project(Macaulay2
@@ -50,27 +48,35 @@ project(Macaulay2
   LANGUAGES	C CXX)
 
 ###############################################################################
-
 ## Set path for CMake modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-include(configure)	## CMake script for configuring various variables
-include(prechecks)	## CMake script for preprocessor tests and linting
+include(configure) ## CMake script for configuring various variables
+include(prechecks) ## CMake script for preprocessor tests and linting
+include(packaging) ## CMake script for making distribution packages for Macaulay2
+include(libraries) ## CMake script for downloading and building external projects and libraries
 
+###############################################################################
 ## Configure M2/config.h
 configure_file(include/M2/config.h.cmake include/M2/config.h)
 # TODO: should we just do this here for everything?
 #include_directories(include ${CMAKE_BINARY_DIR}/include)
 
 ###############################################################################
+message("## Target operating system information:
+     ISSUE             = ${ISSUE}
+     NODENAME          = ${NODENAME}
+     OS REL            = ${OS} ${REL}
+     ARCH              = ${ARCH}
+     OPTIMIZE          = ${OPTIMIZE}
+     DEBUG             = ${DEBUG}
+     GIT_DESCRIPTION   = ${GIT_DESCRIPTION}
+     USING_MPIR        = ${USING_MPIR}")
+# TODO
+# message("## Host operating system information:")
 
+###############################################################################
 ## Kick off the Macaulay2 directory
 add_subdirectory(Macaulay2)
-
-## Find or download and build external libraries and executables
-add_subdirectory(libraries)
-
-## Kick off making distribution packages for Macaulay2
-#add_subdirectory(distributions)
 
 ###############################################################################
 ## This section is temporary hacks, will be gone soon.

@@ -1,5 +1,3 @@
-set(CMAKE_VERBOSE_MAKEFILE OFF)
-
 # FIXME: currently various pieces and libraries are not built by cmake
 # BUILD/cmake-bootstrap should be a symlink to an existing build directory
 set(BOOTSTRAP ${CMAKE_SOURCE_DIR}/BUILD/cmake-bootstrap)
@@ -71,155 +69,79 @@ set(MP_LIBRARY "gmp" CACHE STRING "specify the big integer package to use (mpir 
 ################################################################
 ## Setting compiler flags
 
-# TODO: how do we not include gmp? Factory always includes it!
+# TODO: where do we use the SHARED setting? In e?
+
+
 if(${MP_LIBRARY} STREQUAL "mpir")
   set(USING_MPIR 1)
+  # TODO: use target_include_directories instead? Maybe this is easier
+  include_directories(${CMAKE_SOURCE_DIR}/include/M2/gmp-to-mpir)
+  # LIBS="-lmpirxx -lmpir $LIBS"
 else()
   set(USING_MPIR 0)
+  # LIBS="-lgmpxx  -lgmp  $LIBS"
 endif()
 
-# TODO: easier way to do this? generator expressions don't work at configure time
 if(${PROFILING})
+  # TODO: easier way to do this? generator expressions don't work at configure time
   set(PROFILING_STRING 1)
+  set(ENABLE_STRIP OFF)
+  # TODO: we can do better
+  add_compile_options(-pg)
+  add_link_options(-pg)
 else()
   set(PROFILING_STRING 0)
 endif()
 
-# TODO: unnecessary?
+# TODO: necessary?
 if("${OS}" STREQUAL "Darwin")
-  set(SHARED OFF) # TODO: Gatekeeper issue
+  set(SHARED OFF) # TODO: Gatekeeper issue on macOS
   # we don't know what this does, but some apple documentation writers seem to like it:
-#  LDFLAGS="$LDFLAGS -bind_at_load"
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -bind_at_load")
   # this one makes it find and use our readline.a first, even if there is a file readline.dylib in /usr/lib
   # the point is that the system's readline.dylib might be much older and conflict with our newer one
-#  LDFLAGS="$LDFLAGS -Wl,-search_paths_first"
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-search_paths_first")
 endif()
 
-# TODO: where do we use the SHARED setting? In e?
-
+# TODO: maybe just set this per build configuration?
 if(${OPTIMIZE})
-#  CFLAGS="$CFLAGS -O2"
-#  CXXFLAGS="$CXXFLAGS -O2"
-#  FCFLAGS="$FCFLAGS -O2"
+  add_compile_options(-O2)
 else()
-#  CFLAGS="$CFLAGS -O0"
-#  CXXFLAGS="$CXXFLAGS -O0"
-#  FCFLAGS="$FCFLAGS -O0"
-endif()
-
-# TODO we can do better
-if(${PROFILING})
-  set(ENABLE_STRIP ON)
-#  CFLAGS="$CFLAGS -pg"
-#  CXXFLAGS="$CXXFLAGS -pg"
-#  LDFLAGS="$LDFLAGS -pg"
+  add_compile_options(-O0)
 endif()
 
 if(${MEMDEBUG})
   set(DEBUG ON)
-#  M2_CPPFLAGS="$M2_CPPFLAGS -DMEMDEBUG"
+  add_compile_options(-DMEMDEBUG)
 endif()
 
-# It is a mistake to add "-DDEBUG" to CPPFLAGS, because it is nonstandard and may confusing libraries, such as "flint".
-# Instead, NDEBUG being *not* defined as a C macro is what indicates debug mode.  This is standard practice.
-# gc.h obeys the GC_DEBUG flag:
+# It is a mistake to pass "-DDEBUG" to preprocessor because it is nonstandard and may confusing libraries,
+# such as "flint". Instead, NDEBUG being *not* defined as a C macro is what indicates debug mode.
+# This is standard practice. gc.h obeys the GC_DEBUG flag.
 if(${DEBUG})
-  set(ENABLE_STRIP ON)
-#  M2_CPPFLAGS="$M2_CPPFLAGS -DGC_DEBUG"
-#  CPPFLAGS="$CPPFLAGS -DGC_DEBUG"
+  set(ENABLE_STRIP OFF)
+  add_compile_options(-DGC_DEBUG)
 else()
-#  M2_CPPFLAGS="$M2_CPPFLAGS -DNDEBUG"
-#  CPPFLAGS="$CPPFLAGS -DNDEBUG"
+  add_compile_options(-DNDEBUG)
 endif()
 
 if(${ENABLE_STRIP})
-  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
+  add_compile_options(-s)
 endif()
 
 # always compile with "-g", so we can debug even optimized versions
 if(${CMAKE_C_COMPILER_ID} STREQUAL GNU)
-#  CFLAGS="$CFLAGS -g3"
-#  CXXFLAGS="$CXXFLAGS -g3"
-#  LDFLAGS="$LDFLAGS -g3"
-#  LDFLAGS_FOR_BUILD="$LDFLAGS_FOR_BUILD -g3"
+  add_compile_options(-g3)
+  add_link_options(-g3)
 else()
-#  CFLAGS="$CFLAGS -g"
-#  CXXFLAGS="$CXXFLAGS -g"
-#  LDFLAGS="$LDFLAGS -g"
-#  LDFLAGS_FOR_BUILD="$LDFLAGS_FOR_BUILD -g"
+  add_compile_options(-g)
+  add_link_options(-g)
 endif()
 
-#if(${ALTIVEC})
-#  CFLAGS="CFLAGS -faltivec"
-#  CXXFLAGS="$CXXFLAGS -faltivec"
-#  LDFLAGS="$LDFLAGS -faltivec"
-#endif()
-
-################################################################
-## Look for packages and libraries using CMake or pkg-config
-
-# FIXME: should these stay here or go to bin/CMakeLists.txt?
-# TODO: which ones need to be patched and built?
-## Find libraries available as CMake modules
-find_package(BLAS    3.8 REQUIRED QUIET)
-find_package(LAPACK  3.8 REQUIRED QUIET) # TODO: both?
-find_package(Eigen3  3.3 REQUIRED QUIET NO_MODULE)
-find_package(LibXml2 2.9 REQUIRED QUIET) # need xmlNewNode
-find_package(Threads 2.1 REQUIRED QUIET) # pthread
-find_package(LibLZMA 5.2 REQUIRED QUIET) # need lzma_end
-# OpenMP is required for building the library csdp and good for building the library normaliz
-find_package(OpenMP      REQUIRED QUIET) # TODO: use OPENMP_LIBS/CXXFLAGS for csdb
-
-## We provide modules for finding these libraries in cmake/
-## They are not required because we can build them if they are not found.
-#find_package(GMP  6.1.0 QUIET)
-#find_package(MPC  1.1.0 QUIET)
-#find_package(MPFR 4.0.2 QUIET)
-#find_package(GLPK 4.59  QUIET)
-find_package(MPIR 3.0.0 QUIET)
-find_package(Mathicgb   QUIET)
-
-#find_library(GIVARO    libfrobby.a REQUIRED givaro                   IMPORTED_TARGET)
-#find_library(LIBFROBBY libfrobby.a frobby PATHS ${CMAKE_BINARY_DIR}/usr-host/lib)
-#pkg_search_module(FFLAS_FFPACK       fflas-ffpack             IMPORTED_TARGET)
-#pkg_search_module(GC                 bdw-gc                   IMPORTED_TARGET)
-
-if(NOT ${MPIR_FOUND})
-  set(USING_MPIR 0)
+if(${ALTIVEC})
+  add_compile_options(-faltivec)
+  add_link_options(-faltivec)
 endif()
-
-## For everything else, we can use pkg-config
-find_package(PkgConfig   REQUIRED QUIET)
-
-## Find libraries available via pkg-config
-## tip: use cmake -LA to list resolved variables
-# TODO: use foo>=VERSION to specify version
-# TODO: investigate error when factory-devel package is installed:
-# sample Factory finite field addition table file missing, needed for factorization:
-# /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist//usr/share/factory/
-pkg_search_module(FACTORY   REQUIRED factory singular-factory IMPORTED_TARGET)
-# To fix the error, change the givaro requirement in ${BOOTSTRAP}/usr-host/lib/pkgconfig/fflas-ffpack.pc to 4.0.2
-pkg_search_module(READLINE           readline                 IMPORTED_TARGET)
-
-## Find all other libraries
-find_library(LIBHISTORY history)
-
-find_library(LIBGDBM gdbm)
-find_library(LIBM m) # need pow from math.h
-find_library(LIBC c)
-
-# TODO:
-#test:
-#	: "PKG_CONFIG_PATH    = $(PKG_CONFIG_PATH)"
-#	: "M2_PKG_CONFIG_PATH = $(M2_PKG_CONFIG_PATH)"
-#	:
-#	: "GIVARO_CXXFLAGS       = $(GIVARO_CXXFLAGS)"
-#	: "FFLAS_FFPACK_CXXFLAGS = $(FFLAS_FFPACK_CXXFLAGS)"
-#	:
-#	: "GIVARO_LIBS           = $(GIVARO_LIBS)"
-#	: "FFLAS_FFPACK_LIBS     = $(FFLAS_FFPACK_LIBS)"
-#	: "M2_LIBRARIES          = $(M2_LIBRARIES)"
 
 ################################################################
 ## Check for certain header files, functions
@@ -244,7 +166,19 @@ check_library_exists(resolv hstrerror "" HAVE_HSTRERROR)
 include(CheckCSourceCompiles)
 check_c_source_compiles("int main(){__builtin_return_address(1);return 0;}" BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT)
 
-#AC_DEFINE([HAVE_GIVARO_isunit],,[whether givaro has isunit]) # otherwise
+include(CheckCXXSourceCompiles)
+# whether givaro has isUnit or isunit
+# TODO: still necessary?
+check_cxx_source_compiles([[#include <givaro/gfq.h>
+  int main(){class Givaro::GFqDom<long int> foo; foo.isunit(0);return 0;}]] HAVE_GIVARO_isunit)
+
+# TODO: is there better way to do this?
+if(HAVE_GIVARO_isunit)
+  set(GIVARO_isunit_STRING 1)
+else()
+  set(GIVARO_isunit_STRING 0)
+ENDIF()
+
 #AC_DEFINE(HAVE_LINBOX,1,[whether we are linking with the linbox library])
 #AC_DEFINE(HAVE_FPLLL,1,[whether we are linking with the fplll library])
 #AC_DEFINE([HAVE_FACTORY_PREM],[1],[whether Prem() from factory is public])
@@ -333,52 +267,20 @@ check_function_exists(ioctl	HAVE_IOCTL)
 check_function_exists(alloca HAVE_ALLOCA)
 check_include_files(alloca.h HAVE_ALLOCA_H)
 
-################################################################
+## mpir and gmp serve the same purpose
+# Remark: both gmp.h and mpir.h are surrounded by 
+# 	#ifndef __GMP_H__
+# 	#endif
+# so only one can be loaded.  Similarly for gmpxx.h and mpirxx.h.  However, the contents of
+# the files differ.  For example, mpf_cmp_z is defined only in gmp.h.
+check_include_files(gmp.h	GMP_FOUND)
+check_include_files(mpir.h	MPIR_FOUND)
 
-# TODO
-# message("## Host operating system information:")
-
-message("## Target operating system information:
-     ISSUE             = ${ISSUE}
-     NODENAME          = ${NODENAME}
-     OS REL            = ${OS} ${REL}
-     ARCH              = ${ARCH}
-     OPTIMIZE          = ${OPTIMIZE}
-     DEBUG             = ${DEBUG}
-     GIT_DESCRIPTION   = ${GIT_DESCRIPTION}
-     USING_MPIR        = ${USING_MPIR}")
-
-################################################################
-## Setting variables for installation directories and Macaulay2 Layout
-# TODO: where should these be set? most are only used in startup.m2, so could move there
-# if they weren't prefixed with common and exec they would be more useful
-
-## Only overwrite the default prefix, not one provided via command line
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/usr-dist CACHE PATH "..." FORCE)
+if(USING_MPIR AND NOT MPIR_FOUND)
+  # TODO: build
+elseif(NOT USING_MPIR AND NOT GMP_FOUND)
+  message(ERROR "gmp integer package specified, but not found")
 endif()
-
-set(M2_INSTALL_PREFIX	${CMAKE_INSTALL_PREFIX})
-set(M2_COMMON_PREFIX	${M2_INSTALL_PREFIX}/common)     # staging area for common files as in layout.m2.in
-set(M2_EXEC_PREFIX	${M2_INSTALL_PREFIX}/${MACHINE}) # staging area for arch. dep. files as in layout.m2.in
-set(M2_PACKAGE_DIR	${M2_COMMON_PREFIX}/share/Macaulay2)
-set(M2_CORE_DIR		${M2_PACKAGE_DIR}/Core)
-
-## Rewrite this so that GNUInstallDirs module can use it to generate architecture independent directories
-set(CMAKE_INSTALL_PREFIX ${M2_EXEC_PREFIX})
-# Possible alternative:
-#set(CMAKE_INSTALL_DATAROOTDIR common/share) # ${MACHINE}/common will be a symlink to ../common
-
-## This is using https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html#module:GNUInstallDirs
-## Which follows https://www.gnu.org/prep/standards/html_node/Directory-Variables.html
-## Also see FHS  https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html
-include(GNUInstallDirs)
-
-message("## Staging area directory:
-     common:	${M2_COMMON_PREFIX}
-     exec:	${M2_EXEC_PREFIX}")
-
-# TODO: install in /opt instead?
 
 ################################################################
 
