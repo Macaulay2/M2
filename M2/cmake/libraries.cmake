@@ -63,8 +63,8 @@
 find_package(PkgConfig  REQUIRED QUIET)
 
 ## Setting the prefix so pkg-config can find libraries we've built
-list(APPEND CMAKE_PREFIX_PATH    ${M2_HOST_PREFIX})
-list(APPEND ENV{PKG_CONFIG_PATH} ${M2_HOST_PREFIX}/lib/pkgconfig)
+list(APPEND CMAKE_PREFIX_PATH ${M2_HOST_PREFIX})
+set(ENV{PKG_CONFIG_PATH}      ${M2_HOST_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PATH})
 # TODO: the latter should be unnecessary:
 # https://cmake.org/cmake/help/latest/module/FindPkgConfig.html#variable:PKG_CONFIG_USE_CMAKE_PREFIX_PATH
 
@@ -452,7 +452,6 @@ ExternalProject_Add(build-mathicgb
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
 		    -DPACKAGE_TESTS=OFF
-  DEPENDS           build-mathic
   )
 if(NOT MATHIC_FOUND)
   ExternalProject_Add_StepDependencies(build-mathic build build-mathic)
