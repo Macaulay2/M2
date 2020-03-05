@@ -1,10 +1,3 @@
-# FIXME: currently various pieces and libraries are not built by cmake
-# BUILD/cmake-bootstrap should be a symlink to an existing build directory
-set(BOOTSTRAP ${CMAKE_SOURCE_DIR}/BUILD/cmake-bootstrap)
-message("## Bootstrapping from previous build in ${BOOTSTRAP}")
-
-################################################################
-
 ## Summary of git status
 # old output: git describe --dirty --long --always --abbrev=40 --tags --match "version-*"
 find_package(Git QUIET)
@@ -22,7 +15,7 @@ message("## Configuring Macaulay2 version ${PROJECT_VERSION} from commit ${GIT_D
 
 # TODO: Which environment variables still relevant?
 ## Relevant environment variable values, if any:
-foreach(X CC CXX AR CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION PKG_CONFIG_PATH GFTABLESDIR)
+foreach(X CC CXX AR CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION PKG_CONFIG_PATH GFTABLESDIR)
   if(NOT ("$ENV{${X}}" STREQUAL ""))
     set(${X} "$ENV{${X}}" CACHE STRING "set via environment variable at configure time")
     message("## Set via environment:   ${X} = ${${X}}")
@@ -70,7 +63,6 @@ set(MP_LIBRARY "gmp" CACHE STRING "specify the big integer package to use (mpir 
 ## Setting compiler flags
 
 # TODO: where do we use the SHARED setting? In e?
-
 
 if(${MP_LIBRARY} STREQUAL "mpir")
   set(USING_MPIR 1)
@@ -265,6 +257,11 @@ check_function_exists(ioctl	HAVE_IOCTL)
 # this is an alternative for AC_FUNC_ALLOCA()
 check_function_exists(alloca HAVE_ALLOCA)
 check_include_files(alloca.h HAVE_ALLOCA_H)
+
+# TODO: use these
+## topcom depends on cddlib, but includes setoper.h, rather than cdd/setoper.h, so we do, too
+check_include_files(setoper.h	HAVE_CDDLIB)
+check_include_files(NTL/version.h	HAVE_NTL)
 
 ## mpir and gmp serve the same purpose
 # Remark: both gmp.h and mpir.h are surrounded by 

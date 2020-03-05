@@ -10,8 +10,8 @@
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 
-find_path(MEMTAILOR_INCLUDE_DIR NAMES memtailor.h PATHS ${M2_HOST_DIR}/include)
-find_library(MEMTAILOR_LIBRARIES NAMES memtailor libmemtailor PATHS ${M2_HOST_DIR}/lib)
+find_path(MEMTAILOR_INCLUDE_DIR NAMES memtailor.h PATHS ${CMAKE_PREFIX_PATH}/include)
+find_library(MEMTAILOR_LIBRARIES NAMES memtailor libmemtailor PATHS ${CMAKE_PREFIX_PATH}/lib)
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(MEMTAILOR DEFAULT_MSG MEMTAILOR_INCLUDE_DIR MEMTAILOR_LIBRARIES)

@@ -9,11 +9,11 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif()
 
 set(M2_INSTALL_PREFIX	${CMAKE_INSTALL_PREFIX})
-set(M2_COMMON_PREFIX	${M2_INSTALL_PREFIX}/common)     # staging area for common files as in layout.m2.in
+set(M2_HOST_PREFIX	${CMAKE_BINARY_DIR}/usr-host)    # staging area for building libraries needed to compile M2
 set(M2_EXEC_PREFIX	${M2_INSTALL_PREFIX}/${MACHINE}) # staging area for arch. dep. files as in layout.m2.in
+set(M2_COMMON_PREFIX	${M2_INSTALL_PREFIX}/common)     # staging area for common files as in layout.m2.in
 set(M2_PACKAGE_DIR	${M2_COMMON_PREFIX}/share/Macaulay2)
 set(M2_CORE_DIR		${M2_PACKAGE_DIR}/Core)
-set(M2_HOST_DIR		${CMAKE_BINARY_DIR}/usr-host)
 
 ## Rewrite this so that GNUInstallDirs module can use it to generate architecture independent directories
 set(CMAKE_INSTALL_PREFIX ${M2_EXEC_PREFIX})

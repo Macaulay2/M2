@@ -58,8 +58,10 @@ include(libraries) ## CMake script for downloading and building external project
 ###############################################################################
 ## Configure M2/config.h
 configure_file(include/M2/config.h.cmake include/M2/config.h)
-# TODO: should we just do this here for everything?
-#include_directories(include ${CMAKE_BINARY_DIR}/include)
+
+# TODO: is it okay to do this globally?
+add_compile_options(-I${CMAKE_SOURCE_DIR}/include -I${CMAKE_BINARY_DIR}/include -I${M2_HOST_PREFIX}/include)
+add_link_options(-L${M2_HOST_PREFIX}/lib)
 
 ###############################################################################
 message("## Target operating system information:
@@ -86,17 +88,22 @@ set(SUPPRESS_COMPILER_WARNINGS ON)
 
 # TODO: this should be done somewhere else, perhaps install, but at build time, not install time
 execute_process(
+  COMMAND ln -fs Macaulay2/bin/M2-binary   M2
   COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_CORE_DIR}
   COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_INFODIR}
   COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_DOCDIR}
+  # FIXME: this hack is needed because for some reason the path prefix
+  # in the binary is Macaulay2/share instead of usr-dist/common/share and
+  COMMAND ln -fs ${M2_COMMON_PREFIX}/share Macaulay2/share
+  COMMAND ln -fs ${M2_HOST_PREFIX}/lib     Macaulay2/${CMAKE_INSTALL_LIBDIR}
   )
 
-# FIXME: this hack is needed because for some reason the path prefix
-# in the binary is Macaulay2/share instead of usr-dist/common/share and
+################################################################
+
+# FIXME: currently various pieces and libraries are not built by cmake
+# BUILD/cmake-bootstrap should be a symlink to an existing build directory
+set(BOOTSTRAP ${CMAKE_SOURCE_DIR}/BUILD/cmake-bootstrap)
+message("## Bootstrapping from previous build in ${BOOTSTRAP}")
 execute_process(
-  COMMAND ln -fs ${M2_COMMON_PREFIX}/share Macaulay2/share
-  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${MACHINE}/${CMAKE_INSTALL_LIBDIR}     ${CMAKE_BINARY_DIR}/Macaulay2/
   COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${MACHINE}/${CMAKE_INSTALL_LIBEXECDIR} ${CMAKE_BINARY_DIR}/Macaulay2/
   )
-
-execute_process(COMMAND ln -fs ${CMAKE_BINARY_DIR}/Macaulay2/bin/M2-binary ${CMAKE_BINARY_DIR}/M2)

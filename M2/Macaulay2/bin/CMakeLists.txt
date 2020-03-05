@@ -7,52 +7,47 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 # Any other sources?
 # TODO: do we still want to use M2${EXE} defined in cmake/config.cmake?
 add_executable(M2-binary timestamp.cpp)
+target_link_directories(M2-binary PRIVATE ${CMAKE_BINARY_DIR}/usr-host/lib)
+target_include_directories(M2-binary PRIVATE ${CMAKE_BINARY_DIR}/usr-host/include)
 
-message("fflas_ffpack: ${FFLAS_FFPACK_LIBRARIES}")
-message("givaro:       ${GIVARO_LIBRARIES}")
-message("factory:      ${FACTORY_LIBRARIES}")
-message("mathicgb:     ${MATHICGB_LIBRARIES}")
-message("mathic:       ${MATHIC_LIBRARIES}")
-message("memtailor:    ${MEMTAILOR_LIBRARIES}")
-message("mpir:         ${MPIR_LIBRARIES}")
+# Link the big integer package
+if(USING_MPIR)
+  target_link_libraries(M2-binary ${MPIR_LIBRARIES})
+else()
+  target_link_libraries(M2-binary gmp gmpxx)
+endif()
 
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
   regex interpreter M2-engine system kernel
-  Threads::Threads
-  ${LAPACK_LIBRARIES}
-  ${LIBXML2_LIBRARIES}
-  ${LZMA_LIBRARIES}
+  Threads::Threads ${LAPACK_LIBRARIES} PkgConfig::BDWGC
+  ${LIBXML2_LIBRARIES} ${LZMA_LIBRARIES} ${LIBGDBM} ${CMAKE_DL_LIBS}
+  )
 
-  # Big integer package
-  $<IF:${USING_MPIR},${MPIR_LIBRARIES},"gmp gmpxx">
-
+if(MATHICGB_LIBRARIES AND MATHIC_LIBRARIES AND MEMTAILOR_LIBRARIES)
+target_link_libraries(M2-binary
   # mathicgb depends on mathic, memtailor, and TBB
-  ${MATHICGB_LIBRARIES}
-  ${MATHIC_LIBRARIES}
-  ${MEMTAILOR_LIBRARIES}
-  ${TBB_LIBRARIES}
-  frobby
-  gc
+  ${MATHICGB_LIBRARIES} ${MATHIC_LIBRARIES} ${MEMTAILOR_LIBRARIES} ${TBB_LIBRARIES} frobby
+  )
+endif()
 
+if(FACTORY_LIBRARIES AND FFLAS_FFPACK_LIBRARIES AND GIVARO_LIBRARIES)
+target_link_libraries(M2-binary
   PkgConfig::FACTORY # factory depends on flint mpfr ntl gmp
   PkgConfig::FFLAS_FFPACK # fflas-ffpack depends on openmp, givaro, gmp, and gmpxx
   PkgConfig::GIVARO # givaro depends on gmpxx and gmp (or mpir and mpirxx)
-
-  $<IF:$<BOOL:UNIX>,${LIBHISTORY},history>
-  $<IF:$<BOOL:UNIX>,PkgConfig::READLINE,"readline termcap">
-
-  ${LIBGDBM} ${CMAKE_DL_LIBS}
   )
+endif()
 
-target_link_directories(M2-binary PUBLIC
-  ${CMAKE_BINARY_DIR}/usr-host/lib
-  ${CMAKE_BINARY_DIR}/usr-host/lib64
-  )
+# Link commandline related libraries
+if(UNIX)
+  target_link_libraries(M2-binary ${LIBHISTORY} PkgConfig::READLINE)
+elseif(APPLE)
+  target_link_libraries(M2-binary history readline termcap)
+endif()
 
-target_include_directories(M2-binary PUBLIC
-  ${CMAKE_BINARY_DIR}/usr-host/include
-  )
+get_target_property(LINK_LIBRARIES M2-binary LINK_LIBRARIES)
+message("## Library information: ${LINK_LIBRAREIS}")
 
 # TODO
 # LD_LIBRARY_PATH="/home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-host/lib:$LD_LIBRARY_PATH" ldd /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist/x86_64-Linux-Fedora-30/bin/M2-binary.tmp
