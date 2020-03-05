@@ -8,6 +8,13 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 # TODO: do we still want to use M2${EXE} defined in cmake/config.cmake?
 add_executable(M2-binary timestamp.cpp)
 
+message("fflas_ffpack: ${FFLAS_FFPACK_LIBRARIES}")
+message("givaro:       ${GIVARO_LIBRARIES}")
+message("factory:      ${FACTORY_LIBRARIES}")
+message("mathicgb:     ${MATHICGB_LIBRARIES}")
+message("mathic:       ${MATHIC_LIBRARIES}")
+message("memtailor:    ${MEMTAILOR_LIBRARIES}")
+
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
   regex interpreter M2-engine system kernel
@@ -16,18 +23,21 @@ target_link_libraries(M2-binary
   ${LIBXML2_LIBRARIES}
   ${LZMA_LIBRARIES}
 
-  mathicgb # mathicgb depends on mathic and memtailor
+  ${MATHICGB_LIBRARIES} ${MATHIC_LIBRARIES} ${MEMTAILOR_LIBRARIES} # mathicgb depends on mathic and memtailor
   PkgConfig::FACTORY # factory depends on flint mpfr ntl gmp
-#  fflas-ffpack # fflas-ffpack depends on openmp, givaro, gmp, and gmpxx
-  givaro # givaro depends on gmpxx and gmp (or mpir and mpirxx)
+  PkgConfig::FFLAS_FFPACK # fflas-ffpack depends on openmp, givaro, gmp, and gmpxx
+  PkgConfig::GIVARO # givaro depends on gmpxx and gmp (or mpir and mpirxx)
   gc
   frobby
+  tbb
+  gdbm
 
   $<IF:${USING_MPIR},${MPIR_LIBRARIES},>
-  $<IF:$<BOOL:UNIX>,PkgConfig::READLINE,"readline termcap">
-  $<IF:$<BOOL:UNIX>,${LIBHISTORY},"history">
+  $<IF:$<BOOL:UNIX>,${LIBHISTORY},>
+  $<IF:$<BOOL:UNIX>,PkgConfig::READLINE,"readline termcap history">
 
-  ${LIBGDBM} ${LIBM} ${LIBC} ${CMAKE_DL_LIBS}
+  # ${LIBGDBM} ${LIBM} ${LIBC}
+  ${CMAKE_DL_LIBS}
   # ${LIBCDD}
   )
 

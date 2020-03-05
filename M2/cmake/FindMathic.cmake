@@ -10,8 +10,8 @@
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 
-find_path(MATHIC_INCLUDE_DIR NAMES mathic.h )
-find_library(MATHIC_LIBRARIES NAMES mathic libmathic)
+find_path(MATHIC_INCLUDE_DIR NAMES mathic.h PATHS ${M2_HOST_DIR}/include)
+find_library(MATHIC_LIBRARIES NAMES mathic libmathic PATHS ${M2_HOST_DIR}/lib)
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(MATHIC DEFAULT_MSG MATHIC_INCLUDE_DIR MATHIC_LIBRARIES)

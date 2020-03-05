@@ -71,16 +71,19 @@ find_library(LIBC c)
 #find_package(MPFR 4.0.2 QUIET)
 #find_package(GLPK 4.59  QUIET)
 #find_package(MPIR 3.0.0 QUIET)
-#find_package(Mathicgb   QUIET)
+
+find_package(Mathicgb)
+find_package(Mathic)
+find_package(Memtailor)
 
 # TODO: investigate error when factory-devel package is installed:
 # sample Factory finite field addition table file missing, needed for factorization:
 # /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist//usr/share/factory/
-#pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
-#pkg_search_module(FFLAS_FFPACK fflas-ffpack             IMPORTED_TARGET)
+pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
+pkg_search_module(FFLAS_FFPACK fflas-ffpack             IMPORTED_TARGET)
+pkg_search_module(GIVARO       givaro                   IMPORTED_TARGET)
 #pkg_search_module(BDWGC        bdw-gc                   IMPORTED_TARGET)
 
-#find_library(GIVARO    libfrobby.a REQUIRED givaro                   IMPORTED_TARGET)
 #find_library(LIBFROBBY libfrobby.a frobby PATHS ${M2_HOST_DIR}/lib)
 # To fix the error, change the givaro requirement in ${BOOTSTRAP}/usr-host/lib/pkgconfig/fflas-ffpack.pc to 4.0.2
 
@@ -137,6 +140,28 @@ string(REPLACE ";" " " LDFLAGS "${LDFLAGS}")
 #     CPPFLAGS="`$PKG_CONFIG --cflags $FACTORY_NAME` $CPPFLAGS"
 #fi
 
+# TODO: use git? https://github.com/Macaulay2/mpir.git 82816d99
+ExternalProject_Add(build-mpir
+  URL               ${M2_SOURCE_URL}/mpir-3.0.0.tar.bz2
+  URL_HASH          SHA256=52f63459cf3f9478859de29e00357f004050ead70b45913f2c2269d9708675bb
+  PREFIX            libraries/mpir
+  SOURCE_DIR        libraries/mpir/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/mpir/patch-3.0.0
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND ./configure --prefix=${M2_HOST_DIR}
+                      --enable-gmpcompat
+                      --enable-cxx
+                      --disable-shared
+                      --cache-file=/dev/null
+                      CPPFLAGS=${CPPFLAGS}
+                      # --enable-assert
+  BUILD_COMMAND     ${MAKE_EXE} -j
+        COMMAND     ${MAKE_EXE} install
+  INSTALL_COMMAND   ""
+  )
+
 # TODO: use flint2 from https://github.com/Macaulay2/flint2.git ??
 # TODO: cflags: normal: -std=c90 -pedantic-errors +debug: -O0 -fno-unroll-loops
 # TODO: confirm that building with mpir works
@@ -149,6 +174,11 @@ ExternalProject_Add(build-flint
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND LIB_DIRS=${M2_HOST_DIR}/lib ./configure --prefix=${M2_HOST_DIR}
                       --with-blas # TODO: ${BLAS_INCLUDE_DIR} is empty
+#		      --with-gmp=${M2_HOST_DIR}
+#		      --with-mpir=${M2_HOST_DIR}
+#		      --with-mpfr=${M2_HOST_DIR}
+#		      --with-ntl=${M2_HOST_DIR}
+                      --enable-cxx
                       --disable-tls
                       --disable-shared
                       # --enable-assert
@@ -169,8 +199,8 @@ ExternalProject_Add(build-factory
   PATCH_COMMAND     patch --batch -p0 < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.1.1
   CONFIGURE_COMMAND cd factory-4.1.1 && autoreconf -vif
             COMMAND cd factory-4.1.1 && ./configure --prefix=${M2_HOST_DIR} --includedir=${M2_HOST_DIR}/include
-                      # --with-ntl=${M2_HOST_DIR}/lib # TODO: only if needed
-                      --with-flint=${M2_HOST_DIR}/lib # TODO: only if needed
+                      # --with-ntl=${M2_HOST_DIR} # TODO: only if needed
+                      --with-flint=${M2_HOST_DIR} # TODO: only if needed
                       --disable-omalloc
                       --enable-streamio
                       --disable-shared
@@ -185,11 +215,11 @@ ExternalProject_Add(build-factory
                     ./bin/makeheader factoryconf.template factoryconf.h && cp factoryconf.h include/factory/
         COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j1 prefix=${M2_HOST_DIR} all-recursive
         COMMAND     cd factory-4.1.1 && ${MAKE_EXE} install
-        INSTALL_COMMAND   ""
-  DEPENDS build-flint
+  INSTALL_COMMAND   ""
+  DEPENDS           build-flint # also: mpfr, ntl, gmp/mpir
   )
 # TODO: remove this, since the one above has the tables at libraries/factory/build/factory-4.1.1/gftables/
-ExternalProject_Add(gftables
+ExternalProject_Add(extract-gftables
   URL               ${M2_SOURCE_URL}/factory.4.0.1-gftables.tar.gz
   URL_HASH          SHA256=9cd158ceb1c2b1c47bdca2c0b004bba92cb0e0aaa0ea6a43ca784ebdce10eebd
   PREFIX            libraries/gftables
@@ -198,28 +228,6 @@ ExternalProject_Add(gftables
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
-  INSTALL_COMMAND   ""
-  )
-
-# TODO: use git? https://github.com/Macaulay2/mpir.git 82816d99
-ExternalProject_Add(build-mpir
-  URL               ${M2_SOURCE_URL}/mpir-3.0.0.tar.bz2
-  URL_HASH          SHA256=52f63459cf3f9478859de29e00357f004050ead70b45913f2c2269d9708675bb
-  PREFIX            libraries/mpir
-  SOURCE_DIR        libraries/mpir/build
-  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
-  BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/mpir/patch-3.0.0
-  CONFIGURE_COMMAND autoreconf -vif
-            COMMAND ./configure --prefix=${M2_HOST_DIR}
-                      --enable-gmpcompat
-                      --enable-cxx
-                      --disable-shared
-                      --cache-file=/dev/null
-                      CPPFLAGS=${CPPFLAGS}
-                      # --enable-assert
-  BUILD_COMMAND     ${MAKE_EXE} -j
-        COMMAND     ${MAKE_EXE} install
   INSTALL_COMMAND   ""
   )
 
@@ -309,13 +317,13 @@ ExternalProject_Add(build-fflas_ffpack
   SOURCE_DIR        libraries/fflas_ffpack/build
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND autoreconf -vif
-                    COMMAND PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${M2_HOST_DIR}
+            COMMAND PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${M2_HOST_DIR}
                     AR=${CMAKE_AR} OBJDUMP=${CMAKE_OBJDUMP} # AS=${CMAKE_AS} DLLTOOL=${CMAKE_DLLTOOL}
                     STRIP=${CMAKE_STRIP} RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE_EXE}
         COMMAND     ${MAKE_EXE} install
   INSTALL_COMMAND   ""
-  DEPENDS           build-givaro
+  DEPENDS           build-givaro # and openmp and gmp/mpir
   )
 
 # TODO: would it be better to use FetchContent_Declare instead?
