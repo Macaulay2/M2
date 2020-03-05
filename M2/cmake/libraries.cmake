@@ -323,8 +323,8 @@ ExternalProject_Add(build-memtailor
   GIT_REPOSITORY    https://github.com/mahrud/memtailor.git
   GIT_TAG           4fb227410ca7e37baf4451a1540e349536dd3cde # original: e85453b
   PREFIX            libraries/memtailor
-  SOURCE_DIR        libraries/memtailor/build
-  BUILD_IN_SOURCE   ON
+#  SOURCE_DIR        libraries/memtailor/src
+  BINARY_DIR        libraries/memtailor/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_DIR} -DPACKAGE_TESTS=OFF
   # TODO: use this
   DEPENDS           googletest
@@ -332,10 +332,10 @@ ExternalProject_Add(build-memtailor
 
 ExternalProject_Add(build-mathic
   GIT_REPOSITORY    https://github.com/mahrud/mathic.git
-  GIT_TAG           master # 5ac885917c89a2356c410d84e5f518e3cd0b67ed # original: 023afcf
+  GIT_TAG           0f473e0886e70099070daf4686f6b1e66c84f7a8 # original: 023afcf
   PREFIX            libraries/mathic
-  SOURCE_DIR        libraries/mathic/build
-  BUILD_IN_SOURCE   ON
+#  SOURCE_DIR        libraries/mathic/src
+  BINARY_DIR        libraries/mathic/build
   CMAKE_ARGS        -DCMAKE_PREFIX_PATH=${M2_HOST_DIR} -DCMAKE_INSTALL_PREFIX=${M2_HOST_DIR}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake -DPACKAGE_TESTS=OFF
   DEPENDS           build-memtailor
@@ -343,10 +343,10 @@ ExternalProject_Add(build-mathic
 
 ExternalProject_Add(build-mathicgb
   GIT_REPOSITORY    https://github.com/mahrud/mathicgb.git
-  GIT_TAG           2dad1309e3afb659b29d9b76033263543e711f9f # original: bd634c8
+  GIT_TAG           9e7088de873d783c5a8c15482c68f14763bb8381 # original: bd634c8
   PREFIX            libraries/mathicgb
-  SOURCE_DIR        libraries/mathicgb/build
-  BUILD_IN_SOURCE   ON
+#  SOURCE_DIR        libraries/mathicgb/src
+  BINARY_DIR        libraries/mathicgb/build
   CMAKE_ARGS        -DCMAKE_PREFIX_PATH=${M2_HOST_DIR} -DCMAKE_INSTALL_PREFIX=${M2_HOST_DIR}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake -DPACKAGE_TESTS=OFF
   DEPENDS           build-mathic
