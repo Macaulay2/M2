@@ -14,6 +14,7 @@ message("factory:      ${FACTORY_LIBRARIES}")
 message("mathicgb:     ${MATHICGB_LIBRARIES}")
 message("mathic:       ${MATHIC_LIBRARIES}")
 message("memtailor:    ${MEMTAILOR_LIBRARIES}")
+message("mpir:         ${MPIR_LIBRARIES}")
 
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
@@ -23,28 +24,30 @@ target_link_libraries(M2-binary
   ${LIBXML2_LIBRARIES}
   ${LZMA_LIBRARIES}
 
-  ${MATHICGB_LIBRARIES} ${MATHIC_LIBRARIES} ${MEMTAILOR_LIBRARIES} # mathicgb depends on mathic and memtailor
+  # Big integer package
+  $<IF:${USING_MPIR},${MPIR_LIBRARIES},"gmp gmpxx">
+
+  # mathicgb depends on mathic, memtailor, and TBB
+  ${MATHICGB_LIBRARIES}
+  ${MATHIC_LIBRARIES}
+  ${MEMTAILOR_LIBRARIES}
+  ${TBB_LIBRARIES}
+  frobby
+  gc
+
   PkgConfig::FACTORY # factory depends on flint mpfr ntl gmp
   PkgConfig::FFLAS_FFPACK # fflas-ffpack depends on openmp, givaro, gmp, and gmpxx
   PkgConfig::GIVARO # givaro depends on gmpxx and gmp (or mpir and mpirxx)
-  gc
-  frobby
-  tbb
-  gdbm
 
-  $<IF:${USING_MPIR},${MPIR_LIBRARIES},>
-  $<IF:$<BOOL:UNIX>,${LIBHISTORY},>
-  $<IF:$<BOOL:UNIX>,PkgConfig::READLINE,"readline termcap history">
+  $<IF:$<BOOL:UNIX>,${LIBHISTORY},history>
+  $<IF:$<BOOL:UNIX>,PkgConfig::READLINE,"readline termcap">
 
-  # ${LIBGDBM} ${LIBM} ${LIBC}
-  ${CMAKE_DL_LIBS}
-  # ${LIBCDD}
+  ${LIBGDBM} ${CMAKE_DL_LIBS}
   )
 
 target_link_directories(M2-binary PUBLIC
   ${CMAKE_BINARY_DIR}/usr-host/lib
   ${CMAKE_BINARY_DIR}/usr-host/lib64
-#  ${BOOTSTRAP}/usr-host/lib
   )
 
 target_include_directories(M2-binary PUBLIC

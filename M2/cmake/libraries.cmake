@@ -52,6 +52,7 @@ find_package(Threads 2.1 REQUIRED QUIET) # pthread
 find_package(LibLZMA 5.2 REQUIRED QUIET) # need lzma_end
 # OpenMP is required for building the library csdp and good for building the library normaliz
 find_package(OpenMP      REQUIRED QUIET) # TODO: use OPENMP_LIBS/CXXFLAGS for csdb
+find_package(TBB         REQUIRED) # required by mathicgb
 
 ## Find libraries available via pkg-config
 # TODO: use foo>=VERSION to specify version
@@ -61,8 +62,6 @@ pkg_search_module(READLINE readline IMPORTED_TARGET) # TODO: make this REQUIRED
 ## TODO: remove these
 find_library(LIBHISTORY history)
 find_library(LIBGDBM gdbm)
-find_library(LIBM m) # need pow from math.h
-find_library(LIBC c)
 
 ## We provide modules for finding these libraries in cmake/
 ## They are not required because we can build them if they are not found.
@@ -71,10 +70,11 @@ find_library(LIBC c)
 #find_package(MPFR 4.0.2 QUIET)
 #find_package(GLPK 4.59  QUIET)
 #find_package(MPIR 3.0.0 QUIET)
-
 find_package(Mathicgb)
 find_package(Mathic)
 find_package(Memtailor)
+find_package(Frobby)
+find_package(Flint)
 
 # TODO: investigate error when factory-devel package is installed:
 # sample Factory finite field addition table file missing, needed for factorization:
@@ -82,26 +82,7 @@ find_package(Memtailor)
 pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
 pkg_search_module(FFLAS_FFPACK fflas-ffpack             IMPORTED_TARGET)
 pkg_search_module(GIVARO       givaro                   IMPORTED_TARGET)
-#pkg_search_module(BDWGC        bdw-gc                   IMPORTED_TARGET)
-
-#find_library(LIBFROBBY libfrobby.a frobby PATHS ${M2_HOST_DIR}/lib)
-# To fix the error, change the givaro requirement in ${BOOTSTRAP}/usr-host/lib/pkgconfig/fflas-ffpack.pc to 4.0.2
-
-if(NOT ${MPIR_FOUND}) # also for GMP, MPC, MPFR, GLPK?
-  set(BUILD_MPIR ON)
-endif()
-
-if(NOT ${FACTORY_FOUND})
-  # TODO
-endif()
-
-if(NOT ${FFLAS_FFPACK_FOUND})
-  # TODO
-endif()
-
-if(NOT ${BDWGC_FOUND})
-  # TODO
-endif()
+pkg_search_module(BDWGC        bdw-gc                   IMPORTED_TARGET)
 
 #################################################################################
 
@@ -134,12 +115,9 @@ set(LDFLAGS "${LINK_OPTIONS}")
 string(REPLACE ";" " " LDFLAGS "${LDFLAGS}")
 
 #################################################################################
+## Build required libraries
 
-#then
-#     LIBS="`$PKG_CONFIG --libs $FACTORY_NAME` $LIBS"
-#     CPPFLAGS="`$PKG_CONFIG --cflags $FACTORY_NAME` $CPPFLAGS"
-#fi
-
+if(USING_MPI AND NOT MPIR_FOUND)
 # TODO: use git? https://github.com/Macaulay2/mpir.git 82816d99
 ExternalProject_Add(build-mpir
   URL               ${M2_SOURCE_URL}/mpir-3.0.0.tar.bz2
@@ -161,7 +139,9 @@ ExternalProject_Add(build-mpir
         COMMAND     ${MAKE_EXE} install
   INSTALL_COMMAND   ""
   )
+endif()
 
+if(NOT FLINT_FOUND)
 # TODO: use flint2 from https://github.com/Macaulay2/flint2.git ??
 # TODO: cflags: normal: -std=c90 -pedantic-errors +debug: -O0 -fno-unroll-loops
 # TODO: confirm that building with mpir works
@@ -187,7 +167,9 @@ ExternalProject_Add(build-flint
         COMMAND     ${MAKE_EXE} install
   INSTALL_COMMAND   ""
   )
+endif()
 
+if(NOT FACTORY_FOUND)
 set(factory_CPPFLAGS "${CPPFLAGS} -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
 ExternalProject_Add(build-factory
   URL               ${M2_SOURCE_URL}/factory-4.1.1.tar.gz
@@ -218,6 +200,7 @@ ExternalProject_Add(build-factory
   INSTALL_COMMAND   ""
   DEPENDS           build-flint # also: mpfr, ntl, gmp/mpir
   )
+endif()
 # TODO: remove this, since the one above has the tables at libraries/factory/build/factory-4.1.1/gftables/
 ExternalProject_Add(extract-gftables
   URL               ${M2_SOURCE_URL}/factory.4.0.1-gftables.tar.gz
@@ -231,6 +214,7 @@ ExternalProject_Add(extract-gftables
   INSTALL_COMMAND   ""
   )
 
+if(NOT GIVARO_FOUND)
 ExternalProject_Add(build-givaro
   URL               ${M2_SOURCE_URL}/givaro-4.0.3.tar.gz
   URL_HASH          SHA256=19101e41161db46a925a0d055cf530c6d731b0dcc79e69f4358e483778306d16
@@ -246,7 +230,9 @@ ExternalProject_Add(build-givaro
         COMMAND     ${MAKE_EXE} install
   INSTALL_COMMAND   ""
   )
+endif()
 
+if(NOT FROBBY_FOUND)
 set(frobby_CFLAGS "-Wno-deprecated")
 # FIXME: permissions on the installed files are wrong
 ExternalProject_Add(build-frobby
@@ -269,9 +255,10 @@ ExternalProject_Add(build-frobby
                     /usr/bin/install -c -d ${M2_HOST_DIR}/include &&
                     cp bin/libfrobby.a ${M2_HOST_DIR}/lib/libfrobby.a &&
                     cp src/frobby.h ${M2_HOST_DIR}/include/frobby.h &&
-                    cp src/stdinc.h ${M2_HOST_DIR}/include/stdinc.h
+                    cp src/stdinc.h ${M2_HOST_DIR}/include/stdinc.h # FIXME
   INSTALL_COMMAND   ""
   )
+endif()
 
 #################################################################################
 ## git submodules section
@@ -290,6 +277,7 @@ ExternalProject_Add(googletest
   )
 set(GTEST_PATH  ${CMAKE_BINARY_DIR}/libraries/googletest/build/googletest) # ${M2_HOST_DIR}/include/gtest
 
+if(NOT BDWGC_FOUND)
 ## bdwgc
 # Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
 # Currently cloning master for significant cmake support. Hopefully soon there will be a stable release
@@ -308,13 +296,16 @@ ExternalProject_Add(bdwgc
                     -DCMAKE_INSTALL_PREFIX=${M2_HOST_DIR}
   INSTALL_COMMAND   ""
   )
+endif()
 
+if(NOT FFLAS_FFPACK_FOUND)
 # TODO: PATCHFILE = libraries/fflas_ffpack/patch-2.2.2
 ExternalProject_Add(build-fflas_ffpack
   GIT_REPOSITORY    https://github.com/Macaulay2/fflas-ffpack.git
   GIT_TAG           712cef0e
   PREFIX            libraries/fflas_ffpack
   SOURCE_DIR        libraries/fflas_ffpack/build
+#  BINARY_DIR        libraries/fflas_ffpack/build
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${M2_HOST_DIR}
@@ -325,33 +316,36 @@ ExternalProject_Add(build-fflas_ffpack
   INSTALL_COMMAND   ""
   DEPENDS           build-givaro # and openmp and gmp/mpir
   )
+endif()
 
+if(NOT MEMTAILOR_FOUND)
 # TODO: would it be better to use FetchContent_Declare instead?
 ExternalProject_Add(build-memtailor
   GIT_REPOSITORY    https://github.com/mahrud/memtailor.git
-  GIT_TAG           4fb227410ca7e37baf4451a1540e349536dd3cde # original: e85453b
+  GIT_TAG           af4a81f57fb585a541f5fefb517f2ad91b38cbe9 # original: e85453b
   PREFIX            libraries/memtailor
-#  SOURCE_DIR        libraries/memtailor/src
   BINARY_DIR        libraries/memtailor/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_DIR} -DPACKAGE_TESTS=OFF
-  # TODO: use this
-  DEPENDS           googletest
+#  DEPENDS           googletest # TODO: use this
   )
+endif()
 
+if(NOT MATHIC_FOUND)
 ExternalProject_Add(build-mathic
   GIT_REPOSITORY    https://github.com/mahrud/mathic.git
-  GIT_TAG           0f473e0886e70099070daf4686f6b1e66c84f7a8 # original: 023afcf
+  GIT_TAG           770fe83edb4edae061af613328bbe2d380ea26d6 # original: 023afcf
   PREFIX            libraries/mathic
-#  SOURCE_DIR        libraries/mathic/src
   BINARY_DIR        libraries/mathic/build
   CMAKE_ARGS        -DCMAKE_PREFIX_PATH=${M2_HOST_DIR} -DCMAKE_INSTALL_PREFIX=${M2_HOST_DIR}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake -DPACKAGE_TESTS=OFF
   DEPENDS           build-memtailor
   )
+endif()
 
+if(NOT MATHICGB_FOUND)
 ExternalProject_Add(build-mathicgb
   GIT_REPOSITORY    https://github.com/mahrud/mathicgb.git
-  GIT_TAG           9e7088de873d783c5a8c15482c68f14763bb8381 # original: bd634c8
+  GIT_TAG           557d3da746c6888ef05f29c2f095f0262080956d # original: bd634c8
   PREFIX            libraries/mathicgb
 #  SOURCE_DIR        libraries/mathicgb/src
   BINARY_DIR        libraries/mathicgb/build
@@ -359,6 +353,7 @@ ExternalProject_Add(build-mathicgb
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake -DPACKAGE_TESTS=OFF
   DEPENDS           build-mathic
   )
+endif()
 
 ###############################################################################
 ## STILL PROCESSING

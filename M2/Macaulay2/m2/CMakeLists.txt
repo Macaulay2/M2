@@ -35,7 +35,7 @@ add_custom_command(OUTPUT ${M2_CORE_DIR}/tvalues.m2
   COMMAND
     ${CMAKE_COMMAND} -E copy_if_different tvalues.m2 ${M2_CORE_DIR}
   VERBATIM
-  DEPENDS gftables  ${CORELIST} ${M2_CORE_DIR}/statuscodes
+  DEPENDS extract-gftables ${CORELIST} ${M2_CORE_DIR}/statuscodes
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
 

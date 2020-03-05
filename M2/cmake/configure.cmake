@@ -76,10 +76,8 @@ if(${MP_LIBRARY} STREQUAL "mpir")
   set(USING_MPIR 1)
   # TODO: use target_include_directories instead? Maybe this is easier
   include_directories(${CMAKE_SOURCE_DIR}/include/M2/gmp-to-mpir)
-  # LIBS="-lmpirxx -lmpir $LIBS"
 else()
   set(USING_MPIR 0)
-  # LIBS="-lgmpxx  -lgmp  $LIBS"
 endif()
 
 if(${PROFILING})
@@ -192,6 +190,7 @@ ENDIF()
 
 include(CheckIncludeFiles)
 # TODO: are all still relevant?
+check_include_files("stdlib.h;stdarg.h;string.h;float.h" STDC_HEADERS)
 check_include_files(arpa/inet.h	HAVE_ARPA_INET_H)
 check_include_files(assert.h	HAVE_ASSERT_H)
 check_include_files(dlfcn.h	HAVE_DLFCN_H)
@@ -276,9 +275,7 @@ check_include_files(alloca.h HAVE_ALLOCA_H)
 check_include_files(gmp.h	GMP_FOUND)
 check_include_files(mpir.h	MPIR_FOUND)
 
-if(USING_MPIR AND NOT MPIR_FOUND)
-  # TODO: build
-elseif(NOT USING_MPIR AND NOT GMP_FOUND)
+if(NOT USING_MPIR AND NOT GMP_FOUND)
   message(ERROR "gmp integer package specified, but not found")
 endif()
 
