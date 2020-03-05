@@ -11,11 +11,11 @@
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 
-find_path(MPIR_INCLUDE_DIR NAMES mpir.h PATHS ${CMAKE_PREFIX_PATH}/include)
-find_library(MPIR_LIBRARIES NAMES mpir libmpir PATHS ${CMAKE_PREFIX_PATH}/lib)
+find_path(MPIR_INCLUDE_DIR NAMES mpir.h)
+find_library(MPIR_LIBRARIES NAMES mpir libmpir)
 
-find_path(MPIRXX_INCLUDE_DIR NAMES mpirxx.h PATHS ${CMAKE_PREFIX_PATH}/include)
-find_library(MPIRXX_LIBRARIES NAMES mpirxx libmpirxx PATHS ${CMAKE_PREFIX_PATH}/lib)
+find_path(MPIRXX_INCLUDE_DIR NAMES mpirxx.h)
+find_library(MPIRXX_LIBRARIES NAMES mpirxx libmpirxx)
 
 if(NOT MPIR_INCLUDE_DIR STREQUAL MPIRXX_INCLUDE_DIR)
   set(MPIR_INCLUDE_DIR ${MPIR_INCLUDE_DIR};${MPIRXX_INCLUDE_DIR})

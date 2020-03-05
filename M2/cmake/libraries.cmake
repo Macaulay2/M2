@@ -63,7 +63,10 @@
 find_package(PkgConfig  REQUIRED QUIET)
 
 ## Setting the prefix so pkg-config can find libraries we've built
-set(CMAKE_PREFIX_PATH    ${M2_HOST_PREFIX}:${CMAKE_PREFIX_PATH})
+list(APPEND CMAKE_PREFIX_PATH    ${M2_HOST_PREFIX})
+list(APPEND ENV{PKG_CONFIG_PATH} ${M2_HOST_PREFIX}/lib/pkgconfig)
+# TODO: the latter should be unnecessary:
+# https://cmake.org/cmake/help/latest/module/FindPkgConfig.html#variable:PKG_CONFIG_USE_CMAKE_PREFIX_PATH
 
 ################################################################
 ## 1. Look for prerequisite packages and libraries using CMake or pkg-config
@@ -96,6 +99,7 @@ find_package(Frobby)
 find_package(Memtailor)
 find_package(Mathic)
 find_package(Mathicgb)
+
 #find_package(GMP  6.1.0 QUIET)
 #find_package(MPC  1.1.0 QUIET)
 #find_package(MPFR 4.0.2 QUIET)
@@ -252,8 +256,11 @@ ExternalProject_Add(build-factory
         COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j1 prefix=${M2_HOST_PREFIX} all-recursive
         COMMAND     cd factory-4.1.1 && ${MAKE_EXE} install
   INSTALL_COMMAND   ""
-#  DEPENDS           build-flint # also: mpfr, ntl, gmp/mpir # FIXME: this errors if flint already exists
   )
+if(NOT FLINT_FOUND)
+  # TODO: also add mpfr, ntl, gmp/mpir?
+  ExternalProject_Add_StepDependencies(build-factory build build-flint) # lol
+endif()
 endif()
 # TODO: remove this, since the one above has the tables at libraries/factory/build/factory-4.1.1/gftables/
 ExternalProject_Add(extract-gftables
@@ -399,8 +406,11 @@ ExternalProject_Add(build-fflas_ffpack
   BUILD_COMMAND     ${MAKE_EXE}
         COMMAND     ${MAKE_EXE} install
   INSTALL_COMMAND   ""
-  DEPENDS           build-givaro # and openmp and gmp/mpir
   )
+if(NOT GIVARO_FOUND)
+  # TODO: also add gmp/mpir?
+  ExternalProject_Add_StepDependencies(build-fflas_ffpack build build-givaro) # lol
+endif()
 endif()
 
 if(NOT MEMTAILOR_FOUND)
@@ -427,6 +437,9 @@ ExternalProject_Add(build-mathic
 		    -DPACKAGE_TESTS=OFF
   DEPENDS           build-memtailor
   )
+if(NOT MEMTAILOR_FOUND)
+  ExternalProject_Add_StepDependencies(build-mathic build build-memtailor)
+endif()
 endif()
 
 if(NOT MATHICGB_FOUND)
@@ -441,6 +454,9 @@ ExternalProject_Add(build-mathicgb
 		    -DPACKAGE_TESTS=OFF
   DEPENDS           build-mathic
   )
+if(NOT MATHIC_FOUND)
+  ExternalProject_Add_StepDependencies(build-mathic build build-mathic)
+endif()
 endif()
 
 ###############################################################################

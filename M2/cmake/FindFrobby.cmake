@@ -10,8 +10,8 @@
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 
-find_path(FROBBY_INCLUDE_DIR NAMES frobby.h PATHS ${CMAKE_PREFIX_PATH}/include)
-find_library(FROBBY_LIBRARIES NAMES frobby libfrobby PATHS ${CMAKE_PREFIX_PATH}/lib)
+find_path(FROBBY_INCLUDE_DIR NAMES frobby.h)
+find_library(FROBBY_LIBRARIES NAMES frobby libfrobby)
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(FROBBY DEFAULT_MSG FROBBY_INCLUDE_DIR FROBBY_LIBRARIES)

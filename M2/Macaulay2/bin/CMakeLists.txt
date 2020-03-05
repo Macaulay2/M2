@@ -24,14 +24,14 @@ target_link_libraries(M2-binary
   ${LIBXML2_LIBRARIES} ${LZMA_LIBRARIES} ${LIBGDBM} ${CMAKE_DL_LIBS}
   )
 
-if(MATHICGB_LIBRARIES AND MATHIC_LIBRARIES AND MEMTAILOR_LIBRARIES)
+if(MATHICGB_FOUND AND MATHIC_FOUND AND MEMTAILOR_FOUND)
 target_link_libraries(M2-binary
   # mathicgb depends on mathic, memtailor, and TBB
   ${MATHICGB_LIBRARIES} ${MATHIC_LIBRARIES} ${MEMTAILOR_LIBRARIES} ${TBB_LIBRARIES} frobby
   )
 endif()
 
-if(FACTORY_LIBRARIES AND FFLAS_FFPACK_LIBRARIES AND GIVARO_LIBRARIES)
+if(FACTORY_FOUND AND FFLAS_FFPACK_FOUND AND GIVARO_FOUND)
 target_link_libraries(M2-binary
   PkgConfig::FACTORY # factory depends on flint mpfr ntl gmp
   PkgConfig::FFLAS_FFPACK # fflas-ffpack depends on openmp, givaro, gmp, and gmpxx

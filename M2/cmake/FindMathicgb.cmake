@@ -10,8 +10,8 @@
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 
-find_path(MATHICGB_INCLUDE_DIR NAMES mathicgb.h PATHS ${CMAKE_PREFIX_PATH}/include)
-find_library(MATHICGB_LIBRARIES NAMES mathicgb libmathicgb PATHS ${CMAKE_PREFIX_PATH}/lib)
+find_path(MATHICGB_INCLUDE_DIR NAMES mathicgb.h)
+find_library(MATHICGB_LIBRARIES NAMES mathicgb libmathicgb)
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(MATHICGB DEFAULT_MSG MATHICGB_INCLUDE_DIR MATHICGB_LIBRARIES)

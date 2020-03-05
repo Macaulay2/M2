@@ -92,11 +92,16 @@ execute_process(
   COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_CORE_DIR}
   COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_INFODIR}
   COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_DOCDIR}
-  # FIXME: this hack is needed because for some reason the path prefix
-  # in the binary is Macaulay2/share instead of usr-dist/common/share and
-  COMMAND ln -fs ${M2_COMMON_PREFIX}/share Macaulay2/share
-  COMMAND ln -fs ${M2_HOST_PREFIX}/lib     Macaulay2/${CMAKE_INSTALL_LIBDIR}
   )
+
+# FIXME: this hack is needed because for some reason the path prefix
+# in the binary is Macaulay2/share instead of usr-dist/common/share and
+if(NOT EXISTS Macaulay2/share)
+  execute_process(COMMAND ln -fs ${M2_COMMON_PREFIX}/share Macaulay2/share)
+endif()
+if(NOT EXISTS Macaulay2/${CMAKE_INSTALL_LIBDIR})
+  execute_process(COMMAND ln -fs ${M2_HOST_PREFIX}/lib     Macaulay2/${CMAKE_INSTALL_LIBDIR})
+endif()
 
 ################################################################
 

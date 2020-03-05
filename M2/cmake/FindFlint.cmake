@@ -10,8 +10,8 @@
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 
-find_path(FLINT_INCLUDE_DIR NAMES flint/flint.h PATHS ${CMAKE_PREFIX_PATH}/include)
-find_library(FLINT_LIBRARIES NAMES flint libflint PATHS ${CMAKE_PREFIX_PATH}/lib)
+find_path(FLINT_INCLUDE_DIR NAMES flint/flint.h)
+find_library(FLINT_LIBRARIES NAMES flint libflint)
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(FLINT DEFAULT_MSG FLINT_INCLUDE_DIR FLINT_LIBRARIES)
