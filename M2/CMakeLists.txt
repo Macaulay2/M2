@@ -88,11 +88,17 @@ set(SUPPRESS_COMPILER_WARNINGS ON)
 
 # TODO: this should be done somewhere else, perhaps install, but at build time, not install time
 execute_process(
-  COMMAND ln -fs Macaulay2/bin/M2-binary   M2
+  COMMAND ln -fs ${CMAKE_INSTALL_FULL_BINDIR}/M2-binary   M2
   COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_CORE_DIR}
   COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_INFODIR}
   COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_DOCDIR}
   )
+
+# Hackish way to set topSrcdir in startup.m2
+# FIXME: DELETING THIS CAUSES CONFUSING PATH ERRORS!!!
+file(RELATIVE_PATH LIST_FILE ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_LIST_FILE})
+get_filename_component(RELATIVE_SOURCE_DIR ${LIST_FILE} DIRECTORY)
+file(GENERATE OUTPUT srcdir CONTENT "${RELATIVE_SOURCE_DIR}/\n")
 
 # FIXME: this hack is needed because for some reason the path prefix
 # in the binary is Macaulay2/share instead of usr-dist/common/share and
