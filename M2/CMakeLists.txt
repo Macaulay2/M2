@@ -100,15 +100,6 @@ file(RELATIVE_PATH LIST_FILE ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_LIST_FILE})
 get_filename_component(RELATIVE_SOURCE_DIR ${LIST_FILE} DIRECTORY)
 file(GENERATE OUTPUT srcdir CONTENT "${RELATIVE_SOURCE_DIR}/\n")
 
-# FIXME: this hack is needed because for some reason the path prefix
-# in the binary is Macaulay2/share instead of usr-dist/common/share and
-if(NOT EXISTS Macaulay2/share)
-  execute_process(COMMAND ln -fs ${M2_COMMON_PREFIX}/share Macaulay2/share)
-endif()
-if(NOT EXISTS Macaulay2/${CMAKE_INSTALL_LIBDIR})
-  execute_process(COMMAND ln -fs ${M2_HOST_PREFIX}/lib     Macaulay2/${CMAKE_INSTALL_LIBDIR})
-endif()
-
 ################################################################
 
 # FIXME: currently various pieces and libraries are not built by cmake
@@ -116,5 +107,5 @@ endif()
 set(BOOTSTRAP ${CMAKE_SOURCE_DIR}/BUILD/cmake-bootstrap)
 message("## Bootstrapping from previous build in ${BOOTSTRAP}")
 execute_process(
-  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${MACHINE}/${CMAKE_INSTALL_LIBEXECDIR} ${CMAKE_BINARY_DIR}/Macaulay2/
+  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${MACHINE}/${CMAKE_INSTALL_LIBEXECDIR} ${M2_EXEC_PREFIX}
   )

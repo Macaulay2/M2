@@ -9,6 +9,7 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 add_executable(M2-binary timestamp.cpp)
 target_link_directories(M2-binary PRIVATE ${CMAKE_BINARY_DIR}/usr-host/lib)
 target_include_directories(M2-binary PRIVATE ${CMAKE_BINARY_DIR}/usr-host/include)
+# TODO: make sure this is okay on multi-configuration editors
 set_target_properties(M2-binary PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_FULL_BINDIR})
 
 # Link the big integer package
