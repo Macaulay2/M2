@@ -1,117 +1,9 @@
-## tip: use cmake -LA to list resolved variables
-#  TODO: Greg Smith requested cddplus and lrslib for future use
-
-# Requirements:
-#    BLAS/LAPACK: lapack includes blas, makes both libblas and liblapack
-#    Eigen3
-#    Threads
-#    LibXML2
-#    LibLZMA
-#    OpenMP
-#    TBB
-#    (also pkg-config, git, and bison for compiling)
-
-# Platform dependent requirements:
-#    readline, history, termcap, ...
-
-# The list LIBLIST is the list of libraries that might be used and linked into M2.
-#set(LIBLIST
-#   gc gdbm mpir mpfr ntl flint factory # lapack
-#   frobby glpk cddlib fplll givaro linbox boost mpc # qd gtest
-#  )
-
-# Libraries we can build:
-#    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too. (optional)
-#    flint depends on gmp (or mpir) and mpfr
-#    factory needs flint, ntl and gmp; it includes and installs gftables, so doesn't need it separately
-#    givaro uses gmp (or mpir)
-#    frobby depends on gmp
-##   googletest
-##    bdw-gc
-#    fflas_ffpack needs givaro and lapack
-#    memtailor needs pthread
-#    mathic needs memtailor and pthread
-#    mathicgb needs mathic, memtailor, pthread, and tbb
-
-# Still processing:
-#    boost??
-#    gdbm??
-#    glpk??
-#    cddlib uses gmp
-#    fplll uses mpir and mpfr
-#    mpfr needs gmp (or mpir
-#    	  mpfr puts pointers to gmp numbers in thread local variables, unless
-# 	  specially configured, so we shouldn't tell gmp to use libgc (we used to do that)
-#    mpc needs mpfr
-#    ntl needs gmp (or mpir)
-#    linbox needs fflas_ffpack and givaro and is provided as an option for experimentation
-
-# The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
-#     Initially, we offer no option for not compiling some of them.
-#set(PROGLIST 4ti2 gfan normaliz csdp nauty cddplus lrslib topcom cohomcalg)
-
-#    4ti2 needs glpk and is used by the package FourTiTwo
-#    glpk needs gmp (or mpir)
-#    topcom depends on cddlib
-#    gfan needs cddlib and is used by the packages gfanInterface and StatePolytope
-#    polymake cannot be included in Macaulay2 because its compile/build/install procedure is flawed (FIXME)
-#    normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
-#    nauty is used by the package Nauty
-
 ################################################################
-## pkg-config is useful for fflas-ffpack and certain other packages
-find_package(PkgConfig  REQUIRED QUIET)
+## This target requires all external projects to be built and installed
+add_custom_target(install-libraries ALL)
 
-## Setting the prefix so pkg-config can find libraries we've built
-list(APPEND CMAKE_PREFIX_PATH ${M2_HOST_PREFIX})
-set(ENV{PKG_CONFIG_PATH}      ${M2_HOST_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PATH})
-# TODO: the latter should be unnecessary:
-# https://cmake.org/cmake/help/latest/module/FindPkgConfig.html#variable:PKG_CONFIG_USE_CMAKE_PREFIX_PATH
-
-################################################################
-## 1. Look for prerequisite packages and libraries using CMake or pkg-config
-
-## Find libraries available as CMake modules
-find_package(BLAS    3.8 REQUIRED QUIET)
-find_package(LAPACK  3.8 REQUIRED QUIET) # TODO: both?
-find_package(Eigen3  3.3 REQUIRED QUIET NO_MODULE)
-find_package(Threads 2.1 REQUIRED QUIET) # pthread
-find_package(LibXml2 2.9 REQUIRED QUIET) # need xmlNewNode
-find_package(LibLZMA 5.2 REQUIRED QUIET) # need lzma_end
-# OpenMP is required for building the library csdp and good for building the library normaliz
-find_package(OpenMP      REQUIRED QUIET) # TODO: use OPENMP_LIBS/CXXFLAGS for csdb
-find_package(TBB         REQUIRED) # required by mathicgb
-
-## Find libraries available via pkg-config
-# TODO: use foo>=VERSION to specify version
-pkg_search_module(READLINE readline IMPORTED_TARGET) # TODO: make this REQUIRED
-# TODO: replace readline with https://github.com/AmokHuginnsson/replxx
-
-## TODO: remove these or deal with them differently
-find_library(LIBHISTORY history)
-find_library(LIBGDBM gdbm)
-
-## We provide modules for finding these libraries in cmake/
-## They are not required because we can build them if they are not found.
-find_package(MPIR)
-find_package(Flint)
-find_package(Frobby)
-find_package(Memtailor)
-find_package(Mathic)
-find_package(Mathicgb)
-
-#find_package(GMP  6.1.0 QUIET)
-#find_package(MPC  1.1.0 QUIET)
-#find_package(MPFR 4.0.2 QUIET)
-#find_package(GLPK 4.59  QUIET)
-
-# TODO: investigate error when factory-devel package is installed:
-# sample Factory finite field addition table file missing, needed for factorization:
-# /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist//usr/share/factory/
-pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
-pkg_search_module(FFLAS_FFPACK fflas-ffpack             IMPORTED_TARGET)
-pkg_search_module(GIVARO       givaro                   IMPORTED_TARGET)
-pkg_search_module(BDWGC        bdw-gc                   IMPORTED_TARGET)
+## Hack to force CMake to reconfigure after library is reinstalled
+file(TOUCH ${CMAKE_SOURCE_DIR}/cmake/check-libraries.cmake)
 
 #################################################################################
 ## Setting a baseline for compile and link options for external projects
@@ -169,16 +61,21 @@ ExternalProject_Add(build-mpir
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
-		      CC=${CMAKE_C_COMPILER}
-		      CXX=${CMAKE_CXX_COMPILER}
-		      AR=${CMAKE_AR}
-		      OBJDUMP=${CMAKE_OBJDUMP}
-		      STRIP=${CMAKE_STRIP}
-		      RANLIB=${CMAKE_RANLIB}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+                      AR=${CMAKE_AR}
+                      OBJDUMP=${CMAKE_OBJDUMP}
+                      STRIP=${CMAKE_STRIP}
+                      RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE_EXE} -j4
-        COMMAND     ${MAKE_EXE} install
-  INSTALL_COMMAND   ""
+  INSTALL_COMMAND   ${MAKE_EXE} install
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
   )
+# Add this to the libraries target
+add_dependencies(install-libraries build-mpir-install)
+# Force cmake to rebuild makefiles when the stamp is updates
+file(TOUCH ${CMAKE_BINARY_DIR}/libraries/stamp)
 endif()
 
 if(NOT FLINT_FOUND)
@@ -194,10 +91,10 @@ ExternalProject_Add(build-flint
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND LIB_DIRS=${M2_HOST_PREFIX}/lib ./configure --prefix=${M2_HOST_PREFIX}
                       --with-blas # TODO: ${BLAS_INCLUDE_DIR} is empty
-#		      --with-gmp=${M2_HOST_PREFIX}
-#		      --with-mpir=${M2_HOST_PREFIX}
-#		      --with-mpfr=${M2_HOST_PREFIX}
-#		      --with-ntl=${M2_HOST_PREFIX}
+#                      --with-gmp=${M2_HOST_PREFIX}
+#                      --with-mpir=${M2_HOST_PREFIX}
+#                      --with-mpfr=${M2_HOST_PREFIX}
+#                      --with-ntl=${M2_HOST_PREFIX}
                       --enable-cxx
                       --disable-tls
                       --disable-shared
@@ -206,16 +103,21 @@ ExternalProject_Add(build-flint
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
-		      CC=${CMAKE_C_COMPILER}
-		      CXX=${CMAKE_CXX_COMPILER}
-		      AR=${CMAKE_AR}
-		      OBJDUMP=${CMAKE_OBJDUMP}
-		      STRIP=${CMAKE_STRIP}
-		      RANLIB=${CMAKE_RANLIB}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+                      AR=${CMAKE_AR}
+                      OBJDUMP=${CMAKE_OBJDUMP}
+                      STRIP=${CMAKE_STRIP}
+                      RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE_EXE} -j4
-        COMMAND     ${MAKE_EXE} install
-  INSTALL_COMMAND   ""
+  INSTALL_COMMAND   ${MAKE_EXE} install
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
   )
+# Add this to the libraries target
+add_dependencies(install-libraries build-flint-install)
+# Force cmake to rebuild makefiles when the stamp is updates
+file(TOUCH ${CMAKE_BINARY_DIR}/libraries/stamp)
 endif()
 
 if(NOT FACTORY_FOUND)
@@ -242,24 +144,30 @@ ExternalProject_Add(build-factory
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
-		      CC=${CMAKE_C_COMPILER}
-		      CXX=${CMAKE_CXX_COMPILER}
-		      AR=${CMAKE_AR}
-		      OBJDUMP=${CMAKE_OBJDUMP}
-		      STRIP=${CMAKE_STRIP}
-		      RANLIB=${CMAKE_RANLIB}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+                      AR=${CMAKE_AR}
+                      OBJDUMP=${CMAKE_OBJDUMP}
+                      STRIP=${CMAKE_STRIP}
+                      RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j1 all prefix=${M2_HOST_PREFIX} ftmpl_inst.o
                     AM_DEFAULT_VERBOSITY=1 'WARNFLAGS=-Wno-uninitialized -Wno-write-strings -Wno-deprecated'
         COMMAND     cd factory-4.1.1 &&
                     ./bin/makeheader factory.template     factory.h     && cp factory.h     include/factory/ &&
                     ./bin/makeheader factoryconf.template factoryconf.h && cp factoryconf.h include/factory/
         COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j1 prefix=${M2_HOST_PREFIX} all-recursive
-        COMMAND     cd factory-4.1.1 && ${MAKE_EXE} install
-  INSTALL_COMMAND   ""
+  INSTALL_COMMAND   cd factory-4.1.1 && ${MAKE_EXE} install
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
   )
+# Add this to the libraries target
+add_dependencies(install-libraries build-factory-install)
+# Force cmake to rebuild makefiles when the stamp is updates
+file(TOUCH ${CMAKE_BINARY_DIR}/libraries/stamp)
+# TODO: repeat pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
 if(NOT FLINT_FOUND)
   # TODO: also add mpfr, ntl, gmp/mpir?
-  ExternalProject_Add_StepDependencies(build-factory build build-flint) # lol
+  ExternalProject_Add_StepDependencies(build-factory build build-flint-install) # lol
 endif()
 endif()
 # TODO: remove this, since the one above has the tables at libraries/factory/build/factory-4.1.1/gftables/
@@ -290,16 +198,21 @@ ExternalProject_Add(build-givaro
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
-		      CC=${CMAKE_C_COMPILER}
-		      CXX=${CMAKE_CXX_COMPILER}
-		      AR=${CMAKE_AR}
-		      OBJDUMP=${CMAKE_OBJDUMP}
-		      STRIP=${CMAKE_STRIP}
-		      RANLIB=${CMAKE_RANLIB}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+                      AR=${CMAKE_AR}
+                      OBJDUMP=${CMAKE_OBJDUMP}
+                      STRIP=${CMAKE_STRIP}
+                      RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE_EXE}
-        COMMAND     ${MAKE_EXE} install
-  INSTALL_COMMAND   ""
+  INSTALL_COMMAND   ${MAKE_EXE} install
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
   )
+# Add this to the libraries target
+add_dependencies(install-libraries build-givaro-install)
+# Force cmake to rebuild makefiles when the stamp is updates
+file(TOUCH ${CMAKE_BINARY_DIR}/libraries/stamp)
 endif()
 
 if(NOT FROBBY_FOUND)
@@ -320,19 +233,24 @@ ExternalProject_Add(build-frobby
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${frobby_CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
-		      CC=${CMAKE_C_COMPILER}
-		      CXX=${CMAKE_CXX_COMPILER}
-		      AR=${CMAKE_AR}
-		      OBJDUMP=${CMAKE_OBJDUMP}
-		      STRIP=${CMAKE_STRIP}
-		      RANLIB=${CMAKE_RANLIB}
-        COMMAND     /usr/bin/install -c -d ${M2_HOST_PREFIX}/lib &&
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+                      AR=${CMAKE_AR}
+                      OBJDUMP=${CMAKE_OBJDUMP}
+                      STRIP=${CMAKE_STRIP}
+                      RANLIB=${CMAKE_RANLIB}
+  INSTALL_COMMAND   /usr/bin/install -c -d ${M2_HOST_PREFIX}/lib &&
                     /usr/bin/install -c -d ${M2_HOST_PREFIX}/include &&
                     cp bin/libfrobby.a ${M2_HOST_PREFIX}/lib/libfrobby.a &&
                     cp src/frobby.h ${M2_HOST_PREFIX}/include/frobby.h &&
                     cp src/stdinc.h ${M2_HOST_PREFIX}/include/stdinc.h # FIXME
-  INSTALL_COMMAND   ""
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
   )
+# Add this to the libraries target
+add_dependencies(install-libraries build-frobby-install)
+# Force cmake to rebuild makefiles when the stamp is updates
+file(TOUCH ${CMAKE_BINARY_DIR}/libraries/stamp)
 endif()
 
 #################################################################################
@@ -349,6 +267,7 @@ ExternalProject_Add(googletest
   BUILD_COMMAND     ""
   INSTALL_COMMAND   ""
 #  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX} -DBUILD_GMOCK=OFF # -DINSTALL_GTEST=OFF
+  EXCLUDE_FROM_ALL  ON
   )
 set(GTEST_PATH  ${CMAKE_BINARY_DIR}/libraries/googletest/build/googletest) # ${M2_HOST_PREFIX}/include/gtest
 
@@ -367,18 +286,23 @@ ExternalProject_Add(bdwgc
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -Denable_cplusplus=ON
                     -Denable_threads=ON
-		    -Denable_large_config=ON
-		    -Dbuild_cord=OFF
+                    -Denable_large_config=ON
+                    -Dbuild_cord=OFF
                     -Denable_throw_bad_alloc_library=OFF
-		    -Denable_gcj_support=OFF
-		    -Denable_java_finalization=OFF
+                    -Denable_gcj_support=OFF
+                    -Denable_java_finalization=OFF
                     # -Denable_gc_debug=ON
-		    # -Denable_parallel_mark=OFF
-		    # -Denable_gc_assertions=ON
-		    # -Dbuild_tests=ON
+                    # -Denable_parallel_mark=OFF
+                    # -Denable_gc_assertions=ON
+                    # -Dbuild_tests=ON
                     # -DGC_ABORT_ON_LEAK
-  INSTALL_COMMAND   ""
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
   )
+# Add this to the libraries target
+add_dependencies(install-libraries build-bdwgc-install)
+# Force cmake to rebuild makefiles when the stamp is updates
+file(TOUCH ${CMAKE_BINARY_DIR}/libraries/stamp)
 endif()
 
 if(NOT FFLAS_FFPACK_FOUND)
@@ -397,19 +321,24 @@ ExternalProject_Add(build-fflas_ffpack
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
-		      CC=${CMAKE_C_COMPILER}
-		      CXX=${CMAKE_CXX_COMPILER}
-		      AR=${CMAKE_AR}
-		      OBJDUMP=${CMAKE_OBJDUMP}
-		      STRIP=${CMAKE_STRIP}
-		      RANLIB=${CMAKE_RANLIB}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+                      AR=${CMAKE_AR}
+                      OBJDUMP=${CMAKE_OBJDUMP}
+                      STRIP=${CMAKE_STRIP}
+                      RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE_EXE}
-        COMMAND     ${MAKE_EXE} install
-  INSTALL_COMMAND   ""
+  INSTALL_COMMAND   ${MAKE_EXE} install
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
   )
+# Add this to the libraries target
+add_dependencies(install-libraries build-fflas_ffpack-install)
+# Force cmake to rebuild makefiles when the stamp is updates
+file(TOUCH ${CMAKE_BINARY_DIR}/libraries/stamp)
 if(NOT GIVARO_FOUND)
   # TODO: also add gmp/mpir?
-  ExternalProject_Add_StepDependencies(build-fflas_ffpack build build-givaro) # lol
+  ExternalProject_Add_StepDependencies(build-fflas_ffpack build build-givaro-install) # lol
 endif()
 endif()
 
@@ -423,7 +352,13 @@ ExternalProject_Add(build-memtailor
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DPACKAGE_TESTS=OFF
 #  DEPENDS           googletest # TODO: use this
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
   )
+# Add this to the libraries target
+add_dependencies(install-libraries build-memtailor-install)
+# Force cmake to rebuild makefiles when the stamp is updates
+file(TOUCH ${CMAKE_BINARY_DIR}/libraries/stamp)
 endif()
 
 if(NOT MATHIC_FOUND)
@@ -434,11 +369,17 @@ ExternalProject_Add(build-mathic
   BINARY_DIR        libraries/mathic/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
-		    -DPACKAGE_TESTS=OFF
+                    -DPACKAGE_TESTS=OFF
   DEPENDS           build-memtailor
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
   )
+# Add this to the libraries target
+add_dependencies(install-libraries build-mathic-install)
+# Force cmake to rebuild makefiles when the stamp is updates
+file(TOUCH ${CMAKE_BINARY_DIR}/libraries/stamp)
 if(NOT MEMTAILOR_FOUND)
-  ExternalProject_Add_StepDependencies(build-mathic build build-memtailor)
+  ExternalProject_Add_StepDependencies(build-mathic build build-memtailor-install)
 endif()
 endif()
 
@@ -451,10 +392,16 @@ ExternalProject_Add(build-mathicgb
   BINARY_DIR        libraries/mathicgb/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
-		    -DPACKAGE_TESTS=OFF
+                    -DPACKAGE_TESTS=OFF
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
   )
+# Add this to the libraries target
+add_dependencies(install-libraries build-mathicgb-install)
+# Force cmake to rebuild makefiles when the stamp is updates
+file(TOUCH ${CMAKE_BINARY_DIR}/libraries/stamp)
 if(NOT MATHIC_FOUND)
-  ExternalProject_Add_StepDependencies(build-mathic build build-mathic)
+  ExternalProject_Add_StepDependencies(build-mathicgb build build-mathic-install)
 endif()
 endif()
 
@@ -463,7 +410,6 @@ endif()
 
 set(TARFILES
   # My machine download these:
-  4ti2      3053e7467b5585ad852f6a56e78e28352653943e7249ad5e5174d4744d174966 4ti2-1.6.9.tar.gz
   cddlib    fe6d04d494683cd451be5f6fe785e147f24e8ce3ef7387f048e739ceb4565ab5 cddlib-094h.tar.gz
   cohomcalg 367c52b99c0b0a4794b215181439bf54abe4998872d3ef25d793bc13c4d40e42 cohomCalg-0.32.tar.gz
   csdp      7f202a15f33483ee205dcfbd0573fdbd74911604bb739a04f8baa35f8a055c5b Csdp-6.2.0.tgz
@@ -486,6 +432,44 @@ set(TARFILES
 
 # whether the package 4ti2 is installed
 #4ti2-circuits 4ti2
+if(NOT 4TI2_FOUND)
+ExternalProject_Add(build-4ti2
+  URL               ${M2_SOURCE_URL}/4ti2-1.6.9.tar.gz
+  URL_HASH          SHA256=3053e7467b5585ad852f6a56e78e28352653943e7249ad5e5174d4744d174966
+  PREFIX            libraries/4ti2
+  SOURCE_DIR        libraries/4ti2/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      --with-gmp=no # TODO: does this line work?
+                      CPPFLAGS=${CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      CXXFLAGS=${CXXFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+                      AR=${CMAKE_AR}
+                      OBJDUMP=${CMAKE_OBJDUMP}
+                      STRIP=${CMAKE_STRIP}
+                      RANLIB=${CMAKE_RANLIB}
+  BUILD_COMMAND     ${MAKE_EXE} -j4
+        COMMAND     ${CMAKE_STRIP}
+                      src/groebner/4ti2gmp${CMAKE_EXECUTABLE_SUFFIX}
+                      src/groebner/4ti2int32${CMAKE_EXECUTABLE_SUFFIX}
+                      src/groebner/4ti2int64${CMAKE_EXECUTABLE_SUFFIX}
+                      src/util/genmodel
+                      src/util/gensymm
+                      src/ppi/ppi
+                      src/util/output
+                      src/zsolve/zsolve
+  INSTALL_COMMAND   ${MAKE_EXE} install
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
+  )
+set(4TI2_FOUND 1)
+endif()
+
 #cohomcalg cohomcalg
 #gfan gfan
 # whether the package lrs is installed
@@ -507,13 +491,16 @@ set(TARFILES
 
 #############################################################################
 
+get_target_property(LIBRARY_DEPENDENCIES install-libraries MANUALLY_ADDED_DEPENDENCIES)
+string(REGEX REPLACE "(build-|-install)" "" BUILD_LIB_LIST "${LIBRARY_DEPENDENCIES}")
+
 # TOOD
-#message("## External library information:
-#     BUILDLIBLIST      = ${BUILDLIBLIST}
+#     BUILDLIST         = ${BUILDLIST}
 #     BUILDSUBLIST      = ${BUILDSUBLIST}
 #     BUILDPROGLIST     = ${BUILDPROGLIST}
-#     BUILDLIST         = ${BUILDLIST}
-#     BUILD_ALWAYS      = ${BUILD_ALWAYS}")
+#     BUILD_ALWAYS      = ${BUILD_ALWAYS}
+message("## External library information:
+     BUILDLIBLIST      = ${BUILD_LIB_LIST}")
 
 # TODO
 #message("## Linker information:

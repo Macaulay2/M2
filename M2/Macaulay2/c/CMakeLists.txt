@@ -44,6 +44,7 @@ target_include_directories(scc1
     ${CMAKE_BINARY_DIR}/include
     /usr/local/include
   )
+# TODO: replace gc with a build-bdwc dependency?
 target_link_libraries(scc1 gc ${LIBGDBM}) #PkgConfig::GC
 target_link_directories(scc1 PRIVATE ${CMAKE_BUILD_DIR}/usr-host/lib)
 
