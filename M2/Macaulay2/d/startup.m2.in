@@ -10,6 +10,7 @@ stopIfError = false
 debugWarningHashcode = null
 gotarg := arg -> any(commandLine, s -> s == arg)
 if gotarg "--stop" then stopIfError = true
+if gotarg "--int"  then handleInterrupts = false
 
 firstTime := class PackageDictionary === Symbol
 
