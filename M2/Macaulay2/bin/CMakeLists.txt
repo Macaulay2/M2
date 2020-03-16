@@ -24,12 +24,15 @@ target_link_libraries(M2-binary
   regex interpreter M2-engine system kernel
   Threads::Threads ${LAPACK_LIBRARIES} PkgConfig::BDWGC
   ${LIBXML2_LIBRARIES} ${LIBGDBM} ${CMAKE_DL_LIBS} # TODO: remove ${LZMA_LIBRARIES}
+
+  # Link commandline related libraries
+  ${HISTORY_LIBRARY} ${READLINE_LIBRARY}
   )
 
-if(MATHICGB_FOUND AND MATHIC_FOUND AND MEMTAILOR_FOUND)
+if(MATHICGB_FOUND AND MATHIC_FOUND AND MEMTAILOR_FOUND AND FROBBY_FOUND)
 target_link_libraries(M2-binary
   # mathicgb depends on mathic, memtailor, and TBB
-  ${MATHICGB_LIBRARIES} ${MATHIC_LIBRARIES} ${MEMTAILOR_LIBRARIES} ${TBB_LIBRARIES} frobby
+  ${MATHICGB_LIBRARIES} ${MATHIC_LIBRARIES} ${MEMTAILOR_LIBRARIES} ${TBB_LIBRARIES} ${FROBBY_LIBRARIES}
   )
 endif()
 
@@ -39,13 +42,6 @@ target_link_libraries(M2-binary
   PkgConfig::FFLAS_FFPACK # fflas-ffpack depends on openmp, givaro, gmp, and gmpxx
   PkgConfig::GIVARO # givaro depends on gmpxx and gmp (or mpir and mpirxx)
   )
-endif()
-
-# Link commandline related libraries
-if(UNIX)
-  target_link_libraries(M2-binary ${LIBHISTORY} PkgConfig::READLINE)
-elseif(APPLE)
-  target_link_libraries(M2-binary history readline termcap)
 endif()
 
 get_target_property(LINK_LIBRARIES M2-binary LINK_LIBRARIES)

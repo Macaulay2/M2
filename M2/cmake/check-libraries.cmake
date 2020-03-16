@@ -51,21 +51,15 @@ find_package(LAPACK      REQUIRED QUIET) # also sets BLAS variables
 find_package(Eigen3  3.3 REQUIRED QUIET NO_MODULE)
 find_package(Threads 2.1 REQUIRED QUIET) # pthread
 find_package(LibXml2 2.9 REQUIRED QUIET) # d/xml-c.c needs xmlNewNode
+find_package(Readline    REQUIRED QUIET)
+find_package(History     REQUIRED QUIET)
+# TODO: replace readline with https://github.com/AmokHuginnsson/replxx
 #find_package(LibLZMA 5.2 REQUIRED QUIET) # TODO: where is this needed?
 # TODO: which to use: TBB or OpenMP?
 # OpenMP is required for building the library csdp and good for building the library normaliz
 find_package(OpenMP      REQUIRED QUIET)
 # TBB is required for threading in mathicgb
 find_package(TBB         REQUIRED) # required by mathicgb
-
-## Find libraries available via pkg-config
-# TODO: use foo>=VERSION to specify version
-pkg_search_module(READLINE readline IMPORTED_TARGET) # TODO: make this REQUIRED
-# TODO: replace readline with https://github.com/AmokHuginnsson/replxx
-
-## TODO: remove these or deal with them differently
-find_library(LIBHISTORY history)
-find_library(LIBGDBM gdbm)
 
 ## We provide modules for finding these libraries in cmake/
 ## They are not required because we can build them if they are not found.
@@ -82,6 +76,8 @@ find_package(MPC  1.1.0 QUIET)
 find_package(MPFR 4.0.2 QUIET)
 find_package(GLPK 4.59  QUIET)
 
+## Find libraries available via pkg-config
+# TODO: use foo>=VERSION to specify version
 # TODO: investigate error when factory-devel package is installed:
 # sample Factory finite field addition table file missing, needed for factorization:
 # /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist//usr/share/factory/
@@ -89,6 +85,9 @@ pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
 pkg_search_module(FFLAS_FFPACK fflas-ffpack             IMPORTED_TARGET)
 pkg_search_module(GIVARO       givaro                   IMPORTED_TARGET)
 pkg_search_module(BDWGC        bdw-gc                   IMPORTED_TARGET)
+
+## TODO: remove these or deal with them differently
+find_library(LIBGDBM gdbm)
 
 ###############################################################################
 
