@@ -1,4 +1,4 @@
-# Try to find the GLPK librairies
+# Try to find the GLPK libraries
 # See https://www.gnu.org/software/glpk/
 #
 # This file sets up GLPK for CMake. Once done this will define

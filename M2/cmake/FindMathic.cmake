@@ -1,4 +1,4 @@
-# Try to find the mathic librairies
+# Try to find the mathic libraries
 # See https://github.com/Macaulay2/mathic
 #
 # This file sets up mathic for CMake. Once done this will define

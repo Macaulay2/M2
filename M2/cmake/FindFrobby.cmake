@@ -1,4 +1,4 @@
-# Try to find the frobby librairies
+# Try to find the frobby libraries
 # See https://github.com/Macaulay2/frobby
 #
 # This file sets up frobby for CMake. Once done this will define

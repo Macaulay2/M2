@@ -1,4 +1,4 @@
-# Try to find the flint librairies
+# Try to find the flint libraries
 # See http://www.flintlib.org/
 #
 # This file sets up flint for CMake. Once done this will define

@@ -29,6 +29,7 @@ make check-packages
 
 ### From Xcode or Visual Studio
 IDEs such as Xcode or vscode can also configure and build using CMake.
+Simply open the cloned repository using your IDE and select target to build.
 
 ## Advanced targets and options
 After running `cmake ../..`, you can use `cmake -LA` to see a list of computed variables and options.
@@ -77,3 +78,21 @@ Targets for installing and checking Macaulay2 packages
 - `uninstall-[PACKAGE]`
 
 For instace, you can run `make check-LocalRings` to run the tests from the `LocalRings` package.
+
+## Libraries
+
+Macaulay2 uses several external libraries and programs.
+
+### Intel(R) Math Kernel Library
+
+[MKL](https://software.intel.com/en-us/mkl) is a linear algebra routines library specifically optimized for
+Intel(R) processors. To enable linking with MKL, adjust the path and architecture appropriately and run the
+following before calling `cmake`:
+```
+source /opt/intel/bin/compilervars.sh intel64
+```
+Note that MKL is closed-source but released as a freeware.
+
+### AMD(R) Optimizing CPU Libraries
+
+[AOCL](https://developer.amd.com/amd-aocl/) includes AMD BLIS and AMD libFLAME

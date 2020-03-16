@@ -18,6 +18,11 @@
 cmake_minimum_required(VERSION 3.14...3.16)
 cmake_policy(VERSION 3.16)
 
+## Guard against in-source builds
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+  message(FATAL_ERROR "In-source builds are not allowed.")
+endif()
+
 ## Use the C++14 standard
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -58,16 +63,11 @@ include(prechecks) ## CMake script for preprocessor tests and linting
 include(packaging) ## CMake script for making distribution packages for Macaulay2
 include(check-libraries) ## CMake script for checking which libraries exist and which need to be built
 include(build-libraries) ## CMake script for downloading, building, and installing external libraries
-
 # Note: we separate the two so that check-libraries.cmake can be called by Macaulay2/bin/CMakeLists.txt
 
 ###############################################################################
 ## Configure M2/config.h
 configure_file(include/M2/config.h.cmake include/M2/config.h)
-
-# TODO: is it okay to do this globally?
-add_compile_options(-I${CMAKE_SOURCE_DIR}/include -I${CMAKE_BINARY_DIR}/include -I${M2_HOST_PREFIX}/include)
-add_link_options(-L${M2_HOST_PREFIX}/lib)
 
 ###############################################################################
 message("## Target operating system information:
@@ -109,11 +109,3 @@ execute_process(
 file(RELATIVE_PATH LIST_FILE ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_LIST_FILE})
 get_filename_component(RELATIVE_SOURCE_DIR ${LIST_FILE} DIRECTORY)
 file(GENERATE OUTPUT srcdir CONTENT "${RELATIVE_SOURCE_DIR}/\n")
-
-################################################################
-
-# FIXME: currently various pieces and libraries are not built by cmake
-# BUILD/cmake-bootstrap should be a symlink to an existing build directory
-set(BOOTSTRAP ${CMAKE_SOURCE_DIR}/BUILD/cmake-bootstrap)
-message("## Bootstrapping from previous build in ${BOOTSTRAP}")
-file(CREATE_LINK ${BOOTSTRAP}/usr-dist/${MACHINE}/${CMAKE_INSTALL_LIBEXECDIR} ${M2_EXEC_PREFIX}/${CMAKE_INSTALL_LIBEXECDIR} SYMBOLIC)

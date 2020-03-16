@@ -1,4 +1,4 @@
-# Try to find the mathicgb librairies
+# Try to find the mathicgb libraries
 # See https://github.com/Macaulay2/mathicgb
 #
 # This file sets up mathicgb for CMake. Once done this will define

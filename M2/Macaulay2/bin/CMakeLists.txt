@@ -23,7 +23,7 @@ endif()
 target_link_libraries(M2-binary
   regex interpreter M2-engine system kernel
   Threads::Threads ${LAPACK_LIBRARIES} PkgConfig::BDWGC
-  ${LIBXML2_LIBRARIES} ${LZMA_LIBRARIES} ${LIBGDBM} ${CMAKE_DL_LIBS}
+  ${LIBXML2_LIBRARIES} ${LIBGDBM} ${CMAKE_DL_LIBS} # TODO: remove ${LZMA_LIBRARIES}
   )
 
 if(MATHICGB_FOUND AND MATHIC_FOUND AND MEMTAILOR_FOUND)

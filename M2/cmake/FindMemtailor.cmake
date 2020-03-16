@@ -1,4 +1,4 @@
-# Try to find the MEMTAILOR librairies
+# Try to find the MEMTAILOR libraries
 # See https://github.com/Macaulay2/memtailor
 #
 # This file sets up GLPK for CMake. Once done this will define

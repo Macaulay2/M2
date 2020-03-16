@@ -64,6 +64,9 @@ set(MP_LIBRARY "gmp" CACHE STRING "specify the big integer package to use (mpir 
 
 # TODO: where do we use the SHARED setting? In e?
 
+# TODO: is it okay to do this globally?
+add_compile_options(-I${CMAKE_SOURCE_DIR}/include -I${CMAKE_BINARY_DIR}/include)
+
 if(${MP_LIBRARY} STREQUAL "mpir")
   set(USING_MPIR 1)
   # TODO: use target_include_directories instead? Maybe this is easier

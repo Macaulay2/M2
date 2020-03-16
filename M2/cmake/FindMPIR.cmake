@@ -1,4 +1,4 @@
-# Try to find the MPIR librairies
+# Try to find the MPIR libraries
 # See http://www.mpir.org/
 #
 # This file sets up MPIR for CMake. Once done this will define
