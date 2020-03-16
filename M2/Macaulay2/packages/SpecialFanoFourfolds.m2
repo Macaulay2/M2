@@ -786,7 +786,7 @@ describe SpecialGushelMukaiFourfold := (X) -> (
    descr = descr|(if # unique degs == 1 then "cut out by "|toString(#degs)|" hypersurfaces of degree "|toString(first degs) else "cut out by "|toString(#degs)|" hypersurfaces of degrees "|toString(toSequence degs));
    descr = descr|newline|"and with class in G(1,4) given by "|toString(cS);
    if X#"isGushelType" =!= null then (if X#"isGushelType" then descr = descr|newline|"Type: Gushel (not ordinary)" else descr = descr|newline|"Type: ordinary");
-   if recognize(X,discrX,eulerCharacteristic X,(a,b)) =!= null then descr = descr|newline|"(case "|toString(recognize X)|" of Table 1 in "|"arXiv:2002.07026"|")";
+   if instance(recognize(X,discrX,eulerCharacteristic X,(a,b)),ZZ) then descr = descr|newline|"(case "|toString(recognize X)|" of Table 1 in "|"arXiv:2002.07026"|")";
    net expression descr
 );
 
@@ -851,6 +851,8 @@ recognize (SpecialGushelMukaiFourfold,ZZ,ZZ,Sequence) := (X,d,e,ab) -> (
     if (d == 24 and e == 9 and a == 6 and b == 4 and invS == (10,3,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return X#"label" = 19;
     if (d == 24 and e == 3 and a == 2 and b == 2 and invS == (4,0,1) and degs == {1, 1, 1, 2, 2, 2, 2, 2, 2}) then return X#"label" = 20;
     if (d == 26 and e == 12 and a == 7 and b == 5 and invS == (12,5,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return X#"label" = 21;
+    --
+    if (d == 26 and e == 25 and a == 11 and b == 6 and invS == (17,11,2) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return X#"label" = "gushel26''";
 );
 
 parametrize (SpecialGushelMukaiFourfold) := (X) -> (
@@ -1953,6 +1955,7 @@ imageOfAssociatedMap (MutableHashTable) := (X) -> (
    if e === "C38Coble" or e === "C42" then forceImage(f,image(f,3));
    if instance(e,ZZ) and e >= 1 and e <= 21 and e != 3 and e != 21 then forceImage(f,image(f,2));
    if instance(e,ZZ) and (e == 3 or e == 21) then forceImage(f,trim lift(kernel(map rationalMap(f,Dominant=>2),SubringLimit=>1),ambient target f));
+   if e === "gushel26''" then forceImage(f,trim kernel(map f,SubringLimit=>1));
    image f
 );
 
