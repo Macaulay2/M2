@@ -10,6 +10,8 @@ file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
 ## FIXME: Hack to force CMake to reconfigure after library is reinstalled
 file(TOUCH ${CMAKE_SOURCE_DIR}/cmake/check-libraries.cmake)
 
+# TODO: add share/config.site to provide defaults for configure scripts
+
 #################################################################################
 ## Setting a baseline for compile and link options for external projects
 
@@ -328,14 +330,17 @@ if(NOT BDW_GC_FOUND)
 endif()
 
 
+# TODO: out of source build has issues with detecting SIMD instructions
 ExternalProject_Add(build-givaro
   GIT_REPOSITORY    https://github.com/linbox-team/givaro.git
   GIT_TAG           v4.0.3
   PREFIX            libraries/givaro
-  BINARY_DIR        libraries/givaro/build
-  CONFIGURE_COMMAND ../src/build-givaro/autogen.sh --prefix=${M2_HOST_PREFIX}
+  SOURCE_DIR        libraries/givaro/build
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND ./configure --prefix=${M2_HOST_PREFIX}
                       --disable-shared
-                      # --disable-simd # unrecognized option?
+                      # --disable-simd # unrecognized option on 4.0.3?
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
