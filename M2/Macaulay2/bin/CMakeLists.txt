@@ -22,7 +22,7 @@ endif()
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
   regex interpreter M2-engine system kernel
-  Threads::Threads ${LAPACK_LIBRARIES} PkgConfig::BDWGC
+  Threads::Threads ${LAPACK_LIBRARIES} PkgConfig::BDW_GC
   ${LIBXML2_LIBRARIES} ${LIBGDBM} ${CMAKE_DL_LIBS} # TODO: remove ${LZMA_LIBRARIES}
 
   # Link commandline related libraries

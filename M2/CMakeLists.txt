@@ -16,7 +16,7 @@
 
 ## Works with 3.14 and tested through 3.16
 cmake_minimum_required(VERSION 3.14...3.16)
-cmake_policy(VERSION 3.16)
+cmake_policy(VERSION 3.14)
 
 ## Guard against in-source builds
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})

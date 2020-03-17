@@ -47,6 +47,7 @@ set(ENV{PKG_CONFIG_PATH}      ${M2_HOST_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PA
 ## Look for prerequisite packages and libraries using CMake or pkg-config
 
 ## Find libraries available as CMake modules
+# TODO: specify minimum version
 find_package(LAPACK      REQUIRED QUIET) # also sets BLAS variables
 find_package(Eigen3  3.3 REQUIRED QUIET NO_MODULE)
 find_package(Threads 2.1 REQUIRED QUIET) # pthread
@@ -63,6 +64,7 @@ find_package(TBB         REQUIRED) # required by mathicgb
 
 ## We provide modules for finding these libraries in cmake/
 ## They are not required because we can build them if they are not found.
+# TODO: specify minimum version
 find_package(CDD)
 find_package(MPIR)
 find_package(Flint)
@@ -77,14 +79,14 @@ find_package(MPFR 4.0.2 QUIET)
 find_package(GLPK 4.59  QUIET)
 
 ## Find libraries available via pkg-config
-# TODO: use foo>=VERSION to specify version
 # TODO: investigate error when factory-devel package is installed:
 # sample Factory finite field addition table file missing, needed for factorization:
 # /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist//usr/share/factory/
-pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
-pkg_search_module(FFLAS_FFPACK fflas-ffpack             IMPORTED_TARGET)
-pkg_search_module(GIVARO       givaro                   IMPORTED_TARGET)
-pkg_search_module(BDWGC        bdw-gc                   IMPORTED_TARGET)
+pkg_search_module(FACTORY	factory>=4.1.1
+                                singular-factory>=4.1.1	IMPORTED_TARGET)
+pkg_search_module(FFLAS_FFPACK	fflas-ffpack>=2.3.2	IMPORTED_TARGET)
+pkg_search_module(GIVARO	givaro>=4.0.3		IMPORTED_TARGET)
+pkg_search_module(BDW_GC	bdw-gc			IMPORTED_TARGET)
 
 ## TODO: remove these or deal with them differently
 find_library(LIBGDBM gdbm)

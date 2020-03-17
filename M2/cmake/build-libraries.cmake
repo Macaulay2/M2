@@ -5,7 +5,9 @@ set(JOBS 4)
 add_custom_target(install-libraries ALL)
 add_custom_target(install-programs ALL)
 
-## Hack to force CMake to reconfigure after library is reinstalled
+file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
+
+## FIXME: Hack to force CMake to reconfigure after library is reinstalled
 file(TOUCH ${CMAKE_SOURCE_DIR}/cmake/check-libraries.cmake)
 
 #################################################################################
@@ -199,37 +201,6 @@ ExternalProject_Add(extract-gftables
   )
 
 
-ExternalProject_Add(build-givaro
-  URL               ${M2_SOURCE_URL}/givaro-4.0.3.tar.gz
-  URL_HASH          SHA256=19101e41161db46a925a0d055cf530c6d731b0dcc79e69f4358e483778306d16
-  PREFIX            libraries/givaro
-  SOURCE_DIR        libraries/givaro/build
-  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
-  BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
-                      --disable-shared
-                      --disable-simd # unrecognized option?
-                      CPPFLAGS=${CPPFLAGS}
-                      CFLAGS=${CFLAGS}
-                      CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
-                      CC=${CMAKE_C_COMPILER}
-                      CXX=${CMAKE_CXX_COMPILER}
-                      AR=${CMAKE_AR}
-                      OBJDUMP=${CMAKE_OBJDUMP}
-                      STRIP=${CMAKE_STRIP}
-                      RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     ${MAKE_EXE}
-  INSTALL_COMMAND   ${MAKE_EXE} install
-  EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
-  )
-if(NOT GIVARO_FOUND)
-  # Add this to the libraries target
-  add_dependencies(install-libraries build-givaro-install)
-endif()
-
-
 set(frobby_CXXFLAGS "${CPPFLAGS} ${CXXFLAGS} -Wno-deprecated-declarations")
 # FIXME: permissions on the installed files are wrong
 ExternalProject_Add(build-frobby
@@ -352,9 +323,38 @@ ExternalProject_Add(bdwgc
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
-if(NOT BDWGC_FOUND)
+if(NOT BDW_GC_FOUND)
   # Add this to the libraries target
   add_dependencies(install-libraries build-bdwgc-install)
+endif()
+
+
+ExternalProject_Add(build-givaro
+  GIT_REPOSITORY    https://github.com/linbox-team/givaro.git
+  GIT_TAG           v4.0.3
+  PREFIX            libraries/givaro
+  BINARY_DIR        libraries/givaro/build
+  CONFIGURE_COMMAND ../src/build-givaro/autogen.sh --prefix=${M2_HOST_PREFIX}
+                      --disable-shared
+                      # --disable-simd # unrecognized option?
+                      CPPFLAGS=${CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      CXXFLAGS=${CXXFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+                      AR=${CMAKE_AR}
+                      OBJDUMP=${CMAKE_OBJDUMP}
+                      STRIP=${CMAKE_STRIP}
+                      RANLIB=${CMAKE_RANLIB}
+  BUILD_COMMAND     ${MAKE_EXE}
+  INSTALL_COMMAND   ${MAKE_EXE} install
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
+  )
+if(NOT GIVARO_FOUND)
+  # Add this to the libraries target
+  add_dependencies(install-libraries build-givaro-install)
 endif()
 
 
@@ -519,14 +519,14 @@ find_program(COHOMCALG cohomcalg PATH ${M2_HOST_PREFIX}/bin)
 # Warning: this no longer compiles with gcc version 4.8.5, and it doesn't help with
 #   https://github.com/Macaulay2/M2/issues/977, so we may want to go back to the old version.
 ExternalProject_Add(build-cohomcalg
-  URL               ${M2_SOURCE_URL}/cohomcalg-0.32.tar.gz
+  URL               ${M2_SOURCE_URL}/cohomCalg-0.32.tar.gz
   URL_HASH          SHA256=367c52b99c0b0a4794b215181439bf54abe4998872d3ef25d793bc13c4d40e42
   PREFIX            libraries/cohomcalg
   SOURCE_DIR        libraries/cohomcalg/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} lrs
+  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -534,12 +534,8 @@ ExternalProject_Add(build-cohomcalg
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
                       LD=${CMAKE_CXX_COMPILER} # correct?
-                      AR=${CMAKE_AR}
-                      OBJDUMP=${CMAKE_OBJDUMP}
-                      STRIP=${CMAKE_STRIP}
-                      RANLIB=${CMAKE_RANLIB}
-        COMMAND     ${CMAKE_STRIP} cohomcalg${CMAKE_EXECUTABLE_SUFFIX}
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different cohomcalg ${M2_HOST_PREFIX}/bin/cohomcalg
+        COMMAND     ${CMAKE_STRIP} bin/cohomcalg
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different bin/cohomcalg ${M2_HOST_PREFIX}/bin
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -601,7 +597,7 @@ ExternalProject_Add(build-lrslib
                       RANLIB=${CMAKE_RANLIB}
 		      # TODO: TARGET_ARCH= RANLIB=true
         COMMAND     ${CMAKE_STRIP} lrs${CMAKE_EXECUTABLE_SUFFIX}
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${M2_HOST_PREFIX}/bin/lrs
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${M2_HOST_PREFIX}/bin
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -620,7 +616,7 @@ set(csdp_LDLIBS  "${LDLIBS}  ${csdp_OpenMP_CXX_LIBRARIES}")
 list(JOIN LAPACK_LIBRARIES " " csdp_LAPACK_LIBRARIES)
 set(csdp_LIBS     "-L../lib -lsdp ${csdp_LAPACK_LIBRARIES} -lm")
 ExternalProject_Add(build-csdp
-  URL               ${M2_SOURCE_URL}/Csdp-6.2.0.tgz
+  URL               http://www.coin-or.org/download/source/Csdp/Csdp-6.2.0.tgz # TODO
   URL_HASH          SHA256=7f202a15f33483ee205dcfbd0573fdbd74911604bb739a04f8baa35f8a055c5b
   PREFIX            libraries/csdp
   SOURCE_DIR        libraries/csdp/build
@@ -730,7 +726,7 @@ ExternalProject_Add(build-nauty
   BUILD_COMMAND     ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX}
         COMMAND     ${CMAKE_STRIP} ${nauty_STRIPFILES}
   # TODO: put nauty programs in a folder?
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${nauty_PROGRAMS} ${M2_HOST_PREFIX}/bin/
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${nauty_PROGRAMS} ${M2_HOST_PREFIX}/bin
   TEST_COMMAND      rm -f ${nauty_CHECKERS}
        COMMAND      ${MAKE_EXE} BIGTEST=0 checks
   EXCLUDE_FROM_ALL  ON
@@ -751,17 +747,22 @@ install(DIRECTORY
 #############################################################################
 
 get_target_property(LIBRARY_DEPENDENCIES install-libraries MANUALLY_ADDED_DEPENDENCIES)
-string(REGEX REPLACE "(build-|-install)" "" BUILD_LIB_LIST "${LIBRARY_DEPENDENCIES}")
+get_target_property(PROGRAM_DEPENDENCIES install-programs  MANUALLY_ADDED_DEPENDENCIES)
+if(NOT LIBRARY_DEPENDENCIES)
+  set(LIBRARY_DEPENDENCIES N/A)
+endif()
+if(NOT PROGRAM_DEPENDENCIES)
+  set(PROGRAM_DEPENDENCIES N/A)
+endif()
+string(REGEX REPLACE "(build-|-install)" "" BUILD_LIB_LIST  "${LIBRARY_DEPENDENCIES}")
+string(REGEX REPLACE "(build-|-install)" "" BUILD_PROG_LIST "${PROGRAM_DEPENDENCIES}")
 
-# TOOD
-#     BUILDLIST         = ${BUILDLIST}
-#     BUILDSUBLIST      = ${BUILDSUBLIST}
-#     BUILDPROGLIST     = ${BUILDPROGLIST}
-#     BUILD_ALWAYS      = ${BUILD_ALWAYS}
-message("## External library information:
-     BUILDLIBLIST      = ${BUILD_LIB_LIST}")
+message("## External components that will be built:
+     BUILDLIBLIST      = ${BUILD_LIB_LIST}
+     BUILDPROGLIST     = ${BUILD_PROG_LIST}")
+# TOOD: BUILDLIST BUILDSUBLIST BUILD_ALWAYS
 
-# TODO
+# TODO: how to keep track of things we've built?
 #message("## Linker information:
 #     BUILTLIBS         = ${BUILTLIBS}
 #     LINALGLIBS        = ${LINALGLIBS}
