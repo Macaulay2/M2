@@ -8,7 +8,7 @@ if version#"VERSION" < "1.15" then error "this package requires Macaulay2 versio
 newPackage(
        "SpecialFanoFourfolds",
     	Version => "0.9.1", 
-        Date => "March 9, 2020",
+        Date => "March 17, 2020",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
         PackageExports => {"Resultants","Cremona"},
@@ -480,7 +480,9 @@ detectCongruence (SpecialCubicFourfold,ZZ) := (X,e) -> (
       P := apply(decE,D -> (D' := phi^* D; (degree D',dim D' -1, dim (D'+S) -1,degree (D'+S),D')));
       P = select(P,s -> s_0 == e and s_1 == 1 and s_2 == 0 and s_3 == 3*e-1);
       if #P != 1 then error "internal error encountered";
-      last first P
+      C := last first P;
+      if genus C != 0 then C = top C;
+      C
     );
     try f point ring X else error "no congruences detected";
     f
@@ -1023,7 +1025,9 @@ detectCongruence (SpecialGushelMukaiFourfold,ZZ) := (X,e) -> (
       P := apply(decE,D -> (D' := phi^* D; (degree D',dim D' -1, dim (D'+S) -1,degree (D'+S),D')));
       P = select(P,s -> s_0 == e and s_1 == 1 and s_2 == 0 and s_3 == 2*e-1);
       if #P != 1 then error "internal error encountered";
-      last first P
+      C := last first P;
+      if genus C != 0 then C = trim sub(top trim lift(C,ambient ring C),ring C);
+      C
     );
     try f (point ideal source map X) else error "no congruences detected";
     f
@@ -1998,6 +2002,10 @@ projectivityBetweenRationalNormalCurves (Ideal,Ideal) := (C1,C2) -> (
    phi
 );
 
+point (SpecialCubicFourfold) := (X) -> point ideal X;  
+
+point (SpecialGushelMukaiFourfold) := (X) -> trim sub(point ideal X,ringDP5 X);
+
 ------------------------------------------------------------------------
 ---------------------------- Documentation -----------------------------
 ------------------------------------------------------------------------
@@ -2257,6 +2265,8 @@ Usage => "< X",
 Inputs => {"X" => SpecialGushelMukaiFourfold => {"a fourfold of ordinary type"}}, 
 Outputs => {SpecialGushelMukaiFourfold => {"a fourfold of Gushel type, a deformation of ",TT"X"}}, 
 EXAMPLE {"time X = specialGushelMukaiFourfold \"quintic del Pezzo surface\";", "? ideal singularLocus grassmannianHull X", "time X' = < X;", "time ? radical saturate ideal singularLocus grassmannianHull X'"}} 
+
+undocumented{(point,SpecialCubicFourfold), (point,SpecialGushelMukaiFourfold)}
 
 ------------------------------------------------------------------------
 ------------------------------- Tests ----------------------------------
