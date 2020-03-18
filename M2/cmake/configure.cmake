@@ -165,13 +165,6 @@ include(CheckCXXSourceCompiles)
 check_cxx_source_compiles([[#include <givaro/gfq.h>
   int main(){class Givaro::GFqDom<long int> foo; foo.isunit(0);return 0;}]] HAVE_GIVARO_isunit)
 
-# TODO: is there better way to do this?
-if(HAVE_GIVARO_isunit)
-  set(GIVARO_isunit_STRING 1)
-else()
-  set(GIVARO_isunit_STRING 0)
-ENDIF()
-
 #AC_DEFINE(HAVE_LINBOX,1,[whether we are linking with the linbox library])
 #AC_DEFINE(HAVE_FPLLL,1,[whether we are linking with the fplll library])
 #AC_DEFINE([HAVE_FACTORY_PREM],[1],[whether Prem() from factory is public])
