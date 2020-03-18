@@ -57,7 +57,6 @@ string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS}")
 # mpfr      1d3be708604eae0e42d578ba93b390c2a145f17743a744d8f3f8c2ad5855a38a mpfr-4.0.2.tar.xz
 
 include(ExternalProject) # populate at build time; FetchContent populates at configure time
-find_program(MAKE_EXE NAMES make gmake nmake)
 set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
 
 # TODO: use git? https://github.com/Macaulay2/mpir.git 82816d99
@@ -473,7 +472,6 @@ endif()
 # FIXME: gmp libtool pari are Missing below
 # gfan normaliz csdp nauty cddplus lrslib topcom cohomcalg)
 
-find_program(4TI2 NAMES circuits PATH ${M2_HOST_PREFIX}/bin)
 ExternalProject_Add(build-4ti2
   URL               ${M2_SOURCE_URL}/4ti2-1.6.9.tar.gz
   URL_HASH          SHA256=3053e7467b5585ad852f6a56e78e28352653943e7249ad5e5174d4744d174966
@@ -514,7 +512,6 @@ if(NOT 4TI2)
 endif()
 
 
-find_program(COHOMCALG cohomcalg PATH ${M2_HOST_PREFIX}/bin)
 # https://github.com/BenjaminJurke/cohomCalg/
 # Warning: this no longer compiles with gcc version 4.8.5, and it doesn't help with
 #   https://github.com/Macaulay2/M2/issues/977, so we may want to go back to the old version.
@@ -545,7 +542,6 @@ if(NOT COHOMCALG)
 endif()
 
 
-find_program(GFAN gfan PATH ${M2_HOST_PREFIX}/bin)
 set(gfan_CC  "${CC}  ${CPPFLAGS}")
 set(gfan_CXX "${CXX} ${CPPFLAGS}")
 set(gfan_CLINKER  "${CC}  ${LDFLAGS}")
@@ -579,7 +575,6 @@ endif()
 
 
 # TODO: library or program?
-find_program(LRSLIB lrs PATH ${M2_HOST_PREFIX}/bin)
 # http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
 ExternalProject_Add(build-lrslib
   URL               ${M2_SOURCE_URL}/lrslib-062.tar.gz
@@ -607,7 +602,6 @@ if(NOT LRSLIB)
 endif()
 
 
-find_program(CSDP csdp PATH ${M2_HOST_PREFIX}/bin)
 set(csdp_CC  "${CC}  ${OpenMP_C_FLAGS}")
 set(csdp_CXX "${CXX} ${OpenMP_CXX_FLAGS}")
 set(csdp_LDFLAGS "${LDFLAGS} ${OpenMP_CXX_FLAGS}")
@@ -647,7 +641,6 @@ endif()
 
 
 # TODO: see special variables OPENMP and NORMFLAGS for macOS from libraries/normaliz/Makefile.in
-find_program(NORMALIZ NAMES normaliz PATH ${M2_HOST_PREFIX}/bin)
 set(normaliz_CXXFLAGS "${CPPFLAGS} -Wall -O3 -Wno-unknown-pragmas -std=c++11 -I .. -I . ${OpenMP_CXX_FLAGS}")
 set(normaliz_GMPFLAGS "${LDFLAGS} -lgmpxx -lgmp") # TODO: what about mpir?
 ExternalProject_Add(build-normaliz
@@ -692,7 +685,6 @@ if(NOT NORMALIZ)
 endif()
 
 
-#find_program(NAUTY NAMES nauty-complg PATH ${M2_HOST_PREFIX}/bin)
 # URL = http://cs.anu.edu.au/~bdm/nauty
 set(nauty_PROGRAMS
    NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg

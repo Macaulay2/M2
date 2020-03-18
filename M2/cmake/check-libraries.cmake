@@ -48,6 +48,7 @@ set(ENV{PKG_CONFIG_PATH}      ${M2_HOST_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PA
 
 ## Find libraries available as CMake modules
 # TODO: specify minimum version
+# TODO: use LAPACK/BLAS from Eigen3
 find_package(LAPACK      REQUIRED QUIET) # also sets BLAS variables
 find_package(Eigen3  3.3 REQUIRED QUIET NO_MODULE)
 find_package(Threads 2.1 REQUIRED QUIET) # pthread
@@ -84,12 +85,25 @@ find_package(GLPK 4.59  QUIET)
 # /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist//usr/share/factory/
 pkg_search_module(FACTORY	factory>=4.1.1
                                 singular-factory>=4.1.1	IMPORTED_TARGET)
-pkg_search_module(FFLAS_FFPACK	fflas-ffpack>=2.3.2	IMPORTED_TARGET)
-pkg_search_module(GIVARO	givaro>=4.0.3		IMPORTED_TARGET)
+pkg_search_module(FFLAS_FFPACK	fflas-ffpack>=2.2.2	IMPORTED_TARGET)
+pkg_search_module(GIVARO	givaro>=4.0.2		IMPORTED_TARGET)
 pkg_search_module(BDW_GC	bdw-gc			IMPORTED_TARGET)
 
-## TODO: remove these or deal with them differently
+# TODO: remove this or deal with it differently
 find_library(LIBGDBM gdbm)
+
+## Need a flavor of make for building libraries and programs
+find_program(MAKE_EXE NAMES make gmake nmake)
+
+## Find external programs used by Macaulay2 packages
+find_program(4TI2	NAMES	4ti2-circuits circuits	PATH ${M2_HOST_PREFIX}/bin)
+find_program(COHOMCALG		cohomcalg		PATH ${M2_HOST_PREFIX}/bin)
+find_program(GFAN		gfan			PATH ${M2_HOST_PREFIX}/bin)
+# TODO: library or program?
+find_program(LRSLIB		lrs			PATH ${M2_HOST_PREFIX}/bin)
+find_program(CSDP		csdp			PATH ${M2_HOST_PREFIX}/bin)
+find_program(NORMALIZ		normaliz		PATH ${M2_HOST_PREFIX}/bin)
+find_program(NAUTY	NAMES	dreadnaut nauty-complg	PATH ${M2_HOST_PREFIX}/bin)
 
 ###############################################################################
 

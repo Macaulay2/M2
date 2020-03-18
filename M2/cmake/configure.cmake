@@ -261,7 +261,9 @@ check_function_exists(ioctl	HAVE_IOCTL)
 check_function_exists(alloca HAVE_ALLOCA)
 check_include_files(alloca.h HAVE_ALLOCA_H)
 
-# TODO: use these
+# TODO: remove dependence on atomic_ops.h
+
+# TODO: do we use these?
 ## topcom depends on cddlib, but includes setoper.h, rather than cdd/setoper.h, so we do, too
 check_include_files(setoper.h	HAVE_CDDLIB)
 check_include_files(NTL/version.h	HAVE_NTL)
