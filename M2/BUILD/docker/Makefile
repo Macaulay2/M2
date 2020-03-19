@@ -18,7 +18,8 @@ build-image:
 
 build-M2:
 	mkdir -p build
-	docker run --volume $(STORAGE):$(M2HOME) --volume $(M2REPO):$(M2HOME)/M2 --interactive --tty --entrypoint="" $(TAG) bash /home/macaulay/build-M2.sh
+	docker run --volume $(STORAGE):$(M2HOME) --volume $(M2REPO):$(M2HOME)/M2 --interactive --tty \
+		--entrypoint="" $(TAG) bash /home/macaulay/build-M2.sh
 
 run-graphical:
 	docker run $(VOLUME) --net=host --env="DISPLAY" $(TAG)

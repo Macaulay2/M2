@@ -74,10 +74,10 @@ find_package(Memtailor)
 find_package(Mathic)
 find_package(Mathicgb)
 
-#find_package(GMP  6.1.0 QUIET)
+find_package(GMP  6.1.0 QUIET)
 find_package(MPC  1.1.0 QUIET)
 find_package(MPFR 4.0.2 QUIET)
-find_package(GLPK 4.59  QUIET)
+find_package(NTL  10.5.0 QUIET)
 
 ## Find libraries available via pkg-config
 # TODO: investigate error when factory-devel package is installed:

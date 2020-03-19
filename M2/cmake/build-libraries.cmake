@@ -178,8 +178,19 @@ if(NOT FACTORY_FOUND)
   add_dependencies(install-libraries build-factory-install)
   # TODO: repeat pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
   if(NOT FLINT_FOUND)
-    # TODO: also add mpfr, ntl, gmp/mpir?
     ExternalProject_Add_StepDependencies(build-factory build build-flint-install) # lol
+  endif()
+  if(NOT NTL_FOUND)
+    # TODO: add build-ntl
+    ExternalProject_Add_StepDependencies(build-factory build build-ntl-install)
+  endif()
+  if(NOT MPFR_FOUND)
+    # TODO: add build-mpfr
+    ExternalProject_Add_StepDependencies(build-factory build build-mpfr-install)
+  endif()
+  if(NOT GMP_FOUND AND NOT MPIR_FOUND)
+    # TODO: add build-gmp as well
+    ExternalProject_Add_StepDependencies(build-factory build build-mpir-install)
   endif()
 endif()
 
@@ -396,7 +407,7 @@ if(NOT FFLAS_FFPACK_FOUND)
   add_dependencies(install-libraries build-fflas_ffpack-install)
   if(NOT GIVARO_FOUND)
     # TODO: also add gmp/mpir?
-    ExternalProject_Add_StepDependencies(build-fflas_ffpack build build-givaro-install) # lol
+    ExternalProject_Add_StepDependencies(build-fflas_ffpack build build-givaro-install)
   endif()
 endif()
 
