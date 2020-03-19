@@ -76,7 +76,7 @@ find_package(Mathicgb)
 
 find_package(GMP  6.1.0 QUIET)
 find_package(MPC  1.1.0 QUIET)
-find_package(MPFR 4.0.2 QUIET)
+find_package(MPFR 4.0.1 QUIET)
 find_package(NTL  10.5.0 QUIET)
 
 ## Find libraries available via pkg-config

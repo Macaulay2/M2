@@ -28,7 +28,7 @@ run-terminal:
 	docker run $(VOLUME) --interactive --tty $(TAG)
 
 shell:
-	docker run $(VOLUME) --interactive --tty --entrypoint bash $(TAG)
+	docker run $(VOLUME) --interactive --tty --user root --entrypoint bash $(TAG)
 
 M2:
 	docker run $(VOLUME) --interactive --tty --entrypoint M2 $(TAG)
