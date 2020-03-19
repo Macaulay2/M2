@@ -44,7 +44,9 @@ target_include_directories(scc1
     ${CMAKE_BINARY_DIR}/include
     /usr/local/include
   )
+if(BDW_GC_FOUND)
 target_link_libraries(scc1 PkgConfig::BDW_GC ${LIBGDBM})
+endif()
 target_link_directories(scc1 PRIVATE ${CMAKE_BUILD_DIR}/usr-host/lib)
 
 # Why do we do this?

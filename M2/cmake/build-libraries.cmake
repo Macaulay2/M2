@@ -300,7 +300,7 @@ set(GTEST_PATH  ${CMAKE_BINARY_DIR}/libraries/googletest/build/googletest) # ${M
 ## bdwgc
 # Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
 # Currently cloning master for significant cmake support. Hopefully soon there will be a stable release
-ExternalProject_Add(bdwgc
+ExternalProject_Add(build-bdwgc
   GIT_REPOSITORY    https://github.com/ivmai/bdwgc.git
   GIT_TAG           master
   PREFIX            libraries/bdwgc
