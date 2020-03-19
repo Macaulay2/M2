@@ -34,7 +34,7 @@ string(REPLACE ";" " " CPPFLAGS "${COMPILE_OPTIONS}")
 set(CFLAGS   "${CPPFLAGS} -w -Wimplicit -Werror")
 
 ## C++ compiler flags
-set(CXXFLAGS "${CPPFLAGS} -Wno-mismatched-tags -w -Wno-deprecated-register")
+set(CXXFLAGS "${CXXFLAGS} -std=gnu++11 -Wno-mismatched-tags -w -Wno-deprecated-register")
 
 ## Linker flags
 string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS}")

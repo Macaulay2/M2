@@ -1,5 +1,5 @@
 # Time usage: <15min
-# Net usage:  <300MB
+# Net usage:  ~255MB
 # Disk usage: <1GB docker image + 650MB Macaulay2 build
 
 FROM ubuntu:18.04

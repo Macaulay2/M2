@@ -26,6 +26,9 @@ run-graphical:
 run-terminal:
 	docker run $(VOLUME) --interactive --tty $(TAG)
 
+M2:
+	docker run $(VOLUME) --interactive --tty --entrypoint M2 $(TAG)
+
 bash:
 	docker run $(VOLUME) --interactive --tty --entrypoint bash $(TAG)
 
