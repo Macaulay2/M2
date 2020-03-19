@@ -26,10 +26,10 @@ run-graphical:
 run-terminal:
 	docker run $(VOLUME) --interactive --tty $(TAG)
 
+shell:
+	docker run $(VOLUME) --interactive --tty --entrypoint bash $(TAG)
+
 M2:
 	docker run $(VOLUME) --interactive --tty --entrypoint M2 $(TAG)
-
-bash:
-	docker run $(VOLUME) --interactive --tty --entrypoint bash $(TAG)
 
 # TODO: need --int --no-readline --no-randomize in args?

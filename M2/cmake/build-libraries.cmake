@@ -27,17 +27,19 @@ get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
 # --disable-shared --enable-static
 
 ## Preprocessor flags
-string(REPLACE ";" " " CPPFLAGS "${COMPILE_OPTIONS}")
+string(REPLACE ";" " " CPPFLAGS "${CPPFLAGS} ${COMPILE_OPTIONS}")
 
-# NOTE: CMake does not easily support compiler dependent flags, so we put all preprocessor flags as compiler flags
+# NOTE: CMake does not easily support compiler dependent flags,
+# so we put all preprocessor flags as compiler flags. Also, since
+# some components are old, we only require C++11 standard here.
 ## C compiler flags
-set(CFLAGS   "${CPPFLAGS} -w -Wimplicit -Werror")
+set(CFLAGS   "${CFLAGS}   ${CPPFLAGS} -std=gnu11 -w -Wimplicit -Werror")
 
 ## C++ compiler flags
-set(CXXFLAGS "${CXXFLAGS} -std=gnu++11 -Wno-mismatched-tags -w -Wno-deprecated-register")
+set(CXXFLAGS "${CXXFLAGS} ${CPPFLAGS} -std=gnu++11 -Wno-mismatched-tags -w -Wno-deprecated-register")
 
 ## Linker flags
-string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS}")
+string(REPLACE ";" " " LDFLAGS "${LDFLAGS} ${LINK_OPTIONS}")
 
 ## Toolchain flags
 # TODO: Are these necessary to define?
@@ -99,8 +101,9 @@ endif()
 
 
 # TODO: use flint2 from https://github.com/Macaulay2/flint2.git ??
-# TODO: cflags: normal: -std=c90 -pedantic-errors +debug: -O0 -fno-unroll-loops
+# TODO: cflags+debug: -O0 -fno-unroll-loops
 # TODO: confirm that building with mpir works
+set(flint_CFLAGS "${CFLAGS} ${CPPFLAGS} -std=c90 -pedantic-errors")
 ExternalProject_Add(build-flint
   URL               ${M2_SOURCE_URL}/flint-2.5.2.tar.gz
   URL_HASH          SHA256=cbf1fe0034533c53c5c41761017065f85207a1b770483e98b2392315f6575e87
@@ -118,16 +121,8 @@ ExternalProject_Add(build-flint
                       --disable-tls
                       --disable-shared
                       # --enable-assert
-                      CPPFLAGS=${CPPFLAGS}
-                      CFLAGS=${CFLAGS}
-                      CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
+                      CFLAGS=${flint_CFLAGS}
                       CC=${CMAKE_C_COMPILER}
-                      CXX=${CMAKE_CXX_COMPILER}
-                      AR=${CMAKE_AR}
-                      OBJDUMP=${CMAKE_OBJDUMP}
-                      STRIP=${CMAKE_STRIP}
-                      RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
   INSTALL_COMMAND   ${MAKE_EXE} install
   EXCLUDE_FROM_ALL  ON
@@ -304,9 +299,7 @@ ExternalProject_Add(build-bdwgc
   GIT_REPOSITORY    https://github.com/ivmai/bdwgc.git
   GIT_TAG           master
   PREFIX            libraries/bdwgc
-  SOURCE_DIR        libraries/bdwgc/build
-  INSTALL_DIR       usr-host
-  BUILD_IN_SOURCE   ON
+  BINARY_DIR        libraries/bdwgc/build
 # TODO: what is GC_LARGE_ALLOC_WARN_INTERVAL=1?
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -Denable_cplusplus=ON
