@@ -103,7 +103,7 @@ class MonomialHashTable
   // The hash table size will be a power of 2, and this
   // is the initial power.
 
-  ~MonomialHashTable() = default;
+  ~MonomialHashTable() {}
 
   void reset();
   // Clear out the hash table, resetting all values to 0, and

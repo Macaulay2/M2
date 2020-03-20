@@ -12,6 +12,11 @@ end--
 restart
 load "roots.m2"
 
+R = RR[x]
+F = x^4-x^2-3*x-1
+F = (x^2-1)^3
+roots F
+
 R = QQ[x]
 F = x^4-x^2-3*x-1
 F = (x^2-1)^3

@@ -869,6 +869,13 @@ if test $BUILD_mpfr = yes
 then BUILTLIBS="-lmpfr $BUILTLIBS"
 fi
 
+# including mps 
+AC_LANG(C)
+AC_CHECK_HEADER(mps/mps.h,LIBS="-lmps $LIBS",BUILD_mps=yes)
+if test $BUILD_mps = yes
+then AC_MSG_ERROR("we cant compile mps yet") 
+fi
+
 AC_LANG(C)
 AC_CHECK_HEADER(mpc.h,LIBS="-lmpc $LIBS",BUILD_mpc=yes)
 if test $BUILD_mpc = yes
