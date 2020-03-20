@@ -51,34 +51,38 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
 
   /* Allocate space to hold the results. We check only floating point results
    * in here */
-  cplx_t *results = cplx_valloc (hideg);
+  cplx_t *result_mps = cplx_valloc (hideg);
 
   /* Actually solve the polynomial */
   mps_mpsolve (s);
 
   /* Save roots computed in the vector results */
-  mps_context_get_roots_d (s, &results, nullptr);
+  mps_context_get_roots_d (s, &result_mps, nullptr);
 
   /* Print out roots */
   for (int i = 0; i < hideg; i++) {
-    cplx_out_str (stdout, results[i]);
+    cplx_out_str (stdout, result_mps[i]);
     printf ("\n");
   }
 
-  free (results);
-      
-  ERROR("'roots' is implemented for RR coefficients... NOT YET");
-  return nullptr;
-
-  ///////////////////////////
+  ///////////////////////////////
+  // copy to mps_result to result
   engine_RawRingElementArrayOrNull result = nullptr;
 
-  const size_t num_roots = 1; // TODO: set this correctly
+  const size_t num_roots = hideg; // is this correct for non-squarefree?
   result = getmemarraytype(engine_RawRingElementArray, num_roots);
   result->len = static_cast<int>(num_roots);
-      
-  // TODO: set the roots correctly.
-      
+  ring_elem m2_root;
+
+  const RingCC *CC = dynamic_cast<const RingCC *>(IM2_Ring_CCC(prec)); // ???
+  for (int i = 0; i < hideg; i++) {
+    auto& mps_root = result_mps[i];
+    const complex root = {cplx_Re(mps_root),cplx_Im(mps_root)};
+    CC->ring().to_ring_elem(m2_root, root);
+    result->array[i] = RingElement::make_raw(CC, m2_root);
+  }
+
+  free (result_mps);
   return result;
 }
 
