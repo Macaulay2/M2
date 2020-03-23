@@ -25,6 +25,10 @@ set(CLIST arithmetic-tmp.c atomic-tmp.c M2-tmp.c system-tmp.c strings-tmp.c vars
 
 add_custom_target(generate-d ALL DEPENDS ${CLIST})
 
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set(SCCFLAGS -O)
+endif()
+
 foreach(FILENAME ${CLIST})
   string(REGEX MATCH "^([a-zA-Z0-9_]+)-tmp\.(c|cc)$" NULL ${FILENAME})
   set(NAME ${CMAKE_MATCH_1})
@@ -32,7 +36,7 @@ foreach(FILENAME ${CLIST})
 
   add_custom_command(OUTPUT ${NAME}.sig
     COMMAND
-      scc1 -dep ${CMAKE_CURRENT_SOURCE_DIR}/${NAME}.${DEXT}
+      scc1 ${SCCFLAGS} -dep ${CMAKE_CURRENT_SOURCE_DIR}/${NAME}.${DEXT}
     COMMAND
       mv ${NAME}.dep.tmp ${NAME}.dep
     COMMAND
@@ -45,7 +49,7 @@ foreach(FILENAME ${CLIST})
 
   add_custom_command(OUTPUT ${FILENAME}
     COMMAND
-      scc1 ${CMAKE_CURRENT_SOURCE_DIR}/${NAME}.${DEXT}
+      scc1 ${SCCFLAGS} ${CMAKE_CURRENT_SOURCE_DIR}/${NAME}.${DEXT}
     COMMAND
       test -e ${NAME}-exports.h
         && cmp -s ${NAME}-exports.h.tmp ${NAME}-exports.h
@@ -83,9 +87,6 @@ add_library(interpreter OBJECT
   ${CMAKE_CURRENT_BINARY_DIR}/startup.c
   )
 
-# TODO: Is this needed for standalone use? How?
-# target_link_libraries(interpreter gc)
-
 add_dependencies(interpreter generate-d e-includes)
 
 target_include_directories(interpreter
@@ -100,25 +101,41 @@ target_include_directories(interpreter
     ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
     /usr/local/include
   PRIVATE
-    ${LIBXML2_INCLUDE_DIR}
     ${EIGEN3_INCLUDE_DIR}
     ${GIVARO_INCLUDE_DIRS}
+    ${LIBXML2_INCLUDE_DIR}
+    ${READLINE_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/submodules/memtailor/src
     ${CMAKE_SOURCE_DIR}/submodules/mathic/src
     ${CMAKE_SOURCE_DIR}/submodules/mathicgb/src
   )
 
-if(SUPPRESS_COMPILER_WARNINGS)
-  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(interpreter PRIVATE
-      -Wall -Wno-shadow
-      -Wno-sign-conversion -Wno-sign-compare
-      -Wno-parentheses
-      -Wstrict-aliasing -Wfatal-errors
-      -Wimplicit-function-declaration -Wno-uninitialized
-      -Wno-cast-qual -Wno-unused -Wno-unused-label -Wreturn-type
-      -Wno-mismatched-tags
-      )
-  endif()
-  # add other compilers here
+# common warning flags
+target_compile_options(interpreter PRIVATE
+  -Wall
+  #-Wextra
+  -Wfatal-errors
+  -Wno-cast-qual
+  -Wno-parentheses
+  -Wno-shadow
+  -Wno-sign-compare
+  -Wno-sign-conversion
+  -Wno-uninitialized
+  -Wno-unused
+  -Wno-unused-parameter
+  # temporary flags
+  -Wno-unknown-pragmas
+  -Wno-frame-address
+  )
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  # using Clang or AppleClang
+  target_compile_options(interpreter PRIVATE
+    -Wno-mismatched-tags # needed currently, but if we clean up includes, should not be needed?
+    -Wno-parentheses-equality
+    )
 endif()
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  # using GCC
+endif()
+# add other compilers (eg: Intel, MSVC) here
+# for Intel: -diag-disable 981,869,383,2259,444 -debug

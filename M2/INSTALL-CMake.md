@@ -22,7 +22,8 @@ git clone https://github.com/mahrud/M2.git M2
 cd M2/M2/BUILD/build
 git checkout eigen
 cmake ../..
-make install-libraries
+make build-libraries build-programs
+cmake .
 make
 make check-packages
 ```
@@ -47,8 +48,9 @@ The following are some general targets:
 - `list_install_components`
 - `rebuild_cache`
 
-Targets for building and installing libraries
-- `install-libraries`
+Targets for building and installing libraries and programs
+- `build-libraries`
+- `build-programs`
 - `build-[LIBRARY or PROGRAM]`
 - `build-[LIBRARY or PROGRAM]-install`
 - `googletest`

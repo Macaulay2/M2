@@ -282,7 +282,8 @@ set(SOURCES
   )
 
 # TODO: write the M2Config.cmake module for users
-add_library(M2-engine SHARED ${SOURCES})
+# TODO: SHARED seems to fail on mac unless it is linked
+add_library(M2-engine STATIC ${SOURCES})
 
 # TODO: install the unstripped library with debug_info in the appropriate place.
 # On Fedora: /usr/lib/debug/usr/lib64/
@@ -312,34 +313,40 @@ target_include_directories(M2-engine
   )
 
 # TODO: enable INTERPROCEDURAL_OPTIMIZATION?
-if(SUPPRESS_COMPILER_WARNINGS)
-  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    # using Clang or AppleClang
-    target_compile_options(M2-engine PRIVATE
-      -Wall -Wuninitialized
-      -Wextra -Wno-unused-parameter
-      #  -pedantic-errors -Wno-extra-semi # we cannot put this in since fflas_ffpack appears to use gnu extensions...
-      #  -Wno-shadow # not needed for appleclang
-      #  -Wno-parentheses # not needed for appleclang
-      -Wno-sign-conversion
-      -Wno-sign-compare
-      #  -Wno-error=pragmas # not needed for appleclang
-      -Wno-unknown-pragmas
-      -Wno-mismatched-tags # needed currently, but if we clean up includes, should not be needed?
-      #  -Wno-unused-local-typedefs # one warning, in mathic.h from x-aring.cpp
-      #  -Wno-cast-qual # not needed for appleclang
-      )
-  endif()
-  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    # using GCC
-  endif()
-  if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-    # using Intel C++
-  endif()
-  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    # using Visual Studio C++
-  endif()
+# common warning flags
+target_compile_options(M2-engine PRIVATE
+  -Wall
+  -Wextra
+  -Wfatal-errors
+  -Wno-cast-qual
+  -Wno-parentheses
+  -Wno-shadow
+  -Wno-sign-compare
+  -Wno-sign-conversion
+  -Wno-uninitialized
+  -Wno-unused
+  -Wno-unused-parameter
+  # temporary flags
+  -Wno-deprecated-copy
+  -Wno-unknown-pragmas
+  )
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  # using Clang or AppleClang
+  target_compile_options(M2-engine PRIVATE
+    -Wno-mismatched-tags # needed currently, but if we clean up includes, should not be needed?
+    )
 endif()
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  # using GCC
+  target_compile_options(M2-engine PRIVATE
+    #-pedantic-errors
+    #-Wno-extra-semi
+    -Wno-error=pragmas
+    -Wno-unused-local-typedefs # one warning, in mathic.h from x-aring.cpp
+    )
+endif()
+# add other compilers (eg: Intel, MSVC) here
+# for Intel: -diag-disable 981,869,383,2259,444 -debug -Wimplicit-function-declaration
 
 # TODO
 if(FALSE)

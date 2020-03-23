@@ -3,11 +3,11 @@
 set -x
 set -e
 
-mkdir -p /home/macaulay/M2/M2/BUILD/docker-build
-cd /home/macaulay/M2/M2/BUILD/docker-build
+mkdir -p /home/macaulay/M2/M2/BUILD/build-docker
+cd /home/macaulay/M2/M2/BUILD/build-docker
 
 cmake ../..
-make install-libraries install-programs
+make build-libraries build-programs
 
 cmake .
 make install

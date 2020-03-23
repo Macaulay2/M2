@@ -2,11 +2,13 @@
 
 find_path(HISTORY_INCLUDE_DIR
   NAMES readline/history.h
-  PATHS ${READLINE_ROOT_DIR} ${READLINE_INCLUDE_DIR}
-  NO_DEFAULT_PATH
+  PATHS ${READLINE_ROOT_DIR}/include ${READLINE_INCLUDE_DIR}
   )
 
-find_library(HISTORY_LIBRARY history)
+find_library(HISTORY_LIBRARY
+  NAMES history
+  PATHS ${READLINE_ROOT_DIR}/lib
+  )
 
 # handle the QUIETLY and REQUIRED arguments and set XXX_FOUND to TRUE if all listed variables are TRUE
 INCLUDE(FindPackageHandleStandardArgs)

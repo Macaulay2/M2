@@ -23,8 +23,7 @@ endif()
 target_link_libraries(M2-binary
   regex interpreter M2-engine system kernel
   Threads::Threads ${LAPACK_LIBRARIES}
-  ${LIBXML2_LIBRARIES} ${LIBGDBM} ${CMAKE_DL_LIBS} # TODO: remove ${LZMA_LIBRARIES}
-
+  ${LIBXML2_LIBRARIES} ${LIBGDBM} ${CMAKE_DL_LIBS}
   )
 
 if(HISTORY_FOUND AND READLINE_FOUND)
@@ -50,25 +49,50 @@ target_link_libraries(M2-binary
   )
 endif()
 
-get_target_property(LINK_LIBRARIES M2-binary LINK_LIBRARIES)
-message("## Library information: ${LINK_LIBRAREIS}")
+###############################################################################
 
-# TODO
-# LD_LIBRARY_PATH="/home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-host/lib:$LD_LIBRARY_PATH" ldd /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist/x86_64-Linux-Fedora-30/bin/M2-binary.tmp
+find_program(LDD ldd)
+find_program(OTOOL otool)
+if(LDD)
+  add_custom_command(TARGET M2-binary POST_BUILD
+    COMMENT "## Linked libraries:"
+    COMMAND ${LDD} $<TARGET_FILE:M2-binary>
+    )
+elseif(OTOOL)
+  add_custom_command(TARGET M2-binary POST_BUILD
+    COMMENT "## Linked libraries:"
+    COMMAND ${OTOOL} -L $<TARGET_FILE:M2-binary>
+    )
+endif()
+
+###############################################################################
+
+# TODO: strip args
 
 # objcopy --only-keep-debug Macaulay2/bin/M2-binary M2.debug-info
 # objdump -x Macaulay2/bin/M2-binary | egrep RPATH || [ $? -lt 2 ]
 # objdump -x Macaulay2/bin/M2-binary | egrep "RPATH +/usr/lib64/Macaulay2/lib$" || [ $? -lt 2 ]
 
-#AC_OUTPUT() # files configured in this folder
-#Macaulay2/bin/M2
+if(APPLE)
+  set(EXPORT_STRING [[DYLD_LIBRARY_PATH=`dirname "$0"`/../${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib:$DYLD_LIBRARY_PATH]])
+elseif(UNIX)
+  set(EXPORT_STRING [[  LD_LIBRARY_PATH=`dirname "$0"`/../${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib:$LD_LIBRARY_PATH]])
+endif()
 
-#if(APPLE)
-#  set(EXPORT_STRING [[export DYLD_LIBRARY_PATH=`dirname "$0"`/../@tail_librariesdir@:$DYLD_LIBRARY_PATH ;;]])
-#elseif(UNIX)
-#  set(EXPORT_STRING [[export   LD_LIBRARY_PATH=`dirname "$0"`/../@tail_librariesdir@:$LD_LIBRARY_PATH ;;]])
-#endif()
-# TEMPLATE:
-##! /bin/sh
-## We assume that @ pre_bindir @/.. is ${pre_exec_prefix} (see configure.ac)
-#@EXPORT_STRING@ `dirname "$0"`/M2@EXE@ "$@"
+set(M2_TEMPLATE "#!/bin/sh\n@EXPORT_STRING@ `dirname \"$0\"`/M2@EXE@ \"$@\"\n")
+string(CONFIGURE "${M2_TEMPLATE}" M2_TEMPLATE @ONLY)
+file(GENERATE
+  OUTPUT M2
+  CONTENT "${M2_TEMPLATE}"
+  )
+
+install(FILES M2
+  TYPE BIN
+  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+  )
+#install(TARGETS M2-binary RUNTIME
+#  FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+#  )
+
+# TODO
+# LD_LIBRARY_PATH="${M2_HOST_PREFIX}/lib:$LD_LIBRARY_PATH" ldd M2-binary.tmp

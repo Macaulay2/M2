@@ -47,6 +47,7 @@ set(ENV{PKG_CONFIG_PATH}      ${M2_HOST_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PA
 ## Look for prerequisite packages and libraries using CMake or pkg-config
 
 ## Find libraries available as CMake modules
+## We provide modules for finding come of these libraries in cmake/
 # TODO: specify minimum version
 # TODO: use LAPACK/BLAS from Eigen3
 find_package(LAPACK      REQUIRED QUIET) # also sets BLAS variables
@@ -63,18 +64,18 @@ find_package(OpenMP      REQUIRED QUIET)
 # TBB is required for threading in mathicgb
 find_package(TBB         REQUIRED) # required by mathicgb
 
-## We provide modules for finding these libraries in cmake/
+find_package(GMP  6.1.0 QUIET)
+find_package(MPIR 3.0.0 QUIET)
+
 ## They are not required because we can build them if they are not found.
 # TODO: specify minimum version
 find_package(CDD)
-find_package(MPIR)
 find_package(Flint)
 find_package(Frobby)
 find_package(Memtailor)
 find_package(Mathic)
 find_package(Mathicgb)
 
-find_package(GMP  6.1.0 QUIET)
 find_package(MPC  1.1.0 QUIET)
 find_package(MPFR 4.0.1 QUIET)
 find_package(NTL  10.5.0 QUIET)
@@ -93,7 +94,9 @@ pkg_search_module(BDW_GC	bdw-gc			IMPORTED_TARGET)
 find_library(LIBGDBM gdbm)
 
 ## Need a flavor of make for building libraries and programs
-find_program(MAKE_EXE NAMES make gmake nmake)
+find_program(MAKE_EXE	NAMES	make gmake nmake)
+## Need a flavor of etags for building TAGS files
+find_program(ETAGS	NAMES	etags ctags)
 
 ## Find external programs used by Macaulay2 packages
 find_program(4TI2	NAMES	4ti2-circuits circuits	PATH ${M2_HOST_PREFIX}/bin)

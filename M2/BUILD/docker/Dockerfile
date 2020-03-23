@@ -20,6 +20,7 @@ RUN apt-get update && \
     apt-get clean
 
 # Libraries we require (except gc)
+# TODO: need to build gc for large memory machines
 RUN apt-get install -y libopenblas-dev libeigen3-dev \
     libxml2-dev libreadline-dev libomp-dev libtbb-dev \
     libgc-dev libgdbm-dev && apt-get clean
@@ -43,7 +44,7 @@ USER 1000:1000
 # FIXME: This address might not always be the same
 ENV PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
 ENV LDFLAGS         -L/usr/lib/x86_64-linux-gnu
-ENV PATH            /home/macaulay/M2/M2/BUILD/docker-build:${PATH}
+ENV PATH            /home/macaulay/M2/M2/BUILD/build-docker:${PATH}
 
 # Build the Docker image:
 # make build-image

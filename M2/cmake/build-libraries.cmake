@@ -2,8 +2,8 @@ set(JOBS 4)
 
 ################################################################
 ## This target requires all external projects to be built and installed
-add_custom_target(install-libraries ALL)
-add_custom_target(install-programs ALL)
+add_custom_target(build-libraries ALL)
+add_custom_target(build-programs ALL)
 
 file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
 
@@ -33,20 +33,24 @@ string(REPLACE ";" " " CPPFLAGS "${CPPFLAGS} ${COMPILE_OPTIONS}")
 # so we put all preprocessor flags as compiler flags. Also, since
 # some components are old, we only require C++11 standard here.
 ## C compiler flags
-set(CFLAGS   "${CFLAGS}   ${CPPFLAGS} -std=gnu11 -w -Wimplicit -Werror")
+set(CFLAGS   "${CPPFLAGS} -std=gnu11 -w -Wimplicit -Werror ${CFLAGS}")
 
 ## C++ compiler flags
-set(CXXFLAGS "${CXXFLAGS} ${CPPFLAGS} -std=gnu++11 -Wno-mismatched-tags -w -Wno-deprecated-register")
+set(CXXFLAGS "${CPPFLAGS} -std=gnu++11 -w -Wno-mismatched-tags -Wno-deprecated-register ${CXXFLAGS}")
 
 ## Linker flags
-string(REPLACE ";" " " LDFLAGS "${LDFLAGS} ${LINK_OPTIONS}")
+string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS} ${LDFLAGS}")
 
 ## Toolchain flags
-# TODO: Are these necessary to define?
-# TODO: LIBS=??? LIB_DIRS=??
 # Possible assembly dialects are "", "_NASM", "_MASM", "-ATT"
 # AS=${CMAKE_ASM${DIALECT}_COMPILER}
-# DLLTOOL=??? (use find_program if needed)
+
+if(VERBOSE)
+  message("## Library compile options:
+     CFLAGS            = ${CFLAGS}
+     CXXFLAGS          = ${CXXFLAGS}
+     LDFLAGS           = ${LDFLAGS}")
+endif()
 
 #################################################################################
 ## Build required libraries, first those downloaded as a tarfile
@@ -58,7 +62,6 @@ string(REPLACE ";" " " LDFLAGS "${LDFLAGS} ${LINK_OPTIONS}")
 # 4ti2 needs glpk, but maybe FindGLPK will suffice for all three
 # glpk      e398be2e7cb8a98584325268704729872558a4a88555bc8a54139d017eb9ebae glpk-4.59.tar.gz
 # mpc       6985c538143c1208dcb1ac42cedad6ff52e267b47e5f970183a3e75125b43c2e mpc-1.1.0.tar.gz
-# mpfr      1d3be708604eae0e42d578ba93b390c2a145f17743a744d8f3f8c2ad5855a38a mpfr-4.0.2.tar.xz
 
 include(ExternalProject) # populate at build time; FetchContent populates at configure time
 set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
@@ -90,20 +93,72 @@ ExternalProject_Add(build-mpir
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
-  INSTALL_COMMAND   ${MAKE_EXE} install
+  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
-if(USING_MPI AND NOT MPIR_FOUND)
+if(MP_LIBRARY MATCHES "gmp|GMP" AND GMP_FOUND)
+  set(MP_LIBRARY GMP)
+  if(NOT GMP_FOUND)
+    # gmp is a prerequisite
+    message(FATAL "gmp integer package specified, but not found")
+  endif()
+elseif(MP_LIBRARY MATCHES "mpir|MPIR")
+  set(MP_LIBRARY MPIR)
+  if(NOT MPIR_FOUND)
+    # Add this to the libraries target
+    add_dependencies(build-libraries build-mpir-install)
+  endif()
+  # mpir.h and gmp.h both serve as multiple precision rational and integer arithmetic
+  # libraries and are surrounded by #ifndef __GMP_H__ ... #endif so only one can be loaded.
+  # Similarly for gmpxx.h and mpirxx.h.  However, the contents of the files differ.
+  # For example, mpf_cmp_z is defined only in gmp.h.
+  # TODO: use target_include_directories instead? Maybe this is easier
+  include_directories(${CMAKE_SOURCE_DIR}/include/M2/gmp-to-mpir)
+else()
+  message(FATAL "multiple precision rational and integer arithmetic library not found")
+endif()
+
+
+ExternalProject_Add(build-mpfr
+  URL               ${M2_SOURCE_URL}/mpfr-4.0.2.tar.xz
+  URL_HASH          SHA256=1d3be708604eae0e42d578ba93b390c2a145f17743a744d8f3f8c2ad5855a38a
+  PREFIX            libraries/mpfr
+  SOURCE_DIR        libraries/mpfr/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+		      --disable-thread-safe
+		      --disable-shared
+		      --cache-file=/dev/null
+                      # --enable-assert
+		      # TARGET_ARCH=
+                      CPPFLAGS=${CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      CXXFLAGS=${CXXFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+                      AR=${CMAKE_AR}
+                      OBJDUMP=${CMAKE_OBJDUMP}
+                      STRIP=${CMAKE_STRIP}
+                      RANLIB=${CMAKE_RANLIB}
+  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX}
+                      CPPFLAGS=${CPPFLAGS}
+  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} install
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
+  )
+if(NOT MPFR_FOUND)
   # Add this to the libraries target
-  add_dependencies(install-libraries build-mpir-install)
+  add_dependencies(build-libraries build-mpfr-install)
 endif()
 
 
 # TODO: use flint2 from https://github.com/Macaulay2/flint2.git ??
 # TODO: cflags+debug: -O0 -fno-unroll-loops
 # TODO: confirm that building with mpir works
-set(flint_CFLAGS "${CFLAGS} ${CPPFLAGS} -std=c90 -pedantic-errors")
+set(flint_CFLAGS "${CFLAGS} ${CPPFLAGS} -std=c90 -pedantic-errors -Wno-newline-eof")
 ExternalProject_Add(build-flint
   URL               ${M2_SOURCE_URL}/flint-2.5.2.tar.gz
   URL_HASH          SHA256=cbf1fe0034533c53c5c41761017065f85207a1b770483e98b2392315f6575e87
@@ -117,20 +172,20 @@ ExternalProject_Add(build-flint
 #                      --with-mpir=${M2_HOST_PREFIX}
 #                      --with-mpfr=${M2_HOST_PREFIX}
 #                      --with-ntl=${M2_HOST_PREFIX}
-                      --enable-cxx
+#                      --enable-cxx
                       --disable-tls
                       --disable-shared
                       # --enable-assert
                       CFLAGS=${flint_CFLAGS}
                       CC=${CMAKE_C_COMPILER}
   BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
-  INSTALL_COMMAND   ${MAKE_EXE} install
+  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
 if(NOT FLINT_FOUND)
   # Add this to the libraries target
-  add_dependencies(install-libraries build-flint-install)
+  add_dependencies(build-libraries build-flint-install)
 endif()
 
 
@@ -169,13 +224,13 @@ ExternalProject_Add(build-factory
                     ./bin/makeheader factory.template     factory.h     && cp factory.h     include/factory/ &&
                     ./bin/makeheader factoryconf.template factoryconf.h && cp factoryconf.h include/factory/
         COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} all-recursive
-  INSTALL_COMMAND   cd factory-4.1.1 && ${MAKE_EXE} install
+  INSTALL_COMMAND   cd factory-4.1.1 && ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
 if(NOT FACTORY_FOUND)
   # Add this to the libraries target
-  add_dependencies(install-libraries build-factory-install)
+  add_dependencies(build-libraries build-factory-install)
   # TODO: repeat pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
   if(NOT FLINT_FOUND)
     ExternalProject_Add_StepDependencies(build-factory build build-flint-install) # lol
@@ -188,9 +243,8 @@ if(NOT FACTORY_FOUND)
     # TODO: add build-mpfr
     ExternalProject_Add_StepDependencies(build-factory build build-mpfr-install)
   endif()
-  if(NOT GMP_FOUND AND NOT MPIR_FOUND)
-    # TODO: add build-gmp as well
-    ExternalProject_Add_StepDependencies(build-factory build build-mpir-install)
+  if(NOT ${MP_LIBRARY}_FOUND)
+    ExternalProject_Add_StepDependencies(build-factory build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
 endif()
 
@@ -208,6 +262,7 @@ ExternalProject_Add(extract-gftables
   )
 
 
+#TODO: version#"frobby version" is missing
 set(frobby_CXXFLAGS "${CPPFLAGS} ${CXXFLAGS} -Wno-deprecated-declarations")
 # FIXME: permissions on the installed files are wrong
 ExternalProject_Add(build-frobby
@@ -241,7 +296,7 @@ ExternalProject_Add(build-frobby
   )
 if(NOT FROBBY_FOUND)
   # Add this to the libraries target
-  add_dependencies(install-libraries build-frobby-install)
+  add_dependencies(build-libraries build-frobby-install)
 endif()
 
 
@@ -256,10 +311,10 @@ ExternalProject_Add(build-cddlib
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ./configure --prefix=${M2_HOST_PREFIX}
-		      --includedir=${M2_HOST_PREFIX}/include/cdd
+                      --includedir=${M2_HOST_PREFIX}/include/cdd
                       --disable-shared
                       SUBDIRS=${cddlib_SUBDIRS}
-		      gmpdir=/nowhere
+                      gmpdir=/nowhere
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -272,16 +327,16 @@ ExternalProject_Add(build-cddlib
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX}
                       SUBDIRS=${cddlib_SUBDIRS}
-		      gmpdir=/nowhere
+                      gmpdir=/nowhere
   INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} install
                       SUBDIRS=${cddlib_SUBDIRS}
-		      gmpdir=/nowhere
+                      gmpdir=/nowhere
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
 if(NOT CDD_FOUND)
   # Add this to the libraries target
-  add_dependencies(install-libraries build-cddlib-install)
+  add_dependencies(build-libraries build-cddlib-install)
 endif()
 
 #################################################################################
@@ -330,7 +385,7 @@ ExternalProject_Add(build-bdwgc
   )
 if(NOT BDW_GC_FOUND)
   # Add this to the libraries target
-  add_dependencies(install-libraries build-bdwgc-install)
+  add_dependencies(build-libraries build-bdwgc-install)
 endif()
 
 
@@ -362,7 +417,7 @@ ExternalProject_Add(build-givaro
   )
 if(NOT GIVARO_FOUND)
   # Add this to the libraries target
-  add_dependencies(install-libraries build-givaro-install)
+  add_dependencies(build-libraries build-givaro-install)
 endif()
 
 
@@ -372,19 +427,22 @@ endif()
 # Result: run into issues with e/lapack.h redeclaring cblas functions
 #set(MKL_LIBS   "-L/opt/intel/mkl/lib/intel64_lin -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl")
 #set(MKL_CFLAGS "-I/opt/intel/mkl/include")
+if(APPLE)
+  set(fflas_ffpack_LIBS "-framework Accelerate")
+endif()
 ExternalProject_Add(build-fflas_ffpack
   GIT_REPOSITORY    https://github.com/Macaulay2/fflas-ffpack.git
   GIT_TAG           712cef0e
   PREFIX            libraries/fflas_ffpack
   SOURCE_DIR        libraries/fflas_ffpack/build
 #  BINARY_DIR        libraries/fflas_ffpack/build
-  BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND autoreconf -vif
+ BUILD_IN_SOURCE   ON
+ CONFIGURE_COMMAND autoreconf -vif
             COMMAND PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${M2_HOST_PREFIX}
-	              # --enable-openmp
-		      # --with-blas-libs=${MKL_LIBS}
-		      # --with-blas-cflags=${MKL_CFLAGS}
-		      # --enable-precompilation # build errors
+                      # --enable-openmp
+                      # --with-blas-libs=${MKL_LIBS}
+                      # --with-blas-cflags=${MKL_CFLAGS}
+                      # --enable-precompilation # build errors
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -395,6 +453,7 @@ ExternalProject_Add(build-fflas_ffpack
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
+                      LIBS=${fflas_ffpack_LIBS}
   BUILD_COMMAND     "" # we only use the fflas_ffpack header files, so no need to build it
 #  BUILD_COMMAND     ${MAKE_EXE}
 #        COMMAND     ${MAKE_EXE} autotune
@@ -404,7 +463,7 @@ ExternalProject_Add(build-fflas_ffpack
   )
 if(NOT FFLAS_FFPACK_FOUND)
   # Add this to the libraries target
-  add_dependencies(install-libraries build-fflas_ffpack-install)
+  add_dependencies(build-libraries build-fflas_ffpack-install)
   if(NOT GIVARO_FOUND)
     # TODO: also add gmp/mpir?
     ExternalProject_Add_StepDependencies(build-fflas_ffpack build build-givaro-install)
@@ -426,7 +485,7 @@ ExternalProject_Add(build-memtailor
   )
 if(NOT MEMTAILOR_FOUND)
   # Add this to the libraries target
-  add_dependencies(install-libraries build-memtailor-install)
+  add_dependencies(build-libraries build-memtailor-install)
 endif()
 
 
@@ -444,7 +503,7 @@ ExternalProject_Add(build-mathic
   )
 if(NOT MATHIC_FOUND)
   # Add this to the libraries target
-  add_dependencies(install-libraries build-mathic-install)
+  add_dependencies(build-libraries build-mathic-install)
   if(NOT MEMTAILOR_FOUND)
     ExternalProject_Add_StepDependencies(build-mathic build build-memtailor-install)
   endif()
@@ -465,7 +524,7 @@ ExternalProject_Add(build-mathicgb
   )
 if(NOT MATHICGB_FOUND)
   # Add this to the libraries target
-  add_dependencies(install-libraries build-mathicgb-install)
+  add_dependencies(build-libraries build-mathicgb-install)
   if(NOT MATHIC_FOUND)
     ExternalProject_Add_StepDependencies(build-mathicgb build build-mathic-install)
   endif()
@@ -511,13 +570,13 @@ ExternalProject_Add(build-4ti2
                       src/ppi/ppi
                       src/util/output
                       src/zsolve/zsolve
-  INSTALL_COMMAND   ${MAKE_EXE} install
+  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
 if(NOT 4TI2)
   # Add this to the programs target
-  add_dependencies(install-programs build-4ti2-install)
+  add_dependencies(build-programs build-4ti2-install)
 endif()
 
 
@@ -547,7 +606,7 @@ ExternalProject_Add(build-cohomcalg
   )
 if(NOT COHOMCALG)
   # Add this to the programs target
-  add_dependencies(install-programs build-cohomcalg-install)
+  add_dependencies(build-programs build-cohomcalg-install)
 endif()
 
 
@@ -566,20 +625,19 @@ ExternalProject_Add(build-gfan
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX}
                       CC=${gfan_CC}
-		      CXX=${gfan_CXX}
-		      CLINKER=${gfan_CLINKER}
-		      CCLINKER=${gfan_CCLINKER}
-		      PREFIX=/nowhere
-		      CDD_LINKOPTIONS=-lcddgmp
+                      CXX=${gfan_CXX}
+                      CLINKER=${gfan_CLINKER}
+                      CCLINKER=${gfan_CCLINKER}
+                      PREFIX=/nowhere
+                      CDD_LINKOPTIONS=-lcddgmp
         COMMAND     ${CMAKE_STRIP} gfan${CMAKE_EXECUTABLE_SUFFIX}
   INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} install
-                      PREFIX=${M2_HOST_PREFIX}
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
 if(NOT GFAN)
   # Add this to the programs target
-  add_dependencies(install-programs build-gfan-install)
+  add_dependencies(build-programs build-gfan-install)
 endif()
 
 
@@ -599,7 +657,7 @@ ExternalProject_Add(build-lrslib
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       RANLIB=${CMAKE_RANLIB}
-		      # TODO: TARGET_ARCH= RANLIB=true
+                      # TODO: TARGET_ARCH= RANLIB=true
         COMMAND     ${CMAKE_STRIP} lrs${CMAKE_EXECUTABLE_SUFFIX}
   INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${M2_HOST_PREFIX}/bin
   EXCLUDE_FROM_ALL  ON
@@ -607,7 +665,7 @@ ExternalProject_Add(build-lrslib
   )
 if(NOT LRSLIB)
   # Add this to the programs target
-  add_dependencies(install-programs build-lrslib-install)
+  add_dependencies(build-programs build-lrslib-install)
 endif()
 
 
@@ -636,16 +694,16 @@ ExternalProject_Add(build-csdp
         COMMAND     ${CMAKE_STRIP} 
                       solver/csdp
                       theta/complement
-		      theta/graphtoprob
-		      theta/rand_graph
-		      theta/theta
+                      theta/graphtoprob
+                      theta/rand_graph
+                      theta/theta
   INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
 if(NOT CSDP)
   # Add this to the programs target
-  add_dependencies(install-programs build-csdp-install)
+  add_dependencies(build-programs build-csdp-install)
 endif()
 
 
@@ -673,24 +731,24 @@ ExternalProject_Add(build-normaliz
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-		      # OPENMP=
-		      # NORMFLAGS=
-		      # TARGET_ARCH=
+                      # OPENMP=
+                      # NORMFLAGS=
+                      # TARGET_ARCH=
   BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
                       CXX=${CMAKE_CXX_COMPILER}
-		      # NORMFLAGS=
+                      # NORMFLAGS=
                       CXXFLAGS=${normaliz_CXXFLAGS}
                       RANLIB=${CMAKE_RANLIB}
-		      GMPFLAGS=${normaliz_GMPFLAGS}
+                      GMPFLAGS=${normaliz_GMPFLAGS}
         COMMAND     ${CMAKE_STRIP} source/normaliz
   # TODO: do we need the libraries as well, or just the binary?
-  INSTALL_COMMAND   ${MAKE_EXE} install
+  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
 if(NOT NORMALIZ)
   # Add this to the programs target
-  add_dependencies(install-programs build-normaliz-install)
+  add_dependencies(build-programs build-normaliz-install)
 endif()
 
 
@@ -736,7 +794,7 @@ ExternalProject_Add(build-nauty
   )
 if(NOT NAUTY)
   # Add this to the programs target
-  add_dependencies(install-programs build-nauty-install)
+  add_dependencies(build-programs build-nauty-install)
 endif()
 
 install(DIRECTORY
@@ -747,8 +805,8 @@ install(DIRECTORY
 
 #############################################################################
 
-get_target_property(LIBRARY_DEPENDENCIES install-libraries MANUALLY_ADDED_DEPENDENCIES)
-get_target_property(PROGRAM_DEPENDENCIES install-programs  MANUALLY_ADDED_DEPENDENCIES)
+get_target_property(LIBRARY_DEPENDENCIES build-libraries MANUALLY_ADDED_DEPENDENCIES)
+get_target_property(PROGRAM_DEPENDENCIES build-programs  MANUALLY_ADDED_DEPENDENCIES)
 if(NOT LIBRARY_DEPENDENCIES)
   set(LIBRARY_DEPENDENCIES N/A)
 endif()

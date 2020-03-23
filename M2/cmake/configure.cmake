@@ -9,7 +9,10 @@ execute_process(
   )
 
 # TODO: when this is stable, use STATUS instead of ##
-message("## Configuring Macaulay2 version ${PROJECT_VERSION} from commit ${GIT_DESCRIPTION} for ${CMAKE_SYSTEM_NAME}")
+message("## Configure Macaulay2
+     M2 Version        = ${PROJECT_VERSION}
+     Git Commit        = ${GIT_DESCRIPTION}
+     CMake Build Type  = ${CMAKE_BUILD_TYPE}")
 
 ################################################################
 
@@ -67,15 +70,7 @@ set(MP_LIBRARY "gmp" CACHE STRING "specify the big integer package to use (mpir 
 # TODO: is it okay to do this globally?
 add_compile_options(-I${CMAKE_SOURCE_DIR}/include -I${CMAKE_BINARY_DIR}/include)
 
-if(${MP_LIBRARY} STREQUAL "mpir")
-  set(USING_MPIR 1)
-  # TODO: use target_include_directories instead? Maybe this is easier
-  include_directories(${CMAKE_SOURCE_DIR}/include/M2/gmp-to-mpir)
-else()
-  set(USING_MPIR 0)
-endif()
-
-if(${PROFILING})
+if(PROFILING)
   # TODO: easier way to do this? generator expressions don't work at configure time
   set(PROFILING_STRING 1)
   set(ENABLE_STRIP OFF)
@@ -87,7 +82,7 @@ else()
 endif()
 
 # TODO: necessary?
-if("${OS}" STREQUAL "Darwin")
+if(APPLE)
   set(SHARED OFF) # TODO: Gatekeeper issue on macOS
   # we don't know what this does, but some apple documentation writers seem to like it:
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -bind_at_load")
@@ -97,13 +92,13 @@ if("${OS}" STREQUAL "Darwin")
 endif()
 
 # TODO: maybe just set this per build configuration?
-if(${OPTIMIZE})
-  add_compile_options(-O2)
+if(OPTIMIZE)
+  add_compile_options(-O2 -Wuninitialized)
 else()
   add_compile_options(-O0)
 endif()
 
-if(${MEMDEBUG})
+if(MEMDEBUG)
   set(DEBUG ON)
   add_compile_options(-DMEMDEBUG)
 endif()
@@ -111,19 +106,19 @@ endif()
 # It is a mistake to pass "-DDEBUG" to preprocessor because it is nonstandard and may confusing libraries,
 # such as "flint". Instead, NDEBUG being *not* defined as a C macro is what indicates debug mode.
 # This is standard practice. gc.h obeys the GC_DEBUG flag.
-if(${DEBUG})
+if(DEBUG)
   set(ENABLE_STRIP OFF)
   add_compile_options(-DGC_DEBUG)
 else()
   add_compile_options(-DNDEBUG)
 endif()
 
-if(${ENABLE_STRIP})
+if(ENABLE_STRIP)
   add_compile_options(-s)
 endif()
 
 # always compile with "-g", so we can debug even optimized versions
-if(${CMAKE_C_COMPILER_ID} STREQUAL GNU)
+if(CMAKE_C_COMPILER_ID STREQUAL GNU)
   add_compile_options(-g3)
   add_link_options(-g3)
 else()
@@ -131,7 +126,7 @@ else()
   add_link_options(-g)
 endif()
 
-if(${ALTIVEC})
+if(ALTIVEC)
   add_compile_options(-faltivec)
   add_link_options(-faltivec)
 endif()
@@ -156,21 +151,9 @@ include(CheckLibraryExists)
 check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
 check_library_exists(resolv hstrerror "" HAVE_HSTRERROR)
 
-include(CheckCSourceCompiles)
-check_c_source_compiles("int main(){__builtin_return_address(1);return 0;}" BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT)
-
-include(CheckCXXSourceCompiles)
-# whether givaro has isUnit or isunit
-# TODO: still necessary?
-check_cxx_source_compiles([[#include <givaro/gfq.h>
-  int main(){class Givaro::GFqDom<long int> foo; foo.isunit(0);return 0;}]] HAVE_GIVARO_isunit)
-
 #AC_DEFINE(HAVE_LINBOX,1,[whether we are linking with the linbox library])
 #AC_DEFINE(HAVE_FPLLL,1,[whether we are linking with the fplll library])
-#AC_DEFINE([HAVE_FACTORY_PREM],[1],[whether Prem() from factory is public])
-#AC_DEFINE([FACTORY_STREAMIO],[1],[whether factory was built with --enable-streamio])
 
-#AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])
 #AC_DEFINE_UNQUOTED(AUTOINST,$val,whether to instantiate templates automatically)
 #AC_DEFINE_UNQUOTED(IMPLINST,$val,whether to instantiate templates implicitly)
 #AC_DEFINE_UNQUOTED(WITH_NEWLINE_CRLF,$WITH_NEWLINE_CRLF,[whether newline is cr lf])
@@ -250,6 +233,34 @@ check_function_exists(fcntl	HAVE_FCNTL)
 check_function_exists(personality	HAVE_PERSONALITY)
 check_function_exists(ioctl	HAVE_IOCTL)
 
+include(CheckCSourceCompiles)
+check_c_source_compiles("int main(){__builtin_return_address(1);return 0;}" BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT)
+
+# whether getaddrinfo can handle numeric service (port) numbers
+check_c_source_compiles([[
+  #include <sys/types.h>
+  #ifdef HAVE_SYS_SOCKET_H
+   #include <sys/socket.h>
+  #endif
+  #ifdef HAVE_NETDB_H
+   #include <netdb.h>
+  #endif
+  int main(){struct addrinfo *addr;return 0 != getaddrinfo("1.2.3.4", "80", 0, &addr) ? 99 : 0;}]] GETADDRINFO_WORKS)
+
+include(CheckCXXSourceCompiles)
+# whether givaro has isUnit (4.0.3) or isunit (4.0.2)
+check_cxx_source_compiles([[#include <givaro/gfq.h>
+  int main(){class Givaro::GFqDom<long int> foo; foo.isunit(0);return 0;}]] HAVE_GIVARO_isunit)
+
+# whether factory was built with --enable-streamio
+check_cxx_source_compiles([[#include <factory/factory.h>
+  int main(){Variable x; x = Variable(); std::cout << x;return 0;}]] FACTORY_STREAMIO)
+# whether Prem() from factory is public
+check_cxx_source_compiles([[#include <factory/factory.h>
+  int main(){CanonicalForm p,q; Prem(p,q);return 0;}]] HAVE_FACTORY_PREM)
+
+################################################################
+
 # this is an alternative for AC_FUNC_ALLOCA()
 check_function_exists(alloca HAVE_ALLOCA)
 check_include_files(alloca.h HAVE_ALLOCA_H)
@@ -260,144 +271,3 @@ check_include_files(alloca.h HAVE_ALLOCA_H)
 ## topcom depends on cddlib, but includes setoper.h, rather than cdd/setoper.h, so we do, too
 check_include_files(setoper.h	HAVE_CDDLIB)
 check_include_files(NTL/version.h	HAVE_NTL)
-
-## mpir and gmp serve the same purpose
-# Remark: both gmp.h and mpir.h are surrounded by 
-# 	#ifndef __GMP_H__
-# 	#endif
-# so only one can be loaded.  Similarly for gmpxx.h and mpirxx.h.  However, the contents of
-# the files differ.  For example, mpf_cmp_z is defined only in gmp.h.
-check_include_files(gmp.h	GMP_FOUND)
-check_include_files(mpir.h	MPIR_FOUND)
-
-if(NOT USING_MPIR AND NOT GMP_FOUND)
-  message(ERROR "gmp integer package specified, but not found")
-endif()
-
-################################################################
-
-#content of version:
-#memtailor version = 1.0
-#readline version = 8.0
-#factory version = 4.1.1
-#givaro version = 4.0.2
-#gmp version = not present
-#pointer size = 8
-#mpir version = 3.0.0
-#M2 name = M2
-#machine = x86_64-Linux-Fedora-31
-#scscp version = not present
-#M2 suffix =
-#fflas_ffpack version = 2.3.2
-#linbox version = not present
-#architecture = x86_64
-#gc version = 8.0.4
-#python version = not present
-#operating system release = 5.4.17-200.fc31.x86_64
-#atomic_ops version = 7.6.10
-#issue = Fedora-31
-#mathic version = 1.0
-#compile time = Feb  8 2020, 16:21:30
-#mysql version = not present
-#configure arguments =  '--enable-rpm' '--prefix=/usr' '--enable-download' 'CPPFLAGS=-I/usr/include -I/usr/include/eigen3 -I/usr/include/eigen3/unsupported' 'LDFLAGS=-L/usr/lib64'
-#dumpdata = false
-#ntl version = 10.5.0
-#compiler = gcc 9.2.1
-#gdbm version = GDBM version 1.18.1. 27/10/2018 (built Sep 23 2019 00:00:00)
-#pari version = 2.11.2
-#flint version = 2.5.2
-#mpfr version = 4.0.2
-#executable extension =
-#packages = Style Macaulay2Doc ...
-#git description = version-1.14.0.1-403-g698a43717742958165ea6909edc971f2c1435d4a
-#operating system = Linux
-#frobby version = 0.9.0
-#endianness = dcba
-#mathicgb version = 1.0
-#VERSION = 1.15.0.1
-#compile node name = noether
-
-################################################################
-
-#### STILL LEFT TO PROCESS ####
-
-
-#AC_DEFINE([HAVE_FACTORY_PREM], [1],
-#    [whether Prem() from factory is public])
-#if test $BUILD_factory = no
-#then
-#    AC_MSG_CHECKING([whether Prem() from factory is public])
-#    AC_LANG([C++])
-#    AC_COMPILE_IFELSE(
-#	[AC_LANG_PROGRAM(
-#	    [#include <factory/factory.h>],
-#	    [CanonicalForm p,q; Prem(p,q)])],
-#	[AC_MSG_RESULT([yes])],
-#	[AC_MSG_RESULT([no])
-#	 AC_DEFINE([HAVE_FACTORY_PREM], [0])])
-#fi
-
-#AC_DEFINE([FACTORY_STREAMIO], [1],
-#    [whether factory was built with --enable-streamio])
-#if test $BUILD_factory = no
-#then
-#    AC_MSG_CHECKING([whether factory was built with --enable-streamio])
-#    AC_LANG([C++])
-#    AC_COMPILE_IFELSE(
-#	[AC_LANG_PROGRAM(
-#	    [#include <factory/factory.h>],
-#	    [Variable x; x = Variable(); std::cout << x])],
-#	[AC_MSG_RESULT([yes])],
-#	[AC_MSG_RESULT([no])
-#	 AC_DEFINE([FACTORY_STREAMIO], [0])])
-#fi
-
-#AC_CHECK_PROGS(ETAGS,etags ctags,false)
-#if test "$ETAGS" = false; then AC_MSG_WARN(without etags no TAGS files will be made); fi
-
-#if test "$STRIP" != "false"
-#then AC_MSG_CHECKING(whether $STRIP accepts the remove-section option)
-#     if "$STRIP" --help 2>&1 | grep remove-section >/dev/null
-#     then val=yes
-#     else val=no
-#     fi
-#     AC_MSG_RESULT($val)
-#     AC_SUBST(STRIP_REMOVE_SECTION,$val)
-#fi
-
-#AC_LANG(C)
-#AC_MSG_CHECKING([whether getaddrinfo can handle numeric service (port) numbers])
-#AC_RUN_IFELSE([AC_LANG_SOURCE([
-#    #include <sys/types.h>
-#    #ifdef HAVE_SYS_SOCKET_H
-#     #include <sys/socket.h>
-#    #endif
-#    #ifdef HAVE_WINSOCK2_H
-#     #include <winsock2.h>
-#    #endif
-#    #ifdef HAVE_NETDB_H
-#     #include <netdb.h>
-#    #endif
-#    main() {
-#       struct addrinfo *addr;
-#       return 0 != getaddrinfo("1.2.3.4", "80", 0, &addr) ? 99 : 0 ;
-#       }
-#    ])],
-#    [AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])] [AC_MSG_RESULT(yes)],
-#    [if test $? = 99 ; then AC_MSG_RESULT(no) ; else AC_MSG_ERROR([test file failed to compile]) ; fi],
-#    [AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])] [AC_MSG_RESULT([probably (cross-compiling, not tested)])])
-
-#AC_SUBST(M2_CPPFLAGS,)
-#AC_SUBST(M2_CFLAGS,)
-#AC_SUBST(M2_CXXFLAGS,)
-
-
-#WITH_NEWLINE_CR=0
-#WITH_NEWLINE_CRLF=0
-#AC_ARG_WITH(newline, AS_HELP_STRING([--with-newline=...], [crlf, cr, or lf (the default)]),
-#    [ case $withval in
-#	  crlf) WITH_NEWLINE_CRLF=1 WITH_NEWLINE_CR=0 ;;
-#	  cr)   WITH_NEWLINE_CR=1 WITH_NEWLINE_CRLF=0 ;;
-#	  lf)   WITH_NEWLINE_CR=0 WITH_NEWLINE_CRLF=0 ;;
-#	  *)    AC_MSG_ERROR([--with-newline expected crlf, cr, or lf]) ;;
-#      esac ])

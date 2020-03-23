@@ -18,3 +18,32 @@ target_compile_definitions(regex PUBLIC
   -Dregexec=M2_regexec
   -Dregfree=M2_regfree
   )
+
+# common warning flags
+target_compile_options(regex PRIVATE
+  -Wall
+  -Wfatal-errors
+  -Wno-cast-qual
+  -Wno-parentheses
+  -Wno-shadow
+  -Wno-sign-compare
+  -Wno-sign-conversion
+  -Wno-uninitialized
+  -Wno-unused
+  -Wno-unused-parameter
+  )
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  # using Clang or AppleClang
+  target_compile_options(regex PRIVATE
+    -Wno-mismatched-tags
+    -Wno-unknown-pragmas
+    )
+endif()
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  # using GCC
+  target_compile_options(regex PRIVATE
+    -pedantic-errors
+    -Wno-error=pragmas
+    )
+endif()
+# add other compilers (eg: Intel, MSVC) here

@@ -7,7 +7,7 @@
 ## Short instructions:
 ##  1. cd M2/BUILD/build-cmake
 ##  2. cmake ../..
-##  3. make install-libraries
+##  3. make build-libraries
 ##  4. make
 ##  5. make check-packages
 ##
@@ -31,13 +31,16 @@ set(CMAKE_C_STANDARD 11)
 
 ###############################################################################
 ## Specify a few build configurations
-set(CMAKE_BUILD_TYPE		Debug) # TODO: Release
-set(CMAKE_VERBOSE_MAKEFILE	OFF)   # Useful for debugging build system issues
-# TODO: this doesn't seem to be working, so we use COPY instead of INSTALL
-set(CMAKE_INSTALL_MESSAGE	LAZY)  # Print "Installing .." but not "Up-to-date .." messages
-
-## TODO: cross-compile for Darwin from Linux. Currently not working.
-if("${CMAKE_BINARY_DIR}" MATCHES ".*(apple|darwin).*")
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
+if(NOT CMAKE_INSTALL_MESSAGE)
+  # Print "Installing .." but not "Up-to-date .." messages
+  # TODO: this doesn't seem to be working, so we use COPY instead of INSTALL
+  set(CMAKE_INSTALL_MESSAGE LAZY)
+endif()
+if(CMAKE_BINARY_DIR MATCHES ".*(apple|darwin).*")
+  ## TODO: cross-compile for Darwin from Linux. Currently not working.
   set(TOOLCHAIN ${CMAKE_CURRENT_LIST_DIR}/cmake/darwin.cmake)
   message("## Cross-compiling from toolchain file: ${TOOLCHAIN}")
   set(CMAKE_TOOLCHAIN_FILE ${TOOLCHAIN})
@@ -76,11 +79,14 @@ message("## Target operating system information:
      OS REL            = ${OS} ${REL}
      ARCH              = ${ARCH}
      OPTIMIZE          = ${OPTIMIZE}
-     DEBUG             = ${DEBUG}
-     GIT_DESCRIPTION   = ${GIT_DESCRIPTION}
-     MP_LIBRARY        = ${MP_LIBRARY}")
+     DEBUG             = ${DEBUG}")
+
 # TODO
 # message("## Host operating system information:")
+
+message("## Library information:
+     Linear Algebra    = ${LAPACK_LIBRARIES}
+     Arithmetic        = ${${MP_LIBRARY}_LIBRARIES}")
 
 ###############################################################################
 ## Kick off the Macaulay2 directory
