@@ -84,10 +84,6 @@ message("## Target operating system information:
 # TODO
 # message("## Host operating system information:")
 
-message("## Library information:
-     Linear Algebra    = ${LAPACK_LIBRARIES}
-     Arithmetic        = ${${MP_LIBRARY}_LIBRARIES}")
-
 ###############################################################################
 ## Kick off the Macaulay2 directory
 add_subdirectory(Macaulay2)

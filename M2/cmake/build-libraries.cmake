@@ -47,6 +47,14 @@ string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS} ${LDFLAGS}")
 # Possible assembly dialects are "", "_NASM", "_MASM", "-ATT"
 # AS=${CMAKE_ASM${DIALECT}_COMPILER}
 
+## Linear algebra library flags
+# TODO: add option for Intel MKL
+if(APPLE)
+  set(LA_LIBRARIES "-framework Accelerate")
+else()
+  list(JOIN LAPACK_LIBRARIES " " LA_LIBRARIES)
+endif()
+
 if(VERBOSE)
   message("## Library compile options:
      CFLAGS            = ${CFLAGS}
@@ -130,11 +138,11 @@ ExternalProject_Add(build-mpfr
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
-		      --disable-thread-safe
-		      --disable-shared
-		      --cache-file=/dev/null
+                      --disable-thread-safe
+                      --disable-shared
+                      --cache-file=/dev/null
                       # --enable-assert
-		      # TARGET_ARCH=
+                      # TARGET_ARCH=
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -157,7 +165,6 @@ if(NOT MPFR_FOUND)
 endif()
 
 
-# TODO: use flint2 from https://github.com/Macaulay2/flint2.git ??
 # TODO: cflags+debug: -O0 -fno-unroll-loops
 # TODO: confirm that building with mpir works
 set(flint_CFLAGS "${CFLAGS} ${CPPFLAGS} -std=c90 -pedantic-errors -Wno-newline-eof")
@@ -169,7 +176,7 @@ ExternalProject_Add(build-flint
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND LIB_DIRS=${M2_HOST_PREFIX}/lib ./configure --prefix=${M2_HOST_PREFIX}
-                      --with-blas # TODO: ${BLAS_INCLUDE_DIR} is empty
+                      --with-blas
 #                      --with-gmp=${M2_HOST_PREFIX}
 #                      --with-mpir=${M2_HOST_PREFIX}
 #                      --with-mpfr=${M2_HOST_PREFIX}
@@ -189,6 +196,16 @@ if(NOT FLINT_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-flint-install)
 endif()
+
+ExternalProject_Add(build-flint-git
+  GIT_REPOSITORY    https://github.com/mahrud/flint2.git
+  GIT_TAG           HEAD
+  PREFIX            libraries/flint-git
+  BINARY_DIR        libraries/flint-git/build
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
+  )
 
 
 set(factory_CPPFLAGS "${CPPFLAGS} -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
@@ -429,9 +446,6 @@ endif()
 # Result: run into issues with e/lapack.h redeclaring cblas functions
 #set(MKL_LIBS   "-L/opt/intel/mkl/lib/intel64_lin -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl")
 #set(MKL_CFLAGS "-I/opt/intel/mkl/include")
-if(APPLE)
-  set(fflas_ffpack_LIBS "-framework Accelerate")
-endif()
 ExternalProject_Add(build-fflas_ffpack
   GIT_REPOSITORY    https://github.com/Macaulay2/fflas-ffpack.git
   GIT_TAG           712cef0e
@@ -440,7 +454,7 @@ ExternalProject_Add(build-fflas_ffpack
 #  BINARY_DIR        libraries/fflas_ffpack/build
  BUILD_IN_SOURCE   ON
  CONFIGURE_COMMAND autoreconf -vif
-            COMMAND PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${M2_HOST_PREFIX}
+           COMMAND PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       # --enable-openmp
                       # --with-blas-libs=${MKL_LIBS}
                       # --with-blas-cflags=${MKL_CFLAGS}
@@ -455,7 +469,7 @@ ExternalProject_Add(build-fflas_ffpack
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-                      LIBS=${fflas_ffpack_LIBS}
+                      LIBS=${LA_LIBRARIES}
   BUILD_COMMAND     "" # we only use the fflas_ffpack header files, so no need to build it
 #  BUILD_COMMAND     ${MAKE_EXE}
 #        COMMAND     ${MAKE_EXE} autotune
@@ -534,13 +548,6 @@ endif()
 
 ###############################################################################
 ## Build required programs
-
-# Everything possible:
-# LIBLIST gc gdbm mpir mpfr ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest
-# PROGLIST 4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg
-# SUBLIST memtailor mathic mathicgb fflas_ffpack
-# FIXME: gmp libtool pari are Missing below
-# gfan normaliz csdp nauty cddplus lrslib topcom cohomcalg)
 
 ExternalProject_Add(build-4ti2
   URL               ${M2_SOURCE_URL}/4ti2-1.6.9.tar.gz
@@ -676,12 +683,7 @@ set(csdp_CXX "${CXX} ${OpenMP_CXX_FLAGS}")
 set(csdp_LDFLAGS "${LDFLAGS} ${OpenMP_CXX_FLAGS}")
 list(JOIN OpenMP_CXX_LIBRARIES " " csdp_OpenMP_CXX_LIBRARIES)
 set(csdp_LDLIBS  "${LDLIBS}  ${csdp_OpenMP_CXX_LIBRARIES}")
-if(APPLE)
-  set(csdp_LAPACK_LIBRARIES "-framework Accelerate")
-else()
-  list(JOIN LAPACK_LIBRARIES " " csdp_LAPACK_LIBRARIES)
-endif()
-set(csdp_LIBS     "-L../lib -lsdp ${csdp_LAPACK_LIBRARIES} -lm")
+set(csdp_LIBS     "-L../lib -lsdp ${LA_LIBRARIES} -lm")
 ExternalProject_Add(build-csdp
   URL               http://www.coin-or.org/download/source/Csdp/Csdp-6.2.0.tgz # TODO
   URL_HASH          SHA256=7f202a15f33483ee205dcfbd0573fdbd74911604bb739a04f8baa35f8a055c5b
@@ -827,17 +829,26 @@ string(REGEX REPLACE "(build-|-install)" "" BUILD_LIB_LIST  "${LIBRARY_DEPENDENC
 string(REGEX REPLACE "(build-|-install)" "" BUILD_PROG_LIST "${PROGRAM_DEPENDENCIES}")
 
 message("## External components that will be built:
-     BUILDLIBLIST      = ${BUILD_LIB_LIST}
-     BUILDPROGLIST     = ${BUILD_PROG_LIST}")
+     Libraries         = ${BUILD_LIB_LIST}
+     Programs          = ${BUILD_PROG_LIST}")
 # TOOD: BUILDLIST BUILDSUBLIST BUILD_ALWAYS
 
+message("## Library information:
+     Linear Algebra    = ${LAPACK_LIBRARIES}
+     MP Arithmetic     = ${${MP_LIBRARY}_LIBRARIES}")
 # TODO: how to keep track of things we've built?
-#message("## Linker information:
 #     BUILTLIBS         = ${BUILTLIBS}
-#     LINALGLIBS        = ${LINALGLIBS}
-#     LIBS              = ${LIBS}")
+#     LIBS              = ${LIBS}
 
 #############################################################################
+
+# Everything possible:
+# LIBLIST gc gdbm mpir mpfr ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest
+# PROGLIST 4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg
+# SUBLIST memtailor mathic mathicgb fflas_ffpack
+# FIXME: gmp libtool pari are Missing below
+# gfan normaliz csdp nauty cddplus lrslib topcom cohomcalg)
+
 
 ## the order of these segments also reflects dependencies
 #AC_LANG(C)
