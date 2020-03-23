@@ -1,9 +1,11 @@
 set(JOBS 4)
 
+# TODO: are git downloads too heavy?
+
 ################################################################
 ## This target requires all external projects to be built and installed
-add_custom_target(build-libraries ALL)
-add_custom_target(build-programs ALL)
+add_custom_target(build-libraries)
+add_custom_target(build-programs)
 
 file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
 
@@ -631,7 +633,7 @@ ExternalProject_Add(build-gfan
                       PREFIX=/nowhere
                       CDD_LINKOPTIONS=-lcddgmp
         COMMAND     ${CMAKE_STRIP} gfan${CMAKE_EXECUTABLE_SUFFIX}
-  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} install
+  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} PREFIX=${M2_HOST_PREFIX} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -674,7 +676,11 @@ set(csdp_CXX "${CXX} ${OpenMP_CXX_FLAGS}")
 set(csdp_LDFLAGS "${LDFLAGS} ${OpenMP_CXX_FLAGS}")
 list(JOIN OpenMP_CXX_LIBRARIES " " csdp_OpenMP_CXX_LIBRARIES)
 set(csdp_LDLIBS  "${LDLIBS}  ${csdp_OpenMP_CXX_LIBRARIES}")
-list(JOIN LAPACK_LIBRARIES " " csdp_LAPACK_LIBRARIES)
+if(APPLE)
+  set(csdp_LAPACK_LIBRARIES "-framework Accelerate")
+else()
+  list(JOIN LAPACK_LIBRARIES " " csdp_LAPACK_LIBRARIES)
+endif()
 set(csdp_LIBS     "-L../lib -lsdp ${csdp_LAPACK_LIBRARIES} -lm")
 ExternalProject_Add(build-csdp
   URL               http://www.coin-or.org/download/source/Csdp/Csdp-6.2.0.tgz # TODO
@@ -708,11 +714,15 @@ endif()
 
 
 # TODO: see special variables OPENMP and NORMFLAGS for macOS from libraries/normaliz/Makefile.in
-set(normaliz_CXXFLAGS "${CPPFLAGS} -Wall -O3 -Wno-unknown-pragmas -std=c++11 -I .. -I . ${OpenMP_CXX_FLAGS}")
+set(normaliz_CXXFLAGS "${CPPFLAGS} -Wall -O3 -Wno-unknown-pragmas -std=c++11 -I .. -I . ")
+if(NOT APPLE)
+  # TODO: due to problem with -fopenmp on map, skip this for apple
+  set(normaliz_CXXFLAGS "${normaliz_CXXFLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
 set(normaliz_GMPFLAGS "${LDFLAGS} -lgmpxx -lgmp") # TODO: what about mpir?
 ExternalProject_Add(build-normaliz
-  URL               ${M2_SOURCE_URL}/normaliz-3.7.2.tar.gz
-  URL_HASH          SHA256=436a870a1ab9a5e0c2330f5900d904dc460938c17428db1c729318dbd9bf27aa
+  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.4/normaliz-3.8.4.tar.gz
+  URL_HASH          SHA256=795a0a752ef7bcc75e3307917c336436abfc836718c5cbf55043da6e7430cda3
   PREFIX            libraries/normaliz
   SOURCE_DIR        libraries/normaliz/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles

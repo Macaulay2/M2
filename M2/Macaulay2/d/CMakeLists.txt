@@ -29,7 +29,7 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(SCCFLAGS -O)
 endif()
 
-foreach(FILENAME ${CLIST})
+foreach(FILENAME IN LISTS CLIST)
   string(REGEX MATCH "^([a-zA-Z0-9_]+)-tmp\.(c|cc)$" NULL ${FILENAME})
   set(NAME ${CMAKE_MATCH_1})
   string(REPLACE "c" "d" DEXT ${CMAKE_MATCH_2})
@@ -60,7 +60,7 @@ foreach(FILENAME ${CLIST})
 
   set(PREVSIG ${NAME}.sig)
   set(PREVTMP ${FILENAME})
-endforeach(FILENAME)
+endforeach()
 
 ################################################################
 

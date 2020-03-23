@@ -33,7 +33,7 @@ list(TRANSFORM PACKAGES APPEND ".m2" OUTPUT_VARIABLE PACKAGE_OUTPUTS)
 ## Copy packages and auxiliary files to the destination
 add_custom_target(copy-packages ALL DEPENDS ${PACKAGE_OUTPUTS})
 
-foreach(PACKAGE ${PACKAGES})
+foreach(PACKAGE IN LISTS PACKAGES)
   add_custom_command(OUTPUT ${M2_PACKAGE_DIR}/${PACKAGE}.m2
     COMMENT
       "Copying package ${PACKAGE}"
@@ -82,7 +82,7 @@ set(M2_INSTALL_ARGS
   DebuggingMode          => true
   )
 
-foreach(PACKAGE ${PACKAGES})
+foreach(PACKAGE IN LISTS PACKAGES)
   ## Custom target for installing the package
   add_custom_target(install-${PACKAGE}
     COMMENT

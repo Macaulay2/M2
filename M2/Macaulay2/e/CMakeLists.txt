@@ -327,7 +327,6 @@ target_compile_options(M2-engine PRIVATE
   -Wno-unused
   -Wno-unused-parameter
   # temporary flags
-  -Wno-deprecated-copy
   -Wno-unknown-pragmas
   )
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -343,6 +342,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     #-Wno-extra-semi
     -Wno-error=pragmas
     -Wno-unused-local-typedefs # one warning, in mathic.h from x-aring.cpp
+    # temporary flags
+    -Wno-deprecated-copy
     )
 endif()
 # add other compilers (eg: Intel, MSVC) here

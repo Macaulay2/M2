@@ -34,3 +34,6 @@ M2:
 	docker run $(VOLUME) --interactive --tty --entrypoint M2 $(TAG)
 
 # TODO: need --int --no-readline --no-randomize in args?
+
+force-clean:
+	rm -rf ../build-docker
