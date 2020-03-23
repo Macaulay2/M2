@@ -12,24 +12,26 @@ target_include_directories(M2-binary PRIVATE ${CMAKE_BINARY_DIR}/usr-host/includ
 # TODO: make sure this is okay on multi-configuration editors
 set_target_properties(M2-binary PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_FULL_BINDIR})
 
-# Link the big integer package
-if(USING_MPIR)
-  target_link_libraries(M2-binary ${MPIR_LIBRARIES})
-else()
-  target_link_libraries(M2-binary gmp gmpxx)
-endif()
-
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
   regex interpreter M2-engine system kernel
   Threads::Threads ${LAPACK_LIBRARIES}
   ${LIBXML2_LIBRARIES} ${LIBGDBM} ${CMAKE_DL_LIBS}
+
+  # Link the big integer package: either GMP or MPIR
+  ${${MP_LIBRARY}_LIBRARIES}
   )
 
 if(HISTORY_FOUND AND READLINE_FOUND)
 target_link_libraries(M2-binary
   # Link commandline related libraries
   ${HISTORY_LIBRARY} ${READLINE_LIBRARY}
+  )
+endif()
+
+if(MPSOLVE_FOUND)
+target_link_libraries(M2-binary
+  ${MPSOLVE_LIBRARY}
   )
 endif()
 

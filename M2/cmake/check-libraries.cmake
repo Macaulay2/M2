@@ -79,6 +79,7 @@ find_package(Mathicgb)
 find_package(MPC  1.1.0 QUIET)
 find_package(MPFR 4.0.1 QUIET)
 find_package(NTL  10.5.0 QUIET)
+find_package(MPSolve 3.1.8 QUIET)
 
 ## Find libraries available via pkg-config
 # TODO: investigate error when factory-devel package is installed:

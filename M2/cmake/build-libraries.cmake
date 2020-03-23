@@ -358,6 +358,35 @@ if(NOT CDD_FOUND)
   add_dependencies(build-libraries build-cddlib-install)
 endif()
 
+
+ExternalProject_Add(build-mpsolve
+  URL               https://numpi.dm.unipi.it/_media/software/mpsolve/mpsolve-3.1.8.tar.gz
+  URL_HASH          SHA256=34740339d14cf8ca6d3f7da7ca12237b6da642623d14a6d6d5b5fc684c9c0fe5
+  PREFIX            libraries/mpsolve
+  SOURCE_DIR        libraries/mpsolve/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      --disable-shared
+                      --disable-examples
+                      --disable-ui
+                      --disable-documentation
+                      CPPFLAGS=${CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      CXXFLAGS=${CXXFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
+  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
+  )
+if(NOT MPSOLVE_FOUND)
+  # Add this to the libraries target
+  add_dependencies(build-libraries build-mpsolve-install)
+endif()
+
 #################################################################################
 ## Packages downloaded via git
 
