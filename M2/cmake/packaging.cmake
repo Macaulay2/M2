@@ -5,13 +5,16 @@
 
 ## Only overwrite the default prefix, not one provided via command line
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/usr-dist CACHE PATH "..." FORCE)
+  set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/usr-dist CACHE PATH "installation prefix" FORCE)
+  set(M2_COMMON_INFIX	"/common"	CACHE INTERNAL "infix for architecture independent files")
+  set(M2_EXEC_INFIX	"/${MACHINE}"	CACHE INTERNAL "infix for architecture dependent files")
 endif()
 
 set(M2_INSTALL_PREFIX	${CMAKE_INSTALL_PREFIX})
-set(M2_HOST_PREFIX	${CMAKE_BINARY_DIR}/usr-host)    # staging area for building libraries needed to compile M2
-set(M2_EXEC_PREFIX	${M2_INSTALL_PREFIX}/${MACHINE}) # staging area for arch. dep. files as in layout.m2.in
-set(M2_COMMON_PREFIX	${M2_INSTALL_PREFIX}/common)     # staging area for common files as in layout.m2.in
+set(M2_COMMON_PREFIX	${M2_INSTALL_PREFIX}${M2_COMMON_INFIX})	# staging area for common files as in layout.m2.in
+set(M2_EXEC_PREFIX	${M2_INSTALL_PREFIX}${M2_EXEC_INFIX})	# staging area for arch. dep. files as in layout.m2.in
+set(M2_HOST_PREFIX	${CMAKE_BINARY_DIR}/usr-host)		# staging area for building libraries needed to compile M2
+
 set(M2_PACKAGE_DIR	${M2_COMMON_PREFIX}/share/Macaulay2)
 set(M2_CORE_DIR		${M2_PACKAGE_DIR}/Core)
 
@@ -25,7 +28,7 @@ set(CMAKE_INSTALL_PREFIX ${M2_EXEC_PREFIX})
 ## Also see FHS  https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html
 include(GNUInstallDirs)
 
-message("## Staging area directory:
+message("## Staging area directories: (set CMAKE_INSTALL_PREFIX to overwrite)
      common:	${M2_COMMON_PREFIX}
      exec:	${M2_EXEC_PREFIX}")
 

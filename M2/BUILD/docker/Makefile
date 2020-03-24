@@ -17,9 +17,7 @@ build-image:
 	docker build --tag $(TAG) .
 
 build-M2:
-	mkdir -p build
-	docker run --volume $(STORAGE):$(M2HOME) --volume $(M2REPO):$(M2HOME)/M2 --interactive --tty \
-		--entrypoint="" $(TAG) bash /home/macaulay/build-M2.sh
+	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) bash /home/macaulay/build-M2.sh
 
 run-graphical:
 	docker run $(VOLUME) --net=host --env="DISPLAY" $(TAG)
@@ -34,6 +32,9 @@ M2:
 	docker run $(VOLUME) --interactive --tty --entrypoint M2 $(TAG)
 
 # TODO: need --int --no-readline --no-randomize in args?
+
+%:
+	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) make -C $(M2HOME)/M2/M2/BUILD/build-docker $@
 
 force-clean:
 	rm -rf ../build-docker
