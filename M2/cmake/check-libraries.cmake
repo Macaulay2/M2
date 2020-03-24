@@ -70,7 +70,6 @@ find_package(MPIR 3.0.0 QUIET)
 ## They are not required because we can build them if they are not found.
 # TODO: specify minimum version
 find_package(CDD)
-find_package(Flint)
 find_package(Frobby)
 find_package(Memtailor)
 find_package(Mathic)
@@ -79,7 +78,8 @@ find_package(Mathicgb)
 find_package(MPC  1.1.0 QUIET)
 find_package(MPFR 4.0.1 QUIET)
 find_package(NTL  10.5.0 QUIET)
-find_package(MPSolve 3.1.8 QUIET)
+find_package(Flint	2.5.3 QUIET)
+find_package(MPSolve	3.1.8 QUIET)
 
 ## Find libraries available via pkg-config
 # TODO: investigate error when factory-devel package is installed:

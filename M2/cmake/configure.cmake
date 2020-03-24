@@ -72,13 +72,10 @@ add_compile_options(-I${CMAKE_SOURCE_DIR}/include -I${CMAKE_BINARY_DIR}/include)
 
 if(PROFILING)
   # TODO: easier way to do this? generator expressions don't work at configure time
-  set(PROFILING_STRING 1)
   set(ENABLE_STRIP OFF)
   # TODO: we can do better
   add_compile_options(-pg)
   add_link_options(-pg)
-else()
-  set(PROFILING_STRING 0)
 endif()
 
 # TODO: necessary?

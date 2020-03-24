@@ -176,8 +176,8 @@ ExternalProject_Add(build-flint
 #  URL_HASH          SHA256=cbf1fe0034533c53c5c41761017065f85207a1b770483e98b2392315f6575e87
   GIT_REPOSITORY    https://github.com/mahrud/flint2.git
   GIT_TAG           HEAD
-  PREFIX            libraries/flint-git
-  BINARY_DIR        libraries/flint-git/build
+  PREFIX            libraries/flint
+  BINARY_DIR        libraries/flint/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     # Possible variables for the CMake build:
                     #-DWITH_NLT
@@ -267,6 +267,8 @@ ExternalProject_Add(extract-gftables
   BUILD_COMMAND     ""
   INSTALL_COMMAND   ""
   )
+# Add this to the libraries target
+add_dependencies(build-libraries extract-gftables)
 
 
 #TODO: version#"frobby version" is missing

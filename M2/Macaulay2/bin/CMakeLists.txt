@@ -29,9 +29,9 @@ target_link_libraries(M2-binary
   )
 endif()
 
-if(MPSOLVE_FOUND)
+if(MPSOLVE_FOUND AND FLINT_FOUND)
 target_link_libraries(M2-binary
-  ${MPSOLVE_LIBRARY}
+  ${MPSOLVE_LIBRARY} ${FLINT_LIBRARY}
   )
 endif()
 

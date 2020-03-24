@@ -357,7 +357,7 @@
 
 // TODO: why does M2lib.c fail if this isn't defined?
 /* whether profiling has been enabled */
-#define PROFILING ${PROFILING_STRING}
+#cmakedefine01 PROFILING
 
 /* The size of `int *', as computed by sizeof. */
 #cmakedefine SIZEOF_INT_P 8

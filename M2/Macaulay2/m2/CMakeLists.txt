@@ -20,5 +20,4 @@ add_custom_command(OUTPUT ${M2_CORE_DIR}/tvalues.m2
     M2-binary ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/tvalues-make.m2 -e "make \"${CMAKE_SOURCE_DIR}/Macaulay2/d/\"; exit 0"
   VERBATIM
   WORKING_DIRECTORY ${M2_CORE_DIR}
-  DEPENDS extract-gftables
   )
