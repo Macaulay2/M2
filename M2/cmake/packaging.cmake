@@ -1,7 +1,5 @@
 ################################################################
 ## Setting variables for installation directories and Macaulay2 Layout
-# TODO: where should these be set? most are only used in startup.m2, so could move there
-# if they weren't prefixed with common and exec they would be more useful
 
 ## Only overwrite the default prefix, not one provided via command line
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -20,12 +18,9 @@ set(M2_CORE_DIR		${M2_PACKAGE_DIR}/Core)
 
 ## Rewrite this so that GNUInstallDirs module can use it to generate architecture independent directories
 set(CMAKE_INSTALL_PREFIX ${M2_EXEC_PREFIX})
-# Possible alternative:
-#set(CMAKE_INSTALL_DATAROOTDIR common/share) # ${MACHINE}/common will be a symlink to ../common
 
 ## This is using https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html#module:GNUInstallDirs
 ## Which follows https://www.gnu.org/prep/standards/html_node/Directory-Variables.html
-## Also see FHS  https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html
 include(GNUInstallDirs)
 
 message("## Staging area directories: (set CMAKE_INSTALL_PREFIX to overwrite)

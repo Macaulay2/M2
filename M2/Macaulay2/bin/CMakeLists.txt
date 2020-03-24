@@ -76,19 +76,19 @@ endif()
 # objdump -x Macaulay2/bin/M2-binary | egrep "RPATH +/usr/lib64/Macaulay2/lib$" || [ $? -lt 2 ]
 
 if(APPLE)
-  set(EXPORT_STRING [[DYLD_LIBRARY_PATH=`dirname "$0"`/../${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib:$DYLD_LIBRARY_PATH]])
+  set(EXPORT_STRING [[DYLD_LIBRARY_PATH=`dirname "$0"`/../@CMAKE_INSTALL_LIBDIR@/Macaulay2/lib:$DYLD_LIBRARY_PATH]])
 elseif(UNIX)
-  set(EXPORT_STRING [[  LD_LIBRARY_PATH=`dirname "$0"`/../${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib:$LD_LIBRARY_PATH]])
+  set(EXPORT_STRING   [[LD_LIBRARY_PATH=`dirname "$0"`/../@CMAKE_INSTALL_LIBDIR@/Macaulay2/lib:$LD_LIBRARY_PATH]])
 endif()
 
-set(M2_TEMPLATE "#!/bin/sh\n@EXPORT_STRING@ `dirname \"$0\"`/M2@EXE@ \"$@\"\n")
+set(M2_TEMPLATE "#!/bin/sh\n${EXPORT_STRING} `dirname \"$0\"`/M2@EXE@ \"$@\"\n")
 string(CONFIGURE "${M2_TEMPLATE}" M2_TEMPLATE @ONLY)
 file(GENERATE
   OUTPUT M2
   CONTENT "${M2_TEMPLATE}"
   )
 
-install(FILES M2
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/M2
   TYPE BIN
   PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
   )

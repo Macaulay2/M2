@@ -94,6 +94,10 @@ add_subdirectory(Macaulay2)
 ###############################################################################
 ## This section is temporary hacks, will be gone soon.
 
+add_custom_target(run-M2
+  COMMAND M2-binary
+  DEPENDS Core copy-packages)
+
 # This is just for Mahrud to work on CMake issues without messy compiler errors
 set(SUPPRESS_COMPILER_WARNINGS ON)
 

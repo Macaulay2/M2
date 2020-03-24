@@ -29,12 +29,14 @@ shell:
 	docker run $(VOLUME) --interactive --tty --user root --entrypoint bash $(TAG)
 
 M2:
-	docker run $(VOLUME) --interactive --tty --entrypoint M2 $(TAG)
+	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) M2
 
-# TODO: need --int --no-readline --no-randomize in args?
-
-%:
-	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) make -C $(M2HOME)/M2/M2/BUILD/build-docker $@
+M2-safe:
+	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) M2 --int --no-readline --no-randomize
 
 force-clean:
 	rm -rf ../build-docker
+
+# For anything else, run it in the build directory within the container
+%:
+	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) make -C $(M2HOME)/M2/M2/BUILD/build-docker $@
