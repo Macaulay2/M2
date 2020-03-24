@@ -10,12 +10,18 @@ roots RingElement := {Precision => 53, Unique => false} >> o -> p -> (
 
 end--
 restart
-load "roots.m2"
+--load "roots.m2"
 
 R = RR[x]
 F = x^4-x^2-3*x-1
 F = (x^2-1)^3
-roots F
+F = (x^22-1)
+r = roots F
+prec=100000
+r = roots(F,Precision=>prec)
+CC_prec[x]
+p = product(r,a->x-a);
+clean_(2.^(-prec)) p
 
 R = QQ[x]
 F = x^4-x^2-3*x-1
