@@ -167,28 +167,26 @@ endif()
 
 # TODO: cflags+debug: -O0 -fno-unroll-loops
 # TODO: confirm that building with mpir works
-set(flint_CFLAGS "${CFLAGS} ${CPPFLAGS} -std=c90 -pedantic-errors -Wno-newline-eof")
+# TODO: Are the following still relevant with CMake build?
+# --with-blas --with-gmp --with-mpir --with-mpfr --with-ntl
+# --enable-cxx --disable-tls --disable-shared
+# set(flint_CFLAGS "${CFLAGS} ${CPPFLAGS} -std=c90 -pedantic-errors -Wno-newline-eof")
 ExternalProject_Add(build-flint
-  URL               ${M2_SOURCE_URL}/flint-2.5.2.tar.gz
-  URL_HASH          SHA256=cbf1fe0034533c53c5c41761017065f85207a1b770483e98b2392315f6575e87
-  PREFIX            libraries/flint
-  SOURCE_DIR        libraries/flint/build
-  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
-  BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND LIB_DIRS=${M2_HOST_PREFIX}/lib ./configure --prefix=${M2_HOST_PREFIX}
-                      --with-blas
-#                      --with-gmp=${M2_HOST_PREFIX}
-#                      --with-mpir=${M2_HOST_PREFIX}
-#                      --with-mpfr=${M2_HOST_PREFIX}
-#                      --with-ntl=${M2_HOST_PREFIX}
-#                      --enable-cxx
-                      --disable-tls
-                      --disable-shared
-                      # --enable-assert
-                      CFLAGS=${flint_CFLAGS}
-                      CC=${CMAKE_C_COMPILER}
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
-  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install
+#  URL               ${M2_SOURCE_URL}/flint-2.5.2.tar.gz
+#  URL_HASH          SHA256=cbf1fe0034533c53c5c41761017065f85207a1b770483e98b2392315f6575e87
+  GIT_REPOSITORY    https://github.com/mahrud/flint2.git
+  GIT_TAG           HEAD
+  PREFIX            libraries/flint-git
+  BINARY_DIR        libraries/flint-git/build
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    # Possible variables for the CMake build:
+                    #-DWITH_NLT
+                    #-DBUILD_TESTING
+		    #-DCMAKE_BUILD_TYPE
+                    #-DHAS_FLAG_MPOPCNT
+                    #-DHAS_FLAG_UNROLL_LOOPS
+                    #-DIPO_SUPPORTED
+                    #-DBUILD_DOCS
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -196,16 +194,6 @@ if(NOT FLINT_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-flint-install)
 endif()
-
-ExternalProject_Add(build-flint-git
-  GIT_REPOSITORY    https://github.com/mahrud/flint2.git
-  GIT_TAG           HEAD
-  PREFIX            libraries/flint-git
-  BINARY_DIR        libraries/flint-git/build
-  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
-  EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
-  )
 
 
 set(factory_CPPFLAGS "${CPPFLAGS} -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
