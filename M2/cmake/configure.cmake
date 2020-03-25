@@ -62,13 +62,35 @@ option(ENABLE_STRIP "discard symbols from object files"  OFF)
 # TODO: what is the default? mpir currently fails
 set(MP_LIBRARY "gmp" CACHE STRING "specify the big integer package to use (mpir or gmp)")
 
+# TODO: transition from using DEBUG/OPTIMIZE/etc. to CMAKE_BUILD_TYPE
+# TODO: apparently -DNDEBUG is standard on gcc, but not clang
+if(CMAKE_BUILD_TYPE MATCHES "Debug|RelWithDebInfo")
+  set(DEBUG ON)
+#  set(MEMDEBUG ON)
+  set(ENABLE_STRIP OFF)
+endif()
+if(CMAKE_BUILD_TYPE MATCHES "Release|RelWithDebInfo|MinSizeRel")
+  set(OPTIMIZE ON)
+endif()
+if(CMAKE_BUILD_TYPE MATCHES "Release|MinSizeRel")
+  set(ENABLE_STRIP ON)
+endif()
+
 ################################################################
 ## Setting compiler flags
+# TODO: many of these should not be set manually, but depend on CMAKE_BUILD_TYPE
 
 # TODO: where do we use the SHARED setting? In e?
 
 # TODO: is it okay to do this globally?
-add_compile_options(-I${CMAKE_SOURCE_DIR}/include -I${CMAKE_BINARY_DIR}/include)
+add_compile_options(
+  -I${CMAKE_SOURCE_DIR}/include
+  -I${CMAKE_BINARY_DIR}/include
+  # TODO: where should these be set?
+  # -fopenmp # fflas_ffpack wants this, but currently normaliz fails on macOS with it
+  -fabi-version=6 # givaro and fflas_ffpack want this
+  -DSING_NDEBUG -DOM_NDEBUG # factory wants these
+  )
 
 if(PROFILING)
   # TODO: easier way to do this? generator expressions don't work at configure time

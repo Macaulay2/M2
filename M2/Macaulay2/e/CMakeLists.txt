@@ -1,19 +1,5 @@
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
-# TODO: add -DNDEBUG compiler definition
-
-# Use globbing to find source files.
-# Any source files added to include/ or src/ will automatically be added to the project.
-#file(GLOB_RECURSE INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-#file(GLOB_RECURSE SOURCE_FILES_NO_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-#list(REMOVE_ITEM SOURCE_FILES_NO_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
-#set(SOURCE_FILES ${SOURCE_FILES_NO_MAIN} ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
-
-#add_library(engine OBJECT  ${INCLUDE_FILES} ${SOURCE_FILES_NO_MAIN} ${SOURCE_FILES})
-
-# TODO: consider using:
-# source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/base/dir" PREFIX "Header Files" FILES ${FILE_LIST})
-
 set(UNDETERMINED
   dmat-ffpack.cpp
   franzi-brp-test.cpp
@@ -22,6 +8,25 @@ set(UNDETERMINED
   test.dd
   aring-wrap # both cpp and hpp
   points # both cpp and hpp
+  )
+
+# c files, and some h files
+set(CFILES
+  complex.c
+  complex.h
+  error.c
+  error.h
+  exptable.c
+  exptable.h
+  monordering.c
+  monordering.h
+  rand.h
+  table.c
+  table.h
+  gmp-util.h
+  engine.h
+  defgroups.h
+  mpreal.h
   )
 
 # these files are include only.
@@ -68,25 +73,6 @@ set(HPPONLYFILES
   f4/res-memblock.hpp
   f4/res-monomial-types.hpp
   f4/res-schreyer-order.hpp
-  )
-
-# c files, and some h files
-set(CFILES
-  complex.c
-  complex.h
-  error.c
-  error.h
-  exptable.c
-  exptable.h
-  monordering.c
-  monordering.h
-  rand.h
-  table.c
-  table.h
-  gmp-util.h
-  engine.h
-  defgroups.h
-  mpreal.h
   )
 
 # these files have .cpp file, but NOT .hpp file
@@ -273,20 +259,14 @@ set(SRCLIST
 list(TRANSFORM SRCLIST APPEND .cpp OUTPUT_VARIABLE CPPFILES)
 list(TRANSFORM SRCLIST APPEND .hpp OUTPUT_VARIABLE HPPFILES)
 
-set(SOURCES
-  ${CFILES}
+# set -DBUILD_SHARED_LIBS=ON to generate a shared library
+add_library(M2-engine
   ${HPPONLYFILES}
   ${CPPONLYFILES}
-  ${CPPFILES}
   ${HPPFILES}
+  ${CPPFILES}
+  ${CFILES}
   )
-
-# TODO: write the M2Config.cmake module for users
-# TODO: SHARED seems to fail on mac unless it is linked
-add_library(M2-engine STATIC ${SOURCES})
-
-# TODO: install the unstripped library with debug_info in the appropriate place.
-# On Fedora: /usr/lib/debug/usr/lib64/
 
 add_dependencies(M2-engine interpreter e-includes)
 

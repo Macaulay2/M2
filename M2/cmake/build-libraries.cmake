@@ -171,10 +171,11 @@ ExternalProject_Add(build-flint
   PREFIX            libraries/flint
   BINARY_DIR        libraries/flint/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DBUILD_SHARED_LIBS=ON
                     # Possible variables for the CMake build:
                     #-DWITH_NLT
                     #-DBUILD_TESTING
-		    #-DCMAKE_BUILD_TYPE
+                    #-DCMAKE_BUILD_TYPE
                     #-DHAS_FLAG_MPOPCNT
                     #-DHAS_FLAG_UNROLL_LOOPS
                     #-DIPO_SUPPORTED
@@ -198,27 +199,27 @@ ExternalProject_Add(build-ntl
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND cd src && ./configure PREFIX=${M2_HOST_PREFIX}
                       TUNE=generic # TODO: x86 and auto if NTL_WIZARD
-		      NATIVE=off # TODO: on if not packaging?
-		      NTL_GMP_LIP=on
-		      NTL_STD_CXX14=on
-		      NTL_NO_INIT_TRANS=on # TODO: still necessary?
+                      NATIVE=off # TODO: on if not packaging?
+                      NTL_GMP_LIP=on
+                      NTL_STD_CXX14=on
+                      NTL_NO_INIT_TRANS=on # TODO: still necessary?
                       CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
                       CXX=${CMAKE_CXX_COMPILER}
-		      RANLIB=${CMAKE_RANLIB}
+                      RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     cd src && ${MAKE_EXE} -j${JOBS}
                       MakeDescCFLAGS=-O0
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
-		      LDFLAGS_CXX=${LDFLAGS}
+                      LDFLAGS_CXX=${LDFLAGS}
   INSTALL_COMMAND   cd src && ${MAKE_EXE} -j${JOBS} PREFIX=${M2_HOST_PREFIX} install
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
-		      LDFLAGS_CXX=${LDFLAGS}
+                      LDFLAGS_CXX=${LDFLAGS}
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -228,7 +229,9 @@ if(NOT NTL_FOUND)
 endif()
 
 
+# Factory has trouble finding ntl and flint without LD_LIBRARY_PATH
 set(factory_CPPFLAGS "${CPPFLAGS} -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
+set(factory_WARNFLAGS "-Wno-uninitialized -Wno-write-strings -Wno-deprecated")
 ExternalProject_Add(build-factory
   URL               ${M2_SOURCE_URL}/factory-4.1.1.tar.gz
   URL_HASH          SHA256=9dd84d11204e1457dac0a0d462a78d4cd4103c14cbf792b83d488aa529ad5724
@@ -238,14 +241,15 @@ ExternalProject_Add(build-factory
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p0 < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.1.1
   CONFIGURE_COMMAND cd factory-4.1.1 && autoreconf -vif
-            COMMAND cd factory-4.1.1 && ./configure --prefix=${M2_HOST_PREFIX} --includedir=${M2_HOST_PREFIX}/include
-                      --disable-omalloc
-                      --enable-streamio
+            COMMAND cd factory-4.1.1 && LD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib ./configure --prefix=${M2_HOST_PREFIX}
                       --disable-shared
+                      --disable-omalloc
+                      --disable-doxygen-doc
+		      --enable-streamio
                       --without-Singular
-                      --cache-file=/dev/null
                       --with-ntl
                       --with-flint
+                      --cache-file=/dev/null
                       # --enable-assertions
                       CPPFLAGS=${factory_CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -253,15 +257,13 @@ ExternalProject_Add(build-factory
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
-                      AR=${CMAKE_AR}
-                      OBJDUMP=${CMAKE_OBJDUMP}
-                      STRIP=${CMAKE_STRIP}
-                      RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j${JOBS} all prefix=${M2_HOST_PREFIX} ftmpl_inst.o
-                    AM_DEFAULT_VERBOSITY=1 'WARNFLAGS=-Wno-uninitialized -Wno-write-strings -Wno-deprecated'
+  BUILD_COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} all ftmpl_inst.o
+                      AM_DEFAULT_VERBOSITY=1
+                      WARNFLAGS=${factory_WARNFLAGS}
         COMMAND     cd factory-4.1.1 &&
-                    ./bin/makeheader factory.template     factory.h     && cp factory.h     include/factory/ &&
-                    ./bin/makeheader factoryconf.template factoryconf.h && cp factoryconf.h include/factory/
+                    ./bin/makeheader factory.template     factory.h     &&
+                    ./bin/makeheader factoryconf.template factoryconf.h &&
+                    ${CMAKE_COMMAND} -E copy factory.h factoryconf.h include/factory
         COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} all-recursive
   INSTALL_COMMAND   cd factory-4.1.1 && ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} install
   EXCLUDE_FROM_ALL  ON
@@ -395,7 +397,6 @@ endif()
 
 
 # TODO: who requires mpc?
-# TODO: requires mpfr and gmp, mpir too?
 ExternalProject_Add(build-mpc
   URL               ${M2_SOURCE_URL}/mpc-1.1.0.tar.gz
   URL_HASH          SHA256=6985c538143c1208dcb1ac42cedad6ff52e267b47e5f970183a3e75125b43c2e
@@ -405,6 +406,8 @@ ExternalProject_Add(build-mpc
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
                       --disable-shared
+                      #--with-gmp=.. # TODO: mpir too?
+                      #--with-mpfr=..
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       LDFLAGS=${LDFLAGS}
@@ -417,6 +420,9 @@ ExternalProject_Add(build-mpc
 if(NOT MPC_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-mpc-install)
+  if(NOT MPFR_FOUND)
+    ExternalProject_Add_StepDependencies(build-mpc build build-mpfr-install)
+  endif()
 endif()
 
 
