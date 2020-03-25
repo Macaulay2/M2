@@ -304,8 +304,6 @@ target_include_directories(M2-engine
   PRIVATE
     ${EIGEN3_INCLUDE_DIR}
     ${LIBXML2_INCLUDE_DIR}
-    ${FFLAS_FFPACK_INCLUDE_DIRS}
-    ${FLINT_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR}/Macaulay2/d
     ${CMAKE_SOURCE_DIR}/Macaulay2/c # TODO: engine should not depend on scc1
     ${CMAKE_SOURCE_DIR}/submodules/memtailor/src

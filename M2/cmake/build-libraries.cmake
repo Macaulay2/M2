@@ -275,11 +275,9 @@ if(NOT FACTORY_FOUND)
     ExternalProject_Add_StepDependencies(build-factory build build-flint-install) # lol
   endif()
   if(NOT NTL_FOUND)
-    # TODO: add build-ntl
     ExternalProject_Add_StepDependencies(build-factory build build-ntl-install)
   endif()
   if(NOT MPFR_FOUND)
-    # TODO: add build-mpfr
     ExternalProject_Add_StepDependencies(build-factory build build-mpfr-install)
   endif()
   if(NOT ${MP_LIBRARY}_FOUND)
@@ -903,13 +901,18 @@ if(NOT NAUTY)
 endif()
 
 
-#  http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
+# http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
 set(topcom_PROGRAMS
   src-reg/checkregularity src/points2finetriang src/points2chiro src/chiro2circuits src/chiro2cocircuits
   src/points2allfinetriangs src/points2alltriangs src/points2ntriangs src/points2nfinetriangs
   src/points2finetriangs src/points2flips src/points2nallfinetriangs src/points2nalltriangs src/points2nflips
   src/points2triangs src/points2volume)
-set(topcom_CPPFLAGS "${CPPFLAGS} -I${M2_HOST_PREFIX}/include/cdd")
+# TODO: any way to simplify this?
+if(NOT CDD_FOUND)
+  set(topcom_CPPFLAGS "${CPPFLAGS} -I${M2_HOST_PREFIX}/include/cdd")
+else()
+  set(topcom_CPPFLAGS "${CPPFLAGS} -I${CDD_INCLUDE_DIR}/cdd")
+endif()
 ExternalProject_Add(build-topcom
   URL               ${M2_SOURCE_URL}/TOPCOM-0.17.8.tar.gz
   URL_HASH          SHA256=3f83b98f51ee859ec321bacabf7b172c25884f14848ab6c628326b987bd8aaab
@@ -926,7 +929,7 @@ ExternalProject_Add(build-topcom
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
-  BUILD_COMMAND     ${MAKE_EXE}
+  BUILD_COMMAND     ${MAKE_EXE} -j1 # topcom doesn't like parallel builds
         COMMAND     ${CMAKE_STRIP} ${topcom_PROGRAMS}
   # TODO: put topcom programs in a folder?
   INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${topcom_PROGRAMS} ${M2_HOST_PREFIX}/bin
@@ -936,6 +939,9 @@ ExternalProject_Add(build-topcom
 if(NOT TOPCOM)
   # Add this to the programs target
   add_dependencies(build-programs build-topcom-install)
+  if(NOT CDD_FOUND)
+    ExternalProject_Add_StepDependencies(build-topcom build build-cddlib-install)
+  endif()
 endif()
 
 install(DIRECTORY
