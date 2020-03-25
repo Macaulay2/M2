@@ -65,14 +65,6 @@ endif()
 #################################################################################
 ## Build required libraries, first those downloaded as a tarfile
 
-# TODO:
-# ntl       b90b36c9dd8954c9bc54410b1d57c00be956ae1db5a062945822bbd7a86ab4d2 ntl-10.5.0.tar.gz
-# topcom    3f83b98f51ee859ec321bacabf7b172c25884f14848ab6c628326b987bd8aaab TOPCOM-0.17.8.tar.gz
-#
-# 4ti2 needs glpk, but maybe FindGLPK will suffice for all three
-# glpk      e398be2e7cb8a98584325268704729872558a4a88555bc8a54139d017eb9ebae glpk-4.59.tar.gz
-# mpc       6985c538143c1208dcb1ac42cedad6ff52e267b47e5f970183a3e75125b43c2e mpc-1.1.0.tar.gz
-
 include(ExternalProject) # populate at build time; FetchContent populates at configure time
 set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
 
@@ -196,6 +188,46 @@ if(NOT FLINT_FOUND)
 endif()
 
 
+# http://shoup.net/ntl
+ExternalProject_Add(build-ntl
+  URL               ${M2_SOURCE_URL}/ntl-10.5.0.tar.gz
+  URL_HASH          SHA256=b90b36c9dd8954c9bc54410b1d57c00be956ae1db5a062945822bbd7a86ab4d2
+  PREFIX            libraries/ntl
+  SOURCE_DIR        libraries/ntl/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND cd src && ./configure PREFIX=${M2_HOST_PREFIX}
+                      TUNE=generic # TODO: x86 and auto if NTL_WIZARD
+		      NATIVE=off # TODO: on if not packaging?
+		      NTL_GMP_LIP=on
+		      NTL_STD_CXX14=on
+		      NTL_NO_INIT_TRANS=on # TODO: still necessary?
+                      CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
+                      CXXFLAGS=${CXXFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      CXX=${CMAKE_CXX_COMPILER}
+		      RANLIB=${CMAKE_RANLIB}
+  BUILD_COMMAND     cd src && ${MAKE_EXE} -j${JOBS}
+                      MakeDescCFLAGS=-O0
+                      CPPFLAGS=${CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      CXXFLAGS=${CXXFLAGS}
+                      LDFLAGS=${LDFLAGS}
+		      LDFLAGS_CXX=${LDFLAGS}
+  INSTALL_COMMAND   cd src && ${MAKE_EXE} -j${JOBS} PREFIX=${M2_HOST_PREFIX} install
+                      CFLAGS=${CFLAGS}
+                      CXXFLAGS=${CXXFLAGS}
+                      LDFLAGS=${LDFLAGS}
+		      LDFLAGS_CXX=${LDFLAGS}
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
+  )
+if(NOT NTL_FOUND)
+  # Add this to the libraries target
+  add_dependencies(build-libraries build-ntl-install)
+endif()
+
+
 set(factory_CPPFLAGS "${CPPFLAGS} -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
 ExternalProject_Add(build-factory
   URL               ${M2_SOURCE_URL}/factory-4.1.1.tar.gz
@@ -212,8 +244,8 @@ ExternalProject_Add(build-factory
                       --disable-shared
                       --without-Singular
                       --cache-file=/dev/null
-                      # --with-ntl=${M2_HOST_PREFIX} # TODO: only if needed
-                      # --with-flint=${M2_HOST_PREFIX} # TODO: only if needed
+                      --with-ntl
+                      --with-flint
                       # --enable-assertions
                       CPPFLAGS=${factory_CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -253,22 +285,13 @@ if(NOT FACTORY_FOUND)
   if(NOT ${MP_LIBRARY}_FOUND)
     ExternalProject_Add_StepDependencies(build-factory build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
+else()
+  if(NOT EXISTS ${M2_CORE_DIR}/factory/gftables)
+    file(GLOB   GFTABLES    "${FACTORY_PREFIX}/share/factory/gftables/*")
+    file(MAKE_DIRECTORY               ${M2_CORE_DIR}/factory/gftables)
+    file(COPY ${GFTABLES} DESTINATION ${M2_CORE_DIR}/factory/gftables)
+  endif()
 endif()
-
-# TODO: remove this, since the one above has the tables at libraries/factory/build/factory-4.1.1/gftables/
-ExternalProject_Add(extract-gftables
-  URL               ${M2_SOURCE_URL}/factory.4.0.1-gftables.tar.gz
-  URL_HASH          SHA256=9cd158ceb1c2b1c47bdca2c0b004bba92cb0e0aaa0ea6a43ca784ebdce10eebd
-  PREFIX            libraries/gftables
-  SOURCE_DIR        ${M2_CORE_DIR}/factory/gftables
-  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
-  BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  INSTALL_COMMAND   ""
-  )
-# Add this to the libraries target
-add_dependencies(build-libraries extract-gftables)
 
 
 #TODO: version#"frobby version" is missing
@@ -346,6 +369,56 @@ ExternalProject_Add(build-cddlib
 if(NOT CDD_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-cddlib-install)
+endif()
+
+
+ExternalProject_Add(build-glpk
+  URL               ${M2_SOURCE_URL}/glpk-4.59.tar.gz
+  URL_HASH          SHA256=e398be2e7cb8a98584325268704729872558a4a88555bc8a54139d017eb9ebae
+  PREFIX            libraries/glpk
+  SOURCE_DIR        libraries/glpk/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      --disable-shared
+                      CPPFLAGS=${CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      CC=${CMAKE_C_COMPILER}
+  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
+  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install-strip
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
+  )
+if(NOT GLPK_FOUND)
+  # Add this to the libraries target
+  add_dependencies(build-libraries build-glpk-install)
+endif()
+
+
+# TODO: who requires mpc?
+# TODO: requires mpfr and gmp, mpir too?
+ExternalProject_Add(build-mpc
+  URL               ${M2_SOURCE_URL}/mpc-1.1.0.tar.gz
+  URL_HASH          SHA256=6985c538143c1208dcb1ac42cedad6ff52e267b47e5f970183a3e75125b43c2e
+  PREFIX            libraries/mpc
+  SOURCE_DIR        libraries/mpc/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      --disable-shared
+                      CPPFLAGS=${CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      CC=${CMAKE_C_COMPILER}
+  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
+  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install-strip
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
+  )
+if(NOT MPC_FOUND)
+  # Add this to the libraries target
+  add_dependencies(build-libraries build-mpc-install)
 endif()
 
 
@@ -718,7 +791,7 @@ ExternalProject_Add(build-csdp
                       LDFLAGS=${csdp_LDFLAGS}
                       LDLIBS=${csdp_LDLIBS}
                       LIBS=${csdp_LIBS}
-        COMMAND     ${CMAKE_STRIP} 
+        COMMAND     ${CMAKE_STRIP}
                       solver/csdp
                       theta/complement
                       theta/graphtoprob
@@ -784,6 +857,7 @@ endif()
 
 
 # URL = http://cs.anu.edu.au/~bdm/nauty
+# TODO: do we not strip some files?
 set(nauty_PROGRAMS
    NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg
    directg dreadnaut dretog genbg geng genrang gentourng labelg listg
@@ -826,6 +900,42 @@ ExternalProject_Add(build-nauty
 if(NOT NAUTY)
   # Add this to the programs target
   add_dependencies(build-programs build-nauty-install)
+endif()
+
+
+#  http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
+set(topcom_PROGRAMS
+  src-reg/checkregularity src/points2finetriang src/points2chiro src/chiro2circuits src/chiro2cocircuits
+  src/points2allfinetriangs src/points2alltriangs src/points2ntriangs src/points2nfinetriangs
+  src/points2finetriangs src/points2flips src/points2nallfinetriangs src/points2nalltriangs src/points2nflips
+  src/points2triangs src/points2volume)
+set(topcom_CPPFLAGS "${CPPFLAGS} -I${M2_HOST_PREFIX}/include/cdd")
+ExternalProject_Add(build-topcom
+  URL               ${M2_SOURCE_URL}/TOPCOM-0.17.8.tar.gz
+  URL_HASH          SHA256=3f83b98f51ee859ec321bacabf7b172c25884f14848ab6c628326b987bd8aaab
+  PREFIX            libraries/topcom
+  SOURCE_DIR        libraries/topcom/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/topcom/patch-0.17.8
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      CPPFLAGS=${topcom_CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      CXXFLAGS=${CXXFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+  BUILD_COMMAND     ${MAKE_EXE}
+        COMMAND     ${CMAKE_STRIP} ${topcom_PROGRAMS}
+  # TODO: put topcom programs in a folder?
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${topcom_PROGRAMS} ${M2_HOST_PREFIX}/bin
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
+  )
+if(NOT TOPCOM)
+  # Add this to the programs target
+  add_dependencies(build-programs build-topcom-install)
 endif()
 
 install(DIRECTORY

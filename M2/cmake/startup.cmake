@@ -67,7 +67,7 @@ endif()
 
 ## read startup.m2.in and apply regex to address and content
 file(GLOB STARTUP_M2_ADDR "startup.m2.in")
-file(READ           "startup.m2.in"      STARTUP_M2_CONTENT)
+file(READ "startup.m2.in"                STARTUP_M2_CONTENT)
 _STARTUP_REGEX([[${STARTUP_M2_ADDR}]]    STARTUP_M2_ADDR    NO)
 _STARTUP_REGEX([[${STARTUP_M2_CONTENT}]] STARTUP_M2_CONTENT YES)
 string(CONFIGURE "${STARTUP_M2_CONTENT}" STARTUP_M2_CONTENT @ONLY)

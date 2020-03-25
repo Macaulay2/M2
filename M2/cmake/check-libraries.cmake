@@ -77,11 +77,13 @@ find_package(Mathicgb)
 
 find_package(MPC  1.1.0 QUIET)
 find_package(MPFR 4.0.1 QUIET)
+find_package(GLPK 4.59  QUIET)
 find_package(NTL  10.5.0 QUIET)
 find_package(Flint	2.5.3 QUIET)
 find_package(MPSolve	3.1.8 QUIET)
 
 ## Find libraries available via pkg-config
+# TODO: add relevant X_CFLAGS_OTHER flags!
 # TODO: investigate error when factory-devel package is installed:
 # sample Factory finite field addition table file missing, needed for factorization:
 # /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist//usr/share/factory/
@@ -108,6 +110,7 @@ find_program(LRSLIB		lrs			PATH ${M2_HOST_PREFIX}/bin)
 find_program(CSDP		csdp			PATH ${M2_HOST_PREFIX}/bin)
 find_program(NORMALIZ		normaliz		PATH ${M2_HOST_PREFIX}/bin)
 find_program(NAUTY	NAMES	dreadnaut nauty-complg	PATH ${M2_HOST_PREFIX}/bin)
+find_program(TOPCOM	NAMES	checkregularity		PATH ${M2_HOST_PREFIX}/bin)
 
 ###############################################################################
 

@@ -1,29 +1,54 @@
 TAG = m2-cmake-build
 STORAGE = `pwd`/storage
-M2HOME = /home/macaulay
-M2REPO = `pwd`/../../..
-VOLUME = --volume $(STORAGE):$(M2HOME) --volume $(M2REPO):$(M2HOME)/M2
+M2_REPO = `pwd`/../../..
+M2_HOME = /home/macaulay
+VOLUME = --volume $(STORAGE):$(M2_HOME) --volume $(M2_REPO):$(M2_HOME)/M2
+BUILD_DIR = M2/M2/BUILD/build-docker
+
+define M2_BUILD_SCRIPT
+set -xe
+
+cmake -S M2/M2 -B $(BUILD_DIR) \
+      -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+      -DCMAKE_INSTALL_PREFIX=$(M2_HOME)/$(BUILD_DIR)/usr-dist
+
+#rm -rf $(BUILD_DIR)/{libraries,usr-host}
+#ln -s $(M2_HOME)/$(BUILD_DIR)/libraries-docker $(M2_HOME)/$(BUILD_DIR)/libraries
+#ln -s $(M2_HOME)/$(BUILD_DIR)/usr-host-docker  $(M2_HOME)/$(BUILD_DIR)/usr-host
+
+cmake --build $(BUILD_DIR) --target build-libraries build-programs
+cmake --build $(BUILD_DIR) --target all
+cmake --install $(BUILD_DIR)
+
+yes | M2 -q --stop --silent -e "setupEmacs(); exit(0);"
+endef
+export M2_BUILD_SCRIPT
+
+###############################################################################
 
 always:
 	@cat README.md
 
-build: build-image build-M2
-
-run: run-graphical
+clean:
+	rm -rf ../build-docker
 
 all: build run
 
-build-image:
-	docker build --tag $(TAG) .
+###############################################################################
 
-build-M2:
-	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) bash /home/macaulay/build-M2.sh
+build:
+	docker build --tag $(TAG) .
+	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) bash -c "$$M2_BUILD_SCRIPT"
+
+run: run-graphical
 
 run-graphical:
 	docker run $(VOLUME) --net=host --env="DISPLAY" $(TAG)
 
 run-terminal:
 	docker run $(VOLUME) --interactive --tty $(TAG)
+
+###############################################################################
 
 shell:
 	docker run $(VOLUME) --interactive --tty --user root --entrypoint bash $(TAG)
@@ -34,9 +59,8 @@ M2:
 M2-safe:
 	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) M2 --int --no-readline --no-randomize
 
-force-clean:
-	rm -rf ../build-docker
+###############################################################################
 
 # For anything else, run it in the build directory within the container
 %:
-	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) make -C $(M2HOME)/M2/M2/BUILD/build-docker $@
+	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) make -C $(M2_HOME)/$(BUILD_DIR) $@
