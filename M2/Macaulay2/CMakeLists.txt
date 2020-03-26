@@ -8,6 +8,9 @@ configure_file(README.in README)
 file(STRINGS "packages/\=distributed-packages" DISTRIBUTED_PACKAGES REGEX "^[a-zA-Z0-9]+$")
 list(JOIN DISTRIBUTED_PACKAGES " " DISTRIBUTED_PACKAGES)
 
+# TODO: consider using:
+#source_group(TREE . PREFIX "Macaulay2" FILES ../include/M2/config.h ...)
+
 # TODO:
 #add_subdirectory(util)
 add_subdirectory(regex)
@@ -22,8 +25,8 @@ add_subdirectory(m2)
 add_subdirectory(man)
 add_subdirectory(packages)
 add_subdirectory(emacs)
+add_subdirectory(tests)
 #add_subdirectory(html-check-links)
-#add_subdirectory(tests)
 #add_subdirectory(book)
 
 file(COPY COPYING-GPL-2 COPYING-GPL-3 DESTINATION ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_DOCDIR})
