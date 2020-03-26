@@ -88,10 +88,16 @@ add_compile_options(
   -I${CMAKE_SOURCE_DIR}/include
   -I${CMAKE_BINARY_DIR}/include
   # TODO: where should these be set?
-  # -fopenmp # fflas_ffpack wants this, but currently normaliz fails on macOS with it
-  -fabi-version=6 # givaro and fflas_ffpack want this
   -DSING_NDEBUG -DOM_NDEBUG # factory wants these
   )
+# TODO: is this not necessary with clang?
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  add_compile_options(
+    # -fopenmp # fflas_ffpack wants this, but currently normaliz fails on macOS with it
+    -fabi-version=6 # givaro and fflas_ffpack want this
+    )
+endif()
+
 
 if(PROFILING)
   # TODO: easier way to do this? generator expressions don't work at configure time
