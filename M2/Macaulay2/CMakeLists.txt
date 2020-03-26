@@ -25,8 +25,11 @@ add_subdirectory(m2)
 add_subdirectory(man)
 add_subdirectory(packages)
 add_subdirectory(emacs)
-add_subdirectory(tests)
 #add_subdirectory(html-check-links)
 #add_subdirectory(book)
+
+if(BUILD_TESTING)
+  add_subdirectory(tests)
+endif()
 
 file(COPY COPYING-GPL-2 COPYING-GPL-3 DESTINATION ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_DOCDIR})

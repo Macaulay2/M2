@@ -1,73 +1,91 @@
-enable_testing()
-
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
-#TARGETS = all check status
+## Try:
+# cd Macaulay2/tests
+# ctest --build-and-test
+# ctest --build-run-dir
+# ctest -R schorder --rerun-failed -V
 
-set(SUBDIRS normal) #ComputationsBook normal slow gigantic goals quarantine)
-# engine rationality
+## Default resource limits
+# TODO: add memory, virtual memory, and stack size
+# the tests aren't run through bash, so ulimit wouldn't work
+if(DEBUG)
+  set(CTEST_TEST_TIMEOUT 140)
+  #MLIMIT ?= 1200000
+  #VLIMIT ?= 2000000
+else()
+  set(CTEST_TEST_TIMEOUT 90)
+  ## one test doesn't work with only 150MB RAM, ext-total.m2, on a 64 bit intel machine:
+  #MLIMIT ?=  800000
+  #VLIMIT ?= 2000000
+endif()
+## make the stack limit always the same as it would be under MacOS
+#SLIMIT ?= 8192
+
+# TODO: get this to work
+if(MEMDEBUG)
+  find_program(MEMORYCHECK_COMMAND valgrind)
+  set( MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full --show-reachable=yes --track-origins=yes" )
+endif()
+
+include(CTest)
+
+###############################################################################
+
+# TODO: add the other folders
+# ComputationsBook has a different build command
+# some targets have different resource limits
+set(SUBDIRS normal) #ComputationsBook normal slow gigantic goals quarantine) # engine rationality too?
 
 # set(M2_gbTrace    5)
 # set(M2_errorDepth 0)
 
-## Arguments for M2-binary and installPackage
+## Arguments for M2-binary
 set(M2_ARGS
-  -q --stop --silent
-  --no-debug --no-randomize --print-width 140
+  -q --stop --silent --no-debug --no-randomize # --no-prompts --no-...
   -e errorDepth=${M2_errorDepth} -e debugLevel=${M2_debugLevel} -e gbTrace=${M2_gbTrace}
   )
 set(M2_PATH "join(path,{\"${CMAKE_CURRENT_SOURCE_DIR}/\",\"${CMAKE_SOURCE_DIR}/packages/\"})")
 
-foreach(GROUP IN LISTS SUBDIRS)
+## Regular expressions for various test errors
+## TODO: add WILL_FAIL tests
+set(M2_FAIL_REGEX
+  [[internal error;non-zero status]]
+  "\nCommand terminated;\nGC;\n0x;\nout of mem"
+  "user.*system.*elapsed;\n[0-9]+\.[0-9]+user"
+  [[:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):]]
+  )
 
-  add_custom_target(test-${GROUP}) # DEPENDS Core)
+###############################################################################
+
+foreach(GROUP IN LISTS SUBDIRS)
 
   ## eg: LU.m2 ...
   file(GLOB ${GROUP}_TESTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/${GROUP} "${GROUP}/*.m2")
 
   foreach(TESTFILE IN LISTS ${GROUP}_TESTS)
     ## ctest target for testing the package
-    set(TESTNAME ${GROUP}-${TESTFILE})
+    set(TESTNAME ${GROUP}/${TESTFILE})
 
+    # Read the file, then exit. Note: a "restart" command causes the test to not halt
     set(M2_TEST_STRING "input(\"${CMAKE_CURRENT_SOURCE_DIR}/${GROUP}/${TESTFILE}\")$<SEMICOLON>exit(0)")
 
     add_test(NAME ${TESTNAME}
       COMMAND M2-binary ${M2_ARGS} -e path=${M2_PATH} -e ${M2_TEST_STRING}
-      #WORKING_DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/${GROUP}
+      WORKING_DIRECTORY	${CMAKE_BINARY_DIR}
       )
 
-#    add_dependencies(test-${GROUP} ${TESTNAME})
+    set_tests_properties(${TESTNAME} PROPERTIES
+      FAIL_REGULAR_EXPRESSION "${M2_FAIL_REGEX}"
+      ENVIRONMENT "GC_MAXIMUM_HEAP_SIZE=400M"
+      TIMEOUT ${CTEST_TEST_TIMEOUT} # TODO: this shouldn't be necessary
+      )
   endforeach()
 
 endforeach()
 
 ###############################################################################
 ##### STILL PROCESSING
-
-#define do-in-subdirs
-#$(foreach d,$(SUBDIRS),
-#	$(eval .PHONY: $1-in-subdirs)
-#	$(eval .PHONY $1 $1-in-subdirs:$1-in-$d)
-#	$(eval $1-in-$d:; $$(MAKE) -C $d $1 $2))
-#endef
-#$(foreach t,$(TARGETS),$(eval $(call do-in-subdirs,$t)))
-#$(foreach t,$(CLEANTARGETS),$(eval $(call do-in-subdirs,$t,DEPENDS=no)))
-
-#check-deferred:
-#	-@ if egrep -nHw 'defer|deferred|disable|disabled' @abs_srcdir@/*.m2 >/dev/null 2>&1 ; \
-#	  then echo "make: warning: tests in the following files have been deferred:" >&2 ; \
-#	       egrep -nHw 'defer|deferred|disable|disabled' @abs_srcdir@/*.m2 >&2 ; \
-#	       false ; \
-#	  fi
-
-#docStructure.out: docStructure.m2
-
-#MIKE_TESTS := $(wildcard @srcdir@/mt-*.m2 @srcdir@/gigantic/mt-*.m2)
-#MIKE_RESULTS := $(patsubst @srcdir@/%.m2, %.out, $(MIKE_TESTS))
-#mike-tests: $(MIKE_RESULTS) ; grep sys $^ 
-
-#PAT := 'internal error|:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^0x|^out of mem|non-zero status|^Command terminated|user.*system.*elapsed|^[0-9]+\.[0-9]+user'
-#FILTER := egrep -a $(PAT)
 
 #status: status-files
 #status-files: $(TESTFILES)
@@ -86,6 +104,7 @@ endforeach()
 #		     egrep -n '^--status:' $< /dev/null || true ; \
 #		     exit $$a ; \
 #		fi
+
 #%.out : %.m2-input
 #	@ echo testing: $<
 #	@ egrep -n '^--status:' $< /dev/null || true
@@ -108,31 +127,3 @@ endforeach()
 #	  done
 
 #clean:; rm -f *.okay *.out core *.errors
-
-#ifeq @DEBUG@ no
-#TLIMIT ?= 90
-## one test doesn't work with only 150MB RAM, ext-total.m2, on a 64 bit intel machine:
-#MLIMIT ?=  800000
-#VLIMIT ?= 2000000
-#else
-## give the debug version more time and space
-#TLIMIT ?= 140
-#MLIMIT ?= 1200000
-#VLIMIT ?= 2000000
-#endif
-## make the stack limit always the same as it would be under MacOS
-#SLIMIT ?= 8192
-
-#LIMIT :=
-#ifeq (@ULIMIT_T@,yes)
-#LIMIT += ulimit -t $(TLIMIT) ;
-#endif
-#ifeq (@ULIMIT_M@,yes)
-#LIMIT += ulimit -m $(MLIMIT) ;
-#endif
-#ifeq (@ULIMIT_V@,yes)
-#LIMIT += ulimit -v $(VLIMIT) ;
-#endif
-#ifeq (@ULIMIT_S@,yes)
-#LIMIT += ulimit -s $(SLIMIT) ;
-#endif
