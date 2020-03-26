@@ -245,7 +245,7 @@ ExternalProject_Add(build-factory
                       --disable-shared
                       --disable-omalloc
                       --disable-doxygen-doc
-		      --enable-streamio
+                      --enable-streamio
                       --without-Singular
                       --with-ntl
                       --with-flint
@@ -434,10 +434,6 @@ ExternalProject_Add(build-googletest
   PREFIX            libraries/googletest
   BINARY_DIR        libraries/googletest/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX} -DBUILD_GMOCK=OFF # -DINSTALL_GTEST=OFF
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  INSTALL_COMMAND   ""
-  TEST_COMMAND      ""
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )

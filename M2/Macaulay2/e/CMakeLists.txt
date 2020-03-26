@@ -283,9 +283,6 @@ target_include_directories(M2-engine
     ${LIBXML2_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR}/Macaulay2/d
     ${CMAKE_SOURCE_DIR}/Macaulay2/c # TODO: engine should not depend on scc1
-    ${CMAKE_SOURCE_DIR}/submodules/memtailor/src
-    ${CMAKE_SOURCE_DIR}/submodules/mathic/src
-    ${CMAKE_SOURCE_DIR}/submodules/mathicgb/src
   )
 
 # TODO: enable INTERPROCEDURAL_OPTIMIZATION?
@@ -380,23 +377,23 @@ if(BUILD_TESTING)
   # TODO: valgrind --track-origins=yes ...
   add_test(NAME M2-engine-tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND M2-unit-tests)
 
+  if(GTEST_FOUND)
   target_link_libraries(M2-unit-tests GTest::GTest GTest::Main)
+  target_include_directories(M2-unit-tests PRIVATE ${GTEST_INCLUDE_DIR})
+  endif()
+
+  ###############################################################################
+
+  # TODO: this is a hack, how do we avoid it?
   target_include_directories(M2-unit-tests
     PRIVATE
-    ${GTEST_INCLUDE_DIR}
     ${EIGEN3_INCLUDE_DIR}
     ${LIBXML2_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR}/Macaulay2/d
     ${CMAKE_SOURCE_DIR}/Macaulay2/d
     ${CMAKE_SOURCE_DIR}/Macaulay2/c # TODO: engine should not depend on scc1
-    ${CMAKE_SOURCE_DIR}/submodules/memtailor/src
-    ${CMAKE_SOURCE_DIR}/submodules/mathic/src
-    ${CMAKE_SOURCE_DIR}/submodules/mathicgb/src
     )
 
-  ###############################################################################
-
-  # TODO: this is a hack, how do we avoid it?
   # NOTE: is d/debug.o needed?
   target_link_libraries(M2-unit-tests
     regex M2-engine interpreter system kernel

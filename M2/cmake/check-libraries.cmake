@@ -82,7 +82,7 @@ find_package(Flint	2.5.3 QUIET)
 find_package(MPSolve	3.1.8 QUIET)
 
 if(BUILD_TESTING)
-  find_package(GTest REQUIRED)
+  find_package(GTest)
 endif()
 
 ## Find libraries available via pkg-config

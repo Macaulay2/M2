@@ -107,9 +107,6 @@ target_include_directories(interpreter
     ${GIVARO_INCLUDE_DIRS}
     ${LIBXML2_INCLUDE_DIR}
     ${READLINE_INCLUDE_DIR}
-    ${CMAKE_SOURCE_DIR}/submodules/memtailor/src
-    ${CMAKE_SOURCE_DIR}/submodules/mathic/src
-    ${CMAKE_SOURCE_DIR}/submodules/mathicgb/src
   )
 
 # common warning flags
