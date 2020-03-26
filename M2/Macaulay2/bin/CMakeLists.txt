@@ -4,9 +4,9 @@
 
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
-# Any other sources?
 # TODO: do we still want to use M2${EXE} defined in cmake/config.cmake?
-add_executable(M2-binary timestamp.cpp)
+# TODO: move main.c here
+add_executable(M2-binary timestamp.cpp ../d/main.c)
 target_link_directories(M2-binary PRIVATE ${CMAKE_BINARY_DIR}/usr-host/lib)
 target_include_directories(M2-binary PRIVATE ${CMAKE_BINARY_DIR}/usr-host/include)
 # TODO: make sure this is okay on multi-configuration editors

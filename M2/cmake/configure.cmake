@@ -12,7 +12,8 @@ execute_process(
 message("## Configure Macaulay2
      M2 Version        = ${PROJECT_VERSION}
      Git Commit        = ${GIT_DESCRIPTION}
-     CMake Build Type  = ${CMAKE_BUILD_TYPE}")
+     CMake Build Type  = ${CMAKE_BUILD_TYPE}
+     BUILD_TESTING     = ${BUILD_TESTING}")
 
 ################################################################
 

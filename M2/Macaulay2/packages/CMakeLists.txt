@@ -53,6 +53,8 @@ endforeach()
 # TODO: how to handle EngineTests and other packages under development that
 # should be checked but not installed
 
+# TODO: use make install instead of individual install targets?
+
 ## eg: install-Style install-Macaulay2Doc ...
 list(TRANSFORM PACKAGES PREPEND "install-" OUTPUT_VARIABLE INSTALL_TARGETS)
 ## Install packages and make documentation
@@ -92,18 +94,16 @@ foreach(PACKAGE IN LISTS PACKAGES)
     DEPENDS copy-packages
     )
 
-  # TODO: use cmake -E remove?
   ## Custom target for uninstalling the package
   add_custom_target(uninstall-${PACKAGE}
     COMMENT
       "Uninstalling package ${PACKAGE}"
-#    COMMAND
-#      rm -rf
-#        @pre_libm2dir@/$1
-#        @pre_infodir@/$1.info
-#        @pre_infodir@/$1.info.errors
-#        @pre_packagesdir@/$1
-#        @pre_docdir@/$1
+    COMMAND
+      rm -rf
+        ${M2_PACKAGE_DIR}/${PACKAGE}*
+        ${CMAKE_INSTALL_FULL_LIBDIR}/Macaulay2/${PACKAGE}*
+        ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_DOCDIR}/${PACKAGE}*
+        ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_INFODIR}/${PACKAGE}*
     )
 
   # FIXME: what is if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 ?

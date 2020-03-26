@@ -1,4 +1,5 @@
 #set(CMAKE_VERBOSE_MAKEFILE on)
+# TODO: use PRE_BUILD targets for parsing d files
 
 # FIXME: for some reason scc1 fails if run in parallel: failed to open typecode.db
 # TODO: this isn't working
@@ -73,10 +74,11 @@ endforeach()
 ################################################################
 ## Compile the interpreter
 
+# TODO: are all of these needed?
 add_library(interpreter OBJECT
   ${CLIST}
   gmp_aux.c
-  main.c
+  # main.c
   M2types.c
   scclib.c
   M2lib.c

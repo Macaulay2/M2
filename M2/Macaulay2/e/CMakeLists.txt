@@ -272,9 +272,6 @@ add_dependencies(M2-engine interpreter e-includes)
 
 target_link_libraries(M2-engine Eigen3::Eigen)
 
-#TODO: look into this pattern
-#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-#    $<INSTALL_INTERFACE:include>
 target_include_directories(M2-engine
   PUBLIC
     .
@@ -328,62 +325,103 @@ endif()
 # add other compilers (eg: Intel, MSVC) here
 # for Intel: -diag-disable 981,869,383,2259,444 -debug -Wimplicit-function-declaration
 
-# TODO
-if(FALSE)
-enable_testing()
-add_executable(macaulay2-test
-  # unit-tests
-  unit-tests/ARingCCCTest.cpp
-  unit-tests/ARingCCTest.cpp
-  unit-tests/ARingGFTest.cpp
-  unit-tests/ARingQQFlintTest.cpp
-  unit-tests/ARingQQGmpTest.cpp
-  unit-tests/ARingRRRTest.cpp
-  unit-tests/ARingRRTest.cpp
-  unit-tests/ARingTest.hpp
-  unit-tests/ARingZZTest.cpp
-  unit-tests/ARingZZpTest.cpp
-  unit-tests/DMatTest.hpp
-  unit-tests/DMatZZpTest.cpp
-  unit-tests/GivaroTest.cpp
-  unit-tests/M2-cpp-replacement.cpp
-  unit-tests/M2-replacement.c
-  unit-tests/M2mem-replacement.c
-  unit-tests/M2mem-replacement.h
-  unit-tests/PointArray.cpp
-  unit-tests/ResTest.cpp
-  unit-tests/RingCCCTest.cpp
-  unit-tests/RingQQTest.cpp
-  unit-tests/RingRRRTest.cpp
-  unit-tests/RingTest.hpp
-  unit-tests/RingTowerTest.cpp
-  unit-tests/RingZZTest.cpp
-  unit-tests/RingZZpTest.cpp
-  unit-tests/SubsetTest.cpp
-  unit-tests/basics-test.cpp
-  unit-tests/fromStream.cpp
-#  unit-tests/gtest-include.cpp
-  unit-tests/testMain.cpp
-)
 
-# find_package(GTest REQUIRED)
-# include_directories(${GTEST_INCLUDE_DIRS})
-# target_link_libraries(macaulay2-test ${GTEST_BOTH_LIBRARIES})
-# add_test(AllTestsInFoo macaulay2-test)
+## To try, run ctest or ./M2-unit-tests in Macaulay2/e
+if(BUILD_TESTING)
+  enable_testing()
 
+  include(GoogleTest)
 
-# add_executable(proj-test
-#   ${source_files}
-#   ${test_files}
-#   )
+  # TODO: overflow tests
+  # TODO: break up into multiple branches
+  add_executable(M2-unit-tests
+    # what are these for?
+    #unit-tests/M2-cpp-replacement.cpp
+    #unit-tests/M2-replacement.c
+    #unit-tests/M2mem-replacement.c
+    #unit-tests/M2mem-replacement.h
 
-# set(GTEST_INCLUDE_DIRS
-#   gtest-1.7.0/include
-#   gtest-1.7.0
-#   )
+    #unit-tests/GivaroTest.cpp
 
-# target_include_directories(proj-test PUBLIC
-#   ${GTEST_INCLUDE_DIRS}
-#   include
-#   )
+    unit-tests/ARingTest.hpp
+    unit-tests/ARingZZTest.cpp
+    unit-tests/ARingZZpTest.cpp
+    #unit-tests/ARingGFTest.cpp
+    unit-tests/ARingQQFlintTest.cpp
+    unit-tests/ARingQQGmpTest.cpp
+    unit-tests/ARingRRTest.cpp
+    unit-tests/ARingCCTest.cpp
+    unit-tests/ARingRRRTest.cpp
+    unit-tests/ARingCCCTest.cpp
+
+    unit-tests/RingTest.hpp
+    unit-tests/RingZZTest.cpp
+    unit-tests/RingZZpTest.cpp
+    unit-tests/RingQQTest.cpp
+    #unit-tests/RingCCCTest.cpp
+    #unit-tests/RingRRRTest.cpp
+    unit-tests/RingTowerTest.cpp
+
+    unit-tests/DMatTest.hpp
+    unit-tests/DMatZZpTest.cpp
+
+    unit-tests/ResTest.cpp
+    unit-tests/PointArray.cpp
+    unit-tests/SubsetTest.cpp
+    unit-tests/basics-test.cpp
+
+    unit-tests/fromStream.cpp
+    unit-tests/testMain.cpp # not needed, except for GC_INIT
+    ../bin/timestamp.c # version.dd needs timestamp
+    )
+
+  gtest_discover_tests(M2-unit-tests)
+
+  # TODO: valgrind --track-origins=yes ...
+  add_test(NAME M2-engine-tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND M2-unit-tests)
+
+  target_link_libraries(M2-unit-tests GTest::GTest GTest::Main)
+  target_include_directories(M2-unit-tests
+    PRIVATE
+    ${GTEST_INCLUDE_DIR}
+    ${EIGEN3_INCLUDE_DIR}
+    ${LIBXML2_INCLUDE_DIR}
+    ${CMAKE_BINARY_DIR}/Macaulay2/d
+    ${CMAKE_SOURCE_DIR}/Macaulay2/d
+    ${CMAKE_SOURCE_DIR}/Macaulay2/c # TODO: engine should not depend on scc1
+    ${CMAKE_SOURCE_DIR}/submodules/memtailor/src
+    ${CMAKE_SOURCE_DIR}/submodules/mathic/src
+    ${CMAKE_SOURCE_DIR}/submodules/mathicgb/src
+    )
+
+  ###############################################################################
+
+  # TODO: this is a hack, how do we avoid it?
+  # NOTE: is d/debug.o needed?
+  target_link_libraries(M2-unit-tests
+    regex M2-engine interpreter system kernel
+    Threads::Threads ${LIBGDBM} ${CMAKE_DL_LIBS}
+    )
+
+  set(PKGLIB_LIST    BDW_GC FACTORY FFLAS_FFPACK GIVARO)
+  set(LIBRARY_LIST   HISTORY READLINE MPSOLVE FLINT)
+  set(LIBRARIES_LIST LAPACK LIBXML2 ${MP_LIBRARY} MPFR NTL MATHICGB MATHIC MEMTAILOR TBB FROBBY)
+
+  foreach(LIB IN LISTS LIBRARY_LIST)
+    if(${LIB}_FOUND)
+      target_link_libraries(M2-unit-tests ${${LIB}_LIBRARY})
+    endif()
+  endforeach()
+
+  foreach(LIB IN LISTS LIBRARIES_LIST)
+    if(${LIB}_FOUND)
+      target_link_libraries(M2-unit-tests ${${LIB}_LIBRARIES})
+    endif()
+  endforeach()
+
+  foreach(LIB IN LISTS PKGLIB_LIST)
+    if(${LIB}_FOUND)
+      target_link_libraries(M2-unit-tests PkgConfig::${LIB})
+    endif()
+  endforeach()
 endif()

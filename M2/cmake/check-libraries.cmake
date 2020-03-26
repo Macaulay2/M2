@@ -57,7 +57,7 @@ find_package(LibXml2 2.9 REQUIRED QUIET) # d/xml-c.c needs xmlNewNode
 find_package(Readline    REQUIRED QUIET)
 find_package(History     REQUIRED QUIET)
 # TODO: replace readline with https://github.com/AmokHuginnsson/replxx
-#find_package(LibLZMA 5.2 REQUIRED QUIET) # TODO: where is this needed?
+
 # TODO: which to use: TBB or OpenMP?
 # OpenMP is required for building the library csdp and good for building the library normaliz
 find_package(OpenMP      REQUIRED QUIET)
@@ -75,12 +75,15 @@ find_package(Memtailor)
 find_package(Mathic)
 find_package(Mathicgb)
 
-find_package(MPC  1.1.0 QUIET)
 find_package(MPFR 4.0.1 QUIET)
 find_package(GLPK 4.59  QUIET)
 find_package(NTL  10.5.0 QUIET)
 find_package(Flint	2.5.3 QUIET)
 find_package(MPSolve	3.1.8 QUIET)
+
+if(BUILD_TESTING)
+  find_package(GTest REQUIRED)
+endif()
 
 ## Find libraries available via pkg-config
 # TODO: add relevant X_CFLAGS_OTHER flags!

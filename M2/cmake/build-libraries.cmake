@@ -396,36 +396,6 @@ if(NOT GLPK_FOUND)
 endif()
 
 
-# TODO: who requires mpc?
-ExternalProject_Add(build-mpc
-  URL               ${M2_SOURCE_URL}/mpc-1.1.0.tar.gz
-  URL_HASH          SHA256=6985c538143c1208dcb1ac42cedad6ff52e267b47e5f970183a3e75125b43c2e
-  PREFIX            libraries/mpc
-  SOURCE_DIR        libraries/mpc/build
-  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
-  BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
-                      --disable-shared
-                      #--with-gmp=.. # TODO: mpir too?
-                      #--with-mpfr=..
-                      CPPFLAGS=${CPPFLAGS}
-                      CFLAGS=${CFLAGS}
-                      LDFLAGS=${LDFLAGS}
-                      CC=${CMAKE_C_COMPILER}
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
-  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install-strip
-  EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
-  )
-if(NOT MPC_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-mpc-install)
-  if(NOT MPFR_FOUND)
-    ExternalProject_Add_StepDependencies(build-mpc build build-mpfr-install)
-  endif()
-endif()
-
-
 ExternalProject_Add(build-mpsolve
   URL               https://numpi.dm.unipi.it/_media/software/mpsolve/mpsolve-3.1.8.tar.gz
   URL_HASH          SHA256=34740339d14cf8ca6d3f7da7ca12237b6da642623d14a6d6d5b5fc684c9c0fe5
@@ -458,18 +428,23 @@ endif()
 ## Packages downloaded via git
 
 # TODO: do we actually need it built?
-ExternalProject_Add(googletest
+ExternalProject_Add(build-googletest
   GIT_REPOSITORY    https://github.com/google/googletest.git
   GIT_TAG           release-1.10.0 # 42bc671f
   PREFIX            libraries/googletest
-  SOURCE_DIR        libraries/googletest/build
-  BUILD_IN_SOURCE   ON
+  BINARY_DIR        libraries/googletest/build
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX} -DBUILD_GMOCK=OFF # -DINSTALL_GTEST=OFF
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   ""
-#  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX} -DBUILD_GMOCK=OFF # -DINSTALL_GTEST=OFF
+  TEST_COMMAND      ""
   EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
   )
+if(BUILD_TESTING AND NOT GTEST_FOUND)
+  # Add this to the libraries target
+  add_dependencies(build-libraries build-googletest-install)
+endif()
 set(GTEST_PATH  ${CMAKE_BINARY_DIR}/libraries/googletest/build/googletest) # ${M2_HOST_PREFIX}/include/gtest
 
 
