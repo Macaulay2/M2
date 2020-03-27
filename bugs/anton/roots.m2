@@ -12,12 +12,36 @@ end--
 restart
 --load "roots.m2"
 
-R = RR[x]
-F = x^4-x^2-3*x-1
+testRoots = (F,prec) -> (
+    r := roots(F,Precision=>prec);
+    Rprec := CC_prec[gens ring F];
+    assert(0 == clean_(2.^(-7*prec/10)) (sub(F,Rprec) - product(r,a->Rprec_0-a)))
+    )
+
+rings = {ZZ[x],QQ[x],RR[x],CC[x],RR_1000[x],CC_1000[x]}
+ZZ[x]
 F = (x^2-1)^3
-F = (x^22-1)
+--F = x^22-x-1
+for R in rings do for prec in {53,100,1000} do (
+    print (R,prec);
+    testRoots(sub(F,R),prec);
+    )
+
+R = QQ[x]
+F = (x^2-1)^3
 r = roots F
-prec=100000
+prec=1000
+r = roots(F,Precision=>prec)
+
+R = RR[x]
+R = CC[x]
+R = RR_1000[x]
+
+F = x^4-x^2-3*x-1
+F = (x^22-1)
+F = (x^2-1)^3
+r = roots F
+prec=1000
 r = roots(F,Precision=>prec)
 CC_prec[x]
 p = product(r,a->x-a);

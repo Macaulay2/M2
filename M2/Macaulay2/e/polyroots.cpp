@@ -36,17 +36,45 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
   mps_context *s = mps_context_new ();
   mps_monomial_poly *mps_p = mps_monomial_poly_new (s, hideg);
   mps_context_select_algorithm(s, MPS_ALGORITHM_SECULAR_GA);
-      
-  if (K->ringID() != M2::ring_RR) {
-    ERROR("'roots' is implemented only for RR coefficients.");
-    return nullptr;
-  }
 
+
+  const auto ID = K->ringID();
   for (Nterm *t = p->get_value(); t != nullptr; t = t->next) {
-    double c = t->coeff.get_double();
     int deg;
     M->to_expvector(t->monom, &deg); // number of vars = 1
-    mps_monomial_poly_set_coefficient_d (s, mps_p, deg, c, 0); 
+    if (ID==M2::ring_RR or ID==M2::ring_CC) {
+      cc_doubles_struct cc;
+      if (ID==M2::ring_RR) {
+        cc.re = t->coeff.get_double();
+        cc.im = 0;
+      } else if (ID==M2::ring_CC) 
+        cc = *t->coeff.get_cc_doubles();
+      mps_monomial_poly_set_coefficient_d (s, mps_p, deg, cc.re, cc.im); 
+      /*} else if (ID==M2::ring_RRR or ID==M2::ring_CCC) {
+      mpc_t cc;
+      mpc_init(cc);
+      if (ID==M2::ring_RRR) {
+        mpfr_get_f(cc->r,t->coeff.get_mpfr(),GMP_RNDN);
+      } else if (ID==M2::ring_CC) {
+        mpfr_get_f(cc->r,&t->coeff.get_cc()->re,GMP_RNDN);
+        mpfr_get_f(cc->i,&t->coeff.get_cc()->im,GMP_RNDN);
+      }
+      mps_monomial_poly_set_coefficient_f (s, mps_p, deg, cc); 
+      mpc_clear(cc);
+      */} else if ((ID==M2::ring_old and K->is_ZZ()) or ID==M2::ring_QQ) {
+      mpq_t q, zero;
+      mpq_init(zero);
+      mpq_init(q);
+      if (ID==M2::ring_QQ)
+        mpq_set(q, t->coeff.get_mpq());
+      else mpq_set_z(q, t->coeff.get_mpz());
+      mps_monomial_poly_set_coefficient_q(s, mps_p, deg, q, zero); 
+      mpq_clear(q);
+      mpq_clear(zero);
+    } else {
+      ERROR("'roots' expects coefficients in ZZ, QQ, RR or CC");
+      return nullptr;
+    }
   }
 
   /* Set the input polynomial */
@@ -71,10 +99,10 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
     mps_context_get_roots_d (s, &result_mps, nullptr);
 
     /* Print out roots */
-    for (int i = 0; i < hideg; i++) {
-      cplx_out_str (stdout, result_mps[i]);
-      printf ("\n");
-    }
+    // for (int i = 0; i < hideg; i++) {
+    //   cplx_out_str (stdout, result_mps[i]);
+    //   printf ("\n");
+    // }
 
     ///////////////////////////////
     // copy to mps_result to result
@@ -96,10 +124,10 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
     mps_context_get_roots_m (s, &roots, &radii);
     /* Sort roots in the order of increasing real part */
     //sort_roots(hideg, roots, radii);
-    for (int i = 0; i < hideg; i++) {
-      mpc_out_str (stdout, 10, prec/4, roots[i]);
-      printf ("\n");
-    }
+    // for (int i = 0; i < hideg; i++) {
+    //   mpc_out_str (stdout, 10, prec/4, roots[i]);
+    //   printf ("\n");
+    // }
     
     const Ring *C = IM2_Ring_CCC(prec);
     const M2::ARingCCC C0(prec);
