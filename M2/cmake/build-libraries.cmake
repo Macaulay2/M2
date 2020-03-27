@@ -744,6 +744,7 @@ if(NOT LRSLIB)
 endif()
 
 
+# TODO: do we need to make and strip theta/* if we don't use them?
 set(csdp_CC  "${CC}  ${OpenMP_C_FLAGS}")
 set(csdp_CXX "${CXX} ${OpenMP_CXX_FLAGS}")
 set(csdp_LDFLAGS "${LDFLAGS} ${OpenMP_CXX_FLAGS}")
@@ -771,7 +772,7 @@ ExternalProject_Add(build-csdp
                       theta/graphtoprob
                       theta/rand_graph
                       theta/theta
-  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} install
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different solver/csdp ${M2_HOST_PREFIX}/bin
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -798,6 +799,7 @@ ExternalProject_Add(build-normaliz
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ./configure --prefix=${M2_HOST_PREFIX}
                       --disable-shared
+		      --disable-flint
                       --cache-file=/dev/null
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
