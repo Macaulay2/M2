@@ -441,7 +441,6 @@ if(BUILD_TESTING AND NOT GTEST_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-googletest-install)
 endif()
-set(GTEST_PATH  ${CMAKE_BINARY_DIR}/libraries/googletest/build/googletest) # ${M2_HOST_PREFIX}/include/gtest
 
 
 ## bdwgc
@@ -452,8 +451,8 @@ ExternalProject_Add(build-bdwgc
   GIT_TAG           master
   PREFIX            libraries/bdwgc
   BINARY_DIR        libraries/bdwgc/build
-# TODO: what is GC_LARGE_ALLOC_WARN_INTERVAL=1?
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+		    -DGC_LARGE_ALLOC_WARN_INTERVAL=1
                     -Denable_cplusplus=ON
                     -Denable_threads=ON
                     -Denable_large_config=ON
@@ -469,7 +468,7 @@ ExternalProject_Add(build-bdwgc
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
-if(NOT BDW_GC_FOUND)
+if(NOT BDWGC_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-bdwgc-install)
 endif()

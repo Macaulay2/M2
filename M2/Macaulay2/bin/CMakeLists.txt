@@ -29,9 +29,9 @@ target_link_libraries(M2-binary
   )
 endif()
 
-if(MPSOLVE_FOUND AND FLINT_FOUND AND MPFR_FOUND AND NTL_FOUND)
+if(BDWGC_FOUND AND MPSOLVE_FOUND AND FLINT_FOUND AND MPFR_FOUND AND NTL_FOUND)
 target_link_libraries(M2-binary
-  ${MPSOLVE_LIBRARY} ${FLINT_LIBRARY} ${MPFR_LIBRARIES} ${NTL_LIBRARIES}
+  ${BDWGC_LIBRARIES} ${MPSOLVE_LIBRARY} ${FLINT_LIBRARY} ${MPFR_LIBRARIES} ${NTL_LIBRARIES}
   )
 endif()
 
@@ -42,9 +42,8 @@ target_link_libraries(M2-binary
   )
 endif()
 
-if(BDW_GC_FOUND AND FACTORY_FOUND AND FFLAS_FFPACK_FOUND AND GIVARO_FOUND)
+if(FACTORY_FOUND AND FFLAS_FFPACK_FOUND AND GIVARO_FOUND)
 target_link_libraries(M2-binary
-  PkgConfig::BDW_GC
   PkgConfig::FACTORY # factory depends on flint mpfr ntl gmp
   PkgConfig::FFLAS_FFPACK # fflas-ffpack depends on openmp, givaro, gmp, and gmpxx
   PkgConfig::GIVARO # givaro depends on gmpxx and gmp (or mpir and mpirxx)

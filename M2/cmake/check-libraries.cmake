@@ -79,6 +79,7 @@ find_package(MPFR 4.0.1 QUIET)
 find_package(GLPK 4.59  QUIET)
 find_package(NTL  10.5.0 QUIET)
 find_package(Flint	2.5.3 QUIET)
+find_package(BDWGC	8.1.0 QUIET)
 find_package(MPSolve	3.1.8 QUIET)
 
 if(BUILD_TESTING)
@@ -94,7 +95,6 @@ pkg_search_module(FACTORY	factory>=4.1.1
                                 singular-factory>=4.1.1	IMPORTED_TARGET)
 pkg_search_module(FFLAS_FFPACK	fflas-ffpack>=2.2.2	IMPORTED_TARGET)
 pkg_search_module(GIVARO	givaro>=4.0.2		IMPORTED_TARGET)
-pkg_search_module(BDW_GC	bdw-gc			IMPORTED_TARGET)
 
 # TODO: remove this or deal with it differently
 find_library(LIBGDBM gdbm)

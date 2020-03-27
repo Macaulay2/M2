@@ -338,12 +338,12 @@ if(BUILD_TESTING)
     #unit-tests/M2mem-replacement.c
     #unit-tests/M2mem-replacement.h
 
-    #unit-tests/GivaroTest.cpp
+    #unit-tests/GivaroTest.cpp # FIXME
 
     unit-tests/ARingTest.hpp
     unit-tests/ARingZZTest.cpp
     unit-tests/ARingZZpTest.cpp
-    #unit-tests/ARingGFTest.cpp
+    #unit-tests/ARingGFTest.cpp # FIXME
     unit-tests/ARingQQFlintTest.cpp
     unit-tests/ARingQQGmpTest.cpp
     unit-tests/ARingRRTest.cpp
@@ -384,7 +384,6 @@ if(BUILD_TESTING)
 
   ###############################################################################
 
-  # TODO: this is a hack, how do we avoid it?
   target_include_directories(M2-unit-tests
     PRIVATE
     ${EIGEN3_INCLUDE_DIR}
@@ -400,9 +399,9 @@ if(BUILD_TESTING)
     Threads::Threads ${LIBGDBM} ${CMAKE_DL_LIBS}
     )
 
-  set(PKGLIB_LIST    BDW_GC FACTORY FFLAS_FFPACK GIVARO)
+  set(PKGLIB_LIST    FACTORY FFLAS_FFPACK GIVARO)
   set(LIBRARY_LIST   HISTORY READLINE MPSOLVE FLINT)
-  set(LIBRARIES_LIST LAPACK LIBXML2 ${MP_LIBRARY} MPFR NTL MATHICGB MATHIC MEMTAILOR TBB FROBBY)
+  set(LIBRARIES_LIST LAPACK LIBXML2 ${MP_LIBRARY} BDWGC MPFR NTL MATHICGB MATHIC MEMTAILOR TBB FROBBY)
 
   foreach(LIB IN LISTS LIBRARY_LIST)
     if(${LIB}_FOUND)
