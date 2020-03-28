@@ -11,6 +11,8 @@ add_library(kernel OBJECT
   bibasis/settings-manager.cpp
   )
 
+add_dependencies(kernel M2-interpreter) # needs pthread-exports.h
+
 target_include_directories(kernel
   PUBLIC
     .

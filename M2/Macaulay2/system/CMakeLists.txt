@@ -7,6 +7,8 @@ add_library(system OBJECT
   tests.cpp
   )
 
+add_dependencies(system M2-interpreter) # supervisor.cpp requires pthread-exports.h
+
 target_include_directories(system
   PUBLIC
     .
