@@ -269,15 +269,13 @@ add_library(M2-engine
   ${CFILES}
   )
 
-add_dependencies(M2-engine interpreter e-includes)
+add_dependencies(M2-engine M2-interpreter e-includes)
 
 target_link_libraries(M2-engine Eigen3::Eigen)
 
 target_include_directories(M2-engine
   PUBLIC
     .
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_BINARY_DIR}/include
     ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
   PRIVATE
     ${EIGEN3_INCLUDE_DIR}
@@ -397,7 +395,7 @@ if(BUILD_TESTING)
 
   # NOTE: is d/debug.o needed?
   target_link_libraries(M2-unit-tests
-    regex M2-engine interpreter system kernel
+    regex M2-engine M2-interpreter system kernel
     Threads::Threads ${LIBGDBM} ${CMAKE_DL_LIBS}
     )
 

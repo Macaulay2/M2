@@ -13,16 +13,12 @@ add_library(kernel OBJECT
 
 target_include_directories(kernel
   PUBLIC
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_BINARY_DIR}/include
-    ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
-    # TODO: why does putting c before e cause errors?
-    ${CMAKE_SOURCE_DIR}/Macaulay2/e
+    .
+    ${CMAKE_BINARY_DIR}/Macaulay2/d # needs engine-exports.h
+    ${CMAKE_SOURCE_DIR}/Macaulay2/e # needs matrix.hpp
     ${CMAKE_SOURCE_DIR}/Macaulay2/c # needs scc-core.h
-    ${CMAKE_BINARY_DIR}/Macaulay2/d
+    ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
   )
-
-add_dependencies(kernel interpreter) # needs pthread-exports.h
 
 # common warning flags
 target_compile_options(kernel PRIVATE
@@ -30,16 +26,9 @@ target_compile_options(kernel PRIVATE
   -Wcast-qual
   -Wextra
   -Wfatal-errors
-  -Wno-parentheses
-  -Wno-shadow
-  -Wno-sign-compare
-  -Wno-sign-conversion
-  -Wno-uninitialized
   -Wno-unused
-  -Wno-unused-parameter
   # temporary flags
-  #-Wno-deprecated-copy
-  #-Wno-unknown-pragmas
+  -Wno-ignored-qualifiers
   )
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   # using Clang or AppleClang

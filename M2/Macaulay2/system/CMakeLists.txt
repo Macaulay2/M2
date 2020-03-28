@@ -10,15 +10,11 @@ add_library(system OBJECT
 target_include_directories(system
   PUBLIC
     .
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_BINARY_DIR}/include
     ${CMAKE_SOURCE_DIR}/Macaulay2/c # needs scc-core.h
     ${CMAKE_SOURCE_DIR}/Macaulay2/e # needs newdelete.hpp
     ${CMAKE_BINARY_DIR}/Macaulay2/d # needs pthread-exports.h
     ${LIBXML2_INCLUDE_DIR}
   )
-
-add_dependencies(system interpreter)
 
 # common warning flags
 target_compile_options(system PRIVATE
@@ -26,16 +22,7 @@ target_compile_options(system PRIVATE
   -Wcast-qual
   -Wextra
   -Wfatal-errors
-  -Wno-parentheses
-  -Wno-shadow
-  -Wno-sign-compare
-  -Wno-sign-conversion
-  -Wno-uninitialized
   -Wno-unused
-  -Wno-unused-parameter
-  # temporary flags
-  #-Wno-deprecated-copy
-  #-Wno-unknown-pragmas
   )
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   # using Clang or AppleClang
