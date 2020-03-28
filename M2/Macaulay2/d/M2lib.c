@@ -764,7 +764,7 @@ int system_randomint(void) {
      extern long random00();
      return random00();
 #else
-     return rawRandomInt(2<<31-1);
+     return rawRandomInt((int32_t)~0>>1);
 #endif
      }
 

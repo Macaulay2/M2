@@ -12,7 +12,9 @@ file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
 ## FIXME: Hack to force CMake to reconfigure after library is reinstalled
 file(TOUCH ${CMAKE_SOURCE_DIR}/cmake/check-libraries.cmake)
 
-# TODO: add share/config.site to provide defaults for configure scripts
+# TODO: Accumulate information in usr-host/share/config.site to speed up configuration
+# See: https://www.gnu.org/software/autoconf/manual/autoconf-2.60/html_node/Cache-Files.html
+set(CONFIGURE_CACHE ${M2_HOST_PREFIX}/share/config.site)
 
 #################################################################################
 ## Setting a baseline for compile and link options for external projects
@@ -48,7 +50,10 @@ string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS} ${LDFLAGS}")
 # AS=${CMAKE_ASM${DIALECT}_COMPILER}
 
 ## Linear algebra library flags
-# TODO: add option for Intel MKL
+# TODO: add option for Intel MKL (first replace s/CBLAS/BLAS/g in macros/mkl-check.m4 and macros/fflas-ffpack-blas.m4)
+# Result: run into issues with e/lapack.h redeclaring cblas functions
+#set(MKL_LIBS   "-L/opt/intel/mkl/lib/intel64_lin -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl")
+#set(MKL_CFLAGS "-I/opt/intel/mkl/include")
 if(APPLE)
   set(LA_LIBRARIES "-framework Accelerate")
 else()
@@ -79,10 +84,10 @@ ExternalProject_Add(build-mpir
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/mpir/patch-3.0.0
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
                       --enable-gmpcompat
                       --enable-cxx
                       --disable-shared
-                      --cache-file=/dev/null
                       # --enable-assert
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -99,7 +104,7 @@ ExternalProject_Add(build-mpir
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
-if(MP_LIBRARY MATCHES "gmp|GMP" AND GMP_FOUND)
+if(MP_LIBRARY MATCHES "gmp|GMP")
   set(MP_LIBRARY GMP)
   if(NOT GMP_FOUND)
     # gmp is a prerequisite
@@ -130,10 +135,10 @@ ExternalProject_Add(build-mpfr
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-thread-safe
                       --enable-shared
                       --with-pic
-                      --cache-file=/dev/null
                       # --enable-assert
                       # TARGET_ARCH=
                       CPPFLAGS=${CPPFLAGS}
@@ -170,6 +175,7 @@ ExternalProject_Add(build-flint
   GIT_REPOSITORY    https://github.com/mahrud/flint2.git
   GIT_TAG           HEAD
   PREFIX            libraries/flint
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint
   BINARY_DIR        libraries/flint/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DBUILD_SHARED_LIBS=ON
@@ -203,6 +209,7 @@ ExternalProject_Add(build-ntl
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND cd src && ./configure PREFIX=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
                       TUNE=generic # TODO: x86 and auto if NTL_WIZARD
                       NATIVE=off # TODO: on if not packaging?
                       NTL_GMP_LIP=on
@@ -247,6 +254,7 @@ ExternalProject_Add(build-factory
   PATCH_COMMAND     patch --batch -p0 < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.1.1
   CONFIGURE_COMMAND cd factory-4.1.1 && autoreconf -vif
             COMMAND cd factory-4.1.1 && LD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib ./configure --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-shared
                       --disable-omalloc
                       --disable-doxygen-doc
@@ -254,7 +262,6 @@ ExternalProject_Add(build-factory
                       --without-Singular
                       --with-ntl
                       --with-flint
-                      --cache-file=/dev/null
                       # --enable-assertions
                       CPPFLAGS=${factory_CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -338,6 +345,7 @@ endif()
 
 
 # https://www.inf.ethz.ch/personal/fukudak/cdd_home/
+# TODO: change includedir to default?
 set(cddlib_SUBDIRS "lib-src lib-src-gmp")
 ExternalProject_Add(build-cddlib
   URL               ${M2_SOURCE_URL}/cddlib-094h.tar.gz
@@ -348,6 +356,7 @@ ExternalProject_Add(build-cddlib
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
                       --includedir=${M2_HOST_PREFIX}/include/cdd
                       --disable-shared
                       SUBDIRS=${cddlib_SUBDIRS}
@@ -385,6 +394,7 @@ ExternalProject_Add(build-glpk
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-shared
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -409,6 +419,7 @@ ExternalProject_Add(build-mpsolve
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-shared
                       --disable-examples
                       --disable-ui
@@ -437,6 +448,7 @@ ExternalProject_Add(build-googletest
   GIT_REPOSITORY    https://github.com/google/googletest.git
   GIT_TAG           release-1.10.0 # 42bc671f
   PREFIX            libraries/googletest
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/googletest
   BINARY_DIR        libraries/googletest/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX} -DBUILD_GMOCK=OFF # -DINSTALL_GTEST=OFF
   EXCLUDE_FROM_ALL  ON
@@ -455,6 +467,7 @@ ExternalProject_Add(build-bdwgc
   GIT_REPOSITORY    https://github.com/ivmai/bdwgc.git
   GIT_TAG           master
   PREFIX            libraries/bdwgc
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/bdwgc
   BINARY_DIR        libraries/bdwgc/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -Denable_cplusplus=ON
@@ -481,6 +494,7 @@ endif()
 
 
 # TODO: out of source build has issues with detecting SIMD instructions
+# TODO: separate source and binary directories
 ExternalProject_Add(build-givaro
   GIT_REPOSITORY    https://github.com/linbox-team/givaro.git
   GIT_TAG           v4.0.3
@@ -489,6 +503,7 @@ ExternalProject_Add(build-givaro
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-shared
                       # --disable-simd # unrecognized option on 4.0.3?
                       CPPFLAGS=${CPPFLAGS}
@@ -513,20 +528,18 @@ endif()
 
 
 # Note: fflas_ffpack is just header files, so we don't build it
+# TODO: separate source and binary directories
 # TODO: make autotune produces fflas-ffpack/fflas-ffpack-thresholds.h which could be useful
-# TODO: try configuring with mkl blas (first replace s/CBLAS/BLAS/g in macros/mkl-check.m4 and macros/fflas-ffpack-blas.m4)
-# Result: run into issues with e/lapack.h redeclaring cblas functions
-#set(MKL_LIBS   "-L/opt/intel/mkl/lib/intel64_lin -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl")
-#set(MKL_CFLAGS "-I/opt/intel/mkl/include")
 ExternalProject_Add(build-fflas_ffpack
   GIT_REPOSITORY    https://github.com/Macaulay2/fflas-ffpack.git
   GIT_TAG           712cef0e
   PREFIX            libraries/fflas_ffpack
   SOURCE_DIR        libraries/fflas_ffpack/build
 #  BINARY_DIR        libraries/fflas_ffpack/build
- BUILD_IN_SOURCE   ON
- CONFIGURE_COMMAND autoreconf -vif
-           COMMAND PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${M2_HOST_PREFIX}
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
                       # --enable-openmp
                       # --with-blas-libs=${MKL_LIBS}
                       # --with-blas-cflags=${MKL_CFLAGS}
@@ -564,6 +577,7 @@ ExternalProject_Add(build-memtailor
   GIT_REPOSITORY    https://github.com/mahrud/memtailor.git
   GIT_TAG           af4a81f57fb585a541f5fefb517f2ad91b38cbe9 # original: e85453b
   PREFIX            libraries/memtailor
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/memtailor
   BINARY_DIR        libraries/memtailor/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DPACKAGE_TESTS=OFF
@@ -581,6 +595,7 @@ ExternalProject_Add(build-mathic
   GIT_REPOSITORY    https://github.com/mahrud/mathic.git
   GIT_TAG           770fe83edb4edae061af613328bbe2d380ea26d6 # original: 023afcf
   PREFIX            libraries/mathic
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathic
   BINARY_DIR        libraries/mathic/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
@@ -602,7 +617,7 @@ ExternalProject_Add(build-mathicgb
   GIT_REPOSITORY    https://github.com/mahrud/mathicgb.git
   GIT_TAG           557d3da746c6888ef05f29c2f095f0262080956d # original: bd634c8
   PREFIX            libraries/mathicgb
-#  SOURCE_DIR        libraries/mathicgb/src
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathicgb
   BINARY_DIR        libraries/mathicgb/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
@@ -630,6 +645,7 @@ ExternalProject_Add(build-4ti2
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
                       --with-gmp=no # TODO: does this line work?
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -804,9 +820,9 @@ ExternalProject_Add(build-normaliz
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-shared
                       --disable-flint
-                      --cache-file=/dev/null
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -858,7 +874,7 @@ ExternalProject_Add(build-nauty
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ./configure --prefix=${M2_HOST_PREFIX}
-                      --cache-file=/dev/null
+                      #-C --cache-file=${CONFIGURE_CACHE}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -907,6 +923,7 @@ ExternalProject_Add(build-topcom
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/topcom/patch-0.17.8
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
                       CPPFLAGS=${topcom_CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}

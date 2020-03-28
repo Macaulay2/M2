@@ -11,6 +11,7 @@ set(UNDETERMINED
   )
 
 # c files, and some h files
+# TODO: convert to cpp or simplify if not needed
 set(CFILES
   complex.c
   complex.h
@@ -292,6 +293,7 @@ target_compile_options(M2-engine PRIVATE
   -Wextra
   -Wfatal-errors
   -Wno-cast-qual
+  -Wno-implicit-fallthrough
   -Wno-parentheses
   -Wno-shadow
   -Wno-sign-compare

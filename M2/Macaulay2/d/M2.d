@@ -89,7 +89,7 @@ export tocharstarmalloc(s:string):charstar := Ccode(returns, "
   p[s->len] = 0;
   return p; ");
 export tocharstarstarmalloc(p:ArrayString):charstarstar := Ccode(returns, "
-  int n = p->len;
+  unsigned int n = p->len;
   char **s = (char **)getmem_malloc((n + 1)*sizeof(char *));
   unsigned int i;
   for (i=0; i<n; i++) s[i] = M2_tocharstarmalloc(p->array[i]);

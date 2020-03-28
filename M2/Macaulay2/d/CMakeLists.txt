@@ -26,8 +26,10 @@ set(CLIST arithmetic-tmp.c atomic-tmp.c M2-tmp.c system-tmp.c strings-tmp.c vars
 
 add_custom_target(generate-d ALL DEPENDS ${CLIST})
 
-if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(CMAKE_BUILD_TYPE MATCHES "Rel")
   set(SCCFLAGS -O)
+else()
+  # TODO: set(SCCFLAGS -debug)
 endif()
 
 foreach(FILENAME IN LISTS CLIST)
@@ -112,19 +114,14 @@ target_include_directories(interpreter
 # common warning flags
 target_compile_options(interpreter PRIVATE
   -Wall
-  #-Wextra
+  -Wextra
   -Wfatal-errors
-  -Wno-cast-qual
-  -Wno-parentheses
-  -Wno-shadow
   -Wno-sign-compare
-  -Wno-sign-conversion
   -Wno-uninitialized
   -Wno-unused
-  -Wno-unused-parameter
   # temporary flags
-  -Wno-unknown-pragmas
   -Wno-frame-address
+  -Wno-unknown-pragmas
   )
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   # using Clang or AppleClang

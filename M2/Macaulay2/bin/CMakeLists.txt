@@ -15,40 +15,33 @@ set_target_properties(M2-binary PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INST
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
   regex interpreter M2-engine system kernel
-  Threads::Threads ${LAPACK_LIBRARIES}
-  ${LIBXML2_LIBRARIES} ${LIBGDBM} ${CMAKE_DL_LIBS}
+  Threads::Threads
 
-  # Link the big integer package: either GMP or MPIR
-  ${${MP_LIBRARY}_LIBRARIES}
+  # TODO: handle these differently:
+  ${LIBGDBM} ${CMAKE_DL_LIBS}
   )
 
-if(HISTORY_FOUND AND READLINE_FOUND)
-target_link_libraries(M2-binary
-  # Link commandline related libraries
-  ${HISTORY_LIBRARY} ${READLINE_LIBRARY}
-  )
-endif()
+set(PKGLIB_LIST    FACTORY FFLAS_FFPACK GIVARO)
+set(LIBRARY_LIST   HISTORY READLINE MPSOLVE FLINT)
+set(LIBRARIES_LIST LAPACK LIBXML2 ${MP_LIBRARY} BDWGC MPFR NTL MATHICGB MATHIC MEMTAILOR TBB FROBBY)
 
-if(BDWGC_FOUND AND MPSOLVE_FOUND AND FLINT_FOUND AND MPFR_FOUND AND NTL_FOUND)
-target_link_libraries(M2-binary
-  ${BDWGC_LIBRARIES} ${MPSOLVE_LIBRARY} ${FLINT_LIBRARY} ${MPFR_LIBRARIES} ${NTL_LIBRARIES}
-  )
-endif()
+foreach(LIB IN LISTS LIBRARY_LIST)
+  if(${LIB}_FOUND)
+    target_link_libraries(M2-binary ${${LIB}_LIBRARY})
+  endif()
+endforeach()
 
-if(MATHICGB_FOUND AND MATHIC_FOUND AND MEMTAILOR_FOUND AND FROBBY_FOUND)
-target_link_libraries(M2-binary
-  # mathicgb depends on mathic, memtailor, and TBB
-  ${MATHICGB_LIBRARIES} ${MATHIC_LIBRARIES} ${MEMTAILOR_LIBRARIES} ${TBB_LIBRARIES} ${FROBBY_LIBRARIES}
-  )
-endif()
+foreach(LIB IN LISTS LIBRARIES_LIST)
+  if(${LIB}_FOUND)
+    target_link_libraries(M2-binary ${${LIB}_LIBRARIES})
+  endif()
+endforeach()
 
-if(FACTORY_FOUND AND FFLAS_FFPACK_FOUND AND GIVARO_FOUND)
-target_link_libraries(M2-binary
-  PkgConfig::FACTORY # factory depends on flint mpfr ntl gmp
-  PkgConfig::FFLAS_FFPACK # fflas-ffpack depends on openmp, givaro, gmp, and gmpxx
-  PkgConfig::GIVARO # givaro depends on gmpxx and gmp (or mpir and mpirxx)
-  )
-endif()
+foreach(LIB IN LISTS PKGLIB_LIST)
+  if(${LIB}_FOUND)
+    target_link_libraries(M2-binary PkgConfig::${LIB})
+  endif()
+endforeach()
 
 ###############################################################################
 
