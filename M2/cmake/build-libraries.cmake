@@ -131,7 +131,8 @@ ExternalProject_Add(build-mpfr
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
                       --disable-thread-safe
-                      --disable-shared
+                      --enable-shared
+                      --with-pic
                       --cache-file=/dev/null
                       # --enable-assert
                       # TARGET_ARCH=
@@ -172,6 +173,7 @@ ExternalProject_Add(build-flint
   BINARY_DIR        libraries/flint/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DBUILD_SHARED_LIBS=ON
+                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON
                     # Possible variables for the CMake build:
                     #-DWITH_NLT
                     #-DBUILD_TESTING
@@ -186,6 +188,9 @@ ExternalProject_Add(build-flint
 if(NOT FLINT_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-flint-install)
+  if(NOT MPFR_FOUND)
+    ExternalProject_Add_StepDependencies(build-flint build build-mpfr-install)
+  endif()
 endif()
 
 
@@ -452,7 +457,6 @@ ExternalProject_Add(build-bdwgc
   PREFIX            libraries/bdwgc
   BINARY_DIR        libraries/bdwgc/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
-		    -DGC_LARGE_ALLOC_WARN_INTERVAL=1
                     -Denable_cplusplus=ON
                     -Denable_threads=ON
                     -Denable_large_config=ON
@@ -461,10 +465,12 @@ ExternalProject_Add(build-bdwgc
                     -Denable_gcj_support=OFF
                     -Denable_java_finalization=OFF
                     # -Denable_gc_debug=ON
-                    # -Denable_parallel_mark=OFF
                     # -Denable_gc_assertions=ON
+                    # -Denable_parallel_mark=OFF
                     # -Dbuild_tests=ON
+                    # -DGC_LARGE_ALLOC_WARN_INTERVAL=1
                     # -DGC_ABORT_ON_LEAK
+                    # -DDBG_HDRS_ALL=1
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -799,7 +805,7 @@ ExternalProject_Add(build-normaliz
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ./configure --prefix=${M2_HOST_PREFIX}
                       --disable-shared
-		      --disable-flint
+                      --disable-flint
                       --cache-file=/dev/null
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}

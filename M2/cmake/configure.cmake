@@ -65,12 +65,12 @@ set(MP_LIBRARY "gmp" CACHE STRING "specify the big integer package to use (mpir 
 
 # TODO: transition from using DEBUG/OPTIMIZE/etc. to CMAKE_BUILD_TYPE
 # TODO: apparently -DNDEBUG is standard on gcc, but not clang
-if(CMAKE_BUILD_TYPE MATCHES "Debug|RelWithDebInfo")
+if(CMAKE_BUILD_TYPE MATCHES "Deb")
   set(DEBUG ON)
 #  set(MEMDEBUG ON)
   set(ENABLE_STRIP OFF)
 endif()
-if(CMAKE_BUILD_TYPE MATCHES "Release|RelWithDebInfo|MinSizeRel")
+if(CMAKE_BUILD_TYPE MATCHES "Rel")
   set(OPTIMIZE ON)
 endif()
 if(CMAKE_BUILD_TYPE MATCHES "Release|MinSizeRel")
