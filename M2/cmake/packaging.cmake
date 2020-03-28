@@ -29,6 +29,9 @@ message("## Staging area directories: (set CMAKE_INSTALL_PREFIX to overwrite)
 
 # TODO: install in /opt instead?
 
+# TODO: install the unstripped library with debug_info in the appropriate place.
+# On Fedora: /usr/lib/debug/usr/lib64/
+
 ################################################################
 
 set(DISTRIBUTION 1) # use this starting number to sequentially number the downstream distributions

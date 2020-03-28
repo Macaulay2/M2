@@ -20,12 +20,6 @@ set(M2_IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example co
 set(M2_RemakeAllDocumentation  "false" CACHE STRING "remake all documentation")
 set(M2_RerunExamples           "false" CACHE STRING "rerun example outpuat files")
 
-
-# errors
-# set(PACKAGES
-#  Macaulay2Doc CoincidentRootLoci Bertini QuillenSuslin MonodromySolver
-#  StatePolytope PHCpack MultiplierIdeals NumericalAlgebraicGeometry )
-
 #################################################################################
 
 ## eg: Style.m2 Macaulay2Doc.m2 ...
@@ -54,8 +48,6 @@ endforeach()
 
 # TODO: how to handle EngineTests and other packages under development that
 # should be checked but not installed
-
-# TODO: use make install instead of individual install targets?
 
 ## eg: install-Style install-Macaulay2Doc ...
 list(TRANSFORM PACKAGES PREPEND "install-" OUTPUT_VARIABLE INSTALL_TARGETS)
@@ -116,7 +108,6 @@ foreach(PACKAGE IN LISTS PACKAGES)
     COMMAND
       M2-binary ${M2_ARGS} -e \"needsPackage(\\"${PACKAGE}\\", LoadDocumentation=>true, DebuggingMode=>true) $<SEMICOLON>
       check(${PACKAGE}, UserMode=>false) $<SEMICOLON> exit 0\"
-    DEPENDS install-${PACKAGE}
     )
 
   ## Everything bagel

@@ -5,6 +5,7 @@ set(EMACS_FILES M2-README M2-emacs-hlp.txt M2-emacs.m2 M2-init.el M2-mode.el M2-
 
 configure_file(M2-init.el.in M2-init.el @ONLY)
 
+# TODO: move this from ALL to install
 add_custom_target(emacs ALL DEPENDS M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2)
 
 # TODO: refactor the three scripts

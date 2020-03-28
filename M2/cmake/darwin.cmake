@@ -7,6 +7,7 @@ set(CMAKE_STAGING_PREFIX ${CMAKE_CURRENT_LIST_DIR}/usr-dist)
 #set(tools /home/devel/gcc-4.7-linaro-rpi-gnueabihf)
 #set(CMAKE_C_COMPILER ${tools}/bin/arm-linux-gnueabihf-gcc)
 #set(CMAKE_CXX_COMPILER ${tools}/bin/arm-linux-gnueabihf-g++)
+#TODO: use CMAKE_<LANG>_FLAGS_<CONFIG>_INIT for Accelerate framework?
 
 # ONLY: CMAKE_FIND_ROOT_PATH will be searched
 # NEVER: only the host system root will be searched

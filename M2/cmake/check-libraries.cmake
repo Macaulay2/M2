@@ -75,15 +75,15 @@ find_package(Memtailor)
 find_package(Mathic)
 find_package(Mathicgb)
 
-find_package(MPFR 4.0.1 QUIET)
-find_package(GLPK 4.59  QUIET)
-find_package(NTL  10.5.0 QUIET)
-find_package(Flint	2.5.3 QUIET)
-find_package(BDWGC	8.1.0 QUIET)
-find_package(MPSolve	3.1.8 QUIET)
+find_package(MPFR	4.0.1	QUIET)
+find_package(GLPK	4.59	QUIET)
+find_package(NTL	10.5.0	QUIET)
+find_package(BDWGC	7.6.4	QUIET)
+find_package(Flint	2.5.3	QUIET)
+find_package(MPSolve	3.1.8	QUIET)
 
 if(BUILD_TESTING)
-  find_package(GTest)
+  find_package(GTest QUIET)
 endif()
 
 ## Find libraries available via pkg-config

@@ -9,12 +9,10 @@ define M2_BUILD_SCRIPT
 set -xe
 
 cmake -S M2/M2 -B $(BUILD_DIR) \
-      -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+      -DMP_LIBRARY=GMP \
+      -DBUILD_TESTING=ON \
+      -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_PREFIX=$(M2_HOME)/$(BUILD_DIR)/usr-dist
-
-#rm -rf $(BUILD_DIR)/{libraries,usr-host}
-#ln -s $(M2_HOME)/$(BUILD_DIR)/libraries-docker $(M2_HOME)/$(BUILD_DIR)/libraries
-#ln -s $(M2_HOME)/$(BUILD_DIR)/usr-host-docker  $(M2_HOME)/$(BUILD_DIR)/usr-host
 
 cmake --build $(BUILD_DIR) --target build-libraries build-programs
 cmake --build $(BUILD_DIR) --target all
@@ -26,11 +24,9 @@ export M2_BUILD_SCRIPT
 
 ###############################################################################
 
-always:
-	@cat README.md
+always:; @cat README.md
 
-clean:
-	rm -rf ../build-docker
+clean:;  rm -rf ../build-docker
 
 all: build run
 
@@ -40,27 +36,23 @@ build:
 	docker build --tag $(TAG) .
 	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) bash -c "$$M2_BUILD_SCRIPT"
 
+###############################################################################
+
 run: run-graphical
 
-run-graphical:
-	docker run $(VOLUME) --net=host --env="DISPLAY" $(TAG)
+run-graphical:; docker run $(VOLUME) --net=host --env="DISPLAY" $(TAG)
 
-run-terminal:
-	docker run $(VOLUME) --interactive --tty $(TAG)
+run-terminal:;  docker run $(VOLUME) --interactive --tty $(TAG)
 
 ###############################################################################
 
-shell:
-	docker run $(VOLUME) --interactive --tty --user root --entrypoint bash $(TAG)
+shell:;   docker run $(VOLUME) --interactive --tty --user root --entrypoint bash $(TAG)
 
-M2:
-	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) M2
+M2:;      docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) M2
 
-M2-safe:
-	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) M2 --int --no-readline --no-randomize
+M2-safe:; docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) M2 --int --no-readline --no-randomize
 
 ###############################################################################
 
 # For anything else, run it in the build directory within the container
-%:
-	docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) make -C $(M2_HOME)/$(BUILD_DIR) $@
+%:; docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) make -C $(M2_HOME)/$(BUILD_DIR) $@ -j4

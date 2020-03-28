@@ -19,7 +19,6 @@ set(CONFIGURE_CACHE ${M2_HOST_PREFIX}/share/config.site)
 #################################################################################
 ## Setting a baseline for compile and link options for external projects
 
-# TODO: is it okay to do this globally? Where is it better to do this?
 add_compile_options(-I${M2_HOST_PREFIX}/include)
 add_link_options(-L${M2_HOST_PREFIX}/lib)
 

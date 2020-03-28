@@ -83,6 +83,7 @@ add_dependencies(M2-interpreter e-includes)
 target_include_directories(M2-interpreter
   PUBLIC
     .
+    ${CMAKE_SOURCE_DIR}/Macaulay2/regex # scclib.c requires regex
     ${CMAKE_SOURCE_DIR}/Macaulay2/e
     ${CMAKE_SOURCE_DIR}/Macaulay2/c
     ${CMAKE_BINARY_DIR}/Macaulay2/d

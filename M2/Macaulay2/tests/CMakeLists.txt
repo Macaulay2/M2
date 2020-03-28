@@ -2,6 +2,7 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 ## Try:
 # cd Macaulay2/tests
+# ctest -N
 # ctest --build-and-test
 # ctest --build-run-dir
 # ctest -R schorder --rerun-failed -V
@@ -23,6 +24,7 @@ endif()
 #SLIMIT ?= 8192
 
 # TODO: get this to work
+# See https://gitlab.kitware.com/cmake/community/-/wikis/doc/ctest/Testing-With-CTest
 if(MEMDEBUG)
   find_program(MEMORYCHECK_COMMAND valgrind)
   set( MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full --show-reachable=yes --track-origins=yes" )
@@ -50,10 +52,10 @@ set(M2_PATH "join(path,{\"${CMAKE_CURRENT_SOURCE_DIR}/\",\"${CMAKE_SOURCE_DIR}/p
 ## Regular expressions for various test errors
 ## TODO: add WILL_FAIL tests
 set(M2_FAIL_REGEX
-  [[internal error;non-zero status]]
+  [[internal error;non-zero status;assertion failed]]
   "\nCommand terminated;\nGC;\n0x;\nout of mem"
   "user.*system.*elapsed;\n[0-9]+\.[0-9]+user"
-  [[:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):]]
+  [[/.*:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):]] # TODO: this one catches commented errors
   )
 
 ###############################################################################

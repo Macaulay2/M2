@@ -23,12 +23,15 @@ RUN apt-get update && \
 # TODO: need to build gc for large memory machines
 RUN apt-get install -y libopenblas-dev libeigen3-dev \
     libxml2-dev libreadline-dev libomp-dev libtbb-dev \
-    libgc-dev libgdbm-dev && apt-get clean
+    libgmp3-dev libgdbm-dev && apt-get clean
+
+# needed for mpir
+RUN apt-get install -y yasm && apt-get clean
 
 # Libraries we can build (factory not available on ubuntu)
 RUN apt-get install -y fflas-ffpack libcdd-dev libgivaro-dev \
     libglpk-dev libgmp3-dev libmpc-dev libmpfr-dev libntl-dev \
-    libflint-dev libfrobby-dev libatomic-ops-dev && apt-get clean
+    libflint-dev libfrobby-dev libgc-dev && apt-get clean
 
 # Programs we can build
 # TODO: libpari-dev still needed? cohomcalg available soon. Polymake requires firefox???
@@ -45,12 +48,10 @@ USER 1000:1000
 ENV PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
 ENV LDFLAGS         -L/usr/lib/x86_64-linux-gnu
 ENV PATH            /home/macaulay/M2/M2/BUILD/build-docker:${PATH}
+ENV LD_LIBRARY_PATH /home/macaulay/M2/M2/BUILD/build-docker/usr-host/lib:${LD_LIBRARY_PATH}
 
-# Build the Docker image:
-# make build-image
-
-# Build Macaulay2:
-# make build-M2
+# Build the Docker image and Macaulay2-in-a-container
+# make build
 
 # Start a graphical instance:
 # make run-graphical

@@ -92,6 +92,9 @@ add_subdirectory(Macaulay2)
 # ExternalProject so it is configured after the others.
 
 ###############################################################################
+# TODO: write the M2Config.cmake module for users
+
+###############################################################################
 ## This section is temporary hacks, will be gone soon.
 
 add_custom_target(run-M2
