@@ -65,15 +65,15 @@
 #cmakedefine HAVE_ACCEPT 1
 
 // TODO: only used in Macaulay2/d/interrupts.d. Still needed?
-/* Define to 1 if you have the `alarm' function. */
-#cmakedefine HAVE_ALARM 1
+/* Defined if you have the `alarm' function. */
+#cmakedefine HAVE_ALARM
 
 // TODO: used a few places, what is it for?
 /* Define to 1 if you have `alloca', as a function or macro. */
 #cmakedefine HAVE_ALLOCA 1
 
-/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix). */
-#cmakedefine HAVE_ALLOCA_H 1
+/* Defined if you have <alloca.h> and it should be used (not on Ultrix). */
+#cmakedefine HAVE_ALLOCA_H
 
 // TODO: only used in Macaulay2/d/types.h. Still needed?
 /* Define to 1 if you have the <arpa/inet.h> header file. */
@@ -88,8 +88,8 @@
 #cmakedefine HAVE_BACKTRACE 1
 
 // TODO: only used in Macaulay2/d/M2lib.c. Still needed?
-/* Define to 1 if you have the `clock_gettime' function. */
-#cmakedefine HAVE_CLOCK_GETTIME 1
+/* Defined if you have the `clock_gettime' function. */
+#cmakedefine HAVE_CLOCK_GETTIME
 
 // TODO: only used in Macaulay2/d/M2lib.c. Still needed?
 /* Define to 1 if you have the declaration of `ADDR_NO_RANDOMIZE', and to 0 if you don't. */
@@ -99,8 +99,8 @@
 /* Define to 1 if you have the declaration of `herror', and to 0 if you don't. */
 #cmakedefine HAVE_DECL_HERROR 1
 
-/* Define to 1 if you have the <dlfcn.h> header file. */
-#cmakedefine HAVE_DLFCN_H 1
+/* Defined if you have the <dlfcn.h> header file. */
+#cmakedefine HAVE_DLFCN_H
 
 // TODO: remove?
 /* Define to 1 if you have the <elf.h> header file. */
@@ -259,8 +259,8 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #cmakedefine HAVE_STDLIB_H 1
 
-/* Define to 1 if you have the <strings.h> header file. */
-#cmakedefine HAVE_STRINGS_H 1
+/* Defined if you have the <strings.h> header file. */
+#cmakedefine HAVE_STRINGS_H
 
 /* Define to 1 if you have the <string.h> header file. */
 #cmakedefine HAVE_STRING_H 1
@@ -277,11 +277,11 @@
 /* Define to 1 if you have the <sys/ioctl.h> header file. */
 #cmakedefine HAVE_SYS_IOCTL_H 1
 
-/* Define to 1 if you have the <sys/mman.h> header file. */
-#cmakedefine HAVE_SYS_MMAN_H 1
+/* Defined if you have the <sys/mman.h> header file. */
+#cmakedefine HAVE_SYS_MMAN_H
 
-/* Define to 1 if you have the <sys/resource.h> header file. */
-#cmakedefine HAVE_SYS_RESOURCE_H 1
+/* Defined if you have the <sys/resource.h> header file. */
+#cmakedefine HAVE_SYS_RESOURCE_H
 
 /* Define to 1 if you have the <sys/socket.h> header file. */
 #cmakedefine HAVE_SYS_SOCKET_H 1
@@ -289,8 +289,8 @@
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #cmakedefine HAVE_SYS_STAT_H 1
 
-/* Define to 1 if you have the <sys/time.h> header file. */
-#cmakedefine HAVE_SYS_TIME_H 1
+/* Defined if you have the <sys/time.h> header file. */
+#cmakedefine HAVE_SYS_TIME_H
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #cmakedefine HAVE_SYS_TYPES_H 1
@@ -304,8 +304,8 @@
 /* Define to 1 if you have the <time.h> header file. */
 #cmakedefine HAVE_TIME_H 1
 
-/* Define to 1 if you have the <unistd.h> header file. */
-#cmakedefine HAVE_UNISTD_H 1
+/* Defined if you have the <unistd.h> header file. */
+#cmakedefine HAVE_UNISTD_H
 
 /* Define to 1 if you have the `wait4' function. */
 #cmakedefine HAVE_WAIT4 1
@@ -367,9 +367,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
-
-/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
-#cmakedefine TIME_WITH_SYS_TIME 1
 
 // TODO: used a bunch of places, but is it still needed?
 /* whether we are linking with the mysql library */

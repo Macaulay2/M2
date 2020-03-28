@@ -1,5 +1,7 @@
 #set(CMAKE_VERBOSE_MAKEFILE on)
 
+# TODO: there's now a c++ regex library
+
 add_library(regex OBJECT regex.c)
 
 target_include_directories(regex PUBLIC .)

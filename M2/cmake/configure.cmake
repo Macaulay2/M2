@@ -219,6 +219,7 @@ check_include_files(sys/wait.h	HAVE_SYS_WAIT_H)
 check_include_files(termios.h	HAVE_TERMIOS_H)
 check_include_files(time.h	HAVE_TIME_H)
 check_include_files(unistd.h	HAVE_UNISTD_H)
+# TODO: clear out d/types.h
 
 include(CheckFunctionExists)
 # TODO: can't getaddrinfo
@@ -288,6 +289,7 @@ check_cxx_source_compiles([[#include <factory/factory.h>
 ################################################################
 
 # this is an alternative for AC_FUNC_ALLOCA()
+# TODO: is it still relevant?
 check_function_exists(alloca HAVE_ALLOCA)
 check_include_files(alloca.h HAVE_ALLOCA_H)
 

@@ -178,7 +178,7 @@ extern "C" {
 };
 
 ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds, bool isM2Task):
-  m_Name(name),m_Func(func),m_UserData(userData),m_Result(NULL),m_Done(false),m_Started(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_KeepRunning(true),m_CurrentThread(NULL),m_IsM2Task(isM2Task),m_ReadyToRun(false),m_Running(false)
+  m_Name(name),m_Func(func),m_UserData(userData),m_Result(NULL),m_IsM2Task(isM2Task),m_Done(false),m_Started(false),m_KeepRunning(true),m_ReadyToRun(false),m_Running(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_CurrentThread(NULL)
 {
    if(pthread_cond_init(&m_FinishCondition,NULL))
     abort();

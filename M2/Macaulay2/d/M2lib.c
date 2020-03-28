@@ -20,7 +20,7 @@
 /* to get IM2_initialize() : */
 #include "engine.h"
 
-#if HAVE_ALLOCA_H
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #else
 #ifdef __GNUC__
@@ -634,7 +634,7 @@ int Macaulay2_main(const int argc, char * const* argv)
 #endif
 
 #if defined HAVE_PERSONALITY && !PROFILING
-     if (!gotArg("--no-personality", (char * const*)argv)) {
+     if (!gotArg("--no-personality", argv)) {
 	  /* this avoids mmap() calls resulting in address randomization */
 	  int oldpersonality = personality(-1);
 	  if ((oldpersonality & ADDR_NO_RANDOMIZE) == 0) {
@@ -687,7 +687,7 @@ int Macaulay2_main(const int argc, char * const* argv)
      vargs->envp = (const char **)saveenvp;
      vargs->envc = envc;
 
-     if (gotArg("--no-threads", (const char **) saveargv)) {
+     if (gotArg("--no-threads", saveargv)) {
 	  interpFunc(vargs);
 	  }
      else {
