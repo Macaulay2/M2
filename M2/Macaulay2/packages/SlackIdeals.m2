@@ -3134,25 +3134,6 @@ doc ///
 		Object
 ///
 
-end
-
-doc /// Key
-   Headline
-   Usage
-   Inputs
-   Outputs
-   Consequences
-    Item
-   Description
-    Text
-    Code
-    Pre
-    Example
-   Subnodes
-   Caveat
-   SeeAlso
-///
-
 ------ TESTS ------
 
 TEST ///
