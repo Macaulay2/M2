@@ -161,7 +161,6 @@ if(NOT MPFR_FOUND)
   add_dependencies(build-libraries build-mpfr-install)
 endif()
 
-
 # TODO: cflags+debug: -O0 -fno-unroll-loops
 # TODO: confirm that building with mpir works
 # TODO: Are the following still relevant with CMake build?
@@ -177,6 +176,7 @@ ExternalProject_Add(build-flint
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint
   BINARY_DIR        libraries/flint/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DBUILD_SHARED_LIBS=ON
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
                     # Possible variables for the CMake build:
@@ -469,6 +469,7 @@ ExternalProject_Add(build-bdwgc
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/bdwgc
   BINARY_DIR        libraries/bdwgc/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -Denable_cplusplus=ON
                     -Denable_threads=ON
                     -Denable_large_config=ON
@@ -579,6 +580,7 @@ ExternalProject_Add(build-memtailor
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/memtailor
   BINARY_DIR        libraries/memtailor/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DPACKAGE_TESTS=OFF
 #  DEPENDS           googletest # TODO: use this
   EXCLUDE_FROM_ALL  ON
@@ -597,6 +599,7 @@ ExternalProject_Add(build-mathic
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathic
   BINARY_DIR        libraries/mathic/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
                     -DPACKAGE_TESTS=OFF
   DEPENDS           build-memtailor
@@ -619,6 +622,7 @@ ExternalProject_Add(build-mathicgb
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathicgb
   BINARY_DIR        libraries/mathicgb/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
                     -DPACKAGE_TESTS=OFF
   EXCLUDE_FROM_ALL  ON

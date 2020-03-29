@@ -102,7 +102,7 @@ target_compile_options(M2-interpreter PRIVATE
   -Wno-uninitialized
   -Wno-unused
   # temporary flags
-  -Wno-frame-address
+  #-Wno-frame-address
   -Wno-unknown-pragmas
   )
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")

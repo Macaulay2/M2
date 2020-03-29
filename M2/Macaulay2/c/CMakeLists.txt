@@ -11,6 +11,7 @@ BISON_TARGET(scc1 ${CMAKE_CURRENT_SOURCE_DIR}/grammar.y ${CMAKE_CURRENT_BINARY_D
 
 # The header files are only listed so that they show up in IDEs
 add_executable(scc1
+  scc.h
   scc1.c
   scc1.h
   readfile.c
@@ -32,22 +33,15 @@ add_executable(scc1
   debugging.c
   debugging.h
   grammar.c
-  scc.h
   grammar.h
   keywords.h
   )
 
-target_include_directories(scc1
-  PUBLIC
-    .
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_BINARY_DIR}/include
-    /usr/local/include
-  )
+target_include_directories(scc1 PUBLIC .)
+
 if(BDWGC_FOUND)
 target_link_libraries(scc1 ${BDWGC_LIBRARIES} ${LIBGDBM})
 endif()
-target_link_directories(scc1 PRIVATE ${CMAKE_BUILD_DIR}/usr-host/lib)
 
 # Why do we do this?
 # CC scc-core.c

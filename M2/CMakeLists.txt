@@ -88,9 +88,6 @@ message("## Target operating system information:
 ## Kick off the Macaulay2 directory
 add_subdirectory(Macaulay2)
 
-# TODO: one way to solve the library situation is to include Macaulay2 as an
-# ExternalProject so it is configured after the others.
-
 ###############################################################################
 # TODO: write the M2Config.cmake module for users
 

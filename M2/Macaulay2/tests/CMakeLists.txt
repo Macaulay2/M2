@@ -7,15 +7,17 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 # ctest --build-run-dir
 # ctest -R schorder --rerun-failed -V
 
+set(GC_MAXIMUM_HEAP_SIZE 400M CACHE STRING "maximum collected heap size")
+
 ## Default resource limits
 # TODO: add memory, virtual memory, and stack size
 # the tests aren't run through bash, so ulimit wouldn't work
 if(DEBUG)
-  set(CTEST_TEST_TIMEOUT 140)
+  set(CTEST_TEST_TIMEOUT 1400)
   #MLIMIT ?= 1200000
   #VLIMIT ?= 2000000
 else()
-  set(CTEST_TEST_TIMEOUT 90)
+  set(CTEST_TEST_TIMEOUT 900)
   ## one test doesn't work with only 150MB RAM, ext-total.m2, on a 64 bit intel machine:
   #MLIMIT ?=  800000
   #VLIMIT ?= 2000000
@@ -34,10 +36,9 @@ include(CTest)
 
 ###############################################################################
 
-# TODO: add the other folders
-# ComputationsBook has a different build command
-# some targets have different resource limits
-set(SUBDIRS normal) #ComputationsBook normal slow gigantic goals quarantine) # engine rationality too?
+# TODO: some targets have different resource limits
+# TODO: different rules: ComputationsBook rationality
+set(SUBDIRS normal slow gigantic goals quarantine engine)
 
 # set(M2_gbTrace    5)
 # set(M2_errorDepth 0)
@@ -74,12 +75,12 @@ foreach(GROUP IN LISTS SUBDIRS)
 
     add_test(NAME ${TESTNAME}
       COMMAND M2-binary ${M2_ARGS} -e path=${M2_PATH} -e ${M2_TEST_STRING}
-      WORKING_DIRECTORY	${CMAKE_BINARY_DIR}
+      WORKING_DIRECTORY	${CMAKE_CURRENT_SOURCE_DIR}/${GROUP}
       )
 
     set_tests_properties(${TESTNAME} PROPERTIES
       FAIL_REGULAR_EXPRESSION "${M2_FAIL_REGEX}"
-      ENVIRONMENT "GC_MAXIMUM_HEAP_SIZE=400M"
+      ENVIRONMENT "GC_MAXIMUM_HEAP_SIZE=${GC_MAXIMUM_HEAP_SIZE}"
       TIMEOUT ${CTEST_TEST_TIMEOUT} # TODO: this shouldn't be necessary
       )
   endforeach()
