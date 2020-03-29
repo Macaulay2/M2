@@ -1419,7 +1419,7 @@ reconstructSlackMatrix (Matrix, List, List) := Matrix => opts -> (S, fl, F) -> (
     newS = substitute(newS, newR);
     newCols := for f in F list if member(f, simpF) then simplicialColExtend(newS, fl, f) else smallColExtend(newS, fl, f, newR, drop(gens newR, oVars)); 
     scan(newCols, c->(newS = newS | c));
-    newS
+    matrix(for i in (0..numgens target newS-1) list(flatten entries newS^{i}))
 )
 reconstructSlackMatrix (Matrix, List) := Matrix => opts -> (S, F) -> (
     -- INPUT: S a (column) reduced slack matrix, F list of facet columns we want to refill
@@ -3134,30 +3134,11 @@ doc ///
 		Object
 ///
 
-end
-
-doc /// Key
-   Headline
-   Usage
-   Inputs
-   Outputs
-   Consequences
-    Item
-   Description
-    Text
-    Code
-    Pre
-    Example
-   Subnodes
-   Caveat
-   SeeAlso
-///
-
 ------ TESTS ------
 
 TEST ///
 V = {{0, 0}, {0, 1}, {1, 1}, {1, 0}}
-assert(slackMatrix V == matrix {{0, 1, 0, 1}, {1, 0, 0, 1}, {0, 1, 1, 0}, {1, 0, 1, 0}})
+assert(slackMatrix V == matrix(QQ, {{0, 1, 0, 1}, {1, 0, 0, 1}, {0, 1, 1, 0}, {1, 0, 1, 0}}))
 assert(slackMatrix(V, Object => "matroid") == matrix {{-1, -1, 0, -1, 0, 0}, {-1, 0, 1, 0, 1, 0}, {0, 1, 1, 0, 0, -1}, {0, 0, 0, -1, -1, -1}})
 C = posHull(matrix{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}})
 assert(slackMatrix C == matrix {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}})
@@ -3177,24 +3158,25 @@ assert(slackFromPlucker(V, B) == matrix {{-1, 0, 0, -1, 0}, {0, 1, 0, -1, 0}, {0
 TEST ///
 MG = matrix(RR, {{0, 1, -1, 0, -1, 1}, {1, 0, -1, -1, 0, 1}})
 B = {{1, 2, 4}, {0, 2, 3}, {0, 1, 4}, {3, 4, 5}, {0, 1, 2}}
-assert(slackFromGalePlucker(B, MG) == matrix {{1, 0, 0, 1, 0}, {0, -1, 0, 1, 0}, {0, 0, 1, 1, 0}, {1, 0, 0, 0, -1}, {0, -1, 0, 0, -1}, {0, 0, 1, 0, -1}})
+assert(slackFromGalePlucker(B, MG) == matrix(RR, {{1, 0, 0, 1, 0}, {0, -1, 0, 1, 0}, {0, 0, 1, 1, 0}, {1, 0, 0, 0, -1}, {0, -1, 0, 0, -1}, {0, 0, 1, 0, -1}}))
 ///
 
 TEST ///
 G = matrix(RR, {{0, 1, -1, 0, -1, 1}, {1, 0, -1, -1, 0, 1}})
-assert(slackFromGaleCircuits G == matrix {{1, 0, 0, 1, 0}, {0, 1, 0, 1, 0}, {0, 0, 1, 1, 0}, {1, 0, 0, 0, 1}, {0, 1, 0, 0, 1}, {0, 0, 1, 0, 1}})
+assert(slackFromGaleCircuits G == matrix(RR, {{1, 0, 0, 1, 0}, {0, 1, 0, 1, 0}, {0, 0, 1, 1, 0}, {1, 0, 0, 0, 1}, {0, 1, 0, 0, 1}, {0, 0, 1, 0, 1}}))
 ///
 
 TEST ///
-assert(specificSlackMatrix "barnette" == matrix {{1, 0, 0, 0, 1, 1, 0}, {1, 0, 0, 0, 0, 1, 1}, {1, 0, 0, 1, 0, 0, 1}, {1, 0, 0, 1, 1, 0, 0}, {1, 0, 1, 0, 0, 0, 0}, {0, 1, 0, 0, 1, 1, 0}, {0, 1, 0, 0, 0, 1, 1}, {0, 1, 0, 1, 0, 0, 1}, {0, 1, 0, 1, 1, 0, 0}, {0, 1, 1, 0, 0, 0, 0}})
+assert(specificSlackMatrix "barnette" == matrix(RR, {{1, 0, 0, 0, 1, 1, 0}, {1, 0, 0, 0, 0, 1, 1}, {1, 0, 0, 1, 0, 0, 1}, {1, 0, 0, 1, 1, 0, 0}, {1, 0, 1, 0, 0, 0, 0}, {0, 1, 0, 0, 1, 1, 0}, {0, 1, 0, 0, 0, 1, 1}, {0, 1, 0, 1, 0, 0, 1}, {0, 1, 0, 1, 1, 0, 0}, {0, 1, 1, 0, 0, 0, 0}}))
 ///
 
 TEST ///
 V = {{0, 0}, {0, 1}, {1, 1}, {1, 0}}
-assert(symbolicSlackMatrix V == matrix {{0, x_0, 0, x_1}, {x_2, 0, 0, x_3}, {0, x_4, x_5, 0}, {x_6, 0, x_7, 0}})
-assert(symbolicSlackMatrix(V, Object => "matroid") == matrix {{x_0, x_1, 0, x_2, 0, 0}, {x_3, 0, x_4, 0, x_5, 0}, {0, x_6, x_7, 0, 0, x_8}, {0, 0, 0, x_9, x_10, x_11}})
+R = QQ[x_0..x_11]
+assert(substitute(symbolicSlackMatrix V, R) == matrix {{0, x_0, 0, x_1}, {x_2, 0, 0, x_3}, {0, x_4, x_5, 0}, {x_6, 0, x_7, 0}})
+assert(substitute(symbolicSlackMatrix(V, Object => "matroid"), R) == matrix {{x_0, x_1, 0, x_2, 0, 0}, {x_3, 0, x_4, 0, x_5, 0}, {0, x_6, x_7, 0, 0, x_8}, {0, 0, 0, x_9, x_10, x_11}})
 V = {{1, 2, 3}, {4, 5, 6}, {1, 2, 4, 5}, {1, 3, 4, 6}, {2, 3, 5, 6}}
-assert(symbolicSlackMatrix(V, Object => "abstractPolytope") == matrix {{0, x_0, 0, 0, x_1}, {0, x_2, 0, x_3, 0}, {0, x_4, x_5, 0, 0}, {x_6, 0, 0, 0, x_7}, {x_8, 0, 0, x_9, 0}, {x_10, 0, x_11, 0, 0}})
+assert(substitute(symbolicSlackMatrix(V, Object => "abstractPolytope"), R) == matrix {{0, x_0, 0, 0, x_1}, {0, x_2, 0, x_3, 0}, {0, x_4, x_5, 0, 0}, {x_6, 0, 0, 0, x_7}, {x_8, 0, 0, x_9, 0}, {x_10, 0, x_11, 0, 0}})
 ///
 
 TEST ///
@@ -3205,14 +3187,16 @@ assert(symbolicSlackOfPlucker(V, B) == matrix {{-p_(0,1,2,4), 0, 0, -p_(0,3,4,5)
 
 TEST ///
 V = {{0, 0}, {1, 0}, {1, 1}, {0, 1}}
-assert(slackIdeal V == ideal(x_0*x_3*x_5*x_6-x_1*x_2*x_4*x_7))
-assert(slackIdeal(V, Object => "matroid") == ideal(x_4*x_8*x_10+x_5*x_7*x_11, x_1*x_8*x_9+x_2*x_6*x_11, x_0*x_5*x_9+x_2*x_3*x_10, x_0*x_4*x_6+x_1*x_3*x_7, x_1*x_3*x_8*x_10-x_0*x_5*x_6*x_11, x_0*x_4*x_8*x_9-x_2*x_3*x_7*x_11, x_1*x_5*x_7*x_9-x_2*x_4*x_6*x_10))
+R = QQ[x_0..x_11]
+assert(substitute(slackIdeal V, R) == ideal(x_0*x_3*x_5*x_6-x_1*x_2*x_4*x_7))
+assert(substitute(slackIdeal(V, Object => "matroid"), R) == ideal(x_4*x_8*x_10+x_5*x_7*x_11, x_1*x_8*x_9+x_2*x_6*x_11, x_0*x_5*x_9+x_2*x_3*x_10, x_0*x_4*x_6+x_1*x_3*x_7, x_1*x_3*x_8*x_10-x_0*x_5*x_6*x_11, x_0*x_4*x_8*x_9-x_2*x_3*x_7*x_11, x_1*x_5*x_7*x_9-x_2*x_4*x_6*x_10))
 ///
 
 TEST ///
 V = {{0, 0}, {1, 0}, {2, 1}, {1, 2}, {0, 1}}
 (VV, B) = getFacetBases V
-assert(grassmannSectionIdeal(VV, B) == ideal(p_(1,2,4)*p_(0,3,4)-p_(0,2,4)*p_(1,3,4)+p_(0,1,4)*p_(2,3,4), p_(1,2,3)*p_(0,3,4)-p_(0,2,3)*p_(1,3,4)+p_(0,1,3)*p_(2,3,4), p_(1,2,3)*p_(0,2,4)-p_(0,2,3)*p_(1,2,4)+p_(0,1,2)*p_(2,3,4), p_(1,2,3)*p_(0,1,4)-p_(0,1,3)*p_(1,2,4)+p_(0,1,2)*p_(1,3,4), p_(0,2,3)*p_(0,1,4)-p_(0,1,3)*p_(0,2,4)+p_(0,1,2)*p_(0,3,4)))
+R = QQ[p_(0,1,2), p_(0,1,3), p_(0,2,3), p_(1,2,3), p_(0,1,4), p_(0,2,4), p_(1,2,4), p_(0,3,4), p_(1,3,4), p_(2,3,4)]
+assert(substitute(grassmannSectionIdeal(VV, B), R) == substitute(ideal(p_(1,2,4)*p_(0,3,4)-p_(0,2,4)*p_(1,3,4)+p_(0,1,4)*p_(2,3,4), p_(1,2,3)*p_(0,3,4)-p_(0,2,3)*p_(1,3,4)+p_(0,1,3)*p_(2,3,4), p_(1,2,3)*p_(0,2,4)-p_(0,2,3)*p_(1,2,4)+p_(0,1,2)*p_(2,3,4), p_(1,2,3)*p_(0,1,4)-p_(0,1,3)*p_(1,2,4)+p_(0,1,2)*p_(1,3,4), p_(0,2,3)*p_(0,1,4)-p_(0,1,3)*p_(0,2,4)+p_(0,1,2)*p_(0,3,4)), R))
 ///
 
 TEST ///
@@ -3222,15 +3206,17 @@ assert(graphFromSlackMatrix(symbolicSlackMatrix V) == matrix {{1, 1, 0, 0, 0, 0,
 
 TEST ///
 P = convexHull(matrix{{0, 0, 1, 1}, {0, 1, 0, 1}})
-assert(graphicIdeal P == ideal(y_0*y_3*y_5*y_6-y_1*y_2*y_4*y_7))
+R = QQ[y_0..y_7]
+assert(substitute(graphicIdeal P, R) == ideal(y_0*y_3*y_5*y_6-y_1*y_2*y_4*y_7))
 ///
 
 TEST ///
 V = {{0, 0}, {1, 0}, {1, 1}, {0, 1}}
-assert(cycleIdeal V == ideal(y_0*y_3*y_5*y_6-y_1*y_2*y_4*y_7))
-assert(cycleIdeal(V, Object => "matroid") == ideal(y_4*y_8*y_10+y_5*y_7*y_11, y_1*y_8*y_9+y_2*y_6*y_11, y_0*y_5*y_9+y_2*y_3*y_10, y_0*y_4*y_6+y_1*y_3*y_7, y_1*y_3*y_8*y_10-y_0*y_5*y_6*y_11, y_0*y_4*y_8*y_9-y_2*y_3*y_7*y_11, y_1*y_5*y_7*y_9-y_2*y_4*y_6*y_10))
+R = QQ[y_0..y_11]
+assert(substitute(cycleIdeal V, R) == ideal(y_0*y_3*y_5*y_6-y_1*y_2*y_4*y_7))
+assert(substitute(cycleIdeal(V, Object => "matroid"), R) == ideal(y_4*y_8*y_10+y_5*y_7*y_11, y_1*y_8*y_9+y_2*y_6*y_11, y_0*y_5*y_9+y_2*y_3*y_10, y_0*y_4*y_6+y_1*y_3*y_7, y_1*y_3*y_8*y_10-y_0*y_5*y_6*y_11, y_0*y_4*y_8*y_9-y_2*y_3*y_7*y_11, y_1*y_5*y_7*y_9-y_2*y_4*y_6*y_10))
 S = matrix{{1, 1, 0}, {0, 1, 2}, {1, 0, 3}}
-assert(cycleIdeal S == ideal(3*y_1*y_3*y_4-2*y_0*y_2*y_5))
+assert(substitute(cycleIdeal S, R) == ideal(3*y_1*y_3*y_4-2*y_0*y_2*y_5))
 ///
 
 TEST ///
@@ -3246,8 +3232,8 @@ assert(rehomogenizePolynomial(X, matrix {{0, 1, 0, 0, 1}, {1, 0, 0, 0, x_4}, {0,
 
 TEST ///
 V = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}, {0, 0, 1}, {0, 1, 1}}
-assert(rehomogenizeIdeal(3, symbolicSlackMatrix V) == ideal(x_3*x_6*x_9*x_10-x_2*x_7*x_8*x_11, x_0*x_5*x_9*x_10-x_1*x_4*x_8*x_11, x_1*x_3*x_4*x_6-x_0*x_2*x_5*x_7))
 R = QQ[x_0..x_11]
+assert(substitute(rehomogenizeIdeal(3, symbolicSlackMatrix V), R) == ideal(x_3*x_6*x_9*x_10-x_2*x_7*x_8*x_11, x_0*x_5*x_9*x_10-x_1*x_4*x_8*x_11, x_1*x_3*x_4*x_6-x_0*x_2*x_5*x_7))
 Y = matrix {{0, 0, 1, 0, 1}, {1, 0, 1, 0, 0}, {0, x_4, 0, 0, 1}, {1, 1, 0, 0, 0}, {0, 0, 1, 1, 0}, {0, x_10, 0, 1, 0}}
 T = graph(QQ[y_0, y_1, y_2, y_3, y_4, y_5, y_6, y_7, y_8, y_9, y_10], {{y_1, y_6}, {y_3, y_6}, {y_3, y_7}, {y_0, y_8}, {y_1, y_8}, {y_4, y_8}, {y_4, y_9}, {y_5, y_9}, {y_0, y_10}, {y_2, y_10}})
 assert(rehomogenizeIdeal(3, Y, T) == ideal(x_3*x_6*x_9*x_10-x_2*x_7*x_8*x_11, x_0*x_5*x_9*x_10-x_1*x_4*x_8*x_11, x_1*x_3*x_4*x_6-x_0*x_2*x_5*x_7))
@@ -3257,7 +3243,7 @@ TEST ///
 V = {{0,0,0},{0,0,1},{1,0,0},{1,0,1},{0,1,0},{0,1,1}}
 S = slackMatrix V
 assert(findFlag S == {0, 1, 2, 4})
-assert(findFlag(V, Object => "matroid") == {0, 1, 2, 8})
+assert(findFlag(V, Object => "matroid") == {0, 1, 5, 7})
 assert(findFlag({{0, 2, 3, 5}, {0, 1, 3, 4}, {1, 2, 4, 5}, {0, 1, 2}, {3, 4, 5}}, Object => "abstractPolytope") == {0, 1, 2, 4})
 ///
 
@@ -3272,16 +3258,22 @@ assert(containsFlag({0, 1, 2, 3}, {{0, 2, 3, 5}, {0, 1, 3, 4}, {1, 2, 4, 5}, {0,
 TEST ///
 V = {{0,0,0},{0,0,1},{1,0,0},{1,0,1},{0,1,0},{0,1,1}}
 S = slackMatrix V
-assert(reconstructSlackMatrix(reducedSlackMatrix(S,Vars => {a,b,c,d,e,f,g,h,j,k,m,p}), {{0,1,2}}) ==  matrix {{0, 0, a, b, 0}, {c, 0, 0, d, 0}, {0, e, 0, f, 0}, {0, 0, g, 0, -b*c*e*g}, {h, 0, 0, 0, -a*d*e*h}, {0, j, 0, 0, -a*c*f*j}})
-assert(reconstructSlackMatrix(reducedSlackMatrix(3, S), {{0,1,2}}) == matrix {{0, 0, 1, 1, 0}, {1, 0, 0, 1, 0}, {0, 1, 0, 1, 0}, {0, 0, 1, 0, -1}, {1, 0, 0, 0, -1}, {0, 1, 0, 0, -1}})
-assert(reconstructSlackMatrix(reducedSlackMatrix(3, S), {{0,1,2}}, Vars => {x}) == matrix {{0, 0, x_0, x_1, 0}, {x_2, 0, 0, x_3, 0}, {0, x_4, 0, x_5, 0}, {0, 0, x_6, 0, -x_1*x_2*x_4*x_6}, {x_7, 0, 0, 0, -x_0*x_3*x_4*x_7}, {0, x_8, 0, 0, -x_0*x_2*x_5*x_8}})
+redS = reducedSlackMatrix(S,Vars => {a,b,c,d,e,f,g,h,j,k,m,p})
+R = ring redS
+assert(reconstructSlackMatrix(redS, {{0,1,2}}) ==  substitute(matrix {{0, 0, a, b, 0}, {c, 0, 0, d, 0}, {0, e, 0, f, 0}, {0, 0, g, 0, -b*c*e*g}, {h, 0, 0, 0, -a*d*e*h}, {0, j, 0, 0, -a*c*f*j}}, R))
+assert(reconstructSlackMatrix(reducedSlackMatrix(3, S), {{0,1,2}}) == matrix(QQ, {{0, 0, 1, 1, 0}, {1, 0, 0, 1, 0}, {0, 1, 0, 1, 0}, {0, 0, 1, 0, -1}, {1, 0, 0, 0, -1}, {0, 1, 0, 0, -1}}))
+redS1 = reducedSlackMatrix(3, S)
+extS1 = reconstructSlackMatrix(redS1, {{0,1,2}}, Vars => {x})
+T = ring extS1
+assert(extS1 == substitute(matrix {{0, 0, x_0, x_1, 0}, {x_2, 0, 0, x_3, 0}, {0, x_4, 0, x_5, 0}, {0, 0, x_6, 0, -x_1*x_2*x_4*x_6}, {x_7, 0, 0, 0, -x_0*x_3*x_4*x_7}, {0, x_8, 0, 0, -x_0*x_2*x_5*x_8}}, T))
 ///
 
 TEST ///
 V = {{0,0,0},{0,0,1},{1,0,0},{1,0,1},{0,1,0},{0,1,1}}
 S = slackMatrix V
-assert(reducedSlackMatrix V == matrix {{0, 0, 1, 1}, {1, 0, 0, 1}, {0, 1, 0, 1}, {0, 0, 1, 0}, {1, 0, 0, 0}, {0, 1, 0, 0}})
-assert(reducedSlackMatrix(S, Vars => {x}) == matrix {{0, 0, x_0, x_1}, {x_2, 0, 0, x_3}, {0, x_4, 0, x_5}, {0, 0, x_6, 0}, {x_7, 0, 0, 0}, {0, x_8, 0, 0}})
+assert(reducedSlackMatrix V == matrix(QQ, {{0, 0, 1, 1}, {1, 0, 0, 1}, {0, 1, 0, 1}, {0, 0, 1, 0}, {1, 0, 0, 0}, {0, 1, 0, 0}}))
+R = QQ[x_0..x_8]
+assert(substitute(reducedSlackMatrix(S, Vars => {x}), R) == matrix {{0, 0, x_0, x_1}, {x_2, 0, 0, x_3}, {0, x_4, 0, x_5}, {0, 0, x_6, 0}, {x_7, 0, 0, 0}, {0, x_8, 0, 0}})
 ///
 
 end
