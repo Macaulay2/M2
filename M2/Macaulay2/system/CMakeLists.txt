@@ -25,6 +25,7 @@ target_compile_options(system PRIVATE
   -Wextra
   -Wfatal-errors
   -Wno-unused
+  -Wno-unused-parameter
   )
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   # using Clang or AppleClang

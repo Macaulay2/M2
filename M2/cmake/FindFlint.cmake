@@ -58,13 +58,9 @@ macro(_flint_check_version)
   endif()
 endmacro(_flint_check_version)
 
-if (FLINT_INCLUDE_DIR AND FLINT_LIBRARY)
-
-  # Exists in cache already
-  _flint_check_version()
-  set(FLINT_FOUND ${FLINT_VERSION_OK})
-
-else()
+if(NOT FLINT_FOUND)
+  set(FLINT_INCLUDE_DIRS NOTFOUND)
+  set(FLINT_LIBRARIES NOTFOUND)
 
   # search first if an FlintConfig.cmake is available in the system,
   # if successful this would set FLINT_INCLUDE_DIR and the rest of

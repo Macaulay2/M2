@@ -2,10 +2,20 @@ set(JOBS 4)
 
 # TODO: are git downloads too heavy?
 
+if(APPLE)
+  set(SET_LD_LIBRARY_PATH DYLD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
+elseif(UNIX)
+  set(SET_LD_LIBRARY_PATH   LD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
+endif()
+
 ################################################################
 ## This target requires all external projects to be built and installed
 add_custom_target(build-libraries)
 add_custom_target(build-programs)
+
+## This target forces libraries and programs to run their install targets
+add_custom_target(clean-stamps
+  COMMAND rm libraries/*/src/build-*-stamp/*-install)
 
 file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
 
@@ -69,7 +79,7 @@ endif()
 #################################################################################
 ## Build required libraries, first those downloaded as a tarfile
 
-include(ExternalProject) # populate at build time; FetchContent populates at configure time
+include(ExternalProject) # configure, compile, and install at build time; FetchContent populates at configure time
 set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
 
 # TODO: use git? https://github.com/Macaulay2/mpir.git 82816d99
@@ -86,7 +96,8 @@ ExternalProject_Add(build-mpir
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --enable-gmpcompat
                       --enable-cxx
-                      --disable-shared
+                      --with-pic
+                      --enable-shared
                       # --enable-assert
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -133,7 +144,7 @@ ExternalProject_Add(build-mpfr
   SOURCE_DIR        libraries/mpfr/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+  CONFIGURE_COMMAND ${SET_LD_LIBRARY_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-thread-safe
                       --enable-shared
@@ -159,6 +170,9 @@ ExternalProject_Add(build-mpfr
 if(NOT MPFR_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-mpfr-install)
+  if(NOT ${MP_LIBRARY}_FOUND)
+    ExternalProject_Add_StepDependencies(build-factory build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  endif()
 endif()
 
 # TODO: cflags+debug: -O0 -fno-unroll-loops
@@ -172,9 +186,9 @@ ExternalProject_Add(build-flint
 #  URL_HASH          SHA256=cbf1fe0034533c53c5c41761017065f85207a1b770483e98b2392315f6575e87
   GIT_REPOSITORY    https://github.com/mahrud/flint2.git
   GIT_TAG           HEAD
-  PREFIX            libraries/flint
-  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint
-  BINARY_DIR        libraries/flint/build
+  PREFIX            libraries/flint2
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint2
+  BINARY_DIR        libraries/flint2/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DBUILD_SHARED_LIBS=ON
@@ -193,6 +207,9 @@ ExternalProject_Add(build-flint
 if(NOT FLINT_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-flint-install)
+  if(NOT ${MP_LIBRARY}_FOUND)
+    ExternalProject_Add_StepDependencies(build-factory build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  endif()
   if(NOT MPFR_FOUND)
     ExternalProject_Add_StepDependencies(build-flint build build-mpfr-install)
   endif()
@@ -207,19 +224,20 @@ ExternalProject_Add(build-ntl
   SOURCE_DIR        libraries/ntl/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND cd src && ./configure PREFIX=${M2_HOST_PREFIX}
+  CONFIGURE_COMMAND cd src && ${SET_LD_LIBRARY_PATH} ./configure PREFIX=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       TUNE=generic # TODO: x86 and auto if NTL_WIZARD
                       NATIVE=off # TODO: on if not packaging?
                       NTL_GMP_LIP=on
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
+		      SHARED=on
                       CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
                       CXX=${CMAKE_CXX_COMPILER}
                       RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     cd src && ${MAKE_EXE} -j${JOBS}
+  BUILD_COMMAND     cd src && ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${JOBS}
                       MakeDescCFLAGS=-O0
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -240,7 +258,6 @@ if(NOT NTL_FOUND)
 endif()
 
 
-# Factory has trouble finding ntl and flint without LD_LIBRARY_PATH
 set(factory_CPPFLAGS "${CPPFLAGS} -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
 set(factory_WARNFLAGS "-Wno-uninitialized -Wno-write-strings -Wno-deprecated")
 ExternalProject_Add(build-factory
@@ -252,11 +269,11 @@ ExternalProject_Add(build-factory
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p0 < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.1.1
   CONFIGURE_COMMAND cd factory-4.1.1 && autoreconf -vif
-            COMMAND cd factory-4.1.1 && LD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib ./configure --prefix=${M2_HOST_PREFIX}
+            COMMAND cd factory-4.1.1 && ${SET_LD_LIBRARY_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --disable-shared
                       --disable-omalloc
                       --disable-doxygen-doc
+                      --enable-shared
                       --enable-streamio
                       --without-Singular
                       --with-ntl
@@ -354,7 +371,7 @@ ExternalProject_Add(build-cddlib
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND autoreconf -vif
-            COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+            COMMAND ${SET_LD_LIBRARY_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --includedir=${M2_HOST_PREFIX}/include/cdd
                       --disable-shared
@@ -495,6 +512,7 @@ endif()
 
 # TODO: out of source build has issues with detecting SIMD instructions
 # TODO: separate source and binary directories
+# TODO: Givaro can't find gmp when mpir is present, commeting LDFLAGS
 ExternalProject_Add(build-givaro
   GIT_REPOSITORY    https://github.com/linbox-team/givaro.git
   GIT_TAG           v4.0.3
@@ -502,7 +520,7 @@ ExternalProject_Add(build-givaro
   SOURCE_DIR        libraries/givaro/build
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND autoreconf -vif
-            COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+            COMMAND ${SET_LD_LIBRARY_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-shared
                       # --disable-simd # unrecognized option on 4.0.3?
@@ -565,7 +583,8 @@ ExternalProject_Add(build-fflas_ffpack
 if(NOT FFLAS_FFPACK_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-fflas_ffpack-install)
-  if(NOT GIVARO_FOUND)
+  # TODO: the requirement on Givaro version is for fflas_ffpack 2.3.2
+  if(NOT GIVARO_FOUND OR GIVARO_VERSION VERSION_LESS 4.0.3)
     # TODO: also add gmp/mpir?
     ExternalProject_Add_StepDependencies(build-fflas_ffpack build build-givaro-install)
   endif()
@@ -639,6 +658,7 @@ endif()
 ###############################################################################
 ## Build required programs
 
+# FIXME: when compiling with mpir, 4ti2gmp doesn't exist
 ExternalProject_Add(build-4ti2
   URL               ${M2_SOURCE_URL}/4ti2-1.6.9.tar.gz
   URL_HASH          SHA256=3053e7467b5585ad852f6a56e78e28352653943e7249ad5e5174d4744d174966
@@ -661,16 +681,7 @@ ExternalProject_Add(build-4ti2
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
-        COMMAND     ${CMAKE_STRIP}
-                      src/groebner/4ti2gmp${CMAKE_EXECUTABLE_SUFFIX}
-                      src/groebner/4ti2int32${CMAKE_EXECUTABLE_SUFFIX}
-                      src/groebner/4ti2int64${CMAKE_EXECUTABLE_SUFFIX}
-                      src/util/genmodel
-                      src/util/gensymm
-                      src/ppi/ppi
-                      src/util/output
-                      src/zsolve/zsolve
-  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install
+  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install-strip
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -710,10 +721,10 @@ if(NOT COHOMCALG)
 endif()
 
 
-set(gfan_CC  "${CC}  ${CPPFLAGS}")
-set(gfan_CXX "${CXX} ${CPPFLAGS}")
-set(gfan_CLINKER  "${CC}  ${LDFLAGS}")
-set(gfan_CCLINKER "${CXX} ${LDFLAGS}")
+set(gfan_CC  "${CMAKE_C_COMPILER}   ${CPPFLAGS}")
+set(gfan_CXX "${CMAKE_CXX_COMPILER} ${CPPFLAGS}")
+set(gfan_CLINKER  "${CMAKE_C_COMPILER}   ${LDFLAGS}")
+set(gfan_CCLINKER "${CMAKE_CXX_COMPILER} ${LDFLAGS}")
 ExternalProject_Add(build-gfan
   URL               ${M2_SOURCE_URL}/gfan0.6.2.tar.gz
   URL_HASH          SHA256=a674d5e5dc43634397de0d55dd5da3c32bd358d05f72b73a50e62c1a1686f10a
@@ -770,8 +781,8 @@ endif()
 
 
 # TODO: do we need to make and strip theta/* if we don't use them?
-set(csdp_CC  "${CC}  ${OpenMP_C_FLAGS}")
-set(csdp_CXX "${CXX} ${OpenMP_CXX_FLAGS}")
+set(csdp_CC  "${CMAKE_C_COMPILER}  ${OpenMP_C_FLAGS}")
+set(csdp_CXX "${CMAKE_CXX_COMPILER} ${OpenMP_CXX_FLAGS}")
 set(csdp_LDFLAGS "${LDFLAGS} ${OpenMP_CXX_FLAGS}")
 list(JOIN OpenMP_CXX_LIBRARIES " " csdp_OpenMP_CXX_LIBRARIES)
 set(csdp_LDLIBS  "${LDLIBS}  ${csdp_OpenMP_CXX_LIBRARIES}")

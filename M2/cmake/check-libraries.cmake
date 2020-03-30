@@ -60,30 +60,30 @@ find_package(History     REQUIRED QUIET)
 
 # TODO: which to use: TBB or OpenMP?
 # OpenMP is required for building the library csdp and good for building the library normaliz
-find_package(OpenMP      REQUIRED QUIET)
+find_package(OpenMP	REQUIRED QUIET)
 # TBB is required for threading in mathicgb
-find_package(TBB         REQUIRED) # required by mathicgb
+find_package(TBB	REQUIRED QUIET) # required by mathicgb
 
-find_package(GMP  6.1.0 QUIET)
-find_package(MPIR 3.0.0 QUIET)
+find_package(GMP	6.0.0)
+find_package(MPIR	3.0.0)
 
-## They are not required because we can build them if they are not found.
-# TODO: specify minimum version
-find_package(CDD)
-find_package(Frobby)
-find_package(Memtailor)
-find_package(Mathic)
-find_package(Mathicgb)
+## These are not required because we can build them if they are not found.
+find_package(MPFR	4.0.1)
+find_package(BDWGC	7.6.4)
+find_package(Flint	2.5.3)
 
-find_package(MPFR	4.0.1	QUIET)
-find_package(GLPK	4.59	QUIET)
-find_package(NTL	10.5.0	QUIET)
-find_package(BDWGC	7.6.4	QUIET)
-find_package(Flint	2.5.3	QUIET)
-find_package(MPSolve	3.1.8	QUIET)
+# TODO: add minimum version checks
+find_package(CDD) # 094h?
+find_package(NTL	10.5.0)
+find_package(GLPK	4.59.0)
+find_package(Frobby	0.9.0)
+find_package(Memtailor	1.0.0)
+find_package(Mathic	1.0.0)
+find_package(Mathicgb	1.0.0)
+find_package(MPSolve	3.1.8)
 
 if(BUILD_TESTING)
-  find_package(GTest QUIET)
+  find_package(GTest)
 endif()
 
 ## Find libraries available via pkg-config
@@ -116,6 +116,25 @@ find_program(NAUTY	NAMES	dreadnaut nauty-complg	PATH ${M2_HOST_PREFIX}/bin)
 find_program(TOPCOM	NAMES	checkregularity		PATH ${M2_HOST_PREFIX}/bin)
 
 ###############################################################################
+
+include(CheckCXXSourceCompiles)
+
+if(GIVARO_FOUND)
+  set(CMAKE_REQUIRED_INCLUDES "${GIVARO_INCLUDE_DIRS}")
+  # whether givaro has isUnit (4.0.3) or isunit (4.0.2)
+  check_cxx_source_compiles([[#include <givaro/gfq.h>
+    int main(){class Givaro::GFqDom<long int> foo; foo.isunit(0);return 0;}]] HAVE_GIVARO_isunit)
+endif()
+
+if(FACTORY_FOUND)
+  set(CMAKE_REQUIRED_INCLUDES "${FACTORY_INCLUDE_DIRS}")
+  # whether factory was built with --enable-streamio
+  check_cxx_source_compiles([[#include <factory/factory.h>
+    int main(){Variable x; x = Variable(); std::cout << x;return 0;}]] FACTORY_STREAMIO)
+  # whether Prem() from factory is public
+  check_cxx_source_compiles([[#include <factory/factory.h>
+    int main(){CanonicalForm p,q; Prem(p,q);return 0;}]] HAVE_FACTORY_PREM)
+endif()
 
 # Still processing:
 #    boost??

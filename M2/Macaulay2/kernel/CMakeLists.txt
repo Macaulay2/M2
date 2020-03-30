@@ -29,6 +29,7 @@ target_compile_options(kernel PRIVATE
   -Wextra
   -Wfatal-errors
   -Wno-unused
+  -Wno-unused-parameter
   # temporary flags
   -Wno-ignored-qualifiers
   )

@@ -19,7 +19,7 @@ message("## Configure Macaulay2
 
 # TODO: Which environment variables still relevant?
 ## Relevant environment variable values, if any:
-foreach(X CC CXX AR CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION PKG_CONFIG_PATH GFTABLESDIR)
+foreach(X AR CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION PKG_CONFIG_PATH GFTABLESDIR)
   if(NOT ("$ENV{${X}}" STREQUAL ""))
     set(${X} "$ENV{${X}}" CACHE STRING "set via environment variable at configure time")
     message("## Set via environment:   ${X} = ${${X}}")
@@ -273,18 +273,6 @@ check_c_source_compiles([[
    #include <netdb.h>
   #endif
   int main(){struct addrinfo *addr;return 0 != getaddrinfo("1.2.3.4", "80", 0, &addr) ? 99 : 0;}]] GETADDRINFO_WORKS)
-
-include(CheckCXXSourceCompiles)
-# whether givaro has isUnit (4.0.3) or isunit (4.0.2)
-check_cxx_source_compiles([[#include <givaro/gfq.h>
-  int main(){class Givaro::GFqDom<long int> foo; foo.isunit(0);return 0;}]] HAVE_GIVARO_isunit)
-
-# whether factory was built with --enable-streamio
-check_cxx_source_compiles([[#include <factory/factory.h>
-  int main(){Variable x; x = Variable(); std::cout << x;return 0;}]] FACTORY_STREAMIO)
-# whether Prem() from factory is public
-check_cxx_source_compiles([[#include <factory/factory.h>
-  int main(){CanonicalForm p,q; Prem(p,q);return 0;}]] HAVE_FACTORY_PREM)
 
 ################################################################
 
