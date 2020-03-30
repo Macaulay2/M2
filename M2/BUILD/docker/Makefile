@@ -9,13 +9,15 @@ define M2_BUILD_SCRIPT
 set -xe
 
 cmake -S M2/M2 -B $(BUILD_DIR) \
-      -DMP_LIBRARY=GMP \
+      -DMP_LIBRARY=MPIR \
       -DBUILD_TESTING=ON \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_PREFIX=$(M2_HOME)/$(BUILD_DIR)/usr-dist
 
 cmake --build $(BUILD_DIR) --target build-libraries build-programs
-cmake --build $(BUILD_DIR) --target all
+cmake -S M2/M2 -B $(BUILD_DIR) # just to recheck library paths
+
+cmake --build $(BUILD_DIR) --target all -j4
 cmake --install $(BUILD_DIR)
 
 yes | M2 -q --stop --silent -e "setupEmacs(); exit(0);"

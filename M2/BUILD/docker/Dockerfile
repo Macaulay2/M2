@@ -16,29 +16,28 @@ RUN apt-get update && \
       /etc/apt/sources.list.d/macaulay2.list && apt-get clean && \
     echo 'deb https://apt.kitware.com/ubuntu/ bionic main' > \
       /etc/apt/sources.list.d/cmake.list && \
-    apt-get update && apt-get install -y autoconf cmake libtool && \
+    apt-get update && apt-get install -y autoconf cmake libtool yasm  && \
     apt-get clean
 
-# Libraries we require (except gc)
-# TODO: need to build gc for large memory machines
+# Libraries we require
 RUN apt-get install -y libopenblas-dev libeigen3-dev \
     libxml2-dev libreadline-dev libomp-dev libtbb-dev \
-    libgmp3-dev libgdbm-dev && apt-get clean
+    libgdbm-dev && apt-get clean
 
-# needed for mpir
-RUN apt-get install -y yasm && apt-get clean
+# This is a dependency that we should get rid of
+RUN apt-get install -y libatomic-ops-dev && apt-get clean
 
 # Libraries we can build (factory not available on ubuntu)
-RUN apt-get install -y fflas-ffpack libcdd-dev libgivaro-dev \
-    libglpk-dev libgmp3-dev libmpc-dev libmpfr-dev libntl-dev \
-    libflint-dev libfrobby-dev libgc-dev && apt-get clean
+#RUN apt-get install -y fflas-ffpack libcdd-dev libgivaro-dev \
+#    libglpk-dev libgmp3-dev libmpc-dev libmpfr-dev libntl-dev \
+#    libflint-dev libfrobby-dev libgc-dev && apt-get clean
 
 # Programs we can build
 # TODO: libpari-dev still needed? cohomcalg available soon. Polymake requires firefox???
-RUN apt-get install -y 4ti2 gfan normaliz coinor-csdp nauty lrslib && apt-get clean
+#RUN apt-get install -y 4ti2 gfan normaliz coinor-csdp nauty lrslib && apt-get clean
 
 # Emacs is optional
-RUN apt-get install -y emacs
+#RUN apt-get install -y emacs
 
 # Add non-root user for building and running Macaulay2
 RUN useradd -G sudo -g root -u 1000 -m macaulay

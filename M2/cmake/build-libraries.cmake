@@ -171,47 +171,7 @@ if(NOT MPFR_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-mpfr-install)
   if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
-  endif()
-endif()
-
-# TODO: cflags+debug: -O0 -fno-unroll-loops
-# TODO: confirm that building with mpir works
-# TODO: Are the following still relevant with CMake build?
-# --with-blas --with-gmp --with-mpir --with-mpfr --with-ntl
-# --enable-cxx --disable-tls --disable-shared
-# set(flint_CFLAGS "${CFLAGS} ${CPPFLAGS} -std=c90 -pedantic-errors -Wno-newline-eof")
-ExternalProject_Add(build-flint
-#  URL               ${M2_SOURCE_URL}/flint-2.5.2.tar.gz
-#  URL_HASH          SHA256=cbf1fe0034533c53c5c41761017065f85207a1b770483e98b2392315f6575e87
-  GIT_REPOSITORY    https://github.com/mahrud/flint2.git
-  GIT_TAG           HEAD
-  PREFIX            libraries/flint2
-  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint2
-  BINARY_DIR        libraries/flint2/build
-  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
-                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
-                    -DBUILD_SHARED_LIBS=ON
-                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-                    # Possible variables for the CMake build:
-                    #-DWITH_NLT
-                    #-DBUILD_TESTING
-                    #-DCMAKE_BUILD_TYPE
-                    #-DHAS_FLAG_MPOPCNT
-                    #-DHAS_FLAG_UNROLL_LOOPS
-                    #-DIPO_SUPPORTED
-                    #-DBUILD_DOCS
-  EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
-  )
-if(NOT FLINT_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-flint-install)
-  if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
-  endif()
-  if(NOT MPFR_FOUND)
-    ExternalProject_Add_StepDependencies(build-flint build build-mpfr-install)
+    ExternalProject_Add_StepDependencies(build-mpfr build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
 endif()
 
@@ -255,6 +215,50 @@ ExternalProject_Add(build-ntl
 if(NOT NTL_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-ntl-install)
+  if(NOT ${MP_LIBRARY}_FOUND)
+    ExternalProject_Add_StepDependencies(build-ntl build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  endif()
+endif()
+
+
+# TODO: cflags+debug: -O0 -fno-unroll-loops
+# TODO: confirm that building with mpir works
+# TODO: Are the following still relevant with CMake build?
+# --with-blas --with-gmp --with-mpir --with-mpfr --with-ntl
+# --enable-cxx --disable-tls --disable-shared
+# set(flint_CFLAGS "${CFLAGS} ${CPPFLAGS} -std=c90 -pedantic-errors -Wno-newline-eof")
+ExternalProject_Add(build-flint
+#  URL               ${M2_SOURCE_URL}/flint-2.5.2.tar.gz
+#  URL_HASH          SHA256=cbf1fe0034533c53c5c41761017065f85207a1b770483e98b2392315f6575e87
+  GIT_REPOSITORY    https://github.com/mahrud/flint2.git
+  GIT_TAG           HEAD
+  PREFIX            libraries/flint2
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint2
+  BINARY_DIR        libraries/flint2/build
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
+                    -DBUILD_SHARED_LIBS=ON
+                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+                    # Possible variables for the CMake build:
+                    #-DWITH_NLT
+                    #-DBUILD_TESTING
+                    #-DCMAKE_BUILD_TYPE
+                    #-DHAS_FLAG_MPOPCNT
+                    #-DHAS_FLAG_UNROLL_LOOPS
+                    #-DIPO_SUPPORTED
+                    #-DBUILD_DOCS
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
+  )
+if(NOT FLINT_FOUND)
+  # Add this to the libraries target
+  add_dependencies(build-libraries build-flint-install)
+  if(NOT ${MP_LIBRARY}_FOUND)
+    ExternalProject_Add_StepDependencies(build-flint build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  endif()
+  if(NOT MPFR_FOUND)
+    ExternalProject_Add_StepDependencies(build-flint build build-mpfr-install)
+  endif()
 endif()
 
 
@@ -301,17 +305,17 @@ if(NOT FACTORY_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-factory-install)
   # TODO: repeat pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
-  if(NOT FLINT_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory build build-flint-install) # lol
-  endif()
-  if(NOT NTL_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory build build-ntl-install)
+  if(NOT ${MP_LIBRARY}_FOUND)
+    ExternalProject_Add_StepDependencies(build-factory build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
   if(NOT MPFR_FOUND)
     ExternalProject_Add_StepDependencies(build-factory build build-mpfr-install)
   endif()
-  if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  if(NOT NTL_FOUND)
+    ExternalProject_Add_StepDependencies(build-factory build build-ntl-install)
+  endif()
+  if(NOT FLINT_FOUND)
+    ExternalProject_Add_StepDependencies(build-factory build build-flint-install) # lol
   endif()
 else()
   if(NOT EXISTS ${M2_CORE_DIR}/factory/gftables)
@@ -542,6 +546,9 @@ ExternalProject_Add(build-givaro
 if(NOT GIVARO_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-givaro-install)
+  if(NOT ${MP_LIBRARY}_FOUND)
+    ExternalProject_Add_StepDependencies(build-givaro build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  endif()
 endif()
 
 
