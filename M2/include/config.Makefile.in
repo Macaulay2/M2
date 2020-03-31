@@ -75,9 +75,6 @@ CPPFLAGS :=									\
 	-I$(BUILTLIBPATH)/include/cdd						\
 	$(foreach S, @BUILDSUBLIST@, -I@abs_top_srcdir@/submodules/$S/src)	\
 	$(CPPFLAGS)
-ifeq "@ENABLE_MPACK@" "yes"
-CPPFLAGS := -I$(BUILTLIBPATH)/include/mpack $(CPPFLAGS)
-endif
 
 vpath %.h $(BUILTLIBPATH)/include
 

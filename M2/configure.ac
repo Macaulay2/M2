@@ -705,7 +705,7 @@ AC_SUBST(BUILTLIBS,)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro linbox boost gtest ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
@@ -726,7 +726,6 @@ AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack ")
 #    mpfr needs gmp (or mpir
 #    	  mpfr puts pointers to gmp numbers in thread local variables, unless
 # 	  specially configured, so we shouldn't tell gmp to use libgc (we used to do that)
-#    mpc needs mpfr
 #    ntl needs gmp (or mpir)
 #    4ti2 needs glpk
 #    glpk needs gmp (or mpir)
@@ -750,8 +749,6 @@ AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack ")
 #    fflas_ffpack needs givaro and lapack, but fflas_ffpack is just source code, so we don't *have* to build it
 #    mpir is used by givaro
 #    mpir and mpfr are used by fplll
-#    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
-#    mpack depends on gmp (or mpir) mpfr mpc qd
 #    flint depends on gmp (or mpir) and mpfr
 #    frobby depends on gmp
 
@@ -776,7 +773,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox boost 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
     [for i in $enableval
     do case "$LIBLIST $SUBLIST" in
 	    *" $i "*) 
@@ -869,17 +866,11 @@ if test $BUILD_mpfr = yes
 then BUILTLIBS="-lmpfr $BUILTLIBS"
 fi
 
-# including mps 
+# including mpsolve (requires gmp or mpir) 
 AC_LANG(C)
-AC_CHECK_HEADER(mps/mps.h,LIBS="-lmps $LIBS",BUILD_mps=yes)
-if test $BUILD_mps = yes
-then AC_MSG_ERROR("we cant compile mps yet") 
-fi
-
-AC_LANG(C)
-AC_CHECK_HEADER(mpc.h,LIBS="-lmpc $LIBS",BUILD_mpc=yes)
-if test $BUILD_mpc = yes
-then BUILTLIBS="-lmpc $BUILTLIBS"
+AC_CHECK_HEADER(mps/mps.h,LIBS="-lmps $LIBS",BUILD_mpsolve=yes)
+if test $BUILD_mpsolve = yes
+then BUILTLIBS="-lmps $BUILTLIBS"
 fi
 
 AC_LANG(C)
@@ -1402,16 +1393,6 @@ AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
 AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))
 AC_SEARCH_LIBS(lzma_end,lzma,,AC_MSG_ERROR(library lzma not found or not linkable))
 AC_SEARCH_LIBS(xmlNewNode,xml2,,AC_MSG_ERROR(library xml2 not found or not linkable))
-
-AC_SUBST(ENABLE_MPACK,no)
-AC_ARG_ENABLE(mpack,
-    [AS_HELP_STRING(--enable-mpack,[enable building the mpack library, linking with it, and compiling the experimental code that uses it])],
-    AC_DEFINE(HAVE_MPACK,1,[whether we are linking with the mpack library])
-    BUILD_mpack=yes
-    BUILD_qd=yes
-    ENABLE_MPACK=yes
-    BUILTLIBS="-lmlapack_mpfr -lmblas_mpfr -lmpfrcxx $BUILTLIBS"
-    )
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS

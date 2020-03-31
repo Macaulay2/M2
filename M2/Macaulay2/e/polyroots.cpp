@@ -24,6 +24,10 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
     ERROR("expected a univariate polynomial ring");
     return nullptr;
   }
+  if (p->is_zero()) {
+    ERROR("expected a nonzero polynomial");
+    return nullptr;    
+  }
   const Ring *K = P->getCoefficients();
   int lodeg,hideg; // lowest,highest degree
   P->degree_of_var(0,p->get_value(),lodeg,hideg);
@@ -37,7 +41,6 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
   mps_monomial_poly *mps_p = mps_monomial_poly_new (s, hideg);
   mps_context_select_algorithm(s, MPS_ALGORITHM_SECULAR_GA);
 
-
   const auto ID = K->ringID();
   for (Nterm *t = p->get_value(); t != nullptr; t = t->next) {
     int deg;
@@ -47,21 +50,20 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
       if (ID==M2::ring_RR) {
         cc.re = t->coeff.get_double();
         cc.im = 0;
-      } else if (ID==M2::ring_CC) 
-        cc = *t->coeff.get_cc_doubles();
+      } else cc = *t->coeff.get_cc_doubles();
       mps_monomial_poly_set_coefficient_d (s, mps_p, deg, cc.re, cc.im); 
-      /*} else if (ID==M2::ring_RRR or ID==M2::ring_CCC) {
-      mpc_t cc;
-      mpc_init(cc);
+    } else if (ID==M2::ring_RRR or ID==M2::ring_CCC) {
+      mpc_t mpc_cc;
+      mpc_init2(mpc_cc,K->get_precision());
       if (ID==M2::ring_RRR) {
-        mpfr_get_f(cc->r,t->coeff.get_mpfr(),GMP_RNDN);
-      } else if (ID==M2::ring_CC) {
-        mpfr_get_f(cc->r,&t->coeff.get_cc()->re,GMP_RNDN);
-        mpfr_get_f(cc->i,&t->coeff.get_cc()->im,GMP_RNDN);
+          mpfr_get_f(mpc_cc->r,t->coeff.get_mpfr(),GMP_RNDN);
+      } else {
+        mpfr_get_f(mpc_cc->r,&t->coeff.get_cc()->re,GMP_RNDN);
+        mpfr_get_f(mpc_cc->i,&t->coeff.get_cc()->im,GMP_RNDN);
       }
-      mps_monomial_poly_set_coefficient_f (s, mps_p, deg, cc); 
-      mpc_clear(cc);
-      */} else if ((ID==M2::ring_old and K->is_ZZ()) or ID==M2::ring_QQ) {
+      mps_monomial_poly_set_coefficient_f (s, mps_p, deg, mpc_cc); 
+      mpc_clear(mpc_cc);
+    } else if ((ID==M2::ring_old and K->is_ZZ()) or ID==M2::ring_QQ) {
       mpq_t q, zero;
       mpq_init(zero);
       mpq_init(q);

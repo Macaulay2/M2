@@ -45,10 +45,7 @@ libraries/gmp/Makefile
 libraries/mpfr/Makefile
 libraries/mpir/Makefile
 libraries/boost/Makefile
-libraries/mpack/Makefile
 libraries/gtest/Makefile
-libraries/qd/Makefile
-libraries/mpc/Makefile
 libraries/4ti2/Makefile
 libraries/gfan/Makefile
 libraries/fflas_ffpack/Makefile
@@ -69,6 +66,7 @@ libraries/ntl/Makefile
 libraries/libtool/Makefile
 libraries/gftables/Makefile
 libraries/factory/Makefile
+libraries/mpsolve/Makefile
 libraries/frobby/Makefile
 libraries/lapack/Makefile
 Macaulay2/Makefile

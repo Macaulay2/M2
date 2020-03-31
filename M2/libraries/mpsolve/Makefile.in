@@ -1,0 +1,17 @@
+VPATH = @srcdir@
+HOMEPAGE = https://numpi.dm.unipi.it/software/mpsolve 
+VERSION = 3.1.8
+# URL = http://macaulay2.com/Downloads/OtherSourceCode
+URL = https://numpi.dm.unipi.it/_media/software/mpsolve
+# TARFILE = mpsolve-$(VERSION).tar.gz
+# TARDIR = mpsolve-$(VERSION)
+LICENSEFILES = README
+CONFIGOPTIONS += --disable-shared\
+                 --disable-examples\
+                 --disable-ui\
+                 --disable-documentation
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mps/Makefile
+# Local Variables:
+# compile-command: "make -w -C $M2BUILDDIR/libraries/mpc "
+# End:

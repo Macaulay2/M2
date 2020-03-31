@@ -1,3 +1,28 @@
+testRoots = (F,prec) -> (
+    r := roots(F,Precision=>prec);
+    Rprec := CC_prec[gens ring F];
+    assert(0 == clean_(2.^(-7*prec/10)) (sub(F,Rprec) - product(r,a->Rprec_0-a)))
+    )
+rings = {
+    ZZ[x],QQ[x],
+    RR_1000[x],CC_1000[x],
+    RR[x],
+    CC[x]
+    }
+polyR = ZZ[x]
+F = (x^2-1)^3
+--F = x^22-x-1
+for R in rings do for prec in {53,100,1000} do (
+    print (R,prec);
+    testRoots(sub(F,R),prec);
+    )
+roots 0_polyR
+roots 1_polyR
+polyR = QQ[x]
+time f = ((x-1/2)^100*(x-1/3)^50)
+elapsedTime roots f 
+end
+
 needsPackage "NumericalAlgebraicGeometry"
 roots RingElement := {Precision => 53, Unique => false} >> o -> p -> (
     << "calling our roots" << endl;
@@ -9,23 +34,9 @@ roots RingElement := {Precision => 53, Unique => false} >> o -> p -> (
 --  toList apply(rawRoots(raw p, o.Precision, o.Unique), r -> new CC from r)
 
 end--
+
 restart
---load "roots.m2"
-
-testRoots = (F,prec) -> (
-    r := roots(F,Precision=>prec);
-    Rprec := CC_prec[gens ring F];
-    assert(0 == clean_(2.^(-7*prec/10)) (sub(F,Rprec) - product(r,a->Rprec_0-a)))
-    )
-
-rings = {ZZ[x],QQ[x],RR[x],CC[x],RR_1000[x],CC_1000[x]}
-ZZ[x]
-F = (x^2-1)^3
---F = x^22-x-1
-for R in rings do for prec in {53,100,1000} do (
-    print (R,prec);
-    testRoots(sub(F,R),prec);
-    )
+load "roots.m2"
 
 R = QQ[x]
 F = (x^2-1)^3
