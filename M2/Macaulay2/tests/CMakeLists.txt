@@ -54,9 +54,10 @@ set(M2_PATH "join(path,{\"${CMAKE_CURRENT_SOURCE_DIR}/\",\"${CMAKE_SOURCE_DIR}/p
 ## TODO: add WILL_FAIL tests
 set(M2_FAIL_REGEX
   [[internal error;non-zero status;assertion failed]]
+  "--back trace--"
   "\nCommand terminated;\nGC;\n0x;\nout of mem"
   "user.*system.*elapsed;\n[0-9]+\.[0-9]+user"
-  [[/.*:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):]] # TODO: this one catches commented errors
+  [[\.m2:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):]] # TODO: this one catches commented errors
   )
 
 ###############################################################################

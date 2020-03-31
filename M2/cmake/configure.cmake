@@ -44,103 +44,58 @@ set(EXEEXT   "${CMAKE_EXECUTABLE_SUFFIX}") # DEPRECATE: used in config.h.cmake, 
 set(EXE      "-binary${M2SUFFIX}${CMAKE_EXECUTABLE_SUFFIX}")
 
 ################################################################
-## Configure options
+## Configure options:
+# use CMAKE_BUILD_TYPE=Debug                 instead of DEBUG
+# use CMAKE_BUILD_TYPE=Release               instead of OPTIMIZE
+# use CMAKE_BUILD_TYPE=RelWithDebInfo        instead of PROFILING
+# use CMAKE_BUILD_TYPE=RelMinSize            instead of ENABLE_STRIP
+# use BUILD_SHARED_LIBS=ON                   instead of SHARED
 
-option(SHARED       "build shared libraries"              ON)
-option(OPTIMIZE     "enable optimization"                 ON)
-option(PROFILING    "enable profiling"                   OFF)
-option(DEBUG        "enable debugging"                   OFF)
-option(MEMDEBUG     "enable memory allocation debugging" OFF)
-option(ENABLE_STRIP "discard symbols from object files"  OFF)
-#option(PTHREADS     "link with pthreads (for gc)"         ON)
-#option(XML          "link with xml2"                      ON)
+option(MEMDEBUG "enable memory allocation debugging" OFF)
+set(MP_LIBRARY  "mpir" CACHE STRING "specify the big integer package to use (mpir or gmp)")
+
+# TODO:
 #option(MYSQL        "link with mysql"                    OFF)
 #option(PYTHON       "link with libpython"                OFF)
 #option(NTL_WIZARD   "enable running the NTL wizard"      OFF)
 #option(ALTIVEC      "compile with '-faltivec' option"    OFF)
 #option(XCODE        "build Macaulay2/d/interpret.a"      OFF)
 
-# TODO: what is the default? mpir currently fails
-set(MP_LIBRARY "gmp" CACHE STRING "specify the big integer package to use (mpir or gmp)")
-
-# TODO: transition from using DEBUG/OPTIMIZE/etc. to CMAKE_BUILD_TYPE
-# TODO: apparently -DNDEBUG is standard on gcc, but not clang
-if(CMAKE_BUILD_TYPE MATCHES "Deb")
-  set(DEBUG ON)
-#  set(MEMDEBUG ON)
-  set(ENABLE_STRIP OFF)
+# NOTE: gc.h obeys the GC_DEBUG flag.
+if(CMAKE_BUILD_TYPE MATCHES "Deb") # Debugging
+  add_compile_options(-O0 -DGC_DEBUG)
 endif()
-if(CMAKE_BUILD_TYPE MATCHES "Rel")
-  set(OPTIMIZE ON)
+if(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo") # Profiling
+  add_compile_options(-pg) #DNDEBUG
+  add_link_options(-pg)
 endif()
 if(CMAKE_BUILD_TYPE MATCHES "Release|MinSizeRel")
-  set(ENABLE_STRIP ON)
+  add_compile_options(-s -O2 -DNDEBUG -Wuninitialized)
+endif()
+
+if(MEMDEBUG)
+  add_compile_options(-DMEMDEBUG)
 endif()
 
 ################################################################
 ## Setting compiler flags
-# TODO: many of these should not be set manually, but depend on CMAKE_BUILD_TYPE
+# look into compiler features:
+# https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
 
-# TODO: where do we use the SHARED setting? In e?
-
-# TODO: is it okay to do this globally?
 add_compile_options(
   -I${CMAKE_SOURCE_DIR}/include
   -I${CMAKE_BINARY_DIR}/include
+
   # TODO: where should these be set?
   -DSING_NDEBUG -DOM_NDEBUG # factory wants these
   )
+
 # TODO: is this not necessary with clang?
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   add_compile_options(
     # -fopenmp # fflas_ffpack wants this, but currently normaliz fails on macOS with it
     -fabi-version=6 # givaro and fflas_ffpack want this
     )
-endif()
-
-
-if(PROFILING)
-  # TODO: easier way to do this? generator expressions don't work at configure time
-  set(ENABLE_STRIP OFF)
-  # TODO: we can do better
-  add_compile_options(-pg)
-  add_link_options(-pg)
-endif()
-
-# TODO: necessary?
-if(APPLE)
-  set(SHARED OFF) # TODO: Gatekeeper issue on macOS
-  # we don't know what this does, but some apple documentation writers seem to like it:
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -bind_at_load")
-  # this one makes it find and use our readline.a first, even if there is a file readline.dylib in /usr/lib
-  # the point is that the system's readline.dylib might be much older and conflict with our newer one
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-search_paths_first")
-endif()
-
-# TODO: maybe just set this per build configuration?
-if(OPTIMIZE)
-  add_compile_options(-O2 -Wuninitialized)
-else()
-  add_compile_options(-O0)
-endif()
-
-if(MEMDEBUG)
-  set(DEBUG ON)
-  add_compile_options(-DMEMDEBUG)
-endif()
-
-# It is a mistake to pass "-DDEBUG" to preprocessor because it is nonstandard and may confusing libraries,
-# such as "flint". Instead, NDEBUG being *not* defined as a C macro is what indicates debug mode.
-# This is standard practice. gc.h obeys the GC_DEBUG flag.
-if(DEBUG)
-  set(ENABLE_STRIP OFF)
-  add_compile_options(-DGC_DEBUG)
-else()
-  add_compile_options(-DNDEBUG)
-endif()
-
-if(ENABLE_STRIP)
-  add_compile_options(-s)
 endif()
 
 # always compile with "-g", so we can debug even optimized versions
@@ -152,6 +107,7 @@ else()
   add_link_options(-g)
 endif()
 
+# TODO: deal with all SIMDs together
 if(ALTIVEC)
   add_compile_options(-faltivec)
   add_link_options(-faltivec)
@@ -168,7 +124,7 @@ check_type_size("long" SIZEOF_LONG)
 
 include(CheckSymbolExists)
 CHECK_SYMBOL_EXISTS(ADDR_NO_RANDOMIZE "linux/personality.h" HAVE_DECL_ADDR_NO_RANDOMIZE)
-CHECK_SYMBOL_EXISTS(herror       "stdlib.h;stdio.h;errno.h" HAVE_DECL_HERROR) # TODO: can stdlib.h always be included?
+CHECK_SYMBOL_EXISTS(herror       "stdlib.h;stdio.h;errno.h" HAVE_DECL_HERROR)
 CHECK_SYMBOL_EXISTS(environ                      "unistd.h" HAVE_DECL_ENVIRON)
 CHECK_SYMBOL_EXISTS(_environ                     "unistd.h" HAVE_DECL__ENVIRON)
 CHECK_SYMBOL_EXISTS(__environ                    "unistd.h" HAVE_DECL___ENVIRON)
@@ -261,8 +217,12 @@ check_function_exists(personality	HAVE_PERSONALITY)
 check_function_exists(ioctl	HAVE_IOCTL)
 
 include(CheckCSourceCompiles)
+include(CheckCXXSourceCompiles)
+
+# TODO: what is this for?
 check_c_source_compiles("int main(){__builtin_return_address(1);return 0;}" BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT)
 
+# TODO: is this necessary?
 # whether getaddrinfo can handle numeric service (port) numbers
 check_c_source_compiles([[
   #include <sys/types.h>
@@ -280,10 +240,3 @@ check_c_source_compiles([[
 # TODO: is it still relevant?
 check_function_exists(alloca HAVE_ALLOCA)
 check_include_files(alloca.h HAVE_ALLOCA_H)
-
-# TODO: remove dependence on atomic_ops.h
-
-# TODO: do we use these?
-## topcom depends on cddlib, but includes setoper.h, rather than cdd/setoper.h, so we do, too
-check_include_files(setoper.h	HAVE_CDDLIB)
-check_include_files(NTL/version.h	HAVE_NTL)

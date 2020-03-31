@@ -102,7 +102,6 @@ target_compile_options(M2-interpreter PRIVATE
   -Wno-uninitialized
   -Wno-unused
   # temporary flags
-  #-Wno-frame-address
   -Wno-unknown-pragmas
   )
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -114,6 +113,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   # using GCC
+  target_compile_options(M2-interpreter PRIVATE
+    # temporary flags
+    -Wno-frame-address # many errors about __builtin_frame_address in M2lib.c:165
+    )
 endif()
 # add other compilers (eg: Intel, MSVC) here
 # for Intel: -diag-disable 981,869,383,2259,444 -debug

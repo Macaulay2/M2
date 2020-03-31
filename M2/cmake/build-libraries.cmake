@@ -1,16 +1,12 @@
 set(JOBS 4)
 
-# TODO: are git downloads too heavy?
-
-if(APPLE)
-  set(SET_LD_LIBRARY_PATH DYLD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
-elseif(UNIX)
-  set(SET_LD_LIBRARY_PATH   LD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
-endif()
+# TODO: git clones can be heavy; switch to downloading tarfiles from github.
 
 ################################################################
-## This target requires all external projects to be built and installed
+## This target builds external libraries that M2 relies on.
 add_custom_target(build-libraries)
+
+## This target builds external programs that are distributed with M2.
 add_custom_target(build-programs)
 
 ## This target forces libraries and programs to run their install targets
@@ -25,6 +21,13 @@ file(TOUCH ${CMAKE_SOURCE_DIR}/cmake/check-libraries.cmake)
 # TODO: Accumulate information in usr-host/share/config.site to speed up configuration
 # See: https://www.gnu.org/software/autoconf/manual/autoconf-2.60/html_node/Cache-Files.html
 set(CONFIGURE_CACHE ${M2_HOST_PREFIX}/share/config.site)
+
+# We wrap some configure commands in this so they find mpir, mpfr, etc.
+if(APPLE)
+  set(SET_LD_LIBRARY_PATH DYLD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
+elseif(UNIX)
+  set(SET_LD_LIBRARY_PATH   LD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
+endif()
 
 #################################################################################
 ## Setting a baseline for compile and link options for external projects
@@ -137,6 +140,9 @@ else()
 endif()
 
 
+# TODO: Is this still relevant?
+# mpfr puts pointers to gmp numbers in thread local variables, unless
+# specially configured, so we shouldn't tell gmp to use libgc (we used to do that)
 ExternalProject_Add(build-mpfr
   URL               ${M2_SOURCE_URL}/mpfr-4.0.2.tar.xz
   URL_HASH          SHA256=1d3be708604eae0e42d578ba93b390c2a145f17743a744d8f3f8c2ad5855a38a
@@ -221,15 +227,7 @@ if(NOT NTL_FOUND)
 endif()
 
 
-# TODO: cflags+debug: -O0 -fno-unroll-loops
-# TODO: confirm that building with mpir works
-# TODO: Are the following still relevant with CMake build?
-# --with-blas --with-gmp --with-mpir --with-mpfr --with-ntl
-# --enable-cxx --disable-tls --disable-shared
-# set(flint_CFLAGS "${CFLAGS} ${CPPFLAGS} -std=c90 -pedantic-errors -Wno-newline-eof")
 ExternalProject_Add(build-flint
-#  URL               ${M2_SOURCE_URL}/flint-2.5.2.tar.gz
-#  URL_HASH          SHA256=cbf1fe0034533c53c5c41761017065f85207a1b770483e98b2392315f6575e87
   GIT_REPOSITORY    https://github.com/mahrud/flint2.git
   GIT_TAG           HEAD
   PREFIX            libraries/flint2
@@ -237,10 +235,11 @@ ExternalProject_Add(build-flint
   BINARY_DIR        libraries/flint2/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
-                    -DBUILD_SHARED_LIBS=ON
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+                    -DBUILD_SHARED_LIBS=ON
+		    -DHAVE_TLS=OFF
+                    -DWITH_NLT=ON
                     # Possible variables for the CMake build:
-                    #-DWITH_NLT
                     #-DBUILD_TESTING
                     #-DCMAKE_BUILD_TYPE
                     #-DHAS_FLAG_MPOPCNT
@@ -264,6 +263,9 @@ endif()
 
 set(factory_CPPFLAGS "${CPPFLAGS} -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
 set(factory_WARNFLAGS "-Wno-uninitialized -Wno-write-strings -Wno-deprecated")
+# TODO: without this, factory finds flint, but not ntl. Why?
+set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} /usr /usr/local /sw /opt/local")
+set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} /usr /usr/local /sw /opt/local")
 ExternalProject_Add(build-factory
   URL               ${M2_SOURCE_URL}/factory-4.1.1.tar.gz
   URL_HASH          SHA256=9dd84d11204e1457dac0a0d462a78d4cd4103c14cbf792b83d488aa529ad5724
@@ -280,8 +282,8 @@ ExternalProject_Add(build-factory
                       --enable-shared
                       --enable-streamio
                       --without-Singular
-                      --with-ntl
-                      --with-flint
+                      --with-ntl=${factory_NTL_HOME_PATH}
+                      --with-flint=${factory_FLINT_HOME_PATH}
                       # --enable-assertions
                       CPPFLAGS=${factory_CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -403,6 +405,9 @@ ExternalProject_Add(build-cddlib
 if(NOT CDD_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-cddlib-install)
+  if(NOT ${MP_LIBRARY}_FOUND)
+    ExternalProject_Add_StepDependencies(build-cddlib build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  endif()
 endif()
 
 
@@ -428,6 +433,9 @@ ExternalProject_Add(build-glpk
 if(NOT GLPK_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-glpk-install)
+  if(NOT ${MP_LIBRARY}_FOUND)
+    ExternalProject_Add_StepDependencies(build-glpk build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  endif()
 endif()
 
 
@@ -566,8 +574,6 @@ ExternalProject_Add(build-fflas_ffpack
             COMMAND PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       # --enable-openmp
-                      # --with-blas-libs=${MKL_LIBS}
-                      # --with-blas-cflags=${MKL_CFLAGS}
                       # --enable-precompilation # build errors
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -580,9 +586,7 @@ ExternalProject_Add(build-fflas_ffpack
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
                       LIBS=${LA_LIBRARIES}
-  BUILD_COMMAND     "" # we only use the fflas_ffpack header files, so no need to build it
-#  BUILD_COMMAND     ${MAKE_EXE}
-#        COMMAND     ${MAKE_EXE} autotune
+  BUILD_COMMAND     "" # ${MAKE_EXE} autotune
   INSTALL_COMMAND   ${MAKE_EXE} install-data # only install headers and fflas-ffpack.pc
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
@@ -591,14 +595,15 @@ if(NOT FFLAS_FFPACK_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-fflas_ffpack-install)
   # TODO: the requirement on Givaro version is for fflas_ffpack 2.3.2
+  if(NOT ${MP_LIBRARY}_FOUND)
+    ExternalProject_Add_StepDependencies(build-fflas_ffpack build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  endif()
   if(NOT GIVARO_FOUND OR GIVARO_VERSION VERSION_LESS 4.0.3)
-    # TODO: also add gmp/mpir?
     ExternalProject_Add_StepDependencies(build-fflas_ffpack build build-givaro-install)
   endif()
 endif()
 
 
-# TODO: would it be better to use FetchContent_Declare instead?
 ExternalProject_Add(build-memtailor
   GIT_REPOSITORY    https://github.com/mahrud/memtailor.git
   GIT_TAG           af4a81f57fb585a541f5fefb517f2ad91b38cbe9 # original: e85453b
@@ -608,7 +613,6 @@ ExternalProject_Add(build-memtailor
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DPACKAGE_TESTS=OFF
-#  DEPENDS           googletest # TODO: use this
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -665,7 +669,7 @@ endif()
 ###############################################################################
 ## Build required programs
 
-# FIXME: when compiling with mpir, 4ti2gmp doesn't exist
+# 4ti2 needs glpk and is used by the package FourTiTwo
 ExternalProject_Add(build-4ti2
   URL               ${M2_SOURCE_URL}/4ti2-1.6.9.tar.gz
   URL_HASH          SHA256=3053e7467b5585ad852f6a56e78e28352653943e7249ad5e5174d4744d174966
@@ -695,12 +699,13 @@ ExternalProject_Add(build-4ti2
 if(NOT 4TI2)
   # Add this to the programs target
   add_dependencies(build-programs build-4ti2-install)
+  if(NOT GLPK_FOUND)
+    ExternalProject_Add_StepDependencies(build-4ti2 build build-glpk-install)
+  endif()
 endif()
 
 
 # https://github.com/BenjaminJurke/cohomCalg/
-# Warning: this no longer compiles with gcc version 4.8.5, and it doesn't help with
-#   https://github.com/Macaulay2/M2/issues/977, so we may want to go back to the old version.
 ExternalProject_Add(build-cohomcalg
   URL               ${M2_SOURCE_URL}/cohomCalg-0.32.tar.gz
   URL_HASH          SHA256=367c52b99c0b0a4794b215181439bf54abe4998872d3ef25d793bc13c4d40e42
@@ -728,6 +733,7 @@ if(NOT COHOMCALG)
 endif()
 
 
+# gfan needs cddlib and is used by the packages gfanInterface and StatePolytope
 set(gfan_CC  "${CMAKE_C_COMPILER}   ${CPPFLAGS}")
 set(gfan_CXX "${CMAKE_CXX_COMPILER} ${CPPFLAGS}")
 set(gfan_CLINKER  "${CMAKE_C_COMPILER}   ${LDFLAGS}")
@@ -756,6 +762,9 @@ ExternalProject_Add(build-gfan
 if(NOT GFAN)
   # Add this to the programs target
   add_dependencies(build-programs build-gfan-install)
+  if(NOT CDD_FOUND)
+    ExternalProject_Add_StepDependencies(build-gfan build build-cddlib-install)
+  endif()
 endif()
 
 
@@ -825,10 +834,11 @@ if(NOT CSDP)
 endif()
 
 
+# normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
 # TODO: see special variables OPENMP and NORMFLAGS for macOS from libraries/normaliz/Makefile.in
 set(normaliz_CXXFLAGS "${CPPFLAGS} -Wall -O3 -Wno-unknown-pragmas -std=c++11 -I .. -I . ")
 if(NOT APPLE)
-  # TODO: due to problem with -fopenmp on map, skip this for apple
+  # TODO: due to problem with -fopenmp on mac, skip this for apple
   set(normaliz_CXXFLAGS "${normaliz_CXXFLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 set(normaliz_GMPFLAGS "${LDFLAGS} -lgmpxx -lgmp") # TODO: what about mpir?
@@ -872,9 +882,13 @@ ExternalProject_Add(build-normaliz
 if(NOT NORMALIZ)
   # Add this to the programs target
   add_dependencies(build-programs build-normaliz-install)
+  if(NOT ${MP_LIBRARY}_FOUND)
+    ExternalProject_Add_StepDependencies(build-normaliz build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  endif()
 endif()
 
 
+# nauty is used by the package Nauty
 # URL = http://cs.anu.edu.au/~bdm/nauty
 # TODO: do we not strip some files?
 set(nauty_PROGRAMS
