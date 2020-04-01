@@ -114,15 +114,15 @@ find_program(MAKE_EXE	NAMES	make gmake nmake)
 find_program(ETAGS	NAMES	etags ctags)
 
 ## Find external programs used by Macaulay2 packages
-find_program(4TI2	NAMES	4ti2-circuits circuits	PATH ${M2_HOST_PREFIX}/bin)
-find_program(COHOMCALG		cohomcalg		PATH ${M2_HOST_PREFIX}/bin)
-find_program(GFAN		gfan			PATH ${M2_HOST_PREFIX}/bin)
+find_program(4TI2	NAMES	4ti2-circuits circuits	PATH ${M2_INSTALL_PROGRAMSDIR}/bin)
+find_program(COHOMCALG	NAMES	cohomcalg		PATH ${M2_INSTALL_PROGRAMSDIR}/bin)
+find_program(GFAN	NAMES	gfan			PATH ${M2_INSTALL_PROGRAMSDIR}/bin)
 # TODO: library or program?
-find_program(LRSLIB		lrs			PATH ${M2_HOST_PREFIX}/bin)
-find_program(CSDP		csdp			PATH ${M2_HOST_PREFIX}/bin)
-find_program(NORMALIZ		normaliz		PATH ${M2_HOST_PREFIX}/bin)
-find_program(NAUTY	NAMES	dreadnaut nauty-complg	PATH ${M2_HOST_PREFIX}/bin)
-find_program(TOPCOM	NAMES	checkregularity		PATH ${M2_HOST_PREFIX}/bin)
+find_program(LRSLIB	NAMES	lrs			PATH ${M2_INSTALL_PROGRAMSDIR}/bin)
+find_program(CSDP	NAMES	csdp			PATH ${M2_INSTALL_PROGRAMSDIR}/bin)
+find_program(NORMALIZ	NAMES	normaliz		PATH ${M2_INSTALL_PROGRAMSDIR}/bin)
+find_program(NAUTY	NAMES	dreadnaut nauty-complg	PATH ${M2_INSTALL_PROGRAMSDIR}/bin)
+find_program(TOPCOM	NAMES	checkregularity		PATH ${M2_INSTALL_PROGRAMSDIR}/bin)
 find_program(POLYMAKE	NAMES	polymake)
 
 ###############################################################################

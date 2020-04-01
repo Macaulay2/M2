@@ -18,13 +18,13 @@ add_custom_target(build-libraries)
 
 ## This target builds external programs that are distributed with M2.
 add_custom_target(build-programs)
-set(PROGRAMS_DIR ${M2_INSTALL_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2)
+
+file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
+file(MAKE_DIRECTORY ${M2_INSTALL_PROGRAMSDIR}/bin)
 
 ## This target forces libraries and programs to run their install targets
 add_custom_target(clean-stamps
   COMMAND rm libraries/*/src/build-*-stamp/*-install)
-
-file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
 
 ## FIXME: Hack to force CMake to reconfigure after library is reinstalled
 file(TOUCH ${CMAKE_SOURCE_DIR}/cmake/check-libraries.cmake)
@@ -735,7 +735,7 @@ ExternalProject_Add(build-cohomcalg
                       CXX=${CMAKE_CXX_COMPILER}
                       LD=${CMAKE_CXX_COMPILER} # correct?
         COMMAND     ${CMAKE_STRIP} bin/cohomcalg
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different bin/cohomcalg ${PROGRAMS_DIR}/bin/
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different bin/cohomcalg ${M2_INSTALL_PROGRAMSDIR}/bin/
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -767,7 +767,7 @@ ExternalProject_Add(build-gfan
                       PREFIX=/nowhere
                       CDD_LINKOPTIONS=-lcddgmp
         COMMAND     ${CMAKE_STRIP} gfan${CMAKE_EXECUTABLE_SUFFIX}
-  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} PREFIX=${PROGRAMS_DIR} install
+  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} PREFIX=${M2_INSTALL_PROGRAMSDIR} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -798,7 +798,7 @@ ExternalProject_Add(build-lrslib
                       RANLIB=${CMAKE_RANLIB}
                       # TODO: TARGET_ARCH= RANLIB=true
         COMMAND     ${CMAKE_STRIP} lrs${CMAKE_EXECUTABLE_SUFFIX}
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${PROGRAMS_DIR}/bin/
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${M2_INSTALL_PROGRAMSDIR}/bin/
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -836,7 +836,7 @@ ExternalProject_Add(build-csdp
                       theta/graphtoprob
                       theta/rand_graph
                       theta/theta
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different solver/csdp ${PROGRAMS_DIR}/bin/
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different solver/csdp ${M2_INSTALL_PROGRAMSDIR}/bin/
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -888,7 +888,7 @@ ExternalProject_Add(build-normaliz
         COMMAND     ${CMAKE_STRIP} source/normaliz
   # TODO: do we need the libraries as well, or just the binary?
   INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${PROGRAMS_DIR}/bin/
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/bin/
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -936,7 +936,7 @@ ExternalProject_Add(build-nauty
   BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
         COMMAND     ${CMAKE_STRIP} ${nauty_STRIPFILES}
   # TODO: put nauty programs in a folder?
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${nauty_PROGRAMS} ${PROGRAMS_DIR}/bin/
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${nauty_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/bin/
   TEST_COMMAND      rm -f ${nauty_CHECKERS}
        COMMAND      ${MAKE_EXE} BIGTEST=0 checks
   EXCLUDE_FROM_ALL  ON
@@ -981,7 +981,7 @@ ExternalProject_Add(build-topcom
   BUILD_COMMAND     ${MAKE_EXE} -j1 # topcom doesn't like parallel builds
         COMMAND     ${CMAKE_STRIP} ${topcom_PROGRAMS}
   # TODO: put topcom programs in a folder?
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${topcom_PROGRAMS} ${PROGRAMS_DIR}/bin/
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${topcom_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/bin/
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
