@@ -84,6 +84,11 @@ message("## Host operating system information:
 # TODO: install the unstripped library with debug_info in the appropriate place.
 # On Fedora: /usr/lib/debug/usr/lib64/
 
+## Setting the prefix so pkg-config can find libraries we've built
+list(PREPEND CMAKE_SYSTEM_PREFIX_PATH	${M2_HOST_PREFIX})
+list(APPEND  CMAKE_PREFIX_PATH		${M2_HOST_PREFIX})
+set(ENV{PKG_CONFIG_PATH}		${M2_HOST_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PATH})
+
 # staging area for building libraries needed to compile M2
 set(M2_INSTALL_PREFIX	${CMAKE_BINARY_DIR}/usr-dist CACHE PATH "target build prefix")
 set(M2_HOST_PREFIX	${CMAKE_BINARY_DIR}/usr-host CACHE PATH "host build prefix")
