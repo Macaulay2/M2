@@ -682,7 +682,10 @@ endif()
 ## Build required programs
 
 # 4ti2 needs glpk and is used by the package FourTiTwo
-# TODO: install binaries in the libexec directory
+set(4ti2_PROGRAMS
+  4ti2int32  circuits  gensymm  groebner  markov    normalform  ppi     rays  zbasis
+  4ti2int64  genmodel  graver   hilbert   minimize  output      qsolve  walk  zsolve)
+list(TRANSFORM 4ti2_PROGRAMS PREPEND ${M2_HOST_PREFIX}/bin/ OUTPUT_VARIABLE 4ti2_PROGRAMS)
 ExternalProject_Add(build-4ti2
   URL               ${M2_SOURCE_URL}/4ti2-1.6.9.tar.gz
   URL_HASH          SHA256=3053e7467b5585ad852f6a56e78e28352653943e7249ad5e5174d4744d174966
@@ -706,6 +709,7 @@ ExternalProject_Add(build-4ti2
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS}
   INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install-strip
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${4ti2_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/bin
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -1018,71 +1022,3 @@ message("## Library information:
 # TODO: how to keep track of things we've built?
 #     BUILTLIBS         = ${BUILTLIBS}
 #     LIBS              = ${LIBS}
-
-#############################################################################
-
-# Everything possible:
-# LIBLIST gc gdbm mpir mpfr ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest
-# PROGLIST 4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg
-# SUBLIST memtailor mathic mathicgb fflas_ffpack
-# FIXME: gmp libtool pari are Missing below
-# gfan normaliz csdp nauty cddplus lrslib topcom cohomcalg)
-
-
-## the order of these segments also reflects dependencies
-#AC_LANG(C)
-#AC_SEARCH_LIBS(tgoto,tinfo ncurses curses,,AC_MSG_ERROR([[not found: library containing symbol tgoto; tried libcurses, libncurses, and libtinfo)]]))
-#if test $BUILD_readline = no
-#then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
-#fi
-#if test $BUILD_readline = no
-#then AC_SEARCH_LIBS(rl_set_prompt,readline,,BUILD_readline=yes)
-#fi
-#if test $BUILD_readline = no
-#then AC_SEARCH_LIBS(rl_completion_matches,readline,,BUILD_readline=yes)
-#fi
-#if test $BUILD_readline = no
-#then AC_SEARCH_LIBS(readline,readline,,BUILD_readline=yes)
-#fi
-#if test $BUILD_readline = no
-#then AC_SEARCH_LIBS(add_history,history readline,,BUILD_readline=yes)
-#fi
-#if test $BUILD_readline = no
-#then # readline on Mac OS X is stuck at version 4.2, which has this bug:
-#     #   CTRL-A doesn't go all the way to the beginning of the
-#     #   line after typing r e s o TAB C-a
-#     # So we build it ourselves.
-#     AC_LANG(C)
-#     AC_MSG_CHECKING([whether readline library is new enough (version at least 6)])
-#     AC_RUN_IFELSE([AC_LANG_SOURCE([[
-#	     #include <stdio.h>
-#	     #include <readline/readline.h>
-#	     int main () { return ! ( RL_READLINE_VERSION >= 6 * 0x100 ) ; }]])],
-#	[ AC_MSG_RESULT([yes]) ],
-#	[ AC_MSG_RESULT([no, will build it]) ; BUILD_readline=yes ],
-#	[ AC_MSG_RESULT([cross-compiling, test not possible]) ])
-#fi
-#if test $BUILD_readline = no
-#then AC_CHECK_DECL(rl_catch_signals,,BUILD_readline=yes,[
-#	#include <stdio.h>
-#	#include <readline/readline.h>
-#	])
-#fi
-#if test $BUILD_readline = yes
-#then AC_MSG_NOTICE(readline library will be compiled)
-#     BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
-#fi
-
-#if test "$PYTHON" = yes
-#then AC_LANG(C)
-#     if test "$LIBPYTHON" = "$LIBPYTHONORIG"
-#     then AC_SEARCH_LIBS(Py_Initialize,python2.7,,AC_MSG_ERROR(libpython2.7 not found))
-#     else LIBS="$LIBPYTHON $LIBS"
-#     fi
-#     AC_CHECK_HEADER(python2.7/Python.h,,AC_MSG_ERROR(include file python2.7/Python.h not found))
-#fi
-
-#if test $BUILD_boost = no
-#then AC_LANG(C++)
-#     AC_CHECK_HEADER(boost/version.hpp,,BUILD_boost=yes)
-#fi
