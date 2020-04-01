@@ -14,7 +14,8 @@ endif()
 
 ################################################################
 ## This target builds external libraries that M2 relies on.
-add_custom_target(build-libraries)
+add_custom_target(build-libraries
+  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_SOURCE_DIR}/cmake/check-libraries.cmake)
 
 ## This target builds external programs that are distributed with M2.
 add_custom_target(build-programs)
@@ -25,9 +26,6 @@ file(MAKE_DIRECTORY ${M2_INSTALL_PROGRAMSDIR}/bin)
 ## This target forces libraries and programs to run their install targets
 add_custom_target(clean-stamps
   COMMAND rm libraries/*/src/build-*-stamp/*-install)
-
-## FIXME: Hack to force CMake to reconfigure after library is reinstalled
-file(TOUCH ${CMAKE_SOURCE_DIR}/cmake/check-libraries.cmake)
 
 # TODO: Accumulate information in usr-host/share/config.site to speed up configuration
 # See: https://www.gnu.org/software/autoconf/manual/autoconf-2.60/html_node/Cache-Files.html
