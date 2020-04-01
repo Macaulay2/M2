@@ -16,7 +16,6 @@ cmake -S M2/M2 -B $(BUILD_DIR) \
       -DCMAKE_INSTALL_PREFIX=$(M2_HOME)/$(BUILD_DIR)/usr-dist
 
 cmake --build $(BUILD_DIR) --target build-libraries build-programs
-cmake --build $(BUILD_DIR) --target rebuild_cache # recheck library paths
 cmake --build $(BUILD_DIR) --target M2-core -j4
 cmake --install $(BUILD_DIR)
 

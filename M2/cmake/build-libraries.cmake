@@ -246,6 +246,7 @@ ExternalProject_Add(build-flint
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
                     -DBUILD_SHARED_LIBS=ON
+                    -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
 		    -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
                     # Possible variables for the CMake build:
@@ -253,7 +254,6 @@ ExternalProject_Add(build-flint
                     #-DCMAKE_BUILD_TYPE
                     #-DHAS_FLAG_MPOPCNT
                     #-DHAS_FLAG_UNROLL_LOOPS
-                    #-DIPO_SUPPORTED
                     #-DBUILD_DOCS
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install

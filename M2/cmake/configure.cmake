@@ -152,7 +152,11 @@ if(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo") # Profiling
   add_link_options(-pg)
 endif()
 if(CMAKE_BUILD_TYPE MATCHES "Release|MinSizeRel")
-  add_compile_options(-s -O2 -DNDEBUG -Wuninitialized)
+  add_compile_options(-O2 -DNDEBUG -Wuninitialized)
+  # TODO: what are the right strip options?
+  if(CMAKE_C_COMPILER_ID STREQUAL GNU)
+    add_compile_options(-s)
+  endif()
 endif()
 
 # Flags based on compiler

@@ -208,6 +208,22 @@ cmake -U*[MPFR | NTL | FLINT | FROBBY]* .
 
 
 <details>
+<summary><code>undefined reference to `GC_malloc`</code></summary>
+This error occurs if the GC library path is not set correctly.
+<code><pre>
+[  4%] Linking C executable scc1
+CMakeFiles/scc1.dir/scc1.c.o: In function `getmem':
+/home/macaulay/M2/M2/Macaulay2/c/scc1.c:23: undefined reference to `GC_malloc'
+</code></pre>
+Solution:
+<code><pre>
+make build-bdwgc-install
+cmake -U*BDWGC* .
+</code></pre>
+</details>
+
+
+<details>
 <summary><code>fatal error: no member named 'isunit' in '...'; did you mean 'isUnit'?</code></summary>
 Yes. This error occurs when the local givaro headers are version 4.0.2 or below, but we have
 built version 4.0.3 or above in `usr-host`.
