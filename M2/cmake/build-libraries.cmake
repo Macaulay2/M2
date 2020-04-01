@@ -269,6 +269,9 @@ if(NOT FLINT_FOUND)
   if(NOT MPFR_FOUND)
     ExternalProject_Add_StepDependencies(build-flint configure build-mpfr-install)
   endif()
+  if(NOT NTL_FOUND)
+    ExternalProject_Add_StepDependencies(build-flint configure build-ntl-install)
+  endif()
 endif()
 
 
