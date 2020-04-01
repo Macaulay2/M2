@@ -61,15 +61,7 @@ macro(_mpfr_check_version)
   endif()
 endmacro(_mpfr_check_version)
 
-if (MPFR_INCLUDE_DIRS AND MPFR_LIBRARIES)
-
-  # Exists in cache already
-  _MPFR_check_version()
-  set(MPFR_FOUND ${MPFR_VERSION_OK})
-
-endif()
-
-if(NOT MPFR_FOUND)
+if(NOT MPFR_VERSION_OK)
   set(MPFR_INCLUDE_DIRS NOTFOUND)
   set(MPFR_LIBRARIES NOTFOUND)
 

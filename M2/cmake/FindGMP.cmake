@@ -69,7 +69,7 @@ macro(_gmp_check_version)
   endif()
 endmacro(_gmp_check_version)
 
-if(NOT GMP_FOUND)
+if(NOT GMP_VERSION_OK)
   set(GMP_INCLUDE_DIRS NOTFOUND)
   set(GMP_LIBRARIES NOTFOUND)
 

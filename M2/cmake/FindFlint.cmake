@@ -9,7 +9,7 @@
 #
 #  FLINT_FOUND		- system has the FLINT library with correct version
 #  FLINT_INCLUDE_DIR	- the FLINT include directory
-#  FLINT_LIBRARY	- the FLINT library
+#  FLINT_LIBRARIES	- the FLINT library
 #  FLINT_VERSION	- FLINT version
 
 # Copyright (c) 2020, Mahrud Sayrafi, <mahrud@umn.edu>
@@ -79,16 +79,16 @@ if(NOT FLINT_FOUND)
     _flint_check_version()
   endif()
 
-  if(NOT FLINT_LIBRARY)
-    find_library(FLINT_LIBRARY NAMES flint
+  if(NOT FLINT_LIBRARIES)
+    find_library(FLINT_LIBRARIES NAMES flint
       HINTS ENV FLINTDIR
       PATHS ${LIB_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/lib
       )
   endif()
 
   include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(Flint DEFAULT_MSG FLINT_INCLUDE_DIR FLINT_LIBRARY FLINT_VERSION_OK)
+  find_package_handle_standard_args(Flint DEFAULT_MSG FLINT_INCLUDE_DIR FLINT_LIBRARIES FLINT_VERSION_OK)
 
-  mark_as_advanced(FLINT_INCLUDE_DIR FLINT_LIBRARY)
+  mark_as_advanced(FLINT_INCLUDE_DIR FLINT_LIBRARIES)
 
 endif()

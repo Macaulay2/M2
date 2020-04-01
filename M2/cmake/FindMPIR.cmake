@@ -57,7 +57,7 @@ macro(_mpir_check_version)
   endif()
 endmacro(_mpir_check_version)
 
-if(NOT MPIR_FOUND)
+if(NOT MPIR_VERSION_OK)
   set(MPIR_INCLUDE_DIRS NOTFOUND)
   set(MPIR_LIBRARIES NOTFOUND)
 
@@ -65,11 +65,6 @@ if(NOT MPIR_FOUND)
   # if successful this would set MPIR_INCLUDE_DIRS and the rest of
   # the script will work as usual
   find_package(MPIR ${MPIR_FIND_VERSION} NO_MODULE QUIET)
-
-if(NOT MPIR_INCLUDE_DIR STREQUAL MPIRXX_INCLUDE_DIR)
-  set(MPIR_INCLUDE_DIR ${MPIR_INCLUDE_DIR};${MPIRXX_INCLUDE_DIR})
-endif()
-set(MPIR_LIBRARIES ${MPIR_LIBRARIES};${MPIRXX_LIBRARIES})
 
   if(NOT MPIR_INCLUDE_DIRS)
     find_path(MPIR_INCLUDE_DIRS NAMES mpir.h

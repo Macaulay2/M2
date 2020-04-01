@@ -52,13 +52,9 @@ macro(_gc_check_version)
   endif()
 endmacro(_gc_check_version)
 
-if (BDWGC_INCLUDE_DIR AND BDWGC_LIBRARY)
-
-  # Exists in cache already
-  _gc_check_version()
-  set(BDWGC_FOUND ${BDWGC_VERSION_OK})
-
-else()
+if(NOT BDWGC_VERSION_OK)
+  set(BDWGC_INCLUDE_DIRS NOTFOUND)
+  set(BDWGC_LIBRARIES NOTFOUND)
 
   # search first if an BDWGCConfig.cmake is available in the system,
   # if successful this would set BDWGC_INCLUDE_DIR and the rest of
