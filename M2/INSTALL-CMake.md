@@ -180,6 +180,44 @@ Below are a list of common issues and errors. If you run into a problem not list
 please open a [new issue](https://github.com/Macaulay2/M2/issues/new) on GitHub.
 
 <details>
+<summary><code>error while loading shared libraries: libgmp.so.23: cannot open shared object file</code></summary>
+This error occurs when a library or component is linked with libmpir, located in `usr-host/lib`, but that
+directory is not in the path of the linker.
+<code><pre>
+export LD_LIBRARY_PATH=[BUILD DIRECTORY]/usr-host/lib
+</code></pre>
+</details>
+
+
+<details>
+<summary><code>/usr/bin/ld: warning: libgmp.so.10, needed by ..., may conflict with libgmp.so.23</code></summary>
+This happens because the local version of a high level library, for instance libflint, is linked against
+an older version of a lower level library, such as libmpfr or libgmp.
+<code><pre>
+/usr/bin/ld: warning: libgmp.so.10, needed by ../../usr-host/lib/libmpfr.so, may conflict with libgmp.so.23
+/usr/bin/ld: warning: libgmp.so.10, needed by /usr/lib64/libntl.so, may conflict with libgmp.so.23
+/usr/bin/ld: warning: libmpfr.so.4, needed by /usr/local/lib/libflint.so, may conflict with libmpfr.so.6
+/usr/bin/ld: warning: libgmpxx.so.4, needed by /usr/lib64/libfrobby.so, may conflict with libgmpxx.so.8
+</code></pre>
+Solution:
+<code><pre>
+make build-[mpfr | ntl | flint | frobby]-install
+cmake -U*[MPFR | NTL | FLINT | FROBBY]* .
+</code></pre>
+</details>
+
+
+<details>
+<summary><code>fatal error: no member named 'isunit' in '...'; did you mean 'isUnit'?</code></summary>
+Yes. This error occurs when the local givaro headers are version 4.0.2 or below, but we have
+built version 4.0.3 or above in `usr-host`.
+<code><pre>
+cmake -U*GIVARO* .
+</code></pre>
+</details>
+
+
+<details>
 <summary><code>error: Runtime CPU support is only available with GCC 4.6 or later.</code></summary>
 When compiling using Clang, the following error might occur:
 <code><pre>
@@ -196,26 +234,6 @@ If this happens, run the following to build NTL in the `usr-host` library and us
 <code><pre>
 make build-ntl-install
 cmake -UNTL_* .
-</code></pre>
-</details>
-
-
-<details>
-<summary><code>error while loading shared libraries: libgmp.so.23: cannot open shared object file</code></summary>
-This error occurs when a library or component is linked with libmpir, located in `usr-host/lib`, but that
-directory is not in the path of the linker.
-<code><pre>
-export LD_LIBRARY_PATH=[BUILD DIRECTORY]/usr-host/lib
-</code></pre>
-</details>
-
-
-<details>
-<summary><code>fatal error: no member named 'isunit' in '...'; did you mean 'isUnit'?</code></summary>
-Yes. This error occurs when the local givaro headers are version 4.0.2 or below, but we have
-built version 4.0.3 or above in `usr-host`.
-<code><pre>
-cmake -U*GIVARO* .
 </code></pre>
 </details>
 
@@ -243,24 +261,6 @@ cmake -UFLINT_* .
 
 
 <details>
-<summary>Library conflicts</summary>
-This happens because the local version of a high level library, for instance libflint, is linked against
-an older version of a lower level library, such as libmpfr or libgmp.
-<code><pre>
-/usr/bin/ld: warning: libgmp.so.10, needed by ../../usr-host/lib/libmpfr.so, may conflict with libgmp.so.23
-/usr/bin/ld: warning: libgmp.so.10, needed by /usr/lib64/libntl.so, may conflict with libgmp.so.23
-/usr/bin/ld: warning: libmpfr.so.4, needed by /usr/local/lib/libflint.so, may conflict with libmpfr.so.6
-/usr/bin/ld: warning: libgmpxx.so.4, needed by /usr/lib64/libfrobby.so, may conflict with libgmpxx.so.8
-</code></pre>
-Solution:
-<code><pre>
-make build-[mpfr | ntl | flint | frobby]-install
-cmake -U*[MPFR | NTL | FLINT | FROBBY]* .
-</code></pre>
-</details>
-
-
-<details>
 <summary><code>recompile with -fPIC</code></summary>
 TODO
 <code><pre>
@@ -270,7 +270,7 @@ TODO
 
 
 <details>
-<summary>Errors building `Macaulay2/Core/tvalues.m2</code></summary>
+<summary><code>sample Factory finite field addition table file missing, needed for factorization: ...</code></code></summary>
 TODO
 <code><pre>
 [ 60%] Generating ../../usr-dist/share/Macaulay2/Core/tvalues.m2
