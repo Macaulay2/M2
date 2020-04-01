@@ -180,9 +180,9 @@ Below are a list of common issues and errors. If you run into a problem not list
 please open a [new issue](https://github.com/Macaulay2/M2/issues/new) on GitHub.
 
 <details>
-<summary>`error: Runtime CPU support is only available with GCC 4.6 or later.`</summary>
+<summary><code>error: Runtime CPU support is only available with GCC 4.6 or later.</code></summary>
 When compiling using Clang, the following error might occur:
-```
+<code><pre>
 [ 25%] Building CXX object Macaulay2/e/CMakeFiles/M2-engine.dir/ntl-internal.cpp.o
 In file included from M2/Macaulay2/e/ntl-debugio.cpp:4:
 In file included from M2/Macaulay2/e/./ntl-interface.hpp:16:
@@ -191,39 +191,39 @@ In file included from /usr/include/NTL/lip.h:5:
 /usr/include/NTL/ctools.h:510:2: fatal error: Runtime CPU support is only available with GCC 4.6 or later.
 #error Runtime CPU support is only available with GCC 4.6 or later.
  ^
-```
+</code></pre>
 If this happens, run the following to build NTL in the `usr-host` library and use it.
-```
+<code><pre>
 make build-ntl-install
 cmake -UNTL_* .
-```
+</code></pre>
 </details>
 
 
 <details>
-<summary>`error while loading shared libraries: libgmp.so.23: cannot open shared object file`</summary>
+<summary><code>error while loading shared libraries: libgmp.so.23: cannot open shared object file</code></summary>
 This error occurs when a library or component is linked with libmpir, located in `usr-host/lib`, but that
 directory is not in the path of the linker.
-```
+<code><pre>
 export LD_LIBRARY_PATH=[BUILD DIRECTORY]/usr-host/lib
-```
+</code></pre>
 </details>
 
 
 <details>
-<summary>`fatal error: no member named 'isunit' in '...'; did you mean 'isUnit'?`</summary>
+<summary><code>fatal error: no member named 'isunit' in '...'; did you mean 'isUnit'?</code></summary>
 Yes. This error occurs when the local givaro headers are version 4.0.2 or below, but we have
 built version 4.0.3 or above in `usr-host`.
-```
+<code><pre>
 cmake -U*GIVARO* .
-```
+</code></pre>
 </details>
 
 
 <details>
-<summary>`error: variable '_flint_primes' cannot be threadprivate because it is thread-local`</summary>
+<summary><code>error: variable '_flint_primes' cannot be threadprivate because it is thread-local</code></summary>
 If certain prerequisite libraries, such as OpenMP, are not installed before beginning the process,
-```
+<code><pre>
 [ 60%] Building CXX object Macaulay2/e/CMakeFiles/M2-unit-tests.dir/unit-tests/ARingZZTest.cpp.o
 In file included from M2/Macaulay2/e/unit-tests/ARingZZTest.cpp:11:
 In file included from M2/Macaulay2/e/./aring-zz-flint.hpp:18:
@@ -233,12 +233,12 @@ In file included from /usr/local/include/flint/nmod_vec.h:29:
 /usr/local/include/flint/ulong_extras.h:123:27: error: variable '_flint_primes' cannot be threadprivate because it is thread-local
 #pragma omp threadprivate(_flint_primes, _flint_prime_inverses, _flint_primes_used)
                           ^
-```
+<code><pre>
 If this happens, run the following to build Flint in the `usr-host` library and use it.
-```
+</code></pre>
 make build-flint-install
 cmake -UFLINT_* .
-```
+</code></pre>
 </details>
 
 
@@ -246,36 +246,36 @@ cmake -UFLINT_* .
 <summary>Library conflicts</summary>
 This happens because the local version of a high level library, for instance libflint, is linked against
 an older version of a lower level library, such as libmpfr or libgmp.
-```
+<code><pre>
 /usr/bin/ld: warning: libgmp.so.10, needed by ../../usr-host/lib/libmpfr.so, may conflict with libgmp.so.23
 /usr/bin/ld: warning: libgmp.so.10, needed by /usr/lib64/libntl.so, may conflict with libgmp.so.23
 /usr/bin/ld: warning: libmpfr.so.4, needed by /usr/local/lib/libflint.so, may conflict with libmpfr.so.6
 /usr/bin/ld: warning: libgmpxx.so.4, needed by /usr/lib64/libfrobby.so, may conflict with libgmpxx.so.8
-```
+</code></pre>
 Solution:
-```
+<code><pre>
 make build-[mpfr | ntl | flint | frobby]-install
 cmake -U*[MPFR | NTL | FLINT | FROBBY]* .
-```
+</code></pre>
 </details>
 
 
 <details>
-<summary>`recompile with -fPIC`</summary>
+<summary><code>recompile with -fPIC</code></summary>
 TODO
-```
+<code><pre>
 /usr/bin/ld: M2/BUILD/build/usr-host/lib/libgmp.a(randmts.o): relocation R_X86_64_32S against `.rodata' can not be used when making a shared object; recompile with -fPIC
-```
+</code></pre>
 </details>
 
 
 <details>
-<summary>Errors building `Macaulay2/Core/tvalues.m2`</summary>
+<summary>Errors building `Macaulay2/Core/tvalues.m2</code></summary>
 TODO
-```
+<code><pre>
 [ 60%] Generating ../../usr-dist/share/Macaulay2/Core/tvalues.m2
 ../../../../../../Macaulay2/m2/debugging.m2:20:6:(1):[7]: error: sample Factory finite field addition table file missing, needed for factorization: /home/mahrud/Projects/M2/M2/M2/BUILD/build-cmake/usr-dist/
-```
+</code></pre>
 </details>
 
 
@@ -284,9 +284,9 @@ TODO
 [MKL](https://software.intel.com/en-us/mkl) is a linear algebra routines library specifically optimized for
 Intel(R) processors. To enable linking with MKL, adjust the path and architecture appropriately and run the
 following before calling `cmake`:
-```
+<code><pre>
 source /opt/intel/bin/compilervars.sh intel64
-```
+</code></pre>
 Note that MKL is closed-source but released as a freeware.
 </details>
 
