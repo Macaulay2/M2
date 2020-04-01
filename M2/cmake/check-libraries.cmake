@@ -52,6 +52,8 @@ find_package(PkgConfig  REQUIRED QUIET)
 list(APPEND CMAKE_PREFIX_PATH ${M2_HOST_PREFIX})
 set(ENV{PKG_CONFIG_PATH}      ${M2_HOST_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PATH})
 
+# TODO: set CMAKE_SYSTEM_PREFIX_PATH to prioritize libraries from usr-host?
+
 ################################################################
 ## Look for prerequisite packages and libraries using CMake or pkg-config
 

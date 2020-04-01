@@ -26,7 +26,7 @@
 /* machine hardware type */
 #define ARCH "${CMAKE_SYSTEM_PROCESSOR}"
 
-// TODO: what is the default?
+// TODO: what is this for? is it still relevant?
 /* whether to instantiate templates automatically */
 #cmakedefine AUTOINST 1
 
@@ -320,6 +320,7 @@
 /* Define to 1 if you have the `_setmode' function. */
 #cmakedefine HAVE__SETMODE 1
 
+// TODO: what is this for? is it still relevant?
 /* whether to instantiate templates implicitly */
 #cmakedefine IMPLINST 1
 

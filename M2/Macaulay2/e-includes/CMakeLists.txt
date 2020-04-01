@@ -14,7 +14,6 @@ add_custom_command(OUTPUT geores.hpp geogbvec.hpp statuscodes.h
   COMMAND
     echo "  DUMMY_STATUS_CODE" >> statuscodes.h
   VERBATIM
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
 
-file(COPY statuscodes DESTINATION ${M2_CORE_DIR})
+file(COPY statuscodes DESTINATION ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR}/Core)

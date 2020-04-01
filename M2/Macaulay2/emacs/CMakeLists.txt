@@ -1,12 +1,11 @@
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 set(M2_ARGS -q --stop --silent)
+set(EMACS_DIR ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp)
 set(EMACS_FILES M2-README M2-emacs-hlp.txt M2-emacs.m2 M2-init.el M2-mode.el M2-symbols.el M2.el)
 
-configure_file(M2-init.el.in M2-init.el @ONLY)
-
 # TODO: move this from ALL to install
-add_custom_target(emacs ALL DEPENDS M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2)
+add_custom_target(M2-emacs DEPENDS M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2)
 
 # TODO: refactor the three scripts
 add_custom_command(OUTPUT M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2
@@ -18,14 +17,9 @@ add_custom_command(OUTPUT M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2
     M2-binary ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/makehlp.m2 -e 'exit 0'
   COMMAND
     M2-binary ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/makem2.m2 -e 'exit 0'
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS Core
+  WORKING_DIRECTORY ${EMACS_DIR}
+  DEPENDS M2-core
   )
 
-install(FILES
-  M2-mode.el M2.el M2-README
-  ${CMAKE_CURRENT_BINARY_DIR}/M2-symbols.el
-  ${CMAKE_CURRENT_BINARY_DIR}/M2-emacs-hlp.txt
-  ${CMAKE_CURRENT_BINARY_DIR}/M2-emacs.m2
-  ${CMAKE_CURRENT_BINARY_DIR}/M2-init.el
-  DESTINATION ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_DATADIR}/emacs/site-lisp)
+configure_file(M2-init.el.in ${EMACS_DIR}/M2-init.el @ONLY)
+file(COPY M2-mode.el M2.el M2-README DESTINATION ${EMACS_DIR})

@@ -27,25 +27,16 @@ string(REPLACE " " ";" PACKAGES "${PACKAGES}")
 list(TRANSFORM PACKAGES APPEND ".m2" OUTPUT_VARIABLE PACKAGE_OUTPUTS)
 
 ## Copy packages and auxiliary files to the destination
-add_custom_target(copy-packages ALL DEPENDS ${PACKAGE_OUTPUTS})
-
 foreach(PACKAGE IN LISTS PACKAGES)
-  add_custom_command(OUTPUT ${M2_PACKAGE_DIR}/${PACKAGE}.m2
-    COMMENT
-      "Copying package ${PACKAGE}"
-    COMMAND
-      ${CMAKE_COMMAND} -E copy_if_different ${PACKAGE}.m2 ${M2_PACKAGE_DIR}
-    COMMAND
-      if [ -d "${PACKAGE}" ] \; then
-        ${CMAKE_COMMAND} -E copy_directory  ${PACKAGE}    ${M2_PACKAGE_DIR}/${PACKAGE} \;
-      fi
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS Core
-    )
+  file(COPY ${PACKAGE}.m2 DESTINATION ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR})
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE})
+    file(COPY ${PACKAGE}  DESTINATION ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR})
+  endif()
 endforeach()
 
 #################################################################################
 
+# TODO: add all-packages list-packages
 # TODO: how to handle EngineTests and other packages under development that
 # should be checked but not installed
 
@@ -62,6 +53,7 @@ add_custom_target(check-packages DEPENDS ${CHECK_TARGETS})
 ## eg: uninstall-Style uninstall-Macaulay2Doc ...
 list(TRANSFORM PACKAGES PREPEND "uninstall-" OUTPUT_VARIABLE UNINSTALL_TARGETS)
 ## Uninstall packages
+# TODO: have this clear out the folders completely and uninstall-[package] only run uninstallPackage
 add_custom_target(uninstall-packages DEPENDS ${UNINSTALL_TARGETS})
 
 ## Arguments for M2-binary and installPackage
@@ -85,7 +77,7 @@ foreach(PACKAGE IN LISTS PACKAGES)
       "Installing package ${PACKAGE}"
     COMMAND
       M2-binary ${M2_ARGS} -e \"installPackage(\\"${PACKAGE}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON> exit 0\"
-    DEPENDS copy-packages
+    DEPENDS M2-core
     )
 
   ## Custom target for uninstalling the package
@@ -94,10 +86,10 @@ foreach(PACKAGE IN LISTS PACKAGES)
       "Uninstalling package ${PACKAGE}"
     COMMAND
       rm -rf
-        ${M2_PACKAGE_DIR}/${PACKAGE}*
-        ${CMAKE_INSTALL_FULL_LIBDIR}/Macaulay2/${PACKAGE}*
-        ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_DOCDIR}/${PACKAGE}*
-        ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_INFODIR}/${PACKAGE}*
+        ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR}/${PACKAGE}*
+        ${M2_INSTALL_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${PACKAGE}*
+        ${M2_INSTALL_PREFIX}/${M2_INSTALL_DOCDIR}/${PACKAGE}*
+        ${M2_INSTALL_PREFIX}/${M2_INSTALL_INFODIR}/${PACKAGE}*
     )
 
   # FIXME: what is if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 ?
@@ -108,6 +100,7 @@ foreach(PACKAGE IN LISTS PACKAGES)
     COMMAND
       M2-binary ${M2_ARGS} -e \"needsPackage(\\"${PACKAGE}\\", LoadDocumentation=>true, DebuggingMode=>true) $<SEMICOLON>
       check(${PACKAGE}, UserMode=>false) $<SEMICOLON> exit 0\"
+    DEPENDS M2-core
     )
 
   ## Everything bagel

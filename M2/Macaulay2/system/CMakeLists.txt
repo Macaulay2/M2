@@ -1,15 +1,15 @@
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 # TODO: add necessary header files to this list
-add_library(system OBJECT
+add_library(M2-system OBJECT
   supervisor.cpp
   m2file.cpp
   tests.cpp
   )
 
-add_dependencies(system M2-interpreter) # supervisor.cpp requires pthread-exports.h
+add_dependencies(M2-system M2-interpreter) # supervisor.cpp requires pthread-exports.h
 
-target_include_directories(system
+target_include_directories(M2-system
   PUBLIC
     .
     ${CMAKE_SOURCE_DIR}/Macaulay2/c # needs scc-core.h
@@ -19,7 +19,7 @@ target_include_directories(system
   )
 
 # common warning flags
-target_compile_options(system PRIVATE
+target_compile_options(M2-system PRIVATE
   -Wall
   -Wcast-qual
   -Wextra
@@ -29,14 +29,14 @@ target_compile_options(system PRIVATE
   )
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   # using Clang or AppleClang
-  target_compile_options(system PRIVATE
+  target_compile_options(M2-system PRIVATE
     -Wno-mismatched-tags # needed currently, but if we clean up includes, should not be needed?
     -Wno-unknown-pragmas
     )
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   # using GCC
-  target_compile_options(system PRIVATE
+  target_compile_options(M2-system PRIVATE
     #-pedantic-errors
     #-Wno-extra-semi
     -Wno-error=pragmas

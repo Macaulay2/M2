@@ -1,52 +1,105 @@
-################################################################
-## Setting variables for installation directories and Macaulay2 Layout
-
-## Only overwrite the default prefix, not one provided via command line
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/usr-dist CACHE PATH "installation prefix" FORCE)
-  set(M2_COMMON_INFIX	"/common"	CACHE INTERNAL "infix for architecture independent files")
-  set(M2_EXEC_INFIX	"/${MACHINE}"	CACHE INTERNAL "infix for architecture dependent files")
-endif()
-
-set(M2_INSTALL_PREFIX	${CMAKE_INSTALL_PREFIX})
-set(M2_COMMON_PREFIX	${M2_INSTALL_PREFIX}${M2_COMMON_INFIX})	# staging area for common files as in layout.m2.in
-set(M2_EXEC_PREFIX	${M2_INSTALL_PREFIX}${M2_EXEC_INFIX})	# staging area for arch. dep. files as in layout.m2.in
-set(M2_HOST_PREFIX	${CMAKE_BINARY_DIR}/usr-host)		# staging area for building libraries needed to compile M2
-
-set(M2_PACKAGE_DIR	${M2_COMMON_PREFIX}/share/Macaulay2)
-set(M2_CORE_DIR		${M2_PACKAGE_DIR}/Core)
-
-## Rewrite this so that GNUInstallDirs module can use it to generate architecture independent directories
-set(CMAKE_INSTALL_PREFIX ${M2_EXEC_PREFIX})
-
-## This is using https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html#module:GNUInstallDirs
-## Which follows https://www.gnu.org/prep/standards/html_node/Directory-Variables.html
-include(GNUInstallDirs)
-
-message("## Staging area directories: (set CMAKE_INSTALL_PREFIX to overwrite)
-     common:	${M2_COMMON_PREFIX}
-     exec:	${M2_EXEC_PREFIX}")
-
-# TODO: install in /opt instead?
-
-# TODO: install the unstripped library with debug_info in the appropriate place.
-# On Fedora: /usr/lib/debug/usr/lib64/
-
-################################################################
-
-set(DISTRIBUTION 1) # use this starting number to sequentially number the downstream distributions
-
-set(COMPRESS "gz" CACHE STRING	"compression method for tarball (gz or bz2)")
-option(M2TARFILE	"prepare binary and source packages as compressed tar files" OFF)
-option(TARLIBS		"include symbolic links to needed shared libraries for tar" OFF)
-option(FREEBSD		"prepare a package file for freebsd" OFF)
-option(DEB		"prepare a *.deb package (for debian, ubuntu, ...)" OFF)
-option(RPM		"prepare a *.rpm package (for red had based systems)" OFF)
-option(DMG		"prepare a *.dmg package (for Mac OS)" OFF)
+###############################################################################
+set(PROJECT_DISTRIBUTION 1)
 
 # TODO: check to make sure OPTIMIZE is ON if packaging is ON
+# TODO: OSX options: DragNDrop;PackageMaker;OSXX11;Bundle
+# TODO: compression options: TGZ;STGZ;TBZ2;TZ;ZIP
+# TODO: CPACK_SOURCE_GENERATOR options: TGZ;TZ
+set(COMPRESS "gz" CACHE STRING	"compression method for tarball (gz or bz2)")
+#option(M2TARFILE	"prepare binary and source packages as compressed tar files" OFF)
+#option(TARLIBS		"include symbolic links to needed shared libraries for tar" OFF)
+#option(FREEBSD		"prepare a package file for freebsd" OFF)
+option(DEB		"prepare a *.deb package (for debian, ubuntu, ...)" OFF)
+option(RPM		"prepare a *.rpm package (for red had based systems)" OFF)
+#option(DMG		"prepare a *.dmg package (for Mac OS)" OFF)
 
-#AC_OUTPUT() # distribution files configured
+#set(CPACK_INSTALL_CMAKE_PROJECTS
+#  ${CMAKE_BINARY_DIR}:Macaulay2:ALL:/usr
+#  ${CMAKE_BINARY_DIR}:Macaulay2:packages:/usr
+#  ${CMAKE_BINARY_DIR}:Macaulay2:docs:/usr
+#  )
+
+set(CPACK_GENERATOR "" CACHE STRING "package types to build")
+set(CPACK_GENERATOR "RPM")
+set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON) # Experiment
+# set(CPACK_STRIP_FILES ON)
+# set(CPACK_PACKAGING_INSTALL_PREFIX /usr)
+# vs CPACK_PACKAGE_INSTALL_DIRECTORY
+# CPACK_PACKAGE_VENDOR
+# CPACK_PACKAGE_CONTACT
+# CPACK_PROJECT_CONFIG_FILE for this file?
+# CPACK_INSTALL_COMMANDS
+# CPACK_INSTALL_SCRIPT
+# CPACK_INSTALLED_DIRECTORIES
+# CPACK_OUTPUT_FILE_PREFIX
+
+set(CPACK_PACKAGE_SUMMARY "Macaulay2 is a software system for algebraic geometry research")
+
+set(CPACK_PACKAGE_NAME	${PROJECT_NAME})
+set(CPACK_PACKAGE_URL	${PROJECT_HOMEPAGE_URL})
+set(CPACK_PACKAGE_VERSION	${PROJECT_VERSION})
+set(CPACK_PACKAGE_RELEASE	${PROJECT_DISTRIBUTION})
+# ALT: set(CPACK_PACKAGE_DESCRIPTION_FILE ...)
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY
+  "Macaulay2 is a software system for algebraic geometry research, written by \
+  Daniel R. Grayson and Michael E. Stillman.  Based on Groebner bases, it \
+  provides algorithms for computing homological invariants of rings and \
+  modules.")
+set(CPACK_PACKAGE_FILE_NAME
+  "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_PACKAGE_RELEASE}.${CMAKE_SYSTEM_PROCESSOR}")
+
+###############################################################################
+
+#CPACK_RPM_PACKAGE_DEBUG
+#CPACK_RPM_PACKAGE_ARCHITECTURE noarch for common
+#CPACK_RPM_GENERATE_USER_BINARY_SPECFILE_TEMPLATE
+
+set(CPACK_RPM_PACKAGE_NAME	${PROJECT_NAME})
+set(CPACK_RPM_PACKAGE_URL	${PROJECT_HOMEPAGE_URL})
+set(CPACK_RPM_PACKAGE_VERSION	${PROJECT_VERSION})
+set(CPACK_RPM_PACKAGE_RELEASE	${PROJECT_DISTRIBUTION})
+set(CPACK_RPM_PACKAGE_SUMMARY	${CPACK_PACKAGE_SUMMARY})
+
+set(CPACK_RPM_PACKAGE_LICENSE	various)
+set(CPACK_RPM_PACKAGE_GROUP	Applications/Engineering)
+set(CPACK_RPM_PACKAGE_REQUIRES	"Macaulay2-common = 1.15.0.1")
+#CPACK_RPM_PRE_INSTALL_SCRIPT_FILE
+#CPACK_RPM_PRE_UNINSTALL_SCRIPT_FILE
+#CPACK_RPM_POST_INSTALL_SCRIPT_FILE
+#CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE
+#CPACK_RPM_NO_<COMPONENT>_INSTALL_PREFIX_RELOCATION
+#set(CPACK_RPM_COMPONENT_INSTALL ON) # we need to generate two packages: common and arch-dependent
+set(CPACK_RPM_CHANGELOG_FILE	${CMAKE_SOURCE_DIR}/README)
+#CPACK_RPM_SPEC_INSTALL_POST
+#CPACK_RPM_SPEC_MORE_DEFINE
+
+###############################################################################
+
+#CPACK_DEBIAN_PACKAGE_PRIORITY
+#CPACK_DEBIAN_PACKAGE_RECOMMENDS
+#CPACK_DEBIAN_PACKAGE_SUGGESTS
+#set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA
+#  "${CMAKE_CURRENT_SOURCE_DIR}/CMake/debian/postinst;${CMAKE_CURRENT_SOURCE_DIR}/CMake/debian/prerm;" )
+
+set(CPACK_DEBIAN_PACKAGE_NAME	${PROJECT_NAME})
+set(CPACK_DEBIAN_PACKAGE_URL	${PROJECT_HOMEPAGE_URL})
+set(CPACK_DEBIAN_PACKAGE_VERSION	${PROJECT_VERSION})
+set(CPACK_DEBIAN_PACKAGE_RELEASE	${PROJECT_DISTRIBUTION})
+#set(CPACK_DEBIAN_PACKAGE_SUMMARY	${CPACK_PACKAGE_SUMMARY})
+
+set(CPACK_DEBIAN_PACKAGE_SECTION	devel)
+set(CPACK_DEBIAN_PACKAGE_DEPENDS	"Macaulay2-common (>= 1.15.0.1)")
+set(CPACK_DEBIAN_PACKAGE_DESCRIPTION ${CPACK_PACKAGE_DESCRIPTION_SUMMARY})
+#CPACK_DEBIAN_PRE_INSTALL_SCRIPT_FILE
+#CPACK_DEBIAN_PRE_UNINSTALL_SCRIPT_FILE
+#CPACK_DEBIAN_POST_INSTALL_SCRIPT_FILE
+#CPACK_DEBIAN_POST_UNINSTALL_SCRIPT_FILE
+#CPACK_DEBIAN_NO_<COMPONENT>_INSTALL_PREFIX_RELOCATION
+#set(CPACK_DEBIAN_COMPONENT_INSTALL ON) # we need to generate two packages: common and arch-dependent
+set(CPACK_DEBIAN_CHANGELOG_FILE	${CMAKE_SOURCE_DIR}/README)
+
+###############################################################################
+include(CPack)
 
 # install/Makefile
 

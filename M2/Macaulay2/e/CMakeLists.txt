@@ -260,8 +260,10 @@ set(SRCLIST
 list(TRANSFORM SRCLIST APPEND .cpp OUTPUT_VARIABLE CPPFILES)
 list(TRANSFORM SRCLIST APPEND .hpp OUTPUT_VARIABLE HPPFILES)
 
+###############################################################################
+
 # set -DBUILD_SHARED_LIBS=ON to generate a shared library
-add_library(M2-engine
+add_library(M2-engine # SHARED
   ${HPPONLYFILES}
   ${CPPONLYFILES}
   ${HPPFILES}
@@ -276,15 +278,17 @@ target_link_libraries(M2-engine Eigen3::Eigen)
 target_include_directories(M2-engine
   PUBLIC
     .
-    ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
   PRIVATE
     ${EIGEN3_INCLUDE_DIR}
     ${LIBXML2_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR}/Macaulay2/d
     ${CMAKE_SOURCE_DIR}/Macaulay2/c # TODO: engine should not depend on scc1
+    ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
   )
 
+###############################################################################
 # TODO: enable INTERPROCEDURAL_OPTIMIZATION?
+
 # common warning flags
 target_compile_options(M2-engine PRIVATE
   -Wall
@@ -322,8 +326,9 @@ endif()
 # add other compilers (eg: Intel, MSVC) here
 # for Intel: -diag-disable 981,869,383,2259,444 -debug -Wimplicit-function-declaration
 
-
+###############################################################################
 ## To try, run ctest or ./M2-unit-tests in Macaulay2/e
+
 if(BUILD_TESTING)
   enable_testing()
 
@@ -395,7 +400,7 @@ if(BUILD_TESTING)
 
   # NOTE: is d/debug.o needed?
   target_link_libraries(M2-unit-tests
-    regex M2-engine M2-interpreter system kernel
+    M2-regex M2-engine M2-interpreter M2-system M2-kernel
     Threads::Threads ${LIBGDBM} ${CMAKE_DL_LIBS}
     )
 

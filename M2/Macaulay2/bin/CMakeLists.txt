@@ -8,17 +8,12 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 # TODO: move main.c here
 add_executable(M2-binary timestamp.cpp ../d/main.c)
 
-# TODO: make sure this is okay on multi-configuration editors
-set_target_properties(M2-binary PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_FULL_BINDIR})
+set_target_properties(M2-binary PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${M2_INSTALL_PREFIX}/${M2_INSTALL_BINDIR})
 
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
-  regex M2-interpreter M2-engine system kernel
-  Threads::Threads
-
-  # TODO: handle these differently:
-  ${LIBGDBM} ${CMAKE_DL_LIBS}
-  )
+  M2-regex M2-interpreter M2-engine M2-system M2-kernel
+  Threads::Threads ${LIBGDBM} ${CMAKE_DL_LIBS}) # TODO: handle the latter two differently
 
 set(PKGLIB_LIST    FACTORY FFLAS_FFPACK GIVARO)
 set(LIBRARY_LIST   HISTORY READLINE MPSOLVE FLINT)
@@ -49,13 +44,11 @@ find_program(OTOOL otool)
 if(LDD)
   add_custom_command(TARGET M2-binary POST_BUILD
     COMMENT "## Linked libraries:"
-    COMMAND ${LDD} $<TARGET_FILE:M2-binary>
-    )
+    COMMAND ${SET_LD_LIBRARY_PATH} ${LDD} $<TARGET_FILE:M2-binary>)
 elseif(OTOOL)
   add_custom_command(TARGET M2-binary POST_BUILD
     COMMENT "## Linked libraries:"
-    COMMAND ${OTOOL} -L $<TARGET_FILE:M2-binary>
-    )
+    COMMAND ${SET_LD_LIBRARY_PATH} ${OTOOL} -L $<TARGET_FILE:M2-binary>)
 endif()
 
 ###############################################################################
@@ -74,18 +67,4 @@ endif()
 
 set(M2_TEMPLATE "#!/bin/sh\n${EXPORT_STRING} `dirname \"$0\"`/M2@EXE@ \"$@\"\n")
 string(CONFIGURE "${M2_TEMPLATE}" M2_TEMPLATE @ONLY)
-file(GENERATE
-  OUTPUT M2
-  CONTENT "${M2_TEMPLATE}"
-  )
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/M2
-  TYPE BIN
-  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-  )
-#install(TARGETS M2-binary RUNTIME
-#  FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-#  )
-
-# TODO
-# LD_LIBRARY_PATH="${M2_HOST_PREFIX}/lib:$LD_LIBRARY_PATH" ldd M2-binary.tmp
+file(GENERATE OUTPUT ${M2_INSTALL_PREFIX}/${M2_INSTALL_BINDIR}/M2 CONTENT "${M2_TEMPLATE}")

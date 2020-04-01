@@ -8,7 +8,7 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 # https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderUSD/blob/master/cmake/macros/PlatformIntrospection.cmake
 
 # TODO: which of these are still relevant? Can CMake replace any?
-if("${ISSUE}" STREQUAL "")
+if(NOT ISSUE)
   find_program(SW_VERS      sw_vers)
   find_program(LSB_RELEASE  lsb_release)
   find_file(OS_RELEASE      os-release      HINTS /etc /usr/lib)

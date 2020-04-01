@@ -1,26 +1,60 @@
-## Summary of git status
-# old output: git describe --dirty --long --always --abbrev=40 --tags --match "version-*"
-find_package(Git QUIET)
-execute_process(
-  COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  OUTPUT_VARIABLE   GIT_DESCRIPTION
-  ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
+###############################################################################
+## This file has multiple sections:
+#    1. Define configure options and cached variables
+#    2. Detect and print information about build system
+#    3. Define variables for installation directories and Macaulay2 Layout
+#    4. Define compiler and linker flags and feature
+#    5. Detect type sizes and existence of symbols, headers, and functions
 
-# TODO: when this is stable, use STATUS instead of ##
+###############################################################################
+## Define configure options and cached variables
+# use CMAKE_BUILD_TYPE=Debug                 instead of DEBUG
+# use CMAKE_BUILD_TYPE=Release               instead of OPTIMIZE
+# use CMAKE_BUILD_TYPE=RelWithDebInfo        instead of PROFILING
+# use CMAKE_BUILD_TYPE=RelMinSize            instead of ENABLE_STRIP
+# use BUILD_SHARED_LIBS=ON                   instead of SHARED
+
+option(MEMDEBUG      "enable memory allocation debugging" OFF)
+option(GIT_SUBMODULE "update submodules during build"     OFF)
+# TODO:
+#option(MYSQL        "link with mysql"                    OFF)
+#option(PYTHON       "link with libpython"                OFF)
+#option(NTL_WIZARD   "enable running the NTL wizard"      OFF)
+#option(ALTIVEC      "compile with '-faltivec' option"    OFF)
+#option(XCODE        "build Macaulay2/d/interpret.a"      OFF)
+
+set(MP_LIBRARY    MPIR CACHE STRING "specify the multiple precision library to use (MPIR or GMP)")
+set(PARALLEL_JOBS 4    CACHE STRING "specify the number of parallel jobs for libraries and programs")
+
+# TODO: deprecate these variables
+set(M2SUFFIX "")
+set(EXEEXT   "${CMAKE_EXECUTABLE_SUFFIX}")
+set(EXE      "-binary${M2SUFFIX}${CMAKE_EXECUTABLE_SUFFIX}")
+set(PACKAGE_VERSION ${Macaulay2_VERSION})
+
+###############################################################################
+## Detect and print information about build system
+
+## Summary of git status
+find_package(Git QUIET)
+if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
+  # previous describe code: git describe --dirty --long --always --abbrev=40 --tags --match "version-*"
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE   GIT_COMMIT)
+endif()
+
 message("## Configure Macaulay2
      M2 Version        = ${PROJECT_VERSION}
-     Git Commit        = ${GIT_DESCRIPTION}
+     Git Commit        = ${GIT_COMMIT}
      CMake Build Type  = ${CMAKE_BUILD_TYPE}
      BUILD_TESTING     = ${BUILD_TESTING}")
 
-################################################################
-
-# TODO: Which environment variables still relevant?
 ## Relevant environment variable values, if any:
-foreach(X AR CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION PKG_CONFIG_PATH GFTABLESDIR)
-  if(NOT ("$ENV{${X}}" STREQUAL ""))
+foreach(X AR CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION)
+  if(NOT "$ENV{${X}}" STREQUAL "${${X}}")
     set(${X} "$ENV{${X}}" CACHE STRING "set via environment variable at configure time")
     message("## Set via environment:   ${X} = ${${X}}")
   endif()
@@ -36,31 +70,77 @@ set(ARCH    ${CMAKE_SYSTEM_PROCESSOR})        # e.g. `uname -p`, x86_64, arm
 set(MACHINE ${ARCH}-${OS}-${ISSUE})           # e.g. x86_64-Linux-Fedora-31
 SITE_NAME(NODENAME)                           # e.g. `uname -n`
 
-# TODO: Is this still necessary?
-# The suffix "-binary" distinguishes the binary program M2-binary from the shell script M2.
-# The purpose of the shell script M2 is to set LD_LIBRARY_PATH appropriately.
-set(M2SUFFIX "") # used to be set by --progam-suffix
-set(EXEEXT   "${CMAKE_EXECUTABLE_SUFFIX}") # DEPRECATE: used in config.h.cmake, version.dd, and M2-init.el.in
-set(EXE      "-binary${M2SUFFIX}${CMAKE_EXECUTABLE_SUFFIX}")
+message("## Host operating system information:
+     ISSUE             = ${ISSUE}
+     NODENAME          = ${NODENAME}
+     OS REL            = ${OS} ${REL}
+     ARCH              = ${ARCH}")
+
+# TODO
+# message("## Target operating system information:")
 
 ################################################################
-## Configure options:
-# use CMAKE_BUILD_TYPE=Debug                 instead of DEBUG
-# use CMAKE_BUILD_TYPE=Release               instead of OPTIMIZE
-# use CMAKE_BUILD_TYPE=RelWithDebInfo        instead of PROFILING
-# use CMAKE_BUILD_TYPE=RelMinSize            instead of ENABLE_STRIP
-# use BUILD_SHARED_LIBS=ON                   instead of SHARED
+## Define variables for installation directories and Macaulay2 Layout
+# TODO: install the unstripped library with debug_info in the appropriate place.
+# On Fedora: /usr/lib/debug/usr/lib64/
 
-option(MEMDEBUG "enable memory allocation debugging" OFF)
-set(MP_LIBRARY  "mpir" CACHE STRING "specify the big integer package to use (mpir or gmp)")
+# staging area for building libraries needed to compile M2
+set(M2_INSTALL_PREFIX	${CMAKE_BINARY_DIR}/usr-dist CACHE PATH "target build prefix")
+set(M2_HOST_PREFIX	${CMAKE_BINARY_DIR}/usr-host CACHE PATH "host build prefix")
+set(M2_EXEC_INFIX	${MACHINE}	CACHE INTERNAL "infix for architecture dependent files")
+set(M2_DATA_INFIX	common		CACHE INTERNAL "infix for architecture independent files")
 
-# TODO:
-#option(MYSQL        "link with mysql"                    OFF)
-#option(PYTHON       "link with libpython"                OFF)
-#option(NTL_WIZARD   "enable running the NTL wizard"      OFF)
-#option(ALTIVEC      "compile with '-faltivec' option"    OFF)
-#option(XCODE        "build Macaulay2/d/interpret.a"      OFF)
+set(CMAKE_INSTALL_DATADIR share/Macaulay2)
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/usr-dist CACHE PATH "installation prefix" FORCE)
+endif()
 
+## This is using https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html#module:GNUInstallDirs
+## Which follows https://www.gnu.org/prep/standards/html_node/Directory-Variables.html
+include(GNUInstallDirs)
+
+# setting architecture dependent paths as in layout.m2.in
+foreach(DIR IN ITEMS BINDIR LIBDIR LIBEXECDIR)
+  set(M2_INSTALL_${DIR} ${M2_EXEC_INFIX}/${CMAKE_INSTALL_${DIR}})
+  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR})
+endforeach()
+
+# setting architecture independent paths as in layout.m2.in
+foreach(DIR IN ITEMS SYSCONFDIR DATAROOTDIR DATADIR INFODIR LOCALEDIR MANDIR DOCDIR INCLUDEDIR)
+  set(M2_INSTALL_${DIR} ${M2_DATA_INFIX}/${CMAKE_INSTALL_${DIR}})
+  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR})
+endforeach()
+
+message("## Staging area directories:
+     common:	${M2_INSTALL_PREFIX}/${M2_DATA_INFIX}
+     exec:	${M2_INSTALL_PREFIX}/${M2_EXEC_INFIX}")
+message("## Installation prefix: ${CMAKE_INSTALL_PREFIX}")
+
+###############################################################################
+## Define compiler and linker flags and features
+# look into compiler features:
+# https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
+
+# Common flags
+add_compile_options(
+  -I${CMAKE_SOURCE_DIR}/include
+  -I${CMAKE_BINARY_DIR}/include
+
+  # TODO: where should these be set?
+  -DSING_NDEBUG -DOM_NDEBUG # factory wants these
+  )
+
+# Flags based on options
+if(MEMDEBUG)
+  add_compile_options(-DMEMDEBUG)
+endif()
+# TODO: deal with all SIMDs together
+if(ALTIVEC)
+  add_compile_options(-faltivec)
+  add_link_options(-faltivec)
+endif()
+
+# Flags based on build type
 # NOTE: gc.h obeys the GC_DEBUG flag.
 if(CMAKE_BUILD_TYPE MATCHES "Deb") # Debugging
   add_compile_options(-O0 -DGC_DEBUG)
@@ -73,50 +153,24 @@ if(CMAKE_BUILD_TYPE MATCHES "Release|MinSizeRel")
   add_compile_options(-s -O2 -DNDEBUG -Wuninitialized)
 endif()
 
-if(MEMDEBUG)
-  add_compile_options(-DMEMDEBUG)
-endif()
+# Flags based on compiler
+# always compile with "-g", so we can debug even optimized versions
+if(CMAKE_C_COMPILER_ID STREQUAL GNU)
+  add_compile_options(-g3
 
-################################################################
-## Setting compiler flags
-# look into compiler features:
-# https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
-
-add_compile_options(
-  -I${CMAKE_SOURCE_DIR}/include
-  -I${CMAKE_BINARY_DIR}/include
-
-  # TODO: where should these be set?
-  -DSING_NDEBUG -DOM_NDEBUG # factory wants these
-  )
-
-# TODO: is this not necessary with clang?
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  add_compile_options(
+    # TODO: is this not necessary with clang?
     # -fopenmp # fflas_ffpack wants this, but currently normaliz fails on macOS with it
     -fabi-version=6 # givaro and fflas_ffpack want this
     )
-endif()
-
-# always compile with "-g", so we can debug even optimized versions
-if(CMAKE_C_COMPILER_ID STREQUAL GNU)
-  add_compile_options(-g3)
   add_link_options(-g3)
 else()
   add_compile_options(-g)
   add_link_options(-g)
 endif()
 
-# TODO: deal with all SIMDs together
-if(ALTIVEC)
-  add_compile_options(-faltivec)
-  add_link_options(-faltivec)
-endif()
-
-################################################################
-## Check for certain header files, functions
-
-# TODO: use CMAKE_REQUIRED_QUIET?
+###############################################################################
+## Detect type sizes and existence of symbols, headers, and functions
+# TIP: set CMAKE_REQUIRED_QUIET=ON to turn off output in this section
 
 include(CheckTypeSize)
 check_type_size("int *" SIZEOF_INT_P)
@@ -132,14 +186,6 @@ CHECK_SYMBOL_EXISTS(__environ                    "unistd.h" HAVE_DECL___ENVIRON)
 include(CheckLibraryExists)
 check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
 check_library_exists(resolv hstrerror "" HAVE_HSTRERROR)
-
-#AC_DEFINE(HAVE_LINBOX,1,[whether we are linking with the linbox library])
-#AC_DEFINE(HAVE_FPLLL,1,[whether we are linking with the fplll library])
-
-#AC_DEFINE_UNQUOTED(AUTOINST,$val,whether to instantiate templates automatically)
-#AC_DEFINE_UNQUOTED(IMPLINST,$val,whether to instantiate templates implicitly)
-#AC_DEFINE_UNQUOTED(WITH_NEWLINE_CRLF,$WITH_NEWLINE_CRLF,[whether newline is cr lf])
-#AC_DEFINE_UNQUOTED(WITH_NEWLINE_CR, $WITH_NEWLINE_CR,   [whether newline is cr])
 
 include(CheckIncludeFiles)
 # TODO: are all still relevant?

@@ -1,6 +1,16 @@
-set(JOBS 4)
-
-# TODO: git clones can be heavy; switch to downloading tarfiles from github.
+# TODO: git clones can be heavy; switch to submodules or downloading tarfiles from github.
+if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
+  ## Update submodules as needed
+  if(GIT_SUBMODULE)
+    message(STATUS "Submodule update")
+    execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      RESULT_VARIABLE GIT_SUBMOD_RESULT)
+    if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+      message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+    endif()
+  endif()
+endif()
 
 ################################################################
 ## This target builds external libraries that M2 relies on.
@@ -8,6 +18,7 @@ add_custom_target(build-libraries)
 
 ## This target builds external programs that are distributed with M2.
 add_custom_target(build-programs)
+set(PROGRAMS_DIR ${M2_INSTALL_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2)
 
 ## This target forces libraries and programs to run their install targets
 add_custom_target(clean-stamps
@@ -112,8 +123,8 @@ ExternalProject_Add(build-mpir
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
-  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install
+  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS}
+  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -167,9 +178,9 @@ ExternalProject_Add(build-mpfr
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX}
+  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       CPPFLAGS=${CPPFLAGS}
-  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} install
+  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -177,7 +188,7 @@ if(NOT MPFR_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-mpfr-install)
   if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-mpfr build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+    ExternalProject_Add_StepDependencies(build-mpfr configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
 endif()
 
@@ -203,14 +214,14 @@ ExternalProject_Add(build-ntl
                       LDFLAGS=${LDFLAGS}
                       CXX=${CMAKE_CXX_COMPILER}
                       RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     cd src && ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${JOBS}
+  BUILD_COMMAND     cd src && ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS}
                       MakeDescCFLAGS=-O0
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
                       LDFLAGS_CXX=${LDFLAGS}
-  INSTALL_COMMAND   cd src && ${MAKE_EXE} -j${JOBS} PREFIX=${M2_HOST_PREFIX} install
+  INSTALL_COMMAND   cd src && ${MAKE_EXE} -j${PARALLEL_JOBS} PREFIX=${M2_HOST_PREFIX} install
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
@@ -222,7 +233,7 @@ if(NOT NTL_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-ntl-install)
   if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-ntl build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+    ExternalProject_Add_StepDependencies(build-ntl configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
 endif()
 
@@ -238,7 +249,7 @@ ExternalProject_Add(build-flint
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
                     -DBUILD_SHARED_LIBS=ON
 		    -DHAVE_TLS=OFF
-                    -DWITH_NLT=ON
+                    -DWITH_NTL=ON
                     # Possible variables for the CMake build:
                     #-DBUILD_TESTING
                     #-DCMAKE_BUILD_TYPE
@@ -253,10 +264,10 @@ if(NOT FLINT_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-flint-install)
   if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-flint build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+    ExternalProject_Add_StepDependencies(build-flint configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
   if(NOT MPFR_FOUND)
-    ExternalProject_Add_StepDependencies(build-flint build build-mpfr-install)
+    ExternalProject_Add_StepDependencies(build-flint configure build-mpfr-install)
   endif()
 endif()
 
@@ -291,15 +302,15 @@ ExternalProject_Add(build-factory
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
-  BUILD_COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} all ftmpl_inst.o
+  BUILD_COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} all ftmpl_inst.o
                       AM_DEFAULT_VERBOSITY=1
                       WARNFLAGS=${factory_WARNFLAGS}
         COMMAND     cd factory-4.1.1 &&
                     ./bin/makeheader factory.template     factory.h     &&
                     ./bin/makeheader factoryconf.template factoryconf.h &&
                     ${CMAKE_COMMAND} -E copy factory.h factoryconf.h include/factory
-        COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} all-recursive
-  INSTALL_COMMAND   cd factory-4.1.1 && ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} install
+        COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} all-recursive
+  INSTALL_COMMAND   cd factory-4.1.1 && ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -308,22 +319,22 @@ if(NOT FACTORY_FOUND)
   add_dependencies(build-libraries build-factory-install)
   # TODO: repeat pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
   if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+    ExternalProject_Add_StepDependencies(build-factory configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
   if(NOT MPFR_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory build build-mpfr-install)
+    ExternalProject_Add_StepDependencies(build-factory configure build-mpfr-install)
   endif()
   if(NOT NTL_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory build build-ntl-install)
+    ExternalProject_Add_StepDependencies(build-factory configure build-ntl-install)
   endif()
   if(NOT FLINT_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory build build-flint-install) # lol
+    ExternalProject_Add_StepDependencies(build-factory configure build-flint-install) # lol
   endif()
 else()
-  if(NOT EXISTS ${M2_CORE_DIR}/factory/gftables)
+  if(NOT EXISTS ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
+    message(STATUS "Copying gftables in ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables")
     file(GLOB   GFTABLES    "${FACTORY_PREFIX}/share/factory/gftables/*")
-    file(MAKE_DIRECTORY               ${M2_CORE_DIR}/factory/gftables)
-    file(COPY ${GFTABLES} DESTINATION ${M2_CORE_DIR}/factory/gftables)
+    file(COPY ${GFTABLES} DESTINATION ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
   endif()
 endif()
 
@@ -340,7 +351,7 @@ ExternalProject_Add(build-frobby
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/frobby/patch-0.9.0
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ${MAKE_EXE} library -j${JOBS} prefix=${M2_HOST_PREFIX}
+  BUILD_COMMAND     ${MAKE_EXE} library -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       GMP_INC_DIR=${M2_HOST_PREFIX}/include
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -393,10 +404,10 @@ ExternalProject_Add(build-cddlib
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX}
+  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       SUBDIRS=${cddlib_SUBDIRS}
                       gmpdir=/nowhere
-  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} install
+  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
                       SUBDIRS=${cddlib_SUBDIRS}
                       gmpdir=/nowhere
   EXCLUDE_FROM_ALL  ON
@@ -406,7 +417,7 @@ if(NOT CDD_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-cddlib-install)
   if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-cddlib build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+    ExternalProject_Add_StepDependencies(build-cddlib configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
 endif()
 
@@ -425,8 +436,8 @@ ExternalProject_Add(build-glpk
                       CFLAGS=${CFLAGS}
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
-  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install-strip
+  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS}
+  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install-strip
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -434,7 +445,7 @@ if(NOT GLPK_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-glpk-install)
   if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-glpk build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+    ExternalProject_Add_StepDependencies(build-glpk configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
 endif()
 
@@ -458,8 +469,8 @@ ExternalProject_Add(build-mpsolve
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
-  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install
+  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS}
+  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -524,7 +535,7 @@ endif()
 
 # TODO: out of source build has issues with detecting SIMD instructions
 # TODO: separate source and binary directories
-# TODO: Givaro can't find gmp when mpir is present, commeting LDFLAGS
+# FIXME: don't install givaro-config, can we not even build it?
 ExternalProject_Add(build-givaro
   GIT_REPOSITORY    https://github.com/linbox-team/givaro.git
   GIT_TAG           v4.0.3
@@ -555,7 +566,7 @@ if(NOT GIVARO_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-givaro-install)
   if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-givaro build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+    ExternalProject_Add_StepDependencies(build-givaro configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
 endif()
 
@@ -596,10 +607,10 @@ if(NOT FFLAS_FFPACK_FOUND)
   add_dependencies(build-libraries build-fflas_ffpack-install)
   # TODO: the requirement on Givaro version is for fflas_ffpack 2.3.2
   if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-fflas_ffpack build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+    ExternalProject_Add_StepDependencies(build-fflas_ffpack configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
   if(NOT GIVARO_FOUND OR GIVARO_VERSION VERSION_LESS 4.0.3)
-    ExternalProject_Add_StepDependencies(build-fflas_ffpack build build-givaro-install)
+    ExternalProject_Add_StepDependencies(build-fflas_ffpack configure build-givaro-install)
   endif()
 endif()
 
@@ -640,7 +651,7 @@ if(NOT MATHIC_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-mathic-install)
   if(NOT MEMTAILOR_FOUND)
-    ExternalProject_Add_StepDependencies(build-mathic build build-memtailor-install)
+    ExternalProject_Add_StepDependencies(build-mathic configure build-memtailor-install)
   endif()
 endif()
 
@@ -662,7 +673,7 @@ if(NOT MATHICGB_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-mathicgb-install)
   if(NOT MATHIC_FOUND)
-    ExternalProject_Add_StepDependencies(build-mathicgb build build-mathic-install)
+    ExternalProject_Add_StepDependencies(build-mathicgb configure build-mathic-install)
   endif()
 endif()
 
@@ -670,6 +681,7 @@ endif()
 ## Build required programs
 
 # 4ti2 needs glpk and is used by the package FourTiTwo
+# TODO: install binaries in the libexec directory
 ExternalProject_Add(build-4ti2
   URL               ${M2_SOURCE_URL}/4ti2-1.6.9.tar.gz
   URL_HASH          SHA256=3053e7467b5585ad852f6a56e78e28352653943e7249ad5e5174d4744d174966
@@ -691,8 +703,8 @@ ExternalProject_Add(build-4ti2
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
-  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install-strip
+  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS}
+  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install-strip
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -700,7 +712,7 @@ if(NOT 4TI2)
   # Add this to the programs target
   add_dependencies(build-programs build-4ti2-install)
   if(NOT GLPK_FOUND)
-    ExternalProject_Add_StepDependencies(build-4ti2 build build-glpk-install)
+    ExternalProject_Add_StepDependencies(build-4ti2 configure build-glpk-install)
   endif()
 endif()
 
@@ -714,7 +726,7 @@ ExternalProject_Add(build-cohomcalg
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX}
+  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -723,7 +735,7 @@ ExternalProject_Add(build-cohomcalg
                       CXX=${CMAKE_CXX_COMPILER}
                       LD=${CMAKE_CXX_COMPILER} # correct?
         COMMAND     ${CMAKE_STRIP} bin/cohomcalg
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different bin/cohomcalg ${M2_HOST_PREFIX}/bin
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different bin/cohomcalg ${PROGRAMS_DIR}/bin/
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -747,7 +759,7 @@ ExternalProject_Add(build-gfan
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/gfan/patch-0.6.2
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX}
+  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       CC=${gfan_CC}
                       CXX=${gfan_CXX}
                       CLINKER=${gfan_CLINKER}
@@ -755,7 +767,7 @@ ExternalProject_Add(build-gfan
                       PREFIX=/nowhere
                       CDD_LINKOPTIONS=-lcddgmp
         COMMAND     ${CMAKE_STRIP} gfan${CMAKE_EXECUTABLE_SUFFIX}
-  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} PREFIX=${M2_HOST_PREFIX} install
+  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} PREFIX=${PROGRAMS_DIR} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -763,7 +775,7 @@ if(NOT GFAN)
   # Add this to the programs target
   add_dependencies(build-programs build-gfan-install)
   if(NOT CDD_FOUND)
-    ExternalProject_Add_StepDependencies(build-gfan build build-cddlib-install)
+    ExternalProject_Add_StepDependencies(build-gfan configure build-cddlib-install)
   endif()
 endif()
 
@@ -778,7 +790,7 @@ ExternalProject_Add(build-lrslib
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX} lrs
+  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} lrs
                       LIBDIR=${M2_HOST_PREFIX}/lib
                       CPPFLAGS=${CPPFLAGS}
                       LDFLAGS=${LDFLAGS}
@@ -786,7 +798,7 @@ ExternalProject_Add(build-lrslib
                       RANLIB=${CMAKE_RANLIB}
                       # TODO: TARGET_ARCH= RANLIB=true
         COMMAND     ${CMAKE_STRIP} lrs${CMAKE_EXECUTABLE_SUFFIX}
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${M2_HOST_PREFIX}/bin
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${PROGRAMS_DIR}/bin/
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -812,7 +824,7 @@ ExternalProject_Add(build-csdp
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/csdp/patch-6.2.0
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX}
+  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       CC=${csdp_CC}
                       CXX=${csdp_CXX}
                       LDFLAGS=${csdp_LDFLAGS}
@@ -824,7 +836,7 @@ ExternalProject_Add(build-csdp
                       theta/graphtoprob
                       theta/rand_graph
                       theta/theta
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different solver/csdp ${M2_HOST_PREFIX}/bin
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different solver/csdp ${PROGRAMS_DIR}/bin/
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -867,7 +879,7 @@ ExternalProject_Add(build-normaliz
                       # OPENMP=
                       # NORMFLAGS=
                       # TARGET_ARCH=
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS}
+  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS}
                       CXX=${CMAKE_CXX_COMPILER}
                       # NORMFLAGS=
                       CXXFLAGS=${normaliz_CXXFLAGS}
@@ -875,7 +887,8 @@ ExternalProject_Add(build-normaliz
                       GMPFLAGS=${normaliz_GMPFLAGS}
         COMMAND     ${CMAKE_STRIP} source/normaliz
   # TODO: do we need the libraries as well, or just the binary?
-  INSTALL_COMMAND   ${MAKE_EXE} -j${JOBS} install
+  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${PROGRAMS_DIR}/bin/
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -883,7 +896,7 @@ if(NOT NORMALIZ)
   # Add this to the programs target
   add_dependencies(build-programs build-normaliz-install)
   if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-normaliz build build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+    ExternalProject_Add_StepDependencies(build-normaliz configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
 endif()
 
@@ -920,10 +933,10 @@ ExternalProject_Add(build-nauty
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     ${MAKE_EXE} -j${JOBS} prefix=${M2_HOST_PREFIX}
+  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
         COMMAND     ${CMAKE_STRIP} ${nauty_STRIPFILES}
   # TODO: put nauty programs in a folder?
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${nauty_PROGRAMS} ${M2_HOST_PREFIX}/bin
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${nauty_PROGRAMS} ${PROGRAMS_DIR}/bin/
   TEST_COMMAND      rm -f ${nauty_CHECKERS}
        COMMAND      ${MAKE_EXE} BIGTEST=0 checks
   EXCLUDE_FROM_ALL  ON
@@ -968,7 +981,7 @@ ExternalProject_Add(build-topcom
   BUILD_COMMAND     ${MAKE_EXE} -j1 # topcom doesn't like parallel builds
         COMMAND     ${CMAKE_STRIP} ${topcom_PROGRAMS}
   # TODO: put topcom programs in a folder?
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${topcom_PROGRAMS} ${M2_HOST_PREFIX}/bin
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${topcom_PROGRAMS} ${PROGRAMS_DIR}/bin/
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -976,15 +989,9 @@ if(NOT TOPCOM)
   # Add this to the programs target
   add_dependencies(build-programs build-topcom-install)
   if(NOT CDD_FOUND)
-    ExternalProject_Add_StepDependencies(build-topcom build build-cddlib-install)
+    ExternalProject_Add_StepDependencies(build-topcom configure build-cddlib-install)
   endif()
 endif()
-
-install(DIRECTORY
-  ${M2_HOST_PREFIX}/bin
-  DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2
-  USE_SOURCE_PERMISSIONS)
-
 
 #############################################################################
 

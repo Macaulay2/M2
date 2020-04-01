@@ -2,11 +2,11 @@
 
 # TODO: there's now a c++ regex library
 
-add_library(regex OBJECT regex.c)
+add_library(M2-regex OBJECT regex.c)
 
-target_include_directories(regex PUBLIC .)
+target_include_directories(M2-regex PUBLIC .)
 
-target_compile_definitions(regex PUBLIC
+target_compile_definitions(M2-regex PUBLIC
   -Dre_compile_fastmap=M2_re_compile_fastmap
   -Dre_compile_pattern=M2_re_compile_pattern
   -Dre_match=M2_re_match
@@ -22,7 +22,7 @@ target_compile_definitions(regex PUBLIC
   )
 
 # common warning flags
-target_compile_options(regex PRIVATE
+target_compile_options(M2-regex PRIVATE
   -Wall
   -Wfatal-errors
   -Wno-cast-qual
@@ -36,14 +36,14 @@ target_compile_options(regex PRIVATE
   )
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   # using Clang or AppleClang
-  target_compile_options(regex PRIVATE
+  target_compile_options(M2-regex PRIVATE
     -Wno-mismatched-tags
     -Wno-unknown-pragmas
     )
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   # using GCC
-  target_compile_options(regex PRIVATE
+  target_compile_options(M2-regex PRIVATE
     -pedantic-errors
     -Wno-error=pragmas
     )

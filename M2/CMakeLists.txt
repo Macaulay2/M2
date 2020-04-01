@@ -7,9 +7,9 @@
 ## Short instructions:
 ##  1. cd M2/BUILD/build-cmake
 ##  2. cmake ../..
-##  3. make build-libraries
-##  4. make
-##  5. make check-packages
+##  3. make build-libraries build-programs rebuild_cache
+##  4. make M2-engine M2-binary M2-core M2-emacs
+##  5. make install install-packages check-packages
 ##
 ## IDEs such as Xcode or vscode can also configure and build using CMake.
 ###############################################################################
@@ -62,8 +62,7 @@ project(Macaulay2
 ## Set path for CMake modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(configure) ## CMake script for configuring various variables
-include(prechecks) ## CMake script for preprocessor tests and linting
-include(packaging) ## CMake script for making distribution packages for Macaulay2
+include(prechecks) ## CMake script for preprocessor checks and linting
 include(check-libraries) ## CMake script for checking which libraries exist and which need to be built
 include(build-libraries) ## CMake script for downloading, building, and installing external libraries
 # Note: we separate the two so that check-libraries.cmake can be called by Macaulay2/bin/CMakeLists.txt
@@ -73,18 +72,6 @@ include(build-libraries) ## CMake script for downloading, building, and installi
 configure_file(include/M2/config.h.cmake include/M2/config.h)
 
 ###############################################################################
-message("## Target operating system information:
-     ISSUE             = ${ISSUE}
-     NODENAME          = ${NODENAME}
-     OS REL            = ${OS} ${REL}
-     ARCH              = ${ARCH}
-     OPTIMIZE          = ${OPTIMIZE}
-     DEBUG             = ${DEBUG}")
-
-# TODO
-# message("## Host operating system information:")
-
-###############################################################################
 ## Kick off the Macaulay2 directory
 add_subdirectory(Macaulay2)
 
@@ -92,23 +79,15 @@ add_subdirectory(Macaulay2)
 # TODO: write the M2Config.cmake module for users
 
 ###############################################################################
+
+#include(testing) ## CMake script for testing
+include(packaging) ## CMake script for making distribution packages for Macaulay2
+
+###############################################################################
 ## This section is temporary hacks, will be gone soon.
 
-add_custom_target(run-M2
-  COMMAND M2-binary -q
-  DEPENDS Core copy-packages)
-
-# This is just for Mahrud to work on CMake issues without messy compiler errors
-set(SUPPRESS_COMPILER_WARNINGS ON)
-
 # TODO: this should be done somewhere else, perhaps install, but at build time, not install time
-file(CREATE_LINK ${CMAKE_INSTALL_FULL_BINDIR}/M2-binary ${CMAKE_BINARY_DIR}/M2 SYMBOLIC)
-execute_process(
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_CORE_DIR}
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_EXEC_PREFIX}
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_INFODIR}
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${M2_COMMON_PREFIX}/${CMAKE_INSTALL_DOCDIR}
-  )
+file(CREATE_LINK ${M2_INSTALL_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_BINDIR}/M2-binary ${CMAKE_BINARY_DIR}/M2 SYMBOLIC)
 
 # Hackish way to set topSrcdir in startup.m2
 # FIXME: DELETING THIS CAUSES CONFUSING PATH ERRORS!!!
