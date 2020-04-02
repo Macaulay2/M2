@@ -34,7 +34,6 @@ endif()
 macro(_NTL_check_version)
   # Query NTL_VERSION
   file(READ "${NTL_INCLUDE_DIR}/NTL/version.h" _NTL_version_header)
-  message(${NTL_INCLUDE_DIR}/NTL/version.h)
 
   string(REGEX MATCH "define[ \t]+NTL_MAJOR_VERSION[ \t]+\\(([0-9]+)\\)"
     _NTL_major_version_match "${_NTL_version_header}")
@@ -60,7 +59,7 @@ macro(_NTL_check_version)
 endmacro(_NTL_check_version)
 
 if(NOT NTL_FOUND)
-  set(NTL_INCLUDE_DIRS NOTFOUND)
+  set(NTL_INCLUDE_DIR NOTFOUND)
   set(NTL_LIBRARIES NOTFOUND)
 
   # search first if an NTLConfig.cmake is available in the system,

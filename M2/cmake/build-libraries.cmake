@@ -206,7 +206,7 @@ ExternalProject_Add(build-ntl
                       NTL_GMP_LIP=on
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
-		      SHARED=on
+                      SHARED=off
                       CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
@@ -245,9 +245,9 @@ ExternalProject_Add(build-flint
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-                    -DBUILD_SHARED_LIBS=ON
+                    -DBUILD_SHARED_LIBS=OFF
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
-		    -DHAVE_TLS=OFF
+                    -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
                     # Possible variables for the CMake build:
                     #-DBUILD_TESTING
@@ -276,8 +276,8 @@ endif()
 set(factory_CPPFLAGS "${CPPFLAGS} -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
 set(factory_WARNFLAGS "-Wno-uninitialized -Wno-write-strings -Wno-deprecated")
 # TODO: without this, factory finds flint, but not ntl. Why?
-set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} /usr /usr/local /sw /opt/local")
-set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} /usr /usr/local /sw /opt/local")
+set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} ${NTL_INCLUDE_DIR}/..")
+set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} ${FLINT_INCLUDE_DIR}/..")
 ExternalProject_Add(build-factory
   URL               ${M2_SOURCE_URL}/factory-4.1.1.tar.gz
   URL_HASH          SHA256=9dd84d11204e1457dac0a0d462a78d4cd4103c14cbf792b83d488aa529ad5724
@@ -291,7 +291,7 @@ ExternalProject_Add(build-factory
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-omalloc
                       --disable-doxygen-doc
-                      --enable-shared
+                      --disable-shared
                       --enable-streamio
                       --without-Singular
                       --with-ntl=${factory_NTL_HOME_PATH}

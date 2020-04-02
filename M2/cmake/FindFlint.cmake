@@ -59,7 +59,7 @@ macro(_flint_check_version)
 endmacro(_flint_check_version)
 
 if(NOT FLINT_FOUND)
-  set(FLINT_INCLUDE_DIRS NOTFOUND)
+  set(FLINT_INCLUDE_DIR NOTFOUND)
   set(FLINT_LIBRARIES NOTFOUND)
 
   # search first if an FlintConfig.cmake is available in the system,
