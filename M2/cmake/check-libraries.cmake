@@ -71,10 +71,13 @@ find_package(TBB	REQUIRED QUIET) # required by mathicgb
 find_package(GMP	6.0.0)
 find_package(MPIR	3.0.0)
 
+# IDEA: check only if all prerequisites are found?
+# eg: don't check MPFR if choice of MP isn't found
+
 ## These are not required because we can build them if they are not found.
-find_package(MPFR	4.0.1)
+find_package(MPFR	4.0.1) # dep: gmp/mpir
 find_package(BDWGC	7.6.4)
-find_package(Flint	2.5.3)
+find_package(Flint	2.5.3) # dep: mpfr, gmp/mpir
 # TODO: add minimum version checks
 find_package(CDD)     # 094h?
 find_package(NTL	10.5.0)
@@ -96,8 +99,8 @@ endif()
 # /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist//usr/share/factory/
 pkg_search_module(FACTORY	factory>=4.1.1
                                 singular-factory>=4.1.1	IMPORTED_TARGET)
-pkg_search_module(FFLAS_FFPACK	fflas-ffpack>=2.2.2	IMPORTED_TARGET)
-pkg_search_module(GIVARO	givaro>=4.0.2		IMPORTED_TARGET)
+pkg_search_module(FFLAS_FFPACK	fflas-ffpack>=2.3.2	IMPORTED_TARGET)
+pkg_search_module(GIVARO	givaro>=4.0.3		IMPORTED_TARGET)
 
 # TODO: remove this or deal with it differently
 find_library(LIBGDBM gdbm)

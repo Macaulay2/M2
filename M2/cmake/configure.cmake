@@ -16,12 +16,15 @@
 
 option(MEMDEBUG      "enable memory allocation debugging" OFF)
 option(GIT_SUBMODULE "update submodules during build"     OFF)
+option(BUILD_TESTING "build unit test suits"              ON)
 # TODO:
 #option(MYSQL        "link with mysql"                    OFF)
 #option(PYTHON       "link with libpython"                OFF)
 #option(NTL_WIZARD   "enable running the NTL wizard"      OFF)
 #option(ALTIVEC      "compile with '-faltivec' option"    OFF)
 #option(XCODE        "build Macaulay2/d/interpret.a"      OFF)
+option(BUILD_PROGRAMS  "build all programs, even if found"  ON)
+option(BUILD_LIBRARIES "build all libraries, even if found" OFF)
 
 set(MP_LIBRARY    MPIR CACHE STRING "specify the multiple precision library to use (MPIR or GMP)")
 set(PARALLEL_JOBS 4    CACHE STRING "specify the number of parallel jobs for libraries and programs")
@@ -84,16 +87,16 @@ message("## Host operating system information:
 # TODO: install the unstripped library with debug_info in the appropriate place.
 # On Fedora: /usr/lib/debug/usr/lib64/
 
-## Setting the prefix so pkg-config can find libraries we've built
-list(PREPEND CMAKE_SYSTEM_PREFIX_PATH	${M2_HOST_PREFIX})
-list(APPEND  CMAKE_PREFIX_PATH		${M2_HOST_PREFIX})
-set(ENV{PKG_CONFIG_PATH}		${M2_HOST_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PATH})
-
 # staging area for building libraries needed to compile M2
 set(M2_INSTALL_PREFIX	${CMAKE_BINARY_DIR}/usr-dist CACHE PATH "target build prefix")
 set(M2_HOST_PREFIX	${CMAKE_BINARY_DIR}/usr-host CACHE PATH "host build prefix")
 set(M2_EXEC_INFIX	${MACHINE}	CACHE INTERNAL "infix for architecture dependent files")
 set(M2_DATA_INFIX	common		CACHE INTERNAL "infix for architecture independent files")
+
+## Setting the prefix so pkg-config can find libraries we've built
+set(CMAKE_SYSTEM_PREFIX_PATH	${M2_HOST_PREFIX} ${CMAKE_SYSTEM_PREFIX_PATH})
+set(CMAKE_PREFIX_PATH		${CMAKE_PREFIX_PATH} ${M2_HOST_PREFIX})
+set(ENV{PKG_CONFIG_PATH}	${M2_HOST_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PATH})
 
 set(CMAKE_INSTALL_DATADIR share/Macaulay2)
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)

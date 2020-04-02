@@ -133,7 +133,7 @@ The main targets for building Macaulay2 are:
 - `M2-emacs`: build the M2-mode package for Emacs
 
 In addition, the following targets are available for 
-- `scc1`: build the Simple C Compiler
+- `scc1`: build the Safe C Compiler
 - `M2-interpreter`: translate `.d` and `.dd` sources into C and C++ sources
 - `M2-regex`
 - `M2-system`

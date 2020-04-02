@@ -318,6 +318,7 @@ ExternalProject_Add(build-factory
 if(NOT FACTORY_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-factory-install)
+  set(FACTORY_STREAMIO 1) # TODO: does this work?
   # TODO: repeat pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
   if(NOT ${MP_LIBRARY}_FOUND)
     ExternalProject_Add_StepDependencies(build-factory configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
@@ -566,6 +567,7 @@ ExternalProject_Add(build-givaro
 if(NOT GIVARO_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-givaro-install)
+  set(HAVE_GIVARO_isunit 1) # TODO: does this work?
   if(NOT ${MP_LIBRARY}_FOUND)
     ExternalProject_Add_StepDependencies(build-givaro configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
   endif()
@@ -999,6 +1001,40 @@ if(NOT TOPCOM)
 endif()
 
 #############################################################################
+
+if(BUILD_PROGRAMS)
+  add_dependencies(build-programs
+    build-4ti2-install
+    build-cohomcalg-install
+    build-gfan-install
+    build-lrslib-install
+    build-csdp-install
+    build-normaliz-install
+    build-nauty-install
+    build-topcom-install
+    )
+endif()
+
+if(BUILD_LIBRARIES)
+  add_dependencies(build-libraries
+    build-mpir-install
+    build-mpfr-install
+    build-ntl-install
+    build-flint-install
+    build-factory-install
+    build-frobby-install
+    build-cddlib-install
+    build-glpk-install
+    build-mpsolve-install
+    build-googletest-install
+    build-bdwgc-install
+    build-givaro-install
+    build-fflas_ffpack-install
+    build-memtailor-install
+    build-mathic-install
+    build-mathicgb-install
+    )
+endif()
 
 get_target_property(LIBRARY_DEPENDENCIES build-libraries MANUALLY_ADDED_DEPENDENCIES)
 get_target_property(PROGRAM_DEPENDENCIES build-programs  MANUALLY_ADDED_DEPENDENCIES)
