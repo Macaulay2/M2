@@ -2,6 +2,37 @@
 --- author(s): Gregory G. Smith
 --- notes: 
 
+doc /// 
+    Key
+	(isPseudoprime,ZZ)
+    	isPseudoprime
+    Headline
+    	whether an integer is probably prime
+    Usage 
+    	isPseudoprime x
+    Inputs
+    	x:ZZ
+    Outputs
+    	:Boolean
+    Description
+    	Text 
+	    Performs some trial division and then some probabilistic
+	    primality tests. If $x$ is definitely composite, the function
+	    returns false, otherwise it is declared probably prime, i.e. prime
+	    for most practical purposes, and the function returns true. The
+	    chance of declaring a composite prime is very small.
+	    Subsequent calls to the same function do not increase the
+	    probability of the number being prime.
+    	    
+	    This function calls {\tt fmpz_is_probabprime} in the {\tt flint} library.
+	Example
+    	    isPseudoprime 911
+    SeeAlso
+    	(isPrime,ZZ)
+	(factor,ZZ)
+///
+
+-*
 document { 
      Key => {(isPseudoprime, ZZ), isPseudoprime},
      Headline => "whether an integer is a pseudoprime",
@@ -20,6 +51,7 @@ document {
 	  to be prime up to $10^{13}$, and no nonprime pseudoprime is known."
 	  }
      }
+*-
 
 TEST ///
 assert not isPseudoprime(101*1617839547365369353)

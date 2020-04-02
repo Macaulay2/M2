@@ -28,8 +28,12 @@ M2_bool rawZZisPrime(gmp_ZZ a)
 
 M2_bool rawZZisPseudoprime(gmp_ZZ a)
 {
-  ERROR("not yet reimplemented!");
-  return false;
+  fmpz_t n;
+  fmpz_init(n);
+  fmpz_set_mpz(n, a);  
+  int ret = fmpz_is_probabprime(n);
+  fmpz_clear(n);
+  return ret;
 }
 
 gmp_arrayZZ flintToFrontend(std::vector<fmpz_t>); // this function copies data to front end type.
