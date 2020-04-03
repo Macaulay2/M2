@@ -88,7 +88,7 @@ include(packaging) ## CMake script for making distribution packages for Macaulay
 ## This section is temporary hacks, will be gone soon.
 
 # TODO: this should be done somewhere else, perhaps install, but at build time, not install time
-file(CREATE_LINK ${M2_INSTALL_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_BINDIR}/M2-binary ${CMAKE_BINARY_DIR}/M2 SYMBOLIC)
+file(CREATE_LINK ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_BINDIR}/M2-binary ${CMAKE_BINARY_DIR}/M2 SYMBOLIC)
 
 # Hackish way to set topSrcdir in startup.m2
 # FIXME: DELETING THIS CAUSES CONFUSING PATH ERRORS!!!
