@@ -103,6 +103,8 @@ pkg_search_module(FFLAS_FFPACK	fflas-ffpack>=2.3.2	IMPORTED_TARGET)
 pkg_search_module(GIVARO	givaro>=4.0.3		IMPORTED_TARGET)
 
 # TODO: remove this or deal with it differently
+# IDEA: replace with capnproto.org or msgpack.org
+# Alternatively protobuf: https://developers.google.com/protocol-buffers/docs/proto#maps
 find_library(LIBGDBM gdbm)
 
 ## Need a flavor of make for building libraries and programs

@@ -32,8 +32,6 @@ if(MEMDEBUG)
   set( MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full --show-reachable=yes --track-origins=yes" )
 endif()
 
-include(CTest)
-
 ###############################################################################
 
 # TODO: some targets have different resource limits

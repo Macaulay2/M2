@@ -318,9 +318,9 @@ In file included from /usr/local/include/flint/nmod_vec.h:29:
 /usr/local/include/flint/ulong_extras.h:123:27: error: variable '_flint_primes' cannot be threadprivate because it is thread-local
 #pragma omp threadprivate(_flint_primes, _flint_prime_inverses, _flint_primes_used)
                           ^
-<pre>
-If this happens, run the following to build Flint in the `usr-host` library and use it.
 </pre>
+If this happens, run the following to build Flint in the `usr-host` library and use it.
+<pre>
 make build-flint-install
 cmake -UFLINT_* .
 </pre>

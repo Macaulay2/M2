@@ -13,49 +13,60 @@ file(COPY LAYOUT COPYING-GPL-2 COPYING-GPL-3 DESTINATION ${M2_DIST_PREFIX}/${M2_
 # TODO: consider using:
 #source_group(TREE . PREFIX "Macaulay2" FILES ../include/M2/config.h ...)
 
-# TODO:
-#add_subdirectory(util)
-add_subdirectory(regex)
-add_subdirectory(c)
-add_subdirectory(e-includes)
-add_subdirectory(d)
-add_subdirectory(e)
-add_subdirectory(system)
-add_subdirectory(kernel)
-add_subdirectory(bin)
-add_subdirectory(m2)
-add_subdirectory(man)
+# TODO: remove compat, nash, util
+add_subdirectory(regex) # replace with gnu regex?
+add_subdirectory(c) # rename to scc?
+add_subdirectory(e-includes) # remove?
+add_subdirectory(d) # rename to interpreter?
+add_subdirectory(e) # rename to engine?
+add_subdirectory(system) # clear up purpose or combine
+add_subdirectory(kernel) # clear up purpose or combine
+add_subdirectory(bin) # combine with engine or interpreter?
+add_subdirectory(m2) # rename to Core?
+add_subdirectory(man) # combine?
 add_subdirectory(packages)
-add_subdirectory(emacs)
-#add_subdirectory(html-check-links)
-#add_subdirectory(book)
-
+add_subdirectory(emacs) # rename to editors and include vim, etc?
+add_subdirectory(book) # separate repository?
 if(BUILD_TESTING)
   add_subdirectory(tests)
 endif()
 
 ###############################################################################
 
+# install M2-binary and the M2 wrapper
 install(FILES
   ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2
   ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2-binary
   DESTINATION ${CMAKE_INSTALL_BINDIR}
   PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
+# install shared and dynamic libraries
+# TODO: pick one of the following two folder approaches
+install(DIRECTORY
+  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/lib ${M2_HOST_PREFIX}/lib
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2
+  USE_SOURCE_PERMISSIONS
+  OPTIONAL
+  FILES_MATCHING PATTERN "*.so*" PATTERN "*.dylib")
+
+# install programs and licenses
+install(DIRECTORY
+  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBEXECDIR}/Macaulay2/bin
+  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBEXECDIR}/Macaulay2/program-licenses
+  DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2
+  USE_SOURCE_PERMISSIONS
+  OPTIONAL)
+
+# install documentation databases
 install(DIRECTORY
   ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2
   DESTINATION ${CMAKE_INSTALL_LIBDIR}
   USE_SOURCE_PERMISSIONS
   COMPONENT common
-  OPTIONAL)
+  OPTIONAL
+  PATTERN "lib" EXCLUDE)
 
-install(DIRECTORY
-  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBEXECDIR}/Macaulay2/bin
-  DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2
-  USE_SOURCE_PERMISSIONS
-  COMPONENT programs
-  OPTIONAL)
-
+# install man page, packages, info files, documentation, and emacs package
 install(DIRECTORY
   ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}
@@ -63,8 +74,6 @@ install(DIRECTORY
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/doc
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
+  USE_SOURCE_PERMISSIONS
   COMPONENT common
   OPTIONAL)
-
-# /usr/lib64/Macaulay2
-# /usr/libexec/Macaulay2
