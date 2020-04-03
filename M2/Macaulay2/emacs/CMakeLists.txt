@@ -1,7 +1,7 @@
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 set(M2_ARGS -q --stop --silent)
-set(EMACS_DIR ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp)
+set(EMACS_DIR ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp)
 set(EMACS_FILES M2-README M2-emacs-hlp.txt M2-emacs.m2 M2-init.el M2-mode.el M2-symbols.el M2.el)
 
 # TODO: move this from ALL to install

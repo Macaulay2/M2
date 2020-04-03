@@ -377,7 +377,7 @@ if(BUILD_TESTING)
     ../bin/timestamp.c # version.dd needs timestamp
     )
 
-  gtest_discover_tests(M2-unit-tests)
+  gtest_discover_tests(M2-unit-tests TEST_PREFIX unit-tests:)
 
   # TODO: valgrind --track-origins=yes ...
   add_test(NAME M2-engine-tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND M2-unit-tests)

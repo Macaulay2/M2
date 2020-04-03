@@ -12,8 +12,7 @@ cmake -S M2/M2 -B $(BUILD_DIR) \
       -DMP_LIBRARY=MPIR \
       -DBUILD_TESTING=ON \
       -DCMAKE_BUILD_TYPE=Release \
-      -DM2_IgnoreExampleErrors=true \
-      -DCMAKE_INSTALL_PREFIX=$(M2_HOME)/$(BUILD_DIR)/usr-dist
+      -DM2_IgnoreExampleErrors=true
 
 cmake --build $(BUILD_DIR) --target build-libraries build-programs
 cmake --build $(BUILD_DIR) --target M2-core -j4

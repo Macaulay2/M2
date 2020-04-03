@@ -23,9 +23,9 @@ add_custom_target(build-programs)
 file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
 file(MAKE_DIRECTORY ${M2_INSTALL_PROGRAMSDIR}/bin)
 
-## This target forces libraries and programs to run their install targets
+## This target forces libraries and programs to run their configure and install targets
 add_custom_target(clean-stamps
-  COMMAND rm libraries/*/src/build-*-stamp/*-install)
+  COMMAND rm libraries/*/src/build-*-stamp/*-{configure,install})
 
 # TODO: Accumulate information in usr-host/share/config.site to speed up configuration
 # See: https://www.gnu.org/software/autoconf/manual/autoconf-2.60/html_node/Cache-Files.html
@@ -91,7 +91,7 @@ endif()
 #################################################################################
 ## Build required libraries, first those downloaded as a tarfile
 
-include(ExternalProject) # configure, compile, and install at build time; FetchContent populates at configure time
+include(ExternalProject) # configure, patch, build, and install at build time
 set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
 
 # TODO: use git? https://github.com/Macaulay2/mpir.git 82816d99
@@ -286,8 +286,8 @@ ExternalProject_Add(build-factory
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p0 < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.1.1
-  CONFIGURE_COMMAND cd factory-4.1.1 && autoreconf -vif
-            COMMAND cd factory-4.1.1 && ${SET_LD_LIBRARY_PATH} ./configure --prefix=${M2_HOST_PREFIX}
+  CONFIGURE_COMMAND cd factory-4.1.1 && autoreconf -vif && ${SET_LD_LIBRARY_PATH}
+                    ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-omalloc
                       --disable-doxygen-doc
@@ -305,12 +305,11 @@ ExternalProject_Add(build-factory
                       CXX=${CMAKE_CXX_COMPILER}
   BUILD_COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} all ftmpl_inst.o
                       AM_DEFAULT_VERBOSITY=1
-                      WARNFLAGS=${factory_WARNFLAGS}
-        COMMAND     cd factory-4.1.1 &&
+                      WARNFLAGS=${factory_WARNFLAGS} &&
                     ./bin/makeheader factory.template     factory.h     &&
                     ./bin/makeheader factoryconf.template factoryconf.h &&
-                    ${CMAKE_COMMAND} -E copy factory.h factoryconf.h include/factory
-        COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} all-recursive
+                    ${CMAKE_COMMAND} -E copy factory.h factoryconf.h include/factory &&
+                    ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} all-recursive
   INSTALL_COMMAND   cd factory-4.1.1 && ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
@@ -333,10 +332,10 @@ if(NOT FACTORY_FOUND)
     ExternalProject_Add_StepDependencies(build-factory configure build-flint-install) # lol
   endif()
 else()
-  if(NOT EXISTS ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
-    message(STATUS "Copying gftables in ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables")
+  if(NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
+    message(STATUS "Copying gftables in ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables")
     file(GLOB   GFTABLES    "${FACTORY_PREFIX}/share/factory/gftables/*")
-    file(COPY ${GFTABLES} DESTINATION ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
+    file(COPY ${GFTABLES} DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
   endif()
 endif()
 

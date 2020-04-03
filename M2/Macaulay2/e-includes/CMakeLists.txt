@@ -16,4 +16,4 @@ add_custom_command(OUTPUT geores.hpp geogbvec.hpp statuscodes.h
   VERBATIM
   )
 
-file(COPY statuscodes DESTINATION ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR}/Core)
+file(COPY statuscodes DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core)

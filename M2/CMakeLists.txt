@@ -61,6 +61,7 @@ project(Macaulay2
 ###############################################################################
 ## Set path for CMake modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+include(CTest) ## CMake module for generating a 'test' target for all unit-tests
 include(configure) ## CMake script for configuring various variables
 include(prechecks) ## CMake script for preprocessor checks and linting
 include(check-libraries) ## CMake script for checking which libraries exist and which need to be built

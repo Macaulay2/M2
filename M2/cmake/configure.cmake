@@ -16,7 +16,6 @@
 
 option(MEMDEBUG      "enable memory allocation debugging" OFF)
 option(GIT_SUBMODULE "update submodules during build"     OFF)
-option(BUILD_TESTING "build unit test suits"              ON)
 # TODO:
 #option(MYSQL        "link with mysql"                    OFF)
 #option(PYTHON       "link with libpython"                OFF)
@@ -87,21 +86,21 @@ message("## Host operating system information:
 # TODO: install the unstripped library with debug_info in the appropriate place.
 # On Fedora: /usr/lib/debug/usr/lib64/
 
-# staging area for building libraries needed to compile M2
-set(M2_INSTALL_PREFIX	${CMAKE_BINARY_DIR}/usr-dist CACHE PATH "target build prefix")
-set(M2_HOST_PREFIX	${CMAKE_BINARY_DIR}/usr-host CACHE PATH "host build prefix")
-set(M2_EXEC_INFIX	${MACHINE}	CACHE INTERNAL "infix for architecture dependent files")
-set(M2_DATA_INFIX	common		CACHE INTERNAL "infix for architecture independent files")
+## Setting the staging area for building libraries needed to compile M2
+set(M2_DIST_PREFIX	${CMAKE_BINARY_DIR}/usr-dist	CACHE PATH	"target build prefix")
+set(M2_HOST_PREFIX	${CMAKE_BINARY_DIR}/usr-host	CACHE PATH	"host build prefix")
+set(M2_EXEC_INFIX	${MACHINE}			CACHE INTERNAL	"infix for architecture dependent files")
+set(M2_DATA_INFIX	common				CACHE INTERNAL	"infix for architecture independent files")
 
 ## Setting the prefix so pkg-config can find libraries we've built
-set(CMAKE_SYSTEM_PREFIX_PATH	${M2_HOST_PREFIX} ${CMAKE_SYSTEM_PREFIX_PATH})
-set(CMAKE_PREFIX_PATH		${CMAKE_PREFIX_PATH} ${M2_HOST_PREFIX})
 set(ENV{PKG_CONFIG_PATH}	${M2_HOST_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PATH})
 
-set(CMAKE_INSTALL_DATADIR share/Macaulay2)
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/usr-dist CACHE PATH "installation prefix" FORCE)
-endif()
+## Setting the prefixes where CMake will look for headers, libraries, and programs
+set(CMAKE_SYSTEM_PREFIX_PATH	${M2_HOST_PREFIX} ${CMAKE_SYSTEM_PREFIX_PATH})
+set(CMAKE_PREFIX_PATH		${CMAKE_PREFIX_PATH} ${M2_HOST_PREFIX})
+
+## Setting the folder for Macaulay2 Core and packages
+set(CMAKE_INSTALL_DATADIR	share/Macaulay2)
 
 ## This is using https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html#module:GNUInstallDirs
 ## Which follows https://www.gnu.org/prep/standards/html_node/Directory-Variables.html
@@ -119,11 +118,11 @@ foreach(DIR IN ITEMS SYSCONFDIR DATAROOTDIR DATADIR INFODIR LOCALEDIR MANDIR DOC
   GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR})
 endforeach()
 
-set(M2_INSTALL_PROGRAMSDIR ${M2_INSTALL_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2)
+set(M2_INSTALL_PROGRAMSDIR ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2)
 
 message("## Staging area directories:
-     common:	${M2_INSTALL_PREFIX}/${M2_DATA_INFIX}
-     exec:	${M2_INSTALL_PREFIX}/${M2_EXEC_INFIX}")
+     common:	${M2_DIST_PREFIX}/${M2_DATA_INFIX}
+     exec:	${M2_DIST_PREFIX}/${M2_EXEC_INFIX}")
 message("## Installation prefix: ${CMAKE_INSTALL_PREFIX}")
 
 ###############################################################################

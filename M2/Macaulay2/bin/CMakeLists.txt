@@ -8,7 +8,7 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 # TODO: move main.c here
 add_executable(M2-binary timestamp.cpp ../d/main.c)
 
-set_target_properties(M2-binary PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${M2_INSTALL_PREFIX}/${M2_INSTALL_BINDIR})
+set_target_properties(M2-binary PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
 
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
@@ -67,4 +67,4 @@ endif()
 
 set(M2_TEMPLATE "#!/bin/sh\n${EXPORT_STRING} `dirname \"$0\"`/M2@EXE@ \"$@\"\n")
 string(CONFIGURE "${M2_TEMPLATE}" M2_TEMPLATE @ONLY)
-file(GENERATE OUTPUT ${M2_INSTALL_PREFIX}/${M2_INSTALL_BINDIR}/M2 CONTENT "${M2_TEMPLATE}")
+file(GENERATE OUTPUT ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2 CONTENT "${M2_TEMPLATE}")

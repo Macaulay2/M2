@@ -28,9 +28,9 @@ list(TRANSFORM PACKAGES APPEND ".m2" OUTPUT_VARIABLE PACKAGE_OUTPUTS)
 
 ## Copy packages and auxiliary files to the destination
 foreach(PACKAGE IN LISTS PACKAGES)
-  file(COPY ${PACKAGE}.m2 DESTINATION ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR})
+  file(COPY ${PACKAGE}.m2 DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR})
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE})
-    file(COPY ${PACKAGE}  DESTINATION ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR})
+    file(COPY ${PACKAGE}  DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR})
   endif()
 endforeach()
 
@@ -64,7 +64,7 @@ set(M2_INSTALL_ARGS
   CheckDocumentation     => ${M2_CheckDocumentation},
   IgnoreExampleErrors    => ${M2_IgnoreExampleErrors},
   RemakeAllDocumentation => ${M2_RemakeAllDocumentation},
-  InstallPrefix          => \\"${M2_INSTALL_PREFIX}/\\",
+  InstallPrefix          => \\"${M2_DIST_PREFIX}/\\",
   UserMode               => false,
   SeparateExec           => true,
   DebuggingMode          => true
@@ -86,10 +86,10 @@ foreach(PACKAGE IN LISTS PACKAGES)
       "Uninstalling package ${PACKAGE}"
     COMMAND
       rm -rf
-        ${M2_INSTALL_PREFIX}/${M2_INSTALL_DATADIR}/${PACKAGE}*
-        ${M2_INSTALL_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${PACKAGE}*
-        ${M2_INSTALL_PREFIX}/${M2_INSTALL_DOCDIR}/${PACKAGE}*
-        ${M2_INSTALL_PREFIX}/${M2_INSTALL_INFODIR}/${PACKAGE}*
+        ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/${PACKAGE}*
+        ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${PACKAGE}*
+        ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/${PACKAGE}*
+        ${M2_DIST_PREFIX}/${M2_INSTALL_INFODIR}/${PACKAGE}*
     )
 
   # FIXME: what is if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 ?
