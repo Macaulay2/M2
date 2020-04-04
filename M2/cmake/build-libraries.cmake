@@ -41,9 +41,6 @@ endif()
 #################################################################################
 ## Setting a baseline for compile and link options for external projects
 
-add_compile_options(-I${M2_HOST_PREFIX}/include)
-add_link_options(-L${M2_HOST_PREFIX}/lib)
-
 get_property(COMPILE_OPTIONS DIRECTORY PROPERTY COMPILE_OPTIONS)
 get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
 
@@ -126,26 +123,14 @@ ExternalProject_Add(build-mpir
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
-if(MP_LIBRARY MATCHES "gmp|GMP")
-  set(MP_LIBRARY GMP)
-  if(NOT GMP_FOUND)
+if(NOT ${MP_LIBRARY}_FOUND)
+  if(MP_LIBRARY STREQUAL GMP)
     # gmp is a prerequisite
     message(FATAL "gmp integer package specified, but not found")
-  endif()
-elseif(MP_LIBRARY MATCHES "mpir|MPIR")
-  set(MP_LIBRARY MPIR)
-  if(NOT MPIR_FOUND)
+  elseif(MP_LIBRARY STREQUAL MPIR)
     # Add this to the libraries target
     add_dependencies(build-libraries build-mpir-install)
   endif()
-  # mpir.h and gmp.h both serve as multiple precision rational and integer arithmetic
-  # libraries and are surrounded by #ifndef __GMP_H__ ... #endif so only one can be loaded.
-  # Similarly for gmpxx.h and mpirxx.h.  However, the contents of the files differ.
-  # For example, mpf_cmp_z is defined only in gmp.h.
-  # TODO: use target_include_directories instead? Maybe this is easier
-  include_directories(${CMAKE_SOURCE_DIR}/include/M2/gmp-to-mpir)
-else()
-  message(FATAL "multiple precision rational and integer arithmetic library not found")
 endif()
 
 
@@ -246,6 +231,7 @@ ExternalProject_Add(build-flint
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
                     -DBUILD_SHARED_LIBS=OFF
+                    -DWITH_MPIR=${WITH_MPIR}
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
                     -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
@@ -273,7 +259,7 @@ if(NOT FLINT_FOUND)
 endif()
 
 
-set(factory_CPPFLAGS "${CPPFLAGS} -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
+set(factory_CPPFLAGS "${CPPFLAGS} -DSING_NDEBUG -DOM_NDEBUG -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
 set(factory_WARNFLAGS "-Wno-uninitialized -Wno-write-strings -Wno-deprecated")
 # TODO: without this, factory finds flint, but not ntl. Why?
 set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} ${NTL_INCLUDE_DIR}/..")

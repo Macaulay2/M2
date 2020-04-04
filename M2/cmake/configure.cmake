@@ -131,12 +131,11 @@ message("## Installation prefix: ${CMAKE_INSTALL_PREFIX}")
 # https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
 
 # Common flags
+add_link_options(-L${M2_HOST_PREFIX}/lib)
 add_compile_options(
+  -I${M2_HOST_PREFIX}/include
   -I${CMAKE_SOURCE_DIR}/include
   -I${CMAKE_BINARY_DIR}/include
-
-  # TODO: where should these be set?
-  -DSING_NDEBUG -DOM_NDEBUG # factory wants these
   )
 
 # Flags based on options

@@ -1,6 +1,7 @@
 ###############################################################################
 ## This script is responsible for finding location of libraries and programs
-## TIP: use cmake -LA to list resolved variables
+## TIP: use cmake -LA . to list resolved variables
+##      use cmake -U*NTL* . to reconfigure NTL variables
 
 ## Requirement	Debian package	RPM package	OSX package
 #   BLAS/LAPACK	libopenblas-dev	openblas-devel	
@@ -68,8 +69,23 @@ find_package(OpenMP	REQUIRED QUIET)
 find_package(TBB	REQUIRED QUIET) # required by mathicgb
 
 ## Two options for multiprecision arithmetic
-find_package(GMP	6.0.0)
-find_package(MPIR	3.0.0)
+# TODO: just use WITH_MPIR?
+if(MP_LIBRARY MATCHES "gmp|GMP")
+  find_package(GMP	6.0.0)
+  set(MP_LIBRARY GMP)
+elseif(MP_LIBRARY MATCHES "mpir|MPIR")
+  find_package(MPIR	3.0.0)
+  set(WITH_MPIR ON)
+  set(MP_LIBRARY MPIR)
+  # mpir.h and gmp.h both serve as multiple precision rational and integer arithmetic
+  # libraries and are surrounded by #ifndef __GMP_H__ ... #endif so only one can be loaded.
+  # Similarly for gmpxx.h and mpirxx.h.  However, the contents of the files differ.
+  # For example, mpf_cmp_z is defined only in gmp.h.
+  configure_file(${CMAKE_SOURCE_DIR}/include/M2/gmp-to-mpir/gmp.h   ${M2_HOST_PREFIX}/include/gmp.h   COPYONLY)
+  configure_file(${CMAKE_SOURCE_DIR}/include/M2/gmp-to-mpir/gmpxx.h ${M2_HOST_PREFIX}/include/gmpxx.h COPYONLY)
+else()
+  message(FATAL "multiple precision rational and integer arithmetic library not found")
+endif()
 
 # IDEA: check only if all prerequisites are found?
 # eg: don't check MPFR if choice of MP isn't found

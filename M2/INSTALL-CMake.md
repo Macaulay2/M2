@@ -1,5 +1,5 @@
-Building Macaulay2 with CMake
-=============================
+Building Macaulay2 from Source using CMake
+==========================================
 
 ## Warning!
 This is not (yet) the official build system of Macaulay2.
@@ -7,18 +7,18 @@ This is not (yet) the official build system of Macaulay2.
 ## Why CMake?
 CMake is a cross-platform system for generating build environments using native tools such as
 Makefiles and Ninja or IDEs such as Xcode and Visual Studio.
-See this article on [why the KDE project switched to CMake](https://lwn.net/Articles/188693/) and
-[this page](https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/Really-Cool-CMake-Features).
+See this article on [why the KDE project switched to CMake](https://lwn.net/Articles/188693/) and this list of
+[cool CMake features](https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/Really-Cool-CMake-Features).
 
 ## Getting started
 [Download](https://cmake.org/download/) the latest release of CMake for your platform.
-If using a packaged distribution, confirm that you have version at least 3.14 with `cmake --version`.
+If using a packaged distribution, confirm using `cmake --version` that you have version at least 3.14.
 
 There are various other tools needed to compile Macaulay2 dependencies.
 On Ubuntu, install `autoconf build-essential bison libtool yasm`.
 See [INSTALL](INSTALL) for more details for Mac OS X and other systems.
 
-Further, there are 7 libraries that must be found on the system. On Ubuntu, install
+There are also 7 libraries that must be found on the system. On Ubuntu, install
 `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libomp-dev libtbb-dev libgdbm-dev`.
 In addition, install `libatomic-ops-dev`, though this dependency will be removed soon.
 
@@ -38,16 +38,17 @@ Each step is explained separately in the next section.
 git clone https://github.com/mahrud/M2.git -b feature/cmake
 ```
 
-2. Setup the build directory:
+2. Setup the build environment:
 ```
 cd M2/M2/BUILD/build
 cmake -S ../.. -B . \
       -DMP_LIBRARY=MPIR \
       -DCMAKE_BUILD_TYPE=Release
 ```
-We build with MPIR as the multiple precision arithmetic library by default.To use GMP, use `-DMP_LIBRARY=GMP` instead.
+We build with MPIR as the multiple precision arithmetic library by default. To use GMP, use `-DMP_LIBRARY=GMP` instead.
+This command generates Makefiles. To generate Ninja files instead, add `-GNinja`.
 
-3. Build the libraries that Macaulay2 requires:
+3. Build the libraries that will be linked with the Macaulay2 executable:
 ```
 make build-libraries
 ```
@@ -88,13 +89,17 @@ Note that by default the `install` target depends on the `all` target.
 ### Packaging Macaulay2
 CMake also supports creating rpm and deb packages as well as archives and dmg images using the `cpack` utility:
 ```
-cpack -G DEB
-cpack -G RPM
+cpack -G DEB	# requires dpkg
+cpack -G RPM	# requires rpmbuild
 ```
 
-## Advanced flags
-For a complete list, along with descriptions, try `cmake -LAH .`.
-Here are the most useful flags, where the format is `[FLAG]:[TYPE]=[DEFAULT VALUE]`:
+## Advanced cached flags
+Within the build environment, you can use `cmake -L .` to see a list of computed flags and options.
+Use `cmake -DVARIABLE=VALUE .` (note the `-D` prefix) to change a cached variable and 
+use `cmake -UVARIABLE` to unset the variable. Wildcard unsetting is allowed; e.g. `cmake -U*VAR* .`
+
+For a complete list, along with descriptions, try `cmake -LAH .`. Here are the most useful flags,
+where the format is `[FLAG]:[TYPE]=[DEFAULT VALUE]`, though specifying the type is optional.
 
 ### Build flags
 - `BUILD_LIBRARIES:BOOL=OFF`: build all libraries, even if found on the system
@@ -121,18 +126,16 @@ Here are the most useful flags, where the format is `[FLAG]:[TYPE]=[DEFAULT VALU
 - `M2_gbTrace:STRING=0`: set the Groebner basis trace level
 - `GC_MAXIMUM_HEAP_SIZE:STRING=400M`: maximum collected heap size for tests
 
-## Advanced targets and options
-After running `cmake`, you can use `cmake -LA .` to see a list of computed flags and options.
-To change any, run `cmake -DVARIABLE=VALUE .` (don't forget the `-D` prefix). Note that these changes
-are sticky, meaning that to unset variables you need to run `cmake -UVARIABLE`.
-Wildcard unsetting is allowed; e.g. `cmake -U*VAR* .`
 
-The following are some general targets:
+## Advanced targets and options
+Within the build environment, use `make help` (or `ninja help`) to get a list of valid targets.
+
+The following are the general targets:
 - `all (default)`
 - `depend`
-- `install`
-  - `install/local`: only install targets in the current directory
-  - `install/strip`: install and strip binaries and executables
+- `install`: install the build artifacts from the `all` target
+  - `install/local`: only install artifacts from targets in the current directory
+  - `install/strip`: install stripped binary and library artifacts
 - `edit_cache`: edit configure options and cache variables
 - `rebuild_cache`: rebuild the cache
 - `clean`: clean generated artifacts (but not everything)
