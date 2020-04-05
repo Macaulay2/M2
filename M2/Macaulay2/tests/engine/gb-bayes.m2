@@ -1,4 +1,3 @@
-restart
 if instance(gbTrace,ZZ) then gbTrace = 1 else gbTrace 1
 
 R = ZZ/32003[p_(1,1,1,1,1)..p_(2,2,2,2,2)]

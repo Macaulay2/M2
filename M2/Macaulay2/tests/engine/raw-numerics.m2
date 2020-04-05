@@ -1,6 +1,5 @@
 -- Test of numeric rings
 
-restart
 needs "raw-util.m2"
 
 -- new ZZ from RawRingElement -- rawToInteger

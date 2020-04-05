@@ -1,6 +1,5 @@
 -- Test of GB and quotients of polynomial rings
 
-restart
 R = ZZ/32003[a..d]
 I = ideal((a*d-b*c)*a*(b-c))
 A = R/a
