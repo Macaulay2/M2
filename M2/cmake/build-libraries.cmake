@@ -123,7 +123,7 @@ ExternalProject_Add(build-mpir
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
-if(NOT ${MP_LIBRARY}_FOUND)
+if(NOT MP_FOUND)
   if(MP_LIBRARY STREQUAL GMP)
     # gmp is a prerequisite
     message(FATAL "gmp integer package specified, but not found")
@@ -131,6 +131,10 @@ if(NOT ${MP_LIBRARY}_FOUND)
     # Add this to the libraries target
     add_dependencies(build-libraries build-mpir-install)
   endif()
+endif()
+# Making sure flint can find the gmp.h->mpir.h symlink
+if(MPIR_FOUND AND NOT EXISTS ${M2_HOST_PREFIX}/include/gmp.h)
+  file(COPY ${MP_INCLUDE_DIRS}/gmp.h ${MP_INCLUDE_DIRS}/gmpxx.h DESTINATION ${M2_HOST_PREFIX}/include)
 endif()
 
 
@@ -170,8 +174,8 @@ ExternalProject_Add(build-mpfr
 if(NOT MPFR_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-mpfr-install)
-  if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-mpfr configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  if(NOT MP_FOUND)
+    ExternalProject_Add_StepDependencies(build-mpfr configure build-mpir-install)
   endif()
 endif()
 
@@ -215,8 +219,8 @@ ExternalProject_Add(build-ntl
 if(NOT NTL_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-ntl-install)
-  if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-ntl configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  if(NOT MP_FOUND)
+    ExternalProject_Add_StepDependencies(build-ntl configure build-mpir-install)
   endif()
 endif()
 
@@ -247,8 +251,8 @@ ExternalProject_Add(build-flint
 if(NOT FLINT_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-flint-install)
-  if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-flint configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  if(NOT MP_FOUND)
+    ExternalProject_Add_StepDependencies(build-flint configure build-mpir-install)
   endif()
   if(NOT MPFR_FOUND)
     ExternalProject_Add_StepDependencies(build-flint configure build-mpfr-install)
@@ -259,6 +263,7 @@ if(NOT FLINT_FOUND)
 endif()
 
 
+# TODO: what is ftmpl_inst.o?
 set(factory_CPPFLAGS "${CPPFLAGS} -DSING_NDEBUG -DOM_NDEBUG -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
 set(factory_WARNFLAGS "-Wno-uninitialized -Wno-write-strings -Wno-deprecated")
 # TODO: without this, factory finds flint, but not ntl. Why?
@@ -272,7 +277,8 @@ ExternalProject_Add(build-factory
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p0 < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.1.1
-  CONFIGURE_COMMAND cd factory-4.1.1 && autoreconf -vif && ${SET_LD_LIBRARY_PATH}
+  CONFIGURE_COMMAND cd factory-4.1.1 &&
+                    autoreconf -vif && ${SET_LD_LIBRARY_PATH} &&
                     ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-omalloc
@@ -289,7 +295,8 @@ ExternalProject_Add(build-factory
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
-  BUILD_COMMAND     cd factory-4.1.1 && ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} all ftmpl_inst.o
+  BUILD_COMMAND     cd factory-4.1.1 &&
+                    ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} all ftmpl_inst.o
                       AM_DEFAULT_VERBOSITY=1
                       WARNFLAGS=${factory_WARNFLAGS} &&
                     ./bin/makeheader factory.template     factory.h     &&
@@ -305,8 +312,8 @@ if(NOT FACTORY_FOUND)
   add_dependencies(build-libraries build-factory-install)
   set(FACTORY_STREAMIO 1) # TODO: does this work?
   # TODO: repeat pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
-  if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  if(NOT MP_FOUND)
+    ExternalProject_Add_StepDependencies(build-factory configure build-mpir-install)
   endif()
   if(NOT MPFR_FOUND)
     ExternalProject_Add_StepDependencies(build-factory configure build-mpfr-install)
@@ -326,7 +333,7 @@ else()
 endif()
 
 
-#TODO: version#"frobby version" is missing
+# TODO: version#"frobby version" is missing
 set(frobby_CXXFLAGS "${CPPFLAGS} ${CXXFLAGS} -Wno-deprecated-declarations")
 # FIXME: permissions on the installed files are wrong
 ExternalProject_Add(build-frobby
@@ -365,7 +372,8 @@ endif()
 
 
 # https://www.inf.ethz.ch/personal/fukudak/cdd_home/
-# TODO: change includedir to default?
+# topcom depends on cddlib, but includes setoper.h, rather than cdd/setoper.h
+# TODO: anyway to change this?
 set(cddlib_SUBDIRS "lib-src lib-src-gmp")
 ExternalProject_Add(build-cddlib
   URL               ${M2_SOURCE_URL}/cddlib-094h.tar.gz
@@ -403,8 +411,8 @@ ExternalProject_Add(build-cddlib
 if(NOT CDD_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-cddlib-install)
-  if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-cddlib configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  if(NOT MP_FOUND)
+    ExternalProject_Add_StepDependencies(build-cddlib configure build-mpir-install)
   endif()
 endif()
 
@@ -431,8 +439,8 @@ ExternalProject_Add(build-glpk
 if(NOT GLPK_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-glpk-install)
-  if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-glpk configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  if(NOT MP_FOUND)
+    ExternalProject_Add_StepDependencies(build-glpk configure build-mpir-install)
   endif()
 endif()
 
@@ -553,8 +561,8 @@ if(NOT GIVARO_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-givaro-install)
   set(HAVE_GIVARO_isunit 1) # TODO: does this work?
-  if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-givaro configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  if(NOT MP_FOUND)
+    ExternalProject_Add_StepDependencies(build-givaro configure build-mpir-install)
   endif()
 endif()
 
@@ -594,8 +602,8 @@ if(NOT FFLAS_FFPACK_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-fflas_ffpack-install)
   # TODO: the requirement on Givaro version is for fflas_ffpack 2.3.2
-  if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-fflas_ffpack configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  if(NOT MP_FOUND)
+    ExternalProject_Add_StepDependencies(build-fflas_ffpack configure build-mpir-install)
   endif()
   if(NOT GIVARO_FOUND OR GIVARO_VERSION VERSION_LESS 4.0.3)
     ExternalProject_Add_StepDependencies(build-fflas_ffpack configure build-givaro-install)
@@ -887,8 +895,8 @@ ExternalProject_Add(build-normaliz
 if(NOT NORMALIZ)
   # Add this to the programs target
   add_dependencies(build-programs build-normaliz-install)
-  if(NOT ${MP_LIBRARY}_FOUND)
-    ExternalProject_Add_StepDependencies(build-normaliz configure build-$<LOWER_CASE:${MP_LIBRARY}>-install)
+  if(NOT MP_FOUND)
+    ExternalProject_Add_StepDependencies(build-normaliz configure build-mpir-install)
   endif()
 endif()
 
@@ -1039,7 +1047,7 @@ message("## External components that will be built:
 
 message("## Library information:
      Linear Algebra    = ${LAPACK_LIBRARIES}
-     MP Arithmetic     = ${${MP_LIBRARY}_LIBRARIES}")
+     MP Arithmetic     = ${MP_LIBRARIES}")
 # TODO: how to keep track of things we've built?
 #     BUILTLIBS         = ${BUILTLIBS}
 #     LIBS              = ${LIBS}

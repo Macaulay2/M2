@@ -15,10 +15,6 @@ target_link_libraries(M2-binary
   M2-regex M2-interpreter M2-engine M2-system M2-kernel
   Threads::Threads ${LIBGDBM} ${CMAKE_DL_LIBS}) # TODO: handle the latter two differently
 
-set(PKGLIB_LIST    FACTORY FFLAS_FFPACK GIVARO)
-set(LIBRARY_LIST   HISTORY READLINE MPSOLVE)
-set(LIBRARIES_LIST LAPACK LIBXML2 ${MP_LIBRARY} BDWGC MPFR NTL FLINT MATHICGB MATHIC MEMTAILOR TBB FROBBY)
-
 foreach(LIB IN LISTS LIBRARY_LIST)
   if(${LIB}_FOUND)
     target_link_libraries(M2-binary ${${LIB}_LIBRARY})

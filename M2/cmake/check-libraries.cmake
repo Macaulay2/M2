@@ -45,6 +45,11 @@
 #   cddplus	Double Description Method
 #   lrslib	vertex enumeration/convex hull problems
 
+## These lists will be used in Macaulay2/{e,bin}/CMakeLists.txt
+set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
+set(LIBRARY_LIST   HISTORY READLINE MPSOLVE)
+set(LIBRARIES_LIST LAPACK LIBXML2 MP BDWGC MPFR NTL FLINT FACTORY MATHICGB MATHIC MEMTAILOR TBB FROBBY)
+
 ################################################################
 ## pkg-config is useful for fflas-ffpack and certain other packages
 find_package(PkgConfig  REQUIRED QUIET)
@@ -69,54 +74,51 @@ find_package(OpenMP	REQUIRED QUIET)
 find_package(TBB	REQUIRED QUIET) # required by mathicgb
 
 ## Two options for multiprecision arithmetic
-# TODO: just use WITH_MPIR?
+# mpir.h and gmp.h both serve as multiple precision rational and integer arithmetic
+# libraries and are surrounded by #ifndef __GMP_H__ ... #endif so only one can be loaded.
+# Similarly for gmpxx.h and mpirxx.h.  However, the contents of the files differ.
+# For example, mpf_cmp_z is defined only in gmp.h.
+# TODO: find a way so switching from one to another is possible
 if(MP_LIBRARY MATCHES "gmp|GMP")
   find_package(GMP	6.0.0)
   set(MP_LIBRARY GMP)
 elseif(MP_LIBRARY MATCHES "mpir|MPIR")
   find_package(MPIR	3.0.0)
+  # TODO: use WITH_MPIR instead of MP_LIBRARY?
   set(WITH_MPIR ON)
   set(MP_LIBRARY MPIR)
-  # mpir.h and gmp.h both serve as multiple precision rational and integer arithmetic
-  # libraries and are surrounded by #ifndef __GMP_H__ ... #endif so only one can be loaded.
-  # Similarly for gmpxx.h and mpirxx.h.  However, the contents of the files differ.
-  # For example, mpf_cmp_z is defined only in gmp.h.
-  configure_file(${CMAKE_SOURCE_DIR}/include/M2/gmp-to-mpir/gmp.h   ${M2_HOST_PREFIX}/include/gmp.h   COPYONLY)
-  configure_file(${CMAKE_SOURCE_DIR}/include/M2/gmp-to-mpir/gmpxx.h ${M2_HOST_PREFIX}/include/gmpxx.h COPYONLY)
 else()
   message(FATAL "multiple precision rational and integer arithmetic library not found")
 endif()
 
-# IDEA: check only if all prerequisites are found?
-# eg: don't check MPFR if choice of MP isn't found
+# MP will mask either GMP or MPIR
+foreach(var IN ITEMS FOUND INCLUDE_DIRS LIBRARIES VERSION_OK)
+  set(MP_${var} ${${MP_LIBRARY}_${var}})
+endforeach()
 
 ## These are not required because we can build them if they are not found.
-find_package(MPFR	4.0.1) # dep: gmp/mpir
+find_package(MPFR	4.0.1)
 find_package(BDWGC	7.6.4)
-find_package(Flint	2.5.3) # dep: mpfr, gmp/mpir
+find_package(Factory	4.1.0)
+find_package(Flint	2.5.3)
+find_package(NTL       10.5.0)
 # TODO: add minimum version checks
 find_package(CDD)     # 094h?
-find_package(NTL	10.5.0)
-find_package(GLPK	4.59.0)
-find_package(Frobby	0.9.0)
-find_package(Memtailor	1.0.0)
 find_package(Mathic	1.0.0)
 find_package(Mathicgb	1.0.0)
+find_package(Memtailor	1.0.0)
 find_package(MPSolve	3.1.8)
+find_package(Frobby	0.9.0)
+find_package(GLPK      4.59.0) # needed by 4ti2
 
 if(BUILD_TESTING)
   find_package(GTest)
 endif()
 
 ## Find libraries available via pkg-config
-# TODO: add relevant X_CFLAGS_OTHER flags!
-# TODO: investigate error when factory-devel package is installed:
-# sample Factory finite field addition table file missing, needed for factorization:
-# /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist//usr/share/factory/
-pkg_search_module(FACTORY	factory>=4.1.1
-                                singular-factory>=4.1.1	IMPORTED_TARGET)
-pkg_search_module(FFLAS_FFPACK	fflas-ffpack>=2.3.2	IMPORTED_TARGET)
-pkg_search_module(GIVARO	givaro>=4.0.3		IMPORTED_TARGET)
+# TODO: take care of c flags such as -fopenmp and -fabi-version=6
+pkg_search_module(FFLAS_FFPACK	IMPORTED_TARGET	fflas-ffpack>=2.3.2)
+pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.0.3)
 
 # TODO: remove this or deal with it differently
 # IDEA: replace with capnproto.org or msgpack.org
@@ -138,12 +140,11 @@ find_program(CSDP	NAMES	csdp			PATHS ${M2_INSTALL_PROGRAMSDIR}/bin)
 find_program(NORMALIZ	NAMES	normaliz		PATHS ${M2_INSTALL_PROGRAMSDIR}/bin)
 find_program(NAUTY	NAMES	dreadnaut nauty-complg	PATHS ${M2_INSTALL_PROGRAMSDIR}/bin)
 find_program(TOPCOM	NAMES	checkregularity		PATHS ${M2_INSTALL_PROGRAMSDIR}/bin)
-find_program(POLYMAKE	NAMES	polymake)
+find_program(POLYMAKE	NAMES	polymake) # TODO
 
 ###############################################################################
 
 # TODO: do we use these?
-## topcom depends on cddlib, but includes setoper.h, rather than cdd/setoper.h, so we do, too
 if(CDD_FOUND)
   check_include_files(setoper.h HAVE_CDDLIB)
 endif()
@@ -167,4 +168,52 @@ if(FACTORY_FOUND)
   # whether Prem() from factory is public
   check_cxx_source_compiles([[#include <factory/factory.h>
     int main(){CanonicalForm p,q; Prem(p,q);return 0;}]] HAVE_FACTORY_PREM)
+endif()
+
+## Check to make sure that the libraries found can be linked together
+# This catches linking conflicts early.
+# eg: don't check MPFR if choice of MP isn't found
+# TODO: is it better to directly use try_compile?
+# TIP: cmake --debug-trycompile keeps the termporary sources and binaries
+set(CMAKE_REQUIRED_LIBRARIES "")
+set(CMAKE_REQUIRED_INCLUDES "")
+set(CHECK_LIBRARY_COMPATIBILITY ON)
+
+foreach(LIB IN LISTS LIBRARY_LIST LIBRARIES_LIST PKGLIB_LIST)
+  if(NOT ${LIB}_FOUND)
+    set(CHECK_LIBRARY_COMPATIBILITY OFF)
+    break()
+  endif()
+endforeach()
+
+if(CHECK_LIBRARY_COMPATIBILITY)
+  message("## All libraries are found. Checking library compatibility ...")
+
+  foreach(LIB IN LISTS LIBRARY_LIST)
+    list(APPEND CMAKE_REQUIRED_LIBRARIES ${${LIB}_LIBRARY})
+  endforeach()
+
+  foreach(LIB IN LISTS LIBRARIES_LIST)
+    list(APPEND CMAKE_REQUIRED_LIBRARIES ${${LIB}_LIBRARIES})
+  endforeach()
+
+  foreach(LIB IN LISTS PKGLIB_LIST)
+    list(APPEND CMAKE_REQUIRED_LIBRARIES PkgConfig::${LIB})
+  endforeach()
+
+  check_cxx_source_compiles([[int main(){return 0;}]] LIBRARY_COMPATIBILITY)
+
+  if(NOT LIBRARY_COMPATIBILITY)
+    unset(FACTORY_FOUND)
+    unset(FROBBY_FOUND)
+    unset(FLINT_FOUND)
+    unset(MPFR_FOUND)
+    unset(NTL_FOUND)
+    unset(GLPK_FOUND)
+  endif()
+
+  unset(LIBRARY_COMPATIBILITY CACHE)
+
+else()
+  message("## The build-libraries target is not yet finished.")
 endif()
