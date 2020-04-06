@@ -151,6 +151,7 @@ ExternalProject_Add(build-mpfr
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ${SET_LD_LIBRARY_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
+                      --with-gmp=${M2_HOST_PREFIX}
                       --disable-thread-safe
                       --enable-shared
                       --with-pic
