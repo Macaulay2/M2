@@ -134,8 +134,8 @@ if(NOT MP_FOUND)
 endif()
 # Making sure flint can find the gmp.h->mpir.h symlink
 if(MPIR_FOUND AND NOT EXISTS ${M2_HOST_PREFIX}/include/gmp.h)
-  configure_file(${MP_INCLUDE_DIRS}/mpir.h   ${M2_HOST_PREFIX}/gmp.h   COPYONLY)
-  configure_file(${MP_INCLUDE_DIRS}/mpirxx.h ${M2_HOST_PREFIX}/gmpxx.h COPYONLY)
+  configure_file(${MP_INCLUDE_DIRS}/mpir.h   ${M2_HOST_PREFIX}/include/gmp.h   COPYONLY)
+  configure_file(${MP_INCLUDE_DIRS}/mpirxx.h ${M2_HOST_PREFIX}/include/gmpxx.h COPYONLY)
 endif()
 
 
@@ -197,7 +197,7 @@ ExternalProject_Add(build-ntl
                       GMP_PREFIX=${M2_HOST_PREFIX}
                       TUNE=generic # TODO: x86 and auto if NTL_WIZARD
                       NATIVE=off # TODO: on if not packaging?
-                      SHARED=off
+                      SHARED=on
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
                       CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
@@ -228,8 +228,8 @@ ExternalProject_Add(build-flint
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-                    -DBUILD_SHARED_LIBS=OFF
-                    -DWITH_MPIR=${WITH_MPIR}
+                    -DBUILD_SHARED_LIBS=ON
+                    -DWITH_MPIR=${USING_MPIR}
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
                     -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
@@ -277,7 +277,7 @@ ExternalProject_Add(build-factory
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-omalloc
                       --disable-doxygen-doc
-                      --disable-shared
+                      --enable-shared
                       --enable-streamio
                       --without-Singular
                       --with-ntl=${factory_NTL_HOME_PATH}
@@ -362,6 +362,9 @@ ExternalProject_Add(build-frobby
 if(NOT FROBBY_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-frobby-install)
+  if(NOT MP_FOUND)
+    ExternalProject_Add_StepDependencies(build-frobby configure build-mpir-install)
+  endif()
 endif()
 
 

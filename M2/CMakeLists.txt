@@ -14,12 +14,12 @@
 ## IDEs such as Xcode or vscode can also configure and build using CMake.
 ###############################################################################
 
-## Works with 3.14 and tested through 3.16
-cmake_minimum_required(VERSION 3.14...3.16)
+## Works with 3.14 and tested through 3.17
+cmake_minimum_required(VERSION 3.14...3.17)
 cmake_policy(VERSION 3.14)
 
 ## Guard against in-source builds
-if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "In-source builds are not allowed.")
 endif()
 
@@ -55,7 +55,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 project(Macaulay2
   VERSION	1.15.0.2 # branch eigen on cmake
   DESCRIPTION	"A software system for algebraic geometry research"
-  HOMEPAGE_URL	https://faculty.math.illinois.edu/Macaulay2/ # http://macaulay2.com/ Macaulay2@math.uiuc.edu
+  HOMEPAGE_URL	http://macaulay2.com # contact: Macaulay2@math.uiuc.edu
   LANGUAGES	C CXX)
 
 ###############################################################################

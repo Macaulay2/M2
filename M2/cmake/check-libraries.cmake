@@ -147,6 +147,20 @@ set(CMAKE_REQUIRED_LIBRARIES "")
 set(CMAKE_REQUIRED_INCLUDES "")
 set(CHECKED_LIBRARIES "")
 
+# FIXME: hack to force building mpir, mpfr, ntl, flint, factory
+if(NOT MPIR_INCLUDE_DIRS MATCHES ${M2_HOST_PREFIX})
+  unset(MPIR_FOUND)
+endif()
+if(NOT MPIR_FOUND)
+  unset(MPFR_FOUND)
+  unset(NTL_FOUND)
+  unset(FLINT_FOUND)
+  unset(FACTORY_FOUND)
+  unset(FROBBY_FOUND)
+  unset(GIVARO_FOUND)
+  unset(FFLAS_FFPACK_FOUND)
+endif()
+
 if(CHECK_LIBRARY_COMPATIBILITY)
   message("## All libraries are found. Checking library compatibility ...")
 

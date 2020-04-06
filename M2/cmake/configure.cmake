@@ -23,8 +23,8 @@ option(GIT_SUBMODULE "update submodules during build"     OFF)
 #option(ALTIVEC      "compile with '-faltivec' option"    OFF)
 #option(XCODE        "build Macaulay2/d/interpret.a"      OFF)
 option(USING_MPIR	"use MPIR instead of GMP"            ON)
-option(BUILD_PROGRAMS	"build all programs, even if found"  ON)
-option(BUILD_LIBRARIES	"build all libraries, even if found" ON)
+option(BUILD_PROGRAMS	"build all programs, even if found"  OFF)
+option(BUILD_LIBRARIES	"build all libraries, even if found" OFF)
 
 set(PARALLEL_JOBS 4    CACHE STRING "specify the number of parallel jobs for libraries and programs")
 
