@@ -22,10 +22,10 @@ option(GIT_SUBMODULE "update submodules during build"     OFF)
 #option(NTL_WIZARD   "enable running the NTL wizard"      OFF)
 #option(ALTIVEC      "compile with '-faltivec' option"    OFF)
 #option(XCODE        "build Macaulay2/d/interpret.a"      OFF)
-option(BUILD_PROGRAMS  "build all programs, even if found"  ON)
-option(BUILD_LIBRARIES "build all libraries, even if found" OFF)
+option(USING_MPIR	"use MPIR instead of GMP"            ON)
+option(BUILD_PROGRAMS	"build all programs, even if found"  ON)
+option(BUILD_LIBRARIES	"build all libraries, even if found" ON)
 
-set(MP_LIBRARY    MPIR CACHE STRING "specify the multiple precision library to use (MPIR or GMP)")
 set(PARALLEL_JOBS 4    CACHE STRING "specify the number of parallel jobs for libraries and programs")
 
 # TODO: deprecate these variables

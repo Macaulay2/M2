@@ -134,7 +134,8 @@ if(NOT MP_FOUND)
 endif()
 # Making sure flint can find the gmp.h->mpir.h symlink
 if(MPIR_FOUND AND NOT EXISTS ${M2_HOST_PREFIX}/include/gmp.h)
-  file(COPY ${MP_INCLUDE_DIRS}/gmp.h ${MP_INCLUDE_DIRS}/gmpxx.h DESTINATION ${M2_HOST_PREFIX}/include)
+  configure_file(${MP_INCLUDE_DIRS}/mpir.h   ${M2_HOST_PREFIX}/gmp.h   COPYONLY)
+  configure_file(${MP_INCLUDE_DIRS}/mpirxx.h ${M2_HOST_PREFIX}/gmpxx.h COPYONLY)
 endif()
 
 
@@ -181,38 +182,30 @@ endif()
 
 
 # http://shoup.net/ntl
+# what is MakeDescCFLAGS=-O0
 ExternalProject_Add(build-ntl
-  URL               ${M2_SOURCE_URL}/ntl-10.5.0.tar.gz
-  URL_HASH          SHA256=b90b36c9dd8954c9bc54410b1d57c00be956ae1db5a062945822bbd7a86ab4d2
+  URL               https://www.shoup.net/ntl/ntl-11.4.3.tar.gz
+  URL_HASH          SHA256=b7c1ccdc64840e6a24351eb4a1e68887d29974f03073a1941c906562c0b83ad2
   PREFIX            libraries/ntl
   SOURCE_DIR        libraries/ntl/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND cd src && ${SET_LD_LIBRARY_PATH} ./configure PREFIX=${M2_HOST_PREFIX}
+  CONFIGURE_COMMAND cd src && ${SET_LD_LIBRARY_PATH} ./configure
                       #-C --cache-file=${CONFIGURE_CACHE}
+                      PREFIX=${M2_HOST_PREFIX}
+                      GMP_PREFIX=${M2_HOST_PREFIX}
                       TUNE=generic # TODO: x86 and auto if NTL_WIZARD
                       NATIVE=off # TODO: on if not packaging?
-                      NTL_GMP_LIP=on
+                      SHARED=off
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
-                      SHARED=off
                       CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
                       CXX=${CMAKE_CXX_COMPILER}
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     cd src && ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS}
-                      MakeDescCFLAGS=-O0
-                      CPPFLAGS=${CPPFLAGS}
-                      CFLAGS=${CFLAGS}
-                      CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
-                      LDFLAGS_CXX=${LDFLAGS}
-  INSTALL_COMMAND   cd src && ${MAKE_EXE} -j${PARALLEL_JOBS} PREFIX=${M2_HOST_PREFIX} install
-                      CFLAGS=${CFLAGS}
-                      CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
-                      LDFLAGS_CXX=${LDFLAGS}
+  INSTALL_COMMAND   cd src && ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} PREFIX=${M2_HOST_PREFIX} install
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -327,7 +320,7 @@ if(NOT FACTORY_FOUND)
 else()
   if(NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
     message(STATUS "Copying gftables in ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables")
-    file(GLOB   GFTABLES    "${FACTORY_PREFIX}/share/factory/gftables/*")
+    file(GLOB   GFTABLES    "${FACTORY_INCLUDE_DIR}/../share/factory/gftables/*")
     file(COPY ${GFTABLES} DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
   endif()
 endif()

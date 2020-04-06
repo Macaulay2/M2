@@ -47,8 +47,8 @@
 
 ## These lists will be used in Macaulay2/{e,bin}/CMakeLists.txt
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
-set(LIBRARY_LIST   HISTORY READLINE MPSOLVE)
-set(LIBRARIES_LIST LAPACK LIBXML2 MP BDWGC MPFR NTL FLINT FACTORY MATHICGB MATHIC MEMTAILOR TBB FROBBY)
+set(LIBRARY_LIST   HISTORY READLINE)
+set(LIBRARIES_LIST LAPACK LIBXML2 MP MPFR BDWGC NTL FLINT FACTORY FROBBY MATHICGB MATHIC MEMTAILOR MPSOLVE TBB)
 
 ################################################################
 ## pkg-config is useful for fflas-ffpack and certain other packages
@@ -79,18 +79,13 @@ find_package(TBB	REQUIRED QUIET) # required by mathicgb
 # Similarly for gmpxx.h and mpirxx.h.  However, the contents of the files differ.
 # For example, mpf_cmp_z is defined only in gmp.h.
 # TODO: find a way so switching from one to another is possible
-if(MP_LIBRARY MATCHES "gmp|GMP")
-  find_package(GMP	6.0.0)
-  set(MP_LIBRARY GMP)
-elseif(MP_LIBRARY MATCHES "mpir|MPIR")
+if(USING_MPIR)
   find_package(MPIR	3.0.0)
-  # TODO: use WITH_MPIR instead of MP_LIBRARY?
-  set(WITH_MPIR ON)
   set(MP_LIBRARY MPIR)
 else()
-  message(FATAL "multiple precision rational and integer arithmetic library not found")
+  find_package(GMP	6.0.0 REQUIRED)
+  set(MP_LIBRARY GMP)
 endif()
-
 # MP will mask either GMP or MPIR
 foreach(var IN ITEMS FOUND INCLUDE_DIRS LIBRARIES VERSION_OK)
   set(MP_${var} ${${MP_LIBRARY}_${var}})
@@ -143,6 +138,46 @@ find_program(TOPCOM	NAMES	checkregularity		PATHS ${M2_INSTALL_PROGRAMSDIR}/bin)
 find_program(POLYMAKE	NAMES	polymake) # TODO
 
 ###############################################################################
+## Check to make sure that the found libraries can be linked to catch linking conflicts early.
+# when a conflict is detected, we default to building all involved libraries from source.
+# TIP: cmake --debug-trycompile keeps the termporary sources and binaries
+set(CHECK_LIBRARY_COMPATIBILITY ON)
+
+set(CMAKE_REQUIRED_LIBRARIES "")
+set(CMAKE_REQUIRED_INCLUDES "")
+set(CHECKED_LIBRARIES "")
+
+if(CHECK_LIBRARY_COMPATIBILITY)
+  message("## All libraries are found. Checking library compatibility ...")
+
+  foreach(LIB IN LISTS LIBRARIES_LIST)
+    if(${LIB}_FOUND)
+      list(APPEND CMAKE_REQUIRED_LIBRARIES ${${LIB}_LIBRARIES})
+      list(APPEND CHECKED_LIBRARIES ${LIB})
+    endif()
+  endforeach()
+
+  foreach(LIB IN LISTS PKGLIB_LIST)
+    if(${LIB}_FOUND)
+      list(APPEND CMAKE_REQUIRED_LIBRARIES PkgConfig::${LIB})
+      list(APPEND CHECKED_LIBRARIES ${LIB})
+    endif()
+  endforeach()
+
+  check_cxx_source_compiles([[int main(){return 0;}]] LIBRARY_COMPATIBILITY)
+
+  if(NOT LIBRARY_COMPATIBILITY)
+    message("## Unsetting incompatible libraries ...")
+    foreach(LIB IN LISTS CHECKED_LIBRARIES)
+      unset(${LIB}_FOUND)
+    endforeach()
+    message("## Rerun the build-libraries.")
+  endif()
+
+  unset(LIBRARY_COMPATIBILITY CACHE)
+endif()
+
+###############################################################################
 
 # TODO: do we use these?
 if(CDD_FOUND)
@@ -168,52 +203,4 @@ if(FACTORY_FOUND)
   # whether Prem() from factory is public
   check_cxx_source_compiles([[#include <factory/factory.h>
     int main(){CanonicalForm p,q; Prem(p,q);return 0;}]] HAVE_FACTORY_PREM)
-endif()
-
-## Check to make sure that the libraries found can be linked together
-# This catches linking conflicts early.
-# eg: don't check MPFR if choice of MP isn't found
-# TODO: is it better to directly use try_compile?
-# TIP: cmake --debug-trycompile keeps the termporary sources and binaries
-set(CMAKE_REQUIRED_LIBRARIES "")
-set(CMAKE_REQUIRED_INCLUDES "")
-set(CHECK_LIBRARY_COMPATIBILITY ON)
-
-foreach(LIB IN LISTS LIBRARY_LIST LIBRARIES_LIST PKGLIB_LIST)
-  if(NOT ${LIB}_FOUND)
-    set(CHECK_LIBRARY_COMPATIBILITY OFF)
-    break()
-  endif()
-endforeach()
-
-if(CHECK_LIBRARY_COMPATIBILITY)
-  message("## All libraries are found. Checking library compatibility ...")
-
-  foreach(LIB IN LISTS LIBRARY_LIST)
-    list(APPEND CMAKE_REQUIRED_LIBRARIES ${${LIB}_LIBRARY})
-  endforeach()
-
-  foreach(LIB IN LISTS LIBRARIES_LIST)
-    list(APPEND CMAKE_REQUIRED_LIBRARIES ${${LIB}_LIBRARIES})
-  endforeach()
-
-  foreach(LIB IN LISTS PKGLIB_LIST)
-    list(APPEND CMAKE_REQUIRED_LIBRARIES PkgConfig::${LIB})
-  endforeach()
-
-  check_cxx_source_compiles([[int main(){return 0;}]] LIBRARY_COMPATIBILITY)
-
-  if(NOT LIBRARY_COMPATIBILITY)
-    unset(FACTORY_FOUND)
-    unset(FROBBY_FOUND)
-    unset(FLINT_FOUND)
-    unset(MPFR_FOUND)
-    unset(NTL_FOUND)
-    unset(GLPK_FOUND)
-  endif()
-
-  unset(LIBRARY_COMPATIBILITY CACHE)
-
-else()
-  message("## The build-libraries target is not yet finished.")
 endif()

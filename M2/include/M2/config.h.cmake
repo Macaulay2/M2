@@ -374,7 +374,7 @@
 #cmakedefine USE_MYSQL 1
 
 /* Whether we use MPIR (instead of GMP) */
-#cmakedefine USING_MPIR 1
+#cmakedefine01 USING_MPIR
 
 /* whether newline is cr */
 #cmakedefine WITH_NEWLINE_CR 1

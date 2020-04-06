@@ -42,10 +42,10 @@ git clone https://github.com/mahrud/M2.git -b feature/cmake
 ```
 cd M2/M2/BUILD/build
 cmake -S ../.. -B . \
-      -DMP_LIBRARY=MPIR \
+      -DUSING_MPIR=ON \
       -DCMAKE_BUILD_TYPE=Release
 ```
-We build with MPIR as the multiple precision arithmetic library by default. To use GMP, use `-DMP_LIBRARY=GMP` instead.
+We build with MPIR as the multiple precision arithmetic library by default. To use GMP, use `-DUSING_MPIR=OFF` instead.
 This command generates Makefiles. To generate Ninja files instead, add `-GNinja`.
 
 3. Build the libraries that will be linked with the Macaulay2 executable:
@@ -102,7 +102,7 @@ For a complete list, along with descriptions, try `cmake -LAH .`. Here are the m
 where the format is `[FLAG]:[TYPE]=[DEFAULT VALUE]`, though specifying the type is optional.
 
 ### Build flags
-- `BUILD_LIBRARIES:BOOL=OFF`: build all libraries, even if found on the system
+- `BUILD_LIBRARIES:BOOL=ON`: build all libraries, even if found on the system
 - `BUILD_PROGRAMS:BOOL=ON`: build all programs, even if found on the system
 - `BUILD_TESTING:BOOL=ON`: build the testing targets
 - `CMAKE_BUILD_TYPE:STRING=Release`: choose the type of build, options are: `Debug` `Release` `RelWithDebInfo` `MinSizeRel`
@@ -111,7 +111,7 @@ where the format is `[FLAG]:[TYPE]=[DEFAULT VALUE]`, though specifying the type 
 - `M2_DIST_PREFIX:PATH=${CMAKE_BINARY_DIR}/usr-dist`: target build prefix
 
 - `MEMDEBUG:BOOL=OFF`: enable memory allocation debugging
-- `MP_LIBRARY:STRING=MPIR`: specify the multiple precision library to use (MPIR or GMP)
+- `USING_MPIR:BOOL=ON`: use MPIR instead of GMP
 - `PARALLEL_JOBS:STRING=4`: specify the number of parallel jobs for libraries and programs
 - `GIT_SUBMODULE:BOOL=OFF`: update submodules during build
 
@@ -256,6 +256,25 @@ Solution:
 <pre>
 make build-[mpfr | ntl | flint | frobby]-install
 cmake -U*[MPFR | NTL | FLINT | FROBBY]* .
+</pre>
+</details>
+
+
+<details>
+<summary><code>cf_factor.cc:(.text+0x20b9): undefined reference to 'fq_nmod_poly_factor_init'</code></summary>
+<pre>
+/usr/bin/ld: ../../usr-host/lib/libfactory.a(cf_factor.o): in function `factorize(CanonicalForm const&, Variable const&)':
+cf_factor.cc:(.text+0x20b9): undefined reference to `fq_nmod_poly_factor_init'
+</pre>
+TODO
+</details>
+
+
+<details>
+<summary><code>TLS reference in libfactory.a(facFqBivar.o) mismatches non-TLS definition in libntl.a(lzz_p.o) section .bss</code></summary>
+This is most likely caused when factory is linked with a local ntl library. TODO
+<pre>
+/usr/bin/ld: _ZN3NTL8zz_pInfoE: TLS reference in ../../usr-host/lib/libfactory.a(facFqBivar.o) mismatches non-TLS definition in ../../usr-host/lib/libntl.a(lzz_p.o) section .bss
 </pre>
 </details>
 
