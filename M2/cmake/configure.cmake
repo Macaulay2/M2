@@ -14,6 +14,7 @@
 # use CMAKE_BUILD_TYPE=RelMinSize            instead of ENABLE_STRIP
 # use BUILD_SHARED_LIBS=ON                   instead of SHARED
 
+option(AUTOTUNE      "autotune library parameters"        OFF)
 option(MEMDEBUG      "enable memory allocation debugging" OFF)
 option(GIT_SUBMODULE "update submodules during build"     OFF)
 # TODO:

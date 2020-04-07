@@ -41,6 +41,7 @@ MACRO (_SCC_GENERATE _source _prev)
   set(_name ${CMAKE_MATCH_1})
   string(REPLACE "d" "c" _ext ${CMAKE_MATCH_2})
 
+  # TODO: use the {_name}.dep file to check for dependencies
   add_custom_command(OUTPUT ${_name}-tmp.${_ext}
     COMMENT "Generating ${_name}.${_ext}"
     COMMAND

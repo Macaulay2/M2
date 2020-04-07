@@ -120,8 +120,10 @@ ExternalProject_Add(build-mpir
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS}
   INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install
+  TEST_COMMAND      ${MAKE_EXE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
   )
 if(NOT MP_FOUND)
   if(MP_LIBRARY STREQUAL GMP)
@@ -167,11 +169,12 @@ ExternalProject_Add(build-mpfr
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
-                      CPPFLAGS=${CPPFLAGS}
-  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
+  BUILD_COMMAND     ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} CPPFLAGS=${CPPFLAGS}
+  INSTALL_COMMAND   ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
+  TEST_COMMAND      ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
   )
 if(NOT MPFR_FOUND)
   # Add this to the libraries target
@@ -207,8 +210,10 @@ ExternalProject_Add(build-ntl
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     cd src && ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS}
   INSTALL_COMMAND   cd src && ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} PREFIX=${M2_HOST_PREFIX} install
+  TEST_COMMAND      cd src && ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
   )
 if(NOT NTL_FOUND)
   # Add this to the libraries target
@@ -227,20 +232,22 @@ ExternalProject_Add(build-flint
   BINARY_DIR        libraries/flint2/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
+                    -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+                    -DBUILD_TESTING=${BUILD_TESTING}
                     -DBUILD_SHARED_LIBS=ON
-                    -DWITH_MPIR=${USING_MPIR}
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
                     -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
+                    -DWITH_MPIR=${USING_MPIR}
                     # Possible variables for the CMake build:
-                    #-DBUILD_TESTING
-                    #-DCMAKE_BUILD_TYPE
                     #-DHAS_FLAG_MPOPCNT
                     #-DHAS_FLAG_UNROLL_LOOPS
                     #-DBUILD_DOCS
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
   )
 if(NOT FLINT_FOUND)
   # Add this to the libraries target
@@ -272,7 +279,7 @@ ExternalProject_Add(build-factory
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p0 < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.1.1
   CONFIGURE_COMMAND cd factory-4.1.1 &&
-                    autoreconf -vif && ${SET_LD_LIBRARY_PATH} &&
+                    autoreconf -vif && ${SET_LD_LIBRARY_PATH}
                     ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-omalloc
@@ -289,7 +296,7 @@ ExternalProject_Add(build-factory
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
-  BUILD_COMMAND     cd factory-4.1.1 &&
+  BUILD_COMMAND     cd factory-4.1.1 && ${SET_LD_LIBRARY_PATH}
                     ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} all ftmpl_inst.o
                       AM_DEFAULT_VERBOSITY=1
                       WARNFLAGS=${factory_WARNFLAGS} &&
@@ -297,9 +304,11 @@ ExternalProject_Add(build-factory
                     ./bin/makeheader factoryconf.template factoryconf.h &&
                     ${CMAKE_COMMAND} -E copy factory.h factoryconf.h include/factory &&
                     ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} all-recursive
-  INSTALL_COMMAND   cd factory-4.1.1 && ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
+  INSTALL_COMMAND   cd factory-4.1.1 && ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
+  TEST_COMMAND      cd factory-4.1.1 && ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
   )
 if(NOT FACTORY_FOUND)
   # Add this to the libraries target
@@ -339,7 +348,7 @@ ExternalProject_Add(build-frobby
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/frobby/patch-0.9.0
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ${MAKE_EXE} library -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
+  BUILD_COMMAND     ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} library -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       GMP_INC_DIR=${M2_HOST_PREFIX}/include
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -351,13 +360,13 @@ ExternalProject_Add(build-frobby
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-  INSTALL_COMMAND   /usr/bin/install -c -d ${M2_HOST_PREFIX}/lib &&
-                    /usr/bin/install -c -d ${M2_HOST_PREFIX}/include &&
-                    cp bin/libfrobby.a ${M2_HOST_PREFIX}/lib/libfrobby.a &&
-                    cp src/frobby.h ${M2_HOST_PREFIX}/include/frobby.h &&
-                    cp src/stdinc.h ${M2_HOST_PREFIX}/include/stdinc.h # FIXME
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_HOST_PREFIX}/lib ${M2_HOST_PREFIX}/include
+          COMMAND   ${CMAKE_COMMAND} -E bin/libfrobby.a ${M2_HOST_PREFIX}/lib/libfrobby.a
+          COMMAND   ${CMAKE_COMMAND} -E src/frobby.h src/stdinc.h ${M2_HOST_PREFIX}/include
+  TEST_COMMAND      ${MAKE_EXE} -j${PARALLEL_JOBS} test
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
   )
 if(NOT FROBBY_FOUND)
   # Add this to the libraries target
@@ -396,14 +405,16 @@ ExternalProject_Add(build-cddlib
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
+  BUILD_COMMAND     ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       SUBDIRS=${cddlib_SUBDIRS}
                       gmpdir=/nowhere
-  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
+  INSTALL_COMMAND   ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
                       SUBDIRS=${cddlib_SUBDIRS}
                       gmpdir=/nowhere
+  TEST_COMMAND      ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
   )
 if(NOT CDD_FOUND)
   # Add this to the libraries target
@@ -421,17 +432,19 @@ ExternalProject_Add(build-glpk
   SOURCE_DIR        libraries/glpk/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+  CONFIGURE_COMMAND ${SET_LD_LIBRARY_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-shared
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
-  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS}
-  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install-strip
+  BUILD_COMMAND     ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS}
+  INSTALL_COMMAND   ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} install-strip
+  TEST_COMMAND      ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
   )
 if(NOT GLPK_FOUND)
   # Add this to the libraries target
@@ -449,9 +462,9 @@ ExternalProject_Add(build-mpsolve
   SOURCE_DIR        libraries/mpsolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+  CONFIGURE_COMMAND ${SET_LD_LIBRARY_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --disable-shared
+                      --enable-shared
                       --disable-examples
                       --disable-ui
                       --disable-documentation
@@ -461,10 +474,12 @@ ExternalProject_Add(build-mpsolve
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
-  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS}
-  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install
+  BUILD_COMMAND     ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS}
+  INSTALL_COMMAND   ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} install
+  TEST_COMMAND      ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test # TODO: fails when building static library
   )
 if(NOT MPSOLVE_FOUND)
   # Add this to the libraries target
@@ -502,6 +517,9 @@ ExternalProject_Add(build-bdwgc
   BINARY_DIR        libraries/bdwgc/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+		    #-DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+		    -Dbuild_tests=${BUILD_TESTING}
                     -Denable_cplusplus=ON
                     -Denable_threads=ON
                     -Denable_large_config=ON
@@ -517,7 +535,8 @@ ExternalProject_Add(build-bdwgc
                     # -DGC_ABORT_ON_LEAK
                     # -DDBG_HDRS_ALL=1
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
   )
 if(NOT BDWGC_FOUND)
   # Add this to the libraries target
@@ -538,7 +557,7 @@ ExternalProject_Add(build-givaro
             COMMAND ${SET_LD_LIBRARY_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-shared
-                      # --disable-simd # unrecognized option on 4.0.3?
+                      # --disable-simd # TODO: replaced with sse,sse2,sse3,ssse3,sse4.1,sse4.2avx,avx,avx2,fma,fma4
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -549,10 +568,12 @@ ExternalProject_Add(build-givaro
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     ${MAKE_EXE}
-  INSTALL_COMMAND   ${MAKE_EXE} install
+  BUILD_COMMAND     ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} -C src
+  INSTALL_COMMAND   ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} install-data
+  TEST_COMMAND      ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
   )
 if(NOT GIVARO_FOUND)
   # Add this to the libraries target
@@ -565,8 +586,8 @@ endif()
 
 
 # Note: fflas_ffpack is just header files, so we don't build it
+# instead we add an extra autotune target for generating fflas-ffpack-thresholds.h
 # TODO: separate source and binary directories
-# TODO: make autotune produces fflas-ffpack/fflas-ffpack-thresholds.h which could be useful
 ExternalProject_Add(build-fflas_ffpack
   GIT_REPOSITORY    https://github.com/Macaulay2/fflas-ffpack.git
   GIT_TAG           712cef0e
@@ -590,24 +611,37 @@ ExternalProject_Add(build-fflas_ffpack
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
                       LIBS=${LA_LIBRARIES}
-  BUILD_COMMAND     "" # ${MAKE_EXE} autotune
-  INSTALL_COMMAND   ${MAKE_EXE} install-data # only install headers and fflas-ffpack.pc
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ${MAKE_EXE}  -j${PARALLEL_JOBS} install-data # only install headers and fflas-ffpack.pc
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install autotune
+  )
+ExternalProject_Add_Step(build-fflas_ffpack autotune
+  COMMENT           "Generating fflas-ffpack-thresholds.h"
+  COMMAND           ${MAKE_EXE} -j${PARALLEL_JOBS} autotune
+  COMMAND           ${MAKE_EXE} -j${PARALLEL_JOBS} install-data
+  WORKING_DIRECTORY libraries/fflas_ffpack/build
+  EXCLUDE_FROM_MAIN ON
   )
 if(NOT FFLAS_FFPACK_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-fflas_ffpack-install)
-  # TODO: the requirement on Givaro version is for fflas_ffpack 2.3.2
   if(NOT MP_FOUND)
     ExternalProject_Add_StepDependencies(build-fflas_ffpack configure build-mpir-install)
   endif()
+  # TODO: the requirement on Givaro version is for fflas_ffpack 2.3.2
   if(NOT GIVARO_FOUND OR GIVARO_VERSION VERSION_LESS 4.0.3)
     ExternalProject_Add_StepDependencies(build-fflas_ffpack configure build-givaro-install)
   endif()
 endif()
+# TODO: install twice?
+if(AUTOTUNE)
+  add_dependencies(build-fflas_ffpack-install build-fflas_ffpack-autotune)
+endif()
 
 
+# TODO: add testing
 ExternalProject_Add(build-memtailor
   GIT_REPOSITORY    https://github.com/mahrud/memtailor.git
   GIT_TAG           af4a81f57fb585a541f5fefb517f2ad91b38cbe9 # original: e85453b
@@ -616,6 +650,7 @@ ExternalProject_Add(build-memtailor
   BINARY_DIR        libraries/memtailor/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DPACKAGE_TESTS=OFF
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
@@ -626,6 +661,7 @@ if(NOT MEMTAILOR_FOUND)
 endif()
 
 
+# TODO: add testing
 ExternalProject_Add(build-mathic
   GIT_REPOSITORY    https://github.com/mahrud/mathic.git
   GIT_TAG           770fe83edb4edae061af613328bbe2d380ea26d6 # original: 023afcf
@@ -635,6 +671,7 @@ ExternalProject_Add(build-mathic
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DPACKAGE_TESTS=OFF
   DEPENDS           build-memtailor
   EXCLUDE_FROM_ALL  ON
@@ -649,6 +686,7 @@ if(NOT MATHIC_FOUND)
 endif()
 
 
+# TODO: add testing
 ExternalProject_Add(build-mathicgb
   GIT_REPOSITORY    https://github.com/mahrud/mathicgb.git
   GIT_TAG           557d3da746c6888ef05f29c2f095f0262080956d # original: bd634c8
@@ -658,6 +696,7 @@ ExternalProject_Add(build-mathicgb
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DPACKAGE_TESTS=OFF
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
@@ -703,7 +742,8 @@ ExternalProject_Add(build-4ti2
   INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install-strip
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${4ti2_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/bin
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  STEP_TARGETS      install test
   )
 if(NOT 4TI2)
   # Add this to the programs target
@@ -734,7 +774,8 @@ ExternalProject_Add(build-cohomcalg
         COMMAND     ${CMAKE_STRIP} bin/cohomcalg
   INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different bin/cohomcalg ${M2_INSTALL_PROGRAMSDIR}/bin/
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  STEP_TARGETS      install test
   )
 if(NOT COHOMCALG)
   # Add this to the programs target
@@ -766,7 +807,8 @@ ExternalProject_Add(build-gfan
         COMMAND     ${CMAKE_STRIP} gfan${CMAKE_EXECUTABLE_SUFFIX}
   INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} PREFIX=${M2_INSTALL_PROGRAMSDIR} install
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  STEP_TARGETS      install test
   )
 if(NOT GFAN)
   # Add this to the programs target
@@ -797,7 +839,8 @@ ExternalProject_Add(build-lrslib
         COMMAND     ${CMAKE_STRIP} lrs${CMAKE_EXECUTABLE_SUFFIX}
   INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${M2_INSTALL_PROGRAMSDIR}/bin/
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  STEP_TARGETS      install test
   )
 if(NOT LRSLIB)
   # Add this to the programs target
@@ -835,7 +878,8 @@ ExternalProject_Add(build-csdp
                       theta/theta
   INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different solver/csdp ${M2_INSTALL_PROGRAMSDIR}/bin/
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  STEP_TARGETS      install test
   )
 if(NOT CSDP)
   # Add this to the programs target
@@ -887,7 +931,8 @@ ExternalProject_Add(build-normaliz
   INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/bin/
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  STEP_TARGETS      install test
   )
 if(NOT NORMALIZ)
   # Add this to the programs target
@@ -938,6 +983,7 @@ ExternalProject_Add(build-nauty
        COMMAND      ${MAKE_EXE} BIGTEST=0 checks
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
+  TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
 if(NOT NAUTY)
@@ -980,7 +1026,8 @@ ExternalProject_Add(build-topcom
   # TODO: put topcom programs in a folder?
   INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${topcom_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/bin/
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  STEP_TARGETS      install test
   )
 if(NOT TOPCOM)
   # Add this to the programs target

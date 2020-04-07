@@ -200,6 +200,10 @@ the `libraries` subdirectory in the build directory, while the `build-libraries`
 also invoke `build-[LIBRARY or PROGRAM]-install` on each component in order to install the artifacts
 in the `usr-host` subdirectory.
 
+### Targets for Autotuning Libraries
+Targets for autotuning various parameters in libraries:
+- `build-fflas_ffpack-autotune`: generates `fflas-ffpack-thresholds.h`
+
 ### Targets for Building Macaulay2
 The main targets for building Macaulay2 are:
 - `M2-engine`: build the `libM2-engine` library
