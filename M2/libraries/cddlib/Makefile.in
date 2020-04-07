@@ -10,8 +10,7 @@ CONFIGOPTIONS += --disable-shared
 BUILDOPTIONS   = $(ALLOPTIONS)
 CHECKOPTIONS   = $(ALLOPTIONS)
 INSTALLOPTIONS = $(ALLOPTIONS)
-# using "autoreconf" results in mysterious libtool errors on some systems.
-# PRECONFIGURE = autoreconf -vif
+PRECONFIGURE = autoreconf -vif
 LICENSEFILES = COPYING
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/cddlib/Makefile
