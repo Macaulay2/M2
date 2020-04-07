@@ -687,15 +687,22 @@ document {
 
 
 document {
-     Key => ";",
-     Headline => "statement separator",
-     TT "(e;f;...;g;h)", " the semicolon can be used for evaluating a sequence of 
-     expressions.  The value of the sequence is the value of its
-     last expression, unless it is omitted, in which case the value
-     is ", TO "null", ".",
+     Key => {";"},
+     Headline => "expression separator",
+     Usage => "(e;f;...;g;h)",
+     PARA {
+     	  "The semicolon can be used for evaluating a sequence of 
+     	  expressions.  The value of the sequence is the value of its
+     	  last expression, unless it is omitted, in which case the value
+     	  is ", TO "null", "."
+	  },
      EXAMPLE {
 	  "(3;4;5)",
       	  "(3;4;5;)"
+	  },
+     PARA {
+	  "Putting expressions on separate lines is not a substitute for 
+	  the semicolons."
 	  }
      }
 

@@ -71,6 +71,9 @@ document {
 	       a number greater than 0 or a number greater than 5."
 	       }
 	  },
+     Outputs => {
+	  Package => { "the package that was installed" }
+	  },
      Consequences => {
 	  {"The package is installed in a local directory, so that in the future, one may simply use ", TO "loadPackage", ".  Documentation for the
 	  package is also produced, running any Macaulay2 examples that are requested in the package documentation, with
