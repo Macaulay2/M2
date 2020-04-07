@@ -181,14 +181,16 @@ if(CHECK_LIBRARY_COMPATIBILITY)
     endif()
   endforeach()
 
-  check_cxx_source_compiles([[int main(){return 0;}]] LIBRARY_COMPATIBILITY)
+  check_cxx_source_compiles([[int main(){return 0;}]] LIBRARY_COMPATIBILITY
+    FAIL_REGEX "warning")
 
   if(NOT LIBRARY_COMPATIBILITY)
     message("## Unsetting incompatible libraries ...")
     foreach(LIB IN LISTS CHECKED_LIBRARIES)
+      message(${LIB})
       unset(${LIB}_FOUND)
     endforeach()
-    message("## Rerun the build-libraries.")
+    message("## Rerun the build-libraries target.")
   endif()
 
   unset(LIBRARY_COMPATIBILITY CACHE)
