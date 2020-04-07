@@ -31,7 +31,17 @@ document {
      }
 
 document {
-     Key => "changes made for the next release"
+     Key => "changes made for the next release",
+     UL {
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI {
+			 "The function ", TO "installPackage", " now returns, as its value, the package that was installed.
+			 This makes it more convenient to both install and check a package, because one can type ", TT "check installPackage \"FOO\"", "."
+			 }
+		    }
+	       }
+     	  }
      }
 
 document {

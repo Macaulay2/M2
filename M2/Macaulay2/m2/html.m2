@@ -563,7 +563,9 @@ setupNames := (opts,pkg) -> (
 unsetupNames := () -> installPrefix = installLayout = buildPackage = null
 
 
-installPackage = method(Options => {
+installPackage = method(
+     TypicalValue => Package,
+     Options => {
 	  SeparateExec => false,
           InstallPrefix => () -> applicationDirectory() | "local/",
 	  UserMode => null,
@@ -612,8 +614,7 @@ installPackage String := opts -> pkg -> (
      -- -- in the "Macaulay2Doc" package was not yet loaded
      -- ... but we want to build the package Style without loading any other packages
      pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation, FileName => opts.FileName, Reload => true);
-     installPackage(pkg, opts);
-     )
+     installPackage(pkg, opts))
 
 dispatcherMethod := m -> m#-1 === Sequence and (
      f := lookup m;
@@ -1028,7 +1029,7 @@ installPackage Package := opts -> pkg -> (
      unsetupNames();
      htmlDirectory = null;
      tallyInstalledPackages();
-     )
+     pkg)
 
 sampleInitFile = ///-- This is a sample init.m2 file provided with Macaulay2.
 -- It contains Macaulay2 code and is automatically loaded upon
