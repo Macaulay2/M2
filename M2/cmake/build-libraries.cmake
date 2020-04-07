@@ -1062,6 +1062,14 @@ if(BUILD_PROGRAMS)
     build-nauty-install
     build-topcom-install
     )
+else()
+  # Make a symbolic link to the existing executable in the programs directory
+  foreach(program IN ITEMS 4TI2 COHOMCALG GFAN LRSLIB CSDP NORMALIZ NAUTY TOPCOM POLYMAKE)
+    if(NOT ${program} MATCHES ${M2_INSTALL_PROGRAMSDIR})
+      get_filename_component(program_name ${${program}} NAME)
+      file(CREATE_LINK ${${program}} ${M2_INSTALL_PROGRAMSDIR}/bin/${program_name} SYMBOLIC)
+    endif()
+  endforeach()
 endif()
 
 if(BUILD_LIBRARIES)

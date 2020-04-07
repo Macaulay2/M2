@@ -81,7 +81,7 @@ foreach(PACKAGE IN LISTS PACKAGES)
     COMMAND
       M2-binary ${M2_ARGS} -e \"installPackage(\\"${PACKAGE}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON> exit 0\"
     USES_TERMINAL
-    DEPENDS M2-core
+    DEPENDS M2-core install-Macaulay2Doc
     )
 
   ## Custom target for uninstalling the package
@@ -113,5 +113,16 @@ foreach(PACKAGE IN LISTS PACKAGES)
 endforeach()
 
 #################################################################################
+# Special dependencies:
 
-# TODO: test? big-check?
+# 1. all packages seem to depend on Macaulay2Doc: https://github.com/Macaulay2/M2/issues/1085
+# 2. FourTiTwo needs 4ti2 which needs glpk
+# 3. cohomcalg
+# 4. gfanInterface and StatePolytope need gfan which needs cddlib
+# 5. lrslib
+# 6. csdp
+# 7. Normaliz needs normaliz which needs libgmp, libgmpxx, boost
+# 8. nauty
+# 9. topcom
+# 10. polymake
+
