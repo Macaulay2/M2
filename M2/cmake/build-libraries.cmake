@@ -44,9 +44,11 @@ endif()
 get_property(COMPILE_OPTIONS DIRECTORY PROPERTY COMPILE_OPTIONS)
 get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
 
-# TODO: configure option to disable building shared libraries are added individually
-# is there a way to do all at once?
-# --disable-shared --enable-static
+if(BUILD_SHARED_LIBS)
+  set(shared_setting --enable-shared)
+else()
+  set(shared_setting --disable-shared)
+endif()
 
 ## Preprocessor flags
 string(REPLACE ";" " " CPPFLAGS "${CPPFLAGS} ${COMPILE_OPTIONS}")
@@ -106,7 +108,7 @@ ExternalProject_Add(build-mpir
                       --enable-gmpcompat
                       --enable-cxx
                       --with-pic
-                      --enable-shared
+                      ${shared_setting}
                       # --enable-assert
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -155,7 +157,7 @@ ExternalProject_Add(build-mpfr
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --with-gmp=${M2_HOST_PREFIX}
                       --disable-thread-safe
-                      --enable-shared
+		      ${shared_setting}
                       --with-pic
                       # --enable-assert
                       # TARGET_ARCH=
@@ -187,6 +189,9 @@ endif()
 
 # http://shoup.net/ntl
 # what is MakeDescCFLAGS=-O0
+if(USING_MPIR)
+  set(ntl_GMP_PREFIX GMP_PREFIX=${M2_HOST_PREFIX})
+endif()
 ExternalProject_Add(build-ntl
   URL               https://www.shoup.net/ntl/ntl-11.4.3.tar.gz
   URL_HASH          SHA256=b7c1ccdc64840e6a24351eb4a1e68887d29974f03073a1941c906562c0b83ad2
@@ -197,10 +202,10 @@ ExternalProject_Add(build-ntl
   CONFIGURE_COMMAND cd src && ${SET_LD_LIBRARY_PATH} ./configure
                       #-C --cache-file=${CONFIGURE_CACHE}
                       PREFIX=${M2_HOST_PREFIX}
-                      GMP_PREFIX=${M2_HOST_PREFIX}
+                      ${ntl_GMP_PREFIX}
                       TUNE=generic # TODO: x86 and auto if NTL_WIZARD
                       NATIVE=off # TODO: on if not packaging?
-                      SHARED=on
+                      SHARED=$<IF:$<BOOL:BUILD_SHARED_LIBS>,on,off>
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
                       CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
@@ -235,8 +240,8 @@ ExternalProject_Add(build-flint
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-                    -DBUILD_TESTING=${BUILD_TESTING}
-                    -DBUILD_SHARED_LIBS=ON
+                    -DBUILD_TESTING=OFF # ${BUILD_TESTING} # Takes too long
+                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
                     -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
@@ -284,7 +289,7 @@ ExternalProject_Add(build-factory
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-omalloc
                       --disable-doxygen-doc
-                      --enable-shared
+                      ${shared_setting}
                       --enable-streamio
                       --without-Singular
                       --with-ntl=${factory_NTL_HOME_PATH}
@@ -361,8 +366,8 @@ ExternalProject_Add(build-frobby
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
   INSTALL_COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_HOST_PREFIX}/lib ${M2_HOST_PREFIX}/include
-          COMMAND   ${CMAKE_COMMAND} -E bin/libfrobby.a ${M2_HOST_PREFIX}/lib/libfrobby.a
-          COMMAND   ${CMAKE_COMMAND} -E src/frobby.h src/stdinc.h ${M2_HOST_PREFIX}/include
+          COMMAND   ${CMAKE_COMMAND} -E copy bin/libfrobby.a ${M2_HOST_PREFIX}/lib/libfrobby.a
+          COMMAND   ${CMAKE_COMMAND} -E copy src/frobby.h src/stdinc.h ${M2_HOST_PREFIX}/include
   TEST_COMMAND      ${MAKE_EXE} -j${PARALLEL_JOBS} test
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -392,7 +397,7 @@ ExternalProject_Add(build-cddlib
             COMMAND ${SET_LD_LIBRARY_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --includedir=${M2_HOST_PREFIX}/include/cdd
-                      --disable-shared
+                      ${shared_setting}
                       SUBDIRS=${cddlib_SUBDIRS}
                       gmpdir=/nowhere
                       CPPFLAGS=${CPPFLAGS}
@@ -434,7 +439,7 @@ ExternalProject_Add(build-glpk
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ${SET_LD_LIBRARY_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --disable-shared
+                      ${shared_setting}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       LDFLAGS=${LDFLAGS}
@@ -464,7 +469,7 @@ ExternalProject_Add(build-mpsolve
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ${SET_LD_LIBRARY_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --enable-shared
+                      ${shared_setting}
                       --disable-examples
                       --disable-ui
                       --disable-documentation
@@ -484,6 +489,9 @@ ExternalProject_Add(build-mpsolve
 if(NOT MPSOLVE_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-mpsolve-install)
+  if(NOT MPFR_FOUND)
+    ExternalProject_Add_StepDependencies(build-mpsolve configure build-mpfr-install)
+  endif()
 endif()
 
 #################################################################################
@@ -518,7 +526,7 @@ ExternalProject_Add(build-bdwgc
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-		    #-DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+		    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
 		    -Dbuild_tests=${BUILD_TESTING}
                     -Denable_cplusplus=ON
                     -Denable_threads=ON
@@ -556,7 +564,7 @@ ExternalProject_Add(build-givaro
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${SET_LD_LIBRARY_PATH} ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --disable-shared
+                      ${shared_setting}
                       # --disable-simd # TODO: replaced with sse,sse2,sse3,ssse3,sse4.1,sse4.2avx,avx,avx2,fma,fma4
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -569,7 +577,8 @@ ExternalProject_Add(build-givaro
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} -C src
-  INSTALL_COMMAND   ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} install-data
+  INSTALL_COMMAND   ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} -C src install
+          COMMAND   ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} install-data
   TEST_COMMAND      ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -650,6 +659,7 @@ ExternalProject_Add(build-memtailor
   BINARY_DIR        libraries/memtailor/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
+                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DPACKAGE_TESTS=OFF
   EXCLUDE_FROM_ALL  ON
@@ -671,6 +681,7 @@ ExternalProject_Add(build-mathic
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
+                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DPACKAGE_TESTS=OFF
   DEPENDS           build-memtailor
@@ -696,6 +707,7 @@ ExternalProject_Add(build-mathicgb
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
+                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DPACKAGE_TESTS=OFF
   EXCLUDE_FROM_ALL  ON
@@ -905,7 +917,7 @@ ExternalProject_Add(build-normaliz
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ./configure --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --disable-shared
+                      ${shared_setting}
                       --disable-flint
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}

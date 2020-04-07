@@ -23,7 +23,7 @@ option(RPM		"prepare a *.rpm package (for red had based systems)" OFF)
 set(CPACK_GENERATOR "TGZ" CACHE STRING "package types to build")
 set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON) # Experiment
 # set(CPACK_STRIP_FILES ON)
-# set(CPACK_PACKAGING_INSTALL_PREFIX /usr)
+set(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
 # vs CPACK_PACKAGE_INSTALL_DIRECTORY
 # CPACK_PACKAGE_VENDOR
 # CPACK_PROJECT_CONFIG_FILE for this file?
@@ -76,6 +76,9 @@ set(CPACK_RPM_PACKAGE_GROUP	Applications/Engineering)
 set(CPACK_RPM_CHANGELOG_FILE	${CMAKE_BINARY_DIR}/CHANGELOG)
 #CPACK_RPM_SPEC_INSTALL_POST
 #CPACK_RPM_SPEC_MORE_DEFINE
+
+set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION
+  /usr/local /usr/local/bin /usr/local/lib64 /usr/local/libexec /usr/local/share)
 
 ###############################################################################
 

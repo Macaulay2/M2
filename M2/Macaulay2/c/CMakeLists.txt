@@ -40,7 +40,7 @@ add_executable(scc1
 target_include_directories(scc1 PUBLIC .)
 
 if(BDWGC_FOUND)
-target_link_libraries(scc1 ${BDWGC_LIBRARIES} ${LIBGDBM})
+target_link_libraries(scc1 Threads::Threads ${BDWGC_LIBRARIES} ${LIBGDBM})
 endif()
 
 # Why do we do this?

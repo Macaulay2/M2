@@ -9,6 +9,7 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 add_executable(M2-binary timestamp.cpp ../d/main.c)
 
 set_target_properties(M2-binary PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
+get_target_property(INSTALL_RPATH M2-binary INSTALL_RPATH)
 
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
@@ -46,21 +47,14 @@ elseif(OTOOL)
     COMMENT "## Linked libraries:"
     COMMAND ${SET_LD_LIBRARY_PATH} ${OTOOL} -L $<TARGET_FILE:M2-binary>)
 endif()
+add_custom_command(TARGET M2-binary POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E echo "## INSTALL_RPATH:" ${INSTALL_RPATH})
+
+# TODO: strip args
+# objdump -x M2-binary | grep RPATH
+# objcopy --only-keep-debug Macaulay2/bin/M2-binary M2.debug-info
 
 ###############################################################################
 
-# TODO: strip args
-
-# objcopy --only-keep-debug Macaulay2/bin/M2-binary M2.debug-info
-# objdump -x Macaulay2/bin/M2-binary | egrep RPATH || [ $? -lt 2 ]
-# objdump -x Macaulay2/bin/M2-binary | egrep "RPATH +/usr/lib64/Macaulay2/lib$" || [ $? -lt 2 ]
-
-if(APPLE)
-  set(EXPORT_STRING [[DYLD_LIBRARY_PATH=`dirname "$0"`/../@CMAKE_INSTALL_LIBDIR@/Macaulay2/lib:$DYLD_LIBRARY_PATH]])
-elseif(UNIX)
-  set(EXPORT_STRING   [[LD_LIBRARY_PATH=`dirname "$0"`/../@CMAKE_INSTALL_LIBDIR@/Macaulay2/lib:$LD_LIBRARY_PATH]])
-endif()
-
-set(M2_TEMPLATE "#!/bin/sh\n${EXPORT_STRING} `dirname \"$0\"`/M2@EXE@ \"$@\"\n")
-string(CONFIGURE "${M2_TEMPLATE}" M2_TEMPLATE @ONLY)
-file(GENERATE OUTPUT ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2 CONTENT "${M2_TEMPLATE}")
+file(CREATE_LINK M2-binary ${CMAKE_BINARY_DIR}/M2 SYMBOLIC)
+file(CREATE_LINK M2-binary ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2 SYMBOLIC)

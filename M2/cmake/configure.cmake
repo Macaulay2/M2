@@ -26,6 +26,7 @@ option(GIT_SUBMODULE "update submodules during build"     OFF)
 option(USING_MPIR	"use MPIR instead of GMP"            ON)
 option(BUILD_PROGRAMS	"build all programs, even if found"  OFF)
 option(BUILD_LIBRARIES	"build all libraries, even if found" OFF)
+option(BUILD_SHARED_LIBS "build shared libraries"            ON)
 
 set(PARALLEL_JOBS 4    CACHE STRING "specify the number of parallel jobs for libraries and programs")
 
@@ -52,7 +53,8 @@ endif()
 message("## Configure Macaulay2
      M2 Version        = ${PROJECT_VERSION}
      Git Commit        = ${GIT_COMMIT}
-     CMake Build Type  = ${CMAKE_BUILD_TYPE}
+     CMAKE_BUILD_TYPE  = ${CMAKE_BUILD_TYPE}
+     BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}
      BUILD_TESTING     = ${BUILD_TESTING}")
 
 ## Relevant environment variable values, if any:

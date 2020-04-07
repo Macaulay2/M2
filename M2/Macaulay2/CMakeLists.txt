@@ -9,6 +9,11 @@ configure_file(README.in ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/README @ONLY)
 file(COPY LAYOUT COPYING-GPL-2 COPYING-GPL-3 DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR})
 
 ###############################################################################
+# This tells CMake how to set the RPATH on the installed executable
+set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+###############################################################################
 
 # TODO: consider using:
 #source_group(TREE . PREFIX "Macaulay2" FILES ../include/M2/config.h ...)
@@ -33,13 +38,17 @@ endif()
 
 ###############################################################################
 
-# install M2-binary and the M2 wrapper
+# install M2-binary and M2-engine
+install(TARGETS M2-binary M2-engine
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
+  COMPONENT ALL)
+
+# install the M2 link
 install(FILES
   ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2
-  ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2-binary
   DESTINATION ${CMAKE_INSTALL_BINDIR}
-  COMPONENT ALL
-  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+  COMPONENT ALL)
 
 # install shared and dynamic libraries
 # TODO: pick one of the following two folder approaches
@@ -77,6 +86,5 @@ install(DIRECTORY
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/doc
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
-  USE_SOURCE_PERMISSIONS
   COMPONENT common
   OPTIONAL)
