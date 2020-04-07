@@ -42,6 +42,7 @@ MACRO (_SCC_GENERATE _source _prev)
   string(REPLACE "d" "c" _ext ${CMAKE_MATCH_2})
 
   # TODO: use the {_name}.dep file to check for dependencies
+  # TODO: use DEPFILE option, but only works with ninja
   add_custom_command(OUTPUT ${_name}-tmp.${_ext}
     COMMENT "Generating ${_name}.${_ext}"
     COMMAND

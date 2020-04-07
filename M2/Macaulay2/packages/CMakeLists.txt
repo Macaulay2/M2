@@ -8,6 +8,7 @@
 ## Package options
 ## The default is to install all distributed packages
 set(PACKAGES "${DISTRIBUTED_PACKAGES}" CACHE INTERNAL "the list of packages to install")
+set(PACKAGES_DEVEL       "EngineTests" CACHE INTERNAL "the list of packages to only check")
 set(M2_ReinstallPackages       "false" CACHE STRING   "reinstall the packages")
 # TODO: use ReinstallPackages or unmark-packages target?
 ## Arguments to M2
@@ -36,19 +37,21 @@ endforeach()
 
 #################################################################################
 
-# TODO: add all-packages list-packages
-# TODO: how to handle EngineTests and other packages under development that
-# should be checked but not installed
+add_custom_target(list-packages
+  COMMENT "Listing available packages"
+  COMMAND ${CMAKE_COMMAND} -E echo ${PACKAGES})
 
 ## eg: install-Style install-Macaulay2Doc ...
 list(TRANSFORM PACKAGES PREPEND "install-" OUTPUT_VARIABLE INSTALL_TARGETS)
 ## Install packages and make documentation
 add_custom_target(install-packages DEPENDS ${INSTALL_TARGETS})
 
+## TODO: turn these (at least EngineTests) into CTest targets
 ## eg: check-Style check-Macaulay2Doc ...
-list(TRANSFORM PACKAGES PREPEND "check-" OUTPUT_VARIABLE CHECK_TARGETS)
+list(TRANSFORM PACKAGES       PREPEND "check-" OUTPUT_VARIABLE CHECK_TARGETS)
+list(TRANSFORM PACKAGES_DEVEL PREPEND "check-" OUTPUT_VARIABLE CHECK_TARGETS_DEVEL)
 ## Run tests and check packages
-add_custom_target(check-packages DEPENDS ${CHECK_TARGETS})
+add_custom_target(check-packages DEPENDS ${CHECK_TARGETS} ${CHECK_TARGETS_DEVEL})
 
 ## eg: uninstall-Style uninstall-Macaulay2Doc ...
 list(TRANSFORM PACKAGES PREPEND "uninstall-" OUTPUT_VARIABLE UNINSTALL_TARGETS)
@@ -77,6 +80,7 @@ foreach(PACKAGE IN LISTS PACKAGES)
       "Installing package ${PACKAGE}"
     COMMAND
       M2-binary ${M2_ARGS} -e \"installPackage(\\"${PACKAGE}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON> exit 0\"
+    USES_TERMINAL
     DEPENDS M2-core
     )
 
@@ -100,6 +104,7 @@ foreach(PACKAGE IN LISTS PACKAGES)
     COMMAND
       M2-binary ${M2_ARGS} -e \"needsPackage(\\"${PACKAGE}\\", LoadDocumentation=>true, DebuggingMode=>true) $<SEMICOLON>
       check(${PACKAGE}, UserMode=>false) $<SEMICOLON> exit 0\"
+    USES_TERMINAL
     DEPENDS M2-core
     )
 

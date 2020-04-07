@@ -56,6 +56,5 @@ add_custom_command(TARGET M2-binary POST_BUILD
 
 ###############################################################################
 
-file(CREATE_LINK M2-binary ${CMAKE_BINARY_DIR}/M2 SYMBOLIC)
 file(MAKE_DIRECTORY        ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
 file(CREATE_LINK M2-binary ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2 SYMBOLIC)

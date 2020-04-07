@@ -125,6 +125,7 @@ where the format is `[FLAG]:[TYPE]=[DEFAULT VALUE]`, though specifying the type 
 - `M2_errorDepth:STRING=3`: set the error printing depth
 - `M2_gbTrace:STRING=0`: set the Groebner basis trace level
 - `GC_MAXIMUM_HEAP_SIZE:STRING=400M`: maximum collected heap size for tests
+- `PACKAGES:INTERNAL=[list of packages]`: a space-separated list of packages
 
 
 ## Advanced targets and options
@@ -221,6 +222,7 @@ In addition, the following targets are available for
 
 ### Targets for Installing Macaulay2 Packages
 The following targets involve the Macaulay2 packages located in the `Macaulay2/packages` subdirectory in the source:
+- `list-packages`: print the list of packages to be installed (can be modified using the `PACKAGES` cache option)
 - `install-packages`: run `installPackage` for each [distributed package](Macaulay2/packages/%3Ddistributed-packages)
 - `check-packages`: run `check` for each distributed package
 - `uninstall-packages`: remove installed files for all packages
