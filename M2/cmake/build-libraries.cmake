@@ -108,7 +108,7 @@ ExternalProject_Add(build-mpir
                       --enable-gmpcompat
                       --enable-cxx
                       --with-pic
-                      ${shared_setting}
+                      --enable-shared # ${shared_setting} # TODO: get static mpir linking to work
                       # --enable-assert
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
