@@ -1078,6 +1078,7 @@ if(NOT TOPCOM)
 endif()
 
 #############################################################################
+# TODO: use BUILD_PROGRAMS and BUILD_LIBRARIES as lists of what to install
 
 if(BUILD_PROGRAMS)
   add_dependencies(build-programs

@@ -197,15 +197,6 @@ endif()
 
 ###############################################################################
 
-# TODO: do we use these?
-if(CDD_FOUND)
-  check_include_files(setoper.h HAVE_CDDLIB)
-endif()
-
-if(NTL_FOUND)
-  check_include_files(NTL/version.h HAVE_NTL)
-endif()
-
 if(GIVARO_FOUND)
   set(CMAKE_REQUIRED_INCLUDES "${GIVARO_INCLUDE_DIRS}")
   # whether givaro has isUnit (4.0.3) or isunit (4.0.2)
