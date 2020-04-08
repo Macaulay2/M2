@@ -241,7 +241,7 @@ ExternalProject_Add(build-flint
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
                     -DBUILD_TESTING=OFF # ${BUILD_TESTING} # Takes too long
-                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+                    -DBUILD_SHARED_LIBS=ON # ${BUILD_SHARED_LIBS} # TODO: get static flint building to work
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
                     -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
