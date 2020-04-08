@@ -924,62 +924,6 @@ if(NOT CSDP)
 endif()
 
 
-# normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
-# TODO: see special variables OPENMP and NORMFLAGS for macOS from libraries/normaliz/Makefile.in
-set(normaliz_CXXFLAGS "${CPPFLAGS} -Wall -O3 -Wno-unknown-pragmas -std=c++11 -I .. -I . ")
-if(NOT APPLE)
-  # TODO: due to problem with -fopenmp on mac, skip this for apple
-  set(normaliz_CXXFLAGS "${normaliz_CXXFLAGS} ${OpenMP_CXX_FLAGS}")
-endif()
-set(normaliz_GMPFLAGS "${LDFLAGS} -lgmpxx -lgmp") # TODO: what about mpir?
-ExternalProject_Add(build-normaliz
-  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.4/normaliz-3.8.4.tar.gz
-  URL_HASH          SHA256=795a0a752ef7bcc75e3307917c336436abfc836718c5cbf55043da6e7430cda3
-  PREFIX            libraries/normaliz
-  SOURCE_DIR        libraries/normaliz/build
-  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
-  BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND autoreconf -vif
-            COMMAND ./configure --prefix=${M2_HOST_PREFIX}
-                      #-C --cache-file=${CONFIGURE_CACHE}
-                      ${shared_setting}
-                      --disable-flint
-                      CPPFLAGS=${CPPFLAGS}
-                      CFLAGS=${CFLAGS}
-                      CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
-                      CC=${CMAKE_C_COMPILER}
-                      CXX=${CMAKE_CXX_COMPILER}
-                      AR=${CMAKE_AR}
-                      OBJDUMP=${CMAKE_OBJDUMP}
-                      STRIP=${CMAKE_STRIP}
-                      RANLIB=${CMAKE_RANLIB}
-                      # OPENMP=
-                      # NORMFLAGS=
-                      # TARGET_ARCH=
-  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS}
-                      CXX=${CMAKE_CXX_COMPILER}
-                      # NORMFLAGS=
-                      CXXFLAGS=${normaliz_CXXFLAGS}
-                      RANLIB=${CMAKE_RANLIB}
-                      GMPFLAGS=${normaliz_GMPFLAGS}
-        COMMAND     ${CMAKE_STRIP} source/normaliz
-  # TODO: do we need the libraries as well, or just the binary?
-  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/bin/
-  EXCLUDE_FROM_ALL  ON
-  TEST_EXCLUDE_FROM_MAIN ON # FIXME
-  STEP_TARGETS      install test
-  )
-if(NOT NORMALIZ)
-  # Add this to the programs target
-  add_dependencies(build-programs build-normaliz-install)
-  if(NOT MP_FOUND)
-    ExternalProject_Add_StepDependencies(build-normaliz configure build-mpir-install)
-  endif()
-endif()
-
-
 # nauty is used by the package Nauty
 # URL = http://cs.anu.edu.au/~bdm/nauty
 # TODO: do we not strip some files?
@@ -1026,6 +970,65 @@ ExternalProject_Add(build-nauty
 if(NOT NAUTY)
   # Add this to the programs target
   add_dependencies(build-programs build-nauty-install)
+endif()
+
+
+# normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
+# TODO: see special variables OPENMP and NORMFLAGS for macOS from libraries/normaliz/Makefile.in
+set(normaliz_CXXFLAGS "${CPPFLAGS} -Wall -O3 -Wno-unknown-pragmas -std=c++11 -I .. -I . ")
+if(NOT APPLE)
+  # TODO: due to problem with -fopenmp on mac, skip this for apple
+  set(normaliz_CXXFLAGS "${normaliz_CXXFLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
+set(normaliz_GMPFLAGS "${LDFLAGS} -lgmpxx -lgmp") # TODO: what about mpir?
+ExternalProject_Add(build-normaliz
+  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.4/normaliz-3.8.4.tar.gz
+  URL_HASH          SHA256=795a0a752ef7bcc75e3307917c336436abfc836718c5cbf55043da6e7430cda3
+  PREFIX            libraries/normaliz
+  SOURCE_DIR        libraries/normaliz/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND ./configure --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
+                      --disable-shared
+                      --without-flint
+                      CPPFLAGS=${CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      CXXFLAGS=${CXXFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+                      AR=${CMAKE_AR}
+                      OBJDUMP=${CMAKE_OBJDUMP}
+                      STRIP=${CMAKE_STRIP}
+                      RANLIB=${CMAKE_RANLIB}
+                      # OPENMP=
+                      # NORMFLAGS=
+                      # TARGET_ARCH=
+  BUILD_COMMAND     ${MAKE_EXE} -j${PARALLEL_JOBS}
+                      CXX=${CMAKE_CXX_COMPILER}
+                      # NORMFLAGS=
+                      CXXFLAGS=${normaliz_CXXFLAGS}
+                      RANLIB=${CMAKE_RANLIB}
+                      GMPFLAGS=${normaliz_GMPFLAGS}
+        COMMAND     ${CMAKE_STRIP} source/normaliz
+  # TODO: do we need the libraries as well, or just the binary?
+  INSTALL_COMMAND   ${MAKE_EXE} -j${PARALLEL_JOBS} install
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/bin/
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  STEP_TARGETS      install test
+  )
+if(NOT NORMALIZ)
+  # Add this to the programs target
+  add_dependencies(build-programs build-normaliz-install)
+  if(NOT MP_FOUND)
+    ExternalProject_Add_StepDependencies(build-normaliz configure build-mpir-install)
+  endif()
+  if(NOT NAUTY)
+    ExternalProject_Add_StepDependencies(build-normaliz configure build-nauty-install)
+  endif()
 endif()
 
 
