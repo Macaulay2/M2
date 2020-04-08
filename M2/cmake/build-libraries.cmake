@@ -1064,6 +1064,7 @@ if(BUILD_PROGRAMS)
     )
 else()
   # Make a symbolic link to the existing executable in the programs directory
+  # TODO: more programs need to be symlinked
   foreach(program IN ITEMS 4TI2 COHOMCALG GFAN LRSLIB CSDP NORMALIZ NAUTY TOPCOM POLYMAKE)
     if(NOT ${program} MATCHES ${M2_INSTALL_PROGRAMSDIR})
       get_filename_component(program_name ${${program}} NAME)

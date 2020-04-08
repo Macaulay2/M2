@@ -17,7 +17,7 @@ degmonoid = (n) -> (
      rawMonoid(mo, 
 	  toSequence varnames,
 	  trivring,
-	  {}))
+	  {}, {}))
 
 degring1 := rawPolynomialRing(rawZZ(), degmonoid 1)
 

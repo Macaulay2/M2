@@ -22,3 +22,5 @@ configure_file(version.m2.in ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/versio
 foreach(filename IN LISTS M2LIST ITEMS loadsequence installedpackages)
   file(COPY ${filename} DESTINATION ${CORE_DIR})
 endforeach()
+
+# TODO: handle Style here.
