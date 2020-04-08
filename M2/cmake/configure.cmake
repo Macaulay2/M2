@@ -12,23 +12,21 @@
 # use CMAKE_BUILD_TYPE=Release               instead of OPTIMIZE
 # use CMAKE_BUILD_TYPE=RelWithDebInfo        instead of PROFILING
 # use CMAKE_BUILD_TYPE=RelMinSize            instead of ENABLE_STRIP
-# use BUILD_SHARED_LIBS=ON                   instead of SHARED
+# use BUILD_TESTING=ON                       to build the testing tree
 
-option(AUTOTUNE      "autotune library parameters"        OFF)
-option(MEMDEBUG      "enable memory allocation debugging" OFF)
-option(GIT_SUBMODULE "update submodules during build"     OFF)
+option(MEMDEBUG		"Enable memory allocation debugging"	OFF)
+option(GIT_SUBMODULE	"Update submodules during build"	OFF)
+option(BUILD_PROGRAMS	"Build all programs, even if found"	OFF)
+option(BUILD_LIBRARIES	"Build all libraries, even if found"	OFF)
+option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
+option(USING_MPIR	"Use MPIR instead of GMP"		ON)
+option(AUTOTUNE		"Autotune library parameters"		OFF)
 # TODO:
 #option(MYSQL        "link with mysql"                    OFF)
 #option(PYTHON       "link with libpython"                OFF)
-#option(NTL_WIZARD   "enable running the NTL wizard"      OFF)
 #option(ALTIVEC      "compile with '-faltivec' option"    OFF)
-#option(XCODE        "build Macaulay2/d/interpret.a"      OFF)
-option(USING_MPIR	"use MPIR instead of GMP"            ON)
-option(BUILD_PROGRAMS	"build all programs, even if found"  OFF)
-option(BUILD_LIBRARIES	"build all libraries, even if found" OFF)
-option(BUILD_SHARED_LIBS "build shared libraries"            OFF)
 
-set(PARALLEL_JOBS 4    CACHE STRING "specify the number of parallel jobs for libraries and programs")
+set(PARALLEL_JOBS 4    CACHE STRING "Number of parallel jobs for libraries and programs")
 
 # TODO: deprecate these variables
 set(M2SUFFIX "")

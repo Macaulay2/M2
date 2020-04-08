@@ -218,7 +218,28 @@ ExternalProject_Add(build-ntl
   TEST_COMMAND      cd src && ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
-  STEP_TARGETS      install test
+  STEP_TARGETS      install test wizard
+  )
+ExternalProject_Add_Step(build-ntl wizard
+  COMMENT           "Building NTL with NTL_WIZARD"
+  COMMAND           ${SET_LD_LIBRARY_PATH} ./configure
+                      #-C --cache-file=${CONFIGURE_CACHE}
+                      PREFIX=${M2_HOST_PREFIX}
+                      ${ntl_GMP_PREFIX}
+                      TUNE=auto
+                      NATIVE=on
+                      SHARED=$<IF:$<BOOL:BUILD_SHARED_LIBS>,on,off>
+                      NTL_STD_CXX14=on
+                      NTL_NO_INIT_TRANS=on # TODO: still necessary?
+                      CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
+                      CXXFLAGS=${CXXFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      CXX=${CMAKE_CXX_COMPILER}
+                      RANLIB=${CMAKE_RANLIB}
+  COMMAND           ${SET_LD_LIBRARY_PATH} ${MAKE_EXE} -j${PARALLEL_JOBS}
+  WORKING_DIRECTORY libraries/ntl/build/src
+  EXCLUDE_FROM_MAIN ON
+  USES_TERMINAL ON
   )
 if(NOT NTL_FOUND)
   # Add this to the libraries target
@@ -226,6 +247,9 @@ if(NOT NTL_FOUND)
   if(NOT MP_FOUND)
     ExternalProject_Add_StepDependencies(build-ntl configure build-mpir-install)
   endif()
+endif()
+if(AUTOTUNE)
+  add_dependencies(build-ntl-install build-ntl-wizard)
 endif()
 
 
@@ -629,7 +653,6 @@ ExternalProject_Add(build-fflas_ffpack
 ExternalProject_Add_Step(build-fflas_ffpack autotune
   COMMENT           "Generating fflas-ffpack-thresholds.h"
   COMMAND           ${MAKE_EXE} -j${PARALLEL_JOBS} autotune
-  COMMAND           ${MAKE_EXE} -j${PARALLEL_JOBS} install-data
   WORKING_DIRECTORY libraries/fflas_ffpack/build
   EXCLUDE_FROM_MAIN ON
   )
@@ -644,7 +667,6 @@ if(NOT FFLAS_FFPACK_FOUND)
     ExternalProject_Add_StepDependencies(build-fflas_ffpack configure build-givaro-install)
   endif()
 endif()
-# TODO: install twice?
 if(AUTOTUNE)
   add_dependencies(build-fflas_ffpack-install build-fflas_ffpack-autotune)
 endif()

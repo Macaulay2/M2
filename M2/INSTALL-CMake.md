@@ -204,6 +204,9 @@ in the `usr-host` subdirectory.
 ### Targets for Autotuning Libraries
 Targets for autotuning various parameters in libraries:
 - `build-fflas_ffpack-autotune`: generates `fflas-ffpack-thresholds.h`
+- `build-ntl-wizard`: run the NTL wizard
+
+Note: rerun the corresponding `build-[library]-install` target after the targets above.
 
 ### Targets for Building Macaulay2
 The main targets for building Macaulay2 are:
