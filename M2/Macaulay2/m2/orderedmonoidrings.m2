@@ -19,6 +19,15 @@ degreeLength OrderedMonoid := M -> M.degreeLength
 terms := symbol terms
 PolynomialRing = new Type of EngineRing
 PolynomialRing.synonym = "polynomial ring"
+PolynomialRing#{Standard,AfterPrint} = R -> (
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
+    << "PolynomialRing";
+    if #R.monoid.Options.WeylAlgebra > 0
+    then << ", " << #R.monoid.Options.WeylAlgebra << " differential variables";
+    if #R.monoid.Options.SkewCommutative > 0
+    then << ", " << #R.monoid.Options.SkewCommutative << " skew commutative variables";
+    << endl;
+    )
 
 isPolynomialRing = method(TypicalValue => Boolean)
 isPolynomialRing Thing := x -> false
@@ -30,30 +39,16 @@ expression PolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
      T := if (options R).Local === true then List else Array;
-     (expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (new T from (monoid R).generatorExpressions)
+     (expression k) (new T from R.generatorExpressions)
      )
 
 describe PolynomialRing := R -> (
      k := last R.baseRings;
-     net ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expressionMonoid monoid R)))
+     Describe (expression k) (expressionMonoid monoid R)) -- not describe k, we only expand one level
+--toExternalString PolynomialRing := R -> toString describe R;
 toExternalString PolynomialRing := R -> (
      k := last R.baseRings;
      toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
-
-tex PolynomialRing := R -> "$" | texMath R | "$"	    -- silly!
-
-texMath PolynomialRing := R -> (
-     if R.?tex then R.tex
-     else if hasAttribute(R,ReverseDictionary) then "\\text{" | toString getAttribute(R,ReverseDictionary)  | "}"
-     else (texMath last R.baseRings)|(texMath expression monoid R)
-     )
-
-net PolynomialRing := R -> (
-     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
-     else net expression R)
-toString PolynomialRing := R -> (
-     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
-     else toString expression R)
 
 degreeLength PolynomialRing := (RM) -> degreeLength RM.FlatMonoid
 

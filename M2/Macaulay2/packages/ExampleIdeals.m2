@@ -7,11 +7,10 @@ newPackage(
     	Authors => {{Name => "Mike Stillman", 
 		  Email => "mike@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},
-    	Headline => "a package consisting of examples of ideals",
+    	Headline => "examples of ideals",
+     	PackageImports => { "Markov" },
     	DebuggingMode => false
     	)
-
-needsPackage "Markov"
 
 export {
      "readExampleFile",

@@ -1,12 +1,11 @@
 --symbols
 
-protect MTries;
 protect NoStrategy;
 protect ReturnMap;
 protect IdealStrategy;
 protect Section;
 protect KnownDomain;
-protect IsGraded; 
+protect IsGraded;
 protect ModuleStrategy;
 
 --the following code is take from Divisor.m2
@@ -18,7 +17,7 @@ reflexify = method(Options => {Strategy => NoStrategy, KnownDomain=>true, Return
 reflexify(Ideal) := Ideal => o->(I1) -> (
     if (o.Strategy == ModuleStrategy) then (
         --the user specified we use the ModuleStrategy
-        S1 := ring I1; 
+        S1 := ring I1;
         inc := inducedMap(S1^1, I1*(S1^1));
         ddual := Hom(Hom(inc, S1^1), S1^1);
 		annihilator(coker ddual)
@@ -36,21 +35,21 @@ reflexifyIdeal(Ideal) := Ideal => o->(I1) -> (
 	S1 := ring I1;
 	assumeDomain := false;
 	if (o.KnownDomain == true) then (assumeDomain = true;) else (assumeDomain = isDomain(S1););
-	if (assumeDomain) then ( 
+	if (assumeDomain) then (
 		if (I1 == ideal sub(0, S1)) then (
 			I1
 		)
 		else(
 			x := sub(0, S1);
-			i := 0;	
+			i := 0;
 			genList := first entries gens I1;
 			while ((i < #genList) and (x == sub(0, S1))) do(
 				x = genList#i;
-				i = i+1;	
+				i = i+1;
 			);
 			ideal(x) : (ideal(x) : I1)
 		)
-		
+
 	)
 	else (
 		inc := inducedMap(S1^1, I1*(S1^1));
@@ -108,50 +107,50 @@ reflexivePower(ZZ, Ideal) := Ideal => o -> (n1, I1) -> (
 );
 
 --this method embeds a rank 1 module as a divisorial ideal
---this method is based on and inspired by code originally written by Moty Katzman, earlier versions can be found in 
+--this method is based on and inspired by code originally written by Moty Katzman, earlier versions can be found in
 -- http://katzman.staff.shef.ac.uk/FSplitting/ParameterTestIdeals.m2
 --under canonicalIdeal
 
-embedAsIdeal = method(Options => {MTries =>10, IsGraded=>false, ReturnMap=>false, Section=>null});
+embedAsIdeal = method(Options => {Attempts =>10, IsGraded=>false, ReturnMap=>false, Section=>null});
 
 embedAsIdeal(Module) := Ideal => o -> (M1) -> (
     S1 := ring M1;
-	embedAsIdeal(S1, M1, MTries=>o.MTries, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap, Section=>o.Section)
+	embedAsIdeal(S1, M1, Attempts=>o.Attempts, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap, Section=>o.Section)
 )
 
 embedAsIdeal(Matrix) := Ideal => o -> (Mat1) -> (
     S1 := ring Mat1;
-	embedAsIdeal(S1, Mat1, MTries=>o.MTries, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
+	embedAsIdeal(S1, Mat1, Attempts=>o.Attempts, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
 )
 
 embedAsIdeal(Ring, Module) := Ideal => o ->(R1, M2) ->(
     if (instance(o.Section, Matrix)) then ( --if we are passing a section
         if (target o.Section == M2) then (
-            embedAsIdeal(R1, o.Section, MTries=>o.MTries, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
+            embedAsIdeal(R1, o.Section, Attempts=>o.Attempts, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
         )
         else (
             error "embedAsIdeal: the target of the section is not equal to the given module.";
         )
     )
     else(
-        internalModuleToIdeal(R1, M2, MTries=>o.MTries, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
+        internalModuleToIdeal(R1, M2, Attempts=>o.Attempts, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
     )
 )
 
 embedAsIdeal(Ring, Matrix) := Ideal => o->(R1, Mat2) -> (
-    internalModuleWithSectionToIdeal(R1, Mat2, MTries=>o.MTries, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
+    internalModuleWithSectionToIdeal(R1, Mat2, Attempts=>o.Attempts, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
 )
 
-internalModuleToIdeal = method(Options => {MTries=>10, IsGraded=>false, ReturnMap=>false});
+internalModuleToIdeal = method(Options => {Attempts=>10, IsGraded=>false, ReturnMap=>false});
 
-internalModuleToIdeal(Ring, Module) := Ideal => o ->(R1, M2) -> 
+internalModuleToIdeal(Ring, Module) := Ideal => o ->(R1, M2) ->
 (--turns a module to an ideal of a ring
 --	S1 := ambient R1;
 	flag := false;
 	answer:=0;
-	if (M2 == 0) then ( --don't work for the zero module	    
+	if (M2 == 0) then ( --don't work for the zero module
 	    answer = ideal(sub(0, R1));
-	    if (o.IsGraded==true) then (		    
+	    if (o.IsGraded==true) then (
 			answer = {answer, degree (sub(1,R1))};
 		);
 		if (o.ReturnMap==true) then (
@@ -195,7 +194,7 @@ internalModuleToIdeal(Ring, Module) := Ideal => o ->(R1, M2) ->
 	);
 	-- if that doesn't work, then try a random combination/embedding
      i = 0;
-	while ((flag == false) and (i < o.MTries) ) do (
+	while ((flag == false) and (i < o.Attempts) ) do (
 		coeffRing := coefficientRing(R1);
 		d := sum(#s2, z -> random(coeffRing, Height=>100000)*(s2#z));
        -- print d;
@@ -219,9 +218,9 @@ internalModuleToIdeal(Ring, Module) := Ideal => o ->(R1, M2) ->
 );
 
 
---this variant takes a map from a free module of rank 1 and maps to another rank 1 module.  The function returns the second module as an ideal combined with the element 
+--this variant takes a map from a free module of rank 1 and maps to another rank 1 module.  The function returns the second module as an ideal combined with the element
 
-internalModuleWithSectionToIdeal = method(Options => {MTries=>10, ReturnMap=>false, IsGraded=>false});
+internalModuleWithSectionToIdeal = method(Options => {Attempts=>10, ReturnMap=>false, IsGraded=>false});
 
 internalModuleWithSectionToIdeal(Ring, Matrix) := Ideal => o->(R1, f1)->
 (
@@ -255,7 +254,7 @@ internalModuleWithSectionToIdeal(Ring, Matrix) := Ideal => o->(R1, f1)->
 		i = i+1;
 	);
 	-- if that doesn't work, then try a random combination/embedding
-	while ((flag == false) and (i < o.MTries) ) do (
+	while ((flag == false) and (i < o.Attempts) ) do (
 		coeffRing := coefficientRing(R1);
 		d := sum(#s2, z -> random(coeffRing, Height=>100000)*(s2#z));
 		h = map(R1^1, M2**R1, {d});
@@ -272,7 +271,7 @@ internalModuleWithSectionToIdeal(Ring, Matrix) := Ideal => o->(R1, f1)->
 			);
 		);
 	);
-	
+
 	if (flag == false) then error "internalModuleWithSectionToIdeal: No way found to embed the module into the ring as an ideal, are you sure it can be embedded as an ideal?";
 	newMatrix := h*f1;
 	flatten {first first entries newMatrix, answer}
@@ -283,4 +282,44 @@ isDomain = method();
 
 isDomain(Ring) := Boolean => (R1) -> (
 	isPrime( ideal(sub(0, R1)))
+);
+
+--gets a nonzero generator of an ideal.
+getNonzeroGenerator := (I2) -> (
+    i := 0;
+    flag := false;
+    genList := first entries gens I2;
+    localZero := sub(0, ring I2);
+    while ((i < #genList) and (flag == false)) do (
+        if (genList#i != localZero) then (
+            flag = true;
+        );
+        i = i + 1;
+    );
+    if (flag == true) then (
+        genList#(i-1)
+    )
+    else (
+        null
+    )
+);
+
+isLocallyPrincipalIdeal = method();
+
+--the following function should go elsewhere, it checks whether a given ideal is locally principal (really, invertible).  If it is locally principal, it returns the inverse ideal.
+isLocallyPrincipalIdeal(Ideal) := (I2) -> (
+    localGen := getNonzeroGenerator(I2);
+    if (localGen === null) then (
+        return {false, sub(0, ring I2)};
+    );
+    inverseIdeal := (ideal(localGen) : I2);
+    idealProduct := inverseIdeal*I2;
+    isLocPrinc := (reflexify(idealProduct) == idealProduct);
+    if (isLocPrinc == true) then (
+        return {true, inverseIdeal};
+    )
+    else (
+        return {false, sub(0, ring I2)};
+    );
+
 );

@@ -1,8 +1,5 @@
--- -*- M2-comint -*- hash: -1187831874
---loading configuration for package "FourTiTwo" from file /Users/dan/Library/Application Support/Macaulay2/init-FourTiTwo.m2
---loading configuration for package "gfanInterface" from file /Users/dan/Library/Application Support/Macaulay2/init-gfanInterface.m2
---loading configuration for package "Tropical" from file /Users/dan/Library/Application Support/Macaulay2/init-Tropical.m2
--- polymake is installed
+-- -*- M2-comint -*- hash: 1364290900
+-- polymake not present
 
 i1 : QQ[x_1,x_2,x_3,x_4]
 
@@ -27,16 +24,30 @@ o3 = Fan{...1...}
 
 o3 : Fan
 
-i4 : QQ[x,y]
+i4 : QQ[x_0,x_1]
 
-o4 = QQ[x, y]
+o4 = QQ[x , x ]
+         0   1
 
 o4 : PolynomialRing
 
-i5 : tropicalPrevariety({x+y+1,x+y},Strategy => "gfan")
+i5 : tropicalPrevariety({x_0+x_1+1}, {{1,0}})
 
 o5 = Fan{...1...}
 
 o5 : Fan
 
-i6 : 
+i6 : QQ[x_0,x_1]
+
+o6 = QQ[x , x ]
+         0   1
+
+o6 : PolynomialRing
+
+i7 : tropicalPrevariety({x_0+x_1+1,x_0+x_1},Strategy => "gfan")
+
+o7 = Fan{...1...}
+
+o7 : Fan
+
+i8 : 

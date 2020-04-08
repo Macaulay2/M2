@@ -8,10 +8,9 @@ newPackage(
        Email => "diegcif@mit.edu",
        HomePage => "http://www.mit.edu/~diegcif"}
     },
-    Headline => "A package for triangular decompositions of ideals",
-    DebuggingMode => true,
+    Headline => "triangular decompositions of ideals",
     AuxiliaryFiles => true,
-    PackageImports => {"SimpleDoc","Binomials","MapleInterface"},
+    PackageImports => {"Binomials","MapleInterface","Elimination"},
     PackageExports => {}
 )
 

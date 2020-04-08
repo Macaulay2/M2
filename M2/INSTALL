@@ -82,8 +82,8 @@ Here are commands that will get you a good development environment under
 various modern operating systems:
 
   Ubuntu and Debian:
-    Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev
+    Install packages as root with:
+      apt-get install -y -q sudo autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
@@ -114,13 +114,11 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo dnf -y install autoconf bison boost-devel emacs flex gc-devel gcc-c++ gdbm-devel git glpk-devel kernel-devel lapack-devel libatomic_ops-devel libgfortran-static libtool libxml2-devel ncurses-devel patch readline-devel rpm-build rpm-sign libmpc-devel yasm time which
-    Some packages perhaps of interest to developers:
-      sudo dnf -y install mpir-devel mpfr-devel pari-devel frobby cddlib-devel givaro-devel gtest-devel emacs kernel-devel libgfortran-static flint-devel gmp-devel debuginfo-install strace libfac-devel factory-devel ntl-devel rpmdevtools
+      sudo dnf -y install autoconf bison boost-devel cddlib-devel debuginfo-install emacs emacs factory-devel flex flint-devel frobby gc-devel gcc-c++ gdbm-devel git givaro-devel glpk-devel gmp-devel gtest-devel kernel-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch polymake readline-devel rpm-build rpm-sign rpmdevtools strace time which yasm
 
-  Scientific linux:
+  Scientific linux (Red Hat, CentOS, ...):
     Install packages with: (SL 7.x)
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel texinfo
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel texinfo redhat-lsb wget
     Install other software:
       Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
         way (untar, configure, make, make install).
@@ -135,6 +133,7 @@ various modern operating systems:
 	  . /opt/rh/devtoolset-2/enable
       to update the environment of your currently running shell.  The latter
       command will also work in your shell initialization file, ".profile".
+      Alternatively, see the instructions at https://www.softwarecollections.org/en/scls/rhscl/devtoolset-8/.
 
   Suse Linux Leap 42.1:
 
@@ -152,25 +151,40 @@ various modern operating systems:
 
       sudo pacman --sync --needed archlinux-keyring
       sudo pacman-key --populate archlinux
-      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip yasm gtest
+      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip yasm gtest wget patch
 
     To upgrade the system:
 
       sudo pacman-key --refresh-keys
       sudo pacman --sync --refresh --sysupgrade
 
+  Gentoo Linux:
+
+    To install generally needed packages, run this command as root:
+
+       emerge --ask -n sudo xauth git emacs
+
+       Note: for emacs, set the USE variables (package.use), so emacs will use X11 when available:
+		app-editors/emacs X
+		app-emacs/emacs-common-gentoo X
+
+    To install packages needed by Macaulay2, run this command:
+
+       emerge --ask -n yasm sys-process/time
+
+    To install packages potentially usable by Macaulay2, run this command:
+
+       emerge --ask -n 4ti2 blas-reference lapack-reference boehm-gc boost cddlib coinor-csdp flint fplll frobby gdbm gfan glpk gmp gtest libatomic_ops lrslib mpc mpfr mpir nauty normaliz ntl pari topcom
+
+       Note: various variables, licenses, and options will have to be set
+
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
       simply run instead.
-    Install the Xcode Command Line Tools, available from Apple.  On older versions of Mac OS X
-      one may use the following command for installing it:
-      	 xcode-select --install
-      On newer versions, one installs the tools with "Software Update".
-      After upgrading the OS, it will be necessary to install it again.  (One symptom of
-      forgetting to do this is that /usr/include may be missing.)
-      If you install XCode, you will then need to do
-        xcode-select --install
-	(this command creates /usr/include, and other usual unix directories)
+    Install the Xcode Command Line Tools using the following command.
+          xcode-select --install
+       (Starting with Mac OS X version 10.15 (Catalina), /usr/include does not exist and cannot be
+        made to exist, so our previous instructions for getting it no longer apply and have been removed.)
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 
@@ -181,12 +195,12 @@ various modern operating systems:
       at https://github.com/Homebrew/homebrew/tarball/master, which will download
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
-	brew tap homebrew/science
-	brew update
-	brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost libmpc xz wget
-	brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk yasm make
+	brew update |cat
+	brew install pkg-config autoconf automake gnu-tar libtool wget yasm make |cat
+	brew install --build-bottle bdw-gc libatomic_ops gdbm glpk boost libmpc libomp xz |cat
       You may omit the option "--build-bottle" if you will not be distributing your Macaulay2
       binaries to other people with CPU's that may not have the same capabilities as yours.
+      
     If you have previously installed homebrew, will be distributing your
       Macaulay2 binaries to other people, and perhaps not used the option
       --build-bottle when installing packages, then use the command
@@ -213,6 +227,13 @@ various modern operating systems:
         sudo rm -rf /sw
     Note: adding "--enable-strip" to the configure script command line may not be a good idea,
       as stripping the M2 binary seems to cause the program to crash unpredictably.
+    Note: starting with Mac OS X 10.14 (Mojave) the "binutils" package of
+      homebrew includes versions of the programs 'ar' and 'ranlib' that are not
+      compatible with the native (clang) Mac OS X compilers, so either remove
+      or unlink the package, add "AR=/usr/bin/ar RANLIB=/usr/bin/ranlib" as
+      options to the 'configure' command line, or arrange for /usr/local/bin to
+      occur later in the value of the environment variable PATH than /usr/bin
+      does.
 
   Cygwin 1.7 under Microsoft Windows:
     Use setup to install these packages:
@@ -238,14 +259,14 @@ various modern operating systems:
   the directory where you want to install the files; if it's a directory not
   owned by you, prefix the "make install" command below with "sudo".
 
-       wget ftp://ftp.gnu.org/gnu/gcc/gcc-7.1/gcc-7.1.tar.bz2
-       tar xjf gcc-7.1.tar.bz2
-       cd gcc-7.1
+       wget ftp://ftp.gnu.org/gnu/gcc/gcc-7.1.0/gcc-7.1.0.tar.bz2
+       tar xjf gcc-7.1.0.tar.bz2
+       cd gcc-7.1.0
        ./contrib/download_prerequisites
        cd ..
-       mkdir gcc-7.1-build
-       cd gcc-7.1-build
-       ../gcc-7.1/configure --prefix=$HOME/local --program-suffix=-7.1 --enable-languages=c,c++,fortran --disable-multilib
+       mkdir gcc-7.1.0-build
+       cd gcc-7.1.0-build
+       ../gcc-7.1.0/configure --prefix=$HOME/local --program-suffix=-7.1.0 --enable-languages=c,c++,fortran --disable-multilib
        make
        make install
 
@@ -257,16 +278,16 @@ various modern operating systems:
      command line above, allowing the resulting binaries to depend on the
      version of libstdc++ already installed on your system.
 
-     The resulting compiler executables will be named gcc-7.1 and g++-7.1.
+     The resulting compiler executables will be named gcc-7.1.0 and g++-7.1.0.
      Now put the following lines in your file $HOME/.profile :
 
         export PATH=$HOME/local/bin:$PATH
         export MANPATH=$HOME/local/share/man:$MANPATH
         export INFOPATH=$HOME/local/share/info:$INFOPATH
         export LD_LIBRARY_PATH=$HOME/local/lib:$HOME/local/lib64:$LD_LIBRARY_PATH
-        export CC=gcc-7.1
-        export CXX=g++-7.1
-        export FC=gfortran-7.1
+        export CC=gcc-7.1.0
+        export CXX=g++-7.1.0
+        export FC=gfortran-7.1.0
 
      and then log out and log in again (or source the file into your
      environment and continue in the same process or in daughter processes).
@@ -347,36 +368,13 @@ make.
 
 Now continue building the program this way:
 
-        ./configure --enable-download
+        ./configure --enable-download --prefix=/foo/bar
         make
         make check                      # optional
         make install
 
-Note: version 3.82 of the "make" program, used above, seems to have a bug that
-results in this error message:
-    CC scclib.c
-    ../../../Macaulay2/d/scclib.c:5:10: fatal error: 'expr-exports.h' file not found
-Under Mac OS X, one encounters that old version of "make", so it is better to
-use a later version instead, such as the "gmake" program, as provided by
-"brew", and installed according to the instructions above.
-
 Remember to add any options specified above, in the section for your particular
 operating system, to the "configure" command line.
-
-To take advantage of parallelism when running "make", append an option of
-the form "-jN" to the command line, where "N" is replaced by the number of
-processors you wish to devote to the task.  (Our makefiles are just begining to
-take advantage of this.)
-
-To enable the running of the NTL "wizard", which conducts time consuming
-experiments to optimize the speed of its code, before compiling it, add the
-option --enable-ntl-wizard to the "configure" command line above.
-
-By default, the files are installed in appropriate subdirectories of
-/usr/local.  To specify a different location (prefix) you may use an option to
-the configure script:
-
-        ./configure --enable-download --prefix=/foo/bar
 
 Files will then be installed in the following directories:
 
@@ -387,14 +385,24 @@ Files will then be installed in the following directories:
         /foo/bar/share/emacs/site-lisp
         /foo/bar/lib/Macaulay2
 
-instead of in
+The Macaulay2 program itself will be located at /foo/bar/bin/M2.
 
-        /usr/local/bin
-        /usr/local/share/Macaulay2
-        /usr/local/share/doc/Macaulay2
-        /usr/local/share/man/man1
-        /usr/local/share/emacs/site-lisp
-        /usr/local/lib/Macaulay2
+Choose an appropriate directory path, instead of /foo/bar, as the installation
+prefix, or omit the option entirely for installation in /usr/local.
+
+Note: the "make" program in the commands above should be at least version 4.
+Under Mac OS X, one encounters an old version of "make", so it is better to use
+the "gmake" program, as provided by "brew", and installed according to the
+instructions above.
+
+To take advantage of parallelism when running "make", append an option of
+the form "-jN" to the command line, where "N" is replaced by the number of
+processors you wish to devote to the task.  (Our makefiles are just begining to
+take advantage of this.)
+
+To enable the running of the NTL "wizard", which conducts time consuming
+experiments to optimize the speed of its code, before compiling it, add the
+option --enable-ntl-wizard to the "configure" command line above.
 
 To use a different prefix, say $HOME/local, for finding libraries and include
 files installed in a nonstandard location, add the following options to the
@@ -501,9 +509,7 @@ To validate all our HTML files, run:
    make validate-html
 
 This depends on the installation of the validator (e.g., the Ubuntu package
-"w3c-markup-validator") and the script "validator-runner.py" from
-http://github.com/ysangkok/w3c-validator-runner, so we don't run it
-automatically.
+"w3c-markup-validator"), so we don't run it automatically.
 
 ----------------------
 Rerunning the package examples

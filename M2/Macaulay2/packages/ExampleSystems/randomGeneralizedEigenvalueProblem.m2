@@ -13,6 +13,8 @@ randomGeneralizedEigenvalueProblem ZZ := n -> (
      (T,S,solsS)
      )
 
+beginDocumentation()
+
 doc ///
     Key
     	randomGeneralizedEigenvalueProblem

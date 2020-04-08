@@ -6,9 +6,9 @@ newPackage(
 	Authors => {
 	     {Name => "Gunnar Floystad", Email => "nmagf@uib.no"}
 	      },
-   	Headline => "Triplets of degree sequences, and associated Betti diagrams and cohomology tables",
-   	DebuggingMode => false,
-	Reload => true
+     	PackageImports => {"BoijSoederberg"},
+   	Headline => "triplets of degree sequences and associated Betti diagrams and cohomology tables",
+   	DebuggingMode => false
    	)
 export {
      "Triplet",
@@ -39,8 +39,6 @@ export {
      --
      "cohMatrix",
      "cohTable"}
-  
-needsPackage("BoijSoederberg");
 
 ----------------------------
 --New type:Triplet

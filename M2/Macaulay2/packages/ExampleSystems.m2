@@ -13,9 +13,6 @@ newPackage(
     	DebuggingMode => false
     	)
 
-needsPackage "Text"
-needsPackage "SimpleDoc"
-
 examples'names = {
     "cyclic",
     "katsura",
@@ -25,6 +22,16 @@ examples'names = {
 
 for e in examples'names do 
 needs("./ExampleSystems/"|e|".m2")
+
+beginDocumentation()
+
+multidoc ///
+ Node
+  Key
+   ExampleSystems
+  Headline
+   examples of polynomial systems
+///
 
 end
 

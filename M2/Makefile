@@ -27,7 +27,7 @@ check-make:
 	@ echo GNU make version okay
 
 make-configure : check-autoconf configure
-configure : configure.ac config/files config/ax_func_accept_argtypes.m4 config/ax_prog_cc_for_build.m4 # aclocal.m4
+configure : configure.ac config/files config/ax_func_accept_argtypes.m4 config/ax_prog_cc_for_build.m4 config/openmp.m4 # aclocal.m4
 	@ set -x ; autoconf
 
 get-tools: usr-build/aclocal-path get-m4 get-pkg get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
@@ -44,7 +44,7 @@ get-m4:
 get-autoconf:get-m4
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=autoconf VERSION=2.69
 get-automake:get-autoconf
-	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.15
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.16.1
 get-libtool:get-automake
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=libtool VERSION=2.4.6
 get-pkg: usr-build/share/aclocal/pkg.m4

@@ -12,6 +12,7 @@ newPackage(
 	     },
     	Headline => "Bernstein-Gelfand-Gelfand correspondence",
 	PackageExports => {"BoijSoederberg"},
+	PackageImports => {"Truncations"},
     	DebuggingMode => false
     	)
 
@@ -1270,7 +1271,7 @@ TEST///
 	  E = ZZ/32003[e_0..e_2, SkewCommutative=>true];
 	  M = coker matrix {{x_0^2, x_1^2}};
 	  m = presentation truncate(regularity M,M);
-	  assert(symExt(m,E)==map(E^{4:1},E^4,{{e_2,e_1,e_0,0},{0,e_2,0,e_0},{0,0,e_2,e_1},{3:0,e_2}}))
+	  assert(symExt(m,E)==map(E^{{1}, {1}, {1}, {1}},E^4,{{e_2, 0, 0, 0}, {e_1, e_2, 0, 0}, {e_0, 0, e_2, 0}, {0, e_0, e_1, e_2}}))
 ///
 
 TEST///

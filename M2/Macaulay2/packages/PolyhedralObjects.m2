@@ -6,7 +6,7 @@
 -- UPDATE HISTORY : August 2012 
 ---------------------------------------------------------------------------
 newPackage("PolyhedralObjects",
-    Headline => "A package with types for Polyhedra2, gfanInterface, and PolymakeInterface",
+    Headline => "types for Polyhedra2, gfanInterface, and PolymakeInterface",
     Version => ".1",
     Date => "August 5, 2011",
     Authors => {
@@ -15,8 +15,7 @@ newPackage("PolyhedralObjects",
 	  Email => "nilten@math.berkeley.edu"},
      	  {Name => "Qingchun Ren"},
 	  {Name => "Josephine Yu"}
-     },
-    DebuggingMode => true
+     }
     )
 
 ---------------------------------------------------------------------------

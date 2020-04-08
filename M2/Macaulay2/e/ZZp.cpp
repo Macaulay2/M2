@@ -135,7 +135,7 @@ ring_elem Z_mod::from_long(long n) const
   return ring_elem(m);
 }
 
-ring_elem Z_mod::from_int(mpz_ptr n) const
+ring_elem Z_mod::from_int(mpz_srcptr n) const
 {
   //  cout << "from_int(";
   //  bignum_text_out(cout, n);

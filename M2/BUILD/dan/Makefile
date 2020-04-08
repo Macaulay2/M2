@@ -7,6 +7,7 @@
 CC  =
 CXX =
 FC  =
+AR  = 
 
 # configure script options:
 OPTIONS =
@@ -18,9 +19,8 @@ BUILDLIBS =
 DIRSUFF =
 
 #############################################################################
-# Examples:
-#
-#    time make SIGN=no DEBUG=no CC=gcc-7 CXX=g++-7 FC=gfortran-7 
+# Example:
+#    time make SIGN=no DEBUG=no CC=gcc-8 CXX=g++-8 FC=gfortran-8 DIRSUFF=-gcc8
 #############################################################################
 
 # We may distribute the result, so prevent aggressive optimizations based on the current architecture:
@@ -33,6 +33,9 @@ MACOSX := $(shell if [ `uname -s` = Darwin ] ; then echo yes ; else echo no; fi)
 
 ifeq ($(MACOSX),yes)
 OPTLIBS += /usr/local/opt/readline
+# we add these libraries so we can build them without dynamic libraries
+BUILDLIBS += gdbm readline
+# I had to also manually move homebrew's dynamic library /usr/local/lib/libomp.dylib out of the way to avoid linking with it.  Find a better way.
 endif
 
 DIRECTORY ?= $(shell hostname)$(DIRSUFF)
@@ -44,15 +47,19 @@ ifeq ($(DEBUG),yes)
 CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
 DIRECTORY := $(DIRECTORY).debug
 else
-CONFIGOPTIONS += --enable-tarfile
+CONFIGOPTIONS += --enable-strip
 ifeq ($(DEBIAN),yes)
 CONFIGOPTIONS += --enable-deb
-endif
+else
 ifeq ($(RPM),yes)
 CONFIGOPTIONS += --enable-rpm
-endif
+else
 ifeq ($(MACOSX),yes)
 CONFIGOPTIONS += --enable-dmg
+else
+CONFIGOPTIONS += --enable-tarfile
+endif
+endif
 endif
 endif
 
@@ -76,9 +83,9 @@ $(foreach O, $(OPTLIBS),			\
 include Makefile.include
 
 test :
-	: $(FC) $(CC) $(CXX)
+	: $(FC) $(CC) $(CXX) $(AR)
 
 # Local Variables:
 # mode: makefile-gmake
-# compile-command: "time make SIGN=no DEBUG=no "
+# compile-command: "time gmake SIGN=no DEBUG=no "
 # End:

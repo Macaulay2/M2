@@ -28,13 +28,22 @@ hypercube = method(TypicalValue => Polyhedron)
 --   INPUT : '(d,s)',  where 'd' is a strictly positive integer, the dimension of the polytope, and
 --     	    	       's' is a positive rational number, half of the edge length
 --  OUTPUT : The 'd'-dimensional hypercube with edge length 2*'s' as a polyhedron
-hypercube(ZZ,QQ) := (d,s) -> (
+hypercube(ZZ,QQ) := (d,s) -> hypercube(d, -s, s)
+
+-- PURPOSE : Generating the 'd'-dimensional hypercube '[lower, upper]^d'.
+-- OUTPUT : The 'd'-dimensional hypercube '[lower, upper]^d'.
+hypercube(ZZ,QQ,QQ) := (d, lower, upper) -> (
      -- Checking for input errors
      if d < 1 then error("dimension must at least be 1");
-     if s <= 0 then error("size of the hypercube must be positive");
+     if lower >= upper then error("Lower vertex value cannot be bigger than upper.");
      -- Generating half-spaces matrix and vector
-     polyhedronFromHData(map(QQ^d,QQ^d,1) || -map(QQ^d,QQ^d,1),matrix toList(2*d:{s})))
-
+     A := map(QQ^d,QQ^d,1) || -map(QQ^d,QQ^d,1);
+     b := (matrix toList(d:{upper})) || (matrix toList(d:{-lower}));
+     polyhedronFromHData(A, b)
+)
+hypercube(ZZ,ZZ,ZZ) := (d, lower, upper) -> hypercube(d, promote(lower, QQ), promote(upper, QQ))
+hypercube(ZZ,QQ,ZZ) := (d, lower, upper) -> hypercube(d, lower, promote(upper, QQ))
+hypercube(ZZ,ZZ,QQ) := (d, lower, upper) -> hypercube(d, promote(lower, QQ), upper)
 
 
 --   INPUT : '(d,s)',  where 'd' is a strictly positive integer, the dimension of the polytope, and
@@ -108,7 +117,7 @@ secondaryPolytope Polyhedron := P -> (
      v := map(QQ^m,QQ^1,0);
      N := matrix{toList(m:1_QQ)} || V;
      w := matrix {{1_QQ}};
-     sum apply(refCells, e -> (e#0/volP) * intersection(Id,v,N,w||e#1)))
+     sum apply(refCells, e -> (e#0/volP) * polyhedronFromHData(Id,v,N,w||e#1)))
      
 
 
@@ -142,7 +151,7 @@ bipyramid Polyhedron := P -> (
    result := new HashTable from {
       underlyingCone => newC
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 )
 
 
@@ -165,7 +174,7 @@ pyramid Polyhedron := P -> (
    result := new HashTable from {
       underlyingCone => newC
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 )
 
 
@@ -190,11 +199,11 @@ crossPolytope(ZZ,QQ) := (d,s) -> (
       facets => transpose(-homHalf#0),
       computedHyperplanes => transpose(homHalf#1)
    };
-   C = cone C;
+   C = internalConeConstructor C;
    result := new HashTable from {
       underlyingCone => C
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 )
 
 
@@ -219,7 +228,7 @@ emptyPolyhedron ZZ := n -> (
    result := new HashTable from {
       underlyingCone => C
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 );
 	  
 -- PURPOSE : Generating the 'd'-dimensional standard simplex in QQ^(d+1)
@@ -231,3 +240,19 @@ stdSimplex ZZ := d -> (
      if d < 0 then error("dimension must not be negative");
      -- Generating the standard basis
      convexHull map(QQ^(d+1),QQ^(d+1),1))
+
+-- PURPOSE : Generating the 'd'-dimensional simplex in QQ^(d), the convex hull of 0 and the unit vectors
+--   INPUT : 'd',  a positive integer
+--  OUTPUT : The 'd'-dimensional simplex as a polyhedron
+simplex = method(TypicalValue => Polyhedron)
+simplex ZZ := d -> (
+   simplex(d, 1)
+)
+simplex(ZZ, QQ) := (d, a) -> (
+   -- Checking for input errors
+   if d < 0 then error("dimension must not be negative");
+   if a <= 0 then error("dilation factor must be positive");
+   -- Generating the standard basis
+   convexHull (map(QQ^d,QQ^1,0) | map(QQ^(d),QQ^(d),a))
+)
+simplex(ZZ, ZZ) := (d, a) -> simplex(d, promote(a, QQ))

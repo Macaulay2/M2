@@ -171,15 +171,15 @@ document {
      Key => { (symbol /,VisibleList,Function),
 	  (symbol /,List,Function),
 	  (symbol \,Function,VisibleList),
-	  (symbol \,Function,Tally),
+	  (symbol \,Function,VirtualTally),
 	  (symbol \,SelfInitializingType,VisibleList),
 	  (symbol \,Command,VisibleList),
 	  (symbol \,RingMap,List),
-	  (symbol \,Command,Tally),
+	  (symbol \,Command,VirtualTally),
 	  (symbol /,VisibleList,SelfInitializingType),
 	  (symbol /,List,Command),
-	  (symbol /,Tally,Command),
-	  (symbol /,Tally,Function),
+	  (symbol /,VirtualTally,Command),
+	  (symbol /,VirtualTally,Function),
 	  (symbol /,List,RingMap),
 	  (symbol /,VisibleList,Command)
 	  },
@@ -257,37 +257,6 @@ document {
      ///
      }
 
-document {
-     Key => hash,
-     Headline => "hash code of an object",
-     Usage => "hash x",
-     Inputs => { "x" => Thing },
-     Outputs => { ZZ => { "the hash code of ", TT "x" } },
-     PARA{
-	  "The hash code of ", TT "x", " is an integer produced in a deterministic way
-	  from ", TT "x", ", and perhaps from the hash codes of the contents of ", TT "x", ".
-	  See ", TO "hashing", " for a discussion of the requirements that
-	  the hash codes used here are designed to satisfy."
-	  },
-     PARA {
-	  "Hash codes may change from one version of Macaulay2 to the next, but changes to the hash codes
-	  of the basic types will be avoided, if possible.  That includes lists, sequences, strings, hash 
-	  tables, options, Boolean values, and numbers."
-	  }
-     }
-
-document {
-     Key => {remove,(remove, HashTable, Thing)},
-     Headline => "remove an entry from a hash table",
-     TT "remove(x,k)", " -- removes the entry stored in the hash table ", TT "x", "
-     under the key ", TT "k", ".",
-     PARA{},
-     EXAMPLE {
-	  "x = new MutableHashTable from {a => 1, b => 2}",
-	  "remove(x,a)",
-	  "x"
-	  }
-     }
 
 document {
      Key => Boolean,
@@ -391,24 +360,6 @@ document {
      }
 
 document {
-     Key => {mutable,(mutable, Thing)},
-     Headline => "whether something may be modified",
-     TT "mutable x", " -- returns true or false, depending on whether x is mutable.",
-     PARA{},
-     "If ", TT "x", " is a hash table, list, dictionary, or database, then it is mutable if its contents
-     can be destructively altered.",
-     PARA{},
-     "If ", TT "x", " is a symbol, then it's mutable if a value can be assigned to
-     it. (See ", TO "protect", ".)",
-     PARA{},
-     "If ", TT "x", " is anything else, then it isn't mutable.",
-     PARA{},
-     "The (changeable) contents of a mutable hash table or list do not participate in strong comparison
-     with ", TO "===", " or in ", TO "hashing", ".",
-     SeeAlso => {"MutableList", "MutableHashTable"}
-     }
-
-document {
      Key => serialNumber,
      Headline => "serial number of a dictionary, task, symbol, mutable hash table, or mutable list, ",
      Usage => "serialNumber x",
@@ -504,6 +455,25 @@ document {
 	  LI { TO "Postfix", " -- it's a postfix unary operator" }
 	  },
      "We intend to add parsing precedences to this table and eliminate ", TO "seeParsing", "."
+     }
+
+
+document{
+     Headline => "a type of method function",
+     Key => MethodFunctionBinary,
+     PARA {
+	  "The type of all method functions created with the option ", TO "Binary", " set to ", TO "true", ", such as ", TO "gcd", "."
+	  },
+     SeeAlso => { "method" }
+     }
+
+document{
+     Headline => "a type of method function",
+     Key => MethodFunctionSingle,
+     PARA {
+	  "The type of all method functions created with the option ", TO "Dispatch", " set to ", TO "Thing", ", such as ", TO "code", "."
+	  },
+     SeeAlso => { "method" }
      }
 
 document { Key => MethodFunction,
@@ -997,6 +967,81 @@ document { Key => {(betti,BettiTally)},
      ///
      }
 
+document { Key => {MultigradedBettiTally,
+	(symbol SPACE,MultigradedBettiTally,List)},
+    Headline => "the class of all multigraded Betti tallies",
+    "A multigraded Betti tally is a special type of ", TO "BettiTally", " that is
+     printed as a display of the multigraded Betti numbers.  The class was
+     created so that the function ", TO "multigraded", " could return something that
+     both prints nicely and from which information could be extracted.  The keys
+     are triples ", TT "(i,d,h)", " where ", TT "i", " is the homological
+     degree, ", TT "d", " is a list of integers giving a multidegree, and ",
+     TT "h", " is the result of applying a weight covector to ", TT "d", ".",
+    PARA{},
+    "By default the data is presented as a table of polynomials where each column
+     corresponds to a given homological degree appearing as the top entry and each
+     monomial in the other entries represents the multidegree of a given generator.",
+    PARA{},
+    "When ", TT "compactMatrixForm", " is set to true, the entries in a
+     column correspond to a fixed multidegree, ordered by the ", TT "h",
+     ".  The number of summand correspond to a given multidegree appears to
+     the left of the multidegree.",
+    EXAMPLE lines ///
+      B = new MultigradedBettiTally from {(0, {0, 0}, 0) => 1, (1, {0, 2}, 2) => 1, (1, {1, 1}, 2) => 2, (1, {2, 0}, 2) => 1, (2, {1, 2}, 3) => 2, (2, {2, 1}, 3) => 2, (3, {2, 2}, 4) => 1}
+      peek oo
+    ///,
+    "For convenience, most operations on", TT "BettiTally", " such as direct sum
+     (", TO "++", "), tensor product (", TO "**", "), ", TO "pdim", " and degree
+     shifting (numbers in brackets or lists in parentheses) are automatically
+     extended to work with multigraded Betti tables.  These operations mimic the
+     corresponding operations on chain complexes.",
+    EXAMPLE lines ///
+      B({-1,-1})
+      B[1]
+      B[1] ++ B
+      B ** B
+      pdim B
+      compactMatrixForm = false
+      dual B
+    ///,
+    "A multigraded Betti tally also can multiplied by an integer or by a rational number.",
+    EXAMPLE lines ///
+      (1/2) * B
+      2 * oo
+      lift(oo,ZZ)
+    ///,
+    "This feature was implemented by Mahrud Sayrafi based on earlier work by Gregory G. Smith.",
+    SeeAlso => { BettiTally }
+    }
+
+document { Key => { (multigraded, BettiTally), multigraded },
+    Headline => "convert a Betti tally into a multigraded Betti tally",
+    Usage => "multigraded t",
+    Inputs => { "t" => BettiTally },
+    Outputs => { MultigradedBettiTally => { "different from the input only in the ordering of each column"} },
+    "A multigraded Betti tally is a special type of ", TO "BettiTally", " that both
+     prints nicely and from which multigraded Betti numbers could be easily extracted.",
+    EXAMPLE lines ///
+      R = ZZ/101[a..d, Degrees => {2:{1,0},2:{0,1}}];
+      I = ideal random(R^1, R^{2:{-2,-2},2:{-3,-3}});
+      t = betti res I
+      peek t
+      B = multigraded t
+      peek B
+    ///,
+    "By changing the weights, we can reorder the columns of the diagram. The following three
+     displays display the first degree, the second degree, and the total degree, respectively.",
+    EXAMPLE lines ///
+      betti(B, Weights => {1,0})
+      betti(B, Weights => {0,1})
+      B' = betti(B, Weights => {1,1})
+    ///,
+    SeeAlso => {
+	MultigradedBettiTally,
+	(betti, BettiTally)
+	}
+    }
+
 document { Key => {(netList, VisibleList),
 	  netList,
 	  [netList, Boxes],
@@ -1213,7 +1258,7 @@ document { Key => (module, Vector),
      ///}
 
 document { Key => {package,(package, Dictionary), (package, Thing),
-	  (package, HashTable), (package, Function), (package, DocumentTag), (package, Symbol),
+	  (package, HashTable), (package, Function), (package, Symbol),
 	  (package, Sequence)
 	  },
      Headline => "get containing package",
@@ -1816,12 +1861,6 @@ document { Key => toUpper,
      EXAMPLE lines ///
      	  toUpper "A b C d E f"
      ///}
-
-document { Key => "encapDirectory",
-     Headline => "encapsulated installation directory",
-     "This variable contains the path to the encapsulation directory tree where the files of Macaulay2 are located.",
-     SeeAlso => { "prefixDirectory" }
-     }
 
 document { Key => "synonym",
      Headline => "synonym for members of a class",

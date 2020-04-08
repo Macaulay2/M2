@@ -176,7 +176,8 @@ numericalAffineSpace PolynomialRing := R -> (
     b := random(C^n,C^1);
     numericalVariety {witnessSet(ideal R, A|(-b), {point entries transpose solve(A,b)})}
     )
-projectiveNumericalVariety = method(TypicalValue=>ProjectiveNumericalVariety)
+-- ProjectiveNumericalVariety is not a type!
+projectiveNumericalVariety = method( -* TypicalValue=>ProjectiveNumericalVariety *- )
 projectiveNumericalVariety List := Ws -> new ProjectiveNumericalVariety from numericalVariety Ws
 
 check NumericalVariety := o-> V -> (

@@ -102,7 +102,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	       	    store(interruptedFlag, false);
 		    determineExceptionFlag();
 		    promptWanted = true;
-		    issuePrompt = true;
+		    if !file.posFile.file.readline then issuePrompt = true; -- I'm not sure why this works, but it does!  Assigning always leads to an extra prompt when readline is being used in a terminal window.
 		    )
 	       else (
 		    if debugLevel == 123 then stderr <<  "-- token read error" << endl;
@@ -525,7 +525,7 @@ value(e:Expr):Expr := (
 	       else r)
 	  else r)
      else WrongArg(1,"a string, a symbol, or pseudocode"));
-setupfun("value",value).Protected = false;
+setupfun("value'",value);
 
 tmpbuf := new string len 100 do provide ' ' ;
 
@@ -590,7 +590,7 @@ export process():void := (
      stdIO.outisatty =   0 != isatty(1) ;
      stdError.outisatty =   0 != isatty(2) ;
      setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
-     sethandleInterrupts(true);
+     sethandleInterrupts(true);				    -- could be overridden in startup.m2
      -- setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      everytimeRun();
      -- we don't know the right directory; calls commandInterpreter and eventually returns:

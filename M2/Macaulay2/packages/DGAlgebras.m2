@@ -1,13 +1,14 @@
 -- -*- coding: utf-8 -*-
 newPackage("DGAlgebras",
-     Headline => "Data type for DG algebras",
+     Headline => "data type for DG algebras",
      Version => "1.0.1",
      Date => "January 11, 2017",
      Authors => {
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
 	   Email => "moorewf@wfu.edu"}},
-     DebuggingMode => false
+     DebuggingMode => false,
+     PackageExports => {"IntegralClosure"}
      )
 
 export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff", "natural", "cycles",

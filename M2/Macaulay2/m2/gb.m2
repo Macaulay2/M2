@@ -31,6 +31,7 @@ status GroebnerBasis := opts -> G -> (
      (if s === "done" then "S-pairs encountered up to degree " else "all S-pairs handled up to degree ") | toString rawStatus2 raw G
      )
 toString GroebnerBasis := net GroebnerBasis := g -> "GroebnerBasis[" | status g | "]"
+texMath GroebnerBasis := x -> texMath toString x
 
 checkListOfIntegers := method()
 checkListOfIntegers ZZ := t -> {t}
@@ -240,7 +241,6 @@ elseSomething(Nothing,Function) := (x,f) -> f()
 newGB := (f,type,opts) -> (
      if flagInhomogeneity then (
 	  if not isHomogeneous f then error "internal error: gb: inhomogeneous matrix flagged";
-	  if debugLevel > 0 then stderr << "gb: matrix is homogeneous, good" << endl;
 	  );
      G := new GroebnerBasis;
      if debugLevel > 5 then (

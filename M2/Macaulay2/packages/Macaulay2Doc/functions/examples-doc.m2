@@ -15,11 +15,6 @@ document {
      "The output is returned as a ", TO Net, " of height 0, so the examples will be
      displayed indented by just white space, allowing immediate entry.  Alternatively,
      one could use ", TO "print", " to display them with no indentation.",
-     EXAMPLE lines ///
-     examples "while"
-     examples (ideal,Matrix)
-     print oo
-     ///,
      SeeAlso => {"reading the documentation", help}
      }
 

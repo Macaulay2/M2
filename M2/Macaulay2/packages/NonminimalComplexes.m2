@@ -1,15 +1,24 @@
+///
+restart
+uninstallPackage"NonminimalComplexes"
+installPackage"NonminimalComplexes"
+loadPackage("NonminimalComplexes", Reload => true)
+check "NonminimalComplexes"
+viewHelp "NonminimalComplexes"
+///
 newPackage(
         "NonminimalComplexes",
-        Version => "0.1", 
-        Date => "",
-        Authors => {{Name => "Frank Schreyer", 
-                  Email => "", 
-                  HomePage => ""},
-              {Name => "Mike Stillman", 
-                  Email => "", 
-                  HomePage => ""}},
-        Headline => "Obtaining the non-minimal strands of a non-minimal resolution of a homogeneous module",
-        DebuggingMode => true
+        Version => "0.2", 
+        Date => "April 25, 2018",
+        Authors => {{Name => "Frank-Olaf Schreyer", 
+		  Email => "schreyer@math.uni-sb.de", 
+		  HomePage => "http://www.math.uni-sb.de/ag/schreyer"},
+                  {Name => "Mike Stillman", 
+		   Email => "mike@math.cornell.edu", 
+		   HomePage => "http://www.math.cornell.edu/~mike"} 
+		},
+     	PackageImports => { "SVDComplexes" },
+        Headline => "non-minimal strands of a non-minimal resolution of a homogeneous module"
         )
 
 export {
@@ -19,11 +28,17 @@ export {
     "getNonminimalRes",
     "degreeZeroMatrix",
     "minimizeBetti",
-    "SVDBetti"
+    "SVDBetti",
+    
+    "SparseMatrix",
+    "newSparseMatrix",
+    "sparseMatrix",
+    "Entries",
+    "RowNums",
+    "ColumnNums"
 }
 
 debug Core
-needsPackage "SVDComplexes"
 
 -*
 -- The following shuold be where?
@@ -40,6 +55,81 @@ newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
     )
 *-
 
+SparseMatrix = new Type of HashTable
+
+numRows SparseMatrix := S -> # S.RowNums
+numColumns SparseMatrix := S -> # S.ColumnNums
+
+net SparseMatrix := (S) -> (
+    netList{
+        {"", netList toList{toList(0..numColumns S - 1), S.ColumnNums}},
+        {
+            netList for r from 0 to numRows S - 1 list {r, S.RowNums#r},
+            netList S.Entries
+        }}
+    )
+
+newSparseMatrix = method()
+newSparseMatrix(List, List, List) := SparseMatrix => (mat, rownums, colnums) -> (
+    new SparseMatrix from {
+        Entries => mat,
+        RowNums => rownums,
+        ColumnNums => colnums
+        }
+    )
+sparseMatrix = method()
+sparseMatrix Matrix := SparseMatrix => (M) -> (
+    e := entries M;
+    mat := for e1 in e list (pos := positions(e1, x -> x != 0); {pos, e1_pos});
+    rownums := for r in mat list #r#0;
+    colnums := new MutableList from (numColumns M : 0);
+    for r from 0 to numRows M - 1 do (
+        for c in mat#r#0 do colnums#c = colnums#c + 1;
+        );
+    newSparseMatrix(mat, rownums, toList colnums)
+    )
+
+removeRows = method()
+removeRows(List,SparseMatrix) := (r,S) -> (
+    -- chores:
+    --  1. remove entry r from RowNums, Entries.
+    --  2. for each column in Entries#r#0: 
+    removeThese := set r;
+    keep := sort toList(set toList(0..numRows S - 1) - removeThese);
+    colnums := new MutableList from S.ColumnNums;
+    for r1 in r do (
+        for c in S.Entries#r#0 do colnums#c = colnums#c - 1;
+        );
+    newSparseMatrix(S.Entries_keep, S.RowNums_keep, toList colnums)
+    )
+
+removeColumn = method()
+removeColumn(ZZ,SparseMatrix) := (c,S) -> (
+    -- remove c from ColNums
+    -- loop over all rows r
+    --   if c is in S.Entries#r#0
+    --     remove c from this list, and corresponding coeff.
+    --     decrement rownums#r.
+    )
+removeZeroOneRows = method()
+removeZeroOneRows SparseMatrix := (S) -> (
+    -- returns (#zero rows, #rows with 1 element)
+    -- removes columns in such rows too.
+    p := positions(toList S.RowNums, x -> x > 0);
+    )
+///
+  restart
+  debug needsPackage "NonminimalComplexes"
+  kk := ZZ/101
+  M = mutableMatrix(kk, 10, 10);
+  fillMatrix(M, Density=>.2)
+  rank M
+  S = sparseMatrix matrix M
+
+  S = removeRows(positions(S.RowNums, x -> x == 0), S)
+  for r in positions(S.RowNums, x -> x == 1) list 
+  M
+///
 -----------------------------------------------
 -- Code for nonminimal resolutions over QQ ----
 -----------------------------------------------
@@ -96,7 +186,6 @@ getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
     result := new MutableList;
     for i from 0 to length C - 1 do (
       result#i = matrix map(R, rawResolutionGetMutableMatrixB(rawC, raw R, i+1));
-      << " i=" << i << " matrix = " << netList result#i << endl;
       if i > 0 then result#i = map(source result#(i-1),,result#i);
       );
     chainComplex toList result
@@ -115,7 +204,7 @@ TEST ///
   
   R = QQ[a..e]
   I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
-  C = res(I, FastNonminimal=>true)
+  C = res(ideal gens gb I, Strategy=>4.1)
   betti C
   constantStrand(C, RR_53, 4)
   constantStrand(C, RR_53, 5)
@@ -139,7 +228,8 @@ TEST ///
       => 14, (3,{8},8) => 52, (3,{9},9) => 45, (3,{10},10) => 4, (4,{8},8) => 4, (4,{9},9) => 35, (4,{10},10) =>
       52, (4,{11},11) => 14, (4,{12},12) => 4, (5,{10},10) => 9, (5,{11},11) => 29, (5,{12},12) => 10, (5,{13},13)
       => 3, (5,{14},14) => 1, (6,{12},12) => 6, (6,{13},13) => 3, (6,{14},14) => 1}
-  assert(betti'ans == betti (C1 = getNonminimalRes(C, R1)))
+  -*
+  assert(betti'ans ==betti (C1 = getNonminimalRes(C, R1)))
   assert(betti'ans == betti (C2 = getNonminimalRes(C, R2)))
   assert(betti'ans == betti (C3 = getNonminimalRes(C, R3)))
   assert(betti'ans == betti (C4 = getNonminimalRes(C, R4)))
@@ -147,6 +237,7 @@ TEST ///
   assert(C2.dd^2 == 0)
   assert(C3.dd^2 == 0)
   assert(C4.dd^2 == 0)
+  *-
 ///
 
 TEST ///
@@ -156,7 +247,7 @@ TEST ///
 *-
   R = ZZ/32003[a..e]
   I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
-  C = res(I, FastNonminimal=>true)
+  C = res(ideal gens gb I, Strategy=>4.1)
   C1 = getNonminimalRes(C, R)
   assert(C == C1)
 ///
@@ -213,7 +304,7 @@ SVDBetti ChainComplex := (C) -> (
     Ls := constantStrands(C,RR_53);
     H := hashTable for i in keys Ls list i => SVDHomology Ls#i;
     H2 := hashTable for i in keys H list i => last H#i;
-    << "singular values: " << H2 << endl;
+    -- << "singular values: " << H2 << endl;
     sum for i in keys H list toBetti(i, first H#i)
     )
 
@@ -228,7 +319,7 @@ doc ///
     Text
       Some functionality here should be moved elsewhere.
       
-      Here is an example of the usage.
+      
    Caveat
      Currently, this package requires that the Macaulay2 being run is from the res-2107 git branch
 ///
@@ -243,10 +334,10 @@ doc ///
      Cd = constantStrand(C, kk, deg)
    Inputs
      C:ChainComplex
-       A chain complex created using {\tt res(I, FastNonminimal=>true)}
+       a chain complex created using {\tt res(I, Strategy=>4.1)}
      kk:Ring
        if the coefficient ring of the ring of C is QQ, then this should be either:
-       RR_53, RR_1000, ZZ/1073741891, or ZZ/1073741909.  
+       RR_{53}, RR_{1000},ZZ/32003, or ZZ/1073741909.  
      deg:ZZ
        the degree that one wants to choose.
    Outputs
@@ -260,16 +351,16 @@ doc ///
     Example
       R = QQ[a..d]
       I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-      C = res(I, FastNonminimal=>true)
+      C = res(ideal gens gb I, Strategy=>4.1)
       betti C
-      CR = constantStrand(C, RR_53, 8)
-      CR.dd_4
-      CR2 = constantStrand(C, RR_1000, 8)
-      CR2.dd_4
+      CR = constantStrand(C, RR_53, 3)
+      CR.dd_2
+      CR2 = constantStrand(C, RR_1000, 3)
+      CR2.dd_2
       kk1 = ZZ/32003
       kk2 = ZZ/1073741909
-      Cp1 = constantStrand(C, kk1, 8)
-      Cp2 = constantStrand(C, kk2, 8)
+      Cp1 = constantStrand(C, kk1, 3)
+      Cp2 = constantStrand(C, kk2, 3)
       netList {{CR.dd_4, CR2.dd_4}, {Cp1.dd_4, Cp2.dd_4}}
       (clean(1e-14,CR)).dd_4
       netList {(clean(1e-14,CR)).dd_4}==netList {(clean(1e-299,CR2)).dd_4}
@@ -283,13 +374,15 @@ doc ///
       CZ.dd_4
    Caveat
      This function should be defined for any graded chain complex, not just ones created
-     using {\tt res(I, FastNonminimal=>true)}.  Currently, it is used to extract information 
+     using {\tt res(I, Strategy=>4.1)}.  Currently, it is used to extract information 
      from the not yet implemented ring QQhybrid, whose elements, coming from QQ, are stored as real number 
      approximations (as doubles, and as 1000 bit floating numbers), together with its remainders under a couple of primes,
      together with information about how many multiplications were performed to obtain this number.
    SeeAlso
      constantStrands
 ///
+
+
 
 doc ///
    Key
@@ -301,12 +394,10 @@ doc ///
      Cs = constantStrands(C, kk)
    Inputs
      C:ChainComplex
-       A chain complex created using {\tt res(I, FastNonminimal=>true)}
+       A chain complex created using {\tt res(I, Strategy=>4.1)}
      kk:Ring
        if the coefficient ring of the ring of C is QQ, then this should be either:
        RR_{53}, RR_{1000}, ZZ/1073741891, or ZZ/1073741909.  
-     deg:ZZ
-       the degree that one wants to choose.
    Outputs
      Cs:List
       the list of chain complex over {\tt kk}, which for each degree degree {\tt deg}, consisting of the submatrices of {\tt C} of degree {\tt deg}
@@ -318,13 +409,14 @@ doc ///
     Example
       R = QQ[a..d]
       I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-      C = res(I, FastNonminimal=>true)
+      C = res(ideal gens gb I, Strategy=>4.1)
       betti C
       Cs = constantStrands(C, RR_53)
-      CR=Cs#8         
+      CR=Cs#8
+      SVDBetti C, betti C         
    Caveat
      This function should be defined for any graded chain complex, not just ones created
-     using {\tt res(I, FastNonminimal=>true)}.  Currently, it is used to extract information 
+     using {\tt res(I, Strategy=>4.1)}.  Currently, it is used to extract information 
      from the not yet implemented ring QQhybrid, whose elements, coming from QQ, are stored as real number 
      approximations (as doubles, and as 1000 bit floating numbers), together with its remainders under a couple of primes,
      together with information about how many multiplications were performed to obtain this number.
@@ -332,10 +424,49 @@ doc ///
      constantStrand
 ///
 
+doc ///
+   Key
+     SVDBetti
+     (SVDBetti, ChainComplex)
+   Headline
+     the Betti table computed with SVD methods
+   Usage
+     SVDBetti C
+   Inputs
+     C:ChainComplex
+       A chain complex created using {\tt res(I, Strategy=>4.1)}   
+       if the coefficient ring of the ring of C is QQ, then this should be either:
+       RR_{53}, RR_{1000}, ZZ/1073741891, or ZZ/1073741909.  
+   Outputs
+      :BettiTally
+       the betti table of the minimal resolution using SVD of complexes and the numerical data
+   Description
+    Text
+      Warning! This function is very rough currently.  It workes if one uses it in the intended manner,
+      as in the example below.  But it should be much more general, handling other rings with grace,
+      and also it should handle arbitrary (graded) chain complexes.
+    Example
+      R = QQ[a..d]
+      I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
+      C = res(ideal gens gb I, Strategy=>4.1)
+      SVDBetti C, betti C 
+      Rp=ZZ/32003[gens R]
+      betti res sub(I,Rp)        
+   Caveat
+     This function should be defined for any graded chain complex, not just ones created
+     using {\tt res(I, Strategy=>4.1)}.  Currently, it is used to extract information 
+     from the not yet implemented ring QQhybrid, whose elements, coming from QQ, are stored as real number 
+     approximations (as doubles, and as 1000 bit floating numbers), together with its remainders under a couple of primes,
+     together with information about how many multiplications were performed to obtain this number.
+   SeeAlso
+     constantStrands
+///
+
+
 TEST ///
   R = QQ[a..d]
   I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-  C = res(I, FastNonminimal=>true)
+  C = res(ideal gens gb I,Strategy=>4.1)
   betti C
   betti'deg8 = new BettiTally from {(3,{},0) => 13, (4,{},0) => 4}
   CR = constantStrand(C, RR_53, 8)
@@ -356,19 +487,238 @@ TEST ///
   (clean(1e-299,CR2)).dd_4
 ///
 
+
+
+
+
 TEST ///
   kk = QQ
   R = kk[a..d]
   I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-  C = res(I, FastNonminimal=>true)
+  C = res(ideal gens gb I, Strategy=>4.1)
   betti C
   constantStrand(C, RR_53, 8)
    -- fails, as it doesn't even make it to that code
 ///
 
+TEST ///
+-- Test of computing non-minimal resolutions, modules
+  -- XXX
+-*  
+  restart
+*-  
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d]
+  m = map(R^2,,{{a,b^2},{c,d^2}})
+
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- non-compatible monomial order...
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{4,Position=>Up}]
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- non-compatible monomial order...
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{4,Position=>Down}]
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- non-compatible monomial order...
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{Position=>Down,4}]
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- WORKS!!
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{Position=>Up,4}]
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- non-compatible monomial order...
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{Position=>Down,4}]
+  m = map(R^{1,0},,{{c^2,d^3},{a,b^2}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- doesn't work
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{Position=>Up,4}]
+  m = map(R^{1,0},,{{c^2,d^3},{a,b^2}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- works!
+
+///
+
+TEST ///
+-- Test of computing non-minimal resolutions
+  -- XXX
+-*  
+  restart
+*-  
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d]
+
+  hasFastNonminimal = method()
+  hasFastNonminimal Module := Boolean => M -> M.cache.?resolutionNonminimal
+  hasFastNonminimal Ideal := Boolean => I -> hasFastNonminimal comodule I
+
+  nonminimalResolutionComputation = method()
+  nonminimalResolutionComputation Module := RawComputation => (M) -> M.cache.resolutionNonminimal.Resolution.RawComputation
+  nonminimalResolutionComputation Ideal := RawComputation => (I) -> nonminimalResolutionComputation comodule I
+
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  M = comodule I
+  C = res(M, Strategy=>4)
+  assert hasFastNonminimal M
+  assert hasFastNonminimal I
+
+  D = nonminimalResolutionComputation I
+  getfree = (I,i) -> new Module from (ring I,rawResolutionGetFree(nonminimalResolutionComputation I,i))
+  getfree(I,0)
+  getfree(I,1)
+  getmat = (I,i) -> (
+      D := nonminimalResolutionComputation I;
+      src := getfree(I,i);
+      tar := getfree(I,i-1);
+      map(tar, src, rawResolutionGetMatrix(D,i))
+      )
+  getmat(I,1)
+  getmat(I,2)
+
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  C = res(I, Strategy=>4)
+  assert hasFastNonminimal I
+
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  C = res(I, FastNonminimal=>true, Strategy=>4)
+  assert hasFastNonminimal I
+  
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  C = res(I, FastNonminimal=>true)
+  assert hasFastNonminimal I
+
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  C = res I
+  assert not hasFastNonminimal I
+  
+  M.cache.resolutionNonminimal.Resolution.RawComputation
+///  
+
+///
+-- Test of computing non-minimal resolutions
+  -- XXX
+  -- Try a non homogeneous ideal:
+  restart
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d]
+
+  hasFastNonminimal = method()
+  hasFastNonminimal Module := M -> M.cache.?resolutionNonminimal
+  hasFastNonminimal Ideal := I -> hasFastNonminimal comodule I
+    
+  I = ideal"ab-1,c2-c-a"
+  M = comodule I
+  C = res(I, Strategy=>5) -- currently gives an error: cannot use res(...,FastNonminimal=>true) with inhomogeneous input
+  assert hasFastNonminimal M
+  assert hasFastNonminimal I
+
+  R = kk[a..d,DegreeRank=>4]  
+  degree a
+  I = ideal(a^2, a*b, b^2)
+  C = res(I, Strategy=>4) -- currently gives an error: expected singly graded with positive degrees for the variables
+
+
+  
+  C = res I
+  C.dd
+  peek C.Resolution
+  debug Core
+  C.Resolution.RawComputation
+
+  J = ideal"ab-cd,a3+c3,a2c+b2c"
+  CJ = res(J, FastNonminimal=>true)
+  CJ.dd
+  peek CJ.Resolution
+  debug Core
+  CJ.Resolution.RawComputation
+  
+  -- where are these stashed?
+  MI = comodule I  
+  MI.cache.resolution === C
+
+  MJ = comodule J
+  MJ.cache.resolution === CJ
+
+gbTrace=3
+  minimalBetti J
+  minimalBetti I
+///
 
 end--
+
 -*
+///
+  -- test for computing ranks of matrices concurrently
+  restart 
+  allowableThreads = 10
+  kk = ZZ/101
+  sizes = for i from 1 to 5 list (1000*i, 1000*i)
+  mats = for i from 0 to 30 list (
+      fillMatrix mutableMatrix(kk,sizes#(i % 5)#0, sizes#(i % 5)#1)
+      );
+  fcn = (i) -> () -> (
+      << "[" << i << "]" << endl;
+      t := elapsedTiming rank mats#i;
+      << "time for rank #" << i << " = " << t#0 << endl;
+      t#1
+      )      
+  donetask = createTask(()->(<< "all computations are done!" << endl; "done!"))
+  tsks = for i from 0 to 30 list createTask (fcn i)
+  for i from 0 to 30 do addDependencyTask(donetask, tsks#i)
+  elapsedTime(schedule donetask; tsks/schedule; while not isReady donetask do sleep 1;)
+  tsks/taskResult
+  elapsedTime for i from 0 to 30 list (fcn i)()
+
+  m1 = mutableMatrix(kk,5000,5000); fillMatrix m1;
+  m2 = mutableMatrix(kk,4000,5000); fillMatrix m2;
+  m3 = mutableMatrix(kk,3000,3000); fillMatrix m3;
+
+  -- our goal: do these simultaneously
+  f1 = () -> (<< "[f1]" << endl; t := elapsedTiming rank m1; << "time for rank m1: " << t#0 << endl; t#1)
+  f2 = () -> (<< "[f2]" << endl; t := elapsedTiming rank m2; << "time for rank m2: " << t#0 << endl; t#1)
+  f3 = () -> (<< "[f3]" << endl; t := elapsedTiming rank m3; << "time for rank m3: " << t#0 << endl; t#1)
+  t4 = createTask(()->(<< "all computations are done!" << endl; "done!"))
+  t1 = createTask f1
+  t2 = createTask f2
+  t3 = createTask f3
+
+  addDependencyTask(t4, t1)
+  addDependencyTask(t4, t2)
+  addDependencyTask(t4, t3)
+  elapsedTime({t1,t2,t3,t4}/schedule; while not isReady t4 do sleep 1)
+  taskResult t4
+  {t1,t2,t3}/taskResult
+  schedule t4
+  schedule t1
+schedule t2
+schedule t3
+schedule t4
+///
+-*
+
 Cs2 = (constantStrands(C, RR_1000))#8
       kk1 = ZZ/32003
       kk2 = ZZ/1073741909
@@ -386,9 +736,9 @@ uninstallPackage "NonminimalComplexes"
 restart
 
 installPackage "NonminimalComplexes"
-viewHelp "NonminimlaComplexes"
+viewHelp "NonminimalComplexes"
 restart
-check "SVDComplexes"
+check "NonminimalComplexes"
 restart
 needsPackage "NonminimalComplexes"
 

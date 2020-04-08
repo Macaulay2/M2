@@ -274,7 +274,7 @@ class Ring : public MutableEngineObject
   ring_elem minus_one() const { return minus_oneV; }
   ring_elem zero() const { return zeroV; }
   virtual ring_elem from_long(long n) const = 0;
-  virtual ring_elem from_int(mpz_ptr n) const = 0;
+  virtual ring_elem from_int(mpz_srcptr n) const = 0;
 
   // from_rational: if the rational q cannot be placed into this ring, false is
   // returned, and result is not touched.

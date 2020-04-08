@@ -3,6 +3,7 @@
 List#"major documentation node" = true
 
 List ? List := (s,t) -> if class s === class t then toSequence s ? toSequence t else (class s) ? (class t)
+Option ? Option := (s,t) -> toSequence s ? toSequence t
 
 VisibleList _ ZZ := (s,i) -> s#i
 String _ ZZ := String => (s,i) -> s#i
@@ -176,8 +177,8 @@ random List := opts -> s -> (
      n := #s;
      if n <= 1 then return s;
      s = new MutableList from s;
-     for i from 0 to n-1 do (
-	  j := random n;
+     for i from 1 to n-1 do (
+	  j := random (i+1);
 	  t := s#i ; s#i = s#j ; s#j = t;
 	  );
      new List from s)

@@ -5,6 +5,7 @@ use pthread0;
 export ERROR ::= -1;
 export NOFD ::= -1;
 export EOF ::= -2;					    -- end of file
+export DEPRECATED := -3;				    -- deprecated block comment syntax
 export STDIN ::= 0;
 export STDOUT ::= 1;
 export STDERR ::= 2;

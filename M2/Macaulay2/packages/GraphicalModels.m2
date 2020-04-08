@@ -1,7 +1,5 @@
 -- -*- coding: utf-8-unix -*-
 
-needsPackage "Graphs"
-
 newPackage(
      "GraphicalModels",
      Version => "1.0",
@@ -23,7 +21,9 @@ newPackage(
 	  -- Email=> "",
 	  -- HomePage=>""}      
 	  },
-     Headline => "A package for discrete and Gaussian graphical models",
+     Headline => "discrete and Gaussian graphical models",
+     PackageExports => { "Graphs" },
+     PackageImports => { "IntegralClosure", "Elimination" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
 	  "journal URI" => "http://j-sag.org/",
@@ -68,8 +68,6 @@ export {"bidirectedEdgesMatrix",
        "lVariableName",
        "pVariableName"
        	} 
-     
-needsPackage "Graphs"
 
 markovRingData = local markovRingData
 markovVariables = local markovVariables

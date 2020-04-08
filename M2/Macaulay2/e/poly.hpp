@@ -59,7 +59,7 @@ class PolyRing : public PolyRingFlat
   ring_elem fromCoefficient(ring_elem &coeff) const;
 
   virtual ring_elem from_long(long n) const;
-  virtual ring_elem from_int(mpz_ptr n) const;
+  virtual ring_elem from_int(mpz_srcptr n) const;
   virtual bool from_rational(mpq_ptr q, ring_elem &result) const;
 
   virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
@@ -239,6 +239,7 @@ class PolyRing : public PolyRingFlat
                       const int *n,
                       int *resultmon,
                       int use_coeff) const;
+  ring_elem power_direct(const ring_elem f, int n) const;
 
   ring_elem get_logical_coeff(const Ring *coeffR, const Nterm *&f) const;
   // Given an Nterm f, return the coeff of its logical monomial, in the

@@ -216,12 +216,19 @@ lngamma ZZ := lngamma QQ := lngamma RR := x -> (
      if s == -1 then y + ii * numeric_(precision y) pi else y
      )
 
-expression Constant := c -> expression c#0
+expression Constant := hold
 toString Constant := net Constant := c -> toString c#0
 toExternalString Constant := c -> toString c#0
 numeric Constant := c -> c#1 defaultPrecision
 numeric(ZZ,Constant) := (prec,c) -> c#1 prec
 exp Constant := c -> exp numeric c
+
+constantTexMath := new HashTable from {
+    symbol pi => "\\pi",
+    symbol EulerConstant => "\\gamma",
+    symbol ii => "\\mathbf{i}"
+    }
+texMath Constant := c -> if constantTexMath#?(c#0) then constantTexMath#(c#0) else texMath toString c#0
 
 Constant + Constant := (c,d) -> numeric c + numeric d
 Constant + RingElement := 
@@ -255,7 +262,11 @@ Constant == InexactNumber := (c,x) -> numeric(precision x,c) == x
 RingElement == Constant :=
 InexactNumber == Constant := (x,c) -> x == numeric(precision x,c)
 
-Constant _ Ring := (c,R) -> (numeric c)_R
+Constant _ Ring := (c,R) -> (
+     prec := precision R;
+     if prec === infinity
+     then error "cannot promote constant to a ring with exact arithmetic"
+     else (numeric (prec, c))_R)
 Constant _ InexactFieldFamily := (x,RR) -> x_(default RR)
 
 Constant + Number := (c,x) -> numeric c + x
@@ -315,6 +326,7 @@ net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
 toExternalString CC := toExternalString0
+texMath CC := x -> texMath expression x
 withFullPrecision = f -> (
      prec := printingPrecision;
      acc := printingAccuracy;

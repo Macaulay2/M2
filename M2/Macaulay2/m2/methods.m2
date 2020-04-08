@@ -14,7 +14,14 @@ silentRobustNetWithClass = silentRobustNet = (wid,ht,sec,y) -> simpleToString y
 --
 
 MethodFunction = new Type of CompiledFunctionClosure
+MethodFunctionSingle = new Type of CompiledFunctionClosure
+MethodFunctionBinary = new Type of CompiledFunctionClosure
 MethodFunctionWithOptions = new Type of FunctionClosure
+
+MethodFunction.synonym = "method function"
+MethodFunctionSingle.synonym = "method function with a single argument"
+MethodFunctionBinary.synonym = "binary method function"
+MethodFunctionWithOptions.synonym = "method function with options"
 
 dispatcherFunctions = {}
 
@@ -46,7 +53,7 @@ methodDefaults := new OptionTable from {
      }
 
 BinaryNoOptions := (outputs) -> (
-     methodFunction := newmethod1(args -> noMethod(methodFunction,args,outputs),outputs);
+     methodFunction := newmethod1(args -> noMethod(methodFunction,args,outputs),outputs,MethodFunctionBinary);
      binaryLookup := (x,y) -> (
 	  -- Common code for every associative method without options
 	  f := lookup(methodFunction,class x,class y);
@@ -148,7 +155,7 @@ method = methodDefaults >> opts -> args -> (
      methodFunction := (
 	  if opts.Options === null then (
        	       if opts.Binary then BinaryNoOptions(outputs)
-       	       else if singleArgDispatch then newmethod1 (args -> noMethodSingle(methodFunction,args,outputs), outputs)
+       	       else if singleArgDispatch then newmethod1 (args -> noMethodSingle(methodFunction,args,outputs), outputs, MethodFunctionSingle)
        	       else MultipleArgsNoOptions(opts, outputs))
 	  else (
        	       if opts.Binary then BinaryWithOptions(opts.Options,outputs)
@@ -156,12 +163,15 @@ method = methodDefaults >> opts -> args -> (
        	       else MultipleArgsWithOptions(opts, opts.Options, outputs)
 	       )
 	  );
-     if opts.TypicalValue =!= Thing then typicalValues#methodFunction = opts.TypicalValue;
+     if opts.TypicalValue =!= Thing then (
+	  if not instance(opts.TypicalValue,Type) then error("expected typical value ", toString opts.TypicalValue, " to be a type");
+	  typicalValues#methodFunction = opts.TypicalValue;
+	  );
      methodFunction)
 
 setupMethods := (args, symbols) -> (
      scan(symbols, n -> (
-	  if value n =!= n then error concatenate("symbol ",toString n," redefined");
+	  if value' n =!= n then error concatenate("symbol ",toString n," redefined");
 	  f := method args;
 	  globalAssignFunction(n,f);
 	  n <- f;
@@ -185,7 +195,7 @@ setupMethods((), {
       isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
 	  })
 
-use = method()
+use = method(Dispatch => Thing)
 use Thing := identity
 
 dual = method(Options => true)
@@ -284,7 +294,7 @@ toExternalString Symbol := s -> (
 	  if syns#?0 then n = syns#0
 	  else error("can't convert symbol ",s," to external string because it is shadowed by ", getGlobalSymbol n, " and there is no synonym")
 	  );
-     if value s === s then n else concatenate("symbol ", n))
+     if value' s === s then n else concatenate("symbol ", n))
 toExternalString Boolean := simpleToString
 toExternalString Nothing := simpleToString
 
@@ -341,10 +351,9 @@ dictionary Symbol := s -> (				    -- eventually every symbol will know what dic
 dictionary Thing := x -> if hasAttribute(x,ReverseDictionary) then dictionary getAttribute(x,ReverseDictionary)
 
 -----------------------------------------------------------------------------
-oldvalue := value
 value = method()
-value Symbol := value Pseudocode := oldvalue
-value String := x -> oldvalue x
+value Symbol := value Pseudocode := value'		    -- compiled code
+value String := x -> value' x
 value Nothing := x -> null
 -----------------------------------------------------------------------------
 
@@ -557,6 +566,7 @@ codeHelper#(functionBody (stashValue null) null) = g -> {
 html = method(Dispatch => Thing, TypicalValue => String)
 tex = method(Dispatch => Thing, TypicalValue => String)
 texMath = method(Dispatch => Thing, TypicalValue => String)
+htmlWithTex = method(Dispatch => Thing, TypicalValue => String)
 info = method(Dispatch => Thing, TypicalValue => String)
 
 -- method options

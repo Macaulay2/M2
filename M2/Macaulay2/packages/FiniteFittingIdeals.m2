@@ -7,7 +7,7 @@
 -- UPDATE HISTORY : March 2015 v0.1, May 2015 v1.0
 ---------------------------------------------------------------------------
 newPackage("FiniteFittingIdeals",
-    Headline => "A package for computing Fitting ideals of finite modules",
+    Headline => "Fitting ideals of finite modules",
     Version => "1.0",
     Date => "May 5, 2015",
     Authors => {

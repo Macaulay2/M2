@@ -5,8 +5,9 @@ newPackage(
         Authors => {{Name => "David Eisenbud", 
                   Email => "de@msri.org",
                   HomePage => "http://www.msri.org/~de/"}},
-        Headline => "Higer CI operators",
+        Headline => "higher CI operators",
         DebuggingMode => false,
+     	PackageImports => { "CompleteIntersectionResolutions" },
 	PackageExports =>{"MCMApproximations"}
         )
 
@@ -18,7 +19,6 @@ export {"exteriorMultiplication",
 	"trueKoszul"
        }
 --notify = true
-needsPackage "CompleteIntersectionResolutions"
 
 trueKoszul=method()
 trueKoszul Matrix := ff -> (
@@ -217,6 +217,7 @@ viewHelp higherCIOperators
 viewHelp complexity
 *-
 
+beginDocumentation()
 
 doc ///
    Key 

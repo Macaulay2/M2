@@ -1,11 +1,11 @@
 LICENSEFILES = COPYING
 
 # URL = ftp://ftp.gnu.org/gnu/gdbm
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 1.9.1
 
 ifeq (@SHARED@,no)
-CONFIGOPTIONS += --disable-shared
+CONFIGOPTIONS += --disable-shared --enable-static
 endif
 
 ifeq ($(VERSION) @host@,1.9.1 x86_64-w64-mingw32)

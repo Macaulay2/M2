@@ -15,13 +15,12 @@ newPackage(
             {Name => "Franziska Hinkelmann"}
             },
         AuxiliaryFiles=>true,
-        --PackageImports => {"MGBInterface"},
-        DebuggingMode => true
+        PackageImports => {"Elimination", "IntegralClosure"}
         )
 
-<< "warning!  This package is experimental.  The interface will change, and although" << endl;
-<< "  it passes its tests, it has not been fully debugged yet!" << endl;
-<< "  In particular, in small characteristic, it *sometimes* might miss a component" << endl;
+-- << "warning!  This package is experimental.  The interface will change, and although" << endl;
+-- << "  it passes its tests, it has not been fully debugged yet!" << endl;
+-- << "  In particular, in small characteristic, it *sometimes* might miss a component" << endl;
 
 --USEMGB = true;
 USEMGB = false;

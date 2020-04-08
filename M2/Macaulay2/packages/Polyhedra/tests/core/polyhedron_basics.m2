@@ -31,18 +31,18 @@ v = matrix {{-1},{-1}};
 assert(halfspaces P == (promote(M1,QQ),promote(v,QQ)))
 ///
 -- Test 3
--- Checking convexHull and intersection
+-- Checking convexHull and polyhedronFromHData
 TEST ///
 P2 =  convexHull matrix {{1,-2,-1,2},{2,1,-2,-1}};
 M = matrix{{3,1},{-3,-1},{1,-3},{-1,3}};
 v = matrix{{5},{5},{5},{5}};
-assert(intersection(M,v) == P2)
+assert(polyhedronFromHData(M,v) == P2)
 ///
 
 -- Test 4
--- Checking intersection
+-- Checking polyhedronFromHData
 TEST ///
-P = intersection (matrix{{1,0},{0,1},{-1,0},{0,-1}},matrix{{1},{2},{3},{4}});
+P = polyhedronFromHData (matrix{{1,0},{0,1},{-1,0},{0,-1}},matrix{{1},{2},{3},{4}});
 V1 = vertices P;
 V1 = set apply(numColumns V1, i -> V1_{i});
 V2 = {matrix{{1},{2}},matrix{{1},{-4}},matrix{{-3},{2}},matrix{{-3},{-4}}};
@@ -55,10 +55,10 @@ assert(isSubset(V1,V2) and isSubset(V2,V1))
 -- Checking equality for polyhedra and cones
 TEST ///
 P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
-Q = intersection(matrix{{1,0},{-1,0},{0,1},{0,-1}},matrix{{1},{1},{1},{1}});
+Q = polyhedronFromHData(matrix{{1,0},{-1,0},{0,1},{0,-1}},matrix{{1},{1},{1},{1}});
 assert(P == Q)
 C1 = coneFromVData matrix {{1,2},{2,1}};
-C2 =intersection matrix {{2,-1},{-1,2}};
+C2 = coneFromHData matrix {{2,-1},{-1,2}};
 assert(C1 == C2)
 ///
 
@@ -89,9 +89,9 @@ assert(fVector P == {8,18,12,1})
 -- Test 15
 -- Checking isEmpty
 TEST ///
-P = intersection(matrix{{1,1,1},{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{1},{0},{0},{0}});
+P = polyhedronFromHData(matrix{{1,1,1},{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{1},{0},{0},{0}});
 assert not isEmpty P
-P = intersection {P,(matrix{{-1,-1,-1}},matrix{{-2}})};
+P = intersection {P, polyhedronFromHData(matrix{{-1,-1,-1}},matrix{{-2}})};
 assert isEmpty P
 ///
 
@@ -102,7 +102,7 @@ P = convexHull matrix {{1,-1,0,0},{0,0,1,-1}};
 LP = latticePoints P;
 LP1 = {matrix {{1},{0}},matrix {{-1},{0}},matrix {{0},{1}},matrix {{0},{-1}},matrix {{0},{0}}};
 assert(set LP === set LP1)
-P = intersection(matrix {{-6,0,0},{0,-6,0},{0,0,-6},{1,1,1}},matrix{{-1},{-1},{-1},{1}});
+P = polyhedronFromHData(matrix {{-6,0,0},{0,-6,0},{0,0,-6},{1,1,1}},matrix{{-1},{-1},{-1},{1}});
 assert(latticePoints P == {})
 ///
 
@@ -114,7 +114,7 @@ P = convexHull M;
 assert(ring vertices P === QQ)
 v = matrix {{1},{1},{1}};
 I = (M,v);
-P = intersection I;
+P = polyhedronFromHData I;
 l = facets P;
 assert(ring l#0 === QQ)
 assert(ring l#1 === QQ)

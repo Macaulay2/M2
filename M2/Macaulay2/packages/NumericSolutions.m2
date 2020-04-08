@@ -715,7 +715,7 @@ beginDocumentation()
 
 document { 
  Key => NumericSolutions,
- Headline => "A package to solve systems of polynomial equalities",
+ Headline => "solving systems of polynomial equalities",
  EM "NumericSolutions", " is a package for solving systems of polynomial equalities.
   It is used to compute the points in the affine variety V(I) of a zero 
   dimensional ideal I. Note that this package can be used only to compute the

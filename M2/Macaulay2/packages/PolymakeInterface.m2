@@ -11,8 +11,8 @@ newPackage(
 	            {Name => "Qingchun Ren", 
 		    Email => "qingchun.ren@gmail.com", 
 		    HomePage => "http://math.berkeley.edu/~qingchun/"}},
-    	Headline => "a package for interfacing with polymake",
-    	DebuggingMode => true
+    	Headline => "interfacing with polymake",
+	PackageImports => {"PolyhedralObjects"}
     	)
 
 export {
@@ -24,13 +24,9 @@ export {
      parseAllAvailableProperties
      }
 
-
 ---------------------------------------------------------------------------
 -- Code
 ---------------------------------------------------------------------------
-
-needsPackage "SimpleDoc"
-needsPackage "PolyhedralObjects"
 
 runPolymakePrefix = "polymake"
 

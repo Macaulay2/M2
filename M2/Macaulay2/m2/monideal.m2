@@ -88,10 +88,10 @@ MonomialIdeal - MonomialIdeal := MonomialIdeal => (I,J) -> (
 radical MonomialIdeal := MonomialIdeal => options -> (I) -> newMonomialIdeal(ring I, rawRadical raw I)
 
 quotient(MonomialIdeal, MonomialIdeal) := MonomialIdeal => opts -> (I,J) -> newMonomialIdeal(ring I, rawColon(raw I, raw J))
-MonomialIdeal : MonomialIdeal := MonomialIdeal => quotient
+MonomialIdeal : MonomialIdeal := MonomialIdeal => (I,J) -> quotient(I,J)
 
 quotient(MonomialIdeal, RingElement) := opts -> (I,f) -> I : monomialIdeal terms f
-MonomialIdeal : RingElement := MonomialIdeal => quotient
+MonomialIdeal : RingElement := MonomialIdeal => (I,r) -> quotient(I,r)
 
 saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => o -> (I,J) -> newMonomialIdeal(ring I, rawSaturate(raw I, raw J))
 
@@ -167,10 +167,7 @@ independentSets Ideal := o -> (M) -> independentSets(monomialIdeal M,o)
 -- this code below here is by Greg Smith (and partially Mike Stillman)
 -----------------------------------------------------------------------------
 
-expression MonomialIdeal := (I) -> (
-     if numgens I === 0 then hold "0" 
-     else new FunctionApplication from { monomialIdeal, expression unsequence toSequence first( entries generators I) }
-     )
+expression MonomialIdeal := (I) -> (expression monomialIdeal) unsequence apply(toSequence first entries generators I, expression)
 
 MonomialIdeal#{Standard,AfterPrint} = MonomialIdeal#{Standard,AfterNoPrint} = (I) -> (
      << endl;				  
@@ -244,7 +241,7 @@ lcm MonomialIdeal := (I) -> (if I.cache.?lcm
  -- We use E. Miller's definition for nonsquare 
  -- free monomial -- ideals.
 
-alexanderDual = local alexanderDual
+protect alexanderDual
 alexopts = {Strategy=>0}
 
 dual(MonomialIdeal, List) := alexopts >> o -> (I,a) -> (
@@ -256,7 +253,7 @@ dual(MonomialIdeal, List) := alexopts >> o -> (I,a) -> (
      newMonomialIdeal(ring I, rawAlexanderDual(raw I, a, o.Strategy)) -- 0 is the default algorithm
      )
 
-dual(MonomialIdeal,RingElement) := alexopts >> o -> (I,r) -> alexanderDual(I,first exponents r,o)
+dual(MonomialIdeal,RingElement) := alexopts >> o -> (I,r) -> dual(I,first exponents r,o)
 
 dual MonomialIdeal := alexopts >> o -> (I) -> (
   if I.cache#?alexanderDual
@@ -322,6 +319,21 @@ monomialSubideal Ideal := (I) -> (
 	       ));
      monomialIdeal substitute(J, R)
      )
+
+
+polarize = method(Options => {VariableBaseName => "z"});
+polarize (MonomialIdeal) := o -> I -> (
+    n := #(generators ring I);
+    u := apply(#(first entries mingens I), i -> first exponents I_i);
+    Ilcm := max \ transpose u;
+    z := getSymbol(o.VariableBaseName);
+    Z := flatten apply(n, i -> apply(Ilcm#i, j -> z_{i,j}));
+    R := QQ(monoid[Z]);
+    G := generators R;
+    p := apply(n, i -> sum((Ilcm)_{0..i-1}));
+    monomialIdeal apply(u, e -> product apply(n, i -> product(toList(0..e#i-1), j -> G#(p#i+j))))
+    )
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

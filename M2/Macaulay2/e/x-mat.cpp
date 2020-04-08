@@ -25,7 +25,7 @@ M2_string IM2_Matrix_to_string(const Matrix *M)
     {
       M->text_out(o);
       return o.to_string();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       o << "[unprintable matrix]";
       return o.to_string();
@@ -54,7 +54,7 @@ const RingElement /* or null */ *IM2_Matrix_get_entry(const Matrix *M,
       ring_elem result;
       result = M->elem(r, c);
       return RingElement::make_raw(M->get_ring(), result);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -171,7 +171,7 @@ const Matrix /* or null */ *IM2_Matrix_remake1(const FreeModule *target,
 #warning prefer_dense not yet used
 #endif
       return M->remake(target);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -204,7 +204,7 @@ int  // 1 = true, 0 = false, -1 = error
          Therefore, it can happen that M-N == 0, but M != N.
       */
       return M->is_equal(*N);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return -1;
@@ -246,7 +246,7 @@ const Matrix /* or null */ *IM2_Matrix_concat(const engine_RawMatrixArray Ms)
             }
         }
       return mat.to_matrix();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -278,7 +278,7 @@ const Matrix /* or null */ *IM2_Matrix_direct_sum(
         result = result->direct_sum(Ms->array[i]);
 
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -290,7 +290,7 @@ const Matrix /* or null */ *IM2_Matrix_tensor(const Matrix *M, const Matrix *N)
   try
     {
       return M->tensor(N);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -302,7 +302,7 @@ const Matrix /* or null */ *rawModuleTensor(const Matrix *M, const Matrix *N)
   try
     {
       return M->module_tensor(N);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -314,7 +314,7 @@ const Matrix /* or null */ *IM2_Matrix_transpose(const Matrix *M)
   try
     {
       return M->transpose();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -328,7 +328,7 @@ const Matrix /* or null */ *IM2_Matrix_reshape(const Matrix *M,
   try
     {
       return M->reshape(F, G);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -341,7 +341,7 @@ const Matrix /* or null */ *IM2_Matrix_flip(const FreeModule *F,
   try
     {
       return Matrix::flip(F, G);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -356,7 +356,7 @@ const Matrix /* or null */ *rawWedgeProduct(int p, int q, const FreeModule *F)
   try
     {
       return Matrix::wedge_product(p, q, F);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -370,7 +370,7 @@ const Matrix /* or null */ *IM2_Matrix_submatrix(const Matrix *M,
   try
     {
       return M->sub_matrix(rows, cols);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -383,7 +383,7 @@ const Matrix /* or null */ *IM2_Matrix_submatrix1(const Matrix *M,
   try
     {
       return M->sub_matrix(cols);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -395,7 +395,7 @@ const Matrix /* or null */ *IM2_Matrix_koszul(int p, const Matrix *M)
   try
     {
       return M->koszul(p);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -417,7 +417,7 @@ const Matrix /* or null */ *rawKoszulMonomials(int nskew,
           return 0;
         }
       return Matrix::koszul_monomials(nskew, M, N);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -429,7 +429,7 @@ const Matrix /* or null */ *IM2_Matrix_symm(int p, const Matrix *M)
   try
     {
       return M->symm(p);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -450,7 +450,7 @@ M2_arrayintOrNull IM2_Matrix_sort_columns(const Matrix *M,
   try
     {
       return M->sort(deg_order, mon_order);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -664,7 +664,7 @@ const Matrix /* or null */ *IM2_Matrix_promote(const FreeModule *newTarget,
             }
       mat.compute_column_degrees();
       return mat.to_matrix();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -694,7 +694,7 @@ const Matrix /* or null */ *IM2_Matrix_lift(int *success_return,
       mat.compute_column_degrees();
       *success_return = 1;
       return mat.to_matrix();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;

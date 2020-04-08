@@ -5,13 +5,13 @@ newPackage(
     	Version => "1.4",
     	Date => "May 14, 2012",
     	Authors => {{Name => "Janko Boehm", 
-		  Email => "boehm@math.uni-sb.de", 
+		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"},
                   {Name => "Stavros Papadakis", 
 		  Email => "papadak@math.ist.utl.pt", 
 		  HomePage => "http://www.math.ist.utl.pt/~papadak/"}
                    },
-    	Headline => "Unprojection and the Kustin-Miller complex construction",
+    	Headline => "unprojection and the Kustin-Miller complex construction",
 	PackageExports => {"SimplicialComplexes"},
     	DebuggingMode => false,
 	Certification => {

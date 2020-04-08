@@ -9,8 +9,15 @@
 #include <iostream>
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
+// The following line, which would be useful, doesn't quiet g++-8 about pragma omp...
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
 #pragma GCC diagnostic ignored "-Wshorten-64-to-32"
 #pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+
+// this fixes a weird problem in the package "openblas" of Arch Linux, which somehow fails to declare this function:
+extern "C" void openblas_set_num_threads(int num_threads);
+
 #include <fflas-ffpack/ffpack/ffpack.h>
 #pragma GCC diagnostic pop
 
@@ -142,7 +149,7 @@ class ARingZZpFFPACK : public RingInterface
 
   void set_from_long(ElementType &result, long a) const;
 
-  void set_from_mpz(ElementType &result, const mpz_ptr a) const;
+  void set_from_mpz(ElementType &result, mpz_srcptr a) const;
 
   bool set_from_mpq(ElementType &result, const mpq_ptr a) const;
 

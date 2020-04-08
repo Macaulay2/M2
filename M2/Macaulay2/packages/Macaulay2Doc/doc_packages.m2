@@ -254,9 +254,9 @@ document {
 	  [newPackage,Certification], [newPackage,Reload], [newPackage,UseCachedExampleOutput], [newPackage, OptionalComponentsPresent]
 	  }, 
      Headline => "package item: start a new package",
-     Usage => "newPackage ( title )",
+     Usage => "newPackage ( pkgname )",
      Inputs => {
-	  "title" => "the name of the new package",
+	  "pkgname" => "the name of the new package",
 	  Version => String => {"the version number of the package.  A version number less than 1.0 indicates that the package is under
 	       development, and the user interface may change."},
 	  Date => String => "the date of this version of the package",
@@ -328,7 +328,7 @@ document {
      PARA { "Here is a template for a typical ", TT "newPackage", " entry in a package."},
      PRE ///newPackage("PACKAGENAME",
     Headline => "one line description",
-    Version => 0.1,
+    Version => "0.1",
     Date => "month XX, 20XX",
     Authors => {
 	 {Name => "author1", Email => "email1", HomePage => "url1"}

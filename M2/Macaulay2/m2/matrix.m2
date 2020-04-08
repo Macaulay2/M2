@@ -116,7 +116,17 @@ Matrix _ Sequence := RingElement => (m,ind) -> (
 Number == Matrix :=
 RingElement == Matrix := (r,m) -> m == r
 
-Matrix == Matrix := (m,n) -> target m == target n and source m == source n and raw m === raw n
+Matrix == Matrix := (f,g) -> (
+    if source f === source g
+      then if target f === target g 
+             then raw f === raw g
+             else target f == target g and
+                  raw super f === raw super g
+      else source f == source g and
+           target f == target g and 
+           raw(super f * inducedMap(source f, source g)) === raw super g
+    )
+
 Matrix == Number :=
 Matrix == RingElement := (m,f) -> m - f == 0		    -- slow!
 Matrix == ZZ := (m,i) -> if i === 0 then rawIsZero m.RawMatrix else m - i == 0
@@ -209,19 +219,24 @@ Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
      u := m * v#0;
      new target u from {u})
 
-expression Matrix := m -> MatrixExpression applyTable(entries m, expression)
+expression Matrix := m -> (
+    x := applyTable(entries m, expression);
+    d := degrees -* cover *- target m;
+    if not all(d, i -> all(i, j -> j == 0)) then MatrixDegreeExpression {x,d, degrees source m} else MatrixExpression x
+    )
 
-toExternalString Matrix := m -> concatenate (
-     "map(", 
-     toExternalString target m, ",", 
-     toExternalString source m, ",", 
-     if m.?RingMap then (toExternalString m.RingMap,","),
-     if m == 0 then "0" else toString entries m,
-     if not all(degree m, zero) then (",Degree=>", toString degree m),
-     ")"
-     )
+net Matrix := m -> net expression m
+toString Matrix := m -> toString expression m
+texMath Matrix := m -> texMath expression m
 
-toString Matrix := m -> concatenate ( "matrix ", toString entries m )
+describe Matrix := m -> (
+    args:=(describe target m,describe source m);
+    if m.?RingMap then args=append(args,describe m.RingMap);
+    args=append(args,expression if m == 0 then 0 else entries m);
+    if not all(degree m,zero) then args=append(args,expression(Degree=>degree m));
+    Describe (expression map) args
+    )
+toExternalString Matrix := m -> toString describe m;
 
 isIsomorphism Matrix := f -> cokernel f == 0 and kernel f == 0
 

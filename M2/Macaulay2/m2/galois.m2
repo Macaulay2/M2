@@ -3,14 +3,11 @@
 GaloisField = new Type of EngineRing
 GaloisField.synonym = "Galois field"
 
-toExternalString GaloisField := k -> toString expression k
-toString GaloisField := k -> (
-     if hasAttribute(k,ReverseDictionary) then toString getAttribute(k,ReverseDictionary)
-     else toExternalString k)
-net GaloisField := k -> (
-     if hasAttribute(k,ReverseDictionary) then toString getAttribute(k,ReverseDictionary)
-     else net expression k)
-describe GaloisField := F -> net expression F
+toExternalString GaloisField := k -> toString describe k
+toString GaloisField := toString @@ expression
+net GaloisField := net @@ expression
+expression GaloisField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else (expression GF) (expression F.order)
+describe GaloisField := F -> Describe (expression GF) (expression F.order)
 
 precision GaloisField := F -> infinity
 
@@ -37,8 +34,6 @@ GF = method (
 	    --   "CompleteGivaro", uses Givaro representation, and also its choice of polynomial
 	  }
      )
-
-expression GaloisField := F -> new FunctionApplication from { GF, F.order }
 
 lastp := 2
 

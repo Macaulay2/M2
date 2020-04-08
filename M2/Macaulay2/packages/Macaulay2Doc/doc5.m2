@@ -306,7 +306,7 @@ document {
      }
 
 document {
-     Key => (symbol **, Tally, Tally),
+     Key => (symbol **, VirtualTally, VirtualTally),
      Headline => "Cartesian product of tallies",
      TT "x ** y", " -- produces the Cartesian product of two tallies.",
      PARA{},
@@ -319,6 +319,38 @@ document {
 	  },
      SeeAlso => {"Tally", "tally"}
      }
+
+document {
+     Key => (symbol +, VirtualTally, VirtualTally),
+     Headline => "union of tallies",
+     TT "x + y", " -- produces the union of two tallies.",
+     PARA{},
+     "One of the arguments may be a ", TO "Set", ".",
+     PARA{},
+     EXAMPLE {
+	      "x = tally {a,b,b,c,c,c,d,d,d}",
+      	  "y = tally {a,a,a,b,b,c,d}",
+     	  "x' = new VirtualTally from x",
+	 	  "y' = new VirtualTally from y",
+	 	  "z' = y' - x'",
+	 	  "z' + x'",
+	  	  "z' + y'",
+	  },
+     }
+     
+document {
+     Key => (symbol -, VirtualTally),
+     Headline => "negation of a VirtualTally",
+     TT "-x", " -- the negation of ", TT "x",
+     PARA{},
+     EXAMPLE {
+      	  "x = tally {a,b,b,c,c,d,d,d}",
+	 	  "x' = new VirtualTally from x",
+	  	  "- x'",
+     },
+}     
+
+
 
 document {
      Key => (symbol +, Tally, Tally),
@@ -345,15 +377,6 @@ document {
      ", TT "x", " and in ", TT "y", " if it's positive, otherwise, zero.",
      EXAMPLE "tally {a,a,b,c} - tally {c,d,d}",
      SeeAlso => "Tally"
-     }
-
-document {
-     Key => {commonest, (commonest, VisibleList), (commonest, Set), (commonest, Tally)},
-     Headline => "the most common elements of a list or tally",
-     Usage => "commonest x",
-     Inputs => { "x" },
-     Outputs => { { "a list of the elements appearing most frequently in ", TT "x" } },
-     EXAMPLE "commonest {a,a,a,a,b,b,b,b,c,c,d}"
      }
 
 document {
@@ -406,7 +429,7 @@ document {
      TO2((symbol*,Set,Set),"intersection"), ", ",
      TO2((symbol-,Set,Set),"difference"), ", ",
      TO2((symbol**,Set,Set),"Cartesian product"), ", ",
-     TO2((symbol^**,Tally,ZZ),"Cartesian power"), ", and ",
+     TO2((symbol^**,VirtualTally,ZZ),"Cartesian power"), ", and ",
      TO2((isSubset,Set,Set),"subset"),
      " are available. For example,",
      EXAMPLE {
@@ -542,7 +565,7 @@ document {
      }
 
 document {
-     Key => (symbol ^**, Tally, ZZ),
+     Key => (symbol ^**, VirtualTally, ZZ),
      Headline => "Cartesian power of sets and tallies",
      Usage => "B = A^**n",
      Inputs => { "A", "n" },

@@ -238,6 +238,7 @@ expression ProjectiveHilbertPolynomial := (h) -> (
      sum(sort pairs h, (n,c) -> c * new Subscript from {"P", n})
      )	  
 net ProjectiveHilbertPolynomial := (h) -> net expression h
+texMath ProjectiveHilbertPolynomial := x -> texMath expression x
 
 projectiveHilbertPolynomial = method()
 projectiveHilbertPolynomial ZZ := ProjectiveHilbertPolynomial => (n) -> (
@@ -365,7 +366,7 @@ multidegree Module := M -> (
      A := degreesRing M;
      onem := map(A,A,apply(generators A, t -> 1-t));
      c := codim M;
-     if c === infinity then 0_A else part(c,onem numerator poincare M))
+     if c === infinity then 0_A else part(c,numgens A:1,onem numerator poincare M))
 multidegree Ring := R -> multidegree R^1
 multidegree Ideal := I -> multidegree cokernel generators I
 
@@ -831,17 +832,6 @@ basis(InfiniteNumber,ZZ,Matrix) := opts -> (lo,hi,M) -> basis(lo,{hi},M,opts)
 basis(ZZ,InfiniteNumber,Matrix) := opts -> (lo,hi,M) -> basis({lo},hi,M,opts)
 basis(ZZ,ZZ,Matrix) := opts -> (lo,hi,M) -> basis({lo},{hi},M,opts)
 
------------------------------------------------------------------------------
-truncate = method()
-truncate(List,Module) := Module => (deg,M) -> (
-     if M.?generators then (
-	  b := M.generators * cover basis(deg,deg,cokernel presentation M,Truncate=>true);
-	  if M.?relations then subquotient(b, M.relations)
-	  else image b)
-     else image basis(deg,deg,M,Truncate=>true))
-truncate(List,Ideal) := Ideal => (deg,I) -> ideal truncate(deg,module I)
-truncate(ZZ,Module) := Module => (deg,M) -> truncate({deg},M)
-truncate(ZZ,Ideal) := Ideal => (deg,I) -> truncate({deg},I)
 -----------------------------------------------------------------------------
 isSubset(Module,Module) := (M,N) -> (
      -- here is where we could use gb of a subquotient!

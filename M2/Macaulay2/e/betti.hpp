@@ -5,6 +5,11 @@
 
 #include "buffer.hpp"
 
+#include "memtailor.h"
+#include <unordered_set>
+#include <unordered_map>
+#include <utility>
+
 class BettiDisplay
 {
  public:
@@ -39,6 +44,24 @@ class BettiDisplay
   int mHiLength;
   int mNLevels;
   int* mValues;
+};
+
+class BettiHashAndEq
+{
+public:
+  using value = std::pair<const int*, int>;
+
+  // hash function
+  std::size_t operator()(value m) const
+  {
+    return reinterpret_cast<std::size_t>(const_cast<int*>(m.first)) + 13*m.second;
+  }
+
+  // equality function
+  bool operator() (value a, value b) const
+  {
+    return a == b;
+  }
 };
 
 #endif

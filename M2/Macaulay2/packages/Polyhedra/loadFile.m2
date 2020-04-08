@@ -1,6 +1,7 @@
 needsPackage "FourierMotzkin"
 -- needsPackage "FourTiTwo"
 needsPackage "Normaliz"
+needsPackage "Topcom"
 
 load "./exports.m2"
 load "./symbols.m2"
@@ -34,20 +35,23 @@ load "./core/globalMethods.m2"
    load "./core/cone/constructors.m2"
    load "./core/cone/properties.m2"
    load "./core/cone/methods.m2"
-   -- Polyhedron (relies on cone)
-   load "./core/polyhedron/constructors.m2"
-   load "./core/polyhedron/properties.m2"
-   load "./core/polyhedron/methods.m2"
    -- Fan
    load "./core/fan/constructors.m2"
-   load "./core/fan/methods.m2"
+   load "./core/polyhedron/constructors.m2"
+   load "./core/fan/methods.m2"			       -- relies on Polyhedron
    load "./core/fan/properties.m2"
+   -- Polyhedron (relies on cone)
+   load "./core/polyhedron/properties.m2"
+   load "./core/polyhedron/methods.m2"	   -- relies on Fan
    -- PolyhedralComplex (relies on Fan)
    load "./core/polyhedralComplex/constructors.m2"
    load "./core/polyhedralComplex/properties.m2"
    load "./core/polyhedralComplex/methods.m2"
 load "./core/contains.m2"
 load "./core/intersection.m2"
+
+-- Deprecated methods collected in one file
+load "./deprecated.m2"
 
 -------------------------------------------------------------------------------
 -- Extended
@@ -71,6 +75,7 @@ load "./extended/not_refactored.m2"
 load "./tests/core/cone_basics.m2"
 load "./tests/core/polyhedron_basics.m2"
 load "./tests/core/fan_basics.m2"
+load "./tests/core/polyhedralComplex_basics.m2"
 load "./tests/core/dualFaceRepresentation.m2"
 load "./tests/core/tests_from_polymake/fvector.m2"
 load "./tests/core/tests_from_polymake/representation.m2"
@@ -78,12 +83,16 @@ load "./tests/core/tests_from_polymake/hilbert_basis.m2"
 load "./tests/core/tests_from_polymake/lattice_points.m2"
 load "./tests/core/tests_from_polymake/normal_fan.m2"
 load "./tests/core/tests_from_polymake/basic_fans.m2"
+load "./tests/core/volume.m2"
 -- Extended:
 load "./tests/extended/polyhedron.m2"
 load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
 load "./tests/extended/mixedVolume.m2"
 load "./tests/extended/tests_from_polymake/ehrhart_and_volume.m2"
 load "./tests/extended/linearTransform.m2"
+load "./tests/extended/regularSubdivision.m2"
+load "./tests/extended/stanleyReisner.m2"
+
 -- Other:
 load "./tests/legacy_tests_working.m2"
 load "./tests/shouldFail.m2"
@@ -93,14 +102,20 @@ load "./tests/isWellDefined.m2"
 -------------------------------------------------------------------------------
 -- Interfaces to other software
 --
-load "./alternatives/fourierMotzkinAlternatives.m2"
-load "./alternatives/normaliz.m2"
+load "./interfaces/fourierMotzkinAlternatives.m2"
+load "./interfaces/normaliz.m2"
 
 -------------------------------------------------------------------------------
 -- Documentation
 --
-load "./documentation.m2"
-load "./new_documentation.m2"
+beginDocumentation()
+load "./documentation/intro.m2"
+load "./documentation/working_with_polyhedra.m2"
+load "./documentation/working_with_cones.m2"
+load "./documentation/v_h_representation.m2"
+load "./documentation/deprecated_documentation.m2"
+load "./documentation/old_documentation.m2"
+load "./documentation/documentation.m2"
 
 end
 

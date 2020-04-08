@@ -64,6 +64,10 @@ assert(
      dual(I, {2,2,2,2}) == 
      monomialIdeal matrix {{a^2*c^2, b^2*c^2, a^2*b^2*c*d, b^2*d^2, a^2*b*c*d^2, a*b*c^2*d^2}} )
 
+assert(
+     dual(I, a^2*b^2*c^2*d^2) == 
+     monomialIdeal matrix {{a^2*c^2, b^2*c^2, a^2*b^2*c*d, b^2*d^2, a^2*b*c*d^2, a*b*c^2*d^2}} )
+
 --  PRIMARY DECOMPOSITION  ---------------------------------
 
 R = QQ[x,y,z];
