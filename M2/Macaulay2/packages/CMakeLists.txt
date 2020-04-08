@@ -43,15 +43,17 @@ add_custom_target(list-packages
 
 ## eg: install-Style install-Macaulay2Doc ...
 list(TRANSFORM PACKAGES PREPEND "install-" OUTPUT_VARIABLE INSTALL_TARGETS)
+## Remove install-EngineTests from install-packages
+list(TRANSFORM PACKAGES_DEVEL PREPEND "install-" OUTPUT_VARIABLE PHONY_TARGETS)
+list(REMOVE_ITEM INSTALL_TARGETS ${PHONY_TARGETS})
 ## Install packages and make documentation
 add_custom_target(install-packages DEPENDS ${INSTALL_TARGETS})
 
 ## TODO: turn these (at least EngineTests) into CTest targets
 ## eg: check-Style check-Macaulay2Doc ...
 list(TRANSFORM PACKAGES       PREPEND "check-" OUTPUT_VARIABLE CHECK_TARGETS)
-list(TRANSFORM PACKAGES_DEVEL PREPEND "check-" OUTPUT_VARIABLE CHECK_TARGETS_DEVEL)
 ## Run tests and check packages
-add_custom_target(check-packages DEPENDS ${CHECK_TARGETS} ${CHECK_TARGETS_DEVEL})
+add_custom_target(check-packages DEPENDS ${CHECK_TARGETS})
 
 ## eg: uninstall-Style uninstall-Macaulay2Doc ...
 list(TRANSFORM PACKAGES PREPEND "uninstall-" OUTPUT_VARIABLE UNINSTALL_TARGETS)
@@ -75,12 +77,12 @@ set(M2_INSTALL_ARGS
 
 foreach(PACKAGE IN LISTS PACKAGES)
   ## Custom target for installing the package
+  # TODO: enable USES_TERMINAL only for Macaulay2Docs?
   add_custom_target(install-${PACKAGE}
     COMMENT
       "Installing package ${PACKAGE}"
     COMMAND
       M2-binary ${M2_ARGS} -e \"installPackage(\\"${PACKAGE}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON> exit 0\"
-    USES_TERMINAL
     DEPENDS M2-core install-Macaulay2Doc
     )
 
@@ -104,7 +106,6 @@ foreach(PACKAGE IN LISTS PACKAGES)
     COMMAND
       M2-binary ${M2_ARGS} -e \"needsPackage(\\"${PACKAGE}\\", LoadDocumentation=>true, DebuggingMode=>true) $<SEMICOLON>
       check(${PACKAGE}, UserMode=>false) $<SEMICOLON> exit 0\"
-    USES_TERMINAL
     DEPENDS M2-core
     )
 

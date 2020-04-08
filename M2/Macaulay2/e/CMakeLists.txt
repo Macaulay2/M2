@@ -263,7 +263,7 @@ list(TRANSFORM SRCLIST APPEND .hpp OUTPUT_VARIABLE HPPFILES)
 ###############################################################################
 
 # set -DBUILD_SHARED_LIBS=ON to generate a shared library
-add_library(M2-engine # SHARED
+add_library(M2-engine STATIC # SHARED
   ${HPPONLYFILES}
   ${CPPONLYFILES}
   ${HPPFILES}
