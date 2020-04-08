@@ -44,7 +44,7 @@ install(TARGETS M2-binary M2-engine
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
   COMPONENT ALL)
 
-# install the M2 link
+# install the M2 wrapper
 install(FILES
   ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2
   DESTINATION ${CMAKE_INSTALL_BINDIR}

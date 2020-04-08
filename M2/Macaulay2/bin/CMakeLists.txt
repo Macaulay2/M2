@@ -55,6 +55,14 @@ add_custom_command(TARGET M2-binary POST_BUILD
 # objcopy --only-keep-debug Macaulay2/bin/M2-binary M2.debug-info
 
 ###############################################################################
+# Build the M2 wrapper, which sets the library path, mainly for normaliz, etc.
+# TODO: find a way to make this obsolete
 
-file(MAKE_DIRECTORY        ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
-file(CREATE_LINK M2-binary ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2 SYMBOLIC)
+if(APPLE)
+  set(EXPORT_STRING [[DYLD_LIBRARY_PATH=`dirname "$0"`/../@CMAKE_INSTALL_LIBDIR@/Macaulay2/lib:$DYLD_LIBRARY_PATH]])
+else()
+  set(EXPORT_STRING   [[LD_LIBRARY_PATH=`dirname "$0"`/../@CMAKE_INSTALL_LIBDIR@/Macaulay2/lib:$LD_LIBRARY_PATH]])
+endif()
+
+string(CONFIGURE "${EXPORT_STRING}" EXPORT_STRING @ONLY)
+configure_file(M2.cmake ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2 @ONLY)
