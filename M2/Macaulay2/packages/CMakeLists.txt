@@ -84,11 +84,15 @@ set(M2_INSTALL_ARGS
   )
 
 foreach(package IN LISTS PACKAGES)
-  ## enable USES_TERMINAL only for Macaulay2Doc and EngineTests
-  if(package MATCHES "Macaulay2Doc" OR package IN_LIST PACKAGE_DEVEL)
+  ## Enable USES_TERMINAL only for Macaulay2Doc and EngineTests
+  ## Also make all other packages depend on Macaulay2Doc and Style
+  # TODO: remove dependencies, or move Macaulay2Doc and Style to Core
+  if(package MATCHES "Macaulay2Doc" OR package IN_LIST PACKAGES_DEVEL)
     set(USES_TERMINAL USES_TERMINAL)
+    unset(PACKAGE_DEPENDENCIES)
   else()
     unset(USES_TERMINAL)
+    set(PACKAGE_DEPENDENCIES install-Macaulay2Doc install-Style)
   endif()
 
   ## Custom target for installing the package
@@ -98,7 +102,7 @@ foreach(package IN LISTS PACKAGES)
     COMMAND
       M2-binary ${M2_ARGS} -e \"installPackage(\\"${package}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON> exit 0\"
     ${USES_TERMINAL}
-    DEPENDS M2-core install-Macaulay2Doc
+    DEPENDS M2-core ${PACKAGE_DEPENDENCIES}
     )
 
   ## Custom target for uninstalling the package
