@@ -36,6 +36,7 @@ foreach(PACKAGE IN LISTS PACKAGES)
 endforeach()
 
 #################################################################################
+# TODO: turn check targets (at least check-EngineTests) into CTest targets
 
 add_custom_target(list-packages
   COMMENT "Listing available packages"
@@ -49,11 +50,18 @@ list(REMOVE_ITEM INSTALL_TARGETS ${PHONY_TARGETS})
 ## Install packages and make documentation
 add_custom_target(install-packages DEPENDS ${INSTALL_TARGETS})
 
-## TODO: turn these (at least EngineTests) into CTest targets
 ## eg: check-Style check-Macaulay2Doc ...
 list(TRANSFORM PACKAGES       PREPEND "check-" OUTPUT_VARIABLE CHECK_TARGETS)
 ## Run tests and check packages
 add_custom_target(check-packages DEPENDS ${CHECK_TARGETS})
+
+## eg: all-Style all-Macaulay2Doc ...
+list(TRANSFORM PACKAGES PREPEND "all-" OUTPUT_VARIABLE ALL_TARGETS)
+## Remove all-EngineTests from all-packages
+list(TRANSFORM PACKAGES_DEVEL PREPEND "all-" OUTPUT_VARIABLE PHONY_TARGETS)
+list(REMOVE_ITEM ALL_TARGETS ${PHONY_TARGETS})
+## Install and check packages
+add_custom_target(all-packages DEPENDS ${ALL_TARGETS})
 
 ## eg: uninstall-Style uninstall-Macaulay2Doc ...
 list(TRANSFORM PACKAGES PREPEND "uninstall-" OUTPUT_VARIABLE UNINSTALL_TARGETS)
