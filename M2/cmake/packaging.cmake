@@ -20,7 +20,9 @@ option(RPM		"prepare a *.rpm package (for red had based systems)" OFF)
 #  ${CMAKE_BINARY_DIR}:Macaulay2:docs:/usr
 #  )
 
-set(CPACK_GENERATOR "TGZ" CACHE STRING "package types to build")
+set(CPACK_GENERATOR        "TGZ" CACHE STRING "package types to create")
+set(CPACK_SOURCE_GENERATOR "TGZ" CACHE STRING "source package types to create")
+
 set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON) # Experiment
 # set(CPACK_STRIP_FILES ON)
 set(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
@@ -47,6 +49,8 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY
   modules.")
 set(CPACK_PACKAGE_FILE_NAME
   "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_PACKAGE_RELEASE}.${CMAKE_SYSTEM_PROCESSOR}")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME
+  "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_PACKAGE_RELEASE}.src")
 
 # TODO: generate changelog from git description
 string(TIMESTAMP TODAY "%a %b %d %Y")

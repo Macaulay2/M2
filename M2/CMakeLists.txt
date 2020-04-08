@@ -77,9 +77,6 @@ configure_file(include/M2/config.h.cmake include/M2/config.h)
 add_subdirectory(Macaulay2)
 
 ###############################################################################
-# TODO: write the M2Config.cmake module for users
-
-###############################################################################
 
 #include(testing) ## CMake script for testing
 include(packaging) ## CMake script for making distribution packages for Macaulay2

@@ -366,6 +366,7 @@ endif()
 
 
 # TODO: version#"frobby version" is missing
+# TODO: switch to https://github.com/Macaulay2/frobby
 set(frobby_CXXFLAGS "${CPPFLAGS} ${CXXFLAGS} -Wno-deprecated-declarations")
 # FIXME: permissions on the installed files are wrong
 ExternalProject_Add(build-frobby
@@ -720,6 +721,8 @@ endif()
 
 
 # TODO: add testing
+# TODO: g++ warning: tbb.h contains deprecated functionality.
+# https://www.threadingbuildingblocks.org/docs/help/reference/appendices/deprecated_features.html
 ExternalProject_Add(build-mathicgb
   GIT_REPOSITORY    https://github.com/mahrud/mathicgb.git
   GIT_TAG           557d3da746c6888ef05f29c2f095f0262080956d # original: bd634c8

@@ -1,5 +1,7 @@
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
+# TODO: just call config.guess?
+
 ## Issue can be set via command line:
 # $ cmake -DISSUE=Catch-22 .
 ## Unset cached issue with cmake -UISSUE .

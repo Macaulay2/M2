@@ -82,7 +82,7 @@ message("## Host operating system information:
 # TODO
 # message("## Target operating system information:")
 
-################################################################
+###############################################################################
 ## Define variables for installation directories and Macaulay2 Layout
 # TODO: install the unstripped library with debug_info in the appropriate place.
 # On Fedora: /usr/lib/debug/usr/lib64/
@@ -293,7 +293,7 @@ check_c_source_compiles([[
   #endif
   int main(){struct addrinfo *addr;return 0 != getaddrinfo("1.2.3.4", "80", 0, &addr) ? 99 : 0;}]] GETADDRINFO_WORKS)
 
-################################################################
+###############################################################################
 
 # this is an alternative for AC_FUNC_ALLOCA()
 # TODO: is it still relevant?

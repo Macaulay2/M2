@@ -75,42 +75,60 @@ set(M2_INSTALL_ARGS
   DebuggingMode          => true
   )
 
-foreach(PACKAGE IN LISTS PACKAGES)
+foreach(package IN LISTS PACKAGES)
+  ## enable USES_TERMINAL only for Macaulay2Doc and EngineTests
+  if(package MATCHES "Macaulay2Doc" OR package IN_LIST PACKAGE_DEVEL)
+    set(USES_TERMINAL USES_TERMINAL)
+  else()
+    unset(USES_TERMINAL)
+  endif()
+
   ## Custom target for installing the package
-  # TODO: enable USES_TERMINAL only for Macaulay2Docs?
-  add_custom_target(install-${PACKAGE}
+  add_custom_target(install-${package}
     COMMENT
-      "Installing package ${PACKAGE}"
+      "Installing package ${package}"
     COMMAND
-      M2-binary ${M2_ARGS} -e \"installPackage(\\"${PACKAGE}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON> exit 0\"
+      M2-binary ${M2_ARGS} -e \"installPackage(\\"${package}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON> exit 0\"
+    ${USES_TERMINAL}
     DEPENDS M2-core install-Macaulay2Doc
     )
 
   ## Custom target for uninstalling the package
-  add_custom_target(uninstall-${PACKAGE}
+  add_custom_target(uninstall-${package}
     COMMENT
-      "Uninstalling package ${PACKAGE}"
+      "Uninstalling package ${package}"
     COMMAND
       rm -rf
-        ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/${PACKAGE}*
-        ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${PACKAGE}*
-        ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/${PACKAGE}*
-        ${M2_DIST_PREFIX}/${M2_INSTALL_INFODIR}/${PACKAGE}*
+        ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/${package}*
+        ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${package}*
+        ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/${package}*
+        ${M2_DIST_PREFIX}/${M2_INSTALL_INFODIR}/${package}*
     )
 
   # FIXME: what is if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 ?
   ## Custom target for checking the package
-  add_custom_target(check-${PACKAGE}
+  add_custom_target(check-${package}
     COMMENT
-      "Checking package ${PACKAGE}"
+      "Checking package ${package}"
     COMMAND
-      M2-binary ${M2_ARGS} -e \"needsPackage(\\"${PACKAGE}\\", LoadDocumentation=>true, DebuggingMode=>true) $<SEMICOLON>
-      check(${PACKAGE}, UserMode=>false) $<SEMICOLON> exit 0\"
+      M2-binary ${M2_ARGS}
+        -e \"needsPackage(\\"${package}\\", LoadDocumentation=>true, DebuggingMode=>true) $<SEMICOLON>
+             check(${package}, UserMode=>false) $<SEMICOLON> exit 0\"
+    ${USES_TERMINAL}
     DEPENDS M2-core
     )
 
   ## Everything bagel
-  add_custom_target(all-${PACKAGE} DEPENDS install-${PACKAGE} check-${PACKAGE})
+  add_custom_target(all-${package}
+    COMMENT
+      "Installing and checking package ${package}"
+    COMMAND
+      M2-binary ${M2_ARGS}
+        -e \"installPackage(\\"${package}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON>
+             check(${package}, UserMode=>false) $<SEMICOLON> exit 0\"
+    ${USES_TERMINAL}
+    DEPENDS M2-core
+    )
 endforeach()
 
 #################################################################################
