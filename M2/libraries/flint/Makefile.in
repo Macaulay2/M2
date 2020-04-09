@@ -1,14 +1,14 @@
 HOMEPAGE = http://flintlib.org
 #URL = http://flintlib.org
 URL = http://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 2.5.2
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 2.5.3
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PARALLEL = yes
-# The patch file disables some tests that need too much memory, but
-# many other tests keep failing, so disable them all:
+
+# Many other tests keep failing, so disable them all:
 CHECKTARGET = .
 
-LICENSEFILES = flint.h gpl-2.0.txt
+LICENSEFILES = flint.h LICENSE
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert
 CFLAGS += -O0 -fno-unroll-loops 
