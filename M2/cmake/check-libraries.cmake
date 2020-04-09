@@ -121,7 +121,7 @@ pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.0.3)
 find_library(LIBGDBM gdbm)
 
 ## Need a flavor of make for building libraries and programs
-find_program(MAKE_EXE	NAMES	make gmake nmake)
+find_program(MAKE	NAMES	make gmake nmake)
 ## Need a flavor of etags for building TAGS files
 find_program(ETAGS	NAMES	etags ctags)
 
