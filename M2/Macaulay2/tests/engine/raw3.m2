@@ -18,12 +18,11 @@ singlemonoid toList apply(1..10, i -> x_i)
 rZ = rawZZ()
 rQ = rawQQ()
 rZp = rawZZp(5)
---status: no one maintains this old test file, so it's broken, since it tests the raw interface
-rR = rawRR(.0000000001)
+rR = rawRR(53)
 
 R1 = rawPolynomialRing(rawZZ(), singlemonoid{x,y,z})
 R2 = rawPolynomialRing(rawZZp(7), singlemonoid{x,y,z})
-R3 = rawPolynomialRing(rawRR(.000000000001), singlemonoid{x,y,z})
+R3 = rawPolynomialRing(rawRR(53), singlemonoid{x,y,z})
 R4 = rawPolynomialRing(rawQQ(), singlemonoid{x,y,z,w,a,b})
 A =  rawPolynomialRing(rawZZ(), singlemonoid{r,s})
 

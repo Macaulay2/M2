@@ -53,9 +53,9 @@ J = ideal(
 -- GB timing ------
 -------------------
 time gb J; -- 0.9.2: 7.56 sec
+-*
  -- 0.9.5, unoptimized, with debugging: 116.1 sec
  --        optimized: 40.13 sec
-
  -- in 0.9.5:
  {2}(29){3}(30){4}(79){5}(243){6}(671){7}(845){8}(1364){9}(1582){10}(2130)
    -- {11}(1252){12}(620){13}(100){14}(28)     -- used 116.1 seconds
@@ -87,7 +87,6 @@ o10 = total: 1 678
          10: .  39
          11: .   5
          12: .   2
-
 -- 0.9.2
 i4 : time gb J
 {2}(0)gggggggggogogggogogogogggogog{3}(30)mmmmmmmmmmmmooooooooooooomooom
@@ -220,11 +219,13 @@ ooooooooooooooooooooooooooooooooooooooooo{13}(133)ooooooooooooooooooooooooo
 ooooooooooooooooooooooooooooooooooooooooomoooooooooooooooooooomoooooooooooo
 oooooooooooooooooooooooooooo{14}(33)ooooooooooooooooooooooooooooooooo
      -- used 7.9 seconds
+*-
 
 ---------------------------
 -- simple ideal quotient --
 ---------------------------
 time J1 = J : p_(1,1,1,1,1); -- 0.9.2: 38.43 sec
+-*
 -- betti J1 -- gives
 o11 = generators: total: 1 236
                       0: 1   .
@@ -239,6 +240,7 @@ o11 = generators: total: 1 236
                       9: .   2
   -- 0.9.2 time: 38.43 sec
   -- 0.9.5 time: 
+*-
 
 -- This works in 0.9.5 (slow, but works)
 A = R/J;
@@ -275,7 +277,7 @@ gens gb J1;
 ---------------------------
 -- saturation -------------
 ---------------------------
-time Jsat = saturate(J,p_(1,1,1,1,1));
+time Jsat = saturate(J,sub(p_(1,1,1,1,1),R));
   -- what algorithm is being used here?
   -- 
   -- betti Jsat -- as reported by 0.9.2 (these are mingens)
@@ -294,14 +296,14 @@ time Jsat = saturate(J,p_(1,1,1,1,1));
   -- 0.9.2 time: 133.11 sec
   -- 0.9.5 time: 
 
-time Jsat = saturate(J,p_(1,1,1,1,1),Strategy=>Linear);
+time Jsat = saturate(J,sub(p_(1,1,1,1,1),R),Strategy=>Linear);
   -- this does one GB
   -- 0.9.2 time: 
   -- 0.9.5 time: 
   
 Rt = (coefficientRing R)[t, gens R, MonomialOrder=>Eliminate 1]
 Jt = substitute(J,Rt) + ideal(t*p_(1,1,1,1,1)-1);
-gbTrace 3
+gbTrace = 3
 time gb Jt;
   -- 0.9.5 time: -- used 270.03 seconds
   -- 0.9.2 time: -- used 102.78 seconds

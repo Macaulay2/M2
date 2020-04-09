@@ -4,21 +4,23 @@ needs "raw-util.m2"
 
 -- new ZZ from RawRingElement -- rawToInteger
 -- new QQ from RawRingElement -- rawToRational
--- new RR from RawRingElement -- rawToReal
--- new CC from RawRingElement -- rawToComplex -- WRITE THIS
+-- new RR from RawRingElement -- rawToRR
+-- new CC from RawRingElement -- rawToCC -- WRITE THIS
 
+C = CC_53
 a = 1+3*ii
-b = rawFromNumber(raw CC,a)
-c = rawToComplex b
+b = rawFromNumber(raw C,a)
+c = rawToCC b
 assert(a === c)
 
 -- also need: rawImaginaryPart, rawRealPart, rawFromReals(a,b) gives a+b*ii
 -- need promote and lift to work between these rings?
 
+R = RR_53
 b = new RR from .234
-b = new RR from rawFromNumber(raw RR, .234)  -- FAILS
-new RR from RawRingElement := (R, f) -> rawToReal f
-b = new RR from rawFromNumber(raw RR, .234)  -- now it works
+b = new RR from rawFromNumber(raw R, .234)  -- FAILS
+new RR from RawRingElement := (R, f) -> rawToRR f
+b = new RR from rawFromNumber(raw R, .234)  -- now it works
 
 new QQ from 2/3
 print "The following line is WRONG"
@@ -49,10 +51,10 @@ raw a
 raw b
 
 a = new RR from 2/3 -- FAILS
-b = new RR from rawFromNumber(raw RR, 2/3) 
+b = new RR from rawFromNumber(raw R, 2/3)
 b
 a = (2/3)_RR
-rawToReal rawFromNumber(raw RR, .234567)
+rawToRR rawFromNumber(raw R, .234567)
 raw a
 raw b
 
