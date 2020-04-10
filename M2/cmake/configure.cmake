@@ -17,8 +17,8 @@
 option(MEMDEBUG		"Enable memory allocation debugging"	OFF)
 option(PROFILING	"Enable profiling build flags"		OFF)
 option(GIT_SUBMODULE	"Update submodules during build"	OFF)
-option(BUILD_PROGRAMS	"Build all programs, even if found"	OFF)
-option(BUILD_LIBRARIES	"Build all libraries, even if found"	OFF)
+option(BUILD_PROGRAMS	"Build programs, even if found"		OFF)
+option(BUILD_LIBRARIES	"Build libraries, even if found"	OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
 option(USING_MPIR	"Use MPIR instead of GMP"		ON)
 option(AUTOTUNE		"Autotune library parameters"		OFF)
@@ -55,15 +55,6 @@ message("## Configure Macaulay2
      CMAKE_BUILD_TYPE  = ${CMAKE_BUILD_TYPE}
      BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}
      BUILD_TESTING     = ${BUILD_TESTING}")
-
-## Relevant environment variable values, if any:
-# TODO: most of these are currently not being used
-foreach(X AR CPPFLAGS LIBS)
-  if(NOT "$ENV{${X}}" STREQUAL "${${X}}")
-    set(${X} "$ENV{${X}}" CACHE STRING "set via environment variable at configure time")
-    message("## Set via environment:   ${X} = ${${X}}")
-  endif()
-endforeach()
 
 ## Set machine description variables used in version.dd
 include(flavor) ## Set ISSUE, ISSUE_FLAVOR, and ISSUE_RELEASE
@@ -186,13 +177,18 @@ add_compile_options(
 get_property(COMPILE_OPTIONS DIRECTORY PROPERTY COMPILE_OPTIONS)
 get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
 
-message("## Build flags (excluding default build tags for ${CMAKE_BUILD_TYPE})
+if(VERBOSE)
+  message("## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)
      Compiler:	${COMPILE_OPTIONS}
      Linker:	${LINK_OPTIONS}")
+endif()
 
 ###############################################################################
 ## Detect type sizes and existence of symbols, headers, and functions
-# TIP: set CMAKE_REQUIRED_QUIET=ON to turn off output in this section
+
+if(NOT VERBOSE)
+  set(CMAKE_REQUIRED_QUIET ON)
+endif()
 
 include(CheckTypeSize)
 check_type_size("int *" SIZEOF_INT_P)

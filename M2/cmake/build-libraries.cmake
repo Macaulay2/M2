@@ -13,6 +13,12 @@ if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
 endif()
 
 ################################################################
+# List of programs and libraries that we can build
+set(PROGRAM_OPTIONS
+  4ti2 cohomcalg gfan lrslib csdp normaliz nauty topcom)
+set(LIBRARY_OPTIONS
+  mpir mpfr ntl flint factory frobby cddlib glpk mpsolve googletest bdwgc givaro fflas_ffpack memtailor mathic mathicgb)
+
 ## This target builds external libraries that M2 relies on.
 add_custom_target(build-libraries
   COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_SOURCE_DIR}/cmake/check-libraries.cmake)
@@ -59,7 +65,7 @@ endif()
 ## Setting a baseline for compile and link options for external projects
 
 ## Preprocessor flags
-string(REPLACE ";" " " CPPFLAGS "${CPPFLAGS} ${COMPILE_OPTIONS}")
+string(REPLACE ";" " " CPPFLAGS "$ENV{CPPFLAGS} ${COMPILE_OPTIONS}")
 
 ## C compiler flags
 set(CFLAGS   "${CPPFLAGS} -std=gnu11 -w -Wimplicit -Werror")
@@ -89,6 +95,42 @@ endif()
 
 include(ExternalProject) # configure, patch, build, and install at build time
 set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
+
+## bdwgc
+# TODO: add environment variables GC_LARGE_ALLOC_WARN_INTERVAL and GC_ABORT_ON_LEAK
+# Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
+# Currently cloning master for significant cmake support. Hopefully soon there will be a stable release
+ExternalProject_Add(build-bdwgc
+  GIT_REPOSITORY    https://github.com/ivmai/bdwgc.git
+  GIT_TAG           master
+  PREFIX            libraries/bdwgc
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/bdwgc
+  BINARY_DIR        libraries/bdwgc/build
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+                    -Dbuild_tests=${BUILD_TESTING}
+                    -Dbuild_cord=OFF
+                    -Denable_threads=ON
+                    -Denable_cplusplus=ON
+                    -Denable_gcj_support=OFF
+                    -Denable_large_config=ON
+                    -Denable_java_finalization=OFF
+                    -Denable_single_obj_compilation=ON
+                    -Denable_parallel_mark=$<NOT:$<BOOL:${MEMDEBUG}>>
+                    -Denable_gc_assertions=${MEMDEBUG}
+                    -Denable_gc_debug=${MEMDEBUG}
+                    -Ddisable_gc_debug=$<NOT:$<BOOL:${MEMDEBUG}>>
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  )
+if(NOT BDWGC_FOUND)
+  # Add this to the libraries target
+  add_dependencies(build-libraries build-bdwgc-install)
+endif()
+
 
 # TODO: use git? https://github.com/Macaulay2/mpir.git 82816d99
 ExternalProject_Add(build-mpir
@@ -513,61 +555,6 @@ if(NOT MPSOLVE_FOUND)
   endif()
 endif()
 
-#################################################################################
-## Packages downloaded via git
-
-# TODO: do we actually need it built?
-ExternalProject_Add(build-googletest
-  GIT_REPOSITORY    https://github.com/google/googletest.git
-  GIT_TAG           release-1.10.0 # 42bc671f
-  PREFIX            libraries/googletest
-  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/googletest
-  BINARY_DIR        libraries/googletest/build
-  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX} -DBUILD_GMOCK=OFF # -DINSTALL_GTEST=OFF
-  EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
-  )
-if(BUILD_TESTING AND NOT GTEST_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-googletest-install)
-endif()
-
-
-## bdwgc
-# TODO: add environment variables GC_LARGE_ALLOC_WARN_INTERVAL and GC_ABORT_ON_LEAK
-# Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
-# Currently cloning master for significant cmake support. Hopefully soon there will be a stable release
-ExternalProject_Add(build-bdwgc
-  GIT_REPOSITORY    https://github.com/ivmai/bdwgc.git
-  GIT_TAG           master
-  PREFIX            libraries/bdwgc
-  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/bdwgc
-  BINARY_DIR        libraries/bdwgc/build
-  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
-                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
-                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-                    -Dbuild_tests=${BUILD_TESTING}
-                    -Dbuild_cord=OFF
-                    -Denable_threads=ON
-                    -Denable_cplusplus=ON
-                    -Denable_gcj_support=OFF
-                    -Denable_large_config=ON
-                    -Denable_java_finalization=OFF
-                    -Denable_single_obj_compilation=ON
-                    -Denable_parallel_mark=$<NOT:$<BOOL:${MEMDEBUG}>>
-                    -Denable_gc_assertions=${MEMDEBUG}
-                    -Denable_gc_debug=${MEMDEBUG}
-                    -Ddisable_gc_debug=$<NOT:$<BOOL:${MEMDEBUG}>>
-  EXCLUDE_FROM_ALL  ON
-  TEST_EXCLUDE_FROM_MAIN ON
-  STEP_TARGETS      install test
-  )
-if(NOT BDWGC_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-bdwgc-install)
-endif()
-
 
 # TODO: out of source build has issues with detecting SIMD instructions
 # TODO: separate source and binary directories
@@ -736,6 +723,23 @@ if(NOT MATHICGB_FOUND)
   if(NOT MATHIC_FOUND)
     ExternalProject_Add_StepDependencies(build-mathicgb configure build-mathic-install)
   endif()
+endif()
+
+
+# TODO: do we actually need it built?
+ExternalProject_Add(build-googletest
+  GIT_REPOSITORY    https://github.com/google/googletest.git
+  GIT_TAG           release-1.10.0 # 42bc671f
+  PREFIX            libraries/googletest
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/googletest
+  BINARY_DIR        libraries/googletest/build
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX} -DBUILD_GMOCK=OFF # -DINSTALL_GTEST=OFF
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
+  )
+if(BUILD_TESTING AND NOT GTEST_FOUND)
+  # Add this to the libraries target
+  add_dependencies(build-libraries build-googletest-install)
 endif()
 
 ###############################################################################
@@ -1071,22 +1075,47 @@ endif()
 
 
 #############################################################################
-# TODO: use BUILD_PROGRAMS and BUILD_LIBRARIES as lists of what to install
 
+MACRO (_ADD_BUILD_TARGET _target _name)
+  add_dependencies(${_target} build-${_name}-install)
+ENDMACRO (_ADD_BUILD_TARGET)
+
+MACRO (_ADD_BUILD_TARGETS _target _name_list)
+  foreach(_name IN LISTS ${_name_list})
+    _ADD_BUILD_TARGET(${_target} ${_name})
+  endforeach()
+ENDMACRO (_ADD_BUILD_TARGETS)
+
+# If this is set and not false, add to libraries to be installed
+if(BUILD_LIBRARIES)
+  # If a library is not on the list, it must be "ON", so add everything
+  foreach(library IN LISTS BUILD_LIBRARIES)
+    string(TOLOWER ${library} library)
+    if(library IN_LIST LIBRARY_OPTIONS)
+      _ADD_BUILD_TARGET(build-libraries ${library})
+    else()
+      _ADD_BUILD_TARGETS(build-libraries LIBRARY_OPTIONS)
+      break()
+    endif()
+  endforeach()
+endif()
+
+# If this is set and not false, add to programs to be installed
 if(BUILD_PROGRAMS)
-  add_dependencies(build-programs
-    build-4ti2-install
-    build-cohomcalg-install
-    build-gfan-install
-    build-lrslib-install
-    build-csdp-install
-    build-normaliz-install
-    build-nauty-install
-    build-topcom-install
-    )
+  # If a program is not on the list, it must be "ON", so add everything
+  foreach(program IN LISTS BUILD_PROGRAMS)
+    string(TOLOWER ${program} program)
+    if(program IN_LIST PROGRAM_OPTIONS)
+      _ADD_BUILD_TARGET(build-programs ${program})
+    else()
+      _ADD_BUILD_TARGETS(build-programs PROGRAM_OPTIONS)
+      break()
+    endif()
+  endforeach()
 else()
   # Make a symbolic link to the existing executable in the programs directory
   # TODO: more programs need to be symlinked
+  # TODO: alternatively, fix M2 to look for programs on PATH
   foreach(program IN ITEMS 4TI2 COHOMCALG GFAN LRSLIB CSDP NORMALIZ NAUTY TOPCOM POLYMAKE)
     if(NOT ${program} MATCHES ${M2_INSTALL_PROGRAMSDIR})
       get_filename_component(program_name ${${program}} NAME)
@@ -1095,26 +1124,7 @@ else()
   endforeach()
 endif()
 
-if(BUILD_LIBRARIES)
-  add_dependencies(build-libraries
-    build-mpir-install
-    build-mpfr-install
-    build-ntl-install
-    build-flint-install
-    build-factory-install
-    build-frobby-install
-    build-cddlib-install
-    build-glpk-install
-    build-mpsolve-install
-    build-googletest-install
-    build-bdwgc-install
-    build-givaro-install
-    build-fflas_ffpack-install
-    build-memtailor-install
-    build-mathic-install
-    build-mathicgb-install
-    )
-endif()
+#############################################################################
 
 get_target_property(LIBRARY_DEPENDENCIES build-libraries MANUALLY_ADDED_DEPENDENCIES)
 get_target_property(PROGRAM_DEPENDENCIES build-programs  MANUALLY_ADDED_DEPENDENCIES)
@@ -1127,14 +1137,10 @@ endif()
 string(REGEX REPLACE "(build-|-install)" "" BUILD_LIB_LIST  "${LIBRARY_DEPENDENCIES}")
 string(REGEX REPLACE "(build-|-install)" "" BUILD_PROG_LIST "${PROGRAM_DEPENDENCIES}")
 
-message("## External components that will be built:
+message("## External components that need to be built:
      Libraries         = ${BUILD_LIB_LIST}
      Programs          = ${BUILD_PROG_LIST}")
-# TOOD: BUILDLIST BUILDSUBLIST BUILD_ALWAYS
 
 message("## Library information:
      Linear Algebra    = ${LAPACK_LIBRARIES}
      MP Arithmetic     = ${MP_LIBRARIES}")
-# TODO: how to keep track of things we've built?
-#     BUILTLIBS         = ${BUILTLIBS}
-#     LIBS              = ${LIBS}
