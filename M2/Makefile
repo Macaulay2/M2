@@ -122,7 +122,6 @@ automake-old : automake-old-msg automake-msg
 automake-old-msg :
 	@ echo "=============================================================================" >&2
 	@ echo "error: the automake program installed on your system (`type automake`) is too old." >&2
-	@ echo "       Run 'make get-autoconf'." >&2
 
 automake-msg :
 	@ echo "" >&2
