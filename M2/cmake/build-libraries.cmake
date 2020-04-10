@@ -38,47 +38,39 @@ elseif(UNIX)
   set(SET_LD_LIBRARY_PATH   LD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
 endif()
 
-# Ensure that we set the library path in every configure and make
+# Set the shared library path in every configure and make
 set(CONFIGURE PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure)
 set(CONFIGURE ${SET_LD_LIBRARY_PATH} ${CONFIGURE})
 set(MAKE      ${SET_LD_LIBRARY_PATH} ${MAKE})
 
-#################################################################################
-## Setting a baseline for compile and link options for external projects
-
-get_property(COMPILE_OPTIONS DIRECTORY PROPERTY COMPILE_OPTIONS)
-get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
-
+# Set the flags for building shared libraries
 if(BUILD_SHARED_LIBS)
   set(shared_setting --enable-shared)
 else()
   set(shared_setting --disable-shared)
 endif()
 
+# Set the flags for enabling assertions
+if(CMAKE_BUILD_TYPE STREQUAL Debug)
+  set(assertions_setting --enable-assertions)
+endif()
+
+#################################################################################
+## Setting a baseline for compile and link options for external projects
+
 ## Preprocessor flags
 string(REPLACE ";" " " CPPFLAGS "${CPPFLAGS} ${COMPILE_OPTIONS}")
 
-# NOTE: CMake does not easily support compiler dependent flags,
-# so we put all preprocessor flags as compiler flags. Also, since
-# some components are old, we only require C++11 standard here.
 ## C compiler flags
-set(CFLAGS   "${CPPFLAGS} -std=gnu11 -w -Wimplicit -Werror ${CFLAGS}")
+set(CFLAGS   "${CPPFLAGS} -std=gnu11 -w -Wimplicit -Werror")
 
 ## C++ compiler flags
-set(CXXFLAGS "${CPPFLAGS} -std=gnu++11 -w -Wno-mismatched-tags -Wno-deprecated-register ${CXXFLAGS}")
+set(CXXFLAGS "${CPPFLAGS} -std=gnu++11 -w -Wno-mismatched-tags -Wno-deprecated-register")
 
 ## Linker flags
-string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS} ${LDFLAGS}")
-
-## Toolchain flags
-# Possible assembly dialects are "", "_NASM", "_MASM", "-ATT"
-# AS=${CMAKE_ASM${DIALECT}_COMPILER}
+string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS}")
 
 ## Linear algebra library flags
-# TODO: add option for Intel MKL (first replace s/CBLAS/BLAS/g in macros/mkl-check.m4 and macros/fflas-ffpack-blas.m4)
-# Result: run into issues with e/lapack.h redeclaring cblas functions
-#set(MKL_LIBS   "-L/opt/intel/mkl/lib/intel64_lin -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl")
-#set(MKL_CFLAGS "-I/opt/intel/mkl/include")
 if(APPLE)
   set(LA_LIBRARIES "-framework Accelerate")
 else()
@@ -162,7 +154,7 @@ ExternalProject_Add(build-mpfr
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --with-gmp=${M2_HOST_PREFIX}
                       --disable-thread-safe
-		      ${shared_setting}
+                      ${shared_setting}
                       --with-pic
                       # --enable-assert
                       # TARGET_ARCH=
@@ -207,8 +199,8 @@ ExternalProject_Add(build-ntl
   CONFIGURE_COMMAND cd src && ${CONFIGURE} PREFIX=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${ntl_GMP_PREFIX}
-                      TUNE=generic # TODO: x86 and auto if NTL_WIZARD
-                      NATIVE=off # TODO: on if not packaging?
+                      TUNE=generic
+                      NATIVE=off
                       SHARED=$<IF:$<BOOL:BUILD_SHARED_LIBS>,on,off>
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
@@ -299,7 +291,6 @@ endif()
 # TODO: what is ftmpl_inst.o?
 set(factory_CPPFLAGS "${CPPFLAGS} -DSING_NDEBUG -DOM_NDEBUG -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
 set(factory_WARNFLAGS "-Wno-uninitialized -Wno-write-strings -Wno-deprecated")
-# TODO: without this, factory finds flint, but not ntl. Why?
 set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} ${NTL_INCLUDE_DIR}/..")
 set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} ${FLINT_INCLUDE_DIR}/..")
 ExternalProject_Add(build-factory
@@ -317,11 +308,11 @@ ExternalProject_Add(build-factory
                       --disable-omalloc
                       --disable-doxygen-doc
                       ${shared_setting}
+                      ${assertions_setting}
                       --enable-streamio
                       --without-Singular
                       --with-ntl=${factory_NTL_HOME_PATH}
                       --with-flint=${factory_FLINT_HOME_PATH}
-                      # --enable-assertions
                       CPPFLAGS=${factory_CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -543,6 +534,7 @@ endif()
 
 
 ## bdwgc
+# TODO: add environment variables GC_LARGE_ALLOC_WARN_INTERVAL and GC_ABORT_ON_LEAK
 # Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
 # Currently cloning master for significant cmake support. Hopefully soon there will be a stable release
 ExternalProject_Add(build-bdwgc
@@ -554,22 +546,19 @@ ExternalProject_Add(build-bdwgc
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-		    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-		    -Dbuild_tests=${BUILD_TESTING}
-                    -Denable_cplusplus=ON
-                    -Denable_threads=ON
-                    -Denable_large_config=ON
+                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+                    -Dbuild_tests=${BUILD_TESTING}
                     -Dbuild_cord=OFF
-                    -Denable_throw_bad_alloc_library=OFF
+                    -Denable_threads=ON
+                    -Denable_cplusplus=ON
                     -Denable_gcj_support=OFF
+                    -Denable_large_config=ON
                     -Denable_java_finalization=OFF
-                    # -Denable_gc_debug=ON
-                    # -Denable_gc_assertions=ON
-                    # -Denable_parallel_mark=OFF
-                    # -Dbuild_tests=ON
-                    # -DGC_LARGE_ALLOC_WARN_INTERVAL=1
-                    # -DGC_ABORT_ON_LEAK
-                    # -DDBG_HDRS_ALL=1
+                    -Denable_single_obj_compilation=ON
+                    -Denable_parallel_mark=$<NOT:$<BOOL:${MEMDEBUG}>>
+                    -Denable_gc_assertions=${MEMDEBUG}
+                    -Denable_gc_debug=${MEMDEBUG}
+                    -Ddisable_gc_debug=$<NOT:$<BOOL:${MEMDEBUG}>>
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
@@ -812,7 +801,7 @@ ExternalProject_Add(build-cohomcalg
                       CXX=${CMAKE_CXX_COMPILER}
                       LD=${CMAKE_CXX_COMPILER} # correct?
   INSTALL_COMMAND   ${CMAKE_STRIP} bin/cohomcalg
-	  COMMAND   ${CMAKE_COMMAND} -E copy_if_different bin/cohomcalg ${M2_INSTALL_PROGRAMSDIR}/bin/
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different bin/cohomcalg ${M2_INSTALL_PROGRAMSDIR}/bin/
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON # FIXME
   STEP_TARGETS      install test

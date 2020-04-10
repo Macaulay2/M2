@@ -7,9 +7,9 @@ include(startup) ## CMake script for messy substitutions in startup.c
 configure_file(startup.c.cmake startup.c @ONLY)
 
 ## Configure distributed-packages.h at the destination
-string(REPLACE ";" " " PACKAGES "${DISTRIBUTED_PACKAGES}")
+string(REPLACE ";" " " DISTRIBUTED_PACKAGES "${DISTRIBUTED_PACKAGES}")
 # TODO: configure this header directly in version.dd?
-file(GENERATE OUTPUT distributed-packages.h CONTENT "#define DISTRIBUTED_PACKAGES \"${PACKAGES}\"")
+file(GENERATE OUTPUT distributed-packages.h CONTENT "#define DISTRIBUTED_PACKAGES \"${DISTRIBUTED_PACKAGES}\"")
 
 ## Configure version.dd at the destination
 #configure_file(version.dd.in version.dd #ONLY)

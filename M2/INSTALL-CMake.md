@@ -18,6 +18,8 @@ There are various other tools needed to compile Macaulay2 dependencies.
 On Ubuntu, install `autoconf build-essential bison libtool yasm`.
 See [INSTALL](INSTALL) for more details for Mac OS X and other systems.
 
+**TIP**: for fastest results, consider also installing `ninja-build` and `ccache`.
+
 There are also 7 libraries that must be found on the system. On Ubuntu, install
 `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libomp-dev libtbb-dev libgdbm-dev`.
 In addition, install `libatomic-ops-dev`, though this dependency will be removed soon.
@@ -46,7 +48,7 @@ cmake -S ../.. -B . \
       -DCMAKE_BUILD_TYPE=Release
 ```
 We build with MPIR as the multiple precision arithmetic library by default. To use GMP, use `-DUSING_MPIR=OFF` instead.
-This command generates Makefiles. To generate Ninja files instead, add `-GNinja`.
+This command generates Makefiles. To generate a Ninja build environment, which is much faster, also add `-GNinja`.
 
 3. Build the libraries that will be linked with the Macaulay2 executable:
 ```
@@ -111,6 +113,7 @@ where the format is `[FLAG]:[TYPE]=[DEFAULT VALUE]`, though specifying the type 
 - `M2_DIST_PREFIX:PATH=${CMAKE_BINARY_DIR}/usr-dist`: target build prefix
 
 - `MEMDEBUG:BOOL=OFF`: enable memory allocation debugging
+- `PROFILING:BOOL=OFF`: enable profiling build flags
 - `USING_MPIR:BOOL=ON`: use MPIR instead of GMP
 - `PARALLEL_JOBS:STRING=4`: specify the number of parallel jobs for libraries and programs
 - `GIT_SUBMODULE:BOOL=OFF`: update submodules during build

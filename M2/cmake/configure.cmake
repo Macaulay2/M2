@@ -9,22 +9,23 @@
 ###############################################################################
 ## Define configure options and cached variables
 # use CMAKE_BUILD_TYPE=Debug                 instead of DEBUG
-# use CMAKE_BUILD_TYPE=Release               instead of OPTIMIZE
+# use CMAKE_BUILD_TYPE=Release               for releases
 # use CMAKE_BUILD_TYPE=RelWithDebInfo        instead of PROFILING
-# use CMAKE_BUILD_TYPE=RelMinSize            instead of ENABLE_STRIP
+# use CMAKE_BUILD_TYPE=RelMinSize            for minimized release
 # use BUILD_TESTING=ON                       to build the testing tree
 
 option(MEMDEBUG		"Enable memory allocation debugging"	OFF)
+option(PROFILING	"Enable profiling build flags"		OFF)
 option(GIT_SUBMODULE	"Update submodules during build"	OFF)
 option(BUILD_PROGRAMS	"Build all programs, even if found"	OFF)
 option(BUILD_LIBRARIES	"Build all libraries, even if found"	OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
 option(USING_MPIR	"Use MPIR instead of GMP"		ON)
 option(AUTOTUNE		"Autotune library parameters"		OFF)
+option(ALTIVEC		"compile and link with '-faltivec'"	OFF)
 # TODO:
 #option(MYSQL        "link with mysql"                    OFF)
 #option(PYTHON       "link with libpython"                OFF)
-#option(ALTIVEC      "compile with '-faltivec' option"    OFF)
 
 set(PARALLEL_JOBS 4    CACHE STRING "Number of parallel jobs for libraries and programs")
 
@@ -56,17 +57,16 @@ message("## Configure Macaulay2
      BUILD_TESTING     = ${BUILD_TESTING}")
 
 ## Relevant environment variable values, if any:
-foreach(X AR CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION)
+# TODO: most of these are currently not being used
+foreach(X AR CPPFLAGS LIBS)
   if(NOT "$ENV{${X}}" STREQUAL "${${X}}")
     set(${X} "$ENV{${X}}" CACHE STRING "set via environment variable at configure time")
     message("## Set via environment:   ${X} = ${${X}}")
   endif()
 endforeach()
 
-## Sets ISSUE, ISSUE_FLAVOR, and ISSUE_RELEASE
-include(flavor)
-
-## Complete machine description (to appear in name of tar file)
+## Set machine description variables used in version.dd
+include(flavor) ## Set ISSUE, ISSUE_FLAVOR, and ISSUE_RELEASE
 set(OS      ${CMAKE_SYSTEM_NAME})             # e.g. `uname -s`, Linux, Darwin
 set(REL     ${CMAKE_SYSTEM_VERSION})          # e.g. `uname -r`
 set(ARCH    ${CMAKE_SYSTEM_PROCESSOR})        # e.g. `uname -p`, x86_64, arm
@@ -131,47 +131,40 @@ message("## Installation prefix: ${CMAKE_INSTALL_PREFIX}")
 # look into compiler features:
 # https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
 
-# Common flags
-add_link_options(-L${M2_HOST_PREFIX}/lib)
-add_compile_options(
-  -I${M2_HOST_PREFIX}/include
-  -I${CMAKE_SOURCE_DIR}/include
-  -I${CMAKE_BINARY_DIR}/include
-  )
-
 # Flags based on options
 if(MEMDEBUG)
   add_compile_options(-DMEMDEBUG)
 endif()
+if(PROFILING)
+  add_compile_options(-pg)
+  add_link_options(-pg)
+endif()
 # TODO: deal with all SIMDs together
+# See: https://cmake.org/cmake/help/latest/command/cmake_host_system_information.html
 if(ALTIVEC)
   add_compile_options(-faltivec)
   add_link_options(-faltivec)
 endif()
 
 # Flags based on build type
-# NOTE: gc.h obeys the GC_DEBUG flag.
-if(CMAKE_BUILD_TYPE MATCHES "Deb") # Debugging
+# Note: certain flags are initialized by CMake based on the compiler and build type.
+if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
+  # INIT: -g
   add_compile_options(-O0 -DGC_DEBUG)
+else()
+  add_compile_options(-DNDEBUG -DOM_NDEBUG -DSING_NDEBUG -Wuninitialized)
 endif()
-if(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo") # Profiling
-  add_compile_options(-pg) #DNDEBUG
-  add_link_options(-pg)
-endif()
-if(CMAKE_BUILD_TYPE MATCHES "Release|MinSizeRel")
-  add_compile_options(-O2 -DNDEBUG -Wuninitialized)
-  # TODO: what are the right strip options?
-  if(CMAKE_C_COMPILER_ID STREQUAL GNU)
-    add_compile_options(-s)
-  endif()
+if(CMAKE_BUILD_TYPE MATCHES "MinSizeRel")
+  # INIT: -Os
+elseif(CMAKE_BUILD_TYPE MATCHES "Release")
+  # INIT: -O2
+elseif(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
+  # INIT: -O2 -g
 endif()
 
 # Flags based on compiler
-# always compile with "-g", so we can debug even optimized versions
 if(CMAKE_C_COMPILER_ID STREQUAL GNU)
   add_compile_options(-g3
-
-    # TODO: is this not necessary with clang?
     # -fopenmp # fflas_ffpack wants this, but currently normaliz fails on macOS with it
     -fabi-version=6 # givaro and fflas_ffpack want this
     )
@@ -180,6 +173,22 @@ else()
   add_compile_options(-g)
   add_link_options(-g)
 endif()
+
+# Common flags
+add_link_options(-L${M2_HOST_PREFIX}/lib)
+add_compile_options(
+  -I${M2_HOST_PREFIX}/include
+  -I${CMAKE_SOURCE_DIR}/include
+  -I${CMAKE_BINARY_DIR}/include
+  )
+
+# Querying the options so we can print them
+get_property(COMPILE_OPTIONS DIRECTORY PROPERTY COMPILE_OPTIONS)
+get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
+
+message("## Build flags (excluding default build tags for ${CMAKE_BUILD_TYPE})
+     Compiler:	${COMPILE_OPTIONS}
+     Linker:	${LINK_OPTIONS}")
 
 ###############################################################################
 ## Detect type sizes and existence of symbols, headers, and functions
