@@ -830,7 +830,7 @@ ExternalProject_Add(build-gfan
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/gfan/patch-0.6.2
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ${TESTING_STR} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       CC=${gfan_CC}
                       CXX=${gfan_CXX}
                       CLINKER=${gfan_CLINKER}
@@ -838,7 +838,7 @@ ExternalProject_Add(build-gfan
                       PREFIX=/nowhere
                       CDD_LINKOPTIONS=-lcddgmp
   INSTALL_COMMAND   ${CMAKE_STRIP} gfan${CMAKE_EXECUTABLE_SUFFIX}
-          COMMAND   ${TESTING_STR} -j${PARALLEL_JOBS} PREFIX=${M2_INSTALL_PROGRAMSDIR} install
+          COMMAND   ${MAKE} -j${PARALLEL_JOBS} PREFIX=${M2_INSTALL_PROGRAMSDIR} install
     EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON # FIXME
   STEP_TARGETS      install test
