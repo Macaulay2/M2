@@ -1117,7 +1117,7 @@ else()
   # TODO: more programs need to be symlinked
   # TODO: alternatively, fix M2 to look for programs on PATH
   foreach(program IN ITEMS 4TI2 COHOMCALG GFAN LRSLIB CSDP NORMALIZ NAUTY TOPCOM POLYMAKE)
-    if(NOT ${program} MATCHES ${M2_INSTALL_PROGRAMSDIR})
+    if(${program} AND NOT ${program} MATCHES ${M2_INSTALL_PROGRAMSDIR})
       get_filename_component(program_name ${${program}} NAME)
       file(CREATE_LINK ${${program}} ${M2_INSTALL_PROGRAMSDIR}/bin/${program_name} SYMBOLIC)
     endif()
