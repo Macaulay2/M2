@@ -64,5 +64,9 @@ else()
   set(EXPORT_STRING   [[LD_LIBRARY_PATH=`dirname "$0"`/../@CMAKE_INSTALL_LIBDIR@/Macaulay2/lib:$LD_LIBRARY_PATH]])
 endif()
 
-string(CONFIGURE "${EXPORT_STRING}" EXPORT_STRING @ONLY)
-configure_file(M2.cmake ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2 @ONLY)
+string(CONFIGURE "#!/bin/sh\n${EXPORT_STRING} `dirname \"$0\"`/M2@EXE@ \"$@\"" M2_CONTENT @ONLY)
+execute_process(
+  COMMAND ${CMAKE_COMMAND} -E echo "${M2_CONTENT}"
+  OUTPUT_FILE ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
+execute_process(
+  COMMAND chmod +x ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
