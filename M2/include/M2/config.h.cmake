@@ -307,6 +307,9 @@
 /* Defined if you have the <unistd.h> header file. */
 #cmakedefine HAVE_UNISTD_H
 
+/* Defined if you have the <regex.h> header file. */
+#cmakedefine HAVE_REGEX_H
+
 /* Define to 1 if you have the `wait4' function. */
 #cmakedefine HAVE_WAIT4 1
 

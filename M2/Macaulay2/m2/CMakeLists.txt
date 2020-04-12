@@ -19,7 +19,7 @@ add_custom_command(OUTPUT ${CORE_DIR}/tvalues.m2
 
 configure_file(version.m2.in ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/version.m2 @ONLY)
 
-foreach(filename IN LISTS M2LIST ITEMS loadsequence installedpackages)
+foreach(filename IN LISTS M2LIST ITEMS statuscodes loadsequence installedpackages)
   file(COPY ${filename} DESTINATION ${CORE_DIR})
 endforeach()
 

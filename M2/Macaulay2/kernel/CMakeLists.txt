@@ -19,7 +19,6 @@ target_include_directories(M2-kernel
     ${CMAKE_BINARY_DIR}/Macaulay2/d # needs engine-exports.h
     ${CMAKE_SOURCE_DIR}/Macaulay2/e # needs matrix.hpp
     ${CMAKE_SOURCE_DIR}/Macaulay2/c # needs scc-core.h
-    ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
   )
 
 # common warning flags

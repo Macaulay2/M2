@@ -13,7 +13,7 @@ get_target_property(INSTALL_RPATH M2-binary INSTALL_RPATH)
 
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
-  M2-regex M2-interpreter M2-engine M2-system M2-kernel
+  M2-interpreter M2-engine M2-system
   Threads::Threads ${LIBGDBM} ${CMAKE_DL_LIBS}) # TODO: handle the latter two differently
 
 foreach(LIB IN LISTS LIBRARY_LIST)

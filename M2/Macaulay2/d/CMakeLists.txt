@@ -80,16 +80,13 @@ endforeach()
 # TODO: are all of these needed?
 add_library(M2-interpreter OBJECT ${CLIST})
 
-add_dependencies(M2-interpreter e-includes)
 
 target_include_directories(M2-interpreter
   PUBLIC
     .
-    ${CMAKE_SOURCE_DIR}/Macaulay2/regex # scclib.c requires regex
     ${CMAKE_SOURCE_DIR}/Macaulay2/e
     ${CMAKE_SOURCE_DIR}/Macaulay2/c
     ${CMAKE_BINARY_DIR}/Macaulay2/d
-    ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
   PRIVATE
     ${LIBXML2_INCLUDE_DIR}
     ${READLINE_INCLUDE_DIR} # TODO: needed?

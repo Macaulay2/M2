@@ -72,7 +72,7 @@ add_custom_target(uninstall-packages DEPENDS ${UNINSTALL_TARGETS})
 ## Arguments for M2-binary and installPackage
 set(M2_ARGS -q --stop --silent -e errorDepth=${M2_errorDepth} -e debugLevel=${M2_debugLevel})
 set(M2_INSTALL_ARGS
-  Verbose                => $<IF:$<BOOL:${CMAKE_VERBOSE_MAKEFILE}>,true,false>,
+  Verbose                => $<IF:$<BOOL:${VERBOSE}>,true,false>,
   RerunExamples          => ${M2_RerunExamples},
   CheckDocumentation     => ${M2_CheckDocumentation},
   IgnoreExampleErrors    => ${M2_IgnoreExampleErrors},

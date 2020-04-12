@@ -6,10 +6,11 @@
 ## Full instructions: INSTALL-CMake.md
 ## Short instructions:
 ##  1. cd M2/BUILD/build-cmake
-##  2. cmake ../..
-##  3. make build-libraries build-programs rebuild_cache
-##  4. make M2-engine M2-binary M2-core M2-emacs
-##  5. make install install-packages check-packages
+##  2. cmake -GNinja ../..
+##  3. ninja build-libraries build-programs
+##  4. ninja M2-engine M2-binary M2-core M2-emacs
+##  5. ninja install-packages check-packages
+##  6. ninja install
 ##
 ## IDEs such as Xcode or vscode can also configure and build using CMake.
 ###############################################################################
@@ -18,34 +19,20 @@
 cmake_minimum_required(VERSION 3.14...3.17)
 cmake_policy(VERSION 3.14)
 
-## Guard against in-source builds
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-  message(FATAL_ERROR "In-source builds are not allowed.")
-endif()
-
 ## Use the C++14 standard
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 ## Use the C11 (C0X) standard
 set(CMAKE_C_STANDARD 11)
 
 ###############################################################################
-## Specify a few build configurations
-if(NOT CMAKE_BUILD_TYPE)
+## Set the defaultg build configuration
+if(NOT DEFINED CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
-if(NOT CMAKE_INSTALL_MESSAGE)
-  # Print "Installing .." but not "Up-to-date .." messages
-  # TODO: this doesn't seem to be working, so we use COPY instead of INSTALL
-  set(CMAKE_INSTALL_MESSAGE LAZY)
+## Guard against in-source builds
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+  message(FATAL_ERROR "In-source builds are not allowed. Delete CMakeFiles and CMakeCache.txt.")
 endif()
-if(CMAKE_BINARY_DIR MATCHES ".*(apple|darwin).*")
-  ## TODO: cross-compile for Darwin from Linux. Currently not working.
-  set(TOOLCHAIN ${CMAKE_CURRENT_LIST_DIR}/cmake/darwin.cmake)
-  message("## Cross-compiling from toolchain file: ${TOOLCHAIN}")
-  set(CMAKE_TOOLCHAIN_FILE ${TOOLCHAIN})
-endif()
-
 ## Enable support for folders in IDEs
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 

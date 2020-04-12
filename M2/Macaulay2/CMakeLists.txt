@@ -9,6 +9,13 @@ configure_file(README.in ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/README @ONLY)
 file(COPY LAYOUT COPYING-GPL-2 COPYING-GPL-3 DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR})
 
 ###############################################################################
+# Generate statuscodes.h
+file(READ m2/statuscodes STATUSCODES)
+string(REGEX REPLACE "([0-9]*):([A-Z\_]*):\"?([a-zA-Z ]*)\"?" "  \\2 = \\1,\t\t/* \\3 */" STATUSCODES_H ${STATUSCODES})
+# FIXME: where should this go?
+file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/include/M2/statuscodes.h CONTENT "${STATUSCODES_H}")
+
+###############################################################################
 # This tells CMake how to set the RPATH on the installed executable
 set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
@@ -19,13 +26,10 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 #source_group(TREE . PREFIX "Macaulay2" FILES ../include/M2/config.h ...)
 
 # TODO: remove compat, nash, util
-add_subdirectory(regex) # replace with gnu regex?
 add_subdirectory(c) # rename to scc?
-add_subdirectory(e-includes) # remove?
 add_subdirectory(d) # rename to interpreter?
 add_subdirectory(e) # rename to engine?
 add_subdirectory(system) # clear up purpose or combine
-add_subdirectory(kernel) # clear up purpose or combine
 add_subdirectory(bin) # combine with engine or interpreter?
 add_subdirectory(m2) # rename to Core?
 add_subdirectory(man) # combine?
@@ -37,6 +41,10 @@ if(BUILD_TESTING)
 endif()
 
 ###############################################################################
+
+if(NOT VERBOSE)
+  set(CMAKE_INSTALL_MESSAGE LAZY)
+endif()
 
 # install M2-binary and M2-engine
 install(TARGETS M2-binary M2-engine

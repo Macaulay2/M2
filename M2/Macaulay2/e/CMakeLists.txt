@@ -52,6 +52,7 @@ set(HPPONLYFILES
   dmat-zzp-flint.hpp
   engine-includes.hpp
   exceptions.hpp
+  geobucket.hpp
   geopoly.hpp
   geovec.hpp
   hash.hpp
@@ -255,6 +256,15 @@ set(SRCLIST
   f4/res-schreyer-frame
   f4/res-varpower-monomial
   f4/varpower-monomial
+  # BIBasis
+  bibasis/bibasis
+  bibasis/allocator
+  bibasis/launcher
+  bibasis/monom
+  bibasis/monomDL
+  bibasis/monomDRL
+  bibasis/monomLex
+  bibasis/settings-manager
   )
 
 list(TRANSFORM SRCLIST APPEND .cpp OUTPUT_VARIABLE CPPFILES)
@@ -271,7 +281,7 @@ add_library(M2-engine STATIC # SHARED
   ${CFILES}
   )
 
-add_dependencies(M2-engine M2-interpreter e-includes)
+add_dependencies(M2-engine M2-interpreter)
 
 target_link_libraries(M2-engine Eigen3::Eigen)
 
@@ -283,7 +293,6 @@ target_include_directories(M2-engine
     ${LIBXML2_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR}/Macaulay2/d
     ${CMAKE_SOURCE_DIR}/Macaulay2/c # TODO: engine should not depend on scc1
-    ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
   )
 
 ###############################################################################
@@ -293,6 +302,7 @@ target_include_directories(M2-engine
 target_compile_options(M2-engine PRIVATE
   -Wall
   -Wextra
+  -Wcast-qual # added for bibasis
   -Wfatal-errors
   -Wno-cast-qual
   -Wno-implicit-fallthrough
@@ -400,7 +410,7 @@ if(BUILD_TESTING)
 
   # NOTE: is d/debug.o needed?
   target_link_libraries(M2-unit-tests
-    M2-regex M2-engine M2-interpreter M2-system M2-kernel
+    M2-engine M2-interpreter M2-system
     Threads::Threads ${LIBGDBM} ${CMAKE_DL_LIBS}
     )
 
