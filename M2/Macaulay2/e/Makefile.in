@@ -9,7 +9,7 @@ PRE.cc   = $(COMPILE.cc) -E
 include @srcdir@/Makefile.files
 include Makefile.common
 
-CPPFLAGS := -I@srcdir@ -I../e-includes $(CPPFLAGS) -I../d -I@srcdir@/../c -Wno-fatal-errors 
+CPPFLAGS := -I@srcdir@ $(CPPFLAGS) -I../d -I@srcdir@/../c -Wno-fatal-errors 
 CXXFLAGS += -Wno-unknown-pragmas
 
 DOXYGEN_CONF_DIR :=$(SRCDIR)/doxygen-settings
@@ -26,8 +26,9 @@ endif
 TAGS tags: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
 		 @srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
+		 @srcdir@/bibasis/*.hpp @srcdir@/bibasis/*.cpp \
 		 @srcdir@/unit-tests/*.cpp \
-		 @srcdir@/../e-includes/statuscodes
+		 @srcdir@/../m2/statuscodes
 	@ echo " ** making etags file"
 	@ cd @srcdir@ && @ETAGS@ -o TAGS $(patsubst @srcdir@/%, %, $^)
 

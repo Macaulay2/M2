@@ -10,14 +10,10 @@ export LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 
 CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
      -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)/include \
-	 -I../../e-includes -I@srcdir@/../../d -I../../d \
+	 -I@srcdir@/../../d -I../../d \
 	 -I@srcdir@/../../c #-Wno-unused-local-typedefs # ffpack has some of these.
 
 CXXFLAGS += -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
-
-# removed from CPPFLAGS for tests:
-#    -I../../d -I@srcdir@/../../c \
-#    -I../../e-includes
 
 # note: on some machines, gcc can't find -lstdc++
 LOADLIBES += @BUILTLIBS@ @LIBS@ -lmathicgb -lmathic -lmemtailor @FCLIBS@ -pthread
