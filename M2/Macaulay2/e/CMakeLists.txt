@@ -410,7 +410,7 @@ if(BUILD_TESTING)
 
   # NOTE: is d/debug.o needed?
   target_link_libraries(M2-unit-tests
-    M2-engine M2-interpreter M2-system
+    M2-regex M2-engine M2-interpreter M2-system
     Threads::Threads ${LIBGDBM} ${CMAKE_DL_LIBS}
     )
 

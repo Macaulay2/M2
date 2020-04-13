@@ -84,6 +84,7 @@ add_library(M2-interpreter OBJECT ${CLIST})
 target_include_directories(M2-interpreter
   PUBLIC
     .
+    ${CMAKE_SOURCE_DIR}/Macaulay2/regex # scclib.c uses regex
     ${CMAKE_SOURCE_DIR}/Macaulay2/e
     ${CMAKE_SOURCE_DIR}/Macaulay2/c
     ${CMAKE_BINARY_DIR}/Macaulay2/d

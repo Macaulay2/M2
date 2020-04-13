@@ -25,7 +25,8 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # TODO: consider using:
 #source_group(TREE . PREFIX "Macaulay2" FILES ../include/M2/config.h ...)
 
-# TODO: remove compat, nash, util
+# TODO: remove util
+add_subdirectory(regex) # use POSIX regex
 add_subdirectory(c) # rename to scc?
 add_subdirectory(d) # rename to interpreter?
 add_subdirectory(e) # rename to engine?
