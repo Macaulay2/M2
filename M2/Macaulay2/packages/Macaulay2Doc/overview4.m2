@@ -328,11 +328,14 @@ document {
      examined with ", TO "status", ".  The computation can be continued
      with ", TT "res M", ".  Here is an example, with an alarm interrupting
      the computation several times before it's complete.  (On my machine, 
-     the computation takes a total of 14 seconds.)",
+     the computation takes a total of 14 seconds.)  (Example code, such as
+     the code below, is run in such a way that interrupts stop the program,
+     so to prevent that, we set ", TO "handleInterrupts", " to ", TO "true", ".)",
      PARA{},
      EXAMPLE {
 	  "R = ZZ/2[a..d];",
 	  "M = coker random(R^4, R^{5:-3,6:-4});",
+	  "handleInterrupts = true",
 ///(<< "-- computation started: " << endl;
  while true do try (
      alarm 1;
