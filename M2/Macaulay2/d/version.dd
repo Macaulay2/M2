@@ -156,7 +156,6 @@ setupconst("version", Expr(toHashTable(Sequence(
    "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),
    "compile time" => Ccode(constcharstar,"timestamp"),
    "compile node name" => Ccode(constcharstar,"NODENAME"),
-   "dumpdata" => Ccode(bool,"0"),
    "atomic_ops version" => atomicopsversion(),
    "gc version" => gcversion(),
    "mysql version" => Ccode(constcharstar,"

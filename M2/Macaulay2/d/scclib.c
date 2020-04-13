@@ -120,8 +120,6 @@ M2_string system_getcwd()
 {
      /* this function now adds a terminal / to the directory name */
      char buf[700];
-     /* We have to get the cwd each time, because otherwise we might pick up the
-        cwd from when dumpdata was run, which could have been different from now. */
      static const char slash[] = "/";
      char *x = getcwd(buf,sizeof(buf)-strlen(slash));
      if (0 != strcmp(buf,slash)) strcat(buf,slash);

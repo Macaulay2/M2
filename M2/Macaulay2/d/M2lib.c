@@ -648,22 +648,6 @@ int Macaulay2_main(const int argc, char * const* argv)
      }
 #endif
 
-#if defined(_WIN32)
-     if (argv[0][0]=='/' && argv[0][1]=='/' && argv[0][3]=='/') {
-       /* we must be in Windows 95 or NT running under CYGWIN32, and
-	  the path to our executable has been mangled from D:/a/b/c
-	  into //D/a/b/c */
-       argv[0][0] = argv[0][2];
-       argv[0][1] = ':';
-       strcpy(argv[0]+2,argv[0]+3);
-     }
-     {
-       /* change all \ in path to executable to / */
-       char *p;
-       for (p=argv[0]; *p; p++) if (*p == '\\') *p = '/';
-     }
-#endif
-
      abort_jump_set = FALSE;
 
 #ifdef HAVE__SETMODE
@@ -719,18 +703,6 @@ void clean_up(void) {
      }
 
 void scclib__prepare(void) {}
-
-int system_dumpdata(M2_string datafilename)
-{
-  return ERROR;
-}
-
-#define FENCE 0x47474747
-
-int system_loaddata(int notify, M2_string datafilename)
-{
-  return ERROR;
-}
 
 int system_isReady(int fd) {
   int ret;

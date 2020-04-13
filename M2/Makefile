@@ -1,13 +1,18 @@
 # -*- makefile-gmake -*-
 
+<<<<<<< HEAD
 # SHELL := /bin/bash -x
 
 .PHONY : all monitor check-make check-autoconf check-libtool check-automake
+=======
+.PHONY : all monitor check-make check-autoconf
+>>>>>>> Reducing legacy code in CMake branch
 
 .NOTPARALLEL:
 
 VERBOSE = yes
 
+<<<<<<< HEAD
 all: check-make make-configure monitor include/M2/config.h.in.stamp check-automake check-autoconf check-libtool
 
 # libtool 2.4.3 is too old, 2.4.6 is okay, and we provide it
@@ -15,6 +20,9 @@ LIBTOOL_MAJOR = 2
 LIBTOOL_MINOR = 4
 LIBTOOL_BABY  = 4
 LIBTOOL_VERSION = $(LIBTOOL_MAJOR).$(LIBTOOL_MINOR).$(LIBTOOL_BABY)
+=======
+all: check-make make-configure monitor include/M2/config.h.in.stamp check-automake
+>>>>>>> Reducing legacy code in CMake branch
 
 AUTOCONF_MAJOR = 2
 AUTOCONF_MINOR = 68
@@ -23,9 +31,14 @@ AUTOCONF_MINOR = 68
 # version 2.68 is required by mpir 2.6.0
 AUTOCONF_VERSION = $(AUTOCONF_MAJOR).$(AUTOCONF_MINOR)
 
+<<<<<<< HEAD
 # automake 1.15 is too old
 AUTOMAKE_MAJOR = 1
 AUTOMAKE_MINOR = 16
+=======
+AUTOMAKE_MAJOR = 1
+AUTOMAKE_MINOR = 12
+>>>>>>> Reducing legacy code in CMake branch
 # version 1.12 was the first one with the macro AM_PROG_AR, used by memtailor
 AUTOMAKE_VERSION = $(AUTOMAKE_MAJOR).$(AUTOMAKE_MINOR)
 
@@ -36,7 +49,12 @@ check-make:
 	@ echo GNU make version okay
 
 make-configure : check-autoconf configure
+<<<<<<< HEAD
 configure: configure.ac config/files config/*.m4; autoconf
+=======
+configure : configure.ac config/files config/ax_func_accept_argtypes.m4 config/ax_prog_cc_for_build.m4 config/openmp.m4 # aclocal.m4
+	@ set -x ; autoconf
+>>>>>>> Reducing legacy code in CMake branch
 
 get-tools: usr-build/aclocal-path get-m4 get-pkg get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
 which-tools:
@@ -49,11 +67,19 @@ usr-build/aclocal-path:; echo export ACLOCAL_PATH:="`aclocal --print-ac-dir`":'$
 usr-build/aclocal-path2:; echo export ACLOCAL_PATH:="`usr-build/bin/aclocal --print-ac-dir`":'$$(ACLOCAL_PATH)' >$@
 get-m4:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=m4 VERSION=1.4.18
+<<<<<<< HEAD
 get-autoconf:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=autoconf VERSION=2.69
 get-automake:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.16.1
 get-libtool:
+=======
+get-autoconf:get-m4
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=autoconf VERSION=2.69
+get-automake:get-autoconf
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.16.1
+get-libtool:get-automake
+>>>>>>> Reducing legacy code in CMake branch
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=libtool VERSION=2.4.6
 get-pkg: usr-build/share/aclocal/pkg.m4
 usr-build/aclocal-path2:get-automake
@@ -66,7 +92,11 @@ clean-tools:; rm -rf usr-build/aclocal-path usr-build/aclocal-path2 usr-build/bi
 autoconf-absent : autoconf-absent-msg autoconf-msg 
 autoconf-absent-msg :
 	@ echo "=============================================================================" >&2
+<<<<<<< HEAD
 	@ echo "error: the autoconf program is not installed on your system." >&2
+=======
+	@ echo "Error: the autoconf program is not installed on your system." >&2
+>>>>>>> Reducing legacy code in CMake branch
 
 autoconf-old : autoconf-old-msg autoconf-msg 
 autoconf-old-msg :
@@ -76,6 +106,7 @@ autoconf-old-msg :
 autoconf-msg :
 	@ echo "" >&2
 	@ echo "Please install or update autoconf: the version (`autoconf --version | sed -e '1s/.*\([1-9][0-9]*\..*\)/\1/' -e '2,$$d'`) should be at least $(AUTOCONF_VERSION)." >&2
+<<<<<<< HEAD
 	@ $(MAKE) alternative-msg
 
 check-libtool:
@@ -116,6 +147,24 @@ check-autoconf :
 	    test "`autoconf --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`"  = "$(AUTOCONF_MAJOR)" \
 	    && \
 	    test "`autoconf --version | sed -e '1s/.*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`"   -ge "$(AUTOCONF_MINOR)" ;\
+=======
+	@ echo "" >&2
+	@ echo "Alternatively, type" >&2
+	@ echo "" >&2
+	@ echo "    make get-tools" >&2
+	@ echo "" >&2
+	@ echo "for recent versions of m4, autoconf, automake, and libtool to be downloaded and compiled automatically." >&2
+	@ echo "=============================================================================" >&2
+	@ false
+
+check-autoconf :
+	@ type autoconf >/dev/null || $(MAKE) -f Makefile autoconf-absent
+	@ if test `autoconf --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` -gt "$(AUTOCONF_MAJOR)" \
+	  || \
+	    test `autoconf --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`  = "$(AUTOCONF_MAJOR)" \
+	    && \
+	    test `autoconf --version | sed -e '1s/.*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`   -ge "$(AUTOCONF_MINOR)" ;\
+>>>>>>> Reducing legacy code in CMake branch
 	  then echo GNU autoconf version okay ;\
 	  else $(MAKE) -f Makefile autoconf-old ;\
 	  fi
@@ -123,8 +172,12 @@ check-autoconf :
 automake-absent : automake-absent-msg automake-msg 
 automake-absent-msg :
 	@ echo "=============================================================================" >&2
+<<<<<<< HEAD
 	@ echo "error: the automake program is not installed on your system." >&2
 
+=======
+	@ echo "Error: the automake program is not installed on your system." >&2
+>>>>>>> Reducing legacy code in CMake branch
 
 automake-old : automake-old-msg automake-msg 
 automake-old-msg :
@@ -134,6 +187,7 @@ automake-old-msg :
 automake-msg :
 	@ echo "" >&2
 	@ echo "Please install or update automake: the version (`automake --version | sed -e '1s/.* \(.*\)/\1/' -e '2,$$d'`) should be at least $(AUTOMAKE_VERSION)." >&2
+<<<<<<< HEAD
 	@ $(MAKE) alternative-msg
 
 alternative-msg:
@@ -149,16 +203,32 @@ alternative-msg:
 	@ echo "    make get-autoconf" >&2
 	@ echo "    make get-automake" >&2
 	@ echo "    make get-libtool" >&2
+=======
+	@ echo "" >&2
+	@ echo "Alternatively, type" >&2
+	@ echo "" >&2
+	@ echo "    make get-tools" >&2
+	@ echo "" >&2
+	@ echo "for recent versions of m4, autoconf, automake, and libtool to be downloaded and compiled automatically." >&2
+>>>>>>> Reducing legacy code in CMake branch
 	@ echo "=============================================================================" >&2
 	@ false
 
 check-automake :
 	@ type automake >/dev/null || $(MAKE) -f Makefile automake-absent
+<<<<<<< HEAD
 	@ if test "`automake --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`" -gt "$(AUTOMAKE_MAJOR)" \
 	  || \
 	    test "`automake --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`"  =  "$(AUTOMAKE_MAJOR)" \
 	    && \
 	    test "`automake --version | sed -e '1s/.* [1-9][0-9]*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`"  -ge "$(AUTOMAKE_MINOR)" ;\
+=======
+	@ if test `automake --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` -gt "$(AUTOMAKE_MAJOR)" \
+	  || \
+	    test `automake --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`  =  "$(AUTOMAKE_MAJOR)" \
+	    && \
+	    test `automake --version | sed -e '1s/.* [1-9][0-9]*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`  -ge "$(AUTOMAKE_MINOR)" ;\
+>>>>>>> Reducing legacy code in CMake branch
 	  then echo GNU automake version okay ;\
 	  else $(MAKE) -f Makefile automake-old ;\
 	  fi

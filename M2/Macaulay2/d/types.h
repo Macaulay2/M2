@@ -28,8 +28,6 @@ extern char *libfac_version;
 
 #ifdef HAVE_REGEX_H
 #include <regex.h>
-#else
-#include "../regex/regex.h"
 #endif
 
 #ifdef HAVE_UNISTD_H

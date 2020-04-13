@@ -1,8 +1,7 @@
 #!/bin/sh -e
 prefix=@prefix@
 case "$1" in
-    abort-upgrade|configure)
-	;;
+    abort-upgrade|configure) ;;
     abort-remove|abort-deconfigure) ;;
     *) echo "postinst called with unknown argument \`$1'" >&2
        exit 1 ;;

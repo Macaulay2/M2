@@ -51,7 +51,7 @@ export pow(x:double,y:double) ::= Ccode(double, "pow(", x, ",", y, ")" );
 export abort() ::= Ccode(exits,"abort()");
 export sleep(t:int):int := Ccode(int,"sleep(t)");
 export nanosleep(t:long):int := Ccode(returns,"struct timespec ts_sleep; ts_sleep.tv_sec = ",t,"/1000000000; ts_sleep.tv_nsec=",t,"%1000000000; return nanosleep(&ts_sleep, NULL);");
-export getpid():int := Ccode(int, "getpid()");	-- do it this way because glibc caches the result in memory, and that can interfere with dumpdata
+export getpid():int := Ccode(int, "getpid()");
 export getpgrp():int := Ccode(int, "
      #ifdef HAVE_GETPGRP
       getpgrp()
@@ -143,8 +143,6 @@ import waitNoHang(pid:array(int)):array(int);
 import select(s:array(int)):array(int);
 import hash(x:double):int;
 import getcwd():string;
-import dumpdata(filename:string):int;
-import loaddata(notify:int,filename:string):int;
 import errfmt(filename:string,lineno:int,colno:int,loaddepth:int):string;
 threadLocal export loadDepth := ushort(0);
 import dbmopen(filename:string,write:bool):int;

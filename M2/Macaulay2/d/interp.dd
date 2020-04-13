@@ -582,7 +582,7 @@ export startupFile := cachedFile(
      tostring(Ccode(constcharstar,"startupFile.contents")));
 export process():void := (
      localFrame = globalFrame;
-     previousLineNumber = -1;			  -- might have done dumpdata()
+     previousLineNumber = -1;
      stdIO .inisatty  =   0 != isatty(0) ;
      stdIO.echo       = !(0 != isatty(0));
      stdIO.outisatty =   0 != isatty(1) ;

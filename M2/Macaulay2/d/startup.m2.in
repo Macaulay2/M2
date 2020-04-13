@@ -39,8 +39,7 @@ local topBuilddir
 
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
 if firstTime then (
-     -- all global definitions go here, because after loaddata is run, we'll come through here again
-     -- with all these already done and global variables set to read-only
+     -- all global definitions here are set to read-only
 
      filesLoaded = new MutableHashTable;
      loadedFiles = new MutableHashTable;
@@ -259,8 +258,6 @@ if firstTime then (
 	  else error "environment variable HOME not set"
 	  );
 
-     dumpdataFile = null;
-
      initlayout := () -> (
 	  if regex(".*/","/aa/bb") =!= {(0, 4)}
 	  or regex("a|b","a") =!= {(0,1)}
@@ -350,7 +347,6 @@ prefixDirectory = null					    -- prefix directory, after installation, e.g., "/
 fullCopyright := false
 matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
-noloaddata := false
 nosetup := false
 noinitfile = false
 interpreter := commandInterpreter
@@ -381,7 +377,6 @@ notyet := arg -> if phase == 1 then (
 obsolete := arg -> error ("warning: command line option ", arg, " is obsolete")
 progname := notdir commandLine#0
 
-local dump
 usage := arg -> (
      << "usage:"             << newline
      << "    " << progname << " [option ...] [file ...]" << newline
@@ -391,8 +386,6 @@ usage := arg -> (
      << "    --copyright        display full copyright messasge" << newline
      << "    --no-debug         do not enter debugger upon error" << newline
      << "    --debug n          debug warning message n by signalling an error" << newline
-     << "    --dumpdata         read source code, dump data if so configured, exit (no init.m2)" << newline
-     << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --int              don't handle interrupts" << newline -- handled by M2lib.c
      << "    --notify           notify when loading files during initialization" << newline
      << "                       and when evaluating command line arguments" << newline
@@ -413,7 +406,7 @@ usage := arg -> (
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-randomize     don't set the random number seed based on the date" << newline
      << "    --no-readline      don't use readline" << newline;
-     << "    --no-setup         don't try to load setup.m2 or to loaddata" << newline
+     << "    --no-setup         don't try to load setup.m2" << newline
      << "    --no-time          arrange for the current time to be always 0" << newline;
      << "    --no-tty           do not treat stdin and stdout as tty's" << newline
      << "    --no-tvalues       do not load tvalues.m2" << newline
@@ -426,13 +419,7 @@ usage := arg -> (
      << "                           n=2: test Core" << newline
      << "                           n=3: test all packages" << newline
      << "environment:"       << newline
-     << "    M2ARCH             a hint to find the dumpdata file as" << newline
-     << "                       bin/../cache/Macaulay2-$M2ARCH-data, where bin is the" << newline
-     << "                       directory containing the Macaulay2 executable" << newline
      << "    EDITOR             default text editor" << newline
-     << "    LOADDATA_IGNORE_CHECKSUMS (loaddata: disable verification of memory map checksums)" << newline
-     << "    COMPAREVDSO               (loaddata: enable verification for the vdso segment)" << newline
-     << "    LOADDATA_DEBUG            (loaddata: verbose debugging messages)" << newline
      << "    GC_INITIAL_HEAP_SIZE      (gc: initial heap size in bytes)" << newline
      << "    GC_PRINT_STATS            (gc: turn on logging)" << newline
      << "    GC_PRINT_VERBOSE_STATS    (gc: turn on more verbose logging)" << newline
@@ -469,12 +456,10 @@ action := hashTable {
      "-silent" => obsolete,
      "-tty" => notyet,
      "--copyright" => arg -> if phase == 1 then fullCopyright = true,
-     "--dumpdata" => arg -> (noinitfile = noloaddata = true; if phase == 4 then dump()),
      "--help" => arg -> (usage(); exit 0),
      "--int" => arg -> arg,
      "--no-backtrace" => arg -> if phase == 1 then backtrace = false,
      "--no-debug" => arg -> debuggingMode = false,
-     "--no-loaddata" => arg -> if phase == 1 then noloaddata = true,
      "--no-randomize" => arg -> arg,
      "--no-time" => arg -> arg,
      "--no-personality" => arg -> arg,
@@ -482,7 +467,7 @@ action := hashTable {
      "--no-preload" => arg -> arg,
      "--no-prompts" => arg -> if phase == 3 then noPrompts(),
      "--no-readline" => arg -> arg,			    -- handled in d/stdio.d
-     "--no-setup" => arg -> if phase == 1 then noloaddata = nosetup = true,
+     "--no-setup" => arg -> if phase == 1 then nosetup = true,
      "--notify" => arg -> if phase <= 2 then notify = true,
      "--no-tty" => arg -> arg,			    -- handled in d/stdio.d
      "--no-tvalues" => arg -> arg,		    -- handled in m2/typicalvalues.m2
@@ -623,45 +608,12 @@ loadSetup := () -> (
      error "can't load setup.m2"
      )
 
-dump = () -> (
-     if not version#"dumpdata" then (
-	  error "not configured for dumping data with this version of Macaulay2";
-	  );
-     arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
-     fn := (
-	  if prefixDirectory =!= null then concatenate(prefixDirectory, replaceStrings("PKG","Core",currentLayout#"packagecache"), "Macaulay2-", arch, "-data")	  
-	  );
-     if fn === null then error "can't find cache directory for dumpdata file";
-     fntmp := fn | ".tmp";
-     fnmaps := fn | ".maps";
-     fnmaps << showMaps() << endl << close;
-     runEndFunctions();
-     dumpdataFile = toAbsolutePath fn;					    -- so we know after "loaddata" where we put the file
-     collectGarbage();
-     stderr << "--dumping to " << fntmp << endl;
-     dumpdata fntmp;
-     stderr << "--success" << endl;
-     moveFile(fntmp,fn,Verbose=>true);
-     exit 0;
-     )
-
 if firstTime and not nobanner then (
      if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
      stderr << (if fullCopyright then copyright else first separate copyright) << newline << flush;
      if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush)
-if firstTime and not noloaddata and version#"dumpdata" then (
-     -- try to load dumped data
-     arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
-     datafile := minimizeFilename (
-	  if prefixDirectory =!= null then concatenate(prefixDirectory, replaceStrings("PKG","Core",currentLayout#"packagecache"), "Macaulay2-", arch, "-data")
-	  else concatenate("Macaulay2-", arch, "-data")
-	  );
-     if fileExists datafile then (
-	  if notify then stderr << "--loading cached memory data from " << datafile << newline << flush;
-     	  try loaddata(notify,datafile);
-	  if notify then stderr << "--warning: unable to load data from " << datafile << newline << flush))
 
-scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile = true)
+scan(commandLine, arg -> if arg === "-q" then noinitfile = true)
 homeDirectory = getenv "HOME" | "/"
 
 initcurrentlayout()

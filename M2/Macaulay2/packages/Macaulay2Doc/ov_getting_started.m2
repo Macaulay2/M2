@@ -1099,9 +1099,8 @@ document {
 document {
      Key => "how Macaulay2 finds its files",
      "When you run Macaulay2, it has to find and load a sequence of
-     startup files containing code written in the Macaulay2 language,
-     or it has to find a data file containing a memory dump from a
-     previous session.  Here is the way it does that.",
+     startup files containing code written in the Macaulay2 language.
+     Here is the way it does that.",
      PARA{},
      "Its first task is to discover the path to the binary file ", TT "M2", " that is currently running.  On some systems, that
      information is available from the ", TT "/proc", " file system.  Otherwise, it examines the command name you used to run the
@@ -1113,15 +1112,6 @@ document {
      ", TO "prefixDirectory", ", which you can examine to see whether it all worked out.
      For detailed information about the relative location of Macaulay2 files,
      see ", TO "Layout", ".",
-     PARA{},
-     "A possible data memory dump file may be located in the directory ", TT replace("PKG","Core",Layout#1#"packagecache"), " 
-     and loaded with ", TO "loaddata", ".  If the file is present and and loading it works, then startup will be quicker.  
-     If it's absent then the necessary setup files will be loaded instead;
-     if problems with it are encountered, it is always safe to delete it.
-     The name of the file data dump file is of the form \"Macaulay2-*-data\",
-     where \"*\" is replaced by the value of the environment
-     variable name M2ARCH if present, or else is a value computed at compile time and
-     stored in the hash table called ", TO "version", " and accessible as ", TT "version#\"architecture\"", ".",
      Subnodes => {
 	  TO "Layout",
      	  TO "prefixDirectory"
