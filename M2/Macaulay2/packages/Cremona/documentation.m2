@@ -873,7 +873,7 @@ EXAMPLE {
 Caveat => {"If the declaration is false, nonsensical answers may result."},
 SeeAlso => forceInverseMap}
 
-undocumented {(point,Ideal)}
+undocumented {(point,Ideal),(point,Ideal,Boolean)}
 document { 
 Key => {point,(point,QuotientRing),(point,PolynomialRing)}, 
 Headline => "pick a random rational point on a projective variety", 

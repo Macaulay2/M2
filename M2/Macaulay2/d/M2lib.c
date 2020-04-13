@@ -531,7 +531,7 @@ int register_fun(int *count, char *filename, int lineno, char *funname) {
 extern void clean_up();
 extern char *GC_stackbottom;
 extern void arginits(int, const char **);
-extern bool gotArg(const char *arg, const char ** argv);
+extern bool gotArg(const char *arg, char ** argv);
 
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
@@ -653,7 +653,7 @@ char * const * argv;
 #endif
 
 #if defined HAVE_PERSONALITY && !PROFILING
-     if (!gotArg("--no-personality", (const char **)argv)) {
+     if (!gotArg("--no-personality", argv)) {
 	  /* this avoids mmap() calls resulting in address randomization */
 	  int oldpersonality = personality(-1);
 	  if ((oldpersonality & ADDR_NO_RANDOMIZE) == 0) {
@@ -761,8 +761,6 @@ char * const * argv;
 
      /* the configure script is responsible for ensuring that rl_catch_signals is defined, or else we build readline ourselves */
      rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
-
-     system_handleInterruptsSetup(TRUE);
      
      vargs = GC_MALLOC_UNCOLLECTABLE(sizeof(struct saveargs));
      vargs->argv= (char const * const *)saveargv;
