@@ -31,7 +31,38 @@ document {
      }
 
 document {
-     Key => "changes made for the next release"
+     Key => "changes made for the next release",
+     UL {
+         LI { "functionality changed in a way that could break code:",
+             UL {
+		         LI { "The ", TO "roots", " command is now handled by the ", TO "MPSolve", " library, and is more robust, 
+                     but no longer takes an optional argument ", TT "Unique", "."
+                     },
+                 LI { "The function ", TT "isPseudoprime", " has been replaced by the function ", TO "isProbablePrime", ", and is handled
+                     by the ", TO "FLINT", " library."
+                     }
+                 }
+             },
+         LI { "internal changes:",
+             "The following changes are mostly invisible to the user, and allow
+             for easier connection of libraries and eventually faster, more parallelizable code, hopefully.
+             ",
+             
+	         UL {
+		         LI { "The Pari library has been removed.  Its functionality has been 
+                     subsumed by the ", TO "MPSolve", " library (for the ", TO "roots", " function for finding roots of a univariate
+                         polynomial), and the ", TO "FLINT", " library, for integer factorization and primality testing."
+                     },
+                 LI { "Primality testing via ", TO "isPrime", " is now handled by the ", TO "FLINT", " library."
+                     },
+                 LI { "Factorization of integers is now handled by the ", TO "FLINT", " library."
+                     },
+                 LI { "The ", TO "FLINT", " library, and several others, no longer need to be patched while building Macaulay2.  This means that 
+                     we can use system versions of several basic libraries, including ", TO "GNU MP", ",", TO "MPIR", ",", TO "MPFR", ", and the ", TO "NTL library", "."
+		             }
+	             }
+             }
+         }
      }
 
 document {

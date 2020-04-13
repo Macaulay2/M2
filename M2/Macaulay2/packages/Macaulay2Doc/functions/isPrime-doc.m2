@@ -20,16 +20,46 @@ doc ///
 	    primality tests. If $x$ is definitely composite, the function
 	    returns false, otherwise it is declared probably prime, i.e. prime
 	    for most practical purposes, and the function returns true. The
-	    chance of declaring a composite prime is very small.
+	    chance of declaring a composite number prime is very small.
 	    Subsequent calls to the same function do not increase the
-	    probability of the number being prime.
+	    probability of the number being prime.  In fact, there are no known numbers
+            which are composite, and for which this function returns true, although
+            it is expected that there are an infinite number of such primes.
     	    
-	    This function calls {\tt fmpz_is_probabprime} in the {\tt flint} library.
+            This function calls {\tt fmpz_is_probabprime} in the {\tt flint} library.
 	Example
-    	    isPseudoprime 911
+            n = 1166513229502037
+   	    isPseudoprime n
+            isPrime n
+            n1 = nextPrime(n+1)
+            factor(n1^2*n)
+        Text
+            These functions handle numbers larger than this.  For example,
+        Example
+            m = 158174196546819165468118574681196546811856748118567481185669501856749
+            isPseudoprime m
+            isPrime m
+            isPrime m^2
+            factor m^2
+        Example
+            ndigits = 30
+            m = nextPrime(10^30)
+            m1 = nextPrime (m+10^10)
+            m2 = nextPrime (m1 + 10^20)
+            isPrime m
+            isPrime m1
+            isPrime (m*m1)
+            isPrime(m*m*m1*m1*m2^6)
+            elapsedTime facs = factor(m*m1)
+            facs = facs//toList/toList
+            assert(set facs === set {{m,1}, {m1,1}})
+            m3 = nextPrime (m^3)
+            elapsedTime isPrime m3
+            elapsedTime isPseudoprime m3
     SeeAlso
-    	(isPrime,ZZ)
-	(factor,ZZ)
+        (isPrime,ZZ)
+        (factor,ZZ)
+        (nextPrime,Number)
 ///
 
 -*
