@@ -15,7 +15,7 @@ See this article on [why the KDE project switched to CMake](https://lwn.net/Arti
 If using a packaged distribution, confirm using `cmake --version` that you have version at least 3.14.
 
 There are various other tools needed to compile Macaulay2 dependencies.
-On Ubuntu, install `autoconf build-essential bison libtool yasm`.
+On Ubuntu, install `autoconf build-essential bison libtool pkg-config yasm`.
 See [INSTALL](INSTALL) for more details for Mac OS X and other systems.
 
 **TIP**: for fastest results, consider also installing `ninja-build` and `ccache`.
@@ -23,6 +23,7 @@ See [INSTALL](INSTALL) for more details for Mac OS X and other systems.
 There are also 7 libraries that must be found on the system. On Ubuntu, install
 `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libomp-dev libtbb-dev libgdbm-dev`.
 In addition, install `libatomic-ops-dev`, though this dependency will be removed soon.
+The equivalent Homebrew packages are `eigen libxml2 readline libomp tbb gdbm` and `libatomic_ops`.
 
 A quick build involves the following steps:
 ```
@@ -48,7 +49,8 @@ cmake -S ../.. -B . \
       -DCMAKE_BUILD_TYPE=Release
 ```
 We build with MPIR as the multiple precision arithmetic library by default. To use GMP, use `-DUSING_MPIR=OFF` instead.
-This command generates Makefiles. To generate a Ninja build environment, which is much faster, also add `-GNinja`.
+This command generates Makefiles. To generate a Ninja build environment, which is much faster, add `-GNinja` and use
+`ninja` instead of `make` in subsequent commands.
 
 3. Build the libraries that will be linked with the Macaulay2 executable:
 ```

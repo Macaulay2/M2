@@ -25,7 +25,7 @@ set(CLIST
   startup.c
   )
 
-set(DLIST arithmetic.d atomic.d M2.d system.d strings.d varstrin.d strings1.d errio.d vararray.d ctype.d nets.d varnets.d interrupts.d pthread0.d stdiop0.d gmp.d engine.dd xml.d stdio0.d parse.d expr.d stdio.d stdiop.d err.d gmp1.d tokens.d getline.d lex.d parser.d binding.d basic.d convertr.d common.d util.d struct.d classes.dd buckets.dd equality.dd hashtables.dd sets.dd version.dd evaluate.d mysqldummy.d pthread.d actors.d actors2.dd actors3.d actors4.d xmlactors.d actors5.d actors6.dd threads.dd flint.d interface.dd interface2.d texmacs.d interp.dd)
+set(DLIST arithmetic.d atomic.d M2.d system.d strings.d varstrin.d strings1.d errio.d vararray.d ctype.d nets.d varnets.d interrupts.d pthread0.d stdiop0.d gmp.d engine.dd xml.d stdio0.d parse.d expr.d stdio.d stdiop.d err.d gmp1.d tokens.d getline.d lex.d parser.d binding.d basic.d convertr.d common.d util.d struct.d classes.dd buckets.dd equality.dd hashtables.dd sets.dd version.dd evaluate.d mysqldummy.d pthread.d actors.d actors2.dd actors3.d actors4.d xmlactors.d actors5.d actors6.dd threads.dd interface.dd interface2.d texmacs.d interp.dd)
 
 ################################################################
 ## Macro for compiling .d and .dd files to .c and .cc files, respectively

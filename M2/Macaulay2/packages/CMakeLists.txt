@@ -69,7 +69,8 @@ list(TRANSFORM PACKAGES PREPEND "uninstall-" OUTPUT_VARIABLE UNINSTALL_TARGETS)
 # TODO: have this clear out the folders completely and uninstall-[package] only run uninstallPackage
 add_custom_target(uninstall-packages DEPENDS ${UNINSTALL_TARGETS})
 
-## Arguments for M2-binary and installPackage
+## Arguments for M2 and installPackage
+set(M2 ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
 set(M2_ARGS -q --stop --silent -e errorDepth=${M2_errorDepth} -e debugLevel=${M2_debugLevel})
 set(M2_INSTALL_ARGS
   Verbose                => $<IF:$<BOOL:${VERBOSE}>,true,false>,
@@ -82,6 +83,7 @@ set(M2_INSTALL_ARGS
   SeparateExec           => true,
   DebuggingMode          => true
   )
+
 
 foreach(package IN LISTS PACKAGES)
   ## Enable USES_TERMINAL only for Macaulay2Doc and EngineTests
@@ -100,7 +102,7 @@ foreach(package IN LISTS PACKAGES)
     COMMENT
       "Installing package ${package}"
     COMMAND
-      M2-binary ${M2_ARGS} -e \"installPackage(\\"${package}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON> exit 0\"
+      ${M2} ${M2_ARGS} -e \"installPackage(\\"${package}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON> exit 0\"
     ${USES_TERMINAL}
     DEPENDS M2-core ${PACKAGE_DEPENDENCIES}
     )
@@ -123,7 +125,7 @@ foreach(package IN LISTS PACKAGES)
     COMMENT
       "Checking package ${package}"
     COMMAND
-      M2-binary ${M2_ARGS}
+      ${M2} ${M2_ARGS}
         -e \"needsPackage(\\"${package}\\", LoadDocumentation=>true, DebuggingMode=>true) $<SEMICOLON>
              check(${package}, UserMode=>false) $<SEMICOLON> exit 0\"
     ${USES_TERMINAL}
@@ -135,7 +137,7 @@ foreach(package IN LISTS PACKAGES)
     COMMENT
       "Installing and checking package ${package}"
     COMMAND
-      M2-binary ${M2_ARGS}
+      ${M2} ${M2_ARGS}
         -e \"installPackage(\\"${package}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON>
              check(${package}, UserMode=>false) $<SEMICOLON> exit 0\"
     ${USES_TERMINAL}
