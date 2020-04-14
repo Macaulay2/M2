@@ -3,21 +3,25 @@
 ## TIP: use cmake -LA . to list resolved variables
 ##      use cmake -U*NTL* . to reconfigure NTL variables
 
-## Requirement	Debian package	RPM package	OSX package
-#   BLAS/LAPACK	libopenblas-dev	openblas-devel	
-#   Eigen3	libeigen3-dev	eigen3-devel	
-#   Threads	libc6-dev	glibc-headers	
-#   LibXML2	libxml2-dev	libxml2-devel	
-#   OpenMP	libomp-dev	libomp-devel	
-#   TBB		libtbb-dev	tbb-devel	
-#   GDBM	libgdbm-dev	gdbm-devel	
+## Requirement	Debian package	RPM package	Homebrew package
+#   BLAS/LAPACK	libopenblas-dev	openblas-devel	N/A
+#   Threads	libc6-dev	glibc-headers	N/A
+#   OpenMP	libomp-dev	libomp-devel	libomp
+#   TBB		libtbb-dev	tbb-devel	tbb
+#   GDBM	libgdbm-dev	gdbm-devel	gdbm
 #   (also pkg-config, git, and bison + yasm for compiling MPIR)
+
+## Optional	Debian package	RPM package	Homebew package
+#   LibXML2	libxml2-dev	libxml2-devel	N/A
+#   MySQL	libmysql	mysql-devel	N/A
+#   Python3	libpython3-dev	python3-libs	N/A
 
 ## Platform dependent requirements:
 #    readline, history, termcap, ...
 #    (provided by libreadline-dev on Ubuntu)
 
 ## Libraries we can download and build:
+#   eigen3	C++ template library for linear algebra
 #   bdw-gc	Boehm-Demers-Weiser conservative C/C++ Garbage Collector
 #   mpir	Multiple Precision Integers & Rationals	(optional plug-in replacement for gmp)
 #   mpfr	Multiple Precision Floating Point	(needs gmp)
@@ -48,7 +52,7 @@
 ## These lists will be used in Macaulay2/{e,bin}/CMakeLists.txt
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
 set(LIBRARY_LIST   HISTORY READLINE)
-set(LIBRARIES_LIST LAPACK LIBXML2 MP MPFR BDWGC NTL FLINT FACTORY FROBBY MATHICGB MATHIC MEMTAILOR MPSOLVE TBB)
+set(LIBRARIES_LIST LAPACK MP MPFR BDWGC NTL FLINT FACTORY FROBBY MATHICGB MATHIC MEMTAILOR MPSOLVE TBB)
 
 ################################################################
 ## pkg-config is useful for fflas-ffpack and certain other packages
@@ -60,9 +64,7 @@ find_package(PkgConfig  REQUIRED QUIET)
 ## Find libraries available as CMake modules
 ## We provide modules for finding come of these libraries in cmake/
 find_package(LAPACK      REQUIRED QUIET)
-find_package(Eigen3  3.3 REQUIRED QUIET NO_MODULE)
 find_package(Threads 2.1 REQUIRED QUIET)
-find_package(LibXml2 2.9 REQUIRED QUIET) # d/xml-c.c needs xmlNewNode
 find_package(Readline    REQUIRED QUIET)
 find_package(History     REQUIRED QUIET)
 # TODO: replace readline with https://github.com/AmokHuginnsson/replxx
@@ -94,6 +96,7 @@ endforeach()
 ## These are not required because we can build them if they are not found.
 find_package(MPFR	4.0.1)
 find_package(BDWGC	7.6.4)
+find_package(Eigen3	3.3.0 PATHS ${M2_HOST_PREFIX})
 find_package(Factory	4.1.0)
 find_package(Flint	2.5.3)
 find_package(NTL       10.5.0)
@@ -108,6 +111,21 @@ find_package(GLPK      4.59.0) # needed by 4ti2
 
 if(BUILD_TESTING)
   find_package(GTest)
+endif()
+
+if(WITH_XML)
+  find_package(LibXml2 2.9 REQUIRED)
+  list(APPEND LIBRARIES_LIST LIBXML2)
+endif()
+
+if(WITH_SQL)
+  find_package(SQLite3 3.0 REQUIRED)
+  list(APPEND LIBRARIES_LIST SQLite3)
+endif()
+
+if(WITH_PYTHON)
+  find_package(Python3 3.7 REQUIRED)
+  list(APPEND LIBRARIES_LIST Python3)
 endif()
 
 ## Find libraries available via pkg-config

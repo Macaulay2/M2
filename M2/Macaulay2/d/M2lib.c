@@ -6,8 +6,6 @@
 
 #include "interp-exports.h"
 
-/* defining GDBM_STATIC makes the cygwin version work, and is irrelevant for the other versions */
-#define GDBM_STATIC
 #include <gdbm.h>
 
 #include <M2/gc-include.h>
@@ -21,28 +19,26 @@
 #include "engine.h"
 
 #ifdef HAVE_ALLOCA_H
-#include <alloca.h>
+# include <alloca.h>
 #else
-#ifdef __GNUC__
-#ifndef alloca
-#define alloca __builtin_alloca
-#endif
-#endif
-
+# ifdef __GNUC__
+#  ifndef alloca
+#   define alloca __builtin_alloca
+#  endif
+# endif
 #endif
 
 #if !defined(PROFILING)
-#error PROFILING not defined
+# error PROFILING not defined
 #endif
 
 #ifdef HAVE_LINUX_PERSONALITY_H
-#include <linux/personality.h>
-#undef personality
+# include <linux/personality.h>
+# undef personality
 #endif
 
-#ifdef HAVE_DECL_ADDR_NO_RANDOMIZE
-#else
-#define ADDR_NO_RANDOMIZE 0x0040000
+#ifndef HAVE_DECL_ADDR_NO_RANDOMIZE
+# define ADDR_NO_RANDOMIZE 0x0040000
 #endif
 
 #ifdef HAVE_PERSONALITY
@@ -116,7 +112,7 @@ static void alarm_handler(int sig) {
 #define BACKTRACE_WORKS 0	/* doesn't work under ubuntu, or works very slowly when threads are involved */
 
 #if defined(HAVE_EXECINFO_H) && defined(HAVE_BACKTRACE)
-#include <execinfo.h>
+# include <execinfo.h>
 #endif
 
 #if !BACKTRACE_WORKS
@@ -524,30 +520,6 @@ extern char *GC_stackbottom;
 extern void arginits(int, const char **);
 extern bool gotArg(const char *arg, char * const* argv);
 
-#ifdef HAVE_DLFCN_H
-#include <dlfcn.h>
-#endif
-
-static void call_shared_library() {
-#if 0
-  const char *libname = "libM2.so";
-  const char *funname = "entry";
-  void *handle;
-  int (*g)();
-  errno = 0;
-  handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
-  if (handle == NULL) { error("can't load library %s", libname); return; }
-  g = dlsym(handle, funname);
-  if (g == NULL) { error("can't link function %s from sharable library %s",funname,libname); return; }
-  g();
-  if (0 != dlclose(handle)) { error("can't close sharable library %s",libname); return; }
-#endif
-}
-
-#ifdef HAVE_PYTHON
-#include <python2.7/Python.h>
-#endif
-
 void* testFunc(void* q )
 {
   printf("testfunc %p\n",q);
@@ -626,9 +598,8 @@ int Macaulay2_main(const int argc, char * const* argv)
 #    endif
      
      system_cpuTime_init();
-     call_shared_library();
 
-#ifdef HAVE_PYTHON
+#ifdef WITH_PYTHON
      Py_SetProgramName(argv[0]);
      Py_Initialize();
 #endif
@@ -694,7 +665,7 @@ void clean_up(void) {
 	  final_list->fun();
 	  final_list = final_list->next;
 	  }
-#ifdef HAVE_PYTHON
+#ifdef WITH_PYTHON
      if (Py_IsInitialized()) Py_Finalize();
 #endif
 #    ifndef NDEBUG

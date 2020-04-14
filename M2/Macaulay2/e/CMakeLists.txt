@@ -225,6 +225,7 @@ set(SRCLIST
   util
   varpower
   weylalg
+  # Faugère's F4 Algorithm
   f4/f4-computation
   f4/f4-m2-interface
   f4/f4-mem
@@ -256,7 +257,7 @@ set(SRCLIST
   f4/res-schreyer-frame
   f4/res-varpower-monomial
   f4/varpower-monomial
-  # BIBasis
+  # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator
   bibasis/launcher
@@ -283,14 +284,14 @@ add_library(M2-engine STATIC # SHARED
 
 add_dependencies(M2-engine M2-interpreter)
 
-target_link_libraries(M2-engine Eigen3::Eigen)
+if(EIGEN3_FOUND)
+  target_link_libraries(M2-engine Eigen3::Eigen)
+endif()
 
 target_include_directories(M2-engine
   PUBLIC
     .
   PRIVATE
-    ${EIGEN3_INCLUDE_DIR}
-    ${LIBXML2_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR}/Macaulay2/d
     ${CMAKE_SOURCE_DIR}/Macaulay2/c # TODO: engine should not depend on scc1
   )

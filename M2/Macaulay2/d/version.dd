@@ -4,11 +4,11 @@ use M2;
 use hashtables;
 
 declarations "
-   #if USE_MYSQL
+   #if WITH_SQL
      #include <mysql/mysql.h>
    #endif
-   #ifdef HAVE_PYTHON
-     #include <python2.7/Python.h>
+   #ifdef WITH_PYTHON
+     #include <Python.h>
    #else
      #define PyObject_Str(o) 0
      #define PyString_AS_STRING(o) 0
@@ -176,7 +176,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	  "),
    "mpsolve version" => "3.1.8", -- TODO: DETERMINE VERSION #??
    "python version" => Ccode(constcharstar,"
-	#ifdef HAVE_PYTHON
+	#ifdef WITH_PYTHON
 		 PY_VERSION				      
 	#else
 		 \"not present\"

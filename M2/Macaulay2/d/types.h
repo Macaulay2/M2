@@ -151,6 +151,10 @@ extern int system_errno();
  #endif
 extern bool interrupt_jump_set;
 
+#ifdef WITH_PYTHON
+#include <Python.h>
+#endif
+
 /*
 // Local Variables:
 // compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "

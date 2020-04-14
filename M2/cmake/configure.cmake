@@ -20,12 +20,14 @@ option(GIT_SUBMODULE	"Update submodules during build"	OFF)
 option(BUILD_PROGRAMS	"Build programs, even if found"		OFF)
 option(BUILD_LIBRARIES	"Build libraries, even if found"	OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
-option(USING_MPIR	"Use MPIR instead of GMP"		ON)
 option(AUTOTUNE		"Autotune library parameters"		OFF)
 option(ALTIVEC		"compile and link with '-faltivec'"	OFF)
-# TODO:
-#option(MYSQL        "link with mysql"                    OFF)
-#option(PYTHON       "link with libpython"                OFF)
+option(USING_MPIR	"Use MPIR instead of GMP"		ON)
+# TODO: parse.d expr.d tokens.d actors4.d actors5.d still need xml
+option(WITH_XML		"Link with the libxml2 library"		ON)
+# TODO: still not operational
+option(WITH_SQL		"Link with the MySQL library"		OFF)
+option(WITH_PYTHON	"Link with the Python library"		OFF)
 
 set(PARALLEL_JOBS 4    CACHE STRING "Number of parallel jobs for libraries and programs")
 
@@ -207,6 +209,7 @@ check_library_exists(resolv hstrerror "" HAVE_HSTRERROR)
 
 include(CheckIncludeFiles)
 # TODO: are all still relevant?
+# HAVE_SCSCP is used in version.dd: https://www.openmath.org/standard/scscp/
 check_include_files("stdlib.h;stdarg.h;string.h;float.h" STDC_HEADERS)
 check_include_files(arpa/inet.h	HAVE_ARPA_INET_H)
 check_include_files(assert.h	HAVE_ASSERT_H)

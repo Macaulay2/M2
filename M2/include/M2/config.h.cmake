@@ -222,10 +222,6 @@
 /* Define to 1 if you have the <pthread.h> header file. */
 #cmakedefine HAVE_PTHREAD_H 1
 
-// TODO: used a bunch of places in Macaulay2/d. Remove?
-/* whether we are linking with the python library */
-/* #undef HAVE_PYTHON */
-
 /* Define to 1 if you have the `readlink' function. */
 #cmakedefine HAVE_READLINK 1
 
@@ -316,9 +312,6 @@
 /* Define to 1 if you have the `waitpid' function. */
 #cmakedefine HAVE_WAITPID 1
 
-/* whether we are linking with the xml library */
-#cmakedefine HAVE_XML 1
-
 // TODO: used in Macaulay2/d/M2lib.c. Still needed?
 /* Define to 1 if you have the `_setmode' function. */
 #cmakedefine HAVE__SETMODE 1
@@ -372,12 +365,17 @@
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
 
-// TODO: used a bunch of places, but is it still needed?
-/* whether we are linking with the mysql library */
-#cmakedefine USE_MYSQL 1
-
 /* Whether we use MPIR (instead of GMP) */
 #cmakedefine01 USING_MPIR
+
+/* whether we are linking with the libxml2 library */
+#cmakedefine WITH_XML
+
+/* whether we are linking with the mysql library */
+#cmakedefine WITH_SQL
+
+/* whether we are linking with the python library */
+#cmakedefine WITH_PYTHON
 
 /* whether newline is cr */
 #cmakedefine WITH_NEWLINE_CR 1

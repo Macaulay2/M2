@@ -96,7 +96,25 @@ endif()
 include(ExternalProject) # configure, patch, build, and install at build time
 set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
 
-## bdwgc
+ExternalProject_Add(build-eigen
+  URL               https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz
+  URL_HASH          SHA256=d56fbad95abf993f8af608484729e3d87ef611dd85b3380a8bad1d5cbc373a57
+  PREFIX            libraries/eigen
+  BINARY_DIR        libraries/eigen/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                    -DBUILD_TESTING=${BUILD_TESTING}
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  )
+if(NOT EIGEN3_FOUND)
+  # Add this to the libraries target
+  add_dependencies(build-libraries build-eigen-install)
+endif()
+
+
 # TODO: add environment variables GC_LARGE_ALLOC_WARN_INTERVAL and GC_ABORT_ON_LEAK
 # Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
 # Currently cloning master for significant cmake support. Hopefully soon there will be a stable release
@@ -878,6 +896,9 @@ ExternalProject_Add(build-lrslib
 if(NOT LRSLIB)
   # Add this to the programs target
   add_dependencies(build-programs build-lrslib-install)
+  if(NOT MP_FOUND)
+    ExternalProject_Add_StepDependencies(build-lrslib configure build-mpir-install)
+  endif()
 endif()
 
 

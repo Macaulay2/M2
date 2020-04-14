@@ -1,6 +1,7 @@
 /* some routines to augment the gmp library */
+#include <M2/config.h>
 
-#if USING_MPIR 
+#if USING_MPIR
 #include <mpir.h>
 #else
 #include <gmp.h>

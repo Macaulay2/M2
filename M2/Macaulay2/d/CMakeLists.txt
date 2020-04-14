@@ -17,15 +17,102 @@ file(GENERATE OUTPUT distributed-packages.h CONTENT "#define DISTRIBUTED_PACKAGE
 ################################################################
 
 set(CLIST
-  M2lib.c M2mem.c M2types.c scclib.c
-  debug.c # Where is this done normally?
+  distributed-packages.h
+  types.h startup.c
+  debug.c debug.h
+  memdebug.c memdebug.h
+  M2types.c scclib.c M2lib.c M2mem.c
+
+  getpagesize.h M2mem.h
+  gmp_aux.c gmp_aux.h # TODO: needed with mpir?
   gdbm_interface.c
-  gmp_aux.c
-  xml-c.c
-  startup.c
+
+  $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
+  $<$<BOOL:${WITH_PYTHON}>:python-c.c>
   )
 
-set(DLIST arithmetic.d atomic.d M2.d system.d strings.d varstrin.d strings1.d errio.d vararray.d ctype.d nets.d varnets.d interrupts.d pthread0.d stdiop0.d gmp.d engine.dd xml.d stdio0.d parse.d expr.d stdio.d stdiop.d err.d gmp1.d tokens.d getline.d lex.d parser.d binding.d basic.d convertr.d common.d util.d struct.d classes.dd buckets.dd equality.dd hashtables.dd sets.dd version.dd evaluate.d mysqldummy.d pthread.d actors.d actors2.dd actors3.d actors4.d xmlactors.d actors5.d actors6.dd threads.dd interface.dd interface2.d texmacs.d interp.dd)
+# TODO: can there be #ifdefs in D sources?
+set(DLIST
+  arithmetic.d
+  atomic.d
+  M2.d
+  system.d
+  strings.d
+  varstrin.d
+  strings1.d
+  errio.d
+  vararray.d
+  ctype.d
+  nets.d
+  varnets.d
+  interrupts.d
+  pthread0.d
+  stdiop0.d
+  gmp.d
+  engine.dd
+  xml.d		# removed unless WITH_XML
+  stdio0.d
+  parse.d
+  expr.d
+  stdio.d
+  stdiop.d
+  err.d
+  gmp1.d
+  tokens.d
+  getline.d
+  lex.d
+  parser.d
+  binding.d
+  basic.d
+  convertr.d
+  common.d
+  util.d
+  struct.d
+  classes.dd
+  buckets.dd
+  equality.dd
+  hashtables.dd
+  sets.dd
+  version.dd
+  evaluate.d
+  mysql.d	# removed unless WITH_SQL
+  mysqldummy.d	# removed if WITH_SQL
+  pthread.d
+  actors.d
+  actors2.dd
+  actors3.d
+  actors4.d
+  # tasks.d
+  xmlactors.d	# removed unless WITH_XML
+  actors5.d
+  actors6.dd
+  threads.dd
+  python.d	# removed unless WITH_PYTHON
+  interface.dd interface2.d
+  texmacs.d
+  interp.dd	# this one is last, because it contains the top level interpreter
+  )
+
+# Generator expressions conflict with the macro below, so manually remove the ones we don't need
+if(NOT WITH_XML)
+  list(REMOVE_ITEM DLIST xml.d xmlactors.d)
+endif()
+if(NOT WITH_SQL)
+  list(REMOVE_ITEM DLIST mysql.d)
+else()
+  list(REMOVE_ITEM DLIST mysqldummy.d)
+endif()
+if(NOT WITH_PYTHON)
+  list(REMOVE_ITEM DLIST python.d)
+endif()
+
+################################################################
+
+# TODO: generate etags
+# cd ${CMAKE_SOURCE_DIR}/Macaulay2/d && etags  ...
+
+# What is this for?
+# if [ -f ${CMAKE_SOURCE_DIR}/Macaulay2/d/.gdbinit.mahrud ]; then cp ${CMAKE_SOURCE_DIR}/Macaulay2/d/.gdbinit.mahrud .gdbinit; fi
 
 ################################################################
 ## Macro for compiling .d and .dd files to .c and .cc files, respectively
@@ -62,14 +149,6 @@ MACRO (_SCC_GENERATE _source _prev)
 ENDMACRO (_SCC_GENERATE)
 
 ################################################################
-
-# TODO
-# cd ${CMAKE_SOURCE_DIR}/Macaulay2/d && etags  ...
-
-# What is this for?
-# if [ -f ${CMAKE_SOURCE_DIR}/Macaulay2/d/.gdbinit.mahrud ]; then cp ${CMAKE_SOURCE_DIR}/Macaulay2/d/.gdbinit.mahrud .gdbinit; fi
-
-################################################################
 ## Compile the interpreter
 
 foreach(d_file IN LISTS DLIST)
@@ -77,9 +156,7 @@ foreach(d_file IN LISTS DLIST)
   list(APPEND CLIST ${c_file_source})
 endforeach()
 
-# TODO: are all of these needed?
 add_library(M2-interpreter OBJECT ${CLIST})
-
 
 target_include_directories(M2-interpreter
   PUBLIC
@@ -90,7 +167,9 @@ target_include_directories(M2-interpreter
     ${CMAKE_BINARY_DIR}/Macaulay2/d
   PRIVATE
     ${LIBXML2_INCLUDE_DIR}
-    ${READLINE_INCLUDE_DIR} # TODO: needed?
+    ${SQLite3_INCLUDE_DIRS}
+    ${Python3_INCLUDE_DIRS}
+    ${READLINE_INCLUDE_DIR}
   )
 
 # common warning flags

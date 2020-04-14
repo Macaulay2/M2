@@ -8,7 +8,7 @@ BUILD_DIR = M2/M2/BUILD/build-docker
 define M2_BUILD_SCRIPT
 set -xe
 
-cmake -S M2/M2 -B $(BUILD_DIR) \
+cmake -GNinja -S M2/M2 -B $(BUILD_DIR) \
       -DUSING_MPIR=ON \
       -DBUILD_TESTING=ON \
       -DCMAKE_BUILD_TYPE=Release \
@@ -26,7 +26,7 @@ export M2_BUILD_SCRIPT
 
 always:; @cat README.md
 
-clean:;  rm -rf ../build-docker
+clean:;  rm -rf ../../../../$(BUILD_DIR)
 
 all: build run
 
