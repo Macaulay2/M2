@@ -74,7 +74,7 @@ darwin64-appleclang : always
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download \
-		--enable-build-libraries="mpir flint pari ntl"
+		--enable-build-libraries="mpir flint ntl"
 
 darwin64-gcc6 : always
 	mkdir -p builds.tmp/darwin64-gcc6

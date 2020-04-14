@@ -26,9 +26,9 @@ endif
 ifeq (@ULIMIT_M@,yes)
 LIMIT += ulimit -m $(MLIMIT) ;
 endif
-ifeq (@ULIMIT_V@,yes)
-LIMIT += ulimit -v $(VLIMIT) ;
-endif
+#ifeq (@ULIMIT_V@,yes)
+#LIMIT += ulimit -v $(VLIMIT) ;
+#endif
 ifeq (@ULIMIT_S@,yes)
 LIMIT += ulimit -s $(SLIMIT) ;
 endif
