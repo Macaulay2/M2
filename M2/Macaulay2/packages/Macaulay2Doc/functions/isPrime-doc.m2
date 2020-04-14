@@ -4,12 +4,12 @@
 
 doc /// 
     Key
-	(isPseudoprime,ZZ)
-    	isPseudoprime
+	(isProbablePrime,ZZ)
+    	isProbablePrime	
     Headline
     	whether an integer is probably prime
     Usage 
-    	isPseudoprime x
+    	isProbablePrime x
     Inputs
     	x:ZZ
     Outputs
@@ -29,7 +29,7 @@ doc ///
             This function calls {\tt fmpz_is_probabprime} in the {\tt flint} library.
 	Example
             n = 1166513229502037
-   	    isPseudoprime n
+   	    isProbablePrime n
             isPrime n
             n1 = nextPrime(n+1)
             factor(n1^2*n)
@@ -37,7 +37,7 @@ doc ///
             These functions handle numbers larger than this.  For example,
         Example
             m = 158174196546819165468118574681196546811856748118567481185669501856749
-            isPseudoprime m
+            isProbablePrime m
             isPrime m
             isPrime m^2
             factor m^2
@@ -55,22 +55,18 @@ doc ///
             assert(set facs === set {{m,1}, {m1,1}})
             m3 = nextPrime (m^3)
             elapsedTime isPrime m3
-            elapsedTime isPseudoprime m3
+            elapsedTime isProbablePrime m3
     SeeAlso
         (isPrime,ZZ)
         (factor,ZZ)
         (nextPrime,Number)
 ///
 
--*
 document { 
      Key => {(isPseudoprime, ZZ), isPseudoprime},
-     Headline => "whether an integer is a pseudoprime",
-     Usage => "isPseudoprime x",
-     Inputs => { "x" },
-     Outputs => {
-	  Boolean => {TO "true", " if ", TT "x", " is a strong pseudoprime in the sense of Baillie-Pomerance-Selfridge-Wagstaff"}
-	  },
+     Headline => "deprecated, use isProbablePrime",
+     SeeAlso => {"isProbablePrime"}
+     -*
      PARA {
 	  "The algorithm is provided by ", TO "pari", ".  The pseudoprimality test means that
 	  it has no small factors, that it is a Rabin-Miller pseudoprime for the 
@@ -80,13 +76,13 @@ document {
 	  According to the documentation of ", TO "pari", TEX ", such pseudoprimes are known
 	  to be prime up to $10^{13}$, and no nonprime pseudoprime is known."
 	  }
+     *-
      }
-*-
 
 TEST ///
-assert not isPseudoprime(101*1617839547365369353)
-assert not isPseudoprime(18158848484363*1617839547365369353)
-assert isPseudoprime 1617839547365369353
+assert not isProbablePrime(101*1617839547365369353)
+assert not isProbablePrime(18158848484363*1617839547365369353)
+assert isProbablePrime 1617839547365369353
 ///
 
 document { 
@@ -131,7 +127,7 @@ document {
 -- 	  {"At the moment, for integers larger than ", TT "2^31-1", " it checks for
 --      	       divisibility by small primes, and then applies a strong pseudoprimality
 --      	       test (Rabin-Miller) to the base 2."},},
-     SeeAlso => {factor, isPseudoprime}
+     SeeAlso => {factor, isProbablePrime}
      }
 
 TEST "

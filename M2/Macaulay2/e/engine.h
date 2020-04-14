@@ -79,7 +79,7 @@ extern "C" {
 
   M2_bool rawZZisPrime(gmp_ZZ a);
 
-  M2_bool rawZZisPseudoprime(gmp_ZZ a);
+  M2_bool rawZZisProbablePrime(gmp_ZZ a);
 
   gmp_arrayZZ rawZZfactor(gmp_ZZ a);
   

@@ -117,7 +117,7 @@ syn keyword m2Method isAffineRing isBorel isCommutative isConstant
 syn keyword m2Method isDirectSum isField isFreeModule isHomogeneous
 syn keyword m2Method isIdeal isInjective isIsomorphism isModule
 syn keyword m2Method isMonomialIdeal isPolynomialRing isPrime
-syn keyword m2Method isPseudoprime isQuotientModule isQuotientOf
+syn keyword m2Method isProbablePrime isQuotientModule isQuotientOf
 syn keyword m2Method isQuotientRing isReal isRing isSkewCommutative
 syn keyword m2Method isSquareFree isSubmodule isSubquotient isSubset
 syn keyword m2Method isSurjective isUnit isWellDefined jacobian koszul

@@ -4371,16 +4371,16 @@ export rawZZisPrime(e:Expr):Expr := (
   );
 setupfun("rawZZisPrime",rawZZisPrime);
 
-export rawZZisPseudoprime(e:Expr):Expr := (                             
+export rawZZisProbablePrime(e:Expr):Expr := (                             
   when e is f:ZZcell do 
     toExpr(Ccode(bool,
-      "rawZZisPseudoprime(",
+      "rawZZisProbablePrime(",
         f.v,
       ")"
     ))
   else WrongArgZZ()
   );
-setupfun("rawZZisPseudoprime",rawZZisPseudoprime);
+setupfun("rawZZisProbablePrime",rawZZisProbablePrime);
 
 export rawZZfactor(e:Expr):Expr := (                             
   when e is f:ZZcell do 

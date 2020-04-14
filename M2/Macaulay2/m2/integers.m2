@@ -66,8 +66,13 @@ isPrime2 := n -> (			  -- assume n > 2
 
 biggest := 2^31-1
 
-isPseudoprime ZZ := Boolean => (n) -> (
-    rawZZisPseudoprime n -- calls flint
+isProbablePrime ZZ := Boolean => n -> (
+    rawZZisProbablePrime n -- calls flint
+    )
+
+isPseudoprime ZZ := Boolean => n -> (
+    << "warning: isPseudoprime is deprecated, using isProbablePrime" << endl;
+    isProbablePrime n
     )
 
 isPrime ZZ := Boolean => n -> (

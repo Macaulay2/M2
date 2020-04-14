@@ -778,6 +778,7 @@ export {
 	"isPolynomialRing",
 	"isPrime",
 	"isPrimitive",
+	"isProbablePrime",
 	"isPseudoprime",
 	"isQuotientModule",
 	"isQuotientOf",

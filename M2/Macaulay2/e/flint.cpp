@@ -26,7 +26,7 @@ M2_bool rawZZisPrime(gmp_ZZ a)
   return ret;
 }
 
-M2_bool rawZZisPseudoprime(gmp_ZZ a)
+M2_bool rawZZisProbablePrime(gmp_ZZ a)
 {
   fmpz_t n;
   fmpz_init(n);

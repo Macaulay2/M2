@@ -47,7 +47,7 @@ document {
      EXAMPLE "peek'(100,x)",
      PARA {
 	  "For integers, factorization is done by ", TO "flint", TEX ", and the factors $x$ are actually
-	  just probably prime, as described in the documentation of ", TO "isPseudoprime", "."
+	  just probably prime, as described in the documentation of ", TO "isProbablePrime", "."
 	  },
      PARA {
 	  "For multivariate polynomials the
