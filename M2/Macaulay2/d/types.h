@@ -25,7 +25,6 @@
 extern char *libfac_version;
 
 #include "../c/compat.h"
-#include "../regex/regex.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
