@@ -4,7 +4,7 @@ use M2;
 use hashtables;
 
 declarations "
-   #if WITH_SQL
+   #ifdef WITH_SQL
      #include <mysql/mysql.h>
    #endif
    #ifdef WITH_PYTHON

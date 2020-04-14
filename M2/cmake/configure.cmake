@@ -134,6 +134,7 @@ if(PROFILING)
 endif()
 # TODO: deal with all SIMDs together
 # See: https://cmake.org/cmake/help/latest/command/cmake_host_system_information.html
+# See: http://eigen.tuxfamily.org/index.php?title=FAQ#How_can_I_enable_vectorization.3F
 if(ALTIVEC)
   add_compile_options(-faltivec)
   add_link_options(-faltivec)
