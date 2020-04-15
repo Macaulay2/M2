@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 Luigi made this change
 oldPackage ( "TorAlgebra",
+=======
+newPackage ( "TorAlgebra",
+>>>>>>> d6d0838f92661cd27728315d635a176058f4d70a
     Version => "2.0",
     Date => "9 February 2018", This is OLD!!!
     Authors => {
