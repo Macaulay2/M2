@@ -2,6 +2,7 @@
 Luigi made this change
 oldPackage ( "TorAlgebra",
 =======
+No Luigi I don't like your change
 newPackage ( "TorAlgebra",
 >>>>>>> d6d0838f92661cd27728315d635a176058f4d70a
     Version => "2.0",
