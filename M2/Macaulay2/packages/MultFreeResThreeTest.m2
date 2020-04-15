@@ -2,6 +2,7 @@
 <<<<<<< HEAD
 Luigi made this change ZZZ
 =======
+A
 >>>>>>> cf5fe9a9053708e826e90b989fc68a5f3c04c1bd
 oldPackage ( "TorAlgebra",
 =======
