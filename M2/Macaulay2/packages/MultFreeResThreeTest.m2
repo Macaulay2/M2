@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-Luigi made this change
+A
 oldPackage ( "TorAlgebra",
 =======
 No Luigi I don't like your change
