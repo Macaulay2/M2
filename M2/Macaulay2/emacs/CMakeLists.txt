@@ -1,3 +1,5 @@
+# TODO: generate textmate grammar
+
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 set(M2_ARGS -q --stop --silent)

@@ -4,7 +4,7 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 add_library(M2-system OBJECT
   supervisor.cpp
   m2file.cpp
-  tests.cpp
+  tests.cpp # TODO: is this used?
   )
 
 add_dependencies(M2-system M2-interpreter) # supervisor.cpp requires pthread-exports.h

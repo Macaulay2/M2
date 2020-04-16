@@ -109,6 +109,11 @@ find_package(MPSolve	3.1.8)
 find_package(Frobby	0.9.0)
 find_package(GLPK      4.59.0) # needed by 4ti2
 
+if(BUILD_DOCS)
+  find_package(Doxygen REQUIRED)
+  find_package(Sphinx  REQUIRED)
+endif()
+
 if(BUILD_TESTING)
   find_package(GTest)
 endif()

@@ -37,8 +37,13 @@ add_subdirectory(man) # combine?
 add_subdirectory(packages)
 add_subdirectory(emacs) # rename to editors and include vim, etc?
 add_subdirectory(book) # separate repository?
+
 if(BUILD_TESTING)
   add_subdirectory(tests)
+endif()
+
+if(BUILD_DOCS)
+  add_subdirectory(docs)
 endif()
 
 ###############################################################################
