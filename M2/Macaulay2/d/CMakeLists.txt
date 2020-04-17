@@ -122,6 +122,7 @@ if(CMAKE_BUILD_TYPE MATCHES "Rel")
 else()
   # TODO: set(SCCFLAGS -debug)
 endif()
+# set(SCCFLAGS -noline)
 
 MACRO (_SCC_GENERATE _source _prev)
   string(REGEX MATCH "^([a-zA-Z0-9_]+)\.(d|dd)$" NULL ${_source})

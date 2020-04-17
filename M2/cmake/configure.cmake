@@ -14,6 +14,7 @@
 # use CMAKE_BUILD_TYPE=RelMinSize            for minimized release
 # use BUILD_TESTING=ON                       to build the testing tree
 
+option(LINTING		"Enable linting source files"		OFF)
 option(MEMDEBUG		"Enable memory allocation debugging"	OFF)
 option(PROFILING	"Enable profiling build flags"		OFF)
 option(GIT_SUBMODULE	"Update submodules during build"	OFF)
@@ -161,7 +162,7 @@ endif()
 if(CMAKE_C_COMPILER_ID STREQUAL GNU)
   add_compile_options(-g3
     # -fopenmp # fflas_ffpack wants this, but currently normaliz fails on macOS with it
-    -fabi-version=6 # givaro and fflas_ffpack want this
+    # -fabi-version=6 # givaro and fflas_ffpack want this
     )
   add_link_options(-g3)
 else()

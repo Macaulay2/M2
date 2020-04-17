@@ -63,6 +63,8 @@ set(HPPONLYFILES
   mat-util.hpp
   mutablemat-defs.hpp
   mutablemat-imp.hpp
+  mutablemat.hpp
+  newdelete.hpp
   queue.hpp
   res-a0-pair.hpp
   ringelem.hpp
@@ -80,7 +82,6 @@ set(HPPONLYFILES
 # these files have .cpp file, but NOT .hpp file
 set(CPPONLYFILES
   engine.cpp
-  factor.cpp
   flint.cpp
   franzi-gb.cpp
   franzi-interface.cpp
@@ -100,7 +101,6 @@ set(CPPONLYFILES
   x-mat.cpp
   x-monideal.cpp
   x-monoid.cpp
-  x-monom.cpp
   x-mutablemat.cpp
   x-relem.cpp
   x-ringmap.cpp
@@ -186,8 +186,6 @@ set(SRCLIST
   montable
   montableZZ
   mutablecomplex
-  mutablemat
-  newdelete
   ntl-interface
   ntuple
   overflow
@@ -295,6 +293,15 @@ target_include_directories(M2-engine
     ${CMAKE_BINARY_DIR}/Macaulay2/d
     ${CMAKE_SOURCE_DIR}/Macaulay2/c # TODO: engine should not depend on scc1
   )
+
+###############################################################################
+# Add source linting and formatting checks for this target, see cmake/prechecks.cmake
+
+if(LINTING)
+  _ADD_PRECHECKS(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
+endif()
+
+_ADD_CLANG_FORMAT(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
 
 ###############################################################################
 # TODO: enable INTERPROCEDURAL_OPTIMIZATION?
