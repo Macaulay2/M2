@@ -143,6 +143,8 @@ export substrAlwaysCopy(x:string,start:int,leng:int):string := Ccode(returns, "
 declarations " extern char newline[]; ";
 header " char newline[] = \"\\n\"; ";
 export newline := tostring(Ccode(constcharstarOrNull,"newline"));
+export envc := 0;
+export argc := 0;
 export envp := array(string)();
 export argv := array(string)();
 export args := array(string)();

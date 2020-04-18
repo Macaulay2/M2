@@ -47,7 +47,7 @@
 
 // TODO: What is the default?
 /* whether experimental code has been enabled */
-#cmakedefine EXPERIMENT 1
+#cmakedefine EXPERIMENT
 
 // TODO: only used in Macaulay2/e/x-factor.cpp. Still needed?
 /* whether factory was built with --enable-streamio */

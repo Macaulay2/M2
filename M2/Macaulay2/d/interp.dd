@@ -452,8 +452,6 @@ export topLevel():bool := (
 commandInterpreter(dc:DictionaryClosure):Expr := loadprint("-",dc,false);
 commandInterpreter(f:Frame):Expr := commandInterpreter(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
 commandInterpreter(e:Expr):Expr := (
-     --saveLoadDepth := loadDepth;
-     --setLoadDepth(loadDepth+1);
      incrementInterpreterDepth();
        ret := 
        when e is s:Sequence do (
@@ -470,7 +468,6 @@ commandInterpreter(e:Expr):Expr := (
        is s:SpecialExpr do commandInterpreter(s.e)
        else WrongArg("a function, symbol, dictionary, pseudocode, or ()");
      decrementInterpreterDepth();
-     --setLoadDepth(saveLoadDepth);
      ret);
 setupfun("commandInterpreter",commandInterpreter);
 

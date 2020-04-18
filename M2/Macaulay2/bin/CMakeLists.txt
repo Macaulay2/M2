@@ -5,8 +5,11 @@
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 # TODO: do we still want to use M2${EXE} defined in cmake/config.cmake?
-# TODO: move main.c here
-add_executable(M2-binary timestamp.cpp ../d/main.c)
+add_executable(M2-binary timestamp.cpp main.cpp)
+
+if(TRY_NEW_MAIN)
+  target_compile_definitions(M2-binary PRIVATE EXPERIMENT)
+endif()
 
 set_target_properties(M2-binary PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
 get_target_property(INSTALL_RPATH M2-binary INSTALL_RPATH)

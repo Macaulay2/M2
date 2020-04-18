@@ -84,6 +84,7 @@ static void oursignal(int sig, void (*handler)(int)) {
 
 static int have_arg_no_int;
 
+// TODO: remove this from actors5.d and system.d?
 void system_handleInterruptsSetup(M2_bool handleInterrupts) {
      if (!have_arg_no_int) {
 	  oursignal(SIGINT,handleInterrupts ? interrupt_handler : SIG_DFL);
@@ -529,16 +530,14 @@ void* testFunc(void* q )
 struct saveargs
 {
   int argc;
+  int volatile envc;
   const char * const * argv;
   const char * const * envp;
-  int volatile envc;
 };
 
 static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }
 
-static char dummy;
-static struct saveargs* vargs;
-void* interpFunc(void* vargs2)
+void* interpFunc(void* vargs)
 {
   struct saveargs* args = (struct saveargs*) vargs;
   char const * const * saveenvp = args->envp;
@@ -636,6 +635,7 @@ int Macaulay2_main(const int argc, char * const* argv)
      /* the configure script is responsible for ensuring that rl_catch_signals is defined, or else we build readline ourselves */
      rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
      
+     static struct saveargs* vargs;
      vargs = GC_MALLOC_UNCOLLECTABLE(sizeof(struct saveargs));
      vargs->argv = (const char **)saveargv;
      vargs->argc = argc;
