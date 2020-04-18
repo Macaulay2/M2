@@ -12,7 +12,7 @@ newPackage(
                   Email => "myzhang@berkeley.edu", 
                   HomePage => "https://math.berkeley.edu/~myzhang/"}
 	      },
-        Headline => "Generation of space curves",
+        Headline => "space curves",
         DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",

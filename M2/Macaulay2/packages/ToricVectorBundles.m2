@@ -6,7 +6,7 @@
 -- UPDATE HISTORY : November 2008, November 2009, April 2010
 ---------------------------------------------------------------------------
 newPackage("ToricVectorBundles",
-    Headline => "A package for computations with vector bundles on toric varieties",
+    Headline => "vector bundles on toric varieties",
     Version => "1.1",
     Date => "August 21, 2014",
     Authors => {

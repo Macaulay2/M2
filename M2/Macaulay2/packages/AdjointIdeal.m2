@@ -6,7 +6,7 @@ newPackage(
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
-    	Headline => "Adjoint ideals of plane curves and related computations",
+    	Headline => "adjoint ideals of plane curves and related computations",
     	DebuggingMode => false,
 	CacheExampleOutput => true,
 	PackageImports => {"IntegralClosure","MapleInterface"},

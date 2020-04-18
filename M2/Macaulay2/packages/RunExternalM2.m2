@@ -1058,11 +1058,11 @@ spin = (x,t) -> (
 ////<<endl<<close;
 
 r=runExternalM2(fn,"spin",(5,6),PreRunScript=>"ulimit -t 2");
-assert(not(r#"exit code"===0));
+assert(not(r#"return code"===0));
 assert(r#value===null);
 
 r=runExternalM2(fn,"spin",(5,2),KeepStatistics=>true);
-assert(r#"exit code"===0);
+assert(r#"return code"===0);
 assert(r#value===5);
 assert(instance(r#"statistics",String));
 assert(length(r#"statistics")>0);

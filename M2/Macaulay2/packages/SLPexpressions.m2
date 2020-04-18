@@ -7,7 +7,7 @@ newPackage select((
      "SLPexpressions",
      Version => "1.14",
      Date => "Aug 2019",
-     Headline => "Straight Line Programs and Algebraic Circuits",
+     Headline => "straight line programs and algebraic circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {

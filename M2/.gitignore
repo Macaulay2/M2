@@ -145,7 +145,6 @@
 /Macaulay2/kernel/Makefile
 /Macaulay2/kernel/bibasis/Makefile
 /usr-dist
-/usr-build
 /usr-host
 /.completed
 LOGFILE

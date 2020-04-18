@@ -20,7 +20,7 @@ newPackage(
     		{Name => "Paolo Tripoli", Email => "paolo.tripoli@nottingham.ac.uk", HomePage=>"https://sites.google.com/view/paolotripoli/home"},
    		{Name => "Magdalena Zajaczkowska", Email => "Magdalena.A.Zajaczkowska@gmail.com", HomePage=>""}
 		},
-	Headline => "A package for doing computations in tropical geometry",
+	Headline => "tropical geometry",
 	Configuration => {
 		"path" => "",
 		"fig2devpath" => "",
@@ -30,7 +30,6 @@ newPackage(
 		"polymakeCommand" =>""
 	},
         PackageExports => {"gfanInterface","EliminationMatrices","Binomials"},
-	DebuggingMode => true,
 	AuxiliaryFiles => true,
 --	AuxiliaryFiles => false,
 	CacheExampleOutput => true

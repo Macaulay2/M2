@@ -30,8 +30,7 @@ newPackage(
 		    Email => "ssam@math.mit.edu",
 		    HomePage => "http://math.mit.edu/~ssam/"
 		    }},
-	  Headline => "computations of matrices between representations of 
-	  the general linear group based on the Pieri formulas",
+	  Headline => "maps between representations of the general linear group based on the Pieri formulas",
 	  DebuggingMode => false
 	  )
 
@@ -384,7 +383,7 @@ pureFree(List, PolynomialRing) := (d, P) -> (
 beginDocumentation()
 document {
      Key => PieriMaps,
-     Headline => "Methods for computing Pieri inclusions",
+     Headline => "Pieri inclusions",
      "For mathematical background of this package and some examples of use, see:",
      BR{},
      "Steven V Sam, Computing inclusions of Schur modules, arXiv:0810.4666",

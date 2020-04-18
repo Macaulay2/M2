@@ -15,7 +15,7 @@ Version => "0.3", Date => "August 11th, 2019", Authors => {
      {Name => "C.J. Bott",
      Email => "cjamesbott@gmail.com"}
 }, --this file is in the public domain
-Headline => "A package for working with rational maps.", DebuggingMode => true, Reload=>true)
+Headline => "rational maps")
 export{
 	"isBirationalMap",
 	"idealOfImageOfMap",
@@ -1238,7 +1238,7 @@ beginDocumentation();
 
 document {
     Key => RationalMaps,
-    Headline => "A package for computations with rational maps.",
+    Headline => "rational maps",
     EM "RationalMaps", " is a package for computing things related to maps between projective varieties.",
     BR{},BR{},
     "It focuses on finding where a birational map is undefined, checking whether a map is a closed embedding, checking birationality and computing inverse maps",

@@ -7,8 +7,7 @@ newPackage(
     	Authors => {{Name => "Mike Stillman", 
 		  Email => "mike@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},
-    	Headline => "Canonical subalgebra bases (sagbi bases)",
-    	DebuggingMode => true
+    	Headline => "canonical subalgebra bases (sagbi bases)"
     	)
 
 export {"subalgebraBasis", "sagbi" => "subalgebraBasis", "PrintLevel"}

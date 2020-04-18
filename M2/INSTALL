@@ -83,7 +83,7 @@ various modern operating systems:
 
   Ubuntu and Debian:
     Install packages as root with:
-      apt-get install -y -q sudo autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev
+      apt-get install -y -q sudo autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
@@ -181,15 +181,10 @@ various modern operating systems:
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
       simply run instead.
-    To create the directory /usr/include, along with the files in it, there are two steps:
-        (A) One installs the Xcode Command Line Tools using the following command.
-      	      xcode-select --install
-	(B) Starting with Mac OS X version 10.14 (Mojave), one must run an additional command:
-	      sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
-	    An alternative to the command above is to use the finder to navigate to the directory
-	      /Library/Developer/CommandLineTools/Packages
-	    and then to "open" the package file to get it installed.
-	 Note: After upgrading the OS, if /usr/include is again missing, simply repeat.
+    Install the Xcode Command Line Tools using the following command.
+          xcode-select --install
+       (Starting with Mac OS X version 10.15 (Catalina), /usr/include does not exist and cannot be
+        made to exist, so our previous instructions for getting it no longer apply and have been removed.)
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 
@@ -597,3 +592,18 @@ will and then try:
     The partial word should be completed to "resolution".  Then press:
           C-a
     Verify that the cursor is now at the beginning of the line.
+
+----------------------
+Unexpected problems
+----------------------
+
+Suppose you encounter error messages like this one when compiling in libraries/mpir:
+
+       tmp-mul_1.s:94: Error: no such instruction: `mulx (%rsi),%r9,%r8'
+
+Then try adding --build=`./config/config.guess` to the command line of the
+'configure' command.  This will tell mpir to build itself using just machine
+instructions common to all the architectures in the same class as the
+architecture of your machine, instead of optimizing itself for speed according
+to your system.	 Mpir seems overconfident that the assembler on the machine
+knows about all the machine instructions on the machine.

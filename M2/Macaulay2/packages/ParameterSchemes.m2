@@ -6,7 +6,7 @@ newPackage(
     	Authors => {{Name => "Mike Stillman", 
 		  Email => "mike@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},
-    	Headline => "a Macaulay2 package for local equations of Hilbert and other parameter schemes",
+    	Headline => "local equations of Hilbert and other parameter schemes",
      	PackageImports => { "FourierMotzkin" },
     	DebuggingMode => false
     	)
@@ -326,7 +326,7 @@ groebnerScheme Ideal := opts -> (I) -> (
 beginDocumentation()
 document { 
      Key => ParameterSchemes,
-     Headline => "a Macaulay2 package for local equations of Hilbert and other parameter schemes",
+     Headline => "local equations of Hilbert and other parameter schemes",
      EM "ParameterSchemes", " is a package containing tools to create parameter schemes, 
      especially centered about a monomial ideal.",
      PARA{},

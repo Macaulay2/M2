@@ -67,6 +67,7 @@ static void initpari() {
   }
   if (gen_0 == NULL /* && FALSE /-* groan */ ) {
     pari_init_opts( PARISIZE, MAXPRIME, init_flags);
+    pari_stackcheck_init(NULL);	/* disable stack size checking to prevent spurious errors */
     self_initialized = TRUE;
   }
   cb_pari_err_recover = m2_pari_err_recover;

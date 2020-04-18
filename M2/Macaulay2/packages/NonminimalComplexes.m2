@@ -18,7 +18,7 @@ newPackage(
 		   HomePage => "http://www.math.cornell.edu/~mike"} 
 		},
      	PackageImports => { "SVDComplexes" },
-        Headline => "Obtaining the non-minimal strands of a non-minimal resolution of a homogeneous module"
+        Headline => "non-minimal strands of a non-minimal resolution of a homogeneous module"
         )
 
 export {

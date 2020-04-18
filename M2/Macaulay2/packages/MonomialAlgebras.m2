@@ -7,7 +7,7 @@ newPackage(
          {Name => "Janko Boehm", Email => "boehm@mathematik.uni-kl.de", HomePage => "http://www.mathematik.uni-kl.de/~boehm/"},
          {Name => "Max Nitsche", Email => "nitsche@mis.mpg.de", HomePage => ""}
          },
-    	Headline => "Monomial algebras",
+    	Headline => "monomial algebras",
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",

@@ -148,7 +148,7 @@ M2INCLUDES += -I@srcdir@/../regex
 # it's important that *our* directories get searched first:
 CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)
 
-CPPFLAGS += -Wno-fatal-errors -Wno-unknown-pragmas
+CPPFLAGS += -Wno-unknown-pragmas
 
 CFLAGS += $(M2_CFLAGS)
 ifeq "@__INTEL_COMPILER@" "no"
@@ -160,9 +160,15 @@ CXXFLAGS += $(M2_CXXFLAGS)
 CFLAGS   += -Wreturn-type
 CXXFLAGS += -Wreturn-type
 
+CFLAGS   += -Wfatal-errors
+CXXFLAGS += -Wfatal-errors
+
 # the following is included since g++-8 and gcc-8 give many warnings arising from "pragma omp"
 # and apparently it can't be silenced in source code.
 CXXFLAGS += -Wno-unknown-pragmas
+
+# This hushes warnings about "struct" and "class" both being used.
+CXXFLAGS += -Wno-mismatched-tags
 
 python-c.o : | python-exports.h.tmp
 
@@ -176,7 +182,7 @@ M2lib.o scclib.o : | interp-exports.h.tmp
 scclib.o : expr-exports.h M2mem.h M2inits.h ../dumpdata/map.h debug.h types.h ../c/compat.h ../e/engine.h ../dumpdata/dumpdata.h
 M2lib.o : types.h ../c/compat.c debug.h M2mem.h ../c/compat.h ../e/engine.h ../dumpdata/dumpdata.h
 gmp_int.o M2lib.o scclib.o gdbm_interface.o gc_cpp.o M2inits.o debug.o : ../../include/M2/config.h
-M2.o : ../../include/M2/config.h
+M2.o : ../../include/M2/config.h @srcdir@/../c/scc-core.h
 
 all: M2inits1.o
 all: libM2inits2.a

@@ -6,7 +6,7 @@ newPackage( "Divisor",
      Authors => {
 	  {Name => "Karl Schwede", Email=> "kschwede@gmail.com", HomePage=> "http://www.math.utah.edu/~schwede"},
      	  {Name=> "Zhaoning Yang", Email=> "zyy5054@gmail.com", HomePage => "http://sites.psu.edu/zhaoningyang"}},
-     Headline => "a package for working with Weil divisors",
+     Headline => "Weil divisors",
      PackageImports => { "IntegralClosure", "RationalMaps" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -1944,7 +1944,7 @@ beginDocumentation();
 
 document {
     Key => Divisor,
-    Headline => "a package for computations with divisors",
+    Headline => "divisors",
     EM "Divisor", " is a package for working with (Q/R)-Weil divisors on ", EM "normal", " affine and projective varieties (equivalently, on commutative, normal and graded rings).", 
     BR{},BR{},
     "This package introduces a type ", TO "WeilDivisor", " which lets the user work with Weil divisors similar to the way one might in algebraic geometry.  We highlight a few important functions below.",

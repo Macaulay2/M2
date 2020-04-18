@@ -5,33 +5,28 @@ dnl appears as a literal value.
 dnl Note: it is best to increment version numbers on the master branch, so they are
 dnl       all incremented on the same branch, hence in a well-defined order, despite possible merging.
 
-dnl Things to do when incrementing the version number to X.Y.Z (or X.Y) :
-dnl    - increment the version number in the AC_INIT macro below
-dnl    - add an entry to distributions/deb/changelog
-dnl    - commit those two changed files
-dnl    - make a git tag of the form version-X.Y.Z
+dnl Things to do when incrementing the version number to X.Y.Z, say :
+dnl    - on the master branch:
+dnl      - increment the version number in the AC_INIT macro below
+dnl      - add an entry to distributions/deb/changelog
+dnl      - commit the two files and push upstream
+dnl      - make a git tag of the form version-X.Y.Z and push it to github
 dnl    	      git tag version-X.Y.Z
-dnl    - make a git branch of the form release-X.Y.Z, if it's for final development of a binary release
-dnl           git checkout -b release-X.Y.Z
-dnl    - push the new branch to github and track it
-dnl           git push -u origin release-X.Y.Z
-dnl    - push the new tag to github
 dnl           git push --tags origin version-X.Y.Z
 
-dnl Things to do when the release has been accomplished and pulling from the master branch to the release branch will not be needed:
-dnl    - on the master branch, increment the version number to X.Y.Z.1 in this file and add an
-dnl      entry to distributions/deb/changelog for it, setting Z=0 if it was
-dnl      omitted above.  Commit that change and make a tag.  I.e.:
-dnl           git checkout master
-dnl           # edit two files, as above, and commit
-dnl           git tag version-X.Y.Z.1
-dnl           git push --tags origin version-X.Y.Z.1
+dnl Things to do when developing a binary release for version X.Y
+dnl    - on the master branch:
+dnl      - increment version to X.Y, as described above
+dnl      - make a git branch of the form release-X.Y
+dnl           git branch release-X.Y
+dnl      - update version to X.Y.0.1, as described above, so development on the master branch can continue
+dnl    - switch to release-X.Y and develop it there, eventually merging it into the master branch
 
 dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
 dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
 
-AC_INIT(Macaulay2, 1.14.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.15.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
@@ -608,6 +603,12 @@ test "$EXPERIMENT" = no; val=$?; AC_DEFINE_UNQUOTED(EXPERIMENT,$val,whether expe
 AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare binary and source packages as compressed tar files), M2TARFILE=$enableval)
 AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS=$enableval)
 AC_SUBST(SHARED,yes)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--disable-shared,disable building of shared libraries), SHARED=$enableval)
+
+dnl Under Mac OS X 10.15 the Gatekeeper makes it impossible for us to distribute shared libraries with our program to end users in disk image (*.dmg) format:
+if test "$ISSUE_FLAVOR" = "MacOS"
+then SHARED=no
+     AC_MSG_NOTICE([disabling the building of shared libraries under Mac OS X])
+fi
 
 test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" ENABLE_STRIP=no
@@ -1714,12 +1715,46 @@ done
 
 AC_LANG(C)
 
-AC_MSG_CHECKING(whether package libxml-2.0 is provided)
-if [ pkg-config --exists libxml-2.0 ]
-then AC_MSG_RESULT(yes)
-     CPPFLAGS="`pkg-config --cflags-only-I libxml-2.0 | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-else AC_MSG_ERROR([no, package libxml-2.0 not found, install it])
+dnl        The installation of libxml2 under Mac OS X is problematic:
+dnl            (1) Starting with Mac OS X 10.15, /usr/include is not present.  The compilers look in
+dnl                /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include instead.  It's a good idea
+dnl                not to depend on that.
+dnl            (2) The libraries own include files have lines like this:
+dnl                   #include <libxml/xmlversion.h>
+dnl                but the files is found at this path
+dnl                   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libxml2/libxml/xmlexports.h
+dnl        Combine (1) and (2) and we conclude that somehow we have to get this option on the compiler command line:
+dnl                   -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libxml2
+dnl        Ubuntu doesn't have this problem, because the configuration is done correctly:
+dnl                   $ pkg-config --cflags libxml-2.0
+dnl                   -I/usr/include/libxml2
+dnl        , and we can just use that.  Homebrew tries to emulate that by providing pkg-config files that provide the
+dnl        same value, but as we said above, /usr/include is not present, so that doesn't work!
+dnl
+dnl        The solution seems to be to use the C preprocessor to obtain the path to the file libxml include files, and
+dnl        to use that to automatically add the correct option to CPPFLAGS.  This assumes the system allows
+dnl	              #include <libxml2/libxml/xmlversion.h>
+dnl        to work, but not
+dnl	              #include <libxml/xmlversion.h>
+dnl        , so we test those two lines early.
+dnl
+if pkg-config --exists libxml-2.0
+then XML_INCLUDE=`pkg-config --cflags-only-I libxml-2.0 | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'`
+     AC_MSG_NOTICE(pkg-config: will search for include files also in $XML_INCLUDE)
+     CPPFLAGS="$XML_INCLUDE $CPPFLAGS"
 fi
+AC_CHECK_HEADERS(libxml2/libxml/xmlexports.h)
+dnl now improve the situation:
+dnl ac_cv_header_
+AC_LANG(C)
+AC_PREPROC_IFELSE(
+   [AC_LANG_SOURCE([[
+	#include <libxml2/libxml/xmlexports.h>
+	]])],
+   LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `)
+AC_MSG_NOTICE(found in libxml2: will search for include files also in $LIBXML_LOCATION)
+CPPFLAGS="-isystem $LIBXML_LOCATION $CPPFLAGS"
+AC_CHECK_HEADERS(libxml/xmlexports.h libxml/parser.h)
 
 AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
 AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))

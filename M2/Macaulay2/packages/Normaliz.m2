@@ -17,7 +17,7 @@ newPackage(
                     Email=>"gkaempf@uni-osnabrueck.de"},
                     {Name=> "Christof Soeger",
                     Email=>"csoeger@uni-osnabrueck.de"}},
-           Headline=>"a package to use Normaliz in Macaulay 2",
+           Headline=>"interface to Normaliz in Macaulay2",
            DebuggingMode => false,
 	   Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",

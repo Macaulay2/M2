@@ -125,15 +125,15 @@ localResolution Module := options -> (M) -> (
 	  );
      C)
 
-end--
-
 beginDocumentation()
 
+-*
 document { Key => LocalRings,
      Headline => "Polynomial rings localized at a maximal ideal",
      EM "LocalRings", " is a package for finding minimal generators, syzygies and resolutions
      for polynomial rings localized at a maximal ideal.",
      }
+*-
 
 document {
      Key => {setMaxIdeal, (setMaxIdeal,Ideal)},
