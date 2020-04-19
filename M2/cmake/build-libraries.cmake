@@ -670,10 +670,25 @@ if(AUTOTUNE)
 endif()
 
 
-# TODO: add testing
+ExternalProject_Add(build-googletest
+  GIT_REPOSITORY    https://github.com/google/googletest.git
+  GIT_TAG           release-1.10.0 # 42bc671f
+  PREFIX            libraries/googletest
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/googletest
+  BINARY_DIR        libraries/googletest/build
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX} -DBUILD_GMOCK=OFF
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install
+  )
+if(BUILD_TESTING AND NOT GTEST_FOUND)
+  # Add this to the libraries target
+  add_dependencies(build-libraries build-googletest-install)
+endif()
+
+
 ExternalProject_Add(build-memtailor
   GIT_REPOSITORY    https://github.com/mahrud/memtailor.git
-  GIT_TAG           af4a81f57fb585a541f5fefb517f2ad91b38cbe9 # original: e85453b
+  GIT_TAG           1499aba498edcfadfeb0718b18b94822688165e0
   PREFIX            libraries/memtailor
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/memtailor
   BINARY_DIR        libraries/memtailor/build
@@ -681,20 +696,23 @@ ExternalProject_Add(build-memtailor
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                    -DPACKAGE_TESTS=OFF
+                    -DBUILD_TESTING=${BUILD_TESTING}
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
   )
 if(NOT MEMTAILOR_FOUND)
   # Add this to the libraries target
   add_dependencies(build-libraries build-memtailor-install)
+  if(BUILD_TESTING AND NOT GTEST_FOUND)
+    ExternalProject_Add_StepDependencies(build-memtailor configure build-googletest-install)
+  endif()
 endif()
 
 
-# TODO: add testing
 ExternalProject_Add(build-mathic
   GIT_REPOSITORY    https://github.com/mahrud/mathic.git
-  GIT_TAG           770fe83edb4edae061af613328bbe2d380ea26d6 # original: 023afcf
+  GIT_TAG           65664cbb833c905b175edd02220bcf2725722ee3
   PREFIX            libraries/mathic
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathic
   BINARY_DIR        libraries/mathic/build
@@ -703,10 +721,10 @@ ExternalProject_Add(build-mathic
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                    -DPACKAGE_TESTS=OFF
-  DEPENDS           build-memtailor
+                    -DBUILD_TESTING=${BUILD_TESTING}
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
   )
 if(NOT MATHIC_FOUND)
   # Add this to the libraries target
@@ -714,15 +732,17 @@ if(NOT MATHIC_FOUND)
   if(NOT MEMTAILOR_FOUND)
     ExternalProject_Add_StepDependencies(build-mathic configure build-memtailor-install)
   endif()
+  if(BUILD_TESTING AND NOT GTEST_FOUND)
+    ExternalProject_Add_StepDependencies(build-mathic configure build-googletest-install)
+  endif()
 endif()
 
 
-# TODO: add testing
 # TODO: g++ warning: tbb.h contains deprecated functionality.
 # https://www.threadingbuildingblocks.org/docs/help/reference/appendices/deprecated_features.html
 ExternalProject_Add(build-mathicgb
   GIT_REPOSITORY    https://github.com/mahrud/mathicgb.git
-  GIT_TAG           557d3da746c6888ef05f29c2f095f0262080956d # original: bd634c8
+  GIT_TAG           ce385523f38dd7b560fdd835470d47651d2b992f
   PREFIX            libraries/mathicgb
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathicgb
   BINARY_DIR        libraries/mathicgb/build
@@ -731,9 +751,11 @@ ExternalProject_Add(build-mathicgb
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                    -DPACKAGE_TESTS=OFF
+                    -DBUILD_TESTING=${BUILD_TESTING}
+                    -Denable_mgb=ON
   EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
   )
 if(NOT MATHICGB_FOUND)
   # Add this to the libraries target
@@ -741,23 +763,9 @@ if(NOT MATHICGB_FOUND)
   if(NOT MATHIC_FOUND)
     ExternalProject_Add_StepDependencies(build-mathicgb configure build-mathic-install)
   endif()
-endif()
-
-
-# TODO: do we actually need it built?
-ExternalProject_Add(build-googletest
-  GIT_REPOSITORY    https://github.com/google/googletest.git
-  GIT_TAG           release-1.10.0 # 42bc671f
-  PREFIX            libraries/googletest
-  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/googletest
-  BINARY_DIR        libraries/googletest/build
-  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX} -DBUILD_GMOCK=OFF # -DINSTALL_GTEST=OFF
-  EXCLUDE_FROM_ALL  ON
-  STEP_TARGETS      install
-  )
-if(BUILD_TESTING AND NOT GTEST_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-googletest-install)
+  if(BUILD_TESTING AND NOT GTEST_FOUND)
+    ExternalProject_Add_StepDependencies(build-mathicgb configure build-googletest-install)
+  endif()
 endif()
 
 ###############################################################################
@@ -792,6 +800,7 @@ ExternalProject_Add(build-4ti2
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-strip
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${4ti2_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/bin
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON # FIXME
   STEP_TARGETS      install test

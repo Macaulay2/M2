@@ -10,7 +10,7 @@ set(CLANG_TIDY_CHECKS
   -*,clang-analyzer-*,cppcoreguidelines-*,performance-*,modernize-*)#,readability-*)
 
 MACRO (_ADD_PRECHECKS _target _c_sources _cxx_sources)
-  message("Setting up source checks for target ${_target} ...")
+  message("-- Setting up source checks for target ${_target} ...")
   message("     lwyu (link what you use)")
   set_target_properties(${_target} PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
@@ -40,7 +40,7 @@ ENDMACRO (_ADD_PRECHECKS)
 
 MACRO (_ADD_CLANG_FORMAT _target _c_sources _cxx_sources)
   if(CLANG_FORMAT)
-    message("Setting up reformat target for running clang-format on ${_target}")
+    message("-- Setting up reformat target for running clang-format on ${_target}")
     # TODO: editing source files from cmake ... kind of a bad idea
     # C_CHANGED_FILES = $(git diff --cached --name-only --diff-filter=ACM | grep -Ee "\.[ch]$")
     # CXX_CHANGED_FILES = $(git diff --cached --name-only --diff-filter=ACM | grep -Ee "\.([ch](pp|xx))$")
