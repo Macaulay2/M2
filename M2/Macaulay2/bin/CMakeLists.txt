@@ -14,6 +14,8 @@ endif()
 set_target_properties(M2-binary PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
 get_target_property(INSTALL_RPATH M2-binary INSTALL_RPATH)
 
+target_include_directories(M2-binary PRIVATE ${READLINE_INCLUDE_DIR})
+
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
   M2-regex M2-interpreter M2-engine M2-system

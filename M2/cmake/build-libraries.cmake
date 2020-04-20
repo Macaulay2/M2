@@ -31,6 +31,7 @@ file(MAKE_DIRECTORY ${M2_INSTALL_PROGRAMSDIR}/bin)
 
 ## These target run the tests on the external components
 add_custom_target(check-components)
+add_custom_target(check-components-slow)
 set(SKIP_TESTS "eigen;ntl;flint;mpsolve;googletest" CACHE STRING "Long or broken tests to skip")
 
 ## This target forces libraries and programs to run their configure and install targets
@@ -105,30 +106,29 @@ set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSou
 # _name:       lowercase name of a library or program; e.g. mp, flint, cohomcalg
 # _dependency: lowercase name of the library or program that ${_name} should depend on
 # NOTE: ${_dependency}_FOUND is used to check whether ${_dependency} is present or not
-MACRO (_ADD_STEP_DEPENDENCY _name _dependency)
-  string(TOUPPER ${_dependency} _dependency)
-  if(NOT ${_dependency}_FOUND AND NOT ${_dependency})
-    if(VERBOSE)
-      message(STATUS "${_name} depends on ${_dependency}, ${_dependency} will be built first")
-    endif()
+FUNCTION (_ADD_STEP_DEPENDENCY _name _dependency)
+  if(${_dependency} STREQUAL mp)
+    string(TOLOWER ${MP_LIBRARY} _dependency)
+  endif()
+  string(TOUPPER "${_dependency}" _condition)
+  if(NOT ${_condition}_FOUND AND NOT ${_condition})
     ExternalProject_Add_StepDependencies(build-${_name} configure build-${_dependency}-install)
   endif()
-ENDMACRO (_ADD_STEP_DEPENDENCY)
+ENDFUNCTION (_ADD_STEP_DEPENDENCY)
 
 # If not found, add _name to the build-${_component} target
 # _component:       either "libraries" or "programs"
 # _name             lowercase name of a library or program; e.g. mp, flint, cohomcalg
 # _dependencies:    list of lowercase library names; e.g. "mp mpfr"
 # _found_condition: add dependency only if ${_found_condition} evaluates to false
-MACRO (_ADD_COMPONENT_DEPENDENCY _component _name _dependencies _found_condition)
+FUNCTION (_ADD_COMPONENT_DEPENDENCY _component _name _dependencies _found_condition)
   if(NOT ${_found_condition})
     add_dependencies(build-${_component} build-${_name}-install)
+    foreach(_dependency IN LISTS _dependencies)
+      _ADD_STEP_DEPENDENCY(${_name} ${_dependency})
+    endforeach()
   endif()
-  set(_dependencies ${_dependencies}) # FIXME: not sure why this is needed
-  foreach(_dependency IN LISTS _dependencies)
-    _ADD_STEP_DEPENDENCY(${_name} ${_dependency})
-  endforeach()
-ENDMACRO (_ADD_COMPONENT_DEPENDENCY)
+ENDFUNCTION (_ADD_COMPONENT_DEPENDENCY)
 
 
 #################################################################################
@@ -223,14 +223,13 @@ ExternalProject_Add(build-mpir
   STEP_TARGETS      install test
   )
 # Alias
-add_custom_target(build-mp-install DEPENDS build-mpir-install)
 if(NOT MP_FOUND)
   if(MP_LIBRARY STREQUAL GMP)
     # gmp is a prerequisite
     message(FATAL_ERROR "gmp integer package specified, but not found")
   elseif(MP_LIBRARY STREQUAL MPIR)
     # Add this to the libraries target
-    add_dependencies(build-libraries build-mpir-install)
+    _ADD_COMPONENT_DEPENDENCY(libraries mpir "" MPIR_FOUND)
   endif()
 endif()
 # Making sure flint can find the gmp.h->mpir.h symlink
@@ -383,7 +382,7 @@ ExternalProject_Add(build-factory
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-omalloc
                       --disable-doxygen-doc
-                      --enable-static # FIXME: ${shared_setting}
+                      ${shared_setting}
                       ${assertions_setting}
                       --enable-streamio
                       --without-Singular
@@ -497,6 +496,7 @@ ExternalProject_Add(build-cddlib
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+set(CDDLIB_FOUND ${CDD_FOUND})
 _ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDD_FOUND)
 
 
@@ -917,7 +917,6 @@ ExternalProject_Add(build-nauty
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-set(NAUTY_FOUND ${NAUTY})
 _ADD_COMPONENT_DEPENDENCY(programs nauty "" NAUTY)
 
 
@@ -1078,12 +1077,13 @@ string(REGEX REPLACE "(build-|-install)" "" INSTALLED_LIST_0  "${_installed_list
 foreach(_i IN ITEMS 1 2 3 4)
   list(SUBLIST INSTALLED_LIST_0 ${_j}0 10 INSTALLED_LIST_${_i})
   list(LENGTH INSTALLED_LIST_${_i} _n)
-  if(${_n} EQUAL 10)
-    set(INSTALLED_LIST "${INSTALLED_LIST}\n         ${INSTALLED_LIST_${_i}}")
-  else()
-    break()
-  endif()
   set(_j ${_i})
+  if(${_n} GREATER 0)
+    set(INSTALLED_LIST "${INSTALLED_LIST}\n         ${INSTALLED_LIST_${_i}}")
+    if(${_n} LESS 10)
+      break()
+    endif()
+  endif()
 endforeach()
 if(NOT INSTALLED_LIST)
   set(INSTALLED_LIST N/A)
@@ -1110,8 +1110,8 @@ message("## Library information:
      MP Arithmetic     = ${MP_LIBRARIES}")
 
 if(BUILD_LIB_LIST OR BUILD_PROG_LIST)
-  message(CHECK_FAIL "Some components are missing")
+  message(CHECK_FAIL " Some components are missing")
   message("## Rerun the build-libraries and build-programs targets")
 else()
-  message(CHECK_PASS "Everything is in order! 🎉")
+  message(CHECK_PASS " Everything is in order! 🎉")
 endif()

@@ -47,6 +47,7 @@ struct Args
 extern "C" void clean_up();
 extern "C" void system_cpuTime_init();
 extern "C" bool gotArg(const char *arg, const char * const* argv);
+extern "C" char ** environ;
 
 /* ######################################################################### */
 
