@@ -29,6 +29,10 @@ add_custom_target(build-programs)
 file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
 file(MAKE_DIRECTORY ${M2_INSTALL_PROGRAMSDIR}/bin)
 
+## These target run the tests on the external components
+add_custom_target(check-components)
+set(SKIP_TESTS eigen;ntl;flint;mpsolve CACHE STRING "Long or broken tests to skip")
+
 ## This target forces libraries and programs to run their configure and install targets
 add_custom_target(clean-stamps
   COMMAND rm libraries/*/src/build-*-stamp/*-{configure,install})
@@ -91,11 +95,49 @@ if(VERBOSE)
 endif()
 
 #################################################################################
-## Build required libraries, first those downloaded as a tarfile
+## A few macros for adding dependencies between components
 
-include(ExternalProject) # configure, patch, build, and install at build time
+include(ExternalProject) # configure, patch, build, install, or test at build time
 set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
 
+# Conditionally ensure that _dependency is installed before _name is configured
+# _name:       lowercase name of a library or program; e.g. mp, flint, cohomcalg
+# _dependency: lowercase name of the library or program that ${_name} should depend on
+# _condition:  add dependency only if ${_condition} evaluates to true
+MACRO (_ADD_CONDITIONED_DEPENDENCY _name _dependency _condition)
+  if(${_condition})
+    ExternalProject_Add_StepDependencies(build-${_name} configure build-${_dependency}-install)
+  endif()
+ENDMACRO (_ADD_CONDITIONED_DEPENDENCY)
+
+# Ensure that _dependency is found before _name is configured
+# _name:       lowercase name of a library or program; e.g. mp, flint, cohomcalg
+# _dependency: lowercase name of the library or program that ${_name} should depend on
+# NOTE: ${_dependency}_FOUND is used to check whether ${_dependency} is present or not
+MACRO (_ADD_STEP_DEPENDENCY _name _dependency)
+  string(TOUPPER ${${_dependency}_FOUND} _condition)
+  _ADD_CONDITIONED_DEPENDENCY(${_name} ${_dependency} "NOT ${_condition}")
+ENDMACRO (_ADD_STEP_DEPENDENCY)
+
+# If not found, add _name to the build-${_component} target
+# _component:       either "libraries" or "programs"
+# _name             lowercase name of a library or program; e.g. mp, flint, cohomcalg
+# _dependencies:    list of lowercase library names; e.g. "mp mpfr"
+# _found_condition: add dependency only if ${_found_condition} evaluates to false
+MACRO (_ADD_COMPONENT_DEPENDENCY _component _name _dependencies _found_condition)
+  if(NOT ${_found_condition})
+    add_dependencies(build-${_component} build-${_name}-install)
+    foreach(_dependency IN LISTS _dependencies)
+      _ADD_STEP_DEPENDENCY(${_name} ${_dependency})
+    endforeach()
+  endif()
+ENDMACRO (_ADD_COMPONENT_DEPENDENCY)
+
+#################################################################################
+## Build required libraries, first those downloaded as a tarfile
+## See https://cmake.org/cmake/help/latest/module/ExternalProject.html
+
+# http://eigen.tuxfamily.org/
 ExternalProject_Add(build-eigen
   URL               https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz
   URL_HASH          SHA256=d56fbad95abf993f8af608484729e3d87ef611dd85b3380a8bad1d5cbc373a57
@@ -105,19 +147,20 @@ ExternalProject_Add(build-eigen
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_TESTING=${BUILD_TESTING}
+  TEST_COMMAND      ${CMAKE_COMMAND} . -DEIGEN_LEAVE_TEST_IN_ALL_TARGET=ON
+       COMMAND      ${CMAKE_COMMAND} --build .
+       COMMAND      ${CMAKE_COMMAND} --build . --target test
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT EIGEN3_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-eigen-install)
-endif()
+_ADD_COMPONENT_DEPENDENCY(libraries eigen "" EIGEN3_FOUND)
 
 
+# https://github.com/ivmai/bdwgc/
 # TODO: add environment variables GC_LARGE_ALLOC_WARN_INTERVAL and GC_ABORT_ON_LEAK
 # Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
-# Currently cloning master for significant cmake support. Hopefully soon there will be a stable release
+# FIXME: fix a commit to use instead of master
 ExternalProject_Add(build-bdwgc
   GIT_REPOSITORY    https://github.com/ivmai/bdwgc.git
   GIT_TAG           master
@@ -144,13 +187,10 @@ ExternalProject_Add(build-bdwgc
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT BDWGC_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-bdwgc-install)
-endif()
+_ADD_COMPONENT_DEPENDENCY(libraries bdwgc "" BDWGC_FOUND)
 
 
-# TODO: use git? https://github.com/Macaulay2/mpir.git 82816d99
+# https://github.com/wbhart/mpir
 ExternalProject_Add(build-mpir
   URL               ${M2_SOURCE_URL}/mpir-3.0.0.tar.bz2
   URL_HASH          SHA256=52f63459cf3f9478859de29e00357f004050ead70b45913f2c2269d9708675bb
@@ -187,10 +227,11 @@ ExternalProject_Add(build-mpir
 if(NOT MP_FOUND)
   if(MP_LIBRARY STREQUAL GMP)
     # gmp is a prerequisite
-    message(FATAL "gmp integer package specified, but not found")
+    message(FATAL_ERROR "gmp integer package specified, but not found")
   elseif(MP_LIBRARY STREQUAL MPIR)
     # Add this to the libraries target
     add_dependencies(build-libraries build-mpir-install)
+    add_custom_target(build-mp-install DEPENDS build-mpir-install)
   endif()
 endif()
 # Making sure flint can find the gmp.h->mpir.h symlink
@@ -200,8 +241,8 @@ if(MPIR_FOUND AND NOT EXISTS ${M2_HOST_PREFIX}/include/gmp.h)
 endif()
 
 
-# TODO: Is this still relevant?
-# mpfr puts pointers to gmp numbers in thread local variables, unless
+# https://www.mpfr.org/
+# NOTE: mpfr puts pointers to gmp numbers in thread local variables, unless
 # specially configured, so we shouldn't tell gmp to use libgc (we used to do that)
 ExternalProject_Add(build-mpfr
   URL               ${M2_SOURCE_URL}/mpfr-4.0.2.tar.xz
@@ -235,20 +276,10 @@ ExternalProject_Add(build-mpfr
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT MPFR_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-mpfr-install)
-  if(NOT MP_FOUND)
-    ExternalProject_Add_StepDependencies(build-mpfr configure build-mpir-install)
-  endif()
-endif()
+_ADD_COMPONENT_DEPENDENCY(libraries mpfr mp MPFR_FOUND)
 
 
 # http://shoup.net/ntl
-# what is MakeDescCFLAGS=-O0
-if(USING_MPIR)
-  set(ntl_GMP_PREFIX GMP_PREFIX=${M2_HOST_PREFIX})
-endif()
 ExternalProject_Add(build-ntl
   URL               https://www.shoup.net/ntl/ntl-11.4.3.tar.gz
   URL_HASH          SHA256=b7c1ccdc64840e6a24351eb4a1e68887d29974f03073a1941c906562c0b83ad2
@@ -258,10 +289,10 @@ ExternalProject_Add(build-ntl
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND cd src && ${CONFIGURE} PREFIX=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      ${ntl_GMP_PREFIX}
                       TUNE=generic
                       NATIVE=off
-                      SHARED=$<IF:$<BOOL:BUILD_SHARED_LIBS>,on,off>
+                      $<$<BOOL:${USING_MPIR}>:GMP_PREFIX=${M2_HOST_PREFIX}>
+                      SHARED=$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
                       CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
@@ -280,10 +311,10 @@ ExternalProject_Add_Step(build-ntl wizard
   COMMENT           "Building NTL with NTL_WIZARD"
   COMMAND           ${CONFIGURE} PREFIX=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      ${ntl_GMP_PREFIX}
                       TUNE=auto
                       NATIVE=on
-                      SHARED=$<IF:$<BOOL:BUILD_SHARED_LIBS>,on,off>
+                      $<$<BOOL:${USING_MPIR}>:GMP_PREFIX=${M2_HOST_PREFIX}>
+                      SHARED=$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
                       CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
@@ -296,18 +327,13 @@ ExternalProject_Add_Step(build-ntl wizard
   EXCLUDE_FROM_MAIN ON
   USES_TERMINAL ON
   )
-if(NOT NTL_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-ntl-install)
-  if(NOT MP_FOUND)
-    ExternalProject_Add_StepDependencies(build-ntl configure build-mpir-install)
-  endif()
-endif()
 if(AUTOTUNE)
   add_dependencies(build-ntl-install build-ntl-wizard)
 endif()
+_ADD_COMPONENT_DEPENDENCY(libraries ntl mp NTL_FOUND)
 
 
+# https://github.com/wbhart/flint2
 ExternalProject_Add(build-flint
   GIT_REPOSITORY    https://github.com/mahrud/flint2.git
   GIT_TAG           HEAD
@@ -319,7 +345,7 @@ ExternalProject_Add(build-flint
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-                    -DBUILD_TESTING=OFF # ${BUILD_TESTING} # Takes too long
+                    -DBUILD_TESTING=OFF # Flint builds too many tests, so make them a separate target
                     -DBUILD_SHARED_LIBS=ON # ${BUILD_SHARED_LIBS} # TODO: get static flint building to work
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
                     -DHAVE_TLS=OFF
@@ -328,28 +354,19 @@ ExternalProject_Add(build-flint
                     # Possible variables for the CMake build:
                     #-DHAS_FLAG_MPOPCNT
                     #-DHAS_FLAG_UNROLL_LOOPS
-                    #-DBUILD_DOCS
+  TEST_COMMAND      ${CMAKE_COMMAND} . -DBUILD_TESTING=ON
+       COMMAND      ${CMAKE_COMMAND} --build .
+       COMMAND      ${CMAKE_COMMAND} --build . --target test
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT FLINT_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-flint-install)
-  if(NOT MP_FOUND)
-    ExternalProject_Add_StepDependencies(build-flint configure build-mpir-install)
-  endif()
-  if(NOT MPFR_FOUND)
-    ExternalProject_Add_StepDependencies(build-flint configure build-mpfr-install)
-  endif()
-  if(NOT NTL_FOUND)
-    ExternalProject_Add_StepDependencies(build-flint configure build-ntl-install)
-  endif()
-endif()
+_ADD_COMPONENT_DEPENDENCY(libraries flint "mp mpfr ntl" FLINT_FOUND)
 
 
+# https://github.com/Singular/Sources/tree/spielwiese/factory
 # TODO: what is ftmpl_inst.o?
-set(factory_CPPFLAGS "${CPPFLAGS} -DSING_NDEBUG -DOM_NDEBUG -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
+set(factory_CPPFLAGS "${CPPFLAGS} -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
 set(factory_WARNFLAGS "-Wno-uninitialized -Wno-write-strings -Wno-deprecated")
 set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} ${NTL_INCLUDE_DIR}/..")
 set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} ${FLINT_INCLUDE_DIR}/..")
@@ -394,22 +411,7 @@ ExternalProject_Add(build-factory
   STEP_TARGETS      install test
   )
 if(NOT FACTORY_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-factory-install)
-  set(FACTORY_STREAMIO 1) # TODO: does this work?
-  # TODO: repeat pkg_search_module(FACTORY      factory singular-factory IMPORTED_TARGET)
-  if(NOT MP_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory configure build-mpir-install)
-  endif()
-  if(NOT MPFR_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory configure build-mpfr-install)
-  endif()
-  if(NOT NTL_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory configure build-ntl-install)
-  endif()
-  if(NOT FLINT_FOUND)
-    ExternalProject_Add_StepDependencies(build-factory configure build-flint-install) # lol
-  endif()
+  unset(FACTORY_STREAMIO CACHE)
 else()
   if(NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
     message(STATUS "Copying gftables in ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables")
@@ -417,8 +419,10 @@ else()
     file(COPY ${GFTABLES} DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
   endif()
 endif()
+_ADD_COMPONENT_DEPENDENCY(libraries factory "mp mpfr ntl flint" FACTORY_FOUND)
 
 
+# https://www.broune.com/frobby/
 # TODO: version#"frobby version" is missing
 # TODO: switch to https://github.com/Macaulay2/frobby
 set(frobby_CXXFLAGS "${CPPFLAGS} ${CXXFLAGS} -Wno-deprecated-declarations")
@@ -452,13 +456,7 @@ ExternalProject_Add(build-frobby
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT FROBBY_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-frobby-install)
-  if(NOT MP_FOUND)
-    ExternalProject_Add_StepDependencies(build-frobby configure build-mpir-install)
-  endif()
-endif()
+_ADD_COMPONENT_DEPENDENCY(libraries frobby mp FROBBY_FOUND)
 
 
 # https://www.inf.ethz.ch/personal/fukudak/cdd_home/
@@ -500,15 +498,10 @@ ExternalProject_Add(build-cddlib
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT CDD_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-cddlib-install)
-  if(NOT MP_FOUND)
-    ExternalProject_Add_StepDependencies(build-cddlib configure build-mpir-install)
-  endif()
-endif()
+_ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDD_FOUND)
 
 
+# https://www.gnu.org/software/glpk/
 ExternalProject_Add(build-glpk
   URL               ${M2_SOURCE_URL}/glpk-4.59.tar.gz
   URL_HASH          SHA256=e398be2e7cb8a98584325268704729872558a4a88555bc8a54139d017eb9ebae
@@ -530,15 +523,10 @@ ExternalProject_Add(build-glpk
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT GLPK_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-glpk-install)
-  if(NOT MP_FOUND)
-    ExternalProject_Add_StepDependencies(build-glpk configure build-mpir-install)
-  endif()
-endif()
+_ADD_COMPONENT_DEPENDENCY(libraries glpk mp GLPK_FOUND)
 
 
+# https://numpi.dm.unipi.it/software/mpsolve
 ExternalProject_Add(build-mpsolve
   URL               https://numpi.dm.unipi.it/_media/software/mpsolve/mpsolve-3.1.8.tar.gz
   URL_HASH          SHA256=34740339d14cf8ca6d3f7da7ca12237b6da642623d14a6d6d5b5fc684c9c0fe5
@@ -565,18 +553,12 @@ ExternalProject_Add(build-mpsolve
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test # TODO: fails when building static library
   )
-if(NOT MPSOLVE_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-mpsolve-install)
-  if(NOT MPFR_FOUND)
-    ExternalProject_Add_StepDependencies(build-mpsolve configure build-mpfr-install)
-  endif()
-endif()
+_ADD_COMPONENT_DEPENDENCY(libraries mpsolve "mp mpfr" MPSOLVE_FOUND)
 
 
+# https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
 # TODO: out of source build has issues with detecting SIMD instructions
 # TODO: separate source and binary directories
-# FIXME: don't install givaro-config, can we not even build it?
 ExternalProject_Add(build-givaro
   GIT_REPOSITORY    https://github.com/linbox-team/givaro.git
   GIT_TAG           v4.0.3
@@ -606,17 +588,14 @@ ExternalProject_Add(build-givaro
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+_ADD_COMPONENT_DEPENDENCY(libraries givaro mp GIVARO_FOUND)
 if(NOT GIVARO_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-givaro-install)
-  set(HAVE_GIVARO_isunit 1) # TODO: does this work?
-  if(NOT MP_FOUND)
-    ExternalProject_Add_StepDependencies(build-givaro configure build-mpir-install)
-  endif()
+  unset(HAVE_GIVARO_isunit CACHE)
 endif()
 
 
-# Note: fflas_ffpack is just header files, so we don't build it
+# https://linbox-team.github.io/fflas-ffpack/
+# NOTE: fflas_ffpack is just header files, so we don't build it
 # instead we add an extra autotune target for generating fflas-ffpack-thresholds.h
 # TODO: separate source and binary directories
 ExternalProject_Add(build-fflas_ffpack
@@ -624,7 +603,6 @@ ExternalProject_Add(build-fflas_ffpack
   GIT_TAG           712cef0e
   PREFIX            libraries/fflas_ffpack
   SOURCE_DIR        libraries/fflas_ffpack/build
-#  BINARY_DIR        libraries/fflas_ffpack/build
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
@@ -643,10 +621,11 @@ ExternalProject_Add(build-fflas_ffpack
                       RANLIB=${CMAKE_RANLIB}
                       LIBS=${LA_LIBRARIES}
   BUILD_COMMAND     ""
-  INSTALL_COMMAND   ${MAKE}  -j${PARALLEL_JOBS} install-data # only headers and fflas-ffpack.pc
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-data # only headers and fflas-ffpack.pc
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
-  STEP_TARGETS      install autotune
+  STEP_TARGETS      autotune install test 
   )
 ExternalProject_Add_Step(build-fflas_ffpack autotune
   COMMENT           "Generating fflas-ffpack-thresholds.h"
@@ -654,22 +633,17 @@ ExternalProject_Add_Step(build-fflas_ffpack autotune
   WORKING_DIRECTORY libraries/fflas_ffpack/build
   EXCLUDE_FROM_MAIN ON
   )
-if(NOT FFLAS_FFPACK_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-fflas_ffpack-install)
-  if(NOT MP_FOUND)
-    ExternalProject_Add_StepDependencies(build-fflas_ffpack configure build-mpir-install)
-  endif()
-  # TODO: the requirement on Givaro version is for fflas_ffpack 2.3.2
-  if(NOT GIVARO_FOUND OR GIVARO_VERSION VERSION_LESS 4.0.3)
-    ExternalProject_Add_StepDependencies(build-fflas_ffpack configure build-givaro-install)
-  endif()
-endif()
 if(AUTOTUNE)
   add_dependencies(build-fflas_ffpack-install build-fflas_ffpack-autotune)
 endif()
+if(NOT FFLAS_FFPACK_FOUND)
+  # FIXME: the requirement on Givaro version is for fflas_ffpack 2.3.2
+  _ADD_CONDITIONED_DEPENDENCY(fflas_ffpack givaro "NOT GIVARO_FOUND OR GIVARO_VERSION VERSION_LESS 4.0.3")
+endif()
+_ADD_COMPONENT_DEPENDENCY(libraries fflas_ffpack mp FFLAS_FFPACK_FOUND)
 
 
+# https://github.com/google/googletest
 ExternalProject_Add(build-googletest
   GIT_REPOSITORY    https://github.com/google/googletest.git
   GIT_TAG           release-1.10.0 # 42bc671f
@@ -680,12 +654,12 @@ ExternalProject_Add(build-googletest
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
-if(BUILD_TESTING AND NOT GTEST_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-googletest-install)
+if(BUILD_TESTING)
+  _ADD_COMPONENT_DEPENDENCY(libraries googletest "" GTEST_FOUND)
 endif()
 
 
+# https://github.com/Macaulay2/memtailor
 ExternalProject_Add(build-memtailor
   GIT_REPOSITORY    https://github.com/mahrud/memtailor.git
   GIT_TAG           1499aba498edcfadfeb0718b18b94822688165e0
@@ -701,15 +675,13 @@ ExternalProject_Add(build-memtailor
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT MEMTAILOR_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-memtailor-install)
-  if(BUILD_TESTING AND NOT GTEST_FOUND)
-    ExternalProject_Add_StepDependencies(build-memtailor configure build-googletest-install)
-  endif()
+_ADD_COMPONENT_DEPENDENCY(libraries memtailor "" MEMTAILOR_FOUND)
+if(BUILD_TESTING)
+  _ADD_CONDITIONED_DEPENDENCY(memtailor googletest "NOT GTEST_FOUND")
 endif()
 
 
+# https://github.com/Macaulay2/mathic
 ExternalProject_Add(build-mathic
   GIT_REPOSITORY    https://github.com/mahrud/mathic.git
   GIT_TAG           65664cbb833c905b175edd02220bcf2725722ee3
@@ -726,18 +698,10 @@ ExternalProject_Add(build-mathic
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT MATHIC_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-mathic-install)
-  if(NOT MEMTAILOR_FOUND)
-    ExternalProject_Add_StepDependencies(build-mathic configure build-memtailor-install)
-  endif()
-  if(BUILD_TESTING AND NOT GTEST_FOUND)
-    ExternalProject_Add_StepDependencies(build-mathic configure build-googletest-install)
-  endif()
-endif()
+_ADD_COMPONENT_DEPENDENCY(libraries mathic memtailor MATHIC_FOUND)
 
 
+# https://github.com/Macaulay2/mathicgb
 # TODO: g++ warning: tbb.h contains deprecated functionality.
 # https://www.threadingbuildingblocks.org/docs/help/reference/appendices/deprecated_features.html
 ExternalProject_Add(build-mathicgb
@@ -757,27 +721,20 @@ ExternalProject_Add(build-mathicgb
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT MATHICGB_FOUND)
-  # Add this to the libraries target
-  add_dependencies(build-libraries build-mathicgb-install)
-  if(NOT MATHIC_FOUND)
-    ExternalProject_Add_StepDependencies(build-mathicgb configure build-mathic-install)
-  endif()
-  if(BUILD_TESTING AND NOT GTEST_FOUND)
-    ExternalProject_Add_StepDependencies(build-mathicgb configure build-googletest-install)
-  endif()
-endif()
+_ADD_COMPONENT_DEPENDENCY(libraries mathicgb mathic MATHICGB_FOUND)
 
 ###############################################################################
 ## Build required programs
 
-# 4ti2 needs glpk and is used by the package FourTiTwo
+
+# https://github.com/4ti2/4ti2
+# 4ti2 needs gmp and glpk and is used by the package FourTiTwo
 set(4ti2_PROGRAMS
-  4ti2int32  circuits  gensymm  groebner  markov    normalform  ppi     rays  zbasis
-  4ti2int64  genmodel  graver   hilbert   minimize  output      qsolve  walk  zsolve)
+  4ti2gmp 4ti2int32 4ti2int64 circuits groebner markov minimize normalform
+  qsolve rays walk zbasis zsolve hilbert graver ppi genmodel gensymm output)
 list(TRANSFORM 4ti2_PROGRAMS PREPEND ${M2_HOST_PREFIX}/bin/ OUTPUT_VARIABLE 4ti2_PROGRAMS)
 ExternalProject_Add(build-4ti2
-  URL               ${M2_SOURCE_URL}/4ti2-1.6.9.tar.gz
+  URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_9/4ti2-1.6.9.tar.gz
   URL_HASH          SHA256=3053e7467b5585ad852f6a56e78e28352653943e7249ad5e5174d4744d174966
   PREFIX            libraries/4ti2
   SOURCE_DIR        libraries/4ti2/build
@@ -786,7 +743,6 @@ ExternalProject_Add(build-4ti2
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --with-gmp=no # TODO: does this line work?
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -802,19 +758,14 @@ ExternalProject_Add(build-4ti2
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${4ti2_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/bin
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
-  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT 4TI2)
-  # Add this to the programs target
-  add_dependencies(build-programs build-4ti2-install)
-  if(NOT GLPK_FOUND)
-    ExternalProject_Add_StepDependencies(build-4ti2 configure build-glpk-install)
-  endif()
-endif()
+_ADD_COMPONENT_DEPENDENCY(programs 4ti2 "mp flpk" 4TI2)
 
 
-# https://github.com/BenjaminJurke/cohomCalg/
+# https://github.com/BenjaminJurke/cohomCalg
+# cohomCalg is used by the package CohomCalg
 ExternalProject_Add(build-cohomcalg
   URL               ${M2_SOURCE_URL}/cohomCalg-0.32.tar.gz
   URL_HASH          SHA256=367c52b99c0b0a4794b215181439bf54abe4998872d3ef25d793bc13c4d40e42
@@ -833,16 +784,15 @@ ExternalProject_Add(build-cohomcalg
                       LD=${CMAKE_CXX_COMPILER} # correct?
   INSTALL_COMMAND   ${CMAKE_STRIP} bin/cohomcalg
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different bin/cohomcalg ${M2_INSTALL_PROGRAMSDIR}/bin/
+  TEST_COMMAND      ${CMAKE_COMMAND} -E echo "Warning: No tests available for cohomCalg"
   EXCLUDE_FROM_ALL  ON
-  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT COHOMCALG)
-  # Add this to the programs target
-  add_dependencies(build-programs build-cohomcalg-install)
-endif()
+_ADD_COMPONENT_DEPENDENCY(programs cohomcalg "" COHOMCALG)
 
 
+# https://users-math.au.dk/~jensen/software/gfan/gfan.html
 # gfan needs cddlib and is used by the packages gfanInterface and StatePolytope
 set(gfan_CC  "${CMAKE_C_COMPILER}   ${CPPFLAGS}")
 set(gfan_CXX "${CMAKE_CXX_COMPILER} ${CPPFLAGS}")
@@ -864,23 +814,18 @@ ExternalProject_Add(build-gfan
                       CCLINKER=${gfan_CCLINKER}
                       PREFIX=/nowhere
                       CDD_LINKOPTIONS=-lcddgmp
-  INSTALL_COMMAND   ${CMAKE_STRIP} gfan${CMAKE_EXECUTABLE_SUFFIX}
+  INSTALL_COMMAND   ${CMAKE_STRIP} gfan
           COMMAND   ${MAKE} -j${PARALLEL_JOBS} PREFIX=${M2_INSTALL_PROGRAMSDIR} install
-    EXCLUDE_FROM_ALL  ON
-  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT GFAN)
-  # Add this to the programs target
-  add_dependencies(build-programs build-gfan-install)
-  if(NOT CDD_FOUND)
-    ExternalProject_Add_StepDependencies(build-gfan configure build-cddlib-install)
-  endif()
-endif()
+_ADD_COMPONENT_DEPENDENCY(programs gfan "mp cddlib factory" GFAN)
 
 
-# TODO: library or program?
 # http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
+# TODO: is this a library or program?
 ExternalProject_Add(build-lrslib
   URL               ${M2_SOURCE_URL}/lrslib-062.tar.gz
   URL_HASH          SHA256=adf92f9c7e70c001340b9c28f414208d49c581df46b550f56ab9a360348e4f09
@@ -896,21 +841,17 @@ ExternalProject_Add(build-lrslib
                       CC=${CMAKE_C_COMPILER}
                       RANLIB=${CMAKE_RANLIB}
                       # TODO: TARGET_ARCH= RANLIB=true
-  INSTALL_COMMAND   ${CMAKE_STRIP} lrs${CMAKE_EXECUTABLE_SUFFIX}
+  INSTALL_COMMAND   ${CMAKE_STRIP} lrs
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${M2_INSTALL_PROGRAMSDIR}/bin/
+  TEST_COMMAND      ${CMAKE_COMMAND} -E echo "Warning: No tests available for cohomCalg"
   EXCLUDE_FROM_ALL  ON
-  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT LRSLIB)
-  # Add this to the programs target
-  add_dependencies(build-programs build-lrslib-install)
-  if(NOT MP_FOUND)
-    ExternalProject_Add_StepDependencies(build-lrslib configure build-mpir-install)
-  endif()
-endif()
+_ADD_COMPONENT_DEPENDENCY(programs lrslib mp LRSLIB)
 
 
+# https://github.com/coin-or/Csdp
 # TODO: do we need to make and strip theta/* if we don't use them?
 set(csdp_CC  "${CMAKE_C_COMPILER}  ${OpenMP_C_FLAGS}")
 set(csdp_CXX "${CMAKE_CXX_COMPILER} ${OpenMP_CXX_FLAGS}")
@@ -933,35 +874,24 @@ ExternalProject_Add(build-csdp
                       LDFLAGS=${csdp_LDFLAGS}
                       LDLIBS=${csdp_LDLIBS}
                       LIBS=${csdp_LIBS}
-  INSTALL_COMMAND   ${CMAKE_STRIP}
-                      solver/csdp
-                      theta/complement
-                      theta/graphtoprob
-                      theta/rand_graph
-                      theta/theta
+  INSTALL_COMMAND   ${CMAKE_STRIP} solver/csdp
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different solver/csdp ${M2_INSTALL_PROGRAMSDIR}/bin/
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} -C test clean
+       COMMAND      ${MAKE} -j${PARALLEL_JOBS} -C test
   EXCLUDE_FROM_ALL  ON
-  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT CSDP)
-  # Add this to the programs target
-  add_dependencies(build-programs build-csdp-install)
-endif()
+_ADD_COMPONENT_DEPENDENCY(programs csdp "" CSDP)
 
 
 # nauty is used by the package Nauty
-# URL = http://cs.anu.edu.au/~bdm/nauty
-# TODO: do we not strip some files?
-set(nauty_PROGRAMS
-   NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg
-   directg dreadnaut dretog genbg geng genrang gentourng labelg listg
-   multig newedgeg pickg planarg shortg showg)
-set(nauty_STRIPFILES
-   NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg directg
-   dreadnaut dretog genbg geng genrang gentourng labelg linegraphg listg multig
-   newedgeg pickg planarg ranlabg shortg showg subdivideg watercluster2)
-set(nauty_CHECKERS dreadtest dreadtestS dreadtestS1 dreadtest4K dreadtest1 dreadtestW1 dreadtestL1 dreadtestL)
+# http://cs.anu.edu.au/~bdm/nauty
+set(nauty_BINARIES
+  dreadnaut NRswitchg addedgeg amtog biplabg catg complg converseg copyg countg cubhamg
+  deledgeg delptg directg dretodot dretog edgetransg genbg genbgL geng genquarticg genrang
+  genspecialg gentourng gentreeg hamheuristic labelg linegraphg listg multig newedgeg pickg
+  planarg ranlabg shortg showg subdivideg twohamg vcolg watercluster2)
 ExternalProject_Add(build-nauty
   URL               ${M2_SOURCE_URL}/nauty27b11.tar.gz
   URL_HASH          SHA256=5d52211cec767d8d8e43483d96202be235f85696d1373c307291273463c812fa
@@ -984,21 +914,18 @@ ExternalProject_Add(build-nauty
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
   # TODO: put nauty programs in a folder?
-  INSTALL_COMMAND   ${CMAKE_STRIP} ${nauty_STRIPFILES}
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${nauty_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/bin/
-  TEST_COMMAND      rm -f ${nauty_CHECKERS}
-       COMMAND      ${MAKE} BIGTEST=0 checks
+  INSTALL_COMMAND   ${CMAKE_STRIP} ${nauty_BINARIES}
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${nauty_BINARIES} ${M2_INSTALL_PROGRAMSDIR}/bin/
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
-  TEST_EXCLUDE_FROM_MAIN ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT NAUTY)
-  # Add this to the programs target
-  add_dependencies(build-programs build-nauty-install)
-endif()
+set(NAUTY_FOUND ${NAUTY})
+_ADD_COMPONENT_DEPENDENCY(programs nauty "" NAUTY)
 
 
+# https://www.normaliz.uni-osnabrueck.de/
 # normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
 # TODO: see special variables OPENMP and NORMFLAGS for macOS from libraries/normaliz/Makefile.in
 set(normaliz_CXXFLAGS "${CPPFLAGS} -Wall -O3 -Wno-unknown-pragmas -std=c++11 -I .. -I . ")
@@ -1042,20 +969,12 @@ ExternalProject_Add(build-normaliz
   INSTALL_COMMAND   ${CMAKE_STRIP} source/normaliz
           COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/bin/
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
-  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT NORMALIZ)
-  # Add this to the programs target
-  add_dependencies(build-programs build-normaliz-install)
-  if(NOT MP_FOUND)
-    ExternalProject_Add_StepDependencies(build-normaliz configure build-mpir-install)
-  endif()
-  if(NOT NAUTY)
-    ExternalProject_Add_StepDependencies(build-normaliz configure build-nauty-install)
-  endif()
-endif()
+_ADD_COMPONENT_DEPENDENCY(programs normaliz "mp nauty" NORMALIZ)
 
 
 # http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
@@ -1091,56 +1010,38 @@ ExternalProject_Add(build-topcom
   # TODO: put topcom programs in a folder?
   INSTALL_COMMAND   ${CMAKE_STRIP} ${topcom_PROGRAMS}
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${topcom_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/bin/
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
-  TEST_EXCLUDE_FROM_MAIN ON # FIXME
+  TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT TOPCOM)
-  # Add this to the programs target
-  add_dependencies(build-programs build-topcom-install)
-  if(NOT CDD_FOUND)
-    ExternalProject_Add_StepDependencies(build-topcom configure build-cddlib-install)
-  endif()
-endif()
+_ADD_COMPONENT_DEPENDENCY(programs topcom cddlib TOPCOM)
 
 
 #############################################################################
 
-MACRO (_ADD_BUILD_TARGET _target _name)
-  add_dependencies(${_target} build-${_name}-install)
-ENDMACRO (_ADD_BUILD_TARGET)
-
-MACRO (_ADD_BUILD_TARGETS _target _name_list)
-  foreach(_name IN LISTS ${_name_list})
-    _ADD_BUILD_TARGET(${_target} ${_name})
+# Set too ALL to install all libraries
+if(BUILD_LIBRARIES MATCHES "(all|ALL|on|ON)")
+  foreach(library IN LISTS LIBRARY_OPTIONS)
+    add_dependencies(build-libraries build-${library}-install)
   endforeach()
-ENDMACRO (_ADD_BUILD_TARGETS)
-
-# If this is set and not false, add to libraries to be installed
-if(BUILD_LIBRARIES)
-  # If a library is not on the list, it must be "ON", so add everything
+elseif(BUILD_LIBRARIES)
   foreach(library IN LISTS BUILD_LIBRARIES)
     string(TOLOWER ${library} library)
-    if(library IN_LIST LIBRARY_OPTIONS)
-      _ADD_BUILD_TARGET(build-libraries ${library})
-    else()
-      _ADD_BUILD_TARGETS(build-libraries LIBRARY_OPTIONS)
-      break()
-    endif()
+    add_dependencies(build-libraries build-${library}-install)
   endforeach()
 endif()
 
-# If this is set and not false, add to programs to be installed
-if(BUILD_PROGRAMS)
+# Set too ALL to install all programs
+if(BUILD_PROGRAMS MATCHES "(all|ALL|on|ON)")
+  foreach(program IN LISTS PROGRAM_OPTIONS)
+    add_dependencies(build-programs build-${program}-install)
+  endforeach()
+elseif(BUILD_PROGRAMS)
   # If a program is not on the list, it must be "ON", so add everything
   foreach(program IN LISTS BUILD_PROGRAMS)
     string(TOLOWER ${program} program)
-    if(program IN_LIST PROGRAM_OPTIONS)
-      _ADD_BUILD_TARGET(build-programs ${program})
-    else()
-      _ADD_BUILD_TARGETS(build-programs PROGRAM_OPTIONS)
-      break()
-    endif()
+    add_dependencies(build-programs build-${program}-install)
   endforeach()
 else()
   # Make a symbolic link to the existing executable in the programs directory
@@ -1156,6 +1057,7 @@ endif()
 
 #############################################################################
 
+# Detect components that are not found
 get_target_property(LIBRARY_DEPENDENCIES build-libraries MANUALLY_ADDED_DEPENDENCIES)
 get_target_property(PROGRAM_DEPENDENCIES build-programs  MANUALLY_ADDED_DEPENDENCIES)
 if(NOT LIBRARY_DEPENDENCIES)
@@ -1167,9 +1069,32 @@ endif()
 string(REGEX REPLACE "(build-|-install)" "" BUILD_LIB_LIST  "${LIBRARY_DEPENDENCIES}")
 string(REGEX REPLACE "(build-|-install)" "" BUILD_PROG_LIST "${PROGRAM_DEPENDENCIES}")
 
-message("## External components that need to be built:
-     Libraries         = ${BUILD_LIB_LIST}
-     Programs          = ${BUILD_PROG_LIST}")
+# Detect installed components by the install stamp
+file(GLOB_RECURSE _install_stamp_list RELATIVE ${CMAKE_BINARY_DIR}/libraries
+  "${CMAKE_BINARY_DIR}/libraries/*/src/build-*-stamp/build-*-install")
+string(REGEX REPLACE "[a-z0-9_]+/src/build-[a-z0-9_]+-stamp/(build-[a-z0-9_]+-install)" "\\1"
+  _installed_list "${_install_stamp_list}")
+string(REGEX REPLACE "(build-|-install)" "" INSTALLED_LIST  "${_installed_list}")
+list(SUBLIST INSTALLED_LIST  0 10 INSTALLED_LIST_1)
+list(SUBLIST INSTALLED_LIST 10 10 INSTALLED_LIST_2)
+list(SUBLIST INSTALLED_LIST 20 10 INSTALLED_LIST_3)
+
+# Make the test target
+string(REGEX REPLACE "install" "test" TEST_TARGET_LIST  "${_installed_list}")
+foreach(_test IN LISTS SKIP_TESTS)
+  list(REMOVE_ITEM TEST_TARGET_LIST build-${_test}-test)
+endforeach()
+add_dependencies(check-components ${TEST_TARGET_LIST})
+
+# Print some of that information
+message("## External components:
+     To be built:
+       Libraries       = ${BUILD_LIB_LIST}
+       Programs        = ${BUILD_PROG_LIST}
+     Already built:
+         ${INSTALLED_LIST_1}
+         ${INSTALLED_LIST_2}
+         ${INSTALLED_LIST_3}")
 
 message("## Library information:
      Linear Algebra    = ${LAPACK_LIBRARIES}
