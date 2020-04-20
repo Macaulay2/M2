@@ -68,6 +68,7 @@ else()
 endif()
 
 string(CONFIGURE "#!/bin/sh\n${EXPORT_STRING} `dirname \"$0\"`/M2@EXE@ \"$@\"" M2_CONTENT @ONLY)
+file(MAKE_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
 execute_process(
   COMMAND ${CMAKE_COMMAND} -E echo "${M2_CONTENT}"
   OUTPUT_FILE ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)

@@ -31,7 +31,7 @@ file(MAKE_DIRECTORY ${M2_INSTALL_PROGRAMSDIR}/bin)
 
 ## These target run the tests on the external components
 add_custom_target(check-components)
-set(SKIP_TESTS eigen;ntl;flint;mpsolve CACHE STRING "Long or broken tests to skip")
+set(SKIP_TESTS "eigen;ntl;flint;mpsolve;googletest" CACHE STRING "Long or broken tests to skip")
 
 ## This target forces libraries and programs to run their configure and install targets
 add_custom_target(clean-stamps
@@ -63,6 +63,7 @@ endif()
 # Set the flags for enabling assertions
 if(CMAKE_BUILD_TYPE STREQUAL Debug)
   set(assertions_setting --enable-assertions)
+  set(assert_setting --enable-assert)
 endif()
 
 #################################################################################
@@ -100,23 +101,18 @@ endif()
 include(ExternalProject) # configure, patch, build, install, or test at build time
 set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
 
-# Conditionally ensure that _dependency is installed before _name is configured
-# _name:       lowercase name of a library or program; e.g. mp, flint, cohomcalg
-# _dependency: lowercase name of the library or program that ${_name} should depend on
-# _condition:  add dependency only if ${_condition} evaluates to true
-MACRO (_ADD_CONDITIONED_DEPENDENCY _name _dependency _condition)
-  if(${_condition})
-    ExternalProject_Add_StepDependencies(build-${_name} configure build-${_dependency}-install)
-  endif()
-ENDMACRO (_ADD_CONDITIONED_DEPENDENCY)
-
 # Ensure that _dependency is found before _name is configured
 # _name:       lowercase name of a library or program; e.g. mp, flint, cohomcalg
 # _dependency: lowercase name of the library or program that ${_name} should depend on
 # NOTE: ${_dependency}_FOUND is used to check whether ${_dependency} is present or not
 MACRO (_ADD_STEP_DEPENDENCY _name _dependency)
-  string(TOUPPER ${${_dependency}_FOUND} _condition)
-  _ADD_CONDITIONED_DEPENDENCY(${_name} ${_dependency} "NOT ${_condition}")
+  string(TOUPPER ${_dependency} _dependency)
+  if(NOT ${_dependency}_FOUND AND NOT ${_dependency})
+    if(VERBOSE)
+      message(STATUS "${_name} depends on ${_dependency}, ${_dependency} will be built first")
+    endif()
+    ExternalProject_Add_StepDependencies(build-${_name} configure build-${_dependency}-install)
+  endif()
 ENDMACRO (_ADD_STEP_DEPENDENCY)
 
 # If not found, add _name to the build-${_component} target
@@ -127,11 +123,13 @@ ENDMACRO (_ADD_STEP_DEPENDENCY)
 MACRO (_ADD_COMPONENT_DEPENDENCY _component _name _dependencies _found_condition)
   if(NOT ${_found_condition})
     add_dependencies(build-${_component} build-${_name}-install)
-    foreach(_dependency IN LISTS _dependencies)
-      _ADD_STEP_DEPENDENCY(${_name} ${_dependency})
-    endforeach()
   endif()
+  set(_dependencies ${_dependencies}) # FIXME: not sure why this is needed
+  foreach(_dependency IN LISTS _dependencies)
+    _ADD_STEP_DEPENDENCY(${_name} ${_dependency})
+  endforeach()
 ENDMACRO (_ADD_COMPONENT_DEPENDENCY)
+
 
 #################################################################################
 ## Build required libraries, first those downloaded as a tarfile
@@ -205,8 +203,8 @@ ExternalProject_Add(build-mpir
                       --enable-gmpcompat
                       --enable-cxx
                       --with-pic
-                      --enable-shared # ${shared_setting} # TODO: get static mpir linking to work
-                      # --enable-assert
+                      --enable-static # FIXME: ${shared_setting}
+                      ${assert_setting}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -224,6 +222,8 @@ ExternalProject_Add(build-mpir
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+# Alias
+add_custom_target(build-mp-install DEPENDS build-mpir-install)
 if(NOT MP_FOUND)
   if(MP_LIBRARY STREQUAL GMP)
     # gmp is a prerequisite
@@ -231,7 +231,6 @@ if(NOT MP_FOUND)
   elseif(MP_LIBRARY STREQUAL MPIR)
     # Add this to the libraries target
     add_dependencies(build-libraries build-mpir-install)
-    add_custom_target(build-mp-install DEPENDS build-mpir-install)
   endif()
 endif()
 # Making sure flint can find the gmp.h->mpir.h symlink
@@ -255,9 +254,9 @@ ExternalProject_Add(build-mpfr
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --with-gmp=${M2_HOST_PREFIX}
                       --disable-thread-safe
-                      ${shared_setting}
                       --with-pic
-                      # --enable-assert
+                      ${shared_setting}
+                      ${assert_setting}
                       # TARGET_ARCH=
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -292,7 +291,7 @@ ExternalProject_Add(build-ntl
                       TUNE=generic
                       NATIVE=off
                       $<$<BOOL:${USING_MPIR}>:GMP_PREFIX=${M2_HOST_PREFIX}>
-                      SHARED=$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
+                      SHARED=on # FIXME: $<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
                       CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
@@ -314,7 +313,7 @@ ExternalProject_Add_Step(build-ntl wizard
                       TUNE=auto
                       NATIVE=on
                       $<$<BOOL:${USING_MPIR}>:GMP_PREFIX=${M2_HOST_PREFIX}>
-                      SHARED=$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
+                      SHARED=on # FIXME: $<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
                       CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
@@ -346,7 +345,7 @@ ExternalProject_Add(build-flint
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
                     -DBUILD_TESTING=OFF # Flint builds too many tests, so make them a separate target
-                    -DBUILD_SHARED_LIBS=ON # ${BUILD_SHARED_LIBS} # TODO: get static flint building to work
+                    -DBUILD_SHARED_LIBS=ON # FIXME: ${BUILD_SHARED_LIBS} # TODO: get static flint building to work
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
                     -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
@@ -361,7 +360,7 @@ ExternalProject_Add(build-flint
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(libraries flint "mp mpfr ntl" FLINT_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
 
 
 # https://github.com/Singular/Sources/tree/spielwiese/factory
@@ -384,7 +383,7 @@ ExternalProject_Add(build-factory
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-omalloc
                       --disable-doxygen-doc
-                      ${shared_setting}
+                      --enable-static # FIXME: ${shared_setting}
                       ${assertions_setting}
                       --enable-streamio
                       --without-Singular
@@ -419,7 +418,7 @@ else()
     file(COPY ${GFTABLES} DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
   endif()
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries factory "mp mpfr ntl flint" FACTORY_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
 
 
 # https://www.broune.com/frobby/
@@ -553,7 +552,7 @@ ExternalProject_Add(build-mpsolve
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test # TODO: fails when building static library
   )
-_ADD_COMPONENT_DEPENDENCY(libraries mpsolve "mp mpfr" MPSOLVE_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries mpsolve "mp;mpfr" MPSOLVE_FOUND)
 
 
 # https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
@@ -636,9 +635,9 @@ ExternalProject_Add_Step(build-fflas_ffpack autotune
 if(AUTOTUNE)
   add_dependencies(build-fflas_ffpack-install build-fflas_ffpack-autotune)
 endif()
-if(NOT FFLAS_FFPACK_FOUND)
+if(NOT FFLAS_FFPACK_FOUND AND (NOT GIVARO_FOUND OR GIVARO_VERSION VERSION_LESS 4.0.3))
   # FIXME: the requirement on Givaro version is for fflas_ffpack 2.3.2
-  _ADD_CONDITIONED_DEPENDENCY(fflas_ffpack givaro "NOT GIVARO_FOUND OR GIVARO_VERSION VERSION_LESS 4.0.3")
+  _ADD_STEP_DEPENDENCY(fflas_ffpack givaro)
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries fflas_ffpack mp FFLAS_FFPACK_FOUND)
 
@@ -675,10 +674,7 @@ ExternalProject_Add(build-memtailor
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(libraries memtailor "" MEMTAILOR_FOUND)
-if(BUILD_TESTING)
-  _ADD_CONDITIONED_DEPENDENCY(memtailor googletest "NOT GTEST_FOUND")
-endif()
+_ADD_COMPONENT_DEPENDENCY(libraries memtailor googletest MEMTAILOR_FOUND)
 
 
 # https://github.com/Macaulay2/mathic
@@ -761,7 +757,7 @@ ExternalProject_Add(build-4ti2
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(programs 4ti2 "mp flpk" 4TI2)
+_ADD_COMPONENT_DEPENDENCY(programs 4ti2 "mp;glpk" 4TI2)
 
 
 # https://github.com/BenjaminJurke/cohomCalg
@@ -821,7 +817,7 @@ ExternalProject_Add(build-gfan
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(programs gfan "mp cddlib factory" GFAN)
+_ADD_COMPONENT_DEPENDENCY(programs gfan "mp;cddlib;factory" GFAN)
 
 
 # http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
@@ -974,7 +970,7 @@ ExternalProject_Add(build-normaliz
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(programs normaliz "mp nauty" NORMALIZ)
+_ADD_COMPONENT_DEPENDENCY(programs normaliz "mp;nauty" NORMALIZ)
 
 
 # http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
@@ -1025,6 +1021,8 @@ if(BUILD_LIBRARIES MATCHES "(all|ALL|on|ON)")
   foreach(library IN LISTS LIBRARY_OPTIONS)
     add_dependencies(build-libraries build-${library}-install)
   endforeach()
+  # Turn it off afterward
+  set(BUILD_LIBRARIES OFF CACHE BOOL "Build libraries, even if found" FORCE)
 elseif(BUILD_LIBRARIES)
   foreach(library IN LISTS BUILD_LIBRARIES)
     string(TOLOWER ${library} library)
@@ -1037,6 +1035,8 @@ if(BUILD_PROGRAMS MATCHES "(all|ALL|on|ON)")
   foreach(program IN LISTS PROGRAM_OPTIONS)
     add_dependencies(build-programs build-${program}-install)
   endforeach()
+  # Turn it off afterward
+  set(BUILD_PROGRAMS  OFF CACHE BOOL "Build programs, even if found"  FORCE)
 elseif(BUILD_PROGRAMS)
   # If a program is not on the list, it must be "ON", so add everything
   foreach(program IN LISTS BUILD_PROGRAMS)
@@ -1074,28 +1074,44 @@ file(GLOB_RECURSE _install_stamp_list RELATIVE ${CMAKE_BINARY_DIR}/libraries
   "${CMAKE_BINARY_DIR}/libraries/*/src/build-*-stamp/build-*-install")
 string(REGEX REPLACE "[a-z0-9_]+/src/build-[a-z0-9_]+-stamp/(build-[a-z0-9_]+-install)" "\\1"
   _installed_list "${_install_stamp_list}")
-string(REGEX REPLACE "(build-|-install)" "" INSTALLED_LIST  "${_installed_list}")
-list(SUBLIST INSTALLED_LIST  0 10 INSTALLED_LIST_1)
-list(SUBLIST INSTALLED_LIST 10 10 INSTALLED_LIST_2)
-list(SUBLIST INSTALLED_LIST 20 10 INSTALLED_LIST_3)
+string(REGEX REPLACE "(build-|-install)" "" INSTALLED_LIST_0  "${_installed_list}")
+foreach(_i IN ITEMS 1 2 3 4)
+  list(SUBLIST INSTALLED_LIST_0 ${_j}0 10 INSTALLED_LIST_${_i})
+  list(LENGTH INSTALLED_LIST_${_i} _n)
+  if(${_n} EQUAL 10)
+    set(INSTALLED_LIST "${INSTALLED_LIST}\n         ${INSTALLED_LIST_${_i}}")
+  else()
+    break()
+  endif()
+  set(_j ${_i})
+endforeach()
+if(NOT INSTALLED_LIST)
+  set(INSTALLED_LIST N/A)
+endif()
 
 # Make the test target
 string(REGEX REPLACE "install" "test" TEST_TARGET_LIST  "${_installed_list}")
 foreach(_test IN LISTS SKIP_TESTS)
   list(REMOVE_ITEM TEST_TARGET_LIST build-${_test}-test)
 endforeach()
-add_dependencies(check-components ${TEST_TARGET_LIST})
+if(TEST_TARGET_LIST)
+  add_dependencies(check-components ${TEST_TARGET_LIST})
+endif()
 
 # Print some of that information
 message("## External components:
      To be built:
        Libraries       = ${BUILD_LIB_LIST}
        Programs        = ${BUILD_PROG_LIST}
-     Already built:
-         ${INSTALLED_LIST_1}
-         ${INSTALLED_LIST_2}
-         ${INSTALLED_LIST_3}")
+     Already built     = ${INSTALLED_LIST}")
 
 message("## Library information:
      Linear Algebra    = ${LAPACK_LIBRARIES}
      MP Arithmetic     = ${MP_LIBRARIES}")
+
+if(BUILD_LIB_LIST OR BUILD_PROG_LIST)
+  message(CHECK_FAIL "Some components are missing")
+  message("## Rerun the build-libraries and build-programs targets")
+else()
+  message(CHECK_PASS "Everything is in order! 🎉")
+endif()

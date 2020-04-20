@@ -54,9 +54,11 @@ set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
 set(LIBRARY_LIST   HISTORY READLINE)
 set(LIBRARIES_LIST LAPACK MP MPFR BDWGC NTL FLINT FACTORY FROBBY MATHICGB MATHIC MEMTAILOR MPSOLVE TBB)
 
+message(CHECK_START "Checking for existing libraries and programs")
+
 ################################################################
 ## pkg-config is useful for fflas-ffpack and certain other packages
-find_package(PkgConfig  REQUIRED QUIET)
+find_package(PkgConfig   REQUIRED QUIET)
 
 ################################################################
 ## Look for prerequisite packages and libraries using CMake or pkg-config
@@ -188,7 +190,7 @@ if(NOT GIVARO_FOUND)
 endif()
 
 if(CHECK_LIBRARY_COMPATIBILITY)
-  message("## All libraries are found. Checking library compatibility ...")
+  message(CHECK_START "Checking library compatibility")
 
   foreach(LIB IN LISTS LIBRARIES_LIST)
     if(${LIB}_FOUND)
@@ -208,11 +210,12 @@ if(CHECK_LIBRARY_COMPATIBILITY)
     FAIL_REGEX "warning")
 
   if(NOT LIBRARY_COMPATIBILITY)
-    message("## Unsetting incompatible libraries ...")
+    message(CHECK_FAIL "Detected library incompatibilities; rerun the build-libraries target")
     foreach(LIB IN LISTS CHECKED_LIBRARIES)
       unset(${LIB}_FOUND)
     endforeach()
-    message("## Rerun the build-libraries target.")
+  else()
+    message(CHECK_PASS "Libraries are compatible!")
   endif()
 
   unset(LIBRARY_COMPATIBILITY CACHE)
