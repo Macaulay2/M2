@@ -13,12 +13,6 @@ if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
 endif()
 
 ################################################################
-# List of programs and libraries that we can build
-set(PROGRAM_OPTIONS
-  4ti2 cohomcalg gfan lrslib csdp normaliz nauty topcom)
-set(LIBRARY_OPTIONS
-  mpir mpfr ntl flint factory frobby cddlib glpk mpsolve googletest bdwgc givaro fflas_ffpack memtailor mathic mathicgb)
-
 ## This target builds external libraries that M2 relies on.
 add_custom_target(build-libraries
   COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_SOURCE_DIR}/cmake/check-libraries.cmake)
@@ -27,12 +21,19 @@ add_custom_target(build-libraries
 add_custom_target(build-programs)
 
 file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
-file(MAKE_DIRECTORY ${M2_INSTALL_PROGRAMSDIR}/bin)
+file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/lib)
+file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/include)
+file(MAKE_DIRECTORY ${M2_INSTALL_PROGRAMSDIR})
+file(MAKE_DIRECTORY ${M2_INSTALL_LICENSESDIR})
+
+## Copy component licenses
+if(EXISTS ${M2_HOST_PREFIX}/licenses)
+  file(COPY ${M2_HOST_PREFIX}/licenses DESTINATION ${M2_INSTALL_LICENSESDIR}/)
+endif()
 
 ## These target run the tests on the external components
 add_custom_target(check-components)
 add_custom_target(check-components-slow)
-set(SKIP_TESTS "eigen;ntl;flint;mpsolve;googletest" CACHE STRING "Long or broken tests to skip")
 
 ## This target forces libraries and programs to run their configure and install targets
 add_custom_target(clean-stamps
@@ -136,6 +137,7 @@ ENDFUNCTION (_ADD_COMPONENT_DEPENDENCY)
 ## See https://cmake.org/cmake/help/latest/module/ExternalProject.html
 
 # http://eigen.tuxfamily.org/
+# TODO: add licenses
 ExternalProject_Add(build-eigen
   URL               https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz
   URL_HASH          SHA256=d56fbad95abf993f8af608484729e3d87ef611dd85b3380a8bad1d5cbc373a57
@@ -161,6 +163,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries eigen "" EIGEN3_FOUND)
 # TODO: add environment variables GC_LARGE_ALLOC_WARN_INTERVAL and GC_ABORT_ON_LEAK
 # Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
 # FIXME: fix a commit to use instead of master
+# TODO: add licenses: README.QUICK
 ExternalProject_Add(build-bdwgc
   GIT_REPOSITORY    https://github.com/ivmai/bdwgc.git
   GIT_TAG           master
@@ -221,6 +224,8 @@ ExternalProject_Add(build-mpir
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/mpir
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different README INSTALL COPYING COPYING.LIB ${M2_INSTALL_LICENSESDIR}/mpir
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -273,6 +278,8 @@ ExternalProject_Add(build-mpfr
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} CPPFLAGS=${CPPFLAGS}
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/mpfr
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different README COPYING.LESSER ${M2_INSTALL_LICENSESDIR}/mpfr
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -303,7 +310,9 @@ ExternalProject_Add(build-ntl
                       CXX=${CMAKE_CXX_COMPILER}
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     cd src && ${MAKE} -j${PARALLEL_JOBS}
-  INSTALL_COMMAND   cd src && ${MAKE} -j${PARALLEL_JOBS} PREFIX=${M2_HOST_PREFIX} install
+  INSTALL_COMMAND   cd src && ${MAKE} -j${PARALLEL_JOBS} PREFIX=${M2_HOST_PREFIX} install &&
+                    ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/ntl &&
+                    ${CMAKE_COMMAND} -E copy_if_different ../doc/copying.txt ${M2_INSTALL_LICENSESDIR}/ntl
   TEST_COMMAND      cd src && ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -336,6 +345,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries ntl mp NTL_FOUND)
 
 
 # https://github.com/wbhart/flint2
+# TODO: add licenses: README LICENSE
 ExternalProject_Add(build-flint
   GIT_REPOSITORY    https://github.com/mahrud/flint2.git
   GIT_TAG           HEAD
@@ -408,7 +418,9 @@ ExternalProject_Add(build-factory
                     ./bin/makeheader factoryconf.template factoryconf.h &&
                     ${CMAKE_COMMAND} -E copy factory.h factoryconf.h include/factory &&
                     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} all-recursive
-  INSTALL_COMMAND   cd factory-4.1.1 && ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
+  INSTALL_COMMAND   cd factory-4.1.1 && ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install &&
+                    ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/factory &&
+                    ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/factory
   TEST_COMMAND      cd factory-4.1.1 && ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -425,7 +437,6 @@ else()
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
 
-
 # https://www.broune.com/frobby/
 # TODO: version#"frobby version" is missing
 # TODO: switch to https://github.com/Macaulay2/frobby
@@ -439,7 +450,7 @@ ExternalProject_Add(build-frobby
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/frobby/patch-0.9.0
-  CONFIGURE_COMMAND ""
+  CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} library -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       GMP_INC_DIR=${M2_HOST_PREFIX}/include
                       CPPFLAGS=${CPPFLAGS}
@@ -452,9 +463,10 @@ ExternalProject_Add(build-frobby
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_HOST_PREFIX}/lib ${M2_HOST_PREFIX}/include
-          COMMAND   ${CMAKE_COMMAND} -E copy bin/libfrobby.a ${M2_HOST_PREFIX}/lib/libfrobby.a
-          COMMAND   ${CMAKE_COMMAND} -E copy src/frobby.h src/stdinc.h ${M2_HOST_PREFIX}/include
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy bin/libfrobby.a ${M2_HOST_PREFIX}/lib/libfrobby.a
+          COMMAND   ${CMAKE_COMMAND} -E copy src/frobby.h src/stdinc.h ${M2_HOST_PREFIX}/include/
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/frobby
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/frobby
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} test
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -463,13 +475,11 @@ ExternalProject_Add(build-frobby
 _ADD_COMPONENT_DEPENDENCY(libraries frobby mp FROBBY_FOUND)
 
 
+# https://github.com/cddlib/cddlib
 # https://www.inf.ethz.ch/personal/fukudak/cdd_home/
-# topcom depends on cddlib, but includes setoper.h, rather than cdd/setoper.h
-# TODO: anyway to change this?
-set(cddlib_SUBDIRS "lib-src lib-src-gmp")
 ExternalProject_Add(build-cddlib
-  URL               ${M2_SOURCE_URL}/cddlib-094h.tar.gz
-  URL_HASH          SHA256=fe6d04d494683cd451be5f6fe785e147f24e8ce3ef7387f048e739ceb4565ab5
+  URL               https://github.com/cddlib/cddlib/releases/download/0.94j/cddlib-0.94j.tar.gz
+  URL_HASH          SHA256=27d7fcac2710755a01ef5381010140fc57c95f959c3c5705c58539d8c4d17bfb
   PREFIX            libraries/cddlib
   SOURCE_DIR        libraries/cddlib/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -477,10 +487,7 @@ ExternalProject_Add(build-cddlib
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --includedir=${M2_HOST_PREFIX}/include/cdd
                       ${shared_setting}
-                      SUBDIRS=${cddlib_SUBDIRS}
-                      gmpdir=/nowhere
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -491,19 +498,16 @@ ExternalProject_Add(build-cddlib
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
-                      SUBDIRS=${cddlib_SUBDIRS}
-                      gmpdir=/nowhere
-  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
-                      SUBDIRS=${cddlib_SUBDIRS}
-                      gmpdir=/nowhere
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} -C lib-src
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} -C lib-src install
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/cddlib
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/cddlib
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-set(CDDLIB_FOUND ${CDD_FOUND})
-_ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDD_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDDLIB_FOUND)
 
 
 # https://www.gnu.org/software/glpk/
@@ -521,8 +525,10 @@ ExternalProject_Add(build-glpk
                       CFLAGS=${CFLAGS}
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
-  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
-  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-strip
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} -C src
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} -C src install-strip
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/glpk
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/glpk
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -551,8 +557,12 @@ ExternalProject_Add(build-mpsolve
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
-  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
-  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} -C src/libmps
+        COMMAND     ${MAKE} -j${PARALLEL_JOBS} -C include
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} -C src/libmps install
+          COMMAND   ${MAKE} -j${PARALLEL_JOBS} -C include install
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/mpsolve
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different README ${M2_INSTALL_LICENSESDIR}/mpsolve
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -564,6 +574,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpsolve "mp;mpfr" MPSOLVE_FOUND)
 # https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
 # TODO: out of source build has issues with detecting SIMD instructions
 # TODO: separate source and binary directories
+set(givaro_LICENSEFILES COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt)
 ExternalProject_Add(build-givaro
   GIT_REPOSITORY    https://github.com/linbox-team/givaro.git
   GIT_TAG           v4.0.3
@@ -587,6 +598,8 @@ ExternalProject_Add(build-givaro
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} -C src
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} -C src install
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/givaro
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${givaro_LICENSEFILES} ${M2_INSTALL_LICENSESDIR}/givaro
           COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-data
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
@@ -625,12 +638,14 @@ ExternalProject_Add(build-fflas_ffpack
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
                       LIBS=${LA_LIBRARIES}
-  BUILD_COMMAND     ""
+  BUILD_COMMAND     true
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-data # only headers and fflas-ffpack.pc
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/fflas_ffpack
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/fflas_ffpack
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
-  STEP_TARGETS      autotune install test 
+  STEP_TARGETS      autotune install test
   )
 ExternalProject_Add_Step(build-fflas_ffpack autotune
   COMMENT           "Generating fflas-ffpack-thresholds.h"
@@ -661,8 +676,9 @@ ExternalProject_Add(build-googletest
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
+set(GOOGLETEST_FOUND ${GTEST_FOUND})
 if(BUILD_TESTING)
-  _ADD_COMPONENT_DEPENDENCY(libraries googletest "" GTEST_FOUND)
+  _ADD_COMPONENT_DEPENDENCY(libraries googletest "" GOOGLETEST_FOUND)
 endif()
 
 
@@ -731,7 +747,11 @@ ExternalProject_Add(build-mathicgb
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+if(EXISTS ${M2_HOST_PREFIX}/bin/mgb)
+  execute_process(COMMAND mv ${M2_HOST_PREFIX}/bin/mgb ${M2_INSTALL_PROGRAMSDIR}/)
+endif()
 _ADD_COMPONENT_DEPENDENCY(libraries mathicgb mathic MATHICGB_FOUND)
+
 
 ###############################################################################
 ## Build required programs
@@ -764,8 +784,11 @@ ExternalProject_Add(build-4ti2
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
-  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-strip
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${4ti2_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/bin
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} -C src install-strip
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/4ti2
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different README ${M2_INSTALL_LICENSESDIR}/4ti2
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${4ti2_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/
+          COMMAND   ${CMAKE_COMMAND} -E remove -f ${4ti2_PROGRAMS}
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -783,7 +806,7 @@ ExternalProject_Add(build-cohomcalg
   SOURCE_DIR        libraries/cohomcalg/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND ""
+  CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -793,7 +816,9 @@ ExternalProject_Add(build-cohomcalg
                       CXX=${CMAKE_CXX_COMPILER}
                       LD=${CMAKE_CXX_COMPILER} # correct?
   INSTALL_COMMAND   ${CMAKE_STRIP} bin/cohomcalg
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different bin/cohomcalg ${M2_INSTALL_PROGRAMSDIR}/bin/
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/cohomcalg
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE ${M2_INSTALL_LICENSESDIR}/cohomcalg
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different bin/cohomcalg ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${CMAKE_COMMAND} -E echo "Warning: No tests available for cohomCalg"
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -816,16 +841,17 @@ ExternalProject_Add(build-gfan
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/gfan/patch-0.6.2
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
+  CONFIGURE_COMMAND true
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
+                      cddnoprefix=yes
                       CC=${gfan_CC}
                       CXX=${gfan_CXX}
                       CLINKER=${gfan_CLINKER}
                       CCLINKER=${gfan_CCLINKER}
-                      PREFIX=/nowhere
-                      CDD_LINKOPTIONS=-lcddgmp
   INSTALL_COMMAND   ${CMAKE_STRIP} gfan
-          COMMAND   ${MAKE} -j${PARALLEL_JOBS} PREFIX=${M2_INSTALL_PROGRAMSDIR} install
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/gfan
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE COPYING ${M2_INSTALL_LICENSESDIR}/gfan
+          COMMAND   ${MAKE} -j${PARALLEL_JOBS} PREFIX=${M2_INSTALL_PROGRAMSDIR}/../ install
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -843,7 +869,7 @@ ExternalProject_Add(build-lrslib
   SOURCE_DIR        libraries/lrslib/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND ""
+  CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} lrs
                       LIBDIR=${M2_HOST_PREFIX}/lib
                       CPPFLAGS=${CPPFLAGS}
@@ -852,7 +878,9 @@ ExternalProject_Add(build-lrslib
                       RANLIB=${CMAKE_RANLIB}
                       # TODO: TARGET_ARCH= RANLIB=true
   INSTALL_COMMAND   ${CMAKE_STRIP} lrs
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${M2_INSTALL_PROGRAMSDIR}/bin/
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/lrslib
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/lrslib
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${CMAKE_COMMAND} -E echo "Warning: No tests available for cohomCalg"
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -877,7 +905,7 @@ ExternalProject_Add(build-csdp
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/csdp/patch-6.2.0
-  CONFIGURE_COMMAND ""
+  CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       CC=${csdp_CC}
                       CXX=${csdp_CXX}
@@ -885,7 +913,9 @@ ExternalProject_Add(build-csdp
                       LDLIBS=${csdp_LDLIBS}
                       LIBS=${csdp_LIBS}
   INSTALL_COMMAND   ${CMAKE_STRIP} solver/csdp
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different solver/csdp ${M2_INSTALL_PROGRAMSDIR}/bin/
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/csdp
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE README ${M2_INSTALL_LICENSESDIR}/csdp
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different solver/csdp ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} -C test clean
        COMMAND      ${MAKE} -j${PARALLEL_JOBS} -C test
   EXCLUDE_FROM_ALL  ON
@@ -925,7 +955,9 @@ ExternalProject_Add(build-nauty
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
   # TODO: put nauty programs in a folder?
   INSTALL_COMMAND   ${CMAKE_STRIP} ${nauty_BINARIES}
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${nauty_BINARIES} ${M2_INSTALL_PROGRAMSDIR}/bin/
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/nauty
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different nauty.h ${M2_INSTALL_LICENSESDIR}/nauty
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${nauty_BINARIES} ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -976,8 +1008,9 @@ ExternalProject_Add(build-normaliz
                       GMPFLAGS=${normaliz_GMPFLAGS}
   # TODO: do we need the libraries as well, or just the binary?
   INSTALL_COMMAND   ${CMAKE_STRIP} source/normaliz
-          COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/bin/
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/normaliz
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/normaliz
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -987,16 +1020,15 @@ _ADD_COMPONENT_DEPENDENCY(programs normaliz "mp;nauty" NORMALIZ)
 
 
 # http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
+# topcom needs cddlib
 set(topcom_PROGRAMS
   src-reg/checkregularity src/points2finetriang src/points2chiro src/chiro2circuits src/chiro2cocircuits
   src/points2allfinetriangs src/points2alltriangs src/points2ntriangs src/points2nfinetriangs
   src/points2finetriangs src/points2flips src/points2nallfinetriangs src/points2nalltriangs src/points2nflips
   src/points2triangs src/points2volume)
-# TODO: any way to simplify this?
-if(NOT CDD_FOUND)
-  set(topcom_CPPFLAGS "${CPPFLAGS} -I${M2_HOST_PREFIX}/include/cdd")
-else()
-  set(topcom_CPPFLAGS "${CPPFLAGS} -I${CDD_INCLUDE_DIR}/cdd")
+set(topcom_CPPFLAGS "${CPPFLAGS}")
+if(CDDLIB_FOUND)
+  set(topcom_CPPFLAGS "${topcom_CPPFLAGS} -I${CDDLIB_INCLUDE_DIR}")
 endif()
 ExternalProject_Add(build-topcom
   URL               ${M2_SOURCE_URL}/TOPCOM-0.17.8.tar.gz
@@ -1018,7 +1050,9 @@ ExternalProject_Add(build-topcom
   BUILD_COMMAND     ${MAKE} -j1 # topcom doesn't like parallel builds
   # TODO: put topcom programs in a folder?
   INSTALL_COMMAND   ${CMAKE_STRIP} ${topcom_PROGRAMS}
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${topcom_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/bin/
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/topcom
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING README ${M2_INSTALL_LICENSESDIR}/topcom
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${topcom_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -1026,100 +1060,54 @@ ExternalProject_Add(build-topcom
   )
 _ADD_COMPONENT_DEPENDENCY(programs topcom cddlib TOPCOM)
 
-
 #############################################################################
 
-# Set too ALL to install all libraries
-if(BUILD_LIBRARIES MATCHES "(all|ALL|on|ON)")
-  foreach(library IN LISTS LIBRARY_OPTIONS)
-    add_dependencies(build-libraries build-${library}-install)
-  endforeach()
-  # Turn it off afterward
-  set(BUILD_LIBRARIES OFF CACHE BOOL "Build libraries, even if found" FORCE)
-elseif(BUILD_LIBRARIES)
-  foreach(library IN LISTS BUILD_LIBRARIES)
-    string(TOLOWER ${library} library)
-    add_dependencies(build-libraries build-${library}-install)
-  endforeach()
-endif()
-
-# Set too ALL to install all programs
-if(BUILD_PROGRAMS MATCHES "(all|ALL|on|ON)")
-  foreach(program IN LISTS PROGRAM_OPTIONS)
-    add_dependencies(build-programs build-${program}-install)
-  endforeach()
-  # Turn it off afterward
-  set(BUILD_PROGRAMS  OFF CACHE BOOL "Build programs, even if found"  FORCE)
-elseif(BUILD_PROGRAMS)
-  # If a program is not on the list, it must be "ON", so add everything
-  foreach(program IN LISTS BUILD_PROGRAMS)
-    string(TOLOWER ${program} program)
-    add_dependencies(build-programs build-${program}-install)
-  endforeach()
-else()
-  # Make a symbolic link to the existing executable in the programs directory
-  # TODO: more programs need to be symlinked
-  # TODO: alternatively, fix M2 to look for programs on PATH
-  foreach(program IN ITEMS 4TI2 COHOMCALG GFAN LRSLIB CSDP NORMALIZ NAUTY TOPCOM POLYMAKE)
-    if(${program} AND NOT ${program} MATCHES ${M2_INSTALL_PROGRAMSDIR})
-      get_filename_component(program_name ${${program}} NAME)
-      file(CREATE_LINK ${${program}} ${M2_INSTALL_PROGRAMSDIR}/bin/${program_name} SYMBOLIC)
-    endif()
-  endforeach()
-endif()
-
-#############################################################################
-
-# Detect components that are not found
+# Make a list of remaining components that we need
 get_target_property(LIBRARY_DEPENDENCIES build-libraries MANUALLY_ADDED_DEPENDENCIES)
 get_target_property(PROGRAM_DEPENDENCIES build-programs  MANUALLY_ADDED_DEPENDENCIES)
-if(NOT LIBRARY_DEPENDENCIES)
-  set(LIBRARY_DEPENDENCIES N/A)
-endif()
-if(NOT PROGRAM_DEPENDENCIES)
-  set(PROGRAM_DEPENDENCIES N/A)
-endif()
 string(REGEX REPLACE "(build-|-install)" "" BUILD_LIB_LIST  "${LIBRARY_DEPENDENCIES}")
 string(REGEX REPLACE "(build-|-install)" "" BUILD_PROG_LIST "${PROGRAM_DEPENDENCIES}")
 
-# Detect installed components by the install stamp
+# Make a list of built components to test
 file(GLOB_RECURSE _install_stamp_list RELATIVE ${CMAKE_BINARY_DIR}/libraries
   "${CMAKE_BINARY_DIR}/libraries/*/src/build-*-stamp/build-*-install")
 string(REGEX REPLACE "[a-z0-9_]+/src/build-[a-z0-9_]+-stamp/(build-[a-z0-9_]+-install)" "\\1"
   _installed_list "${_install_stamp_list}")
-string(REGEX REPLACE "(build-|-install)" "" INSTALLED_LIST_0  "${_installed_list}")
-foreach(_i IN ITEMS 1 2 3 4)
-  list(SUBLIST INSTALLED_LIST_0 ${_j}0 10 INSTALLED_LIST_${_i})
-  list(LENGTH INSTALLED_LIST_${_i} _n)
-  set(_j ${_i})
-  if(${_n} GREATER 0)
-    set(INSTALLED_LIST "${INSTALLED_LIST}\n         ${INSTALLED_LIST_${_i}}")
-    if(${_n} LESS 10)
-      break()
-    endif()
-  endif()
-endforeach()
-if(NOT INSTALLED_LIST)
-  set(INSTALLED_LIST N/A)
-endif()
-
-# Make the test target
-string(REGEX REPLACE "install" "test" TEST_TARGET_LIST  "${_installed_list}")
+string(REGEX REPLACE "-install" "-test" TEST_TARGET_LIST  "${_installed_list}")
+# Remove broken tests or those we skip
 foreach(_test IN LISTS SKIP_TESTS)
+  list(REMOVE_ITEM TEST_TARGET_LIST build-${_test}-test)
+endforeach()
+if(TEST_TARGET_LIST)
+  add_dependencies(check-components-slow ${TEST_TARGET_LIST})
+endif()
+# Remove slow tests as well
+foreach(_test IN LISTS SLOW_TESTS)
   list(REMOVE_ITEM TEST_TARGET_LIST build-${_test}-test)
 endforeach()
 if(TEST_TARGET_LIST)
   add_dependencies(check-components ${TEST_TARGET_LIST})
 endif()
 
+
+# Set empty ones to N/A
+foreach(_list IN ITEMS
+    BUILD_LIB_LIST INSTALLED_LIBRARIES BUILD_PROG_LIST INSTALLED_PROGRAMS)
+  if(NOT ${_list})
+    set(${_list} N/A)
+  endif()
+endforeach()
+
 # Print some of that information
-message("\n## External components:
-     To be built:
+message("\n## External components
+     Need to build:
        Libraries       = ${BUILD_LIB_LIST}
        Programs        = ${BUILD_PROG_LIST}
-     Already built     = ${INSTALLED_LIST}")
+     Already built:
+       Libraries       = ${INSTALLED_LIBRARIES}
+       Programs        = ${INSTALLED_PROGRAMS}")
 
-message("\n## Library information:
+message("\n## Library information
      Linear Algebra    = ${LAPACK_LIBRARIES}
      MP Arithmetic     = ${MP_LIBRARIES}")
 
@@ -1128,4 +1116,18 @@ if(BUILD_LIB_LIST OR BUILD_PROG_LIST)
   message("## Rerun build-libraries and build-programs targets first")
 else()
   message(CHECK_PASS " Everything is in order! 🎉")
+endif()
+
+###############################################################################
+# This wasn't working well ... perhaps will be fixed at some point
+if(FALSE)
+  # Make a symbolic link to the existing executable in the programs directory
+  # TODO: more programs need to be symlinked
+  # TODO: alternatively, fix M2 to look for programs on PATH
+  foreach(program IN ITEMS 4TI2 COHOMCALG GFAN LRSLIB CSDP NORMALIZ NAUTY TOPCOM POLYMAKE)
+    if(${program} AND NOT ${program} MATCHES ${M2_INSTALL_PROGRAMSDIR})
+      get_filename_component(program_name ${${program}} NAME)
+      file(CREATE_LINK ${${program}} ${M2_INSTALL_PROGRAMSDIR}/${program_name} SYMBOLIC)
+    endif()
+  endforeach()
 endif()

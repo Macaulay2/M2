@@ -33,7 +33,10 @@ option(WITH_XML		"Link with the libxml2 library"		ON)
 option(WITH_SQL		"Link with the MySQL library"		OFF)
 option(WITH_PYTHON	"Link with the Python library"		OFF)
 
-set(PARALLEL_JOBS 4    CACHE STRING "Number of parallel jobs for libraries and programs")
+set(PARALLEL_JOBS 4
+  CACHE STRING "Number of parallel jobs for libraries and programs")
+set(SKIP_TESTS "mpsolve;googletest" CACHE STRING "Tests to skip")
+set(SLOW_TESTS "eigen;ntl;flint"    CACHE STRING "Slow tests to skip")
 
 # TODO: deprecate these variables
 set(M2SUFFIX "")
@@ -56,8 +59,9 @@ if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
 endif()
 
 message("## Configure Macaulay2
-     M2 Version        = ${PROJECT_VERSION}
-     Git Commit        = ${GIT_COMMIT}\n
+     M2 version        = ${PROJECT_VERSION}
+     Git commit        = ${GIT_COMMIT}
+     Install prefix    = ${CMAKE_INSTALL_PREFIX}\n
      CMAKE_BUILD_TYPE  = ${CMAKE_BUILD_TYPE}
      BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}
      BUILD_TESTING     = ${BUILD_TESTING}
@@ -119,12 +123,13 @@ foreach(DIR IN ITEMS SYSCONFDIR DATAROOTDIR DATADIR INFODIR LOCALEDIR MANDIR DOC
   GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR})
 endforeach()
 
-set(M2_INSTALL_PROGRAMSDIR ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2)
+set(M2_INSTALL_LICENSESDIR ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2/program-licenses)
+set(M2_INSTALL_PROGRAMSDIR ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2/bin)
+set(CMAKE_PROGRAM_PATH     ${M2_INSTALL_PROGRAMSDIR})
 
 message("\n## Staging area prefixes
      common            = ${M2_DIST_PREFIX}/${M2_DATA_INFIX}
      exec 	       = ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}")
-message("\n## Installation prefix = ${CMAKE_INSTALL_PREFIX}")
 
 ###############################################################################
 ## Define compiler and linker flags and features

@@ -8,10 +8,15 @@
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 
-find_path(GLPK_INCLUDE_DIR NAMES glpk.h )
-find_library(GLPK_LIBRARIES NAMES glpk libglpk)
+find_path(GLPK_INCLUDE_DIR NAMES glpk.h
+  PATHS ${INCLUDE_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/include
+  )
+
+find_library(GLPK_LIBRARIES NAMES glpk libglpk
+  PATHS ${LIB_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/lib
+  )
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLPK DEFAULT_MSG GLPK_INCLUDE_DIR GLPK_LIBRARIES)
+find_package_handle_standard_args(GLPK DEFAULT_MSG GLPK_INCLUDE_DIR GLPK_LIBRARIES)
 
 mark_as_advanced(GLPK_INCLUDE_DIR GLPK_LIBRARIES)

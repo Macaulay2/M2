@@ -29,7 +29,7 @@
 #   flint	Fast Library for Number Theory		(needs gmp, ntl)
 #   factory	Multivariate Polynomal Package		(needs flint, ntl and gmp)
 #   frobby	Computations With Monomial Ideals	(needs on gmp)
-#   cddlib	Double Description Method of Motzkin	
+#   cddlib	Double Description Method of Motzkin
 #   glpk	GNU Linear Programming Kit
 #   mpsolve	Multiprecision Polynomial SOLVEr
 #   givaro	prime field and algebraic computations	(needs gmp)
@@ -53,6 +53,12 @@
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
 set(LIBRARY_LIST   HISTORY READLINE)
 set(LIBRARIES_LIST LAPACK MP MPFR BDWGC NTL FLINT FACTORY FROBBY MATHICGB MATHIC MEMTAILOR MPSOLVE TBB)
+
+## List of programs and libraries that we can build
+set(LIBRARY_OPTIONS
+  Eigen3 BDWGC MPIR MPFR NTL Flint Factory Frobby cddlib MPSolve
+  Givaro FFLAS_FFPACK GLPK GTest Memtailor Mathic Mathicgb)
+set(PROGRAM_OPTIONS 4ti2 cohomCalg Gfan lrslib CSDP Normaliz Nauty TOPCOM)
 
 message(CHECK_START " Checking for existing libraries and programs")
 
@@ -103,7 +109,7 @@ find_package(Factory	4.1.0)
 find_package(Flint	2.5.3)
 find_package(NTL       10.5.0)
 # TODO: add minimum version checks
-find_package(CDD)     # 094h?
+find_package(CDDLIB)  # 094h?
 find_package(Mathic	1.0.0)
 find_package(Mathicgb	1.0.0)
 find_package(Memtailor	1.0.0)
@@ -151,16 +157,64 @@ find_program(MAKE	NAMES	make gmake nmake)
 find_program(ETAGS	NAMES	etags ctags)
 
 ## Find external programs used by Macaulay2 packages
-find_program(4TI2	NAMES	4ti2-circuits circuits	PATHS ${M2_INSTALL_PROGRAMSDIR}/bin)
-find_program(COHOMCALG	NAMES	cohomcalg		PATHS ${M2_INSTALL_PROGRAMSDIR}/bin)
-find_program(GFAN	NAMES	gfan			PATHS ${M2_INSTALL_PROGRAMSDIR}/bin)
+find_program(4TI2	NAMES	circuits)
+find_program(COHOMCALG	NAMES	cohomcalg)
+find_program(GFAN	NAMES	gfan)
 # TODO: library or program?
-find_program(LRSLIB	NAMES	lrs			PATHS ${M2_INSTALL_PROGRAMSDIR}/bin)
-find_program(CSDP	NAMES	csdp			PATHS ${M2_INSTALL_PROGRAMSDIR}/bin)
-find_program(NORMALIZ	NAMES	normaliz		PATHS ${M2_INSTALL_PROGRAMSDIR}/bin)
-find_program(NAUTY	NAMES	dreadnaut nauty-complg	PATHS ${M2_INSTALL_PROGRAMSDIR}/bin)
-find_program(TOPCOM	NAMES	checkregularity		PATHS ${M2_INSTALL_PROGRAMSDIR}/bin)
+find_program(LRSLIB	NAMES	lrs)
+find_program(CSDP	NAMES	csdp)
+find_program(NORMALIZ	NAMES	normaliz)
+find_program(NAUTY	NAMES	dreadnaut)
+find_program(TOPCOM	NAMES	checkregularity)
 find_program(POLYMAKE	NAMES	polymake) # TODO
+
+#############################################################################
+## List installed components and unset those that we wish to build ourselves
+set(INSTALLED_LIBRARIES "")
+set(INSTALLED_PROGRAMS "")
+
+# Detect which libraries are installed, which we want to build, and which we have yet to build
+foreach(_library IN LISTS LIBRARY_OPTIONS)
+  string(TOUPPER "${BUILD_LIBRARIES}" BUILD_LIBRARIES)
+  string(TOUPPER "${_library}" _name)
+  if(${_name}_FOUND)
+    if(${_name}_INCLUDE_DIR MATCHES ${M2_HOST_PREFIX} OR
+	${_name}_LIBRARIES MATCHES ${M2_HOST_PREFIX})
+      # we built it
+      list(APPEND INSTALLED_LIBRARIES ${_library})
+    elseif(BUILD_LIBRARIES MATCHES "(ALL|ON)" OR "${_name}" IN_LIST BUILD_LIBRARIES)
+      # exists on the system, but we want to build it
+      unset(${_name}_FOUND)
+      unset(${_library}_DIR CACHE)
+      unset(${_name}_LIBRARIES CACHE)
+      unset(${_name}_INCLUDE_DIR CACHE)
+      unset(${_name}_INCLUDE_DIRS CACHE)
+    else()
+      # exists on the system
+    endif()
+  else()
+    # was not found
+  endif()
+endforeach()
+
+# Detect which programs are installed, which we want to build, and which we have yet to build
+foreach(_program IN LISTS PROGRAM_OPTIONS)
+  string(TOUPPER "${BUILD_PROGRAMS}" BUILD_PROGRAMS)
+  string(TOUPPER "${_program}" _name)
+  if(${_name})
+    if(${_name} MATCHES ${M2_INSTALL_PROGRAMSDIR})
+      # we built it
+      list(APPEND INSTALLED_PROGRAMS ${_program})
+    elseif(BUILD_PROGRAMS MATCHES "(ALL|ON)" OR "${_name}" IN_LIST BUILD_PROGRAMS)
+      # exists on the system, but we want to build it
+      unset(${_name} CACHE) # Unlike libraries, programs are set in cache
+    else()
+      # exists on the system
+    endif()
+  else()
+    # was not found
+  endif()
+endforeach()
 
 ###############################################################################
 ## Check to make sure that the found libraries can be linked to catch linking conflicts early.
