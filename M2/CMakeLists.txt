@@ -15,8 +15,8 @@
 ## IDEs such as Xcode or vscode can also configure and build using CMake.
 ###############################################################################
 
-## Works with 3.14 and tested through 3.17
-cmake_minimum_required(VERSION 3.14...3.17)
+## Requires version 3.15 and is tested with 3.17
+cmake_minimum_required(VERSION 3.15...3.17)
 cmake_policy(VERSION 3.14)
 
 ## Use the C++14 standard
