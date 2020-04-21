@@ -346,6 +346,8 @@ ExternalProject_Add(build-flint
                     -DBUILD_TESTING=OFF # Flint builds too many tests, so make them a separate target
                     -DBUILD_SHARED_LIBS=ON # FIXME: ${BUILD_SHARED_LIBS} # TODO: get static flint building to work
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
+                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
                     -DWITH_MPIR=${USING_MPIR}
