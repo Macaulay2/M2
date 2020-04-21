@@ -145,6 +145,8 @@ ExternalProject_Add(build-eigen
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_TESTING=${BUILD_TESTING}
+                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
   TEST_COMMAND      ${CMAKE_COMMAND} . -DEIGEN_LEAVE_TEST_IN_ALL_TARGET=ON
        COMMAND      ${CMAKE_COMMAND} --build .
        COMMAND      ${CMAKE_COMMAND} --build . --target test
@@ -170,6 +172,8 @@ ExternalProject_Add(build-bdwgc
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -Dbuild_tests=${BUILD_TESTING}
+                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -Dbuild_cord=OFF
                     -Denable_threads=ON
                     -Denable_cplusplus=ON
@@ -342,12 +346,12 @@ ExternalProject_Add(build-flint
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
                     -DBUILD_TESTING=OFF # Flint builds too many tests, so make them a separate target
                     -DBUILD_SHARED_LIBS=ON # FIXME: ${BUILD_SHARED_LIBS} # TODO: get static flint building to work
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
-                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
                     -DWITH_MPIR=${USING_MPIR}
@@ -652,6 +656,8 @@ ExternalProject_Add(build-googletest
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/googletest
   BINARY_DIR        libraries/googletest/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX} -DBUILD_GMOCK=OFF
+                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -672,6 +678,8 @@ ExternalProject_Add(build-memtailor
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_TESTING=${BUILD_TESTING}
+                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
@@ -692,6 +700,8 @@ ExternalProject_Add(build-mathic
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_TESTING=${BUILD_TESTING}
+                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
@@ -714,6 +724,8 @@ ExternalProject_Add(build-mathicgb
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_TESTING=${BUILD_TESTING}
+                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -Denable_mgb=ON
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
