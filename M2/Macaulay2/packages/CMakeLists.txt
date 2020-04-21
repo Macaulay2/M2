@@ -96,66 +96,84 @@ foreach(package IN LISTS PACKAGES)
     unset(USES_TERMINAL)
     set(PACKAGE_DEPENDENCIES install-Macaulay2Doc install-Style)
   endif()
+  
+###############################################################################
+  # TODO: Special dependencies:
+
+  # 1. all packages seem to depend on Macaulay2Doc: https://github.com/Macaulay2/M2/issues/1085
+  # 2. FourTiTwo needs 4ti2 which needs glpk
+  # 3. cohomcalg
+  # 4. gfanInterface and StatePolytope need gfan which needs cddlib
+  # 5. lrslib
+  # 6. csdp
+  # 7. Normaliz needs normaliz which needs libgmp, libgmpxx, boost
+  # 8. nauty
+  # 9. topcom
+  # 10. polymake
+
+  set(M2_INSTALL_STRING installPackage(\\"${package}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON>)
+  set(M2_COUNT_STRING   \\\"${package}-testcount\\\"<<${package}\#\\\"test number\\\"<<close $<SEMICOLON>)
+  set(M2_CHECK_STRING   check(${package}, UserMode=>false) $<SEMICOLON>)
+  set(M2_NEED_STRING    needsPackage(\\"${package}\\", LoadDocumentation=>true, DebuggingMode=>true) $<SEMICOLON>)
+  # M2_TEST_STRING is defined further down, as it includes an index
 
   ## Custom target for installing the package
+  # also stores the number of tests in a file
   add_custom_target(install-${package}
-    COMMENT
-      "Installing package ${package}"
-    COMMAND
-      ${M2} ${M2_ARGS} -e \"installPackage(\\"${package}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON> exit 0\"
+    COMMENT "Installing package ${package}"
+    COMMAND ${M2} ${M2_ARGS} -e \"${M2_INSTALL_STRING} ${M2_COUNT_STRING} exit 0\"
     ${USES_TERMINAL}
+    BYPRODUCTS ${package}-testcount
     DEPENDS M2-core ${PACKAGE_DEPENDENCIES}
     )
 
   ## Custom target for uninstalling the package
   add_custom_target(uninstall-${package}
-    COMMENT
-      "Uninstalling package ${package}"
+    COMMENT "Uninstalling package ${package}"
     COMMAND
-      rm -rf
+      rm -rf ${package}-testcount
         ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/${package}*
         ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${package}*
         ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/${package}*
         ${M2_DIST_PREFIX}/${M2_INSTALL_INFODIR}/${package}*
     )
 
+###############################################################################
+
   # FIXME: what is if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 ?
   ## Custom target for checking the package
   add_custom_target(check-${package}
-    COMMENT
-      "Checking package ${package}"
-    COMMAND
-      ${M2} ${M2_ARGS}
-        -e \"needsPackage(\\"${package}\\", LoadDocumentation=>true, DebuggingMode=>true) $<SEMICOLON>
-             check(${package}, UserMode=>false) $<SEMICOLON> exit 0\"
+    COMMENT "Checking package ${package}"
+    COMMAND ${M2} ${M2_ARGS} -e \"${M2_NEED_STRING} ${M2_CHECK_STRING} exit 0\"
     ${USES_TERMINAL}
     DEPENDS M2-core
     )
 
+  if(BUILD_TESTING)
+    ## Read the number of tests
+    if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${package}-testcount)
+      file(READ ${CMAKE_CURRENT_BINARY_DIR}/${package}-testcount ${package}-testcount)
+    else()
+      set(${package}-testcount 0)
+    endif()
+    ## Add individual tests for package
+    foreach(_i RANGE ${${package}-testcount})
+      if(${_i} LESS ${${package}-testcount})
+	set(M2_TEST_STRING "check_${_i}(\"${package}\",UserMode=>false)$<SEMICOLON>exit(0)")
+        add_test(NAME "check-${package}-${_i}"
+          COMMAND ${M2} ${M2_ARGS} -e ${M2_TEST_STRING}
+          )    
+      endif()
+    endforeach()
+  endif()
+
+###############################################################################
+
   ## Everything bagel
   add_custom_target(all-${package}
-    COMMENT
-      "Installing and checking package ${package}"
-    COMMAND
-      ${M2} ${M2_ARGS}
-        -e \"installPackage(\\"${package}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON>
-             check(${package}, UserMode=>false) $<SEMICOLON> exit 0\"
+    COMMENT "Installing and checking package ${package}"
+    COMMAND ${M2} ${M2_ARGS} -e \"${M2_INSTALL_STRING} ${M2_COUNT_STRING} ${M2_CHECK_STRING} exit 0\"
     ${USES_TERMINAL}
     DEPENDS M2-core
     )
 endforeach()
-
-#################################################################################
-# Special dependencies:
-
-# 1. all packages seem to depend on Macaulay2Doc: https://github.com/Macaulay2/M2/issues/1085
-# 2. FourTiTwo needs 4ti2 which needs glpk
-# 3. cohomcalg
-# 4. gfanInterface and StatePolytope need gfan which needs cddlib
-# 5. lrslib
-# 6. csdp
-# 7. Normaliz needs normaliz which needs libgmp, libgmpxx, boost
-# 8. nauty
-# 9. topcom
-# 10. polymake
-
