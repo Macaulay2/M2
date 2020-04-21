@@ -90,7 +90,7 @@ else()
 endif()
 
 if(VERBOSE)
-  message("## Library compile options:
+  message("\n## Library compile options:
      CFLAGS            = ${CFLAGS}
      CXXFLAGS          = ${CXXFLAGS}
      LDFLAGS           = ${LDFLAGS}")
@@ -1113,19 +1113,19 @@ if(TEST_TARGET_LIST)
 endif()
 
 # Print some of that information
-message("## External components:
+message("\n## External components:
      To be built:
        Libraries       = ${BUILD_LIB_LIST}
        Programs        = ${BUILD_PROG_LIST}
      Already built     = ${INSTALLED_LIST}")
 
-message("## Library information:
+message("\n## Library information:
      Linear Algebra    = ${LAPACK_LIBRARIES}
      MP Arithmetic     = ${MP_LIBRARIES}")
 
 if(BUILD_LIB_LIST OR BUILD_PROG_LIST)
   message(CHECK_FAIL " Some components are missing")
-  message("## Rerun the build-libraries and build-programs targets")
+  message("## Rerun build-libraries and build-programs targets first")
 else()
   message(CHECK_PASS " Everything is in order! 🎉")
 endif()

@@ -14,6 +14,8 @@
 # use CMAKE_BUILD_TYPE=RelMinSize            for minimized release
 # use BUILD_TESTING=ON                       to build the testing tree
 
+option(DEVELOPMENT	"Set the DEVELOPMENT macro in config.h"	OFF)
+option(EXPERIMENT	"Set the EXPERIMENT macro in config.h"	OFF)
 option(LINTING		"Enable linting source files"		OFF)
 option(MEMDEBUG		"Enable memory allocation debugging"	OFF)
 option(PROFILING	"Enable profiling build flags"		OFF)
@@ -55,10 +57,13 @@ endif()
 
 message("## Configure Macaulay2
      M2 Version        = ${PROJECT_VERSION}
-     Git Commit        = ${GIT_COMMIT}
+     Git Commit        = ${GIT_COMMIT}\n
      CMAKE_BUILD_TYPE  = ${CMAKE_BUILD_TYPE}
      BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}
-     BUILD_TESTING     = ${BUILD_TESTING}")
+     BUILD_TESTING     = ${BUILD_TESTING}
+     BUILD_DOCS        = ${BUILD_DOCS}\n
+     DEVELOPMENT       = ${DEVELOPMENT}
+     EXPERIMENT        = ${EXPERIMENT}")
 
 ## Set machine description variables used in version.dd
 include(flavor) ## Set ISSUE, ISSUE_FLAVOR, and ISSUE_RELEASE
@@ -68,14 +73,14 @@ set(ARCH    ${CMAKE_SYSTEM_PROCESSOR})        # e.g. `uname -p`, x86_64, arm
 set(MACHINE ${ARCH}-${OS}-${ISSUE})           # e.g. x86_64-Linux-Fedora-31
 SITE_NAME(NODENAME)                           # e.g. `uname -n`
 
-message("## Host operating system information:
+message("\n## Host OS information
      ISSUE             = ${ISSUE}
      NODENAME          = ${NODENAME}
      OS REL            = ${OS} ${REL}
      ARCH              = ${ARCH}")
 
 # TODO
-# message("## Target operating system information:")
+# message("## Target OS information")
 
 ###############################################################################
 ## Define variables for installation directories and Macaulay2 Layout
@@ -116,10 +121,10 @@ endforeach()
 
 set(M2_INSTALL_PROGRAMSDIR ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2)
 
-message("## Staging area directories:
-     common:	${M2_DIST_PREFIX}/${M2_DATA_INFIX}
-     exec:	${M2_DIST_PREFIX}/${M2_EXEC_INFIX}")
-message("## Installation prefix: ${CMAKE_INSTALL_PREFIX}")
+message("\n## Staging area prefixes
+     common            = ${M2_DIST_PREFIX}/${M2_DATA_INFIX}
+     exec 	       = ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}")
+message("\n## Installation prefix = ${CMAKE_INSTALL_PREFIX}")
 
 ###############################################################################
 ## Define compiler and linker flags and features
@@ -182,10 +187,14 @@ add_compile_options(
 get_property(COMPILE_OPTIONS DIRECTORY PROPERTY COMPILE_OPTIONS)
 get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
 
+message("\n## Compiler information
+     C                 = ${CMAKE_C_COMPILER}
+     C++               = ${CMAKE_CXX_COMPILER}")
+
 if(VERBOSE)
-  message("## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)
-     Compiler:	${COMPILE_OPTIONS}
-     Linker:	${LINK_OPTIONS}")
+  message("\n## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)
+     Compiler flags    = ${COMPILE_OPTIONS}
+     Linker flags      = ${LINK_OPTIONS}")
 endif()
 
 ###############################################################################
