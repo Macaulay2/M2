@@ -21,31 +21,13 @@ target_compile_definitions(M2-regex PUBLIC
   -Dregfree=M2_regfree
   )
 
-# common warning flags
+# Compiler warning flags
 target_compile_options(M2-regex PRIVATE
-  -Wall
-  -Wfatal-errors
   -Wno-cast-qual
-  -Wno-parentheses
-  -Wno-shadow
   -Wno-sign-compare
-  -Wno-sign-conversion
-  -Wno-uninitialized
   -Wno-unused
   -Wno-unused-parameter
+
+  # FIXME: update regex or use POSIX syntax
+  $<$<COMPILE_LANG_AND_ID:C,GNU>:-Wno-misleading-indentation -Wno-old-style-declaration>
   )
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  # using Clang or AppleClang
-  target_compile_options(M2-regex PRIVATE
-    -Wno-mismatched-tags
-    -Wno-unknown-pragmas
-    )
-endif()
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  # using GCC
-  target_compile_options(M2-regex PRIVATE
-    -pedantic-errors
-    -Wno-error=pragmas
-    )
-endif()
-# add other compilers (eg: Intel, MSVC) here

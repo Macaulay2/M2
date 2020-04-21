@@ -193,8 +193,8 @@ get_property(COMPILE_OPTIONS DIRECTORY PROPERTY COMPILE_OPTIONS)
 get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
 
 message("\n## Compiler information
-     C                 = ${CMAKE_C_COMPILER}
-     C++               = ${CMAKE_CXX_COMPILER}")
+     C                 = ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} (${CMAKE_C_COMPILER})
+     C++               = ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})")
 
 if(VERBOSE)
   message("\n## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)

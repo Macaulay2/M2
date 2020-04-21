@@ -25,12 +25,17 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # TODO: consider using:
 #source_group(TREE . PREFIX "Macaulay2" FILES ../include/M2/config.h ...)
 
+# Add extra compiler warning flags for Macaulay2
+# NOTE: some warnings are disabled in the subdirectories
+# TODO: add a cached option for this?
+add_compile_options(-Wall -Wextra -Wfatal-errors -Wcast-qual) # -Werror
+
 # TODO: remove util
 add_subdirectory(regex) # use POSIX regex
 add_subdirectory(c) # rename to scc?
 add_subdirectory(d) # rename to interpreter?
 add_subdirectory(e) # rename to engine?
-add_subdirectory(system) # clear up purpose or combine
+add_subdirectory(system) # rename to supervisor?
 add_subdirectory(bin) # combine with engine or interpreter?
 add_subdirectory(m2) # rename to Core?
 add_subdirectory(man) # combine?

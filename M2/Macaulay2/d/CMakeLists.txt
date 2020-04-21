@@ -173,30 +173,22 @@ target_include_directories(M2-interpreter
     ${READLINE_INCLUDE_DIR}
   )
 
-# common warning flags
+# Compiler warning flags
 target_compile_options(M2-interpreter PRIVATE
-  -Wall
-  #-Wextra
-  -Wfatal-errors
+  -Wno-cast-qual # FIXME: caused by M2lib.c:551:43
   -Wno-sign-compare
   -Wno-uninitialized
   -Wno-unused
-  # temporary flags
-  -Wno-unknown-pragmas
+  -Wno-unused-parameter
+
+  # FIXME: mismatched-tags and parentheses-equality errors are caused by scc1
+  $<$<COMPILE_LANG_AND_ID:C,AppleClang,Clang>:-Wno-parentheses-equality>
+  $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags -Wno-parentheses-equality>
+
+  # FIXME: __builtin_frame_address M2lib.c:165 causes this:
+  $<$<COMPILE_LANG_AND_ID:C,GNU>:-Wno-frame-address>
+  # Givaro and fflas_ffpack cause these:
+  $<$<COMPILE_LANG_AND_ID:CXX,GNU>:-Wno-deprecated-copy -Wno-unknown-pragmas>
   )
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  # using Clang or AppleClang
-  target_compile_options(M2-interpreter PRIVATE
-    -Wno-mismatched-tags # needed currently, but if we clean up includes, should not be needed?
-    -Wno-parentheses-equality
-    )
-endif()
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  # using GCC
-  target_compile_options(M2-interpreter PRIVATE
-    # temporary flags
-    -Wno-frame-address # many errors about __builtin_frame_address in M2lib.c:165
-    )
-endif()
 # add other compilers (eg: Intel, MSVC) here
 # for Intel: -diag-disable 981,869,383,2259,444 -debug

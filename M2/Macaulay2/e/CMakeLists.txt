@@ -306,43 +306,27 @@ _ADD_CLANG_FORMAT(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFI
 ###############################################################################
 # TODO: enable INTERPROCEDURAL_OPTIMIZATION?
 
-# common warning flags
+# Compiler warning flags
 target_compile_options(M2-engine PRIVATE
-  -Wall
-  -Wextra
-  -Wcast-qual # added for bibasis
-  -Wfatal-errors
-  -Wno-cast-qual
-  -Wno-implicit-fallthrough
-  -Wno-parentheses
-  -Wno-shadow
+  -Wno-cast-qual # FIXME
   -Wno-sign-compare
-  -Wno-sign-conversion
-  -Wno-uninitialized
-  -Wno-unused
   -Wno-unused-parameter
-  # temporary flags
-  -Wno-unknown-pragmas
+  -Wno-unused-local-typedefs # FIXME: caused by mathic/Geobucket.h:510:49
+
+  $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:
+  -Wno-deprecated-register # caused by mps/mpc.h:114:37
+  -Wno-mismatched-tags # FIXME: caused by scc1
+  -Wno-unused-variable # FIXME: caused by schur2.cpp:597:31
+  >
+
+  $<$<COMPILE_LANG_AND_ID:CXX,GNU>:
+  -Wno-deprecated-copy -Wno-unknown-pragmas # caused by Givaro and fflas_ffpack
+  -Wno-ignored-qualifiers # FIXME: caused by bibasis/tset.hpp:44:9
+  -Wno-implicit-fallthrough # FIXME: caused by gb-default.cpp, gb-test1.cpp, gb-walk.cpp, hermite.cpp, etc.
+  >
+
+  # Intel TODO: -diag-disable 981,869,383,2259,444 -debug -Wimplicit-function-declaration
   )
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  # using Clang or AppleClang
-  target_compile_options(M2-engine PRIVATE
-    -Wno-mismatched-tags # needed currently, but if we clean up includes, should not be needed?
-    )
-endif()
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  # using GCC
-  target_compile_options(M2-engine PRIVATE
-    #-pedantic-errors
-    #-Wno-extra-semi
-    -Wno-error=pragmas
-    -Wno-unused-local-typedefs # one warning, in mathic.h from x-aring.cpp
-    # temporary flags
-    -Wno-deprecated-copy
-    )
-endif()
-# add other compilers (eg: Intel, MSVC) here
-# for Intel: -diag-disable 981,869,383,2259,444 -debug -Wimplicit-function-declaration
 
 ###############################################################################
 ## To try, run ctest or ./M2-unit-tests in Macaulay2/e
@@ -407,6 +391,12 @@ if(BUILD_TESTING)
 
   ###############################################################################
 
+  target_compile_options(M2-unit-tests PRIVATE
+    -Wno-cast-qual # FIXME
+    -Wno-sign-compare
+    -Wno-unused-parameter
+    $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags> # FIXME
+    )
   target_include_directories(M2-unit-tests
     PRIVATE
     ${EIGEN3_INCLUDE_DIR}
@@ -418,7 +408,7 @@ if(BUILD_TESTING)
 
   # NOTE: is d/debug.o needed?
   target_link_libraries(M2-unit-tests
-    M2-regex M2-engine M2-interpreter M2-system
+    M2-regex M2-engine M2-interpreter M2-supervisor
     Threads::Threads ${LIBGDBM} ${CMAKE_DL_LIBS}
     )
 

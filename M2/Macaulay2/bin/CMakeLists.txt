@@ -2,6 +2,8 @@
 # make the executable, "M2-binary".  We also make and install the shell script wrapper,
 # "M2", whose function is to set LD_LIBRARY_PATH appropriately.
 
+# TODO: plenty of Darwin specific linker flags in Makefile.in
+
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 # TODO: do we still want to use M2${EXE} defined in cmake/config.cmake?
@@ -18,7 +20,7 @@ target_include_directories(M2-binary PRIVATE ${READLINE_INCLUDE_DIR})
 
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
-  M2-regex M2-interpreter M2-engine M2-system
+  M2-regex M2-interpreter M2-engine M2-supervisor
   Threads::Threads ${LIBGDBM} ${CMAKE_DL_LIBS}) # TODO: handle the latter two differently
 
 foreach(LIB IN LISTS LIBRARY_LIST)

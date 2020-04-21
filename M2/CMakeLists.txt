@@ -35,6 +35,13 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 endif()
 ## Enable support for folders in IDEs
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+## Enable ccache or distcc acceleration with Makefile and Ninja
+# run ccache -s to get the CCache statistics
+find_program(CCACHE ccache)
+if(CCACHE)
+    set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE}")
+    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
+endif()
 
 ###############################################################################
 ## Set the project name, version, and languages
