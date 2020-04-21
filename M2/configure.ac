@@ -395,14 +395,19 @@ AC_SEARCH_LIBS(socket,socket ws2_32) dnl ws2_32 is used under mingw64
 AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
-AC_SUBST(HAVE_LIBTBB,no)
-AC_SUBST(LIBTBB,)
-   AC_LANG(C++)
-   AC_CHECK_HEADER(tbb/tbb.h,
-      [AC_SEARCH_LIBS(TBB_runtime_interface_version,tbb,
-	 LIBTBB=$ac_cv_search_TBB_runtime_interface_version
-	 HAVE_LIBTBB=yes)])
-   AC_LANG(C)
+
+dnl AC_SUBST(HAVE_LIBTBB,no)
+dnl AC_SUBST(LIBTBB,)
+dnl    AC_LANG(C++)
+dnl    AC_CHECK_HEADER(tbb/tbb.h,
+dnl       [AC_SEARCH_LIBS(TBB_runtime_interface_version,tbb,
+dnl 	 LIBTBB=$ac_cv_search_TBB_runtime_interface_version
+dnl 	 HAVE_LIBTBB=yes)])
+dnl    AC_LANG(C)
+# the following line remove -ltbb from LIBS (only thing in LIBS so far).  It is not needed
+# for linking M2-binary.  It is used in mathicgb.
+# LIBS=
+
 AC_CHECK_FUNCS([herror error backtrace clock_gettime __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality ioctl])
 
 AC_SUBST(HAVE_PERSONALITY,$ac_cv_func_personality)
@@ -697,7 +702,6 @@ AC_SUBST(OPENMP_CXXFLAGS,"$OPENMP_CXXFLAGS")
 AC_SUBST(OPENMP_LIBS,"$OPENMP_LIBS")
 
 #############################################################################
-
 AC_SUBST(BUILTLIBS,)
 # The list BUILTLIBS is the list of link options for the libraries we have decided to build,
 #    of the form "-lFOO", which will be used to link Macaulay2 later on.  These libraries are not
