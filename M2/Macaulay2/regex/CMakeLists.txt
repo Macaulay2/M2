@@ -26,7 +26,6 @@ target_compile_options(M2-regex PRIVATE
   -Wno-cast-qual
   -Wno-sign-compare
   -Wno-unused
-  -Wno-unused-parameter
 
   # FIXME: update regex or use POSIX syntax
   $<$<COMPILE_LANG_AND_ID:C,GNU>:-Wno-misleading-indentation -Wno-old-style-declaration>

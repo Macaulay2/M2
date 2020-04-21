@@ -40,7 +40,6 @@ add_executable(scc1
 target_include_directories(scc1 PUBLIC .)
 
 target_compile_options(scc1 PRIVATE
-  -Wno-unused-parameter # FIXME: caused by chk.c:244:40
   $<$<COMPILE_LANG_AND_ID:C,GNU>:-Wno-implicit-fallthrough> # FIXME: caused by type.c:175:26
   )
 

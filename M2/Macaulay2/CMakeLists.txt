@@ -28,7 +28,10 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # Add extra compiler warning flags for Macaulay2
 # NOTE: some warnings are disabled in the subdirectories
 # TODO: add a cached option for this?
-add_compile_options(-Wall -Wextra -Wfatal-errors -Wcast-qual) # -Werror
+add_compile_options(
+  -Wall -Wextra -Wfatal-errors -Wcast-qual # -Werror
+  -Wno-unused-parameter # FIXME: caused by c/chk.c:244:40 and every scc1 generated file
+  )
 
 # TODO: remove util
 add_subdirectory(regex) # use POSIX regex

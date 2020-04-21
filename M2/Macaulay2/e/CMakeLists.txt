@@ -310,7 +310,6 @@ _ADD_CLANG_FORMAT(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFI
 target_compile_options(M2-engine PRIVATE
   -Wno-cast-qual # FIXME
   -Wno-sign-compare
-  -Wno-unused-parameter
   -Wno-unused-local-typedefs # FIXME: caused by mathic/Geobucket.h:510:49
 
   $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:
@@ -394,7 +393,6 @@ if(BUILD_TESTING)
   target_compile_options(M2-unit-tests PRIVATE
     -Wno-cast-qual # FIXME
     -Wno-sign-compare
-    -Wno-unused-parameter
     $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags> # FIXME
     )
   target_include_directories(M2-unit-tests

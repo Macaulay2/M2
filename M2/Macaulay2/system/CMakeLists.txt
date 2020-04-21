@@ -22,5 +22,4 @@ target_include_directories(M2-supervisor
 target_compile_options(M2-supervisor PRIVATE
   -Wcast-qual
   -Wno-unused
-  -Wno-unused-parameter
   )

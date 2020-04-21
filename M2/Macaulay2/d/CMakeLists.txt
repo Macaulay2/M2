@@ -179,7 +179,6 @@ target_compile_options(M2-interpreter PRIVATE
   -Wno-sign-compare
   -Wno-uninitialized
   -Wno-unused
-  -Wno-unused-parameter
 
   # FIXME: mismatched-tags and parentheses-equality errors are caused by scc1
   $<$<COMPILE_LANG_AND_ID:C,AppleClang,Clang>:-Wno-parentheses-equality>

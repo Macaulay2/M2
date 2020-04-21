@@ -28,7 +28,6 @@ target_compile_options(M2-kernel PRIVATE
   -Wextra
   -Wfatal-errors
   -Wno-unused
-  -Wno-unused-parameter
   # temporary flags
   -Wno-ignored-qualifiers
   )
