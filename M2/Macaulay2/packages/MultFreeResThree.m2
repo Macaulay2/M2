@@ -33,23 +33,7 @@ newPackage ( "MultResFreeThree",
     -- 	 }
     )
 
-export { 
-    "torAlgData", 
-    "torAlgDataPrint", 
-    "torAlgDataList", 
-    "torAlgClass", 
-    "isCI",
-    "isGorenstein",
-    "isGolod",
-    "attemptsAtGenericReduction", 
-    "setAttemptsAtGenericReduction" }
-
--- if version#"VERSION" < "1.4" then error "This package was written for Macaulay2 ver. 1.4 or higher";
-
--- Workaround because Macaulay2 ver. 1.6 has a minor bug --
-
--- if version#"VERSION" == "1.6" then ( complete GradedModule := (M) -> M );
-
+export { "multtable" }
 
 
 --==========================================================================
@@ -89,495 +73,39 @@ export {
 -- PoincareSeries: rational function, Poincare series in closed form
 -- BassSeries: rational function, Bass series in closed form
 
-T := degreesRing 1;
-T = newRing(T, Degrees => {1});
-t := T_0;
-
-toralgdata = R -> (
-    limit := 4;
-    if not R.?attemptsAtGenericReduction then (
-	tries := 25
-	)
-    else (
-	tries = R.attemptsAtGenericReduction
-	);
-
-    isGorenstein := false;
-    isCI := false;
-    isGolod := false;
-
-    c := "UNDETERMINED";
-    e := "UNDETERMINED";
-    h := "UNDETERMINED";
-    m := "UNDETERMINED";
-    n := "UNDETERMINED";
-    p := "UNDETERMINED";
-    q := "UNDETERMINED";
-    r := "UNDETERMINED";
-    cls:= "UNDETERMINED";
-    Bas := "UNDETERMINED";
-    Poi := "UNDETERMINED";
-
-
--- Step 1: Classify R (to the extent possible based on the presentation):
---         if it is the zero ring or defined by the zero ideal.
-
-    if R == 0 then (
-	cls = "zero ring";
-	m = 1;
-	)
-    else (
-	if ideal R == 0 then (
-	    isCI = true;
-	    isGolod = true;	    
-	    isGorenstein = true;
-	    cls = "C";
-	    R = ring zeroIdeal R;
-	    c = 0;
-	    e = numgens ideal vars R;
-	    h = 0;
-	    m = 0;
-	    n = 1;
-	    p = 0;
-	    q = 0;
-	    r = 0;
-	    Poi = computePoincareC (e, c);
-	    Bas = t^e;
-	    )
-    	else (
-	    R = prune R;
-	    Q := ambient R;
-	    if ( not isSubset( ideal R, ideal vars Q ) ) then (
-		cls = "zero ring";
-		m = 1;
-		)
-	    else (
-		if isHomogeneous R then (
-		    I := ideal R;
-		    F := res I;
-		    )
-		else (
-		    setMaxIdeal ideal vars Q;		
-		    I = ideal localMingens (localResolution ideal R).dd_1;
-		    F = localResolution I;
-		    R = Q/I;
-		    );
-		c = length F;
-		e = numgens ideal vars R;
-		h = c - codim R;
-		m = rank F_1;
-		n = rank F_c;
-		l := m-1;
-    	    	if e == 1 then poi := 1;
-    	    	if e == 2 then poi = 1+t;
-		if e >= 3 then poi = new Power from { 1+t, e-1 };
-		);
-	    );
-	);
+multtable = (d1,d2,d3) -> (
+    Q := ring d1; --add check that all matrices come from same ring
+    m := numcols d1;
+    l := numcols d2;
+    n := numcols d3;
     
--- Step 2: Classify R (to the extent possible based on the free resolution of R over Q):
---         if c = 0, 1, 2
---         if c = 3 and [ [h = 0 and n = 1] or h = 2 ]
---         if c = 4 = m
---    	   if c >= 5 and h = 0 and n = 1
-    
-    if cls == "UNDETERMINED" then (
+    EE = new MutableHashTable;
+    for i from 1 to m do (
+	for j from i+1 to m do (
+	 a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1};
+    	 b := ( matrix entries transpose a ) // d2;
+	 ee#(i,j) = ( matrix entries b );
+	 );
+     )
+)	    
 
-	if c <= 1 then (
-    	    isCI = true;
-    	    isGolod = true;	    
-	    isGorenstein = true;	     
-	    cls = "C"; 
-	    p = 0;
-	    q = 0;
-	    r = 0;
-	    Poi = computePoincareC (e, c);
-	    Bas = t^(e-c);
- 	    );
+end
+--==========================================================================
+-- end of package code
+--==========================================================================
 
-	if c == 2 then (
-		q = 0;
-		r = 0;
-	    if h == 0 and n == 1 then (
-		isCI = true;
-		isGorenstein = true;		
-		cls = "C";
-		p = 1;
-	    	Poi = computePoincareC (e, c);
-		Bas = t^(e-c);
-		)
-	    else (
-		isGolod = true;
-		cls = "S";
-		p = 0;
-		den := 1 - t - l*t^2;
-	    	Poi = new Divide from { poi , den };
-	    	Bas = adjustBass (1 + t - t^2, den, e, c);
-		);
-	    );
-
-	if c == 3 then (
-    	    if h == 0 and n == 1 then (
-		isGorenstein = true;
-	    	q = 1;
-		r = m;
-		Bas = t^(e-c);
-    		if r == 3 then (
-		    isCI = true;
-    		    cls = "C";
-    		    p = 3;
-		    Poi = computePoincareC (e, c);
-		    )
-		else (
-    		    cls = "G";
-    		    p = 0;
-		    Poi = new Divide from { poi,  1 - t - l*t^2 - t^3 + t^4 };
-		    );
-		)
-	    else (
-	    	if h == 2 then (
-		    isGolod = true;
-		    cls = "H";
-		    p = 0;
-		    q = 0;
-		    r = 0;
-		    den = 1 - t - l*t^2 - n*t^3;
-		    Poi = new Divide from { poi, den };
-		    Bas = adjustBass (n + l*t + t^2 - t^3, den, e, c);
-		    );
-		);
-	    );
-
-	if c >= 4 then (
-	    r = "-";
-	    if h == 0 and n == 1 then (
-		isGorenstein = true;
-		r = m;
-		Bas = t^(e-c);
-		if m == c then (
-		    isCI = true;
-		    cls = "C";
-		    p = binomial(c,2);
-		    q = binomial(c,3);
-		    Poi = computePoincareC (e, c);		    
-		    )
-		else (
-		   if c >= 5 then (
-		   	cls = "Gorenstein";
-			);
-		    );
-		)
-	    else (
-		num := 0;
-		limit = max{c+1,e};
-		);
-	    );
-
-	);
-
--- Step 3: Classify R (to the extent that it is possible 
---         based on the free resolution of the residue field):
---    	   if c = 3 and [p = 2 or p > 3 or q > 1 ]
---    	   if c >= 4
-    
-    if cls == "UNDETERMINED" then (
-	if isHomogeneous R then (
-	    L := res( ideal vars R, LengthLimit => limit ); 
-	    )
-	else (
-	    setMaxIdeal ideal vars R;
-    	    L = localResolution( R^1/(ideal vars R), LengthLimit => limit ); 
-	    );
-	b := for i from 0 to limit list rank L_i;
-	
-    	if c == 3 then (    
-	    p = n + l*b#1 + b#2 - b#3 + binomial(e-1,3);
-	    q = (n-p)*b#1 + l*b#2 + b#3 - b#4 + binomial(e-1,4);
-	    den = 1 - t - l*t^2 - (n-p)*t^3 + q*t^4;
-	    if p == 2 or p > 3 or q > 1 then (
-	    	cls = "H";
-	    	r = q;
-	    	num = n + (l-r)*t - p*t^2 - t^3 + t^4;
-    	    	Poi = new Divide from { poi , den };
-    	    	Bas = adjustBass (num , den, e, c);
-	    	);
-	    );
-	
-    	if c == 4 and isGorenstein then (
-	    p = 2 + (l-2)*b#1 + 2*b#2 - b#3 + binomial(e-2,3);
-	    q = p - 1 - (p-2)*b#1 + (l-2)*b#2 + 2*b#3 - b#4 + binomial(e-2,4);
-	    poi = new Power from { 1+t, e-2 };
-	    den = 1 - 2*t - (l-2)*t^2 + (p-2)*t^3 + (q-p+1)*t^4;
-	    if p == 0 then (
-	    	cls = "GS";
-	    	Poi = new Divide from { poi, den };
-	    	)
-	    else (
-	    	Poi = new Divide from { poi, den - t^5};	    
-	    	if p == q then (
-		    cls = "GT";
-		    )
-	    	else (
-		    cls = "GH";
-		    );
-	    	);
-	    );
-	
-    	if c >= 4 and not isGorenstein then (	
-	    f := for i from 0 to c list rank F_i;
-    	    f = f|for i from 1 to limit - c - 1 list 0;
-	    j := 2;
-	    while cls == "UNDETERMINED" and j <= limit do (
-		if b#j != binomial(e,j) +  sum for i from 0 to j-2 list b#i*f#(j-1-i) then (
-		    cls = "no class";
-		    )
-		else (
-		    if j == limit then (
-			isGolod = true;
-			cls = "Golod";
-	    		p = 0;
-	    		q = 0;
-		    	den = 1 + sum for j from 1 to c list (
-			    (-1)^j*(sum for i from 0 to j-1 list (-1)^i*f#i)*t^j
-			    );
-		    	Poi = new Divide from { poi, den };
-		    	num = -t^c + t^(c-1) + sum for j from 0 to c-2 list ( 
-			    (sum for i from 0 to j list (-1)^i*rank F_(c-j+i))*t^j
-			    );
-		    	Bas = adjustBass(num, den, e, c);
-			);
-		    );
-		j = j+1;
-		);
-	    );
-	);
-
--- Step 4: Classify R (based on Bass numbers):
---    	   if c = 3 
-
-    if cls == "UNDETERMINED" and c == 3 then (
-
-	if p == 0 then (
-	    if q == 0 then (
-		isGolod = true;
-		cls = "H";
-		r = q;
-		num = n + l*t + t^2 - t^3;
-		)
-	    else (
-		if isHomogeneous R then (
-		    data := computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries)
-		    )
-		else (
-    	    	    data = computeBass2 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries);
-		    );
-		mu := data#"bass";
-		c':= data#"codepth";
-		d':= data#"codim";
-		e':= data#"edim";	  
-		if (  c' != 3 or d' != codim R or e' != 3 or mu#0 != n ) then (
-	    	    error "Failed to compute Bass numbers. You may raise the 
-	    	    number of attempts to compute Bass numbers via a generic reduction 
-	    	    with the function setAttemptsAtGenericReduction and try again.";	    
-	    	    )
-		else (
-	    	    r = l + n - mu#1;
-		    if q == r then (
-			cls = "H";
-			num = n + (l-r)*t - t^3 + t^4;
-			)
-		    else (
-		    	cls="G";
-		    	num = n + (l-r)*t - (r-1)*t^2 - t^3 + t^4;
-		    	);
-		    );
-	    	);
-	    );     
-
-	if p == 1 then (
-	    if q == 0 then (
-		cls = "H";
-		r = q;
-		num = n + l*t - t^2 - t^3 + t^4;
-		)
-	    else (
-		if isHomogeneous R then (
-		    data = computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries)
-		    )
-		else (
-    	    	    data = computeBass2 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries);
-		    );
-		mu = data#"bass";
-		c'= data#"codepth";
-		d'= data#"codim";
-		e'= data#"edim";	  
-		if (  c' != 3 or d' != codim R or e' != 3 or mu#0 != n ) then (
-	    	    error "Failed to compute Bass numbers. You may raise the 
-	    	    number of attempts to compute Bass numbers via a generic reduction 
-	    	    with the function setAttemptsAtGenericReduction and try again.";	    
-	    	    )
-		else (
-	    	    r = l + n - mu#1;
-		    if q == r then (
-			cls = "H";
-			num = n + (l-r)*t - t^2 - t^3 + t^4;
-			)
-		    else (
-		    	cls="B";
-		    	num = n + (l-r)*t - t^2 + t^4;
-		    	);
-		    );
-	    	);
-	    );     
-
-	if p == 3 then (
-	    if q == 1 then (
-		cls = "H";
-		r = q;
-		num = n + (l-1)*t - 3*t^2 - t^3 + t^4;
-		)
-	    else (
-		if isHomogeneous R then (
-		    data = computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2,L.dd_3), tries)
-		    )
-		else (
-    	    	    data = computeBass2 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2,L.dd_3), tries);
-		    );
-		mu = data#"bass";
-		c'= data#"codepth";
-		d'= data#"codim";
-		e'= data#"edim";	  
-		if (  c' != 3 or d' != codim R or e' != 3 or mu#0 != n ) then (
-	    	    error "Failed to compute Bass numbers. You may raise the 
-	    	    number of attempts to compute Bass numbers via a generic reduction 
-	    	    with the function setAttemptsAtGenericReduction and try again.";	    
-	    	    )
-		else (
-		    if mu#2 == mu#1 + l*n - 3 then (
-			cls = "H";
-			r = q;
-			num = n + l*t - 3*t^2 - t^3 + t^4;
-			)
-		    else (
-		    	cls="T";
-			r = q;
-			num = n + l*t - 2*t^2 - t^3 + t^4;
-			den = den - t^5;			
-		    	);
-		    );
-	    	);
-
-	    );
-    
-        Poi = new Divide from { poi , den };
-    	Bas = adjustBass(num, den, e, c);
-     	);
- 
- 
--- Step 5: Create error if R not classified
-
-    if cls == "UNDETERMINED" then ( 
-	error "Internal error: computed invariants not consistent"
-	);
-    
-
--- Step 6: Prepare data to be returned
-
-    torAlg := hashTable { 
-	"c" => c,
-	"e" => e,
-	"h" => h,
-	"m" => m,
-	"n" => n,	  
-	"p" => p,
-	"q" => q,
-	"r" => r,
-	"Class" => cls,
-	"isCI" => isCI,
-	"isGorenstein" => isGorenstein,
-	"isGolod" => isGolod,
-	"PoincareSeries" => Poi,
-	"BassSeries" => Bas,
-	}
-    )
-
-torAlgData = ( cacheValue "torAlg" ) toralgdata
+uninstallPackage "MultFreeResThree"
+restart
+installPackage "MultFreeResThree"
+check "TorAlgebra"
 
 
-----------------------------------------------------------------------------
--- setAttemptsAtGenericReduction
---
--- R a quotient of a polynomial algebra
--- n a positive integer
---
--- Sets R.attemptsAtGenericReduction = n
-
-setAttemptsAtGenericReduction = (R,n) -> (
-    R.attemptsAtGenericReduction = n;
-    toString(n^2)|" attempt(s) will be made to compute the Bass numbers via a generic reduction"
-    )
+-- torAlgData = ( cacheValue "torAlg" ) toralgdata
 
 
 ----------------------------------------------------------------------------
 -- Functions for presenting classification data
 ----------------------------------------------------------------------------
-
-----------------------------------------------------------------------------
--- torAlgClass
---
--- R a quotient of a polynomial algebra
---
--- Returns the (parametrized) class of the ring ring obtained by localizing 
--- R at the irrelevant maximal ideal
-
-torAlgClass = R -> (
-    torAlg := torAlgData R;
-    cls := torAlg#"Class";
-    if cls == "zero ring" or cls == "S" 
-    or cls == "B" or cls == "T" 
-    or cls == "GS" or cls == "GT"then ( 	
-    	S := cls;
-	);
-    if cls == "C" then (
-	S = cls|"("|toString torAlg#"c"|")";
-	);
-    if cls == "G" then (
-	if isGorenstein R then (
-	    S = cls|"("|toString torAlg#"r"|")"|", Gorenstein"
-	    )
-	else (
-	    S = cls|"("|toString torAlg#"r"|")"
-	    );
-	);    
-    if cls == "H" then (
-	S = cls|"("|toString torAlg#"p"|","|toString torAlg#"q"|")";
-	);
-    if cls == "GH" then (
-	S = cls|"("|toString torAlg#"p"|")";
-	);    
-    if cls == "Gorenstein" or cls == "Golod" or cls == "no class" then (
-	S = "codepth "|toString torAlg#"c"|" "|cls;
-	);        
-    S )        
-
-
-----------------------------------------------------------------------------
--- torAlgDataPrint
---
--- R a quotient of a polynomial algebra
--- L a list of keys for the hash table returned by torAlgData
---
--- Returns a string of keys and their values
-
-torAlgDataPrint = (R,L) -> (
-    torAlg := torAlgData R;
-    fn := temporaryFileName();
-    for x in L do (
-	fn << toString x << "=" << toString(torAlg#(toString x)) << " "
-	);
-    fn << endl << close;
-    get fn
-    )
 
 ----------------------------------------------------------------------------
 -- torAlgDataList
@@ -587,203 +115,15 @@ torAlgDataPrint = (R,L) -> (
 --
 -- Returns a list of the values of the specified keys
 
-torAlgDataList = (R,L) -> (
-    torAlg := torAlgData R;
-    for x in L list torAlg#(toString x)
-    )
-
-----------------------------------------------------------------------------
--- isCI
---
--- R a quotient of a polynomial algebra
---
--- Returns TRUE if R is complete intersection and FALSE otherwise
-
-isCI = R -> ( 
-    (torAlgData R)#"isCI"
-    )
-
-----------------------------------------------------------------------------
--- isGorenstein
---
--- R a quotient of a polynomial algebra
---
--- Returns TRUE if R is Gorenstein and FALSE otherwise
-
-isGorenstein = R -> (
-    (torAlgData R)#"isGorenstein"
-    )
-
-----------------------------------------------------------------------------
--- isGolod
---
--- R a quotient of a polynomial algebra
---
--- Returns TRUE if R is Golod and FALSE otherwise
-
-isGolod = R -> (
-    (torAlgData R)#"isGolod"
-    )
-
 --==========================================================================
 -- INTERNAL ROUTINES
 --==========================================================================
 
 ----------------------------------------------------------------------------
--- Routines used by torAlgData
+-- Routines used by 
 ----------------------------------------------------------------------------
 
 ----------------------------------------------------------------------------
--- computeBass1
-
--- Q is a polynomial algebra
--- I is a homogeneous ideal of Q contained in the irrelevant maximal ideal
--- R is the quotient Q/I
--- e is the embedding dimension of R
-
--- Returns a hash table with Bass numbers of the local ring
--- obtained by localizing R at the irrelevant maximal ideal
--- plus data for verification that computations went OK
-
-computeBass1 = (Q, R, I, e, L, tries) -> ( 
-    ll := length L;
-    data := new MutableHashTable;
-    if e == 3 then (
-    	E := dual L;
-    	data#"edim" = 3;
-    	data#"codepth" = 3;
-	data#"codim" = codim R;
-	)
-    else (
-	R' := Q;
-	c' := 0;
-	e' := 0;
-	i := 0;
-	while (	( c' != 3 or e' != 3 or codim R' != codim R ) 
-	    and i < tries ) do (
-	    i = i+1;
-	    X := zeroIdeal Q;
-	    j := 0;
-	    while grade X != e - 3 and j < tries do (
-	    	j = j+1; 
-	    	X = zeroIdeal Q;
-	    	for k from 4 to e do (
-    		    X = X + ideal random(1,Q);
-		    );
-	    	);
-	    Q' := Q/X;
-	    R' = prune( Q'/promote(I,Q') );
-	    c' = length res ideal R';
-	    e' = numgens ideal vars R';
-	    );
-    	data#"edim" = e';
-    	data#"codepth" = c';
-    	data#"codim" = codim R';
-	E = dual res( ideal vars R', LengthLimit => ll ); 
-	);
-    data#"bass" = for i from 0 to ll-1 list degree HH^i(E); 
-    data
-    )
-
-----------------------------------------------------------------------------
--- computeBass2
--- serves same purpose as computeBass1 but handles non-homogeneous
--- rings using the LocalRings package
-
--- Q is a polynomial algebra
--- I is an ideal of Q contained in the irrelevant maximal ideal
--- R is the quotient Q/I
--- e is the embedding dimension of R
-
--- Returns a hash table with Bass numbers of the local ring
--- obtained by localizing R at the irrelevant maximal ideal
--- plus data for verification that computations went OK
-
-computeBass2 = (Q, R, I, e, L, tries) -> ( 
-    ll := length L;
-    data := new MutableHashTable;
-    if e == 3 then (
-    	E := dual L;
-    	data#"edim" = 3;
-    	data#"codepth" = 3;
-	data#"codim" = codim R;
-	)
-    else (
-	R' := Q;
-	c' := 0;
-	e' := 0; 
-	i := 0;
-	while (	( c' != 3 or e' != 3 or codim R' != codim R ) 
-	    and i < tries ) do (
-	    i = i+1;
-	    X := zeroIdeal Q;
-	    j := 0;
-	    while grade X != e - 3 and j < tries do (
-	    	j = j+1;
-	    	X = zeroIdeal Q;
-	    	for k from 4 to e do (
-       		    X = X + ideal random(1,Q);
-		    );
-	    	);
-	    Q' := Q/X;
-	    R' = prune( Q'/promote(I,Q') );
-	    setMaxIdeal ideal vars ambient R';
-	    c' = length localResolution ideal R';
-	    e' = numgens ideal vars R';
-	    );
-    	data#"edim" = e';
-    	data#"codepth" = c';
-    	data#"codim" = codim R';
-	setMaxIdeal ideal vars R';
-	E = dual localResolution( R'^1/(ideal vars R'), LengthLimit => ll ); 
-	);
-    data#"bass" = for i from 0 to ll-1 list degree HH^i(E); 
-    data
-    )
-
-----------------------------------------------------------------------------
--- computePoincareC
-
--- e is the embedding dimension of a complete intersection local ring 
--- c is the codepth of the ring 
-
--- Returns the Poincare series of the local ring in closed form
-
-computePoincareC = (e, c) -> (
-    if c == 0 then (
-	if e == 0 then Ser:= 1;
-	if e == 1 then Ser = 1+t;
-	if e >= 2 then Ser = new Power from { 1+t, e };
-	)
-    else (
-	if e == c then Ser = new Divide from { 1 , new Power from { 1-t, c } };
-	if e == c+1 then Ser = new Divide from { 1+t , new Power from { 1-t, c } };
-	if e >= c+2 then Ser = new Divide from { new Power from { 1+t, e-c }, new Power from { 1-t, c } };
-	);
-    Ser
-    )
-
-----------------------------------------------------------------------------
--- adjustBass
-
--- e is the embedding dimension of a local ring 
--- c is the codepth of the ring 
--- num is the numerator of the closed form of the Bass series of an 
---    artinian reduction of the ring
--- den is the denominator of the same series
-
--- Returns the Bass series of the local ring in closed form
-
-adjustBass = (num, den, e, c) -> (
-    if e == c then (
-	Ser := new Divide from { num , den }
-	)
-    else (
-	Ser = ( new Power from { t^(e-c), 1 } )*( new Divide from { num, den } )
-	);
-    Ser
-    )
-
 
 ----------------------------------------------------------------------------
 -- Auxiliary routines
@@ -796,43 +136,43 @@ adjustBass = (num, den, e, c) -> (
 --
 -- Returns the supremum of C: the highest degree of a non-zero module
 
-sup = C -> (
-    j := max C;
-    while true do (
-        if j < min C then (
-	    break -infinity 
-	    )
-	else (
-	    if C_j != 0 then (
-		break j 
-		)
-	    else (
-		j = j-1
-		)
-	    )
-	)
-    )
+-- sup = C -> (
+--     j := max C;
+--     while true do (
+--         if j < min C then (
+-- 	    break -infinity 
+-- 	    )
+-- 	else (
+-- 	    if C_j != 0 then (
+-- 		break j 
+-- 		)
+-- 	    else (
+-- 		j = j-1
+-- 		)
+-- 	    )
+-- 	)
+--     )
 
 
-----------------------------------------------------------------------------
--- grade
---
--- I a homogeneous ideal in a polynomial algebra
---
--- Returns the grade of I
+-- ----------------------------------------------------------------------------
+-- -- grade
+-- --
+-- -- I a homogeneous ideal in a polynomial algebra
+-- --
+-- -- Returns the grade of I
 
-grade = I -> (
-    - sup prune HH(dual res I)
-    )
+-- grade = I -> (
+--     - sup prune HH(dual res I)
+--     )
 
-----------------------------------------------------------------------------
--- zeroIdeal
---
--- R a ring
---
--- Returns the zero ideal of R
+-- ----------------------------------------------------------------------------
+-- -- zeroIdeal
+-- --
+-- -- R a ring
+-- --
+-- -- Returns the zero ideal of R
 
-zeroIdeal = R -> ideal (map(R^1,R^0,0)) 
+-- zeroIdeal = R -> ideal (map(R^1,R^0,0)) 
 
 
 --==========================================================================
@@ -1727,12 +1067,4 @@ assert( L === {6, 6, 4, 7, 1, "Golod", 0, 0, "-"} )
 end
 
 
---==========================================================================
--- end of package code
---==========================================================================
-
-uninstallPackage "TorAlgebra"
-restart
-installPackage "TorAlgebra"
-check "TorAlgebra"
 
