@@ -16,7 +16,6 @@ newPackage ( "MultFreeResThree",
 	  HomePage => "https://cos.northeastern.edu/faculty/oana-veliche/" }
 	},
     Headline => "Multiplication in free resolution of length three",
-    PackageImports => {"LocalRings"},
     -- Certification => { -- this package was certified under its old name, "CodepthThree"
     -- 	 "journal name" => "The Journal of Software for Algebra and Geometry",
     -- 	 "journal URI" => "http://j-sag.org/",
@@ -31,6 +30,8 @@ newPackage ( "MultFreeResThree",
     -- 	 "volume number" => "6",
     -- 	 "volume URI" => "http://msp.org/jsag/2014/6-1/"
     -- 	 }
+    Reload => true,
+    DebuggingMode => false
     )
 
 export { "multtable" }
@@ -79,15 +80,19 @@ multtable = (d1,d2,d3) -> (
     l := numcols d2;
     n := numcols d3;
     
-    EE = new MutableHashTable;
+    EE := new MutableHashTable;
     for i from 1 to m do (
 	for j from i+1 to m do (
 	 a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1};
     	 b := ( matrix entries transpose a ) // d2;
-	 ee#(i,j) = ( matrix entries b );
+	 EE#(i,j) = ( matrix entries b );
 	 );
-     )
-)	    
+     );
+ EE
+ )
+
+-- torAlgData = ( cacheValue "torAlg" ) toralgdata
+	    
 
 end
 --==========================================================================
@@ -96,11 +101,22 @@ end
 
 uninstallPackage "MultFreeResThree"
 restart
-installPackage "MultFreeResThree"
+loadPackage "MultFreeResThree"
 check "TorAlgebra"
 
+Q = QQ[x,y,z]
 
--- torAlgData = ( cacheValue "torAlg" ) toralgdata
+I = ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3)
+
+F = res I
+    d1 = matrix entries (F.dd)_1;
+    d2 = matrix entries (F.dd)_2;
+    d3 = matrix entries (F.dd)_3;    
+
+ee = multtable(d1,d2,d3)
+peek ee
+
+
 
 
 ----------------------------------------------------------------------------
