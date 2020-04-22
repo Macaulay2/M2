@@ -1,10 +1,13 @@
 newPackage ( "TorAlgebra",
     Version => "0.1",
-    Date => "22 Spril 2020",
+    Date => "22 April 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
 	  HomePage => "http://www.math.ttu.edu/~lchriste/index.html" },
+	{ Name => "Francesca Gandini",
+	  Email => "fra.gandi.phd@gmail.com",
+	  HomePage => "TBD" },
 	{ Name => "Oana Veliche", 
 	  Email => "o.veliche@northeastern.edu",
 	  HomePage => "https://cos.northeastern.edu/faculty/oana-veliche/" }
