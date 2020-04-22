@@ -1,4 +1,10 @@
 ###############################################################################
+## This script is responsible for generating CPackConfig.cmake in the build
+## directory, which in turn is used by CPack to create distribution packages.
+## See: https://cmake.org/cmake/help/latest/module/CPack.html
+##
+## - cpack -G"DEB;RPM;TGZ"
+
 set(PROJECT_DISTRIBUTION 1)
 
 # TODO: check to make sure OPTIMIZE is ON if packaging is ON
@@ -24,7 +30,9 @@ set(CPACK_GENERATOR        "TGZ" CACHE STRING "package types to create")
 set(CPACK_SOURCE_GENERATOR "TGZ" CACHE STRING "source package types to create")
 
 set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON) # Experiment
-# set(CPACK_STRIP_FILES ON)
+set(CPACK_STRIP_FILES ON)
+set(CPACK_PACKAGE_EXECUTABLES	"M2-binary;Macaulay2")
+set(CPACK_PACKAGE_CHECKSUM	"SHA256")
 set(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
 # vs CPACK_PACKAGE_INSTALL_DIRECTORY
 # CPACK_PACKAGE_VENDOR

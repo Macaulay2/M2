@@ -747,6 +747,7 @@ if(EXISTS ${M2_HOST_PREFIX}/bin/mgb)
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries mathicgb mathic MATHICGB_FOUND)
 
+
 #############################################################################
 ## Instructions for building required programs
 
@@ -1068,6 +1069,8 @@ if(EXISTS ${M2_HOST_PREFIX}/lib)
     FILES_MATCHING PATTERN "*.so*" PATTERN "*.dylib*"
     PATTERN "pkgconfig" EXCLUDE)
 endif()
+
+# TODO: strip libraries and binaries
 
 # TODO: fix RPATH on: zsolve, normaliz, 4ti2gmp, 4ti2nt32, 4ti2int64?
 

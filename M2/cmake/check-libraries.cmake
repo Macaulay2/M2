@@ -184,10 +184,14 @@ foreach(_library IN LISTS LIBRARY_OPTIONS)
       # exists on the system, but we want to build it
       unset(${_library}_DIR CACHE) # for Eigen3
       unset(${_name}_FOUND)
-      unset(${_name}_LIBRARY CACHE)
       unset(${_name}_LIBRARIES CACHE)
       unset(${_name}_INCLUDE_DIR CACHE)
       unset(${_name}_INCLUDE_DIRS CACHE)
+      # for GTest:
+      unset(${_name}_MAIN_LIBRARY CACHE)
+      unset(${_name}_MAIN_LIBRARY_DEBUG CACHE)
+      unset(${_name}_LIBRARY_DEBUG CACHE)
+      unset(${_name}_LIBRARY CACHE)
     else()
       # exists on the system
     endif()
