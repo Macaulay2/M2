@@ -1115,7 +1115,7 @@ foreach(_list IN ITEMS
 endforeach()
 
 # Print some of that information
-message("\n## External components
+message("## External components
      Need to build:
        Libraries       = ${BUILD_LIB_LIST}
        Programs        = ${BUILD_PROG_LIST}
@@ -1125,14 +1125,14 @@ message("\n## External components
 
 message("\n## Library information
      Linear Algebra    = ${LAPACK_LIBRARIES}
-     MP Arithmetic     = ${MP_LIBRARIES}")
+     MP Arithmetic     = ${MP_LIBRARIES}\n")
 
 # Report the default flags, but if verbose
 if(VERBOSE)
-  message("\n## Library compile options:
+  message("## Library compile options:
      CFLAGS            = ${CFLAGS}
      CXXFLAGS          = ${CXXFLAGS}
-     LDFLAGS           = ${LDFLAGS}")
+     LDFLAGS           = ${LDFLAGS}\n")
 endif()
 
 # Report the next step

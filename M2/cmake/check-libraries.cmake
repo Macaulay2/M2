@@ -175,14 +175,16 @@ foreach(_library IN LISTS LIBRARY_OPTIONS)
   string(TOUPPER "${BUILD_LIBRARIES}" BUILD_LIBRARIES)
   string(TOUPPER "${_library}" _name)
   if(${_name}_FOUND)
-    if(${_name}_INCLUDE_DIR MATCHES ${M2_HOST_PREFIX} OR
-	${_name}_LIBRARIES MATCHES ${M2_HOST_PREFIX})
+    if(${_library}_DIR MATCHES ${M2_HOST_PREFIX} OR
+        ((${_name}_INCLUDE_DIR MATCHES ${M2_HOST_PREFIX} OR ${_name}_INCLUDE_DIRS MATCHES ${M2_HOST_PREFIX}) AND
+          (${_name}_LIBRARY MATCHES ${M2_HOST_PREFIX}    OR ${_name}_LIBRARIES MATCHES ${M2_HOST_PREFIX})))
       # we built it
       list(APPEND INSTALLED_LIBRARIES ${_library})
     elseif(BUILD_LIBRARIES MATCHES "(ALL|ON)" OR "${_name}" IN_LIST BUILD_LIBRARIES)
       # exists on the system, but we want to build it
+      unset(${_library}_DIR CACHE) # for Eigen3
       unset(${_name}_FOUND)
-      unset(${_library}_DIR CACHE)
+      unset(${_name}_LIBRARY CACHE)
       unset(${_name}_LIBRARIES CACHE)
       unset(${_name}_INCLUDE_DIR CACHE)
       unset(${_name}_INCLUDE_DIRS CACHE)
@@ -228,23 +230,6 @@ option(CHECK_LIBRARY_COMPATIBILITY "Check for library incompatibilities" ON)
 set(CMAKE_REQUIRED_LIBRARIES "")
 set(CMAKE_REQUIRED_INCLUDES "")
 set(CHECKED_LIBRARIES "")
-
-# FIXME: hack to force building mpir, mpfr, ntl, flint, factory together
-if(MP_LIBRARY MATCHES MPIR AND NOT MP_INCLUDE_DIRS MATCHES ${M2_HOST_PREFIX})
-  unset(MP_FOUND)
-  unset(MPIR_FOUND)
-endif()
-if(NOT MP_FOUND)
-  unset(MPFR_FOUND)
-  unset(NTL_FOUND)
-  unset(FLINT_FOUND)
-  unset(FACTORY_FOUND)
-  unset(FROBBY_FOUND)
-  unset(GIVARO_FOUND)
-endif()
-if(NOT GIVARO_FOUND)
-  unset(FFLAS_FFPACK_FOUND)
-endif()
 
 if(CHECK_LIBRARY_COMPATIBILITY)
   message(CHECK_START " Checking library compatibility")

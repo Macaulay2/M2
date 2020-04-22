@@ -21,8 +21,6 @@ option(LINTING		"Enable linting source files"		OFF)
 option(MEMDEBUG		"Enable memory allocation debugging"	OFF)
 option(PROFILING	"Enable profiling build flags"		OFF)
 option(GIT_SUBMODULE	"Update submodules during build"	ON)
-option(BUILD_PROGRAMS	"Build programs, even if found"		OFF)
-option(BUILD_LIBRARIES	"Build libraries, even if found"	OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
 option(BUILD_DOCS	"Build internal documentation"		OFF)
 option(AUTOTUNE		"Autotune library parameters"		OFF)
@@ -35,6 +33,10 @@ option(WITH_XML		"Link with the libxml2 library"		ON)
 option(WITH_SQL		"Link with the MySQL library"		OFF)
 option(WITH_PYTHON	"Link with the Python library"		OFF)
 
+set(BUILD_PROGRAMS "4ti2;Nauty;TOPCOM"
+  CACHE STRING "Build programs, even if found")
+set(BUILD_LIBRARIES "GTest;MPIR;MPFR;NTL;Flint;Factory;Frobby;Givaro"
+  CACHE STRING "Build libraries, even if found")
 set(PARALLEL_JOBS 4
   CACHE STRING "Number of parallel jobs for libraries and programs")
 set(SKIP_TESTS "mpsolve;googletest" CACHE STRING "Tests to skip")
@@ -196,12 +198,12 @@ get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
 
 message("\n## Compiler information
      C                 = ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} (${CMAKE_C_COMPILER})
-     C++               = ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})")
+     C++               = ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})\n")
 
 if(VERBOSE)
-  message("\n## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)
+  message("## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)
      Compiler flags    = ${COMPILE_OPTIONS}
-     Linker flags      = ${LINK_OPTIONS}")
+     Linker flags      = ${LINK_OPTIONS}\n")
 endif()
 
 ###############################################################################

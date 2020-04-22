@@ -29,7 +29,7 @@ set(CMAKE_C_STANDARD 11)
 
 ###############################################################################
 ## Set the defaultg build configuration
-if(NOT DEFINED CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
 
