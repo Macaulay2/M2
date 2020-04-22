@@ -1,4 +1,4 @@
-newPackage ( "MultResFreeThree",
+newPackage ( "MultFreeResThree",
     Version => "0.1",
     Date => "22 April 2020",
     Authors => {
