@@ -1,6 +1,6 @@
 newPackage ( "TorAlgebra",
-    Version => "2.0",
-    Date => "9 February 2018",
+    Version => "0.1",
+    Date => "22 Spril 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
@@ -9,22 +9,22 @@ newPackage ( "TorAlgebra",
 	  Email => "o.veliche@northeastern.edu",
 	  HomePage => "https://cos.northeastern.edu/faculty/oana-veliche/" }
 	},
-    Headline => "classification of local rings based on multiplication in homology",
+    Headline => "Multiplication in free resolution of length three",
     PackageImports => {"LocalRings"},
-    Certification => { -- this package was certified under its old name, "CodepthThree"
-	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
-	 "article title" => "Local rings of embedding codepth 3: A classification algorithm",
-	 "acceptance date" => "2014-07-11",
-         "published article DOI" => "http://dx.doi.org/10.2140/jsag.2014.6.1",
-	 "published article URI" => "http://msp.org/jsag/2014/6-1/jsag-v6-n1-p01-s.pdf",
-	 "published code URI" => "http://msp.org/jsag/2014/6-1/jsag-v6-n1-x01-code.zip",
-	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/CodepthThree.m2",
-	 "release at publication" => "4b2e83cd591e7dca954bc0dd9badbb23f61595c0",
-	 "version at publication" => "1.0",
-	 "volume number" => "6",
-	 "volume URI" => "http://msp.org/jsag/2014/6-1/"
-	 }
+    -- Certification => { -- this package was certified under its old name, "CodepthThree"
+    -- 	 "journal name" => "The Journal of Software for Algebra and Geometry",
+    -- 	 "journal URI" => "http://j-sag.org/",
+    -- 	 "article title" => "Local rings of embedding codepth 3: A classification algorithm",
+    -- 	 "acceptance date" => "2014-07-11",
+    --      "published article DOI" => "http://dx.doi.org/10.2140/jsag.2014.6.1",
+    -- 	 "published article URI" => "http://msp.org/jsag/2014/6-1/jsag-v6-n1-p01-s.pdf",
+    -- 	 "published code URI" => "http://msp.org/jsag/2014/6-1/jsag-v6-n1-x01-code.zip",
+    -- 	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/CodepthThree.m2",
+    -- 	 "release at publication" => "4b2e83cd591e7dca954bc0dd9badbb23f61595c0",
+    -- 	 "version at publication" => "1.0",
+    -- 	 "volume number" => "6",
+    -- 	 "volume URI" => "http://msp.org/jsag/2014/6-1/"
+    -- 	 }
     )
 
 export { 
