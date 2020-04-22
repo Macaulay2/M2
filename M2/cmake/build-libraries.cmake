@@ -1,18 +1,14 @@
-# TODO: git clones can be heavy; switch to submodules or downloading tarfiles from github.
-if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
-  ## Update submodules as needed
-  if(GIT_SUBMODULE)
-    message(STATUS "Submodule update")
-    execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      RESULT_VARIABLE GIT_SUBMOD_RESULT)
-    if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-      message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
-    endif()
-  endif()
-endif()
+###############################################################################
+## This script is responsible for dependencies between libraries and programs
+## that we build and contains build instructions for them.
+##
+## - build all: cmake --build . --target build-libraries  build-programs
+## - test all:  cmake --build . --target check-components check-components-slow (very slow)
+## - clean all: cmake --build . --target clean-stamps
 
-################################################################
+include(ExternalProject) # configure, patch, build, install, or test at build time
+set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
+
 ## This target builds external libraries that M2 relies on.
 add_custom_target(build-libraries
   COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_SOURCE_DIR}/cmake/check-libraries.cmake)
@@ -20,40 +16,35 @@ add_custom_target(build-libraries
 ## This target builds external programs that are distributed with M2.
 add_custom_target(build-programs)
 
-file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
-file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/lib)
-file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/include)
-file(MAKE_DIRECTORY ${M2_INSTALL_PROGRAMSDIR})
-file(MAKE_DIRECTORY ${M2_INSTALL_LICENSESDIR})
-
-## Copy component licenses
-if(EXISTS ${M2_HOST_PREFIX}/licenses)
-  file(COPY ${M2_HOST_PREFIX}/licenses DESTINATION ${M2_INSTALL_LICENSESDIR}/)
-endif()
-
 ## These target run the tests on the external components
 add_custom_target(check-components)
 add_custom_target(check-components-slow)
 
 ## This target forces libraries and programs to run their configure and install targets
 add_custom_target(clean-stamps
-  COMMAND rm libraries/*/src/build-*-stamp/*-{configure,install})
+  COMMAND rm libraries/*/src/build-*-stamp/build-*-{configure,build,install})
 
-# TODO: Accumulate information in usr-host/share/config.site to speed up configuration
-# See: https://www.gnu.org/software/autoconf/manual/autoconf-2.60/html_node/Cache-Files.html
-set(CONFIGURE_CACHE ${M2_HOST_PREFIX}/share/config.site)
+###############################################################################
+## Set the default compile and link flags for external projects
 
-# We wrap some configure commands in this so they find mpir, mpfr, etc.
+# Preprocessor flags
+string(REPLACE ";" " " CPPFLAGS "$ENV{CPPFLAGS} ${COMPILE_OPTIONS}")
+
+# C compiler flags
+set(CFLAGS   "${CPPFLAGS} -std=gnu11 -w -Wimplicit -Werror")
+
+# C++ compiler flags
+set(CXXFLAGS "${CPPFLAGS} -std=gnu++11 -w -Wno-mismatched-tags -Wno-deprecated-register")
+
+# Linker flags
+string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS}")
+
+# Linear algebra library flags
 if(APPLE)
-  set(SET_LD_LIBRARY_PATH DYLD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
-elseif(UNIX)
-  set(SET_LD_LIBRARY_PATH   LD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
+  set(LA_LIBRARIES "-framework Accelerate")
+else()
+  list(JOIN LAPACK_LIBRARIES " " LA_LIBRARIES)
 endif()
-
-# Set the shared library path in every configure and make
-set(CONFIGURE PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure)
-set(CONFIGURE ${SET_LD_LIBRARY_PATH} ${CONFIGURE})
-set(MAKE      ${SET_LD_LIBRARY_PATH} ${MAKE})
 
 # Set the flags for building shared libraries
 if(BUILD_SHARED_LIBS)
@@ -68,45 +59,28 @@ if(CMAKE_BUILD_TYPE STREQUAL Debug)
   set(assert_setting --enable-assert)
 endif()
 
-#################################################################################
-## Setting a baseline for compile and link options for external projects
-
-## Preprocessor flags
-string(REPLACE ";" " " CPPFLAGS "$ENV{CPPFLAGS} ${COMPILE_OPTIONS}")
-
-## C compiler flags
-set(CFLAGS   "${CPPFLAGS} -std=gnu11 -w -Wimplicit -Werror")
-
-## C++ compiler flags
-set(CXXFLAGS "${CPPFLAGS} -std=gnu++11 -w -Wno-mismatched-tags -Wno-deprecated-register")
-
-## Linker flags
-string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS}")
-
-## Linear algebra library flags
+# Wrap configure and make commands so they find mpir, mpfr, etc.
 if(APPLE)
-  set(LA_LIBRARIES "-framework Accelerate")
-else()
-  list(JOIN LAPACK_LIBRARIES " " LA_LIBRARIES)
+  set(SET_LD_LIBRARY_PATH DYLD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
+elseif(UNIX)
+  set(SET_LD_LIBRARY_PATH   LD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
 endif()
 
-if(VERBOSE)
-  message("\n## Library compile options:
-     CFLAGS            = ${CFLAGS}
-     CXXFLAGS          = ${CXXFLAGS}
-     LDFLAGS           = ${LDFLAGS}")
-endif()
+# Set the shared library path before every configure and make
+set(CONFIGURE PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure)
+set(CONFIGURE ${SET_LD_LIBRARY_PATH} ${CONFIGURE})
+set(MAKE      ${SET_LD_LIBRARY_PATH} ${MAKE})
 
-#################################################################################
-## A few macros for adding dependencies between components
+# TODO: Accumulate information in usr-host/share/config.site to speed up configuration
+# See: https://www.gnu.org/software/autoconf/manual/autoconf-2.60/html_node/Cache-Files.html
+set(CONFIGURE_CACHE ${M2_HOST_PREFIX}/share/config.site)
 
-include(ExternalProject) # configure, patch, build, install, or test at build time
-set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
+###############################################################################
+## Helper functions for adding dependencies between components
 
 # Ensure that _dependency is found before _name is configured
 # _name:       lowercase name of a library or program; e.g. mp, flint, cohomcalg
 # _dependency: lowercase name of the library or program that ${_name} should depend on
-# NOTE: ${_dependency}_FOUND is used to check whether ${_dependency} is present or not
 FUNCTION (_ADD_STEP_DEPENDENCY _name _dependency)
   if(${_dependency} STREQUAL mp)
     string(TOLOWER ${MP_LIBRARY} _dependency)
@@ -117,7 +91,7 @@ FUNCTION (_ADD_STEP_DEPENDENCY _name _dependency)
   endif()
 ENDFUNCTION (_ADD_STEP_DEPENDENCY)
 
-# If not found, add _name to the build-${_component} target
+# If not _found_condition, add _name to the build-_component target
 # _component:       either "libraries" or "programs"
 # _name             lowercase name of a library or program; e.g. mp, flint, cohomcalg
 # _dependencies:    list of lowercase library names; e.g. "mp mpfr"
@@ -131,13 +105,37 @@ FUNCTION (_ADD_COMPONENT_DEPENDENCY _component _name _dependencies _found_condit
   endif()
 ENDFUNCTION (_ADD_COMPONENT_DEPENDENCY)
 
+###############################################################################
+## Pre-build actions
 
-#################################################################################
-## Build required libraries, first those downloaded as a tarfile
-## See https://cmake.org/cmake/help/latest/module/ExternalProject.html
+# TODO: git clones can be heavy; switch to submodules or downloading tarfiles from github.
+# Currently we don't use submodules, we just use those addresses
+if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
+  ## Update submodules as needed
+  if(GIT_SUBMODULE)
+    message(STATUS "Submodule update")
+    execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      RESULT_VARIABLE GIT_SUBMOD_RESULT)
+    if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+      message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+    endif()
+  endif()
+endif()
+
+# Create directories so copy instructions don't create files in their place
+file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
+file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/lib)
+file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/include)
+file(MAKE_DIRECTORY ${M2_INSTALL_PROGRAMSDIR})
+file(MAKE_DIRECTORY ${M2_INSTALL_LICENSESDIR})
+
+###############################################################################
+## Instructions for building required libraries
+# See https://cmake.org/cmake/help/latest/module/ExternalProject.html
 
 # http://eigen.tuxfamily.org/
-# TODO: add licenses
+# TODO: add licenses: libraries/eigen/src/build-eigen/COPYING.MPL2
 ExternalProject_Add(build-eigen
   URL               https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz
   URL_HASH          SHA256=d56fbad95abf993f8af608484729e3d87ef611dd85b3380a8bad1d5cbc373a57
@@ -165,8 +163,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries eigen "" EIGEN3_FOUND)
 # FIXME: fix a commit to use instead of master
 # TODO: add licenses: README.QUICK
 ExternalProject_Add(build-bdwgc
-  GIT_REPOSITORY    https://github.com/ivmai/bdwgc.git
-  GIT_TAG           master
+#  GIT_REPOSITORY    https://github.com/ivmai/bdwgc.git
+#  GIT_TAG           master
   PREFIX            libraries/bdwgc
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/bdwgc
   BINARY_DIR        libraries/bdwgc/build
@@ -347,8 +345,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries ntl mp NTL_FOUND)
 # https://github.com/wbhart/flint2
 # TODO: add licenses: README LICENSE
 ExternalProject_Add(build-flint
-  GIT_REPOSITORY    https://github.com/mahrud/flint2.git
-  GIT_TAG           HEAD
+#  GIT_REPOSITORY    https://github.com/mahrud/flint2.git
+#  GIT_TAG           HEAD
   PREFIX            libraries/flint2
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint2
   BINARY_DIR        libraries/flint2/build
@@ -426,9 +424,7 @@ ExternalProject_Add(build-factory
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT FACTORY_FOUND)
-  unset(FACTORY_STREAMIO CACHE)
-else()
+if(FACTORY_FOUND)
   if(NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
     message(STATUS "Copying gftables in ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables")
     file(GLOB   GFTABLES    "${FACTORY_INCLUDE_DIR}/../share/factory/gftables/*")
@@ -436,6 +432,7 @@ else()
   endif()
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
+
 
 # https://www.broune.com/frobby/
 # TODO: version#"frobby version" is missing
@@ -510,33 +507,6 @@ ExternalProject_Add(build-cddlib
 _ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDDLIB_FOUND)
 
 
-# https://www.gnu.org/software/glpk/
-ExternalProject_Add(build-glpk
-  URL               ${M2_SOURCE_URL}/glpk-4.59.tar.gz
-  URL_HASH          SHA256=e398be2e7cb8a98584325268704729872558a4a88555bc8a54139d017eb9ebae
-  PREFIX            libraries/glpk
-  SOURCE_DIR        libraries/glpk/build
-  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
-  BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
-                      #-C --cache-file=${CONFIGURE_CACHE}
-                      ${shared_setting}
-                      CPPFLAGS=${CPPFLAGS}
-                      CFLAGS=${CFLAGS}
-                      LDFLAGS=${LDFLAGS}
-                      CC=${CMAKE_C_COMPILER}
-  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} -C src
-  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} -C src install-strip
-          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/glpk
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/glpk
-  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
-  EXCLUDE_FROM_ALL  ON
-  TEST_EXCLUDE_FROM_MAIN ON
-  STEP_TARGETS      install test
-  )
-_ADD_COMPONENT_DEPENDENCY(libraries glpk mp GLPK_FOUND)
-
-
 # https://numpi.dm.unipi.it/software/mpsolve
 ExternalProject_Add(build-mpsolve
   URL               https://numpi.dm.unipi.it/_media/software/mpsolve/mpsolve-3.1.8.tar.gz
@@ -607,9 +577,6 @@ ExternalProject_Add(build-givaro
   STEP_TARGETS      install test
   )
 _ADD_COMPONENT_DEPENDENCY(libraries givaro mp GIVARO_FOUND)
-if(NOT GIVARO_FOUND)
-  unset(HAVE_GIVARO_isunit CACHE)
-endif()
 
 
 # https://linbox-team.github.io/fflas-ffpack/
@@ -663,10 +630,37 @@ endif()
 _ADD_COMPONENT_DEPENDENCY(libraries fflas_ffpack mp FFLAS_FFPACK_FOUND)
 
 
+# https://www.gnu.org/software/glpk/
+ExternalProject_Add(build-glpk
+  URL               ${M2_SOURCE_URL}/glpk-4.59.tar.gz
+  URL_HASH          SHA256=e398be2e7cb8a98584325268704729872558a4a88555bc8a54139d017eb9ebae
+  PREFIX            libraries/glpk
+  SOURCE_DIR        libraries/glpk/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
+                      ${shared_setting}
+                      CPPFLAGS=${CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      CC=${CMAKE_C_COMPILER}
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} -C src
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} -C src install-strip
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/glpk
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/glpk
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  )
+_ADD_COMPONENT_DEPENDENCY(libraries glpk mp GLPK_FOUND)
+
+
 # https://github.com/google/googletest
 ExternalProject_Add(build-googletest
-  GIT_REPOSITORY    https://github.com/google/googletest.git
-  GIT_TAG           release-1.10.0 # 42bc671f
+#  GIT_REPOSITORY    https://github.com/google/googletest.git
+#  GIT_TAG           release-1.10.0 # 42bc671f
   PREFIX            libraries/googletest
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/googletest
   BINARY_DIR        libraries/googletest/build
@@ -684,8 +678,8 @@ endif()
 
 # https://github.com/Macaulay2/memtailor
 ExternalProject_Add(build-memtailor
-  GIT_REPOSITORY    https://github.com/mahrud/memtailor.git
-  GIT_TAG           1499aba498edcfadfeb0718b18b94822688165e0
+#  GIT_REPOSITORY    https://github.com/mahrud/memtailor.git
+#  GIT_TAG           1499aba498edcfadfeb0718b18b94822688165e0
   PREFIX            libraries/memtailor
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/memtailor
   BINARY_DIR        libraries/memtailor/build
@@ -705,8 +699,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries memtailor googletest MEMTAILOR_FOUND)
 
 # https://github.com/Macaulay2/mathic
 ExternalProject_Add(build-mathic
-  GIT_REPOSITORY    https://github.com/mahrud/mathic.git
-  GIT_TAG           65664cbb833c905b175edd02220bcf2725722ee3
+#  GIT_REPOSITORY    https://github.com/mahrud/mathic.git
+#  GIT_TAG           65664cbb833c905b175edd02220bcf2725722ee3
   PREFIX            libraries/mathic
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathic
   BINARY_DIR        libraries/mathic/build
@@ -729,8 +723,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries mathic memtailor MATHIC_FOUND)
 # TODO: g++ warning: tbb.h contains deprecated functionality.
 # https://www.threadingbuildingblocks.org/docs/help/reference/appendices/deprecated_features.html
 ExternalProject_Add(build-mathicgb
-  GIT_REPOSITORY    https://github.com/mahrud/mathicgb.git
-  GIT_TAG           ce385523f38dd7b560fdd835470d47651d2b992f
+#  GIT_REPOSITORY    https://github.com/mahrud/mathicgb.git
+#  GIT_TAG           ce385523f38dd7b560fdd835470d47651d2b992f
   PREFIX            libraries/mathicgb
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathicgb
   BINARY_DIR        libraries/mathicgb/build
@@ -742,6 +736,7 @@ ExternalProject_Add(build-mathicgb
                     -DBUILD_TESTING=${BUILD_TESTING}
                     -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -Dwith_tbb=${WITH_TBB}
                     -Denable_mgb=ON
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -752,10 +747,8 @@ if(EXISTS ${M2_HOST_PREFIX}/bin/mgb)
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries mathicgb mathic MATHICGB_FOUND)
 
-
-###############################################################################
-## Build required programs
-
+#############################################################################
+## Instructions for building required programs
 
 # https://github.com/4ti2/4ti2
 # 4ti2 needs gmp and glpk and is used by the package FourTiTwo
@@ -1060,13 +1053,26 @@ ExternalProject_Add(build-topcom
   )
 _ADD_COMPONENT_DEPENDENCY(programs topcom cddlib TOPCOM)
 
-#############################################################################
+###############################################################################
+## Post-build actions
 
-# Make a list of remaining components that we need
-get_target_property(LIBRARY_DEPENDENCIES build-libraries MANUALLY_ADDED_DEPENDENCIES)
-get_target_property(PROGRAM_DEPENDENCIES build-programs  MANUALLY_ADDED_DEPENDENCIES)
-string(REGEX REPLACE "(build-|-install)" "" BUILD_LIB_LIST  "${LIBRARY_DEPENDENCIES}")
-string(REGEX REPLACE "(build-|-install)" "" BUILD_PROG_LIST "${PROGRAM_DEPENDENCIES}")
+# Copy component licenses
+if(EXISTS ${M2_HOST_PREFIX}/licenses)
+  file(COPY ${M2_HOST_PREFIX}/licenses/ DESTINATION ${M2_INSTALL_LICENSESDIR}/)
+endif()
+
+# Copy dynamic libraries
+if(EXISTS ${M2_HOST_PREFIX}/lib)
+  file(COPY ${M2_HOST_PREFIX}/lib
+    DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2
+    FILES_MATCHING PATTERN "*.so*" PATTERN "*.dylib*"
+    PATTERN "pkgconfig" EXCLUDE)
+endif()
+
+# TODO: fix RPATH on: zsolve, normaliz, 4ti2gmp, 4ti2nt32, 4ti2int64?
+
+###############################################################################
+## Populate the test-components target
 
 # Make a list of built components to test
 file(GLOB_RECURSE _install_stamp_list RELATIVE ${CMAKE_BINARY_DIR}/libraries
@@ -1074,6 +1080,7 @@ file(GLOB_RECURSE _install_stamp_list RELATIVE ${CMAKE_BINARY_DIR}/libraries
 string(REGEX REPLACE "[a-z0-9_]+/src/build-[a-z0-9_]+-stamp/(build-[a-z0-9_]+-install)" "\\1"
   _installed_list "${_install_stamp_list}")
 string(REGEX REPLACE "-install" "-test" TEST_TARGET_LIST  "${_installed_list}")
+
 # Remove broken tests or those we skip
 foreach(_test IN LISTS SKIP_TESTS)
   list(REMOVE_ITEM TEST_TARGET_LIST build-${_test}-test)
@@ -1081,6 +1088,7 @@ endforeach()
 if(TEST_TARGET_LIST)
   add_dependencies(check-components-slow ${TEST_TARGET_LIST})
 endif()
+
 # Remove slow tests as well
 foreach(_test IN LISTS SLOW_TESTS)
   list(REMOVE_ITEM TEST_TARGET_LIST build-${_test}-test)
@@ -1089,8 +1097,16 @@ if(TEST_TARGET_LIST)
   add_dependencies(check-components ${TEST_TARGET_LIST})
 endif()
 
+###############################################################################
+## Report on the status
 
-# Set empty ones to N/A
+# Make a list of remaining components that we need
+get_target_property(LIBRARY_DEPENDENCIES build-libraries MANUALLY_ADDED_DEPENDENCIES)
+get_target_property(PROGRAM_DEPENDENCIES build-programs  MANUALLY_ADDED_DEPENDENCIES)
+string(REGEX REPLACE "(build-|-install)" "" BUILD_LIB_LIST  "${LIBRARY_DEPENDENCIES}")
+string(REGEX REPLACE "(build-|-install)" "" BUILD_PROG_LIST "${PROGRAM_DEPENDENCIES}")
+
+# Set empty lists to N/A
 foreach(_list IN ITEMS
     BUILD_LIB_LIST INSTALLED_LIBRARIES BUILD_PROG_LIST INSTALLED_PROGRAMS)
   if(NOT ${_list})
@@ -1111,23 +1127,18 @@ message("\n## Library information
      Linear Algebra    = ${LAPACK_LIBRARIES}
      MP Arithmetic     = ${MP_LIBRARIES}")
 
+# Report the default flags, but if verbose
+if(VERBOSE)
+  message("\n## Library compile options:
+     CFLAGS            = ${CFLAGS}
+     CXXFLAGS          = ${CXXFLAGS}
+     LDFLAGS           = ${LDFLAGS}")
+endif()
+
+# Report the next step
 if(BUILD_LIB_LIST OR BUILD_PROG_LIST)
   message(CHECK_FAIL " Some components are missing")
   message("## Rerun build-libraries and build-programs targets first")
 else()
   message(CHECK_PASS " Everything is in order! 🎉")
-endif()
-
-###############################################################################
-# This wasn't working well ... perhaps will be fixed at some point
-if(FALSE)
-  # Make a symbolic link to the existing executable in the programs directory
-  # TODO: more programs need to be symlinked
-  # TODO: alternatively, fix M2 to look for programs on PATH
-  foreach(program IN ITEMS 4TI2 COHOMCALG GFAN LRSLIB CSDP NORMALIZ NAUTY TOPCOM POLYMAKE)
-    if(${program} AND NOT ${program} MATCHES ${M2_INSTALL_PROGRAMSDIR})
-      get_filename_component(program_name ${${program}} NAME)
-      file(CREATE_LINK ${${program}} ${M2_INSTALL_PROGRAMSDIR}/${program_name} SYMBOLIC)
-    endif()
-  endforeach()
 endif()

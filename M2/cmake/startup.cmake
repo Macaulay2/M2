@@ -1,3 +1,10 @@
+###############################################################################
+## This script is called from Macaulay2/d/CMakeLists.txt and is responsible for
+## setting the Layout strings and strings for startup.c. Note that the system's
+## layout structure is detected in cmake/configure.cmake and startup.c will be
+## configured in Macaulay2/d/CMakeLists.txt
+
+###############################################################################
 ## regex macro for C-style character escaping
 ## escapes / and "
 ## converts each line to "CONTENT" if with_newline is NO or "CONTENT\n" if it is YES
@@ -18,38 +25,6 @@ MACRO (_STARTUP_REGEX input retval with_newline)
   STRING (STRIP "${_output}" ${retval})
 ENDMACRO (_STARTUP_REGEX)
 
-################################################################
-#### Setting the Layout strings for startupString
-
-## These are literal strings which startup.m2 replaces at runtime
-set(prefix	[[${prefix}]])
-set(exec_prefix	[[${exec_prefix}]])
-## CMake knows about these locations for each platform
-set(bindir	${exec_prefix}/${CMAKE_INSTALL_BINDIR})
-set(libdir	${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
-set(libexecdir	${exec_prefix}/${CMAKE_INSTALL_LIBEXECDIR})
-set(datadir	${prefix}/${CMAKE_INSTALL_DATAROOTDIR})
-set(datarootdir	${prefix}/${CMAKE_INSTALL_DATAROOTDIR})
-set(infodir	${prefix}/${CMAKE_INSTALL_INFODIR})
-set(mandir	${prefix}/${CMAKE_INSTALL_MANDIR})
-set(docdir	${prefix}/${CMAKE_INSTALL_DOCDIR})
-## These locations are Macaulay2 conventions
-set(libm2dir	${libdir}/Macaulay2)
-set(emacsdir	${datarootdir}/emacs/site-lisp)
-set(gftablesdir	${datarootdir}/Macaulay2/Core/factory/)
-set(packagesdir	${datarootdir}/Macaulay2)
-set(programsdir	${libexecdir}/Macaulay2/bin)
-set(licensesdir	${libexecdir}/Macaulay2/program-licenses)
-set(librariesdir ${libm2dir}/lib)
-
-# TODO: any need for these?
-#SHAREDSTATEDIR: modifiable architecture-independent data (com)
-#LOCALSTATEDIR:  modifiable single-machine data (var)
-#RUNSTATEDIR:    run-time variable data (LOCALSTATEDIR/run)
-
-################################################################
-#### Configuring Macaulay2/d/startup.c
-
 ## test for regex macro
 set(_STARTUP_REGEX_TEST_YES "\nA-B\n\nA\\;\"B\n")
 set(_STARTUP_REGEX_TEST_NO "A-BA\\;\"B.m2")
@@ -61,6 +36,38 @@ _STARTUP_REGEX([[${_STARTUP_REGEX_TEST_NO}]] _STARTUP_REGEX_TEST_NO  NO)
 if(NOT "${_STARTUP_REGEX_TEST_NO}"  STREQUAL "\"A-BA\\\\;\\\"B.m2\"")
   message(ERROR "_STARTUP_MACTO_TEST_NO failed: ${_STARTUP_REGEX_TEST_NO}")
 endif()
+
+###############################################################################
+## Setting the Layout strings for startupString
+
+# These are literal strings which startup.m2 replaces at runtime
+set(prefix	[[${prefix}]])
+set(exec_prefix	[[${exec_prefix}]])
+# cmake/configure.cmake sets these locations for each platform
+set(bindir	${exec_prefix}/${CMAKE_INSTALL_BINDIR})
+set(libdir	${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
+set(libexecdir	${exec_prefix}/${CMAKE_INSTALL_LIBEXECDIR})
+set(datadir	${prefix}/${CMAKE_INSTALL_DATAROOTDIR})
+set(datarootdir	${prefix}/${CMAKE_INSTALL_DATAROOTDIR})
+set(infodir	${prefix}/${CMAKE_INSTALL_INFODIR})
+set(mandir	${prefix}/${CMAKE_INSTALL_MANDIR})
+set(docdir	${prefix}/${CMAKE_INSTALL_DOCDIR})
+# These locations are Macaulay2 conventions
+set(libm2dir	${libdir}/Macaulay2)
+set(emacsdir	${datarootdir}/emacs/site-lisp)
+set(gftablesdir	${datarootdir}/Macaulay2/Core/factory/)
+set(packagesdir	${datarootdir}/Macaulay2)
+set(programsdir	${libexecdir}/Macaulay2/bin)
+set(licensesdir	${libexecdir}/Macaulay2/program-licenses)
+set(librariesdir ${libm2dir}/lib)
+
+# TODO: any need for these?
+# SHAREDSTATEDIR: modifiable architecture-independent data (com)
+# LOCALSTATEDIR:  modifiable single-machine data (var)
+# RUNSTATEDIR:    run-time variable data (LOCALSTATEDIR/run)
+
+###############################################################################
+## Set variables for configuring Macaulay2/d/startup.c
 
 ## read startup.m2.in and apply regex to address and content
 file(GLOB STARTUP_M2_ADDR "startup.m2.in")

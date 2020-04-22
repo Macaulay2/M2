@@ -1,5 +1,8 @@
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+###############################################################################
+## This directory contains the rules for building M2-engine and M2-unit-tests
+## - run unit tests:  ctest -R unit-tests
 
+# TODO: determine the fate of these files
 set(UNDETERMINED
   dmat-ffpack.cpp
   franzi-brp-test.cpp
@@ -270,6 +273,8 @@ list(TRANSFORM SRCLIST APPEND .cpp OUTPUT_VARIABLE CPPFILES)
 list(TRANSFORM SRCLIST APPEND .hpp OUTPUT_VARIABLE HPPFILES)
 
 ###############################################################################
+## Compile the engine
+# TODO: enable INTERPROCEDURAL_OPTIMIZATION?
 
 # set -DBUILD_SHARED_LIBS=ON to generate a shared library
 add_library(M2-engine STATIC # SHARED
@@ -294,18 +299,6 @@ target_include_directories(M2-engine
     ${CMAKE_SOURCE_DIR}/Macaulay2/c # TODO: engine should not depend on scc1
   )
 
-###############################################################################
-# Add source linting and formatting checks for this target, see cmake/prechecks.cmake
-
-if(LINTING)
-  _ADD_PRECHECKS(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
-endif()
-
-_ADD_CLANG_FORMAT(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
-
-###############################################################################
-# TODO: enable INTERPROCEDURAL_OPTIMIZATION?
-
 # Compiler warning flags
 target_compile_options(M2-engine PRIVATE
   -Wno-cast-qual # FIXME
@@ -328,11 +321,18 @@ target_compile_options(M2-engine PRIVATE
   )
 
 ###############################################################################
+# Add source linting and formatting checks for this target, see cmake/prechecks.cmake
+
+if(LINTING)
+  _ADD_PRECHECKS(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
+endif()
+
+_ADD_CLANG_FORMAT(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
+
+###############################################################################
 ## To try, run ctest or ./M2-unit-tests in Macaulay2/e
 
 if(BUILD_TESTING)
-  enable_testing()
-
   include(GoogleTest)
 
   # TODO: overflow tests
@@ -378,6 +378,12 @@ if(BUILD_TESTING)
     ../bin/timestamp.c # version.dd needs timestamp
     )
 
+  target_compile_options(M2-unit-tests PRIVATE
+    -Wno-cast-qual # FIXME
+    -Wno-sign-compare
+    $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags> # FIXME
+    )
+
   gtest_discover_tests(M2-unit-tests TEST_PREFIX unit-tests:)
 
   # TODO: valgrind --track-origins=yes ...
@@ -389,12 +395,8 @@ if(BUILD_TESTING)
   endif()
 
   ###############################################################################
+  # TODO: is there any way to deduce these?
 
-  target_compile_options(M2-unit-tests PRIVATE
-    -Wno-cast-qual # FIXME
-    -Wno-sign-compare
-    $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags> # FIXME
-    )
   target_include_directories(M2-unit-tests
     PRIVATE
     ${EIGEN3_INCLUDE_DIR}
@@ -407,8 +409,7 @@ if(BUILD_TESTING)
   # NOTE: is d/debug.o needed?
   target_link_libraries(M2-unit-tests
     M2-regex M2-engine M2-interpreter M2-supervisor
-    Threads::Threads ${LIBGDBM} ${CMAKE_DL_LIBS}
-    )
+    Threads::Threads ${CMAKE_DL_LIBS})
 
   foreach(LIB IN LISTS LIBRARY_LIST)
     if(${LIB}_FOUND)

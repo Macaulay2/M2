@@ -1,6 +1,8 @@
-# TODO: generate textmate grammar
+###############################################################################
+## This directory contains the rules for generating the M2-mode Emacs package.
+## The target is M2-emacs
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+# TODO: generate textmate grammar
 
 set(M2_ARGS -q --stop --silent)
 set(EMACS_DIR ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp)

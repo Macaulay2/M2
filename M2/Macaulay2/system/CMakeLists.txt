@@ -1,4 +1,6 @@
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+###############################################################################
+## This directory contains the rules for building M2-supervisor, which is a the
+## entity responsible for managing Macaulay2 threads.
 
 # TODO: add necessary header files to this list
 add_library(M2-supervisor OBJECT
@@ -19,7 +21,4 @@ target_include_directories(M2-supervisor
   )
 
 # Compiler warning flags
-target_compile_options(M2-supervisor PRIVATE
-  -Wcast-qual
-  -Wno-unused
-  )
+target_compile_options(M2-supervisor PRIVATE -Wcast-qual -Wno-unused)

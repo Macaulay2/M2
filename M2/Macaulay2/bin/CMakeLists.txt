@@ -1,27 +1,28 @@
-# In this directory we link the object files compiled in the other directories to
-# make the executable, "M2-binary".  We also make and install the shell script wrapper,
-# "M2", whose function is to set LD_LIBRARY_PATH appropriately.
+###############################################################################
+## In this directory we link the object files compiled in the other directories
+## to make the executable, "M2-binary". We also make and install the M2 wrapper,
+## whose function is to set (DY)LD_LIBRARY_PATH appropriately so that programs
+## called by M2-binary can find the shared libraries they need.
 
 # TODO: plenty of Darwin specific linker flags in Makefile.in
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
-
-# TODO: do we still want to use M2${EXE} defined in cmake/config.cmake?
+# NOTE: is d/debug.c useful here?
 add_executable(M2-binary timestamp.cpp main.cpp)
 
+# This is work in progress
 if(TRY_NEW_MAIN)
   target_compile_definitions(M2-binary PRIVATE EXPERIMENT)
 endif()
 
+# Set where the executable should be store and get its RPATH
 set_target_properties(M2-binary PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
 get_target_property(INSTALL_RPATH M2-binary INSTALL_RPATH)
 
 target_include_directories(M2-binary PRIVATE ${READLINE_INCLUDE_DIR})
 
-# NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
   M2-regex M2-interpreter M2-engine M2-supervisor
-  Threads::Threads ${LIBGDBM} ${CMAKE_DL_LIBS}) # TODO: handle the latter two differently
+  Threads::Threads ${CMAKE_DL_LIBS})
 
 foreach(LIB IN LISTS LIBRARY_LIST)
   if(${LIB}_FOUND)
@@ -42,6 +43,7 @@ foreach(LIB IN LISTS PKGLIB_LIST)
 endforeach()
 
 ###############################################################################
+## After linking, print a list of all shared libraries M2-binary uses
 
 find_program(LDD ldd)
 find_program(OTOOL otool)

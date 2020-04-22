@@ -1,8 +1,7 @@
+###############################################################################
 # Safe C Compiler (SCC)
-# In this directory, we compile "scc1", the D to C translator, which we want to run
+# In this directory, we compile the "scc1", the D to C translator, which we want to run
 # on the "build" machine, in the sense of autoconf.
-
-set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 find_package(BISON REQUIRED QUIET)
 BISON_TARGET(scc-grammar ${CMAKE_CURRENT_SOURCE_DIR}/grammar.y ${CMAKE_CURRENT_BINARY_DIR}/grammar.c
@@ -43,8 +42,8 @@ target_compile_options(scc1 PRIVATE
   $<$<COMPILE_LANG_AND_ID:C,GNU>:-Wno-implicit-fallthrough> # FIXME: caused by type.c:175:26
   )
 
-if(BDWGC_FOUND)
-target_link_libraries(scc1 Threads::Threads ${BDWGC_LIBRARIES} ${LIBGDBM} ${CMAKE_DL_LIBS})
+if(BDWGC_FOUND AND GDBM_FOUND)
+target_link_libraries(scc1 Threads::Threads ${BDWGC_LIBRARIES} ${GDBM_LIBRARY} ${CMAKE_DL_LIBS})
 endif()
 
 # Why do we do this?

@@ -1,4 +1,5 @@
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+###############################################################################
+## This directory contains the rules for building M2-core
 
 set(CORE_DIR ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core)
 set(M2_ARGS -q --silent --stop -e errorDepth=0 --no-preload --no-tvalues)

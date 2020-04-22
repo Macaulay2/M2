@@ -1,29 +1,35 @@
+###############################################################################
+## The subdirectories here are responsible for various pieces of Macaulay2 and
+## this file is the central hub connecting them as well as giving instructions
+## for where each piece should be installed on the target system
+
+# TODO: consider using: source_group(TREE . PREFIX "Macaulay2" FILES ../include/M2/config.h ...)
 # TODO: should we add [all,check,clean,distclean]-in-$dir?
 
-## eg: Style Macaulay2Doc ...
-## This will be used by d/ and packages/
-file(STRINGS "packages/\=distributed-packages" DISTRIBUTED_PACKAGES REGEX "^[a-zA-Z0-9]+$")
-list(JOIN DISTRIBUTED_PACKAGES " " DISTRIBUTED_PACKAGES)
+###############################################################################
+## Some miscellaneous instructions
 
+# Generate README and copy the copyright license in usr-dist
 configure_file(README.in ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/README @ONLY)
 file(COPY LAYOUT COPYING-GPL-2 COPYING-GPL-3 DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR})
 
-###############################################################################
 # Generate statuscodes.h
-file(READ m2/statuscodes STATUSCODES)
-string(REGEX REPLACE "([0-9]*):([A-Z\_]*):\"?([a-zA-Z ]*)\"?" "  \\2 = \\1,\t\t/* \\3 */" STATUSCODES_H ${STATUSCODES})
 # FIXME: where should this go?
+file(READ m2/statuscodes STATUSCODES)
+string(REGEX
+  REPLACE "([0-9]*):([A-Z\_]*):\"?([a-zA-Z ]*)\"?" "  \\2 = \\1,\t\t/* \\3 */"
+  STATUSCODES_H ${STATUSCODES})
 file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/include/M2/statuscodes.h CONTENT "${STATUSCODES_H}")
 
-###############################################################################
+# eg: Style Macaulay2Doc ...
+# This will be used by d/CMakeLists.txt and packages/CMakeLists.txt
+# TODO: discontinue using this list
+file(STRINGS "packages/\=distributed-packages" DISTRIBUTED_PACKAGES REGEX "^[a-zA-Z0-9]+$")
+list(JOIN DISTRIBUTED_PACKAGES " " DISTRIBUTED_PACKAGES)
+
 # This tells CMake how to set the RPATH on the installed executable
 set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-###############################################################################
-
-# TODO: consider using:
-#source_group(TREE . PREFIX "Macaulay2" FILES ../include/M2/config.h ...)
 
 # Add extra compiler warning flags for Macaulay2
 # NOTE: some warnings are disabled in the subdirectories
@@ -32,6 +38,9 @@ add_compile_options(
   -Wall -Wextra -Wfatal-errors -Wcast-qual # -Werror
   -Wno-unused-parameter # FIXME: caused by c/chk.c:244:40 and every scc1 generated file
   )
+
+###############################################################################
+## Call the subdirectories
 
 # TODO: remove util
 add_subdirectory(regex) # use POSIX regex
@@ -44,7 +53,7 @@ add_subdirectory(m2) # rename to Core?
 add_subdirectory(man) # combine?
 add_subdirectory(packages)
 add_subdirectory(emacs) # rename to editors and include vim, etc?
-add_subdirectory(book) # separate repository?
+#add_subdirectory(book) # separate repository?
 
 if(BUILD_TESTING)
   add_subdirectory(tests)
@@ -55,6 +64,7 @@ if(BUILD_DOCS)
 endif()
 
 ###############################################################################
+## Install instructions, which are also are very important for CPack
 
 if(NOT VERBOSE)
   set(CMAKE_INSTALL_MESSAGE LAZY)
@@ -74,9 +84,8 @@ install(FILES
   COMPONENT ALL)
 
 # install shared and dynamic libraries
-# TODO: pick one of the following two folder approaches
 install(DIRECTORY
-  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/lib ${M2_HOST_PREFIX}/lib
+  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/lib
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2
   USE_SOURCE_PERMISSIONS
   COMPONENT ALL

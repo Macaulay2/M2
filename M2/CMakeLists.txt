@@ -3,6 +3,9 @@
 ## Why use CMake at all? See https://lwn.net/Articles/188693/ and
 ## https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/Really-Cool-CMake-Features
 ##
+## Take a look at cmake/configure.cmake for a list of options
+## and read cmake/check-libraries.cmake for a list of requirements.
+##
 ## Full instructions: INSTALL-CMake.md
 ## Short instructions:
 ##  1. cd M2/BUILD/build-cmake
@@ -15,7 +18,7 @@
 ## IDEs such as Xcode or vscode can also configure and build using CMake.
 ###############################################################################
 
-## Requires version 3.15 and is tested with 3.17
+## Requires CMake version 3.15 and is tested with 3.17
 cmake_minimum_required(VERSION 3.15...3.17)
 cmake_policy(VERSION 3.14)
 
@@ -29,25 +32,28 @@ set(CMAKE_C_STANDARD 11)
 if(NOT DEFINED CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
+
 ## Guard against in-source builds
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "In-source builds are not allowed. Delete CMakeFiles and CMakeCache.txt.")
 endif()
+
 ## Enable support for folders in IDEs
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 ## Enable ccache or distcc acceleration with Makefile and Ninja
-# run ccache -s to get the CCache statistics
 find_program(CCACHE ccache)
 if(CCACHE)
-    set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE}")
-    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
+  # run ccache -s to get the CCache statistics
+  set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE}")
+  set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
 endif()
 
 ###############################################################################
 ## Set the project name, version, and languages
 ## This is the source of truth for the version number
 project(Macaulay2
-  VERSION	1.15.0.2 # branch eigen on cmake
+  VERSION	1.15.0.2 # branch feature/cmake on github.com/mahrud/M2.git
   DESCRIPTION	"A software system for algebraic geometry research"
   HOMEPAGE_URL	http://macaulay2.com # contact: Macaulay2@math.uiuc.edu
   LANGUAGES	C CXX)
@@ -56,7 +62,7 @@ project(Macaulay2
 ## Set path for CMake modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(CTest) ## CMake module for generating a 'test' target for all unit-tests
-include(prechecks) ## CMake script for preprocessor checks and linting
+include(prechecks) ## CMake macros for preprocessor checks and linting
 include(configure) ## CMake script for configuring various variables
 include(check-libraries) ## CMake script for checking which libraries exist and which need to be built
 include(build-libraries) ## CMake script for downloading, building, and installing external libraries

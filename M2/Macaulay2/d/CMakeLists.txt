@@ -1,9 +1,10 @@
-#set(CMAKE_VERBOSE_MAKEFILE on)
-# TODO: use PRE_BUILD targets for parsing d files
+###############################################################################
+## This directory contains the rules for building M2-interpreter
 
-################################################################
-## Configure startup.c at the destination
+include(scc) ## CMake macro for calling the Safe C Compiler
 include(startup) ## CMake script for messy substitutions in startup.c
+
+## Configure startup.c
 configure_file(startup.c.cmake startup.c @ONLY)
 
 ## Configure distributed-packages.h at the destination
@@ -14,7 +15,7 @@ file(GENERATE OUTPUT distributed-packages.h CONTENT "#define DISTRIBUTED_PACKAGE
 ## Configure version.dd at the destination
 #configure_file(version.dd.in version.dd #ONLY)
 
-################################################################
+###############################################################################
 
 set(CLIST
   distributed-packages.h
@@ -31,6 +32,7 @@ set(CLIST
   $<$<BOOL:${WITH_PYTHON}>:python-c.c>
   )
 
+# CAUTION: order is important in this list
 # TODO: can there be #ifdefs in D sources?
 set(DLIST
   arithmetic.d
@@ -106,56 +108,16 @@ if(NOT WITH_PYTHON)
   list(REMOVE_ITEM DLIST python.d)
 endif()
 
-################################################################
+###############################################################################
+## Generate the interpreter
 
-# TODO: generate etags
-# cd ${CMAKE_SOURCE_DIR}/Macaulay2/d && etags  ...
-
-# What is this for?
-# if [ -f ${CMAKE_SOURCE_DIR}/Macaulay2/d/.gdbinit.mahrud ]; then cp ${CMAKE_SOURCE_DIR}/Macaulay2/d/.gdbinit.mahrud .gdbinit; fi
-
-################################################################
-## Macro for compiling .d and .dd files to .c and .cc files, respectively
-
-if(CMAKE_BUILD_TYPE MATCHES "Rel")
-  set(SCCFLAGS -O)
-else()
-  # TODO: set(SCCFLAGS -debug)
-endif()
-# set(SCCFLAGS -noline)
-
-MACRO (_SCC_GENERATE _source _prev)
-  string(REGEX MATCH "^([a-zA-Z0-9_]+)\.(d|dd)$" NULL ${_source})
-  set(_name ${CMAKE_MATCH_1})
-  string(REPLACE "d" "c" _ext ${CMAKE_MATCH_2})
-
-  # TODO: use the {_name}.dep file to check for dependencies
-  # TODO: use DEPFILE option, but only works with ninja
-  add_custom_command(OUTPUT ${_name}-tmp.${_ext}
-    COMMENT "Generating ${_name}.${_ext}"
-    COMMAND
-      scc1 ${SCCFLAGS} -dep ${CMAKE_CURRENT_SOURCE_DIR}/${_source}
-    COMMAND
-      mv ${_name}.sig.tmp ${_name}.sig && mv ${_name}.dep.tmp ${_name}.dep
-    COMMAND
-      scc1 ${SCCFLAGS} ${CMAKE_CURRENT_SOURCE_DIR}/${_source}
-    COMMAND
-      mv ${_name}-exports.h.tmp ${_name}-exports.h
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_source} ${${_prev}_source}
-    )
-
-  set(${_prev}_name.sig ${_name}.sig)
-  set(${_prev}_source   ${_name}-tmp.${_ext})
-ENDMACRO (_SCC_GENERATE)
-
-################################################################
-## Compile the interpreter
-
-foreach(d_file IN LISTS DLIST)
-  _SCC_GENERATE(${d_file} c_file)
-  list(APPEND CLIST ${c_file_source})
+foreach(_d_source IN LISTS DLIST)
+  _SCC_GENERATE(${_d_source} _c) # sets _c_source
+  list(APPEND CLIST ${_c_source})
 endforeach()
+
+###############################################################################
+## Compile the interpreter
 
 add_library(M2-interpreter OBJECT ${CLIST})
 
@@ -191,3 +153,11 @@ target_compile_options(M2-interpreter PRIVATE
   )
 # add other compilers (eg: Intel, MSVC) here
 # for Intel: -diag-disable 981,869,383,2259,444 -debug
+
+###############################################################################
+
+# TODO: generate etags
+# cd ${CMAKE_SOURCE_DIR}/Macaulay2/d && etags  ...
+
+# What is this for?
+# if [ -f ${CMAKE_SOURCE_DIR}/Macaulay2/d/.gdbinit.mahrud ]; then cp ${CMAKE_SOURCE_DIR}/Macaulay2/d/.gdbinit.mahrud .gdbinit; fi

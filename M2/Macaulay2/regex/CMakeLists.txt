@@ -1,6 +1,8 @@
-#set(CMAKE_VERBOSE_MAKEFILE on)
+###############################################################################
+## This directory contains the rules for building M2-regex, which is a very old
+## copy of GNU regex library.
 
-# TODO: there's now a c++ regex library
+# TODO: refactor d/scclib.c to use POSIX.1 syntax, then drop this folder
 
 add_library(M2-regex OBJECT regex.c)
 
@@ -27,6 +29,5 @@ target_compile_options(M2-regex PRIVATE
   -Wno-sign-compare
   -Wno-unused
 
-  # FIXME: update regex or use POSIX syntax
   $<$<COMPILE_LANG_AND_ID:C,GNU>:-Wno-misleading-indentation -Wno-old-style-declaration>
   )

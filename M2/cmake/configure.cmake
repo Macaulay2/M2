@@ -14,19 +14,21 @@
 # use CMAKE_BUILD_TYPE=RelMinSize            for minimized release
 # use BUILD_TESTING=ON                       to build the testing tree
 
+option(USING_MPIR	"Use MPIR instead of GMP"		ON)
 option(DEVELOPMENT	"Set the DEVELOPMENT macro in config.h"	OFF)
 option(EXPERIMENT	"Set the EXPERIMENT macro in config.h"	OFF)
 option(LINTING		"Enable linting source files"		OFF)
 option(MEMDEBUG		"Enable memory allocation debugging"	OFF)
 option(PROFILING	"Enable profiling build flags"		OFF)
-option(GIT_SUBMODULE	"Update submodules during build"	OFF)
+option(GIT_SUBMODULE	"Update submodules during build"	ON)
 option(BUILD_PROGRAMS	"Build programs, even if found"		OFF)
 option(BUILD_LIBRARIES	"Build libraries, even if found"	OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
-option(BUILD_DOCS	"Build internal documentation"		ON)
+option(BUILD_DOCS	"Build internal documentation"		OFF)
 option(AUTOTUNE		"Autotune library parameters"		OFF)
 option(ALTIVEC		"compile and link with '-faltivec'"	OFF)
-option(USING_MPIR	"Use MPIR instead of GMP"		ON)
+option(WITH_TBB		"Link with the TBB library"		OFF)
+option(WITH_OMP		"Link with the OpenMP library"		OFF)
 # TODO: parse.d expr.d tokens.d actors4.d actors5.d still need xml
 option(WITH_XML		"Link with the libxml2 library"		ON)
 # TODO: still not operational

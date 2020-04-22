@@ -1,11 +1,10 @@
-set(CMAKE_VERBOSE_MAKEFILE OFF)
-
-## Try:
-# cd Macaulay2/tests
-# ctest -N
-# ctest --build-and-test
-# ctest --build-run-dir
-# ctest -R schorder --rerun-failed -V
+###############################################################################
+## This directory contains the rules for adding various tests to CTest.
+##
+## - list tests:      ctest -N
+## - build and test:  ctest --build-and-test
+## - rerun matching tests:
+##     ctest -R schorder --rerun-failed -V
 
 set(GC_MAXIMUM_HEAP_SIZE 400M CACHE STRING "maximum collected heap size")
 
