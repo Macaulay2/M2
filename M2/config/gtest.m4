@@ -57,6 +57,16 @@ AC_DEFUN([CHECK_GTEST],
 
   AC_CHECK_FILES([$GTEST_SOURCE/src/gtest-all.cc]
                  [$GTEST_SOURCE/src/gtest_main.cc],
+                 # mathicgb's unit tests fail to build with googletest
+                 # 1.8.1, so we require googletest >= 1.10.0. As the
+                 # gtest-config script may or may not be available to
+                 # check the version number (e.g., it's not included in
+                 # the Debian googletest package), we instead compile a
+                 # short program using TYPED_TEST_SUITE, one of the
+                 # functions which was introduced in 1.10.0 in the
+                 # switch from the *_TEST_CASE to the *_TEST_SUITE naming
+                 # convention.  If this test fails, then an older
+                 # googletest is installed and we will build it instead.
                  [AC_COMPILE_IFELSE(
 		   [AC_LANG_PROGRAM(
 		     [[#include <gtest/gtest.h>]],
