@@ -37,7 +37,7 @@ export clearAllFlags():void := (
      interruptPending = false;
      );
 export setInterruptFlag():void := (
-     --note ordering here, interrupt flag, then exception flag, then libfac interrupt flag. 
+     --note ordering here: interrupt flag, then exception flag.
      store(interruptedFlag, true);
      --compiler barrier necessary to disable compiler reordering.  
      --On architectures that do not enforce memory write ordering, emit a memory barrier

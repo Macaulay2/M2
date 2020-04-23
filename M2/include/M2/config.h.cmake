@@ -1,6 +1,9 @@
 /* include/M2/config.h is generated from config.h.cmake by cmake.  */
 /* include/M2/config.h.cmake is created manually.  */
 
+#ifndef _M2_CONFIG_H
+#define _M2_CONFIG_H
+
 // TODO: remove the following five? Currently they are hardcoded.
 // See https://gist.github.com/stalkerg/7a1e891a887b65823ef9.
 
@@ -393,3 +396,5 @@
 // TODO
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #cmakedefine size_t ${CMAKE_HOST_SYSTEM}
+
+#endif /* _M2_CONFIG_H */

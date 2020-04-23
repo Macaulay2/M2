@@ -37,6 +37,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 add_compile_options(
   -Wall -Wextra -Wfatal-errors -Wcast-qual # -Werror
   -Wno-unused-parameter # FIXME: caused by c/chk.c:244:40 and every scc1 generated file
+  -Wno-attributes # caused by SIMD unpack functions in fflas-ffpack
   )
 
 ###############################################################################

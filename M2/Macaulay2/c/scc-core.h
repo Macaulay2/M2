@@ -1,18 +1,24 @@
 /* this file gets included into each file created by scc1 */
+
 #ifndef SCC_CORE_H
 #define SCC_CORE_H
+
 #include <M2/gc-include.h>
-/* for size_t: */
- #include <stdlib.h>
-/* for memcpy: */
- #include <string.h>
+
 #if defined(__cplusplus)
   extern "C" {
 #endif
-    extern void scc_core_prepare();
-    extern void fatal(const char *s,...);
+#ifndef _FUNCTION_CELL
+#define _FUNCTION_CELL
     struct FUNCTION_CELL { void (*fun)(); struct FUNCTION_CELL *next; };
     extern struct FUNCTION_CELL *pre_final_list, *final_list, *thread_prepare_list;
+#endif
+
+#ifndef _scc_core_prepare
+    extern void scc_core_prepare();
+#endif
+
+    extern void fatal(const char *s,...);
     extern void invalidTypeTag(int,const char*,int,int);
     extern void invalidNullPointer(const char*,int,int);
     extern void fatalarraylen(int,const char*,int,int);

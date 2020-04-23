@@ -15,7 +15,7 @@
 #endif
 
 #define Matrix FactoryMatrix
-#include <factory/factory.h>  // from Messollen's libfac
+#include <factory/factory.h>
 #if !HAVE_FACTORY_PREM
 CanonicalForm Prem(const CanonicalForm &F, const CanonicalForm &G);
 #endif

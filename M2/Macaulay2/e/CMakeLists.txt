@@ -296,7 +296,6 @@ target_include_directories(M2-engine
     .
   PRIVATE
     ${CMAKE_BINARY_DIR}/Macaulay2/d
-    ${CMAKE_SOURCE_DIR}/Macaulay2/c # TODO: engine should not depend on scc1
   )
 
 # Compiler warning flags
@@ -338,18 +337,15 @@ if(BUILD_TESTING)
   # TODO: overflow tests
   # TODO: break up into multiple branches
   add_executable(M2-unit-tests
-    # what are these for?
-    #unit-tests/M2-cpp-replacement.cpp
-    #unit-tests/M2-replacement.c
-    #unit-tests/M2mem-replacement.c
-    #unit-tests/M2mem-replacement.h
-
-    #unit-tests/GivaroTest.cpp # FIXME
+    unit-tests/M2-cpp-replacement.cpp
+    unit-tests/M2-replacement.c
+    unit-tests/M2mem-replacement.c
+    unit-tests/M2mem-replacement.h
 
     unit-tests/ARingTest.hpp
     unit-tests/ARingZZTest.cpp
     unit-tests/ARingZZpTest.cpp
-    #unit-tests/ARingGFTest.cpp # FIXME
+    unit-tests/ARingGFTest.cpp # FIXME: line 155
     unit-tests/ARingQQFlintTest.cpp
     unit-tests/ARingQQGmpTest.cpp
     unit-tests/ARingRRTest.cpp
@@ -375,24 +371,36 @@ if(BUILD_TESTING)
 
     unit-tests/fromStream.cpp
     unit-tests/testMain.cpp # not needed, except for GC_INIT
-    ../bin/timestamp.c # version.dd needs timestamp
     )
+  ## Separate main(), separate executable
+  # TODO: why does this run main on compilation?
+  add_executable(M2-unit-tests-givaro unit-tests/GivaroTest.cpp)
 
+  ## Compile flags
   target_compile_options(M2-unit-tests PRIVATE
-    -Wno-cast-qual # FIXME
+    -Wno-cast-qual # FIXME: caused by NAG.hpp:559:37 and NAG.hpp:603:37
     -Wno-sign-compare
     $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags> # FIXME
     )
 
-  gtest_discover_tests(M2-unit-tests TEST_PREFIX unit-tests:)
-
-  # TODO: valgrind --track-origins=yes ...
-  add_test(NAME M2-engine-tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND M2-unit-tests)
+  ## Linking information
+  target_link_libraries(M2-unit-tests M2-engine Threads::Threads ${CMAKE_DL_LIBS})
+  target_link_libraries(M2-unit-tests-givaro PkgConfig::GIVARO Threads::Threads ${CMAKE_DL_LIBS})
 
   if(GTEST_FOUND)
   target_link_libraries(M2-unit-tests GTest::GTest GTest::Main)
   target_include_directories(M2-unit-tests PRIVATE ${GTEST_INCLUDE_DIR})
+
+  target_link_libraries(M2-unit-tests-givaro GTest::GTest GTest::Main)
+  target_include_directories(M2-unit-tests-givaro PRIVATE ${GTEST_INCLUDE_DIR})
   endif()
+
+  ## Add the tests
+  gtest_discover_tests(M2-unit-tests TEST_PREFIX unit-tests:)
+  gtest_discover_tests(M2-unit-tests-givaro TEST_PREFIX unit-tests:Givaro:)
+
+  # TODO: valgrind --track-origins=yes ...
+  # add_test(NAME M2-unit-tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND M2-unit-tests)
 
   ###############################################################################
   # TODO: is there any way to deduce these?
@@ -403,19 +411,9 @@ if(BUILD_TESTING)
     ${LIBXML2_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR}/Macaulay2/d
     ${CMAKE_SOURCE_DIR}/Macaulay2/d
-    ${CMAKE_SOURCE_DIR}/Macaulay2/c # TODO: engine should not depend on scc1
     )
 
   # NOTE: is d/debug.o needed?
-  target_link_libraries(M2-unit-tests
-    M2-regex M2-engine M2-interpreter M2-supervisor
-    Threads::Threads ${CMAKE_DL_LIBS})
-
-  foreach(LIB IN LISTS LIBRARY_LIST)
-    if(${LIB}_FOUND)
-      target_link_libraries(M2-unit-tests ${${LIB}_LIBRARY})
-    endif()
-  endforeach()
 
   foreach(LIB IN LISTS LIBRARIES_LIST)
     if(${LIB}_FOUND)

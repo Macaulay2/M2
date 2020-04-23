@@ -134,7 +134,7 @@ set(CMAKE_PROGRAM_PATH     ${M2_INSTALL_PROGRAMSDIR})
 
 message("\n## Staging area prefixes
      common            = ${M2_DIST_PREFIX}/${M2_DATA_INFIX}
-     exec 	       = ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}")
+     exec              = ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}")
 
 ###############################################################################
 ## Define compiler and linker flags and features
@@ -245,11 +245,9 @@ check_include_files("stdlib.h;stdarg.h;string.h;float.h" STDC_HEADERS)
 check_include_files(arpa/inet.h	HAVE_ARPA_INET_H)
 check_include_files(assert.h	HAVE_ASSERT_H)
 check_include_files(dlfcn.h	HAVE_DLFCN_H)
-check_include_files(elf.h	HAVE_ELF_H)
 check_include_files(execinfo.h	HAVE_EXECINFO_H)
 check_include_files(inttypes.h	HAVE_INTTYPES_H)
 check_include_files(io.h	HAVE_IO_H)
-check_include_files(linux/personality.h	HAVE_LINUX_PERSONALITY_H)
 check_include_files(malloc.h	HAVE_MALLOC_H)
 check_include_files(math.h	HAVE_MATH_H)
 check_include_files(memory.h	HAVE_MEMORY_H)
@@ -299,8 +297,6 @@ check_function_exists(alarm	HAVE_ALARM)
 check_function_exists(fork	HAVE_FORK)
 check_function_exists(sigprocmask	HAVE_SIGPROCMASK)
 check_function_exists(kill	HAVE_KILL)
-check_function_exists(longjmp	HAVE_LONGJMP)
-check_function_exists(siglongjmp	HAVE_SIGLONGJMP)
 check_function_exists(sigaction	HAVE_SIGACTION)
 check_function_exists(wait4	HAVE_WAIT4)
 check_function_exists(readlink	HAVE_READLINK)

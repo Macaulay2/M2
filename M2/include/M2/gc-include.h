@@ -21,6 +21,11 @@
   #define __need_sigset_t 1
   #include <signal.h>
 
+  /* for size_t: */
+  #include <stdlib.h>
+  /* for memcpy: */
+  #include <string.h>
+
   #ifdef NDEBUG
    #define GC_IGNORE_WARN 1
   #endif

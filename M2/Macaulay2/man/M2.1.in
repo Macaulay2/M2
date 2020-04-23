@@ -46,9 +46,6 @@ don't try to load setup.m2
 \fB\-\-no\-threads\fR
 don't start any additional threads (or tasks)
 .TP
-\fB\-\-no\-personality\fR
-don't set the personality and re-exec M2 (linux only)
-.TP
 \fB\-\-prefix DIR\fR
 set prefixDirectory
 .TP
