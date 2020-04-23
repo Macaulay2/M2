@@ -465,26 +465,47 @@ describeReturnCode = r -> (
 
 runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefiles) -> ( -- return false if error
      announcechange();
-     stderr << "--making " << desc;
-     if debugLevel > 0 then stderr << " in file " << outf;
-     stderr << endl;
+     stderr << "--making " << desc << ( if debugLevel > 0 then " in file " | outf else "" ) << endl;
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
-     setseed := " --no-randomize";
-     ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'") else "";
-     src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
-     -- we specify --no-readline because the readline library catches SIGINT:
-     args := "--silent --print-width 77 --stop --int --no-readline" | (if usermode then "" else " -q") | src | setseed | ldpkg;
-     env := "GC_MAXIMUM_HEAP_SIZE=400M ";
-     cmdname := commandLine#0;
-     -- must convert a relative path to an absolute path so we can run the same M2 from another directory while
-     -- running the examples:
-     if match("/",cmdname) then cmdname = toAbsolutePath cmdname;
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
      rundir := temporaryFileName() | "-rundir/";
-     cmd := ulimit | "cd " | rundir | "; " | env | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
-     if debugLevel > 0 then stderr << cmd << endl;
      makeDirectory rundir;
+     -* convert usermode to a number and use bitmask (see below) to decide arguments *-
+     defmode := (1<<20)+(1<<21)+1+(1<<1)+(1<<5)+(1<<6)+(1<<12)+(1<<13)+(1<<14)+(1<<30)+(1<<31)+(1<<32); -* =7519367267 *-
+     usermode = if usermode === true then defmode - 1 else usermode; -* the default without -q *-
+     usermode = if usermode === false or usermode === null then defmode else usermode; -* the default *-
+     usermode = if usermode < 0 then (1<<64) + defmode - usermode else usermode; -* useful for changing the default *-
+     -* returns (" "|arg) if the (m)th bit is set *-
+     readmode := (m, arg) -> if usermode & (1 << m) != 0 then " " | arg else "";
+     cmd := readmode(20, ulimit);
+     cmd = cmd | " cd " | rundir | ";";
+     cmd = cmd | readmode(21, "GC_MAXIMUM_HEAP_SIZE=400M");
+     cmd = cmd | readmode(22, "GC_PRINT_STATS=1");
+     cmd = cmd | readmode(23, "GC_PRINT_VERBOSE_STATS=1");
+     cmd = cmd | " " | format toAbsolutePath commandLine#0;
+     cmd = cmd | readmode(0,  "-q");
+     cmd = cmd | readmode(1,  "--int");
+     cmd = cmd | readmode(2,  "--no-backtrace");
+     cmd = cmd | readmode(3,  "--no-debug");
+     cmd = cmd | readmode(4,  "--no-preload");
+     cmd = cmd | readmode(5,  "--no-randomize");
+     cmd = cmd | readmode(6,  "--no-readline");
+     cmd = cmd | readmode(7,  "--no-setup");
+     cmd = cmd | readmode(8,  "--no-threads");
+     cmd = cmd | readmode(9,  "--no-tty");
+     cmd = cmd | readmode(10, "--no-tvalues");
+     cmd = cmd | readmode(11, "--notify");
+     cmd = cmd | readmode(12, "--silent");
+     cmd = cmd | readmode(13, "--stop");
+     cmd = cmd | readmode(14, "--print-width 77");
+     cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir",format d));
+     needsline := concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'");
+     cmd = cmd | if pkgname != "Macaulay2Doc" then needsline else "";
+     cmd = cmd | readmode(30, "<" | format inf);
+     cmd = cmd | readmode(31, ">>" | format toAbsolutePath tmpf);
+     cmd = cmd | readmode(32, "2>&1");
+     if debugLevel > 0 then stderr << cmd << endl;
      for fn in examplefiles do copyFile(fn,rundir | baseFilename fn);
      r := run cmd;
      if r == 0 then (
