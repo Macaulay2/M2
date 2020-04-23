@@ -57,6 +57,8 @@ endif()
 if(CMAKE_BUILD_TYPE STREQUAL Debug)
   set(assertions_setting --enable-assertions)
   set(assert_setting --enable-assert)
+elseif(CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
+  set(strip_setting --strip)
 endif()
 
 # Wrap configure and make commands so they find mpir, mpfr, etc.
@@ -108,8 +110,6 @@ ENDFUNCTION (_ADD_COMPONENT_DEPENDENCY)
 ###############################################################################
 ## Pre-build actions
 
-# TODO: git clones can be heavy; switch to submodules or downloading tarfiles from github.
-# Currently we don't use submodules, we just use those addresses
 if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
   ## Update submodules as needed
   if(GIT_SUBMODULE)
@@ -135,7 +135,6 @@ file(MAKE_DIRECTORY ${M2_INSTALL_LICENSESDIR})
 # See https://cmake.org/cmake/help/latest/module/ExternalProject.html
 
 # http://eigen.tuxfamily.org/
-# TODO: add licenses: libraries/eigen/src/build-eigen/COPYING.MPL2
 ExternalProject_Add(build-eigen
   URL               https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz
   URL_HASH          SHA256=d56fbad95abf993f8af608484729e3d87ef611dd85b3380a8bad1d5cbc373a57
@@ -145,8 +144,11 @@ ExternalProject_Add(build-eigen
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_TESTING=${BUILD_TESTING}
-                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
+  INSTALL_COMMAND   ${CMAKE_COMMAND} --install . ${strip_setting}
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/eigen
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ../src/build-eigen/COPYING.MPL2 ${M2_INSTALL_LICENSESDIR}/eigen
   TEST_COMMAND      ${CMAKE_COMMAND} . -DEIGEN_LEAVE_TEST_IN_ALL_TARGET=ON
        COMMAND      ${CMAKE_COMMAND} --build .
        COMMAND      ${CMAKE_COMMAND} --build . --target test
@@ -161,7 +163,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries eigen "" EIGEN3_FOUND)
 # TODO: add environment variables GC_LARGE_ALLOC_WARN_INTERVAL and GC_ABORT_ON_LEAK
 # Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
 # FIXME: fix a commit to use instead of master
-# TODO: add licenses: README.QUICK
 ExternalProject_Add(build-bdwgc
 #  GIT_REPOSITORY    https://github.com/ivmai/bdwgc.git
 #  GIT_TAG           master
@@ -175,6 +176,8 @@ ExternalProject_Add(build-bdwgc
                     -Dbuild_tests=${BUILD_TESTING}
                     -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -DCMAKE_C_FLAGS=${CFLAGS}
+                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
                     -Dbuild_cord=OFF
                     -Denable_threads=ON
                     -Denable_cplusplus=ON
@@ -186,6 +189,9 @@ ExternalProject_Add(build-bdwgc
                     -Denable_gc_assertions=${MEMDEBUG}
                     -Denable_gc_debug=${MEMDEBUG}
                     -Ddisable_gc_debug=$<NOT:$<BOOL:${MEMDEBUG}>>
+  INSTALL_COMMAND   ${CMAKE_COMMAND} --install . ${strip_setting}
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/bdwgc
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/bdwgc/README.QUICK ${M2_INSTALL_LICENSESDIR}/bdwgc
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
@@ -343,7 +349,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries ntl mp NTL_FOUND)
 
 
 # https://github.com/wbhart/flint2
-# TODO: add licenses: README LICENSE
 ExternalProject_Add(build-flint
 #  GIT_REPOSITORY    https://github.com/mahrud/flint2.git
 #  GIT_TAG           HEAD
@@ -356,16 +361,21 @@ ExternalProject_Add(build-flint
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -DCMAKE_C_FLAGS=${CFLAGS}
+                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
                     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-                    -DBUILD_TESTING=OFF # Flint builds too many tests, so make them a separate target
                     -DBUILD_SHARED_LIBS=ON # FIXME: ${BUILD_SHARED_LIBS} # TODO: get static flint building to work
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
                     -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
                     -DWITH_MPIR=${USING_MPIR}
-                    # Possible variables for the CMake build:
+                    # TODO: force SIMD flags off for distribution
                     #-DHAS_FLAG_MPOPCNT
                     #-DHAS_FLAG_UNROLL_LOOPS
+  INSTALL_COMMAND   ${CMAKE_COMMAND} --install . ${strip_setting}
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/flint
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/README ${M2_INSTALL_LICENSESDIR}/flint
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/LICENSE ${M2_INSTALL_LICENSESDIR}/flint
   TEST_COMMAND      ${CMAKE_COMMAND} . -DBUILD_TESTING=ON
        COMMAND      ${CMAKE_COMMAND} --build .
        COMMAND      ${CMAKE_COMMAND} --build . --target test
@@ -665,8 +675,8 @@ ExternalProject_Add(build-googletest
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/googletest
   BINARY_DIR        libraries/googletest/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX} -DBUILD_GMOCK=OFF
-                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
@@ -688,8 +698,8 @@ ExternalProject_Add(build-memtailor
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_TESTING=${BUILD_TESTING}
-                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
@@ -710,8 +720,8 @@ ExternalProject_Add(build-mathic
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_TESTING=${BUILD_TESTING}
-                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
@@ -734,8 +744,8 @@ ExternalProject_Add(build-mathicgb
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_TESTING=${BUILD_TESTING}
-                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
                     -Dwith_tbb=${WITH_TBB}
                     -Denable_mgb=ON
   EXCLUDE_FROM_ALL  ON

@@ -21,10 +21,10 @@ option(LINTING		"Enable linting source files"		OFF)
 option(MEMDEBUG		"Enable memory allocation debugging"	OFF)
 option(PROFILING	"Enable profiling build flags"		OFF)
 option(GIT_SUBMODULE	"Update submodules during build"	ON)
+option(BUILD_NATIVE	"Use native SIMD instructions"		ON)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
 option(BUILD_DOCS	"Build internal documentation"		OFF)
 option(AUTOTUNE		"Autotune library parameters"		OFF)
-option(ALTIVEC		"compile and link with '-faltivec'"	OFF)
 option(WITH_TBB		"Link with the TBB library"		OFF)
 option(WITH_OMP		"Link with the OpenMP library"		OFF)
 # TODO: parse.d expr.d tokens.d actors4.d actors5.d still need xml
@@ -67,6 +67,7 @@ message("## Configure Macaulay2
      Git commit        = ${GIT_COMMIT}
      Install prefix    = ${CMAKE_INSTALL_PREFIX}\n
      CMAKE_BUILD_TYPE  = ${CMAKE_BUILD_TYPE}
+     BUILD_NATIVE      = ${BUILD_NATIVE}
      BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}
      BUILD_TESTING     = ${BUILD_TESTING}
      BUILD_DOCS        = ${BUILD_DOCS}\n
@@ -137,8 +138,20 @@ message("\n## Staging area prefixes
 
 ###############################################################################
 ## Define compiler and linker flags and features
-# look into compiler features:
-# https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
+
+# Flags based on architecture
+# Clang:
+#  - https://clang.llvm.org/docs/CrossCompilation.html
+#  - clang -march=native -E - -###
+# GCC:
+#  - gcc -march=native -Q --help=target
+#  - gcc -march=native -E - -###
+if(BUILD_NATIVE)
+  add_compile_options(-march=native)
+  add_link_options(-march=native)
+else()
+  # TODO
+endif()
 
 # Flags based on options
 if(MEMDEBUG)
@@ -147,13 +160,6 @@ endif()
 if(PROFILING)
   add_compile_options(-pg)
   add_link_options(-pg)
-endif()
-# TODO: deal with all SIMDs together
-# See: https://cmake.org/cmake/help/latest/command/cmake_host_system_information.html
-# See: http://eigen.tuxfamily.org/index.php?title=FAQ#How_can_I_enable_vectorization.3F
-if(ALTIVEC)
-  add_compile_options(-faltivec)
-  add_link_options(-faltivec)
 endif()
 
 # Flags based on build type
@@ -184,7 +190,11 @@ else()
   add_link_options(-g)
 endif()
 
+# TODO: look into compiler features:
+# https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
+
 # Common flags
+# TODO: reduce these if possible
 add_link_options(-L${M2_HOST_PREFIX}/lib)
 add_compile_options(
   -I${M2_HOST_PREFIX}/include
