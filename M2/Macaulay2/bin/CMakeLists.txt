@@ -8,39 +8,13 @@
 
 # NOTE: is d/debug.c useful here?
 add_executable(M2-binary timestamp.cpp main.cpp)
-
-# This is work in progress
-if(TRY_NEW_MAIN)
-  target_compile_definitions(M2-binary PRIVATE EXPERIMENT)
-endif()
+target_link_libraries(M2-binary
+  M2-engine M2-interpreter M2-supervisor ${CMAKE_DL_LIBS})
 
 # Set where the executable should be store and get its RPATH
-set_target_properties(M2-binary PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
+set_target_properties(M2-binary PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
 get_target_property(INSTALL_RPATH M2-binary INSTALL_RPATH)
-
-target_include_directories(M2-binary PRIVATE ${READLINE_INCLUDE_DIR})
-
-target_link_libraries(M2-binary
-  M2-regex M2-interpreter M2-engine M2-supervisor
-  Threads::Threads ${CMAKE_DL_LIBS})
-
-foreach(LIB IN LISTS LIBRARY_LIST)
-  if(${LIB}_FOUND)
-    target_link_libraries(M2-binary ${${LIB}_LIBRARY})
-  endif()
-endforeach()
-
-foreach(LIB IN LISTS LIBRARIES_LIST)
-  if(${LIB}_FOUND)
-    target_link_libraries(M2-binary ${${LIB}_LIBRARIES})
-  endif()
-endforeach()
-
-foreach(LIB IN LISTS PKGLIB_LIST)
-  if(${LIB}_FOUND)
-    target_link_libraries(M2-binary PkgConfig::${LIB})
-  endif()
-endforeach()
 
 ###############################################################################
 ## After linking, print a list of all shared libraries M2-binary uses

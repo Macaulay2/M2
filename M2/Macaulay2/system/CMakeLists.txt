@@ -9,8 +9,9 @@ add_library(M2-supervisor OBJECT
   tests.cpp # TODO: is this used?
   )
 
-add_dependencies(M2-supervisor M2-interpreter) # supervisor.cpp requires pthread-exports.h
+target_link_libraries(M2-supervisor INTERFACE M2-interpreter Threads::Threads)
 
+# TODO: reduce these dependencies
 target_include_directories(M2-supervisor
   PUBLIC
     .

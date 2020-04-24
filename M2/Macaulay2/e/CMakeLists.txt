@@ -35,6 +35,7 @@ set(CFILES
 
 # these files are include only.
 set(HPPONLYFILES
+  newdelete.hpp
   timing.hpp
   SLP-defs.hpp
   SLP-imp.hpp
@@ -277,7 +278,7 @@ list(TRANSFORM SRCLIST APPEND .hpp OUTPUT_VARIABLE HPPFILES)
 # TODO: enable INTERPROCEDURAL_OPTIMIZATION?
 
 # set -DBUILD_SHARED_LIBS=ON to generate a shared library
-add_library(M2-engine STATIC # SHARED
+add_library(M2-engine STATIC
   ${HPPONLYFILES}
   ${CPPONLYFILES}
   ${HPPFILES}
@@ -285,18 +286,28 @@ add_library(M2-engine STATIC # SHARED
   ${CFILES}
   )
 
-add_dependencies(M2-engine M2-interpreter)
+target_include_directories(M2-engine
+  PUBLIC . ${CMAKE_BINARY_DIR}/Macaulay2/d)
+
+target_link_libraries(M2-engine
+  PUBLIC M2-interpreter M2-regex)
 
 if(EIGEN3_FOUND)
-  target_link_libraries(M2-engine Eigen3::Eigen)
+  target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
 endif()
 
-target_include_directories(M2-engine
-  PUBLIC
-    .
-  PRIVATE
-    ${CMAKE_BINARY_DIR}/Macaulay2/d
-  )
+foreach(LIB IN LISTS LIBRARIES_LIST)
+  if(${LIB}_FOUND)
+    target_link_libraries(M2-engine PUBLIC ${${LIB}_LIBRARIES})
+  endif()
+endforeach()
+
+foreach(LIB IN LISTS PKGLIB_LIST)
+  if(${LIB}_FOUND)
+    target_link_libraries(M2-engine PUBLIC PkgConfig::${LIB})
+    target_link_libraries(M2-engine PUBLIC PkgConfig::${LIB})
+  endif()
+endforeach()
 
 # Compiler warning flags
 target_compile_options(M2-engine PRIVATE
@@ -345,7 +356,7 @@ if(BUILD_TESTING)
     unit-tests/ARingTest.hpp
     unit-tests/ARingZZTest.cpp
     unit-tests/ARingZZpTest.cpp
-    unit-tests/ARingGFTest.cpp # FIXME: line 155
+    unit-tests/ARingGFTest.cpp
     unit-tests/ARingQQFlintTest.cpp
     unit-tests/ARingQQGmpTest.cpp
     unit-tests/ARingRRTest.cpp
@@ -357,8 +368,8 @@ if(BUILD_TESTING)
     unit-tests/RingZZTest.cpp
     unit-tests/RingZZpTest.cpp
     unit-tests/RingQQTest.cpp
-    #unit-tests/RingCCCTest.cpp
-    #unit-tests/RingRRRTest.cpp
+    unit-tests/RingCCCTest.cpp
+    unit-tests/RingRRRTest.cpp
     unit-tests/RingTowerTest.cpp
 
     unit-tests/DMatTest.hpp
@@ -374,19 +385,12 @@ if(BUILD_TESTING)
     )
   ## Separate main(), separate executable
   # TODO: why does this run main on compilation?
-  add_executable(M2-unit-tests-givaro unit-tests/GivaroTest.cpp)
+  add_executable(M2-unit-tests-givaro unit-tests/GivaroTest.cpp) # FIXME: line 155
 
-  ## Compile flags
-  target_compile_options(M2-unit-tests PRIVATE
-    -Wno-cast-qual # FIXME: caused by NAG.hpp:559:37 and NAG.hpp:603:37
-    -Wno-sign-compare
-    $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags> # FIXME
-    )
+  target_link_libraries(M2-unit-tests M2-engine)
+  target_link_libraries(M2-unit-tests-givaro M2-engine)
 
-  ## Linking information
-  target_link_libraries(M2-unit-tests M2-engine Threads::Threads ${CMAKE_DL_LIBS})
-  target_link_libraries(M2-unit-tests-givaro PkgConfig::GIVARO Threads::Threads ${CMAKE_DL_LIBS})
-
+  ## Link with Googletest
   if(GTEST_FOUND)
   target_link_libraries(M2-unit-tests GTest::GTest GTest::Main)
   target_include_directories(M2-unit-tests PRIVATE ${GTEST_INCLUDE_DIR})
@@ -395,35 +399,16 @@ if(BUILD_TESTING)
   target_include_directories(M2-unit-tests-givaro PRIVATE ${GTEST_INCLUDE_DIR})
   endif()
 
-  ## Add the tests
-  gtest_discover_tests(M2-unit-tests TEST_PREFIX unit-tests:)
-  gtest_discover_tests(M2-unit-tests-givaro TEST_PREFIX unit-tests:Givaro:)
+  target_compile_options(M2-unit-tests PRIVATE
+    -Wno-cast-qual # FIXME: caused by NAG.hpp:559:37 and NAG.hpp:603:37
+    -Wno-sign-compare
+    $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags> # FIXME
+    )
 
   # TODO: valgrind --track-origins=yes ...
   # add_test(NAME M2-unit-tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND M2-unit-tests)
 
-  ###############################################################################
-  # TODO: is there any way to deduce these?
-
-  target_include_directories(M2-unit-tests
-    PRIVATE
-    ${EIGEN3_INCLUDE_DIR}
-    ${LIBXML2_INCLUDE_DIR}
-    ${CMAKE_BINARY_DIR}/Macaulay2/d
-    ${CMAKE_SOURCE_DIR}/Macaulay2/d
-    )
-
-  # NOTE: is d/debug.o needed?
-
-  foreach(LIB IN LISTS LIBRARIES_LIST)
-    if(${LIB}_FOUND)
-      target_link_libraries(M2-unit-tests ${${LIB}_LIBRARIES})
-    endif()
-  endforeach()
-
-  foreach(LIB IN LISTS PKGLIB_LIST)
-    if(${LIB}_FOUND)
-      target_link_libraries(M2-unit-tests PkgConfig::${LIB})
-    endif()
-  endforeach()
+  ## Add the tests
+  gtest_discover_tests(M2-unit-tests TEST_PREFIX unit-tests:)
+  gtest_discover_tests(M2-unit-tests-givaro TEST_PREFIX unit-tests:Givaro:)
 endif()

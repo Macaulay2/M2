@@ -121,12 +121,14 @@ endforeach()
 
 add_library(M2-interpreter OBJECT ${CLIST})
 
+target_link_libraries(M2-interpreter PUBLIC M2-regex)
+
 target_include_directories(M2-interpreter
   PUBLIC
     .
     ${CMAKE_SOURCE_DIR}/Macaulay2/regex # scclib.c uses regex
-    ${CMAKE_SOURCE_DIR}/Macaulay2/e
-    ${CMAKE_SOURCE_DIR}/Macaulay2/c
+    ${CMAKE_SOURCE_DIR}/Macaulay2/e # need newdelete.hpp
+    ${CMAKE_SOURCE_DIR}/Macaulay2/c # need scc-core.h
     ${CMAKE_BINARY_DIR}/Macaulay2/d
   PRIVATE
     ${LIBXML2_INCLUDE_DIR}
@@ -134,6 +136,12 @@ target_include_directories(M2-interpreter
     ${Python3_INCLUDE_DIRS}
     ${READLINE_INCLUDE_DIR}
   )
+
+foreach(LIB IN LISTS LIBRARY_LIST)
+  if(${LIB}_FOUND)
+    target_link_libraries(M2-interpreter PUBLIC ${${LIB}_LIBRARY})
+  endif()
+endforeach()
 
 # Compiler warning flags
 target_compile_options(M2-interpreter PRIVATE
