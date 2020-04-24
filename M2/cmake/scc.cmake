@@ -26,7 +26,7 @@ MACRO (_SCC_GENERATE _source _prev)
 
   # TODO: use the {_name}.dep file to check for dependencies
   # TODO: use DEPFILE option, but only works with ninja
-  add_custom_command(OUTPUT ${_name}-tmp.${_ext}
+  add_custom_command(OUTPUT ${_name}-tmp.${_ext} ${_name}-exports.h ${_name}.sig ${_name}.dep
     COMMENT "Generating ${_name}-tmp.${_ext}"
     COMMAND
       scc1 ${SCCFLAGS} -dep ${CMAKE_CURRENT_SOURCE_DIR}/${_source}
@@ -35,9 +35,13 @@ MACRO (_SCC_GENERATE _source _prev)
     COMMAND
       scc1 ${SCCFLAGS} ${CMAKE_CURRENT_SOURCE_DIR}/${_source}
     COMMAND
+      mv ${_name}.sig.tmp ${_name}.sig && mv ${_name}.dep.tmp ${_name}.dep
+    COMMAND
       mv ${_name}-exports.h.tmp ${_name}-exports.h
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_source} ${${_prev}_source}
+    MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/${_source}
+    DEPENDS ${${_prev}_source}
+    DEPFILE ${_name}.dep
     )
 
   set(${_prev}_name.sig ${_name}.sig)

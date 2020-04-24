@@ -2,19 +2,10 @@
 #define M2mem_included
 
 #include <stdlib.h>
+#include "scc-core.h"
 
 #if defined(__cplusplus)
 extern "C" {
-#endif
-
-#ifndef _FUNCTION_CELL
-#define _FUNCTION_CELL
-struct FUNCTION_CELL { void (*fun)(); struct FUNCTION_CELL *next; };
-extern struct FUNCTION_CELL *pre_final_list, *final_list, *thread_prepare_list;
-#endif
-
-#ifndef _scc_core_prepare
-extern void scc_core_prepare();
 #endif
 
 extern void outofmem2(size_t);

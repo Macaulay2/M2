@@ -14,6 +14,68 @@
 #error "M2/config.h not included"
 #endif
 
+
+void
+fatal(const char *s,...)   {
+     va_list ap;
+     va_start(ap,s);
+     vfprintf(stderr,s,ap);
+     fprintf(stderr,"\n");
+     fflush(stderr);
+     va_end(ap);
+#ifndef NDEBUG
+     trap();
+#endif
+     /* stack_trace(); */
+     exit(1);
+     }
+
+void fatalarrayindex(int indx, int len, const char *file, int line, int column) {
+     char msg[100];
+     sprintf(msg,"array index %d out of bounds 0 .. %d",indx,len-1);
+     if (column == -1) {
+         fatal(errfmtnc,file,line,msg);
+         }
+     else {
+         fatal(errfmt,file,line,column,msg);
+         }
+     /* eventually when there is an interpreter we will have break loop here */
+     }
+
+void fatalarraylen(int len, const char *file, int line, int column)
+{
+     char msg[100];
+     sprintf(msg,"new array length %d less than zero",len);
+     if (column == -1) {
+         fatal(errfmtnc,file,line,msg);
+         }
+     else {
+         fatal(errfmt,file,line,column,msg);
+         }
+     }
+
+void invalidTypeTag(int typecode, const char *file, int line, int column) {
+     char msg[100];
+     sprintf(msg,"internal error: unrecognized type code: %d\n",typecode);
+     if (column == -1) {
+         fatal(errfmtnc,file,line,msg);
+         }
+     else {
+         fatal(errfmt,file,line,column,msg);
+         }
+     }
+
+void invalidNullPointer(const char *file, int line, int column) {
+     char msg[100];
+     sprintf(msg,"internal error: invalid null pointer\n");
+     if (column == -1) {
+         fatal(errfmtnc,file,line,msg);
+         }
+     else {
+         fatal(errfmt,file,line,column,msg);
+         }
+     }
+
 int system_openin(M2_string filename) {
      char *fname = M2_tocharstar(filename);
      int fd;

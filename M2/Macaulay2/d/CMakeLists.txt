@@ -23,6 +23,7 @@ set(CLIST
   debug.c debug.h
   memdebug.c memdebug.h
   M2types.c scclib.c M2lib.c M2mem.c
+  ../c/scc-core.h
 
   getpagesize.h M2mem.h
   gmp_aux.c gmp_aux.h # TODO: needed with mpir?
@@ -112,6 +113,7 @@ endif()
 ## Generate the interpreter
 
 foreach(_d_source IN LISTS DLIST)
+  # See cmake/scc.cmake
   _SCC_GENERATE(${_d_source} _c) # sets _c_source
   list(APPEND CLIST ${_c_source})
 endforeach()

@@ -8,17 +8,10 @@
 #if defined(__cplusplus)
   extern "C" {
 #endif
-#ifndef _FUNCTION_CELL
-#define _FUNCTION_CELL
+    extern void fatal(const char *s,...);
     struct FUNCTION_CELL { void (*fun)(); struct FUNCTION_CELL *next; };
     extern struct FUNCTION_CELL *pre_final_list, *final_list, *thread_prepare_list;
-#endif
-
-#ifndef _scc_core_prepare
     extern void scc_core_prepare();
-#endif
-
-    extern void fatal(const char *s,...);
     extern void invalidTypeTag(int,const char*,int,int);
     extern void invalidNullPointer(const char*,int,int);
     extern void fatalarraylen(int,const char*,int,int);

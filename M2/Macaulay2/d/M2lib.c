@@ -96,43 +96,11 @@ int system_randomint(void) {
 
 extern void stack_trace();
 
-void fatal(const char *s, ...) {
-  va_list ap;
-  va_start(ap,s);
-  vfprintf(stderr,s,ap);
-  fprintf(stderr,"\n");
-  fflush(stderr);
-  va_end(ap);
-#ifndef NDEBUG
-  trap();
-#endif
-  stack_trace();
-  exit(1);
-}
+extern void fatal(const char *s, ...);
 
-void fatalarrayindex(int indx, int len, const char *file, int line, int column) {
-  char msg[100];
-  sprintf(msg,"array index %d out of bounds 0 .. %d",indx,len-1);
-  if (column == -1) {
-    fatal(errfmtnc,file,line,msg);
-  }
-  else {
-    fatal(errfmt,file,line,column,msg);
-  }
-  /* eventually when there is an interpreter we will have break loop here */
-}
+extern void fatalarrayindex(int indx, int len, const char *file, int line, int column);
 
-void fatalarraylen(int len, const char *file, int line, int column)
-{
-  char msg[100];
-  sprintf(msg,"new array length %d less than zero",len);
-  if (column == -1) {
-    fatal(errfmtnc,file,line,msg);
-  }
-  else {
-    fatal(errfmt,file,line,column,msg);
-  }
-}
+extern void fatalarraylen(int len, const char *file, int line, int column);
 
 static char *M2_completion_generator(const char *text, int state) {
   static int i;
