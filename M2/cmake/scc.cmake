@@ -41,7 +41,7 @@ MACRO (_SCC_GENERATE _source _prev)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/${_source}
     DEPENDS ${${_prev}_source}
-    DEPFILE ${_name}.dep
+    # DEPFILE ${_name}.dep
     )
 
   set(${_prev}_name.sig ${_name}.sig)
