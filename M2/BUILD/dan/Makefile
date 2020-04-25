@@ -80,6 +80,10 @@ $(foreach O, $(OPTLIBS),			\
 	$(eval CPPFLAGS += -I$O/include)	\
 	$(eval LDFLAGS += -L$O/lib))
 
+# ifeq ($(shell uname -m),i686)
+# CONFIGOPTIONS += --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
+# endif
+
 include Makefile.include
 
 test :
