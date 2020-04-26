@@ -6,8 +6,13 @@
 ## - rerun matching tests:
 ##     ctest -R schorder --rerun-failed -V
 
-set(GC_MAXIMUM_HEAP_SIZE 400M CACHE STRING "maximum collected heap size")
+# TODO: some targets have different resource limits
+set(SUBDIRS normal slow gigantic goals quarantine engine)
 
+add_custom_target(M2-tests)
+add_dependencies(M2-tests M2-tests-ComputationsBook) # M2-tests-rationality
+
+###############################################################################
 ## Default resource limits
 # TODO: add memory, virtual memory, and stack size
 # the tests aren't run through bash, so ulimit wouldn't work
@@ -32,20 +37,18 @@ if(MEMDEBUG)
 endif()
 
 ###############################################################################
-
-# TODO: some targets have different resource limits
-# TODO: different rules: ComputationsBook rationality
-set(SUBDIRS normal slow gigantic goals quarantine engine)
-
+## M2 arguments and commands that will be passed to M2 -e ${STR}
+set(GC_MAXIMUM_HEAP_SIZE 400M CACHE STRING "maximum collected heap size")
 # set(M2_gbTrace    5)
 # set(M2_errorDepth 0)
-
-## Arguments for M2-binary
+set(M2 ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
 set(M2_ARGS
   -q --stop --silent --no-debug --no-randomize # --no-prompts --no-...
   -e errorDepth=${M2_errorDepth} -e debugLevel=${M2_debugLevel} -e gbTrace=${M2_gbTrace}
   )
 set(M2_PATH "join(path,{\"${CMAKE_CURRENT_SOURCE_DIR}/\",\"${CMAKE_SOURCE_DIR}/packages/\"})")
+# Read the file, then exit. Note: a "restart" command causes the test to not halt
+set(M2_TEST_TEMPLATE [[input("@CMAKE_CURRENT_SOURCE_DIR@/@_group@/@_testfile@")]])
 
 ## Regular expressions for various test errors
 ## TODO: add WILL_FAIL tests
@@ -58,25 +61,26 @@ set(M2_FAIL_REGEX
   )
 
 ###############################################################################
+## Adding tests for all subdirectories
 
-foreach(GROUP IN LISTS SUBDIRS)
+foreach(_group IN LISTS SUBDIRS)
 
   ## eg: LU.m2 ...
-  file(GLOB ${GROUP}_TESTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/${GROUP} "${GROUP}/*.m2")
+  file(GLOB ${_group}_TESTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/${_group} "${_group}/*.m2")
 
-  foreach(TESTFILE IN LISTS ${GROUP}_TESTS)
+  foreach(_testfile IN LISTS ${_group}_TESTS)
     ## ctest target for testing the package
-    set(TESTNAME ${GROUP}/${TESTFILE})
+    set(_testname ${_group}/${_testfile})
 
-    # Read the file, then exit. Note: a "restart" command causes the test to not halt
-    set(M2_TEST_STRING "input(\"${CMAKE_CURRENT_SOURCE_DIR}/${GROUP}/${TESTFILE}\")$<SEMICOLON>exit(0)")
+    ## configure the test string
+    string(CONFIGURE "${M2_TEST_TEMPLATE}" M2_TEST_STRING)
 
-    add_test(NAME ${TESTNAME}
-      COMMAND M2-binary ${M2_ARGS} -e path=${M2_PATH} -e ${M2_TEST_STRING}
-      WORKING_DIRECTORY	${CMAKE_CURRENT_SOURCE_DIR}/${GROUP}
+    add_test(NAME ${_testname}
+      COMMAND ${M2} ${M2_ARGS} -e path=${M2_PATH} -e ${M2_TEST_STRING} -e "exit 0"
+      WORKING_DIRECTORY	${CMAKE_CURRENT_SOURCE_DIR}/${_group}
       )
 
-    set_tests_properties(${TESTNAME} PROPERTIES
+    set_tests_properties(${_testname} PROPERTIES
       FAIL_REGULAR_EXPRESSION "${M2_FAIL_REGEX}"
       ENVIRONMENT "GC_MAXIMUM_HEAP_SIZE=${GC_MAXIMUM_HEAP_SIZE}"
       TIMEOUT ${CTEST_TEST_TIMEOUT} # TODO: this shouldn't be necessary
@@ -84,6 +88,84 @@ foreach(GROUP IN LISTS SUBDIRS)
   endforeach()
 
 endforeach()
+
+###############################################################################
+## ComputationsBook targets:
+# - M2-tests-ComputationsBook-${_chapter}
+# - M2-tests-ComputationsBook-${_chapter}-changes
+# - M2-tests-ComputationsBook-${_chapter}-diff
+# Tests:
+# - ComputationsBook/${_chapter}
+
+add_custom_target(M2-tests-ComputationsBook)
+
+set(CHAPTERS completeIntersections constructions d-modules exterior-algebra geometry
+  monomialIdeals preface programming schemes solving toricHilbertScheme varieties)
+
+set(M2_ARGS -q --stop)
+
+foreach(_chapter IN LISTS CHAPTERS)
+
+  ## configure the test string
+  set(_group ComputationsBook/${_chapter})
+
+  set(book_patterns    ${CMAKE_CURRENT_SOURCE_DIR}/${_group}/../patterns)
+  set(chapter_patterns ${CMAKE_CURRENT_SOURCE_DIR}/${_group}/patterns)
+
+  string(CONFIGURE "${M2_TEST_TEMPLATE}" M2_TEST_STRING)
+  set(M2_PATH "join({\"./${_group}\",\"${CMAKE_CURRENT_SOURCE_DIR}/${_group}\"},path)")
+
+  if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${_group})
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${_group})
+  endif()
+
+  ###############################################################################
+  # we depend on "diff" accepting some options that perhaps only GNU diff does
+  add_custom_target(M2-tests-ComputationsBook-${_chapter}
+    COMMAND ${M2} ${M2_ARGS} -e path=${M2_PATH} -e ${M2_TEST_STRING} -e "exit 0" > test.out
+    COMMAND sed -f ${book_patterns} -f ${chapter_patterns} > test.out.trim < test.out
+    COMMAND sed -f ${book_patterns} -f ${chapter_patterns} > test.out.expected.trim
+      < ${CMAKE_CURRENT_SOURCE_DIR}/${_group}/test.out.expected
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${_group}
+    VERBATIM
+    )
+  add_custom_target(M2-tests-ComputationsBook-${_chapter}-diff
+    COMMAND diff -B -b -u test.out.expected.trim test.out.trim
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${_group}
+    DEPENDS M2-tests-ComputationsBook-${_chapter}
+    VERBATIM
+    )
+  add_custom_target(M2-tests-ComputationsBook-${_chapter}-changes
+    COMMAND diff -u chapter.m2 test.m2 || true
+    COMMAND diff -u chapter.out.expected test.out.expected || true
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${_group}
+    VERBATIM
+    )
+
+  add_dependencies(M2-tests-ComputationsBook M2-tests-ComputationsBook-${_chapter})
+
+  ###############################################################################
+  add_test(NAME ${_group}
+    COMMAND diff -B -b -u ${_group}/test.out.expected.trim ${_group}/test.out.trim
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${_group}
+    )
+
+  # TODO: capture output from the chapter's code with M2 version 0.9.2 as a standard of comparison.
+  # this requires an old binary, but we run it only once and save the output
+  #set(OLDM2 M2-0.9.2)
+  #set(OLDM2CMD ${LIMIT} time nice -18 ${OLDM2} -s -q -e${PATHJOIN})
+  #add_custom_command(OUTPUT test.oldout test.oldvalues
+  #  COMMAND ${OLDM2CMD} -e'load "$(chapter_srcdir)/../capture.m2"; input "$<"; exit 0'  >test.oldout.tmp </dev/null
+  #  COMMAND mv test.oldout.tmp test.oldout
+  #  DEPENDS chapter.m2 ../capture.m2
+  #  )
+  #add_custom_target(ComputationsBook-capture
+  #  DEPENDS test.oldout test.oldvalues
+  #  )
+
+endforeach()
+
+# TODO: add_subdirectory(rationality)
 
 ###############################################################################
 ##### STILL PROCESSING

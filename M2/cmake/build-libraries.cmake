@@ -280,8 +280,8 @@ ExternalProject_Add(build-mpfr
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} CPPFLAGS=${CPPFLAGS}
-  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} all
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/mpfr
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different README COPYING.LESSER ${M2_INSTALL_LICENSESDIR}/mpfr
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
@@ -389,7 +389,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
 # https://github.com/Singular/Sources/tree/spielwiese/factory
 # TODO: what is ftmpl_inst.o?
 set(factory_CPPFLAGS "${CPPFLAGS} -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
-set(factory_WARNFLAGS "-Wno-uninitialized -Wno-write-strings -Wno-deprecated")
 set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} ${NTL_INCLUDE_DIR}/..")
 set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} ${FLINT_INCLUDE_DIR}/..")
 ExternalProject_Add(build-factory
@@ -418,15 +417,8 @@ ExternalProject_Add(build-factory
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
-  BUILD_COMMAND     cd factory-4.1.1 &&
-                    ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} all ftmpl_inst.o
-                      AM_DEFAULT_VERBOSITY=1
-                      WARNFLAGS=${factory_WARNFLAGS} &&
-                    ./bin/makeheader factory.template     factory.h     &&
-                    ./bin/makeheader factoryconf.template factoryconf.h &&
-                    ${CMAKE_COMMAND} -E copy factory.h factoryconf.h include/factory &&
-                    ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} all-recursive
-  INSTALL_COMMAND   cd factory-4.1.1 && ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install &&
+  BUILD_COMMAND     cd factory-4.1.1 && ${MAKE} -j${PARALLEL_JOBS} all
+  INSTALL_COMMAND   cd factory-4.1.1 && ${MAKE} -j${PARALLEL_JOBS} install &&
                     ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/factory &&
                     ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/factory
   TEST_COMMAND      cd factory-4.1.1 && ${MAKE} -j${PARALLEL_JOBS} check
@@ -552,8 +544,11 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpsolve "mp;mpfr" MPSOLVE_FOUND)
 
 
 # https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
-# TODO: out of source build has issues with detecting SIMD instructions
-# TODO: separate source and binary directories
+# TODO: get out-of-tree build working: https://github.com/linbox-team/givaro/issues/154
+if(NOT BUILD_NATIVE)
+  set(givaro_SIMD sse sse2 sse3 ssse3 sse4.1 sse4.2avx avx avx2 fma fma4)
+  list(TRANSFORM givaro_SIMD PREPEND "--disable-")
+endif()
 set(givaro_LICENSEFILES COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt)
 ExternalProject_Add(build-givaro
   GIT_REPOSITORY    https://github.com/linbox-team/givaro.git
@@ -565,7 +560,7 @@ ExternalProject_Add(build-givaro
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
-                      # --disable-simd # TODO: replaced with sse,sse2,sse3,ssse3,sse4.1,sse4.2avx,avx,avx2,fma,fma4
+                      ${givaro_SIMD}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -832,9 +827,11 @@ _ADD_COMPONENT_DEPENDENCY(programs cohomcalg "" COHOMCALG)
 
 
 # https://users-math.au.dk/~jensen/software/gfan/gfan.html
-# gfan needs cddlib and is used by the packages gfanInterface and StatePolytope
-set(gfan_CC  "${CMAKE_C_COMPILER}   ${CPPFLAGS}")
-set(gfan_CXX "${CMAKE_CXX_COMPILER} ${CPPFLAGS}")
+# gfan needs cddlib and is used by the packages gfanInterface and StatePolytopes
+set(gfan_OPTFLAGS "${CPPFLAGS} -DGMPRATIONAL") # overriding the flags defined in Makefile
+if(CDDLIB_FOUND)
+  set(gfan_OPTFLAGS "${gfan_OPTFLAGS} -I${CDDLIB_INCLUDE_DIR}")
+endif()
 set(gfan_CLINKER  "${CMAKE_C_COMPILER}   ${LDFLAGS}")
 set(gfan_CCLINKER "${CMAKE_CXX_COMPILER} ${LDFLAGS}")
 ExternalProject_Add(build-gfan
@@ -848,8 +845,9 @@ ExternalProject_Add(build-gfan
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
                       cddnoprefix=yes
-                      CC=${gfan_CC}
-                      CXX=${gfan_CXX}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+                      OPTFLAGS=${gfan_OPTFLAGS}
                       CLINKER=${gfan_CLINKER}
                       CCLINKER=${gfan_CCLINKER}
   INSTALL_COMMAND   ${CMAKE_STRIP} gfan
@@ -865,7 +863,7 @@ _ADD_COMPONENT_DEPENDENCY(programs gfan "mp;cddlib;factory" GFAN)
 
 
 # http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
-# TODO: is this a library or program?
+# TODO: update to v70a which is 4 years more recent
 ExternalProject_Add(build-lrslib
   URL               ${M2_SOURCE_URL}/lrslib-062.tar.gz
   URL_HASH          SHA256=adf92f9c7e70c001340b9c28f414208d49c581df46b550f56ab9a360348e4f09
@@ -894,7 +892,6 @@ _ADD_COMPONENT_DEPENDENCY(programs lrslib mp LRSLIB)
 
 
 # https://github.com/coin-or/Csdp
-# TODO: do we need to make and strip theta/* if we don't use them?
 set(csdp_CC  "${CMAKE_C_COMPILER}  ${OpenMP_C_FLAGS}")
 set(csdp_CXX "${CMAKE_CXX_COMPILER} ${OpenMP_CXX_FLAGS}")
 set(csdp_LDFLAGS "${LDFLAGS} ${OpenMP_CXX_FLAGS}")
@@ -978,7 +975,7 @@ if(NOT APPLE)
   # TODO: due to problem with -fopenmp on mac, skip this for apple
   set(normaliz_CXXFLAGS "${normaliz_CXXFLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
-set(normaliz_GMPFLAGS "${LDFLAGS} -lgmpxx -lgmp") # TODO: what about mpir?
+set(normaliz_GMPFLAGS "${LDFLAGS} -lgmpxx -lgmp")
 ExternalProject_Add(build-normaliz
   URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.4/normaliz-3.8.4.tar.gz
   URL_HASH          SHA256=795a0a752ef7bcc75e3307917c336436abfc836718c5cbf55043da6e7430cda3

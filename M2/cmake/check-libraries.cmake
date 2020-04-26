@@ -150,7 +150,6 @@ endif()
 #   Nauty	automorphism groups of graphs and digraphs
 #   Normaliz	affine monoids, lattice polytopes, and rational cones		(needs gmp, nauty, OpenMB)
 #   TOPCOM	triangulations of point configurations and oriented matroids	(needs cddlib)
-# NOTE: we don't build Polymake, but two packages use it
 
 find_program(4TI2	NAMES	circuits)
 find_program(COHOMCALG	NAMES	cohomcalg)
@@ -161,7 +160,11 @@ find_program(CSDP	NAMES	csdp)
 find_program(NORMALIZ	NAMES	normaliz)
 find_program(NAUTY	NAMES	dreadnaut)
 find_program(TOPCOM	NAMES	checkregularity)
-find_program(POLYMAKE	NAMES	polymake) # TODO
+# NOTE: we don't build the following, but some packages use them
+find_program(POLYMAKE	NAMES	polymake)
+find_program(BERTINI	NAMES	bertini)
+find_program(PHC	NAMES	phc)
+# TODO: Maple and package convex
 
 set(PROGRAM_OPTIONS 4ti2 cohomCalg Gfan lrslib CSDP Nauty Normaliz TOPCOM)
 

@@ -356,7 +356,7 @@ if(BUILD_TESTING)
     unit-tests/ARingTest.hpp
     unit-tests/ARingZZTest.cpp
     unit-tests/ARingZZpTest.cpp
-    unit-tests/ARingGFTest.cpp
+    unit-tests/ARingGFTest.cpp # FIXME: see aring-gf-givaro.cpp:199
     unit-tests/ARingQQFlintTest.cpp
     unit-tests/ARingQQGmpTest.cpp
     unit-tests/ARingRRTest.cpp
