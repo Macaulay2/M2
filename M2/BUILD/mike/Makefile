@@ -65,7 +65,7 @@ debug64-latestclang : always
 		--disable-strip \
 		--enable-download
 
-darwin64-appleclang : always
+darwin64-appleclang1 : always
 	mkdir -p builds.tmp/darwin64-appleclang
 	cd builds.tmp/darwin64-appleclang; ../../../../configure \
 		OPENMP_CXXFLAGS="-I/usr/local/opt/libomp/include -Xpreprocessor -fopenmp" \
@@ -75,6 +75,15 @@ darwin64-appleclang : always
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="mpir flint ntl"
+
+darwin64-appleclang : always
+	mkdir -p builds.tmp/darwin64-appleclang
+	cd builds.tmp/darwin64-appleclang; ../../../../configure \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="flint"
 
 darwin64-gcc6 : always
 	mkdir -p builds.tmp/darwin64-gcc6
