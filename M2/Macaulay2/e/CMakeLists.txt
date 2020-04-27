@@ -383,20 +383,17 @@ if(BUILD_TESTING)
     unit-tests/fromStream.cpp
     unit-tests/testMain.cpp # not needed, except for GC_INIT
     )
-  ## Separate main(), separate executable
-  # TODO: why does this run main on compilation?
-  add_executable(M2-unit-tests-givaro unit-tests/GivaroTest.cpp) # FIXME: line 155
 
   target_link_libraries(M2-unit-tests M2-engine)
-  target_link_libraries(M2-unit-tests-givaro M2-engine)
+
+  ## Add the tests
+  # TODO: valgrind --track-origins=yes ...
+  gtest_discover_tests(M2-unit-tests TEST_PREFIX unit-tests:)
 
   ## Link with Googletest
   if(GTEST_FOUND)
   target_link_libraries(M2-unit-tests GTest::GTest GTest::Main)
   target_include_directories(M2-unit-tests PRIVATE ${GTEST_INCLUDE_DIR})
-
-  target_link_libraries(M2-unit-tests-givaro GTest::GTest GTest::Main)
-  target_include_directories(M2-unit-tests-givaro PRIVATE ${GTEST_INCLUDE_DIR})
   endif()
 
   target_compile_options(M2-unit-tests PRIVATE
@@ -405,10 +402,9 @@ if(BUILD_TESTING)
     $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags> # FIXME
     )
 
-  # TODO: valgrind --track-origins=yes ...
-  # add_test(NAME M2-unit-tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND M2-unit-tests)
-
-  ## Add the tests
-  gtest_discover_tests(M2-unit-tests TEST_PREFIX unit-tests:)
-  gtest_discover_tests(M2-unit-tests-givaro TEST_PREFIX unit-tests:Givaro:)
+  ###############################################################################
+  ## GivaroTest.cpp has a main function and does not use gtest
+  add_executable(M2-unit-tests-givaro unit-tests/GivaroTest.cpp) # FIXME: line 155
+  target_link_libraries(M2-unit-tests-givaro M2-engine)
+  add_test(NAME unit-tests:GivaroTest WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND M2-unit-tests-givaro)
 endif()

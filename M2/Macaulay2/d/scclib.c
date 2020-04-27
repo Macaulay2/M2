@@ -10,11 +10,6 @@
 
 #include "../system/supervisorinterface.h"
 
-#ifndef _M2_CONFIG_H
-#error "M2/config.h not included"
-#endif
-
-
 void
 fatal(const char *s,...)   {
      va_list ap;

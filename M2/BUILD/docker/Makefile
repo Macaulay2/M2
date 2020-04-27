@@ -5,20 +5,22 @@ M2_HOME = /home/macaulay
 VOLUME = --volume $(STORAGE):$(M2_HOME) --volume $(M2_REPO):$(M2_HOME)/M2
 BUILD_DIR = M2/M2/BUILD/build-docker
 
+## Script for building Macaulay2
 define M2_BUILD_SCRIPT
 set -xe
 
-cmake -GNinja -S M2/M2 -B $(BUILD_DIR) \
-      -DUSING_MPIR=ON \
-      -DBUILD_TESTING=ON \
-      -DCMAKE_BUILD_TYPE=Release \
-      -DM2_IgnoreExampleErrors=true
-
+## Full build
+cmake -GNinja -S M2/M2 -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release
 cmake --build $(BUILD_DIR) --target build-libraries build-programs
-cmake --build $(BUILD_DIR) --target M2-core -j4
-# cmake --install $(BUILD_DIR)
+cmake --build $(BUILD_DIR) --target install-packages
+cmake --build $(BUILD_DIR) --target M2-emacs
 
+## Setup Emacs
 yes | M2 -q --stop --silent -e "setupEmacs(); exit(0);"
+
+## Changes to the docker container are ephemeral,
+## but this is how one would do it:
+# cmake --install $(BUILD_DIR)
 endef
 export M2_BUILD_SCRIPT
 
@@ -50,9 +52,9 @@ shell:;   docker run $(VOLUME) --interactive --tty --user root --entrypoint bash
 
 M2:;      docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) M2
 
-M2-safe:; docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) M2 --int --no-readline --no-randomize
+M2-safe:; docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) M2 --int --no-readline --no-randomize --no-threads
 
 ###############################################################################
 
 # For anything else, run it in the build directory within the container
-%:; docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) make -C $(M2_HOME)/$(BUILD_DIR) $@ -j4
+%:; docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) make -C $(M2_HOME)/$(BUILD_DIR) $@

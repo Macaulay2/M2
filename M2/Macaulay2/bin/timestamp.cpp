@@ -1,1 +1,1 @@
-timestamp.c
+char timestamp[] = __DATE__ ", " __TIME__;

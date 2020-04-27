@@ -114,7 +114,7 @@ endif()
 
 foreach(_d_source IN LISTS DLIST)
   # See cmake/scc.cmake
-  _SCC_GENERATE(${_d_source} _c) # sets _c_source
+  _SCC_TRANSLATE(${_d_source} _c) # sets _c_source
   list(APPEND CLIST ${_c_source})
 endforeach()
 

@@ -66,7 +66,6 @@ LIBFILES :=
 LIBFILES += M2mem.o 
 # to get trapchk()
 LIBFILES += debug.o
-LIBFILES += 
 LIBFILES += gmp_aux.o arithmetic.o atomic.o M2.o system.o strings.o varstrin.o errio.o vararray.o ctype.o nets.o varnets.o interrupts.o pthread0.o stdio.o stdiop.o err.o gmp.o
 libd.a: $(LIBFILES) ; ar -r $@ $?
 rm-libd.a:; rm libd.a
@@ -136,8 +135,11 @@ endif
 
 .SECONDARY:
 
+M2INCLUDES += -I.
 M2INCLUDES += -I@srcdir@
 M2INCLUDES += -I@srcdir@/../e
+M2INCLUDES += -I@srcdir@/../system
+M2INCLUDES += -I@srcdir@/../../include
 
 # these are the files that need to find include files built in the current build directory
 $(M2_LASTCFILES:.c=.o) : CPPFLAGS += -I.
