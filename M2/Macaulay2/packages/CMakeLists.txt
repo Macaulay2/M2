@@ -39,8 +39,11 @@ set(M2_CheckDocumentation       "true" CACHE STRING "check documentation for com
 set(M2_IgnoreExampleErrors      "true" CACHE STRING "ignore errors in example code")
 set(M2_RemakeAllDocumentation  "false" CACHE STRING "remake all documentation")
 set(M2_RerunExamples           "false" CACHE STRING "rerun example outpuat files")
-set(M2_UserMode "(1<<31)+(1<<32)-(1<<8)-(1<<64)"
+set(M2_UserMode "(1<<31)+(1<<32)-(1<<64)" # -(1<<8)" # for --no-threads
   CACHE INTERNAL "bitmask for ctest check arguments")
+
+# Make sure PACKAGES is a list
+string(REPLACE " " ";" PACKAGES "${PACKAGES}")
 
 #################################################################################
 ## M2 arguments and commands that will be passed to M2 -e ${STR}
@@ -62,21 +65,6 @@ set(M2_INFO_TEMPLATE    [["info-"|"@package@" << @package@#"test number" << clos
 set(M2_CHECK_TEMPLATE   [[check("@package@", UserMode=>false)]])
 
 #################################################################################
-## Make a list of package files and copy them to usr-dist
-
-## eg: Style.m2 Macaulay2Doc.m2 ...
-string(REPLACE " " ";" PACKAGES "${PACKAGES}")
-list(TRANSFORM PACKAGES APPEND ".m2" OUTPUT_VARIABLE PACKAGE_OUTPUTS)
-
-## Copy packages and auxiliary files to the destination
-foreach(PACKAGE IN LISTS PACKAGES)
-  file(COPY ${PACKAGE}.m2 DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR})
-  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE})
-    file(COPY ${PACKAGE}  DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR})
-  endif()
-endforeach()
-
-#################################################################################
 ## Declare all targets: {install,check,all,uninstall}-{packages,PACKAGE}
 
 add_custom_target(list-packages
@@ -86,7 +74,7 @@ add_custom_target(list-packages
 # Prefixes for package targets
 set(_target_prefixes "install;check;all;uninstall")
 # Package targets that should be included in ALL
-# TODO: add install-packages it is fast enough
+# TODO: add install-packages once it is fast enough
 set(_all_target_list "")
 
 if(BUILD_TESTING)
@@ -107,6 +95,22 @@ set_target_properties(${_all_target_list} PROPERTIES EXCLUDE_FROM_ALL OFF)
 #################################################################################
 
 foreach(package IN LISTS PACKAGES)
+  ## Make a list of package sources to detect changes
+  file(GLOB_RECURSE ${package}_sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${package}.m2 ${package}/*)
+
+  ## Copy package and auxiliary folder to usr-dist
+  file(COPY ${package}.m2 DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR})
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${package})
+    file(COPY ${package}  DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR})
+  endif()
+
+  ## Configuring the command strings
+  _M2_STRING_CONFIGURE(M2_INSTALL_TEMPLATE M2_INSTALL_STRING TRUE)
+  _M2_STRING_CONFIGURE(M2_CHECK_TEMPLATE   M2_CHECK_STRING)
+  _M2_STRING_CONFIGURE(M2_NEED_TEMPLATE    M2_NEED_STRING)
+  _M2_STRING_CONFIGURE(M2_INFO_TEMPLATE    M2_INFO_STRING)
+
+  ###############################################################################
   ## Enable USES_TERMINAL only for Macaulay2Doc and EngineTests
   ## Also make all other packages depend on Macaulay2Doc and Style
   # TODO: remove dependencies, or move Macaulay2Doc and Style to Core
@@ -118,15 +122,7 @@ foreach(package IN LISTS PACKAGES)
     set(PACKAGE_DEPENDENCIES install-Macaulay2Doc install-Style)
   endif()
 
-  ## Configuring the command strings
-  _M2_STRING_CONFIGURE(M2_INSTALL_TEMPLATE M2_INSTALL_STRING TRUE)
-  _M2_STRING_CONFIGURE(M2_CHECK_TEMPLATE   M2_CHECK_STRING)
-  _M2_STRING_CONFIGURE(M2_NEED_TEMPLATE    M2_NEED_STRING)
-  _M2_STRING_CONFIGURE(M2_INFO_TEMPLATE    M2_INFO_STRING)
-
-  ###############################################################################
   # TODO: Special dependencies:
-
   # 1. all packages seem to depend on Macaulay2Doc: https://github.com/Macaulay2/M2/issues/1085
   # 2. FourTiTwo needs 4ti2 which needs glpk
   # 3. cohomcalg
@@ -141,10 +137,10 @@ foreach(package IN LISTS PACKAGES)
   ## Custom command for getting package information
   # TODO: currently only number of tests is stored, but we can do more
   add_custom_command(OUTPUT info-${package}
-    COMMENT "Getting package information"
+    COMMENT "Getting package information for ${package}"
     COMMAND ${M2} ${M2_ARGS} -e ${M2_NEED_STRING} -e ${M2_INFO_STRING} -e "exit 0"
     VERBATIM
-    DEPENDS M2-core
+    DEPENDS M2-core ${${package}_sources}
     )
 
   ## Custom target for installing the package
@@ -179,6 +175,7 @@ foreach(package IN LISTS PACKAGES)
     DEPENDS M2-core
     )
 
+  # TODO: call a script to this this in build step of info-${package}?
   if(BUILD_TESTING)
     ## Read the number of tests
     if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/info-${package})
