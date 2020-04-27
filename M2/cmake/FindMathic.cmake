@@ -10,8 +10,13 @@
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 
-find_path(MATHIC_INCLUDE_DIR NAMES mathic.h)
-find_library(MATHIC_LIBRARIES NAMES mathic libmathic)
+find_path(MATHIC_INCLUDE_DIR NAMES mathic.h
+  PATHS ${INCLUDE_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/include
+  PATH_SUFFIXES mathic
+  )
+find_library(MATHIC_LIBRARIES NAMES mathic
+  PATHS ${LIB_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/lib
+  )
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Mathic DEFAULT_MSG MATHIC_INCLUDE_DIR MATHIC_LIBRARIES)

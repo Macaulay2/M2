@@ -684,7 +684,7 @@ endif()
 # https://github.com/Macaulay2/memtailor
 ExternalProject_Add(build-memtailor
 #  GIT_REPOSITORY    https://github.com/mahrud/memtailor.git
-#  GIT_TAG           0caa952859cb32d3332c0ca88bcd6862d4f5ad80
+#  GIT_TAG           ece5f0b292abd97b48ba103dc4566fc708e8a968
   PREFIX            libraries/memtailor
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/memtailor
   BINARY_DIR        libraries/memtailor/build
@@ -705,7 +705,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries memtailor googletest MEMTAILOR_FOUND)
 # https://github.com/Macaulay2/mathic
 ExternalProject_Add(build-mathic
 #  GIT_REPOSITORY    https://github.com/mahrud/mathic.git
-#  GIT_TAG           98dc7ff086cbb9b44ba2fe4ce59132da5412bae1
+#  GIT_TAG           f96f18604d6a1308baac3a7f14b3d8a18f636461
   PREFIX            libraries/mathic
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathic
   BINARY_DIR        libraries/mathic/build
@@ -729,7 +729,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries mathic memtailor MATHIC_FOUND)
 # https://www.threadingbuildingblocks.org/docs/help/reference/appendices/deprecated_features.html
 ExternalProject_Add(build-mathicgb
 #  GIT_REPOSITORY    https://github.com/mahrud/mathicgb.git
-#  GIT_TAG           18d80906c20536a09f5dd6c0a55b079d18fb32b2
+#  GIT_TAG           1da73abd34d90572ee765c8be133dce23b07dfb7
   PREFIX            libraries/mathicgb
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathicgb
   BINARY_DIR        libraries/mathicgb/build
