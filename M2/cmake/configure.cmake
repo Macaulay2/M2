@@ -35,12 +35,17 @@ option(WITH_PYTHON	"Link with the Python library"		OFF)
 
 set(BUILD_PROGRAMS "4ti2;Nauty;TOPCOM"
   CACHE STRING "Build programs, even if found")
-set(BUILD_LIBRARIES "GTest;MPIR;MPFR;NTL;Flint;Factory;Frobby;Givaro"
+set(BUILD_LIBRARIES "GTest"
   CACHE STRING "Build libraries, even if found")
 set(PARALLEL_JOBS 4
   CACHE STRING "Number of parallel jobs for libraries and programs")
 set(SKIP_TESTS "mpsolve;googletest" CACHE STRING "Tests to skip")
 set(SLOW_TESTS "eigen;ntl;flint"    CACHE STRING "Slow tests to skip")
+
+# TODO: hopefully make these automatic
+if(USING_MPIR)
+  list(APPEND BUILD_LIBRARIES "MPIR;MPFR;NTL;Flint;Factory;Frobby;Givaro")
+endif()
 
 # TODO: deprecate these variables
 set(M2SUFFIX "")
