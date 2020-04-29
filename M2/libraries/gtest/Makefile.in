@@ -2,7 +2,7 @@
 VERSION = 1.10.0
 TARDIR = googletest-release-$(VERSION)/googletest
 CONFIGURECMD = :
-BUILDCMD = cmake
+BUILDCMD = :
 
 LICENSEFILES = LICENSE
 URL = http://macaulay2.com/Downloads/OtherSourceCode
