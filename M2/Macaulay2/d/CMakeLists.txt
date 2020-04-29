@@ -18,19 +18,17 @@ file(GENERATE OUTPUT distributed-packages.h CONTENT "#define DISTRIBUTED_PACKAGE
 ###############################################################################
 
 set(CLIST
-  distributed-packages.h
-  types.h startup.c
-  debug.c debug.h
+  M2types.c M2lib.c M2mem.c types.h
+  scclib.c ../c/scc-core.h
   memdebug.c memdebug.h
-  M2types.c scclib.c M2lib.c M2mem.c
-  ../c/scc-core.h
+  debug.c debug.h
+
+  distributed-packages.h
+  ${CMAKE_CURRENT_BINARY_DIR}/startup.c
 
   getpagesize.h M2mem.h
   gmp_aux.c gmp_aux.h # TODO: needed with mpir?
   gdbm_interface.c
-
-  $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
-  $<$<BOOL:${WITH_PYTHON}>:python-c.c>
   )
 
 # CAUTION: order is important in this list
@@ -110,6 +108,17 @@ if(NOT WITH_PYTHON)
 endif()
 
 ###############################################################################
+## Generate TAGS file
+# TODO: the order is somewhat different, is it a problem?
+
+set_source_files_properties(TAGS PROPERTIES GENERATED true)
+add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/TAGS
+  COMMENT "Generating d/TAGS file"
+  COMMAND ${ETAGS} -o TAGS ${CLIST} ${DLIST}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+
+###############################################################################
 ## Generate the interpreter
 
 foreach(_d_source IN LISTS DLIST)
@@ -126,7 +135,10 @@ endforeach()
 
 # TODO: gmp.d, basic.d, and equality.d require elements from M2-engine
 # for that reason, interpreter cannot be compiled as a static library, yet
-add_library(M2-interpreter OBJECT ${CLIST})
+add_library(M2-interpreter OBJECT ${CLIST} TAGS
+  $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
+  $<$<BOOL:${WITH_PYTHON}>:python-c.c>
+  )
 
 target_link_libraries(M2-interpreter PRIVATE M2-supervisor M2-regex) # scclib.c uses regex
 
@@ -150,8 +162,6 @@ foreach(LIB IN LISTS LIBRARY_LIST)
   endif()
 endforeach()
 
-install(TARGETS M2-interpreter EXPORT Macaulay2)
-
 # Compiler warning flags
 target_compile_options(M2-interpreter PRIVATE
   -Wno-cast-qual # FIXME: caused by M2lib.c:551:43
@@ -172,9 +182,6 @@ target_compile_options(M2-interpreter PRIVATE
 # for Intel: -diag-disable 981,869,383,2259,444 -debug
 
 ###############################################################################
+## Export the target
 
-# TODO: generate etags
-# cd ${CMAKE_SOURCE_DIR}/Macaulay2/d && etags  ...
-
-# What is this for?
-# if [ -f ${CMAKE_SOURCE_DIR}/Macaulay2/d/.gdbinit.mahrud ]; then cp ${CMAKE_SOURCE_DIR}/Macaulay2/d/.gdbinit.mahrud .gdbinit; fi
+install(TARGETS M2-interpreter EXPORT Macaulay2)

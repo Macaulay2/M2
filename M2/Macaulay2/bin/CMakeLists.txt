@@ -16,6 +16,7 @@ set_target_properties(M2-binary PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
 get_target_property(INSTALL_RPATH M2-binary INSTALL_RPATH)
 
+# Export the target
 install(TARGETS M2-binary EXPORT Macaulay2
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   COMPONENT ALL)

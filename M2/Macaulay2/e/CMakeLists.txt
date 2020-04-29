@@ -282,11 +282,22 @@ list(APPEND HEADERS ${CMAKE_BINARY_DIR}/include/M2/config.h)
 list(APPEND HEADERS ${CMAKE_BINARY_DIR}/include/M2/statuscodes.h)
 
 ###############################################################################
+## Generate TAGS file
+# TODO: the order is somewhat different, is it a problem?
+
+set_source_files_properties(TAGS PROPERTIES GENERATED true)
+add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/TAGS
+  COMMENT "Generating e/TAGS file"
+  COMMAND ${ETAGS} -o TAGS ${HEADERS} ${SOURCES}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+
+###############################################################################
 ## Compile the engine
 # TODO: enable INTERPROCEDURAL_OPTIMIZATION?
 
 # set -DBUILD_SHARED_LIBS=ON to generate a shared library
-add_library(M2-engine STATIC ${SOURCES} ${HEADERS})
+add_library(M2-engine STATIC ${SOURCES} ${HEADERS} TAGS)
 
 # TODO: Which headers should be included in the development build?
 set_target_properties(M2-engine PROPERTIES PUBLIC_HEADER "${HEADERS}")
@@ -316,11 +327,6 @@ foreach(LIB IN LISTS PKGLIB_LIST)
   endif()
 endforeach()
 
-install(TARGETS M2-engine EXPORT Macaulay2
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2
-  COMPONENT ALL)
-
 # Compiler warning flags
 target_compile_options(M2-engine PRIVATE
   -Wno-cast-qual # FIXME
@@ -343,7 +349,15 @@ target_compile_options(M2-engine PRIVATE
   )
 
 ###############################################################################
-# Add source linting and formatting checks for this target, see cmake/prechecks.cmake
+## Export the target
+
+install(TARGETS M2-engine EXPORT Macaulay2
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2
+  COMPONENT ALL)
+
+###############################################################################
+## Add source linting and formatting checks for this target, see cmake/prechecks.cmake
 
 if(LINTING)
   _ADD_PRECHECKS(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")

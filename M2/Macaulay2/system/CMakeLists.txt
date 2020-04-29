@@ -20,7 +20,8 @@ target_include_directories(M2-supervisor PUBLIC
   $<INSTALL_INTERFACE:include/Macaulay2>
   )
 
-install(TARGETS M2-supervisor EXPORT Macaulay2)
-
 # Compiler warning flags
 target_compile_options(M2-supervisor PRIVATE -Wcast-qual -Wno-unused)
+
+# Export the target
+install(TARGETS M2-supervisor EXPORT Macaulay2)

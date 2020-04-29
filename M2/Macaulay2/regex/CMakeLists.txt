@@ -11,8 +11,6 @@ target_include_directories(M2-regex PUBLIC
   $<INSTALL_INTERFACE:include/Macaulay2>
   )
 
-install(TARGETS M2-regex EXPORT Macaulay2)
-
 target_compile_definitions(M2-regex PUBLIC
   -Dre_compile_fastmap=M2_re_compile_fastmap
   -Dre_compile_pattern=M2_re_compile_pattern
@@ -36,3 +34,6 @@ target_compile_options(M2-regex PRIVATE
 
   $<$<COMPILE_LANG_AND_ID:C,GNU>:-Wno-misleading-indentation -Wno-old-style-declaration>
   )
+
+# Export the target
+install(TARGETS M2-regex EXPORT Macaulay2)

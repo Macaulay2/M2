@@ -19,7 +19,7 @@ find_package(PkgConfig	REQUIRED QUIET)
 find_package(Doxygen)
 find_package(Sphinx)
 find_program(MAKE  NAMES make gmake nmake)
-find_program(ETAGS NAMES etags ctags)
+find_program(ETAGS NAMES etags)
 
 ###############################################################################
 ## Requirement	Debian package	RPM package	Homebrew package
