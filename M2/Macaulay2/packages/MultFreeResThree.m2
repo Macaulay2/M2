@@ -86,9 +86,22 @@ multtable = (d1,d2,d3) -> (
 	 a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1};
     	 b := ( matrix entries transpose a ) // d2;
 	 EE#(i,j) = ( matrix entries b );
+	 EE#(j,i) = -EE#(i,j);
 	 );
+     for i from 1 to m do (EE#(i,i) = matrix entries map(Q^1,Q^l,(i,j) -> 0));
      );
- EE
+
+    EF := new MutableHashTable;
+    for i from 1 to m do (
+	for j from 1 to l do (
+    	    c := sum(1..m, k -> d2_(k-1,j-1) * (EE#(i,k)));
+--    	    d := d1_(0,i-1)*((id_(Q^l))_(j-1));
+--	    e := (matrix entries (d - c)) // d3;
+--    	    EF#(i,j) = (matrix entries e);
+  	    EF#(i,j) = 1;
+	    );
+	);
+ EF
  )
 
 -- torAlgData = ( cacheValue "torAlg" ) toralgdata
@@ -102,7 +115,7 @@ end
 uninstallPackage "MultFreeResThree"
 restart
 loadPackage "MultFreeResThree"
-check "TorAlgebra"
+--check "TorAlgebra"
 
 Q = QQ[x,y,z]
 
@@ -113,11 +126,13 @@ F = res I
     d2 = matrix entries (F.dd)_2;
     d3 = matrix entries (F.dd)_3;    
 
-ee = multtable(d1,d2,d3)
+ef = multtable(d1,d2,d3)
 peek ee
+ee#(3,4) == -ee#(4,3)
 
+a = map(Q^1,Q^3,(i,j) -> 0)
 
-
+a
 
 ----------------------------------------------------------------------------
 -- Functions for presenting classification data
