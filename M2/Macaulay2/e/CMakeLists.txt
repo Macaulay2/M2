@@ -279,7 +279,6 @@ list(TRANSFORM SRCLIST APPEND .hpp OUTPUT_VARIABLE HPPFILES)
 set(SOURCES ${CPPONLYFILES} ${CPPFILES} ${CFILES})
 set(HEADERS ${HPPONLYFILES} ${HPPFILES} ${HFILES})
 list(APPEND HEADERS ${CMAKE_BINARY_DIR}/include/M2/config.h)
-list(APPEND HEADERS ${CMAKE_BINARY_DIR}/include/M2/statuscodes.h)
 
 ###############################################################################
 ## Generate TAGS file
