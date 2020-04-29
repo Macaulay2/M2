@@ -1,8 +1,9 @@
 -- Copyright 2010 by Daniel R. Grayson
-declarations "
-#include <M2/config.h>
-";
+
+declarations "#include <M2/config.h>";
+
 use arithmetic;
+
 export string := array(char);
 export arrayint := array(int);
 export arrayintOrNull := array(int) or null;

@@ -36,7 +36,7 @@ set(M2_debugLevel                  "0" CACHE STRING "set the debugging level")
 set(M2_gbTrace                     "0" CACHE STRING "set the Groebner basis trace level")
 ## Options to installPackage
 set(M2_CheckDocumentation       "true" CACHE STRING "check documentation for completeness")
-set(M2_IgnoreExampleErrors      "true" CACHE STRING "ignore errors in example code")
+set(M2_IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example code")
 set(M2_RemakeAllDocumentation  "false" CACHE STRING "remake all documentation")
 set(M2_RerunExamples           "false" CACHE STRING "rerun example outpuat files")
 set(M2_UserMode "(1<<31)+(1<<32)-(1<<64)" # -(1<<8)" # for --no-threads

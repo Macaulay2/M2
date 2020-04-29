@@ -1,26 +1,36 @@
-#include "pthread-exports.h"
 #include "supervisor.hpp"
-#include "pthread-methods.hpp"
 
-#include <iostream>
 #include <stdlib.h>
 #include <assert.h>
 
-// We allocate this many threads initially, to save trouble with memory allocation.
-// We may have to raise this, in the future.
-const static int maxNumThreads = 16;
+#include <iostream>
+#include <chrono>
+#include <thread>
+
+// The maximum number of concurrent threads
+const static unsigned int numCores = std::thread::hardware_concurrency();
+// We allocate between 4 and 16 threads initially, to save trouble with memory allocation.
+const static int maxNumThreads = (numCores < 4) ? 4 : (16 < numCores ? 16 : numCores);
 
 // The number of compute-bound threads allowed at any given time should be the number of cores and pseudocores.
 // There may be I/O bound threads, such as the the main interpreter thread.  So a good thing to set currentAllowedThreads to is the
 // number of cores plus the expected number of I/O bound threads.
 static int currentAllowedThreads = 2;
 
-static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }
 
-//thread that the interperter runs in.
+// The thread that the interperter runs in.
 pthread_t interpThread;
 
 extern "C" {
+
+  // TODO: replace with STL linked list traversal
+  extern void reverse_run(struct FUNCTION_CELL *list)
+  {
+    if(list != NULL) {
+      reverse_run(list->next);
+      (*list->func)();
+    }
+  }
 
   extern void setInterpThread()
   {
@@ -28,26 +38,24 @@ extern "C" {
   }
   extern int tryGlobalInterrupt()
   {
-    if(interpThread==pthread_self())
+    if(interpThread==pthread_self()) {
       return 0;
-    else
-    {
+    } else {
       pthread_kill(interpThread,SIGINT);
       return -1;
     }
   }
   extern int tryGlobalAlarm()
   {
-    if(interpThread==pthread_self())
+    if(interpThread==pthread_self()) {
       return 0;
-    else
-    {
+    } else {
       pthread_kill(interpThread,SIGALRM);
       return -1;
     }
   }
 
- THREADLOCALDECL(struct atomic_field, interrupts_interruptedFlag);
+  THREADLOCALDECL(struct atomic_field, interrupts_interruptedFlag);
   THREADLOCALDECL(struct atomic_field, interrupts_exceptionFlag);
   struct ThreadSupervisor* threadSupervisor = 0 ;
   void initializeThreadSupervisor()
@@ -400,7 +408,8 @@ void SupervisorThread::threadEntryPoint()
     {
       if(currentAllowedThreads<=m_LocalThreadId)
 	{
-	  sleep(1);
+	  using namespace std::chrono_literals;
+	  std::this_thread::sleep_for(1s);
 	  continue;
 	}
       AO_store(&m_Interrupt->field,false);

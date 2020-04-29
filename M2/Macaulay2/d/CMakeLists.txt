@@ -121,17 +121,22 @@ endforeach()
 ###############################################################################
 ## Compile the interpreter
 
+# TODO: where should this go to automatically include build directories?
+# set(CMAKE_INCLUDE_CURRENT_DIR OFF)
+
+# TODO: gmp.d, basic.d, and equality.d require elements from M2-engine
+# for that reason, interpreter cannot be compiled as a static library, yet
 add_library(M2-interpreter OBJECT ${CLIST})
 
-target_link_libraries(M2-interpreter PUBLIC M2-regex)
+target_link_libraries(M2-interpreter PRIVATE M2-supervisor M2-regex) # scclib.c uses regex
 
 target_include_directories(M2-interpreter
   PUBLIC
-    .
-    ${CMAKE_SOURCE_DIR}/Macaulay2/regex # scclib.c uses regex
-    ${CMAKE_SOURCE_DIR}/Macaulay2/e # need newdelete.hpp
-    ${CMAKE_SOURCE_DIR}/Macaulay2/c # need scc-core.h
-    ${CMAKE_BINARY_DIR}/Macaulay2/d
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e> # need newdelete.hpp
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/c> # need scc-core.h
+    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/Macaulay2/d>
+    $<INSTALL_INTERFACE:include/Macaulay2>
   PRIVATE
     ${LIBXML2_INCLUDE_DIR}
     ${SQLite3_INCLUDE_DIRS}
@@ -144,6 +149,8 @@ foreach(LIB IN LISTS LIBRARY_LIST)
     target_link_libraries(M2-interpreter PUBLIC ${${LIB}_LIBRARY})
   endif()
 endforeach()
+
+install(TARGETS M2-interpreter EXPORT Macaulay2)
 
 # Compiler warning flags
 target_compile_options(M2-interpreter PRIVATE

@@ -72,10 +72,8 @@ if(NOT VERBOSE)
 endif()
 
 # install M2-binary and M2-engine
-install(TARGETS M2-binary M2-engine
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
-  COMPONENT ALL)
+# install(TARGET) does not support installing targets from subdirectories,
+# so these targets are installed in e/CMakeLists.txt & bin/CMakeLists.txt.
 
 # install the M2 wrapper
 install(FILES
@@ -121,3 +119,11 @@ install(DIRECTORY
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
   COMPONENT common
   OPTIONAL)
+
+###############################################################################
+## Export the CMake targets for use in other projects
+
+install(EXPORT Macaulay2 NAMESPACE Macaulay2::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Macaulay2)
+export(TARGETS M2-binary M2-engine M2-interpreter M2-supervisor M2-regex
+  NAMESPACE Macaulay2:: FILE Macaulay2Config.cmake)

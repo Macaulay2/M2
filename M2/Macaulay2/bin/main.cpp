@@ -25,6 +25,7 @@
 
 #include <boost/stacktrace.hpp>
 #include <iostream>
+#include <thread>
 
 /* ######################################################################### */
 
@@ -118,8 +119,6 @@ void segv_handler(int sig) {
   _exit(1);
 }
 
-static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }
-
 void* testFunc(void* p)
 {
   // TODO: do some math here?
@@ -129,6 +128,7 @@ void* testFunc(void* p)
 
 extern "C" void interp_setupargv();
 extern "C" void interp_process();
+extern "C" void reverse_run(struct FUNCTION_CELL *list);
 
 void* interpFunc(ArgCell* vargs)
 {
@@ -186,9 +186,6 @@ extern "C" void alarm_handler(int sig) {
   oursignal(SIGALRM,alarm_handler);
 }
 
-#undef ABORT
-#define ABORT 1
-
 extern "C" void interrupt_handler(int sig) {
   if (tryGlobalInterrupt() == 0) {
     if (test_Field(THREADLOCAL(interrupts_interruptedFlag, struct atomic_field)) ||
@@ -198,29 +195,16 @@ extern "C" void interrupt_handler(int sig) {
 
 	while (TRUE) {
 	  char buf[10];
-#ifndef ABORT
-	  printf("\nExit (y=yes/n=no/b=backtrace)? ");
-#else
-	  printf("\nAbort (y/n)? ");
-#endif
+	  printf("\nExist (y=yes/n=no/a=abort/b=backtrace)? ");
 	  fflush(stdout);
+#ifndef NDEBUG
+	  trap();
+#endif
 	  if (NULL == fgets(buf,sizeof(buf),stdin)) {
 	    fprintf(stderr,"exiting\n");
 	    exit(11);
 	  }
-	  if (buf[0]=='b' || buf[0]=='B') {
-	    stack_trace();
-	    fprintf(stderr,"exiting\n");
-	    exit(12);
-	  }
-	  if (buf[0]=='y' || buf[0]=='Y') {
-#ifndef NDEBUG
-	    trap();
-#endif
-#ifndef ABORT
-	    fprintf(stderr,"exiting\n");
-	    exit(12);
-#endif
+	  if (buf[0]=='a' || buf[0]=='A') {
 	    if (!tokens_stopIfError && abort_jmp.is_set) {
 	      fprintf(stderr,"returning to top level\n");
 	      fflush(stderr);
@@ -234,7 +218,17 @@ extern "C" void interrupt_handler(int sig) {
 	      interrupts_determineExceptionFlag();
 	      LONGJUMP(abort_jmp.addr);
 	    }
-	  } else if (buf[0]=='n' || buf[0]=='N') {
+	  }
+	  if (buf[0]=='b' || buf[0]=='B') {
+	    stack_trace();
+	    fprintf(stderr,"exiting\n");
+	    exit(12);
+	  }
+	  if (buf[0]=='y' || buf[0]=='Y') {
+	    fprintf(stderr,"exiting\n");
+	    exit(12);
+	  }
+	  if (buf[0]=='n' || buf[0]=='N') {
 	    break;
 	  }
 	}
@@ -264,25 +258,6 @@ extern "C" void interrupt_handler(int sig) {
   }
   oursignal(SIGINT,interrupt_handler);
 }
-
-
-#if 0 /* TODO: what was this used to be for? */
-static struct COUNTER {
-     int *count; char *filename; int lineno; char *funname;
-     struct COUNTER *next;
-     } *counters = NULL;
-
-int register_fun(int *count, char *filename, int lineno, char *funname) {
-     struct COUNTER *p = (struct COUNTER *) getmem(sizeof(struct COUNTER));
-     p->count = count;
-     p->filename = filename;
-     p->lineno = lineno;
-     p->funname = funname;
-     p->next = counters;
-     counters = p;
-     return 0;
-     }
-#endif
 
 /*
 // Local Variables:

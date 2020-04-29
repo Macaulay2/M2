@@ -4,9 +4,14 @@
 
 # TODO: refactor d/scclib.c to use POSIX.1 syntax, then drop this folder
 
-add_library(M2-regex OBJECT regex.c)
+add_library(M2-regex STATIC regex.c)
 
-target_include_directories(M2-regex PUBLIC .)
+target_include_directories(M2-regex PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:include/Macaulay2>
+  )
+
+install(TARGETS M2-regex EXPORT Macaulay2)
 
 target_compile_definitions(M2-regex PUBLIC
   -Dre_compile_fastmap=M2_re_compile_fastmap

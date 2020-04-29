@@ -36,7 +36,7 @@ MACRO (_SCC_TRANSLATE _source _prev)
       mv ${_name}-exports.h.tmp ${_name}-exports.h
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/${_source}
-    DEPENDS ${${_prev}_source}
+    DEPENDS ${${_prev}_source} scc1
     # DEPFILE ${_name}.dep
     )
 

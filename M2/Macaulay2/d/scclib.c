@@ -854,9 +854,9 @@ int system_run(M2_string command){
 
 struct FUNCTION_CELL *pre_final_list, *final_list, *thread_prepare_list;
 
-void system_atend(void (*f)()){
+void system_atend(void (*func)()){
      struct FUNCTION_CELL *this_final = (struct FUNCTION_CELL *)getmem(sizeof(struct FUNCTION_CELL));
-     this_final -> fun = f;
+     this_final -> func = func;
      this_final -> next = pre_final_list;
      pre_final_list = this_final;
      }
@@ -865,18 +865,6 @@ int system_strncmp(M2_string s,M2_string t,int n) {
   return strncmp(s->array,t->array,n);
 }
 
-#define re_compile_fastmap M2_re_compile_fastmap
-#define re_compile_pattern M2_re_compile_pattern
-#define re_match M2_re_match
-#define re_match_2 M2_re_match_2
-#define re_search M2_re_search
-#define re_search_2 M2_re_search_2
-#define re_set_registers M2_re_set_registers
-#define re_set_syntax M2_re_set_syntax
-#define regcomp M2_regcomp
-#define regerror M2_regerror
-#define regexec M2_regexec
-#define regfree M2_regfree
 #include "regex.h"
 
 #define SYNTAX_FLAGS ((RE_SYNTAX_POSIX_EXTENDED | (ignorecase ? RE_ICASE : 0)) & ~RE_DOT_NEWLINE)

@@ -13,19 +13,22 @@ set(UNDETERMINED
   points # both cpp and hpp
   )
 
-# c files, and some h files
+# c files
 # TODO: convert to cpp or simplify if not needed
 set(CFILES
   complex.c
-  complex.h
   error.c
-  error.h
   exptable.c
-  exptable.h
   monordering.c
+  table.c
+  )
+# h files
+set(HFILES
+  complex.h
+  error.h
+  exptable.h
   monordering.h
   rand.h
-  table.c
   table.h
   gmp-util.h
   engine.h
@@ -273,24 +276,28 @@ set(SRCLIST
 list(TRANSFORM SRCLIST APPEND .cpp OUTPUT_VARIABLE CPPFILES)
 list(TRANSFORM SRCLIST APPEND .hpp OUTPUT_VARIABLE HPPFILES)
 
+set(SOURCES ${CPPONLYFILES} ${CPPFILES} ${CFILES})
+set(HEADERS ${HPPONLYFILES} ${HPPFILES} ${HFILES})
+list(APPEND HEADERS ${CMAKE_BINARY_DIR}/include/M2/config.h)
+list(APPEND HEADERS ${CMAKE_BINARY_DIR}/include/M2/statuscodes.h)
+
 ###############################################################################
 ## Compile the engine
 # TODO: enable INTERPROCEDURAL_OPTIMIZATION?
 
 # set -DBUILD_SHARED_LIBS=ON to generate a shared library
-add_library(M2-engine STATIC
-  ${HPPONLYFILES}
-  ${CPPONLYFILES}
-  ${HPPFILES}
-  ${CPPFILES}
-  ${CFILES}
+add_library(M2-engine STATIC ${SOURCES} ${HEADERS})
+
+# TODO: Which headers should be included in the development build?
+set_target_properties(M2-engine PROPERTIES PUBLIC_HEADER "${HEADERS}")
+
+target_include_directories(M2-engine PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:include/Macaulay2>
   )
 
-target_include_directories(M2-engine
-  PUBLIC . ${CMAKE_BINARY_DIR}/Macaulay2/d)
-
-target_link_libraries(M2-engine
-  PUBLIC M2-interpreter M2-regex)
+# TODO: make engine independent of interpreter headers
+target_link_libraries(M2-engine PUBLIC M2-interpreter)
 
 if(EIGEN3_FOUND)
   target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
@@ -308,6 +315,11 @@ foreach(LIB IN LISTS PKGLIB_LIST)
     target_link_libraries(M2-engine PUBLIC PkgConfig::${LIB})
   endif()
 endforeach()
+
+install(TARGETS M2-engine EXPORT Macaulay2
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2
+  COMPONENT ALL)
 
 # Compiler warning flags
 target_compile_options(M2-engine PRIVATE

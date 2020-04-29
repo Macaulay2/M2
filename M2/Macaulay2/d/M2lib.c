@@ -4,6 +4,7 @@
 #include "M2mem.h"
 #include "types.h"
 #include "debug.h"
+#include "supervisorinterface.h"
 
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -41,11 +42,11 @@ void clean_up(void) {
   extern void close_all_dbms();
   close_all_dbms();
   while (pre_final_list != NULL) {
-    pre_final_list->fun();
+    pre_final_list->func();
     pre_final_list = pre_final_list->next;
   }
   while (final_list != NULL) {
-    final_list->fun();
+    final_list->func();
     final_list = final_list->next;
   }
 #ifdef WITH_PYTHON
@@ -181,10 +182,6 @@ int system_readline(M2_string buffer, int len, int offset, M2_string prompt) {
   GC_FREE(p);
   return r;
 }
-
-/* The following function is inserted into each d file. */
-/* It's redundant to include it here */
-void scc_core_prepare() { /*  GC_INIT(); IM2_initialize(); */ }
 
 /*
 // Local Variables:

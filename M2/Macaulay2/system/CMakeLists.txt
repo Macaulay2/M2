@@ -9,17 +9,18 @@ add_library(M2-supervisor OBJECT
   tests.cpp # TODO: is this used?
   )
 
-target_link_libraries(M2-supervisor PUBLIC M2-interpreter Threads::Threads)
+target_link_libraries(M2-supervisor PUBLIC Threads::Threads)
 
 # TODO: reduce these dependencies
-target_include_directories(M2-supervisor
-  PUBLIC
-    .
-    ${CMAKE_SOURCE_DIR}/Macaulay2/c # needs scc-core.h
-    ${CMAKE_SOURCE_DIR}/Macaulay2/e # needs newdelete.hpp
-    ${CMAKE_BINARY_DIR}/Macaulay2/d # needs pthread-exports.h
-    ${LIBXML2_INCLUDE_DIR}
+target_include_directories(M2-supervisor PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/c> # needs scc-core.h
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e> # needs newdelete.hpp
+  $<BUILD_INTERFACE:${LIBXML2_INCLUDE_DIR}>
+  $<INSTALL_INTERFACE:include/Macaulay2>
   )
+
+install(TARGETS M2-supervisor EXPORT Macaulay2)
 
 # Compiler warning flags
 target_compile_options(M2-supervisor PRIVATE -Wcast-qual -Wno-unused)

@@ -59,9 +59,6 @@ all: $(M2_OBJECTS)
 # LIBFILES := $(patsubst M2mem.o,,$(patsubst scclib.o,,$(M2_OBJECTS))) $(patsubst %, %.o, $(M2_DNAMES))
 LIBFILES :=
 
-# LIBFILES += ../c/scc-core.o 
-# to get scc_core_prepare
-
 # to get getmem
 LIBFILES += M2mem.o 
 # to get trapchk()
@@ -182,6 +179,9 @@ python-c.o : | python-exports.h.tmp
 ifeq (@HAVE_WFRAME_ADDRESS@,yes)
 M2lib.o : M2_CFLAGS += -Wno-frame-address
 endif
+
+# flags needed to sidestep system regex
+scclib.o : CPPFLAGS += -Dre_compile_fastmap=M2_re_compile_fastmap -Dre_compile_pattern=M2_re_compile_pattern -Dre_match=M2_re_match -Dre_match_2=M2_re_match_2 -Dre_search=M2_re_search -Dre_search_2=M2_re_search_2 -Dre_set_registers=M2_re_set_registers -Dre_set_syntax=M2_re_set_syntax -Dregcomp=M2_regcomp -Dregerror=M2_regerror -Dregexec=M2_regexec -Dregfree=M2_regfree
 
 M2lib.o scclib.o : | interp-exports.h.tmp
 scclib.o : expr-exports.h M2mem.h debug.h types.h ../c/compat.h ../e/engine.h

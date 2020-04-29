@@ -1,6 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
-use expr;
 
+use expr;
 
 header "
   #include \"../e/engine.h\"
