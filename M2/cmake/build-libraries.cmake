@@ -304,7 +304,7 @@ ExternalProject_Add(build-ntl
                       #-C --cache-file=${CONFIGURE_CACHE}
                       TUNE=generic
                       NATIVE=off
-                      $<$<BOOL:${USING_MPIR}>:GMP_PREFIX=${M2_HOST_PREFIX}>
+                      GMP_PREFIX=$<IF:$<BOOL:${USING_MPIR}>,${M2_HOST_PREFIX},${MP_INCLUDE_DIRS}/..>
                       SHARED=on # FIXME: $<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
