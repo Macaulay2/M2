@@ -409,7 +409,7 @@ void ARingGFGivaro::getGenerator(ElementType &result_gen) const
 
 bool ARingGFGivaro::is_unit(const ElementType f) const
 {
-  return givaroField.isunit(f);
+  return givaroField.isUnit(f);
 }
 
 bool ARingGFGivaro::is_zero(const ElementType f) const
