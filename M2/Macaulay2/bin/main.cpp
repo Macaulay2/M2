@@ -24,8 +24,10 @@
 #include <readline/readline.h>
 
 #include <boost/stacktrace.hpp>
+#include <atomic>
 #include <iostream>
 #include <thread>
+#include <vector>
 
 /* ######################################################################### */
 
@@ -91,7 +93,7 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
     interpFunc(M2_vargs);
   } else {
     initializeThreadSupervisor();
-    struct ThreadTask* interpTask = createThreadTask("Interp", (ThreadTaskFunctionPtr) interpFunc, M2_vargs, 0, 0, 0);
+    struct ThreadTask* interpTask = createThreadTask("Interp", (ThreadTaskFunctionPtr)interpFunc, M2_vargs, 0, 0, 0);
     pushTask(interpTask);
     waitOnTask(interpTask);
   }
@@ -100,8 +102,19 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
 
 /* ######################################################################### */
 
+thread_local std::vector<char*> M2_stack;
+
+extern "C" void M2_stack_push(char* M2_frame) {
+  M2_stack.emplace_back(M2_frame);
+}
+extern "C" void M2_stack_pop() {
+  M2_stack.pop_back();
+}
+
 extern "C" void stack_trace() {
   std::cout << "-* stack trace, pid: " << (long) getpid() << std::endl;
+  for (char* M2_frame : M2_stack)
+    std::cout << M2_frame << std::endl;
   std::cout << boost::stacktrace::stacktrace();
   std::cout << "-- end stack trace *-" << std::endl;
 }

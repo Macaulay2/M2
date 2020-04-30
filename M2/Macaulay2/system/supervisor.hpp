@@ -21,10 +21,13 @@
 #include <list>
 
 typedef struct parse_ThreadCellBody_struct * parse_ThreadCellBody;
-
 typedef void* (*ThreadTaskFunctionPtr)(void*);
+
 class SupervisorThread;
-//not garbage collected
+
+/**
+   not garbage collected
+**/
 struct ThreadTask
 {
   ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds, bool isM2Task);
@@ -72,8 +75,9 @@ struct ThreadTask
   void* waitOn();
 };
 
-
-//not garbage collected
+/**
+   not garbage collected
+**/
 struct ThreadSupervisorInformation
 {
   ///Id for thread

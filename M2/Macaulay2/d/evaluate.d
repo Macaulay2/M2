@@ -1237,6 +1237,7 @@ handleError(c:Code,e:Expr):Expr := (
 	       if p != dummyPosition then err.position = p;
 	       e))
      else e);
+
 export eval(c:Code):Expr := (
      -- better would for cancellation requests to set exceptionFlag:
      -- Ccode(void,"pthread_testcancel()");
@@ -1400,8 +1401,14 @@ export eval(c:Code):Expr := (
 	       ));
      when e is Error do handleError(c,e) else e);
 
+header "extern void M2_stack_push(char*);";
+header "extern void M2_stack_pop();";
+
 export evalexcept(c:Code):Expr := (
+     -- printErrorMessage(codePosition(c),"--evaluating: "+present(tostring(c)));
+     Ccode(void,"M2_stack_push(",tocharstar(tostring(codePosition(c))),")");
      e := eval(c);
+     Ccode(void,"M2_stack_pop()");
      if test(exceptionFlag) then (				    -- compare this code to the code at the top of eval() above
 	  if alarmedFlag then (
 	       clearAlarmedFlag();

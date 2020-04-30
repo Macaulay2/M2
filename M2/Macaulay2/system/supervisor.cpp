@@ -191,9 +191,7 @@ ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userD
    if(pthread_cond_init(&m_FinishCondition,NULL))
     abort();
 }
-ThreadTask::~ThreadTask()
-{
-}
+ThreadTask::~ThreadTask() {}
 void* ThreadTask::waitOn()
 {
   m_Mutex.lock();
