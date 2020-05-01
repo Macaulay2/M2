@@ -10,7 +10,7 @@ define M2_BUILD_SCRIPT
 set -xe
 
 ## Full build
-cmake -GNinja -S M2/M2 -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release
+cmake -GNinja -S M2/M2 -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -DUSING_MPIR=OFF
 cmake --build $(BUILD_DIR) --target build-libraries build-programs
 cmake --build $(BUILD_DIR) --target install-packages
 cmake --build $(BUILD_DIR) --target M2-emacs
