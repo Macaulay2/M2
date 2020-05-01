@@ -1,7 +1,6 @@
 --		Copyright 1994-2002, 2010 by Daniel R. Grayson
 
 use gmp;
-use interrupts;
 
 -- types
 export RawMonomial := Pointer "const struct Monomial *";

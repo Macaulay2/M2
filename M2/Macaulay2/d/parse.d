@@ -28,7 +28,6 @@ use varnets;
 use strings1;
 use stdio0;
 use stdiop0;
-use atomic;
 use pthread0;
 
 

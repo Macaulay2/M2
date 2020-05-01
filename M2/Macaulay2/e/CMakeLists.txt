@@ -1,28 +1,28 @@
 add_library(engine STATIC
-#  CMakeLists.txt
+  # CMakeLists.txt
   Eschreyer.cpp
   Eschreyer.hpp
   GF.cpp
   GF.hpp
   LLL.cpp
   LLL.hpp
-#  Makefile.common.in
-#  Makefile.files
-#  Makefile.in
+  # Makefile.common.in
+  # Makefile.files
+  # Makefile.in
   NAG.cpp
   NAG.hpp
-#  README
+  # README
   SLP-defs.hpp
   SLP-imp.hpp
   SLP.cpp
   SLP.hpp
-#  STYLE.txt
-#  TAGS
-#  TODO
-#  TODO-SLPs
-#  TODO-numerics
-#  TODO-rings-matrices
-#  TODO-sparsepolyring
+  # STYLE.txt
+  # TAGS
+  # TODO
+  # TODO-SLPs
+  # TODO-numerics
+  # TODO-reallocate-heap
+  # TODO-rings-matrices
   ZZ.cpp
   ZZ.hpp
   ZZp.cpp
@@ -35,7 +35,6 @@ add_library(engine STATIC
   aring-RR.hpp
   aring-RRR.cpp
   aring-RRR.hpp
-  aring-example.hpp
   aring-gf-flint-big.cpp
   aring-gf-flint-big.hpp
   aring-gf-flint.cpp
@@ -45,7 +44,6 @@ add_library(engine STATIC
   aring-glue.hpp
   aring-m2-gf.cpp
   aring-m2-gf.hpp
-  aring-poly-zz-flint.hpp
   aring-qq-flint.cpp
   aring-qq-flint.hpp
   aring-qq-gmp.cpp
@@ -54,8 +52,8 @@ add_library(engine STATIC
   aring-tower.cpp
   aring-tower.hpp
   aring-translate.hpp
-#  aring-wrap.cpp
-#  aring-wrap.hpp
+  # aring-wrap.cpp
+  # aring-wrap.hpp
   aring-zz-flint.cpp
   aring-zz-flint.hpp
   aring-zz-gmp.cpp
@@ -66,7 +64,7 @@ add_library(engine STATIC
   aring-zzp-flint.hpp
   aring-zzp.cpp
   aring-zzp.hpp
-  aring.cpp
+  # aring.cpp
   aring.hpp
   array.hpp
   assprime.cpp
@@ -98,7 +96,7 @@ add_library(engine STATIC
   defgroups.h
   det.cpp
   det.hpp
-  dmat-ffpack.cpp
+  # dmat-ffpack.cpp
   dmat-gf-flint-big.hpp
   dmat-gf-flint.hpp
   dmat-lu-inplace.hpp
@@ -112,7 +110,9 @@ add_library(engine STATIC
   dmat-zzp-flint.hpp
   dmat.cpp
   dmat.hpp
-#  doxygen-settings
+  # doxygen-main.hpp
+  # doxygen-settings
+  # doxygen.conf
   dpoly.cpp
   dpoly.hpp
   engine-includes.hpp
@@ -123,22 +123,21 @@ add_library(engine STATIC
   exceptions.hpp
   exptable.c
   exptable.h
-  factor.cpp
+  # f4
+  # factor.cpp
   finalize.cpp
   finalize.hpp
-#  fixspace
   fplll-interface.cpp
   fplll-interface.hpp
   frac.cpp
   frac.hpp
   fractionfreeLU.cpp
   fractionfreeLU.hpp
-#  franzi-brp-test.cpp
+  # franzi-brp-test.cpp
   franzi-brp.cpp
   franzi-brp.hpp
   franzi-gb.cpp
   franzi-interface.cpp
-  free-resolutions
   freemod.cpp
   freemod.hpp
   gauss.cpp
@@ -147,7 +146,6 @@ add_library(engine STATIC
   gb-default.hpp
   gb-homog2.cpp
   gb-homog2.hpp
-  gb-mora.hpp
   gb-sugarless.cpp
   gb-sugarless.hpp
   gb-test1.cpp
@@ -171,7 +169,7 @@ add_library(engine STATIC
   imonorder.cpp
   imonorder.hpp
   index.hpp
-  int-bag.cpp
+  # int-bag.cpp
   int-bag.hpp
   intarray.cpp
   intarray.hpp
@@ -181,6 +179,8 @@ add_library(engine STATIC
   interrupted.hpp
   lapack.cpp
   lapack.hpp
+  localring.cpp
+  localring.hpp
   mat-arith.hpp
   mat-elem-ops.hpp
   mat-linalg.hpp
@@ -206,19 +206,21 @@ add_library(engine STATIC
   monideal.hpp
   monoid.cpp
   monoid.hpp
+  # monomial-sets.cpp
+  monomial-sets.hpp
   monomial.cpp
   monomial.hpp
-#  monorder.cpp
-#  monorder.hpp
   monordering.c
   monordering.h
   montable.cpp
   montable.hpp
   montableZZ.cpp
   montableZZ.hpp
+  mutablecomplex.cpp
+  mutablecomplex.hpp
   mutablemat-defs.hpp
   mutablemat-imp.hpp
-  mutablemat.cpp
+  # mutablemat.cpp
   mutablemat.hpp
   newdelete.cpp
   newdelete.hpp
@@ -228,21 +230,13 @@ add_library(engine STATIC
   ntl-internal.cpp
   ntuple.cpp
   ntuple.hpp
-#  overflow-test.cpp
+  # overflow-test.cpp
   overflow.cpp
   overflow.hpp
   pfaff.cpp
   pfaff.hpp
-#  pi-genmask.cc
-#  pi-readme.txt
-#  pi-test.cc
-#  pi.cc
-#  pi.h
-#  pm-test.cpp
-#  pm.cpp
-#  pm.hpp
-#  points.cpp
-#  points.hpp
+  # points.cpp
+  # points.hpp
   poly.cpp
   poly.hpp
   polyquotient.cpp
@@ -306,8 +300,6 @@ add_library(engine STATIC
   smat.hpp
   solvable.cpp
   solvable.hpp
-  spair-heap.cpp
-  spair-heap.hpp
   spair.cpp
   spair.hpp
   stdinc-m2.hpp
@@ -321,6 +313,7 @@ add_library(engine STATIC
   timing.hpp
   tower.cpp
   tower.hpp
+  unit-tests
   util.cpp
   util.hpp
   varpower.cpp
@@ -335,13 +328,10 @@ add_library(engine STATIC
   x-mat.cpp
   x-monideal.cpp
   x-monoid.cpp
-  x-monom.cpp
+  # x-monom.cpp
   x-mutablemat.cpp
   x-relem.cpp
   x-ringmap.cpp
-#  f4/Makefile.files
-#  f4/Makefile.in
-#  f4/README-RES-F4
   f4/f4-computation.cpp
   f4/f4-computation.hpp
   f4/f4-m2-interface.cpp
@@ -353,7 +343,8 @@ add_library(engine STATIC
   f4/f4-spairs.cpp
   f4/f4-spairs.hpp
   f4/f4-syz.cpp
-  f4/f4-types.cpp
+  f4/f4-syz.hpp
+  # f4/f4-types.cpp
   f4/f4-types.hpp
   f4/f4.cpp
   f4/f4.hpp
@@ -361,7 +352,7 @@ add_library(engine STATIC
   f4/gausser.hpp
   f4/hilb-fcn.cpp
   f4/hilb-fcn.hpp
-  f4/memblock.cpp
+  # f4/memblock.cpp
   f4/memblock.hpp
   f4/monhashtable.cpp
   f4/monhashtable.hpp
@@ -393,8 +384,10 @@ add_library(engine STATIC
   f4/res-moninfo-dense.hpp
   f4/res-moninfo-sparse.cpp
   f4/res-moninfo-sparse.hpp
-  f4/res-moninfo.cpp
+  # f4/res-moninfo.cpp
   f4/res-moninfo.hpp
+  f4/res-monomial-sorter.cpp
+  f4/res-monomial-sorter.hpp
   f4/res-monomial-types.hpp
   f4/res-poly-ring.cpp
   f4/res-poly-ring.hpp
@@ -404,7 +397,32 @@ add_library(engine STATIC
   f4/res-varpower-monomial.cpp
   f4/res-varpower-monomial.hpp
   f4/varpower-monomial.cpp
-  f4/varpower-monomial.hpp
+  f4/varpower-monomial.hpp  
+  )
+
+#  aring-wrap.cpp
+#  aring-wrap.hpp
+#  doxygen-settings
+#  fixspace
+#  franzi-brp-test.cpp
+#  monorder.cpp
+#  monorder.hpp
+#  overflow-test.cpp
+#  pi-genmask.cc
+#  pi-readme.txt
+#  pi-test.cc
+#  pi.cc
+#  pi.h
+#  pm-test.cpp
+#  pm.cpp
+#  pm.hpp
+#  points.cpp
+#  points.hpp
+#  f4/Makefile.files
+#  f4/Makefile.in
+#  f4/README-RES-F4
+
+  set(UNITTESTS
   unit-tests/ARingCCCTest.cpp
   unit-tests/ARingCCTest.cpp
   unit-tests/ARingGFTest.cpp
@@ -440,8 +458,6 @@ add_library(engine STATIC
   unit-tests/gtest-include.cpp
   unit-tests/testMain.cpp
   )
-
-set(BOOTSTRAP "/Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-clang")
 
 target_include_directories(engine PUBLIC
   ${BOOTSTRAP}/include

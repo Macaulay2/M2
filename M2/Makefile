@@ -1,5 +1,7 @@
 # -*- makefile-gmake -*-
 
+# SHELL := /bin/bash -x
+
 .PHONY : all monitor check-make check-autoconf check-libtool check-automake
 
 .NOTPARALLEL:
@@ -34,8 +36,7 @@ check-make:
 	@ echo GNU make version okay
 
 make-configure : check-autoconf configure
-configure : configure.ac config/files config/ax_func_accept_argtypes.m4 config/ax_prog_cc_for_build.m4 config/openmp.m4 # aclocal.m4
-	@ set -x ; autoconf
+configure: configure.ac config/files config/*.m4; autoconf
 
 get-tools: usr-build/aclocal-path get-m4 get-pkg get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
 which-tools:
@@ -79,14 +80,17 @@ autoconf-msg :
 
 check-libtool:
 	@ type libtool >/dev/null || $(MAKE) -f Makefile libtool-absent
-	@ MAJOR=`libtool --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;				\
-	  MINOR=`libtool --version | sed -e '1s/.*\.\([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;				\
-	  BABY=`libtool --version | sed -e '1s/.*\..*\.\([1-9][0-9]*\)/\1/' -e '2,$$d'` ;				\
-	  if test $$MAJOR -gt $(LIBTOOL_MAJOR)										\
-	          -o \( $$MAJOR = $(LIBTOOL_MAJOR) -a $$MINOR -gt $(LIBTOOL_MINOR) \)					\
-	          -o \( $$MAJOR = $(LIBTOOL_MAJOR) -a $$MINOR = $(LIBTOOL_MINOR) -a $$BABY -ge $(LIBTOOL_BABY) \) ;	\
-	  then echo GNU libtool version okay ;										\
-	  else $(MAKE) -f Makefile libtool-old ;									\
+	@ if `libtool --version >/dev/null 2>&1` ;										\
+	  then MAJOR=`libtool --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;					\
+	       MINOR=`libtool --version | sed -e '1s/.*\.\([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;					\
+	       BABY=`libtool --version | sed -e '1s/.*\..*\.\([1-9][0-9]*\)/\1/' -e '2,$$d'` ;					\
+	       if test "$$MAJOR" -gt "$(LIBTOOL_MAJOR)"										\
+		       -o \( "$$MAJOR" = "$(LIBTOOL_MAJOR)" -a "$$MINOR" -gt "$(LIBTOOL_MINOR)" \)				\
+		       -o \( $$MAJOR = $(LIBTOOL_MAJOR) -a $$MINOR = $(LIBTOOL_MINOR) -a $$BABY -ge $(LIBTOOL_BABY) \) ;	\
+	       then echo GNU libtool version okay ;										\
+	       else $(MAKE) -f Makefile libtool-old ;										\
+	       fi														\
+	  else $(MAKE) -f Makefile libtool-not-gnu ;										\
 	  fi
 libtool-absent : libtool-absent-msg libtool-msg 
 libtool-absent-msg :
@@ -96,18 +100,22 @@ libtool-old : libtool-old-msg libtool-msg
 libtool-old-msg :
 	@ echo "=============================================================================" >&2
 	@ echo "error: the libtool program installed on your system (`type libtool`) is too old." >&2
+libtool-not-gnu : libtool-not-gnu-msg libtool-msg 
+libtool-not-gnu-msg :
+	@ echo "=============================================================================" >&2
+	@ echo "error: the libtool program installed on your system (`type libtool`) is too not GNU." >&2
 libtool-msg :
 	@ echo "" >&2
-	@ echo "Please install or update libtool: the version (`libtool --version | sed -e '1s/.* \([1-9][0-9.]*\)$$/\1/' -e '2,$$d'`) should be at least $(LIBTOOL_VERSION)." >&2
+	@ echo "Please install or update libtool: the version should be at least $(LIBTOOL_VERSION)." >&2
 	@ $(MAKE) alternative-msg
 
 check-autoconf :
 	@ type autoconf >/dev/null || $(MAKE) -f Makefile autoconf-absent
-	@ if test `autoconf --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` -gt "$(AUTOCONF_MAJOR)" \
+	@ if test "`autoconf --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`" -gt "$(AUTOCONF_MAJOR)" \
 	  || \
-	    test `autoconf --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`  = "$(AUTOCONF_MAJOR)" \
+	    test "`autoconf --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`"  = "$(AUTOCONF_MAJOR)" \
 	    && \
-	    test `autoconf --version | sed -e '1s/.*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`   -ge "$(AUTOCONF_MINOR)" ;\
+	    test "`autoconf --version | sed -e '1s/.*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`"   -ge "$(AUTOCONF_MINOR)" ;\
 	  then echo GNU autoconf version okay ;\
 	  else $(MAKE) -f Makefile autoconf-old ;\
 	  fi
@@ -146,11 +154,11 @@ alternative-msg:
 
 check-automake :
 	@ type automake >/dev/null || $(MAKE) -f Makefile automake-absent
-	@ if test `automake --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` -gt "$(AUTOMAKE_MAJOR)" \
+	@ if test "`automake --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`" -gt "$(AUTOMAKE_MAJOR)" \
 	  || \
-	    test `automake --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`  =  "$(AUTOMAKE_MAJOR)" \
+	    test "`automake --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`"  =  "$(AUTOMAKE_MAJOR)" \
 	    && \
-	    test `automake --version | sed -e '1s/.* [1-9][0-9]*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`  -ge "$(AUTOMAKE_MINOR)" ;\
+	    test "`automake --version | sed -e '1s/.* [1-9][0-9]*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`"  -ge "$(AUTOMAKE_MINOR)" ;\
 	  then echo GNU automake version okay ;\
 	  else $(MAKE) -f Makefile automake-old ;\
 	  fi
