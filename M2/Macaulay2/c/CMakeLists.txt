@@ -17,15 +17,18 @@ BISON_TARGET(scc-grammar
   COMPILE_FLAGS -yvdlt)
 
 # Generate TAGS file
-set_source_files_properties(TAGS PROPERTIES GENERATED true)
-add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/TAGS
-  COMMENT "Generating c/TAGS file"
-  COMMAND ${ETAGS} -o TAGS ${HEADERS} ${SOURCES} grammar.y scc-core.h scc-core.c
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  )
+if(ETAGS)
+  set(TAGS TAGS)
+  set_source_files_properties(TAGS PROPERTIES GENERATED true)
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/TAGS
+    COMMENT "Generating c/TAGS file"
+    COMMAND ${ETAGS} -o TAGS ${HEADERS} ${SOURCES} grammar.y scc-core.h scc-core.c
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+endif()
 
 # Compile scc1
-add_executable(scc1 ${HEADERS} ${SOURCES} grammar.c TAGS)
+add_executable(scc1 ${HEADERS} ${SOURCES} grammar.c ${TAGS})
 
 target_include_directories(scc1 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

@@ -57,4 +57,4 @@ M2-safe:; docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) M2 --i
 ###############################################################################
 
 # For anything else, run it in the build directory within the container
-%:; docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) make -C $(M2_HOME)/$(BUILD_DIR) $@
+%:; docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) cmake --build $(M2_HOME)/$(BUILD_DIR) --target $@

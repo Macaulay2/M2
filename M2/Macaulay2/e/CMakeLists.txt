@@ -284,19 +284,22 @@ list(APPEND HEADERS ${CMAKE_BINARY_DIR}/include/M2/config.h)
 ## Generate TAGS file
 # TODO: the order is somewhat different, is it a problem?
 
-set_source_files_properties(TAGS PROPERTIES GENERATED true)
-add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/TAGS
-  COMMENT "Generating e/TAGS file"
-  COMMAND ${ETAGS} -o TAGS ${HEADERS} ${SOURCES}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  )
+if(ETAGS)
+  set(TAGS TAGS)
+  set_source_files_properties(TAGS PROPERTIES GENERATED true)
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/TAGS
+    COMMENT "Generating e/TAGS file"
+    COMMAND ${ETAGS} -o TAGS ${HEADERS} ${SOURCES}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+endif()
 
 ###############################################################################
 ## Compile the engine
 # TODO: enable INTERPROCEDURAL_OPTIMIZATION?
 
 # set -DBUILD_SHARED_LIBS=ON to generate a shared library
-add_library(M2-engine STATIC ${SOURCES} ${HEADERS} TAGS)
+add_library(M2-engine STATIC ${SOURCES} ${HEADERS} ${TAGS})
 
 # TODO: Which headers should be included in the development build?
 set_target_properties(M2-engine PROPERTIES PUBLIC_HEADER "${HEADERS}")
