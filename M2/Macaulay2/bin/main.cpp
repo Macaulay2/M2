@@ -110,8 +110,7 @@ extern "C" void M2_stack_push(char* M2_frame) {
 extern "C" void M2_stack_pop() {
   M2_stack.pop_back();
 }
-
-extern "C" void stack_trace() {
+extern "C" void M2_stack_trace() {
   std::cout << "-* stack trace, pid: " << (long) getpid() << std::endl;
   for (char* M2_frame : M2_stack)
     std::cout << M2_frame << std::endl;
@@ -127,7 +126,7 @@ void segv_handler(int sig) {
     fprintf(stderr,"-- SIGSEGV handler called a second time, aborting\n");
     _exit(2);
   }
-  stack_trace();
+  M2_stack_trace();
   level --;
   _exit(1);
 }
@@ -233,7 +232,7 @@ extern "C" void interrupt_handler(int sig) {
 	    }
 	  }
 	  if (buf[0]=='b' || buf[0]=='B') {
-	    stack_trace();
+	    M2_stack_trace();
 	    fprintf(stderr,"exiting\n");
 	    exit(12);
 	  }

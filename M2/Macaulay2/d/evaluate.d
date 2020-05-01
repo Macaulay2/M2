@@ -1403,6 +1403,12 @@ export eval(c:Code):Expr := (
 
 header "extern void M2_stack_push(char*);";
 header "extern void M2_stack_pop();";
+header "extern void M2_stack_trace();";
+stacktrace(e:Expr):Expr := (
+    Ccode(void,"M2_stack_trace()");
+    return e;
+    );
+setupfun("stacktrace",stacktrace);
 
 export evalexcept(c:Code):Expr := (
      -- printErrorMessage(codePosition(c),"--evaluating: "+present(tostring(c)));

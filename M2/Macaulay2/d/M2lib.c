@@ -95,7 +95,7 @@ int system_randomint(void) {
 #endif
      }
 
-extern void stack_trace();
+extern void M2_stack_trace();
 
 extern void fatal(const char *s, ...);
 

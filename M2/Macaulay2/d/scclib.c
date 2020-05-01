@@ -10,6 +10,8 @@
 
 #include "../system/supervisorinterface.h"
 
+extern void M2_stack_trace();
+
 void
 fatal(const char *s,...)   {
      va_list ap;
@@ -21,7 +23,7 @@ fatal(const char *s,...)   {
 #ifndef NDEBUG
      trap();
 #endif
-     /* stack_trace(); */
+     M2_stack_trace();
      exit(1);
      }
 

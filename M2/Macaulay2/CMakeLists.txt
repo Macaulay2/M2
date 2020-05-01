@@ -65,6 +65,15 @@ if(BUILD_DOCS)
 endif()
 
 ###############################################################################
+# Add source-based code coverage targets
+if(BUILD_COVERAGE)
+  include(coverage)
+  foreach(_target IN ITEMS scc1 M2-regex M2-interpreter M2-supervisor M2-engine M2-unit-tests M2-binary)
+    _ADD_COVERAGE(${_target})
+  endforeach()
+endif()
+
+###############################################################################
 ## Install instructions, which are also are very important for CPack
 
 if(NOT VERBOSE)
