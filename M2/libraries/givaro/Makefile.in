@@ -8,7 +8,7 @@ URL = http://macaulay2.com/Downloads/OtherSourceCode
 VLIMIT = 900000
 MLIMIT = 900000
 
-VERSION = 4.0.2
+VERSION = 4.1.1
 # disable the test because it fails to find <bits/stl_pair.h>
 # CHECKTARGET = .
 LICENSEFILES = COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt
