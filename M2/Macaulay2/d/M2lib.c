@@ -57,8 +57,6 @@ void clean_up(void) {
 #endif
 }
 
-void scclib__prepare(void) {}
-
 int system_isReady(int fd) {
   int ret;
   static fd_set r, w, e;

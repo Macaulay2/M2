@@ -144,6 +144,7 @@ extern "C" void reverse_run(struct FUNCTION_CELL *list);
 
 void* interpFunc(ArgCell* vargs)
 {
+  /* set this as the interpreter's thread? */
   setInterpThread();
   /* re-initialize any thread local variables */
   reverse_run(thread_prepare_list);
@@ -162,7 +163,12 @@ void* interpFunc(ArgCell* vargs)
 
   signal(SIGSEGV, segv_handler);
 
-  interp_process(); /* this is where all the action happens, see interp.d, where it is called simply process */
+  /*
+    process() in interp.dd is where all the action happens, however, interp__prepare()
+    from interp-tmp.cc is called first. This happens even before main() because all
+    "_prepare()" functions have "__attribute__ ((constructor))" in their declaration.
+  */
+  interp_process();
 
   clean_up();
 

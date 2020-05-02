@@ -12,14 +12,14 @@ CMake is a cross-platform system for generating build environments using native 
 If using a packaged distribution, confirm using `cmake --version` that you have version at least 3.15.
 
 There are various other tools needed to compile Macaulay2 dependencies.
-- On Debian/Ubuntu, install `autoconf build-essential bison libtool pkg-config yasm`.
+- On Debian/Ubuntu, install `autoconf build-essential bison ccache libtool ninja-build pkg-config yasm`.
 - See [INSTALL](INSTALL) for more details for Mac OS X and other systems.
 
 **TIP**: for fastest results, also install `ninja-build` and `ccache`.
 
 There are 7 libraries that must be found on the system.
-- On Debian/Ubuntu, install `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libomp-dev libtbb-dev libgdbm-dev`. In addition, install `libatomic-ops-dev`, though this dependency will be removed soon.
-- The equivalent Homebrew packages are `eigen libxml2 readline libomp tbb gdbm` and `libatomic_ops`.
+- On Debian/Ubuntu, install `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libomp-dev libtbb-dev libgdbm-dev libboost-stacktrace-dev`. In addition, install `libatomic-ops-dev`, though this dependency will be removed soon.
+- The equivalent Homebrew packages are `eigen libxml2 readline libomp tbb gdbm boost` and `libatomic_ops`.
 
 A quick build involves the following steps:
 ```
@@ -183,9 +183,9 @@ Macaulay2 uses several external libraries and programs, which can be built using
   - `build-givaro`:	[Givaro] library for algebraic computations over prime and finite fields
   - `build-glpk`:	[GLPK] GNU Linear Programming Kit
   - `build-googletest`: [Googletest] C++ unit-testing library
-  - `build-mathic`:	library for symbolic algebra data structures
-  - `build-mathicgb`: library for signature Groebner bases library
-  - `build-memtailor`: library for special purpose memory allocators
+  - `build-mathic`:	[Mathic] library for symbolic algebra data structures
+  - `build-mathicgb`: [Mathicgb] library for signature Groebner bases library
+  - `build-memtailor`: [Memtailor] library for special purpose memory allocators
   - `build-mpfr`:	[MPFR] GNU Multiple Precision Floating Point library
   - `build-mpir`:	[MPIR] Multiple Precision Integers & Rationals library (optional replacement for GMP)
   - `build-mpsolve`: [MPSolve] library for solving multiprecision polynomials
@@ -201,6 +201,9 @@ Macaulay2 uses several external libraries and programs, which can be built using
 [Givaro]: https://github.com/linbox-team/givaro
 [GLPK]: https://www.gnu.org/software/glpk/
 [Googletest]: https://github.com/google/googletest
+[Mathic]: https://github.com/broune/mathic
+[Mathicgb]: https://github.com/broune/mathicgb
+[Memtailor]: https://github.com/broune/memtailor
 [MPFR]: https://www.mpfr.org/
 [MPIR]: http://mpir.org/
 [MPSolve]: https://github.com/robol/MPSolve
