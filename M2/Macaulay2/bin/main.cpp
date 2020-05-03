@@ -112,13 +112,17 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
 std::ofstream prof_log;
 thread_local std::vector<char*> M2_stack;
 
-void stack_trace(std::ostream &stream, bool core) {
-  stream << "-* stack trace, pid: " << (long) getpid() << std::endl;
-  for (char* M2_frame : M2_stack)
-    stream << M2_frame << std::endl;
-  if(core)
+void stack_trace(std::ostream &stream, bool M2) {
+  if(M2) {
+    stream << "M2";
+    for (char* M2_frame : M2_stack)
+      stream << ";" << M2_frame;
+    stream << std::endl;
+  } else {
+    stream << "-* stack trace, pid: " << (long) getpid() << std::endl;
     stream << boost::stacktrace::stacktrace();
-  stream << "-- end stack trace *-" << std::endl;
+    stream << "-- end stack trace *-" << std::endl;
+  }
 }
 
 extern "C" void M2_stack_trace() { stack_trace(std::cout, false); }
@@ -130,7 +134,7 @@ void* profFunc(ArgCell* p)
   using namespace std::chrono_literals;
   prof_log.open("profile.raw", std::ios::out | std::ios::trunc );
   while(true) {
-    std::this_thread::sleep_for(100ms);
+    std::this_thread::sleep_for(20ms);
     tryGlobalTrace();
   }
   return NULL;
@@ -204,7 +208,7 @@ extern "C" void oursignal(int sig, void (*handler)(int)) {
 
 void trace_handler(int sig) {
   if (tryGlobalTrace() == 0)
-    stack_trace(prof_log, false);
+    stack_trace(prof_log, true);
   oursignal(SIGUSR1,trace_handler);
 }
 
@@ -222,7 +226,7 @@ void segv_handler(int sig) {
     fprintf(stderr,"-- SIGSEGV handler called a second time, aborting\n");
     _exit(2);
   }
-  stack_trace(std::cerr, true);
+  stack_trace(std::cerr, false);
   level --;
   _exit(1);
 }
@@ -261,7 +265,7 @@ void interrupt_handler(int sig) {
 	    }
 	  }
 	  if (buf[0]=='b' || buf[0]=='B') {
-	    stack_trace(std::cout, true);
+	    stack_trace(std::cout, false);
 	    fprintf(stderr,"exiting\n");
 	    exit(12);
 	  }
