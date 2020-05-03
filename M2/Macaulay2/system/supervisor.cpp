@@ -54,6 +54,15 @@ extern "C" {
       return -1;
     }
   }
+  extern int tryGlobalTrace()
+  {
+    if(interpThread==pthread_self()) {
+      return 0;
+    } else {
+      pthread_kill(interpThread,SIGUSR1);
+      return -1;
+    }
+  }
 
   THREADLOCALDECL(struct atomic_field, interrupts_interruptedFlag);
   THREADLOCALDECL(struct atomic_field, interrupts_exceptionFlag);

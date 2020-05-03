@@ -164,7 +164,7 @@ if(MEMDEBUG)
   add_compile_options(-DMEMDEBUG)
 endif()
 if(PROFILING)
-  add_compile_options(-pg)
+  add_compile_options(-pg -DPROFILING)
   add_link_options(-pg)
 endif()
 

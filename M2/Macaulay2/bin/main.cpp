@@ -25,6 +25,8 @@
 
 #include <boost/stacktrace.hpp>
 #include <atomic>
+#include <chrono>
+#include <fstream>
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -53,6 +55,7 @@ bool interrupts_interruptShield;
 /* ######################################################################### */
 
 void* interpFunc(ArgCell* vargs);
+void* profFunc(ArgCell* p);
 void* testFunc(ArgCell* p);
 
 int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[])
@@ -93,6 +96,10 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
     interpFunc(M2_vargs);
   } else {
     initializeThreadSupervisor();
+#ifdef PROFILING
+    struct ThreadTask* profileTask = createThreadTask("Profile", (ThreadTaskFunctionPtr)profFunc, M2_vargs, 0, 0, 0);
+    pushTask(profileTask);
+#endif
     struct ThreadTask* interpTask = createThreadTask("Interp", (ThreadTaskFunctionPtr)interpFunc, M2_vargs, 0, 0, 0);
     pushTask(interpTask);
     waitOnTask(interpTask);
@@ -102,45 +109,43 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
 
 /* ######################################################################### */
 
+std::ofstream prof_log;
 thread_local std::vector<char*> M2_stack;
 
-extern "C" void M2_stack_push(char* M2_frame) {
-  M2_stack.emplace_back(M2_frame);
-}
-extern "C" void M2_stack_pop() {
-  M2_stack.pop_back();
-}
-extern "C" void M2_stack_trace() {
-  std::cout << "-* stack trace, pid: " << (long) getpid() << std::endl;
+void stack_trace(std::ostream &stream, bool core) {
+  stream << "-* stack trace, pid: " << (long) getpid() << std::endl;
   for (char* M2_frame : M2_stack)
-    std::cout << M2_frame << std::endl;
-  std::cout << boost::stacktrace::stacktrace();
-  std::cout << "-- end stack trace *-" << std::endl;
+    stream << M2_frame << std::endl;
+  if(core)
+    stream << boost::stacktrace::stacktrace();
+  stream << "-- end stack trace *-" << std::endl;
 }
 
-void segv_handler(int sig) {
-  static int level;
-  fprintf(stderr, "-- SIGSEGV\n");
-  level ++;
-  if (level > 1) {
-    fprintf(stderr,"-- SIGSEGV handler called a second time, aborting\n");
-    _exit(2);
+extern "C" void M2_stack_trace() { stack_trace(std::cout, false); }
+extern "C" void M2_stack_push(char* M2_frame) { M2_stack.emplace_back(M2_frame); }
+extern "C" void M2_stack_pop() { M2_stack.pop_back(); }
+
+void* profFunc(ArgCell* p)
+{
+  using namespace std::chrono_literals;
+  prof_log.open("profile.raw", std::ios::out | std::ios::trunc );
+  while(true) {
+    std::this_thread::sleep_for(100ms);
+    tryGlobalTrace();
   }
-  M2_stack_trace();
-  level --;
-  _exit(1);
+  return NULL;
 }
 
-void* testFunc(void* p)
+void* testFunc(ArgCell* p)
 {
   // TODO: do some math here?
   printf("testfunc %p\n",p);
   return NULL;
 }
 
-extern "C" void interp_setupargv();
-extern "C" void interp_process();
+extern "C" void interp_setupargv(), interp_process();
 extern "C" void reverse_run(struct FUNCTION_CELL *list);
+extern "C" void alarm_handler(int), interrupt_handler(int), trace_handler(int), segv_handler(int);
 
 void* interpFunc(ArgCell* vargs)
 {
@@ -158,10 +163,11 @@ void* interpFunc(ArgCell* vargs)
   /* setting commandLine and environment values for frontend */
   interp_setupargv();
 
-  SETJMP(abort_jmp.addr);
+  SETJMP(abort_jmp.addr); /* longjmp to this point when aborted */
   abort_jmp.is_set = TRUE;
 
-  signal(SIGSEGV, segv_handler);
+  signal(SIGSEGV, segv_handler);  /* dump the stack trace and exit */
+  signal(SIGUSR1, trace_handler); /* log the stack trace to file */
 
   /*
     process() in interp.dd is where all the action happens, however, interp__prepare()
@@ -183,7 +189,6 @@ void* interpFunc(ArgCell* vargs)
 
 /* ######################################################################### */
 
-extern "C" void alarm_handler(int sig), interrupt_handler(int sig);
 extern "C" void oursignal(int sig, void (*handler)(int)) {
  #ifdef HAVE_SIGACTION
   struct sigaction act;
@@ -197,14 +202,32 @@ extern "C" void oursignal(int sig, void (*handler)(int)) {
  #endif
 }
 
-extern "C" void alarm_handler(int sig) {
-  if (tryGlobalAlarm() == 0) {
+void trace_handler(int sig) {
+  if (tryGlobalTrace() == 0)
+    stack_trace(prof_log, false);
+  oursignal(SIGUSR1,trace_handler);
+}
+
+void alarm_handler(int sig) {
+  if (tryGlobalAlarm() == 0)
     interrupts_setAlarmedFlag();
-  }
   oursignal(SIGALRM,alarm_handler);
 }
 
-extern "C" void interrupt_handler(int sig) {
+void segv_handler(int sig) {
+  static int level;
+  fprintf(stderr, "-- SIGSEGV\n");
+  level ++;
+  if (level > 1) {
+    fprintf(stderr,"-- SIGSEGV handler called a second time, aborting\n");
+    _exit(2);
+  }
+  stack_trace(std::cerr, true);
+  level --;
+  _exit(1);
+}
+
+void interrupt_handler(int sig) {
   if (tryGlobalInterrupt() == 0) {
     if (test_Field(THREADLOCAL(interrupts_interruptedFlag, struct atomic_field)) ||
                    THREADLOCAL(interrupts_interruptPending, bool)) {
@@ -238,7 +261,7 @@ extern "C" void interrupt_handler(int sig) {
 	    }
 	  }
 	  if (buf[0]=='b' || buf[0]=='B') {
-	    M2_stack_trace();
+	    stack_trace(std::cout, true);
 	    fprintf(stderr,"exiting\n");
 	    exit(12);
 	  }
