@@ -1646,8 +1646,8 @@ extern "C" {
 
 enum ComputationStatusCode
 {
-  /* we include ../e in the path here, just so we can include it from ../d as well as from . */
-#include "statuscodes.h"
+  /* include/M2/statuscodes.h is generated from Macaulay2/m2/statuscodes */
+#include "M2/statuscodes.h"
 };
 
 enum StrategyValues
