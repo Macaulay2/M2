@@ -1751,9 +1751,12 @@ AC_PREPROC_IFELSE(
    [AC_LANG_SOURCE([[
 	#include <libxml2/libxml/xmlexports.h>
 	]])],
-   LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `)
-AC_MSG_NOTICE(found in libxml2: will search for include files also in $LIBXML_LOCATION)
-CPPFLAGS="-isystem $LIBXML_LOCATION $CPPFLAGS"
+   [ LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `
+     AC_MSG_NOTICE(libxml found in libxml2: will search for include files also in $LIBXML_LOCATION)
+     CPPFLAGS="-isystem $LIBXML_LOCATION $CPPFLAGS"
+     ]
+   )
+
 AC_CHECK_HEADERS(libxml/xmlexports.h libxml/parser.h)
 
 AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
