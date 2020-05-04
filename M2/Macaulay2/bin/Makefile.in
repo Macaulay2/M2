@@ -24,7 +24,6 @@ include ../../include/config.Makefile
 include ../d/Makefile.files
 include @srcdir@/../e/Makefile.files
 include @srcdir@/../system/Makefile.files
-include @srcdir@/../kernel/bibasis/Makefile.files
 
 %.o : %.c
 %.o : %-tmp.cc
@@ -37,7 +36,6 @@ M2_OBJECTS := $(M2_OBJECTS:%=../d/%)
 M2_OBJECTS += $(patsubst %, ../d/%.o, $(M2_DNAMES))
 M2_OBJECTS += $(ENGINE_OFILES:%=../e/%)
 M2_OBJECTS += $(SYSTEM_OFILES:%=../system/%) 
-M2_OBJECTS += $(BIBASIS_OFILES:%=../kernel/bibasis/%) 
 
 EXEFILE = @pre_bindir@/M2@EXE@
 M2SCRIPT = @pre_bindir@/M2

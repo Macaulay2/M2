@@ -75,3 +75,17 @@ A = QQ[t]
 assert try V = minimalPresentation(ideal C,Exclude=>{a}) else true
 assert try V = minimalPresentation(ideal C,Exclude=>{t}) else true
 
+-- see https://github.com/Macaulay2/M2/issues/1116
+-- this test invokes code that is heuristic -- it just does row and column operations
+-- when it finds units in the presentation matrix
+S = ZZ[a,b]
+f = map(S^{-2, -2, -3},S^{-3, -4},{{-b, 0}, {a, -b^2}, {-1, a}})
+assert isHomogeneous f
+M = coker f
+N = prune coker f
+assert isHomogeneous M
+assert(degrees M == {{2}, {2}, {3}})
+assert(degrees N == {{2}, {2}})
+p = N.cache.pruningMap
+assert isHomogeneous p
+assert isIsomorphism p

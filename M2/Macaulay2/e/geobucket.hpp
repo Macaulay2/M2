@@ -16,6 +16,7 @@
 // GEOHEAP_SIZE: defined in style.hpp
 // heap_size: defined in object.cpp
 
+template <class FREEMODULETYPE, class VECTYPE>
 class geobucket
 {
   FREEMODULETYPE *F;		// Our elements will be vectors in here
@@ -41,7 +42,8 @@ public:
 				 // Mainly used for debugging.
 };
 
-inline geobucket::geobucket(FREEMODULETYPE *FF)
+template <class FREEMODULETYPE, class VECTYPE>
+inline geobucket<FREEMODULETYPE, VECTYPE>::geobucket(FREEMODULETYPE *FF)
 : F(FF),
   K(FF->get_ring()->getCoefficientRing()),
   top_of_heap(-1),
@@ -53,14 +55,16 @@ inline geobucket::geobucket(FREEMODULETYPE *FF)
     heap[i] = NULL;
 }
 
-inline geobucket::~geobucket()
+template <class FREEMODULETYPE, class VECTYPE>
+inline geobucket<FREEMODULETYPE, VECTYPE>::~geobucket()
 {
   // The user of this class must insure that all 'vecterm's
   // have been removed first.  Thus, we don't need to
   // do anything here.
 }
 
-inline void geobucket::add(VECTYPE p)
+template <class FREEMODULETYPE, class VECTYPE>
+inline void geobucket<FREEMODULETYPE, VECTYPE>::add(VECTYPE p)
 {
   mLead = -1;
   int len = F->n_terms(p);
@@ -80,7 +84,8 @@ inline void geobucket::add(VECTYPE p)
     top_of_heap = i;
 }
 
-inline const VECTYPE geobucket::get_lead_term()
+template <class FREEMODULETYPE, class VECTYPE>
+inline const VECTYPE geobucket<FREEMODULETYPE, VECTYPE>::get_lead_term()
 {
   int lead_so_far = -1;
   for (int i=0; i <= top_of_heap; i++)
@@ -121,7 +126,9 @@ inline const VECTYPE geobucket::get_lead_term()
   VECTYPE result = heap[lead_so_far];
   return result;
 }
-inline VECTYPE geobucket::remove_lead_term()
+
+template <class FREEMODULETYPE, class VECTYPE>
+inline VECTYPE geobucket<FREEMODULETYPE, VECTYPE>::remove_lead_term()
 {
   if (mLead < 0) get_lead_term();
   if (mLead < 0) return NULL;
@@ -132,7 +139,8 @@ inline VECTYPE geobucket::remove_lead_term()
   return result;
 }
 
-inline VECTYPE geobucket::value()
+template <class FREEMODULETYPE, class VECTYPE>
+inline VECTYPE geobucket<FREEMODULETYPE, VECTYPE>::value()
 {
   VECTYPE result = NULL;
   for (int i=0; i<=top_of_heap; i++)
@@ -144,7 +152,9 @@ inline VECTYPE geobucket::value()
   top_of_heap = -1;
   return result;
 }
-inline VECTYPE geobucket::current_value() const
+
+template <class FREEMODULETYPE, class VECTYPE>
+inline VECTYPE geobucket<FREEMODULETYPE, VECTYPE>::current_value() const
 {
   VECTYPE result = NULL;
   for (int i=0; i<=top_of_heap; i++)

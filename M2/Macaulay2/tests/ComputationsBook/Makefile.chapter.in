@@ -17,11 +17,11 @@ LIMIT :=
 ifeq (@ULIMIT_T@,yes)
 LIMIT += ulimit -t 1200 ;
 endif
-ifeq (@ULIMIT_M@,yes)
-LIMIT += ulimit -m 800000 ;
-endif
 ifeq (@ULIMIT_V@,yes)
 LIMIT += ulimit -v 1600000 ;
+endif
+ifeq (@ULIMIT_M@,yes)
+LIMIT += ulimit -m 800000 ;
 endif
 ifeq (@ULIMIT_S@,yes)
 LIMIT += ulimit -s 8192 ;
