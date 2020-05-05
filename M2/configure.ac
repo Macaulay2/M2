@@ -447,7 +447,7 @@ EOF
     fi
 
 AC_HEADER_TIME()
-AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h elf.h execinfo.h stdlib.h syscall.h sys/types.h sys/stat.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
+AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h elf.h execinfo.h stdlib.h syscall.h sys/types.h sys/stat.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h regex.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 dnl winsock2.h should be included before including windows.h
 dnl  pthread.h includes windows.h
@@ -1751,9 +1751,12 @@ AC_PREPROC_IFELSE(
    [AC_LANG_SOURCE([[
 	#include <libxml2/libxml/xmlexports.h>
 	]])],
-   LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `)
-AC_MSG_NOTICE(found in libxml2: will search for include files also in $LIBXML_LOCATION)
-CPPFLAGS="-isystem $LIBXML_LOCATION $CPPFLAGS"
+   [ LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `
+     AC_MSG_NOTICE(libxml found in libxml2: will search for include files also in $LIBXML_LOCATION)
+     CPPFLAGS="-isystem $LIBXML_LOCATION $CPPFLAGS"
+     ]
+   )
+
 AC_CHECK_HEADERS(libxml/xmlexports.h libxml/parser.h)
 
 AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))

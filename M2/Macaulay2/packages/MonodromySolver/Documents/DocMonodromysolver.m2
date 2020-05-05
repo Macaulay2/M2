@@ -3,7 +3,7 @@ undocumented {Vertices, (pointArray,List), saturateEdges,  (saturateEdges,Homoto
      Correspondence21, Edges, Correspondence12, Potential21, Potential12, Family, gamma1, gamma2, Graph, Node1,  Node2, HomotopyEdge, makeRandomizedSelect}
     --, SpecializedSystem,  HomotopyNode, HomotopyGraph,PartialSols}
 -- undocument tags
-undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), (positions,PointArray,Function),  1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount],FilterFailure}
+undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), 1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount],FilterFailure}
 
 doc ///
     Key

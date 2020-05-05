@@ -86,7 +86,7 @@ Macaulay2.spec: Macaulay2-body.spec packages-used Makefile .prepared
 	(cd files && @FIND@ . -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2.spec
 
 ../../$(PKG_RPM) : Macaulay2.spec .prepared
-	rpmbuild --noclean --buildroot @abs_builddir@/files -bb Macaulay2.spec
+	rpmbuild --buildroot @abs_builddir@/files -bb Macaulay2.spec
 	rpm -qlvp ../../$(PKG_RPM) | head
 
 Macaulay2-common.spec: Macaulay2-common-body.spec Makefile .prepared-common
@@ -95,7 +95,7 @@ Macaulay2-common.spec: Macaulay2-common-body.spec Makefile .prepared-common
 	(cd files-common && @FIND@ -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2-common.spec
 
 ../../$(PKG_COM_RPM) : Macaulay2-common.spec .prepared-common
-	rpmbuild --noclean --buildroot @abs_builddir@/files-common -bb Macaulay2-common.spec
+	rpmbuild --buildroot @abs_builddir@/files-common -bb Macaulay2-common.spec
 	rpm -qlvp ../../$(PKG_COM_RPM) | head
 
 libraries-used: .prepared always

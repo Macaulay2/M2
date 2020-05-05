@@ -72,9 +72,12 @@ LIBFILES += gmp_aux.o arithmetic.o atomic.o M2.o system.o strings.o varstrin.o e
 libd.a: $(LIBFILES) ; ar -r $@ $?
 rm-libd.a:; rm libd.a
 
+../../include/M2/statuscodes.h: @srcdir@/../m2/statuscodes; (sed 's/\(.*\):\(.*\):\(.*\)/  \2 = \1,/' ; echo "  DUMMY_STATUS_CODE") <$< >$@
+
 clean:: ; rm -f $(M2_MADECFILES)
 xml-c.o: xml-c.h xml-exports.h
-M2lib.o M2inits.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o : CPPFLAGS += -I@srcdir@/../e -I../e-includes
+engine.o: ../../include/M2/statuscodes.h
+M2lib.o M2inits.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o : CPPFLAGS += -I@srcdir@/../e
 ifeq (@PARI@,yes)
 pari.o: CFLAGS += -Wno-shadow
 pari.o: CPPFLAGS += -DINCLUDE_PARI_H
@@ -99,6 +102,7 @@ pthread-tmp.c : SCCFLAGS += -noline
 version.o : ../../include/M2/config.h distributed-packages.h
 distributed-packages.h: @srcdir@/../packages/?distributed-packages Makefile
 	echo '#define DISTRIBUTED_PACKAGES "'`cat $<`'"' >$@
+clean::; rm -f distributed-packages.h
 
 # these files depend on USE_MYSQL, which is in config.h:
 actors4.o actors2.o : ../../include/M2/config.h
@@ -148,7 +152,7 @@ M2INCLUDES += -I@srcdir@/../regex
 # it's important that *our* directories get searched first:
 CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)
 
-CPPFLAGS += -Wno-fatal-errors -Wno-unknown-pragmas
+CPPFLAGS += -Wno-unknown-pragmas
 
 CFLAGS += $(M2_CFLAGS)
 ifeq "@__INTEL_COMPILER@" "no"
@@ -159,6 +163,9 @@ CXXFLAGS += $(M2_CXXFLAGS)
 
 CFLAGS   += -Wreturn-type
 CXXFLAGS += -Wreturn-type
+
+CFLAGS   += -Wfatal-errors
+CXXFLAGS += -Wfatal-errors
 
 # the following is included since g++-8 and gcc-8 give many warnings arising from "pragma omp"
 # and apparently it can't be silenced in source code.

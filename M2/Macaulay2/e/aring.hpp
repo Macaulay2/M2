@@ -3,6 +3,7 @@
 #ifndef _aring_hpp_
 #define _aring_hpp_
 
+#include <assert.h>
 #include "ringelem.hpp"
 #include "buffer.hpp"
 

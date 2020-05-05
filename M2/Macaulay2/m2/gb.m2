@@ -1,15 +1,7 @@
 --		Copyright 1995-2002,2012 by Daniel R. Grayson
 
-getone := filenames -> (
-     for name in filenames do if fileExists name then (
-	  if notify then stderr << "--getting " << name << endl;
-	  return get name;
-	  );
-     error concatenate between("\n   ", flatten {"none of the following files exist: ", filenames});
-     )
-
 RawStatusCodes = new HashTable from apply(
-     lines getone {currentFileDirectory | "statuscodes", minimizeFilename (currentFileDirectory | "../e-includes/statuscodes")},
+     lines get (currentFileDirectory | "statuscodes"),
      l -> ( fields := separate(":", l); value fields#0 => value fields#2 ))
 
 Nothing#BeforeEval = x -> (

@@ -2,11 +2,13 @@
 
 #include "res-a0-poly.hpp"
 #include "res-a0.hpp"
-#include "geores.hpp"
+#include "geobucket.hpp"
 #include "buffer.hpp"
 #include "text-io.hpp"
 #include "interrupted.hpp"
 #include "betti.hpp"
+
+using respolyHeap = geobucket<const res2_poly, res2term *>;
 
 #include <iostream>
 bool res2_comp::stop_conditions_ok()
