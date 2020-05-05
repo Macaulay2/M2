@@ -11,15 +11,15 @@ CMake is a cross-platform system for generating build environments using native 
 [Download](https://cmake.org/download/) the latest CMake for your platform.
 If using a packaged distribution, confirm using `cmake --version` that you have version at least 3.15.
 
-There are various other tools needed to compile Macaulay2 dependencies.
-- On Debian/Ubuntu, install `autoconf build-essential bison ccache libtool ninja-build pkg-config yasm`.
-- See [INSTALL](INSTALL) for more details for Mac OS X and other systems.
+**NOTE**: GCC or Clang compilers are recommended (in particular, not AppleClang). Optionally, install `ccache` for caching compiler artifacts and `ninja-build` (`ninja` on Brew) for optimized parallel builds.
 
-**TIP**: for fastest results, also install `ninja-build` and `ccache`.
+There are various tools needed to compile Macaulay2 dependencies.
+- On Debian/Ubuntu, install `autoconf build-essential bison libtool pkg-config yasm`.
+- On Mac OS X, using Homebrew, install `autoconf automake bison libtool pkg-config yasm`.
 
 There are 7 libraries that must be found on the system.
-- On Debian/Ubuntu, install `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libomp-dev libtbb-dev libgdbm-dev libboost-stacktrace-dev`. In addition, install `libatomic-ops-dev`, though this dependency will be removed soon.
-- The equivalent Homebrew packages are `eigen libxml2 readline libomp tbb gdbm boost` and `libatomic_ops`.
+- On Debian/Ubuntu, install `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libomp-dev libtbb-dev libgdbm-dev libboost-stacktrace-dev libatomic-ops-dev`.
+- On Mac OS X, using Homebrew, install `eigen libxml2 readline libomp tbb gdbm boost libatomic_ops`.
 
 A quick build involves the following steps:
 ```
@@ -43,7 +43,7 @@ git clone https://github.com/mahrud/M2.git -b feature/cmake
 cd M2/M2/BUILD/build
 cmake -GNinja -S../.. -B. \
       -DCMAKE_BUILD_TYPE=Release \
-	  -DCMAKE_INSTALL_PREFIX=/usr
+      -DCMAKE_INSTALL_PREFIX=/usr
 ```
 The `-S../..` argument indicates the location of the source and `-B.` indicates the build directory. After those, arguments of type `-DNAME=VALUE` set the `NAME` variable to `VALUE`. For instance, `CMAKE_BUILD_TYPE` determines various compiler flags to be used. Defined options are `Release`, `Debug`, `RelWithDebInfo`, and `RelMinSize`, with `RelWithDebInfo` being the default. The value of `CMAKE_INSTALL_PREFIX` determines the installation prefix.
 

@@ -28,6 +28,7 @@
 #include <chrono>
 #include <fstream>
 #include <iostream>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -92,6 +93,9 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   M2_vargs->envc = envc; /* environment count */
 
   if (gotArg("--no-threads", argv)) {
+#ifdef PROFILING
+    std::thread profileThread(profFunc, M2_vargs);
+#endif
     // testFunc(M2_vargs);
     interpFunc(M2_vargs);
   } else {
@@ -125,16 +129,25 @@ void stack_trace(std::ostream &stream, bool M2) {
   }
 }
 
-extern "C" void M2_stack_trace() { stack_trace(std::cout, false); }
-extern "C" void M2_stack_push(char* M2_frame) { M2_stack.emplace_back(M2_frame); }
-extern "C" void M2_stack_pop() { M2_stack.pop_back(); }
+extern "C" {
+  void M2_stack_trace() { stack_trace(std::cout, false); }
+#ifdef PROFILING
+  void M2_stack_push(char* M2_frame) { M2_stack.emplace_back(M2_frame); }
+  void M2_stack_pop() { M2_stack.pop_back(); }
+#else
+  void M2_stack_push(char* M2_frame) {}
+  void M2_stack_pop() {}
+#endif
+}
 
 void* profFunc(ArgCell* p)
 {
   using namespace std::chrono_literals;
-  prof_log.open("profile.raw", std::ios::out | std::ios::trunc );
+  std::string filename("profile-" + std::to_string(getpid())+ ".raw");
+  // std::cerr << "Saving profile data in " << filename << std::endl;
+  prof_log.open(filename, std::ios::out | std::ios::trunc );
   while(true) {
-    std::this_thread::sleep_for(20ms);
+    std::this_thread::sleep_for(100ms);
     tryGlobalTrace();
   }
   return NULL;
