@@ -15,7 +15,6 @@ threadLocal export backtrace := true;
 threadLocal lastCode := dummyCode;
 threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0));
 eval(c:Code):Expr;
-eval0(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
      when c
@@ -1246,17 +1245,22 @@ stacktrace(e:Expr):Expr := (
     Ccode(void,"M2_stack_trace()"); e );
 setupfun("stacktrace",stacktrace);
 
+evalprof(c:Code):Expr;
+evalraw(c:Code):Expr;
 export eval(c:Code):Expr := (
+    if Ccode(bool,"PROFILING == 1")
+    then Ccode(Expr,"evaluate_evalprof(",c,")")
+    else Ccode(Expr,"evaluate_evalraw(",c,")"));
+export evalprof(c:Code):Expr := (
     when c is f:semiCode do ( -- what makes semiCode special?
         -- printErrorMessage(codePosition(c),"--evaluating a semiCode");
         -- TODO: how to get f.name?
         Ccode(void,"M2_stack_push(",tocharstar(tostring(codePosition(c))),")");
-        e := eval0(c);
+        e := evalraw(c);
         Ccode(void,"M2_stack_pop()");
         e)
-    else eval0(c)
-    );
-export eval0(c:Code):Expr := (
+    else evalraw(c));
+export evalraw(c:Code):Expr := (
      -- better would for cancellation requests to set exceptionFlag:
      -- Ccode(void,"pthread_testcancel()");
      e := (

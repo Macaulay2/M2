@@ -216,9 +216,7 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
 void SchreyerFrame::start_computation(StopConditions& stop)
 {
   // This is the computation of the non-minimal maps themselves
-#if 0  
   decltype(timer()) timeA, timeB;
-#endif
   //  if (level(0).size() == 0)
   //    mState = Done;;
   computeFrame();

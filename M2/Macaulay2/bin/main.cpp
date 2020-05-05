@@ -93,14 +93,14 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   M2_vargs->envc = envc; /* environment count */
 
   if (gotArg("--no-threads", argv)) {
-#ifdef PROFILING
+#if PROFILING
     std::thread profileThread(profFunc, M2_vargs);
 #endif
     // testFunc(M2_vargs);
     interpFunc(M2_vargs);
   } else {
     initializeThreadSupervisor();
-#ifdef PROFILING
+#if PROFILING
     struct ThreadTask* profileTask = createThreadTask("Profile", (ThreadTaskFunctionPtr)profFunc, M2_vargs, 0, 0, 0);
     pushTask(profileTask);
 #endif
@@ -131,7 +131,7 @@ void stack_trace(std::ostream &stream, bool M2) {
 
 extern "C" {
   void M2_stack_trace() { stack_trace(std::cout, false); }
-#ifdef PROFILING
+#if PROFILING
   void M2_stack_push(char* M2_frame) { M2_stack.emplace_back(M2_frame); }
   void M2_stack_pop() { M2_stack.pop_back(); }
 #else

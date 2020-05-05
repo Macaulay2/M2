@@ -77,6 +77,8 @@ message("## Configure Macaulay2
      BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}
      BUILD_TESTING     = ${BUILD_TESTING}
      BUILD_DOCS        = ${BUILD_DOCS}\n
+     COVERAGE          = ${COVERAGE}
+     PROFILING         = ${PROFILING}\n
      DEVELOPMENT       = ${DEVELOPMENT}
      EXPERIMENT        = ${EXPERIMENT}")
 
