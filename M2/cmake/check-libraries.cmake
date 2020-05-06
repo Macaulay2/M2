@@ -180,14 +180,18 @@ foreach(_library IN LISTS LIBRARY_OPTIONS)
   if(${_name}_FOUND)
     if(${_library}_DIR MATCHES ${M2_HOST_PREFIX} OR
         ((${_name}_INCLUDE_DIR MATCHES ${M2_HOST_PREFIX} OR ${_name}_INCLUDE_DIRS MATCHES ${M2_HOST_PREFIX}) AND
-          (${_name}_LIBRARY MATCHES ${M2_HOST_PREFIX}    OR ${_name}_LIBRARIES MATCHES ${M2_HOST_PREFIX})))
+	  (${_name}_LIBRARY MATCHES ${M2_HOST_PREFIX}    OR ${_name}_LIBRARIES MATCHES ${M2_HOST_PREFIX} OR
+	    ${_name}_LIBDIR MATCHES ${M2_HOST_PREFIX})))
       # we built it
       list(APPEND INSTALLED_LIBRARIES ${_library})
     elseif(BUILD_LIBRARIES MATCHES "(ALL|ON)" OR "${_name}" IN_LIST BUILD_LIBRARIES)
       # exists on the system, but we want to build it
       unset(${_library}_DIR CACHE) # for Eigen3
       unset(${_name}_FOUND)
+      unset(${_name}_LIBDIR CACHE)
+      unset(${_name}_LIBRARY CACHE)
       unset(${_name}_LIBRARIES CACHE)
+      unset(${_name}_INCLUDEDIR CACHE)
       unset(${_name}_INCLUDE_DIR CACHE)
       unset(${_name}_INCLUDE_DIRS CACHE)
       # for GTest:
@@ -229,8 +233,8 @@ foreach(_program IN LISTS PROGRAM_OPTIONS)
 endforeach()
 
 ###############################################################################
-## Check to make sure that the found libraries can be linked to catch linking conflicts early.
-# when a conflict is detected, we default to building all involved libraries from source.
+## Check that found libraries can be linked to catch linking conflicts early.
+# When a conflict is detected, default to building all involved libraries.
 # TIP: cmake --debug-trycompile keeps the termporary sources and binaries
 option(CHECK_LIBRARY_COMPATIBILITY "Check for library incompatibilities" ON)
 
