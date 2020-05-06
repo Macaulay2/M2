@@ -88,7 +88,7 @@ multtable = (d1,d2,d3) -> (
 	 EE#(i,j) = ( matrix entries b );
 	 EE#(j,i) = -EE#(i,j);
 	 );
-     for i from 1 to m do (EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0));
+     for i from 1 to m do (EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0)); --move this after the );?
      );
 
     EF := new MutableHashTable;
@@ -100,8 +100,35 @@ multtable = (d1,d2,d3) -> (
     	    EF#(i,j) = (matrix entries e);
 	    );
 	);
- EF
+    EEE := new MutableHashTable;
+    for i from 1 to m do (
+	for j from i+1 to m do (
+	    for k from j+1 to m do(
+    	    c := sum(1..l, s -> (EE#(i,j))_(s-1,0)*(EF#(k,s)));
+    	    EEE#(i,j,k) = (matrix entries c);
+	    EEE#(j,i,k) = -EEE#(i,j,k);
+	    EEE#(i,k,j) = -EEE#(i,j,k);
+	    EEE#(k,j,i) = -EEE#(i,j,k);
+	    EEE#(j,k,i) = EEE#(i,j,k);
+	    EEE#(k,i,j) = EEE#(i,j,k);
+	    );
+	);
+    );
+    for i from 1 to m do(
+	for j from 1 to m do(
+	    EEE#(i,i,j) = matrix entries map(Q^n,Q^1,(i,j) -> 0);
+	    EEE#(i,j,i) = matrix entries map(Q^n,Q^1,(i,j) -> 0);
+	    EEE#(j,i,i) = matrix entries map(Q^n,Q^1,(i,j) -> 0);
+	   );
+     );
+	
+ EEE
  )
+
+--EEE = (i,j,k) -> (
+--l := numgens source d2 ;
+--c := sum(1..l, s -> (EE(i,j))_(s-1,0)*EF(k,s));
+--return matrix entries c)
 
 -- torAlgData = ( cacheValue "torAlg" ) toralgdata
 	    
@@ -127,11 +154,15 @@ F = res I
 
 ee = multtable(d1,d2,d3)
 peek ee
-ee#(3,4) == -ee#(4,3)
-
+ee#(1,2,3)
+ee#(2,1,3)
 a = map(Q^1,Q^3,(i,j) -> 0)
 
 numcols ee#(1,1)
+
+n=numcols d3
+
+ matrix entries map(Q^n,Q^1,(i,j) -> 0)
 
 ----------------------------------------------------------------------------
 -- Functions for presenting classification data
