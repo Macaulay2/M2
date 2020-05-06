@@ -1016,20 +1016,21 @@ runGfanCommand = (cmd, opts, data) -> (
 
 	if gfanVerbose then << ex << endl;
 	returnvalue := run ex;
+	errorMsg := "";
      	if(not returnvalue == 0) then
 	(
---	     << "GFAN returned an error message.\n";
---	     << "COMMAND:" << ex << endl;
---	     << "INPUT:\n";
---	     << get(tmpFile);
---	     << "ERROR:\n";
---	     << get(tmpFile |".err");
-
+	    errorMsg = "GFAN returned an error message.\n";
+	    errorMsg = errorMsg | "COMMAND:" | ex | "\n";
+	    errorMsg = errorMsg | "INPUT:\n";
+	    errorMsg = errorMsg | get(tmpFile);
+	    errorMsg = errorMsg | "ERROR:\n";
+	    errorMsg = errorMsg | get(tmpFile |".err");
 	     );
 		out := get(tmpFile | ".out");
 	gfanRemoveTemporaryFile tmpFile;
 	gfanRemoveTemporaryFile(tmpFile | ".out");
 	gfanRemoveTemporaryFile(tmpFile | ".err");
+	if length(errorMsg) > 0 then error errorMsg;
 	outputFileName := null;
 	
 	if gfanKeepFiles then outputFileName = tmpFile|".out";
