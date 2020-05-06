@@ -42,6 +42,7 @@ endif()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 ## Enable ccache or distcc acceleration with Makefile and Ninja
+# TODO: libraries and programs aren't using ccache this way.
 find_program(CCACHE ccache)
 if(CCACHE)
   # run ccache -s to get the CCache statistics

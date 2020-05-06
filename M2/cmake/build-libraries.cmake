@@ -31,7 +31,7 @@ add_custom_target(clean-stamps
 string(REPLACE ";" " " CPPFLAGS "$ENV{CPPFLAGS} ${COMPILE_OPTIONS}")
 
 # C compiler flags
-set(CFLAGS   "${CPPFLAGS} -std=gnu11 -w -Wimplicit -Werror")
+set(CFLAGS   "${CPPFLAGS} -w -Wimplicit -Werror")
 
 # C++ compiler flags
 set(CXXFLAGS "${CPPFLAGS} -std=gnu++11 -w -Wno-mismatched-tags -Wno-deprecated-register")
