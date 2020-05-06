@@ -8,7 +8,10 @@
 
 // We allocate this many threads initially, to save trouble with memory allocation.
 // We may have to raise this, in the future.
-const static int maxNumThreads = 16;
+// This was 16, but the eigen branch somehow increased virtual memory usage per
+// thread from 28MB to 42MB, so we temporarily lower the number of threads
+// until we figure that out.
+const static int maxNumThreads = 3;
 
 // The number of compute-bound threads allowed at any given time should be the number of cores and pseudocores.
 // There may be I/O bound threads, such as the the main interpreter thread.  So a good thing to set currentAllowedThreads to is the
