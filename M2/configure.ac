@@ -758,7 +758,10 @@ AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
-BUILD_ALWAYS=""
+BUILD_ALWAYS="flint"
+# We always build flint, until flint comes out with a release whose version number we can check for.
+#  (Now we use flint for factoring integers, and only a recent development version does that well.)
+
 
 for i in $LIBLIST $SUBLIST $PROGLIST
 do eval BUILD_$i=no
