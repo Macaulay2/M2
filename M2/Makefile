@@ -232,6 +232,12 @@ check-vardirs:
 check-pre-vardirs:
 	egrep -nH '@pre_(bin|data|include|info|lib|libexec|localstate|man|sbin|sharedstate|sysconf|ps|pdf|dvi|html|locale|doc|dataroot|packages|libm2|emacs|libraries|packagecachecore)dir@' $(shell cat ./config/files | sed 's/$$/.in/')
 
+# The submodule fflas_ffpack scribbles in its source tree to record the current
+# version number of libtool found on the system, in the file
+# M2/submodules/fflas_ffpack/macros/ltversion.m4. This target will clean that up.
+clean-in-submodules:
+	git submodule foreach git clean -xdfq
+
 # Local Variables:
 # mode: Makefile
 # compile-command: "make -f Makefile "
