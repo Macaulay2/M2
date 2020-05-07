@@ -1,0 +1,26 @@
+DEBIAN_REVISION=
+
+overnight:
+	$(MAKE) distclean
+	git pull 
+	git submodule update
+        git submodule foreach git clean -xdfq
+	git branch --contains HEAD
+	git describe --dirty --long --always --abbrev=40 --all
+	$(MAKE) -C ../.. get-tools
+	$(MAKE) -j8					\
+		DEBIAN_REVISION=$(DEBIAN_REVISION)	\
+		DEBUG=no				\
+		IgnoreExampleErrors=true		\
+		rebuild-world -o distclean2
+	$(MAKE) validate-html DEBUG=no
+	date
+
+git-clean:
+	git clean -Xdfq
+	git submodule foreach git clean -Xdfq
+
+# Local Variables:
+# mode: makefile-gmake
+# compile-command: "time make -f Makefile.overnight "
+# End:
