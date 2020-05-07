@@ -945,6 +945,7 @@ AC_MSG_CHECKING(whether the package gfan is installed)
 if test "`type -t gfan`" = file
 then AC_MSG_RESULT([yes, will build anyway])
      dnl currently the gfanInterface package doesn't know how to find gfan if we don't build it.
+     dnl see https://github.com/Macaulay2/M2/pull/1123
      BUILD_gfan=yes
      dnl we'll also build cddlib until gfan can find its files in /usr/include instead of in /usr/include/cdd
      BUILD_cddlib=yes
