@@ -1082,7 +1082,26 @@ function exportTikz (event){
 
   // Branden: Actual tikz code; displayed in black and white. We could do colors, but I am afriad of shading issues when printing.
   var tikzTex = "";
-  tikzTex =  "\\begin{tikzpicture}\n         \\newcommand*\\points"+timestamp+"{"+points+"}\n          \\newcommand*\\edges"+timestamp+"{"+edges+"}\n          \\newcommand*\\faces"+timestamp+"{"+tikzFaces+"}\n          \\newcommand*\\scale"+timestamp+"{0.02}\n          \\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+" {\n          \\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+timestamp+"*\\y) [circle,draw,fill=white,inner sep=1pt] {$\\w$};\n          }\n          \\foreach \\x/\\y/\\z/\\w in \\faces"+timestamp+" {\n    \\fill[black!\\w]\n    (\\x.center) -- (\\y.center) -- (\\z.center) -- cycle;\n         }\n       \\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+" {\n          \\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+timestamp+"*\\y) [circle,draw,fill=white,inner sep=1pt] {$\\w$};\n          }\n             \\foreach \\x/\\y in \\edges"+timestamp+" {\n          \\draw (\\x) -- (\\y);\n          }\n                       \\end{tikzpicture}\n      % \\points"+timestamp+" is point set in the form x-coord/y-coord/node ID/node label\n     % \\edges"+timestamp+" is edge set in the form Source ID/Target ID\n      % \\scale"+timestamp+" makes the picture able to be viewed on the page\n      % \\faces"+timestamp+" is a set in the form (node 1)/(node 2)/(node 3)/fill percent\n";  
+  tikzTex =  "\\begin{tikzpicture}\n         \\newcommand*\\points"+timestamp+
+    "{"+points+"}\n          \\newcommand*\\edges"+timestamp+"{"+edges+
+    "}\n          \\newcommand*\\faces"+timestamp+"{"+tikzFaces+
+    "}\n          \\newcommand*\\scale"+timestamp+"{0.02}\n          "+
+    "\\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+" {\n          "+
+    "\\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+timestamp+
+    "*\\y) [circle,draw,fill=white,inner sep=1pt] {$\\w$};\n          }\n"+
+        "\\foreach \\x/\\y/\\z/\\w in \\faces"+timestamp+
+    " {\n    \\fill[black!\\w]\n    (\\x.center) -- (\\y.center) -- "+
+    "(\\z.center) -- cycle;\n         }\n       \\foreach \\x/\\y/\\z/\\w"+
+    "in \\points"+timestamp+" {\n          \\node (\\z) at (\\scale"+
+    timestamp+"*\\x,-\\scale"+timestamp+"*\\y) [circle,draw,"+
+    "fill=white,inner sep=1pt] {$\\w$};\n          }\n             "+
+    "\\foreach \\x/\\y in \\edges"+timestamp+" {\n          \\draw (\\x)"+
+    "-- (\\y);\n          }\n                       \\end{tikzpicture}\n"+
+    "% \\points"+timestamp+" is point set in the form x-coord/y-coord/node"+
+    "ID/node label\n     % \\edges"+timestamp+" is edge set in the form "+
+    "Source ID/Target ID\n      % \\scale"+timestamp+" makes the picture"+
+    "able to be viewed on the page\n      % \\faces"+timestamp+
+    " is a set in the form (node 1)/(node 2)/(node 3)/fill percent\n";
     
   if(!tikzGenerated){
     var tikzDiv = document.createElement("div");
