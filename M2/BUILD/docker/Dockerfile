@@ -24,13 +24,13 @@ RUN apt-get install -y libopenblas-dev libomp-dev libtbb-dev \
 RUN apt-get install -y libatomic-ops-dev && apt-get clean
 
 # Libraries we can build (factory not available on ubuntu)
-RUN apt-get install -y libeigen3-dev fflas-ffpack libcdd-dev \
-    libgivaro-dev libglpk-dev libgmp3-dev libmpc-dev libmpfr-dev \
-    libntl-dev libflint-dev libfrobby-dev libgc-dev && apt-get clean
+RUN apt-get install -y libeigen3-dev fflas-ffpack \
+    libgivaro-dev libglpk-dev libgmp3-dev libmpfr-dev \
+    libntl-dev libfrobby-dev libgc-dev && apt-get clean # libflint-dev
 
 # Programs we can build
 # TODO: cohomcalg available soon. Polymake requires firefox???
-RUN apt-get install -y 4ti2 gfan normaliz coinor-csdp nauty lrslib && apt-get clean
+RUN apt-get install -y libcdd-dev 4ti2 gfan normaliz coinor-csdp nauty lrslib && apt-get clean
 
 # Optional packages
 #RUN apt-get install -y mlocate bash-completion emacs
