@@ -96,6 +96,7 @@ pthread-tmp.c : SCCFLAGS += -noline
 version.o : ../../include/M2/config.h distributed-packages.h
 distributed-packages.h: @srcdir@/../packages/?distributed-packages Makefile
 	echo '#define DISTRIBUTED_PACKAGES "'`cat $<`'"' >$@
+clean::; rm -f distributed-packages.h
 
 # these files depend on USE_MYSQL, which is in config.h:
 actors4.o actors2.o : ../../include/M2/config.h

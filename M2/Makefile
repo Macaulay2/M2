@@ -81,13 +81,13 @@ autoconf-msg :
 check-libtool:
 	@ type libtool >/dev/null || $(MAKE) -f Makefile libtool-absent
 	@ if `libtool --version >/dev/null 2>&1` ;										\
-	  then MAJOR=`libtool --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;					\
-	       MINOR=`libtool --version | sed -e '1s/.*\.\([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;					\
-	       BABY=`libtool --version | sed -e '1s/.*\..*\.\([1-9][0-9]*\)/\1/' -e '2,$$d'` ;					\
+	  then MAJOR=`libtool --version | sed -e '1s/[^.]* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;				\
+	       MINOR=`libtool --version | sed -e '1s/[^.]*\.\([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;				\
+	       BABY=` libtool --version | sed -e '1s/[^.]*\.[^.]*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'` ;				\
 	       if test "$$MAJOR" -gt "$(LIBTOOL_MAJOR)"										\
 		       -o \( "$$MAJOR" = "$(LIBTOOL_MAJOR)" -a "$$MINOR" -gt "$(LIBTOOL_MINOR)" \)				\
 		       -o \( $$MAJOR = $(LIBTOOL_MAJOR) -a $$MINOR = $(LIBTOOL_MINOR) -a $$BABY -ge $(LIBTOOL_BABY) \) ;	\
-	       then echo GNU libtool version okay ;										\
+	       then echo "GNU libtool version ($$MAJOR.$$MINOR.$$BABY) okay" ;							\
 	       else $(MAKE) -f Makefile libtool-old ;										\
 	       fi														\
 	  else $(MAKE) -f Makefile libtool-not-gnu ;										\

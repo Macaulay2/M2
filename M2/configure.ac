@@ -898,12 +898,19 @@ then BUILTLIBS="-lcdd $BUILTLIBS"
 else LIBS="-lcdd $LIBS"
 fi
 
-AC_LANG(C)
-AC_CHECK_HEADER(flint/flint.h,LIBS="-lflint -lgmp $LIBS",BUILD_flint=yes)
+dnl factory needs to know:
+AC_SUBST(BUILD_flint)
+dnl  We always build flint, until flint comes out with a release whose version number we can check for.
+dnl  (Now we use flint for factoring integers, and only a recent development version does that well.)
+BUILD_flint=yes
+dnl 
+if test $BUILD_flint = no
+then AC_LANG(C)
+     AC_CHECK_HEADER(flint/flint.h,LIBS="-lflint -lgmp $LIBS",BUILD_flint=yes)
+fi
 if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS"
 fi
-AC_SUBST(BUILD_flint)		dnl factory needs to know
 
 AC_MSG_CHECKING(whether the package 4ti2 is installed)
 if test "`type -t 4ti2-circuits`" = file
