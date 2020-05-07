@@ -8,6 +8,7 @@
 // SLP
 class SLProgram;
 
+// needs a finalizer???
 class M2SLProgram : public MutableEngineObject
 {
   std::unique_ptr<SLProgram> mSLProgram;
@@ -57,6 +58,16 @@ class SLProgram
 
 class Homotopy;
 
+// needs a finalizer???
+class M2Homotopy : public MutableEngineObject
+{
+  std::unique_ptr<Homotopy> mHomotopy;
+public:
+  M2Homotopy(Homotopy* pa) : mHomotopy(pa) {}
+
+  Homotopy& value() { return *mHomotopy; }
+};
+
 class TrivialHomotopyAlgorithm
 {
 };
@@ -95,6 +106,7 @@ struct HomotopyAlgorithm<M2::ARingRRR> {
 
 class SLEvaluator;
 
+// needs a finalizer???
 class M2SLEvaluator : public MutableEngineObject
 {
   std::unique_ptr<SLEvaluator> mSLEvaluator;

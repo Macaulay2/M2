@@ -710,14 +710,14 @@ gmp_ZZ to_gmp_ZZ(int a)  // helper fn!!!
   return result;
 }
 
-Homotopy /* or null */ *rawHomotopy(M2SLEvaluator *Hx,
+M2Homotopy /* or null */ *rawHomotopy(M2SLEvaluator *Hx,
                                     M2SLEvaluator *Hxt,
                                     M2SLEvaluator *HxH)
 {
-  return Hx->value().createHomotopy(&(Hxt->value()), &(HxH->value()));
+  return new M2Homotopy(Hx->value().createHomotopy(&(Hxt->value()), &(HxH->value())));
 }
 
-M2_bool rawHomotopyTrack(Homotopy *H,
+M2_bool rawHomotopyTrack(M2Homotopy *H,
                          const MutableMatrix *inputs,
                          MutableMatrix *outputs,
                          MutableMatrix *output_extras,
@@ -728,7 +728,7 @@ M2_bool rawHomotopyTrack(Homotopy *H,
                          gmp_RR infinity_threshold,
                          M2_bool checkPrecision)
 {
-  return H->track(inputs,
+  return H->value().track(inputs,
                   outputs,
                   output_extras,
                   init_dt,
@@ -739,13 +739,13 @@ M2_bool rawHomotopyTrack(Homotopy *H,
                   checkPrecision);
 }
 
-M2_string rawHomotopyToString(Homotopy *H)
+M2_string rawHomotopyToString(M2Homotopy *H)
 {
   buffer o;
-  H->text_out(o);
+  H->value().text_out(o);
   return o.to_string();
 }
-unsigned int rawHomotopyHash(Homotopy *) { return 0; }
+unsigned int rawHomotopyHash(M2Homotopy *) { return 0; }
 M2SLEvaluator /* or null */ *rawSLEvaluator(M2SLProgram *SLP,
                                           M2_arrayint constsPos,
                                           M2_arrayint varsPos,
