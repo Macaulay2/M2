@@ -88,11 +88,52 @@ export {
 	"multiplicitiesReorder"
 }
 
-gfanPath = gfanInterface#Options#Configuration#"path"
-if gfanPath == "" then gfanPath = prefixDirectory | currentLayout#"programs"
+tryGfanPath = gfanPath -> run(gfanPath | "gfan --help 2> /dev/null")
+
+-- we expect a trailing slash in the path, but the paths given in the
+-- PATH environment variable likely will not have one, so we add one
+-- if needed
+addSlash = gfanPath -> (
+	if last gfanPath != "/" then return gfanPath | "/"
+	else return gfanPath
+)
+
+checkGfanPath = gfanPath -> (
+	if gfanVerbose == true then
+		print("checking for gfan in " | gfanPath | "...");
+	if tryGfanPath(gfanPath) == 0 then (
+		if gfanVerbose == true then print("  found");
+		return true
+	) else (
+		if gfanVerbose == true then print("  not found");
+		return false
+	)
+)
+
+findGfanPath = () -> (
+	-- try user-configured path first
+	gfanPath := gfanInterface#Options#Configuration#"path";
+	if gfanPath != "" then (
+		gfanPath = addSlash(gfanPath);
+		if checkGfanPath(gfanPath) then return gfanPath;
+	);
+	-- now try M2-installed gfan
+	gfanPath = addSlash(prefixDirectory | currentLayout#"programs");
+	if checkGfanPath(gfanPath) then return gfanPath;
+	-- finally, try PATH
+	if getenv "PATH" == "" then error "could not find gfan";
+	paths := apply(separate(":", getenv "PATH"), addSlash);
+	gfanPath = scan(paths, gfanPath ->
+		if checkGfanPath(gfanPath) then break gfanPath
+	);
+	if class(gfanPath) === String then return gfanPath
+	else error "could not find gfan"
+)
 
 fig2devPath = gfanInterface#Options#Configuration#"fig2devpath"
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
+gfanPath = findGfanPath()
+
 gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
 gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
 --minmax switch disabled
