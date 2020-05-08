@@ -949,6 +949,7 @@ then AC_MSG_RESULT([yes, will build anyway])
      BUILD_gfan=yes
      dnl we'll also build cddlib until gfan can find its files in /usr/include instead of in /usr/include/cdd
      BUILD_cddlib=yes
+     BUILD_ALWAYS="$BUILD_ALWAYS gfan cddlib"
 else AC_MSG_RESULT([no, will build])
      BUILD_gfan=yes
 fi
