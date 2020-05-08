@@ -144,10 +144,10 @@ debug Core
 getRawHomotopy = method() 
 getRawHomotopy(GateHomotopy,Ring) := (GH,K) -> if GH#?K then GH#K else GH#K = --(GH#"EHx",GH#"EHxt",GH#"EHxH") / (e->rawSLEvaluatorK(e,K)) // rawHomotopy
     rawHomotopy(rawSLEvaluatorK(GH#"EHx",K),rawSLEvaluatorK(GH#"EHxt",K),rawSLEvaluatorK(GH#"EHxH",K)) 
-getRawHomotopy(SpecializedParameterHomotopy,Ring) := (H,K) -> if H#?K then H#K else (
+getRawHomotopy(SpecializedParameterHomotopy,Ring) := (H,K) -> if H#?K then H#K else H#K = (
     GH := H.ParameterHomotopy.GateHomotopy;
     paramsK := raw mutableMatrix promote(H.Parameters,K);
-    H#K = (GH#"EHx",GH#"EHxt",GH#"EHxH") / (e->rawSLEvaluatorSpecialize(rawSLEvaluatorK(e,K),paramsK)) // rawHomotopy 
+    (GH#"EHx",GH#"EHxt",GH#"EHxH") / (e->rawSLEvaluatorSpecialize(rawSLEvaluatorK(e,K),paramsK)) // rawHomotopy 
     )
 gateHomotopy = method(Options=>{Parameters=>null,Software=>null,Strategy=>compress})
 gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (

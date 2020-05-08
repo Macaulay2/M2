@@ -24,7 +24,7 @@ export RawFreeModuleOrNull := RawFreeModule or null;
 export RawMatrix := Pointer "const struct Matrix *";
 export RawMatrixOrNull := RawMatrix or null;
 -- NAG begin
-export RawHomotopy := Pointer "struct Homotopy *";
+export RawHomotopy := Pointer "struct M2Homotopy *";
 export RawHomotopyOrNull := RawHomotopy or null;
 export RawSLEvaluator := Pointer "struct M2SLEvaluator *";
 export RawSLEvaluatorOrNull := RawSLEvaluator or null;

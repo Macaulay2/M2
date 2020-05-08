@@ -1,12 +1,15 @@
 VPATH = @srcdir@
 HOMEPAGE = https://numpi.dm.unipi.it/software/mpsolve 
 VERSION = 3.1.8
-# URL = http://macaulay2.com/Downloads/OtherSourceCode
-URL = https://numpi.dm.unipi.it/_media/software/mpsolve
+URL = http://macaulay2.com/Downloads/OtherSourceCode
+# obtained from https://numpi.dm.unipi.it/_media/software/mpsolve
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-# TARFILE = mpsolve-$(VERSION).tar.gz
-# TARDIR = mpsolve-$(VERSION)
 LICENSEFILES = README
+
+# their use of libtool prevents this from working -- somehow "make install" rebuilds mpsolve during the installation, after we strip it
+# STRIPFILES = src/mpsolve/mpsolve
+
+INSTALLTARGET = install-strip
 CONFIGOPTIONS += --disable-shared\
                  --disable-examples\
                  --disable-ui\

@@ -928,7 +928,13 @@ fi
 
 AC_MSG_CHECKING(whether the package gfan is installed)
 if test "`type -t gfan`" = file
-then AC_MSG_RESULT(yes)
+then AC_MSG_RESULT([yes, will build anyway])
+     dnl currently the gfanInterface package doesn't know how to find gfan if we don't build it.
+     dnl see https://github.com/Macaulay2/M2/pull/1123
+     BUILD_gfan=yes
+     dnl we'll also build cddlib until gfan can find its files in /usr/include instead of in /usr/include/cdd
+     BUILD_cddlib=yes
+     BUILD_ALWAYS="$BUILD_ALWAYS gfan cddlib"
 else AC_MSG_RESULT([no, will build])
      BUILD_gfan=yes
 fi
@@ -1135,11 +1141,12 @@ fi
 
 # test for fflas_ffpack
 if test $BUILD_fflas_ffpack = no
-then AC_MSG_CHECKING(for fflas_ffpack library)
+then AC_MSG_CHECKING([for fflas_ffpack library, version at least 2])
      FFLAS_FFPACK_CXXFLAGS=`fflas-ffpack-config --cflags 2>&1`
      if test $? = 0 && test "`fflas-ffpack-config --decimal-version`" -gt 20000
      then AC_MSG_RESULT(found)
           M2_CXXFLAGS="$M2_CXXFLAGS $FFLAS_FFPACK_CXXFLAGS"
+	  LIBS="$LIBS `fflas-ffpack-config --libs`"
      else AC_MSG_RESULT(not found, will build)
           BUILD_fflas_ffpack=yes
      fi

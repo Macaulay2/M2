@@ -447,7 +447,7 @@ utest := opt -> (
      cmd := "ulimit " | opt | "; ";
      if chkrun("2>/dev/null >/dev/null "|cmd) == 0 then cmd else ""
      )
-ulimit := utest "-c unlimited" | utest "-t 700" | utest "-v 850000"| utest "-m 850000" | utest "-s 8192" | utest "-n 512"
+ulimit := utest "-c unlimited" | utest "-t 700" | utest "-m 850000" | utest "-s 8192" | utest "-n 512"
 
 M2statusRegexp := "^--status:"
 statusLines := file -> select(lines file, s -> match(M2statusRegexp,s))
