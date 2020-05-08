@@ -1,3 +1,7 @@
+# Time usage: <15min
+# Net usage:  ~256 + tarfiles/clones
+# Disk usage: ~1.25GB docker image + ~2G Macaulay2 build
+
 FROM archlinux:latest
 
 # manually run all alpm hooks that can't be run inside the fakechroot

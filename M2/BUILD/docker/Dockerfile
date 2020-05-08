@@ -39,13 +39,9 @@ RUN apt-get install -y libcdd-dev 4ti2 gfan normaliz coinor-csdp nauty lrslib &&
 RUN useradd -G sudo -g root -u 1000 -m macaulay
 USER 1000:1000
 
-# FIXME: This address might not always be the same
 ENV PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
 ENV LDFLAGS         -L/usr/lib/x86_64-linux-gnu
 ENV PATH            /home/macaulay/M2/M2/BUILD/build-docker:${PATH}
-ENV CC              /usr/lib/ccache/gcc
-ENV CXX             /usr/lib/ccache/g++
-ENV LD_LIBRARY_PATH /home/macaulay/M2/M2/BUILD/build-docker/usr-host/lib:${LD_LIBRARY_PATH}
 
 # Build the Docker image and Macaulay2-in-a-container
 # make build
