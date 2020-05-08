@@ -327,11 +327,11 @@ parameterTestIdeal(Ring) := o-> (R1) -> (
 
 --warning, this only works if R is equidimensional.  If Spec R has disjoint components of different dimensions
 --then this function will return false, even if R is Cohen-Macaulay.
-isCohenMacaulay = method( Options => { IsLocal => false } )
+isCohenMacaulay = method( Options => { AtOrigin => false } )
 
 isCohenMacaulay Ring := o -> R1 ->
 (
-    if o.IsLocal then isCM R1
+    if o.AtOrigin then isCM R1
     else
     (
         S1 := ambient R1;
@@ -366,7 +366,7 @@ isFRational = method(
     Options =>
     {
 	AssumeDomain => false,
-	IsLocal => false,
+	AtOrigin => false,
 	AssumeCM => false,
 	FrobeniusRootStrategy => Substitution
     }
@@ -377,13 +377,13 @@ isFRational Ring := o -> R1 ->
     flag := true;
     --first verify if it is CM
     if not o.AssumeCM then
-        if not isCohenMacaulay(R1, IsLocal => o.IsLocal) then flag = false;
+        if not isCohenMacaulay(R1, AtOrigin => o.AtOrigin) then flag = false;
     --next verify if it is Frational
     if flag then
     (
         --note we don't compute the test module if we know that the ring is not CM.
         MList := testModule(CurrentRing => R1, passOptions( o, { AssumeDomain, FrobeniusRootStrategy } ) );
-        if o.IsLocal then
+        if o.AtOrigin then
 	(
             paraTestIdeal := (MList#0):(MList#1);
             myMaxIdeal := sub(maxIdeal(ambient R1), R1);

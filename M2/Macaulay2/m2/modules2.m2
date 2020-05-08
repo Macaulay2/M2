@@ -399,7 +399,8 @@ minimalPresentation(Module) := prune(Module) := Module => opts -> (cacheValue (s
 
 addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	  -- we try to handle any module here, without any information about the ring
-	  f := mutableMatrix mingens gb presentation M;
+          g := mingens gb presentation M;
+	  f := mutableMatrix g;
 	  row := 0;
 	  piv := new MutableHashTable;
 	  pivColumns := new MutableHashTable;
@@ -411,7 +412,8 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 			      scan(numColumns f, j -> if j != col then columnAdd(f,j,-f_(row,j),col));
 			      break))));
 	  piv = values piv;
-	  f = matrix f;
+          f = matrix f;
+	  if isHomogeneous M then f = map(target g, source g, f);
 	  rows := first \ piv;
 	  cols := last \ piv;
 	  f = submatrix'(f,rows,cols);

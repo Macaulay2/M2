@@ -9,7 +9,7 @@ newPackage(
 		HomePage => "http://www.math.uni-bielefeld.de/~bcalmes/"},
                 {Name => "Viktor Petrov"}
 		},
-	Headline => "Create graphics",
+	Headline => "create graphics",
 	DebuggingMode => false)
 
 -- Put here the name of functions that should be visible to users

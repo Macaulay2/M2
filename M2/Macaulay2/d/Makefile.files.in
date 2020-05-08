@@ -15,8 +15,8 @@ M2_LASTCFILES += M2types.c scclib.c M2lib.c M2mem.c gdbm_interface.c
 M2_CFILES += main.c 
 M2_MADECFILES := startup.c
 M2_OBJECTS += $(M2_MADECFILES:.c=.o)
-M2_OBJECTS += ../regex/regex.o
 M2_CCFILES := gmp_init.cc
+M2_OBJECTS += ../regex/regex.o
 M2_OBJECTS += $(M2_CCFILES:.cc=.o)
 M2_HFILES := getpagesize.h types.h M2inits.h M2mem.h debug.h startup-header.h startup-trailer.h
 
@@ -121,7 +121,7 @@ actors5.o basic.o : \
 	@srcdir@/../e/newdelete.hpp \
 	@srcdir@/../d/M2mem.h \
 	@srcdir@/../d/debug.h \
-	../e-includes/statuscodes.h \
+	../../include/M2/statuscodes.h \
 	../../include/M2/config.h
 
 # now assemble the files into various categories:

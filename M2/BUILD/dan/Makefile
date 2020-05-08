@@ -33,6 +33,9 @@ MACOSX := $(shell if [ `uname -s` = Darwin ] ; then echo yes ; else echo no; fi)
 
 ifeq ($(MACOSX),yes)
 OPTLIBS += /usr/local/opt/readline
+# # we add these libraries so we can build them without dynamic libraries
+# BUILDLIBS += gdbm readline
+# # I had to also manually move homebrew's dynamic library /usr/local/lib/libomp.dylib out of the way to avoid linking with it.  Find a better way.
 endif
 
 DIRECTORY ?= $(shell hostname)$(DIRSUFF)
@@ -44,6 +47,7 @@ ifeq ($(DEBUG),yes)
 CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
 DIRECTORY := $(DIRECTORY).debug
 else
+CONFIGOPTIONS += --enable-strip
 ifeq ($(DEBIAN),yes)
 CONFIGOPTIONS += --enable-deb
 else
@@ -75,6 +79,10 @@ endif
 $(foreach O, $(OPTLIBS),			\
 	$(eval CPPFLAGS += -I$O/include)	\
 	$(eval LDFLAGS += -L$O/lib))
+
+# ifeq ($(shell uname -m),i686)
+# CONFIGOPTIONS += --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
+# endif
 
 include Makefile.include
 

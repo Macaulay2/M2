@@ -135,6 +135,7 @@ Visualize
 EquivariantGB
 ExampleSystems
 RationalMaps
+FastLinAlg
 SpectralSequences
 SectionRing
 OldPolyhedra
@@ -159,7 +160,7 @@ ReflexivePolytopesDB
 AbstractToricVarieties
 Licenses
 TestIdeals
-FThresholds
+FrobeniusThresholds
 Seminormalization
 AlgebraicSplines
 TriangularSets
@@ -184,5 +185,16 @@ ExteriorIdeals
 ToricInvariants
 SegreClasses
 SemidefiniteProgramming
-SOS
+SumsOfSquares
 MultiGradedRationalMap
+VirtualResolutions
+Quasidegrees
+DiffAlg
+DeterminantalRepresentations
+FGLM
+SpechtModule
+SpecialFanoFourfolds
+SchurComplexes
+SimplicialPosets
+SlackIdeals
+PositivityToricBundles

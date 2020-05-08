@@ -1,7 +1,0 @@
--- functions that one may forget exist...
-
-extraNAGtypes:
-
-segmentHomotopy
-segmentHomotopyProjective
-parametricSegmentHomotopy

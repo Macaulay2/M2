@@ -24,7 +24,8 @@ Gr = V.Graph
 W1 = apply(points V.PartialSols, p -> matrix {p0.Coordinates|p.Coordinates})
 
 
--- W1 is a partial witness collection for a curve C, obtained by slicing the solution variety with khyperplanes below
+-- W1 is a partial witness collection for a curve C, 
+-- ??? obtained by slicing the solution variety with khyperplanes below ???
 R = ring Gr.Family
 S = coefficientRing R
 svcodim=numgens S
@@ -40,7 +41,8 @@ L=L|{xSlice}
 
 mSysEqs = apply(flatten entries Gr.Family.PolyMap, i-> sub(i,T))
 mSys = polySystem(mSysEqs|L);
-(mSys.NumberOfVariables , mSys.NumberOfPolys)
+
+assert(mSys.NumberOfVariables == mSys.NumberOfPolys) -- checking this is a square system
 
 bigBase=point{p0.Coordinates|x0.Coordinates}
 subTable=apply(gens T,bigBase.Coordinates,(g,c)->g=>c)
@@ -51,11 +53,16 @@ p=first createSeedPair polySystem apply(take(seedEqs,{numgens R, numgens R+svcod
 setRandomSeed 0
 elapsedTime (V',npaths)=monodromySolve(mSys,p,{bigBase},"new tracking routine"=>false,Verbose=>true)
 
--- W2 is a partial witness collection of multidegree 11. together, W1 and W2 form a multihomogeneous witness set for C
+--???  W2 is a partial witness collection of multidegree 11. ???
+-- together, W1 and W2 form a multihomogeneous witness set for C
 W = last V'.Graph.Vertices
 xhyperplane0 = first specializeSystem(W.BasePoint, polySystem {xSlice});
 W2 = apply(points W.PartialSols, p -> matrix p);
 sols = apply(W1 | W2, s -> point s);
+
+end ----------------------------------------
+restart
+load "./example-traceCRN.m2"
 
 khyperplanes0'=specializeSystem(W.BasePoint,polySystem take(equations mSys,{numgens R, numgens R+svcodim-2}))
 
@@ -81,4 +88,24 @@ a small singular value may be regarded as evidence that (W0,W1) is a complete wi
 computeTrace = L -> sum apply(L, t -> matrix t)
 traces = apply({tracked, tracked1, tracked2}, x -> transpose computeTrace x)
 first SVD ((traces#0-traces#1) | (traces#0-traces#2)) 
+
+-** thoughts on what TO DO **
+Make stopping via linear trace test an option for 
+solveFamily
+
+(start with a standalone routine that runs the trace test given W1 and W2)   
+
+By the way, solveFamily should 
+(1) check if the system is indeed linear in parameters
+(2) implement a dynamic strategy (expanding the graph if nesessary)
+(3) fix documentation: 
+ Description
+       ===========
+
+       The output of "monodromySolve" is "technical." This method is intended for
+       users uninterested in the underlying "HomotopyGraph" and its satellite
+       data.
+       
+Also, see ??? for the comments above -- fix those.
+*-
 

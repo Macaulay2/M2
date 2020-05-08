@@ -9,7 +9,7 @@
 --     	    	    September 2009, October 2009, January 2010
 ---------------------------------------------------------------------------
 newPackage("OldPolyhedra",
-    Headline => "A package for computations with convex polyhedra",
+    Headline => "convex polyhedra",
     Version => "1.3",
     Date => "August 21, 2014",
     Certification => {

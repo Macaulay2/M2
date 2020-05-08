@@ -3,7 +3,6 @@
 use ctype;
 use tokens;
 use varstrin;
-use interrupts;
 
 export wordEOF := dummyWord; -- replaced later
 export wordEOC := dummyWord; -- replaced later

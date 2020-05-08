@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 newPackage("DGAlgebras",
-     Headline => "Data type for DG algebras",
+     Headline => "data type for DG algebras",
      Version => "1.0.1",
      Date => "January 11, 2017",
      Authors => {

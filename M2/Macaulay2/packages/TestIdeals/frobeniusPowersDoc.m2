@@ -6,36 +6,6 @@
 
 doc ///
     Key
-        fastExponentiation
-        (fastExponentiation, ZZ, RingElement)
-    Headline
-        compute a power of an element in a ring of positive characteristic quickly
-    Usage
-        fastExponentiation(n, f)
-    Inputs
-        n:ZZ
-            nonnegative
-     	f:RingElement
-            in positive characteristic
-    Outputs
-        :RingElement
-            the {\tt n^{th}} power of {\tt f}
-    Description
-        Text
-            In prime characteristic $p > 0$, raising a sum $a + b$ to the $p^{th}$ power is more quickly done by simply computing $a^p$ and $b^p$ and adding them.
-            The basic strategy behind {\tt fastExponentiation} is to break up the exponent into its base $p$ expansion, and then use the exponent rules. 
-	    For example, $(x + y)^{3p^2 + 5p + 2} = ((x + y)^3)^{p^2}((x + y)^5)^p(x + y)^2$.
-        Example
-            R = ZZ/5[x];
-            f = sum(10, i -> x^i);
-            time f^321;
-            time fastExponentiation(321, f);
-        Text
-            If an element in a ring of characteristic 0 is passed, {\tt fastExponentiation(n, f)} simply computes $f^{ n}$ in the usual way.
-///
-
-doc ///
-    Key
         frobenius
         [frobenius, FrobeniusRootStrategy]
     Headline
@@ -193,4 +163,22 @@ doc ///
     Description
         Text
             Valid values are {\tt Naive} and {\tt Safe}.
+///
+
+doc ///
+    Key
+        frobeniusPreimage        
+        ( frobeniusPreimage, ZZ, Ideal )
+    Headline
+        finds the ideal of elements mapped into a given ideal, under all $p^{-e}$-linear maps
+    Description
+        Text
+            Given an ideal $Q$ in a ring $R$, one frequently considers $I_e(Q)$.  This is the ideal of elements $x \in R$ such that $\phi(x^{1/p^e}) \in Q$ for all $\phi : R^{1/p^e} \to R$.  Sometimes this ideal is called the Frobenius pre-image.
+            In a regular ring, it agrees with the frobenius power $Q^{[p^e]}$.
+        Example
+            R = ZZ/7[x,y,z]/ideal(x*y-z^2);
+            Q = ideal(x, z);
+            frobeniusPreimage(1, Q)
+        Text
+            In the previous example $I_1(Q)$ agrees with $Q^{(p)}$, the $p$th symbolic power of $Q$.
 ///

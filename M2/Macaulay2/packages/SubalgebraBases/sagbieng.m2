@@ -4,11 +4,14 @@
 -- Inhomogeneous SAGBI bases ----
 ---------------------------------
 sagbiEngine = (Gens, maxnloops, printlevel) -> (
-     (R, G, S, RS, RStoS, Gmap, inGmap, J) := null;
-     (d, maxdeg, nloops, Pending) := null;
+     (R, G, S, RS, RStoS, Gmap, inGmap, J) := 8:null;
+     (d, maxdeg, nloops, Pending) := 4:null;
+     numnewsagbi := null;
      R = ring Gens;
      maxdeg = maxnloops;
      Pending = new MutableList from toList(maxdeg+1:{});
+     RtoRS := null;
+     RStoR := null;
      insertPending := (m) -> (
 	  -- append the entries of the one row matrix 'm' to Pending.
 	  i := 0;
@@ -28,14 +31,14 @@ sagbiEngine = (Gens, maxnloops, printlevel) -> (
 	  R := ring m;
 	  M := monoid R;
 	  G = G | m;
-	  nR = numgens R;
-	  nG = numgens source G;
-	  NewOrder = appendElimination(M.Options.MonomialOrder, nR, nG);
+	  nR := numgens R;
+	  nG := numgens source G;
+	  newOrder := appendElimination(M.Options.MonomialOrder, nR, nG);
 	  k := coefficientRing R;
 	  N := monoid [
 	       Variables => nR + nG,
 	       Degrees=>join(degrees source vars R, degrees source G),
-	       MonomialOrder => NewOrder];
+	       MonomialOrder => newOrder];
 	  RS = k N;
 	  RtoRS = map(RS,R,(vars RS)_{0..nR-1});
 	  RStoS = map(RS,RS, matrix {toList(nR:0_RS)} |
@@ -51,23 +54,23 @@ sagbiEngine = (Gens, maxnloops, printlevel) -> (
 	  -- degree part into the basis.
 	  e := lowestDegree();
 	  if e <= maxdeg then (
-	       trr = timing rowReduce(matrix{Pending#e}, e);
-	       timerr = trr#0;
+	       trr := timing rowReduce(matrix{Pending#e}, e);
+	       timerr := trr#0;
 	       if printlevel > 0 then
 	         << "    rowred  done in " << timerr << " seconds" << endl;
-	       m = trr#1;
+	       m := trr#1;
 	       Pending#e = {};
 	       insertPending m;
 	       e = lowestDegree();
 	       numnewsagbi = #Pending#e;
-	       timeapp = (timing appendToBasis matrix{Pending#e})#0;
+	       timeapp := (timing appendToBasis matrix{Pending#e})#0;
 	       if printlevel > 0 then 
 	         << "    append  done in " << timeapp << " seconds" << endl;
 	       Pending#e = {};
 	       );
 	  e);
      G = matrix(R, {{}});
-     Gensmaxdeg = (max degrees source Gens)_0;
+     Gensmaxdeg := (max degrees source Gens)_0;
      Gens = compress submatrixBelowDegree(Gens, maxdeg+1);
      insertPending Gens;
      Pending#0 = {};
@@ -81,27 +84,26 @@ sagbiEngine = (Gens, maxnloops, printlevel) -> (
 	  if printlevel > 0 then
 	    << "--- degree " << d << " ----" << endl;
      	  tgbJ := timing gb(J, DegreeLimit=>d);
-	  gbJ = tgbJ#1;
+	  gbJ := tgbJ#1;
 	  if printlevel > 0 then 
 	    << "    gb comp done in " << tgbJ#0 << " seconds" << endl;
 	  -- spairs = time mingens ideal selectInSubring(1, gens gbJ);
-	  spairs = submatrixByDegrees(selectInSubring(1, gens gbJ), d);
+	  spairs := submatrixByDegrees(selectInSubring(1, gens gbJ), d);
 	  if printlevel > 1 then
 	    << "spairs = " << transpose spairs << endl;
-	  tGmap = timing Gmap(spairs);
+	  tGmap := timing Gmap(spairs);
 	  spairs = tGmap#1;
 	  if printlevel > 0 then 
 	    << "    Gmap    done in " << tGmap#0 << " seconds" << endl;
 	  if Pending#d != {} then (
-	       newgens = RtoRS(matrix{Pending#d});
+	       newgens := RtoRS(matrix{Pending#d});
 	       spairs = spairs | newgens;
 	       Pending#d = {};);
-	  numspairs = numgens source spairs;
-	  tsub = timing map(RS,rawSubduction(raw spairs, raw Gmap, raw gbJ));
+	  tsub := timing map(RS,rawSubduction(rawMonoidNumberOfBlocks raw monoid R, raw spairs, raw Gmap, raw gbJ));
 	  if printlevel > 0 then 
 	    << "    subduct done in " << tsub#0 << " seconds" << endl;
-     	  tRS = timing compress RStoR(tsub#1);
-	  newguys = tRS#1;
+     	  tRS := timing compress RStoR(tsub#1);
+	  newguys := tRS#1;
 	  if printlevel > 0 then
 	    << "    RStoR   done in " << tRS#0 << " seconds" << endl;
 	  if numgens source newguys > 0 

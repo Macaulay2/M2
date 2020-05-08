@@ -815,7 +815,7 @@ synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
 
 synonymAndClass := X -> fixup (
      if X.?synonym then SPAN {indefinite X.synonym, " (of class ", TO X, ")"}
-     else SPAN {"an object of class ", TO X}
+     else SPAN {"an instance of the type ", TO X}
      )     
 
 justClass := X -> fixup SPAN {"an instance of class ", TO X}
@@ -829,7 +829,7 @@ ofClass ImmutableType := ofClass Type := X -> fixup (
      if parent X === Nothing then error "expected a class";
      if X === Nothing then TO "null"
      else if X.?synonym then SPAN {indefiniteArticle X.synonym, TO2 {X, X.synonym}}
-     else SPAN {"an object of class ", TO X}
+     else SPAN {"an instance of the type ", TO X}
      )
 
 rootPath = "";

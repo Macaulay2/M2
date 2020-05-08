@@ -228,24 +228,37 @@ int system_strnumcmp(M2_string s,M2_string t) {
 #error "M2/config.h not included"
 #endif
 
+int fix_status(int status) {
+     /* We can't handle status codes bigger than 127 if the shell intervenes. */
+     return
+       status == ERROR ? ERROR :
+       WIFSIGNALED(status) ?					  /* whether the process died due to a signal */
+       WTERMSIG(status) + (WCOREDUMP(status) ? 128 : 0) :	  /* signal number n, plus 128 if core was dumped */
+       WIFEXITED(status) ?					  /* whether the process exited */
+       (
+	    ((WEXITSTATUS(status) & 0x80) != 0) ?                 /* whether /bin/sh indicates a signal in a command */
+	    (WEXITSTATUS(status) & 0x7f) :			  /* the signal number */
+	    (WEXITSTATUS(status) << 8)				  /* status code times 256 */
+	    ) :
+       -2;						  	  /* still running (or stopped) */
+     }
+
 M2_arrayint system_waitNoHang(M2_arrayint pids)
 {
      int n = pids->len;
      int *pid = pids->array;
-     {
-	  int status[n], i;
-	  M2_arrayint z = (M2_arrayint)getmem_atomic(sizeofarray(z,n));
-	  z->len = n;
-	  for (i=0; i<n; i++) {
-	       #ifdef HAVE_WAIT4
-	       int ret = wait4(pid[i],&status[i],WNOHANG,NULL);
-	       z->array[i] = ret == ERROR ? -1 : WIFEXITED(status[i]) ? status[i] >> 8 : -2;
-	       #else
-	       z->array[i] = -1;
-	       #endif
-	  }
-	  return z;
+     M2_arrayint z = (M2_arrayint)getmem_atomic(sizeofarray(z,n));
+     z->len = n;
+     for (int i=0; i<n; i++) {
+	  #ifdef HAVE_WAITPID
+	      int status = 0, ret = waitpid(pid[i],&status,WNOHANG);
+	      z->array[i] =
+		ret == ERROR ? -1 : fix_status(status);
+	  #else
+	      z->array[i] = -1;                                            /* not implemented */
+	  #endif
      }
+     return z;
 }
 
 M2_arrayint system_select(M2_arrayint v) {
@@ -941,7 +954,7 @@ M2_string system_syserrmsg()
 
 int system_run(M2_string command){
      char *c = M2_tocharstar(command);
-     int r = system(c);
+     int r = fix_status(system(c));
      GC_FREE(c);
      return r;
      }

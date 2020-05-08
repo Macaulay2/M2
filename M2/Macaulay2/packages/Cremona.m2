@@ -4,7 +4,7 @@ newPackage(
 	Version => "4.3", 
         Date => "March 27, 2019",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
-    	Headline => "Some computations for rational maps between projective varieties",
+    	Headline => "rational maps between projective varieties",
         AuxiliaryFiles => true,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -286,7 +286,13 @@ toMap (Ideal,ZZ,ZZ) := o -> (I,v,jj) -> (
    if not isField coefficientRing ring I then error "the coefficient ring needs to be a field";
    if jj <= 0 then error "expected a positive integer";
    homComp := method();
-   homComp (ZZ,Ideal) := (d,I) -> ideal image basis(d,I);
+   -- homComp (ZZ,Ideal) := (d,I) -> ideal image basis(d,I);
+   homComp (ZZ,Ideal) := (d,I) -> (
+      vv := ideal vars ring I;
+      D := flatten degrees I;
+      if d < min D then return ideal ring I;
+      trim sum for i from min D to min(d,max D) list if # select(D,g -> g == i) > 0 then (vv^(d - i) * ideal select(I_*,g -> degree g == {i})) else continue
+   );
    Jac := method();
    Jac (Matrix,ZZ) := (F,d) -> (
       mm := flatten entries gens (ideal vars ring F)^d;
@@ -1570,9 +1576,10 @@ expressionVar (ZZ,List) := (Dim,DimAmbient) -> (
 
 expressionVar (Ideal,ZZ,ZZ) := (I,k,n) -> ( -- assume V(I) absolutely irreducible, linearly normal, etc...
   I = trim I;  d:=degree I; degs := flatten degrees I; 
-  try assert(isPolynomialRing ring I and isHomogeneous I and k == max(dim I -1,-1) and n == numgens ring I -1 and (k != 0 or d == 1)) else error "internal error encountered";
-  if k <= 0 or k >= n then return expressionVar(k,n);
-  dimSing := if (select(degs,ee->ee>1)=={2} and n<=9) or (max degs<=2 and n<=5) or (numgens I == 1 and d<=8-n and n<=5) then max(dim(minors(n-k,jacobian I)+I)-1,-1) else null; -- for efficiency, the singular locus is calculated only in special cases
+  try assert(isPolynomialRing ring I and isHomogeneous I and k == max(dim I -1,-1) and n == numgens ring I -1) else error "internal error encountered";
+  if k < 0 or k >= n then return expressionVar(k,n);
+  if k == 0 then (if d == 1 then return expressionVar(k,n) else return("0-dimensional subscheme of length "|toString(d)|" in PP^"|toString(n)));
+  dimSing := if (select(degs,ee->ee>1)=={2} and n<=9) or (max degs<=2 and n<=5) or (numgens I == 1 and d<=8-n and n<=5) then max(dim(minors(n-k,jacobian I,Strategy=>Cofactor)+I)-1,-1) else null; -- for efficiency, the singular locus is calculated only in special cases
   if dimSing === null then if (unique degs == {1}) then dimSing = -1;
   singStr:=if dimSing =!= null and dimSing =!= -1 then "singular " else "";
   cutOut:=""; if #degs>1 then cutOut = if # unique degs == 1 then " cut out by "|toString(#degs)|" hypersurfaces of degree "|toString(first degs) else " cut out by "|toString(#degs)|" hypersurfaces of degrees "|toString(toSequence degs);
@@ -1598,7 +1605,7 @@ expressionVar (Ideal,ZZ,ZZ) := (I,k,n) -> ( -- assume V(I) absolutely irreducibl
          if d == 1 then return("plane in PP^"|(toString n));
          if d == 2 then if dimSing === -1 then return("smooth quadric surface in PP^"|(toString n)) else return(singStr|"quadric surface in PP^"|(toString n));
          if d == 3 then if dimSing === -1 then return("smooth cubic surface in PP^"|(toString n)|cutOut) else return(singStr|"cubic surface in PP^"|(toString n)|cutOut);
-         if dimSing === -1 then return("smooth surface of degree "|toString(d)|" in PP^"|(toString n)|cutOut) else return(singStr|"surface of degree "|toString(d)|" in PP^"|(toString n)|cutOut);
+         if dimSing === -1 then return("smooth surface of degree "|toString(d)|" and sectional genus "|toString((genera I)_1)|" in PP^"|(toString n)|cutOut) else return(singStr|"surface of degree "|toString(d)|" and sectional genus "|toString((genera I)_1)|" in PP^"|(toString n)|cutOut);
   );
   if numgens I == 1 and dimSing =!= null then (
        if d == 1 then return("hyperplane in PP^"|(toString n));
@@ -1778,28 +1785,36 @@ getMultidegree (RingElement,ZZ,ZZ,ZZ) := (mdeg,n,m,r) -> getMultidegree(mdeg,{n}
 
 getMultidegree (RingElement,List) := (mdeg,n) -> first getMultidegree(mdeg,n,0,(sum n) - (first degree mdeg));
 
-point (Ideal) := (I) -> (  -- see also: code(randomKRationalPoint,Ideal)
+point (Ideal,Boolean) := (I,b) -> (  -- see also: code(randomKRationalPoint,Ideal)
    R := ring I;
    if not (isPolynomialRing R and isHomogeneous I) then error "expected a homogeneous ideal in a polynomial ring";
    if degrees R =!= toList((numgens R):{1}) then error "expected a standard graded ring";
    c := codim I; 
-   if c >= numgens R -1 then error "expected a positive dimensional scheme";
+   n := numgens R -1;
+   if c >= n then error "expected a positive dimensional scheme";
    local p;
-   if c == 0 then (p = randomLinearSubspace(R,0); if dim p == 1 then return p else error "failed to find rational points");
+   if c == 0 then (p = randomLinearSubspace(R,0); if (not b) or dim p == 1 then return p else error "failed to find rational points");
    if char R == 0 then error "expected a finite ground field";
+   local par;
    if c == 1 then (
-       L := {}; local par;
+       L := {}; 
        while #L == 0 do (par = parametrize randomLinearSubspace(R,1); L = select(decompose par^* I,q -> dim q == 1 and degree q == 1));
        p = par first L;
    ); 
-   if c >= 2 then (
+   if c > 1 and n - c >= 2 then (
+       par = parametrize randomLinearSubspace(R,c+1);
+       p = par point(par^* I,false);
+   );
+   if c > 1 and n - c < 2 then (
        f := (rationalMap gens randomLinearSubspace(R,c-2))|I;
        I' := kernel(map f,SubringLimit=>1);
-       p = trim lift(f^*(point I'),ambient source f);
+       p = trim lift(f^*(point(I',false)),ambient source f);
    );
-   if not (unique degrees p == {{1}} and dim p == 1 and degree p == 1 and isSubset(I,p)) then error "failed to find rational points";
+   if b then (if not (unique degrees p == {{1}} and dim p == 1 and degree p == 1 and isSubset(I,p)) then error "failed to find rational points");
    return p;
 );
+
+point (Ideal) := (I) -> point(I,true);
 
 point (PolynomialRing) := (R) -> point ideal R;
 
