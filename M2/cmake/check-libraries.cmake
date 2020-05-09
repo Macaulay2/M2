@@ -73,7 +73,7 @@ else()
   set(MP_LIBRARY GMP)
 endif()
 # MP will mask either GMP or MPIR
-foreach(var IN ITEMS FOUND INCLUDE_DIRS LIBRARIES VERSION_OK)
+foreach(var IN ITEMS FOUND INCLUDE_DIR INCLUDE_DIRS LIBRARIES VERSION_OK)
   set(MP_${var} ${${MP_LIBRARY}_${var}})
 endforeach()
 

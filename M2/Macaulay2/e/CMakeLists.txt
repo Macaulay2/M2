@@ -319,6 +319,7 @@ endif()
 foreach(LIB IN LISTS LIBRARIES_LIST)
   if(${LIB}_FOUND)
     target_link_libraries(M2-engine PUBLIC ${${LIB}_LIBRARIES})
+    target_include_directories(M2-engine PRIVATE ${${LIB}_INCLUDE_DIR})
   endif()
 endforeach()
 

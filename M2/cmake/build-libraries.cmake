@@ -289,6 +289,7 @@ ExternalProject_Add(build-mpfr
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+set(MPFR_INCLUDE_DIR ${MPFR_INCLUDE_DIRS}) # TODO: make this unnecessary in e/CMakeLists.txt
 _ADD_COMPONENT_DEPENDENCY(libraries mpfr mp MPFR_FOUND)
 
 
