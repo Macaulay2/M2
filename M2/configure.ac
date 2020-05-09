@@ -1871,16 +1871,18 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
     AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
-AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
 dnl Always check for the option that turns the warning on, because gcc doesn't complain
 dnl about invalid options that turn off warnings, if there are no warnings to be issued anyway.
 dnl It's a feature, not a bug!
+dnl On the other hand, clang does complain!
+
+AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
 AC_LANG(C)
 SAVE=$CFLAGS
 CFLAGS="$CFLAGS -Wmismatched-tags -Werror"
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
     CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
-    # we don't like seeing this warning, especially from the "clang" compiler
+    dnl we don't like seeing this warning, especially from the "clang" compiler
     AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
     AC_MSG_RESULT(no))
 CFLAGS=$SAVE
