@@ -9,8 +9,6 @@ add_library(M2-supervisor OBJECT
   tests.cpp # TODO: is this used?
   )
 
-target_link_libraries(M2-supervisor PUBLIC Threads::Threads)
-
 # TODO: reduce these dependencies
 target_include_directories(M2-supervisor PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -19,7 +17,10 @@ target_include_directories(M2-supervisor PUBLIC
   $<INSTALL_INTERFACE:include/Macaulay2>
   )
 
+# TODO: make this "if" unnecessary
 if(BDWGC_FOUND)
+  target_link_libraries(M2-supervisor PUBLIC
+    Threads::Threads ${BDWGC_LIBRARIES} ${CMAKE_DL_LIBS})
   target_include_directories(M2-supervisor PUBLIC
     $<BUILD_INTERFACE:${BDWGC_INCLUDE_DIR}>)
 endif()

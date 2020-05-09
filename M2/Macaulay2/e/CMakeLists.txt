@@ -326,7 +326,6 @@ endforeach()
 foreach(LIB IN LISTS PKGLIB_LIST)
   if(${LIB}_FOUND)
     target_link_libraries(M2-engine PUBLIC PkgConfig::${LIB})
-    target_link_libraries(M2-engine PUBLIC PkgConfig::${LIB})
   endif()
 endforeach()
 
@@ -433,7 +432,7 @@ if(BUILD_TESTING)
 
   ###############################################################################
   ## GivaroTest.cpp has a main function and does not use gtest
-  add_executable(M2-unit-tests-givaro unit-tests/GivaroTest.cpp) # FIXME: line 155
-  target_link_libraries(M2-unit-tests-givaro M2-engine)
-  add_test(NAME unit-tests:GivaroTest WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND M2-unit-tests-givaro)
+  #add_executable(M2-unit-tests-givaro unit-tests/GivaroTest.cpp) # FIXME: line 155
+  #target_link_libraries(M2-unit-tests-givaro M2-engine)
+  #add_test(NAME unit-tests:GivaroTest WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND M2-unit-tests-givaro)
 endif()

@@ -167,14 +167,14 @@ endforeach()
 
 foreach(LIB IN LISTS LIBRARIES_LIST)
   if(${LIB}_FOUND)
-    target_link_libraries(M2-interpreter PRIVATE ${${LIB}_LIBRARIES})
+    target_link_libraries(M2-interpreter PUBLIC ${${LIB}_LIBRARIES})
     target_include_directories(M2-interpreter PRIVATE ${${LIB}_INCLUDE_DIR})
   endif()
 endforeach()
 
 foreach(LIB IN LISTS PKGLIB_LIST)
   if(${LIB}_FOUND)
-    target_link_libraries(M2-interpreter PRIVATE PkgConfig::${LIB})
+    target_link_libraries(M2-interpreter PUBLIC PkgConfig::${LIB})
   endif()
 endforeach()
 
