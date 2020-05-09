@@ -17,23 +17,24 @@ RUN apt-get update && \
     apt-get update && apt-get install -y autoconf ccache cmake libtool ninja-build yasm && apt-get clean
 
 # Libraries we require
-RUN apt-get install -y libopenblas-dev libomp-dev libtbb-dev \
-    libxml2-dev libreadline-dev libgdbm-dev libboost-stacktrace-dev && apt-get clean
+RUN apt-get install -y libopenblas-dev libxml2-dev libreadline-dev libgdbm-dev libboost-stacktrace-dev && \
+    apt-get clean # libomp-dev libtbb-dev
 
 # This is a dependency that we should get rid of
 RUN apt-get install -y libatomic-ops-dev && apt-get clean
 
 # Libraries we can build (factory not available on ubuntu)
-RUN apt-get install -y libeigen3-dev fflas-ffpack \
-    libgivaro-dev libglpk-dev libgmp3-dev libmpfr-dev \
-    libntl-dev libfrobby-dev libgc-dev && apt-get clean # libflint-dev
+RUN apt-get install -y libeigen3-dev  libglpk-dev libgmp3-dev libmpfr-dev \
+      libntl-dev libfrobby-dev libgc-dev && apt-get clean
+
+#RUN apt-get install -y fflas-ffpack libgivaro-dev libgc-dev libflint-dev && apt-get clean
 
 # Programs we can build
 # TODO: cohomcalg available soon. Polymake requires firefox???
-RUN apt-get install -y libcdd-dev 4ti2 gfan normaliz coinor-csdp nauty lrslib && apt-get clean
+# RUN apt-get install -y libcdd-dev 4ti2 gfan normaliz coinor-csdp nauty lrslib && apt-get clean
 
 # Optional packages
-#RUN apt-get install -y mlocate bash-completion emacs
+RUN apt-get install -y mlocate bash-completion emacs
 
 # Add non-root user for building and running Macaulay2
 RUN useradd -G sudo -g root -u 1000 -m macaulay

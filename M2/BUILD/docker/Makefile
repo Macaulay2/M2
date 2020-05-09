@@ -11,8 +11,8 @@ set -xe
 
 ## Full build
 cmake -GNinja -S M2/M2 -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -DUSING_MPIR=OFF
-cmake --build $(BUILD_DIR) --target build-libraries build-programs
-cmake --build $(BUILD_DIR) --target install-packages
+cmake --build $(BUILD_DIR) --target build-libraries # build-programs
+cmake --build $(BUILD_DIR) --target M2-core # install-packages
 cmake --build $(BUILD_DIR) --target M2-emacs
 
 ## Setup Emacs
@@ -28,7 +28,7 @@ export M2_BUILD_SCRIPT
 
 always:; @cat README.md
 
-clean:;  rm -rf ../../../../$(BUILD_DIR)
+clean:;  rm -rf ../../../../$(BUILD_DIR) ./storage/.ccache
 
 all: build run
 
