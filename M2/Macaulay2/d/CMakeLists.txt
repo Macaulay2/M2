@@ -151,12 +151,12 @@ target_include_directories(M2-interpreter
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e> # need newdelete.hpp
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/c> # need scc-core.h
     $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/Macaulay2/d>
+    $<BUILD_INTERFACE:${READLINE_INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${LIBXML2_INCLUDE_DIR}>
     $<INSTALL_INTERFACE:include/Macaulay2>
   PRIVATE
-    ${LIBXML2_INCLUDE_DIR}
     ${SQLite3_INCLUDE_DIRS}
     ${Python3_INCLUDE_DIRS}
-    ${READLINE_INCLUDE_DIR}
   )
 
 foreach(LIB IN LISTS LIBRARY_LIST)
