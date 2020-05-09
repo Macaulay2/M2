@@ -165,6 +165,19 @@ foreach(LIB IN LISTS LIBRARY_LIST)
   endif()
 endforeach()
 
+foreach(LIB IN LISTS LIBRARIES_LIST)
+  if(${LIB}_FOUND)
+    target_link_libraries(M2-interpreter PRIVATE ${${LIB}_LIBRARIES})
+    target_include_directories(M2-interpreter PRIVATE ${${LIB}_INCLUDE_DIR})
+  endif()
+endforeach()
+
+foreach(LIB IN LISTS PKGLIB_LIST)
+  if(${LIB}_FOUND)
+    target_link_libraries(M2-interpreter PRIVATE PkgConfig::${LIB})
+  endif()
+endforeach()
+
 # Compiler warning flags
 target_compile_options(M2-interpreter PRIVATE
   -Wno-cast-qual # FIXME: caused by M2lib.c:551:43
