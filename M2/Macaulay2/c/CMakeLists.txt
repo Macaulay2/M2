@@ -38,6 +38,9 @@ target_include_directories(scc1 PUBLIC
 if(BDWGC_FOUND AND GDBM_FOUND)
   target_link_libraries(scc1 Threads::Threads
     ${BDWGC_LIBRARIES} ${GDBM_LIBRARY} ${CMAKE_DL_LIBS})
+  target_include_directories(scc1 PUBLIC
+    $<BUILD_INTERFACE:${BDWGC_INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${GDBM_INCLUDE_DIR}>)
 endif()
 
 target_compile_options(scc1 PRIVATE

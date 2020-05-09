@@ -588,6 +588,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries givaro mp GIVARO_FOUND)
 # NOTE: fflas_ffpack is just header files, so we don't build it
 # instead we add an extra autotune target for generating fflas-ffpack-thresholds.h
 # TODO: separate source and binary directories
+# TODO: combine with OpenMP when it is present
 ExternalProject_Add(build-fflas_ffpack
   GIT_REPOSITORY    https://github.com/Macaulay2/fflas-ffpack.git
   GIT_TAG           712cef0e
@@ -725,6 +726,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries mathic memtailor MATHIC_FOUND)
 
 
 # https://github.com/Macaulay2/mathicgb
+# TODO: use TBB when it is present
 # TODO: g++ warning: tbb.h contains deprecated functionality.
 # https://www.threadingbuildingblocks.org/docs/help/reference/appendices/deprecated_features.html
 ExternalProject_Add(build-mathicgb
@@ -892,6 +894,7 @@ _ADD_COMPONENT_DEPENDENCY(programs lrslib mp LRSLIB)
 
 
 # https://github.com/coin-or/Csdp
+# TODO: what to do when OpenMP is not found
 set(csdp_CC  "${CMAKE_C_COMPILER}  ${OpenMP_C_FLAGS}")
 set(csdp_CXX "${CMAKE_CXX_COMPILER} ${OpenMP_CXX_FLAGS}")
 set(csdp_LDFLAGS "${LDFLAGS} ${OpenMP_CXX_FLAGS}")
@@ -970,6 +973,7 @@ _ADD_COMPONENT_DEPENDENCY(programs nauty "" NAUTY)
 # https://www.normaliz.uni-osnabrueck.de/
 # normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
 # TODO: see special variables OPENMP and NORMFLAGS for macOS from libraries/normaliz/Makefile.in
+# TODO: what to do when OpenMP is not found
 set(normaliz_CXXFLAGS "${CPPFLAGS} -Wall -O3 -Wno-unknown-pragmas -std=c++11 -I .. -I . ")
 if(NOT APPLE)
   # TODO: due to problem with -fopenmp on mac, skip this for apple

@@ -9,7 +9,11 @@
 # These are the libraries linked with Macaulay2 in Macaulay2/{e,bin}/CMakeLists.txt
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
 set(LIBRARY_LIST   HISTORY READLINE GDBM)
-set(LIBRARIES_LIST LAPACK MP MPFR BDWGC NTL FLINT FACTORY FROBBY MATHICGB MATHIC MEMTAILOR MPSOLVE TBB)
+set(LIBRARIES_LIST LAPACK MP MPFR BDWGC NTL FLINT FACTORY FROBBY MATHICGB MATHIC MEMTAILOR MPSOLVE)
+
+if(WITH_TBB)
+  append(LIBRARIES_LIST TBB)
+endif()
 
 message(CHECK_START " Checking for existing libraries and programs")
 
@@ -25,17 +29,21 @@ find_program(ETAGS NAMES etags)
 ## Requirement	Debian package	RPM package	Homebrew package
 #   Threads	libc6-dev	glibc-headers	N/A
 #   LAPACK	libopenblas-dev	openblas-devel	N/A (Accelerate)
-#   OpenMP	libomp-dev	libomp-devel	libomp
-#   TBB		libtbb-dev	tbb-devel	tbb
 #   GDBM	libgdbm-dev	gdbm-devel	gdbm
 
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
-find_package(OpenMP	REQUIRED QUIET)
-find_package(TBB	REQUIRED QUIET) # See FindTBB.cmake
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
 # TODO: replace gdbm with capnproto.org or msgpack.org
 # Alternatively protobuf: https://developers.google.com/protocol-buffers/docs/proto#maps
+
+###############################################################################
+## Optional	Debian package	RPM package 	Homebrew package
+#   OpenMP	libomp-dev	libomp-devel	libomp
+#   TBB		libtbb-dev	tbb-devel	tbb
+
+find_package(OpenMP	QUIET)
+find_package(TBB	QUIET) # See FindTBB.cmake
 
 ###############################################################################
 ## Platform dependent requirements:

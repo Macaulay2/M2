@@ -35,7 +35,10 @@ endif()
 
 ## Guard against in-source builds
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-  message(FATAL_ERROR "In-source builds are not allowed. Delete CMakeFiles and CMakeCache.txt.")
+  message(FATAL_ERROR "In-source builds are not allowed. Delete CMakeFiles and CMakeCache.txt from the source directory.")
+endif()
+if(EXISTS ${CMAKE_SOURCE_DIR}/include/M2/config.h)
+  message(FATAL_ERROR "In-source build artifacts detected. Run `make clean distclean` from the source directory.")
 endif()
 
 ## Enable support for folders in IDEs

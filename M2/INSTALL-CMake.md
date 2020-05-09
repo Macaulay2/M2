@@ -18,8 +18,14 @@ There are various tools needed to compile Macaulay2 dependencies.
 - On Mac OS X, using Homebrew, install `autoconf automake bison libtool pkg-config yasm`.
 
 There are 7 libraries that must be found on the system.
-- On Debian/Ubuntu, install `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libomp-dev libtbb-dev libgdbm-dev libboost-stacktrace-dev libatomic-ops-dev`.
-- On Mac OS X, using Homebrew, install `eigen libxml2 readline libomp tbb gdbm boost libatomic_ops`.
+- On Debian/Ubuntu, install `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-stacktrace-dev libatomic-ops-dev`.
+- On Mac OS X, using Homebrew, install `eigen libxml2 readline gdbm boost libatomic_ops`.
+
+Finally, there are 2 optional libraries that help with building other requirements.
+- On Debian/Ubuntu, install `libomp-dev libtbb-dev`.
+- On Mac OS X, using Homebrew, install `libomp tbb`.
+
+**NOTE**: the source directory must not contain any build artifacts from an in-source build. If you have built Macaulay2 in-source before, clean the build artifacts first by running `make clean distclean` in the source directory.
 
 A quick build involves the following steps:
 ```
@@ -268,6 +274,20 @@ For specific packages, the following targets are also available:
 ## FAQ
 Below are a list of common issues and errors. If you run into a problem not listed below, please open a [new issue](https://github.com/Macaulay2/M2/issues/new) on GitHub.
 
+<details>
+<summary><code>M2/include/M2/config.h:75:0: warning: "HAVE_ALARM" redefined</code></summary>
+This error indicates that a previous in-source build has files left in the source tree. Run `make clean distclean` from the source directory or start from a clean clone of Macaulay2.
+</details>
+
+<details>
+<summary><code>engine.h:84:3: error: ‘gmp_arrayZZ’ does not name a type; did you mean ‘gmp_newZZ’?</code></summary>
+Same as above.
+</details>
+
+<details>
+<summary><code>gmp-util.h:96:31: error: ‘gmp_CCmutable’ was not declared in this scope</code></summary>
+Same as above.
+</details>
 
 <details>
 <summary><code>undefined reference to `GC_malloc`</code></summary>

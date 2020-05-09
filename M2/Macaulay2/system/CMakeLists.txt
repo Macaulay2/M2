@@ -16,9 +16,13 @@ target_include_directories(M2-supervisor PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/c> # needs scc-core.h
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e> # needs newdelete.hpp
-  $<BUILD_INTERFACE:${LIBXML2_INCLUDE_DIR}>
   $<INSTALL_INTERFACE:include/Macaulay2>
   )
+
+if(BDWGC_FOUND)
+  target_include_directories(M2-supervisor PUBLIC
+    $<BUILD_INTERFACE:${BDWGC_INCLUDE_DIR}>)
+endif()
 
 # Compiler warning flags
 target_compile_options(M2-supervisor PRIVATE -Wcast-qual -Wno-unused)
