@@ -55,7 +55,7 @@ ifeq ($(RPM),yes)
 CONFIGOPTIONS += --enable-rpm
 else
 ifeq ($(MACOSX),yes)
-CONFIGOPTIONS += --enable-dmg
+# CONFIGOPTIONS += --enable-dmg
 else
 CONFIGOPTIONS += --enable-tarfile
 endif
