@@ -144,6 +144,8 @@ endif()
 ## TODO: Do we still want these libraries?
 #   fplll	Lattice algorithms using floating-point arithmetic	(uses mpir and mpfr)
 #   linbox	Exact computational linear algebra	(needs fflas and givaro)
+#   arb		arbitrary-precision ball arithmetic
+#   mpfi	arbitrary-precision interval arithmetic
 ## Requested by Greg Smith for future use:
 #   cddplus	Double Description Method
 #   lrslib	vertex enumeration/convex hull problems

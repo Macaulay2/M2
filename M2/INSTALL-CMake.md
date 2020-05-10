@@ -289,6 +289,7 @@ Same as above.
 Same as above.
 </details>
 
+
 <details>
 <summary><code>undefined reference to `GC_malloc`</code></summary>
 This error occurs if the GC library path is not set correctly.
