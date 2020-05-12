@@ -115,8 +115,8 @@ init(x:RRmutable,prec:ulong):RRmutable := (
     );
 export newRRmutable(prec:ulong):RRmutable := init(GCmalloc(RRmutable),prec);
 
--- We use this for results from the gmp routines below, so we can save time by not allocating and free a new one every time.
--- One potential draw back is that the vector of limbs might grow very long.  It never gets freed, it just gets bigger and bigger.
+-- We use these for results from the gmp routines below, so we can save time by not allocating and freeing a new one every time.
+-- One potential drawback is that the vector of limbs might grow very long.  It never gets freed, it just gets bigger and bigger.
 threadLocal resZZ := newZZmutable();
 threadLocal resQQ := newQQmutable();
 threadLocal resRR := newRRmutable(ulong(53));
@@ -148,6 +148,8 @@ export moveToRR(z:RRmutable):RR := (
 set(x:ZZmutable, y:ZZ) ::= Ccode( ZZmutable, "(mpz_set(", x, ",",  y, "),",x,")" );
 
 export copy(y:ZZ):ZZ := (
+    -- this routine copies twice, so could be sped up
+    -- but it's probably not used much
     set(resZZ,y);
     moveToZZ(resZZ)
     );
@@ -177,7 +179,7 @@ export toInteger(i:int):ZZ := (
 export toInteger(i:ushort):ZZ := toInteger(int(i));
 
 export toInteger(i:ulong):ZZ := (
-     if i <= ulong(possmall)
+     if i >= ulong(negsmall) && i <= ulong(possmall)
      then smallints.(int(i)-negsmall)
      else (
 	 set(resZZ,i);
