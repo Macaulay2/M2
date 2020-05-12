@@ -1,6 +1,7 @@
 #! /bin/bash
 
-out=LOGS/LOG-`date +%Y%m%d.%H%M`
+mkdir -p overnight-logs
+out=overnight-logs/LOG-`date +%Y%m%d.%H%M`
 
 echo "-*- mode: compilation; default-directory: \"$HOME\" -*-"
 
