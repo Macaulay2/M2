@@ -108,8 +108,12 @@ getstr(str:charstarOrNull, base:int, x:ZZ) ::= Ccode(charstarOrNull, "mpz_get_st
 init(x:ZZmutable) ::= Ccode( ZZmutable, "(mpz_init(",  x, "),",x,")" );
 export newZZmutable():ZZmutable := init(GCmalloc(ZZmutable));
 
+export clear(x:ZZmutable) ::= Ccode( void, "(mpz_clear(",  x, "),",x,")" );
+
 init(x:QQmutable) ::= Ccode( QQmutable, "(mpq_init(",  x, "),",x,")" );
 export newQQmutable():QQmutable :=  init(GCmalloc(QQmutable));
+
+export clear(x:QQmutable) ::= Ccode( void, "(mpq_clear(",  x, "),",x,")" );
 
 init(x:RRmutable,prec:ulong):RRmutable := (
     if prec < minprec then prec = minprec else if prec > maxprec then prec = maxprec;
@@ -117,8 +121,13 @@ init(x:RRmutable,prec:ulong):RRmutable := (
     );
 export newRRmutable(prec:ulong):RRmutable := init(GCmalloc(RRmutable),prec);
 
+export clear(x:RRmutable) ::= Ccode( void, "(mpfr_clear(",  x, "),",x,")" );
+
+export clear(z:CCmutable):void := ( clear(z.re); clear(z.im); );
+
 -- We use these for results from the gmp routines below, so we can save time by not allocating and freeing a new one every time.
 -- One potential drawback is that the vector of limbs might grow very long.  It never gets freed, it just gets bigger and bigger.
+-- We could occcasionally "clear" them, say after using it 100 times.
 threadLocal resZZ := newZZmutable();
 threadLocal resQQ := newQQmutable();
 threadLocal resRR := newRRmutable(ulong(53));
@@ -133,6 +142,11 @@ export moveToZZ(z:ZZmutable):ZZ := (
 	  ");
      Ccode(ZZ,y));
 
+export moveToZZandclear(z:ZZmutable):ZZ := (
+     w := moveToZZ(z);
+     clear(z);
+     w);
+
 export moveToRR(z:RRmutable):RR := (
      y := GCmalloc(RRmutable);
      Ccode(void, "
@@ -144,9 +158,14 @@ export moveToRR(z:RRmutable):RR := (
   	  ",y,"->_mpfr_exp  = ",z,"->_mpfr_exp;
   	  ",y,"->_mpfr_d    = p;
 	  ");
-    Ccode(RR,z)
+    Ccode(RR,y)
     );
 
+export moveToRRandclear(z:RRmutable):RR := (
+     w := moveToRR(z);
+     clear(z);
+     w);
+     
 set(x:ZZmutable, y:ZZ) ::= Ccode( ZZmutable, "(mpz_set(", x, ",",  y, "),",x,")" );
 
 export copy(y:ZZ):ZZ := (
@@ -387,11 +406,12 @@ bigint := 2147483647.; -- 2^31-1
 -- rationals
 -----------------------------------------------------------------------------
 
-
+-- TO DO : this is inefficient -- we could just grab the numerator without copying its limbs
 export numerator(x:QQ):ZZ := (
      Ccode( void, "mpq_get_num(", resZZ, ",", x, ")" );
      moveToZZ(resZZ));
 
+-- TO DO : this is inefficient -- we could just grab the denominator without copying its limbs
 export denominator(x:QQ):ZZ := (
      Ccode( void, "mpq_get_den(", resZZ, ",", x, ")" );
      moveToZZ(resZZ));
@@ -417,12 +437,17 @@ export newQQCanonical(i:ZZ,j:ZZ):QQ := (
 
 moveToQQ(y:QQmutable):QQ := newQQCanonical(moveToZZ(numeratorRef(y)),moveToZZ(denominatorRef(y)));
 
+export moveToQQandclear(z:QQmutable):QQ := (
+     w := moveToQQ(z);
+     clear(z);
+     w);
+
 export newQQ(i:ZZ,j:ZZ):QQ := (
      x := newQQmutable();
      set(  numeratorRef(x),i);
      set(denominatorRef(x),j);
      Ccode(void, "mpq_canonicalize(",x,")");
-     moveToQQ(x)
+     moveToQQandclear(x)
      );
 
 -- integers and rationals
@@ -444,8 +469,9 @@ export (x:QQ) + (y:QQ) : QQ := (
 	       y,
 	  ")" 
      );
-     moveToQQ(z)
-     );
+     w := moveToQQ(z);
+     clear(z);
+     w);
 
 export - (y:QQ) : QQ := (
      z := newQQmutable();
@@ -455,8 +481,9 @@ export - (y:QQ) : QQ := (
 	       y,
 	  ")" 
      );
-     moveToQQ(z)
-     );
+     w := moveToQQ(z);
+     clear(z);
+     w);
 
 export abs(x:QQ) : QQ := if isNegative0(x) then -x else x;
 
@@ -468,8 +495,9 @@ export inv(y:QQ) : QQ := (			    -- reciprocal
 	       y,
 	  ")" 
      );
-     moveToQQ(z)
-     );
+     w := moveToQQ(z);
+     clear(z);
+     w);
 
 export (x:QQ) - (y:QQ) : QQ := (
      z := newQQmutable();
@@ -480,8 +508,9 @@ export (x:QQ) - (y:QQ) : QQ := (
 	       y,
 	  ")" 
      );
-     moveToQQ(z)
-     );
+     w := moveToQQ(z);
+     clear(z);
+     w);
 
 export (x:QQ) * (y:QQ) : QQ := (
      z := newQQmutable();
@@ -492,8 +521,9 @@ export (x:QQ) * (y:QQ) : QQ := (
 	       y,
 	  ")" 
      );
-     moveToQQ(z)
-     );
+     w := moveToQQ(z);
+     clear(z);
+     w);
 
 export (x:QQ) / (y:QQ) : QQ := (
      z := newQQmutable();
@@ -504,8 +534,9 @@ export (x:QQ) / (y:QQ) : QQ := (
 	       y,
 	  ")" 
      );
-     moveToQQ(z)
-     );
+     w := moveToQQ(z);
+     clear(z);
+     w);
 
 export (x:QQ) === (y:QQ) : bool := (
      Ccode( bool,
@@ -636,6 +667,11 @@ export exponent(x:CC):long := max(exponent(x.re),exponent(x.im));
 export newCCmutable(prec:ulong):CCmutable := CCmutable(newRRmutable(prec),newRRmutable(prec));
 export moveToCC(y:CCmutable):CC := CC(moveToRR(y.re), moveToRR(y.im));
 
+export moveToCCandclear(z:CCmutable):CC := (
+     w := moveToCC(z);
+     clear(z);
+     w);
+
 precision0(x:RR) ::= Ccode(ulong,"(unsigned long)mpfr_get_prec(", x, ")");
 export precision(x:RR):ulong := precision0(x);
 export precision(x:CC):ulong := precision0(x.re);
@@ -644,7 +680,7 @@ export toRR(x:RR,prec:ulong):RR := (
      if precision0(x) == prec then return x;
      z := newRRmutable(prec);
      Ccode( void, "mpfr_set(",  z, ",",  x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export toRR(s:string,prec:ulong):RR := (
      z := newRRmutable(prec);
@@ -655,48 +691,64 @@ export toRR(s:string,prec:ulong):RR := (
 	  "0,",
 	  "GMP_RNDN",
 	  ")" );
-     moveToRR(z));
+     w := moveToRR(z);
+     clear(z);
+     w);
 
 export toRR(x:QQ,prec:ulong):RR := (
      z := newRRmutable(prec);
      Ccode( void, "mpfr_set_q(",  z, ",",  x, ", GMP_RNDN)" );
-     moveToRR(z));
+     w := moveToRR(z);
+     clear(z);
+     w);
 
 export toRR(x:QQ):RR := toRR(x,defaultPrecision);
 
 export toRR(x:ZZ,prec:ulong):RR := (
      z := newRRmutable(prec);
      Ccode( void, "mpfr_set_z(",  z, ",",  x, ", GMP_RNDN)" );
-     moveToRR(z));
+     w := moveToRR(z);
+     clear(z);
+     w);
 
 export toRR(x:ZZ):RR := toRR(x,defaultPrecision);
 
 export toRR(n:int,prec:ulong):RR := (
      x := newRRmutable(prec);
      Ccode( void, "mpfr_set_si(",  x, ",(long)", n, ", GMP_RNDN)" );
-     moveToRR(x));
+     w := moveToRR(x);
+     clear(x);
+     w);
 
 export toRR(n:ulong,prec:ulong):RR := (
      x := newRRmutable(prec);
      Ccode( void, "mpfr_set_ui(",  x, ",(unsigned long)", n, ", GMP_RNDN)" );
-     moveToRR(x));
+     w := moveToRR(x);
+     clear(x);
+     w);
 
 export toRR(n:double,prec:ulong):RR := (
      x := newRRmutable(prec);
      Ccode( void, "mpfr_set_d(",  x, ",", n, ", GMP_RNDN)" );
-     moveToRR(x));
+     w := moveToRR(x);
+     clear(x);
+     w);
 
 export toRR(n:double):RR := toRR(n,defaultPrecision);	   
 
 export infinityRR(prec:ulong,sign:int):RR := (
      x := newRRmutable(prec);
      Ccode(void, "mpfr_set_inf(",x,",",sign,")");
-     moveToRR(x));
+     w := moveToRR(x);
+     clear(x);
+     w);
 export infinityRR(prec:ulong):RR := infinityRR(prec,1);
 export nanRR(prec:ulong):RR := (
      x := newRRmutable(prec);
      Ccode(void, "mpfr_set_nan(",x,")");
-     moveToRR(x));
+     w := moveToRR(x);
+     clear(x);
+     w);
 
 export toCC(x:RR,y:RR):CC := (
      if ( isnan0(x) || isnan0(y) ) then (prec := precision0(x); z := nanRR(prec); CC(z,z))
@@ -814,7 +866,9 @@ export (x:RR) + (y:RR) : RR := (
 	       y,
 	      ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     w := moveToRR(z);
+     clear(z);
+     w);
 
 export (x:RR) + (y:int) : RR := (
      z := newRRmutable(precision0(x));
@@ -825,7 +879,7 @@ export (x:RR) + (y:int) : RR := (
 	      y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
      
 export (x:RR) + (y:ZZ) : RR := (
      z := newRRmutable(precision0(x));
@@ -836,7 +890,7 @@ export (x:RR) + (y:ZZ) : RR := (
 	       y,
 	      ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
      
 export (x:RR) + (y:QQ) : RR := (
      z := newRRmutable(precision0(x));
@@ -847,7 +901,7 @@ export (x:RR) + (y:QQ) : RR := (
 	       y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export - (y:RR) : RR := (
      z := newRRmutable(precision0(y));
@@ -857,7 +911,7 @@ export - (y:RR) : RR := (
 	       y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (x:RR) - (y:RR) : RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
@@ -868,7 +922,7 @@ export (x:RR) - (y:RR) : RR := (
 	       y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (x:RR) - (y:int) : RR := (
      z := newRRmutable(precision0(x));
@@ -879,7 +933,7 @@ export (x:RR) - (y:int) : RR := (
 	      y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (y:int) - (x:RR) : RR := -(x-y);
      
@@ -892,7 +946,7 @@ export (x:RR) - (y:ZZ) : RR := (
 	       y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
      
 export (x:RR) - (y:QQ) : RR := (
      z := newRRmutable(precision0(x));
@@ -903,7 +957,7 @@ export (x:RR) - (y:QQ) : RR := (
 	       y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export abs(x:RR) : RR := if isNegative0(x) then -x else x;
 export (x:RR) * (y:RR) : RR := (
@@ -915,7 +969,7 @@ export (x:RR) * (y:RR) : RR := (
 	       y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (x:RR) * (y:ZZ) : RR := (
      z := newRRmutable(precision0(x));
@@ -926,7 +980,7 @@ export (x:RR) * (y:ZZ) : RR := (
 	       y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (y:ZZ) * (x:RR) : RR := (
      z := newRRmutable(precision0(x));
@@ -937,7 +991,7 @@ export (y:ZZ) * (x:RR) : RR := (
 	       y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (x:RR) * (y:int) : RR := (
      z := newRRmutable(precision0(x));
@@ -948,7 +1002,7 @@ export (x:RR) * (y:int) : RR := (
 	      y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (y:int) * (x:RR) : RR := (
      z := newRRmutable(precision0(x));
@@ -959,7 +1013,7 @@ export (y:int) * (x:RR) : RR := (
 	      y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
      
 export (x:RR) * (y:QQ) : RR := (
      z := newRRmutable(precision0(x));
@@ -970,7 +1024,7 @@ export (x:RR) * (y:QQ) : RR := (
 	       y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (x:RR) / (y:RR) : RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
@@ -981,7 +1035,7 @@ export (x:RR) / (y:RR) : RR := (
 	       y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (x:RR) / (y:long) : RR := (
      z := newRRmutable(precision0(x));
@@ -992,7 +1046,7 @@ export (x:RR) / (y:long) : RR := (
 	      y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (x:RR) / (y:int) : RR := x / long(y);
      
@@ -1005,7 +1059,7 @@ export (x:RR) / (y:ZZ) : RR := (
 	       y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
      
 export (x:RR) / (y:QQ) : RR := (
      z := newRRmutable(precision0(x));
@@ -1016,48 +1070,50 @@ export (x:RR) / (y:QQ) : RR := (
 	       y,
 	  ", GMP_RNDN)" 
      );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export sqrt(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_sqrt(",  z, ",",  x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (x:RR) ^ (n:long) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_pow_si(",  z, ",",  x, ",", n, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (x:RR) ^ (n:ulong) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_pow_ui(",  z, ",",  x, ",", n, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export pow10(n:ulong,prec:ulong):RR := (
      z := newRRmutable(prec);
      Ccode( void, "mpfr_ui_pow_ui(",  z, ",", ulong(10), ",", n, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
+
 export pow10(n:long,prec:ulong):RR := (
      ng := false;
      if n < long(0)
      then (pow10(ulong(-n),prec))^long(-1)
      else pow10(ulong(n),prec));
+
 export pow10(n:int,prec:ulong):RR := pow10(long(n),prec);
 
 export (n:ulong) ^ (x:RR) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_ui_pow(",  z, ",", n, ",",  x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (x:RR) ^ (y:ZZ) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_pow_z(",  z, ",",  x, ",", y, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export (x:RR) ^ (y:RR) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_pow(",  z, ",",  x, ",", y, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 export floor(x:RR) : ZZ := (
      if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
@@ -1078,7 +1134,8 @@ export (x:RR) << (n:long) : RR := (
      if n == long(0) then return x;
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_mul_2si(", z, ",", x, ",", n, ",GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
+
 export (x:RR) >> (n:long) : RR := x << -n;
 export (x:RR) << (n:int) : RR := x << long(n);
 export (x:RR) >> (n:int) : RR := x << long(-n);
@@ -1222,29 +1279,29 @@ export compare(x:QQ,y:CC):int := (
 export abs(x:CC):RR := (
      z := newRRmutable(precision(x));
      Ccode( void, "mpfr_hypot(", z, ",", x.re, ",", x.im, ",GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 header "#include <complex.h> ";
 
 export sqrt(x:CC):CC := (
      z := newCCmutable(precision(x));
      Ccode( void, "mpfc_sqrt(", z, ",", x, ")" );	    -- see ../e/complex.c
-     moveToCC(z));
+     moveToCCandclear(z));
 
 -- real transcendental functions
 
 export pi(prec:ulong):RR := (
      z := newRRmutable(prec);
      Ccode( void, "mpfr_const_pi(",  z, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export exp(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_exp(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export log(x:RR):RR := (				    -- works only if x>0
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_log(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export log(b:RR,x:RR):RR := (				    -- works only if x>0 and b>0
      if precision0(b) < precision0(x) then x = toRR(x,precision0(b))
      else if precision0(b) > precision0(x) then b = toRR(b,precision0(x));
@@ -1252,136 +1309,136 @@ export log(b:RR,x:RR):RR := (				    -- works only if x>0 and b>0
 export sin(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_sin(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export cos(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_cos(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export tan(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_tan(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export asin(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_asin(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export acos(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_acos(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export atan(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_atan(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export atan2(y:RR,x:RR):RR := (
      -- if isZero0(x) && isZero0(y) && isfinite0(x) && isfinite0(y) then return nanRR(min(precision0(x),precision0(y)));
      z := newRRmutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_atan2(", z, ",", y, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export agm(x:RR,y:RR):RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_agm(", z, ",", x, ",", y, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export sinh(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_sinh(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export cosh(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_cosh(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export tanh(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_tanh(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export sec(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_sec(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export csc(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_csc(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export cot(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_cot(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export sech(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_sech(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export csch(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_csch(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export coth(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_coth(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export factorial(x:ulong):ZZ := (
      Ccode( void, "mpz_fac_ui(", resZZ, ",", x, ")" );
      moveToZZ(resZZ));
 export log1p(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_log1p(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export expm1(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_expm1(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export Gamma(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_gamma(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export factorial(x:RR):RR := Gamma(x+1);
 export eint(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_eint(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 --export lngamma(x:RR):RR := (
 --     z := newRRmutable(precision0(x));
 --     Ccode( void, "mpfr_lngamma(", z, ",", x, ", GMP_RNDN)" );
---     moveToRR(z));
+--     moveToRRandclear(z));
 export zeta(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_zeta(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export zeta(x:ulong,prec:ulong):RR := (
      z := newRRmutable(prec);
      Ccode( void, "mpfr_zeta_ui(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export erf(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_erf(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export erfc(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_erfc(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export j0(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_j0(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export j1(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_j1(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export jn(n:long,x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_jn(", z, ",",n,",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export y0(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_y0(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export y1(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_y1(", z, ",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 export yn(n:long,x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_yn(", z, ",",n,",", x, ", GMP_RNDN)" );
-     moveToRR(z));
+     moveToRRandclear(z));
 
 
 
