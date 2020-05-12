@@ -785,7 +785,7 @@ setupfun("Gamma",Gamma);
 export lgamma(x:RR):Expr := (
      z := newRRmutable(precision(x));
      i := 0;
-     Ccode( void, "mpfr_lgamma((mpfr_ptr)", z, ",&",i,",(mpfr_ptr)", x, ", GMP_RNDN)" );
+     Ccode( void, "mpfr_lgamma((mpfr_ptr)", z, ",&",i,",(mpfr_srcptr)", x, ", GMP_RNDN)" );
      Expr(Sequence(toExpr(moveToRR(z)),toExpr(i))));
 lgamma(e:Expr):Expr := (
      when e

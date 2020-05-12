@@ -1,5 +1,10 @@
 # @configure_input@
 
+# user variables
+
+MORE_SCCFLAGS :=
+SCCFLAGS += $(MORE_SCCFLAGS)
+
 # get rid of some unused implicit rules to make debugging simpler
 %:%,v
 %:RCS/%,v
@@ -99,15 +104,18 @@ endif
 .PHONY : clean all check tags
 
 ifeq "@HAVE_WPARENTHESES_EQUALITY@" "yes"
-DCFLAGS += -Wno-parentheses-equality
+DCFLAGS   += -Wno-parentheses-equality
+DCXXFLAGS += -Wno-parentheses-equality
 endif
 
-DCFLAGS += -Wno-uninitialized -Wno-cast-qual
-M2_CFLAGS += -Wno-uninitialized -Wno-cast-qual
+CFLAGS    += -Werror
+CXXFLAGS  += -Werror
+DCFLAGS   += -Wno-uninitialized -Wno-unused-but-set-variable
+DCXXFLAGS += -Wno-uninitialized -Wno-unused-but-set-variable
+M2_CFLAGS += -Wno-uninitialized
+
 ifeq "@__INTEL_COMPILER@" "no"
-DCFLAGS += -Wno-unused
 CFLAGS += -Wno-unused
-M2_CFLAGS += -Wno-unused
 endif
 
 ifeq "@__INTEL_COMPILER@" "yes"
@@ -152,6 +160,9 @@ CXXFLAGS += -Wreturn-type
 
 CFLAGS   += -Wfatal-errors
 CXXFLAGS += -Wfatal-errors
+
+version.o : CXXFLAGS += -Wno-unused-local-typedefs -Wno-unused-function
+engine.o  : CXXFLAGS += -Wno-unused-function
 
 # the following is included since g++-8 and gcc-8 give many warnings arising from "pragma omp"
 # and apparently it can't be silenced in source code.

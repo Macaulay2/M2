@@ -531,7 +531,11 @@ int register_fun(int *count, char *filename, int lineno, char *funname) {
 extern void clean_up();
 extern char *GC_stackbottom;
 extern void arginits(int, const char **);
-extern bool gotArg(const char *arg, char ** argv);
+
+static bool gotArg(const char *arg, char * const * argv) {
+  for (; *argv; argv++) if (0 == strcmp(arg,*argv)) return TRUE;
+  return FALSE;
+}
 
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
@@ -586,9 +590,9 @@ void* interpFunc(void* vargs2)
      setInterpThread();
      reverse_run(thread_prepare_list);// -- re-initialize any thread local variables
 
-     M2_envp = M2_tostrings(envc,(char **)saveenvp);
-     M2_argv = M2_tostrings(argc,(char **)saveargv);
-     M2_args = M2_tostrings(argc == 0 ? 0 : argc - 1, (char **)saveargv + 1);
+     M2_envp = M2_tostrings(envc,saveenvp);
+     M2_argv = M2_tostrings(argc,saveargv);
+     M2_args = M2_tostrings(argc == 0 ? 0 : argc - 1, saveargv + 1);
      interp_setupargv();
      #ifdef HAVE_SIGLONGJMP
       sigsetjmp(abort_jump,TRUE);
@@ -768,7 +772,7 @@ char * const * argv;
      vargs->envp= (char const * const *)saveenvp;
      vargs->envc= envc;
 
-     if (gotArg("--no-threads", (const char **) saveargv)) {
+     if (gotArg("--no-threads", saveargv)) {
 	  interpFunc(vargs);
 	  }
      else {

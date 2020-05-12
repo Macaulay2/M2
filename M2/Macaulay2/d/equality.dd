@@ -207,9 +207,9 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is RawPathTrackerCell do False
      is RawPointArrayCell do False
      -- NAG end
-     is x:RawComputationCell do (
+     is RawComputationCell do (
 	  when rhs
-	  is y:RawComputationCell do (
+	  is RawComputationCell do (
 	       False
 	       -- toExpr(Ccode(bool, "IM2_GB_is_equal(",x,",",y,")"))
 	       )
@@ -227,8 +227,8 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is pythonObjectCell do False
      is xmlNodeCell do False				    -- unimplemented
      is xmlAttrCell do False				    -- unimplemented
-     is x:TaskCell do False
-     is x:fileOutputSyncState do False
+     is TaskCell do False
+     is fileOutputSyncState do False
      );
 
 -- Local Variables:

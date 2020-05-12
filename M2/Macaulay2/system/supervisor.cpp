@@ -145,6 +145,8 @@ extern "C" {
   {
     return task->waitOn();
   }
+  void** TS_Get_LocalArray() {  return (void**)pthread_getspecific(*(pthread_key_t*)threadSupervisor); }
+  void** TS_Get_Local(int refno) { return &TS_Get_LocalArray()[refno]; }
   void TS_Add_ThreadLocal(int* refno, const char* name)
   {
     if(NULL == threadSupervisor)
