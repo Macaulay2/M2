@@ -1,3 +1,17 @@
+-- MES notes 26 July 2019, flight back from IMA 2019 M2/Sage workshop
+-- Overall structure of the algorithm.
+
+-- idea is that we want to use some heuristics to split the ideal I
+-- into a list of ideals such that: WRITE DOWN THE INVARIANT HERE
+-- (The plan is that radical(I) = intersection of all ideals collected so far.).
+-- We first make a simplification:
+-- I is an ideal in a (flattened) polynomial ring.
+--   Perhaps the invariant data should contain the list of computed annotated ideals, AND a
+--   way to get back to the ring of I.
+-- DESIRE: if the computation is interrupted, partial results can be viewed, and the computation 
+--   can be restarted.
+
+
 newPackage(
         "MinimalPrimes",
         Headline => "minimal primes of an ideal",
@@ -102,15 +116,17 @@ minimalPrimesOptions = {
         "CheckPrimeOnly" => false
         }
 
-minimalPrimes Ideal := decompose Ideal := minimalPrimesOptions >> opts -> (cacheValue symbol minimalPrimes) (
+minimalPrimes Ideal := 
+decompose Ideal := minimalPrimesOptions >> opts -> (cacheValue symbol minimalPrimes) (
      (I) -> (
-         if opts.Strategy === Legacy then legacyMinimalPrimes I
+         if opts.Strategy === "Legacy" then legacyMinimalPrimes I
          else 
              minprimes(I, opts, Verbosity=>0)
          )
     )
 
-minimalPrimes MonomialIdeal := decompose MonomialIdeal := {} >> opts -> (cacheValue symbol minimalPrimes) (
+minimalPrimes MonomialIdeal := 
+decompose MonomialIdeal := {} >> opts -> (cacheValue symbol minimalPrimes) (
      (I) -> (
 	  minI := dual radical I;
           if minI == 1 then {monomialIdeal(0_(ring I))}
@@ -157,10 +173,9 @@ if USEMGB then (
               saturate(Jsat, f);
           );
       Jsat)
-      
 
--- TODO: this function should be called from minimalPrimes/decompose
---   under an option Strategy=>Legacy.
+-- This function is called from minimalPrimes/decompose
+--   under an option Strategy=>"Legacy".
 --   'minimalPrimes' is responsible for stashing the value under the 
 --   cache value 'minimalPrimes'.
 legacyMinimalPrimes = (I) -> (
@@ -1315,7 +1330,7 @@ radFcn = (I) -> (
 
 radicalContainment = method()
 -- Returns true if g is in the radical of I.
--- Assumption: I is in a monomial order for which you are happy to compute GB's.x
+-- Assumption: I is in a monomial order for which you are happy to compute GB's.
 radicalContainment(RingElement, Ideal) := (g,I) -> (radFcn I) g
 
 -- Returns the first index i such that I_i is not in the radical of J,
@@ -1410,11 +1425,32 @@ factors RingElement := (F) -> (
 makeFiberRings = method()
 makeFiberRings List := basevars -> if #basevars == 0 then error "Expected at least one variable in the base" else makeFiberRings(basevars,ring (basevars#0))
 makeFiberRings(List,Ring) := (basevars,R) -> (
-   -- This function takes a (possibly empty) list of variables basevars as input
-   -- and returns a pair of matrices (mons, cs) where mons are the monomials in the ideal
-   -- of lead terms of a gb of I, and cs are the coefficients, but with respect to
-   -- a product order kk[fiberVars][basevars].  See tests for behavior
-   -- If basevars does happen to be empty, then the original ring with Lex order is returned.
+    -- basevars: a list, possibly empty, of variables in the ring R.
+    -- R: a flattened polynomial ring.
+    -- result: (S, SF):
+    --   S = R, but with a new monomial order.  S = kk[fibervars, basevars, Lex in fiber vars]
+    --   SF = frac(kk[basevars])[fibervars, MonomialOrder=>Lex]
+    -- warning: if R is already in Lex order, a new ring is currently created.  This behavior may change.
+    -- consequences:
+    --   In the cache of S:
+    --     StoSF: S --> SF.
+    --     SFtoS: SF --> S
+    --     StoR: S --> R
+    --     RtoS: R --> S
+    --   Additionally:
+    --     numerator(f in SF) gives element in S.
+    --     denominator(f in SF) gives an element in S, although it will be in kk[basevars].
+    --     factors(f in a ring)
+    --   In the (mutable hash table of) SF:
+    --     toAmbientField: SF -> frac S
+    --     fromAmbientField(f in frac S) = (numerator f, which is in S), but mapped into SF.
+    --
+    -- Really, these are the rings we want?
+    -- S = kk[fibervars, basevars]
+    -- SF = kk(basevars)[fibervars]
+    -- frac S
+    -- A = kk[basevars] -- obtained via 'ambient coefficientRing SF'
+    -- KA = frac(kk(basevars)) -- obtained via 'coefficientRing SF'
    local S;
    if #basevars == 0 then (
         -- in this case, we are not inverting any variables.  So, S = SF, and S just has the lex
@@ -1447,6 +1483,24 @@ makeFiberRings(List,Ring) := (basevars,R) -> (
       (S, SF)
    )
 )
+
+TEST ///
+ -- test of makeFiberRings
+-* 
+  restart
+  debug needsPackage "MinimalPrimes"
+*-
+  R = QQ[x,r,v,u,b, MonomialOrder=>{Lex=>5}]
+  I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
+  (S, SF) = makeFiberRings({v,u}, R)
+  describe S
+  describe SF
+
+  use R
+  G = resultant(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b, b)
+  H = resultant(G, x^2+(b-2)*x*r+r^2+b^2-4*b, x)
+  factor H
+///
 
 minimalizeOverFrac = method()
 minimalizeOverFrac(Ideal, Ring) := (I, SF) -> (
@@ -1611,26 +1665,7 @@ doc ///
      minprimes
 ///
 
-doc ///
-  Key
-    Verbosity
-  Headline
-    optional argument describing how verbose the output should be
-  Description
-   Text
-     Specifying the optional argument {\tt Verbosity => n}, where $n$ is an integer
-     tells the routine how much output should be given.  A value of 0 means be silent.
-     The larger the value $n$, the more output one might see.
-///
-
-
 end--
-
-restart
-uninstallAllPackages()
-installPackage "MinimalPrimes"
-installPackage "IntegralClosure"
-loadPackage "MinimalPrimes"
 
 doc ///
 Key

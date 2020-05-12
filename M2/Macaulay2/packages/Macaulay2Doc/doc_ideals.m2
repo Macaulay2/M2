@@ -67,7 +67,7 @@ document {
 	  },
      "Primary decomposition and components of an ideal",
      UL {
-	  TO minimalPrimes,
+	  TO "MinimalPrimes::minimalPrimes",
 	  TO radical,
 	  TO associatedPrimes,
 	  TO "PrimaryDecomposition::primaryDecomposition",
