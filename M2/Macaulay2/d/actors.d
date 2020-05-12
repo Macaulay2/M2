@@ -3,8 +3,8 @@
 use evaluate;
 use struct;
 
-export plus0():Expr := Expr(ZZcell(toInteger(0)));
-export times0():Expr := Expr(ZZcell(toInteger(1)));
+export plus0():Expr := zeroE;
+export times0():Expr := oneE;
 export plus1(e:Expr) : Expr := e;
 times1 := plus1;
 
@@ -216,8 +216,6 @@ differencefun(e:Expr):Expr := (
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 setupfun("difference",differencefun);
-one := toInteger(1);
-minusone := toInteger(-1);
 
 export (lhs:Expr) * (rhs:Expr) : Expr := (
      when lhs
@@ -546,7 +544,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 		    then oneE
 		    else minusoneE)
 	       else if isZero(x.v) then buildErrorPacket("division by zero")
-	       else toExpr(newQQCanonical(toInteger(1),x.v^-y.v)))
+	       else toExpr(newQQCanonical(oneZZ,x.v^-y.v)))
 	  is y:QQcell do (
 	       d := denominator(y.v);
 	       if d === 1 then toExpr(x.v^numerator(y.v))

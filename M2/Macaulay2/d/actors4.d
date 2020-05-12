@@ -1561,7 +1561,7 @@ partsRR(x:Expr):Expr := (
 	  numbits := n * sz;
 	  sgn := toExpr(Ccode(long,"(long)(",xx,")->_mpfr_sign"));
 	  expt := toExpr(Ccode(long,"(long)(",xx,")->_mpfr_exp"));
-	  m := toInteger(0);
+	  m := zeroZZ;
 	  for i from int(n)-1 to 0 by -1 do (
 	       m = (m << sz) + toInteger(Ccode(ulong,"(unsigned long)(",xx,")->_mpfr_d[",i,"]"));
 	       );

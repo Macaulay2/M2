@@ -176,6 +176,14 @@ export toInteger(i:int):ZZ := (
 	 moveToZZ(resZZ))
      );
 
+export zeroZZ := toInteger(0);
+export  oneZZ := toInteger(1);
+export  minusoneZZ := toInteger(-1);
+
+export zeroZZcell := ZZcell(zeroZZ);
+export  oneZZcell := ZZcell( oneZZ);
+export  minusoneZZcell := ZZcell( minusoneZZ);
+
 export toInteger(i:ushort):ZZ := toInteger(int(i));
 
 export toInteger(i:ulong):ZZ := (
@@ -396,11 +404,16 @@ export hash(x:QQ):int := hash(numeratorRef(x))+1299841*hash(denominatorRef(x));
 isNegative0(x:QQ):bool := -1 == Ccode(int, "mpq_sgn(",x,")");
 export isNegative(x:QQ):bool := isNegative0(x);
 
-moveToQQ(y:QQmutable) ::= (
-    moveToZZ(numeratorRef(y)); 
-    moveToZZ(denominatorRef(y)); 
-    Ccode(QQ,y)
-    );
+export newQQCanonical(i:ZZ,j:ZZ):QQ := (
+     -- assume canonical: gcd(i,j)=1, j>0, and j==1 if i==0
+     Ccode(void, "
+	  mpq_ptr z = (mpq_ptr) getmem(sizeof(__mpq_struct));
+	  memcpy(&z->_mp_num,",i,",sizeof(__mpz_struct));
+	  memcpy(&z->_mp_den,",j,",sizeof(__mpz_struct))"
+	  );
+     Ccode(QQ,"z"));
+
+moveToQQ(y:QQmutable):QQ := newQQCanonical(moveToZZ(numeratorRef(y)),moveToZZ(denominatorRef(y)));
 
 export newQQ(i:ZZ,j:ZZ):QQ := (
      x := newQQmutable();
@@ -410,32 +423,13 @@ export newQQ(i:ZZ,j:ZZ):QQ := (
      moveToQQ(x)
      );
 
-export newQQCanonical(i:ZZ,j:ZZ):QQ := ( -- assume gcd(i,j)=1, j>0, and j==1 if i==0
-     x := newQQmutable();
-     set(  numeratorRef(x),i);
-     set(denominatorRef(x),j);
-     moveToQQ(x)
-     );
-
-export toRational(n:int):QQ := (
-     x := newQQmutable();
-     Ccode( void, "mpq_set_si(",  x, ",(long)", n, ",(long)1)" );
-     moveToQQ(x)
-     );
-
-export toRational(n:ulong):QQ := (
-     x := newQQmutable();
-     Ccode( void, "mpq_set_ui(",  x, ",(unsigned long)", n, ",(unsigned long)1)" );
-     moveToQQ(x)
-     );
-
 -- integers and rationals
      
-export toRational(x:ZZ):QQ := (
-     z := newQQmutable();
-     Ccode(void, "mpq_set_z(", z, ",", x, ")");
-     moveToQQ(z)
-     );
+export toRational(x:ZZ):QQ := newQQCanonical(x,oneZZ);
+
+export toRational(n:int):QQ := toRational(toInteger(n));
+
+export toRational(n:ulong):QQ := toRational(toInteger(n));
 
 export floor(x:QQ):ZZ := numeratorRef(x)//denominatorRef(x);
 
@@ -1064,17 +1058,17 @@ export (x:RR) ^ (y:RR) : RR := (
      moveToRR(z));
 
 export floor(x:RR) : ZZ := (
-     if !isfinite0(x) then return toInteger(0);			    -- nothing else to do!
+     if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
      Ccode( void, "mpfr_get_z(", resZZ, ",", x, ", GMP_RNDD)" );
      moveToZZ(resZZ));
 
 export ceil(x:RR) : ZZ := (
-     if !isfinite0(x) then return toInteger(0);			    -- nothing else to do!
+     if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
      Ccode( void, "mpfr_get_z(", resZZ, ",", x, ", GMP_RNDU)" );
      moveToZZ(resZZ));
 
 export round(x:RR) : ZZ := (
-     if !isfinite0(x) then return toInteger(0);			    -- nothing else to do!
+     if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
      Ccode( void, "mpfr_get_z(", resZZ, ",", x, ", GMP_RNDN)" );
      moveToZZ(resZZ));
 

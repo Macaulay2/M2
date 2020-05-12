@@ -3,7 +3,7 @@ use tokens;
 use lex;
 
 export parseInt(s:string):ZZ := (
-     i := toInteger(0);
+     i := zeroZZ;
      foreach c in s do (
 	  if c == '\"'
 	  then nothing

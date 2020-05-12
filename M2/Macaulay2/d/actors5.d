@@ -1746,7 +1746,7 @@ export StandardE := Expr(StandardS);
 export topLevelMode := Expr(StandardS);
 topLevelModeS := dummySymbol;
 
-initialRandomSeed := toInteger(0);
+initialRandomSeed := zeroZZ;
 initialRandomHeight := toInteger(10);
 
 setupvar("maxAllowableThreads",toExpr(Ccode( int, " getMaxAllowableThreads() " )));

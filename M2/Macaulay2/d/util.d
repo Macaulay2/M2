@@ -194,11 +194,8 @@ export engineErrorMessage():Expr := buildErrorPacket(EngineError("unknown engine
 export possibleEngineError(ret:bool):Expr := if ret then nullE else engineErrorMessage();
 
 export toExpr(h:int):Expr := Expr(ZZcell(toInteger(h)));
-export zeroE := toExpr(0);
-export oneE := toExpr(1);
 export twoE := toExpr(2);
 export threeE := toExpr(3);
-export minusoneE := toExpr(-1);
 export toExpr(h:long):Expr := Expr(ZZcell(toInteger(h)));
 export toExpr(h:ulong):Expr := Expr(ZZcell(toInteger(h)));
 export toExpr(h:ushort):Expr := Expr(ZZcell(toInteger(h)));
