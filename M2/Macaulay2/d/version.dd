@@ -42,7 +42,6 @@ header "
    #define stringize(a) stringize0(a)
    extern char timestamp[];
    #undef ASSERT
-   #include <pari-c.h>
    #ifdef HAVE_SCSCP
      #include <scscp.h>
      void scscp_dummy() { SCSCP_sc_init(NULL,NULL); /* just to force linking with the library */ }
@@ -213,13 +212,6 @@ setupconst("version", Expr(toHashTable(Sequence(
 	"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
    "frobby version" => "unknown",
-   "pari version" => Ccode(constcharstar,"
-	 #ifdef HAVE_PARI
-	   get_pari_version()
-	 #else
-	   \"not present\"
-	 #endif
-	 "),
    "flint version" => Ccode(constcharstar,"
 	 #if HAVE_FLINT
 	   FLINT_VERSION
