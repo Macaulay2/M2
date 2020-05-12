@@ -805,6 +805,7 @@ dnl Note: we don't include -lgccpp below, because linking with that library is w
 if [ pkg-config --exists bdw-gc ]
 then AC_MSG_RESULT(yes)
      CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
+     dnl should probably use `pkg-config --libs bdw-gc` here instead
      LIBS="-lgc $LIBS"
      FOUND_gc=yes
 else AC_MSG_RESULT(no)
