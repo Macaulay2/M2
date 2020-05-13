@@ -919,6 +919,7 @@ AC_SUBST(BUILD_flint)
 dnl  We always build flint, until flint comes out with a release whose version number we can check for.
 dnl  (Now we use flint for factoring integers, and only a recent development version does that well.)
 BUILD_flint=yes
+BUILD_ALWAYS="$BUILD_ALWAYS flint"
 dnl 
 if test $BUILD_flint = no
 then AC_LANG(C)
@@ -1648,6 +1649,19 @@ subset() {
     return 0
 }
 
+complement() {
+    # the words of $1 not among the words of $2
+    y=" $2 "
+    for i in $1
+    do 	case "$y" in
+	    *" $i "*) ;;
+	    *) echo -n "$i " ;;
+	esac
+    done
+    echo
+}
+
+
 BUILDING=yes
 AC_ARG_ENABLE(building, AS_HELP_STRING(--disable-building,disable automatic building of libraries), BUILDING=$enableval)
 # This option looks useless, but it allows us to test the configure script.  After we build the libraries, we
@@ -1655,7 +1669,8 @@ AC_ARG_ENABLE(building, AS_HELP_STRING(--disable-building,disable automatic buil
 subset "$BUILDLIBLIST" "$BUILD_ALWAYS"
 sub=$?
 if test "$BUILDING" = no -a $sub = 1
-then AC_MSG_ERROR([automatic building of libraries disabled, but some must be built])
+then c=`complement "$BUILDLIBLIST" "$BUILD_ALWAYS"`
+     AC_MSG_ERROR([automatic building of libraries disabled, but some must be built: $c])
 fi
 
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree
