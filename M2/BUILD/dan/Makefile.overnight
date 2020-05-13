@@ -4,7 +4,7 @@ overnight:
 	$(MAKE) distclean
 	git pull 
 	git submodule update
-        git submodule foreach git clean -xdfq
+	git submodule foreach git clean -xdfq
 	git branch --contains HEAD
 	git describe --dirty --long --always --abbrev=40 --all
 	$(MAKE) -C ../.. get-tools

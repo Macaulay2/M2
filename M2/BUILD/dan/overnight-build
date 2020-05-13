@@ -1,10 +1,10 @@
 #! /bin/bash
 
-out=LOGS/LOG-`date +%Y%m%d.%H%M`
-
-echo "-*- mode: compilation; default-directory: \"$HOME\" -*-"
+mkdir -p overnight-logs
+out=overnight-logs/LOG-`date +%Y%m%d.%H%M`
 
 (
+      echo "-*- mode: compilation; default-directory: \"`pwd`\" -*-"
       unset PKG_CONFIG_PATH
       exec 2>&1
       . ~/.profile
