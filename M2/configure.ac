@@ -884,7 +884,6 @@ if test $BUILD_glpk = yes
 then BUILTLIBS="-lglpk $BUILTLIBS"
 fi
 
-AC_DEFINE([HAVE_GIVARO_isunit],,[whether givaro has isunit])
 AC_MSG_CHECKING([whether givaro library is installed])
 if $PKG_CONFIG --exists givaro
 then AC_MSG_RESULT(yes)
@@ -896,10 +895,10 @@ then AC_MSG_RESULT(yes)
 	 [AC_LANG_PROGRAM( [ #include <givaro/gfq.h>
 	 		     ],
 	 		   [ class Givaro::GFqDom<long int> foo; foo.isunit(0) ])],
-	 [AC_MSG_RESULT([isunit]); AC_DEFINE([HAVE_GIVARO_isunit], [1])],
-	 [AC_MSG_RESULT([isUnit]); AC_DEFINE([HAVE_GIVARO_isunit], [0])])
+	 [AC_MSG_RESULT([isunit]); AC_DEFINE([HAVE_GIVARO_isunit], [1],[whether givaro has isunit])],
+	 [AC_MSG_RESULT([isUnit]); AC_DEFINE([HAVE_GIVARO_isunit], [0],[whether givaro has isunit])])
 else AC_MSG_RESULT(no)
-     AC_DEFINE([HAVE_GIVARO_isunit], [0])
+     AC_DEFINE([HAVE_GIVARO_isunit], [0],[whether givaro has isunit])
      BUILD_givaro=yes
 fi
 if test $BUILD_givaro = yes
@@ -1256,19 +1255,22 @@ else
 	[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
 fi
 
-AC_DEFINE([FACTORY_STREAMIO], [1],
-    [whether factory was built with --enable-streamio])
 if test $BUILD_factory = no
 then
     AC_MSG_CHECKING([whether factory was built with --enable-streamio])
     AC_LANG([C++])
     AC_COMPILE_IFELSE(
 	[AC_LANG_PROGRAM(
-	    [#include <factory/factory.h>],
+	    [
+	    #include <factory/factory.h>
+	    ],
 	    [Variable x; x = Variable(); std::cout << x])],
-	[AC_MSG_RESULT([yes])],
+	[AC_MSG_RESULT([yes])
+	 AC_DEFINE([FACTORY_STREAMIO], [1])
+	],
 	[AC_MSG_RESULT([no])
 	 AC_DEFINE([FACTORY_STREAMIO], [0])])
+else AC_DEFINE([FACTORY_STREAMIO], [1], [whether factory was built with --enable-streamio])
 fi
 
 AC_SUBST(LINALGLIBS)
@@ -1526,14 +1528,29 @@ dnl about invalid options that turn off warnings, if there are no warnings to be
 dnl It's a feature, not a bug!
 dnl On the other hand, clang does complain!
 
-AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
+dnl -- maybe we can benefit now from these warnings
+dnl AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
+dnl AC_LANG(C)
+dnl SAVE=$CFLAGS
+dnl CFLAGS="$CFLAGS -Wmismatched-tags -Werror"
+dnl AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+dnl     CFLAGS=$SAVE
+dnl     CFLAGS="$CFLAGS -Wno-mismatched-tags"
+dnl     CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
+dnl     dnl we don't like seeing this warning, especially from the "clang" compiler
+dnl     AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
+dnl     CFLAGS=$SAVE
+dnl     AC_MSG_RESULT(no))
+
+AC_MSG_CHECKING(whether $CC accepts -Wunused-but-set-variable)
+AC_SUBST(HAVE_WUNUSED_BUT_SET_VARIABLE,)
 AC_LANG(C)
 SAVE=$CFLAGS
-CFLAGS="$CFLAGS -Wmismatched-tags -Werror"
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
-    CFLAGS="$CLAGS -Wmismatched-tags"
-    dnl we don't like seeing this warning, especially from the "clang" compiler
-    AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
+CFLAGS="$CFLAGS -Wunused-but-set-variable -Werror"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
+    HAVE_WUNUSED_BUT_SET_VARIABLE=yes
+    AC_MSG_RESULT(yes),
+    HAVE_WUNUSED_BUT_SET_VARIABLE=no
     AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
