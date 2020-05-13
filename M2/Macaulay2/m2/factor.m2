@@ -51,7 +51,9 @@ inversePermutation = v -> ( w := new MutableList from #v:null; scan(#v, i -> w#(
 -- We mimic the procedure for finding a finite field addition table used in the routine gf_get_table
 -- for building the file name in "gffilename", in the file BUILD_DIR/libraries/factory/build/factory/gfops.cc .
 -- Reminder: the contents of currentLayout are determined by the file ../d/startup.m2.in .
-gfdirs = {prefixDirectory | currentLayout#"factory gftables"}
+gfdirs = ( if isAbsolutePath currentLayout#"factory gftables"
+           then {                  currentLayout#"factory gftables"}
+	   else {prefixDirectory | currentLayout#"factory gftables"} )
 i := position(gfdirs, gfdir -> fileExists(gfdir | "gftables/961")) -- 961==31^2
 if i === null
 then error ("sample Factory finite field addition table file missing, needed for factorization: ",
