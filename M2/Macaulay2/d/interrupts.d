@@ -24,13 +24,7 @@ import threadLocal exceptionFlag:atomicField; -- indicates interrupt, stepping, 
 export determineExceptionFlag():void := (
      store(exceptionFlag, test(interruptedFlag) || steppingFlag || alarmedFlag);
      );
-export alarm(x:uint) ::= Ccode(int,"
-     #ifdef HAVE_ALARM
-      alarm(",x,")
-     #else
-      -1
-     #endif
-     ");
+export alarm(x:uint) ::= Ccode(int," alarm(",x,") ");
 export clearAlarm():void := alarm(uint(0));
 export clearAllFlags():void := (
      store(exceptionFlag, false);
