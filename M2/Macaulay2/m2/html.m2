@@ -1193,7 +1193,7 @@ show URL := x -> (
      else if runnable "xdg-open" then browser = "xdg-open" -- most Linux distributions
      else if runnable getenv "WWWBROWSER" then browser = getenv "WWWBROWSER" -- compatibility
      else if runnable "firefox" then browser = "firefox" -- backup
-     else error "neither open nor xdg-open are found and WWWBROWSER is not set";
+     else error "neither open nor xdg-open is found and WWWBROWSER is not set";
      cmd := { browser, url };
      if fork() == 0 then (
 	  setGroupID(0,0);
