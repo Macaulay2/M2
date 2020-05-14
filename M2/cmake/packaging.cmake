@@ -7,6 +7,7 @@
 
 set(PROJECT_DISTRIBUTION 1)
 
+# TODO: remove duplicate files from package
 # TODO: check to make sure OPTIMIZE is ON if packaging is ON
 # TODO: OSX options: DragNDrop;PackageMaker;OSXX11;Bundle
 # TODO: compression options: TGZ;STGZ;TBZ2;TZ;ZIP

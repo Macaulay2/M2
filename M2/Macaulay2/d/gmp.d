@@ -154,13 +154,13 @@ init(x:ZZmutable) ::= Ccode( ZZmutable, "(mpz_init(",  x, "),",x,")" );
 
 export newZZmutable():ZZmutable := init(GCmalloc(ZZmutable));
 
-export clear(x:ZZmutable) ::= Ccode( void, "(mpz_clear(",  x, "),",x,")" );
+clear(x:ZZmutable) ::= Ccode( void, "mpz_clear(",  x, ")" );
 
 init(x:QQmutable) ::= Ccode( QQmutable, "(mpq_init(",  x, "),",x,")" );
 
 export newQQmutable():QQmutable :=  init(GCmalloc(QQmutable));
 
-export clear(x:QQmutable) ::= Ccode( void, "(mpq_clear(",  x, "),",x,")" );
+clear(x:QQmutable) ::= Ccode( void, "mpq_clear(",  x, ")" );
 
 init(x:RRmutable,prec:ulong):RRmutable := (
     if prec < minprec then prec = minprec else if prec > maxprec then prec = maxprec;
@@ -169,9 +169,9 @@ init(x:RRmutable,prec:ulong):RRmutable := (
 
 export newRRmutable(prec:ulong):RRmutable := init(GCmalloc(RRmutable),prec);
 
-export clear(x:RRmutable) ::= Ccode( void, "(mpfr_clear(",  x, "),",x,")" );
+clear(x:RRmutable) ::= Ccode( void, "mpfr_clear(",  x, ")" );
 
-export clear(z:CCmutable):void := ( clear(z.re); clear(z.im); );
+clear(z:CCmutable):void := ( clear(z.re); clear(z.im); );
 
 export moveToZZ(z:ZZmutable):ZZ := (
      y := GCmalloc(ZZmutable);
@@ -207,10 +207,10 @@ export moveToRRandclear(z:RRmutable):RR := (
      clear(z);
      w);
      
-set(x:ZZmutable, y:ZZ   ) ::= Ccode( ZZmutable, "(mpz_set   (", x, ",", y, "),",x,")" );
-set(x:ZZmutable, n:int  ) ::= Ccode( ZZmutable, "(mpz_set_si(", x, ",", n, "),",x,")" );
-set(x:ZZmutable, n:long ) ::= Ccode( ZZmutable, "(mpz_set_si(", x, ",", n, "),",x,")" );
-set(x:ZZmutable, n:ulong) ::= Ccode( ZZmutable, "(mpz_set_ui(", x, ",", n, "),",x,")" );
+set(x:ZZmutable, y:ZZ   ) ::= Ccode( void, "mpz_set   (", x, ",", y, ")" );
+set(x:ZZmutable, n:int  ) ::= Ccode( void, "mpz_set_si(", x, ",", n, ")" );
+set(x:ZZmutable, n:long ) ::= Ccode( void, "mpz_set_si(", x, ",", n, ")" );
+set(x:ZZmutable, n:ulong) ::= Ccode( void, "mpz_set_ui(", x, ",", n, ")" );
 
 negsmall := -100;
 possmall := 300;
