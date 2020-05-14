@@ -19,7 +19,6 @@ export charstarOrNull := charstar or null;
 export constcharstarOrNull := constcharstar or null;
 export constucharstarOrNull := constucharstar or null;
 export constcharstarstarOrNull := constcharstarstar or null;
-const(x:charstar):constcharstar := Ccode(constcharstar,x);
 const(x:charstarOrNull):constcharstarOrNull := Ccode(constcharstarOrNull,x);
 
 header "#include <M2mem.h>";
