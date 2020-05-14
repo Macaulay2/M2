@@ -822,6 +822,10 @@ installPackage Package := opts -> pkg -> (
  	  if not opts.IgnoreExampleErrors 
 	  then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running examples for package ", pkg#"pkgname");
 
+	  -- if no examples were generated, then remove the directory
+	  if length readDirectory exampleOutputDir == 2 then
+	  	  removeDirectory exampleOutputDir;
+
 	  -- process documentation
 	  rawkey := "raw documentation database";
 	  if verbose then stderr << "--processing documentation nodes..." << endl;
