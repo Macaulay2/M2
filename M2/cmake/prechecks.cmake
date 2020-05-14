@@ -33,10 +33,12 @@ MACRO (_ADD_PRECHECKS _target _c_sources _cxx_sources)
   endif()
 
   if(CLANG_TIDY)
+    message("     clang-tidy")
     set_target_properties(${_target} PROPERTIES C_CLANG_TIDY   "${CLANG_TIDY};-checks=${CLANG_TIDY_CHECKS}")
     set_target_properties(${_target} PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY};-checks=${CLANG_TIDY_CHECKS}")
   endif()
 ENDMACRO (_ADD_PRECHECKS)
+
 
 MACRO (_ADD_CLANG_FORMAT _target _c_sources _cxx_sources)
   if(CLANG_FORMAT)

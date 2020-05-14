@@ -257,7 +257,7 @@ AC_SUBST(M2_CFLAGS,)
 AC_SUBST(M2_CXXFLAGS,)
 
 dnl Fix standards, apply everywhere
-CXXFLAGS="-std=gnu++11 $CXXFLAGS"
+CXXFLAGS="-std=gnu++14 $CXXFLAGS"
 CFLAGS="-std=gnu11 $CFLAGS"
 
 AC_PROG_CC() 			# set CFLAGS before this
