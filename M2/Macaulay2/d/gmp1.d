@@ -25,8 +25,8 @@ export (x:ZZ) ^ (n:int) : ZZ := (
      if isZero(x) then return x;
      y := newZZmutable();
      pow(y,x,ulong(n));
-     moveToZZ(y)
-     );
+     moveToZZandclear(y));
+
 export (x:ZZ) ^ (n:ZZ) : ZZ := (
      if isNegative(n) then fatal("internal error: negative exponent for integer power"); -- what else can we do???
      if !isULong(n) then fatal("integer exponent too large");
@@ -36,7 +36,7 @@ export powermod(x:ZZ, y:ZZ, n:ZZ) : ZZ := (
      -- z = x^y mod n
      z := newZZmutable();
      Ccode( void, "mpz_powm(",  z, ",",  x, ",",  y, ",",  n, ")" );
-     moveToZZ(z)
+     moveToZZandclear(z)
      );
 
 export (x:QQ) ^ (nn:ZZ) : QQ := (

@@ -14,6 +14,10 @@ declarations "
 #define interrupted() test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))
 ";
 
+header "
+#include <M2/config.h>
+#include <unistd.h>
+";
 
 import threadLocal exceptionFlag:atomicField; -- indicates interrupt, stepping, or alarm
 
