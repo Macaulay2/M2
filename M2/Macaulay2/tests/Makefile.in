@@ -1,5 +1,7 @@
 # @configure_input@
 
+all:
+
 VPATH = @srcdir@
 
 # DOTS is the path to M2/Macaulay2 from this directory
@@ -8,8 +10,6 @@ include $(DOTS)/../include/config.Makefile
 
 SRCDIR = @srcdir@
 include Makefile.test
-
-all:
 
 TARGETS = all check status
 CLEANTARGETS = clean distclean

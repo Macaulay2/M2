@@ -1248,6 +1248,7 @@ then
 	[AC_LANG_PROGRAM(
 	    [
 	    #include <factory/factory.h>
+	    #include <iostream>
 	    ],
 	    [Variable x; x = Variable(); std::cout << x])],
 	[AC_MSG_RESULT([yes])
