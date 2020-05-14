@@ -182,7 +182,7 @@ randomMutableMatrix(ZZ,ZZ,RR,ZZ) := options -> (n,m,percentagezero,maxentry) -> 
 
 LUdecomposition = method()
 LUdecomposition MutableMatrix := (A) -> (
-     if not hasEngineLinearAlgebra ring A then
+     if not isField ring A then
        error("LU not implemented over ring " | toString ring A);
      nrows := rawNumberOfRows raw A;
      L := mutableMatrix(ring A,0,0,Dense=>true);
@@ -200,7 +200,7 @@ solve = method(Options => { ClosestFit => false,
 
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      R := ring A;
-     if not hasEngineLinearAlgebra R then
+     if not isField R then
        error("solve not implemented over ring " | toString ring A);
      if opts.ClosestFit then (
          if (opts#Precision !=0) then (
@@ -288,7 +288,7 @@ QRDecomposition Matrix := A -> (
      (matrix Q,matrix R))
 
 rank MutableMatrix := (M) -> (
-    if hasEngineLinearAlgebra ring M then
+    if isField ring M then
       rawLinAlgRank raw M
     else
       rank matrix M
@@ -296,7 +296,7 @@ rank MutableMatrix := (M) -> (
 
 determinant MutableMatrix := opts -> (M) -> (
     if numRows M =!= numColumns M then error "expected a square matrix";
-    if hasEngineLinearAlgebra ring M then
+    if isField ring M then
       promote(rawLinAlgDeterminant raw M, ring M)
     else
       determinant matrix M
@@ -304,7 +304,7 @@ determinant MutableMatrix := opts -> (M) -> (
 
 inverse MutableMatrix := (M) -> (
      if numRows M =!= numColumns M then error "expected square matrix";
-     if hasEngineLinearAlgebra ring M then
+     if isField ring M then
        map(ring M, rawLinAlgInverse raw M)
      else
        mutableMatrix inverse matrix M
