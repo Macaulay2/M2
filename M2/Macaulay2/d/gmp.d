@@ -794,7 +794,7 @@ export toRR(x:RR,prec:ulong):RR := (
 
 export toRR(s:string,prec:ulong):RR := (
      z := newRRmutable(prec);
-     r := Ccode( int,  "mpfr_set_str(",  z,",",  s, "->array,", "0,", "GMP_RNDN", ")" ); 
+     Ccode( void,  "mpfr_set_str(",  z,",",  s, "->array,", "0,", "GMP_RNDN", ")" ); 
      moveToRRandclear(z));
 
 export toRR(x:QQ,prec:ulong):RR := (
@@ -1126,7 +1126,6 @@ export pow10(n:ulong,prec:ulong):RR := (
      moveToRRandclear(z));
 
 export pow10(n:long,prec:ulong):RR := (
-     ng := false;
      if n < long(0)
      then (pow10(ulong(-n),prec))^long(-1)
      else pow10(ulong(n),prec));
