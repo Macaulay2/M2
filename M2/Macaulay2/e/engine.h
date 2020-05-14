@@ -1654,13 +1654,30 @@ extern "C" {
   /**** Groebner basis and resolution routines ******/
   /**************************************************/
 
-enum ComputationStatusCode
-{
-  /* include/M2/statuscodes.h is generated from Macaulay2/m2/statuscodes */
-#include "M2/statuscodes.h"
-};
+  enum ComputationStatusCode
+  {
+    /* Keep this enum in sync with Macaulay2/m2/statuscodes */
+    COMP_NEED_RESIZE = 1,		/* need resize */
+    COMP_ERROR = 2,		/* error */
+    COMP_INTERRUPTED = 3,		/* interrupted */
+    COMP_NOT_STARTED = 4,		/* not started */
+    COMP_INITIAL_STOP = 5,	/* StopBeforeComputation */
+    COMP_DONE = 6,		/* done */
+    COMP_DONE_DEGREE_LIMIT = 7,	/* DegreeLimit */
+    COMP_DONE_LENGTH_LIMIT = 8,	/* LengthLimit */
+    COMP_DONE_SYZYGY_LIMIT = 9,	/* SyzygyLimit */
+    COMP_DONE_PAIR_LIMIT = 10,	/* PairLimit */
+    COMP_DONE_GB_LIMIT = 11,	/* BasisElementLimit */
+    COMP_DONE_SYZ_LIMIT = 12,	/* SyzygyLimit */
+    COMP_DONE_CODIM = 13,		/* CodimensionLimit */
+    COMP_DONE_MIN_GENS = 14,	/* StopWithMinimalGenerators */
+    COMP_DONE_STEPS = 15,		/* StepLimit */
+    COMP_DONE_SUBRING_LIMIT = 16,	/* SubringLimit */
+    COMP_COMPUTING = 17,		/* computing */
+    COMP_OVERFLOWED = 18,		/* overflowed */
+  };
 
-enum StrategyValues
+  enum StrategyValues
   {
     STRATEGY_LONGPOLYNOMIALS = 1,
     STRATEGY_SORT = 2,
@@ -1668,13 +1685,13 @@ enum StrategyValues
     STRATEGY_USE_SYZ = 8
   };
 
-enum Algorithms
+  enum Algorithms
   {
     GB_polyring_field = 1, /* The main GB algorithm to use */
     GB_polyring_field_homog = 2
   };
 
-enum gbTraceValues
+  enum gbTraceValues
   {
     /* The printlevel flags */
     PRINT_SPAIR_TRACKING=1024

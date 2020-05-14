@@ -26,9 +26,6 @@ OTHERM2FILES := sagbi.m2
 LOADSEQUENCE := $(shell cat @srcdir@/loadsequence)
 DUMPEDM2FILES += $(LOADSEQUENCE)
 DUMPEDM2SRCFILES += $(patsubst version.m2, version.m2.in, $(LOADSEQUENCE))
-############################## statuscodes.m2
-# an obsolete file:
-clean::; rm -f statuscodes.m2
 ############################## mpcodes.m2
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed

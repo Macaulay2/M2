@@ -39,7 +39,11 @@ JumpCell interrupt_jmp;
 
 extern "C" void clean_up();
 extern "C" void system_cpuTime_init();
-extern "C" bool gotArg(const char *arg, const char * const* argv);
+
+static bool gotArg(const char* arg, char* const * argv) {
+  for (; *argv; argv++) if (0 == strcmp(arg, *argv)) return true;
+  return false;
+}
 
 extern "C" void interrupts_clearInterruptFlag();
 extern "C" void interrupts_clearAlarmedFlag();
@@ -174,9 +178,9 @@ void* interpFunc(ArgCell* vargs)
   /* setting variables defined in M2.dd */
   M2_envc = vargs->envc;
   M2_argc = vargs->argc;
-  M2_envp = M2_tostrings(M2_envc, (char **) vargs->envp);
-  M2_argv = M2_tostrings(M2_argc, (char **) vargs->argv);
-  M2_args = M2_tostrings(M2_argc == 0 ? 0 : M2_argc - 1, (char **) vargs->argv + 1);
+  M2_envp = M2_tostrings(M2_envc, vargs->envp);
+  M2_argv = M2_tostrings(M2_argc, vargs->argv);
+  M2_args = M2_tostrings(M2_argc == 0 ? 0 : M2_argc - 1, vargs->argv + 1);
   /* setting commandLine and environment values for frontend */
   interp_setupargv();
 

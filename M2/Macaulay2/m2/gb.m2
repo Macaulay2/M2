@@ -1,5 +1,6 @@
 --		Copyright 1995-2002,2012 by Daniel R. Grayson
 
+-- Keep statuscodes in sync with the ComputationStatusCode enum in engine.h
 RawStatusCodes = new HashTable from apply(
      lines get (currentFileDirectory | "statuscodes"),
      l -> ( fields := separate(":", l); value fields#0 => value fields#2 ))
