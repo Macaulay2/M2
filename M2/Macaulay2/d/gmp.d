@@ -192,7 +192,7 @@ export moveToRR(z:RRmutable):RR := (
      y := GCmalloc(RRmutable);
      Ccode(void, "
   	  int limb_size = (",z,"->_mpfr_prec - 1) / GMP_NUMB_BITS + 1;
-  	  mp_limb_t *p = (mp_limb_t*) GC_MALLOC(limb_size * sizeof(mp_limb_t));
+  	  mp_limb_t *p = (mp_limb_t*) getmem_atomic(limb_size * sizeof(mp_limb_t));
   	  memcpy(p, ",z,"->_mpfr_d, limb_size * sizeof(mp_limb_t));
   	  ",y,"->_mpfr_prec = ",z,"->_mpfr_prec;
   	  ",y,"->_mpfr_sign = ",z,"->_mpfr_sign;
