@@ -44,13 +44,13 @@ runmethod(methodname:Expr,g:Expr):Expr := (
 
 endInput := makeProtectedSymbolClosure("end");
 
-PrintOut(g:Expr,semi:bool,f:Code):Expr := (
-     methodname := if semi then NoPrint else Print;
-     method := lookup(Class(g),methodname);
-     if method == nullE 
-     then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
-     else applyEE(method,g)
-     );
+-- PrintOut(g:Expr,semi:bool,f:Code):Expr := (
+--      methodname := if semi then NoPrint else Print;
+--      method := lookup(Class(g),methodname);
+--      if method == nullE 
+--      then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
+--      else applyEE(method,g)
+--      );
 
 readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      lastvalue := nullE;

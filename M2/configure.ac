@@ -790,6 +790,7 @@ dnl Note: we don't include -lgccpp below, because linking with that library is w
 if [ pkg-config --exists bdw-gc ]
 then AC_MSG_RESULT(yes)
      CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
+     dnl should probably use `pkg-config --libs bdw-gc` here instead
      LIBS="-lgc $LIBS"
      FOUND_gc=yes
 else AC_MSG_RESULT(no)
@@ -868,7 +869,6 @@ if test $BUILD_glpk = yes
 then BUILTLIBS="-lglpk $BUILTLIBS"
 fi
 
-AC_DEFINE([HAVE_GIVARO_isunit],,[whether givaro has isunit])
 AC_MSG_CHECKING([whether givaro library is installed])
 if $PKG_CONFIG --exists givaro
 then AC_MSG_RESULT(yes)
@@ -880,10 +880,10 @@ then AC_MSG_RESULT(yes)
 	 [AC_LANG_PROGRAM( [ #include <givaro/gfq.h>
 	 		     ],
 	 		   [ class Givaro::GFqDom<long int> foo; foo.isunit(0) ])],
-	 [AC_MSG_RESULT([isunit]); AC_DEFINE([HAVE_GIVARO_isunit], [1])],
-	 [AC_MSG_RESULT([isUnit]); AC_DEFINE([HAVE_GIVARO_isunit], [0])])
+	 [AC_MSG_RESULT([isunit]); AC_DEFINE([HAVE_GIVARO_isunit], [1],[whether givaro has isunit])],
+	 [AC_MSG_RESULT([isUnit]); AC_DEFINE([HAVE_GIVARO_isunit], [0],[whether givaro has isunit])])
 else AC_MSG_RESULT(no)
-     AC_DEFINE([HAVE_GIVARO_isunit], [0])
+     AC_DEFINE([HAVE_GIVARO_isunit], [0],[whether givaro has isunit])
      BUILD_givaro=yes
 fi
 if test $BUILD_givaro = yes
@@ -903,6 +903,7 @@ AC_SUBST(BUILD_flint)
 dnl  We always build flint, until flint comes out with a release whose version number we can check for.
 dnl  (Now we use flint for factoring integers, and only a recent development version does that well.)
 BUILD_flint=yes
+BUILD_ALWAYS="$BUILD_ALWAYS flint"
 dnl 
 if test $BUILD_flint = no
 then AC_LANG(C)
@@ -1239,19 +1240,22 @@ else
 	[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
 fi
 
-AC_DEFINE([FACTORY_STREAMIO], [1],
-    [whether factory was built with --enable-streamio])
 if test $BUILD_factory = no
 then
     AC_MSG_CHECKING([whether factory was built with --enable-streamio])
     AC_LANG([C++])
     AC_COMPILE_IFELSE(
 	[AC_LANG_PROGRAM(
-	    [#include <factory/factory.h>],
+	    [
+	    #include <factory/factory.h>
+	    ],
 	    [Variable x; x = Variable(); std::cout << x])],
-	[AC_MSG_RESULT([yes])],
+	[AC_MSG_RESULT([yes])
+	 AC_DEFINE([FACTORY_STREAMIO], [1])
+	],
 	[AC_MSG_RESULT([no])
 	 AC_DEFINE([FACTORY_STREAMIO], [0])])
+else AC_DEFINE([FACTORY_STREAMIO], [1], [whether factory was built with --enable-streamio])
 fi
 
 AC_SUBST(LINALGLIBS)
@@ -1504,18 +1508,43 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
     AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
-AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
 dnl Always check for the option that turns the warning on, because gcc doesn't complain
 dnl about invalid options that turn off warnings, if there are no warnings to be issued anyway.
 dnl It's a feature, not a bug!
-AC_LANG(C++)
+dnl On the other hand, clang does complain!
+
+dnl -- maybe we can benefit now from these warnings
+dnl AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
+dnl AC_LANG(C)
+dnl SAVE=$CFLAGS
+dnl CFLAGS="$CFLAGS -Wmismatched-tags -Werror"
+dnl AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+dnl     CFLAGS=$SAVE
+dnl     CFLAGS="$CFLAGS -Wno-mismatched-tags"
+dnl     CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
+dnl     dnl we don't like seeing this warning, especially from the "clang" compiler
+dnl     AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
+dnl     CFLAGS=$SAVE
+dnl     AC_MSG_RESULT(no))
+
+AC_MSG_CHECKING(whether $CC accepts -Wunused-but-set-variable)
+AC_SUBST(HAVE_WUNUSED_BUT_SET_VARIABLE,)
+AC_LANG(C)
 SAVE=$CFLAGS
-CFLAGS="$CFLAGS -Wmismatched-tags -Werror"
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
-    CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
-    # we don't like seeing this warning, especially from the "clang" compiler
-    AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
-    AC_MSG_RESULT(no))
+CFLAGS="$CFLAGS -Wunused-but-set-variable -Werror"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
+    HAVE_WUNUSED_BUT_SET_VARIABLE=yes; AC_MSG_RESULT(yes),
+    HAVE_WUNUSED_BUT_SET_VARIABLE=no ; AC_MSG_RESULT(no))
+CFLAGS=$SAVE
+
+AC_MSG_CHECKING(whether $CC accepts -Wmaybe-uninitialized)
+AC_SUBST(HAVE_WMAYBE_UNINITIALIZED,)
+AC_LANG(C)
+SAVE=$CFLAGS
+CFLAGS="$CFLAGS -Wmaybe-uninitialized -Werror"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
+    HAVE_WMAYBE_UNINITIALIZED=yes; AC_MSG_RESULT(yes),
+    HAVE_WMAYBE_UNINITIALIZED=no ; AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
 AC_MSG_CHECKING(whether $CC accepts -Wparentheses-equality)
@@ -1630,6 +1659,19 @@ subset() {
     return 0
 }
 
+complement() {
+    # the words of $1 not among the words of $2
+    y=" $2 "
+    for i in $1
+    do 	case "$y" in
+	    *" $i "*) ;;
+	    *) echo -n "$i " ;;
+	esac
+    done
+    echo
+}
+
+
 BUILDING=yes
 AC_ARG_ENABLE(building, AS_HELP_STRING(--disable-building,disable automatic building of libraries), BUILDING=$enableval)
 # This option looks useless, but it allows us to test the configure script.  After we build the libraries, we
@@ -1637,7 +1679,8 @@ AC_ARG_ENABLE(building, AS_HELP_STRING(--disable-building,disable automatic buil
 subset "$BUILDLIBLIST" "$BUILD_ALWAYS"
 sub=$?
 if test "$BUILDING" = no -a $sub = 1
-then AC_MSG_ERROR([automatic building of libraries disabled, but some must be built])
+then c=`complement "$BUILDLIBLIST" "$BUILD_ALWAYS"`
+     AC_MSG_ERROR([automatic building of libraries disabled, but some must be built: $c])
 fi
 
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree

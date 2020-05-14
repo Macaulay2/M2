@@ -175,7 +175,6 @@ always:
 export DISPLAY=
 
 # Safe C language:
-SCCFLAGS =
 ifeq "@DEBUG@" "no"
 SCCFLAGS += -O
 endif
@@ -213,7 +212,7 @@ ifeq "$(NORULES)" ""
 	$(HIDE)$(COMPILE.c) $(DCFLAGS) $< $(OUTPUT_OPTION)
 %.o: %-tmp.cc %-exports.h
 	$(SHOW)CXX $*-tmp.cc
-	$(HIDE)$(COMPILE.cc) $(DCFLAGS) $< $(OUTPUT_OPTION)
+	$(HIDE)$(COMPILE.cc) $(DCXXFLAGS) $< $(OUTPUT_OPTION)
 
 # various compiler output files
 .SUFFIXES : .ss .ii .s

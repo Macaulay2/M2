@@ -15,12 +15,11 @@ export ucharstar := atomicPointer "unsigned char *";
 export charstarstar := Pointer "char **";
 export constcharstar := atomicPointer "const char *";
 export constucharstar := atomicPointer "const unsigned char *";
-export constcharstarstar := Pointer "const char **";
+export constcharstarstar := Pointer "const char * const *";
 export charstarOrNull := charstar or null;
 export constcharstarOrNull := constcharstar or null;
 export constucharstarOrNull := constucharstar or null;
 export constcharstarstarOrNull := constcharstarstar or null;
-const(x:charstar):constcharstar := Ccode(constcharstar,x);
 const(x:charstarOrNull):constcharstarOrNull := Ccode(constcharstarOrNull,x);
 
 header "#include <M2mem.h>";
@@ -96,7 +95,7 @@ export tocharstarstarmalloc(p:ArrayString):charstarstar := Ccode(returns, "
   for (i=0; i<n; i++) s[i] = M2_tocharstarmalloc(p->array[i]);
   s[n] = NULL;
   return s;");
-export tostrings(n:int,s:charstarstar):ArrayString := Ccode(returns, "
+export tostrings(n:int,s:constcharstarstar):ArrayString := Ccode(returns, "
   int i;
   M2_ArrayString a = getmemarraytype(M2_ArrayString,n);
   a->len = n;

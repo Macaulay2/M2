@@ -135,6 +135,7 @@ clean::; rm -f $(EXEFILE) timestamp.o
 @pre_bindir@ : ; $(MKDIR_P) "$@"
 
 $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
+	@ $(WHY)
 	@ echo "compiling timestamp.cpp"
 	$(COMPILE.cc) @srcdir@/timestamp.cpp -o timestamp.o
 	time @CXX@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
