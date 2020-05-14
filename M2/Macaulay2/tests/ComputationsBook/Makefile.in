@@ -4,7 +4,7 @@ VPATH = @srcdir@
 CHAPTERS = completeIntersections constructions d-modules exterior-algebra geometry \
 	   monomialIdeals preface programming schemes solving toricHilbertScheme varieties
 .PHONY: changes capture
-all: check
+all:
 $(CHAPTERS):; $(MKDIR_P) "$@"
 check capture changes :: Makefile.chapter $(CHAPTERS)
 $(foreach d,$(CHAPTERS),											\
