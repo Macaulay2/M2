@@ -220,10 +220,6 @@ smallints := (
      	  set(x,i);
      	  provide moveToZZ(x)));
 
-isSmall(x:ZZ):bool := isInt(x) && (
-     i := toInt(x);
-     negsmall <= i && i <= possmall);
-
 export toInteger(i:int):ZZ := (
      if i >= negsmall && i <= possmall then smallints.(i-negsmall)
      else (
@@ -344,12 +340,6 @@ fdiv(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_fdiv_q(", x, ",", y, ",", z,
 export (x:ZZ) // (y:ZZ) : ZZ := (
      w := newZZmutable();
      if isPositive0(y) then fdiv(w,x,y) else cdiv(w,x,y);
-     moveToZZ(w));
-
-divexact(x:ZZ, y:ZZ):ZZ := (
-     if y === 1 then return x;
-     w := newZZmutable();
-     Ccode( void, "mpz_divexact(", w, ",", x, ",", y, ")" );
      moveToZZ(w));
 
 fmod(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_fdiv_r(", x, ",", y, ",", z, ")" );

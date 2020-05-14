@@ -218,7 +218,6 @@ getstring(o:PosFile):(null or Word) := (
 	  );
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
-ismore(file:PosFile):bool := ( c := peek(file); c != EOF && c != ERROR );
 swline := ushort(0);
 swcolumn := ushort(0);
 skipwhite(file:PosFile):int := (

@@ -149,8 +149,6 @@ exitfun(e:Expr):Expr := (
      else WrongArgZZ(1));
 setupfun("exit",exitfun).Protected = false;
 
-applythem(obj:HashTable,fn:FunctionClosure):void := applyFCE(fn,Expr(obj));
-
 lookupCountFun(e:Expr):Expr := (
      when e
      is s:SymbolClosure do toExpr(s.symbol.lookupCount)
@@ -1483,8 +1481,6 @@ fillnodes(n:LexNode):void := (
      );
 fillnodes(baseLexNode);
 setupconst("operatorNames",Expr(operatorNames));
-
-issym(d:Dictionary,s:string):Expr := when lookup(makeUniqueWord(s,parseWORD),d) is x:Symbol do True is null do False;
 
 getglobalsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);

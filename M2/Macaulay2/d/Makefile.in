@@ -169,11 +169,13 @@ CXXFLAGS += $(M2_CXXFLAGS)
 CFLAGS   += -Wreturn-type
 CXXFLAGS += -Wreturn-type
 
+CFLAGS   += -Wunused-function
+CXXFLAGS += -Wunused-function
+
 CFLAGS   += -Wfatal-errors
 CXXFLAGS += -Wfatal-errors
 
-version.o : CXXFLAGS += -Wno-unused-local-typedefs -Wno-unused-function
-engine.o  : CXXFLAGS += -Wno-unused-function
+version.o : CXXFLAGS += -Wno-unused-local-typedefs
 
 # the following is included since g++-8 and gcc-8 give many warnings arising from "pragma omp"
 # and apparently it can't be silenced in source code.

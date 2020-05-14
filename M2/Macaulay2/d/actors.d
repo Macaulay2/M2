@@ -444,20 +444,6 @@ setup(BackslashBackslashS,BackslashBackslashFun);
 
 adjacentFun(lhs:Code,rhs:Code):Expr := eval(Code(adjacentCode(lhs,rhs,codePosition(rhs))));
 setup(AdjacentS,adjacentFun);
-
-doublepower(x:double,n:int):double := (
-     if n == 0 then return 1.0;
-     if n < 0 then (x = 1./x; n = -n;);
-     y := x;
-     z := 1.0;
-     while true do (
-	  if (n & 1) != 0 then z = z * y;
-	  n = n >> 1;
-	  if n == 0 then break;
-	  y = y * y;
-	  );
-     z
-     );
 BinaryPowerMethod(x:Expr,y:Expr):Expr := (
      when y is i0:ZZcell do (
 	  i := i0.v;

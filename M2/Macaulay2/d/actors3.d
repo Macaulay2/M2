@@ -187,11 +187,6 @@ EqualEqualfun(lhs:Code,rhs:Code):Expr := (
      	  y := eval(rhs);
 	  when y is Error do y else EqualEqualfun(x,y)));
 setup(EqualEqualS,EqualEqualfun);
-not(z:Expr):Expr := (
-     when z is Error do z 
-     else if z == True then False 
-     else if z == False then True
-     else buildErrorPacket("expected true or false"));
 
 NotEqualfun(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
