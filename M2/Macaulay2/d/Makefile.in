@@ -114,12 +114,15 @@ CXXFLAGS  += -Werror
 # scc1 produces switch statements without default cases, because it knows what
 # all the possibilities are, so the compiler may think some cases are not handled.  Hence
 # we may shush some warnings
-DCFLAGS   += -Wno-maybe-uninitialized
-DCXXFLAGS += -Wno-maybe-uninitialized
 
 ifeq "@HAVE_WUNUSED_BUT_SET_VARIABLE@" "yes"
 DCFLAGS   += -Wno-unused-but-set-variable
 DCXXFLAGS += -Wno-unused-but-set-variable
+endif
+
+ifeq "@HAVE_WMAYBE_UNINITIALIZED@" "yes"
+DCFLAGS   += -Wno-maybe-uninitialized
+DCXXFLAGS += -Wno-maybe-uninitialized
 endif
 
 ifeq "@__INTEL_COMPILER@" "no"
