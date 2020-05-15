@@ -71,7 +71,6 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		@srcdir@/../tests/normal/*.m2 \
 		@srcdir@/../tests/engine/*.m2 \
 		@srcdir@/../packages/SimpleDoc/doc.txt \
-		statuscodes \
 		loadsequence \
 		Makefile.in \
 		Makefile.tests \
