@@ -179,7 +179,7 @@ foreach(LIB IN LISTS LIBRARY_LIST)
   endif()
 endforeach()
 
-target_include_directories(M2-interpreter PRIVATE $<${APPLE}:${ATOMIC_OPS_INCLUDE_DIR}>
+target_include_directories(M2-interpreter PRIVATE $<${APPLE}:${ATOMIC_OPS_INCLUDE_DIR}>)
 
 # Compiler warning flags
 target_compile_options(M2-interpreter PRIVATE

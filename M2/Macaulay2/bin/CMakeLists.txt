@@ -28,7 +28,7 @@ add_executable(M2-binary timestamp.cpp main.cpp ${TAGS})
 target_link_libraries(M2-binary
   M2-engine M2-interpreter M2-supervisor ${CMAKE_DL_LIBS})
 target_include_directories(M2-binary PRIVATE
-  ${GDBM_INCLUDE_DIR} $<${APPLE}:${ATOMIC_OPS_INCLUDE_DIR}>
+  ${GDBM_INCLUDE_DIR} $<${APPLE}:${ATOMIC_OPS_INCLUDE_DIR}>)
 
 # Set where the executable should be store and get its RPATH
 set_target_properties(M2-binary PROPERTIES

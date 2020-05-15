@@ -329,7 +329,7 @@ foreach(LIB IN LISTS LIBRARIES_LIST)
   endif()
 endforeach()
 
-target_include_directories(M2-engine PRIVATE $<${APPLE}:${ATOMIC_OPS_INCLUDE_DIR}>
+target_include_directories(M2-engine PRIVATE $<${APPLE}:${ATOMIC_OPS_INCLUDE_DIR}>)
 
 # Compiler warning flags
 target_compile_options(M2-engine PRIVATE
