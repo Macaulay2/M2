@@ -25,6 +25,8 @@ if(BDWGC_FOUND)
     $<BUILD_INTERFACE:${BDWGC_INCLUDE_DIR}>)
 endif()
 
+target_include_directories(M2-supervisor PRIVATE $<${APPLE}:${ATOMIC_OPS_INCLUDE_DIR}>
+
 # Compiler warning flags
 target_compile_options(M2-supervisor PRIVATE -Wcast-qual -Wno-unused)
 

@@ -307,3 +307,6 @@ if(FACTORY_FOUND)
 else()
   unset(FACTORY_STREAMIO CACHE)
 endif()
+
+# Temporary hack:
+set(ATOMIC_OPS_INCLUDE_DIR /usr/local/include)

@@ -316,6 +316,12 @@ if(EIGEN3_FOUND)
   target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
 endif()
 
+foreach(LIB IN LISTS PKGLIB_LIST)
+  if(${LIB}_FOUND)
+    target_link_libraries(M2-engine PUBLIC PkgConfig::${LIB})
+  endif()
+endforeach()
+
 foreach(LIB IN LISTS LIBRARIES_LIST)
   if(${LIB}_FOUND)
     target_link_libraries(M2-engine PUBLIC ${${LIB}_LIBRARIES})
@@ -323,11 +329,7 @@ foreach(LIB IN LISTS LIBRARIES_LIST)
   endif()
 endforeach()
 
-foreach(LIB IN LISTS PKGLIB_LIST)
-  if(${LIB}_FOUND)
-    target_link_libraries(M2-engine PUBLIC PkgConfig::${LIB})
-  endif()
-endforeach()
+target_include_directories(M2-engine PRIVATE $<${APPLE}:${ATOMIC_OPS_INCLUDE_DIR}>
 
 # Compiler warning flags
 target_compile_options(M2-engine PRIVATE

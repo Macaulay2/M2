@@ -159,9 +159,9 @@ target_include_directories(M2-interpreter
     ${Python3_INCLUDE_DIRS}
   )
 
-foreach(LIB IN LISTS LIBRARY_LIST)
+foreach(LIB IN LISTS PKGLIB_LIST)
   if(${LIB}_FOUND)
-    target_link_libraries(M2-interpreter PUBLIC ${${LIB}_LIBRARY})
+    target_link_libraries(M2-interpreter PUBLIC PkgConfig::${LIB})
   endif()
 endforeach()
 
@@ -172,11 +172,14 @@ foreach(LIB IN LISTS LIBRARIES_LIST)
   endif()
 endforeach()
 
-foreach(LIB IN LISTS PKGLIB_LIST)
+foreach(LIB IN LISTS LIBRARY_LIST)
   if(${LIB}_FOUND)
-    target_link_libraries(M2-interpreter PUBLIC PkgConfig::${LIB})
+    target_link_libraries(M2-interpreter PUBLIC ${${LIB}_LIBRARY})
+    target_include_directories(M2-interpreter PRIVATE ${${LIB}_INCLUDE_DIR})
   endif()
 endforeach()
+
+target_include_directories(M2-interpreter PRIVATE $<${APPLE}:${ATOMIC_OPS_INCLUDE_DIR}>
 
 # Compiler warning flags
 target_compile_options(M2-interpreter PRIVATE
