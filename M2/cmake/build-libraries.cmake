@@ -72,6 +72,7 @@ endif()
 set(CONFIGURE PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure)
 set(CONFIGURE ${SET_LD_LIBRARY_PATH} ${CONFIGURE})
 set(MAKE      ${SET_LD_LIBRARY_PATH} ${MAKE})
+set(NINJA     ${SET_LD_LIBRARY_PATH} ${NINJA})
 
 # TODO: Accumulate information in usr-host/share/config.site to speed up configuration
 # See: https://www.gnu.org/software/autoconf/manual/autoconf-2.60/html_node/Cache-Files.html
@@ -245,11 +246,6 @@ if(NOT MP_FOUND)
     _ADD_COMPONENT_DEPENDENCY(libraries mpir "" MPIR_FOUND)
   endif()
 endif()
-# Making sure flint can find the gmp.h->mpir.h symlink
-if(MPIR_FOUND AND NOT EXISTS ${M2_HOST_PREFIX}/include/gmp.h)
-  configure_file(${MP_INCLUDE_DIRS}/mpir.h   ${M2_HOST_PREFIX}/include/gmp.h   COPYONLY)
-  configure_file(${MP_INCLUDE_DIRS}/mpirxx.h ${M2_HOST_PREFIX}/include/gmpxx.h COPYONLY)
-endif()
 
 
 # https://www.mpfr.org/
@@ -264,7 +260,7 @@ ExternalProject_Add(build-mpfr
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --with-gmp=${M2_HOST_PREFIX}
+                      --with-gmp=${MP_ROOT}
                       --disable-thread-safe
                       --with-pic
                       ${shared_setting}
@@ -305,7 +301,7 @@ ExternalProject_Add(build-ntl
                       #-C --cache-file=${CONFIGURE_CACHE}
                       TUNE=generic
                       NATIVE=off
-                      GMP_PREFIX=$<IF:$<BOOL:${USING_MPIR}>,${M2_HOST_PREFIX},${MP_INCLUDE_DIRS}/..>
+                      GMP_PREFIX=${MP_ROOT}
                       SHARED=on # FIXME: $<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
@@ -329,7 +325,7 @@ ExternalProject_Add_Step(build-ntl wizard
                       #-C --cache-file=${CONFIGURE_CACHE}
                       TUNE=auto
                       NATIVE=on
-                      $<$<BOOL:${USING_MPIR}>:GMP_PREFIX=${M2_HOST_PREFIX}>
+                      GMP_PREFIX=${MP_ROOT}
                       SHARED=on # FIXME: $<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
@@ -452,7 +448,7 @@ ExternalProject_Add(build-frobby
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/frobby/patch-0.9.0
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} library -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
-                      GMP_INC_DIR=${M2_HOST_PREFIX}/include
+                      GMP_INC_DIR=${MP_ROOT}/include
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${frobby_CXXFLAGS}
@@ -1065,6 +1061,42 @@ ExternalProject_Add(build-topcom
   STEP_TARGETS      install test
   )
 _ADD_COMPONENT_DEPENDENCY(programs topcom cddlib TOPCOM)
+
+
+# TODO: this is still experimental
+# https://polymake.org
+# Polymake needs gmp, mpfr, cdd, lrs, libnormaliz, nauty and jReality
+#set(polymake_CPPFLAGS "${CPPFLAGS}")
+#if(CDDLIB_FOUND)
+#  set(polymake_CPPFLAGS "${polymake_CPPFLAGS} -I${CDDLIB_INCLUDE_DIR}")
+#endif()
+ExternalProject_Add(build-polymake
+  URL               https://polymake.org/lib/exe/fetch.php/download/polymake-4.0r1-minimal.tar.bz2
+  URL_HASH          SHA256=b29de50dda6f657f2e82ef6acff62df1b51128a20c5d53bd97226ea22fdc3b52
+  PREFIX            libraries/polymake
+  SOURCE_DIR        libraries/polymake/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
+		      --with-gmp=${MP_ROOT}
+                      CPPFLAGS=${CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      CXXFLAGS=${CXXFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+  BUILD_COMMAND     ${MAKE}
+  INSTALL_COMMAND   ninja -C build/Opt install
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/polymake
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/polymake
+#          COMMAND   ${CMAKE_COMMAND} -E copy_if_different polymake ${M2_INSTALL_PROGRAMSDIR}/
+  TEST_COMMAND      ${MAKE} test
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  )
+#_ADD_COMPONENT_DEPENDENCY(programs polymake "cddlib;lrs;normaliz;nauty" POLYMAKE)
 
 ###############################################################################
 ## Post-build actions

@@ -68,14 +68,18 @@ find_package(History	REQUIRED QUIET) # See FindHistory.cmake
 if(USING_MPIR)
   find_package(MPIR	3.0.0)
   set(MP_LIBRARY MPIR)
+  set(MP_ROOT ${M2_HOST_PREFIX})
+  include_directories(BEFORE ${CMAKE_SOURCE_DIR}/include/M2/gmp-to-mpir)
 else()
   find_package(GMP	6.0.0 REQUIRED)
   set(MP_LIBRARY GMP)
+  set(MP_ROOT ${GMP_INCLUDE_DIR}/..)
 endif()
 # MP will mask either GMP or MPIR
-foreach(var IN ITEMS FOUND INCLUDE_DIR INCLUDE_DIRS LIBRARIES VERSION_OK)
+foreach(var IN ITEMS FOUND INCLUDE_DIRS LIBRARIES VERSION_OK)
   set(MP_${var} ${${MP_LIBRARY}_${var}})
 endforeach()
+set(MP_INCLUDE_DIR ${${MP_LIBRARY}_INCLUDE_DIRS})
 
 ###############################################################################
 ## Libraries we can download and build:
@@ -309,4 +313,4 @@ else()
 endif()
 
 # Temporary hack:
-set(ATOMIC_OPS_INCLUDE_DIR /usr/local/include)
+set(ATOMIC_OPS_INCLUDE_DIR /usr/local/Cellar/libatomic_ops/7.6.10/include)

@@ -23,8 +23,7 @@ if(ETAGS)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/TAGS
     COMMENT "Generating c/TAGS file"
     COMMAND ${ETAGS} -o TAGS ${HEADERS} ${SOURCES} grammar.y scc-core.h scc-core.c
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
 # Compile scc1
@@ -32,8 +31,7 @@ add_executable(scc1 ${HEADERS} ${SOURCES} grammar.c ${TAGS})
 
 target_include_directories(scc1 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-  $<INSTALL_INTERFACE:include/Macaulay2>
-  )
+  $<INSTALL_INTERFACE:include/Macaulay2>)
 
 if(BDWGC_FOUND AND GDBM_FOUND)
   target_link_libraries(scc1 Threads::Threads
@@ -44,5 +42,4 @@ if(BDWGC_FOUND AND GDBM_FOUND)
 endif()
 
 target_compile_options(scc1 PRIVATE
-  $<$<COMPILE_LANG_AND_ID:C,GNU>:-Wno-implicit-fallthrough> # FIXME: caused by type.c:175:26
-  )
+  $<$<COMPILE_LANG_AND_ID:C,GNU>:-Wno-implicit-fallthrough>) # FIXME: caused by type.c:175:26

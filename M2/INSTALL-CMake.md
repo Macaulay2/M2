@@ -289,6 +289,11 @@ Same as above.
 Same as above.
 </details>
 
+<details>
+<summary><code>mpirxx.h:3482:13: error: ‘mpir_ui’ has not been declared</code></summary>
+This error indicates that a system version of `gmp.h` was found before `mpir.h`. If this occurs, open an issue.
+</details>
+
 
 <details>
 <summary><code>undefined reference to `GC_malloc`</code></summary>

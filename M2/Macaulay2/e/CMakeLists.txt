@@ -290,8 +290,7 @@ if(ETAGS)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/TAGS
     COMMENT "Generating e/TAGS file"
     COMMAND ${ETAGS} -o TAGS ${HEADERS} ${SOURCES}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
 ###############################################################################
@@ -306,8 +305,7 @@ set_target_properties(M2-engine PROPERTIES PUBLIC_HEADER "${HEADERS}")
 
 target_include_directories(M2-engine PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-  $<INSTALL_INTERFACE:include/Macaulay2>
-  )
+  $<INSTALL_INTERFACE:include/Macaulay2>)
 
 # TODO: make engine independent of interpreter headers
 target_link_libraries(M2-engine PUBLIC M2-interpreter)
@@ -329,7 +327,8 @@ foreach(LIB IN LISTS LIBRARIES_LIST)
   endif()
 endforeach()
 
-target_include_directories(M2-engine PRIVATE $<${APPLE}:${ATOMIC_OPS_INCLUDE_DIR}>)
+# FIXME: simply this for Mac users
+target_include_directories(M2-engine PRIVATE $<$<BOOL:${APPLE}>:${ATOMIC_OPS_INCLUDE_DIR}>)
 
 # Compiler warning flags
 target_compile_options(M2-engine PRIVATE
@@ -414,7 +413,7 @@ if(BUILD_TESTING)
     unit-tests/testMain.cpp # not needed, except for GC_INIT
     )
 
-  target_link_libraries(M2-unit-tests M2-engine)
+  target_link_libraries(M2-unit-tests M2-engine ${BDWGC_LIBRARIES} ${CMAKE_DL_LIB})
 
   ## Add the tests
   # TODO: valgrind --track-origins=yes ...
