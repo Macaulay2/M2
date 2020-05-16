@@ -5,7 +5,7 @@ newPackage(
     	Authors => {{Name => "Roberto Barrera", 
 		  Email => "rbarrera@math.tamu.edu", 
 		  HomePage => "http://www.math.tamu.edu/~rbarrera/"}},
-    	Headline => "a package to compute quasidegrees and graded local cohomology",
+    	Headline => "quasidegrees and graded local cohomology",
 	PackageImports => {"FourTiTwo", "Depth", "Polyhedra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -582,7 +582,7 @@ doc ///
       $R/I$ where $R$ is the ring of $I$.
       
      Text
-      A synonym for this function is @TO "qav"@.
+      A synonym for this function is @TT "qav"@.
      
      Example
       R = QQ[x,y,Degrees=>{{1,0},{0,1}}]
@@ -730,7 +730,7 @@ doc ///
       executes for the module $R/I$ where $R$ is the ring of $I$.
       
      Text
-      A synonym for this function is @TO "qlc"@.
+      A synonym for this function is @TT "qlc"@.
      
      Text 
       The first example computes the quasidegree set of 

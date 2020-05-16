@@ -236,13 +236,13 @@ class ARingGFFlint : public RingInterface
         set_zero(result);
         return;
       }
-    bool neg = false;
+    // bool neg = false;
     mpz_t abs_n;
     mpz_init(abs_n);
     mpz_abs(abs_n, n);
     if (mpz_sgn(n) < 0)
       {
-        neg = true;
+        // neg = true;
         invert(result, a);
       }
     else

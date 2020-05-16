@@ -8,7 +8,7 @@ newPackage( "SectionRing",
      	       }
 	  },
      PackageImports => {"Divisor"},
-     Headline => "computing the section ring of a Weil Divisor"
+     Headline => "the section ring of a Weil Divisor"
      )
 
 export{

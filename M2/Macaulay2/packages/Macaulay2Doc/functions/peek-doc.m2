@@ -35,11 +35,6 @@ document {
       	  "peek s",
       	  "peek'_2 s"
 	  },
-     PARA {
-	  "Some types of things have the notion of depth modified slightly to make the entire structure visible at depth 1, as in the following example, which
-	  also shows how to use ", TO "wrap", " with the output from ", TO "peek", "."
-	  },
-     EXAMPLE "wrap_70 peek help resolution",
      SeeAlso => "peek"
      }
 

@@ -51,7 +51,9 @@ inversePermutation = v -> ( w := new MutableList from #v:null; scan(#v, i -> w#(
 -- We mimic the procedure for finding a finite field addition table used in the routine gf_get_table
 -- for building the file name in "gffilename", in the file BUILD_DIR/libraries/factory/build/factory/gfops.cc .
 -- Reminder: the contents of currentLayout are determined by the file ../d/startup.m2.in .
-gfdirs = {prefixDirectory | currentLayout#"factory gftables"}
+gfdirs = ( if isAbsolutePath currentLayout#"factory gftables"
+           then {                  currentLayout#"factory gftables"}
+	   else {prefixDirectory | currentLayout#"factory gftables"} )
 i := position(gfdirs, gfdir -> fileExists(gfdir | "gftables/961")) -- 961==31^2
 if i === null
 then error ("sample Factory finite field addition table file missing, needed for factorization: ",
@@ -79,17 +81,16 @@ irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      TtoR.cache.inverse = RtoT;
      (apply(rawCharSeries raw StoT m, rawmat -> map(T,rawmat)),TtoR))
 
-factor ZZ := ( f -> opts -> f ) (
-     if instance(Pari$factorint, Function)
-     then n -> (
-	  if n === 0 then Product { Power{0,1} }
-	  else (
-	       r := Pari$factorint n;
-	       Product apply(r#0,r#1,(p,i)-> Power{p,i})
-	       )
-	  )
-     else n -> Product apply(sort pairs factorInteger n, (p,i)-> Power{p,i})
-     )
+factor ZZ := opts -> n -> (
+    if n === 0 then Product { Power{0,1} }
+    else (
+	r := rawZZfactor n; -- format is: (sign, factor1, exponent1, factor2, exponent2, ...)
+        nfactors := #r//2;
+        assert(#r == 2*nfactors + 1);
+        r#0 * Product for i from 1 to nfactors list Power{r#(2*i-1), r#(2*i)}
+	)
+    )
+ 
 factor QQ := opts -> (r) -> factor numerator r / factor denominator r
 -----------------------------------------------------------------------------
 topCoefficients = method()

@@ -11,7 +11,7 @@ newPackage(
        Email => "parrilo@mit.edu",
        HomePage => "http://www.mit.edu/~parrilo/"}
     },
-    Headline => "A package that exploits chordal structure",
+    Headline => "routines that exploit chordal structure",
     AuxiliaryFiles => true,
     PackageExports => {"Graphs","TriangularSets"}
 )

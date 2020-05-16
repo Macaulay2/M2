@@ -2,14 +2,71 @@
 --- author(s): Gregory G. Smith
 --- notes: 
 
+doc /// 
+    Key
+	(isProbablePrime,ZZ)
+    	isProbablePrime	
+    Headline
+    	whether an integer is probably prime
+    Usage 
+    	isProbablePrime x
+    Inputs
+    	x:ZZ
+    Outputs
+    	:Boolean
+    Description
+    	Text 
+	    Performs some trial division and then some probabilistic
+	    primality tests. If $x$ is definitely composite, the function
+	    returns false, otherwise it is declared probably prime, i.e. prime
+	    for most practical purposes, and the function returns true. The
+	    chance of declaring a composite number prime is very small.
+	    Subsequent calls to the same function do not increase the
+	    probability of the number being prime.  In fact, there are no known numbers
+            which are composite, and for which this function returns true, although
+            it is expected that there are an infinite number of such primes.
+    	    
+            This function calls {\tt fmpz_is_probabprime} in the {\tt flint} library.
+	Example
+            n = 1166513229502037
+   	    isProbablePrime n
+            isPrime n
+            n1 = nextPrime(n+1)
+            factor(n1^2*n)
+        Text
+            These functions handle numbers larger than this.  For example,
+        Example
+            m = 158174196546819165468118574681196546811856748118567481185669501856749
+            isProbablePrime m
+            isPrime m
+            isPrime m^2
+            factor m^2
+        Example
+            ndigits = 30
+            m = nextPrime(10^30)
+            m1 = nextPrime (m+10^10)
+            m2 = nextPrime (m1 + 10^20)
+            isPrime m
+            isPrime m1
+            isPrime (m*m1)
+            isPrime(m*m*m1*m1*m2^6)
+            elapsedTime facs = factor(m*m1)
+            facs = facs//toList/toList
+            assert(set facs === set {{m,1}, {m1,1}})
+            m3 = nextPrime (m^3)
+            elapsedTime isPrime m3
+            elapsedTime isProbablePrime m3
+    SeeAlso
+        (isPrime,ZZ)
+        (factor,ZZ)
+        (nextPrime,Number)
+///
+
 document { 
      Key => {(isPseudoprime, ZZ), isPseudoprime},
-     Headline => "whether an integer is a pseudoprime",
-     Usage => "isPseudoprime x",
-     Inputs => { "x" },
-     Outputs => {
-	  Boolean => {TO "true", " if ", TT "x", " is a strong pseudoprime in the sense of Baillie-Pomerance-Selfridge-Wagstaff"}
-	  },
+     Headline => "deprecated, use isProbablePrime",
+     SeeAlso => {"isProbablePrime"}
+     -*
      PARA {
 	  "The algorithm is provided by ", TO "pari", ".  The pseudoprimality test means that
 	  it has no small factors, that it is a Rabin-Miller pseudoprime for the 
@@ -19,12 +76,13 @@ document {
 	  According to the documentation of ", TO "pari", TEX ", such pseudoprimes are known
 	  to be prime up to $10^{13}$, and no nonprime pseudoprime is known."
 	  }
+     *-
      }
 
 TEST ///
-assert not isPseudoprime(101*1617839547365369353)
-assert not isPseudoprime(18158848484363*1617839547365369353)
-assert isPseudoprime 1617839547365369353
+assert not isProbablePrime(101*1617839547365369353)
+assert not isProbablePrime(18158848484363*1617839547365369353)
+assert isProbablePrime 1617839547365369353
 ///
 
 document { 
@@ -69,7 +127,7 @@ document {
 -- 	  {"At the moment, for integers larger than ", TT "2^31-1", " it checks for
 --      	       divisibility by small primes, and then applies a strong pseudoprimality
 --      	       test (Rabin-Miller) to the base 2."},},
-     SeeAlso => {factor, isPseudoprime}
+     SeeAlso => {factor, isProbablePrime}
      }
 
 TEST "

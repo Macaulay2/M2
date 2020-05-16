@@ -21,7 +21,7 @@ newPackage(
 	  -- Email=> "",
 	  -- HomePage=>""}      
 	  },
-     Headline => "A package for discrete and Gaussian graphical models",
+     Headline => "discrete and Gaussian graphical models",
      PackageExports => { "Graphs" },
      PackageImports => { "IntegralClosure", "Elimination" },
      Certification => {

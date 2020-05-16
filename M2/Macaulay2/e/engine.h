@@ -25,7 +25,7 @@ class EngineComputation;
 class MutableComplex;
 // NAG begin
 class M2SLEvaluator;
-class Homotopy;
+class M2Homotopy;
 class M2SLProgram;
 class StraightLineProgram;
 class PathTracker;
@@ -50,7 +50,7 @@ typedef struct MonomialIdeal MonomialIdeal;
 typedef struct MutableComplex MutableComplex;
 // NAG begin
 typedef struct M2SLEvaluator M2SLEvaluator;
-typedef struct Homotopy Homotopy;
+typedef struct M2Homotopy M2Homotopy;
 typedef struct M2SLProgram M2SLProgram;
 typedef struct StraightLineProgram StraightLineProgram;
 typedef struct PathTracker PathTracker;
@@ -73,6 +73,16 @@ extern "C" {
 
   M2_string engineMemory(); /* connected MES to engineMemory */
 
+  /*****************************************************/
+  /**** Integer primality and factorization (via flint)*/
+  /*****************************************************/
+
+  M2_bool rawZZisPrime(gmp_ZZ a);
+
+  M2_bool rawZZisProbablePrime(gmp_ZZ a);
+
+  gmp_arrayZZ rawZZfactor(gmp_ZZ a);
+  
   /**************************************************/
   /**** Monomial routines ***************************/
   /**************************************************/
@@ -1646,8 +1656,8 @@ extern "C" {
 
 enum ComputationStatusCode
 {
-  /* we include ../e in the path here, just so we can include it from ../d as well as from . */
-#include "statuscodes.h"
+  /* include/M2/statuscodes.h is generated from Macaulay2/m2/statuscodes */
+#include "M2/statuscodes.h"
 };
 
 enum StrategyValues
@@ -2042,19 +2052,19 @@ enum gbTraceValues
   gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M);
 
   // NAG begin
-  Homotopy /* or null */ *rawHomotopy(M2SLEvaluator *Hx, M2SLEvaluator *Hxt, M2SLEvaluator *HxH);
+  M2Homotopy /* or null */ *rawHomotopy(M2SLEvaluator *Hx, M2SLEvaluator *Hxt, M2SLEvaluator *HxH);
   M2SLEvaluator /* or null */ *rawSLEvaluator(M2SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts);
   M2SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(M2SLEvaluator* H, const MutableMatrix *parameters);
   M2SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs);
   M2_string rawSLEvaluatorToString(M2SLEvaluator *); /* connected */
   M2_bool rawSLEvaluatorEvaluate(M2SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs);
-  M2_string rawHomotopyToString(Homotopy *); /* connected */
+  M2_string rawHomotopyToString(M2Homotopy *); /* connected */
   M2_string rawSLProgramToString(M2SLProgram *); /* connected */
   unsigned int rawSLEvaluatorHash(M2SLEvaluator *); /* connected */
-  unsigned int rawHomotopyHash(Homotopy *); /* connected */
+  unsigned int rawHomotopyHash(M2Homotopy *); /* connected */
   unsigned int rawSLProgramHash(M2SLProgram *); /* connected */
 
-  M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs,
+  M2_bool rawHomotopyTrack(M2Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs,
                            MutableMatrix* output_extras,  
                            gmp_RR init_dt, gmp_RR min_dt,
                            gmp_RR epsilon, // o.CorrectorTolerance,

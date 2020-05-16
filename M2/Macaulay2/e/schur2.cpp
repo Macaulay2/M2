@@ -185,7 +185,7 @@ ring_elem SchurRing2::from_partition(M2_arrayint part) const
   int len = last_nonzero(part) + 1;
   f->monoms.push_back(len + 1);
   for (int i = 0; i < len; i++) f->monoms.push_back(part->array[i]);
-  return ring_elem(f);;
+  return ring_elem(f);
 }
 
 void SchurRing2::text_out(buffer &o) const

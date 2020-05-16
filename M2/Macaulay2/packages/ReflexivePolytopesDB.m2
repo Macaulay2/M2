@@ -15,7 +15,6 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
         Headline => "simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4",
-        DebuggingMode => true,
         AuxiliaryFiles => true
         )
 

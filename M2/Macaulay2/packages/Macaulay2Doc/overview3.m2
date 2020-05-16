@@ -280,13 +280,35 @@ document {
      SeeAlso => "GC garbage collector"
      }
 
+doc /// 
+    Key 
+        "MPSolve"
+    Headline 
+        a library for finding roots of univariate polynomials 
+    Description 
+        Text 
+            Starting with version 1.16, Macaulay2 incorporates the
+            MPsolve (version 3) package, available at @HREF
+            "https://numpi.dm.unipi.it/_media/software/mpsolve"@,
+            and originally developed by Dario Bini, Giuseppe
+            Fiorentino, and Leonardo Robol.
+            
+            This library is used by the @TO "roots"@ function, for
+            finding complex roots of a univariate polynomial
+    SeeAlso
+        (roots, RingElement)
+///
+
 document {
      Key => "pari",
      PARA {
-	  "Starting with version 1.2, Macaulay2 incorporates ", TT "pari", ", a free library for fast computations in number theory,
-	  available at ", HREF "http://pari.math.u-bordeaux.fr/", ",
-	  originally developed by Henri Cohen and his co-workers at Université Bordeaux I, France.
-	  It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), "."
+	  "Starting with version 1.2, and up through version 1.15,
+	  Macaulay2 incorporated ", TT "pari", ", a free library for fast
+	  computations in number theory, available at ", HREF "http://pari.math.u-bordeaux.fr/", 
+      ", originally developed by
+	  Henri Cohen and his co-workers at Université Bordeaux I, France.
+	  In the stated versions, it is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", 
+      TT "isPseudoprime", ", and ", TO (isPrime,ZZ), "."
 	  }
      }
 

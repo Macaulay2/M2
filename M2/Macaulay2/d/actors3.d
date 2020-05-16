@@ -187,11 +187,6 @@ EqualEqualfun(lhs:Code,rhs:Code):Expr := (
      	  y := eval(rhs);
 	  when y is Error do y else EqualEqualfun(x,y)));
 setup(EqualEqualS,EqualEqualfun);
-not(z:Expr):Expr := (
-     when z is Error do z 
-     else if z == True then False 
-     else if z == False then True
-     else buildErrorPacket("expected true or false"));
 
 NotEqualfun(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
@@ -785,7 +780,7 @@ setupfun("Gamma",Gamma);
 export lgamma(x:RR):Expr := (
      z := newRRmutable(precision(x));
      i := 0;
-     Ccode( void, "mpfr_lgamma((mpfr_ptr)", z, ",&",i,",(mpfr_ptr)", x, ", GMP_RNDN)" );
+     Ccode( void, "mpfr_lgamma((mpfr_ptr)", z, ",&",i,",(mpfr_srcptr)", x, ", GMP_RNDN)" );
      Expr(Sequence(toExpr(moveToRR(z)),toExpr(i))));
 lgamma(e:Expr):Expr := (
      when e

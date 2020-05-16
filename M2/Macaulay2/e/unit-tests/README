@@ -1,6 +1,15 @@
-This file contains unit tests for engine.
+This directory contains unit tests for engine.  We are using googletest (gtest) currently,
+but only in a fairly naive manner.
+
+However, gtest does not play well with libgc, at least I could not get them to work together.
+We create our own executable here (or, executables), and have a number of files which avoid the
+use of libgc, as well as avoid needing to link in d directory 
+(M2mem-replacement, M2-replacement, M2-cpp-replacement).
 
 Run tests (and compiles them) using: make check
   Currently, this also is when the file gtest-includes is compiled (which takes a bit of time)
 
 Currently, the source files (except gtest-include.cpp) are compiled during 'make'
+
+We are experimenting with using catch2 instead of gtest, and also with trying to build the 
+unit test executable via cmake.

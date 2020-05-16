@@ -328,7 +328,7 @@ document {
      PARA { "Here is a template for a typical ", TT "newPackage", " entry in a package."},
      PRE ///newPackage("PACKAGENAME",
     Headline => "one line description",
-    Version => 0.1,
+    Version => "0.1",
     Date => "month XX, 20XX",
     Authors => {
 	 {Name => "author1", Email => "email1", HomePage => "url1"}

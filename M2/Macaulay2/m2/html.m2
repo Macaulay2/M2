@@ -447,7 +447,7 @@ utest := opt -> (
      cmd := "ulimit " | opt | "; ";
      if chkrun("2>/dev/null >/dev/null "|cmd) == 0 then cmd else ""
      )
-ulimit := utest "-c unlimited" | utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192" | utest "-n 512"
+ulimit := utest "-c unlimited" | utest "-t 700" | utest "-m 850000" | utest "-s 8192" | utest "-n 512"
 
 M2statusRegexp := "^--status:"
 statusLines := file -> select(lines file, s -> match(M2statusRegexp,s))
@@ -563,7 +563,9 @@ setupNames := (opts,pkg) -> (
 unsetupNames := () -> installPrefix = installLayout = buildPackage = null
 
 
-installPackage = method(Options => {
+installPackage = method(
+     TypicalValue => Package,
+     Options => {
 	  SeparateExec => false,
           InstallPrefix => () -> applicationDirectory() | "local/",
 	  UserMode => null,
@@ -612,8 +614,7 @@ installPackage String := opts -> pkg -> (
      -- -- in the "Macaulay2Doc" package was not yet loaded
      -- ... but we want to build the package Style without loading any other packages
      pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation, FileName => opts.FileName, Reload => true);
-     installPackage(pkg, opts);
-     )
+     installPackage(pkg, opts))
 
 dispatcherMethod := m -> m#-1 === Sequence and (
      f := lookup m;
@@ -1028,7 +1029,7 @@ installPackage Package := opts -> pkg -> (
      unsetupNames();
      htmlDirectory = null;
      tallyInstalledPackages();
-     )
+     pkg)
 
 sampleInitFile = ///-- This is a sample init.m2 file provided with Macaulay2.
 -- It contains Macaulay2 code and is automatically loaded upon
@@ -1242,13 +1243,7 @@ showHtml = show Hypertext := x -> (
 
 show TEX := x -> showTex x
 
-viewHelp = method()
-
-installMethod(viewHelp, () -> (
-     i := applicationDirectory() | topFileName;
-     if not fileExists i then error("missing file (run makePackageIndex() or start M2 without -q): ",i);
-     show new URL from { "file://" | i }		    -- formerly (for cygwin): fix i
-     ))
+viewHelp = method(Dispatch=>Thing)
 
 viewHelp String := key -> (		    -- assume key is a formatted key
      fn := locateDocumentationNode key;
@@ -1256,11 +1251,17 @@ viewHelp String := key -> (		    -- assume key is a formatted key
      else show new URL from {fn})
 
 viewHelp Thing := key -> (
-     (prefix,tail) := htmlFilename getPrimary makeDocumentTag key;
-     fn := prefix|tail;
-     if not fileExists fn then error("html file not found: ",fn);
-     show new URL from {fn})
-
+     if key === () then (				    -- show the top level help page
+	  i := applicationDirectory() | topFileName;
+	  if not fileExists i then error("missing file (run makePackageIndex() or start M2 without -q): ",i);
+	  show new URL from { "file://" | i }		    -- formerly (for cygwin): fix i
+          )
+     else (
+     	  (prefix,tail) := htmlFilename getPrimary makeDocumentTag key;
+     	  fn := prefix|tail;
+     	  if not fileExists fn then error("html file not found: ",fn);
+     	  show new URL from {fn}))
+     
 viewHelp = new Command from viewHelp
 
 indexHtml = dir -> (

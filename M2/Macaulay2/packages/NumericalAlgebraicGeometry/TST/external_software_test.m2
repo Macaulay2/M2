@@ -1,4 +1,6 @@
-restart
+-- this is a test that is NOT run by the package
+-- but SHOULD BE RUN before a release
+
 setRandomSeed 0
 NAG = needsPackage "NumericalAlgebraicGeometry"
 NAGtrace 1;
@@ -26,3 +28,7 @@ assert (M == P)
 -----------------------------------------------------
 -- OTHER TESTS
 load "NumericalAlgebraicGeometry/Bertini/Bertini.test.m2"
+
+end
+restart
+load "external_software_test.m2"

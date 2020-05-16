@@ -1,9 +1,7 @@
+-- -*- coding: utf-8 -*-
+
 --TODO: gfan errors printed on screen in:
 -- QQ[x,y,z,w]; I=ideal(x-y,w+y-x); gfanTropicalStartingCone I; tropicalVariety I; tropicalVariety ideal(x);
-
-path = prepend ("~/src/M2/Workshop-2018-Leipzig/Tropical/", path)
-
--- -*- coding: utf-8 -*-
 
 newPackage(
 	"gfanInterface",
@@ -13,7 +11,7 @@ newPackage(
 		{Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""},
 		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"},
 	    {Name => "Diane Maclagan (current maintainer)", Email => "D.Maclagan@warwick.ac.uk", HomePage=>"http://homepages.warwick.ac.uk/staff/D.Maclagan/"}},
-	Headline => "Interface to Anders Jensen's Gfan software",
+	Headline => "interface to Anders Jensen's Gfan software",
 	Configuration => {
 		"path" => "",
 		"fig2devpath" => "",

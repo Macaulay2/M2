@@ -5,7 +5,7 @@ newPackage(
         Authors => {{Name => "Mike Stillman", 
                   Email => "", 
                   HomePage => ""}},
-        Headline => "Experimental package for mathicgb interface.  Not meant for general use",
+        Headline => "experimental mathicgb interface, not meant for general use",
         PackageExports => {"ExampleIdeals"},
         Configuration => { "path" => ""
 	        },

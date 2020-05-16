@@ -142,7 +142,7 @@ void PolyRing::text_out(buffer &o) const
 Nterm *PolyRing::new_term() const
 {
   Nterm *result = GETMEM(Nterm *, poly_size_);
-  result->next = NULL;
+  result->next = nullptr;
   result->coeff = 0;  // This value is never used, one hopes...
   // In fact, it gets used in the line below:       K->remove(tmp->coeff);
   // which is called from the line below:           remove(idiotic);
@@ -150,7 +150,7 @@ Nterm *PolyRing::new_term() const
   // part of the union, so on a machine with 4 byte ints and 8 byte pointers,
   // the
   // pointer part is not NULL!
-  result->coeff.poly_val = NULL;  // so I added this line
+  result->coeff.poly_val = nullptr;  // so I added this line
   return result;
 }
 

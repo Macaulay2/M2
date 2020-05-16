@@ -9,7 +9,7 @@ newPackage(
      Date => "28 October 2009",
      Authors => {{Name => "Bradford Hovinen",
 	          Email => "hovinen@math.uni-hannover.de"}},
-     Headline => "Computing versal deformations of maximal Cohen-Macaulay modules",
+     Headline => "versal deformations of maximal Cohen-Macaulay modules",
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "http://j-sag.org/",

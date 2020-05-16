@@ -14,6 +14,10 @@
 #pragma GCC diagnostic ignored "-Wshorten-64-to-32"
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wunused-variable"
+
+// this fixes a weird problem in the package "openblas" of Arch Linux, which somehow fails to declare this function:
+extern "C" void openblas_set_num_threads(int num_threads);
+
 #include <fflas-ffpack/ffpack/ffpack.h>
 #pragma GCC diagnostic pop
 

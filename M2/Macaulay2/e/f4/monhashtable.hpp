@@ -84,10 +84,11 @@ class MonomialHashTable
   unsigned long size;
   unsigned int logsize;
   unsigned long hashmask;
-
   unsigned long threshold;
-  unsigned long nfind_or_insert;
+
   unsigned long count;
+
+  unsigned long nfind_or_insert;
   unsigned long nclashes;
   unsigned long max_run_length;
   unsigned long monequal_count;
@@ -102,7 +103,7 @@ class MonomialHashTable
   // The hash table size will be a power of 2, and this
   // is the initial power.
 
-  ~MonomialHashTable();
+  ~MonomialHashTable() {}
 
   void reset();
   // Clear out the hash table, resetting all values to 0, and
@@ -119,10 +120,9 @@ class MonomialHashTable
   // and number of values
 
   void show() const;
-  // displays the hash table, first by dots and x'x: ...x...xxx....
+  // displays the hash table
   // and then each value is displayed, with hash value.
   // in form [loc, hash, value]
-  // Each blank line has a dot, with multiple dots per line.
 };
 #endif
 

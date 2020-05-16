@@ -1,13 +1,18 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
+/* these two macros affect the definition of GC_INIT, but have to appear before the include directives, in order to take effect */
+#define GC_FREE_SPACE_DIVISOR 12
+#define GC_INITIAL_HEAP_SIZE 70000000
+
 #include "interp-exports.h"
 
 /* defining GDBM_STATIC makes the cygwin version work, and is irrelevant for the other versions */
 #define GDBM_STATIC
 #include <gdbm.h>
 
+#include <M2/gc-include.h>
+
 #include "M2mem.h"
-#include "M2inits.h"
 #include "../dumpdata/map.h"
 #include "types.h"
 #include "debug.h"
@@ -507,17 +512,17 @@ int register_fun(int *count, char *filename, int lineno, char *funname) {
 #if defined HAVE___ENVIRON
     #define our_environ __environ
     #if !HAVE_DECL___ENVIRON
-    extern const char **__environ;
+    extern char ** __environ;
     #endif
 #elif defined HAVE__ENVIRON
     #define our_environ _environ
     #if !HAVE_DECL__ENVIRON
-    extern const char **_environ;
+    extern char ** _environ;
     #endif
 #elif defined HAVE_ENVIRON
     #define our_environ environ
     #if !HAVE_DECL_ENVIRON
-    extern const char **environ;
+    extern char ** environ;
     #endif
 #else
     #error "no environment variable available"
@@ -526,7 +531,11 @@ int register_fun(int *count, char *filename, int lineno, char *funname) {
 extern void clean_up();
 extern char *GC_stackbottom;
 extern void arginits(int, const char **);
-extern bool gotArg(const char *arg, const char ** argv);
+
+static bool gotArg(const char *arg, char * const * argv) {
+  for (; *argv; argv++) if (0 == strcmp(arg,*argv)) return TRUE;
+  return FALSE;
+}
 
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
@@ -561,8 +570,8 @@ void* testFunc(void* q )
 struct saveargs
 {
   int argc;
-  const char** argv;
-  const char** envp;
+  const char * const * argv;
+  const char * const * envp;
   int volatile envc;
 };
 
@@ -573,20 +582,17 @@ static struct saveargs* vargs;
 void* interpFunc(void* vargs2)
 {
   struct saveargs* args = (struct saveargs*) vargs;
-  const char** saveenvp = args->envp;
-  const char** saveargv = args->argv;
+  char const * const * saveenvp = args->envp;
+  char const * const * saveargv = args->argv;
   int argc = args->argc;
   int volatile envc = args->envc;
+
      setInterpThread();
      reverse_run(thread_prepare_list);// -- re-initialize any thread local variables
-     arginits(argc,(const char **)saveargv);
 
-     //     void M2__prepare();
-     ///     M2__prepare();
-
-     M2_envp = M2_tostrings(envc,(char **)saveenvp);
-     M2_argv = M2_tostrings(argc,(char **)saveargv);
-     M2_args = M2_tostrings(argc == 0 ? 0 : argc - 1, (char **)saveargv + 1);
+     M2_envp = M2_tostrings(envc,saveenvp);
+     M2_argv = M2_tostrings(argc,saveargv);
+     M2_args = M2_tostrings(argc == 0 ? 0 : argc - 1, saveargv + 1);
      interp_setupargv();
      #ifdef HAVE_SIGLONGJMP
       sigsetjmp(abort_jump,TRUE);
@@ -617,7 +623,7 @@ int have_arg(char **argv, const char *arg) {
 
 int Macaulay2_main(argc,argv)
 int argc; 
-const char **argv;
+char * const * argv;
 {
 
      int volatile envc = 0;
@@ -632,11 +638,10 @@ const char **argv;
 #endif
      void main_inits();
 
-     const char **x = our_environ; 
+     char const * const *x = (char const * const *) our_environ; 
      while (*x) envc++, x++;
 
      GC_INIT();
-     progname = argv[0];
      IM2_initialize();
 
 #    ifndef NDEBUG
@@ -652,7 +657,7 @@ const char **argv;
 #endif
 
 #if defined HAVE_PERSONALITY && !PROFILING
-     if (!gotArg("--no-personality", (const char **)argv)) {
+     if (!gotArg("--no-personality", argv)) {
 	  /* this avoids mmap() calls resulting in address randomization */
 	  int oldpersonality = personality(-1);
 	  if ((oldpersonality & ADDR_NO_RANDOMIZE) == 0) {
@@ -760,14 +765,12 @@ const char **argv;
 
      /* the configure script is responsible for ensuring that rl_catch_signals is defined, or else we build readline ourselves */
      rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
-
-     system_handleInterruptsSetup(TRUE);
      
      vargs = GC_MALLOC_UNCOLLECTABLE(sizeof(struct saveargs));
-     vargs->argv=saveargv;
-     vargs->argc=argc;
-     vargs->envp=saveenvp;
-     vargs->envc = envc;
+     vargs->argv= (char const * const *)saveargv;
+     vargs->argc= argc;
+     vargs->envp= (char const * const *)saveenvp;
+     vargs->envc= envc;
 
      if (gotArg("--no-threads", saveargv)) {
 	  interpFunc(vargs);
@@ -883,6 +886,14 @@ int system_randomint(void) {
      return rawRandomInt(2<<31-1);
 #endif
      }
+
+/* The following function is, I believe, inserted into each d file,
+   and is set to run before main starts. */
+
+void scc_core_prepare() {
+  GC_INIT();			/* it's probably redundant to include this here */
+  IM2_initialize();
+}
 
 /*
 // Local Variables:

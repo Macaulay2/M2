@@ -187,7 +187,7 @@ setupMethods((), {
 	  substitute, rank, complete, ambient, topComponents, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
 	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw, exp,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
-	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
+	  leadComponent, degreesRing, degrees, assign, numgens, realPart, imaginaryPart, conjugate,
 	  autoload, relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
 	  presentation, dismiss, precision, 
 	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes, decompose,
@@ -266,7 +266,7 @@ map = method(
 setupMethods(Dispatch => Thing, {transpose} )
 setupMethods(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit, match,
-	  isSubset,isHomogeneous, isIsomorphism, isPrime, isPseudoprime, isField, isConstant
+	  isSubset,isHomogeneous, isIsomorphism, isPrime, isProbablePrime, isPseudoprime, isField, isConstant
 	  })
 setupMethods(TypicalValue => ZZ,
      {binomial,degreeLength,height,char,pdim,dim,depth,width,euler,genus})

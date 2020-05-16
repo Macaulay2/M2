@@ -55,7 +55,6 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
     varsPos.push_back(slp->inputCounter + vPos->array[i]);
   values.resize(slp->inputCounter + slp->mNodes.size());
   for (auto i = values.begin(); i != values.end(); ++i) ring().init(*i);
-  // R = consts->get_ring();
   for (int i = 0; i < cPos->len; i++)
     ring().set(values[slp->inputCounter + cPos->array[i]],
                consts->getMat().entry(0, i));
@@ -82,7 +81,7 @@ SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
     ERROR("1-column matrix expected; or #parameters > #vars");
     return nullptr;
   }
-  auto* e = new SLEvaluatorConcrete<RT>(*this);
+  SLEvaluatorConcrete<RT>* e = new SLEvaluatorConcrete<RT>(*this);
   size_t nParams = parameters->n_rows();
   for (int i = 0; i < nParams; ++i)
     ring().set(e->values[varsPos[i]], parameters->getMat().entry(i, 0));

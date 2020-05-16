@@ -17,7 +17,7 @@ newPackage("SLnEquivariantMatrices",
 			   Email => "paolo.lella@polimi.it",
 			       HomePage => "http://www.paololella.it"}
 		      },
-     	   Headline => "Ancillary file to the paper \"A construction of equivariant bundles on the space of symmetric forms\""
+     	   Headline => "file ancillary to the paper \"A construction of equivariant bundles on the space of symmetric forms\""
      	  )
      
 export {

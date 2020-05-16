@@ -106,7 +106,7 @@ isAffineRing isBorel isCommutative isConstant
 isDirectSum isField isFreeModule isHomogeneous
 isIdeal isInjective isIsomorphism isModule
 isMonomialIdeal isPolynomialRing isPrime
-isPseudoprime isQuotientModule isQuotientOf
+isProbablePrime isQuotientModule isQuotientOf
 isQuotientRing isReal isRing isSkewCommutative
 isSquareFree isSubmodule isSubquotient isSubset
 isSurjective isUnit isWellDefined jacobian koszul

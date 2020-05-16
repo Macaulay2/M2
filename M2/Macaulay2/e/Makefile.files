@@ -15,6 +15,14 @@ INTERFACE = \
 	monomial-sets \
 	mutablecomplex \
 	localring \
+	bibasis/bibasis \
+	bibasis/allocator \
+	bibasis/launcher \
+	bibasis/monom \
+	bibasis/monomDL \
+	bibasis/monomDRL \
+	bibasis/monomLex \
+	bibasis/settings-manager \
 	f4/res-monomial-sorter \
 	f4/res-varpower-monomial \
 	f4/res-f4-monlookup \
@@ -161,6 +169,7 @@ COMMANDS2 = \
 	polyroots
 
 COMMANDS = \
+	flint \
 	rand \
 	ntl-internal \
 	ntl-debugio \

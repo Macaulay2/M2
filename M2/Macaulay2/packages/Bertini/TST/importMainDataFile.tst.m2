@@ -28,7 +28,7 @@ if w#Multiplicity>1 then (
 ----------------------
 --Bertini has a USEREGENERATION option. When Bertini uses regenereation singular solutions are ignored in zero dimensional runs. 
 makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y},B'Polynomials=>{"(x^2-2)*x^3","y"},
-    B'Configs=>{{USEREGENERATION,1}})
+    BertiniInputConfiguration=>{UseRegeneration=>1})
 runBertini(storeBM2Files)
 
 witnessPoints=importMainDataFile(storeBM2Files)
@@ -41,8 +41,7 @@ assert(#witnessPoints==2)
 
 
 makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y},B'Polynomials=>{"(x^2-2)*x^3","y"},
-    B'Configs=>{
-	{TrackType,1}})
+    BertiniInputConfiguration=>{TrackType=>1})
 runBertini(storeBM2Files)
 
 witnessPoints=importMainDataFile(storeBM2Files)
@@ -61,7 +60,7 @@ keys p1
 makeB'InputFile(storeBM2Files,
     AffVariableGroup=>{x,y},
     B'Polynomials=>{"x*(x-1)*(x-2)^2","x*(y-3)"},
-    B'Configs=>{{TrackType,1}});
+    BertiniInputConfiguration=>{TrackType=>1});
 
 runBertini(storeBM2Files);
 wp=importMainDataFile(storeBM2Files) ;
@@ -153,7 +152,7 @@ assert( abs( abs(sings_0_0)-0)<1e-10)
 
 ----We want to make sure we have lots of precision. 
 makeB'InputFile(storeBM2Files,AffVariableGroup=>{x},B'Polynomials=>{"(x^2-2)"},
-    B'Configs=>{{FINALTOL,1e-300}})
+    BertiniInputConfiguration=>{FinalTol=>1e-300})
 runBertini(storeBM2Files)
 printingPrecision =256 
 rawSolutions=importSolutionsFile(storeBM2Files,

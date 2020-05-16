@@ -1,5 +1,3 @@
---path = prepend ("~/src/M2/Workshop-2018-Leipzig/Tropical/", path)
---Delete the line above when the "loading the wrong version" has been fixed.
 --polymakeOkay := try replace( "polymake version ", "", first lines get "!polymake --version 2>&1") >= "3.0" else false;
 --polymakeOkay := try replace( "polymake version ", "", first lines get "!polymake --version") >= "3.0" else false;
 
@@ -20,7 +18,7 @@ newPackage(
     		{Name => "Paolo Tripoli", Email => "paolo.tripoli@nottingham.ac.uk", HomePage=>"https://sites.google.com/view/paolotripoli/home"},
    		{Name => "Magdalena Zajaczkowska", Email => "Magdalena.A.Zajaczkowska@gmail.com", HomePage=>""}
 		},
-	Headline => "A package for doing computations in tropical geometry",
+	Headline => "tropical geometry",
 	Configuration => {
 		"path" => "",
 		"fig2devpath" => "",
@@ -30,7 +28,6 @@ newPackage(
 		"polymakeCommand" =>""
 	},
         PackageExports => {"gfanInterface","EliminationMatrices","Binomials"},
-	DebuggingMode => true,
 	AuxiliaryFiles => true,
 --	AuxiliaryFiles => false,
 	CacheExampleOutput => true

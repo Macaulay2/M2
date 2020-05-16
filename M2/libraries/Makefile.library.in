@@ -27,6 +27,10 @@ PRECONFIGURE  ?= :
 
 export PKG_CONFIG_PATH := $(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)
 
+# suppress warning messages while compiling libraries, because it's not our code
+CXXFLAGS += -w
+CFLAGS += -w
+
 ifeq ($(OPTIMIZE),no)
 CXXFLAGS += -O0
 CFLAGS += -O0
@@ -166,7 +170,7 @@ endif
 # installing a library, we copy the shared library files from the "usr-host"
 # directory tree in the build directory to the Macaulay2 part of the "usr-dist"
 # directory tree in the build directory.  In that location, they will be found
-# when running M2 or its thrid party programs, and they will be
+# when running M2 or its third party programs, and they will be
 # distributed along with Macaulay2.
 
 .compiled-$(VERSION)   : .configured-$(VERSION)

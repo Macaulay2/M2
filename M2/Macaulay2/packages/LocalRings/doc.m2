@@ -164,8 +164,7 @@ Description
     RP = localRing(R, ideal gens R);
     I = ideal"x5+y3+z3,x3+y5+z3,x3+y3+z5"
     M = RP^1/I
-    elapsedTime length M -- 0.55 seconds
-    elapsedTime hilbertSamuelFunction(M, 0, 6) -- 0.55 seconds
+    elapsedTime hilbertSamuelFunction(M, 0, 6)
     oo//sum
 
   Text
@@ -183,24 +182,7 @@ SeeAlso
   (length, Module)
 ///
 
-///
-Key
-   length
-  (length, Module)
-Headline
-  Computes the length of modules over local rings
-Usage
-Inputs
-Outputs
-Description
-  Text
-  Example
-Consequences
-  Item
-    If the algorithm terminates, the length of the module is stored in M.cache.length.
-Caveat
-SeeAlso
-///
+-- See (length, Module) in packages/Macaulay2Doc/functions/degree-doc.m2.
 
 end--
 

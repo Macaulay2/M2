@@ -28,7 +28,7 @@ newPackage(
     		{Name => "Alexander I. Suciu", Email => "a.suciu@neu.edu"}
 		},  
      	PackageImports => { "SimplicialComplexes" },
-    	Headline => "Toric topology"
+    	Headline => "toric topology"
     	)
 
 protect QTMSimplicialComplex

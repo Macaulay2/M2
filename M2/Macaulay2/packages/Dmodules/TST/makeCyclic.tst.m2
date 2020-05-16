@@ -13,7 +13,7 @@ R = QQ[x, dx, WeylAlgebra => {x=>dx}]
 M = matrix {{dx, 0, 0}, {0, dx, 0}, {0, 0, dx}}
 h = makeCyclic M
 assert (listForm bFunction(h.AnnG,{1}) == listForm bFunction(cokernel M, {1}, {0,1,2}))
-assert (Drank h.AnnG == Drank cokernel M)
+assert (holonomicRank h.AnnG == holonomicRank cokernel M)
 assert (singLocus h.AnnG == singLocus cokernel M)
 
 

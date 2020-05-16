@@ -53,7 +53,7 @@ extern "C" {
   void initializeThreadSupervisor()
   {
     if(NULL==threadSupervisor)
-      threadSupervisor = new ThreadSupervisor(maxNumThreads);
+      threadSupervisor = new (GC) ThreadSupervisor(maxNumThreads);
     assert(threadSupervisor);
     threadSupervisor->m_TargetNumThreads=maxNumThreads;
     threadSupervisor->initialize();
@@ -84,7 +84,7 @@ extern "C" {
   void delThread(pthread_t thread)
   {
     threadSupervisor->m_Mutex.lock();
-    std::map<pthread_t, struct ThreadSupervisorInformation*>::iterator it = threadSupervisor->m_ThreadMap.find(thread);
+    gc_map(pthread_t, struct ThreadSupervisorInformation*)::iterator it = threadSupervisor->m_ThreadMap.find(thread);
     if(it!=threadSupervisor->m_ThreadMap.end())
       {
 	threadSupervisor->m_ThreadMap.erase(it);
@@ -139,16 +139,18 @@ extern "C" {
 
   struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds, int isM2Task)
   {
-    return new ThreadTask(name,func,userData,(bool)timeLimitExists,timeLimitSeconds,isM2Task);
+    return new (GC) ThreadTask(name,func,userData,(bool)timeLimitExists,timeLimitSeconds,isM2Task);
   }
   void* waitOnTask(struct ThreadTask* task)
   {
     return task->waitOn();
   }
+  void** TS_Get_LocalArray() {  return (void**)pthread_getspecific(*(pthread_key_t*)threadSupervisor); }
+  void** TS_Get_Local(int refno) { return &TS_Get_LocalArray()[refno]; }
   void TS_Add_ThreadLocal(int* refno, const char* name)
   {
     if(NULL == threadSupervisor)
-      threadSupervisor = new ThreadSupervisor(maxNumThreads);
+      threadSupervisor = new (GC) ThreadSupervisor(maxNumThreads);
     assert(threadSupervisor);
     threadSupervisor->m_Mutex.lock();
     if(threadSupervisor->m_ThreadLocalIdPtrSet.find(refno)!=threadSupervisor->m_ThreadLocalIdPtrSet.end())
@@ -220,7 +222,7 @@ ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
   if(pthread_key_create(&m_ThreadSpecificKey,NULL))
     abort();
   //create new thread local memory block
-  m_LocalThreadMemory = new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
+  m_LocalThreadMemory = new (GC) void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
   //make really really sure it is zero
   memset(m_LocalThreadMemory,0,sizeof(void*)*ThreadSupervisor::s_MaxThreadLocalIdCounter);
   //set memory block location for main thread.  Main thread doesn't do anything, so not really used.
@@ -251,7 +253,7 @@ void ThreadSupervisor::initialize()
   //initialize premade threads
   for(int i = 0; i < m_TargetNumThreads; ++i)
     {
-      SupervisorThread* thread = new SupervisorThread(i);
+      SupervisorThread* thread = new (GC) SupervisorThread(i);
       //critical -- we MUST push back before we start.
       m_Threads.push_back(thread);
       thread->start();
@@ -291,7 +293,7 @@ void ThreadSupervisor::_i_startTask(struct ThreadTask* task, struct ThreadTask* 
 	  m_Mutex.unlock();
 	  return;
 	}
-      std::set<struct ThreadTask*>::iterator it = task->m_Dependencies.find(launcher);
+      gc_set(struct ThreadTask*)::iterator it = task->m_Dependencies.find(launcher);
       if(it!=task->m_Dependencies.end())
 	{
 	  task->m_Dependencies.erase(launcher);
@@ -369,17 +371,17 @@ void ThreadTask::run(SupervisorThread* thread)
   m_CurrentThread=NULL;
   threadSupervisor->_i_finished(this);
   //cancel stuff_
-  for(std::set<ThreadTask*>::iterator it = m_CancelTasks.begin(); it!=m_CancelTasks.end(); ++it)
+  for(gc_set(ThreadTask*)::iterator it = m_CancelTasks.begin(); it!=m_CancelTasks.end(); ++it)
     threadSupervisor->_i_cancelTask(*it);
   //start stuff
-  for(std::set<ThreadTask*>::iterator it = m_StartTasks.begin(); it!=m_StartTasks.end(); ++it)
+  for(gc_set(ThreadTask*)::iterator it = m_StartTasks.begin(); it!=m_StartTasks.end(); ++it)
     threadSupervisor->_i_startTask(*it,this);
   m_Mutex.unlock();
 }
 
 SupervisorThread::SupervisorThread(int localThreadId):m_KeepRunning(true),m_LocalThreadId(localThreadId)
 {
-  m_ThreadLocal = new void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
+  m_ThreadLocal = new (GC) void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
   AO_compiler_barrier();
 }
 void SupervisorThread::start()

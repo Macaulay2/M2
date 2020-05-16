@@ -8,8 +8,9 @@ interpreterDepth = loadDepth = errorDepth = 0
 debuggingMode = true
 stopIfError = false
 debugWarningHashcode = null
-gotarg := arg -> any(commandLine, s -> s == arg)
+gotarg := arg -> any(commandLine, s -> s === arg)
 if gotarg "--stop" then stopIfError = true
+if gotarg "--int"  then handleInterrupts = false
 
 firstTime := class PackageDictionary === Symbol
 
@@ -165,11 +166,6 @@ if firstTime then (
 	       then ("  Frobby " | version#"frobby version" | ", by B. H. Roune" | newline)
 	       else ""
 	       )
-	  |    ( 
-	       if version#"pari version" =!= "not present" 
-	       then ("  pari " | version#"pari version" | ", the PARI Group, Bordeaux" | newline)
-	       else ""
-	       )
 	  | "  NTL " | version#"ntl version" | ", by V. Shoup" | newline
 	  | "  FLINT " | version#"flint version" | ", by W. Hart et al." | newline
 	  |    (
@@ -186,6 +182,7 @@ if firstTime then (
           | "  FFLAS-FFPACK " | version#"fflas_ffpack version" | ", by the FFLAS group" | newline
      	  | "  MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
 	  | "  BLAS and LAPACK 3.0" | ", by J. Dongarra et al." | newline
+          | "  MPSolve 3.1.8, by D. Bini et al." | newline
           | "  Memtailor " | version#"memtailor version" | ", by B. Roune" | newline
           | "  Mathic " | version#"mathic version" | ", by B. Roune and M. Stillman" | newline
           | "  MathicGB " | version#"mathicgb version" | ", by B. Roune and M. Stillman"

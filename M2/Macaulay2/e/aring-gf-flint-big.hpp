@@ -270,7 +270,7 @@ class ARingGFFlintBig : public RingInterface
         set_zero(result);
         return;
       }
-    bool neg = false;
+    // bool neg = false;
     mpz_t abs_n;
     mpz_init(abs_n);
 #if 0    
@@ -290,7 +290,7 @@ class ARingGFFlintBig : public RingInterface
 #endif    
     if (mpz_sgn(n) < 0)
       {
-        neg = true;
+        // neg = true;
         invert(base, a);
       }
     else

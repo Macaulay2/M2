@@ -1,0 +1,19 @@
+--------- cmake build ----------------------
+WSL(Ubuntu 18.04)
+
+cd M2/BUILD/build
+sudo apt-get install libtbb-dev
+cmake ../..
+make install-libraries
+sudo apt-get install libopenblas-dev
+make install-programs
+cmake .
+make
+
+----------- docker ------------------
+Ubuntu 18.04
+
+cd M2/BUILD/docker
+sudo apt install docker.io
+sudo dockerd&
+sudo make all

@@ -1,0 +1,26 @@
+# @configure_input@
+# DOTS is the path to M2/Macaulay2 from this directory
+DOTS = ../..
+include $(DOTS)/../include/config.Makefile
+VPATH = @srcdir@
+
+ifeq "@DEBUG@" "no"
+MLIMIT = 1000000
+VLIMIT = 2000000
+TLIMIT = 1000
+else
+# give the debug version more time and space
+MLIMIT = 1400000
+VLIMIT = 3000000
+TLIMIT = 1200
+endif
+
+SRCDIR = @srcdir@
+include ../Makefile.test
+
+Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/tests/slow/Makefile
+
+# Local Variables:
+# compile-command: "make -k -C $M2BUILDDIR/Macaulay2/tests/slow "
+# End:
+.NOTPARALLEL:

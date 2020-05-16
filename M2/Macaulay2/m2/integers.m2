@@ -66,21 +66,26 @@ isPrime2 := n -> (			  -- assume n > 2
 
 biggest := 2^31-1
 
-isPseudoprime ZZ := Boolean => Pari$ispseudoprime
+isProbablePrime ZZ := Boolean => n -> (
+    rawZZisProbablePrime n -- calls flint
+    )
 
-isPrime ZZ := Boolean => (
-     if instance(Pari$isprime,Function) then Pari$isprime
-     else 
-     n -> (
-	  n = abs n;
-	  n > 1 and
-	  if n <= biggest 
-	  then (
-	       v := factor n;
-	       # v === 1 and v#0#1 === 1
-	       )
-	  else isPrime1 n and (n == 2 or isPrime2 n)
-	  ))
+isPseudoprime ZZ := Boolean => n -> (
+    << "warning: isPseudoprime is deprecated, using isProbablePrime" << endl;
+    isProbablePrime n
+    )
+
+isPrime ZZ := Boolean => n -> (
+    return rawZZisPrime n; -- calls flint
+    n = abs n;
+    n > 1 and
+    if n <= biggest 
+    then (
+        v := factor n;
+        # v === 1 and v#0#1 === 1
+        )
+    else isPrime1 n and (n == 2 or isPrime2 n)
+    )
 
 random ZZ := ZZ => opts -> n -> if n > 0 then rawRandomZZ n else error "random: expected a positive integer"
 random(ZZ,ZZ) := ZZ => opts -> (min,max) -> (
