@@ -928,12 +928,15 @@ if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS"
 fi
 
-AC_MSG_CHECKING(whether the package 4ti2 is installed)
-if test "`type -t 4ti2-circuits`" = file
-then AC_MSG_RESULT(yes)
-else AC_MSG_RESULT([no, will build])
-     BUILD_4ti2=yes
-fi
+dnl we can't use the test below for the presence of 4ti2 until the package FourTiTwo knows
+dnl how to find programs such as "markov" under the name "4ti2-markov"
+BUILD_4ti2=yes
+dnl AC_MSG_CHECKING(whether the package 4ti2 is installed)
+dnl if test "`type -t 4ti2-circuits`" = file
+dnl then AC_MSG_RESULT(yes)
+dnl else AC_MSG_RESULT([no, will build])
+dnl      BUILD_4ti2=yes
+dnl fi
 
 AC_MSG_CHECKING(whether the package cohomcalg is installed)
 if test "`type -t cohomcalg`" = file
