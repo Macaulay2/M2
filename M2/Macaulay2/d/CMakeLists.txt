@@ -157,6 +157,8 @@ target_include_directories(M2-interpreter
     ${Python3_INCLUDE_DIRS}
   )
 
+# TODO: Including most of these is only necessary because of version.dd
+# changing or moving that file would allow moving this to e/CMakeLists.txt
 foreach(LIB IN LISTS PKGLIB_LIST)
   if(${LIB}_FOUND)
     target_link_libraries(M2-interpreter PUBLIC PkgConfig::${LIB})
@@ -166,19 +168,18 @@ endforeach()
 foreach(LIB IN LISTS LIBRARIES_LIST)
   if(${LIB}_FOUND)
     target_link_libraries(M2-interpreter PUBLIC ${${LIB}_LIBRARIES})
-    target_include_directories(M2-interpreter PRIVATE ${${LIB}_INCLUDE_DIR})
+    target_include_directories(M2-interpreter PUBLIC
+        $<BUILD_INTERFACE:${${LIB}_INCLUDE_DIR}>)
   endif()
 endforeach()
 
 foreach(LIB IN LISTS LIBRARY_LIST)
   if(${LIB}_FOUND)
     target_link_libraries(M2-interpreter PUBLIC ${${LIB}_LIBRARY})
-    target_include_directories(M2-interpreter PRIVATE ${${LIB}_INCLUDE_DIR})
+    target_include_directories(M2-interpreter PUBLIC
+        $<BUILD_INTERFACE:${${LIB}_INCLUDE_DIR}>)
   endif()
 endforeach()
-
-# FIXME: simply this for Mac users
-target_include_directories(M2-interpreter PRIVATE $<$<BOOL:${APPLE}>:${ATOMIC_OPS_INCLUDE_DIR}>)
 
 # Compiler warning flags
 target_compile_options(M2-interpreter PRIVATE

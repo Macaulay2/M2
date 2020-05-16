@@ -22,14 +22,12 @@ target_include_directories(M2-supervisor PUBLIC
 
 # TODO: make this "if" unnecessary
 if(BDWGC_FOUND)
-  target_link_libraries(M2-supervisor PUBLIC
-    Threads::Threads ${BDWGC_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(M2-supervisor PUBLIC Threads::Threads
+    ${BDWGC_LIBRARIES} ${ATOMICOPS_LIBRARIES} ${CMAKE_DL_LIBS})
   target_include_directories(M2-supervisor PUBLIC
+    $<BUILD_INTERFACE:${ATOMICOPS_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${BDWGC_INCLUDE_DIR}>)
 endif()
-
-# FIXME: simply this for Mac users
-target_include_directories(M2-supervisor PRIVATE $<$<BOOL:${APPLE}>:${ATOMIC_OPS_INCLUDE_DIR}>)
 
 # Compiler warning flags
 target_compile_options(M2-supervisor PRIVATE -Wcast-qual -Wno-unused)
