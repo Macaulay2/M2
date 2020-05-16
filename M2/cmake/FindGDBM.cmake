@@ -11,10 +11,12 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 
 find_path(GDBM_INCLUDE_DIR NAMES gdbm.h
+  HINTS /usr/local/opt/gdbm
   PATHS ${INCLUDE_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/include
   )
 
 find_library(GDBM_LIBRARY NAMES gdbm
+  HINTS /usr/local/opt/gdbm
   PATHS ${LIB_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/lib
   )
 

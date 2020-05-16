@@ -8,7 +8,7 @@
 
 # These are the libraries linked with Macaulay2 in Macaulay2/{e,bin}/CMakeLists.txt
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
-set(LIBRARY_LIST   HISTORY READLINE GDBM)
+set(LIBRARY_LIST   HISTORY READLINE GDBM AtomicOps)
 set(LIBRARIES_LIST LAPACK MP MPFR BDWGC NTL FLINT FACTORY FROBBY MATHICGB MATHIC MEMTAILOR MPSOLVE)
 
 if(WITH_TBB)
@@ -30,12 +30,15 @@ find_program(ETAGS NAMES etags)
 #   Threads	libc6-dev	glibc-headers	N/A
 #   LAPACK	libopenblas-dev	openblas-devel	N/A (Accelerate)
 #   GDBM	libgdbm-dev	gdbm-devel	gdbm
+#   libatomic_ops libatomic_ops-dev libatomic_ops-devel libatomic_ops
 
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
 # TODO: replace gdbm with capnproto.org or msgpack.org
 # Alternatively protobuf: https://developers.google.com/protocol-buffers/docs/proto#maps
+find_package(AtomicOps	REQUIRED QUIET) # See FindAtomicOps.cmake
+# TODO: remove libatomic_ops
 
 ###############################################################################
 ## Optional	Debian package	RPM package 	Homebrew package
@@ -311,6 +314,3 @@ if(FACTORY_FOUND)
 else()
   unset(FACTORY_STREAMIO CACHE)
 endif()
-
-# Temporary hack:
-set(ATOMIC_OPS_INCLUDE_DIR /usr/local/Cellar/libatomic_ops/7.6.10/include)
