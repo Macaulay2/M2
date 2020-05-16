@@ -972,12 +972,16 @@ else AC_MSG_RESULT([no, will build])
      BUILD_csdp=yes
 fi
 
-AC_MSG_CHECKING(whether the package normaliz is installed)
-if test "`type -t normaliz`" = file
-then AC_MSG_RESULT(yes)
-else AC_MSG_RESULT([no, will build])
-     BUILD_normaliz=yes
-fi
+dnl we can't use the test below for the presence of normaliz until the package Normaliz knows
+dnl how to find normaliz on the path
+BUILD_normaliz=yes
+BUILD_ALWAYS="$BUILD_ALWAYS normaliz"
+dnl AC_MSG_CHECKING(whether the package normaliz is installed)
+dnl if test "`type -t normaliz`" = file
+dnl then AC_MSG_RESULT(yes)
+dnl else AC_MSG_RESULT([no, will build])
+dnl      BUILD_normaliz=yes
+dnl fi
 
 AC_MSG_CHECKING(whether the package nauty is installed)
 if test "`type -t nauty-complg`" = file
