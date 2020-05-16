@@ -192,7 +192,7 @@ export moveToRR(z:RRmutable):RR := (
      y := GCmalloc(RRmutable);
      Ccode(void, "
   	  int limb_size = (",z,"->_mpfr_prec - 1) / GMP_NUMB_BITS + 1;
-  	  mp_limb_t *p = (mp_limb_t*) GC_MALLOC(limb_size * sizeof(mp_limb_t));
+  	  mp_limb_t *p = (mp_limb_t*) getmem_atomic(limb_size * sizeof(mp_limb_t));
   	  memcpy(p, ",z,"->_mpfr_d, limb_size * sizeof(mp_limb_t));
   	  ",y,"->_mpfr_prec = ",z,"->_mpfr_prec;
   	  ",y,"->_mpfr_sign = ",z,"->_mpfr_sign;
@@ -215,17 +215,17 @@ set(x:ZZmutable, n:ulong) ::= Ccode( void, "mpz_set_ui(", x, ",", n, ")" );
 negsmall := -100;
 possmall := 300;
 smallints := (
-     x := newZZmutable();
      new array(ZZ) len possmall - negsmall + 1 do for i from negsmall to possmall do (
+     	  x := newZZmutable();
      	  set(x,i);
-     	  provide moveToZZ(x)));
+     	  provide moveToZZandclear(x)));
 
 export toInteger(i:int):ZZ := (
      if i >= negsmall && i <= possmall then smallints.(i-negsmall)
      else (
 	  x := newZZmutable();
 	  set(x,i);
-	  moveToZZ(x)));
+	  moveToZZandclear(x)));
 
 export zeroZZ := toInteger(0);
 
@@ -246,21 +246,21 @@ export toInteger(i:ulong):ZZ := (
      else (
 	  x := newZZmutable();
 	  set(x,i);
-	  moveToZZ(x)));
+	  moveToZZandclear(x)));
 
 export toInteger(i:long):ZZ := (
      if i >= long(negsmall) && i <= long(possmall) then smallints.(int(i)-negsmall)
      else (
 	  x := newZZmutable();
 	  set(x,i);
-	  moveToZZ(x)));
+	  moveToZZandclear(x)));
 
 neg(x:ZZmutable, y:ZZ) ::= Ccode( void, "mpz_neg(", x, ",", y, ")" );
 
 export - (x:ZZ) : ZZ := (
      w := newZZmutable();
      neg(w,x);
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 abs(x:ZZmutable, y:ZZ) ::= Ccode( void, "mpz_abs(", x, ",", y, ")" );
 
@@ -268,7 +268,7 @@ export abs(x:ZZ) : ZZ := (
     if isNegative0(x) then (
 	 w := newZZmutable();
 	 abs(w,x);
-	 moveToZZ(w))
+	 moveToZZandclear(w))
     else x
    );
 add(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_add(", x, ",", y, ",", z, ")" );
@@ -276,14 +276,14 @@ add(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_add(", x, ",", y, ",", z, ")"
 export (x:ZZ) + (y:ZZ) : ZZ := (
      w := newZZmutable();
      add(w,x,y);
-     moveToZZ(w));
+     moveToZZandclear(w));
 add(x:ZZmutable, y:ZZ, z:ulong) ::= Ccode( void, "mpz_add_ui(", x, ",", y, ",", z, ")" );
 sub(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_sub(", x, ",", y, ",", z, ")" );
 
 export (x:ZZ) - (y:ZZ) : ZZ := (
      w := newZZmutable();
      sub(w,x,y);
-     moveToZZ(w));
+     moveToZZandclear(w));
 compare(x:ZZ, y:ZZ) ::= Ccode( int, "mpz_cmp(", x, ",", y, ")" );
 
 export (x:ZZ) === (y:ZZ) : bool := compare(x,y) == 0;
@@ -324,7 +324,7 @@ mul(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_mul(", x, ",", y, ",", z, ")"
 export (x:ZZ) * (y:ZZ) : ZZ := (
      w := newZZmutable();
      mul(w,x,y);
-     moveToZZ(w));
+     moveToZZandclear(w));
 mul(x:ZZmutable, y:ZZ, z:int) ::= Ccode( void, "mpz_mul_si(", x, ",", y, ",", z, ")" );
 mul(x:ZZmutable, y:ZZ, z:ulong) ::= Ccode( void, "mpz_mul_ui(", x, ",", y, ",", z, ")" );
 pow(x:ZZmutable, y:ZZ, n:ulong) ::= Ccode( void, "mpz_pow_ui(", x, ",", y, ",", n, ")" );
@@ -332,7 +332,7 @@ pow(x:ZZmutable, y:ZZ, n:ulong) ::= Ccode( void, "mpz_pow_ui(", x, ",", y, ",", 
 export (x:ZZ) ^ (n:ulong) : ZZ := (
      w := newZZmutable();
      pow(w,x,n);
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 cdiv(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_cdiv_q(", x, ",", y, ",", z, ")" );
 fdiv(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_fdiv_q(", x, ",", y, ",", z, ")" );
@@ -340,7 +340,7 @@ fdiv(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_fdiv_q(", x, ",", y, ",", z,
 export (x:ZZ) // (y:ZZ) : ZZ := (
      w := newZZmutable();
      if isPositive0(y) then fdiv(w,x,y) else cdiv(w,x,y);
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 fmod(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_fdiv_r(", x, ",", y, ",", z, ")" );
 cmod(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_cdiv_r(", x, ",", y, ",", z, ")" );
@@ -348,14 +348,14 @@ cmod(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_cdiv_r(", x, ",", y, ",", z,
 export (x:ZZ) % (y:ZZ) : ZZ := (
      w := newZZmutable();
      if isPositive0(y) then fmod(w,x,y) else cmod(w,x,y);
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 fdiv(x:ZZmutable, y:ZZ, z:ulong) ::= Ccode( void, "mpz_fdiv_q_ui(", x, ",", y, ",", z, ")" );
 
 export (x:ZZ) // (y:ulong) : ZZ := (
      w := newZZmutable();
      fdiv(w,x,y);
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 export (x:ZZ) // (y:ushort) : ZZ := x // ulong(y);
 
@@ -369,21 +369,21 @@ gcd(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_gcd(", x, ",", y, ",", z, ")"
 export gcd(x:ZZ,y:ZZ):ZZ := (
      w := newZZmutable();
      gcd(w,x,y);
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 mul_2exp(x:ZZmutable, y:ZZ, z:ulong) ::= Ccode( void, "mpz_mul_2exp(", x, ",", y, ",", z, ")" );
 
 leftshift(x:ZZ,n:ulong):ZZ := (
      w := newZZmutable();
      mul_2exp(w,x,n);
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 tdiv_q_2exp(x:ZZmutable, y:ZZ, z:ulong) ::= Ccode( void, "mpz_tdiv_q_2exp(", x, ",", y, ",", z, ")" );
 
 rightshift(x:ZZ,n:ulong):ZZ := (
      w := newZZmutable();
      tdiv_q_2exp(w,x,n);
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 export (x:ZZ) << (n:int) : ZZ := (
      if n == 0 then x else if n > 0 then leftshift(x,ulong(n)) else rightshift(x,ulong(-n))
@@ -398,21 +398,21 @@ and(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_and(", x, ",", y, ",", z, ")"
 export (x:ZZ) & (y:ZZ) : ZZ := (
      w := newZZmutable();
      and(w,x,y);
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 ior(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_ior(", x, ",", y, ",", z, ")" );
 
 export (x:ZZ) | (y:ZZ) : ZZ := (
      w := newZZmutable();
      ior(w,x,y);
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 xor(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_xor(", x, ",", y, ",", z, ")" );
 
 export (x:ZZ) ^^ (y:ZZ) : ZZ := (
      w := newZZmutable();
      xor(w,x,y);
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 base := 10;
 toCstring(x:ZZ) ::= getstr(charstarOrNull(null()), base, x);
@@ -500,13 +500,13 @@ bigint := 2147483647.; -- 2^31-1
 export numerator(x:QQ):ZZ := (
      w := newZZmutable();
      Ccode( void, "mpq_get_num(", w, ",", x, ")" );
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 -- TO DO : this is inefficient -- we could just grab the denominator without copying its limbs
 export denominator(x:QQ):ZZ := (
      w := newZZmutable();
      Ccode( void, "mpq_get_den(", w, ",", x, ")" );
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 export numeratorRef  (x:QQ) ::= Ccode( ZZ, "mpq_numref(",  x, ")");
 
@@ -1141,19 +1141,19 @@ export floor(x:RR) : ZZ := (
      if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
      w := newZZmutable();
      Ccode( void, "mpfr_get_z(", w, ",", x, ", GMP_RNDD)" );
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 export ceil(x:RR) : ZZ := (
      if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
      w := newZZmutable();
      Ccode( void, "mpfr_get_z(", w, ",", x, ", GMP_RNDU)" );
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 export round(x:RR) : ZZ := (
      if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
      w := newZZmutable();
      Ccode( void, "mpfr_get_z(", w, ",", x, ", GMP_RNDN)" );
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 export (x:RR) << (n:long) : RR := (
      if n == long(0) then return x;
@@ -1460,7 +1460,7 @@ export coth(x:RR):RR := (
 export factorial(x:ulong):ZZ := (
      w := newZZmutable();
      Ccode( void, "mpz_fac_ui(", w, ",", x, ")" );
-     moveToZZ(w));
+     moveToZZandclear(w));
 
 export log1p(x:RR):RR := (
      z := newRRmutable(precision0(x));
