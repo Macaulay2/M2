@@ -3,11 +3,16 @@
 use getline;
 use actors;
 use actors2;
-use version;
 use struct;
 use pthread;
 
 header "#include <engine.h>";
+
+header "#ifndef WITH_PYTHON
+# define PyObject_Str(o) 0
+# define PyString_AS_STRING(o) 0
+# define Py_DECREF(o) 0
+#endif";
 
 internalName(s:string):string := (
      -- was "$" + s in 0.9.2

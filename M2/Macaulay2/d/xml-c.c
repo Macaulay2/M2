@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <M2/config.h>
+
 #include "M2mem.h"
 #include "xml-exports.h"
 #include "xml-c.h"

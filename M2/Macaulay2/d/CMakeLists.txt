@@ -68,7 +68,6 @@ set(DLIST
   equality.dd
   hashtables.dd
   sets.dd
-  version.dd
   evaluate.d
   mysql.d	# removed unless WITH_SQL
   mysqldummy.d	# removed if WITH_SQL
@@ -86,6 +85,7 @@ set(DLIST
   interface.dd interface2.d
   texmacs.d
   interp.dd	# this one is last, because it contains the top level interpreter
+  version.dd
   )
 
 # Generator expressions conflict with the macro below, so manually remove the ones we don't need

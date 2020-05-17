@@ -9,10 +9,6 @@ declarations "
    #endif
    #ifdef WITH_PYTHON
      #include <Python.h>
-   #else
-     #define PyObject_Str(o) 0
-     #define PyString_AS_STRING(o) 0
-     #define Py_DECREF(o) 0
    #endif
    ";
 
@@ -24,7 +20,6 @@ header "
    #include <gmp.h>
    #include <gmpxx.h>
    #endif
-   #include <M2/config.h>
    #include <atomic_ops.h>
    #include <mpfr.h>
    #include <memtailor.h>
@@ -153,7 +148,6 @@ setupconst("version", Expr(toHashTable(Sequence(
    "operating system" => Ccode(constcharstar,"OS"),
    "operating system release" => Ccode(constcharstar,"REL"),
    "compiler" => compiler,
-   "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),
    "compile time" => Ccode(constcharstar,"timestamp"),
    "compile node name" => Ccode(constcharstar,"NODENAME"),
    "atomic_ops version" => atomicopsversion(),
