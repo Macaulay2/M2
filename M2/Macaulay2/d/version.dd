@@ -4,7 +4,7 @@ use M2;
 use hashtables;
 
 declarations "
-   #ifdef WITH_SQL
+   #ifdef WITH_MYSQL
      #include <mysql/mysql.h>
    #endif
    #ifdef WITH_PYTHON
@@ -159,7 +159,7 @@ setupconst("version", Expr(toHashTable(Sequence(
    "atomic_ops version" => atomicopsversion(),
    "gc version" => gcversion(),
    "mysql version" => Ccode(constcharstar,"
-	  #if USE_MYSQL
+	  #if WITH_MYSQL
 		   mysql_get_client_info()
 	  #else
 		   \"not present\"

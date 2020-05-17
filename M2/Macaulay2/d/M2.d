@@ -77,7 +77,7 @@ export join(x:string,y:string):string := Ccode(returns, "
 ");
 export tocharstarstar(p:ArrayString):charstarstar := (
      Ccode(returns, "
-	  int i, n = p->len;
+	  unsigned int i, n = p->len;
 	  char **s = getmemvectortype(char *,n+1);
 	  for (i = 0; i<n; i++) s[i] = M2_tocharstar(p->array[i]);
 	  s[n] = NULL;

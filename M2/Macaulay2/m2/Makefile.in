@@ -54,7 +54,7 @@ all: tags
 tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: \
-		../d/startup.m2.in \
+		startup.m2.in \
 		$(DUMPEDM2SRCFILES) \
 		installedpackages \
 		$(OTHERM2FILES) \
@@ -64,7 +64,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		../emacs/makesyms.m2 \
 		loads.awk \
 		@srcdir@/../*/COPYRIGHT \
-		@srcdir@/../d/basictests/*.m2 \
+		@srcdir@/basictests/*.m2 \
 		@srcdir@/../book/*.m2 \
 		@srcdir@/../packages/*.m2 \
 		@srcdir@/../packages/*/*.m2 \

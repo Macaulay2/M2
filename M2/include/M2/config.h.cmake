@@ -375,7 +375,7 @@
 #cmakedefine WITH_XML
 
 /* whether we are linking with the mysql library */
-#cmakedefine WITH_SQL
+#cmakedefine WITH_MYSQL
 
 /* whether we are linking with the python library */
 #cmakedefine WITH_PYTHON

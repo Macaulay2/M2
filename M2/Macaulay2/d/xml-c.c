@@ -1,13 +1,12 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include <M2/config.h>
-
-#ifdef WITH_XML
 
 #include "M2mem.h"
 #include "xml-exports.h"
 #include "xml-c.h"
+
+#ifdef WITH_XML
 
 static char *copystring(const char *s) {
   char *p = (char *)getmem(strlen(s)+1);

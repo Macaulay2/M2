@@ -464,7 +464,7 @@ isListener(e:Expr):Expr := (
 setupfun("isListener",isListener);
 
 header "
-    #if USE_MYSQL
+    #if WITH_MYSQL
       #include <mysql/mysql.h>
     #endif
     ";
@@ -475,7 +475,7 @@ close(g:Expr):Expr := (
 	  is null do nothing
 	  is n:MysqlConnection do (
 	       Ccode(void,"
-		    #if USE_MYSQL
+		    #if WITH_MYSQL
 		       mysql_close(",n,")
 		    #endif
 		    ");

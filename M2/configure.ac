@@ -459,19 +459,20 @@ AC_COMPILE_IFELSE(
 AC_SUBST(XML,yes)
 AC_ARG_ENABLE(xml, AS_HELP_STRING(--disable-xml,[do not link with xml library]), XML=$enableval)
 if test "$XML" = yes
-then AC_DEFINE(HAVE_XML,1,[whether we are linking with the xml library])
+then AC_DEFINE(WITH_XML,1,[whether we are linking with the xml library])
 fi
 
 AC_SUBST(PYTHON,no)
 AC_ARG_WITH(python, AS_HELP_STRING(--with-python,[link with libpython]), PYTHON=$withval)
 if test "$PYTHON" = yes
-then AC_DEFINE(HAVE_PYTHON,1,[whether we are linking with the python library])
+then AC_DEFINE(WITH_PYTHON,1,[whether we are linking with the python library])
 fi
 
 AC_SUBST(MYSQL,no)
 AC_ARG_WITH(mysql, AS_HELP_STRING(--with-mysql,[link with mysql]), MYSQL=$withval)
-test "$MYSQL" = no; USE_MYSQL=$?
-AC_DEFINE_UNQUOTED(USE_MYSQL,$USE_MYSQL,[whether we are linking with the mysql library])
+if test "$MYSQL" = yes
+then AC_DEFINE(WITH_MYSQL,1,[whether we are linking with the mysql library])
+fi
 
 LIBPYTHONORIG=-lpython2.7
 AC_SUBST(LIBPYTHON,$LIBPYTHONORIG)
