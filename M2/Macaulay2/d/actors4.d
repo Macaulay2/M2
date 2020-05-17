@@ -841,10 +841,11 @@ readfun(e:Expr):Expr := (
 	  oldprompt := stdIO.prompt;
 	  stdIO.prompt = readpromptfun;
 	  r := getLine(stdIO);
-	  when r is e:errmsg do buildErrorPacket(e.message)
-	  is s:stringCell do (
-	       stdIO.prompt = oldprompt;
-	       Expr(s)))
+	  stdIO.prompt = oldprompt;
+	  when r
+	  is e:errmsg do buildErrorPacket(e.message)
+	  is s:stringCell do Expr(s)
+	  )
      is s:Sequence do (
 	  if length(s) == 0
 	  then readE(stdIO)

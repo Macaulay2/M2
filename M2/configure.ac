@@ -1,6 +1,5 @@
 dnl =============================================================================
-dnl This is the only place in the code where the Macaulay2 version number
-dnl appears as a literal value.
+dnl The only place the Macaulay2 version number appears is in the file ./VERSION
 
 dnl Note: it is best to increment version numbers on the master branch, so they are
 dnl       all incremented on the same branch, hence in a well-defined order, despite possible merging.
@@ -26,7 +25,8 @@ dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
 dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
 
-AC_INIT(Macaulay2, 1.15.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, NO_VERSION_NUMBER, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+PACKAGE_VERSION=`cat $srcdir/VERSION`
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
