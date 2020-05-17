@@ -203,18 +203,18 @@ M2.o : ../../include/M2/config.h @srcdir@/../c/scc-core.h
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
 BSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1"/'
-startup.m2: startup.m2.in ; cd ../.. ; ./config.status Macaulay2/d/startup.m2
-startup.c: startup-header.h startup.m2 @srcdir@/basictests/*.m2 Makefile
+../m2/startup.m2: ../m2/startup.m2.in ; cd ../.. ; ./config.status Macaulay2/m2/startup.m2
+startup.c: startup-header.h ../m2/startup.m2 @srcdir@/../m2/basictests/*.m2 Makefile
 	: making $@
 	@(\
 	 cat @srcdir@/startup-header.h; \
 	 echo 'cached_file startupFile = {' ; \
-	     echo @abs_srcdir@/startup.m2.in | sed $(BSTRING) ; \
+	     echo @abs_top_srcdir@/Macaulay2/m2/startup.m2.in | sed $(BSTRING) ; \
 	     echo  ',' ; \
-	     cat startup.m2 | sed $(SSTRING) ; \
+	     cat ../m2/startup.m2 | sed $(SSTRING) ; \
 	 echo  '};' ; \
 	 echo 'cached_file testStrings[] = {' ; \
-	 for i in @abs_srcdir@/basictests/*.m2 ; \
+	 for i in @abs_top_srcdir@/Macaulay2/m2/basictests/*.m2 ; \
 	 do echo '{' ; echo $$i | sed $(BSTRING) ; echo  ',' ; cat $$i | sed $(SSTRING) ; echo  '},' ; \
 	 done ; \
 	 echo '};' ; \
@@ -230,7 +230,7 @@ tags: @srcdir@/TAGS
 @srcdir@/TAGS: $(M2_SRCFILES); cd @srcdir@ && @ETAGS@ $(M2_SRCFILES)
 clean-bin:; rm -f *.o *-tmp.c *-tmp.cc *.sig.tmp *-exports.h.tmp
 clean::; rm -f typecode.db *-exports.h *-exports.h.tmp *-tmp.c *-tmp.cc *.log a.out *.o *.sym *.out *.a *.oo *.sig *.sig.tmp *.sg *.dep *.dp *.dep.tmp core gmon.out mapfile restart.tmp TAGS
-distclean: clean; rm -f Makefile startup.m2 @srcdir@/TAGS
+distclean: clean; rm -f Makefile ../m2/startup.m2 @srcdir@/TAGS
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/d/Makefile
 Makefile.files: Makefile.files.in; cd ../..; ./config.status Macaulay2/d/Makefile.files
 clean::; rm -f .gdbinit .gdb-directories

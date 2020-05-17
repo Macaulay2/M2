@@ -71,6 +71,7 @@ include(profiling) ## CMake macros for profiling Macaulay2 code
 include(configure) ## CMake script for configuring various variables
 include(check-libraries) ## CMake script for checking which libraries exist and which need to be built
 include(build-libraries) ## CMake script for downloading, building, and installing external libraries
+include(startup) ## CMake script for messy substitutions in Macaulay2/bin/startup.c
 # Note: we separate the two so that check-libraries.cmake can be called by Macaulay2/bin/CMakeLists.txt
 
 ###############################################################################

@@ -1,4 +1,4 @@
-/* Macaulay2/d/startup.c is generated from startup.c.cmake by cmake.  */
+/* Macaulay2/bin/startup.c is generated from Macaulay2/bin/startup.c.cmake. */
 
 typedef struct {
   const char *filename, *contents;

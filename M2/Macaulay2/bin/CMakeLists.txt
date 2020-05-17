@@ -6,6 +6,9 @@
 
 # TODO: plenty of Darwin specific linker flags in Makefile.in
 
+## Configure startup.c
+configure_file(startup.c.cmake startup.c @ONLY)
+
 ###############################################################################
 ## Generate TAGS file
 # TODO: the order is somewhat different, is it a problem?
@@ -15,15 +18,15 @@ if(ETAGS)
   set_source_files_properties(TAGS PROPERTIES GENERATED true)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/TAGS
     COMMENT "Generating bin/TAGS file"
-    COMMAND ${ETAGS} -o TAGS timestamp.cpp main.cpp
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
+    COMMAND ${ETAGS} -o TAGS timestamp.cpp main.cpp ${CMAKE_CURRENT_BINARY_DIR}/startup.c
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
 ###############################################################################
 ## Build M2-binary
 
-add_executable(M2-binary timestamp.cpp main.cpp ${TAGS})
+add_executable(M2-binary timestamp.cpp main.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/startup.c ${TAGS})
 target_link_libraries(M2-binary
   M2-engine M2-interpreter M2-supervisor ${CMAKE_DL_LIBS})
 

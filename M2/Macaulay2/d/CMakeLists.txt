@@ -2,11 +2,8 @@
 ## This directory contains the rules for building M2-interpreter
 
 include(scc) ## CMake macro for calling the Safe C Compiler
-include(startup) ## CMake script for messy substitutions in startup.c
 
-## Configure startup.c
-configure_file(startup.c.cmake startup.c @ONLY)
-
+# TODO: changing this causes a lot of recompiling
 ## Configure distributed-packages.h at the destination
 string(REPLACE ";" " " DISTRIBUTED_PACKAGES "${DISTRIBUTED_PACKAGES}")
 # TODO: configure this header directly in version.dd?
@@ -22,10 +19,7 @@ set(CLIST
   scclib.c ../c/scc-core.h
   memdebug.c memdebug.h
   debug.c debug.h
-
   distributed-packages.h
-  ${CMAKE_CURRENT_BINARY_DIR}/startup.c
-
   getpagesize.h M2mem.h
   gmp_aux.c gmp_aux.h # TODO: needed with mpir?
   gdbm_interface.c
@@ -131,9 +125,6 @@ endforeach()
 
 ###############################################################################
 ## Compile the interpreter
-
-# TODO: where should this go to automatically include build directories?
-# set(CMAKE_INCLUDE_CURRENT_DIR OFF)
 
 # TODO: gmp.d, basic.d, and equality.d require elements from M2-engine
 # for that reason, interpreter cannot be compiled as a static library, yet

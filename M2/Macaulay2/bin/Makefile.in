@@ -111,13 +111,10 @@ M2_LDFLAGS  += -Wl,--enable-auto-import
     # Info: resolving _gdbm_errno by linking to __imp__gdbm_errno (auto-import)
 endif
 
-############################## macros
-
-M2_LIBRARIES :=
-
 ###################### libraries
 
 # the order of this list should agree with that in ../../configure.ac
+M2_LIBRARIES :=
 M2_LIBRARIES +=  @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@
 
 ifeq (@MYSQL@,yes)
