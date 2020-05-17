@@ -144,7 +144,10 @@ exitfun(e:Expr):Expr := (
      when e
      is ZZcell do (
 	  if isInt(e) 
-	  then exit(toInt(e))
+	  then (
+	       exit(toInt(e));
+	       nullE			     -- just to satisfy noisy compilers
+	       )
 	  else WrongArgSmallInteger(1))
      else WrongArgZZ(1));
 setupfun("exit",exitfun).Protected = false;
