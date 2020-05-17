@@ -577,7 +577,6 @@ struct saveargs
 
 static void reverse_run(struct FUNCTION_CELL *p) { if (p) { reverse_run(p->next); (*p->fun)(); } }
 
-static char dummy;
 static struct saveargs* vargs;
 void* interpFunc(void* vargs2)
 {
