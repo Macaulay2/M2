@@ -151,7 +151,7 @@ void* profFunc(ArgCell* p)
   // std::cerr << "Saving profile data in " << filename << std::endl;
   prof_log.open(filename, std::ios::out | std::ios::trunc );
   while(true) {
-    std::this_thread::sleep_for(100ms);
+    std::this_thread::sleep_for(1000ms);
     tryGlobalTrace();
   }
   return NULL;

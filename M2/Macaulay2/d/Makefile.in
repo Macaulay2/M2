@@ -101,15 +101,31 @@ DCFLAGS   += -Wno-parentheses-equality
 DCXXFLAGS += -Wno-parentheses-equality
 endif
 
+ifeq "@DEVELOPMENT@" "yes"
+# -- development --
 CFLAGS    += -Werror
 CXXFLAGS  += -Werror
 
-# scc1 produces switch statements without default cases, because it knows what
-# all the possibilities are, so the compiler may think some cases are not handled.  Hence
-# we may shush some warnings
+DCFLAGS   += -Wsometimes-uninitialized
+DCXXFLAGS += -Wsometimes-uninitialized
+
+ifeq "@HAVE_WDISCARDS_QUALIFIERS@" "yes"
+CFLAGS += -Werror=incompatible-pointer-types-discards-qualifiers
+else
+CFLAGS += -Wincompatible-pointer-types-discards-qualifiers
+endif
+else
+# -- non-development --
+DCFLAGS   += -Wno-sometimes-uninitialized
+DCXXFLAGS += -Wno-sometimes-uninitialized
+endif
 
 DCFLAGS   += -Wno-unused-value
 DCXXFLAGS += -Wno-unused-value
+
+# scc1 produces switch statements without default cases, because it knows what
+# all the possibilities are, so the compiler may think some cases are not handled.  Hence
+# we may hush some warnings
 
 ifeq "@HAVE_WUNUSED_BUT_SET_VARIABLE@" "yes"
 DCFLAGS   += -Wno-unused-but-set-variable
@@ -130,10 +146,6 @@ DCFLAGS += -diag-disable 111,411,177,593,1572
 ifeq "@DEBUG@" "yes"
 CFLAGS += -diag-disable 1418
 endif
-endif
-
-ifeq "@HAVE_WDISCARDS_QUALIFIERS@" "yes"
-CFLAGS += -Werror=incompatible-pointer-types-discards-qualifiers
 endif
 
 .SECONDARY:

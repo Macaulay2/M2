@@ -39,6 +39,9 @@ DIRECTORY ?= $(shell hostname)$(DIRSUFF)
 BRANCH := $(shell git branch --contains | grep '^\* ' | sed -e s=^..== -e s=/=.=g )
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
+# this may not be suitable for ordinary users, since it promotes some warnings to errors
+CONFIGOPTIONS += --enable-development
+
 ifeq ($(DEBUG),yes)
 CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
 DIRECTORY := $(DIRECTORY).debug

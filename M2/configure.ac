@@ -1,6 +1,5 @@
 dnl =============================================================================
-dnl This is the only place in the code where the Macaulay2 version number
-dnl appears as a literal value.
+dnl The only place the Macaulay2 version number appears is in the file ./VERSION
 
 dnl Note: it is best to increment version numbers on the master branch, so they are
 dnl       all incremented on the same branch, hence in a well-defined order, despite possible merging.
@@ -26,7 +25,8 @@ dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
 dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
 
-AC_INIT(Macaulay2, 1.15.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, NO_VERSION_NUMBER, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+PACKAGE_VERSION=`cat $srcdir/VERSION`
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
@@ -915,7 +915,8 @@ then BUILTLIBS="-lflint $BUILTLIBS"
 fi
 
 dnl we can't use the test below for the presence of 4ti2 until the package FourTiTwo knows
-dnl how to find programs such as "markov" under the name "4ti2-markov"
+dnl how to find programs such as "markov" under the name "4ti2-markov", and until our *.dmg and
+dnl *.deb making procedures know how to include them or set the dependencies appropriately
 BUILD_4ti2=yes
 dnl AC_MSG_CHECKING(whether the package 4ti2 is installed)
 dnl if test "`type -t 4ti2-circuits`" = file
@@ -936,6 +937,7 @@ if test "`type -t gfan`" = file
 then AC_MSG_RESULT([yes, will build anyway])
      dnl currently the gfanInterface package doesn't know how to find gfan if we don't build it.
      dnl see https://github.com/Macaulay2/M2/pull/1123
+     dnl Also our *.dmg and *.deb making procedures need to know how to include it or set the dependencies appropriately
      BUILD_gfan=yes
      dnl we'll also build cddlib until gfan can find its files in /usr/include instead of in /usr/include/cdd
      BUILD_cddlib=yes
@@ -959,7 +961,8 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 dnl we can't use the test below for the presence of normaliz until the package Normaliz knows
-dnl how to find normaliz on the path
+dnl how to find normaliz on the path, and until our *.dmg and
+dnl *.deb making procedures know how to include it or set the dependencies appropriately
 BUILD_normaliz=yes
 BUILD_ALWAYS="$BUILD_ALWAYS normaliz"
 dnl AC_MSG_CHECKING(whether the package normaliz is installed)
