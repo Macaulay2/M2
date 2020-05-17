@@ -118,6 +118,9 @@ CXXFLAGS  += -Werror
 DCFLAGS   += -Wno-unused-value
 DCXXFLAGS += -Wno-unused-value
 
+DCFLAGS   += -Wsometimes-uninitialized
+DCXXFLAGS += -Wsometimes-uninitialized
+
 ifeq "@HAVE_WUNUSED_BUT_SET_VARIABLE@" "yes"
 DCFLAGS   += -Wno-unused-but-set-variable
 DCXXFLAGS += -Wno-unused-but-set-variable

@@ -929,7 +929,8 @@ then BUILTLIBS="-lflint $BUILTLIBS"
 fi
 
 dnl we can't use the test below for the presence of 4ti2 until the package FourTiTwo knows
-dnl how to find programs such as "markov" under the name "4ti2-markov"
+dnl how to find programs such as "markov" under the name "4ti2-markov", and until our *.dmg and
+dnl *.deb making procedures know how to include them or set the dependencies appropriately
 BUILD_4ti2=yes
 dnl AC_MSG_CHECKING(whether the package 4ti2 is installed)
 dnl if test "`type -t 4ti2-circuits`" = file
@@ -950,6 +951,7 @@ if test "`type -t gfan`" = file
 then AC_MSG_RESULT([yes, will build anyway])
      dnl currently the gfanInterface package doesn't know how to find gfan if we don't build it.
      dnl see https://github.com/Macaulay2/M2/pull/1123
+     dnl Also our *.dmg and *.deb making procedures need to know how to include it or set the dependencies appropriately
      BUILD_gfan=yes
      dnl we'll also build cddlib until gfan can find its files in /usr/include instead of in /usr/include/cdd
      BUILD_cddlib=yes
@@ -973,7 +975,8 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 dnl we can't use the test below for the presence of normaliz until the package Normaliz knows
-dnl how to find normaliz on the path
+dnl how to find normaliz on the path, and until our *.dmg and
+dnl *.deb making procedures know how to include it or set the dependencies appropriately
 BUILD_normaliz=yes
 BUILD_ALWAYS="$BUILD_ALWAYS normaliz"
 dnl AC_MSG_CHECKING(whether the package normaliz is installed)
