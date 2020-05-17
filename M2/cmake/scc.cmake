@@ -20,25 +20,26 @@ MACRO (_SCC_TRANSLATE _source _prev)
   set(_name ${CMAKE_MATCH_1})
   string(REPLACE "d" "c" _ext ${CMAKE_MATCH_2})
 
-  # TODO: use the {_name}.dep file to check for dependencies
-  # TODO: use DEPFILE option, but only works with ninja
+  # TODO: disabled until scc1 supports multiple threads
+  # Only Ninja supports reading .dep files
+  if(FALSE AND CMAKE_GENERATOR STREQUAL "Ninja" AND
+      EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${_name}.dep)
+    set(_dependency DEPFILE ${_name}.dep)
+  else()
+    set(_dependency ${${_prev}_source})
+  endif()
+
   add_custom_command(OUTPUT ${_name}-tmp.${_ext} ${_name}-exports.h ${_name}.sig ${_name}.dep
     COMMENT "Generating ${_name}-tmp.${_ext}"
-#    COMMAND
-#      scc1 ${SCCFLAGS} -dep ${CMAKE_CURRENT_SOURCE_DIR}/${_source}
-#    COMMAND
-#      mv ${_name}.sig.tmp ${_name}.sig && mv ${_name}.dep.tmp ${_name}.dep
     COMMAND
       scc1 ${SCCFLAGS} ${CMAKE_CURRENT_SOURCE_DIR}/${_source}
     COMMAND
-      mv ${_name}.sig.tmp ${_name}.sig && mv ${_name}.dep.tmp ${_name}.dep
-    COMMAND
+      mv ${_name}.sig.tmp ${_name}.sig &&
+      mv ${_name}.dep.tmp ${_name}.dep &&
       mv ${_name}-exports.h.tmp ${_name}-exports.h
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/${_source}
-    DEPENDS ${${_prev}_source} scc1
-    # DEPFILE ${_name}.dep
-    )
+    DEPENDS scc1 ${_dependency})
 
   set(${_prev}_name.sig ${_name}.sig)
   set(${_prev}_source   ${_name}-tmp.${_ext})
