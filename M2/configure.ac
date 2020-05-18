@@ -252,9 +252,9 @@ AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize
 
 AC_SUBST(NTL_WIZARD,no) AC_ARG_ENABLE(ntl-wizard, AS_HELP_STRING(--enable-ntl-wizard,enable running the NTL wizard), NTL_WIZARD=$enableval)
 
-AC_SUBST(M2_CPPFLAGS,)
-AC_SUBST(M2_CFLAGS,)
-AC_SUBST(M2_CXXFLAGS,)
+AC_SUBST(M2_CPPFLAGS)
+AC_SUBST(M2_CFLAGS)
+AC_SUBST(M2_CXXFLAGS)
 
 dnl Fix standards, apply everywhere
 CXXFLAGS="-std=gnu++14 $CXXFLAGS"
@@ -317,7 +317,7 @@ else CFLAGS="$CFLAGS -O0"
      FCFLAGS="$FCFLAGS -O0"
 fi
 
-AC_SUBST(GCCVERSION,)
+AC_SUBST(GCCVERSION)
 if test $GCC = yes
 then AC_MSG_CHECKING(for $CC version)
      GCCVERSION=`$CC -dumpversion 2>&1 | sed 's/.*-\(.*\):.*/\1/'`
@@ -397,7 +397,7 @@ AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 
 dnl AC_SUBST(HAVE_LIBTBB,no)
-dnl AC_SUBST(LIBTBB,)
+dnl AC_SUBST(LIBTBB)
 dnl    AC_LANG(C++)
 dnl    AC_CHECK_HEADER(tbb/tbb.h,
 dnl       [AC_SEARCH_LIBS(TBB_runtime_interface_version,tbb,
@@ -571,7 +571,7 @@ if test "$DEVELOPMENT" = yes
 then AC_DEFINE_UNQUOTED(DEVELOPMENT,1,whether to build a development version)
 fi
 
-AC_SUBST(DEVELOPER,)
+AC_SUBST(DEVELOPER)
 AC_ARG_WITH(developer, AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER=$withval)
 
 AC_SUBST(TAR_COMPRESS_OPTION,)
@@ -640,7 +640,7 @@ then if test "$OPTIMIZE" = no
      fi
 fi
 
-AC_SUBST(M2SUFFIX,)
+AC_SUBST(M2SUFFIX)
 test "$program_suffix" != NONE && M2SUFFIX=$program_suffix
 AC_ARG_ENABLE(dummy, AS_HELP_STRING(--program-suffix=...,suffix to append to executable name M2))
 
@@ -688,14 +688,14 @@ AC_SUBST(OPENMP_CXXFLAGS,"$OPENMP_CXXFLAGS")
 AC_SUBST(OPENMP_LIBS,"$OPENMP_LIBS")
 
 #############################################################################
-AC_SUBST(BUILTLIBS,)
+AC_SUBST(BUILTLIBS)
 # The list BUILTLIBS is the list of link options for the libraries we have decided to build,
 #    of the form "-lFOO", which will be used to link Macaulay2 later on.  These libraries are not
 #    available at the time this configure script is run, which is why we can't add "-lFOO" to LIBS.
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro linbox boost gtest ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro linbox boost gtest ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
@@ -810,44 +810,41 @@ dnl 	#ifndef __GMP_H__
 dnl 	#endif
 dnl , so only one can be loaded.  Similarly for gmpxx.h and mpirxx.h.  However, the contents of
 dnl the files differ.  For example, mpf_cmp_z is defined only in gmp.h.
-AC_SUBST(PREFERRED_INTEGER_PACKAGE)
+AC_SUBST(PREFERRED_INTEGER_PACKAGE,gmp)
 AC_ARG_WITH(integer-package,
 		AS_HELP_STRING(--with-integer-package=[mpir|gmp],specify the big integer package to use (mpir or gmp)),
 		if ! test $withval = mpir -o $withval = gmp
 		then AC_MSG_ERROR([big integer package option: invalid value: $withval])
 		fi
 		PREFERRED_INTEGER_PACKAGE=$withval)
-if test "$FOUND_mpir" = yes
-then if test "$FOUND_gmp" = yes
-     then if test "$PREFERRED_INTEGER_PACKAGE" = gmp
-          then USING_MPIR=0
-	  else USING_MPIR=1
-	  fi
-     else USING_MPIR=1
+if test $BUILD_gmp = yes -a $BUILD_mpir = yes
+then AC_MSG_ERROR([refusing to build both mpir and gmp, since the are interchangeable])
+fi
+AC_MSG_CHECKING([to use gmp or mpir])
+if test "$PREFERRED_INTEGER_PACKAGE" = mpir
+then USING_MPIR=1
+     if test "$FOUND_mpir" = no
+     then BUILD_mpir=yes
+          BUILTLIBS="-lmpirxx -lmpir $BUILTLIBS"
+     else LIBS="-lmpirxx -lmpir $LIBS"
      fi
-else if test "$FOUND_gmp" = yes
-     then if test "$PREFERRED_INTEGER_PACKAGE" = mpir
-          then BUILD_mpir=yes
-	       USING_MPIR=1
-	  else USING_MPIR=0
-	  fi
-     else if test "$PREFERRED_INTEGER_PACKAGE" = gmp
-          then AC_MSG_ERROR([gmp integer package specified, but not found])
-	  else BUILD_mpir=yes
-	       USING_MPIR=1
-	  fi
+else USING_MPIR=0		# i.e., using gmp
+     if test "$FOUND_gmp" = no
+     then BUILD_gmp=yes
+          BUILTLIBS="-lgmpxx -lgmp $BUILTLIBS"
+     else LIBS="-lgmpxx -lgmp $LIBS"
+	  dnl By the way: with Hombebrew on the Mac gmp comes with package configuration:
+	  dnl $ pkg-config gmp --cflags
+	  dnl -I/usr/local/Cellar/gmp/6.2.0/include
+	  dnl $ pkg-config gmp --libs
+	  dnl -L/usr/local/Cellar/gmp/6.2.0/lib -lgmp
      fi
 fi
 if test "$USING_MPIR" = 0
-then AC_DEFINE(USING_MPIR,0,[Whether we use MPIR (instead of GMP)])
-else AC_DEFINE(USING_MPIR,1,[Whether we use MPIR (instead of GMP)])
-fi
-if test $BUILD_mpir = yes
-then BUILTLIBS="-lmpirxx -lmpir $BUILTLIBS"
-else if test "$USING_MPIR" = 1
-     then LIBS="-lmpirxx -lmpir $LIBS"
-     else LIBS="-lgmpxx  -lgmp  $LIBS"
-     fi
+then AC_MSG_RESULT([using gmp])
+     AC_DEFINE(USING_MPIR,0,[Whether we use MPIR (instead of GMP)])
+else AC_MSG_RESULT([using mpir])
+     AC_DEFINE(USING_MPIR,1,[Whether we use MPIR (instead of GMP)])
 fi
 AC_SUBST(USING_MPIR)
 
@@ -1420,7 +1417,7 @@ AC_SEARCH_LIBS(xmlNewNode,xml2,,AC_MSG_ERROR(library xml2 not found or not linka
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
 
-AC_SUBST(NM_DEMANGLES,)
+AC_SUBST(NM_DEMANGLES)
 AC_MSG_CHECKING(whether nm accepts the demangle option)
 if nm --help 2>&1 | grep demangle >/dev/null
    then NM_DEMANGLES=yes; AC_MSG_RESULT(yes)
@@ -1449,25 +1446,25 @@ AC_RUN_IFELSE([AC_LANG_SOURCE([
     [if test $? = 99 ; then AC_MSG_RESULT(no) ; else AC_MSG_ERROR([test file failed to compile]) ; fi],
     [AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])] [AC_MSG_RESULT([probably (cross-compiling, not tested)])])
 
-AC_SUBST(BUILDLIST,)
+AC_SUBST(BUILDLIST)
 for i in $LIBLIST $PROGLIST
 do eval t=\$BUILD_$i
    test "$t" = yes && BUILDLIST="$BUILDLIST $i"
 done
 
-AC_SUBST(BUILDLIBLIST,)
+AC_SUBST(BUILDLIBLIST)
 for i in $LIBLIST
 do eval t=\$BUILD_$i
    test "$t" = yes && BUILDLIBLIST="$BUILDLIBLIST $i"
 done
 
-AC_SUBST(BUILDSUBLIST,)
+AC_SUBST(BUILDSUBLIST)
 for i in $SUBLIST
 do eval t=\$BUILD_$i
    test "$t" = yes && BUILDSUBLIST="$BUILDSUBLIST $i"
 done
 
-AC_SUBST(BUILDPROGLIST,)
+AC_SUBST(BUILDPROGLIST)
 for i in $PROGLIST
 do eval t=\$BUILD_$i
    test "$t" = yes && BUILDPROGLIST="$BUILDPROGLIST $i"
@@ -1486,7 +1483,7 @@ CFLAGS="$SAVE"
 
 TESTFLAG=-Wframe-address
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_WFRAME_ADDRESS,)
+AC_SUBST(HAVE_WFRAME_ADDRESS)
 SAVE=$CFLAGS
 CFLAGS="-Werror $TESTFLAG $CFLAGS"
 AC_LANG(C)
@@ -1496,7 +1493,7 @@ AC_MSG_RESULT($HAVE_WFRAME_ADDRESS)
 
 TESTFLAG=-Wstrict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_WSTRICT_ALIASING,)
+AC_SUBST(HAVE_WSTRICT_ALIASING)
 SAVE=$CFLAGS
 CFLAGS="$TESTFLAG -Werror $CFLAGS"
 AC_LANG(C)
@@ -1506,7 +1503,7 @@ AC_MSG_RESULT($HAVE_WSTRICT_ALIASING)
 
 TESTFLAG=-Wincompatible-pointer-types-discards-qualifiers
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_WDISCARDS_QUALIFIERS,)
+AC_SUBST(HAVE_WDISCARDS_QUALIFIERS)
 SAVE=$CFLAGS
 CFLAGS="$TESTFLAG -Werror $CFLAGS"
 AC_LANG(C)
@@ -1529,22 +1526,23 @@ dnl about invalid options that turn off warnings, if there are no warnings to be
 dnl It's a feature, not a bug!
 dnl On the other hand, clang does complain!
 
-dnl -- maybe we can benefit now from these warnings
-dnl AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
-dnl AC_LANG(C)
-dnl SAVE=$CFLAGS
-dnl CFLAGS="$CFLAGS -Wmismatched-tags -Werror"
-dnl AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
-dnl     CFLAGS=$SAVE
-dnl     CFLAGS="$CFLAGS -Wno-mismatched-tags"
-dnl     CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
-dnl     dnl we don't like seeing this warning, especially from the "clang" compiler
-dnl     AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
-dnl     CFLAGS=$SAVE
-dnl     AC_MSG_RESULT(no))
+AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
+AC_LANG(C)
+SAVE=$CFLAGS
+CFLAGS="$CFLAGS -Wmismatched-tags -Werror"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    CFLAGS=$SAVE
+    CFLAGS="$CFLAGS -Wno-mismatched-tags"
+    CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
+    dnl We don't like seeing this warning, especially from the "clang++" compiler, because
+    dnl we like using "struct" and "class" interchangeably.
+    AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
+    CFLAGS=$SAVE
+    AC_MSG_RESULT(no))
 
+dnl we should make a macro for this test
 AC_MSG_CHECKING(whether $CC accepts -Wunused-but-set-variable)
-AC_SUBST(HAVE_WUNUSED_BUT_SET_VARIABLE,)
+AC_SUBST(HAVE_WUNUSED_BUT_SET_VARIABLE)
 AC_LANG(C)
 SAVE=$CFLAGS
 CFLAGS="$CFLAGS -Wunused-but-set-variable -Werror"
@@ -1553,8 +1551,18 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
     HAVE_WUNUSED_BUT_SET_VARIABLE=no ; AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
+AC_MSG_CHECKING(whether $CC accepts -Wsometimes-uninitialized)
+AC_SUBST(HAVE_WSOMETIMES_UNINITIALIZED)
+AC_LANG(C)
+SAVE=$CFLAGS
+CFLAGS="$CFLAGS -Wsometimes-uninitialized -Werror"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
+    HAVE_WSOMETIMES_UNINITIALIZED=yes; AC_MSG_RESULT(yes),
+    HAVE_WSOMETIMES_UNINITIALIZED=no ; AC_MSG_RESULT(no))
+CFLAGS=$SAVE
+
 AC_MSG_CHECKING(whether $CC accepts -Wmaybe-uninitialized)
-AC_SUBST(HAVE_WMAYBE_UNINITIALIZED,)
+AC_SUBST(HAVE_WMAYBE_UNINITIALIZED)
 AC_LANG(C)
 SAVE=$CFLAGS
 CFLAGS="$CFLAGS -Wmaybe-uninitialized -Werror"
@@ -1564,7 +1572,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
 CFLAGS=$SAVE
 
 AC_MSG_CHECKING(whether $CC accepts -Wparentheses-equality)
-AC_SUBST(HAVE_WPARENTHESES_EQUALITY,)
+AC_SUBST(HAVE_WPARENTHESES_EQUALITY)
 AC_LANG(C)
 SAVE=$CFLAGS
 CFLAGS="$CFLAGS -Wparentheses-equality -Werror"
@@ -1574,7 +1582,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
 CFLAGS=$SAVE
 
 AC_MSG_CHECKING([whether $CC accepts -Wl,-z,noexecstack])
-AC_SUBST(HAVE_WL_X_NOEXECSTACK,)
+AC_SUBST(HAVE_WL_X_NOEXECSTACK)
 AC_LANG(C)
 SAVE=$LDFLAGS
 LDFLAGS="$LDFLAGS -Wl,-z,noexecstack -Werror"
@@ -1584,7 +1592,7 @@ AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])],
 LDFLAGS=$SAVE
 
 AC_MSG_CHECKING([whether $CC accepts -Wl,--enable-auto-import])
-AC_SUBST(HAVE_WL_ENABLE_AUTO_IMPORT,)
+AC_SUBST(HAVE_WL_ENABLE_AUTO_IMPORT)
 AC_LANG(C)
 SAVE=$LDFLAGS
 LDFLAGS="$LDFLAGS -Wl,--enable-auto-import -Werror"
@@ -1594,7 +1602,7 @@ AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])],
 LDFLAGS=$SAVE
 
 AC_MSG_CHECKING([whether $CC accepts -Wl,-Map,conftest.mapfile])
-AC_SUBST(HAVE_WL_MAP,)
+AC_SUBST(HAVE_WL_MAP)
 AC_LANG(C)
 SAVE=$LDFLAGS
 LDFLAGS="$LDFLAGS -Wl,-Map,conftest.mapfile -Werror"
