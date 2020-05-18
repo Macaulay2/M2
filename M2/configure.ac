@@ -709,7 +709,7 @@ AC_SUBST(BUILTLIBS,)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro linbox boost gtest ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro linbox boost gtest ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
@@ -824,44 +824,41 @@ dnl 	#ifndef __GMP_H__
 dnl 	#endif
 dnl , so only one can be loaded.  Similarly for gmpxx.h and mpirxx.h.  However, the contents of
 dnl the files differ.  For example, mpf_cmp_z is defined only in gmp.h.
-AC_SUBST(PREFERRED_INTEGER_PACKAGE)
+AC_SUBST(PREFERRED_INTEGER_PACKAGE,gmp)
 AC_ARG_WITH(integer-package,
 		AS_HELP_STRING(--with-integer-package=[mpir|gmp],specify the big integer package to use (mpir or gmp)),
 		if ! test $withval = mpir -o $withval = gmp
 		then AC_MSG_ERROR([big integer package option: invalid value: $withval])
 		fi
 		PREFERRED_INTEGER_PACKAGE=$withval)
-if test "$FOUND_mpir" = yes
-then if test "$FOUND_gmp" = yes
-     then if test "$PREFERRED_INTEGER_PACKAGE" = gmp
-          then USING_MPIR=0
-	  else USING_MPIR=1
-	  fi
-     else USING_MPIR=1
+if test $BUILD_gmp = yes -a $BUILD_mpir = yes
+then AC_MSG_ERROR([refusing to build both mpir and gmp, since the are interchangeable])
+fi
+AC_MSG_CHECKING([to use gmp or mpir])
+if test "$PREFERRED_INTEGER_PACKAGE" = mpir
+then USING_MPIR=1
+     if test "$FOUND_mpir" = no
+     then BUILD_mpir=yes
+          BUILTLIBS="-lmpirxx -lmpir $BUILTLIBS"
+     else LIBS="-lmpirxx -lmpir $LIBS"
      fi
-else if test "$FOUND_gmp" = yes
-     then if test "$PREFERRED_INTEGER_PACKAGE" = mpir
-          then BUILD_mpir=yes
-	       USING_MPIR=1
-	  else USING_MPIR=0
-	  fi
-     else if test "$PREFERRED_INTEGER_PACKAGE" = gmp
-          then AC_MSG_ERROR([gmp integer package specified, but not found])
-	  else BUILD_mpir=yes
-	       USING_MPIR=1
-	  fi
+else USING_MPIR=0		# i.e., using gmp
+     if test "$FOUND_gmp" = no
+     then BUILD_gmp=yes
+          BUILTLIBS="-lgmpxx -lgmp $BUILTLIBS"
+     else LIBS="-lgmpxx -lgmp $LIBS"
+	  dnl By the way: with Hombebrew on the Mac gmp comes with package configuration:
+	  dnl $ pkg-config gmp --cflags
+	  dnl -I/usr/local/Cellar/gmp/6.2.0/include
+	  dnl $ pkg-config gmp --libs
+	  dnl -L/usr/local/Cellar/gmp/6.2.0/lib -lgmp
      fi
 fi
 if test "$USING_MPIR" = 0
-then AC_DEFINE(USING_MPIR,0,[Whether we use MPIR (instead of GMP)])
-else AC_DEFINE(USING_MPIR,1,[Whether we use MPIR (instead of GMP)])
-fi
-if test $BUILD_mpir = yes
-then BUILTLIBS="-lmpirxx -lmpir $BUILTLIBS"
-else if test "$USING_MPIR" = 1
-     then LIBS="-lmpirxx -lmpir $LIBS"
-     else LIBS="-lgmpxx  -lgmp  $LIBS"
-     fi
+then AC_MSG_RESULT([using gmp])
+     AC_DEFINE(USING_MPIR,0,[Whether we use MPIR (instead of GMP)])
+else AC_MSG_RESULT([using mpir])
+     AC_DEFINE(USING_MPIR,1,[Whether we use MPIR (instead of GMP)])
 fi
 AC_SUBST(USING_MPIR)
 
@@ -1543,19 +1540,19 @@ dnl about invalid options that turn off warnings, if there are no warnings to be
 dnl It's a feature, not a bug!
 dnl On the other hand, clang does complain!
 
-dnl -- maybe we can benefit now from these warnings
-dnl AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
-dnl AC_LANG(C)
-dnl SAVE=$CFLAGS
-dnl CFLAGS="$CFLAGS -Wmismatched-tags -Werror"
-dnl AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
-dnl     CFLAGS=$SAVE
-dnl     CFLAGS="$CFLAGS -Wno-mismatched-tags"
-dnl     CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
-dnl     dnl we don't like seeing this warning, especially from the "clang" compiler
-dnl     AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
-dnl     CFLAGS=$SAVE
-dnl     AC_MSG_RESULT(no))
+AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
+AC_LANG(C)
+SAVE=$CFLAGS
+CFLAGS="$CFLAGS -Wmismatched-tags -Werror"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    CFLAGS=$SAVE
+    CFLAGS="$CFLAGS -Wno-mismatched-tags"
+    CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
+    dnl We don't like seeing this warning, especially from the "clang++" compiler, because
+    dnl we like using "struct" and "class" interchangeably.
+    AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
+    CFLAGS=$SAVE
+    AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(whether $CC accepts -Wunused-but-set-variable)
 AC_SUBST(HAVE_WUNUSED_BUT_SET_VARIABLE,)
