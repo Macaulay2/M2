@@ -252,9 +252,9 @@ AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize
 
 AC_SUBST(NTL_WIZARD,no) AC_ARG_ENABLE(ntl-wizard, AS_HELP_STRING(--enable-ntl-wizard,enable running the NTL wizard), NTL_WIZARD=$enableval)
 
-AC_SUBST(M2_CPPFLAGS,)
-AC_SUBST(M2_CFLAGS,)
-AC_SUBST(M2_CXXFLAGS,)
+AC_SUBST(M2_CPPFLAGS)
+AC_SUBST(M2_CFLAGS)
+AC_SUBST(M2_CXXFLAGS)
 
 dnl Fix standards, apply everywhere
 CXXFLAGS="-std=gnu++11 $CXXFLAGS"
@@ -317,7 +317,7 @@ else CFLAGS="$CFLAGS -O0"
      FCFLAGS="$FCFLAGS -O0"
 fi
 
-AC_SUBST(GCCVERSION,)
+AC_SUBST(GCCVERSION)
 if test $GCC = yes
 then AC_MSG_CHECKING(for $CC version)
      GCCVERSION=`$CC -dumpversion 2>&1 | sed 's/.*-\(.*\):.*/\1/'`
@@ -397,7 +397,7 @@ AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 
 dnl AC_SUBST(HAVE_LIBTBB,no)
-dnl AC_SUBST(LIBTBB,)
+dnl AC_SUBST(LIBTBB)
 dnl    AC_LANG(C++)
 dnl    AC_CHECK_HEADER(tbb/tbb.h,
 dnl       [AC_SEARCH_LIBS(TBB_runtime_interface_version,tbb,
@@ -570,10 +570,10 @@ if test "$DEVELOPMENT" = yes
 then AC_DEFINE_UNQUOTED(DEVELOPMENT,1,whether to build a development version)
 fi
 
-AC_SUBST(DEVELOPER,)
+AC_SUBST(DEVELOPER)
 AC_ARG_WITH(developer, AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER=$withval)
 
-AC_SUBST(DUMPDATA,)
+AC_SUBST(DUMPDATA)
 AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA=$enableval)
 if ! test "$DUMPDATA"
 then case $OS in
@@ -588,7 +588,7 @@ else case $DUMPDATA in
 fi
 test "$DUMPDATA" = no;   val=$?; AC_DEFINE_UNQUOTED(DUMPDATA,  $val,whether to use dumpdata)
 
-AC_SUBST(TAR_COMPRESS_OPTION,)
+AC_SUBST(TAR_COMPRESS_OPTION)
 case $COMPRESS in
    gz) TAR_COMPRESS_OPTION=--gzip ;;
   bz2) TAR_COMPRESS_OPTION=--bzip ;;
@@ -654,7 +654,7 @@ then if test "$OPTIMIZE" = no
      fi
 fi
 
-AC_SUBST(M2SUFFIX,)
+AC_SUBST(M2SUFFIX)
 test "$program_suffix" != NONE && M2SUFFIX=$program_suffix
 AC_ARG_ENABLE(dummy, AS_HELP_STRING(--program-suffix=...,suffix to append to executable name M2))
 
@@ -702,7 +702,7 @@ AC_SUBST(OPENMP_CXXFLAGS,"$OPENMP_CXXFLAGS")
 AC_SUBST(OPENMP_LIBS,"$OPENMP_LIBS")
 
 #############################################################################
-AC_SUBST(BUILTLIBS,)
+AC_SUBST(BUILTLIBS)
 # The list BUILTLIBS is the list of link options for the libraries we have decided to build,
 #    of the form "-lFOO", which will be used to link Macaulay2 later on.  These libraries are not
 #    available at the time this configure script is run, which is why we can't add "-lFOO" to LIBS.
@@ -1431,7 +1431,7 @@ AC_SEARCH_LIBS(xmlNewNode,xml2,,AC_MSG_ERROR(library xml2 not found or not linka
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
 
-AC_SUBST(NM_DEMANGLES,)
+AC_SUBST(NM_DEMANGLES)
 AC_MSG_CHECKING(whether nm accepts the demangle option)
 if nm --help 2>&1 | grep demangle >/dev/null
    then NM_DEMANGLES=yes; AC_MSG_RESULT(yes)
@@ -1460,25 +1460,25 @@ AC_RUN_IFELSE([AC_LANG_SOURCE([
     [if test $? = 99 ; then AC_MSG_RESULT(no) ; else AC_MSG_ERROR([test file failed to compile]) ; fi],
     [AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])] [AC_MSG_RESULT([probably (cross-compiling, not tested)])])
 
-AC_SUBST(BUILDLIST,)
+AC_SUBST(BUILDLIST)
 for i in $LIBLIST $PROGLIST
 do eval t=\$BUILD_$i
    test "$t" = yes && BUILDLIST="$BUILDLIST $i"
 done
 
-AC_SUBST(BUILDLIBLIST,)
+AC_SUBST(BUILDLIBLIST)
 for i in $LIBLIST
 do eval t=\$BUILD_$i
    test "$t" = yes && BUILDLIBLIST="$BUILDLIBLIST $i"
 done
 
-AC_SUBST(BUILDSUBLIST,)
+AC_SUBST(BUILDSUBLIST)
 for i in $SUBLIST
 do eval t=\$BUILD_$i
    test "$t" = yes && BUILDSUBLIST="$BUILDSUBLIST $i"
 done
 
-AC_SUBST(BUILDPROGLIST,)
+AC_SUBST(BUILDPROGLIST)
 for i in $PROGLIST
 do eval t=\$BUILD_$i
    test "$t" = yes && BUILDPROGLIST="$BUILDPROGLIST $i"
@@ -1497,7 +1497,7 @@ CFLAGS="$SAVE"
 
 TESTFLAG=-Wframe-address
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_WFRAME_ADDRESS,)
+AC_SUBST(HAVE_WFRAME_ADDRESS)
 SAVE=$CFLAGS
 CFLAGS="-Werror $TESTFLAG $CFLAGS"
 AC_LANG(C)
@@ -1507,7 +1507,7 @@ AC_MSG_RESULT($HAVE_WFRAME_ADDRESS)
 
 TESTFLAG=-Wstrict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_WSTRICT_ALIASING,)
+AC_SUBST(HAVE_WSTRICT_ALIASING)
 SAVE=$CFLAGS
 CFLAGS="$TESTFLAG -Werror $CFLAGS"
 AC_LANG(C)
@@ -1517,7 +1517,7 @@ AC_MSG_RESULT($HAVE_WSTRICT_ALIASING)
 
 TESTFLAG=-Wincompatible-pointer-types-discards-qualifiers
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_WDISCARDS_QUALIFIERS,)
+AC_SUBST(HAVE_WDISCARDS_QUALIFIERS)
 SAVE=$CFLAGS
 CFLAGS="$TESTFLAG -Werror $CFLAGS"
 AC_LANG(C)
@@ -1554,8 +1554,9 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
     CFLAGS=$SAVE
     AC_MSG_RESULT(no))
 
+dnl we should make a macro for this test
 AC_MSG_CHECKING(whether $CC accepts -Wunused-but-set-variable)
-AC_SUBST(HAVE_WUNUSED_BUT_SET_VARIABLE,)
+AC_SUBST(HAVE_WUNUSED_BUT_SET_VARIABLE)
 AC_LANG(C)
 SAVE=$CFLAGS
 CFLAGS="$CFLAGS -Wunused-but-set-variable -Werror"
@@ -1564,8 +1565,18 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
     HAVE_WUNUSED_BUT_SET_VARIABLE=no ; AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
+AC_MSG_CHECKING(whether $CC accepts -Wsometimes-uninitialized)
+AC_SUBST(HAVE_WSOMETIMES_UNINITIALIZED)
+AC_LANG(C)
+SAVE=$CFLAGS
+CFLAGS="$CFLAGS -Wsometimes-uninitialized -Werror"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
+    HAVE_WSOMETIMES_UNINITIALIZED=yes; AC_MSG_RESULT(yes),
+    HAVE_WSOMETIMES_UNINITIALIZED=no ; AC_MSG_RESULT(no))
+CFLAGS=$SAVE
+
 AC_MSG_CHECKING(whether $CC accepts -Wmaybe-uninitialized)
-AC_SUBST(HAVE_WMAYBE_UNINITIALIZED,)
+AC_SUBST(HAVE_WMAYBE_UNINITIALIZED)
 AC_LANG(C)
 SAVE=$CFLAGS
 CFLAGS="$CFLAGS -Wmaybe-uninitialized -Werror"
@@ -1575,7 +1586,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
 CFLAGS=$SAVE
 
 AC_MSG_CHECKING(whether $CC accepts -Wparentheses-equality)
-AC_SUBST(HAVE_WPARENTHESES_EQUALITY,)
+AC_SUBST(HAVE_WPARENTHESES_EQUALITY)
 AC_LANG(C)
 SAVE=$CFLAGS
 CFLAGS="$CFLAGS -Wparentheses-equality -Werror"
@@ -1585,7 +1596,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
 CFLAGS=$SAVE
 
 AC_MSG_CHECKING([whether $CC accepts -Wl,-z,noexecstack])
-AC_SUBST(HAVE_WL_X_NOEXECSTACK,)
+AC_SUBST(HAVE_WL_X_NOEXECSTACK)
 AC_LANG(C)
 SAVE=$LDFLAGS
 LDFLAGS="$LDFLAGS -Wl,-z,noexecstack -Werror"
@@ -1595,7 +1606,7 @@ AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])],
 LDFLAGS=$SAVE
 
 AC_MSG_CHECKING([whether $CC accepts -Wl,--enable-auto-import])
-AC_SUBST(HAVE_WL_ENABLE_AUTO_IMPORT,)
+AC_SUBST(HAVE_WL_ENABLE_AUTO_IMPORT)
 AC_LANG(C)
 SAVE=$LDFLAGS
 LDFLAGS="$LDFLAGS -Wl,--enable-auto-import -Werror"
@@ -1605,7 +1616,7 @@ AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])],
 LDFLAGS=$SAVE
 
 AC_MSG_CHECKING([whether $CC accepts -Wl,-Map,conftest.mapfile])
-AC_SUBST(HAVE_WL_MAP,)
+AC_SUBST(HAVE_WL_MAP)
 AC_LANG(C)
 SAVE=$LDFLAGS
 LDFLAGS="$LDFLAGS -Wl,-Map,conftest.mapfile -Werror"

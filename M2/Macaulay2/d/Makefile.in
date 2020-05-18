@@ -112,16 +112,13 @@ ifeq "@DEVELOPMENT@" "yes"
 # -- development --
 CFLAGS    += -Werror
 CXXFLAGS  += -Werror
-
-DCFLAGS   += -Wsometimes-uninitialized
-DCXXFLAGS += -Wsometimes-uninitialized
-
 ifeq "@HAVE_WDISCARDS_QUALIFIERS@" "yes"
-CFLAGS += -Werror=incompatible-pointer-types-discards-qualifiers
-else
 CFLAGS += -Wincompatible-pointer-types-discards-qualifiers
+CXXFLAGS += -Wincompatible-pointer-types-discards-qualifiers
 endif
 else
+DCFLAGS   += -Wsometimes-uninitialized
+DCXXFLAGS += -Wsometimes-uninitialized
 # -- non-development --
 DCFLAGS   += -Wno-sometimes-uninitialized
 DCXXFLAGS += -Wno-sometimes-uninitialized
