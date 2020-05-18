@@ -106,6 +106,9 @@ distclean: clean; rm -f Makefile @srcdir@/TAGS
 
 SCCFLAGS += -I../d
 
+# we like using "struct" and "class" interchangeably
+CXXFLAGS += -Wno-mismatched-tags
+
 # a stand-alone program made from test.dd
 # test : ../c/scc-core.o
 test : complex.o
