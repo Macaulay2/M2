@@ -1347,7 +1347,7 @@ getMinMaxDegrees = gensList -> (
 
 runCommand = cmd -> (
    --- comment this line out eventually, or add a verbosity option
-   stderr << "--running: " << cmd << " ... " << flush;
+   -- stderr << "--running: " << cmd << " ... " << flush;
    r := run cmd;
    if r != 0 then (
       << "Failed!" << endl;
