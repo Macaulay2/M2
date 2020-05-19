@@ -23,7 +23,7 @@ newPackage(
 	     },
 	CacheExampleOutput => false,
      	PackageExports => { "Polyhedra" },
-	AuxiliaryFiles => false,
+	AuxiliaryFiles => true,
     	DebuggingMode => false,
         --PackageExports => {"Polyhedra","FourTiTwo"},
         Configuration => {"Use4ti2"=>false}
