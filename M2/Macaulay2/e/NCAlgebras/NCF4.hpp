@@ -46,10 +46,7 @@ private:
   std::vector<Row> mRows;
   std::vector<Row> mOverlaps;
   int mFirstOverlap; // First non pivot row row (and all later ones are also non-pivot rows).
-  
-  // Translate a Row to a Poly.
 
-  // Overall algorithm logic
 public:
   NCF4(const FreeAlgebra& A,
        const ConstPolyList& input,

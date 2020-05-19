@@ -1,3 +1,35 @@
+19 May 2020  -- what needs to be done?
+ . hook up NCAlgebras.m2 with the new engine code.  (Update AssociateAlgebras to do what NCAlgebras can do).
+ . debug the F4 code.  There should be no duplicate rows or columns.
+ . refactoring of Polynomial and Monomial code, (at least some cleanup).
+   We have a shit-load of Monomial types.  Get them under control.
+   Word: (Word.hpp) (a range consisting of two pointers).
+   Monom: (a pointer 'm' such that *m is the length). (in e/Polynomial.hpp)
+     lots of stuff in here: heft value, degree, values on weight functions, monorder.
+       potentially (but not currently): hash value, component in a module)
+   ModuleMonom (in e/Polynomial.hpp) Used in ncBasis. -- not using our full monom stuff now.  LOOK this code over.
+   where are monomials stored?
+     . in a polynomial. One possible todo: polynomial has three things in it:  (a) vector of coefficients, (b) vector of Monom's.
+       the idea being: either a Matrix, or Computation, or maybe even per polynomial, will store the actual monomials.
+       or: (in GB): in a monomial space structure.
+ . NCGB: Buchberger-like, F4-like.  Other strategies for the reduction of polynomials heap.
+. review the NCF4 code.
+. make these computations as part of Computation type in front end.
+
+Notes:
+  . The MemoryBlock code is mainly used in NCReduction, F4 code currently.
+
+havn't done (so far!):
+  . GB's over quotients
+  . GB's over ZZ
+  . GB's over commutative poly rings.
+  . one sided GB's, modules.
+  . free resolutions (over quotients).
+  . Hilbert/Poincare series
+  . faster overlap tables: Frank has code that does this, still needs work
+     (SuffixTree.*)
+     
+
 13 Feb 2020, notes on classes, implementation, preparing for Frank's visit to Ithaca.
 
 1. Monomials:
