@@ -23,7 +23,7 @@ newPackage(
 	     },
 	CacheExampleOutput => false,
      	PackageExports => { "Polyhedra" },
-	AuxiliaryFiles => false,
+	AuxiliaryFiles => true,
     	DebuggingMode => false,
         --PackageExports => {"Polyhedra","FourTiTwo"},
         Configuration => {"Use4ti2"=>false}
@@ -1060,7 +1060,7 @@ doc ///
       We illustrate the tests with @TO "Diagrams"@ showing projections of the set of all possible (regularity, degree, codim).
 ///
 
-doc ///
+diagramsDoc = ///
   Key
     "Diagrams"
   Headline
@@ -1087,85 +1087,87 @@ doc ///
 
       a = 3:    
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projr_33.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojr_33.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projc_33.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojc_33.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projd_33.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojd_33.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/EGplane_33.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIREGplane_33.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/EGbar_33.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIREGbar_33.jpg", "alt" => ""}@
 
       a = 4:    
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projr_43.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojr_43.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projc_43.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojc_43.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projd_43.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojd_43.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/EGplane_43.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIREGplane_43.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/EGbar_43.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIREGbar_43.jpg", "alt" => ""}@
 
       a = 5:    
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projr_53.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojr_53.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projc_53.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojc_53.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projd_53.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojd_53.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/EGplane_53.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIREGplane_53.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/EGbar_53.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIREGbar_53.jpg", "alt" => ""}@
 
       {\bf d = 4:}
 
       a = 2:    
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projr_24.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojr_24.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projc_24.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojc_24.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projd_24.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojd_24.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/EGplane_24.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIREGplane_24.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/EGbar_24.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIREGbar_24.jpg", "alt" => ""}@
 
       a = 3:    
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projr_34.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojr_34.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projc_34.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojc_34.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projd_34.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojd_34.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/EGplane_34.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIREGplane_34.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/EGbar_34.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIREGbar_34.jpg", "alt" => ""}@
 
 
       {\bf d = 5:}
 
       a = 2:    
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projr_25.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojr_25.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projc_25.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojc_25.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/projd_25.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIRprojd_25.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/EGplane_25.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIREGplane_25.jpg", "alt" => ""}@
 
-      @IMG{"src" => "http://www.math.uni-sb.de/ag/schreyer/jb/Macaulay2/MonomialAlgebras/EGbar_25.jpg", "alt" => ""}@
+      @IMG{"src" => "IMGDIREGbar_25.jpg", "alt" => ""}@
 
 
 
 ///     
 
+doc replace("IMGDIR", replace("PKG", "MonomialAlgebras",
+		currentLayout#"package"), diagramsDoc)
 
 doc ///
   Key
