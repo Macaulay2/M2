@@ -1,288 +1,228 @@
 -- -*- coding: utf-8 -*-
+-- TODO: add linter
 newPackage(
-	"SimpleDoc",
-    	Version => "1.1", 
-    	Date => "December 1, 2009",
-	AuxiliaryFiles=>true,
-    	Authors => {
-	     {Name => "Dan Grayson", 
-		  Email => "dan@math.uiuc.edu", 
-		  HomePage => "http://www.math.uiuc.edu/~grayson/"},
-	     {Name => "Mike Stillman", 
-		  Email => "mike@math.cornell.edu", 
-		  HomePage => "http://www.math.cornell.edu/~mike/"}},
-    	Headline => "a simple documentation function",
-     	PackageImports => { "Text" },
-    	DebuggingMode => false
-    	)
+    "SimpleDoc",
+    Version => "1.2",
+    Date => "May 18, 2020",
+    Headline => "a simple documentation function",
+    Authors => {
+	{ Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "https://faculty.math.illinois.edu/~dan/" },
+	{ Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "https://pi.math.cornell.edu/~mike/" },
+	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu", HomePage => "https://math.umn.edu/~mahrud/" }
+	},
+    PackageImports => { "Text" },
+    DebuggingMode => false,
+    AuxiliaryFiles => true
+    )
 
-export {"multidoc", "doc", "docTemplate", "docExample", "packageTemplate", "simpleDocFrob"}
+export {"doc", "multidoc", "packageTemplate", -- functions
+    "docTemplate", "docExample", "testExample", "simpleDocFrob"} -- templates and examples
 
-simpleDocFrob = method()
-simpleDocFrob(ZZ,Matrix) := (n,M) -> directSum(n:M)
+-- Primary functions
+doc = method()
+doc String := docstring -> document toDoc(KeyFunctions, docstring)
 
--- We represent a line of text by a triple (text,indent,linenum) where 
---   text : String     	    the content of the line, with indentation removed, or null if the line was empty (?)
---   indent : ZZ     	    the number of spaces of indentation removed, or infinity if the line was empty
---   linenum : ZZ     	    the source line number
+multidoc = method()
+multidoc String := multidocstring -> document \ toDoc(NodeFunctions, multidocstring)
+
+packageTemplate = method()
+packageTemplate String := (packagename) -> replace("%%NAME%%", packagename, packagetemplate)
+
+-- Helper functions
+toDoc = (functionTable, text) -> (
+    linenum := 0;
+    textlines := for line in lines text list (
+	linenum = linenum + 1;
+	if match("^[[:space:]]*--", line) then continue -- skip comment lines
+	else makeTextline(line, linenum));
+    deepSplice applySplit(functionTable, textlines))
+
+applySplit = (functionTable, textlines) -> apply(splitByIndent(textlines, false), (s, e) -> (
+	key := getText textlines#s;
+	if not functionTable#?key then error splice(
+	    "unrecognized keyword, line ", toString getLinenum textlines#s, " of string: ", format key, "; ",
+	    "expected: ", toSequence between(" ", sort keys functionTable));
+	functionTable#key(textlines_{s+1..e}, getLinenum textlines#s)))
+
+-- Mapping tables for evaluating docstring keywords
+NodeFunctions = new HashTable from {
+    "Node" => (textlines, keylinenum) -> (
+	parsed := deepSplice applySplit(KeyFunctions, textlines);
+	if any(parsed, i -> member(first i, {Inputs, Outputs})) and not any(parsed, i -> first i === Usage)
+	then error("multidoc node, line ", toString keylinenum, " of string: Inputs or Outputs specified, but Usage not provided");
+	parsed)
+     }
+
+KeyFunctions = new HashTable from {
+    "Key"             => (textlines, keylinenum) -> Key          => getKeys(textlines, keylinenum),
+    "Headline"        => (textlines, keylinenum) -> Headline     => singleString(Headline, textlines, keylinenum),
+    "Usage"           => (textlines, keylinenum) -> Usage        => multiString(Usage, textlines, keylinenum),
+    "Inputs"          => (textlines, keylinenum) -> Inputs       => items(textlines, keylinenum),
+    "Outputs"         => (textlines, keylinenum) -> Outputs      => items(textlines, keylinenum),
+    "Consequences"    => (textlines, keylinenum) -> Consequences => applySplit(ConsequencesFuntions, textlines),
+    "Description"     => (textlines, keylinenum) -> toSequence applySplit(DescriptionFunctions, textlines),
+    "Acknowledgement" => (textlines, keylinenum) -> multiString(null, textlines, keylinenum),
+    "Contributors"    => (textlines, keylinenum) -> multiString(null, textlines, keylinenum),
+    "References"      => (textlines, keylinenum) -> multiString(null, textlines, keylinenum),
+    "ExampleFiles"    => (textlines, keylinenum) -> ExampleFiles => getText \ textlines,
+    "Caveat"          => (textlines, keylinenum) -> Caveat       => {markup(textlines, keylinenum)},
+    "SeeAlso"         => (textlines, keylinenum) -> SeeAlso      => apply(select(getText \ textlines, p -> #p > 0), value),
+    "Subnodes"        => (textlines, keylinenum) -> Subnodes     => apply(getText \ textlines, p -> if match("^:", p) then substring(1, p) else TO value p),
+ }
+
+DescriptionFunctions = new HashTable from {
+    "Example"       => (textlines, keylinenum) -> getExample(textlines, keylinenum, false),
+    "CannedExample" => (textlines, keylinenum) -> getExample(textlines, keylinenum, true),
+    "Text"          => (textlines, keylinenum) -> markup(textlines, keylinenum),
+    "Pre"           => (textlines, keylinenum) -> PRE reassemble(min\\getIndent\textlines, textlines),
+    "Code"          => (textlines, keylinenum) -> getCode(textlines, keylinenum),
+    }
+
+ConsequencesFuntions = new HashTable from {
+    "Item" => (textlines, keylinenum) -> markup(textlines, keylinenum)
+    }
+
+-- Processing functions
+
+-- We represent a line of text by a triple (text, indent, linenum) where
+--   text : String	the content of the line, with indentation removed, or null if the line was empty (?)
+--   indent : ZZ	the number of spaces of indentation removed, or infinity if the line was empty
+--   linenum : ZZ	the source line number
 -- We use these access functions uniformly:
 getText = textline -> textline#0
 getIndent = textline -> textline#1
 getLinenum = textline -> textline#2
 -- We use this creation function:
-makeTextline = (text,indent,linenum) -> (text,indent,linenum)
+makeTextline = (line, linenum) -> (
+    indent := getIndentLevel line;
+    text := if indent == infinity then "" else replace("[[:space:]]+$", "", substring(indent, line));
+    (text, indent, linenum))
 
-splitByIndent = (textlines,empties) -> (
-     indents := for x in textlines list getIndent x;
-     if empties then indents = apply(indents, n -> if n === infinity then -1 else n);
-     m := infinity;
-     indents = append(indents,infinity);
-     r := for i from 0 to #indents-1 list if indents#i >= m+1 then continue else (m = indents#i; i);
-     r = append(r, #indents-1);
-     apply(#r - 1, i -> (r#i,r#(i+1)-1)))
+-- return of number of leading spaces + leading tabs * 8 before text, or infinity for empty line
+getIndentLevel = str -> (
+    level := 0;
+    for c in characters str do (
+	if c === " " then level = level + 1
+	else if c === "\t" then level = 8 * ((level + 8) // 8)
+	else if c === "\r" then level = 0
+	else return level);
+    infinity)
 
-indentationLevel = (s) -> (
-     lev := 0;
-     for i from 0 to #s-1 do (
-	  c := s#i;
-	  if c === " " then lev = lev+1
-	  else if c === "\t" then lev = 8*((lev+8)//8)
-	  else if c === "\r" then lev = 0
-	  else return (lev, replace("[[:space:]]+$","",substring(i, s)))
-	  );
-     (infinity, "")
-     )
+-- return list of intervals such that the start of all intervals has the same, minimum intentation
+-- if empties is true then empty lines split intervals
+splitByIndent = (textlines, empties) -> (
+    indents := for n in getIndent \ textlines list (if empties and n === infinity then -1 else n);
+    m := infinity;
+    r := for i to #indents - 1 list if m + 1 <= indents#i then continue else (m = indents#i; i);
+    r = append(r, #indents);
+    apply(#r - 1, i -> (r#i, r#(i + 1) - 1)))
 
-singleString = (key, textlines, keylinenum) -> (
-     if #textlines === 0 then
-       error("line ",toString keylinenum," of string: expected single indented line after "|toString key)
-     else if #textlines > 1 then 
-       error("line ",toString getLinenum textlines#1," of string: expected single indented line after "|toString key);
-     key => getText textlines#0)
+safevalue = t -> try value t else ( stderr << "in the evaluation of: " << stack lines t << endl; value t )
 
-multiString = (key, textlines, keylinenum) -> (				    -- written by Andrew Hoefel originally
-     if #textlines === 0 then
-       error("line ",toString keylinenum," of string: expected at least one indented line after "|toString key);
-     key => concatenate between(newline, getText \ textlines)
-     )
-
-listOfStrings = (key, textlines, keylinenum) -> (
-     key => getText \ textlines
-     )
-
-reassemble = (indent,textlines) -> concatenate between(newline,
-     for x in textlines list ( if getIndent x =!= infinity then getIndent x - indent : " ", getText x )
-     )
-
-safevalue = t -> (
-     try value t else (
-	  stderr << "in the evaluation of: " << stack lines t << endl;
-	  value t
-	  )
-     )
-
-markup2 = (textlines, keylinenum) -> (
-     if #textlines === 0 then return "";
-     s := concatenate between(" ",getText \ textlines);
-     sp := separateRegexp(///(^|[^\\])(@)///, 2, s);
-     sp = apply(sp, s -> replace(///\\@///,"@",s));
-     if not odd(#sp) then error "unmatched @";
-     t := for i from 0 to #sp-1 list if even i then if sp#i != "" then TEX sp#i else "" else safevalue concatenate("(",sp#i,")");
-     t = select(t, x -> x =!= "");
-     if instance(t,List) and #t === 1 then t = first t;
-     t
-     )
+-- render @...@ blocks
+-- TODO: use negative lookaheads to simplify this
+render = (textlines, keylinenum) -> (
+    if #textlines == 0 then return "";
+    text := concatenate between(" ", getText \ textlines);
+    segments := separateRegexp(///(^|[^\\])(@)///, 2, text);
+    segments = apply(segments, segment -> replace(///\\@///, "@", segment));
+    if not odd(#segments) then error("unmatched @ near line ", toString keylinenum);
+    parsed := for i to #segments - 1 list (
+	if segments#i == "" then continue;
+	if even i then TEX segments#i else safevalue concatenate("(", segments#i, ")"));
+    if instance(parsed, List) and #parsed == 1 then first parsed else parsed)
 
 markup = (textlines, keylinenum) -> (
-     textlines = prepend(makeTextline("",infinity,if #textlines == 0 then "unknown" else getLinenum first textlines - 1), textlines);
-     splits := splitByIndent(textlines,true);
-     DIV apply(splits, (i,j) -> (
-	       x := markup2(textlines_{i+1..j},getLinenum textlines#i);
-	       if not (instance(x,HypertextContainer) or instance(x,HypertextParagraph)) then x = PARA x;
-	       x)))
-    
-items = (textlines, keylinenum) -> (
-     apply(splitByIndent(textlines, false), (i,j) -> (
-	       s := getText textlines#i;
-	       ps := separateRegexp("[[:space:]]*:[[:space:]]*", s);
-	       if #ps =!= 2 then (
-	       	    val := value;
-	       	    ps = separateRegexp("[[:space:]]*=>[[:space:]]*", s);
-	       	    if #ps =!= 2 then error("line ",toString getLinenum textlines#i," of string: expected line containing a colon or a double arrow");
-		    )
-	       else (
-		    val = identity;
-		    );
-	       result := if i === j then "" else markup2(textlines_{i+1..j}, getLinenum textlines#i);
-	       if ps#1 != "" then result = value ps#1 => result;
-	       if ps#0 != "" then result = val ps#0 => result;
-	       result
-	       ))
-     )
+    textline := makeTextline("", if #textlines == 0 then "unknown" else getLinenum textlines#0 - 1);
+    textlines = prepend(textline, textlines);
+    intervals := splitByIndent(textlines, true);
+    DIV apply(intervals, (s, e) -> (
+	    result := render(textlines_{s+1..e}, getLinenum textlines#s);
+	    if instance(result, HypertextContainer) or instance(result, HypertextParagraph) then result else PARA result)))
 
-DescriptionFunctions = new HashTable from {
-     "Example" => (textlines,keylinenum) -> EXAMPLE apply(
-	  splitByIndent(textlines,false),
-	  (i,j) -> reassemble(getIndent textlines#0, take(textlines, {i,j}))),
-     "CannedExample" => (textlines,keylinenum) -> EXAMPLE { PRE reassemble(getIndent textlines#0, textlines) },
-     "Text" => markup,
-     "Pre" => (textlines, keylinenum) -> PRE reassemble(min\\getIndent\textlines, textlines),
-     "Code" => (textlines, keylinenum) -> ( 
-	  m := min\\getIndent\textlines; 
-	  value concatenate ("(",apply(textlines, x -> (getIndent x - m, getText x, "\n")),")"))
-     }
+singleString = (key, textlines, keylinenum) -> (
+     if #textlines == 0 then
+       error("line ", toString keylinenum, " of string: expected single indented line after ", toString key)
+     else if #textlines > 1 then
+       error("line ", toString getLinenum textlines#1, " of string: expected single indented line after ", toString key);
+     getText textlines#0)
 
-applySplit = (fcns, textlines) ->
-     apply(splitByIndent(textlines,false), (i,j) -> (
-	       key := getText textlines#i;
-	       if not fcns#?key then error splice(
-		    "unrecognized keyword, line ",toString getLinenum textlines#i,
-		    " of string: ",format key,
-		    "; expected: ", toSequence between(" ",sort keys fcns)
-		    );
-	       fcns#key(textlines_{i+1..j}, getLinenum textlines#i)))
+-- originally written by Andrew Hoefel
+multiString = (key, textlines, keylinenum) -> (
+     if #textlines == 0 then
+       error("line ", toString keylinenum, " of string: expected at least one indented line after ", toString key);
+     concatenate between(newline, getText \ textlines))
 
-description = (textlines, keylinenum) -> toSequence applySplit(DescriptionFunctions, textlines)
-nonnull = x -> select(x, i -> i =!= null)
+-- used for inputs, outputs, and options
+items = (textlines, keylinenum) -> apply(splitByIndent(textlines, false), (s, e) -> (
+	line := getText textlines#s;
+	ps := separateRegexp("[[:space:]]*(:|=>)[[:space:]]*", line); -- split by ":" or "=>"
+	if #ps =!= 2 then error("line ", toString getLinenum textlines#s, " of string: expected line containing a colon or a double arrow");
+	result := if s === e then "" else render(textlines_{s+1..e}, getLinenum textlines#s);
+	if ps#1 != "" then result = value ps#1 => result;
+	if ps#0 != "" then result = (if match("=>", line) then value else identity) ps#0 => result;
+	result))
 
-ConsequencesFuntions = new HashTable from {
-     "Item" => (textlines, keylinenum) -> markup(textlines, keylinenum)
-     }
+-- reassemble textlines into a docstring
+reassemble = (indent, textlines) -> concatenate between(newline,
+    for line in textlines list ( if getIndent line =!= infinity then getIndent line - indent : " ", getText line ))
 
-KeyFunctions = new HashTable from {
-     "Key" => (textlines, keylinenum) -> Key => (
-	  r := nonnull apply(getText \ textlines,value);
-	  if length r == 0 then error("Key (line ",toString keylinenum," of string): expected at least one key");
-	  r),
-     "SeeAlso" => (textlines, keylinenum) -> SeeAlso => apply(select(getText\textlines,p -> #p>0),value),
-     "Subnodes" => (textlines, keylinenum) -> Subnodes => apply(getText\textlines, p -> if match("^:",p) then substring(1,p) else TO value p),
-     "Usage" => (textlines, keylinenum) -> multiString(Usage, textlines, keylinenum),
-     "Headline" => (textlines, keylinenum) -> singleString(Headline, textlines, keylinenum),
-     "Description" => (textlines, keylinenum) -> description(textlines, keylinenum),
-     "Caveat" => (textlines, keylinenum) -> Caveat => {markup(textlines, keylinenum)},
-     "Consequences" => (textlines, keylinenum) -> Consequences => applySplit(ConsequencesFuntions, textlines),
-     "Inputs" => (textlines, keylinenum) -> Inputs => items(textlines, keylinenum),
-     "Outputs" => (textlines, keylinenum) -> Outputs => items(textlines, keylinenum),
-     "ExampleFiles" => (textlines, keylinenum) -> listOfStrings(ExampleFiles,textlines, keylinenum)
-     }
+getKeys = (textlines, keylinenum) -> (
+    keyList := select(apply(getText \ textlines, value), key -> key =!= null);
+    if #keyList == 0 then error("Key (line ", toString keylinenum, " of string): expected at least one key");
+    keyList)
 
-NodeFunctions = new HashTable from {
-     "Node" => (textlines, keylinenum) -> (
-	  r := deepSplice applySplit(KeyFunctions, textlines);
-	  if any(r, i -> member(first i,{Inputs,Outputs}))
-	  and not any(r, i -> first i === Usage)
-	  then error("multidoc node, line ",toString keylinenum," of string: Inputs or Outputs specified, but Usage not provided");
-	  r)
-     }
+getCode = (textlines, keylinenum) -> (
+    m := min\\getIndent\textlines;
+    snippet := apply(textlines, x -> (getIndent x - m, getText x, newline));
+    value concatenate ("(", newline, snippet, ")"))
 
-toDoc = (funtab,text) -> (
-     text = lines text;
-     text = apply(text,1 .. #text,identity);		    -- append line numbers
-     text = select(text, (l,n) -> not match("^[[:space:]]*--",l));
-     linenums := apply(text,last);
-     text = apply(text,first);
-     t := apply(text, indentationLevel);
-     text = apply(t, last);
-     indents := apply(t, first);
-     textlines := for i from 0 to #text-1 list makeTextline(text#i,indents#i,linenums#i);
-     deepSplice applySplit(funtab, textlines))
+getExample = (textlines, keylinenum, canned) -> (
+    EXAMPLE if canned then { PRE reassemble(getIndent textlines#0, textlines) }
+    else apply(splitByIndent(textlines, false), (i, j) -> reassemble(getIndent textlines#0, take(textlines, {i,j}))))
 
-doc = method()
-doc String := (s) -> document toDoc(KeyFunctions,s)
+-- docstring and package templetes
 
-multidoc = method()
-multidoc String := (s) -> document \ toDoc(NodeFunctions,s)
-
-docExample = "doc ///
-  Key
-    (simpleDocFrob,ZZ,Matrix)
-  Headline
-    a sample documentation node
-  Usage
-    x = simpleDocFrob(n,M)
-  Inputs
-    n:ZZ
-      positive
-    M:Matrix
-      which is square
-  Outputs
-    x:Matrix
-      A block diagonal matrix with {\\tt n} 
-      copies of {\\tt M} along the diagonal
-  Consequences
-   Item
-    The first side effect of the function, if any, is described here.
-   Item
-    The second side effect of the function is described here, and so on.
-  Description
-   Text
-     Each paragraph of text begins with \"Text\".  The following 
-     line starts a sequence of Macaulay2 example input lines.
-     However, see @TO (matrix,List)@.
-     
-     The output in the following example was automatically generated at the time
-     of package installation.
-   Example
-     M = matrix\"1,2;3,4\";
-     simpleDocFrob(3,M)
-   Text
-     The following example was generated by the documentation author.
-   CannedExample
-      i1 : 4+
-	   4
-
-      o1 = 8
-
-      i1000 = 2+2
-
-      o1000 = 4
-   Text
-     See @ TO \"docExample\" @ for the code used to create this documentation.
-  Caveat
-    This is not a particularly useful function.
-  SeeAlso
-    matrix
-    (directSum,List)
+docTemplate = "doc ///
+Key
+Headline
+Usage
+Inputs
+Outputs
+Consequences
+  Item
+Description
+  Text
+  Code
+  Pre
+  Example
+  CannedExample
+ExampleFiles
+Acknowledgement
+Contributors
+References
+Caveat
+SeeAlso
+Subnodes
 ///"
-
-docTemplate = "
-doc ///
-   Key
-   Headline
-   Usage
-   Inputs
-   Outputs
-   Consequences
-    Item
-   Description
-    Text
-    Code
-    Pre
-    Example
-    CannedExample
-   Subnodes
-   Caveat
-   SeeAlso
-///
-"
-
 
 packagetemplate = "
 newPackage(
-	\"%%NAME%%\",
-    	Version => \"0.1\", 
-    	Date => \"\",
-    	Authors => {{Name => \"\", 
-		  Email => \"\", 
-		  HomePage => \"\"}},
-    	Headline => \"\",
-    	DebuggingMode => false
-    	)
+    \"%%NAME%%\",
+    Version => \"0.1\",
+    Date => \"\",
+    Headline => \"\",
+    Authors => {{ Name => \"\", Email => \"\", HomePage => \"\"}},
+    AuxiliaryFiles => false,
+    DebuggingMode => false
+    )
 
 export {}
 
--- Code here
+-* Code section *-
 
+
+-* Documentation section *-
 beginDocumentation()
 
 doc ///
@@ -292,8 +232,13 @@ Headline
 Description
   Text
   Example
+  CannedExample
+Acknowledgement
+Contributors
+References
 Caveat
 SeeAlso
+Subnodes
 ///
 
 doc ///
@@ -303,30 +248,66 @@ Usage
 Inputs
 Outputs
 Consequences
+  Item
 Description
   Text
   Example
+  CannedExample
   Code
   Pre
+ExampleFiles
+Contributors
+References
 Caveat
 SeeAlso
 ///
 
-TEST ///
+-* Test section *-
+TEST /// -* [insert short title for this test] *-
 -- test code and assertions here
 -- may have as many TEST sections as needed
 ///
+
+end--
+
+-* Development section *-
+restart
+debug needsPackage \"%%NAME%%\"
+check \"%%NAME%%\"
+
+uninstallPackage \"%%NAME%%\"
+restart
+installPackage \"%%NAME%%\"
+viewHelp \"%%NAME%%\"
 "
 
-packageTemplate = method()
-packageTemplate String := (packagename) -> 
-     replace("%%NAME%%", packagename, packagetemplate)
+-- This is an example that can also be used as a test
+simpleDocFrob = method()
+simpleDocFrob(ZZ,Matrix) := (n,M) -> directSum(n:M)
 
+-* Documentation section *-
 beginDocumentation()
 
+-- load the example
+load("./SimpleDoc/example.m2")
+value docExample
+value testExample
+
+-- load the multidocstring
 multidoc get (currentFileDirectory | "SimpleDoc/doc.txt")
 
-value docExample
+end--
+
+uninstallPackage "SimpleDoc"
+restart
+installPackage "SimpleDoc"
+viewHelp (simpleDocFrob, ZZ, Matrix)
+
+restart
+debug Core
+debug SimpleDoc
+text = substring(8, length docExample - 4 - 8 +1, docExample)
+toDoc(KeyFunctions, text)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SimpleDoc RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false RerunExamples=true"
