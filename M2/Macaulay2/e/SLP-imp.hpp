@@ -24,19 +24,20 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
 // copy constructor
 template <typename RT>
 SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>& a)
-    : mRing(a.ring()), values(a.values.size())
+    : SLEvaluator(a), mRing(a.ring()), values(a.values.size())
 {
   slp = a.slp;
   varsPos = a.varsPos;
   auto i = values.begin();
   auto j = a.values.begin();
   for (; i != values.end(); ++i, ++j) ring().init_set(*i, *j);
+  // std::cout << "SLEvaluatorConcrete: copy constructor for " << this << std::endl;
 }
 
 template <typename RT>
 SLEvaluatorConcrete<RT>::~SLEvaluatorConcrete()
 {
-  //std::cout << "SLEvaluatorConcrete: deleting values" << std::endl;
+  // std::cout << "~SLEvaluatorConcrete: " << this << std::endl
   for (auto& v : values) ring().clear(v);
 }
 
@@ -58,12 +59,14 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
   for (int i = 0; i < cPos->len; i++)
     ring().set(values[slp->inputCounter + cPos->array[i]],
                consts->getMat().entry(0, i));
+  // std::cout << "SLEvaluatorConcrete(MutableMat): " << this << std::endl;
 }
 
 template <typename RT>
 SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
     const MutableMatrix* parameters) const
 {
+  // std::cout << "SLEvaluatorConcrete::specialize:" << this << std::endl;
   auto p = dynamic_cast<const MutableMat<DMat<RT> >*>(parameters);
   if (p == nullptr)
     {
@@ -760,6 +763,14 @@ template <typename RT, typename Algorithm>
 void HomotopyConcrete<RT, Algorithm>::text_out(buffer& o) const
 {
   o << "HomotopyConcrete<...,...> : track not implemented" << newline;
+}
+template <typename RT>
+HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::HomotopyConcrete(
+    HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::EType& Hx,
+    HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::EType& Hxt,
+    HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::EType& HxH)
+    : mHx(Hx), mHxt(Hxt), mHxH(HxH)
+{
 }
 
 template <typename RT>
