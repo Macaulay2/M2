@@ -57,6 +57,7 @@ document {
 	  TO "FLINT",
 	  TO "givaro",
 	  TO "fflas-ffpack",
+	  TO "MPSolve",
 	  -- TO "boost", -- we don't link with boost, but normaliz does
 	  "programs and their libraries",
 	  TO "4ti2",
