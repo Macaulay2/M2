@@ -19,11 +19,18 @@ P = gateSystem matrix {{W_(0,{3, 0, 0})*x^3+W_(0,{2, 1, 0})*x^2*y+W_(0,{1, 2, 0}
        {W_(1,{2, 0, 0})*x^2+W_(1,{1, 1, 0})*x*y+W_(1,{0, 2, 0})*y^2+W_(1,{1, 0, 1})*x*z+W_(1,{0, 1, 1})*y*z+W_(1,{0, 0,
        2})*z^2}, {W_(2,{1, 0, 0})*x+W_(2,{0, 1, 0})*y+W_(2,{0, 0, 1})*z+W_(2,{0, 0, 0})}},
 
-(p0, x0) := createSeedPair P;
-(V, npaths) := monodromySolve(P,p0,{x0});
-G := V.Graph;
+(p0, x0) = createSeedPair P;
+(V, npaths) = monodromySolve(P,p0,{x0});
+print "monodromySolve done"
+G = V.Graph;
 H = G.Family;
-for i to 100 do (
+
+
+(V, npaths) := monodromySolve(P,p0,{x0});
+G' := V.Graph;
+H' = G.Family;
+
+for i to 10 do (
     print i;
     (p1, x1) := createSeedPair P;
     start = transpose matrix V.BasePoint;
@@ -32,10 +39,16 @@ for i to 100 do (
     trackHomotopy(H01,points V.PartialSols)
     )
 
-for i to 100 do (
+
+for i to 10 do (
     print i;
     monodromySolve P
     )
+
+end
+
+
+debug SLPexpressions
 end
 restart
 load "sparseMonodromySolve.m2"
