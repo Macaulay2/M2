@@ -8,7 +8,6 @@
 // SLP
 class SLProgram;
 
-// needs a finalizer???
 class M2SLProgram : public MutableEngineObject
 {
   std::unique_ptr<SLProgram> mSLProgram;
@@ -106,10 +105,10 @@ struct HomotopyAlgorithm<M2::ARingRRR> {
 
 class SLEvaluator;
 
-// needs a finalizer???
 class M2SLEvaluator : public MutableEngineObject
 {
-  std::unique_ptr<SLEvaluator> mSLEvaluator;
+  SLEvaluator* mSLEvaluator; //!!! this is a hack to avoid memory corruption, it results in a memory leak
+  // std::unique_ptr<SLEvaluator> mSLEvaluator;
 public:
   M2SLEvaluator(SLEvaluator* pa) : mSLEvaluator(pa) {}
 
@@ -229,10 +228,7 @@ class HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm> : public Homotopy
 {
  public:
   typedef SLEvaluatorConcrete<RT> EType;
-  HomotopyConcrete(EType& Hx, EType& Hxt, EType& HxH)
-      : mHx(Hx), mHxt(Hxt), mHxH(HxH)
-  {
-  }
+  HomotopyConcrete(EType& Hx, EType& Hxt, EType& HxH);
   /* columns of inputs are initial solutions (last coordinate is the initial
      value of continuation parameter t,
      outputs have the same shape as inputs (last coordinate of outputs is set to

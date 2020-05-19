@@ -109,12 +109,18 @@ ifeq "@HAVE_WDISCARDS_QUALIFIERS@" "yes"
 CFLAGS += -Wincompatible-pointer-types-discards-qualifiers
 CXXFLAGS += -Wincompatible-pointer-types-discards-qualifiers
 endif
-else
+ifeq "@HAVE_WSOMETIMES_UNINITIALIZED@" "yes"
 DCFLAGS   += -Wsometimes-uninitialized
 DCXXFLAGS += -Wsometimes-uninitialized
+endif
+# -- development end --
+else
 # -- non-development --
+ifeq "@HAVE_WSOMETIMES_UNINITIALIZED@" "yes"
 DCFLAGS   += -Wno-sometimes-uninitialized
 DCXXFLAGS += -Wno-sometimes-uninitialized
+endif
+# -- non-development end --
 endif
 
 DCFLAGS   += -Wno-unused-value

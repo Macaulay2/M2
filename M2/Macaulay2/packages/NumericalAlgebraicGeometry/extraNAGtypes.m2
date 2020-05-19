@@ -147,7 +147,9 @@ getRawHomotopy(GateHomotopy,Ring) := (GH,K) -> if GH#?K then GH#K else GH#K = --
 getRawHomotopy(SpecializedParameterHomotopy,Ring) := (H,K) -> if H#?K then H#K else H#K = (
     GH := H.ParameterHomotopy.GateHomotopy;
     paramsK := raw mutableMatrix promote(H.Parameters,K);
-    (GH#"EHx",GH#"EHxt",GH#"EHxH") / (e->rawSLEvaluatorSpecialize(rawSLEvaluatorK(e,K),paramsK)) // rawHomotopy 
+    evaluators := (GH#"EHx",GH#"EHxt",GH#"EHxH") / (e->rawSLEvaluatorSpecialize(rawSLEvaluatorK(e,K),paramsK)); 
+    (if H#?"evaluators" then H#"evaluators" else new MutableHashTable)#K = evaluators;
+    evaluators // rawHomotopy 
     )
 gateHomotopy = method(Options=>{Parameters=>null,Software=>null,Strategy=>compress})
 gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
