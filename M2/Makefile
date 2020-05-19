@@ -103,7 +103,7 @@ libtool-old-msg :
 libtool-not-gnu : libtool-not-gnu-msg libtool-msg 
 libtool-not-gnu-msg :
 	@ echo "=============================================================================" >&2
-	@ echo "error: the libtool program installed on your system (`type libtool`) is too not GNU." >&2
+	@ echo "error: the libtool program installed on your system (`type libtool`) is not GNU." >&2
 libtool-msg :
 	@ echo "" >&2
 	@ echo "Please install or update libtool: the version should be at least $(LIBTOOL_VERSION)." >&2
