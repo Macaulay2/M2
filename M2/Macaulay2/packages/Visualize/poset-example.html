@@ -91,7 +91,7 @@
     var clipboard = null;
       
 //    $('#side').BootSideMenu({side:"right"});
-    $('#side').BootSideMenu({side:"right", autoClose: false});
+    $('#side').BootSideMenu({side:"right", closeOnClick: false, width: "230px"});
     
     // When the side menu bar is opened or closed (i.e, when the "toggler" div is clicked), resize the svg appropriately so that nodes do not go behind the side menu.
     document.getElementsByClassName("toggler")[0].addEventListener("mousedown", function() {
