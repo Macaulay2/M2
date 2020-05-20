@@ -1429,7 +1429,15 @@ tutorial = x -> (
      x )
 
 Wikipedia = method(TypicalValue => Hypertext)
-Wikipedia String := s -> PARA { "See ", HREF{ "http://en.wikipedia.org/wiki/" | s }, "."}
+Wikipedia String          :=       title  -> HREF{ "https://en.wikipedia.org/wiki/" | title, title }
+Wikipedia(String, String) := (url, title) -> HREF{ "https://en.wikipedia.org/wiki/" |   url, title }
+
+arXiv = method(TypicalValue => Hypertext)
+arXiv String          :=  ref         -> HREF{ "https://arxiv.org/abs/" | ref, "arXiv:" | ref }
+arXiv(String, String) := (ref, title) -> HREF{ "https://arxiv.org/abs/" | ref, title }
+
+stacks = method(TypicalValue => Hypertext)
+stacks(String, String) := (tag, title) -> HREF{ "https://stacks.math.columbia.edu/tag/" | tag, title }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

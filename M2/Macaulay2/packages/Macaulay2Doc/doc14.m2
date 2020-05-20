@@ -59,18 +59,53 @@ document { Key => {commonRing, (commonRing,List)},
      	  ///
      }
 
-document { Key => {(Wikipedia,String),Wikipedia},
-     Headline => "link to a Wikipedia entry",
-     Usage => "Wikipedia s",
-     Inputs => { "s" },
-     Outputs => { {"a paragraph with a link to the Wikipedia entry with title ", TT "s",
-	       ", usable inside a documentation node"} },
+document { Key => {(Wikipedia, String, String), (Wikipedia, String), Wikipedia},
+     Headline => "link to a Wikipedia article",
+     Usage => "Wikipedia(url,title)\nWikipedia title",
+     Inputs => {
+	 "url" => String => "the article's url slug, optional",
+	 "title" => String => "a Wikipedia article's title" },
+     Outputs => { {"a link to the Wikipedia entry with the given title usable inside a documentation node"} },
      EXAMPLE lines ///
-          Wikipedia "Bessel_function"
+          Wikipedia "Bessel function"
+	  html oo
+          Wikipedia("Bessel_function#Definitions", "Bessel function")
 	  html oo
 	  ///,
-     SeeAlso => { document }
+     SeeAlso => { document, arXiv, stacks }
      }
+
+document {
+    Key => {(arXiv, String, String), (arXiv, String), arXiv},
+    Headline => "link to an arXiv article",
+    Usage => "arXiv ref\narXiv(ref, title)",
+    Inputs => {
+	"ref" => String => "an arXiv identifier \"YYMM.NNNNN\" or \"math/YYMMNNN\"",
+	"title" => String => "the link title, optional"},
+    Outputs => { {"a link to the abstract of the article with the given identifier, usable inside a documentation node"} },
+    EXAMPLE lines ///
+    arXiv "1411.5724"
+    html oo
+    arXiv("math/0003033", "Macaulay2 and the geometry of schemes")
+    html oo
+    ///,
+    SeeAlso => { document, stacks, Wikipedia }
+    }
+
+document {
+    Key => {(stacks, String, String), stacks},
+    Headline => "link to a Stacks Project tag",
+    Usage => "stacks(tag, description)",
+    Inputs => {
+	"tag" => String => "an alphanumeric Stacks Project tag \"TTTT\"",
+	"title" => String => "the link title"},
+    Outputs => { {"a link to the Stacks Project node with the given tag, usable inside a documentation node"} },
+    EXAMPLE lines ///
+    stacks("01HR", "Affine schemes")
+    html oo
+    ///,
+    SeeAlso => { document, arXiv, Wikipedia }
+    }
 
 document { Key => {log1p,(log1p, QQ),(log1p, ZZ),(log1p, RR)},
      Usage => "log1p x",
@@ -100,7 +135,7 @@ document { Key => {eint,(eint, QQ),(eint, ZZ),(eint, RR)},
      EXAMPLE lines ///
      	  eint 2
      ///,
-     Wikipedia "Exponential_integral"
+     PARA {"See ", Wikipedia "Exponential integral", "."}
      }
 document { Key => {Gamma,(Gamma, ZZ),(Gamma, RR),(Gamma, QQ)},
      Usage => "Gamma x",
@@ -110,7 +145,7 @@ document { Key => {Gamma,(Gamma, ZZ),(Gamma, RR),(Gamma, QQ)},
      EXAMPLE lines ///
      	  Gamma 6
      ///,
-     Wikipedia "Gamma_function"
+     PARA {"See ", Wikipedia "Gamma function", "."}
      }
 document { Key => {lngamma,(lngamma, QQ),(lngamma, ZZ),(lngamma, RR)},
      Usage => "lngamma x",
@@ -132,7 +167,7 @@ document { Key => {zeta,(zeta, QQ),(zeta, ZZ),(zeta, RR)},
      EXAMPLE lines ///
      	  zeta 2
      ///,
-     Wikipedia "Riemann_zeta_function"
+     PARA {"See ", Wikipedia "Riemann zeta function", "."}
      }
 document { Key => {erf,(erf, ZZ),(erf, RR),(erf, QQ)},
      Usage => "erf x",
@@ -142,7 +177,7 @@ document { Key => {erf,(erf, ZZ),(erf, RR),(erf, QQ)},
      EXAMPLE lines ///
      	  erf 2
      ///,
-     Wikipedia "Error_function"
+     PARA {"See ", Wikipedia "Error function", "."}
      }
 document { Key => {erfc,(erfc, QQ),(erfc, ZZ),(erfc, RR)},
      Usage => "erfc x",
@@ -152,7 +187,7 @@ document { Key => {erfc,(erfc, QQ),(erfc, ZZ),(erfc, RR)},
      EXAMPLE lines ///
      	  erfc 2
      ///,
-     Wikipedia "Error_function"
+     PARA {"See ", Wikipedia "Error function", "."}
      }
 document { 
      --- author(s): L. Gold, Dan Grayson
@@ -164,7 +199,7 @@ document {
      EXAMPLE lines ///
      acos 0.5
      ///,
-     Wikipedia "Trigonometric_function"
+     PARA {"See ", Wikipedia "Trigonometric function", "."}
      }     
 document { 
      --- author(s): L. Gold, Dan Grayson
@@ -178,7 +213,7 @@ document {
      EXAMPLE {
 	  "asin 1"
 	  },
-     Wikipedia "Trigonometric_function"
+     PARA {"See ", Wikipedia "Trigonometric function", "."}
      }
 document { 
      --- author(s): L. Gold
@@ -201,7 +236,7 @@ document {
      acosh .2
      cosh oo
      ///,
-     Wikipedia "Hyperbolic_function"
+     PARA {"See ", Wikipedia "Hyperbolic function", "."}
      }     
 document { 
      Key => {asinh,(asinh,Number)},
@@ -212,7 +247,7 @@ document {
      EXAMPLE lines ///
      asinh .2
      ///,
-     Wikipedia "Hyperbolic_function"
+     PARA {"See ", Wikipedia "Hyperbolic function", "."}
      }
 document { Key => {sec,(sec, ZZ),(sec,CC),(sec, RR),(sec, QQ)},
      Usage => "sec x",
@@ -222,7 +257,7 @@ document { Key => {sec,(sec, ZZ),(sec,CC),(sec, RR),(sec, QQ)},
      EXAMPLE lines ///
      	  sec(pi/3)
      ///,
-     Wikipedia "Trigonometric_function"
+     PARA {"See ", Wikipedia "Trigonometric function", "."}
      }
 document { Key => {csc,(csc,CC),(csc, QQ),(csc, ZZ),(csc, RR)},
      Usage => "csc x",
@@ -232,7 +267,7 @@ document { Key => {csc,(csc,CC),(csc, QQ),(csc, ZZ),(csc, RR)},
      EXAMPLE lines ///
      	  csc(pi/3)
      ///,
-     Wikipedia "Trigonometric_function"
+     PARA {"See ", Wikipedia "Trigonometric function", "."}
 
      }
 document { Key => {cot,(cot, ZZ),(cot, RR),(cot,CC),(cot, QQ)},
@@ -243,7 +278,7 @@ document { Key => {cot,(cot, ZZ),(cot, RR),(cot,CC),(cot, QQ)},
      EXAMPLE lines ///
      	  cot(pi/3)
      ///,
-     Wikipedia "Trigonometric_function"
+     PARA {"See ", Wikipedia "Trigonometric function", "."}
 
      }
 document { Key => {sech,(sech,CC),(sech, QQ),(sech, ZZ),(sech, RR)},
@@ -254,7 +289,7 @@ document { Key => {sech,(sech,CC),(sech, QQ),(sech, ZZ),(sech, RR)},
      EXAMPLE lines ///
      	  sech(pi/3)
      ///,
-     Wikipedia "Hyperbolic_function"
+     PARA {"See ", Wikipedia "Hyperbolic function", "."}
      }
 document { Key => {csch,(csch,CC),(csch, ZZ),(csch, RR),(csch, QQ)},
      Usage => "csch x",
@@ -264,7 +299,7 @@ document { Key => {csch,(csch,CC),(csch, ZZ),(csch, RR),(csch, QQ)},
      EXAMPLE lines ///
      	  csch(pi/3)
      ///,
-     Wikipedia "Hyperbolic_function"
+     PARA {"See ", Wikipedia "Hyperbolic function", "."}
      }
 document { Key => {coth,(coth,CC),(coth, QQ),(coth, ZZ),(coth, RR)},
      Usage => "coth x",
@@ -274,7 +309,7 @@ document { Key => {coth,(coth,CC),(coth, QQ),(coth, ZZ),(coth, RR)},
      EXAMPLE lines ///
      	  coth(pi/3)
      ///,
-     Wikipedia "Hyperbolic_function"
+     PARA {"See ", Wikipedia "Hyperbolic function", "."}
      }
      
 document {
@@ -314,7 +349,7 @@ document { Key => {EulerConstant},
      	  +EulerConstant
      	  EulerConstant+100p100
      ///,
-     Wikipedia "Euler-Mascheroni_constant",
+     PARA {"See ", Wikipedia "Euler-Mascheroni constant", "."}
      }
 document { Key => {InexactNumber'},
      "This class is the common parent of the classes of complex fields and real fields."
@@ -336,7 +371,7 @@ document { Key => {BesselJ,(BesselJ, ZZ, QQ),(BesselJ, ZZ, ZZ),(BesselJ, ZZ, RR)
           BesselJ_0 .5
      	  BesselJ_2 3p200
      ///,
-     Wikipedia "Bessel_function",
+     PARA {"See ", Wikipedia "Bessel function", "."},
      SeeAlso => { BesselY }
      }
 document { Key => {BesselY,(BesselY, ZZ, ZZ),(BesselY, ZZ, RR),(BesselY, ZZ, QQ)},
@@ -353,7 +388,7 @@ document { Key => {BesselY,(BesselY, ZZ, ZZ),(BesselY, ZZ, RR),(BesselY, ZZ, QQ)
           BesselY_0 .5
      	  BesselY_2 3p200
      ///,
-     Wikipedia "Bessel_function",
+     PARA {"See ", Wikipedia "Bessel function", "."},
      SeeAlso => { BesselJ }
      }
 document { Key => {agm,(agm, ZZ, ZZ),(agm, QQ, ZZ),(agm, ZZ, QQ),(agm, QQ, QQ),(agm, ZZ, RR),(agm, RR, ZZ),(agm, QQ, RR),(agm, RR, QQ),(agm, RR, RR),
@@ -365,7 +400,7 @@ document { Key => {agm,(agm, ZZ, ZZ),(agm, QQ, ZZ),(agm, ZZ, QQ),(agm, QQ, QQ),(
      EXAMPLE lines ///
      	  agm(1,2p200)
      ///,
-     Wikipedia "Arithmetic-geometric_mean"
+     PARA {"See ", Wikipedia "Arithmetic-geometric mean", "."}
      }
 
 document {
