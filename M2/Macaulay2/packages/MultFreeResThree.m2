@@ -34,7 +34,7 @@ newPackage ( "MultFreeResThree",
     DebuggingMode => false
     )
 
-export { "multtable" }
+export { "multtable", "multtable1", "multTables", "eeproduct" }
 
 
 --==========================================================================
@@ -88,7 +88,7 @@ multtable = (d1,d2,d3) -> (
 	 EE#(i,j) = ( matrix entries b );
 	 EE#(j,i) = -EE#(i,j);
 	 );
-     for i from 1 to m do (EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0)); --move this after the );?
+     EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0);
      );
 
     EF := new MutableHashTable;
@@ -100,6 +100,7 @@ multtable = (d1,d2,d3) -> (
     	    EF#(i,j) = (matrix entries e);
 	    );
 	);
+
     EEE := new MutableHashTable;
     for i from 1 to m do (
 	for j from i+1 to m do (
@@ -122,16 +123,52 @@ multtable = (d1,d2,d3) -> (
 	   );
      );
 	
- EEE
+ {EE,EF}
  )
+
+multtable1 = F -> (
+    Q := ring F;
+    d1:= matrix entries F.dd_1;
+    d2:= matrix entries F.dd_2;    
+    d3:= matrix entries F.dd_3;    
+    m := numcols d1;
+    l := numcols d2;
+    n := numcols d3;
+    
+    EE := new MutableHashTable;
+    for i from 1 to m do (
+	for j from i+1 to m do (
+	 a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1};
+    	 b := ( matrix entries transpose a ) // d2;
+	 EE#(i,j) = ( matrix entries b );
+	 EE#(j,i) = -EE#(i,j);
+	 );
+     EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0);
+     );
+
+    EF := new MutableHashTable;
+    for i from 1 to m do (
+	for j from 1 to l do (
+    	    c := sum(1..m, k -> d2_(k-1,j-1) * (EE#(i,k)));
+    	    d := d1_(0,i-1)*((id_(Q^l))_(j-1));
+	    e := (matrix entries (matrix d - c)) // d3;
+    	    EF#(i,j) = (matrix entries e);
+	    );
+	);
+    {EE,EF}
+    )
 
 --EEE = (i,j,k) -> (
 --l := numgens source d2 ;
 --c := sum(1..l, s -> (EE(i,j))_(s-1,0)*EF(k,s));
 --return matrix entries c)
 
--- torAlgData = ( cacheValue "torAlg" ) toralgdata
-	    
+multTables = ( cacheValue "multTables" ) multtable1
+
+eeproduct = (F,i,j) -> (
+    mtable := multTables F;
+    (mtable#0)#(i,j)
+    )
 
 end
 --==========================================================================
@@ -152,8 +189,18 @@ F = res I
     d2 = matrix entries (F.dd)_2;
     d3 = matrix entries (F.dd)_3;    
 
-ee = multtable(d1,d2,d3)
+time eeproduct(F,1,3)
+
+m = multtable1 F
+m = multTables F
+
+peek F.cache
+m = multtable(d1,d2,d3)
+
+(m#0)#(1,2)
+ee = EEtable(d1,d2,d3)
 peek ee
+
 ee#(1,2,3)
 ee#(2,1,3)
 a = map(Q^1,Q^3,(i,j) -> 0)
