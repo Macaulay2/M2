@@ -62,7 +62,6 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		../emacs/makehlp.m2 \
 		../emacs/makem2.m2 \
 		../emacs/makesyms.m2 \
-		loads.awk \
 		@srcdir@/../*/COPYRIGHT \
 		@srcdir@/basictests/*.m2 \
 		@srcdir@/../book/*.m2 \
