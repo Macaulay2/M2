@@ -287,16 +287,6 @@ assert areEqual(sols,{{ { -.707107, .707107}, SolutionStatus => Regular }, { {.7
 ///
 
 TEST ///
-needsPackage "NAGtools"
-X = inputGate x
-F = matrix{{X^2}} 
-PH = gateHomotopy4preimage(F,{X})
-K = CC_53
-H = specialize (PH, transpose matrix{{1_K,2}})
-time sols = trackHomotopy(H,{point{{1_K}}})
-///
-
-TEST ///
 needsPackage "NumericalAlgebraicGeometry"
 CC[x,y]
 S = polySystem {x^2+y^2-6, 2*x^2-y}
