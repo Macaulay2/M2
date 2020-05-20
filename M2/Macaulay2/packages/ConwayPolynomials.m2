@@ -10,24 +10,28 @@ newPackage(
     	Headline => "a database of Conway polynomials"
     	)
 -- the data comes libflint
-export "conwayPolynomial"
+export {
+    "conwayPolynomial",
+    -- options to set the variable to use
+    "Variable"
+    }
 rawConwayPolynomial := value Core#"private dictionary"#"rawConwayPolynomial"
 getCP := (p,n) -> rawConwayPolynomial (p,n,false)
-Ap := memoize(p -> (ZZ/p)(monoid [getSymbol "a"]))
+Ap := memoize((p, a) -> (ZZ/p)(monoid [a]))
 fix := (p,n,co,a) -> sum(#co, i -> co#i * a^i)
-conwayPolynomial = method()
-conwayPolynomial(ZZ,ZZ) := (p,n) -> (
+conwayPolynomial = method(Options=>{Variable=>getSymbol "a"})
+conwayPolynomial(ZZ,ZZ) := opts -> (p,n) -> (
      cp := getCP(p,n);
-     if cp != {} then fix(p,n,cp,(Ap p)_0))
-conwayPolynomial ZZ := q -> (
+     if cp != {} then fix(p,n,cp,(Ap(p, opts.Variable))_0))
+conwayPolynomial ZZ := opts -> q -> (
      factors := factor q;
      if #factors =!= 1 or factors#0#0 === -1
      then error "expected a power of a prime";
-     conwayPolynomial(factors#0#0,factors#0#1))
+     conwayPolynomial(factors#0#0,factors#0#1,opts))
 addHook(GaloisField,FindOne,(p,n,a) -> (
      cp := getCP(p,n);
      if cp != {} then break fix(p,n,cp,a)))
-isConway := (F) -> (gens ideal ambient F)_(0,0) == sub(conwayPolynomial(F.char,F.degree),ambient ambient F)
+isConway := (F) -> (gens ideal ambient F)_(0,0) == sub(conwayPolynomial(F.char,F.degree, Variable=>F_0),ambient ambient F)
 map(GaloisField,GaloisField) := RingMap => o -> (K,F) -> (
      p := char F;
      n := K.degree;
@@ -71,9 +75,10 @@ document {
      Key => {conwayPolynomial, (conwayPolynomial,ZZ,ZZ), (conwayPolynomial,ZZ)},
      Headline => "provide a Conway polynomial",
      SYNOPSIS (
-     	  Usage => "conwayPolynomial q",
+     	  Usage => "conwayPolynomial(q,Variable=>a)",
 	  Inputs => {
-	       "q" => ZZ => {"a power of a prime number"}
+	       "q" => ZZ => {"a power of a prime number"},
+	       "a" => Symbol => {"an optional input, the symbol served as variable, default a"}
 	       },
 	  Outputs => {
 	       {"a Conway polynomial whose roots generate a field with q elements"}
@@ -83,16 +88,17 @@ document {
 	  ///
 	  ),
      SYNOPSIS (
-     	  Usage => "conwayPolynomial(p,n)",
+     	  Usage => "conwayPolynomial(p,n,Variable=>a)",
 	  Inputs => {
 	       "p" => ZZ => {"a prime number"},
-	       "n" => ZZ
+	       "n" => ZZ,
+	       "a" => Symbol => {"an optional input, the symbol served as variable, default a"}
 	       },
 	  Outputs => {
-	       {"a Conway polynomial whose roots generate a field with p^n elements"}
+	       {"a Conway polynomial whose roots generate a field with ", TEX "p^n", " elements"}
 	       },
 	  EXAMPLE lines ///
-	  conwayPolynomial(2,20)
+	  conwayPolynomial(2,20,Variable=>"b")
 	  ///
 	  )
      }
