@@ -100,11 +100,6 @@ document {
 	  ///
 	  )
      }
- 
---TEST /// -- check isConway
---K = GF(8,Variable=>z);
---assert(isConway(K));
---///
 
 TEST /// -- check map(GaloisField,GaloisField)
 K = GF(8,Variable=>a); 
