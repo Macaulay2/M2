@@ -14,21 +14,14 @@ using std::my_free;
 #define free my_free
 #endif
 
+#include <M2/math-include.h>
+
 #define mpfr foo
 #include "mpreal.h"
 #include <unsupported/Eigen/MPRealSupport>
 #undef mpfr
 #include "eigen.hpp"
 #include <Eigen/SVD>
-
-#if USING_MPIR 
-#include <mpir.h>
-#include <mpirxx.h>
-#else
-#include <gmp.h>
-#include <gmpxx.h>
-#endif
-#include <mpfr.h>
 
 #if 0
 #undef free

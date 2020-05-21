@@ -122,15 +122,6 @@
     #define MPREAL_MSVC_DEBUGVIEW_DATA 
 #endif
 
-#if USING_MPIR 
-#include <mpir.h>
-#include <mpirxx.h>
-#else
-#include <gmp.h>
-#include <gmpxx.h>
-#endif
-#include <mpfr.h>
-
 #if (MPFR_VERSION < MPFR_VERSION_NUM(3,0,0))
     #include <cstdlib>                          // Needed for random()
 #endif

@@ -24,14 +24,6 @@ declarations "
    ";
 
 header "
-   #if USING_MPIR 
-   #include <mpir.h>
-   #include <mpirxx.h>
-   #else
-   #include <gmp.h>
-   #include <gmpxx.h>
-   #endif
-   #include <M2/config.h>
    #include <atomic_ops.h>
    #include <mpfr.h>
    #include <memtailor.h>
