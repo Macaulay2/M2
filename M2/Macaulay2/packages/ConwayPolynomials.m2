@@ -10,19 +10,17 @@ newPackage(
     	Headline => "a database of Conway polynomials"
     	)
 -- the data comes libflint
-export {
-    "conwayPolynomial",
-    -- options to set the variable to use
-    "Variable"
-    }
+export "conwayPolynomial"
 rawConwayPolynomial := value Core#"private dictionary"#"rawConwayPolynomial"
 getCP := (p,n) -> rawConwayPolynomial (p,n,false)
 Ap := memoize((p, a) -> (ZZ/p)(monoid [a]))
 fix := (p,n,co,a) -> sum(#co, i -> co#i * a^i)
-conwayPolynomial = method(Options=>{Variable=>getSymbol "a"})
+conwayPolynomial = method(Options=>{Variable=>null})
 conwayPolynomial(ZZ,ZZ) := opts -> (p,n) -> (
      cp := getCP(p,n);
-     if cp != {} then fix(p,n,cp,(Ap(p, opts.Variable))_0))
+     var := opts.Variable;
+     var = if var === null then getSymbol "a" else baseName var;
+     if cp != {} then fix(p,n,cp,(Ap(p, var))_0))
 conwayPolynomial ZZ := opts -> q -> (
      factors := factor q;
      if #factors =!= 1 or factors#0#0 === -1
@@ -102,6 +100,22 @@ document {
 	  ///
 	  )
      }
+ 
+--TEST /// -- check isConway
+--K = GF(8,Variable=>z);
+--assert(isConway(K));
+--///
+
+TEST /// -- check map(GaloisField,GaloisField)
+K = GF(8,Variable=>a); 
+L = GF(64,Variable=>b); 
+middleK = GF(8); 
+middleL = GF(64);
+f1 = map(middleK,K,{middleK_0});
+f3 = map(L,middleL,{L_0});
+f2 = map(middleL,middleK);
+assert(f3 * f2 * f1 === map(L, K));
+///
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages  PACKAGES=ConwayPolynomials RemakePackages=true RerunExamples=true IgnoreExampleErrors=false RemakeAllDocumentation=true"
