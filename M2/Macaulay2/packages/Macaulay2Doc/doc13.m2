@@ -232,7 +232,7 @@ document { Key => {applicationDirectory, "application directory"},
 	  },
      PARA { "The function ", TO "applicationDirectorySuffix", " determines the value of ", TT "applicationDirectory", ", and can be modified by the user." },
      EXAMPLE "applicationDirectory()",
-     SeeAlso => applicationDirectorySuffix}
+     SeeAlso => "applicationDirectorySuffix"}
 
 document {
      Key => installedPackages,
