@@ -1,9 +1,5 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
-/* these two macros affect the definition of GC_INIT, but have to appear before the include directives, in order to take effect */
-#define GC_FREE_SPACE_DIVISOR 12
-#define GC_INITIAL_HEAP_SIZE 70000000
-
 #include "interp-exports.h"
 
 /* defining GDBM_STATIC makes the cygwin version work, and is irrelevant for the other versions */
