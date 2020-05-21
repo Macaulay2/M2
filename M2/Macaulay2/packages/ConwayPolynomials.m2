@@ -15,12 +15,10 @@ rawConwayPolynomial := value Core#"private dictionary"#"rawConwayPolynomial"
 getCP := (p,n) -> rawConwayPolynomial (p,n,false)
 Ap := memoize((p, a) -> (ZZ/p)(monoid [a]))
 fix := (p,n,co,a) -> sum(#co, i -> co#i * a^i)
-conwayPolynomial = method(Options=>{Variable=>null})
+conwayPolynomial = method(Options=>{Variable=>"a"})
 conwayPolynomial(ZZ,ZZ) := opts -> (p,n) -> (
      cp := getCP(p,n);
-     var := opts.Variable;
-     var = if var === null then getSymbol "a" else baseName var;
-     if cp != {} then fix(p,n,cp,(Ap(p, var))_0))
+     if cp != {} then fix(p,n,cp,(Ap(p, opts.Variable))_0))
 conwayPolynomial ZZ := opts -> q -> (
      factors := factor q;
      if #factors =!= 1 or factors#0#0 === -1
