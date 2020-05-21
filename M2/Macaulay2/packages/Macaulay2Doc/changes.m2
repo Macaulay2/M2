@@ -1466,7 +1466,7 @@ document {
 			 },
 		    LI {
 			 "A bug in Gröbner bases over the integers was fixed, which, under certain situations, led to
-			 in incomplete Gröbner basis."},
+			 an incomplete Gröbner basis."},
 		    LI {
 			 "A bug in Gröbner bases over fields and the integers was fixed, which caused, under some situations,
 			 the list of \"trimmed\" generators to be incomplete (but the Gröbner basis itself was correct).
