@@ -3,12 +3,11 @@
 #ifndef _dmat_hpp_
 #define _dmat_hpp_
 
+#include "engine-includes.hpp"
+#include "mat-util.hpp"
+
 #include <algorithm>
 #include <utility>
-
-#include "engine-includes.hpp"
-#include <algorithm>
-#include "mat-util.hpp"
 
 template <typename ACoeffRing>
 class DMat;
@@ -80,16 +79,17 @@ class DMat
   typedef DMatIterator<ACoeffRing> Iterator;
   typedef DMatConstIterator<ACoeffRing> ConstIterator;
 
-  DMat() : mRing(0), mNumRows(0), mNumColumns(0), mArray(0) {}
+  DMat() : mRing(0), mNumRows(0), mNumColumns(0), mArray(nullptr) {}
   DMat(const ACoeffRing& R, size_t nrows, size_t ncols)
       : mRing(&R), mNumRows(nrows), mNumColumns(ncols)
   {
     size_t len = mNumRows * mNumColumns;
     if (len == 0)
-      mArray = 0;
+      mArray = nullptr;
     else
       {
-        mArray = new ElementType[len];
+        mArray = static_cast<ElementType*>(GC_MALLOC_UNCOLLECTABLE(sizeof(ElementType) * len));
+        //        mArray = new ElementType[len];
         for (size_t i = 0; i < len; i++)
           {
             ring().init(mArray[i]);
@@ -102,10 +102,11 @@ class DMat
   {
     size_t len = mNumRows * mNumColumns;
     if (len == 0)
-      mArray = 0;
+      mArray = nullptr;
     else
       {
-        mArray = new ElementType[len];
+        mArray = static_cast<ElementType*>(GC_MALLOC_UNCOLLECTABLE(sizeof(ElementType) * len));
+        //        mArray = new ElementType[len];
         for (size_t i = 0; i < len; i++)
           ring().init_set(mArray[i], M.array()[i]);
       }
@@ -114,7 +115,8 @@ class DMat
   {
     size_t len = mNumRows * mNumColumns;
     for (size_t i = 0; i < len; i++) ring().clear(mArray[i]);
-    if (mArray != 0) delete[] mArray;
+    //    if (mArray != 0) delete[] mArray;
+    if (mArray != nullptr) GC_FREE(mArray);
   }
 
   // swap the actual matrices of 'this' and 'M'.

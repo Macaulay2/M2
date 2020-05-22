@@ -92,8 +92,8 @@ extern "C" {
   }
 #ifdef GETSPECIFICTHREADLOCAL
   extern void TS_Add_ThreadLocal(int* refno, const char* name);
-  static void** TS_Get_LocalArray() {  return (void**)pthread_getspecific(*(pthread_key_t*)threadSupervisor); }
-  static void** TS_Get_Local(int refno) { return &TS_Get_LocalArray()[refno]; }
+  extern void** TS_Get_LocalArray();
+  extern void** TS_Get_Local(int refno);
 #endif
   
      

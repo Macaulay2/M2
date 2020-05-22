@@ -2,12 +2,12 @@
 ---------------------------------------------------------------------------
 -- PURPOSE: Calculating versal deformations and local Hilbert schemes
 -- PROGRAMMER : Nathan Ilten
--- UPDATE HISTORY : June 2018
+-- UPDATE HISTORY : April 2020
 ---------------------------------------------------------------------------
 newPackage("VersalDeformations",
     Headline => "versal deformations and local Hilbert schemes",
-    Version => "2.0",
-    Date => "June 1, 2018",
+    Version => "2.1",
+    Date => "April 10, 2020",
     Authors => {
         {Name => "Nathan Ilten",
 	  HomePage => "http://www.sfu.ca/~nilten/",
@@ -31,7 +31,7 @@ newPackage("VersalDeformations",
 ---------------------------------------------------------------------------
 -- COPYRIGHT NOTICE:
 --
--- Copyright 2018 Nathan Owen Ilten
+-- Copyright 2020 Nathan Owen Ilten
 --
 --
 -- This program is free software: you can redistribute it and/or modify
@@ -344,9 +344,6 @@ localHilbertScheme=method(Options=>versalopts)
 versalDeformation (List,List,List,List):= opts ->(f,r,g,c)->(
      cachename:=opts#CacheName;
      if cachename===null then cachename=(f_0).cache; 
-     if not class coefficientRing ring f_0===PolynomialRing then (
-	  print "No deformation parameters!";
-	  return (f,r,g,c));
      ord:=-1+opts#HighestOrder;
      (F,R,G,C):=(f,r,g,c);
      if opts#SmartLift then (
@@ -387,6 +384,9 @@ versalDeformation (Matrix,Matrix,Matrix):= opts ->(F0,T1,T2)->(
      NT2:=lift(sub(T2,A)%sub(transpose R_0,A),ring F_0);
      C:={NT2};
      G:={};
+     if (numgens source T1)===0 then (
+	  print "No deformation parameters!";
+	  return (F,R,G,C));
      versalDeformation(F,R,G,C,HighestOrder=>opts#HighestOrder,Verbose=>opts#Verbose,
 	  SanityCheck=>opts#SanityCheck, PolynomialCheck=>opts#PolynomialCheck,SmartLift=>opts#SmartLift,
 	  CorrectionMatrix=>opts#CorrectionMatrix,CacheName=>cachename))

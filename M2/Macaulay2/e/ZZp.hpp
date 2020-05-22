@@ -59,7 +59,7 @@ class Z_mod : public Ring
 
   virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_srcptr n) const;
-  virtual bool from_rational(mpq_ptr q, ring_elem &result) const;
+  virtual bool from_rational(mpq_srcptr q, ring_elem &result) const;
 
   virtual bool promote(const Ring *R,
                        const ring_elem f,
@@ -74,15 +74,15 @@ class Z_mod : public Ring
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
 
-  void internal_negate_to(ring_elem &f) const;
-  void internal_add_to(ring_elem &f, ring_elem &g) const;
-  void internal_subtract_to(ring_elem &f, ring_elem &g) const;
-
+  int internal_negate(int f) const;
+  int internal_add(int f, int g) const;
+  int internal_subtract(int f, int g) const;
+  
   virtual ring_elem negate(const ring_elem f) const;
   virtual ring_elem add(const ring_elem f, const ring_elem g) const;
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const;
   virtual ring_elem mult(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
   virtual ring_elem invert(const ring_elem f) const;
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;

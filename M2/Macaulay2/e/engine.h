@@ -24,12 +24,12 @@ class Computation;
 class EngineComputation;
 class MutableComplex;
 // NAG begin
-class SLEvaluator;
-class Homotopy;
-class SLProgram;
+class M2SLEvaluator;
+class M2Homotopy;
+class M2SLProgram;
 class StraightLineProgram;
 class PathTracker;
-class PointArray;
+class M2PointArray;
 // NAG end
 
 typedef struct MonomialOrdering MonomialOrdering;
@@ -49,12 +49,12 @@ typedef struct MonomialOrdering MonomialOrdering;
 typedef struct MonomialIdeal MonomialIdeal;
 typedef struct MutableComplex MutableComplex;
 // NAG begin
-typedef struct SLEvaluator SLEvaluator;
-typedef struct Homotopy Homotopy;
-typedef struct SLProgram SLProgram;
+typedef struct M2SLEvaluator M2SLEvaluator;
+typedef struct M2Homotopy M2Homotopy;
+typedef struct M2SLProgram M2SLProgram;
 typedef struct StraightLineProgram StraightLineProgram;
 typedef struct PathTracker PathTracker;
-typedef struct PointArray PointArray;
+typedef struct M2PointArray M2PointArray;
 // NAG end
 #endif
 
@@ -73,6 +73,16 @@ extern "C" {
 
   M2_string engineMemory(); /* connected MES to engineMemory */
 
+  /*****************************************************/
+  /**** Integer primality and factorization (via flint)*/
+  /*****************************************************/
+
+  M2_bool rawZZisPrime(gmp_ZZ a);
+
+  M2_bool rawZZisProbablePrime(gmp_ZZ a);
+
+  gmp_arrayZZ rawZZfactor(gmp_ZZ a);
+  
   /**************************************************/
   /**** Monomial routines ***************************/
   /**************************************************/
@@ -373,7 +383,7 @@ extern "C" {
                                                   gmp_ZZ d);  /* drg: connected rawFromNumber*/
 
   const RingElement /* or null */ *IM2_RingElement_from_rational(const Ring *R,
-                                                         gmp_QQ r); /* rawFromNumber*/
+                                                         mpq_srcptr r); /* rawFromNumber*/
 
   gmp_ZZ /* or null */ IM2_RingElement_to_Integer(const RingElement *a); /* drg: connected rawToInteger*/
     /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
@@ -625,7 +635,7 @@ extern "C" {
      This then translates F, returning the translated poly in the ring newRing.
   */
 
-  const RingElement /* or null */ *rawPowerMod(const RingElement *f, mpz_ptr n, const RingElement *g);  /* connected */
+  const RingElement /* or null */ *rawPowerMod(const RingElement *f, mpz_srcptr n, const RingElement *g);  /* connected */
   /* Currently only valid for tower rings */
 
   /**************************************************/
@@ -2041,19 +2051,20 @@ enum gbTraceValues
   gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f);
   gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M);
 
-  Homotopy /* or null */ *rawHomotopy(SLEvaluator *Hx, SLEvaluator *Hxt, SLEvaluator *HxH);
-  SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts);
-  SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(SLEvaluator* H, const MutableMatrix *parameters);
-  SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs);
-  M2_string rawSLEvaluatorToString(SLEvaluator *); /* connected */
-  M2_bool rawSLEvaluatorEvaluate(SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs);
-  M2_string rawHomotopyToString(Homotopy *); /* connected */
-  M2_string rawSLProgramToString(SLProgram *); /* connected */
-  unsigned int rawSLEvaluatorHash(SLEvaluator *); /* connected */
-  unsigned int rawHomotopyHash(Homotopy *); /* connected */
-  unsigned int rawSLProgramHash(SLProgram *); /* connected */
+  // NAG begin
+  M2Homotopy /* or null */ *rawHomotopy(M2SLEvaluator *Hx, M2SLEvaluator *Hxt, M2SLEvaluator *HxH);
+  M2SLEvaluator /* or null */ *rawSLEvaluator(M2SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts);
+  M2SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(M2SLEvaluator* H, const MutableMatrix *parameters);
+  M2SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs);
+  M2_string rawSLEvaluatorToString(M2SLEvaluator *); /* connected */
+  M2_bool rawSLEvaluatorEvaluate(M2SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs);
+  M2_string rawHomotopyToString(M2Homotopy *); /* connected */
+  M2_string rawSLProgramToString(M2SLProgram *); /* connected */
+  unsigned int rawSLEvaluatorHash(M2SLEvaluator *); /* connected */
+  unsigned int rawHomotopyHash(M2Homotopy *); /* connected */
+  unsigned int rawSLProgramHash(M2SLProgram *); /* connected */
 
-  M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs,
+  M2_bool rawHomotopyTrack(M2Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs,
                            MutableMatrix* output_extras,  
                            gmp_RR init_dt, gmp_RR min_dt,
                            gmp_RR epsilon, // o.CorrectorTolerance,
@@ -2061,12 +2072,12 @@ enum gbTraceValues
                            gmp_RR infinity_threshold,
                            M2_bool checkPrecision);
 
-  gmp_ZZ rawSLPInputGate(SLProgram *S);
-  gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a);
-  gmp_ZZ rawSLPProductGate(SLProgram *S, M2_arrayint a);
-  gmp_ZZ rawSLPDetGate(SLProgram *S, M2_arrayint a);
-  gmp_ZZ rawSLPsetOutputPositions(SLProgram *S, M2_arrayint a);
-  gmp_ZZ rawSLPDivideGate(SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPInputGate(M2SLProgram *S);
+  gmp_ZZ rawSLPSumGate(M2SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPProductGate(M2SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPDetGate(M2SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPsetOutputPositions(M2SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPDivideGate(M2SLProgram *S, M2_arrayint a);
 
   StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program);
   const Matrix /* or null */ *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals);
@@ -2097,12 +2108,12 @@ enum gbTraceValues
   gmp_RRorNull rawGetSolutionLastTvaluePT(PathTracker* PT, int solN);
   gmp_RRorNull rawGetSolutionRcondPT(PathTracker* PT, int solN);
   const Matrix /* or null */ *rawRefinePT(PathTracker* PT, const Matrix* sols, gmp_RR tolerance, int max_corr_steps_refine);
-  // PointArray
-  unsigned int rawPointArrayHash(PointArray *); 
-  M2_string rawPointArrayToString(PointArray *);
-  PointArray /* or null */ *rawPointArray(double epsilon, int n);
-  int rawPointArrayLookup(PointArray *pa, const MutableMatrix *M, int col);
-  int rawPointArrayLookupOrAppend(PointArray *pa, const MutableMatrix *M, int col);
+  // M2PointArray
+  unsigned int rawPointArrayHash(M2PointArray *); 
+  M2_string rawPointArrayToString(M2PointArray *);
+  M2PointArray /* or null */ *rawPointArray(double epsilon, int n);
+  int rawPointArrayLookup(M2PointArray *pa, const MutableMatrix *M, int col);
+  int rawPointArrayLookupOrAppend(M2PointArray *pa, const MutableMatrix *M, int col);
   // NAG end  
   const Matrix /* or null */ *rawGbBoolean(const Matrix *m);
   const Matrix /* or null */ *rawBIBasis(const Matrix* m, int toGroebner);

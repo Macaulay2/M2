@@ -11,6 +11,7 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
+	eigen \
 	monomial-sets \
 	mutablecomplex \
 	localring \
@@ -168,6 +169,8 @@ COMMANDS2 = \
 	polyroots
 
 COMMANDS = \
+	flint \
+	rand \
 	ntl-internal \
 	ntl-debugio \
 	matrix-kbasis \
@@ -194,7 +197,7 @@ NAMES_H = ringelem \
 	index \
 	res-a0-pair
 
-C_FILES = error table exptable monordering complex rand
+C_FILES = error table exptable monordering complex
 
 D_FILES = 
 DD_FILES = #test

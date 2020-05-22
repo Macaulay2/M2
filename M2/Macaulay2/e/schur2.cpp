@@ -91,8 +91,8 @@ unsigned int SchurRing2::computeHashValue(const ring_elem a) const
 {
 //  assuming a normal form: distinct monomials in the linear order introduced by compare_partitions()
 
-  const auto& coeffs = a.schur_poly_val->coeffs;
-  const auto& monoms = a.schur_poly_val->monoms;
+  const auto& coeffs = a.get_schur_poly()->coeffs;
+  const auto& monoms = a.get_schur_poly()->monoms;
 
   size_t seed = 95864398;  // using previous M2's constant hash value
 
@@ -180,14 +180,12 @@ static int last_nonzero(M2_arrayint part)
 }
 ring_elem SchurRing2::from_partition(M2_arrayint part) const
 {
-  ring_elem result;
   schur_poly *f = new schur_poly;
   f->coeffs.push_back(coefficientRing->one());
   int len = last_nonzero(part) + 1;
   f->monoms.push_back(len + 1);
   for (int i = 0; i < len; i++) f->monoms.push_back(part->array[i]);
-  result.schur_poly_val = f;
-  return result;
+  return ring_elem(f);
 }
 
 void SchurRing2::text_out(buffer &o) const
@@ -204,7 +202,7 @@ void SchurRing2::elem_text_out(buffer &o,
                                bool p_plus,
                                bool p_parens) const
 {
-  const schur_poly *g = f.schur_poly_val;
+  const schur_poly *g = f.get_schur_poly();
   size_t n = g->size();
 
   bool needs_parens = p_parens && (n > 1);
@@ -238,21 +236,21 @@ void SchurRing2::elem_text_out(buffer &o,
 
 bool SchurRing2::is_unit(const ring_elem f) const
 {
-  const schur_poly *g = f.schur_poly_val;
+  const schur_poly *g = f.get_schur_poly();
   if (g->size() != 1) return false;
   return (g->monoms.size() == 1) && (coefficientRing->is_unit(g->coeffs[0]));
 }
 
 bool SchurRing2::is_zero(const ring_elem f) const
 {
-  const schur_poly *g = f.schur_poly_val;
+  const schur_poly *g = f.get_schur_poly();
   return g->size() == 0;
 }
 
 bool SchurRing2::is_equal(const ring_elem f, const ring_elem g) const
 {
-  const schur_poly *f1 = f.schur_poly_val;
-  const schur_poly *g1 = g.schur_poly_val;
+  const schur_poly *f1 = f.get_schur_poly();
+  const schur_poly *g1 = g.get_schur_poly();
   if (f1->size() != g1->size()) return false;
   if (f1->monoms.size() != g1->monoms.size()) return false;
 
@@ -279,15 +277,13 @@ bool SchurRing2::get_scalar(const schur_poly *g, ring_elem &result) const
 
 ring_elem SchurRing2::from_coeff(ring_elem a) const
 {
-  ring_elem result;
   schur_poly *f = new schur_poly;
   if (!coefficientRing->is_zero(a))
     {
       f->coeffs.push_back(a);
       f->monoms.push_back(1);
     }
-  result.schur_poly_val = f;
-  return result;
+  return ring_elem(f);
 }
 ring_elem SchurRing2::from_long(long n) const
 {
@@ -299,7 +295,7 @@ ring_elem SchurRing2::from_int(mpz_srcptr n) const
   ring_elem a = coefficientRing->from_int(n);
   return from_coeff(a);
 }
-bool SchurRing2::from_rational(mpq_ptr q, ring_elem &result) const
+bool SchurRing2::from_rational(mpq_srcptr q, ring_elem &result) const
 {
   ring_elem a;
   bool ok = coefficientRing->from_rational(q, a);
@@ -310,16 +306,13 @@ bool SchurRing2::from_rational(mpq_ptr q, ring_elem &result) const
 
 ring_elem SchurRing2::copy(const ring_elem f) const
 {
-  const schur_poly *f1 = f.schur_poly_val;
+  const schur_poly *f1 = f.get_schur_poly();
 
-  ring_elem result;
   schur_poly *g = new schur_poly;
-  result.schur_poly_val = g;
-
   g->coeffs.insert(g->coeffs.end(), f1->coeffs.begin(), f1->coeffs.end());
   g->monoms.insert(g->monoms.end(), f1->monoms.begin(), f1->monoms.end());
 
-  return result;
+  return ring_elem(g);
 }
 
 ring_elem SchurRing2::invert(const ring_elem f) const
@@ -366,10 +359,10 @@ int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const
 //  assuming the monomials are sorted in the linear order on the partitions
 //  see SchurRing2::compare_partitions
 
-  auto f_it = f.schur_poly_val->begin(),
-       f_end = f.schur_poly_val->end();
-  auto g_it = g.schur_poly_val->begin(),
-       g_end = g.schur_poly_val->end();
+  auto f_it = f.get_schur_poly()->begin(),
+    f_end = f.get_schur_poly()->end();
+  auto g_it = g.get_schur_poly()->begin(),
+    g_end = g.get_schur_poly()->end();
 
   for(; f_it!=f_end && g_it!=g_end; ++f_it, ++g_it) {
     auto cmp = compare_partitions(f_it.getMonomial(), g_it.getMonomial());
@@ -384,9 +377,8 @@ bool SchurRing2::promote_coeffs(const SchurRing2 *Rf,
                                 ring_elem &resultRE) const
 {
   // Assumption in use: Rf (ring of f) is a Schur ring, with coeff ring coeffRf
-  const schur_poly *f1 = f.schur_poly_val;
+  const schur_poly *f1 = f.get_schur_poly();
   schur_poly *result = new schur_poly;
-  resultRE.schur_poly_val = result;
 
   for (schur_poly::iterator i = f1->begin(); i != f1->end(); ++i)
     {
@@ -396,19 +388,20 @@ bool SchurRing2::promote_coeffs(const SchurRing2 *Rf,
               Rf->getCoefficientRing(), i.getCoefficient(), a))
         {
           delete result;
+          resultRE = from_long(0);
           return false;
         }
       result->appendTerm(a, i.getMonomial());
     }
+  resultRE = ring_elem(result);
   return true;
 }
 bool SchurRing2::lift_coeffs(const SchurRing2 *Sg,
                              const ring_elem f,
                              ring_elem &resultRE) const
 {
-  const schur_poly *f1 = f.schur_poly_val;
+  const schur_poly *f1 = f.get_schur_poly();
   schur_poly *result = new schur_poly;
-  resultRE.schur_poly_val = result;
 
   for (schur_poly::iterator i = f1->begin(); i != f1->end(); ++i)
     {
@@ -418,10 +411,12 @@ bool SchurRing2::lift_coeffs(const SchurRing2 *Sg,
               Sg->getCoefficientRing(), i.getCoefficient(), a))
         {
           delete result;
+          resultRE = from_long(0);
           return false;
         }
       result->appendTerm(a, i.getMonomial());
     }
+  resultRE = ring_elem(result);
   return true;
 }
 
@@ -464,7 +459,7 @@ bool SchurRing2::lift(const Ring *Rg,
                       const ring_elem f,
                       ring_elem &result) const
 {
-  const schur_poly *f1 = f.schur_poly_val;
+  const schur_poly *f1 = f.get_schur_poly();
   if (Rg == coefficientRing || Rg == globalZZ)
     {
       if (get_scalar(f1, result))
@@ -493,10 +488,8 @@ bool SchurRing2::lift(const Ring *Rg,
 ring_elem SchurRing2::negate(const ring_elem f) const
 {
   if (is_zero(f)) return f;
-  const schur_poly *f1 = f.schur_poly_val;
-  ring_elem resultRE;
+  const schur_poly *f1 = f.get_schur_poly();
   schur_poly *result = new schur_poly;
-  resultRE.schur_poly_val = result;
 
   for (VECTOR(ring_elem)::const_iterator i = f1->coeffs.begin();
        i != f1->coeffs.end();
@@ -505,7 +498,7 @@ ring_elem SchurRing2::negate(const ring_elem f) const
 
   result->monoms.insert(
       result->monoms.end(), f1->monoms.begin(), f1->monoms.end());
-  return resultRE;
+  return ring_elem(result);
 }
 
 ring_elem SchurRing2::truncate(const ring_elem f) const
@@ -515,29 +508,25 @@ ring_elem SchurRing2::truncate(const ring_elem f) const
 //  n_vars()
 {
   if (is_zero(f)) return f;
-  const schur_poly *f1 = f.schur_poly_val;
-  ring_elem resultRE;
+  const schur_poly *f1 = f.get_schur_poly();
   schur_poly *result = new schur_poly;
-  resultRE.schur_poly_val = result;
 
   for (schur_poly::iterator i = f1->begin(); i != f1->end(); ++i)
     {
       if (i.getMonomial()[0] - 1 > nvars) continue;
       result->appendTerm(i.getCoefficient(), i.getMonomial());
     }
-  return resultRE;
+  return ring_elem(result);
 }
 
 ring_elem SchurRing2::add(const ring_elem f, const ring_elem g) const
 {
   if (is_zero(f)) return g;
   if (is_zero(g)) return f;
-  const schur_poly *f1 = f.schur_poly_val;
-  const schur_poly *g1 = g.schur_poly_val;
+  const schur_poly *f1 = f.get_schur_poly();
+  const schur_poly *g1 = g.get_schur_poly();
 
-  ring_elem resultRE;
   schur_poly *result = new schur_poly;
-  resultRE.schur_poly_val = result;
 
   schur_poly::iterator i = f1->begin();
   schur_poly::iterator j = g1->begin();
@@ -591,7 +580,7 @@ ring_elem SchurRing2::add(const ring_elem f, const ring_elem g) const
             break;
         }
     }
-  return resultRE;
+  return ring_elem(result);
 }
 
 ring_elem SchurRing2::subtract(const ring_elem f, const ring_elem g) const
@@ -619,19 +608,17 @@ schur_poly *SchurRing2::mult_by_coefficient(ring_elem a,
 ring_elem SchurRing2::mult(const ring_elem f, const ring_elem g) const
 {
   ring_elem resultRE;
-  const schur_poly *f1 = f.schur_poly_val;
-  const schur_poly *g1 = g.schur_poly_val;
+  const schur_poly *f1 = f.get_schur_poly();
+  const schur_poly *g1 = g.get_schur_poly();
   ring_elem a;
   if (get_scalar(f1, a))
     {
-      resultRE.schur_poly_val = mult_by_coefficient(a, g1);
-      return resultRE;
+      return ring_elem(mult_by_coefficient(a, g1));
       // In this case, do a simple multiplication
     }
   else if (get_scalar(g1, a))
     {
-      resultRE.schur_poly_val = mult_by_coefficient(a, f1);
-      return resultRE;
+      return ring_elem(mult_by_coefficient(a, f1));
     }
   else
     {
@@ -644,8 +631,7 @@ ring_elem SchurRing2::mult(const ring_elem f, const ring_elem g) const
                 coefficientRing->mult(i.getCoefficient(), j.getCoefficient());
             ring_elem r = const_cast<SchurRing2 *>(this)->mult_terms(
                 i.getMonomial(), j.getMonomial());
-            resultRE.schur_poly_val = mult_by_coefficient(c, r.schur_poly_val);
-            H.add(resultRE);
+            H.add(ring_elem(mult_by_coefficient(c, r.get_schur_poly())));
           }
       return H.value();
     }
@@ -692,7 +678,7 @@ engine_RawArrayPairOrNull SchurRing2::list_form(const Ring *coeffR,
       ERROR("expected coefficient ring of Schur ring");
       return 0;
     }
-  const schur_poly *f1 = f.schur_poly_val;
+  const schur_poly *f1 = f.get_schur_poly();
   int n = static_cast<int>(f1->size());  // this is here because the lengths of
                                          // arrays for M3 front end use int as
                                          // length field.
@@ -831,10 +817,9 @@ void SchurRing2::SM()
 void SchurRing2::SMappendTerm(const_schur_partition f)
 {
   // make a poly, and insert it into the heap
-  ring_elem RE;
-  RE.schur_poly_val = new schur_poly;
-  RE.schur_poly_val->appendTerm(coefficientRing->one(), f);
-  SMheap->add(RE);
+  schur_poly * val = new schur_poly;
+  val->appendTerm(coefficientRing->one(), f);
+  SMheap->add(ring_elem(val));
 }
 
 ring_elem SchurRing2::skew_schur(const_schur_partition lambda,

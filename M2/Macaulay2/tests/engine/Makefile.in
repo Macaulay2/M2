@@ -1,0 +1,15 @@
+# @configure_input@
+# DOTS is the path to M2/Macaulay2 from this directory
+DOTS = ../..
+include $(DOTS)/../include/config.Makefile
+VPATH = @srcdir@
+
+SRCDIR = @srcdir@
+include ../Makefile.test
+
+Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/tests/engine/Makefile
+
+# Local Variables:
+# compile-command: "make -k -C $M2BUILDDIR/Macaulay2/tests/engine check "
+# End:
+.NOTPARALLEL:

@@ -144,10 +144,12 @@ debug Core
 getRawHomotopy = method() 
 getRawHomotopy(GateHomotopy,Ring) := (GH,K) -> if GH#?K then GH#K else GH#K = --(GH#"EHx",GH#"EHxt",GH#"EHxH") / (e->rawSLEvaluatorK(e,K)) // rawHomotopy
     rawHomotopy(rawSLEvaluatorK(GH#"EHx",K),rawSLEvaluatorK(GH#"EHxt",K),rawSLEvaluatorK(GH#"EHxH",K)) 
-getRawHomotopy(SpecializedParameterHomotopy,Ring) := (H,K) -> if H#?K then H#K else (
+getRawHomotopy(SpecializedParameterHomotopy,Ring) := (H,K) -> if H#?K then H#K else H#K = (
     GH := H.ParameterHomotopy.GateHomotopy;
     paramsK := raw mutableMatrix promote(H.Parameters,K);
-    H#K = (GH#"EHx",GH#"EHxt",GH#"EHxH") / (e->rawSLEvaluatorSpecialize(rawSLEvaluatorK(e,K),paramsK)) // rawHomotopy 
+    evaluators := (GH#"EHx",GH#"EHxt",GH#"EHxH") / (e->rawSLEvaluatorSpecialize(rawSLEvaluatorK(e,K),paramsK)); 
+    (if H#?"evaluators" then H#"evaluators" else new MutableHashTable)#K = evaluators;
+    evaluators // rawHomotopy 
     )
 gateHomotopy = method(Options=>{Parameters=>null,Software=>null,Strategy=>compress})
 gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
@@ -285,16 +287,6 @@ assert areEqual(sols,{{ { -.707107, .707107}, SolutionStatus => Regular }, { {.7
 ///
 
 TEST ///
-needsPackage "NAGtools"
-X = inputGate x
-F = matrix{{X^2}} 
-PH = gateHomotopy4preimage(F,{X})
-K = CC_53
-H = specialize (PH, transpose matrix{{1_K,2}})
-time sols = trackHomotopy(H,{point{{1_K}}})
-///
-
-TEST ///
 needsPackage "NumericalAlgebraicGeometry"
 CC[x,y]
 S = polySystem {x^2+y^2-6, 2*x^2-y}
@@ -363,7 +355,7 @@ segmentHomotopyProjective (PolySystem, PolySystem) := o -> (S,T) -> (
     chartHyperPlane := coeffs * transpose matrix {getVarGates R} + matrix{{-1}}; 
     t := local t;
     tt := inputGate [t];
-    gateHomotopy((o.gamma*(1-tt)*gateMatrix S + tt*gateMatrix T)||chartHyperPlane, 
+    gateHomotopy(((1-tt)*gateMatrix S + o.gamma*tt*gateMatrix T)||chartHyperPlane, 
 	gateMatrix{getVarGates R}, tt, Parameters=>coeffs, Strategy=>compress)
     )
 

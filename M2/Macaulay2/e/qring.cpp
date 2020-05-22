@@ -190,8 +190,8 @@ void QRingInfo_field_QQ::reduce_lead_term_QQ(Nterm *&f, const Nterm *g) const
   monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
   const Monoid *M = R->getMonoid();
   M->divide(f->monom, g->monom, MONOM1);
-  ring_elem c = globalQQ->QQ::negate(f->coeff);
-  c = globalQQ->QQ::divide(c, g->coeff);
+  ring_elem c = globalQQ->RingQQ::negate(f->coeff);
+  c = globalQQ->RingQQ::divide(c, g->coeff);
   if (R->is_skew_commutative())
     {
       exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
@@ -200,7 +200,7 @@ void QRingInfo_field_QQ::reduce_lead_term_QQ(Nterm *&f, const Nterm *g) const
       M->to_expvector(g->monom, EXP2);
       M->to_expvector(MONOM1, EXP1);
       if (R->getSkewInfo().mult_sign(EXP1, EXP2) < 0)
-        globalQQ->QQ::negate_to(c);
+        globalQQ->RingQQ::negate_to(c);
     }
   ring_elem g1 = const_cast<Nterm *>(g);
   g1 = R->mult_by_term(g1, c, MONOM1);

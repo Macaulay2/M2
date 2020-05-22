@@ -368,7 +368,6 @@ document {
      load "Macaulay2Doc/demo2.m2"
      code f
      f 0
-     help
      return
      disassemble current
      step(-3)

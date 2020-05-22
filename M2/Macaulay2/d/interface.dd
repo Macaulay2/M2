@@ -405,7 +405,7 @@ fun2 := {+f:function(int):RawMonomialOrdering};
 fun3 := {+f:function(arrayint):RawMonomialOrdering};
 fun4 := {+f:function(bool):RawMonomialOrdering};
 fun5 := {+f:function(arrayint):RawMonomialOrderingOrNull};
-toFun(f:function():RawMonomialOrdering):fun1 := fun1(f);
+-- toFun(f:function():RawMonomialOrdering):fun1 := fun1(f);
 toFun(f:function(int):RawMonomialOrdering):fun2 := fun2(f);
 toFun(f:function(arrayint):RawMonomialOrdering):fun3 := fun3(f);
 toFun(f:function(bool):RawMonomialOrdering):fun4 := fun4(f);
@@ -4239,9 +4239,9 @@ setupfun("pi0",pi0);
 
 mpfrConstantEuler(e:Expr):Expr := (
      when e is prec:ZZcell do if !isULong(prec) then WrongArgSmallUInteger(1) else (
-	  z := newRR(toULong(prec));
+	  z := newRRmutable(toULong(prec));
 	  Ccode( void, "mpfr_const_euler(", z, ", GMP_RNDN)" );
-	  toExpr(z))
+	  toExpr(moveToRRandclear(z)))
      else WrongArgZZ(1));
 setupfun("mpfrConstantEuler",mpfrConstantEuler);
 
@@ -4332,7 +4332,7 @@ export rawPruningMorphism(e:Expr):Expr := (			    -- returns the pruning maps
   );
 setupfun("rawPruningMorphism",rawPruningMorphism);
 
-export rawLiftLocalMatrix(e:Expr):Expr := (                         -- clears denominators
+export rawLiftLocalMatrix(e:Expr):Expr := ( -- clears denominators
   when e is s:Sequence do (
   if length(s) == 2 then (
   when s.0 is R:RawRingCell do (
@@ -4349,7 +4349,7 @@ export rawLiftLocalMatrix(e:Expr):Expr := (                         -- clears de
   );
 setupfun("rawLiftLocalMatrix", rawLiftLocalMatrix);
 
-export rawIsLocalUnit(e:Expr):Expr := (                             -- true for units in local rings
+export rawIsLocalUnit(e:Expr):Expr := ( -- true for units in local rings
   when e is f:RawRingElementCell do (
     toExpr(Ccode(bool,
       "rawIsLocalUnit(",
@@ -4359,6 +4359,39 @@ export rawIsLocalUnit(e:Expr):Expr := (                             -- true for 
   ) else WrongArg(1,"a raw ring element")
   );
 setupfun("rawIsLocalUnit",rawIsLocalUnit);
+
+export rawZZisPrime(e:Expr):Expr := (                             
+  when e is f:ZZcell do 
+    toExpr(Ccode(bool,
+      "rawZZisPrime(",
+        f.v,
+      ")"
+    ))
+  else WrongArgZZ()
+  );
+setupfun("rawZZisPrime",rawZZisPrime);
+
+export rawZZisProbablePrime(e:Expr):Expr := (                             
+  when e is f:ZZcell do 
+    toExpr(Ccode(bool,
+      "rawZZisProbablePrime(",
+        f.v,
+      ")"
+    ))
+  else WrongArgZZ()
+  );
+setupfun("rawZZisProbablePrime",rawZZisProbablePrime);
+
+export rawZZfactor(e:Expr):Expr := (                             
+  when e is f:ZZcell do 
+    toExpr(Ccode(arrayZZ,
+      "rawZZfactor(",
+        f.v,
+      ")"
+    ))
+  else WrongArgZZ()
+  );
+setupfun("rawZZfactor",rawZZfactor);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interface.o "

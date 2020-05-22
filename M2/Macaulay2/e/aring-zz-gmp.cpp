@@ -38,6 +38,7 @@ void ARingZZGMP::elem_text_out(buffer& o,
     {
       str = mpz_get_str(static_cast<char*>(0), 10, &a);
       o << str;
+      delete str;
     }
 }
 

@@ -424,6 +424,10 @@ export False := Expr(Boolean(false));	  -- use toExpr instead
 --Conversion from C boolean value to Expression
 export toExpr(v:bool):Expr := if v then True else False;
 
+export zeroE := Expr(zeroZZcell);
+export  oneE := Expr( oneZZcell);
+export  minusoneE := Expr( minusoneZZcell);
+
 --Internal "null" expressions that should never be visible to user
 export nullE := Expr(Nothing());
 export notfoundE := Expr(Nothing());

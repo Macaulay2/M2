@@ -280,8 +280,10 @@ class MutableMat : public MutableMatrix
 
         mat.ring().init(a);
         MatOps::getEntry(mat, r, c, a);
+        bool is_nonzero = not mat.ring().is_zero(a);
         mat.ring().to_ring_elem(result, a);
-        return (not mat.ring().is_zero(a));
+        mat.ring().clear(a);
+        return is_nonzero;
       }
 
     result = get_ring()->zero();
@@ -758,8 +760,8 @@ class MutableMat : public MutableMatrix
   virtual void clean(gmp_RR epsilon);  // modifies 'this'
   virtual gmp_RRorNull norm() const;
 
-  virtual SLEvaluator* createSLEvaluator(
-      SLProgram* P,
+  virtual M2SLEvaluator* createSLEvaluator(
+      M2SLProgram* P,
       M2_arrayint constsPos,
       M2_arrayint varsPos) const;  // this = const matrix
 };

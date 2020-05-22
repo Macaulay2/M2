@@ -247,8 +247,8 @@ openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
      fromChild := array(int)(NOFD,NOFD);
      if output && pipe(toChild) == ERROR || input && pipe(fromChild) == ERROR 
      then (
-	  if  toChild.0 != NOFD then close(  toChild.0);
-	  if  toChild.1 != NOFD then close(  toChild.1);
+	  if  toChild.0 != NOFD then close(toChild.0);
+	  if  toChild.1 != NOFD then close(toChild.1);
 	  return errmsg("can't make pipe : "+syserrmsg());
 	  );
      arglist := tocharstarstar(array(string)("/bin/sh","-c",substr(filename,1)));
@@ -954,8 +954,7 @@ export get(filename:string):StringOrError := (
 	  when readfile(f.infd)
 	  is null do (
 	       close(f);
-	       StringOrError(errmsg(fileErrorMessage(f,"read")))
-	       )
+	       StringOrError(errmsg(fileErrorMessage(f,"read"))))
 	  is s:string do (
 	       r := close(f);
 	       when r is m:errmsg
