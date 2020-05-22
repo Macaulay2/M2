@@ -1,12 +1,6 @@
 /* some routines to augment the gmp library */
 #include <M2/config.h>
-
-#if USING_MPIR
-#include <mpir.h>
-#else
-#include <gmp.h>
-#endif
-#include <mpfr.h>
+#include "M2/math-include.h"
 
 int mpz_hash(mpz_srcptr x) {
   int h = 0;

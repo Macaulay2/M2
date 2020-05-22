@@ -6,14 +6,6 @@
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
 #include "dmat.hpp"
-#if USING_MPIR 
-#include <mpir.h>
-#include <mpirxx.h>
-#else
-#include <gmp.h>
-#include <gmpxx.h>
-#endif
-#include <mpfr.h>
 
 /* Lapack routines */
 /* Compute solutions x to Ax = b for square matrix A and a matrix b */

@@ -1,15 +1,6 @@
 -- this file is small, so the exported definitions can be imported into the engine
-declarations "
-    #include <math.h>
-    #if USING_MPIR 
-    #include <mpir.h>
-    #else
-    #include <gmp.h>
-    #endif
-    #include <mpfr.h>
-";
 
-header "#include \"gmp_aux.h\"";
+header "";
 
 --This file contains gmp related functions.
 --Functions in this file may make calls to stdio.

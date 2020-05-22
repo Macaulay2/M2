@@ -83,7 +83,7 @@ various modern operating systems:
 
   Ubuntu and Debian:
     Install packages as root with:
-      apt-get install -y -q sudo autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan libeigen3-dev libtool-bin
+      apt-get install -y -q sudo autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan libeigen3-dev libtool-bin
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
@@ -103,7 +103,7 @@ various modern operating systems:
 
   Raspbian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time libtool libmpc-dev yasm
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time libtool libmpc-dev yasm
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
@@ -114,7 +114,7 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo dnf -y install autoconf bison boost-devel cddlib-devel debuginfo-install emacs emacs factory-devel flex flint-devel frobby gc-devel gcc-c++ gdbm-devel git givaro-devel glpk-devel gmp-devel gtest-devel kernel-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch polymake readline-devel rpm-build rpm-sign rpmdevtools strace time which yasm
+      sudo dnf -y install autoconf bison boost-devel cddlib-devel debuginfo-install emacs emacs factory-devel flex flint-devel frobby gc-devel gcc-c++ gdbm-devel git givaro-devel glpk-devel gmp-devel gtest-devel kernel-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel patch polymake readline-devel rpm-build rpm-sign rpmdevtools strace time which yasm
 
   Scientific linux (Red Hat, CentOS, ...):
     Install packages with: (SL 7.x)
@@ -137,7 +137,7 @@ various modern operating systems:
 
   Suse Linux Leap 42.1:
 
-    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel pari-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build mpc-devel yasm
+    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build mpc-devel yasm
 
     Add
 
@@ -174,7 +174,7 @@ various modern operating systems:
 
     To install packages potentially usable by Macaulay2, run this command:
 
-       emerge --ask -n 4ti2 blas-reference lapack-reference boehm-gc boost cddlib coinor-csdp flint fplll frobby gdbm gfan glpk gmp gtest libatomic_ops lrslib mpc mpfr mpir nauty normaliz ntl pari topcom
+       emerge --ask -n 4ti2 blas-reference lapack-reference boehm-gc boost cddlib coinor-csdp flint fplll frobby gdbm gfan glpk gmp gtest libatomic_ops lrslib mpc mpfr mpir nauty normaliz ntl topcom
 
        Note: various variables, licenses, and options will have to be set
 

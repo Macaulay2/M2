@@ -11,17 +11,20 @@ checkSVD(Matrix) := (M) -> (
      errM := norm(M - U * diagonalMatrix(numcols U, numrows Vt, S) * Vt);
      errU := norm((conjugate transpose U) * U - 1);
      errV := norm(Vt*(conjugate transpose Vt) - 1);
-     (errM,errU,errV)
+     prec := precision ring M;
+     safety := 10; -- safety bits (heuristic)
+     assert( 
+	 errM < 2^(-prec+safety) 
+	 and errU < 2^(-prec+safety) 
+	 and errV < 2^(-prec+safety) 
+	 )
      )
 
 TEST ///
   debug needsPackage "EngineTests"
-  KK = RR_1000
-  for i to 1000 do (
-      M = random(KK^20,KK^10) * random(KK^10,KK^30);
-      (S,U,Vt) := SVD M;
-      stderr << i << endl;
-      );
+  KK = RR_53
+  M = random(KK^20,KK^10) * random(KK^10,KK^30);
+  checkSVD M
   KK = RR_2000
   M = random(KK^20,KK^10) * random(KK^10,KK^30);
   checkSVD M

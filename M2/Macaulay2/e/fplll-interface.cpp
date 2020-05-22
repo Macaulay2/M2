@@ -3,13 +3,6 @@
 
 #ifdef HAVE_FPLLL
 #include <stddef.h>
-#if USING_MPIR 
-#include <mpir.h>
-#include <mpirxx.h>
-#else
-#include <gmp.h>
-#include <gmpxx.h>
-#endif
 #include <fplll.h>
 #endif
 
