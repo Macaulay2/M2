@@ -27,6 +27,9 @@ set(CMAKE_CXX_STANDARD 14)
 ## Use the C11 (C0X) standard
 set(CMAKE_C_STANDARD 11)
 
+## Source of truth for project version
+file(STRINGS VERSION VERSION)
+
 ###############################################################################
 ## Set the defaultg build configuration
 if(NOT CMAKE_BUILD_TYPE)
@@ -57,7 +60,7 @@ endif()
 ## Set the project name, version, and languages
 ## This is the source of truth for the version number
 project(Macaulay2
-  VERSION	1.15.0.2 # branch feature/cmake on github.com/mahrud/M2.git
+  VERSION	${VERSION}
   DESCRIPTION	"A software system for algebraic geometry research"
   HOMEPAGE_URL	http://macaulay2.com # contact: Macaulay2@math.uiuc.edu
   LANGUAGES	C CXX)
