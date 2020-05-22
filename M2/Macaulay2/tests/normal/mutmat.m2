@@ -43,5 +43,19 @@ mutableIdentity
 mutableMatrix
 randomMutableMatrix
 
--- linear algebra
+-- determinant, rank, inverse
+
+R = QQ[a,b,c,d]
+M = mutableMatrix {{a, b}, {c, d}}
+assert(det M == a*d - b*c)
+assert(rank M == 2)
+
 -- LUdecomposition, solve, eigenvalues, eigenvectors, SVD, leastSquares, LLL
+
+R = GF(25)
+M = mutableMatrix {{a, 1}, {0, 1}}
+(P, L, U) = LUdecomposition M
+Q = mutableMatrix id_(R^2)_P
+assert(L_(0, 1) == 0)
+assert(U_(1, 0) == 0)
+assert(Q * L * U == M)
