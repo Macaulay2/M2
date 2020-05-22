@@ -25,6 +25,7 @@ ENDMACRO ()
 
 #################################################################################
 ## Package options
+# TODO: use if(DEFINED ENV{var}) for these variables
 ## The default is to install all distributed packages
 set(PACKAGES "${DISTRIBUTED_PACKAGES}" CACHE INTERNAL "the list of packages to install")
 set(PACKAGES_DEVEL       "EngineTests" CACHE INTERNAL "the list of packages to only check")
