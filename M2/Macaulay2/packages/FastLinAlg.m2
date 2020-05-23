@@ -1,5 +1,5 @@
 newPackage( "FastLinAlg",
-Version => "0.2", Date => "April 30th, 2020", Authors => {
+Version => "0.21", Date => "May 24th, 2020", Authors => {
     {Name => "Boyana Martinova",
     Email=> "u1056124@utah.edu"
     },
@@ -95,8 +95,6 @@ StrategyDefaultNonRandom = new HashTable from {
     Random => 0,
     RandomNonzero => 0
 };
---protect nanosleep;
---if (not isGlobalSymbol "nanosleep") then protect getSymbol("nanosleep");
 
 StrategyCurrent = new MutableHashTable from StrategyDefault;
 
@@ -650,16 +648,16 @@ RnReductionP(ZZ, Ring, ZZ):= opts -> (n1, R1, p)-> (
 );
 
 verifyStrategy := (passedStrat) -> (
-    if not ((class passedStrat === HashTable) or ((class passedStrat) === MutableHashTable)) then return false;
-    if not (passedStrat #? LexLargest) then return false;
-    if not (passedStrat #? LexSmallestTerm) then return false;
-    if not (passedStrat #? LexSmallest) then return false;
-    if not (passedStrat #? GRevLexSmallestTerm) then return false;
-    if not (passedStrat #? GRevLexSmallest) then return false;
-    if not (passedStrat #? GRevLexLargest) then return false;
-    if not (passedStrat #? Random) then return false;
-    if not (passedStrat #? RandomNonzero) then return false;
-    return true;
+    (((class passedStrat === HashTable) or ((class passedStrat) === MutableHashTable)) 
+        and (passedStrat #? LexLargest) 
+        and (passedStrat #? LexSmallestTerm)
+        and (passedStrat #? LexSmallest)
+        and (passedStrat #? GRevLexSmallestTerm)
+        and (passedStrat #? GRevLexSmallest)
+        and (passedStrat #? GRevLexLargest)
+        and (passedStrat #? Random)
+        and (passedStrat #? RandomNonzero)
+    )
 );
 
 --an internal function which chooses a minor, based on chance
