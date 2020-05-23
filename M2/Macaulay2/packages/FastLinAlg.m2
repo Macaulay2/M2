@@ -1,5 +1,5 @@
 newPackage( "FastLinAlg",
-Version => "0.1", Date => "October 21st, 2019", Authors => {
+Version => "0.2", Date => "April 30th, 2020", Authors => {
     {Name => "Boyana Martinova",
     Email=> "u1056124@utah.edu"
     },
@@ -15,7 +15,7 @@ Version => "0.1", Date => "October 21st, 2019", Authors => {
     Email=> "yuhuiyao4ever@gmail.com"
     }
 }, --this file is in the public domain
-Headline => "faster linear algebra operations")
+Headline => "A package for faster linear algebra operations.", DebuggingMode => true, Reload=>true)
 export{
 --  "selectSmallestTerms",
   "chooseSubmatrixSmallestDegree", --there are checks
@@ -29,6 +29,8 @@ export{
   "isRankAtLeast", --there are checks
   "getSubmatrixOfRank",
   "recursiveMinors",
+  "isCodimAtLeast",
+  "isDimAtMost",
   --"internalChooseMinor",
   --options to export
   "DetStrategy", --to pass on to calls of determinant
@@ -60,7 +62,9 @@ export{
   "StrategyGRevLexSmallest",
   "StrategyLexSmallest",
   "StrategyRandom",
-  "StrategyCurrent"
+  "StrategyCurrent",
+  "SPairsFunction",
+  "UseOnlyFastCodim"
 }
 
 protect MutableSmallest;
@@ -110,7 +114,11 @@ optRn := {
     ModP => 0,     
 --    MaxMinorsFunction => , 
     MinMinorsFunction => ((x) -> 2*x + 3), 
-    CodimCheckFunction => ((k) -> 1.3^k)
+    CodimCheckFunction => ((k) -> 1.3^k),
+    PairLimit => 100,
+    UseOnlyFastCodim => false, 
+--    DegreeFunction => ( (t,i) -> ceiling((i+1)*t))
+    SPairsFunction => (i -> ceiling(i^1.5))
 };
 
 optInternalChooseMinor := {
@@ -141,6 +149,13 @@ optChooseGoodMinors := {
     Strategy => StrategyDefault,
     DetStrategy=>Cofactor,
     PeriodicCheckFunction => null 
+};
+
+optIsCodimAtLeast := {
+    Verbose => false,
+    PairLimit => 100,
+    --DegreeFunction => ( (t,i) -> ceiling((i+1)*t))
+    SPairsFunction => (i -> ceiling(i^1.5))
 };
 
 
@@ -242,6 +257,7 @@ chooseMinorLargestDegree(ZZ, Matrix) := o -> (n1, M1) -> (
     minorColList := bestDegree#1;
     return (M1^minorRowList)_minorColList;
 )
+
 chooseMinorLargestDegree(ZZ, MutableMatrix) := o -> (n1, M1) -> (
     return new Matrix from chooseMinorLargestDegree(n1, matrix(M1), o);
   );
@@ -764,6 +780,7 @@ Rn(ZZ, Ring) := opts -> (n1, R1) -> (
 
     quotient1 := ambR/(Id+sumMinors);
     d := dim(quotient1);
+    D := dim(ambR);
 
     if (opts.Verbose or debugLevel > 0) then print concatenate("Rn: ring dimension =", toString(d), ", there are ", toString(possibleMinors), " possible minors, we will compute up to ", toString(numberOfMinorsCompute), " of them.");
 
@@ -790,8 +807,15 @@ Rn(ZZ, Ring) := opts -> (n1, R1) -> (
         if (opts.Verbose or debugLevel > 0) then print concatenate("Rn:  Loop step, about to compute dimension.  Submatrices considered: ", toString(i), ", and computed = ", toString(# keys searchedSet) );
         mutM2 = mutableMatrix(nonzeroM); --reset this matrix periodically
         mutM1 = mutableMatrix(M1);
-        quotient1 = ambR/(Id+sumMinors);
-        d = dim(quotient1);
+        if (true === isCodimAtLeast((D - r) + n1 + 1, Id + sumMinors, PairLimit=>opts.PairLimit, SPairsFunction => opts.SPairsFunction)) then (
+            d = r-n1 - 1;
+            if (opts.Verbose or debugLevel > 0) then print concatenate("Rn:  singularLocus dimension verified by isCodimAtLeast");            
+        );
+        if (not opts.UseOnlyFastCodim) and (r-d <= n1) then (
+            if (opts.Verbose or debugLevel > 0) then print concatenate("Rn:  isCodimAtLeast failed, computing codim.");            
+            quotient1 = ambR/(Id+sumMinors);
+            d = dim(quotient1);
+        );
         if (opts.Verbose or debugLevel > 0) then print concatenate("Rn:  partial singular locus dimension computed, = ", toString(d));
         j = j+1;
     );
@@ -914,6 +938,71 @@ projDim(Module) := opts -> (N1) -> (
         i=i-1;
     );
     return i;
+);
+
+isGBDone := (myGB) -> (
+    --a temporary function for finding out if a gb computation is done.
+    myStr := status myGB;
+    if (0 < #select("status: done", myStr)) then return true else return false;
+);
+
+
+
+isCodimAtLeast = method(Options => optIsCodimAtLeast);
+
+isCodimAtLeast(ZZ, Ideal) := opts -> (n1, I1) -> (
+    R1 := ring I1;
+    S1 := ambient R1;
+    if (not isPolynomialRing(S1)) then error "isCodimAtLeast:  This requires an ideal in a polynomial ring, or in a quotient of a polynomial ring.";
+    if (n1 <= 0) then return true; --if for some reason we are checking codim 0.
+    if (isMonomialIdeal(I1)) then (
+        if (codim monomialIdeal(I1) >= n1) then return true;
+    );
+    if (#first entries gens I1 == 0) then ( return false; ); 
+    J1 := ideal R1;
+    dAmb := codim J1;
+    I2 := sub(I1, S1) + sub(J1, S1); --lift to the polynomial ring.
+    --now we have an ideal in a polynomial ring.  The idea is that we should compute a partial Groebner basis.
+    --and compute the codim of that.
+    --But first, we just try a quick codim computation based on the ideal generators.
+    monIdeal := null;
+    if (#first entries gens I2 > 0) then (
+        monIdeal = monomialIdeal(apply(first entries gens I2, t->leadTerm t));
+        if (opts.Verbose or debugLevel > 0) then print concatenate("isCodimAtLeast: Computing codim of monomials based on ideal generators.");
+        if (codim monIdeal - dAmb >= n1) then return true;
+        if (opts.Verbose or debugLevel > 0) then print concatenate("isCodimAtLeast: Didn't work, going to find the partial Groebner basis.");
+    );
+    --now we set stuff up for the loop if that doesn't work.  
+    vCount := # first entries vars S1;
+ --   baseDeg := apply(sum(apply(first entries vars S1, t1 -> degree t1)), v -> ceiling(v/vCount)); --use this as the base degree to step by (probably we should use a different value)
+    i := 1;
+    --curLimit := baseDeg;
+    local curLimit;
+    local myGB;
+    
+    gensList := null;
+    while (i < opts.PairLimit) do(
+        curLimit = opts.SPairsFunction(i);
+--        curLimit = apply(baseDeg, tt -> (opts.SPairsFunction)(tt,i));
+        if (opts.Verbose or debugLevel > 0) then print concatenate("isCodimAtLeast: about to compute gb PairLimit => ", toString curLimit);
+        myGB = gb(I2, PairLimit=>curLimit);
+        gensList = first entries leadTerm gb(I2, PairLimit=>curLimit);    
+        if (#gensList > 0) then (
+            monIdeal = monomialIdeal(first entries leadTerm myGB);
+            if (opts.Verbose or debugLevel > 0) then print concatenate("isCodimAtLeast: computed gb, now computing codim ");
+            if (codim monIdeal - dAmb >= n1) then return true;
+        );
+        if (isGBDone(myGB)) then i = opts.PairLimit;
+        i = i + 1;
+    );
+    return null;
+);
+
+isDimAtMost = method(Options => optIsCodimAtLeast);
+
+isDimAtMost(ZZ, Ideal) := opts -> (n1, I1) -> (
+    d := dim ring I1;
+    return isCodimAtLeast(d-n1, I1, opts);
 );
 
 -- Multithreaded function to determine if the rank of a given matrix is greater than or equal to an input value
@@ -1170,11 +1259,12 @@ document {
 	  {TO "Rn", " checks whether a ring is regular in codimension n only in the affirmative." },
 	  {TO "projDim", " checks the projective dimension of a module and may give better answers than ", TO "pdim", " in the case that R is not homogeneous" },
       {TO "recursiveMinors", " provides a different strategy for computing minors of a matrix.  It is a cofactor strategy where the determinants of smaller minors are stored." },
+      {TO "isCodimAtLeast", " provides a way for finding lower bounds for the codimension of an ideal, without actually computing the codimension."},
 	},
     "Many of these functions have extensive options for fine tuning their behavior, for instance by controlling how submatrices are chosen.  See the documentation for ", TO "StrategyDefault",
 	BR{},BR{},
 	BOLD "Acknowledgements:",BR{},BR{},
-	"The authors would like to thank David Eisenbud and Srikanth Iyengar for useful conversations and comments on the development of this package.", BR{},
+	"The authors would like to thank David Eisenbud, Eloisa Grifo, and Srikanth Iyengar for useful conversations and comments on the development of this package.", BR{},
     BR{},
     "Boyana Martinova received funding from the University of Utah Mathematics Department REU program and from the ACCESS program at the University of Utah, while developing this package.",
     BR{},
@@ -1367,8 +1457,12 @@ doc ///
         [Rn, ModP]
         [Rn, MinMinorsFunction]
         [Rn, CodimCheckFunction]
+        [Rn, PairLimit]
+        [Rn, UseOnlyFastCodim]
+        [Rn, SPairsFunction]
         MinMinorsFunction
         CodimCheckFunction
+        UseOnlyFastCodim
     Headline
         attempts to show that the ring is regular in codimension n
     Usage
@@ -1448,12 +1542,16 @@ doc ///
         Text
             The minimum number of minors computed before checking the codimension, can also be controlled by an option {\tt MinMinorsFunction}.  This is should be a function of a single variable, the number of minors computed.  Finally, via the option {\tt CodimCheckFunction}, you can pass the {\tt Rn} a function which controls how frequently the codimension of the partial Jacobian ideal is computed.  By default this is the floor of {\tt 1.3^k}.  
             Finally, passing the option {\tt ModP => p} will do the computation after changing the coefficient ring to {\tt ZZ/p}.
+        Text
+            The options {\tt PairLimit} and {\tt SPairsFunction} are passed directly to {\tt isCodimAtLeast}.  You can turn off internal calls to {\tt codim/dim}, and only use {\tt isCodimAtLeast} by setting {\tt UseOnlyFastCodim => true}.
+    SeeAlso
+        isCodimAtLeast
 ///
 
 
 
 document {
-    Key => {GRevLexLargest, GRevLexSmallest, GRevLexSmallestTerm, LexLargest, LexSmallest, LexSmallestTerm, Random, RandomNonzero, [chooseGoodMinors, Strategy], [getSubmatrixOfRank, Strategy], [Rn, Strategy], [isRankAtLeast, Strategy], [projDim, Strategy], "StrategyCurrent", "StrategyDefault", "StrategyLexSmallest", "StrategyGRevLexSmallest", "StrategyRandom"},
+    Key => {GRevLexLargest, GRevLexSmallest, GRevLexSmallestTerm, LexLargest, LexSmallest, LexSmallestTerm, Random, RandomNonzero, [chooseGoodMinors, Strategy], [getSubmatrixOfRank, Strategy], [Rn, Strategy], [isRankAtLeast, Strategy], [projDim, Strategy], "StrategyCurrent", "StrategyDefault", "StrategyDefaultNonRandom", "StrategyLexSmallest", "StrategyGRevLexSmallest", "StrategyRandom"},
     Headline => "strategies for choosing submatrices",
     "Many of the core functions of this package allow the user to fine tune the strategy of how submatrices are selected.  Different strategies yield markedly different performance or results on these examples.
     These are controlled by specifying a {\tt Strategy => } option, pointing to a {\tt HashTable}.  This HashTable should have the following keys.",
@@ -1481,7 +1579,8 @@ document {
     BR{},BR{},
     "This package comes with several default strategies exported to the user.",
     UL {
-        {TT "StrategyDefault", ": 25% of the matrices are ", TT "LexSmallest", ", ", TT "LexSmallestTerm", ", ", TT "GRevLexSmallest", " and, ", TT "GRevLexLargest", " each"},
+        {TT "StrategyDefault", ": 16% of the matrices are ", TT "LexSmallest", ", ", TT "LexSmallestTerm", ", ", TT "GRevLexSmallest", ", ", TT "GRevLexLargest", ", ", TT "Random", ", and ", TT "RandomNonZero",  " each"},
+        {TT "StrategyDefaultNonRandom", ": 25% of the matrices are ", TT "LexSmallest", ", ", TT "LexSmallestTerm", ", ", TT "GRevLexSmallest", " and, ", TT "GRevLexLargest", " each"},
         {TT "StrategyLexSmallest", ": 50% of the matrices are ", TT "LexSmallest", " and 50% are ", TT "LexSmallestTerm"},
         {TT "StrategyGRevLexSmallest", ": 50% of the matrices are ", TT "GRevLexSmallest", " and 50% are ", TT "GRevLexLargest"},
         {TT "StrategyRandom", ": chooses 100% random submatrices."},
@@ -1643,8 +1742,8 @@ doc ///
         orderType: Symbol
             a valid monomial order, such as {\tt GRevLex}
     Outputs
-        R1: ZZ
-           a polynomial ring
+        b: Boolean
+           true if 
     Description
         Text
             This function takes a polynomial ring and produces a new polynomial ring with {\tt MonomialOrder} of type {\tt orderType}.
@@ -1688,6 +1787,80 @@ doc ///
         rank
 ///
 
+doc ///
+    Key
+        isCodimAtLeast
+        (isCodimAtLeast, ZZ, Ideal)
+        [isCodimAtLeast, Verbose]
+        [isCodimAtLeast, SPairsFunction]
+        [isCodimAtLeast, PairLimit]
+        SPairsFunction
+    Headline
+        returns true if we can quickly see if the codim is at least a given number
+    Usage
+        isCodimAtLeast(n, I)
+    Inputs
+        n: ZZ
+            an integer
+        I: Ideal
+            an ideal in a polynomial ring over a field, or a quotient ring
+    Outputs
+        : Boolean
+           {\tt true} if the codimension of I is at least n
+        : 
+            {\tt null} if the function cannot tell whether the codimension is at least n
+    Description
+        Text
+            The computes a partial Groebner basis, takes the initial terms, and checks whether that (partial) initial ideal has codimension at least {\tt n}.  
+            The following example made up of some minors of the following matrix, is no accessible via standard executions of either {\tt minors} or {\tt codim} 
+            even on a subset of the minors.
+        Example
+            R = ZZ/127[x_1 .. x_(12)];
+            P = minors(3,genericMatrix(R,x_1,3,4));
+            C = res (R^1/(P^3));
+            myDiff = C.dd_3;
+            r = rank myDiff;
+            time isCodimAtLeast(3, chooseGoodMinors(15, r, myDiff, Strategy=>StrategyDefaultNonRandom))
+        Text
+            The function works by computing {\tt gb(I, PairLimit=>f(i))} for successive values of {\tt i}.  Here {tt f(i)} is a function that takes {\tt t}, some approximation of the base degree value
+            of the polynomial ring (for example, in a standard graded polynomial ring, this is probably expected to be {\tt \{1\}}).  And {\tt i} is a counting variable.  
+            You can provide your own function by calling {\tt isCodimAtLeast(n, I, SPairsFunction=>( (i) -> f(i) )}.   Perhaps more commonly however, the user may want to 
+            instead tell the function to compute for larger values of {\tt i}.  This is done via the option {\tt PairLimit}.  This is the max value of {\tt i} to consider before the function gives up.
+        Example
+            time isCodimAtLeast(3, chooseGoodMinors(15, r, myDiff, Strategy=>StrategyDefaultNonRandom), PairLimit => 3, Verbose=>true)
+            time isCodimAtLeast(3, chooseGoodMinors(15, r, myDiff, Strategy=>StrategyDefaultNonRandom), PairLimit => 15, Verbose=>true)
+        Text
+            Notice in the first case the function returned {\tt null}, because the depth of search was not high enough.  The second returned true, but it did so as soon as the answer was found (and before we hit the {\tt PairLimit} limit).
+///
+
+doc ///
+    Key
+        isDimAtMost
+        (isDimAtMost, ZZ, Ideal)
+        [isDimAtMost, Verbose]
+        [isDimAtMost, SPairsFunction]
+        [isDimAtMost, PairLimit]
+    Headline
+        returns true if we can quickly see if the dim is at most a given number
+    Usage
+        isDimAtMost(n, I)
+    Inputs
+        n: ZZ
+            an integer
+        I: Ideal
+            an ideal in a polynomial ring over a field, or a quotient ring of such
+    Outputs
+        : Boolean
+           {\tt true} if the dimension of I is at most n
+        : 
+            {\tt null} if the function cannot tell whether the dimension is at most n
+    Description
+        Text
+            This simply calls {\tt isCodimAtLeast}, passing options as described there.
+    SeeAlso
+        isCodimAtLeast
+///
+
 TEST /// --check #0 (Rn)
 R = QQ[x,y,z]/ideal(x^2-y*z);
 assert(Rn(1, R)=== true);
@@ -1711,7 +1884,7 @@ J =  ideal(YY_8^2-YY_7*YY_9,YY_6*YY_8-YY_5*YY_9,YY_3*YY_8-YY_2*YY_9,YY_2*YY_8-YY
      2*YY_9+10*YY_3*YY_9,YY_3*YY_6-YY_8*YY_9-10*YY_9^2,YY_2*YY_6-YY_7*YY_9-10*YY_8*YY_9,YY_1*YY_6-YY_7*YY_8-10*YY_7*YY_9,YY_5^2-YY_4*YY_7,YY_4*YY_5+YY_1*YY_7-10*YY_1*YY_8-YY_1*YY_9+10*YY_2*YY_9,YY_3*YY_5-YY_7*YY_9-10*YY_8
      *YY_9,YY_2*YY_5-YY_7*YY_8-10*YY_7*YY_9,YY_1*YY_5-YY_7^2-10*YY_7*YY_8,YY_4^2+YY_7^2-YY_9^2,YY_3*YY_4-YY_5*YY_9-10*YY_6*YY_9,YY_2*YY_4-YY_5*YY_8-10*YY_5*YY_9,YY_1*YY_4-YY_5*YY_7-10*YY_5*YY_8,YY_2^2-YY_1*YY_3,YY_1*YY_2-
      10*YY_1*YY_3-YY_2*YY_3+10*YY_3^2+YY_4*YY_8+10*YY_4*YY_9,YY_1^2-YY_3^2+YY_4*YY_7+20*YY_4*YY_8-YY_4*YY_9);
-assert((Rn(1, R/J, MaxMinors=>80)===null) and (Rn(1, R/J, MaxMinors=>80, ModP=>7)===null));
+assert((Rn(1, R/J, MaxMinors=>15)===null) and (Rn(1, R/J, MaxMinors=>15, ModP=>7)===null));
 ///
 
 TEST/// --check #4 (Rn)
@@ -1801,11 +1974,25 @@ TEST /// --check #13 (ProjDim)
 R = QQ[x,y,z,w];
 I = ideal(x^4,x*y,w^3, y^4);
 f = map(R, R, {x+1, x+y+1, z+x-2, w+y+1});
+g =  map(R, R, {sub(x+x^2+1, R), x+y+1, z+z^4+x-2, w+w^5+y+1});
 assert(projDim(module f I, Strategy=>StrategyDefault)==2);
-g =  map(R, R, {x+x^2+1, x+y+1, z+z^4+x-2, w+w^5+y+1});
 assert(projDim(module g I, Strategy=>StrategyDefault, MinDimension=>2)==2);
 ///
 
+TEST /// --check #14 (isCodimAtLeast)
+R = ZZ/7[x,y,z];
+I = ideal(x^2+z,y);
+assert(isCodimAtLeast(1, I))
+assert(isCodimAtLeast(2, I))
+assert(null === isCodimAtLeast(3, I))
+///
 
+TEST /// --check #15 (isDimAtMost)
+R = ZZ/7[x,y,u,v];
+I = ideal(x*u,x*v,y*u,y*v);
+assert(null === isDimAtMost(1, I));
+assert(true === isDimAtMost(2, I));
+assert(true === isDimAtMost(3, I))
+///
 
 end
