@@ -1735,8 +1735,8 @@ doc ///
         orderType: Symbol
             a valid monomial order, such as {\tt GRevLex}
     Outputs
-        b: Boolean
-           true if 
+        R1: Ring
+           the ring with a new MonomialOrder 
     Description
         Text
             This function takes a polynomial ring and produces a new polynomial ring with {\tt MonomialOrder} of type {\tt orderType}.
