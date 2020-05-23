@@ -7,7 +7,7 @@
 # perform the various steps manually.
 
 set -e
-pkgutil --pkg-info=com.apple.pkg.CLTools_Executables > /dev/null || xcode-select --install
+xcode-select -p >/dev/null 2>&1 || xcode-select --install
 sleep 1
 brew update
 stty -onlcr -echo
@@ -15,7 +15,7 @@ sleep 1
 brew upgrade
 stty -onlcr -echo
 sleep 1
-brew install pkg-config autoconf automake gnu-tar libtool wget yasm make
+brew install pkg-config autoconf automake gnu-tar libtool wget yasm make ctags ntl
 stty -onlcr -echo
 sleep 1
 brew install bdw-gc libatomic_ops gdbm glpk boost libmpc libomp xz

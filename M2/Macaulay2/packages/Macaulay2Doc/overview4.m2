@@ -328,11 +328,14 @@ document {
      examined with ", TO "status", ".  The computation can be continued
      with ", TT "res M", ".  Here is an example, with an alarm interrupting
      the computation several times before it's complete.  (On my machine, 
-     the computation takes a total of 14 seconds.)",
+     the computation takes a total of 14 seconds.)  (Example code, such as
+     the code below, is run in such a way that interrupts stop the program,
+     so to prevent that, we set ", TO "handleInterrupts", " to ", TO "true", ".)",
      PARA{},
      EXAMPLE {
 	  "R = ZZ/2[a..d];",
 	  "M = coker random(R^4, R^{5:-3,6:-4});",
+	  "handleInterrupts = true",
 ///(<< "-- computation started: " << endl;
  while true do try (
      alarm 1;
@@ -373,9 +376,8 @@ document { Key => "the debugger",
      EXAMPLE {"g 4", "g 3"},
      "However, the following attempt results in an error, and the debugger starts up automatically.",
      EXAMPLE "g 2",
-     "We use ", TO "help", ", as instructed, to view the commands available in the debugger.",
-     EXAMPLE "help",
-     "As suggested, we can use ", TO "listLocalSymbols", " to list the local symbols and their values.",
+     "You may use ", TO "help", ", as instructed, to view the commands available in the debugger.
+     As suggested by the help display, we can use ", TO "listLocalSymbols", " to list the local symbols and their values.",
      EXAMPLE "listLocalSymbols",
      "We see the the value of ", TT "x", " is 0, and that explains the error message about division by zero.
      The other local symbols are the ones defined in the body of the function ", TT "f", ", whose

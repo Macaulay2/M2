@@ -28,7 +28,6 @@ use varnets;
 use strings1;
 use stdio0;
 use stdiop0;
-use atomic;
 use pthread0;
 
 
@@ -424,6 +423,10 @@ export True := Expr(Boolean(true));	  -- don't make new ones!
 export False := Expr(Boolean(false));	  -- use toExpr instead
 --Conversion from C boolean value to Expression
 export toExpr(v:bool):Expr := if v then True else False;
+
+export zeroE := Expr(zeroZZcell);
+export  oneE := Expr( oneZZcell);
+export  minusoneE := Expr( minusoneZZcell);
 
 --Internal "null" expressions that should never be visible to user
 export nullE := Expr(Nothing());

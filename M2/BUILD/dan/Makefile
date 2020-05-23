@@ -9,6 +9,9 @@ CXX =
 FC  =
 AR  = 
 
+# This seems inconvenient, but how else can we know where ubuntu puts the "eigen" and "cdd" libraries?
+CPPFLAGS = -I/usr/include/eigen3 -I/usr/include/eigen3/unsupported -I/usr/include/cdd
+
 # configure script options:
 OPTIONS =
 
@@ -31,15 +34,14 @@ DEBIAN := $(shell if [ -d /var/lib/dpkg ] ; then echo yes ; else echo no; fi)
 RPM := $(shell if [ -d /var/lib/yum -o -d /var/lib/dnf ] ; then echo yes ; else echo no; fi)
 MACOSX := $(shell if [ `uname -s` = Darwin ] ; then echo yes ; else echo no; fi)
 
-ifeq ($(MACOSX),yes)
-OPTLIBS += /usr/local/opt/readline
-endif
-
 DIRECTORY ?= $(shell hostname)$(DIRSUFF)
 
 BRANCH := $(shell git branch --contains | grep '^\* ' | sed -e s=^..== -e s=/=.=g )
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
+ifeq ($(DEV),yes)
+CONFIGOPTIONS += --enable-development
+endif
 ifeq ($(DEBUG),yes)
 CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
 DIRECTORY := $(DIRECTORY).debug
@@ -52,7 +54,7 @@ ifeq ($(RPM),yes)
 CONFIGOPTIONS += --enable-rpm
 else
 ifeq ($(MACOSX),yes)
-CONFIGOPTIONS += --enable-dmg
+# CONFIGOPTIONS += --enable-dmg
 else
 CONFIGOPTIONS += --enable-tarfile
 endif
@@ -77,6 +79,10 @@ $(foreach O, $(OPTLIBS),			\
 	$(eval CPPFLAGS += -I$O/include)	\
 	$(eval LDFLAGS += -L$O/lib))
 
+# ifeq ($(shell uname -m),i686)
+# CONFIGOPTIONS += --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
+# endif
+
 include Makefile.include
 
 test :
@@ -84,5 +90,5 @@ test :
 
 # Local Variables:
 # mode: makefile-gmake
-# compile-command: "time gmake SIGN=no DEBUG=no "
+# compile-command: "time gmake SIGN=no DEBUG=no DEV=no "
 # End:

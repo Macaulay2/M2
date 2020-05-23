@@ -32,14 +32,19 @@ SRCFILES := $(HFILES) $(CNAMES) grammar.y scc-core.h scc-core.c
 CPPFLAGS := -I../../include -I/include -I@srcdir@/../../include -I@srcdir@ $(CPPFLAGS)
 
 # we include -Wno-unknown-attributes because libgc incorrectly assumes that clang 6 accepts __attribute__((__alloc_size__(1))):
-CFLAGS += -Wall -Wno-unknown-attributes -Werror
+CFLAGS += -Wall -Wno-unknown-attributes
+
+ifeq "@DEVELOPMENT@" "yes"
+CFLAGS +=  -Werror
+endif
+
 ifeq "@__INTEL_COMPILER@" "no"
 CFLAGS += -Wimplicit-function-declaration
 endif
 ifeq (@OS@,Linux)
 LDFLAGS += -Wl,-rpath,$(BUILTLIBPATH)/lib
 endif
-LOADLIBES += @GC_LIBS@
+LOADLIBES += -lgc
 
 ############################## compiling
 scc1: $(OFILES) 

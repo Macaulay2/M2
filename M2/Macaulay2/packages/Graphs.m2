@@ -36,7 +36,7 @@ newPackage select((
             {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"},
             {Name => "Contributers of note: Alex Diaz, Luis Garcia, Shaowei Lin, Sonja Mapes, Mike Stillman, Doug Torrance"}
         },
-        Headline => "Package for processing graphs and directed graphs (digraphs)",
+        Headline => "graphs and directed graphs (digraphs)",
         Configuration => {
             "DotBinary" => "dot",
             "JpgViewer" => "display"

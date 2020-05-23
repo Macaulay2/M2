@@ -22,7 +22,7 @@ newPackage (
 		  Email => "fquallb@dm.uba.ar",
 		  HomePage => ""}
 	},
-	Headline => "Specialized routines for differential forms",
+	Headline => "specialized routines for differential forms",
 	Configuration => { 
 		"BaseRing" => F,
 		"VariableName" => "x",
@@ -477,7 +477,7 @@ beginDocumentation()
 
 document {
   Key => DiffAlg,
-  Headline => "a differential algebra package",
+  Headline => "differential algebra",
   PARA {TO DiffAlg, " is a differential algebra package. It can compute the usual operations with polynomial differential forms and vector fields. Its main purpose is to associate algebraic objects to differential operators in the exterior algebra of differential forms."},
   PARA {"The simplest way to load the package is with the command:"},
   TT {"loadPackage \"DiffAlg\""},

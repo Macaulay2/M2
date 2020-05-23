@@ -31,7 +31,7 @@ appendElimination = (monorder, nold, nnew) -> (
      append(monorder, Weights=>nold:1)
      )
 
-submatrixByDegrees = (m,d) -> (
+submatrixByDegrees (Matrix,ZZ) := (m,d) -> (
     want := positions(0..numgens source m - 1, 
 	             i -> (degrees source m)_i === {d});
     m_want)
@@ -47,7 +47,7 @@ rowReduce = (elems, d) -> (
      -- CAUTION: Only the monomial orders GRevLex, Eliminate, Lex, and RevLex
      --	     	 are supported by this routine.  The monomial orders
      --	    	 Lex and ProductOrder ARE NOT SUPPORTED.
-     local RH, RtoRH, RHtoR, elemsH;
+     (RH, RtoRH, RHtoR, elemsH) := 4:null;
      R := ring elems;
      n := numgens R;
      M := monoid R;

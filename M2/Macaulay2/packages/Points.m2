@@ -11,7 +11,7 @@ newPackage(
 	     {Name => "Federico Galetto", Email => "galetto.federico@gmail.com", HomePage => "http://math.galetto.org"},
 	     {Name => "Joseph W. Skelton", Email => "jskelton@tulane.edu"}
 	     },
-    	Headline => "computing with sets of points",
+    	Headline => "sets of points",
 	PackageExports => {"LexIdeals"},
     	DebuggingMode => false
     	)

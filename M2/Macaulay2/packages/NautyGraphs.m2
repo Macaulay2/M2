@@ -19,7 +19,7 @@ newPackage select((
     Authors => {{Name => "David Cook II",
                  Email => "dcook8@nd.edu",
                  HomePage => "http://www.nd.edu/~dcook8"}},
-    Headline => "Interface to nauty (Graphs fork)",
+    Headline => "interface to nauty (Graphs fork)",
     Configuration => {"path" => ""},
     PackageExports => {"Graphs"},
     DebuggingMode => false,

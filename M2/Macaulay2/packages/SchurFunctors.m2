@@ -9,7 +9,7 @@ newPackage(
 	       {Name => "Anton Leykin"},
 	       {Name => "Mauricio Velasco"}
 	       },
-	  Headline => "computations of Schur modules and maps between them",
+	  Headline => "Schur modules and maps between them",
 	  DebuggingMode => false,
 	  AuxiliaryFiles=>true
      	  )

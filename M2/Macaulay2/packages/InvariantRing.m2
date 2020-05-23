@@ -28,7 +28,7 @@ newPackage(
     	Authors => {
 	     {Name => "Thomas Hawes", Email => "thomas.hawes@maths.ox.ac.uk"}
 	     },
-    	Headline => "a package to construct the invariant ring of a finite group",
+    	Headline => "construct the invariant ring of a finite group",
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",

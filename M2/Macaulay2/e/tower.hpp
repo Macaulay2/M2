@@ -42,7 +42,7 @@ class Tower : public Ring
   virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_srcptr n) const;
   virtual ring_elem var(int v) const;
-  virtual bool from_rational(mpq_ptr q, ring_elem &result) const;
+  virtual bool from_rational(mpq_srcptr q, ring_elem &result) const;
 
   virtual bool promote(const Ring *R,
                        const ring_elem f,
@@ -99,7 +99,7 @@ class Tower : public Ring
   ring_elem differentiate(int var, const ring_elem f) const;
   int extension_degree(int nvars) const;  // returns -1 if infinite
   ring_elem power_mod(const ring_elem f,
-                      mpz_t n,
+                      mpz_srcptr n,
                       const ring_elem g) const;  // f^n mod g
   ring_elem lowerP(const ring_elem f) const;
 

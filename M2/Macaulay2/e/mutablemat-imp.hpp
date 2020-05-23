@@ -6,14 +6,16 @@
 #define _mutable_mat_imp_hpp_
 
 template <typename Mat>
-SLEvaluator* MutableMat<Mat>::createSLEvaluator(SLProgram* P,
+M2SLEvaluator* MutableMat<Mat>::createSLEvaluator(M2SLProgram* P,
                                                 M2_arrayint constsPos,
                                                 M2_arrayint varsPos) const
 {
   if (n_rows() != 1 || n_cols() != constsPos->len) {
     ERROR("1-row matrix expected; or numbers of constants don't match");
     return nullptr;
-  } else return new SLEvaluatorConcrete<typename Mat::CoeffRing> (P, constsPos, varsPos, this);
+  } else return new M2SLEvaluator(
+    new SLEvaluatorConcrete<typename Mat::CoeffRing> (&(P->value()), constsPos, varsPos, this)
+  );
 }
 
 template <typename T>
@@ -299,12 +301,12 @@ gmp_RRorNull MutableMat<T>::norm() const
   if (get_ring()->get_precision() == 0)
     throw exc::engine_error("expected a matrix over RR or CC");
 
-  gmp_RR nm = getmemstructtype(gmp_RR);
+  gmp_RRmutable nm = getmemstructtype(gmp_RRmutable);
   mpfr_init2(nm, get_ring()->get_precision());
   mpfr_set_si(nm, 0, GMP_RNDN);
 
   MatrixOps::increase_norm(nm, mat);
-  return nm;
+  return moveTo_gmpRR(nm);
 }
 
 #endif

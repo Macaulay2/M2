@@ -11,9 +11,18 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
+	eigen \
 	monomial-sets \
 	mutablecomplex \
 	localring \
+	bibasis/bibasis \
+	bibasis/allocator \
+	bibasis/launcher \
+	bibasis/monom \
+	bibasis/monomDL \
+	bibasis/monomDRL \
+	bibasis/monomLex \
+	bibasis/settings-manager \
 	f4/res-monomial-sorter \
 	f4/res-varpower-monomial \
 	f4/res-f4-monlookup \
@@ -160,6 +169,8 @@ COMMANDS2 = \
 	polyroots
 
 COMMANDS = \
+	flint \
+	rand \
 	ntl-internal \
 	ntl-debugio \
 	matrix-kbasis \
@@ -186,7 +197,7 @@ NAMES_H = ringelem \
 	index \
 	res-a0-pair
 
-C_FILES = error table exptable monordering complex rand
+C_FILES = error table exptable monordering complex
 
 D_FILES = 
 DD_FILES = #test

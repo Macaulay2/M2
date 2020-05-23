@@ -30,8 +30,7 @@ newPackage(
 -- Contributing Author	     {Name => "Will Smith", Email => "smithw12321@gmail.com"},		
 -- Contributing Author	     {Name => "Julio Urenda", Email => "jcurenda@nmsu.edu"},	     
 	     },
-    	Headline => "Interactive visualization and manipulation of combinatorial objects in a browser",
-    	DebuggingMode => true,
+    	Headline => "interactive visualization and manipulation of combinatorial objects in a browser",
 	PackageExports => {"Graphs", "Posets", "SimplicialComplexes"},
 	AuxiliaryFiles => true,
 	Configuration => {"DefaultPath" => null } 

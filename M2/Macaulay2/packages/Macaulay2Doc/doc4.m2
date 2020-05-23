@@ -664,8 +664,7 @@ document {
 	       }
 	  },
      PARA {
-	  "The command line option ", TT "--int", " has the same effect as ", TT "handleInterrupts=false", ", and overrides
-	  and subsequent setting of ", TT "handleInterrupts", " to ", TT "true", "."
+	  "The command line option ", TT "--int", " has the same effect as ", TT "handleInterrupts=false", "."
 	  }
      }
 

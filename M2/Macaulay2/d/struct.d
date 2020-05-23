@@ -86,7 +86,10 @@ export toInt(e:Expr):int := (
      -- To fix it, we should have this function, and similar ones, return union types that have to be tested.
      when e 
      is i:ZZcell do toInt(i)
-     else fatal("internal error"));
+     else (
+	  fatal("internal error");
+	  0	     	       	    -- just to satisfy noisy compilers
+	  ));
 export toIntArray(e:Sequence):array(int) := (
      new array(int) len length(e) do foreach x in e do provide toInt(x));
 export toIntArray(e:Expr):array(int) := (
@@ -95,7 +98,7 @@ export toIntArray(e:Expr):array(int) := (
      is b:List do toIntArray(b.v)
      else (
 	  fatal("internal error: toIntArray expected an array of ints");
-	  array(int)()
+	  array(int)()	   	     	  -- just to satisfy noisy compilers
 	  )
      );
 export toArrayExpr(v:array(int)):Sequence := (

@@ -27,9 +27,7 @@ Authors => {
      HomePage => "https://witt.faculty.ku.edu"
      }
 },
-Headline => "A package for calculations of F-thresholds",
-DebuggingMode => true,
-Reload => true,
+Headline => "F-thresholds",
 AuxiliaryFiles => true,
 PackageExports => {"TestIdeals"}
 )

@@ -447,7 +447,7 @@ utest := opt -> (
      cmd := "ulimit " | opt | "; ";
      if chkrun("2>/dev/null >/dev/null "|cmd) == 0 then cmd else ""
      )
-ulimit := utest "-c unlimited" | utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192" | utest "-n 512"
+ulimit := utest "-c unlimited" | utest "-t 700" | utest "-m 850000" | utest "-s 8192" | utest "-n 512"
 
 M2statusRegexp := "^--status:"
 statusLines := file -> select(lines file, s -> match(M2statusRegexp,s))
@@ -563,7 +563,9 @@ setupNames := (opts,pkg) -> (
 unsetupNames := () -> installPrefix = installLayout = buildPackage = null
 
 
-installPackage = method(Options => {
+installPackage = method(
+     TypicalValue => Package,
+     Options => {
 	  SeparateExec => false,
           InstallPrefix => () -> applicationDirectory() | "local/",
 	  UserMode => null,
@@ -612,8 +614,7 @@ installPackage String := opts -> pkg -> (
      -- -- in the "Macaulay2Doc" package was not yet loaded
      -- ... but we want to build the package Style without loading any other packages
      pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation, FileName => opts.FileName, Reload => true);
-     installPackage(pkg, opts);
-     )
+     installPackage(pkg, opts))
 
 dispatcherMethod := m -> m#-1 === Sequence and (
      f := lookup m;
@@ -820,6 +821,10 @@ installPackage Package := opts -> pkg -> (
 
  	  if not opts.IgnoreExampleErrors 
 	  then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running examples for package ", pkg#"pkgname");
+
+	  -- if no examples were generated, then remove the directory
+	  if length readDirectory exampleOutputDir == 2 then
+	  	  removeDirectory exampleOutputDir;
 
 	  -- process documentation
 	  rawkey := "raw documentation database";
@@ -1028,7 +1033,7 @@ installPackage Package := opts -> pkg -> (
      unsetupNames();
      htmlDirectory = null;
      tallyInstalledPackages();
-     )
+     pkg)
 
 sampleInitFile = ///-- This is a sample init.m2 file provided with Macaulay2.
 -- It contains Macaulay2 code and is automatically loaded upon

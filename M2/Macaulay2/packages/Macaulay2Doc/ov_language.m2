@@ -1,27 +1,32 @@
 document {
      Key => "The Macaulay2 language",
      
-     "The Macaulay2 language is a simple yet powerful interpreted language.  Every object has a type, such as ", TO "Type", ", ", TO "ZZ", "
-     (integer), ", TO "String", ", ", TO "HashTable", ", ", TO "Ring", ", ", TO "Matrix", ", ", TO "Function", ", etc.  User defined variables may
-     hold values of any type.",
+     PARA {
+	  "The Macaulay2 language is a simple yet powerful interpreted language.  Every object has a type, such as ", TO "Type", ", ", TO "ZZ", "
+	  (integer), ", TO "String", ", ", TO "HashTable", ", ", TO "Ring", ", ", TO "Matrix", ", ", TO "Function", ", etc.  User defined variables may
+	  hold values of any type."
+	  },
      
-     PARA{},
+     PARA{
+	  "The Macaulay2 language is based on expressions, which, generally speaking, are used to create new objects from old ones.
+	  Other computer languages have things called statements, but Macaulay2 does not.
+	  Other computer languages use newline characters and even indentation to indicate separate and nesting of statements, but Macaulay2 does not.
+	  Expressions in Macaulay2 include function calls, control structures (e.g., ", TO "for", " and ", TO "while", " loops), function definitions, and
+	  operator expressions.  Every expression returns an object, although the basic object ", TO "null", " is often returned if the expression is being 
+	  used only to produce some side effect."
+	  },
 
-     "Expressions in Macaulay2 include function calls, control structures (e.g., ", TO "for", " and ", TO "while", " loops), function definitions, and
-     operator expressions.  Every expression returns an object, although ", TO "null", " is often returned if the expression is being used only to
-     produce some side effect.",
+     PARA{
+	  "There is special syntax for creating and accessing strings, lists, sequences, and hashtables.  These are the key data types underlying many new
+	  types.  The Macaulay2 engine implements rings, ring elements, and matrices, as instances of low-level types, and various high-level types,
+	  visible to the user, are based on them.  Examples include ", TO "Ring", ", ", TO "RingElement", ", ", TO "Matrix", ", ", TO "Ideal", ", ", 
+	  TO "RingMap", ", ", TO "Module", ", and ", TO "ChainComplex", "."
+	  },
 
-     PARA{},
-
-     "There is special syntax for creating and accessing strings, lists, sequences, and hashtables.  These are the key data types underlying many new
-     types.  The Macaulay2 engine implements rings, ring elements, and matrices, as instances of low-level types, and various high-level types,
-     visible to the user, are based on them.  Examples include ", TO "Ring", ", ", TO "RingElement", ", ", TO "Matrix", ", ", TO "Ideal", ", ", 
-     TO "RingMap", ", ", TO "Module", ", and ", TO "ChainComplex", ".",
-
-     PARA{},
-
-     "The user can create new types of higher level mathematical objects, whose types form a hierarchy that facilitates the installation and use of
-     appropriate methods for computing with them.",
+     PARA{
+	  "The user can create new types of higher level mathematical objects, whose types form a hierarchy that facilitates the installation and use of
+	  appropriate methods for computing with them."
+	  },
 
      Subnodes => {
 	      TO "variables",
@@ -669,20 +674,20 @@ document { Key => "in",
 
 document { Key => "for",
      Headline => "for loops",
-     Usage => "for i from m to n when p list x do z", 
-     Inputs => { "m" => ZZ, "n" => ZZ },
-     Consequences => { 
-	  {"The variable ", TT "i", " is initialized to ", TT "m", ".  As long as ", TT "i", " is not greater than ", TT "n", ", evaluation of the loop continues.  First ", TT "p", " is evaluated.  
-	       As long as the value of ", TT "p", " is true, evaluation of the loop continues.  Next ", TT "x", " is evaluated and its value is saved, and
-	       ", TT "z", " is evaluated and its value is discarded.  Then ", TT "i", " is incremented by 1, and the loop repeats.  When the value of ", TT "p", " is false,
-	       then the loop terminates, and the list of values of ", TT "x", " is returned as the value of the entire expression."
-	       }},
-     Caveat => {
-     	  "The variable ", TT "i", " is a new local variable whose scope includes only the expressions ", TT "p", ", ", TT "x", ",
-	  and ", TT "y", " in the body of the loop; moreover, new local variables defined inside the body of the loop will not
-	  be visible outside it.  The numbers ", TT "m", " and ", TT "n", " must be small integers that fit into a single word."
-	  },
-     Outputs => {{"the list of values of the clause ", TT "x", ", as desribed above"}},
+     SYNOPSIS (
+     	  Usage => "for i from m to n when p list x do z", 
+     	  Inputs => { "m" => ZZ, "n" => ZZ },
+     	  Outputs => {{"the list of values of the clause ", TT "x", ", as described above"}},
+	  Consequences => { 
+	       {"The numbers ", TT "m", " and ", TT "n", " must be small integers that fit into a single word.
+		 The variable ", TT "i", " is initialized to ", TT "m", ".  
+		 As long as ", TT "i", " is not greater than ", TT "n", ", evaluation of the loop continues.  
+		 First ", TT "p", " is evaluated;
+		 as long as the value of ", TT "p", " is true, evaluation of the loop continues.  
+		 Next ", TT "x", " is evaluated and its value is saved, and ", TT "z", " is evaluated and its value is discarded.  
+		 Then ", TT "i", " is incremented by 1, and the loop repeats. 
+		 When the value of ", TT "p", " is false, then the loop terminates, and the list of values of ", TT "x", " is returned as the value of the entire expression."
+		 }}),
      SYNOPSIS (
 	  Usage => "for i in v when p list x do z",
 	  Inputs => { "v" => BasicList },
@@ -692,54 +697,48 @@ document { Key => "for",
 	       then the loop terminates, and the list of values of ", TT "x", " is returned as the value of the entire expression."
 	       }},
 	  ),
+     Caveat => {
+     	  "The variable ", TT "i", " is a new local variable whose scope includes only the expressions ", TT "p", ", ", TT "x", ",
+	  and ", TT "z", " in the body of the loop.  Moreover, new local variables defined inside the body of the loop will not
+	  be visible outside it."
+	  },
      SUBSECTION "examples",
      EXAMPLE lines ///
      	  for i from 1 to 5 when i < 15 list i^2 do print i
      	  for i from 1 to 5 when i^2 < 15 list i^2 do print i
      ///,
+     PARA {
+	  "The expressions in this construction may be arbitrarily complicated.
+	  Here is an example where ", TT "z", " is a sequence of expressions separated by semicolons (see ", TO ";", ")."
+	  },
+     EXAMPLE ///for i from 1 to 3 do (
+     print "The value of i is : ";
+     print i
+     )
+     ///,
      PARA { "The ", TT "do z", " clause may be omitted." },
-     EXAMPLE lines ///
-     	  for i from 1 to 5 when i < 15 list i^2
-     ///,
+     EXAMPLE "for i from 1 to 5 when i < 15 list i^2",
      PARA { "The ", TT "from m", " clause may be omitted, in which case ", TT "i", " starts with ", TT "0", "." },
-     EXAMPLE lines ///
-     	  for i to 5 when i < 15 list i^2
-     ///,
+     EXAMPLE "for i to 5 when i < 15 list i^2",
      PARA { "The ", TT "when p", " clause may be omitted." },
-     EXAMPLE lines ///
-     	  for i to 5 list i^2
-     ///,
+     EXAMPLE "for i to 5 list i^2",
      PARA { "The ", TT "to n", " clause may be omitted." },
-     EXAMPLE lines ///
-     	  for i when i < 15 list i^2
-     ///,
+     EXAMPLE "for i when i < 15 list i^2",
      PARA { "The ", TT "list x", " clause may be omitted." },
-     EXAMPLE lines ///
-     	  for i when i^2 < 15 do print i
-     ///,
+     EXAMPLE "for i when i^2 < 15 do print i",
      PARA { "If ", TO "continue", " is executed by ", TT "x", " then execution of ", TT "x", " is interrupted, no value is added to the list, and iteration of the loop
      	  continues." 
 	  },
-     EXAMPLE lines ///
-         for i from 0 when i < 10 list (if odd i then continue; i^2)
-     ///,
+     EXAMPLE "for i from 0 when i < 10 list (if odd i then continue; i^2)",
      PARA { "If ", TT "continue w", " is executed by ", TT "x", " then execution of ", TT "x", " is interrupted, the value of ", TT "w", " is added to the list, 
      	  and iteration of the loop continues."
 	  },
-     EXAMPLE lines ///
-         for i from 0 when i < 10 list (if odd i then continue 4567; i^2)
-     ///,
+     EXAMPLE "for i from 0 when i < 10 list (if odd i then continue 4567; i^2)",
      PARA { "  If ", TT "break v", " is executed by ", TT "x", ", then the loop is stopped and ", TT "v", " is returned as its value." },
-     EXAMPLE lines ///
-         for i from 0 when i < 10 list (if i== 5 then break i; i^2)
-     ///,
+     EXAMPLE lines "for i from 0 when i < 10 list (if i== 5 then break i; i^2)",
      PARA { "If ", TO "break", " is executed by ", TT "x", ", then the loop is stopped and the list accumulated so far is returned as the value." },
-     EXAMPLE lines ///
-         for i from 0 when i < 10 list (if i== 5 then break; i^2)
-     ///,
-     EXAMPLE lines ///
-          for i in 0..3 list i^2
-     ///
+     EXAMPLE "for i from 0 when i < 10 list (if i== 5 then break; i^2)",
+     EXAMPLE "for i in 0..3 list i^2"
      }
 
 document {

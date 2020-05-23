@@ -9,7 +9,7 @@ newPackage(
 		HomePage => "http://www.math.uni-bielefeld.de/~bcalmes/"},
                 {Name => "Viktor Petrov"}
 		},
-	Headline => "Package to deal with commutative formal group laws",
+	Headline => "commutative formal group laws",
 	PackageImports => {"Truncations"},
 	DebuggingMode => false)
 

@@ -11,7 +11,7 @@ newPackage(
 	       Email => "charleyc@math.berkeley.edu",
 	       HomePage => "http://math.berkeley.edu/~charleyc/"}},
      PackageExports => {"Schubert2", "SchurRings"},
-     Headline => "Examples to accompany the eponymous book by Eisenbud and Harris"
+     Headline => "examples to accompany the eponymous book by Eisenbud and Harris"
      )
 
 export {"grassmannian", "placeholderSchubertCycle", "diagrams", "placeholderToSchubertBasis"}

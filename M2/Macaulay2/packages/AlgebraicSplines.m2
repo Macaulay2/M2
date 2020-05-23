@@ -19,7 +19,7 @@ newPackage select((
 	    {Name => "Eliana Duarte", Email => "emduart2@illinois.edu", HomePage => "https://faculty.math.illinois.edu/~emduart2/"},
 	    {Name => "Daniel Irving Bernstein", Email=> "dibernst@ncsu.edu", HomePage =>"http://www4.ncsu.edu/~dibernst"}
         },
-        Headline => "Package for splines on simplicial complexes, polytopal complexes, and graphs",
+        Headline => "splines on simplicial complexes, polytopal complexes, and graphs",
         Configuration => {},
         DebuggingMode => false,
 	PackageImports => { "Elimination" },
