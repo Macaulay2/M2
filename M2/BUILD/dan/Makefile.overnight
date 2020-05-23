@@ -6,7 +6,7 @@ overnight:
 	git submodule update
 	git submodule foreach git clean -xdfq
 	git branch --contains HEAD
-	git describe --dirty --long --always --abbrev=40 --all
+	git describe --dirty --long --always --abbrev=40 --tags
 	: "make get-m4 doesn't work under Ubuntu 20.04"
 	: $(MAKE) -C ../.. get-tools
 	$(MAKE) -j8					\
