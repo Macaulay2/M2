@@ -1789,7 +1789,7 @@ doc ///
         [isCodimAtLeast, PairLimit]
         SPairsFunction
     Headline
-        returns true if we can quickly see if the codim is at least a given number
+        returns true if we can quickly see whether the codim is at least a given number
     Usage
         isCodimAtLeast(n, I)
     Inputs
