@@ -4,10 +4,18 @@ include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
 .PHONY:unconfigure-libs reconfigure configure-help report-M2-location help scripts
-all install: \
-	check-make config.status configured check-for-undefined-configure-variables\
-	srcdir protect-configs configured-files check-machine \
+all install:										\
+	check-make config.status configured check-for-undefined-configure-variables	\
+	optional-git-submodule-update							\
+	srcdir protect-configs configured-files check-machine				\
 	M2 all-in-subdirs report-M2-location
+ifeq "@DEVELOPMENT@" "yes"
+optional-git-submodule-update:
+	: skipping automatic updating of submodules, because --enable-development was specified
+else
+optional-git-submodule-update:
+	git submodule update
+endif
 configured-files: @CONFIGURED_FILES@
 $(foreach f,@CONFIGURED_FILES@,$(eval $f: @srcdir@/$f.in; ./config.status $f))
 M2: GNUmakefile
