@@ -648,7 +648,8 @@ RnReductionP(ZZ, Ring, ZZ):= opts -> (n1, R1, p)-> (
 );
 
 verifyStrategy := (passedStrat) -> (
-    (((class passedStrat === HashTable) or ((class passedStrat) === MutableHashTable)) 
+    (
+        instance(passedStrat, HashTable) 
         and (passedStrat #? LexLargest) 
         and (passedStrat #? LexSmallestTerm)
         and (passedStrat #? LexSmallest)
@@ -763,7 +764,8 @@ Rn(ZZ, Ring) := opts -> (n1, R1) -> (
     else if (instance(opts.MaxMinors, Number)) then (
         numberOfMinorsCompute = opts.MaxMinors;)
     else (
-        numberOfMinorsCompute = 5*minNumberToCutDown + 8*ceiling(log_1.3(possibleMinors));
+        --numberOfMinorsCompute = 5*minNumberToCutDown + 8*ceiling(log_1.3(possibleMinors));
+        error "Rn:  You must pass MaxMinors either a function or a number.";
     );
 
     minTerm := sub(0, R1a);
@@ -971,15 +973,14 @@ isCodimAtLeast(ZZ, Ideal) := opts -> (n1, I1) -> (
  --   baseDeg := apply(sum(apply(first entries vars S1, t1 -> degree t1)), v -> ceiling(v/vCount)); --use this as the base degree to step by (probably we should use a different value)
     i := 1;
     --curLimit := baseDeg;
-    local curLimit;
-    local myGB;
+    --local myGB;
     
     gensList := null;
     while (i < opts.PairLimit) do(
-        curLimit = opts.SPairsFunction(i);
+        curLimit := opts.SPairsFunction(i);
 --        curLimit = apply(baseDeg, tt -> (opts.SPairsFunction)(tt,i));
         if (opts.Verbose or debugLevel > 0) then print concatenate("isCodimAtLeast: about to compute gb PairLimit => ", toString curLimit);
-        myGB = gb(I2, PairLimit=>curLimit);
+        myGB := gb(I2, PairLimit=>curLimit);
         gensList = first entries leadTerm gb(I2, PairLimit=>curLimit);    
         if (#gensList > 0) then (
             monIdeal = monomialIdeal(first entries leadTerm myGB);
@@ -1504,7 +1505,7 @@ doc ///
         Example
             time Rn(2, S, Verbose=>true)
         Text
-            The maximum number of minors considered can be controlled by the option {\tt MaxMinors}.  Alternately, it can be controlled in a more precise way by passing a function to the option {\tt MaxMinors}.  This function should have two inputs, the first is minimum number of minors needed to determine if the ring is regular in codimension n, and the second is the total number of minors available in the Jacobian.              
+            The maximum number of minors considered can be controlled by passing the option {\tt MaxMinors} a number.  Alternately, it can be controlled in a more precise way by passing a function to the option {\tt MaxMinors}.  This function should have two inputs, the first is minimum number of minors needed before checking if the ring is regular in codimension n, and the second is the total number of minors available in the Jacobian.              
             The function {\tt Rn} does not recompute determinants, so {\tt MaxMinors} or is only an upper bound on the number of minors computed.            
         Example
             time Rn(2, S, Verbose=>true, MaxMinors=>30)
