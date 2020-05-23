@@ -794,7 +794,7 @@ Rn(ZZ, Ring) := opts -> (n1, R1) -> (
     while ( (r-d <= n1) and (i < numberOfMinorsCompute) and (#searchedSet < possibleMinors)) do (
         while (i <= opts.CodimCheckFunction(j)) and (i < numberOfMinorsCompute) do (
             submatrixS1 = internalChooseMinor(fullRank, ambR, nonzeroM, M1, Strategy=>opts.Strategy, MutableSmallest=>mutM2, MutableLargest=>mutM1);
-            if  (not (submatrixS1 === null)) and (not (searchedSet#?(locationToSubmatrix(submatrixS1)))) then (
+            if  (submatrixS1 =!= null) and (not (searchedSet#?(locationToSubmatrix(submatrixS1)))) then (
                 searchedSet#(locationToSubmatrix(submatrixS1)) = true;
                 sumMinors = sumMinors + ideal(getDetOfSubmatrix(M1, submatrixS1, DetStrategy=>opts.DetStrategy));
                 k = k+1;
@@ -852,14 +852,14 @@ chooseGoodMinors(ZZ, ZZ, Matrix) := opts -> (howMany, minorSize, M1) -> (
         while (i <= j^1.5) and (k < howMany) and (i < maxAttempts) do (
             submatrixS1 = internalChooseMinor(minorSize, ambR, nonzeroM, M1, Strategy=>opts.Strategy, MutableSmallest=>mutM2, MutableLargest=>mutM1);
 
-            if (not (submatrixS1 === null)) and (not searchedSet#?(locationToSubmatrix(submatrixS1))) then (
+            if (submatrixS1 =!= null) and (not searchedSet#?(locationToSubmatrix(submatrixS1))) then (
                 searchedSet#(locationToSubmatrix(submatrixS1)) = true;
                 sumMinors = sumMinors + ideal(getDetOfSubmatrix(M1, submatrixS1, DetStrategy=>opts.DetStrategy));
                 k = k+1;
             );
             i = i+1;
         );
-        if not (opts.PeriodicCheckFunction === null) then (
+        if (opts.PeriodicCheckFunction =!= null) then (
             --if there is a custom function
             if (opts.PeriodicCheckFunction)(sub(sumMinors, R1)) then break;
         );
@@ -1016,7 +1016,7 @@ isRankAtLeast(ZZ, Matrix) := opts -> (n1, M0) -> (
 
   if (n1 > numRows M0) or (n1 > numColumns M0) then return false;
   if (n1 == numRows M0) and (n1 == numColumns M0) then return (rank M0 == n1);
-  if (not (opts.MaxMinors === null)) then (if (opts.MaxMinors <= 0) then return (rank M0 == n1););
+  if (opts.MaxMinors =!= null) then (if (opts.MaxMinors <= 0) then return (rank M0 == n1););
   t1 := createTask(getSubmatrixOfRank, (n1, M0, MaxMinors=>infinity, Verbose => opts.Verbose, DetStrategy => opts.DetStrategy, Strategy => opts.Strategy, Threads => opts.Threads));
   t3 := createTask(rank, M0);
   schedule t1;
@@ -1061,7 +1061,7 @@ isRankAtLeastSingle(ZZ, Matrix) := opts -> (n1, M0) -> (
   if (n1 > numRows M0) or (n1 > numColumns M0) then return false;
   if (M0 == 0) then return (n1 <= 0);
   if (n1 == numRows M0) and (n1 == numColumns M0) then return (rank M0 == n1);
-  if (not (opts.MaxMinors === null)) then (if (opts.MaxMinors <= 0) then return (rank M0 == n1););
+  if (opts.MaxMinors =!= null) then (if (opts.MaxMinors <= 0) then return (rank M0 == n1););
   val := getSubmatrixOfRank(n1, M0, opts);
   if (val === null) then ( return (rank M0 >= n1); ) else return true;
   )
@@ -1080,7 +1080,7 @@ getSubmatrixOfRank(ZZ, Matrix) := opts -> (n1, M0) -> (
     M1 := sub(M0, ambRing);
     possibleMinors := binomial(numColumns M1, n1)*binomial(numRows M1, n1);
     attempts := min(possibleMinors, 2+log_10(possibleMinors));
-    if not (opts.MaxMinors === null) then attempts = opts.MaxMinors;
+    if (opts.MaxMinors =!= null) then attempts = opts.MaxMinors;
     mutM1 := mutableMatrix(M1); --for largest grevlex computations
     nonzeroM := replaceZeros(M1); --
     mutM2 := mutableMatrix(nonzeroM); --for smallest grevlex computations
@@ -1089,7 +1089,7 @@ getSubmatrixOfRank(ZZ, Matrix) := opts -> (n1, M0) -> (
 
     searchedSet := new MutableHashTable from {}; --used to store which ranks have already been computed
 
-    if not (opts.MaxMinors === null) then (
+    if (opts.MaxMinors =!= null) then (
         attempts = opts.MaxMinors;
     );
     subMatrix := null;
@@ -1099,7 +1099,7 @@ getSubmatrixOfRank(ZZ, Matrix) := opts -> (n1, M0) -> (
         if (any(flatten entries matrix mutM2, z->z==0)) then error "getSubmatrixOfRank: expected a matrix with no zero entries.";
         subMatrix = internalChooseMinor(n1, ambRing, nonzeroM, M1, internalMinorsOptions++{MutableSmallest=>mutM2, MutableLargest=>mutM1});
         --if (debugLevel > 0) or opts.Verbose then print ("getSubmatrixOfRank: found subMatrix " | toString(subMatrix));
-        if (not (subMatrix === null)) and (not (searchedSet#?(locationToSubmatrix(subMatrix)))) then (
+        if (subMatrix =!= null) and (not (searchedSet#?(locationToSubmatrix(subMatrix)))) then (
             searchedSet#(locationToSubmatrix(subMatrix)) = true;
             if (opts.DetStrategy === Rank) then (
                 mRowListS := subMatrix#0;
