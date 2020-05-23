@@ -1418,7 +1418,7 @@ doc ///
         : List
     Description
         Text
-            This function looks at subtmatrices of the given matrix, and tries to find
+            This function looks at submatrices of the given matrix, and tries to find
             one of the specified rank.  If it succeeds, it returns a list of two lists.
             The first is the list of rows, the second is the list of columns, of the desired rank submatrix.
             If it fails to find such a matrix,
