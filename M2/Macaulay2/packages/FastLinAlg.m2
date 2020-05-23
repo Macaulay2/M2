@@ -753,7 +753,6 @@ Rn(ZZ, Ring) := opts -> (n1, R1) -> (
     fullRank := n-r;
     myRand := 0;
     Q := null; C := null; C2 := null; g := null;
-    --    1/0;
 
     possibleMinors := binomial(n, fullRank)*binomial(numberRelations, fullRank);
     minNumberToCutDown := n1+1;
@@ -846,7 +845,6 @@ chooseGoodMinors(ZZ, ZZ, Matrix) := opts -> (howMany, minorSize, M1) -> (
     R2 := reorderPolynomialRing(GRevLex, ambR);
     f := map(R2, ambR);
     sumMinors := trim ideal(sub(0, ambR));
-    --1/0;
     local M2;
     local submatrixS1;
 --first we try smallest submatrices with respect to several different monomial orders
@@ -904,9 +902,7 @@ projDim(Module) := opts -> (N1) -> (
     else (
         if (debugLevel > 0) or opts.Verbose then print "projDim:  Using default max minors function."; 
         minorsCount = 5*myDim + 2*log_1.3(possibleMinors); );
---        print class opts.MaxMinors;
 
---    1/0;
     if (debugLevel > 0) or opts.Verbose then print concatenate("projDim: going to try to find ", toString minorsCount, " minors.");
     
     goodMinorsOptions := new OptionTable from {Strategy=>opts.Strategy, Verbose=>opts.Verbose, DetStrategy=>opts.DetStrategy, PeriodicCheckFunction => (J -> (dim J < 0))}; --just grab the options relevant to chooseGoodMinors
@@ -1098,7 +1094,6 @@ getSubmatrixOfRank(ZZ, Matrix) := opts -> (n1, M0) -> (
     );
     subMatrix := null;
     val := null;
-    --1/0;
     if (debugLevel > 0) or opts.Verbose then print ("getSubmatrixOfRank: Trying to find a submatrix of rank at least: " | toString(n1) | " with attempts = " | toString(attempts) | ".  DetStrategy=>" | toString(opts.DetStrategy));
     while (i < attempts)  do (
         if (any(flatten entries matrix mutM2, z->z==0)) then error "getSubmatrixOfRank: expected a matrix with no zero entries.";
