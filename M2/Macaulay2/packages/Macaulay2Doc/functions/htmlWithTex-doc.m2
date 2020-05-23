@@ -8,8 +8,8 @@ undocumented {
     (htmlWithTex, Hypertext),
     (htmlWithTex, String),
     (htmlWithTex, Descent),
-    (htmlWithTex, Holder),
-    (htmlWithTex, RowExpression)
+--    (htmlWithTex, Holder),
+--    (htmlWithTex, RowExpression)
 	     }
 
 document { 

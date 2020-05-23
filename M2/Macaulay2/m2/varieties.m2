@@ -74,7 +74,7 @@ expression CoherentSheaf := F -> (
 	    scan(rle,
 		(n,d) -> (
 		    s := new Superscript from {expression OO_X, expression n};
-		    if not all(d, zero) then s = Adjacent {s, if #d === 1 then Parenthesize d#0 else toSequence d};
+		    if not all(d, zero) then s = Adjacent {s, if #d === 1 then Parenthesize unhold expression d#0 else expression toSequence d};
 		    if expr === null then expr = s else expr = expr ++ s;
 		    ));
 	    expr

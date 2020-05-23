@@ -188,10 +188,12 @@ toString'(Function, Equation) := (fmt,v) -> (
 ZeroExpression = new Type of Holder
 ZeroExpression.synonym = "zero expression"
 ZERO = new ZeroExpression from {0}
+unhold ZeroExpression := identity
 -----------------------------------------------------------------------------
 OneExpression = new Type of Holder
 OneExpression.synonym = "one expression"
 ONE = new OneExpression from {1}
+unhold OneExpression := identity
 -----------------------------------------------------------------------------
 Parenthesize = new WrapperType of Expression
 Parenthesize.synonym = "possibly parenthesized expression"
@@ -1020,25 +1022,17 @@ html Divide := x -> (
      if precedence x#1 <= p then b = "(" | b | ")";
      a | " / " | b)
 
-html OneExpression := html ZeroExpression :=
-texMath OneExpression := texMath ZeroExpression := toString
-
 texMath Sum := v -> (
      n := # v;
      if n === 0 then "0"
      else (
 	  p := precedence v;
-	  seps := newClass(MutableList, apply(n+1, i->"+"));
-	  seps#0 = seps#n = "";
-	  v = apply(n, i -> (
-		    if class v#i === Minus
-		    then ( seps#i = "-"; v#i#0 )
-		    else v#i ));
+	  seps := apply(toList(1..n-1), i -> if class v#i === Minus then "" else "+");
 	  names := apply(n, i -> (
-		    if precedence v#i <= p
-		    then "(" | texMath v#i | ")"
+		    if precedence v#i <= p and class v#i =!= Minus
+		    then "\\left(" | texMath v#i | "\\right)"
 		    else texMath v#i ));
-	  concatenate mingle ( seps, names )))
+	  concatenate mingle ( names, seps )))
 
 html Sum := v -> (
      n := # v;
@@ -1174,16 +1168,17 @@ texMath Table := m -> (
 	"\\end{array}}")
 )
 
+texMathTable := lookup(texMath,Table);
 texMath MatrixExpression := m -> (
     if all(m,r->all(r,i->class i===ZeroExpression)) then "0"
-    else if m#?0 then if #m#0>10 then "{\\left(" | texMath(new Table from toList m) | "\\right)}" -- the extra {} is to discourage line breaks
+    else if m#?0 then if #m#0>10 then "{\\left(" | texMathTable m | "\\right)}" -- the extra {} is to discourage line breaks
      else concatenate(
       	      "\\begin{pmatrix}" | newline,
      	      between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
 	      "\\end{pmatrix}" -- notice the absence of final \\ -- so lame. no newline either in case last line is empty
 	      )
 	  )
-texMath MatrixDegreeExpression := x -> texMath MatrixExpression x#0 -- degrees not displayed atm
+texMath MatrixDegreeExpression := (lookup(texMath,MatrixExpression))@@first -- degrees not displayed atm
 
 texMath VectorExpression := v -> (
      concatenate(
@@ -1221,7 +1216,8 @@ print = x -> (<< net x << endl;) -- !! one may want to modify this depending on 
 -----------------------------------------------------------------------------
 texMath RR := x -> if not isANumber x then texMath toString x else if isInfinite x then if x>0 then texMath infinity else texMath (-infinity) else "{"|format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,"}\\cdot 10^{",x)|"}"
 texMath ZZ := toString
-tex Thing := x -> concatenate("$",texMath x,"$")
+texMathStart = texMathEnd = "$"; -- the default tex delimiters
+tex Thing := x -> concatenate(texMathStart,texMath x,texMathEnd)
 texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
 
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -1279,7 +1275,7 @@ Expression#{Standard,AfterPrint} = x -> (
 
 -----------------------------------------------------------------------------
 
-expression VisibleList := v -> new Holder from { apply(v,unhold @@ expression) }
+expression VisibleList := v -> new Holder from { apply(v, expression) }
 expression Thing :=
 expression Symbol :=
 expression Function :=
@@ -1360,7 +1356,7 @@ texAltLiteralTable = hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{
     "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
 -- not \^{} for KaTeX compatibility because of https://github.com/Khan/KaTeX/issues/1366
 texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
-texMath String := s -> "\\texttt{" | texAltLiteral s | "%\n}" -- here we refuse to consider \n issues. the final %\n is intentional!
+texMath String := s -> "\\texttt{" | texAltLiteral s | "}"
 -- this truncates very big nets
 maxlen := 3000; -- randomly chosen
 texMath Net := n -> (
