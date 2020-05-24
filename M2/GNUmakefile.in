@@ -12,6 +12,9 @@ all install:										\
 ifeq "@DEVELOPMENT@" "yes"
 optional-git-submodule-update:
 	: skipping automatic updating of submodules, because --enable-development was specified
+else ifeq "@BUILDSUBLIST@" ""
+optional-git-submodule-update:
+	: skipping automatic updating of submodules, because no submodules are being built
 else
 optional-git-submodule-update:
 	git submodule update
