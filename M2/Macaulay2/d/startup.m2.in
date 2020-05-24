@@ -286,7 +286,7 @@ if firstTime then (
 	       "programs" => "@programsdir@/",
 	       "program licenses" => "@licensesdir@/",
 	       "package" => "@packagesdir@/PKG/",
-	       "factory gftables" =>  "@gftablesdir@",
+	       "factory gftables" =>  "@GFTABLESDIR@",
 	       "packagedoc" => "@docdir@/PKG/",
 	       "packageimages" => "@docdir@/PKG/images/",
 	       "packagetests" => "@docdir@/PKG/tests/",

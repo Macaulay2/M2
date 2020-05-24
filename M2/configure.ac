@@ -1247,7 +1247,7 @@ AC_ARG_VAR([GFTABLESDIR],
 if test $BUILD_factory = yes
 then
     BUILD_gftables=yes
-    AC_SUBST([gftablesdir], [${datadir}/Macaulay2/Core/factory/])
+    AC_SUBST([GFTABLESDIR], [${datadir}/Macaulay2/Core/factory/])
 else
     BUILD_gftables=no
     if test x$GFTABLESDIR = x
@@ -1261,7 +1261,7 @@ else
     fi
     adl_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
     AC_CHECK_FILE([${GFTABLESDIR}gftables/961],
-	[AC_SUBST([gftablesdir], [$GFTABLESDIR])],
+	[AC_SUBST([GFTABLESDIR], [$GFTABLESDIR])],
 	[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
 fi
 
@@ -1761,7 +1761,7 @@ sysconfdir=/nowhere
 sharedstatedir=/nowhere
 localstatedir=/nowhere
 for i in bindir datadir includedir infodir libdir libexecdir mandir sbindir \
-         psdir pdfdir dvidir htmldir localedir gftablesdir docdir datarootdir
+         psdir pdfdir dvidir htmldir localedir GFTABLESDIR docdir datarootdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
      "$exec_prefix"|"$exec_prefix"/*)
@@ -1774,7 +1774,7 @@ do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v=
 	   eval  pre_${i}=`echo $v | sed s,"^$prefix","'\\${pre_prefix}'",`
 	   eval      ${i}=`echo $v | sed s,"^$prefix","'\\${prefix}'",`
 	   ;;
-     *) if test $i != gftablesdir #only needs normalized if we build factory
+     *) if test $i != GFTABLESDIR #only needs normalized if we build factory
 	then AC_MSG_ERROR([expected "\${$i}" => "$w" to start with "\${prefix}" or with "\${exec_prefix}"])
 	fi ;;
    esac
