@@ -15,7 +15,7 @@ Version => "0.2", Date => "April 30th, 2020", Authors => {
     Email=> "yuhuiyao4ever@gmail.com"
     }
 }, --this file is in the public domain
-Headline => "A package for faster linear algebra operations.", DebuggingMode => true, Reload=>true)
+Headline => "A package for faster linear algebra operations.")
 export{
 --  "selectSmallestTerms",
   "chooseSubmatrixSmallestDegree", --there are checks
