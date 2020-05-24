@@ -23,7 +23,7 @@ then echo === SUCCESS ===
      echo ...
      tail -5 $out
 else echo === FAILURE === see $out ===
-     grep ' \*\*\* \|^[^ ]*: error: \|^[^ ]*:[1-9][0-9]*: undefined reference\|^[^ ]*: (output file) error: \|^error: \|^fatal: \|test .* failed\|^# FAIL:  [1-9]\|^# FAIL: [1-9]\|warning: jobserver unavailable\|heads/\|.*:(.*): undefined reference to ' $out
+     grep ' \*\*\* \|^[^ ]*: error: \|^[^ ]*:[1-9][0-9]*: undefined reference\|^[^ ]*: (output file) error: \|^error: \|^fatal: \|test .* failed\|^# FAIL:  [1-9]\|^# FAIL: [1-9]\|warning: jobserver unavailable\|heads/\|.*:(.*): undefined reference to \|git-description:' $out
      echo === FAILURE ===
 fi
 
