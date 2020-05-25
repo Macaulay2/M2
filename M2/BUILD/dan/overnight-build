@@ -19,7 +19,7 @@ if [ $ret = 0 ]
 then echo === SUCCESS ===
      head -20 $out
      echo ...
-     grep '^heads/' $out
+     grep '^\(heads/\|git-description:\)' $out
      echo ...
      tail -5 $out
 else echo === FAILURE === see $out ===
