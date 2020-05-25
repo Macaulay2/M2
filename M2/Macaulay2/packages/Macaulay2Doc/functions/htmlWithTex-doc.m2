@@ -14,16 +14,16 @@ undocumented {
 
 document { 
      Key => htmlWithTex,
-     Headline => "convert to html format with some TeX math",
+     Headline => "convert to HTML format with some TeX",
      Usage => "htmlWithTex x",
      Inputs => {
 	  "x" => "any Macaulay2 object"
 	  },
      Outputs => {
-	  String => {TT "x", " converted to html/TeX math format"}
+	  String => {TT "x", " converted to html/TeX format"}
 	  },
      "Converts the input to HTML, with mathematical objects converted to
-     TeX surrounded by \\( \\). Used by the ", TO "WebApp"," printing mode.",
+     TeX. Used by the ", TO "WebApp"," printing mode.",
      EXAMPLE {
 	  "R = ZZ[x];",
       	  "htmlWithTex (x-1)^6",

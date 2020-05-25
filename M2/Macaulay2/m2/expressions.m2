@@ -1001,8 +1001,8 @@ html Expression := v -> (
 texMath Minus := v -> (
      term := v#0;
      if precedence term <= precedence v
-     then "{-\\left(" | texMath term | "\\right)}"
-     else "{-" | texMath term | "}"
+     then "-\\left(" | texMath term | "\\right)"
+     else "-" | texMath term
      )
 
 html Minus := v -> (
@@ -1367,7 +1367,7 @@ texMath Net := n -> (
 	    i=i+1;
 	    len=len+#x;
 	    if i<#n and len>maxlen then (
-		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\[-1mm]";
+		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\";
 		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
 		break
 		);
