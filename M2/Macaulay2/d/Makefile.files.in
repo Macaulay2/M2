@@ -107,6 +107,7 @@ actors5.o basic.o : \
 	@srcdir@/../e/newdelete.hpp \
 	@srcdir@/../d/M2mem.h \
 	@srcdir@/../d/debug.h \
+	../../include/M2/statuscodes.h \
 	../../include/M2/config.h
 
 # now assemble the files into various categories:

@@ -32,7 +32,10 @@
 
   #define GC_THREADS 1
 
-  /* these two macros affect the definition of GC_INIT, but have to appear before we include gc.h, in order to take effect */
+  /*
+   * these two macros affect the definition of GC_INIT, but have
+   * to appear before we include gc.h, in order to take effect
+   */
   #define GC_FREE_SPACE_DIVISOR 12
   #define GC_INITIAL_HEAP_SIZE 70000000
 

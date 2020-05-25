@@ -1,10 +1,3 @@
-/*
- * these two macros affect the definition of GC_INIT, but have to
- * appear before the include directives, in order to take effect
- */
-#define GC_FREE_SPACE_DIVISOR 12
-#define GC_INITIAL_HEAP_SIZE 70000000
-
 #define BOOST_STACKTRACE_USE_ADDR2LINE /* show source file and line number */
 // #define BOOST_STACKTRACE_USE_NOOP /* disable stacktrace */
 

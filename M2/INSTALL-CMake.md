@@ -29,7 +29,7 @@ Finally, there are 2 optional libraries that help with building other requiremen
 
 A quick build involves the following steps:
 ```
-git clone https://github.com/mahrud/M2.git -b feature/cmake
+git clone https://github.com/Macaulay2/M2.git
 cmake -GNinja -S M2/M2 -B M2/M2/BUILD/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
 cmake --build M2/M2/BUILD/build --target build-libraries build-programs
 cmake --build M2/M2/BUILD/build --target install-packages
@@ -39,9 +39,9 @@ cmake --install M2/M2/BUILD/build
 Each step is explained separately in the next section.
 
 ### Building Macaulay2
-1. Clone Macaulay2 and switch to branch `feature/cmake`:
+1. Clone Macaulay2:
 ```
-git clone https://github.com/mahrud/M2.git -b feature/cmake
+git clone https://github.com/Macaulay2/M2.git
 ```
 
 2. Setup the build environment:
