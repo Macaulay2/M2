@@ -1,5 +1,5 @@
 newPackage( "FastLinAlg",
-Version => "0.21", Date => "May 24th, 2020", Authors => {
+Version => "0.21", Date => "May 25th, 2020", Authors => {
     {Name => "Boyana Martinova",
     Email=> "u1056124@utah.edu"
     },
@@ -22,7 +22,7 @@ export{
   "chooseSubmatrixLargestDegree", --there are checks
   "chooseRandomSubmatrix",
   "reorderPolynomialRing", --there are checks
-  "Rn", --there are checks
+  "regularInCodimension", --there are checks
   --"RnReductionP",
   "chooseGoodMinors",
   "projDim", --there are checks
@@ -104,7 +104,7 @@ StrategyLexSmallest = new HashTable from {LexLargest=>0, LexSmallestTerm => 50, 
 
 StrategyRandom = new HashTable from {LexLargest=>0, LexSmallestTerm => 0, LexSmallest=>0, GRevLexSmallestTerm=>0, GRevLexSmallest=>0, GRevLexLargest=>0,Random=>100,RandomNonzero=>0};
 
-optRn := {
+optRegularInCodimension := {
     Verbose => false,
     MaxMinors => ((x,y) -> (10*x + 8*log_(1.3)(y))),
     Strategy => StrategyDefault,
@@ -634,9 +634,9 @@ nonzeroEntries (Matrix):= opts -> (M1) ->(
 
 
 
---this function checks Rn via reduction mod p
-RnReductionP = method(Options=>optRn);
-RnReductionP(ZZ, Ring, ZZ):= opts -> (n1, R1, p)-> (
+--this function checks regularInCodimension via reduction mod p
+regularInCodimensionReductionP = method(Options=>optRegularInCodimension);
+regularInCodimensionReductionP(ZZ, Ring, ZZ):= opts -> (n1, R1, p)-> (
     ambR := ambient R1;
     genList := generators(ambR);
     ambRing := ZZ/p[genList];
@@ -644,7 +644,7 @@ RnReductionP(ZZ, Ring, ZZ):= opts -> (n1, R1, p)-> (
     Id := sub(ideal R1, ambRing);
 --    myHash := new HashTable from opts;
 
-    return Rn(n1, ambRing/Id, opts);
+    return regularInCodimension(n1, ambRing/Id, opts);
 );
 
 verifyStrategy := (passedStrat) -> (
@@ -730,10 +730,10 @@ internalChooseMinor(ZZ, Ring, Matrix, Matrix) := opts -> (minorSize, ambR, nonze
 
 
 
-Rn = method(Options=>optRn);
+regularInCodimension = method(Options=>optRegularInCodimension);
 
-Rn(ZZ, Ring) := opts -> (n1, R1) -> (
-    if (not verifyStrategy(opts.Strategy)) then error "Rn: Expected a valid strategy, a HashTable or MutableHashTable with expected Keys.";
+regularInCodimension(ZZ, Ring) := opts -> (n1, R1) -> (
+    if (not verifyStrategy(opts.Strategy)) then error "regularInCodimension: Expected a valid strategy, a HashTable or MutableHashTable with expected Keys.";
     ambR := ambient R1;
     Id := ideal R1;
     R1a := R1;
@@ -765,7 +765,7 @@ Rn(ZZ, Ring) := opts -> (n1, R1) -> (
         numberOfMinorsCompute = opts.MaxMinors;)
     else (
         --numberOfMinorsCompute = 5*minNumberToCutDown + 8*ceiling(log_1.3(possibleMinors));
-        error "Rn:  You must pass MaxMinors either a function or a number.";
+        error "regularInCodimension:  You must pass MaxMinors either a function or a number.";
     );
 
     minTerm := sub(0, R1a);
@@ -781,7 +781,7 @@ Rn(ZZ, Ring) := opts -> (n1, R1) -> (
     d := dim(quotient1);
     D := dim(ambR);
 
-    if (opts.Verbose or debugLevel > 0) then print concatenate("Rn: ring dimension =", toString(d), ", there are ", toString(possibleMinors), " possible minors, we will compute up to ", toString(numberOfMinorsCompute), " of them.");
+    if (opts.Verbose or debugLevel > 0) then print concatenate("regularInCodimension: ring dimension =", toString(d), ", there are ", toString(possibleMinors), " possible minors, we will compute up to ", toString(numberOfMinorsCompute), " of them.");
 
     i := 0;
     k := 0;
@@ -792,7 +792,7 @@ Rn(ZZ, Ring) := opts -> (n1, R1) -> (
     myRandom := 0;
     local M2;
     local submatrixS1;
-    if (opts.Verbose or debugLevel > 0) then print concatenate("Rn: About to enter loop");
+    if (opts.Verbose or debugLevel > 0) then print concatenate("regularInCodimension: About to enter loop");
     while ( (r-d <= n1) and (i < numberOfMinorsCompute) and (#searchedSet < possibleMinors)) do (
         while (i <= opts.CodimCheckFunction(j)) and (i < numberOfMinorsCompute) do (
             submatrixS1 = internalChooseMinor(fullRank, ambR, nonzeroM, M1, Strategy=>opts.Strategy, MutableSmallest=>mutM2, MutableLargest=>mutM1);
@@ -803,22 +803,22 @@ Rn(ZZ, Ring) := opts -> (n1, R1) -> (
             );
             i = i+1;
         );
-        if (opts.Verbose or debugLevel > 0) then print concatenate("Rn:  Loop step, about to compute dimension.  Submatrices considered: ", toString(i), ", and computed = ", toString(# keys searchedSet) );
+        if (opts.Verbose or debugLevel > 0) then print concatenate("regularInCodimension:  Loop step, about to compute dimension.  Submatrices considered: ", toString(i), ", and computed = ", toString(# keys searchedSet) );
         mutM2 = mutableMatrix(nonzeroM); --reset this matrix periodically
         mutM1 = mutableMatrix(M1);
         if (true === isCodimAtLeast((D - r) + n1 + 1, Id + sumMinors, PairLimit=>opts.PairLimit, SPairsFunction => opts.SPairsFunction)) then (
             d = r-n1 - 1;
-            if (opts.Verbose or debugLevel > 0) then print concatenate("Rn:  singularLocus dimension verified by isCodimAtLeast");            
+            if (opts.Verbose or debugLevel > 0) then print concatenate("regularInCodimension:  singularLocus dimension verified by isCodimAtLeast");            
         );
         if (not opts.UseOnlyFastCodim) and (r-d <= n1) then (
-            if (opts.Verbose or debugLevel > 0) then print concatenate("Rn:  isCodimAtLeast failed, computing codim.");            
+            if (opts.Verbose or debugLevel > 0) then print concatenate("regularInCodimension:  isCodimAtLeast failed, computing codim.");            
             quotient1 = ambR/(Id+sumMinors);
             d = dim(quotient1);
         );
-        if (opts.Verbose or debugLevel > 0) then print concatenate("Rn:  partial singular locus dimension computed, = ", toString(d));
+        if (opts.Verbose or debugLevel > 0) then print concatenate("regularInCodimension:  partial singular locus dimension computed, = ", toString(d));
         j = j+1;
     );
-    if (opts.Verbose or debugLevel > 0) then print concatenate("Rn:  Loop completed, submatrices considered = ", toString(i), ", and computed = ", toString(# keys searchedSet), ".  singular locus dimension appears to be = ", toString(d));
+    if (opts.Verbose or debugLevel > 0) then print concatenate("regularInCodimension:  Loop completed, submatrices considered = ", toString(i), ", and computed = ", toString(# keys searchedSet), ".  singular locus dimension appears to be = ", toString(d));
     if ( (r-d) > n1) then (return true);
     if  (r-d<n+1) and (#searchedSet <= possibleMinors) then (return null);
     if (#searchedSet == possibleMinors) and ((r-d)<n1+1) then (return false);
@@ -1250,7 +1250,7 @@ document {
     UL {
 	  {TO "chooseGoodMinors", " Tries to find interesting minors of a matrix."},
       {TO "isRankAtLeast", " Tries to show that a matrix has rank at least a given number by looking at submatrices"},
-	  {TO "Rn", " checks whether a ring is regular in codimension n only in the affirmative." },
+	  {TO "regularInCodimension", " checks whether a ring is regular in codimension n only in the affirmative." },
 	  {TO "projDim", " checks the projective dimension of a module and may give better answers than ", TO "pdim", " in the case that R is not homogeneous" },
       {TO "recursiveMinors", " provides a different strategy for computing minors of a matrix.  It is a cofactor strategy where the determinants of smaller minors are stored." },
       {TO "isCodimAtLeast", " provides a way for finding lower bounds for the codimension of an ideal, without actually computing the codimension."},
@@ -1380,7 +1380,8 @@ doc ///
         n1: ZZ
         M1: Matrix
     Outputs
-        : List
+        : Boolean
+            true if it has that rank, otherwise false
     Description
         Text
             This function tries to quickly determine if the matrix has a given rank.
@@ -1396,7 +1397,7 @@ doc ///
             isRankAtLeast(2, M)
             isRankAtLeast(3, M)
         Text
-            The option {tt Threads} can be used to somewhat multithread this function.  If {\tt allowableThreads} is above 2 and {\tt Threads} is set above 1, then this function will try to simultaneously compute the rank of the matrix while looking for a submatrix of a certain rank.
+            The option {\tt Threads} can be used to somewhat multithread this function.  If {\tt allowableThreads} is above 2 and {\tt Threads} is set above 1, then this function will try to simultaneously compute the rank of the matrix while looking for a submatrix of a certain rank.
     SeeAlso
         getSubmatrixOfRank
         [isRankAtLeast, Strategy]
@@ -1417,6 +1418,9 @@ doc ///
         M1: Matrix
     Outputs
         : List
+            with a list of rows and columns, if such a submatrix was found
+        : null
+            if no such submatrix is found, it returns null
     Description
         Text
             This function looks at submatrices of the given matrix, and tries to find
@@ -1437,7 +1441,7 @@ doc ///
         Text
             The option {\tt Strategy} is used to used to control how the function computes
             the rank of the submatrices considered.  See @TO [getSubmatrixOfRank, Strategy]@.
-            In the future, we hope to multithread this function, in which case the threading would be controlled by the option {tt Threads}.
+            In the future, we hope to multithread this function, in which case the threading would be controlled by the option {\tt Threads}.
     SeeAlso
         isRankAtLeast
         [getSubmatrixOfRank, Strategy]
@@ -1445,50 +1449,50 @@ doc ///
 
 doc ///
     Key
-        Rn
-        (Rn, ZZ, Ring)
-        [Rn, Verbose]
-        [Rn, ModP]
-        [Rn, MinMinorsFunction]
-        [Rn, CodimCheckFunction]
-        [Rn, PairLimit]
-        [Rn, UseOnlyFastCodim]
-        [Rn, SPairsFunction]
+        regularInCodimension
+        (regularInCodimension, ZZ, Ring)
+        [regularInCodimension, Verbose]
+        [regularInCodimension, ModP]
+        [regularInCodimension, MinMinorsFunction]
+        [regularInCodimension, CodimCheckFunction]
+        [regularInCodimension, PairLimit]
+        [regularInCodimension, UseOnlyFastCodim]
+        [regularInCodimension, SPairsFunction]
         MinMinorsFunction
         CodimCheckFunction
         UseOnlyFastCodim
     Headline
         attempts to show that the ring is regular in codimension n
     Usage
-        Rn(n, R)
+        regularInCodimension(n, R)
     Inputs
         n: ZZ
         R: Ring
     Outputs
         : Boolean
-            true, if the ring is Rn, false if it determines it is not
+            true, if the ring is regular in codimension n ($R_n$), false if it determines it is not
         : null
-            if no determination is made
+            if no determination is made it returns null
     Description
         Text
-            This function looks at interesting minors of the jacobian matrix to try to verify that the ring is Rn.
+            This function looks at interesting minors of the jacobian matrix to try to verify that the ring is $R_n$.
             It is frequently much faster at giving an affirmative answer than computing the dimension of the ideal of all minors of the Jacobian.
             We begin with a simple example which is R1, but not R2.
         Example
             R = QQ[x, y, z]/ideal(x*y-z^2);
-            Rn(1, R)
-            Rn(2, R)
+            regularInCodimension(1, R)
+            regularInCodimension(2, R)
         Text
-            Next we consider a more interesting example that is R1 but not R2, and highlight the speed differences.  Note that {\tt Rn(2, R)} returns nothing, as the function did not determine if the ring was Rn.
+            Next we consider a more interesting example that is R1 but not R2, and highlight the speed differences.  Note that {\tt regularInCodimension(2, R)} returns nothing, as the function did not determine if the ring was $R_n$.
         Example
             T = ZZ/101[x1,x2,x3,x4,x5,x6,x7];
             I =  ideal(x5*x6-x4*x7,x1*x6-x2*x7,x5^2-x1*x7,x4*x5-x2*x7,x4^2-x2*x6,x1*x4-x2*x5,x2*x3^3*x5+3*x2*x3^2*x7+8*x2^2*x5+3*x3*x4*x7-8*x4*x7+x6*x7,x1*x3^3*x5+3*x1*x3^2*x7+8*x1*x2*x5+3*x3*x5*x7-8*x5*x7+x7^2,x2*x3^3*x4+3*x2*x3^2*x6+8*x2^2*x4+3*x3*x4*x6-8*x4*x6+x6^2,x2^2*x3^3+3*x2*x3^2*x4+8*x2^3+3*x2*x3*x6-8*x2*x6+x4*x6,x1*x2*x3^3+3*x2*x3^2*x5+8*x1*x2^2+3*x2*x3*x7-8*x2*x7+x4*x7,x1^2*x3^3+3*x1*x3^2*x5+8*x1^2*x2+3*x1*x3*x7-8*x1*x7+x5*x7);
             S = T/I;
             dim S
-            time Rn(1, S)
-            time Rn(2, S)
+            time regularInCodimension(1, S)
+            time regularInCodimension(2, S)
         Text
-            On one machine, a call of {\tt dim singularLocus R} took {\tt 32.4468} seconds and returned {\tt 1}.  On the same machine, {\tt Rn(1, R)} took only {\tt 0.153042} seconds.
+            On one machine, a call of {\tt dim singularLocus R} took {\tt 32.4468} seconds and returned {\tt 1}.  On the same machine, {\tt regularInCodimension(1, R)} took only {\tt 0.153042} seconds.
         Text
             The following is a (pruned) affine chart on Abelian surface (the product of elliptic curves).  It is nonsingular, as our function verifies.
             If one does not prune it, then the {\tt dim singularLocus} call takes an enormous amount of time, otherwise {\tt dim singularLocus} frequently takes a similar amount of time to our function.
@@ -1496,19 +1500,19 @@ doc ///
             R = QQ[c, f, g, h]/ideal(g^3+h^3+1,f*g^3+f*h^3+f,c*g^3+c*h^3+c,f^2*g^3+f^2*h^3+f^2,c*f*g^3+c*f*h^3+c*f,c^2*g^3+c^2*h^3+c^2,f^3*g^3+f^3*h^3+f^3,c*f^2*g^3+c*f^2*h^3+c*f^2,c^2*f*g^3+c^2*f*h^3+c^2*f,c^3-f^2-c,c^3*h-f^2*h-c*h,c^3*g-f^2*g-c*g,c^3*h^2-f^2*h^2-c*h^2,c^3*g*h-f^2*g*h-c*g*h,c^3*g^2-f^2*g^2-c*g^2,c^3*h^3-f^2*h^3-c*h^3,c^3*g*h^2-f^2*g*h^2-c*g*h^2,c^3*g^2*h-f^2*g^2*h-c*g^2*h,c^3*g^3+f^2*h^3+c*h^3+f^2+c);
             dim(R)
             time (dim singularLocus (R))
-            time Rn(2, R)
-            time Rn(2, R)
-            time Rn(2, R)
+            time regularInCodimension(2, R)
+            time regularInCodimension(2, R)
+            time regularInCodimension(2, R)
         Text
             The function works by choosing interesting looking submatrices, computing their determinants, and periodically (based on a logarithmic growth setting), computing the dimension of a subideal of the Jacobian.
             The option {\tt Verbose} can be used to see this in action.
         Example
-            time Rn(2, S, Verbose=>true)
+            time regularInCodimension(2, S, Verbose=>true)
         Text
             The maximum number of minors considered can be controlled by passing the option {\tt MaxMinors} a number.  Alternately, it can be controlled in a more precise way by passing a function to the option {\tt MaxMinors}.  This function should have two inputs, the first is minimum number of minors needed before checking if the ring is regular in codimension n, and the second is the total number of minors available in the Jacobian.              
-            The function {\tt Rn} does not recompute determinants, so {\tt MaxMinors} or is only an upper bound on the number of minors computed.            
+            The function {\tt regularInCodimension} does not recompute determinants, so {\tt MaxMinors} or is only an upper bound on the number of minors computed.            
         Example
-            time Rn(2, S, Verbose=>true, MaxMinors=>30)
+            time regularInCodimension(2, S, Verbose=>true, MaxMinors=>30)
         Text
             This function has many options which allow you to fine tune the strategy used to find interesting minors.
             You can pass it a {\tt HashTable} specifying the strategy via the option {\tt Strategy}.  See @TO LexSmallest@ for how to construct this {\tt HashTable}.
@@ -1521,20 +1525,20 @@ doc ///
             StrategyCurrent#Random = 0;
             StrategyCurrent#LexSmallest = 100;
             StrategyCurrent#LexSmallestTerm = 0;
-            time Rn(2, R, Strategy=>StrategyCurrent)
-            time Rn(2, R, Strategy=>StrategyCurrent)
-            time Rn(1, S, Strategy=>StrategyCurrent)
-            time Rn(1, S, Strategy=>StrategyCurrent)
+            time regularInCodimension(2, R, Strategy=>StrategyCurrent)
+            time regularInCodimension(2, R, Strategy=>StrategyCurrent)
+            time regularInCodimension(1, S, Strategy=>StrategyCurrent)
+            time regularInCodimension(1, S, Strategy=>StrategyCurrent)
             StrategyCurrent#LexSmallest = 0;
             StrategyCurrent#LexSmallestTerm = 100;
-            time Rn(2, R, Strategy=>StrategyCurrent)
-            time Rn(2, R, Strategy=>StrategyCurrent)
-            time Rn(1, S, Strategy=>StrategyCurrent)
-            time Rn(1, S, Strategy=>StrategyCurrent)
-            time Rn(1, S, Strategy=>StrategyRandom)
-            time Rn(1, S, Strategy=>StrategyRandom)
+            time regularInCodimension(2, R, Strategy=>StrategyCurrent)
+            time regularInCodimension(2, R, Strategy=>StrategyCurrent)
+            time regularInCodimension(1, S, Strategy=>StrategyCurrent)
+            time regularInCodimension(1, S, Strategy=>StrategyCurrent)
+            time regularInCodimension(1, S, Strategy=>StrategyRandom)
+            time regularInCodimension(1, S, Strategy=>StrategyRandom)
         Text
-            The minimum number of minors computed before checking the codimension, can also be controlled by an option {\tt MinMinorsFunction}.  This is should be a function of a single variable, the number of minors computed.  Finally, via the option {\tt CodimCheckFunction}, you can pass the {\tt Rn} a function which controls how frequently the codimension of the partial Jacobian ideal is computed.  By default this is the floor of {\tt 1.3^k}.  
+            The minimum number of minors computed before checking the codimension, can also be controlled by an option {\tt MinMinorsFunction}.  This is should be a function of a single variable, the number of minors computed.  Finally, via the option {\tt CodimCheckFunction}, you can pass {\tt regularInCodimension} a function which controls how frequently the codimension of the partial Jacobian ideal is computed.  By default this is the floor of {\tt 1.3^k}.  
             Finally, passing the option {\tt ModP => p} will do the computation after changing the coefficient ring to {\tt ZZ/p}.
         Text
             The options {\tt PairLimit} and {\tt SPairsFunction} are passed directly to {\tt isCodimAtLeast}.  You can turn off internal calls to {\tt codim/dim}, and only use {\tt isCodimAtLeast} by setting {\tt UseOnlyFastCodim => true}.
@@ -1545,7 +1549,7 @@ doc ///
 
 
 document {
-    Key => {GRevLexLargest, GRevLexSmallest, GRevLexSmallestTerm, LexLargest, LexSmallest, LexSmallestTerm, Random, RandomNonzero, [chooseGoodMinors, Strategy], [getSubmatrixOfRank, Strategy], [Rn, Strategy], [isRankAtLeast, Strategy], [projDim, Strategy], "StrategyCurrent", "StrategyDefault", "StrategyDefaultNonRandom", "StrategyLexSmallest", "StrategyGRevLexSmallest", "StrategyRandom"},
+    Key => {GRevLexLargest, GRevLexSmallest, GRevLexSmallestTerm, LexLargest, LexSmallest, LexSmallestTerm, Random, RandomNonzero, [chooseGoodMinors, Strategy], [getSubmatrixOfRank, Strategy], [regularInCodimension, Strategy], [isRankAtLeast, Strategy], [projDim, Strategy], "StrategyCurrent", "StrategyDefault", "StrategyDefaultNonRandom", "StrategyLexSmallest", "StrategyGRevLexSmallest", "StrategyRandom"},
     Headline => "strategies for choosing submatrices",
     "Many of the core functions of this package allow the user to fine tune the strategy of how submatrices are selected.  Different strategies yield markedly different performance or results on these examples.
     These are controlled by specifying a {\tt Strategy => } option, pointing to a {\tt HashTable}.  This HashTable should have the following keys.",
@@ -1681,12 +1685,12 @@ doc ///
     Key
         ModP
     Headline
-        an option for Rn
+        an option for regularInCodimension
     Description
         Text
             This option is used to tell the function to do the computation modulo a prime p.
     SeeAlso
-        Rn
+        regularInCodimension
 ///
 
 doc ///
@@ -1708,15 +1712,15 @@ doc ///
         MaxMinors
         [getSubmatrixOfRank, MaxMinors]
         [isRankAtLeast, MaxMinors]
-        [Rn, MaxMinors]
+        [regularInCodimension, MaxMinors]
         [projDim, MaxMinors]
     Headline
         an option to control depth of search
     Description
         Text
-            This option controls how many minors various functions consider.  Increasing it will make certain functions search longer, but may make them give more useful outputs.  The functions {\tt projDim} and {\tt Rn} can also take in more complicated inputs.  See their documentation for details.
+            This option controls how many minors various functions consider.  Increasing it will make certain functions search longer, but may make them give more useful outputs.  The functions {\tt projDim} and {\tt regularInCodimension} can also take in more complicated inputs.  See their documentation for details.
     SeeAlso
-        Rn
+        regularInCodimension
         projDim
         isRankAtLeast
         getSubmatrixOfRank
@@ -1760,8 +1764,7 @@ doc ///
         [getSubmatrixOfRank, DetStrategy]
         [isRankAtLeast, DetStrategy]
         [projDim, DetStrategy]
-        [Rn, DetStrategy]
-        [RnReductionP, DetStrategy]
+        [regularInCodimension, DetStrategy]
     Headline
         DetStrateg is a strategy for allowing the user to choose how determinants (or rank), is computed
     Description
@@ -1816,7 +1819,7 @@ doc ///
             r = rank myDiff;
             time isCodimAtLeast(3, chooseGoodMinors(15, r, myDiff, Strategy=>StrategyDefaultNonRandom))
         Text
-            The function works by computing {\tt gb(I, PairLimit=>f(i))} for successive values of {\tt i}.  Here {tt f(i)} is a function that takes {\tt t}, some approximation of the base degree value
+            The function works by computing {\tt gb(I, PairLimit=>f(i))} for successive values of {\tt i}.  Here {\tt f(i)} is a function that takes {\tt t}, some approximation of the base degree value
             of the polynomial ring (for example, in a standard graded polynomial ring, this is probably expected to be {\tt \{1\}}).  And {\tt i} is a counting variable.  
             You can provide your own function by calling {\tt isCodimAtLeast(n, I, SPairsFunction=>( (i) -> f(i) )}.   Perhaps more commonly however, the user may want to 
             instead tell the function to compute for larger values of {\tt i}.  This is done via the option {\tt PairLimit}.  This is the max value of {\tt i} to consider before the function gives up.
@@ -1855,15 +1858,15 @@ doc ///
         isCodimAtLeast
 ///
 
-TEST /// --check #0 (Rn)
+TEST /// --check #0 (regularInCodimension)
 R = QQ[x,y,z]/ideal(x^2-y*z);
-assert(Rn(1, R)=== true);
+assert(regularInCodimension(1, R)=== true);
 ///
 
-TEST /// --check #1 (Rn)
+TEST /// --check #1 (regularInCodimension)
 T = ZZ/101[x1,x2,x3,x4,x5,x6,x7];
 I =  ideal(x5*x6-x4*x7,x1*x6-x2*x7,x5^2-x1*x7,x4*x5-x2*x7,x4^2-x2*x6,x1*x4-x2*x5,x2*x3^3*x5+3*x2*x3^2*x7+8*x2^2*x5+3*x3*x4*x7-8*x4*x7+x6*x7,x1*x3^3*x5+3*x1*x3^2*x7+8*x1*x2*x5+3*x3*x5*x7-8*x5*x7+x7^2,x2*x3^3*x4+3*x2*x3^2*x6+8*x2^2*x4+3*x3*x4*x6-8*x4*x6+x6^2,x2^2*x3^3+3*x2*x3^2*x4+8*x2^3+3*x2*x3*x6-8*x2*x6+x4*x6,x1*x2*x3^3+3*x2*x3^2*x5+8*x1*x2^2+3*x2*x3*x7-8*x2*x7+x4*x7,x1^2*x3^3+3*x1*x3^2*x5+8*x1^2*x2+3*x1*x3*x7-8*x1*x7+x5*x7);
-assert((Rn(1,T/I) === true) or (Rn(1,T/I) === true));
+assert((regularInCodimension(1,T/I) === true) or (regularInCodimension(1,T/I) === true));
 ///
 
 TEST /// --check #2 (ProjDim)
@@ -1872,33 +1875,33 @@ I = ideal((x^3+y)^2, (x^2+y^2)^2, (x+y^3)^2, (x*y)^2);
 assert(projDim(module I, Strategy=>StrategyDefault)==1);
 ///
 
-TEST /// --check #3 (Rn, RnReductionP)
+TEST /// --check #3 (regularInCodimension)
 R = (QQ)[YY_1, YY_2, YY_3, YY_4, YY_5, YY_6, YY_7, YY_8, YY_9];
 J =  ideal(YY_8^2-YY_7*YY_9,YY_6*YY_8-YY_5*YY_9,YY_3*YY_8-YY_2*YY_9,YY_2*YY_8-YY_1*YY_9,YY_6*YY_7-YY_5*YY_8,YY_3*YY_7-YY_1*YY_9,YY_2*YY_7-YY_1*YY_8,YY_6^2-YY_4*YY_9,YY_5*YY_6-YY_4*YY_8,YY_4*YY_6+YY_1*YY_8-10*YY_1*YY_9-YY_
      2*YY_9+10*YY_3*YY_9,YY_3*YY_6-YY_8*YY_9-10*YY_9^2,YY_2*YY_6-YY_7*YY_9-10*YY_8*YY_9,YY_1*YY_6-YY_7*YY_8-10*YY_7*YY_9,YY_5^2-YY_4*YY_7,YY_4*YY_5+YY_1*YY_7-10*YY_1*YY_8-YY_1*YY_9+10*YY_2*YY_9,YY_3*YY_5-YY_7*YY_9-10*YY_8
      *YY_9,YY_2*YY_5-YY_7*YY_8-10*YY_7*YY_9,YY_1*YY_5-YY_7^2-10*YY_7*YY_8,YY_4^2+YY_7^2-YY_9^2,YY_3*YY_4-YY_5*YY_9-10*YY_6*YY_9,YY_2*YY_4-YY_5*YY_8-10*YY_5*YY_9,YY_1*YY_4-YY_5*YY_7-10*YY_5*YY_8,YY_2^2-YY_1*YY_3,YY_1*YY_2-
      10*YY_1*YY_3-YY_2*YY_3+10*YY_3^2+YY_4*YY_8+10*YY_4*YY_9,YY_1^2-YY_3^2+YY_4*YY_7+20*YY_4*YY_8-YY_4*YY_9);
-assert((Rn(1, R/J, MaxMinors=>15)===null) and (Rn(1, R/J, MaxMinors=>15, ModP=>7)===null));
+assert((regularInCodimension(1, R/J, MaxMinors=>15)===null) and (regularInCodimension(1, R/J, MaxMinors=>15, ModP=>7)===null));
 ///
 
-TEST/// --check #4 (Rn)
+TEST/// --check #4 (regularInCodimension)
 T = (ZZ/101)[YY_1, YY_2, YY_3, YY_4, YY_5];
 J = ideal(YY_2*YY_3+3*YY_3^2+43*YY_1*YY_4+YY_3*YY_4-43*YY_2*YY_5+50*YY_3*YY_5,YY_2^2-18*YY_3^2+YY_1*YY_4-18*YY_2*YY_4-39*YY_3*YY_4-YY_1*YY_5+8*YY_2*YY_5-47*YY_3*YY_5,YY_1^2+16*YY_1*YY_2-3*YY_1*YY_3-32*YY_3^2+23*YY_1*YY_4-42*YY_2*YY_4-43*YY_3*YY_4+19*YY_1*YY_5+20*YY_2*YY_5-34*YY_3*YY_5,YY_3^3+16*YY_1*YY_2*YY_4+8*YY_1*YY_3*YY_4-36*YY_3^2*YY_4-YY_1*YY_4^2-47*YY_3*YY_4^2+45*YY_1*YY_3*YY_5-31*YY_3^2*YY_5+7*YY_1*YY_4*YY_5+16*YY_2*YY_4*YY_5+37*YY_3*YY_4*YY_5-16*YY_1*YY_5^2+36*YY_2*YY_5^2+15*YY_3*YY_5^2,YY_1*YY_3^2-48*YY_1*YY_2*YY_4+21*YY_1*YY_3*YY_4-45*YY_3^2*YY_4+47*YY_1*YY_4^2+10*YY_2*YY_4^2-47*YY_3*YY_4^2+13*YY_4^3-25*YY_1*YY_2*YY_5-33*YY_1*YY_3*YY_5+45*YY_3^2*YY_5+24*YY_1*YY_4*YY_5-36*YY_2*YY_4*YY_5-41*YY_3*YY_4*YY_5+26*YY_4^2*YY_5-27*YY_1*YY_5^2+30*YY_2*YY_5^2-13*YY_3*YY_5^2-24*YY_4*YY_5^2-17*YY_5^3);
-assert(Rn(1, T/J)===true);
+assert(regularInCodimension(1, T/J)===true);
 --we shoudl change these a bit
---assert(Rn(1, T/J, LexSmallest=>0, Random=>0)===true);
--- note: if we set LexLargest=>0 running just on LexSmallest then Rn returns null
+--assert(regularInCodimension(1, T/J, LexSmallest=>0, Random=>0)===true);
+-- note: if we set LexLargest=>0 running just on LexSmallest then regularInCodimension returns null
 -- same happens for all =>0, GRevLexSmallest=> nonzero
 -- GRevLexLargest works
--- assert(Rn(1, T/J, LexLargest=>0, LexSmallest=>0, GRevLexLargest=>20, Random=>0)===true);
--- assert(Rn(1, T/J, LexLargest=>0, LexSmallest=>0)===true);
--- assert(Rn(1, T/J, LexLargest=>0, LexSmallest=>0, Random=>0, RandomNonzero=>20)===true);
+-- assert(regularInCodimension(1, T/J, LexLargest=>0, LexSmallest=>0, GRevLexLargest=>20, Random=>0)===true);
+-- assert(regularInCodimension(1, T/J, LexLargest=>0, LexSmallest=>0)===true);
+-- assert(regularInCodimension(1, T/J, LexLargest=>0, LexSmallest=>0, Random=>0, RandomNonzero=>20)===true);
 ///
 
 TEST/// --check #5, this is an affine chart on an Abelian surface, it is nonsingular
 S = QQ[c, f, g, h];
 J = ideal(g^3+h^3+1,f*g^3+f*h^3+f,c*g^3+c*h^3+c,f^2*g^3+f^2*h^3+f^2,c*f*g^3+c*f*h^3+c*f,c^2*g^3+c^2*h^3+c^2,f^3*g^3+f^3*h^3+f^3,c*f^2*g^3+c*f^2*h^3+c*f^2,c^2*f*g^3+c^2*f*h^3+c^2*f,c^3-f^2-c,c^3*h-f^2*h-c*h,c^3*g-f^2*g-c*g,c^3*h^2-f^2*h^2-c*h^2,c^3*g*h-f^2*g*h-c*g*h,c^3*g^2-f^2*g^2-c*g^2,c^3*h^3-f^2*h^3-c*h^3,c^3*g*h^2-f^2*g*h^2-c*g*h^2,c^3*g^2*h-f^2*g^2*h-c*g^2*h,c^3*g^3+f^2*h^3+c*h^3+f^2+c);
-assert((Rn(2, S/J) === true) or (Rn(2, S/J) === true));
+assert((regularInCodimension(2, S/J) === true) or (regularInCodimension(2, S/J) === true));
 ///
 
 TEST /// --check #6, we found this example by dehomogenizing a homongeneous example, pdim does not provide the correct answer (of course, it does if you rehomogenize)
