@@ -939,7 +939,8 @@ projDim(Module) := opts -> (N1) -> (
 isGBDone := (myGB) -> (
     --a temporary function for finding out if a gb computation is done.
     myStr := status myGB;
-    if (0 < #select("status: done", myStr)) then return true else return false;
+    --if (0 < #select("status: done", myStr)) then return true else return false;
+    return match("status: done", myStr));-- then  return true else return false;
 );
 
 
