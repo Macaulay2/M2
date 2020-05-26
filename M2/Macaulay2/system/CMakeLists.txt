@@ -33,4 +33,4 @@ endif()
 target_compile_options(M2-supervisor PRIVATE -Wcast-qual -Wno-unused)
 
 # Export the target
-install(TARGETS M2-supervisor EXPORT Macaulay2)
+install(TARGETS M2-supervisor EXPORT Macaulay2 COMPONENT devel EXCLUDE_FROM_ALL)

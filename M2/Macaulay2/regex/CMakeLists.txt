@@ -36,4 +36,4 @@ target_compile_options(M2-regex PRIVATE
   )
 
 # Export the target
-install(TARGETS M2-regex EXPORT Macaulay2)
+install(TARGETS M2-regex EXPORT Macaulay2 COMPONENT devel EXCLUDE_FROM_ALL)

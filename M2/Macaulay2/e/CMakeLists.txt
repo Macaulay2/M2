@@ -341,7 +341,7 @@ target_compile_options(M2-engine PRIVATE
 install(TARGETS M2-engine EXPORT Macaulay2
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2
-  COMPONENT ALL)
+  COMPONENT devel EXCLUDE_FROM_ALL)
 
 ###############################################################################
 ## Add source linting and formatting checks for this target, see cmake/prechecks.cmake
