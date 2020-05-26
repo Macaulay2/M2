@@ -225,13 +225,14 @@ document { Key => {applicationDirectory, "application directory"},
      Headline => "the path to the user's application directory",
      Usage => "applicationDirectory()",
      Outputs => { String => "the path to the user's application directory" },
+     SourceCode => applicationDirectory,
      PARA { "The function ", TO "installPackage", ", by default, installs packages under the application directory.  At program startup,
 	  unless the ", TT "-q", " option is provided on the command line, an entry will be added to the ", TO "path", " so
 	  packages can be loaded from there by ", TO "loadPackage", " and ", TO "needsPackage", ".  Moreover, the ", TO "initialization file", ", if found there, will be run."
 	  },
      PARA { "The function ", TO "applicationDirectorySuffix", " determines the value of ", TT "applicationDirectory", ", and can be modified by the user." },
      EXAMPLE "applicationDirectory()",
-     SeeAlso => applicationDirectorySuffix}
+     SeeAlso => "applicationDirectorySuffix"}
 
 document {
      Key => installedPackages,
