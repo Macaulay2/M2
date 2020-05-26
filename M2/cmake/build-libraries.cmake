@@ -165,8 +165,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries eigen "" EIGEN3_FOUND)
 # Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
 # FIXME: fix a commit to use instead of master
 ExternalProject_Add(build-bdwgc
-#  GIT_REPOSITORY    https://github.com/ivmai/bdwgc.git
-#  GIT_TAG           master
   PREFIX            libraries/bdwgc
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/bdwgc
   BINARY_DIR        libraries/bdwgc/build
@@ -345,10 +343,8 @@ endif()
 _ADD_COMPONENT_DEPENDENCY(libraries ntl mp NTL_FOUND)
 
 
-# https://github.com/wbhart/flint2
+# https://github.com/Macaulay2/flint2
 ExternalProject_Add(build-flint
-#  GIT_REPOSITORY    https://github.com/mahrud/flint2.git
-#  GIT_TAG           HEAD
   PREFIX            libraries/flint2
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint2
   BINARY_DIR        libraries/flint2/build
@@ -662,8 +658,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries glpk mp GLPK_FOUND)
 
 # https://github.com/google/googletest
 ExternalProject_Add(build-googletest
-#  GIT_REPOSITORY    https://github.com/google/googletest.git
-#  GIT_TAG           release-1.10.0 # 42bc671f
   PREFIX            libraries/googletest
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/googletest
   BINARY_DIR        libraries/googletest/build
@@ -681,8 +675,6 @@ endif()
 
 # https://github.com/Macaulay2/memtailor
 ExternalProject_Add(build-memtailor
-#  GIT_REPOSITORY    https://github.com/mahrud/memtailor.git
-#  GIT_TAG           ece5f0b292abd97b48ba103dc4566fc708e8a968
   PREFIX            libraries/memtailor
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/memtailor
   BINARY_DIR        libraries/memtailor/build
@@ -702,8 +694,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries memtailor googletest MEMTAILOR_FOUND)
 
 # https://github.com/Macaulay2/mathic
 ExternalProject_Add(build-mathic
-#  GIT_REPOSITORY    https://github.com/mahrud/mathic.git
-#  GIT_TAG           f96f18604d6a1308baac3a7f14b3d8a18f636461
   PREFIX            libraries/mathic
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathic
   BINARY_DIR        libraries/mathic/build
@@ -727,8 +717,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries mathic memtailor MATHIC_FOUND)
 # TODO: g++ warning: tbb.h contains deprecated functionality.
 # https://www.threadingbuildingblocks.org/docs/help/reference/appendices/deprecated_features.html
 ExternalProject_Add(build-mathicgb
-#  GIT_REPOSITORY    https://github.com/mahrud/mathicgb.git
-#  GIT_TAG           1da73abd34d90572ee765c8be133dce23b07dfb7
   PREFIX            libraries/mathicgb
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathicgb
   BINARY_DIR        libraries/mathicgb/build
