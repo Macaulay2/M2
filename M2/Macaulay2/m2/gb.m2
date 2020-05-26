@@ -1,9 +1,26 @@
 --		Copyright 1995-2002,2012 by Daniel R. Grayson
 
--- Keep statuscodes in sync with the ComputationStatusCode enum in engine.h
-RawStatusCodes = new HashTable from apply(
-     lines get (currentFileDirectory | "statuscodes"),
-     l -> ( fields := separate(":", l); value fields#0 => value fields#2 ))
+-- Keep this in sync with the ComputationStatusCode in Macaulay2/e/engine.h
+RawStatusCodes = new HashTable from {
+    1 => "need resize",              -- COMP_NEED_RESIZE
+    2 => "error",                    -- COMP_ERROR
+    3 => "interrupted",              -- COMP_INTERRUPTED
+    4 => "not started",              -- COMP_NOT_STARTED
+    5 => StopBeforeComputation,      -- COMP_INITIAL_STOP
+    6 => "done",                     -- COMP_DONE
+    7 => DegreeLimit,                -- COMP_DONE_DEGREE_LIMIT
+    8 => LengthLimit,                -- COMP_DONE_LENGTH_LIMIT
+    9 => SyzygyLimit,                -- COMP_DONE_SYZYGY_LIMIT
+    10 => PairLimit,                 -- COMP_DONE_PAIR_LIMIT
+    11 => BasisElementLimit,         -- COMP_DONE_GB_LIMIT
+    12 => SyzygyLimit,               -- COMP_DONE_SYZ_LIMIT
+    13 => CodimensionLimit,          -- COMP_DONE_CODIM
+    14 => StopWithMinimalGenerators, -- COMP_DONE_MIN_GENS
+    15 => "StepLimit",               -- COMP_DONE_STEPS
+    16 => SubringLimit,              -- COMP_DONE_SUBRING_LIMIT
+    17 => "computing",               -- COMP_COMPUTING
+    18 => "overflowed",              -- COMP_OVERFLOWED
+    }
 
 Nothing#BeforeEval = x -> (
      -- for internal use only, for general clean up

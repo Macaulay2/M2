@@ -72,11 +72,8 @@ LIBFILES += gmp_aux.o arithmetic.o atomic.o M2.o system.o strings.o varstrin.o e
 libd.a: $(LIBFILES) ; ar -r $@ $?
 rm-libd.a:; rm libd.a
 
-../../include/M2/statuscodes.h: @srcdir@/../m2/statuscodes; (sed 's/\(.*\):\(.*\):\(.*\)/  \2 = \1,/' ; echo "  DUMMY_STATUS_CODE") <$< >$@
-
 clean:: ; rm -f $(M2_MADECFILES)
 xml-c.o: xml-c.h xml-exports.h
-engine.o: ../../include/M2/statuscodes.h
 M2lib.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o : CPPFLAGS += -I@srcdir@/../e
 
 pthread-tmp.c : SCCFLAGS += -noline

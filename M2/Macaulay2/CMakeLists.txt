@@ -13,14 +13,6 @@
 configure_file(README.in ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/README @ONLY)
 file(COPY LAYOUT COPYING-GPL-2 COPYING-GPL-3 DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR})
 
-# Generate statuscodes.h
-# FIXME: where should this go?
-file(READ m2/statuscodes STATUSCODES)
-string(REGEX
-  REPLACE "([0-9]*):([A-Z\_]*):\"?([a-zA-Z ]*)\"?" "  \\2 = \\1,\t\t/* \\3 */"
-  STATUSCODES_H ${STATUSCODES})
-file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/include/M2/statuscodes.h CONTENT "${STATUSCODES_H}")
-
 # eg: Style Macaulay2Doc ...
 # This will be used by d/CMakeLists.txt and packages/CMakeLists.txt
 # TODO: discontinue using this list
