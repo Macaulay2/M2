@@ -212,8 +212,7 @@ ExternalProject_Add(build-mpir
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --enable-gmpcompat
                       --enable-cxx
-                      --with-pic
-                      --enable-static # FIXME: ${shared_setting}
+                      ${shared_setting}
                       ${assert_setting}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -260,10 +259,8 @@ ExternalProject_Add(build-mpfr
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --with-gmp=${MP_ROOT}
                       --disable-thread-safe
-                      --with-pic
                       ${shared_setting}
                       ${assert_setting}
-                      # TARGET_ARCH=
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -300,7 +297,7 @@ ExternalProject_Add(build-ntl
                       TUNE=generic
                       NATIVE=off
                       GMP_PREFIX=${MP_ROOT}
-                      SHARED=on # FIXME: $<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
+                      SHARED=$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
                       CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
@@ -324,7 +321,7 @@ ExternalProject_Add_Step(build-ntl wizard
                       TUNE=auto
                       NATIVE=on
                       GMP_PREFIX=${MP_ROOT}
-                      SHARED=on # FIXME: $<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
+                      SHARED=$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,on,off>
                       NTL_STD_CXX14=on
                       NTL_NO_INIT_TRANS=on # TODO: still necessary?
                       CPPFLAGS=${CPPFLAGS} # TODO: add -DDEBUG if DEBUG
@@ -356,8 +353,7 @@ ExternalProject_Add(build-flint
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -DCMAKE_C_FLAGS=${CFLAGS}
                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
-                    -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-                    -DBUILD_SHARED_LIBS=ON # FIXME: ${BUILD_SHARED_LIBS} # TODO: get static flint building to work
+                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
                     -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
@@ -430,10 +426,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
 
 
 # https://www.broune.com/frobby/
-# TODO: version#"frobby version" is missing
 # TODO: switch to https://github.com/Macaulay2/frobby
 set(frobby_CXXFLAGS "${CPPFLAGS} ${CXXFLAGS} -Wno-deprecated-declarations")
-# FIXME: permissions on the installed files are wrong
 ExternalProject_Add(build-frobby
   URL               ${M2_SOURCE_URL}/frobby_v0.9.0.tar.gz
   URL_HASH          SHA256=af092383e6dc849c86f4e79747ae0e5cd309a690747230e10aa38d60640062df
@@ -503,6 +497,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDDLIB_FOUND)
 
 
 # https://numpi.dm.unipi.it/software/mpsolve
+# Known issue: tests don't work with static library
 ExternalProject_Add(build-mpsolve
   URL               https://numpi.dm.unipi.it/_media/software/mpsolve/mpsolve-3.1.8.tar.gz
   URL_HASH          SHA256=34740339d14cf8ca6d3f7da7ca12237b6da642623d14a6d6d5b5fc684c9c0fe5
@@ -531,7 +526,7 @@ ExternalProject_Add(build-mpsolve
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
-  STEP_TARGETS      install test # TODO: fails when building static library
+  STEP_TARGETS      install test
   )
 _ADD_COMPONENT_DEPENDENCY(libraries mpsolve "mp;mpfr" MPSOLVE_FOUND)
 
@@ -865,7 +860,6 @@ ExternalProject_Add(build-lrslib
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       RANLIB=${CMAKE_RANLIB}
-                      # TODO: TARGET_ARCH= RANLIB=true
   INSTALL_COMMAND   ${CMAKE_STRIP} lrs
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/lrslib
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/lrslib
@@ -989,7 +983,6 @@ ExternalProject_Add(build-normaliz
                       RANLIB=${CMAKE_RANLIB}
                       # OPENMP=
                       # NORMFLAGS=
-                      # TARGET_ARCH=
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
                       CXX=${CMAKE_CXX_COMPILER}
                       # NORMFLAGS=
