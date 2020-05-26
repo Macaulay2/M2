@@ -28,7 +28,7 @@ export M2_BUILD_SCRIPT
 
 always:; @cat README.md
 
-clean:;  rm -rf ../../../../$(BUILD_DIR) ./storage/.ccache
+clean:;  rm -rf ${M2_REPO}/../$(BUILD_DIR) ./storage/.ccache
 
 all: build run
 
@@ -48,7 +48,9 @@ run-terminal:;  docker run $(VOLUME) --interactive --tty $(TAG)
 
 ###############################################################################
 
-shell:;   docker run $(VOLUME) --interactive --tty --user root --entrypoint bash $(TAG)
+root:;    docker run $(VOLUME) --interactive --tty --user root --entrypoint bash $(TAG)
+
+shell:;   docker run $(VOLUME) --interactive --tty --entrypoint bash $(TAG)
 
 M2:;      docker run $(VOLUME) --interactive --tty --entrypoint="" $(TAG) M2
 

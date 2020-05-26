@@ -87,7 +87,6 @@ add_subdirectory(Macaulay2)
 
 ###############################################################################
 
-#include(testing) ## CMake script for testing
 include(packaging) ## CMake script for making distribution packages for Macaulay2
 
 ###############################################################################

@@ -23,10 +23,28 @@ if(ETAGS)
 endif()
 
 ###############################################################################
+## Generate man pages for M2 and M2-binary
+
+configure_file(../man/M2.1.in M2.1 @ONLY)
+
+set(MAN ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}/man1/M2.1.gz)
+add_custom_command(OUTPUT ${MAN}
+  COMMENT "Creating man page for M2 and M2-binary"
+  COMMAND gzip -nf9 M2.1
+  COMMAND mv M2.1.gz ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}/man1/M2.1.gz)
+
+# Creating symlink to prevent lintian binary-without-manpage warning
+file(MAKE_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}/man1)
+file(CREATE_LINK M2.1.gz ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}/man1/M2-binary.1.gz SYMBOLIC)
+
+# TODO
+# view: M2.1; <M2.1 tbl | groff -S -Wall -mtty-char -man -Tascii | col -b
+
+###############################################################################
 ## Build M2-binary
 
 add_executable(M2-binary timestamp.cpp main.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/startup.c ${TAGS})
+  ${CMAKE_CURRENT_BINARY_DIR}/startup.c ${TAGS} ${MAN})
 target_link_libraries(M2-binary
   M2-engine M2-interpreter M2-supervisor ${CMAKE_DL_LIBS})
 
@@ -47,15 +65,15 @@ find_program(LDD ldd)
 find_program(OTOOL otool)
 if(LDD)
   add_custom_command(TARGET M2-binary POST_BUILD
-    COMMENT "## Linked libraries:"
-    COMMAND ${SET_LD_LIBRARY_PATH} ${LDD} $<TARGET_FILE:M2-binary>)
+    COMMAND ${CMAKE_COMMAND} -E echo "-- Linked libraries:"
+    COMMAND ${SET_LD_LIBRARY_PATH} ${LDD} $<TARGET_FILE:M2-binary>
+    COMMAND ${CMAKE_COMMAND} -E echo "-- INSTALL_RPATH: ${INSTALL_RPATH}")
 elseif(OTOOL)
   add_custom_command(TARGET M2-binary POST_BUILD
-    COMMENT "## Linked libraries:"
-    COMMAND ${SET_LD_LIBRARY_PATH} ${OTOOL} -L $<TARGET_FILE:M2-binary>)
+    COMMAND ${CMAKE_COMMAND} -E echo "-- Linked libraries:"
+    COMMAND ${SET_LD_LIBRARY_PATH} ${OTOOL} -L $<TARGET_FILE:M2-binary>
+    COMMAND ${CMAKE_COMMAND} -E echo "-- INSTALL_RPATH: ${INSTALL_RPATH}")
 endif()
-add_custom_command(TARGET M2-binary POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E echo "## INSTALL_RPATH:" ${INSTALL_RPATH})
 
 # TODO: strip args
 # objdump -x M2-binary | grep RPATH

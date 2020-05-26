@@ -148,6 +148,7 @@ foreach(package IN LISTS PACKAGES)
   add_custom_target(install-${package}
     COMMENT "Installing package ${package}"
     COMMAND ${M2} ${M2_ARGS} -e ${M2_INSTALL_STRING} -e ${M2_INFO_STRING} -e "exit 0"
+    COMMAND gzip -nf9 ${M2_DIST_PREFIX}/${M2_INSTALL_INFODIR}/${package}.info
     VERBATIM
     ${USES_TERMINAL}
     DEPENDS M2-core ${PACKAGE_DEPENDENCIES}

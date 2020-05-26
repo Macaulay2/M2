@@ -51,7 +51,6 @@ add_subdirectory(e) # rename to engine?
 add_subdirectory(system) # rename to supervisor?
 add_subdirectory(bin) # combine with engine or interpreter?
 add_subdirectory(m2) # rename to Core?
-add_subdirectory(man) # combine?
 add_subdirectory(packages)
 add_subdirectory(emacs) # rename to editors and include vim, etc?
 #add_subdirectory(book) # separate repository?
@@ -88,24 +87,31 @@ endif()
 install(FILES
   ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2
   DESTINATION ${CMAKE_INSTALL_BINDIR}
-  PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ
+  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
   COMPONENT ALL)
 
 # install shared and dynamic libraries
 install(DIRECTORY
   ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/lib
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2
-  USE_SOURCE_PERMISSIONS
+  FILE_PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
   COMPONENT ALL
   OPTIONAL
   FILES_MATCHING PATTERN "*.so*" PATTERN "*.dylib")
 
-# install programs and licenses
+# install programs
 install(DIRECTORY
   ${M2_DIST_PREFIX}/${M2_INSTALL_LIBEXECDIR}/Macaulay2/bin
-  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBEXECDIR}/Macaulay2/program-licenses
   DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2
   USE_SOURCE_PERMISSIONS
+  COMPONENT ALL
+  OPTIONAL)
+
+# install licenses
+install(DIRECTORY
+  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBEXECDIR}/Macaulay2/program-licenses
+  DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2
+  FILE_PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
   COMPONENT ALL
   OPTIONAL)
 
@@ -120,7 +126,7 @@ install(DIRECTORY
 
 # install man page, packages, info files, documentation, and emacs package
 install(DIRECTORY
-  ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}
+  ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}/man1
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}
   ${M2_DIST_PREFIX}/${M2_INSTALL_INFODIR}
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/doc

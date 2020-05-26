@@ -43,6 +43,9 @@ set(PARALLEL_JOBS 4
 set(SKIP_TESTS "mpsolve;googletest" CACHE STRING "Tests to skip")
 set(SLOW_TESTS "eigen;ntl;flint"    CACHE STRING "Slow tests to skip")
 
+# TODO: https://github.com/Macaulay2/M2/issues/1198
+list(APPEND BUILD_LIBRARIES "Frobby")
+
 # TODO: hopefully make these automatic
 if(USING_MPIR)
   list(APPEND BUILD_LIBRARIES "MPIR;MPFR;NTL;Flint;Factory;Frobby;Givaro")
@@ -188,10 +191,7 @@ endif()
 
 # Flags based on compiler
 if(CMAKE_C_COMPILER_ID STREQUAL GNU)
-  add_compile_options(-g3
-    # -fopenmp # fflas_ffpack wants this, but currently normaliz fails on macOS with it
-    # -fabi-version=6 # givaro and fflas_ffpack want this
-    )
+  add_compile_options(-g3)
   add_link_options(-g3)
 else()
   add_compile_options(-g)
