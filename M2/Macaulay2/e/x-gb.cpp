@@ -1212,7 +1212,7 @@ ConstPolyList matrixToVector(const M2FreeAlgebraOrQuotient* A,
   return result;
 }
 
-// vectorToMatrix consumes 'elems': the saame pointers are used for the resulting Matrix.
+// vectorToMatrix consumes 'elems': the same pointers are used for the resulting Matrix.
 template<typename PolyL>
 const Matrix* vectorToMatrix(const M2FreeAlgebraOrQuotient* A,
                              const PolyL& elems)
@@ -1240,14 +1240,14 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg, int st
           NCF4 G(A->freeAlgebra(), elems, maxdeg, strategy);
           G.compute(maxdeg); // this argument is actually the soft degree limit
           auto result = copyPolyVector(A, G.currentValue());
-          return vectorToMatrix(A, result);
+          return vectorToMatrix(A, result); // consumes the Poly's in result
         }
       else
         {
           NCGroebner G(A->freeAlgebra(), elems, maxdeg, strategy);
           G.compute(maxdeg); // this argument is actually the soft degree limit
           auto result = copyPolyVector(A, G.currentValue());
-          return vectorToMatrix(A, result);
+          return vectorToMatrix(A, result); // consumes the Poly's in result
         }
 
     }
@@ -1271,7 +1271,7 @@ const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* re
       NCGroebner G(A->freeAlgebra(),reducers, 0, 0);
       G.initReductionOnly();
       auto result = G.twoSidedReduction(reducees);
-      return vectorToMatrix(A, result);
+      return vectorToMatrix(A, result); // consumes the Poly's in result.
     }
   ERROR("expected one row matriices over a noncommutative algebra");
   return nullptr;
@@ -1294,6 +1294,11 @@ const Matrix* rawNCBasis(const Matrix* gb2SidedIdeal,
     if (A != nullptr)
       {
         ConstPolyList G = matrixToVector(A, gb2SidedIdeal);
+
+        // WARNING: The following line creates new polynomials
+        // which are used directly in vectorToMatrix (without copying)
+        // but when result goes out of scope, the list is deleted,
+        // but not the polynomials themselves, as they are pointers.
         std::unique_ptr<PolyList> result = ncBasis(A->freeAlgebra(),
                                                    G,
                                                    M2_arrayint_to_stdvector<int>(lo_degree),

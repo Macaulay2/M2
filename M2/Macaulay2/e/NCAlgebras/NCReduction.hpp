@@ -40,8 +40,8 @@ enum class HeapType {
   NaiveGeobucket,
   NaiveHeap,
   NaiveTourTree,
-  NaiveDedupGeobucket,
-  HashedGeobucket
+  NaiveDedupGeobucket //,
+  // HashedGeobucket
 };
 
 HeapType getHeapType(int strategy);

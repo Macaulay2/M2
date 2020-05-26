@@ -10,6 +10,8 @@ class Ring;
 #include "ring.hpp"
 #include <iostream>
 class M2FreeAlgebra;
+using IntVector = VECTOR(int);
+// using IntVector = std::vector<int>;
 
 struct Monom
 // Format for monomials:
@@ -154,7 +156,7 @@ class Polynomial : public our_new_delete
   typedef typename CoefficientRingType::ElementType ElementType;
 public:  
   typedef typename VECTOR(ElementType) coeffVector;
-  typedef std::vector<int> monomVector;
+  using monomVector = IntVector; // TODO: remove monomVector?
 
   typedef typename coeffVector::iterator coeffIterator;
   typedef monomVector::iterator monomIterator;
@@ -238,28 +240,6 @@ public:
   coeffConstIterator cendCoeff() const { return mCoefficients.cend(); }
   monomConstIterator cendMonom() const { return mMonomials.cend(); }
 
-#if 0
-  // TODO (Frank+Mike): put some of these back in once we need them
-  void push_backCoeff(const ring_elem & val) {mCoefficients.push_back(val); }
-  void push_backMonom(const int & val) {mMonomials.push_back(val); }
-
-  void reserveCoeff(coeffVector::size_type n) { mCoefficients.reserve(n); }
-  void reserveMonom(monomVector::size_type n) { mMonomials.reserve(n); }
-
-  void appendPolynomial(const NCPolynomial* g)
-  {
-    // note: reserve is not necessary here.  It slows things down significantly
-    // for some reason.
-    mCoefficients.insert(mCoefficients.end(), g->getCoeffVector().begin(), g->getCoeffVector().end());
-    mMonomials.insert(mMonomials.end(), g->getMonomVector().begin(), g->getMonomVector().end());
-  }
-
-
-  void copyAllCoeffs(const coeffVector & rhs ) { mCoefficients = rhs; }
-  void copyAllMonoms(const monomVector & rhs ) { mMonomials = rhs; }
-
-
-#endif  
   const coeffVector & getCoeffVector() const { return mCoefficients; }
 
   const monomVector & getMonomVector() const { return mMonomials; }
@@ -271,8 +251,8 @@ private:
   coeffVector & getCoeffInserter() { return mCoefficients; }
   
 private:
-  VECTOR(ElementType) mCoefficients;
-  std::vector<int> mMonomials;
+  coeffVector mCoefficients;
+  monomVector mMonomials;
 };
 
 struct CoefficientRingType

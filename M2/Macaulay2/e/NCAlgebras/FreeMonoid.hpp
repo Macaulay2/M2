@@ -71,7 +71,7 @@ public:
   const Monoid& degreeMonoid() const { return * mDegreeRing->getMonoid(); }
   
   // Monomial operations
-  using MonomialInserter = std::vector<int>;
+  using MonomialInserter = IntVector;
 
   void one(MonomialInserter& m) const;
 

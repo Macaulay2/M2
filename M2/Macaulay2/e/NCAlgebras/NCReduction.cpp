@@ -181,7 +181,7 @@ public:
 
   size_t getMemoryUsedInBytes() override
   {
-    mValue.numTerms();
+    return mValue.numTerms();
   }
 
   std::string getName() const override { return std::string("Trivial Heap"); }
@@ -293,7 +293,7 @@ private:
   const FreeAlgebra& mRing;
 };
 
-template<template<typename> typename Queue>
+template<template<typename> class Queue>
 class NaivePolynomialHeap : public PolynomialHeap
 {
 public:
@@ -436,7 +436,7 @@ private:
 };
 
 
-template<template<typename> typename Queue>
+template<template<typename> class Queue>
 class NaiveDedupPolynomialHeap : public PolynomialHeap
 {
 public:
@@ -713,7 +713,7 @@ private:
   const FreeAlgebra& mRing;
 };
 
-template<template<typename> typename Queue>
+template<template<typename> class Queue>
 class HashedPolynomialHeap : public PolynomialHeap
 {
 public:
@@ -889,7 +889,8 @@ public:
   {
     auto rg = mMonomialSpace.allocateArray<int>(entry.first.size());
     std::copy(entry.first.begin(), entry.first.end(), rg.first);
-    mQueue.push(Entry(Monom(rg.first), entry.second));    
+    mQueue.push(Entry(Monom(rg.first), entry.second));
+    return *this;
   }
 
   PriorityQueuePolynomialHeap& addPolynomial(const Poly& poly) override
@@ -1065,8 +1066,8 @@ std::string getHeapName(HeapType type)
     return "NaiveTourTree";
   case HeapType::NaiveHeap:
     return "NaiveHeap";
-  case HeapType::HashedGeobucket:
-    return "HashedGeobucket";
+    //  case HeapType::HashedGeobucket:
+    //    return "HashedGeobucket";
   };
 }
 
