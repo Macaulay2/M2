@@ -3,7 +3,7 @@ use tokens;
 use lex;
 
 export parseInt(s:string):ZZ := (
-     i := toInteger(0);
+     i := zeroZZ;
      foreach c in s do (
 	  if c == '\"'
 	  then nothing
@@ -251,17 +251,6 @@ matcher(left:string):string := (
 	  );
      ""
      );
-match(left:string,right:string):bool := (
-     rest := matchList;
-     while true do
-     when rest
-     is null do return false
-     is matchPair:MatchPair do (
-	  if matchPair.left == left
-	  then if matchPair.right == right
-	  then return true;
-	  rest = matchPair.next;
-	  ));
 export varexprlist := {
      list:array(ParseTree),
      size:int

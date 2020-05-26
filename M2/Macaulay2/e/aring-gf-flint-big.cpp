@@ -12,6 +12,9 @@ ARingGFFlintBig::ARingGFFlintBig(const PolynomialRing& R, const ring_elem a)
       mCharacteristic(R.characteristic()),
       mGeneratorComputed(false)
 {
+
+  // TODO: assert that the base ring of R is ZZ/p.
+  // TODO: if mDimension <= 1 then give an error.
   ring_elem b = R.copy(a);
   mPrimitiveElement = RingElement::make_raw(&R, b);
   ring_elem minpoly = mOriginalRing.quotient_element(0);

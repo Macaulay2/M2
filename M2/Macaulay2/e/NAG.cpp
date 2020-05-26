@@ -63,7 +63,7 @@ SLP<Field>::SLP()
 template <class Field>
 SLP<Field>::~SLP()
 {
-  delete nodes;
+  deletearray(nodes);
   if (handle != NULL)
     {
       printf("closing library\n");
@@ -153,7 +153,7 @@ SLP<Field> /* or null */* SLP<Field>::make(const Matrix* m_consts,
 template <class Field>
 void SLP<Field>::make_nodes(element_type*& a, int size)
 {
-  a = newarray_atomic(complex, size);
+  a = newarray_atomic(element_type, size);
 }
 
 template <class Field>
@@ -2129,19 +2129,19 @@ int PathTracker::getSolutionSteps(int solN)
 gmp_RRorNull PathTracker::getSolutionLastT(int solN)
 {
   if (solN < 0 || solN >= n_sols) return NULL;
-  gmp_RR result = getmemstructtype(gmp_RR);
+  gmp_RRmutable result = getmemstructtype(gmp_RRmutable);
   mpfr_init2(result, C->get_precision());
   mpfr_set_d(result, raw_solutions[solN].t, GMP_RNDN);
-  return result;
+  return moveTo_gmpRR(result);
 }
 
 gmp_RRorNull PathTracker::getSolutionRcond(int solN)
 {
   if (solN < 0 || solN >= n_sols) return NULL;
-  gmp_RR result = getmemstructtype(gmp_RR);
+  gmp_RRmutable result = getmemstructtype(gmp_RRmutable);
   mpfr_init2(result, C->get_precision());
   mpfr_set_d(result, raw_solutions[solN].cond, GMP_RNDN);
-  return result;
+  return moveTo_gmpRR(result);
 }
 
 void PathTracker::text_out(buffer& o) const

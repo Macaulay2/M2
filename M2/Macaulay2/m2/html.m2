@@ -447,7 +447,7 @@ utest := opt -> (
      cmd := "ulimit " | opt | "; ";
      if chkrun("2>/dev/null >/dev/null "|cmd) == 0 then cmd else ""
      )
-ulimit := utest "-c unlimited" | utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192" | utest "-n 512"
+ulimit := utest "-c unlimited" | utest "-t 700" | utest "-m 850000" | utest "-s 8192" | utest "-n 512"
 
 M2statusRegexp := "^--status:"
 statusLines := file -> select(lines file, s -> match(M2statusRegexp,s))
@@ -822,6 +822,10 @@ installPackage Package := opts -> pkg -> (
  	  if not opts.IgnoreExampleErrors 
 	  then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running examples for package ", pkg#"pkgname");
 
+	  -- if no examples were generated, then remove the directory
+	  if length readDirectory exampleOutputDir == 2 then
+	  	  removeDirectory exampleOutputDir;
+
 	  -- process documentation
 	  rawkey := "raw documentation database";
 	  if verbose then stderr << "--processing documentation nodes..." << endl;
@@ -1182,38 +1186,20 @@ makePackageIndex List := path -> ( -- TO DO : rewrite this function to use the r
      )
 
 runnable := fn -> (
-     if isAbsolutePath fn then (
-	  fileExists fn
-	  )
-     else (
-     	  0 < # select(1,apply(separate(":", getenv "PATH"),p -> p|"/"|fn),fileExists)
-	  )
+     if fn == "" then false;
+     if isAbsolutePath fn then fileExists fn
+     else 0 < # select(1, apply(separate(":", getenv "PATH"), p -> p|"/"|fn), fileExists)
      )
-chk := ret -> if ret != 0 then (
-     if version#"operating system" === "MicrosoftWindows" and ret == 256 then return;     
-     error "external command failed"
-     )
-browserMethods := hashTable {
-     "firefox" => url -> {"firefox", url},
-     "open" => url -> {"open", url},
-     "cygstart" => url -> {"cygstart", url},
-     "netscape" => url -> {"netscape", "-remote",  "openURL(" | url | ")" },
-     "windows firefox" => url -> { "/cygdrive/c/Program Files/Mozilla Firefox/firefox", "-remote", "openURL(" | url | ")" }
-     }
 URL = new SelfInitializingType of BasicList
 new URL from String := (URL,str) -> new URL from {str}
 show URL := x -> (
      url := x#0;
-     browser := getenv "WWWBROWSER";
-     if version#"operating system" === "Darwin" and runnable "open" then browser = "open" -- should ignore WWWBROWSER, according to Mike
-     else
-     if version#"issue" === "Cygwin" then browser = "cygstart";
-     if browser === "" then (
-	  if runnable "firefox" then browser = "firefox"
-	  else if runnable "netscape" then browser = "netscape"
-	  else error "no browser found, and none specified in $WWWBROWSER"
-	  );
-     cmd := if browserMethods#?browser then browserMethods#browser url else { browser, url };
+     if runnable "open" then browser := "open" -- Apple varieties
+     else if runnable "xdg-open" then browser = "xdg-open" -- most Linux distributions
+     else if runnable getenv "WWWBROWSER" then browser = getenv "WWWBROWSER" -- compatibility
+     else if runnable "firefox" then browser = "firefox" -- backup
+     else error "neither open nor xdg-open is found and WWWBROWSER is not set";
+     cmd := { browser, url };
      if fork() == 0 then (
 	  setGroupID(0,0);
      	  try exec cmd;

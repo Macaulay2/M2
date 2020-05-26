@@ -354,7 +354,7 @@ export lookup(object:HashTable,key:SymbolClosure):Expr := (
 -----------------------------------------------------------------------------
 
 assignmentMethodP(meth:Expr):bool := (
-     when meth is s:Sequence do true 			-- something like (OP, symbol =), where OP is a symbol such as symbol +
+     when meth is Sequence do true 			-- something like (OP, symbol =), where OP is a symbol such as symbol +
      is sym:SymbolClosure do (
 	  sym === LeftArrowS	    	-- symbol <- , which is an assignment operator in its own right  -- this should go away!!!
      	  ||

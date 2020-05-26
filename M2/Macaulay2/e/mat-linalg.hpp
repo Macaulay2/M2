@@ -50,6 +50,8 @@ typedef DMat<M2::ARingCC> DMatCC;
 #include "dmat-lu.hpp"
 #include "dmat-qq-interface-flint.hpp"
 
+#include "eigen.hpp"
+
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
 
@@ -293,7 +295,7 @@ void clean(gmp_RR epsilon, T& mat)
 }
 
 template <typename T>
-void increase_norm(gmp_RR& nm, const T& mat)
+void increase_norm(gmp_RRmutable nm, const T& mat)
 {
   throw exc::engine_error(
       "'norm' not implemented for this kind of matrix over this ring");
@@ -1027,7 +1029,7 @@ inline void clean(gmp_RR epsilon, DMatRR& mat)
   for (size_t i = 0; i < len; i++, ++p) mat.ring().zeroize_tiny(epsilon, *p);
 }
 
-inline void increase_norm(gmp_RR& norm, const DMatRR& mat)
+inline void increase_norm(gmp_RRmutable norm, const DMatRR& mat)
 {
   auto p = mat.array();
   size_t len = mat.numRows() * mat.numColumns();
@@ -1087,7 +1089,7 @@ inline void clean(gmp_RR epsilon, DMatCC& mat)
   for (size_t i = 0; i < len; i++, ++p) mat.ring().zeroize_tiny(epsilon, *p);
 }
 
-inline void increase_norm(gmp_RR& norm, const DMatCC& mat)
+inline void increase_norm(gmp_RRmutable norm, const DMatCC& mat)
 {
   auto p = mat.array();
   size_t len = mat.numRows() * mat.numColumns();
@@ -1133,14 +1135,18 @@ inline bool leastSquares(const DMatRRR& A,
     return Lapack::least_squares_deficient(&A, &B, &X);
 }
 
+
 inline bool SVD(const DMatRRR& A,
                 DMatRRR& Sigma,
                 DMatRRR& U,
                 DMatRRR& Vt,
                 int strategy)
 {
+  return EigenM2::SVD(&A, &Sigma, &U, &Vt);
+#if 0  
   if (strategy == 1) return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
   return Lapack::SVD(&A, &Sigma, &U, &Vt);
+#endif  
 }
 
 inline void clean(gmp_RR epsilon, DMatRRR& mat)
@@ -1150,7 +1156,7 @@ inline void clean(gmp_RR epsilon, DMatRRR& mat)
   for (size_t i = 0; i < len; i++, ++p) mat.ring().zeroize_tiny(epsilon, *p);
 }
 
-inline void increase_norm(gmp_RR& norm, const DMatRRR& mat)
+inline void increase_norm(gmp_RRmutable norm, const DMatRRR& mat)
 {
   auto p = mat.array();
   size_t len = mat.numRows() * mat.numColumns();
@@ -1202,8 +1208,11 @@ inline bool SVD(const DMatCCC& A,
                 DMatCCC& Vt,
                 int strategy)
 {
+  return EigenM2::SVD(&A, &Sigma, &U, &Vt);
+#if 0
   if (strategy == 1) return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
   return Lapack::SVD(&A, &Sigma, &U, &Vt);
+#endif
 }
 
 inline void clean(gmp_RR epsilon, DMatCCC& mat)
@@ -1213,7 +1222,7 @@ inline void clean(gmp_RR epsilon, DMatCCC& mat)
   for (size_t i = 0; i < len; i++, ++p) mat.ring().zeroize_tiny(epsilon, *p);
 }
 
-inline void increase_norm(gmp_RR& norm, const DMatCCC& mat)
+inline void increase_norm(gmp_RRmutable norm, const DMatCCC& mat)
 {
   auto p = mat.array();
   size_t len = mat.numRows() * mat.numColumns();

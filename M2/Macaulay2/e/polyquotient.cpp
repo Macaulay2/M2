@@ -139,7 +139,7 @@ bool PolyRingQuotient::promote(const Ring *Rf,
   return numerR_->PolyRing::promote(Rf, f, result);
 }
 
-ring_elem PolyRingQuotient::power(const ring_elem f, mpz_t n) const
+ring_elem PolyRingQuotient::power(const ring_elem f, mpz_srcptr n) const
 {
   return Ring::power(f, n);
 }

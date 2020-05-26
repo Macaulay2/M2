@@ -9,7 +9,6 @@
 #include "monideal-minprimes.hpp"
 #include "exceptions.hpp"
 #include "text-io.hpp"
-#include "../d/M2inits.h"
 #include "finalize.hpp"
 
 engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n)
@@ -266,7 +265,6 @@ const RingElement /* or null */ *IM2_MonomialIdeal_Hilbert(
 }
 
 M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I) { return I->lcm(); }
-#if HAVE_FROBBY
 #include "frobby.h"
 
 class MyIdealConsumer : public Frobby::IdealConsumer, our_new_delete
@@ -367,7 +365,6 @@ static MonomialIdeal *wrapperFrobbyAlexanderDual(const MonomialIdeal *I,
 
   return result;
 }
-#endif
 
 static MonomialIdeal /* or null */ *alexDual(const MonomialIdeal *I,
                                              const M2_arrayint top,
@@ -378,13 +375,9 @@ static MonomialIdeal /* or null */ *alexDual(const MonomialIdeal *I,
         1;  // i.e. don't use frobby if there are no generators and/or variables
   switch (strategy)
     {
-#if HAVE_FROBBY
       case 0:
         if (M2_gbTrace >= 1) emit_line(" -- [Alexander dual: frobby]");
         return wrapperFrobbyAlexanderDual(I, top);
-#else
-#warning "frobby not enabled"
-#endif
       default:
         if (M2_gbTrace >= 1) emit_line(" -- [Alexander dual: M2 monideal]");
         return I->alexander_dual(top);

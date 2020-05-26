@@ -62,7 +62,7 @@ ring_elem SolvableAlgebra::mult_by_term(const ring_elem f,
   return ZERO_RINGELEM;
 }
 
-ring_elem SolvableAlgebra::power(const ring_elem f, mpz_t n) const
+ring_elem SolvableAlgebra::power(const ring_elem f, mpz_srcptr n) const
 {
   std::pair<bool, int> n1 = RingZZ::get_si(n);
   if (n1.first)

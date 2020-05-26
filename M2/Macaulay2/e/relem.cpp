@@ -127,7 +127,7 @@ RingElement /* or null */ *RingElement::power(int n) const
   return new RingElement(R, f);
 }
 
-RingElement /* or null */ *RingElement::power(mpz_t n) const
+RingElement /* or null */ *RingElement::power(mpz_srcptr n) const
 {
   ring_elem f = R->power(val, n);
   if (error()) return 0;

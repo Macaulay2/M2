@@ -81,13 +81,13 @@ autoconf-msg :
 check-libtool:
 	@ type libtool >/dev/null || $(MAKE) -f Makefile libtool-absent
 	@ if `libtool --version >/dev/null 2>&1` ;										\
-	  then MAJOR=`libtool --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;					\
-	       MINOR=`libtool --version | sed -e '1s/.*\.\([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;					\
-	       BABY=`libtool --version | sed -e '1s/.*\..*\.\([1-9][0-9]*\)/\1/' -e '2,$$d'` ;					\
+	  then MAJOR=`libtool --version | sed -e '1s/[^.]* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;				\
+	       MINOR=`libtool --version | sed -e '1s/[^.]*\.\([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` ;				\
+	       BABY=` libtool --version | sed -e '1s/[^.]*\.[^.]*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'` ;				\
 	       if test "$$MAJOR" -gt "$(LIBTOOL_MAJOR)"										\
 		       -o \( "$$MAJOR" = "$(LIBTOOL_MAJOR)" -a "$$MINOR" -gt "$(LIBTOOL_MINOR)" \)				\
 		       -o \( $$MAJOR = $(LIBTOOL_MAJOR) -a $$MINOR = $(LIBTOOL_MINOR) -a $$BABY -ge $(LIBTOOL_BABY) \) ;	\
-	       then echo GNU libtool version okay ;										\
+	       then echo "GNU libtool version ($$MAJOR.$$MINOR.$$BABY) okay" ;							\
 	       else $(MAKE) -f Makefile libtool-old ;										\
 	       fi														\
 	  else $(MAKE) -f Makefile libtool-not-gnu ;										\
@@ -103,7 +103,7 @@ libtool-old-msg :
 libtool-not-gnu : libtool-not-gnu-msg libtool-msg 
 libtool-not-gnu-msg :
 	@ echo "=============================================================================" >&2
-	@ echo "error: the libtool program installed on your system (`type libtool`) is too not GNU." >&2
+	@ echo "error: the libtool program installed on your system (`type libtool`) is not GNU." >&2
 libtool-msg :
 	@ echo "" >&2
 	@ echo "Please install or update libtool: the version should be at least $(LIBTOOL_VERSION)." >&2
@@ -231,6 +231,12 @@ check-vardirs:
 	egrep -nH '@(bin|data|include|info|lib|libexec|localstate|man|sbin|sharedstate|sysconf|ps|pdf|dvi|html|locale|doc|dataroot|packages|libm2|emacs|libraries|packagecachecore)dir@' $(shell cat ./config/files | sed 's/$$/.in/')
 check-pre-vardirs:
 	egrep -nH '@pre_(bin|data|include|info|lib|libexec|localstate|man|sbin|sharedstate|sysconf|ps|pdf|dvi|html|locale|doc|dataroot|packages|libm2|emacs|libraries|packagecachecore)dir@' $(shell cat ./config/files | sed 's/$$/.in/')
+
+# The submodule fflas_ffpack scribbles in its source tree to record the current
+# version number of libtool found on the system, in the file
+# M2/submodules/fflas_ffpack/macros/ltversion.m4. This target will clean that up.
+clean-in-submodules:
+	git submodule foreach git clean -xdfq
 
 # Local Variables:
 # mode: Makefile

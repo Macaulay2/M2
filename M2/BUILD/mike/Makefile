@@ -35,64 +35,20 @@ darwin64-gcc8 : always
 		--disable-strip \
 		--enable-download
 
-#		--enable-dmg \
-#		CPPFLAGS="-I/usr/local/opt/readline/include" \
-#		LDFLAGS="-L/usr/local/opt/readline/lib" \
-#		--enable-build-libraries="mpir flint pari ntl"
-#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include"
-#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib"
-
-#rewrite this: don't change the compiler this way?
-# Thomas Kahle: I rewrote this to use brew's clang latest
-darwin64-latestclang8 : always
-	mkdir -p builds.tmp/darwin64-latestclang8
-	cd builds.tmp/darwin64-latestclang8; ../../../../configure \
-		CC="/usr/local/opt/llvm/bin/clang" \
-	    CXX="/usr/local/opt/llvm/bin/clang++" \
-        LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
-		CPPFLAGS="-I/usr/local/opt/llvm/include" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-download
-
 darwin64-latestclang : always
 	mkdir -p builds.tmp/darwin64-latestclang
 	cd builds.tmp/darwin64-latestclang; ../../../../configure \
 		CC="/usr/local/opt/llvm/bin/clang" \
-	        CXX="/usr/local/opt/llvm/bin/clang++" \
-                LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
-		CPPFLAGS="-I/usr/local/opt/llvm/include" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-download
-
-darwin64-clang6 : always
-	mkdir -p builds.tmp/darwin64-clang6
-	cd builds.tmp/darwin64-clang6; ../../../../configure \
-		CC="/usr/local/opt/llvm/bin/clang-6" \
-		CXX="/usr/local/opt/llvm/bin/clang++-6" \
-		CPPFLAGS="-I/usr/local/opt/llvm/include" \
+		CXX="/usr/local/opt/llvm/bin/clang++" \
 		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
+		--with-integer-package=mpir \
 		--disable-strip \
 		--enable-download
 
-# currently fails (21 Oct 2018), since we aren't detecting openmp support in the compiler.
-darwin64-appleclang : always
-	mkdir -p builds.tmp/darwin64-appleclang
-	cd builds.tmp/darwin64-appleclang; ../../../../configure \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-download
-
-#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-#		--enable-build-libraries="mpir flint pari ntl"
-#		--enable-dmg \
+#--enable-build-libraries="mpir flint pari ntl"
 
 debug64-latestclang : always
 	mkdir -p builds.tmp/debug64-latestclang
@@ -101,13 +57,33 @@ debug64-latestclang : always
 		CXX="/usr/local/opt/llvm/bin/clang++" \
 		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
 		CPPFLAGS="-I/usr/local/opt/llvm/include" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--build=x86_64-apple-darwin \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
 		--enable-debug \
 		--disable-optimize \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download
+
+darwin64-appleclang1 : always
+	mkdir -p builds.tmp/darwin64-appleclang
+	cd builds.tmp/darwin64-appleclang; ../../../../configure \
+		OPENMP_CXXFLAGS="-I/usr/local/opt/libomp/include -Xpreprocessor -fopenmp" \
+		OPENMP_LDFLAGS="-L/usr/local/opt/libomp/lib -lomp" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="mpir flint ntl"
+
+darwin64-appleclang : always
+	mkdir -p builds.tmp/darwin64-appleclang
+	cd builds.tmp/darwin64-appleclang; ../../../../configure \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="flint"
 
 darwin64-gcc6 : always
 	mkdir -p builds.tmp/darwin64-gcc6
@@ -231,6 +207,16 @@ linux-debug64 : always
 		--disable-optimize \
 		--enable-download \
 		--enable-build-libraries="gc mpir flint pari ntl"
+
+linux-debug64 : always
+	mkdir -p builds.tmp/debug64
+	cd builds.tmp/debug64; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CPPFLAGS="-DENGINE_DEBUG_" \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+		--enable-debug \
+		--disable-optimize \
+		--enable-download  # --enable-build-libraries="gc mpir flint pari ntl"
 
 linux-profile64 : always
 	mkdir -p builds.tmp/profile64

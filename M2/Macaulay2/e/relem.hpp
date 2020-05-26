@@ -21,12 +21,9 @@ class RingElement : public EngineObject
   static RingElement *make_raw(const Ring *R, ring_elem f);
 
   ring_elem get_value() const { return val; }
-  void set_value(ring_elem f)
-  {
-    R->remove(val);
-    val = f;
-  }
+
   const Ring *get_ring() const { return R; }
+
   // ring arithmetic
 
   bool is_zero() const;
@@ -38,15 +35,10 @@ class RingElement : public EngineObject
   RingElement *operator-(const RingElement &b) const;
   RingElement *operator*(const RingElement &b) const;
   RingElement *operator*(int n) const;
-  RingElement *power(mpz_t n) const;
+  RingElement *power(mpz_srcptr n) const;
   RingElement *power(int n) const;
 
   RingElement *operator/(const RingElement &b) const;
-#if 0
-//   RingElement *operator%(const RingElement &b) const;
-//   RingElement *divide(const RingElement &b,
-//                    RingElement * &rem) const;
-#endif
   RingElement *invert() const;
 
   static RingElement *random(const Ring *R);

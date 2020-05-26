@@ -30,6 +30,7 @@ INTERFACE = \
 	Polynomial \
 	monordering \
 	monomial-collection \
+	eigen \
 	monomial-sets \
 	mutablecomplex \
 	localring \
@@ -187,6 +188,8 @@ COMMANDS2 = \
 	polyroots
 
 COMMANDS = \
+	flint \
+	rand \
 	ntl-internal \
 	ntl-debugio \
 	matrix-kbasis \
@@ -216,7 +219,7 @@ NAMES_H = \
 	index \
 	res-a0-pair
 
-C_FILES = error table exptable complex rand
+C_FILES = error table exptable complex
 
 D_FILES = 
 DD_FILES = #test

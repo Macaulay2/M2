@@ -99,12 +99,9 @@ $(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(ALL_PACKAGES))), $(eva
 # check::check-info
 
 clean::; rm -rf tmp
-clean::; $(MAKE) -C ComputationsBook $@
 big-check:
-check::; $(MAKE) -C ComputationsBook check
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
 distclean:clean
-	$(MAKE) -C ComputationsBook $@
 	rm -f Makefile
 
 ## here is the list of other files to install along with Macaulay2

@@ -181,8 +181,14 @@ function resetMouseVars() {
 // Update force layout (called automatically by the force layout simulation each iteration).
 function tick() {
   // Update the 2-dimensional faces.
-  polygon.attr("points", function(d) { return (d.v1.x > width-15 ? width-15 : ((d.v1.x < 15 ? 15 : d.v1.x))) + "," + (d.v1.y > height-15 ? height-15 : ((d.v1.y < 15 ? 15 : d.v1.y))) + " " + (d.v2.x > width-15 ? width-15 : ((d.v2.x < 15 ? 15 : d.v2.x))) + "," + (d.v2.y > height-15 ? height-15 : ((d.v2.y < 15 ? 15 : d.v2.y))) + " " + (d.v3.x > width-15 ? width-15 : ((d.v3.x < 15 ? 15 : d.v3.x))) + "," + (d.v3.y > height-15 ? height-15 : ((d.v3.y < 15 ? 15 : d.v3.y))); });
-    
+  polygon.attr("points",function(d) {
+    return (d.v1.x > width-15 ? width-15 : ((d.v1.x < 15 ? 15 : d.v1.x))) +
+      "," + (d.v1.y > height-15 ? height-15 : ((d.v1.y < 15 ? 15 : d.v1.y))) +
+      " " + (d.v2.x > width-15 ? width-15 : ((d.v2.x < 15 ? 15 : d.v2.x))) +
+      "," + (d.v2.y > height-15 ? height-15 : ((d.v2.y < 15 ? 15 : d.v2.y))) +
+      " " + (d.v3.x > width-15 ? width-15 : ((d.v3.x < 15 ? 15 : d.v3.x))) +
+      "," + (d.v3.y > height-15 ? height-15 : ((d.v3.y < 15 ? 15 : d.v3.y)));
+  });
 
   // Draw directed edges with proper padding from node centers.
   path.attr('d', function(d) {
@@ -190,7 +196,13 @@ function tick() {
     // For each edge, set the attribute 'd' to have the form "MsourcexCoord,sourceyCoord LtargetxCoord,targetyCoord".
     // Then the appropriate coordinates to use for padding the directed edges away from the nodes can be obtained by
     // the 'd' attribute.
-    return 'M' + (d.source.x > width-15 ? width-15 : ((d.source.x < 15 ? 15 : d.source.x))) + ',' + (d.source.y > height-15 ? height-15 : ((d.source.y < 15 ? 15 : d.source.y))) + 'L' + (d.target.x > width-15 ? width-15 : ((d.target.x < 15 ? 15 : d.target.x))) + ',' + (d.target.y > height-15 ? height-15 : ((d.target.y < 15 ? 15 : d.target.y)));
+    return 'M' + (d.source.x > width-15 ?
+                  width-15 :((d.source.x < 15 ? 15 :d.source.x))) + ',' +
+      (d.source.y > height-15 ? height-15 : ((d.source.y < 15 ? 15 :
+                                              d.source.y))) + 'L' +
+      (d.target.x > width-15 ? width-15 : ((d.target.x < 15 ? 15 : d.target.x)))
+      + ',' + (d.target.y > height-15 ? height-15 :
+               ((d.target.y < 15 ? 15 : d.target.y)));
   });
 
   // Restrict the nodes to be contained within a 15 pixel margin around the svg.
@@ -366,8 +378,13 @@ function restart() {
                 selected_face_node_2 = null;
             } else {
                 var face = faces.filter(function(f) {
-                return ((f.v1 === selected_face_node_1 || f.v2 === selected_face_node_1 || f.v3 === selected_face_node_1) && (f.v1 === selected_face_node_2 || f.v2 === selected_face_node_2 || f.v3 === selected_face_node_2) && (f.v1 === d || f.v2 === d || f.v3 === d));})[0];
-                
+                  return ((f.v1 === selected_face_node_1 ||
+                           f.v2 === selected_face_node_1 ||
+                           f.v3 === selected_face_node_1) &&
+                          (f.v1 === selected_face_node_2 ||
+                           f.v2 === selected_face_node_2 ||
+                           f.v3 === selected_face_node_2) &&
+                          (f.v1 === d || f.v2 === d || f.v3 === d));})[0];
                 if(!face){
                   // If there was not already a face on the three chosen vertices, create one.
                   face = {v1: selected_face_node_1, v2: selected_face_node_2, v3: d, highlighted:false};
@@ -843,7 +860,11 @@ function updateWindowSize2d() {
     force.size([width, height]).resume();
 }
 
-// Function to construct the M2 constructor for the simplicial complex.  Note: If the user has modified the nodes in the simplicial complex, this will need to pass the new base ring back to Macaulay2 which will cause issues if we want to add in boolean tests/numerical invariants at any point.
+// Function to construct the M2 constructor for the simplicial
+// complex.  Note: If the user has modified the nodes in the
+// simplicial complex, this will need to pass the new base ring back
+// to Macaulay2 which will cause issues if we want to add in boolean
+// tests/numerical invariants at any point.
 
 function simplicialComplex2M2Constructor( nodeSet, edgeSet , faceSet ){
     if(nodeSet.length==0){
@@ -917,9 +938,17 @@ function simplicialComplexFacets(nodeSet,edgeSet,faceSet){
     
     // If a 1-dimensional face is not a subset of any 2-dimensional face, then it is a facet.
     for(var i=0; i < edgeSet.length; i++){
-        if(faceSet.every(function(d){return (((d.v1 != edgeSet[i].source) && (d.v2 != edgeSet[i].source) && (d.v3 != edgeSet[i].source)) || ((d.v1 != edgeSet[i].target) && (d.v2 != edgeSet[i].target) && (d.v3 != edgeSet[i].target)));})){results.push([positionByID(nodeSet,edgeSet[i].source.id),positionByID(nodeSet,edgeSet[i].target.id)]);}
+      if(faceSet.every(
+        function(d){return (((d.v1 != edgeSet[i].source) &&
+                             (d.v2 != edgeSet[i].source) &&
+                             (d.v3 != edgeSet[i].source)) ||
+                            ((d.v1 != edgeSet[i].target) &&
+                             (d.v2 != edgeSet[i].target) &&
+                             (d.v3 != edgeSet[i].target)));})){
+        results.push([positionByID(nodeSet,edgeSet[i].source.id),positionByID(
+          nodeSet,edgeSet[i].target.id)]);}
     }
-    
+
     // All 2-dimensional faces are facets since the simplicial complex is 2-dimensional.
     faceSet.forEach(function(d){results.push([positionByID(nodeSet,d.v1.id),positionByID(nodeSet,d.v2.id),positionByID(nodeSet,d.v3.id)]);});
     
@@ -1082,7 +1111,26 @@ function exportTikz (event){
 
   // Branden: Actual tikz code; displayed in black and white. We could do colors, but I am afriad of shading issues when printing.
   var tikzTex = "";
-  tikzTex =  "\\begin{tikzpicture}\n         \\newcommand*\\points"+timestamp+"{"+points+"}\n          \\newcommand*\\edges"+timestamp+"{"+edges+"}\n          \\newcommand*\\faces"+timestamp+"{"+tikzFaces+"}\n          \\newcommand*\\scale"+timestamp+"{0.02}\n          \\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+" {\n          \\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+timestamp+"*\\y) [circle,draw,fill=white,inner sep=1pt] {$\\w$};\n          }\n          \\foreach \\x/\\y/\\z/\\w in \\faces"+timestamp+" {\n    \\fill[black!\\w]\n    (\\x.center) -- (\\y.center) -- (\\z.center) -- cycle;\n         }\n       \\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+" {\n          \\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+timestamp+"*\\y) [circle,draw,fill=white,inner sep=1pt] {$\\w$};\n          }\n             \\foreach \\x/\\y in \\edges"+timestamp+" {\n          \\draw (\\x) -- (\\y);\n          }\n                       \\end{tikzpicture}\n      % \\points"+timestamp+" is point set in the form x-coord/y-coord/node ID/node label\n     % \\edges"+timestamp+" is edge set in the form Source ID/Target ID\n      % \\scale"+timestamp+" makes the picture able to be viewed on the page\n      % \\faces"+timestamp+" is a set in the form (node 1)/(node 2)/(node 3)/fill percent\n";  
+  tikzTex =  "\\begin{tikzpicture}\n         \\newcommand*\\points"+timestamp+
+    "{"+points+"}\n          \\newcommand*\\edges"+timestamp+"{"+edges+
+    "}\n          \\newcommand*\\faces"+timestamp+"{"+tikzFaces+
+    "}\n          \\newcommand*\\scale"+timestamp+"{0.02}\n          "+
+    "\\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+" {\n          "+
+    "\\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+timestamp+
+    "*\\y) [circle,draw,fill=white,inner sep=1pt] {$\\w$};\n          }\n"+
+        "\\foreach \\x/\\y/\\z/\\w in \\faces"+timestamp+
+    " {\n    \\fill[black!\\w]\n    (\\x.center) -- (\\y.center) -- "+
+    "(\\z.center) -- cycle;\n         }\n       \\foreach \\x/\\y/\\z/\\w"+
+    "in \\points"+timestamp+" {\n          \\node (\\z) at (\\scale"+
+    timestamp+"*\\x,-\\scale"+timestamp+"*\\y) [circle,draw,"+
+    "fill=white,inner sep=1pt] {$\\w$};\n          }\n             "+
+    "\\foreach \\x/\\y in \\edges"+timestamp+" {\n          \\draw (\\x)"+
+    "-- (\\y);\n          }\n                       \\end{tikzpicture}\n"+
+    "% \\points"+timestamp+" is point set in the form x-coord/y-coord/node"+
+    "ID/node label\n     % \\edges"+timestamp+" is edge set in the form "+
+    "Source ID/Target ID\n      % \\scale"+timestamp+" makes the picture"+
+    "able to be viewed on the page\n      % \\faces"+timestamp+
+    " is a set in the form (node 1)/(node 2)/(node 3)/fill percent\n";
     
   if(!tikzGenerated){
     var tikzDiv = document.createElement("div");
@@ -1109,7 +1157,7 @@ function exportTikz (event){
     var listGroup = document.getElementById("menuList");
     listGroup.insertBefore(tikzDiv,listGroup.childNodes[14]);
     document.getElementById("copyButton").setAttribute("data-clipboard-target","#tikzTextBox");
-    clipboard = new Clipboard('#copyButton');
+    clipboard = new ClipboardJS('#copyButton');
     clipboard.on('error', function(e) {
         window.alert("Press enter, then CTRL-C or CMD-C to copy")
     });  

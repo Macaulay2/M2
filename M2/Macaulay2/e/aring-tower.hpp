@@ -138,7 +138,7 @@ class ARingTower : public RingInterface
     assert(false);
   }  // TODO: write this
 
-  bool set_from_mpq(elem &result, mpq_ptr a) const
+  bool set_from_mpq(elem &result, mpq_srcptr a) const
   {
     assert(false);
     return false;
@@ -179,7 +179,7 @@ class ARingTower : public RingInterface
   void mult(elem &result, elem a, elem b) const {}          // TODO: write this
   void divide(elem &result, elem a, elem b) const {}        // TODO: write this
   void power(elem &result, elem a, int n) const {}          // TODO: write this
-  void power_mpz(elem &result, elem a, mpz_ptr n) const {}  // TODO: write this
+  void power_mpz(elem &result, elem a, mpz_srcptr n) const {}  // TODO: write this
   void swap(ElementType &a, ElementType &b) const {}        // TODO: write this
   void elem_text_out(buffer &o,
                      ElementType a,
@@ -295,7 +295,7 @@ class ARingTower : public RingInterface
     
     void set_from_int(ElementType &result, mpz_ptr r);
     
-    bool set_from_rational(ElementType &result, mpq_ptr r);
+    bool set_from_mpq(ElementType &result, mpq_srcptr r);
     
     void set_random(ElementType &result) { result = mRing.random(mStartLevel); }
     
@@ -402,7 +402,7 @@ class ARingTower : public RingInterface
     int degree(int var, const ElementType f) const { return mRing.degree(mStartLevel,var,f); }
     void diff(int var, ElementType &result, const ElementType f) const { result = mRing.diff(mStartLevel, var, f); }
     int extension_degree(int firstvar); // returns -1 if infinite
-    void power_mod(ElementType &result, const ElementType f, mpz_t n, const ElementType g) const { result = mRing.power_mod(mStartLevel, f, n, g); } // f^n mod g
+    void power_mod(ElementType &result, const ElementType f, mpz_srcptr n, const ElementType g) const { result = mRing.power_mod(mStartLevel, f, n, g); } // f^n mod g
     void lowerP(ElementType &result, const ElementType f) { result = mRing.lowerP(mStartLevel, f); }
     
   private:

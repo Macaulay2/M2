@@ -4,10 +4,21 @@ include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
 .PHONY:unconfigure-libs reconfigure configure-help report-M2-location help scripts
-all install: \
-	check-make config.status configured check-for-undefined-configure-variables\
-	srcdir protect-configs configured-files check-machine \
+all install:										\
+	check-make config.status configured check-for-undefined-configure-variables	\
+	optional-git-submodule-update							\
+	srcdir protect-configs configured-files check-machine				\
 	M2 all-in-subdirs report-M2-location
+ifeq "@DEVELOPMENT@" "yes"
+optional-git-submodule-update:
+	: skipping automatic updating of submodules, because --enable-development was specified
+else ifeq "@BUILDSUBLIST@" ""
+optional-git-submodule-update:
+	: skipping automatic updating of submodules, because no submodules are being built
+else
+optional-git-submodule-update:
+	git submodule update
+endif
 configured-files: @CONFIGURED_FILES@
 $(foreach f,@CONFIGURED_FILES@,$(eval $f: @srcdir@/$f.in; ./config.status $f))
 M2: GNUmakefile
@@ -250,7 +261,9 @@ protect-configs:
 	 @ chmod a-w $(shell cat @srcdir@/config/files)
 check-for-undefined-configure-variables:
 	: "checking for strings that look like undefined configure variables in all *.in files..."
-	@ egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep . ; [ "$?" != 0 ]
+	@ if egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:=' | egrep . ;	\
+	  then exit 1;														\
+	  fi
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
 relink:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
 relink-nostrip:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d ENABLE_STRIP=no @pre_exec_prefix@/bin/M2@EXE@
@@ -290,7 +303,7 @@ announce:
 	@ echo "================================================================="
 	@ echo "    Macaulay2 version @PACKAGE_VERSION@"
 	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
-	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@ STATIC=@STATIC@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
 	@ echo "================================================================="
 
 help:
@@ -298,7 +311,7 @@ help:
 	@ echo ""
 	@ echo "make files configured with:"
 	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
-	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@ STATIC=@STATIC@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
 	@ echo ""
 	@ echo "Macaulay2 executable location:"
 	@ echo "   @pre_bindir@/M2@EXE@"
