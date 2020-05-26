@@ -83,7 +83,7 @@ ring_elem M2FreeAlgebraQuotient::from_int(mpz_srcptr n) const
   return from_coefficient(coefficientRing()->from_int(n));
 }
 
-bool M2FreeAlgebraQuotient::from_rational(const mpq_ptr q, ring_elem& result1) const
+bool M2FreeAlgebraQuotient::from_rational(const mpq_srcptr q, ring_elem& result1) const
 {
   ring_elem cq; // in coeff ring.
   bool worked = coefficientRing()->from_rational(q, cq);
@@ -231,7 +231,7 @@ ring_elem M2FreeAlgebraQuotient::mult(const ring_elem f1, const ring_elem g1) co
   return ring_elem(reinterpret_cast<void *>(result));  
 }
 
-ring_elem M2FreeAlgebraQuotient::power(const ring_elem f1, mpz_t n) const
+ring_elem M2FreeAlgebraQuotient::power(const ring_elem f1, mpz_srcptr n) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto result = new Poly;

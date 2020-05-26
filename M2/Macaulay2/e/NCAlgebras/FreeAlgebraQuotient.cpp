@@ -56,7 +56,7 @@ void FreeAlgebraQuotient::from_int(Poly& result, mpz_srcptr n) const
   from_coefficient(result, coefficientRing()->from_int(n));
 }
 
-bool FreeAlgebraQuotient::from_rational(Poly& result, const mpq_ptr q) const
+bool FreeAlgebraQuotient::from_rational(Poly& result, const mpq_srcptr q) const
 {
   ring_elem cq; // in coeff ring.
   bool worked = coefficientRing()->from_rational(q, cq);
@@ -134,7 +134,7 @@ void FreeAlgebraQuotient::power(Poly& result, const Poly& f, int n) const
   normalizeInPlace(result);
 }
 
-void FreeAlgebraQuotient::power(Poly& result, const Poly& f, mpz_ptr n) const
+void FreeAlgebraQuotient::power(Poly& result, const Poly& f, mpz_srcptr n) const
 {
   mFreeAlgebra.power(result, f, n);
   normalizeInPlace(result);

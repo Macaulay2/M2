@@ -82,8 +82,9 @@ darwin64-appleclang : always
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="flint"
+		--enable-download
+
+#--enable-build-libraries="flint"
 
 darwin64-gcc6 : always
 	mkdir -p builds.tmp/darwin64-gcc6

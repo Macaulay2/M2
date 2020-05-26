@@ -132,7 +132,7 @@ void FreeAlgebra::from_int(Poly& result, mpz_srcptr n) const
   from_coefficient(result, coefficientRing()->from_int(n));
 }
 
-bool FreeAlgebra::from_rational(Poly& result, const mpq_ptr q) const
+bool FreeAlgebra::from_rational(Poly& result, const mpq_srcptr q) const
 {
   ring_elem cq; // in coeff ring.
   bool worked = coefficientRing()->from_rational(q, cq);
@@ -598,7 +598,7 @@ void FreeAlgebra::power(Poly& result, const Poly& f, int n) const
     }
 }
 
-void FreeAlgebra::power(Poly& result, const Poly& f, mpz_ptr n) const
+void FreeAlgebra::power(Poly& result, const Poly& f, mpz_srcptr n) const
 {
   if (mpz_sgn(n) == 0) from_long(result, 1);
   else if (is_zero(f)) from_long(result, 0);

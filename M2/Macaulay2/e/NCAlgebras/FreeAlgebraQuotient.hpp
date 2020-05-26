@@ -38,7 +38,7 @@ public:
   void from_coefficient(Poly& result, const ring_elem a) const;
   void from_long(Poly& result, long n) const;
   void from_int(Poly& result, mpz_srcptr n) const; 
-  bool from_rational(Poly& result, const mpq_ptr q) const; 
+  bool from_rational(Poly& result, const mpq_srcptr q) const; 
   void copy(Poly& result, const Poly& f) const;
   void swap(Poly& f, Poly& g) const; // TODO
   void var(Poly& result, int v) const;
@@ -56,7 +56,7 @@ public:
   void subtract(Poly& result, const Poly& f, const Poly& g) const;
   void mult(Poly& result, const Poly& f, const Poly& g) const;
   void power(Poly& result, const Poly& f, int n) const;
-  void power(Poly& result, const Poly& f, mpz_ptr n) const;
+  void power(Poly& result, const Poly& f, mpz_srcptr n) const;
 
   ring_elem eval(const RingMap *map, const Poly& f, int first_var) const;
   

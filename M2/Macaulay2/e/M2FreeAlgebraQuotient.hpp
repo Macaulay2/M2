@@ -45,7 +45,7 @@ public:
   virtual ring_elem from_coefficient(const ring_elem a) const;
   virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_srcptr n) const;
-  virtual bool from_rational(const mpq_ptr q, ring_elem &result) const;
+  virtual bool from_rational(const mpq_srcptr q, ring_elem &result) const;
 
   virtual ring_elem var(int v) const;
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
@@ -61,7 +61,7 @@ public:
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const;
   virtual ring_elem mult(const ring_elem f, const ring_elem g) const;
 
-  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
 
   virtual ring_elem invert(const ring_elem f) const;

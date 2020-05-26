@@ -140,8 +140,6 @@ auto NCF4::isOverlapNecessary(Overlap o) -> bool
   // need to be careful, however, since an overlap lead word is trivially
   // a multiple of the words used to build it.  These possibilities must be discarded
   bool retval;
-  auto A = freeAlgebra();
-
   Word w;
   
   w = createOverlapLeadWord(o);
