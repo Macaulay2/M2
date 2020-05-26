@@ -764,7 +764,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 LIBLIST=" $LIBLIST "
 AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox boost 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
     [for i in $enableval
-    do case "$LIBLIST $SUBLIST" in
+    do case "$LIBLIST $SUBLIST $PROGLIST" in
 	    *" $i "*) 
 	        eval BUILD_$i=yes 
 		BUILD_ALWAYS="$BUILD_ALWAYS $i"
@@ -1233,7 +1233,7 @@ AC_ARG_VAR([GFTABLESDIR],
 if test $BUILD_factory = yes
 then
     BUILD_gftables=yes
-    AC_SUBST([gftablesdir], [${datadir}/Macaulay2/Core/factory/])
+    GFTABLESDIR="${datadir}/Macaulay2/Core/factory/"
 else
     BUILD_gftables=no
     if test x$GFTABLESDIR = x
@@ -1246,8 +1246,7 @@ else
 	fi
     fi
     adl_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
-    AC_CHECK_FILE([${GFTABLESDIR}gftables/961],
-	[AC_SUBST([gftablesdir], [$GFTABLESDIR])],
+    AC_CHECK_FILE([${GFTABLESDIR}gftables/961],,
 	[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
 fi
 
@@ -1747,7 +1746,7 @@ sysconfdir=/nowhere
 sharedstatedir=/nowhere
 localstatedir=/nowhere
 for i in bindir datadir includedir infodir libdir libexecdir mandir sbindir \
-         psdir pdfdir dvidir htmldir localedir gftablesdir docdir datarootdir
+         psdir pdfdir dvidir htmldir localedir GFTABLESDIR docdir datarootdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
      "$exec_prefix"|"$exec_prefix"/*)
@@ -1760,7 +1759,7 @@ do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v=
 	   eval  pre_${i}=`echo $v | sed s,"^$prefix","'\\${pre_prefix}'",`
 	   eval      ${i}=`echo $v | sed s,"^$prefix","'\\${prefix}'",`
 	   ;;
-     *) if test $i != gftablesdir #only needs normalized if we build factory
+     *) if test $i != GFTABLESDIR #only needs normalized if we build factory
 	then AC_MSG_ERROR([expected "\${$i}" => "$w" to start with "\${prefix}" or with "\${exec_prefix}"])
 	fi ;;
    esac

@@ -55,7 +55,7 @@ set(docdir	${prefix}/${CMAKE_INSTALL_DOCDIR})
 # These locations are Macaulay2 conventions
 set(libm2dir	${libdir}/Macaulay2)
 set(emacsdir	${datarootdir}/emacs/site-lisp)
-set(gftablesdir	${datarootdir}/Macaulay2/Core/factory/)
+set(GFTABLESDIR	${datarootdir}/Macaulay2/Core/factory/)
 set(packagesdir	${datarootdir}/Macaulay2)
 set(programsdir	${libexecdir}/Macaulay2/bin)
 set(licensesdir	${libexecdir}/Macaulay2/program-licenses)
