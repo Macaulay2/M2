@@ -1,3 +1,5 @@
+-- Testing stack trace functionality under -DPROFILING=ON
+
 debug Core
 
 g=method()
