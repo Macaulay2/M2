@@ -1419,16 +1419,14 @@ doc ///
         M1: Matrix
     Outputs
         : List
-            with a list of rows and columns, if such a submatrix was found
-        : null
-            if no such submatrix is found, it returns null
+            a list of rows and columns, if such a submatrix was found; if no such submatrix is found, it returns {\tt null}
     Description
         Text
             This function looks at submatrices of the given matrix, and tries to find
             one of the specified rank.  If it succeeds, it returns a list of two lists.
             The first is the list of rows, the second is the list of columns, of the desired rank submatrix.
             If it fails to find such a matrix,
-            the function returns null.  The option {\tt MaxMinors} is used to
+            the function returns {\tt null}.  The option {\tt MaxMinors} is used to
             control how many minors to consider.  If left {\tt null}, the number
             considered is based on the size of the matrix.
         Example
@@ -1471,9 +1469,7 @@ doc ///
         R: Ring
     Outputs
         : Boolean
-            true, if the ring is regular in codimension n ($R_n$), false if it determines it is not
-        : null
-            if no determination is made it returns null
+            {\tt true}, if the ring is regular in codimension n ($R_n$), {\tt false} if it determines it is not, {\tt null} if no determination is made 
     Description
         Text
             This function looks at interesting minors of the jacobian matrix to try to verify that the ring is $R_n$.
@@ -1804,9 +1800,7 @@ doc ///
             an ideal in a polynomial ring over a field, or a quotient ring
     Outputs
         : Boolean
-           {\tt true} if the codimension of I is at least n
-        : 
-            {\tt null} if the function cannot tell whether the codimension is at least n
+           {\tt true} or {\tt false} indicating whether the codimension of I is at least n, if it can be determined, else {\tt null}
     Description
         Text
             The computes a partial Groebner basis, takes the initial terms, and checks whether that (partial) initial ideal has codimension at least {\tt n}.  
@@ -1849,9 +1843,7 @@ doc ///
             an ideal in a polynomial ring over a field, or a quotient ring of such
     Outputs
         : Boolean
-           {\tt true} if the dimension of I is at most n
-        : 
-            {\tt null} if the function cannot tell whether the dimension is at most n
+           {\tt true} if the dimension of I is at most n, {\tt null} if no determination is made.
     Description
         Text
             This simply calls {\tt isCodimAtLeast}, passing options as described there.
