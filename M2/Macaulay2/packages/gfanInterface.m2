@@ -129,7 +129,7 @@ findGfanPath = () -> (
 
 fig2devPath = gfanInterface#Options#Configuration#"fig2devpath"
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
-gfanPath = findGfanPath()
+gfanPath = null
 
 gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
 gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
@@ -1045,7 +1045,7 @@ toPolymakeFormat(Fan) := (F) ->(
 --------------------------------------------------------
 
 runGfanCommand = (cmd, opts, data) -> (
-	
+	if gfanPath === null then gfanPath = findGfanPath();
 	tmpFile := gfanMakeTemporaryFile data;
 	
 	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
