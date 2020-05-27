@@ -3914,6 +3914,54 @@ export rawLU(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawLU", rawLU);
 
+export rawLUincremental(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 4 then (
+  if isSequenceOfSmallIntegers(s.0) then (P := getSequenceOfSmallIntegers(s.0);
+  when s.1 is wLU:RawMutableMatrixCell do (LU := wLU.p;
+  when s.2 is wv:RawMutableMatrixCell do (v := wv.p;
+  when s.3 is wm:ZZcell do (
+  if isInt(wm) then (m := toInt(wm);
+    toExpr(Ccode(RawArrayIntOrNull,
+      "rawLUincremental(",
+        P, ",", LU, ",", v, ",", m,
+      ")"
+    ))
+  ) else WrongArgSmallInteger(3)
+  ) else WrongArgZZ(3)
+  ) else WrongArg(2,"a raw mutable matrix")
+  ) else WrongArg(1,"a raw mutable matrix")
+  ) else WrongArg(0,"a sequence of small integers")
+  ) else WrongNumArgs(4)
+  ) else WrongNumArgs(4)
+  );
+setupfun("rawLUincremental",rawLUincremental);
+
+export rawTriangularSolve(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 4 then (
+  when s.0 is wLv:RawMutableMatrixCell do (Lv := wLv.p;
+  when s.1 is wx:RawMutableMatrixCell do (x := wx.p;
+  when s.2 is wm:ZZcell do (
+  if isInt(wm) then (m := toInt(wm);
+  when s.3 is wstrategy:ZZcell do (
+  if isInt(wstrategy) then (strategy := toInt(wstrategy);
+    Ccode(void,
+      "rawTriangularSolve(",
+        Lv, ",", x, ",", m, ",", strategy,
+      ")"
+    );
+    toExpr(x)
+  ) else WrongArgSmallInteger(3)
+  ) else WrongArgZZ(3)
+  ) else WrongArgSmallInteger(2)
+  ) else WrongArgZZ(2)
+  ) else WrongArg(1,"a raw mutable matrix")
+  ) else WrongArg(0,"a raw mutable matrix")
+  ) else WrongNumArgs(4)
+  ) else WrongNumArgs(4)
+  );
+setupfun("rawTriangularSolve",rawTriangularSolve);
 
 -- export rawLQUPFactorization(e:Expr):Expr := (
 --      -- rawLQUPFactorization(A) returns a pair of list of integers (P, Qt permutations),

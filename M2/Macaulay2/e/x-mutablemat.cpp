@@ -1,5 +1,7 @@
 // Copyright 2004 Michael E. Stillman
 
+#include <iostream>
+
 #include "engine.h"
 #include "relem.hpp"
 #include "ring.hpp"
@@ -595,6 +597,37 @@ M2_arrayintOrNull rawLU(const MutableMatrix *A,
     {
       ERROR(e.what());
       return NULL;
+  }
+}
+
+M2_arrayintOrNull rawLUincremental(M2_arrayintOrNull P,
+                                   MutableMatrix *LU,
+                                   const MutableMatrix* v,
+                                   int i)
+{
+  try
+    {
+      // FIXME: can we not allocate new permutation array?
+      std::vector<size_t> perm = M2_arrayint_to_stdvector<size_t>(P);
+      return LU->LUincremental(perm, v, i);
+  } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return NULL;
+  }
+}
+
+void rawTriangularSolve(MutableMatrix *Lv, /* modified in routine */
+                        MutableMatrix *x, /* modified in routine */
+                        int m,
+                        int strategy)
+{
+  try
+    {
+      Lv->triangularSolve(x, m, strategy);
+  } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
   }
 }
 
