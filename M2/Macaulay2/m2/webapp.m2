@@ -3,16 +3,15 @@
 -- htmlWithTex Thing produces some valid html code with possible TeX code
 -- topLevelMode=WebApp produces that plus possible pure text coming from the system
 -- hence, requires tags to help the browser app distinguish html from text
-(webAppEndTag,            -- closing tag
-    webAppHtmlTag,        -- indicates what follows is HTML
-    webAppOutputTag,      -- it's html but it's output
-    webAppInputTag,       -- it's text but it's input
-    webAppInputContdTag,  -- text, continuation of input
-    webAppTextTag,        -- other text
-    webAppTexTag,         -- TeX start
-    webAppTexEndTag       -- TeX end
-    ):=("</span>","<span class='M2Html'>","<span class='M2Html M2Output'>","","","<span class='M2Text'>","\\(","\\)");
-
+    (webAppEndTag,            -- closing tag ~ </span>
+	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
+	webAppOutputTag,      -- it's html but it's output ~ <span class='M2Html M2Output'>
+	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
+	webAppInputContdTag,  -- text, continuation of input
+	webAppTextTag,        -- other text ~ <span class='M2Text'>
+	webAppTexTag,         -- TeX start ~ \(
+	webAppTexEndTag       -- TeX end ~ \)
+	)=apply((17,18,19,20,28,30,31,17),ascii);
 
 htmlWithTex Thing := tex -- by default, we use tex (as opposed to html)
 
@@ -131,15 +130,6 @@ CoherentSheaf#{WebApp,AfterPrint} = F -> (
 ZZ#{WebApp,AfterPrint} = identity
 
 if topLevelMode === WebApp then (
-    (webAppEndTag,            -- closing tag
-	webAppHtmlTag,        -- indicates what follows is HTML
-	webAppOutputTag,      -- it's html but it's output
-	webAppInputTag,       -- it's text but it's input
-	webAppInputContdTag,  -- text, continuation of input
-	webAppTextTag,        -- other text
-	webAppTexTag,         -- TeX start
-	webAppTexEndTag       -- TeX end
-	)=apply((17,18,19,20,28,30,31,17),ascii);
     -- the help hack: if started in WebApp mode, help is compiled in it as well
     webAppPRE := new MarkUpType of PRE;
     html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so no need to htmlLiteral it
