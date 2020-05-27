@@ -1045,6 +1045,11 @@ toPolymakeFormat(Fan) := (F) ->(
 --------------------------------------------------------
 
 runGfanCommand = (cmd, opts, data) -> (
+	(out, err, fileName) := runGfanCommandCaptureBoth(cmd, opts, data);
+	(out, fileName)
+)
+
+runGfanCommandCaptureBoth = (cmd, opts, data) -> (
 	if gfanPath === null then gfanPath = findGfanPath();
 	tmpFile := gfanMakeTemporaryFile data;
 	
@@ -1064,45 +1069,19 @@ runGfanCommand = (cmd, opts, data) -> (
 	    errorMsg = errorMsg | "ERROR:\n";
 	    errorMsg = errorMsg | get(tmpFile |".err");
 	     );
-		out := get(tmpFile | ".out");
-	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
-	if length(errorMsg) > 0 then error errorMsg;
-	outputFileName := null;
-	
-	if gfanKeepFiles then outputFileName = tmpFile|".out";
-	
-	(out, "GfanFileName" => outputFileName)
-	
-)
-
-runGfanCommandCaptureBoth = (cmd, opts, data) -> (
-	tmpFile := gfanMakeTemporaryFile data;
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
-	if gfanVerbose then << ex << endl;
-	run ex;
 	out := get(tmpFile | ".out");
 	err := get(tmpFile | ".err");
 	gfanRemoveTemporaryFile tmpFile;
 	gfanRemoveTemporaryFile(tmpFile | ".out");
 	gfanRemoveTemporaryFile(tmpFile | ".err");
+	if length(errorMsg) > 0 then error errorMsg;
 	outputFileName := null;
 	if gfanKeepFiles then outputFileName = tmpFile|".out";
 	(out,err, "GfanFileName"=>outputFileName)
 )
 
 runGfanCommandCaptureError = (cmd, opts, data) -> (
-	tmpFile := gfanMakeTemporaryFile data;
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
-	if gfanVerbose then << ex << endl;
-	run ex;
-	err := get(tmpFile | ".err");
-	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
+	(out, err, fileName) := runGfanCommandCaptureBoth(cmd, opts, data);
 	err
 )
 
