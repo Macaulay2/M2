@@ -72,6 +72,7 @@ endmacro(_gmp_check_version)
 if(NOT GMP_VERSION_OK)
   set(GMP_INCLUDE_DIRS NOTFOUND)
   set(GMP_LIBRARIES NOTFOUND)
+  set(GMPXX_LIBRARIES NOTFOUND)
 
   # search first if an GMPConfig.cmake is available in the system,
   # if successful this would set GMP_INCLUDE_DIRS and the rest of

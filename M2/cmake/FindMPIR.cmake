@@ -60,6 +60,7 @@ endmacro(_mpir_check_version)
 if(NOT MPIR_VERSION_OK)
   set(MPIR_INCLUDE_DIRS NOTFOUND)
   set(MPIR_LIBRARIES NOTFOUND)
+  set(MPIRXX_LIBRARIES NOTFOUND)
 
   # search first if an MPIRConfig.cmake is available in the system,
   # if successful this would set MPIR_INCLUDE_DIRS and the rest of
