@@ -29,7 +29,7 @@ Node
     @ TO "allowableThreads" @, and may be examined and changed as follows.
   Example
        allowableThreads
-       allowableThreads = 8
+       allowableThreads = 4
   Text
     To run a function in another thread use @ TO schedule @, as in the
     following example.
