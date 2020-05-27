@@ -41,7 +41,3 @@
 ;; set decent font size
 (custom-set-faces
  '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 143 :width normal)))))
-
-;; Macaulay 2 start
-(load "~/.emacs-Macaulay2" t)
-;; Macaulay 2 end

@@ -1,3 +1,5 @@
+EXTRAOPTS = -DCMAKE_INSTALL_PREFIX=/usr
+
 include ../Makefile
 
 TAG = m2-debian-build

@@ -1,3 +1,4 @@
+## Parameters
 TAG = m2-cmake-build
 STORAGE = `pwd`/storage
 M2_REPO = `pwd`/../../..
@@ -10,7 +11,7 @@ define M2_BUILD_SCRIPT
 set -xe
 
 ## Full build
-cmake -GNinja -S M2/M2 -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -DUSING_MPIR=OFF
+cmake -GNinja -S M2/M2 -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=Release -DUSING_MPIR=OFF $(EXTRAOPTS)
 cmake --build $(BUILD_DIR) --target build-libraries # build-programs
 cmake --build $(BUILD_DIR) --target M2-core # install-packages
 cmake --build $(BUILD_DIR) --target M2-emacs
