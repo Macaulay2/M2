@@ -34,7 +34,7 @@ newPackage ( "MultFreeResThree",
     DebuggingMode => false
     )
 
-export { "multtable", "multtable1", "multTables", "eeproduct" }
+export { "multtable", "multtable1", "multTables", "eeproduct", "multtablelink" }
 
 
 --==========================================================================
@@ -158,6 +158,68 @@ multtable1 = F -> (
     {EE,EF}
     )
 
+multtablelink = (F,i,j,k) -> (
+    Q := ring F;
+    d1:= matrix entries F.dd_1;
+    d2:= matrix entries F.dd_2;    
+    d3:= matrix entries F.dd_3;    
+    m := numcols d1;
+    l := numcols d2;
+    n := numcols d3;
+
+    mtable := multtable1 F;
+    EE := mtable#0;
+    EF := mtable#1;
+        
+    EEE := new MutableHashTable;
+    for i from 1 to m do (
+	for j from i+1 to m do (
+	    for k from j+1 to m do(
+    	    c := sum(1..l, s -> (EE#(i,j))_(s-1,0)*(EF#(k,s)));
+    	    EEE#(i,j,k) = (matrix entries c);
+	    EEE#(j,i,k) = -EEE#(i,j,k);
+	    EEE#(i,k,j) = -EEE#(i,j,k);
+	    EEE#(k,j,i) = -EEE#(i,j,k);
+	    EEE#(j,k,i) = EEE#(i,j,k);
+	    EEE#(k,i,j) = EEE#(i,j,k);
+	    );
+	);
+    );
+    for i from 1 to m do(
+	for j from 1 to m do(
+	    EEE#(i,i,j) = matrix entries map(Q^n,Q^1,(i,j) -> 0);
+	    EEE#(i,j,i) = matrix entries map(Q^n,Q^1,(i,j) -> 0);
+	    EEE#(j,i,i) = matrix entries map(Q^n,Q^1,(i,j) -> 0);
+	   );
+     );
+ 
+    X := new MutableHashTable;
+    d3t := matrix entries(transpose(d3));
+    for s from 1 to n do (
+    	X#(s,s) = matrix entries (0*(id_(Q^l))_{0});
+	for t from s+1 to n do (
+	    X#(s,t) = matrix entries (matrix{ {-(EEE#(i,j,k))_(t-1,0)},{(EEE#(i,j,k))_(s-1,0)}} // d3t);
+	    X#(t,s) = -X#(s,t);
+	    );
+	);
+    
+    Y := new MutableHashTable;
+    A := {} ;
+    d2t := matrix entries(transpose(d2)) ;
+    for s from 1 to l do (
+    	for t from 1 to n do (
+    	    for u from 1 to l do (
+    		S := -(EE#(i,j))_(s-1,0)*(EF#(k,u))_(t-1,0) + (EE#(i,k))_(s-1,0)*(EF#(j,u))_(t-1,0) - (EE#(j,k))_(s-1,0)*(EF#(i,u))_(t-1,0);
+    		S = S + sum(1..n, v -> (- X#(t,v)*(d3t_(v-1,s-1)))_(u-1,0)) ;
+    		if u==s then S = S + (EEE#(i,j,k))_(t-1,0) ;
+    		if S != 0 then A = append(A,S*(id_(Q^l)_{u-1}));
+    		);
+    	    Y#(s,t) =  matrix entries (sum(A) // d2t) ;
+    	    ) ;
+    	);
+ Y
+ )
+
 --EEE = (i,j,k) -> (
 --l := numgens source d2 ;
 --c := sum(1..l, s -> (EE(i,j))_(s-1,0)*EF(k,s));
@@ -189,11 +251,21 @@ F = res I
     d2 = matrix entries (F.dd)_2;
     d3 = matrix entries (F.dd)_3;    
 
-time eeproduct(F,1,3)
+m
+time eeproduct(F,1,2)
 
 m = multtable1 F
 m = multTables F
+m = multtablelink (F,1,2,3)
+peek m
+(sum m)
+m_0
+#m
 
+id_(Q^7)_{0}
+
+peek m
+m#(1,1)
 peek F.cache
 m = multtable(d1,d2,d3)
 
