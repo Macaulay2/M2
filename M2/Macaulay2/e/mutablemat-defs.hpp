@@ -693,6 +693,10 @@ class MutableMat : public MutableMatrix
 
   virtual M2_arrayintOrNull LU(MutableMatrix* L, MutableMatrix* U) const;
 
+  virtual M2_arrayintOrNull LUincremental(std::vector<size_t>& P, const MutableMatrix* v, int i);
+
+  virtual void triangularSolve(MutableMatrix* x, int m, int strategy);
+
   virtual bool eigenvalues(MutableMatrix* eigenvals,
                            bool is_symm_or_hermitian) const;
 
