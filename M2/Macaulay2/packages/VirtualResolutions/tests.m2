@@ -211,8 +211,7 @@ TEST ///
     assert(multigradedRegularity(S, I) == {{1,5},{2,2},{4,1}})
 ///
 
--- This test currently fails due to a bug in tateResolutions
-///
+TEST ///
     (S, E) = productOfProjectiveSpaces {1, 1, 2};
     irr = intersect(ideal(x_(0,0), x_(0,1)), ideal(x_(1,0), x_(1,1)), ideal(x_(2,0), x_(2,1), x_(2,2)))
     I = saturate(intersect apply(6,i-> ideal(random({1,0,0},S),random({0,1,0},S), random({0,0,1},S),random({0,0,1},S))), irr);
