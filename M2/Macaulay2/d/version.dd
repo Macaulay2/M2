@@ -141,6 +141,7 @@ setupconst("version", Expr(toHashTable(Sequence(
    "operating system" => Ccode(constcharstar,"OS"),
    "operating system release" => Ccode(constcharstar,"REL"),
    "compiler" => compiler,
+   "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),
    "compile time" => Ccode(constcharstar,"timestamp"),
    "compile node name" => Ccode(constcharstar,"NODENAME"),
    "atomic_ops version" => atomicopsversion(),

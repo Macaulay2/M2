@@ -126,7 +126,9 @@ foreach(package IN LISTS PACKAGES)
     unset(PACKAGE_DEPENDENCIES)
   else()
     unset(USES_TERMINAL)
-    set(PACKAGE_DEPENDENCIES install-Macaulay2Doc install-Style)
+    set(PACKAGE_DEPENDENCIES
+      ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Macaulay2Doc/.installed
+      ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Style/.installed)
   endif()
 
   # TODO: Special dependencies:
