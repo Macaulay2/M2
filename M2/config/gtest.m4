@@ -72,7 +72,7 @@ AC_DEFUN([CHECK_GTEST],
   # using TYPED_TEST_SUITE, one of the functions which was introduced in
   # 1.10.0 in the switch from the *_TEST_CASE to the *_TEST_SUITE naming
   # convention.  If this test fails, then an older googletest is
-  # installed, so we instead build our own googletest.
+  # installed, so we instead download our own googletest.
   AS_IF([test "x$have_gtest" = "xyes"],
         [AC_MSG_CHECKING([for gtest version])]
         [AC_COMPILE_IFELSE(
@@ -81,7 +81,7 @@ AC_DEFUN([CHECK_GTEST],
             [[TYPED_TEST_SUITE(int, int);]])],
           [AC_MSG_RESULT(>= 1.10.0)],
           [AC_MSG_RESULT(< 1.10.0)]
-	  [AC_MSG_WARN([mathicgb unit tests require gtest >= 1.10.0; we will build a newer version])]
+	  [AC_MSG_WARN([mathicgb unit tests require gtest >= 1.10.0; we will download a newer version])]
           [have_gtest=no])])
 
   CPPFLAGS="$tmp_CPPFLAGS"
