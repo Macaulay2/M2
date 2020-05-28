@@ -3,16 +3,17 @@
 --           of projective spaces.
 --
 -- PROGRAMMERS : Ayah Almousa, Christine Berkesch, Juliette Bruce,
--- David Eisenbud, Daniel Erman, Michael Loper, Mahrud Sayrafi,
--- Greg Smith.
+--               David Eisenbud, Daniel Erman, Michael Loper,
+--               Mahrud Sayrafi, and Greg Smith.
 --
 -- UPDATE HISTORY : created 14 April 2018 at M2@UW;
 --                  updated 15 April 2019 at IMA Coding Sprint.
+--                  updated 16 April 2020 for JSAG
 ---------------------------------------------------------------------------
 newPackage ("VirtualResolutions",
-    Version => "1.1",
-    Date => "November 13, 2018",
-    Headline => "virtual resolutions on products of projective spaces",
+    Version => "1.2",
+    Date => "April 16, 2020",
+    Headline => "Methods for virtual resolutions on products of projective spaces",
     Authors =>{
         {Name => "Ayah Almousa",       Email => "aka66@cornell.edu",   HomePage => "http://pi.math.cornell.edu/~aalmousa "},
         {Name => "Christine Berkesch", Email => "cberkesc@umn.edu",    HomePage => "http://math.umn.edu/~cberkesc/"},
@@ -28,7 +29,8 @@ newPackage ("VirtualResolutions",
         "Elimination",
         "Depth"
         },
-    AuxiliaryFiles => true
+    AuxiliaryFiles => true,
+    DebuggingMode => false
     )
 
 export{
@@ -53,6 +55,7 @@ export{
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 
+debug Core;
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -77,20 +80,21 @@ ourSaturation = (I,irr) -> saturationByElimination(I, decompose irr);
 --See Algorithm 3.4 of [BES]
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-virtualOfPair = method(Options => {Strategy => null})
-virtualOfPair (Ideal,  List) := Boolean => opts -> (I, alphas) -> virtualOfPair((ring I)^1/I, alphas)
-virtualOfPair (Module, List) := Boolean => opts -> (M, alphas) -> (
-    if opts.Strategy == null then return virtualOfPair(res M, alphas);
-    if opts.Strategy == UseSyzygies then (
-	if any(alphas, alpha -> #alpha =!= degreeLength ring M) then error "degree has wrong length";
-	m := presentation M;
-	apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha)));
-	L := {m} | while m != 0 list (
-	    m = syz m; apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha))); m);
-	chainComplex L
-	)
+virtualOfPair = method(Options => {LengthLimit => infinity})
+virtualOfPair (Ideal,  List) := ChainComplex => opts -> (I, alphas) -> virtualOfPair(comodule I, alphas, opts)
+virtualOfPair (Module, List) := ChainComplex => opts -> (M, alphas) -> (
+    R := ring M;
+    if M.cache.?resolution then return virtualOfPair(M.cache.resolution, alphas, opts);
+    if any(alphas, alpha -> #alpha =!= degreeLength ring M) then error "degree has wrong length";
+    m := schreyerOrder gens gb presentation M;
+    apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha)));
+    i := 2;
+    L := {m} | while m != 0 and i <= opts.LengthLimit list (
+	i = i + 1;
+	m = map(R, rawKernelOfGB raw m); apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha))); m);
+    chainComplex L
     )
-virtualOfPair (ChainComplex, List) := Boolean => opts -> (F, alphas) -> (
+virtualOfPair (ChainComplex, List) := ChainComplex => opts -> (F, alphas) -> (
     if any(alphas, alpha -> #alpha =!= degreeLength ring F) then error "degree has wrong length";
     L := apply(length F, i -> (
             m := F.dd_(i+1); apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha))); m));
@@ -223,7 +227,7 @@ idealSheafGens(ZZ, Ideal, NormalToricVariety) := List => opts -> (n, J, X) -> (
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 randomRationalCurve = method()
-randomRationalCurve (ZZ,ZZ,Ring) := (d,e,F)->(
+randomRationalCurve (ZZ,ZZ,Ring) := Ideal => (d,e,F) -> (
     -- Defines P1
     s := getSymbol "s";
     t := getSymbol "t";
@@ -259,7 +263,7 @@ randomRationalCurve (ZZ,ZZ,Ring) := (d,e,F)->(
 ----- degree (d,e) defined over ZZ/101
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-randomRationalCurve (ZZ,ZZ) := (d,e)->(
+randomRationalCurve (ZZ,ZZ) := Ideal => (d,e) -> (
     randomRationalCurve(d,e,ZZ/101)
     )
 
@@ -274,7 +278,7 @@ randomRationalCurve (ZZ,ZZ) := (d,e)->(
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 randomMonomialCurve = method()
-randomMonomialCurve (ZZ,ZZ,Ring) := (d,e,F)->(
+randomMonomialCurve (ZZ,ZZ,Ring) := Ideal => (d,e,F) -> (
     --- Defines P1
     s := getSymbol "s";
     t := getSymbol "t";
@@ -296,7 +300,7 @@ randomMonomialCurve (ZZ,ZZ,Ring) := (d,e,F)->(
     M2 := matrix {{(uVars#0)^e,(uVars#1)^e,f},{uVars#4,uVars#5,uVars#6}};
     J := minors(2,M1)+minors(2,M2);
     --- Computes saturation and then eliminates producing curve in P1xP2
-    J' := saturate(J,ideal(uVars#0,uVars#1),MinimalGenerators=>false);
+    J' := ourSaturation(J,ideal(uVars#0,uVars#1));
     I := sub(eliminate({uVars#0,uVars#1},J'),S);
     (T, E) := productOfProjectiveSpaces({1, 2},CoefficientField=>F);
     G := map(T,S,(flatten entries vars T));
@@ -310,7 +314,7 @@ randomMonomialCurve (ZZ,ZZ,Ring) := (d,e,F)->(
 ----- of degree (d,e) defined over ZZ/101.
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-randomMonomialCurve (ZZ,ZZ) := (d,e)->(
+randomMonomialCurve (ZZ,ZZ) := Ideal => (d,e) -> (
     randomMonomialCurve(d,e,ZZ/101)
     )
 
@@ -325,10 +329,12 @@ randomMonomialCurve (ZZ,ZZ) := (d,e)->(
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 curveFromP3toP1P2 = method(Options => {PreserveDegree => true})
-curveFromP3toP1P2 (Ideal) := opts -> (J) ->(
+curveFromP3toP1P2 (Ideal) := Ideal => opts -> (J) -> (
     --- Defines P3
-    R := ring J;
+    w := getSymbol "w";
+    R := (coefficientRing ring J) monoid([w_0,w_1,w_2,w_3]);
     rVars := flatten entries vars R;
+    J = sub(J,matrix{{R_0,R_1,R_2,R_3}});
     --- Base locus of projection
     BL1 := ideal(rVars#0,rVars#1);
     BL2 := ideal(rVars#1,rVars#2,rVars#3);
@@ -336,7 +342,7 @@ curveFromP3toP1P2 (Ideal) := opts -> (J) ->(
     --- If PreserveDegree => true checks whether curve intersects base locus;
     --- this ensures the curve has the correct degree and genus.
     if opts.PreserveDegree == true then (
-        if (saturate((J+BL1))==ideal(rVars)) or (saturate((J+BL2))==ideal(rVars)) then error "Given curve intersects places of projection.";
+        if (ourSaturation(J+BL1,ideal(rVars))==ideal(rVars) or ourSaturation(J+BL2,ideal(rVars))==ideal(rVars)) then error "Given curve intersects places of projection.";
         );
     --- Defines P1xP2
     x := getSymbol "x";
@@ -378,7 +384,7 @@ curveFromP3toP1P2 (Ideal) := opts -> (J) ->(
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 randomCurveP1P2 = method(Options => {Attempt => 1000})
-randomCurveP1P2 (ZZ,ZZ,Ring) := opts -> (d,g,F)->(
+randomCurveP1P2 (ZZ,ZZ,Ring) := Ideal => opts -> (d,g,F) -> (
     --- Defines P3
     z := getSymbol "z";
     R := F(monoid[z_0,z_1,z_2,z_3]);
@@ -393,12 +399,12 @@ randomCurveP1P2 (ZZ,ZZ,Ring) := opts -> (d,g,F)->(
     apply(opts.Attempt,i->(
             C = curve(d,g,R);
             if class(C) === Curve then C = ideal(C);
-            if (saturate(C+BL1)!=ideal(rVars)) and (saturate(C+BL2)!=ideal(rVars)) then break C;
+            if (ourSaturation(C+BL1,ideal(rVars))!=ideal(rVars) and ourSaturation(C+BL2,ideal(rVars))!=ideal(rVars)) then break C;
             )
         );
     --- Checks whether curve in P3 intersects base locus of projection;
     --- this ensures the curve has the correct degree and genus.
-    if (saturate(C+BL1)==ideal(rVars)) or (saturate(C+BL2)==ideal(rVars)) then error "Unable to find curve not intersecting places of projection.";
+    if (ourSaturation(C+BL1,ideal(rVars))==ideal(rVars) or ourSaturation(C+BL2,ideal(rVars))==ideal(rVars)) then error "Unable to find curve not intersecting places of projection.";
     --- Defines P1xP2
     curveFromP3toP1P2(C)
     )
@@ -409,7 +415,7 @@ randomCurveP1P2 (ZZ,ZZ,Ring) := opts -> (d,g,F)->(
 ----- Output: The ideal of a random curve in P1xP2 over ZZ/101
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-randomCurveP1P2 (ZZ,ZZ) := randomCurveP1P2 => opts -> (d,g)->(
+randomCurveP1P2 (ZZ,ZZ) := Ideal => opts -> (d,g) -> (
     randomCurveP1P2(d,g,ZZ/101)
     )
 
@@ -428,7 +434,6 @@ dimVector(Ring) := (S) -> (
     degTally := tally deg;
     apply(rsort unique deg, i->(degTally_i - 1))
     )
-
 dimVector(Thing) := (X) -> (
     S := ring X;
     deg := degrees S;
@@ -522,7 +527,7 @@ multigradedRegularity(Thing, Thing, Module) := List => (X, S, M) -> (
 --TODO: Finish test
 --      Add length limit
 resolveTail = method()
-resolveTail(ChainComplex) := C ->(
+resolveTail(ChainComplex) := ChainComplex => C -> (
     N := max support C;
     M := coker syz C.dd_N;
     -- TODO: add some component of the irrelevant ideal to M here.
@@ -556,6 +561,6 @@ uninstallPackage "VirtualResolutions"
 restart
 installPackage "VirtualResolutions"
 restart
-needsPackage("VirtualResolutions", FileName => "./VirtualResolutions.m2")
+needsPackage("VirtualResolutions", FileName => "VirtualResolutions.m2")
 elapsedTime check "VirtualResolutions"
 viewHelp "VirtualResolutions"
