@@ -39,7 +39,7 @@
 
 // TODO: not as applicable for CMAKE. Remove from Macaulay2/d/version.dd?
 /* arguments used for configure */
-#define CONFIG_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+#define CONFIG_ARGS "-D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -D BUILD_NATIVE=${BUILD_NATIVE} -G'${CMAKE_GENERATOR}'"
 
 /* whether to build a development version */
 #cmakedefine DEVELOPMENT 1
