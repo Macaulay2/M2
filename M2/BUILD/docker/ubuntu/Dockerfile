@@ -28,7 +28,7 @@ RUN apt-get install -y libeigen3-dev  libglpk-dev libgmp3-dev libmpfr-dev \
 # RUN apt-get install -y --no-install-recommends libcdd-dev 4ti2 gfan polymake normaliz coinor-csdp nauty lrslib && apt-get clean
 
 # Optional packages
-RUN apt-get install -y mlocate bash-completion emacs
+RUN apt-get install -y mlocate bash-completion
 
 # Add non-root user for building and running Macaulay2
 RUN useradd -G sudo -g root -u 1000 -m macaulay
@@ -39,4 +39,8 @@ ENV LDFLAGS         -L/usr/lib/x86_64-linux-gnu
 ENV PATH            /home/macaulay/M2/M2/BUILD/build-docker:${PATH}
 
 WORKDIR /home/macaulay
-ENTRYPOINT emacs
+ENTRYPOINT M2
+
+#RUN apt-get update && apt-get install -y libxml2 libgomp1 libreadline8 libopenblas-base libtbb2 libtcmalloc-minimal4 libgdbm6
+#COPY Macaulay2-*.deb /
+#RUN dpkg -i /Macaulay2-*.deb

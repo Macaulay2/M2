@@ -14,8 +14,8 @@ define M2_BUILD_SCRIPT
 set -xe
 ## Full build
 cmake -GNinja -S M2/M2 -B $(BUILD_DIR) $(BUILD_OPT)
-cmake --build $(BUILD_DIR) --target build-libraries build-programs
-cmake --build $(BUILD_DIR) --target M2-core install-packages
+cmake --build $(BUILD_DIR) --target build-libraries # build-programs
+cmake --build $(BUILD_DIR) --target M2-core # install-packages
 cmake --build $(BUILD_DIR) --target M2-emacs
 ## Changes to the docker container after it is created are ephemeral,
 ## but this is how one would install Macaulay2:
@@ -25,7 +25,7 @@ export M2_BUILD_SCRIPT
 
 ###############################################################################
 
-clean:;	rm -rf ${M2_REPO}/../$(BUILD_DIR) ./storage/.ccache
+clean:;	rm -rf ${M2_REPO}/../$(BUILD_DIR) $(STORAGE)/.ccache
 
 build: build-image
 	docker run $(VOLUME) -it --entrypoint="" $(TAG) bash -c "$$M2_BUILD_SCRIPT"

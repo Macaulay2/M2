@@ -1,5 +1,6 @@
 ;; .emacs
 
+;; Macaulay2 start
 (load "M2-init")
 
 (custom-set-variables

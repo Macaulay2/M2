@@ -31,12 +31,16 @@ RUN apt-get install -y mlocate bash-completion
 
 # Add non-root user for building and running Macaulay2
 RUN useradd -G sudo -g root -u 1000 -m macaulay
-USER 1000:1000
+USER 1000:0
 
 ENV PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
 ENV LDFLAGS         -L/usr/lib/x86_64-linux-gnu
 ENV PATH            /home/macaulay/M2/M2/BUILD/build-docker:${PATH}
 
-WORKDIR /home/macaulay/
+WORKDIR /home/macaulay
+ENTRYPOINT M2
 
-ENTRYPOINT emacs
+# RUN apt-get install --no-install-recommends -y \
+#     libgdbm6 libgomp1 libopenblas-base libreadline7 libtbb2 libtcmalloc-minimal4 libxml2
+#COPY Macaulay2-*.deb /
+#RUN dpkg -i /Macaulay2-*.deb
