@@ -1,7 +1,7 @@
 ###############################################################################
 ## This directory contains the rules for installing and checking the packages.
 ## - set options via the cmake command line:
-##     cmake -DM2_RerunExamples=true .
+##     RerunExamples=true cmake .
 ## - targets:
 ##     cmake --build . --target {install,check,all,uninstall}-{packages,PACKAGE}
 ## - running tests in parallel:
@@ -25,23 +25,29 @@ ENDMACRO ()
 
 #################################################################################
 ## Package options
-# TODO: use if(DEFINED ENV{var}) for these variables
 ## The default is to install all distributed packages
 set(PACKAGES "${DISTRIBUTED_PACKAGES}" CACHE INTERNAL "the list of packages to install")
 set(PACKAGES_DEVEL       "EngineTests" CACHE INTERNAL "the list of packages to only check")
-set(M2_ReinstallPackages       "false" CACHE STRING   "reinstall the packages")
-# TODO: use ReinstallPackages or unmark-packages target?
 ## Arguments to M2
-set(M2_errorDepth                  "3" CACHE STRING "set the error printing depth")
-set(M2_debugLevel                  "0" CACHE STRING "set the debugging level")
-set(M2_gbTrace                     "0" CACHE STRING "set the Groebner basis trace level")
+set(errorDepth                  "3" CACHE STRING "set the error printing depth")
+set(debugLevel                  "0" CACHE STRING "set the debugging level")
+set(gbTrace                     "0" CACHE STRING "set the Groebner basis trace level")
 ## Options to installPackage
-set(M2_CheckDocumentation       "true" CACHE STRING "check documentation for completeness")
-set(M2_IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example code")
-set(M2_RemakeAllDocumentation  "false" CACHE STRING "remake all documentation")
-set(M2_RerunExamples           "false" CACHE STRING "rerun example outpuat files")
-set(M2_UserMode "(1<<31)+(1<<32)-(1<<64)" # -(1<<8)" # for --no-threads
+set(CheckDocumentation       "true" CACHE STRING "check documentation for completeness")
+set(IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example code")
+set(RemakeAllDocumentation  "false" CACHE STRING "remake all documentation")
+set(RerunExamples           "false" CACHE STRING "rerun example outpuat files")
+set(UserMode "(1<<31)+(1<<32)-(1<<64)" # -(1<<8)" # for --no-threads
   CACHE INTERNAL "bitmask for ctest check arguments")
+
+# Allow arguments above to be set via environment variables
+foreach(_var in ITEMS PACKAGES PACKAGES_DEVEL errorDepth debugLevel gbTrace
+    CheckDocumentation IgnoreExampleErrors RemakeAllDocumentation RerunExamples UserMode)
+  if(DEFINED ENV{${_var}})
+    message("## Set via environment:   ${_var}\t= $ENV{${_var}} (default: ${${_var}})")
+    set(${_var} "$ENV{${_var}}")
+  endif()
+endforeach()
 
 # Make sure PACKAGES is a list
 string(REPLACE " " ";" PACKAGES "${PACKAGES}")
@@ -49,19 +55,19 @@ string(REPLACE " " ";" PACKAGES "${PACKAGES}")
 #################################################################################
 ## M2 arguments and commands that will be passed to M2 -e ${STR}
 set(M2 ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
-set(M2_ARGS -q --stop --silent --no-threads -e errorDepth=${M2_errorDepth} -e debugLevel=${M2_debugLevel})
+set(M2_ARGS -q --stop --silent --no-threads -e errorDepth=${errorDepth} -e debugLevel=${debugLevel})
 set(M2_INSTALL_TEMPLATE [[installPackage("@package@",
   Verbose                => $<IF:$<BOOL:${VERBOSE}>,true,false>,
-  RerunExamples          => ${M2_RerunExamples},
-  CheckDocumentation     => ${M2_CheckDocumentation},
-  IgnoreExampleErrors    => ${M2_IgnoreExampleErrors},
-  RemakeAllDocumentation => ${M2_RemakeAllDocumentation},
+  RerunExamples          => ${RerunExamples},
+  CheckDocumentation     => ${CheckDocumentation},
+  IgnoreExampleErrors    => ${IgnoreExampleErrors},
+  RemakeAllDocumentation => ${RemakeAllDocumentation},
   InstallPrefix          => "${M2_DIST_PREFIX}/",
   UserMode               => false,
   SeparateExec           => true,
   DebuggingMode          => true)]])
 set(M2_NEED_TEMPLATE    [[needsPackage("@package@", LoadDocumentation=>true, DebuggingMode=>true)]])
-set(M2_TEST_TEMPLATE    [[check(@_i@, "@package@", UserMode=>(@M2_UserMode@))]]) # see runFile in m2/html.m2
+set(M2_TEST_TEMPLATE    [[check(@_i@, "@package@", UserMode=>(@UserMode@))]]) # see runFile in m2/html.m2
 set(M2_INFO_TEMPLATE    [["info-"|"@package@" << @package@#"test number" << close]]) # ignore the color
 set(M2_CHECK_TEMPLATE   [[check("@package@", UserMode=>false)]])
 
@@ -70,7 +76,7 @@ set(M2_CHECK_TEMPLATE   [[check("@package@", UserMode=>false)]])
 
 add_custom_target(list-packages
   COMMENT "Listing available packages"
-  COMMAND ${CMAKE_COMMAND} -E echo ${PACKAGES})
+  COMMAND ${CMAKE_COMMAND} -E echo ${DISTRIBUTED_PACKAGES})
 
 # Prefixes for package targets
 set(_target_prefixes "install;check;all;uninstall")

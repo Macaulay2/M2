@@ -150,14 +150,15 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `PARALLEL_JOBS:STRING=4`: specify the number of parallel jobs for libraries and programs
 
 ### Macaulay2 flags
-- `M2_CheckDocumentation:STRING=true`: check documentation for completeness
-- `M2_IgnoreExampleErrors:STRING=true`: ignore errors in example code
-- `M2_ReinstallPackages:STRING=false`: reinstall the packages
-- `M2_RemakeAllDocumentation:STRING=false`: remake all documentation
-- `M2_RerunExamples:STRING=false`: rerun example outpuat files
-- `M2_debugLevel:STRING=0`: set the debugging level
-- `M2_errorDepth:STRING=3`: set the error printing depth
-- `M2_gbTrace:STRING=0`: set the Groebner basis trace level
+The following flags can be also set by giving environment variables to CMake (e.g. `errorDepth=2 cmake .`), though setting them this way is ephemeral.
+- `CheckDocumentation:STRING=true`: check documentation for completeness
+- `IgnoreExampleErrors:STRING=true`: ignore errors in example code
+- `RemakeAllDocumentation:STRING=false`: remake all documentation
+- `RerunExamples:STRING=false`: rerun example outpuat files
+- `UserMode:STRING=[integer]`: bitmask for ctest check arguments
+- `debugLevel:STRING=0`: set the debugging level
+- `errorDepth:STRING=3`: set the error printing depth
+- `gbTrace:STRING=0`: set the Groebner basis trace level
 - `GC_MAXIMUM_HEAP_SIZE:STRING=400M`: maximum collected heap size for tests
 - `PACKAGES:INTERNAL=[list of packages]`: a space-separated list of packages
 

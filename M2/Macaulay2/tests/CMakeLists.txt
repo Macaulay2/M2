@@ -39,16 +39,22 @@ endif()
 ###############################################################################
 ## M2 arguments and commands that will be passed to M2 -e ${STR}
 set(GC_MAXIMUM_HEAP_SIZE 400M CACHE STRING "maximum collected heap size")
-# set(M2_gbTrace    5)
-# set(M2_errorDepth 0)
 set(M2 ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
+# gbTrace, errorDepth, and debugLevel are set in packages/CMakeLists.txt
 set(M2_ARGS
   -q --stop --silent --no-debug --no-randomize # --no-prompts --no-...
-  -e errorDepth=${M2_errorDepth} -e debugLevel=${M2_debugLevel} -e gbTrace=${M2_gbTrace}
-  )
+  -e errorDepth=${errorDepth} -e debugLevel=${debugLevel} -e gbTrace=${gbTrace})
 set(M2_PATH "join(path,{\"${CMAKE_CURRENT_SOURCE_DIR}/\",\"${CMAKE_SOURCE_DIR}/packages/\"})")
 # Read the file, then exit. Note: a "restart" command causes the test to not halt
 set(M2_TEST_TEMPLATE [[input("@CMAKE_CURRENT_SOURCE_DIR@/@_group@/@_testfile@")]])
+
+# Allow GC_MAXIMUM_HEAP_SIZE to be set via environment variable
+foreach(_var in ITEMS GC_MAXIMUM_HEAP_SIZE)
+  if(DEFINED ENV{${_var}})
+    message("## Set via environment:   ${_var}\t= $ENV{${_var$}} (default: ${${_var}})")
+    set(${_var} "$ENV{${_var}}")
+  endif()
+endforeach()
 
 ## Regular expressions for various test errors
 ## TODO: add WILL_FAIL tests
