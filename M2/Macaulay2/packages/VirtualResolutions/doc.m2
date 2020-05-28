@@ -1,3 +1,8 @@
+undocumented {
+    (multigradedRegularity, Thing, Ideal),
+    (multigradedRegularity, Thing, Thing, Module)
+    }
+
 doc ///
   Key
     VirtualResolutions
@@ -445,13 +450,20 @@ doc ///
         :ChainComplex
     Description
         Text
-          Given an ideal, a module, or a free resolution, this function keeps only the summands in the minimal graded free resolution
-          generated in degrees in L. If the list L contains only one element which is in the multigraded regularity of M plus the dimension vector,
-          the output will be the virtual resolution of a pair as defined in Section 1 of [BES]. See Algorithm 3.4 of [BES,@{HREF("http://arxiv.org/abs/1703.07631","arXiv:1703.07631")}@] for further details.
+          Given an ideal I or module M and a list of multidegrees L, this function produces a chain complex by iteratively
+          computing syzygies in degrees in L. In particular, if the list L contains only one element which is in the
+          multigraded regularity of M plus the dimension vector, the output will be the virtual resolution of a pair as
+          defined in Section 1 of [BES].
+          See Algorithm 3.4 of [BES,@{HREF("http://arxiv.org/abs/1703.07631","arXiv:1703.07631")}@] for further details.
+
+          If a resolution for the object exists in the cache or when the input is a chain complex C, virtualOfPair uses
+          this information by simply removing the summands in degrees not in L. This option is useful when a minimal free
+          resolution of M can be more efficiently computed in the engine or is already known. Otherwise, induced Schreyer
+          orders are used to speed up the computation of syzygies. Note that this speedup is often very significant.
 
           For example, consider the ideal of three points in $\mathbb{P}^1\times\mathbb{P}^1$.
         Example
-          X = toricProjectiveSpace(1)**toricProjectiveSpace(1);
+          X = toricProjectiveSpace(1) ** toricProjectiveSpace(1);
           S = ring X; B = ideal X;
           J = saturate(intersect(
                 ideal(x_1 - 1*x_0, x_3 - 4*x_2),
@@ -463,12 +475,15 @@ doc ///
           regularity of this example. Thus, since we want to compute a virtual resolution we apply virtualOfPair to the element
           $(3,1)$ since $(3,1)=(2,0)+(1,1)$ and $(1,1)$ is the dimension vector for $\mathbb{P}^1\times\mathbb{P}^1$.
         Example
-          minres = res J;
-          vres = virtualOfPair(J,{{3,1}}) --(3,1) = (2,0) + (1,1)
+          minres = res J
+          vres = virtualOfPair(J, {{3,1}}) --(3,1) = (2,0) + (1,1)
         Text
+          Notice that the virtual resolution of the pair $(S^1/J, (2,0))$ is shorter and thinner than the graded minimal free
+          resolution of $S^1/J$.
+
           Finally, we check that the result is indeed virtual.
         Example
-          isVirtual(B,vres)
+          isVirtual(B, vres)
     Caveat
         Given an element of the multigraded regularity, one must add the dimension vector of the product of projective spaces
         for this to return a virtual resolution.
@@ -476,15 +491,13 @@ doc ///
 
 doc ///
     Key
-        [virtualOfPair, Strategy]
+        [virtualOfPair, LengthLimit]
     Headline
-        compute a virtual resolution using a syzygy by syzygy strategy
+        stop when the virtual resolution reaches this length
     Description
         Text
-            If Strategy is unspecified, virtualOfPair will compute a minimal free resolution before removing summands
-	    in specified degrees. This is often the fastest strategy because resolutions are efficiently computed in
-	    the engine. For larger cases, setting Strategy => UseSyzygies will compute a virtual resolution by iteratively
-	    computing syzygies and removing the desired degrees.
+          When the optional argument LengthLimit is specified virtualOfPair will stop computing syzygies after the given
+          length is reached, otherwise computation continues until the resolution terminates.
     SeeAlso
         virtualOfPair
 ///
