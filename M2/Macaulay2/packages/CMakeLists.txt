@@ -100,6 +100,31 @@ endforeach()
 set_target_properties(${_all_target_list} PROPERTIES EXCLUDE_FROM_ALL OFF)
 
 #################################################################################
+## Handling special dependencies
+
+# 1. all packages depend on Macaulay2Doc and Macaulay2Doc depends on Style
+# TODO: reduce dependencies, or move Macaulay2Doc and Style to Core
+# See https://github.com/Macaulay2/M2/issues/1085
+set(_default_dependencies
+  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Style/.installed
+  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Macaulay2Doc/.installed)
+set(Macaulay2Doc_dependencies
+  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Style/.installed)
+set(EngineTests_dependencies
+  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Macaulay2Doc/.installed)
+
+# TODO: automate this process
+# 2. FourTiTwo needs 4ti2
+# 3. CohomCalg needs cohomcalg
+# 4. gfanInterface and StatePolytope need gfan
+# 5. Polyhedra needs lrslib
+# 6. SemidefiniteProgramming needs csdp
+# 7. Normaliz needs normaliz
+# 8. Nauty and NautyGraphs need nauty
+# 9. Topcom needs topcom
+# 10. Polymake and PolymakeInterface need polymake
+
+#################################################################################
 
 foreach(package IN LISTS PACKAGES)
   ## Make a list of package sources to detect changes
@@ -120,28 +145,12 @@ foreach(package IN LISTS PACKAGES)
   ###############################################################################
   ## Enable USES_TERMINAL only for Macaulay2Doc and EngineTests
   ## Also make all other packages depend on Macaulay2Doc and Style
-  # TODO: remove dependencies, or move Macaulay2Doc and Style to Core
-  if(package MATCHES "Macaulay2Doc" OR package IN_LIST PACKAGES_DEVEL)
+  if(package MATCHES "(Style|Macaulay2Doc)" OR package IN_LIST PACKAGES_DEVEL)
     set(USES_TERMINAL USES_TERMINAL)
-    unset(PACKAGE_DEPENDENCIES)
   else()
     unset(USES_TERMINAL)
-    set(PACKAGE_DEPENDENCIES
-      ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Macaulay2Doc/.installed
-      ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Style/.installed)
+    set(${package}_dependencies ${_default_dependencies})
   endif()
-
-  # TODO: Special dependencies:
-  # 1. all packages seem to depend on Macaulay2Doc: https://github.com/Macaulay2/M2/issues/1085
-  # 2. FourTiTwo needs 4ti2 which needs glpk
-  # 3. cohomcalg
-  # 4. gfanInterface and StatePolytope need gfan which needs cddlib
-  # 5. lrslib
-  # 6. csdp
-  # 7. Normaliz needs normaliz which needs libgmp, libgmpxx, boost
-  # 8. nauty
-  # 9. topcom
-  # 10. polymake
 
   ## Custom command for getting package information
   # TODO: currently only number of tests is stored, but we can do more
@@ -159,7 +168,7 @@ foreach(package IN LISTS PACKAGES)
     COMMAND gzip -nf9 ${M2_DIST_PREFIX}/${M2_INSTALL_INFODIR}/${package}.info
     VERBATIM
     ${USES_TERMINAL}
-    DEPENDS M2-core ${PACKAGE_DEPENDENCIES}
+    DEPENDS M2-core ${${package}_dependencies}
     BYPRODUCTS ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${package}/.installed
     )
 
