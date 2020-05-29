@@ -105,13 +105,11 @@ set_target_properties(${_all_target_list} PROPERTIES EXCLUDE_FROM_ALL OFF)
 # 1. all packages depend on Macaulay2Doc and Macaulay2Doc depends on Style
 # TODO: reduce dependencies, or move Macaulay2Doc and Style to Core
 # See https://github.com/Macaulay2/M2/issues/1085
-set(_default_dependencies
-  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Style/.installed
-  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Macaulay2Doc/.installed)
 set(Macaulay2Doc_dependencies
   ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Style/.installed)
-set(EngineTests_dependencies
+set(_default_dependencies
   ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Macaulay2Doc/.installed)
+set(EngineTests_dependencies ${_default_dependencies})
 
 # TODO: automate this process
 # 2. FourTiTwo needs 4ti2
@@ -149,7 +147,13 @@ foreach(package IN LISTS PACKAGES)
     set(USES_TERMINAL USES_TERMINAL)
   else()
     unset(USES_TERMINAL)
-    set(${package}_dependencies ${_default_dependencies})
+    foreach(_dep IN LISTS _default_dependencies)
+      if(TARGET ${_dep})
+	list(APPEND ${package}_dependencies ${_dep})
+      elseif(NOT EXISTS ${_dep})
+	list(APPEND ${package}_dependencies ${_dep})
+      endif()
+    endforeach()
   endif()
 
   ## Custom command for getting package information
