@@ -4,12 +4,15 @@ STORAGE = `pwd`/storage
 M2_REPO = `pwd`/../../..
 M2_HOME = /home/macaulay
 VOLUME = --volume $(STORAGE):$(M2_HOME) --volume $(M2_REPO):$(M2_HOME)/M2
+BUILD_DIR = M2/M2/BUILD/build-docker
 
 ###############################################################################
 
 always:; @cat README.md
 
 all: build run
+
+clean:;	rm -rf ${M2_REPO}/../$(BUILD_DIR) $(STORAGE)/.ccache
 
 ###############################################################################
 # Build targets

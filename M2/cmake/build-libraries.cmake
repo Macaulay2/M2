@@ -9,9 +9,8 @@
 include(ExternalProject) # configure, patch, build, install, or test at build time
 set(M2_SOURCE_URL https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode)
 
-## This target builds external libraries that M2 relies on.
-add_custom_target(build-libraries
-  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_SOURCE_DIR}/cmake/check-libraries.cmake)
+## This target builds external libraries that M2 relies on, then reruns cmake
+add_custom_target(build-libraries COMMAND ${CMAKE_COMMAND} ${CMAKE_BINARY_DIR} USES_TERMINAL)
 
 ## This target builds external programs that are distributed with M2.
 add_custom_target(build-programs)
@@ -377,18 +376,15 @@ _ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
 
 # https://github.com/Singular/Sources/tree/spielwiese/factory
 # TODO: what is ftmpl_inst.o?
-set(factory_CPPFLAGS "${CPPFLAGS} -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q")
 set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} ${NTL_INCLUDE_DIR}/..")
 set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} ${FLINT_INCLUDE_DIR}/..")
 ExternalProject_Add(build-factory
-  URL               ${M2_SOURCE_URL}/factory-4.1.1.tar.gz
-  URL_HASH          SHA256=9dd84d11204e1457dac0a0d462a78d4cd4103c14cbf792b83d488aa529ad5724
+  GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/Singular/.git
+  GIT_TAG           6ed33f7c
   PREFIX            libraries/factory
   SOURCE_DIR        libraries/factory/build
-  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p0 < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.1.1
-  CONFIGURE_COMMAND cd factory-4.1.1 &&
+  CONFIGURE_COMMAND cd factory &&
                     autoreconf -vif &&
                     ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
@@ -400,17 +396,21 @@ ExternalProject_Add(build-factory
                       --without-Singular
                       --with-ntl=${factory_NTL_HOME_PATH}
                       --with-flint=${factory_FLINT_HOME_PATH}
-                      CPPFLAGS=${factory_CPPFLAGS}
+                      CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
-                      CXX=${CMAKE_CXX_COMPILER}
-  BUILD_COMMAND     cd factory-4.1.1 && ${MAKE} -j${PARALLEL_JOBS} all
-  INSTALL_COMMAND   cd factory-4.1.1 && ${MAKE} -j${PARALLEL_JOBS} install &&
+                      CXX=${CMAKE_CXX_COMPILER} &&
+                    # Check to make sure Factory found NTL and Flint
+                    set -x &&
+                    grep [[^.define HAVE_NTL 1]] _config.h &&
+                    grep [[^.define HAVE_FLINT 1]] _config.h
+  BUILD_COMMAND     cd factory && ${MAKE} -j${PARALLEL_JOBS} all
+  INSTALL_COMMAND   cd factory && ${MAKE} -j${PARALLEL_JOBS} install &&
                     ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/factory &&
                     ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/factory
-  TEST_COMMAND      cd factory-4.1.1 && ${MAKE} -j${PARALLEL_JOBS} check
+  TEST_COMMAND      cd factory && ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
@@ -533,14 +533,15 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpsolve "mp;mpfr" MPSOLVE_FOUND)
 
 # https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
 # TODO: get out-of-tree build working: https://github.com/linbox-team/givaro/issues/154
+# Currently we make a clone from a local submodule
 if(NOT BUILD_NATIVE)
   set(givaro_SIMD sse sse2 sse3 ssse3 sse4.1 sse4.2avx avx avx2 fma fma4)
   list(TRANSFORM givaro_SIMD PREPEND "--disable-")
 endif()
 set(givaro_LICENSEFILES COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt)
 ExternalProject_Add(build-givaro
-  GIT_REPOSITORY    https://github.com/linbox-team/givaro.git
-  GIT_TAG           v4.0.3
+  GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/givaro/.git
+  GIT_TAG           v4.0.3 # 40d1295a
   PREFIX            libraries/givaro
   SOURCE_DIR        libraries/givaro/build
   BUILD_IN_SOURCE   ON
@@ -575,11 +576,10 @@ _ADD_COMPONENT_DEPENDENCY(libraries givaro mp GIVARO_FOUND)
 # https://linbox-team.github.io/fflas-ffpack/
 # NOTE: fflas_ffpack is just header files, so we don't build it
 # instead we add an extra autotune target for generating fflas-ffpack-thresholds.h
-# TODO: separate source and binary directories
 # TODO: combine with OpenMP when it is present
 ExternalProject_Add(build-fflas_ffpack
-  GIT_REPOSITORY    https://github.com/Macaulay2/fflas-ffpack.git
-  GIT_TAG           712cef0e
+  GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/.git
+  GIT_TAG           v2.3.2 # 712cef0e
   PREFIX            libraries/fflas_ffpack
   SOURCE_DIR        libraries/fflas_ffpack/build
   BUILD_IN_SOURCE   ON
@@ -1060,7 +1060,7 @@ ExternalProject_Add(build-polymake
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-		      --with-gmp=${MP_ROOT}
+                      --with-gmp=${MP_ROOT}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}

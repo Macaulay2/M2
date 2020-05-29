@@ -22,6 +22,12 @@
 [submodule "M2/submodules/fflas-ffpack"]
 	path = M2/submodules/fflas_ffpack
 	url = https://github.com/Macaulay2/fflas-ffpack.git
+[submodule "M2/submodules/givaro"]
+	path = M2/submodules/givaro
+	url = https://github.com/linbox-team/givaro.git
 [submodule "M2/submodules/googletest"]
 	path = M2/submodules/googletest
 	url = https://github.com/google/googletest.git
+[submodule "M2/submodules/Singular"]
+	path = M2/submodules/Singular
+	url = https://github.com/mahrud/Singular.git

@@ -25,8 +25,6 @@ export M2_BUILD_SCRIPT
 
 ###############################################################################
 
-clean:;	rm -rf ${M2_REPO}/../$(BUILD_DIR) $(STORAGE)/.ccache
-
 build: build-image
 	docker run $(VOLUME) -it --entrypoint="" $(TAG) bash -c "$$M2_BUILD_SCRIPT"
 
