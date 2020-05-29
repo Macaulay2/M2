@@ -160,6 +160,7 @@ foreach(package IN LISTS PACKAGES)
     VERBATIM
     ${USES_TERMINAL}
     DEPENDS M2-core ${PACKAGE_DEPENDENCIES}
+    BYPRODUCTS ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${package}/.installed
     )
 
   ## Custom target for uninstalling the package
