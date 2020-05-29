@@ -380,7 +380,7 @@ set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} ${NTL_INCLUDE_DIR}/..")
 set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} ${FLINT_INCLUDE_DIR}/..")
 ExternalProject_Add(build-factory
   GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/Singular/.git
-  GIT_TAG           6ed33f7c
+  GIT_TAG           1e4e3f39
   PREFIX            libraries/factory
   SOURCE_DIR        libraries/factory/build
   BUILD_IN_SOURCE   ON
