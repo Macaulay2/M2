@@ -19,6 +19,9 @@
 [submodule "M2/submodules/flint2"]
 	path = M2/submodules/flint2
 	url = https://github.com/Macaulay2/flint2.git
+[submodule "M2/submodules/frobby"]
+	path = M2/submodules/frobby
+	url = https://github.com/Macaulay2/frobby.git
 [submodule "M2/submodules/fflas-ffpack"]
 	path = M2/submodules/fflas_ffpack
 	url = https://github.com/linbox-team/fflas-ffpack.git

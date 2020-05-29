@@ -426,16 +426,14 @@ _ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
 
 
 # https://www.broune.com/frobby/
-# TODO: switch to https://github.com/Macaulay2/frobby
+# https://github.com/Macaulay2/frobby
 set(frobby_CXXFLAGS "${CPPFLAGS} ${CXXFLAGS} -Wno-deprecated-declarations")
 ExternalProject_Add(build-frobby
-  URL               ${M2_SOURCE_URL}/frobby_v0.9.0.tar.gz
-  URL_HASH          SHA256=af092383e6dc849c86f4e79747ae0e5cd309a690747230e10aa38d60640062df
+  GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/frobby/.git
+  GIT_TAG           d12b7b78
   PREFIX            libraries/frobby
   SOURCE_DIR        libraries/frobby/build
-  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/frobby/patch-0.9.0
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} library -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       GMP_INC_DIR=${MP_ROOT}/include
