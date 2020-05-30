@@ -14,8 +14,6 @@ if gotarg "--int"  then handleInterrupts = false
 
 firstTime := class PackageDictionary === Symbol
 
-firstTime = true					    -- debugging
-
 if firstTime then (
      -- we do this bit *before* "debug Core", so that Core (the symbol, not the package), which may not be there yet, ends up in the right dictionary
      assert = x -> (
@@ -616,6 +614,7 @@ homeDirectory = getenv "HOME" | "/"
 
 initcurrentlayout()
 
+if firstTime then
 copyright = copyright | newline | "For licenses see " | prefixDirectory | currentLayout#"program licenses"
 
 path = (x -> select(x, i -> i =!= null)) deepSplice {
