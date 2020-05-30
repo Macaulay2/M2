@@ -19,7 +19,6 @@ set(CLIST
   scclib.c ../c/scc-core.h
   memdebug.c memdebug.h
   debug.c debug.h
-  distributed-packages.h
   getpagesize.h M2mem.h
   gmp_aux.c gmp_aux.h # TODO: needed with mpir?
   gdbm_interface.c
@@ -129,6 +128,7 @@ endforeach()
 # TODO: gmp.d, basic.d, and equality.d require elements from M2-engine
 # for that reason, interpreter cannot be compiled as a static library, yet
 add_library(M2-interpreter OBJECT ${CLIST} ${TAGS}
+  distributed-packages.h
   $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
   $<$<BOOL:${WITH_PYTHON}>:python-c.c>)
 
