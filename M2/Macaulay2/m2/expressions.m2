@@ -1215,8 +1215,7 @@ print = x -> (<< net x << endl;) -- !! one may want to modify this depending on 
 -----------------------------------------------------------------------------
 texMath RR := x -> if not isANumber x then texMath toString x else if isInfinite x then if x>0 then texMath infinity else texMath (-infinity) else "{"|format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,"}\\cdot 10^{",x)|"}"
 texMath ZZ := toString
-texMathStart = texMathEnd = "$"; -- the default tex delimiters
-tex Thing := x -> concatenate(texMathStart,texMath x,texMathEnd)
+tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
 
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
