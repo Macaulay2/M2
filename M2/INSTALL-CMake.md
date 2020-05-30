@@ -65,6 +65,11 @@ Note that this target **must** be built separately, before proceeding to `M2-bin
 
 To enforce building certain libraries, for instance BDWGC and MPIR, run `cmake -DBUILD_LIBRARIES="BDWGC;MPIR"`, or `cmake -DBUILD_LIBRARIES=ALL` to build everything.
 
+*Tip:* if you have already built the libraries in another build directory, use `-DM2_HOST_PREFIX=[usr-host path]` to tell CMake where to look for the libraries and programs. Note that most options can be changed after the initial call to CMake with a subsequent call:
+```
+cmake -DM2_HOST_PREFIX=[usr-host path] .
+```
+
 4. Build the Macaulay2 binary and core scripts:
 ```
 ninja M2-binary M2-core
