@@ -210,7 +210,7 @@ expression Module := M -> (
      then (expression image) (expression M.generators)
      else (
 	 n := numgens M;
-	 new Superscript from {unhold expression ring M, if n =!= 0 then expression n else moduleZERO }
+	 new Superscript from {unhold expression ring M, if n =!= 0 then unhold expression n else moduleZERO }
      )
  )
 toString Module := M -> toString expression M

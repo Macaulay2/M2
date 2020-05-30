@@ -398,6 +398,8 @@ usage := arg -> (
      << "    --stop             exit on error" << newline
      << "    --texmacs          TeXmacs session mode" << newline
      << "    --version          print version number and exit" << newline
+     << "    --webapp           WebApp session mode" << newline
+     << "    --no-personality   don't set the personality and re-exec M2 (linux only)" << newline
      << "    --no-threads       don't start any additional threads (or tasks)" << newline
      << "    --no-preload       don't load the preloaded packages" << newline;
      << "    --no-prompts       print no input prompts" << newline;
@@ -492,7 +494,8 @@ action := hashTable {
 			      << TeXmacsEnd << endl << flush)));
 	       )
 	  ),
-     "--version" => arg -> ( << version#"VERSION" << newline; exit 0; )
+     "--version" => arg -> ( << version#"VERSION" << newline; exit 0; ),
+     "--webapp" => arg -> ( topLevelMode = global WebApp; )
      };
 
 valueNotify := arg -> (
