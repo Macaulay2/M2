@@ -397,7 +397,9 @@ if(BUILD_TESTING)
     unit-tests/testMain.cpp # not needed, except for GC_INIT
     )
 
+  if(BDWGC_FOUND)
   target_link_libraries(M2-unit-tests M2-engine ${BDWGC_LIBRARIES} ${CMAKE_DL_LIB})
+  endif()
 
   ## Add the tests
   # TODO: valgrind --track-origins=yes ...
