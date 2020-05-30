@@ -276,6 +276,15 @@ For specific packages, the following targets are also available:
 Below are a list of common issues and errors. If you run into a problem not listed below, please open a [new issue](https://github.com/Macaulay2/M2/issues/new) on GitHub.
 
 <details>
+<summary>macOS 10.15 Catalina issues with AppleClang</summary>
+After ensuring that you have followed the usual steps from the [INSTALL](INSTALL) manual (e.g. running `xcode-select --install`, consider setting the `CMAKE_OSX_SYSROOT` variable to match the current SDK:
+```
+cmake -DCMAKE_OSX_SYSROOT=`xcrun --show-sdk-path` .
+```
+This would, for instance, tell CMake to look in `/Applications/Xcode.app/Contents/Developer/SDKs/MacOSX.sdk/usr/include` for headers. If problems persist, open an issue.
+</details>
+
+<details>
 <summary><code>M2/include/M2/config.h:75:0: warning: "HAVE_ALARM" redefined</code></summary>
 This error indicates that a previous in-source build has files left in the source tree. Run `make clean distclean` from the source directory or start from a clean clone of Macaulay2.
 </details>

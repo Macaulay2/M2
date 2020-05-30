@@ -169,6 +169,7 @@ ExternalProject_Add(build-bdwgc
   BINARY_DIR        libraries/bdwgc/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
+                    -DCMAKE_OSX_ARCHITECTURES=${CMAKE_SYSTEM_PROCESSOR} # https://github.com/ivmai/bdwgc/issues/319
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -Dbuild_tests=${BUILD_TESTING}
