@@ -676,7 +676,7 @@ ExternalProject_Add(build-memtailor
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                    -DBUILD_TESTING=${BUILD_TESTING}
+                    -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
   EXCLUDE_FROM_ALL  ON
@@ -696,7 +696,7 @@ ExternalProject_Add(build-mathic
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                    -DBUILD_TESTING=${BUILD_TESTING}
+                    -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
   EXCLUDE_FROM_ALL  ON
@@ -719,7 +719,7 @@ ExternalProject_Add(build-mathicgb
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                    -DBUILD_TESTING=${BUILD_TESTING}
+                    -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
                     -Dwith_tbb=${WITH_TBB}
