@@ -544,6 +544,7 @@ ExternalProject_Add(build-givaro
   PREFIX            libraries/givaro
   SOURCE_DIR        libraries/givaro/build
   BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/givaro/patch-4.1.1
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
