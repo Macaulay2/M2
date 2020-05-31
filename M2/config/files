@@ -113,6 +113,7 @@ Macaulay2/tests/Makefile.test
 Macaulay2/tests/engine/Makefile
 Macaulay2/tests/slow/Makefile
 Macaulay2/tests/normal/Makefile
+Macaulay2/tests/threads/Makefile
 Macaulay2/tests/gigantic/Makefile
 Macaulay2/tests/goals/Makefile
 Macaulay2/tests/quarantine/Makefile

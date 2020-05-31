@@ -1,3 +1,5 @@
+-- see https://github.com/Macaulay2/M2/pull/1096#issuecomment-619653875
+-- this crash was only present without --no-threads
 needsPackage "SchurRings"
 S = schurRing(s,3);
 rep = s_{5};
