@@ -381,10 +381,11 @@ _ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
 set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} ${NTL_INCLUDE_DIR}/..")
 set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} ${FLINT_INCLUDE_DIR}/..")
 ExternalProject_Add(build-factory
-  URL               https://service.mathematik.uni-kl.de/ftp/pub/Math/Singular/Factory/factory-4.1.3.tar.gz
+  URL               ${M2_SOURCE_URL}/factory-4.1.3.tar.gz
   URL_HASH          SHA256=d004dd7e3aafc9881b2bf42b7bc935afac1326f73ad29d7eef0ad33eb72ee158
   PREFIX            libraries/factory
   SOURCE_DIR        libraries/factory/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.1.3
   CONFIGURE_COMMAND autoreconf -vif &&
