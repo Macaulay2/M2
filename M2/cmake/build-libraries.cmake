@@ -376,17 +376,18 @@ _ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
 
 
 # https://github.com/Singular/Sources/tree/spielwiese/factory
+# https://service.mathematik.uni-kl.de/ftp/pub/Math/Singular/Factory/
 # TODO: what is ftmpl_inst.o?
 set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} ${NTL_INCLUDE_DIR}/..")
 set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} ${FLINT_INCLUDE_DIR}/..")
 ExternalProject_Add(build-factory
-  GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/Singular/.git
-  GIT_TAG           HEAD # use the submodule commit to make a new, clean clone
+  URL               https://service.mathematik.uni-kl.de/ftp/pub/Math/Singular/Factory/factory-4.1.3.tar.gz
+  URL_HASH          SHA256=d004dd7e3aafc9881b2bf42b7bc935afac1326f73ad29d7eef0ad33eb72ee158
   PREFIX            libraries/factory
   SOURCE_DIR        libraries/factory/build
   BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND cd factory &&
-                    autoreconf -vif &&
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.1.3
+  CONFIGURE_COMMAND autoreconf -vif &&
                     ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-omalloc
@@ -407,11 +408,11 @@ ExternalProject_Add(build-factory
                     set -x &&
                     grep [[^.define HAVE_NTL 1]] _config.h &&
                     grep [[^.define HAVE_FLINT 1]] _config.h
-  BUILD_COMMAND     cd factory && ${MAKE} -j${PARALLEL_JOBS} all
-  INSTALL_COMMAND   cd factory && ${MAKE} -j${PARALLEL_JOBS} install &&
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} all
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install &&
                     ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/factory &&
                     ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/factory
-  TEST_COMMAND      cd factory && ${MAKE} -j${PARALLEL_JOBS} check
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
