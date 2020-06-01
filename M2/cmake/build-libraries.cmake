@@ -381,7 +381,7 @@ set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} ${NTL_INCLUDE_DIR}/..")
 set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} ${FLINT_INCLUDE_DIR}/..")
 ExternalProject_Add(build-factory
   GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/Singular/.git
-  GIT_TAG           1e4e3f39
+  GIT_TAG           HEAD # use the submodule commit to make a new, clean clone
   PREFIX            libraries/factory
   SOURCE_DIR        libraries/factory/build
   BUILD_IN_SOURCE   ON
@@ -431,7 +431,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
 set(frobby_CXXFLAGS "${CPPFLAGS} ${CXXFLAGS} -Wno-deprecated-declarations")
 ExternalProject_Add(build-frobby
   GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/frobby/.git
-  GIT_TAG           d12b7b78 # WIP: 51c3e075
+  GIT_TAG           HEAD # WIP: 51c3e075 # use the submodule commit to make a new, clean clone
   PREFIX            libraries/frobby
   SOURCE_DIR        libraries/frobby/build
   BUILD_IN_SOURCE   ON
@@ -540,7 +540,7 @@ endif()
 set(givaro_LICENSEFILES COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt)
 ExternalProject_Add(build-givaro
   GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/givaro/.git
-  GIT_TAG           v4.1.1
+  GIT_TAG           HEAD # use the submodule commit to make a new, clean clone
   PREFIX            libraries/givaro
   SOURCE_DIR        libraries/givaro/build
   BUILD_IN_SOURCE   ON
@@ -579,7 +579,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries givaro mp GIVARO_FOUND)
 # TODO: combine with OpenMP when it is present
 ExternalProject_Add(build-fflas_ffpack
   GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/.git
-  GIT_TAG           2.4.3
+  GIT_TAG           HEAD # use the submodule commit to make a new, clean clone
   PREFIX            libraries/fflas_ffpack
   SOURCE_DIR        libraries/fflas_ffpack/build
   BUILD_IN_SOURCE   ON
