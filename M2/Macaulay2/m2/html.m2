@@ -557,6 +557,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
+     stderr << cmd << endl;
      stderr << tmpf << ":0:1: (output file) error: Macaulay2 " << describeReturnCode r << endl;
      stderr << aftermatch(M2errorRegexp,get tmpf);
      stderr << inf  << ":0:1: (input file)" << endl;
