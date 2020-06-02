@@ -118,11 +118,12 @@ install(DIRECTORY
   USE_SOURCE_PERMISSIONS
   COMPONENT common
   OPTIONAL
+  PATTERN ".installed" EXCLUDE
   PATTERN "lib" EXCLUDE)
 
 # install man page, packages, info files, documentation, and emacs package
 install(DIRECTORY
-  ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}/man1
+  ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}
   ${M2_DIST_PREFIX}/${M2_INSTALL_INFODIR}
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/doc
@@ -131,7 +132,9 @@ install(DIRECTORY
   DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
   USE_SOURCE_PERMISSIONS
   COMPONENT common
-  OPTIONAL)
+  OPTIONAL
+  PATTERN ".Headline" EXCLUDE
+  PATTERN ".Certification" EXCLUDE)
 
 ###############################################################################
 ## Export the CMake targets for use in other projects

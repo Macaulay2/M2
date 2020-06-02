@@ -297,6 +297,7 @@ endif()
 ## Compile the engine
 # TODO: enable INTERPROCEDURAL_OPTIMIZATION?
 
+# TODO: remove STATIC once M2-engine can be used independently, then we can
 # set -DBUILD_SHARED_LIBS=ON to generate a shared library
 add_library(M2-engine STATIC ${SOURCES} ${HEADERS} ${TAGS})
 
@@ -338,8 +339,10 @@ target_compile_options(M2-engine PRIVATE
 ###############################################################################
 ## Export the target
 
+# TODO: change ARCHIVE to LIBRARY once M2-engine can be used independently
 install(TARGETS M2-engine EXPORT Macaulay2
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
+  COMPONENT devel EXCLUDE_FROM_ALL
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2
   COMPONENT devel EXCLUDE_FROM_ALL)
 

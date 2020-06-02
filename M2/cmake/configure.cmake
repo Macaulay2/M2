@@ -55,6 +55,8 @@ endif()
 set(M2SUFFIX "")
 set(EXEEXT   "${CMAKE_EXECUTABLE_SUFFIX}")
 set(EXE      "-binary${M2SUFFIX}${CMAKE_EXECUTABLE_SUFFIX}")
+set(PACKAGE_NAME    ${PROJECT_NAME})
+set(PACKAGE_TARNAME ${PROJECT_NAME})
 set(PACKAGE_VERSION ${Macaulay2_VERSION})
 
 ###############################################################################

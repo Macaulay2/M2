@@ -37,8 +37,8 @@ add_custom_command(OUTPUT ${MAN}
 file(MAKE_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}/man1)
 file(CREATE_LINK M2.1.gz ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}/man1/M2-binary.1.gz SYMBOLIC)
 
-# TODO
-# view: M2.1; <M2.1 tbl | groff -S -Wall -mtty-char -man -Tascii | col -b
+# Preview the man page
+add_custom_target(man COMMAND zcat ${MAN} | groff -man -Tascii DEPENDS ${MAN})
 
 ###############################################################################
 ## Build M2-binary
