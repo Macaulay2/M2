@@ -37,12 +37,13 @@ set(CheckDocumentation       "true" CACHE STRING "check documentation for comple
 set(IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example code")
 set(RemakeAllDocumentation  "false" CACHE STRING "remake all documentation")
 set(RerunExamples           "false" CACHE STRING "rerun example outpuat files")
-set(UserMode "(1<<31)+(1<<32)-(1<<64)" # -(1<<8)" # for --no-threads
+## Arguments to the M2 subprocess that runs individual tests and exampels; see runFile in m2/html.m2
+set(ArgumentMode "(1<<31)|(1<<32)|(1<<64)" # |(1<<8) for --no-threads
   CACHE INTERNAL "bitmask for ctest check arguments")
 
 # Allow arguments above to be set via environment variables
 foreach(_var in ITEMS PACKAGES PACKAGES_DEVEL errorDepth debugLevel gbTrace
-    CheckDocumentation IgnoreExampleErrors RemakeAllDocumentation RerunExamples UserMode)
+    CheckDocumentation IgnoreExampleErrors RemakeAllDocumentation RerunExamples ArgumentMode)
   if(DEFINED ENV{${_var}})
     message("## Set via environment:   ${_var}\t= $ENV{${_var}} (default: ${${_var}})")
     set(${_var} "$ENV{${_var}}")
@@ -67,7 +68,7 @@ set(M2_INSTALL_TEMPLATE [[installPackage("@package@",
   SeparateExec           => true,
   DebuggingMode          => true)]])
 set(M2_NEED_TEMPLATE    [[needsPackage("@package@", LoadDocumentation=>true, DebuggingMode=>true)]])
-set(M2_TEST_TEMPLATE    [[check(@_i@, "@package@", UserMode=>(@UserMode@))]]) # see runFile in m2/html.m2
+set(M2_TEST_TEMPLATE    [[debug Core \; argumentMode = @ArgumentMode@ \; check(@_i@, "@package@")]])
 set(M2_INFO_TEMPLATE    [["info-"|"@package@" << @package@#"test number" << close]]) # ignore the color
 set(M2_CHECK_TEMPLATE   [[check("@package@", UserMode=>false)]])
 

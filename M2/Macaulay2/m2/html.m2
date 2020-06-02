@@ -488,6 +488,13 @@ SetInputFile   := 1 << 30 -* add <inf *-
 SetOutputFile  := 1 << 31 -* add >>tmpf *-
 SetCaptureErr  := 1 << 32 -* add 2>&1 *-
 
+-* by default, the following commandline fixtures are used *-
+defaultMode := (SetUlimit + GCMAXHEAP + ArgQ + ArgInt
+    + ArgNoRandomize + ArgNoReadline + ArgSilent + ArgStop
+    + ArgPrintWidth + SetInputFile + SetOutputFile + SetCaptureErr)
+-* making this global, so it can be edited after entering debug Core *-
+argumentMode = defaultMode
+
 runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefiles) -> ( -- return false if error
      announcechange();
      stderr << "--making " << desc << ( if debugLevel > 0 then " in file " | outf else "" ) << endl;
@@ -496,24 +503,18 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
      rundir := temporaryFileName() | "-rundir/";
      makeDirectory rundir;
-     -* by default, the following commandline fixtures are used *-
-     defmode := (SetUlimit + GCMAXHEAP + ArgQ + ArgInt
-	 + ArgNoRandomize + ArgNoReadline + ArgSilent + ArgStop + ArgPrintWidth
-	 + SetInputFile + SetOutputFile + SetCaptureErr);
-     -* convert usermode to a number and use the bitmask above to decide arguments *-
-     usermode = if usermode === true then defmode - 1 else usermode; -* the default without -q *-
-     usermode = if usermode === false or usermode === null then defmode else usermode; -* the default *-
-     -* as a convenience, to start with the default and add or subtract args,
-        negate the integer by subtracting 2^64; here we undo those actions: *-
-     usermode = if usermode < 0 then (1<<64) + defmode - usermode else usermode;
-     -* returns (" "|arg) if all bits in m are set in usermode *-
-     readmode := (m, arg) -> if usermode & m == m then " " | arg else "";
+     -* The bits in the binary representation of argmode determine arguments to add.
+        If the 64th bit is set, argumentMode modifies the defaultMode rather than overriding them. *-
+     argmode := if 0 < argumentMode & (1<<64) then xor(defaultMode, argumentMode) else argumentMode;
+     -* returns (" "|arg) if all bits in m are set in argmode *-
+     readmode := (m, arg) -> if argmode & m == m then " " | arg else "";
      cmd := readmode(SetUlimit, ulimit);
      cmd = cmd | " cd " | rundir | ";";
      cmd = cmd | readmode(GCMAXHEAP,      "GC_MAXIMUM_HEAP_SIZE=400M");
      cmd = cmd | readmode(GCSTATS,        "GC_PRINT_STATS=1");
      cmd = cmd | readmode(GCVERBOSE,      "GC_PRINT_VERBOSE_STATS=1");
      cmd = cmd | " " | format toAbsolutePath commandLine#0;
+     if argmode == defaultMode and not usermode then
      cmd = cmd | readmode(ArgQ,           "-q");
      cmd = cmd | readmode(ArgInt,         "--int");
      cmd = cmd | readmode(ArgNoBacktrace, "--no-backtrace");
