@@ -1090,9 +1090,8 @@ document {
      Outputs => {
 	  "the complete path to the current directory, together with an extra slash"
 	  },
-     EXAMPLE lines ///
-     currentDirectory()
-     ///,
+     EXAMPLE {PRE("i1 : currentDirectory()" | newline | newline |
+	  "o1 = /home/m2user/")},
      PARA {
 	  "If a component of the path to the current directory no longer exist, an error will be signalled."
 	  }

@@ -1425,9 +1425,8 @@ document { Key => toAbsolutePath,
      Outputs => {
 	  String => {"the absolute (real) path name of ", TT "filename"}
 	  },
-     EXAMPLE lines ///
-         toAbsolutePath "a/b.m2"
-     ///,
+     EXAMPLE {PRE(///i1 : toAbsolutePath "a/b.m2"/// | newline | newline |
+	  ///o1 = /home/m2user/a/b.m2 ///)},
      PARA {
 	  "Paths of the form ", TT "foo/x/../bar", ", are shortened to ", TT "foo/bar", " without
 	  checking the file system to see whether ", TT "x", " is a symbolic link.  For the other

@@ -419,17 +419,26 @@ document {
 	  "The following example shows the list of places where we might find the source code of a package called ", TT "Foo", "
 	  after it has been installed by ", TO "installPackage", "."
 	  },
-     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///,
+     EXAMPLE {PRE(
+	  ///i1 : stack apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///
+	  | newline | newline | ///o1 = /home/m2user/.Macaulay2/local/share/Macaulay2/Foo.m2///
+	  | newline | ///     /usr/share/Macaulay2/Foo.m2///)},
      PARA {
      	  "This example shows the list of places where we might reasonably find the html file documenting a
 	  function named ", TT "bar", " in a package called ", TT "Foo", "."
 	  },
-     EXAMPLE ///stack apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///,
+     EXAMPLE {PRE(
+	  ///i2 : stack apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///
+	  | newline | newline | ///o2 = /home/m2user/.Macaulay2/local/share/doc/Macaulay2/Foo/html/bar.html///
+	  | newline | ///     /usr/share/doc/Macaulay2/Foo/html/bar.html///)},
      PARA {
      	  "This example shows the list of places where we might reasonably find the info file documenting a
 	  package called ", TT "Foo", "."
 	  },
-     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///,
+     EXAMPLE {PRE(
+	  ///i3 : stack apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///
+	  | newline | newline | ///o3 = /home/m2user/.Macaulay2/local/share/info/Foo.info///
+	  | newline | ///     /usr/share/info/Foo.info///)},
      SeeAlso => {"commandLine", "Invoking the program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
      }
 
