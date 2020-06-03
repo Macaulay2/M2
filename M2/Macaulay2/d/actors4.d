@@ -1500,7 +1500,7 @@ locate2(c:Code):Expr := (
      locate1();
      p := codePosition(c);
      Expr(Sequence(
-	       toExpr(verifyMinimizeFilename(locatedCode.filename)),
+	       toExpr(relativizeFilename(locatedCode.filename)),
 	       toExpr(locatedCode.minline),
 	       toExpr(locatedCode.mincol),
 	       toExpr(locatedCode.maxline),
@@ -1519,7 +1519,7 @@ locate(e:Expr):Expr := (
 	  then nullE
 	  else Expr(
 	       Sequence(
-		    toExpr(verifyMinimizeFilename(p.filename)),
+		    toExpr(relativizeFilename(p.filename)),
 		    toExpr(int(p.line)),toExpr(int(p.column)),
 		    toExpr(int(p.line)),toExpr(int(p.column)+length(s.symbol.word.name)),
 		    toExpr(int(p.line)),toExpr(int(p.column))
