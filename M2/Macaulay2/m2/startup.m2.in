@@ -51,7 +51,7 @@ if firstTime then (
      markLoaded = (fullfilename,origfilename,notify,filetime) -> ( 
 	  fullfilename = minimizeFilename fullfilename;
 	  filesLoaded#origfilename = (fullfilename,filetime); 
-	  loadedFiles##loadedFiles = realpath toAbsolutePath fullfilename; 
+	  loadedFiles##loadedFiles = relativizeFilename fullfilename;
 	  if notify then stderr << "--loaded " << fullfilename << endl;
 	  );
      normalPrompts = () -> (
