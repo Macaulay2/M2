@@ -34,7 +34,7 @@ newPackage ( "MultFreeResThree",
     DebuggingMode => false
     )
 
-export { "multtable", "multtable1", "multTables", "eeproduct", "multtablelink" }
+export { "multTables", "multTablesLink", "eeProd", "efProd", "mapX", "mapY", "makeRes" }
 
 
 --==========================================================================
@@ -74,59 +74,7 @@ export { "multtable", "multtable1", "multTables", "eeproduct", "multtablelink" }
 -- PoincareSeries: rational function, Poincare series in closed form
 -- BassSeries: rational function, Bass series in closed form
 
-multtable = (d1,d2,d3) -> (
-    Q := ring d1; --add check that all matrices come from same ring
-    m := numcols d1;
-    l := numcols d2;
-    n := numcols d3;
-    
-    EE := new MutableHashTable;
-    for i from 1 to m do (
-	for j from i+1 to m do (
-	 a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1};
-    	 b := ( matrix entries transpose a ) // d2;
-	 EE#(i,j) = ( matrix entries b );
-	 EE#(j,i) = -EE#(i,j);
-	 );
-     EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0);
-     );
-
-    EF := new MutableHashTable;
-    for i from 1 to m do (
-	for j from 1 to l do (
-    	    c := sum(1..m, k -> d2_(k-1,j-1) * (EE#(i,k)));
-    	    d := d1_(0,i-1)*((id_(Q^l))_(j-1));
-	    e := (matrix entries (matrix d - c)) // d3;
-    	    EF#(i,j) = (matrix entries e);
-	    );
-	);
-
-    EEE := new MutableHashTable;
-    for i from 1 to m do (
-	for j from i+1 to m do (
-	    for k from j+1 to m do(
-    	    c := sum(1..l, s -> (EE#(i,j))_(s-1,0)*(EF#(k,s)));
-    	    EEE#(i,j,k) = (matrix entries c);
-	    EEE#(j,i,k) = -EEE#(i,j,k);
-	    EEE#(i,k,j) = -EEE#(i,j,k);
-	    EEE#(k,j,i) = -EEE#(i,j,k);
-	    EEE#(j,k,i) = EEE#(i,j,k);
-	    EEE#(k,i,j) = EEE#(i,j,k);
-	    );
-	);
-    );
-    for i from 1 to m do(
-	for j from 1 to m do(
-	    EEE#(i,i,j) = matrix entries map(Q^n,Q^1,(i,j) -> 0);
-	    EEE#(i,j,i) = matrix entries map(Q^n,Q^1,(i,j) -> 0);
-	    EEE#(j,i,i) = matrix entries map(Q^n,Q^1,(i,j) -> 0);
-	   );
-     );
-	
- {EE,EF}
- )
-
-multtable1 = F -> (
+multtables = F -> (
     Q := ring F;
     d1:= matrix entries F.dd_1;
     d2:= matrix entries F.dd_2;    
@@ -158,7 +106,7 @@ multtable1 = F -> (
     {EE,EF}
     )
 
-multtablelink = (F,i,j,k) -> (
+multtableslink = (F,i,j,k) -> (
     Q := ring F;
     d1:= matrix entries F.dd_1;
     d2:= matrix entries F.dd_2;    
@@ -167,7 +115,7 @@ multtablelink = (F,i,j,k) -> (
     l := numcols d2;
     n := numcols d3;
 
-    mtable := multtable1 F;
+    mtable := multtables F;
     EE := mtable#0;
     EF := mtable#1;
         
@@ -217,20 +165,55 @@ multtablelink = (F,i,j,k) -> (
     	    Y#(s,t) =  matrix entries (sum(A) // d2t) ;
     	    ) ;
     	);
- Y
+    
+ {X,Y,EEE}
  )
 
---EEE = (i,j,k) -> (
---l := numgens source d2 ;
---c := sum(1..l, s -> (EE(i,j))_(s-1,0)*EF(k,s));
---return matrix entries c)
+-- Public functions
 
-multTables = ( cacheValue "multTables" ) multtable1
+multTables = ( cacheValue "multTables" ) multtables
 
-eeproduct = (F,i,j) -> (
-    mtable := multTables F;
-    (mtable#0)#(i,j)
+multTablesLink =  multtableslink
+
+eeProd = (F,i,j) -> (
+    m := multTables F;
+    (m#0)#(i,j)
     )
+
+efProd = (F,i,j) -> (
+    m := multTables F;
+    (m#1)#(i,j)
+    )
+
+mapX = (F,i,j,k) -> (
+    m := multTablesLink (F,i,j,k);
+    m#0
+    )
+
+mapY = (F,i,j,k) -> (
+    m := multTablesLink (F,i,j,k);
+    m#1
+    )
+
+makeRes = (d1,d2,d3) -> ( 
+    d1 = matrix entries d1; 
+    d2 = matrix entries d2;
+    d3 = matrix entries d3;
+    F := new ChainComplex; 
+    F.ring = ring d1;
+    F#0 = target d1; 
+    F#1 = source d1; F.dd#1 = d1; 
+    F#2 = source d2; F.dd#2 = d2;
+    F#3 = source d3; F.dd#3 = d3; 
+    F 
+    )
+
+TEST ///
+Q = QQ[x,y,z];
+F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
+assert ( (eeProd(F,1,2))_(0,0) == y )
+assert ( (efProd(F,1,4))_(0,0) == -x )
+///
 
 end
 --==========================================================================
@@ -240,23 +223,24 @@ end
 uninstallPackage "MultFreeResThree"
 restart
 loadPackage "MultFreeResThree"
---check "TorAlgebra"
+check "MultFreeResThree"
 
-Q = QQ[x,y,z]
+Q = QQ[x,y,z];
+F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
+d1 = matrix entries F.dd_1
+d2 = matrix entries F.dd_2
+d3 = matrix entries F.dd_3
 
-I = ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3)
+L = makeRes(d1,d2,d3)
 
-F = res I
-    d1 = matrix entries (F.dd)_1;
-    d2 = matrix entries (F.dd)_2;
-    d3 = matrix entries (F.dd)_3;    
-
-m
-time eeproduct(F,1,2)
-
-m = multtable1 F
 m = multTables F
-m = multtablelink (F,1,2,3)
+m = multTablesLink (F,1,2,3)
+eeProd(F,1,2)
+efProd(F,1,4)
+mapX(F,1,2,3)
+mapY(F,1,2,3)
+
+
 peek m
 (sum m)
 m_0
