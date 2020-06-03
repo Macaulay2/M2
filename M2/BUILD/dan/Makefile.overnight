@@ -17,10 +17,6 @@ overnight:
 	$(MAKE) validate-html DEBUG=no
 	date
 
-git-clean:
-	git clean -Xdfq
-	git submodule foreach git clean -Xdfq
-
 # Local Variables:
 # mode: makefile-gmake
 # compile-command: "time make -f Makefile.overnight "
