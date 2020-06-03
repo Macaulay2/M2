@@ -101,7 +101,7 @@ void determinant(const DMatZZpFFPACK& mat, ZZpFFPACK::ElementType& result_det)
   else
     {
       DMatZZpFFPACK N(mat);
-      ZZpFFPACK::ElementType det;
+      ZZpFFPACK::ElementType det = 0;
       result_det = FFPACK::Det(mat.ring().field(),
                                det,
                                mat.numRows(),

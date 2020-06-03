@@ -21,3 +21,15 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-mast
    //Off(SW_USE_NTL_SORT);
  #endif
    On(SW_USE_EZGCD);
+diff -ur ~/Projects/M2/M2/M2/BUILD/mahrud/build/libraries/factory/build/m4/flint-check.m4 m4/flint-check.m4
+--- /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/libraries/factory/build/m4/flint-check.m4	2018-02-15 08:02:18.000000000 -0600
++++ m4/flint-check.m4	2020-05-28 13:44:27.476498101 -0500
+@@ -69,7 +69,7 @@
+ 	[
+ 	AC_TRY_RUN(
+ 	[#include <flint/flint.h>
+-	int main () { if ((int) version[0] < 2) return -1; else return 0; }
++	int main () { if (__FLINT_VERSION < 2) return -1; else return 0; }
+ 	],[
+ 	flint_found="yes"
+ 	break

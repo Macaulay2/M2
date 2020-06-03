@@ -27,12 +27,6 @@ do not enter debugger upon error
 \fB\-\-debug n\fR
 debug warning message n by signalling an error
 .TP
-\fB\-\-dumpdata\fR
-read source code, dump data if so configured, exit (no init.m2)
-.TP
-\fB\-\-no\-loaddata\fR
-don't try to load the dumpdata file
-.TP
 \fB\-\-int\fR
 don't handle interrupts
 .TP
@@ -47,13 +41,10 @@ print no input prompts
 don't use readline
 .TP
 \fB\-\-no\-setup\fR
-don't try to load setup.m2 or to loaddata
+don't try to load setup.m2
 .TP
 \fB\-\-no\-threads\fR
 don't start any additional threads (or tasks)
-.TP
-\fB\-\-no\-personality\fR
-don't set the personality and re-exec M2 (linux only)
 .TP
 \fB\-\-prefix DIR\fR
 set prefixDirectory

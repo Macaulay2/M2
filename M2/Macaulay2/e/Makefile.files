@@ -4,11 +4,7 @@
 ## Source code ###
 ##################
 
-
-
-INTERFACE2 = \
-	interrupted \
-	newdelete \
+INTERFACE2 = interrupted
 
 INTERFACE = \
 	eigen \
@@ -180,7 +176,6 @@ COMMANDS = \
         res-a2-gb \
 	engine \
 	x-aring \
-	x-monom \
 	x-monoid \
 	x-relem \
 	x-free \

@@ -19,7 +19,7 @@ newPackage(
     },
     Headline => "sums of squares",
     AuxiliaryFiles => true,
-    PackageImports => {"FourierMotzkin", "Macaulay2Doc"},
+    PackageImports => {"FourierMotzkin"},
     PackageExports => {"SemidefiniteProgramming"}
 )
 

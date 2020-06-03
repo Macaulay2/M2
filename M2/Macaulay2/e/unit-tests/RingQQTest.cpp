@@ -20,8 +20,7 @@ ring_elem getElement<RingQQ>(const RingQQ &R, int index)
     }
   gmp_QQ a1 = rawRandomQQ(maxH);
   ring_elem result;
-  bool ok = R.from_rational(a1, result);
-  assert(ok);
+  EXPECT_TRUE(R.from_rational(a1, result));
   return result;
 }
 ////////////////////////////////////////////////////////

@@ -1,10 +1,8 @@
 #include <stdio.h>
 #include <M2/gc-include.h>
-#include "types.h"
+#include "../d/types.h"
 
 #include "M2mem-replacement.h"
-
-struct FUNCTION_CELL * thread_prepare_list = 0;
 
 /* trapchk: taken from d/debug.h *************************************/
 

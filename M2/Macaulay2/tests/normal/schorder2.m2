@@ -1,7 +1,6 @@
 -- Test of symmetric powers of schreyer orders
 -- and of free modules
 
-restart
 R = QQ[a,b,c, Degrees => {{1,0,0},{0,1,0},{0,1,3}}]
 F = source vars R
 assert(degrees source symmetricPower(2,vars R) 

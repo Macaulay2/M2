@@ -1,26 +1,25 @@
 FROM ubuntu:bionic
 
+# Setting up Macaulay2 repository
 RUN apt-get update && \
-    apt-get install -y curl gnupg apt-transport-https emacs && \
+    apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl gnupg && \
     curl https://faculty.math.illinois.edu/Macaulay2/PublicKeys/Macaulay2-key -s --output - | apt-key add - && \
     echo 'deb http://www.math.uiuc.edu/Macaulay2/Repositories/Ubuntu bionic main' > \
-    	 /etc/apt/sources.list.d/macaulay2.list && apt-get clean
+	/etc/apt/sources.list.d/macaulay2.list && apt-get update && apt-get clean
 
-RUN apt-get update && \
-    apt-get install -y macaulay2 && \
-    apt-get clean
+# Install Macaulay2
+RUN apt-get install -y macaulay2 && apt-get clean
 
-RUN yes | M2 --silent --print-width 77 --stop --int --no-readline -q --no-randomize -e "setupEmacs(); exit(0);"
-COPY emacs-docker.el /root/.emacs
+# Install optional packages
+RUN apt-get install -y emacs bash-completion git mlocate && apt-get clean && updatedb
 
-WORKDIR /home
+# Add non-root user for running Macaulay2
+RUN useradd -G sudo -g root -u 1000 -m macaulay
+USER 1000:0
+
+# Setting environment variables
+ENV LD_LIBRARY_PATH /usr/lib/Macaulay2/lib
+ENV PATH /usr/libexec/Macaulay2/bin:${PATH}
+
+WORKDIR /home/macaulay
 ENTRYPOINT emacs
-
-# Create the image:
-# docker build --tag m2 .
-
-# Start a graphical instance:
-# docker run --volume `pwd`/storage:/home --volume `pwd`/../../../:/home/M2 --net=host --env="DISPLAY" m2
-
-# Start a non-graphical instance:
-# docker run --volume `pwd`/storage:/home --volume `pwd`/../../../:/home/M2 --interactive --tty m2

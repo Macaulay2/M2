@@ -48,13 +48,13 @@ texMath undocumented unique vars applyPairs
 applyValues ascii asin clearEcho
 collectGarbage combine connectionCount copy
 cos cosh cot coth currentLineNumber
-currentTime debugError dumpdata echoOff
+currentTime debugError echoOff
 echoOn eint erase fileLength fileMode
 fileTime firstkey functionBody get
 getGlobalSymbol hashTable horizontalJoin
 identity isANumber isDirectory isFinite
 isListener isOpen isOutputFile linkFile
-loaddata localDictionaries mergePairs mingle
+localDictionaries mergePairs mingle
 newClass newNetFile nextkey openIn openInOut
 openListener parent plus power powermod
 EulerConstant Constant ii Constant pi infinity

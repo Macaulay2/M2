@@ -102,37 +102,6 @@ document {
      }
 
 document {
-     Key => dumpdata,
-     Headline => "dump state of the system to a file",
-     TT "dumpdata s", " -- dump all data segments for the current process to
-     the file whose name is stored in the string ", TT "s", ".",
-     PARA{},
-     "This effectively saves the entire state of the system, except that the
-     input buffer for the file ", TO "stdio", " appears to have been emptied,
-     and care is taken so that the environment and the command line arguments
-     maintain their new values when the data is reloaded later with
-     ", TO "loaddata", "."
-     }
-
-document {
-     Key => loaddata,
-     Headline => "load state of the system from a file",
-     TT "loaddata s", " -- load all data segments for the current process from
-     the file whose name is stored in the string ", TT "s", ".  The file must have been
-     created with ", TO "dumpdata", " and the same version of Macaulay2.",
-     PARA{},
-     "The file should have been created with ", TO "dumpdata", ".  Everything will
-     be returned to its former state except:",
-     UL {
-	  TO "environment",
-	  TO "commandLine",
-	  "whether the standard input is echoed and prompts to the
-	  standard output are properly flushed, which depends on whether
-	  the standard input is a terminal."
-	  }
-     }
-
-document {
      Key => identity,
      Headline => "the identity function",
      TT "identity x", " -- returns x.",

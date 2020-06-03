@@ -83,7 +83,7 @@ class ARingGFGivaro : public RingInterface
   // We hope that if the polynomial is F(t), that t is a generator of the
   // multiplicative group.  We need to check this.
   // TODO: check whether Givaro can handle F(t) with t not primitive.
-  static const M2_arrayint findMinimalPolynomial(UTT charac, UTT dim);
+  static M2_arrayint findMinimalPolynomial(UTT charac, UTT dim);
 
   ARingGFGivaro(UTT charac_,
                 const M2_arrayint &modPolynomial,

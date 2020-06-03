@@ -167,7 +167,6 @@ o360 = HashTable{architecture => i686
                  compile time => Nov  6 2006, 11:03:04
                  compiler => gcc 3.4.4
                  configure arguments =>  'LDFLAGS=-L/o/local/lib'
-                 dumpdata => false
                  executable extension => .exe
                  factory version => 3.0.2
                  gc version => 6.7

@@ -462,26 +462,81 @@ describeReturnCode = r -> (
      else "killed by signal " | toString (r % 128) | if r & 128 =!= 0 then " (core dumped)" else ""
      )
 
+-- prefixes
+SetUlimit      := 1 << 20 -* sets ulimits *-
+GCMAXHEAP      := 1 << 21 -* sets GC_MAXIMUM_HEAP_SIZE=400M *-
+GCSTATS        := 1 << 22 -* sets GC_PRINT_STATS=1 *-
+GCVERBOSE      := 1 << 23 -* sets GC_PRINT_VERBOSE_STATS=1 *-
+-- arguments
+ArgQ           := 1 <<  0 -* add -q *-
+ArgInt         := 1 <<  1 -* add --int *-
+ArgNoBacktrace := 1 <<  2 -* add --no-backtrace *-
+ArgNoDebug     := 1 <<  3 -* add --no-debug *-
+ArgNoPreload   := 1 <<  4 -* add --no-preload *-
+ArgNoRandomize := 1 <<  5 -* add --no-randomize *-
+ArgNoReadline  := 1 <<  6 -* add --no-readline *-
+ArgNoSetup     := 1 <<  7 -* add --no-setup *-
+ArgNoThreads   := 1 <<  8 -* add --no-threads *-
+ArgNoTTY       := 1 <<  9 -* add --no-tty *-
+ArgNoTValues   := 1 << 10 -* add --no-tvalues *-
+ArgNotify      := 1 << 11 -* add --notify *-
+ArgSilent      := 1 << 12 -* add --silent *-
+ArgStop        := 1 << 13 -* add --stop *-
+ArgPrintWidth  := 1 << 14 -* add --print-width 77 *-
+-- suffixes
+SetInputFile   := 1 << 30 -* add <inf *-
+SetOutputFile  := 1 << 31 -* add >>tmpf *-
+SetCaptureErr  := 1 << 32 -* add 2>&1 *-
+
+-* by default, the following commandline fixtures are used *-
+defaultMode := (SetUlimit + GCMAXHEAP + ArgQ + ArgInt
+    + ArgNoRandomize + ArgNoReadline + ArgSilent + ArgStop
+    + ArgPrintWidth + SetInputFile + SetOutputFile + SetCaptureErr)
+-* making this global, so it can be edited after entering debug Core *-
+argumentMode = defaultMode
+
 runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefiles) -> ( -- return false if error
      announcechange();
-     stderr << "--making " << desc << " in file " << outf << endl;
+     stderr << "--making " << desc << ( if debugLevel > 0 then " in file " | outf else "" ) << endl;
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
-     setseed := " --no-randomize";
-     ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'") else "";
-     src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
-     -- we specify --no-readline because the readline library catches SIGINT:
-     args := "--silent --print-width 77 --stop --int --no-readline" | (if usermode then "" else " -q") | src | setseed | ldpkg;
-     env := "GC_MAXIMUM_HEAP_SIZE=400M ";
-     cmdname := commandLine#0;
-     -- must convert a relative path to an absolute path so we can run the same M2 from another directory while
-     -- running the examples:
-     if match("/",cmdname) then cmdname = toAbsolutePath cmdname;
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
      rundir := temporaryFileName() | "-rundir/";
-     cmd := ulimit | "cd " | rundir | "; " | env | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
-     stderr << cmd << endl;
      makeDirectory rundir;
+     -* The bits in the binary representation of argmode determine arguments to add.
+        If the 64th bit is set, argumentMode modifies the defaultMode rather than overriding them. *-
+     argmode := if 0 < argumentMode & (1<<64) then xor(defaultMode, argumentMode) else argumentMode;
+     -* returns (" "|arg) if all bits in m are set in argmode *-
+     readmode := (m, arg) -> if argmode & m == m then " " | arg else "";
+     cmd := readmode(SetUlimit, ulimit);
+     cmd = cmd | " cd " | rundir | ";";
+     cmd = cmd | readmode(GCMAXHEAP,      "GC_MAXIMUM_HEAP_SIZE=400M");
+     cmd = cmd | readmode(GCSTATS,        "GC_PRINT_STATS=1");
+     cmd = cmd | readmode(GCVERBOSE,      "GC_PRINT_VERBOSE_STATS=1");
+     cmd = cmd | " " | format toAbsolutePath commandLine#0;
+     if argmode =!= defaultMode and not usermode then
+     cmd = cmd | readmode(ArgQ,           "-q");
+     cmd = cmd | readmode(ArgInt,         "--int");
+     cmd = cmd | readmode(ArgNoBacktrace, "--no-backtrace");
+     cmd = cmd | readmode(ArgNoDebug,     "--no-debug");
+     cmd = cmd | readmode(ArgNoPreload,   "--no-preload");
+     cmd = cmd | readmode(ArgNoRandomize, "--no-randomize");
+     cmd = cmd | readmode(ArgNoReadline,  "--no-readline");
+     cmd = cmd | readmode(ArgNoSetup,     "--no-setup");
+     cmd = cmd | readmode(ArgNoThreads,   "--no-threads");
+     cmd = cmd | readmode(ArgNoTTY,       "--no-tty");
+     cmd = cmd | readmode(ArgNoTValues,   "--no-tvalues");
+     cmd = cmd | readmode(ArgNotify,      "--notify");
+     cmd = cmd | readmode(ArgSilent,      "--silent");
+     cmd = cmd | readmode(ArgStop,        "--stop");
+     cmd = cmd | readmode(ArgPrintWidth,  "--print-width 77");
+     cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir",format d));
+     needsline := concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'");
+     cmd = cmd | if pkgname != "Macaulay2Doc" then needsline else "";
+     cmd = cmd | readmode(SetInputFile,   "<" | format inf);
+     cmd = cmd | readmode(SetOutputFile,  ">>" | format toAbsolutePath tmpf);
+     cmd = cmd | readmode(SetCaptureErr,  "2>&1");
+     if debugLevel > 0 then stderr << cmd << endl;
      for fn in examplefiles do copyFile(fn,rundir | baseFilename fn);
      r := run cmd;
      if r == 0 then (
@@ -502,6 +557,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
+     stderr << cmd << endl;
      stderr << tmpf << ":0:1: (output file) error: Macaulay2 " << describeReturnCode r << endl;
      stderr << aftermatch(M2errorRegexp,get tmpf);
      stderr << inf  << ":0:1: (input file)" << endl;

@@ -1,8 +1,9 @@
 -- Copyright 2010 by Daniel R. Grayson
-declarations "
-#include <M2/config.h>
-";
+
+declarations "#include <M2/config.h>";
+
 use arithmetic;
+
 export string := array(char);
 export arrayint := array(int);
 export arrayintOrNull := array(int) or null;
@@ -76,7 +77,7 @@ export join(x:string,y:string):string := Ccode(returns, "
 ");
 export tocharstarstar(p:ArrayString):charstarstar := (
      Ccode(returns, "
-	  int i, n = p->len;
+	  unsigned int i, n = p->len;
 	  char **s = getmemvectortype(char *,n+1);
 	  for (i = 0; i<n; i++) s[i] = M2_tocharstar(p->array[i]);
 	  s[n] = NULL;
@@ -88,7 +89,7 @@ export tocharstarmalloc(s:string):charstar := Ccode(returns, "
   p[s->len] = 0;
   return p; ");
 export tocharstarstarmalloc(p:ArrayString):charstarstar := Ccode(returns, "
-  int n = p->len;
+  unsigned int n = p->len;
   char **s = (char **)getmem_malloc((n + 1)*sizeof(char *));
   unsigned int i;
   for (i=0; i<n; i++) s[i] = M2_tocharstarmalloc(p->array[i]);
@@ -142,6 +143,8 @@ export substrAlwaysCopy(x:string,start:int,leng:int):string := Ccode(returns, "
 declarations " extern char newline[]; ";
 header " char newline[] = \"\\n\"; ";
 export newline := tostring(Ccode(constcharstarOrNull,"newline"));
+export envc := 0;
+export argc := 0;
 export envp := array(string)();
 export argv := array(string)();
 export args := array(string)();

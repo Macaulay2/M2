@@ -1237,7 +1237,30 @@ handleError(c:Code,e:Expr):Expr := (
 	       if p != dummyPosition then err.position = p;
 	       e))
      else e);
+
+header "extern void M2_stack_push(char*);";
+header "extern void M2_stack_pop();";
+header "extern void M2_stack_trace();";
+stacktrace(e:Expr):Expr := (
+    Ccode(void,"M2_stack_trace()"); e );
+setupfun("stacktrace",stacktrace);
+
+evalprof(c:Code):Expr;
+evalraw(c:Code):Expr;
 export eval(c:Code):Expr := (
+    if Ccode(bool,"PROFILING == 1")
+    then Ccode(Expr,"evaluate_evalprof(",c,")")
+    else Ccode(Expr,"evaluate_evalraw(",c,")"));
+export evalprof(c:Code):Expr := (
+    when c is f:semiCode do ( -- what makes semiCode special?
+        -- printErrorMessage(codePosition(c),"--evaluating a semiCode");
+        -- TODO: how to get f.name?
+        Ccode(void,"M2_stack_push(",tocharstar(tostring(codePosition(c))),")");
+        e := evalraw(c);
+        Ccode(void,"M2_stack_pop()");
+        e)
+    else evalraw(c));
+export evalraw(c:Code):Expr := (
      -- better would for cancellation requests to set exceptionFlag:
      -- Ccode(void,"pthread_testcancel()");
      e := (
@@ -1401,6 +1424,7 @@ export eval(c:Code):Expr := (
      when e is Error do handleError(c,e) else e);
 
 export evalexcept(c:Code):Expr := (
+     -- printErrorMessage(codePosition(c),"--evaluating: "+present(tostring(c)));
      e := eval(c);
      if test(exceptionFlag) then (				    -- compare this code to the code at the top of eval() above
 	  if alarmedFlag then (

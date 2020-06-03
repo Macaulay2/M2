@@ -581,8 +581,8 @@ export rawMonoid(e:Expr):Expr := (
 	  else WrongArg(3,"the degrees ring"))
      else WrongArg(2,"a sequence of strings to be used as names")
      else WrongArg(1,"a monomial ordering")
-     else buildErrorPacket("expected 0 or 4 arguments")
-     else buildErrorPacket("expected 0 or 4 arguments")
+     else buildErrorPacket("expected 0 or 5 arguments")
+     else buildErrorPacket("expected 0 or 5 arguments")
      );
 setupfun("rawMonoid",rawMonoid);
 

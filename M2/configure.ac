@@ -256,7 +256,7 @@ AC_SUBST(M2_CFLAGS)
 AC_SUBST(M2_CXXFLAGS)
 
 dnl Fix standards, apply everywhere
-CXXFLAGS="-std=gnu++11 $CXXFLAGS"
+CXXFLAGS="-std=gnu++14 $CXXFLAGS"
 CFLAGS="-std=gnu11 $CFLAGS"
 
 AC_PROG_CC() 			# set CFLAGS before this
@@ -458,19 +458,20 @@ AC_COMPILE_IFELSE(
 AC_SUBST(XML,yes)
 AC_ARG_ENABLE(xml, AS_HELP_STRING(--disable-xml,[do not link with xml library]), XML=$enableval)
 if test "$XML" = yes
-then AC_DEFINE(HAVE_XML,1,[whether we are linking with the xml library])
+then AC_DEFINE(WITH_XML,1,[whether we are linking with the xml library])
 fi
 
 AC_SUBST(PYTHON,no)
 AC_ARG_WITH(python, AS_HELP_STRING(--with-python,[link with libpython]), PYTHON=$withval)
 if test "$PYTHON" = yes
-then AC_DEFINE(HAVE_PYTHON,1,[whether we are linking with the python library])
+then AC_DEFINE(WITH_PYTHON,1,[whether we are linking with the python library])
 fi
 
 AC_SUBST(MYSQL,no)
 AC_ARG_WITH(mysql, AS_HELP_STRING(--with-mysql,[link with mysql]), MYSQL=$withval)
-test "$MYSQL" = no; USE_MYSQL=$?
-AC_DEFINE_UNQUOTED(USE_MYSQL,$USE_MYSQL,[whether we are linking with the mysql library])
+if test "$MYSQL" = yes
+then AC_DEFINE(WITH_MYSQL,1,[whether we are linking with the mysql library])
+fi
 
 LIBPYTHONORIG=-lpython2.7
 AC_SUBST(LIBPYTHON,$LIBPYTHONORIG)
@@ -572,22 +573,7 @@ fi
 AC_SUBST(DEVELOPER)
 AC_ARG_WITH(developer, AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER=$withval)
 
-AC_SUBST(DUMPDATA)
-AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA=$enableval)
-if ! test "$DUMPDATA"
-then case $OS in
-	 Linux|SunOS) DUMPDATA=no;; # sigh, dumpdata no longer works, even under linux
-	 *) DUMPDATA=no;;
-     esac
-     AC_MSG_NOTICE([default dumpdata option for $OS operating system used, value: $DUMPDATA])
-else case $DUMPDATA in
-         yes|no) ;;
-	 *) AC_MSG_ERROR([dumpdata option: invalid value: $DUMPDATA])
-     esac
-fi
-test "$DUMPDATA" = no;   val=$?; AC_DEFINE_UNQUOTED(DUMPDATA,  $val,whether to use dumpdata)
-
-AC_SUBST(TAR_COMPRESS_OPTION)
+AC_SUBST(TAR_COMPRESS_OPTION,)
 case $COMPRESS in
    gz) TAR_COMPRESS_OPTION=--gzip ;;
   bz2) TAR_COMPRESS_OPTION=--bzip ;;

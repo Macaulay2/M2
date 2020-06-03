@@ -2,7 +2,7 @@
 --------------------------------
 -- 4 by 4 commuting matrices.
 -- Adapted from 4by4.m2
--------------------------------
+--------------------------------
 restart
 load "raw-util.m2"
 mo = rawMonomialOrdering { GRevLex => 8:1, GRevLex => 12:1, GRevLex => 12:1}
@@ -173,3 +173,6 @@ rawStartComputation Gcomp
 mgb = rawGBGetMatrix(Gcomp)
 
 ---------------------------------------
+
+-- TODO: split this up
+exit 0;

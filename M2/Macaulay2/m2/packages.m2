@@ -258,7 +258,6 @@ newPackage String := opts -> (pkgname) -> (
 	  };
      newpkg#"test number" = 0;
      if newpkg#?"package prefix" then (
-	  -- these assignments might be premature, for any package that is loaded before dumpdata, as the "package prefix" might change:
 	  l := detectCurrentLayout newpkg#"package prefix";
 	  rawdbname := databaseFilename(Layout#l,newpkg#"package prefix", pkgname);
 	  if fileExists rawdbname then (

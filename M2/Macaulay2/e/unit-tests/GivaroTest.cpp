@@ -152,6 +152,7 @@ int main(int argc, char** argv)
   // Zech log finite field with 5^4 elements
   GFqDom<int> GF625(5, 4);
   TestField(GF625);
+#if 0 // Possibly related: https://github.com/cr-marcstevens/m4gb/issues/8
   // Zech log finite field with 256 elements
   // and prescribed irreducible polynomial
   std::vector<GFqDom<unsigned long long>::Residu_t> Irred(9);
@@ -166,6 +167,7 @@ int main(int argc, char** argv)
   Irred[8] = 1;
   GFqDom<unsigned long long> F256(2, 8, Irred);
   TestField(F256);
+#endif
   // Zech log finite field with 3^4 elements
   // Using the Q-adic Transform
   GFqExt<int32_t> GF81(3, 4);

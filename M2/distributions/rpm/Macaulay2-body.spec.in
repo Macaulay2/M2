@@ -16,12 +16,6 @@ Prefix: @prefix@
 #! /bin/sh -e
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-if [ @DUMPDATA@ = yes ]
-then if ! [ -d @packagecachecoredir@ ]
-     then mkdir @packagecachecoredir@
-     fi
-     @bindir@/M2 --dumpdata
-fi
 %preun
 #! /bin/sh -e
 prefix=@prefix@

@@ -466,6 +466,9 @@ export HashTable := {+
 
 export m2cfile := Pointer "struct M2File*";	
 
+-- TODO: note: Excessive padding in 'struct parse_file_struct' (34 padding bytes, where 2 is optimal).
+-- Optimal fields order: filename, errorMessage, inbuffer, prompt, reward, unsyncOutputState, cfile, threadSyncMutex, hash, pid, listenerfd, connection, numconns, infd, inindex, insize, echoindex, outfd, type_, error, listener, input, inisatty, eof, promptq, fulllines, bol, echo, readline, output, outisatty, consider reordering the fields or adding explicit padding members
+
 export file := {+
         -- general stuff
      	hash:int,     	   	-- hash code

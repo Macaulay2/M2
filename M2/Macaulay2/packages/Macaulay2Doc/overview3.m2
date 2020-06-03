@@ -726,8 +726,6 @@ document {
 	  TO "clearEcho",
 	  TO "setEcho",
      	  "Dumping and restoring the state of the system:",
-	  TO "dumpdata",
-	  TO "loaddata",
 	  TO "restart",
 	  TO "addStartFunction",
 	  TO "addEndFunction",
