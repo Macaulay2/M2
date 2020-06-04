@@ -49,6 +49,8 @@ cygwin-signature:; $(MAKE) -C builds.tmp/$(DIRECTORY)/distributions/cygwin/serve
 pre-install post-install:
 rebuild-world: rebuild-world1 rebuild-world2 rebuild-world3
 rebuild-world1: arch-chk distclean2
+clean-rm-rf :
+	rm -rf "builds.tmp/$(DIRECTORY)"
 distclean2:
 	@if [ -f "builds.tmp/$(DIRECTORY)/GNUmakefile" ] ; then set -x ; $(MAKE) -f GNUmakefile -C "builds.tmp/$(DIRECTORY)" distclean ; fi
 rebuild-world2:make-configure
