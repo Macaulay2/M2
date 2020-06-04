@@ -16,7 +16,9 @@ newPackage(
     )
 
 export {"doc", "multidoc", "packageTemplate", -- functions
-    "docTemplate", "docExample", "testExample", "simpleDocFrob"} -- templates and examples
+    "docTemplate", "docExample", "testExample", "simpleDocFrob", -- templates and examples
+    "Node", "Item", "CannedExample", "Pre", "Code", "Acknowledgement", "Contributors", "References" -- temporary nodes
+    }
 
 -- Primary functions
 doc = method()
@@ -54,20 +56,20 @@ NodeFunctions = new HashTable from {
      }
 
 KeyFunctions = new HashTable from {
-    "Key"             => (textlines, keylinenum) -> Key          => getKeys(textlines, keylinenum),
-    "Headline"        => (textlines, keylinenum) -> Headline     => singleString(Headline, textlines, keylinenum),
-    "Usage"           => (textlines, keylinenum) -> Usage        => multiString(Usage, textlines, keylinenum),
-    "Inputs"          => (textlines, keylinenum) -> Inputs       => items(textlines, keylinenum),
-    "Outputs"         => (textlines, keylinenum) -> Outputs      => items(textlines, keylinenum),
-    "Consequences"    => (textlines, keylinenum) -> Consequences => applySplit(ConsequencesFuntions, textlines),
+    "Key"             => (textlines, keylinenum) -> Key             => getKeys(textlines, keylinenum),
+    "Headline"        => (textlines, keylinenum) -> Headline        => singleString(Headline, textlines, keylinenum),
+    "Usage"           => (textlines, keylinenum) -> Usage           => multiString(Usage, textlines, keylinenum),
+    "Inputs"          => (textlines, keylinenum) -> Inputs          => items(textlines, keylinenum),
+    "Outputs"         => (textlines, keylinenum) -> Outputs         => items(textlines, keylinenum),
+    "Consequences"    => (textlines, keylinenum) -> Consequences    => applySplit(ConsequencesFuntions, textlines),
     "Description"     => (textlines, keylinenum) -> toSequence applySplit(DescriptionFunctions, textlines),
-    "Acknowledgement" => (textlines, keylinenum) -> multiString(null, textlines, keylinenum),
-    "Contributors"    => (textlines, keylinenum) -> multiString(null, textlines, keylinenum),
-    "References"      => (textlines, keylinenum) -> multiString(null, textlines, keylinenum),
-    "ExampleFiles"    => (textlines, keylinenum) -> ExampleFiles => getText \ textlines,
-    "Caveat"          => (textlines, keylinenum) -> Caveat       => {markup(textlines, keylinenum)},
-    "SeeAlso"         => (textlines, keylinenum) -> SeeAlso      => apply(select(getText \ textlines, p -> #p > 0), value),
-    "Subnodes"        => (textlines, keylinenum) -> Subnodes     => apply(getText \ textlines, p -> if match("^:", p) then substring(1, p) else TO value p),
+    "Acknowledgement" => (textlines, keylinenum) -> -* Acknowledgement => *- {markup(textlines, keylinenum)},
+    "Contributors"    => (textlines, keylinenum) -> -* Contributors    => *- {markup(textlines, keylinenum)},
+    "References"      => (textlines, keylinenum) -> -* References      => *- {markup(textlines, keylinenum)},
+    "ExampleFiles"    => (textlines, keylinenum) -> ExampleFiles    => getText \ textlines,
+    "Caveat"          => (textlines, keylinenum) -> Caveat          => {markup(textlines, keylinenum)},
+    "SeeAlso"         => (textlines, keylinenum) -> SeeAlso         => apply(select(getText \ textlines, p -> #p > 0), value),
+    "Subnodes"        => (textlines, keylinenum) -> Subnodes        => apply(getText \ textlines, p -> if match("^:", p) then substring(1, p) else TO value p),
  }
 
 DescriptionFunctions = new HashTable from {
@@ -206,8 +208,7 @@ SeeAlso
 Subnodes
 ///"
 
-packagetemplate = "
-newPackage(
+packagetemplate = "newPackage(
     \"%%NAME%%\",
     Version => \"0.1\",
     Date => \"\",
