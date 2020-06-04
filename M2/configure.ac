@@ -1524,18 +1524,17 @@ dnl about invalid options that turn off warnings, if there are no warnings to be
 dnl It's a feature, not a bug!
 dnl On the other hand, clang does complain!
 
-AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
-AC_LANG(C)
-SAVE=$CFLAGS
-CFLAGS="$CFLAGS -Wmismatched-tags -Werror"
+AC_MSG_CHECKING(whether $CXX accepts -Wmismatched-tags)
+AC_LANG(C++)
+SAVE=$CXXFLAGS
+CXXFLAGS="$CXXFLAGS -Wmismatched-tags -Werror"
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
-    CFLAGS=$SAVE
-    CFLAGS="$CFLAGS -Wno-mismatched-tags"
+    CXXFLAGS=$SAVE
     CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
     dnl We don't like seeing this warning, especially from the "clang++" compiler, because
     dnl we like using "struct" and "class" interchangeably.
     AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
-    CFLAGS=$SAVE
+    CXXFLAGS=$SAVE
     AC_MSG_RESULT(no))
 
 dnl we should make a macro for this test
