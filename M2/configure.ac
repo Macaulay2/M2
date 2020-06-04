@@ -1887,7 +1887,6 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
     AC_MSG_RESULT([[yes, adding -Wno-mismatched-tags to flags]]),
     CXXFLAGS=$SAVE
     AC_MSG_RESULT(no))
-CFLAGS=$SAVE
 
 AC_MSG_CHECKING(whether $CC accepts -Wparentheses-equality)
 AC_SUBST(HAVE_WPARENTHESES_EQUALITY,)
