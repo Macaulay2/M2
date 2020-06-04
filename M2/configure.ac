@@ -1883,8 +1883,8 @@ CXXFLAGS="$CXXFLAGS -Wmismatched-tags -Werror"
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
     CXXFLAGS=$SAVE
     CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
-    # we don't like seeing this warning, especially from the "clang" compiler
-    AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
+    dnl we don't like seeing this warning, especially from the "clang" compiler
+    AC_MSG_RESULT([[yes, adding -Wno-mismatched-tags to flags]]),
     CXXFLAGS=$SAVE
     AC_MSG_RESULT(no))
 CFLAGS=$SAVE
