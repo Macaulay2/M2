@@ -159,6 +159,9 @@ M2_CXXFLAGS += @M2_CXXFLAGS@
 
 M2_CXXFLAGS += -Wno-error=pragmas
 
+# this line overrides givaro possibly setting the ABI version to an old obsolete error-prone one:
+M2_CXXFLAGS += -fabi-version=0
+
 ifeq "@__INTEL_COMPILER@" "no"
 M2_CFLAGS   += -Wimplicit-function-declaration
 endif
