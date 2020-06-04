@@ -1871,7 +1871,6 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
     AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
-AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
 dnl Always check for the option that turns the warning on, because gcc doesn't complain
 dnl about invalid options that turn off warnings, if there are no warnings to be issued anyway.
 dnl It's a feature, not a bug!
