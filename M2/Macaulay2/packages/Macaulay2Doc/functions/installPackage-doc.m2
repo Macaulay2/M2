@@ -1,7 +1,7 @@
 document { Key => "epkg",
      "The program ", TT "epkg", " is used to ", EM "encapsulate", " the files of a package
      in a subdirectory for easy later removal.  Symbolic links make it look like they have
-     been installed in the right place.  See ", HREF "http://www.encap.org/epkg/", "."
+     been installed in the right place.  See ", HREF "https://github.com/DanGrayson/epkg", "."
      }
 
 document {
