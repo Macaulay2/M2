@@ -907,7 +907,7 @@ then AC_LANG(C)
      AC_CHECK_HEADER(flint/flint.h,LIBS="-lflint -lgmp $LIBS",BUILD_flint=yes)
 fi
 if test $BUILD_flint = yes
-then BUILTLIBS="-lflint $BUILTLIBS"
+then BUILTLIBS="-lflint $BUILTLIBS -lm"
 fi
 
 dnl we can't use the test below for the presence of 4ti2 until the package FourTiTwo knows
@@ -1013,9 +1013,11 @@ then
     then
         CPPFLAGS="$GTEST_CPPFLAGS $CPPFLAGS"
         GTEST_PATH=$GTEST_SOURCE
+	AC_MSG_NOTICE(we have found gtest)
     else
         BUILD_gtest=yes
         GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
+	AC_MSG_NOTICE(we will build gtest)
     fi
 else
     GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
@@ -1154,9 +1156,10 @@ fi
 # test for fflas_ffpack
 if test $BUILD_fflas_ffpack = no
 then AC_MSG_CHECKING([for fflas_ffpack library, version at least 2])
-     FFLAS_FFPACK_CXXFLAGS=`fflas-ffpack-config --cflags 2>&1`
      if test $? = 0 && test "`fflas-ffpack-config --decimal-version`" -gt 20000
      then AC_MSG_RESULT(found)
+          FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) echo -n "$x " ;; esac done)
+	  AC_MSG_NOTICE([adding fflas_ffpack flags $FFLAS_FFPACK_CXXFLAGS])
           M2_CXXFLAGS="$M2_CXXFLAGS $FFLAS_FFPACK_CXXFLAGS"
 	  LIBS="$LIBS `fflas-ffpack-config --libs`"
      else AC_MSG_RESULT(not found, will build)
