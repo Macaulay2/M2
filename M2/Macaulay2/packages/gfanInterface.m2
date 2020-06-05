@@ -1062,7 +1062,7 @@ runGfanCommandCaptureBoth = (cmd, opts, data) -> (
 	errorMsg := "";
      	if(not returnvalue == 0) then
 	(
-	    errorMsg = "GFAN returned an error message.\n";
+	    errorMsg = "Gfan returned an error message.\n";
 	    errorMsg = errorMsg | "COMMAND:" | ex | "\n";
 	    errorMsg = errorMsg | "INPUT:\n";
 	    errorMsg = errorMsg | get(tmpFile);
