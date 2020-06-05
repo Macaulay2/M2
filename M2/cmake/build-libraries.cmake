@@ -962,8 +962,8 @@ if(NOT APPLE)
 endif()
 set(normaliz_GMPFLAGS "${LDFLAGS} -lgmpxx -lgmp")
 ExternalProject_Add(build-normaliz
-  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.4/normaliz-3.8.4.tar.gz
-  URL_HASH          SHA256=795a0a752ef7bcc75e3307917c336436abfc836718c5cbf55043da6e7430cda3
+  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.5/normaliz-3.8.5.tar.gz
+  URL_HASH          SHA256=cf4fdaaa6ffcd8d268b1f16dd4b64cf86f1eab55177e611f8ef672e7365435a0
   PREFIX            libraries/normaliz
   SOURCE_DIR        libraries/normaliz/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
