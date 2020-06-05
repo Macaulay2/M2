@@ -134,7 +134,7 @@ availableOffline = () -> (
     hashTable for k in keys offlines list (
         val := offlines#k;
         (maxlimit, filename) := if instance(val, Sequence) then val else (infinity, val);
-        actualfile := offlineDirectory | filename;
+        actualfile := relativizeFilename(offlineDirectory | filename);
         fcncall := if instance(k, ZZ) then (
           "kreuzerSkarke("|k|
             (if maxlimit === infinity then ")" else ", Limit => "|maxlimit|")")
