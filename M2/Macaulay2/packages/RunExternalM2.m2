@@ -760,7 +760,7 @@ runExternalM2 = {
 	);	
 	if (M2Loc===null) then (
 		-- TODO, do we need rootPath for Cygwin?
-		M2Loc=toAbsolutePath(first(commandLine));
+		M2Loc=relativizeFilename(first(commandLine));
 	);
 	if not(fileExists(M2Loc)) then (
 		error "runExternalM2: error finding location of M2 program; check M2Location option";
