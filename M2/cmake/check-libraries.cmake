@@ -46,6 +46,14 @@ find_package(AtomicOps	REQUIRED QUIET) # See FindAtomicOps.cmake
 #   TBB		libtbb-dev	tbb-devel	tbb
 
 find_package(OpenMP	QUIET)
+foreach(lang IN ITEMS C CXX)
+  foreach(_dir IN LISTS OpenMP_${lang}_INCLUDE_DIRS)
+    set(OpenMP_${lang}_FLAGS "${OpenMP_${lang}_FLAGS} -I${_dir}")
+  endforeach()
+  foreach(_lib IN LISTS OpenMP_${lang}_LIB_NAMES)
+    set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} ${OpenMP_${_lib}_LIBRARY}")
+  endforeach()
+endforeach()
 find_package(TBB	QUIET) # See FindTBB.cmake
 
 ###############################################################################
