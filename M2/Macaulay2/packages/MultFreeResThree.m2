@@ -1,6 +1,6 @@
 newPackage ( "MultFreeResThree",
-    Version => "0.1",
-    Date => "22 April 2020",
+    Version => "0.5",
+    Date => "3 June 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
@@ -34,7 +34,8 @@ newPackage ( "MultFreeResThree",
     DebuggingMode => false
     )
 
-export { "multTables", "multTablesLink", "eeProd", "efProd", "mapX", "mapY", "makeRes" }
+export { "genmulttables", "multTables", "multTablesLink", "eeProd", "efProd", 
+    "mapX", "mapY", "makeRes" }
 
 
 --==========================================================================
@@ -105,6 +106,48 @@ multtables = F -> (
 	);
     {EE,EF}
     )
+
+-- genmulttables = F -> (
+--     P := ring F;
+--     m := numcols F.dd_1;
+--     l := numcols F.dd_2;
+--     n := numcols F.dd_3;
+--     L := {};
+--     for i from 1 to m-1 do (
+--     	for j from i+1 to m do (
+-- 	    for k from 1 to n do (
+-- 	    	L = append(L, {i,j,k})
+-- 	    	)
+-- 	    )
+-- 	);
+--     Q := P[for l in L list u_l];
+--     F = F**Q;
+--     d1:= matrix entries F.dd_1;
+--     d2:= matrix entries F.dd_2;    
+--     d3:= matrix entries F.dd_3;    
+    
+--     EE := new MutableHashTable;
+--     for i from 1 to m do (
+-- 	for j from i+1 to m do (
+-- 	 a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1};
+--     	 b := ( matrix entries transpose a ) // d2;
+-- 	 EE#(i,j) = ( matrix entries b );
+-- 	 EE#(j,i) = -EE#(i,j);
+-- 	 );
+--      EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0);
+--      );
+
+--     EF := new MutableHashTable;
+--     for i from 1 to m do (
+-- 	for j from 1 to l do (
+--     	    c := sum(1..m, k -> d2_(k-1,j-1) * (EE#(i,k)));
+--     	    d := d1_(0,i-1)*((id_(Q^l))_(j-1));
+-- 	    e := (matrix entries (matrix d - c)) // d3;
+--     	    EF#(i,j) = (matrix entries e);
+-- 	    );
+-- 	);
+--     {EE,EF}
+--     )
 
 multtableslink = (F,i,j,k) -> (
     Q := ring F;
