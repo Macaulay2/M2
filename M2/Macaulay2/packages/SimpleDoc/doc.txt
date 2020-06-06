@@ -8,14 +8,14 @@ Node
     Text
       This package provides a human-readable serialization format for
       documentation nodes as an alternative to the classic way of
-      @TO "writing documentation"@ using the @TO document@ method.
+      @TO "Macaulay2Doc::writing documentation"@ using the @TO document@ method.
       The new format is parsed by either @TO doc@ for writing a single node,
       or @TO multidoc@ for writing multiple documentation nodes in one file
       and adheres off-side rule; i.e., using indentation to separate blocks.
   Contributors
     Andrew Hoefel contributed to this package.
   SeeAlso
-    "writing documentation"
+    "Macaulay2Doc::writing documentation"
 Node
  Key
   multidoc
@@ -50,8 +50,8 @@ Node
       the name of the package
   Description
    Text
-     This routine returns a barebones package template
-     that you can use to start writing a package.
+     This routine returns a barebones package template that can be used to start
+     writing a package.
    Example
      print packageTemplate "WonderfulModules"
   SeeAlso
@@ -66,11 +66,9 @@ Node
     docTemplate
   Description
    Text
-     docTemplate is a @TO String@, which can
-     be cut and paste into a text file,
-     to be used as a template for writing
-     documentation for functions and other objects
-     in a package.
+     docTemplate is a @TO String@, which can be cut and pasted into a text file,
+     to be used as a template for writing documentation for functions and other
+     objects in a package.
    Example
      print docTemplate
   SeeAlso
