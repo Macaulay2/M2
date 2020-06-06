@@ -90,7 +90,7 @@ add_subdirectory(Macaulay2)
 include(packaging) ## CMake script for making distribution packages for Macaulay2
 
 ###############################################################################
-## This section is temporary hacks, will be gone soon.
+## This section is temporary hacks! Try to reduce or move them elsewhere.
 
 set(M2_CONTENT "#!/bin/sh\nexec ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2 \"$@\"")
 execute_process(
