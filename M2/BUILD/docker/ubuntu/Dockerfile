@@ -2,15 +2,18 @@
 # Net usage:  ~255MB
 # Disk usage: <1GB docker image + 650MB Macaulay2 build
 
-FROM ubuntu:bionic
+FROM ubuntu:focal
 
 # Programs we require to build
 RUN apt-get update && \
     apt-get install -y apt-transport-https bison build-essential curl git gnupg && \
     curl https://apt.kitware.com/keys/kitware-archive-latest.asc -s --output - | apt-key add - && \
-    echo 'deb https://apt.kitware.com/ubuntu/ bionic main' > \
+    echo 'deb https://apt.kitware.com/ubuntu/ focal main' > \
       /etc/apt/sources.list.d/cmake.list && \
     apt-get update && apt-get install -y autoconf ccache cmake libtool ninja-build yasm && apt-get clean
+
+# FIXME: this is needed to make tzdata install without asking a question
+RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
 
 # Libraries we require
 RUN apt-get install -y libopenblas-dev libxml2-dev libreadline-dev libgdbm-dev libboost-stacktrace-dev && \
@@ -22,6 +25,9 @@ RUN apt-get install -y libatomic-ops-dev && apt-get clean
 # Libraries we can build (factory not available on ubuntu)
 RUN apt-get install -y libeigen3-dev  libglpk-dev libgmp3-dev libmpfr-dev \
       libntl-dev libfrobby-dev libgc-dev && apt-get clean
+
+# FIXME: The base container doesn't have Python, which is needed by MPSolve
+RUN apt-get install -y python && apt-get clean
 
 # Programs we can build
 # TODO: cohomcalg available soon.
