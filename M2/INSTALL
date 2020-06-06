@@ -312,7 +312,7 @@ various modern operating systems:
      Installing multiple software in the same directory, such as in $HOME/local
      (as described above), makes it hard to remove or upgrade packages.  To
      solve that problem, use the program "epkg", available from
-     http://www.encap.org/epkg/.
+     https://github.com/DanGrayson/epkg.
 
 ----------------------
 Choosing a place for the repository
@@ -445,7 +445,7 @@ may add an option to the "make install" line, as follows:
         make install prefix=/foo/bar
 
 To make an encapsulated directory tree or distribution tarball suitable for use
-with the program "epkg" (see http://www.encap.org/epkg/), add the option
+with the program "epkg" (see https://github.com/DanGrayson/epkg), add the option
 
         --enable-encap
 
