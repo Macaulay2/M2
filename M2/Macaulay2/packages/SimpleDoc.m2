@@ -16,6 +16,7 @@ newPackage(
     )
 
 export {"doc", "multidoc", "packageTemplate", -- functions
+    "arXiv", "stacksProject", "wikipedia", -- helper functions
     "docTemplate", "docExample", "testExample", "simpleDocFrob", -- templates and examples
     "Node", "Item", "CannedExample", "Pre", "Code", "Acknowledgement", "Contributors", "References" -- temporary nodes
     }
@@ -96,8 +97,8 @@ getIndent = textline -> textline#1
 getLinenum = textline -> textline#2
 -- We use this creation function:
 makeTextline = (line, linenum) -> (
+    text := replace("(^[[:space:]]+|[[:space:]]+$)", "", line);
     indent := getIndentLevel line;
-    text := if indent == infinity then "" else replace("[[:space:]]+$", "", substring(indent, line));
     (text, indent, linenum))
 
 -- return of number of leading spaces + leading tabs * 8 before text, or infinity for empty line
@@ -183,119 +184,25 @@ getExample = (textlines, keylinenum, canned) -> (
     EXAMPLE if canned then { PRE reassemble(getIndent textlines#0, textlines) }
     else apply(splitByIndent(textlines, false), (i, j) -> reassemble(getIndent textlines#0, take(textlines, {i,j}))))
 
+-- helper functions for writing documentation
+load("./SimpleDoc/helpers.m2")
+
 -- docstring and package templetes
+load("./SimpleDoc/templates.m2")
 
-docTemplate = "doc ///
-Key
-Headline
-Usage
-Inputs
-Outputs
-Consequences
-  Item
-Description
-  Text
-  Code
-  Pre
-  Example
-  CannedExample
-ExampleFiles
-Acknowledgement
-Contributors
-References
-Caveat
-SeeAlso
-Subnodes
-///"
-
-packagetemplate = "newPackage(
-    \"%%NAME%%\",
-    Version => \"0.1\",
-    Date => \"\",
-    Headline => \"\",
-    Authors => {{ Name => \"\", Email => \"\", HomePage => \"\"}},
-    AuxiliaryFiles => false,
-    DebuggingMode => false
-    )
-
-export {}
-
--* Code section *-
-
-
--* Documentation section *-
-beginDocumentation()
-
-doc ///
-Key
-  %%NAME%%
-Headline
-Description
-  Text
-  Example
-  CannedExample
-Acknowledgement
-Contributors
-References
-Caveat
-SeeAlso
-Subnodes
-///
-
-doc ///
-Key
-Headline
-Usage
-Inputs
-Outputs
-Consequences
-  Item
-Description
-  Text
-  Example
-  CannedExample
-  Code
-  Pre
-ExampleFiles
-Contributors
-References
-Caveat
-SeeAlso
-///
-
--* Test section *-
-TEST /// -* [insert short title for this test] *-
--- test code and assertions here
--- may have as many TEST sections as needed
-///
-
-end--
-
--* Development section *-
-restart
-debug needsPackage \"%%NAME%%\"
-check \"%%NAME%%\"
-
-uninstallPackage \"%%NAME%%\"
-restart
-installPackage \"%%NAME%%\"
-viewHelp \"%%NAME%%\"
-"
-
--- This is an example that can also be used as a test
-simpleDocFrob = method()
-simpleDocFrob(ZZ,Matrix) := (n,M) -> directSum(n:M)
-
--* Documentation section *-
-beginDocumentation()
-
--- load the example
+-- an example that can also be used as a test
 load("./SimpleDoc/example.m2")
-value docExample
-value testExample
+
+-* Documentation section *-
+beginDocumentation()
 
 -- load the multidocstring
 multidoc get (currentFileDirectory | "SimpleDoc/doc.txt")
+multidoc get (currentFileDirectory | "SimpleDoc/helpers-doc.txt")
+
+-- load the documentation and tests for the example
+value docExample
+value testExample
 
 end--
 

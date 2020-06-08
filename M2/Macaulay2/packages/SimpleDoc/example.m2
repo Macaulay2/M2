@@ -1,3 +1,6 @@
+simpleDocFrob = method()
+simpleDocFrob(ZZ, Matrix) := (n, M) -> directSum(n:M)
+
 docExample = "doc ///
   Key
     simpleDocFrob

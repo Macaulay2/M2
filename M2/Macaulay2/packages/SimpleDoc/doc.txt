@@ -9,16 +9,21 @@ Node
       This package provides a human-readable serialization format for
       documentation nodes as an alternative to the classic way of
       @TO "Macaulay2Doc::writing documentation"@ using the @TO document@ method.
-      The new format is parsed by either @TO doc@ for writing a single node,
-      or @TO multidoc@ for writing multiple documentation nodes in one file
-      and adheres off-side rule; i.e., using indentation to separate blocks.
+      The new format is parsed by either @TO doc@ for writing a single node
+      or @TO multidoc@ for writing multiple documentation nodes in one file and
+      adheres to the off-side rule; i.e., using indentation to separate blocks.
   Contributors
     Andrew Hoefel contributed to this package.
+  Subnodes
+    :Documentation helpers
+    arXiv
+    stacksProject
+    wikipedia
   SeeAlso
     "Macaulay2Doc::writing documentation"
 Node
  Key
-  multidoc
+   multidoc
   (multidoc,String)
  Headline
   a simple documentation function, allowing multiple documentation nodes
@@ -39,7 +44,7 @@ Node
    EXAMPLE { PRE concatenate between("\n", lines get(SimpleDoc#"source directory" | "SimpleDoc/doc.txt")) }
 Node
   Key
-    packageTemplate
+     packageTemplate
     (packageTemplate,String)
   Headline
     a template for a package
@@ -113,7 +118,7 @@ Node
     packageTemplate
 Node
   Key
-    doc
+     doc
     (doc,String)
   Headline
     a simple documentation function

@@ -2204,7 +2204,7 @@ document {
 	  TO "toCC", ", ",
 	  TO "toRR", ", ",
 	  TO "utf8", ", ",
-	  TO "Wikipedia", ", and ",
+	  TO "wikipedia", ", and ",
 	  TO "zeta", "."
 	  },
      PARA ///
