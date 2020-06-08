@@ -2,7 +2,7 @@
 # Net usage:  54+124+
 # Disk usage: ??
 
-FROM registry.fedoraproject.org/fedora-minimal:31
+FROM registry.fedoraproject.org/fedora-minimal:32
 
 # Programs we require to build
 #  kernel-devel rpm-build rpm-sign rpmdevtools

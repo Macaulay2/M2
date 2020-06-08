@@ -514,7 +514,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      cmd = cmd | readmode(GCSTATS,        "GC_PRINT_STATS=1");
      cmd = cmd | readmode(GCVERBOSE,      "GC_PRINT_VERBOSE_STATS=1");
      cmd = cmd | " " | format toAbsolutePath commandLine#0;
-     if argmode =!= defaultMode and not usermode then
+     if argmode =!= defaultMode or not usermode then
      cmd = cmd | readmode(ArgQ,           "-q");
      cmd = cmd | readmode(ArgInt,         "--int");
      cmd = cmd | readmode(ArgNoBacktrace, "--no-backtrace");

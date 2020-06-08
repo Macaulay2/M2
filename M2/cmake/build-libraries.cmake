@@ -876,14 +876,11 @@ _ADD_COMPONENT_DEPENDENCY(programs lrslib mp LRSLIB)
 
 # https://github.com/coin-or/Csdp
 # TODO: what to do when OpenMP is not found
-set(csdp_CC  "${CMAKE_C_COMPILER}  ${OpenMP_C_FLAGS}")
-set(csdp_CXX "${CMAKE_CXX_COMPILER} ${OpenMP_CXX_FLAGS}")
-set(csdp_LDFLAGS "${LDFLAGS} ${OpenMP_CXX_FLAGS}")
-list(JOIN OpenMP_CXX_LIBRARIES " " csdp_OpenMP_CXX_LIBRARIES)
-set(csdp_LDLIBS  "${LDLIBS}  ${csdp_OpenMP_CXX_LIBRARIES}")
-set(csdp_LIBS     "-L../lib -lsdp ${LA_LIBRARIES} -lm")
+# TODO: set CFLAGS instead of CC, this is tricky due to csdp's Makefile
+set(csdp_CC      "${CMAKE_C_COMPILER} ${OpenMP_C_FLAGS} ${CFLAGS}")
+set(csdp_LIBS    "-L../lib -lsdp ${LA_LIBRARIES} -lm")
 ExternalProject_Add(build-csdp
-  URL               http://www.coin-or.org/download/source/Csdp/Csdp-6.2.0.tgz # TODO
+  URL               http://www.coin-or.org/download/source/Csdp/Csdp-6.2.0.tgz
   URL_HASH          SHA256=7f202a15f33483ee205dcfbd0573fdbd74911604bb739a04f8baa35f8a055c5b
   PREFIX            libraries/csdp
   SOURCE_DIR        libraries/csdp/build
@@ -893,9 +890,7 @@ ExternalProject_Add(build-csdp
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
                       CC=${csdp_CC}
-                      CXX=${csdp_CXX}
-                      LDFLAGS=${csdp_LDFLAGS}
-                      LDLIBS=${csdp_LDLIBS}
+                      LDLIBS=${OpenMP_C_LDLIBS}
                       LIBS=${csdp_LIBS}
   INSTALL_COMMAND   ${CMAKE_STRIP} solver/csdp
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/csdp
@@ -953,21 +948,16 @@ _ADD_COMPONENT_DEPENDENCY(programs nauty "" NAUTY)
 
 # https://www.normaliz.uni-osnabrueck.de/
 # normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
-# TODO: see special variables OPENMP and NORMFLAGS for macOS from libraries/normaliz/Makefile.in
 # TODO: what to do when OpenMP is not found
-set(normaliz_CXXFLAGS "${CPPFLAGS} -Wall -O3 -Wno-unknown-pragmas -std=c++11 -I .. -I . ")
-if(NOT APPLE)
-  # TODO: due to problem with -fopenmp on mac, skip this for apple
-  set(normaliz_CXXFLAGS "${normaliz_CXXFLAGS} ${OpenMP_CXX_FLAGS}")
-endif()
-set(normaliz_GMPFLAGS "${LDFLAGS} -lgmpxx -lgmp")
+string(REPLACE " " "%20" normaliz_OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}")
 ExternalProject_Add(build-normaliz
-  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.4/normaliz-3.8.4.tar.gz
-  URL_HASH          SHA256=795a0a752ef7bcc75e3307917c336436abfc836718c5cbf55043da6e7430cda3
+  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.5/normaliz-3.8.5.tar.gz
+  URL_HASH          SHA256=cf4fdaaa6ffcd8d268b1f16dd4b64cf86f1eab55177e611f8ef672e7365435a0
   PREFIX            libraries/normaliz
   SOURCE_DIR        libraries/normaliz/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/normaliz/patch-3.8.5
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
@@ -983,14 +973,8 @@ ExternalProject_Add(build-normaliz
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-                      # OPENMP=
-                      # NORMFLAGS=
+                      OPENMP_CXXFLAGS=${normaliz_OpenMP_CXX_FLAGS}
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
-                      CXX=${CMAKE_CXX_COMPILER}
-                      # NORMFLAGS=
-                      CXXFLAGS=${normaliz_CXXFLAGS}
-                      RANLIB=${CMAKE_RANLIB}
-                      GMPFLAGS=${normaliz_GMPFLAGS}
   # TODO: do we need the libraries as well, or just the binary?
   INSTALL_COMMAND   ${CMAKE_STRIP} source/normaliz
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/normaliz

@@ -315,6 +315,10 @@ if(EIGEN3_FOUND)
   target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
 endif()
 
+if(OpenMP_FOUND)
+  target_link_libraries(M2-engine PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
 # Compiler warning flags
 target_compile_options(M2-engine PRIVATE
   -Wno-cast-qual # FIXME

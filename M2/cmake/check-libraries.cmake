@@ -8,8 +8,8 @@
 
 # These are the libraries linked with Macaulay2 in Macaulay2/{e,bin}/CMakeLists.txt
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
-set(LIBRARY_LIST   HISTORY READLINE GDBM ATOMICOPS)
 set(LIBRARIES_LIST MPSOLVE MATHICGB MATHIC MEMTAILOR FROBBY FACTORY FLINT NTL MPFR MP BDWGC LAPACK)
+set(LIBRARY_LIST   READLINE HISTORY GDBM ATOMICOPS)
 
 if(WITH_TBB)
   append(LIBRARIES_LIST TBB)
@@ -46,6 +46,14 @@ find_package(AtomicOps	REQUIRED QUIET) # See FindAtomicOps.cmake
 #   TBB		libtbb-dev	tbb-devel	tbb
 
 find_package(OpenMP	QUIET)
+foreach(lang IN ITEMS C CXX)
+  foreach(_dir IN LISTS OpenMP_${lang}_INCLUDE_DIRS)
+    set(OpenMP_${lang}_FLAGS "${OpenMP_${lang}_FLAGS} -I${_dir}")
+  endforeach()
+  foreach(_lib IN LISTS OpenMP_${lang}_LIB_NAMES)
+    set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} ${OpenMP_${_lib}_LIBRARY}")
+  endforeach()
+endforeach()
 find_package(TBB	QUIET) # See FindTBB.cmake
 
 ###############################################################################
