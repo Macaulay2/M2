@@ -32,7 +32,6 @@ toString := value' getGlobalSymbol if firstTime then "simpleToString" else "toSt
 match := X -> null =!= regex X
 
 local exe
-local topSrcdir
 local topBuilddir
 
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
