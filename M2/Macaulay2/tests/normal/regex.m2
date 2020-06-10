@@ -15,6 +15,32 @@ assert(replace("b","B",replace("a","A",s)) === "lpdiBdjlpwvwvpvuovhqdjcgdufxqfwi
 assert(replace("b","B",replace("a","A",s)) === replace("a","A",replace("b","B",s)))
 assert( (replace("a(b+)(c+)","\\2\\1"," abbcc abccc ")) === " ccbb cccb " )
 assert( (replace("a(b+).(c+)","\\2\\1"," abbcc ab\nccc ")) === " cbb ab\nccc " )
+
+assert match(regexQuote ///foo\///, ///foo\///)
+assert match(regexQuote "foo^", "foo^")
+assert match(regexQuote "foo$", "foo$")
+assert match(regexQuote "foo.", "foo.")
+assert match(regexQuote "foo|", "foo|")
+assert match(regexQuote "foo?", "foo?")
+assert match(regexQuote "foo*", "foo*")
+assert match(regexQuote "foo+", "foo+")
+assert match(regexQuote "(foo)", "(foo)")
+assert match(regexQuote "[foo]", "[foo]")
+assert match(regexQuote "{foo}", "{foo}")
+
+-- the following matches would all return true without regexQuote
+assert not match(regexQuote ///\w///, "foo")
+assert not match(regexQuote "^foo", "foo")
+assert not match(regexQuote "foo$", "foo")
+assert not match(regexQuote "foo.", "fooo")
+assert not match(regexQuote "f|oo", "oo")
+assert not match(regexQuote "foo?", "fo")
+assert not match(regexQuote "foo*", "fo")
+assert not match(regexQuote "foo+", "foo")
+assert not match(regexQuote "(foo)", "foo")
+assert not match(regexQuote "[foo]", "foo")
+assert not match(regexQuote "foo{1}", "foo")
+
 end
 print generateAssertions ///
 6
