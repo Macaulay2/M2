@@ -10,6 +10,7 @@
 
 #include "RingTest.hpp"
 #include "tower.hpp"
+#include "../util.hpp"
 
 // First: we need a routne to read a polynomial from a string.
 // Format:  variables are a..zA..Z, and then [1], [2], ...
