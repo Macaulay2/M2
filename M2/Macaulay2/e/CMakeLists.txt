@@ -15,11 +15,11 @@ set(UNDETERMINED
 
 # c files
 # TODO: convert to cpp or simplify if not needed
+# MES TODO:   monordering.c removed this, is that correct?
 set(CFILES
   complex.c
   error.c
   exptable.c
-  monordering.c
   table.c
   )
 # h files
@@ -38,6 +38,8 @@ set(HFILES
 
 # these files are include only.
 set(HPPONLYFILES
+	NCAlgebras/MemoryBlock
+	NCAlgebras/Range
   newdelete.hpp
   timing.hpp
   SLP-defs.hpp
@@ -114,7 +116,25 @@ set(CPPONLYFILES
   )
 
 # these files all have .hpp and .cpp files
+# MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
+	myalloc
+	matrix-ncbasis
+	NCAlgebras/VectorArithmetic
+	NCAlgebras/Word
+	NCAlgebras/NCReduction
+	NCAlgebras/FreeAlgebraQuotient
+	M2FreeAlgebraQuotient
+	NCAlgebras/FreeAlgebra
+	NCAlgebras/FreeMonoid
+	NCAlgebras/WordTable
+	NCAlgebras/NCGroebner
+	NCAlgebras/NCF4
+	NCAlgebras/OverlapTable
+	M2FreeAlgebra
+	Polynomial
+	monordering
+	monomial-collection
   Eschreyer
   GF
   LLL
