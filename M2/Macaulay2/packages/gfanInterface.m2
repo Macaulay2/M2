@@ -2647,20 +2647,6 @@ doc ///
 			{\tt gfanInterface.m2} either before installing or in the installed copy.
 			You will find the path configuration near the top of the file.
 
-			If {\tt gfanInterface} is already installed and loaded, you can find the path
-			of the source file by the following command:
-
-		Example
-			gfanInterface#"source file"
-
-		Text
-			If you want to use {\tt gfan} executables outside of @EM "Macaulay2"@, they can be found with
-			{\tt currentLayout#"programs"}:
-
-		Example
-			prefixDirectory | currentLayout#"programs"
-
-		Text
 			If you would like to see the input and output files used to communicate with {\tt gfan}
 			you can set the {\tt "keepfiles"} configuration option to {\tt true}. If {\tt "verbose"}
 			is set to {\tt true}, {\tt gfanInterface} will output the names of the temporary files used.

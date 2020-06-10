@@ -9,8 +9,7 @@ document {
      Inputs => { "fn" => String => "a filename, or path to a file" },
      Outputs => { String => { "a pathname to ", TT "fn", " passing through no symbolic links, and
 	       ending with a slash if ", TT "fn", " refers to a directory" }},
-     EXAMPLE lines ///
-     	  realpath "."
+     EXAMPLE (lines ///
      	  p = temporaryFileName()
 	  q = temporaryFileName()
 	  symlinkFile(p,q)
@@ -19,11 +18,13 @@ document {
 	  realpath q
 	  removeFile p
 	  removeFile q
-     ///,
+     /// | {PRE(///i9 : realpath "."/// | newline | newline |
+	  ///o9 = /home/m2user/ ///)}),
      PARA {
 	  "The empty string is interpreted as a reference to the current directory."
 	  },
-     EXAMPLE ///realpath ""///,
+     EXAMPLE {PRE(///i10 : realpath ""/// | newline | newline |
+	  ///o10 = /home/m2user/ ///)},
      SeeAlso => {readlink},
      Caveat => {
 	  "Every component of the path must exist in the file system and be accessible to the user.
