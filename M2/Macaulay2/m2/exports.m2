@@ -986,6 +986,7 @@ export {
 	"recursionDepth",
 	"reduceHilbert",
 	"regex",
+	"regexQuote",
 	"registerFinalizer",
 	"regularity",
 	"relations",
