@@ -771,7 +771,6 @@ installPackage Package := opts -> pkg -> (
 
 	  -- cache raw documentation in database, and check for changes
 	  rawDocUnchanged := new MutableHashTable;
-	  libDir := pkg#"package prefix" | replace("PKG",pkg#"pkgname",installLayout#"packagelib");
 	  rawdbname := databaseFilename(installLayout,pkg#"package prefix",pkg#"pkgname");
 	  rawdbnametmp := rawdbname | ".tmp";
 	  if verbose then stderr << "--storing raw documentation in " << rawdbname << endl;
@@ -1076,6 +1075,7 @@ installPackage Package := opts -> pkg -> (
      -- all done
      SRC = null;
      if not hadExampleError then (
+ 	  libDir := pkg#"package prefix" | replace("PKG",pkg#"pkgname",installLayout#"packagelib");
 	  iname := libDir|".installed";
 	  iname << close;
 	  if verbose then stderr << "--file created: " << iname << endl;
