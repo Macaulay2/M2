@@ -1,7 +1,7 @@
 newPackage(
         "AssociativeAlgebras",
-        Version => "0.1", 
-        Date => "16 Feb 2016",
+        Version => "0.7", 
+        Date => "10 June 2020",
         Authors => {{Name => "Frank Moore", 
                   Email => "", 
                   HomePage => ""},
@@ -13,7 +13,12 @@ newPackage(
         DebuggingMode => true
         )
 
+-- MES TODO: changes to make to interface:
+-- add FreeAlgebraQuotient
+-- NCGB --> ncGB
+-- 
 export {
+    "freeAlgebra",
     "ncBasis",
     "NCGB", -- uugh: change name!
     "NCReduction2Sided",
@@ -35,6 +40,12 @@ export {
     "homogDual",
     "quadraticClosure"
     }
+
+processWeights = value Core#"private dictionary"#"processWeights"
+raw = value Core#"private dictionary"#"raw"
+rawNCGroebnerBasisTwoSided = value Core#"private dictionary"#"rawNCGroebnerBasisTwoSided"
+rawPairs = value Core#"private dictionary"#"rawPairs"
+RawRing = value Core#"private dictionary"#"RawRing"
 
 debug Core
 
@@ -113,7 +124,8 @@ checkHeft = (degs, heftvec) -> (
 --   - figure out backInserter, i.e. conform to the standard c++ lib
 --   - add in degree support
 --   - add in e.g. leadMonomial, support.  
-Ring List := (A, args) -> (
+freeAlgebra = method()
+freeAlgebra(Ring, List) := FreeAlgebra => (A, args)  -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
    opts := new OptionTable from {Degrees=>null, DegreeRank=>null, Weights=>{}, Heft=>null};
    (opts,args) = override(opts,toSequence args);
@@ -178,6 +190,11 @@ Ring List := (A, args) -> (
    -- TODO: implement this: leadMonomial R := f -> new R from rawTerm(raw R, raw 1_A, rawLeadMonomial(n, raw f));
    R
    );
+
+-- WARNING, TODO!!  This breaks local rings
+Ring List := Ring => (R,variables) -> (
+    use freeAlgebra(R, variables)
+    )
 
 FreeAlgebra _ ZZ := (R, n) -> (R.generators)#n
 coefficientRing FreeAlgebra := R -> last R.baseRings
@@ -390,7 +407,59 @@ centralElements(Ring,ZZ) := (B,n) -> (
    normalElements(idB,n)
 )
 
+-*
+isNormal NCRingElement := f -> (
+   if not isHomogeneous f then error "Expected a homogeneous element.";
+   all(gens ring f, x -> findNormalComplement(f,x) =!= null)
+)
+
 normalElements = method()
+normalElements(FreeAlgebraQuotient, ZZ, Symbol, Symbol) := (R,n,x,y) -> (
+   -- Inputs: An associate algebra R, a degree n, and two symbols to use for indexed variables.
+   -- Outputs: (1) A list of normal monomials in degree n
+   --          (2) the components of the variety of normal elements (excluding the normal monomials) 
+   --              expressed as ideals in terms of coefficients of non-normal monomial basis elements
+   -- 
+   -- The variety also contains information about the normalizing automorphism. This information is not displayed.
+   -- The user can obtain the normalizing automorphism of a normal element via the normalAutomorphism function
+   fromBasis := flatten entries ncBasis(n,R);
+   toBasis := flatten entries ncBasis(n+1,R);
+   pos := positions(fromBasis,m->isNormal(m));
+   normalBasis := apply(pos, i-> fromBasis#i);
+   nonNormalBasis := fromBasis-set normalBasis;
+   -- print a list of normal monomials
+      << "Normal monomials of degree " << n << ":" << endl;
+      for i from 0 to ((length normalBasis) - 1) do (
+        << normalBasis#i << endl;
+      );
+      if (length normalBasis)==0 then << "none" << endl;
+   numGens := numgens R;
+   leftMaps := apply(gens R, x->leftMultiplicationMap(x,nonNormalBasis,toBasis));
+   rightMaps := apply(gens R, x->rightMultiplicationMap(x,nonNormalBasis,toBasis));
+   -- make a polynomial ring with (fromDim) - (number of normal monomials)  + (numgens R)^2 variables
+   -- need to hide variables from user
+   xvars := apply(nonNormalBasis, i->x_i);
+   yvars := table(numGens, numGens, (i,j) -> y_(i,j));
+   cRing := R.CoefficientRing[(flatten yvars) | xvars,MonomialOrder=>Eliminate numGens^2];
+   xvars = xvars / value;
+   yvars = applyTable(yvars,value);
+   leftCoeff := apply(leftMaps, L-> L*transpose matrix {xvars});
+   rightCoeff := apply(rightMaps, R-> R*transpose matrix {xvars});
+   idealGens := flatten apply(numGens,g-> rightCoeff#(g-1) - sum(numGens,j->(yvars#g#j)*leftCoeff#(j-1)));
+   I := ideal idealGens;
+   -- the next line throws away information, including automorphism data
+   << "Components of the normal variety, excluding normal monomials:" << endl;
+   unique(select(apply(xvars, x-> (
+                     J:=saturate(I,ideal(x));
+                     if J!=cRing then 
+                        selectInSubring(1, gens gb J)
+                     else
+                        0
+                     )),
+                  c->c!=0))
+)
+*-
+
 normalElements(RingMap,ZZ) := (phi,n) -> (
    if source phi =!= target phi then error "Expected an automorphism.";
    B := source phi;
@@ -418,7 +487,7 @@ isExterior Ring := A -> (
 )
 
 toNCRing = method()
-toNCRing Ring := R -> (
+toNCRing Ring := FreeAlgebraQuotient => R -> (
    isComm := isCommutative R;
    isExter := isExterior R;
    if not isComm and not isExter then error "Input ring must be either strictly (-1)-skew commutative or commutative.";
@@ -811,6 +880,104 @@ Caveat
   Not yet functional
 SeeAlso
 ///
+
+-- change the BUG to doc once ready!
+BUG ///
+   Key
+      normalElements
+      (normalElements, FreeAlgebraQuotient, ZZ, Symbol, Symbol)
+   Headline
+      Finds normal elements
+   Usage
+      normalElements(A,n,x,y)
+   Inputs
+      A : FreeAlgebraQuotient
+      n : ZZ
+      x : Symbol
+      y : Symbol
+   Outputs
+      : List
+   Description
+      Text
+         Let b_1,...,b_n be a monomial basis for an NCRing A in degree d. We assume A
+	 is generated by elements a_1,...,a_k of degree 1. A homogeneous element r in A
+	 is normal if a_i*r is in the span of the r*a_j for all i.
+      Text
+         Using the input symbols x and y, we define the "normal variety" to be the 
+	 set of common solutions to the equations  
+	 x_j*a_i*b_j = y_j1*b_j*a_1+...+y_jk*b_j*a_k 
+	 for all i and j. Saturating the ideal at each x_i we extract polynomial equations
+	 the x_i must satisfy for the element x_1*b_1+...+x_n*b_n to be normal in A.
+      Text
+         Before computing the normal variety, this method checks for normal monomials
+	 in degree n. These are returned first to reduce the complexity of the problem.
+	 Then the method computes the variety and returns its components. The equations
+         the method returns are given in terms of the indexed variable x. The indices are
+	 basis monomials in degree n.
+      Text
+         The following example is a 3-dimensional Sklyanin algebra.
+      Example
+	 B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+	 basis(2,B)
+	 normalElements(B,2,r,s)
+      Text
+         The normal elements in degree 2 are x^2, y^2 and z^2. The basis
+	 calculation shows x^2 and y^2 are normal forms in B. The normalElements
+	 method first checks all basis monomials using @ TO isNormal @. In this case
+	 it finds x^2 and y^2 are normal and returns this information. However,  
+	 z^2 is not a normal form expression. The normal form of z^2 is x*y+y*x. In 
+	 the second phase of the calculation, the method returns generators of the
+	 ideal describing the normal elements (excluding the normal monomials). We
+	 see the coefficients of basis monomials y*z and x*z must be 0 and the 
+	 coefficients of x*y and y*x must be equal. The last equation identifies
+	 z^2 = x*y+y*x as a normal element of degree 2.
+      Example
+         normalElements(B,3,t,u) 
+	 g = -y^3-x*y*z+y*x*z+x^3
+	 isCentral g
+      Text
+         In degree 3, there are no normal monomials. The function returns several equations
+	 which determine the only normal element of degree 3 (up to scaling) is the central
+	 element g.
+///
+
+doc ///
+   Key
+      (normalElements, RingMap, ZZ)
+   Headline
+      Finds elements normalized by a ring map
+   Usage
+      normalElements(f,n)
+   Inputs
+      f : RingMap
+      n : ZZ
+          a homogeneous degree in which to search for normal elements
+   Outputs
+      : Matrix
+   Description
+      Text
+         A normal element x in a non-commutative ring R determines an automorphism f of R by
+	 a*x=x*f(a). Conversely, given a ring endomorphism, we may ask if any x
+	 satisfy the above equation for all a. 
+      Text
+         Given a ring map f and a degree n, this method returns solutions to 
+	 the equations a*x=x*f(a) for all generators a of R.
+      Example
+         B = skewPolynomialRing(QQ,(-1)_QQ,{x,y,z,w})
+	 sigma = map(B,B,{y,z,w,x})
+	 C = oreExtension(B,sigma,a)
+	 sigmaC = map(C,C,{y,z,w,x,a})
+	 normalElements(sigmaC,1)
+         normalElements(sigmaC,2)
+         normalElements(sigmaC * sigmaC,2)
+         normalElements(sigmaC * sigmaC * sigmaC, 3)
+      Example
+         D = threeDimSklyanin(QQ, {a,b,c}) 
+         normalElements(id_D, 3)
+         assert(numColumns oo == 1)
+         assert(normalElements(id_D, 2) == 0)
+///
+
 
 TEST ///
 -*
