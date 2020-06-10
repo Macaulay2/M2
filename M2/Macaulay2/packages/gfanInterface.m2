@@ -85,6 +85,8 @@ export {
 	"multiplicitiesReorder"
 }
 
+noGfan = raiseError -> if raiseError then error "could not find gfan"
+
 tryGfanPath = gfanPath -> run(gfanPath | "gfan --help 2> /dev/null")
 
 -- we expect a trailing slash in the path, but the paths given in the
@@ -107,7 +109,7 @@ checkGfanPath = gfanPath -> (
 	)
 )
 
-findGfanPath = () -> (
+findGfanPath = {"RaiseError" => true} >> opts -> () -> (
 	-- try user-configured path first
 	gfanPath := gfanInterface#Options#Configuration#"path";
 	if gfanPath != "" then (
@@ -118,18 +120,18 @@ findGfanPath = () -> (
 	gfanPath = addSlash(prefixDirectory | currentLayout#"programs");
 	if checkGfanPath(gfanPath) then return gfanPath;
 	-- finally, try PATH
-	if getenv "PATH" == "" then error "could not find gfan";
+	if getenv "PATH" == "" then return noGfan(opts#"RaiseError");
 	paths := apply(separate(":", getenv "PATH"), addSlash);
 	gfanPath = scan(paths, gfanPath ->
 		if checkGfanPath(gfanPath) then break gfanPath
 	);
 	if class(gfanPath) === String then return gfanPath
-	else error "could not find gfan"
+	else noGfan(opts#"RaiseError");
 )
 
 fig2devPath = gfanInterface#Options#Configuration#"fig2devpath"
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
-gfanPath = findGfanPath()
+gfanPath = null
 
 gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
 gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
@@ -1045,7 +1047,12 @@ toPolymakeFormat(Fan) := (F) ->(
 --------------------------------------------------------
 
 runGfanCommand = (cmd, opts, data) -> (
-	
+	(out, err, fileName) := runGfanCommandCaptureBoth(cmd, opts, data);
+	(out, fileName)
+)
+
+runGfanCommandCaptureBoth = (cmd, opts, data) -> (
+	if gfanPath === null then gfanPath = findGfanPath();
 	tmpFile := gfanMakeTemporaryFile data;
 	
 	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
@@ -1057,52 +1064,26 @@ runGfanCommand = (cmd, opts, data) -> (
 	errorMsg := "";
      	if(not returnvalue == 0) then
 	(
-	    errorMsg = "GFAN returned an error message.\n";
+	    errorMsg = "Gfan returned an error message.\n";
 	    errorMsg = errorMsg | "COMMAND:" | ex | "\n";
 	    errorMsg = errorMsg | "INPUT:\n";
 	    errorMsg = errorMsg | get(tmpFile);
 	    errorMsg = errorMsg | "ERROR:\n";
 	    errorMsg = errorMsg | get(tmpFile |".err");
 	     );
-		out := get(tmpFile | ".out");
-	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
-	if length(errorMsg) > 0 then error errorMsg;
-	outputFileName := null;
-	
-	if gfanKeepFiles then outputFileName = tmpFile|".out";
-	
-	(out, "GfanFileName" => outputFileName)
-	
-)
-
-runGfanCommandCaptureBoth = (cmd, opts, data) -> (
-	tmpFile := gfanMakeTemporaryFile data;
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
-	if gfanVerbose then << ex << endl;
-	run ex;
 	out := get(tmpFile | ".out");
 	err := get(tmpFile | ".err");
 	gfanRemoveTemporaryFile tmpFile;
 	gfanRemoveTemporaryFile(tmpFile | ".out");
 	gfanRemoveTemporaryFile(tmpFile | ".err");
+	if length(errorMsg) > 0 then error errorMsg;
 	outputFileName := null;
 	if gfanKeepFiles then outputFileName = tmpFile|".out";
 	(out,err, "GfanFileName"=>outputFileName)
 )
 
 runGfanCommandCaptureError = (cmd, opts, data) -> (
-	tmpFile := gfanMakeTemporaryFile data;
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
-	if gfanVerbose then << ex << endl;
-	run ex;
-	err := get(tmpFile | ".err");
-	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
+	(out, err, fileName) := runGfanCommandCaptureBoth(cmd, opts, data);
 	err
 )
 
@@ -2606,9 +2587,11 @@ gfanFunctions = hashTable {
 --	gfanFunctions#fn => apply( lines runGfanCommandCaptureError(gfanFunctions#fn, {"--help"}, {true}, ") , l->PARA {l})
 --)
 --WARNING - the word PARA was deleted from the next function (it used to read "l -> PARA {l})
-gfanHelp = (functionStr) ->
-	apply( lines runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") , l-> {l})
-
+gfanHelp = (functionStr) -> (
+	if gfanPath === null then gfanPath = findGfanPath("RaiseError" => false);
+	if gfanPath === null then {}
+	else apply( lines runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") , l-> {l})
+)
 
 
 doc ///

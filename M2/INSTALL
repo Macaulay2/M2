@@ -114,7 +114,7 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo dnf -y install autoconf bison boost-devel cddlib-devel debuginfo-install emacs emacs factory-devel flex flint-devel frobby gc-devel gcc-c++ gdbm-devel git givaro-devel glpk-devel gmp-devel gtest-devel kernel-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel patch polymake readline-devel rpm-build rpm-sign rpmdevtools strace time which yasm
+      sudo dnf -y install autoconf bison boost-devel cddlib-devel debuginfo-install emacs emacs factory-devel fflas-ffpack-devel flex flint-devel frobby gc-devel gcc-c++ gdbm-devel git givaro-devel glpk-devel gmp-devel gtest gtest-devel kernel-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel patch polymake readline-devel rpm-build rpm-sign rpmdevtools strace time which yasm
 
   Scientific linux (Red Hat, CentOS, ...):
     Install packages with: (SL 7.x)
@@ -312,7 +312,7 @@ various modern operating systems:
      Installing multiple software in the same directory, such as in $HOME/local
      (as described above), makes it hard to remove or upgrade packages.  To
      solve that problem, use the program "epkg", available from
-     http://www.encap.org/epkg/.
+     https://github.com/DanGrayson/epkg.
 
 ----------------------
 Choosing a place for the repository
@@ -445,7 +445,7 @@ may add an option to the "make install" line, as follows:
         make install prefix=/foo/bar
 
 To make an encapsulated directory tree or distribution tarball suitable for use
-with the program "epkg" (see http://www.encap.org/epkg/), add the option
+with the program "epkg" (see https://github.com/DanGrayson/epkg), add the option
 
         --enable-encap
 

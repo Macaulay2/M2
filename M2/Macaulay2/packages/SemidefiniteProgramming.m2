@@ -19,7 +19,6 @@ newPackage(
     Headline => "semidefinite programming",
     Configuration => {"CSDPexec"=>"","MOSEKexec"=>"mosek","SDPAexec"=>"sdpa","DefaultSolver"=>null},
     AuxiliaryFiles => true,
-    PackageImports => {"SimpleDoc"},
     PackageExports => {"NumericalAlgebraicGeometry"}
 )
 

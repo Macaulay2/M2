@@ -3,13 +3,16 @@
 use getline;
 use actors;
 use actors2;
-use version;
 use struct;
 use pthread;
 
-header "
-#include <engine.h>
-";
+header "#include <engine.h>";
+
+header "#ifndef WITH_PYTHON
+# define PyObject_Str(o) 0
+# define PyString_AS_STRING(o) 0
+# define Py_DECREF(o) 0
+#endif";
 
 internalName(s:string):string := (
      -- was "$" + s in 0.9.2
@@ -999,7 +1002,7 @@ linesfun(e:Expr):Expr := (
 setupfun("separate",linesfun);
 
 tostring(n:MysqlConnection):string := tostring(Ccode(constcharstarOrNull, "
-     #if USE_MYSQL
+     #if WITH_MYSQL
        mysql_get_host_info(", n, ")
      #else
        \"not present\"
@@ -1023,15 +1026,15 @@ tostringfun(e:Expr):Expr := (
      is m:MysqlConnectionWrapper do toExpr(tostring(m))
      is res:MysqlResultWrapper do toExpr(
 	  "<<MysqlResult : "
-	  + tostring(Ccode(int, "\n # if USE_MYSQL \n mysql_num_rows(", res.res, ") \n #else \n 0 \n #endif \n"))
+	  + tostring(Ccode(int, "\n # if WITH_MYSQL \n mysql_num_rows(", res.res, ") \n #else \n 0 \n #endif \n"))
 	  + " by "
-	  + tostring(Ccode(int, "\n # if USE_MYSQL \n mysql_num_fields(", res.res, ") \n #else \n 0 \n #endif \n"))
+	  + tostring(Ccode(int, "\n # if WITH_MYSQL \n mysql_num_fields(", res.res, ") \n #else \n 0 \n #endif \n"))
 	  + ">>")
      is fld:MysqlFieldWrapper do toExpr(
 	  "<<MysqlField : "
-	  + tostring(Ccode(constcharstarOrNull,"(\n #if USE_MYSQL \n (", fld.fld, ")->name \n #else \n \"\" \n #endif \n )"))
+	  + tostring(Ccode(constcharstarOrNull,"(\n #if WITH_MYSQL \n (", fld.fld, ")->name \n #else \n \"\" \n #endif \n )"))
 	  + " : "
-	  + tostring(Ccode(int,"\n # if USE_MYSQL \n (", fld.fld, ")->type \n #else \n 0 \n #endif \n"))
+	  + tostring(Ccode(int,"\n # if WITH_MYSQL \n (", fld.fld, ")->type \n #else \n 0 \n #endif \n"))
 	  + ">>")
      is Net do toExpr("<<net>>")
      is CodeClosure do toExpr("<<pseudocode>>")

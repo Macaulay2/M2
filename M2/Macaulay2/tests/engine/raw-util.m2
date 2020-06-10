@@ -17,7 +17,7 @@ degmonoid = (n) -> (
      rawMonoid(mo, 
 	  toSequence varnames,
 	  trivring,
-	  {}))
+	  {}, {}))
 
 degring1 := rawPolynomialRing(rawZZ(), degmonoid 1)
 
@@ -31,7 +31,7 @@ singlemonoid = vars -> (
      mo := rawMonomialOrdering { GRevLex => apply(#vars, i -> 1) };
      varnames := toSequence apply(vars, toString);
      degs := apply(vars, i -> 1);
-     rawMonoid(mo, varnames, degring 1, degs))
+     rawMonoid(mo, varnames, degring 1, degs, {1}))
 
 doublemonoid = (vars, degs) -> (
      -- vars should be a sequence or list of variable names
@@ -44,7 +44,7 @@ lex = vars -> (
      mo := rawMonomialOrdering { Lex => #vars };
      varnames := apply(vars, toString);
      degs := apply(vars, i -> 1);
-     rawMonoid(mo, varnames, degring 1, degs))
+     rawMonoid(mo, varnames, degring 1, degs, {1}))
 
 elim = (vars1,vars2) -> (
      vars := join(vars1,vars2);
@@ -52,7 +52,7 @@ elim = (vars1,vars2) -> (
      degs := vars/(i -> 1);
      mo := rawMonomialOrdering { Weights => wts1, GRevLex => degs };
      varnames := apply(vars, toString);
-     rawMonoid(mo, varnames, degring 1, degs))
+     rawMonoid(mo, varnames, degring 1, degs, {1}))
 
 polyring = (K, vars) -> (
      -- each element of vars should be a symbol!
@@ -63,7 +63,7 @@ polyring = (K, vars) -> (
 polyring2 = (K, vars, mo) -> (
      -- each element of vars should be a symbol!
      M := rawMonoid(mo, apply(vars, toString), 
-	       degring 1, (#vars):1);
+	       degring 1, (#vars):1, {1});
      R := rawPolynomialRing(K, M);
      scan(#vars, i -> vars#i <- rawRingVar(R,i));
      R)
@@ -72,7 +72,7 @@ polyring3 = (K, vars, mo, degs) -> (
      degs = toList flatten splice degs;
      ndegs := (#degs)//(#vars);
      M := rawMonoid(mo, apply(vars, toString), 
-	       degring ndegs, degs);
+	       degring ndegs, degs, toList(ndegs:0));
      R := rawPolynomialRing(K, M);
      scan(#vars, i -> vars#i <- rawRingVar(R,i));
      R)
@@ -94,11 +94,11 @@ rawbettimat = (C,typ) -> (
      )
 
 rawgb = (m) -> (
-  Gcomp = rawGB(m,false,0,{},false,0,0,0);
+  Gcomp = rawGB(m,false,0,{},false,0,0,0,10);
   rawStartComputation Gcomp;
   rawGBGetMatrix Gcomp)
 
 rawsyz = (m) -> (
-  Gcomp = rawGB(m,true,-1,{},false,0,0,0);
+  Gcomp = rawGB(m,true,-1,{},false,0,0,0,10);
   rawStartComputation Gcomp;
   rawGBSyzygies Gcomp)

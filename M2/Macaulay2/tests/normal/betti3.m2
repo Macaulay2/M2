@@ -52,7 +52,6 @@ betti prune coker f
 --                 compile node name => David-Eisenbuds-Computer.local
 --                 compile time => Dec 16 2003 21:20:19
 --                 compiler => gcc 3.3
---                 dumpdata => false
 --                 factory version => 1.3b
 --                 gc version => 6.2 alpha 4
 --                 gmp version => 4.1.2

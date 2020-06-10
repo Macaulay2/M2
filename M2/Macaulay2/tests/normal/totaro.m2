@@ -168,7 +168,7 @@ two=(); i=0; while (i<=B) do (two=append(two,2^i); i=i+1);
 -- we stop with an error.
 recip = (x,C) -> (if (x%2==0) then (
     error ("Tried to compute 1/",x," mod 2^",C))
-  else (C:=two#C;
+  else (C=two#C;
     y:=(1-x)%C; tot:=1; pow:=y;
 -- Then 1/x = 1/(1-y) = 1+y+y^2+....
     while (pow != 0) do (tot=tot+pow; pow=(pow*y)%C);

@@ -185,6 +185,30 @@ M2_arrayintOrNull MutableMat<T>::LU(MutableMatrix* L, MutableMatrix* U) const
   return MatrixOps::LU(mat, *L1, *U1);
 }
 
+template <typename T> // T should be a matrix type, generally DMat<RT>
+M2_arrayintOrNull MutableMat<T>::LUincremental(std::vector<size_t>& P,
+                                  const MutableMatrix* v,
+                                  int m)
+{
+  T* LU1 = this->coerce<T>();
+  const T* v1 = const_cast<MutableMatrix*>(v)->coerce<T>();
+  if (LU1 == nullptr or v1 == nullptr)
+    throw exc::engine_error("expected matrices of the same ring/type");
+  return MatrixOps::LUincremental(P, *LU1, *v1, m);
+}
+
+template <typename T> // T should be a matrix type, generally DMat<RT>
+void MutableMat<T>::triangularSolve(MutableMatrix* x,
+                                    int m,
+                                    int strategy)
+{
+  T* Lv1 = this->coerce<T>();
+  T* x1 = x->coerce<T>();
+  if (Lv1 == nullptr or x1 == nullptr)
+    throw exc::engine_error("expected matrices of the same ring/type");
+  MatrixOps::triangularSolve(*Lv1, *x1, m, strategy);
+}
+
 template <typename T>
 bool MutableMat<T>::eigenvalues(MutableMatrix* eigenvals,
                                 bool is_symm_or_hermitian) const

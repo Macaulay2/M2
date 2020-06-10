@@ -76,13 +76,6 @@ addStartFunction( () -> if not noinitfile then (
 		    ));
 	  ))
 
-addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile then (
-	  dumptime := fileTime dumpdataFile;
-	  newfiles := select(values loadedFiles, fn -> dumptime < fileTime fn);
-	  if #newfiles == 0 then return;
-	  stderr << "--warning: old dumpdata file: " << dumpdataFile << endl;
-	  stderr << "--         the following source files are newer:" << endl;
-	  scan(sort newfiles, fn -> stderr << "--         " << fn << endl)))
 addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our sharable library is not being found" )
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
 noinitfile' := noinitfile

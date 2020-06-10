@@ -808,7 +808,6 @@ ring_elem PolyRing::mult(const ring_elem f, const ring_elem g) const
 ring_elem PolyRing::power(const ring_elem f0, mpz_srcptr n) const
 {
   ring_elem ff, result;
-  bool isinverted = false;
 
   if (mpz_sgn(n) == 0) return from_long(1);
   if (is_zero(f0)) return ZERO_RINGELEM;
@@ -819,10 +818,7 @@ ring_elem PolyRing::power(const ring_elem f0, mpz_srcptr n) const
   if (mpz_sgn(n) > 0)
     ff = f0;
   else
-    {
-      isinverted = true;
-      ff = invert(f0);
-    }
+    ff = invert(f0);
 
   Nterm *f = ff;
 

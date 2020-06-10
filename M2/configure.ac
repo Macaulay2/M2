@@ -256,7 +256,7 @@ AC_SUBST(M2_CFLAGS)
 AC_SUBST(M2_CXXFLAGS)
 
 dnl Fix standards, apply everywhere
-CXXFLAGS="-std=gnu++11 $CXXFLAGS"
+CXXFLAGS="-std=gnu++14 $CXXFLAGS"
 CFLAGS="-std=gnu11 $CFLAGS"
 
 AC_PROG_CC() 			# set CFLAGS before this
@@ -458,19 +458,20 @@ AC_COMPILE_IFELSE(
 AC_SUBST(XML,yes)
 AC_ARG_ENABLE(xml, AS_HELP_STRING(--disable-xml,[do not link with xml library]), XML=$enableval)
 if test "$XML" = yes
-then AC_DEFINE(HAVE_XML,1,[whether we are linking with the xml library])
+then AC_DEFINE(WITH_XML,1,[whether we are linking with the xml library])
 fi
 
 AC_SUBST(PYTHON,no)
 AC_ARG_WITH(python, AS_HELP_STRING(--with-python,[link with libpython]), PYTHON=$withval)
 if test "$PYTHON" = yes
-then AC_DEFINE(HAVE_PYTHON,1,[whether we are linking with the python library])
+then AC_DEFINE(WITH_PYTHON,1,[whether we are linking with the python library])
 fi
 
 AC_SUBST(MYSQL,no)
 AC_ARG_WITH(mysql, AS_HELP_STRING(--with-mysql,[link with mysql]), MYSQL=$withval)
-test "$MYSQL" = no; USE_MYSQL=$?
-AC_DEFINE_UNQUOTED(USE_MYSQL,$USE_MYSQL,[whether we are linking with the mysql library])
+if test "$MYSQL" = yes
+then AC_DEFINE(WITH_MYSQL,1,[whether we are linking with the mysql library])
+fi
 
 LIBPYTHONORIG=-lpython2.7
 AC_SUBST(LIBPYTHON,$LIBPYTHONORIG)
@@ -572,22 +573,7 @@ fi
 AC_SUBST(DEVELOPER)
 AC_ARG_WITH(developer, AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER=$withval)
 
-AC_SUBST(DUMPDATA)
-AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA=$enableval)
-if ! test "$DUMPDATA"
-then case $OS in
-	 Linux|SunOS) DUMPDATA=no;; # sigh, dumpdata no longer works, even under linux
-	 *) DUMPDATA=no;;
-     esac
-     AC_MSG_NOTICE([default dumpdata option for $OS operating system used, value: $DUMPDATA])
-else case $DUMPDATA in
-         yes|no) ;;
-	 *) AC_MSG_ERROR([dumpdata option: invalid value: $DUMPDATA])
-     esac
-fi
-test "$DUMPDATA" = no;   val=$?; AC_DEFINE_UNQUOTED(DUMPDATA,  $val,whether to use dumpdata)
-
-AC_SUBST(TAR_COMPRESS_OPTION)
+AC_SUBST(TAR_COMPRESS_OPTION,)
 case $COMPRESS in
    gz) TAR_COMPRESS_OPTION=--gzip ;;
   bz2) TAR_COMPRESS_OPTION=--bzip ;;
@@ -921,7 +907,7 @@ then AC_LANG(C)
      AC_CHECK_HEADER(flint/flint.h,LIBS="-lflint -lgmp $LIBS",BUILD_flint=yes)
 fi
 if test $BUILD_flint = yes
-then BUILTLIBS="-lflint $BUILTLIBS"
+then BUILTLIBS="-lflint $BUILTLIBS -lm"
 fi
 
 dnl we can't use the test below for the presence of 4ti2 until the package FourTiTwo knows
@@ -1027,9 +1013,11 @@ then
     then
         CPPFLAGS="$GTEST_CPPFLAGS $CPPFLAGS"
         GTEST_PATH=$GTEST_SOURCE
+	AC_MSG_NOTICE(we have found gtest)
     else
         BUILD_gtest=yes
         GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
+	AC_MSG_NOTICE(we will build gtest)
     fi
 else
     GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
@@ -1168,9 +1156,10 @@ fi
 # test for fflas_ffpack
 if test $BUILD_fflas_ffpack = no
 then AC_MSG_CHECKING([for fflas_ffpack library, version at least 2])
-     FFLAS_FFPACK_CXXFLAGS=`fflas-ffpack-config --cflags 2>&1`
      if test $? = 0 && test "`fflas-ffpack-config --decimal-version`" -gt 20000
      then AC_MSG_RESULT(found)
+          FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) echo -n "$x " ;; esac done)
+	  AC_MSG_NOTICE([adding fflas_ffpack flags $FFLAS_FFPACK_CXXFLAGS])
           M2_CXXFLAGS="$M2_CXXFLAGS $FFLAS_FFPACK_CXXFLAGS"
 	  LIBS="$LIBS `fflas-ffpack-config --libs`"
      else AC_MSG_RESULT(not found, will build)
@@ -1416,9 +1405,12 @@ AC_PREPROC_IFELSE(
    [AC_LANG_SOURCE([[
 	#include <libxml2/libxml/xmlexports.h>
 	]])],
-   LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `)
-AC_MSG_NOTICE(found in libxml2: will search for include files also in $LIBXML_LOCATION)
-CPPFLAGS="-isystem $LIBXML_LOCATION $CPPFLAGS"
+   [ LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `
+     AC_MSG_NOTICE(libxml found in libxml2: will search for include files also in $LIBXML_LOCATION)
+     CPPFLAGS="-isystem $LIBXML_LOCATION $CPPFLAGS"
+     ]
+   )
+
 AC_CHECK_HEADERS(libxml/xmlexports.h libxml/parser.h)
 
 AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
@@ -1538,18 +1530,17 @@ dnl about invalid options that turn off warnings, if there are no warnings to be
 dnl It's a feature, not a bug!
 dnl On the other hand, clang does complain!
 
-AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
-AC_LANG(C)
-SAVE=$CFLAGS
-CFLAGS="$CFLAGS -Wmismatched-tags -Werror"
+AC_MSG_CHECKING(whether $CXX accepts -Wmismatched-tags)
+AC_LANG(C++)
+SAVE=$CXXFLAGS
+CXXFLAGS="$CXXFLAGS -Wmismatched-tags -Werror"
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
-    CFLAGS=$SAVE
-    CFLAGS="$CFLAGS -Wno-mismatched-tags"
+    CXXFLAGS=$SAVE
     CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
     dnl We don't like seeing this warning, especially from the "clang++" compiler, because
     dnl we like using "struct" and "class" interchangeably.
-    AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
-    CFLAGS=$SAVE
+    AC_MSG_RESULT([[yes, adding -Wno-mismatched-tags to flags]]),
+    CXXFLAGS=$SAVE
     AC_MSG_RESULT(no))
 
 dnl we should make a macro for this test

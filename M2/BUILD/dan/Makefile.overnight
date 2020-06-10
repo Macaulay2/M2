@@ -1,7 +1,6 @@
 DEBIAN_REVISION=
 
 overnight:
-	$(MAKE) distclean
 	git pull 
 	git submodule update
 	git submodule foreach git clean -xdfq
@@ -9,17 +8,10 @@ overnight:
 	echo -n "git-description: " ; git describe --dirty --long --always --abbrev=40 --tags
 	: "make get-m4 doesn't work under Ubuntu 20.04"
 	: $(MAKE) -C ../.. get-tools
-	$(MAKE) -j8					\
-		DEBIAN_REVISION=$(DEBIAN_REVISION)	\
-		DEBUG=no				\
-		IgnoreExampleErrors=true		\
-		rebuild-world -o distclean2
-	$(MAKE) validate-html DEBUG=no
+	$(MAKE) clean-rm-rf
+	$(MAKE) -j8 DEBIAN_REVISION=$(DEBIAN_REVISION)
+	$(MAKE) validate-html
 	date
-
-git-clean:
-	git clean -Xdfq
-	git submodule foreach git clean -Xdfq
 
 # Local Variables:
 # mode: makefile-gmake

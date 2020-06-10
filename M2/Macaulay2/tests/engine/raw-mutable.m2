@@ -61,15 +61,15 @@ rawMutableIdentity(raw R, 10, true)
 -- Test of mutable dense matrices over RR --
 --------------------------------------------
 needs "raw-util.m2"
---status: no one maintains this old test file, so it's broken, since it tests the raw interface
-p = rawMutableIdentity(raw RR, 10, true)
-rawSetMatrixEntry(p,3,5,rawFromNumber(raw RR, 3.5))
+R = RR_53
+p = rawMutableIdentity(raw R, 10, true)
+rawSetMatrixEntry(p,3,5,rawFromNumber(raw R, 3.5))
 p
 
-p = rawMutableMatrix(raw RR, 10, 20, true); p      
-scan(50, i -> (rawSetMatrixEntry(p,random 10, random 20, rawFromNumber(raw RR, random 1.0))))
+p = rawMutableMatrix(raw R, 10, 20, true); p
+scan(50, i -> (rawSetMatrixEntry(p,random 10, random 20, rawFromNumber(raw R, random 1.0))))
 p
-map(RR,rawMatrix p)
+map(R,rawMatrix p)
 
 --------------------------------------------
 -- Test of mutable sparse matrices ---------
@@ -189,8 +189,9 @@ r5 = rawMutableIdentity(R,5,true) -- mutable r5
   -- rawSolve -------------------
   -------------------------------
   needs "raw-util.m2"
-  m = mat table(4,4, (i,j) -> rawFromNumber(raw RR, random 1.0))
-  b0 = mat table(4,1, (i,j) -> rawFromNumber(raw RR, random 1.0))
+  R = RR_53
+  m = mat table(4,4, (i,j) -> rawFromNumber(raw R, random 1.0))
+  b0 = mat table(4,1, (i,j) -> rawFromNumber(raw R, random 1.0))
   A = rawMutableMatrix(m,true)
   b = rawMutableMatrix(b0,true)
   x = rawMutableMatrix(b0,true)
@@ -199,4 +200,4 @@ r5 = rawMutableIdentity(R,5,true) -- mutable r5
   x
   x1 = rawMatrix b
   m*(rawMatrix x)
-  rawMinors(4,m,0,-1,null,null)
+  rawMinors(4,m,1,-1,null,null)

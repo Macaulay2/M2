@@ -111,13 +111,10 @@ M2_LDFLAGS  += -Wl,--enable-auto-import
     # Info: resolving _gdbm_errno by linking to __imp__gdbm_errno (auto-import)
 endif
 
-############################## macros
-
-M2_LIBRARIES :=
-
 ###################### libraries
 
 # the order of this list should agree with that in ../../configure.ac
+M2_LIBRARIES :=
 M2_LIBRARIES +=  @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@
 
 ifeq (@MYSQL@,yes)
@@ -136,8 +133,8 @@ clean::; rm -f $(EXEFILE) timestamp.o
 
 $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
 	@ $(WHY)
-	@ echo "compiling timestamp.c"
-	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
+	@ echo "compiling timestamp.cpp"
+	$(COMPILE.cc) @srcdir@/timestamp.cpp -o timestamp.o
 	time @CXX@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
 ifneq ("$(EXECSTACK)","no")
 	@ if [ -x /usr/bin/execstack ] ;\

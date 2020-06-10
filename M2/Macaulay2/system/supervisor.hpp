@@ -1,9 +1,8 @@
-#ifndef _system_supervisor_h_
-#define _system_supervisor_h_
+#pragma once
 
 /* this next bit is copied from ../d/atomic.d, but it should be included, instead */
 
-  #include <atomic_ops.h>
+#include <atomic_ops.h>
 #ifndef atomic_field_decl
 #define atomic_field_decl
   struct atomic_field {
@@ -22,10 +21,13 @@
 #include <list>
 
 typedef struct parse_ThreadCellBody_struct * parse_ThreadCellBody;
-
 typedef void* (*ThreadTaskFunctionPtr)(void*);
+
 class SupervisorThread;
-//not garbage collected
+
+/**
+   not garbage collected
+**/
 struct ThreadTask
 {
   ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds, bool isM2Task);
@@ -73,8 +75,9 @@ struct ThreadTask
   void* waitOn();
 };
 
-
-//not garbage collected
+/**
+   not garbage collected
+**/
 struct ThreadSupervisorInformation
 {
   ///Id for thread
@@ -157,5 +160,3 @@ struct ThreadSupervisor
 };
 
 #include "supervisorinterface.h"
-
-#endif

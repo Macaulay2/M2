@@ -11,14 +11,8 @@
 static char errfmt[] = "%s:%d:%d: %s";
 static char errfmtnc[] = "%s:%d: %s";
 
-void scc_core_prepare() {
-     /* 
-	This function used to initialize libgc, but it gets initialized automatically, anyway. 
-	Probably we don't need this any longer.
-	*/
-}
-
 struct FUNCTION_CELL *pre_final_list, *final_list, *thread_prepare_list;
+
 void outofmem(void) {
   const char msg[] = "\n\n *** out of memory, exiting ***\n";
   int r = write(STDERR,msg,sizeof(msg));

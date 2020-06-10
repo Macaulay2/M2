@@ -1,5 +1,5 @@
 /* some routines to augment the gmp library */
-
+#include <M2/config.h>
 #include "M2/math-include.h"
 
 int mpz_hash(mpz_srcptr x) {

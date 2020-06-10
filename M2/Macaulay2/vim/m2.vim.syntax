@@ -53,13 +53,13 @@ syn keyword m2CompiledFunction texMath undocumented unique vars applyPairs
 syn keyword m2CompiledFunction applyValues ascii asin clearEcho
 syn keyword m2CompiledFunction collectGarbage combine connectionCount copy
 syn keyword m2CompiledFunction cos cosh cot coth currentLineNumber
-syn keyword m2CompiledFunction currentTime debugError dumpdata echoOff
+syn keyword m2CompiledFunction currentTime debugError echoOff
 syn keyword m2CompiledFunction echoOn eint erase fileLength fileMode
 syn keyword m2CompiledFunction fileTime firstkey functionBody get
 syn keyword m2CompiledFunction getGlobalSymbol hashTable horizontalJoin
 syn keyword m2CompiledFunction identity isANumber isDirectory isFinite
 syn keyword m2CompiledFunction isListener isOpen isOutputFile linkFile
-syn keyword m2CompiledFunction loaddata localDictionaries mergePairs mingle
+syn keyword m2CompiledFunction localDictionaries mergePairs mingle
 syn keyword m2CompiledFunction newClass newNetFile nextkey openIn openInOut
 syn keyword m2CompiledFunction openListener parent plus power powermod
 
