@@ -407,13 +407,14 @@ centralElements(Ring,ZZ) := (B,n) -> (
    normalElements(idB,n)
 )
 
+normalElements = method()
+
 -*
 isNormal NCRingElement := f -> (
    if not isHomogeneous f then error "Expected a homogeneous element.";
    all(gens ring f, x -> findNormalComplement(f,x) =!= null)
 )
 
-normalElements = method()
 normalElements(FreeAlgebraQuotient, ZZ, Symbol, Symbol) := (R,n,x,y) -> (
    -- Inputs: An associate algebra R, a degree n, and two symbols to use for indexed variables.
    -- Outputs: (1) A list of normal monomials in degree n
