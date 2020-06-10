@@ -972,13 +972,15 @@ doc ///
          normalElements(sigmaC,2)
          normalElements(sigmaC * sigmaC,2)
          normalElements(sigmaC * sigmaC * sigmaC, 3)
+///
+
+///
       Example
          D = threeDimSklyanin(QQ, {a,b,c}) 
          normalElements(id_D, 3)
          assert(numColumns oo == 1)
          assert(normalElements(id_D, 2) == 0)
 ///
-
 
 TEST ///
 -*

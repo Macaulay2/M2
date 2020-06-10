@@ -38,8 +38,8 @@ set(HFILES
 
 # these files are include only.
 set(HPPONLYFILES
-	NCAlgebras/MemoryBlock
-	NCAlgebras/Range
+	NCAlgebras/MemoryBlock.hpp
+	NCAlgebras/Range.hpp
   newdelete.hpp
   timing.hpp
   SLP-defs.hpp
