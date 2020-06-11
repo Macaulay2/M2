@@ -974,6 +974,7 @@ ExternalProject_Add(build-normaliz
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
                       OPENMP_CXXFLAGS=${normaliz_OpenMP_CXX_FLAGS}
+            COMMAND patch --fuzz=10 --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/normaliz/patch-libtool
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
   # TODO: do we need the libraries as well, or just the binary?
   INSTALL_COMMAND   ${CMAKE_STRIP} source/normaliz
