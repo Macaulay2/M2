@@ -1,0 +1,152 @@
+################################################################################
+#
+#  Github actions trigger (workflow script) for building Macaulay2
+#
+#    See https://help.github.com/en/actions for the documentation.
+#
+################################################################################
+
+name: Build and Test Macaulay2
+
+on:
+  # trigger a test quick build at both PR (on dev)
+  # and pushing to master (after merging or by Dan or Mike)
+  push:
+    branch:
+      - master
+      - feature/actions
+  pull_request:
+    branch:
+      - developement
+  schedule:
+    # cron time in UTC; set to 6a EDT
+    - cron: '0 10 * * *'
+
+env:
+#  CMAKE_VERSION: 3.17
+#  NINJA_VERSION: 1.9.0
+  BUILD_TYPE: Release  # add Buildfast
+  BUILD_DIR: M2/BUILD/cicd
+
+jobs:
+  build:
+    name: ${{matrix.os}}-${{matrix.build-type}}-${{matrix.compiler}}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false  # eventually make this true
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        build-type: [cmake, autotools]
+        compiler: [gcc9, default]  # add clang
+#       language: [cxx17, cxx14]
+        include:
+          - compiler: gcc9
+            cxx: g++-9
+            cc: gcc-9
+          - os: macos-latest
+            make: gmake
+          - os: ubuntu-latest
+            make: make
+
+
+    steps:
+      - uses: actions/checkout@v1  # this set up the virtual environment, which has a whole lot
+                                   # as of this writing: gcc9, clang10, cmake3.17, homebrew...
+
+# ----------------------
+#   Install missing tools and libraries using homebrew (macOS and Linux)
+# ----------------------
+
+      - name: Install missing dev tools (homebrew)
+        id: get_dev_tools_brew
+        if: ${{ runner.os == 'macOS' }}
+        # autoconf, libtool are already in the virtual env
+        run: |
+          brew config
+          brew install ninja pkg-config autoconf automake gnu-tar libtool yasm make
+
+      - name: Install libraries (homebrew)
+        id: get_dev_libraries_brew
+        if: ${{ runner.os == 'macOS' }}
+        # mpfr, gdbm, libmpc, xz are already in the virtual env
+        run: brew install boost flint ntl mpir bdw-gc libatomic_ops glpk libomp eigen ncurses
+
+# ----------------------
+#   Install missing tools and libraries using apt-get (Debian-based Linux only)
+# ----------------------
+
+      - name: Install missing dev tools (apt-get)
+        id: get_dev_tools_aptget
+        if: ${{ runner.os == 'Linux' }}
+        # make is really gmake
+        run: sudo apt-get install -y ninja-build
+
+      - name: Install libraries (apt-get)
+        id: get_dev_libraries_aptget
+        if: ${{ runner.os == 'Linux' }}
+        # trim all this garbage
+        run: sudo apt-get install -y -q autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan libeigen3-dev libtool-bin
+
+# ----------------------
+#   Steps common to all build variants
+# ----------------------
+
+      - name: Create build directory
+        id: step_build_dir
+        run: mkdir $BUILD_DIR
+
+# ----------------------
+#   Configure and build M2 using cmake
+# ----------------------
+
+      - name: Configure Macaulay2 (cmake)
+        id: step_configure_cmake
+        if: ${{ matrix.build-type == 'cmake' }}
+        working-directory: M2/BUILD/cicd  # use ${{ defaults.dir }} or something along those lines
+        env:
+          CXX: ${{matrix.cxx}}
+          CC: ${{matrix.cc}}
+        run: |
+          echo $CXX $CC
+          cmake -S../.. -B. -G"Ninja" -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Macaulay2 (cmake)
+        id: step_build
+        if: ${{ matrix.build-type == 'cmake' }}
+        working-directory: M2/BUILD/cicd
+        run: |
+          cmake --build . --target build-libraries  -j4
+          cmake --build . --target build-programs   -j4
+          cmake --build . --target install-packages -j4
+          cmake --build . --target M2-emacs         -j4
+
+# ----------------------
+#   Configure and build M2 the old way
+# ----------------------
+
+      - name: Configure Macaulay2 (autotools)
+        id: step_configure_autotools
+        if: ${{ matrix.build-type == 'autotools' }}
+        env:
+          CXX: ${{matrix.cxx}}
+          CC: ${{matrix.cc}}
+        run: |
+          cd M2
+          ${{matrix.make}} get-tools
+          ${{matrix.make}} -f Makefile
+          cd BUILD/cicd
+          ../../configure --enable-download --enable-build-libraries="readline"
+
+      - name: Build Macaulay2 (autotools)
+        id: step_build_autotools
+        if: ${{ matrix.build-type == 'autotools' }}
+        working-directory: M2/BUILD/cicd
+        run: ${{matrix.make}}
+
+# ----------------------
+#   Run tests (Skip for now given the build failures)
+# ----------------------
+
+      - name: Run Tests
+        id: step_run_tests
+        run: echo "Placeholder. Don't do anything for now"
