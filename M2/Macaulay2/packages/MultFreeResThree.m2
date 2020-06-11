@@ -35,9 +35,9 @@ newPackage ( "MultFreeResThree",
     )
 
 export { "genmulttables", "multTables", "multTablesLink", "eeProd", "efProd", 
-    "mapX", "mapY", "makeRes" }
+    "mapX", "mapY", "makeRes" , "findRegSeq"}
 
-
+-- exportMutable{ "u" }
 --==========================================================================
 -- EXPORTED FUNCTIONS
 --==========================================================================
@@ -107,47 +107,51 @@ multtables = F -> (
     {EE,EF}
     )
 
--- genmulttables = F -> (
---     P := ring F;
---     m := numcols F.dd_1;
---     l := numcols F.dd_2;
---     n := numcols F.dd_3;
---     L := {};
---     for i from 1 to m-1 do (
---     	for j from i+1 to m do (
--- 	    for k from 1 to n do (
--- 	    	L = append(L, {i,j,k})
--- 	    	)
--- 	    )
--- 	);
---     Q := P[for l in L list u_l];
---     F = F**Q;
---     d1:= matrix entries F.dd_1;
---     d2:= matrix entries F.dd_2;    
---     d3:= matrix entries F.dd_3;    
+genmulttables = F -> (
+    P := ring F;
+    m := numcols F.dd_1;
+    l := numcols F.dd_2;
+    n := numcols F.dd_3;
+    L := {};
+    for i from 1 to m-1 do (
+    	for j from i+1 to m do (
+	    for k from 1 to n do (
+	    	L = append(L, {i,j,k} )
+	    	)
+	    )
+	);
+    u := getSymbol("u");
+--    Q := P[for l in L list getSymbol("u")_l];
+    Q := P[for l in L list u_l];    
+    F = F**Q;
+    d1:= matrix entries F.dd_1;
+    d2:= matrix entries F.dd_2;    
+    d3:= matrix entries F.dd_3;    
     
---     EE := new MutableHashTable;
---     for i from 1 to m do (
--- 	for j from i+1 to m do (
--- 	 a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1};
---     	 b := ( matrix entries transpose a ) // d2;
--- 	 EE#(i,j) = ( matrix entries b );
--- 	 EE#(j,i) = -EE#(i,j);
--- 	 );
---      EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0);
---      );
+    EE := new MutableHashTable;
+    for i from 1 to m-1 do (
+	for j from i+1 to m do (
+	 a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1};
+    	 b := ( matrix entries transpose a ) // d2;
+	 c := matrix for k from 1 to n list {Q_(n*( (i-1)*m - binomial(i,2) + j - i -1) + k - 1)} ;
+--	 print(c);
+	 EE#(i,j) = ( d3*c + matrix entries b );
+	 EE#(j,i) = -EE#(i,j);
+	 );
+     EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0);
+     );
 
---     EF := new MutableHashTable;
---     for i from 1 to m do (
--- 	for j from 1 to l do (
---     	    c := sum(1..m, k -> d2_(k-1,j-1) * (EE#(i,k)));
---     	    d := d1_(0,i-1)*((id_(Q^l))_(j-1));
--- 	    e := (matrix entries (matrix d - c)) // d3;
---     	    EF#(i,j) = (matrix entries e);
--- 	    );
--- 	);
---     {EE,EF}
---     )
+    -- EF := new MutableHashTable;
+    -- for i from 1 to m do (
+    -- 	for j from 1 to l do (
+    -- 	    c := sum(1..m, k -> d2_(k-1,j-1) * (EE#(i,k)));
+    -- 	    d := d1_(0,i-1)*((id_(Q^l))_(j-1));
+    -- 	    e := (matrix entries (matrix d - c)) // d3;
+    -- 	    EF#(i,j) = (matrix entries e);
+    -- 	    );
+    -- 	);
+    {EE,for i from 0 to 10 list Q_i}
+    )
 
 multtableslink = (F,i,j,k) -> (
     Q := ring F;
@@ -251,6 +255,37 @@ makeRes = (d1,d2,d3) -> (
     F 
     )
 
+findRegSeq = ( M, L ) -> (
+    L = L - {1,1,1};
+    c := numcols M;
+    C := flatten entries M ;
+    K := toList(0..c-1) ;
+    for l in L do K = delete( l, K);
+    P := {};
+    for l in L do (
+	X := ideal(for i in delete(l,L) list C#i); 
+	for k  in K do (
+	    Y := X + ideal(C#l+C#k);
+	    if codim Y == 3 then ( P = append( P, {Y,{l+1,k+1}} ));
+	    );
+	);
+    if P != {} then P 
+    else (
+	for l in L do (
+    	    X := ideal(C#l) ;
+	    L1 := delete(l,L);
+	    for k in K do (
+		for m in delete(k,K) do (
+		Y := X + ideal(C#(L1#0) + C#k, C#(L1#1) + C#m);
+		if codim Y == 3 then ( P = append( P, {Y,{l+1,(L1#0+1,k+1),(L1#1+1,m+1)}} ) );
+		);
+	    );
+	);
+    );
+P
+)
+
+
 TEST ///
 Q = QQ[x,y,z];
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
@@ -274,12 +309,17 @@ d1 = matrix entries F.dd_1
 d2 = matrix entries F.dd_2
 d3 = matrix entries F.dd_3
 
+findRegSeq(d1,{1,2,4})
+
 L = makeRes(d1,d2,d3)
 
-m = multTables F
+m = genmulttables F
+peek m#0
+Q_5
 m = multTablesLink (F,1,2,3)
-eeProd(F,1,2)
-efProd(F,1,4)
+eeProd(F,2,4)
+for i from 1 to 7 list efProd(F,3,i)
+codim ideal(d1_(0,0),d1_(0,1) + d1_(0,2),d1_(0,3) + d1_(0,5))
 mapX(F,1,2,3)
 mapY(F,1,2,3)
 
