@@ -116,12 +116,18 @@ various modern operating systems:
     Install packages with:
       sudo dnf -y install autoconf bison boost-devel cddlib-devel debuginfo-install emacs emacs factory-devel fflas-ffpack-devel flex flint-devel frobby gc-devel gcc-c++ gdbm-devel git givaro-devel glpk-devel gmp-devel gtest gtest-devel kernel-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel patch polymake readline-devel rpm-build rpm-sign rpmdevtools strace time which yasm
 
-  Scientific linux (Red Hat, CentOS, ...):
-    Install packages with: (SL 7.x)
+  CentOS 8 (covers Red Hat Enterprise Linux):
+    Install packages with:
+       -- from the standard repository:
+       sudo dnf install -y autoconf bison blas boost-devel emacs flex gc gcc-c++ gcc-gfortran gdbm-devel git-all gmp-devel lapack libatomic_ops libmpc libtool libxml2-devel make mpfr-devel ncurses-devel readline-devel redhat-lsb rpm-build rpm-sign time wget xz-devel zlib-devel
+       -- from the PowerTools repository
+       sudo dnf config-manager --set-enabled PowerTools
+       sudo dnf install -y eigen3-devel gtest texinfo yasm
+
+  Scientific Linux:
+    This distribution is obsolete.
+    Install packages with:
       sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel texinfo redhat-lsb wget
-    Install other software:
-      Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
-        way (untar, configure, make, make install).
     Note: Scientific Linux 7.1 has a modern version of gcc (version 4.8.3).  By contrast,
       Scientific Linux 6.5 has an old version (4.4.7) of gcc that may not work with a
       future version of Macaulay2.  However, one can install newer compilers
@@ -134,6 +140,8 @@ various modern operating systems:
       to update the environment of your currently running shell.  The latter
       command will also work in your shell initialization file, ".profile".
       Alternatively, see the instructions at https://www.softwarecollections.org/en/scls/rhscl/devtoolset-8/.
+    Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
+        way (untar, configure, make, make install).
 
   Suse Linux Leap 42.1:
 
