@@ -12,9 +12,8 @@ on:
   # trigger a test quick build at both PR (on dev)
   # and pushing to master (after merging or by Dan or Mike)
   push:
-    branch:
+    branches:
       - master
-      - feature/actions
   pull_request:
     branch:
       - developement
