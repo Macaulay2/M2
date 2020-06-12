@@ -756,6 +756,7 @@ ExternalProject_Add(build-4ti2
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
+                      $<$<BOOL:${GLPK_FOUND}>:--with-glpk=${GLPK_INCLUDE_DIR}/..>
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -837,7 +838,7 @@ ExternalProject_Add(build-gfan
   INSTALL_COMMAND   ${CMAKE_STRIP} gfan
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/gfan
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE COPYING ${M2_INSTALL_LICENSESDIR}/gfan
-          COMMAND   ${MAKE} -j${PARALLEL_JOBS} PREFIX=${M2_INSTALL_PROGRAMSDIR}/../ install
+          COMMAND   ${MAKE} -j${PARALLEL_JOBS} PREFIX=${M2_INSTALL_PROGRAMSDIR}/.. install
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
