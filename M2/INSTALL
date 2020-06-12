@@ -114,7 +114,7 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo dnf -y install autoconf bison boost-devel cddlib-devel debuginfo-install emacs emacs factory-devel fflas-ffpack-devel flex flint-devel frobby gc-devel gcc-c++ gdbm-devel git givaro-devel glpk-devel gmp-devel gtest gtest-devel kernel-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel patch polymake readline-devel rpm-build rpm-sign rpmdevtools strace time which yasm
+      sudo dnf -y install autoconf bison boost-devel cddlib-devel cohomCalg csdp csdp-tools debuginfo-install emacs factory-devel fflas-ffpack-devel flex flint-devel frobby gcc-c++ gc-devel gdbm-devel git givaro-devel glpk-devel gmp-devel gtest gtest-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel nauty ncurses-devel ntl-devel patch polymake qd readline-devel rpm-build rpmdevtools rpm-sign strace time which yasm
 
   CentOS 8 (covers Red Hat Enterprise Linux):
     Install packages with:
