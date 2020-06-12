@@ -15,8 +15,8 @@ on:
     branches:
       - master
   pull_request:
-    tags-ignore:
-      - draft*
+    branches:
+      - development
   schedule:
     # cron time in UTC; set to 6a EDT
     - cron: '0 10 * * *'
