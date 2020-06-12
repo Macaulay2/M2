@@ -1,2 +1,8 @@
-;; this file is obsolete, so we just load M2.el if it hasn't been loaded already
+;;; M2-mode.el --- Major mode for editing Macaulay2 source core -*- lexical-binding: t -*-
+;; Keywords: languages Macaulay2
+
 (require 'M2)
+
+(provide 'M2-mode)
+
+;;; M2-mode.el ends here

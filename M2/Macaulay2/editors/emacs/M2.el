@@ -1,48 +1,66 @@
-;;; M2.el 
-;;;    - run Macaulay2 as a command interpreter in an Emacs buffer
-;;;    - provide a major mode used for editing Macaulay2 source files
+;;; M2.el --- Major mode for editing Macaulay2 source core -*- lexical-binding: t -*-
+;; Keywords: languages Macaulay2
 
+;;; Commentary:
 ;; Macaulay2 makes no attempt to wrap long output lines, so we provide
-;; functions that make horizontal scrolling easier.
+;; functions that make horizontal scrolling easier. In addition:
+;;    - run Macaulay2 as a command interpreter in an Emacs buffer
+;;    - provide a major mode used for editing Macaulay2 source files
+
+;;; TODO:
+;; Do we still wish to enable ansi-color-for-comint-mode?
+
+;;; Code:
 
 (require 'font-lock)
 (require 'comint)
-(require 'M2-symbols) 
+(require 'M2-symbols)
+
+(defgroup Macaulay2 nil
+  "Support for Macaulay2 language development."
+  :group 'languages
+  :prefix "M2-")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; M2 command interpreter
+;; M2-mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun m2-mode() 
-  "Macaulay2 editing mode, name in lower case"
-  (M2-mode))
-(defun m2-comint-mode() 
-  "Macaulay2 command interpreter mode, name in lower case"
-  (M2-comint-mode))
+;;;###autoload
+(define-derived-mode M2-mode prog-mode "Macaulay2"
+  "Major mode for editing Macaulay2 source code.\n\n\\{M2-mode-map}" (M2-common))
 
-(define-derived-mode M2-mode fundamental-mode "Macaulay2"
-  "Major mode for editing Macaulay2 source code.
+;;;###autoload
+(defun m2-mode nil
+  "Major mode for editing Macaulay2 source code, name in lower case" (M2-mode))
 
-\\{M2-mode-map}"
-  ;; (kill-all-local-variables)
-  ;; (set-buffer-modified-p (buffer-modified-p))
-  (M2-common)
-  )
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.m2\\'" . M2-mode))
 
-;; give up trying to fix this:
-;; (defcustom ansi-color-for-comint-mode nil "...")
+(defcustom M2-indent-level 4
+  "Indentation increment in Macaulay2 mode"
+  :type 'integer
+  :group 'Macaulay2)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; M2-comint-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;###autoload
 (define-derived-mode M2-comint-mode comint-mode "Macaulay2 Interaction"
-  "Major mode for interacting with a Macaulay2 process.
-
-\\{M2-comint-mode-map}"
-  (M2-common)
+  "Major mode for interacting with a Macaulay2 process.\n\n\\{M2-comint-mode-map}" (M2-common)
   (setq comint-prompt-regexp M2-comint-prompt-regexp
+	comint-prompt-read-only t
 	comint-use-prompt-regexp t)
-  (set (make-local-variable 'comint-dynamic-complete-functions) '( M2-dynamic-complete-symbol comint-dynamic-complete-filename))
-  ;; give up trying to fix this:
-  ;; (set (make-local-variable 'ansi-color-for-comint-mode-on) nil)
-  )
+  (set (make-local-variable 'comint-dynamic-complete-functions)
+       '(M2-dynamic-complete-symbol comint-dynamic-complete-filename)))
+
+;;;###autoload
+(defun m2-comint-mode nil
+  "Macaulay2 command interpreter mode, name in lower case" (M2-comint-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Common definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun M2-common()
   "Set up features common to both Macaulay2 major modes."
@@ -85,7 +103,7 @@
 ;; (define-key M2-comint-mode-map [ (control C) d ] 'M2-find-documentation)
 
 (mapcar
- (function 
+ (function
   (lambda (mode-map)
     (define-key mode-map [ f12 ] 'M2) ; the user may want to make this one global
     (define-key mode-map [ f11 ] 'M2-send-to-program) ; the user may want to make this one global
@@ -120,26 +138,31 @@
     ))
  (list M2-mode-syntax-table M2-comint-mode-syntax-table))
 
-;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; M2 interpreter
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defgroup Macaulay2 nil "Editing Macaulay2 code.")
-(defcustom M2-indent-level 4 "Indentation increment in Macaulay2 mode" :group 'Macaulay2)
-(defvar M2-exe "M2" "The default Macaulay2 executable name.")
+(defcustom M2-exe "M2"
+  "The default Macaulay2 executable name."
+  :type 'string
+  :group 'Macaulay2)
+(defcustom M2-command
+  (concat M2-exe " --no-readline --print-width " (number-to-string (- (window-body-width) 1)) " ")
+  "The default Macaulay2 command line."
+  :type 'string
+  :group 'Macaulay2)
+
 (defvar M2-shell-exe "/bin/sh" "The default shell executable name.")
-(defcustom M2-command 
-  (concat M2-exe " --no-readline --print-width " (number-to-string (- (window-width) 1)) " ") 
-  "The default Macaulay2 command line." :group 'Macaulay2)
 (defvar M2-history (list M2-command) "The history of recent Macaulay2 command lines.")
 (defvar M2-send-to-buffer-history '("*M2*") "The history of recent Macaulay2 send-to buffers.")
 (defvar M2-tag-history () "The history of recent Macaulay2 command name tags.")
+(defvar M2-usual-jog 30 "Usual distance scrolled by M2-jog-left and M2-jog-right")
 
 (defun M2-add-width-option (command)
-  (concat
-   (replace-regexp-in-string " +--print-width [0-9]+\\| +$" "" command)
-   " --print-width "
-   (number-to-string (- (window-width) 1))
-   " "))
+  (concat (replace-regexp-in-string " +--print-width +[0-9]+\\| +$" "" command)
+	  " --print-width " (number-to-string (- (window-body-width) 1)) " "))
 
+;;;###autoload
 (defun M2 (command name)
   "Run Macaulay2 in a buffer.  With a prefix argument, the command line given
 to the shell to run Macaulay2 can be edited in the minibuffer.  With prefix
@@ -149,9 +172,9 @@ command line will always have the appropriate option for the width of the
 current window added to it."
   (interactive
    (list
-    (cond 
+    (cond
      (current-prefix-arg
-      (read-from-minibuffer "M2 command line: " (M2-add-width-option (if M2-history (car M2-history) M2-command)) 
+      (read-from-minibuffer "M2 command line: " (M2-add-width-option (if M2-history (car M2-history) M2-command))
 			    nil nil (if M2-history '(M2-history . 1) 'M2-history)))
      (M2-history (M2-add-width-option (car M2-history)))
      (t (M2-add-width-option M2-command)))
@@ -168,20 +191,18 @@ current window added to it."
 	(M2-comint-mode)
 	(text-scale-set n)))
     buffer))
-(defvar M2-usual-jog 30 "Usual distance scrolled by M2-jog-left and M2-jog-right")
-(defvar M2-comint-prompt-regexp "^\\([ \t]*\\(i*[1-9][0-9]* :\\|o*[1-9][0-9]* =\\) \\)?"
-  "Regular expression used to recognize the Macaulay2 prompt.")
+
 (defun M2-left-hand-column () (window-hscroll))
-(defun M2-right-hand-column () (+ (window-hscroll) (window-width) -1))
+(defun M2-right-hand-column () (+ (window-hscroll) (window-body-width) -1))
 (defun M2-on-screen () (and (< (M2-left-hand-column) (current-column)) (< (current-column) (M2-right-hand-column))))
 (defun M2-position-point (pos)
   "Scroll display horizontally so point ends up at center of screen, or
   at column position given by prefix argument."
   (interactive "P")
   (if (listp pos) (setq pos (car pos)))
-  (if (not pos) 
-      (setq pos (/ (window-width) 2))
-    (if (< pos 0) (setq pos (+ pos (window-width)))))
+  (if (not pos)
+      (setq pos (/ (window-body-width) 2))
+    (if (< pos 0) (setq pos (+ pos (window-body-width)))))
   (set-window-hscroll (selected-window) (+ 1 (- (current-column) pos))))
 
 (defun M2-jog-right (arg)
@@ -189,7 +210,7 @@ current window added to it."
   prefix argument tells how far to move."
   (interactive "P")
   (if (listp arg) (setq arg (car arg)))
-  (goto-char 
+  (goto-char
    (if arg
        (+ (point) arg)
      (min (save-excursion (end-of-line) (point)) (+ (point) M2-usual-jog))))
@@ -200,7 +221,7 @@ current window added to it."
   prefix argument tells how far to move."
   (interactive "P")
   (if (listp arg) (setq arg (car arg)))
-  (goto-char 
+  (goto-char
    (if arg
        (- (point) arg)
      (max (save-excursion (beginning-of-line) (point)) (- (point) M2-usual-jog))))
@@ -210,19 +231,19 @@ current window added to it."
   (save-excursion
     (and
      (<= 0 (- (current-column) (window-hscroll (selected-window))))
-     (< (- (current-column) (window-hscroll (selected-window))) 
-	(window-width (selected-window))))))
+     (< (- (current-column) (window-hscroll (selected-window)))
+	(window-body-width (selected-window))))))
 
 (defun M2-toggle-truncate-lines ()
-  "Toggle the value of truncate-lines, the variable which determines whether 
+  "Toggle the value of truncate-lines, the variable which determines whether
   long lines are truncated or wrapped on the screen."
   (interactive)
   (setq truncate-lines (not truncate-lines))
-  (if truncate-lines 
+  (if truncate-lines
       (if (not (M2-visible-horizontally))
-	  (set-window-hscroll 
+	  (set-window-hscroll
 	   (selected-window)
-	   (- (current-column) (/ (window-width) 2))))
+	   (- (current-column) (/ (window-body-width) 2))))
     (set-window-hscroll (selected-window) 0))
   (update-screen))
 
@@ -241,7 +262,7 @@ current window added to it."
      (interactive)
      (beginning-of-line)
      (let ((case-fold-search nil))
-       (if (looking-at M2-comint-prompt-regexp) 
+       (if (looking-at M2-comint-prompt-regexp)
 	   (goto-char (match-end 0))
 	 (back-to-indentation))))
 
@@ -276,7 +297,7 @@ can be executed with \\[M2-send-to-program]."
    (t
     (find-file-other-window filename)
     (if linenum2
-	(progn 
+	(progn
 	  (goto-line linenum2)
 	  (if colnum2 (move-to-column (- colnum2 1)))
 	  (transient-mark-mode 1)
@@ -290,7 +311,7 @@ can be executed with \\[M2-send-to-program]."
   location specified in the corresponding file.  Otherwise, send the input to the command
   interpreter using \\[comint-send-input]."
   (interactive)
-  (cond ((save-excursion 
+  (cond ((save-excursion
 	   (search-backward-regexp "\\({\\*\\|^\\)")
 	   ;; example: {*FunctionBody[../../d/startup.m2.in:123:19-123:21]*}
 	   ;; example: {*Function[../../m2/res.m2:191:40-202:36]*}
@@ -368,7 +389,7 @@ be sent can be entered, with history."
 		 (cmd (if (and
 			  (equal (point) (point-max))
 			  (equal (current-buffer) (save-excursion (set-buffer send-to-buffer))))
-			 (if (equal (point) 
+			 (if (equal (point)
 				    (save-excursion
 				      (M2-to-end-of-prompt)
 				      (if (looking-at "[ \t]+") (goto-char (match-end 0)))
@@ -408,7 +429,7 @@ be sent can be entered, with history."
 	      ; (setq deactivate-mark t)
 	      ))))
      (setq deactivate-mark nil)
-     (if (and (not (and (boundp 'mark-active) mark-active)) 
+     (if (and (not (and (boundp 'mark-active) mark-active))
 	      (not (and
 		    (equal (point) (point-max))
 		    (equal (current-buffer) (save-excursion (set-buffer send-to-buffer)))
@@ -436,7 +457,7 @@ be sent can be entered, with history."
   "Sets up a new frame with a big font for a Macaulay2 demo."
   (interactive)
   (let* ((f (prog1
-	      (select-frame 
+	      (select-frame
 	       (new-frame
 		'((height . 30)
 		  (width . 80)
@@ -457,7 +478,7 @@ be sent can be entered, with history."
     (modify-frame-parameters f '((left + 20) (top + 30)))
     ; (M2)
     (make-variable-buffer-local 'comint-scroll-show-maximum-output)
-    (save-excursion 
+    (save-excursion
       (set-buffer "*M2*")
       (setq comint-scroll-show-maximum-output t))))
 
@@ -481,7 +502,7 @@ be sent can be entered, with history."
 
 (defun M2-electric-semi ()
      (interactive)
-     (insert ?;)
+     (insert ?\;)
      (and (eolp) (next-line-blank) (= 0 (paren-change))
 	 (M2-newline-and-indent))
      )
@@ -502,7 +523,7 @@ be sent can be entered, with history."
 
 (defun blank-line ()
      (save-excursion (beginning-of-line) (skip-chars-forward " \t") (eolp)))
-     		   
+
 (defun next-line-blank()
      (save-excursion
 	  (end-of-line)
@@ -537,8 +558,8 @@ be sent can be entered, with history."
 			    (back-to-indentation))
 		       (indent-to i))))))
 
-(defvar M2-demo-buffer 
-  (save-excursion 
+(defvar M2-demo-buffer
+  (save-excursion
     (set-buffer (get-buffer-create "*M2-demo-buffer*"))
     (M2-mode)
     (current-buffer))
@@ -547,10 +568,12 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer." )
 
 ; enable syntax highlighting:
 (add-hook 'M2-comint-mode-hook 'turn-on-font-lock)
-(add-hook 'M2-mode-hook 'turn-on-font-lock) 
+(add-hook 'M2-mode-hook 'turn-on-font-lock)
 
 (provide 'M2)
 
 ; Local Variables:
 ; compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs "
+; coding: utf-8
 ; End:
+;;; M2.el ends here

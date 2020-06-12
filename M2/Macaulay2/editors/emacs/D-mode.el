@@ -1,19 +1,21 @@
-;;;; put these lines in your .emacs file
-;; (setq auto-mode-alist (append auto-mode-alist '(("\\.d$" . D-mode))))
-;; (autoload 'D-mode "D-mode.el" "Macaulay2 editing mode" t)
-;;;;
+;; Put this file in your path and add these lines to your .emacs file
+;; to enable syntax highlighting for the interpreter language
+;(autoload 'D-mode "D-mode" "Editing mode for the interpreter language" t)
+;(add-to-list 'auto-mode-alist '("\\.dd?\\'" . D-mode))
+
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.dd?\\'" . D-mode))
 
 (defvar D-mode-hook nil
   "*Hook evaluated when first loading D-mode.")
 
 (defvar D-symbols '()
-  "A list of the symbols available in D-mode, for use with dynamic completion."
-  )
+  "A list of the symbols available in D-mode, for use with dynamic completion.")
 
 
 (if (fboundp 'font-lock-add-keywords)
     (progn
-      (defvar D-mode-font-lock-keywords 
+      (defvar D-mode-font-lock-keywords
 	'(("\\<\\(do\\|new\\|len\\|until\\|while\\|is\\|or\\|when\\|foreach\\|function\\|for\\)\\>"
 	   . font-lock-keyword-face)
 	  ("\\<\\(at\\|in\\|by\\|from\\|to\\|if\\|op\\|package\\|signature\\|use\\)\\>"
@@ -21,7 +23,7 @@
 	  ("\\<\\(export\\|import\\|then\\|else\\|break\\|provide\\|return\\)\\>"
 	   . font-lock-keyword-face)
 	  )
-	)      
+	)
       (font-lock-add-keywords 'D-mode D-mode-font-lock-keywords)
       ))
 
@@ -33,6 +35,7 @@
 
 (defun d-mode() (D-mode))		;setting file variables lowers the case
 
+;;;###autoload
 (defun D-mode()
   "Major mode used for editing contents of a D source file.
 
@@ -127,7 +130,7 @@
 
 (defun blank-line ()
      (save-excursion (beginning-of-line) (skip-chars-forward " \t") (eolp)))
-     		   
+
 (defun next-line-blank()
      (save-excursion
 	  (end-of-line)

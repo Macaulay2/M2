@@ -1,0 +1,46 @@
+;; use this function with C-h f to discover which instance and version of this file is loaded
+(defun M2-version () "@M2VERSION@" "The corresponding Macaulay2 version number for the loaded Macaulay2 major mode.")
+
+(defconst M2-symbols
+  '( @M2SYMBOLS@ )
+  "A list of the symbols available in Macaulay2, for use with dynamic completion." )
+
+(let ((max-specpdl-size 1000)) ; needed for passing long long lists to regexp-opt
+  (defconst M2-comment-regexp  (rx "--" (0+ not-newline))
+      "Regular expression for Macaulay2 comment lines")
+  (defconst M2-keyword-regexp  (regexp-opt '( @M2KEYWORDS@  ) 'words)
+      "Regular expression for Macaulay2 keywords")
+  (defconst M2-type-regexp     (regexp-opt '( @M2DATATYPES@ ) 'words)
+      "Regular expression for Macaulay2 types")
+  (defconst M2-function-regexp (regexp-opt '( @M2FUNCTIONS@ ) 'words)
+      "Regular expression for Macaulay2 functions")
+  (defconst M2-constant-regexp (regexp-opt '( @M2CONSTANTS@ ) 'words)
+      "Regular expression for Macaulay2 constants")
+  (defconst M2-string-regexp   @M2STRINGS@
+      "Regular expression for Macaulay2 strings"))
+
+(defconst M2-comint-prompt-regexp "^\\([ \t]*\\(i*[1-9][0-9]* :\\|o*[1-9][0-9]* =\\) \\)?"
+  "Regular expression for the Macaulay2 prompt")
+
+(defconst M2-mode-font-lock-keywords
+  (list
+   (cons M2-comment-regexp  'font-lock-comment-face)
+   (cons M2-keyword-regexp  'font-lock-keyword-face)
+   (cons M2-type-regexp     'font-lock-type-face)
+   (cons M2-function-regexp 'font-lock-function-name-face)
+   (cons M2-constant-regexp 'font-lock-constant-face)
+   (cons M2-string-regexp   'font-lock-string-face)))
+
+; TODO:
+; font-lock-warning-face
+; font-lock-variable-name-face
+; font-lock-builtin-face
+; font-lock-preprocessor-face
+; font-lock-string-face
+; font-lock-doc-face
+; font-lock-negation-char-face
+
+(if (fboundp 'font-lock-add-keywords)
+    (font-lock-add-keywords 'M2-mode M2-mode-font-lock-keywords 'set))
+
+(provide 'M2-symbols)
