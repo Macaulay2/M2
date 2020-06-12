@@ -1,83 +1,109 @@
-is := X -> s -> instance(value s, X)
-isAlpha := s -> match("^[[:alpha:]]+$",s)
+-------------------------------------------------------------------------------
+-- This script is responsible for creating a list of all builtin symbols, such
+-- as keywords, types, etc. and substituting them in grammar files for various
+-- editors and syntax highlighting engines. Grammar file templates are assumed
+-- to be located in the same directory as this script.
+-- Currently:
+--  - Emacs
+--  - Atom & Linguist: https://github.com/Macaulay2/language-macaulay2
+--  - Rouge
+
+-------------------------------------------------------------------------------
+-- TODO: Move these two elsewhere:
+Function and Function := (f, g) -> s -> f s and g s
+Function or  Function := (f, g) -> s -> f s or  g s
+
+is := X -> (name, symb) -> instance(value symb, X)
+
+isAlpha        := s -> match("^[[:alpha:]]+$",s)
 isAlphaNumeric := s -> match("^[[:alnum:]]+$",s)
 
-okay := method()
-okay(String,Keyword) := okay(String,Symbol) := (nam,sym) -> #nam > 1 and isAlphaNumeric nam
-symbols := unique sort join( 
-     apply(join(separate(" ",version#"packages"),{"Core"}), pkgnam -> (pkgnam,symbol Core)),
-     flatten apply(
-     	  join(Core#"pre-installed packages", {"Core","Text","Parsing","SimpleDoc"}),
-     	  pkgnam -> (
-	       pkg := needsPackage pkgnam;
-	       select(pairs pkg.Dictionary,okay))))
-bad := select(symbols, (nam,sym) -> not okay (nam,sym))
-if #bad > 0 then (
-     error("symbol(s) encountered that are not alphanumeric, or are of length 0 or 1: ", concatenate between_", " (first \ bad))
-     )
-
-Function and Function := (f,g) -> s -> f s and g s
-
-f := openOut "M2-symbols.el"
-f2 := openOut "M2-symbols"
-
-f << "(defvar M2-symbols '(" << endl
-
-scan( select (symbols, (nam,sym) -> isAlphaNumeric nam), (nam,sym) -> (
-	  f << "    " << format nam << endl;
-	  f2 << nam << endl;
-	  ))
-
-f2 << close
-
-f << "   )" << endl
-f << "  " << format ///A list of the symbols available in Macaulay2, for use with dynamic completion./// << endl
-f << "  )" << endl
-
-f << ///
-
-(defun M2-symbols-el ())	; use this function with C-h f to discover which instance of this file got loaded
-
-(defvar M2-mode-font-lock-keywords 
-     (let (
-	    (max-specpdl-size 1000) ; needed for passing long long lists to regexp-opt
-	  )
-       `(
-	 ; (,"--.*" . font-lock-comment-face)
-///
-
-
-add := (face,words) -> if #words > 0 then (
-     f
-     << "         (" 
-     << ///,(concat "\\<\\(" (regexp-opt '(/// << demark(" ", format\words) << ///)) "\\)\\>")///
-     <<  " . " << face << ")" << endl
-     )
-
-isKeyword := is Keyword
-add( "font-lock-keyword-face", first \ select(symbols, (nam,sym) -> isKeyword sym))
-
-isType := is Type
-add( "font-lock-type-face", first \ select(symbols, (nam,sym) -> isType sym))
-
+-- Things we want to highlight:
+isType     := is Type
+isKeyword  := is Keyword
 isFunction := is Function
-add( "font-lock-function-name-face", first \ select(symbols, (nam,sym) -> isFunction sym))
+isConst    := (name, symb) -> (isAlpha name
+    and not (isFunction or isType or isKeyword) (name, symb)
+    and (symb === symbol null or value symb =!= null))
 
-add( ",font-lock-constant-face", first \ select(symbols, (nam,sym) -> (
-	       not isFunction sym
-	       and not isType sym
-	       and not isKeyword sym
-	       and (sym === symbol null or value sym =!= null)
-	       and isAlpha nam)))
-f << "         (" << format "///\\(/?/?[^/]\\|\\(//\\)*////[^/]\\)*\\(//\\)*///"  << " . (0 font-lock-string-face t))" << endl
-f << ")))" << endl << endl
+okay := method()
+okay(String, Keyword) :=
+okay(String, Symbol)  := (name, pkg) -> length name > 1 and isAlphaNumeric name
 
-f << "(if (fboundp 'font-lock-add-keywords)
-    (font-lock-add-keywords 'M2-mode M2-mode-font-lock-keywords 'set))" << endl << endl
+-------------------------------------------------------------------------------
+-- Get a list of all symbols visible just after loading preloaded packages
+allPkgNames := separate(" ", version#"packages") | {"Core"}
+loadedPkgNames := Core#"pre-installed packages" | {"Core", "Text", "Parsing", "SimpleDoc"}
+symbols := unique sort join(
+    apply(allPkgNames, pkgname -> (pkgname, symbol Core)),
+    flatten apply(loadedPkgNames, pkgname -> (
+	    pkg := needsPackage pkgname;
+	    select(pairs pkg.Dictionary, okay))))
 
-f << "(provide 'M2-symbols)" << endl
+if length symbols < 1500 then error "expected more entries for M2-symbols"
 
-f << close
+-- Check for invalid symbols
+bad := select(symbols, (name, symb) -> not okay(name, symb))
+if #bad > 0 then error(
+    "encountered symbol(s) that are not alphanumeric or have less than 2 characters:",
+    concatenate apply(bad, (name, symb) ->
+	{"\n\t", -* TODO: symbolLocation name, ": here is the first use of ", *- toString name}))
+
+-------------------------------------------------------------------------------
+-- Substitute symbols, keywords, types, functions, and constants
+
+-- This banner is added to the top of generated grammars
+banner := "Auto-generated for Macaulay2-@M2VERSION@. Do not modify this file manually."
+
+symbolsForVim = template -> ()
+
+symbolsForEmacs = template -> (
+    output := concatenate(";; ", banner, newline, newline, template);
+    output = replace("@M2VERSION@",  version#"VERSION", output);
+    output = replace("@M2SYMBOLS@",   demark(" ", format \ first \ select(symbols, (name, symb) -> isAlphaNumeric name)), output);
+    output = replace("@M2KEYWORDS@",  demark(" ", format \ first \ select(symbols, isKeyword)),  output);
+    output = replace("@M2DATATYPES@", demark(" ", format \ first \ select(symbols, isType)),     output);
+    output = replace("@M2FUNCTIONS@", demark(" ", format \ first \ select(symbols, isFunction)), output);
+    output = replace("@M2CONSTANTS@", demark(" ", format \ first \ select(symbols, isConst)),    output);
+    output = replace("@M2STRINGS@", format "///\\(/?/?[^/]\\|\\(//\\)*////[^/]\\)*\\(//\\)*///", output);
+    output)
+
+symbolsForAtom = template -> (
+    output := concatenate("## ", banner, newline, newline, template);
+    output = replace("@M2VERSION@",  version#"VERSION", output);
+    --output = replace("@M2SYMBOLS@",   demark("|", first \ select(symbols, (name, symb) -> isAlphaNumeric name)), output);
+    output = replace("@M2KEYWORDS@",  demark("|", first \ select(symbols, isKeyword)),  output);
+    output = replace("@M2DATATYPES@", demark("|", first \ select(symbols, isType)),     output);
+    output = replace("@M2FUNCTIONS@", demark("|", first \ select(symbols, isFunction)), output);
+    output = replace("@M2CONSTANTS@", demark("|", first \ select(symbols, isConst)),    output);
+    output = replace("@M2STRINGS@", format "///\\(/?/?[^/]\\|\\(//\\)*////[^/]\\)*\\(//\\)*///", output);
+    output)
+
+symbolsForRouge = template -> (
+    output := concatenate("## ", banner, newline, newline, template);
+    output = replace("@M2VERSION@",  version#"VERSION", output);
+    --output = replace("@M2SYMBOLS@",   demark("|", first \ select(symbols, (name, symb) -> isAlphaNumeric name)), output);
+    output = replace("@M2KEYWORDS@",  demark(" ", first \ select(symbols, isKeyword)),  output);
+    output = replace("@M2DATATYPES@", demark("|", first \ select(symbols, isType)),     output);
+    output = replace("@M2FUNCTIONS@", demark("|", first \ select(symbols, isFunction)), output);
+    output = replace("@M2CONSTANTS@", demark("|", first \ select(symbols, isConst)),    output);
+    output = replace("@M2STRINGS@", format "///\\(/?/?[^/]\\|\\(//\\)*////[^/]\\)*\\(//\\)*///", output);
+    output)
+
+-------------------------------------------------------------------------------
+-- Generate syntax files from templates in the same directory
+
+generateGrammar := (grammarFile, grammarFunction) -> (
+    grammarFile << grammarFunction get(currentFileDirectory | grammarFile | ".in") << close)
+
+-- Emacs: Write M2-symbols.el
+generateGrammar("emacs/M2-symbols.el", symbolsForEmacs)
+
+-- Atom & Linguist: Write macaulay2.cson
+generateGrammar("atom/macaulay2.cson", symbolsForAtom);
+
+-- Rouge: Write macaulay2.rb
+generateGrammar("rouge/macaulay2.rb", symbolsForRouge);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs M2-symbols "

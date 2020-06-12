@@ -1,15 +1,11 @@
-;; -*- emacs-lisp -*-
+;; Setup M2.el for autoloading
 
-(defvar M2-exe "M2@M2SUFFIX@@EXEEXT@" "*The default Macaulay2 executable name.")
-(defvar M2-version "@PACKAGE_VERSION@" "*The Macaulay2 version number for the Macaulay2 emacs files.")
-(autoload 'M2 "M2.el" "Run Macaulay 2 in a buffer." t)
-(autoload 'Macaulay2 "M2" "Run Macaulay 2 in a buffer, non-interactive." t)
-(autoload 'M2-mode "M2" "Macaulay 2 editing mode" t)
-(autoload 'm2-mode "M2" "Macaulay 2 editing mode, name in lower case" t)
-(autoload 'm2-comint-mode "M2" "Macaulay 2 command interpreter mode, name in lower case" t)
-(setq auto-mode-alist (append auto-mode-alist '(("\\.m2$" . M2-mode))))
-(defun M2-init-el ())
+(autoload 'M2             "M2" "Run Macaulay2 in an emacs buffer" t)
+(autoload 'M2-mode        "M2" "Macaulay2 editing mode" t)
+(autoload 'm2-mode        "M2" "Macaulay2 editing mode, name in lower case" t)
+(autoload 'm2-comint-mode "M2" "Macaulay2 command interpreter mode, name in lower case" t)
+(add-to-list 'auto-mode-alist '("\\.m2\\'" . M2-mode))
 
-;; Local Variables:
-;; compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs "
-;; End:
+;; Uncomment these lines to enable syntax highlighting for the interpreter language
+;(autoload 'D-mode "D-mode" "Editing mode for the interpreter language" t)
+;(add-to-list 'auto-mode-alist '("\\.dd?\\'" . D-mode))

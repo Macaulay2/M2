@@ -1,29 +1,43 @@
 ###############################################################################
-## This directory contains the rules for generating the M2-mode Emacs package.
-## The target is M2-emacs
+## This directory contains the rules for generating grammar files for editors
+## and syntax highlighing engines as well as the M2-mode package for Emacs.
+## - M2-editors generates grammar files
+## - M2-emacs   generates the M2-mode package for Emacs
 
+# TODO: generate vim grammar
 # TODO: generate textmate grammar
 
-set(M2_ARGS -q --stop --silent)
-set(EMACS_DIR ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp)
-set(EMACS_FILES M2-README M2-emacs-hlp.txt M2-emacs.m2 M2-init.el M2-mode.el M2-symbols.el M2.el)
+set(M2 ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
+set(M2_ARGS --script)
 
-# TODO: move this from ALL to install
-add_custom_target(M2-emacs DEPENDS M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2)
+###############################################################################
+## Generating the grammar files is mainly done in make-M2-grammars.m2.
+## To add to the M2-editors target, add grammar filenames here and in .gitignore.
+set(GRAMMAR_FILES
+  atom/macaulay2.cson
+  rouge/macaulay2.rb
+  emacs/M2-symbols.el)
 
-# TODO: refactor the three scripts
-add_custom_command(OUTPUT M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2
-  COMMENT
-    "Generating Emacs package"
-  COMMAND
-    M2-binary ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/makesyms.m2 -e 'exit 0'
-  COMMAND
-    M2-binary ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/makehlp.m2 -e 'exit 0'
-  COMMAND
-    M2-binary ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/makem2.m2 -e 'exit 0'
-  WORKING_DIRECTORY ${EMACS_DIR}
-  DEPENDS M2-core
-  )
+add_custom_target(M2-editors DEPENDS ${GRAMMAR_FILES})
+add_custom_command(OUTPUT ${GRAMMAR_FILES}
+  COMMENT "Generating M2 grammar files for editors"
+  COMMAND ${M2} ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/make-M2-grammars.m2
+  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/make-M2-grammars.m2
+  DEPENDS M2-core)
 
-configure_file(M2-init.el.in ${EMACS_DIR}/M2-init.el @ONLY)
-file(COPY M2-mode.el M2.el M2-README DESTINATION ${EMACS_DIR})
+###############################################################################
+## Generating the M2-mode package for Emacs
+
+# TODO: only the emacs target is installed in usr-dist by default
+set(M2_INSTALL_EMACSDIR
+  ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp/M2)
+file(COPY emacs/ DESTINATION ${M2_INSTALL_EMACSDIR}
+  FILES_MATCHING PATTERN "M2*" PATTERN "*.in" EXCLUDE)
+
+add_custom_target(M2-emacs ALL
+  COMMENT "Generating Emacs package"
+  COMMAND ${M2} ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/emacs/make-M2-emacs-help.m2
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/emacs/M2-symbols.el ${M2_INSTALL_EMACSDIR}
+  COMMAND gzip -nf9 M2-symbols.el
+  WORKING_DIRECTORY ${M2_INSTALL_EMACSDIR}
+  DEPENDS M2-editors)
