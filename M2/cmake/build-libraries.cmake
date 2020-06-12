@@ -756,6 +756,7 @@ ExternalProject_Add(build-4ti2
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
+                      $<$<BOOL:${GLPK_FOUND}>:--with-glpk=${GLPK_INCLUDE_DIR}/..>
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -771,7 +772,7 @@ ExternalProject_Add(build-4ti2
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/4ti2
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different README ${M2_INSTALL_LICENSESDIR}/4ti2
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${4ti2_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/
-          COMMAND   ${CMAKE_COMMAND} -E remove -f ${4ti2_PROGRAMS}
+          COMMAND   ${CMAKE_COMMAND} -E rm -f ${4ti2_PROGRAMS}
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -837,7 +838,7 @@ ExternalProject_Add(build-gfan
   INSTALL_COMMAND   ${CMAKE_STRIP} gfan
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/gfan
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE COPYING ${M2_INSTALL_LICENSESDIR}/gfan
-          COMMAND   ${MAKE} -j${PARALLEL_JOBS} PREFIX=${M2_INSTALL_PROGRAMSDIR}/../ install
+          COMMAND   ${MAKE} -j${PARALLEL_JOBS} PREFIX=${M2_INSTALL_PROGRAMSDIR}/.. install
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -974,6 +975,7 @@ ExternalProject_Add(build-normaliz
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
                       OPENMP_CXXFLAGS=${normaliz_OpenMP_CXX_FLAGS}
+            COMMAND patch --fuzz=10 --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/normaliz/patch-libtool
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
   # TODO: do we need the libraries as well, or just the binary?
   INSTALL_COMMAND   ${CMAKE_STRIP} source/normaliz

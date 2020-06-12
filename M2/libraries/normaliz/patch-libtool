@@ -1,0 +1,18 @@
+diff -Nar -U 5 a/libtool b/libtool
+--- a/libtool	2020-06-11 13:23:35.000000000 -0400
++++ b/libtool	2020-06-11 13:23:35.000000000 -0400
+@@ -7582,14 +7582,10 @@
+       -mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe \
+       |-threads|-fopenmp|-openmp|-mp|-xopenmp|-omp|-qsmp=*)
+ 	func_append compiler_flags " $arg"
+ 	func_append compile_command " $arg"
+ 	func_append finalize_command " $arg"
+-	case "$new_inherited_linker_flags " in
+-	    *" $arg "*) ;;
+-	    * ) func_append new_inherited_linker_flags " $arg" ;;
+-	esac
+ 	continue
+ 	;;
+ 
+       -multi_module)
+ 	single_module=$wl-multi_module

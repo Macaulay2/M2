@@ -281,6 +281,13 @@ For specific packages, the following targets are also available:
 Below are a list of common issues and errors. If you run into a problem not listed below, please open a [new issue](https://github.com/Macaulay2/M2/issues/new) on GitHub.
 
 <details>
+<summary>Detected library incompatibilities; rerun the build-libraries target</summary>
+This message indicates that the build scripts detected an inconsistency between the libraries found on the system, and that those libraries are marked to be compiled from source. Run `ninja build-libraries` (or `make build-libraries`) to build the libraries from source.
+
+If the problem persists, run `cmake --debug-trycompile` and open an issue with the contents of `CMakeFiles/CMakeError.log`.
+</details>
+
+<details>
 <summary>macOS 10.15 Catalina issues with AppleClang</summary>
 After ensuring that you have followed the usual steps from the [INSTALL](INSTALL) manual (e.g. running `xcode-select --install`, consider setting the `CMAKE_OSX_SYSROOT` variable to match the current SDK:
 ```
