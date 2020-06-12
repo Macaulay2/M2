@@ -867,7 +867,7 @@ ExternalProject_Add(build-lrslib
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/lrslib
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/lrslib
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${M2_INSTALL_PROGRAMSDIR}/
-  TEST_COMMAND      ${CMAKE_COMMAND} -E echo "Warning: No tests available for cohomCalg"
+  TEST_COMMAND      ${CMAKE_COMMAND} -E echo "Warning: No tests available for lrslib"
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
