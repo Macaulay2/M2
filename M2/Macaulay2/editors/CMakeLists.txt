@@ -11,7 +11,7 @@ set(M2 ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
 set(M2_ARGS --script)
 
 ###############################################################################
-## Generating the grammar files is mainly done in make-M2-grammars.m2.
+## Generating the grammar files is mainly done in make-M2-symbols.m2.
 ## To add to the M2-editors target, add grammar filenames here and in .gitignore.
 set(GRAMMAR_FILES
   atom/macaulay2.cson
@@ -21,8 +21,8 @@ set(GRAMMAR_FILES
 add_custom_target(M2-editors DEPENDS ${GRAMMAR_FILES})
 add_custom_command(OUTPUT ${GRAMMAR_FILES}
   COMMENT "Generating M2 grammar files for editors"
-  COMMAND ${M2} ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/make-M2-grammars.m2
-  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/make-M2-grammars.m2
+  COMMAND ${M2} ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/make-M2-symbols.m2
+  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/make-M2-symbols.m2
   DEPENDS M2-core)
 
 ###############################################################################
@@ -30,7 +30,7 @@ add_custom_command(OUTPUT ${GRAMMAR_FILES}
 
 # TODO: only the emacs target is installed in usr-dist by default
 set(M2_INSTALL_EMACSDIR
-  ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp/M2)
+  ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp/Macaulay2)
 file(COPY emacs/ DESTINATION ${M2_INSTALL_EMACSDIR}
   FILES_MATCHING PATTERN "M2*" PATTERN "*.in" EXCLUDE)
 
