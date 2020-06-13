@@ -535,10 +535,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpsolve "mp;mpfr" MPSOLVE_FOUND)
 # https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
 # TODO: get out-of-tree build working: https://github.com/linbox-team/givaro/issues/154
 # Currently we make a clone from a local submodule
-if(NOT BUILD_NATIVE)
-  set(givaro_SIMD sse sse2 sse3 ssse3 sse4.1 sse4.2avx avx avx2 fma fma4)
-  list(TRANSFORM givaro_SIMD PREPEND "--disable-")
-endif()
 set(givaro_LICENSEFILES COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt)
 ExternalProject_Add(build-givaro
   GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/givaro/.git
@@ -551,7 +547,7 @@ ExternalProject_Add(build-givaro
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
-                      ${givaro_SIMD}
+                      $<$<NOT:$<BOOL:${BUILD_NATIVE}>>:--without-archnative>
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -590,6 +586,7 @@ ExternalProject_Add(build-fflas_ffpack
                       #-C --cache-file=${CONFIGURE_CACHE}
                       # --enable-openmp
                       # --enable-precompilation # build errors
+                      $<$<NOT:$<BOOL:${BUILD_NATIVE}>>:--without-archnative>
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
