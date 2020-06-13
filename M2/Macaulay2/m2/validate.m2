@@ -71,7 +71,7 @@ validate(Type, Set, BasicList) := (p,valid,x) -> (
      haderror = false;
      scan(x, e -> chk(valid,p,class e,e));
      if haderror then error "validation failed")
-validate(MarkUpTypeWithOptions, Set, BasicList) := (p,valid,x) -> ( 
+validate(MarkUpType, Set, BasicList) := (p,valid,x) -> (
      haderror = false;
      scan(x, e -> if class e =!= Option then chk(valid,p,class e,e)); 
      if haderror then error "validation failed")

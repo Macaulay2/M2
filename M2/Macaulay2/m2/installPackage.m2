@@ -64,8 +64,7 @@ initInstallDirectory := o -> (
 
 isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
 
-toURL := method()
-     
+toURL = method()
 toURL String := pth -> (				    -- phase this one out eventually
      if isAbsolutePath pth then concatenate(rootURI,
 	  if fileExists pth then realpath pth 
@@ -226,12 +225,12 @@ html HTML := t -> concatenate(
 
 -- produce html form of documentation, for Macaulay2 and for packages
 
-buttonBar := (tag) -> ButtonTABLE {{ 
-	  DIV splice {
-     	       forward tag, backward tag, next tag, prev tag, up tag,
-     	       (if tag =!= topDocumentTag then topNodeButton else topNodeButton#-1, " | "),
-     	       masterIndexButton, " | ", tocButton, -* " | ", directoryButton, *- " | ", homeButton
-	       }}}
+buttonBar := tag -> TABLE { "class" => "buttons",
+    TR { TD { DIV splice {
+		forward tag, backward tag, next tag, prev tag, up tag,
+		(if tag =!= topDocumentTag then topNodeButton else topNodeButton#-1, " | "),
+		masterIndexButton, " | ", tocButton, -* " | ", directoryButton, *- " | ", homeButton
+		}}}}
 
 upAncestors := tag -> reverse (
      n := 0;

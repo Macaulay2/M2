@@ -1,224 +1,253 @@
---		Copyright 1993-2003 by Daniel R. Grayson
+--  Copyright 1993-2003 by Daniel R. Grayson
+-- html0.m2 -> markup.m2
 
 -----------------------------------------------------------------------------
--- html input
+-- Hypertext type declarations
 -----------------------------------------------------------------------------
 
+-- Hypertext, HypertextParagraph, and HypertextContainer
 Hypertext = new Type of BasicList
-Hypertext.synonym = "mark-up list"
+Hypertext.synonym = "markup list"
 
-HypertextParagraph = new Type of Hypertext		    -- one of these will be a paragraph
-HypertextParagraph.synonym = "mark-up list paragraph"
+-- A paragraph starts on a new line and ends with a line break.
+HypertextParagraph = new Type of Hypertext
+HypertextParagraph.synonym = "markup list paragraph"
 
-HypertextContainer = new Type of Hypertext	    -- one of these may contain paragraphs or containers, and its method for printing has to handle the line breaks
-HypertextContainer.synonym = "mark-up list container"
+-- A container's contents are indented
+HypertextContainer = new Type of Hypertext
+HypertextContainer.synonym = "markup list container"
 
-     MarkUpType = new Type of SelfInitializingType
-MarkUpType.synonym = "mark-up type"
+toString         Hypertext := s -> concatenate(toString class s, toString         toList s)
+toExternalString Hypertext := s -> concatenate(toString class s, toExternalString toList s)
+
+-----------------------------------------------------------------------------
+-- Markup type declarations
+-----------------------------------------------------------------------------
+
+-- MarkUpType
+MarkUpType = new Type of SelfInitializingType
+MarkUpType.synonym = "markup type"
 
 new MarkUpType from Thing := (M,x) -> new M from {x}
 new MarkUpType from List := (M,x) -> new M from x
 new MarkUpType from Sequence := (M,x) -> new M from toList x
-
 options MarkUpType := X -> X.Options
-
-MarkUpTypeWithOptions = new Type of MarkUpType
-MarkUpTypeWithOptions.synonym = "mark-up type with options"
 
 MarkUpType Net := (M,x) -> new M from {toString x}
 MarkUpType String :=
 MarkUpType Hypertext := (M,x) -> new M from {x}
 
-IntermediateMarkUpType = new Type of MarkUpType	    -- this is for things like MENU, which do not correspond to an html entity, but have a recipe for translation into html
-IntermediateMarkUpType.synonym = "intermediate mark-up type"
+-- e.g. a MENU, which does not correspond to an html entity.
+-- It does not have a qname, nor a default method for producing html,
+-- so one should be provided.
+IntermediateMarkUpType = new Type of MarkUpType
+IntermediateMarkUpType.synonym = "intermediate markup type"
 
-makeList := method()
-makeList MarkUpType := X -> toString X
-makeList Type       := X -> concatenate("new ", toString X, " from ")
-toExternalString Hypertext := s -> concatenate(makeList class s, toExternalString toList s)
-toString         Hypertext := s -> concatenate(makeList class s, toString         toList s)
+-----------------------------------------------------------------------------
+-- Setting GlobalAssignHooks
+-----------------------------------------------------------------------------
 
-lower := "abcdefghijklmnopqrstuvwxyz"
-upper := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-tolower := new HashTable from apply(characters upper,characters lower,identity)
-toupper := new HashTable from apply(characters lower,characters upper,identity)
-toLower = s -> concatenate apply(characters s, c -> if tolower#?c then tolower#c else c)
-toUpper = s -> concatenate apply(characters s, c -> if toupper#?c then toupper#c else c)
+MarkUpType.GlobalAssignHook = (X, x) -> (
+    if not x.?qname then x.qname = toLower toString X;
+    if not hasAttribute(x, ReverseDictionary) then (
+	setAttribute(x, ReverseDictionary, X)))
 
--- the tags that print with extra newlines after the close tag:
-ewnl := BlockMix - set { "ins" } + set { "body", "tr", "li", "head", "html", "title", "link", "meta", "style" } 
+IntermediateMarkUpType.GlobalAssignHook = globalAssignFunction
 
-htmlMarkUpType := s -> (
-     on := "<" | s | ">";
-     off := "</" | s | ">";
-     onoff := "<" | s | "/>";
-     if ewnl#?s then (off = off|"\n";onoff = onoff|"\n");
-     t -> if #t === 0 then onoff else concatenate(on, apply(t,html), off))
+-----------------------------------------------------------------------------
+-- MarkUptypes
+-----------------------------------------------------------------------------
+-- The qname (qualified name) is the lowercase name of the type by default.
+-- See the end for exceptions (e.g. PARA.qname = p)
 
-htmlMarkUpTypeWithOptions := opts -> s -> (
-     off := "</" | s | ">";
-     lt := "<";
-     onoff := "/>";
-     if ewnl#?s then (off = off|"\n";onoff = onoff|"\n");
-     t -> (
-	  o := "";
-	  (opts',u) := try override(opts, toSequence t) else error(
-	       "mark up type ",toString class t,
-	       ": unrecognized option name(s): ", toString select(toList t, x -> instance(x,Option))
-	       );
-	  scanPairs(opts', (k,v) -> if v =!= null then o = concatenate(o, " ", k, "=", format v));
-	  if #u === 0 then concatenate(lt, s, o, onoff)
-	  else concatenate(lt, s, o, ">", apply(sequence u,html), off)
-	  ))
-
-MarkUpType.GlobalAssignHook = (X,x) -> (
-     if not x.?qname then x.qname = toLower toString X;
-     if not hasAttribute(x,ReverseDictionary) then (
-	  setAttribute(x,ReverseDictionary,X);
-     	  html x := htmlMarkUpType x.qname;
-	  );
-     )
-
-IntermediateMarkUpType.GlobalAssignHook = globalAssignFunction -- no qname, no default method for producing html
-
-MarkUpTypeWithOptions.GlobalAssignHook = (X,x) -> (
-     if not x.?qname then x.qname = toLower toString X;
-     if not hasAttribute(x,ReverseDictionary) then (
-	  setAttribute(x,ReverseDictionary,X);
-     	  html x := (htmlMarkUpTypeWithOptions options x) x.qname;
-	  );
-     )
-
-withOptions := (v,x) -> (x.Options = new OptionTable from apply(v,val -> if class val === Option then val else val=>null); x)
-withQname   := (q,x) -> (x.qname = q; x)
-trimfront := x -> apply(x, line -> if not instance(line,String) then line else (
-	  s := lines line;
-	  r := if not s#?0 then line else concatenate between(newline, prepend(replace("^[[:space:]]+","",s#0), drop(s,1)));
-	  if #r =!= 0 then r))
-
-new MarkUpType := x -> error "obsolete 'new' method called"
-
-BR         = new MarkUpType of Hypertext		    -- HypertextParagraph?  no, because paragraphs are separated more by browsers
-br         = BR{}
-
-HR         = new MarkUpType of HypertextParagraph
-hr         = HR{}
-
-new HR from List := 
-new BR from List := (X,x) -> if #x>0 then error "expected empty list" else x
-
-PARA       = withQname_"p" new MarkUpType of HypertextParagraph	    -- double spacing inside
-
-ExampleItem = withQname_"code" new MarkUpType of Hypertext
-makeExampleItem = method()
-makeExampleItem String := s -> ExampleItem s
-makeExampleItem Thing := s -> error ("EXAMPLE expected a string or a PRE item, but encountered ", toString s)
-
-EXAMPLE = method(Dispatch => Thing)
-EXAMPLE VisibleList := x -> (
-     x = nonnull trimfront toSequence x;
-     if #x === 0 then error "empty list of examples encountered";
-     TABLE splice { "class" => "examples", apply(x, item -> TR TD makeExampleItem item) }
-     )
-EXAMPLE String := x -> (
-     if #x == 0 then error "empty example string";
-     if x#0 == newline then error "empty first line in example";
-     EXAMPLE {x}
-     )
-
-PRE        = new MarkUpType of HypertextParagraph
-makeExampleItem PRE := identity				    -- this will allow precomputed example text
-
+-- Standard html
+HTML       = new MarkUpType of HypertextContainer
+HEAD       = new MarkUpType of HypertextContainer
+META       = new MarkUpType of HypertextParagraph
+LINK       = new MarkUpType of HypertextParagraph
 TITLE      = new MarkUpType of HypertextParagraph
-HEAD       = new MarkUpType of HypertextParagraph
 BODY       = new MarkUpType of HypertextContainer
-IMG	   = withOptions_{"src","alt"} new MarkUpTypeWithOptions of Hypertext
-HTML       = new MarkUpType of Hypertext
-HEADER1    = withQname_"h1" new MarkUpType of HypertextParagraph
-HEADER2    = withQname_"h2" new MarkUpType of HypertextParagraph
-HEADER3    = withQname_"h3" new MarkUpType of HypertextParagraph
-HEADER4    = withQname_"h4" new MarkUpType of HypertextParagraph
-HEADER5    = withQname_"h5" new MarkUpType of HypertextParagraph
-HEADER6    = withQname_"h6" new MarkUpType of HypertextParagraph
+STYLE      = new MarkUpType of Hypertext
+SPAN       = new MarkUpType of Hypertext
+PARA       = new MarkUpType of HypertextParagraph -- double spacing inside
+DIV        = new MarkUpType of HypertextContainer
+BR         = new MarkUpType of Hypertext
+HR         = new MarkUpType of HypertextParagraph
+
+-- Headers
+HEADER1    = new MarkUpType of HypertextParagraph
+HEADER2    = new MarkUpType of HypertextParagraph
+HEADER3    = new MarkUpType of HypertextParagraph
+HEADER4    = new MarkUpType of HypertextParagraph
+HEADER5    = new MarkUpType of HypertextParagraph
+HEADER6    = new MarkUpType of HypertextParagraph
 SUBSECTION = HEADER2
-LITERAL    = withQname_"div" new IntermediateMarkUpType of Hypertext -- fake!!!!! check later
-BLOCKQUOTE = new MarkUpType of HypertextContainer
-STRONG     = new MarkUpType of Hypertext
+
+-- Emphasis (TODO: strikethrough)
+EM         = new MarkUpType of Hypertext
+ITALIC     = new MarkUpType of Hypertext
 SMALL      = new MarkUpType of Hypertext
+BOLD       = new MarkUpType of Hypertext
+STRONG     = new MarkUpType of Hypertext
 SUB        = new MarkUpType of Hypertext
 SUP        = new MarkUpType of Hypertext
-ITALIC     = withQname_"i" new MarkUpType of Hypertext
-TEX	   = withQname_"#PCDATA" new MarkUpType of Hypertext -- TEX really needs to be processed further so its output can be checked, too!
-SPAN       = withOptions_{"lang"} new MarkUpTypeWithOptions of Hypertext
 TT         = new MarkUpType of Hypertext
+
+-- Lists (TODO: OL)
+OL         = new MarkUpType of HypertextContainer
+UL         = new MarkUpType of HypertextContainer
 LI         = new MarkUpType of HypertextContainer
-EM         = new MarkUpType of Hypertext
-BOLD       = withQname_"b" new MarkUpType of Hypertext
+DL         = new MarkUpType of HypertextContainer
+DT         = new MarkUpType of HypertextParagraph
+DD         = new MarkUpType of HypertextParagraph
+
+-- Links and references
+IMG        = new MarkUpType of Hypertext
+ANCHOR     = new MarkUpType of Hypertext
+LABEL      = new MarkUpType of Hypertext
+
+-- Blockquotes
+BLOCKQUOTE = new MarkUpType of HypertextParagraph
+
+-- Code
 CODE       = new MarkUpType of Hypertext
-COMMENT    = new MarkUpType of Hypertext
+PRE        = new MarkUpType of HypertextParagraph
+
+-- Tables
+TABLE      = new MarkUpType of HypertextContainer
+TR         = new MarkUpType of HypertextContainer
+TD         = new MarkUpType of HypertextContainer
+
 CDATA      = new MarkUpType of Hypertext
-LINK       = withOptions_{"href","rel","title","type"} new MarkUpTypeWithOptions of Hypertext
-META       = withOptions_{"name","content","http-equiv"} new MarkUpTypeWithOptions of Hypertext
+COMMENT    = new MarkUpType of Hypertext
 
-DL         = withOptions_{"class"} new MarkUpTypeWithOptions of Hypertext
-DD         = withOptions_{"class"} new MarkUpTypeWithOptions of Hypertext
-DT         = withOptions_{"class"} new MarkUpTypeWithOptions of Hypertext
+TEX        = new MarkUpType of Hypertext -- TEX should be processed further so its output can be checked
 
-STYLE      = withOptions_{"type"} new MarkUpTypeWithOptions of Hypertext
+ExampleItem = new IntermediateMarkUpType of Hypertext
+HREF       = new IntermediateMarkUpType of Hypertext
+LATER      = new IntermediateMarkUpType of Hypertext
+LITERAL    = new IntermediateMarkUpType of Hypertext -- fake!!!!! check later
+MENU       = new IntermediateMarkUpType of HypertextContainer -- e.g. help sum
+TO         = new IntermediateMarkUpType of Hypertext
+TO2        = new IntermediateMarkUpType of Hypertext
+TOH        = new IntermediateMarkUpType of Hypertext
 
-HREF       = withQname_"a" new IntermediateMarkUpType of Hypertext
-new HREF from List := (HREF,x) -> (
+-----------------------------------------------------------------------------
+-- LATER
+-----------------------------------------------------------------------------
+
+toExternalString LATER := x -> toExternalString x#0()
+
+-----------------------------------------------------------------------------
+-- EXAMPLE
+-----------------------------------------------------------------------------
+-- TODO: Move this
+
+makeExampleItem = method()
+makeExampleItem PRE    := identity -- this will allow precomputed example text
+makeExampleItem String := s -> ExampleItem s
+makeExampleItem Thing  := s -> error ("EXAMPLE expected a string or a PRE item, but encountered ", toString s)
+
+trimfront := x -> apply(x, line -> if not instance(line, String) then line else (
+	  s := lines line;
+	  r := if not s#?0 then line else concatenate between(newline, prepend(replace("^[[:space:]]+", "", s#0), drop(s, 1)));
+	  if #r =!= 0 then r))
+
+EXAMPLE = method(Dispatch => Thing)
+EXAMPLE String      := x -> EXAMPLE {x}
+EXAMPLE VisibleList := x -> (
+    x = nonnull trimfront toSequence x;
+    if #x == 0 then error "empty list of examples encountered";
+    TABLE splice {"class" => "examples", apply(x, item -> TR TD makeExampleItem item)})
+
+-----------------------------------------------------------------------------
+-- MarkUpType constructors
+-----------------------------------------------------------------------------
+-- TODO: Move this
+
+new  HR  from List :=
+new  BR  from List := (X, x) -> if 0 < #x then error "expected empty list" else x
+br = BR{}
+hr = HR{}
+
+new TOH  from Thing     :=
+new TO   from Thing     :=
+new TO   from Hypertext := (TO, x) -> new TO from {x}
+-- document tags can be sequences or arrays, so keep them intact
+new TO   from List      := (TO, x) -> if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
+new TO2  from List      :=
+new TO2  from Sequence  := (TO2, x) -> { makeDocumentTag x#0, concatenate drop(toSequence x,1) }
+new TOH  from List      := (TOH, x) -> { makeDocumentTag x#0 }
+new HREF from List      := (HREF, x) -> (
      if #x > 2 or #x == 0 then error "HREF list should have length 1 or 2";
      y := x#0;
-     if not (
-	  instance(y,String) 
-	  or
-	  instance(y,Sequence) and #y===2 and instance(y#0,String) and instance(y#1,String))
-     then error "HREF expected URL to be a string or a pair of strings";
-     x)
+     if not (instance(y,String) or instance(y,Sequence) and #y===2 and instance(y#0,String) and instance(y#1,String))
+     then error "HREF expected URL to be a string or a pair of strings"; x)
 
-ANCHOR     = withOptions_{"id"} withQname_"a" new MarkUpTypeWithOptions of Hypertext
-
-UL         = new MarkUpType of HypertextParagraph
-new UL from VisibleList := (UL,x) -> (
+new OL from VisibleList :=
+new UL from VisibleList := (T, x) -> (
      x = nonnull x;
-     if #x == 0 then error("empty element of type ", format toString UL, " encountered");
+     if #x == 0 then error("empty element of type ", format toString T, " encountered");
      apply(x, e -> (
 	       if class e === TO then LI{TOH{e#0}}
 	       else if class e === LI then e
 	       else LI e)))
-ul = x -> (
-     x = nonnull x;
-     if #x>0 then UL x)
+ul = x -> ( x = nonnull x; if 0 < #x then UL x )
 
-DIV        = withOptions_{"class"} new MarkUpTypeWithOptions of HypertextContainer
-DIV1       = withOptions_{"class"=>"single"} withQname_"div" new MarkUpTypeWithOptions of HypertextContainer -- phase this one out!
+-- the main idea of these comparisons is so sorting will sort by the way things will print:
+TO  ? TO  :=
+TO  ? TOH :=
+TOH ? TO  :=
+TOH ? TOH := (x,y) -> x#0 ? y#0
+TO  ? TO2 :=
+TOH ? TO2 := (x,y) -> x#0 ? y#1
+TO2 ? TO  :=
+TO2 ? TOH := (x,y) -> x#1 ? y#0
+TO2 ? TO2 := (x,y) -> x#1 ? y#1
 
-LABEL      = withOptions_{"title"} new MarkUpTypeWithOptions of Hypertext
+-----------------------------------------------------------------------------
+-- Fixing the qname for non-standard type names
+-----------------------------------------------------------------------------
+ANCHOR.qname  = "a"
+BOLD.qname    = "b"
+ExampleItem.qname = "code"
+HEADER1.qname = "h1"
+HEADER2.qname = "h2"
+HEADER3.qname = "h3"
+HEADER4.qname = "h4"
+HEADER5.qname = "h5"
+HEADER6.qname = "h6"
+HREF.qname    = "a"
+ITALIC.qname  = "i"
+LITERAL.qname = "div"
+MENU.qname    = "div"
+PARA.qname    = "p"
+TEX.qname     = "#PCDATA"
+TO.qname      = "a"
+TO2.qname     = "a"
+TOH.qname     = "span"
 
-TABLE      = withOptions_{"class"} new MarkUpTypeWithOptions of HypertextParagraph
-TR         = new MarkUpType of Hypertext
-TD         = withOptions_{"valign"} new MarkUpTypeWithOptions of HypertextContainer
-ButtonTABLE  = new MarkUpType of HypertextParagraph
+-----------------------------------------------------------------------------
+-- Add acceptable html attributes to the type of an html tag
+-----------------------------------------------------------------------------
+addAttribute := (T, opts) -> (
+    T.Options = new OptionTable from apply(opts, opt ->
+	if class opt === Option then opt else opt => null))
 
-TO2        = withQname_"a" new IntermediateMarkUpType of Hypertext
-new TO2 from Sequence := 
-new TO2 from List := (TO2,x) -> { makeDocumentTag x#0, concatenate drop(toSequence x,1) }
-
-TO         = withQname_"a" new IntermediateMarkUpType of Hypertext
-new TO from List := (TO,x) -> if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
-
-TOH        = withQname_"span" new IntermediateMarkUpType of Hypertext
-new TOH from List := (TOH,x) -> { makeDocumentTag x#0 }
-
-LATER      = new IntermediateMarkUpType of Hypertext
-
-new TO from Hypertext := 
-new TOH from Hypertext := x -> error("TO of mark up list '", toString x, "'")
-
-new TO from Thing := new TOH from Thing := (TO,x) -> new TO from {x} -- document tags can be sequences or arrays, so keep them intact
-
-MENU       = withQname_"div" new IntermediateMarkUpType of HypertextParagraph	            -- like "* Menu:" of "info"
+-- Add html attributes for some types
+addAttribute(ANCHOR, {"id"})
+addAttribute(DD,    {"class"})
+addAttribute(DL,    {"class"})
+addAttribute(DT,    {"class"})
+addAttribute(DIV,   {"class"})
+addAttribute(IMG,   {"src", "alt"})
+addAttribute(LABEL, {"title"})
+addAttribute(LINK,  {"href", "rel", "title", "type"})
+addAttribute(META,  {"name", "content", "http-equiv"})
+addAttribute(SPAN,  {"lang"})
+addAttribute(STYLE, {"type"})
+addAttribute(TABLE, {"class"})
+addAttribute(TD,    {"valign"})
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -1,93 +1,80 @@
---		Copyright 1993-2004 by Daniel R. Grayson
+---             Copyright 1993-2004 by Daniel R. Grayson
+-*
+  The help command returns its output as a Hypertext object.
+  Three steps are necessary in order to generate documentation:
+  - parse Hypertext nodes into subnodes
+  - render subnodes in the appropriate format
+  - join the result
+
+  info and net are parsed and rendered in this file.
+  When possible, write a new core script that performs the steps above.
+  See markup.m2 for the comprehensive list of markup types that inherit from
+  MarkUpType, and therefore need to be rendered.
+*-
 
 -----------------------------------------------------------------------------
--- html output
+-- Common utilities for formatting documentation nodes
 -----------------------------------------------------------------------------
 
-htmlLiteral = s -> if not match("<|&|]]>|\42",s) then s else (
-     s = replace("&","&amp;",s);			    -- do this one first
-     s = replace("<","&lt;",s);
-     s = replace("]]>","]]&gt;",s);
-     s = replace("\42","&quot;",s);  -- note: \42 is "
-     s )
+-- Macro for setting default parsing of type T
+-- When writing a new formatting tool, call setupRenderer to create the default
+-- parsing for Hypertext, then use the examples provided below to test rendering
+-- of individual subtypes.
+setupRenderer = (parser, joiner, T) -> (
+    parser T := node -> joiner apply(node,
+	subnode -> if class subnode =!= Option then parser subnode))
 
------------------------------------------------------------------------------
-texLiteralTable := new MutableHashTable
-    scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, toString c, "}"))
-    scan(characters ascii(32 .. 126), c -> texLiteralTable#c = c)
-    scan(characters "\\{}$&#^_%~|<>", c -> texLiteralTable#c = concatenate("{\\char ", toString (ascii c)#0, "}"))
-    texLiteralTable#"\n" = "\n"
-    texLiteralTable#"\r" = "\r"
-    texLiteralTable#"\t" = "\t"
-    texLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
-				   -- see page 381 of TeX Book
-texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
+-- Default joiners: (TODO: move to string.m2?)
+-- concatenate
+-- horizontalJoin
+wrapHorizontalJoin := x -> wrap horizontalJoin x
 
-HALFLINE := ///\vskip 4.75pt
-///
-ENDLINE := ///\leavevmode\hss\endgraf
-///
-VERBATIM := ///\begingroup\tt\parskip=0pt
-///
-ENDVERBATIM := ///\endgroup{}///
+-- Main types: (see markup.m2)
+-- Hypertext  > HypertextParagraph, HypertextContainer
+-- MarkUpType > IntermediateMarkUpType
 
-texExtraLiteralTable := copy texLiteralTable
-texExtraLiteralTable#" " = "\\ "
-texExtraLiteral := s -> demark(ENDLINE,
-     apply(lines s, l -> apply(characters l, c -> texExtraLiteralTable#c))
-     )
------------------------------------------------------------------------------
--- the default case
-
+-- comment a string
+commentize := s -> if s =!= null then concatenate(" -- ", s)
+-- skip Options; TODO: define parser Option := null instead
 noopts := x -> select(x,e -> class e =!= Option)
+-- so the user can cut paste the menu line to get help!
+* String := x -> help x
 
-scan((
-	  (info,horizontalJoin),
-	  (net,horizontalJoin),
-	  (html,concatenate),
-	  (tex,concatenate),
-	  (texMath,concatenate),
-	  (mathML,concatenate)
-	  ),
-     (op,joiner) -> op Hypertext := x -> joiner apply(noopts x,op))
+-----------------------------------------------------------------------------
+-- Setup uniform rendering
+-----------------------------------------------------------------------------
 
-scan((
-	  (info,horizontalJoin),
-	  (net,horizontalJoin)
-	  ),
-     (op,joiner) -> op HypertextParagraph := x -> wrap joiner apply(noopts x,op))
+-- Rendering TOH and LATER
+scan({net, html, tex}, parser ->
+    parser TOH := node -> parser SPAN nonnull { new TO from toList node, commentize headline node#0 } )
+scan({net, info, html, tex}, parser ->
+    parser LATER := node -> parser node#0() )
 
--- defop := (joiner,op) -> x -> joiner apply(x,op)
--- info Hypertext := defop(horizontalJoin,info)
--- net Hypertext := defop(horizontalJoin,net)
--- html Hypertext := defop(concatenate,html)
--- tex Hypertext := defop(concatenate,tex)
--- texMath Hypertext := defop(concatenate,texMath)
--- mathML Hypertext := defop(concatenate,mathML)
+-- TODO: move somewhere else
+-- Rendering by concatenation of inputs
+scan({mathML, tex, texMath},
+    parser -> setupRenderer(parser, concatenate, Hypertext))
 
-info TITLE := net TITLE := x -> ""
+-- Rendering by horizontal join of inputs
+scan({net, info},
+    parser -> setupRenderer(parser, horizontalJoin, Hypertext))
+scan({net, info},
+    parser -> setupRenderer(parser, wrapHorizontalJoin, HypertextParagraph))
 
-Hop := (op,filler) -> x -> ( 
-     r := horizontalJoin apply(x,op);
-     if width r === 1 then r = horizontalJoin(r," ");
-     r || concatenate( width r : filler ) )
-net  HEADER1 := Hop(net,"*")
-net  HEADER2 := Hop(net,"=")
-net  HEADER3 := Hop(net,"-")
-info HEADER1 := Hop(info,"*")
-info HEADER2 := Hop(info,"=")
-info HEADER3 := Hop(info,"-")
+-----------------------------------------------------------------------------
+-- info and net
+-----------------------------------------------------------------------------
 
-html String := htmlLiteral
-tex String := texLiteral
+net  STYLE :=
+net  TITLE :=
+info TITLE :=
+net  COMMENT :=
+info COMMENT :=
+net  LITERAL :=
+info LITERAL := x -> ""
 
-info String := identity
-
--- html HashTable := x -> html expression x
-
-specials := new HashTable from {
-     symbol ii => "&ii;"
-     }
+info String  := identity
+info Nothing := net
 
 -*
  spacing between lines and paragraphs:
@@ -113,7 +100,7 @@ specials := new HashTable from {
       expand DIV{x}  to BK x BK
       do the expansions above recursively, do the following collapses at top level:
            collapse each sequence of consecutive SPs and BKs to BK "" BK if there is at least one SP in there, else to BK
-      collect things between BKs and wrap them into nets, with empty sequences, 
+      collect things between BKs and wrap them into nets, with empty sequences,
            if we didn't collapse each BK...BK, becoming empty nets of height 0 and depth 0
       discard each BK
       stack all the nets
@@ -128,152 +115,60 @@ specials := new HashTable from {
 BK := local BK
 SP := local SP
 
-scan( ((net,net'), (info,info')), (f,f') -> (
-	  f' = f' <- method(Dispatch => Thing); -- this will return either a f (or string), or a sequence of fs and BKs, for later splicing
-	  f' Option := o -> ();
-	  f' String := identity;
-	  f' BR := br -> ("", BK);
-	  f' Hypertext := f;
-	  f' HypertextParagraph := x -> (SP, {f x}, SP);    -- use { } to indicate wrapping is already done (or not desired)
-	  f' UL := x -> (BK, {f x}, BK);
-	  f' HypertextContainer := x -> (BK, apply(toSequence x, f'), BK);
-     	  f' Thing := x -> error("no hypertext conversion method for: ",toString x," of class ",toString class x);
-	  f HypertextContainer := x -> (
-	       x = deepSplice f' x;
-	       n := 0;
-	       while x#?n and (x#n === SP or x#n === BK) do n = n+1;
-	       x = drop(x,n);
-	       m := -1;
-	       while x#?m and (x#m === SP or x#m === BK) do m = m-1;
-	       x = drop(x,m+1);
-	       x = splice sublists(x, i -> i === BK or i === SP, 
-		    SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
-	       x = splice sublists(x, i -> i =!= BK,
-		    x -> if #x===1 and instance(x#0,List) then horizontalJoin x#0 else wrap horizontalJoin x, 
-		    BK -> ());
-	       stack x);
-	  ))
-     
-tex  BR := x -> ///
-\hfil\break
-///
+-- Define (net, HypertextContainer) and (info, HypertextContainer)
+scan( {(net, net'), (info, info')},
+    (f, f') -> (
+	-- this will return either a f (or string),
+	-- or a sequence of fs and BKs, for later splicing
+	f' = f' <- method(Dispatch => Thing);
+	f' BR := br -> ("", BK);
+	f' Hypertext := f;
+	f' Option := o -> ();
+	f' String := identity;
+	f' Thing := x -> error("no hypertext conversion method for: ", toString x, " of class ", toString class x);
+	f' UL := x -> (BK, {f x}, BK);
+	-- use { } to indicate wrapping is already done (or not desired)
+	f' HypertextParagraph := x -> (SP, {f x}, SP);
+	f' HypertextContainer := x -> (BK, apply(toSequence x, f'), BK);
+	-- Here is where we define the method
+	f HypertextContainer := x -> (
+	    x = deepSplice f' x;
+	    n := 0;
+	    while x#?n and (x#n === SP or x#n === BK) do n = n+1;
+	    x = drop(x,n);
+	    m := -1;
+	    while x#?m and (x#m === SP or x#m === BK) do m = m-1;
+	    x = drop(x,m+1);
+	    x = splice sublists(x, i -> i === BK or i === SP,
+		SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
+	    x = splice sublists(x, i -> i =!= BK,
+		x -> if #x===1 and instance(x#0,List) then horizontalJoin x#0 else wrap horizontalJoin x,
+		BK -> ());
+	    stack x);
+	))
 
-tex  HR := x -> ///
-\hfill\break
-\hbox to\hsize{\leaders\hrule\hfill}
-///
+Hop := (op,filler) -> x -> (
+     r := horizontalJoin apply(x,op);
+     if width r === 1 then r = horizontalJoin(r," ");
+     r || concatenate( width r : filler ) )
+net  HEADER1 := Hop(net, "*")
+net  HEADER2 := Hop(net, "=")
+net  HEADER3 := Hop(net, "-")
+info HEADER1 := Hop(info,"*")
+info HEADER2 := Hop(info,"=")
+info HEADER3 := Hop(info,"-")
 
-tex PARA := x -> concatenate(///
-\par
-///,
-     apply(x,tex))
+net  HR :=
+info HR := x -> concatenate(printWidth:"-")
 
-html ButtonTABLE := x -> concatenate(
-     newline,
-     "<table class=\"buttons\">", newline,
-     apply(x, row -> ( 
-	       "  <tr>", newline,
-	       apply(row, item -> (
-			 "    <td>", html item, newline,
-			 "    </td>", newline
-			 )),
-	       "  </tr>", newline)),
-     "</table>", newline )			 
+net  TT :=
+info TT := x -> concatenate toSequence x   -- should just be strings here
 
-truncWidth := 0
-truncateString := s -> if printWidth == 0 or width s <= printWidth then s else concatenate(substring(s,0,truncWidth-1),"$")
-truncateNet    := n -> if printWidth == 0 or width n <= printWidth then n else stack(apply(unstack n,truncateString))
+net  PRE := x -> net concatenate x
+info PRE := x -> wrap(printWidth, "-", net concatenate x)
 
-tex TABLE := x -> concatenate applyTable(x,tex)
-texMath TABLE := x -> concatenate (
-     ///
-\begin{matrix}
-///,
-     apply(x,
-	  row -> (
-	       apply(row,item -> (texMath item, "&")),
-	       ///\cr
-///
-	       )
-	  ),
-     ///\end{matrix}
-///
-     )
-
-info TABLE := x -> (
-     s := printWidth;
-     if printWidth > 2 then printWidth = printWidth - 2;
-     ret := netList(Boxes=>true, applyTable(toList \ noopts \\ toList x,info));
-     printWidth = s;
-     ret)
-
-net TABLE :=  x -> (
-     (op,ag) := override(options TABLE, toSequence x);
-     save := printWidth;
-     printWidth = printWidth - 2;
-     r := netList(Boxes => op#"class" === "examples", toList \ toList ag);
-     printWidth = save;
-     r)
-
-shorten := s -> (
-     while #s > 0 and s#-1 == "" do s = drop(s,-1);
-     while #s > 0 and s#0 == "" do s = drop(s,1);
-     s)
-
-verbatim := x -> concatenate ( VERBATIM, texExtraLiteral concatenate x, ENDVERBATIM )
-
-maximumCodeWidth = 60					    -- see also booktex.m2, an old file that sets the same variable
-
-tex TT := verbatim
-texMath TT := x -> concatenate apply(x,texMath) -- can't use \begingroup and \parindent in math mode (at least not in mathjax)
-
-tex CODE :=
-tex PRE := x -> concatenate ( VERBATIM,
-     ///\penalty-200
-///,
-     HALFLINE,
-     shorten lines concatenate x
-     / (line ->
-	  if #line <= maximumCodeWidth then line
-	  else concatenate(substring(0,maximumCodeWidth,line), " ..."))
-     / texExtraLiteral
-     / (line -> if line === "" then ///\penalty-170/// else line)
-     / (line -> (line, ENDLINE)),
-     ENDVERBATIM,
-     HALFLINE,
-     ///\penalty-200\par{}
-///
-     )
-
-net TT := info TT := x -> concatenate toSequence x   -- should just be strings here
-texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(x,tex),"}")
-texMath ITALIC := tex ITALIC := x -> concatenate("{\\sl ",apply(x,tex),"}")
-texMath TEX := tex TEX := x -> concatenate toList x
-
-info PRE := x -> wrap(printWidth,"-",net concatenate x)
-net PRE := x -> net concatenate x
-html PRE   := x -> concatenate( 
-     "<pre>", 
-     demark(newline, apply(lines concatenate x, htmlLiteral)),
-     "</pre>\n"
-     )
-
-info CODE := net CODE := x -> stack lines concatenate x
-
--- this is wrong now
--- tex ANCHOR := x -> (
---      concatenate(
--- 	  ///\special{html:<a id="///, texLiteral x#0, ///">}///,
--- 	  tex x#-1,
--- 	  ///\special{html:</a>}///
--- 	  )
---      )
-
-commentize := s -> if s =!= null then concatenate(" -- ",s)
-
-info HR := net HR := x -> concatenate(printWidth:"-")
-
-info Nothing := net
+net  CODE :=
+info CODE := x -> stack lines concatenate x
 
 ULop := op -> x -> (
      s := "  * ";
@@ -282,39 +177,44 @@ ULop := op -> x -> (
      printWidth = printWidth + #s;
      r)
 info UL := ULop info
-net UL := ULop net
-
-* String := x -> help x					    -- so the user can cut paste the menu line to get help!
-
-tex UL := x -> concatenate( ///\begin{itemize}///, newline, apply(x, x -> ( ///\item ///, tex x, newline)), ///\end{itemize}///, newline)
-
-texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
-texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )
+net  UL := ULop net
 
 opSU := (op,n) -> x -> (horizontalJoin apply(x, op))^n
-net SUP := opSU(net,1)
+net  SUP := opSU(net, 1)
 info SUP := opSU(info,1)
-net SUB := opSU(net,-1)
+net  SUB := opSU(net, -1)
 info SUB := opSU(info,-1)
 
-tex TO := x -> tex TT DocumentTag.FormattedKey x#0
+net  IMG :=
+info IMG := x -> (
+     (o,cn) := override(IMG.Options,toSequence x);
+     if o#"alt" === null then error ("IMG item is missing alt attribute");
+     o#"alt")
 
-tex TO2 := x -> (
-     tag := x#0;
-     text := x#1;
-     tex TT text )
+net  HREF :=
+info HREF := x -> (
+     if #x === 1 then x#0
+     else if match ("^mailto:",x#0) then toString x#1
+     -- x#0 is sometimes the relative path to the file, but not from the current directory
+     else toString x#1 | " (see " | x#0 | " )")
 
-net LATER := x -> net x#0()
-info LATER := x -> info x#0()
-html LATER := x -> html x#0()
-toExternalString LATER := x -> toExternalString x#0()
+net TABLE :=  x -> (
+     (op,ag) := override(options TABLE, toSequence x);
+     save := printWidth;
+     printWidth = printWidth - 2;
+     r := netList(Boxes => op#"class" === "examples", toList \ toList ag);
+     printWidth = save;
+     r)
+info TABLE := x -> (
+     s := printWidth;
+     if printWidth > 2 then printWidth = printWidth - 2;
+     ret := netList(Boxes=>true, applyTable(toList \ noopts \\ toList x,info));
+     printWidth = s;
+     ret)
 
-net TO  := x -> (
-     if class x#0 === DocumentTag 
-     then concatenate( "\"", DocumentTag.FormattedKey x#0, "\"", if x#?1 then x#1)
-     else horizontalJoin( "\"", net x#0, "\"", if x#?1 then x#1)
-     )
-net TO2 := x -> x#1
+-----------------------------------------------------------------------------
+-- Handling TO and TO2 and MENU
+-----------------------------------------------------------------------------
 
 -- node names in info files are delimited by commas and parentheses somehow...
 infoLiteral := new MutableHashTable
@@ -368,117 +268,32 @@ info TOH := x -> (
 	  )
      )
 
-info IMG := net IMG := tex IMG  := x -> (
-     (o,cn) := override(IMG.Options,toSequence x);
-     if o#"alt" === null then error ("IMG item is missing alt attribute");
-     o#"alt")
-
-info HREF := net HREF := x -> (
-     if #x === 1
-     then x#0
-     else if match ("^mailto:",x#0)
-     then toString x#1
-     else toString x#1 | " (see " | x#0 | " )"			    -- x#0 is sometimes the relative path to the file, but not from the current directory
+net TO  := x -> (
+     if class x#0 === DocumentTag
+     then concatenate( "\"", DocumentTag.FormattedKey x#0, "\"", if x#?1 then x#1)
+     else horizontalJoin( "\"", net x#0, "\"", if x#?1 then x#1)
      )
+net TO2 := x -> x#1
 
-scan( (net,html,tex), op -> op TOH := x -> op SPAN nonnull { new TO from toList x, commentize headline x#0 } )
-
-info LITERAL := tex LITERAL := net LITERAL := x -> ""
-html LITERAL := x -> concatenate x
-html ITALIC := t -> concatenate("<i>", apply(t,html), "</i>")
-html BOLD := t -> concatenate("<b>", apply(t,html), "</b>")
-
-html Option := x -> error("attempted to convert option '", toString x, "' to html")
-
---     \rm     Roman
---     \sf     sans-serif
---     \tt     typewriter
-
---     \tiny		5
---     \scriptsize	7
---     \footnotesize	8
---     \small		9
---     \normalsize	10
---     \large		12
---     \Large		14
---     \LARGE		18
---     \huge		20
---     \Huge		24
-
-tex HEADER1 := x -> concatenate (
-     ///
-\par\medskip\noindent\begingroup\Large\bf
-///,
-     apply(toList x, tex),
-     ///\endgroup
-\par\smallskip%
-///
-     )
-tex HEADER2 := x -> concatenate (
-     ///
-\par\medskip\noindent\begingroup\Large\bf
-///,
-     apply(toList x, tex),
-     ///\endgroup
-\par\smallskip%
-///
-     )
-tex HEADER3 := x -> concatenate (
-     ///
-\par\medskip\noindent\begingroup\large\bf
-///,
-     apply(toList x, tex),
-     ///\endgroup
-\par\smallskip%
-///
-     )
-tex HEADER4 := x -> concatenate (
-     ///
-\par\medskip\noindent\begingroup\large\bf
-///,
-     apply(toList x, tex),
-     ///\endgroup
-\par\smallskip%
-///
-     )
-tex HEADER5 := x -> concatenate (
-     ///
-\par\medskip\noindent\begingroup\normal\bf
-///,
-     apply(toList x, tex),
-     ///\endgroup
-\par\smallskip%
-///
-     )
-tex HEADER6 := x -> concatenate (
-     ///
-\par\medskip\noindent\begingroup\normal\bf
-///,
-     apply(toList x, tex),
-     ///\endgroup
-\par\smallskip%
-///
-     )
 
 redoMENU := r -> DIV prepend(
      HEADER3 "Menu",
-     nonnull sublists(toList r, 
+     nonnull sublists(toList r,
 	  x -> class x === TO,
 	  v -> if #v != 0 then UL apply(v, i -> (
 		    t := optTO i#0;
 		    if t === null then error("undocumented menu item ",toString i#0);
 		    last t)),
 	  x -> HEADER4 {x}
-	  )
-     )
-net MENU := x -> net redoMENU x
+	  ))
+-- TODO: move this away
 html MENU := x -> html redoMENU x
-
+net  MENU := x -> net  redoMENU x
 info MENU := r -> (
      pre := "* ";
      savePW := printWidth;
      printWidth = 0; -- wrapping a menu item makes it hard for emacs info to follow links
-     ret := sublists(toList r, 
+     ret := sublists(toList r,
 	  x -> class x === TO,
 	  v -> stack apply(v, i -> pre | wrap (
 		    fkey := DocumentTag.FormattedKey i#0;
@@ -492,20 +307,3 @@ info MENU := r -> (
 	  );
      printWidth = savePW;
      stack join({"* Menu:",""}, ret))
-
-html COMMENT := x -> concatenate("<!--",x,"-->")
-html CDATA := x -> concatenate("<![CDATA[",x,"]]>")
-tex COMMENT := x -> newline | concatenate apply(lines concatenate x,line -> "% " | line | newline)
-info COMMENT := net COMMENT := x -> ""
-
--- the main idea of these comparisons is so sorting will sort by the way things will print:
-TO ? TO := TO ? TOH := TOH ? TO := TOH ? TOH := (x,y) -> x#0 ? y#0
-TO2 ? TO2 := (x,y) -> x#1 ? y#1
-TO ? TO2 := TOH ? TO2 := (x,y) -> x#0 ? y#1
-TO2 ? TO := TO2 ? TOH := (x,y) -> x#1 ? y#0
-
-texMath STYLE := tex STYLE := net STYLE := x -> ""
-
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
--- End:
