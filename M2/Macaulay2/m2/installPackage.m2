@@ -131,52 +131,7 @@ htmlFilename DocumentTag := tag -> (
      )
 htmlFilename Thing := x -> htmlFilename makeDocumentTag x
 
-html IMG  := x -> (
-     (o,cn) := override(IMG.Options,toSequence x);
-     if o#"alt" === null then error ("IMG item is missing alt attribute");
-     concatenate("<img src=\"", htmlLiteral toURL o#"src", "\" alt=", format o#"alt", "/>"))
-
-html HREF := x -> (
-     r := html last x;
-     if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
-     concatenate("<a href=\"", htmlLiteral toURL first x, "\">", r, "</a>")
-     )
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
-
-html TO   := x -> (
-     tag := x#0;
-     d := fetchPrimaryRawDocumentation tag;
-     r := htmlLiteral DocumentTag.FormattedKey tag;
-     if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
-     if d#?"undocumented" and d#"undocumented" === true then (
-	  if signalDocError tag then (
-	       stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
-	       warning();
-	       );
-	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ",toString DocumentTag.Key tag," -->)")
-	  )
-     else if d === null					    -- isMissingDoc
-     then (
-	  warning("missing documentation: "|toString tag);
-	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ",toString DocumentTag.Key tag," -->)")
-	  )
-     else concatenate( "<a href=\"", toURL htmlFilename getPrimary tag, "\" title=\"", fixtitle headline tag, "\">", r, "</a>", if x#?1 then x#1))
-html TO2  := x -> (
-     tag := x#0;
-     headline tag;		   -- this is a kludge, just to generate error messages about missing links 
-     d := fetchPrimaryRawDocumentation tag;
-     if d#?"undocumented" and d#"undocumented" === true then (
-	  if signalDocError tag then (
-	       stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
-	       warning();
-	       );
-	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ",DocumentTag.FormattedKey tag," -->)")
-	  )
-     else if d === null					    -- isMissingDoc
-     then (
-	  warning("missing documentation: "|toString tag);
-	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ",DocumentTag.FormattedKey tag," -->)"))
-     else concatenate("<a href=\"", toURL htmlFilename getPrimary tag, "\">", htmlLiteral x#1, "</a>"))
 
 next := tag -> ( if NEXT#?tag then HREF { htmlFilename NEXT#tag, nextButton } else nextButton, " | ")
 prev := tag -> ( if PREV#?tag then HREF { htmlFilename PREV#tag, prevButton } else prevButton, " | ")
