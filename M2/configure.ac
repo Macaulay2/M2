@@ -867,6 +867,7 @@ then BUILTLIBS="-lglpk $BUILTLIBS"
 fi
 
 AC_MSG_CHECKING([whether givaro library is installed])
+AC_SUBST(BUILD_givaro)
 if $PKG_CONFIG --exists givaro
 then AC_MSG_RESULT(yes)
      LIBS="`$PKG_CONFIG --libs givaro` $LIBS"
@@ -1156,7 +1157,7 @@ fi
 # test for fflas_ffpack
 if test $BUILD_fflas_ffpack = no
 then AC_MSG_CHECKING([for fflas_ffpack library, version at least 2])
-     if test $? = 0 && test "`fflas-ffpack-config --decimal-version`" -gt 20000
+     if test "`type -t fflas-ffpack-config`" = "file" && test "`fflas-ffpack-config --decimal-version`" -gt 20000
      then AC_MSG_RESULT(found)
           FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) echo -n "$x " ;; esac done)
 	  AC_MSG_NOTICE([adding fflas_ffpack flags $FFLAS_FFPACK_CXXFLAGS])

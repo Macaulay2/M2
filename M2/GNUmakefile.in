@@ -191,7 +191,13 @@ $(foreach s,@BUILDSUBLIST@,$(eval $(call build-submodule-rules,$s)))
 # installation into usr-dist
 ## It's annoying that fflas_ffpack will copy the files during installation every time.
 all-in-fflas_ffpack: install-in-fflas_ffpack
+
+ifeq (@BUILD_givaro@,yes)
+# fflas_ffpack depends on givaro, so if they both get built, then build givaro first.
+# This is a counterintuitive way to specify a dependence of one submodule on another.
 submodules/fflas_ffpack/Makefile: install-in-givaro
+endif
+
 all-in-Macaulay2:install-licenses
 
 install-licenses:all-in-submodules
