@@ -107,6 +107,7 @@ set_target_properties(${_all_target_list} PROPERTIES EXCLUDE_FROM_ALL OFF)
 # TODO: reduce dependencies, or move Macaulay2Doc and Style to Core
 # See https://github.com/Macaulay2/M2/issues/1085
 set(Macaulay2Doc_dependencies
+  ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/FirstPackage/.installed
   ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Style/.installed)
 set(_default_dependencies
   ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Macaulay2Doc/.installed)
@@ -144,7 +145,7 @@ foreach(package IN LISTS PACKAGES)
   ###############################################################################
   ## Enable USES_TERMINAL only for Macaulay2Doc and EngineTests
   ## Also make all other packages depend on Macaulay2Doc and Style
-  if(package MATCHES "(Style|Macaulay2Doc)" OR package IN_LIST PACKAGES_DEVEL)
+  if(package MATCHES "(Style|FirstPackage|Macaulay2Doc)" OR package IN_LIST PACKAGES_DEVEL)
     set(USES_TERMINAL USES_TERMINAL)
   else()
     unset(USES_TERMINAL)
