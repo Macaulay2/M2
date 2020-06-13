@@ -140,7 +140,7 @@ html IMG  := x -> (
 *-
 
 treatImgSrc := x -> apply(x, y -> if class y === Option and y#0 === "src" then "src" => htmlLiteral toURL y#1 else y)
-html IMG := IMG#html @@ treatImgSrc
+html IMG := (lookup(html,IMG)) @@ treatImgSrc
 
 html HREF := x -> (
      r := html last x;

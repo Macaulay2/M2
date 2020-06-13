@@ -254,7 +254,7 @@ info PRE := x -> wrap(printWidth,"-",net concatenate noopts x)
 net PRE := x -> net concatenate noopts x
 
 splitLines := x -> apply(x, y -> if class y === String then demark(newline,lines y) else y) -- effectively, \r\n -> \n and removes last [\r]\n
-html PRE := PRE#html @@ splitLines
+html PRE := (lookup(html,PRE)) @@ splitLines
 
 info CODE := net CODE := x -> stack lines concatenate noopts x
 
