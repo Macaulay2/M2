@@ -62,9 +62,9 @@ endif()
 
 # Wrap configure and make commands so they find mpir, mpfr, etc.
 if(APPLE)
-  set(SET_LD_LIBRARY_PATH DYLD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
+  set(SET_LD_LIBRARY_PATH DYLD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib:$ENV{DYLD_LIBRARY_PATH})
 elseif(UNIX)
-  set(SET_LD_LIBRARY_PATH   LD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
+  set(SET_LD_LIBRARY_PATH   LD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib:$ENV{LD_LIBRARY_PATH})
 endif()
 
 # Set the shared library path before every configure and make
@@ -574,7 +574,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries givaro mp GIVARO_FOUND)
 # https://linbox-team.github.io/fflas-ffpack/
 # NOTE: fflas_ffpack is just header files, so we don't build it
 # instead we add an extra autotune target for generating fflas-ffpack-thresholds.h
-# TODO: combine with OpenMP when it is present
+# TODO: to make sure AppleClang works with OpenMP see: https://github.com/linbox-team/fflas-ffpack/issues/309
 ExternalProject_Add(build-fflas_ffpack
   GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/.git
   GIT_TAG           HEAD # use the submodule commit to make a new, clean clone
@@ -584,8 +584,8 @@ ExternalProject_Add(build-fflas_ffpack
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      # --enable-openmp
                       # --enable-precompilation # build errors
+                      $<$<BOOL:${WITH_OMP}>:--enable-openmp>
                       $<$<NOT:$<BOOL:${BUILD_NATIVE}>>:--without-archnative>
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -598,6 +598,7 @@ ExternalProject_Add(build-fflas_ffpack
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
                       LIBS=${LA_LIBRARIES}
+                      CBLAS_LIBS=${LA_LIBRARIES} # see macros/mkl-check.m4
   BUILD_COMMAND     true
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-data # only headers and fflas-ffpack.pc
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/fflas_ffpack

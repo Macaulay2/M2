@@ -116,7 +116,7 @@ find_package(Eigen3	3.3.0 PATHS ${M2_HOST_PREFIX})
 find_package(BDWGC	7.6.4)
 find_package(MPFR	4.0.1)
 find_package(NTL       10.5.0)
-find_package(Flint	2.5.3)
+find_package(Flint	2.6.0)
 find_package(Factory	4.1.0)
 # TODO: add minimum version checks
 find_package(Frobby	0.9.0)
@@ -128,8 +128,8 @@ find_package(Mathic	1.0.0)
 find_package(Mathicgb	1.0.0)
 find_package(GLPK      4.59.0)
 
-pkg_search_module(FFLAS_FFPACK	IMPORTED_TARGET	fflas-ffpack>=2.3.2)
-pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.0.3)
+pkg_search_module(FFLAS_FFPACK	IMPORTED_TARGET	fflas-ffpack>=2.4.3)
+pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.1.1)
 # TODO: add FindModules for these two as well
 
 set(LIBRARY_OPTIONS
