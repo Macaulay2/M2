@@ -1,7 +1,8 @@
 DEBIAN_REVISION=
 
 overnight:
-	git pull 
+	git pull
+	git submodule sync
 	git submodule update
 	git submodule foreach git clean -xdfq
 	git branch --contains HEAD
