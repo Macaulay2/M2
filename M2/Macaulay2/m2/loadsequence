@@ -17,7 +17,7 @@ lists.m2
 nets.m2
 robust.m2
 content.m2
-html0.m2
+markup.m2
 validate.m2
 expressions.m2
 peek.m2
@@ -72,9 +72,9 @@ dotdot.m2
 local.m2
 packages.m2
 document.m2
-hypertext.m2
+format.m2
 texhtml.m2
-html.m2
+installPackage.m2
 varieties.m2
 webapp.m2
 jupyter.m2
