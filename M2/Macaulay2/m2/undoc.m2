@@ -51,7 +51,7 @@ undocumented {
     (html, HR),
     (html, LATER),
     (html, PARA),
-    (html, DIV1),
+--    (html, DIV1),
     (html, TABLE),
     (html, PRE),
     (html, TITLE),
