@@ -61,13 +61,15 @@ html HTML := x -> demark(newline, {
     	popIndentLevel(pushIndentLevel 1, apply(x, html)),
 	///</html>///})
 
-html IMG  := x -> (
-     (o, cn) := override(IMG.Options, toSequence x);
-     if o#"alt" === null then error ("IMG item is missing alt attribute");
-     concatenate("<img src=\"", htmlLiteral toURL o#"src", "\" alt=", format o#"alt", "/>"))
+treatImgSrc := x -> apply(x, y -> if class y === Option and y#0 === "src" then "src" => htmlLiteral toURL y#1 else y)
+html IMG := (lookup(html, IMG)) @@ treatImgSrc
 
-html PRE := x -> concatenate(indentLevel+1:"  ", "<pre>",
-    demark(newline, apply(lines concatenate x, htmlLiteral)), "</pre>\n")
+--html PRE := x -> concatenate(indentLevel+1:"  ", "<pre>",
+--    demark(newline, apply(lines concatenate x, htmlLiteral)), "</pre>\n")
+
+-- TODO: fix indent levels
+splitLines := x -> apply(x, y -> if class y === String then demark(newline, apply(lines y, htmlLiteral)) else y) -- effectively, \r\n -> \n and removes last [\r]\n
+html PRE := (lookup(html, PRE)) @@ splitLines
 
 html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
 html COMMENT := x -> concatenate("<!--",x,"-->")
@@ -117,3 +119,6 @@ html TO2  := x -> (
 	  warning("missing documentation: "|toString tag);
 	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ",DocumentTag.FormattedKey tag," -->)"))
      else concatenate("<a href=\"", toURL htmlFilename getPrimary tag, "\">", htmlLiteral x#1, "</a>"))
+
+html VerticalList         := x -> html UL apply(x, html)
+html NumberedVerticalList := x -> html OL apply(x, html)

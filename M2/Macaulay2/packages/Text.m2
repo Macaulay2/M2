@@ -8,9 +8,11 @@ newPackage("Text",
 exportFrom_Core {
      "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
      "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "IMG", "ITALIC",
-     "LABEL", "LATER", "LI", "LINK", "LITERAL", "MENU", "META", "PARA", "PRE", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD",
-     "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "validate",
-     "MarkUpType", "IntermediateMarkUpType" }
+     "LABEL", "LATER", "LI", "LINK", "LITERAL", "MENU", "META", "PARA", "PRE", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD", "TH",
+     "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "OL", "validate",
+     "MarkUpType", "IntermediateMarkUpType",
+     "style"
+     }
 
 beginDocumentation()
 
@@ -44,26 +46,16 @@ document {
      PARA "Intended for internal use only."
      }
 document {
-     Key => {MarkUpType,
-	  (symbol SPACE, MarkUpType, String),
-	  (symbol SPACE, MarkUpType, Net),
-	  (symbol SPACE, MarkUpType, Hypertext)},
-     Headline => "the class of markup types used with hypertext",
-     "Some markup types also allow attributes in their html tags.",
-     EXAMPLE { ///
-	 DIV ( "class" => "waystouse",
-	     SUBSECTION {"Ways to use ", TT "resolution", ":"},
-	     "There are many ways to use ", TO "resolution", ".") ///,
+     Key => MarkUpType,
+     Headline => "the class of mark-up types used with hypertext", 
+     "Some mark-up types allow options (attributes) to be inserted in their html tags.",
+     EXAMPLE {
+	 ///DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT "resolution", ":"},
+	     "There are many ways to use ", TO "resolution", "."
+	     )///,
 	 "html oo"
          }
      }
-
---document {
---     Key => PARA,
---     Headline => "paragraph separator",
---	Usage => "PARA x",
---     TT "PARA x", " makes a ", TO "hypertext", " double-spaced paragraph break."
---     }
 
 document {
      Key => DIV,
@@ -663,6 +655,8 @@ document { Key => TR,
      Headline => "hypertext TR element" }
 document { Key => TD,
      Headline => "hypertext TD element" }
+document { Key => TH,
+     Headline => "hypertext TH element" }
 document { Key => DL,
      Headline => "hypertext DL element" }
 document { Key => DT,
@@ -694,6 +688,24 @@ document {
      PRE "UL {\"first\",\"second\",\"third\"}",
      "produces",
      UL {"first","second","third"},
+     PARA{},
+     SeeAlso => "hypertext"
+     }
+
+document {
+     Key => OL,
+     Headline => "hypertext OL item",
+	Usage => "OL x",
+	Inputs => {"x" => {}},
+	Outputs => {OL => {}},
+     TT "OL x", " encloses the list x as a hypertext OL itemized list.",
+     PARA{},
+     "The argument ", TT "x", " should be a list of strings or hypertext items.",
+     PARA{},
+     "Here is an example. The expression ",
+     PRE "OL {\"first\",\"second\",\"third\"}",
+     "produces",
+     OL {"first","second","third"},
      PARA{},
      SeeAlso => "hypertext"
      }

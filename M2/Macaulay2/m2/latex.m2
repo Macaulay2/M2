@@ -3,6 +3,9 @@
 -- tex, and texMath output
 -----------------------------------------------------------------------------
 
+-- TODO: remove as duplicate
+noopts := x -> select(x,e -> class e =!= Option)
+
 texLiteralTable := new MutableHashTable
 scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, toString c, "}"))
 scan(characters ascii(32 .. 126), c -> texLiteralTable#c = c)
@@ -40,22 +43,22 @@ texExtraLiteral := s -> demark(ENDLINE, apply(lines s, l -> apply(characters l, 
 
 tex HEADER1 := x -> concatenate (
     "\n\\par\\medskip\\noindent\\begingroup\\Large\\bf\n",
-    apply(toList x, tex), "\\endgroup\n\\par\\smallskip%\n")
+    apply(toList noopts x, tex), "\\endgroup\n\\par\\smallskip%\n")
 tex HEADER2 := x -> concatenate (
     "\n\\par\\medskip\\noindent\\begingroup\\Large\\bf\n",
-    apply(toList x, tex), "\\endgroup\n\\par\\smallskip%\n")
+    apply(toList noopts x, tex), "\\endgroup\n\\par\\smallskip%\n")
 tex HEADER3 := x -> concatenate (
     "\n\\par\\medskip\\noindent\\begingroup\\large\\bf\n",
-    apply(toList x, tex), "\\endgroup\n\\par\\smallskip%\n")
+    apply(toList noopts x, tex), "\\endgroup\n\\par\\smallskip%\n")
 tex HEADER4 := x -> concatenate (
     "\n\\par\\medskip\\noindent\\begingroup\\large\\bf\n",
-    apply(toList x, tex), "\\endgroup\n\\par\\smallskip%\n")
+    apply(toList noopts x, tex), "\\endgroup\n\\par\\smallskip%\n")
 tex HEADER5 := x -> concatenate (
     "\n\\par\\medskip\\noindent\\begingroup\\normal\\bf\n",
-    apply(toList x, tex), "\\endgroup\n\\par\\smallskip%\n")
+    apply(toList noopts x, tex), "\\endgroup\n\\par\\smallskip%\n")
 tex HEADER6 := x -> concatenate (
     "\n\\par\\medskip\\noindent\\begingroup\\normal\\bf\n",
-    apply(toList x, tex), "\\endgroup\n\\par\\smallskip%\n")
+    apply(toList noopts x, tex), "\\endgroup\n\\par\\smallskip%\n")
 
 tex String := texLiteral
 
@@ -98,12 +101,12 @@ tex CODE := x -> concatenate ( VERBATIM, "\n\\penalty-200\n", HALFLINE,
      / (line -> (line, ENDLINE)),
      ENDVERBATIM, HALFLINE, "\\penalty-200\\par{}\n")
 
-texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(x,tex),"}")
-texMath ITALIC := tex ITALIC := x -> concatenate("{\\sl ",apply(x,tex),"}")
+texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(noopts x,tex),"}")
+texMath ITALIC := tex ITALIC := x -> concatenate("{\\sl ",apply(noopts x,tex),"}")
 texMath TEX := tex TEX := x -> concatenate toList x
 
-texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
-texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )
+texMath SUP := x -> concatenate( "^{", apply(noopts x, tex), "}" )
+texMath SUB := x -> concatenate( "_{", apply(noopts x, tex), "}" )
 
 texMath STYLE :=
 tex     STYLE := x -> ""

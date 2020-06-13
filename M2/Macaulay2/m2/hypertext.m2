@@ -49,8 +49,7 @@ IntermediateMarkUpType.synonym = "intermediate markup type"
 
 MarkUpType.GlobalAssignHook = (X, x) -> (
     if not x.?qname then x.qname = toLower toString X;
-    if not hasAttribute(x, ReverseDictionary) then (
-	setAttribute(x, ReverseDictionary, X)))
+    if not hasAttribute(x, ReverseDictionary) then setAttribute(x, ReverseDictionary, X))
 
 IntermediateMarkUpType.GlobalAssignHook = globalAssignFunction
 
@@ -117,6 +116,7 @@ PRE        = new MarkUpType of HypertextParagraph
 TABLE      = new MarkUpType of HypertextContainer
 TR         = new MarkUpType of HypertextContainer
 TD         = new MarkUpType of HypertextContainer
+TH         = new MarkUpType of TD
 
 CDATA      = new MarkUpType of Hypertext
 COMMENT    = new MarkUpType of Hypertext
@@ -193,6 +193,14 @@ new UL from VisibleList := (T, x) -> (
 	       else LI e)))
 ul = x -> ( x = nonnull x; if 0 < #x then UL x )
 
+-- Written by P. Zinn-Justin
+new TABLE from VisibleList := (T,x) -> (
+    apply(nonnull x, e -> (
+           if instance(e, TR) or instance(e, Option) then e else TR e)))
+new TR from VisibleList := (T,x) -> (
+    apply(nonnull x, e -> (
+           if instance(e, TD) or instance(e, Option) then e else TD e)))
+
 -- the main idea of these comparisons is so sorting will sort by the way things will print:
 TO  ? TO  :=
 TO  ? TOH :=
@@ -233,20 +241,64 @@ addAttribute := (T, opts) -> (
     T.Options = new OptionTable from apply(opts, opt ->
 	if class opt === Option then opt else opt => null))
 
--- Add html attributes for some types
-addAttribute(ANCHOR, {"id"})
-addAttribute(DD,    {"class"})
-addAttribute(DL,    {"class"})
-addAttribute(DT,    {"class"})
-addAttribute(DIV,   {"class"})
-addAttribute(IMG,   {"src", "alt"})
-addAttribute(LABEL, {"title"})
-addAttribute(LINK,  {"href", "rel", "title", "type"})
-addAttribute(META,  {"name", "content", "http-equiv"})
-addAttribute(SPAN,  {"lang"})
-addAttribute(STYLE, {"type"})
-addAttribute(TABLE, {"class"})
-addAttribute(TD,    {"valign"})
+-- html global attributes
+htmlGlobalAttr := {
+    "accesskey",
+    "class",
+    "contenteditable",
+    --  "data-*", -- at the moment can't handle this
+    "dir",
+    "draggable",
+    "dropzone",
+    "hidden",
+    "id",
+    "lang",
+    "spellcheck",
+    "style",
+    "tabindex",
+    "title",
+    "translate"
+    }
+
+scan({HTML, HEAD, TITLE, BODY}, T -> addAttribute(T, htmlGlobalAttr))
+addAttribute(META,  htmlGlobalAttr | {"name", "content", "http-equiv"})
+addAttribute(LINK,  htmlGlobalAttr | {"href", "rel", "title", "type"})
+addAttribute(STYLE, htmlGlobalAttr | {"type"})
+
+-- html global and event attributes
+htmlAttr := htmlGlobalAttr | {
+    "onafterprint","onbeforeprint","onbeforeunload","onerror","onhashchange",
+    "onload","onmessage","onoffline","ononline","onpagehide","onpageshow",
+    "onpopstate","onresize","onstorage","onunload","onblur","onchange",
+    "oncontextmenu","onfocusscript","oninputscript","oninvalid","onresetscript",
+    "onsearch","onselect","onsubmit","onkeydown","onkeypress","onkeyup",
+    "onclick","ondblclick","onmousedown","onmousemove","onmouseout",
+    "onmouseover","onmouseup","onmousewheel","onwheel","ondrag","ondragend",
+    "ondragenter","ondragleave","ondragover","ondragstart","ondrop","onscroll",
+    "ontoggle"
+    }
+
+scan({BR, HR, PARA, PRE, HEADER1, HEADER2, HEADER3, HEADER4, HEADER5, HEADER6,
+	BLOCKQUOTE, EM, ITALIC, SMALL, BOLD, STRONG, SUB, SUP, SPAN, TT, LI, CODE,
+	DL, DT, DD, OL, UL, DIV, TABLE, TR}, T -> addAttribute(T, htmlAttr))
+addAttribute(LABEL,  htmlAttr | {"for", "from"})
+addAttribute(ANCHOR, htmlAttr | {"href", "rel", "target", "type"})
+addAttribute(TD,     htmlAttr | {"colspan", "headers", "rowspan"})
+addAttribute(TH,     htmlAttr | {"colspan", "headers", "rowspan"})
+addAttribute(IMG,    htmlAttr | {"alt", "src", "srcset", "width", "height",
+	"sizes", "crossorigin", "longdesc", "referrerpolicy", "ismap", "usemap"})
+
+
+-- Written by P. Zinn-Justin
+style = method(Options => true)
+style Hypertext := true >> o -> x -> style(x, pairs o)
+style(Hypertext, VisibleList) := true >> o -> (x, s) -> ( -- here s is a pair of key/values
+    str := concatenate apply(s, e -> if class e#0 === String then e#0|":"|toString e#1|";");
+    if str === "" then return x;
+    i := position(toList x, y -> class y === Option and y#0 === "style");
+    if i===null then append(x,"style"=>str) else
+    new class x from replace(i,"style"=>x#i#1|(if #x#i#1>0 and last x#i#1 =!= ";" then ";" else "")|str,toList x)
+    )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

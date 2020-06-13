@@ -26,8 +26,9 @@ validate2 HEAD := x -> (
      -- if c_BASE > 1 then oops stderr << "--warning: HEAD should have at most one BASE element" << endl;
      )
 validate2 DL :=
-validate2 TR := 
-validate2 UL := 
+validate2 TR :=
+validate2 UL :=
+validate2 OL :=
 validate2 BLOCKQUOTE := x -> if #x === 0 then oops stderr << "--warning: " << class x << " should contain at least one element" << endl
 validate2 LATER := x -> validate2 x#0()
 

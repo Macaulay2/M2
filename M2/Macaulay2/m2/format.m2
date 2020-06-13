@@ -148,7 +148,7 @@ scan( {(net, net'), (info, info')},
 	))
 
 Hop := (op,filler) -> x -> (
-     r := horizontalJoin apply(x,op);
+     r := horizontalJoin apply(noopts x,op);
      if width r === 1 then r = horizontalJoin(r," ");
      r || concatenate( width r : filler ) )
 net  HEADER1 := Hop(net, "*")
@@ -162,24 +162,34 @@ net  HR :=
 info HR := x -> concatenate(printWidth:"-")
 
 net  TT :=
-info TT := x -> concatenate toSequence x   -- should just be strings here
+info TT := x -> concatenate toSequence noopts x   -- should just be strings here
 
 net  PRE := x -> net concatenate x
-info PRE := x -> wrap(printWidth, "-", net concatenate x)
+info PRE := x -> wrap(printWidth, "-", net concatenate noopts x)
 
 net  CODE :=
-info CODE := x -> stack lines concatenate x
+info CODE := x -> stack lines concatenate noopts x
 
 ULop := op -> x -> (
      s := "  * ";
      printWidth = printWidth - #s;
-     r := stack apply(toList x, i -> s | op i);
+     r := stack apply(toList noopts x, i -> s | op i);
      printWidth = printWidth + #s;
      r)
 info UL := ULop info
 net  UL := ULop net
 
-opSU := (op,n) -> x -> (horizontalJoin apply(x, op))^n
+OLop := op -> x -> (
+     s := "000. ";
+     printWidth = printWidth - #s;
+     x = toList noopts x;
+     r := stack apply(#x, i -> pad(3,toString (i+1)) | ". " | op x#i); -- html starts counting from 1!
+     printWidth = printWidth + #s;
+     r)
+info OL := OLop info
+net  OL := OLop net
+
+opSU := (op,n) -> x -> (horizontalJoin apply(noopts x, op))^n
 net  SUP := opSU(net, 1)
 info SUP := opSU(info,1)
 net  SUB := opSU(net, -1)
