@@ -564,6 +564,7 @@ codeHelper#(functionBody (stashValue null) null) = g -> {
 -- hypertext conversion
 
 html = method(Dispatch => Thing, TypicalValue => String)
+markdown = method(Dispatch => Thing, TypicalValue => String)
 tex = method(Dispatch => Thing, TypicalValue => String)
 texMath = method(Dispatch => Thing, TypicalValue => String)
 htmlWithTex = method(Dispatch => Thing, TypicalValue => String)

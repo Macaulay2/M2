@@ -8,7 +8,7 @@
 
   info and net are parsed and rendered in this file.
   When possible, write a new core script that performs the steps above.
-  See markup.m2 for the comprehensive list of markup types that inherit from
+  See hypertext.m2 for the comprehensive list of markup types that inherit from
   MarkUpType, and therefore need to be rendered.
 *-
 
@@ -29,7 +29,7 @@ setupRenderer = (parser, joiner, T) -> (
 -- horizontalJoin
 wrapHorizontalJoin := x -> wrap horizontalJoin x
 
--- Main types: (see markup.m2)
+-- Main types: (see hypertext.m2)
 -- Hypertext  > HypertextParagraph, HypertextContainer
 -- MarkUpType > IntermediateMarkUpType
 
@@ -45,9 +45,9 @@ noopts := x -> select(x,e -> class e =!= Option)
 -----------------------------------------------------------------------------
 
 -- Rendering TOH and LATER
-scan({net, html, tex}, parser ->
+scan({net, html, markdown, tex}, parser ->
     parser TOH := node -> parser SPAN nonnull { new TO from toList node, commentize headline node#0 } )
-scan({net, info, html, tex}, parser ->
+scan({net, info, html, markdown, tex}, parser ->
     parser LATER := node -> parser node#0() )
 
 -- TODO: move somewhere else

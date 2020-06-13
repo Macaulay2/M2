@@ -255,8 +255,6 @@ undocumented {
      (NewFromMethod, MarkUpType, Sequence),
      (NewFromMethod, Module, Sequence),
      (NewFromMethod, TO2, Sequence),
-     (NewFromMethod, TO, Hypertext),
-     (NewFromMethod, TOH, Hypertext),
      (NewFromMethod, MarkUpType, Thing),
      (NewFromMethod, Matrix, MutableMatrix),
      (NewFromMethod, Matrix, Vector),

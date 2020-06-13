@@ -1,5 +1,5 @@
 --  Copyright 1993-2003 by Daniel R. Grayson
--- html0.m2 -> markup.m2
+-- html0.m2 -> hypertext.m2
 
 -----------------------------------------------------------------------------
 -- Hypertext type declarations
@@ -170,9 +170,8 @@ new  BR  from List := (X, x) -> if 0 < #x then error "expected empty list" else 
 br = BR{}
 hr = HR{}
 
-new TOH  from Thing     :=
 new TO   from Thing     :=
-new TO   from Hypertext := (TO, x) -> new TO from {x}
+new TOH  from Thing     := (TO, x) -> new TO from {x}
 -- document tags can be sequences or arrays, so keep them intact
 new TO   from List      := (TO, x) -> if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 new TO2  from List      :=
