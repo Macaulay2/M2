@@ -45,7 +45,7 @@ undocumented {
     (html, Nothing),
     (html, LATER),
     (html, PRE),
---    (html, IMG),
+    (html, IMG),
     (html, HTML),
     (html, Sum),
     (html, LITERAL),

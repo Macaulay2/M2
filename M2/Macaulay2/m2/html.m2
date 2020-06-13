@@ -39,10 +39,10 @@ html Hypertext := x -> (
     (head, prefix, suffix, tail) := (
 	if instance(x, HypertextContainer) then (concatenate(indentLevel:"  "), newline, concatenate(indentLevel:"  "), newline) else
 	if instance(x, HypertextParagraph) then (concatenate(indentLevel:"  "), "", "", newline) else ("","","",""));
-    if #cont == 0
-    then concatenate(head, "<", qname, attr, "/>", tail)
-    else concatenate(head, "<", qname, attr, ">", prefix,
-	popIndentLevel(1, apply(cont, html)), suffix, "</", qname, ">", tail))
+    popIndentLevel(1, if #cont == 0
+	then concatenate(head, "<", qname, attr, "/>", tail)
+	else concatenate(head, "<", qname, attr, ">", prefix,
+	    apply(cont, html), suffix, "</", qname, ">", tail)))
 
 -----------------------------------------------------------------------------
 -- Exceptional (html, MarkUpType) methods
@@ -64,11 +64,7 @@ html HTML := x -> demark(newline, {
 treatImgSrc := x -> apply(x, y -> if class y === Option and y#0 === "src" then "src" => htmlLiteral toURL y#1 else y)
 html IMG := (lookup(html, IMG)) @@ treatImgSrc
 
---html PRE := x -> concatenate(indentLevel+1:"  ", "<pre>",
---    demark(newline, apply(lines concatenate x, htmlLiteral)), "</pre>\n")
-
--- TODO: fix indent levels
-splitLines := x -> apply(x, y -> if class y === String then demark(newline, apply(lines y, htmlLiteral)) else y) -- effectively, \r\n -> \n and removes last [\r]\n
+splitLines := x -> apply(x, y -> if class y === String then demark(newline, lines y) else y) -- effectively, \r\n -> \n and removes last [\r]\n
 html PRE := (lookup(html, PRE)) @@ splitLines
 
 html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
