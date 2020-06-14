@@ -501,8 +501,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
-     rundir := toString temporaryFilenameCounter | "-rundir/";
-     temporaryFilenameCounter = temporaryFilenameCounter + 1;
+     rundir := temporaryFileName() | "-rundir/";
      makeDirectory rundir;
      -* The bits in the binary representation of argmode determine arguments to add.
         If the 64th bit is set, argumentMode modifies the defaultMode rather than overriding them. *-

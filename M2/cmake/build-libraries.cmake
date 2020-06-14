@@ -62,9 +62,9 @@ endif()
 
 # Wrap configure and make commands so they find mpir, mpfr, etc.
 if(APPLE)
-  set(SET_LD_LIBRARY_PATH DYLD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
+  set(SET_LD_LIBRARY_PATH DYLD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib:$ENV{DYLD_LIBRARY_PATH})
 elseif(UNIX)
-  set(SET_LD_LIBRARY_PATH   LD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib)
+  set(SET_LD_LIBRARY_PATH   LD_LIBRARY_PATH=${M2_HOST_PREFIX}/lib:$ENV{LD_LIBRARY_PATH})
 endif()
 
 # Set the shared library path before every configure and make
@@ -535,10 +535,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpsolve "mp;mpfr" MPSOLVE_FOUND)
 # https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
 # TODO: get out-of-tree build working: https://github.com/linbox-team/givaro/issues/154
 # Currently we make a clone from a local submodule
-if(NOT BUILD_NATIVE)
-  set(givaro_SIMD sse sse2 sse3 ssse3 sse4.1 sse4.2avx avx avx2 fma fma4)
-  list(TRANSFORM givaro_SIMD PREPEND "--disable-")
-endif()
 set(givaro_LICENSEFILES COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt)
 ExternalProject_Add(build-givaro
   GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/givaro/.git
@@ -551,7 +547,7 @@ ExternalProject_Add(build-givaro
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
-                      ${givaro_SIMD}
+                      $<$<NOT:$<BOOL:${BUILD_NATIVE}>>:--without-archnative>
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -578,7 +574,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries givaro mp GIVARO_FOUND)
 # https://linbox-team.github.io/fflas-ffpack/
 # NOTE: fflas_ffpack is just header files, so we don't build it
 # instead we add an extra autotune target for generating fflas-ffpack-thresholds.h
-# TODO: combine with OpenMP when it is present
+# TODO: to make sure AppleClang works with OpenMP see: https://github.com/linbox-team/fflas-ffpack/issues/309
 ExternalProject_Add(build-fflas_ffpack
   GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/.git
   GIT_TAG           HEAD # use the submodule commit to make a new, clean clone
@@ -588,8 +584,9 @@ ExternalProject_Add(build-fflas_ffpack
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      # --enable-openmp
                       # --enable-precompilation # build errors
+                      $<$<BOOL:${WITH_OMP}>:--enable-openmp>
+                      $<$<NOT:$<BOOL:${BUILD_NATIVE}>>:--without-archnative>
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -601,6 +598,7 @@ ExternalProject_Add(build-fflas_ffpack
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
                       LIBS=${LA_LIBRARIES}
+                      CBLAS_LIBS=${LA_LIBRARIES} # see macros/mkl-check.m4
   BUILD_COMMAND     true
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-data # only headers and fflas-ffpack.pc
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/fflas_ffpack
@@ -867,7 +865,7 @@ ExternalProject_Add(build-lrslib
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/lrslib
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/lrslib
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${M2_INSTALL_PROGRAMSDIR}/
-  TEST_COMMAND      ${CMAKE_COMMAND} -E echo "Warning: No tests available for cohomCalg"
+  TEST_COMMAND      ${CMAKE_COMMAND} -E echo "Warning: No tests available for lrslib"
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
