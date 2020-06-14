@@ -32,7 +32,6 @@ MarkUpType.synonym = "markup type"
 options MarkUpType := X -> if X.?Options then X.Options else new OptionTable from {}
 
 new Hypertext from VisibleList := (M,x) -> x
-new Hypertext from String :=
 new Hypertext from Thing  := (M,x) -> {x}
 new Hypertext from Net    := (M,x) -> {toString x}
 
