@@ -1,4 +1,5 @@
 --  Copyright 1993-2003 by Daniel R. Grayson
+-- Revamped by P. Zinn-Justin and Mahrud Sayrafi 2020
 -- html0.m2 -> hypertext.m2
 
 -----------------------------------------------------------------------------
@@ -28,14 +29,12 @@ toExternalString Hypertext := s -> concatenate(toString class s, toExternalStrin
 MarkUpType = new Type of SelfInitializingType
 MarkUpType.synonym = "markup type"
 
-new MarkUpType from Thing := (M,x) -> new M from {x}
-new MarkUpType from List := (M,x) -> new M from x
-new MarkUpType from Sequence := (M,x) -> new M from toList x
-options MarkUpType := X -> X.Options
+options MarkUpType := X -> if X.?Options then X.Options else new OptionTable from {}
 
-MarkUpType Net := (M,x) -> new M from {toString x}
-MarkUpType String :=
-MarkUpType Hypertext := (M,x) -> new M from {x}
+new Hypertext from VisibleList := (M,x) -> x
+new Hypertext from String :=
+new Hypertext from Thing  := (M,x) -> {x}
+new Hypertext from Net    := (M,x) -> {toString x}
 
 -- e.g. a MENU, which does not correspond to an html entity.
 -- It does not have a qname, nor a default method for producing html,
