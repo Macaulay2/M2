@@ -1407,8 +1407,13 @@ AC_PREPROC_IFELSE(
 	#include <libxml2/libxml/xmlexports.h>
 	]])],
    [ LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `
-     AC_MSG_NOTICE(libxml found in libxml2: will search for include files also in $LIBXML_LOCATION)
-     CPPFLAGS="-isystem $LIBXML_LOCATION $CPPFLAGS"
+     if test -z "$LIBXML_LOCATION"
+     then AC_MSG_WARN([failed to extract path to libxml from preprocessor output:])
+     	  sed 's/^/| /' <conftest.i
+	  AC_MSG_ERROR([quitting])
+     else AC_MSG_NOTICE(libxml found in libxml2: will search for include files also in $LIBXML_LOCATION)
+          CPPFLAGS="-isystem '$LIBXML_LOCATION' $CPPFLAGS"
+     fi
      ]
    )
 
