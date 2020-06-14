@@ -12,12 +12,11 @@ on:
   # trigger a test quick build at both PR (on dev)
   # and pushing to master (after merging or by Dan or Mike)
   push:
-    branch:
+    branches:
       - master
-      - feature/actions
   pull_request:
-    branch:
-      - developement
+    branches:
+      - development
   schedule:
     # cron time in UTC; set to 6a EDT
     - cron: '0 10 * * *'
