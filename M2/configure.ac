@@ -1398,26 +1398,26 @@ then XML_INCLUDE=`pkg-config --cflags-only-I libxml-2.0 | sed -e 's=^-I/=-isyste
      AC_MSG_NOTICE(pkg-config: will search for include files also in $XML_INCLUDE)
      CPPFLAGS="$XML_INCLUDE $CPPFLAGS"
 fi
-AC_CHECK_HEADERS(libxml2/libxml/xmlexports.h)
-dnl now improve the situation:
-dnl ac_cv_header_
-AC_LANG(C)
-AC_PREPROC_IFELSE(
-   [AC_LANG_SOURCE([[
-	#include <libxml2/libxml/xmlexports.h>
-	]])],
-   [ LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `
-     if test -z "$LIBXML_LOCATION"
-     then AC_MSG_WARN([failed to extract path to libxml from preprocessor output:])
-     	  sed 's/^/| /' <conftest.i
-	  AC_MSG_ERROR([quitting])
-     else AC_MSG_NOTICE(libxml found in libxml2: will search for include files also in $LIBXML_LOCATION)
-          CPPFLAGS="-isystem '$LIBXML_LOCATION' $CPPFLAGS"
-     fi
-     ]
-   )
 
-AC_CHECK_HEADERS(libxml/xmlexports.h libxml/parser.h)
+AC_CHECK_HEADER(libxml/xmlexports.h,,
+     dnl if it's not found, it might be here:
+     AC_CHECK_HEADERS(libxml2/libxml/xmlexports.h)
+     AC_LANG(C)
+     AC_PREPROC_IFELSE(
+	[AC_LANG_SOURCE([[
+	     #include <libxml2/libxml/xmlexports.h>
+	     ]])],
+	[ LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `
+	  if test -z "$LIBXML_LOCATION"
+	  then AC_MSG_WARN([failed to extract path to libxml from preprocessor output:])
+	       dnl perhaps this happens when libxml2 is a symbolic link and the preprocessor unpacks it
+	       sed 's/^/| /' <conftest.i
+	  else AC_MSG_NOTICE(libxml found in libxml2: will search for include files also in $LIBXML_LOCATION)
+	       CPPFLAGS="-isystem '$LIBXML_LOCATION' $CPPFLAGS"
+	  fi
+	  ]
+	))
+AC_CHECK_HEADERS(libxml/xmlexports.h libxml/parser.h) dnl these might be found only after the improvement above
 
 AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
 AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))
