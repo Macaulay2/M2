@@ -32,6 +32,10 @@ find_program(ETAGS NAMES etags)
 #   GDBM	libgdbm-dev	gdbm-devel	gdbm
 #   libatomic_ops libatomic_ops-dev libatomic_ops-devel libatomic_ops
 
+# Set this variable to specify the linear algebra library.
+# See `cmake --help-module FindLAPACK` for the list of options
+#set(BLA_VENDOR OpenBLAS)
+
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
