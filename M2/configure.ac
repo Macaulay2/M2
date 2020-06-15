@@ -900,14 +900,22 @@ fi
 
 dnl factory needs to know:
 AC_SUBST(BUILD_flint)
-dnl  We always build flint, until flint comes out with a release whose version number we can check for.
-dnl  (Now we use flint for factoring integers, and only a recent development version does that well.)
-BUILD_flint=yes
-BUILD_ALWAYS="$BUILD_ALWAYS flint"
-dnl 
 if test $BUILD_flint = no
 then AC_LANG(C)
-     AC_CHECK_HEADER(flint/flint.h,LIBS="-lflint -lgmp $LIBS",BUILD_flint=yes)
+     AC_MSG_CHECKING([for flint >= 2.6.0])
+     AC_COMPILE_IFELSE(
+        [AC_LANG_PROGRAM(
+	  [#include <flint/flint.h>
+	  ],
+	  [
+#if __FLINT_VERSION < 2 || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR < 6)
+#error old flint
+#endif
+	  ])],
+	  AC_MSG_RESULT([yes])
+	  LIBS="-lflint -lgmp $LIBS",
+	  AC_MSG_RESULT([no])
+	  BUILD_flint=yes)
 fi
 if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
