@@ -296,6 +296,8 @@ if firstTime then (
 		    replaceStrings("^\\$\\{(pre_)?prefix\\}","common",	    -- as in configure.ac
 			 replaceStrings("^\\$\\{(pre_)?exec_prefix\\}",version#"machine", -- as in configure.ac
 			      x)))};
+	  finalPrefix = "@prefix@";
+	  if last finalPrefix != "/" then finalPrefix = finalPrefix | "/";
 	  );
      initlayout();
      )
