@@ -22,7 +22,8 @@ export {
     "ncBasis",
     "NCGB", -- uugh: change name!
     "NCReduction2Sided",
-    "FreeAlgebra", -- change this name too!
+    "FreeAlgebra", -- change this name too! FM (?)
+    "FreeAlgebraQuotient", 
     "sequenceToVariableSymbols",
     "leftMultiplicationMap",
     "rightMultiplicationMap",
@@ -41,13 +42,30 @@ export {
     "quadraticClosure"
     }
 
+-- FM: better way to do this?
 processWeights = value Core#"private dictionary"#"processWeights"
 raw = value Core#"private dictionary"#"raw"
 rawNCGroebnerBasisTwoSided = value Core#"private dictionary"#"rawNCGroebnerBasisTwoSided"
 rawPairs = value Core#"private dictionary"#"rawPairs"
 RawRing = value Core#"private dictionary"#"RawRing"
-
-debug Core
+getAttribute = value Core#"private dictionary"#"getAttribute"
+promoteDegree = value Core#"private dictionary"#"promoteDegree"
+makepromoter = value Core#"private dictionary"#"makepromoter"
+indexStrings = value Core#"private dictionary"#"indexStrings"
+liftDegree = value Core#"private dictionary"#"liftDegree"
+indexSymbols = value Core#"private dictionary"#"indexSymbols"
+generatorExpressions = value Core#"private dictionary"#"generatorExpressions"
+hasAttribute = value Core#"private dictionary"#"hasAttribute"
+findSymbols = value Core#"private dictionary"#"findSymbols"
+rawQuotientRing = value Core#"private dictionary"#"rawQuotientRing"
+rawSparseListFormMonomial = value Core#"private dictionary"#"rawSparseListFormMonomial"
+rawNCFreeAlgebra = value Core#"private dictionary"#"rawNCFreeAlgebra"
+rawNCBasis = value Core#"private dictionary"#"rawNCBasis"
+processDegrees = value Core#"private dictionary"#"processDegrees"
+ReverseDictionary = value Core#"private dictionary"#"ReverseDictionary"
+generatorSymbols = value Core#"private dictionary"#"generatorSymbols"
+commonEngineRingInitializations = value Core#"private dictionary"#"commonEngineRingInitializations"
+rawNCReductionTwoSided = value Core#"private dictionary"#"rawNCReductionTwoSided"
 
 BUG = str -> ()
 
@@ -407,14 +425,42 @@ centralElements(Ring,ZZ) := (B,n) -> (
    normalElements(idB,n)
 )
 
-normalElements = method()
+-- worker function for normalAutomorphism
+findNormalComplement = method()
+findNormalComplement (RingElement,RingElement) := (f,x) -> (
+   B := ring f;
+   if B =!= ring x then error "Expected elements from the same ring.";
+   if not isHomogeneous f or not isHomogeneous x then error "Expected homogeneous elements";
+   n := degree f;
+   m := degree x;
+   leftFCoeff := last coefficients(f*x,Monomials=>flatten entries ncBasis(n+m,B));
+   rightMultF := rightMultiplicationMap(f,m);
+   factorMap := (leftFCoeff // rightMultF);
+   if rightMultF * factorMap == leftFCoeff then
+      first flatten entries (ncBasis(m,B) * factorMap)
+   else
+      null
+)
 
--*
-isNormal NCRingElement := f -> (
+normalAutomorphism = method()
+normalAutomorphism RingElement := f -> (
+   if not isFreeAlgebraOrQuotient(ring f) then error "Expected an element in a noncommutative ring.";
+   if not isHomogeneous f then error "Expected a homogeneous element.";
+   B := ring f;
+   normalComplements := apply(gens B, x -> findNormalComplement(f,x));
+   if any(normalComplements, f -> f === null) then error "Expected a normal element.";
+   map(B, B, normalComplements)
+)
+
+-- FM: TODO This steps on isNormal in IntegralClosure, I think.
+isNormal = method()
+isNormal RingElement := f -> (
+   if not isFreeAlgebraOrQuotient(ring f) then error "Expected an element in a noncommutative ring.";
    if not isHomogeneous f then error "Expected a homogeneous element.";
    all(gens ring f, x -> findNormalComplement(f,x) =!= null)
 )
 
+normalElements = method()
 normalElements(FreeAlgebraQuotient, ZZ, Symbol, Symbol) := (R,n,x,y) -> (
    -- Inputs: An associate algebra R, a degree n, and two symbols to use for indexed variables.
    -- Outputs: (1) A list of normal monomials in degree n
@@ -459,7 +505,6 @@ normalElements(FreeAlgebraQuotient, ZZ, Symbol, Symbol) := (R,n,x,y) -> (
                      )),
                   c->c!=0))
 )
-*-
 
 normalElements(RingMap,ZZ) := (phi,n) -> (
    if source phi =!= target phi then error "Expected an automorphism.";
@@ -918,8 +963,8 @@ BUG ///
       Text
          The following example is a 3-dimensional Sklyanin algebra.
       Example
-	 B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
-	 basis(2,B)
+	 B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})  -- BUG - something wrong with promote?
+	 ncBasis(2,B)
 	 normalElements(B,2,r,s)
       Text
          The normal elements in degree 2 are x^2, y^2 and z^2. The basis
