@@ -1,7 +1,5 @@
 --		Copyright 1993-1999, 2008 by Daniel R. Grayson
 
-emptyStack = stack()
-
 getSourceLines = method(Dispatch => Thing) 
 getSourceLines Nothing := null -> null
 getSourceLines Sequence := x -> (
