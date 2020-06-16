@@ -430,12 +430,16 @@ _ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
 
 # https://www.broune.com/frobby/
 # https://github.com/Macaulay2/frobby
+# TODO: to use Frobby as a submodule, it needs to support out-of-tree builds
 set(frobby_CXXFLAGS "${CPPFLAGS} ${CXXFLAGS} -Wno-deprecated-declarations")
 ExternalProject_Add(build-frobby
-  GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/frobby/.git
-  GIT_TAG           HEAD # WIP: 51c3e075 # use the submodule commit to make a new, clean clone
+#  GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/frobby/.git
+#  GIT_TAG           HEAD # WIP: 51c3e075
+  URL               https://github.com/Macaulay2/frobby/archive/d12b7b786a0e50765c1a2878601125ac2f55b68c.tar.gz
+  URL_HASH          SHA256=ccd686a4f76ad21ce55c6534ad17fce1f59ff9382485a1c8fd5fe4e1a80fc8b8
   PREFIX            libraries/frobby
   SOURCE_DIR        libraries/frobby/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} library -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
@@ -533,8 +537,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpsolve "mp;mpfr" MPSOLVE_FOUND)
 
 
 # https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
-# TODO: get out-of-tree build working: https://github.com/linbox-team/givaro/issues/154
-# Currently we make a clone from a local submodule
 string(REGEX REPLACE
   "./configure$" "${CMAKE_SOURCE_DIR}/submodules/givaro/autogen.sh" givaro_AUTOGEN "${CONFIGURE}")
 set(givaro_LICENSEFILES COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt)
