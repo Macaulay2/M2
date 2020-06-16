@@ -43,29 +43,39 @@ export {
     }
 
 -- FM: better way to do this?
-processWeights = value Core#"private dictionary"#"processWeights"
-raw = value Core#"private dictionary"#"raw"
-rawNCGroebnerBasisTwoSided = value Core#"private dictionary"#"rawNCGroebnerBasisTwoSided"
-rawPairs = value Core#"private dictionary"#"rawPairs"
-RawRing = value Core#"private dictionary"#"RawRing"
-getAttribute = value Core#"private dictionary"#"getAttribute"
-promoteDegree = value Core#"private dictionary"#"promoteDegree"
-makepromoter = value Core#"private dictionary"#"makepromoter"
-indexStrings = value Core#"private dictionary"#"indexStrings"
-liftDegree = value Core#"private dictionary"#"liftDegree"
-indexSymbols = value Core#"private dictionary"#"indexSymbols"
-generatorExpressions = value Core#"private dictionary"#"generatorExpressions"
-hasAttribute = value Core#"private dictionary"#"hasAttribute"
+
+-- symbols into hash table for ring
+generatorSymbols = Core#"private dictionary"#"generatorSymbols"
+generatorExpressions = Core#"private dictionary"#"generatorExpressions"
+liftDegree = Core#"private dictionary"#"liftDegree"
+promoteDegree = Core#"private dictionary"#"promoteDegree"
+indexStrings = Core#"private dictionary"#"indexStrings"
+indexSymbols = Core#"private dictionary"#"indexSymbols"
+
+-- local functions in the commutative ring code from core that are needed
 findSymbols = value Core#"private dictionary"#"findSymbols"
+ReverseDictionary = value Core#"private dictionary"#"ReverseDictionary"
+makepromoter = value Core#"private dictionary"#"makepromoter"
+processWeights = value Core#"private dictionary"#"processWeights"
+hasAttribute = value Core#"private dictionary"#"hasAttribute"
+getAttribute = value Core#"private dictionary"#"getAttribute"
+processDegrees = value Core#"private dictionary"#"processDegrees"
+commonEngineRingInitializations = value Core#"private dictionary"#"commonEngineRingInitializations"
+
+-- raw function calls to engine
+raw = value Core#"private dictionary"#"raw"
+rawPairs = value Core#"private dictionary"#"rawPairs"
 rawQuotientRing = value Core#"private dictionary"#"rawQuotientRing"
 rawSparseListFormMonomial = value Core#"private dictionary"#"rawSparseListFormMonomial"
 rawNCFreeAlgebra = value Core#"private dictionary"#"rawNCFreeAlgebra"
 rawNCBasis = value Core#"private dictionary"#"rawNCBasis"
-processDegrees = value Core#"private dictionary"#"processDegrees"
-ReverseDictionary = value Core#"private dictionary"#"ReverseDictionary"
-generatorSymbols = value Core#"private dictionary"#"generatorSymbols"
-commonEngineRingInitializations = value Core#"private dictionary"#"commonEngineRingInitializations"
 rawNCReductionTwoSided = value Core#"private dictionary"#"rawNCReductionTwoSided"
+rawNCGroebnerBasisTwoSided = value Core#"private dictionary"#"rawNCGroebnerBasisTwoSided"
+
+-- we are having trouble with the following line, due to the fact
+-- that RawRing is a class, but we would like to reference the symbol in the
+-- local hash table.
+RawRing = Core#"private dictionary"#"RawRing"
 
 BUG = str -> ()
 
@@ -83,19 +93,19 @@ getNameIfAny = (k) -> expression if hasAttribute(k,ReverseDictionary) then getAt
 expression FreeAlgebra := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
-     (getNameIfAny k) (R.generatorSymbols)
+     (getNameIfAny k) (R#generatorSymbols)
      )
 net FreeAlgebra := R -> (
      if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
      else net expression R)
 describe FreeAlgebra := R -> (
      k := last R.baseRings;
-     net ((getNameIfAny k) R.generatorSymbols)
+     net ((getNameIfAny k) R#generatorSymbols)
      )
 toExternalString FreeAlgebra := R -> (
     --toString describe R
      k := last R.baseRings;
-     toString ((getNameIfAny k) R.generatorSymbols)
+     toString ((getNameIfAny k) R#generatorSymbols)
      )
 toString FreeAlgebra := R -> (
     toString expression R
@@ -162,11 +172,11 @@ freeAlgebra(Ring, List) := FreeAlgebra => (A, args)  -> (
    if not checkHeft(degs, heftvec) then error "expected a valid Heft vector, which dots positively with each degree vector";
    rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degrk, flatten degs, flatten wtvecs, heftvec);
    R := new FreeAlgebra from {
-       (symbol RawRing) => rawR,
-       (symbol generators) => {},
-       (symbol generatorSymbols) => varSymbols,
+       RawRing => rawR,
+       generatorSymbols => varSymbols,
        --(symbol generatorExpressions) => hashTable apply(#varList, i -> (i,expression varList#i)),
-       (symbol generatorExpressions) => for v in varSymbols list if instance(v,Symbol) then v else expression v,
+       generatorExpressions => for v in varSymbols list if instance(v,Symbol) then v else expression v,
+       (symbol generators) => {},
        (symbol degreesRing) => degreesRing degrk,
        (symbol degreeLength) => degrk,
        (symbol degrees) => degs,
@@ -177,13 +187,13 @@ freeAlgebra(Ring, List) := FreeAlgebra => (A, args)  -> (
        (symbol cache) => new CacheTable from {},
        (symbol baseRings) => append(A.baseRings,A)
        };
-   newGens := for i from 0 to #varSymbols-1 list varSymbols#i <- new R from R.RawRing_i;
-   R.promoteDegree = makepromoter degreeLength R;
-   R.liftDegree = makepromoter degreeLength R;
+   newGens := for i from 0 to #varSymbols-1 list varSymbols#i <- new R from R#RawRing_i;
+   R#promoteDegree = makepromoter degreeLength R;
+   R#liftDegree = makepromoter degreeLength R;
    R.generators = newGens;
    commonEngineRingInitializations R;
    --- need to fix net of an RingElement coming from a NCPolynomial ring.
-   processFactor := (k,v) -> if v =!= 1 then Power{R.generatorExpressions#k, v} else R.generatorExpressions#k;
+   processFactor := (k,v) -> if v =!= 1 then Power{R#generatorExpressions#k, v} else R#generatorExpressions#k;
    processFactors := facs -> (
 	  if #facs  === 1
 	  then processFactor facs#0
@@ -227,15 +237,15 @@ isWellDefined FreeAlgebra := Boolean => R -> (
     isbad := str -> (if debugLevel > 0 then << str; false);
     if # R.generators =!= numgens R then 
         return isbad "# R.generators =!= numgens R";
-    if # R.generatorExpressions =!= numgens R then 
-        return isbad "# R.generatorExpressions =!= numgens R";
-    if # R.generatorSymbols =!= numgens R then 
-        return isbad "# R.generatorSymbols =!= numgens R";
+    if # R#generatorExpressions =!= numgens R then 
+        return isbad "# R#generatorExpressions =!= numgens R";
+    if # R#generatorSymbols =!= numgens R then 
+        return isbad "# R#generatorSymbols =!= numgens R";
     if not all(R.generators, x -> class x === R) then 
         return isbad "generators are not all in the ring";
-    if not all(R.generatorExpressions, x -> instance(x,Expression) or instance(x,Symbol)) then
+    if not all(R#generatorExpressions, x -> instance(x,Expression) or instance(x,Symbol)) then
         return isbad "generatorExpressions are not all expressions";
-    if not all(R.generatorSymbols, x -> instance(x, Symbol) or instance(x, IndexedVariable)) then
+    if not all(R#generatorSymbols, x -> instance(x, Symbol) or instance(x, IndexedVariable)) then
         return isbad "generatorSymbols are not all symbols or indexed variables";
     if not instance(expression R, Expression) then
         return isbad "expression R should be an expression";
@@ -292,12 +302,12 @@ FreeAlgebra / Ideal := FreeAlgebraQuotient => (R,I) -> (
      S.relations = gensI;
      S.isCommutative = false;
      S.generators = apply(generators S, m -> promote(m,S));
-     if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
-     if R.?generatorExpressions then S.generatorExpressions = (
-	  R.generatorExpressions
+     if R#?generatorSymbols then S#generatorSymbols = R#generatorSymbols;
+     if R#?generatorExpressions then S#generatorExpressions = (
+	  R#generatorExpressions
 	  );
-     if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
-     if R.?indexSymbols then S.indexSymbols = applyValues(R.indexSymbols, x -> promote(x,S));
+     if R#?indexStrings then S#indexStrings = applyValues(R#indexStrings, x -> promote(x,S));
+     if R#?indexSymbols then S#indexSymbols = applyValues(R#indexSymbols, x -> promote(x,S));
      expression S := lookup(expression,R);
      S.use = x -> ( -- what is this for??
 	  );
@@ -1038,10 +1048,10 @@ TEST ///
 *-
   --- generators test
   debug Core -- for generatorSymbols
-  R = QQ{a,b,c}; assert(R.generatorSymbols == splice {vars(0,1,2)})
+  R = QQ{a,b,c}; assert(R#generatorSymbols == splice {vars(0,1,2)})
   assert isWellDefined R
     
-  R = QQ{a,b,c}; assert(R.generatorSymbols == splice {vars(0,1,2)})
+  R = QQ{a,b,c}; assert(R#generatorSymbols == splice {vars(0,1,2)})
   assert isWellDefined R
 
   R = QQ{a,b, x_1..x_3, c, y_1..y_4}
@@ -1049,11 +1059,11 @@ TEST ///
   debugLevel = 1
   isWellDefined R
 
-  R = QQ{{a,b,c},{d,e}}; assert(R.generatorSymbols == splice {vars(0,1,2,3,4)})
-  R = QQ{(a,b,c),{d,e}}; assert(R.generatorSymbols == splice {vars(0,1,2,3,4)})
-  R = QQ{(a,b,c),(d,e)}; assert(R.generatorSymbols == splice {vars(0,1,2,3,4)})
-  R = QQ{b..f}; assert(R.generatorSymbols == splice {vars(1,2,3,4,5)})
-  R = QQ{a,b,c}; assert(R.generatorSymbols == splice {vars(0,1,2)})
+  R = QQ{{a,b,c},{d,e}}; assert(R#generatorSymbols == splice {vars(0,1,2,3,4)})
+  R = QQ{(a,b,c),{d,e}}; assert(R#generatorSymbols == splice {vars(0,1,2,3,4)})
+  R = QQ{(a,b,c),(d,e)}; assert(R#generatorSymbols == splice {vars(0,1,2,3,4)})
+  R = QQ{b..f}; assert(R#generatorSymbols == splice {vars(1,2,3,4,5)})
+  R = QQ{a,b,c}; assert(R#generatorSymbols == splice {vars(0,1,2)})
   R = QQ{x_1..x_100, y_1..y_100}; assert(numgens R == 200)
   debugLevel = 1
   isWellDefined R
@@ -1528,7 +1538,6 @@ TEST ///
   restart
   needsPackage "AssociativeAlgebras"
 *-
-  debug Core
   R = QQ{a,b}
   I = ideal(a^2 - b^2)
   A = R/I
@@ -1586,7 +1595,7 @@ TEST ///
   elapsedTime (monoms, cfs) = coefficients M;
   assert(monoms * cfs == M)  
 
-  sub(M, R) -- NOT CORRECT
+  sub(M, R) -- TODO: should lift monomials as in the commutative case
   map(R,A) -- gives the 0 map
   map(A,R) -- ok
   sub(M, vars R) -- ok
@@ -1616,6 +1625,7 @@ TEST ///
   NCGB(I, 1000)
   A = R/I
   assert(numcols ncBasis({10}, {10}, A) == 11) 
+  ncBasis({500},{500},A); -- Duplicate large block deallocation?
   elapsedTime assert(numcols ncBasis({1000},{1000},A) == 1001)
 
   S = QQ{u,v,Degrees=>{2,3}}
@@ -1777,6 +1787,19 @@ TEST ///
   R = QQ{b,c}
   I = ideal"bc"
   assert(NCGB(I, 10) == matrix{{b*c}})
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "AssociativeAlgebras"
+*-
+R = QQ{x,y}
+I = ideal {x^2-y^2}
+S = R/I
+gbS = NCGB(ideal S)
+debug Core
+rawNCBasis(raw gbS,{500},{500},-1);
 ///
 
 end--
