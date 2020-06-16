@@ -1299,12 +1299,15 @@ const Matrix* rawNCBasis(const Matrix* gb2SidedIdeal,
         // which are used directly in vectorToMatrix (without copying)
         // but when result goes out of scope, the list is deleted,
         // but not the polynomials themselves, as they are pointers.
-        std::unique_ptr<PolyList> result = ncBasis(A->freeAlgebra(),
-                                                   G,
-                                                   M2_arrayint_to_stdvector<int>(lo_degree),
-                                                   M2_arrayint_to_stdvector<int>(hi_degree),
-                                                   limit);
-        return vectorToMatrix(A, *result);
+        PolyList result;
+        bool worked = ncBasis(A->freeAlgebra(),
+                              G,
+                              M2_arrayint_to_stdvector<int>(lo_degree),
+                              M2_arrayint_to_stdvector<int>(hi_degree),
+                              limit,
+                              result);
+        if (not worked) return nullptr;
+        return vectorToMatrix(A, result); // consumes entries of result
       }
     ERROR("expected a free algebra");
     return nullptr;

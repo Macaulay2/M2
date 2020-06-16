@@ -9,13 +9,14 @@
  * \ingroup matrices
  */
 
-std::unique_ptr<PolyList> ncBasis(
-                 const FreeAlgebra& A,
-                 const ConstPolyList& gb, // actually, only the lead terms are ever considered
-                 const std::vector<int>& lo_degree, // length 0: means -infinity, i.e. 0.
-                 const std::vector<int>& hi_degree, // length 0: +infinity
-                 int limit // <0 means no limit
-                 ); 
+bool ncBasis(
+             const FreeAlgebra& A,
+             const ConstPolyList& gb, // actually, only the lead terms are ever considered
+             const std::vector<int>& lo_degree, // length 0: means -infinity, i.e. 0.
+             const std::vector<int>& hi_degree, // length 0: +infinity
+             int limit, // <0 means no limit
+             PolyList& result
+             ); 
 
 #endif
 

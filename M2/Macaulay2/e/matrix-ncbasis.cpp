@@ -20,7 +20,7 @@ std::unique_ptr<WordTable> constructWordTable(const FreeAlgebra& A, const ConstP
   return W;
 }
 
-class NCBasis
+class NCBasis : public our_new_delete
 {
 private:
   const FreeAlgebra& mFreeAlgebra;
@@ -38,7 +38,7 @@ private:
   int mCurrentHeftValue; // heft value so far, of monomial being constructed.
 
   // Result
-  std::unique_ptr<PolyList> mBasis;
+  PolyList mBasis;
 
   // Input degree bounds, and input options
   int mLimit; // if >= 0, then number of monomials to collect.  <0 means no limit.
@@ -72,7 +72,6 @@ public:
     mWordTable(constructWordTable(A,gb)),
     mCurrentIndex(-1),
     mCurrentHeftValue(0),
-    mBasis(new PolyList),
     mLimit(limit),
     mLoHeft(0),
     mHiHeft(-1)
@@ -85,10 +84,10 @@ public:
     if (hi_degree.size() > 0) mHiHeft = hi_degree[0];
   }
 
-  std::unique_ptr<PolyList> compute()
+  PolyList& compute()
   {
     if (mLimit != 0) basis0();
-    return std::move(mBasis);
+    return mBasis;
   }
 
 private:  
@@ -100,7 +99,7 @@ void NCBasis::insert()
 {
   Poly* result = new Poly;
   mFreeAlgebra.from_word(*result, Word(mMonomial.data(), mMonomial.data() + mCurrentIndex + 1));
-  mBasis->push_back(result);
+  mBasis.push_back(result);
   if (mLimit > 0) mLimit--;
 }
 
@@ -144,26 +143,28 @@ void NCBasis::basis0()
   mCurrentIndex--;
 }
 
-std::unique_ptr<PolyList> ncBasis(
-                                  const FreeAlgebra& A,
-                                  const ConstPolyList& gb, // actually, only the lead terms are ever considered
-                                  const std::vector<int>& lo_degree, // length 0: means -infinity, i.e. 0.
-                                  const std::vector<int>& hi_degree, // length 0: +infinity
-                                  int limit // <0 means no limit
-                                  )
+bool ncBasis(
+             const FreeAlgebra& A,
+             const ConstPolyList& gb, // actually, only the lead terms are ever considered
+             const std::vector<int>& lo_degree, // length 0: means -infinity, i.e. 0.
+             const std::vector<int>& hi_degree, // length 0: +infinity
+             int limit, // <0 means no limit
+             PolyList &result
+                 )
 {
   if (A.monoid().degreeMonoid().n_vars() != 1)
     {
       ERROR("expected singly graded algebra");
-      return nullptr;
+      return false;
     }
   if (lo_degree.size() > 1 or hi_degree.size() > 1)
     {
       ERROR("expected singly graded algebra");
-      return nullptr;
+      return false;
     }
   NCBasis computation(A, gb, lo_degree, hi_degree, limit);
-  return computation.compute();
+  std::swap(result, computation.compute());
+  return true;
 }
 
 // Local Variables:
