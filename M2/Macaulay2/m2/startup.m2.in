@@ -616,7 +616,7 @@ homeDirectory = getenv "HOME" | "/"
 
 initcurrentlayout()
 
-if firstTime then
+if firstTime and fileExists(prefixDirectory | currentLayout#"program licenses") then
 copyright = copyright | newline | "For licenses see " | prefixDirectory | currentLayout#"program licenses"
 
 path = (x -> select(x, i -> i =!= null)) deepSplice {
