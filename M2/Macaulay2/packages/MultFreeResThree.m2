@@ -35,7 +35,7 @@ newPackage ( "MultFreeResThree",
     )
 
 export { "genmulttables", "multTables", "multTablesLink", "eeProd", "efProd", 
-    "mapX", "mapY", "makeRes" , "findRegSeq"}
+    "mapX", "mapY", "makeRes" , "findRegSeq" , "eeProdH" }
 
 -- exportMutable{ "u" }
 --==========================================================================
@@ -222,6 +222,28 @@ multTables = ( cacheValue "multTables" ) multtables
 
 multTablesLink =  multtableslink
 
+eeProdH = F -> (
+    t := (multTables F)#0;
+    m := numcols F.dd_1;
+    l := numcols F.dd_2;
+    n := numcols F.dd_3;        
+    e := getSymbol("e".Variable);    
+    f := getSymbol("f".Variable);
+    g := getSymbol("g".Variable);                
+--    P := getSymbol("P");                    
+    P1 := (ring t#(1,1))[e_1..e_m];
+    P2 := P1[f_1..f_l];
+    P3 := P2[g_1..g_n];
+    first flattenRing P3;
+    f_1*f_2
+    -- matrix{toList(P_2..P_8)}
+--    for i from 1 to l list f_i*f_1
+--    c := matrix {for i from 1 to l list f_i};
+--    matrix table(m,m,(i,j) ->  c*(t#(i+1,j+1)**P) )    
+--x*f_1
+    )
+
+
 eeProd = (F,i,j) -> (
     m := multTables F;
     (m#0)#(i,j)
@@ -308,6 +330,30 @@ F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
 d1 = matrix entries F.dd_1
 d2 = matrix entries F.dd_2
 d3 = matrix entries F.dd_3
+
+eeProdH (F)
+
+ring(f_1)
+use P
+f_1*g_1
+describe l
+matrix {l}
+
+m = multTables(F)
+peek (m#0)
+peek (m#1)
+
+p = (m#1)#(6,5)
+p**((ring p)/ideal vars ring p) ==0
+{(e1,f6;4)
+    
+T1 = matrix table(6,6,(i,j) -> if (m#0)#(i+1,j+1) )    
+
+numrows p
+n = multTablesLink(F,1,2,4)
+peek (n#0)
+peek (n#1)
+peek (n#2)
 
 findRegSeq(d1,{1,2,4})
 
