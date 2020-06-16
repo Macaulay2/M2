@@ -11,7 +11,7 @@ CMake is a cross-platform system for generating build environments using native 
 [Download](https://cmake.org/download/) the latest CMake for your platform.
 If using a packaged distribution, confirm using `cmake --version` that you have version at least 3.15.
 
-**NOTE**: GCC or Clang compilers are recommended (in particular, not AppleClang). Optionally, install `ccache` for caching compiler artifacts and `ninja-build` (`ninja` on Brew) for optimized parallel builds.
+**NOTE**: This build system is tested on GCC, Clang, and AppleClang compilers. Optionally, install `ccache` for caching compiler artifacts and `ninja-build` (`ninja` on Brew) for optimized parallel builds.
 
 There are various tools needed to compile Macaulay2 dependencies.
 - On Debian/Ubuntu, install `autoconf build-essential bison libtool pkg-config yasm`.
@@ -280,6 +280,22 @@ For specific packages, the following targets are also available:
 ## FAQ
 Below are a list of common issues and errors. If you run into a problem not listed below, please open a [new issue](https://github.com/Macaulay2/M2/issues/new) on GitHub.
 
+
+<details>
+<summary>CMake is not using the local version of MPIR, Flint, etc.</summary>
+Currently, when CMake is set to use the MPIR library, it compiles MPIR and a number of other libraries from source, including MPFR, NTL, Flint, Factory, Frobby, and Givaro. This is done to avoid linking conflicts caused by the libraries linking instead with the GMP library. Therefore, in order to link with system libraries the `-DUSING_MPIR=OFF` option is required. See this [comment](https://github.com/Macaulay2/M2/issues/1275#issuecomment-644217756) for more details on the reasoning behind this.
+</details>
+
+<details>
+<summary><code>No download info given for 'build-flint' and its source directory</code></summary>
+When building from a downloaded archive (i.e., not a git repository), it is necessary to also download and extract archives of the required submodules in the `M2/submodules` directory.
+
+If a given library is not required on a particular system, CMake might still complain that the submodule directory is empty. One way to prevent this is to create a dummy file in the submodule directory for the libraries that are not required; for instance:
+```
+touch M2/submodules/flint2/empty
+```
+</details>
+
 <details>
 <summary>Detected library incompatibilities; rerun the build-libraries target</summary>
 This message indicates that the build scripts detected an inconsistency between the libraries found on the system, and that those libraries are marked to be compiled from source. Run `ninja build-libraries` (or `make build-libraries`) to build the libraries from source.
@@ -340,6 +356,8 @@ cmake -U*BDWGC* .
 source /opt/intel/bin/compilervars.sh intel64
 </pre>
 Note that MKL is closed-source but released as a freeware.
+
+See [FindLAPACK](https://cmake.org/cmake/help/latest/module/FindLAPACK.html) for information on specifying the linear algebra library by setting the value of `BLA_VENDOR` in `cmake/check-libraries.cmake`.
 </details>
 
 
