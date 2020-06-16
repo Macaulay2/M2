@@ -9,7 +9,7 @@ VLIMIT = 900000
 MLIMIT = 900000
 
 VERSION = 4.1.1
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 # the patch modifies test/Makefile.am, so we must remake test/Makefile.in
 PRECONFIGURE = autoreconf -vif
 

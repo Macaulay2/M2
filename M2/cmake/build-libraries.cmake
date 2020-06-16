@@ -535,16 +535,15 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpsolve "mp;mpfr" MPSOLVE_FOUND)
 # https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
 # TODO: get out-of-tree build working: https://github.com/linbox-team/givaro/issues/154
 # Currently we make a clone from a local submodule
+string(REGEX REPLACE
+  "./configure$" "${CMAKE_SOURCE_DIR}/submodules/givaro/autogen.sh" givaro_AUTOGEN "${CONFIGURE}")
 set(givaro_LICENSEFILES COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt)
+list(TRANSFORM givaro_LICENSEFILES PREPEND ${CMAKE_SOURCE_DIR}/submodules/givaro/)
 ExternalProject_Add(build-givaro
-  GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/givaro/.git
-  GIT_TAG           HEAD # use the submodule commit to make a new, clean clone
   PREFIX            libraries/givaro
-  SOURCE_DIR        libraries/givaro/build
-  BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/givaro/patch-4.1.1
-  CONFIGURE_COMMAND autoreconf -vif
-            COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/givaro
+  BINARY_DIR        libraries/givaro/build
+  CONFIGURE_COMMAND ${givaro_AUTOGEN} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
                       $<$<NOT:$<BOOL:${BUILD_NATIVE}>>:--without-archnative>
@@ -575,14 +574,14 @@ _ADD_COMPONENT_DEPENDENCY(libraries givaro mp GIVARO_FOUND)
 # NOTE: fflas_ffpack is just header files, so we don't build it
 # instead we add an extra autotune target for generating fflas-ffpack-thresholds.h
 # TODO: to make sure AppleClang works with OpenMP see: https://github.com/linbox-team/fflas-ffpack/issues/309
+string(REGEX REPLACE
+  "./configure$" "${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/autogen.sh" fflas_ffpack_AUTOGEN "${CONFIGURE}")
+set(fflas_ffpack_LICENSEFILES ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/COPYING)
 ExternalProject_Add(build-fflas_ffpack
-  GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/.git
-  GIT_TAG           HEAD # use the submodule commit to make a new, clean clone
   PREFIX            libraries/fflas_ffpack
-  SOURCE_DIR        libraries/fflas_ffpack/build
-  BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND autoreconf -vif
-            COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack
+  BINARY_DIR        libraries/fflas_ffpack/build
+  CONFIGURE_COMMAND ${fflas_ffpack_AUTOGEN} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       # --enable-precompilation # build errors
                       $<$<BOOL:${WITH_OMP}>:--enable-openmp>
@@ -602,7 +601,7 @@ ExternalProject_Add(build-fflas_ffpack
   BUILD_COMMAND     true
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-data # only headers and fflas-ffpack.pc
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/fflas_ffpack
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/fflas_ffpack
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${fflas_ffpack_LICENSEFILES} ${M2_INSTALL_LICENSESDIR}/fflas_ffpack
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
