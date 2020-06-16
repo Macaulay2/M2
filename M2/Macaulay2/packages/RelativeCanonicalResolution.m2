@@ -925,6 +925,14 @@ betti(resX = resCurveOnScroll(Jcan,g,2))
 betti(resC = iteratedCone(resX,e))
 assert(rank matrix basis(5,resC_4) == 6)
 ///
+
+TEST ///
+R = ZZ/12347[x_0..x_7]
+Phi = matrix{{x_0..x_3},{x_4..x_7}}
+betti(eagonNorthcottType(Phi,0))
+betti(eagonNorthcottType(Phi,1))
+///
+
 end;
 
 ---------------------------------------------
