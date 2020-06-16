@@ -27,16 +27,14 @@ setupfun("reorganize",dbmreorganize);
 dbmopenin(e:Expr):Expr := (
      when e
      is a:stringCell do (
-	  if notify then stderr << "--opening database " <<
-	       relativizeFilename(a.v) << endl;
+	  if notify then stderr << "--opening database " << a.v << endl;
 	  dbmopenin(a.v))
      else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabase",dbmopenin);
 dbmopenout(e:Expr):Expr := (
      when e
      is a:stringCell do (
-	  if notify then stderr << "--opening database for output " <<
-	       relativizeFilename(a.v) << endl;
+	  if notify then stderr << "--opening database for output " << a.v << endl;
 	  dbmopenout(a.v))
      else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabaseOut",dbmopenout);
@@ -486,8 +484,7 @@ close(g:Expr):Expr := (
 	  g)
      is f:file do when close(f) is m:errmsg do buildErrorPacket(m.message) else g
      is x:Database do (
-	  if notify then stderr << "--closing database " <<
-	       relativizeFilename(x.filename) << endl;
+	  if notify then stderr << "--closing database " << x.filename << endl;
 	  dbmclose(x))
      else buildErrorPacket("expected a file or database"));
 setupfun("close",close).Protected = false;
