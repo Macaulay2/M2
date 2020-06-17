@@ -19,6 +19,8 @@ newPackage(
     Headline=>"Solving decomposable sparse systems",
     PackageImports=>{"PHCpack","Polyhedra","DeterminantalRepresentations"},
     PackageExports=>{"NumericalAlgebraicGeometry"},
+    AuxiliaryFiles=>true,
+    CacheExampleOutput => true,
     DebuggingMode=>false
     )
 
@@ -745,6 +747,12 @@ doc///
 			solveDecomposableSystem (F,Verify=>1,Tolerance=>0.1,Verbose=>3)
 ///		
 
+-- The program phcpack isn't installed on every user's system.
+-- TO DO: detect its presence and enable re-running the examples and running the tests conditionally
+
+stderr << "--warning: *** tests disabled for package DecomposableSparseSystems" << endl
+
+end
 
 
 TEST ///
