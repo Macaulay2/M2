@@ -540,13 +540,13 @@ we briefly summarize them and the software they depend on:
  	         sudo apt-get install polymake
 
     Bertini needs bertini:
-	    http://www.nd.edu/~sommese/bertini/BertiniSource_v1.4.tar.gz
+	    http://www.nd.edu/~sommese/bertini/
 	which needs gmp and mpfr:
-	    https://gmplib.org/download/gmp/gmp-6.0.0a.tar.xz
-	    http://www.mpfr.org/mpfr-3.1.2/mpfr-3.1.2.tar.xz
+	    https://gmplib.org/
+	    http://www.mpfr.org/
 
     PHCpack needs PHCpack, download the binary:
-	    http://www.math.uic.edu/~jan/x86_64phcv23p.tar.gz
+            http://homepages.math.uic.edu/~jan/download.html
 
     AdjointIdeal ConvexInterface MapleInterface Parametrization need Maple.
 
