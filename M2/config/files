@@ -44,7 +44,6 @@ libraries/flint/Makefile
 libraries/gmp/Makefile
 libraries/mpfr/Makefile
 libraries/mpir/Makefile
-libraries/boost/Makefile
 libraries/gtest/Makefile
 libraries/4ti2/Makefile
 libraries/gfan/Makefile
