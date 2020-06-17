@@ -15,6 +15,7 @@ on:
     branches:
       - master
       - development
+      - local
   pull_request:
     branches:
       - development
@@ -30,6 +31,7 @@ env:
 
 jobs:
   build:
+    if: github.repository == 'Macaulay2/M2' || contains(github.ref, "local")
     name: ${{matrix.os}}-${{matrix.build-type}}-${{matrix.compiler}}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -106,9 +108,7 @@ jobs:
         env:
           CXX: ${{matrix.cxx}}
           CC: ${{matrix.cc}}
-        run: |
-          echo $CXX $CC
-          cmake -S../.. -B. -G"Ninja" -DCMAKE_BUILD_TYPE=Release
+        run: cmake -S../.. -B. -G"Ninja" -DCMAKE_BUILD_TYPE=Release
 
       - name: Build Macaulay2 (cmake)
         id: step_build
@@ -117,8 +117,8 @@ jobs:
         run: |
           cmake --build . --target build-libraries  -j4
           cmake --build . --target build-programs   -j4
+          cmake --build . --target M2-core          -j4
           cmake --build . --target install-packages -j4
-          cmake --build . --target M2-emacs         -j4
 
 # ----------------------
 #   Configure and build M2 the old way
