@@ -15,9 +15,10 @@ on:
     branches:
       - master
       - development
-      - local
+      - global
   pull_request:
     branches:
+      - master
       - development
   schedule:
     # cron time in UTC; set to 6a EDT
@@ -31,7 +32,7 @@ env:
 
 jobs:
   build:
-    if: github.repository == 'Macaulay2/M2' || contains(github.ref, "local")
+    if: github.repository == 'Macaulay2/M2' || contains(github.ref, 'global')
     name: ${{matrix.os}}-${{matrix.build-type}}-${{matrix.compiler}}
     runs-on: ${{ matrix.os }}
     strategy:
