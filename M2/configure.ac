@@ -696,7 +696,7 @@ AC_SUBST(BUILTLIBS)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll linbox boost gtest ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll linbox gtest ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
@@ -1139,11 +1139,8 @@ then AC_LANG(C)
      AC_CHECK_HEADER(python2.7/Python.h,,AC_MSG_ERROR(include file python2.7/Python.h not found))
 fi
 
-
-if test $BUILD_boost = no
-then AC_LANG(C++)
-     AC_CHECK_HEADER(boost/version.hpp,,BUILD_boost=yes)
-fi
+AC_LANG(C++)
+AC_CHECK_HEADER(boost/version.hpp,,AC_MSG_ERROR([[boost library not installed, but required]]))
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
@@ -1405,8 +1402,10 @@ dnl        , so we test those two lines early.
 dnl
 if pkg-config --exists libxml-2.0
 then XML_INCLUDE=`pkg-config --cflags-only-I libxml-2.0 | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'`
-     AC_MSG_NOTICE(pkg-config: will search for include files also in $XML_INCLUDE)
-     CPPFLAGS="$XML_INCLUDE $CPPFLAGS"
+     if test "$XML_INCLUDE"
+     then AC_MSG_NOTICE([pkg-config: will search for include files also in $XML_INCLUDE])
+          CPPFLAGS="$XML_INCLUDE $CPPFLAGS"
+     fi
 fi
 
 AC_CHECK_HEADER(libxml/xmlexports.h,,
