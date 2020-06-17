@@ -150,7 +150,7 @@ genmulttables = F -> (
     -- 	    EF#(i,j) = (matrix entries e);
     -- 	    );
     -- 	);
-    {EE,for i from 0 to 10 list Q_i}
+--    {EE,for i from 0 to 10 list Q_i}
     )
 
 multtableslink = (F,i,j,k) -> (
