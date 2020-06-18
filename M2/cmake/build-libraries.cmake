@@ -505,15 +505,18 @@ _ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDDLIB_FOUND)
 # https://numpi.dm.unipi.it/software/mpsolve
 # Known issue: tests don't work with static library
 ExternalProject_Add(build-mpsolve
-  URL               https://numpi.dm.unipi.it/_media/software/mpsolve/mpsolve-3.1.8.tar.gz
-  URL_HASH          SHA256=34740339d14cf8ca6d3f7da7ca12237b6da642623d14a6d6d5b5fc684c9c0fe5
+  URL               https://github.com/robol/MPSolve/archive/3.2.1.tar.gz
+  URL_HASH          SHA256=7edb7899d69a3e09848b893b12f360b8a83429a18eee4a7f193fcfc8692dca71
+  DOWNLOAD_NAME     MPSolve-3.2.1.tar.gz
   PREFIX            libraries/mpsolve
   SOURCE_DIR        libraries/mpsolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
+		      --disable-debug # TODO: replace with --enable-debug-build conditionally
                       --disable-examples
                       --disable-ui
                       --disable-documentation
@@ -528,7 +531,7 @@ ExternalProject_Add(build-mpsolve
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} -C src/libmps install
           COMMAND   ${MAKE} -j${PARALLEL_JOBS} -C include install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/mpsolve
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different README ${M2_INSTALL_LICENSESDIR}/mpsolve
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/mpsolve
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
