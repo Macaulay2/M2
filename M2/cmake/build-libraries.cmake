@@ -1034,8 +1034,10 @@ ExternalProject_Add(build-topcom
   )
 _ADD_COMPONENT_DEPENDENCY(programs topcom cddlib TOPCOM)
 
+###############################################################################
+## Experimental build scripts for other software programs.
+## These programs are not built by default, but the build targets are provided.
 
-# TODO: this is still experimental
 # https://polymake.org
 # Polymake needs gmp, mpfr, cdd, lrs, libnormaliz, nauty and jReality
 #set(polymake_CPPFLAGS "${CPPFLAGS}")
@@ -1069,6 +1071,38 @@ ExternalProject_Add(build-polymake
   STEP_TARGETS      install test
   )
 #_ADD_COMPONENT_DEPENDENCY(programs polymake "cddlib;lrs;normaliz;nauty" POLYMAKE)
+
+
+# https://www3.nd.edu/~sommese/bertini/
+ExternalProject_Add(build-bertini
+  URL               https://bertini.nd.edu/BertiniSource_v1.6.tar.gz
+  URL_HASH          SHA256=b742d4a55623092eb0c46f8ee644aa487e5decf4ad05eb9297306b599795a424
+  PREFIX            libraries/bertini
+  SOURCE_DIR        libraries/bertini/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
+                      --disable-shared
+                      CPPFLAGS=${CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      CXXFLAGS=${CXXFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COhMPILER}
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/bertini
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/bertini
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different bertini-serial ${M2_INSTALL_PROGRAMSDIR}/
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  )
+#_ADD_COMPONENT_DEPENDENCY(libraries bertini "mp;mpfr" BERTINI)
+
 
 ###############################################################################
 ## Post-build actions
