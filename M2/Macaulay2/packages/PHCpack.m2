@@ -30,8 +30,7 @@ newPackage(
   Headline => "interface to PHCpack",
   Configuration => { 
     "path" => "",
-    "PHCexe"=>"phc", 
-    "keep files" => true
+    "PHCexe"=>"phc -0"
   },
   Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry",
