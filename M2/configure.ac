@@ -896,10 +896,14 @@ fi
 
 AC_LANG(C)
 dnl topcom includes setoper.h, rather than cdd/setoper.h, so we do, too
-dnl Fedora: /usr/include/cddlib/setoper.h
-dnl Ubuntu: /usr/include/cdd/setoper.h
-dnl -- we should look in both of those places
-AC_CHECK_HEADER(setoper.h,,BUILD_cddlib=yes)
+SAVE=$CPPFLAGS
+AC_CHECK_HEADER(setoper.h,,[
+  CPPFLAGS="$SAVE /usr/include/cdd" dnl for Ubuntu
+  AC_CHECK_HEADER(setoper.h,,[
+    CPPFLAGS="$SAVE /usr/include/cddlib" dnl for Fedora
+    AC_CHECK_HEADER(setoper.h,,CPPFLAGS=$SAVE
+			       AC_MSG_RESULT([[setoper.h not found, will build cddlib]])
+			       BUILD_cddlib=yes)])])
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
 else LIBS="-lcdd $LIBS"
