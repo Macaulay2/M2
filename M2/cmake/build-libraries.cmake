@@ -1073,7 +1073,34 @@ ExternalProject_Add(build-polymake
 #_ADD_COMPONENT_DEPENDENCY(programs polymake "cddlib;lrs;normaliz;nauty" POLYMAKE)
 
 
+# http://homepages.math.uic.edu/~jan/download.html
+ExternalProject_Add(build-phcpack
+  URL               https://github.com/janverschelde/PHCpack/archive/v2.4.77.tar.gz
+  URL_HASH          SHA256=cc4f4274253dc4a6794d5f7e01f10622b6d3f58bea1f8da83467e6f7e1d90e88
+  DOWNLOAD_NAME     PHCpack-v2.4.77.tar.gz
+  PREFIX            libraries/phcpack
+  SOURCE_DIR        libraries/phcpack/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND true
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} -C src/Objects phc
+                      CC=${CMAKE_C_COMPILER}
+                      gpp=${CMAKE_CXX_COMPILER}
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/phcpack
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE ${M2_INSTALL_LICENSESDIR}/phcpack
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different src/bin/phc ${M2_INSTALL_PROGRAMSDIR}/
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} -C src/Objects testall
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  USES_TERMINAL_BUILD ON
+  USES_TERMINAL_TEST ON
+  )
+#_ADD_COMPONENT_DEPENDENCY(libraries phcpack "???" PHC)
+
+
 # https://www3.nd.edu/~sommese/bertini/
+# NOTE: Bertini's license is restrictive, so we don't build and distribute it by default.
 ExternalProject_Add(build-bertini
   URL               https://bertini.nd.edu/BertiniSource_v1.6.tar.gz
   URL_HASH          SHA256=b742d4a55623092eb0c46f8ee644aa487e5decf4ad05eb9297306b599795a424
