@@ -138,8 +138,7 @@ jobs:
           ../../configure --enable-download --enable-build-libraries="readline"
 
       - name: Save artifacts (autotools)
-        if: always()
-        if: matrix.build-type == 'autotools'
+        if: always() && matrix.build-type == 'autotools'
         uses: actions/upload-artifact@v1
         with:
            name: config-log
