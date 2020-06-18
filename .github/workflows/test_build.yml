@@ -137,6 +137,14 @@ jobs:
           cd BUILD/cicd
           ../../configure --enable-download --enable-build-libraries="readline"
 
+      - name: Save artifacts (autotools)
+        if: always()
+        if: matrix.build-type == 'autotools'
+        uses: actions/upload-artifact@v1
+        with:
+           name: config-log
+           path: M2/BUILD/cicd/config.log
+
       - name: Build Macaulay2 (autotools)
         id: step_build_autotools
         if: ${{ matrix.build-type == 'autotools' }}
