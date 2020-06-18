@@ -142,7 +142,7 @@ jobs:
         if: always() && matrix.build-type == 'autotools'
         uses: actions/upload-artifact@v1
         with:
-           name: config-log
+           name: config-log-${{matrix.os}}-${{matrix.cc}}
            path: M2/BUILD/cicd/config.log
 
       - name: Build Macaulay2 (autotools)
