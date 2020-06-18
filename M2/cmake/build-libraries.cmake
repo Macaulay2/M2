@@ -435,8 +435,9 @@ set(frobby_CXXFLAGS "${CPPFLAGS} ${CXXFLAGS} -Wno-deprecated-declarations")
 ExternalProject_Add(build-frobby
 #  GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/frobby/.git
 #  GIT_TAG           HEAD # WIP: 51c3e075
-  URL               https://github.com/Macaulay2/frobby/archive/d12b7b786a0e50765c1a2878601125ac2f55b68c.tar.gz
-  URL_HASH          SHA256=ccd686a4f76ad21ce55c6534ad17fce1f59ff9382485a1c8fd5fe4e1a80fc8b8
+  URL               https://github.com/Macaulay2/frobby/archive/v0.9.1.tar.gz
+  URL_HASH          SHA256=4bd699ff009973bc2d209ec9abdee33ef09e11de83914046fcc4ce68e7cc25b5
+  DOWNLOAD_NAME     frobby-v0.9.1.tar.gz
   PREFIX            libraries/frobby
   SOURCE_DIR        libraries/frobby/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
