@@ -92,7 +92,7 @@ done
 
 dnl: homebrew-provided compilers don't look here:
 CPPFLAGS="-I/usr/include -I/usr/local/include $CPPFLAGS"
-LDFLAGS="-I/usr/lib -I/usr/local/lib $LDFLAGS"
+LDFLAGS="-L/usr/lib -L/usr/local/lib $LDFLAGS"
 
 dnl AC_MSG_CHECKING(whether $FIND is GNU find)
 dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
