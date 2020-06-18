@@ -189,7 +189,8 @@ find_program(CSDP	NAMES	csdp)
 find_program(NORMALIZ	NAMES	normaliz)
 find_program(NAUTY	NAMES	dreadnaut)
 find_program(TOPCOM	NAMES	checkregularity)
-# NOTE: we don't build the following, but some packages use them
+# NOTE: we don't build the following by default, but some packages use them, so
+# we provide targets build-polymake, build-bertini, build-phcpack for building them.
 find_program(POLYMAKE	NAMES	polymake)
 find_program(BERTINI	NAMES	bertini)
 find_program(PHC	NAMES	phc)

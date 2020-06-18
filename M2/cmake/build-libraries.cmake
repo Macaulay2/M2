@@ -71,7 +71,7 @@ endif()
 set(CONFIGURE PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure)
 set(CONFIGURE ${SET_LD_LIBRARY_PATH} ${CONFIGURE})
 set(MAKE      ${SET_LD_LIBRARY_PATH} ${MAKE})
-set(NINJA     ${SET_LD_LIBRARY_PATH} ${NINJA})
+set(NINJA     ${SET_LD_LIBRARY_PATH} ninja)
 
 # TODO: Accumulate information in usr-host/share/config.site to speed up configuration
 # See: https://www.gnu.org/software/autoconf/manual/autoconf-2.60/html_node/Cache-Files.html
@@ -516,7 +516,7 @@ ExternalProject_Add(build-mpsolve
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
-		      --disable-debug # TODO: replace with --enable-debug-build conditionally
+                      --disable-debug # TODO: replace with --enable-debug-build conditionally
                       --disable-examples
                       --disable-ui
                       --disable-documentation
@@ -851,22 +851,23 @@ _ADD_COMPONENT_DEPENDENCY(programs gfan "mp;cddlib;factory" GFAN)
 
 
 # http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
-# TODO: update to v70a which is 4 years more recent
 ExternalProject_Add(build-lrslib
-  URL               ${M2_SOURCE_URL}/lrslib-062.tar.gz
-  URL_HASH          SHA256=adf92f9c7e70c001340b9c28f414208d49c581df46b550f56ab9a360348e4f09
+  URL               http://cgm.cs.mcgill.ca/~avis/C/lrslib/archive/lrslib-071.tar.gz
+  URL_HASH          SHA256=d3ea5636bfde3011d43c835773fabe131d9251197b6cc666a52d8caa3e1c7816
   PREFIX            libraries/lrslib
   SOURCE_DIR        libraries/lrslib/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND true
-  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} lrs
-                      LIBDIR=${M2_HOST_PREFIX}/lib
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} all-shared
+                      INCLUDEDIR=${MP_ROOT}/include
+                      LIBDIR=${MP_ROOT}/lib
                       CPPFLAGS=${CPPFLAGS}
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       RANLIB=${CMAKE_RANLIB}
-  INSTALL_COMMAND   ${CMAKE_STRIP} lrs
+  INSTALL_COMMAND   ${CMAKE_STRIP} lrs liblrs.so.1.0.0
+          COMMAND   ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/lrslib
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/lrslib
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${M2_INSTALL_PROGRAMSDIR}/
@@ -965,8 +966,8 @@ ExternalProject_Add(build-normaliz
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --disable-shared
-                      --without-flint
+                      --enable-shared
+                      --without-flint # ${FLINT_INCLUDE_DIR}/..
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -980,8 +981,7 @@ ExternalProject_Add(build-normaliz
                       OPENMP_CXXFLAGS=${normaliz_OpenMP_CXX_FLAGS}
             COMMAND patch --fuzz=10 --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/normaliz/patch-libtool
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
-  # TODO: do we need the libraries as well, or just the binary?
-  INSTALL_COMMAND   ${CMAKE_STRIP} source/normaliz
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-strip
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/normaliz
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/normaliz
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/
@@ -1038,15 +1038,15 @@ _ADD_COMPONENT_DEPENDENCY(programs topcom cddlib TOPCOM)
 ## Experimental build scripts for other software programs.
 ## These programs are not built by default, but the build targets are provided.
 
-# https://polymake.org
-# Polymake needs gmp, mpfr, cdd, lrs, libnormaliz, nauty and jReality
-#set(polymake_CPPFLAGS "${CPPFLAGS}")
-#if(CDDLIB_FOUND)
-#  set(polymake_CPPFLAGS "${polymake_CPPFLAGS} -I${CDDLIB_INCLUDE_DIR}")
-#endif()
+# https://polymake.org/doku.php/install/install
+# Note: polymake requires ~16G storage and permlib and perl-Term-ReadLine-Gnu on Fedora.
+# TODO: the install target doesn't install polymake in usr-dist, only in usr-host
+set(polymake_CXXFLAGS "${CPPFLAGS} -std=gnu++14 -w -Wno-mismatched-tags -Wno-deprecated-register")
 ExternalProject_Add(build-polymake
-  URL               https://polymake.org/lib/exe/fetch.php/download/polymake-4.0r1-minimal.tar.bz2
-  URL_HASH          SHA256=b29de50dda6f657f2e82ef6acff62df1b51128a20c5d53bd97226ea22fdc3b52
+#  URL               https://polymake.org/lib/exe/fetch.php/download/polymake-4.1.tar.bz2 # Bundled version
+#  URL_HASH          9ee571c08552672e990d0478f8c1ce13467b769c99049b8afd2fc39fe6ab35d6
+  URL               https://polymake.org/lib/exe/fetch.php/download/polymake-4.1-minimal.tar.bz2 # Minimal version
+  URL_HASH          SHA256=7e8d45bce800007e5c26ce5b7b5ac95731cbfc99df021e715abeb494ae550ac9
   PREFIX            libraries/polymake
   SOURCE_DIR        libraries/polymake/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -1054,23 +1054,36 @@ ExternalProject_Add(build-polymake
   CONFIGURE_COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --with-gmp=${MP_ROOT}
-                      CPPFLAGS=${CPPFLAGS}
+                      --with-cdd=${CDDLIB_INCLUDE_DIR}/..
+                      --with-flint=${FLINT_INCLUDE_DIR}/..
+                      --with-libnormaliz=${M2_HOST_PREFIX}
+                      --with-lrs=${M2_HOST_PREFIX}
+                      --with-lrs-include=${CMAKE_BINARY_DIR}/libraries/lrslib/build
+                      --with-nauty-src=${CMAKE_BINARY_DIR}/libraries/nauty/build
+                      --without-bliss
+                      --without-java
+#                      --without-ppl
+#                      --without-scip
+#                      --without-singular
+#                      --without-soplex
+#                      --without-sympol
                       CFLAGS=${CFLAGS}
-                      CXXFLAGS=${CXXFLAGS}
+                      CXXFLAGS=${polymake_CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
-  BUILD_COMMAND     ${MAKE}
-  INSTALL_COMMAND   ninja -C build/Opt install
-          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/polymake
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/polymake
+  BUILD_COMMAND     ${NINJA} -C build/Opt
+  INSTALL_COMMAND   ${NINJA} -C build/Opt install
+#          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/polymake
+#          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/polymake
 #          COMMAND   ${CMAKE_COMMAND} -E copy_if_different polymake ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} test
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
+  USES_TERMINAL_BUILD ON
   )
-#_ADD_COMPONENT_DEPENDENCY(programs polymake "cddlib;lrs;normaliz;nauty" POLYMAKE)
+#_ADD_COMPONENT_DEPENDENCY(programs polymake "mp;mpfr;cddlib;flint;normaliz;lrs;nauty" POLYMAKE)
 
 
 # http://homepages.math.uic.edu/~jan/download.html
