@@ -90,6 +90,9 @@ do case $i in
    esac
 done
 
+dnl: homebrew-provided compilers don't look here:
+CPPFLAGS="-I/usr/include -I/usr/local/include $CPPFLAGS"
+
 dnl AC_MSG_CHECKING(whether $FIND is GNU find)
 dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
 dnl then AC_MSG_RESULT(yes)
@@ -892,6 +895,9 @@ fi
 
 AC_LANG(C)
 dnl topcom includes setoper.h, rather than cdd/setoper.h, so we do, too
+dnl Fedora: /usr/include/cddlib/setoper.h
+dnl Ubuntu: /usr/include/cdd/setoper.h
+dnl -- we should look in both of those places
 AC_CHECK_HEADER(setoper.h,,BUILD_cddlib=yes)
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
