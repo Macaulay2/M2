@@ -135,7 +135,8 @@ jobs:
           ${{matrix.make}} get-tools
           ${{matrix.make}} -f Makefile
           cd BUILD/cicd
-          ../../configure --enable-download --enable-build-libraries="readline"
+          # Specifying /usr as the prefix allows us to discover gftables if it's installed there.
+          ../../configure --prefix=/usr --enable-download --enable-build-libraries="readline"
 
       - name: Save artifacts (autotools)
         if: always() && matrix.build-type == 'autotools'

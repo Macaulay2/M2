@@ -895,15 +895,18 @@ then BUILTLIBS="-lgivaro $BUILTLIBS"
 fi
 
 AC_LANG(C)
-dnl topcom includes setoper.h, rather than cdd/setoper.h, so we do, too
+dnl topcom includes "setoper.h" -- no prefix
 SAVE=$CPPFLAGS
-AC_CHECK_HEADER(setoper.h,,[
-  CPPFLAGS="$SAVE /usr/include/cdd" dnl for Ubuntu
-  AC_CHECK_HEADER(setoper.h,,[
-    CPPFLAGS="$SAVE /usr/include/cddlib" dnl for Fedora
+dnl We try 3 different filenames to thwart the caching of results:
+AC_CHECK_HEADER(cdd.h,,[
+  dnl for Ubuntu
+  CPPFLAGS="$SAVE -I/usr/include/cdd"
+  AC_CHECK_HEADER(cddmp.h,,[
+    dnl for Fedora
+    CPPFLAGS="$SAVE -I/usr/include/cddlib"
     AC_CHECK_HEADER(setoper.h,,CPPFLAGS=$SAVE
-			       AC_MSG_RESULT([[setoper.h not found, will build cddlib]])
-			       BUILD_cddlib=yes)])])
+			        AC_MSG_RESULT([[cddlib not found, will build]])
+			        BUILD_cddlib=yes)])])
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
 else LIBS="-lcdd $LIBS"
