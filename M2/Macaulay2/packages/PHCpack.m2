@@ -1,4 +1,3 @@
-
 newPackage(
   "PHCpack",
   Version => "1.8", 
@@ -50,7 +49,8 @@ newPackage(
   DebuggingMode => false,
   AuxiliaryFiles => true,
   CacheExampleOutput => true,
-  PackageExports => {"NAGtypes"}
+  PackageExports => {"NAGtypes"},
+  OptionalComponentsPresent => PHCpackPresent := run ("type phc >/dev/null 2>&1") === 0
 )
 
 --Copyright 2013 Elizabeth Gross, Sonja Petrovic, Jan Verschelde.
@@ -696,7 +696,7 @@ cascade (List) := o -> (system) -> (
         ) else (
           supsols := points(supwit);
           genpts := witnessSuperSetsFilter(result,supsols);
-          g := toList(apply(genpts,x->point{x}));
+          g := genpts;
           ws := witnessSet(ideal(equations(supwit)),ideal(slice(supwit)),g);
           if #g!=0 then result = append(result,(i,ws));
         );
