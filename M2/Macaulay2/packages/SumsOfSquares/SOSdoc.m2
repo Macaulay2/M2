@@ -870,6 +870,7 @@ document { --Verbosity
         [sosdecTernary,Verbosity],
         [sosInIdeal,Verbosity],
         [lowerBound,Verbosity],
+        [checkSolver,Verbosity],
         },
     Headline => "control the level of information printed",
     "This optional argument indicates how much information should be given to the user.  The possible values are:",
