@@ -68,7 +68,7 @@ unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
 	$$(WHY)
 	$(MKDIR_P) $1-temporary
 	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
-	cd $1-temporary && HOME=/home/m2user @pre_bindir@/M2 $(M2DIRS) \
+	cd $1-temporary && @pre_bindir@/M2 $(M2DIRS) \
 	    -q $(STOP) \
 	    -e errorDepth=$(errorDepth) \
 	    -e debugLevel=$(debugLevel) \
