@@ -30,7 +30,7 @@ html Hypertext := x -> (
     T := class x;
     qname := T.qname;
     attr := "";
-    cont := if member(Options, keys T) then (
+    cont := if T.?Options then (
 	(op, ct) := try override(options T, toSequence x) else error("markup type ", toString T, ": ",
 	    "unrecognized option name(s): ", toString select(toList x, c -> instance(c, Option)));
 	scanPairs(op, (key, val) -> if val =!= null then attr = " " | key | "=" | format val | attr);

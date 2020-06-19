@@ -235,12 +235,12 @@ TOH.qname     = "span"
 -----------------------------------------------------------------------------
 -- Add acceptable html attributes to the type of an html tag
 -----------------------------------------------------------------------------
-addAttribute := (T, opts) -> (
+addAttribute = (T, opts) -> (
     T.Options = new OptionTable from apply(opts, opt ->
 	if class opt === Option then opt else opt => null))
 
 -- html global attributes
-htmlGlobalAttr := {
+htmlGlobalAttr = {
     "accesskey",
     "class",
     "contenteditable",
@@ -264,7 +264,7 @@ addAttribute(LINK,  htmlGlobalAttr | {"href", "rel", "title", "type"})
 addAttribute(STYLE, htmlGlobalAttr | {"type"})
 
 -- html global and event attributes
-htmlAttr := htmlGlobalAttr | {
+htmlAttr = htmlGlobalAttr | {
     "onafterprint","onbeforeprint","onbeforeunload","onerror","onhashchange",
     "onload","onmessage","onoffline","ononline","onpagehide","onpageshow",
     "onpopstate","onresize","onstorage","onunload","onblur","onchange",

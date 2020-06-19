@@ -12,7 +12,7 @@ newPackage(
 		},
 	Headline => "root systems and Weyl groups",
 	AuxiliaryFiles => true,
-	PackageExports => {"Graphics"},
+	PackageExports => {"OldGraphics"},
 	DebuggingMode => false)
 
 -- Put here the name of functions that should be visible to users
@@ -1031,7 +1031,7 @@ hasseDiagramToGraph(HasseDiagram) := {"labels"=>""} >> opts -> (D) ->
 	  )
 	)
 
---making graphic elements for the package "Graphics" out of a HasseGraph (and return them in a Picture object). No labels for the moment.
+--making graphic elements for the package "OldGraphics" out of a HasseGraph (and return them in a Picture object). No labels for the moment.
 hasseGraphToPicture = method(Options=>true)
 hasseGraphToPicture(HasseGraph) := {"top margin"=>100,"left margin"=>100,"horizontal space"=>100,"row space"=>100,"tag distance"=>20,"point radius"=>2,"point options"=>new HashTable from {"fill"=>"black"}, "edge options" => new HashTable from {"stroke-width"=>"2"}, "tag options"=>new HashTable from {}} >> opts -> (G) ->
 	(
@@ -4294,7 +4294,7 @@ doc ///
 		H: HasseGraph
 	Outputs
 		: Picture 
-			describing the Hasse graph in the picture language of the package Graphics 
+			describing the Hasse graph in the picture language of the package OldGraphics 
 ///
 
 doc ///

@@ -1,1923 +1,1280 @@
 -- -*- coding: utf-8 -*-
--- licensed under GPL, any version
 newPackage(
-	"Graphics",
-	Version => "0.2",
-	Date => "February 26, 2010",
-	Authors => {
-		{Name => "Baptiste Calmès",
-		HomePage => "http://www.math.uni-bielefeld.de/~bcalmes/"},
-                {Name => "Viktor Petrov"}
-		},
-	Headline => "create graphics",
-	DebuggingMode => false)
-
--- Put here the name of functions that should be visible to users
-export{
-"Point2D", "Point3D", "Segment2D", "Segment3D", "Polygon2D", "Polygon3D", "Circle", "Sphere", "TextTag", "GraphicPrimitive", 
-"FormattedGraphicPrimitives", "Picture",
-"point", "segment", "polygon", "circle", "sphere", "textTag", "formatGraphicPrimitives", "picture",
-"pictureZone", 
-"mergeFormattedGraphicPrimitives",
-"svgObject", "svgPicture", "defaultSVGOpening",
-"pgfObject", "pgfPicture",
-"viewPicture"
-}
-
--- Variables that can be modified by the user
-exportMutable{
-"possibleSVGOptions", "defaultSVGOptions", "defaultSVGValues", "defaultSVGHeading", "defaultSVGClosing",
-"possiblePGFOptions", "defaultPGFOptions", "defaultPGFValues"
-}
-
--- Package code 
-
---Defining the class of a GraphicPrimitive. It will have child types like Points, etc. 
-GraphicPrimitive = new Type of BasicList 
-
---Defining the class of a FormattedGraphicPrimitives. It is a basic list that contains a list of GraphicPrimitives and a hash table of formatting options (like color, thickness, width, etc.)
-FormattedGraphicPrimitives = new Type of BasicList 
-
---Defining the class of a FormattedGraphicPrimitive. It is a basic list that contains a GraphicPrimitive and a hash table of formatting options (like color, thickness, width, etc.)
---FormattedGraphicPrimitive = new Type of BasicList 
-
---Defining the class of a Picture. It is a basic list containing FormattedGraphicPrimitives. Some functions should be written to optimize it as far as options are concerned. The order of the FGPs should not be changed, for reasons of what should appear above what on screen.
-Picture = new Type of BasicList
-
---Defining the class of a point (each point is at least two coordinates)
-Point2D = new Type of GraphicPrimitive 
-
---Defining the class of a point (each point is at least two coordinates)
-Point3D = new Type of GraphicPrimitive 
-
---Defining the class of a line segment (two points)
-Segment2D = new Type of GraphicPrimitive
-
---Defining the class of a line segment (two points)
-Segment3D = new Type of GraphicPrimitive
-
---Defining the class of a polygon (set of points)
-Polygon2D = new Type of GraphicPrimitive
-
---Defining the class of a polygon (set of points)
-Polygon3D = new Type of GraphicPrimitive
-
---Defining the class of a sphere (a center point and a radius)
-Circle = new Type of GraphicPrimitive 
-
---Defining the class of a sphere (a center point and a radius)
-Sphere = new Type of GraphicPrimitive 
-
---Defining the class of a text tag (a string and a position where to put it) 
-TextTag = new Type of GraphicPrimitive 
-
---Making a Point (2D or 3D)
-point = method()
-
-point(ZZ,ZZ) := (x,y) -> new Point2D from {x,y}
-
-point(RR,RR) := (x,y) -> new Point2D from {round(x),round(y)}
-
-point(ZZ,ZZ,ZZ) := (x,y,z) -> new Point3D from {x,y,z}
-
-point(RR,RR,RR) := (x,y,z) -> new Point3D from {round(x),round(y),round(z)}
-
---Making a Segment from points 
-segment = method()
-segment(Point2D,Point2D) := (p,q) -> new Segment2D from {p,q}
-segment(Point3D,Point3D) := (p,q) -> new Segment3D from {p,q}
-
---Making a polygon from a list points
-polygon = method()
-polygon(List) := (L) -> 
-	(
-	cl:=keys set(class\L);
-	if cl === {Point2D} then return new Polygon2D from L;
-	if cl === {Point3D} then return new Polygon3D from L;
-	error "The list should be non empty, all elements in it should have the same type, either Point2D or Point3D."
-	)
-
---Making a circle from a center point and a radius 
-circle = method()
-circle(Point2D,ZZ) := (p,r) -> new Circle from {p,r} 
-
-circle(Point2D,RR) := (p,r) -> new Circle from {p,round(r)} 
-
---Making a sphere from a center point and a radius 
-sphere = method()
-sphere(Point3D,ZZ) := (p,r) -> new Sphere from {p,r} 
-
-sphere(Point3D,RR) := (p,r) -> new Sphere from {p,round(r)} 
-
---Making a text tag from a point and a string 
-textTag = method()
-textTag(Point2D,String) := (p,s) -> new TextTag from {p,s} 
-
-textTag(Point3D,String) := (p,s) -> new TextTag from {p,s} 
-
---Turning a GraphicPrimitive object into a formated one by specifying options. These options will be passed to the different methods to create pictures in different formats (ex: SVG, etc.) so they are not constrained here because I don't know what graphic formats will be supported in the future. 
-formatGraphicPrimitives = method()
-formatGraphicPrimitives(BasicList,HashTable) := (gplist, h) ->
-	(
-	if all(gplist,x->instance(x,GraphicPrimitive)) then new FormattedGraphicPrimitives from {gplist,h} else error "All elements of the list should be of the type GraphicPrimitive."
-	)
-
---make a picture out of a list of FormattedGraphicPrimitives. No optimization is done on the options.
-picture = method()
-picture(BasicList) := (fgplist) ->
-	(
-	if all(fgplist,x->instance(x,FormattedGraphicPrimitives)) then new Picture from fgplist else error "All elements of the list should be of the type FormattedGraphicPrimitives."
-	)
-
---merging two FormattedGraphicPrimitives
-mergeFormattedGraphicPrimitives = method(Options => true)
-mergeFormattedGraphicPrimitives(FormattedGraphicPrimitives,FormattedGraphicPrimitives) := {"keep"=>"1","priority"=>"1"} >> opts -> (fgp1,fgp2) ->
-	(
-	new FormattedGraphicPrimitives from {(fgp1#0)|(fgp2#0),mergeOptions(fgp1#1,fgp2#1,"keep"=>opts#"keep","priority"=>opts#"priority")}
-	)
-
-mergeOptions = {"keep"=>"1or2","priority"=>"1"} >> opts -> (h1,h2) ->
-	(
-	if opts#"keep" === "1" or opts#"keep" === "1and2" then h2 = applyPairs(h2,(k,v)->if (h1)#?k then (k,v)); 
-	if opts#"keep" === "2" or opts#"keep" === "1and2" then h1 = applyPairs(h1,(k,v)->if (h2)#?k then (k,v)); 
-	if opts#"priority" === "1" then return merge(h1,h2,(x,y)->x); 
-	if opts#"priority" === "2" then return merge(h1,h2,(x,y)->y); 
-	)
-
---determine the zone in which a GraphicPrimitive object lives. It is given as a list {xmin,xmax,ymin,ymax} for 2D objects and {xmin,xmax,ymin,ymax} for 3D objects.
-pictureZone = method()
-
-pictureZone(Point2D) := (GP) -> {GP#0,GP#0,GP#1,GP#1}
-
-pictureZone(Point3D) := (GP) -> {GP#0,GP#0,GP#1,GP#1,GP#2,GP#2}
-
-pictureZone(Segment2D) := (GP) -> {min(GP#0#0,GP#1#0),max(GP#0#0,GP#1#0),min(GP#0#1,GP#1#1),max(GP#0#1,GP#1#1)}
-
-pictureZone(Segment3D) := (GP) -> {min(GP#0#0,GP#1#0),max(GP#0#0,GP#1#0),min(GP#0#1,GP#1#1),max(GP#0#1,GP#1#1),min(GP#0#2,GP#1#2),max(GP#0#2,GP#1#2)}
-
-pictureZone(Circle) := (GP) -> {GP#0#0-GP#1,GP#0#0+GP#1,GP#0#1-GP#1,GP#0#1+GP#1}
-
-pictureZone(Sphere) := (GP) -> {GP#0#0-GP#1,GP#0#0+GP#1,GP#0#1-GP#1,GP#0#1+GP#1,GP#0#2-GP#1,GP#0#2+GP#1}
-
-pictureZone(Polygon2D) := (GP) -> 
-	(
-	Lx:=toList apply(GP,x->x#0);
-	Ly:=toList apply(GP,x->x#1);
-	{min Lx,max Lx, min Ly, max Ly}
-	)
-
-pictureZone(Polygon3D) := (GP) -> 
-	(
-	Lx:=toList apply(GP,x->x#0);
-	Ly:=toList apply(GP,x->x#1);
-	Lz:=toList apply(GP,x->x#2);
-	{min Lx,max Lx, min Ly, max Ly,min Lz, max Lz}
-	)
-
-pictureZone(TextTag) := (GP) -> pictureZone(GP#0)
-
---determine the zone in which a list of GraphicPrimitives lie. It is supposed a nonempty list and to be consistent in containing only 2D objects or only 3D objects.
-pictureZone(FormattedGraphicPrimitives) := (fgps) -> 
-	(
-	mylist:=apply(fgps#0,pictureZone);
-	if #(mylist#0)==4 then
-	{min apply(mylist,x->x#0), max apply(mylist,x->x#1), min apply(mylist,x->x#2), max apply(mylist,x->x#3)} 
-	else if #(mylist#0)==6 then
-	{min apply(mylist,x->x#0), max apply(mylist,x->x#1), min apply(mylist,x->x#2), max apply(mylist,x->x#3), min apply(mylist,x->x#4), max apply(mylist,x->x#5)} 
-	)
-
---determine the zone in which a picture lies
-pictureZone(Picture) := (pict) ->
-	(
-	mylist:=apply(toList(pict),pictureZone);
-	if #(mylist#0)==4 then
-	{min apply(mylist,x->x#0), max apply(mylist,x->x#1), min apply(mylist,x->x#2), max apply(mylist,x->x#3)} 
-	else if #(mylist#0)==6 then
-	{min apply(mylist,x->x#0), max apply(mylist,x->x#1), min apply(mylist,x->x#2), max apply(mylist,x->x#3), min apply(mylist,x->x#4), max apply(mylist,x->x#5)}
-	)
-
--- SVG section
---
---Functions are defined to translate graphic primitives into SVG language.
---
-
---Default SVG values for coordinates, etc.
-defaultSVGValues= hashTable{
-	Point2D => hashTable{
-		"cx"=>"0",
-		"cy"=>"0",
-		"r"=>"2",
-		},
-	Circle => hashTable{
-		"cx"=>"0",
-		"cy"=>"0",
-		"r"=>"10",
-		},
-	Segment2D => hashTable{
-		"x1"=>"0",
-		"y1"=>"0",
-		"x2"=>"0",
-		"y2"=>"0",
-		},
-	Polygon2D => hashTable{
-		"points"=>"0,0",
-		},
-	TextTag => hashTable{
-		"x"=>"0",
-		"y"=>"0",
-		}
-	}
-
---possible SVG options
-possibleSVGOptions = hashTable{
-	Point2D => set{"stroke","stroke-width","stroke-opacity","fill","fill-opacity"},
-	Circle => set{"stroke","stroke-width","stroke-opacity","fill","fill-opacity"},
-	Segment2D => set{"stroke","stroke-width","stroke-opacity"},
-	Polygon2D => set{"stroke","stroke-width","stroke-opacity","fill","fill-opacity"},
-	TextTag => set{"stroke","stroke-width","stroke-opacity","fill","fill-opacity","font-family","font-size"}
-	}
-
-
---Default SVG options for each graphic primitive
-defaultSVGOptions = hashTable{
-	Point2D => hashTable{
-		"stroke"=>"black",
-		"stroke-width"=>"0",
-		"stroke-opacity"=>"1",
-		"fill"=>"black",
-		"fill-opacity"=>"1"
-		},
-	Circle => hashTable{
-		"stroke"=>"black",
-		"stroke-width"=>"1",
-		"stroke-opacity"=>"1",
-		"fill"=>"black",
-		"fill-opacity"=>"0"
-		},
-	Segment2D => hashTable{
-		"stroke"=>"black",
-		"stroke-width"=>"1",
-		"stroke-opacity"=>"1",
-		},
-	Polygon2D => hashTable{
-		"stroke"=>"black",
-		"stroke-width"=>"1",
-		"stroke-opacity"=>"1",
-		"fill"=>"black",
-		"fill-opacity"=>"1"
-		},
-	TextTag => hashTable{
-		"stroke"=>"black",
-		"stroke-width"=>"0",
-		"stroke-opacity"=>"0",
-		"fill"=>"black",
-		"fill-opacity"=>"1",
-		"font-family"=>"Verdana",
-		"font-size"=>"12"
-		}
-	}
-
---default SVG document heading
-defaultSVGHeading =
-(///<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
-"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-
-///)
-
---default SVG opening
-defaultSVGOpening = method()
-defaultSVGOpening(ZZ,ZZ) := (wid,hei) ->
-	(///<svg width="///|toString(wid)|///" height="///|toString(hei)|///" version="1.1"
-xmlns="http://www.w3.org/2000/svg">
-
-///)
-
---default SVG closing 
-defaultSVGClosing =
-(///</svg>
-///)
-
---Making an SVG object (stored in a string) from a Graphic Primitive and some options
-svgObject = method()
-svgObject(Point2D,HashTable) := (mypt,opts) ->
-	(
-	opts= mergeOptions(mergeOptions(opts,possibleSVGOptions#Point2D,"keep"=>"1and2","priority"=>"1"),defaultSVGOptions#Point2D);
-	"<circle "
-	|///cx="///|toString(mypt#0)|///" cy="///|toString(mypt#1)|/// r="///|defaultSVGValues#Point2D#("r")|///" ///
-	|concatenate(apply(pairs(opts),x->(x#0|///="///|x#1|///" ///)))
-	|"/>"
-	)
-
-svgObject(Circle,HashTable) := (mycirc,opts) ->
-	(
-	opts= mergeOptions(mergeOptions(opts,possibleSVGOptions#Circle,"keep"=>"1and2","priority"=>"1"),defaultSVGOptions#Circle);
-	"<circle "
-	|///cx="///|toString(mycirc#0#0)|///" cy="///|toString(mycirc#0#1)|///" r="///|toString(mycirc#1)|///" ///
-	|concatenate(apply(pairs(opts),x->(x#0|///="///|x#1|///" ///)))
-	|"/>"
-	)
-
-svgObject(Segment2D,HashTable) := (myseg,opts) ->
-	(
-	opts= mergeOptions(mergeOptions(opts,possibleSVGOptions#Segment2D,"keep"=>"1and2","priority"=>"1"),defaultSVGOptions#Segment2D);
-	"<line "
-	|///x1="///|toString(myseg#0#0)|///" y1="///|toString(myseg#0#1)|///" x2="///|toString(myseg#1#0)|///" y2="///|toString(myseg#1#1)|///" ///
-	|concatenate(apply(pairs(opts),x->(x#0|///="///|x#1|///" ///)))
-	|"/>"
-	)
-
-svgObject(Polygon2D,HashTable) := (mypoly,opts) ->
-	(
-	opts= mergeOptions(mergeOptions(opts,possibleSVGOptions#Polygon2D,"keep"=>"1and2","priority"=>"1"),defaultSVGOptions#Polygon2D);
-	"<polygon "
-	|///points="///|concatenate(apply(mypoly,x->toString(x#0)|","|toString(x#1)|" "))|///" ///
-	|concatenate(apply(pairs(opts),x->(x#0|///="///|x#1|///" ///)))
-	|"/>"
-	)
-
-svgObject(TextTag,HashTable) := (mytext,opts) ->
-	(
-	opts= mergeOptions(mergeOptions(opts,possibleSVGOptions#TextTag,"keep"=>"1and2","priority"=>"1"),defaultSVGOptions#TextTag);
-	///<text id="TextElement" ///
-	|///x="///|toString(mytext#0#0)|///" y="///|toString(mytext#0#1)|///" ///
-	|concatenate(apply(pairs(opts),x->(x#0|///="///|x#1|///" ///)))
-	|">"
-	|mytext#1
-	|"</text>"
-	)
-
-svgObject(FormattedGraphicPrimitives) := (fgp) -> concatenate(apply(fgp#0,x->svgObject(x,fgp#1)|newline|newline))
-	
-svgObject(Picture) := (pict) -> concatenate(apply(toList pict,svgObject))
-
---Making an SVG picture (stored in a string) from a Picture with prescribed size. It only accepts Pictures with 2D primitives.
-svgPicture = method()
-svgPicture(Picture,ZZ,ZZ) := (pict,w,h) ->
-	(
-	defaultSVGHeading
-	|defaultSVGOpening(w,h)
-	|svgObject(pict) 
-	|defaultSVGClosing
-	) 
-
---Making an SVG picture (stored in a string) from a Picture with size computed to be just the size of the picture. 
-svgPicture(Picture) := (pict) ->
-	(
-	z:=pictureZone(pict);
-	w:=z#1+100;
-	h:=z#3+100;
-	svgPicture(pict,w,h)
-	) 
-
---Making an SVG picture from a Picture with prescribed size, and storing it in a file 
-svgPicture(Picture,ZZ,ZZ,String) := (pict,w,h,s) ->
-	(
-	(if match(///\.svg\'///,s) then s else s|".svg") << svgPicture(pict,w,h) << endl << close
-	) 
-
---Making an SVG picture from a Picture with size computed to be just the size of the picture, and storing it in a file 
-svgPicture(Picture,String) := (pict,s) ->
-	(
-	(if match(///\.svg\'///,s) then s else s|".svg") << svgPicture(pict) << endl << close
-	) 
-
---view a picture document (that is in SVG for the moment) in the default browser.
-viewPicture = method()
-viewPicture(String) := (filename) ->
-	(
-	if match(///\.svg\'///,filename) then show new URL from {filename}
-	)
+        "Graphics",
+        Version => "0.9",
+        Date => "May 18, 2018",
+        Authors => {{Name => "Paul Zinn-Justin",
+                  Email => "pzinn@unimelb.edu.au",
+                  HomePage => "http://http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
+        Headline => "A package to produce SVG graphics",
+        DebuggingMode => false,
+	AuxiliaryFiles => true,
+	PackageImports => {"Text"},
+	PackageExports => {"Text"}
+        )
+
+export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
+    "GraphicsList", "Circle", "Light", "Ellipse", "Path", "Polygon", "Polyline", "GraphicsText", "Line", "GraphicsHtml",
+    "gList", "viewPort", "is3d", "distance", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot",
+    "Contents", "TextContent", "HtmlContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "Point", "SizeX", "SizeY", "ViewPort",
+    "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Points", "Radius",
+    "Blur", "Static", "PathList", "Axes", "Margin", "Mesh",
+    "SVG", "SVGElement"
+    }
+
+protect Filter
+protect Distance
+protect Is3d
+protect Anim
+protect CurrentMatrix
+protect ScaledRadius
+protect ScaledRadiusX
+protect ScaledRadiusY
+protect GraphicsId
+
+debug Core
+
+-- for now data-* need entering manually
+htmlData={ "data-matrix","data-dmatrix","data-pmatrix","data-center","data-r","data-rx","data-ry","data-coords","data-onesided","data-origin","data-point","data-point1","data-point2","data-fontsize"}
+svgAttr= htmlAttr | htmlData | { "transform", "filter" } -- what else ?
+
+GraphicsObject = new Type of HashTable -- ancestor type
+
+new GraphicsObject from List := (T,l) -> hashTable append(l,symbol cache => new CacheTable); -- every Graphics object should have a cache
+new GraphicsObject := T -> new T from {};
+new GraphicsObject from OptionTable := (T,o) -> o ++ {symbol cache => new CacheTable};
+GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opts2,last) -- cf similar method for OptionTable
+
+-- a bunch of options are scattered throughout the code:
+-- * all dimensions are redefined as dimensionless quantities: Radius, FontSize, etc
+-- * TransformMatrix for static transformation
+-- * AnimMatrix for animation transformation
+-- * OneSided for 3d paths, polygons
+-- * Static for objects that can't be rotated
+--   i.e, they or their contents can rotate/autorotate, but the rotations of their ancestors won't affect them
+--   useful for lights
+-- * Blur (amount of blurriness relative to the size of the object)
+-- GLOBAL options (only work if in outermost object)
+-- * SizeY / SizeX for picture sizes
+-- * ViewPort for manual range of viewing window
+-- * Perspective for 3d: can be a number or a whole 4d matrix (ideally, there'd be a function to translate...)
+--   the matrix should be such that after transformation, the coordinates are (x,y,z,z/p) where the viewer is at (0,0,0) and the screen at z=-p
+-- * Margin (leave blank around picture)
+-- * Axes (draw axes)
+
+-- 3d: turns on lights, axes are diff
+
+GraphicsType = new Type of Type -- all usable Graphics objects are ~ self-initialized
+
+gParseFlag := false;
+gParse := method(Dispatch=>Thing)
+gParse Sequence := x -> gParse vector(toList x)
+gParse VisibleList := x -> apply(x,gParse)
+gParse HashTable := x -> applyValues(x,gParse)
+gParse CacheTable := identity
+gParse Option := x -> x#0 => gParse x#1
+gParse Thing := identity
+gParse Matrix := x -> (
+    if rank source x =!= rank target x or rank source x < 2 or rank source x > 4 then error "wrong matrix";
+    if rank source x == 2 then x++1++1 else if rank source x == 3 then x++1 else x
+    )
+gParse Vector := x -> (
+    if rank class x < 2 or rank class x > 4 then error "wrong coordinates";
+    if rank class x === 2 then x || vector {0,1.} else (
+	 gParseFlag=true; if rank class x === 3 then x || vector {1.} else if rank class x === 4 then x)
+     )
+
+GraphicsType List := (T,opts) -> (
+    opts0 := T.Options;
+    -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
+    gParseFlag = false;
+    temp := gParse(opts0 | apply(#opts, i -> if i < #opts0 and class opts#i =!= Option then opts0#i#0 => opts#i else opts#i));
+    new T from append(temp,symbol Is3d => gParseFlag)
+)
+
+perspective = g -> (
+    persp := if g.?Perspective then g.Perspective else 1000.; -- some arbitrary number
+    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,persp},{0,0,-1/persp,1}} -- useful to have output {x,y,z+p,1+z/p}
+)
+
+viewPort = g -> (
+    if not g.cache.?ViewPort then svg g; -- need to be rendered
+    g.cache.ViewPort
+    )
+viewPort1 := method() -- returns [xmin,ymin],[xmax,ymax]
+viewPort1 GraphicsObject := x -> null
+
+-- Is3d=false has two effects:
+-- * the data-* stuff is lightened (can be recreated from the normal parameters)
+-- * the event listeners for 3d rotating the object with the mouse are deactivated
+-- * lighting is deactivated
+is3d = x -> if x.?Is3d then x.Is3d else true; -- the else clause should never happen
+
+distance = g -> (
+    if not g.cache.?Distance then svg g; -- need to be rendered
+    g.cache.Distance
+    )
+distance1 := method()
+distance1 GraphicsObject := x -> 0_RR
+
+updateGraphicsCache := g -> (
+    g.cache.ViewPort = viewPort1 g; -- update the range
+    g.cache.Distance = distance1 g; -- update the distance
+    if g.?OneSided and g.OneSided then determineSide g;
+    -- bit of a hack: 2d objects Circle, Ellipse get scaled in a 3d context
+    if instance(g,Circle) then (
+	scale := 1/(g.cache.CurrentMatrix*g.Center)_3;
+	g.cache.ScaledRadius=max(0,g.Radius*scale);
+	) else if instance(g,Ellipse) then (
+	scale = 1/(g.cache.CurrentMatrix*g.Center)_3;
+	g.cache.ScaledRadiusX=max(0,g.RadiusX*scale);
+	g.cache.ScaledRadiusY=max(0,g.RadiusY*scale);
+	) else if instance(g,GraphicsText) then ( -- same for GraphicsText
+	-- choose font size
+	f := if g.?FontSize then g.FontSize else 14.;
+	scale = 1/(g.cache.CurrentMatrix*g.Point)_3;
+	f = max(0,f*scale);
+	g.cache#"font-size"= toString f|"px";
+	if instance(g,GraphicsHtml) then ( -- hack
+	    g.cache#"overflow"="visible"; -- makes width/height irrelevant
+	    g.cache#"width"=g.cache#"height"="100%"; -- but still needed otherwise webkit won't render
+	    );
+	);
+    )
+
+project2d := x -> vector {x_0/x_3,x_1/x_3}
+
+new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
+    g:=new MutableHashTable;
+    g.Options=x#1; -- TODO: should it be an actual table? then have to suppress the BS syntax
+    g.SVGElement = new MarkUpType of Hypertext;
+    addAttribute(g.SVGElement,svgAttr | if #x>=3 then x#2 else {});
+    g.SVGElement.qname = x#0;
+    g)
+
+
+Circle = new GraphicsType of GraphicsObject from ( "circle",
+    { symbol Center => vector {0.,0.}, symbol Radius => 50. },
+    { "r", "cx", "cy" }
+    )
+viewPort1 Circle := g -> (
+    p := g.cache.CurrentMatrix * g.Center;
+    r:=g.Radius/p_3;
+    p=project2d p;
+    r = vector {r,r};
+    { p - r, p + r }
+    )
+distance1 Circle := g -> (
+    y := g.cache.CurrentMatrix * g.Center;
+    y_2
+    )
+
+Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
+    { symbol Center => vector {0.,0.}, symbol RadiusX => 50., symbol RadiusY => 50. },
+    { "rx", "ry", "cx", "cy" }
+    )
+viewPort1 Ellipse := g -> (
+    p := g.cache.CurrentMatrix * g.Center;
+    rx:=g.RadiusX/p_3; ry:=g.RadiusY/p_3;
+    p=project2d p;
+    r := vector {rx,ry};
+    { p - r, p + r }
+    )
+distance1 Ellipse := g -> (
+    y := g.cache.CurrentMatrix * g.Center;
+    y_2
+    )
+
+GraphicsText = new GraphicsType of GraphicsObject from ( "text",
+    { Point => vector {0.,0.}, symbol TextContent => "" },
+    { "x", "y" }
+    )
+viewPort1 GraphicsText := g -> (
+    f := if g.?FontSize then g.FontSize else 14.;
+    p := g.cache.CurrentMatrix * g.Point;
+    f=f/p_3;
+    p=project2d p;
+    { p - vector {0,f}, p + vector{f*0.6*length g.TextContent,0} } -- very approximate TODO properly
+    )
+
+Line = new GraphicsType of GraphicsObject from ( "line",
+    { Point1 => vector {0.,0.}, Point2 => vector {50.,50.}},
+    { "x1", "y1", "x2", "y2" }
+    )
+viewPort1 Line := g -> (
+    p1 := project2d(g.cache.CurrentMatrix * g.Point1);
+    p2 := project2d(g.cache.CurrentMatrix * g.Point2);
+    p := transpose{entries p1,entries p2};
+    { vector(min\p), vector(max\p) }
+    )
+distance1 Line := g -> (
+    p1 := g.cache.CurrentMatrix * g.Point1;
+    p2 := g.cache.CurrentMatrix * g.Point1;
+    0.5*(p1_2+p2_2)
+    )
+
+GraphicsPoly = new Type of GraphicsObject;
+
+Polyline = new GraphicsType of GraphicsPoly from ( "polyline", { symbol Points => {} }, { "points" } )
+Polygon = new GraphicsType of GraphicsPoly from ( "polygon", { symbol Points => {} }, { "points" } )
+Path = new GraphicsType of GraphicsPoly from ( "path", { symbol PathList => {} }, { "d" } )
+viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw this
+    if instance(g,Path) then s := select(g.PathList, x -> instance(x,Vector)) else s = g.Points;
+    s = transpose apply(s, x -> entries project2d (g.cache.CurrentMatrix*x));
+    {vector(min\s), vector(max\s)}
+    )
+
+-- to make lists of them
+GraphicsList = new GraphicsType of GraphicsObject from ( "g", { symbol Contents => {} } )
+-- slightly simpler syntax: gList (a,b,c, opt=>xxx) rather than GraphicsList { {a,b,c}, opt=>xxx }
+gList = x -> (
+    x=flatten toList sequence x;
+    x1 := select(x, y -> instance(y,GraphicsObject));
+    x2 := select(x, y -> instance(y,Option));
+    GraphicsList append(x2,symbol Contents => x1)
+    )
+viewPort1 GraphicsList := x -> (
+    s := nonnull apply(x.Contents, y->y.cache.ViewPort);
+    if #s===0 then null else (
+	s = transpose s;
+	mn := transpose (entries \ s#0);
+	mx := transpose (entries \ s#1);
+	{vector (min\mn), vector(max\mx)}
+    )
+)
+
+GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
+    { Point => vector {0.,0.}, symbol HtmlContent => null },
+    { "x", "y" }
+    )
+viewPort1 GraphicsHtml := g -> (
+    p := project2d (g.cache.CurrentMatrix * g.Point);
+    { p, p } -- TODO properly
+    )
 
 --
---PGF section
---containing functions to turn Pictures into the pgf/tikz language for latex
+anim := method()
+anim GraphicsObject := x -> x.?AnimMatrix
+anim GraphicsList := x -> (
+    if not x.cache.?Anim then x.cache.Anim = x.?AnimMatrix or any(x.Contents,anim);
+    x.cache.Anim
+    )
+
+SVG = new MarkUpType of Hypertext
+addAttribute(SVG,svgAttr|{"height","preserveAspectRatio","viewBox","width","x","xmlns"=>"http://www.w3.org/2000/svg","y","zoomAndPan"})
+
 --
+stableSort = x -> if #x <= 1 then x else (
+xx := transpose {x,toList(0..#x-1)};
+(transpose sort xx)#0
+)
 
---Default PGF options for each graphic primitive
-possiblePGFOptions = hashTable{
-	Picture => set {"scale","x","y"},
-	Point2D => set {"fill","draw","style","line width","fill opacity","draw opacity","opacity"},
-	Circle => set{"fill","draw","style","line width","fill opacity","draw opacity","opacity","dashed"},
-	Segment2D => set{"draw","style","line width","draw opacity","opacity","dashed"},
-	Polygon2D => set{"fill","draw","style","line width","fill opacity","draw opacity","opacity","dashed"},
-	TextTag => set{}
+-- for javascript stuff
+jsString := method(Dispatch=>Thing)
+jsString Thing := toString
+jsString String := x -> "'" | x |"'"
+jsString Matrix := x -> "matrix(" | jsString entries x | ")"
+jsString Vector := x -> "vector(" | jsString entries x | ")"
+jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
+--jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
+jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
+
+updateTransformMatrix := (g,m,p) -> ( -- (object,matrix,persepective matrix)
+    g.cache.CurrentMatrix = if g.?Static and g.Static then p else m; -- if static reset to perspective matrix
+    if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*g.TransformMatrix;
+    )
+
+-*
+LiteralString := new WrapperType of Holder -- to make sure the text inside GraphicsText doesn't get html'ified
+htmlWithTex LiteralString := x -> htmlLiteral x#0
+*-
+
+svgLookup := hashTable { -- should be more systematic
+    symbol TransformMatrix => (x,m) -> "data-matrix" => jsString x,
+    symbol AnimMatrix => (x,m) -> "data-dmatrix" => jsString x,
+    symbol Center => (x,m) -> (
+	x = project2d (m*x);
+	"cx" => toString x_0,
+	"cy" => toString x_1
+	),
+    symbol ScaledRadius => (x,m) ->  "r" => toString x,
+    symbol ScaledRadiusX => (x,m) ->  "rx" => toString x,
+    symbol ScaledRadiusY => (x,m) ->  "ry" => toString x,
+    symbol PathList => (x,m) -> "d" => demark(" ", flatten apply(x, y -> if instance(y,Vector) then apply(entries project2d(m*y),toString) else y)),
+    symbol Points => (x,m) -> "points" => demark(" ", flatten apply(x, y -> apply(entries project2d(m*y),toString))),
+    symbol Point => (x,m) -> (
+	x = project2d (m*x);
+	"x" => toString x_0,
+	"y" => toString x_1
+	),
+    symbol Point1 => (x,m) -> (
+	x = project2d (m*x);
+	"x1" => toString x_0,
+	"y1" => toString x_1
+	),
+    symbol Point2 => (x,m) -> (
+	x = project2d (m*x);
+	"x2" => toString x_0,
+	"y2" => toString x_1
+	),
+    symbol Static => (x,m) -> if x then "data-pmatrix" => jsString m,
+    symbol GraphicsId => (x,m) -> "id" => x,
+    symbol Filter => (x,m) -> "filter" => toString x,
+    symbol Contents => (x,m) -> (
+	x = toSequence stableSort x;
+	apply(x, y -> y.cache.SVGElement)
+	),
+    symbol TextContent => (x,m) -> x,
+    symbol HtmlContent => (x,m) -> htmlWithTex x
+    }
+
+svg3dLookup := hashTable { -- should be more systematic
+    symbol Center => x -> "data-center" => jsString x,
+    symbol Radius => x -> "data-r" => jsString x,
+    symbol RadiusX => x -> "data-rx" => jsString x,
+    symbol RadiusY => x -> "data-ry" => jsString x,
+    symbol PathList => x -> "data-coords" => jsString x,
+    symbol Points => x -> "data-coords" => jsString x,
+    symbol Point => x -> "data-point" => jsString x,
+    symbol Point1 => x -> "data-point1" => jsString x,
+    symbol Point2 => x -> "data-point2" => jsString x,
+    symbol OneSided => x -> "data-onesided" => jsString x,
+    symbol FontSize => x -> "data-fontsize" => jsString x,
+    }
+
+-- produces SVG element hypertext
+svg = method()
+svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current matrix,perspective matrix,lights)
+    if not (class g).?SVGElement then return;
+    updateTransformMatrix(g,m,p);
+    if g.?Contents then scan(g.Contents, x -> svg(x,g.cache.CurrentMatrix,p,l));
+    updateGraphicsCache g;
+    filter(g,l);
+    prs := pairs g | pairs g.cache; -- TODO restructure
+    opts := deepSplice apply(select(prs,(key,val)-> svgLookup#?key), (key,val) -> svgLookup#key(val,g.cache.CurrentMatrix));
+    if is3d g then opts = opts | deepSplice apply(select(prs,(key,val)-> svg3dLookup#?key), (key,val) -> svg3dLookup#key val);
+    g.cache.SVGElement = style((class g).SVGElement opts,prs)
+    )
+
+svg (GraphicsObject,Matrix,Matrix) := (g,m,p) -> svg(g,m,p,{})
+
+svg (GraphicsObject,List) := (g,l) -> (
+    p := perspective g;
+    svg(g,p,p,l)
+)
+
+svg GraphicsObject := g -> svg(g,{})
+
+htmlWithTex GraphicsObject := html
+
+globalAssignment GraphicsObject
+toString GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
+net GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,HashTable)) g
+expression GraphicsObject := hold
+
+distance1 GraphicsPoly := g -> (
+    if instance(g,Path) then s := select(g.PathList, x -> instance(x,Vector)) else s = g.Points;
+    sum(s,x->(g.cache.CurrentMatrix*x)_2) / #s
+    )
+distance1 GraphicsList := g -> (
+    if #(g.Contents) == 0 then 0_RR else sum(g.Contents, distance) / #(g.Contents)
+    )
+GraphicsObject ? GraphicsObject := (x,y) -> (distance y) ? (distance x)
+distance1 GraphicsText := g -> (
+    y := g.cache.CurrentMatrix*g.Point;
+    y_2
+    )
+
+graphicsIdCount := 0;
+graphicsId := () -> (
+    graphicsIdCount=graphicsIdCount+1;
+    "Graphics_" | toString currentTime() | "_" | toString graphicsIdCount
+    )
+
+-- defs
+svgDefs = new MarkUpType of Hypertext
+svgDefs.qname="defs"
+addAttribute(svgDefs,svgAttr)
+
+scanDefs := g -> (
+    lst := select(values g | values g.cache, y->instance(y,HypertextInternalLink));
+    if g.?Contents then lst = lst | flatten apply(g.Contents,scanDefs);
+    lst
+    )
+
+
+-- full SVG with the headers
+new SVG from GraphicsObject := (S,g) -> (
+    p := perspective g;
+    lights := if is3d g then setupLights(g,p,p) else {};
+    main := svg(g,p,p,lights); -- run this first because it will compute the ranges too
+    if main === null then return {};
+    if g.?ViewPort then r := g.ViewPort else r = g.cache.ViewPort; -- should be cached at this stage
+    if r === null or r#0 == r#1 then (g.cache.SizeX=g.cache.SizeY=0.; return {}); -- nothing to draw
+    r = apply(r,numeric);
+    rr := r#1 - r#0;
+    if rr_0 == 0 then (
+	rr = vector { rr_1 * 16/10, rr_1 };
+	r = { vector { r#0_0 - 0.5*rr_0, r#0_1 }, vector { r#1_0 + 0.5*rr_0, r#1_1 } };
+	);
+    if rr_1 == 0 then (
+	rr = vector { rr_0, rr_0 * 10/16 };
+	r = { vector { r#0_0, r#0_1 - 0.5*rr_1 }, vector {  r#1_0, r#1_1 + 0.5*rr_1 } };
+	);
+    -- axes
+    axes:=null; axeslabels:=null; defsList:={};
+    if g.?Axes and g.Axes =!= false then ( -- TEMP: coordinates wrong
+	arr := arrow();
+	axes = gList(
+	    Line { Point1 => vector if is3d g then {r#0_0,0,0} else {r#0_0,0}, Point2 => vector if is3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
+	    Line { Point1 => vector if is3d g then {0,r#0_1,0} else {0,r#0_1}, Point2 => vector if is3d g then {0,r#1_1,0} else {0,r#1_1}, "marker-end" => arr },
+	    if is3d g then Line { Point1 => vector{0,0,min(r#0_0,r#0_1)}, Point2 => vector {0,0,max(r#1_0,r#1_1)}, "marker-end" => arr },
+	    "stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
+	    );
+	axeslabels = gList(
+	    GraphicsHtml { Point => 1.06*vector if is3d g then {r#1_0,0,0} else {r#1_0,0}, HtmlContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x , FontSize => 0.08*min(rr_0,rr_1)},
+	    GraphicsHtml { Point => 1.06*vector if is3d g then {0,r#1_1,0} else {0,r#1_1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
+	    if is3d g then GraphicsHtml { Point => 1.06*vector{0,0,max(r#1_0,r#1_1)}, HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)}
+	    -*
+	    GraphicsText { Point => 1.06*vector if is3d g then {r#1_0,0,0} else {r#1_0,0}, HtmlContent => if instance(g.Axes,List) then toString g.Axes#0 else "x", FontSize => 0.08*min(rr_0,rr_1)},
+	    GraphicsText { Point => 1.06*vector if is3d g then {0,r#1_1,0} else {0,r#1_1}, HtmlContent => if instance(g.Axes,List) then toString g.Axes#1 else "y", FontSize => 0.08*min(rr_0,rr_1)},
+	    if is3d g then GraphicsText { Point => 1.06*vector{0,0,max(r#1_0,r#1_1)}, HtmlContent => if instance(g.Axes,List) then toString g.Axes#2 else "z", FontSize => 0.08*min(rr_0,rr_1)},
+	    "stroke" => "none", "fill"=>"black"
+	    *-
+	    );
+	defsList = scanDefs axes | scanDefs axeslabels;
+	axes=svg(axes,p,p);
+	axeslabels=svg(axeslabels,p,p);
+	);
+    if g.?SizeX then g.cache.SizeX = numeric g.SizeX;
+    if g.?SizeY then g.cache.SizeY = numeric g.SizeY;
+    if not (g.?SizeX or g.?SizeY) then -- by default, make it fit inside 16 x 10
+	if rr_0 > 1.6*rr_1 then g.cache.SizeX = 16. else g.cache.SizeY = 10.;
+    -- at this stage one of the two is set
+    if not g.cache.?SizeY then g.cache.SizeY = g.cache.SizeX * rr_1/rr_0;
+    if not g.cache.?SizeX then g.cache.SizeX = g.cache.SizeY * rr_0/rr_1;
+    -- put some extra blank space around picture
+    margin := if g.?Margin then g.Margin else 0.1;
+    r = { r#0-margin*rr, r#1+margin*rr }; rr = (1+2*margin)*rr;
+    --
+--    tag := graphicsId();
+    ss := SVG {
+	"preserveAspectRatio" => "none",
+	"class" => "M2Svg",
+--	"id" => tag,
+	"style" => concatenate("width:",toString g.cache.SizeX,"em;",
+	    "height:",toString g.cache.SizeY,"em;",
+	    if not g#?"stroke-width" then "stroke-width:"|toString(0.005*max(rr_0,rr_1)), -- define a default stroke-width
+	),
+	"viewBox" => concatenate between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),
+	"data-pmatrix" => jsString p
+	};
+    if is3d g then ss = append(ss, "onmousedown" => "gfxMouseDown.call(this,event)");
+    if axes =!= null then ss = append(ss, axes);
+    if axeslabels =!= null then ss = append(ss, axeslabels);
+    ss = append(ss,main);
+    defsList = unique ( defsList | scanDefs g );
+    if #defsList>0 then ss=append(ss,svgDefs defsList);
+    -- then autorotate button
+    if anim g then (
+	sizex := rr_0*min(0.5,1.5/g.cache.SizeX); sizey := rr_1*min(0.5,1.5/g.cache.SizeY); -- can't be larger than half the pic; default = 1.5em
+	ss = append(ss,
+	GraphicsList.SVGElement {
+	    "transform" => "translate("|toString(r#0_0)|" "|toString(r#0_1)|") scale("|toString sizex|" "|toString sizey|")",
+	    "class" => "gfxauto",
+	    "onclick" => "gfxToggleRotation.call(this,event)",
+	    Circle.SVGElement { "cx" => "0.5", "cy" => "0.5", "r" => "0.45", "style" => "fill:white; stroke:black; stroke-width:0.05" },
+	    Polygon.SVGElement { "class" => "gfxautoplay", "points" => "0.3,0.25 0.8,0.5 0.3,0.75", "style" => "stroke:none; fill:black" },
+	    Line.SVGElement { "class" => "gfxautostop", "x1" => "0.3", "y1" => "0.25", "x2" => "0.3", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" },
+	    Line.SVGElement { "class" => "gfxautostop", "x1" => "0.7", "y1" => "0.25", "x2" => "0.7", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" }
+	    }
+	));
+    ss
+    )
+
+html GraphicsObject := g -> html SVG g;
+
+-- now transformations
+-- following 2 functions can be used to produce matrices to be fed to either
+-- AnimMatrix (animation) or TransformMatrix (static)
+
+rotation = args -> (
+    args = sequence args;
+    if #args>3 then error("Too many arguments");
+    angle := args#0;
+    threeD :=  #args === 3 or (#args === 2 and (( instance(args#1,Vector) and rank class args#1 === 3 ) or ( instance(args#1,Sequence) and #args#1 === 3 )));
+    axis := promote(if threeD then if instance(args#1,Vector) then args#1 else vector toList args#1 else vector {0,0,1},RR);
+    invr := 1/sqrt(axis_0^2+axis_1^2+axis_2^2);
+    axis = invr*axis;
+    cross := (axis#0)**transpose(axis#0);
+    rot := cross + (sin angle) * matrix {{0,-axis_2,axis_1},{axis_2,0,-axis_0},{-axis_1,axis_0,0}} + (cos angle) * (1-cross);
+    rot = rot ++ 1;
+    if (#args==2 and threeD) or #args==1 then rot else (
+	center := gParse last args;
+	(translation(center))*rot*(translation(-center))
+	)
+    )
+translation = vec -> (
+    vec = gParse vec;
+    matrix {{1,0,0,vec_0},{0,1,0,vec_1},{0,0,1,vec_2},{0,0,0,1}}
+)
+
+determineSide = method()
+determineSide GraphicsObject := x -> ()
+determineSide GraphicsPoly := g -> (
+    -- find first 3 coords
+    if instance(g,Path) then coords := select(g.PathList, x -> instance(x,Vector)) else coords = g.Points;
+    if #coords<3 then ( remove(g.cache,Filter); return; );
+    coords=apply(take(coords,3),x->(g.cache.CurrentMatrix*x)^{0,1,2});
+    g.cache#"visibility" = if det(matrix coords#0 | matrix coords#1 | matrix coords#2) > 0 then "hidden" else "visible";
+    )
+
+-- lighting
+Light = new GraphicsType of Circle from ( "circle",
+    { symbol Center => vector {0,0,0,1.}, symbol Radius => 0, symbol Specular => 64, symbol Blur => 0.3, symbol Static => true, "fill" => "#FFFFFF", "stroke" => "none" },
+    { "r", "cx", "cy" } -- atm these are not inherited
+    )
+-- in case it's drawn, it's a circle
+
+-- viewPort1 ignores lights if invisible
+viewPort1 Light := g -> if g.Radius === 0 then null else (lookup(viewPort1,Circle)) g
+
+setupLights = (g,m,p) -> (
+    remove(g.cache,Filter); -- clean up filters from past
+    if instance(g,Light) then (
+    updateTransformMatrix(g,m,p);
+    g.cache.GraphicsId = graphicsId();
+    { g } ) else if g.?Contents then (
+    updateTransformMatrix(g,m,p);
+    flatten apply(g.Contents, x -> setupLights(x,g.cache.CurrentMatrix,p))
+    ) else {}
+) -- yeah, could make a method...
+
+HypertextInternalLink = new Type of Hypertext -- could be useful elsewhere
+toString HypertextInternalLink := net HypertextInternalLink := x -> (
+    -- ideally we'd use "override" to get the tag, but...
+    tag := (select(x, y -> instance(y,Option) and y#0==="id"))#0#1;
+    "url(#"|tag|")"
+)
+
+noid := x -> select(x,e -> class e =!= Option or e#0 =!= "id")
+htmlWithTex HypertextInternalLink := html @@ noid -- bit of a hack: to prevent id from being printed directly in WebApp mode
+
+svgFilter := new MarkUpType of HypertextInternalLink
+addAttribute(svgFilter,svgAttr | {"x","y","width","height"})
+svgFilter.qname="filter"
+feGaussianBlur := new MarkUpType of Hypertext
+addAttribute(feGaussianBlur,svgAttr|{"in","result","stdDeviation"})
+feGaussianBlur.qname="feGaussianBlur";
+feSpecularLighting := new MarkUpType of Hypertext
+addAttribute(feSpecularLighting,svgAttr| {"result","specularExponent","lighting-color"})
+feSpecularLighting.qname="feSpecularLighting"
+fePointLight := new MarkUpType of Hypertext
+addAttribute(fePointLight,svgAttr|{"x","y","z"})
+fePointLight.qname="fePointLight"
+feComposite := new MarkUpType of Hypertext
+addAttribute(feComposite,svgAttr|{"in","in2","operator","result","k1","k2","k3","k4"})
+feComposite.qname="feComposite"
+
+filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,GraphicsPoly) and g#?"fill") then (
+    tag := graphicsId();
+    i:=0;
+    opts := { "id" => tag };
+    if g.?Blur then (
+	b := g.Blur;
+	opts = opts | { "x" => toString(-100*b)|"%", "y" => toString(-100*b)|"%", "width" => toString(100*(1+2*b))|"%", "height" => toString(100*(1+2*b))|"%" };
+	rng := g.cache.ViewPort; if rng =!= null then (
+    	    drng:=rng#1-rng#0;
+    	    r := b*min(drng_0,drng_1);
+	    g.cache.ViewPort={rng#0-vector{r,r},rng#1+vector{r,r}}; -- a bit of a hack
+	    opts = append(opts, feGaussianBlur { "in" => "SourceGraphic",
+		    "result" => "result"|toString i, "stdDeviation" => toString(0.5*r) } ); -- problem is, this should be updated dynamically as radius changes...
+	    i=i+1;
+	)
+    );
+    if is3d g and instance(g,GraphicsPoly) and g#?"fill" then (
+    	-- find first 3 coords
+	if instance(g,Path) then coords := select(g.PathList, x -> instance(x,Vector)) else coords = g.Points;
+    	if #coords>=3 then (
+	    coords=apply(take(coords,3),x->(g.cache.CurrentMatrix*x)^{0,1,2});
+    	    d:=-det(matrix coords#0 | matrix coords#1 | matrix coords#2);
+    	    u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
+	    scan(l, gg -> (
+	    	    -- compute reflected coords
+		    light := gg.cache.CurrentMatrix*gg.Center;
+	    	    p := light_2/light_3;
+	    	    light=light^{0,1,2};
+	    	    lightrel := light-coords#0;
+	    	    sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
+	    	    c := 2*sp/w2;
+	    	    lightmir := light - c*w;
+		    if d<0 then sp=-sp;
+		    opts = opts | {
+			feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString g#"fill",
+			    fePointLight { "data-origin" => gg.cache.GraphicsId, "x" => toString(lightmir_0*p/lightmir_2), "y" => toString(lightmir_1*p/lightmir_2), "z" => toString(sp/sqrt(w2)) } },
+			feComposite { "in" => "spec"|toString i, "in2" => "SourceGraphic", "operator" => "in", "result" => "clipspec"|toString i },
+			feComposite { "in" => (if i==0 then "SourceGraphic" else "result"|toString(i-1)),  "in2" => "clipspec"|toString i, "result" => "result"|toString i,
+			    "operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }
+			};
+	    	    i=i+1;
+	    	    ));
+	    );
+	);
+    if (g.cache.?Filter) then ( -- can happen if object used several times in a list
+	g.cache#(g.cache.Filter)=g.cache.Filter;
+	);
+    g.cache.Filter=svgFilter opts;
+    )
+
+svgLinearGradient := new MarkUpType of HypertextInternalLink
+addAttribute(svgLinearGradient,svgAttr|{"in","in2","operator","result","k1","k2","k3","k4"})
+svgLinearGradient.qname="linearGradient"
+svgRadialGradient := new MarkUpType of HypertextInternalLink
+addAttribute(svgRadialGradient,svgAttr|{"in","in2","operator","result","k1","k2","k3","k4"} )
+svgRadialGradient.qname="radialGradient"
+svgStop := new MarkUpType of HypertextInternalLink
+addAttribute(svgStop,svgAttr|{"offset"} )
+svgStop.qname="stop"
+linearGradient = true >> o -> stop -> (
+    tag := graphicsId();
+    svgLinearGradient prepend(
+	"id" => tag,
+	apply(pairs o, (key,val) -> key => val) -- lame but what to do
+	|
+	apply(stop,(offset,style) -> svgStop { "offset" => offset, "style" => style })
+	)
+    )
+radialGradient = true >> o -> stop -> (
+    tag := graphicsId();
+    svgRadialGradient prepend(
+	"id" => tag,
+	apply(pairs o, (key,val) -> key => val) -- lame but what to do
+	|
+	apply(stop,(offset,style) -> svgStop { "offset" => offset, "style" => style })
+	)
+    )
+
+GraphicsArrow = new OptionTable from gParse { symbol Points => { vector {0,0}, vector {0,4}, vector {3,2} }, "fill" => "black", "stroke" => "none", Is3d => false }
+svgMarker := new MarkUpType of HypertextInternalLink
+addAttribute(svgMarker,svgAttr|{ "orient" => "auto", "markerSizeX" => "3", "markerSizeY" => "4", "refX" => "0", "refY" => "2"})
+svgMarker.qname="marker"
+
+arrow = true >> o -> x -> (
+    tag := graphicsId();
+    svgMarker {
+	"id" => tag,
+	svg(new Polygon from (GraphicsArrow ++ gParse o),map(RR^4,RR^4,1),map(RR^4,RR^4,1))  -- eww
 	}
+    )
 
---Default PGF values for coordinates
-defaultPGFValues = hashTable{
-	Point2D => hashTable{
-		"cx"=>"0", 
-		"cy"=>"0",
-		"r"=>"0.1",
-		},
-	Circle => hashTable{
-		"cx"=>"0", 
-		"cy"=>"0",
-		"r"=>"1",
-		},
-	Segment2D => hashTable{},
-	Polygon2D => hashTable{},
-	TextTag => hashTable{}
-}
+-* TODO recreate at some point
+gfxLabel = true >> o -> label -> (
+    tag := graphicsId();
+    f:=1; -- TEMP
+--    s:="<marker id='"|tag|"' markerUnits='userSpaceOnUse' markerSizeX='"|toString(f*0.6*length label)|"' markerSizeY='"|toString f|"' refX='0' refY='0'>"; -- very approximate
+    s:="<marker id='"|tag|"' markerSizeX='100' markerSizeY='100' refX='0' refY='0'>"; -- very approximate
+    saveTransformMatrix := currentTransformMatrix;
+    s=s|(svg new GraphicsText from (new GraphicsObject) ++ { "fill" => "black", "stroke" => "none" } ++ gParse o ++ { Point => vector {0,0}, Content => label });
+    currentTransformMatrix = saveTransformMatrix;
+    s=s|"</marker>";
+    new GraphicsIdged from (tag,s)
+    )
+*-
 
---Default PGF options for each graphic primitive
-defaultPGFOptions = hashTable{
-	Picture => hashTable{
-		},
-	Point2D => hashTable{
-		"fill"=>"black"
-		},
-	Circle => hashTable{
-		},
-	Segment2D => hashTable{
-		},
-	Polygon2D => hashTable{
-		"fill"=>"black",
-		"fill opacity"=>"1"
-		},
-	TextTag => hashTable{
-		}
-	}
+needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
 
---making pdf code out of a graphic primitive
-pgfObject = method()
-
-pgfObject(Circle,HashTable) := (mycirc,opts)->
-	(
-	opts= mergeOptions(mergeOptions(opts,possiblePGFOptions#Circle,"keep"=>"1and2","priority"=>"1"),defaultPGFOptions#Circle);
-	///\draw[///
-	|(if #opts==0 then "" else fold(apply(pairs(opts),x->(if x#1===null then x#0 else x#0|"="|x#1)),(a,b)->a|","|b))
-	|///] (///
-	|mycirc#0#0|","|mycirc#0#1
-	|///) circle (///
-	|mycirc#1
-	|///);///
+-- note that the range is only where the curve actually lies, not the original range "r" provided.
+-- the reason is that it's not clear how to force that original range (there are possible coordinate transformations etc)
+plot = true >> o -> (P,r) -> (
+    R := ring P; -- R should have one or two variables
+    if not instance(r,List) then error("incorrect ranges");
+    if not instance(r#0,List) then r = { r };
+    if #r>2 or (numgens R =!= #r and numgens R =!= #r+1) then error("incorrect number of variables / ranges");
+    if numgens R === #r then R2 := coefficientRing R else R2 = (coefficientRing R) ( monoid [last gens R] );
+    if (#r === 1) then ( r = r#0;
+	if (o.?Mesh) then n := o.Mesh else n = 100;
+	val := transpose apply(n+1, i -> (
+		x := i*(r#1-r#0)/n+r#0;
+		f := map(R2,R, matrix { if numgens R === 1 then { x } else { x, R2_0 } });
+		y := if numgens R === 1 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
+		apply(y, yy -> if abs imaginaryPart yy < 1e-6 then vector { x, realPart yy })));
+	new GraphicsList from (
+	    (new OptionTable from { "fill"=>"none", Axes=>gens R, Is3d=>false,
+		symbol Contents => apply(val, v -> Path { flag:=true; PathList => flatten apply(v, w -> if w === null then (flag=true; {}) else first({ if flag then "M" else "L", w },flag=false))})
+		}) ++ gParse o
+	    )
+	) else (
+	if (o.?Mesh) then n = o.Mesh else n = 10;
+	val = table(n+1,n+1,(i,j)->(
+		x := i*(r#0#1-r#0#0)/n+r#0#0;
+		y := j*(r#1#1-r#1#0)/n+r#1#0;
+		f := map(R2,R, matrix { if numgens R === 2 then { x,y } else { x, y, R2_0 } });
+		z := if numgens R === 2 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
+		apply(z, zz -> if abs imaginaryPart zz < 1e-6 then vector { x, y, realPart zz })));
+	new GraphicsList from (
+	    (new OptionTable from { Axes=>gens R, Is3d=>true,
+		symbol Contents => flatten flatten table(n,n,(i,j) -> for k from 0 to min(#val#i#j,#val#(i+1)#j,#val#i#(j+1),#val#(i+1)#(j+1))-1 list (
+			if val#i#j#k === null or val#(i+1)#j#k === null or val#i#(j+1)#k === null or val#(i+1)#(j+1)#k === null then continue;
+			Polygon { Points => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ) -- technically this is wrong -- the quad isn't flat, we should make triangles
+		 }) ++ gParse o
 	)
-
-pgfObject(Point2D,HashTable) := (mypt,opts)->
-	(
-	opts= mergeOptions(mergeOptions(opts,possiblePGFOptions#Point2D,"keep"=>"1and2","priority"=>"1"),defaultPGFOptions#Point2D);
-	///\draw[///
-	|(if #opts==0 then "" else fold(apply(pairs(opts),x->(if x#1===null then x#0 else x#0|"="|x#1)),(a,b)->a|","|b))
-	|///] ///
-	|///(///|mypt#0|","|mypt#1|///) circle (///|defaultPGFValues#Point2D#"r"|///);///
-	)
-
-pgfObject(Segment2D,HashTable) := (myseg,opts)->
-	(
-	opts= mergeOptions(mergeOptions(opts,possiblePGFOptions#Segment2D,"keep"=>"1and2","priority"=>"1"),defaultPGFOptions#Segment2D);
-	///\draw[///
-	|(if #opts==0 then "" else fold(apply(pairs(opts),x->(if x#1===null then x#0 else x#0|"="|x#1)),(a,b)->a|","|b))
-	|///] ///
-	|///(///|myseg#0#0|","|myseg#0#1|///) -- (///|myseg#1#0|","|myseg#1#1|///);///
-	)
-
-pgfObject(Polygon2D,HashTable) := (mypoly,opts)->
-	(
-	opts= mergeOptions(mergeOptions(opts,possiblePGFOptions#Polygon2D,"keep"=>"1and2","priority"=>"1"),defaultPGFOptions#Polygon2D);
-	///\draw[///
-	|fold(apply(pairs(opts),x->(if x#1===null then x#0 else x#0|"="|x#1)),(a,b)->a|","|b)
-	|///] ///
-	|(if #opts==0 then "" else fold(apply(toList(mypoly),x->///(///|toString(x#0)|","|toString(x#1)|///)///),(a,b)->a|/// -- ///|b))
-	|/// -- cycle;///
-	)
-
-pgfObject(TextTag,HashTable) := (mytext,opts)->
-	(
-	opts= mergeOptions(mergeOptions(opts,possiblePGFOptions#TextTag,"keep"=>"1and2","priority"=>"1"),defaultPGFOptions#TextTag);
-	///\draw ///
-	|///(///|mytext#0#0|","|mytext#0#1|///) ///
-	|///node[///
-	|(if #opts==0 then "" else fold(apply(pairs(opts),x->(if x#1===null then x#0 else x#0|"="|x#1)),(a,b)->a|","|b))
-	|///] ///
-	|///{///|mytext#1|///};///
-	)
-
---This is bad. One should use a scope for each FormattedGraphicPrimitive. I will fix this later.
-pgfObject(FormattedGraphicPrimitives) := (fgp) -> concatenate(apply(fgp#0,x->pgfObject(x,fgp#1)|newline))
-
---Here one could maybe accept global options for scope.
-pgfObject(Picture) := (pict) -> concatenate(apply(toList pict,pgfObject))
-
---making a complete pgf picture out a Picture object and some global options
-pgfPicture = method()
-pgfPicture(Picture,HashTable) := (pict,opts) ->
-	(
-	opts= mergeOptions(mergeOptions(opts,possiblePGFOptions#Picture,"keep"=>"1and2","priority"=>"1"),defaultPGFOptions#Picture);
-	///\begin{tikzpicture}[///
-	|(if #opts==0 then "" else fold(apply(pairs(opts),x->(if x#1===null then x#0 else x#0|"="|x#1)),(a,b)->a|","|b))
-	|///]///|newline
-	|pgfObject(pict)
-	|///\end{tikzpicture}///|newline
-	)
-
-pgfPicture(Picture) := (pict) ->
-	(
-	///\begin{tikzpicture}///|newline
-	|pgfObject(pict)
-	|///\end{tikzpicture}///|newline
-	)
-
-pgfPicture(Picture,HashTable,String) := (pict,opts,filename) ->
-	(
-	(if match(///\.tex\'///,filename) then filename else filename|".tex") << pgfPicture(pict,opts) << endl << close
-	)
-
-pgfPicture(Picture,String) := (pict,filename) ->
-	(
-	(if match(///\.tex\'///,filename) then filename else filename|".tex") << pgfPicture(pict) << endl << close
-	)
-
-
---The rest of the file is documentation.
+    )
+)
 
 beginDocumentation()
-
-doc ///
-	Key
-		Graphics
-	Headline
-		Graphics
-	Description
-		Text
-			This package provides graphic primitives and functions to turn them into pictures in different formats. The formats supported include svg and pgf/tikz.
-///
-
-doc ///
-	Key
-		GraphicPrimitive	
-	Headline
-		the class of all graphic primitives	
-///
-
-doc ///
-	Key
-		FormattedGraphicPrimitives	
-	Headline
-		the class of lists of graphic primitives together with formatting options
-///
-
-doc ///
-	Key
-		Picture
-	Headline
-		the class of pictures containing several FormattedGraphicPrimitives
-///
-
-doc ///
-	Key
-		Point2D
-	Headline
-		the class of a point in a 2D space
-///
-
-doc ///
-	Key
-		Point3D
-	Headline
-		the class of a point in a 3D space
-///
-
-doc ///
-	Key
-		Segment2D
-	Headline
-		the class of a line segment in a 2D space
-///
-
-doc ///
-	Key
-		Segment3D
-	Headline
-		the class of a line segment in a 3D space
-///
-
-doc ///
-	Key
-		Polygon2D
-	Headline
-		the class of a polygon in a 2D space
-///
-
-doc ///
-	Key
-		Polygon3D
-	Headline
-		the class of a polygon in a 3D space
-///
-
-doc ///
-	Key
-		Circle
-	Headline
-		the class of a circle in a 2D space
-///
-
-doc ///
-	Key
-		Sphere
-	Headline
-		the class of a sphere in a 3D space
-///
-
-doc ///
-	Key
-		TextTag
-	Headline
-		the class of a text tag 
-///
-
-doc ///
-	Key
-		point
-	Headline
-		create a point 
-///
-
-doc ///
-	Key
-		(point,ZZ,ZZ)
-	Headline
-		a point from two coordinates	
-	Usage
-		point(x,y)	
-	Inputs
-		x: ZZ 
-		y: ZZ 
-	Outputs
-		: Point2D
-			the point with coordinates {\tt x} and {\tt y}	
-	Description
-		Example
-			point(20, 30)
-///
-
-doc ///
-	Key
-		(point,RR,RR)
-	Headline
-		a point from two coordinates	
-	Usage
-		point(x,y)	
-	Inputs
-		x: RR 
-		y: RR 
-	Outputs
-		: Point2D
-			the point with coordinates {\tt x} and {\tt y}	
-	Description
-		Example
-			point(2.1, 3.)
-///
-
-doc ///
-	Key
-		(point,ZZ,ZZ,ZZ)
-	Headline
-		a point from three coordinates	
-	Usage
-		point(x,y,z)	
-	Inputs
-		x: ZZ 
-		y: ZZ 
-		z: ZZ 
-	Outputs
-		: Point3D 
-			the point with coordinates {\tt x}, {\tt y} and {\tt z}
-	Description
-		Example
-			point(20,30,40)
-///
-
-doc ///
-	Key
-		(point,RR,RR,RR)
-	Headline
-		a point from three coordinates	
-	Usage
-		point(x,y,z)	
-	Inputs
-		x: RR 
-		y: RR 
-		z: RR
-	Outputs
-		: Point3D 
-			the point with coordinates {\tt x}, {\tt y} and {\tt z}
-	Description
-		Example
-			point(2.1, 3.,4.)
-///
-
-doc ///
-	Key
-		segment
-	Headline
-		create a line segment 
-///
-
-doc ///
-	Key
-		(segment,Point2D,Point2D)
-	Headline
-		a line segment from two points 
-	Usage
-		segment(p,q)	
-	Inputs
-		p: Point2D 
-		q: Point2D
-	Outputs
-		: Segment2D 
-			the line segment with endpoints {\tt p} and {\tt q}	
-	Description
-		Example
-			p=point(2.1, 3.)
-			q=point(.4, 4.6)
-			segment(p,q)
-///
-
-doc ///
-	Key
-		(segment,Point3D,Point3D)
-	Headline
-		a line segment from two points 
-	Usage
-		segment(p,q)	
-	Inputs
-		p: Point3D 
-		q: Point3D
-	Outputs
-		: Segment3D 
-			the line segment with endpoints {\tt p} and {\tt q}	
-	Description
-		Example
-			p=point(2.1, 3.,4.)
-			q=point(.4, 4.6,5.3)
-			segment(p,q)
-///
-
-doc ///
-	Key
-		polygon
-	Headline
-		create a polygon from a list of points 
-///
-
-doc ///
-	Key
-		(polygon,List)
-	Headline
-		a polygon from a list of points 
-	Usage
-		polygon(L)	
-	Inputs
-		L: List 
-			of @TO Point2D@s or of @TO Point3D@s
-	Outputs
-		: Thing
-			the polygon defined by the points in {\tt L}	
-	Description
-		Text
-			All the points must be of the same class, either @TO Point2D@ or @TO Point3D@. 
-		Example
-			L={point(2.1, 3.),point(.4, 4.6),point(3.1,5.)}
-			polygon(L)
-///
-
-doc ///
-	Key
-		circle
-	Headline
-		create a circle from a point and a radius 
-///
-
-doc ///
-	Key
-		(circle,Point2D,ZZ)
-	Headline
-		a circle from a center and a radius
-	Usage
-		circle(p,r)	
-	Inputs
-		p: Point2D 
-			the center of the circle 
-		r: ZZ 
-			the radius of the circle 
-	Outputs
-		: Circle 
-			the circle with center {\tt p} and radius {\tt r} 
-	Description
-		Example
-			circle(point(20,30),10)
-///
-
-doc ///
-	Key
-		(circle,Point2D,RR)
-	Headline
-		a circle from a center and a radius
-	Usage
-		circle(p,r)	
-	Inputs
-		p: Point2D 
-			the center of the circle 
-		r: RR
-			the radius of the circle 
-	Outputs
-		: Circle 
-			the circle with center {\tt p} and radius {\tt r} 
-	Description
-		Example
-			circle(point(20.1, 30.),30.)
-///
-
-doc ///
-	Key
-		sphere
-	Headline
-		create a sphere from a point and a radius 
-///
-
-doc ///
-	Key
-		(sphere,Point3D,ZZ)
-	Headline
-		a sphere from a center and a radius
-	Usage
-		sphere(p,r)	
-	Inputs
-		p: Point3D 
-			the center of the sphere
-		r: ZZ 
-			the radius of the sphere
-	Outputs
-		: Sphere 
-			the sphere with center {\tt p} and radius {\tt r} 
-	Description
-		Example
-			sphere(point(20,30,100),10)
-///
-
-doc ///
-	Key
-		(sphere,Point3D,RR)
-	Headline
-		a sphere from a center and a radius
-	Usage
-		sphere(p,r)	
-	Inputs
-		p: Point3D 
-			the center of the sphere
-		r: RR
-			the radius of the sphere
-	Outputs
-		: Sphere 
-			the sphere with center {\tt p} and radius {\tt r} 
-	Description
-		Example
-			sphere(point(20.1, 30.,100.),30.)
-///
-
-doc ///
-	Key
-		textTag
-	Headline
-		create a text tag at a position 
-///
-
-doc ///
-	Key
-		(textTag,Point2D,String)
-	Headline
-		a text tag at a position 
-	Usage
-		textTag(p,s)	
-	Inputs
-		p: Point2D 
-			the position of the tag 
-		s: String 
-			the text of the tag 
-	Outputs
-		: TextTag 
-			the {\tt TextTag} with text {\tt s} at position {\tt p}
-	Description
-		Example
-			textTag(point(2.1, 3.),"My Tag")
-///
-
-doc ///
-	Key
-		(textTag,Point3D,String)
-	Headline
-		a text tag at a position 
-	Usage
-		textTag(p,s)	
-	Inputs
-		p: Point3D 
-			the position of the tag 
-		s: String 
-			the text of the tag 
-	Outputs
-		: TextTag 
-			the {\tt TextTag} with text {\tt s} at position {\tt p}
-	Description
-		Example
-			textTag(point(2.1, 3.,4.),"My Tag")
-///
-
-doc ///
-	Key
-		formatGraphicPrimitives
-	Headline
-		create a FormattedGraphicPrimitives object
-///
-
-doc ///
-	Key
-		(formatGraphicPrimitives,BasicList,HashTable)
-	Headline
-		create a formated graphic primitive object
-	Usage
-		textTag(gplist,h)	
-	Inputs
-		gplist: BasicList
-		h: HashTable 
-			containing graphic options 
-	Outputs
-		: FormattedGraphicPrimitives 
-	Description
-		Example
-			myPoint1=point(20.,30.)	
-			myPoint2=point(30.,40.)	
-			myOptions = hashTable {"fill"=>"black"}
-			formatGraphicPrimitives({myPoint1,myPoint2},myOptions)
-///
-
-TEST ///
-	mylist={point(20.,30.),point(30.,40.)};
-	myOptions = hashTable {"fill"=>"black"};
-	assert(formatGraphicPrimitives(mylist,myOptions)===new FormattedGraphicPrimitives from {mylist,myOptions})
-///
-
-doc ///
-	Key
-		picture
-	Headline
-		create a Picture object
-///
-
-doc ///
-	Key
-		(picture,BasicList)
-	Headline
-		create a picture object
-	Usage
-		picture(fgplist,h)	
-	Inputs
-		fgplist: BasicList
-			a list of FormattedGraphicPrimitives
-	Outputs
-		: Picture 
-	Description
-		Example
-			myfgp1=formatGraphicPrimitives({point(20.,30.),point(30.,40.)},hashTable {"fill"=>"black"})
-			myfgp2=formatGraphicPrimitives({circle(point(20.,30.),10)},hashTable {"fill"=>"red"})
-			picture({myfgp1,myfgp2})
-///
-
-doc ///
-	Key
-		pictureZone
-	Headline
-		find the zone in which a picture lies
-///
-
-doc ///
-	Key
-		(pictureZone,Point2D)
-	Headline
-		find the zone that contains the point 
-	Usage
-		pictureZone(p)	
-	Inputs
-		p: Point2D 
-	Outputs
-		: List
-			of the form {xmin,xmax,ymin,ymax}
-	Description
-		Example
-			pictureZone(point(20,30))
-///
-
-TEST ///
-	assert(pictureZone(point(20,30))==={20,20,30,30})
-///
-
-doc ///
-	Key
-		(pictureZone,Point3D)
-	Headline
-		find the zone that contains the point 
-	Usage
-		pictureZone(p)	
-	Inputs
-		p: Point3D 
-	Outputs
-		: List
-			of the form {xmin,xmax,ymin,ymax,zmin,zmax}
-	Description
-		Example
-			pictureZone(point(20,30,40))
-///
-
-TEST ///
-	assert(pictureZone(point(20,30,40))==={20,20,30,30,40,40})
-///
-
-doc ///
-	Key
-		(pictureZone,Segment2D)
-	Headline
-		find the zone that contains the line segment 
-	Usage
-		pictureZone(l)	
-	Inputs
-		l: Segment2D 
-	Outputs
-		: List
-			of the form {xmin,xmax,ymin,ymax}
-	Description
-		Example
-			pictureZone(segment(point(20,30),point(30,40)))
-///
-
-TEST ///
-	assert(pictureZone(segment(point(20,30),point(30,40)))==={20,30,30,40})
-///
-
-doc ///
-	Key
-		(pictureZone,Segment3D)
-	Headline
-		find the zone that contains the line segment 
-	Usage
-		pictureZone(l)	
-	Inputs
-		l: Segment3D 
-	Outputs
-		: List
-			of the form {xmin,xmax,ymin,ymax,zmin,zmax}
-	Description
-		Example
-			pictureZone(segment(point(20,30,40),point(30,40,50)))
-///
-
-TEST ///
-	assert(pictureZone(segment(point(20,30,40),point(30,40,50)))==={20,30,30,40,40,50})
-///
-
-doc ///
-	Key
-		(pictureZone,Circle)
-	Headline
-		find the zone that contains the circle 
-	Usage
-		pictureZone(c)
-	Inputs
-		c: Circle 
-	Outputs
-		: List
-			of the form {xmin,xmax,ymin,ymax}
-	Description
-		Example
-			pictureZone(circle(point(20,30),10))
-///
-
-TEST ///
-	assert(pictureZone(circle(point(20,30),10))==={10,30,20,40})
-///
-
-doc ///
-	Key
-		(pictureZone,Sphere)
-	Headline
-		find the zone that contains the sphere 
-	Usage
-		pictureZone(s)	
-	Inputs
-		s: Sphere
-	Outputs
-		: List
-			of the form {xmin,xmax,ymin,ymax,zmin,zmax}
-	Description
-		Example
-			pictureZone(sphere(point(20,30,40),10))
-///
-
-TEST ///
-	assert(pictureZone(sphere(point(20,30,40),10))==={10,30,20,40,30,50})
-///
-
-doc ///
-	Key
-		(pictureZone,Polygon2D)
-	Headline
-		find the zone that contains the polygon 
-	Usage
-		pictureZone(p)	
-	Inputs
-		p: Polygon2D 
-	Outputs
-		: List
-			of the form {xmin,xmax,ymin,ymax}
-	Description
-		Example
-			pictureZone(polygon({point(20,30),point(25,30),point(20,35)}))
-///
-
-TEST ///
-	assert(pictureZone(polygon({point(20,30),point(25,30),point(20,35)}))==={20,25,30,35})
-///
-
-doc ///
-	Key
-		(pictureZone,Polygon3D)
-	Headline
-		find the zone that contains the polygon 
-	Usage
-		pictureZone(p)	
-	Inputs
-		p: Polygon3D 
-	Outputs
-		: List
-			of the form {xmin,xmax,ymin,ymax,zmin,zmax}
-	Description
-		Example
-			pictureZone(polygon({point(20,30,40),point(25,30,40),point(20,35,45)}))
-///
-
-TEST ///
-	assert(pictureZone(polygon({point(20,30,40),point(25,30,40),point(20,35,40)}))==={20,25,30,35,40,40})
-///
-
-doc ///
-	Key
-		(pictureZone,TextTag)
-	Headline
-		find the zone that contains the tag 
-	Usage
-		pictureZone(t)	
-	Inputs
-		t: TextTag 
-	Outputs
-		: List
-			of the form {xmin,xmax,ymin,ymax} or {xmin,xmax,ymin,ymax,zmin,zmax}
-	Description
-		Example
-			pictureZone(textTag(point(20,30),"my tag"))
-			pictureZone(textTag(point(20,30,40),"my tag"))
-///
-
-TEST ///
-	assert(pictureZone(textTag(point(20,30),"my tag"))==={20,20,30,30})
-	assert(pictureZone(textTag(point(20,30,40),"my tag"))==={20,20,30,30,40,40})
-///
-
-doc ///
-	Key
-		(pictureZone,FormattedGraphicPrimitives)
-	Headline
-		find the zone that contains the whole list of graphic primitive
-	Usage
-		pictureZone(fgp)	
-	Inputs
-		fgp: FormattedGraphicPrimitives 
-	Outputs
-		: List
-			of the form {xmin,xmax,ymin,ymax} (or {xmin,xmax,ymin,ymax,zmin,zmax} for 3D objects) describing a zone containing the object fgp
-	Description
-		Example
-			pictureZone(formatGraphicPrimitives({circle(point(20,30),10)},hashTable {"fill"=>"black"}))
-///
-
-TEST ///
-	assert(pictureZone(formatGraphicPrimitives({circle(point(20,30),10),point(50,40)},hashTable {"fill"=>"black"}))==={10,50,20,40})
-///
-
-doc ///
-	Key
-		(pictureZone,Picture)
-	Headline
-		find the zone that contains the whole picture 
-	Usage
-		pictureZone(mypict)	
-	Inputs
-		mypict: Picture 
-	Outputs
-		: List
-			of the form {xmin,xmax,ymin,ymax} (or {xmin,xmax,ymin,ymax,zmin,zmax} for 3D objects) describing a zone containing the object fgp
-	Description
-		Example
-			myfgp1=formatGraphicPrimitives({point(20.,30.),point(30.,40.)},hashTable {"fill"=>"black"})
-			myfgp2=formatGraphicPrimitives({circle(point(20.,30.),10)},hashTable {"fill"=>"red"})
-			mypict=picture({myfgp1,myfgp2})
-			pictureZone(mypict)
-///
-
-TEST ///
-	myfgp1=formatGraphicPrimitives({point(20.,30.),point(30.,40.)},hashTable {"fill"=>"black"});
-	myfgp2=formatGraphicPrimitives({circle(point(20.,30.),10)},hashTable {"fill"=>"red"});
-	mypict=picture({myfgp1,myfgp2});
-	assert(pictureZone(mypict)==={10,30,20,40})
-///
-
-doc ///
-	Key
-		mergeFormattedGraphicPrimitives
-	Headline
-		merge two lists of graphic primitives with options	
-///
-
-doc ///
-	Key
-		(mergeFormattedGraphicPrimitives,FormattedGraphicPrimitives,FormattedGraphicPrimitives)
-	Headline
-		merge two lists of graphic primitives with options
-	Usage
-		mergeFormattedGraphicPrimitives(fgp1,fgp2)	
-	Inputs
-		fgp1: FormattedGraphicPrimitives 
-		fgp2: FormattedGraphicPrimitives 
-	Outputs
-		: FormattedGraphicPrimitives
-	Description
-		Text
-			The list of graphic primitives are concatenated and the graphic options are merged according to the value of two options {\tt "keep"} (either "1or2", "1" or "2") and {\tt "priority"} (either "1" or "2").
-		Example
-			myoptions1= new HashTable from {"fill"=>"black"}
-			myoptions2= new HashTable from {"fill"=>"blue","stroke"=>"red"}
-			fgp1=formatGraphicPrimitives({point(20,30),point(40,50)},myoptions1)
-			fgp2=formatGraphicPrimitives({circle(point(30,40),10)},myoptions2)
-			mergeFormattedGraphicPrimitives(fgp1,fgp2)
-			mergeFormattedGraphicPrimitives(fgp1,fgp2,"keep"=>"2","priority"=>"1")
-///
-
-doc ///
-	Key
-		"defaultSVGOptions"
-	Headline
-		the default SVG options
-	Description
-		Text
-			It's a hash table containing the default SVG options for all graphic primitives that can be used to create an SVG document.
-///
-
-doc ///
-	Key
-		"defaultSVGValues"
-	Headline
-		the default SVG values of coordinates 
-	Description
-		Text
-			It's a hash table containing the default SVG values for some graphic primitives. They can be used while creating an SVG document.
-///
-
-doc ///
-	Key
-		"possibleSVGOptions"
-	Headline
-		the possible SVG options
-	Description
-		Text
-			It's a hash table containing the possible SVG options for graphic primitives that can be used to create an SVG picture. Options not listed here will usually be discarded when the primitive is turned into an SVG object.
-///
-
-doc ///
-	Key
-		"defaultSVGHeading"
-	Headline
-		the default SVG heading 
-	Description
-		Text
-			It's a string containing the default SVG heading used to create SVG pictures. 
-///
-
-doc ///
-	Key
-		defaultSVGOpening
-	Headline
-		the default SVG opening 
-///
-
-doc ///
-	Key
-		(defaultSVGOpening,ZZ,ZZ)
-	Headline
-		default SVG opening for a picture of a given size
-	Usage
-		defaultSVGOpening(w,h)	
-	Inputs
-		w: ZZ 
-		h: ZZ
-	Outputs
-		: String
-	Description
-		Text
-			It returns a string containing the default SVG opening of the form <svg etc. used to create an SVG picture.
-///
-
-doc ///
-	Key
-		"defaultSVGClosing"
-	Headline
-		the default SVG closing 
-	Description
-		Text
-			It's a string containing the default SVG closing </svg> used to create SVG pictures. 
-///
-
-doc ///
-	Key
-		svgObject
-	Headline
-		create an SVG object 
-///
-
-doc ///
-	Key
-		(svgObject,FormattedGraphicPrimitives)
-	Headline
-		create a string describing in SVG a list of formatted graphic primitive object
-	Usage
-		svgObject(fgp)	
-	Inputs
-		fgp: FormattedGraphicPrimitives 
-	Outputs
-		: String
-			containing the description of an object in SVG 
-	Description
-		Text
-			The options that are not given in the hash table part of {\tt fgp} are set at the default values contained in {\tt defaultSVGOptions}.
-		Example
-			myoptions = hashTable {"fill"=>"black"}
-			myfgp= formatGraphicPrimitives({point(20,30)},myoptions)
-			svgObject(myfgp)
-///
-
-doc ///
-	Key
-		(svgObject,Picture)
-	Headline
-		create a string describing the picture in SVG 
-	Usage
-		svgObject(mypict)	
-	Inputs
-		mypict: Picture 
-	Outputs
-		: String
-			containing the description of the picture in SVG 
-	Description
-		Example
-			myfgp1=formatGraphicPrimitives({point(20.,30.),point(30.,40.)},hashTable {"fill"=>"black"})
-			myfgp2=formatGraphicPrimitives({circle(point(20.,30.),10)},hashTable {"fill"=>"red"})
-			mypict=picture({myfgp1,myfgp2})
-			svgObject(mypict)
-	SeeAlso
-		svgPicture	
-		viewPicture
-///
-
-doc ///
-	Key
-		(svgObject,Point2D,HashTable)
-	Headline
-		create the string describing a point in SVG 
-	Usage
-		svgObject(mypoint,myoptions)	
-	Inputs
-		mypoint: Point2D 
-		myoptions: HashTable
-			giving values to some options (see @TO "defaultSVGOptions"@).
-	Outputs
-		: String
-			containing the description of the point in SVG 
-	Description
-		Text
-			The options that are not given in {\tt myoptions} are set at the default values contained in @TO "defaultSVGOptions"@.
-		Example
-			myoptions = hashTable {"fill"=>"black"}
-			svgObject(point(20,30),myoptions)
-///
-
-doc ///
-	Key
-		(svgObject,Segment2D,HashTable)
-	Headline
-		create the string describing a line segment in SVG 
-	Usage
-		svgObject(mysegment,myoptions)	
-	Inputs
-		mysegment: Segment2D 
-		myoptions: HashTable
-			giving values to some options (see @TO "defaultSVGOptions"@).
-	Outputs
-		: String
-			containing the description of the segment in SVG 
-	Description
-		Text
-			The options that are not given in {\tt myoptions} are set at the default values contained in @TO "defaultSVGOptions"@.
-		Example
-			myoptions = hashTable {"stroke-width"=>"2"}
-			svgObject(segment(point(20,30),point(40,50)),myoptions)
-///
-
-doc ///
-	Key
-		(svgObject,Circle,HashTable)
-	Headline
-		create the string describing a circle in SVG 
-	Usage
-		svgObject(mycircle,myoptions)	
-	Inputs
-		mycircle: Circle 
-		myoptions: HashTable
-			giving values to some options (see @TO "defaultSVGOptions"@).
-	Outputs
-		: String
-			containing the description of the circle in SVG 
-	Description
-		Text
-			The options that are not given in {\tt myoptions} are set at the default values contained in @TO "defaultSVGOptions"@.
-		Example
-			myoptions = hashTable {"fill"=>"black"}
-			svgObject(circle(point(20,30),10),myoptions)
-///
-
-doc ///
-	Key
-		(svgObject,Polygon2D,HashTable)
-	Headline
-		create the string describing a circle in SVG 
-	Usage
-		svgObject(mypolygon,myoptions)	
-	Inputs
-		mypolygon: Polygon2D 
-		myoptions: HashTable
-			giving values to some options (see @TO "defaultSVGOptions"@).
-	Outputs
-		: String
-			containing the description of the polygon in SVG 
-	Description
-		Text
-			The options that are not given in {\tt myoptions} are set at the default values contained in @TO "defaultSVGOptions"@.
-		Example
-			myoptions = hashTable {"fill"=>"black"}
-			svgObject(polygon({point(20,30),point(40,50),point(10,40)}),myoptions)
-///
-
-doc ///
-	Key
-		(svgObject,TextTag,HashTable)
-	Headline
-		create the string describing a circle in SVG 
-	Usage
-		svgObject(mytext,myoptions)	
-	Inputs
-		mytext: TextTag 
-		myoptions: HashTable
-			giving values to some options (see @TO "defaultSVGOptions"@).
-	Outputs
-		: String
-			containing the description of the text tag in SVG 
-	Description
-		Text
-			The options that are not given in {\tt myoptions} are set at the default values contained in @TO "defaultSVGOptions"@.
-		Example
-			myoptions = hashTable {"font-family"=>"verdana"}
-			svgObject(textTag(point(20,30),"Hello world"),myoptions)
-///
-
-doc ///
-	Key
-		svgPicture
-	Headline
-		create an SVG picture 
-///
-
-doc ///
-	Key
-		(svgPicture,Picture,ZZ,ZZ)
-	Headline
-		create an SVG picture from a Picture object 
-	Usage
-		svgPicture(mypict,w,h)	
-	Inputs
-		mypict: Picture 
-		w: ZZ
-			the width of the picture
-		h: ZZ
-			the height of the picture
-	Outputs
-		: String
-			containing the SVG picture 
-	Description
-		Text
-			The heading used is stored in @TO "defaultSVGHeading"@ and the SVG opening bracket (resp. closing) used is stored in @TO "defaultSVGOpening"@ (resp. @TO "defaultSVGClosing"@).
-		Example
-			myfgp1 = formatGraphicPrimitives({point(20,30)},hashTable {"fill"=>"black"})
-			myfgp2 = formatGraphicPrimitives({circle(point(20,30),10),point(50,60)},hashTable {"fill"=>"red","fill-opacity"=>"0.2"})
-			mypict = picture {myfgp1,myfgp2}
-			svgPicture(mypict,100,100)
-	SeeAlso
-		(svgPicture,Picture)
-		(svgPicture,Picture,ZZ,ZZ,String)
-		(svgPicture,Picture,String)
-		(pgfPicture,Picture)
-///
-
-doc ///
-	Key
-		(svgPicture,Picture)
-	Headline
-		create an SVG picture from a Picture object 
-	Usage
-		svgPicture(mypict)	
-	Inputs
-		mypict: Picture 
-	Outputs
-		: String
-			containing the SVG picture 
-	Description
-		Text
-			The heading used is stored in @TO "defaultSVGHeading"@ and the SVG opening bracket (resp. closing) used is stored in @TO "defaultSVGOpening"@ (resp. @TO "defaultSVGClosing"@).
-		Example
-			myfgp1 = formatGraphicPrimitives({point(20,30)},hashTable {"fill"=>"black"})
-			myfgp2 = formatGraphicPrimitives({circle(point(20,30),10),point(50,60)},hashTable {"fill"=>"red","fill-opacity"=>"0.2"})
-			mypict = picture {myfgp1,myfgp2}
-			svgPicture(mypict)
-	SeeAlso
-		(svgPicture,Picture,ZZ,ZZ)
-		(svgPicture,Picture,ZZ,ZZ,String)
-		(svgPicture,Picture,String)
-		(pgfPicture,Picture)
-///
-
-doc ///
-	Key
-		(svgPicture,Picture,String)
-	Headline
-		create an SVG picture from a Picture object and store it in a file
-	Usage
-		svgPicture(mypict,filename)	
-	Inputs
-		mypict: Picture 
-		filename: String
-			the name of the storage file
-	Description
-		Text
-			If the filename is without a .svg suffix, it will be added.
-		Text
-			The heading used is stored in @TO "defaultSVGHeading"@ and the SVG opening bracket (resp. closing) used is stored in @TO "defaultSVGOpening"@ (resp. @TO "defaultSVGClosing"@).
-	SeeAlso
-		(svgPicture,Picture)
-		(pgfPicture,Picture)
-///
-
-doc ///
-	Key
-		(svgPicture,Picture,ZZ,ZZ,String)
-	Headline
-		create an SVG picture from a Picture object and store it in a file
-	Usage
-		svgPicture(mypict,w,h,filename)	
-	Inputs
-		mypict: Picture 
-		w: ZZ
-			the width of the SVG picture
-		h: ZZ
-			the height of the SVG picture
-		filename: String
-			the name of the storage file
-	Description
-		Text
-			If the filename is without a .svg suffix, it will be added.
-		Text
-			The heading used is stored in @TO "defaultSVGHeading"@ and the SVG opening bracket (resp. closing) used is stored in @TO "defaultSVGOpening"@ (resp. @TO "defaultSVGClosing"@).
-	SeeAlso
-		(svgPicture,Picture)
-		(pgfPicture,Picture)
-
-///
-
-doc ///
-	Key
-		"defaultPGFOptions"
-	Headline
-		the default pgf options
-	Description
-		Text
-			It's a hash table containing the default pgf options for graphic primitives that can be used to create a pgf picture.
-///
-
-doc ///
-	Key
-		"possiblePGFOptions"
-	Headline
-		the possible pgf options
-	Description
-		Text
-			It's a hash table containing the possible pgf options for graphic primitives that can be used to create a pgf picture. Options not listed here will usually be discarded.
-///
-
-doc ///
-	Key
-		"defaultPGFValues"
-	Headline
-		the default pgf values
-	Description
-		Text
-			It's a hash table containing the default pgf values for some graphic primitives that are used to create a pgf picture.
-///
-
-doc ///
-	Key
-		pgfObject
-	Headline
-		create a pgf object 
-///
-
-doc ///
-	Key
-		(pgfObject,Point2D,HashTable)
-	Headline
-		create the string describing a point in pgf 
-	Usage
-		pgfObject(mypoint,myoptions)	
-	Inputs
-		mypoint: Point2D 
-		myoptions: HashTable
-			giving values to some options
-	Outputs
-		: String
-			containing the description of the point in pgf 
-	Description
-		Text
-			The options that are not given in {\tt myoptions} are set at their default values if they are contained in @TO "defaultPGFOptions"@. Options not listed in @TO "possiblePGFOptions"@ are discarded. The size of the point comes from @TO "defaultPGFValues"@.
-		Example
-			myoptions = hashTable {"fill"=>"red"}
-			pgfObject(point(20,30),myoptions)
-///
-
-doc ///
-	Key
-		(pgfObject,Segment2D,HashTable)
-	Headline
-		create the string describing a line segment in pgf 
-	Usage
-		pgfObject(mysegment,myoptions)	
-	Inputs
-		mysegment: Segment2D 
-		myoptions: HashTable
-			giving values to some options
-	Outputs
-		: String
-			containing the description of the segment in pgf 
-	Description
-		Text
-			The options that are not given in {\tt myoptions} are set at their default values if they are contained in @TO "defaultPGFOptions"@. Options not listed in @TO "possiblePGFOptions"@ are discarded. 
-		Example
-			myoptions = hashTable {"fill"=>"black"}
-			pgfObject(segment(point(20,30),point(40,50)),myoptions)
-///
-
-doc ///
-	Key
-		(pgfObject,Circle,HashTable)
-	Headline
-		create the string describing a circle in pgf 
-	Usage
-		pgfObject(mycircle,myoptions)	
-	Inputs
-		mycircle: Circle 
-		myoptions: HashTable
-			giving values to some options
-	Outputs
-		: String
-			containing the description of the circle in pgf 
-	Description
-		Text
-			The options that are not given in {\tt myoptions} are set at their default values if they are contained in @TO "defaultPGFOptions"@. Options not listed in @TO "possiblePGFOptions"@ are discarded. 
-		Example
-			myoptions = hashTable {"fill"=>"black"}
-			pgfObject(circle(point(20,30),10),myoptions)
-///
-
-doc ///
-	Key
-		(pgfObject,Polygon2D,HashTable)
-	Headline
-		create the string describing a circle in pgf 
-	Usage
-		svgObject(mypolygon,myoptions)	
-	Inputs
-		mypolygon: Polygon2D 
-		myoptions: HashTable
-			giving values to some options
-	Outputs
-		: String
-			containing the description of the polygon in pgf 
-	Description
-		Text
-			The options that are not given in {\tt myoptions} are set at their default values if they are contained in @TO "defaultPGFOptions"@. Options not listed in @TO "possiblePGFOptions"@ are discarded. 
-		Example
-			myoptions = hashTable {"fill"=>"black"}
-			pgfObject(polygon({point(20,30),point(40,50),point(10,40)}),myoptions)
-///
-
-doc ///
-	Key
-		(pgfObject,TextTag,HashTable)
-	Headline
-		create the string describing a circle in pgf 
-	Usage
-		pgfObject(mytext,myoptions)	
-	Inputs
-		mytext: TextTag 
-		myoptions: HashTable
-			giving values to some options
-	Outputs
-		: String
-			containing the description of the text tag in pgf 
-	Description
-		Text
-			The options that are not given in {\tt myoptions} are set at their default values if they are contained in @TO "defaultPGFOptions"@. Options not listed in @TO "possiblePGFOptions"@ are discarded. 
-		Example
-			myoptions = hashTable {"fill"=>"black"}
-			pgfObject(textTag(point(20,30),"Hello world"),myoptions)
-///
-
-doc ///
-	Key
-		(pgfObject,FormattedGraphicPrimitives)
-	Headline
-		create the string describing a series of graphic primitives in pgf 
-	Usage
-		pgfObject(FGP)	
-	Inputs
-		FGP: FormattedGraphicPrimitives
-	Outputs
-		: String
-			containing the description of all the graphic primitives contained in the FormattedGraphicPrimitives in pgf 
-	Description
-		Text
-			The options that are not given in the hash table part of FGP are set at their default values if they are contained in @TO "defaultPGFOptions"@. Options not listed in @TO "possiblePGFOptions"@ are discarded. 
-		Example
-			myoptions = hashTable {"fill"=>"black"}
-			myfgp= formatGraphicPrimitives({point(20,30)},myoptions)
-			pgfObject(myfgp)
-///
-
-doc ///
-	Key
-		(pgfObject,Picture)
-	Headline
-		create the string describing a series of graphic primitives in pgf 
-	Usage
-		pgfObject(pict)	
-	Inputs
-		pict: Picture 
-	Outputs
-		: String
-			containing the description of all the graphic primitives contained in the Picture in pgf 
-	Description
-		Text
-			The options that are not given in the hash table parts of the various FormattedGraphicPrimitives in the picture are set at their default values if they are contained in @TO "defaultPGFOptions"@. Options not listed in @TO "possiblePGFOptions"@ are discarded. 
-		Example
-			myfgp1=formatGraphicPrimitives({point(20.,30.),point(30.,40.)},hashTable {"fill"=>"black"})
-			myfgp2=formatGraphicPrimitives({circle(point(20.,30.),10)},hashTable {"fill"=>"red"})
-			mypict=picture({myfgp1,myfgp2})
-			pgfObject(mypict)
-///
-
-doc ///
-	Key
-		pgfPicture
-	Headline
-		create a pgf picture 
-///
-
-doc ///
-	Key
-		(pgfPicture,Picture)
-	Headline
-		create a pgf picture from a Picture object 
-	Usage
-		pgfPicture(mypict)	
-	Inputs
-		mypict: Picture 
-	Outputs
-		: String
-			containing the pgf picture 
-	Description
-		Example
-			myfgp1 = formatGraphicPrimitives({point(20,30)},hashTable {"fill"=>"black"})
-			myfgp2 = formatGraphicPrimitives({circle(point(20,30),10),point(50,60)},hashTable {"fill"=>"red","fill-opacity"=>"0.2"})
-			mypict = picture {myfgp1,myfgp2}
-			pgfPicture(mypict)
-	SeeAlso
-		(pgfPicture,Picture,HashTable)
-		(svgPicture,Picture)
-
-///
-
-doc ///
-	Key
-		(pgfPicture,Picture,HashTable)
-	Headline
-		create a pgf picture from a Picture object with some options 
-	Usage
-		pgfPicture(mypict,myoptions)	
-	Inputs
-		mypict: Picture 
-		myoptions: HashTable
-	Outputs
-		: String
-			containing the picture in pgf
-	Description
-		Example
-			myfgp1 = formatGraphicPrimitives({point(20,30)},hashTable {"fill"=>"black"})
-			myfgp2 = formatGraphicPrimitives({circle(point(20,30),10),point(50,60)},hashTable {"fill"=>"red","fill-opacity"=>"0.2"})
-			mypict = picture {myfgp1,myfgp2}
-			myoptions = hashTable{"scale"=>"0.5","x"=>"0.1cm","y"=>"0.2cm"}
-			pgfPicture(mypict,myoptions)
-	SeeAlso
-		(pgfPicture,Picture)
-		(svgPicture,Picture)
-
-///
-
-doc ///
-	Key
-		(pgfPicture,Picture,String)
-	Headline
-		create a pgf picture from a Picture object and store it in a file
-	Usage
-		pgfPicture(mypict,filename)	
-	Inputs
-		mypict: Picture 
-		filename: String
-			the name of the storage file
-	Description
-		Text
-			If the filename is without a .tex suffix, it will be added.
-	SeeAlso
-		(pgfPicture,Picture,HashTable,String)
-		(pgfPicture,Picture)
-		(pgfPicture,Picture,HashTable)
-		(svgPicture,Picture)
-///
-
-doc ///
-	Key
-		(pgfPicture,Picture,HashTable,String)
-	Headline
-		create a pgf picture from a Picture object with options and store it in a file
-	Usage
-		pgfPicture(mypict,opts,filename)	
-	Inputs
-		mypict: Picture 
-		opts: HashTable
-			containing the options
-		filename: String
-			the name of the storage file
-	Description
-		Text
-			If the filename is without a .tex suffix, it will be added.
-	SeeAlso
-		(pgfPicture,Picture,String)
-		(pgfPicture,Picture)
-		(pgfPicture,Picture,HashTable)
-		(svgPicture,Picture)
-///
-
-doc ///
-	Key
-		viewPicture
-	Headline
-		view a picture in a browser
-///
-
-doc ///
-	Key
-		(viewPicture,String)
-	Headline
-		view a Picture in a browser
-	Usage
-		viewPicture(filename)
-	Inputs
-		filename: String
-			the name of the file (possibly with path) containing the picture
-	Caveat
-		For the moment, it only works with SVG pictures and browsers supporting them.
-///
+multidoc ///
+ Node
+  Key
+   Graphics
+  Headline
+   A package to produce SVG graphics
+  Description
+   Text
+    {\bf Graphics} is a package to produce SVG 2d and 3d graphics.
+    All usable types are descendents of the type GraphicsObject, and are self-initializing.
+    Coordinates can be entered as vectors in \mathbb{RR}^2, \mathbb{RR}^3 or \mathbb{RR}^4 (\mathbb{RR}^4 is projective
+    coordinates); alternatively, one can enter them as sequences. With the default perspective matrix,
+    the x axis points to the right, the y axis points up, and the z axis points towards the viewer.
+    All types are option tables, i.e., their arguments are options. There are two types of options:
+    Graphics options, that are symbols (e.g., {\tt Radius} for circles);
+    and styling options, which are CSS style options,
+    and which are {\bf strings} (e.g., {\tt "fill"} for fill color).
+    {\bf Graphics} does not use units (coordinates are dimensionless).
+    In @ TO {Standard} @ mode, the graphical objects are not directly visible; to export them to SVG
+    in order to embed them into a web page, use @ TO {html} @. In @ TO {WebApp} @ mode, the graphical objects
+    are shown as output.
+ Node
+  Key
+   GraphicsObject
+  Headline
+   The ancestor class of all Graphics objects
+ Node
+  Key
+   GraphicsPoly
+  Headline
+   The ancestor class of complex Graphics objects
+ Node
+  Key
+   GraphicsList
+  Headline
+   A list of Graphics objects
+  Description
+   Text
+    A class that represents a list of @ TO {Graphics} @ objects, displayed together. See also @ TO{gList} @.
+ Node
+  Key
+   Circle
+  Headline
+   An SVG circle
+  Description
+   Text
+    An SVG circle. The two compulsory options are Center (coordinates of the center) and Radius (radius).
+    In 3d, gives a decent approximation of a sphere.
+   Example
+    Circle{Center=>vector {10,10},Radius=>50,"fill"=>"green","stroke"=>"none"}
+    Circle{(10,10),10} -- equivalent syntax for coordinates
+ Node
+  Key
+   Line
+  Headline
+   An SVG line
+  Description
+   Text
+    A simple SVG line. The two compulsory options are Point1 and Point2, which are vectors (or sequences) describing the two endpoints.
+   Example
+    Line{Point1=>vector{0,0},Point2=>vector{2,1},"stroke"=>"green"}
+    Line{(0,0),(2,1),"stroke-width"=>0.1} -- simplified syntax
+ Node
+  Key
+   Light
+  Headline
+   A source of light
+  Description
+   Text
+    A source of light for a 3d SVG picture.
+    This corresponds to the SVG "specular" lighting, use the property Specular. The location is given by Center.
+    By default a Light is invisible (it has Radius 0) and is unaffected by matrix transformations outside it (Static true).
+   Example
+    Light{Radius=>10,"fill"=>"yellow"}
+    v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
+    f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
+    c={"red","green","blue","yellow"};
+    tetra=gList(apply(4,i->Polygon{f#i,"fill"=>c#i,"stroke"=>"none"}),Light{(100,0,0),Radius=>10},ViewPort=>{(-100,-100),(100,100)},SizeY=>30,TransformMatrix=>rotation(-1.5,(0,1,0)))
+  Caveat
+   Do not use the same Light object multiple times in a given @ TO {GraphicsList} @.
+ Node
+  Key
+   Ellipse
+  Headline
+   An SVG ellipse
+  Description
+   Text
+    An SVG ellipse. The three compulsory options are Center (coordinates of the center) and RadiusX, RadiusY (radii).
+   Example
+    Ellipse{Center=>vector{10,10},RadiusX=>50,RadiusY=>20,"stroke"=>"none","fill"=>"red"}
+    Ellipse{(10,10),50,20,"stroke"=>"blue"} -- equivalent syntax
+  Caveat
+   Does not really make sense in a 3d context.
+ Node
+  Key
+   Path
+  Headline
+   An SVG path
+  Description
+   Text
+    An SVG path. It follows the syntax of SVG paths, except successive commands must be grouped together in a list called PathList.
+   Example
+    Path{PathList => {"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
+ Node
+  Key
+   Polygon
+  Headline
+   An SVG polygon
+  Description
+   Text
+    An SVG polygon. The coordinates must form a list called Points. (the difference with Polyline is that the last coordinate is reconnected to the first)
+   Example
+    Polygon{Points=>{(0,10),(100,10),(90,90),(0,80)},"stroke"=>"red","fill"=>"white"}
+ Node
+  Key
+   Polyline
+  Headline
+   An SVG sequence of lines
+  Description
+   Text
+    An SVG sequence of lines. The coordinates must form a list called Points. (the difference with Polygon is that the last coordinate is not reconnected to the first)
+   Example
+    Polyline{Points=>{(0,10),(100,10),(90,90),(0,80)},"stroke"=>"red","fill"=>"white"}
+ Node
+  Key
+   GraphicsText
+  Headline
+   SVG text
+  Description
+   Text
+    Some SVG text. The text itself is the option TextContent (a string). Text can be "stroke"d or "fill"ed.
+    Font size should be specified with FontSize.
+   Example
+    GraphicsText{(0,0),"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
+  Caveat
+   Currently, cannot be rotated. (coming soon)
+ Node
+  Key
+   gList
+  Headline
+    Group together Graphics objects
+  Description
+   Text
+    gList(a,b,...,c, options) results in a new @ TO{GraphicsList} @ object containing a,b,...,c
+    and the given options.
+   Example
+    a=gList(Line{(-100, 15, 78), (-9, 100, 4)},Line{(-96, -49, -100), (46, -100, 52)},Line{(-100, -42, -51), (59, 100, 76)},Line{(-100, 66, 54), (83, -100, -27)})
+    b=gList(Line{(-30, 100, 20), (9, -100, 8)},Line{(-78, -73, -100), (-64, 84, 100)},"stroke"=>"red")
+    gList(a,b,SizeX=>20)
+ Node
+  Key
+   viewPort
+  Headline
+    ViewPort of view port
+  Description
+   Text
+    viewPort gives the range of view port occupied by a @ TO {Graphics} @ object, as computed by the package.
+    See also @ TO{ViewPort} @.
+  Caveat
+    At the moment viewPort does not take into account the width of "stroke"s.
+ Node
+  Key
+   is3d
+  Headline
+   Whether a Graphics object is 3d
+  Description
+   Text
+    Returns a boolean according to whether the @ TO {Graphics} @ object is 2d (false) or 3d (true).
+ Node
+  Key
+   distance
+  Headline
+   Distance to the viewer
+  Description
+   Text
+    Returns the distance (perpendicularly to the screen) to the viewer of a @ TO {Graphics} @ 3d object.
+ Node
+  Key
+   rotation
+  Headline
+   Computes a rotation matrix
+  Usage
+   rotation ( angle, axis, center)
+   rotation ( angle, center)
+  Description
+   Text
+    Produces a rotation encoded as a 4x4 matrix that can be used as an argument to @TO{TransformMatrix}@ or @TO{AnimMatrix}@.
+    For a 3d rotation, use 3d vectors for axis and center.
+    For a 2d rotation, use a 2d vector for the center.
+    In both cases, the center is optional.
+ Node
+  Key
+   translation
+  Headline
+   Computes a translation matrix
+  Description
+   Text
+    Produces a translation encoded as a 4x4 matrix that can be used as an argument to @TO{TransformMatrix}@ or @TO{AnimMatrix}@.
+    The vector can be 2d or 3d.
+   Example
+    v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
+    f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
+    tetra=gList(apply(4,i->Polygon{f#i,"fill"=>"white"}))
+    g = memoize(n -> if n==0 then tetra else gList apply(4,i->g(n-1)++{TransformMatrix=>translation v#i}))
+    apply(4,g)
+  Usage
+   translation ( vector )
+ Node
+  Key
+   OneSided
+  Description
+   Text
+    A property of @ TO{GraphicsPoly} @ 3d objects, means that polygons must be drawn only if they are facing the correct way.
+ Node
+  Key
+   ViewPort
+  Headline
+   Fix the view port
+  Description
+   Text
+    An option to fix manually the view port range of a @ TO {Graphics} @ object.
+    Only has an effect if in the outermost @ TO {Graphics} @ object.
+    See also @ TO{viewPort} @ and @ TO{Margin} @.
+ Node
+  Key
+   SizeX
+  Headline
+   Set the width
+  Description
+   Text
+    An option to fix the width of the @ TO {Graphics} @ object in line width units.
+    Only has an effect if in the outermost @ TO {Graphics} @ object.
+ Node
+  Key
+   Perspective
+  Headline
+   Set the amount of perspective
+  Description
+   Text
+    A 4x4 matrix that is applied to 3d coordinates for perspective.
+    After this tranformation, the coordinates must be (x,-y,-z,z/p) in the reference frame
+    where the viewer is at (0,0,0) and the screen at z=-p.
+    One can instead provide a real number p, which is equivalent to placing the screen
+    centered at z=0 and the viewer at (0,0,p).
+    Only has an effect if in the outermost @ TO {Graphics} @ object.
+ Node
+  Key
+   SizeY
+  Headline
+   Set the height
+  Description
+   Text
+    An option to fix the height of the @ TO {Graphics} @ object in line width units.
+    Only has an effect if in the outermost @ TO {Graphics} @ object.
+ Node
+  Key
+   AnimMatrix
+  Headline
+   Create a rotation animation matrix
+  Description
+   Text
+    An option to create a rotation animation for the @ TO {Graphics} @ 3d object.
+    The value can be a single 4x4 matrix, or a list which is cycled.
+    The syntax n => ... can be used to repeat a sequence n times (where 0 means infinity).
+    The animation automatically loops (use {\tt 0 => \{ \}} to stop!)
+    In order for the animation to work, Graphics.css and Graphics.js must be included in the web page.
+   Example
+    (anim1=rotation(0.1,(0,0,1),(0,0,0)); anim2=rotation(-0.1,(0,0,1),(0,0,0)); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 });
+    gList(Polygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red",AnimMatrix=>anim1},Circle{(1,0),0.1},Circle{(0,0),1})
+    gList(Polygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red",AnimMatrix=>anim3},Circle{(1,0),0.1},Circle{(0,0),1})
+ Node
+  Key
+   TransformMatrix
+  Headline
+   Create a rotation matrix
+  Description
+   Text
+    An option to rotate the coordinates of the @ TO {Graphics} @ 3d object.
+    Must be a 4x4 matrix (projective coordinates).
+   Example
+    a=Polygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red"}
+    gList(a,a++{TransformMatrix=>rotation(2*pi/3)})
+ Node
+  Key
+   Blur
+  Headline
+   An option to blur a Graphics object
+  Description
+   Text
+    This corresponds to the feGaussianBlur SVG filter.
+    The value is the amount of blurriness relative to the size of the object.
+  Caveat
+    In animated 3d, the amount of blurriness does not vary as the size varies.
+ Node
+  Key
+   Static
+  Headline
+   An option to make a Graphics object unmoving
+  Description
+   Text
+    The @ TO {Graphics} @ 3d object is unaffected by matrix tranformations of its ancestors.
+ Node
+  Key
+   linearGradient
+  Headline
+   An SVG gradient
+  Description
+   Text
+    This corresponds to the linearGradient SVG gradient.
+    The argument is a list of pairs of offsets and styles.
+    Optional arguments (e.g., "x1", "y1", "x2", "y2") are used to determine the orientation of the gradient.
+   Example
+    Ellipse{(60,60),40,30, "fill"=>linearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
+ Node
+  Key
+   radialGradient
+  Headline
+   An SVG gradient
+  Description
+   Text
+    This corresponds to the radialGradient SVG gradient.
+    The argument is a list of pairs of offsets and styles.
+    Optional arguments (e.g., "cx", "cy", "r", "fx", "fy") are used to position the gradient.
+   Example
+    Ellipse{(60,60),40,30, "fill"=>radialGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
+ Node
+  Key
+   plot
+  Headline
+   Draws a curve or surface
+  Description
+   Text
+    Draws a curve or surface defined implicitly or explicitly by a polynomial.
+    The first argument is a polynomial, the second is a (list of) range(s) of variable(s).
+    If the number of ranges is equal to the number of variables of the polynomial, the graph of the polynomial
+    is drawn. If it is one fewer, then the zero set of the polynomial is drawn.
+    The option Mesh specifies the number of sampled values of the variables.
+   Example
+    R=RR[x,y];
+    P=y^2-(x+1)*(x-1)*(x-2);
+    plot(P,{-2,3},"stroke-width"=>0.05,SizeY=>25,"stroke"=>"red")
+ Node
+  Key
+   Axes
+  Headline
+   An option to draw axes
+ Node
+  Key
+   Margin
+  Headline
+   An option to specify the margin
+  Description
+   Text
+    The margin is proportional to the size of the image.
+    It increases the view port beyond the value returned by @ TO{viewPort} @ or set by @ TO{ViewPort} @.
+   Example
+    Circle{"fill"=>"red","stroke"=>"none",Margin=>0}
+    Circle{"fill"=>"red","stroke"=>"none",Margin=>0.5}
+ Node
+  Key
+   arrow
+  Headline
+   A marker to add to paths
+  Description
+   Text
+    Must be used as styling options "marker-start", "marker-mid" or "marker-end", to add an arrow to a path.
+   Example
+    Polyline{Points=>{(0,0),(50,50),(0,100),(50,150)},"stroke"=>"yellow","stroke-width"=>5,"marker-end"=>arrow("fill"=>"orange"),Margin=>0.3}
+ Node
+  Key
+   GraphicsHtml
+  Headline
+   Html content inside a Graphics object
+  Description
+   Text
+    Some arbitrary HTML content, specified by the option HtmlContent (a @ TO{Hypertext} @ object or other content to render in HTML).
+  Caveat
+   Due to a limitation of <foreignObject>, coordinates are rounded to the nearest integer. So use large enough coordinate systems.
+ Node
+  Key
+   SVG
+  Headline
+   hypertext SVG item
+ Node
+  Key
+   GraphicsType
+  Headline
+   A particular type of type used by Graphics, similar to SelfInitializingType.
+///
+
+undocumented { -- there's an annoying conflict with NAG for Point, Points
+    Contents, TextContent, HtmlContent, SVGElement, Graphics$Point, Graphics$Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
+    (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
+    (expression, GraphicsObject), (html,GraphicsObject), (htmlWithTex,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
+    (NewFromMethod,GraphicsObject,List), (NewFromMethod,GraphicsObject,OptionTable), (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
+}
+
+end--
+
+-- ex of use
+gr=linearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")};
+gList(Ellipse{(0,0),90,30,"stroke"=>"none","fill"=>gr,Blur=>0.3},GraphicsText{(-65,-7),"Macaulay2",FontSize=>25,"stroke"=>"black","fill"=>"white"},SizeY=>12)
+
+a=Circle{"fill"=>"yellow","stroke"=>"green",SizeX=>1,SizeY=>1}
+b=Line{(10,10),(20,50),"stroke"=>"black"}
+c=Circle{(50,50),50,"fill"=>"blue","fill-opacity"=>0.25}
+d=Ellipse{(60,60),40,30, "fill"=>"blue", "stroke"=>"grey"}
+e=Polyline{{(0,0),(100,100),(100,50)},"fill"=>"pink","stroke"=>"green"}
+f=Polygon{{(0,10),(100,10),(90,90),(0,80)},"stroke"=>"red","fill"=>"white"}
+gList (f,a,b,c,d,e)
+-- or
+rgb={"red","green","blue"};
+scan(rgb, x -> (value x <- Circle{"fill"=>x,"stroke"=>"black",SizeX=>0.8,SizeY=>0.8,Margin=>0}))
+value\rgb
+R=QQ[x_red,x_green,x_blue]
+describe R
+x_red^2-x_green^2
+factor oo
+
+-- or
+z=Polygon{{(0,0),(0,50),(50,50),(50,0)},"fill"=>"white"}
+b1=Path{{"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
+b2=Path{{"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
+b=gList(z,b1,b2,SizeX=>2,SizeY=>2,Margin=>0)
+a1=Path{{"M", (50, 25), "Q", (25, 25), (25, 0), "M", (0, 25), "Q", (25, 25), (25, 50)},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
+a2=Path{{"M", (50, 25), "Q", (25, 25), (25, 0), "M", (0, 25), "Q", (25, 25), (25, 50)},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
+a=gList(z,a1,a2,SizeX=>2,SizeY=>2,Margin=>0)
+--ab=a|b
+--ba=b|a
+--ab||ba||ba
+tile = (I,i,j)->(if m_(i+1,j+1)%I == 0 then if c_(i+1,j+1)%I==0 then () else a else b);
+tiledRow = (I,i)->new RowExpression from apply(n,j->tile(I,i,j));
+loopConfig = I->new ColumnExpression from apply(k,i->tiledRow(I,i)); -- no such a thing as ColumnExpression. there should
+
+
+-- or
+barside1=Path{{"M",(80,60,100),"L",(80,55,100),"L",(220,55,100),"L",(220,60,100),"Z"},"fill"=>"#222","stroke-width"=>0}; -- stroke-width shouldn't be necessary
+triangle1=Path{{"M",(-50,160,2),"L",(0,80,2),"L",(50,160,2),"Z"},"fill"=>"#2040d0","stroke"=>"#80c0ff","stroke-width"=>1,"stroke-miterlimit"=>0};
+triangle2=Path{{"M",(30,160,98),"L",(80,80,98),"L",(130,160,98),"Z"},"fill"=>"#2040d0","stroke"=>"#80c0ff","stroke-width"=>1,"stroke-miterlimit"=>0};
+edge1=Path{{"M",(30,160,98),"L",(30,160,102),"L",(80,80,102),"L",(80,80,98),"Z"},"fill"=>"#4080e0","stroke-width"=>1};
+edge2=Path{{"M",(130,160,98),"L",(130,160,102),"L",(80,80,102),"L",(80,80,98),"Z"},"fill"=>"#4080e0","stroke-width"=>1};
+bartop=Path{{"M",(80,55,98),"L",(80,55,102),"L",(220,55,102),"L",(220,55,98),"Z"},"fill"=>"#aaa","stroke-width"=>0}; -- stroke-width shouldn't be necessary
+thread=Path{{"M",(80,55,100),"L",(80,80,100),"Z"},"stroke"=>"#111","stroke-width"=>0.5,"stroke-opacity"=>0.8};
+gList{barside1,triangle1,triangle2,edge1,edge2,bartop,thread}
+
+-- tetrahedron
+v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
+c={"red","green","blue","yellow"};
+vv={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
+triangles=apply(4,i->Path{{"M",vv#i#0,"L",vv#i#1,"L",vv#i#2,"Z"},"fill"=>c#i,OneSided=>true});
+gList(triangles,Light{(100,0,0),Radius=>10},ViewPort=>{(-100,-150),(150,150)},SizeY=>30,TransformMatrix=>rotation(-1.5,(0,1,0)))
+
+-- dodecahedron
+vertices={vector{-137.638,0.,26.2866},vector{137.638,0.,-26.2866},vector{-42.5325,-130.902,26.2866},vector{-42.5325,130.902,26.2866},vector{111.352,-80.9017,26.2866},vector{111.352,80.9017,26.2866},vector{-26.2866,-80.9017,111.352},vector{-26.2866,80.9017,111.352},vector{-68.8191,-50.,-111.352},vector{-68.8191,50.,-111.352},vector{68.8191,-50.,111.352},vector{68.8191,50.,111.352},vector{85.0651,0.,-111.352},vector{-111.352,-80.9017,-26.2866},vector{-111.352,80.9017,-26.2866},vector{-85.0651,0.,111.352},vector{26.2866,-80.9017,-111.352},vector{26.2866,80.9017,-111.352},vector{42.5325,-130.902,-26.2866},vector{42.5325,130.902,-26.2866}};
+faces={{14,9,8,13,0},{1,5,11,10,4},{4,10,6,2,18},{10,11,7,15,6},{11,5,19,3,7},{5,1,12,17,19},{1,4,18,16,12},{3,19,17,9,14},{17,12,16,8,9},{16,18,2,13,8},{2,6,15,0,13},{15,7,3,14,0}};
+centers=apply(faces,f->1/5*sum(f,i->vertices#i));
+steps=30;
+dodeca=apply(faces,centers,(f,c)->Polygon{apply(f,j->vertices#j),"fill"=>concatenate("rgb(",toString(134+round(1.2*c_0)),",",toString(134+round(1.2*c_1)),",",toString(134+round(1.2*c_2)),")")});
+label=apply(#vertices,i->GraphicsText{vertices#i,toString i});
+dodecasplit=apply(faces,centers,(f,c)->Polygon{apply(f,j->vertices#j),
+	AnimMatrix=>apply(steps,j->rotation(2*pi/5/steps*4*min(j/steps,1-j/steps),c,c)*translation(0.075*sin(2*pi*j/steps)*c)),
+	"fill"=>concatenate("rgb(",toString(134+round(1.2*c_0)),",",toString(134+round(1.2*c_1)),",",toString(134+round(1.2*c_2)),")")});
+d=gList(dodecasplit,"fill-opacity"=>0.65,AnimMatrix=>rotation(0.02,(1,2,3)));
+d1=gList(d,TransformMatrix=>translation(200,0,0)); -- using alternate syntax of Sequence instead of Vector
+d2=gList(d,TransformMatrix=>translation(-200,0,0));
+gList(d1,d2,ViewPort=>{vector{-400,-400},vector{400,400}},SizeY=>25,"stroke-width"=>2)
+
+p=random splice{0..11};
+
+
+-- icosahedron
+vertices={vector{0.,0.,-95.1057},vector{0.,0.,95.1057},vector{-85.0651,0.,-42.5325},vector{85.0651,0.,42.5325},vector{68.8191,-50.,-42.5325},vector{68.8191,50.,-42.5325},vector{-68.8191,-50.,42.5325},vector{-68.8191,50.,42.5325},vector{-26.2866,-80.9017,-42.5325},vector{-26.2866,80.9017,-42.5325},vector{26.2866,-80.9017,42.5325},vector{26.2866,80.9017,42.5325}};
+faces={{1,11,7},{1,7,6},{1,6,10},{1,10,3},{1,3,11},{4,8,0},{5,4,0},{9,5,0},{2,9,0},{8,2,0},{11,9,7},{7,2,6},{6,8,10},{10,4,3},{3,5,11},{4,10,8},{5,3,4},{9,11,5},{2,7,9},{8,6,2}};
+icosa=apply(faces,f->Polygon{apply(f,j->vertices#j),"fill"=>"gray","stroke"=>"none"});
+i=gList(icosa,TransformMatrix=>matrix{{0.7,0,0,0},{0,0.7,0,0},{0,0,0.7,0},{0,0,0,1}})
+
+rnd = () -> random(-1.,1.); cols={"red","green","blue","yellow","magenta","cyan"};
+gList(i, apply(cols, c -> Light{100*vector{1.5+rnd(),rnd(),rnd()},Radius=>10,"fill"=>c,Specular=>10,AnimMatrix=>rotation(0.02,(rnd(),rnd(),rnd()))}),ViewPort=>{(-200,-200),(200,200)},SizeY=>30)
+
+subdivide = (v,f) -> (
+    u := v#0;
+    c := u_0*u_0+u_1*u_1+u_2*u_2;
+    e := unique flatten apply(f,x->{sort{x#0,x#1},sort{x#0,x#2},sort{x#1,x#2}});
+    mid := apply(e, x -> (u=0.5*(v#(x#0)+v#(x#1)); r:=sqrt(c/(u_0*u_0+u_1*u_1+u_2*u_2)); r*u));
+    ff := flatten apply(f, x -> (
+	    i:=#v+position(e,y->y==sort{x#0,x#1});
+	    j:=#v+position(e,y->y==sort{x#0,x#2});
+	    k:=#v+position(e,y->y==sort{x#1,x#2});
+	    {{x#0,i,j},{x#1,i,k},{x#2,j,k},{i,j,k}}
+	    ));
+    (v|mid,ff)
+    )
+(v2,f2)=subdivide(vertices,faces);
+(v3,f3)=subdivide(v2,f2);
+sph=apply(f3,f->Polygon{apply(f,j->v3#j),"stroke"=>"white","stroke-width"=>0.01,"fill"=>"gray"});
+gList(sph, apply(cols, c -> Light{100*vector{1.5+rnd(),rnd(),rnd()},Radius=>10,"fill"=>c,Specular=>10,AnimMatrix=>rotation(0.02,(rnd(),rnd(),rnd()))}),ViewPort=>{(-200,-200),(200,200)},SizeY=>30)
+
+-- simple plot
+R=RR[x,y]; P=0.1*(x^2-y^2);
+gList(plot(P,{{-10,10},{-10,10}},Mesh=>15,"stroke-width"=>0.05,"fill"=>"gray"),Light{(200,0,-500),Specular=>10,"fill"=>"rgb(180,0,100)"},Light{(-200,100,-500),Specular=>10,"fill"=>"rgb(0,180,100)"},SizeY=>40,Axes=>false)
+
+-- implicit plot
+R=RR[x,y];
+P=y^2-(x+1)*(x-1)*(x-2);
+plot(P,{-2,3},"stroke-width"=>0.05,SizeY=>25,"stroke"=>"red")
+
+-- Schubert calculus
+a=gList(Line{(-100, 15, 78), (-9, 100, 4)},Line{(-96, -49, -100), (46, -100, 52)},Line{(-100, -42, -51), (59, 100, 76)},Line{(-100, 66, 54), (83, -100, -27)})
+b=gList(Line{(-30, 100, 20), (9, -100, 8)},Line{(-78, -73, -100), (-64, 84, 100)},"stroke"=>"red")
+c=gList(Polygon{{(-100,100,100),(-100,-100,100),(-100,-100,-100),(-100,100,-100)}},
+		  Polygon{{(100,100,100),(100,-100,100),(100,-100,-100),(100,100,-100)}},
+		  Polygon{{(100,-100,100),(-100,-100,100),(-100,-100,-100),(100,-100,-100)}},
+		  Polygon{{(100,100,100),(-100,100,100),(-100,100,-100),(100,100,-100)}},
+		  Polygon{{(100,100,-100),(100,-100,-100),(-100,-100,-100),(-100,100,-100)}},
+		  Polygon{{(100,100,100),(100,-100,100),(-100,-100,100),(-100,100,100)}},
+		  "stroke"=>"black","fill"=>"grey", "opacity"=>"0.25")
+gList(a,b,c,SizeX=>20)
+
+--
+n=10;
+v1=apply(n,i->vector {cos(2*pi*i/n),sin(2*pi*i/n),0.1});
+v2=apply(n,i->vector {cos(2*pi*i/n),sin(2*pi*i/n),-0.1});
+l=apply(n,i->Polygon{{v1#i,v2#i,v2#((i+1)%n),v1#((i+1)%n)},"fill"=>"hsl("|toString(360.*i/n)|",100%,50%)"});
+a=gList(l,AnimMatrix=>rotation(0.2,vector{0,0,1}));
+m=50;r=apply(m,i->rotation(0.05,vector{cos(2*pi*i/m),sin(2*pi*i/m),0}));
+b=gList(a,AnimMatrix=>r)
+--c=gList(a,TransformMatrix=>(map(RR^3,RR^3,0.5)++1)*rotation(2,vector{1,2,3}),AnimMatrix=>r)
+--gList(b,c)
+
+-- stars
+n=100;
+speed=100;
+far=-10000;
+screen=1000;
+stars=apply(n,i->(
+z=speed*(random(far,screen)//speed);
+Circle{(random(-200,200),random(-200,200),z),10,"fill"=>"yellow","stroke"=>"none",Blur=>0.3,
+AnimMatrix=>{((screen-z)//speed)=>translation (0,0,speed),translation (0,0,far-screen),((-far+z)//speed)=>translation (0,0,speed)}}
+));
+gList(stars,ViewPort=>{(-100,-100),(100,100)})
+style(SVG oo,"background"=>"black")
+
+-- removed (might be added back if correctly implemented in 3d)
+ Node
+  Key
+   Rectangle
+  Headline
+   An SVG rectangle
+  Description
+   Text
+    An SVG rectangle. The SW coordinate is given as Point, the difference between NE and SW corners is given as GraphicsSize.
+   Example
+    Rectangle{(10,10),(20,50),"fill"=>"pink","stroke"=>"black"} -- first argument is Point, second GraphicsSize
+  Caveat
+   Rectangle can only be used in 2d. Use Polygon for 3d.
 
