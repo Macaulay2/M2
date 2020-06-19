@@ -324,7 +324,7 @@ NormalToricVariety _ ZZ := ToricDivisor => (X, i) -> (
 -- THIS FUNCTION IS NOT EXPORTED. By reading an auxiliary file, this function
 -- creates a HashTable with the defining data for the small smooth projective
 -- toric varieties.
-smallSmoothFile := currentFileDirectory | "SmallSmoothProjectiveToricVarieties.txt"
+smallSmoothFile := currentFileDirectory | "smallSmoothProjectiveToricVarieties.txt"
 getSmallSmooth := hashTable apply (lines get smallSmoothFile, x -> (
 	x = value x;
 	((x#0,x#1), drop (x,2)) 
