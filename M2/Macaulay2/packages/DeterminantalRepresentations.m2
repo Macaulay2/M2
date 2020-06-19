@@ -506,7 +506,7 @@ doc ///
             are not limited to the scope of determinantal representations). These include:
             creating/testing orthogonal, symmetric, doubly stochastic, unipotent, and 
             positive semidefinite matrices, Hadamard products, Cholesky decomposition, 
-            and converting/rounding matrices from @TO CC@ to @TO RR@/@TO QQ@.
+            and lifting/rounding matrices from @TO CC@ to @TO RR@/@TO QQ@.
             
         Text
             {\bf References}:
