@@ -1128,17 +1128,21 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     numLinCoeffs = value(linCoeffDims#0) * value(linCoeffDims#1);
     rw = {};
     mat = {};
-    for i from 1 to value(linCoeffDims#1) do (
-	     for j from 1 to value(linCoeffDims#0) do (
-         coefParts = select("[0-9-]+/[0-9-]+", first l);
-         rw = join(rw, {toCC(53,value(coefParts#0)) + ii*toCC(53,value(coefParts#1))});
-	        -- definitely losing data here, going from rational number to float!
-          l = drop(l,1);
-        );
-        mat = join(mat, {rw});
+
+
+    for i from 1 to value(linCoeffDims#0) do ( 
+	for j from 1 to value(linCoeffDims#1) do (
+            coefParts = select("[0-9-]+/[0-9-]+", first l);
+            rw = join(rw, {toCC(53,value(coefParts#0)) + 
+		    ii*toCC(53,value(coefParts#1))});  
+	    -- definitely losing data here, going from rational number to float!
+            l = drop(l,1);
+            );
+        mat = join(mat, {rw});  
         rw = {};
-    );
-    M = matrix(mat); -- "master matrix" that stores all slices
+        );
+    
+    M = transpose matrix(mat); --stores all slices
 
     -- Finally, we can cycle through the witness sets in nv
     -- and add the slice data.
