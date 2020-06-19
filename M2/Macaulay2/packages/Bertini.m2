@@ -1260,6 +1260,206 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
   else error "unknown output file";
   )
 
+
+
+-*
+restart
+path
+path=prepend("/Users/jo/Documents/GoodGit/AntonM2/M2/Macaulay2/packages",path)
+needsPackage"Bertini"
+debug Bertini
+R = CC[x,y,z,t]
+I = ideal(x + 3, y+1)
+I = ideal(x*(x + 3), x*(y+1)*(z-t^2))
+I = ideal(x^2*(x + 3), x^2*(y+1)*(z-t^2))
+I = ideal(x,y,z)
+I = ideal(x,2*z-t,x-2*y-1)
+
+nv = bertiniPosDimSolve(I_*, Verbose => true)
+w = first components nv
+F = polySystem slice w
+pts2 = w#Points
+pts2 / (p -> norm evaluate(F,p)) -- this value is >> 0
+nv#WitnessDataFileName
+PWD  = new MutableHashTable from {IsProjective=>-1}
+A = parseWitnessDataFile(PWD,first separate("w",nv#WitnessDataFileName),"witness_data")
+peek PWD
+peek PWD#"WS"#0
+peek PWD#"WS"#1
+peek PWD#"WS"#2
+
+(matrix{{1_CC}}|sub(vars R,    matrix PWD#"WS"#0#0))* transpose PWD#"SliceData" 
+PWD#"Directory"
+
+R = CC[x,y,z,t];I = ideal(x,y);
+nv = bertiniPosDimSolve(I_*, Verbose => true,IsProjective=>1)
+PWD  = new MutableHashTable from {IsProjective=>1}
+A = parseWitnessDataFile(PWD,first separate("w",nv#WitnessDataFileName),"witness_data")
+PWD#"RemainingFile"
+sub(vars R,    matrix PWD#"WS"#0#0)*transpose  PWD#"SliceData" 
+
+
+R = CC[x,y,z,t]
+I = ideal(x + 3, y+1)
+IP =-1
+nv = bertiniPosDimSolve(I_*, Verbose => true)
+PWD  = new MutableHashTable from {IsProjective=>IP}
+A = parseWitnessDataFile(PWD,first separate("w",nv#WitnessDataFileName),"witness_data")
+PWD#"RemainingFile"
+(matrix{{1}}|sub(vars R,    matrix PWD#"WS"#0#0)) * transpose PWD#"SliceData" 
+
+PWD#"SliceData"
+PWD#"WS"#1//toList/(i->i#"ComponentNumber")
+PWD#"WS"#1//toList/(i->i#"Multiplicity")
+PWD#"WS"#0//toList/(i->i#"Multiplicity")
+*-
+--This method is used for debugging parsing witness data files. 
+parseWitnessDataFile = method(TypicalValue=>MutableHashTable)
+parseWitnessDataFile (MutableHashTable,String,String) := (PWD,dir,name) -> (
+    --PWD :=new MutableHashTable from {};
+    PWD#"Directory"=dir;
+    PWD#"Name"=name;
+    if  dir_-1=!="/" then dir =dir|"/";
+    l := lines get (dir|name); -- grabs all lines of the file
+    numVars := value(first l);  
+    PWD#"NumVars"=numVars;
+    l = drop(l,1);
+    maxCodim := value(first l); 
+    PWD#"MaxCodim"=maxCodim;--Number of equidimensional witness sets
+    l=drop(l,1);    
+    --list of witness sets indexed by codimension
+    wList := new MutableList from for i to maxCodim-1 list null;
+    --keeps track of codimension of each witness set; 
+    trueCodimension := new MutableList from for i to maxCodim-1 list null;     
+    --componentIndex#i number of components in codimension i.        
+    componentIndex := new MutableList from for i to maxCodim-1 list null;  
+    --numPoints#i number of pts in codimension i.
+    numPoints := new MutableList from for i to maxCodim-1 list null;  
+    scan(PWD#"MaxCodim",
+	ic->(
+	    print 1;
+	    trueCodimension#ic = value(first l); 
+	    l=drop(l,1);
+            if componentIndex#ic===null then componentIndex#ic={};
+	    numPoints#ic = value(first l);
+	    l=drop(l,1);
+	    pts := new MutableList from for i to numPoints#ic-1 list null ;  
+	    -- We now construct a new point using the type Point.
+    	    print"numPoints#ic loop";
+--
+            scan(numPoints#ic,
+		ptNum->(
+            	    pt := new Point;
+	    	    maxPrec := value(first l);
+            	    l = drop(l,1);
+	    	    pt#"MaxPrecisionBits"=maxPrec;
+            	    coords := new MutableList from for i to numVars-1 list null;
+    	    	    print"numVars loop";
+            	    scan(numVars,
+			j->( -- grab each coordinate
+              		    -- use regexp to get the two numbers from the string
+	      		    coord := select("[0-9.e+-]+", cleanupOutput(first l));  
+	      		    -- NOTE: we convert to maxPrec bits complex type
+              		    coords#j = toCC(maxPrec, value(coord#0),value(coord#1));  
+              		    l = drop(l,1);
+              		    )
+			);
+    	    	    --If we have an affine variety, we homogenize by the first coordinate. 
+    	    	    pt#"ProjectiveCoordinates"=coords;
+            	    l = drop(l,numVars+1);  -- don't need second copy of point or extra copy of maxPrec
+	    	    if PWD.IsProjective===1 
+		    then pt.Coordinates = toList coords 
+            	    -- If we have an affine variety we dehomogenize, assuming the first variable is the hom coord:
+	    	    else pt.Coordinates =(1/coords#0)*toList drop(coords,1);    	    
+	    	    condNum := value(cleanupOutput(first l)); 
+	    	    pt#"ConditionNumber"=condNum;
+	    	    l=drop(l,4);
+    	    	    --What is type?
+            	    ptType := value(first l); l=drop(l,1);
+	    	    pt#"PointType"=ptType;
+            	    ptMult := value(first l); l=drop(l,1);
+            	    pt#"Multiplicity"=ptMult;
+    	    	    compNum := value(first l); l=drop(l,1);
+	    	    pt#"ComponentNumber"=compNum;
+            	    numDeflations := value(first l); l=drop(l,1);
+    	    	    pt#"NumDeflations"=numDeflations;
+    	    	    --Append pt to pts
+    	    	    print pt.Coordinates;
+            	    pts#ptNum = pt;
+    	    	    print (componentIndex#ic);
+            	    if not member(compNum,componentIndex#ic)
+	    	    then componentIndex#ic = append(componentIndex#ic,compNum)            	     
+		    )
+		);
+	    wList#ic =  pts
+	    )
+	);
+    PWD#"WS"=wList;
+    -- now we grab the slice data, at the end of the witness_data file, 
+    --to be inserted into the witnessSets with dim>0
+    l = drop(l,2); -- These are the lines {-1, blank line} 
+    --MPType line
+    PWD#"MPType"=first l; 
+    l=drop(l,1);
+
+    --#cols for the matrix used to randomize the system 
+    randDims := select("[0-9]+", first l);  -- grabs #rows,     
+    l = drop(l,1);
+    
+    -- numRands is the number of random numbers we want to skip next    
+    numRands := value(randDims#0) * value(randDims#1);  
+    
+    l = drop(l,numRands+1);   -- includes blank line after rands    
+    
+    -- next we have the same number of integers 
+    --(degrees needed to keep homogenization right)
+    l = drop(l,numRands);
+    
+    -- next we have an integer and a list of row vectors 
+    --(the number of which is the initial integer).  Again related to homogenization.    
+    numToSkip := select("[0-9]+", first l);
+    
+    l = drop(l,value(numToSkip#0)+3); -- dropping all those, 
+    --plus line containing integer (before), then blank line, and one more line
+    
+    --finally, we have the number of linears and the number of coefficients per linear
+    (numberOfLinears,numberOfCoefficientsPerLinear) := toSequence select("[0-9-]+", first l);
+    l = drop(l,1);
+
+    --now we just read in the matrix
+    numLinCoeffs := value(numberOfLinears) * value(numberOfCoefficientsPerLinear);
+    rw := {};
+    mat := {};
+    PWD#"NumberOfLinears" =value(numberOfLinears);
+    PWD#"NumberOfCoefficientsPerLinear" =value(numberOfCoefficientsPerLinear);    
+    for i from 1 to PWD#"NumberOfLinears"  do ( 
+	for j from 1 to PWD#"NumberOfCoefficientsPerLinear"  do (
+            coefParts := select("[0-9-]+/[0-9-]+", first l);
+            rw = join(rw, {toCC(53,value(coefParts#0)) + 
+		    ii*toCC(53,value(coefParts#1))});  
+	    -- definitely losing data here, going from rational number to float!
+            l = drop(l,1);
+            );
+        mat = join(mat, {rw});  
+        rw = {};
+        );    
+    M := matrix(mat);
+    PWD#"SliceData"=M;   
+    PWD#"RemainingFile"=l;
+    -- Finally, we can cycle through the witness sets in nv 
+    -- and add the slice data.
+    -- There are length listOfCodims witness sets, 
+    -- the first of which uses the full set of slices (all of M).
+    -- The higher codimensions need higher-dimensional hyperplane sections, 
+    -- so fewer slices (part of M).
+    -- The lowest slice is kept longest.  
+    -- Ex:  If there is a codim 1 set with a 2x4 matrix of slice data, 
+    -- a subsequent codim 2 set would have a 
+    -- 1x4 matrix of slice data consists of the second (not first) 
+    -- line of the codim 1 slice data.
+    PWD);
+
+
 -------------------------------------------------------
 ---functions used by bertiniSolve, makeBertiniInput,
 ---and readBertiniSolutions----------------------------
