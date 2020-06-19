@@ -338,9 +338,9 @@ NormalToricVariety ^** ZZ := NormalToricVariety => (X, n) ->  (
 -- THIS FUNCTION IS NOT EXPORTED. By reading an auxiliary file, this function
 -- creates a HashTable with the defining data for the low dimensional smooth
 -- Fano toric varieties.
-smoothFanoToricVarietiesFile := currentFileDirectory | "SmoothFanoToricVarieties.txt"
-smoothFanoToricVarietiesFile5 := currentFileDirectory | "SmoothFanoToricVarieties5.txt"
-smoothFanoToricVarietiesFile6 := currentFileDirectory | "SmoothFanoToricVarieties6.txt"
+smoothFanoToricVarietiesFile := currentFileDirectory | "smoothFanoToricVarieties.txt"
+smoothFanoToricVarietiesFile5 := currentFileDirectory | "smoothFanoToricVarieties5.txt"
+smoothFanoToricVarietiesFile6 := currentFileDirectory | "smoothFanoToricVarieties6.txt"
 getFano := memoize(d -> (
     	local fanoFile;
     	if d < 5 then fanoFile = smoothFanoToricVarietiesFile
