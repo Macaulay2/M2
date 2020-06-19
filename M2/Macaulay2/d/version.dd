@@ -19,6 +19,10 @@ header "
    #include <mathic.h>
    #include <gdbm.h>
    #include <mathicgb.h>
+   #include <mps/version.h>
+       #ifndef MPS_MAJOR_VERSION
+       #error \"MPS_MAJOR_VERSION undefined\"
+       #endif
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
    namespace constants { extern const char* const version; } /* we have to copy this from frobby until they make it more accessible */
@@ -162,7 +166,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	       \"not present\"
 	  #endif
 	  "),
-   "mpsolve version" => "3.1.8", -- TODO: DETERMINE VERSION #??
+   "mpsolve version" => Ccode(constcharstar, "stringize(MPS_MAJOR_VERSION) \".\" stringize(MPS_MINOR_VERSION) \".\" stringize(MPS_PATCH_VERSION)" ),
    "python version" => Ccode(constcharstar,"
 	#ifdef WITH_PYTHON
 		 PY_VERSION				      
