@@ -165,7 +165,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	  "),
    "mpsolve version" => Ccode(constcharstar, "
 	#ifdef MPS_MAJOR_VERSION
-               stringize(MPS_MAJOR_VERSION) \".\" stringize(MPS_MINOR_VERSION) \".\" stringize(MPS_PATCH_VERSION)
+	       stringize(MPS_MAJOR_VERSION) \".\" stringize(MPS_MINOR_VERSION) \".\" stringize(MPS_PATCH_VERSION)
 	#else
 	       \"MPS_MAJOR_VERSION undefined\"
 	#endif

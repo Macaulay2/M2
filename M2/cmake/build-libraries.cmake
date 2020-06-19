@@ -1074,9 +1074,13 @@ ExternalProject_Add(build-polymake
                       CXX=${CMAKE_CXX_COMPILER}
   BUILD_COMMAND     ${NINJA} -C build/Opt
   INSTALL_COMMAND   ${NINJA} -C build/Opt install
-#          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/polymake
-#          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/polymake
-#          COMMAND   ${CMAKE_COMMAND} -E copy_if_different polymake ${M2_INSTALL_PROGRAMSDIR}/
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/polymake
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/polymake
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${M2_HOST_PREFIX}/bin/polymake ${M2_INSTALL_PROGRAMSDIR}/
+          COMMAND   ${CMAKE_COMMAND} -E copy_directory
+	    ${M2_HOST_PREFIX}/lib/polymake   ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/lib
+          COMMAND   ${CMAKE_COMMAND} -E copy_directory
+	    ${M2_HOST_PREFIX}/share/polymake ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}
   TEST_COMMAND      ${MAKE} test
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
