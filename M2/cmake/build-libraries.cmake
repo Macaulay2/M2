@@ -969,7 +969,7 @@ ExternalProject_Add(build-normaliz
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --enable-shared
+                      --disable-shared # TODO: for polymake --enable-shared
                       --without-flint # ${FLINT_INCLUDE_DIR}/..
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -984,7 +984,7 @@ ExternalProject_Add(build-normaliz
                       OPENMP_CXXFLAGS=${normaliz_OpenMP_CXX_FLAGS}
             COMMAND patch --fuzz=10 --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/normaliz/patch-libtool
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
-  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-strip
+  INSTALL_COMMAND   ${CMAKE_STRIP} source/normaliz # TODO: for polymake ${MAKE} -j${PARALLEL_JOBS} install-strip
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/normaliz
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/normaliz
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/
@@ -1059,9 +1059,9 @@ ExternalProject_Add(build-polymake
                       --with-gmp=${MP_ROOT}
                       --with-cdd=${CDDLIB_INCLUDE_DIR}/..
                       --with-flint=${FLINT_INCLUDE_DIR}/..
-                      --with-libnormaliz=${M2_HOST_PREFIX}
-                      --with-lrs=${M2_HOST_PREFIX}
-                      --with-lrs-include=${CMAKE_BINARY_DIR}/libraries/lrslib/build
+#                      --with-libnormaliz=${M2_HOST_PREFIX}
+#                      --with-lrs=${M2_HOST_PREFIX}
+#                      --with-lrs-include=${CMAKE_BINARY_DIR}/libraries/lrslib/build
                       --with-nauty-src=${CMAKE_BINARY_DIR}/libraries/nauty/build
                       --without-bliss
                       --without-java
