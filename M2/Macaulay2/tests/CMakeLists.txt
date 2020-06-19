@@ -108,18 +108,19 @@ add_custom_target(M2-tests-ComputationsBook)
 set(CHAPTERS completeIntersections constructions d-modules exterior-algebra geometry
   monomialIdeals preface programming schemes solving toricHilbertScheme varieties)
 
-set(M2_ARGS -q --stop)
+set(M2_ARGS -q --stop --print-width 0)
 
 foreach(_chapter IN LISTS CHAPTERS)
 
   ## configure the test string
+  set(_testfile test.m2)
   set(_group ComputationsBook/${_chapter})
 
   set(book_patterns    ${CMAKE_CURRENT_SOURCE_DIR}/${_group}/../patterns)
   set(chapter_patterns ${CMAKE_CURRENT_SOURCE_DIR}/${_group}/patterns)
 
   string(CONFIGURE "${M2_TEST_TEMPLATE}" M2_TEST_STRING)
-  set(M2_PATH "join({\"./${_group}\",\"${CMAKE_CURRENT_SOURCE_DIR}/${_group}\"},path)")
+  set(M2_PATH "join({\"${CMAKE_CURRENT_BINARY_DIR}/${_group}\",\"${CMAKE_CURRENT_SOURCE_DIR}/${_group}\"},path)")
 
   if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${_group})
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${_group})
@@ -152,7 +153,9 @@ foreach(_chapter IN LISTS CHAPTERS)
 
   ###############################################################################
   add_test(NAME ${_group}
-    COMMAND diff -B -b -u ${_group}/test.out.expected.trim ${_group}/test.out.trim
+    COMMAND diff -B -b -u
+      ${CMAKE_CURRENT_BINARY_DIR}/${_group}/test.out.expected.trim
+      ${CMAKE_CURRENT_BINARY_DIR}/${_group}/test.out.trim
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${_group}
     )
 

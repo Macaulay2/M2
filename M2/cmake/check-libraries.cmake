@@ -125,7 +125,7 @@ find_package(Factory	4.1.0)
 # TODO: add minimum version checks
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 094h?
-find_package(MPSolve	3.1.8)
+find_package(MPSolve	3.2.0)
 find_package(GTest	1.10)
 find_package(Memtailor	1.0.0)
 find_package(Mathic	1.0.0)
@@ -189,7 +189,8 @@ find_program(CSDP	NAMES	csdp)
 find_program(NORMALIZ	NAMES	normaliz)
 find_program(NAUTY	NAMES	dreadnaut)
 find_program(TOPCOM	NAMES	checkregularity)
-# NOTE: we don't build the following, but some packages use them
+# NOTE: we don't build the following by default, but some packages use them, so
+# we provide targets build-polymake, build-bertini, build-phcpack for building them.
 find_program(POLYMAKE	NAMES	polymake)
 find_program(BERTINI	NAMES	bertini)
 find_program(PHC	NAMES	phc)
