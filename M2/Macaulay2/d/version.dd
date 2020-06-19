@@ -163,7 +163,13 @@ setupconst("version", Expr(toHashTable(Sequence(
 	       \"not present\"
 	  #endif
 	  "),
-   "mpsolve version" => Ccode(constcharstar, "stringize(MPS_MAJOR_VERSION) \".\" stringize(MPS_MINOR_VERSION) \".\" stringize(MPS_PATCH_VERSION)" ),
+   "mpsolve version" => Ccode(constcharstar, "
+	#ifdef MPS_MAJOR_VERSION
+               stringize(MPS_MAJOR_VERSION) \".\" stringize(MPS_MINOR_VERSION) \".\" stringize(MPS_PATCH_VERSION)
+	#else
+	       \"MPS_MAJOR_VERSION undefined\"
+	#endif
+	"),
    "python version" => Ccode(constcharstar,"
 	#ifdef WITH_PYTHON
 		 PY_VERSION				      
