@@ -78,6 +78,7 @@ endif()
 # TODO: strip args
 # objdump -x M2-binary | grep RPATH
 # objcopy --only-keep-debug Macaulay2/bin/M2-binary M2.debug-info
+# see https://github.com/Macaulay2/M2/issues/212
 
 ###############################################################################
 # Build the M2 wrapper, which sets the library path, mainly for normaliz, etc.
