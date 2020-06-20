@@ -88,7 +88,7 @@ if(USING_MPIR)
 else()
   find_package(GMP	6.0.0 REQUIRED)
   set(MP_LIBRARY GMP)
-  set(MP_ROOT ${GMP_INCLUDE_DIR}/..)
+  set(MP_ROOT ${GMP_INCLUDE_DIRS}/..)
 endif()
 # MP will mask either GMP or MPIR
 foreach(var IN ITEMS FOUND INCLUDE_DIRS LIBRARIES VERSION_OK)

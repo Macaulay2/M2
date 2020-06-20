@@ -20,7 +20,21 @@ newPackage(
     Headline => "sums of squares",
     AuxiliaryFiles => true,
     PackageImports => {"FourierMotzkin"},
-    PackageExports => {"SemidefiniteProgramming"}
+    PackageExports => {"SemidefiniteProgramming"},
+    Certification => {
+	 "journal name" => "The Journal of Software for Algebra and Geometry",
+	 "journal URI" => "http://j-sag.org/",
+	 "article title" => "Sums of squares in Macaulay2",
+	 "acceptance date" => "6 January 2020",
+	 "published article URI" => "https://msp.org/jsag/2020/10-1/p03.xhtml",
+	 "published article DOI" => "https://doi.org/10.2140/jsag.2020.10.17",
+	 "published code URI" => "https://msp.org/jsag/2020/10-1/jsag-v10-n1-x03-SumsOfSquares.zip",
+	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/....m2",
+	 "release at publication" => "7623915208e2f52445cd73c9acd680027bba1d9c",	    -- git commit number in hex
+	 "version at publication" => "2.1",
+	 "volume number" => "10",
+	 "volume URI" => "https://msp.org/jsag/2020/10-1/"
+	 }
 )
 
 export {
@@ -866,8 +880,8 @@ lowerBound(RingElement,Matrix,ZZ) := o -> (f,h,D) -> (
 -- Methods for testing
 --###################################
 
-checkSolver = method()
-checkSolver(String,String) := (solver,fun) -> (
+checkSolver = method( Options => {Verbosity => 0} )
+checkSolver(String,String) := o -> (solver,fun) -> (
     checkMethod := hashTable {
         "optimize" => checkOptimize,
         "solveSOS" => checkSolveSOS,
@@ -882,28 +896,29 @@ checkSolver(String,String) := (solver,fun) -> (
     T := for f in keys checkMethod list(
         print "################################";
         print("checking method "|f);
-        print "################################";
-        t := checkMethod#f(solver);
+        print "--------------------------------";
+        t := checkMethod#f(solver,o);
         informAboutTests t;
         {f, testsString t}
         );
     print "################################";
     print("SUMMARY");
-    print "################################";
+    print "--------------------------------";
     print netList(T,Boxes=>false);
     )
-checkSolver(String,Function) := (solver,fun) -> checkSolver(solver,toString fun)
-checkSolver(String) := (solver) -> checkSolver(solver,"AllMethods")
+checkSolver(String,Function) := o -> (solver,fun) -> checkSolver(solver,toString fun,o)
+checkSolver(String) := o -> (solver) -> checkSolver(solver,"AllMethods",o)
 
 -- A method to inform about the results of the tests in one function
 testsString = t -> concatenate apply(t, i -> if i then " ✓ " else " ✘ ")
 informAboutTests = t -> (
-    print("Test Results: " | testsString t);
+    print("Results: " | testsString t);
     )
 
 
 --checkSolveSOS
-checkSolveSOS = (solver) -> (
+checkSolveSOS = method( Options => {Verbosity => 0} )
+checkSolveSOS(String) := o -> (solver) -> (
     local x; x= symbol x;
     local y; y= symbol y;
     local z; z= symbol z;
@@ -924,27 +939,27 @@ checkSolveSOS = (solver) -> (
     t0:= (
         R := QQ[x,y];
         f := 4*x^4+y^4;
-        (mon,Q,X,tval,sdpstatus) := readSdpResult solveSOS(f,Solver=>solver);
+        (mon,Q,X,tval,sdpstatus) := readSdpResult solveSOS(f,Solver=>solver,Verbosity=>o.Verbosity);
         isGram(f,mon,Q)
         );
 
     t1:= (
         f = 2*x^4+5*y^4-2*x^2*y^2+2*x^3*y;
-        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f,Solver=>solver);
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f,Solver=>solver,Verbosity=>o.Verbosity);
         isGram(f,mon,Q)
         );
 
     t2:= (
         R = QQ[x,y,z];
         f = x^4+y^4+z^4-4*x*y*z+x+y+z+3;
-        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f,Solver=>solver);
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f,Solver=>solver,Verbosity=>o.Verbosity);
         isGram(f,mon,Q)
         );
     
     t3:= (
         R = QQ[x,y,z,w];
         f = 2*x^4 + x^2*y^2 + y^4 - 4*x^2*z - 4*x*y*z - 2*y^2*w + y^2 - 2*y*z + 8*z^2 - 2*z*w + 2*w^2;
-        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f,Solver=>solver);
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f,Solver=>solver,Verbosity=>o.Verbosity);
         isGram(f,mon,Q)
         );
 
@@ -952,7 +967,7 @@ checkSolveSOS = (solver) -> (
     t4:= (
         R = QQ[x][t];
         f = (t-1)*x^4+1/2*t*x+1;
-        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS (f,Solver=>solver);
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS (f,Solver=>solver,Verbosity=>o.Verbosity);
         isGramParam(f,mon,Q,tval)
         );
 
@@ -961,7 +976,7 @@ checkSolveSOS = (solver) -> (
         R = QQ[x,y];
         S := R/ideal(x^2 + y^2 - 1);
         f = sub(10-x^2-y,S);
-        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS (f, 2, TraceObj=>true, Solver=>solver);
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS (f, 2, TraceObj=>true, Solver=>solver,Verbosity=>o.Verbosity);
         isGram(f,mon,Q) and rank Q == 2
         );
 
@@ -969,12 +984,12 @@ checkSolveSOS = (solver) -> (
     t6:= (
         R = QQ[x,y][t];
         f = x^4*y^2 + x^2*y^4 - 3*x^2*y^2 + 1; --Motzkin
-        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f,Solver=>solver); 
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f,Solver=>solver,Verbosity=>o.Verbosity); 
         ( Q === null )
         );
 
     t7:= (
-        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f-t,-t, Solver=>solver); 
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f-t,-t, Solver=>solver,Verbosity=>o.Verbosity); 
         ( Q === null )
         );
 
@@ -982,7 +997,8 @@ checkSolveSOS = (solver) -> (
     )
 
 -- check sosdecTernary
-checkSosdecTernary = (solver) -> (
+checkSosdecTernary = method( Options => {Verbosity => 0} )
+checkSosdecTernary(String) := o -> (solver) -> (
     local x; x= symbol x;
     local y; y= symbol y;
     local z; z= symbol z;
@@ -996,21 +1012,21 @@ checkSosdecTernary = (solver) -> (
     t0:= (
         R:= QQ[x,y,z];
         f := x^6 + y^6 +z^6;
-        (p,q) := sosdecTernary (f, Solver=>solver);
+        (p,q) := sosdecTernary (f, Solver=>solver,Verbosity=>o.Verbosity);
         cmp(f,p,q)
         );
 
     t1:= (
         R = QQ[x,y,z];
         f = x^4*y^2 + x^2*y^4 + z^6 - 4*x^2 *y^2 * z^2;
-        (p,q) = sosdecTernary (f, Solver=>solver);
+        (p,q) = sosdecTernary (f, Solver=>solver,Verbosity=>o.Verbosity);
         (p===null)
         );
 
     t2:= (
         R = RR[x,y,z];
         f = x^4*y^2 + x^2*y^4 + z^6 - 3*x^2 *y^2 * z^2; --Motzkin
-        (p,q) = sosdecTernary (f, Solver=>solver);
+        (p,q) = sosdecTernary (f, Solver=>solver,Verbosity=>o.Verbosity);
         cmp(f,p,q)
         );
 
@@ -1019,7 +1035,8 @@ checkSosdecTernary = (solver) -> (
 
 
 -- check sosInIdeal
-checkSosInIdeal = (solver) -> (
+checkSosInIdeal = method( Options => {Verbosity => 0} )
+checkSosInIdeal(String) := o -> (solver) -> (
     local x; x= symbol x;
     local y; y= symbol y;
     local z; z= symbol z;
@@ -1034,7 +1051,7 @@ checkSosInIdeal = (solver) -> (
     t0:= (
         R:= QQ[x];
         h:= matrix {{x+1}};
-        (sol,mult) = sosInIdeal (h,2, Solver=>solver);
+        (sol,mult) = sosInIdeal (h,2, Solver=>solver,Verbosity=>o.Verbosity);
         s = sosPoly sol;
         cmp(h,s,mult)
         );
@@ -1042,7 +1059,7 @@ checkSosInIdeal = (solver) -> (
     t1:= ( --similar to test0
         R= RR[x];
         h= matrix {{x+1}};
-        (sol,mult) = sosInIdeal (h,4, Solver=>solver);
+        (sol,mult) = sosInIdeal (h,4, Solver=>solver,Verbosity=>o.Verbosity);
         s = sosPoly sol;
         cmp(h,s,mult)
         );
@@ -1050,7 +1067,7 @@ checkSosInIdeal = (solver) -> (
     t2:= (
         R = RR[x,y,z];
         h = matrix {{x-y, x+z}};
-        (sol,mult) = sosInIdeal (h,2, Solver=>solver);
+        (sol,mult) = sosInIdeal (h,2, Solver=>solver,Verbosity=>o.Verbosity);
         s = sosPoly sol;
         cmp(h,s,mult)
         );
@@ -1058,7 +1075,7 @@ checkSosInIdeal = (solver) -> (
     t3:= ( --similar to test2
         R = RR[x,y,z];
         h = matrix {{x-y, x+z}};
-        (sol,mult) = sosInIdeal (h,6, Solver=>solver);
+        (sol,mult) = sosInIdeal (h,6, Solver=>solver,Verbosity=>o.Verbosity);
         s = sosPoly sol;
         cmp(h,s,mult)
         );
@@ -1066,20 +1083,20 @@ checkSosInIdeal = (solver) -> (
     t4:= (
         R = QQ[x,y];
         h = matrix {{y^2+y, x*y, -x^2*y-x^2-y-1}};
-        (sol,mult) = sosInIdeal(h,2, Solver=>solver);
+        (sol,mult) = sosInIdeal(h,2, Solver=>solver,Verbosity=>o.Verbosity);
         (sol#GramMatrix===null)
         );
 
     -----------------QUOTIENT1-----------------
     t5:= (
         R = QQ[x,y,z]/ideal {x^2+y^2+y, y-z^2};
-        s = sosPoly sosInIdeal (R,2,Solver=>solver);
+        s = sosPoly sosInIdeal (R,2,Solver=>solver,Verbosity=>o.Verbosity);
         (s=!=null and ideal gens s == ideal(x_R,y,z))
         );
 
     t6:= ( --similar to test4
         R = QQ[x,y]/ideal {y^2+y, x*y, -x^2*y-x^2-y-1};
-        s = sosPoly sosInIdeal(R,2, Solver=>solver);
+        s = sosPoly sosInIdeal(R,2, Solver=>solver,Verbosity=>o.Verbosity);
         (s=!=null and ideal gens s == ideal(x_R,y+1))
         );
     
@@ -1088,7 +1105,8 @@ checkSosInIdeal = (solver) -> (
 
 
 -- check lowerBound
-checkLowerBound = (solver) -> (
+checkLowerBound = method( Options => {Verbosity => 0} )
+checkLowerBound(String) := o -> (solver) -> (
     tol := LowPrecision;
     local x; x= symbol x;
     local y; y= symbol y;
@@ -1109,28 +1127,28 @@ checkLowerBound = (solver) -> (
     t0:= (
         R := QQ[x];
         f := (x-1)^2 + (x+3)^2;
-        (bound,sol) := lowerBound(f, Solver=>solver);
+        (bound,sol) := lowerBound(f, Solver=>solver,Verbosity=>o.Verbosity);
         equal(bound,8)
         );
 
     t1:= (
         R = RR[x,y];
         f = (x-exp(1)*y)^2 + x^2 + (y-4)^2;
-        (bound,sol) = lowerBound(f, Solver=>solver);
+        (bound,sol) = lowerBound(f, Solver=>solver,Verbosity=>o.Verbosity);
         equal(bound,16*exp(2)/(2+exp(2)))
         );
 
     t2:= (
         R = QQ[x,z];
         f = x^4+x^2+z^6-3*x^2*z^2;
-        (bound,sol) = lowerBound (f,Solver=>solver,RoundTol=>infinity);
+        (bound,sol) = lowerBound (f,Solver=>solver,Verbosity=>o.Verbosity,RoundTol=>infinity);
         equal(bound,-.17798)
         );
 
     t3:= ( --rational function
         R = QQ[x];
         f = (x^2-x)/(x^2+1);
-        (bound,sol) = lowerBound(f, Solver=>solver, RoundTol=>infinity);
+        (bound,sol) = lowerBound(f, Solver=>solver,Verbosity=>o.Verbosity, RoundTol=>infinity);
         equal(bound,1/2-1/sqrt(2))
         );
 
@@ -1139,7 +1157,7 @@ checkLowerBound = (solver) -> (
         R = RR[x,y];
         f = y;
         h := matrix {{y-pi*x^2}};
-        (bound,sol,mult) = lowerBound (f, h, 2, Solver=>solver);
+        (bound,sol,mult) = lowerBound (f, h, 2, Solver=>solver,Verbosity=>o.Verbosity);
         (mon,Q,X,tval,sdpstatus) := readSdpResult sol;
         equal(bound,0) and cmp(f,h,bound,mon,Q,mult)
         );
@@ -1148,7 +1166,7 @@ checkLowerBound = (solver) -> (
         R = QQ[x,y,z];
         f = z;
         h = matrix {{x^2 + y^2 + z^2 - 1}};
-        (bound,sol,mult) = lowerBound (f, h, 4, Solver=>solver);
+        (bound,sol,mult) = lowerBound (f, h, 4, Solver=>solver,Verbosity=>o.Verbosity);
         (mon,Q,X,tval,sdpstatus) = readSdpResult sol;
         equal(bound,-1) and cmp(f,h,bound,mon,Q,mult)
         );
@@ -1160,7 +1178,7 @@ checkLowerBound = (solver) -> (
         S := R/I;
         f = sub(x-y,S);
         h = matrix {{sub(y^2 - y,S)}};
-        (bound,sol,mult) = lowerBound(f, h, 2, Solver=>solver);
+        (bound,sol,mult) = lowerBound(f, h, 2, Solver=>solver,Verbosity=>o.Verbosity);
         (mon,Q,X,tval,sdpstatus) = readSdpResult sol;
         equal(bound,-1) and cmp(f,h,bound,mon,Q,mult)
         );
