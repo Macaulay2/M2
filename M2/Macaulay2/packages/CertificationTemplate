@@ -12,6 +12,6 @@
      	        "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/....m2",
 		"release at publication" => "",	    -- git commit number in hex
 		"version at publication" => "",
-		"volume number" => "9",
-		"volume URI" => "https://msp.org/jsag/2019/9-2/"
+		"volume number" => "10",
+		"volume URI" => "https://msp.org/jsag/2020/10-1/"
 		}

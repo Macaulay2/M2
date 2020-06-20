@@ -13,7 +13,20 @@ newPackage( "Seminormalization",
 	Headline => "seminormalization of rings",
 	PackageImports => {"IntegralClosure"},
 	PackageExports => {"Pullback", "PushForward"},
-	AuxiliaryFiles=>false
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "Seminormalization package for Macaulay2",
+	     "acceptance date" => "5 December 2019",
+	     "published article URI" => "https://msp.org/jsag/2020/10-1/p01.xhtml",
+	     "published article DOI" => "https://doi.org/10.2140/jsag.2020.10.1",
+	     "published code URI" => "https://msp.org/jsag/2020/10-1/jsag-v10-n1-x01-Seminormalization.m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Seminormalization.m2",
+	     "release at publication" => "7a7e6f96b0122482f5d60306f34d06fd8ae1e885",	    -- git commit number in hex
+	     "version at publication" => "0.21",
+	     "volume number" => "10",
+	     "volume URI" => "https://msp.org/jsag/2020/10-1/"
+	     }
 )
 
 export{
