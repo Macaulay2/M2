@@ -161,9 +161,13 @@ jobs:
         run: ${{matrix.make}}
 
 # ----------------------
-#   Run tests (Skip for now given the build failures)
+#   Run tests
 # ----------------------
 
-      - name: Run Tests
-        id: step_run_tests
-        run: echo "Placeholder. Don't do anything for now"
+      - name: Run Tests (autotools, ubuntu)
+        if: ${{ matrix.build-type == 'autotools' }} && ${{ matrix.os == 'ubuntu-latest' }}
+        working-directory: M2/BUILD/cicd
+        run: |
+          ${{matrix.make}} -k check
+          ${{matrix.make}} -C Macaulay2/html-check-links check
+          ${{matrix.make}} validate-html
