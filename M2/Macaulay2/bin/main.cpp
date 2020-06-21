@@ -250,7 +250,7 @@ void interrupt_handler(int sig) {
 
 	while (TRUE) {
 	  char buf[10];
-	  printf("\nExist (y=yes/n=no/a=abort/b=backtrace)? ");
+	  printf("\nExit (y=yes/n=no/a=abort/b=backtrace)? ");
 	  fflush(stdout);
 #ifndef NDEBUG
 	  trap();
