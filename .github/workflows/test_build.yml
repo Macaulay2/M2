@@ -165,7 +165,7 @@ jobs:
 # ----------------------
 
       - name: Run Tests (autotools, ubuntu)
-        if: ${{ matrix.build-type == 'autotools' }} && ${{ matrix.os == 'ubuntu-latest' }}
+        if: matrix.build-type == 'autotools' && matrix.os == 'ubuntu-latest'
         working-directory: M2/BUILD/cicd
         run: |
           ${{matrix.make}} -k check
