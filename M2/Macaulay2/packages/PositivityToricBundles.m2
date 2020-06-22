@@ -7,8 +7,8 @@
 
 newPackage("PositivityToricBundles",
            Headline => "check positivity of toric vector bundles",
-           Version => "1.0",
-           Date => "April, 2020",
+           Version => "1.1",
+           Date => "June, 2020",
            Authors => { 
             {Name => "Andreas Hochenegger",
              Email => "andreas.hochenegger@sns.it"}},
@@ -511,74 +511,89 @@ graphToricChernCharacter (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts
 --           'parliament', parliament of polytopes
 --           'torChern', toric Chern character
 --  OUTPUT :  Integer, -1 if not separates any l-jets, otherwise l
-separatesJets = method( Options => true)
+separatesJets = method( Options => true )
 separatesJets (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheValue separatesJets) ( tvb -> (
+ if opts#Verbosity>0 then << "METHOD: separatesJets" << endl;
  parPolytopes := parliament(tvb, Verbosity=>(opts#Verbosity-1));
  torChern := toricChernCharacter(tvb, Verbosity=>(opts#Verbosity-1));
- if opts#Verbosity>0 then  << "METHOD: separatesJets" << endl;
+-- exclude another trivial case
+ if min apply(values parPolytopes, dim) < 0 then (
+  if opts#Verbosity>0 then << "There are empty polytopes, so not even 0-jets are separated." << endl;
+  return -1;
+ );
+ parVertices := applyValues(parPolytopes, vertices);
  n := dim fan tvb;
- onefaces := applyValues(parPolytopes, p -> facesAsPolyhedra(n-1,p));
- -- working hypothesis: separates all jets (expectation will be lowered during computation)
- lJets := infinity;
- if not all(values onefaces, l -> #l > 0) then lJets = 0;
- if opts#Verbosity>0 then << "All polytopes of the parliament have maximal dimension: " << (lJets > 0) << endl;
- par := applyValues(parPolytopes, vertices);
- indexedPolytopes := {};
- for sigma in keys torChern do (
-  admPolys := new MutableHashTable from parPolytopes;
-  if opts#Verbosity>0 then << "Test on the maximal cone:" << endl << sigma << endl;
-  for u in torChern#sigma do (
-   if opts#Verbosity>0 then << "for the component u of Chern character:" << endl << u << endl;
-   uVertexOfPolys := hashTable select(pairs admPolys, p -> isFace(convexHull u, p_1));
-   if #uVertexOfPolys == 0 then (
-    if opts#Verbosity>0 then << "is not vertex of an available polytope." << endl;
-    return -1;
-   )
-   else (
-    if opts#Verbosity>0 then << "is vertex of polytopes: " << endl << applyValues(uVertexOfPolys, vertices) << endl;
-   );
-   maxLengthRealisedAt := 0;
-   if lJets > 0 then (
-    uMaxEdgeLength := -infinity;
-    for p in pairs uVertexOfPolys do (
-     edgesContainU := select(onefaces#(p_0), f -> contains(f,u));
-     if opts#Verbosity>0 then << "Edges of polytope containing u: " << endl << apply(edgesContainU, vertices) << endl;
-     coneAtU := dualCone coneFromVData fold(apply(edgesContainU, q -> vertices(q + convexHull (-u) )), (i,j) -> i|j);
-     isSameCone := coneAtU == coneFromVData sigma;
-     if opts#Verbosity>0 then << "The dual cone at this vertex is:" << endl << rays coneAtU << endl 
-                            << "this is the same as the maximal cone: " << isSameCone << endl;
-     localEdgeLength := if isSameCone then (
-      edgesVert := apply(edgesContainU,vertices);
-      edgesLengths := apply(edgesVert, e -> gcd flatten entries (e_1 - e_0));
-      if opts#Verbosity>0 then << "The edges have (lattice) lengths: " << edgesLengths << endl;
-      min edgesLengths
-     )
-     else 
-      0;
-     if localEdgeLength > uMaxEdgeLength then (
-      uMaxEdgeLength = localEdgeLength;
-      maxLengthRealisedAt = p;
+ onefaces := applyValues(applyValues(parPolytopes, p -> faces(n-1, p)), L -> apply(L, l -> l#0));
+-- for each maximal cone sigma
+-- the following searches for each component u of the character u(sigma)
+-- all polytopes parParliament#g with g in ground set such that u is j0-th vertex
+-- then checks whether the cone at u is (degenerate form of) dual cone of sigma
+-- and computes the edge lengths
+ uPositions := hashTable for sigma in keys torChern list (
+  usigma := torChern#sigma;
+  if opts#Verbosity>0 then << "For the maximal cone" << endl << sigma << endl;
+  sigma => hashTable for u in usigma list (
+   if opts#Verbosity>0 then << "the component " << u << " of the associated character" << endl;
+   uPos := for g in keys parPolytopes list (
+    j0 := -1;
+    for j in 0 ..< numgens source parVertices#g do (
+     if flatten entries u == entries parVertices#g_j then (
+      j0 = j;
+      break;
      )
     );
-    if opts#Verbosity>0 then << "Maximal edge length for u is " << uMaxEdgeLength << " realised at: " << endl << vertices maxLengthRealisedAt_1 << endl;
-
-    lJets = min(lJets, uMaxEdgeLength);
-   )
-   -- case lJets == 0
-   else (
-    maxLengthRealisedAt = first pairs uVertexOfPolys;
+    if j0 >= 0 then (
+     if #(onefaces#g) == 0 then (
+      if opts#Verbosity>0 then << "is a vertex of the point polytope " << endl << parVertices#sigma << endl;
+      if opts#Verbosity>0 then << "with minimal edge length: 0" << endl;
+      {g, j0,0}
+     )
+     else (
+      coneAtU := fold( apply( flatten select(apply(onefaces#g, f -> delete(j0,f)), f-> #f == 1), f -> parVertices#g_f - parVertices#g_j0 ), (a,b) -> matrix a| matrix b);
+      if opts#Verbosity>0 then << "is a vertex of the polytope " << endl  << parVertices#g << endl << "with cone at corner " << endl << coneAtU << endl;
+      dualSigma := coneFromHData transpose matrix sigma;
+      if isFace(coneFromVData coneAtU, dualSigma) then (
+       if opts#Verbosity>0 then << "is subcone of dual cone of sigma " << endl << rays dualSigma << endl;
+ -- Here: gcd = lattice length of vector
+       l := min apply(entries transpose coneAtU, gcd);
+       if opts#Verbosity>0 then << "with minimal edge length: " << l << endl;
+       {g, j0,l}
+      )
+      else (
+       if opts#Verbosity>0 then << "is not a subcone of dual cone of sigma " << endl << rays dualSigma << endl;
+       continue
+      )
+     )
+    )
+    else 
+     continue
    );
-
-   remove(admPolys, maxLengthRealisedAt_0);
-   indexedPolytopes = append(indexedPolytopes, maxLengthRealisedAt_0);
-  );
+   if #uPos == 0 then (
+    if opts#Verbosity>0 then << "is not a vertex of any polytope, so not even 0-jets are separated." << endl;
+    return -1;
+   );
+-- At this point: in uPos list for every u in usigma, possible places of u as a vertex, which vertex, and edge length
+   u =>  uPos
+  )
  );
-
- if set indexedPolytopes === set keys parPolytopes then 
-  lift(lJets,ZZ)
- else
-  -1
+-- helper function to parse through all choices of u as a vertex (usually not too many)
+ combinations := L -> (
+  if #L == 1 then 
+   return L_0
+  else
+   return combinations({flatten apply(L_0, l0 -> apply(L_1, l1 -> {l0,l1} | flatten drop(L,2) ))})
+ );
+ max {-1, min for sigma in keys uPositions list (
+  max for c in combinations values uPositions#sigma list (
+   if rank fold((transpose c)_0, (i,j) -> i|j) != rank tvb then
+    continue;
+   lift(min (transpose c)_2,ZZ)
+  )
+ )}
 ))
+
+
+
 
 ------------------------------------------------------------------------------
 -- METHODS: isGloballyGenerated, isVeryAmple
@@ -637,7 +652,7 @@ restrictToCurve (Matrix,HashTable) := {Verbosity => 0} >> opts -> (tau,torChern)
  );
  if opts#Verbosity>0 then << "the adjacent maximal cones sigma1 and sigma2 are:" << endl << sigmas << endl;
  for u0 in torChern#(sigmas_0) list (
-  a := 0;
+  local a;
   for u1 in torChern#(sigmas_1) do (
    -- opposite due to different sign convention in [RJS]
    diff := u1-u0;

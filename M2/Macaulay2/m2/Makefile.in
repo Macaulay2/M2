@@ -67,8 +67,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		@srcdir@/../book/*.m2 \
 		@srcdir@/../packages/*.m2 \
 		@srcdir@/../packages/*/*.m2 \
-		@srcdir@/../tests/normal/*.m2 \
-		@srcdir@/../tests/engine/*.m2 \
+		@srcdir@/../tests/*/*.m2 \
 		@srcdir@/../packages/SimpleDoc/doc.txt \
 		loadsequence \
 		Makefile.in \

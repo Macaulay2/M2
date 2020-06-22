@@ -313,6 +313,7 @@ bertiniPosDimSolve Ideal := o -> I -> bertiniPosDimSolve(I_*, o)
 
 
 bertiniSample = method(TypicalValue => List, Options=>{Verbose=>false,
+	BertiniInputConfiguration=>{},
 	IsProjective=>-1
   })
 bertiniSample (ZZ, WitnessSet) := o -> (n, W) -> (

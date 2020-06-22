@@ -90,6 +90,10 @@ do case $i in
    esac
 done
 
+dnl: homebrew-provided compilers don't look here:
+CPPFLAGS="-I/usr/include -I/usr/local/include $CPPFLAGS"
+LDFLAGS="-L/usr/lib -L/usr/local/lib $LDFLAGS"
+
 dnl AC_MSG_CHECKING(whether $FIND is GNU find)
 dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
 dnl then AC_MSG_RESULT(yes)
@@ -891,8 +895,19 @@ then BUILTLIBS="-lgivaro $BUILTLIBS"
 fi
 
 AC_LANG(C)
-dnl topcom includes setoper.h, rather than cdd/setoper.h, so we do, too
-AC_CHECK_HEADER(setoper.h,,BUILD_cddlib=yes)
+SAVE=$CPPFLAGS
+dnl topcom includes "setoper.h" -- no prefix
+dnl We try 3 different filenames to thwart the caching of results:
+AC_CHECK_HEADER(cdd.h,,[
+  dnl for Ubuntu
+  CPPFLAGS="$SAVE -I/usr/include/cdd"
+  AC_CHECK_HEADER(cddmp.h,,[
+    dnl for Fedora
+    CPPFLAGS="$SAVE -I/usr/include/cddlib"
+    AC_CHECK_HEADER(setoper.h,,CPPFLAGS=$SAVE
+			        AC_MSG_RESULT([[cddlib not found, will build]])
+			        BUILD_cddlib=yes)])],
+    [#include <setoper.h>])
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
 else LIBS="-lcdd $LIBS"
@@ -1003,13 +1018,25 @@ then CFO=`$PKG_CONFIG --cflags-only-other eigen3`
 else AC_MSG_ERROR(eigen library not found)
 fi
 
-AC_LANG(C)
+AC_LANG(C++)
 AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
 if test $BUILD_ntl = yes
 then BUILTLIBS="-lntl $BUILTLIBS"
-else LIBS="-lntl $LIBS"
+else AC_MSG_CHECKING([whether libntl is present and usable])
+     LIBS="-lntl $LIBS"
+     AC_LINK_IFELSE(
+	[AC_LANG_PROGRAM(
+	    [
+	     #include <NTL/tools.h>
+	     ],
+	    [_ntl_GetTime()])],
+	[AC_MSG_RESULT([yes])],
+	[AC_MSG_RESULT([no, even though include files are present])
+	 AC_MSG_ERROR(quitting)
+	 ])
 fi
-AC_SUBST(BUILD_ntl)		dnl factory needs to know
+dnl factory needs to know:
+AC_SUBST(BUILD_ntl)
 
 AC_LANG(C++)
 AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby -lgmpxx -lgmp $LIBS",BUILD_frobby=yes)
