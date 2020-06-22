@@ -1259,7 +1259,7 @@ Description
   Text  
     The subspace $S$ in degree $n$ 
     should be invariant 
-    under $f$ (which is tested by the program) and the output
+    under $f$ (which is tested by the program), and the output
     gives the trace of $f$ acting on $S$ in degree $n$, 
     which is an element in {\tt L#Field}.
     
@@ -1477,8 +1477,8 @@ document {
     The output ", TT "holonomy(x,y)" , 
     TEX "is the holonomy Lie algebra of the affine arrangement, which is
     the same in degrees at least 2 as ", TT "holonomy(z)" , TEX " where $z$ is 
-    obtained by choosing a new variable and add it to all sets in $x$ and 
-    then take the union with $y$.",  
+    obtained by choosing a new variable and adding it to all sets in $x$ and 
+    then taking the union with $y$.",  
      SeeAlso => {"holonomyLocal","decompose(LieAlgebra)","Holonomy Lie algebras and symmetries"},
      SYNOPSIS {
 	  Usage => "L=holonomy(y)",	            	            ,
@@ -1569,7 +1569,7 @@ Description
   Text
     The generators in the $i$th set (beginning with $i=0$) in the inputs of 
     @TO holonomy@ generate a subalgebra
-    of the holonomy Lie algebra $H$ and the output of {\tt holonomyLocal(i,H)} 
+    of the holonomy Lie algebra $H$, and the output of {\tt holonomyLocal(i,H)} 
     is this Lie subalgebra. If the set is of size $k$, then the local Lie
     algebra is free on $k$ generators if the set belongs to the first input
     set, and it is free on $k-1$ generators in degrees $\ge 2$ if it belongs
@@ -2077,7 +2077,7 @@ Description
   
   Text
     Here is an example of a non-Koszul algebra. The table for 
-    the Ext-algebra has a non-zero occurence off the diagonal.
+    the Ext-algebra has a non-zero occurrence off the diagonal.
       
   Example
     R2=QQ[x,y,z, SkewCommutative=>{},Degrees=>{{1,1},{1,2},{1,3}}]
@@ -2148,7 +2148,7 @@ Description
     that there exists a differential Lie algebra 
     homomorphism $f: M \ \to\  L$ such that $H(f)$ is an isomorphism up to degree $d$, 
     $M$ is free as a Lie algebra, and the linear part of the differential 
-    on $M$ is zero. The homomophism $f$ may be obtained using @TO "map(LieAlgebra)"@ 
+    on $M$ is zero. The homomorphism $f$ may be obtained using @TO "map(LieAlgebra)"@ 
     applied to $M$.
         
     The generators of $M$ yield a basis for 

@@ -29,7 +29,7 @@ doc ///
 		the Lie generators in the minimal
 		model, @TO minimalModel@, 
 		for which the homological degree have been raised by 1 and
-		the signs  changed.
+		the signs changed.
 	      Example
 	        M=minimalModel(4,L)
 		describe M
@@ -76,13 +76,13 @@ doc ///
 		  The degree of $ekn$ is $n-k$. 
 		  The relation [ $e14$, $e15$ ] is of degree 7 
 		  in the free Lie algebra $F$ on the 
-		  basis and the dimension of $F$ in degree 7 is 7596. 
+		  basis, and the dimension of $F$ in degree 7 is 7596. 
 		  To avoid a computation
 		  of the normal form of [ $e14$, $e15$ ] one uses "formal" operators.
 		  The symbol $\@$
 		  is used as formal Lie multiplication and formal 
 		  multiplication by scalars, ++ is used as
-		  formal addition and / is used as formal subtraction. 
+		  formal addition, and / is used as formal subtraction. 
 		  Observe that $\@$, like SPACE, is right associative, 
 		  while / is left associative, so $a/b/c$ means $a-b-c$ and not $a-b+c$.
 		  Here is an example of a formal 
@@ -116,7 +116,7 @@ doc ///
 		   
 	      Text  
 		  Below is a differential Lie algebra, which 
-		  is non-free and where the 
+		  is non-free, and where the 
 		   linear part of the differential is non-zero. 
  
 		  

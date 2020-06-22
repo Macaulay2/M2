@@ -17,12 +17,7 @@ doc ///
 			Algebra Whose Hilbert Series Converges 
 			in the Unit Circle}, 
 			Adv. Math. 130 (1997), no. 2, 161–200.
-			
-		--	See also the earlier implementation in Mathematica by
-		--	C. Löfwall,  
-		--	{\it Liedim, a Mathematica program for Lie-calculations
-		--	    (2001-2016)}, 
-		--    	available at @HREF("http://www2.math.su.se/liedim/")@.
+
 
 			See
 		Code	
@@ -66,7 +61,7 @@ doc ///
 			is defined, then the homological degree will be zero for
 			all elements.
 			Each object of type {\tt LieAlgebra} 
-			is also a type {\tt L}
+			is also a type {\tt L},
 			and elements 
 			in {\tt L} belong also to the type @TO LieElement@, which
 			is the parent of {\tt L}. Lie multiplication is given by 
@@ -122,7 +117,7 @@ doc ///
 		Text
 			This type represents elements in Lie algebras.
 			Each object of type {\tt LieAlgebra} 
-			is itself a type {\tt L} and elements 
+			is itself a type {\tt L}, and elements 
 			in {\tt L} belong also to the type {\tt LieElement}, which
 			is the parent of {\tt L}. Internally an element of
 			type {\tt LieElement} is of type
@@ -155,7 +150,7 @@ doc ///
 			$E=Ext_{UL}(F,F)$, where $F$ is the 
 			field of $L$ and $UL$ is the enveloping algebra of $L$.
 			Each object of type {\tt ExtAlgebra} 
-			is itself a type {\tt E} and 
+			is itself a type {\tt E}, and 
 			homogeneous elements 
 			in {\tt E} belong also to the type @TO ExtElement@, which
 			is the parent of {\tt E}. The generators of {\tt E}, 
@@ -163,7 +158,7 @@ doc ///
 			represents a
 			basis for $E$ as a vector space and correspond to the 
 			Lie algebra generators for the minimal model $M$ of $L$. 
-			However, the 
+			However; the 
 			homological degree of a generator in $E$ is 1 more than
 			the homological degree for the 
 			corresponding generator in $M$ 
@@ -193,7 +188,7 @@ doc ///
 		Text
 			This type represents elements in Ext-algebras.
 			Each object of type {\tt ExtAlgebra} 
-			is itself a type {\tt E} and 
+			is itself a type {\tt E}, and 
 			homogeneous elements 
 			in {\tt E} belong also to the type {\tt ExtElement}, which
 			is the parent of {\tt E}. Internally an element of
@@ -201,7 +196,7 @@ doc ///
 			consisting of two basic lists, 
 			the first is a list 
 			of coefficients and the second is a list of 
-			indices for the generators occuring in the element.
+			indices for the generators occurring in the element.
 		      
 		Example			
 			L = lieAlgebra{a,b}/{a a b,b b a}
@@ -224,16 +219,17 @@ doc ///
 		Text
 			Given a homomorphism of Lie algebras $f: M \ \to\  L$, 
 			one has the 
-			notion of a derivation $d: M \ \to\  L$ over $f$ and
+			notion of a derivation $d: M \ \to\  L$ over $f$, and
 			{\tt LieDerivation} is the type representing 
 			such pairs $(d,\,f)$ 
 			($f$ is the identity for the case
 			of ordinary derivations from $L$ to $L$). 
 		        The derivation law reads \break
-			$d\,[x,\,y]=[d\,x,\,f\,y] ± [f\,x,\,d\,y]$,\break
+			$d$ [x, y] = [$d$ x, $f$ y] ± [$f$ x, $d$ y],
+			\break
 			where the sign is determined by the sign of
-			interchanging $d$ and $x$, i.e., the sign is + if
-			sign$(d)$=0 or sign$(x)$=0 and - otherwise. 
+			interchanging $d$ and $x$, i.e., the sign is plus if
+			sign$(d)$=0 or sign$(x)$=0 and minus otherwise. 
 			An object of type {\tt LieDerivation} need not be 
 			well defined as a map. 
 			Use @TO "isWellDefined(ZZ,LieDerivation)"@
@@ -307,7 +303,7 @@ doc ///
 		Text
 			This type represents e.g., homology of Lie algebras, 
 			and it
-			has the following subtypes, {\tt LieSubSpace,
+			has the subtypes {\tt LieSubSpace,
 			LieSubAlgebra, LieIdeal, FGLieIdeal, FGLieSubAlgebra}. 
 		
 			 
@@ -330,8 +326,8 @@ doc ///
 		the class of all Lie subspaces
 	Description
 		Text
-			This type represents  Lie subspaces and has 
-			the following subtypes,
+			This type represents  Lie subspaces, and has 
+			the subtypes
 			{\tt LieIdeal, FGLieIdeal, 
 			LieSubAlgebra, FGLieSubAlgebra}.
 		    	A Lie subspace need not be invariant under the 
@@ -360,9 +356,9 @@ doc ///
 		the class of all Lie subalgebras
 	Description
 		Text
-			This type represents  Lie subalgebras 
-			(which are invariant under the differential) and has 
-			the following subtypes,
+			This type represents Lie subalgebras 
+			(which are invariant under the differential), and has 
+			the subtypes
 			{\tt LieIdeal, FGLieIdeal, FGLieSubAlgebra}. 
 		
 			 
@@ -477,8 +473,7 @@ Description
       Two objects {\tt L} and {\tt M} of type {\tt LieAlgebra} satisfies 
       {\tt L==M} 
       if they have the same 
-      generators, weights, signs and field and also the same defining ideal
-      and the same differential.
+      generators, weights, signs, field, defining ideal, and differential.
      
   Example
        F = lieAlgebra{a,b}
@@ -510,7 +505,7 @@ Description
   Text
       Two objects {\tt f} and {\tt g} of type {\tt LieAlgebraMap} 
       satisfies {\tt f==g} if 
-      {\tt source f==source g, target f==target g} and the values
+      {\tt source f==source g, target f==target g}, and the values
       of the generators of {\tt source f} under {\tt f} considered as 
       elements in {\tt target g} are the same as the values of the 
       generators of {\tt source g} under {\tt g}. 
@@ -676,7 +671,7 @@ Description
       that is the same for all generators, see @TO "degreeLength(Liealgebra)"@. 
       The first component (also just called the degree) is positive, 
       see @TO "firstDegree(LieElement)"@. 
-      If the  option @TO LastWeightHomological@ is {\tt true}, 
+      If the option @TO LastWeightHomological@ is {\tt true}, 
       then the last component in a weight is the homological degree, 
       which is non-negative
       and less than the first degree. If the 
@@ -1183,8 +1178,8 @@ Description
     If $S$ is of type {\tt FGLieSubAlgebra}, then 
     {\tt image(f,S)} is of type {\tt FGLieSubAlgebra}. If $S$ is 
     an instance of {\tt LieSubAlgebra}, but not of {\tt FGLieSubAlgebra}, then  
-    {\tt image(f,S)} is of type {\tt LieSubAlgebra},  
-    otherwise {\tt image(f,S)} is of type {\tt LieSubSpace}.
+    {\tt image(f,S)} is of type {\tt LieSubAlgebra}.  
+    Otherwise, {\tt image(f,S)} is of type {\tt LieSubSpace}.
   Example
       F=lieAlgebra({a,b,c,r3,r4,r42},
         Weights => {{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},Signs=>{0,0,0,1,1,0},
@@ -1430,8 +1425,8 @@ Description
   Text
     The optional inputs given above are not relevant for Lie algebras.
     A Lie element $x$ is in $T$ if $x$ multiplies all the 
-    generators of $S$ into $I$. However,
-    in general $T$ is not finitely generated.
+    generators of $S$ into $I$. However;
+    $T$ is not in general finitely generated.
   
   Example
       L=lieAlgebra{a,b,c}/{a a b-c c b,b b a-b b c}
@@ -1577,8 +1572,8 @@ Description
     If both $A$ and $B$ are instances of {\tt FGLieIdeal}, 
     then $S$ is of type {\tt FGLieIdeal}. 
     Otherwise, if both $A$ and $B$ are instances of {\tt LieIdeal}, 
-    then $S$ is of type {\tt LieIdeal}. If this is not true, 
-    but one of $A$ and $B$
+    then $S$ is of type {\tt LieIdeal}. If exactly 
+    one of $A$ and $B$
     is an instance of {\tt LieIdeal}, 
     and the other is an instance of {\tt LieSubAlgebra}, 
     then $S$ is of type {\tt LieSubAlgebra}. 
@@ -1993,8 +1988,8 @@ Outputs
 Description
   Text
       The symbol SPACE is used as notation for multiplication
-      by scalars. The scalars are of type {\tt Number} if the field is {\tt QQ}.
-      Otherwise, the scalars are of type {\tt RingElement}.
+      by scalars. The scalars are of type {\tt Number} if the field is {\tt QQ},
+      otherwise the scalars are of type {\tt RingElement}.
       If the Lie element is surrounded by parentheses,
       the SPACE may be omitted.
   Example 
@@ -3115,15 +3110,15 @@ Description
      Define $g: F ->  L$ as the composition $g=f*p$. 
      A derivation $dF:F  ->   L$ over $g$ 
      is defined by defining $dF$ on the generators of $F$ 
-     and then extend $dF$ to 
+     and then extending $dF$ to 
      all of $F$ by the derivation rule  	
      $dF$ [x, y] = [$dF$ x, $g$ y] ± [$g$ x, $dF$ y], 
-     where  the sign is $+$ if sign$(d)=0$ or sign$(x)=0$ and $-$ otherwise.
+     where  the sign is plus if sign$(d)=0$ or sign$(x)=0$ and minus otherwise.
      The output ", TT "d", TEX " represents the induced map $M  ->   L$, 
      which might not be well defined. 
      That the derivation is indeed well defined 
-     may be checked (up to a certain degree) using ", TT "isWellDefined.", 
-     TEX " When no $f$ of class ", TT "LieAlgebraMap", 
+     may be checked (up to a certain degree) using ", TO "isWellDefined(ZZ,LieDerivation)", 
+     TEX ". When no $f$ of class ", TT "LieAlgebraMap", 
      TEX " is given as input, the
      derivation $d$ maps $L$ to $L$ (and $f$ is the
      identity map). In this case, 

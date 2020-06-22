@@ -55,7 +55,7 @@ doc ///
 			is {\tt false}, 
 			which
 			is the default value, then 	
-			the program defines the homological degree to be zero and adds a last 
+			the program defines the homological degree to be zero, and adds a last 
                         component 0 to the existing degrees. In this case the weights
 			can also be given as a list of positive integers that will be the
 			degrees. See @TO "Differential Lie algebra tutorial"@ 
@@ -122,7 +122,7 @@ doc ///
 			Use @TO "describe(LieAlgebra)"@ to get
 			information about the Lie algebra. This contains the value of
 			the three options @TO [lieAlgebra,Weights]@, @TO [lieAlgebra,Signs]@,
-			@TO [lieAlgebra,Field]@ and also the values 
+			@TO [lieAlgebra,Field]@, and also the values 
 		        @TO "generators(LieAlgebra)"@, @TO "ideal(LieAlgebra)"@, 
 			@TO "ambient(LieAlgebra)"@, @TO "diff(LieAlgebra)"@ and 
 			@TO "computedDegree(LieAlgebra)"@  
@@ -155,7 +155,7 @@ doc ///
     		       is the number of generators in the 
 		       Lie algebra times the internal counter
     		       {\tt L#cache.max}, which initially 
-		       is set to $5$ and is changed to $n+5$ if the computation of $L$
+		       is set to $5$, and is changed to $n+5$ if the computation of $L$
     		       is performed up to degree $n$ with $n\ >$ {\tt L#cache.max}. 
 		       
 		Example

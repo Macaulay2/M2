@@ -90,8 +90,8 @@ doc ///
 		  degrees. The basis elements for the homology are represented
 		  as cycles in the Lie algebra. 
 		  The set of boundaries and the set of cycles
-		  are subalgebras of the Lie algebra and they are obtained using
-		  @TO boundaries@ and @TO cycles@ and bases and dimensions 
+		  are subalgebras of the Lie algebra, and they are obtained using
+		  @TO boundaries@ and @TO cycles@, and bases and dimensions 
 		  of them are 
 		  obtained in the same way as for homology.
 		  

@@ -146,7 +146,7 @@ doc ///
 		  basis(3,oo)
 	         		 	    
 	     Text
-	          The symmetric group S_4 operates on the vertices of K_4
+	          The symmetric group S_4 operates on the vertices of K_4,
 		  and this induces an action of S_4 on the six edges, which
 		  in turn induces an action of S_4 on $Q$ as automorphisms. One
 		  such permutation of the edges is (231645) but not (231564).

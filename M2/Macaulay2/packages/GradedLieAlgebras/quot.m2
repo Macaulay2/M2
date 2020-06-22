@@ -20,7 +20,7 @@ doc ///
 		
 		Text
 		   There is also the possibility to build quotients by Lie
-		   ideals. A Lie ideal is of type {\tt LieIdeal} and may be 
+		   ideals. A Lie ideal is of type {\tt LieIdeal}, and may be 
 		   constructed in different ways, e.g., as the kernel of a
 		   homomorphism. In general, Lie ideals are not finitely 
 		   generated (or not known to be, as $J$ below), 
@@ -110,7 +110,7 @@ doc ///
 		   L=D/{b c2}
 		   describe L
 		Text
-		   In additon to the constructor @TO lieIdeal@ there are also 
+		   In addition to the constructor @TO lieIdeal@ there are also 
 		   the constructors @TO lieSubAlgebra@ and @TO lieSubSpace@ 
 		   yielding finitely generated Lie subalgebras and finitely 
 		   generated subspaces respectively. 
