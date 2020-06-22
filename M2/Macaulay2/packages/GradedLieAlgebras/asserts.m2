@@ -80,4 +80,3 @@ I=kernel f
 S=image f
 assert(dims(1,8,L/I)===dims(1,8,S))
 ///
-

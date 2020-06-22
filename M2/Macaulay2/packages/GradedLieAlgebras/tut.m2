@@ -101,7 +101,4 @@ doc ///
 		 "Quotient Lie algebras and subspaces"
 				       	 
 ///
-end			
-	
-	
-	
+end
