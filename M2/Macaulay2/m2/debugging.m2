@@ -186,7 +186,7 @@ localSymbols Type := X -> select2(X,localSymbols ())
 
 robust := y -> silentRobustNet(55,4,3,y)
 abbreviate := x -> (
-     if instance(x, Function) and match("^--Function.*--$", toString x) then "..."
+     if instance(x, Function) and match("^-\\*Function.*\\*-$", toString x) then "..."
      else robust x)
 listSymbols = method()
 listSymbols Dictionary := d -> listSymbols values d
