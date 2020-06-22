@@ -4135,21 +4135,3 @@ k=map(Y,R)
 K=new LieIdeal from image(k,I)
 Y/K==U
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
