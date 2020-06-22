@@ -79,6 +79,17 @@ symbolsForAtom = template -> (
     output = replace("@M2STRINGS@", format "///\\(/?/?[^/]\\|\\(//\\)*////[^/]\\)*\\(//\\)*///", output);
     output)
 
+symbolsForPrism = template -> (
+    output := concatenate("// ", banner, newline, newline, template);
+    output = replace("@M2VERSION@",  version#"VERSION", output);
+    output = replace("@M2SYMBOLS@",   demark(",", format \ first \ select(symbols, (name, symb) -> isAlphaNumeric name)), output);
+    output = replace("@M2KEYWORDS@",  demark("|", first \ select(symbols, isKeyword)),  output);
+    output = replace("@M2DATATYPES@", demark("|", first \ select(symbols, isType)),     output);
+    output = replace("@M2FUNCTIONS@", demark("|", first \ select(symbols, isFunction)), output);
+    output = replace("@M2CONSTANTS@", demark("|", first \ select(symbols, isConst)),    output);
+    output = replace("@M2STRINGS@", format "///\\(/?/?[^/]\\|\\(//\\)*////[^/]\\)*\\(//\\)*///", output);
+    output)
+
 symbolsForRouge = template -> (
     output := concatenate("## ", banner, newline, newline, template);
     output = replace("@M2VERSION@",  version#"VERSION", output);
@@ -102,8 +113,11 @@ generateGrammar("emacs/M2-symbols.el", symbolsForEmacs)
 -- Atom & Linguist: Write macaulay2.cson
 generateGrammar("atom/macaulay2.cson", symbolsForAtom);
 
+-- Prism: Write macaulay2.js
+generateGrammar("prism/macaulay2.js", symbolsForPrism);
+
 -- Rouge: Write macaulay2.rb
-generateGrammar("rouge/macaulay2.rb", symbolsForRouge);
+--generateGrammar("rouge/macaulay2.rb", symbolsForRouge);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs M2-symbols "
