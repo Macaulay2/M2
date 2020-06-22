@@ -1,7 +1,7 @@
 -- -*- M2-comint -*- hash: 240042084
-***************************************************************************
-CoincidentRootLoci v.0.1.1 loaded successfully (last updated: June 1, 2018)
-***************************************************************************
+****************************************************************************
+CoincidentRootLoci v.0.1.2 loaded successfully (last updated: June 22, 2020)
+****************************************************************************
 
 i1 : X = coincidentRootLocus {11,1,1,1,1}
 
@@ -16,14 +16,14 @@ o2 = CRL(13,1,1)
 o2 : CoincidentRootLocus
 
 i3 : time X * Y
-     -- used 0.575931 seconds
+     -- used 0.531738 seconds
 
 o3 = CRL(11,1,1,1,1) * CRL(13,1,1) (dual of CRL(6,4,1,1,1,1,1))
 
 o3 : JoinOfCoincidentRootLoci
 
 i4 : time X * Y * Y
-     -- used 0.143298 seconds
+     -- used 0.138182 seconds
 
 o4 = CRL(11,1,1,1,1) * CRL(13,1,1) * CRL(13,1,1) (dual of CRL(6,4,4,1))
 
@@ -42,7 +42,7 @@ o5 : Ideal of QQ[t , t , t , t , t ]
                   0   1   2   3   4
 
 i6 : time projectiveJoin(I,I)
-     -- used 0.0414323 seconds
+     -- used 0.0379216 seconds
 
             3                2    2
 o6 = ideal(t  - 2t t t  + t t  + t t  - t t t )
