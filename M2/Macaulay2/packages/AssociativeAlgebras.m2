@@ -39,7 +39,10 @@ export {
     "toNCRing",
     "isFreeAlgebraOrQuotient",
     "homogDual",
-    "quadraticClosure"
+    "quadraticClosure",
+    "oppositeRing",
+    "isLeftRegular",
+    "isRightRegular"
     }
 
 -- FM: better way to do this?
@@ -385,7 +388,7 @@ leftMultiplicationMap(RingElement,List,List) := (f,fromBasis,toBasis) -> (
       retVal
    )
    else (
-      last coefficients(matrix{apply(fromBasis, g -> f*g)},Monomials=>toBasis)
+      sub(last coefficients(matrix{apply(fromBasis, g -> f*g)},Monomials=>toBasis), R)
    )
 )
 
@@ -425,8 +428,26 @@ rightMultiplicationMap(RingElement,List,List) := (f,fromBasis,toBasis) -> (
       retVal
    )
    else (
-      last coefficients(matrix{apply(fromBasis, g -> g*f)}, Monomials=>toBasis)
+      sub(last coefficients(matrix{apply(fromBasis, g -> g*f)}, Monomials=>toBasis), R)
    )
+)
+
+isLeftRegular = method()
+isLeftRegular (RingElement, ZZ) := (f,d) -> (
+   A := ring f;
+   if not isHomogeneous f then error "Expected a homogeneous element.";
+   r := rank rightMultiplicationMap(f,d);
+   s := #(flatten entries basis(d,A));
+   r == s
+)
+
+isRightRegular = method()
+isRightRegular (RingElement, ZZ) := (f,d) -> (
+   A := ring f;
+   if not isHomogeneous f then error "Expected a homogeneous element.";
+   r := rank leftMultiplicationMap(f,d);
+   s := #(flatten entries basis(d,A));
+   r == s
 )
 
 centralElements = method()
@@ -439,12 +460,13 @@ centralElements(Ring,ZZ) := (B,n) -> (
 findNormalComplement = method()
 findNormalComplement (RingElement,RingElement) := (f,x) -> (
    B := ring f;
+   kk := coefficientRing B;
    if B =!= ring x then error "Expected elements from the same ring.";
    if not isHomogeneous f or not isHomogeneous x then error "Expected homogeneous elements";
-   n := degree f;
-   m := degree x;
-   leftFCoeff := last coefficients(f*x,Monomials=>flatten entries ncBasis(n+m,B));
-   rightMultF := rightMultiplicationMap(f,m);
+   n := first degree f;
+   m := first degree x;  -- assumes singly graded!
+   leftFCoeff := sub(last coefficients(f*x,Monomials=>flatten entries ncBasis(n+m,B)), kk);
+   rightMultF := sub(rightMultiplicationMap(f,m), kk);
    factorMap := (leftFCoeff // rightMultF);
    if rightMultF * factorMap == leftFCoeff then
       first flatten entries (ncBasis(m,B) * factorMap)
@@ -461,6 +483,20 @@ normalAutomorphism RingElement := f -> (
    if any(normalComplements, f -> f === null) then error "Expected a normal element.";
    map(B, B, normalComplements)
 )
+
+isCentral = method()
+isCentral RingElement := f -> (
+   varsList := gens f.ring;
+   all(varsList, x -> (f*x - x*f) == 0)   
+)
+
+-*
+-- I'm not sure we want this version until we can get % working correctly.
+isCentral (RingElement, Ideal) := (f,I) -> (
+   varsList := gens f.ring;
+   all(varsList, x -> (f*x - x*f) % I == 0)
+)
+*-
 
 -- FM: TODO This steps on isNormal in IntegralClosure, I think.
 isNormal = method()
@@ -479,6 +515,7 @@ normalElements(FreeAlgebraQuotient, ZZ, Symbol, Symbol) := (R,n,x,y) -> (
    -- 
    -- The variety also contains information about the normalizing automorphism. This information is not displayed.
    -- The user can obtain the normalizing automorphism of a normal element via the normalAutomorphism function
+   kk := coefficientRing R;
    fromBasis := flatten entries ncBasis(n,R);
    toBasis := flatten entries ncBasis(n+1,R);
    pos := positions(fromBasis,m->isNormal(m));
@@ -497,7 +534,8 @@ normalElements(FreeAlgebraQuotient, ZZ, Symbol, Symbol) := (R,n,x,y) -> (
    -- need to hide variables from user
    xvars := apply(nonNormalBasis, i->x_i);
    yvars := table(numGens, numGens, (i,j) -> y_(i,j));
-   cRing := R.CoefficientRing[(flatten yvars) | xvars,MonomialOrder=>Eliminate numGens^2];
+   -- is this what I want to do here?  or should I use monoid?
+   cRing := kk[(flatten yvars) | xvars,MonomialOrder=>Eliminate numGens^2];
    xvars = xvars / value;
    yvars = applyTable(yvars,value);
    leftCoeff := apply(leftMaps, L-> L*transpose matrix {xvars});
@@ -580,7 +618,6 @@ skewPolynomialRing (Ring,Matrix,List) := (R,skewMatrix,varList) -> (
    gensA := gens A;
    I := ideal apply(subsets(numgens A, 2), p -> 
             (gensA_(p#0))*(gensA_(p#1)) - (skewMatrix_(p#0)_(p#1))*(gensA_(p#1))*(gensA_(p#0)));
-   -- Igb := ncGroebnerBasis(I, InstallGB=>(not A#BergmanRing));
    B := A/I;
    B
 )
@@ -593,7 +630,6 @@ skewPolynomialRing (Ring,RingElement,List) := (R,skewElt,varList) -> (
    gensA := gens A;
    I := ideal apply(subsets(numgens A, 2), p ->
             (gensA_(p#0))*(gensA_(p#1)) - promote(skewElt,R)*(gensA_(p#1))*(gensA_(p#0)));
-   -- Igb := ncGroebnerBasis(I, InstallGB=>(not A#BergmanRing));
    B := A/I;
    B
 )
@@ -608,10 +644,7 @@ threeDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    I := ideal {params#0*gensA#1*gensA#2+params#1*gensA#2*gensA#1+params#2*(gensA#0)^2,
        params#0*gensA#2*gensA#0+params#1*gensA#0*gensA#2+params#2*(gensA#1)^2,
        params#0*gensA#0*gensA#1+params#1*gensA#1*gensA#0+params#2*(gensA#2)^2};
-   --Igb := ncGroebnerBasis(I, InstallGB=>(not A#BergmanRing), DegreeLimit=>opts#DegreeLimit);
-   -- installGB := not (A#BergmanRing or bergmanCoefficientRing gens I =!= null);
    Igb := NCGB(I, opts.DegreeLimit);
-   -- Igb := ncGroebnerBasis(I, InstallGB=>installGB, DegreeLimit=>opts#DegreeLimit);
    B := A/I;
    B
 )
@@ -637,8 +670,6 @@ fourDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
 
    I := ideal {f1,f2,f3,g1,g2,g3};
    Igb := NCGB(I, opts.DegreeLimit);
-   --installGB := not (A#BergmanRing or bergmanCoefficientRing gens I =!= null);
-   --Igb := ncGroebnerBasis(I, InstallGB=>installGB, DegreeLimit=>opts#DegreeLimit);
    B := A/I;
    B
 )
@@ -786,10 +817,38 @@ homogDual Ideal := I -> (
    if dualGens == 0 then ideal {0_A} else ideal flatten entries dualGens
 )
 
--- TODO: Make this work eventually
---NCRing ** NCRing := (A,B) -> (
---   qTensorProduct(A,B,promote(1,coefficientRing A))
---)
+-*  Move this to the engine, or leave at top level?
+oppositeElement = method()
+oppositeElement NCRingElement := f -> (
+   new (ring f) from hashTable {
+          (symbol ring, f.ring),
+          (symbol cache, new CacheTable from {}),
+          (symbol terms, hashTable apply(pairs f.terms, p -> (
+               newMon := new NCMonomial from {(symbol monList) => reverse p#0#monList,
+                                              (symbol ring) => ring f};
+               (newMon,p#1))))}
+)
+
+oppositeRing = method()
+oppositeRing NCRing := B -> (
+   gensB := gens B;
+   R := coefficientRing B;
+   oppA := R gensB;
+   if class B === NCPolynomialRing then return oppA;
+   idealB := gens ideal B;
+   phi := ncMap(oppA,ambient B, gens oppA);
+   oppIdealB := idealB / oppositeElement / phi // ncIdeal;
+   oppIdealBGB := ncGroebnerBasis(oppIdealB, InstallGB=>not B#BergmanRing);
+   oppA / oppIdealB
+)
+*-
+
+-*
+-- Make this work eventually
+NCRing ** NCRing := (A,B) -> (
+   qTensorProduct(A,B,promote(1,coefficientRing A))
+)
+*-
 
 BUG ///
 --- things to get fixed:
@@ -933,12 +992,11 @@ Description
     R_1
     R_2
 Caveat
-  Not yet functional
+  Not yet fully functional.
 SeeAlso
 ///
 
--- change the BUG to doc once ready!
-BUG ///
+doc ///
    Key
       normalElements
       (normalElements, FreeAlgebraQuotient, ZZ, Symbol, Symbol)
@@ -955,7 +1013,7 @@ BUG ///
       : List
    Description
       Text
-         Let b_1,...,b_n be a monomial basis for an NCRing A in degree d. We assume A
+         Let b_1,...,b_n be a monomial basis for a noncommutative Ring A in degree d. We assume A
 	 is generated by elements a_1,...,a_k of degree 1. A homogeneous element r in A
 	 is normal if a_i*r is in the span of the r*a_j for all i.
       Text
@@ -973,7 +1031,7 @@ BUG ///
       Text
          The following example is a 3-dimensional Sklyanin algebra.
       Example
-	 B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})  -- BUG - something wrong with promote?
+	 B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
 	 ncBasis(2,B)
 	 normalElements(B,2,r,s)
       Text
@@ -1029,13 +1087,131 @@ doc ///
          normalElements(sigmaC * sigmaC * sigmaC, 3)
 ///
 
-///
+-- Turn this into a test?
+BUG ///
       Example
          D = threeDimSklyanin(QQ, {a,b,c}) 
          normalElements(id_D, 3)
          assert(numColumns oo == 1)
          assert(normalElements(id_D, 2) == 0)
 ///
+
+doc ///
+   Key
+      "Basic operations on noncommutative algebras"
+   Description
+      Text 
+         The AssociativeAlgebras package contains a number of methods for studying noncommutative
+	 rings - primarily graded rings. The following three extended examples 
+	 highlight the capabilites of the package. For a detailed account of the
+	 Groebner basis calculations underlying nearly all of these methods, see
+	 @ TO "Using the Bergman interface" @.
+      Text
+         Our first example concerns a three-dimensional Sklyanin algebra. This example is
+	 a PI-ring. We define the ring as a quotient of the tensor algebra on three
+	 generators by the two-sided ideal generated by the three elements listed.
+      Example
+         A = QQ{x,y,z}
+      Text
+         Users familiar with Macaulay2 will recognize the notation for a ring of
+	 noncommutative polynomials is identical to that for local rings, see
+	 @ TO (symbol SPACE, Ring, List) @. Thus the
+	 previous line does not generate an error if you forget to load the NCAlgebra package. 
+      Example
+	 f = y*z + z*y - x^2
+	 g = x*z + z*x - y^2
+	 h = z^2 - x*y - y*x
+	 B = A/ncIdeal{f,g,h}
+      Text
+         It is known that this algebra has a unique (up to rescaling) central element 
+	 of degree 3. We can verify this claim computationally using @ TO centralElements @
+	 and check that the element is regular to a given degree. See @ TO isLeftRegular @.
+      Example
+         centralElements(B,3)
+	 j = y^3+x*y*z-y*x*z-x^3
+	 isCentral j
+	 apply(5,i->isLeftRegular(j,i+1))
+      Text
+         In fact, we can see that j is (up to scaling) the only normal element of degree 3.
+	 See the discussion above for interpreting the output of @ TO normalElements @.
+      Example
+         normalElements(B,3,n,o)
+	 basis(3,B)
+      Text
+         The user can create noncommutative rings in ways other than specifying a
+	 presentation. For our second example, consider a skew polynomial ring on four
+	 generators, where generators skew-commute (but are not nilpotent). See
+	 @ TO skewPolynomialRing @ for more details.
+      Example
+         C = skewPolynomialRing(QQ,(-1)_QQ,{x,y,z,w})
+      Text
+         Let us briefly note that the user can also define a skew polynomial ring 
+	 with coefficients in a commutative ring.
+      Example
+         R = QQ[q]/ideal{q^4+q^3+q^2+q+1}
+	 B = skewPolynomialRing(R,q,{x,y,z,w})
+	 x*y == q*y*x         
+      Text
+         Returning to the main example, we can define a graded Ore extension of C 
+	 by specifying an automorphism.
+	 The function @ TO map @ is used to define a ring map. Note that ring maps 
+	 are linear and multiplicative by definition but are not assumed to be  well-defined. 
+      Example
+         use C
+         sigma = map(C,C,{y,z,w,x})
+	 isWellDefined sigma
+      Text
+         We form the Ore extension of C by sigma. See @ TO oreExtension @.
+      Example         
+         D = oreExtension(C,sigma,a)
+      Text
+         The new generator a is normal and regular in D. Regularity (on the left or right)
+	 can be checked one homogeneous degree at a time. See @ TO isLeftRegular @. 
+	 Thus a determines a graded automorphism f:D->D via a*r=f(r)*a.
+      Example
+         isNormal a
+	 apply(5,i-> isLeftRegular(a,i+1))
+         sigmaD = normalAutomorphism a
+      Text
+	 Given an automorphism, one can check to see which elements it normalizes
+	 in any given degree.
+      Example       
+         normalElements(sigmaD,1)
+	 normalElements(sigmaD,2)
+      Text
+         One can check for the presence of normal elements more generally. In our
+	 example, since a is normal, a^2 will also be normal. It is the only normal
+	 monomial of degree 2. A complete description of the normal elements in a
+	 given degree is given by @ TO normalElements @. 
+      Example
+         normalElements(D,2,P,Q)
+      Text
+         Each component of the "normal variety" is a set of polynomial equations which must
+	 be satisfied by the coefficients of the monomial basis for an element expressed
+	 in that basis to be normal. In this case, the basis of D in degree 2 is
+      Example
+         basis(2,D)	 
+      Text
+         The output of normalElements tells us that in order for a degree 2 element of D
+	 to be normal, it must be an expresison in powers of the generators. The coefficients
+	 of these powers must satisfy the six equations listed.
+      Example
+         isNormal (x^2+z^2-y^2-w^2)	 
+      Text
+         In Macaulay2, the user can define a polynomial ring to be commutative or 
+	 skew-commutative (the exterior algebra). The user can convert these rings (and
+	 their quotients) to a type compatible with the NCAlgebra package using 
+         @ TO toNCRing @.
+      Example
+         E' = QQ[x,y,z,w,SkewCommutative=>true]
+	 E = toNCRing E'
+	 f = map(E,C,gens E)
+	 f x^2       
+	 use C
+	 x^2 == 0
+///
+
+--- end documentation
 
 TEST ///
 -*
@@ -1800,6 +1976,7 @@ S = R/I
 gbS = NCGB(ideal S)
 debug Core
 rawNCBasis(raw gbS,{500},{500},-1);
+rawNCBasis(raw gbS,{1000},{1000},-1);
 ///
 
 end--
@@ -1846,3 +2023,108 @@ toList apply(last rawP / rawSparseListFormMonomial, t -> product(apply(t, p -> R
 --- Q: Do we change this code to work for AssociativeAlgebra objects as well, or will they
 ---    get their own function?  (We added a separate function for these types of things in the past).
 apply(rawP#0,rawP#1,(c,m) -> new R from rawTerm(raw R, c, m))
+
+-- XXX
+restart
+needsPackage "AssociativeAlgebras"
+B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+ncBasis(2,B)
+normalElements(B,2,r,s)
+normalElements(B,3,t,u) 
+g = -y^3-x*y*z+y*x*z+x^3
+isCentral g
+
+--- XXX
+restart
+needsPackage "AssociativeAlgebras"
+B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+A = ambient B
+use A
+I = ideal B
+x^3 % I
+use B
+phi = map(B,B,{y,z,x})
+isWellDefined phi
+
+--- XXX
+restart
+needsPackage "AssociativeAlgebras"
+B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+A = ambient B
+g = 2*(-y^3-x*y*z+y*x*z+x^3)
+J = (ideal B) + ideal {g}
+B' = A/J -- Factor of sklyanin
+k = matrix {{x,y,z}}
+BprimeToB = map(B,B',gens B) -- way to lift back from B' to B
+M = BprimeToB rightKernelBergman rightKernelBergman k  -- second syzygy of k over B
+
+-- Issues to talk to Mike about 6/23/2020.
+-- Move these into the package once discussed.
+TEST ///
+-- 1. change NCGB to gb to get some things to work? (e.g. reduction via %, etc)
+restart
+needsPackage "AssociativeAlgebras"
+B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+A = ambient B
+use A
+I = ideal B
+x^3 % I -- fails
+///
+TEST ///
+-- 2. Possible to change name from ncBasis to basis?
+restart
+needsPackage "AssociativeAlgebras"
+B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+basis(3,B)
+///
+TEST ///
+-- 3. Double curly braces for associative algebras?
+restart
+needsPackage "AssociativeAlgebras"
+A = QQ{{x,y,z}}
+assert(instance(A,FreeAlgebra))
+B = QQ{x,y,z}
+assert(instance(B,PolynomialRing))
+///
+TEST ///
+-- 4. isWellDefined broken for maps of nc rings.
+restart
+needsPackage "AssociativeAlgebras"
+B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+phi = map(B,B,{y,z,x})
+isWellDefined phi
+///
+TEST ///
+-- 5. kernel broken for maps of nc rings (but we can make a product order which will compute it).
+restart
+needsPackage "AssociativeAlgebras"
+B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+phi = map(B,B,{y,z,x})
+ker phi
+///
+TEST ///
+-- 6. ** doesn't work right for nc rings.
+restart
+needsPackage "AssociativeAlgebras"
+B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+C = B ** B
+///
+TEST ///
+-- 7. "//" doesn't work for matrices over nc rings.  Need left/right ncgbs.
+-- no test available just yet.
+-- 8. Documentation!!! Continue to bring over working documentation nodes from NCAlgebra
+-- 9. Opposite Ring and element don't work yet.
+-- 10. Change toM2Ring to 'abelianization' or some such
+///
+
+-- Some things not bringing over yet:
+-- 1. Hom_R(M,M) as a nc ring for R a commutative ring.  My code for computing
+--    the defining ideal is all at top level and is slow.  It should be moved
+--    into the engine.
+-- 2. graded pieces of Hom_R(M,M) for M a graded `module' (note that (left/right/bi)
+--    modules over an nc ring do not yet exist, only as presentation matrices.
+--    current code is once again at top level and rather slow.
+
+-- Still to do by Frank:
+-- 1. Port over bergman interface for testing purposes
+-- 2. Documentation nodes!
