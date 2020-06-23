@@ -55,7 +55,16 @@ if #bad > 0 then error(
 -- This banner is added to the top of generated grammars
 banner := "Auto-generated for Macaulay2-@M2VERSION@. Do not modify this file manually."
 
-symbolsForVim = template -> ()
+symbolsForVim = template -> (
+    output := concatenate("\"\" ", banner, newline, newline, template);
+    output = replace("@M2VERSION@",  version#"VERSION", output);
+    output = replace("@M2SYMBOLS@",   demark(" ", first \ select(symbols, (name, symb) -> isAlphaNumeric name)), output);
+    output = replace("@M2KEYWORDS@",  demark(" ", first \ select(symbols, isKeyword)),  output);
+    output = replace("@M2DATATYPES@", demark(" ", first \ select(symbols, isType)),     output);
+    output = replace("@M2FUNCTIONS@", demark(" ", first \ select(symbols, isFunction)), output);
+    output = replace("@M2CONSTANTS@", demark(" ", first \ select(symbols, isConst)),    output);
+    output = replace("@M2STRINGS@", format "///\\(/?/?[^/]\\|\\(//\\)*////[^/]\\)*\\(//\\)*///", output);
+    output)
 
 symbolsForEmacs = template -> (
     output := concatenate(";; ", banner, newline, newline, template);
@@ -115,6 +124,10 @@ generateGrammar("atom/macaulay2.cson", symbolsForAtom);
 
 -- Prism: Write macaulay2.js
 generateGrammar("prism/macaulay2.js", symbolsForPrism);
+
+-- Vim: Write m2.vim.syntax and m2.vim.dict
+generateGrammar("vim/m2.vim.syntax", symbolsForVim);
+generateGrammar("vim/m2.vim.dict", symbolsForVim); -- TODO: is this necessary?
 
 -- Rouge: Write macaulay2.rb
 --generateGrammar("rouge/macaulay2.rb", symbolsForRouge);

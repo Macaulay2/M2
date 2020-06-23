@@ -17,6 +17,8 @@ set(GRAMMAR_FILES
   atom/macaulay2.cson
   prism/macaulay2.js
 #  rouge/macaulay2.rb
+  vim/m2.vim.syntax
+  vim/m2.vim.dict
   emacs/M2-symbols.el)
 
 add_custom_target(M2-editors DEPENDS ${GRAMMAR_FILES})
