@@ -142,8 +142,8 @@ scan({net, info},
 	    -- Apply parser' first
 	    x = deepSplice parser' x;
 	    -- Drop the leading and trailing SPs or BKs
-	    l := position(x, e -> e =!= SP or e =!= BK);
-	    t := position(x, e -> e =!= SP or e =!= BK, Reverse => true);
+	    l := position(x, e -> e =!= SP and e =!= BK);
+	    t := position(x, e -> e =!= SP and e =!= BK, Reverse => true);
 	    x = take(x, {l, t});
 	    -- ??
 	    x = splice sublists(x, i -> i === BK or i === SP,

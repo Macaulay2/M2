@@ -1249,7 +1249,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 			 nam := defs.Name;
 			 if defs.HomePage =!= null then nam = HREF{defs.HomePage, nam};
 			 em := defs.Email;
-			 if em =!= null then em = concatenate(" <",HREF{concatenate("mailto:",em),em},">");
+			 if em =!= null then em = SPAN{" <",HREF{concatenate("mailto:",em),em},">"};
 			 LI {nam,em}
 			 )
 		    )
