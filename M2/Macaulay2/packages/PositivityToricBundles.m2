@@ -297,7 +297,7 @@ possibleFlags (ToricVectorBundleKlyachko, List) := (tvb, gs) -> (
   ray => for filtMat in flagTable#ray list (
    parted := partition(e -> isSubset(image promote(matrix e, QQ), image promote(filtMat, QQ)), vecs);
    vecs = if parted#?false then parted#false else {};
-   parted#true
+   if parted#?true then parted#true else continue
   )
  )
 )
@@ -348,9 +348,8 @@ removeChosenBasisVectorsFromFlags := (compatB,possFlagsList) -> (
 --   INPUT: 'possFlagsList', list of possible flags
 --  OUTPUT: compatible base (list of vectors)
 compatibleBasis = method( Options => true )
-compatibleBasis (List) := {Verbosity => 0} >> opts -> (possFlagsList) -> (
+compatibleBasis (ZZ, List) := {Verbosity => 0} >> opts -> (n,possFlagsList) -> (
  if opts#Verbosity>0 then << "METHOD: compatibleBasis" << endl;
- n := # entries possFlagsList_0_0_0;
 
  compatB := flatten for possFlags in possFlagsList list 
   flatten select(possFlags, b -> #b==1);
@@ -414,7 +413,7 @@ compatibleBases (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cach
   possFlagsSigma := for i in 0 ..< numgens target sigma list possFlagsTable#(matrix sigma_i);
   
   if opts#Verbosity>0 then (<< "possible flags are:" << endl; for pB in possFlagsSigma do  << pB << endl);
-  cB := compatibleBasis(possFlagsSigma, Verbosity=>(opts#Verbosity-1));
+  cB := compatibleBasis(rank tvb, possFlagsSigma, Verbosity=>(opts#Verbosity-1));
   if opts#Verbosity>0 then << "actual compatible basis is:" << endl << cB << endl;
   sigma => cB
  )
