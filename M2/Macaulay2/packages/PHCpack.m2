@@ -30,7 +30,7 @@ newPackage(
   Headline => "interface to PHCpack",
   Configuration => { 
     "path" => "",
-    "PHCexe"=>"phc -0"
+    "PHCexe"=>"phc"
   },
   Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry",
@@ -105,7 +105,9 @@ protect Append
 
 PHCDBG = 0; -- debug level (10=keep temp files)
 path'PHC = (options PHCpack).Configuration#"path";
-PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe"; 
+PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe"|(
+    if member("--no-randomize", commandLine) then " -0" else ""
+    );
 -- this is the executable string that make sures that calls to PHCpack run:
 -- NOTE: the absolute path should be put into the init-PHCpack.m2 file 
 
@@ -695,7 +697,7 @@ cascade (List) := o -> (system) -> (
         ) else (
           supsols := points(supwit);
           genpts := witnessSuperSetsFilter(result,supsols);
-          g := genpts;
+	  g := toList(apply(genpts,x->if class x === Point then x else point{x}));
           ws := witnessSet(ideal(equations(supwit)),ideal(slice(supwit)),g);
           if #g!=0 then result = append(result,(i,ws));
         );
@@ -1799,7 +1801,7 @@ versionNumber(Nothing) :=  o -> (Nothing) -> (
 --     then the output of phc --version is printed to screen.
 -- OUT: information about the current version of phc.
   filename := temporaryFileName() | "PHCversion";
-  run(PHCexe|" --version > "|filename);
+  run(path'PHC|(options PHCpack).Configuration#"PHCexe"|" --version > "|filename);
   data := get filename;
   if o.Verbose then
     stdio << data << endl;
@@ -1816,6 +1818,8 @@ versionNumber(Nothing) :=  o -> (Nothing) -> (
     return (vnbr, date);
   );
 )
+
+if last versionNumber(null) < "2020-06-12" then error "expected PHCpack version 2.4.77 or higher"
 
 --##########################################################################--
 -- DOCUMENTATION
@@ -1914,10 +1918,10 @@ TEST///
 
 TEST///
       R = CC [x,y]
-      system={x^2*y}
+      system={x^2*(y^2-1)}
       V=numericalIrreducibleDecomposition(system)
-      assert (dim V == 1) --there are two components of dimension 1
-      assert ((# V#1)==2)
+      assert all(components V, c->dim c==1) --there are three components of dimension 1
+      assert (#components V == 3)
 ///;      
 
 -----------------------------------
