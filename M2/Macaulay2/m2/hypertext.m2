@@ -3,7 +3,7 @@
 -- html0.m2 -> hypertext.m2
 
 -----------------------------------------------------------------------------
--- Hypertext type declarations
+-- Hypertext type declarations and basic constructors
 -----------------------------------------------------------------------------
 
 -- Hypertext, HypertextParagraph, and HypertextContainer
@@ -21,8 +21,19 @@ HypertextContainer.synonym = "markup list container"
 toString         Hypertext := s -> concatenate(toString class s, toString         toList s)
 toExternalString Hypertext := s -> concatenate(toString class s, toExternalString toList s)
 
+new Hypertext from VisibleList := (M,x) -> x
+new Hypertext from Thing  := (M,x) -> {x}
+new Hypertext from Net    := (M,x) -> {toString x}
+
 -----------------------------------------------------------------------------
--- Markup type declarations
+-- URL type declaration and constructor
+-----------------------------------------------------------------------------
+
+URL = new SelfInitializingType of BasicList
+new URL from String := (URL, str) -> { str }
+
+-----------------------------------------------------------------------------
+-- MarkUpType type declarations
 -----------------------------------------------------------------------------
 
 -- MarkUpType
@@ -30,10 +41,6 @@ MarkUpType = new Type of SelfInitializingType
 MarkUpType.synonym = "markup type"
 
 options MarkUpType := X -> if X.?Options then X.Options else new OptionTable from {}
-
-new Hypertext from VisibleList := (M,x) -> x
-new Hypertext from Thing  := (M,x) -> {x}
-new Hypertext from Net    := (M,x) -> {toString x}
 
 -- e.g. a MENU, which does not correspond to an html entity.
 -- It does not have a qname, nor a default method for producing html,

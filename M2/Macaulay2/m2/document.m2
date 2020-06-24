@@ -737,28 +737,6 @@ undocumentedkeys = null
 undocumented' = x -> error "late use of function undocumented'"
 
 -----------------------------------------------------------------------------
--- getting help from the documentation
------------------------------------------------------------------------------
-
-getExampleInputs := method(Dispatch => Thing)
-getExampleInputs Thing       := t -> ()
-getExampleInputs Sequence    := 
-getExampleInputs Hypertext   := t -> apply(toSequence t, getExampleInputs)
-getExampleInputs ExampleItem := t -> 1 : t#0
-
-examples = method(Dispatch => Thing)
-examples Hypertext := x -> stack deepSplice getExampleInputs x
-examples Thing := x -> (
-     checkLoadDocumentation();
-     d := fetchRawDocumentation makeDocumentTag(x,Package=>null);
-     if d =!= null and d.?Description then (stack deepSplice getExampleInputs d.Description)^-1)
-apropos = method()
-apropos String := (pattern) -> (
-     last \ sort unique select(
-	  flatten \\ pairs \ dictionaryPath, 
-	  (nam,sym) -> match(pattern,nam) and not match("\\$",nam)
-	  ))
------------------------------------------------------------------------------
 headline = method(Dispatch => Thing)
 headline Thing := key -> getOptionNoLoad(key,Headline)	    -- old method
 headline DocumentTag := tag -> (
@@ -1271,7 +1249,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 			 nam := defs.Name;
 			 if defs.HomePage =!= null then nam = HREF{defs.HomePage, nam};
 			 em := defs.Email;
-			 if em =!= null then em = concatenate(" <",HREF{concatenate("mailto:",em),em},">");
+			 if em =!= null then em = SPAN{" <",HREF{concatenate("mailto:",em),em},">"};
 			 LI {nam,em}
 			 )
 		    )

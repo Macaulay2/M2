@@ -488,14 +488,6 @@ scan(flexiblePostfixOperators, op -> (
 -- helper functions useable in documentation
 -----------------------------------------------------------------------------
 
-sourceFileStamp = () -> concatenate("--",toAbsolutePath currentFileName, ":", toString currentLineNumber(), ": location of test code")
-TEST = method()
-TEST String := s -> (
-     currentPackage#"test inputs"#(currentPackage#"test number") = (currentFileName,currentLineNumber(),concatenate( sourceFileStamp(), newline, s));
-     currentPackage#"test number" = currentPackage#"test number" + 1;
-     )
-TEST List := y -> TEST \ y
-
 foo := method(Options => {})
 foodict := first localDictionaries foo
 ---- we can get into an infinite loop by doing this: (it's like printing the contents of a mutable hash table
@@ -578,6 +570,8 @@ texMath = method(Dispatch => Thing, TypicalValue => String)
 htmlWithTex = method(Dispatch => Thing, TypicalValue => String)
 info = method(Dispatch => Thing, TypicalValue => String)
 -- TODO: move this here: net = method(Dispatch => Thing, TypicalValue => String)
+
+show = method()
 
 -- method options
 
