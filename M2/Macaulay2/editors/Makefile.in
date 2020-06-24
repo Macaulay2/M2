@@ -3,8 +3,8 @@ include ../../../include/config.Makefile
 VPATH = @srcdir@
 ARGS = --script
 
-MADEFILES = M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2
-SRCFILES = M2-init.el M2-mode.el M2.el M2-README
+MADEFILES = M2-symbols.el M2-emacs-help.txt M2-emacs.m2
+SRCFILES = M2-init.el M2-mode.el M2.el README.md
 
 all: @pre_emacsdir@ $(MADEFILES) $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES))
 verify: $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES)) $(SRCFILES) $(MADEFILES); ls -lrt $^
@@ -15,7 +15,7 @@ Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/editors/emacs/Make
 
 M2-symbols.el : ../make-M2-symbols.m2 ../../m2/exports.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
 	cd ..; @pre_exec_prefix@/bin/M2 $(ARGS) emacs/@srcdir@/../make-M2-symbols.m2 -e 'exit 0'
-M2-emacs.m2 M2-emacs-hlp.txt: make-M2-emacs-help.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
+M2-emacs.m2 M2-emacs-help.txt: make-M2-emacs-help.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
 	@pre_exec_prefix@/bin/M2 $(ARGS) @srcdir@/make-M2-emacs-help.m2 -e 'exit 0'
 
 clean::; rm -f $(MADEFILES) @pre_emacsdir@/M2*

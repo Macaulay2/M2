@@ -42,5 +42,6 @@ add_custom_target(M2-emacs ALL
   COMMAND ${M2} ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/emacs/make-M2-emacs-help.m2
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/emacs/M2-symbols.el ${M2_INSTALL_EMACSDIR}
   COMMAND gzip -nf9 M2-symbols.el
+  COMMAND ${CMAKE_COMMAND} -E copy M2-emacs-help.txt M2-emacs.m2 M2-symbols.el.gz ${CMAKE_CURRENT_SOURCE_DIR}/emacs
   WORKING_DIRECTORY ${M2_INSTALL_EMACSDIR}
   DEPENDS M2-editors)
