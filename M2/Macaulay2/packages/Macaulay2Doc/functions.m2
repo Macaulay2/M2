@@ -1,3 +1,6 @@
+-- Collections organized by filename containing the source code
+load "./functions/help-doc.m2"
+-- Collections organized by function name
 load "./functions/accumulate-doc.m2"
 load "./functions/addEndFunction-doc.m2"
 load "./functions/addStartFunction-doc.m2"
