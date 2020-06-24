@@ -1002,7 +1002,7 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 AC_MSG_CHECKING(whether the package topcom is installed)
-if test "`type -t points2finetrianga`" = file
+if test "`type -t points2finetriangs`" = file
 then AC_MSG_RESULT(yes)
 else AC_MSG_RESULT([no, will build])
      BUILD_topcom=yes
