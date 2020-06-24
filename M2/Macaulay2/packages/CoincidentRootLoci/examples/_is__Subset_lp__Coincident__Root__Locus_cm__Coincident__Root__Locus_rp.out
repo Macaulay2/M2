@@ -1,7 +1,7 @@
 -- -*- M2-comint -*- hash: -1704902500
-***************************************************************************
-CoincidentRootLoci v.0.1.1 loaded successfully (last updated: June 1, 2018)
-***************************************************************************
+****************************************************************************
+CoincidentRootLoci v.0.1.2 loaded successfully (last updated: June 22, 2020)
+****************************************************************************
 
 i1 : X = coincidentRootLocus {6,4}
 
@@ -16,7 +16,7 @@ o2 = CRL(5,2,2,1)
 o2 : CoincidentRootLocus
 
 i3 : time isSubset(X,Y)
-     -- used 0.000312224 seconds
+     -- used 0.000283455 seconds
 
 o3 = true
 
@@ -27,7 +27,7 @@ o4 = CRL(6,3,1)
 o4 : CoincidentRootLocus
 
 i5 : time isSubset(X',Y)
-     -- used 0.000498274 seconds
+     -- used 0.000279286 seconds
 
 o5 = false
 
