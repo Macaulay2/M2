@@ -1097,7 +1097,11 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
   	      	if (compNums#k == j) then ptsInWS = join(ptsInWS,{pts#k});
   	      	);
   	    N = map(CC^0,CC^numVars,0); -- this is a dummy, will grab slice data later
-  	    ws = witnessSet(ideal F, N, ptsInWS);
+  	    ws = if o.IsProjective===1 then ( 
+		W := projectiveWitnessSet(ideal F, N -* fake affine chart *-, N, ptsInWS); 
+		W.AffineChart = null; -- !!! this is a hack
+		W
+		) else witnessSet(ideal F, N, ptsInWS);
 	    ws.IsIrreducible = true;
 	    --turn these points into a witness set
 	    -- ws = witnessSet(ideal F,N, ptsInWS); --turn these points into a witness set
@@ -1163,14 +1167,14 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
 	--We store the cols of M needed for this particular codimNum in coeffList,
 	--then turn it into a matrix and store it the witness set.
 	colsToSkip = listOfCodims#codimNum - listOfCodims#0;
-	N = transpose submatrix(M,,colsToSkip..numcols(M)-1);
+	N = transpose submatrix(M,,colsToSkip..numcols M - 1);
+	if o.IsProjective===1 then N = map(CC^(numrows N),CC^1,0)|N; -- constant terms are 0xb
 	-- rearrange columns so slice from NAGtypes
 	--returns the correct linear functional
 	firstCol:=N_{0};
 	N=(submatrix'(N, ,{0})|firstCol);
 	(wList#codimNum).Slice = N;
         );
-    if o.IsProjective === 1 then error "not implemented";
     nv = numericalVariety wList;
     nv.WitnessDataFileName=dir|"/witness_data";
     nv.Equations=F;
