@@ -224,6 +224,7 @@ knownConfigs={
 	MaxStepSize=>-1,MaxNumberSteps=>-1,MaxCycleNum=>-1,RegenStartLevel=>-1
 	}
 bertiniZeroDimSolve = method(TypicalValue => List, Options=>{
+  IsProjective =>-1,
   UseRegeneration =>-1,
   OutputStyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
   TopDirectory=>storeBM2Files,
@@ -254,7 +255,10 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
   if myAVG==={} and myHVG==={}
   then (
     if not member (class first myPol,{String,B'Section,B'Slice,Product,Symbol})
-    then (myAVG=gens ring first myPol)
+    then (
+	if o.IsProjective==-1 
+    	then (myAVG=gens ring first myPol)
+	else (myHVG=gens ring first myPol))
   else error"AffVariableGroup or HomVariableGroup need to be set. "    );
 --%%-- Verbose set greater than 1 will print the variable groups.
 --  if o.Verbose then print myAVG;
