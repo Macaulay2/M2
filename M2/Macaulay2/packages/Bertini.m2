@@ -1142,7 +1142,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
         rw = {};
         );
     
-    M = transpose matrix(mat); --stores all slices
+    M = if #mat>0 then transpose matrix(mat) else map(CC^(numVars+1),CC^0,0); --stores all slices
 
     -- Finally, we can cycle through the witness sets in nv
     -- and add the slice data.
@@ -1156,24 +1156,17 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     -- 1x4 matrix of slice data consists of the second (not first)
     -- line of the codim 1 slice data.
     for codimNum from 0 to length listOfCodims - 1 do (
-	     coeffList := {};
-    	 --We store the cols of M needed for this particular codimNum in coeffList,
-    	 --then turn it into a matrix and store it the witness set.
-    	 colsToSkip = listOfCodims#codimNum - listOfCodims#0;
-    	 for i from colsToSkip to numgens source M - 1 do (
-    	    coeffCol := {};
-    	    for j from 0 to numgens target M - 1 do (
-        	   coeffCol = join(coeffCol, {M_(j,i)});
-          );
-          coeffList = join(coeffList, {coeffCol});
+	--We store the cols of M needed for this particular codimNum in coeffList,
+	--then turn it into a matrix and store it the witness set.
+	colsToSkip = listOfCodims#codimNum - listOfCodims#0;
+	N = transpose submatrix(M,,colsToSkip..numcols(M)-1);
+	-- rearrange columns so slice from NAGtypes
+	--returns the correct linear functional
+	firstCol:=N_{0};
+	N=(submatrix'(N, ,{0})|firstCol);
+	(wList#codimNum).Slice = N;
         );
-    	  if (#coeffList > 0) then N = matrix(coeffList) else N = map(CC^0,CC^(numVars+1),0);
-    	   -- rearrange columns so slice from NAGtypes
-    	  --returns the correct linear functional
-    	  firstCol:=N_{0};
-    	  N=(submatrix'(N, ,{0})|firstCol);
-    	  (wList#codimNum).Slice = N;
-        );
+    if o.IsProjective === 1 then error "not implemented";
     nv = numericalVariety wList;
     nv.WitnessDataFileName=dir|"/witness_data";
     nv.Equations=F;
