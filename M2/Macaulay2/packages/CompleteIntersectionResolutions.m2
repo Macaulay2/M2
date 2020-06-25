@@ -5249,6 +5249,7 @@ assert (prune coker f == 0)
 
 TEST///
 ---complete intersection of two quadrics in PP^3 
+kk  = ZZ/101
 U = kk[a,b,c,d]
 gg = matrix"a2,b2"
 Ubar = U/ideal gg
