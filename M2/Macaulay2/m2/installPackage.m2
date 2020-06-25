@@ -436,6 +436,7 @@ dispatcherMethod := m -> m#-1 === Sequence and (
 
 reproduciblePaths = outf -> (
      outstr := get outf;
+     if topSrcdir === null then return outstr;
      srcdir := regexQuote toAbsolutePath topSrcdir;
      builddir := regexQuote prefixDirectory;
      homedir := regexQuote homeDirectory;
