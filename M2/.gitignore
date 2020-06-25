@@ -147,3 +147,4 @@ LOGFILE
 /check-configure/tmp/
 /libraries/ntl/check-once
 /Macaulay2/tests/ComputationsBook/programming/foo
+/cmake-build-*
