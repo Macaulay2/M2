@@ -157,8 +157,8 @@ doc ///
 			see @TO "generators(ExtAlgebra)"@, 
 			represents a
 			basis for $E$ as a vector space and correspond to the 
-			Lie algebra generators for the minimal model $M$ of $L$. 
-			However; the 
+			Lie algebra generators for the minimal model $M$ of $L$; 
+			however, the 
 			homological degree of a generator in $E$ is 1 more than
 			the homological degree for the 
 			corresponding generator in $M$ 
@@ -1169,7 +1169,7 @@ Outputs
 SeeAlso
   "image(LieDerivation,LieSubSpace)"
   "image(LieAlgebraMap)"
-  "image(LieDerivation"
+  "image(LieDerivation)"
   "kernel(LieAlgebraMap)"
   "inverse(LieAlgebraMap,LieSubSpace)"
   
@@ -1425,7 +1425,7 @@ Description
   Text
     The optional inputs given above are not relevant for Lie algebras.
     A Lie element $x$ is in $T$ if $x$ multiplies all the 
-    generators of $S$ into $I$. However;
+    generators of $S$ into $I$. However,
     $T$ is not in general finitely generated.
   
   Example
