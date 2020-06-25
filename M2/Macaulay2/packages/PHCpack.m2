@@ -1822,7 +1822,7 @@ versionNumber(Nothing) :=  o -> (Nothing) -> (
 )
 
 PHCpackPresent := run ("type "|PHCexe|" >/dev/null 2>&1") === 0
-PHCpackRecent := last versionNumber(null) >= "2020-06-12"
+PHCpackRecent := try last versionNumber(null) >= "2020-06-12" else false
 isRunnable = () -> 
 if not PHCpackPresent then error ("executable not found: "|PHCexe) else 
 if not PHCpackRecent then error "expected phc version at least 2.4.77" else true 
