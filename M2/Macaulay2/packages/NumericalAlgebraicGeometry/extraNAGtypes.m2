@@ -27,7 +27,7 @@ gateSystem (GateMatrix,GateMatrix,GateMatrix) := (P,I,O) -> (
     if numrows I != 1 then error "expected the matrix of inputs (2nd argument) to be a row vector";
     if numcols O != 1 then error "expected the output matrix (3rd argument) with 1 column";
     new GateSystem from {Variables=>I, GateMatrix=>O, Parameters=>P,
-	"SLP"=>makeSLProgram(P|I,O)}
+	"SLP"=>makeSLProgram(P|I,O), cache => new CacheTable from {}}
     )
 
 
@@ -73,6 +73,26 @@ evaluate (GateSystem,Matrix,Matrix) := (F,p,x) -> (
     if numParameters F =!= numcols p then error "wrong number of parameter values";
     evaluate(F#"SLP", matrix p | matrix x)
     )
+
+--todo: think about differentiating wrt. a subset of variables
+initJacobian = method()
+initJacobian (List, GateSystem) := (inds, GS) -> (
+    if not GS.cache#?"JSLP" then (
+    	F := gateMatrix GS;
+    	I := (vars GS)_inds;
+    	J := diff(I,F);
+    	GS.cache#"JSLP" = makeSLProgram(parameters GS | vars GS, J);
+	);
+    )
+initJacobian GateSystem := GS -> initJacobian(toList(0..numVariables GS-1), GS)
+
+evaluateJacobian (GateSystem, Matrix, Matrix) := (GS, p0, x0) -> (
+    initJacobian GS;
+    out := evaluate(GS.cache#"JSLP", p0 | x0); -- NB: parameters first
+    matrix(out, numFunctions GS, numVariables GS)
+    )
+evaluateJacobian (GateSystem, Point, Point) := (GS, p0, x0) -> evaluateJacobian(GS,matrix p0, matrix x0)
+
 
 TEST ///
 -* GateSystem *-

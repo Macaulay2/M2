@@ -30,11 +30,11 @@ doc ///
         Example
     	    setRandomSeed 0
 	    declareVariable \ {A,B,C,D,X,Y}
-	    PS = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B},{C*(Y+2)^2+D}})
-	    solveFamily(PS,point{{1,1,1,1}})
+	    PS = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B}, {C*(Y+2)^2+D}})
+	    solveFamily(point{{1,1,1,1}}, PS)
 	    R=CC[a,b,c,d][x,y]
-	    F=polySystem {a*(x-1)^2-b,c*(y+2)^2+d}
-	    solveFamily(F,point{{1,1,1,1}})
+	    F=polySystem {a*(x-1)^2-b, c*(y+2)^2+d}
+	    solveFamily(point{{1,1,1,1}}, F)
 	Text
 	    @TO monodromySolve@ is the core function called by @TO solveFamily@. Its default setting are less conservative and may be faster at the expense of reliability: see @TO MonodromySolverOptions@. For non-parametric systems, the solver @TO sparseMonodromySolve@ essentially calls @TO solveFamily @ assuming the genericity conditions of the Bernstein-Kurhnirenko theorem are satisfied.
         Text
@@ -83,25 +83,26 @@ doc ///
     Key
         solveFamily
         (solveFamily,System)
+        (solveFamily,Point,System)
     Headline
         a solver for parametric families with simple output
     Usage
-        (pTarg,sols) = solveFamily PS
-	sols = solveFamily(PS,pTarg)
+        (p, sols) = solveFamily PS
+        (p, sols) = solveFamily(P, p)
     Inputs 
         PS:System
-           eg. a @TO PolySystem@ whose underlying coefficient ring is defined by parameters, or a @TO GateSystem@ with parameters.
-	pTarg:Point
-	   parameter values for desired system
+           : a parametric polynomial system, represented as either a @TO PolySystem@ whose underlying coefficient ring itself a polynomial ring in the parameters, or a @TO GateSystem@ with parameters.
+        p:Point
+           consisting of target parameter values (optional.)
     Outputs
-        pTarg:List
-            parameter value 
-        sols:List
-            containing solutions to sys, each represented as a @TO Point @.
+        p:Point
+            parameter values. If not part of the input, they are chosen uniformly as complex numbers w/ modulus 1.
+        sols:PointArray
+            containing solutions to PS specialized at p.
     Description
         Text
-            The output of @TO monodromySolve @ is "technical." This method is intended for users uninterested in the underlying
-            @TO HomotopyGraph @ and its satellite data.
+            The output of @TO monodromySolve @ is opaque. This method is intended for users uninterested in the underlying
+            @TO HomotopyGraph @ and its satellite data. If 
         Example
             R = CC[a,b,c,d,e,f][x,y];
             q  = a*x^2+b*y+c;
@@ -478,7 +479,7 @@ doc ///
         Example
             R = CC[a,b,c,d][x,y];
             polys = polySystem {a*x+b*y^2,c*x*y+d};
-            monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>flowerGraphAugment,AugmentNodeCount=>1)
+            monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>flowerGraphAugment,AugmentNodeCount=>1, AugmentNumberOfRepeats=>3)
     ///
     
     
@@ -497,7 +498,7 @@ doc ///
         Example
             R = CC[a,b,c,d][x,y];
             polys = polySystem {a*x+b*y^2,c*x*y+d};
-            monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1)
+            monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1, AugmentNumberOfRepeats=>3)
     ///    
 
 doc ///
