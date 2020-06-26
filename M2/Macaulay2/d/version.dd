@@ -193,7 +193,7 @@ setupconst("version", Expr(toHashTable(Sequence(
    "frobby version" => Ccode(constcharstar,"constants::version"),
    "flint version" => Ccode(constcharstar,"
 	 #if HAVE_FLINT
-	   FLINT_VERSION
+	   flint_version
 	 #else
 	   \"not present\"
 	 #endif

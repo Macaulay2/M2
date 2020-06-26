@@ -1,10 +1,10 @@
 -- -*- M2-comint -*- hash: 1569677465
-***************************************************************************
-CoincidentRootLoci v.0.1.1 loaded successfully (last updated: June 1, 2018)
-***************************************************************************
+****************************************************************************
+CoincidentRootLoci v.0.1.2 loaded successfully (last updated: June 22, 2020)
+****************************************************************************
 
 i1 : time D77 = realRankBoundary(7,7)
-     -- used 0.611583 seconds
+     -- used 0.50038 seconds
 
 o1 = CRL(2,1,1,1,1,1)
 
@@ -22,7 +22,7 @@ o2 = Coincident root locus associated with the partition {2, 1, 1, 1, 1, 1} defi
      The defining polynomial has 1103 terms of degree 12
 
 i3 : time D64 = realRankBoundary(6,4)
-     -- used 3.24222 seconds
+     -- used 2.76743 seconds
 
 o3 = {CRL(5,1) * CRL(5,1) (dual of CRL(3,3)), CRL(4,1,1) * CRL(6) (dual of
      ------------------------------------------------------------------------
@@ -51,7 +51,7 @@ o5 = Dual of the coincident root locus associated with the partition {4, 2} defi
      The defining polynomial has 3140 terms of degree 18
 
 i6 : time D74 = realRankBoundary(7,4)
-     -- used 0.516661 seconds
+     -- used 0.444119 seconds
 
 o6 = CRL(6,1) * CRL(7) * CRL(7) (dual of CRL(3,2,2))
 
@@ -68,7 +68,7 @@ o7 = Dual of the coincident root locus associated with the partition {3, 2, 2} d
      degree = 24
 
 i8 : time D75 = realRankBoundary(7,5)
-     -- used 0.297916 seconds
+     -- used 0.229553 seconds
 
 o8 = {CRL(6,1) * CRL(7) * CRL(7) (dual of CRL(3,2,2)), CRL(5,1,1) * CRL(6,1)
      ------------------------------------------------------------------------
@@ -105,7 +105,7 @@ o11 = Dual of the coincident root locus associated with the partition {5, 2} def
       degree = 24
 
 i12 : time D76 = realRankBoundary(7,6)
-     -- used 0.000313117 seconds
+     -- used 0.000298063 seconds
 
 o12 = {CRL(5,1,1) * CRL(6,1) (dual of CRL(4,3)), CRL(4,1,1,1) * CRL(7) (dual
       -----------------------------------------------------------------------

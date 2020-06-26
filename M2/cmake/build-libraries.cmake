@@ -1206,6 +1206,14 @@ get_target_property(PROGRAM_DEPENDENCIES build-programs  MANUALLY_ADDED_DEPENDEN
 string(REGEX REPLACE "(build-|-install)" "" BUILD_LIB_LIST  "${LIBRARY_DEPENDENCIES}")
 string(REGEX REPLACE "(build-|-install)" "" BUILD_PROG_LIST "${PROGRAM_DEPENDENCIES}")
 
+# Report the next step
+if(BUILD_LIB_LIST OR BUILD_PROG_LIST)
+  message(CHECK_FAIL " Some components are missing")
+  message("## Before building Macaulay2, rerun build-libraries and build-programs targets")
+else()
+  message(CHECK_PASS " Everything is in order! 🎉")
+endif()
+
 # Set empty lists to N/A
 foreach(_list IN ITEMS
     BUILD_LIB_LIST INSTALLED_LIBRARIES BUILD_PROG_LIST INSTALLED_PROGRAMS)
@@ -1235,10 +1243,3 @@ if(VERBOSE)
      LDFLAGS           = ${LDFLAGS}\n")
 endif()
 
-# Report the next step
-if(BUILD_LIB_LIST OR BUILD_PROG_LIST)
-  message(CHECK_FAIL " Some components are missing")
-  message("## Rerun build-libraries and build-programs targets first")
-else()
-  message(CHECK_PASS " Everything is in order! 🎉")
-endif()

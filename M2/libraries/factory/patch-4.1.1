@@ -10,17 +10,6 @@ diff -ur /mike-raid/home/dan/src/M2/overnight/M2/BUILD/dan/builds.tmp/Ubuntu-16.
  
  class InternalCF;
  class CanonicalForm;
-diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/factory/tmp/factory-4.1.1/cf_switches.cc factory-4.1.1/cf_switches.cc
---- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/factory/tmp/factory-4.1.1/cf_switches.cc	2017-12-06 12:37:11.000000000 -0500
-+++ factory-4.1.1/cf_switches.cc	2018-06-26 11:07:29.000000000 -0400
-@@ -31,6 +31,7 @@
- // and set the default (recommended) On-values:
- #ifdef HAVE_NTL
-   On(SW_USE_CHINREM_GCD);
-+  On(SW_USE_EZGCD_P);		// provided to me by Hans Schoenemann
-   //Off(SW_USE_NTL_SORT);
- #endif
-   On(SW_USE_EZGCD);
 diff -ur ~/Projects/M2/M2/M2/BUILD/mahrud/build/libraries/factory/build/m4/flint-check.m4 m4/flint-check.m4
 --- /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/libraries/factory/build/m4/flint-check.m4	2018-02-15 08:02:18.000000000 -0600
 +++ m4/flint-check.m4	2020-05-28 13:44:27.476498101 -0500
