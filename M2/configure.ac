@@ -1814,6 +1814,13 @@ done
 prefix=$save_prefix
 exec_prefix=$save_exec_prefix
 
+if test $BUILD_gftables = no
+then PRE_GFTABLESDIR="$GFTABLESDIR"
+else
+PRE_GFTABLESDIR="$pre_datadir/Macaulay2/Core/factory/"
+fi
+AC_SUBST(PRE_GFTABLESDIR)
+
 AC_SUBST(pre_bindir) dnl In Macaulay2/bin/M2.in we assume that $pre_bindir/.. is $pre_exec_prefix, which follows from pre_bindir=${pre_exec_prefix}/bin.
 AC_SUBST(pre_datadir)
 AC_SUBST(pre_includedir)
