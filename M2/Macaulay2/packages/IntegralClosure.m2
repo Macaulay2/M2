@@ -69,7 +69,7 @@ export{
      "ringFromFractions", 
      --mes--"extendIdeal",
      "simplifyFractions",
-     --mes--"testLT",
+     "testLT",					     -- undocumented at the moment
     -- optional argument names
      "Keep",
      --mes--"Denominator",
