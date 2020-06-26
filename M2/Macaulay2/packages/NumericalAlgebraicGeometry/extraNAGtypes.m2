@@ -74,26 +74,6 @@ evaluate (GateSystem,Matrix,Matrix) := (F,p,x) -> (
     evaluate(F#"SLP", matrix p | matrix x)
     )
 
---todo: think about differentiating wrt. a subset of variables
-initJacobian = method()
-initJacobian (List, GateSystem) := (inds, GS) -> (
-    if not GS.cache#?"JSLP" then (
-    	F := gateMatrix GS;
-    	I := (vars GS)_inds;
-    	J := diff(I,F);
-    	GS.cache#"JSLP" = makeSLProgram(parameters GS | vars GS, J);
-	);
-    )
-initJacobian GateSystem := GS -> initJacobian(toList(0..numVariables GS-1), GS)
-
-evaluateJacobian (GateSystem, Matrix, Matrix) := (GS, p0, x0) -> (
-    initJacobian GS;
-    out := evaluate(GS.cache#"JSLP", p0 | x0); -- NB: parameters first
-    matrix(out, numFunctions GS, numVariables GS)
-    )
-evaluateJacobian (GateSystem, Point, Point) := (GS, p0, x0) -> evaluateJacobian(GS,matrix p0, matrix x0)
-
-
 TEST ///
 -* GateSystem *-
 declareVariable \ {x,y,t}
@@ -117,6 +97,34 @@ toExternalString fS
 toExternalString fT
 ///
 
+--todo: bring into harmony with (jacobian, PolySystem)
+jacobian (List, GateSystem) := (inds, GS) -> (
+    if not GS.cache#?Jacobian then (
+    	F := gateMatrix GS;
+    	I := (vars GS)_inds;
+    	J := diff(I,F);
+    	GS.cache#Jacobian = makeSLProgram(parameters GS | vars GS, J);
+	);
+    )
+jacobian GateSystem := GS -> jacobian(toList(0..numVariables GS-1), GS)
+
+-- overrides "implementation" for System
+evaluateJacobian (GateSystem, Matrix, Matrix) := (GS, p0, x0) -> (
+    J := jacobian GS;
+    out := evaluate(J, p0 | x0); -- NB: parameters first
+    matrix(out, numFunctions GS, numVariables GS)
+    )
+evaluateJacobian (GateSystem, Point, Point) := (GS, p0, x0) -> evaluateJacobian(GS, matrix p0, matrix x0)
+
+TEST /// 
+X = gateMatrix{declareVariable \ {x, y}}
+G = gateSystem(X, gateMatrix{{x^2+y^2-6, 2*x^2-y}})
+p = point({{1.0_CC,2.3_CC}});
+assert(numVariables S == 2)
+assert(numFunctions S == 2)
+evaluate(S,p)
+evaluateJacobian(S,p)
+///
 
 --TEST 
 /// -- package Serialization

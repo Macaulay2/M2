@@ -1,7 +1,6 @@
 --0) seeding tests
 
 TEST ///
--- createSeedPair tests
 setRandomSeed 2 
 T = CC[a_1..a_6][x_1,x_2,lambda]
 f_1 = a_1*x_1+a_2*x_2 - x_1*lambda 
@@ -15,10 +14,10 @@ P=gateSystem(matrix{{A,B,C}},matrix{{t}},transpose matrix{{A-t,B-t^2,C-t^3}})
 (p0, x0) = createSeedPair P
 ///
 
+
 -- 1) static monodromy tests
 
 TEST ///
--- s
 setRandomSeed 0
 R = CC[a,b,c,d,e,f,g,h][A,B,C];
 polys = polySystem {
@@ -31,7 +30,10 @@ count = 6;
 --The first set of tests may not find all solutions, as there is no
 --target root count.
 
-(V,npaths) = monodromySolve polys;
+(V,npaths) = monodromySolve(polys, NumberOfNodes=>3);
+assert( length V.PartialSols == count );
+
+(V,npaths) = monodromySolve(polys, NumberOfNodes=>3, "new tracking routine" => false);
 assert( length V.PartialSols == count );
 
 (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfNodes=>3);
@@ -100,6 +102,29 @@ assert( length V.PartialSols == count );
 assert( length V.PartialSols == count );
 ///
 
+///TEST
+-- this tests the Equivalencer option and the new (v1.13) quadratic parameter homotopy
+setRandomSeed 0
+m = 4
+n = 2
+declareVariable \ {t_1,t_2,u_0,u_1,u_2,u_3}
+paramMatrix = gateMatrix{{u_0,u_1,u_2,u_3}}
+varMatrix = gateMatrix{{t_1,t_2}}
+
+phi = transpose gateMatrix{{t_1^3, t_1^2*t_2, t_1*t_2^2, t_2^3}}
+phiEval = gateSystem(varMatrix, phi)
+assert(m==numrows phi)
+--distance = sum for i from 0 to 2 list (u_i-phi_(0,i))^2
+loss = sum for i from 0 to 3 list (u_i - phi_(i,0))^2
+dLoss = diff(varMatrix, gateMatrix{{loss}})
+G = gateSystem(paramMatrix,varMatrix,transpose dLoss)
+(u0, x0) = createSeedPair G
+norm evaluate(G,u0,x0)
+(P, p0, x0) = (G, u0, x0)
+(p1, x1s) = solveFamily(G, Equivalencer=>(x-> point evaluate(phiEval, x)))
+assert(length points x1s == 7)
+///
+
 -- 2) dynamic monodromy tests
 ///TEST
 setRandomSeed 0
@@ -110,8 +135,6 @@ polys = polySystem {
 	g*A*B*C-h*1};
 (p0,x0) = createSeedPair polys;
 count = 6;
-
-
 
 --Set dynamic options. Need to provide an AugmentGraphFunction and
 --the AugmentEdgeCount and/or AugmentNodeCount should be greater than 0 if
@@ -139,5 +162,3 @@ sols = sparseMonodromySolve(P, NumberOfEdges=>10, NumberOfRepeats=>20)
 assert (#sols == 4) 
 assert all(sols,s->norm evaluate(P,s) < 0.0001)
 ///
-
---2) tests for HomotopyGraphTypes
