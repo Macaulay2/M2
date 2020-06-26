@@ -224,7 +224,7 @@ document {
 	  "Macaulay2 uses the excellent garbage collector GC, version ", version#"gc version", ",
 	  written by Hans-J. Boehm and Alan J. Demers and generously licensed
 	  to the public.  It is available at
-	  ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", "."
+	  ", HREF "https://www.hboehm.info/gc/", "."
 	  },
      PARA{
 	  "Some environment variables can be set by the user to tune garbage collector performance:"
