@@ -2785,16 +2785,10 @@ TEST ///
   S = kk[x,y,z,t]
   F = poly"xy-(z-t2)(z-t3)(z-t4)"
   J = ideal jacobian ideal F
-  F % J
-  RJ = reesAlgebra J
-  RJ = first flattenRing RJ
-  elapsedTime RJ' = integralClosure(RJ, Verbosity => 2)
-  elapsedTime J' = integralClosure J
-  assert(J != J')
-  --assert(F % J' == 0) -- false, is that correct!?  Ask David?
-  assert(isSubset(J, J'))
-  icFractions RJ
-  assert(10 == # icFractions RJ)
+  mm = ideal vars S
+  F % (J+mm*F)!=0 -- shows that F is not crypto-quasihomogeneous
+  J' = integralClosure J
+  assert (F % (J'+mm*F) == 0)
 ///
 
 -- a homogeneous example which extends the ground field
