@@ -1,3 +1,8 @@
+phcPresent := run ("type phc >/dev/null 2>&1") === 0
+phcVersion := if phcPresent then replace("PHCv([0-9.]+) .*\n","\\1",get "! phc --version")
+phcVersionNeeded := "2.4.77"
+phcPresentAndModern := phcPresent and match("^[0-9.]+$",phcVersion) and phcVersion >= phcVersionNeeded
+
 newPackage(
   "PHCpack",
   Version => "1.8", 
@@ -28,10 +33,6 @@ newPackage(
      HomePage => "https://math.berkeley.edu/~seigal/"}
   },
   Headline => "interface to PHCpack",
-  Configuration => { 
-    "path" => "",
-    "PHCexe"=>"phc"
-  },
   Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry",
 	"journal URI" => "http://j-sag.org/",
@@ -49,9 +50,14 @@ newPackage(
   AuxiliaryFiles => true,
   CacheExampleOutput => true,
   PackageExports => {"NAGtypes"},
-  OptionalComponentsPresent => run ("type phc >/dev/null 2>&1") === 0
+  OptionalComponentsPresent => phcPresentAndModern
 )
 
+checkIsRunnable = () -> (
+     if not phcPresent then error "phc not present";
+     if not phcPresentAndModern 
+     then error ("phc present but not modern enough; need version ", phcVersionNeeded, " but found version ",phcVersion);
+     )
 
 --Copyright 2013 Elizabeth Gross, Sonja Petrovic, Jan Verschelde.
 --  You may redistribute this file under the terms of the GNU General
@@ -105,10 +111,11 @@ protect Append
 --##########################################################################--
 
 PHCDBG = 0; -- debug level (10=keep temp files)
-path'PHC = (options PHCpack).Configuration#"path";
-PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe"|(
-    if member("--no-randomize", commandLine) then " -0" else ""
-    );
+
+-- We used to allow the user to set this in the "Configuration" of the package, but we need
+-- to know whether the program is present before "newPackage" runs, and thus there is no
+-- good way to get the option early enough.
+PHCexe = "phc"
 
 -- this is the executable string that make sures that calls to PHCpack run:
 -- NOTE: the absolute path should be put into the init-PHCpack.m2 file 
@@ -244,7 +251,7 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
 --         );
 --         close f;
 --         foutname := fname | ".sols";
---         if isRunnable() then run(PHCexe|" -z "|fname|" "|foutname);
+--         if checkIsRunnable() then run(PHCexe|" -z "|fname|" "|foutname);
 --         parseSolutions(get foutname,R)
 --     )
 -- )
@@ -304,7 +311,8 @@ parseIntermediateSolutions (String,Ring) := (output,R) -> (
         f << "===========================================================================" << endl;
         f << get oldf;
         close f;
-        if isRunnable() then run(PHCexe|"-z "|pf#0|".final "|pf#0|".sols");
+        checkIsRunnable();
+	run(PHCexe|"-z "|pf#0|".final "|pf#0|".sols");
         results = append(results,parseSolutions(pf#0|".sols",R));
     );
     results
@@ -480,7 +488,8 @@ witnessSetFromFile (String) := (name) -> (
   d := dimEmbedding(e);
   witnessPointsFile := temporaryFileName() | "PHCwitnessPoints";
   if fileExists witnessPointsFile then removeFile witnessPointsFile;
-  if isRunnable() then run(PHCexe|" -z " | name | " "|witnessPointsFile);
+  checkIsRunnable();
+  run(PHCexe|" -z " | name | " "|witnessPointsFile);
   eR := ring first e;
   g := parseSolutions(witnessPointsFile,eR);
   w := witnessSet(ideal(take(e,{0,#e-d-1})),ideal(take(e,{#e-d,#e-1})),g);
@@ -665,7 +674,8 @@ cascade (List) := o -> (system) -> (
     ( stdio << "calling phc -c < " << PHCbatchFile;
     stdio << " > " << PHCsessionFile << endl
     );
-    if isRunnable() then run(PHCexe|" -c < " | PHCbatchFile | " > " | PHCsessionFile);
+    checkIsRunnable();
+    run(PHCexe|" -c < " | PHCbatchFile | " > " | PHCsessionFile);
   if o.Verbose then
     ( stdio << "output of phc -c is in file " << PHCoutputFile << endl;
     stdio << "... constructing witness sets ... " << endl
@@ -704,7 +714,8 @@ cascade (List) := o -> (system) -> (
           if #g!=0 then result = append(result,(i,ws));
         );
       ) else (
-        if isRunnable() then run(PHCexe | " -z " | fil | " " | PHCsolsFile);
+        checkIsRunnable(); 
+	run(PHCexe | " -z " | fil | " " | PHCsolsFile);
         use R;
 	supwit = witnessSetFromFile(fil);
         if o.Verbose then
@@ -754,7 +765,8 @@ constructEmbedding (List, ZZ) := o->  (system, dimension) -> (
   (  stdio << "calling phc -c < " << PHCbatchFile;
      stdio << " > " << PHCsessionFile << endl
      );
-  if isRunnable() then run(PHCexe|" -c < " | PHCbatchFile | " > " | PHCsessionFile);
+  checkIsRunnable(); 
+  run(PHCexe|" -c < " | PHCbatchFile | " > " | PHCsessionFile);
   if o.Verbose then
     stdio << "output of phc -c is in file " << PHCoutputFile << endl;
   
@@ -809,7 +821,8 @@ factorWitnessSet (WitnessSet ) := o->  w -> (
   close bat;
   if o.Verbose then
     stdio << "... calling monodromy breakup ..." << endl;
-  if isRunnable() then run(PHCexe|" -f < " | PHCbatchFile | " > " | PHCsessionFile);
+  checkIsRunnable(); 
+  run(PHCexe|" -f < " | PHCbatchFile | " > " | PHCsessionFile);
   if o.Verbose then
     (stdio << "session information of phc -f is in " << PHCsessionFile << endl;
     stdio << "output of phc -f is in file " << PHCoutputFile << endl
@@ -881,7 +894,8 @@ isWitnessSetMember (WitnessSet,Point) := o-> (witset,testpoint) -> (
     stdio << "calling phc -f < " << PHCbatchFile;
     stdio << " > " << PHCsessionFile << endl;
   );
-  if isRunnable() then run(PHCexe|" -f < " | PHCbatchFile | " > " | PHCsessionFile);
+  checkIsRunnable(); 
+  run(PHCexe|" -f < " | PHCbatchFile | " > " | PHCsessionFile);
   if o.Verbose then
     stdio << "output of phc -f is in file " << PHCoutputFile << endl;
   -- if the point does not belong to the witness set,
@@ -946,7 +960,8 @@ mixedVolume  List := Sequence => opt -> system -> (
   
   if opt.interactive then (
     << endl << "If you need a start system, the filename MUST be " << endl << endl << startfile << endl << endl << endl;
-    if isRunnable() then run(PHCexe|" -m "|infile|" "|outfile);
+    checkIsRunnable(); 
+    run(PHCexe|" -m "|infile|" "|outfile);
   ) else (
   -- launching mixed volume calculator :
   execstr := PHCexe|" -m "|(if opt.numThreads > 1 then ("-t"|opt.numThreads|" ") else "")|infile|" "|outfile|" < "|cmdfile|" > "|sesfile;
@@ -1072,13 +1087,15 @@ refineSolutions (List,List,ZZ) := o-> (f,sols,dp) -> (
   bat << s;
   close bat;
   -- stdio << "running phc -v, writing output to " << PHCsessionFile << endl;
-  if isRunnable() then run(PHCexe|" -v < " | PHCbatchFile | " > " | PHCsessionFile);
+  checkIsRunnable(); 
+  run(PHCexe|" -v < " | PHCbatchFile | " > " | PHCsessionFile);
   if o.Verbose then
     (  stdio << "using temporary file " << PHCoutputFile;
     stdio << " for storing refined solutions " << endl;
     stdio << "solutions in Maple format in " << PHCsolutions << endl
     );
-  if isRunnable() then run(PHCexe|" -z " | PHCoutputFile | " " | PHCsolutions);
+  checkIsRunnable(); 
+  run(PHCexe|" -z " | PHCoutputFile | " " | PHCsolutions);
   b := ceiling(log_2(10^dp));
   result := parseSolutions(PHCsolutions,R,Bits=>b);
   result
@@ -1373,9 +1390,11 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
     );
     close bat;
     << batchfile << endl;
-    if isRunnable() then run(PHCexe|" -p "|(if o.numThreads > 1 then 
+    checkIsRunnable(); 
+    run(PHCexe|" -p "|(if o.numThreads > 1 then 
        ("-t"|o.numThreads) else "")|"<"|batchfile|" >phc_session.log");
-    if isRunnable() then run(PHCexe|" -z "|outfile|" "|Tsolsfile);
+    checkIsRunnable(); 
+    run(PHCexe|" -z "|outfile|" "|Tsolsfile);
   )
   -- making batch file
   else if o.interactive then (
@@ -1385,7 +1404,8 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
     << "running (cat "|batchfile|"; cat) | PHCexe -p "<< endl;
     -- (cat batch; cat) | phc -p
     run("(cat "|batchfile|"; cat) | "|PHCexe|" -p ");
-    if isRunnable() then run(PHCexe|" -z "|outfile|" "|Tsolsfile);
+    checkIsRunnable(); 
+    run(PHCexe|" -z "|outfile|" "|Tsolsfile);
       
   ) else (
   if not (o.numThreads > 1) then (
@@ -1429,9 +1449,11 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
     close bat;
   );
 
-  if isRunnable() then run(PHCexe|" -p "|(if o.numThreads > 1 then 
+  checkIsRunnable(); 
+  run(PHCexe|" -p "|(if o.numThreads > 1 then 
      ("-t"|o.numThreads) else "")|"<"|batchfile|" >phc_session.log");
-  if isRunnable() then run(PHCexe|" -z "|outfile|" "|Tsolsfile);
+  checkIsRunnable(); 
+  run(PHCexe|" -z "|outfile|" "|Tsolsfile);
   
   );
   -- parse and output the solutions
@@ -1803,7 +1825,7 @@ versionNumber(Nothing) :=  o -> (Nothing) -> (
 --     then the output of phc --version is printed to screen.
 -- OUT: information about the current version of phc.
   filename := temporaryFileName() | "PHCversion";
-  run(path'PHC|(options PHCpack).Configuration#"PHCexe"|" --version > "|filename);
+  run("phc --version > "|filename);
   data := get filename;
   if o.Verbose then
     stdio << data << endl;
@@ -1820,12 +1842,6 @@ versionNumber(Nothing) :=  o -> (Nothing) -> (
     return (vnbr, date);
   );
 )
-
-PHCpackPresent := run ("type "|PHCexe|" >/dev/null 2>&1") === 0
-PHCpackRecent := try last versionNumber(null) >= "2020-06-12" else false
-isRunnable = () -> 
-if not PHCpackPresent then error ("executable not found: "|PHCexe) else 
-if not PHCpackRecent then error "expected phc version at least 2.4.77" else true 
 
 --##########################################################################--
 -- DOCUMENTATION
