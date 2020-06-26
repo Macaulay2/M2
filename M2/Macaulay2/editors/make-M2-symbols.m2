@@ -114,7 +114,13 @@ symbolsForRouge = template -> (
 -- Generate syntax files from templates in the same directory
 
 generateGrammar := (grammarFile, grammarFunction) -> (
-    grammarFile << grammarFunction get(currentFileDirectory | grammarFile | ".in") << close)
+    template := currentFileDirectory | grammarFile | ".in";
+    if fileExists template then (
+        stdio << "-- Generating " << grammarFile << endl;
+        directory := replace("/[^/].*$", "", grammarFile);
+        if not isDirectory directory then makeDirectory directory;
+        grammarFile << grammarFunction get(template) << close)
+    else stderr << "Skipping generation of " << grammarFile << " as it does not exist." << endl;)
 
 -- Emacs: Write M2-symbols.el
 generateGrammar("emacs/M2-symbols.el", symbolsForEmacs)
