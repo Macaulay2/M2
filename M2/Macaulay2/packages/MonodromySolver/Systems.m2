@@ -64,10 +64,10 @@ flatten GateSystem := GS -> gateSystem(vars GS | parameters GS, gateMatrix GS)
 
 -- syntactic sugar for creating instances of GateSystem
 gateSystem (BasicList, BasicList, GateMatrix) := (P, X, F) -> (
-    assert numcols F == 1;
-    gateSystem(gateMatrix{toList P}, gateMatrix{toList X}, F)
+    GM := if numcols F == 1 then F else transpose F;
+    gateSystem(gateMatrix{toList P}, gateMatrix{toList X}, GM)
     )
---gateSystem (BasicList, BasicList, BasicList) := (P, X, Fs) -> foldVert apply(toList Fs, f -> gateSystem(P, X, gateMatrix f))
+gateSystem (BasicList, BasicList, BasicList) := (P, X, Fs) -> matrix apply(toList Fs, f -> gateSystem(P, X, gateMatrix f))
 gateSystem (Thing, Thing, Gate) := (X, P, g) -> gateSystem(X, P, gateMatrix{{g}})
 gateSystem (List, Thing) := (X, F) -> gateSystem({}, X, F)
 

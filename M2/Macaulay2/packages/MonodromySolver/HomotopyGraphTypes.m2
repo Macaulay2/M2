@@ -287,10 +287,7 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
     	e.Potential21 = HG.Potential (e, false);
 	);
     ret := #untrackedInds;
-    if (ret > 0 and HG.Verbose) then (
-        << "WARNING: no paths attempted" << endl;
-        if DebuggingMode == true then error "trackEdge should not be called";
-        );
+    if (ret == 0 and HG.Verbose) then << "WARNING: no paths attempted" << endl;
     updateFirstDirectedEdge HG;
     ret
     )

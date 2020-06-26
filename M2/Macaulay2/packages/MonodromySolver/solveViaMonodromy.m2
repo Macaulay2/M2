@@ -383,6 +383,10 @@ coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG, node1) -> (
     npaths := 0;    
     lastNode := node1;
     e1 := selectFirstEdgeAndDirection HG;
+    if o.Verbose then (
+        << "starting to track monodromy loops " << endl;
+        << "============================================================" << endl;
+        );
     while not o.StoppingCriterion(same, HG) do (
         (e, from1to2) := selectEdgeAndDirection HG;
         if o.Verbose then (
