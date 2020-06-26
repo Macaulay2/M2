@@ -275,7 +275,7 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
 		    );
 		if not addCorrespondence(if from1to2 then (e,a,b) else (e,b,a))
 		then (
-		    print "a path failed (correspondence conflict: suggests paths have jumped)";
+		    if HG.Verbose then << "a path failed (correspondence conflict: suggests paths have jumped)" << endl;
 		    correspondence#a = null -- record failure 
 		    )
 		);
@@ -287,7 +287,7 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
     	e.Potential21 = HG.Potential (e, false);
 	);
     ret := #untrackedInds;
-    if (ret == 0 and HG.Verbose) then << "WARNING: no paths attempted" << endl;
+    if (ret == 0 and HG.Verbose) then << "no paths attempted" << endl;
     updateFirstDirectedEdge HG;
     ret
     )

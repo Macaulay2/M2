@@ -316,11 +316,17 @@ staticMonodromySolve (System, Point, List) := o -> (PS, p0, sols0) -> (
             (p -> p)
             )
         ) else (
-        assert instance(o.Randomizer, FunctionClosure);
+        assert instance(o.Randomizer, Function);
         o.Randomizer
         );
-    filterCondition := if instance(o.FilterCondition, Nothing) then (x -> false);
-    equivalencer := if instance(o.Equivalencer, Nothing) then (x -> x);
+    filterCondition := if instance(o.FilterCondition, Nothing) then (x -> false) else (
+        assert instance(o.FilterCondition, Function);
+        o.FilterCondition
+        );
+    equivalencer := if instance(o.Equivalencer, Nothing) then (x -> x) else (
+        assert instance(o.Equivalencer, Function);
+        o.Equivalencer
+    );
     -- !! global assignment !!
     USEtrackHomotopy = isGS or (getDefault Software === M2engine and o#"new tracking routine");
     -- certain options must be passed to homotopyGraph
