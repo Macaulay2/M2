@@ -27,36 +27,6 @@ export {
     "sparseMonodromySolve",
     "solveFamily"}
 
--*
-
-Major Change MonodromySolver
-DONE: code refactoring and cleanup
-DONE: complete rewrite of solveFamily, w/ modified documentation
-DONE: reorganize tests
-DONE: remove uninvited warning messages, which used to be printed even when Verbose=>false
-DONE: check linearity before auto-seeding
-DONE: check Randomizer option and set it robustly
-DONE: use quadratic segment homotopy when no good Randomizer is given
-DONE: refactor trackEdge
-DONE: new tests (createSeedPair, Equivalencer, quadratic segment homotopy)
-
-0) GAPcode
-1) experimental nonlinear seeding (requires newton, refine, for System)
-2) Jacobian checking
-3) fix saturateEdges
-4) store failures in graph
-:
-overdetermined systems
-
-clarify mutableOptions, MutableOptions, dynamicOptions, etc
-eliminate logic that distinguishes GateSystems and PolySystems as much as possible
-make sure "new tracking routine" => false actually works!
-IMA todos?
-  -- store more info in graph (failures, npaths)
-  -- addNode bug?
-check that PLMP still runs
-*-
-
 --0) global variables, overrides, & uncategorized service functions
  
 -- Option table that gives defaults for exported functions
@@ -77,9 +47,9 @@ MonodromyOptions = {
 	"new tracking routine" => true, -- uses "track" if false, "trackHomotopy" if true
 	Verbose => false,
 	EdgesSaturated => false,
-	FilterCondition => (x -> false), -- experimental: if (o.FilterCondition x == true), don't record a correspondence
+	FilterCondition => null, -- experimental: if (o.FilterCondition x == true), don't record a correspondence. default (x -> false)
 	Randomizer => null, -- experimental: want p and o.Randomizer p to have the same solutions. disallowed for PolySystem, else set to (p -> p) by default
-	Equivalencer => (x -> x) -- experimental: when are two solutions equal?
+	Equivalencer => null -- experimental: when are two solutions equal? default (x -> x)
         }
 -- OptionTable for CreateSeedPair (excluding Verbose)
 SeedingOptions = {
@@ -349,14 +319,16 @@ staticMonodromySolve (System, Point, List) := o -> (PS, p0, sols0) -> (
         assert instance(o.Randomizer, FunctionClosure);
         o.Randomizer
         );
+    filterCondition := if instance(o.FilterCondition, Nothing) then (x -> false);
+    equivalencer := if instance(o.Equivalencer, Nothing) then (x -> x);
     -- !! global assignment !!
     USEtrackHomotopy = isGS or (getDefault Software === M2engine and o#"new tracking routine");
     -- certain options must be passed to homotopyGraph
     graphConstructorOptionTable := new OptionTable from {
         Potential => o.Potential, 
         Randomizer => randomizer, 
-        FilterCondition => o.FilterCondition, 
-        Equivalencer => o.Equivalencer,
+        FilterCondition => filterCondition,
+        Equivalencer => equivalencer,
         LinearSegment => useLinearSegment,
         Verbose => o.Verbose
         };

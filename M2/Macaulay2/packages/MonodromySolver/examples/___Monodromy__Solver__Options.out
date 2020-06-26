@@ -7,14 +7,14 @@
 
 i1 : options monodromySolve
 
-o1 = OptionTable{AugmentEdgeCount => 0                                                                                                         }
+o1 = OptionTable{AugmentEdgeCount => 0                                }
                  AugmentGraphFunction => null
                  AugmentNodeCount => 0
                  AugmentNumberOfRepeats => null
                  BatchSize => infinity
                  EdgesSaturated => false
-                 Equivalencer => -*Function[../../../home/tim/R/M2/M2/Macaulay2/packages/MonodromySolver/solveViaMonodromy.m2:82:28-82:31]*-
-                 FilterCondition => -*Function[../../../home/tim/R/M2/M2/Macaulay2/packages/MonodromySolver/solveViaMonodromy.m2:80:31-80:34]*-
+                 Equivalencer => null
+                 FilterCondition => null
                  GraphInitFunction => completeGraphInit
                  new tracking routine => true
                  NumberOfEdges => 4

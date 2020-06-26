@@ -1,6 +1,8 @@
 -- undocumented methods and symbols (for each, consider... does it really need to be exported? should it be documented?)
 undocumented {Vertices, (pointArray,List), saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,Point,List), RandomPointFunction, 
-     Correspondence21, Edges, Correspondence12, Potential21, Potential12, Family, gamma1, gamma2, Graph, Node1,  Node2, HomotopyEdge, makeRandomizedSelect}
+     Correspondence21, Edges, Correspondence12, Potential21, Potential12, Family, gamma1, gamma2, Graph, Node1,  Node2, HomotopyEdge, makeRandomizedSelect,
+     isAffineLinearFunction, appendPoint, appendPoints, (symbol <<, File, PointArray), (position, Point, PointArray, FunctionClosure), (toExternalString, PointArray), PartialSolBins, LinearSegment, FirstDirectedEdge
+     }
     --, SpecializedSystem,  HomotopyNode, HomotopyGraph,PartialSols}
 -- undocument tags
 undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), 1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount],FilterFailure}
@@ -288,7 +290,6 @@ doc ///
         [monodromySolve,EdgesSaturated]
         [solveFamily,EdgesSaturated]
         [sparseMonodromySolve,EdgesSaturated]
-	FilterCondition
         GraphInitFunction
         [monodromySolve,GraphInitFunction]
         [solveFamily,GraphInitFunction]
@@ -309,7 +310,6 @@ doc ///
         [monodromySolve,Potential]
         [solveFamily,Potential]
         [sparseMonodromySolve,Potential]
-	Randomizer
         SelectEdgeAndDirection
         [monodromySolve,SelectEdgeAndDirection]
         [solveFamily,SelectEdgeAndDirection]
@@ -325,7 +325,16 @@ doc ///
         [sparseMonodromySolve,TargetSolutionCount]
         [monodromySolve,Verbose]
         [solveFamily,Verbose]
-        [sparseMonodromySolve,Verbose]    
+        [sparseMonodromySolve,Verbose]
+	Randomizer
+        [solveFamily,Randomizer]
+        [sparseMonodromySolve,Randomizer]
+        Equivalencer
+        [solveFamily,Equivalencer]
+        [sparseMonodromySolve,Equivalencer]
+        FilterCondition
+        [solveFamily,FilterCondition]
+        [sparseMonodromySolve,FilterCondition]
     Description
         Text
             Here are some options for the solvers. The current defaults for a given solver may be accessed like so:
@@ -350,11 +359,12 @@ doc ///
                 {"Potential: a function that assigns a number to each edge in each iteration, indicating its
                 potential for producing new solutions. Current supported potential functions are ", TO potentialE , " and ", 
                 TO potentialLowerBound},
-                {"SelectEdgeAndDirection: currently accepts either ", TO selectBestEdgeAndDirection, " or ",
-                 TO selectRandomEdgeAndDirection, ". Note that the former also requires setting " },
+                {"SelectEdgeAndDirection: accepts either ", TO selectBestEdgeAndDirection, " or ",
+                 TO selectRandomEdgeAndDirection, ". Tthe former also requires setting a potential. Default is an internal function that selects the first available edge." },
                 "StoppingCriterion: eg. stop if no progress has been made",
                 "TargetSolutionCount: expected/desired number of solutions (overrides StoppingCriterion)",
-                "Verbose: reports progress in each iteration"
+                "Verbose: reports progress in each iteration",
+                "experimental options: Equivalencer, FilterCondition, Randomizer."
                 }
     ///
 

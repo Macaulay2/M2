@@ -212,9 +212,9 @@ setTrackTime (HomotopyGraph, Number) := (HG,t) -> HG#"track time" = t
 getTrackTime = method()
 getTrackTime HomotopyGraph := HG -> HG#"track time"
 
--- IN: HomotopyEdge (e = head--tail)
---     Boolean (from1to2) -- if true, track head->tail, else track tail->head
---     BatchSize: bound on number of points to track
+--  Input: HomotopyEdge (e = head--tail)
+--         Boolean (from1to2): if true, track head->tail, else track tail->head
+--         ZZ (BatchSize): bound on number of points to track
 -- Output: the number of _Attempted_ path-tracking tasks
 -- Modifies: e and its HomotopyGraph
 trackEdge = method()
@@ -261,7 +261,7 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
 	       	correspondence#a = null; -- record failure		  
 		);
 	    if (status s =!= Regular) then (
-		if HG.Verbose then << "a path failed (tracking error): status = " << status s << endl;
+		if HG.Verbose then << "a path failed (tracking error) status = " << status s << endl;
 		correspondence#a = null; -- record failure
 		)
 	    else ( 
@@ -275,7 +275,7 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
 		    );
 		if not addCorrespondence(if from1to2 then (e,a,b) else (e,b,a))
 		then (
-		    print "failure due to correspondence conflict (suggesting paths have jumped)";
+		    print "a path failed (correspondence conflict: suggests paths have jumped)";
 		    correspondence#a = null -- record failure 
 		    )
 		);
@@ -359,48 +359,3 @@ flowerGraphAugment = (HG, p, node1, nStartingEdges, nNewEdges, nNewNodes) -> (
 
 
 end
-
-restart
-needsPackage "MonodromySolver"
-
-R = CC[x,y,a]
-PS = polySystem {x^2+y^2-1, x+a*y, (a^2+1)*y^2-1}
-G = gateSystem(squareUp(PS,2), drop(gens R,2)) 
-
-
-
-PH = makeEdgeHomotopy G
-PH.Parameters 
-
-c0 = 0
-a0 = 0; a1 = 1;
-H = specialize (PH, transpose matrix{{c0,a0,a1}})
-s'sols = { {{0,1}},{{0,-1}} }/point
-time sols = trackHomotopy(H,s'sols)
-assert areEqual(sols,{{ { -.707107, .707107}, SolutionStatus => Regular }, { {.707107, -.707107}, SolutionStatus => Regular }} / point)
-
-
-        s(0) = 0
-        s(0.5) = c
-        s(1) = 1
-        s(t) = t (at + b) 
-               a+b=1
-               a + 2b =4 c
-               b = 4c -1
-               a = 2 - 4c
-------------------------------------------
-------------------------------------------
--- Documentation
-------------------------------------------
-------------------------------------------
-
-beginDocumentation()
-
-------------------------------------------
--- Data Types
-------------------------------------------
-
-doc ///
-  Key
-    Graphs
-///
