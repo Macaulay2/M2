@@ -136,8 +136,16 @@ jobs:
           ${{matrix.make}} get-tools
           ${{matrix.make}} -f Makefile
           cd BUILD/cicd
-          # Specifying /usr as the prefix allows us to discover gftables if it's installed there.
-          ../../configure --prefix=/usr --enable-download --enable-build-libraries="readline"
+          # Specifying /usr as the prefix here allows us to discover gftables if it's installed there.
+          # Specifying gmp here allows us to sidestep a mismatch between the mangling of C++ symbols by gcc-9 and gcc
+          # that prevents linking mpsolve with the libgmp in homebrew on the Mac:
+                #   CXXLD    libmps.la
+                # Undefined symbols for architecture x86_64:
+                #   "operator<<(std::basic_ostream<char, std::char_traits<char> >&, __mpq_struct const*)", referenced from:
+                #       mps::formal::operator<<(std::basic_ostream<char, std::char_traits<char> >&, mps::formal::Monomial const&) in formal-monomial.o
+                # ld: symbol(s) not found for architecture x86_64
+                # collect2: error: ld returned 1 exit status
+          ../../configure --prefix=/usr --enable-download --enable-build-libraries="readline gmp"
 
       - name: Save artifacts (autotools)
         if: always() && matrix.build-type == 'autotools'
@@ -153,9 +161,13 @@ jobs:
         run: ${{matrix.make}}
 
 # ----------------------
-#   Run tests (Skip for now given the build failures)
+#   Run tests
 # ----------------------
 
-      - name: Run Tests
-        id: step_run_tests
-        run: echo "Placeholder. Don't do anything for now"
+      - name: Run Tests (autotools, ubuntu)
+        if: matrix.build-type == 'autotools' && matrix.os == 'ubuntu-latest'
+        working-directory: M2/BUILD/cicd
+        run: |
+          ${{matrix.make}} -k check
+          ${{matrix.make}} -C Macaulay2/html-check-links check
+          ${{matrix.make}} validate-html

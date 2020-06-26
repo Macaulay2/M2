@@ -1,146 +1,14 @@
---------------------------------------------
--- NOTE!!!!!  The version in bitbucket is the most up to date
--- For now, the version in M2.git is a relatively recent version.
--- Jan 5, 2017: first time Complexes.m2 was added to M2.git
------------------------------------------------
--- DDD: doc node we just finished. Also note the 'prune ChainComplexMap' bug in doc node.
---  May 2019 todo: 
---     write part(d, C), part(d, f), which returns the degree d part of the complex (or map) 
---       over the coefficient ring.
---     working on connecting homomorphisms.  See BBB
---     then continue with connecting homoms of Ext and Tor.
---   do a less trivial example:
---     i.e. a non-zero connectingMap starting with 0 --> M' --> M --> M'' --> 0
---          construct Ext^i(M', S) --> Ext^(i+1)(M'',S)
---          use horseShoe resolution for this case, compare with connectingMap
---   compare two methods of doing connecting homomorphisms.
---   NOTE: connectingMap should have an option for only taking part of the map (e.g. a range of indices).
---   NOTE MORE: many functions should have this option.
---   SHOULD: homology have an option to cache its result?
---  jan 2019: doc cone, cylinder, canonicalMap.
---    also do connectingMorphism(f,g) : H(E) --> H(C[-1])
---      we know two ways to construct this.  Compare both.
---      speicalized for Ext and Tor.
--- todo? add in random complexes. over ZZ from Frank, over other things?
--- todo for week of Aug 5: (prioritized in order)
---   improve speed of minimize
---   finish off the Yoneda stuff (as in todo for 20 Jul)
---   . knock off the remaining easy functionality from ChainComplexes (see below GGG)
---   . documentation
---   . Ext(Module,Module) -- translate this to new code, and make functorial if possible
---   . make sure that yoneda functions can take R^1 --> E, where R^1 is graded of non-zero internal degree.
---   . isNullHomotopic is sometimes too slow, for seemingly small examples.
---        problem: isNullHomotopic is too slow.  Can we improve that.
---       in particular, in test #5, AAAA, it takes forever to check if diffg' is null homotopic.
---       in particular: search for: -- AAAA 22 Mar 2018 resolutions and lifting maps
---       Can we improve that?
---   . rewrite m2/res.m2 code so freeResolution doesn't use the older code.
---     change interface to resolution in res.m2 to return Complex.
---     i.e. add in freeResolution direct to engine.
---     status (of a resolution)
---   .      connecting homomorphisms for Ext, Tor, what else?
---           0 <-- A <-- B <-- C <-- 0 (input: is a complex, short exact sequence)
---           M or N: module
---           i: which Ext
---         connectingExt(i, Complex, Module)
---         connectingExt(i, Module, Complex)
---         connectingTor same
---   . go through all methods, and decide which ones should have a LengthLimit option
---        e.g.: isQuasiIsomorphism.
-
---    1. example: multiplication map on a free resolution is only defined up to homotopy.
---   We changed master source code for M2 to handle Hom(F,G) without Groebner bases,
---     if F and G are free.  However, this didn't improve performance.
---   Can we find different ways to construct quasi-isomorphisms?
---   code to generate a basis of all cycles, as maps, also to generate a basis of all boundaries, as maps.
---    code exists in an example, but not in the interface.
---       Can we speed up the computation of homology, mingens, etc?  
---         (really, this is a core M2 issue).
---         
---   morphisms in derived category (start here).
---       Mike's meanderings: f : C --> D, get Ff : FC --> FD
---       We need to implement the following:
---        (a): given g : C --> D, find Fg : FC --> FD.
---        (b): given g : C --> D a quasi-isomorphism, find Fg^-1 : FD --> FC.
---        (c): given g : C --> D surjective, and E --> D is given, E semi-free.
---           find the lift: E --> FC. (or E --> C) (this might be the main primitive).
---       Generate interesting examples of:
---        (a) quasi-isomorphisms
---        (b) interesting maps between complexes.
---        (c) given complexes C,D, return a random complex morphism.
---            also: return a basis of the set of f : C --> D of degree 0
---   interface code for PruneComplex.
---   possible examples:
---     cotangent complex
---     Hom(res I, (ring I)^1/I)
---   need good (killer app) examples e.g. for:
---     a. connecting homomorphisms
---     b. derived category computations
---       BGG:
---         L,R functors
---         M S-module --> T(M) Tate resolution over E (exterior algebra).
---         Beilinson functor: B(E-module) = U^a
--- 1. Add in functionality present in current ChainComplexes code. GGG
---     eagonNorthcott
---     koszul, koszulComplex
---     taylorResolution
---     Module Array (can't do this until we replace old code)
---     transpose ComplexMap (modules are free modules, we expect)
---   texMath/tex (of Complex, ComplexMap?  Current code is not so useful)
---     cartanEilenbergResolution, extendFromMiddle, gradedModule, isMinimal, mathML, 
---     tensorAssociativity (exists, but maybe not functional?)
---     support (nonzeroMin, nonzeroMin)
---     tex, texMath
-
--- 2. Fill in obvious holes (including code from ChainComplexExtras,TateOnProducts)
---  tensor product along a ring map?
---  Hom and ** should play well with direct sums
---  turn HH^* into a functor
---  connecting homomorphisms
---  isMinimalChainComplex?  Maybe have: isFreeComplex
---  truncation (4 truncations: naive/smart, either side) (naive, canonical).
---    we have done probably a couple of these, e.g. naiveTruncation
--- 6 standard homomorphisms
---   tensor commutativity
---   tensor associativity
---   adjointness
---   Hom swap Hom(C,Hom(D,E)) = Hom(D,Hom(C,E)).
---   Tensor evaluation (Hom(C,D)**E --> Hom(C,D**E)).
---   Hom evaluation: C**Hom(D,E) --> Hom(Hom(C,D),E)
---
---
--- make a new constructor:
---   complex ComplexMap (code shell exists, but not yet written).
---   which: takes an f : C --> C of degree -1
---   and creates a new complex with this as differential
---   (assuming f^2 = 0, which will not be implicitly checked).
-
--- question about ** and Hom:
---   add tensorProduct{F0, F1, F2, ...} ?
---   what if A_i, B_j already have a direct sum structure
---     what are the indices of A ** B ? or A ++ B
---   tensorAssociativity, with an option to go to tensorProduct(A,B,C)
---   tensorProduct{A,B,C,...}
---   tensorCommutativity(A,B)
---
--- A. Other functionality
---   Quotient complexes C/D.
---   cartanEilenbergResolution
---   complexes of Eagon-Northcott type
---
--- B. This package should be able to handle the case where the complex
---   is a complex of Modules, Complexes, or CoherentSheaves
-
 newPackage(
         "Complexes",
-        Version => "0.6", 
-        Date => "24 May 2019",
+        Version => "0.9", 
+        Date => "22 June 2020",
     	Authors => {
 	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
-        Headline => "chain complexes",
-        AuxiliaryFiles => false
+        Headline => "development package for beta testing new version of chain complexes",
+        AuxiliaryFiles => false,
+        DebuggingMode => false
         )
 
 export {
@@ -168,6 +36,7 @@ export {
     "isShortExactSequence",
     "liftMapAlongQuasiIsomorphism",
     "minimize",
+    "minimizingMap",
     "nullHomotopy",
     "naiveTruncation",
     "randomComplexMap",
@@ -236,7 +105,7 @@ ComplexMap = new Type of HashTable
   --          and the user hasn't declared it to be true/false yet.
 
 Complex.synonym = "complex"
-ComplexMap.synonym = "homomorphism of complexes"
+ComplexMap.synonym = "map of complexes"
 
 -- net, expression
 -- construction:
@@ -315,6 +184,13 @@ complex Module := opts -> (M) -> (
 complex Ring := opts -> R -> complex(R^1, opts)
 complex Ideal := opts -> I -> complex(module I, opts)
 complex ComplexMap := opts -> (f) -> (
+    if degree f === -1 then (
+        if source f =!= target f then error "expected a differential";
+        (lo,hi) := concentration source f;
+        if lo === hi then return complex((source f)_lo, Base=>lo);
+        newmaps := hashTable for i from lo+1 to hi list i => f_i;
+        return complex newmaps
+        );
     -- TODO: keep this??  implement it??  what is it??
     -- f : C --> C, degree -1, then return (C,f) as a complex.
     -- f : C --> C[-1], return (C,f) as a complex
@@ -450,8 +326,8 @@ concentration ComplexMap := Sequence => f -> (
     deg := degree f;
     (loC, hiC) := concentration C;
     (loD, hiD) := concentration D;
-    lo := max(loC, loD+deg);
-    hi := min(hiC, hiD+deg);
+    lo := max(loC, loD-deg);
+    hi := min(hiC, hiD-deg);
     if lo > hi then (loC, loC) else (lo, hi)
     )
 
@@ -809,6 +685,7 @@ prune Complex := Complex => opts -> (cacheValue symbol minimalPresentation)(C ->
 homology Complex := Complex => opts -> C -> (
     (lo, hi) := C.concentration;
     modules := hashTable for i from lo to hi list i => homology(i,C);
+    if lo == hi then return complex(modules#lo, Base=>lo);
     maps := hashTable for i from lo+1 to hi list i => map(modules#(i-1), modules#i, 0);
     complex maps
     )
@@ -821,9 +698,9 @@ cohomology(ZZ,Complex) := opts -> (i,C) -> homology(-i, C)
 source ComplexMap := Complex => f -> f.source
 target ComplexMap := Complex => f -> f.target
 ring ComplexMap := Complex => f -> ring source f
-degree ComplexMap := Complex => f -> f.degree
+degree ComplexMap := ZZ => f -> f.degree
 
-map(Complex, Complex, HashTable) := opts -> (tar, src, maps) -> (
+map(Complex, Complex, HashTable) := ComplexMap => opts -> (tar, src, maps) -> (
     R := ring tar;
     if ring src =!= R or any(values maps, f -> ring f =!= R) then
         error "expected source, target and maps to be over the same ring";
@@ -908,11 +785,18 @@ map(Complex, Complex, Function) := ComplexMap => opts -> (D,C,f) -> (
     map(D,C,maps,Degree=>deg)
     )
 
-map(Complex, Complex, ZZ) := ComplexMap => opts -> (tar, src, j) -> (
-    if j != 0 then error "expected integer to be zero";
-    result := map(tar,src,hashTable{},opts);
-    result.cache.isCommutative = true;
-    result
+map(Complex, Complex, ZZ) := ComplexMap => opts -> (D, C, j) -> (
+    if j === 0 then (
+        result := map(D,C,hashTable{},opts);
+        result.cache.isCommutative = true;
+        return result
+        );
+    if j === 1 then (
+        if C == D and (opts.Degree === null or opts.Degree === 0) then
+            return id_C;
+        error "expected source and target to be the same";
+        );
+    error "expected integer to be zero or one";
     )
 
 map(Complex, Complex, ComplexMap) := ComplexMap => opts -> (tar, src, f) -> (
@@ -1422,8 +1306,11 @@ Hom(Complex, Complex) := Complex => (C,D) -> (
     Y.cache#(Hom,C,D) = result;
     result
     )
-Hom(Module, Complex) := Complex => (M,D) -> Hom(complex M, D)
-Hom(Complex, Module) := Complex => (C,N) -> Hom(C, complex N)
+Hom(Module, Complex) := Complex => (M,C) -> Hom(complex M, C)
+Hom(Complex, Module) := Complex => (C,M) -> Hom(C, complex M)
+Hom(Complex, Ring) := Complex => (C,R) -> Hom(C, complex R)
+Hom(Ring, Complex) := Complex => (R,C) -> Hom(complex R, C)
+
 dual Complex := Complex => {} >> o -> (C) -> Hom(C, (ring C)^1)
 
 Hom(ComplexMap, ComplexMap) := ComplexMap => (f,g) -> (
@@ -1473,6 +1360,8 @@ Hom(Complex, ComplexMap) := ComplexMap => (C,g) -> Hom(id_C, g)
 Hom(ComplexMap, Complex) := ComplexMap => (f,D) -> Hom(f, id_D)
 Hom(Module, ComplexMap) := ComplexMap => (M,g) -> Hom(complex M, g)
 Hom(ComplexMap, Module) := ComplexMap => (f,N) -> Hom(f, complex N)
+Hom(Ring, ComplexMap) := ComplexMap => (R,f) -> Hom(complex R, f)
+Hom(ComplexMap, Ring) := ComplexMap => (f,R) -> Hom(f, complex R)
 Hom(Complex, Matrix) := ComplexMap => (C,g) -> 
     Hom(C, map(complex target g, complex source g, i -> if i === 0 then g))
 Hom(Matrix, Complex) := ComplexMap => (f,D) -> 
@@ -1619,7 +1508,27 @@ RingMap Complex := Complex => (phi,C) -> (
 RingMap ComplexMap := ComplexMap => (phi,f) ->
     map(phi target f, phi source f, i -> phi f_i)
 
-ComplexMap ** ComplexMap := ComplexMap => (f,g) -> (
+tensor(RingMap, Complex) := Complex => opts -> (phi, C) -> (
+    if source phi =!= ring C then error "expected the source of the ring map to be the ring of the complex";
+    (lo,hi) := concentration C;
+    modules := hashTable for i from lo to hi list i => tensor(phi, C_i);
+    if lo === hi then 
+        return complex(modules#lo, Base=>lo);
+    maps := hashTable for i from lo+1 to hi list i => 
+        map(modules#(i-1), modules#i, tensor(phi, matrix dd^C_i));
+    complex maps
+    )
+tensor(RingMap, ComplexMap) := ComplexMap => opts -> (phi, f) -> (
+    if source phi =!= ring f then error "expected the source of the ring map to be the ring of the complex map";
+    map(tensor(phi, target f), tensor(phi, source f), i -> tensor(phi, matrix f_i))
+    )
+RingMap ** Complex := Complex => (phi, C) -> tensor(phi, C)
+RingMap ** ComplexMap := ComplexMap => (phi, f) -> tensor(phi, f)
+
+tensor(ComplexMap, ComplexMap) := ComplexMap => opts -> (f,g) -> (
+    -- f : C1 --> C2, g : D1 --> D2
+    -- f**g : C1**D1 --> C2**D2
+    -- (f**g)_i : sum_j(C1_j ** D1_(i-j) --> C2_(j+df) ** D2_(i-j+dg))
     df := degree f;
     dg := degree g;
     src := (source f) ** (source g);
@@ -1653,10 +1562,8 @@ ComplexMap ** ComplexMap := ComplexMap => (f,g) -> (
     if isCommutativeCached f and isCommutativeCached g then
         result.cache.isCommutative = true;
     result    
-    -- f : C1 --> C2, g : D1 --> D2
-    -- f**g : C1**D1 --> C2**D2
-    -- (f**g)_i : C1_j ** D1_(i-j) --> C2_(j+df) ** D2_(i-j+dg)
     )
+ComplexMap ** ComplexMap := ComplexMap => (f,g) -> tensor(f,g)
 Complex ** ComplexMap := ComplexMap => (C,g) -> id_C ** g
 ComplexMap ** Complex := ComplexMap => (f,D) -> f ** id_D
 Module ** ComplexMap := ComplexMap => (M,g) -> (complex M) ** g
@@ -1695,7 +1602,7 @@ cylinder ComplexMap := Complex => f -> (
     C := target f;
     (loB,hiB) := B.concentration;
     (loC,hiC) := C.concentration;
-    lo := min(loB+1,loC);
+    lo := min(loB,loC);
     hi := max(hiB+1,hiC);
     modules := hashTable for i from lo to hi list i => B_(i-1) ++ B_i ++ C_i;
     maps := hashTable for i from lo+1 to hi list i => (
@@ -1816,6 +1723,7 @@ canonicalMap(Complex, Complex) := opts -> (E,D) -> (
             -- cone f --> B[-1]
             return map(E, D, {{id_B', map(B', target f, 0)}})
         ));
+--XXX
     -- case: E is a cylinder
     if E.cache.?cylinder then (
         f = E.cache.cylinder; -- f : B --> C
@@ -1871,7 +1779,7 @@ inducedMap(Complex, Complex) := ComplexMap => opts -> (D,C) -> (
     map(D,C,maps,Degree=>deg)
     )
 
-kernel ComplexMap := opts -> f -> (
+kernel ComplexMap := Complex => opts -> f -> (
     -- f : B --> C
     B := source f;
     (lo,hi) := B.concentration;
@@ -1889,7 +1797,7 @@ kernel ComplexMap := opts -> f -> (
     result.cache.kernel = f;
     result
     )
-cokernel ComplexMap := f -> (
+cokernel ComplexMap := Complex => f -> (
     -- f : B --> C
     C := target f;
     (lo,hi) := C.concentration;
@@ -1908,7 +1816,7 @@ cokernel ComplexMap := f -> (
     result
     )
 
-image ComplexMap := f -> (
+image ComplexMap := Complex => f -> (
     -- f : B --> C
     B := source f;
     C := target f;
@@ -1934,7 +1842,7 @@ image ComplexMap := f -> (
     result
     )
 
-coimage ComplexMap := f -> (
+coimage ComplexMap := Complex => f -> (
     -- f : B --> C
     B := source f;
     (lo,hi) := B.concentration;
@@ -2253,14 +2161,12 @@ minimize Complex := C -> (
         );
     maps := hashTable for i from lo to hi list i => rho#i | C.dd_(i+1)*rho#(i+1);
     C' := coker map(C, C ++ C[1], maps, Degree=>0);
-    pmC := prune C';  -- TODO: this appears to be overkill.  write a specialized prune
+    D := prune C';  -- TODO: this appears to be overkill.  write a specialized prune
                       -- that works in this specific case, where the result will consist of
                       -- free modules.
-    -- here is a way to get the inverse of the pruning map.
-    --phiInv := map(pmC, C, i -> (pmC_i.cache.pruningMap)^(-1) * inducedMap(C'_i, C_i));
-    phi := map(C, pmC, i -> map(C_i, pmC_i, pmC_i.cache.pruningMap));
-    pmC.cache.pruningMap = phi;
-    pmC
+    phi := map(D, C, i -> (D_i.cache.pruningMap)^(-1) * inducedMap(C'_i, C_i));
+    D.cache.minimizingMap = phi;
+    D
     )
 
 --------------
@@ -2321,7 +2227,7 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
     )
 
 yonedaExtension = method()
-yonedaExtension Matrix := f -> (
+yonedaExtension Matrix := Complex => f -> (
     -- f: R^1 --> Ext^d(M,N) = E
     -- construct the chain complex:
     --   0 <-- M <-- FM_0 <-- FM_1 <-- ... <-- FM_(d-2) <-- P <-- N <-- 0
@@ -2354,7 +2260,7 @@ yonedaExtension Matrix := f -> (
     )
 
 yonedaExtension' = method()
-yonedaExtension' Complex := C -> (
+yonedaExtension' Complex := Matrix => C -> (
     -- given an exact complex of R-modules of the form
     --  0 <-- M <-- C0 <-- C1 <-- ... <-- C(d-1) <-- N <-- 0
     -- return the corresponding map R^1 --> Ext^d(M,N).
@@ -2440,12 +2346,113 @@ yonedaProduct(Module, Module) := Matrix => (E,F) -> (
     map(EF, E ** F, matrix {elems})
     )
 
+-*
+-- Ext over a complete intersection (code/method of Dan Grayson and Lucho Avramov).
+Ext(Module,Module) := Module => (M,N) -> (
+  cacheModule := M; -- we have no way to tell whether N is younger than M, sigh
+  cacheKey := (Ext,M,N);
+  if cacheModule.cache#?cacheKey then return cacheModule.cache#cacheKey;
+  B := ring M;
+  if B =!= ring N
+  then error "expected modules over the same ring";
+  if not isCommutative B
+  then error "'Ext' not implemented yet for noncommutative rings.";
+  if not isHomogeneous B
+  then error "'Ext' received modules over an inhomogeneous ring";
+  if not isHomogeneous N or not isHomogeneous M
+  then error "'Ext' received an inhomogeneous module";
+  if N == 0 or M == 0 then return cacheModule.cache#cacheKey = B^0;
+  p := presentation B;
+  A := ring p;
+  I := ideal mingens ideal p;
+  n := numgens A;
+  c := numgens I;
+  if c =!= codim B 
+  then error "total Ext available only for complete intersections";
+  f := I_*;
+  pM := lift(presentation M,A);
+  pN := lift(presentation N,A);
+  M' := cokernel ( pM | p ** id_(target pM) );
+  N' := cokernel ( pN | p ** id_(target pN) );
+  assert isHomogeneous M';
+  assert isHomogeneous N';
+  C := complete resolution M';
+  X := getSymbol "X";
+  K := coefficientRing A;
+  S := K(monoid [X_1 .. X_c, toSequence A.generatorSymbols,
+    Degrees => {
+      apply(0 .. c-1, i -> prepend(-2, - degree f_i)),
+      apply(0 .. n-1, j -> prepend( 0,   degree A_j))
+      }]);
+  -- make a monoid whose monomials can be used as indices
+  Rmon := monoid [X_1 .. X_c,Degrees=>{c:{2}}];
+  -- make group ring, so 'basis' can enumerate the monomials
+  R := K Rmon;
+  -- make a hash table to store the blocks of the matrix
+  blks := new MutableHashTable;
+  blks#(exponents 1_Rmon) = C.dd;
+  scan(0 .. c-1, i -> 
+       blks#(exponents Rmon_i) = nullhomotopy (- f_i*id_C));
+  -- a helper function to list the factorizations of a monomial
+  factorizations := (gamma) -> (
+    -- Input: gamma is the list of exponents for a monomial
+    -- Return a list of pairs of lists of exponents showing the
+    -- possible factorizations of gamma.
+    if gamma === {} then { ({}, {}) }
+    else (
+      i := gamma#-1;
+      splice apply(factorizations drop(gamma,-1), 
+	(alpha,beta) -> apply (0..i, 
+	     j -> (append(alpha,j), append(beta,i-j))))));
+  scan(4 .. length C + 1, 
+    d -> if even d then (
+      scan( flatten \ exponents \ leadMonomial \ first entries basis(d,R), 
+	gamma -> (
+	  s := - sum(factorizations gamma,
+	    (alpha,beta) -> (
+	      if blks#?alpha and blks#?beta
+	      then blks#alpha * blks#beta
+	      else 0));
+	  -- compute and save the nonzero nullhomotopies
+	  if s != 0 then blks#gamma = nullhomotopy s;
+	  ))));
+  -- make a free module whose basis elements have the right degrees
+  spots := C -> sort select(keys C, i -> class i === ZZ);
+  Cstar := S^(apply(spots C,
+      i -> toSequence apply(degrees C_i, d -> prepend(i,d))));
+  -- assemble the matrix from its blocks.
+  -- We omit the sign (-1)^(n+1) which would ordinarily be used,
+  -- which does not affect the homology.
+  toS := map(S,A,apply(toList(c .. c+n-1), i -> S_i),
+    DegreeMap => prepend_0);
+  Delta := map(Cstar, Cstar, 
+    transpose sum(keys blks, m -> S_m * toS sum blks#m),
+    Degree => { -1, degreeLength A:0 });
+  DeltaBar := Delta ** (toS ** N');
+  if debugLevel > 10 then (
+       assert isHomogeneous DeltaBar;
+       assert(DeltaBar * DeltaBar == 0);
+       stderr << describe ring DeltaBar <<endl;
+       stderr << toExternalString DeltaBar << endl;
+       );
+  -- now compute the total Ext as a single homology module
+  tot := minimalPresentation homology(DeltaBar,DeltaBar);
+  cacheModule.cache#cacheKey = tot;
+  tot)
+
+Ext(Module, Ring) := (M,R) -> Ext(M,R^1)
+Ext(Module, Ideal) := (M,J) -> Ext(M,module J)
+Ext(Ideal, Ring) := (I,R) -> Ext(module I,R^1)
+Ext(Ideal, Ideal) := (I,J) -> Ext(module I,module J)
+Ext(Ideal, Module) := (I,N) -> Ext(module I,N)
+*-
+
 ---------------------
 -- Connecting maps --
 ---------------------
 -- BBB
 connectingMap = method()
-connectingMap(ComplexMap, ComplexMap) := (g, f) -> (
+connectingMap(ComplexMap, ComplexMap) := ComplexMap => (g, f) -> (
     -- 0 <-- C <--g-- B <--f-- A <-- 0
     if debugLevel > 0 and not isShortExactSequence(g, f) then
         error "expected a short exact sequence of complexes";
@@ -2470,14 +2477,14 @@ connectingMap(ComplexMap, ComplexMap) := (g, f) -> (
 
 
 augmentationMap = method()
-augmentationMap Complex := C -> (
+augmentationMap Complex := ComplexMap => C -> (
     if not C.cache.?Module then error "expected a free resolution";
     M := C.cache.Module;
     map(complex M, C, i -> if i === 0 then map(M, C_0, 1))
     )
 
 horseshoeResolution = method(Options => {LengthLimit=>infinity})
-horseshoeResolution Complex := opts -> ses -> (
+horseshoeResolution Complex := Sequence => opts -> ses -> (
     -- check that ses is a short exact sequence of modules
     -- occuring in homological degrees 0,1,2.
     -- at least check that the length is correct.
@@ -2537,29 +2544,34 @@ TEST ///
   assert(f == g)
 ///
 
-part(List, Complex) := Complex =>  (deg, C) -> (
+part(List, Complex) := Complex => (deg, C) -> (
     -- return a Complex over the coefficient ring
     R := ring C;
     A := coefficientRing R;
-    psi := map(A,R);
+    psi := map(A,R, DegreeMap => degR -> take(degR, - degreeLength A));
     (lo, hi) := concentration C;
     if lo === hi 
     then complex(psi source basis(deg, C_lo), Base => lo)
     else (
         maps := hashTable for i from lo+1 to hi list (
-            f := matrix basis(deg, dd^C_i);
+            f := psi matrix basis(deg, dd^C_i);
             if source f == 0 then continue else i => f
             );
         if # keys maps === 0 then complex(psi source basis(deg, C_lo), Base => lo)  else complex maps
         )
     )
-part(List, ComplexMap) := ComplexMap =>  (deg, f) -> (
-    error "not yet implemented";
+part(List, ComplexMap) := ComplexMap => (deg, f) -> (
+    R := ring f;
+    A := coefficientRing R;
+    psi := map(A,R, DegreeMap => degR -> take(degR, - degreeLength A));
+    C := part(deg, source f);
+    D := part(deg, target f);
+    map(D, C, i -> map(D_i, C_i, psi matrix basis(deg, f_i)))
     )
-part(ZZ, Complex) := Complex =>  (deg, C) -> part({deg}, C)
-part(ZZ, ComplexMap) := ComplexMap =>  (deg, f) -> part({deg}, f)
+part(ZZ, Complex) := Complex => (deg, C) -> part({deg}, C)
+part(ZZ, ComplexMap) := ComplexMap => (deg, f) -> part({deg}, f)
 
-///
+TEST ///
   -- example of computing part.
 -*
   restart
@@ -2579,6 +2591,8 @@ part(ZZ, ComplexMap) := ComplexMap =>  (deg, f) -> part({deg}, f)
   assert isWellDefined part(1, F)
   assert (C = part(2, F); rank C_0 == 10 and rank C_1 == 3)
   assert isWellDefined part(2, F)
+  assert(ring part(2, F) === kk)
+
   assert (C = part(6, F); 
       (for i from 0 to length C list rank C_i) == {84, 125, 54, 1})
   assert isWellDefined part(6, F)
@@ -2599,7 +2613,7 @@ part(ZZ, ComplexMap) := ComplexMap =>  (deg, f) -> part({deg}, f)
   assert isHomogeneous part(0, F)
   assert isWellDefined part(0, F)
   assert (part(1, F) == complex kk^4)
-  assert isHomogeneous part(1, F)
+  assert isHomogeneous part(1, F) 
   assert isWellDefined part(1, F)
   assert (C = part(2, F); rank C_0 == 10 and rank C_1 == 3)
   assert isHomogeneous part(2, F)
@@ -2608,6 +2622,138 @@ part(ZZ, ComplexMap) := ComplexMap =>  (deg, f) -> part({deg}, f)
       (for i from 0 to length C list rank C_i) == {84, 125, 68, 15})
   assert isHomogeneous part(6, F)
   assert isWellDefined part(6, F)
+  assert(ring part(6, F) === kk)
+
+  C = part(2, F)
+  dd^C
+  isHomogeneous dd^C_1 -- want this to be true.
+///
+
+TEST ///  
+-*
+  restart
+  needsPackage "Complexes"
+*-
+  -- multi-graded example of part(d, C)
+  needsPackage "NormalToricVarieties"
+  kk = ZZ/32003
+  X = hirzebruchSurface(6, CoefficientRing => kk)
+  S = ring X
+  F = random({-4,2}, S)
+  I = ideal jacobian ideal F
+  C = freeResolution I
+  Cd = part({1,1}, C)
+  assert isWellDefined Cd
+  assert(ring Cd === coefficientRing S)
+  
+  Cd = part({-1,3}, C)
+  assert isWellDefined Cd
+  assert(prune HH Cd == 0)
+  
+  J = I + ideal X
+  CJ = freeResolution J
+  f = randomComplexMap(CJ, C, Cycle => true)
+  fd = part({1,1}, f)
+  assert isWellDefined fd
+  assert(ring fd === coefficientRing S)
+  assert isComplexMorphism fd
+  prune HH fd
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes" 
+*-
+  kk = ZZ/32003
+  S = kk[a..d]
+  I = ideal"ab, ad, bc, c3"
+  J = I + ideal"c2"
+  FI = freeResolution comodule I
+  FJ = freeResolution comodule J
+  H = Hom(FI, FJ)
+  f = randomComplexMap(FJ, FI, Cycle => true)
+  assert isWellDefined f
+  assert isCommutative f
+  assert isComplexMorphism f
+
+  f2 = part(2, f)
+  assert(ring f2 === kk) 
+  assert isWellDefined f2
+  assert isComplexMorphism f2
+
+  f5 = part(5, f);
+  assert(ring f5 === kk) 
+  assert isWellDefined f5
+  assert isComplexMorphism f5
+///
+
+chainComplex Complex := ChainComplex => (cacheValue symbol ChainComplex) (C -> (
+    (lo,hi) := concentration C;
+    D := new ChainComplex;
+    D.ring = ring C;
+    for i from lo to hi do D#i = C_i;
+    for i from lo+1 to hi do D.dd#i = dd^C_i;
+    D
+    ))
+
+complex ChainComplex := Complex => opts -> (cacheValue symbol Complex)(D -> (
+    (lo,hi) := (min D, max D);
+    while lo < hi and (D_lo).numgens == 0 do lo = lo+1;
+    while lo < hi and (D_hi).numgens == 0 do hi = hi-1;
+    if lo === hi then
+        complex D_lo
+    else 
+        complex hashTable for i from lo+1 to hi list i => D.dd_i
+    ))
+
+chainComplex ComplexMap := ChainComplexMap => f -> (
+    g := new ChainComplexMap;
+    g.cache = new CacheTable;
+    g.source = chainComplex source f;
+    g.target = chainComplex target f;
+    g.degree = degree f;
+    (lo,hi) := concentration f;
+    for i from lo to hi do g#i = f_i;
+    g
+    )
+
+complex ChainComplexMap := ComplexMap => opts -> g -> (
+    map(complex target g, complex source g, i -> g_i, Degree => degree g)
+    )
+
+///
+  restart
+  needsPackage "Complexes"
+  R = ZZ/101[a..d]
+  D = res coker vars R
+  assert isWellDefined complex D
+  C = freeResolution coker vars R
+  assert(complex D == C)
+  assert(complex D === complex D)
+  assert(concentration complex D == (0,4))
+  assert(concentration C == concentration complex D)
+  assert isWellDefined complex(D.dd)
+    
+  f = complex D.dd    
+  source f 
+  target f
+  g = chainComplex complex D.dd
+  assert(g == D.dd)
+  h = complex g
+  assert(f == h)
+  
+  D = new ChainComplex
+  D.ring = R;
+  D#-3 = R^0
+  D#-2 = R^2
+  D#-1 = R^1
+  D#4 = R^2
+  D#5 = R^0
+  D.dd_-1
+  C = complex D
+  assert isWellDefined C
+  assert(chainComplex C == D)
 ///
 
 beginDocumentation()
@@ -2620,22 +2766,330 @@ undocumented{
     }
 
 doc ///
-   Key
-     Complexes
-   Headline
-     Homological data types and routines
-   Description
-    Text
-      This package provides routines for studying homology in a general algebraic setting.
-   Subnodes
-     "Making complexes"
+    Key
+        Complexes
+    Headline
+        development package for beta testing new version of chain complexes    
+    Description
+        Text
+            This package develops new data types and routines for homological algebra.
+            Eventually, it will replace the current facilities for homological algebra.
+            We are making this available in order to get feedback from users before
+            making this change.  Please email the authors with any and all comments or
+            suggestions.
+        Text
+            The major change is replacing the @TO ChainComplex@ data type with @TO Complex@.
+            The internal structure of this new data type is somewhat different, but more
+            importantly, it has a richer set of constructors.  Use the functions
+            @TO (complex, ChainComplex)@, @TO (complex, ChainComplexMap)@, @TO (chainComplex, Complex)@, @TO (chainComplex, ComplexMap)@, 
+            to translate between these representations.
+        Text
+            The overarching goal is to make all of the homological algebra routines functorial.
+            For instance, we have @TO2(canonicalMap, "canonical maps")@ associated to kernels,
+            cokernels, images, coimages, cones, and cylinders.
+    SeeAlso
+        "Making chain complexes"
+        "Making maps between chain complexes"
+        "Basic invariants and properties"
+        "Working with Ext"
+        "Working with Tor"
+        "Towards computing in the derived category"
 ///
+
+doc ///
+    Key
+        "Making chain complexes"
+    Headline
+        information about the basic constructors
+    Description
+    	Text
+    	    @SUBSECTION "Basic constructors"@
+	Text
+    	    @UL {
+                TO (complex, HashTable),
+                TO (complex, List),
+                TO (complex, Module), 
+                TO (complex, Complex),
+                TO (symbol SPACE, Complex, Array),
+                TO (isWellDefined, Complex)
+            }@
+    	Text
+    	    @SUBSECTION "Important computations creating new complexes"@
+	Text
+    	    @UL {
+                TO (freeResolution, Module),
+                TO (resolution, Complex),
+                TO (homology, Complex)
+            }@
+    	Text
+    	    @SUBSECTION "More advanced constructors"@
+	Text
+    	    @UL {
+                TO (symbol++, Complex, Complex),
+                TO (symbol**, Complex, Complex),
+                TO (Hom, Complex, Complex),
+                TO (dual, Complex),
+                TO (symbol SPACE, RingMap, Complex),
+                TO (symbol **, RingMap, Complex),
+                TO (naiveTruncation, Complex, ZZ, ZZ),
+                TO (canonicalTruncation, Complex, ZZ, ZZ),
+                TO (minimalPresentation, Complex),
+                TO (minimize, Complex),
+                TO (gradedModule, Complex),
+                TO (part, List, Complex),
+                TO (yonedaExtension, Matrix)
+            }@
+    	Text
+    	    @SUBSECTION "Extracting complexes from complex maps"@
+        Text
+    	    @UL {
+                TO (source, ComplexMap),
+                TO (target, ComplexMap),
+                TO (kernel, ComplexMap),
+                TO (cokernel, ComplexMap),
+                TO (image, ComplexMap),
+                TO (coimage, ComplexMap),
+                TO (cone, ComplexMap),
+                TO (cylinder, ComplexMap)
+            }@
+    SeeAlso
+        "Making maps between chain complexes"
+        "Basic invariants and properties"
+        "Working with Ext"
+        "Working with Tor"
+        "Towards computing in the derived category"
+///
+
+doc ///
+    Key
+        "Making maps between chain complexes"
+    Headline
+        information about the basic constructors
+    Description
+    	Text
+    	    @SUBSECTION "Basic constructors"@
+	Text
+    	    @UL {
+                TO (map, Complex, Complex, HashTable),
+                TO (map, Complex, Complex, ZZ),
+                TO (map, Complex, Complex, Function),
+                TO (map, Complex, Complex, ComplexMap),
+                TO (id, Complex),
+                TO "differential of a chain complex",
+                TO (inducedMap, Complex, Complex),
+                TO (symbol SPACE, ComplexMap, Array),
+                TO (isWellDefined, ComplexMap)
+            }@
+    	Text
+    	    @SUBSECTION "Important computations creating new complex maps"@
+        Text 
+            @UL {
+                TO (resolutionMap, Complex),
+                TO (homology, ComplexMap),
+                TO (augmentationMap, Complex),
+                TO (extend, Complex, Complex, Matrix)
+           }@
+    	Text
+    	    @SUBSECTION "Canonical maps between complexes"@
+        Text
+            Some complexes come with canonical maps.
+            To access the complex map, 
+            one uses @TO (canonicalMap, Complex, Complex)@.
+            The following operations have associated canonical maps.
+	Text
+    	    @UL {
+                TO (kernel, ComplexMap),
+                TO (cokernel, ComplexMap),
+                TO (image, ComplexMap),
+                TO (coimage, ComplexMap),
+                TO (cone, ComplexMap),
+                TO (cylinder, ComplexMap)
+            }@
+    	Text
+    	    @SUBSECTION "Random maps of chain complexes"@
+        Text
+            The method @TO (randomComplexMap, Complex, Complex)@
+            allows one to construct random complex maps,
+            random morphisms between complexes, and random
+            null homotopies between complexes.
+	Text
+    	    @UL {
+                TO (isCommutative, ComplexMap),
+                TO (isComplexMorphism, ComplexMap),
+                TO (isNullHomotopic, ComplexMap)
+            }@
+    	Text
+    	    @SUBSECTION "Elementary operations on complex maps"@
+        Text
+    	    @UL {
+                TO (symbol +, ComplexMap, ComplexMap),
+                TO (symbol |, ComplexMap, ComplexMap),
+                TO (symbol ||, ComplexMap, ComplexMap),
+                TO (symbol ++, ComplexMap, ComplexMap),
+                TO (symbol **, ComplexMap, ComplexMap),
+                TO (Hom, ComplexMap, ComplexMap),
+                TO (dual, ComplexMap),
+                TO (symbol _, ComplexMap, Array),
+                TO (symbol ^, ComplexMap, Array),
+                TO (naiveTruncation, ComplexMap, Sequence),
+                TO (canonicalTruncation, ComplexMap, Sequence),
+                TO (symbol SPACE, RingMap, ComplexMap),
+                TO (symbol **, RingMap, ComplexMap)
+            }@
+    SeeAlso
+        "Making chain complexes"
+        "Basic invariants and properties"
+        "Working with Ext"
+        "Working with Tor"
+        "Towards computing in the derived category"
+///
+
+doc ///
+    Key
+        "Basic invariants and properties"
+    Headline
+        information about accessing basic features
+    Description
+    	Text
+    	    @SUBSECTION "Predicates for complexes and complex maps"@
+        Text
+    	    @UL {
+                TO (isWellDefined, Complex),
+                TO (isExact, Complex),
+                TO (isHomogeneous, Complex),
+                TO (isFree, Complex),
+                TO (isWellDefined, ComplexMap),
+                TO (isCommutative, ComplexMap),
+                TO (isComplexMorphism, ComplexMap),
+                TO (isShortExactSequence, ComplexMap, ComplexMap),
+                TO (isQuasiIsomorphism, ComplexMap),
+                TO (isNullHomotopic, ComplexMap),
+                TO (isNullHomotopyOf, ComplexMap, ComplexMap)
+            }@
+    	Text
+    	    @SUBSECTION "Other invariants for complexes"@
+        Text
+    	    @UL {
+                TO (ring, Complex),
+                TO (concentration, Complex),
+                TO (max, Complex),
+                TO (min, Complex),
+                TO (length, Complex),
+                TO (regularity, Complex),
+                TO (betti, Complex),
+                TO (poincare, Complex),
+                TO (poincareN, Complex),
+                TO (components, Complex)
+            }@
+    	Text
+    	    @SUBSECTION "Other invariants for complex maps"@
+        Text
+    	    @UL {
+                TO (ring, ComplexMap),
+                TO (degree, ComplexMap),
+                TO (concentration, ComplexMap),
+                TO (components, ComplexMap),
+                TO (isHomogeneous, ComplexMap)
+            }@
+    SeeAlso
+        "Making chain complexes"
+        "Making maps between chain complexes"
+        "Working with Ext"
+        "Working with Tor"
+        "Towards computing in the derived category"
+///
+
+doc ///
+    Key
+        "Working with Ext"
+    Headline
+        information about functorial properties
+    Description
+    	Text
+    	    @SUBSECTION "Hom and Ext"@
+        Text
+    	    @UL {
+                TO (Ext, ZZ, Module, Module),
+                TO "(Ext, ZZ, Matrix, Matrix)",
+                TO "(Ext, ZZ, Matrix, Module)",
+                TO "(Ext, ZZ, Module, Matrix)",
+                TO (Hom, Complex, Complex),
+                TO (Hom, ComplexMap, ComplexMap),
+                TO (homomorphism, ComplexMap),
+                TO (homomorphism', ComplexMap)
+            }@
+        Text
+    	    @SUBSECTION "Yoneda extensions and elements of Ext"@
+        Text
+    	    @UL {
+                TO (yonedaMap, Matrix),
+                TO (yonedaMap', ComplexMap),
+                TO (yonedaExtension, Matrix),
+                TO (yonedaExtension', Complex),
+                TO (yonedaProduct, Matrix, Matrix),
+                TO (yonedaProduct, Module, Module)
+            }@
+    SeeAlso
+        "Making chain complexes"
+        "Making maps between chain complexes"
+        "Basic invariants and properties"
+        "Working with Tor"
+        "Towards computing in the derived category"
+///
+
+doc ///
+    Key
+        "Working with Tor"
+    Headline
+        information about functorial properties
+    Description
+        Text
+    	    @UL {
+                TO (Tor, ZZ, Module, Module),
+                TO "(Tor, ZZ, Module, Matrix)",
+                TO "(Tor, ZZ, Matrix, Module)",
+                TO "(Tor, ZZ, Matrix, Matrix)",
+                TO (tensor, Complex, Complex),
+                TO "(tensor, ComplexMap, ComplexMap)",
+                TO (tensorAssociativity, Complex, Complex, Complex),
+                TO "symmetry of Tor"
+            }@
+    SeeAlso
+        "Making chain complexes"
+        "Making maps between chain complexes"
+        "Basic invariants and properties"
+        "Working with Ext"
+        "Towards computing in the derived category"
+///
+
+doc ///
+    Key
+        "Towards computing in the derived category"
+    Description
+        Text
+            @UL {
+                TO (resolution, Complex),
+                TO (resolutionMap, Complex),
+                TO (isShortExactSequence, ComplexMap, ComplexMap),
+                TO (isQuasiIsomorphism, ComplexMap),
+                TO (liftMapAlongQuasiIsomorphism, ComplexMap, ComplexMap),
+                TO (connectingMap, ComplexMap, ComplexMap),
+                TO (horseshoeResolution, Complex)
+            }@
+    SeeAlso
+        "Making chain complexes"
+        "Making maps between chain complexes"
+        "Basic invariants and properties"
+        "Working with Ext"
+        "Working with Tor"
+///
+
 
 doc ///
    Key
      Complex
    Headline
-     the class of all chain or cochain complexes
+     the class of all chain complexes
    Description
     Text
       A complex is a sequence of objects $C_i$, connected by maps $dd^C_i : C_i \rightarrow C_{i-1}$
@@ -2721,7 +3175,7 @@ doc ///
      (complex, Ideal)
      (complex, Ring)
    Headline
-     make a chain or cochain complex of length zero
+     make a chain complex of length zero
    Usage
      complex M
    Inputs
@@ -2734,7 +3188,7 @@ doc ///
        returns the complex whose 0-th component is {\tt M}.
    Description
     Text
-      In contrast to @TO (complex,HashTable)@, this constructor
+      In contrast to @TO (complex,HashTable)@ and @TO (complex,List)@, this constructor
       provides a convenient method to construct a complex with
       only one non-zero component.
       
@@ -2775,26 +3229,17 @@ doc ///
 
 doc ///
    Key
-     complex
      (complex, HashTable)
-     (complex, List)
-     Base
    Headline
-     make a chain or cochain complex
+     make a chain complex
    Usage
      complex H
-     complex L
    Inputs
      H:HashTable
        each key is an integer indexing a differential, and the 
          value at that key is the map
-     L:List
-       of maps
      Base => ZZ
-       this argument is unused if the input is a hash table, 
-         but if the input is a list, this
-         determines the index of the target of the first map 
-         in the differential.
+       ignored when the input is a hash table
    Outputs
      :Complex
    Description
@@ -2821,6 +3266,75 @@ doc ///
       C = complex hashTable{1 => F1, 2 => F2, 3 => F3}
       isWellDefined C
     Text
+      This is the primary constructor used by all of the more user friendly
+      methods for constructing a chain complex.
+   Caveat
+      This constructor minimizes computation
+        and does very little error checking. To verify that a complex
+        is well constructed, use @TO (isWellDefined, Complex)@.
+   SeeAlso
+     (isWellDefined, Complex)
+     (complex, List)
+     (complex, Module)
+///
+
+doc ///
+   Key
+     complex
+     (complex, List)
+     Base
+   Headline
+     make a chain complex
+   Usage
+     complex L
+   Inputs
+     L:List
+       of maps
+     Base => ZZ
+         the index of the target of the first map 
+         in the differential.
+   Outputs
+     :Complex
+   Description
+    Text
+      A complex is a sequence of objects (e.g. modules), connected by
+      maps called differentials.  The composition of any two
+      consecutive maps is zero.
+      
+      The same data type is used for both chain and cochain complexes.
+      If {\tt C} is a complex, then we have {\tt C^i = C_{-i}}.
+
+      Often, a complex is most easily described by giving a list of
+      consecutive maps which form the differential.  
+
+      We construct the Koszul complex on the generators for the ideal
+      of the twisted cubic curve.
+    Example
+      S = ZZ/101[a..d]
+      I = ideal(b^2-a*c, b*c-a*d, c^2-b*d)
+      F1 = map(S^1,,matrix{{I_0, I_1, I_2}})
+      F2 = map(source F1,,matrix{
+          {0, I_2, -I_1},
+          {-I_2, 0, I_0},
+          {I_1, -I_0, 0}
+          })
+      F3 = map(source F2,,matrix{{I_0}, {I_1}, {I_2}})
+      C = complex {F1, F2, F3}
+      isWellDefined C
+    Text
+      To start a complex at a base different from zero, use the optional
+      argument {\tt Base}.
+    Example
+      C1 = complex({F1, F2, F3}, Base => 1)
+      isWellDefined C1
+    Text
+      Notice that this changes the homological degrees of the maps,
+      but is not the same as the shift of the complex (which for odd shifts
+      negates the maps).
+    Example
+      dd^C1
+      dd^(C[-1])
+    Text
       Having constructed this complex, we can access individual
       terms and maps.
     Example
@@ -2831,14 +3345,6 @@ doc ///
       dd^C
       dd^C_2
       length C
-    Text
-      Often, a complex is most easily described by giving a list of
-      consecutive maps which form the differential.  
-    Example
-      C1 = complex{F1,F2,F3}
-      isWellDefined C1
-      C1 == C
-      C2 = complex({F1,F2,F3}, Base => 3)
     Text
       By computing the homology of this complex, we 
       see that these generators do not form a
@@ -2853,24 +3359,85 @@ doc ///
         is well constructed, use @TO (isWellDefined, Complex)@.
    SeeAlso
      (isWellDefined, Complex)
+     (complex, Module)
+     (complex, HashTable)
+     (symbol SPACE, Complex, Array)
+///
+
+doc ///
+    Key
+        "differential of a chain complex"
+        (symbol^, Symbol, Complex)
+    Headline
+        get the maps between the terms in a complex
+    Usage
+        dd^C
+    Inputs
+        C:Complex
+    Outputs
+        :ComplexMap
+            a map of degree -1
+    Description
+        Text
+            A chain complex is a sequence of modules connected
+            by homomorphisms, called differentials, such that
+            the composition of any two consecutive maps is zero.
+        Text
+            One can access the differential of a complex as follows.
+        Example
+            R = QQ[a..d];
+            I = ideal(a*d-b*c, b^2-a*c, c^2-b*d);
+            C = freeResolution(R^1/I)
+            dd^C
+            C.dd
+            assert(dd^C === C.dd)
+            assert(source dd^C === C)
+            assert(target dd^C === C)
+            assert(degree dd^C === -1)
+        Text
+            The composition of the differential with itself is zero.
+        Example
+            (dd^C)^2 == 0
+        Text
+            The individual maps between terms are indexed by their
+            source.
+        Example
+            dd^C_2
+            assert(source dd^C_2 === C_2)
+            assert(target dd^C_2 === C_1)
+    SeeAlso
+        "Making maps between chain complexes"
+        (symbol_, ComplexMap, ZZ)
+        (symbol_, Complex, ZZ)
+        (source, ComplexMap)
+        (target, ComplexMap)
+        (degree, ComplexMap)
 ///
 
 doc ///
    Key
      (symbol SPACE, Complex, Array)
+     (symbol SPACE, ComplexMap, Array)
    Headline
-     shift a complex
+     shift a complex or complex map
    Usage
      D = C[i]
+     g = f[i]
    Inputs
      C:Complex
+       or {\tt f}, a @TO ComplexMap@
      :Array
        {\tt [i]}, where {\tt i} is an integer
    Outputs
      D:Complex
-       where $D_j = C_{i+j}$, and the sign of the differential is changed if $i$ is odd
+       or {\tt g}, a @TO ComplexMap@.
    Description
     Text
+      The shifted complex $D$ is defined by $D_j = C_{i+j}$ for all $j$
+      and the sign of the differential is changed if $i$ is odd.
+       
+      The shifted complex map $g$ is defined by $g_j = f_{i+j}$ for all $j$.
+    
       The shift defines a natural automorphism on the category of complexes. 
       Topologists often call the shifted complex $C[1]$ the {\it suspension} of $C$.
     Example
@@ -2878,16 +3445,69 @@ doc ///
       C = freeResolution coker vars S
       dd^C_3
       D = C[1]
-      dd^D_2 == -dd^C_3
+      assert isWellDefined D
+      assert(dd^D_2 == -dd^C_3)
     Text
       In order to shift the complex one step, and not change the differential, one
       can do the following.
     Example
-      (lo,hi) = concentration C
-      E = complex(for i from lo+1 to hi list dd^C_i, Base=>-1)
-      dd^E_2 == dd^C_3
+      E = complex(C, Base => -1)
+      assert isWellDefined E
+      assert(dd^E_2 == dd^C_3)
+    Text
+      The shift operator is functorial, as illustrated below.
+    Example
+      C2 = freeResolution (S^1/(a^2, b^2, c^2, d^2))
+      C3 = freeResolution (S^1/(a^2, b^3, c^4, d^5))
+      f2 = extend(C, C2, map(C_0, C2_0, 1))
+      f3 = extend(C2, C3, map(C2_0, C3_0, 1))
+      assert((f2*f3)[1] == (f2[1]) * (f3[1]))
+      assert(source(f2[1]) == C2[1])
+      assert(target(f2[1]) == C[1])
    SeeAlso
      concentration
+     (complex, Complex)
+     (extend, Complex, Complex, Matrix)
+///
+
+doc ///
+   Key
+     (complex, Complex)
+   Headline
+     make a complex by reindexing the terms of the complex
+   Usage
+     D = complex(C, Base => i)
+   Inputs
+     C:Complex
+     Base => ZZ
+       the target of the lowest differential
+   Outputs
+     D:Complex
+       where if $d$ is the smallest index of the target of the differentials of C,
+       then for all integers $j$ we have $D_{i+j} = C_{d+j}$
+   Description
+    Text
+      This returns an alteration of the input complex, reindexing the terms of the complex.
+    Example
+      S = ZZ/101[a..d]
+      C = freeResolution coker vars S
+      D = complex(C, Base => 1)
+      E = complex(D, Base => -11)
+      dd^D_2 == dd^C_1
+      dd^E_-9 == dd^C_2
+    Text
+      Rather than specifying the homological degree of the lowest target,
+      one can also shift the homological degree, which may simultaneously negate
+      the maps.
+    Example
+      F = C[-1]
+      for i from min F to max F list
+          dd^F_i == - dd^D_i
+   SeeAlso
+     (symbol SPACE, Complex, Array)
+     (complex, List)
+     (complex, Module)
+     (complex, HashTable)
 ///
 
 doc ///
@@ -3114,6 +3734,59 @@ doc ///
      (prune, Complex)
 ///
 
+doc ///
+    Key
+        freeResolution
+        (freeResolution, Module)
+        (freeResolution, Ideal)
+    Headline
+        compute a free resolution of a module or ideal
+    Usage
+        freeResolution M
+    Inputs
+        M:Module
+            or @ofClass Ideal@, an ideal {\tt I} in a ring {\tt R}
+    Outputs
+        :Complex
+            a free resolution of the module {\tt M} or of the
+            quotient module {\tt R^1/I}
+    Description
+        Text
+            A free resolution of a module $M$ is a complex
+            $ F_0 \leftarrow F_1 \leftarrow F_2 \leftarrow \ldots$
+            of free modules, which is acyclic: the cokernel of the map
+            to $F_0$ is $M$ and the complex is exact at all other 
+            locations.
+        Example
+            R = QQ[a..d]
+            I = ideal(c^2-b*d, b*c-a*d, b^2-a*c)
+            M = R^1/I
+            C = freeResolution M
+            betti C
+            length C
+            dd^C
+            assert isWellDefined C
+            assert(prune HH C == complex M)
+        Text
+            Giving an ideal as the input produces a free resolution
+            not of the module {\tt I}, but of the module {\tt R^1/I}.
+        Example
+            assert(freeResolution I == C)
+            resolution complex M == freeResolution M
+        Text
+            Over a quotient ring, free resolutions are often infinite.
+            Use the optional argument {\tt LengthLimit} to obtain
+            part of the resolution.
+        Example
+            S = ZZ/101[a,b]
+            R = S/(a^3+b^3)
+            C = freeResolution (coker vars R, LengthLimit => 7)
+            dd^C
+    SeeAlso
+        (resolution, Complex)
+        (resolutionMap, Complex)
+        (betti, Complex)
+///
 
 doc ///
    Key
@@ -3273,17 +3946,19 @@ doc ///
        the direct sum of the input complexes
    Description
     Text
-      The direct sum of two complexes is another complex in the same category.
+      The direct sum of two complexes is another complex.
     Example
       S = ZZ/101[a,b,c];
       C1 = freeResolution coker vars S
       C1 ++ complex(S^13)[-2]
       C2 = complex (ideal(a,b,c))
       C1 ++ C2
+      assert isWellDefined(C1 ++ C2)
     Text
       The direct sum of a sequence of complexes can be computed as follows.
     Example
       C3 = directSum(C1,C2,C2[-2])
+      assert isWellDefined C3
     Text
       The direct sum is an n-ary operator with projection and
       inclusion maps from each component satisfying appropriate
@@ -3298,9 +3973,16 @@ doc ///
       C4^[second] * C4_[first] == 0
       C4_[first] * C4^[first] + C4_[second] * C4^[second] == 1
     Text
+      There are two short exact sequences associated to a direct sum.
+    Example
+      isShortExactSequence(C4^[first], C4_[second])
+      isShortExactSequence(C4^[second], C4_[first])
+    Text
       Given a complex which is a direct sum, we obtain the component
       complexes and their names (indices) as follows.
     Example
+      components C3
+      indices C3
       components C4
       indices C4
    SeeAlso
@@ -3308,8 +3990,8 @@ doc ///
      indices
      (symbol^, Complex, Array)
      (symbol_, Complex, Array)
+     (isShortExactSequence, ComplexMap, ComplexMap)
 ///
-
 
 doc ///
    Key
@@ -3516,7 +4198,8 @@ doc ///
    Key
      (symbol**, Complex, Complex)
      (symbol**, Complex, Module)
-     (symbol**, Module, Complex)     
+     (symbol**, Module, Complex)
+     (tensor, Complex, Complex)
    Headline
      tensor product of complexes
    Usage
@@ -3533,7 +4216,8 @@ doc ///
     Text
       The tensor product is a complex $D$ whose $i$th component is
       the direct sum of $C1_j \otimes C2_k$ over all $i = j+k$.
-      The differential on $C1_j \otimes C2_k$ is the differential $dd^{C1} \otimes id_{C2} + (-1)^j id_{C1} \otimes dd^{C2}$.
+      The differential on $C1_j \otimes C2_k$ is the differential 
+      $dd^{C1} \otimes id_{C2} + (-1)^j id_{C1} \otimes dd^{C2}$.
       
       As the next example illustrates, the Koszul complex can be constructed via iterated tensor products.
     Example
@@ -3543,24 +4227,30 @@ doc ///
       Cc = complex {matrix{{c}}}
       Cab = Cb ** Ca
       dd^Cab
-      indices Cab_1
-      Cab_1_[{1,0}]
+      assert isWellDefined Cab
       Cabc = Cc ** Cab
       Cc ** Cb ** Ca
       dd^Cabc
+      assert isWellDefined Cabc
     Text
       If one of the arguments is a module, it is considered as a complex concentrated in homological degree 0.
     Example
       Cabc ** (S^1/(a,b,c))
       S^2 ** Cabc
     Text
-      Let's check the differential (Once the BUG is fixed TODO)!!
+      Because the tensor product can be regarded as the total complex of a double complex,
+      each term of the tensor product comes with pairs of indices, labelling the summands.
     Example
-      Cabc_2
-      --indices Cabc_2
-      --dd^Cc ** id_Cab
-   Caveat
+      indices Cabc_1
+      components Cabc_1
+      Cabc_1_[{1,0}]
+      indices Cabc_2
+      components Cabc_2
+      Cabc_2_[{0,2}]
    SeeAlso
+     indices
+     components
+     directSum
 ///
 
 doc ///
@@ -3583,8 +4273,9 @@ doc ///
    Description
     Text
       The complex of homomorphisms is a complex $D$ whose $i$th component is
-      the direct sum of $Hom(C1_j, C2_(j+i))$ over all $j$.
-      The differential on $Hom(C1_j, C2_(j+i))$ is the differential $Hom(id_{C1}, dd^{C2}) + (-1)^j Hom(dd^{C1}, id_{C2})$.
+      the direct sum of $Hom(C1_j, C2_{j+i})$ over all $j$.
+      The differential on $Hom(C1_j, C2_{j+i})$ is the differential 
+      $Hom(id_{C1}, dd^{C2}) + (-1)^j Hom(dd^{C1}, id_{C2})$.
       $dd^{C1} \otimes id_{C2} + (-1)^j id_{C1} \otimes dd^{C2}$.
 
     Example
@@ -3592,16 +4283,44 @@ doc ///
       C = freeResolution coker vars S
       D = Hom(C,C)
       dd^D
+      assert isWellDefined D
     Text
-      The homology of this complex is Hom(C, ZZ/101)
+      The homology of this complex is $Hom(C, ZZ/101)$
     Example
       prune HH D == Hom(C, coker vars S)
     Text
       If one of the arguments is a module, it is considered as a complex concentrated in homological degree 0.
     Example
-      E = Hom(C, S^1)
+      E = Hom(C, S^2)
       prune HH E
+    Text
+      There is a simple relationship between Hom complexes and @TO2 ((symbol SPACE, Complex, Array), "shifts")@.
+      Specifically, shifting the first argument is the same as the negative shift of the result.  But
+      shifting the second argument is only the same as the positive shift of the result
+      up to a sign.
+    Example
+      Hom(C[3], C) == D[-3]
+      Hom(C, C[-2]) == D[-2]
+      Hom(C, C[-3]) != D[-3]
+      Hom(C, C[-3]) == complex(- dd^(D[-3]))
+    Text
+      Specific maps and morphisms between complexes can be obtained
+      with @TO (homomorphism, ComplexMap)@.
+    Text
+      Because the Hom complex can be regarded as the total complex of a double complex,
+      each term comes with pairs of indices, labelling the summands.
+    Example
+      indices D_-1
+      components D_-1
+      indices D_-2
+      components D_-2
    SeeAlso
+     (homomorphism, ComplexMap)
+     (homomorphism', ComplexMap)
+     (randomComplexMap, Complex, Complex)
+     indices
+     components
+     (Hom, ComplexMap, ComplexMap)
 ///
 
 
@@ -3689,11 +4408,13 @@ doc ///
      BettiTally
 ///
 
+-- TODO: once we have Hom evaluation map,
+-- let's add in the map from C to dual dual C.
 doc ///
    Key
-     (dual,Complex)
+     (dual, Complex)
    Headline
-     makes the dual of a complex
+     make the dual of a complex
    Usage
      dual C
    Inputs
@@ -3704,33 +4425,780 @@ doc ///
     Text
       The dual of a complex $C$ is by definition $Hom(C, R)$, where $R$ is the ring of $C$.
     Example
-      S = ZZ/101[a..d]
+      S = ZZ/101[a..d];
       B = intersect(ideal(a,c),ideal(b,d))
       C1 = freeResolution B
       C2 = dual C1
+      assert(C2 == Hom(C1, S^1))
+      C1 == dual dual C1
       prune HH C2
-      Ext^2(S^1/B, S)
-      Ext^3(S^1/B, S)
+    Text
+      The double dual is not necessarily isomorphic to the original complex.
+    Example
+      I = ideal(a^2, a*b, b^2)
+      J = ideal(b^3, b*c, c^3)
+      K = intersect(I,J)
+      f = map(S^1/I ++ S^1/J, S^1/K, {{1},{1}})
+      g = map(S^1/(I+J), S^1/I ++ S^1/J, {{1,-1}})
+      C = complex{g,f}
+      assert isWellDefined C
+      assert isExact C
+      assert(dual C == 0)
+      assert(C != dual dual C)
    SeeAlso
      (Hom, Complex, Complex)
-     Ext
+     (dual, Module)
+///
+
+doc ///
+    Key
+        (part, List, Complex)
+        (part, ZZ, Complex)
+    Headline
+        extract a graded component of a complex
+    Usage
+        part(d, C)
+    Inputs
+        d:List
+            or @TO "ZZ"@, if the underlying ring $R$ is singly graded.
+        C:Complex
+            that is homogeneous over $R$
+    Outputs
+        :Complex
+          a complex over the coefficient ring of $R$
+    Description
+        Text
+          If $C$ is a graded (homogeneous) complex over a ring $R$, and $d$ is a degree, this method
+          computes the degree $d$ part of the complex over the coefficient ring of $R$.
+        Text
+          Taking parts of a graded (homogeneous) complex commutes with taking homology.
+        Example
+          R = QQ[a,b,c,d];
+          I = ideal(a*b, a*c, b*c, a*d)
+          C = freeResolution I
+          D = part(4,C)
+          prune HH D == part(4, HH C)
+          prune HH D == part(4, complex(R^1/I))
+        Text
+          Given a squarefree monomial ideal corresponding to a
+          simplicial complex, in a polynomial ring equipped with the
+          fine grading, parts of the dual of the free resolution of the monomial
+          ideal are the chain complexes of the induced simplicial
+          subcomplexes.
+        Example
+          S = QQ[a..d, DegreeRank=>4];
+          I = intersect(ideal(a,b), ideal(c,d))
+          C = dual freeResolution I
+          prune HH (part({-1,-1,-1,-1}, C)) -- empty quadrilateral
+          prune HH part({-1,-1,0,0}, C) -- 2 points
+          prune HH part({0,0,-1,-1}, C) -- 2 points
+          prune HH part({0,0,0,0}, C) -- solid quadrilateral
+        Text
+          Obtain the implicit equation of a surface by using this method on a resolution over Rees algebra
+          DDD Mike thinks about an example here.
+    SeeAlso
+      "DDD"
+///
+
+doc ///
+    Key
+        (naiveTruncation, Complex, ZZ, ZZ)
+        (naiveTruncation, Complex, InfiniteNumber, ZZ)
+        (naiveTruncation, Complex, Nothing, ZZ)
+        (naiveTruncation, Complex, Sequence)
+        (naiveTruncation, Complex, ZZ, InfiniteNumber)
+        (naiveTruncation, Complex, ZZ, Nothing)
+        naiveTruncation
+    Headline
+        drops all terms of a complex outside a given interval
+    Usage
+        naiveTruncation(C, lo, hi)
+    Inputs
+        C:Complex
+        lo:ZZ
+            or {\tt -infinity} or {\tt null} (the latter two give no lower bound)
+        hi:ZZ
+            or {\tt infinity} or {\tt null} (the latter two give no upper bound)
+    Outputs
+        :Complex
+    Description
+        Text
+            Returns a new complex which drops (sets to zero) all modules 
+            outside the given range.
+        Example
+            R = ZZ/101[a,b,c,d,e];
+            I = intersect(ideal(a,b),ideal(c,d,e))
+            C = freeResolution I
+            naiveTruncation(C, 1, 2)
+            C16 = naiveTruncation(C, 1, 6)
+            isWellDefined C16
+            naiveTruncation(C, 1, infinity)
+            naiveTruncation(C, -13, 2)
+            naiveTruncation(C, -infinity, 2)
+            naiveTruncation(C, , 2)
+        Text
+            Truncation gives rise to a natural short exact sequence of complexes.
+        Example
+            C' = naiveTruncation(C,, 1)
+            C'' = naiveTruncation(C, 2, infinity)
+            f = inducedMap(C, C')
+            g = inducedMap(C'', C)
+            assert isShortExactSequence(g,f)
+        Text
+            There is another type of truncation, @TO "canonicalTruncation"@, which induces
+            an isomorphism on (a range) of homology.
+    SeeAlso
+        (canonicalTruncation, Complex, ZZ, ZZ)
+        (naiveTruncation, ComplexMap, Sequence, Sequence)
+        (naiveTruncation, ComplexMap, Sequence)
+///
+
+doc ///
+    Key
+        (canonicalTruncation, Complex, ZZ, ZZ)
+        (canonicalTruncation, Complex, InfiniteNumber, ZZ)
+        (canonicalTruncation, Complex, Nothing, ZZ)
+        (canonicalTruncation, Complex, Sequence)
+        (canonicalTruncation, Complex, ZZ, InfiniteNumber)
+        (canonicalTruncation, Complex, ZZ, Nothing)
+        canonicalTruncation
+    Headline
+        reducing the number of non-zero terms of a complex
+    Usage
+        canonicalTruncation(C, lo, hi)
+    Inputs
+        C:Complex
+        lo:ZZ
+            or {\tt -infinity} or {\tt null} (the latter two give no lower bound)
+        hi:ZZ
+            or {\tt infinity} or {\tt null} (the latter two give no upper bound)
+    Outputs
+        :Complex
+    Description
+        Text
+            Returns a new complex which drops (sets to zero) all modules 
+            outside the given range, and modifies the ends to preserve homology
+            in the given range.
+        Example
+            R = ZZ/101[a,b,c,d,e];
+            I = intersect(ideal(a,b),ideal(c,d,e))
+            C = (dual freeResolution I)[-4]
+            C1 = canonicalTruncation(C, 1, 2)
+            assert isWellDefined C1
+            HH C1
+            naiveTruncation(HH C, 1, 2) == HH C1
+            prune HH C1
+        Text
+            We illustrate various possibilities for the truncation interval.
+        Example
+            C2 = canonicalTruncation(C, 1, 6)
+            assert isWellDefined C2
+            C3 = canonicalTruncation(C, 1, infinity)
+            C2 == C3
+            C4 = canonicalTruncation(C, -13, 2)
+            C5 = canonicalTruncation(C, -infinity, 2)
+            C4 == C5
+            C6 = canonicalTruncation(C, , 2)
+            C4 == C6
+        Text
+            If the lower and upper bounds are equal in the canonical truncation, 
+            the resulting complex has a single nonzero term consisting of the
+            homology in that location.
+        Example
+            assert(canonicalTruncation(C, 1, 1) == naiveTruncation(HH C, 1, 1))
+        Text
+            If we truncate only from below, then we get an injection
+            from the truncation into the original complex, whereas if
+            we truncate only from above, we get a surjection onto
+            the truncated complex.
+        Example
+            f = inducedMap(C, C3)
+            assert isWellDefined f
+            assert(ker f == 0)
+            prune coker f
+            C7 = canonicalTruncation(C, -infinity, 1)
+            C7 != coker f
+        Example
+            g = inducedMap(C5, C)
+            assert isWellDefined g
+            assert(coker g == 0)
+            C8 = canonicalTruncation(C, 2, infinity)
+            prune C8
+            prune ker g
+        Text
+            There is another type of truncation, @TO "naiveTruncation"@, which yields
+            a short exact sequence of complexes.
+    SeeAlso
+        (naiveTruncation, Complex, ZZ, ZZ)
+        (canonicalTruncation, ComplexMap, Sequence)
+///
+ 
+doc ///
+    Key
+        (gradedModule, Complex)
+    Headline
+        a new complex in which the differential is zero
+    Usage
+        gradedModule C
+    Inputs
+        C:Complex
+    Outputs
+        :Complex
+            whose differential is the zero map
+    Description
+        Text
+            This routine isolates the terms in the complex
+            and forgets the differentials
+        Example
+            R = ZZ/101[a,b,c,d,e];
+            I = intersect(ideal(a,b),ideal(c,d,e))
+            C = (dual freeResolution I)[-4]
+            dd^C
+            G = gradedModule C
+            dd^G
+            assert(isWellDefined G)
+            assert(G != C)
+        Text
+            The homology of a complex already has zero differential.
+        Example
+            H = HH C
+            prune H
+            dd^H == 0
+            assert(H == gradedModule H)
+    SeeAlso
+        (homology, Complex)
+///
+
+doc ///
+    Key
+        (symbol SPACE, RingMap, Complex)
+    Headline
+        apply a ring map
+    Usage
+        phi C
+    Inputs
+        phi:RingMap
+            whose source is a ring $R$, and whose target is a ring $S$
+        C:Complex
+            over the ring $R$
+    Outputs
+        :Complex
+            over the ring $S$
+    Description
+        Text
+            We illustrate the image of a complex under a ring map.
+        Example
+            R = QQ[x,y,z]
+            S = QQ[s,t]
+            phi = map(S, R, {s, s+t, t})
+            I = ideal(x^3, x^2*y, x*y^4, y*z^5)
+            C = freeResolution I
+            D = phi C
+            isWellDefined D
+            dd^D
+            prune HH D
+        Text
+            When the ring map doesn't preserve homogeneity,
+            the @TO "DegreeMap"@ option is needed to determine
+            the degrees of the image free modules in the complex.
+        Example
+            R = ZZ/101[a..d]
+            S = ZZ/101[s,t]
+            phi = map(S, R, {s^4, s^3*t, s*t^3, t^4}, DegreeMap => i -> 4*i)
+            C = freeResolution coker vars R
+            D = phi C
+            assert isWellDefined D
+            assert isHomogeneous D
+            prune HH D
+    Caveat
+        Every term in the complex must be free or a submodule of a free module.
+        Otherwise, use @TO (tensor, RingMap, Complex)@.
+    SeeAlso
+        (symbol SPACE, RingMap, ComplexMap)
+        (symbol **, RingMap, Complex)
+///
+
+doc ///
+    Key
+        (symbol SPACE, RingMap, ComplexMap)
+    Headline
+        apply a ring map to a map of complexes
+    Usage
+        phi f
+    Inputs
+        phi:RingMap
+            whose source is a ring $R$, and whose target is a ring $S$
+        f:ComplexMap
+            over the ring $R$
+    Outputs
+        :ComplexMap
+            over the ring $S$
+    Description
+        Text
+            We illustrate the image of a complex map along a ring map.
+        Example
+            R = QQ[a,b,c,d];
+            S = QQ[s,t];
+            phi = map(S, R, {s, s+t, t, s-t})
+            I = ideal(a*b, b*c, c*d)
+            J = I + ideal(a^2, b^2, c^2, d^2)
+            CI = freeResolution I
+            CJ = freeResolution J
+            f = extend(CJ, CI, map(CJ_0, CI_0, 1))
+            assert isWellDefined f
+            g = phi f
+            assert isWellDefined g
+            dd^(source g)
+            dd^(target g)
+            prune HH g
+    SeeAlso
+        (symbol SPACE, RingMap, Complex)
+        (symbol **, RingMap, ComplexMap)
+///
+
+doc ///
+    Key
+        (symbol**, RingMap, Complex)
+        (tensor, RingMap, Complex)
+    Headline
+        tensor a complex along a ring map
+    Usage
+        phi ** C
+        tensor(phi, C)
+    Inputs
+        phi:RingMap
+            whose source is a ring $R$, and whose target is a ring $S$
+        C:Complex
+            over the ring $R$
+    Outputs
+        :Complex
+            over the ring $S$
+    Description
+        Text
+            We illustrate the tensor product of a complex along a ring map.
+        Example
+            R = QQ[x,y,z]
+            S = QQ[s,t]
+            phi = map(S, R, {s, s+t, t})
+            I = ideal(x^3, x^2*y, x*y^4, y*z^5)
+            C = freeResolution I
+            D = phi ** C
+            assert isWellDefined D
+            dd^D
+            prune HH D
+        Text
+            When the modules in the complex are not free modules,
+            this is different than the image of a complex 
+            under a ring map.
+        Example
+            I = ideal(x*y, x*z, y*z);
+            J = I + ideal(x^2, y^2);
+            g = inducedMap(module J, module I)
+            assert isWellDefined g
+            C = complex {g}
+            D1 = phi C
+            assert isWellDefined D1
+            D2 = phi ** C
+            assert isWellDefined D2
+            prune D1
+            prune D2
+        Text
+            When the ring map doesn't preserve homogeneity,
+            the @TO "DegreeMap"@ option is needed to determine
+            the degrees of the image free modules in the complex.
+        Example
+            R = ZZ/101[a..d]
+            S = ZZ/101[s,t]
+            f = map(S, R, {s^4, s^3*t, s*t^3, t^4}, DegreeMap => i -> 4*i)
+            C = freeResolution coker vars R
+            D = f ** C
+            D == f C
+            assert isWellDefined D
+            assert isHomogeneous D
+            prune HH D
+            C1 = Hom(C, image vars R)
+            D1 = f ** C1
+            isWellDefined D1
+            assert isHomogeneous D1
+    SeeAlso
+        (symbol **, RingMap, ComplexMap)
+        (symbol SPACE, RingMap, Complex)
+///
+
+doc ///
+    Key
+        (symbol**, RingMap, ComplexMap)
+        (tensor, RingMap, ComplexMap)
+    Headline
+        tensor a map of complexes along a ring map
+    Usage
+        phi ** f
+        tensor(phi, f)
+    Inputs
+        phi:RingMap
+            whose source is a ring $R$, and whose target is a ring $S$
+        f:ComplexMap
+            over the ring $R$
+    Outputs
+        :ComplexMap
+            over the ring $S$
+    Description
+        Text
+            We illustrate the tensor product of a map of complexes along a ring map.
+        Example
+            R = QQ[a,b,c,d];
+            S = QQ[s,t];
+            phi = map(S, R, {s, s+t, t, s-t})
+            I = ideal(a*b, b*c, c*d)
+            J = I + ideal(a^2, b^2, c^2, d^2)
+            CI = freeResolution I
+            CJ = freeResolution J
+            f = extend(CJ, CI, map(CJ_0, CI_0, 1))
+            assert isWellDefined f
+            g = phi ** f
+            assert isWellDefined g
+            dd^(source g)
+            dd^(target g)
+            prune HH g
+    SeeAlso
+        (symbol **, RingMap, Complex)
+        (symbol SPACE, RingMap, ComplexMap)
+///
+ 
+doc ///
+    Key
+        (resolution, Complex)
+    Headline
+        minimal free resolution of a complex
+    Usage
+        resolution C
+    Inputs
+        C:Complex
+        LengthLimit => ZZ
+          this is used to limit somehow the computation where resolutions might be too long or infinite
+        DegreeLimit =>
+          unused
+        FastNonminimal =>
+          unused
+        HardDegreeLimit =>
+          unused
+        PairLimit =>
+          unused
+        SortStrategy =>
+          unused
+        StopBeforeComputation =>
+          unused
+        Strategy =>
+          unused
+        SyzygyLimit => 
+          unused
+    Outputs
+        :Complex
+    Description
+        Text
+            Given a complex $C$, this method produces a quasi-isomorphic complex $F$ 
+            all of whose terms are free modules.  The algorithm used minimizes the
+            ranks of the free modules in $F$.
+        Example
+            R = ZZ/101[a,b,c];
+            I = ideal(a^2, a*b, b*c)
+            C = Hom(freeResolution I, R^1/I)
+            assert all(min C .. max C, i -> not isFreeModule C_i)
+            fC = resolutionMap C
+            FC = resolution C
+            prune HH FC
+            assert isQuasiIsomorphism fC
+            assert isFree FC
+            assert isWellDefined fC
+            assert(0 == coker fC) -- showing that fC is surjective.
+        Text
+            The resolution of a short exact sequence is simply the 
+            zero complex.
+        Example
+            J = ideal(a,b)
+            K = ideal(b^2,c)
+            g1 = map(R^1/(J+K), R^1/J ++ R^1/K, {{1,-1}})
+            g2 = map(R^1/J ++ R^1/K, R^1/(intersect(J,K)), {{1},{1}})
+            D = complex{g1, g2}
+            assert isWellDefined D
+            assert isShortExactSequence(g1,g2)
+            fD = resolutionMap D
+            assert isWellDefined fD
+            assert isQuasiIsomorphism fD
+            assert(0 == source fD) -- so fD is certainly not surjective!
+        Text
+            This method just accesses the cached value from
+            the method @TO (resolutionMap, Complex)@, which 
+            does the actual computation.
+    SeeAlso
+        (resolutionMap, Complex)
+        (freeResolution, Module)
+        (isQuasiIsomorphism, ComplexMap)
+///
+
+doc ///
+    Key
+        resolutionMap
+        (resolutionMap, Complex)
+    Headline
+        map from a free resolution to the given complex
+    Usage
+        resolutionMap C
+    Inputs
+        C:Complex
+        LengthLimit => ZZ
+          this is used to limit somehow the computation where resolutions might be too long or infinite
+        DegreeLimit =>
+          unused
+        FastNonminimal =>
+          unused
+        HardDegreeLimit =>
+          unused
+        PairLimit =>
+          unused
+        SortStrategy =>
+          unused
+        StopBeforeComputation =>
+          unused
+        Strategy =>
+          unused
+        SyzygyLimit => 
+          unused
+    Outputs
+        :ComplexMap
+            a quasi-isomorphism whose source is a free resolution and whose target is $C$
+    Description
+        Text
+            Given a complex $C$, this method produces the natural quasi-isomorphism
+            from a complex $F$ all of whose terms are free modules to the complex $C$.
+            The algorithm used minimizes the ranks of the free modules in $F$.
+        Example
+            R = ZZ/101[a,b,c];
+            I = ideal(a^2, a*b, b*c)
+            C = Hom(freeResolution I, R^1/I)
+            assert all(min C .. max C, i -> not isFreeModule C_i)
+            fC = resolutionMap C
+            FC = resolution C
+            prune HH FC
+            assert isQuasiIsomorphism fC
+            assert isFree FC
+            assert isWellDefined fC
+            assert(0 == coker fC) -- showing that fC is surjective.
+        Text
+            The resolution of a short exact sequence is simply the 
+            zero complex.
+        Example
+            J = ideal(a,b)
+            K = ideal(b^2,c)
+            g1 = map(R^1/(J+K), R^1/J ++ R^1/K, {{1,-1}})
+            g2 = map(R^1/J ++ R^1/K, R^1/(intersect(J,K)), {{1},{1}})
+            D = complex{g1, g2}
+            assert isWellDefined D
+            assert isShortExactSequence(g1,g2)
+            fD = resolutionMap D
+            assert isWellDefined fD
+            assert isQuasiIsomorphism fD
+            assert(0 == source fD) -- so fD is certainly not surjective!
+        Text
+            To avoid recomputation, this method caches its value.
+    SeeAlso
+        (resolution, Complex)
+        (freeResolution, Module)
+        (isQuasiIsomorphism, ComplexMap)
+///
+
+doc ///
+    Key
+        (minimalPresentation, Complex)
+        (prune, Complex)
+    Headline
+        minimal presentation of all terms in a complex
+    Usage
+        D = minimalPresentation C
+        D = prune C
+    Inputs
+        C:Complex
+        Exclude => 
+            unused
+    Outputs
+        D:Complex
+            isomorphic to the input, where each term is replaced
+            by a minimally presented model
+    Consequences
+        Item
+            The isomorphism $g : D \to C$ is available as 
+            @TT "g = D.cache.pruningMap"@.  The inverse isomorphism
+            can be obtained as @TT "g^-1"@
+    Description
+        Text
+            This is frequently useful to make the output of certain
+            operations readable or understandable.
+        Text
+            In particular, homology often needs to be pruned to
+            be understood.  For instance, this is useful 
+            for recognizing when terms given by subquotient modules 
+            are actually zero.
+        Example
+            S = ZZ/101[a,b,c,d,e];
+            I = ideal(a,b) * ideal(c,d,e)
+            F = dual freeResolution I
+            C = HH F
+            D = prune C
+            g = D.cache.pruningMap
+            assert isWellDefined g
+            assert isComplexMorphism g
+            assert (target g == C)
+            assert (source g == D)
+            h = g^-1
+            assert(g*h == 1 and h*g == 1)
+        Text
+            The image of a map of complexes also becomes more
+            understandable via pruning.
+        Example
+            S = ZZ/101[a,b,c];
+            I = ideal(a^2,b^2,c^2);
+            J = I + ideal(a*b*c);
+            FI = freeResolution I
+            FJ = freeResolution J
+            f = randomComplexMap(FJ, FI ** S^{-1}, Cycle => true)
+            C = image f
+            D = prune C
+            g = D.cache.pruningMap
+            assert isWellDefined g
+            assert isComplexMorphism g
+            assert (target g == C)
+            assert (source g == D)
+            h = g^-1
+            assert(g*h == 1 and h*g == 1)
+   SeeAlso
+       (minimize, Complex)
+       (minimalPresentation, Module)
+       randomComplexMap
+       freeResolution
+       isComplexMorphism
+///
+
+doc ///
+    Key
+        (minimize, Complex)
+        minimize
+    Headline
+        a quasi-isomorphic complex whose terms have minimal rank
+    Usage
+        D = minimize C
+    Inputs
+        C:Complex
+            graded, whose terms are all free modules
+    Outputs
+        D:Complex
+            graded, whose terms are all free modules of minimal rank
+    Consequences
+        Item
+            The projection morphism $g : C \to D$ is available as 
+            @TT "g = D.cache.minimizingMap"@.  
+    Description
+        Text
+            This method essentially removes all scalar units 
+            from the matrices in the differential of $C$.
+            
+            We illustrate this in a simple example.
+        Example
+            S = ZZ/32003[a,b];
+            I = ideal(a^2-b^2, a*b)
+            C = freeResolution(I, FastNonminimal=>true)
+            betti C
+            D = minimize C
+            assert(isWellDefined D and isHomogeneous D)
+            betti D
+            g = D.cache.minimizingMap
+            assert isWellDefined g
+            assert(isComplexMorphism g and isQuasiIsomorphism g)
+            assert(source g == C)
+            assert(target g == D)
+            assert(coker g == 0)
+        Text
+            The minimal complex $D$ is a direct summand of the
+            original complex $C$.  The natural inclusion
+            of $D$ into $C$ can be constructed as follows.
+        Example
+            f = liftMapAlongQuasiIsomorphism(id_D, g)
+            g*f == id_D
+            assert(source f == D)
+            assert(target f == C)
+            assert(ker f == 0)
+            f*g
+        Text
+            The chain complex $D$ is a direct summand of $C$,
+            giving rise to a split short exact sequence of
+            chain complexes.
+        Example
+            h = prune canonicalMap(C, ker g)
+            assert isShortExactSequence(g, h)
+        Text
+            Warning: If the input complex is not homogeneous, then
+            the output is probably not what one would expect.
+        Example
+            S = ZZ/32003[a..d]
+            J = ideal(a*b*c-b*c, a*d-c, a^3-d^2*c)
+            CJ = freeResolution J
+            assert not isHomogeneous CJ
+            D = minimize CJ
+            isWellDefined D
+            prune HH D == prune HH CJ
+   SeeAlso
+       freeResolution
+       (resolution, Complex)
+       (resolutionMap, Complex)
+       (minimalPresentation, Complex)
+///
+
+/// -- comment about the above node
+-- The following fails due to 'prune' (May 2020, see git issue #1116)
+            SZZ = ZZ (monoid S);
+            CZZ = complex hashTable for i from min C + 1 to max C list i => sub(dd^C_i, SZZ)
+            isWellDefined CZZ
+            betti CZZ
+            DZZ = minimize CZZ
+            assert isWellDefined DZZ
+            assert isHomogeneous DZZ -- !! BUG
+            betti DZZ
+            g = D.cache.minimizingMap
+            assert isWellDefined g
+            assert isComplexMorphism g
+            assert isQuasiIsomorphism g
+            assert(source g == C)
+            assert(target g == D)
+            assert(coker g == 0)
+///
+
+/// -- comment about minimize and pruneComplex:
+  -- this code can be run for the example ini (minimize,Complex).
+  needsPackage "PruneComplex"
+  C' = chainComplex C
+  D' = pruneComplex(C', UnitTest => isScalar)
+  g' = D'.cache.pruningMap
+  D = complex D'
+  g = complex g'
+  source g == D
+  target g == C
+  isComplexMorphism g
 ///
 
 doc ///
   Key
     ComplexMap
   Headline
-    the class of all homomorphisms of complexes
+    the class of all maps between chain complexes
   Description
     Text
-      A complex homomorphism $f : C \rightarrow D$ of degree $d$ is a
+      A map of chain complexes $f : C \rightarrow D$ of degree $d$ is a
       sequence of maps $f_i : C_i \rightarrow D_{d+i}$.  
       No relationship between the maps $f_i$ and 
       and the differentials of either $C$ or $D$ is assumed.
       
-      The set of all complex homomorphisms from $C$ to $D$ form
+      The set of all maps from $C$ to $D$ form
       the complex $Hom(C,D)$ where $Hom(C,D)_d$ consists of the
-      homomorphisms of degree $d$.
+      maps of degree $d$.
 
       The usual algebraic operations are available: addition,
       subtraction, scalar multiplication, and composition. The
@@ -3741,6 +5209,509 @@ doc ///
   SeeAlso
     Complex
 ///
+
+doc ///
+    Key
+        (map, Complex, Complex, HashTable)
+    Headline
+        make a map of chain complexes
+    Usage
+        f = map(D, C, H)
+    Inputs
+        C:Complex
+        D:Complex
+        H:HashTable
+            whose keys are integers, and whose values are the maps between
+            the corresponding terms
+        Degree => ZZ
+            the degree of the resulting map
+        DegreeLift => 
+            unused
+        DegreeMap =>
+            unused
+    Outputs
+        f:ComplexMap
+    Description
+        Text
+            A map of complexes $f : C \rightarrow D$ of degree $d$ is a
+            sequence of maps $f_i : C_i \rightarrow D_{d+i}$.  
+            No relationship between the maps $f_i$ and 
+            and the differentials of either $C$ or $D$ is assumed.
+            
+            We construct a map of chain complexes by specifying the
+            individual maps between the terms.
+        Example
+            R = ZZ/101[a,b,c];
+            C = freeResolution coker matrix{{a^2-b^2,b^3-c^3,c^4}}
+            D = freeResolution coker vars R
+            H = hashTable { 0 => map(D_0, C_0, 1),
+                1 => map(D_1, C_1, {{a, 0, 0}, {-b, b^2, 0}, {0, -c^2, c^3}}),
+                2 => map(D_2, C_2, {{a*b^2, 0, 0}, {-a*c^2, a*c^3, 0}, {b*c^2, -b*c^3, b^2*c^3}}),
+                3 => map(D_3, C_3, {{a*b^2*c^3}})
+                }
+            f = map(D, C, H)
+            assert isWellDefined f
+            assert isHomogeneous f
+            assert(degree f == 0)
+            assert isComplexMorphism f
+        Text
+            The keys in the hash table index the terms in the source of the
+            map.  If a key is missing, that map is taken to be the zero map.
+            We illustrate by constructing a map of chain complexes
+            having nonzero degree, and omitting one key in the hash table.
+        Example
+            E = D[-3]
+            H = hashTable { 0 => map(E_3, C_0, 1),
+                1 => map(E_4, C_1, {{a, 0, 0}, {-b, b^2, 0}, {0, -c^2, c^3}}),
+                3 => map(E_6, C_3, {{a*b^2*c^3}})
+                }
+            g = map(E, C, H, Degree => 3)
+            g_2
+            assert(g_1 == f_1)
+            assert(g != f)
+            assert isWellDefined g
+            assert isHomogeneous g
+            assert(degree g == 3)
+            assert not isComplexMorphism g
+            assert not isCommutative g
+            assert(source g == C)
+            assert(target g == E)
+        Text
+            This is the primary constructor used by all of the more user friendly
+            methods for constructing a chain complex.
+    Caveat
+        This constructor minimizes computation
+        and does very little error checking. To verify that a complex
+        is well constructed, use @TO (isWellDefined, ComplexMap)@.
+    SeeAlso
+        ComplexMap
+        (map, Complex, Complex, Function)
+        (isWellDefined, ComplexMap)
+        (isHomogeneous, ComplexMap)
+        (degree, ComplexMap)
+        (isComplexMorphism, ComplexMap)
+        (isCommutative, ComplexMap)
+        (source, ComplexMap)
+        (target, ComplexMap)
+///
+
+doc ///
+    Key
+        (map, Complex, Complex, ZZ)
+    Headline
+        make the zero map or identity between chain complexes
+    Usage
+        f = map(D, C, 0)
+        f = map(C, C, 1)
+    Inputs
+        C:Complex
+        D:Complex
+        0:ZZ
+            or 1
+        Degree => ZZ
+            the degree of the resulting map
+        DegreeLift => 
+            unused
+        DegreeMap =>
+            unused
+    Outputs
+        f:ComplexMap
+            the zero map from $C$ to $D$ or the identity map from $C$ to $C$
+    Description
+        Text
+            A map of complexes $f : C \rightarrow D$ of degree $d$ is a
+            sequence of maps $f_i : C_i \rightarrow D_{d+i}$.  
+            
+            We construct the zero map between two
+            chain complexes.
+        Example
+            R = QQ[a,b,c]
+            C = freeResolution coker vars R
+            D = freeResolution coker matrix{{a^2, b^2, c^2}}
+            f = map(D, C, 0)
+            assert isWellDefined f
+            assert isComplexMorphism f
+            g = map(C, C, 0, Degree => 13)
+            assert isWellDefined g
+            assert(degree g == 13)
+            assert not isComplexMorphism g
+            assert isCommutative g
+            assert isHomogeneous g
+            assert(source g == C)
+            assert(target g == C)
+        Text
+            Using this function to create the identity map
+            is the same as using @TO (id, Complex)@.
+        Example
+            assert(map(C, C, 1) === id_C)
+   SeeAlso
+        ComplexMap
+        (map, Complex, Complex, Function)
+        (isWellDefined, ComplexMap)
+        (isHomogeneous, ComplexMap)
+        (degree, ComplexMap)
+        (isComplexMorphism, ComplexMap)
+        (isCommutative, ComplexMap)
+        (source, ComplexMap)
+        (target, ComplexMap)
+        (id, Complex)
+///
+
+doc ///
+    Key
+        (map, Complex, Complex, Function)
+    Headline
+        make a map of chain complexes
+    Usage
+        f = map(D, C, fcn)
+    Inputs
+        C:Complex
+        D:Complex
+        fcn:Function
+            whose values at integers are the maps between
+            the corresponding terms
+        Degree => ZZ
+            the degree of the resulting map
+        DegreeLift => 
+            unused
+        DegreeMap =>
+            unused
+    Outputs
+        f:ComplexMap
+    Description
+        Text
+            A map of complexes $f : C \rightarrow D$ of degree $d$ is a
+            sequence of maps $f_i : C_i \rightarrow D_{d+i}$.  
+            No relationship between the maps $f_i$ and 
+            and the differentials of either $C$ or $D$ is assumed.
+            
+            We construct a map of chain complexes by specifying a
+            function which determines the maps between the terms.
+        Example
+            R = ZZ/101[x]/x^3;
+            M = coker vars R
+            C = freeResolution(M, LengthLimit => 6)
+            D = C[1]
+            f = map(D, C, i -> 
+                if odd i then 
+                    map(D_i, C_i, {{x}})
+                else map(D_i, C_i, {{x^2}})
+                )
+            assert isWellDefined f
+            assert isCommutative f
+            assert(source f == C)
+            assert(target f == D)
+    SeeAlso
+        ComplexMap
+        (isWellDefined, ComplexMap)
+        (isCommutative, ComplexMap)
+        (source, ComplexMap)
+        (target, ComplexMap)
+///
+
+doc ///
+    Key
+        (map, Complex, Complex, ComplexMap)
+    Headline
+        make a new map of chain complexes from an existing one
+    Usage
+        g = map(D, C, f)
+    Inputs
+        C:Complex
+        D:Complex
+        f:ComplexMap
+            regarded as providing matrices which induce maps between the terms of $C$ and $D$
+        Degree => ZZ
+            the degree $d$ of the resulting map
+        DegreeLift => 
+            unused
+        DegreeMap =>
+            unused
+    Outputs
+        g:ComplexMap
+    Description
+        Text
+            A map of complexes $f : C' \rightarrow D'$ is a
+            sequence of maps $f_i : C'_i \rightarrow D'_{d'+i}$.  
+            The new map $g : C \rightarrow D$ is the sequence of maps $g_i : C_i \rightarrow D_{d+i}$
+            induced by the matrix of $f_i$.
+            
+            One use for this function is to get the new map of chain complexes obtained by shifting 
+            the source or target of an existing chain map.  For example, one can regard the differential
+            on a complex can be regarded as a map of degree zero between shifted complexes.
+        Example
+            R = ZZ/101[a,b,c];
+            C = freeResolution coker vars R
+            f = map(C[-1], C, dd^C, Degree => 0)
+            assert isWellDefined f
+            assert(degree f == 0)
+            assert isCommutative f
+            assert isComplexMorphism f
+            assert not isComplexMorphism dd^C
+    SeeAlso
+        ComplexMap
+        (map, Complex, Complex, Function)
+        (isWellDefined, ComplexMap)
+        (degree, ComplexMap)
+        (isComplexMorphism, ComplexMap)
+        (isCommutative, ComplexMap)
+        (symbol SPACE, Complex, Array)
+///
+
+doc ///
+    Key
+        (id, Complex)
+    Headline
+        the identity map of a chain complex
+    Usage
+        f = id_C
+    Inputs
+        C:Complex
+    Outputs
+        f:ComplexMap
+          the identity map from $C$ to itself
+    Description
+        Text
+            The chain complexes together with complex morphisms
+            forms a category.  In particular, every chain 
+            complex has an identity map.
+        Example
+            R = ZZ/101[x,y]/(x^3, y^3)
+            C = freeResolution(coker vars R, LengthLimit=>6)
+            f = id_C
+            assert isWellDefined f
+            assert isComplexMorphism f
+        Text
+            The identity map corresponds to an element of
+            the Hom complex.
+        Example
+            R = ZZ/101[a,b,c]
+            I = ideal(a^2, b^2, b*c, c^3)
+            C = freeResolution I
+            D = Hom(C, C)
+            homomorphism' id_C
+    SeeAlso
+        (map, Complex, Complex, ZZ)
+        (isWellDefined, ComplexMap)
+        (isComplexMorphism, ComplexMap)
+        (Hom, Complex, Complex)
+        (homomorphism', ComplexMap)
+///
+
+doc /// 
+    Key
+        (isWellDefined, ComplexMap)
+    Headline
+        whether a map of chain complexes is well-defined
+    Usage
+        isWellDefined f
+    Inputs
+        f:ComplexMap
+    Outputs
+        :Boolean
+            that is true when {\tt f} determines a well defined complex map
+    Description
+        Text
+            A map of chain complexes $f : C \to D$ of degree $d$ is a sequence of
+            maps $f_i : C_i \to D_{d+i}$.  No relationship is required between
+            these maps and the differentials in the source and target.
+
+            This routine checks that $C$ and $D$ are well-defined
+            chain complexes, and that, for each $f_i$, the source and
+            target equal $C_i$ and $D_{d+i}$, respectively.  If the
+            variable {\tt debugLevel} is set to a value greater than
+            zero, then information about the nature of any failure is
+            displayed.
+        Text
+            Unlike the @TO2((isWellDefined, Complex), 
+                "corresponding function for Complexes")@,
+            the basic constructors for complex maps are all but
+            assured to be well defined. The only case that could cause
+            a problem is if one constructs the source or target
+            complex, and those are not well defined.
+        Example
+            R = ZZ/101[a,b,c];
+            C = freeResolution coker matrix{{a^2-b^2,b^3-c^3,c^4}}
+            D = freeResolution coker vars R
+            H = hashTable { 0 => map(D_0, C_0, 1),
+                1 => map(D_1, C_1, {{a, 0, 0}, {-b, b^2, 0}, {0, -c^2, c^3}}),
+                2 => map(D_2, C_2, {{a*b^2, 0, 0}, {-a*c^2, a*c^3, 0}, {b*c^2, -b*c^3, b^2*c^3}}),
+                3 => map(D_3, C_3, {{a*b^2*c^3}})
+                }
+            f = map(D, C, H)
+            assert isWellDefined f
+            assert isHomogeneous f
+            assert(degree f == 0)
+            assert isComplexMorphism f
+        Text
+            We construct two random maps of chain complexes,
+            and check to see that, as should be the case, 
+            both are well defined.
+        Example
+            g = randomComplexMap(D,C)
+            assert isWellDefined g
+            assert not isCommutative g
+        Example
+            h = randomComplexMap(D,C, Cycle => true)
+            assert isWellDefined h
+            assert isComplexMorphism h
+        Text
+            This method also checks the following aspects of 
+            the data structure:
+        Text
+            @UL {
+                TEX "The underlying hash table has exactly the expected keys,
+                namely, {\\tt source, target, degree, map, cache}",
+                "The ring of the source and target are the same",
+                "The source and target are well defined complexes",
+                "The degree is an integer",
+                TEX "All keys in the {\\tt map} field are integers,
+                in the range of the concentration of the source",
+                TEX "The source and target of each $f_i$ is as expected",
+                TEX "If the {\\tt isCommutative} key is present in the cache
+                table, then commutativity of the map with the differentials
+                is checked"
+                }@
+    SeeAlso
+        (isWellDefined, Complex)
+        (isCommutative, ComplexMap)
+        (isComplexMorphism, ComplexMap)
+        (map, Complex, Complex, HashTable)
+///
+
+-- DDD
+doc ///
+    Key
+        canonicalMap
+        (canonicalMap, Complex, Complex)
+        [canonicalMap, UseTarget]
+    Headline
+        gets the natural map arising from various constructions
+    Usage
+        g = canonicalMap(D, C)
+    Inputs
+        C:Complex
+        D:Complex
+        UseTarget => Boolean
+            determines the choice of canonical map
+            when $D$ is a cylinder of a map $f$
+            and the source and target of $f$ are the same
+    Outputs
+        g:ComplexMap
+    Description
+        Text
+            A canonical map, also called a natural map, is a 
+            map that arises naturally from the definition or
+            the construction of the object.
+            
+            The following six constructions are supported: kernel, 
+            cokernel, image, coimage, cone, and cylinder.
+        Text
+            The @TO2((kernel, ComplexMap), "kernel of a complex map")@ 
+            comes with a natural injection into the source complex.
+            This natural map is always a complex morphism.
+        Example
+            R = ZZ/101[a,b,c,d];
+            D = freeResolution coker vars R
+            C = (freeResolution coker matrix"a,b,c")[1]
+            f = randomComplexMap(D, C, Cycle=>true)
+            assert isComplexMorphism f
+            K1 = kernel f
+            g = canonicalMap(source f, K1)
+            degree g
+            assert(isWellDefined g and isComplexMorphism g)
+        Example
+            f2 = randomComplexMap(D, C)
+            assert not isComplexMorphism f2
+            K2 = kernel f2
+            g2 = canonicalMap(source f2, K2)
+            assert(isWellDefined g2 and isComplexMorphism g2)
+        Text
+            The @TO2((cokernel, ComplexMap), "cokernel of a complex map")@
+            comes with a natural surjection from the target complex.
+        Example
+            Q = cokernel f
+            g3 = canonicalMap(Q, target f)
+            assert(isWellDefined g3 and isComplexMorphism g3)
+        Text
+            The @TO2((image, ComplexMap), "image of a complex map")@ 
+            comes with a natural injection into the target complex.
+        Example
+            I = image f
+            g4 = canonicalMap(target f, I)
+            assert(isWellDefined g4 and isComplexMorphism g4)
+        Text
+            The @TO2((coimage, ComplexMap), "coimage of a complex map")@
+            comes with a natural surjection from the source complex.
+            This natural map is always a complex morphism.
+        Example
+            J = coimage f
+            g5 = canonicalMap(J, source f)
+            assert(isWellDefined g5 and isComplexMorphism g5)
+        Example
+            J2 = coimage f2
+            g6 = canonicalMap(J2, source f2)
+            assert(isWellDefined g6 and isComplexMorphism g6)
+        Text
+            The @TO2((cone, ComplexMap), "cone of a complex morphism")@
+            comes with two natural maps.  Given a map $f : C \to D$,
+            let $E$ denote the cone of $f$.  The first is a natural
+            injection from the target $D$ of $f$ into $E$.  The
+            second is a natural surjection from $E$ to $C[-1]$.
+            Together, these maps form a short exact sequence of
+            complexes.
+        Example
+            E = cone f
+            g = canonicalMap(E, target f)
+            h = canonicalMap((source f)[-1], E)
+            assert(isWellDefined g and isWellDefined h)
+            assert(isComplexMorphism g and isComplexMorphism h)
+            assert isShortExactSequence(h,g)
+        Text
+            The @TO2((cylinder, ComplexMap), "cylinder of a complex
+            map")@ comes with four natural maps.  Given a map $f : C
+            \to D$, let $F$ denote the cylinder of $f$.  The first is
+            the natural injection from the source $C$ of $f$ into the
+            cylinder $F$.  Together these two maps form a short exact
+            sequence of complexes.
+        Example
+            F = cylinder f
+            g = canonicalMap(F, source f)
+            h = canonicalMap(E, F)
+            assert(isWellDefined g and isWellDefined h)
+            assert(isComplexMorphism g and isComplexMorphism h)
+            assert isShortExactSequence(h,g)
+        Text
+            The third is the natural injection from the target $D$ of $F$
+            into the cylinder $F$.
+            The fourth is the natural surjection from the cylinder $F$ to the 
+            target $D$ of $f$.
+            However, these two maps do not form a short exact
+            sequence of complexes.
+        Example
+            g' = canonicalMap(F, target f)
+            h' = canonicalMap(target f, F)
+            assert(isWellDefined g' and isWellDefined h')
+            assert(isComplexMorphism g' and isComplexMorphism h')
+            assert not isShortExactSequence(h',g')
+        Text
+            When $D == C$, the optional argument {\tt UseTarget} 
+            selects the appropriate natural map.
+        Example
+            f' = id_C
+            F' = cylinder f'
+            g = canonicalMap(F', C, UseTarget=>true)
+            h = canonicalMap(F', C, UseTarget=>false)
+            assert(isWellDefined g and isWellDefined h)
+            assert(g != h)
+            assert(isComplexMorphism g and isComplexMorphism h)
+    SeeAlso
+        (inducedMap, Complex, Complex)
+///
+
+
+
+-- DDD
 
 
 -- this is deleted, but maybe we want the prose.
@@ -3771,6 +5742,103 @@ doc ///
   SeeAlso
     Complex
     ComplexMap
+///
+
+doc ///
+    Key
+        (source, ComplexMap)
+    Headline
+        get the source of a map of chain complexes
+    Usage
+        C = source f
+    Inputs
+      f:ComplexMap
+    Outputs
+      C:Complex
+    Description
+        Text
+            Given a complex map $f : C \to D$
+            this method returns the chain complex $C$.
+        Example
+            R = ZZ/101[a..d]
+            I = ideal(a^2, b^2, c^2)
+            J = I + ideal(a*b*c)
+            FI = freeResolution I
+            FJ = freeResolution J
+            f = randomComplexMap(FJ, FI, Cycle=>true)
+            source f
+            assert isWellDefined f
+            assert isComplexMorphism f
+            assert(source f == FI)
+            assert(target f == FJ)
+        Text
+            The differential in a complex is a map of chain complexes.
+        Example
+            kk = coker vars R
+            F = freeResolution kk
+            source dd^F == F
+            target dd^F == F
+            degree dd^F == -1
+   SeeAlso
+       "Making chain complexes"
+       (target, ComplexMap)
+       (freeResolution, Ideal)
+       (randomComplexMap, Complex, Complex)
+///
+
+doc ///
+    Key
+        (target, ComplexMap)
+    Headline
+        get the target of a map of chain complexes
+    Usage
+        C = target f
+    Inputs
+      f:ComplexMap
+    Outputs
+      C:Complex
+    Description
+        Text
+            Given a complex map $f : C \to D$
+            this method returns the chain complex $D$.
+        Example
+            R = ZZ/101[a..d]
+            I = ideal(a^2, b^2, c^2)
+            J = I + ideal(a*b*c)
+            FI = freeResolution I
+            FJ = freeResolution J
+            f = randomComplexMap(FJ, FI, Cycle=>true)
+            target f
+            assert isWellDefined f
+            assert isComplexMorphism f
+            assert(target f == FJ)
+            assert(source f == FI)
+        Text
+            The differential in a complex is a map of chain complexes.
+        Example
+            kk = coker vars R
+            F = freeResolution kk
+            target dd^F == F
+            source dd^F == F
+            degree dd^F == -1
+   SeeAlso
+       "Making chain complexes"
+       (source, ComplexMap)
+       (freeResolution, Ideal)
+       (randomComplexMap, Complex, Complex)
+///
+
+-- XXX
+///
+    Key
+    Headline
+    Usage
+    Inputs
+    Outputs
+    Description
+        Text
+        Example
+   SeeAlso
 ///
 
 doc ///
@@ -4029,7 +6097,7 @@ doc ///
   Key
     (image, ComplexMap)
   Headline
-    image of a map of complexes
+    make the image of a map of complexes
   Usage
     E = image f
   Inputs
@@ -4038,15 +6106,15 @@ doc ///
     E : Complex
   Description
     Text
-      If $f : C \mapsto D$ is a map of chain complexes of degree $d$,
+      If $f : C \to D$ is a map of chain complexes of degree $d$,
       then the image is the complex $E$ whose $i-th$ is $image(f_{i-d})$,
       and whose differential is induced from the differential 
       on the target.
     Text
       In the following example, we first construct a random
-      complex morphism $f : C \mapsto D$.  We consider 
-      the exact sequence $0 \mapsto D \mapsto cone(f) \mapsto C[-1] \mapsto 0$.
-      For the maps $g : D \mapsto cone(f)$ and $h : cone(f) \mapsto C[-1]$,
+      complex morphism $f : C \to D$.  We consider 
+      the exact sequence $0 \to D \to cone(f) \to C[-1] \to 0$.
+      For the maps $g : D \to cone(f)$ and $h : cone(f) \to C[-1]$,
       we compute the image.
     Example
       S = ZZ/101[a,b,c,d];
@@ -4068,6 +6136,8 @@ doc ///
       ker h1 == 0
       image h1 == image h
   SeeAlso
+    "Making chain complexes"
+    "Making maps between chain complexes"
     image
     (coimage, ComplexMap)
     (kernel, ComplexMap)
@@ -4079,7 +6149,7 @@ doc ///
   Key
     (coimage, ComplexMap)
   Headline
-    coimage of a map of complexes
+    make the coimage of a map of complexes
   Usage
     coimage f
   Inputs
@@ -4088,15 +6158,15 @@ doc ///
     : Complex
   Description
     Text
-      The coimage of a chain complex map $f : C \mapsto D$
+      The coimage of a chain complex map $f : C \to D$
       is the complex $E$ whose $i-th$ term is $coimage(f_i)$,
       and whose differential is induced from the differential 
       on the source.
     Text
       In the following example, we first construct a random
-      complex morphism $f : C \mapsto D$.  We consider 
-      the exact sequence $0 \mapsto D \mapsto cone(f) \mapsto C[-1] \mapsto 0$.
-      For the maps $g : D \mapsto cone(f)$ and $h : cone(f) \mapsto C[-1]$,
+      complex morphism $f : C \to D$.  We consider 
+      the exact sequence $0 \to D \to cone(f) \to C[-1] \to 0$.
+      For the maps $g : D \to cone(f)$ and $h : cone(f) \to C[-1]$,
       we compute the coimage.
     Example
       S = ZZ/101[a,b,c,d];
@@ -4121,6 +6191,8 @@ doc ///
     The coimage is more computationally intensive than @TO (image, ComplexMap)@
     because, unlike {\tt image}, it computes kernels of maps of modules.
   SeeAlso
+    "Making chain complexes"
+    "Making maps between chain complexes"
     coimage
     (image, ComplexMap)
     (kernel, ComplexMap)
@@ -4132,7 +6204,7 @@ doc ///
   Key
     (kernel, ComplexMap)
   Headline
-    kernel of a map of complexes
+    make the kernel of a map of complexes
   Usage
     kernel f
     ker f
@@ -4142,15 +6214,15 @@ doc ///
     : Complex
   Description
     Text
-      The kernel of a chain complex map $f : C \mapsto D$
+      The kernel of a chain complex map $f : C \to D$
       is the complex $E$ whose $i-th$ term is $kernel(f_i)$,
       and whose differential is induced from the differential 
       on the source.
     Text
       In the following example, we first construct a random
-      complex morphism $f : C \mapsto D$.  We consider 
-      the exact sequence $0 \mapsto D \mapsto cone(f) \mapsto C[-1] \mapsto 0$.
-      For the maps $g : D \mapsto cone(f)$ and $h : cone(f) \mapsto C[-1]$,
+      complex morphism $f : C \to D$.  We consider 
+      the exact sequence $0 \to D \to cone(f) \to C[-1] \to 0$.
+      For the maps $g : D \to cone(f)$ and $h : cone(f) \to C[-1]$,
       we compute the kernel.
     Example
       S = ZZ/101[a,b,c,d];
@@ -4169,6 +6241,8 @@ doc ///
       ker h == image h1
       ker h1 == 0
   SeeAlso
+    "Making chain complexes"
+    "Making maps between chain complexes"
     ker
     (image, ComplexMap)
     (coimage, ComplexMap)
@@ -4180,7 +6254,7 @@ doc ///
   Key
     (cokernel, ComplexMap)
   Headline
-    cokernel of a map of complexes
+    make the cokernel of a map of complexes
   Usage
     cokernel f
     coker f
@@ -4190,15 +6264,15 @@ doc ///
     : Complex
   Description
     Text
-      If $f : C \mapsto D$ is a map of chain complexes of degree $d$,
+      If $f : C \to D$ is a map of chain complexes of degree $d$,
       then the cokernel is the complex $E$ whose $i-th$ is $cokernel(f_{i-d})$,
       and whose differential is induced from the differential 
       on the target.
     Text
       In the following example, we first construct a random
-      complex morphism $f : C \mapsto D$.  We consider 
-      the exact sequence $0 \mapsto D \mapsto cone(f) \mapsto C[-1] \mapsto 0$.
-      For the maps $g : D \mapsto cone(f)$ and $h : cone(f) \mapsto C[-1]$,
+      complex morphism $f : C \to D$.  We consider 
+      the exact sequence $0 \to D \to cone(f) \to C[-1] \to 0$.
+      For the maps $g : D \to cone(f)$ and $h : cone(f) \to C[-1]$,
       we compute the kernel.
     Example
       S = ZZ/101[a,b,c,d];
@@ -4217,6 +6291,8 @@ doc ///
       coker g == image g1
       coker g1 == 0
   SeeAlso
+    "Making chain complexes"
+    "Making maps between chain complexes"
     cokernel
     (image, ComplexMap)
     (coimage, ComplexMap)
@@ -4228,7 +6304,7 @@ doc ///
   Key
     (cone, ComplexMap)
   Headline
-    the mapping cone of a morphism of chain complexes
+    make the mapping cone of a morphism of chain complexes
   Usage
     cone f
   Inputs
@@ -4263,15 +6339,13 @@ doc ///
       g = canonicalMap(Cf,C)
       h = canonicalMap(B[-1],Cf)
       assert(isWellDefined g and isWellDefined h)
-      assert(ker g == 0)
-      assert(coker h == 0)
-      assert(ker h == image g)
+      assert(isShortExactSequence(h,g))
     Text
       The most important application of mapping cones is to 
       identify quasi-isomorphisms: $f$ is a quasi-isomorphism 
       if and only if the mapping cone is acyclic.
     Example
-      aug = map(complex(S^1/M), C, i -> if i === 0 then map(S^1/M, S^1, 1))
+      aug = augmentationMap C
       assert isWellDefined aug
       cone aug
       assert(0 == prune HH cone aug)
@@ -4301,17 +6375,29 @@ doc ///
       assert(degree J == 6)
   Caveat
   SeeAlso
+    "Making chain complexes"
+    "Making maps between chain complexes"
     (cylinder, ComplexMap)
+    (augmentationMap, Complex)
+    (extend, Complex, Complex, Matrix)
+    (freeResolution, Module)
     canonicalMap
     isQuasiIsomorphism
+    isShortExactSequence
 ///
 
-///
-  -- DDD: not really started yet, even....
+-- YYY
+-- This TODO refers to the following cylinder node:
+--    Text
+--      YYY.  Start here.  Should we relate cylinders to connecting
+--      homomorphisms?  If not, what other application can we show?
+
+doc ///
   Key
+    cylinder
     (cylinder, ComplexMap)
   Headline
-    the cylinder of a morphism of chain complexes
+    make the mapping cylinder of a morphism of chain complexes
   Usage
     cylinder f
   Inputs
@@ -4321,81 +6407,52 @@ doc ///
     :Complex
   Description
     Text
-      Given a morphism $f : B \to C$, the mapping cone is the complex
-      whose $i$-th term is $B_{i-1} \oplus\ C_i$, and whose $i$-th 
-      differential is given by
-      {\tt matrix\{\{-dd^{B[-1]}, 0\}, \{f[-1], dd^C\}\}}.
+      Given a morphism $f : B \to C$, the mapping cylinder 
+      is the complex whose the $i$-th term is $B_{i-1} \oplus B_i \oplus C_i$
+      and whose $i$-th differential is given in block form by
+              {\tt matrix \{\{ - dd^B_{i-1}, 0, 0 \}, 
+                \{ -id_{B_{i-1}}, dd^B_i, 0 \},
+                \{ f_{i-1}, 0, dd^C_i\}\}}.
+      Alternatively, the cylinder is the
+      mapping cone of the morphism $g : B \to B \oplus C$ given in block form
+      by
+        {\tt matrix\{\{-id_B\}, \{f\}\}}.
     Text
       A map between modules induces a map between their free resolutions,
-      and we compute the associated mapping cone.
+      and we compute the associated mapping cylinder.
     Example
       S = ZZ/32003[x,y,z];
       M = ideal vars S
       B = freeResolution(S^1/M^2)
       C = freeResolution(S^1/M)
       f = extend(C,B,id_(S^1))
-      Cf = cone f
-      h = canonicalMap(B[-1],Cf)
-      ccf = (cone h)[1]
       cylf = cylinder f
-      ccf == cylf
-      dd^ccf_1
-      dd^cylf_1
-      dd^ccf_2
-      dd^cylf_2
-
-      dd^Cf
-      prune HH Cf
-      assert(prune HH_1 Cf == prune(M/M^2))
+      dd^cylf
+      assert isWellDefined cylf
     Text
-      The mapping cone fits into a canonical short exact
-      sequence of chain complexes:
-      $$0 \to C \to cone(f) \to B[-1] \to 0.$$
+      The mapping cylinder fits into a canonical short exact
+      sequence of chain complexes,
+      $$0 \to B \to cyl(f) \to cone(f) \to 0.$$
     Example
-      g = canonicalMap(Cf,C)
-      h = canonicalMap(B[-1],Cf)
+      Cf = cone f
+      g = canonicalMap(cylf, B)
+      h = canonicalMap(Cf, cylf)
       assert(isWellDefined g and isWellDefined h)
-      assert(ker g == 0)
-      assert(coker h == 0)
-      assert(ker h == image g)
+      assert(isShortExactSequence(h,g))
     Text
-      The most important application of mapping cones is to 
-      identify quasi-isomorphisms: $f$ is a quasi-isomorphism 
-      if and only if the mapping cone is acyclic.
+      The alternative interpretation of the cylinder, defined above,
+      can be demonstrated as follows.
     Example
-      aug = map(complex(S^1/M), C, i -> if i === 0 then map(S^1/M, S^1, 1))
-      assert isWellDefined aug
-      cone aug
-      assert(0 == prune HH cone aug)
-      assert isQuasiIsomorphism aug
-    Text
-      Mapping cones can also be used to construct free resolutions
-      of subschemes linked via a complete intersection to a
-      arithmetically Cohen-Macaulay subscheme;
-      see Peskine-Szpiro, Liaison des varieties algebrique I, 
-          {\it Invent. math.} {\bf 26} (1974) 271-302.
-    Text
-      Here, we consider a random complete intersection of 2 cubics
-      contained in the ideal of the twisted cubic curve, and we
-      compute a free resolution of the linked curve of degree 6.
-    Example
-      S = ZZ/32003[a..d]
-      I = monomialCurveIdeal(S, {1,2,3})
-      K = ideal((gens I) * random(source gens I, S^{-3,-3}))
-      C = freeResolution(S^1/I)
-      B = freeResolution(S^1/K)
-      f = dual extend(C,B,id_(S^1))
-      Cf = (cone f)[-2]
-      prune HH Cf
-      Cf' = minimize Cf
-      J = ideal dd^Cf'_1
-      freeResolution J
-      assert(degree J == 6)
-  Caveat
+      g = map(B ++ C, B, {{-id_B},{f}})
+      cone g == cylf
   SeeAlso
-    (cylinder, ComplexMap)
+    "Making chain complexes"
+    "Making maps between chain complexes"
+    (cone, ComplexMap)
+    (extend, Complex, Complex, Matrix)
+    (freeResolution, Module)
     canonicalMap
-    isQuasiIsomorphism
+    isShortExactSequence
 ///
 
 -- end of doc nodes DDD
@@ -5363,7 +7420,6 @@ TEST ///
 
 TEST ///
   -- canonical truncation
-  -- XXXX
 -*  
   restart
   needsPackage "Complexes"
@@ -5404,7 +7460,6 @@ TEST ///
 
 TEST ///
   -- canonical truncation, more interesting example(s)
-  -- XXXX
 -*  
   restart
   needsPackage "Complexes"
@@ -5519,7 +7574,7 @@ TEST ///
   MD = minimize D;
   assert(MD == D)
   assert isWellDefined MD
-  p1 = MD.cache.pruningMap;
+  p1 = MD.cache.minimizingMap;
   assert isWellDefined p1
   assert isComplexMorphism p1
   assert isQuasiIsomorphism p1
@@ -5535,7 +7590,7 @@ TEST ///
   isWellDefined C1
   dd^C1 ** coker vars ring D == 0
   D1 = minimize C1
-  p1 = D1.cache.pruningMap;
+  p1 = D1.cache.minimizingMap;
   assert isWellDefined p1
   assert isComplexMorphism p1
   assert isQuasiIsomorphism p1  
@@ -5633,10 +7688,6 @@ TEST ///
   
 -*  
   needsPackage "SVDComplexes"
-  chainComplex Complex := (C) -> (
-      (lo,hi) := concentration C;
-      chainComplex hashTable for i from lo+1 to hi list i => dd^C_i
-      )
 *-
   
 ///
@@ -5807,7 +7858,7 @@ TEST ///
   assert(C_0 == S^1/I)
   assert(C_1 == S^1)-- since we start with a free res of S^1/I
 
-  g = yonedaMap f -- XXX
+  g = yonedaMap f
   assert(degree g === -2)
   f2 = yonedaMap' g
   assert(f == f2)
@@ -5934,7 +7985,7 @@ TEST ///
 
 TEST ///
 -*
-  restart -- XXX
+  restart
   needsPackage "Complexes"
 *-
   S = ZZ/101[x,y,z]
@@ -6078,7 +8129,6 @@ TEST ///
 
 TEST ///
 -*
-  -- XXX
   restart
   needsPackage "Complexes"
 *-
@@ -6499,6 +8549,201 @@ needsPackage "Complexes"
   --   the same thing.  Only then, which is faster?
    
 ///
+
+doc ///
+    Key
+        (complex, ChainComplex)
+    Headline
+        translate between data types for chain complexes
+    Usage
+        D = complex C
+    Inputs
+        C:ChainComplex
+    Outputs
+        D:Complex
+    Description
+        Text
+            Both ChainComplex and Complex are Macaulay2 types that
+            implement chain complexes of modules over rings.
+            The plan is to replace ChainComplex with this new type.
+            Before this happens, this function allows interoperability
+            between these types.
+        Text
+            The first example is the minimal free resolution of the
+            twisted cubic curve.
+        Example
+            R = ZZ/32003[a..d]
+            I = monomialCurveIdeal(R, {1,2,3})
+            M = R^1/I
+            C = resolution M
+            D = complex C
+            D1 = freeResolution M
+            assert(D == D1)
+        Text
+            In the following example, note that a different choice of sign
+            is chosen in the new Complexes package.
+        Example
+            C1 = Hom(C, R^1)
+            D1 = complex C1
+            D2 = Hom(D, R^1)
+            D1.dd_-1
+            D2.dd_-1
+            assert(D1 != D2)
+    Caveat
+        This is a temporary method to allow comparisions among the different data types,
+        and will be removed once the older data structure is replaced
+    SeeAlso
+        (chainComplex, Complex)
+        (chainComplex, ComplexMap)
+        (complex, ChainComplexMap)
+///
+
+doc ///
+    Key
+        (chainComplex, Complex)
+    Headline
+        translate between data types for chain complexes
+    Usage
+        C = chainComplex D
+    Inputs
+        D:Complex
+    Outputs
+        C:ChainComplex
+    Description
+        Text
+            Both ChainComplex and Complex are Macaulay2 types that
+            implement chain complexes of modules over rings.
+            The plan is to replace ChainComplex with this new type.
+            Before this happens, this function allows interoperability
+            between these types.
+        Text
+            The first example is the minimal free resolution of the
+            twisted cubic curve.
+        Example
+            R = ZZ/32003[a..d]
+            I = monomialCurveIdeal(R, {1,2,3})
+            M = R^1/I
+            C = resolution M
+            D = freeResolution M
+            C1 = chainComplex D
+            assert(C == C1)
+        Text
+            The tensor products make the same choice of signs.
+        Example
+            D2 = D ** D
+            C2 = chainComplex D2
+            assert(C2 == C1 ** C1)
+    Caveat
+        This is a temporary method to allow comparisions among the different data types,
+        and will be removed once the older data structure is replaced
+    SeeAlso
+        (complex, ChainComplex)
+        (complex, ChainComplexMap)
+        (chainComplex, ComplexMap)
+///
+
+
+doc ///
+    Key
+        (complex, ChainComplexMap)
+    Headline
+        translate between data types for chain complex maps
+    Usage
+        g = complex f
+    Inputs
+        f:ChainComplexMap
+    Outputs
+        g:ComplexMap
+    Description
+        Text
+            Both ChainComplexMap and ComplexMap are Macaulay2 types that
+            implement maps between chain complexes.
+            The plan is to replace ChainComplexMap with this new type.
+            Before this happens, this function allows interoperability
+            between these types.
+        Text
+            The first example is the minimal free resolution of the
+            twisted cubic curve.
+        Example
+            R = ZZ/32003[a..d]
+            I = monomialCurveIdeal(R, {1,2,3})
+            M = R^1/I
+            C = resolution M
+            f = C.dd
+            g = complex f
+            isWellDefined g
+            D = freeResolution M
+            assert(D.dd == g)
+        Text
+            The following two extension of maps between modules to
+            maps between chain complexes agree.
+        Example
+            J = ideal vars R
+            C1 = resolution(R^1/J)
+            D1 = freeResolution(R^1/J)
+            f = extend(C1, C, matrix{{1_R}})
+            g = complex f
+            g1 = extend(D1, D, matrix{{1_R}})
+            assert(g == g1)
+    Caveat
+        This is a temporary method to allow comparisions among the different data types,
+        and will be removed once the older data structure is replaced
+    SeeAlso
+        (chainComplex, ComplexMap)
+        (complex, ChainComplex)
+        (chainComplex, Complex)
+///
+
+doc ///
+    Key
+        (chainComplex, ComplexMap)
+    Headline
+        translate between data types for chain complexes
+    Usage
+        f = chainComplex g
+    Inputs
+        g:ComplexMap
+    Outputs
+        f:ChainComplexMap
+    Description
+        Text
+            Both ChainComplexMap and ComplexMap are Macaulay2 types that
+            implement maps between chain complexes.
+            The plan is to replace ChainComplexMap with this new type.
+            Before this happens, this function allows interoperability
+            between these types.
+        Text
+            The first example is the minimal free resolution of the
+            twisted cubic curve.
+        Example
+            R = ZZ/101[a..d]
+            I = monomialCurveIdeal(R, {1,2,3})
+            M = R^1/I
+            D = freeResolution M
+            C = resolution M
+            g = D.dd
+            f = chainComplex g
+            assert(f == C.dd)
+        Text
+            We construct a random morphism of chain complexes.
+        Example
+            J = ideal vars R
+            C1 = resolution(R^1/J)
+            D1 = freeResolution(R^1/J)
+            g = randomComplexMap(D1, D, Cycle => true)
+            f = chainComplex g
+            assert(g == complex f)
+            assert(isComplexMorphism g)
+    Caveat
+        This is a temporary method to allow comparisions among the different data types,
+        and will be removed once the older data structure is replaced
+    SeeAlso
+        (complex, ChainComplexMap)
+        (complex, ChainComplex)
+        (chainComplex, Complex)
+///
+
+
 end------------------------------------------------------------
 
 restart
@@ -6512,17 +8757,16 @@ viewHelp
 viewHelp "(isCommutative,ComplexMap)"
 
 doc ///
-  Key
-  Headline
-  Usage
-  Inputs
-  Outputs
-  Description
-    Text
-    Example
-  Caveat
-  SeeAlso
-
+    Key
+    Headline
+    Usage
+    Inputs
+    Outputs
+    Description
+        Text
+        Example
+    Caveat
+    SeeAlso
 ///
 
 NEWCODE FOR ENGINE DESIRED BY DE ///

@@ -463,7 +463,7 @@ static CanonicalForm convertToFactory(const RingElement &g, bool inExtension)
   return f;
 }
 
-void displayCF(PolynomialRing *R, const CanonicalForm &h)  // for debugging
+void displayCF(const PolynomialRing *R, const CanonicalForm &h)  // for debugging
 {
   buffer o;
   const RingElement *g = convertToM2(R, h);
