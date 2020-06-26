@@ -434,6 +434,34 @@ dispatcherMethod := m -> m#-1 === Sequence and (
      f := lookup m;
      any(dispatcherFunctions, g -> functionBody f === functionBody g))
 
+reproduciblePaths = outf -> (
+     outstr := get outf;
+     if topSrcdir === null then return outstr;
+     srcdir := regexQuote toAbsolutePath topSrcdir;
+     builddir := regexQuote prefixDirectory;
+     homedir := regexQuote homeDirectory;
+     if last homedir == "/" then homedir = substring(0, #homedir - 1, homedir);
+     if any({srcdir, builddir, homedir}, dir -> match(dir, outstr))
+     then (
+	 outstr = replace(srcdir | "Macaulay2/m2/startup.m2.in",
+	     "/path/to/source/Macaulay2/m2/startup.m2.in", outstr);
+	 outstr = replace(srcdir | "Macaulay2/m2",
+	     finalPrefix | Layout#1#"packages" | "Core", outstr);
+	 outstr = replace(srcdir | "Macaulay2/packages/",
+	     finalPrefix | Layout#1#"packages", outstr);
+	 outstr = replace(builddir | Layout#2#"bin",
+	     finalPrefix | Layout#1#"bin", outstr);
+	 outstr = replace(builddir | Layout#2#"data",
+	     finalPrefix | Layout#1#"data", outstr);
+	 outstr = replace(builddir | Layout#2#"lib",
+	     finalPrefix | Layout#1#"lib", outstr);
+	 outstr = replace(homedir, "/home/m2user", outstr);
+	 outstr = replace(builddir, finalPrefix, outstr);
+	 outf << outstr << close;
+	 );
+     outstr
+    )
+
 installPackage Package := opts -> pkg -> (
      tallyInstalledPackages();
      verbose := opts.Verbose or debugLevel > 0;
@@ -626,7 +654,11 @@ installPackage Package := opts -> pkg -> (
 			      )
 			 );
 		    -- read, separate, and store example output
-		    if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
+		    if fileExists outf then (
+			 outstr := reproduciblePaths outf;
+			 pkg#"example results"#fkey = drop(
+			      separateM2output(outstr, "Install" => true), -1)
+		    )
 		    else (
 			 if debugLevel > 1 then stderr << "--warning: missing file " << outf << endl;
 			 )
