@@ -36,7 +36,7 @@ specializeSystem (Point, Matrix) := (p, M) -> (
 specializeSystem (Point, GateSystem) := (p, GS) -> (
     pMat := matrix p;
     assert(numrows pMat == 1);
-    pGateMatrix := sub(flatten GS, vars GS | pMat);
+    pGateMatrix := sub(flatten GS, pMat | vars GS);
     gateSystem(vars GS, pGateMatrix)
     )
 
@@ -59,7 +59,7 @@ Some may find a better home in other packages (eg. (extra)NAGtypes, SLPexpressio
 *-
 
 -- make all parameters new variables
-flatten GateSystem := GS -> gateSystem(vars GS | parameters GS, gateMatrix GS)
+flatten GateSystem := GS -> gateSystem(parameters GS | vars GS, gateMatrix GS)
 
 -- syntactic sugar for creating instances of GateSystem
 gateSystem (BasicList, BasicList, GateMatrix) := (P, X, F) -> (

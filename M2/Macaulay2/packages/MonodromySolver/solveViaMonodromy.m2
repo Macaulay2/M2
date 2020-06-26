@@ -360,7 +360,6 @@ coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG, node1) -> (
     same := 0;
     npaths := 0;    
     lastNode := node1;
-    e1 := selectFirstEdgeAndDirection HG;
     if o.Verbose then (
         << "starting to track monodromy loops " << endl;
         << "============================================================" << endl;
@@ -384,11 +383,10 @@ coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG, node1) -> (
             );
         if numSols lastNode == nKnownPoints 
         then same = same + 1 else same = 0;
-        e1 = selectFirstEdgeAndDirection HG;
 	);
     if o.TargetSolutionCount =!= null and o.TargetSolutionCount != numSols lastNode
     then npaths = "failed";
-    if o.EdgesSaturated then saturateEdges HG; -- !!
+    if o.EdgesSaturated and not instance(HG.FirstDirectedEdge, Nothing) then saturateEdges HG; -- !!
     (lastNode, npaths)
 )
 
