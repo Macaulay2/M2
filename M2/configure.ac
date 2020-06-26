@@ -1278,9 +1278,9 @@ else
     then
 	if test $FACTORY_NAME = factory
 	then
-	    GFTABLESDIR="${datadir}/factory/"
+	    GFTABLESDIR="`$PKG_CONFIG --variable=prefix $FACTORY_NAME`/share/factory/"
 	else
-	    GFTABLESDIR="${datadir}/singular/factory/"
+	    GFTABLESDIR="`$PKG_CONFIG --variable=prefix $FACTORY_NAME`/share/singular/factory/"
 	fi
     fi
     adl_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
