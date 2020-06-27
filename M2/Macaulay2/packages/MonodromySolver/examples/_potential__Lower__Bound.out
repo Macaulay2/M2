@@ -11,7 +11,7 @@ i2 : polys = polySystem {a*x+b*y^2,c*x*y+d};
 
 i3 : (V, npaths) = monodromySolve(polys,SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound)
 
-o3 = (HomotopyNode{...6...}, 10)
+o3 = (HomotopyNode{...7...}, 3)
 
 o3 : Sequence
 
