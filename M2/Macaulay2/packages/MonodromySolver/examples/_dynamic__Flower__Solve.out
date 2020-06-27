@@ -12,81 +12,37 @@ i2 : polys = polySystem {a*x+b*y^2,c*x*y+d};
 i3 : (p0, x0) = createSeedPair polys;
 
 i4 : (L, npaths) = dynamicFlowerSolve(polys.PolyMap,p0,{x0})
---backup directory created: /tmp/M2-4086-0/1
-     -- 0.00444498 seconds elapsed
+--backup directory created: /tmp/M2-187687-0/1
+     -- 0.00209163 seconds elapsed
   H01: 1
-     -- 0.00443445 seconds elapsed
+     -- 0.00211598 seconds elapsed
   H10: 1
-     -- 0.000479612 seconds elapsed
+     -- 0.000245316 seconds elapsed
 number of paths tracked: 2
 found 1 points in the fiber so far
-     -- 0.00468674 seconds elapsed
+     -- 0.0020041 seconds elapsed
   H01: 1
-     -- 0.00443558 seconds elapsed
+     -- 0.00212908 seconds elapsed
   H10: 1
-     -- 0.000441842 seconds elapsed
+     -- 0.000220006 seconds elapsed
 number of paths tracked: 4
-found 2 points in the fiber so far
-     -- 0.00573467 seconds elapsed
-  H01: 2
-     -- 0.00511037 seconds elapsed
-  H10: 2
-     -- 0.000626807 seconds elapsed
+found 1 points in the fiber so far
+     -- 0.0020279 seconds elapsed
+  H01: 1
+     -- 0.00206537 seconds elapsed
+  H10: 1
+     -- 0.000202975 seconds elapsed
+number of paths tracked: 6
+found 1 points in the fiber so far
+     -- 0.00199432 seconds elapsed
+  H01: 1
+     -- 0.00206855 seconds elapsed
+  H10: 1
+     -- 0.000211636 seconds elapsed
 number of paths tracked: 8
-found 2 points in the fiber so far
-     -- 0.00503243 seconds elapsed
-  H01: 2
-     -- 0.00531448 seconds elapsed
-  H10: 2
-     -- 0.000606285 seconds elapsed
-number of paths tracked: 12
-found 2 points in the fiber so far
-     -- 0.00512562 seconds elapsed
-  H01: 2
-     -- 0.00530908 seconds elapsed
-  H10: 2
-     -- 0.00060935 seconds elapsed
-number of paths tracked: 16
-found 2 points in the fiber so far
-     -- 0.00518759 seconds elapsed
-  H01: 2
-     -- 0.00533083 seconds elapsed
-  H10: 2
-     -- 0.000589863 seconds elapsed
-number of paths tracked: 20
-found 3 points in the fiber so far
-     -- 0.00580814 seconds elapsed
-  H01: 3
-     -- 0.00610382 seconds elapsed
-  H10: 3
-     -- 0.000463462 seconds elapsed
-number of paths tracked: 26
-found 3 points in the fiber so far
-     -- 0.00325594 seconds elapsed
-  H01: 3
-     -- 0.00349488 seconds elapsed
-  H10: 3
-     -- 0.0004308 seconds elapsed
-number of paths tracked: 32
-found 3 points in the fiber so far
-     -- 0.0035058 seconds elapsed
-  H01: 3
-     -- 0.0166134 seconds elapsed
-  H10: 3
-     -- 0.000449408 seconds elapsed
-number of paths tracked: 38
-found 3 points in the fiber so far
-     -- 0.00345745 seconds elapsed
-  H01: 3
-     -- 0.00331195 seconds elapsed
-  H10: 3
-     -- 0.0004542 seconds elapsed
-number of paths tracked: 44
-found 3 points in the fiber so far
+found 1 points in the fiber so far
 
-o4 = ({{.892712+.673395*ii, .29398+.632944*ii}, {-1.02953+.436414*ii,
-     ------------------------------------------------------------------------
-     .401155-.571066*ii}, {.136821-1.10981*ii, -.695135-.061878*ii}}, 44)
+o4 = ({{.892712+.673395*ii, .29398+.632944*ii}}, 8)
 
 o4 : Sequence
 

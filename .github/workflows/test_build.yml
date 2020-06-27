@@ -136,16 +136,7 @@ jobs:
           ${{matrix.make}} get-tools
           ${{matrix.make}} -f Makefile
           cd BUILD/cicd
-          # Specifying /usr as the prefix here allows us to discover gftables if it's installed there.
-          # Specifying gmp here allows us to sidestep a mismatch between the mangling of C++ symbols by gcc-9 and gcc
-          # that prevents linking mpsolve with the libgmp in homebrew on the Mac:
-                #   CXXLD    libmps.la
-                # Undefined symbols for architecture x86_64:
-                #   "operator<<(std::basic_ostream<char, std::char_traits<char> >&, __mpq_struct const*)", referenced from:
-                #       mps::formal::operator<<(std::basic_ostream<char, std::char_traits<char> >&, mps::formal::Monomial const&) in formal-monomial.o
-                # ld: symbol(s) not found for architecture x86_64
-                # collect2: error: ld returned 1 exit status
-          ../../configure --prefix=/usr --enable-download --enable-build-libraries="readline gmp"
+          ../../configure --prefix=/usr --enable-download --enable-build-libraries="readline"
 
       - name: Save artifacts (autotools)
         if: always() && matrix.build-type == 'autotools'

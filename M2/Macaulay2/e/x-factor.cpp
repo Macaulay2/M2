@@ -102,6 +102,8 @@ void enter_factory::enter()
 {
   oldcharac = getCharacteristic();
   oldRatlState = isOn(SW_RATIONAL);
+  // needed for factory 4.1.1; already turned on by default in factory >= 4.1.2
+  On(SW_USE_EZGCD_P);
   switch (mode)
     {
       case modeZZ:

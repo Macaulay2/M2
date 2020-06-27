@@ -2154,7 +2154,7 @@ document {
      another weakly decreasing sequence of integers corresponding to a partition M, a number i such that
      H^i(E)=S_M(V) and the rank of this module.",
      PARA{},
-     "The function bott(L,u,v) on a list of weaking decreasing integers L and integers u,v will compute 
+     "The function bott(L,u,v) on a list of weakly decreasing integers L and integers u,v will compute 
      our entire cohomology table for our Schur Functor between degrees u and v.",
      }
 

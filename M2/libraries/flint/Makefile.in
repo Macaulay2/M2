@@ -1,12 +1,9 @@
 HOMEPAGE = http://flintlib.org
 # git://github.com/wbhart/flint2.git
 URL = http://macaulay2.com/Downloads/OtherSourceCode
-#VERSION = 2.5.3
-VERSION = 20200414 # prerelease for next version, trunk version as of this date.
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 2.6.0
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PARALLEL = yes
-TARFILE = flint-20200414.tar.gz
-TARDIR = .
 
 # Many other tests keep failing, so disable them all:
 CHECKTARGET = .

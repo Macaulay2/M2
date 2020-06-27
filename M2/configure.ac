@@ -1002,7 +1002,7 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 AC_MSG_CHECKING(whether the package topcom is installed)
-if test "`type -t points2finetrianga`" = file
+if test "`type -t points2finetriangs`" = file
 then AC_MSG_RESULT(yes)
 else AC_MSG_RESULT([no, will build])
      BUILD_topcom=yes
@@ -1278,9 +1278,9 @@ else
     then
 	if test $FACTORY_NAME = factory
 	then
-	    GFTABLESDIR="${datadir}/factory/"
+	    GFTABLESDIR="`$PKG_CONFIG --variable=prefix $FACTORY_NAME`/share/factory/"
 	else
-	    GFTABLESDIR="${datadir}/singular/factory/"
+	    GFTABLESDIR="`$PKG_CONFIG --variable=prefix $FACTORY_NAME`/share/singular/factory/"
 	fi
     fi
     adl_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
@@ -1813,6 +1813,13 @@ do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v=
 done
 prefix=$save_prefix
 exec_prefix=$save_exec_prefix
+
+if test $BUILD_gftables = no
+then PRE_GFTABLESDIR="$GFTABLESDIR"
+else
+PRE_GFTABLESDIR="$pre_datadir/Macaulay2/Core/factory/"
+fi
+AC_SUBST(PRE_GFTABLESDIR)
 
 AC_SUBST(pre_bindir) dnl In Macaulay2/bin/M2.in we assume that $pre_bindir/.. is $pre_exec_prefix, which follows from pre_bindir=${pre_exec_prefix}/bin.
 AC_SUBST(pre_datadir)

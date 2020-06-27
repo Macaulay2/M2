@@ -116,34 +116,42 @@ BK := local BK
 SP := local SP
 
 -- Define (net, HypertextContainer) and (info, HypertextContainer)
-scan( {(net, net'), (info, info')},
-    (f, f') -> (
-	-- this will return either a f (or string),
-	-- or a sequence of fs and BKs, for later splicing
-	f' = f' <- method(Dispatch => Thing);
-	f' BR := br -> ("", BK);
-	f' Hypertext := f;
-	f' Option := o -> ();
-	f' String := identity;
-	f' Thing := x -> error("no hypertext conversion method for: ", toString x, " of class ", toString class x);
-	f' UL := x -> (BK, {f x}, BK);
-	-- use { } to indicate wrapping is already done (or not desired)
-	f' HypertextParagraph := x -> (SP, {f x}, SP);
-	f' HypertextContainer := x -> (BK, apply(toSequence x, f'), BK);
+scan({net, info},
+    parser -> (
+	-- create a temporary parser this will return either the usual output
+	-- object or a sequence of such objects and BKs or SKs for later splicing.
+	parser' := value (toString parser | "'") <- method(Dispatch => Thing);
+	-- setup default rendering methods
+	parser' Hypertext := parser;
+	-- { } indicates wrapping is already done or is not desired
+	parser' HypertextParagraph := x -> (SP, {parser x}, SP);
+	parser' HypertextContainer := x -> (BK, apply(toSequence x, parser'), BK);
+	-- rendering for special types
+	parser' String := identity;
+	parser' Option := x -> ();
+	parser' BR     := x -> ("", BK);
+	-- and rendering for types that inherit from HypertextContainer, but
+	-- have special rendering rules which would lost with toSequence
+	parser' TABLE :=
+	parser' MENU :=
+	parser' DL :=
+	parser' UL :=
+	parser' OL := x -> (BK, {parser x}, BK);
 	-- Here is where we define the method
-	f HypertextContainer := x -> (
-	    x = deepSplice f' x;
-	    n := 0;
-	    while x#?n and (x#n === SP or x#n === BK) do n = n+1;
-	    x = drop(x,n);
-	    m := -1;
-	    while x#?m and (x#m === SP or x#m === BK) do m = m-1;
-	    x = drop(x,m+1);
+	parser HypertextContainer := x -> (
+	    -- Apply parser' first
+	    x = deepSplice parser' x;
+	    -- Drop the leading and trailing SPs or BKs
+	    l := position(x, e -> e =!= SP and e =!= BK);
+	    t := position(x, e -> e =!= SP and e =!= BK, Reverse => true);
+	    x = take(x, {l, t});
+	    -- ??
 	    x = splice sublists(x, i -> i === BK or i === SP,
 		SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
 	    x = splice sublists(x, i -> i =!= BK,
 		x -> if #x===1 and instance(x#0,List) then horizontalJoin x#0 else wrap horizontalJoin x,
 		BK -> ());
+	    -- Stack the pieces vertically
 	    stack x);
 	))
 
@@ -188,6 +196,12 @@ OLop := op -> x -> (
      r)
 info OL := OLop info
 net  OL := OLop net
+
+info DL := x -> stack apply(noopts x, info)
+net  DL := x -> stack apply(noopts x, net)
+
+info DD := x -> "    " | horizontalJoin apply(noopts x, info)
+net  DD := x -> "    " | horizontalJoin apply(noopts x, net)
 
 opSU := (op,n) -> x -> (horizontalJoin apply(noopts x, op))^n
 net  SUP := opSU(net, 1)

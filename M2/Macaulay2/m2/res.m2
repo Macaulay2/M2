@@ -5,8 +5,11 @@ inf := t -> if t === infinity then -1 else t
 spots := C -> select(keys C, i -> class i === ZZ)
 
 defaultResolutionLength := (R) -> (
-     numgens R + 1 + if ZZ === ultimate(coefficientRing, R) then 1 else 0
-     )
+    A := ultimate(coefficientRing, R);
+    nvars := # generators(R, CoefficientRing => A);
+    nvars + 1 + if A === ZZ then 1 else 0
+    -- numgens R + 1 + if ZZ === ultimate(coefficientRing, R) then 1 else 0
+    )
 
 resolutionLength := (R,opts) -> (
      if opts.LengthLimit == infinity then defaultResolutionLength R else opts.LengthLimit

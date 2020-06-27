@@ -19,7 +19,7 @@ i5 : polys0=specializeSystem(p0,polys);
 
 i6 : apply(polys0,p->sub(p,{x=>first x0.Coordinates,y=>last x0.Coordinates}))
 
-o6 = {1.38778e-17*ii, 1.11022e-16+2.77556e-17*ii}
+o6 = {-5.55112e-17, -5.55112e-17-1.66533e-16*ii}
 
 o6 : List
 
