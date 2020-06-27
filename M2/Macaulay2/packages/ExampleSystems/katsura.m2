@@ -22,20 +22,33 @@ doc ///
     	katsura
     	(katsura,ZZ,Ring)
     Headline
-    	an example of a 0-dimensional square polynomial system 
+    	an example of a 0-dimensional square polynomial system
+    Usage
+    	katsura(n,kk)
+    Inputs
+    	n:ZZ
+	     the number of variables
+        kk:Ring
+	     the coefficient ring
+    Outputs
+    	:List
+	    	of polynomials in the system
     Description
     	Text
+	    This system was solved in May 2020, using @TO solveSystem@ in Macaulay2 v1.15
+	     with an Intel(R) Core(TM) i5-5250U CPU at 1.60GHz.
+	   
+	    There were 512 solutions found in 2.804 seconds with 10 variables.
+	    
 	    The unknowns stand for the values (in [0,1])
 	    of a distribution function of a field created by a mixture of 
-	    a ferro-antiferro-magnetic bond at some some points. 
+	    a ferro-antiferro-magnetic bond at some some points.
 	Example
-	    F = katsura(3,QQ)
-	    sols = solveSystem F
-	    #sols
+	    katsura(10,QQ)
     ///
 
-TEST ///
+-* TEST ///
 F = katsura(10,QQ)
 sols = solveSystem F
 assert(#sols==512)
-///
+/// *-

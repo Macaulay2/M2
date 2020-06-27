@@ -1,6 +1,8 @@
 -- undocumented methods and symbols (for each, consider... does it really need to be exported? should it be documented?)
 undocumented {Vertices, (pointArray,List), saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,Point,List), RandomPointFunction, 
-     Correspondence21, Edges, Correspondence12, Potential21, Potential12, Family, gamma1, gamma2, Graph, Node1,  Node2, HomotopyEdge, makeRandomizedSelect}
+     Correspondence21, Edges, Correspondence12, Potential21, Potential12, Family, gamma1, gamma2, Graph, Node1,  Node2, HomotopyEdge, makeRandomizedSelect,
+     isAffineLinearFunction, appendPoint, appendPoints, (symbol <<, File, PointArray), (position, Point, PointArray, FunctionClosure), (toExternalString, PointArray), PartialSolBins, LinearSegment, FirstDirectedEdge
+     }
     --, SpecializedSystem,  HomotopyNode, HomotopyGraph,PartialSols}
 -- undocument tags
 undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), 1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount],FilterFailure}
@@ -30,11 +32,11 @@ doc ///
         Example
     	    setRandomSeed 0
 	    declareVariable \ {A,B,C,D,X,Y}
-	    PS = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B},{C*(Y+2)^2+D}})
-	    solveFamily(PS,point{{1,1,1,1}})
+	    PS = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B}, {C*(Y+2)^2+D}})
+	    solveFamily(point{{1,1,1,1}}, PS)
 	    R=CC[a,b,c,d][x,y]
-	    F=polySystem {a*(x-1)^2-b,c*(y+2)^2+d}
-	    solveFamily(F,point{{1,1,1,1}})
+	    F=polySystem {a*(x-1)^2-b, c*(y+2)^2+d}
+	    solveFamily(point{{1,1,1,1}}, F)
 	Text
 	    @TO monodromySolve@ is the core function called by @TO solveFamily@. Its default setting are less conservative and may be faster at the expense of reliability: see @TO MonodromySolverOptions@. For non-parametric systems, the solver @TO sparseMonodromySolve@ essentially calls @TO solveFamily @ assuming the genericity conditions of the Bernstein-Kurhnirenko theorem are satisfied.
         Text
@@ -83,25 +85,26 @@ doc ///
     Key
         solveFamily
         (solveFamily,System)
+        (solveFamily,Point,System)
     Headline
         a solver for parametric families with simple output
     Usage
-        (pTarg,sols) = solveFamily PS
-	sols = solveFamily(PS,pTarg)
+        (p, sols) = solveFamily PS
+        (p, sols) = solveFamily(P, p)
     Inputs 
         PS:System
-           eg. a @TO PolySystem@ whose underlying coefficient ring is defined by parameters, or a @TO GateSystem@ with parameters.
-	pTarg:Point
-	   parameter values for desired system
+           : a parametric polynomial system, represented as either a @TO PolySystem@ whose underlying coefficient ring itself a polynomial ring in the parameters, or a @TO GateSystem@ with parameters.
+        p:Point
+           consisting of target parameter values (optional.)
     Outputs
-        pTarg:List
-            parameter value 
-        sols:List
-            containing solutions to sys, each represented as a @TO Point @.
+        p:Point
+            parameter values. If not part of the input, they are chosen uniformly as complex numbers w/ modulus 1.
+        sols:PointArray
+            containing solutions to PS specialized at p.
     Description
         Text
-            The output of @TO monodromySolve @ is "technical." This method is intended for users uninterested in the underlying
-            @TO HomotopyGraph @ and its satellite data.
+            The output of @TO monodromySolve @ is opaque. This method is intended for users uninterested in the underlying
+            @TO HomotopyGraph @ and its satellite data. If 
         Example
             R = CC[a,b,c,d,e,f][x,y];
             q  = a*x^2+b*y+c;
@@ -287,7 +290,6 @@ doc ///
         [monodromySolve,EdgesSaturated]
         [solveFamily,EdgesSaturated]
         [sparseMonodromySolve,EdgesSaturated]
-	FilterCondition
         GraphInitFunction
         [monodromySolve,GraphInitFunction]
         [solveFamily,GraphInitFunction]
@@ -308,7 +310,6 @@ doc ///
         [monodromySolve,Potential]
         [solveFamily,Potential]
         [sparseMonodromySolve,Potential]
-	Randomizer
         SelectEdgeAndDirection
         [monodromySolve,SelectEdgeAndDirection]
         [solveFamily,SelectEdgeAndDirection]
@@ -324,7 +325,16 @@ doc ///
         [sparseMonodromySolve,TargetSolutionCount]
         [monodromySolve,Verbose]
         [solveFamily,Verbose]
-        [sparseMonodromySolve,Verbose]    
+        [sparseMonodromySolve,Verbose]
+	Randomizer
+        [solveFamily,Randomizer]
+        [sparseMonodromySolve,Randomizer]
+        Equivalencer
+        [solveFamily,Equivalencer]
+        [sparseMonodromySolve,Equivalencer]
+        FilterCondition
+        [solveFamily,FilterCondition]
+        [sparseMonodromySolve,FilterCondition]
     Description
         Text
             Here are some options for the solvers. The current defaults for a given solver may be accessed like so:
@@ -349,11 +359,12 @@ doc ///
                 {"Potential: a function that assigns a number to each edge in each iteration, indicating its
                 potential for producing new solutions. Current supported potential functions are ", TO potentialE , " and ", 
                 TO potentialLowerBound},
-                {"SelectEdgeAndDirection: currently accepts either ", TO selectBestEdgeAndDirection, " or ",
-                 TO selectRandomEdgeAndDirection, ". Note that the former also requires setting " },
+                {"SelectEdgeAndDirection: accepts either ", TO selectBestEdgeAndDirection, " or ",
+                 TO selectRandomEdgeAndDirection, ". Tthe former also requires setting a potential. Default is an internal function that selects the first available edge." },
                 "StoppingCriterion: eg. stop if no progress has been made",
                 "TargetSolutionCount: expected/desired number of solutions (overrides StoppingCriterion)",
-                "Verbose: reports progress in each iteration"
+                "Verbose: reports progress in each iteration",
+                "experimental options: Equivalencer, FilterCondition, Randomizer."
                 }
     ///
 
@@ -478,7 +489,7 @@ doc ///
         Example
             R = CC[a,b,c,d][x,y];
             polys = polySystem {a*x+b*y^2,c*x*y+d};
-            monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>flowerGraphAugment,AugmentNodeCount=>1)
+            monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>flowerGraphAugment,AugmentNodeCount=>1, AugmentNumberOfRepeats=>3)
     ///
     
     
@@ -497,7 +508,7 @@ doc ///
         Example
             R = CC[a,b,c,d][x,y];
             polys = polySystem {a*x+b*y^2,c*x*y+d};
-            monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1)
+            monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1, AugmentNumberOfRepeats=>3)
     ///    
 
 doc ///

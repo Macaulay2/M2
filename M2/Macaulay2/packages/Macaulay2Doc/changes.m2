@@ -41,7 +41,14 @@ document {
 			},
 	           LI { "The ", TO "roots", " command is now handled by the ", TO "MPSolve", " library, and is more robust, 
                      	but no longer takes an optional argument ", TT "Unique", "."
-                     	}
+                     	},
+	           LI { "The ", TO "Complexes::Complexes", " package.
+                               This package develops new data types and routines for homological algebra.
+            Eventually, it will replace the current facilities for homological algebra.
+            We are making this available in order to get feedback from users before
+            making this change.  Please email the authors with any and all comments or
+            suggestions."
+            }
 		   }
 	      },
          LI { "functionality improved",

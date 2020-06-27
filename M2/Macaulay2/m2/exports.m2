@@ -984,6 +984,7 @@ export {
 	"realPart",
 	"realpath",
 	"recursionDepth",
+    "reducedRowEchelonForm",
 	"reduceHilbert",
 	"regex",
 	"regexQuote",

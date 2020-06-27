@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1300376990
+-- -*- M2-comint -*- hash: 1951696658
 
 i1 : R = CC[x11,x22,x21,x12,x23,x13];
 
@@ -11,14 +11,6 @@ i4 : W = first V#4;
 
 i5 : isWitnessSetMember(W, point{{0,0,0,0,0,0}})
 
-o5 = false
+o5 = true
 
-i6 : isWitnessSetMember(W, point{{0,0,0,0,0,0}},Verbose=>true)
-writing witness set to file /tmp/M2-3683416-0/19PHCwitset
-writing test point to file /tmp/M2-3683416-0/20PHCtestpoint
-calling phc -f < /tmp/M2-3683416-0/21PHCbatch > /tmp/M2-3683416-0/23PHCsession
-output of phc -f is in file /tmp/M2-3683416-0/22PHCoutput
-
-o6 = false
-
-i7 : 
+i6 : 
