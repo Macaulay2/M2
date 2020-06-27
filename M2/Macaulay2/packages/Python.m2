@@ -26,10 +26,13 @@ rs = s -> (
      if debugLevel > 0 then stderr << "--python command: " << s << endl; 
      runString s);
 
-numContexts := 0
-nextContext := () -> (
-     numContexts = numContexts + 1;
-     "context" | toString numContexts)
+numContexts = 0
+nextContext = method()
+installMethod(nextContext,
+    () -> (
+     	numContexts = numContexts + 1;
+     	"context" | toString numContexts)
+    )
 Context = new Type of HashTable
 globalAssignment Context
 use Context := c -> (scanPairs(c,(k,v) -> k <- v); c)
