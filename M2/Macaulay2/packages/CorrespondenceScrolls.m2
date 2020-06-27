@@ -273,11 +273,12 @@ u := unique ((gens R)/degree);
 n := #u;
 nums := apply(u, i-> #select(gens R, x -> degree x == i));
 --form the hilbert polynomials of the factor rings
+a := local a;
 polys1 := apply(n, j-> (
-  hilbertPolynomial(ZZ/2[vars(0..nums_j-1)], 
+  hilbertPolynomial(ZZ/2[a_0 .. a_(nums_j-1)], 
       Projective => false)));
 --move them to the Cox ring
-cox := QQ[s_0..s_(n-1)];
+cox := QQ(monoid [s_0..s_(n-1)]);
 polys := apply(n, j->
 	  (map(cox, ring polys1_j, {cox_j})) polys1_j);
 M1 := coker leadTerm gb presentation M;
