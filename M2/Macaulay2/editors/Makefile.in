@@ -16,11 +16,11 @@ Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/editors/Makefile
 emacs/M2-symbols.el : make-M2-symbols.m2 ../m2/exports.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
 	@pre_exec_prefix@/bin/M2 $(ARGS) @srcdir@/make-M2-symbols.m2 -e 'exit 0'
 emacs/M2-emacs.m2 emacs/M2-emacs-help.txt: emacs/make-M2-emacs-help.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
-	cd emacs; @pre_exec_prefix@/bin/M2 $(ARGS) ../@srcdir@/emacs/make-M2-emacs-help.m2 -e 'exit 0'
+	cd emacs; @pre_exec_prefix@/bin/M2 $(ARGS) @srcdir@/emacs/make-M2-emacs-help.m2 -e 'exit 0'
 
 clean::; rm -f $(MADEFILES) @pre_emacsdir@/*
 distclean:: clean; rm -f Makefile
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/editors/emacs "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/editors "
 # End:
