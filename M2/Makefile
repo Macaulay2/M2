@@ -8,7 +8,7 @@
 
 VERBOSE = yes
 
-all: check-make make-configure monitor include/M2/config.h.in.stamp check-automake check-autoconf check-libtool
+all: check-make make-configure monitor include/M2/config.h.in.stamp check-automake check-autoconf check-libtool fetch-M2-emacs
 
 # libtool 2.4.3 is too old, 2.4.6 is okay, and we provide it
 LIBTOOL_MAJOR = 2
@@ -237,6 +237,10 @@ check-pre-vardirs:
 # M2/submodules/fflas_ffpack/macros/ltversion.m4. This target will clean that up.
 clean-in-submodules:
 	git submodule foreach git clean -xdfq
+
+# Fetch the M2-emacs submodule
+fetch-M2-emacs: Macaulay2/editors/emacs/Makefile.in
+Macaulay2/editors/emacs/Makefile.in:; git submodule update --init Macaulay2/editors/emacs
 
 # Local Variables:
 # mode: Makefile
