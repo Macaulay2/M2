@@ -39,9 +39,9 @@ i8 : fSols = solveSystem(f);
 *** variables in the ring : {x, y} ***
 
 i9 : fSols/print
-(-8.62817e-32+5.23853e-32*ii, 9.06585e-32-1.97232e-33*ii)
-{-ii, -1}
+(8.47409e-33+3.08149e-33*ii, 6.27369e-33-3.48734e-33*ii)
 {ii, -1}
+{-ii, -1}
 
 o9 = {, , }
 
@@ -50,7 +50,7 @@ o9 : List
 i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
 
 i11 : zeroSols/print
-(-8.62817e-32+5.23853e-32*ii, 9.06585e-32-1.97232e-33*ii)
+(8.47409e-33+3.08149e-33*ii, 6.27369e-33-3.48734e-33*ii)
 
 o11 = {}
 
