@@ -1,39 +1,4 @@
-dnl =============================================================================
-dnl The only place the Macaulay2 version number appears is in the file ./VERSION
-
-dnl Note: it is best to increment version numbers on the master branch, so they are
-dnl       all incremented on the same branch, hence in a well-defined order, despite possible merging.
-
-dnl Things to do when incrementing the version number to X.Y.Z, say :
-dnl    - on the master branch:
-dnl      - increment the version number in the AC_INIT macro below
-dnl      - add an entry to distributions/deb/changelog
-dnl      - commit the two files and push upstream
-dnl      - make a git tag of the form version-X.Y.Z and push it to github
-dnl    	      git tag version-X.Y.Z
-dnl           git push --tags origin version-X.Y.Z
-
-dnl Things to do when developing a binary release for version X.Y
-dnl    - on the master branch:
-dnl      - increment version to X.Y, as described above
-dnl      - make a git branch of the form release-X.Y
-dnl           git branch release-X.Y
-dnl      - update version to X.Y.0.1, as described above, so development on the master branch can continue
-dnl    - switch to release-X.Y and develop it there, eventually merging it into the master branch
-
-dnl Note:
-dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
-dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
-
 AC_INIT(Macaulay2, [m4_esyscmd_s([cat VERSION])], Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
-
-dnl The convention for version numbers of Macaulay2 is this:
-dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
-dnl   1.3.1   : a minor update, with changes people might want, stable, suitable for binary distributions or updates to binary distributions on certain architectures
-dnl   1.3.1.1 : a development version, with no binary distributions
-dnl   2.0     : this just means we've gotten bored seeing "1" at the beginning of the number
-dnl =============================================================================
-
 AC_MSG_NOTICE([configuring Macaulay2 version $PACKAGE_VERSION])
 AC_CONFIG_SRCDIR(INSTALL)
 AC_CONFIG_HEADERS(include/M2/config.h)
