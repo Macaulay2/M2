@@ -1090,5 +1090,6 @@ load "./CoincidentRootLoci/documentation.m2"
 load "./CoincidentRootLoci/tests.m2"
 
 welcome := "CoincidentRootLoci v."|CoincidentRootLoci.Options.Version|" loaded successfully (last updated: "|CoincidentRootLoci.Options.Date|")";
-if (options CoincidentRootLoci)#OptionalComponentsPresent then <<concatenate(#welcome:"*")<<endl<<welcome<<endl<<concatenate(#welcome:"*")<<endl else <<"--warning: Qepcad required but not present"<<endl;
+if notify then
+  if (options CoincidentRootLoci)#OptionalComponentsPresent then <<concatenate(#welcome:"*")<<endl<<welcome<<endl<<concatenate(#welcome:"*")<<endl else <<"--warning: Qepcad required but not present"<<endl;
 
