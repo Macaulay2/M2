@@ -713,6 +713,7 @@ export {
 	"homology",
 	"homomorphism",
 	"homomorphism'",
+	"hooks",
 	"horizontalJoin",
 	"html",
 	"htmlWithTex",
