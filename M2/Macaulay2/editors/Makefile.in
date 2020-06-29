@@ -2,6 +2,7 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 ARGS = --script
+.NOTPARALLEL:
 
 MADEFILES = M2-symbols.el M2-emacs-help.txt M2-emacs.m2
 SRCFILES = M2-init.el M2-mode.el M2.el README.md
@@ -18,7 +19,7 @@ emacs/M2-symbols.el : make-M2-symbols.m2 ../m2/exports.m2 @pre_exec_prefix@/bin/
 emacs/M2-emacs.m2 emacs/M2-emacs-help.txt: emacs/make-M2-emacs-help.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
 	cd emacs; @pre_exec_prefix@/bin/M2 $(ARGS) @srcdir@/emacs/make-M2-emacs-help.m2 -e 'exit 0'
 
-clean::; rm -f $(MADEFILES) @pre_emacsdir@/*
+clean::; rm -rf @pre_emacsdir@/* atom emacs prism vim
 distclean:: clean; rm -f Makefile
 
 # Local Variables:
