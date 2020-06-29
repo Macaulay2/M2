@@ -5,7 +5,6 @@
 
 #include "hash.hpp"
 #include "engine-includes.hpp"
-#include "array.hpp"
 #include "monordering.h"
 #include "newdelete.hpp"
 
@@ -40,7 +39,7 @@ class Monoid : public MutableEngineObject
   M2_ArrayString varnames_;
   M2_arrayint degvals_;
   M2_arrayint heftvals_;
-  array<const_monomial>
+  VECTOR(const_monomial)
       degree_of_var_;  // [0]..[nvars-1] are the multi-degrees of the
                        // variables, and [nvars] = zero element in the
                        // degree monoid.

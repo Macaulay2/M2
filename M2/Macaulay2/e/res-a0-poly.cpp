@@ -292,7 +292,7 @@ vec res2_poly::to_vector(const res2term *f,
   return H.value();
 }
 
-res2term *res2_poly::from_vector(const array<res2_pair *> &base,
+res2term *res2_poly::from_vector(const VECTOR(res2_pair *)& base,
                                  const vec v) const
 {
   res2term head;

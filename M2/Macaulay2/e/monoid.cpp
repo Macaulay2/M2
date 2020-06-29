@@ -155,7 +155,7 @@ void Monoid::set_degrees()
 {
   if (degree_monoid_ == NULL)
     {
-      degree_of_var_.append(static_cast<const_monomial>(NULL));
+      degree_of_var_.push_back(static_cast<const_monomial>(NULL));
       return;
     }
 
@@ -176,7 +176,7 @@ void Monoid::set_degrees()
       {
         monomial m = degree_monoid_->make_one();
         degree_monoid_->from_expvector(t, m);
-        degree_of_var_.append(m);
+        degree_of_var_.push_back(m);
         heft_degree_of_var_->array[i] = ntuple::weight(degvars, t, heftvals_);
         t += degvars;
       }
@@ -184,7 +184,7 @@ void Monoid::set_degrees()
     {
       for (int i = 0; i < nvars_; i++) heft_degree_of_var_->array[i] = 1;
     }
-  degree_of_var_.append(degree_monoid_->make_one());
+  degree_of_var_.push_back(degree_monoid_->make_one());
 }
 
 std::vector<int> Monoid::getFirstWeightVector() const

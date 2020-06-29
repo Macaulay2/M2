@@ -38,12 +38,12 @@ class array : public our_new_delete
     entries = newarray(T, len);
     engine_alloc(len * sizeof(T));
   }
-  array(const array<T> &a) : len(a.len), max(a.max)
-  {
-    entries = newarray(T, len);
-    engine_alloc(len * sizeof(T));
-    for (unsigned int i = 0; i < max; i++) entries[i] = a.entries[i];
-  }
+  // array(const array<T> &a) : len(a.len), max(a.max)
+  // {
+  //   entries = newarray(T, len);
+  //   engine_alloc(len * sizeof(T));
+  //   for (unsigned int i = 0; i < max; i++) entries[i] = a.entries[i];
+  // }
 
   ~array()
   {
@@ -73,17 +73,17 @@ class array : public our_new_delete
     return entries[i];
   }
 
-  T &rawelem(unsigned int i)
-  {
-    assert(i < max);
-    return entries[i];
-  }
+  // T &rawelem(unsigned int i)
+  // {
+  //   assert(i < max);
+  //   return entries[i];
+  // }
 
-  const T &rawelem(unsigned int i) const
-  {
-    assert(i < max);
-    return entries[i];
-  }
+  // const T &rawelem(unsigned int i) const
+  // {
+  //   assert(i < max);
+  //   return entries[i];
+  // }
 
   void append(const T &t)
   {
@@ -91,20 +91,20 @@ class array : public our_new_delete
     entries[max++] = t;
   }
 
-  array<T> &operator=(const array<T> &a)
-  {
-    if (&a == this) return *this;
-    engine_dealloc(len * sizeof(T));
-    deletearray(entries);
-    unsigned int n = (init_array_size > a.max ? init_array_size : a.max);
-    max = a.max;
-    len = n;
-    entries =
-        newarray(T, len);  // the constructors for the entries are not run here
-    engine_alloc(len * sizeof(T));
-    for (unsigned int i = 0; i < max; i++) entries[i] = a.entries[i];
-    return *this;
-  }
+  // array<T> &operator=(const array<T> &a)
+  // {
+  //   if (&a == this) return *this;
+  //   engine_dealloc(len * sizeof(T));
+  //   deletearray(entries);
+  //   unsigned int n = (init_array_size > a.max ? init_array_size : a.max);
+  //   max = a.max;
+  //   len = n;
+  //   entries =
+  //       newarray(T, len);  // the constructors for the entries are not run here
+  //   engine_alloc(len * sizeof(T));
+  //   for (unsigned int i = 0; i < max; i++) entries[i] = a.entries[i];
+  //   return *this;
+  // }
 };
 
 #endif

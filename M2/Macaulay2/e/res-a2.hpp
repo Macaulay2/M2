@@ -130,8 +130,8 @@ class gb2_comp : public gb_node
   s_pair *these_pairs;
   intarray total_pairs;
 
-  array<gb_elem *> gb;
-  array<monideal_pair *> monideals;  // baggage for each is 'gb_elem *'
+  VECTOR(gb_elem *) gb;
+  VECTOR(monideal_pair *) monideals;  // baggage for each is 'gb_elem *'
 
   // Syzygies collected
   gb_node *syz;

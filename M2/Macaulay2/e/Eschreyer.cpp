@@ -7,6 +7,7 @@
 #include "matrix-con.hpp"
 
 GBMatrix::GBMatrix(const FreeModule *F0) : F(F0) {}
+
 GBMatrix::GBMatrix(const Matrix *m) : F(m->rows())
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
@@ -20,6 +21,7 @@ GBMatrix::GBMatrix(const Matrix *m) : F(m->rows())
 }
 
 void GBMatrix::append(gbvector *g) { elems.push_back(g); }
+
 Matrix *GBMatrix::to_matrix()
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
@@ -68,11 +70,11 @@ GBKernelComputation::~GBKernelComputation()
 int GBKernelComputation::calc()
 {
   // First find the skeleton
-  for (int i = 0; i < gb.length(); i++) new_pairs(i);
+  for (int i = 0; i < gb.size(); i++) new_pairs(i);
 
   // Debug code
   GBMatrix *mm = new GBMatrix(G);
-  for (int p = 0; p < syzygies.length(); p++)
+  for (int p = 0; p < syzygies.size(); p++)
     mm->append(GR->gbvector_copy(syzygies[p]));
   buffer o;
   Matrix *m = mm->to_matrix();
@@ -86,7 +88,7 @@ int GBKernelComputation::calc()
   // Sort the skeleton now?
 
   // Now reduce each one of these elements
-  for (int j = 0; j < syzygies.length(); j++)
+  for (int j = 0; j < syzygies.size(); j++)
     {
       gbvector *v = s_pair(syzygies[j]);
       reduce(v, syzygies[j]);
@@ -98,7 +100,7 @@ GBMatrix *GBKernelComputation::get_syzygies()
 {
   // Make the Schreyer free module H.
   GBMatrix *result = new GBMatrix(G);
-  for (int i = 0; i < syzygies.length(); i++)
+  for (int i = 0; i < syzygies.size(); i++)
     {
       result->append(syzygies[i]);
       syzygies[i] = 0;
@@ -143,9 +145,9 @@ void GBKernelComputation::strip_gb(const GBMatrix *m)
             last = t;
           }
       last->next = 0;
-      gb.append(head.next);
+      gb.push_back(head.next);
     }
-  for (i = 0; i < F->rank(); i++) mi[i] = new MonomialIdeal(R);
+  for (i = 0; i < F->rank(); i++) mi.push_back(new MonomialIdeal(R));
   deletearray(components);
 }
 
@@ -236,7 +238,7 @@ void GBKernelComputation::new_pairs(int i)
 
       gbvector *q = make_syz_term(
           GR->get_flattened_coefficients()->from_long(1), m, i + 1);
-      syzygies.append(q);
+      syzygies.push_back(q);
     }
 }
 
@@ -263,9 +265,9 @@ int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi,
                                       int &result)
 {
   // Find all the posible matches, use some criterion for finding the best...
-  array<Bag *> bb;
+  VECTOR(Bag *) bb;
   this_mi->find_all_divisors(exp, bb);
-  int ndivisors = bb.length();
+  int ndivisors = bb.size();
   if (ndivisors == 0) return 0;
   result = bb[0]->basis_elem();
   // Now search through, and find the best one.  If only one, just return it.
