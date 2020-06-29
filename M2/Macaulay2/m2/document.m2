@@ -721,9 +721,10 @@ storeRawDocumentation := (tag,opts) -> (
      fkey := DocumentTag.FormattedKey tag;
      if currentPackage#rawKey#?fkey and signalDocError tag
      then (
-	  stderr << currentFileName << ":" << currentLineNumber() << ": warning: documentation already provided for '" << tag << "'" << endl;
+	  stderr << currentFileName << ":" << currentLineNumber() << ": error: documentation already provided for '" << tag << "'" << endl;
 	  doc := currentPackage#rawKey#fkey;
 	  stderr << doc#"filename" << ":" << doc#"linenum" << ": ... here is the (end of the) previous documentation" << endl;
+	  error "quitting";
 	  );
      currentPackage#rawKey#fkey = opts;
      )
