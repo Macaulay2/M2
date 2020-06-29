@@ -747,14 +747,6 @@ doc///
 			solveDecomposableSystem (F,Verify=>1,Tolerance=>0.1,Verbose=>3)
 ///		
 
--- The program phcpack isn't installed on every user's system.
--- TO DO: detect its presence and enable re-running the examples and running the tests conditionally
-
-stderr << "--warning: *** tests disabled for package DecomposableSparseSystems" << endl
-
-end
-
-
 TEST ///
     assert(isLacunary({matrix{{0,2,4},{0,2,4}},matrix{{0,2,0,2},{0,0,2,2}}}));
 ///
