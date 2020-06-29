@@ -1,8 +1,4 @@
 -- -*- M2-comint -*- hash: -1057685552
---loading configuration for package "FourTiTwo" from file /home/aleykin3/.Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /home/aleykin3/.Macaulay2/init-Topcom.m2
--- COMPILE TIME: Oct 31 2019, 08:32:16
---loading configuration for package "Bertini" from file /home/aleykin3/.Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,y,z]
 
@@ -31,11 +27,7 @@ o4 : WitnessSet
 
 i5 : bertiniSample(4, W)
 
-o5 = {{-1.18082e-321-6.9169e-323*ii, -1.18082e-321-6.9169e-323*ii,
-     ------------------------------------------------------------------------
-     -.150552+.0017071*ii}, {0, 0, -.0616309-.0157936*ii}, {0, 0,
-     ------------------------------------------------------------------------
-     .00157828-.0157998*ii}, {0, 0, -.332118+.122569*ii}}
+o5 = {{-3.05361e-191+5.09951e-190*ii, -8.89318e-323-2.96439e-323*ii, .335342+.0752957*ii}, {-1.78316e-116+8.83436e-116*ii, 0, .382064+.398989*ii}, {0, 0, .314218+.446033*ii}, {-1.03284e-222+1.45685e-223*ii, 3.06321e-322-2.86558e-322*ii, .434771+.300668*ii}}
 
 o5 : List
 

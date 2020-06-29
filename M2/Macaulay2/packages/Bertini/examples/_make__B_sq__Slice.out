@@ -1,8 +1,4 @@
 -- -*- M2-comint -*- hash: -1061455288
---loading configuration for package "FourTiTwo" from file /home/aleykin3/.Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /home/aleykin3/.Macaulay2/init-Topcom.m2
--- COMPILE TIME: Oct 31 2019, 08:32:16
---loading configuration for package "Bertini" from file /home/aleykin3/.Macaulay2/init-Bertini.m2
 
 i1 : sliceType={1,1}
 
@@ -43,7 +39,7 @@ o7 : List
 
 i8 : makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"})
 
-o8 = /tmp/M2-26545-0/0/input
+o8 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-75021-0/0/input
 
 o8 : File
 
@@ -83,7 +79,7 @@ i15 : makeB'InputFile(storeBM2Files,
           HomVariableGroup=>variableGroups,
           B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections)
 
-o15 = /tmp/M2-26545-0/0/input
+o15 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-75021-0/0/input
 
 o15 : File
 
@@ -97,7 +93,7 @@ i18 : makeB'InputFile(storeBM2Files,
           HomVariableGroup=>variableGroups,
           B'Polynomials=>{f1,f2}|xySlice#ListB'Sections)
 
-o18 = /tmp/M2-26545-0/0/input
+o18 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-75021-0/0/input
 
 o18 : File
 
@@ -111,7 +107,7 @@ i21 : makeB'InputFile(storeBM2Files,
           HomVariableGroup=>variableGroups,
           B'Polynomials=>{f1,f2}|yySlice#ListB'Sections)
 
-o21 = /tmp/M2-26545-0/0/input
+o21 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-75021-0/0/input
 
 o21 : File
 

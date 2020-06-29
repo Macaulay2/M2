@@ -1,7 +1,4 @@
 -- -*- M2-comint -*- hash: -273104196
---loading configuration for package "FourTiTwo" from file /Users/dan/Library/Application Support/Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /Users/dan/Library/Application Support/Macaulay2/init-Topcom.m2
---loading configuration for package "Bertini" from file /Users/dan/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,y];
 
