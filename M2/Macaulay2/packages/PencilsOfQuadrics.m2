@@ -20,10 +20,10 @@ peek loadedFiles
                        HomePage => ""},
              	         {Name => "David Eisenbud", 
                        Email => "de@msri.org", 
-                       HomePage => "www.msri.org/~de"},
+                       HomePage => "https://www.msri.org/~de"},
 		       {Name => "Yeongrak Kim",
 			   Email => "kim@math.uni-sb.de",
-			   HomePage => "sites.google.com/view/yeongrak"}
+			   HomePage => "https://sites.google.com/view/yeongrak"}
 		   },
 	               PackageExports => {"CompleteIntersectionResolutions"},
              Headline => "Clifford Algebra of a pencil of quadratic forms",
