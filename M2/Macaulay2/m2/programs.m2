@@ -1,4 +1,5 @@
 Program = new Type of HashTable
+ProgramRun = new Type of HashTable
 programPaths = new MutableHashTable
 
 -- we expect a trailing slash in the path, but the paths given in the
@@ -45,3 +46,39 @@ loadProgram (String, String) := opts -> (name, cmd) -> (
 	else return null;
     new Program from {"name" => name, "path" => programPath}
 )
+
+runProgram = method(TypicalValue => ProgramRun,
+    Options => {RaiseError => true, KeepFiles => false, Verbose => false})
+runProgram(Program, String) := opts -> (program, args) ->
+    runProgram(program, program#"name", args, opts)
+runProgram(Program, String, String) := opts -> (program, name, args) -> (
+    tmpFile := temporaryFileName();
+    outFile := tmpFile | ".out";
+    errFile := tmpFile | ".err";
+    cmd := program#"path" | name | " " | args;
+    returnValue := run (cmd | " > " | outFile | " 2> " | errFile);
+    message := "running: " | cmd | "\n";
+    output := get outFile;
+    if output != "" then message = message | output;
+    err := get errFile;
+    if err != "" then message = message | err;
+    if opts.Verbose then print(message);
+    result := {
+	"command" => cmd,
+	"output" => output,
+	"error" => err,
+	"return value" => returnValue};
+    if opts.KeepFiles then result = result | {
+	"output file" => outFile,
+	"error file" => errFile}
+    else (
+	removeFile outFile;
+	removeFile errFile;
+    );
+    if opts.RaiseError and returnValue != 0 then error(
+	program#"name" | " returned an error" |
+	if opts.Verbose then "" else "\n" | message);
+    new ProgramRun from result
+)
+
+net ProgramRun := pr -> net pr#"return value"
