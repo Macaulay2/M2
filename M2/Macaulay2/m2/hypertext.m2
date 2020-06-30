@@ -170,8 +170,8 @@ EXAMPLE VisibleList := x -> (
 -----------------------------------------------------------------------------
 -- TODO: Move this
 
-new  HR  from List :=
-new  BR  from List := (X, x) -> if 0 < #x then error "expected empty list" else x
+new HR from List :=
+new BR from List := (X,x) -> if all(x, e -> instance(e, Option)) then x else error "expected empty list"
 br = BR{}
 hr = HR{}
 
@@ -190,12 +190,11 @@ new HREF from List      := (HREF, x) -> (
 
 new OL from VisibleList :=
 new UL from VisibleList := (T, x) -> (
-     x = nonnull x;
-     if #x == 0 then error("empty element of type ", format toString T, " encountered");
-     apply(x, e -> (
-	       if class e === TO then LI{TOH{e#0}}
-	       else if class e === LI then e
-	       else LI e)))
+    apply(nonnull x, e -> (
+	    if class e === TO then LI{TOH{e#0}}
+	    else if instance(e, LI) or instance(e,Option) then e
+	    else LI e)))
+-- TODO: deprecate this
 ul = x -> ( x = nonnull x; if 0 < #x then UL x )
 
 -- Written by P. Zinn-Justin
@@ -242,12 +241,12 @@ TOH.qname     = "span"
 -----------------------------------------------------------------------------
 -- Add acceptable html attributes to the type of an html tag
 -----------------------------------------------------------------------------
-addAttribute := (T, opts) -> (
+addAttribute = (T, opts) -> (
     T.Options = new OptionTable from apply(opts, opt ->
 	if class opt === Option then opt else opt => null))
 
 -- html global attributes
-htmlGlobalAttr := {
+htmlGlobalAttr = {
     "accesskey",
     "class",
     "contenteditable",
@@ -271,7 +270,7 @@ addAttribute(LINK,  htmlGlobalAttr | {"href", "rel", "title", "type"})
 addAttribute(STYLE, htmlGlobalAttr | {"type"})
 
 -- html global and event attributes
-htmlAttr := htmlGlobalAttr | {
+htmlAttr = htmlGlobalAttr | {
     "onafterprint","onbeforeprint","onbeforeunload","onerror","onhashchange",
     "onload","onmessage","onoffline","ononline","onpagehide","onpageshow",
     "onpopstate","onresize","onstorage","onunload","onblur","onchange",

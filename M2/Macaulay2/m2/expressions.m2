@@ -364,7 +364,8 @@ Expression + Expression     := Sum => (x,y) -> new Sum from {x,y}
 	   - Minus          := x -> expression x#0
            - Expression     := x -> new Minus from {x}
            - Holder         := x -> new Minus from {x#0}
-Expression - Expression     := Sum => (x,y) -> x + -y
+Expression - Expression     := Sum => (x,y) -> x + Minus y
+Thing - Minus               := Sum => (x,y) -> expression x + y#0
 Product    * OneExpression  :=
 Expression * OneExpression  :=
 Holder     * OneExpression  := (x,y) -> x
