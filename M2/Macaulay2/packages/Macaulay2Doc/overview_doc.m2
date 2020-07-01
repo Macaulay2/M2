@@ -24,28 +24,17 @@ document {
      write documentation for an entry is to start with one of the following examples 
      or templates, and then modify it.",
      UL {
-	  { "package header ", 
-	       TO2("package documentation template", "template")
-	       -- Bart wanted this: ,", ", TO2("package documentation example", "example") 
+	  { TO("package documentation template")
 	  },
-	  { "function name ", 
-	       TO2("function name documentation template", "template")
-	       -- Bart wanted this: ,", ", TO2("function name documentation example", "example") 
+	  { TO("function name documentation template")
 	  },
-	  { "function call (includes classes of function arguments) ", 
-	       TO2("function documentation template", "template")
-	       -- Bart wanted this: ,", ", TO2("function documentation example", "example") 
+	  { TO("function documentation template")
 	  },
-	  { "optional argument name ", 
-	       TO2("optional argument name documentation template", "template")
-	       -- Bart wanted this: ,", ", TO2("optional argument name documentation example", "example") 
+	  { TO("optional argument name documentation template")
 	  },
-	  { "optional argument ", 
-	       TO2("optional argument documentation template", "template")
-	       -- Bart wanted this: ,", ", TO2("optional argument documentation example", "example") 
+	  { TO("optional argument documentation template")
 	  },
-	  { "overview ", TO2("overview documentation template", "template")
-	       -- Bart wanted this: ,", ", TO2("overview documentation example", "example") 
+	  { TO("overview documentation template")
 	  }
      },
      HEADER3 "The documentation writing cycle",
@@ -171,7 +160,7 @@ document {
      in mind makes for easier reading by users",
      UL {
 	  { "Start with a documentation template, see ", TO "writing documentation", "." },
-	  { TO Inputs, ", ", TO Outputs, ", and ", TO Consequences, "should not end with periods."}
+	  { TO Inputs, ", ", TO Outputs, ", and ", TO Consequences, " should not end with periods."}
 	  }
      }
 document {
