@@ -137,6 +137,7 @@ isPrimary(Ideal,Ideal) := (Q,P) -> (
      if isPrime P then Q == top Q
      else false
      )
+isPrimary (Module, Module) := (M, Q) -> #associatedPrimes(M/Q) == 1
 
 
 irreducibleDecomposition = method();
