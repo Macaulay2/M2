@@ -355,6 +355,7 @@ associatedPrimes Module := List => opts -> M -> (
      if n < d then M.cache#"associatedPrimesCodimLimit" = n
      else remove(M.cache, "associatedPrimesCodimLimit");
      (flatten apply(toList(c..n), i -> (
+          if debugLevel > 0 then print("Computing associated primes of codim " | toString i);
           A := image transpose C.dd_i : ker transpose C.dd_(i+1); -- ann Ext^i(M, R) (consider colon.m2)
           select(minimalPrimes A, P -> codim P == i)
      )))/(P -> trim sub(P, ring M))
@@ -381,7 +382,7 @@ primaryDecomposition Module := List => o -> M -> ( -- returns a primary decompos
                M.cache#"primaryComponents"#p = Q;
           );
      );
-     values(M.cache#"primaryComponents")
+     apply(AP, p -> M.cache#"primaryComponents"#p)
 )
 
 TEST /// -- direct sum
