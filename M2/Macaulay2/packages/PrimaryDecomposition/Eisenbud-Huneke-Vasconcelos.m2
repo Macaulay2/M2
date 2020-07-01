@@ -336,6 +336,88 @@ J1 = J1 + ideal(R_3^5)
 trim substitute(J1,T)
 ///
 
+
+-- Primary decomposition code for modules (Macaulay2)
+-- Author: Justin Chen (justin.chen@math.gatech.edu)
+-- Last edited: 7/1/2020
+
+associatedPrimes Module := List => opts -> M -> (
+     if M.cache#?"AssociatedPrimes" and not M.cache#?"associatedPrimesWithCodimLimit" then M.cache#"AssociatedPrimes" else M.cache#"AssociatedPrimes" = (
+     polyRing := ring presentation ring M;
+     M1 := lift(M, polyRing);
+     c := codim M1;
+     d := dim polyRing;
+     n := if opts.CodimensionLimit >= 0 then min(d, opts.CodimensionLimit) else d;
+     if c == d and isHomogeneous M then return {sub(ideal gens polyRing, ring M)};
+     C := resolution(M1, LengthLimit => 1+n);
+     if n < d then M.cache#"associatedPrimesWithCodimLimit" = true
+     else remove(M.cache, "associatedPrimesWithCodimLimit");
+     (flatten apply(toList(c..n), i -> (
+          A := image transpose C.dd_i : ker transpose C.dd_(i+1); -- ann Ext^i(M, R) (consider colon.m2)
+          select(minimalPrimes A, P -> codim P == i)
+     )))/(P -> trim sub(P, ring M))
+     )
+)
+
+primaryDecomposition Module := List => o -> M -> ( -- returns a primary decomposition of 0 in M
+     if not M.cache#?"primaryComponents" then M.cache#"primaryComponents" = new MutableHashTable;
+     AP := associatedPrimes M;
+     if #AP == 1 then M.cache#"primaryComponents"#(AP#0) = 0*M;
+     if #values(M.cache#"primaryComponents") != #AP then (
+          H := hashTable apply(AP, p -> p => select(#AP, i -> isSubset(AP#i, p)));
+          for i to #AP - 1 do ( -- assumes all embedded primes appear after all primes they contain, i.e. isSubset(AP#i, AP#j) => i \le j
+               if debugLevel > 0 then print("Prime: " | toString(i+1) | "/" | toString(#AP));
+               p := AP#i;
+               if M.cache#"primaryComponents"#?p then continue;
+               f := product(AP - set AP_(H#p), q -> q_(position(q_*, g -> g % p != 0)));
+               isolComp := if f == 1 then 0*M else saturate(0*M, f);
+               if #(H#p) > 1 then (
+                    colonMod := intersect apply(delete(i, H#p), k -> M.cache#"primaryComponents"#(AP#k));
+                    (j, Q) := (4, topComponents(p^2*M));
+                    while not (image relations M == image relations Q and isSubset(intersect(colonMod, Q), isolComp)) do (j, Q) = (2*j, trim topComponents(p^j*M));
+               ) else Q = isolComp;
+               M.cache#"primaryComponents"#p = Q;
+          );
+     );
+     values(M.cache#"primaryComponents")
+)
+
+
+TEST /// -- direct sum
+R = QQ[x_0..x_3]
+I = monomialCurveIdeal(R,{1,2,3})
+J = monomialCurveIdeal(R,{1,3,4})
+K = monomialCurveIdeal(R,{1,4,5})
+M = comodule I ++ comodule J ++ comodule K
+AP = associatedPrimes M
+set associatedPrimes M === set associatedPrimes I + set associatedPrimes J + set associatedPrimes K
+comps = primaryDecomposition M
+assert(intersect comps == 0)
+assert(all(comps, Q -> #associatedPrimes(M/Q) == 1))
+///
+
+TEST /// -- multiply embedded prime
+-- Cannot modify ambient module in topComponents(Module)
+R = QQ[x_0..x_3]
+I = intersect((ideal(x_0..x_3))^5, (ideal(x_0..x_2))^4, (ideal(x_0..x_1))^3)
+M = comodule I
+AP = associatedPrimes M
+comps = primaryDecomposition M
+assert(intersect comps == 0)
+assert(all(comps, Q -> #associatedPrimes(M/Q) == 1))
+///
+
+TEST /// -- tough example for old primaryDecomposition, good on new code for modules
+-- Example 4.4 in https://arxiv.org/pdf/2006.13881.pdf
+R = QQ[x_0..x_5]
+P = minors(2, matrix{{x_0,x_1,x_3,x_4},{x_1,x_2,x_4,x_5}}) -- surface scroll S(2,2) in P^5
+L = P^2_*; I = ideal (L_0 + L_9, L_0 + L_12, L_13 + L_20)
+M = comodule I
+assert(#associatedPrimes M == 5)
+comps = primaryDecomposition M
+assert(sum(comps, Q -> degree(ideal relations M + ideal gens Q)) == degree M)
+///
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PrimaryDecomposition.installed "
 -- End:

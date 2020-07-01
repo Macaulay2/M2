@@ -75,7 +75,7 @@ topComponents Module := Module => (M) -> (
 	    I := saturate(M, J);
 	    -- alternate strategy: modify M as well:
 	    -- this next line could be commented out
-	    M = (ambient I)/I;
+	    -- M = (ambient I)/I;
 	);
 	if pdim M < p 
 	  then p = pdim M
