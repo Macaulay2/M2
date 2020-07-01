@@ -491,14 +491,9 @@ installMethod(setup, () -> (
      dotloginFix = concatenate(shHeader,apply(shellfixes, (var,dir,rest) -> fix(var,dir,rest,cshtempl)));
      supplantStringFile(dotprofileFix,"~/"|M2profile,false);
      supplantStringFile(dotloginFix,"~/"|M2login,false);
-     fileExists("~/"|".bash_profile") and mungeFile("~/"|".bash_profile",startToken,endToken,M2profileRead) or
-     fileExists("~/"|".bash_login") and mungeFile("~/"|".bash_login",startToken,endToken,M2profileRead) or
      mungeFile("~/"|".profile",startToken,endToken,M2profileRead) or
-     mungeFile("~/"|".bashrc",startToken,endToken,M2profileRead) or
+     mungeFile("~/"|".zprofile",startToken,endToken,M2profileRead) or
      mungeFile("~/"|".login",startToken,endToken,M2loginRead) or
-     fileExists("~/"|".tcshrc" ) and mungeFile("~/"|".tcshrc",startToken,endToken,M2loginRead) or
-     fileExists("~/"|".zshrc" ) and mungeFile("~/"|".zshrc",startToken,endToken,M2loginRead) or
-     mungeFile("~/"|".cshrc",startToken,endToken,M2loginRead) or
      mungeEmacs(); ))
 
 scanLines = method()
