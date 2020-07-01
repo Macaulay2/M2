@@ -341,8 +341,10 @@ trim substitute(J1,T)
 -- Author: Justin Chen (justin.chen@math.gatech.edu)
 -- Last edited: 7/1/2020
 
+bracketPower = (I, n) -> ideal apply(I_*, f -> f^n)
+
 associatedPrimes Module := List => opts -> M -> (
-     if M.cache#?"AssociatedPrimes" and not M.cache#?"associatedPrimesWithCodimLimit" then M.cache#"AssociatedPrimes" else M.cache#"AssociatedPrimes" = (
+     if M.cache#?"AssociatedPrimes" and not M.cache#?"associatedPrimesCodimLimit" then M.cache#"AssociatedPrimes" else M.cache#"AssociatedPrimes" = (
      polyRing := ring presentation ring M;
      M1 := lift(M, polyRing);
      c := codim M1;
@@ -350,8 +352,8 @@ associatedPrimes Module := List => opts -> M -> (
      n := if opts.CodimensionLimit >= 0 then min(d, opts.CodimensionLimit) else d;
      if c == d and isHomogeneous M then return {sub(ideal gens polyRing, ring M)};
      C := resolution(M1, LengthLimit => 1+n);
-     if n < d then M.cache#"associatedPrimesWithCodimLimit" = true
-     else remove(M.cache, "associatedPrimesWithCodimLimit");
+     if n < d then M.cache#"associatedPrimesCodimLimit" = n
+     else remove(M.cache, "associatedPrimesCodimLimit");
      (flatten apply(toList(c..n), i -> (
           A := image transpose C.dd_i : ker transpose C.dd_(i+1); -- ann Ext^i(M, R) (consider colon.m2)
           select(minimalPrimes A, P -> codim P == i)
@@ -373,15 +375,14 @@ primaryDecomposition Module := List => o -> M -> ( -- returns a primary decompos
                isolComp := if f == 1 then 0*M else saturate(0*M, f);
                if #(H#p) > 1 then (
                     colonMod := intersect apply(delete(i, H#p), k -> M.cache#"primaryComponents"#(AP#k));
-                    (j, Q) := (4, topComponents(p^2*M));
-                    while not (image relations M == image relations Q and isSubset(intersect(colonMod, Q), isolComp)) do (j, Q) = (2*j, trim topComponents(p^j*M));
+                    (j, Q) := (4, topComponents(bracketPower(p,2)*M));
+                    while not (image relations M == image relations Q and isSubset(intersect(colonMod, Q), isolComp)) do (j, Q) = (2*j, trim topComponents(bracketPower(p,j)*M));
                ) else Q = isolComp;
                M.cache#"primaryComponents"#p = Q;
           );
      );
      values(M.cache#"primaryComponents")
 )
-
 
 TEST /// -- direct sum
 R = QQ[x_0..x_3]
@@ -393,7 +394,7 @@ AP = associatedPrimes M
 set associatedPrimes M === set associatedPrimes I + set associatedPrimes J + set associatedPrimes K
 comps = primaryDecomposition M
 assert(intersect comps == 0)
-assert(all(comps, Q -> #associatedPrimes(M/Q) == 1))
+assert(all(comps, isPrimary_M)
 ///
 
 TEST /// -- multiply embedded prime
@@ -404,7 +405,7 @@ M = comodule I
 AP = associatedPrimes M
 comps = primaryDecomposition M
 assert(intersect comps == 0)
-assert(all(comps, Q -> #associatedPrimes(M/Q) == 1))
+assert(all(comps, isPrimary_M)
 ///
 
 TEST /// -- tough example for old primaryDecomposition, good on new code for modules
