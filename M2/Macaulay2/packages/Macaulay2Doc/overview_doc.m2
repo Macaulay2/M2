@@ -160,7 +160,7 @@ document {
      in mind makes for easier reading by users",
      UL {
 	  { "Start with a documentation template, see ", TO "writing documentation", "." },
-	  { TO Inputs, ", ", TO Outputs, ", and ", TO Consequences, "should not end with periods."}
+	  { TO Inputs, ", ", TO Outputs, ", and ", TO Consequences, " should not end with periods."}
 	  }
      }
 document {
