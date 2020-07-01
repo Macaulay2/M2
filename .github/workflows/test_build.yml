@@ -159,6 +159,6 @@ jobs:
         if: matrix.build-type == 'autotools' && matrix.os == 'ubuntu-latest'
         working-directory: M2/BUILD/cicd
         run: |
-          ${{matrix.make}} -k check
+          ${{matrix.make}} check
           ${{matrix.make}} -C Macaulay2/html-check-links check
           ${{matrix.make}} validate-html
