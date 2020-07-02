@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 1734007225
+-- -*- M2-comint -*- hash: -2130591421
 --loading configuration for package "FourTiTwo" from file /home/tim/.Macaulay2/init-FourTiTwo.m2
 --loading configuration for package "Topcom" from file /home/tim/.Macaulay2/init-Topcom.m2
 --loading configuration for package "NumericalAlgebraicGeometry" from file /home/tim/.Macaulay2/init-NumericalAlgebraicGeometry.m2
@@ -15,20 +15,20 @@ o2 = {A, B, C, D, X, Y}
 
 o2 : List
 
-i3 : PS = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B},{C*(Y+2)^2+D}})
+i3 : PS = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B}, {C*(Y+2)^2+D}})
 
 o3 = gate system: 2 ---> 2
      (#parameters = 4)
 
 o3 : GateSystem
 
-i4 : solveFamily(PS,point{{1,1,1,1}})
+i4 : solveFamily(point{{1,1,1,1}}, PS)
 
-o4 = {{1.2637e-13-3.0881e-13*ii, -2+ii}, {1.2637e-13-3.0881e-13*ii, -2-ii},
+o4 = ({1, 1, 1, 1}, {{-8.98401e-17, -2-ii}, PointArray( 2 points: 0 1 ), {2,
      ------------------------------------------------------------------------
-     {2, -2-ii}, {2, -2+ii}}
+     -2-ii}})
 
-o4 : List
+o4 : Sequence
 
 i5 : R=CC[a,b,c,d][x,y]
 
@@ -36,18 +36,17 @@ o5 = R
 
 o5 : PolynomialRing
 
-i6 : F=polySystem {a*(x-1)^2-b,c*(y+2)^2+d}
+i6 : F=polySystem {a*(x-1)^2-b, c*(y+2)^2+d}
 
 o6 = F
 
 o6 : PolySystem
 
-i7 : solveFamily(F,point{{1,1,1,1}})
+i7 : solveFamily(point{{1,1,1,1}}, F)
 
-o7 = {{3.06143e-13+4.36084e-13*ii, -2-ii}, {3.06143e-13+4.36084e-13*ii,
-     ------------------------------------------------------------------------
-     -2+ii}, {2, -2+ii}, {2, -2-ii}}
+o7 = ({1, 1, 1, 1}, {{2, -2-ii}, PointArray( 2 points: 0 1 ), {2, -2+ii}})
 
-o7 : List
+
+o7 : Sequence
 
 i8 : 

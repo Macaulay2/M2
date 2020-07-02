@@ -102,8 +102,7 @@
 /Macaulay2/e/f4/Makefile
 /Macaulay2/e/unit-tests/Makefile
 /Macaulay2/d/distributed-packages.h
-/Macaulay2/emacs/M2-init.el
-/Macaulay2/emacs/Makefile
+/Macaulay2/editors/Makefile
 /Macaulay2/html-check-links/Makefile
 /Macaulay2/packages/Style/Makefile
 /Macaulay2/m2/Makefile
@@ -147,3 +146,4 @@ LOGFILE
 /check-configure/tmp/
 /libraries/ntl/check-once
 /Macaulay2/tests/ComputationsBook/programming/foo
+/cmake-build-*

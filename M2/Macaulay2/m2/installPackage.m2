@@ -1,9 +1,10 @@
 -- -*- fill-column: 107 -*-
 --		Copyright 1993-2002 by Daniel R. Grayson
+-- TODO: rename this file
 
-fixtitle = method()
-fixtitle Nothing := identity
-fixtitle String := htmlLiteral
+-----------------------------------------------------------------------------
+-- Generate documentation
+-----------------------------------------------------------------------------
 
 Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/"
 
@@ -11,7 +12,7 @@ Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/"
 -- html output
 -----------------------------------------------------------------------------
 
--- maybe we should rename this file to "packages2.m2" after the merge.
+endswith := (suff,str) -> substring(str,-#suff) == suff
 
 -- we've turned off checking for existence of files...
 
@@ -20,9 +21,6 @@ local nullButton; local masterIndexButton; local tocButton; local homeButton; -*
 local NEXT; local PREV; local UP; local tableOfContents; local linkTable; local SRC
 local nextButton; local prevButton; local upButton; local backwardButton; local forwardButton
 local masterIndex
-
-hadExampleError := false
-numExampleErrors := 0;
 
 hadDocumentationWarning := false
 numDocumentationWarnings := 0;
@@ -64,8 +62,9 @@ initInstallDirectory := o -> (
 
 isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
 
+-- TODO: phase this one out eventually
 toURL = method()
-toURL String := pth -> (				    -- phase this one out eventually
+toURL String := pth -> (
      if isAbsolutePath pth then concatenate(rootURI,
 	  if fileExists pth then realpath pth 
 	  else (
@@ -131,8 +130,6 @@ htmlFilename DocumentTag := tag -> (
      )
 htmlFilename Thing := x -> htmlFilename makeDocumentTag x
 
-tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
-
 next := tag -> ( if NEXT#?tag then HREF { htmlFilename NEXT#tag, nextButton } else nextButton, " | ")
 prev := tag -> ( if PREV#?tag then HREF { htmlFilename PREV#tag, prevButton } else prevButton, " | ")
 up   := tag -> ( if   UP#?tag then HREF { htmlFilename   UP#tag,   upButton } else upButton  , " | ")
@@ -148,35 +145,9 @@ BACKWARD  := tag -> if PREV#?tag then BACKWARD0 PREV#tag else if UP#?tag then UP
 forward  := tag -> ( f := FORWARD  tag; ( if f =!= null then HREF { htmlFilename f, forwardButton } else forwardButton , " | "))
 backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename b, backwardButton} else backwardButton, " | "))
 
-linkTitle := s -> concatenate( " title=\"", fixtitle s, "\"" )
-linkTitleTag := tag -> "pkgname" => fixtitle concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
 
-htmlLinks = () -> LINK { 
-     "href" => locateCorePackageFileRelative("Style", layout -> replace("PKG","Style",layout#"package") | "doc.css", installPrefix, htmlDirectory),
-     "rel" => "stylesheet", 
-     "type" => "text/css" 
-     }
-
--- Also set the character encoding with a meta http-equiv statement. (Sometimes XHTML
--- is parsed as HTML, and then the HTTP header or a meta tag is used to determine the
--- character encoding.  Locally-stored documentation does not have an HTTP header.)
-defaultCharSet := () -> META { "http-equiv" => "Content-Type", "content" => "text/html; charset=utf-8" }
-
-BUTTON := (s,alt) -> (
-     s = toURL s;
-     if alt === null
-     then error "required attribute: ALT"
-     else IMG("src" => s, "alt" => concatenate("[",alt,"]")))
-
-html HTML := t -> concatenate(
-///<?xml version="1.0" encoding="utf-8" ?>  <!-- for emacs: -*- coding: utf-8 -*- -->
-<!-- Apache may like this line in the file .htaccess: AddCharset utf-8 .html -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd" >
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-///,
-     apply(t,html), 
-     "</html>\n"
-     )
+linkTitle := s -> concatenate( " title=\"", htmlLiteral s, "\"" )
+linkTitleTag := tag -> "pkgname" => htmlLiteral concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
 
 -- produce html form of documentation, for Macaulay2 and for packages
 
@@ -365,7 +336,7 @@ makeMasterIndex := (keylist,verbose) -> (
      title := DocumentTag.FormattedKey topDocumentTag | " : Index";
      if verbose then stderr << "--making '" << title << "' in " << fn << endl;
      r := HTML {
-	  HEAD splice { TITLE title, defaultCharSet(), htmlLinks() },
+	  defaultHEAD title,
 	  BODY nonnull {
 	       DIV { topNodeButton, " | ", tocButton, -* " | ", directoryButton, *- " | ", homeButton },
 	       HR{},
@@ -387,7 +358,7 @@ maketableOfContents := (verbose) -> (
      if verbose then stderr << "--making  " << title << "' in " << fn << endl;
      fn
      << html HTML {
-	  HEAD splice { TITLE title, defaultCharSet(), htmlLinks() },
+	  defaultHEAD title,
 	  BODY {
 	       DIV { topNodeButton, " | ", masterIndexButton, -* " | ", directoryButton, *- " | ", homeButton },
 	       HR{},
@@ -397,174 +368,7 @@ maketableOfContents := (verbose) -> (
 	  } << endl << close
      )
 
-utest := opt -> (
-     cmd := "ulimit " | opt | "; ";
-     if chkrun("2>/dev/null >/dev/null "|cmd) == 0 then cmd else ""
-     )
-ulimit := utest "-c unlimited" | utest "-t 700" | utest "-m 850000" | utest "-s 8192" | utest "-n 512"
 
-M2statusRegexp := "^--status:"
-statusLines := file -> select(lines file, s -> match(M2statusRegexp,s))
-
-M2errorRegexp := "^[^:\n]+:[0-9]+:[0-9]+:(\\([0-9]+\\)):\\[[0-9]+\\]: "
-aftermatch := (pat,str) -> (
-     m := regex(pat,str);
-     if m === null then "" else substring(m#0#0,str))
-
-describeReturnCode = r -> (
-     if r % 256 == 0 then "exited with status code " | toString (r // 256)
-     else "killed by signal " | toString (r % 128) | if r & 128 =!= 0 then " (core dumped)" else ""
-     )
-
--- prefixes
-SetUlimit      := 1 << 20 -* sets ulimits *-
-GCMAXHEAP      := 1 << 21 -* sets GC_MAXIMUM_HEAP_SIZE=400M *-
-GCSTATS        := 1 << 22 -* sets GC_PRINT_STATS=1 *-
-GCVERBOSE      := 1 << 23 -* sets GC_PRINT_VERBOSE_STATS=1 *-
--- arguments
-ArgQ           := 1 <<  0 -* add -q *-
-ArgInt         := 1 <<  1 -* add --int *-
-ArgNoBacktrace := 1 <<  2 -* add --no-backtrace *-
-ArgNoDebug     := 1 <<  3 -* add --no-debug *-
-ArgNoPreload   := 1 <<  4 -* add --no-preload *-
-ArgNoRandomize := 1 <<  5 -* add --no-randomize *-
-ArgNoReadline  := 1 <<  6 -* add --no-readline *-
-ArgNoSetup     := 1 <<  7 -* add --no-setup *-
-ArgNoThreads   := 1 <<  8 -* add --no-threads *-
-ArgNoTTY       := 1 <<  9 -* add --no-tty *-
-ArgNoTValues   := 1 << 10 -* add --no-tvalues *-
-ArgNotify      := 1 << 11 -* add --notify *-
-ArgSilent      := 1 << 12 -* add --silent *-
-ArgStop        := 1 << 13 -* add --stop *-
-ArgPrintWidth  := 1 << 14 -* add --print-width 77 *-
--- suffixes
-SetInputFile   := 1 << 30 -* add <inf *-
-SetOutputFile  := 1 << 31 -* add >>tmpf *-
-SetCaptureErr  := 1 << 32 -* add 2>&1 *-
-
--* by default, the following commandline fixtures are used *-
-defaultMode := (SetUlimit + GCMAXHEAP + ArgQ + ArgInt
-    + ArgNoRandomize + ArgNoReadline + ArgSilent + ArgStop
-    + ArgPrintWidth + SetInputFile + SetOutputFile + SetCaptureErr)
--* making this global, so it can be edited after entering debug Core *-
-argumentMode = defaultMode
-
-runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefiles) -> ( -- return false if error
-     announcechange();
-     stderr << "--making " << desc << ( if debugLevel > 0 then " in file " | outf else "" ) << endl;
-     if fileExists outf then removeFile outf;
-     pkgname := toString pkg;
-     tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
-     rundir := temporaryFileName() | "-rundir/";
-     makeDirectory rundir;
-     -* The bits in the binary representation of argmode determine arguments to add.
-        If the 64th bit is set, argumentMode modifies the defaultMode rather than overriding them. *-
-     argmode := if 0 < argumentMode & (1<<64) then xor(defaultMode, argumentMode) else argumentMode;
-     -* returns (" "|arg) if all bits in m are set in argmode *-
-     readmode := (m, arg) -> if argmode & m == m then " " | arg else "";
-     cmd := readmode(SetUlimit, ulimit);
-     cmd = cmd | " cd " | rundir | ";";
-     cmd = cmd | readmode(GCMAXHEAP,      "GC_MAXIMUM_HEAP_SIZE=400M");
-     cmd = cmd | readmode(GCSTATS,        "GC_PRINT_STATS=1");
-     cmd = cmd | readmode(GCVERBOSE,      "GC_PRINT_VERBOSE_STATS=1");
-     cmd = cmd | " " | format toAbsolutePath commandLine#0;
-     if argmode =!= defaultMode or not usermode then
-     cmd = cmd | readmode(ArgQ,           "-q");
-     cmd = cmd | readmode(ArgInt,         "--int");
-     cmd = cmd | readmode(ArgNoBacktrace, "--no-backtrace");
-     cmd = cmd | readmode(ArgNoDebug,     "--no-debug");
-     cmd = cmd | readmode(ArgNoPreload,   "--no-preload");
-     cmd = cmd | readmode(ArgNoRandomize, "--no-randomize");
-     cmd = cmd | readmode(ArgNoReadline,  "--no-readline");
-     cmd = cmd | readmode(ArgNoSetup,     "--no-setup");
-     cmd = cmd | readmode(ArgNoThreads,   "--no-threads");
-     cmd = cmd | readmode(ArgNoTTY,       "--no-tty");
-     cmd = cmd | readmode(ArgNoTValues,   "--no-tvalues");
-     cmd = cmd | readmode(ArgNotify,      "--notify");
-     cmd = cmd | readmode(ArgSilent,      "--silent");
-     cmd = cmd | readmode(ArgStop,        "--stop");
-     cmd = cmd | readmode(ArgPrintWidth,  "--print-width 77");
-     cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir",format d));
-     needsline := concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'");
-     cmd = cmd | if pkgname != "Macaulay2Doc" then needsline else "";
-     cmd = cmd | readmode(SetInputFile,   "<" | format inf);
-     cmd = cmd | readmode(SetOutputFile,  ">>" | format toAbsolutePath tmpf);
-     cmd = cmd | readmode(SetCaptureErr,  "2>&1");
-     if debugLevel > 0 then stderr << cmd << endl;
-     for fn in examplefiles do copyFile(fn,rundir | baseFilename fn);
-     r := run cmd;
-     if r == 0 then (
-	  scan(reverse findFiles rundir, f -> if isDirectory f then (
-		    -- under cygwin, it seems to take a random amount of time before the system knows the directory is no longer in use:
-		    try removeDirectory f
-		    else (
-			 stderr << "--warning: *** removing a directory failed, waiting..." << endl;
-			 sleep 1;
-		    	 try removeDirectory f
-			 else (
-			      stderr << "--warning: *** removing a directory failed again, waiting..." << endl;
-			      sleep 4;
-			      removeDirectory f
-			      )
-			 )
-		    ) else removeFile f);
-	  moveFile(tmpf,outf);
-	  return true;
-	  );
-     stderr << cmd << endl;
-     stderr << tmpf << ":0:1: (output file) error: Macaulay2 " << describeReturnCode r << endl;
-     stderr << aftermatch(M2errorRegexp,get tmpf);
-     stderr << inf  << ":0:1: (input file)" << endl;
-     scan(statusLines get inf, x -> stderr << x << endl);
-     if # findFiles rundir == 1
-     then removeDirectory rundir
-     else stderr << rundir << ": error: files remain in temporary run directory after program exits abnormally" << endl;
-     stderr << "M2: *** Error " << (if r<256 then r else r//256) << endl;
-     if r == 2 then error "interrupted";
-     hadExampleError = true;
-     numExampleErrors = numExampleErrors + 1;
-     return false;
-     )
-
-runString := (x,pkg,usermode) -> (
-     tfn := temporaryFileName();
-     inf := tfn | ".m2";
-     tmpf := tfn | ".tmp";
-     outf := tfn | ".out";
-     rm := fn -> if fileExists fn then removeFile fn;
-     rmall := () -> rm \ {inf, tmpf, outf};
-     inf << x << endl << close;
-     ret := runFile(inf,hash x,outf,tmpf,"test results",pkg,t->t,usermode,{});
-     if ret then (rm inf; rm outf;);
-     ret)
-
-check = method(Options => {
-	  UserMode => null
-	  })
-prep := pkg -> (
-     use pkg;
-     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
-     hadExampleError = false;
-     numExampleErrors = 0;
-     pkg)
-onecheck = (seqno,pkg,usermode) -> (
-     (filename,lineno,s) := pkg#"test inputs"#seqno;
-     stderr << "--running test " << seqno << " of package " << pkg << " on line " << lineno << " in file " << filename << endl;
-     stderr << "--    rerun with: check_" << seqno << " \"" << pkg << "\"" << endl;
-     runString(s,pkg,usermode);
-     )
-check(ZZ,Package) := opts -> (seqno,pkg) -> (
-     pkg = prep pkg;
-     onecheck(seqno,pkg,if opts.UserMode === null then not noinitfile else opts.UserMode);
-     if hadExampleError then error("error occurred running test for package ", toString pkg, ": ", toString seqno);
-     )
-check(ZZ,String) := opts -> (seqno,pkg) -> check(seqno, needsPackage (pkg, LoadDocumentation => true), opts)
-check Package := opts -> pkg -> (
-     pkg = prep pkg;
-     scan(keys pkg#"test inputs", seqno -> onecheck(seqno,pkg,if opts.UserMode === null then not noinitfile else opts.UserMode));
-     if hadExampleError then error(toString numExampleErrors, " error(s) occurred running tests for package ", toString pkg);
-     )
-check String := opts -> pkg -> check(needsPackage (pkg, LoadDocumentation => true), opts)
 
 setupNames := (opts,pkg) -> (
      installPrefix = minimizeFilename(runfun opts.InstallPrefix | "/");
@@ -629,6 +433,34 @@ installPackage String := opts -> pkg -> (
 dispatcherMethod := m -> m#-1 === Sequence and (
      f := lookup m;
      any(dispatcherFunctions, g -> functionBody f === functionBody g))
+
+reproduciblePaths = outf -> (
+     outstr := get outf;
+     if topSrcdir === null then return outstr;
+     srcdir := regexQuote toAbsolutePath topSrcdir;
+     builddir := regexQuote prefixDirectory;
+     homedir := regexQuote homeDirectory;
+     if last homedir == "/" then homedir = substring(0, #homedir - 1, homedir);
+     if any({srcdir, builddir, homedir}, dir -> match(dir, outstr))
+     then (
+	 outstr = replace(srcdir | "Macaulay2/m2/startup.m2.in",
+	     "/path/to/source/Macaulay2/m2/startup.m2.in", outstr);
+	 outstr = replace(srcdir | "Macaulay2/m2",
+	     finalPrefix | Layout#1#"packages" | "Core", outstr);
+	 outstr = replace(srcdir | "Macaulay2/packages/",
+	     finalPrefix | Layout#1#"packages", outstr);
+	 outstr = replace(builddir | Layout#2#"bin",
+	     finalPrefix | Layout#1#"bin", outstr);
+	 outstr = replace(builddir | Layout#2#"data",
+	     finalPrefix | Layout#1#"data", outstr);
+	 outstr = replace(builddir | Layout#2#"lib",
+	     finalPrefix | Layout#1#"lib", outstr);
+	 outstr = replace(homedir, "/home/m2user", outstr);
+	 outstr = replace(builddir, finalPrefix, outstr);
+	 outf << outstr << close;
+	 );
+     outstr
+    )
 
 installPackage Package := opts -> pkg -> (
      tallyInstalledPackages();
@@ -779,8 +611,8 @@ installPackage Package := opts -> pkg -> (
 	       m := regex("\\`.* hash: *(-?[0-9]+)",f);    -- this regular expression must detect the format used above
 	       if m =!= null then value substring(f,m#1#0,m#1#1));
 	  if verbose then stderr << "--making example result files in " << exampleOutputDir << endl;
-	  hadExampleError = false;
-	  numExampleErrors = 0;
+	  hadError = false;
+	  numErrors = 0;
 	  scan(pairs pkg#"example inputs", (fkey,inputs) -> (
 		    examplefiles := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
 		    -- args:
@@ -822,14 +654,18 @@ installPackage Package := opts -> pkg -> (
 			      )
 			 );
 		    -- read, separate, and store example output
-		    if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
+		    if fileExists outf then (
+			 outstr := reproduciblePaths outf;
+			 pkg#"example results"#fkey = drop(
+			      separateM2output(outstr, "Install" => true), -1)
+		    )
 		    else (
 			 if debugLevel > 1 then stderr << "--warning: missing file " << outf << endl;
 			 )
 		    ));
 
- 	  if not opts.IgnoreExampleErrors 
-	  then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running examples for package ", pkg#"pkgname");
+	  if not opts.IgnoreExampleErrors
+	  then if hadError then error(toString numErrors, " error(s) occurred running examples for package ", pkg#"pkgname");
 
 	  -- if no examples were generated, then remove the directory
 	  if length readDirectory exampleOutputDir == 2 then
@@ -1002,11 +838,7 @@ installPackage Package := opts -> pkg -> (
 	       if debugLevel > 0 then stderr << "--making html page for " << tag << endl;
 	       fn
 	       << html HTML { 
-		    HEAD splice {
-			 TITLE {fkey, commentize headline fkey}, -- I hope this works...
-			 defaultCharSet(),
-			 htmlLinks()
-			 },
+		    defaultHEAD {fkey, commentize headline fkey},
 		    BODY { 
 			 buttonBar tag,
 			 if UP#?tag
@@ -1028,7 +860,7 @@ installPackage Package := opts -> pkg -> (
 
      -- all done
      SRC = null;
-     if not hadExampleError then (
+     if not hadError then (
  	  libDir := pkg#"package prefix" | replace("PKG",pkg#"pkgname",installLayout#"packagelib");
 	  iname := libDir|".installed";
 	  iname << close;
@@ -1045,76 +877,11 @@ installPackage Package := opts -> pkg -> (
      tallyInstalledPackages();
      pkg)
 
-sampleInitFile = ///-- This is a sample init.m2 file provided with Macaulay2.
--- It contains Macaulay2 code and is automatically loaded upon
--- startup of Macaulay2, unless you use the "-q" option.
-
--- Uncomment the following line to cause Macaulay2 to load "start.m2" in the current working directory upon startup.
--- if fileExists "start.m2" then load(currentDirectory()|"start.m2")
-
--- Uncomment and edit the following lines to add your favorite directories containing Macaulay2
--- source code files to the load path.  Terminate each directory name with a "/".
--- (To see your current load path, display the value of the variable "path".)
--- path = join( { "~/" | "src/singularities/", "/usr/local/src/M2/" }, path )
-
--- Uncomment the following line if you prefer Macaulay2's larger 2-dimensional display form for matrices.
--- compactMatrixForm = false
-
--- Uncomment and edit the following line if you would like to set the variable kk to your favorite field.
--- kk = ZZ/101
-
--- Uncomment and edit the following line if you don't need to be informed of the class of a sequence 
--- after it is printed by M2.  This works for other classes, too.
--- Sequence#{Standard,AfterPrint} = Sequence#{Standard,AfterNoPrint} = identity
-
--- Uncomment and edit the following line to set a default printwidth for situations where M2 doesn't know the width
--- of your terminal.
--- if printWidth == 0 then printWidth = 100
-
--- Uncomment and edit the following line to preload your favorite package.
--- needsPackage "StateTables"
-
-///
-
-readmeFile = ///Welcome to Macaulay2!
-			     
-This directory is used to contain data and code specific to Macaulay2.  For
-example, your initialization file, init.m2, is in this directory, and is
-automatically loaded upon startup of Macaulay2, unless you use the "-q" option.
-You may edit it to meet your needs.
-
-The web browser file "index.html" in this directory contains a list of links to
-the documentation of Macaulay2 and its installed packages and is updated every
-time you start Macaulay2 (unless you use the "-q" option).  To update it
-manually, use "makePackageIndex()".  Point your web browser at that file and
-bookmark it.
-
-You may place Macaulay2 source files in the subdirectory "code/".  It's on
-your "path", so Macaulay2's "load" and "input" commands will automatically look
-there for your files.
-
-You may obtain source code for Macaulay2 packages and install them yourself
-with the function "installPackage".  Behind the scenes, Macaulay2 will use the
-subdirectory "encap/" to house the code for those packages in separate
-subdirectories.  The subdirectory "local/" will hold a single merged directory
-tree for those packages, with symbolic links to the files of the packages.
-
-Good luck!
-
-http://www.math.uiuc.edu/Macaulay2/
-
-Daniel R. Grayson <dan@math.uiuc.edu>,
-Michael R. Stillman <mike@math.cornell.edu>
-///
-
-endswith = (suff,str) -> substring(str,-#suff) == suff
-
 makePackageIndex = method(Dispatch => Thing)
-makePackageIndex Sequence := x -> (
-     if #x > 0 then error "expected 0 arguments";
-     makePackageIndex path    -- this might get too many files (formerly we used packagePath)
-     )
-makePackageIndex List := path -> ( -- TO DO : rewrite this function to use the results of tallyInstalledPackages
+makePackageIndex Sequence := x -> if x === () then makePackageIndex path else error "expected no arguments"
+-- this might get too many files (formerly we used packagePath)
+makePackageIndex List := path -> (
+    -- TO DO : rewrite this function to use the results of tallyInstalledPackages
      tallyInstalledPackages();
      makingPackageIndex = true;
      initInstallDirectory options installPackage;
@@ -1133,11 +900,7 @@ makePackageIndex List := path -> ( -- TO DO : rewrite this function to use the r
 	  );
      docdirdone := new MutableHashTable;
      fn << html HTML { 
-	  HEAD splice {
-	       TITLE {key},
-	       defaultCharSet(),
-	       htmlLinks()
-	       },
+	  defaultHEAD {key},
 	  BODY { 
 	       -- buttonBar tag, HR{},
 	       PARA {
@@ -1193,121 +956,6 @@ makePackageIndex List := path -> ( -- TO DO : rewrite this function to use the r
      << close;
      makingPackageIndex = false;
      htmlDirectory = null;
-     )
-
-runnable := fn -> (
-     if fn == "" then false;
-     if isAbsolutePath fn then fileExists fn
-     else 0 < # select(1, apply(separate(":", getenv "PATH"), p -> p|"/"|fn), fileExists)
-     )
-URL = new SelfInitializingType of BasicList
-new URL from String := (URL,str) -> new URL from {str}
-show URL := x -> (
-     url := x#0;
-     if runnable "open" then browser := "open" -- Apple varieties
-     else if runnable "xdg-open" then browser = "xdg-open" -- most Linux distributions
-     else if runnable getenv "WWWBROWSER" then browser = getenv "WWWBROWSER" -- compatibility
-     else if runnable "firefox" then browser = "firefox" -- backup
-     else error "neither open nor xdg-open is found and WWWBROWSER is not set";
-     cmd := { browser, url };
-     if fork() == 0 then (
-	  setGroupID(0,0);
-     	  try exec cmd;
-     	  stderr << "exec failed: " << toExternalString cmd << endl;
-	  exit 1
-	  )
-     )
-
-fix := fn -> (
-     r := rootURI | replace(" ","%20",realpath fn); 		    -- might want to replace more characters
-     if debugLevel > 0 then stderr << "--fixed URL: " << r << endl;
-     r)
-showHtml = show Hypertext := x -> (
-     fn := temporaryFileName() | ".html";
-     fn << html HTML {
-	  HEAD {
-	       TITLE "Macaulay2 Output",
-	       defaultCharSet(),
-	       htmlLinks()
-	       },
-     	  BODY {
-	       x
-	       }} << endl << close;
-     show new URL from { fix fn };
-     addEndFunction( () -> if fileExists fn then removeFile fn );
-     )
-
-show TEX := x -> showTex x
-
-viewHelp = method(Dispatch=>Thing)
-
-viewHelp String := key -> (		    -- assume key is a formatted key
-     fn := locateDocumentationNode key;
-     if fn === null then error("documentation not found for key ",key)
-     else show new URL from {fn})
-
-viewHelp Thing := key -> (
-     if key === () then (				    -- show the top level help page
-	  i := applicationDirectory() | topFileName;
-	  if not fileExists i then error("missing file (run makePackageIndex() or start M2 without -q): ",i);
-	  show new URL from { "file://" | i }		    -- formerly (for cygwin): fix i
-          )
-     else (
-     	  (prefix,tail) := htmlFilename getPrimary makeDocumentTag key;
-     	  fn := prefix|tail;
-     	  if not fileExists fn then error("html file not found: ",fn);
-     	  show new URL from {fn}))
-     
-viewHelp = new Command from viewHelp
-
-indexHtml = dir -> (
-     -- experimental
-     if not isDirectory dir then error "expected a directory";
-     title := baseFilename dir;
-     ind := minimizeFilename (dir|"/"|topFileName);
-     if fileExists ind then (
-	  if not match("generated by indexHtml",get ind) then error("file not made by indexHtml already present: ",ind);
-	  );
-     ind = openOut ind;
-     ind << ///<?xml version="1.0" encoding="utf-8"?>  <!-- for emacs: -*- coding: utf-8 -*- -->
-<!-- generated by indexHtml -->
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-<title>///
-<< title
-<< ///</title>
-</head>
-
-<body>
-<h1>/// 
-     << title 
-     << ///</h1>
-<ul>
-///;
-     scan(readDirectory dir, fn -> (
-	       if fn == "." or fn == ".." then return;
-	       fn2 := minimizeFilename(dir|"/"|fn);
-	       if isDirectory fn2 then indexHtml fn2
-	       else (
-		    ind << ///<li><A HREF="///
-		    << fn
-		    << ///">///
-		    << fn
-		    << ///</A>///;
-		    if isRegularFile fn2 then (
-			 ind << " (" << fileLength fn2 << " bytes)";
-			 );
-		    ind << "</li>" << endl)));
-     ind << ///
-</ul>
-<hr>
-<ul>
-  <li><a href="http://validator.w3.org/check/referer">Validate</a> the html on this page.</li>
-</ul>
-</body>
-/// 
-     << close;
      )
 
 -- Local Variables:

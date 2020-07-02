@@ -8,7 +8,7 @@ o1 : NCPolynomialRing
 
 i2 : M = ncMatrix {{x, y, z}}
 
-o2 = | x  y  z |
+o2 = | x y z |
 
 o2 : NCMatrix
 
@@ -20,30 +20,23 @@ o3 : NCRingMap
 
 i4 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
 
-o4 = | x  y  z |
-     |         |
-     | y  z  x |
-     |         |
-     | z  x  y |
+o4 = | x y z |
+     | y z x |
+     | z x y |
 
 o4 : NCMatrix
 
 i5 : N^3
 
-     |  2               2        2   2  3   2            2  3   2          2    3   2   2      2               2  |
-o5 = | z x+zyz+zxy+yzy+y x+yxz+xz +xy +x   z y+zyx+zxz+yz +y +yx +xzx+xyz+x y  z +zy +zx +yzx+y z+yxy+xzy+xyx+x z |
-     |                                                                                                            |
-     |  2            2  3   2          2    3   2   2      2               2    2               2        2   2  3 |
-     | z y+zyx+zxz+yz +y +yx +xzx+xyz+x y  z +zy +zx +yzx+y z+yxy+xzy+xyx+x z  z x+zyz+zxy+yzy+y x+yxz+xz +xy +x  |
-     |                                                                                                            |
-     |  3   2   2      2               2    2               2        2   2  3   2            2  3   2          2  |
-     | z +zy +zx +yzx+y z+yxy+xzy+xyx+x z  z x+zyz+zxy+yzy+y x+yxz+xz +xy +x   z y+zyx+zxz+yz +y +yx +xzx+xyz+x y |
+o5 = | z^2*x+z*y*z+z*x*y+y*z*y+y^2*x+y*x*z+x*z^2+x*y^2+x^3 z^2*y+z*y*x+z*x*z+y*z^2+y^3+y*x^2+x*z*x+x*y*z+x^2*y z^3+z*y^2+z*x^2+y*z*x+y^2*z+y*x*y+x*z*y+x*y*x+x^2*z |
+     | z^2*y+z*y*x+z*x*z+y*z^2+y^3+y*x^2+x*z*x+x*y*z+x^2*y z^3+z*y^2+z*x^2+y*z*x+y^2*z+y*x*y+x*z*y+x*y*x+x^2*z z^2*x+z*y*z+z*x*y+y*z*y+y^2*x+y*x*z+x*z^2+x*y^2+x^3 |
+     | z^3+z*y^2+z*x^2+y*z*x+y^2*z+y*x*y+x*z*y+x*y*x+x^2*z z^2*x+z*y*z+z*x*y+y*z*y+y^2*x+y*x*z+x*z^2+x*y^2+x^3 z^2*y+z*y*x+z*x*z+y*z^2+y^3+y*x^2+x*z*x+x*y*z+x^2*y |
 
 o5 : NCMatrix
 
 i6 : B = A/ncIdeal{y*z + z*y - x^2, x*z + z*x - y^2, z^2 - x*y - y*x}
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12291-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12291-0/3.ter ... Complete!
+Complete!
 
 o6 = B
 
@@ -51,24 +44,17 @@ o6 : NCQuotientRing
 
 i7 : NB = promote(N,B)
 
-o7 = | x  y  z |
-     |         |
-     | y  z  x |
-     |         |
-     | z  x  y |
+o7 = | x y z |
+     | y z x |
+     | z x y |
 
 o7 : NCMatrix
 
 i8 : NB^3
 
-     |   2   3               2       2    2     2                  2      2   2   3           2   3           2   3        |
-o8 = | -y z+y +yxz-yxy+xyz+xy +2xyx+x z+3x y   y z+yxz+2yxy+xyz+3xy -xyx-x z+x y+x          2y z+y +yxy+xyx+2x z+x         |
-     |                                                                                                                     |
-     |   2                  2      2   2   3           2   3           2   3           2   3               2       2    2  |
-     |  y z+yxz+2yxy+xyz+3xy -xyx-x z+x y+x          2y z+y +yxy+xyx+2x z+x          -y z+y +yxz-yxy+xyz+xy +2xyx+x z+3x y |
-     |                                                                                                                     |
-     |          2   3           2   3           2   3               2       2    2     2                  2      2   2   3 |
-     |        2y z+y +yxy+xyx+2x z+x          -y z+y +yxz-yxy+xyz+xy +2xyx+x z+3x y   y z+yxz+2yxy+xyz+3xy -xyx-x z+x y+x  |
+o8 = | -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      |
+     | y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y |
+     | 2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  |
 
 o8 : NCMatrix
 

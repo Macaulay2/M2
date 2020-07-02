@@ -1,13 +1,13 @@
 
-if version#"VERSION" < "1.11" then error "this package requires Macaulay2 version 1.11 or newer";
+if version#"VERSION" < "1.15" then error "this package requires Macaulay2 version 1.15 or newer";
 
 newPackage(
        "CoincidentRootLoci",
-	Version => "0.1.1", 
-        Date => "June 1, 2018",
+	Version => "0.1.2", 
+        Date => "June 22, 2020",
     	Headline => "coincident root loci",
-        Authors => {{Name => "M. C. Brambilla", Email => "brambilla@dipmat.univpm.it"},
-                    {Name => "G. Staglianò", Email => "giovannistagliano@gmail.com"}},
+        Authors => {{Name => "Maria Chiara Brambilla", Email => "brambilla@dipmat.univpm.it"},
+                    {Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
         PackageExports => {"Cremona","Resultants"},
         DebuggingMode => false,
         AuxiliaryFiles => true,
@@ -31,7 +31,8 @@ export{"apolar",
        "randomInCoisotropic",
        "generic",
        "projectiveJoin",
-       "tangentSpace"
+       "tangentSpace",
+       "polarDegrees"
 }
 
 load "./CoincidentRootLoci/equationsCRL.m2";
@@ -424,6 +425,58 @@ tangentSpace (Ideal,Ideal) := (I,p) -> (
    if not isSubset(I,p) then error "expected a point of the variety";
    subs := apply(gens ring I,flatten entries coefficients parametrize p,(x,s) -> x => s);
    trim ideal((vars ring I) * sub(jacobian I,subs))
+);
+
+--================================================================
+--===== Polar degrees of CRL =====================================
+--================================================================
+
+polarDegrees = method();
+polarDegrees (CoincidentRootLocus) := (X) -> (
+   lambda := partition X;
+   n := #lambda;
+   e := n - (X#"multiplicities")_1;
+   -- to be replaced "degree dual CRL" with the explicit Oeding formula
+   P := for j to e list lift((sum(conj(lambda,j),u -> (last u) * degree dual CRL(first u,ZZ/101)))/(n-j+1),ZZ);
+   P | toList(n-e : 0)
+);
+
+conj = method();
+conj (List,ZZ) := (lambda,j) -> (
+   n := #lambda;
+   r := sum lambda;
+   d := n + r - j;
+   D := descendantsPartitions(lambda,j);
+   F := apply(D,a -> (apply(a|toList((n-#a):0),i->i+1),partitionMultiplicity(a,lambda)));
+   select(F,y -> #select(first y,u -> u==1) == 0)
+);
+
+partitionMultiplicity = method()
+partitionMultiplicity (List,List) := (lambda',lambda) -> (
+   try assert(ring matrix {lambda} === ZZ and min lambda > 0 and ring matrix {lambda'} === ZZ and min lambda' > 0) else error "expected lists of positive integers";
+   lambda = rsort lambda;
+   lambda' = rsort lambda';
+   n := #lambda;
+   lambda' = lambda'|toList((n-#lambda'):0);
+   r := sum lambda;
+   r' := sum lambda';
+   j := r-r';
+   J := toList (set {0,1})^**n;
+   for i to n-3 do J = apply(J,splice);
+   J = select(apply(J,toList),a -> sum a == j);
+   A := select(J,a -> rsort(lambda' + a) == lambda);
+   #A
+);
+
+descendantsPartitions = method()
+descendantsPartitions (List,ZZ) := (lambda,j) -> (
+   try assert(ring matrix {lambda} === ZZ and min lambda > 0) else error "expected a list of positive integers";
+   lambda = rsort lambda;
+   n := #lambda;
+   J := toList (set {0,1})^**n;
+   for i to n-3 do J = apply(J,splice);
+   J = select(apply(J,toList),a -> sum a == j);
+   unique apply(J,a -> rsort flatten entries compress matrix{lambda - a})
 );
 
 --================================================================
@@ -1037,5 +1090,6 @@ load "./CoincidentRootLoci/documentation.m2"
 load "./CoincidentRootLoci/tests.m2"
 
 welcome := "CoincidentRootLoci v."|CoincidentRootLoci.Options.Version|" loaded successfully (last updated: "|CoincidentRootLoci.Options.Date|")";
--- if (options CoincidentRootLoci)#OptionalComponentsPresent then <<concatenate(#welcome:"*")<<endl<<welcome<<endl<<concatenate(#welcome:"*")<<endl else <<"--warning: Qepcad required but not present"<<endl;
+if notify then
+  if (options CoincidentRootLoci)#OptionalComponentsPresent then <<concatenate(#welcome:"*")<<endl<<welcome<<endl<<concatenate(#welcome:"*")<<endl else <<"--warning: Qepcad required but not present"<<endl;
 

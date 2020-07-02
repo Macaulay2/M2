@@ -378,8 +378,7 @@ mungeFile = (filename, headerline, trailerline, text) -> (
 
 emacstempl := ///
 ;; add "/PREFIX/DIR" to VAR if it isn't there
-(if (not (member "/PREFIX/DIR" VAR))
-     (setq VAR (cons "/PREFIX/DIR" VAR)))
+(add-to-list 'VAR "/PREFIX/DIR")
 ///
 
 emacsenvtempl := ///

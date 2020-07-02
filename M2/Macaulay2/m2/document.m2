@@ -537,12 +537,19 @@ extractExamples := docBody -> (
 
 M2outputRE := "(\n+)i+[1-9][0-9]* : "
 M2outputREindex := 1
-separateM2output = method()
-separateM2output String := r -> (
+-- if called during installation (and thus generating html and info docs)
+-- then wrap examples to 77 characters.  otherwise, compute the width from
+-- printWidth, allowing space for the output prompt and box boundary
+separateM2output = method(Options => {"Install" => false})
+separateM2output String := o -> r -> (
      m := regex("^i1 : ",r);
      if m#?0 then r = substring(m#0#0,r);
      while r#?-1 and r#-1 == "\n" do r = substring(0,#r-1,r);
-     separateRegexp(M2outputRE,M2outputREindex,r))
+     wrapWidth := if o#"Install" then 77
+	  else printWidth - interpreterDepth - length toString lineNumber - 5;
+     apply(separateRegexp(M2outputRE,M2outputREindex,r), ex ->
+	  toString stack apply(lines ex, line -> wrap(wrapWidth, line)))
+     )
 
 makeExampleOutputFileName := (fkey,pkg) -> (			 -- may return 'null'
      if pkg#?"package prefix" and pkg#"package prefix" =!= null 
@@ -714,9 +721,10 @@ storeRawDocumentation := (tag,opts) -> (
      fkey := DocumentTag.FormattedKey tag;
      if currentPackage#rawKey#?fkey and signalDocError tag
      then (
-	  stderr << currentFileName << ":" << currentLineNumber() << ": warning: documentation already provided for '" << tag << "'" << endl;
+	  stderr << currentFileName << ":" << currentLineNumber() << ": error: documentation already provided for '" << tag << "'" << endl;
 	  doc := currentPackage#rawKey#fkey;
 	  stderr << doc#"filename" << ":" << doc#"linenum" << ": ... here is the (end of the) previous documentation" << endl;
+	  error "quitting";
 	  );
      currentPackage#rawKey#fkey = opts;
      )
@@ -736,28 +744,6 @@ undocumented keys undocumentedkeys
 undocumentedkeys = null
 undocumented' = x -> error "late use of function undocumented'"
 
------------------------------------------------------------------------------
--- getting help from the documentation
------------------------------------------------------------------------------
-
-getExampleInputs := method(Dispatch => Thing)
-getExampleInputs Thing       := t -> ()
-getExampleInputs Sequence    := 
-getExampleInputs Hypertext   := t -> apply(toSequence t, getExampleInputs)
-getExampleInputs ExampleItem := t -> 1 : t#0
-
-examples = method(Dispatch => Thing)
-examples Hypertext := x -> stack deepSplice getExampleInputs x
-examples Thing := x -> (
-     checkLoadDocumentation();
-     d := fetchRawDocumentation makeDocumentTag(x,Package=>null);
-     if d =!= null and d.?Description then (stack deepSplice getExampleInputs d.Description)^-1)
-apropos = method()
-apropos String := (pattern) -> (
-     last \ sort unique select(
-	  flatten \\ pairs \ dictionaryPath, 
-	  (nam,sym) -> match(pattern,nam) and not match("\\$",nam)
-	  ))
 -----------------------------------------------------------------------------
 headline = method(Dispatch => Thing)
 headline Thing := key -> getOptionNoLoad(key,Headline)	    -- old method
@@ -1271,7 +1257,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 			 nam := defs.Name;
 			 if defs.HomePage =!= null then nam = HREF{defs.HomePage, nam};
 			 em := defs.Email;
-			 if em =!= null then em = concatenate(" <",HREF{concatenate("mailto:",em),em},">");
+			 if em =!= null then em = SPAN{" <",HREF{concatenate("mailto:",em),em},">"};
 			 LI {nam,em}
 			 )
 		    )

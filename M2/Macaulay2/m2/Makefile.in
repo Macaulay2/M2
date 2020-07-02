@@ -59,9 +59,8 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		installedpackages \
 		$(OTHERM2FILES) \
 		$(shell @FIND@ @srcdir@/../packages -name "*.m2" -a -not -name .\#\* | sort) \
-		../emacs/makehlp.m2 \
-		../emacs/makem2.m2 \
-		../emacs/makesyms.m2 \
+		../editors/emacs/make-M2-emacs-help.m2 \
+		../editors/make-M2-symbols.m2 \
 		@srcdir@/../*/COPYRIGHT \
 		@srcdir@/basictests/*.m2 \
 		@srcdir@/../book/*.m2 \
@@ -72,7 +71,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		loadsequence \
 		Makefile.in \
 		Makefile.tests \
-		../emacs/Makefile.in \
+		../editors/emacs/Makefile.in \
 		../tests/Makefile.in \
 		../tests/Makefile.test.in \
 		../tests/slow/Makefile.in \

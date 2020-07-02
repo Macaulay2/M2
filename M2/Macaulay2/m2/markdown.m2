@@ -1,18 +1,30 @@
 --  Copyright 2020 by Mahrud Sayrafi
+-----------------------------------------------------------------------------
+-- markdown output
 -- See https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 -- TODO: task lists
-
------------------------------------------------------------------------------
--- Common utilities
 -----------------------------------------------------------------------------
 
-jekyllLayout := "layout: package\n"
+-* Note: users can modify the behavior of markdown on individual types in
+-- order to adjust its output to different markdown processors.
+-- For example, to specify the layout and excerpt:
+markdown HEAD := x -> concatenate("---\n",
+    "layout: package", newline,
+    "excerpt: [headline]", newline,
+    apply(x, markdown), "---\n")
+-- or to skip wrapping BODY in Liquid raw tags:
+markdown BODY := x -> concatenate(shorten apply(x, markdown))
+*-
+
+-----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
 
 -- Trim extra newlines
 shorten := s -> replace("\n+$", "\n", concatenate(s, newline))
 
 -- Parse attributes
-parseAttr := x -> first override((class x).Options, toSequence x)
+parseAttr := (T, x) -> first override(T.Options, toSequence x)
 
 -----------------------------------------------------------------------------
 -- Setup default rendering
@@ -27,22 +39,22 @@ setupRenderer(markdown, concatenate, Hypertext)
 
 -- See hypertext.m2 for the full list
 markdown HTML  := x -> concatenate(apply(x, markdown))
-markdown HEAD  := x -> concatenate("---\n", jekyllLayout, apply(x, markdown), "---\n")
+markdown HEAD  := x -> concatenate("---\n", apply(x, markdown), "---\n")
 markdown TITLE := x -> concatenate("title: ", apply(x, markdown), newline)
 
-markdown BODY  := x -> shorten concatenate(apply(x, markdown))
+markdown BODY  := x -> concatenate(
+    "{% raw %}", shorten apply(x, markdown), "{% endraw %}")
 markdown SPAN  := x -> concatenate(apply(x, markdown), newline)
 markdown PARA  := x -> concatenate(apply(x, markdown), 2:newline)
 markdown DIV   := x -> (
-    c := (parseAttr x)#"class";
+    c := (parseAttr(DIV, x))#"class";
     concatenate(shorten apply(x, markdown), if c =!= null then ("{:.", c, "}"), 2:newline))
 
 markdown LABEL :=
 markdown SMALL :=
 markdown MENU  :=
 markdown SUB   :=
-markdown SUP   :=
-markdown TEX   := html
+markdown SUP   := html
 
 markdown LINK  :=
 markdown META  :=
@@ -51,6 +63,9 @@ markdown Option  :=
 markdown Nothing := x -> ""
 markdown COMMENT := x -> concatenate("<!--", apply(x, markdown), "-->")
 
+-- TODO: implement other literal character changes based on this reference:
+--       https://daringfireball.net/projects/markdown/syntax#code
+markdown TEX     :=
 markdown LITERAL :=
 markdown String  := identity
 
@@ -106,7 +121,7 @@ markdown IMG := x -> (
 markdown PRE  := x -> markdown concatenate x -* TODO: syntax highlighting *-
 markdown TT   := x -> concatenate("`", apply(x, markdown), "`")
 markdown CODE := x -> concatenate(
-    newline, "```macaulay2", newline, shorten apply(x, markdown), "```", newline)
+    newline, "```M2", newline, shorten apply(x, markdown), "```", newline)
 
 -- Blockquotes
 -- TODO: new lines should also start with >
@@ -125,7 +140,7 @@ markdown BR := x -> "<br/>\n"
 -- | col 2 is      | centered      |   $12 |
 -- | zebra stripes | are neat      |    $1 |
 markdown TABLE := x -> (
-    c := (parseAttr x)#"class";
-    concatenate(shorten markdown new CODE from x, if c =!= null then ("{:.", c, "}\n")))
+    c := (parseAttr(TABLE, x))#"class";
+    concatenate(shorten markdown new CODE from toSequence x, if c =!= null then ("{:.", c, "}\n")))
 markdown TR    :=
 markdown TD    := x -> concatenate(apply(x, markdown), newline)

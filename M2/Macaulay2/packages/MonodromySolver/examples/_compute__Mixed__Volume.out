@@ -15,10 +15,10 @@ i4 :  mixedVol = computeMixedVolume polys;
 
 i5 :  sparseMonodromySolve(polySystem polys,TargetSolutionCount=>mixedVol,NumberOfNodes=>3)
 
-o5 = {{.5+.866025*ii, -.5+.866025*ii}, {.5-.866025*ii, -.5-.866025*ii}, {-1,
+o5 = ({1, 1, 1, 1}, {PointArray( 3 points: 2 1 0 ), {.5+.866025*ii,
      ------------------------------------------------------------------------
-     1}}
+     -.5+.866025*ii}, {-1, 1}, {.5-.866025*ii, -.5-.866025*ii}})
 
-o5 : List
+o5 : Sequence
 
 i6 : 

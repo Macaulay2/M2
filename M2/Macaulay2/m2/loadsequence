@@ -2,9 +2,11 @@ command.m2
 classes.m2
 option.m2
 methods.m2
-profile.m2
 autoload.m2
 system.m2
+run.m2
+
+profile.m2
 debugging.m2
 remember.m2
 set.m2
@@ -74,6 +76,8 @@ local.m2
 
 packages.m2
 document.m2
+testing.m2
+help.m2
 
 format.m2
 html.m2
@@ -88,7 +92,6 @@ jupyter.m2
 mathml.m2
 texmacs.m2
 pretty.m2
-docsearch.m2
 undoc.m2
 obsolete.m2
 exports.m2

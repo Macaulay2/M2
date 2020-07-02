@@ -224,7 +224,7 @@ document {
 	  "Macaulay2 uses the excellent garbage collector GC, version ", version#"gc version", ",
 	  written by Hans-J. Boehm and Alan J. Demers and generously licensed
 	  to the public.  It is available at
-	  ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", "."
+	  ", HREF "https://www.hboehm.info/gc/", "."
 	  },
      PARA{
 	  "Some environment variables can be set by the user to tune garbage collector performance:"
@@ -419,26 +419,17 @@ document {
 	  "The following example shows the list of places where we might find the source code of a package called ", TT "Foo", "
 	  after it has been installed by ", TO "installPackage", "."
 	  },
-     EXAMPLE {PRE(
-	  ///i1 : stack apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///
-	  | newline | newline | ///o1 = /home/m2user/.Macaulay2/local/share/Macaulay2/Foo.m2///
-	  | newline | ///     /usr/share/Macaulay2/Foo.m2///)},
+     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///,
      PARA {
      	  "This example shows the list of places where we might reasonably find the html file documenting a
 	  function named ", TT "bar", " in a package called ", TT "Foo", "."
 	  },
-     EXAMPLE {PRE(
-	  ///i2 : stack apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///
-	  | newline | newline | ///o2 = /home/m2user/.Macaulay2/local/share/doc/Macaulay2/Foo/html/bar.html///
-	  | newline | ///     /usr/share/doc/Macaulay2/Foo/html/bar.html///)},
+     EXAMPLE ///stack apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///,
      PARA {
      	  "This example shows the list of places where we might reasonably find the info file documenting a
 	  package called ", TT "Foo", "."
 	  },
-     EXAMPLE {PRE(
-	  ///i3 : stack apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///
-	  | newline | newline | ///o3 = /home/m2user/.Macaulay2/local/share/info/Foo.info///
-	  | newline | ///     /usr/share/info/Foo.info///)},
+     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///,
      SeeAlso => {"commandLine", "Invoking the program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
      }
 
