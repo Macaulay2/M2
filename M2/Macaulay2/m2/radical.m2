@@ -75,7 +75,7 @@ topComponents Module := Module => (M) -> (
 	    I := saturate(M, J);
 	    -- alternate strategy: modify M as well:
 	    -- this next line could be commented out
-	    -- M = (ambient I)/I;
+	    M = (ambient I)/I;
 	);
 	if pdim M < p 
 	  then p = pdim M
@@ -83,6 +83,27 @@ topComponents Module := Module => (M) -> (
 	);
     M
     )
+
+topComponents (Module, ZZ) := Module => (M, e) -> (
+     S := ring M;
+     if not isPolynomialRing S or not isAffineRing S then error "expected a polynomial ring";
+     N := 0*M;
+     f := pdim M;  -- will compute a resolution if needed...
+     while f > e do (
+          E := Ext^f(M,S);
+          if codim E == f then (
+               if debugLevel > 0 then print("Removing components of codim " | toString(f));
+               N = N : annihilator E;
+          );
+          f = f-1;
+     );
+     N
+)
+
+topComponents (Module, Module, ZZ) := (M, N, e) -> (
+     H := topComponents(M/N, e);
+     trim subquotient(generators H | generators N, relations M)
+)
 
 -------------
 -- radical --
