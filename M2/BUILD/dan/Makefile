@@ -59,6 +59,10 @@ endif
 endif
 endif
 
+# under Ubuntu, nauty (the program) can be installed, and then configure detects it, but Nauty (the package) doesn't look there (yet):
+# similarly for csdp and SemidefiniteProgramming
+BUILDLIBS += nauty csdp
+
 CONFIGOPTIONS += --enable-build-libraries="$(BUILDLIBS)"
 
 # add the extra options last
