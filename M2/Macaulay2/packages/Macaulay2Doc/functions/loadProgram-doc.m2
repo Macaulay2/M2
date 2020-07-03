@@ -81,5 +81,5 @@ document {
     EXAMPLE lines ///
 	programPaths#"gfan" = "/path/to/gfan/"
 	gfan = loadProgram("gfan", "gfan --help", Verbose => true)///,
-    SeeAlso => {"Program", "programPaths"}
+    SeeAlso => {"Program", "programPaths", "runProgram"}
 }
