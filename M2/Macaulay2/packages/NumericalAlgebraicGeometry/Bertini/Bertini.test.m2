@@ -1,5 +1,4 @@
--- this file is created to test Bertini interface separately from NAG package
-needsPackage "NumericalAlgebraicGeometry"
+-- this file is created to test Bertini interface
 setDefault (Software=>BERTINI) 
 
 R = CC[x,y];
@@ -27,7 +26,7 @@ assert(areEqual(sortSolutions solsT, sortSolutions sols))
 R = CC[x,y];
 T = {x^2+y^2-1, x*y};
 sols = { {1.00000001,0.00000001}, { -0.0000001,1.0000002} };
-rsols = refine(T, sols, Software=>BERTINI, Bits=>1000)
+rsols = refine(T, sols, Bits=>1000)
 assert areEqual(sortSolutions rsols, {{0,1},{1,0}})
 
 -- numericalVariety
@@ -59,5 +58,6 @@ assert isOn(p, NV)
 end
 
 restart
+needsPackage "NumericalAlgebraicGeometry"
 errorDepth = 2
 load "NumericalAlgebraicGeometry/Bertini/Bertini.test.m2"

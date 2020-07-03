@@ -1,7 +1,9 @@
+bertiniPresent := run ("type bertini >/dev/null 2>&1") === 0
+
 newPackage(
   "Bertini",
   Version => "2.1.2.3",
-  Date => "July 31, 2019",
+  Date => "July 2020",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
@@ -21,7 +23,8 @@ newPackage(
   AuxiliaryFiles => true,
   PackageExports => {"NAGtypes"},
   PackageImports => {"NAGtypes"},
-  CacheExampleOutput => true
+  CacheExampleOutput => true,
+  OptionalComponentsPresent => bertiniPresent
 )
 
 exportMutable{"storeBM2Files"
