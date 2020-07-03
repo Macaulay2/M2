@@ -942,7 +942,9 @@ fi
 
 AC_MSG_CHECKING(whether the package csdp is installed)
 if test "`type -t csdp`" = file
-then AC_MSG_RESULT(yes)
+then AC_MSG_RESULT([yes, will build anyway])
+     dnl because the package SemidefiniteProgramming doesn't look for it on the PATH
+     BUILD_csdp=yes
 else AC_MSG_RESULT([no, will build])
      BUILD_csdp=yes
 fi
@@ -961,7 +963,9 @@ dnl fi
 
 AC_MSG_CHECKING(whether the package nauty is installed)
 if test "`type -t nauty-complg`" = file
-then AC_MSG_RESULT(yes)
+then AC_MSG_RESULT([yes, will build anyway])
+     dnl because the package Nauty doesn't look for it on the PATH
+     BUILD_nauty=yes
 else AC_MSG_RESULT([no, will build])
      BUILD_nauty=yes
 fi
