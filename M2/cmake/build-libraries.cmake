@@ -817,11 +817,13 @@ _ADD_COMPONENT_DEPENDENCY(programs cohomcalg "" COHOMCALG)
 # https://users-math.au.dk/~jensen/software/gfan/gfan.html
 # gfan needs cddlib and is used by the packages gfanInterface and StatePolytopes
 set(gfan_OPTFLAGS "${CPPFLAGS} -DGMPRATIONAL") # overriding the flags defined in Makefile
-if(CDDLIB_FOUND)
-  set(gfan_OPTFLAGS "${gfan_OPTFLAGS} -I${CDDLIB_INCLUDE_DIR}")
-endif()
 set(gfan_CLINKER  "${CMAKE_C_COMPILER}   ${LDFLAGS}")
 set(gfan_CCLINKER "${CMAKE_CXX_COMPILER} ${LDFLAGS}")
+if(CDDLIB_FOUND)
+  set(gfan_OPTFLAGS "${gfan_OPTFLAGS} -I${CDDLIB_INCLUDE_DIR}")
+  set(gfan_CLINKER  "${gfan_CLINKER}  -L${CDDLIB_LIBRARIES}")
+  set(gfan_CCLINKER "${gfan_CCLINKER} -L${CDDLIB_LIBRARIES}")
+endif()
 ExternalProject_Add(build-gfan
   URL               ${M2_SOURCE_URL}/gfan0.6.2.tar.gz
   URL_HASH          SHA256=a674d5e5dc43634397de0d55dd5da3c32bd358d05f72b73a50e62c1a1686f10a
@@ -1004,8 +1006,10 @@ set(topcom_PROGRAMS
   src/points2finetriangs src/points2flips src/points2nallfinetriangs src/points2nalltriangs src/points2nflips
   src/points2triangs src/points2volume)
 set(topcom_CPPFLAGS "${CPPFLAGS}")
+set(topcom_LDFLAGS  "${LDFLAGS}")
 if(CDDLIB_FOUND)
   set(topcom_CPPFLAGS "${topcom_CPPFLAGS} -I${CDDLIB_INCLUDE_DIR}")
+  set(topcom_LDFLAGS  "${topcom_LDFLAGS}  -L${CDDLIB_LIBRARIES}")
 endif()
 ExternalProject_Add(build-topcom
   URL               ${M2_SOURCE_URL}/TOPCOM-0.17.8.tar.gz
@@ -1021,7 +1025,7 @@ ExternalProject_Add(build-topcom
                       CPPFLAGS=${topcom_CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
+                      LDFLAGS=${topcom_LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
   BUILD_COMMAND     ${MAKE} -j1 # topcom doesn't like parallel builds

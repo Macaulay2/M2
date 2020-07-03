@@ -8,6 +8,8 @@
 ## - Generate .deb, .rpm, and .tar.gz packages:
 ##   cpack -G"DEB;RPM;TGZ"
 
+set(CPACK_SOURCE_IGNORE_FILES "BUILD")
+
 set(PROJECT_DISTRIBUTION     "1" CACHE STRING "Package distribution version")
 set(CPACK_GENERATOR        "TGZ" CACHE STRING "package types to create")
 set(CPACK_SOURCE_GENERATOR "TGZ" CACHE STRING "source package types to create")
