@@ -12,13 +12,13 @@ i5 : paramValues1={0,1+2*ii,0};
 
 i6 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
 
-o6 = {{{13.3247, 1}, {11.3376-.56228*ii, 1}, {11.3376+.56228*ii, 1}}, {{13, 2}, {11, 2}, {12, 2}}}
+o6 = {{{11.3376+.56228*ii, 1}, {13.3247, 1}, {11.3376-.56228*ii, 1}}, {{11, 2}, {13, 2}, {12, 2}}}
 
 o6 : List
 
 i7 : bPH_0--the solutions to the system with parameters set equal to paramValues0
 
-o7 = {{13.3247, 1}, {11.3376-.56228*ii, 1}, {11.3376+.56228*ii, 1}}
+o7 = {{11.3376+.56228*ii, 1}, {13.3247, 1}, {11.3376-.56228*ii, 1}}
 
 o7 : List
 
@@ -55,13 +55,13 @@ o12 : List
 
 i13 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },HomVariableGroup=>{x,y,z})
 
-o13 = {{{-1, 1.76655e-17+2.62119e-17*ii, 1}, {1, 3.07932e-18+1.35068e-17*ii, 1}}, {{-2.11592e-16-5.46841e-17*ii, 1, 1}, {-2.08855e-17-1.54397e-17*ii, 1, -1}}}
+o13 = {{{1, -2.3823e-19+7.38367e-19*ii, -1}, {1, -1.93778e-18-1.20316e-18*ii, 1}}, {{-8.26463e-17-3.92715e-17*ii, 1, -1}, {2.40365e-16+1.01147e-16*ii, 1, 1}}}
 
 o13 : List
 
 i14 : bPH_0--The two solutions for finalParameters0
 
-o14 = {{-1, 1.76655e-17+2.62119e-17*ii, 1}, {1, 3.07932e-18+1.35068e-17*ii, 1}}
+o14 = {{1, -2.3823e-19+7.38367e-19*ii, -1}, {1, -1.93778e-18-1.20316e-18*ii, 1}}
 
 o14 : List
 

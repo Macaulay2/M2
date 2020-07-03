@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -73199544
+-- -*- M2-comint -*- hash: -524747189
 
 i1 : s=makeB'Section({x,y,z})
 
@@ -108,11 +108,7 @@ o19 : B'Section
 
 i20 : makeB'InputFile(storeBM2Files,
         AffVariableGroup=>{x,y},
-        B'Polynomials=>{f,s1})
-
-o20 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-74815-0/0/input
-
-o20 : File
+        B'Polynomials=>{f,s1});
 
 i21 : runBertini(storeBM2Files)
 
