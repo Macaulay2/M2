@@ -16,7 +16,7 @@ o2 : List
 i3 : L = solveSystem(S)
 *** variables in the ring : {x, y, z} ***
 
-o3 = {{1+ii, 1-ii, -1}, {1-ii, 1+ii, -1}}
+o3 = {{1-ii, 1+ii, -1}, {1+ii, 1-ii, -1}}
 
 o3 : List
 
@@ -29,7 +29,7 @@ o4 : Point
 i5 : peek oneSoln
 
 o5 = Point{ConditionNumber => 6.32111     }
-           Coordinates => {1+ii, 1-ii, -1}
+           Coordinates => {1-ii, 1+ii, -1}
            LastT => 1
            SolutionStatus => Regular
 

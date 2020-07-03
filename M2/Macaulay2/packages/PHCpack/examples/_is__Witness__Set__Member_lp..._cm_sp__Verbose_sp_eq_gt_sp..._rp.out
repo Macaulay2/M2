@@ -11,6 +11,6 @@ i4 : W = first V#4;
 
 i5 : isWitnessSetMember(W, point{{0,0,0,0,0,0}})
 
-o5 = false
+o5 = true
 
 i6 : 
