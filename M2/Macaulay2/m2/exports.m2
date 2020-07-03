@@ -193,7 +193,6 @@ export {
 	"HomePage",
 	"Homogeneous",
 	"Homogeneous2",
-	"HookOptions",
 	"HorizontalSpace",
 	"Ideal",
 	"IgnoreExampleErrors",
