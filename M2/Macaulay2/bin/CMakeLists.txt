@@ -48,6 +48,9 @@ add_executable(M2-binary timestamp.cpp main.cpp
 target_link_libraries(M2-binary
   M2-engine M2-interpreter M2-supervisor Boost::stacktrace_backtrace ${CMAKE_DL_LIBS})
 
+# Link with libboost_stacktrace_backtrace to enable stacktraces work with ASLR
+target_compile_definitions(M2-binary PUBLIC BOOST_STACKTRACE_LINK)
+
 # Set where the executable should be store and get its RPATH
 set_target_properties(M2-binary PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
