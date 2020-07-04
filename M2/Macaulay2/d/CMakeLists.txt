@@ -160,7 +160,7 @@ foreach(LIB IN LISTS LIBRARIES_LIST)
   if(${LIB}_FOUND)
     target_link_libraries(M2-interpreter PUBLIC ${${LIB}_LIBRARIES})
     target_include_directories(M2-interpreter PUBLIC
-        $<BUILD_INTERFACE:${${LIB}_INCLUDE_DIR}>)
+        "$<BUILD_INTERFACE:${${LIB}_INCLUDE_DIR}>")
   endif()
 endforeach()
 
@@ -168,7 +168,7 @@ foreach(LIB IN LISTS LIBRARY_LIST)
   if(${LIB}_FOUND)
     target_link_libraries(M2-interpreter PUBLIC ${${LIB}_LIBRARY})
     target_include_directories(M2-interpreter PUBLIC
-        $<BUILD_INTERFACE:${${LIB}_INCLUDE_DIR}>)
+        "$<BUILD_INTERFACE:${${LIB}_INCLUDE_DIR}>")
   endif()
 endforeach()
 
