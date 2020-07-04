@@ -337,12 +337,15 @@ trim substitute(J1,T)
 ///
 
 
--- Primary decomposition code for modules (Macaulay2)
--- Author: Justin Chen (justin.chen@math.gatech.edu)
--- Last edited: 7/3/2020
+-- Primary decomposition code for modules
 
 associatedPrimes Module := List => opts -> M -> ( -- modified code in ass1 for modules
-     if M.cache#?"AssociatedPrimes" and not M.cache#?"associatedPrimesCodimLimit" then M.cache#"AssociatedPrimes" else M.cache#"AssociatedPrimes" = (
+     previousPrimes := {};
+     if M.cache#?"AssociatedPrimes" then (
+          previousPrimes = M.cache#"AssociatedPrimes";
+          if not M.cache#?"associatedPrimesCodimLimit" then return previousPrimes;
+     );
+     M.cache#"AssociatedPrimes" = (
      ringRel := presentation ring M;
      polyRing := ring ringRel;
      M1 := lift(M, polyRing);
@@ -352,9 +355,13 @@ associatedPrimes Module := List => opts -> M -> ( -- modified code in ass1 for m
      n := if opts.CodimensionLimit >= 0 then min(d, opts.CodimensionLimit) else d;
      if c == d and isHomogeneous M then return {sub(ideal gens polyRing, ring M)};
      C := resolution(M1, LengthLimit => 1+n);
+     if M.cache#?"associatedPrimesCodimLimit" then (
+          if n < d and n <= M.cache#"associatedPrimesCodimLimit" then return select(previousPrimes, P -> codim P <= n);
+          c = 1 + M.cache#"associatedPrimesCodimLimit";
+     );
      if n < d then M.cache#"associatedPrimesCodimLimit" = n
      else remove(M.cache, "associatedPrimesCodimLimit");
-     (flatten apply(toList(c..n), i -> (
+     previousPrimes | (flatten apply(toList(c..n), i -> (
           if debugLevel > 0 then print("Computing associated primes of codim " | toString i);
           A := image transpose C.dd_i : ker transpose C.dd_(i+1); -- ann Ext^i(M, R) (consider colon.m2)
           select(minimalPrimes A, P -> codim P == i)
