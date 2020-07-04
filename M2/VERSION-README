@@ -21,7 +21,7 @@ Here is the procedure:
 	 - add an entry to distributions/deb/changelog
 	 - commit the two files and push upstream
 	 - make a git tag of the form version-X.Y.Z and push it to github
-		  git tag version-X.Y.Z
+	      git tag version-X.Y.Z
 	      git push --tags origin version-X.Y.Z
 
     Things to do when developing a binary release for version X.Y
@@ -30,9 +30,12 @@ Here is the procedure:
 	 - make a git branch of the form release-X.Y
 	      git branch release-X.Y
 	 - update version to X.Y.0.1, as described above, so development on the master branch can continue
-       - switch to release-X.Y and prepare binary releases there, committing
-         minor changes needed for building on various architectures.
-	 Eventually merge the branch into the master branch.
+       - switch to release-X.Y and push it:
+       	      git checkout release-X.Y
+	      git push -u origin release-X.Y
+         Prepare binary releases there, committing minor changes needed for
+         building on various architectures.  Periodically merge the branch into
+         the master branch.
 
 Note:
   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N

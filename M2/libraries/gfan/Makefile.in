@@ -6,7 +6,8 @@ URL = http://macaulay2.com/Downloads/OtherSourceCode
 TARFILE = gfan$(VERSION).tar.gz
 TARDIR = gfan$(VERSION)
 CONFIGURECMD = true
-BUILDOPTIONS = CC="$(CC) $(CPPFLAGS)" CXX="$(CXX) $(CPPFLAGS)" CLINKER="$(CC) $(LDFLAGS)" CCLINKER="$(CXX) $(LDFLAGS)" PREFIX=/nowhere CDD_LINKOPTIONS=-lcddgmp
+# adding cddnoprefix=yes here ensures that we include "cdd.h" instead of "cdd/cdd.h", which is necessary when trying to use cddlib as installed by homebrew on the Mac:
+BUILDOPTIONS = CC="$(CC) $(CPPFLAGS)" CXX="$(CXX) $(CPPFLAGS)" CLINKER="$(CC) $(LDFLAGS)" CCLINKER="$(CXX) $(LDFLAGS)" PREFIX=/nowhere CDD_LINKOPTIONS=-lcddgmp cddnoprefix=yes
 INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
 CHECKTARGET = .
 STRIPFILES = gfan@EXEEXT@

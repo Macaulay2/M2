@@ -72,7 +72,7 @@ jobs:
         id: get_dev_libraries_brew
         if: ${{ runner.os == 'macOS' }}
         # mpfr, gdbm, libmpc, xz are already in the virtual env
-        run: brew install boost flint ntl mpir bdw-gc libatomic_ops glpk libomp eigen ncurses
+        run: brew install boost flint ntl mpir bdw-gc libatomic_ops glpk libomp eigen ncurses cddlib
 
 # ----------------------
 #   Install missing tools and libraries using apt-get (Debian-based Linux only)
