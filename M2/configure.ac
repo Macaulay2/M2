@@ -608,6 +608,10 @@ then if test "$OPTIMIZE" = no
      if test "$DEBUG" = yes
      then AC_MSG_ERROR([--enable-debug and --enable-dmg both specified])
      fi
+     if test $SHARED = yes
+     then SHARED=no
+          AC_MSG_WARN([--enable-dmg specified, so disabling the building of shared libraries])
+     fi
 fi
 
 AC_SUBST(M2SUFFIX)
