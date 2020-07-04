@@ -207,10 +207,12 @@ endif()
 # https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
 
 # Flags based on OS
-if(APPLE)
-  set(Boost_stacktrace stacktrace_basic)
-else()
+if(ISSUE MATCHES Ubuntu)
+  # Apparently libboost_stacktrace_backtrace is not reliably available on all platforms.
   set(Boost_stacktrace stacktrace_backtrace)
+else()
+  # addr2line is more readily available, but does not work well with -fPIE
+  set(Boost_stacktrace stacktrace_addr2line)
 endif()
 
 # Common flags
