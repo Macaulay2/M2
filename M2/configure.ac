@@ -1143,7 +1143,24 @@ then AC_LANG(C)
 fi
 
 AC_LANG(C++)
-AC_CHECK_HEADER(boost/version.hpp,,AC_MSG_ERROR([[boost library not installed, but required]]))
+AC_CHECK_HEADER(boost/version.hpp,
+	[
+	AC_CHECK_HEADER(boost/stacktrace.hpp,,
+	    [
+	    AC_MSG_ERROR([[boost library installed, but not modern enough to contain 'boost/stacktrace.hpp']])
+	    dnl As of July, 2020:
+	    dnl These do not contain the file:
+	    dnl   Ubuntu 16.04 comes with boost 1.58
+	    dnl These do contain the file:
+	    dnl   Ubuntu 18.04 comes with boost 1.65
+	    dnl   Debian 10    comes with boost 1.67
+	    dnl   Ubuntu 20.04 comes with boost 1.71
+	    dnl   Homebrew on the Mac provides boost 1.72
+	    ])
+	],
+	[
+	AC_MSG_ERROR([boost library not installed, but required])
+	])
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
