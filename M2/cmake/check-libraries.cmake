@@ -39,7 +39,7 @@ find_program(ETAGS NAMES etags)
 
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
-find_package(Boost	REQUIRED QUIET COMPONENTS stacktrace_backtrace)
+find_package(Boost	REQUIRED QUIET COMPONENTS ${Boost_stacktrace})
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
 # TODO: replace gdbm with capnproto.org or msgpack.org
 # Alternatively protobuf: https://developers.google.com/protocol-buffers/docs/proto#maps

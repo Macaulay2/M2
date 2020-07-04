@@ -46,9 +46,10 @@ add_custom_target(man COMMAND zcat ${MAN} | groff -man -Tascii DEPENDS ${MAN})
 add_executable(M2-binary timestamp.cpp main.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/startup.c ${TAGS} ${MAN})
 target_link_libraries(M2-binary
-  M2-engine M2-interpreter M2-supervisor Boost::stacktrace_backtrace ${CMAKE_DL_LIBS})
+  Boost::${Boost_stacktrace}
+  M2-engine M2-interpreter M2-supervisor ${CMAKE_DL_LIBS})
 
-# Link with libboost_stacktrace_backtrace to enable stacktraces work with ASLR
+# Force using libboost_stacktrace library
 target_compile_definitions(M2-binary PUBLIC BOOST_STACKTRACE_LINK)
 
 # Set where the executable should be store and get its RPATH

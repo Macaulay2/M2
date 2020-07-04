@@ -206,6 +206,13 @@ endif()
 # TODO: look into compiler features:
 # https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
 
+# Flags based on OS
+if(APPLE)
+  set(Boost_stacktrace stacktrace_basic)
+else()
+  set(Boost_stacktrace stacktrace_backtrace)
+endif()
+
 # Common flags
 # TODO: reduce these if possible
 add_link_options(-L${M2_HOST_PREFIX}/lib)
