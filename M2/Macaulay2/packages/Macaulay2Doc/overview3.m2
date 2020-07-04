@@ -224,7 +224,7 @@ document {
 	  "Macaulay2 uses the excellent garbage collector GC, version ", version#"gc version", ",
 	  written by Hans-J. Boehm and Alan J. Demers and generously licensed
 	  to the public.  It is available at
-	  ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", "."
+	  ", HREF "https://www.hboehm.info/gc/", "."
 	  },
      PARA{
 	  "Some environment variables can be set by the user to tune garbage collector performance:"
@@ -541,7 +541,7 @@ document { Key => "frequently encountered problems",
 
 document {
      Key => "specifying typical values",
-     "For the purpose of construction good documentation automatically, it
+     "For the purpose of constructing good documentation automatically, it
      is useful to specify the type of value typically returned by a function
      or method.  For example, the function ", TO "isModule", " returns a boolean
      value, and this is specified when creating the method function with the

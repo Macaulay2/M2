@@ -271,7 +271,6 @@ doc ///
     constructs an embedding of a polynomial system
   Usage
     constructEmbedding(f,k)
-    constructEmbedding(f,k,Verbose=>true)
   Inputs
     f:List
       of polynomials
@@ -504,7 +503,7 @@ doc ///
     isWitnessSetMember(...,Verbose=>Boolean)
   Description
     Text
-       Use {\tt Verbose=>true} for additional output which includes the 
+       Use {\tt Verbose=>true} for additional output, which includes the 
        input and solution file names used by {\tt phc}.  
 
     Example
@@ -513,7 +512,6 @@ doc ///
       V = numericalIrreducibleDecomposition (system);
       W = first V#4;
       isWitnessSetMember(W, point{{0,0,0,0,0,0}})      
-      isWitnessSetMember(W, point{{0,0,0,0,0,0}},Verbose=>true)      
 ///;
 
 -----------------
@@ -864,7 +862,6 @@ doc ///
     refines solutions of a system by increasing working precision
   Usage
     newSols = refineSolutions(f,sols,dp)
-    newSols = refineSolutions(f,sols,dp,Verbose=>true)
   Inputs
     f:List
       a system of polynomials
@@ -1003,7 +1000,6 @@ doc ///
     a numerical blackbox solver
   Usage
     solveSystem(S)
-    solveSystem(S,Verbose=>true)
     solveSystem(S,numThreads=>4)
     solveSystem(S,computingPrecision=>2)
     solveSystem(S,randomSeed=>12345)

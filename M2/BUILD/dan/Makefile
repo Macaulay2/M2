@@ -9,9 +9,6 @@ CXX =
 FC  =
 AR  = 
 
-# This seems inconvenient, but how else can we know where ubuntu puts the "eigen" and "cdd" libraries?
-CPPFLAGS = -I/usr/include/eigen3 -I/usr/include/eigen3/unsupported -I/usr/include/cdd
-
 # configure script options:
 OPTIONS =
 
@@ -61,6 +58,10 @@ endif
 endif
 endif
 endif
+
+# under Ubuntu, nauty (the program) can be installed, and then configure detects it, but Nauty (the package) doesn't look there (yet):
+# similarly for csdp and SemidefiniteProgramming
+BUILDLIBS += nauty csdp
 
 CONFIGOPTIONS += --enable-build-libraries="$(BUILDLIBS)"
 

@@ -377,7 +377,8 @@ doc /// --project2linspace
 document { --Verbosity
     Key => {
 	Verbosity,
-        [optimize,Verbosity]
+        [optimize,Verbosity],
+        [checkOptimize,Verbosity]
         },
     Headline => "control the level of information printed",
     "This optional argument indicates how much information should be given to the user.  The possible values are:",
@@ -460,6 +461,7 @@ doc ///
 doc ///
     Key
       checkOptimize
+      (checkOptimize,String)
     Headline
       check an SDP solver
     Usage

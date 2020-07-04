@@ -589,10 +589,13 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      bundleRanks' := bundleRanks;			    -- the original list of bundle ranks
      n' := #bundleRanks';
      rk := rank E;
-     if part(rk+1,infinity,chern E) != 0 then error "expected an effective bundle (with vanishing higher Chern classes)";
+     ---- We don't have equations in the "base" that for all monomials in the Chern classes of degree greater than the dimension,
+     ---- so some things will not appear to vanish.
+     -- if part(rk+1,infinity,chern E) != 0 then error "expected an effective bundle (with vanishing higher Chern classes)";
      if opts.Isotropic then (
 	  if not even rk then error "flagBundle, isotropic case: expected bundle of even rank";
-	  if not all(1 .. rk//2, i -> part(2*i-1, chern E) == 0) then error "flagBundle, isotropic case: expected bundle with vanishing odd Chern classes";
+          -- Same here:
+	  -- if not all(1 .. rk//2, i -> part(2*i-1, chern E) == 0) then error "flagBundle, isotropic case: expected bundle with vanishing odd Chern classes";
 	  );
      rk2 := if opts.Isotropic then rk//2 else rk;
      omittedVariables := null;

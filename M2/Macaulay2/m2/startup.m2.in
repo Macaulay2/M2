@@ -32,7 +32,6 @@ toString := value' getGlobalSymbol if firstTime then "simpleToString" else "toSt
 match := X -> null =!= regex X
 
 local exe
-local topSrcdir
 local topBuilddir
 
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
@@ -296,6 +295,8 @@ if firstTime then (
 		    replaceStrings("^\\$\\{(pre_)?prefix\\}","common",	    -- as in configure.ac
 			 replaceStrings("^\\$\\{(pre_)?exec_prefix\\}",version#"machine", -- as in configure.ac
 			      x)))};
+	  finalPrefix = "@prefix@";
+	  if last finalPrefix != "/" then finalPrefix = finalPrefix | "/";
 	  );
      initlayout();
      )
@@ -616,7 +617,7 @@ homeDirectory = getenv "HOME" | "/"
 
 initcurrentlayout()
 
-if firstTime then
+if firstTime and fileExists(prefixDirectory | currentLayout#"program licenses") then
 copyright = copyright | newline | "For licenses see " | prefixDirectory | currentLayout#"program licenses"
 
 path = (x -> select(x, i -> i =!= null)) deepSplice {

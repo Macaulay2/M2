@@ -8,7 +8,7 @@ o1 : NCPolynomialRing
 
 i2 : B = A/ncIdeal{y*z + z*y - x^2, x*z + z*x - y^2, z^2 - x*y - y*x}
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12252-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12252-0/3.ter ... Complete!
+Complete!
 
 o2 = B
 
@@ -16,25 +16,19 @@ o2 : NCQuotientRing
 
 i3 : M = ncMatrix {{x,y,z,w},{y,z,w,x}}
 
-o3 = | x  y  z  w |
-     |            |
-     | y  z  w  x |
+o3 = | x y z w |
+     | y z w x |
 
 o3 : NCMatrix
 
 i4 : N = M || 2*M || -3*M
 
-o4 = |  x    y    z    w  |
-     |                    |
-     |  y    z    w    x  |
-     |                    |
-     |  2x   2y   2z   2w |
-     |                    |
-     |  2y   2z   2w   2x |
-     |                    |
-     | -3x  -3y  -3z  -3w |
-     |                    |
-     | -3y  -3z  -3w  -3x |
+o4 = | x    y    z    w    |
+     | y    z    w    x    |
+     | 2*x  2*y  2*z  2*w  |
+     | 2*y  2*z  2*w  2*x  |
+     | -3*x -3*y -3*z -3*w |
+     | -3*y -3*z -3*w -3*x |
 
 o4 : NCMatrix
 

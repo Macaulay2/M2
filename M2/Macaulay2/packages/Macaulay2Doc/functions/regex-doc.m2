@@ -120,7 +120,8 @@ document {
 	  {TT "[:upper:]", " -- uppercase letters"},
 	  {TT "[:xdigit:]", " -- hexadecimal digits"},
 	  },
-     "In order to match one of the special characters itself, precede it with a backslash.",
+     PARA {"In order to match one of the special characters itself, precede it with a backslash ",
+	  "or use ", TO regexQuote, "."},
      PARA {"We illustrate the use of regular expressions with ", TO (regex,String,String), "."},
      EXAMPLE lines ///
      s = "1abcddddeF2";

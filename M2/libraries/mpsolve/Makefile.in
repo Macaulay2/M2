@@ -1,18 +1,28 @@
 VPATH = @srcdir@
 HOMEPAGE = https://numpi.dm.unipi.it/software/mpsolve 
-VERSION = 3.1.8
+VERSION = 3.2.1
 URL = http://macaulay2.com/Downloads/OtherSourceCode
+
 # obtained from https://numpi.dm.unipi.it/_media/software/mpsolve
+#               https://numpi.dm.unipi.it/_media/software/mpsolve/mpsolve-3.2.1.tar.gz
+
+# the patch disables the python tests, which don't know that the name of the
+# sharable library in Mac OS is libmps.3.dylib instead of libmps.so.3
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+
 LICENSEFILES = README
 
 # their use of libtool prevents this from working -- somehow "make install" rebuilds mpsolve during the installation, after we strip it
 # STRIPFILES = src/mpsolve/mpsolve
 
 INSTALLTARGET = install-strip
-CONFIGOPTIONS += --disable-shared\
-                 --disable-examples\
-                 --disable-ui\
+CONFIGOPTIONS += --disable-shared		\
+		 --disable-dependency-tracking	\
+                 --disable-examples		\
+		 --disable-debug		\
+		 --disable-silent-rules		\
+                 --disable-ui			\
+		 --disable-graphical-debugger	\
                  --disable-documentation
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mpsolve/Makefile

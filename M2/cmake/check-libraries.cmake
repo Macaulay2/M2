@@ -29,11 +29,17 @@ find_program(ETAGS NAMES etags)
 ## Requirement	Debian package	RPM package	Homebrew package
 #   Threads	libc6-dev	glibc-headers	N/A
 #   LAPACK	libopenblas-dev	openblas-devel	N/A (Accelerate)
+#   Boost       libboost-dev    boost-devel     boost
 #   GDBM	libgdbm-dev	gdbm-devel	gdbm
 #   libatomic_ops libatomic_ops-dev libatomic_ops-devel libatomic_ops
 
+# Set this variable to specify the linear algebra library.
+# See `cmake --help-module FindLAPACK` for the list of options
+#set(BLA_VENDOR OpenBLAS)
+
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
+find_package(Boost	REQUIRED QUIET COMPONENTS ${Boost_stacktrace})
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
 # TODO: replace gdbm with capnproto.org or msgpack.org
 # Alternatively protobuf: https://developers.google.com/protocol-buffers/docs/proto#maps
@@ -84,7 +90,7 @@ if(USING_MPIR)
 else()
   find_package(GMP	6.0.0 REQUIRED)
   set(MP_LIBRARY GMP)
-  set(MP_ROOT ${GMP_INCLUDE_DIR}/..)
+  set(MP_ROOT ${GMP_INCLUDE_DIRS}/..)
 endif()
 # MP will mask either GMP or MPIR
 foreach(var IN ITEMS FOUND INCLUDE_DIRS LIBRARIES VERSION_OK)
@@ -116,20 +122,20 @@ find_package(Eigen3	3.3.0 PATHS ${M2_HOST_PREFIX})
 find_package(BDWGC	7.6.4)
 find_package(MPFR	4.0.1)
 find_package(NTL       10.5.0)
-find_package(Flint	2.5.3)
+find_package(Flint	2.6.0)
 find_package(Factory	4.1.0)
 # TODO: add minimum version checks
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 094h?
-find_package(MPSolve	3.1.8)
+find_package(MPSolve	3.2.0)
 find_package(GTest	1.10)
 find_package(Memtailor	1.0.0)
 find_package(Mathic	1.0.0)
 find_package(Mathicgb	1.0.0)
 find_package(GLPK      4.59.0)
 
-pkg_search_module(FFLAS_FFPACK	IMPORTED_TARGET	fflas-ffpack>=2.3.2)
-pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.0.3)
+pkg_search_module(FFLAS_FFPACK	IMPORTED_TARGET	fflas-ffpack>=2.4.3)
+pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.1.1)
 # TODO: add FindModules for these two as well
 
 set(LIBRARY_OPTIONS
@@ -185,7 +191,8 @@ find_program(CSDP	NAMES	csdp)
 find_program(NORMALIZ	NAMES	normaliz)
 find_program(NAUTY	NAMES	dreadnaut)
 find_program(TOPCOM	NAMES	checkregularity)
-# NOTE: we don't build the following, but some packages use them
+# NOTE: we don't build the following by default, but some packages use them, so
+# we provide targets build-polymake, build-bertini, build-phcpack for building them.
 find_program(POLYMAKE	NAMES	polymake)
 find_program(BERTINI	NAMES	bertini)
 find_program(PHC	NAMES	phc)

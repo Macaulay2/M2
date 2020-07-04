@@ -78,18 +78,20 @@ CPPFLAGS :=									\
 
 vpath %.h $(BUILTLIBPATH)/include
 
+BUILTSUBS := $(filter @BUILDSUBLIST@, memtailor mathic mathicgb)
+
 # /// @dan move the info about libraries and submodules nearer to the submodules, perhaps in new included makefiles
 LDFLAGS :=						\
 	-L$(BUILTLIBPATH)/lib				\
-	$(foreach S, memtailor mathic mathicgb, -L@abs_top_builddir@/submodules/$S/.libs) \
+	$(foreach S, $(BUILTSUBS), -L@abs_top_builddir@/submodules/$S/.libs) \
 	$(LDFLAGS)
 LDFLAGS_FOR_BUILD :=					\
 	-L$(BUILTLIBPATH)/lib				\
-	$(foreach S, memtailor mathic mathicgb, -L@abs_top_builddir@/submodules/$S/.libs) \
+	$(foreach S, $(BUILTSUBS), -L@abs_top_builddir@/submodules/$S/.libs) \
 	$(LDFLAGS_FOR_BUILD)
 
-LIBDEPS_FOR_BUILD := $(foreach S, memtailor mathic mathicgb, @abs_top_builddir@/submodules/$S/.libs/lib$S.a)
-LDLIBS_FOR_BUILD := $(foreach S, memtailor mathic mathicgb, -l$S)
+LIBDEPS_FOR_BUILD := $(foreach S, $(BUILTSUBS), @abs_top_builddir@/submodules/$S/.libs/lib$S.a)
+LDLIBS_FOR_BUILD := $(foreach S, $(BUILTSUBS), -l$S)
 
 vpath %.a $(BUILTLIBPATH)/lib
 vpath %.o $(BUILTLIBPATH)/lib

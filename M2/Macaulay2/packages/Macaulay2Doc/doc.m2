@@ -274,7 +274,8 @@ document {
 	  prepended to the path, based on the value of the ", TO "applicationDirectory", "
 	  for your system."
 	  },
-     PRE concatenate between_"\n" apply(value Core#"private dictionary"#"userpath",s -> (5,s)),
+     PRE replace(regexQuote homeDirectory, "/home/m2user/",
+	   concatenate between_"\n" apply(value Core#"private dictionary"#"userpath",s -> (5,s))),
      EXAMPLE {
 	  "path",
 	  ///path = append(path, "~/resolutions/")///
@@ -538,14 +539,11 @@ undocumented {
 (symbol SPACE, WrapperType, Sequence),
 (symbol SPACE, Manipulator, Database),
 (symbol SPACE, Function, Thing),
-(symbol SPACE, MarkUpType, Hypertext),
 (symbol SPACE, Command, Thing),
 (symbol SPACE, Manipulator, Nothing),
 (symbol SPACE, WrapperType, Thing),
 (symbol SPACE, HeaderType, List),
 (symbol SPACE, HeaderType, Sequence),
-(symbol SPACE, MarkUpType, Net),
-(symbol SPACE, MarkUpType, String),
 (symbol SPACE, Thing, Thing),
 
 (symbol SPACE, Ring, Array),

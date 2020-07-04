@@ -91,9 +91,11 @@ $(foreach i, $(PACKAGES), $(eval all: unmark-$i))
 endif
 $(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i))
 
-# make packages Style and Macaulay2Doc get installed before the others:
+# make packages Style, FirstPackage, and Macaulay2Doc get installed
+# before the others:
 $(foreach i, $(patsubst Style,,$(ALL_PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Style/.installed))
-$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Macaulay2Doc/.installed))
+$(foreach i, $(patsubst FirstPackage,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/FirstPackage/.installed))
+$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst FirstPackage,,$(patsubst Style,,$(ALL_PACKAGES)))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Macaulay2Doc/.installed))
 
 # the Info-validate function doesn't work well enough to be useful:
 # check::check-info

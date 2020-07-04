@@ -1,39 +1,4 @@
-dnl =============================================================================
-dnl The only place the Macaulay2 version number appears is in the file ./VERSION
-
-dnl Note: it is best to increment version numbers on the master branch, so they are
-dnl       all incremented on the same branch, hence in a well-defined order, despite possible merging.
-
-dnl Things to do when incrementing the version number to X.Y.Z, say :
-dnl    - on the master branch:
-dnl      - increment the version number in the AC_INIT macro below
-dnl      - add an entry to distributions/deb/changelog
-dnl      - commit the two files and push upstream
-dnl      - make a git tag of the form version-X.Y.Z and push it to github
-dnl    	      git tag version-X.Y.Z
-dnl           git push --tags origin version-X.Y.Z
-
-dnl Things to do when developing a binary release for version X.Y
-dnl    - on the master branch:
-dnl      - increment version to X.Y, as described above
-dnl      - make a git branch of the form release-X.Y
-dnl           git branch release-X.Y
-dnl      - update version to X.Y.0.1, as described above, so development on the master branch can continue
-dnl    - switch to release-X.Y and develop it there, eventually merging it into the master branch
-
-dnl Note:
-dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
-dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
-
 AC_INIT(Macaulay2, [m4_esyscmd_s([cat VERSION])], Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
-
-dnl The convention for version numbers of Macaulay2 is this:
-dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
-dnl   1.3.1   : a minor update, with changes people might want, stable, suitable for binary distributions or updates to binary distributions on certain architectures
-dnl   1.3.1.1 : a development version, with no binary distributions
-dnl   2.0     : this just means we've gotten bored seeing "1" at the beginning of the number
-dnl =============================================================================
-
 AC_MSG_NOTICE([configuring Macaulay2 version $PACKAGE_VERSION])
 AC_CONFIG_SRCDIR(INSTALL)
 AC_CONFIG_HEADERS(include/M2/config.h)
@@ -89,6 +54,10 @@ do case $i in
    -I*) AC_MSG_ERROR(preprocessor flag $i found in LDFLAGS instead of in CPPFLAGS);;
    esac
 done
+
+dnl: homebrew-provided compilers don't look here:
+CPPFLAGS="-I/usr/include -I/usr/local/include $CPPFLAGS"
+LDFLAGS="-L/usr/lib -L/usr/local/lib $LDFLAGS"
 
 dnl AC_MSG_CHECKING(whether $FIND is GNU find)
 dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
@@ -525,10 +494,12 @@ AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,in
 AC_SUBST(SHARED,yes)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--disable-shared,disable building of shared libraries), SHARED=$enableval)
 
 dnl Under Mac OS X 10.15 the Gatekeeper makes it impossible for us to distribute shared libraries with our program to end users in disk image (*.dmg) format:
-if test "$ISSUE_FLAVOR" = "MacOS"
-then SHARED=no
-     AC_MSG_NOTICE([disabling the building of shared libraries under Mac OS X])
-fi
+dnl ... but we've given up on trying to satisfy the gatekeeper.  There is a strange error message when we try to link with libgmp.a:
+dnl     ld: illegal text-relocation to '___gmp_binvert_limb_table' in /Users/runner/runners/2.263.0/work/M2/M2/M2/BUILD/cicd/usr-host/lib/libgmp.a(mp_minv_tab.o) from '___gmpn_divexact_1' in /Users/runner/runners/2.263.0/work/M2/M2/M2/BUILD/cicd/usr-host/lib/libgmp.a(dive_1.o) for architecture x86_64
+dnl if test "$ISSUE_FLAVOR" = "MacOS"
+dnl then SHARED=no
+dnl      AC_MSG_NOTICE([disabling the building of shared libraries under Mac OS X])
+dnl fi
 
 test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" ENABLE_STRIP=no
@@ -694,14 +665,14 @@ AC_SUBST(BUILTLIBS)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro linbox boost gtest ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll linbox gtest ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
 # The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
 #     Initially, we offer no option for not compiling some of them.
 
-AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack ")
+AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack givaro ")
 # The list SUBLIST is the list of submodules that might be used and linked into M2.
 
 # These three lists reflect dependencies, with prerequisites listed first, including the following dependencies:
@@ -791,7 +762,7 @@ if [ pkg-config --exists bdw-gc ]
 then AC_MSG_RESULT(yes)
      CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
      dnl should probably use `pkg-config --libs bdw-gc` here instead
-     LIBS="-lgc $LIBS"
+     LIBS="`pkg-config --libs bdw-gc` $LIBS"
      FOUND_gc=yes
 else AC_MSG_RESULT(no)
      BUILD_gc=yes
@@ -867,6 +838,7 @@ then BUILTLIBS="-lglpk $BUILTLIBS"
 fi
 
 AC_MSG_CHECKING([whether givaro library is installed])
+AC_SUBST(BUILD_givaro)
 if $PKG_CONFIG --exists givaro
 then AC_MSG_RESULT(yes)
      LIBS="`$PKG_CONFIG --libs givaro` $LIBS"
@@ -888,8 +860,19 @@ then BUILTLIBS="-lgivaro $BUILTLIBS"
 fi
 
 AC_LANG(C)
-dnl topcom includes setoper.h, rather than cdd/setoper.h, so we do, too
-AC_CHECK_HEADER(setoper.h,,BUILD_cddlib=yes)
+SAVE=$CPPFLAGS
+dnl topcom includes "setoper.h" -- no prefix
+dnl We try 3 different filenames to thwart the caching of results:
+AC_CHECK_HEADER(cdd.h,,[
+  dnl for Ubuntu
+  CPPFLAGS="$SAVE -I/usr/include/cdd"
+  AC_CHECK_HEADER(cddmp.h,,[
+    dnl for Fedora
+    CPPFLAGS="$SAVE -I/usr/include/cddlib"
+    AC_CHECK_HEADER(setoper.h,,CPPFLAGS=$SAVE
+			        AC_MSG_RESULT([[cddlib not found, will build]])
+			        BUILD_cddlib=yes)])],
+    [#include <setoper.h>])
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
 else LIBS="-lcdd $LIBS"
@@ -897,14 +880,22 @@ fi
 
 dnl factory needs to know:
 AC_SUBST(BUILD_flint)
-dnl  We always build flint, until flint comes out with a release whose version number we can check for.
-dnl  (Now we use flint for factoring integers, and only a recent development version does that well.)
-BUILD_flint=yes
-BUILD_ALWAYS="$BUILD_ALWAYS flint"
-dnl 
 if test $BUILD_flint = no
 then AC_LANG(C)
-     AC_CHECK_HEADER(flint/flint.h,LIBS="-lflint -lgmp $LIBS",BUILD_flint=yes)
+     AC_MSG_CHECKING([for flint >= 2.6.0])
+     AC_COMPILE_IFELSE(
+        [AC_LANG_PROGRAM(
+	  [#include <flint/flint.h>
+	  ],
+	  [
+#if __FLINT_VERSION < 2 || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR < 6)
+#error old flint
+#endif
+	  ])],
+	  AC_MSG_RESULT([yes])
+	  LIBS="-lflint -lgmp $LIBS",
+	  AC_MSG_RESULT([no])
+	  BUILD_flint=yes)
 fi
 if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
@@ -976,7 +967,7 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 AC_MSG_CHECKING(whether the package topcom is installed)
-if test "`type -t points2finetrianga`" = file
+if test "`type -t points2finetriangs`" = file
 then AC_MSG_RESULT(yes)
 else AC_MSG_RESULT([no, will build])
      BUILD_topcom=yes
@@ -992,13 +983,25 @@ then CFO=`$PKG_CONFIG --cflags-only-other eigen3`
 else AC_MSG_ERROR(eigen library not found)
 fi
 
-AC_LANG(C)
+AC_LANG(C++)
 AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
 if test $BUILD_ntl = yes
 then BUILTLIBS="-lntl $BUILTLIBS"
-else LIBS="-lntl $LIBS"
+else AC_MSG_CHECKING([whether libntl is present and usable])
+     LIBS="-lntl $LIBS"
+     AC_LINK_IFELSE(
+	[AC_LANG_PROGRAM(
+	    [
+	     #include <NTL/tools.h>
+	     ],
+	    [_ntl_GetTime()])],
+	[AC_MSG_RESULT([yes])],
+	[AC_MSG_RESULT([no, even though include files are present])
+	 AC_MSG_ERROR(quitting)
+	 ])
 fi
-AC_SUBST(BUILD_ntl)		dnl factory needs to know
+dnl factory needs to know:
+AC_SUBST(BUILD_ntl)
 
 AC_LANG(C++)
 AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby -lgmpxx -lgmp $LIBS",BUILD_frobby=yes)
@@ -1046,7 +1049,7 @@ fi
 
 # the order of these segments also reflects dependencies
 AC_LANG(C)
-AC_SEARCH_LIBS(tgoto,tinfo ncurses curses,,AC_MSG_ERROR([[not found: library containing symbol tgoto; tried libcurses, libncurses, and libtinfo)]]))
+AC_SEARCH_LIBS(tgoto,curses tinfo ncurses,,AC_MSG_ERROR([[not found: library containing symbol tgoto; tried libcurses, libncurses, and libtinfo)]]))
 if test $BUILD_readline = no
 then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
 fi
@@ -1128,11 +1131,8 @@ then AC_LANG(C)
      AC_CHECK_HEADER(python2.7/Python.h,,AC_MSG_ERROR(include file python2.7/Python.h not found))
 fi
 
-
-if test $BUILD_boost = no
-then AC_LANG(C++)
-     AC_CHECK_HEADER(boost/version.hpp,,BUILD_boost=yes)
-fi
+AC_LANG(C++)
+AC_CHECK_HEADER(boost/version.hpp,,AC_MSG_ERROR([[boost library not installed, but required]]))
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
@@ -1156,7 +1156,7 @@ fi
 # test for fflas_ffpack
 if test $BUILD_fflas_ffpack = no
 then AC_MSG_CHECKING([for fflas_ffpack library, version at least 2])
-     if test $? = 0 && test "`fflas-ffpack-config --decimal-version`" -gt 20000
+     if test "`type -t fflas-ffpack-config`" = "file" && test "`fflas-ffpack-config --decimal-version`" -gt 20000
      then AC_MSG_RESULT(found)
           FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) echo -n "$x " ;; esac done)
 	  AC_MSG_NOTICE([adding fflas_ffpack flags $FFLAS_FFPACK_CXXFLAGS])
@@ -1243,9 +1243,9 @@ else
     then
 	if test $FACTORY_NAME = factory
 	then
-	    GFTABLESDIR="${datadir}/factory/"
+	    GFTABLESDIR="`$PKG_CONFIG --variable=prefix $FACTORY_NAME`/share/factory/"
 	else
-	    GFTABLESDIR="${datadir}/singular/factory/"
+	    GFTABLESDIR="`$PKG_CONFIG --variable=prefix $FACTORY_NAME`/share/singular/factory/"
 	fi
     fi
     adl_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
@@ -1394,24 +1394,31 @@ dnl        , so we test those two lines early.
 dnl
 if pkg-config --exists libxml-2.0
 then XML_INCLUDE=`pkg-config --cflags-only-I libxml-2.0 | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'`
-     AC_MSG_NOTICE(pkg-config: will search for include files also in $XML_INCLUDE)
-     CPPFLAGS="$XML_INCLUDE $CPPFLAGS"
+     if test "$XML_INCLUDE"
+     then AC_MSG_NOTICE([pkg-config: will search for include files also in $XML_INCLUDE])
+          CPPFLAGS="$XML_INCLUDE $CPPFLAGS"
+     fi
 fi
-AC_CHECK_HEADERS(libxml2/libxml/xmlexports.h)
-dnl now improve the situation:
-dnl ac_cv_header_
-AC_LANG(C)
-AC_PREPROC_IFELSE(
-   [AC_LANG_SOURCE([[
-	#include <libxml2/libxml/xmlexports.h>
-	]])],
-   [ LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `
-     AC_MSG_NOTICE(libxml found in libxml2: will search for include files also in $LIBXML_LOCATION)
-     CPPFLAGS="-isystem $LIBXML_LOCATION $CPPFLAGS"
-     ]
-   )
 
-AC_CHECK_HEADERS(libxml/xmlexports.h libxml/parser.h)
+AC_CHECK_HEADER(libxml/xmlexports.h,,
+     dnl if it's not found, it might be here:
+     AC_CHECK_HEADERS(libxml2/libxml/xmlexports.h)
+     AC_LANG(C)
+     AC_PREPROC_IFELSE(
+	[AC_LANG_SOURCE([[
+	     #include <libxml2/libxml/xmlexports.h>
+	     ]])],
+	[ LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `
+	  if test -z "$LIBXML_LOCATION"
+	  then AC_MSG_WARN([failed to extract path to libxml from preprocessor output:])
+	       dnl perhaps this happens when libxml2 is a symbolic link and the preprocessor unpacks it
+	       sed 's/^/| /' <conftest.i
+	  else AC_MSG_NOTICE(libxml found in libxml2: will search for include files also in $LIBXML_LOCATION)
+	       CPPFLAGS="-isystem '$LIBXML_LOCATION' $CPPFLAGS"
+	  fi
+	  ]
+	))
+AC_CHECK_HEADERS(libxml/xmlexports.h libxml/parser.h) dnl these might be found only after the improvement above
 
 AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
 AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))
@@ -1772,6 +1779,13 @@ done
 prefix=$save_prefix
 exec_prefix=$save_exec_prefix
 
+if test $BUILD_gftables = no
+then PRE_GFTABLESDIR="$GFTABLESDIR"
+else
+PRE_GFTABLESDIR="$pre_datadir/Macaulay2/Core/factory/"
+fi
+AC_SUBST(PRE_GFTABLESDIR)
+
 AC_SUBST(pre_bindir) dnl In Macaulay2/bin/M2.in we assume that $pre_bindir/.. is $pre_exec_prefix, which follows from pre_bindir=${pre_exec_prefix}/bin.
 AC_SUBST(pre_datadir)
 AC_SUBST(pre_includedir)
@@ -1853,7 +1867,7 @@ AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2)
-AC_SUBST(emacsdir,$datadir/emacs/site-lisp)
+AC_SUBST(emacsdir,$datadir/emacs/site-lisp/Macaulay2)
 AC_SUBST(librariesdir,$libm2dir/lib)
 AC_SUBST(programsdir,$libexecdir/Macaulay2/bin)
 AC_SUBST(licensesdir,$libexecdir/Macaulay2/program-licenses)
@@ -1861,7 +1875,7 @@ AC_SUBST(packagecachecoredir,$libm2dir/cache)
 
 AC_SUBST(tail_packagesdir,$tail_datadir/Macaulay2)
 AC_SUBST(tail_libm2dir,$tail_libdir/Macaulay2)
-AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp)
+AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp/Macaulay2)
 AC_SUBST(tail_librariesdir,$tail_libm2dir/lib)
 AC_SUBST(tail_programsdir,$tail_libexecdir/Macaulay2/bin)
 AC_SUBST(tail_licensesdir,$tail_libexecdir/Macaulay2/program-licenses)
@@ -1869,7 +1883,7 @@ AC_SUBST(tail_packagecachecoredir,$tail_libm2dir/cache)
 
 AC_SUBST(pre_packagesdir,$pre_datadir/Macaulay2)
 AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2)
-AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp)
+AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp/Macaulay2)
 AC_SUBST(pre_librariesdir,$pre_libm2dir/lib)
 AC_SUBST(pre_programsdir,$pre_libexecdir/Macaulay2/bin)
 AC_SUBST(pre_licensesdir,$pre_libexecdir/Macaulay2/program-licenses)

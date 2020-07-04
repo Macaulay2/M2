@@ -57,7 +57,8 @@ export {
 
 polymakeCommand = (options Tropical)#Configuration#"polymakeCommand"
 if polymakeCommand !="" then polymakeOkay=true else polymakeOkay=false;
-if polymakeOkay then << "-- polymake is installed\n" else << "-- polymake not present\n";
+if notify then
+  if polymakeOkay then << "-- polymake is installed\n" else << "-- polymake not present\n";
 
 
 ------------------------------------------------------------------------------

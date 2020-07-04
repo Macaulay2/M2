@@ -15,7 +15,7 @@ newPackage(
             {Name => "Franziska Hinkelmann"}
             },
         AuxiliaryFiles=>true,
-        PackageImports => {"Elimination", "IntegralClosure"}
+        PackageImports => {"Elimination"}
         )
 
 -- << "warning!  This package is experimental.  The interface will change, and although" << endl;
@@ -30,7 +30,8 @@ export {
     -- Main functions
     "installMinprimes",
     "minprimes",
-    "newIsPrime"
+    "newIsPrime",
+    "Verbosity"
     }
 
 protect symbol IndependentSet
@@ -1456,9 +1457,8 @@ Description
     release this will be renamed to {\tt minimalPrimes}.
     
     Use @TO "installMinprimes"@ to replace the system versions of 'decompose Ideal', 
-    'minimalPrimes Ideal' and 'isPrime Ideal'.  Warning!  Although this code passes
-    many tests, it has not been used any where near as often as the 'decompose'
-    function in Macaulay2.  However, in many cases the new function is {\it much} faster.
+    'minimalPrimes Ideal' and 'isPrime Ideal'.  In many cases the new function is {\it much} faster,
+    although there are cases when the older, current, version is faster.
 Caveat
   Only works for ideals in (commutative)polynomial rings or quotients of 
     polynomial rings over a prime field, might have bugs in small characteristic and larger degree 
@@ -1534,7 +1534,26 @@ doc ///
      minprimes
 ///
 
-end
+doc ///
+  Key
+    Verbosity
+  Headline
+    optional argument describing how verbose the output should be
+  Description
+   Text
+     Specifying the optional argument {\tt Verbosity => n}, where $n$ is an integer
+     tells the routine how much output should be given.  A value of 0 means be silent.
+     The larger the value $n$, the more output one might see.
+///
+
+
+end--
+
+restart
+uninstallAllPackages()
+installPackage "MinimalPrimes"
+installPackage "IntegralClosure"
+loadPackage "MinimalPrimes"
 
 doc ///
 Key

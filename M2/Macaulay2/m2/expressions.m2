@@ -364,7 +364,8 @@ Expression + Expression     := Sum => (x,y) -> new Sum from {x,y}
 	   - Minus          := x -> expression x#0
            - Expression     := x -> new Minus from {x}
            - Holder         := x -> new Minus from {x#0}
-Expression - Expression     := Sum => (x,y) -> x + -y
+Expression - Expression     := Sum => (x,y) -> x + Minus y
+Thing - Minus               := Sum => (x,y) -> expression x + y#0
 Product    * OneExpression  :=
 Expression * OneExpression  :=
 Holder     * OneExpression  := (x,y) -> x
@@ -1209,6 +1210,7 @@ showTex Thing := x -> (
      if 0 =!= chkrun("(xdvi "|f|".dvi && rm -f "|f|".tex "|f|".dvi "|f|".log "|f|".aux)&")
      then error ("xdvi failed on input file "|f|".tex");
      )
+show TEX := showTex
 
 -----------------------------------------------------------------------------
 print = x -> (<< net x << endl;) -- !! one may want to modify this depending on the type of output !!

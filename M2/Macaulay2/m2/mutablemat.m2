@@ -330,6 +330,12 @@ rowRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, true)
 
 columnRankProfile = method()
 columnRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, false)
+
+reducedRowEchelonForm = method()
+reducedRowEchelonForm Matrix := (M) -> (
+    matrix reducedRowEchelonForm(mutableMatrix M)
+    )
+reducedRowEchelonForm MutableMatrix := (M) -> map(ring M, rawLinAlgRREF raw M)
      
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

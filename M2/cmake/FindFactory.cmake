@@ -33,7 +33,7 @@ endif()
 
 macro(_Factory_check_version)
   # Query Factory_VERSION
-  file(READ "${FACTORY_INCLUDE_DIR}/factory/factoryconf.h" _factory_version_header)
+  file(READ "${FACTORYCONF_INCLUDE_DIR}/factory/factoryconf.h" _factory_version_header)
 
   string(REGEX MATCH "define[ \t]+FACTORYVERSION[ \t]+\"([0-9]+)\.([0-9]+)\.([0-9]+)\""
     _factory_version_match "${_factory_version_header}")
@@ -55,8 +55,10 @@ macro(_Factory_check_version)
 endmacro(_Factory_check_version)
 
 if(NOT FACTORY_FOUND)
+  set(FACTORYCONF_INCLUDE_DIR NOTFOUND)
   set(FACTORY_INCLUDE_DIR NOTFOUND)
   set(FACTORY_LIBRARIES NOTFOUND)
+  set(GFTABLESDIR NOTFOUND)
 
   # search first if an FactoryConfig.cmake is available in the system,
   # if successful this would set FACTORY_INCLUDE_DIR and the rest of
@@ -64,18 +66,27 @@ if(NOT FACTORY_FOUND)
   find_package(Factory ${Factory_FIND_VERSION} NO_MODULE QUIET)
 
   if(NOT FACTORY_INCLUDE_DIR)
+    find_path(FACTORYCONF_INCLUDE_DIR NAMES factory/factoryconf.h
+      HINTS ENV FACTORYDIR
+      PATHS ${INCLUDE_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/include
+      PATH_SUFFIXES singular)
     find_path(FACTORY_INCLUDE_DIR NAMES factory/factory.h
       HINTS ENV FACTORYDIR
       PATHS ${INCLUDE_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/include
-      )
+      PATH_SUFFIXES singular)
+    find_path(GFTABLESDIR NAMES gftables/961
+      HINTS ENV GFTABLESDIR
+      PATHS ${CMAKE_SYSTEM_PREFIX_PATH}
+      PATH_SUFFIXES share/factory share/singular/factory)
+    set(FACTORY_INCLUDE_DIR "${FACTORY_INCLUDE_DIR};${FACTORYCONF_INCLUDE_DIR}")
   endif()
 
-  if(FACTORY_INCLUDE_DIR)
+  if(FACTORYCONF_INCLUDE_DIR)
     _Factory_check_version()
   endif()
 
   if(NOT FACTORY_LIBRARIES)
-    find_library(FACTORY_LIBRARIES NAMES factory
+    find_library(FACTORY_LIBRARIES NAMES factory singular-factory
       HINTS ENV FACTORYDIR
       PATHS ${LIB_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/lib
       )

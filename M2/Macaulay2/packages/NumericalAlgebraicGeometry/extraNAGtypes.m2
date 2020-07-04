@@ -27,7 +27,7 @@ gateSystem (GateMatrix,GateMatrix,GateMatrix) := (P,I,O) -> (
     if numrows I != 1 then error "expected the matrix of inputs (2nd argument) to be a row vector";
     if numcols O != 1 then error "expected the output matrix (3rd argument) with 1 column";
     new GateSystem from {Variables=>I, GateMatrix=>O, Parameters=>P,
-	"SLP"=>makeSLProgram(P|I,O)}
+	"SLP"=>makeSLProgram(P|I,O), cache => new CacheTable from {}}
     )
 
 
@@ -97,6 +97,47 @@ toExternalString fS
 toExternalString fT
 ///
 
+--todo: bring into harmony with (jacobian, PolySystem)
+jacobian (List, GateSystem) := (inds, GS) -> (
+    if not GS.cache#?Jacobian then (
+    	F := gateMatrix GS;
+    	I := (vars GS)_inds;
+    	J := diff(I,F);
+    	GS.cache.Jacobian = makeSLProgram(parameters GS | vars GS, J);
+	);
+    GS.cache.Jacobian
+    )
+jacobian GateSystem := GS -> jacobian(toList(0..numVariables GS-1), GS)
+
+-- overrides "implementation" for System
+evaluateJacobian (GateSystem, Matrix) := (GS, x0) -> (
+    J := jacobian GS;
+    assert(numcols matrix x0 == J#"number of inputs");
+    out := evaluate(jacobian GS,  matrix x0);
+    matrix(out, numFunctions GS, numVariables GS)
+    )
+evaluateJacobian (GateSystem, Point) := (GS, x0) -> evaluateJacobian(GS, matrix x0)
+evaluateJacobian (GateSystem, Matrix, Matrix) := (GS, p0, x0) -> evaluateJacobian(GS, p0 | x0)
+evaluateJacobian (GateSystem, Point, Point) := (GS, p0, x0) -> evaluateJacobian(GS, matrix p0, matrix x0)
+
+
+TEST /// 
+X = gateMatrix{declareVariable \ {x, y}}
+G = gateSystem(X, transpose gateMatrix{{x^2+y^2-6, 2*x^2-y}})
+x0 = point({{1.0_CC,2.3_CC}});
+assert(numVariables G == 2)
+assert(numFunctions G == 2)
+evaluate(G,x0)
+evaluateJacobian(G,x0)
+
+P = gateMatrix{declareVariable \ {a, b, c}}
+H = gateSystem(P, X, transpose gateMatrix{{a*x^2+c*y^2-6, 2*x^2-2*y*b}})
+p0 = point({{1.1_CC,0.51,1}});
+assert(numParameters H == 3)
+assert(numFunctions G == 2)
+evaluate(H,p0,x0)
+evaluateJacobian(H,p0,x0)
+///
 
 --TEST 
 /// -- package Serialization

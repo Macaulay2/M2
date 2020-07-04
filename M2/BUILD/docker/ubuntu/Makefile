@@ -12,6 +12,10 @@ BUILD_OPT = -DCMAKE_BUILD_TYPE=Release -DUSING_MPIR=OFF
 ## Script for building Macaulay2
 define M2_BUILD_SCRIPT
 set -xe
+
+git config --global user.email "macaulay@docker"
+git config --global user.name "Macaulay"
+
 ## Full build
 cmake -GNinja -S M2/M2 -B $(BUILD_DIR) $(BUILD_OPT)
 cmake --build $(BUILD_DIR) --target build-libraries # build-programs

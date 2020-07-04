@@ -6,11 +6,11 @@ FROM ubuntu:focal
 
 # Programs we require to build
 RUN apt-get update && \
-    apt-get install -y apt-transport-https bison build-essential curl git gnupg && \
+    apt-get install -y apt-transport-https build-essential curl git gnupg && \
     curl https://apt.kitware.com/keys/kitware-archive-latest.asc -s --output - | apt-key add - && \
     echo 'deb https://apt.kitware.com/ubuntu/ focal main' > \
       /etc/apt/sources.list.d/cmake.list && \
-    apt-get update && apt-get install -y autoconf ccache cmake libtool ninja-build yasm && apt-get clean
+    apt-get update && apt-get install -y autoconf bison ccache cmake flex libtool ninja-build yasm && apt-get clean
 
 # FIXME: this is needed to make tzdata install without asking a question
 RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime

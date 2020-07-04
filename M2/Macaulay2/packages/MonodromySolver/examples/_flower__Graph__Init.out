@@ -11,7 +11,7 @@ i2 : polys = polySystem {a*x+b*y^2,c*x*y+d};
 
 i3 : monodromySolve(polys,GraphInitFunction => flowerGraphInit)
 
-o3 = (HomotopyNode{...6...}, 23)
+o3 = (HomotopyNode{...7...}, 24)
 
 o3 : Sequence
 

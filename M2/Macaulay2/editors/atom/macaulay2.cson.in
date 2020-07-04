@@ -1,0 +1,106 @@
+# If this is your first time writing a language grammar, check out:
+#   - https://flight-manual.atom.io/hacking-atom/sections/creating-a-grammar/
+#   - https://flight-manual.atom.io/hacking-atom/sections/creating-a-legacy-textmate-grammar/
+#   - https://gist.github.com/Aerijo/b8c82d647db783187804e86fa0a604a1
+#   - https://macromates.com/manual/en/language_grammars.html#naming_conventions
+#   - https://www.rexegg.com/regex-quickstart.html
+
+scopeName: 'source.m2'
+name: 'Macaulay2'
+fileTypes: [ 'm2' ]
+patterns: [
+  {include: '#keywords'}
+  {include: '#comment'}
+  {include: '#strings'}
+  {include: '#fields'}
+  {include: '#math'}
+  {include: '#autogen'}
+]
+repository:
+  keywords:
+    patterns: [
+      {
+        match: '''(?x)(\\b|^)(@M2KEYWORDS@)\\b
+        '''
+        name: 'keyword.control.m2'
+      }
+      {
+        match: '''(?x)(\\b|^)(and|not|or)\\b
+        '''
+        name: 'keyword.operator.m2'
+      }
+    ]
+  comment:
+    patterns: [
+      {
+        match: '(--).*$'
+        captures:
+          '1':
+            name: 'punctuation.definition.comment.m2'
+        name: 'comment.line.double-dash.m2'
+      }
+      {
+        begin: '-\\*'
+        beginCaptures:
+          '0': name: 'punctuation.definition.comment.begin.m2'
+        end: '\\*-'
+        endCaptures:
+          '0': name: 'punctuation.definition.comment.end.m2'
+        contentName: 'comment.block.m2'
+      }
+    ]
+  strings:
+    patterns: [
+      {
+        begin: '"'
+        beginCaptures:
+          0: name: 'punctuation.definition.string.begin.m2'
+        end: '"'
+        endCaptures:
+          0: name: 'punctuation.definition.string.end.m2'
+        name: 'string.quoted.double.m2'
+      }
+      {
+#        begin: '///'
+#        beginCaptures:
+#          0: name: 'punctuation.definition.string.begin.m2'
+#        end: '///'
+#        endCaptures:
+#          0: name: 'punctuation.definition.string.end.m2'
+        match: '@M2STRINGS@'
+        name: 'string.unquoted.m2'
+      }
+    ]
+  math:
+    patterns: [
+      {
+        match: '(\\+|\\*)' # FIXME
+        name: 'keyword.operator.arithmetic.m2'
+      }
+      {
+        match: '(?<=\\s)\\d+'
+        name: 'constant.numeric.integer.m2'
+      }
+    ]
+  'fields':
+    patterns: [
+      {
+        match: '(ZZ|QQ)(\\/\\d+)?'
+        name: 'entity.name.type.m2'
+      }
+    ]
+  'autogen':
+    patterns: [
+      {
+        match: '''(?x)(\\b|^)(@M2DATATYPES@)\\b'''
+        name: 'entity.name.type.m2'
+      }
+      {
+        match: '''(?x)(\\b|^)(@M2FUNCTIONS@)\\b'''
+        name: 'entity.name.function.m2'
+      }
+      {
+        match: '''(?x)(\\b|^)(@M2CONSTANTS@)\\b'''
+        name: 'constant.other.m2'
+      }
+    ]

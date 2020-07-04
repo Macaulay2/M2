@@ -302,6 +302,14 @@ toExternalString Thing := x -> (
      if hasAttribute(x,ReverseDictionary) then return toString getAttribute(x,ReverseDictionary);
      error("can't convert anonymous object of class ",toString class x," to external string"))
 
+regexQuote = method(Dispatch => Thing, TypicalValue => String)
+regexQuote String := s -> (
+     specialChars := {"\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "[",
+	  "]", "{", "}"};
+     concatenate apply(characters s, c ->
+	  if member(c, specialChars) then "\\" | c else c)
+     )
+
 options = method(Dispatch => Thing, TypicalValue => OptionTable)
 setupMethods(Dispatch => Thing, {max,min,directSum,intersect,vars})
 net = method(Dispatch => Thing, TypicalValue => Net)
@@ -480,14 +488,6 @@ scan(flexiblePostfixOperators, op -> (
 -- helper functions useable in documentation
 -----------------------------------------------------------------------------
 
-sourceFileStamp = () -> concatenate("--",toAbsolutePath currentFileName, ":", toString currentLineNumber(), ": location of test code")
-TEST = method()
-TEST String := s -> (
-     currentPackage#"test inputs"#(currentPackage#"test number") = (currentFileName,currentLineNumber(),concatenate( sourceFileStamp(), newline, s));
-     currentPackage#"test number" = currentPackage#"test number" + 1;
-     )
-TEST List := y -> TEST \ y
-
 foo := method(Options => {})
 foodict := first localDictionaries foo
 ---- we can get into an infinite loop by doing this: (it's like printing the contents of a mutable hash table
@@ -564,10 +564,14 @@ codeHelper#(functionBody (stashValue null) null) = g -> {
 -- hypertext conversion
 
 html = method(Dispatch => Thing, TypicalValue => String)
+markdown = method(Dispatch => Thing, TypicalValue => String)
 tex = method(Dispatch => Thing, TypicalValue => String)
 texMath = method(Dispatch => Thing, TypicalValue => String)
 htmlWithTex = method(Dispatch => Thing, TypicalValue => String)
 info = method(Dispatch => Thing, TypicalValue => String)
+-- TODO: move this here: net = method(Dispatch => Thing, TypicalValue => String)
+
+show = method()
 
 -- method options
 

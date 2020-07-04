@@ -44,7 +44,7 @@ add_subdirectory(system) # rename to supervisor?
 add_subdirectory(bin) # combine with engine or interpreter?
 add_subdirectory(m2) # rename to Core?
 add_subdirectory(packages)
-add_subdirectory(emacs) # rename to editors and include vim, etc?
+add_subdirectory(editors)
 #add_subdirectory(book) # separate repository?
 
 if(BUILD_TESTING)
