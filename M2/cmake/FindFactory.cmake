@@ -58,6 +58,7 @@ if(NOT FACTORY_FOUND)
   set(FACTORYCONF_INCLUDE_DIR NOTFOUND)
   set(FACTORY_INCLUDE_DIR NOTFOUND)
   set(FACTORY_LIBRARIES NOTFOUND)
+  set(GFTABLESDIR NOTFOUND)
 
   # search first if an FactoryConfig.cmake is available in the system,
   # if successful this would set FACTORY_INCLUDE_DIR and the rest of
@@ -73,6 +74,10 @@ if(NOT FACTORY_FOUND)
       HINTS ENV FACTORYDIR
       PATHS ${INCLUDE_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/include
       PATH_SUFFIXES singular)
+    find_path(GFTABLESDIR NAMES gftables/961
+      HINTS ENV GFTABLESDIR
+      PATHS ${CMAKE_SYSTEM_PREFIX_PATH}
+      PATH_SUFFIXES share/factory share/singular/factory)
     set(FACTORY_INCLUDE_DIR "${FACTORY_INCLUDE_DIR};${FACTORYCONF_INCLUDE_DIR}")
   endif()
 

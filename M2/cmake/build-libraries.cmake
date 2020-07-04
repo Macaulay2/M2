@@ -418,12 +418,9 @@ ExternalProject_Add(build-factory
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(FACTORY_FOUND)
-  if(NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
-    message(STATUS "Copying gftables in ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables")
-    file(GLOB   GFTABLES    "${FACTORY_INCLUDE_DIR}/../share/factory/gftables/*")
-    file(COPY ${GFTABLES} DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
-  endif()
+if(GFTABLESDIR AND NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
+  message(STATUS "Copying gftables from ${GFTABLESDIR}/gftables")
+  file(COPY ${GFTABLESDIR}/gftables DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory)
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
 
