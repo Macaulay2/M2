@@ -22,12 +22,21 @@ STRIPFILES =					\
 # But now it is there, and we get a complaint when checking for unstripped binaries.
 STRIPFILES += 	src/groebner/4ti2gmp@EXEEXT@
 
-# according to the documentation, the line below should prevent GMP from being used,
+ifeq (@SHARED@,no)
+# the default for 4ti2 is to not build shared libraries, but it does, anyway (?)
+CONFIGOPTIONS += --disable-shared
+else 
+CONFIGOPTIONS += --enable-shared
+endif
+
+# this is how we control whether to link with libgmp.a or with libgmp.dylib:
+BUILDOPTIONS = GMP_LIBS="@LIBS_GMP@" GLPK_LIBS="@LIBS_GLPK@"
+
+# according to the documentation, specifying "no" for this option to configure should prevent GMP from being used,
 # but it doesn't
   # --with-gmp={DIR|no}     Use the GMP library installed in DIR. If the
   #                         argument is no, do not use the GMP library; some
   #                         functionality will not be available then.
-CONFIGOPTIONS += --with-gmp=no
 
 LICENSEFILES = README
 include ../Makefile.library
