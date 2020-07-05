@@ -17,6 +17,7 @@ m4_include(config/ax_func_accept_argtypes.m4)
 m4_include(config/relpaths.m4)
 m4_include(config/gtest.m4)
 m4_include(config/openmp.m4)
+m4_include(config/search-libraries.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -608,6 +609,10 @@ then if test "$OPTIMIZE" = no
      if test "$DEBUG" = yes
      then AC_MSG_ERROR([--enable-debug and --enable-dmg both specified])
      fi
+     if test $SHARED = yes
+     then SHARED=no
+          AC_MSG_WARN([--enable-dmg specified, so disabling the building of shared libraries])
+     fi
 fi
 
 AC_SUBST(M2SUFFIX)
@@ -790,31 +795,33 @@ AC_ARG_WITH(integer-package,
 if test $BUILD_gmp = yes -a $BUILD_mpir = yes
 then AC_MSG_ERROR([refusing to build both mpir and gmp, since the are interchangeable])
 fi
-AC_MSG_CHECKING([to use gmp or mpir])
+AC_MSG_CHECKING([whether to use gmp or mpir])
 if test "$PREFERRED_INTEGER_PACKAGE" = mpir
 then USING_MPIR=1
+     AC_MSG_RESULT([using mpir])
+     AC_DEFINE(USING_MPIR,1,[Whether we use MPIR (instead of GMP)])
      if test "$FOUND_mpir" = no
      then BUILD_mpir=yes
           BUILTLIBS="-lmpirxx -lmpir $BUILTLIBS"
      else LIBS="-lmpirxx -lmpir $LIBS"
      fi
 else USING_MPIR=0		# i.e., using gmp
+     AC_MSG_RESULT([using gmp])
+     AC_DEFINE(USING_MPIR,0,[Whether we use MPIR (instead of GMP)])
      if test "$FOUND_gmp" = no
      then BUILD_gmp=yes
           BUILTLIBS="-lgmpxx -lgmp $BUILTLIBS"
-     else LIBS="-lgmpxx -lgmp $LIBS"
+     else AC_LANG(C)
+	  if test $SHARED = no
+          then SEARCH_LIBRARIES(__gmpz_init,"/usr/local/lib/libgmpxx.a /usr/local/lib/libgmp.a",,[AC_MSG_ERROR([libgmp.a not usable])])
+	  else AC_SEARCH_LIBS(__gmpz_init,"-lgmpxx -lgmp",,[AC_MSG_ERROR([libgmp not usable])])
+	  fi
 	  dnl By the way: with Hombebrew on the Mac gmp comes with package configuration:
 	  dnl $ pkg-config gmp --cflags
 	  dnl -I/usr/local/Cellar/gmp/6.2.0/include
 	  dnl $ pkg-config gmp --libs
 	  dnl -L/usr/local/Cellar/gmp/6.2.0/lib -lgmp
      fi
-fi
-if test "$USING_MPIR" = 0
-then AC_MSG_RESULT([using gmp])
-     AC_DEFINE(USING_MPIR,0,[Whether we use MPIR (instead of GMP)])
-else AC_MSG_RESULT([using mpir])
-     AC_DEFINE(USING_MPIR,1,[Whether we use MPIR (instead of GMP)])
 fi
 AC_SUBST(USING_MPIR)
 
@@ -893,7 +900,7 @@ then AC_LANG(C)
 #endif
 	  ])],
 	  AC_MSG_RESULT([yes])
-	  LIBS="-lflint -lgmp $LIBS",
+	  LIBS="-lflint $LIBS",
 	  AC_MSG_RESULT([no])
 	  BUILD_flint=yes)
 fi
@@ -1008,7 +1015,7 @@ dnl factory needs to know:
 AC_SUBST(BUILD_ntl)
 
 AC_LANG(C++)
-AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby -lgmpxx -lgmp $LIBS",BUILD_frobby=yes)
+AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby $LIBS",BUILD_frobby=yes)
 if test $BUILD_frobby = yes
 then BUILTLIBS="-lfrobby $BUILTLIBS"
 fi

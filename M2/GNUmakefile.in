@@ -63,6 +63,13 @@ check-stripped:
 	file @pre_programsdir@/* $(BUILTLIBPATH)/bin/* @pre_bindir@/M2-binary usr-dist/bin/M2-binary usr-host/bin/* | (! grep "not stripped")
 
 ## submodules
+
+ifeq (@SHARED@,no)
+SUBMODULE_CONFIGOPTIONS += --disable-shared
+else
+SUBMODULE_CONFIGOPTIONS += --enable-shared
+endif
+
 ifneq (@build_alias@,)
 # it was ../configure --build=@build_alias@
 SUBMODULE_CONFIGOPTIONS += --build=@build_alias@
@@ -87,7 +94,7 @@ submodules/fflas_ffpack/Makefile: LIBS += @LINALGLIBS@
 # don't even come with "uninstall" targets, typically.
 # include/config.Makefile.in for lines that add the locations of the the
 # include files and libraries to CPPFLAGS and LDFLAGS.
-BUILDSUBTARGETS = check all run-configure check
+BUILDSUBTARGETS = check all run-configure check install
 
 # Even for submodules not scheduled to be built, we might as well arrange
 # for these targets to fire also for them when doing them for all submodules:
