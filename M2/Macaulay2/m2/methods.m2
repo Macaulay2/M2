@@ -510,19 +510,35 @@ dispatcherFunctions = join (dispatcherFunctions, {
 
 addHook = method()
 removeHook = method()
-runHooks = method()
+runHooks = method(Options => true)
 
 addHook   (MutableHashTable,Thing,Function) := (obj,key,hook) -> obj#key = if obj#?key then prepend(hook,obj#key) else {hook}
 removeHook(MutableHashTable,Thing,Function) := (obj,key,hook) -> if obj#?key then obj#key = delete(obj#key,hook)
-runHooks  (MutableHashTable,Thing,Thing   ) := (obj,key,arg ) -> if obj#?key then scan(obj#key, hook -> hook arg)
+runHooks  (MutableHashTable,Thing,Thing   ) := true >> opts -> (obj,key,arg ) -> (if obj#?key then scan(obj#key, hook -> (
+          result := (if options hook =!= null then (
+               hookOpts := select(keys options hook, k -> opts#?k) / (k -> k => opts#k);
+               hook(arg, new OptionTable from hookOpts)
+               ) else hook arg 
+          );
+          if not instance(result, Nothing) then break result)))
 
 addHook   (HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; c#key = if c#?key then prepend(hook,c#key) else {hook})
 removeHook(HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; if c#?key then c#key = delete(c#key,hook))
-runHooks  (HashTable,Thing,Thing   ) := (obj,key,arg ) -> (c := obj.cache; if c#?key then scan(c#key, hook -> hook arg))
+runHooks  (HashTable,Thing,Thing   ) := true >> opts -> (obj,key,arg ) -> (c := obj.cache; if c#?key then scan(c#key, hook -> (
+          result := (if options hook =!= null then ( 
+               hookOpts := select(keys options hook, k -> opts#?k) / (k -> k => opts#k);
+               hook(arg, new OptionTable from hookOpts)
+               ) else hook arg);
+          if not instance(result, Nothing) then break result)))
 
 addHook   (Symbol,Function) := (sym,hook) -> sym <- if value sym =!= sym then prepend(hook,value sym) else {hook}
 removeHook(Symbol,Function) := (sym,hook) -> if value sym =!= sym then sym <- delete(value sym,hook)
-runHooks  (Symbol,Thing   ) := (sym,arg ) -> if value sym =!= sym then scan(value sym, hook -> hook arg)
+runHooks  (Symbol,Thing   ) := true >> opts -> (sym,arg ) -> if value sym =!= sym then scan(value sym, hook -> (
+          result := (if options hook =!= null then ( 
+               hookOpts := select(keys options hook, k -> opts#?k) / (k -> k => opts#k);
+               hook(arg, new OptionTable from hookOpts)
+               ) else hook arg);
+          if not instance(result, Nothing) then break result))
 
 -- and keys
 protect QuotientRingHook
