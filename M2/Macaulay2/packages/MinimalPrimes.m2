@@ -40,8 +40,7 @@ export {
     -- Main functions
     "installMinprimes",
     "minprimes",
-    "newIsPrime",
-    "Verbosity"
+    "newIsPrime"
     }
 
 protect symbol Legacy
