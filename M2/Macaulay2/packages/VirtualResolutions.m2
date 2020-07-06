@@ -23,6 +23,7 @@ newPackage ("VirtualResolutions",
         {Name => "Mahrud Sayrafi",     Email => "mahrud@umn.edu",      HomePage => "http://math.umn.edu/~mahrud/"}
         },
     PackageExports => {
+	"Colon",
         "SpaceCurves",
         "TateOnProducts",
         "NormalToricVarieties",
@@ -67,7 +68,6 @@ debug Core;
 ----- created. We hope this is eventually removed.
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-load("./VirtualResolutions/Colon.m2")
 ourSaturation = (I,irr) -> saturationByElimination(I, decompose irr);
 
 

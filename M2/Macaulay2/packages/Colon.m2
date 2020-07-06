@@ -1,18 +1,15 @@
--- This file is intended to be turned into an independent package,
--- at which point VirtualResolutions will simply include it as an
--- exported package.
-
--*
 newPackage(
-        "Colon",
-        Version => "0.1",
-        Date => "",
-        Authors => {{Name => "",
-                  Email => "",
-                  HomePage => ""}},
-        Headline => "saturation and ideal and submodule colon/quotient routines",
-        DebuggingMode => true
-        )
+    "Colon",
+    Version => "0.1",
+    Date => "7/6/2020",
+    Authors => {
+	{Name => "Justin Chen", Email => "justin.chen@math.gatech.edu"},
+	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu", HomePage => "https://math.umn.edu/~mahrud"},
+	{Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
+	},
+    Headline => "saturation and ideal and submodule colon/quotient routines",
+    DebuggingMode => true
+    )
 
 export {
     "grevLexRing",
@@ -21,7 +18,6 @@ export {
     "saturationByGrevLex",
     "intersectionByElimination"
     }
-*-
 
 -- quotient methods:
 -- 1. syzygyies
