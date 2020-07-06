@@ -13,12 +13,11 @@ newPackage(
 	Configuration => {"gfan command" => "gfan"},
     	DebuggingMode => false,
 	AuxiliaryFiles => true,
-	CacheExampleOutput => true
+	CacheExampleOutput => true,
+	PackageImports => {"gfanInterface"}
     	)
 
 export { 
-     --"gfanRingInput", 
-     --"gfanIdealInput", 
      "initialIdeals", --documented
      --"hilbertPt", 
      --"statePolytopePoints", 
@@ -30,49 +29,17 @@ export {
      "isStable" --documented
      }
 
-
-gfanCommand = (options StatePolytope)#Configuration#"gfan command"
-if gfanCommand === "gfan" then gfanCommand = prefixDirectory | currentLayout#"programs" | gfanCommand
-gfanCommand = "!" | gfanCommand
-
---The next two functions print out the ring and the ideal in the format required by gfan
-
-gfanRingInput = (I) -> (R:= ring(I);
-     str:="";
-     if char(R) == 0 then str = "Q[" else str = concatenate(concatenate("Z/",toString(char(R))) ,"Z[");
-for i from 0 to (numgens(R)-2) do str = concatenate(str,concatenate(toString R_i, "," ));
-return concatenate(str,concatenate(toString R_(numgens(R)-1), "]" ));
-)
-
-
-gfanIdealInput = (I) -> (toString apply((numgens(I)), k -> I_k)
-    )
-
---The following test is to check whether gfan is working
-
-
+if (options StatePolytope)#Configuration#"gfan command" != "gfan" then stderr <<
+    "warning: The \"gfan command\" configuration option has been deprecated." <<
+    endl <<
+    "If gfan is installed in a non-standard location, then specify it by" <<
+    endl <<
+    "setting programPaths#\"gfan\"." << endl
 
 initialIdeals = method(
      TypicalValue => List
      )
-initialIdeals(Ideal) := (I) -> (
-gfanoutputfile := openInOut gfanCommand;
-gfanoutputfile << gfanRingInput(I) << gfanIdealInput(I);
-gfanoutputfile << closeOut;
-gfanoutputstring := get gfanoutputfile;
-if gfanoutputstring == "" then (
-gfanoutputfile = openInOut gfanCommand;
-gfanoutputfile << gfanIdealInput(I);
-gfanoutputfile << closeOut;
-gfanoutputstring = get gfanoutputfile;);
-if gfanoutputstring == "" then error "gfan output is null; check the command you are using";
-markedInitialIdealsString:=replace("[Q,Z].*]","",gfanoutputstring);
-use(ring(I));
-initialIdealsList := value replace("[+-][^,{}]*}","}",replace("[+-][^,{}]*,",",",markedInitialIdealsString));
-return initialIdealsList
-)
-
-
+initialIdeals(Ideal) := (I) -> apply(gfan I, first)
 
 hilbertPt = (n,m,L,monomialsList) -> (
      totalDegree := binomial( n-1 + m, n-1) * m / n ;
