@@ -24,7 +24,7 @@ export {
      --"statePolytopePoints", 
      --"printHilbPt", 
      --"createPolymakeInputFile",
-     "statePolytope", --documented
+     "polymakeStatePolytope", --documented
      --"maxUGBDegree", 
      "isStable" --documented
      }
@@ -90,10 +90,10 @@ maxUGBDegree = (L) -> (
      (max apply(#L, i -> max apply(#(L_i), j -> degree L_i_j)))_0
 	  )
 
-statePolytope = method(
+polymakeStatePolytope = method(
      TypicalValue => List
      )
-statePolytope(ZZ,Ideal) := (m,I) -> ( initialIdealsList := initialIdeals(I);
+polymakeStatePolytope(ZZ,Ideal) := (m,I) -> ( initialIdealsList := initialIdeals(I);
 createPolymakeInputFile(statePolytopePoints(m,I,initialIdealsList),I);
 polymakesession := "!polymake temporarypolymakefile.txt VERTICES";
 polymakesession << closeOut;
@@ -101,7 +101,7 @@ st := get polymakesession;
 polymakeToM2(st)
 )
 
-statePolytope(Ideal) := (I) -> ( initialIdealsList := initialIdeals(I);
+polymakeStatePolytope(Ideal) := (I) -> ( initialIdealsList := initialIdeals(I);
 createPolymakeInputFile(fullStatePolytopePoints(maxUGBDegree(initialIdealsList),I,initialIdealsList),I);
 polymakesession := "!polymake temporarypolymakefile.txt VERTICES";
 polymakesession << closeOut;
@@ -179,7 +179,7 @@ assert(set initialIdeals(I) === set L)
 ///
      
 document {
-	Key => "statePolytope",
+	Key => "polymakeStatePolytope",
 	Headline => "computes state polytopes of ideals",
 	"Computes ",  ITALIC "State", SUB "m", "(I) or ", ITALIC "State", "(I), as defined in Sturmfels's book ", ITALIC "Groebner bases and convex polytopes", ", page 14."
 	}
@@ -189,7 +189,7 @@ document {
 
 
  document {
-	Key => (statePolytope,Ideal),
+	Key => (polymakeStatePolytope,Ideal),
 	Headline => "computes the state polytope of an ideal",
 	Usage => "statePolytope(I)",
 	Inputs => {
@@ -204,7 +204,7 @@ Outputs => {
 EXAMPLE lines ///
 	        R = QQ[a..d];
 		I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);  
-		statePolytope(I) 
+		polymakeStatePolytope(I)
 		///,
 		
 }  
@@ -214,7 +214,7 @@ EXAMPLE lines ///
    
        
    document {
-	Key => (statePolytope,ZZ,Ideal),
+	Key => (polymakeStatePolytope,ZZ,Ideal),
 	Headline => "computes the mth state polytope of an ideal",
 	Usage => "statePolytope(m,I)",
 	Inputs => {
@@ -231,7 +231,7 @@ EXAMPLE lines ///
 	EXAMPLE lines ///
 	        R = QQ[a..d];
 		I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);
-		statePolytope(3,I)   
+		polymakeStatePolytope(3,I)
 		///,
 		}
 
@@ -240,9 +240,9 @@ TEST ///
 R=QQ[a..d];
 I=ideal(a*c-b^2,a*d-b*c,b*d-c^2);
 L = {{9, 6, 6, 9}, {9, 3, 12, 6}, {7, 5, 14, 4}, {5, 8, 14, 3}, {3, 12, 12,3}, {6, 12, 3, 9}, {4, 14, 5, 7}, {3, 14, 8, 5}};
-assert(set statePolytope(3,I) === set L)
+assert(set polymakeStatePolytope(3,I) === set L)
 M ={{11, 7, 7, 11}, {11, 3, 15, 7}, {8, 6, 18, 4}, {6, 9, 18, 3}, {3, 15, 15, 3}, {7, 15, 3, 11}, {4, 18, 6, 8}, {3, 18, 9, 6}};
-assert(set statePolytope(I) === set M)
+assert(set polymakeStatePolytope(I) === set M)
 ///
 
 
