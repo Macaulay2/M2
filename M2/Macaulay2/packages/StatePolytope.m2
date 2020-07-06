@@ -172,8 +172,8 @@ document {
 TEST ///
 R=QQ[a..d];
 I=ideal(a*c-b^2,a*d-b*c,b*d-c^2);
-L= {{b*d, a*d, a*c}, {c^2, a*d, a*c}, {c^2, b*c, a*c, a^2*d}, {c^2, b*c, b^3,
-     a*c}, {c^2, b*c, b^2}, {b*d, b^2, a*d}, {b*d, b*c, b^2, a*d^2}, {c^3, b*d,
+L= {{b*d, a*d, a*c}, {a*d, b*d, b^2}, {a*d^2, b*d, b*c, b^2}, {b*d, b^2, b*c,
+     c^3}, {a*d, a*c, c^2}, {a^2*d, a*c, c^2, b*c}, {a*c, c^2, b*c, b^3}, {c^2,
      b*c, b^2}};
 assert(set initialIdeals(I) === set L)
 ///
