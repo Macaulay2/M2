@@ -8,19 +8,24 @@ PRECONFIGURE = autoreconf -vif
 # URL = http://www.4ti2.de/version_$(VERSION)
 # URL = https://github.com/4ti2/4ti2/releases/download/Release_1_6_9/4ti2-1.6.9.tar.gz
 URL = http://macaulay2.com/Downloads/OtherSourceCode
-STRIPFILES =					\
-	src/groebner/4ti2int32@EXEEXT@		\
-	src/groebner/4ti2int64@EXEEXT@		\
-	src/util/genmodel			\
-	src/util/gensymm			\
-	src/ppi/ppi				\
-	src/util/output				\
-	src/zsolve/zsolve
 
+# Sometimes these files are not executables, because of libtool:
+#   The 4ti2int32 program cannot be directly executed until all the libtool
+#   libraries that it depends on are installed.
+#   This wrapper script should never be moved out of the build directory.
+#   If it is, it will not operate correctly.
+# STRIPFILES =					\
+# 	src/groebner/4ti2int32@EXEEXT@		\
+# 	src/groebner/4ti2int64@EXEEXT@		\
+# 	src/util/genmodel			\
+# 	src/util/gensymm			\
+# 	src/ppi/ppi				\
+# 	src/util/output				\
+# 	src/zsolve/zsolve
 # # We have stopped trying to get 4ti2 to compile on all architectures with arbitrary precision
 # # support provided by GMP, so this file will not be there:
 # But now it is there, and we get a complaint when checking for unstripped binaries.
-STRIPFILES += 	src/groebner/4ti2gmp@EXEEXT@
+# STRIPFILES += src/groebner/4ti2gmp@EXEEXT@
 
 ifeq (@SHARED@,no)
 # the default for 4ti2 is to not build shared libraries, but it does, anyway (?)
