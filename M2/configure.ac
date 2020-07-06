@@ -764,6 +764,7 @@ else if test $SHARED = no
      else AC_SEARCH_LIBS(gdbm_close,"gdbm",,[AC_MSG_ERROR([libgdbm not found])])
      fi
      LIBS_GDBM=$ac_cv_search_gdbm_close
+     LIBS="$LIBS_GDBM $LIBS"
 fi
 
 AC_MSG_CHECKING(whether package bdw-gc is provided)
@@ -820,6 +821,7 @@ then USING_MPIR=1
 	  else SEARCH_LIBRARIES(__gmpz_init,"-lmpirxx -lmpir",,[AC_MSG_ERROR([libmpir not found])])
 	  fi
 	  LIBS_GMP=$ac_cv_search___gmpz_init
+	  LIBS="$LIBS_GMP $LIBS"
      fi
 else USING_MPIR=0		# i.e., using gmp
      AC_MSG_RESULT([using gmp])
@@ -835,6 +837,7 @@ else USING_MPIR=0		# i.e., using gmp
 	  else SEARCH_LIBRARIES(__gmpz_init,"-lgmpxx -lgmp",,[AC_MSG_ERROR([libgmp not found])])
 	  fi
      	  LIBS_GMP=$ac_cv_search___gmpz_init
+	  LIBS="$LIBS_GMP $LIBS"
 	  dnl By the way: with Hombebrew on the Mac gmp comes with package configuration:
 	  dnl $ pkg-config gmp --cflags
 	  dnl -I/usr/local/Cellar/gmp/6.2.0/include
@@ -871,7 +874,8 @@ else if test $SHARED = no
      then SEARCH_LIBRARIES(glp_free,"/usr/lib/libglpk.a" "/usr/local/lib/libglpk.a",,[AC_MSG_ERROR([libglpk.a not found])])
      else AC_SEARCH_LIBS(glp_free,"glpk",,[AC_MSG_ERROR([libglpk not found])])
      fi
-     LIBS_GLPK=$ac_cv_search__glp_zlib_open
+     LIBS_GLPK=$ac_cv_search_glp_free
+     LIBS="$LIBS_GLPK $LIBS"
 fi
 
 AC_MSG_CHECKING([whether givaro library is installed])
