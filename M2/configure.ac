@@ -761,7 +761,7 @@ then LIBS_GDBM="-lgdbm"
      BUILTLIBS="$LIBS_GDBM $BUILTLIBS"
 else if test $SHARED = no
      then SEARCH_LIBRARIES(gdbm_close,"/usr/lib/libgdbm.a" "/usr/local/lib/libgdbm.a",,[AC_MSG_ERROR([libgdbm.a not found])])
-     else AC_SEARCH_LIBS(gdbm_close,"-lgdbm",,[AC_MSG_ERROR([libgdbm not found])])
+     else AC_SEARCH_LIBS(gdbm_close,"gdbm",,[AC_MSG_ERROR([libgdbm not found])])
      fi
      LIBS_GDBM=$ac_cv_search_gdbm_close
 fi
@@ -781,7 +781,7 @@ then BUILTLIBS="-lgc -lpthread $BUILTLIBS"
 else if test $SHARED = no
      then SEARCH_LIBRARIES(GC_malloc,"/usr/lib/libgc.a" "/usr/local/lib/libgc.a",,
           [AC_MSG_ERROR([libgc.a not found])])
-     else AC_SEARCH_LIBS(GC_malloc,"-lgc",,[AC_MSG_ERROR([libgc not found])])
+     else AC_SEARCH_LIBS(GC_malloc,"gc",,[AC_MSG_ERROR([libgc not found])])
      fi
 fi
 
@@ -817,7 +817,7 @@ then USING_MPIR=1
      else if test $SHARED = no
           then SEARCH_LIBRARIES(__gmpz_init,"/usr/lib/libmpirxx.a /usr/lib/libmpir.a" "/usr/local/lib/libmpirxx.a /usr/local/lib/libmpir.a",,
 					    [AC_MSG_ERROR([libmpir.a not found])])
-	  else AC_SEARCH_LIBS(__gmpz_init,"-lmpirxx -lmpir",,[AC_MSG_ERROR([libmpir not found])])
+	  else SEARCH_LIBRARIES(__gmpz_init,"-lmpirxx -lmpir",,[AC_MSG_ERROR([libmpir not found])])
 	  fi
 	  LIBS_GMP=$ac_cv_search___gmpz_init
      fi
@@ -832,7 +832,7 @@ else USING_MPIR=0		# i.e., using gmp
 	  if test $SHARED = no
           then SEARCH_LIBRARIES(__gmpz_init,"/usr/lib/libgmpxx.a /usr/lib/libgmp.a" "/usr/local/lib/libgmpxx.a /usr/local/lib/libgmp.a",,
 					    [AC_MSG_ERROR([libgmp.a not found])])
-	  else AC_SEARCH_LIBS(__gmpz_init,"-lgmpxx -lgmp",,[AC_MSG_ERROR([libgmp not found])])
+	  else SEARCH_LIBRARIES(__gmpz_init,"-lgmpxx -lgmp",,[AC_MSG_ERROR([libgmp not found])])
 	  fi
      	  LIBS_GMP=$ac_cv_search___gmpz_init
 	  dnl By the way: with Hombebrew on the Mac gmp comes with package configuration:
@@ -851,7 +851,7 @@ then BUILTLIBS="-lmpfr $BUILTLIBS"
 else if test $SHARED = no
      then SEARCH_LIBRARIES(mpfr_digamma,"/usr/lib/libmpfr.a" "/usr/local/lib/libmpfr.a",,
 				        [AC_MSG_ERROR([libmpfr.a not found])])
-     else AC_SEARCH_LIBS(mpfr_digamma,"-lmpfr",,[AC_MSG_ERROR([libmpfr not found])])
+     else AC_SEARCH_LIBS(mpfr_digamma,"mpfr",,[AC_MSG_ERROR([libmpfr not found])])
      fi
 fi
 
@@ -868,8 +868,8 @@ AC_CHECK_HEADER(glpk.h,,BUILD_glpk=yes)
 if test $BUILD_glpk = yes
 then BUILTLIBS="-lglpk $BUILTLIBS"
 else if test $SHARED = no
-     then SEARCH_LIBRARIES(_glp_zlib_open,"/usr/lib/libglpk.a" "/usr/local/lib/libglpk.a",,[AC_MSG_ERROR([libglpk.a not found])])
-     else AC_SEARCH_LIBS(_glp_zlib_open,"-lglpk",,[AC_MSG_ERROR([libglpk not found])])
+     then SEARCH_LIBRARIES(glp_free,"/usr/lib/libglpk.a" "/usr/local/lib/libglpk.a",,[AC_MSG_ERROR([libglpk.a not found])])
+     else AC_SEARCH_LIBS(glp_free,"glpk",,[AC_MSG_ERROR([libglpk not found])])
      fi
      LIBS_GLPK=$ac_cv_search__glp_zlib_open
 fi
@@ -915,7 +915,7 @@ then BUILTLIBS="-lcdd $BUILTLIBS"
 else if test $SHARED = no
      then SEARCH_LIBRARIES(dd_Equal,"/usr/lib/libcdd.a" "/usr/local/lib/libcdd.a",,
 				    [AC_MSG_ERROR([libcdd.a not found])])
-     else AC_SEARCH_LIBS(dd_Equal,"-lcdd",,[AC_MSG_ERROR([libcdd not found])])
+     else AC_SEARCH_LIBS(dd_Equal,"cdd",,[AC_MSG_ERROR([libcdd not found])])
      fi
 fi
 
@@ -937,7 +937,7 @@ then AC_LANG(C)
 	  if test $SHARED = no
 	  then SEARCH_LIBRARIES(_fmpz_mod_mul1,/usr/lib/libflint.a /usr/local/lib/libflint.a,,
 					       [AC_MSG_ERROR([libflint.a not found])])
-	  else AC_SEARCH_LIBS(_fmpz_mod_mul1,"-lflint",,[AC_MSG_ERROR([libflint not found])])
+	  else AC_SEARCH_LIBS(_fmpz_mod_mul1,"flint",,[AC_MSG_ERROR([libflint not found])])
 	  fi,
 	  AC_MSG_RESULT([no])
 	  BUILD_flint=yes)
