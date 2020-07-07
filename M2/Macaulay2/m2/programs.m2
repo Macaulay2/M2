@@ -10,10 +10,10 @@ addSlash = programPath -> (
     else return programPath
 )
 
-checkProgramPath = (name, cmd, programPath, verbose) -> (
+checkProgramPath = (name, cmds, programPath, verbose) -> (
     if verbose == true then
 	print("checking for " | name | " in " | programPath | "...");
-    if run(programPath | cmd | " >/dev/null 2>&1") == 0 then (
+    if all(cmds, cmd -> run(programPath | cmd | " >/dev/null 2>&1") == 0) then (
 	if verbose == true then print("	found");
 	return true;
     ) else (
@@ -22,7 +22,7 @@ checkProgramPath = (name, cmd, programPath, verbose) -> (
     )
 )
 
-getProgramPath = (name, cmd, verbose) -> (
+getProgramPath = (name, cmds, verbose) -> (
     pathsToTry := {};
     -- try user-configured path first
     if programPaths#?name then
@@ -34,13 +34,16 @@ getProgramPath = (name, cmd, verbose) -> (
 	pathsToTry = join(pathsToTry, separate(":", getenv "PATH"));
     pathsToTry = apply(pathsToTry, addSlash);
     scan(pathsToTry, pathToTry ->
-	if checkProgramPath(name, cmd, pathToTry, verbose) then break pathToTry)
+	if checkProgramPath(name, cmds, pathToTry, verbose) then
+	    break pathToTry)
 )
 
 loadProgram = method(TypicalValue => Program,
     Options => {RaiseError => true, Verbose => false})
-loadProgram (String, String) := opts -> (name, cmd) -> (
-    programPath := getProgramPath(name, cmd, opts.Verbose);
+loadProgram(String, String) := opts -> (name, cmd) ->
+    loadProgram(name, {cmd}, opts)
+loadProgram(String, List) := opts -> (name, cmds) -> (
+    programPath := getProgramPath(name, cmds, opts.Verbose);
     if programPath === null then
 	if opts.RaiseError then error("could not find " | name)
 	else return null;

@@ -40,16 +40,19 @@ document {
 document {
     Key => {loadProgram,
 	(loadProgram, String, String),
+	(loadProgram, String, List),
 	[loadProgram, RaiseError],
 	[loadProgram, Verbose]},
     Headline => "load external program",
-    Usage => "loadProgram(name, cmd)",
+    Usage => "loadProgram(name, cmd)\nloadProgram(name, cmds)",
     Inputs => {
 	"name" => String => {"the name of the program to load.  ",
 	    "This should match the corresponding key in ",
 	    TO "programPaths", "."},
 	"cmd" => String =>
 	    "a command to run that should return 0 if the program is present.",
+	"cmds" => List => {"a list of commands to run that should all return ",
+	    "0 if the program is present."},
 	RaiseError => Boolean =>
 	    "whether to raise an error if the program is not found.",
 	Verbose => Boolean =>
@@ -59,8 +62,8 @@ document {
 	"If the program is not found and ", TT "RaiseError", " is set to ",
 	TO "false", " then ", TO "null", " is returned."}},
     PARA {"This function checks for the existence of an external program by ",
-	"running ", TT "cmd", " prepended with various paths in the ",
-	"following order:"},
+	"running ", TT "cmd", " (or every element of ", TT "cmds", ") ",
+	"prepended with various paths in the following order:"},
     UL {
 	{"The user-defined path specified by ", TT "programPaths#name",
 	    ", if it exists.",},
@@ -70,10 +73,10 @@ document {
 	{"Each path specified by the user's ", TT "PATH",
 	    " environment variable."}
     },
-    PARA {"Once this is successful (i.e., ", TT "cmd", " returns a value ",
-	"of 0), then a ", TO "Program", " object is returned.  ",
-	"If it is unsuccessful, then either an error is raised or ",
-	TO "null", " is returned, depending on the value of ",
+    PARA {"Once this is successful (i.e., ", TT "cmd", " or each element of ",
+	TT "cmds", " returns a value of 0), then a ", TO "Program",
+	" object is returned.  If it is unsuccessful, then either an error is ",
+	"raised or ", TO "null", " is returned, depending on the value of ",
 	TT "RaiseError", "."},
     PARA {"Note that if a program consists of a single executable binary ",
 	"file, then ", TT "name", " should coincide with the name of this ",
