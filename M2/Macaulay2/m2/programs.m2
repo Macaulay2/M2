@@ -10,10 +10,8 @@ addSlash = programPath -> (
     else return programPath
 )
 
-checkProgramPath = (name, cmds, programPath, opts) -> (
-    if opts.Verbose == true then
-	print("checking for " | name | " in " | programPath | "...");
-    if all(cmds, cmd -> run(programPath | cmd | " >/dev/null 2>&1") == 0) then (
+checkProgramPath = (name, cmds, opts) -> (
+    if all(cmds, cmd -> run(cmd | " >/dev/null 2>&1") == 0) then (
 	if opts.Verbose == true then print("	found");
 	return true;
     ) else (
@@ -21,6 +19,9 @@ checkProgramPath = (name, cmds, programPath, opts) -> (
 	return false;
     )
 )
+
+addPrefix = (cmd, prefix) ->
+    if match(prefix_1, first separate(" ", cmd)) then prefix_2 | cmd else cmd
 
 getProgramPath = (name, cmds, opts) -> (
     pathsToTry := {};
@@ -33,21 +34,31 @@ getProgramPath = (name, cmds, opts) -> (
     if getenv "PATH" != "" then
 	pathsToTry = join(pathsToTry, separate(":", getenv "PATH"));
     pathsToTry = apply(pathsToTry, addSlash);
-    scan(pathsToTry, pathToTry ->
-	if checkProgramPath(name, cmds, pathToTry, opts) then
-	    break pathToTry)
+    prefixes := {("default", ".*", "")} | opts.Prefix;
+    scan(pathsToTry, pathToTry -> (
+	if opts.Verbose == true then
+	    print("checking for " | name | " in " | pathToTry | "...");
+	prefix := scan(prefixes, prefix -> (
+	    if opts.Verbose == true and #prefixes > 1 then
+		print("	 trying " | prefix_0 | " prefix...");
+	    if checkProgramPath(name, apply(cmds, cmd ->
+		pathToTry | addPrefix(cmd, prefix)), opts) then break prefix)
+	);
+	if prefix =!= null then break (pathToTry, prefix)
+    ))
 )
 
 loadProgram = method(TypicalValue => Program,
-    Options => {RaiseError => true, Verbose => false})
+    Options => {RaiseError => true, Verbose => false, Prefix => {}})
 loadProgram(String, String) := opts -> (name, cmd) ->
     loadProgram(name, {cmd}, opts)
 loadProgram(String, List) := opts -> (name, cmds) -> (
-    programPath := getProgramPath(name, cmds, opts);
-    if programPath === null then
+    programPathAndPrefix := getProgramPath(name, cmds, opts);
+    if programPathAndPrefix === null then
 	if opts.RaiseError then error("could not find " | name)
 	else return null;
-    new Program from {"name" => name, "path" => programPath}
+    new Program from {"name" => name, "path" => programPathAndPrefix_0,
+	"prefix" => programPathAndPrefix_1}
 )
 
 runProgram = method(TypicalValue => ProgramRun,
