@@ -818,8 +818,8 @@ set(gfan_CLINKER  "${CMAKE_C_COMPILER}   ${LDFLAGS}")
 set(gfan_CCLINKER "${CMAKE_CXX_COMPILER} ${LDFLAGS}")
 if(CDDLIB_FOUND)
   set(gfan_OPTFLAGS "${gfan_OPTFLAGS} -I${CDDLIB_INCLUDE_DIR}")
-  set(gfan_CLINKER  "${gfan_CLINKER}  -L${CDDLIB_LIBRARIES}")
-  set(gfan_CCLINKER "${gfan_CCLINKER} -L${CDDLIB_LIBRARIES}")
+  set(gfan_CLINKER  "${gfan_CLINKER}  -L${CDDLIB_LIBRARY_DIR}")
+  set(gfan_CCLINKER "${gfan_CCLINKER} -L${CDDLIB_LIBRARY_DIR}")
 endif()
 ExternalProject_Add(build-gfan
   URL               ${M2_SOURCE_URL}/gfan0.6.2.tar.gz
@@ -1006,7 +1006,7 @@ set(topcom_CPPFLAGS "${CPPFLAGS}")
 set(topcom_LDFLAGS  "${LDFLAGS}")
 if(CDDLIB_FOUND)
   set(topcom_CPPFLAGS "${topcom_CPPFLAGS} -I${CDDLIB_INCLUDE_DIR}")
-  set(topcom_LDFLAGS  "${topcom_LDFLAGS}  -L${CDDLIB_LIBRARIES}")
+  set(topcom_LDFLAGS  "${topcom_LDFLAGS}  -L${CDDLIB_LIBRARY_DIR}")
 endif()
 ExternalProject_Add(build-topcom
   URL               ${M2_SOURCE_URL}/TOPCOM-0.17.8.tar.gz
