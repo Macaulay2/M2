@@ -354,7 +354,7 @@ associatedPrimes Module := List => opts -> M -> ( -- modified code in ass1 for m
      d := dim polyRing;
      n := if opts.CodimensionLimit >= 0 then min(d, opts.CodimensionLimit) else d;
      if c == d and isHomogeneous M then return {sub(ideal gens polyRing, ring M)};
-     C := resolution(M1, LengthLimit => 1+n);
+     -- C := resolution(M1, LengthLimit => 1+n);
      if M.cache#?"associatedPrimesCodimLimit" then (
           if n < d and n <= M.cache#"associatedPrimesCodimLimit" then return select(previousPrimes, P -> codim P <= n);
           c = 1 + M.cache#"associatedPrimesCodimLimit";
@@ -363,14 +363,13 @@ associatedPrimes Module := List => opts -> M -> ( -- modified code in ass1 for m
      else remove(M.cache, "associatedPrimesCodimLimit");
      previousPrimes | (flatten apply(toList(c..n), i -> (
           if debugLevel > 0 then print("Computing associated primes of codim " | toString i);
-          A := image transpose C.dd_i : ker transpose C.dd_(i+1); -- ann Ext^i(M, R) (consider colon.m2)
+          A := ann Ext^i(M1, polyRing);
+          -- A := image transpose C.dd_i : ker transpose C.dd_(i+1); -- ann Ext^i(M, R) (consider colon.m2)
           select(minimalPrimes A, P -> codim P == i)
      )))/(P -> trim sub(P, ring M))
      )
 )
 associatedPrimes Ring := List => opts -> R -> associatedPrimes comodule ideal R
-
-bracketPower = (I, n) -> ideal apply(I_*, f -> f^n)
 
 primaryDecomposition Module := List => o -> M -> ( -- returns a primary decomposition of 0 in M
      if not M.cache#?"primaryComponents" then M.cache#"primaryComponents" = new MutableHashTable;
@@ -396,6 +395,11 @@ primaryDecomposition Module := List => o -> M -> ( -- returns a primary decompos
      apply(AP, p -> M.cache#"primaryComponents"#p)
 )
 primaryDecomposition Ring := List => opts -> R -> primaryDecomposition comodule ideal R
+
+-- Helper functions for primary decomposition
+
+bracketPower = (I, n) -> ideal apply(I_*, f -> f^n)
+
 
 TEST /// -- non-cyclic modules
 R = QQ[x_0..x_3]
