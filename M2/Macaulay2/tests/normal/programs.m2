@@ -11,6 +11,7 @@ fileMode(7*64 + 5*8 + 5, fn)
 program = loadProgram(name, name)
 assert(program#"name" == name)
 assert(program#"path" == dir)
+assert(net program == name)
 
 pr = runProgram(program, "world", KeepFiles => true)
 assert(pr#"command" == fn | " world")

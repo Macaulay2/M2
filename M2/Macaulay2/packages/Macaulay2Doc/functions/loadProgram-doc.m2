@@ -1,12 +1,13 @@
 document {
-    Key => Program,
+    Key => {Program, (net, Program)},
     Headline => "external program object",
     PARA {"A hash table returned by ", TO "loadProgram",
 	" with the following strings as keys:"},
     UL {
 	{TT "\"name\"", ", the name of the loaded program.  ",
 	    "This comes from the first argument passed to ",
-	    TO "loadProgram", "."},
+	    TO "loadProgram", ".  It is also what is displayed when ",
+	    "printing a Program."},
 	{TT "\"path\"", ", the path to the program as determined by ",
 	    TO "loadProgram", "."}},
     SeeAlso => {"programPaths", "loadProgram"}

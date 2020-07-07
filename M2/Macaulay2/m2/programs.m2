@@ -95,4 +95,5 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
     new ProgramRun from result
 )
 
+net Program := program -> program#"name"
 net ProgramRun := pr -> net pr#"return value"
