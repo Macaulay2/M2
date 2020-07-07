@@ -9,7 +9,11 @@ document {
 	    TO "loadProgram", ".  It is also what is displayed when ",
 	    "printing a Program."},
 	{TT "\"path\"", ", the path to the program as determined by ",
-	    TO "loadProgram", "."}},
+	    TO "loadProgram", "."},
+	{TT "\"prefix\"", ", a sequence of three strings identifying the ",
+	    "prefix prepended to the binary executables.  See ",
+	    TO "loadProgram", ", specifically the description of the ",
+	    TT "Prefix", " option, for more."}},
     SeeAlso => {"programPaths", "loadProgram"}
 }
 
@@ -42,6 +46,7 @@ document {
     Key => {loadProgram,
 	(loadProgram, String, String),
 	(loadProgram, String, List),
+	[loadProgram, Prefix],
 	[loadProgram, RaiseError],
 	[loadProgram, Verbose]},
     Headline => "load external program",
@@ -58,6 +63,23 @@ document {
 	    "whether to raise an error if the program is not found.",
 	Verbose => Boolean =>
 	    "whether to inform the user of each path that is checked.",
+	Prefix => List => {
+	    "a list of sequences containing three strings identifying a ",
+	    "prefix that is added to the executable binaries belonging to the ",
+	    "program by some distributions.  These sequences should be of the ",
+	    "form ", TT "(distribution, regex, prefix)", " where: ",
+		UL {
+		    {TT "distribution", " identifies the name of the ",
+			"distribution that uses the prefix, e.g., ",
+			"\"debian\".  It is only used for printing messages ",
+			"when ", TT "Verbose", " is set to ", TO "true", "."},
+		    {TT "regex", " is a ",
+			TO2("regular expressions", "regular expression"),
+			" that should match all binary executables that ",
+			"need the prefix."},
+		    {TT "prefix", " is the prefix itself."}
+		}
+	}
     },
     Outputs => {Program => { "the program that was loaded.  ",
 	"If the program is not found and ", TT "RaiseError", " is set to ",
@@ -74,6 +96,8 @@ document {
 	{"Each path specified by the user's ", TT "PATH",
 	    " environment variable."}
     },
+    PARA {"For each path, any prefixes specified by the ", TT "Prefix",
+	" option are checked."},
     PARA {"Once this is successful (i.e., ", TT "cmd", " or each element of ",
 	TT "cmds", " returns a value of 0), then a ", TO "Program",
 	" object is returned.  If it is unsuccessful, then either an error is ",
@@ -85,5 +109,12 @@ document {
     EXAMPLE lines ///
 	programPaths#"gfan" = "/path/to/gfan/"
 	gfan = loadProgram("gfan", "gfan --help", Verbose => true)///,
+    PARA {"One program that is shipped with a variety of prefixes in ",
+	"different distributions and for which the ", TT "Prefix",
+	" option is useful is TOPCOM:"},
+    EXAMPLE {///loadProgram("topcom", "cube 3", Verbose => true, Prefix => {
+    ("debian", ".*", "topcom-"),
+    ("fedora", "^(cross|cube|cyclic|hypersimplex|lattice)$", "TOPCOM-"),
+    ("gentoo", "^cube$", "topcom_")})///},
     SeeAlso => {"Program", "programPaths", "runProgram"}
 }
