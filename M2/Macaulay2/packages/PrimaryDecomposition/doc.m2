@@ -339,8 +339,8 @@ document { Key => {(irreducibleDecomposition,MonomialIdeal),irreducibleDecomposi
      ///,
      Outputs => {{ "a list of irreducible monomial ideals whose intersection is ", TT "I" }}}
 
-document { 
-     Key => {(primaryDecomposition, Ideal),(primaryDecomposition,MonomialIdeal)},
+document {
+     Key => {primaryDecomposition,(primaryDecomposition, Ideal),(primaryDecomposition,MonomialIdeal)},
      Headline => "irredundant primary decomposition of an ideal",
      Usage => "primaryDecomposition I",
      Inputs => {
@@ -386,8 +386,8 @@ document {
      SeeAlso => {PrimaryDecomposition,(primaryDecomposition, Module),(associatedPrimes,Ideal), radical, minimalPrimes, topComponents, removeLowestDimension}
      }
      
-document { 
-     Key => {primaryDecomposition,(primaryDecomposition, Module),(primaryDecomposition, Ring)},
+document {
+     Key => {(primaryDecomposition, Module),(primaryDecomposition, Ring)},
      Headline => "irredundant primary decomposition of a module",
      Usage => "primaryDecomposition M",
      Inputs => {
@@ -448,11 +448,18 @@ document {
 	  "apply(comps, Q -> ideal mingens(I + ideal gens Q))",
 	  "I == intersect oo"
 	  },
+     PARA{},
+     "The results of the computation are stored in ", TT ///M.cache#"primaryComponents"///, 
+     ", which is a ", TO "HashTable", " whose keys are associated primes and values are      
+     the corresponding primary components. The computation may be interrupted at any point,
+     and can be resumed later without recomputing already-known primary components. To
+     display detailed information throughout the computation, set the global variable ",
+     TO "debugLevel", " to a value greater than 0, e.g. ", TT "debugLevel = 1", ".",
      Caveat => {"Note that although isolated components (i.e. those corresponding to minimal
-     primes) are unique, embedded components are never unique, and thus specifying
-     generators of an embedded component requires non-canonical choices. For speed 
-     purposes, this algorithm searches for embedded components obtained by adding a 
-     bracket power of the embedded prime, with exponent a power of 2. In particular, the
+     primes) are uniquely determined by the module, embedded components are never unique,
+     and thus specifying generators of an embedded component requires non-canonical choices.
+     For speed purposes, this algorithm searches for embedded components obtained by adding 
+     a bracket power of the embedded prime, with exponent a power of 2. In particular, the
      generators of an embedded component may not be of minimal possible degree."},
      SeeAlso => {(primaryDecomposition,Ideal),(associatedPrimes,Module),isPrimary,topComponents}
      }
