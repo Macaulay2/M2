@@ -10,7 +10,7 @@ document {
 	    "printing a Program."},
 	{TT "\"path\"", ", the path to the program as determined by ",
 	    TO "loadProgram", "."},
-	{TT "\"prefix\"", ", a sequence of three strings identifying the ",
+	{TT "\"prefix\"", ", a sequence of two strings identifying the ",
 	    "prefix prepended to the binary executables.  See ",
 	    TO "loadProgram", ", specifically the description of the ",
 	    TT "Prefix", " option, for more."}},
@@ -64,15 +64,11 @@ document {
 	Verbose => Boolean =>
 	    "whether to inform the user of each path that is checked.",
 	Prefix => List => {
-	    "a list of sequences containing three strings identifying a ",
+	    "a list of sequences containing two strings identifying a ",
 	    "prefix that is added to the executable binaries belonging to the ",
 	    "program by some distributions.  These sequences should be of the ",
-	    "form ", TT "(distribution, regex, prefix)", " where: ",
+	    "form ", TT "(regex, prefix)", " where: ",
 		UL {
-		    {TT "distribution", " identifies the name of the ",
-			"distribution that uses the prefix, e.g., ",
-			"\"debian\".  It is only used for printing messages ",
-			"when ", TT "Verbose", " is set to ", TO "true", "."},
 		    {TT "regex", " is a ",
 			TO2("regular expressions", "regular expression"),
 			" that should match all binary executables that ",
@@ -113,8 +109,8 @@ document {
 	"different distributions and for which the ", TT "Prefix",
 	" option is useful is TOPCOM:"},
     EXAMPLE {///loadProgram("topcom", "cube 3", Verbose => true, Prefix => {
-    ("debian", ".*", "topcom-"),
-    ("fedora", "^(cross|cube|cyclic|hypersimplex|lattice)$", "TOPCOM-"),
-    ("gentoo", "^cube$", "topcom_")})///},
+    (".*", "topcom-"),
+    ("^(cross|cube|cyclic|hypersimplex|lattice)$", "TOPCOM-"),
+    ("^cube$", "topcom_")})///},
     SeeAlso => {"Program", "programPaths", "runProgram"}
 }

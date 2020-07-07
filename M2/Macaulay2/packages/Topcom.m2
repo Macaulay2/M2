@@ -78,9 +78,9 @@ callTopcom = method()
 callTopcom(String, List) := (command, inputs) -> (
     if topcomProgram === null then
 	topcomProgram = loadProgram("topcom","cube 3", Prefix => {
-	    ("debian", ".*", "topcom-"),
-	    ("fedora", "^(cross|cube|cyclic|hypersimplex|lattice)$", "TOPCOM-"),
-	    ("gentoo", "^cube$", "topcom_")});
+	    (".*", "topcom-"), -- debian
+	    ("^(cross|cube|cyclic|hypersimplex|lattice)$", "TOPCOM-"), --fedora
+	    ("^cube$", "topcom_")}); --gentoo
     filename := temporaryFileName();
     infile := filename|".in";
     -- now create the output file

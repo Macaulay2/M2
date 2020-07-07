@@ -12,16 +12,16 @@ addSlash = programPath -> (
 
 checkProgramPath = (name, cmds, opts) -> (
     if all(cmds, cmd -> run(cmd | " >/dev/null 2>&1") == 0) then (
-	if opts.Verbose == true then print("	found");
+	if opts.Verbose == true then print("    found");
 	return true;
     ) else (
-	if opts.Verbose == true then print("	not found");
+	if opts.Verbose == true then print("    not found");
 	return false;
     )
 )
 
 addPrefix = (cmd, prefix) ->
-    if match(prefix_1, first separate(" ", cmd)) then prefix_2 | cmd else cmd
+    if match(prefix_0, first separate(" ", cmd)) then prefix_1 | cmd else cmd
 
 getProgramPath = (name, cmds, opts) -> (
     pathsToTry := {};
@@ -34,13 +34,14 @@ getProgramPath = (name, cmds, opts) -> (
     if getenv "PATH" != "" then
 	pathsToTry = join(pathsToTry, separate(":", getenv "PATH"));
     pathsToTry = apply(pathsToTry, addSlash);
-    prefixes := {("default", ".*", "")} | opts.Prefix;
+    prefixes := {(".*", "")} | opts.Prefix;
     scan(pathsToTry, pathToTry -> (
 	if opts.Verbose == true then
 	    print("checking for " | name | " in " | pathToTry | "...");
 	prefix := scan(prefixes, prefix -> (
 	    if opts.Verbose == true and #prefixes > 1 then
-		print("	 trying " | prefix_0 | " prefix...");
+		print("  trying prefix \"" | prefix_1 |
+		    "\" for executables matching \"" | prefix_0 | "\"...");
 	    if checkProgramPath(name, apply(cmds, cmd ->
 		pathToTry | addPrefix(cmd, prefix)), opts) then break prefix)
 	);
