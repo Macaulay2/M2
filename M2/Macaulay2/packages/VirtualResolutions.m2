@@ -453,6 +453,11 @@ multigradedPolynomialRing = n -> (
     ZZ/32003[xx, Degrees=>degs]
     )
 
+gradedPolynomialRing = n -> (
+    y := local y;
+    yy := flatten apply(#n, i -> apply(n_i+1, j -> y_(i,j)));
+    ZZ/32003[yy])
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 ----- Input: (S,M) = (Ring, Module)
@@ -487,29 +492,43 @@ multigradedRegularity(Thing, Thing, Module) := List => (X, S, M) -> (
         S = ring X;
         );
     n := #(degrees S)_0;
+    -- for products of projective space, the dimension is the
+    -- number of variables minus the rank of the Picard group
+    -- TODO: why is (n:degs-d) the right lower bound?
+    d := dim X;
+    degs := apply(n, i -> min(degrees M / (deg -> deg_i)));
+    -- TODO: why is (n:r) the right upper bound?
     r := regularity M;
     H := hilbertPolynomial(X, M);
+    -- TODO: fix this comment
     -- We only search in the positive cone and up to the regularity of M
-    L := pairs cohomologyHashTable(M', toList(n:0), toList(n:r));
+    -- TODO: as we twist the module, the window should move also
+    -- maybe lower corner is bounded by the minimum degree of the generators?
+    low := degs-toList(n:d);
+    high := apply(n, i -> max({r} | degrees M / (deg -> deg_i)));
+    L := pairs cohomologyHashTable(M', low, high);
     -- Based on findHashTableCorner from TateOnProducts
     P := multigradedPolynomialRing toList(n:0);
+    -- We use this trick 
+    Q := gradedPolynomialRing toList(n:0);
+    phi := map(P, Q, gens P);
     gt := new MutableHashTable;
     apply(L, ell -> (
             -- Check that Hilbert function and Hilbert polynomial match
             -- (this imposes a condition on the alternating sum of local cohomology dimensions)
             if hilbertFunction(ell_0_0, M) != (map(QQ, ring H, ell_0_0))(H) then (
-                gt#(ell_0_0) = true;
-                );
+                gt#(ell_0_0) = true);
             -- Check that higher local cohomology vanishes (i.e., H^i_B(M) = 0 for i > 1)
-            if ell_1 != 0 and ell_0_1 > 0 then (
-                gt#(ell_0_0) = true;
-                apply(n, j -> gt#(ell_0_0 + degree P_j) = true);
-                );
+	    -- TODO: do I really need to check ell_0_1 > 0?
+            if ell_1 != 0 and ell_0_1 > 0 then
+	        scan(flatten entries phi basis(0, ell_0_1, Q),
+		    j -> gt#(ell_0_0 + degree j) = true);
             )
         );
-    low := apply(n, i -> min (L / (ell -> ell_0_0_i - 1)));
-    I := ideal apply(L, ell -> if not gt#?(ell_0_0) then product(n, j -> P_j^(ell_0_0_j - low_j)) else 0);
-    sort apply(flatten entries mingens I, g -> (flatten exponents g) + low)
+    I := ideal apply(L, ell ->
+	if all(n, j -> ell_0_0_j >= degs_j)
+	and not gt#?(ell_0_0) then product(n, j -> P_j^(ell_0_0_j - degs_j)) else 0);
+    sort apply(flatten entries mingens I, g -> (flatten exponents g) + degs)
     )
 
 --------------------------------------------------------------------

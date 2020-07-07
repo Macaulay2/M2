@@ -192,6 +192,7 @@ TEST ///
 ///
 
 -- Tests for multigradedRegularity
+-- TODO: takes too long
 TEST ///
     X = toricProjectiveSpace(1)**toricProjectiveSpace(2);
     S = ring X; B = ideal X;
