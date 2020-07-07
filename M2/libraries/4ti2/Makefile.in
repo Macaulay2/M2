@@ -22,8 +22,9 @@ else
 CONFIGOPTIONS += --enable-shared
 endif
 
-# this is how we control whether to link with libgmp.a or with libgmp.dylib:
-BUILDOPTIONS = GMP_LIBS="@LIBS_GMP@" GLPK_LIBS="@LIBS_GLPK@"
+# This is how we control whether to link with libgmp.a or with libgmp.dylib:
+# But using it leads to a mysterious linker bug on the Mac:
+# BUILDOPTIONS = GMP_LIBS="@LIBS_GMP@" GLPK_LIBS="@LIBS_GLPK@"
 
 # according to the documentation, specifying "no" for this option to configure should prevent GMP from being used,
 # but it doesn't
