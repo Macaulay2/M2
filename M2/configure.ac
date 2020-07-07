@@ -57,8 +57,8 @@ do case $i in
 done
 
 dnl: homebrew-provided compilers don't look here:
-CPPFLAGS="-I/usr/include -I/usr/local/include $CPPFLAGS"
-LDFLAGS="-L/usr/lib -L/usr/local/lib $LDFLAGS"
+CPPFLAGS="$CPPFLAGS -I/usr/include -I/usr/local/include"
+LDFLAGS="$LDFLAGS -L/usr/lib -L/usr/local/lib"
 
 dnl AC_MSG_CHECKING(whether $FIND is GNU find)
 dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
