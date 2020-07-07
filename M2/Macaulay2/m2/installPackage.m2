@@ -656,8 +656,7 @@ installPackage Package := opts -> pkg -> (
 		    -- read, separate, and store example output
 		    if fileExists outf then (
 			 outstr := reproduciblePaths outf;
-			 pkg#"example results"#fkey = drop(
-			      separateM2output(outstr, "Install" => true), -1)
+			 pkg#"example results"#fkey = drop(separateM2output outstr,-1)
 		    )
 		    else (
 			 if debugLevel > 1 then stderr << "--warning: missing file " << outf << endl;
