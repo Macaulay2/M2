@@ -717,6 +717,10 @@ AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack givaro ")
 #    flint depends on gmp (or mpir) and mpfr
 #    frobby depends on gmp
 
+AC_SUBST(FILE_PREREQS)
+# This is the list of files found in the system that we need to be there for the user who
+# installs a binary distribution.
+
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
 BUILD_ALWAYS=""
@@ -963,7 +967,15 @@ dnl fi
 
 AC_MSG_CHECKING(whether the package cohomcalg is installed)
 if test "`type -t cohomcalg`" = file
-then AC_MSG_RESULT(yes)
+then if test "$OS" = Darwin -a "$DMG" = yes
+     then # On the Mac, we have no way (yet) to install prerequisite homebrew packages:
+          # the user just copies a directory tree to /Applications.  Change this when
+	  # porting to homebrew.
+	  AC_MSG_RESULT([yes, will build anyway])
+          BUILD_cohomcalg=yes
+     else AC_MSG_RESULT(yes)
+          FILE_PREREQS="$FILE_PREREQS `type -p cohomcalg`"
+     fi
 else AC_MSG_RESULT([no, will build])
      BUILD_cohomcalg=yes
 fi
@@ -984,7 +996,15 @@ fi
 
 AC_MSG_CHECKING(whether the package lrs is installed)
 if test "`type -t lrs`" = file
-then AC_MSG_RESULT(yes)
+then if test "$OS" = Darwin -a "$DMG" = yes
+     then # On the Mac, we have no way (yet) to install prerequisite homebrew packages:
+          # the user just copies a directory tree to /Applications.  Change this when
+	  # porting to homebrew.
+	  AC_MSG_RESULT([yes, will build anyway])
+          BUILD_lrslib=yes
+     else AC_MSG_RESULT(yes)
+          FILE_PREREQS="$FILE_PREREQS `type -p lrs`"
+     fi
 else AC_MSG_RESULT([no, will build])
      BUILD_lrslib=yes
 fi
@@ -1737,6 +1757,7 @@ AC_MSG_NOTICE([using BUILDSUBLIST  = $BUILDSUBLIST])
 AC_MSG_NOTICE([using BUILDPROGLIST = $BUILDPROGLIST])
 AC_MSG_NOTICE([using BUILDLIST     = $BUILDLIST])
 AC_MSG_NOTICE([using BUILD_ALWAYS  = $BUILD_ALWAYS])
+AC_MSG_NOTICE([using FILE_PREREQS  = $FILE_PREREQS])
 AC_MSG_NOTICE([link using:])
 dnl the order of this list should agree with that in Macaulay2/bin/Makefile.in
 AC_MSG_NOTICE([     BUILTLIBS          = $BUILTLIBS])
