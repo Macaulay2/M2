@@ -97,7 +97,7 @@ callTopcom(String, List) := (command, inputs) -> (
     if debugLevel >= 2 then << "-- " << command << ": executing " << executable << endl;
 
     retval := run executable;
-    --if 0 =!= retval then error ("error running topcom:"| net get errfile);
+    if 0 =!= retval then error ("error running topcom:"| net get errfile);
 
     if debugLevel >= 5 then << "-- " << command << ": output = " << net get outfile << endl;
     if debugLevel >= 6 then << "-- " << command << ": stderr = " << net get errfile << endl;    
