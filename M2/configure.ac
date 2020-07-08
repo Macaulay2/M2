@@ -971,10 +971,12 @@ then if test "$OS" = Darwin -a "$DMG" = yes
      then # On the Mac, we have no way (yet) to install prerequisite homebrew packages:
           # the user just copies a directory tree to /Applications.  Change this when
 	  # porting to homebrew.
+     	  # Also, the package CohomCalg looks only in the directory where Macaulay2's binaries are
 	  AC_MSG_RESULT([yes, will build anyway])
           BUILD_cohomcalg=yes
-     else AC_MSG_RESULT(yes)
-          FILE_PREREQS="$FILE_PREREQS `type -p cohomcalg`"
+     else AC_MSG_RESULT([yes, will build anyway])
+     	  # the package CohomCalg looks only in the directory where Macaulay2's binaries are
+          BUILD_cohomcalg=yes
      fi
 else AC_MSG_RESULT([no, will build])
      BUILD_cohomcalg=yes
