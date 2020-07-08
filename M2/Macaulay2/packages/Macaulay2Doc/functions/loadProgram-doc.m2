@@ -67,15 +67,10 @@ document {
 	    "a list of sequences containing two strings identifying a ",
 	    "prefix that is added to the executable binaries belonging to the ",
 	    "program by some distributions.  These sequences should be of the ",
-	    "form ", TT "(regex, prefix)", " where: ",
-		UL {
-		    {TT "regex", " is a ",
-			TO2("regular expressions", "regular expression"),
-			" that should match all binary executables that ",
-			"need the prefix."},
-		    {TT "prefix", " is the prefix itself."}
-		}
-	}
+	    "form ", TT "(regex, prefix)", " where ", TT "regex", " is a ",
+	    TO2("regular expressions", "regular expression"), " that should ",
+	    "match all binary executables that need the prefix and ",
+	    TT "prefix", " is the prefix itself."}
     },
     Outputs => {Program => { "the program that was loaded.  ",
 	"If the program is not found and ", TT "RaiseError", " is set to ",
