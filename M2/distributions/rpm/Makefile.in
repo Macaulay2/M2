@@ -103,10 +103,10 @@ file-prereqs: .prepared always
 	do if [ -f $$i ] ; then ( set -x ; ldd $$i ) ; fi ;		\
 	done								\
 	    | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//'	\
-	    | egrep '^/'						\
+	    | egrep -v '^$(BUILTLIBPATH)'					\
 	    | sort | uniq						\
 	    > $@ || true
-	for i in @FILE_PREREQS@ ; do echo $i ; done >>$@
+	for i in @FILE_PREREQS@ ; do echo $$i ; done >>$@
 
 # Typical results returned by "rmp --query -f":
 #     gmp-devel-4.3.1-7.el6_2.2.x86_64
