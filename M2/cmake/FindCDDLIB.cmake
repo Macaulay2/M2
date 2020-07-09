@@ -3,6 +3,7 @@
 #
 # This file sets up cddlib for CMake. Once done this will define
 #  CDDLIB_FOUND             - system has the CDDLIB library
+#  CDDLIB_ROOT              - the CDDLIB install prefix
 #  CDDLIB_INCLUDE_DIR       - the CDDLIB include directory
 #  CDDLIB_LIBRARIES         - Libraries needed to use CDDLIB
 #
@@ -17,15 +18,17 @@ find_path(CDDLIB_INCLUDE_DIR NAMES cdd.h
   PATH_SUFFIXES cdd cddlib
   )
 
-find_path(CDDLIB_LIBRARY_DIR NAMES cdd cddgmp
-  PATHS ${LIB_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/lib
-  )
-
 find_library(CDDLIB_LIBRARIES NAMES cdd cddgmp
   PATHS ${LIB_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/lib
   )
 
-include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(CDDLIB DEFAULT_MSG CDDLIB_INCLUDE_DIR CDDLIB_LIBRARY_DIR CDDLIB_LIBRARIES)
+if(CDDLIB_LIBRARIES)
+  get_filename_component(CDDLIB_LIBRARY_DIR "${CDDLIB_LIBRARIES}" DIRECTORY)
+endif()
 
-mark_as_advanced(CDDLIB_INCLUDE_DIR CDDLIB_LIBRARY_DIR CDDLIB_LIBRARIES)
+string(REGEX REPLACE "/include(/${CMAKE_LIBRARY_ARCHITECTURE}$)?" "" CDDLIB_ROOT "${CDDLIB_INCLUDE_DIR}")
+
+include(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(CDDLIB DEFAULT_MSG CDDLIB_ROOT CDDLIB_INCLUDE_DIR CDDLIB_LIBRARY_DIR CDDLIB_LIBRARIES)
+
+mark_as_advanced(CDDLIB_ROOT CDDLIB_INCLUDE_DIR CDDLIB_LIBRARY_DIR CDDLIB_LIBRARIES)
