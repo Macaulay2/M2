@@ -132,30 +132,36 @@ equidimHull Module := Module => M -> ( -- equidimensional hull of 0 in a module 
      kernel map(target ddh, M, matrix ddh)
 )
 
-maxRegSeq = method()
-maxRegSeq Ideal := Ideal => I -> (
+maxRegSeq = method(Options => {Strategy => "Quick"})
+maxRegSeq Ideal := Ideal => opts -> I -> (
      -- attempts to find sparse maximal regular sequence contained in an ideal
-     -- ideal should be in a polynomial ring over a (sufficiently large) field
+     -- ideal should be in a CM ring (with sufficiently large coefficientRing)
      G := sort flatten entries mingens I;
-     c := codim I;
+     t := timing codim I;
+     c := last t;
+     t0 := 1 + ceiling first t;
      if c == #G then return ideal G;
+     k := coefficientRing ring I;
      J := ideal(G#0);
-     for j from 1 to c-1 do (
-          (t, foundNextNZD) := (0, false);
-          while not foundNextNZD and c+t < #G do (
-               coeffList := {0_(ring I), random coefficientRing ring I};
-               if debugLevel > 0 then print("Trying generators " | toString(j, #G-(t+1)));
+     for i from 1 to c-1 do (
+          (j, foundNextNZD) := (#G-1, false); -- starts searching from end
+          while not foundNextNZD and j >= c do (
+               coeffList := {0_k, 1_k, random k};
+               if debugLevel > 0 then print("Trying generators " | toString(i, j));
                for a in coeffList do (
-                    cand := G#j + a*G#(-t-1);
+                    cand := G#i + a*G#j;
                     K := J + ideal cand;
-                    if debugLevel > 0 then print("Testing regularity...");
-                    if codim K == 1 + #J_* then (
+                    if debugLevel > 0 then print("Testing regular sequence...");
+                    n := if opts.Strategy == "Quick" then ( 
+                         try ( alarm t0; codim K ) else infinity
+                    ) else codim K;
+                    if n == 1 + #J_* then (
                          J = K;
                          foundNextNZD = true;
                          break;
                     );
                );
-               t = t+1;
+               j = j-1;
           );
      );
      J
