@@ -22,8 +22,6 @@ export {
      --"hilbertPt", 
      --"statePolytopePoints", 
      --"statePolytopePoints", 
-     --"printHilbPt", 
-     --"createPolymakeInputFile",
      "polymakeStatePolytope", --documented
      --"maxUGBDegree", 
      "isStable" --documented
@@ -63,28 +61,23 @@ fullStatePolytopePoints(ZZ,Ideal,List) := (m,I,initialIdealsList) -> (
      sum apply(m+1,k-> statePolytopePoints(k,I,initialIdealsList))
      )
 
-printHilbPt = (L,I) -> ( str:= "1";
-for j from 0 to (numgens ring(I)-1) do str = concatenate(str,concatenate(" ",toString lift(L_j,ZZ)));
-return str
+polymake = null
+
+runPolymake = args -> (
+    if polymake === null then
+	polymake = findProgram("polymake", "polymake --version");
+    polymakeRun := runProgram(polymake, args);
+    polymakeRun#"output"
 )
 
-createPolymakeInputFile = (statePolytopePointsList,I) -> (
-openOut "temporarypolymakefile.txt";
-polymakeinput :=  concatenate("_application polytope\nPOINTS",newline);
-for i from 0 to (#statePolytopePointsList - 1) do polymakeinput = concatenate(polymakeinput,concatenate(printHilbPt(statePolytopePointsList_i,I),newline));
-"temporarypolymakefile.txt" << polymakeinput << closeOut
-)
+M2toPolymake = points ->
+    "'my $p = new Polytope(POINTS=>[" |
+	demark(", ", apply(points, point ->
+	    "[" | demark(", ", toString \ prepend(1, point)) | "]")) |
+	"]); print $p->VERTICES;'"
 
-polymakeToM2 = (st) -> (
-p := concatenate("VERTICES",concatenate(newline,"1 "));
-st = replace(p,"{{",st);
-p = concatenate(newline,"1 ");
-st = replace(p,"},{",st);
-st = replace(" ",", ",st);
-st = concatenate(st,"}}");
-return value st
-)
-
+polymakeToM2 = (st) ->
+    apply(lines st, line -> value \ drop(separate(" ", line), 1))
 
 maxUGBDegree = (L) -> (
      (max apply(#L, i -> max apply(#(L_i), j -> degree L_i_j)))_0
@@ -93,50 +86,33 @@ maxUGBDegree = (L) -> (
 polymakeStatePolytope = method(
      TypicalValue => List
      )
-polymakeStatePolytope(ZZ,Ideal) := (m,I) -> ( initialIdealsList := initialIdeals(I);
-createPolymakeInputFile(statePolytopePoints(m,I,initialIdealsList),I);
-polymakesession := "!polymake temporarypolymakefile.txt VERTICES";
-polymakesession << closeOut;
-st := get polymakesession;
-polymakeToM2(st)
+polymakeStatePolytope(ZZ,Ideal) := (m,I) -> (
+    initialIdealsList := initialIdeals(I);
+    st := runPolymake M2toPolymake statePolytopePoints(m,I,initialIdealsList);
+    polymakeToM2(st)
 )
 
-polymakeStatePolytope(Ideal) := (I) -> ( initialIdealsList := initialIdeals(I);
-createPolymakeInputFile(fullStatePolytopePoints(maxUGBDegree(initialIdealsList),I,initialIdealsList),I);
-polymakesession := "!polymake temporarypolymakefile.txt VERTICES";
-polymakesession << closeOut;
-st :=  get polymakesession;
-polymakeToM2(st)
+polymakeStatePolytope(Ideal) := (I) -> (
+    initialIdealsList := initialIdeals(I);
+    st := runPolymake M2toPolymake fullStatePolytopePoints(
+	maxUGBDegree(initialIdealsList),I,initialIdealsList);
+    polymakeToM2(st)
 )
-
-
-
-
 
 isStable = method(
      TypicalValue => Boolean
      )
-isStable(ZZ,Ideal) := (m,I) -> (   
+isStable(ZZ,Ideal) := (m,I) -> (
      initialIdealsList := initialIdeals(I);
-createPolymakeInputFile(statePolytopePoints(m,I,initialIdealsList),I);
-polymakesession := "!polymake temporarypolymakefile.txt VERTICES";
-polymakesession << closeOut;
-st := get polymakesession;
-    str:= st;
-     barycenter := toString ((sum(statePolytopePoints(m,I,initialIdeals(I)))_0) / (numgens ring(I) ));
-     barycenterstring:= concatenate("POINTS",concatenate(newline,"1 "));
-     for i from 0 to (numgens(ring(I))-1) do barycenterstring = concatenate(barycenterstring, concatenate(barycenter," "));
-     str = replace("VERTICES",barycenterstring,str);
-     openOut "augmentedtemporarypolymakefile.txt";
-     "augmentedtemporarypolymakefile.txt" << "_application polytope\n" << str << closeOut;
-     polymakesession2 := "!polymake augmentedtemporarypolymakefile.txt VERTICES";
-     polymakesession2 << closeOut;
-     augmentedstatepolytope := get polymakesession2;
-     if set polymakeToM2(st) === set polymakeToM2(augmentedstatepolytope)   then true else false
-          )
-     
-
-
+     points := statePolytopePoints(m,I,initialIdealsList);
+     st := runPolymake M2toPolymake points;
+     n := numgens ring I;
+     barycenter := apply(n, i -> sum points_0 / n);
+     augmentedpoints := prepend(barycenter, points);
+     augmentedstatepolytope :=  runPolymake M2toPolymake augmentedpoints;
+     if set polymakeToM2(st) === set polymakeToM2(augmentedstatepolytope)
+	then true else false
+)
 
 beginDocumentation()
 document {    
