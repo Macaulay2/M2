@@ -1,15 +1,16 @@
 
 newPackage(
        "SparseResultants",
-        Version => "0.9", 
-        Date => "June 13, 2020",
+        Version => "0.9.1", 
+        Date => "July 10, 2020",
         Headline => "computations with sparse resultants",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
         PackageExports => {"Resultants"},
         DebuggingMode => false
 )
 
-export{"sparseResultant", "sparseDiscriminant", "exponentsMatrix", "genericLaurentPolynomials", "denseResultant", "denseDiscriminant", "genericMultihomogeneousPolynomial"}
+export{"sparseResultant", "sparseDiscriminant", "exponentsMatrix", "genericLaurentPolynomials", "denseResultant", "denseDiscriminant", "genericMultihomogeneousPolynomial",
+       "MultidimensionalMatrix", "multidimensionalMatrix", "genericMultidimensionalMatrix", "randomMultidimensionalMatrix", "transposition"}
 
 SPARSERESULTANT := local SPARSERESULTANT;
 
@@ -462,6 +463,208 @@ genericMultihomogeneousPolynomial (VisibleList,VisibleList) := o -> (k,d) -> (
     sum(gens A,e -> (b = last baseName e; e * product(n,i -> (mm_i)_(b_i))))
 );
 
+-- Hyperdeterminants --
+
+MultidimensionalMatrix = new Type of HashTable;
+
+MultidimensionalMatrix#{Standard,AfterPrint} = MultidimensionalMatrix#{Standard,AfterNoPrint} = M -> (
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Multidimensional matrix of format " << M#"format" << " over " << M#"ring" << endl;
+);
+
+net MultidimensionalMatrix := M -> net(M#"list");
+
+multidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix);
+
+multidimensionalMatrix (List) := (L) -> (
+    X := makeRing L;
+    F := makeMultilinearForm(L,X);
+    L' := makeList(F,X);
+    new MultidimensionalMatrix from {
+        "format" => apply(X,i -> #i),
+        "list" => L',
+        "multilinearForm" => F,
+        "varsMultilinearForm" => X,
+        "ring" => coefficientRing ring F  
+    }
+);
+
+Thing * MultidimensionalMatrix := (a,M) -> (
+    applyToEntries(M,m -> a*m)
+);
+
+RingElement * MultidimensionalMatrix := (a,M) -> (
+    applyToEntries(M,m -> a*m)
+);
+
+- MultidimensionalMatrix := (M) -> (-1) * M;
+
+MultidimensionalMatrix - MultidimensionalMatrix := (M,N) -> (
+   if M#"format" != N#"format" then error "expected matrix of the same format";
+   multidimensionalMatrix(M#"list" - N#"list")
+);
+
++ MultidimensionalMatrix := (M) -> M;
+
+MultidimensionalMatrix + MultidimensionalMatrix := (M,N) -> (
+   if M#"format" != N#"format" then error "expected matrix of the same format";
+   multidimensionalMatrix(M#"list" + N#"list")
+);
+
+MultidimensionalMatrix == MultidimensionalMatrix := (M,N) -> (
+   if M#"format" != N#"format" then return false;
+   if M#"ring" =!= N#"ring" then return false;
+   M#"multilinearForm" == N#"multilinearForm"
+);
+
+transposition = method();
+transposition (MultidimensionalMatrix,List) := (M,l) -> (
+    n := M#"format";
+    try assert(ring matrix {l} === ZZ and sort l == toList(0 .. #n-1)) else error("expected a permutation of the set "|toString toList(0 .. #n-1));
+    K := M#"ring";
+    X := M#"varsMultilinearForm"; 
+    n' := for i to #n-1 list n_(l_i);
+    X' := for i to #n-1 list X_(l_i);
+    R := K[flatten X'];
+    X' = apply(X',X0->apply(X0,u -> sub(u,R)));
+    multidimensionalMatrix makeList(sub(M#"multilinearForm",R),X')
+);
+
+makeRing = method();
+makeRing (List) := (L) -> (
+    if #L == 0 then error "expected a nonempty list";
+    n := {#L};
+    L' := first L;
+    while instance(L',List) do (
+        if #L' == 0 then error "expected nonempty lists";
+        n = prepend(#L',n);
+        L' = first L';
+    );
+    for i to #n-2 do L = flatten L;
+    K := ring matrix{L};
+    gensRing0(K,n)
+);
+
+makeMultilinearForm = method();
+makeMultilinearForm (List,List) := (L,X) -> (
+    if not instance(first L,List) then return ((matrix{last X})*transpose(matrix{L}))_(0,0);
+    X' := X_{0 .. #X-2};
+    return makeMultilinearForm(apply(L,l -> makeMultilinearForm(l,X')),X);
+);
+
+makeList = method();
+makeList (RingElement,List) := (F,X) -> (
+    K := coefficientRing ring F;
+    R := K[X_0]; for i from 1 to #X-1 do R = R[X_i];
+    C := sub(F,R);
+    for i to #X-1 do C = coeffs C; 
+    return C;
+);
+
+coeffs = method();
+coeffs (RingElement) := (F) -> flatten entries sub(last coefficients(matrix F,Monomials=>vars ring F),coefficientRing ring F);
+coeffs (List) := (L) -> apply(L,F -> coeffs F);
+
+applyToEntries = method();
+applyToEntries (List,Function) := (M,f) -> (
+    ff := method();
+    ff Thing := t -> f(t);
+    ff List := l -> apply(l,ff);
+    ff(M) 
+);
+applyToEntries (MultidimensionalMatrix,Function) := (M,f) -> multidimensionalMatrix applyToEntries(M#"list",f);
+
+genericMultidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix, Options => {CoefficientRing => ZZ});
+genericMultidimensionalMatrix (VisibleList,Boolean) := o -> (n,b) -> (
+    F := genericMultihomogeneousPolynomial(toSequence n,#n:1,CoefficientRing=>o.CoefficientRing);
+    K := coefficientRing coefficientRing ring F;
+    if b then F = sub(sub(F,apply(gens coefficientRing ring F,u -> u => random(K))),K[gens ring F]);
+    x := gens ring F;
+    X := {};
+    for i to #n-1 do (
+        X = append(X,x_{0 .. n_i -1});
+        x = x_{n_i .. #x-1}
+    );
+    multidimensionalMatrix makeList(F,X)
+);
+genericMultidimensionalMatrix (VisibleList) := o -> (n) -> genericMultidimensionalMatrix(n,false,CoefficientRing=>o.CoefficientRing);
+
+randomMultidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix, Options => {CoefficientRing => ZZ});
+randomMultidimensionalMatrix (VisibleList) := o -> (n) -> genericMultidimensionalMatrix(n,true,CoefficientRing=>o.CoefficientRing);
+
+GENSRING0 := local GENSRING0;
+
+gensRing0 = method();
+gensRing0 (Ring,List) := (K,n) -> (
+    if instance(GENSRING0_(K,n),List) then return GENSRING0_(K,n);
+    x := apply(#n,i -> getSymbol("x"|toString(i)));
+    X := apply(#n,i -> toList((x_i)_0 .. (x_i)_(n_i-1)));
+    R := K[flatten X];
+    GENSRING0_(K,n) = apply(X,X0->apply(X0,u -> u_R))
+);
+
+removeOneDim = method();
+removeOneDim (MultidimensionalMatrix) := (M) -> (
+    if all(M#"format",i -> i == 1) then return multidimensionalMatrix {coefficient(product gens ring M#"multilinearForm",M#"multilinearForm")};
+    X := select(M#"varsMultilinearForm",e -> #e > 1);
+    R := (M#"ring")[flatten X];
+    P := sub(sub(M#"multilinearForm",apply(select(M#"varsMultilinearForm",e -> #e == 1),t -> (first t)=>1)),R);
+    X = apply(X,X0->apply(X0,u -> sub(u,R)));
+    multidimensionalMatrix makeList(P,X)
+);
+
+canApplySchlafli = method();
+canApplySchlafli (List) := (n) -> (
+    if #n == 1 then return (true,0);
+    if #n == 2 then if n_0 == n_1 then return (true,0) else return (false,-1);
+    if #n == 3 and #unique n <= 2 then (
+        b := first commonest n;
+        a := n_0; if a == b then (a = n_1; if a == b then a = n_2);
+        if a >= 4 then return (false,-1);
+    );
+    k := apply(n,i -> i-1);
+    if 2*max(k) > sum k then return (false,-1);
+    for i to #n-1 do if first canApplySchlafli n_(toList delete(i,0..#n-1)) then return (true,i);
+    return (false,-1);
+);
+
+schlafliMethod = method(Options => {Strategy => null});
+schlafliMethod (MultidimensionalMatrix) := o -> M -> (
+    n := M#"format";
+    if #n <= 2 then return determinant(M,Strategy=>o.Strategy);
+    (b,i0) := canApplySchlafli n;
+    if not b then error "Schlafli's method cannot be applied";
+    F := M#"multilinearForm";
+    K := M#"ring";
+    X := M#"varsMultilinearForm";    
+    G := sub(F,(K[X_i0])[flatten X_(toList delete(i0,0..#n-1))]);
+    N := multidimensionalMatrix makeList(G,X_(toList delete(i0,0..#n-1)));
+    detN := schlafliMethod(N,Strategy=>o.Strategy);
+    d := first degree detN;
+    detN' := sub(sub(detN,first gens ring detN => 1),K[(gens ring detN)_{1 .. n_i0-1}]);
+    try assert(d == first degree detN') else error "unhomogenization failed";
+    Disc := affineDiscriminant;
+    if o.Strategy =!= null and o.Strategy =!= "Dense" and o.Strategy =!= "NotDense" then error "allowed strategies are \"Dense\" and \"NotDense\"";
+    if o.Strategy === "Dense" or (o.Strategy === null and numgens coefficientRing ring detN' > 0) then Disc = denseDiscriminant(d,n_i0-1);
+    Disc detN'
+);
+
+determinant (MultidimensionalMatrix) := o -> (M) -> (
+    n := M#"format";
+    k := apply(n,i -> i-1);
+    if 2*max(k) > sum k then error("the determinant for matrices of format "|toString(n)|" does not exist");
+    if n == {1} then return first M#"list";
+    if min n == 1 then return determinant(removeOneDim M,Strategy=>o.Strategy);
+    if #n == 2 then return determinant(matrix M#"list",Strategy=>null);
+    if #n == 3 then if first canApplySchlafli n then return schlafliMethod(M,Strategy=>o.Strategy);
+    if n == {2,2,2,2} then return schlafliMethod(M,Strategy=>o.Strategy);
+    K := if char M#"ring" == 0 then ZZ else ZZ/(char M#"ring");
+    A := sparseDiscriminant(exponentsMatrix genericMultihomogeneousPolynomial(n,toList(#n:1),CoefficientRing=>K),CoefficientRing=>K);
+    A (M#"multilinearForm")
+);
+
+
+-- end Hyperdeterminants --
+
 beginDocumentation() 
 
 document { 
@@ -609,6 +812,147 @@ document {
     SeeAlso => {sparseDiscriminant, affineDiscriminant, denseResultant, exponentsMatrix, genericLaurentPolynomials}
 }
 
+document { 
+    Key => {multidimensionalMatrix,(multidimensionalMatrix,List)}, 
+    Headline => "make a multidimensional matrix", 
+    Usage => "multidimensionalMatrix L", 
+    Inputs => {"L" => List => {"a list of nested lists representing a hyper-rectangular array of ring elements."}},
+    Outputs => {MultidimensionalMatrix => {"the corresponding multidimensional matrix."}},
+    EXAMPLE {
+        "multidimensionalMatrix {{0, 5}, {9, 3}, {7, 2}}",
+        "multidimensionalMatrix {{{1, 0}, {4, 3}}, {{3, 1}, {5, 9}}}",
+        "multidimensionalMatrix {{{7/3, 8, 0}, {6, 8, 3}}, {{3, 8, 2}, {9, 2, 4}}, {{0, 2, 9}, {1, 9, 5}}, {{2, 8, 4}, {9, 7, 7}}}"
+    },
+    SeeAlso => {(det,MultidimensionalMatrix)} 
+}
+
+document { 
+    Key => {MultidimensionalMatrix}, 
+    Headline => "the class of all multidimensional matrices", 
+    PARA{"A multidimensional matrix is a hyper-rectangular array of ring elements."}, 
+    SeeAlso => {"multidimensionalMatrix"}
+}
+
+document { 
+    Key => {transposition,(transposition,MultidimensionalMatrix,List)}, 
+    Headline => "transpose a multidimensional matrix", 
+    Usage => "transposition(M,s)", 
+    Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix"},
+               "s" => List => {"a permutation of the set ",TEX///$\{0,1\ldots,n-1\}$///}},
+    Outputs => {MultidimensionalMatrix => {"the ",TEX///$s$///,"-transposition of ",TEX///$M$///,"."}},
+    EXAMPLE {
+        "M = multidimensionalMatrix {{{3, 8}, {5, 9}, {4, 0}}, {{9, 6}, {3, 6}, {3, 1}}, {{7, 6}, {2, 0}, {0, 4}}, {{7, 2}, {3, 2}, {2, 5}}}",
+        "transposition(M,{1,0,2})",
+        "transposition(M,{2,0,1})"
+     }
+}
+
+document { 
+    Key => {(symbol +,MultidimensionalMatrix,MultidimensionalMatrix)}, 
+    Headline => "addition of two multidimensional matrices of the same format", 
+    Usage => "M + N", 
+    Inputs => {"M" => MultidimensionalMatrix,
+               "N" => MultidimensionalMatrix},
+    Outputs => {MultidimensionalMatrix => {"the sum ",TEX///$M+N$///}},
+    EXAMPLE {
+        "M = multidimensionalMatrix {{{1, 7}, {3, 6}, {1, 6}}, {{3, 5}, {4, 4}, {8, 0}}}",
+        "N = multidimensionalMatrix {{{1, 7}, {6, 5}, {5, 5}}, {{4, 3}, {3, 8}, {4, 1}}}",
+        "M + N"
+     }
+}
+undocumented {(symbol +,MultidimensionalMatrix)}
+
+document { 
+    Key => {(symbol -,MultidimensionalMatrix,MultidimensionalMatrix)}, 
+    Headline => "subtraction of two multidimensional matrices of the same format", 
+    Usage => "M - N", 
+    Inputs => {"M" => MultidimensionalMatrix,
+               "N" => MultidimensionalMatrix},
+    Outputs => {MultidimensionalMatrix => {"the subtraction ",TEX///$M-N$///}},
+    EXAMPLE {
+        "M = multidimensionalMatrix {{{1, 7}, {3, 6}, {1, 6}}, {{3, 5}, {4, 4}, {8, 0}}}",
+        "N = multidimensionalMatrix {{{1, 7}, {6, 5}, {5, 5}}, {{4, 3}, {3, 8}, {4, 1}}}",
+        "M - N",
+        "-M"
+     }
+}
+undocumented {(symbol -,MultidimensionalMatrix)}
+
+document { 
+    Key => {(symbol *,RingElement,MultidimensionalMatrix)}, 
+    Headline => "multiplication of a scalar with a multidimensional matrix", 
+    Usage => "e * N", 
+    Inputs => {"e" => RingElement,
+               "M" => MultidimensionalMatrix},
+    Outputs => {MultidimensionalMatrix => {"the multiplication ",TEX///$e*M$///}},
+    EXAMPLE {
+        "M = multidimensionalMatrix {{{1, 7}, {3, 6}, {1, 6}}, {{3, 5}, {4, 4}, {8, 0}}}",
+        "2 * M",
+        "(3/2) * M"
+     }
+}
+undocumented {(symbol *,Thing,MultidimensionalMatrix)}
+
+undocumented {(net,MultidimensionalMatrix)}
+
+document { 
+    Key => {(symbol ==,MultidimensionalMatrix,MultidimensionalMatrix)}, 
+    Headline => "equality of two multidimensional matrices", 
+    Usage => "M == N", 
+    Inputs => {"M" => MultidimensionalMatrix,
+               "N" => MultidimensionalMatrix},
+    Outputs => {Boolean => {"true or false, depending on whether ",TEX///$M$///," and ",TEX///$N$///, " are equal."}},
+    EXAMPLE {
+        "M = multidimensionalMatrix {{7, 6}, {9, 3}, {1, 7}}",
+        "N = multidimensionalMatrix {{7, 6}, {9, 4}, {1, 7}}",
+        "N' = multidimensionalMatrix {{7, 6}, {9, 3}, {1, 7}}",
+        "M == N",
+        "M == N'"
+     }
+}
+
+document { 
+    Key => {(determinant,MultidimensionalMatrix)}, 
+    Headline => "hyperdeterminant of a multidimensional matrix", 
+    Usage => "det M", 
+    Inputs => {"M" => MultidimensionalMatrix},
+    Outputs => {RingElement => {"the hyperdeterminant of ",TEX///$M$///}},
+    EXAMPLE {
+        "M = multidimensionalMatrix {{{{3, 2}, {9, 6}}, {{4, 7}, {2, 2}}}, {{{2, 6}, {9, 0}}, {{0, 5}, {4, 3}}}}",
+        "time det M",
+        "M = multidimensionalMatrix {{{0, 2, 9}, {4, 3, 1}, {0, 5, 9}, {8, 6, 1}, {1, 3, 5}}, {{1, 8, 3}, {0, 0, 0}, {4, 8, 2}, {4, 3, 4}, {6, 5, 6}}, {{1, 6, 5}, {9, 5, 5}, {9, 6, 5}, {6, 7, 7}, {2, 6, 9}}, {{5, 7, 1}, {4, 0, 5}, {2, 8, 9}, {5, 5, 2}, {3, 2, 6}}, {{0, 0, 2}, {6, 5, 4}, {7, 2, 6}, {0, 9, 7}, {7, 3, 0}}}",
+        "time det M"
+     },
+     SeeAlso => {"sparseDiscriminant"}
+}
+
+document { 
+    Key => {genericMultidimensionalMatrix,(genericMultidimensionalMatrix,VisibleList),[genericMultidimensionalMatrix,CoefficientRing]}, 
+    Headline => "generic multidimensional matrix", 
+    Usage => "genericMultidimensionalMatrix {d_1,...,d_n}", 
+    Inputs => {{TT"{d_1,...,d_n}",", a list of positive integers."}},
+    Outputs => {{"the generic multidimensional matrix of format ",TEX///$(d_1,\ldots,d_n)$///,"."}},
+    EXAMPLE {
+        "genericMultidimensionalMatrix {2,2,2}",
+        "genericMultidimensionalMatrix({2,2,2},CoefficientRing=>ZZ/101)",
+        "det oo"
+    },
+    SeeAlso => {randomMultidimensionalMatrix,(determinant,MultidimensionalMatrix)}
+}
+undocumented{(genericMultidimensionalMatrix,VisibleList,Boolean)}
+
+document { 
+    Key => {randomMultidimensionalMatrix,(randomMultidimensionalMatrix,VisibleList),[randomMultidimensionalMatrix,CoefficientRing]}, 
+    Headline => "random multidimensional matrix", 
+    Usage => "randomMultidimensionalMatrix {d_1,...,d_n}", 
+    Inputs => {{TT"{d_1,...,d_n}",", a list of positive integers."}},
+    Outputs => {{"a random multidimensional matrix of format ",TEX///$(d_1,\ldots,d_n)$///,"."}},
+    EXAMPLE {
+        "randomMultidimensionalMatrix {2,2,2}",
+        "randomMultidimensionalMatrix({2,3,2},CoefficientRing=>ZZ/3331)"
+    },
+    SeeAlso => {genericMultidimensionalMatrix}
+}
 
 TEST ///
  -- p. 318 Cox-Little-Shea
@@ -757,5 +1101,36 @@ F = matrix{toList genericLaurentPolynomials((1,1,2),CoefficientRing=>ZZ/33331)}
 R = (coefficientRing ring F)[gens ring F,y1,y2];
 f = flatten entries sub(F,R)
 assert(sparseResultant(F) == sparseDiscriminant(f_2 + y1*f_0 + y2*f_1))
+///
+
+TEST /// -- det
+-- 2x2x2x2
+M = multidimensionalMatrix {{{{1, 5}, {2, 8}}, {{6, 4}, {3, 0}}}, {{{0, 0}, {9, 7}}, {{8, 5}, {6, 2}}}}
+assert(det M == 15443093137451945984)
+M = multidimensionalMatrix {{{{0, 0}, {7, 3}}, {{4, 1}, {6, 2}}}, {{{0, 1}, {8, 3}}, {{3, 2}, {8, 9}}}}
+assert(det M == -3171019184352000)
+-- 3x3x3
+M = multidimensionalMatrix {{{4, 1, 1}, {0, 4, 2}, {3, 6, 0}}, {{0, 6, 7}, {5, 1, 2}, {4, 1, 8}}, {{8, 7, 7}, {3, 2, 8}, {0, 7, 2}}}
+assert(det M == -331148935009089093624820864272)
+M = multidimensionalMatrix {{{9, 6, 1}, {0, 1, 8}, {0, 9, 2}}, {{0, 1, 8}, {7, 7, 5}, {9, 0, 4}}, {{3, 3, 8}, {8, 4, 8}, {8, 7, 3}}}
+assert(det M == -295802129755280442875126108752)
+-- 3x4x4
+M = multidimensionalMatrix {{{3, 3, 5}, {8, 6, 1}, {1, 6, 6}, {1, 0, 4}}, {{5, 7, 7}, {0, 6, 8}, {6, 7, 4}, {4, 8, 9}}, {{9, 0, 1}, {6, 1, 5}, {9, 7, 1}, {4, 3, 4}}, {{0, 5, 2}, {5, 7, 5}, {6, 9, 1}, {4, 9, 7}}}
+assert(det M == 79410647519045266081460676906532049366895749002036567996434812688220789304961231485162415744)
+-- 4x3x4
+M = multidimensionalMatrix {{{1, 3, 1, 8}, {5, 6, 5, 4}, {3, 7, 4, 5}}, {{7, 6, 5, 2}, {5, 7, 4, 0}, {8, 8, 6, 5}}, {{7, 3, 7, 4}, {4, 3, 5, 2}, {2, 4, 2, 7}}, {{2, 7, 8, 3}, {7, 1, 5, 4}, {3, 4, 8, 3}}}
+assert(det M == -38294458590140101732130753793959707479707823954684704526689898232575574571008653766688)
+-- 5x1x1x2x1x5x1
+M = multidimensionalMatrix {{{{{{{6, 8, 4, 6, 5}}}, {{{6, 4, 1, 0, 6}}}}}, {{{{{7, 6, 2, 8, 7}}}, {{{3, 9, 2, 1, 7}}}}}, {{{{{0, 4, 5, 5, 5}}}, {{{1, 7, 6, 7, 4}}}}}, {{{{{4, 3, 9, 9, 1}}}, {{{7, 9, 5, 0, 2}}}}}, {{{{{0, 7, 7, 7, 4}}}, {{{8, 2, 6, 7, 4}}}}}}}
+assert(det M == -1013820701536151127624817309100800)
+///;
+
+end 
+
+TEST ///
+M = genericMultidimensionalMatrix {2,2,2,2}
+time D = det M;
+assert(degree D == {24})
+assert(# terms D == 2894276)
 ///
 
