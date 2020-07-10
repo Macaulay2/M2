@@ -49,11 +49,11 @@ getProgramPath = (name, cmds, opts) -> (
     ))
 )
 
-loadProgram = method(TypicalValue => Program,
+findProgram = method(TypicalValue => Program,
     Options => {RaiseError => true, Verbose => false, Prefix => {}})
-loadProgram(String, String) := opts -> (name, cmd) ->
-    loadProgram(name, {cmd}, opts)
-loadProgram(String, List) := opts -> (name, cmds) -> (
+findProgram(String, String) := opts -> (name, cmd) ->
+    findProgram(name, {cmd}, opts)
+findProgram(String, List) := opts -> (name, cmds) -> (
     programPathAndPrefix := getProgramPath(name, cmds, opts);
     if programPathAndPrefix === null then
 	if opts.RaiseError then error("could not find " | name)
