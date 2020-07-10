@@ -351,9 +351,9 @@ associatedPrimes Module := List => opts -> M -> ( -- modified code in ass1 for m
      M1 := lift(M, polyRing);
      -- M1 := subquotient(lift(gens M, polyRing), lift(relations M, polyRing) | ringRel);
      c := codim M1;
-     d := dim polyRing;
+     if c == dim polyRing and isHomogeneous M then return {sub(ideal gens polyRing, ring M)};
+     d := pdim M;
      n := if opts.CodimensionLimit >= 0 then min(d, opts.CodimensionLimit) else d;
-     if c == d and isHomogeneous M then return {sub(ideal gens polyRing, ring M)};
      -- C := resolution(M1, LengthLimit => 1+n);
      if M.cache#?"associatedPrimesCodimLimit" then (
           if n < d and n <= M.cache#"associatedPrimesCodimLimit" then return select(previousPrimes, P -> codim P <= n);
@@ -363,9 +363,11 @@ associatedPrimes Module := List => opts -> M -> ( -- modified code in ass1 for m
      else remove(M.cache, "associatedPrimesCodimLimit");
      previousPrimes | (flatten apply(toList(c..n), i -> (
           if debugLevel > 0 then print("Computing associated primes of codim " | toString i);
-          A := ann Ext^i(M1, polyRing);
-          -- A := image transpose C.dd_i : ker transpose C.dd_(i+1); -- ann Ext^i(M, R) (consider colon.m2)
-          select(minimalPrimes A, P -> codim P == i)
+          if i == dim polyRing and isHomogeneous M then sub(ideal gens polyRing, ring M) else (
+               A := ann(if i == c then M1 else Ext^i(M1, polyRing));
+               -- A := image transpose C.dd_i : ker transpose C.dd_(i+1); -- ann Ext^i(M, R) (consider colon.m2)
+               select(minimalPrimes A, P -> codim P == i)
+          )
      )))/(P -> trim sub(P, ring M))
      )
 )
@@ -399,6 +401,16 @@ primaryDecomposition Ring := List => opts -> R -> primaryDecomposition comodule 
 -- Helper functions for primary decomposition
 
 bracketPower = (I, n) -> ideal apply(I_*, f -> f^n)
+
+-- Localization methods
+
+kernelOfLocalization = method()
+kernelOfLocalization (Module, Ideal) := Module => (M, P) -> ( -- returns kernel of localization map M -> M_P
+     -- if not isPrime P then error "Expected second argument to be a prime ideal";
+     AP := associatedPrimes M;
+     f := product(AP, p -> ( i := position(p_*, g -> g % P != 0); if i === null then 1 else p_i ));
+     if f == 1 then 0*M else saturate(0*M, f)
+)
 
 
 TEST /// -- non-cyclic modules

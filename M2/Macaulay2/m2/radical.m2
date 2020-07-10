@@ -89,13 +89,18 @@ topComponents (Module, ZZ) := Module => (M, e) -> (
      if not isPolynomialRing S or not isAffineRing S then error "expected a polynomial ring";
      N := 0*M;
      f := pdim M;  -- will compute a resolution if needed...
+     -- if isHomogeneous M and f == dim S then (
+	-- if debugLevel > 0 then print("Removing m-primary component");
+	-- N = saturate(N, ideal generators S);
+	-- f = f-1;
+     -- );
      while f > e do (
-          E := Ext^f(M,S);
-          if codim E == f then (
-               if debugLevel > 0 then print("Removing components of codim " | toString(f));
-               N = N : annihilator E;
-          );
-          f = f-1;
+	E := Ext^f(M,S);
+	if codim E == f then (
+		if debugLevel > 0 then print("Removing components of codim " | toString(f));
+		N = N : annihilator E;
+	);
+	f = f-1;
      );
      N
 )
@@ -164,7 +169,10 @@ maxRegSeq Ideal := Ideal => opts -> I -> (
                j = j-1;
           );
      );
-     J
+     if codim J == #J_* then (
+	if debugLevel > 0 then print("Success!");
+	J
+     ) else print "Could not find regular sequence. Try again with Strategy => 'Full'"
 )
 
 -------------
