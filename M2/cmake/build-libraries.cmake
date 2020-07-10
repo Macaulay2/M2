@@ -378,8 +378,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
 # https://github.com/Singular/Sources/tree/spielwiese/factory
 # https://service.mathematik.uni-kl.de/ftp/pub/Math/Singular/Factory/
 # TODO: what is ftmpl_inst.o?
-set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} ${NTL_INCLUDE_DIR}/..")
-set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} ${FLINT_INCLUDE_DIR}/..")
+set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} ${NTL_ROOT}")
+set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} ${FLINT_ROOT}")
 ExternalProject_Add(build-factory
   URL               ${M2_SOURCE_URL}/factory-4.1.3.tar.gz
   URL_HASH          SHA256=d004dd7e3aafc9881b2bf42b7bc935afac1326f73ad29d7eef0ad33eb72ee158
@@ -397,6 +397,7 @@ ExternalProject_Add(build-factory
                       ${assertions_setting}
                       --enable-streamio
                       --without-Singular
+                      --with-gmp=${MP_ROOT}
                       --with-ntl=${factory_NTL_HOME_PATH}
                       --with-flint=${factory_FLINT_HOME_PATH}
                       CPPFLAGS=${CPPFLAGS}
@@ -509,6 +510,7 @@ ExternalProject_Add(build-mpsolve
   SOURCE_DIR        libraries/mpsolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/mpsolve/patch-3.2.1
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
@@ -517,6 +519,8 @@ ExternalProject_Add(build-mpsolve
                       --disable-examples
                       --disable-ui
                       --disable-documentation
+                      GMP_CFLAGS=-I${MP_INCLUDE_DIRS}
+                      GMP_LDFLAGS=-L${MP_LIBRARY_DIRS}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -550,6 +554,7 @@ ExternalProject_Add(build-givaro
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
                       $<$<NOT:$<BOOL:${BUILD_NATIVE}>>:--without-archnative>
+                      --with-gmp=${MP_ROOT}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -746,6 +751,8 @@ set(4ti2_PROGRAMS
   4ti2gmp 4ti2int32 4ti2int64 circuits groebner markov minimize normalform
   qsolve rays walk zbasis zsolve hilbert graver ppi genmodel gensymm output)
 list(TRANSFORM 4ti2_PROGRAMS PREPEND ${M2_HOST_PREFIX}/bin/ OUTPUT_VARIABLE 4ti2_PROGRAMS)
+set(4ti2_CPPFLAGS "${CPPFLAGS} -I${MP_INCLUDE_DIRS}")
+set(4ti2_LDFLAGS  "${LDFLAGS}  -L${MP_LIBRARY_DIRS}")
 ExternalProject_Add(build-4ti2
   URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_9/4ti2-1.6.9.tar.gz
   URL_HASH          SHA256=3053e7467b5585ad852f6a56e78e28352653943e7249ad5e5174d4744d174966
@@ -756,11 +763,11 @@ ExternalProject_Add(build-4ti2
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      $<$<BOOL:${GLPK_FOUND}>:--with-glpk=${GLPK_INCLUDE_DIR}/..>
-                      CPPFLAGS=${CPPFLAGS}
+                      $<$<BOOL:${GLPK_FOUND}>:--with-glpk=${GLPK_ROOT}>
+                      CPPFLAGS=${4ti2_CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
+                      LDFLAGS=${4ti2_LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
                       AR=${CMAKE_AR}
@@ -797,8 +804,7 @@ ExternalProject_Add(build-cohomcalg
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
-                      CXX=${CMAKE_CXX_COMPILER}
-                      LD=${CMAKE_CXX_COMPILER} # correct?
+                      LD=${CMAKE_CXX_COMPILER} # set to g++ in Makefile
   INSTALL_COMMAND   ${CMAKE_STRIP} bin/cohomcalg
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/cohomcalg
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE ${M2_INSTALL_LICENSESDIR}/cohomcalg
@@ -832,6 +838,8 @@ ExternalProject_Add(build-gfan
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
                       cddnoprefix=yes
+                      GMP_LINKOPTIONS=-L${MP_LIBRARY_DIRS}
+                      GMP_INCLUDEOPTIONS=-I${MP_INCLUDE_DIRS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
                       OPTFLAGS=${gfan_OPTFLAGS}
@@ -887,8 +895,9 @@ _ADD_COMPONENT_DEPENDENCY(programs lrslib mp LRSLIB)
 set(csdp_CC      "${CMAKE_C_COMPILER} ${OpenMP_C_FLAGS} ${CFLAGS}")
 set(csdp_LIBS    "-L../lib -lsdp ${LA_LIBRARIES} -lm")
 ExternalProject_Add(build-csdp
-  URL               http://www.coin-or.org/download/source/Csdp/Csdp-6.2.0.tgz
-  URL_HASH          SHA256=7f202a15f33483ee205dcfbd0573fdbd74911604bb739a04f8baa35f8a055c5b
+  URL               https://github.com/coin-or/Csdp/archive/releases/6.2.0.tar.gz
+  URL_HASH          SHA256=3d341974af1f8ed70e1a37cc896e7ae4a513375875e5b46db8e8f38b7680b32f
+  DOWNLOAD_NAME     csdp-6.2.0.tar.gz
   PREFIX            libraries/csdp
   SOURCE_DIR        libraries/csdp/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -956,6 +965,8 @@ _ADD_COMPONENT_DEPENDENCY(programs nauty "" NAUTY)
 # https://www.normaliz.uni-osnabrueck.de/
 # normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
 # TODO: what to do when OpenMP is not found
+set(normaliz_CPPFLAGS "${CPPFLAGS} -I${MP_INCLUDE_DIRS}")
+set(normaliz_LDFLAGS  "${LDFLAGS}  -L${MP_LIBRARY_DIRS}")
 string(REPLACE " " "%20" normaliz_OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}")
 ExternalProject_Add(build-normaliz
   URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.5/normaliz-3.8.5.tar.gz
@@ -969,11 +980,11 @@ ExternalProject_Add(build-normaliz
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-shared # TODO: for polymake --enable-shared
-                      --without-flint # ${FLINT_INCLUDE_DIR}/..
-                      CPPFLAGS=${CPPFLAGS}
+                      --without-flint # ${FLINT_ROOT}
+                      CPPFLAGS=${normaliz_CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
+                      LDFLAGS=${normaliz_LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
                       AR=${CMAKE_AR}
@@ -1002,8 +1013,8 @@ set(topcom_PROGRAMS
   src/points2allfinetriangs src/points2alltriangs src/points2ntriangs src/points2nfinetriangs
   src/points2finetriangs src/points2flips src/points2nallfinetriangs src/points2nalltriangs src/points2nflips
   src/points2triangs src/points2volume)
-set(topcom_CPPFLAGS "${CPPFLAGS}")
-set(topcom_LDFLAGS  "${LDFLAGS}")
+set(topcom_CPPFLAGS "${CPPFLAGS} -I${MP_INCLUDE_DIRS}")
+set(topcom_LDFLAGS  "${LDFLAGS}  -L${MP_LIBRARY_DIRS}")
 if(CDDLIB_FOUND)
   set(topcom_CPPFLAGS "${topcom_CPPFLAGS} -I${CDDLIB_INCLUDE_DIR}")
   set(topcom_LDFLAGS  "${topcom_LDFLAGS}  -L${CDDLIB_LIBRARY_DIR}")
@@ -1058,8 +1069,8 @@ ExternalProject_Add(build-polymake
   CONFIGURE_COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --with-gmp=${MP_ROOT}
-                      --with-cdd=${CDDLIB_INCLUDE_DIR}/..
-                      --with-flint=${FLINT_INCLUDE_DIR}/..
+                      --with-cdd=${CDDLIB_ROOT}
+                      --with-flint=${FLINT_ROOT}
 #                      --with-libnormaliz=${M2_HOST_PREFIX}
 #                      --with-lrs=${M2_HOST_PREFIX}
 #                      --with-lrs-include=${CMAKE_BINARY_DIR}/libraries/lrslib/build
