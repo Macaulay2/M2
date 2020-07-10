@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 1198239942
+-- -*- M2-comint -*- hash: 859958423
 
 i1 : R=QQ[z,a,b,c]
 
@@ -10,10 +10,6 @@ i2 : makeB'InputFile(storeBM2Files,
               BertiniInputConfiguration=>{MPType=>2},
               AffVariableGroup=>{{z}},
                B'Constants=>{a=>2,b=>3+2*ii,c=>3/2},
-                B'Polynomials=>{a*z^2+b*z+c})
-
-o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-74934-0/0/input
-
-o2 : File
+                B'Polynomials=>{a*z^2+b*z+c});
 
 i3 : 
