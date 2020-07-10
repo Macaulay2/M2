@@ -153,6 +153,8 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `M2_HOST_PREFIX:PATH=${CMAKE_BINARY_DIR}/usr-host`: host build prefix
 - `M2_DIST_PREFIX:PATH=${CMAKE_BINARY_DIR}/usr-dist`: target build prefix
 - `PARALLEL_JOBS:STRING=4`: specify the number of parallel jobs for libraries and programs
+- `REPRODUCIBLE_CACHED_FILE_PATHS:BOOL=OFF`: use reproducible /path/to/source/
+  for cached files
 
 ### Macaulay2 flags
 The following flags can be also set by giving environment variables to CMake (e.g. `errorDepth=2 cmake .`), though setting them this way is ephemeral.

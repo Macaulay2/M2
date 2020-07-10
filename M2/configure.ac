@@ -1826,6 +1826,14 @@ then c=`complement "$BUILDLIBLIST" "$BUILD_ALWAYS"`
      AC_MSG_ERROR([automatic building of libraries disabled, but some must be built: $c])
 fi
 
+AC_SUBST([REPRODUCIBLE_CACHED_FILE_PATHS], [no])
+AC_ARG_ENABLE([reproducible-cached-file-paths],
+     AS_HELP_STRING([--enable-reproducible-cached-file-paths],
+         [use "/path/to/source/" instead of the actual build paths for the
+          source files (startup.m2 and the basic tests) that are cached
+          as strings in M2-binary]),
+     [REPRODUCIBLE_CACHED_FILE_PATHS=$enableval])
+
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree
 test "$prefix" || prefix=/usr/local
 

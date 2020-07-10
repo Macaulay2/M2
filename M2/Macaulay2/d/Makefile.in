@@ -219,18 +219,23 @@ clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
 BSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1"/'
 ../m2/startup.m2: ../m2/startup.m2.in ; cd ../.. ; ./config.status Macaulay2/m2/startup.m2
+ifeq (@REPRODUCIBLE_CACHED_FILE_PATHS@,no)
+CACHED_FILE_PATH="@abs_top_srcdir@/Macaulay2/m2/"
+else
+CACHED_FILE_PATH="/path/to/source/M2/Macaulay2/m2/"
+endif
 startup.c: startup-header.h ../m2/startup.m2 @srcdir@/../m2/basictests/*.m2 Makefile
 	: making $@
 	@(\
 	 cat @srcdir@/startup-header.h; \
 	 echo 'cached_file startupFile = {' ; \
-	     echo @abs_top_srcdir@/Macaulay2/m2/startup.m2.in | sed $(BSTRING) ; \
+	     echo $(CACHED_FILE_PATH)startup.m2.in | sed $(BSTRING) ; \
 	     echo  ',' ; \
 	     cat ../m2/startup.m2 | sed $(SSTRING) ; \
 	 echo  '};' ; \
 	 echo 'cached_file testStrings[] = {' ; \
 	 for i in @abs_top_srcdir@/Macaulay2/m2/basictests/*.m2 ; \
-	 do echo '{' ; echo $$i | sed $(BSTRING) ; echo  ',' ; cat $$i | sed $(SSTRING) ; echo  '},' ; \
+	 do echo '{' ; echo "$(CACHED_FILE_PATH)basictests/`basename $$i`" | sed $(BSTRING) ; echo  ',' ; cat $$i | sed $(SSTRING) ; echo  '},' ; \
 	 done ; \
 	 echo '};' ; \
 	 cat @srcdir@/startup-trailer.h; \

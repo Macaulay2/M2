@@ -33,6 +33,8 @@ option(WITH_XML		"Link with the libxml2 library"		ON)
 # TODO: still not operational
 option(WITH_PYTHON	"Link with the Python library"		OFF)
 option(WITH_MYSQL	"Link with the MySQL library"		OFF)
+option(REPRODUCIBLE_CACHED_FILE_PATHS
+	"Use reproducible /path/to/source/ for cached files"	OFF)
 
 set(BUILD_PROGRAMS "4ti2;Nauty;TOPCOM"
   CACHE STRING "Build programs, even if found")

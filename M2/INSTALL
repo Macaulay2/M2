@@ -493,6 +493,13 @@ our program, and how to initialize the dumped data file, if present:
         /foo/bar/Macaulay2-*/postinstall
         /foo/bar/Macaulay2-*/preremove
 
+Several source files, and their paths from the source tree, are cached
+as strings in the Macaulay2 binary.  You may want the original path
+for debugging purposes, but for a reproducible build, it can be
+replaced by the generic "/path/to/source/" using:
+
+        ./configure --enable-reproducible-cached-file-paths
+
 -------------------------------------------
 Compiling for multiple machine architectures
 -------------------------------------------
