@@ -321,6 +321,11 @@ cmake -DCMAKE_OSX_SYSROOT=`xcrun --show-sdk-path` .
 ```
 This would, for instance, tell CMake to look in `/Applications/Xcode.app/Contents/Developer/SDKs/MacOSX.sdk/usr/include` for headers.
 
+Moreover, when building with MPIR, adding the following option allows CMake to find OpenMP from its own prefix rather than the common prefix at `/usr/local`, which may help avoid linking conflicts:
+```
+cmake -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix libomp` .
+```
+
 If problems persist for either compiler, open an issue.
 </details>
 
