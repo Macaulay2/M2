@@ -157,7 +157,7 @@ clean::; rm -f libraries-used
 libraries-really-used: libraries-used libraries-used-directly
 	egrep `echo \`cat libraries-used-directly\` | sed -e 's=^=.*/=' -e 's= =|.*/=g'` <$< >$@
 files-used: Makefile
-	for i in @FILE_PREREQS@ ; do echo $i ; done >$@
+	for i in @FILE_PREREQS@ ; do echo $$i ; done >$@
 packages-used: libraries-really-used files-used
 	cat $^ |								\
 	while read x ;								\
