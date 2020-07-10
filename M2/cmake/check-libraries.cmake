@@ -51,7 +51,7 @@ find_package(AtomicOps	REQUIRED QUIET) # See FindAtomicOps.cmake
 #   OpenMP	libomp-dev	libomp-devel	libomp
 #   TBB		libtbb-dev	tbb-devel	tbb
 
-find_package(OpenMP	QUIET)
+find_package(OpenMP)
 foreach(lang IN ITEMS C CXX)
   foreach(_dir IN LISTS OpenMP_${lang}_INCLUDE_DIRS)
     set(OpenMP_${lang}_FLAGS "${OpenMP_${lang}_FLAGS} -I${_dir}")
@@ -63,7 +63,7 @@ foreach(lang IN ITEMS C CXX)
     set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -l${_lib}")
   endforeach()
 endforeach()
-find_package(TBB	QUIET) # See FindTBB.cmake
+find_package(TBB) # See FindTBB.cmake
 
 ###############################################################################
 ## Platform dependent requirements:
@@ -97,11 +97,6 @@ endif()
 foreach(var IN ITEMS FOUND ROOT INCLUDE_DIRS LIBRARY_DIRS LIBRARIES VERSION_OK)
   set(MP_${var} ${${MP_LIBRARY}_${var}})
 endforeach()
-if(NOT MP_ROOT)
-  set(MP_ROOT ${M2_HOST_PREFIX})
-  set(MP_LIBRARY_DIRS ${MP_ROOT}/lib)
-endif()
-set(MP_INCLUDE_DIR ${${MP_LIBRARY}_INCLUDE_DIRS})
 
 ###############################################################################
 ## Libraries we can download and build:
