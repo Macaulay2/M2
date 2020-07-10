@@ -253,11 +253,9 @@ if test "$GCC" = yes
 then CFLAGS="$CFLAGS -g3"
      CXXFLAGS="$CXXFLAGS -g3"
      LDFLAGS="$LDFLAGS -g3"
-     LDFLAGS_FOR_BUILD="$LDFLAGS_FOR_BUILD -g3"
 else CFLAGS="$CFLAGS -g"
      CXXFLAGS="$CXXFLAGS -g"
      LDFLAGS="$LDFLAGS -g"
-     LDFLAGS_FOR_BUILD="$LDFLAGS_FOR_BUILD -g"
 fi
 
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
@@ -1780,7 +1778,6 @@ AC_MSG_NOTICE([using LIBS_GDBM         = $LIBS_GDBM])
 AC_MSG_NOTICE([using LIBS_GLPK         = $LIBS_GLPK])
 AC_MSG_NOTICE([using LIBS_GMP          = $LIBS_GMP])
 AC_MSG_NOTICE([using CC_FOR_BUILD      = $CC_FOR_BUILD])
-AC_MSG_NOTICE([using LDFLAGS_FOR_BUILD = $LDFLAGS_FOR_BUILD])
 AC_MSG_NOTICE([with  ISSUE             = $ISSUE])
 AC_MSG_NOTICE([with  NODENAME          = $NODENAME])
 AC_MSG_NOTICE([with  OS REL            = $OS $REL])
