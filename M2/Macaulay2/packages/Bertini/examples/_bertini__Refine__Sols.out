@@ -24,7 +24,7 @@ o5 : List
 
 i6 : coords_0
 
-o6 = -1.41421-1.11022e-16*ii
+o6 = -1.41421-2.22045e-16*ii
 
 o6 : CC (of precision 333)
 

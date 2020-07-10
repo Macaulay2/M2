@@ -16,6 +16,7 @@ on:
       - master
       - development
       - global
+      - release-1.16
   pull_request:
     branches:
       - master

@@ -1007,12 +1007,18 @@ _ADD_COMPONENT_DEPENDENCY(programs normaliz "mp;nauty" NORMALIZ)
 
 
 # http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
-# topcom needs cddlib
 set(topcom_PROGRAMS
-  src-reg/checkregularity src/points2finetriang src/points2chiro src/chiro2circuits src/chiro2cocircuits
-  src/points2allfinetriangs src/points2alltriangs src/points2ntriangs src/points2nfinetriangs
-  src/points2finetriangs src/points2flips src/points2nallfinetriangs src/points2nalltriangs src/points2nflips
-  src/points2triangs src/points2volume)
+  B_A B_A_center B_D checkregularity cocircuits2facets cross cube cyclic hypersimplex lattice
+  chiro2allfinetriangs   chiro2dual              chiro2nallfinetriangs  chiro2placingtriang
+  chiro2alltriangs       chiro2finetriang        chiro2nalltriangs      chiro2triangs
+  chiro2circuits         chiro2finetriangs       chiro2nfinetriangs
+  chiro2cocircuits       chiro2mintriang         chiro2ntriangs
+  points2allfinetriangs  points2finetriang       points2nalltriangs     points2placingtriang
+  points2alltriangs      points2finetriangs      points2nfinetriangs    points2triangs
+  points2chiro           points2flips            points2nflips          points2volume
+  points2facets          points2nallfinetriangs  points2ntriangs
+  santos_22_triang       santos_dim4_triang      santos_triang)
+list(TRANSFORM topcom_PROGRAMS PREPEND ${M2_HOST_PREFIX}/bin/ OUTPUT_VARIABLE topcom_PROGRAMS)
 ExternalProject_Add(build-topcom
   URL               ${M2_SOURCE_URL}/TOPCOM-0.17.8.tar.gz
   URL_HASH          SHA256=3f83b98f51ee859ec321bacabf7b172c25884f14848ab6c628326b987bd8aaab
@@ -1031,11 +1037,11 @@ ExternalProject_Add(build-topcom
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
   BUILD_COMMAND     ${MAKE} -j1 # topcom doesn't like parallel builds
-  # TODO: put topcom programs in a folder?
-  INSTALL_COMMAND   ${CMAKE_STRIP} ${topcom_PROGRAMS}
+  INSTALL_COMMAND   ${MAKE} -j1 install-strip
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/topcom
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING README ${M2_INSTALL_LICENSESDIR}/topcom
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${topcom_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/
+          COMMAND   ${CMAKE_COMMAND} -E remove -f ${topcom_PROGRAMS}
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
