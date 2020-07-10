@@ -24,11 +24,9 @@ on:
     # cron time in UTC; set to 6a EDT
     - cron: '0 10 * * *'
 
-env:
-#  CMAKE_VERSION: 3.17
-#  NINJA_VERSION: 1.9.0
-  BUILD_TYPE: Release  # add Buildfast
-  BUILD_DIR: M2/BUILD/cicd
+defaults:
+  run:
+    working-directory: M2/BUILD/build
 
 jobs:
   build:
@@ -40,17 +38,19 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest]
         build-type: [cmake, autotools]
-        compiler: [gcc9, default]  # add clang
+        compiler: [clang10, gcc9, default]
 #       language: [cxx17, cxx14]
         include:
           - compiler: gcc9
             cxx: g++-9
             cc: gcc-9
+          - compiler: clang10
+            cxx: clang++
+            cc: clang
           - os: macos-latest
             make: gmake
           - os: ubuntu-latest
             make: make
-
 
     steps:
       - uses: actions/checkout@v1  # this set up the virtual environment, which has a whole lot
@@ -71,8 +71,8 @@ jobs:
       - name: Install libraries (homebrew)
         id: get_dev_libraries_brew
         if: ${{ runner.os == 'macOS' }}
-        # mpfr, gdbm, libmpc, xz are already in the virtual env
-        run: brew install boost flint ntl mpir bdw-gc libatomic_ops glpk libomp eigen ncurses cddlib
+        run: |
+          brew install boost libatomic_ops tbb libomp gmp bdw-gc glpk flint ntl ncurses eigen openblas cddlib
 
 # ----------------------
 #   Install missing tools and libraries using apt-get (Debian-based Linux only)
@@ -81,74 +81,90 @@ jobs:
       - name: Install missing dev tools (apt-get)
         id: get_dev_tools_aptget
         if: ${{ runner.os == 'Linux' }}
-        # make is really gmake
-        run: sudo apt-get install -y ninja-build
+        run: |
+          sudo apt-get install -y ninja-build yasm libtool-bin gfortran llvm-10 clang-10
 
       - name: Install libraries (apt-get)
         id: get_dev_libraries_aptget
         if: ${{ runner.os == 'Linux' }}
-        # trim all this garbage
-        run: sudo apt-get install -y -q autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libboost-stacktrace-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan libeigen3-dev libtool-bin
+        run: |
+          sudo apt-get install -y -q --no-install-recommends libncurses5-dev libreadline-dev \
+            libgdbm-dev libatomic-ops-dev libboost-dev libboost-stacktrace-dev libxml2-dev \
+            libgmp3-dev libmpfr-dev libglpk-dev liblapack-dev libeigen3-dev libopenblas-dev \
+            libgc-dev libcdd-dev libgtest-dev libntl-dev gfan polymake w3c-markup-validator
 
 # ----------------------
 #   Steps common to all build variants
 # ----------------------
 
-      - name: Create build directory
-        id: step_build_dir
-        run: mkdir $BUILD_DIR
+      - name: Prepare build environment
+        id: step_prepare
+        run: |
+          echo "::set-env name=CC::${{ matrix.cc }}"
+          echo "::set-env name=CXX::${{ matrix.cxx }}"
+
+      - name: Prepare build environment for Clang 10 on macOS
+        id: step_prepare_clang10_macos
+        if: matrix.compiler == 'clang10' && runner.os == 'macOS'
+        run: |
+          # Set PATH and LIBRARY_PATH for clang-10
+          export PATH=`brew --prefix llvm`/bin:$PATH
+          echo "::set-env name=PATH::$PATH"
+          echo "::set-env name=LIBRARY_PATH::`llvm-config --libdir`"
 
 # ----------------------
 #   Configure and build M2 using cmake
 # ----------------------
 
-      - name: Configure Macaulay2 (cmake)
+      - name: Configure Macaulay2 using CMake
         id: step_configure_cmake
         if: ${{ matrix.build-type == 'cmake' }}
-        working-directory: M2/BUILD/cicd  # use ${{ defaults.dir }} or something along those lines
-        env:
-          CXX: ${{matrix.cxx}}
-          CC: ${{matrix.cc}}
-        run: cmake -S../.. -B. -G"Ninja" -DCMAKE_BUILD_TYPE=Release
-
-      - name: Build Macaulay2 (cmake)
-        id: step_build
-        if: ${{ matrix.build-type == 'cmake' }}
-        working-directory: M2/BUILD/cicd
         run: |
-          cmake --build . --target build-libraries  -j4
-          cmake --build . --target build-programs   -j4
-          cmake --build . --target M2-core          -j4
-          cmake --build . --target install-packages -j4
+          cmake -S../.. -B. -GNinja -DUSING_MPIR=OFF -DVERBOSE=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix libomp`
+
+      - name: Save CMake artifacts
+        uses: actions/upload-artifact@v2
+        if: failure() && matrix.build-type == 'cmake'
+        with:
+           name: cmake-log-${{matrix.os}}-${{matrix.compiler}}
+           path: M2/BUILD/build/CMakeFiles/CMake(Error.log|Output.log|CMakeTmp/CMakeLists.txt)
+
+      - name: Build Macaulay2 using CMake (Ninja)
+        id: step_build_cmake
+        if: ${{ matrix.build-type == 'cmake' }}
+        run: |
+          cmake --build . --target build-libraries build-programs
+          cmake --build . --target M2-core install-packages
+
+      - name: Save CMake library artifacts
+        uses: actions/upload-artifact@v2
+        if: failure() && matrix.build-type == 'cmake'
+        with:
+           name: cmake-log-${{matrix.os}}-${{matrix.compiler}}
+           path: M2/BUILD/build/libraries/*/build/config.log
 
 # ----------------------
 #   Configure and build M2 the old way
 # ----------------------
 
-      - name: Configure Macaulay2 (autotools)
+      - name: Configure Macaulay2 using Autotools
         id: step_configure_autotools
         if: ${{ matrix.build-type == 'autotools' }}
-        env:
-          CXX: ${{matrix.cxx}}
-          CC: ${{matrix.cc}}
         run: |
-          cd M2
-          ${{matrix.make}} get-tools
-          ${{matrix.make}} -f Makefile
-          cd BUILD/cicd
+          ${{matrix.make}} -C ../.. get-tools
+          ${{matrix.make}} -C ../.. all
           ../../configure --prefix=/usr --enable-download --enable-build-libraries="readline"
 
-      - name: Save artifacts (autotools)
+      - name: Save Autotools artifacts
         if: always() && matrix.build-type == 'autotools'
         uses: actions/upload-artifact@v1
         with:
            name: config-log-${{matrix.os}}-${{matrix.compiler}}
-           path: M2/BUILD/cicd/config.log
+           path: M2/BUILD/build/config.log
 
-      - name: Build Macaulay2 (autotools)
+      - name: Build Macaulay2 using Autotools (Make)
         id: step_build_autotools
         if: ${{ matrix.build-type == 'autotools' }}
-        working-directory: M2/BUILD/cicd
         run: ${{matrix.make}}
 
 # ----------------------
@@ -157,7 +173,6 @@ jobs:
 
       - name: Run Tests (autotools, ubuntu)
         if: matrix.build-type == 'autotools' && matrix.os == 'ubuntu-latest'
-        working-directory: M2/BUILD/cicd
         run: |
           ${{matrix.make}} check
           ${{matrix.make}} -C Macaulay2/html-check-links check
