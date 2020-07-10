@@ -161,7 +161,13 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  else False
 	  )
-     is RawRingCell do False
+     is x:RawRingCell do (
+	  when rhs
+	  is y:RawRingCell do (
+	      if x.p == y.p then True else False
+	       )
+	  else False
+	  )
      is x:RawMonomialIdealCell do (
 	  when rhs
 	  is y:RawMonomialIdealCell do (
