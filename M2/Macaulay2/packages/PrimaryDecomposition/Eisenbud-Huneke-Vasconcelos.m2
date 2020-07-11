@@ -480,15 +480,15 @@ maxRegSeq Ideal := Ideal => opts -> I -> (
      if c == #G then return ideal G;
      k := coefficientRing ring I;
      J := ideal(G#0);
-     for i from 1 to c-1 do (
+     for i from 1 to #G-1 do (
           (j, foundNextNZD) := (#G-1, false); -- starts searching from end
           while not foundNextNZD and j >= c do (
-               coeffList := {0_k, 1_k, random k};
+               coeffList := {0_k, 1_k};
                if debugLevel > 0 then print("Trying generators " | toString(i, j));
                for a in coeffList do (
                     cand := G#i + a*G#j;
                     K := J + ideal cand;
-                    if debugLevel > 0 then print "Testing regular sequence...";
+                    if debugLevel > 0 then print("Testing regular sequence...");
                     n := if opts.Strategy == "Quick" then ( 
                          try ( alarm t0; codim K ) else infinity
                     ) else codim K;
@@ -500,11 +500,18 @@ maxRegSeq Ideal := Ideal => opts -> I -> (
                );
                j = j-1;
           );
+          if #J_* == c then ( if debugLevel > 0 then print("Found regular sequence!"); return J );
      );
-     if codim J == #J_* then (
-	if debugLevel > 0 then print "Found regular sequence!";
-	J
-     ) else print "Could not find regular sequence. Try again with Strategy => 'Full'"
+     m := c - #J_*;
+     n := #G - c;
+     ind := entries id_(k^n);
+     if debugLevel > 0 then print "Could not find sparse regular sequence. Trying denser elements...";
+     for count to (#G)^2//2 do (
+          A := transpose matrix apply(m, i -> sum ind_(apply(n//2, j -> random n)));
+          J1 := J + ideal(matrix{G} * (map(k^(#J_*),k^m,0) || id_(k^m) || A));
+          try ( alarm t0; if codim J1 == #J1_* then return J1 )
+     );
+     print "Could not find regular sequence. Try again with Strategy => 'Full'"
 )
 
 TEST /// -- non-cyclic modules

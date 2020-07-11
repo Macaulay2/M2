@@ -10,7 +10,7 @@ newPackage(
 	{Name => "Carolyn Yackel", Email => "cyackel@math.indiana.edu"},
 	{Name => "Justin Chen", Email => "justin.chen@math.gatech.edu"}
      },
-     PackageExports => {"MinimalPrimes"}
+     PackageExports => {}
      )
 
 export {
@@ -143,6 +143,12 @@ isPrimary(Ideal,Ideal) := (Q,P) -> (
      )
 isPrimary (Module, Module) := (M, Q) -> #associatedPrimes(M/Q) == 1
 
+minimalPrimes MonomialIdeal := decompose MonomialIdeal := (cacheValue symbol minimalPrimes) (
+     (I) -> (
+	  minI := dual radical I;
+          if minI == 1 then {monomialIdeal(0_(ring I))}
+          else
+	      apply(flatten entries generators minI, monomialIdeal @@ support)))
 
 irreducibleDecomposition = method();
 irreducibleDecomposition MonomialIdeal := List => (I) -> (
