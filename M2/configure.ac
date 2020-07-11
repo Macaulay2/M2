@@ -755,6 +755,11 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list
 
 #############################################################################
 
+dnl We disable something temporarily that didn't work out, because if we put a static library, such
+dnl as libflint.a, into LIBS, then mathicgb, mathic, and memtailor get confused and include a copy
+dnl of the file in their *.a file.
+TRY_STATIC=no
+
 AC_SUBST(LIBS_GDBM)
 AC_LANG(C)
 AC_CHECK_HEADER(gdbm.h,
@@ -763,12 +768,11 @@ AC_CHECK_HEADER(gdbm.h,
 if test $BUILD_gdbm = yes
 then LIBS_GDBM="-lgdbm"
      BUILTLIBS="$LIBS_GDBM $BUILTLIBS"
-else if test $SHARED = no
+else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(gdbm_close,"/usr/lib/libgdbm.a" "/usr/local/lib/libgdbm.a",,[AC_MSG_ERROR([libgdbm.a not found])])
      else AC_SEARCH_LIBS(gdbm_close,"gdbm",,[AC_MSG_ERROR([libgdbm not found])])
      fi
      LIBS_GDBM=$ac_cv_search_gdbm_close
-     LIBS="$LIBS_GDBM $LIBS"
 fi
 
 AC_MSG_CHECKING(whether package bdw-gc is provided)
@@ -783,7 +787,7 @@ else AC_MSG_RESULT(no)
 fi
 if test $BUILD_gc = yes
 then BUILTLIBS="-lgc -lpthread $BUILTLIBS"
-else if test $SHARED = no
+else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(GC_malloc,"/usr/lib/libgc.a" "/usr/local/lib/libgc.a",,
           [AC_MSG_ERROR([libgc.a not found])])
      else AC_SEARCH_LIBS(GC_malloc,"gc",,[AC_MSG_ERROR([libgc not found])])
@@ -819,13 +823,12 @@ then USING_MPIR=1
      then BUILD_mpir=yes
           LIBS_GMP="-lmpirxx -lmpir"
           BUILTLIBS="$LIBS_GMP $BUILTLIBS"
-     else if test $SHARED = no
+     else if test $SHARED = no -a $TRY_STATIC = yes
           then SEARCH_LIBRARIES(__gmpz_init,"/usr/lib/libmpirxx.a /usr/lib/libmpir.a" "/usr/local/lib/libmpirxx.a /usr/local/lib/libmpir.a",,
 					    [AC_MSG_ERROR([libmpir.a not found])])
 	  else SEARCH_LIBRARIES(__gmpz_init,"-lmpirxx -lmpir",,[AC_MSG_ERROR([libmpir not found])])
 	  fi
 	  LIBS_GMP=$ac_cv_search___gmpz_init
-	  LIBS="$LIBS_GMP $LIBS"
      fi
 else USING_MPIR=0		# i.e., using gmp
      AC_MSG_RESULT([using gmp])
@@ -835,13 +838,12 @@ else USING_MPIR=0		# i.e., using gmp
      	  LIBS_GMP="-lgmpxx -lgmp"
           BUILTLIBS="$LIBS_GMP $BUILTLIBS"
      else AC_LANG(C)
-	  if test $SHARED = no
+	  if test $SHARED = no -a $TRY_STATIC = yes
           then SEARCH_LIBRARIES(__gmpz_init,"/usr/lib/libgmpxx.a /usr/lib/libgmp.a" "/usr/local/lib/libgmpxx.a /usr/local/lib/libgmp.a",,
 					    [AC_MSG_ERROR([libgmp.a not found])])
 	  else SEARCH_LIBRARIES(__gmpz_init,"-lgmpxx -lgmp",,[AC_MSG_ERROR([libgmp not found])])
 	  fi
      	  LIBS_GMP=$ac_cv_search___gmpz_init
-	  LIBS="$LIBS_GMP $LIBS"
 	  dnl By the way: with Hombebrew on the Mac gmp comes with package configuration:
 	  dnl $ pkg-config gmp --cflags
 	  dnl -I/usr/local/Cellar/gmp/6.2.0/include
@@ -855,7 +857,7 @@ AC_LANG(C)
 AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes)
 if test $BUILD_mpfr = yes
 then BUILTLIBS="-lmpfr $BUILTLIBS"
-else if test $SHARED = no
+else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(mpfr_digamma,"/usr/lib/libmpfr.a" "/usr/local/lib/libmpfr.a",,
 				        [AC_MSG_ERROR([libmpfr.a not found])])
      else AC_SEARCH_LIBS(mpfr_digamma,"mpfr",,[AC_MSG_ERROR([libmpfr not found])])
@@ -874,12 +876,11 @@ AC_LANG(C)
 AC_CHECK_HEADER(glpk.h,,BUILD_glpk=yes)
 if test $BUILD_glpk = yes
 then BUILTLIBS="-lglpk $BUILTLIBS"
-else if test $SHARED = no
+else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(glp_free,"/usr/lib/libglpk.a" "/usr/local/lib/libglpk.a",,[AC_MSG_ERROR([libglpk.a not found])])
      else AC_SEARCH_LIBS(glp_free,"glpk",,[AC_MSG_ERROR([libglpk not found])])
      fi
      LIBS_GLPK=$ac_cv_search_glp_free
-     LIBS="$LIBS_GLPK $LIBS"
 fi
 
 AC_MSG_CHECKING([whether givaro library is installed])
@@ -920,7 +921,7 @@ AC_CHECK_HEADER(cdd.h,,[
     [#include <setoper.h>])
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
-else if test $SHARED = no
+else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(dd_Equal,"/usr/lib/libcdd.a" "/usr/local/lib/libcdd.a",,
 				    [AC_MSG_ERROR([libcdd.a not found])])
      else AC_SEARCH_LIBS(dd_Equal,"cdd",,[AC_MSG_ERROR([libcdd not found])])
@@ -942,7 +943,7 @@ then AC_LANG(C)
 #endif
 	  ])],
 	  AC_MSG_RESULT([yes])
-	  if test $SHARED = no
+	  if test $SHARED = no -a $TRY_STATIC = yes
 	  then SEARCH_LIBRARIES(_fmpz_mod_mul1,/usr/lib/libflint.a /usr/local/lib/libflint.a,,
 					       [AC_MSG_ERROR([libflint.a not found])])
 	  else AC_SEARCH_LIBS(_fmpz_mod_mul1,"flint",,[AC_MSG_ERROR([libflint not found])])
@@ -1065,8 +1066,10 @@ AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
 if test $BUILD_ntl = yes
 then BUILTLIBS="-lntl $BUILTLIBS"
 else AC_MSG_CHECKING([whether libntl is present and usable])
-     if test $SHARED = no
-     then if test -f /usr/lib/libntl.a
+     if test $SHARED = no -a $TRY_STATIC = yes
+     then dnl It would be better to use SEARCH_LIBRARIES here, but all the symbols in libntl.a are mangled by the C++ compiler,
+          dnl so I don't know how to do it.
+	  if test -f /usr/lib/libntl.a
      	  then LIBS="/usr/lib/libntl.a $LIBS"
 	  elif test -f /usr/local/lib/libntl.a
 	  then LIBS="/usr/local/lib/libntl.a $LIBS"
