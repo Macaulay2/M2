@@ -386,10 +386,11 @@ primaryDecomposition Module := List => o -> M -> ( -- returns a primary decompos
                f := product(AP - set AP_(H#p), q -> q_(position(q_*, g -> g % p != 0)));
                isolComp := if f == 1 then 0*M else saturate(0*M, f);
                if #(H#p) > 1 then (
+                    j0 := max(2, ceiling(max((ann M)_*/degree/sum) / min(p_*/degree/sum)));
                     colonMod := intersect apply(delete(i, H#p), k -> M.cache#"primaryComponents"#(AP#k));
-                    (j, Q) := (4, topComponents(M, bracketPower(p,2)*M, codim p));
-                    while not (image relations M == image relations Q and isSubset(intersect(colonMod, Q), isolComp)) 
-                    do (j, Q) = (2*j, trim topComponents(M, bracketPower(p,j)*M, codim p));
+                    (j, Q) := (2*j0, getEmbeddedComponent(M, bracketPower(p,j0)*M, p, o));
+                    while not isSubset(intersect(colonMod, Q), isolComp)
+                    do (j, Q) = (2*j, getEmbeddedComponent(M, bracketPower(p,j)*M, p, o));
                ) else Q = isolComp;
                M.cache#"primaryComponents"#p = Q;
           );
@@ -398,20 +399,113 @@ primaryDecomposition Module := List => o -> M -> ( -- returns a primary decompos
 )
 primaryDecomposition Ring := List => opts -> R -> primaryDecomposition comodule ideal R
 
--- Helper functions for primary decomposition
+-- Additional functions useful for primary decomposition
 
 bracketPower = (I, n) -> ideal apply(I_*, f -> f^n)
 
--- Localization methods
+getEmbeddedComponent = method(Options => options primaryDecomposition)
+getEmbeddedComponent (Module, Module, Ideal) := o -> (M, N, P) -> ( -- N is candidate for P-primary component of M
+     Q := M/N;
+     strat := o.Strategy;
+     if strat === null then (
+          if debugLevel > 0 then print("Determining strategy for top components...");
+          strat = "Hom";
+          try ( alarm 30; if sum values betti resolution Q < 1000 then strat = "Sat" );
+     );
+     if debugLevel > 0 then print("Using strategy " | strat);
+     C := if strat == "Hom" then equidimHull Q 
+          else if strat == "Sat" then kernelOfLocalization(Q, P)
+          else if strat == "Res" then topComponents(Q, codim P);
+     trim subquotient(generators C | generators N, relations M)
+)
 
 kernelOfLocalization = method()
 kernelOfLocalization (Module, Ideal) := Module => (M, P) -> ( -- returns kernel of localization map M -> M_P
      -- if not isPrime P then error "Expected second argument to be a prime ideal";
      AP := associatedPrimes M;
      f := product(AP, p -> ( i := position(p_*, g -> g % P != 0); if i === null then 1 else p_i ));
+     if debugLevel > 0 then print("Computing saturation...");
      if f == 1 then 0*M else saturate(0*M, f)
 )
 
+topComponents (Module, ZZ) := Module => (M, e) -> (
+     S := ring M;
+     if not isPolynomialRing S or not isAffineRing S then error "expected a polynomial ring";
+     N := 0*M;
+     f := pdim M;  -- will compute a resolution if needed...
+     while f > e do (
+	E := Ext^f(M,S);
+	if codim E == f then (
+		if debugLevel > 0 then print("Getting annihilator of Ext...");
+		I := annihilator E;
+		if debugLevel > 0 then print("Removing components of codim " | toString(f));
+		N = N : I;
+		-- M = M/N;
+	);
+	f = f-1;
+     );
+     N
+)
+
+equidimHull = method()
+equidimHull Module := Module => M -> ( -- equidimensional hull of 0 in a module M
+     R := ring M;
+     if debugLevel > 0 then print("Finding maximal regular sequence...");
+     S := comodule maxRegSeq annihilator M;
+     -- G := mingens ann M;
+     -- c := codim M;
+     -- S := comodule ideal(G*random(R^(numcols G), R^c)); -- should be (the quotient by) a maximal R-regular sequence contained in ann(M)
+     if debugLevel > 0 then print("Computing Ext ...");
+     if numColumns mingens M == 1 then (
+          if debugLevel > 0 then print("Using case for cyclic module...");
+          E := Hom(M, S); -- = Ext^c(M, R) by choice of S
+          if debugLevel > 0 then print("Getting annihilator ...");
+          return subquotient(generators annihilator E, relations M);
+     );
+     -- the following uses code from doubleDualMap in AnalyzeSheafOnP1
+     h := coverMap M;
+     ddh := Hom(Hom(h, S), S); -- = Ext^c(Ext^c(h, R), R) by choice of S
+     if debugLevel > 0 then print("Getting hull as kernel of " | toString(numRows matrix ddh) | " by " | toString(numColumns matrix ddh) | " matrix...");
+     kernel map(target ddh, M, matrix ddh)
+)
+
+maxRegSeq = method(Options => {Strategy => "Quick"})
+maxRegSeq Ideal := Ideal => opts -> I -> (
+     -- attempts to find sparse maximal regular sequence contained in an ideal
+     -- ideal should be in a CM ring (with sufficiently large coefficientRing)
+     G := sort flatten entries mingens I;
+     t := timing codim I;
+     c := last t;
+     t0 := 1 + ceiling first t;
+     if c == #G then return ideal G;
+     k := coefficientRing ring I;
+     J := ideal(G#0);
+     for i from 1 to c-1 do (
+          (j, foundNextNZD) := (#G-1, false); -- starts searching from end
+          while not foundNextNZD and j >= c do (
+               coeffList := {0_k, 1_k, random k};
+               if debugLevel > 0 then print("Trying generators " | toString(i, j));
+               for a in coeffList do (
+                    cand := G#i + a*G#j;
+                    K := J + ideal cand;
+                    if debugLevel > 0 then print "Testing regular sequence...";
+                    n := if opts.Strategy == "Quick" then ( 
+                         try ( alarm t0; codim K ) else infinity
+                    ) else codim K;
+                    if n == 1 + #J_* then (
+                         J = K;
+                         foundNextNZD = true;
+                         break;
+                    );
+               );
+               j = j-1;
+          );
+     );
+     if codim J == #J_* then (
+	if debugLevel > 0 then print "Found regular sequence!";
+	J
+     ) else print "Could not find regular sequence. Try again with Strategy => 'Full'"
+)
 
 TEST /// -- non-cyclic modules
 R = QQ[x_0..x_3]
