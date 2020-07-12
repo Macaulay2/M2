@@ -5,7 +5,6 @@ i1 : R = CC[x,y];
 i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 
 i3 : fSols = solveSystem(f, randomSeed=>3);
-*** variables in the ring : {x, y} ***
 
 i4 : fSols/print
 {-1, 0}
@@ -36,7 +35,6 @@ o6 : List
 i7 : f = {x^2+y^2,y*x+x};
 
 i8 : fSols = solveSystem(f);
-*** variables in the ring : {x, y} ***
 
 i9 : fSols/print
 (-2.46519e-32+1.07852e-32*ii, -2.40467e-32+9.0524e-34*ii)
