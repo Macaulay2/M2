@@ -1,6 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
      "PrimaryDecomposition",
+     Headline => "functions for primary decomposition",
      Version => "2.0",
      Date => "July 4, 2020",
      AuxiliaryFiles => true,
@@ -9,7 +10,7 @@ newPackage(
 	{Name => "Carolyn Yackel", Email => "cyackel@math.indiana.edu"},
 	{Name => "Justin Chen", Email => "justin.chen@math.gatech.edu"}
      },
-     Headline => "functions for primary decomposition"
+     PackageExports => {}
      )
 
 export {

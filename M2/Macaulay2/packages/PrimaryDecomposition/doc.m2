@@ -459,8 +459,9 @@ document {
      primes) are uniquely determined by the module, embedded components are never unique,
      and thus specifying generators of an embedded component requires non-canonical choices.
      For speed purposes, this algorithm searches for embedded components obtained by adding 
-     a bracket power of the embedded prime, with exponent a power of 2. In particular, the
-     generators of an embedded component may not be of minimal possible degree."},
+     a bracket power of the embedded prime, with exponent determined by the degrees of
+     generators of the embedded prime and ", TT "ann M", ". In particular, the generators 
+     of an embedded component may not be of minimal possible degree."},
      SeeAlso => {(primaryDecomposition,Ideal),(associatedPrimes,Module),isPrimary,topComponents}
      }
 
