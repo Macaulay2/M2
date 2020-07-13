@@ -1489,6 +1489,7 @@ TEST ///
   restart
   debug needsPackage "MinimalPrimes"
 *-
+  debug needsPackage "MinimalPrimes"
   R = QQ[x,r,v,u,b, MonomialOrder=>{Lex=>5}]
   I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
   (S, SF) = makeFiberRings({v,u}, R)

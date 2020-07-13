@@ -143,7 +143,7 @@ isPrimary(Ideal,Ideal) := (Q,P) -> (
      )
 isPrimary (Module, Module) := (M, Q) -> #associatedPrimes(M/Q) == 1
 
-minimalPrimes MonomialIdeal := decompose MonomialIdeal := (cacheValue symbol minimalPrimes) (
+minimalPrimes MonomialIdeal := decompose MonomialIdeal := {} >> opts -> (cacheValue symbol minimalPrimes) (
      (I) -> (
 	  minI := dual radical I;
           if minI == 1 then {monomialIdeal(0_(ring I))}
