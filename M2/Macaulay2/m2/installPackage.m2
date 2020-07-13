@@ -438,25 +438,27 @@ reproduciblePaths = outf -> (
      outstr := get outf;
      if topSrcdir === null then return outstr;
      srcdir := regexQuote toAbsolutePath topSrcdir;
-     builddir := regexQuote prefixDirectory;
+     prefixdir := regexQuote prefixDirectory;
+     builddir := substring(0, #prefixdir - 9, prefixdir); -- 9 = #"usr-dist/"
      homedir := regexQuote homeDirectory;
-     if last homedir == "/" then homedir = substring(0, #homedir - 1, homedir);
+     homedir = substring(0, #homedir - 1, homedir); -- remove trailing "/"
      if any({srcdir, builddir, homedir}, dir -> match(dir, outstr))
      then (
-	 outstr = replace(srcdir | "Macaulay2/m2/startup.m2.in",
-	     "/path/to/source/Macaulay2/m2/startup.m2.in", outstr);
+	 -- .m2 files in source directory
 	 outstr = replace(srcdir | "Macaulay2/m2",
 	     finalPrefix | Layout#1#"packages" | "Core", outstr);
 	 outstr = replace(srcdir | "Macaulay2/packages/",
 	     finalPrefix | Layout#1#"packages", outstr);
-	 outstr = replace(builddir | Layout#2#"bin",
-	     finalPrefix | Layout#1#"bin", outstr);
-	 outstr = replace(builddir | Layout#2#"data",
-	     finalPrefix | Layout#1#"data", outstr);
-	 outstr = replace(builddir | Layout#2#"lib",
-	     finalPrefix | Layout#1#"lib", outstr);
+	 -- generated .m2 files in build directory (tvalues.m2)
+	 outstr = replace(builddir | "Macaulay2/m2",
+	     finalPrefix | Layout#1#"packages" | "Core", outstr);
+	 -- everything in staging area
+	 scan({"bin", "data", "lib", "program licenses", "programs"}, key ->
+	     outstr = replace(prefixdir | Layout#2#key,
+		 finalPrefix | Layout#1#key, outstr));
+	 outstr = replace(prefixdir, finalPrefix, outstr);
+	 -- home directory
 	 outstr = replace(homedir, "/home/m2user", outstr);
-	 outstr = replace(builddir, finalPrefix, outstr);
 	 outf << outstr << close;
 	 );
      outstr
