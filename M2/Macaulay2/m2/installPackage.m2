@@ -434,8 +434,7 @@ dispatcherMethod := m -> m#-1 === Sequence and (
      f := lookup m;
      any(dispatcherFunctions, g -> functionBody f === functionBody g))
 
-reproduciblePaths = outf -> (
-     outstr := get outf;
+reproduciblePaths = outstr -> (
      if topSrcdir === null then return outstr;
      srcdir := regexQuote toAbsolutePath topSrcdir;
      prefixdir := regexQuote prefixDirectory;
@@ -458,7 +457,6 @@ reproduciblePaths = outf -> (
 	 outstr = replace(prefixdir, finalPrefix, outstr);
 	 -- home directory
 	 outstr = replace(homedir, "/home/m2user", outstr);
-	 outf << outstr << close;
 	 );
      outstr
     )
@@ -656,7 +654,8 @@ installPackage Package := opts -> pkg -> (
 			 );
 		    -- read, separate, and store example output
 		    if fileExists outf then (
-			 outstr := reproduciblePaths outf;
+			 outstr := reproduciblePaths get outf;
+			 outf << outstr << close;
 			 pkg#"example results"#fkey = drop(separateM2output outstr,-1)
 		    )
 		    else (
