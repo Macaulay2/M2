@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 1241447274
+-- -*- M2-comint -*- hash: 307307630
 
 i1 : R=QQ[x1,x2,y]
 
@@ -6,20 +6,14 @@ o1 = R
 
 o1 : PolynomialRing
 
-i2 : theDir = temporaryFileName()
-
-o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-74824-0/1
+i2 : theDir = temporaryFileName();
 
 i3 : makeDirectory theDir
 
 i4 : makeB'InputFile(theDir,
              BertiniInputConfiguration=>{MPType=>2},
          AffVariableGroup=>{{x1,x2},{y}},
-             B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
-
-o4 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-74824-0/1/input
-
-o4 : File
+             B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2});
 
 i5 : R=QQ[x1,x2,y,X]
 
@@ -35,11 +29,7 @@ i6 : makeB'InputFile(theDir,
             {X,x1+x2+1},
             {f1,y*X^2+1},
             {f2,x1-x2+1},
-            {f3,y-2}})
-
-o6 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-74824-0/1/input
-
-o6 : File
+            {f3,y-2}});
 
 i7 : R=QQ[x1,x2,y,X]
 
@@ -52,10 +42,6 @@ i8 : makeB'InputFile(theDir,
           AffVariableGroup=>{{x1,x2},{y}},
                B'Polynomials=>{y*X^2+1,x1-x2+1,y-2},
                 B'Functions=>{
-                   {X,x1+x2+1}})
-
-o8 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-74824-0/1/input
-
-o8 : File
+                   {X,x1+x2+1}});
 
 i9 : 

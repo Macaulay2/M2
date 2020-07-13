@@ -16,7 +16,6 @@ o3 : Ideal of R
 i4 : f=flatten entries gens I;
 
 i5 : (w,ns) = topWitnessSet(f,2);
-*** variables in the ring : {a, b, c, d, zz1, zz2} ***
 
 i6 : slcmat = matrix applyTable (entries w.Slice, x->1_CC*realPart x);
 
