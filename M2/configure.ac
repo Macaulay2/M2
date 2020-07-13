@@ -56,9 +56,18 @@ do case $i in
    esac
 done
 
-dnl: homebrew-provided compilers don't look here:
-CPPFLAGS="$CPPFLAGS -I/usr/include -I/usr/local/include"
-LDFLAGS="$LDFLAGS -L/usr/lib -L/usr/local/lib"
+dnl: adding the /usr prefix
+CPPFLAGS="$CPPFLAGS -I/usr/include"
+LDFLAGS="$LDFLAGS -L/usr/lib"
+
+dnl: adding the Homebrew prefix
+AC_MSG_CHECKING(whether Homebrew is available)
+if test "`type -t brew`" = file
+then BREW_PREFIX=`brew --prefix`
+     AC_MSG_RESULT([yes, adding $BREW_PREFIX to header and library search paths])
+     CPPFLAGS="$CPPFLAGS -I`brew --prefix`/include"
+     LDFLAGS="$LDFLAGS -L`brew --prefix`/lib"
+fi
 
 dnl AC_MSG_CHECKING(whether $FIND is GNU find)
 dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
