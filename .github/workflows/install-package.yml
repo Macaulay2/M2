@@ -1,0 +1,73 @@
+# https://docs.github.com/en/actions/reference/events-that-trigger-workflows#manual-events
+# https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#manually-running-a-workflow
+
+name: Package Review Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to install and check'
+        required: true
+        default: 'FirstPackage'
+
+defaults:
+  run:
+    os: macos-latest
+    compiler: xcode11
+    working-directory: M2/BUILD/build
+
+jobs:
+  install-package:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install requirements for macOS
+        run: |
+          brew config
+          brew install ccache ninja make pkg-config automake gnu-tar yasm
+          brew install boost libatomic_ops ncurses openblas tbb eigen \
+                       libomp bdw-gc gmp mpfr glpk flint ntl cddlib
+
+      - name: Prepare build environment
+        run: |
+          export PATH=`brew --prefix ccache`/libexec:`brew --prefix llvm`/bin:$PATH
+          echo "::set-env name=PATH::$PATH"
+          # Necessary for clang-10 on macOS to find libomp
+          echo "::set-env name=LIBRARY_PATH::`llvm-config --libdir`"
+
+      - uses: actions/cache@v2
+        id: restore-cache
+        with:
+          path: |
+            ~/.ccache
+            ~/M2/BUILD/build/usr-host
+          key: usr-host-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-${{ hashFiles('**/cmake/*-libraries.cmake') }}
+          restore-keys: |
+            usr-host-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-
+            usr-host-${{ runner.os }}-${{ matrix.compiler }}-
+            usr-host-${{ runner.os }}-
+
+      - name: Configure Macaulay2
+        run: |
+          cmake -S../.. -B. -GNinja -DVERBOSE=ON -DUSING_MPIR=OFF \
+            -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix`
+
+      - name: Build libraries
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        run: |
+          # TODO: build only the necessary programs
+          cmake --build . --target build-libraries
+
+      - name: Build Macaulay2
+        run: |
+          cmake --build . --target M2-core
+
+      - name: installPackage "${{ github.event.inputs.package }}"
+        run: |
+          cmake --build . --target install-${{ github.event.inputs.package }}
+
+      - name: check "${{ github.event.inputs.package }}"
+        run: |
+          ctest -R check-${{ github.event.inputs.package }}

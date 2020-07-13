@@ -11,7 +11,7 @@ name: Build and Test Macaulay2
 on:
   push:
     branches:
-      - test/actions
+      - development # test/actions
 
 defaults:
   run:
