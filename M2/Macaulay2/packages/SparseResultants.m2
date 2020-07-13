@@ -1,8 +1,8 @@
 
 newPackage(
        "SparseResultants",
-        Version => "0.9.1", 
-        Date => "July 10, 2020",
+        Version => "0.9.2", 
+        Date => "July 13, 2020",
         Headline => "computations with sparse resultants",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
         PackageExports => {"Resultants"},
@@ -612,18 +612,18 @@ removeOneDim (MultidimensionalMatrix) := (M) -> (
     multidimensionalMatrix makeList(P,X)
 );
 
-canApplySchlafli = method();
-canApplySchlafli (List) := (n) -> (
+canApplySchlafli = method(Options => {Strategy => null});
+canApplySchlafli (List) := o -> (n) -> (
     if #n == 1 then return (true,0);
     if #n == 2 then if n_0 == n_1 then return (true,0) else return (false,-1);
-    if #n == 3 and #unique n <= 2 then (
+    if o.Strategy =!= "forceSchlafliMethod" and o.Strategy =!= "Dense_forceSchlafliMethod" and o.Strategy =!= "NotDense_forceSchlafliMethod" then if #n == 3 and #unique n <= 2 then (
         b := first commonest n;
         a := n_0; if a == b then (a = n_1; if a == b then a = n_2);
         if a >= 4 then return (false,-1);
     );
     k := apply(n,i -> i-1);
     if 2*max(k) > sum k then return (false,-1);
-    for i to #n-1 do if first canApplySchlafli n_(toList delete(i,0..#n-1)) then return (true,i);
+    for i to #n-1 do if first canApplySchlafli(n_(toList delete(i,0..#n-1)),Strategy=>o.Strategy) then return (true,i);
     return (false,-1);
 );
 
@@ -631,7 +631,7 @@ schlafliMethod = method(Options => {Strategy => null});
 schlafliMethod (MultidimensionalMatrix) := o -> M -> (
     n := M#"format";
     if #n <= 2 then return determinant(M,Strategy=>o.Strategy);
-    (b,i0) := canApplySchlafli n;
+    (b,i0) := canApplySchlafli(n,Strategy=>o.Strategy);
     if not b then error "Schlafli's method cannot be applied";
     F := M#"multilinearForm";
     K := M#"ring";
@@ -639,29 +639,31 @@ schlafliMethod (MultidimensionalMatrix) := o -> M -> (
     G := sub(F,(K[X_i0])[flatten X_(toList delete(i0,0..#n-1))]);
     N := multidimensionalMatrix makeList(G,X_(toList delete(i0,0..#n-1)));
     detN := schlafliMethod(N,Strategy=>o.Strategy);
+    if detN == 0 then return 0_(M#"ring");
     d := first degree detN;
     detN' := sub(sub(detN,first gens ring detN => 1),K[(gens ring detN)_{1 .. n_i0-1}]);
     try assert(d == first degree detN') else error "unhomogenization failed";
     Disc := affineDiscriminant;
-    if o.Strategy =!= null and o.Strategy =!= "Dense" and o.Strategy =!= "NotDense" then error "allowed strategies are \"Dense\" and \"NotDense\"";
-    if o.Strategy === "Dense" or (o.Strategy === null and numgens coefficientRing ring detN' > 0) then Disc = denseDiscriminant(d,n_i0-1);
+    if o.Strategy === "Dense" or o.Strategy === "Dense_forceSchlafliMethod" then Disc = denseDiscriminant(d,n_i0-1);
+    if o.Strategy === null or o.Strategy === "forceSchlafliMethod" then if numgens K > 0 then Disc = denseDiscriminant(d,n_i0-1);
     Disc detN'
 );
 
 determinant (MultidimensionalMatrix) := o -> (M) -> (
+    if o.Strategy =!= null and o.Strategy =!= "Dense" and o.Strategy =!= "NotDense" and o.Strategy =!= "forceSchlafliMethod" and o.Strategy =!= "Dense_forceSchlafliMethod" and o.Strategy =!= "NotDense_forceSchlafliMethod" then error "allowed strategies are \"Dense\", \"NotDense\", \"forceSchlafliMethod\", \"Dense_forceSchlafliMethod\", and \"NotDense_forceSchlafliMethod\"";
     n := M#"format";
     k := apply(n,i -> i-1);
     if 2*max(k) > sum k then error("the determinant for matrices of format "|toString(n)|" does not exist");
     if n == {1} then return first M#"list";
     if min n == 1 then return determinant(removeOneDim M,Strategy=>o.Strategy);
     if #n == 2 then return determinant(matrix M#"list",Strategy=>null);
-    if #n == 3 then if first canApplySchlafli n then return schlafliMethod(M,Strategy=>o.Strategy);
+    if #n == 3 then if first canApplySchlafli(n,Strategy=>o.Strategy) then return schlafliMethod(M,Strategy=>o.Strategy);
     if n == {2,2,2,2} then return schlafliMethod(M,Strategy=>o.Strategy);
+    if o.Strategy === "forceSchlafliMethod" or o.Strategy === "Dense_forceSchlafliMethod" or o.Strategy === "NotDense_forceSchlafliMethod" then return schlafliMethod(M,Strategy=>o.Strategy);
     K := if char M#"ring" == 0 then ZZ else ZZ/(char M#"ring");
     A := sparseDiscriminant(exponentsMatrix genericMultihomogeneousPolynomial(n,toList(#n:1),CoefficientRing=>K),CoefficientRing=>K);
     A (M#"multilinearForm")
 );
-
 
 -- end Hyperdeterminants --
 
