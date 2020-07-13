@@ -439,9 +439,8 @@ reproduciblePaths = outf -> (
      if topSrcdir === null then return outstr;
      srcdir := regexQuote toAbsolutePath topSrcdir;
      prefixdir := regexQuote prefixDirectory;
-     builddir := substring(0, #prefixdir - 9, prefixdir); -- 9 = #"usr-dist/"
-     homedir := regexQuote homeDirectory;
-     homedir = substring(0, #homedir - 1, homedir); -- remove trailing "/"
+     builddir := replace("usr-dist/?$", "", prefixdir);
+     homedir := replace("/$", "", regexQuote homeDirectory);
      if any({srcdir, builddir, homedir}, dir -> match(dir, outstr))
      then (
 	 -- .m2 files in source directory
