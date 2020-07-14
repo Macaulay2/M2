@@ -88,7 +88,9 @@ public:
   static const size_t insertFactor = 4;
 
   static const bool supportDeduplication = true;
+
   bool cmpEqual(CompareResult a) const { return a == CompareResult::EQ; }
+
   Entry deduplicate(Entry a, Entry b) const { return a + b + 1000; }
 
   static const bool minBucketBinarySearch = false;
@@ -359,6 +361,7 @@ public:
     while (not mQueue.empty())
       {
         Entry e = mQueue.top();
+        // this is bad - compare should not be used to check equality
         if (mRing.monoid().compare(e.first, lt.first) == EQ)
           {
             lt.second = mRing.coefficientRing()->add(lt.second, e.second);

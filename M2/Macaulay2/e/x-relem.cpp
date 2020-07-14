@@ -240,6 +240,34 @@ const Ring* /* or null */ rawRingM2FreeAlgebra(const Ring* coefficientRing,
   }
 }
 
+/* WIP
+const M2FreeMonoid* rawM2FreeMonoid(M2_ArrayString names,
+                                    const Ring* degreeRing,
+                                    M2_arrayint degrees,
+                                    M2_arrayint wtvecs,
+                                    M2_arrayint heftVector)
+{
+  try {
+    const PolynomialRing *P = degreeRing->cast_to_PolynomialRing();
+    if (P == nullptr)
+      {
+        ERROR("expected polynomial ring");
+        return nullptr;
+      }
+    const M2FreeMonoid* result = M2FreeMonoid::create(M2_ArrayString_to_stdvector(names),
+                                                      P,
+                                                      M2_arrayint_to_stdvector<int>(degrees),
+                                                      M2_arrayint_to_stdvector<int>(wtvecs),
+                                                      M2_arrayint_to_stdvector<int>(heftVector));
+    return result;
+  }
+  catch (exc::engine_error& e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+*/
+
 const Ring* /* or null */ rawRingM2FreeAlgebraQuotient(const Matrix* GB, int maxdeg)
 {
   const Ring* A = GB->get_ring();

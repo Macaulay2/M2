@@ -74,6 +74,7 @@ rawNCFreeAlgebra = value Core#"private dictionary"#"rawNCFreeAlgebra"
 rawNCBasis = value Core#"private dictionary"#"rawNCBasis"
 rawNCReductionTwoSided = value Core#"private dictionary"#"rawNCReductionTwoSided"
 rawNCGroebnerBasisTwoSided = value Core#"private dictionary"#"rawNCGroebnerBasisTwoSided"
+RawRingElement = value Core#"private dictionary"#"RawRingElement"
 
 -- we are having trouble with the following line, due to the fact
 -- that RawRing is a class, but we would like to reference the symbol in the
@@ -1979,7 +1980,34 @@ rawNCBasis(raw gbS,{500},{500},-1);
 rawNCBasis(raw gbS,{1000},{1000},-1);
 ///
 
+-- Toying with adding FreeMonoids
+
+FreeMonoid = new Type of Monoid
+
+FreeMonoidElement = new Type of HashTable
+FreeMonoidElement.synonym = "free monoid element"
+new FreeMonoidElement from RawRingElement := (FreeMonoidElement, f) -> hashTable{ symbol RawRingElement => f }
+raw FreeMonoidElement := x -> x.RawRingElement
+
+freeMonoid = method()
+freeMonoid FreeAlgebra := R -> (
+    M := new FreeMonoid of FreeMonoidElement;
+    M.vars = M.generators = apply(numgens R, i -> new M from raw R_i);
+    M * M := (x,y) -> new M from x.RawRingElement * y.RawRingElement;
+    M
+)
+
 end--
+
+-- making a new type of monoid for noncommutative algebras.
+restart
+debug Core
+debug needsPackage "AssociativeAlgebras"
+R = QQ{x,y}
+M = freeMonoid R
+M_0
+M_1
+M_1*M_0
 
 restart
 uninstallPackage "AssociativeAlgebras"
