@@ -30,6 +30,8 @@ getProgramPath = (name, cmds, opts) -> (
 	pathsToTry = append(pathsToTry, programPaths#name);
     -- now try M2-installed path
     pathsToTry = append(pathsToTry, prefixDirectory | currentLayout#"programs");
+    -- any additional paths specified by the caller
+    pathsToTry = pathsToTry | opts.AdditionalPaths;
     -- finally, try PATH
     if getenv "PATH" != "" then
 	pathsToTry = join(pathsToTry, separate(":", getenv "PATH"));
@@ -50,7 +52,12 @@ getProgramPath = (name, cmds, opts) -> (
 )
 
 findProgram = method(TypicalValue => Program,
-    Options => {RaiseError => true, Verbose => false, Prefix => {}})
+    Options => {
+	RaiseError => true,
+	Verbose => false,
+	Prefix => {},
+	AdditionalPaths => {}
+    })
 findProgram(String, String) := opts -> (name, cmd) ->
     findProgram(name, {cmd}, opts)
 findProgram(String, List) := opts -> (name, cmds) -> (
