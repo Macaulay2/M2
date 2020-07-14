@@ -1013,7 +1013,7 @@ runGfanCommand = (cmd, opts, data) -> (
 
 runGfanCommandCaptureBoth = (cmd, opts, data) -> (
 	if gfanProgram === null then
-	    gfanProgram = loadProgram("gfan", "gfan --help",
+	    gfanProgram = findProgram("gfan", "gfan --help",
 		Verbose => gfanVerbose);
 	tmpFile := gfanMakeTemporaryFile data;
 
@@ -2543,7 +2543,7 @@ gfanFunctions = hashTable {
 --)
 --WARNING - the word PARA was deleted from the next function (it used to read "l -> PARA {l})
 gfanHelp = (functionStr) -> (
-	if gfanProgram === null then gfanProgram = loadProgram("gfan",
+	if gfanProgram === null then gfanProgram = findProgram("gfan",
 	    "gfan --help", RaiseError => false);
 	if gfanProgram === null then {}
 	else apply( lines runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") , l-> {l})
