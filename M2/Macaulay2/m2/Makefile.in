@@ -70,7 +70,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		loadsequence \
 		Makefile.in \
 		Makefile.tests \
-		../editors/emacs/Makefile.in \
+		../editors/Makefile.in \
 		../tests/Makefile.in \
 		../tests/Makefile.test.in \
 		../tests/slow/Makefile.in \
