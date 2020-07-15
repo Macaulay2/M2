@@ -111,7 +111,7 @@ runFile = (inf, inputhash, outf, tmpf, desc, pkg, announcechange, usermode, exam
      cmd = cmd | readmode(ArgSilent,      "--silent");
      cmd = cmd | readmode(ArgStop,        "--stop");
      cmd = cmd | readmode(ArgPrintWidth,  "--print-width 77");
-     cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir",format d));
+     cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir ", format d));
      needsline := concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'");
      cmd = cmd | if pkgname != "Macaulay2Doc" then needsline else "";
      cmd = cmd | readmode(SetInputFile,   "<" | format inf);
