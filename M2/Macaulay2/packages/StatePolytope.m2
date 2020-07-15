@@ -66,7 +66,7 @@ polymake = null
 runPolymake = args -> (
     if polymake === null then
 	polymake = findProgram("polymake", "polymake --version");
-    polymakeRun := runProgram(polymake, args);
+    polymakeRun := runProgram(polymake, "--no-config " | args);
     polymakeRun#"output"
 )
 
