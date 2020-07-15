@@ -515,9 +515,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDDLIB_FOUND)
 # https://numpi.dm.unipi.it/software/mpsolve
 # Known issue: tests don't work with static library
 ExternalProject_Add(build-mpsolve
-  URL               https://github.com/robol/MPSolve/archive/3.2.1.tar.gz
-  URL_HASH          SHA256=7edb7899d69a3e09848b893b12f360b8a83429a18eee4a7f193fcfc8692dca71
-  DOWNLOAD_NAME     MPSolve-3.2.1.tar.gz
+  URL               ${M2_SOURCE_URL}/mpsolve-3.2.1.tar.gz
+  URL_HASH          SHA256=3d11428ae9ab2e020f24cabfbcd9e4d9b22ec572cf70af0d44fe8dae1d51e78e
   PREFIX            libraries/mpsolve
   SOURCE_DIR        libraries/mpsolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
