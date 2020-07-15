@@ -322,7 +322,7 @@ mungeFile = (filename, headerline, trailerline, text) -> (
      insert := headerline | text | trailerline;
      local action;
      if fileExists filename then (
-     	  filename = realpath filename;	-- no other editor does this, but it seems like a good idea...
+     	  filename = realpath filename;	-- if filename is a symbolic link, we want to preserve that link and modify the underlying file
 	  hdr := "^" | regexpString headerline;
 	  tlr := "^" | regexpString trailerline;
      	  regexp := hdr | "(.|\n)*" | tlr ;
@@ -491,9 +491,10 @@ installMethod(setup, () -> (
      --     After reading that file, it looks for `~/.bash_profile',
      --     `~/.bash_login', and `~/.profile', in that order, and reads and
      --     executes commands from the first one that exists and is readable.
-     --   that's why we munge all three files (if present)
-     fileExists("~/.bash_profile") and mungeFile("~/"|".bash_profile",startToken,endToken,M2profileRead) or
-     fileExists("~/.bash_login") and mungeFile("~/"|".bash_login",startToken,endToken,M2profileRead) or
+     mungeFile(     if fileExists "~/.bash_profile" then "~/.bash_profile"
+	       else if fileExists "~/.bash_login"   then "~/.bash_login"
+	       else "~/.bash_profile",
+	       startToken,endToken,M2profileRead) or
      mungeFile("~/.profile",startToken,endToken,M2profileRead) or
      -- zsh:
      mungeFile("~/.zprofile",startToken,endToken,M2profileRead) or
