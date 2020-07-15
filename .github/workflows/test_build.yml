@@ -77,8 +77,8 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew config
-          brew install ccache ninja make pkg-config automake gnu-tar yasm
-          brew install boost libatomic_ops ncurses openblas tbb eigen \
+          brew install ccache ninja make pkg-config automake m4 gnu-tar yasm
+          brew install boost libatomic_ops ncurses tbb eigen \
                        libomp bdw-gc gmp mpfr glpk flint ntl cddlib
 
 # ----------------------
@@ -92,7 +92,7 @@ jobs:
           sudo apt-get install -y -q --no-install-recommends ccache ninja-build yasm libtool-bin clang-10
           sudo apt-get install -y -q --no-install-recommends libgdbm-dev libncurses5-dev libreadline-dev \
                    libatomic-ops-dev libboost-stacktrace-dev libxml2-dev libopenblas-dev libtbb-dev gfan \
-                   libeigen3-dev w3c-markup-validator
+                   libeigen3-dev liblzma-dev w3c-markup-validator
           brew install libomp bdw-gc gmp mpfr glpk flint ntl cddlib
 
 # ----------------------
@@ -103,18 +103,21 @@ jobs:
         run: |
           echo "::set-env name=CC::${{ matrix.cc }}"
           echo "::set-env name=CXX::${{ matrix.cxx }}"
-          # Necessary for gfan on Linux to find cddlib
-          echo "::set-env name=LD_LIBRARY_PATH::`brew --prefix`/lib:$LD_LIBRARY_PATH"
 
           if [[ "${{ runner.os }}" == "Linux" ]]; then
-            echo "::set-env name=PATH::/usr/lib/ccache:$PATH"
-            sudo ln -s /usr/bin/make /usr/bin/gmake
+            PATH=/usr/lib/ccache:$PATH
+            # Necessary for gfan on Linux to find cddlib
+            echo "::set-env name=LD_LIBRARY_PATH::`brew --prefix`/lib:$LD_LIBRARY_PATH"
+            # Necessary for clang-10 on Linux
+            echo "::set-env name=LIBRARY_PATH::`llvm-config-10 --libdir`"
           else
-            export PATH=`brew --prefix ccache`/libexec:`brew --prefix llvm`/bin:$PATH
-            echo "::set-env name=PATH::$PATH"
-            # Necessary for clang-10 on macOS to find libomp
+            PATH=`brew --prefix llvm`/bin:$PATH
+            PATH=`brew --prefix ccache`/libexec:$PATH
+            PATH=`brew --prefix make`/libexec/gnubin:$PATH
+            # Necessary for clang on macOS
             echo "::set-env name=LIBRARY_PATH::`llvm-config --libdir`"
           fi
+          echo "::set-env name=PATH::$PATH"
 
       - uses: actions/cache@v2
         if: matrix.build-system == 'cmake' # TODO: remove when autotools is more efficient with space
@@ -156,14 +159,16 @@ jobs:
       - name: Configure Macaulay2 using Autotools
         if: matrix.build-system == 'autotools'
         run: |
-          gmake -C ../.. get-tools
-          gmake -C ../.. all
-          ../../configure --prefix=/usr --enable-download --enable-build-libraries="readline"
+          if [[ "${{ runner.os }}" == "macOS" ]]; then
+            make -C ../.. get-tools
+          fi
+          make -C ../.. all
+          ../../configure --enable-download
 
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
         run: |
-          gmake
+          make
 
 # ----------------------
 #   Run tests
@@ -179,9 +184,9 @@ jobs:
       - name: Run Tests (autotools, ubuntu)
         if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest'
         run: |
-          gmake check
-          gmake -C Macaulay2/html-check-links check
-          gmake validate-html
+          make check
+          make -C Macaulay2/html-check-links check
+          make validate-html
 
 # ----------------------
 #   Upload build logs
