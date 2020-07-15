@@ -103,11 +103,10 @@ jobs:
         run: |
           echo "::set-env name=CC::${{ matrix.cc }}"
           echo "::set-env name=CXX::${{ matrix.cxx }}"
+          echo "::set-env name=LD_LIBRARY_PATH::`brew --prefix`/lib:$LD_LIBRARY_PATH"
 
           if [[ "${{ runner.os }}" == "Linux" ]]; then
             PATH=/usr/lib/ccache:$PATH
-            # Necessary for gfan on Linux to find cddlib
-            echo "::set-env name=LD_LIBRARY_PATH::`brew --prefix`/lib:$LD_LIBRARY_PATH"
             # Necessary for clang-10 on Linux
             echo "::set-env name=LIBRARY_PATH::`llvm-config-10 --libdir`"
           else
@@ -179,7 +178,7 @@ jobs:
         run: |
           cmake --build . --target M2-unit-tests
           ctest -R "unit-tests"
-          ctest -R "normal/" -E "command|schenck|threads|doc-links" -j4
+          ctest -R "normal/" -E "command|program|schenck|threads|doc-links" -j4
 
       - name: Run Tests (autotools, ubuntu)
         if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest'
