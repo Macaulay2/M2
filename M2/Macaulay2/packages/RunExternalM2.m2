@@ -85,7 +85,6 @@ export {
 	"runExternalM2ReturnAnswer",
 	-- Various Options:
 	"M2Location",
-	"KeepFiles",
 	"KeepStatistics",
 	"KeepStatisticsCommand",
 	"PreRunScript"
@@ -479,7 +478,6 @@ safelyRemoveFile := (s,f) -> (
 mydoc=concatenate(mydoc,///
 Node
 	Key
-		KeepFiles
 		[runExternalM2,KeepFiles]
 	Headline
 		indicate whether or not temporary files should be saved
