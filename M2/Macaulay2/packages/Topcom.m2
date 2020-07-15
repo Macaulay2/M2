@@ -77,7 +77,7 @@ topcomPoints Matrix := opts -> (A) -> (
 callTopcom = method()
 callTopcom(String, List) := (command, inputs) -> (
     if topcomProgram === null then
-	topcomProgram = loadProgram("topcom","cube 3", Prefix => {
+	topcomProgram = findProgram("topcom","cube 3", Prefix => {
 	    (".*", "topcom-"), -- debian
 	    ("^(cross|cube|cyclic|hypersimplex|lattice)$", "TOPCOM-"), --fedora
 	    ("^cube$", "topcom_")}); --gentoo

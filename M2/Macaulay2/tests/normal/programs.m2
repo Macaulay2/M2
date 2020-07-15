@@ -4,11 +4,11 @@ name = baseFilename fn
 dir = replace(name | "$", "", fn)
 programPaths#name = dir
 
-program = loadProgram(name, name, RaiseError => false)
+program = findProgram(name, name, RaiseError => false)
 assert(program === null)
 
 fileMode(7*64 + 5*8 + 5, fn)
-program = loadProgram(name, name)
+program = findProgram(name, name)
 assert(program#"name" == name)
 assert(program#"path" == dir)
 assert(program#"prefix" == (".*", ""))
@@ -25,5 +25,5 @@ assert(net pr == "0")
 
 copyFile(fn, dir | "/foo-bar")
 prefix = ("bar", "foo-")
-program = loadProgram(name, {name, "bar"}, Prefix => {prefix})
+program = findProgram(name, {name, "bar"}, Prefix => {prefix})
 assert(program#"prefix" == prefix)
