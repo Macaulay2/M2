@@ -51,7 +51,9 @@ jobs:
             make: gmake
           - os: ubuntu-latest
             make: make
-
+        exclude:
+          - os: macos-latest
+            compiler: gcc9
 
     steps:
       - uses: actions/checkout@v1  # this set up the virtual environment, which has a whole lot
