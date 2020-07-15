@@ -89,10 +89,12 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           # TODO: add libgivaro-dev and fflas-ffpack one the package is updated
+          # TODO: help autotools detect libraries from brew.
           sudo apt-get install -y -q --no-install-recommends ccache ninja-build yasm libtool-bin clang-10
           sudo apt-get install -y -q --no-install-recommends libgdbm-dev libncurses5-dev libreadline-dev \
                    libatomic-ops-dev libboost-stacktrace-dev libxml2-dev libopenblas-dev libtbb-dev gfan \
-                   libeigen3-dev liblzma-dev w3c-markup-validator
+                   libeigen3-dev libgc-dev libmpfr-dev libglpk-dev libntl-dev libcdd-dev libgtest-dev \
+                   liblzma-dev w3c-markup-validator
           brew install libomp bdw-gc gmp mpfr glpk flint ntl cddlib
 
 # ----------------------
