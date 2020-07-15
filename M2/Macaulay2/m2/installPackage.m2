@@ -664,7 +664,16 @@ installPackage Package := opts -> pkg -> (
 		    ));
 
 	  if not opts.IgnoreExampleErrors
-	  then if hadError then error(toString numErrors, " error(s) occurred running examples for package ", pkg#"pkgname");
+	  then if hadError then error(toString numErrors,
+	       " error(s) occurred running examples for package ",
+	       pkg#"pkgname",
+	       if verbose then ":" | newline | newline |
+	            concatenate apply(select(readDirectory(exampleOutputDir),
+		         file -> match("\\.errors$", file)), err ->
+		              err | newline |
+			      concatenate(width err : "*") | newline |
+			      get("!tail " | exampleOutputDir | err))
+	       else "");
 
 	  -- if no examples were generated, then remove the directory
 	  if length readDirectory exampleOutputDir == 2 then
