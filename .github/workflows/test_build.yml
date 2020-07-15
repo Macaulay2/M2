@@ -139,24 +139,10 @@ jobs:
           cmake -S../.. -B. -GNinja -DUSING_MPIR=OFF \
             -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix`
 
-#      - name: Save CMake artifacts
-#        uses: actions/upload-artifact@v2
-#        if: matrix.build-system == 'cmake' && failure()
-#        with:
-#           name: cmake-log-${{matrix.os}}-${{matrix.compiler}}
-#           path: M2/BUILD/build/CMakeFiles/CMake(Error.log|Output.log|CMakeTmp/CMakeLists.txt)
-
       - name: Build libraries using Ninja
         if: matrix.build-system == 'cmake' # && steps.restore-cache.outputs.cache-hit != 'true'
         run: |
           cmake --build . --target build-libraries build-programs
-
-#      - name: Save CMake library artifacts
-#        uses: actions/upload-artifact@v2
-#        if: matrix.build-system == 'cmake' && failure()
-#        with:
-#           name: cmake-log-${{matrix.os}}-${{matrix.compiler}}
-#           path: M2/BUILD/build/libraries/*/build/config.log
 
       - name: Build Macaulay2 using Ninja
         if: matrix.build-system == 'cmake'
@@ -173,13 +159,6 @@ jobs:
           gmake -C ../.. get-tools
           gmake -C ../.. all
           ../../configure --prefix=/usr --enable-download --enable-build-libraries="readline"
-
-      - name: Save Autotools artifacts
-        if: matrix.build-system == 'autotools' && failure()
-        uses: actions/upload-artifact@v1
-        with:
-           name: config-log-${{ matrix.os }}-${{ matrix.compiler }}
-           path: M2/BUILD/build/config.log
 
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
@@ -203,3 +182,23 @@ jobs:
           gmake check
           gmake -C Macaulay2/html-check-links check
           gmake validate-html
+
+# ----------------------
+#   Upload build logs
+# ----------------------
+
+      - name: Upload build logs
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+           name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}-logs
+           path: |
+             # Autotools
+             M2/BUILD/build/config.log
+             M2/BUILD/build/libraries/*/build/*/config.log
+             # CMake
+             M2/BUILD/build/CMakeFiles/CMakeCache.txt
+             M2/BUILD/build/CMakeFiles/CMake(Error|Output).log
+             M2/BUILD/build/libraries/*/build/config.log
+             # Example errors
+             M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
