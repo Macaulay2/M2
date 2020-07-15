@@ -23,8 +23,9 @@ AUTOCONF_MINOR = 68
 # version 2.68 is required by mpir 2.6.0
 AUTOCONF_VERSION = $(AUTOCONF_MAJOR).$(AUTOCONF_MINOR)
 
+# automake 1.15 is too old
 AUTOMAKE_MAJOR = 1
-AUTOMAKE_MINOR = 15
+AUTOMAKE_MINOR = 16
 # version 1.12 was the first one with the macro AM_PROG_AR, used by memtailor
 AUTOMAKE_VERSION = $(AUTOMAKE_MAJOR).$(AUTOMAKE_MINOR)
 
