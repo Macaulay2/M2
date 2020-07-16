@@ -95,7 +95,8 @@ jobs:
                    libatomic-ops-dev libboost-stacktrace-dev libxml2-dev libopenblas-dev libtbb-dev gfan \
                    libeigen3-dev libgc-dev libmpfr-dev libglpk-dev libntl-dev libcdd-dev libgtest-dev \
                    liblzma-dev w3c-markup-validator
-          brew install libomp bdw-gc gmp mpfr glpk flint ntl cddlib
+          brew install libomp gmp mpfr glpk flint ntl cddlib
+          # TODO: autotools crashes if bdw-gc is installed by brew
 
 # ----------------------
 #   Steps common to all build variants
