@@ -2,7 +2,7 @@
 newPackage(
        "SparseResultants",
         Version => "0.9.2", 
-        Date => "July 14, 2020",
+        Date => "July 16, 2020",
         Headline => "computations with sparse resultants",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
         PackageExports => {"Resultants"},
@@ -511,9 +511,14 @@ MultidimensionalMatrix _ Sequence := (M,l) -> (
 
 ring (MultidimensionalMatrix) := (M) -> M#"ring";
 
-Thing * MultidimensionalMatrix := (a,M) -> applyToEntries(M,m -> a*m); -- internal, undocumented
-
 RingElement * MultidimensionalMatrix := (a,M) -> applyToEntries(M,m -> a*m);
+
+ZZ * MultidimensionalMatrix := (a,M) -> applyToEntries(M,m -> a*m);
+
+QQ * MultidimensionalMatrix := (a,M) -> (
+    if denominator a != 1 then if char ring M != 0 then error "it is not allowed to multiply a rational number with a multidimensional matrix over a ring of positive characteristic"; 
+    applyToEntries(M,m -> a*m)
+);
 
 MultidimensionalMatrix * MultidimensionalMatrix := (A,B) -> (
     kr := last size A;
@@ -560,7 +565,7 @@ ZZ == MultidimensionalMatrix := (n,M) -> M == n;
 
 transposition = method();
 transposition (MultidimensionalMatrix,List) := (M,l) -> (
-    try assert(ring matrix {l} === ZZ) else error "expected a list of integers";
+    if not all(l,i -> instance(i,ZZ)) then error "expected a list of integers";
     d := dim M;
     if sort l != toList(0 .. d-1) then error("expected a permutation of the set "|toString toList(0 .. d-1));
     X := reverse M#"varsMultilinearForm"; 
@@ -702,7 +707,8 @@ determinant (MultidimensionalMatrix) := o -> (M) -> (
 
 degreeDeterminant = method();
 degreeDeterminant (List) := (L) -> (
-    try assert(ring matrix{L} === ZZ and min L >= 1) else error "expected a list of positive integers";
+    if not all(L,i -> instance(i,ZZ)) then error "expected a list of integers";
+    if min L <= 0 then error "expected a list of positive integers";
     L = apply(L,i -> i-1);
     n := #L;
     x := local x;
@@ -1009,7 +1015,7 @@ document {
 undocumented {(symbol -,MultidimensionalMatrix)}
 
 document { 
-    Key => {(symbol *,RingElement,MultidimensionalMatrix)}, 
+    Key => {(symbol *,RingElement,MultidimensionalMatrix),(symbol *,ZZ,MultidimensionalMatrix),(symbol *,QQ,MultidimensionalMatrix)}, 
     Headline => "multiplication of a scalar with a multidimensional matrix", 
     Usage => "e * N", 
     Inputs => {"e" => RingElement,
@@ -1027,9 +1033,9 @@ document {
     Key => {(symbol *,MultidimensionalMatrix,MultidimensionalMatrix)}, 
     Headline => "product of multidimensional matrices", 
     Usage => "M * N", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a multidimensional matrix of format ",TEX///$(k_1,\ldots,k_r)$///},
-               "N" => MultidimensionalMatrix => {"a multidimensional matrix of format ",TEX///$(l_1,\ldots,l_s)$///," with ",TEX///$k_r = l_1$///}},
-    Outputs => {MultidimensionalMatrix => {"the convolution (or product) ",TEX///$M * N$///,", which is a multidimensional matrix of format ",TEX///$(k_1,\ldots,k_{r-1},l_2,\ldots,l_s)$///}},
+    Inputs => {"M" => MultidimensionalMatrix => {"a multidimensional matrix of format ",TEX///$k_1\times\ldots\times k_r$///},
+               "N" => MultidimensionalMatrix => {"a multidimensional matrix of format ",TEX///$l_1\times\ldots\times l_s$///," with ",TEX///$k_r = l_1$///}},
+    Outputs => {MultidimensionalMatrix => {"the convolution (or product) ",TEX///$M * N$///,", which is a multidimensional matrix of format ",TEX///$k_1\times\ldots\times k_{r-1}\times l_2\times\ldots\times l_s$///}},
     EXAMPLE {
         "M = randomMultidimensionalMatrix {4,3}",
         "N = randomMultidimensionalMatrix {3,2}",
@@ -1040,7 +1046,7 @@ document {
      SeeAlso => {(symbol *,RingElement,MultidimensionalMatrix)}
 }
 
-undocumented {(symbol *,Thing,MultidimensionalMatrix),(net,MultidimensionalMatrix),(symbol ==,ZZ,MultidimensionalMatrix),(symbol ==,MultidimensionalMatrix,ZZ)}
+undocumented {(net,MultidimensionalMatrix),(symbol ==,ZZ,MultidimensionalMatrix),(symbol ==,MultidimensionalMatrix,ZZ)}
 
 document { 
     Key => {(symbol ==,MultidimensionalMatrix,MultidimensionalMatrix)}, 
@@ -1063,7 +1069,7 @@ document {
     Key => {(symbol _,MultidimensionalMatrix,Sequence)}, 
     Headline => "get entry of multidimensional matrix", 
     Usage => "M_l", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a multidimensional matrix of format ",TEX///$(d_1,\ldots,d_n)$///,},
+    Inputs => {"M" => MultidimensionalMatrix => {"a multidimensional matrix of format ",TEX///$d_1\times\ldots\times d_n$///,},
                "l" => Sequence => {"a sequence of ",TEX///$n$///," integers"}},
     Outputs => {RingElement => {"the ",TEX///$l$///,"-th entry of the matrix ",TEX///$M$///,", where ",TEX///$M_{(0,\ldots,0)}$///," is the top left entry"}},
     EXAMPLE {
@@ -1092,9 +1098,9 @@ document {
     Key => {degreeDeterminant,(degreeDeterminant,MultidimensionalMatrix),(degreeDeterminant,List)}, 
     Headline => "degree of the hyperdeterminant of a generic multidimensional matrix", 
     Usage => "degreeDeterminant n"|newline|"degreeDeterminant M", 
-    Inputs => {"n" => List => {"a list of positive integers ",TEX///$n=(n_1,n_2,\ldots)$///},
-               "M" => MultidimensionalMatrix => {"a multidimensional matrix of format ",TEX///$n=(n_1,n_2,\ldots)$///}},
-    Outputs => {ZZ => {"the degree of the hyperdeterminant of a generic multidimensional matrix of format ",TEX///$n=(n_1,n_2,\ldots)$///}},
+    Inputs => {"n" => List => {"a list of positive integers ",TEX///$n=\{n_1,n_2,\ldots\}$///},
+               "M" => MultidimensionalMatrix => {"a multidimensional matrix of format ",TEX///$n_1\times n_2\times\ldots$///}},
+    Outputs => {ZZ => {"the degree of the hyperdeterminant of a generic multidimensional matrix of format ",TEX///$n_1\times n_2\times\ldots$///}},
     EXAMPLE {
         "n = {2,3,2}",
         "time degreeDeterminant n",
@@ -1109,7 +1115,7 @@ document {
     Headline => "make a generic multidimensional matrix of variables", 
     Usage => "genericMultidimensionalMatrix {d_1,...,d_n}", 
     Inputs => {{TT"{d_1,...,d_n}",", a list of positive integers."}},
-    Outputs => {{"the generic multidimensional matrix of format ",TEX///$d_1\times \ldots \times d_n$///,"."}},
+    Outputs => {{"the generic multidimensional matrix of format ",TEX///$d_1\times\ldots\times d_n$///,"."}},
     EXAMPLE {
         "genericMultidimensionalMatrix {2,2,2}",
         "genericMultidimensionalMatrix({2,2,2},CoefficientRing=>ZZ/101)",
@@ -1125,7 +1131,7 @@ document {
     Headline => "random multidimensional matrix", 
     Usage => "randomMultidimensionalMatrix {d_1,...,d_n}", 
     Inputs => {{TT"{d_1,...,d_n}",", a list of positive integers."}},
-    Outputs => {{"a random multidimensional matrix of format ",TEX///$d_1\times \ldots\times d_n$///,"."}},
+    Outputs => {{"a random multidimensional matrix of format ",TEX///$d_1\times\ldots\times d_n$///,"."}},
     EXAMPLE {
         "randomMultidimensionalMatrix {2,2,2}",
         "randomMultidimensionalMatrix({2,3,2},CoefficientRing=>ZZ/3331)"
@@ -1165,7 +1171,7 @@ document {
     Key => {(size,MultidimensionalMatrix)}, 
     Headline => "format of a multidimensional matrix", 
     Usage => "size M", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of format ",TEX///$k_1 \times \ldots \times k_n$///}},
+    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of format ",TEX///$k_1\times\ldots\times k_n$///}},
     Outputs => {List => {"the list of integers ",TEX///$\{k_1, \ldots, k_n\}$///}},
     EXAMPLE {
         "M = multidimensionalMatrix {{{0, 8, 3}, {7, 3, 2}, {2, 7, 0}, {4, 8, 4}}, {{0, 8, 1}, {3, 1, 0}, {4, 7, 4}, {0, 6, 9}}}",
@@ -1178,7 +1184,7 @@ document {
     Key => {(dim,MultidimensionalMatrix)}, 
     Headline => "dimension of a multidimensional matrix", 
     Usage => "dim M", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of format ",TEX///$k_1 \times \ldots \times k_n$///}},
+    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of format ",TEX///$k_1\times\ldots\times k_n$///}},
     Outputs => {ZZ => {"the integer ",TEX///$n$///}},
     EXAMPLE {
         "M = multidimensionalMatrix {{{0, 8, 3}, {7, 3, 2}, {2, 7, 0}, {4, 8, 4}}, {{0, 8, 1}, {3, 1, 0}, {4, 7, 4}, {0, 6, 9}}}",
@@ -1423,7 +1429,7 @@ detConvolution({2,2,3},{3,3})
 detConvolution({2,3,3},{3,3})
 detConvolution({2,2},{2,3,3})
 detConvolution({3,2,2},{2,2})
--- detConvolution({2,2,3},{3,2,2}) -- fail ??
+-- detConvolution({2,2,3},{3,2,2}) -- fail since 2x2x2x2 is not a boundary format
 ///;
 
 TEST /// -- transposition
