@@ -1048,12 +1048,24 @@ then AC_MSG_RESULT([no, will build])
      BUILD_nauty=yes
 fi
 
+dnl debian: topcom-
+dnl fedora: TOPCOM- (only for cube)
+dnl gentoo: topcom_ (only for cube, 4 others)
+dnl we save ourselves some trouble and check one of the programs that
+dnl only debian gives a prefix
 AC_MSG_CHECKING(whether the package topcom is installed)
-if test "`type -t points2finetriangs`" = file
-then AC_MSG_RESULT([yes, will build anyway])
-     BUILD_topcom=yes
-     dnl currently the package Topcom uses only the internal Macaulay2 path to run its programs
-else AC_MSG_RESULT([no, will build])
+FOUND_topcom=no
+for topcom_prefix in "" "topcom-"
+do
+    if test "`type -t ${topcom_prefix}points2finetriangs`" = file
+    then AC_MSG_RESULT([yes, using prefix "$topcom_prefix"])
+         FILE_PREREQS="$FILE_PREREQS `type -p ${topcom_prefix}points2finetriangs`"
+         FOUND_topcom=yes
+         break
+    fi
+done
+if test $FOUND_topcom = no
+then AC_MSG_RESULT([no, will build])
      BUILD_topcom=yes
 fi
 
