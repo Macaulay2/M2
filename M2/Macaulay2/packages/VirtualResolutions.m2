@@ -499,13 +499,16 @@ multigradedRegularity(Thing, Thing, Module) := List => (X, S, M) -> (
     degs := apply(n, i -> min(degrees M / (deg -> deg_i)));
     -- TODO: why is (n:r) the right upper bound?
     r := regularity M;
+    if debugLevel > 0 then stderr << "-- Regularity: " << r << endl;
     H := hilbertPolynomial(X, M);
+    if debugLevel > 0 then stderr << "-- Hilbert polynomial: " << H << endl;
     -- TODO: fix this comment
     -- We only search in the positive cone and up to the regularity of M
     -- TODO: as we twist the module, the window should move also
     -- maybe lower corner is bounded by the minimum degree of the generators?
     low := degs-toList(n:d);
     high := apply(n, i -> max({r} | degrees M / (deg -> deg_i)));
+    if debugLevel > 0 then stderr << "-- Computing cohomologyHashTable from " << low << " to " << high << endl;
     L := pairs cohomologyHashTable(M', low, high);
     -- Based on findHashTableCorner from TateOnProducts
     P := multigradedPolynomialRing toList(n:0);
@@ -513,6 +516,7 @@ multigradedRegularity(Thing, Thing, Module) := List => (X, S, M) -> (
     Q := gradedPolynomialRing toList(n:0);
     phi := map(P, Q, gens P);
     gt := new MutableHashTable;
+    if debugLevel > 0 then stderr << "-- Beginning search in Picard group" << endl;
     apply(L, ell -> (
             -- Check that Hilbert function and Hilbert polynomial match
             -- (this imposes a condition on the alternating sum of local cohomology dimensions)
@@ -525,6 +529,7 @@ multigradedRegularity(Thing, Thing, Module) := List => (X, S, M) -> (
 		    j -> gt#(ell_0_0 + degree j) = true);
             )
         );
+    if debugLevel > 0 then stderr << "-- Calculating minimal generators" << endl;
     I := ideal apply(L, ell ->
 	if all(n, j -> ell_0_0_j >= degs_j)
 	and not gt#?(ell_0_0) then product(n, j -> P_j^(ell_0_0_j - degs_j)) else 0);
