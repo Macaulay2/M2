@@ -671,7 +671,7 @@ fixupTable := new HashTable from {
 				   if f === null then error("SourceCode: ", toString m, ": not a method");
 				   c := code f;
 				   if c === null then error("SourceCode: ", toString m, ": code for method not found");
-				   c)))}}
+				   reproduciblePaths toString c)))}}
 	  else v),
      Subnodes => v -> (
 	  v = nonnull enlist v;

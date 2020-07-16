@@ -1,20 +1,20 @@
 document {
     Key => {Program, (net, Program)},
     Headline => "external program object",
-    PARA {"A hash table returned by ", TO "loadProgram",
+    PARA {"A hash table returned by ", TO "findProgram",
 	" with the following strings as keys:"},
     UL {
 	{TT "\"name\"", ", the name of the loaded program.  ",
 	    "This comes from the first argument passed to ",
-	    TO "loadProgram", ".  It is also what is displayed when ",
+	    TO "findProgram", ".  It is also what is displayed when ",
 	    "printing a Program."},
 	{TT "\"path\"", ", the path to the program as determined by ",
-	    TO "loadProgram", "."},
+	    TO "findProgram", "."},
 	{TT "\"prefix\"", ", a sequence of two strings identifying the ",
 	    "prefix prepended to the binary executables.  See ",
-	    TO "loadProgram", ", specifically the description of the ",
+	    TO "findProgram", ", specifically the description of the ",
 	    TT "Prefix", " option, for more."}},
-    SeeAlso => {"programPaths", "loadProgram"}
+    SeeAlso => {"programPaths", "findProgram"}
 }
 
 document {
@@ -23,10 +23,10 @@ document {
     PARA {"A mutable hash table containing user-defined paths to external ",
 	"programs used by Macaulay2.  Its keys are strings containing the ",
 	"names of programs and must coincide with the first argument of ",
-	TO "loadProgram", "."},
+	TO "findProgram", "."},
     PARA {"It is only necessary to define a path in this way if a program ",
 	"is installed in a non-standard location.  In particular, ",
-	TO "loadProgram", " already checks ",
+	TO "findProgram", " already checks ",
 	TT "prefixDirectory | currentLayout#\"programs\"",
 	" (where the programs shipped with Macaulay2 are installed) ",
 	"and all of the directories in the user's ", TT "PATH",
@@ -34,7 +34,7 @@ document {
     PARA {"If you use a particular program frequently and it is installed ",
 	"in a non-standard location, then it may be useful to add a line to ",
 	"your ", TO "initialization file", " defining its path in this way."},
-    SeeAlso => {"Program", "loadProgram"}
+    SeeAlso => {"Program", "findProgram"}
 }
 
 document {
@@ -43,14 +43,14 @@ document {
 }
 
 document {
-    Key => {loadProgram,
-	(loadProgram, String, String),
-	(loadProgram, String, List),
-	[loadProgram, Prefix],
-	[loadProgram, RaiseError],
-	[loadProgram, Verbose]},
+    Key => {findProgram,
+	(findProgram, String, String),
+	(findProgram, String, List),
+	[findProgram, Prefix],
+	[findProgram, RaiseError],
+	[findProgram, Verbose]},
     Headline => "load external program",
-    Usage => "loadProgram(name, cmd)\nloadProgram(name, cmds)",
+    Usage => "findProgram(name, cmd)\nfindProgram(name, cmds)",
     Inputs => {
 	"name" => String => {"the name of the program to load.  ",
 	    "This should match the corresponding key in ",
@@ -99,11 +99,11 @@ document {
 	"file."},
     EXAMPLE lines ///
 	programPaths#"gfan" = "/path/to/gfan/"
-	gfan = loadProgram("gfan", "gfan --help", Verbose => true)///,
+	gfan = findProgram("gfan", "gfan --help", Verbose => true)///,
     PARA {"One program that is shipped with a variety of prefixes in ",
 	"different distributions and for which the ", TT "Prefix",
 	" option is useful is TOPCOM:"},
-    EXAMPLE {///loadProgram("topcom", "cube 3", Verbose => true, Prefix => {
+    EXAMPLE {///findProgram("topcom", "cube 3", Verbose => true, Prefix => {
     (".*", "topcom-"),
     ("^(cross|cube|cyclic|hypersimplex|lattice)$", "TOPCOM-"),
     ("^cube$", "topcom_")})///},

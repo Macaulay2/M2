@@ -43,7 +43,7 @@ runnable := fn -> (
 -- preferred web browser
 -- TODO: cache this value
 browser := () -> (
-    if runnable "open" then "open" -- Apple varieties
+    if version#"operating system" === "Darwin" and runnable "open" then "open" -- Apple varieties
     else if runnable "xdg-open" then "xdg-open" -- most Linux distributions
     else if runnable getenv "WWWBROWSER" then getenv "WWWBROWSER" -- compatibility
     else if runnable "firefox" then "firefox" -- backup
