@@ -1031,12 +1031,20 @@ dnl else AC_MSG_RESULT([no, will build])
 dnl      BUILD_normaliz=yes
 dnl fi
 
+dnl debian/fedora: nauty-
 AC_MSG_CHECKING(whether the package nauty is installed)
-if test "`type -t nauty-complg`" = file
-then AC_MSG_RESULT([yes, will build anyway])
-     dnl because the package Nauty doesn't look for it on the PATH
-     BUILD_nauty=yes
-else AC_MSG_RESULT([no, will build])
+FOUND_nauty=no
+for nauty_prefix in "" "nauty-"
+do
+    if test "`type -t ${nauty_prefix}complg`" = file
+    then AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
+         FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
+         FOUND_nauty=yes
+         break
+    fi
+done
+if test $FOUND_nauty = no
+then AC_MSG_RESULT([no, will build])
      BUILD_nauty=yes
 fi
 
