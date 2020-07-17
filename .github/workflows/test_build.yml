@@ -91,13 +91,11 @@ jobs:
       - name: Install requirements for Linux
         if: runner.os == 'Linux'
         run: |
-          # TODO: add libgivaro-dev and fflas-ffpack once they are updated
           sudo apt-get install -y -q --no-install-recommends clang-10 gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
-                  libcdd-dev w3c-markup-validator
-                  # libz-dev zlib1g-dev liblzma-dev fflas-ffpack libgivaro-dev
+                  libcdd-dev libgivaro-dev fflas-ffpack w3c-markup-validator
           # TODO: help autotools detect flint from brew
           brew install flint
 
@@ -131,11 +129,11 @@ jobs:
           path: |
             ~/.ccache
             ~/M2/BUILD/build/usr-host
-          key: usr-host-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-${{ hashFiles('**/cmake/*-libraries.cmake') }}
+          key: build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-${{ hashFiles('**/cmake/*-libraries.cmake') }}
           restore-keys: |
-            usr-host-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-
-            usr-host-${{ runner.os }}-${{ matrix.compiler }}-
-            usr-host-${{ runner.os }}-
+            build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-
+            build-cache-${{ runner.os }}-${{ matrix.compiler }}-
+            build-cache-${{ runner.os }}-
 
 
 # ----------------------
@@ -146,7 +144,8 @@ jobs:
         if: matrix.build-system == 'cmake'
         run: |
           cmake -S../.. -B. -GNinja -DUSING_MPIR=OFF \
-            -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix`
+            -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` \
+            -DBUILD_NATIVE=OFF -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK" # TODO: remove when the packages are updated
 
       - name: Build libraries using Ninja
         if: matrix.build-system == 'cmake' # && steps.restore-cache.outputs.cache-hit != 'true'
