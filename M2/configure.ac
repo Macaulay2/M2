@@ -1039,20 +1039,28 @@ dnl      BUILD_normaliz=yes
 dnl fi
 
 dnl debian/fedora: nauty-
-AC_MSG_CHECKING(whether the package nauty is installed)
+AC_MSG_CHECKING(whether the package nauty (>= 2.7) is installed)
 FOUND_nauty=no
 for nauty_prefix in "" "nauty-"
 do
     if test "`type -t ${nauty_prefix}complg`" = file
-    then AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
-         FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
-         FOUND_nauty=yes
-         break
+    then nauty_version=`${nauty_prefix}complg --version | cut -d " " -f 3`
+         if test `echo "$nauty_version >= 2.7000" | bc -l` = 1
+         then AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
+             FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
+             FOUND_nauty=yes
+             break
+         else FOUND_nauty=old
+         fi
     fi
 done
-if test $FOUND_nauty = no
-then AC_MSG_RESULT([no, will build])
-     BUILD_nauty=yes
+if test $FOUND_nauty != yes
+then
+    if test $FOUND_nauty = old
+    then AC_MSG_RESULT([yes, but < 2.7, will build])
+    else AC_MSG_RESULT([no, will build])
+    fi
+    BUILD_nauty=yes
 fi
 
 dnl debian: topcom-
