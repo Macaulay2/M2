@@ -104,8 +104,7 @@ nmzNumberThreads=1;
 --nmzUserCalled=true;  -- whether the user calls a method
 nmzFile="";        -- Internal name of the data files
 nmzVersion="";     -- normaliz
-nmzExecVersion=""; -- needs to be at least nmzMinExecVersion
-nmzMinExecVersion="2.11"; -- minimal normaliz version
+nmzMinExecVersion="3.5.2"; -- minimal normaliz version
 nmzGen=true;      -- indicates whether ".gen" is generated
 
 -- component 1 is name of option
@@ -167,8 +166,7 @@ getNmzExec=()->
     (
         nmzExec="normaliz";
     );
---    return nmzExec;
-    return prefixDirectory | currentLayout#"programs" | nmzExec;
+    return nmzExec;
 );
 
 
@@ -503,20 +501,6 @@ showNmzOptions=()->
   << collectNmzOptions();
 )
 
-checkNmzExecVersion=()->
-(
-  if (nmzExecVersion=="") then (
-    cmd := "! " | getNmzExec() | " --version 2>&1 </dev/null || true";
-    result := get cmd;
-    if not match("Normaliz ([0-9.]*)",result) then error("normaliz executable not found: " | getNmzExec());
-    nmzExecVersion = replace("(.|\n)*Normaliz ([0-9.]+)(.|\n)*", "\\2", result);
-    if not match("\\`[0-9.]+\\'$",nmzExecVersion) then error ("failed to recognize version number of program normaliz");
-  );
-  if (nmzExecVersion < nmzMinExecVersion) then
-    error("normaliz: Normaliz executable ("|getNmzExec()|") too old (" | nmzExecVersion | "), at least version " | nmzMinExecVersion | " needed!");
-)
-
-
 normaliz=method(Options=>true)
 opts={allComputations=>false, grading=>{}}
 normaliz(Matrix,String):=opts>>o->(sgr,nmzMode)->
@@ -540,6 +524,8 @@ normaliz(List):=opts>>o->(s)->
 
 
 -- sequence should contain pairs (sgr,nmzMode)
+normalizProgram = null
+
 runNormaliz=method(Options=>true)
 opts={allComputations=>false, grading=>{}}
 runNormaliz(Matrix,String):=opts>>o->(sgr,nmzMode)->
@@ -551,8 +537,10 @@ runNormaliz(Matrix,String):=opts>>o->(sgr,nmzMode)->
 runNormaliz(List):=opts>>o->(s)->
 (
     setNmzFile();
-
-    checkNmzExecVersion();
+    if normalizProgram === null then normalizProgram =
+	findProgram("normaliz", "normaliz --help",
+	    Verbose => debugLevel > 0, MinimumVersion => (nmzMinExecVersion,
+		"normaliz --version | head -1 | cut -d' ' -f 2 | tr -d '\n'"));
 
     if (#o.grading > 0) then (
         s = append(s, (matrix{o.grading}, "grading"));
@@ -560,14 +548,10 @@ runNormaliz(List):=opts>>o->(s)->
     doWriteNmzData(s);
     options:=collectNmzOptions();
 
-    cmd:="";
     dir:=select(".*/",nmzFile);
-    if(dir!={}) then cmd="cd "|dir#0|"; ";
-
-    cmd = (cmd|getNmzExec()|options|baseFilename(nmzFile));
-    if debugLevel > 0 then << "--running command: " << cmd << endl;
-    if 0 != run cmd then error ("command failed : ", cmd);
-    if debugLevel > 0 then << "--command succeeded" << endl;
+    runDir := if dir != {} then dir#0 else null;
+    runProgram(normalizProgram, getNmzExec(), options | baseFilename(nmzFile),
+	RunDirectory => runDir, Verbose => debugLevel > 0);
 
     if(not nmzGen)  -- return nothing if .gen is not
     then(            -- generated
