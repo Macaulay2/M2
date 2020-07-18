@@ -28,11 +28,17 @@ document {
 }
 
 document {
+    Key => {RunDirectory},
+    Headline => "the directory from which to run a program"
+}
+
+document {
     Key => {runProgram,
 	(runProgram, Program, String),
 	(runProgram, Program, String, String),
 	[runProgram, KeepFiles],
 	[runProgram, RaiseError],
+	[runProgram, RunDirectory],
 	[runProgram, Verbose]},
     Headline => "run an external program",
     Usage => "runProgram(program, args)\nrunProgram(program, exe, args)",
@@ -47,6 +53,11 @@ document {
 	    "containing the program's output."},
 	RaiseError => Boolean => {"whether to raise an error if the program ",
 	    "returns a nonzero value."},
+	RunDirectory => String => {"the directory from which to run the ",
+	    "program.  If it does not exist, then it will be created.  ",
+	    "If ", TO "null", ", then the program will be run ",
+	    "from the current working directory (see ",
+	    TO "currentDirectory", ")."},
 	Verbose => Boolean => {"whether to print the command line input and ",
 	    "the program's output."}
 	},
