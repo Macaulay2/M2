@@ -51,16 +51,19 @@ find_package(AtomicOps	REQUIRED QUIET) # See FindAtomicOps.cmake
 #   OpenMP	libomp-dev	libomp-devel	libomp
 #   TBB		libtbb-dev	tbb-devel	tbb
 
-find_package(OpenMP	QUIET)
+find_package(OpenMP)
 foreach(lang IN ITEMS C CXX)
   foreach(_dir IN LISTS OpenMP_${lang}_INCLUDE_DIRS)
     set(OpenMP_${lang}_FLAGS "${OpenMP_${lang}_FLAGS} -I${_dir}")
   endforeach()
   foreach(_lib IN LISTS OpenMP_${lang}_LIB_NAMES)
-    set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} ${OpenMP_${_lib}_LIBRARY}")
+    get_filename_component(_libdir "${OpenMP_${_lib}_LIBRARY}" DIRECTORY)
+    # TODO: remove when this is fixed: https://gitlab.kitware.com/cmake/cmake/-/issues/20934
+    string(REGEX REPLACE "^lib" "" _lib "${_lib}")
+    set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -l${_lib}")
   endforeach()
 endforeach()
-find_package(TBB	QUIET) # See FindTBB.cmake
+find_package(TBB) # See FindTBB.cmake
 
 ###############################################################################
 ## Platform dependent requirements:
@@ -85,18 +88,15 @@ find_package(History	REQUIRED QUIET) # See FindHistory.cmake
 if(USING_MPIR)
   find_package(MPIR	3.0.0)
   set(MP_LIBRARY MPIR)
-  set(MP_ROOT ${M2_HOST_PREFIX})
   include_directories(BEFORE ${CMAKE_SOURCE_DIR}/include/M2/gmp-to-mpir)
 else()
   find_package(GMP	6.0.0 REQUIRED)
   set(MP_LIBRARY GMP)
-  set(MP_ROOT ${GMP_INCLUDE_DIRS}/..)
 endif()
 # MP will mask either GMP or MPIR
-foreach(var IN ITEMS FOUND INCLUDE_DIRS LIBRARIES VERSION_OK)
+foreach(var IN ITEMS FOUND ROOT INCLUDE_DIRS LIBRARY_DIRS LIBRARIES VERSION_OK)
   set(MP_${var} ${${MP_LIBRARY}_${var}})
 endforeach()
-set(MP_INCLUDE_DIR ${${MP_LIBRARY}_INCLUDE_DIRS})
 
 ###############################################################################
 ## Libraries we can download and build:
@@ -319,7 +319,7 @@ else()
 endif()
 
 if(FACTORY_FOUND)
-  set(CMAKE_REQUIRED_INCLUDES "${FACTORY_INCLUDE_DIRS}")
+  set(CMAKE_REQUIRED_INCLUDES "${FACTORY_INCLUDE_DIR}")
   # whether factory was built with --enable-streamio
   check_cxx_source_compiles([[#include <factory/factory.h>
     int main(){Variable x; x = Variable(); std::cout << x;return 0;}]] FACTORY_STREAMIO)
