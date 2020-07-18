@@ -255,6 +255,7 @@ export {
 	"MinimalGenerators",
 	"MinimalMatrix",
 	"Minimize",
+	"MinimumVersion",
 	"Minus",
 	"Module",
 	"ModuleMap",

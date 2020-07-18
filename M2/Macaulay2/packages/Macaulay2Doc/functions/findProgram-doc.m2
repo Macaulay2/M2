@@ -13,7 +13,10 @@ document {
 	{TT "\"prefix\"", ", a sequence of two strings identifying the ",
 	    "prefix prepended to the binary executables.  See ",
 	    TO "findProgram", ", specifically the description of the ",
-	    TT "Prefix", " option, for more."}},
+	    TT "Prefix", " option, for more."},
+	{TT "\"version\"", ", a string containing the version number ",
+	    "of the program.  Only present if ", TO "findProgram",
+	    " was called with the ", TT "MinimumVersion", " option."}},
     SeeAlso => {"programPaths", "findProgram"}
 }
 
@@ -47,11 +50,17 @@ document {
     Headline => "list of non-standard paths to search for a program"
 }
 
+document{
+    Key => MinimumVersion,
+    Headline => "the minimum required version of a program"
+}
+
 document {
     Key => {findProgram,
 	(findProgram, String, String),
 	(findProgram, String, List),
 	[findProgram, AdditionalPaths],
+	[findProgram, MinimumVersion],
 	[findProgram, Prefix],
 	[findProgram, RaiseError],
 	[findProgram, Verbose]},
@@ -79,7 +88,13 @@ document {
 	    TT "prefix", " is the prefix itself."},
 	AdditionalPaths => List => {
 	    "a list of strings containing any paths to check for the program ",
-	    "in addition to the default ones."}
+	    "in addition to the default ones."},
+	MinimumVersion => Sequence => {
+	    "containing two strings the form ",
+	    TT "(minVersion, versionCommand)", ", where  ", TT "minVersion",
+	    " is the minimum required version of the program and ",
+	    TT "versionCommand", " is a shell command to obtain the version ",
+	    "number of an installed program."}
     },
     Outputs => {Program => { "the program that was loaded.  ",
 	"If the program is not found and ", TT "RaiseError", " is set to ",
@@ -117,5 +132,15 @@ document {
     (".*", "topcom-"),
     ("^(cross|cube|cyclic|hypersimplex|lattice)$", "TOPCOM-"),
     ("^cube$", "topcom_")})///},
+    PARA {"Note that when using the ", TT "MinimumVersion", " option, the ",
+	"command used to obtain the current version number must remove ",
+	"everything except the version number itself, including any ",
+	"trailing newlines.  Piping with standard UNIX utilities such as ",
+	TT "sed", ", ", TT "head", ", ", TT "tail", ", ", TT "cut", ", and ",
+	TT "tr", " may be useful."},
+    EXAMPLE {///findProgram("gfan", "gfan --help", Verbose => true,
+  MinimumVersion => ("0.5",
+    "gfan _version | head -2 | tail -1 | sed 's/gfan//' | tr -d '\n'"))
+    ///},
     SeeAlso => {"Program", "programPaths", "runProgram"}
 }
