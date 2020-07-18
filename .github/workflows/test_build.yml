@@ -196,7 +196,7 @@ jobs:
 # ----------------------
 
       - name: Upload build logs
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v2
         with:
            name: ${{ matrix.os }}-${{ matrix.build-system }}-${{ matrix.compiler }}-logs
