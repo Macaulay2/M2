@@ -1301,7 +1301,7 @@ document {
 PARA{},"Depending on the options enabled (see ", TO setNmzOption, "), ", TT "Normaliz", " writes additional output files. To obtain the content of these files within Macaulay2, use ", TO readNmzData, " or ", TO allComputations,". The following files may be written, provided certain conditions are satisfied and the information that should go into them has been computed. We denote the files simply by their types.
 For the most types of inputs the ambient lattice is ", TEX "\\ZZ^n", " if the input of Normaliz is a matrix of n columns. In types polytope and rees_algebra the ambient lattice is ", TEX "\\ZZ^{n+1}", " since the input vectors are extended by 1 component. For congruences and inhomogeneous input it is ", TEX "\\ZZ^{n-1}", " and for inhomogenouse congruences ", TEX "\\ZZ^{n-2}", ".
 For input of type lattice_ideal the lattice is ", TEX "\\ZZ^{r}", " where n-r is the rank of the input matrix. The essential lattice is gp(M) where M is the monoid computed by Normaliz internally, i.e. after a linear transformation such that the cone is full-dimensional and the integral closure has to be computed.
-See the documentation of Normaliz at ", HREF "http://www.math.uos.de/normaliz/Normaliz2.12.2/Normaliz.pdf", " for more details.",
+See the documentation of Normaliz at ", HREF "https://github.com/Normaliz/Normaliz/blob/master/doc/Normaliz.pdf", " for more details.",
 UL{
    {TT "gen      ", "   The Hilbert basis"},
    {TT "ext      ", "   The extreme rays"},
