@@ -1034,17 +1034,17 @@ else AC_MSG_RESULT([no, will build])
      BUILD_csdp=yes
 fi
 
-dnl we can't use the test below for the presence of normaliz until the package Normaliz knows
-dnl how to find normaliz on the path, and until our *.dmg and
-dnl *.deb making procedures know how to include it or set the dependencies appropriately
-BUILD_normaliz=yes
-BUILD_ALWAYS="$BUILD_ALWAYS normaliz"
-dnl AC_MSG_CHECKING(whether the package normaliz is installed)
-dnl if test "`type -t normaliz`" = file
-dnl then AC_MSG_RESULT(yes)
-dnl else AC_MSG_RESULT([no, will build])
-dnl      BUILD_normaliz=yes
-dnl fi
+AC_MSG_CHECKING(whether the package normaliz is installed)
+if test "`type -t normaliz`" = file
+then normaliz_version=`normaliz --version | head -1 | cut -d " " -f 2`
+     AX_COMPARE_VERSION([$normaliz_version], [ge], [2.11],
+          [AC_MSG_RESULT([yes])
+           FILE_PREREQS="$FILE_PREREQS `type -p normaliz`"],
+          [AC_MSG_RESULT([yes, but < 2.11, will build])
+           BUILD_normaliz=yes])
+else AC_MSG_RESULT([no, will build])
+     BUILD_normaliz=yes
+fi
 
 dnl debian/fedora: nauty-
 AC_MSG_CHECKING(whether the package nauty (>= 2.7) is installed)
