@@ -1495,6 +1495,34 @@ TEST ///
   assert(leadTerm f == 2/(a^3-a-1)*b^4)
 ///
 
+TEST ///
+-*
+  restart
+  needsPackage "AssociativeAlgebras"
+*-
+  R = QQ[u,v]
+  S = R{x,y,z}
+  -- TODO: need to incorporate the degree information of base when creating such a ring.
+  f = u*x*y^2 + v^2*x*y*x
+  NCGB(ideal f, 5) -- BUG!
+  isHomogeneous f -- BUG!
+  
+  f = c*m*w1 + lot
+  g = d*n*w2 + lot
+  
+  -- overlap s-pair
+  w = pos; w1 = po; w2 = os
+  m = m1g
+  n = n1g
+  the s-pair corresponding to this overlap is:
+  d*n1*f*s - c*m1*p*g
+
+  -- same monomial lead term s-pair  
+  f = f1*w + lot
+  g = g1*w + lot
+  
+///
+
 TEST /// 
 -*
   restart
