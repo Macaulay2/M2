@@ -16,6 +16,7 @@ file(GENERATE OUTPUT distributed-packages.h CONTENT "#define DISTRIBUTED_PACKAGE
 
 set(CLIST
   M2types.c M2lib.c M2mem.c types.h
+  regex.c
   scclib.c ../c/scc-core.h
   memdebug.c memdebug.h
   debug.c debug.h
@@ -61,6 +62,7 @@ set(DLIST
   convertr.d
   common.d
   util.d
+  regex.d
   struct.d
   classes.dd
   buckets.dd

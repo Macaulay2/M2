@@ -207,10 +207,10 @@ M2lib.o : M2_CFLAGS += -Wno-frame-address
 endif
 
 # flags needed to sidestep system regex
-scclib.o : CPPFLAGS += -Dre_compile_fastmap=M2_re_compile_fastmap -Dre_compile_pattern=M2_re_compile_pattern -Dre_match=M2_re_match -Dre_match_2=M2_re_match_2 -Dre_search=M2_re_search -Dre_search_2=M2_re_search_2 -Dre_set_registers=M2_re_set_registers -Dre_set_syntax=M2_re_set_syntax -Dregcomp=M2_regcomp -Dregerror=M2_regerror -Dregexec=M2_regexec -Dregfree=M2_regfree
+regex.o : CPPFLAGS += -Dre_compile_fastmap=M2_re_compile_fastmap -Dre_compile_pattern=M2_re_compile_pattern -Dre_match=M2_re_match -Dre_match_2=M2_re_match_2 -Dre_search=M2_re_search -Dre_search_2=M2_re_search_2 -Dre_set_registers=M2_re_set_registers -Dre_set_syntax=M2_re_set_syntax -Dregcomp=M2_regcomp -Dregerror=M2_regerror -Dregexec=M2_regexec -Dregfree=M2_regfree
 
 M2lib.o scclib.o : | interp-exports.h.tmp
-scclib.o : expr-exports.h M2mem.h debug.h types.h ../c/compat.h ../e/engine.h
+regex.o scclib.o : expr-exports.h M2mem.h debug.h types.h ../c/compat.h ../e/engine.h
 M2lib.o : types.h ../c/compat.c debug.h M2mem.h ../c/compat.h ../e/engine.h
 M2lib.o scclib.o gdbm_interface.o gc_cpp.o debug.o : ../../include/M2/config.h
 M2.o : ../../include/M2/config.h @srcdir@/../c/scc-core.h
