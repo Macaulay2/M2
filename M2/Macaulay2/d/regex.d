@@ -1,6 +1,8 @@
 use common;
 use util;
 
+header "#include <engine.h>";
+
 import noErrorMessage:string;
 import regexmatchErrorMessage:string;
 import regexmatch(pattern:string, start:int, range:int, text:string, ignorecase:bool):array(int);
@@ -75,3 +77,54 @@ replace(e:Expr):Expr := (
      else WrongNumArgs(3)
      else WrongNumArgs(3));
 setupfun("replaceStrings",replace);
+
+
+
+rawRegexSearcher(e:Expr):Expr := (
+    ignorecase := false;
+    when e is s:Sequence do
+    if length(s) == 2 then (
+	when s.0 is regexp:stringCell do
+	when s.1 is text:stringCell do (
+            r := Ccode(arrayint,
+                "rawRegexSearch(",
+                regexp.v, ",",
+                0, ",",
+                length(text.v), ",",
+                text.v, ",",
+                ignorecase,
+		")");
+            if length(r) != 0 then toPairs(r)
+            else nullE)
+        else WrongArgString(2)
+	else WrongArgString(1))
+    else if length(s) == 3 then (
+	when s.0 is regexp:stringCell do
+	when s.1 is start:ZZcell do if !isInt(start) then WrongArgSmallInteger(2) else
+	when s.2 is text:stringCell do (
+            istart := toInt(start);
+            r := regexmatch(regexp.v,istart,length(text.v)-istart,text.v,ignorecase);
+            if length(r) != 0 then toPairs(r)
+            else if regexmatchErrorMessage == noErrorMessage
+            then nullE
+            else buildErrorPacket("regex: "+regexmatchErrorMessage))
+	else WrongArgString(3)
+	else WrongArgZZ(2)
+	else WrongArgString(1))
+    else if length(s) == 4 then (
+	when s.0 is regexp:stringCell do
+	when s.1 is start:ZZcell do if !isInt(start) then WrongArgSmallInteger(2) else
+	when s.2 is range:ZZcell do if !isInt(range) then WrongArgSmallInteger(3) else
+	when s.3 is text:stringCell do (
+            r := regexmatch(regexp.v,toInt(start),toInt(range),text.v,ignorecase);
+            if length(r) != 0 then toPairs(r)
+            else if regexmatchErrorMessage == noErrorMessage
+            then nullE
+            else buildErrorPacket("regex: "+regexmatchErrorMessage))
+	else WrongArgString(4)
+	else WrongArgZZ(3)
+	else WrongArgZZ(2)
+	else WrongArgString(1))
+    else WrongNumArgs(2,4)
+    else WrongNumArgs(2,4));
+setupfun("rawRegexSearch", rawRegexSearcher);

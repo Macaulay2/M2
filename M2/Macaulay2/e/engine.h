@@ -2151,6 +2151,17 @@ extern "C" {
   // NAG end  
   const Matrix /* or null */ *rawGbBoolean(const Matrix *m);
   const Matrix /* or null */ *rawBIBasis(const Matrix* m, int toGroebner);
+
+  /*******************************/
+  /**** Miscellaneous routines ***/
+  /*******************************/
+
+  M2_arrayint rawRegexSearch(const M2_string pattern,
+                             const int start,
+                             const int range,
+                             const M2_string text,
+                             const M2_bool ignorecase);
+
 #if defined(__cplusplus)
 }
 #endif

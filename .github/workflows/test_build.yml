@@ -17,6 +17,7 @@ on:
       - development
       - global
       - release-1.16
+      - refactor/regex
   pull_request:
     branches:
       - master
@@ -31,7 +32,7 @@ defaults:
 
 jobs:
   build:
-    if: github.repository == 'Macaulay2/M2' || contains(github.ref, 'global')
+#    if: github.repository == 'Macaulay2/M2' || contains(github.ref, 'global')
     name: ${{ matrix.os }}-${{ matrix.build-system }}-${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
