@@ -36,7 +36,6 @@ CPPFLAGS += @CPPFLAGS@
 CXXFLAGS = @CXXFLAGS@
 FCFLAGS = @FCFLAGS@
 LDFLAGS = @LDFLAGS@
-LDFLAGS_FOR_BUILD = @LDFLAGS_FOR_BUILD@
 OPENMP_CXXFLAGS = @OPENMP_CXXFLAGS@
 
 # here we set the variables that "configure" uses
@@ -85,10 +84,6 @@ LDFLAGS :=						\
 	-L$(BUILTLIBPATH)/lib				\
 	$(foreach S, $(BUILTSUBS), -L@abs_top_builddir@/submodules/$S/.libs) \
 	$(LDFLAGS)
-LDFLAGS_FOR_BUILD :=					\
-	-L$(BUILTLIBPATH)/lib				\
-	$(foreach S, $(BUILTSUBS), -L@abs_top_builddir@/submodules/$S/.libs) \
-	$(LDFLAGS_FOR_BUILD)
 
 LIBDEPS_FOR_BUILD := $(foreach S, $(BUILTSUBS), @abs_top_builddir@/submodules/$S/.libs/lib$S.a)
 LDLIBS_FOR_BUILD := $(foreach S, $(BUILTSUBS), -l$S)
@@ -126,7 +121,6 @@ ifeq "@DEBUG@" "yes"
 CFLAGS += -debug
 CXXFLAGS += -debug
 LDFLAGS += -debug
-LDFLAGS_FOR_BUILD += -debug
 endif
 else
 M2_BOTH += -Wno-parentheses

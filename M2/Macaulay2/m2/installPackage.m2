@@ -434,30 +434,29 @@ dispatcherMethod := m -> m#-1 === Sequence and (
      f := lookup m;
      any(dispatcherFunctions, g -> functionBody f === functionBody g))
 
-reproduciblePaths = outf -> (
-     outstr := get outf;
+reproduciblePaths = outstr -> (
      if topSrcdir === null then return outstr;
      srcdir := regexQuote toAbsolutePath topSrcdir;
-     builddir := regexQuote prefixDirectory;
-     homedir := regexQuote homeDirectory;
-     if last homedir == "/" then homedir = substring(0, #homedir - 1, homedir);
+     prefixdir := regexQuote prefixDirectory;
+     builddir := replace("usr-dist/?$", "", prefixdir);
+     homedir := replace("/$", "", regexQuote homeDirectory);
      if any({srcdir, builddir, homedir}, dir -> match(dir, outstr))
      then (
-	 outstr = replace(srcdir | "Macaulay2/m2/startup.m2.in",
-	     "/path/to/source/Macaulay2/m2/startup.m2.in", outstr);
+	 -- .m2 files in source directory
 	 outstr = replace(srcdir | "Macaulay2/m2",
 	     finalPrefix | Layout#1#"packages" | "Core", outstr);
 	 outstr = replace(srcdir | "Macaulay2/packages/",
 	     finalPrefix | Layout#1#"packages", outstr);
-	 outstr = replace(builddir | Layout#2#"bin",
-	     finalPrefix | Layout#1#"bin", outstr);
-	 outstr = replace(builddir | Layout#2#"data",
-	     finalPrefix | Layout#1#"data", outstr);
-	 outstr = replace(builddir | Layout#2#"lib",
-	     finalPrefix | Layout#1#"lib", outstr);
+	 -- generated .m2 files in build directory (tvalues.m2)
+	 outstr = replace(builddir | "Macaulay2/m2",
+	     finalPrefix | Layout#1#"packages" | "Core", outstr);
+	 -- everything in staging area
+	 scan({"bin", "data", "lib", "program licenses", "programs"}, key ->
+	     outstr = replace(prefixdir | Layout#2#key,
+		 finalPrefix | Layout#1#key, outstr));
+	 outstr = replace(prefixdir, finalPrefix, outstr);
+	 -- home directory
 	 outstr = replace(homedir, "/home/m2user", outstr);
-	 outstr = replace(builddir, finalPrefix, outstr);
-	 outf << outstr << close;
 	 );
      outstr
     )
@@ -655,7 +654,8 @@ installPackage Package := opts -> pkg -> (
 			 );
 		    -- read, separate, and store example output
 		    if fileExists outf then (
-			 outstr := reproduciblePaths outf;
+			 outstr := reproduciblePaths get outf;
+			 outf << outstr << close;
 			 pkg#"example results"#fkey = drop(separateM2output outstr,-1)
 		    )
 		    else (
@@ -664,7 +664,16 @@ installPackage Package := opts -> pkg -> (
 		    ));
 
 	  if not opts.IgnoreExampleErrors
-	  then if hadError then error(toString numErrors, " error(s) occurred running examples for package ", pkg#"pkgname");
+	  then if hadError then error(toString numErrors,
+	       " error(s) occurred running examples for package ",
+	       pkg#"pkgname",
+	       if verbose then ":" | newline | newline |
+	            concatenate apply(select(readDirectory(exampleOutputDir),
+		         file -> match("\\.errors$", file)), err ->
+		              err | newline |
+			      concatenate(width err : "*") | newline |
+			      get("!tail " | exampleOutputDir | err))
+	       else "");
 
 	  -- if no examples were generated, then remove the directory
 	  if length readDirectory exampleOutputDir == 2 then

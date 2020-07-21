@@ -282,6 +282,15 @@ Below are a list of common issues and errors. If you run into a problem not list
 
 
 <details>
+<summary>Installing dependencies using Linuxbrew</summary>
+
+On macOS CMake automatically finds libraries installed on the Homebrew prefix. In order to use Linuxbrew (which has the same interface and packages), use the following command to tell CMake to look under the right prefix:
+```
+cmake -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` .
+```
+</details>
+
+<details>
 <summary>CMake is not using the local version of MPIR, Flint, etc.</summary>
 
 Currently, when CMake is set to use the MPIR library, it compiles MPIR and a number of other libraries from source, including MPFR, NTL, Flint, Factory, Frobby, and Givaro. This is done to avoid linking conflicts caused by the libraries linking instead with the GMP library. Therefore, in order to link with system libraries the `-DUSING_MPIR=OFF` option is required. See this [comment](https://github.com/Macaulay2/M2/issues/1275#issuecomment-644217756) for more details on the reasoning behind this.
@@ -321,7 +330,13 @@ cmake -DCMAKE_OSX_SYSROOT=`xcrun --show-sdk-path` .
 ```
 This would, for instance, tell CMake to look in `/Applications/Xcode.app/Contents/Developer/SDKs/MacOSX.sdk/usr/include` for headers.
 
+Moreover, when building with MPIR, adding the following option allows CMake to find OpenMP from its own prefix rather than the common prefix at `/usr/local`, which may help avoid linking conflicts:
+```
+cmake -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix libomp` .
+```
+
 If problems persist for either compiler, open an issue.
+>>>>>>> origin/development
 </details>
 
 <details>

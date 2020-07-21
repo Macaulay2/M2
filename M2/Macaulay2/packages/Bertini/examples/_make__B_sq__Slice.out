@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1061455288
+-- -*- M2-comint -*- hash: -822686202
 
 i1 : sliceType={1,1}
 
@@ -37,11 +37,7 @@ o7 = {f0, f1, f2}
 
 o7 : List
 
-i8 : makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"})
-
-o8 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-75021-0/0/input
-
-o8 : File
+i8 : makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"});
 
 i9 : f1="x0*y0+x1*y0+x2*y2"
 
@@ -77,11 +73,7 @@ o14 : B'Slice
 
 i15 : makeB'InputFile(storeBM2Files,
           HomVariableGroup=>variableGroups,
-          B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections)
-
-o15 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-75021-0/0/input
-
-o15 : File
+          B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections);
 
 i16 : runBertini(storeBM2Files)
 
@@ -91,11 +83,7 @@ o17 = 2
 
 i18 : makeB'InputFile(storeBM2Files,
           HomVariableGroup=>variableGroups,
-          B'Polynomials=>{f1,f2}|xySlice#ListB'Sections)
-
-o18 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-75021-0/0/input
-
-o18 : File
+          B'Polynomials=>{f1,f2}|xySlice#ListB'Sections);
 
 i19 : runBertini(storeBM2Files)
 
@@ -105,11 +93,7 @@ o20 = 3
 
 i21 : makeB'InputFile(storeBM2Files,
           HomVariableGroup=>variableGroups,
-          B'Polynomials=>{f1,f2}|yySlice#ListB'Sections)
-
-o21 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-75021-0/0/input
-
-o21 : File
+          B'Polynomials=>{f1,f2}|yySlice#ListB'Sections);
 
 i22 : runBertini(storeBM2Files)
 

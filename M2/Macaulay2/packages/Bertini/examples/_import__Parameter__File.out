@@ -1,10 +1,6 @@
--- -*- M2-comint -*- hash: -245051623
+-- -*- M2-comint -*- hash: 2116881562
 
-i1 : writeParameterFile(storeBM2Files,{1,2},NameParameterFile=>"final_parameters")
-
-o1 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-74902-0/0/final_parameters
-
-o1 : File
+i1 : writeParameterFile(storeBM2Files,{1,2},NameParameterFile=>"final_parameters");
 
 i2 : importParameterFile(storeBM2Files)
 

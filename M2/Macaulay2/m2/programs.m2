@@ -10,19 +10,20 @@ addSlash = programPath -> (
     else return programPath
 )
 
-checkProgramPath = (name, cmd, programPath, verbose) -> (
-    if verbose == true then
-	print("checking for " | name | " in " | programPath | "...");
-    if run(programPath | cmd | " >/dev/null 2>&1") == 0 then (
-	if verbose == true then print("	found");
+checkProgramPath = (name, cmds, opts) -> (
+    if all(cmds, cmd -> run(cmd | " >/dev/null 2>&1") == 0) then (
+	if opts.Verbose == true then print("    found");
 	return true;
     ) else (
-	if verbose == true then print("	not found");
+	if opts.Verbose == true then print("    not found");
 	return false;
     )
 )
 
-getProgramPath = (name, cmd, verbose) -> (
+addPrefix = (cmd, prefix) ->
+    if match(prefix_0, first separate(" ", cmd)) then prefix_1 | cmd else cmd
+
+getProgramPath = (name, cmds, opts) -> (
     pathsToTry := {};
     -- try user-configured path first
     if programPaths#?name then
@@ -33,18 +34,32 @@ getProgramPath = (name, cmd, verbose) -> (
     if getenv "PATH" != "" then
 	pathsToTry = join(pathsToTry, separate(":", getenv "PATH"));
     pathsToTry = apply(pathsToTry, addSlash);
-    scan(pathsToTry, pathToTry ->
-	if checkProgramPath(name, cmd, pathToTry, verbose) then break pathToTry)
+    prefixes := {(".*", "")} | opts.Prefix;
+    scan(pathsToTry, pathToTry -> (
+	if opts.Verbose == true then
+	    print("checking for " | name | " in " | pathToTry | "...");
+	prefix := scan(prefixes, prefix -> (
+	    if opts.Verbose == true and #prefixes > 1 then
+		print("  trying prefix \"" | prefix_1 |
+		    "\" for executables matching \"" | prefix_0 | "\"...");
+	    if checkProgramPath(name, apply(cmds, cmd ->
+		pathToTry | addPrefix(cmd, prefix)), opts) then break prefix)
+	);
+	if prefix =!= null then break (pathToTry, prefix)
+    ))
 )
 
-loadProgram = method(TypicalValue => Program,
-    Options => {RaiseError => true, Verbose => false})
-loadProgram (String, String) := opts -> (name, cmd) -> (
-    programPath := getProgramPath(name, cmd, opts.Verbose);
-    if programPath === null then
+findProgram = method(TypicalValue => Program,
+    Options => {RaiseError => true, Verbose => false, Prefix => {}})
+findProgram(String, String) := opts -> (name, cmd) ->
+    findProgram(name, {cmd}, opts)
+findProgram(String, List) := opts -> (name, cmds) -> (
+    programPathAndPrefix := getProgramPath(name, cmds, opts);
+    if programPathAndPrefix === null then
 	if opts.RaiseError then error("could not find " | name)
 	else return null;
-    new Program from {"name" => name, "path" => programPath}
+    new Program from {"name" => name, "path" => programPathAndPrefix_0,
+	"prefix" => programPathAndPrefix_1}
 )
 
 runProgram = method(TypicalValue => ProgramRun,
@@ -55,7 +70,7 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
     tmpFile := temporaryFileName();
     outFile := tmpFile | ".out";
     errFile := tmpFile | ".err";
-    cmd := program#"path" | name | " " | args;
+    cmd := program#"path" | addPrefix(name, program#"prefix") | " " | args;
     returnValue := run (cmd | " > " | outFile | " 2> " | errFile);
     message := "running: " | cmd | "\n";
     output := get outFile;
@@ -81,4 +96,5 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
     new ProgramRun from result
 )
 
+net Program := program -> program#"name"
 net ProgramRun := pr -> net pr#"return value"

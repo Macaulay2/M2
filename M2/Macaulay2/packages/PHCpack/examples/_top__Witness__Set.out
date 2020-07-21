@@ -5,7 +5,6 @@ i1 : R = CC[x,y,z];
 i2 : f = { x^2 - y, x^3 - z };
 
 i3 : (w,ns) = topWitnessSet(f,1)
-*** variables in the ring : {x, y, z, zz1} ***
 
 o3 = (w, {})
 
@@ -25,7 +24,8 @@ o6 = {x^2-y+(.380139-.924929*ii)*zz1, x^3-z+(-.45571+.890128*ii)*zz1, zz1}
 
 i7 : toString slice(w)
 
-o7 = {(-.205377-.978683*ii)*x+(.943327-.331864*ii)*y+(.673112+.739541*ii)*z+(-.911067-.412259*ii)*zz1-.883724+.468009*ii}
+o7 = {(-.205377-.978683*ii)*x+(.943327-.331864*ii)*y+(.673112+.739541*ii)*z
+     +(-.911067-.412259*ii)*zz1-.883724+.468009*ii}
 
 i8 : toString points(w)
 
@@ -39,7 +39,6 @@ o10 = {x  - 2x  - x*y + 2y, x y - 2x  - y*z + 2z, x*y*z - 2x*y - z  + 2z}
 o10 : List
 
 i11 : (w,ns) = topWitnessSet(f,1);
-*** variables in the ring : {x, y, z, zz1} ***
 
 i12 : dim(w)
 

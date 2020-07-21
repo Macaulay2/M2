@@ -18,16 +18,16 @@ o6 : List
 
 i7 : peek S0_0
 
-o7 = Point{AccuracyEst => 1.03094e-14        }
-           AccuracyEstInternal => 6.88696e-15
-           ConditionNumber => 22.2635
+o7 = Point{AccuracyEst => 1.21205e-14        }
+           AccuracyEstInternal => 1.43214e-14
+           ConditionNumber => 69.2692
            Coordinates => {1.41421}
            CycleNumber => 1
            FinalTValue => .000390625
-           FunctionResidual => 1.66533e-16
+           FunctionResidual => 3.97205e-15
            MaxPrecisionUtilized => 52
            Multiplicity => 1
-           NewtonResidual => 2.0037e-16
+           NewtonResidual => 1.04182e-15
            PathNumber => 0
            PathsWithSameEndpoint => {}
            PrecisionIncreased => 0

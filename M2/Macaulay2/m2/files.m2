@@ -322,7 +322,7 @@ mungeFile = (filename, headerline, trailerline, text) -> (
      insert := headerline | text | trailerline;
      local action;
      if fileExists filename then (
-     	  filename = realpath filename;	-- no other editor does this, but it seems like a good idea...
+     	  filename = realpath filename;	-- if filename is a symbolic link, we want to preserve that link and modify the underlying file
 	  hdr := "^" | regexpString headerline;
 	  tlr := "^" | regexpString trailerline;
      	  regexp := hdr | "(.|\n)*" | tlr ;
@@ -353,8 +353,8 @@ mungeFile = (filename, headerline, trailerline, text) -> (
      if promptUser then while true do (
 	  response := toLower read concatenate(action, " ", format filename, " ? [y/n/r/q/!/?]: ");
 	  if response == "y" then break else
-	  if response == "n" then return false else
-	  if response == "q" then return true else
+	  if response == "n" then (removeFile tmp; return false) else
+	  if response == "q" then (removeFile tmp; return true ) else
 	  if response == "!" then (promptUser = false; break) else
 	  if response == "?" then (
 	       << ///   y     yes
@@ -481,19 +481,26 @@ prelim := () -> (
      )
 installMethod(setupEmacs, () -> ( prelim(); mungeEmacs(); ))
 installMethod(setup, () -> (
-     -- tcsh reads .tcshrc,or,that doesn't exists,.cshrc
-     -- from bash info:
-     --     After reading that file, it looks for `~/.bash_profile',
-     --     `~/.bash_login', and `~/.profile', in that order, and reads and
-     --     executes commands from the first one that exists and is readable.
      prelim();
      dotprofileFix = concatenate(shHeader, apply(shellfixes, (var,dir,rest) -> fix(var,dir,rest,bashtempl)));
      dotloginFix = concatenate(shHeader,apply(shellfixes, (var,dir,rest) -> fix(var,dir,rest,cshtempl)));
      supplantStringFile(dotprofileFix,"~/"|M2profile,false);
      supplantStringFile(dotloginFix,"~/"|M2login,false);
-     mungeFile("~/"|".profile",startToken,endToken,M2profileRead) or
-     mungeFile("~/"|".zprofile",startToken,endToken,M2profileRead) or
-     mungeFile("~/"|".login",startToken,endToken,M2loginRead) or
+     -- bash:
+     --   from bash info:
+     --     After reading that file, it looks for `~/.bash_profile',
+     --     `~/.bash_login', and `~/.profile', in that order, and reads and
+     --     executes commands from the first one that exists and is readable.
+     mungeFile(     if fileExists "~/.bash_profile" then "~/.bash_profile"
+	       else if fileExists "~/.bash_login"   then "~/.bash_login"
+	       else "~/.bash_profile",
+	       startToken,endToken,M2profileRead) or
+     mungeFile("~/.profile",startToken,endToken,M2profileRead) or
+     -- zsh:
+     mungeFile("~/.zprofile",startToken,endToken,M2profileRead) or
+     -- csh and tcsh:
+     mungeFile("~/.login",startToken,endToken,M2loginRead) or
+     -- emacs:
      mungeEmacs(); ))
 
 scanLines = method()
