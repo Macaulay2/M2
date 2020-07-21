@@ -1012,31 +1012,6 @@ private:
 
 
 
-bool testMemoryBlock()
-{
-  MemoryBlock B;
-  for (size_t i = 0; i < 1000; ++i)
-    {
-      size_t sz = 4 + (32343 * i) % 10;
-      auto range = B.allocateArray<int>(sz);
-      for (int j = 0; j < sz; j++)
-        range.first[j] = 100 * i + j;
-      if (i % 93 == 0)
-        {
-          range = B.shrinkLastAllocate(range.first, range.second, range.first + 4);
-          for (int j = 0; j < 4; j++)
-            range.first[j] = 100 * i + j;
-        }
-      if ((range.second - range.first != sz) and (range.second - range.first != 4))
-        return false;
-      //      std::cout << "i = " << i << " sz = " << sz << " elems = ";
-      //      for (int* a = range.first; a != range.second; ++a)
-      //        std::cout << *a << " ";
-      //      std::cout << std::endl << "memory usage: " << B.getMemoryUsedInBytes() << std::endl;
-    }
-  return true;
-}
-
 HeapType getHeapType(int strategy)
 {
   // The first 3 bits of strategy encode which heap type to use.
