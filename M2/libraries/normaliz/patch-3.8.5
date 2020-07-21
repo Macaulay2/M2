@@ -1,0 +1,84 @@
+From 21bc0dd240089fa45e9a0175eec30a2618b8a6a7 Mon Sep 17 00:00:00 2001
+From: Mahrud Sayrafi <mahrud@berkeley.edu>
+Date: Fri, 5 Jun 2020 14:19:09 -0500
+Subject: [PATCH] Fix #246: OpenMP issue with AppleClang
+
+---
+ m4/ax_openmp.m4               | 19 ++++++++++++-------
+ source/Makefile.configuration |  2 +-
+ 2 files changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/m4/ax_openmp.m4 b/m4/ax_openmp.m4
+index bdb7be65..2f68d52a 100644
+--- a/m4/ax_openmp.m4
++++ b/m4/ax_openmp.m4
+@@ -1,5 +1,5 @@
+ # ===========================================================================
+-#         http://www.gnu.org/software/autoconf-archive/ax_openmp.html
++#        https://www.gnu.org/software/autoconf-archive/ax_openmp.html
+ # ===========================================================================
+ #
+ # SYNOPSIS
+@@ -39,6 +39,7 @@
+ #
+ #   Copyright (c) 2008 Steven G. Johnson <stevenj@alum.mit.edu>
+ #   Copyright (c) 2015 John W. Peterson <jwpeterson@gmail.com>
++#   Copyright (c) 2016 Nick R. Papior <nickpapior@gmail.com>
+ #
+ #   This program is free software: you can redistribute it and/or modify it
+ #   under the terms of the GNU General Public License as published by the
+@@ -51,7 +52,7 @@
+ #   Public License for more details.
+ #
+ #   You should have received a copy of the GNU General Public License along
+-#   with this program. If not, see <http://www.gnu.org/licenses/>.
++#   with this program. If not, see <https://www.gnu.org/licenses/>.
+ #
+ #   As a special exception, the respective Autoconf Macro's copyright owner
+ #   gives unlimited permission to copy, distribute and modify the configure
+@@ -66,20 +67,24 @@
+ #   modified version of the Autoconf Macro, you may extend this special
+ #   exception to the GPL to apply to your modified version as well.
+ 
+-#serial 11
++#serial 13
+ 
+ AC_DEFUN([AX_OPENMP], [
+-AC_PREREQ([2.59]) dnl for _AC_LANG_PREFIX
++AC_PREREQ([2.69]) dnl for _AC_LANG_PREFIX
+ 
+ AC_CACHE_CHECK([for OpenMP flag of _AC_LANG compiler], ax_cv_[]_AC_LANG_ABBREV[]_openmp, [save[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
+ ax_cv_[]_AC_LANG_ABBREV[]_openmp=unknown
+-# Flags to try:  -fopenmp (gcc), -openmp (icc), -mp (SGI & PGI),
+-#                -xopenmp (Sun), -omp (Tru64), -qsmp=omp (AIX), none
+-ax_openmp_flags="-fopenmp -openmp -mp -xopenmp -omp -qsmp=omp none"
++# Flags to try:  -fopenmp (gcc), -mp (SGI & PGI),
++#                -qopenmp (icc>=15), -openmp (icc),
++#                -xopenmp (Sun), -omp (Tru64),
++#                -qsmp=omp (AIX),
++#                none
++ax_openmp_flags="-fopenmp -openmp -qopenmp -mp -xopenmp -omp -qsmp=omp -Xpreprocessor%20-fopenmp none"
+ if test "x$OPENMP_[]_AC_LANG_PREFIX[]FLAGS" != x; then
+   ax_openmp_flags="$OPENMP_[]_AC_LANG_PREFIX[]FLAGS $ax_openmp_flags"
+ fi
+ for ax_openmp_flag in $ax_openmp_flags; do
++  ax_openmp_flag=`echo $ax_openmp_flag | sed 's/%20/ /g'` ;
+   case $ax_openmp_flag in
+     none) []_AC_LANG_PREFIX[]FLAGS=$save[]_AC_LANG_PREFIX[] ;;
+     *) []_AC_LANG_PREFIX[]FLAGS="$save[]_AC_LANG_PREFIX[]FLAGS $ax_openmp_flag" ;;
+diff --git a/source/Makefile.configuration b/source/Makefile.configuration
+index 8599962d..dcf203ca 100644
+--- a/source/Makefile.configuration
++++ b/source/Makefile.configuration
+@@ -27,7 +27,7 @@ endif
+ ifeq ($(OPENMP),no)
+   CXXFLAGS += -Wno-unknown-pragmas
+ else
+-  CXXFLAGS += -fopenmp ## g++
++  CXXFLAGS += $(OPENMP_CXXFLAGS)
+   ## CXXFLAGS += -fopenmp=libgomp ## clang++
+ endif
+ 
+-- 
+2.25.4
+

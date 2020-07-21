@@ -4,28 +4,28 @@
 #include "engine-includes.hpp"
 #include <stdio.h>
 
-void mpfc_init_set(gmp_CC result, const_gmp_CC a)
+void mpfc_init_set(gmp_CCmutable result, gmp_CCmutable a)
 {
-  result->re = getmemstructtype(gmp_RR);
-  result->im = getmemstructtype(gmp_RR);
+  result->re = getmemstructtype(gmp_RRmutable);
+  result->im = getmemstructtype(gmp_RRmutable);
   mpfr_init_set(result->re, a->re, GMP_RNDN);
   mpfr_init_set(result->im, a->im, GMP_RNDN);
 }
 
-void mpfc_init(gmp_CC result, long precision)
+void mpfc_init(gmp_CCmutable result, long precision)
 {
-  result->re = getmemstructtype(gmp_RR);
-  result->im = getmemstructtype(gmp_RR);
+  result->re = getmemstructtype(gmp_RRmutable);
+  result->im = getmemstructtype(gmp_RRmutable);
   mpfr_init2(result->re, precision);
   mpfr_init2(result->im, precision);
 }
-void mpfc_set(gmp_CC result, const_gmp_CC a)
+void mpfc_set(gmp_CCmutable result, gmp_CCmutable a)
 {
   mpfr_set(result->re, a->re, GMP_RNDN);
   mpfr_set(result->im, a->im, GMP_RNDN);
 }
 
-void mpfc_clear(gmp_CC result)
+void mpfc_clear(gmp_CCmutable result)
 {
   mpfr_clear(result->re);
   mpfr_clear(result->im);
@@ -34,36 +34,36 @@ void mpfc_clear(gmp_CC result)
   //  GC_FREE(result->re);
   //  GC_FREE(result->im);
 }
-void mpfc_set_si(gmp_CC result, long re)
+void mpfc_set_si(gmp_CCmutable result, long re)
 {
   mpfr_set_si(result->re, re, GMP_RNDN);
   mpfr_set_si(result->im, 0, GMP_RNDN);
 }
-int mpfc_is_zero(const_gmp_CC a)
+int mpfc_is_zero(gmp_CCmutable a)
 {
   return mpfr_cmp_si(a->re, 0) == 0 && mpfr_cmp_si(a->im, 0) == 0;
 }
 
-int mpfc_is_equal(const_gmp_CC a, const_gmp_CC b)
+int mpfc_is_equal(gmp_CCmutable a, gmp_CCmutable b)
 {
   return mpfr_cmp(a->re, b->re) == 0 && mpfr_cmp(a->im, b->im) == 0;
 }
-void mpfc_add(gmp_CC result, const_gmp_CC a, const_gmp_CC b)
+void mpfc_add(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b)
 {
   mpfr_add(result->re, a->re, b->re, GMP_RNDN);
   mpfr_add(result->im, a->im, b->im, GMP_RNDN);
 }
-void mpfc_neg(gmp_CC result, const_gmp_CC a)
+void mpfc_neg(gmp_CCmutable result, gmp_CCmutable a)
 {
   mpfr_neg(result->re, a->re, GMP_RNDN);
   mpfr_neg(result->im, a->im, GMP_RNDN);
 }
-void mpfc_sub(gmp_CC result, const_gmp_CC a, const_gmp_CC b)
+void mpfc_sub(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b)
 {
   mpfr_sub(result->re, a->re, b->re, GMP_RNDN);
   mpfr_sub(result->im, a->im, b->im, GMP_RNDN);
 }
-void mpfc_mul(gmp_CC result, const_gmp_CC a, const_gmp_CC b)
+void mpfc_mul(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b)
 {
   mpfr_t tmp;
   mpfr_init2(tmp, mpfr_get_prec(a->re));
@@ -82,7 +82,7 @@ void mpfc_mul(gmp_CC result, const_gmp_CC a, const_gmp_CC b)
 
   mpfr_clear(tmp);
 }
-void mpfc_invert(gmp_CC result, const_gmp_CC v)
+void mpfc_invert(gmp_CCmutable result, gmp_CCmutable v)
 {
   mpfr_t p, denom;
   mpfr_init2(p, mpfr_get_prec(v->re));
@@ -120,7 +120,7 @@ void mpfc_invert(gmp_CC result, const_gmp_CC v)
   mpfr_clear(p);
   mpfr_clear(denom);
 }
-void mpfc_div(gmp_CC result, const_gmp_CC u, const_gmp_CC v)
+void mpfc_div(gmp_CCmutable result, gmp_CCmutable u, gmp_CCmutable v)
 {
   mpfr_t p, denom;
   mpfr_init2(p, mpfr_get_prec(u->re));
@@ -196,7 +196,7 @@ void mpfc_div(gmp_CC result, const_gmp_CC u, const_gmp_CC v)
       }
 #endif
 }
-void mpfc_sub_mult(gmp_CC result, const_gmp_CC a, const_gmp_CC b)
+void mpfc_sub_mult(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b)
 {
   // result->re -= a->re*b->re - a->im*b->im;
   // result->im -= a->re*b->im + a->im*b->re;
@@ -216,12 +216,12 @@ void mpfc_sub_mult(gmp_CC result, const_gmp_CC a, const_gmp_CC b)
 
   mpfr_clear(tmp);
 }
-void mpfc_conj(gmp_CC result, const_gmp_CC a)
+void mpfc_conj(gmp_CCmutable result, gmp_CCmutable a)
 {
   mpfr_set(result->re, a->re, GMP_RNDN);
   mpfr_neg(result->im, a->im, GMP_RNDN);
 }
-void mpfc_abs(gmp_RR result, const_gmp_CC c)
+void mpfc_abs(gmp_RRmutable result, gmp_CCmutable c)
 {
   mpfr_t a, b;
 
@@ -278,7 +278,7 @@ void mpfc_abs(gmp_RR result, const_gmp_CC c)
   }
 #endif
 }
-void mpfc_sqrt(gmp_CC result, const_gmp_CC a)
+void mpfc_sqrt(gmp_CCmutable result, gmp_CC a)
 {
   // The idea is: write a = a1 + i * a2
   // first make it numerically more stable by dividing by the larger

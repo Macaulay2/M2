@@ -65,18 +65,14 @@ AC_DEFUN([CHECK_GTEST],
         [have_gtest=yes],
         [have_gtest=no])
 
-  # mathicgb's unit tests fail to build with googletest 1.8.1, so we need
+  # mathicgb's unit tests require googletest 1.10.0, so we need
   # to check which version is installed.  As the gtest-config script may
   # or may not be available to help us do this (e.g., it's not included in
   # the Debian googletest package), we instead compile a short program
   # using TYPED_TEST_SUITE, one of the functions which was introduced in
   # 1.10.0 in the switch from the *_TEST_CASE to the *_TEST_SUITE naming
   # convention.  If this test fails, then an older googletest is
-  # installed.  In this case, we compile another short program, this time
-  # using the ScopedTrace utility, which was exposed to the public
-  # interface in 1.8.1.  If this compiles, then we know that 1.8.1 is
-  # installed, so we instead build our own googletest.  If it doesn't,
-  # then we know that <= 1.8.0 is installed, which is okay.
+  # installed, so we instead download our own googletest.
   AS_IF([test "x$have_gtest" = "xyes"],
         [AC_MSG_CHECKING([for gtest version])]
         [AC_COMPILE_IFELSE(
@@ -84,14 +80,9 @@ AC_DEFUN([CHECK_GTEST],
             [[#include <gtest/gtest.h>]],
             [[TYPED_TEST_SUITE(int, int);]])],
           [AC_MSG_RESULT(>= 1.10.0)],
-          [AC_COMPILE_IFELSE(
-            [AC_LANG_PROGRAM(
-              [[#include <gtest/gtest.h>]],
-              [[testing::ScopedTrace trace();]])],
-            [AC_MSG_RESULT(1.8.1)]
-            [AC_MSG_WARN([mathicgb unit tests do not build with gtest 1.8.1; we will build a newer version])]
-            [have_gtest=no],
-          [AC_MSG_RESULT(<= 1.8.0)])])])
+          [AC_MSG_RESULT(< 1.10.0)]
+	  [AC_MSG_WARN([mathicgb unit tests require gtest >= 1.10.0; we will download a newer version])]
+          [have_gtest=no])])
 
   CPPFLAGS="$tmp_CPPFLAGS"
 

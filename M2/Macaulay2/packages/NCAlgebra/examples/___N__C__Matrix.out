@@ -8,15 +8,14 @@ o1 : NCPolynomialRing
 
 i2 : M = ncMatrix {{a,b,c,d}}
 
-o2 = | a  b  c  d |
+o2 = | a b c d |
 
 o2 : NCMatrix
 
 i3 : N = ncMatrix {{M,2*M,3*M},{4*M,5*M,6*M}}
 
-o3 = |  a   b   c   d  2a  2b  2c  2d  3a  3b  3c  3d |
-     |                                                |
-     | 4a  4b  4c  4d  5a  5b  5c  5d  6a  6b  6c  6d |
+o3 = | a   b   c   d   2*a 2*b 2*c 2*d 3*a 3*b 3*c 3*d |
+     | 4*a 4*b 4*c 4*d 5*a 5*b 5*c 5*d 6*a 6*b 6*c 6*d |
 
 o3 : NCMatrix
 
@@ -56,7 +55,7 @@ o8 : NCIdeal
 
 i9 : Igb = ncGroebnerBasis I
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12571-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12571-0/3.ter ... Complete!
+Complete!
 
       2    2                2
 o9 = y x-xy ; Lead Term = (y x, 1)
@@ -73,7 +72,7 @@ o9 : NCGroebnerBasis
 
 i10 : M = ncMatrix {{x, y, z}}
 
-o10 = | x  y  z |
+o10 = | x y z |
 
 o10 : NCMatrix
 
@@ -85,24 +84,17 @@ o11 : NCRingMap
 
 i12 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
 
-o12 = | x  y  z |
-      |         |
-      | y  z  x |
-      |         |
-      | z  x  y |
+o12 = | x y z |
+      | y z x |
+      | z x y |
 
 o12 : NCMatrix
 
 i13 : Nred = N^3 % Igb
 
-      |   2   3               2       2    2     2                  2      2   2   3           2   3           2   3        |
-o13 = | -y z+y +yxz-yxy+xyz+xy +2xyx+x z+3x y   y z+yxz+2yxy+xyz+3xy -xyx-x z+x y+x          2y z+y +yxy+xyx+2x z+x         |
-      |                                                                                                                     |
-      |   2                  2      2   2   3           2   3           2   3           2   3               2       2    2  |
-      |  y z+yxz+2yxy+xyz+3xy -xyx-x z+x y+x          2y z+y +yxy+xyx+2x z+x          -y z+y +yxz-yxy+xyz+xy +2xyx+x z+3x y |
-      |                                                                                                                     |
-      |          2   3           2   3           2   3               2       2    2     2                  2      2   2   3 |
-      |        2y z+y +yxy+xyx+2x z+x          -y z+y +yxz-yxy+xyz+xy +2xyx+x z+3x y   y z+yxz+2yxy+xyz+3xy -xyx-x z+x y+x  |
+o13 = | -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      |
+      | y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y |
+      | 2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  |
 
 o13 : NCMatrix
 
@@ -120,60 +112,44 @@ o15 : NCRingMap
 
 i16 : NC = phi N
 
-o16 = | x  y  z |
-      |         |
-      | y  z  x |
-      |         |
-      | z  x  y |
+o16 = | x y z |
+      | y z x |
+      | z x y |
 
 o16 : NCMatrix
 
 i17 : N3C = NC^3
 
-      |   2   3               2       2    2     2                  2      2   2   3           2   3           2   3        |
-o17 = | -y z+y +yxz-yxy+xyz+xy +2xyx+x z+3x y   y z+yxz+2yxy+xyz+3xy -xyx-x z+x y+x          2y z+y +yxy+xyx+2x z+x         |
-      |                                                                                                                     |
-      |   2                  2      2   2   3           2   3           2   3           2   3               2       2    2  |
-      |  y z+yxz+2yxy+xyz+3xy -xyx-x z+x y+x          2y z+y +yxy+xyx+2x z+x          -y z+y +yxz-yxy+xyz+xy +2xyx+x z+3x y |
-      |                                                                                                                     |
-      |          2   3           2   3           2   3               2       2    2     2                  2      2   2   3 |
-      |        2y z+y +yxy+xyx+2x z+x          -y z+y +yxz-yxy+xyz+xy +2xyx+x z+3x y   y z+yxz+2yxy+xyz+3xy -xyx-x z+x y+x  |
+o17 = | -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      |
+      | y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y |
+      | 2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  |
 
 o17 : NCMatrix
 
 i18 : X = NC + 3*NC
 
-o18 = | 4x  4y  4z |
-      |            |
-      | 4y  4z  4x |
-      |            |
-      | 4z  4x  4y |
+o18 = | 4*x 4*y 4*z |
+      | 4*y 4*z 4*x |
+      | 4*z 4*x 4*y |
 
 o18 : NCMatrix
 
 i19 : Y = NC | 2*NC
 
-o19 = | x  y  z  2x  2y  2z |
-      |                     |
-      | y  z  x  2y  2z  2x |
-      |                     |
-      | z  x  y  2z  2x  2y |
+o19 = | x y z 2*x 2*y 2*z |
+      | y z x 2*y 2*z 2*x |
+      | z x y 2*z 2*x 2*y |
 
 o19 : NCMatrix
 
 i20 : Z = X || NC
 
-o20 = | 4x  4y  4z |
-      |            |
-      | 4y  4z  4x |
-      |            |
-      | 4z  4x  4y |
-      |            |
-      |  x   y   z |
-      |            |
-      |  y   z   x |
-      |            |
-      |  z   x   y |
+o20 = | 4*x 4*y 4*z |
+      | 4*y 4*z 4*x |
+      | 4*z 4*x 4*y |
+      | x   y   z   |
+      | y   z   x   |
+      | z   x   y   |
 
 o20 : NCMatrix
 

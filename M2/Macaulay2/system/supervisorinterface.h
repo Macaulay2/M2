@@ -16,23 +16,28 @@ typedef void* (*ThreadTaskFunctionPtr)(void*);
 #define THREADLOCALINIT(x) x
 #endif
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-  //Public interface functions
+  // TODO: replace with STL linked list
+  extern struct FUNCTION_CELL {
+    void (*func)();
+    struct FUNCTION_CELL *next;
+  } *pre_final_list, *final_list, *thread_prepare_list;
+
+  // Public interface functions
   struct ThreadSupervisor;
   struct ThreadTask;
   extern void setInterpThread();
-  extern int tryGlobalInterrupt(), tryGlobalAlarm();
+  extern int tryGlobalInterrupt(), tryGlobalAlarm(), tryGlobalTrace();
   extern void* waitOnTask(struct ThreadTask* task);
   extern void addCancelTask(struct ThreadTask* task, struct ThreadTask* cancel);
   extern void pushTask(struct ThreadTask* task);
   extern void addStartTask(struct ThreadTask* task, struct ThreadTask* start);
   extern void addDependency(struct ThreadTask* task, struct ThreadTask* start);
-  /** 
-      Returns 1 if the task is finished, 0 otherwise
+  /**
+     Returns 1 if the task is finished, 0 otherwise
   **/
   extern int taskDone(struct ThreadTask* task);
   /**
@@ -53,7 +58,7 @@ extern "C" {
   extern int taskRunning(struct ThreadTask* task);
   /**
      Interrupt the task
-   **/
+  **/
   extern void taskInterrupt(struct ThreadTask* task);
 
   extern struct ThreadTask* createThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, int timeLimitExists, time_t timeLimitSeconds, int isM2Task);
@@ -90,17 +95,15 @@ extern "C" {
     struct ThreadTask* task = createThreadTask("M2Task",fptr,userData,0,0,1);
     return task;
   }
+
 #ifdef GETSPECIFICTHREADLOCAL
   extern void TS_Add_ThreadLocal(int* refno, const char* name);
-  static void** TS_Get_LocalArray() {  return (void**)pthread_getspecific(*(pthread_key_t*)threadSupervisor); }
-  static void** TS_Get_Local(int refno) { return &TS_Get_LocalArray()[refno]; }
+  extern void** TS_Get_LocalArray();
+  extern void** TS_Get_Local(int refno);
 #endif
-  
-     
+
 #ifdef __cplusplus
 }
 #endif
-
-
 
 #endif

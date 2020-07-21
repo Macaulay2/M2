@@ -6,11 +6,13 @@ newPackage("Text",
      )
 
 exportFrom_Core {
-     "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DIV1", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
+     "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
      "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "IMG", "ITALIC",
-     "LABEL", "LATER", "LI", "LINK", "LITERAL", "MENU", "META", "PARA", "PRE", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD",
-     "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "validate",
-     "MarkUpType", "MarkUpTypeWithOptions", "IntermediateMarkUpType" }
+     "LABEL", "LATER", "LI", "LINK", "LITERAL", "MENU", "META", "PARA", "PRE", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD", "TH",
+     "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "OL", "validate",
+     "MarkUpType", "IntermediateMarkUpType",
+     "style"
+     }
 
 beginDocumentation()
 
@@ -44,37 +46,15 @@ document {
      PARA "Intended for internal use only."
      }
 document {
-     Key => {MarkUpType,
-	  (symbol SPACE, MarkUpType, String),
-	  (symbol SPACE, MarkUpType, Net),
-	  (symbol SPACE, MarkUpType, Hypertext)},
+     Key => MarkUpType,
      Headline => "the class of mark-up types used with hypertext", 
-     PARA "Intended for internal use only."
-     }
-document { Key => MarkUpTypeWithOptions,
-     Headline => "the class of mark-up types used with hypertext, with option handling",
      "Some mark-up types allow options (attributes) to be inserted in their html tags.",
      EXAMPLE {
-	  ///DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT "resolution", ":"},
-    "There are many ways to use ", TO "resolution", "."
-    )///,
-     	  "html oo"
+	 ///DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT "resolution", ":"},
+	     "There are many ways to use ", TO "resolution", "."
+	     )///,
+	 "html oo"
          }
-    }
-
---document {
---     Key => PARA,
---     Headline => "paragraph separator",
---	Usage => "PARA x",
---     TT "PARA x", " makes a ", TO "hypertext", " double-spaced paragraph break."
---     }
-
-document {
-     Key => DIV1,
-     Headline => "a single-spaced paragraph separator",
-	Usage => "DIV1 x",
-     TT "DIV1 x", " makes a ", TO "hypertext", " single-spaced paragraph break. This is mostly for the documentation formated in info mode.",
-	SeeAlso => "PARA"
      }
 
 document {
@@ -675,6 +655,8 @@ document { Key => TR,
      Headline => "hypertext TR element" }
 document { Key => TD,
      Headline => "hypertext TD element" }
+document { Key => TH,
+     Headline => "hypertext TH element" }
 document { Key => DL,
      Headline => "hypertext DL element" }
 document { Key => DT,
@@ -706,6 +688,24 @@ document {
      PRE "UL {\"first\",\"second\",\"third\"}",
      "produces",
      UL {"first","second","third"},
+     PARA{},
+     SeeAlso => "hypertext"
+     }
+
+document {
+     Key => OL,
+     Headline => "hypertext OL item",
+	Usage => "OL x",
+	Inputs => {"x" => {}},
+	Outputs => {OL => {}},
+     TT "OL x", " encloses the list x as a hypertext OL itemized list.",
+     PARA{},
+     "The argument ", TT "x", " should be a list of strings or hypertext items.",
+     PARA{},
+     "Here is an example. The expression ",
+     PRE "OL {\"first\",\"second\",\"third\"}",
+     "produces",
+     OL {"first","second","third"},
      PARA{},
      SeeAlso => "hypertext"
      }
@@ -766,7 +766,7 @@ document {
 
 document {
      Key => ExampleItem,
-     Headline => "a type of hypertext for holding example inputs awaiting outputs" 
+     Headline => "a type of hypertext for holding example inputs awaiting outputs"
      }
 
 document { Key => IntermediateMarkUpType,
@@ -818,10 +818,17 @@ document { Key => {(validate, Hypertext),validate},
      }
 
 undocumented {
-     (validate, TO),(validate, String),(validate, MarkUpTypeWithOptions, Set, BasicList),(validate, Type, Set, BasicList),(validate, TOH),(validate, Option),(validate, TO2),
-     (validate, COMMENT),(validate, CDATA),(validate, TEX), (validate, LITERAL)
-     }
-
-undocumented { 
-     (examples,Hypertext)		   -- it might be good to document this
-     }
+    (validate, CDATA),
+    (validate, COMMENT),
+    (validate, LITERAL),
+    (validate, MarkUpType, Set, BasicList),
+    (validate, Option),
+    (validate, String),
+    (validate, TEX),
+    (validate, TO),
+    (validate, TO2),
+    (validate, TOH),
+    (validate, Type, Set, BasicList),
+    -- TODO: document this
+    (examples,Hypertext)
+    }

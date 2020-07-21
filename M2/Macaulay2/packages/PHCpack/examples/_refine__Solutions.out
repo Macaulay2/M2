@@ -1,9 +1,6 @@
--- -*- M2-comint -*- {* hash: -2099623032 *}
--- COMPILE TIME: Oct  7 2016, 07:56:28
---loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- hash: -2099623032
 
 i1 : R = CC[x,y]; S = {x^2 - 1/3, x*y - 1}; ourRoots = solveSystem(S);
-*** variables in the ring : {x, y} ***
 
 i4 : r0 = ourRoots#0#Coordinates#1
 

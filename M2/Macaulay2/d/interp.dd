@@ -5,6 +5,7 @@ use evaluate;
 use parser;
 use texmacs;
 use actors5;
+
 import dirname(s:string):string;
 
 dummyError := Error(dummyPosition,"dummy error message",nullE,false,dummyFrame);
@@ -43,15 +44,13 @@ runmethod(methodname:Expr,g:Expr):Expr := (
 
 endInput := makeProtectedSymbolClosure("end");
 
-PrintOut(g:Expr,semi:bool,f:Code):Expr := (
-     methodname := if semi then NoPrint else Print;
-     method := lookup(Class(g),methodname);
-     if method == nullE 
-     then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
-     else applyEE(method,g)
-     );
-
-header "extern \"C\" void check_M2init();";
+-- PrintOut(g:Expr,semi:bool,f:Code):Expr := (
+--      methodname := if semi then NoPrint else Print;
+--      method := lookup(Class(g),methodname);
+--      if method == nullE 
+--      then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
+--      else applyEE(method,g)
+--      );
 
 readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      lastvalue := nullE;
@@ -66,7 +65,6 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
      issuePrompt := false;
      lasterrmsg := dummyError;
      while true do (
-     	  Ccode(void, "check_M2init()");
 	  if debugLevel == 123 then stderr <<  "------------ top of loop" << endl;
 	  if bumpLineNumber then (
 	       if debugLevel == 123 then stderr <<  "-- bumpLineNumber" << endl;
@@ -277,6 +275,8 @@ readeval3(file:TokenFile,printout:bool,dc:DictionaryClosure,returnLastvalue:bool
       currentPosFile = savepf;
      localFrame = saveLocalFrame;
      ret);
+
+-- parse a file
 readeval(file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr := (
      savefe := getGlobalVariable(fileExitHooks);
      setGlobalVariable(fileExitHooks,emptyList);
@@ -454,8 +454,6 @@ export topLevel():bool := (
 commandInterpreter(dc:DictionaryClosure):Expr := loadprint("-",dc,false);
 commandInterpreter(f:Frame):Expr := commandInterpreter(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
 commandInterpreter(e:Expr):Expr := (
-     --saveLoadDepth := loadDepth;
-     --setLoadDepth(loadDepth+1);
      incrementInterpreterDepth();
        ret := 
        when e is s:Sequence do (
@@ -472,7 +470,6 @@ commandInterpreter(e:Expr):Expr := (
        is s:SpecialExpr do commandInterpreter(s.e)
        else WrongArg("a function, symbol, dictionary, pseudocode, or ()");
      decrementInterpreterDepth();
-     --setLoadDepth(saveLoadDepth);
      ret);
 setupfun("commandInterpreter",commandInterpreter);
 
@@ -577,18 +574,24 @@ Exit(err:Error):void := exit(
      else errorExit
      );
 
-header "#include \"startup-header.h\"";
+header "/* Declarations for startup.c, which is generated in Macaulay2/bin */
+typedef struct { const char *filename, *contents; } cached_file;
+extern cached_file startupFile;
+extern cached_file testStrings[];
+extern int num_testStrings;
+/* End of declarations for startup.c */";
+
 export cachedFile := { filename:string, contents:string };
 export startupFile := cachedFile(
      tostring(Ccode(constcharstar,"startupFile.filename")),
      tostring(Ccode(constcharstar,"startupFile.contents")));
 export process():void := (
      localFrame = globalFrame;
-     previousLineNumber = -1;			  -- might have done dumpdata()
-     stdIO .inisatty  =   0 != isatty(0) ;
-     stdIO.echo       = !(0 != isatty(0));
-     stdIO.outisatty =   0 != isatty(1) ;
-     stdError.outisatty =   0 != isatty(2) ;
+     previousLineNumber = -1;
+     stdIO.inisatty  =    0 != isatty(0) ;
+     stdIO.echo      =  !(0 != isatty(0));
+     stdIO.outisatty =    0 != isatty(1) ;
+     stdError.outisatty = 0 != isatty(2) ;
      setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
      sethandleInterrupts(true);				    -- could be overridden in startup.m2
      -- setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level

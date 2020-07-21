@@ -1578,7 +1578,7 @@ expressionVar (Ideal,ZZ,ZZ) := (I,k,n) -> ( -- assume V(I) absolutely irreducibl
   I = trim I;  d:=degree I; degs := flatten degrees I; 
   try assert(isPolynomialRing ring I and isHomogeneous I and k == max(dim I -1,-1) and n == numgens ring I -1) else error "internal error encountered";
   if k < 0 or k >= n then return expressionVar(k,n);
-  if k == 0 then (if d == 1 then return expressionVar(k,n) else return("0-dimensional subscheme of length "|toString(d)|" in PP^"|toString(n)));
+  if k == 0 then (if d == 1 then return expressionVar(k,n) else return("0-dimensional subscheme of degree "|toString(d)|" in PP^"|toString(n)));
   dimSing := if (select(degs,ee->ee>1)=={2} and n<=9) or (max degs<=2 and n<=5) or (numgens I == 1 and d<=8-n and n<=5) then max(dim(minors(n-k,jacobian I,Strategy=>Cofactor)+I)-1,-1) else null; -- for efficiency, the singular locus is calculated only in special cases
   if dimSing === null then if (unique degs == {1}) then dimSing = -1;
   singStr:=if dimSing =!= null and dimSing =!= -1 then "singular " else "";

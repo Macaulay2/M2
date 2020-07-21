@@ -112,7 +112,7 @@ class ConcreteRing : public Ring
     R->clear(a);
     return result;
   }
-  virtual bool from_rational(mpq_ptr q, ring_elem &result) const
+  virtual bool from_rational(mpq_srcptr q, ring_elem &result) const
   {
     ElementType a;
     R->init(a);
@@ -347,7 +347,7 @@ class ConcreteRing : public Ring
     return result;
   }
 
-  virtual ring_elem power(const ring_elem f, mpz_t n) const
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling power mpz\n");
     ElementType a, b;
@@ -476,23 +476,23 @@ class ConcreteRing : public Ring
 
   // TODO: look again at the next two when ring_elem is phased out
   virtual ring_elem zeroize_tiny(gmp_RR epsilon, const ring_elem f) const;
-  virtual void increase_maxnorm(gmp_RR norm, const ring_elem f) const;
+  virtual void increase_maxnorm(gmp_RRmutable norm, const ring_elem f) const;
 
   virtual unsigned long get_precision()
       const;  // if the ring is not over RRR/CCC returns 0
 
 };  // class ConcreteRing<RingType>
 
-class QQ : public ConcreteRing<ARingQQ>
+class RingQQ : public ConcreteRing<ARingQQ>
 {
  public:
-  QQ(const ARingQQ *R0) : ConcreteRing<ARingQQ>(R0) {}
-  virtual ~QQ() {}
+  RingQQ(const ARingQQ *R0) : ConcreteRing<ARingQQ>(R0) {}
+  virtual ~RingQQ() {}
   bool is_QQ() const { return true; }
   CoefficientType coefficient_type() const { return COEFF_QQ; }
-  static QQ *create(const ARingQQ *R0)
+  static RingQQ *create(const ARingQQ *R0)
   {
-    QQ *result = new QQ(R0);
+    RingQQ *result = new RingQQ(R0);
     result->initialize_ring(R0->characteristic());
     result->declare_field();
 
@@ -507,14 +507,12 @@ class QQ : public ConcreteRing<ARingQQ>
   {
     mpz_srcptr numer = top.get_mpz();
     mpz_srcptr denom = bottom.get_mpz();
-    gmp_QQ b = getmemstructtype(gmp_QQ);
+    mpq_ptr b = getmemstructtype(mpq_ptr);
     mpq_init(b);
     mpz_set(mpq_numref(b), numer);
     mpz_set(mpq_denref(b), denom);
     mpq_canonicalize(b);
-    ring_elem result;
-    result.poly_val = reinterpret_cast<Nterm *>(b);
-    return result;
+    return ring_elem(b);
   }
 
   ring_elem numerator(ring_elem q) const
@@ -529,25 +527,25 @@ class QQ : public ConcreteRing<ARingQQ>
 
   ring_elem preferred_associate(ring_elem f) const
   {
-    gmp_QQ a = MPQ_VAL(f);
+    mpq_srcptr a = MPQ_VAL(f);
     if (mpq_sgn(a) >= 0) return from_long(1);
     return from_long(-1);
   }
 
   bool lower_associate_divisor(ring_elem &f, const ring_elem g) const
   {
-    gmp_QQ a = MPQ_VAL(f);
-    gmp_QQ b = MPQ_VAL(g);
+    mpq_srcptr a = MPQ_VAL(f);
+    mpq_srcptr b = MPQ_VAL(g);
     int sa = mpq_sgn(a);
     int sb = mpq_sgn(b);
     int s = (sa == 0 ? sb : sa);
-    gmp_QQ result = getmemstructtype(gmp_QQ);
+    mpq_ptr result = getmemstructtype(mpq_ptr);
     mpq_init(result);
 
     mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
     mpz_lcm(mpq_denref(result), mpq_denref(a), mpq_denref(b));
     if (s != mpq_sgn(result)) mpq_neg(result, result);
-    f = MPQ_RINGELEM(result);
+    f = ring_elem(result);
     return true;  // the answer could become lower, if a newer g has a larger
                   // denom
   }
@@ -559,16 +557,16 @@ class QQ : public ConcreteRing<ARingQQ>
         c = g;
         return;
       }
-    gmp_QQ a = MPQ_VAL(c);
-    gmp_QQ b = MPQ_VAL(g);
+    mpq_srcptr a = MPQ_VAL(c);
+    mpq_srcptr b = MPQ_VAL(g);
     int sa = mpq_sgn(a);
-    gmp_QQ result = getmemstructtype(gmp_QQ);
+    mpq_ptr result = getmemstructtype(mpq_ptr);
     mpq_init(result);
 
     mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
     mpz_lcm(mpq_denref(result), mpq_denref(a), mpq_denref(b));
     if (sa != mpq_sgn(result)) mpq_neg(result, result);
-    c = MPQ_RINGELEM(result);
+    c = ring_elem(result);
   }
 };
 
@@ -1092,7 +1090,7 @@ ring_elem ConcreteRing<RingType>::zeroize_tiny(gmp_RR epsilon,
 }
 
 template <typename RingType>
-void ConcreteRing<RingType>::increase_maxnorm(gmp_RR norm,
+void ConcreteRing<RingType>::increase_maxnorm(gmp_RRmutable norm,
                                               const ring_elem f) const
 {
   // do nothing by default
@@ -1155,7 +1153,7 @@ inline ring_elem ConcreteRing<ARingCCC>::zeroize_tiny(gmp_RR epsilon,
 }
 
 template <>
-inline void ConcreteRing<ARingRR>::increase_maxnorm(gmp_RR norm,
+inline void ConcreteRing<ARingRR>::increase_maxnorm(gmp_RRmutable norm,
                                                     const ring_elem f) const
 {
   ARingRR::ElementType a;
@@ -1170,7 +1168,7 @@ inline void ConcreteRing<ARingRR>::increase_maxnorm(gmp_RR norm,
 }
 
 template <>
-inline void ConcreteRing<ARingCC>::increase_maxnorm(gmp_RR norm,
+inline void ConcreteRing<ARingCC>::increase_maxnorm(gmp_RRmutable norm,
                                                     const ring_elem f) const
 {
   const ARingRR &realR = R->real_ring();
@@ -1186,7 +1184,7 @@ inline void ConcreteRing<ARingCC>::increase_maxnorm(gmp_RR norm,
 }
 
 template <>
-inline void ConcreteRing<ARingRRR>::increase_maxnorm(gmp_RR norm,
+inline void ConcreteRing<ARingRRR>::increase_maxnorm(gmp_RRmutable norm,
                                                      const ring_elem f) const
 {
   ARingRRR::ElementType a;
@@ -1201,7 +1199,7 @@ inline void ConcreteRing<ARingRRR>::increase_maxnorm(gmp_RR norm,
 }
 
 template <>
-inline void ConcreteRing<ARingCCC>::increase_maxnorm(gmp_RR norm,
+inline void ConcreteRing<ARingCCC>::increase_maxnorm(gmp_RRmutable norm,
                                                      const ring_elem f) const
 {
   const ARingRRR &realR = R->real_ring();
@@ -1425,9 +1423,9 @@ inline long ConcreteRing<ARingZZpFlint>::discreteLog(const ring_elem &a1) const
 };  // namespace M2
 
 #include "aring-qq.hpp"
-typedef M2::QQ QQ;
+typedef M2::RingQQ RingQQ;
 extern void initializeRationalRing();
-extern const QQ *globalQQ;
+extern const RingQQ *globalQQ;
 #endif
 
 // Local Variables:

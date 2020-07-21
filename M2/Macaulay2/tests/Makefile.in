@@ -1,9 +1,46 @@
-vpath %.in @srcdir@
-all clean big-check check:; $(MAKE) -C rationality $@
-distclean-dirs:; $(MAKE) -C rationality distclean
-Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/tests/Makefile
-distclean:clean distclean-dirs;rm -f Makefile
+# @configure_input@
+
+all:
+
+VPATH = @srcdir@
+
+# DOTS is the path to M2/Macaulay2 from this directory
+DOTS = ..
+include $(DOTS)/../include/config.Makefile
+
+SRCDIR = @srcdir@
+include Makefile.test
+
+TARGETS = all check status
+CLEANTARGETS = clean distclean
+SUBDIRS = ComputationsBook normal threads slow gigantic goals quarantine
+define do-in-subdirs
+$(foreach d,$(SUBDIRS),
+	$(eval .PHONY: $1-in-subdirs)
+	$(eval .PHONY $1 $1-in-subdirs:$1-in-$d)
+	$(eval $1-in-$d:; $$(MAKE) -C $d $1 $2))
+endef
+$(foreach t,$(TARGETS),$(eval $(call do-in-subdirs,$t)))
+$(foreach t,$(CLEANTARGETS),$(eval $(call do-in-subdirs,$t,DEPENDS=no)))
+
+check: check-deferred
+check-deferred:
+	-@ if egrep -nHw 'defer|deferred|disable|disabled' @abs_srcdir@/*.m2 >/dev/null 2>&1 ; \
+	  then echo "make: warning: tests in the following files have been deferred:" >&2 ; \
+	       egrep -nHw 'defer|deferred|disable|disabled' @abs_srcdir@/*.m2 >&2 ; \
+	       false ; \
+	  fi
+
+docStructure.out: docStructure.m2
+
+Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/tests/Makefile
+Makefile.test: Makefile.test.in; cd $(DOTS)/..; ./config.status Macaulay2/tests/Makefile.test
+
+MIKE_TESTS := $(wildcard @srcdir@/mt-*.m2 @srcdir@/gigantic/mt-*.m2)
+MIKE_RESULTS := $(patsubst @srcdir@/%.m2, %.out, $(MIKE_TESTS))
+mike-tests: $(MIKE_RESULTS) ; grep sys $^ 
+
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/tests -k check"
+# compile-command: "make -k -C $M2BUILDDIR/Macaulay2/tests check "
 # End:
 .NOTPARALLEL:

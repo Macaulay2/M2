@@ -8,7 +8,7 @@
 
 VERBOSE = yes
 
-all: check-make make-configure monitor include/M2/config.h.in.stamp check-automake check-autoconf check-libtool
+all: check-make make-configure monitor include/M2/config.h.in.stamp check-automake check-autoconf check-libtool fetch-M2-emacs
 
 # libtool 2.4.3 is too old, 2.4.6 is okay, and we provide it
 LIBTOOL_MAJOR = 2
@@ -38,7 +38,7 @@ check-make:
 make-configure : check-autoconf configure
 configure: configure.ac config/files config/*.m4; autoconf
 
-get-tools: usr-build/aclocal-path get-m4 get-pkg get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
+get-tools: usr-build/aclocal-path get-m4 get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
 which-tools:
 	@ for i in m4 autoconf automake libtool; \
 		do echo $$i: ; which $$i ; $$i --version | head -1 ; done
@@ -55,6 +55,7 @@ get-automake:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.16.1
 get-libtool:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=libtool VERSION=2.4.6
+get-automake: get-pkg
 get-pkg: usr-build/share/aclocal/pkg.m4
 usr-build/aclocal-path2:get-automake
 usr-build/share/aclocal/pkg.m4: usr-build/pkg.m4
@@ -103,7 +104,7 @@ libtool-old-msg :
 libtool-not-gnu : libtool-not-gnu-msg libtool-msg 
 libtool-not-gnu-msg :
 	@ echo "=============================================================================" >&2
-	@ echo "error: the libtool program installed on your system (`type libtool`) is too not GNU." >&2
+	@ echo "error: the libtool program installed on your system (`type libtool`) is not GNU." >&2
 libtool-msg :
 	@ echo "" >&2
 	@ echo "Please install or update libtool: the version should be at least $(LIBTOOL_VERSION)." >&2
@@ -231,6 +232,16 @@ check-vardirs:
 	egrep -nH '@(bin|data|include|info|lib|libexec|localstate|man|sbin|sharedstate|sysconf|ps|pdf|dvi|html|locale|doc|dataroot|packages|libm2|emacs|libraries|packagecachecore)dir@' $(shell cat ./config/files | sed 's/$$/.in/')
 check-pre-vardirs:
 	egrep -nH '@pre_(bin|data|include|info|lib|libexec|localstate|man|sbin|sharedstate|sysconf|ps|pdf|dvi|html|locale|doc|dataroot|packages|libm2|emacs|libraries|packagecachecore)dir@' $(shell cat ./config/files | sed 's/$$/.in/')
+
+# The submodule fflas_ffpack scribbles in its source tree to record the current
+# version number of libtool found on the system, in the file
+# M2/submodules/fflas_ffpack/macros/ltversion.m4. This target will clean that up.
+clean-in-submodules:
+	git submodule foreach git clean -xdfq
+
+# Fetch the M2-emacs submodule
+fetch-M2-emacs: Macaulay2/editors/emacs/Makefile.in
+Macaulay2/editors/emacs/Makefile.in:; git submodule update --init Macaulay2/editors/emacs
 
 # Local Variables:
 # mode: Makefile

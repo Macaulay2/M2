@@ -12,42 +12,6 @@ getParsing(e:Expr):Expr := (
 	  list( toExpr(x.precedence), toExpr(x.binaryStrength), toExpr(x.unaryStrength)))
      else nullE);
 setupfun("getParsing",getParsing);
-dumpdatafun(e:Expr):Expr := (
-     when e
-     is s:stringCell do (
-	  o := stdIO.insize;
-	  p := stdIO.eof;
-	  q := stdIO.inindex;
-	  stdIO.insize = 0;
-	  stdIO.eof = false;
-	  stdIO.inindex = 0;
-	  r := dumpdata(s.v);
-	  stdIO.insize = o;
-	  stdIO.eof = p;
-	  stdIO.inindex = q;
-	  if 0 == r then nullE
-	  else buildErrorPacket("failed to dump data to '" + s.v + "'"))
-     else WrongArgString(0+1)
-     );
-setupfun("dumpdata",dumpdatafun);
-
-loaddatafun(e:Expr):Expr := (
-     when e
-     is s:Sequence do (
-	  when s.0 is x:Boolean do
-	  when s.1 is s:stringCell do (
-	       loaddata(if x == True then 1 else 0, s.v);			  -- should not return
-	       buildErrorPacket("failed to load data from '" + s.v + "'"))
-	  else WrongArgString(2)
-	  else WrongArgBoolean(1)
-	  )
-     is s:stringCell do (
-	  notifyYes := 1;
-	  loaddata(notifyYes,s.v);			  -- should not return
-	  buildErrorPacket("failed to load data from '" + s.v + "'"))
-     else WrongArg("string, or a pair: boolean value and string")
-     );
-setupfun("loaddata",loaddatafun);
 
 LongDoubleRightArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleRightArrowS);
 setup(LongDoubleRightArrowS,LongDoubleRightArrowFun);
@@ -144,12 +108,13 @@ exitfun(e:Expr):Expr := (
      when e
      is ZZcell do (
 	  if isInt(e) 
-	  then exit(toInt(e))
+	  then (
+	       exit(toInt(e));
+	       nullE			     -- just to satisfy noisy compilers
+	       )
 	  else WrongArgSmallInteger(1))
      else WrongArgZZ(1));
 setupfun("exit",exitfun).Protected = false;
-
-applythem(obj:HashTable,fn:FunctionClosure):void := applyFCE(fn,Expr(obj));
 
 lookupCountFun(e:Expr):Expr := (
      when e
@@ -1484,8 +1449,6 @@ fillnodes(n:LexNode):void := (
 fillnodes(baseLexNode);
 setupconst("operatorNames",Expr(operatorNames));
 
-issym(d:Dictionary,s:string):Expr := when lookup(makeUniqueWord(s,parseWORD),d) is x:Symbol do True is null do False;
-
 getglobalsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
      when lookup(w,d.symboltable) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
@@ -1746,7 +1709,7 @@ export StandardE := Expr(StandardS);
 export topLevelMode := Expr(StandardS);
 topLevelModeS := dummySymbol;
 
-initialRandomSeed := toInteger(0);
+initialRandomSeed := zeroZZ;
 initialRandomHeight := toInteger(10);
 
 setupvar("maxAllowableThreads",toExpr(Ccode( int, " getMaxAllowableThreads() " )));

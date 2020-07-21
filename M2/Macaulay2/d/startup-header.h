@@ -1,4 +1,4 @@
-/* the header of startup.c, from file startup-header.c: */
+/* Declarations for startup.c, which is generated in Macaulay2/bin */
 
 typedef struct {
      const char *filename, *contents;

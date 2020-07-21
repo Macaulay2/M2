@@ -233,6 +233,10 @@ class MutableMatrix : public MutableEngineObject
 
   virtual M2_arrayintOrNull LU(MutableMatrix *L, MutableMatrix *U) const = 0;
 
+  virtual M2_arrayintOrNull LUincremental(std::vector<size_t>& P, const MutableMatrix* v, int m) = 0;
+
+  virtual void triangularSolve(MutableMatrix* x, int m, int strategy) = 0;
+
   // replace 'this=A' with a matrix which encodes both 'L' and 'U', returning a
   // permutation P
   // of 0..numRows A-1 s.t. LU = PA
@@ -335,8 +339,8 @@ class MutableMatrix : public MutableEngineObject
   virtual void clean(gmp_RR epsilon) = 0;  // modifies 'this'
   virtual gmp_RRorNull norm() const = 0;
 
-  virtual SLEvaluator *createSLEvaluator(
-      SLProgram *P,
+  virtual M2SLEvaluator *createSLEvaluator(
+      M2SLProgram *P,
       M2_arrayint constsPos,
       M2_arrayint varsPos) const = 0;  // this = const matrix
 };

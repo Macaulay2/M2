@@ -1,8 +1,4 @@
 -- -*- M2-comint -*- hash: -699724426
---loading configuration for package "FourTiTwo" from file /home/aleykin3/.Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /home/aleykin3/.Macaulay2/init-Topcom.m2
--- COMPILE TIME: Oct 31 2019, 08:32:16
---loading configuration for package "Bertini" from file /home/aleykin3/.Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,a,t]; -- include the path variable in the ring
 
@@ -22,20 +18,20 @@ o6 : List
 
 i7 : peek S0_0
 
-o7 = Point{AccuracyEst => 5.43458e-13        }
-           AccuracyEstInternal => 1.06188e-13
-           ConditionNumber => 1.90194
+o7 = Point{AccuracyEst => 1.21205e-14        }
+           AccuracyEstInternal => 1.43214e-14
+           ConditionNumber => 69.2692
            Coordinates => {1.41421}
            CycleNumber => 1
-           FinalTValue => .0015625
-           FunctionResidual => 1.24127e-16
+           FinalTValue => .000390625
+           FunctionResidual => 3.97205e-15
            MaxPrecisionUtilized => 52
            Multiplicity => 1
-           NewtonResidual => 1.85133e-17
+           NewtonResidual => 1.04182e-15
            PathNumber => 0
            PathsWithSameEndpoint => {}
            PrecisionIncreased => 0
-           SolutionNumber => 0
+           SolutionNumber => 1
 
 i8 : R=CC[x,y,t,a]; -- include the path variable in the ring
 

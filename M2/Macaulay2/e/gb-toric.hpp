@@ -108,7 +108,7 @@ class binomial_ring : public our_new_delete
   binomial make_binomial() const;  // allocates the monomials
   binomial copy_binomial(const binomial &f) const;
 
-  const monomial0 lead_monomial(binomial f) const { return f.lead; }
+  monomial0 lead_monomial(binomial f) const { return f.lead; }
   void translate_binomial(const binomial_ring *old_ring, binomial &f) const;
 
   bool gcd_is_one(monomial0 m, monomial0 n) const;

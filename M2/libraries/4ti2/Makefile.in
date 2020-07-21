@@ -8,26 +8,29 @@ PRECONFIGURE = autoreconf -vif
 # URL = http://www.4ti2.de/version_$(VERSION)
 # URL = https://github.com/4ti2/4ti2/releases/download/Release_1_6_9/4ti2-1.6.9.tar.gz
 URL = http://macaulay2.com/Downloads/OtherSourceCode
-STRIPFILES =					\
-	src/groebner/4ti2int32@EXEEXT@		\
-	src/groebner/4ti2int64@EXEEXT@		\
-	src/util/genmodel			\
-	src/util/gensymm			\
-	src/ppi/ppi				\
-	src/util/output				\
-	src/zsolve/zsolve
 
-# # We have stopped trying to get 4ti2 to compile on all architectures with arbitrary precision
-# # support provided by GMP, so this file will not be there:
-# But now it is there, and we get a complaint when checking for unstripped binaries.
-STRIPFILES += 	src/groebner/4ti2gmp@EXEEXT@
+ifeq (@ENABLE_STRIP@,yes)
+INSTALLTARGET = install-strip
+else 
+INSTALLTARGET = install
+endif
 
-# according to the documentation, the line below should prevent GMP from being used,
+ifeq (@SHARED@,no)
+# the default for 4ti2 is to not build shared libraries, but it does, anyway (?)
+CONFIGOPTIONS += --disable-shared
+else 
+CONFIGOPTIONS += --enable-shared
+endif
+
+# This is how we control whether to link with libgmp.a or with libgmp.dylib:
+# But using it leads to a mysterious linker bug on the Mac:
+# BUILDOPTIONS = GMP_LIBS="@LIBS_GMP@" GLPK_LIBS="@LIBS_GLPK@"
+
+# according to the documentation, specifying "no" for this option to configure should prevent GMP from being used,
 # but it doesn't
   # --with-gmp={DIR|no}     Use the GMP library installed in DIR. If the
   #                         argument is no, do not use the GMP library; some
   #                         functionality will not be available then.
-CONFIGOPTIONS += --with-gmp=no
 
 LICENSEFILES = README
 include ../Makefile.library

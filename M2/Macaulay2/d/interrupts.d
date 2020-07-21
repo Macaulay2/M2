@@ -14,19 +14,17 @@ declarations "
 #define interrupted() test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))
 ";
 
+header "
+#include <M2/config.h>
+#include <unistd.h>
+";
 
 import threadLocal exceptionFlag:atomicField; -- indicates interrupt, stepping, or alarm
 
 export determineExceptionFlag():void := (
      store(exceptionFlag, test(interruptedFlag) || steppingFlag || alarmedFlag);
      );
-export alarm(x:uint) ::= Ccode(int,"
-     #ifdef HAVE_ALARM
-      alarm(",x,")
-     #else
-      -1
-     #endif
-     ");
+export alarm(x:uint) ::= Ccode(int," alarm(",x,") ");
 export clearAlarm():void := alarm(uint(0));
 export clearAllFlags():void := (
      store(exceptionFlag, false);
@@ -37,7 +35,7 @@ export clearAllFlags():void := (
      interruptPending = false;
      );
 export setInterruptFlag():void := (
-     --note ordering here, interrupt flag, then exception flag, then libfac interrupt flag. 
+     --note ordering here: interrupt flag, then exception flag.
      store(interruptedFlag, true);
      --compiler barrier necessary to disable compiler reordering.  
      --On architectures that do not enforce memory write ordering, emit a memory barrier

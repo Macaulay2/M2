@@ -57,6 +57,7 @@ document {
 	  TO "FLINT",
 	  TO "givaro",
 	  TO "fflas-ffpack",
+	  TO "MPSolve",
 	  -- TO "boost", -- we don't link with boost, but normaliz does
 	  "programs and their libraries",
 	  TO "4ti2",
@@ -223,7 +224,7 @@ document {
 	  "Macaulay2 uses the excellent garbage collector GC, version ", version#"gc version", ",
 	  written by Hans-J. Boehm and Alan J. Demers and generously licensed
 	  to the public.  It is available at
-	  ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", "."
+	  ", HREF "https://www.hboehm.info/gc/", "."
 	  },
      PARA{
 	  "Some environment variables can be set by the user to tune garbage collector performance:"
@@ -280,13 +281,35 @@ document {
      SeeAlso => "GC garbage collector"
      }
 
+doc /// 
+    Key 
+        "MPSolve"
+    Headline 
+        a library for finding roots of univariate polynomials 
+    Description 
+        Text 
+            Starting with version 1.16, Macaulay2 incorporates the
+            MPsolve (version 3) package, available at @HREF
+            "https://numpi.dm.unipi.it/_media/software/mpsolve"@,
+            and originally developed by Dario Bini, Giuseppe
+            Fiorentino, and Leonardo Robol.
+            
+            This library is used by the @TO "roots"@ function, for
+            finding complex roots of a univariate polynomial
+    SeeAlso
+        (roots, RingElement)
+///
+
 document {
      Key => "pari",
      PARA {
-	  "Starting with version 1.2, Macaulay2 incorporates ", TT "pari", ", a free library for fast computations in number theory,
-	  available at ", HREF "http://pari.math.u-bordeaux.fr/", ",
-	  originally developed by Henri Cohen and his co-workers at Université Bordeaux I, France.
-	  It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), "."
+	  "Starting with version 1.2, and up through version 1.15,
+	  Macaulay2 incorporated ", TT "pari", ", a free library for fast
+	  computations in number theory, available at ", HREF "http://pari.math.u-bordeaux.fr/", 
+      ", originally developed by
+	  Henri Cohen and his co-workers at Université Bordeaux I, France.
+	  In the stated versions, it is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", 
+      TT "isPseudoprime", ", and ", TO (isPrime,ZZ), "."
 	  }
      }
 
@@ -518,7 +541,7 @@ document { Key => "frequently encountered problems",
 
 document {
      Key => "specifying typical values",
-     "For the purpose of construction good documentation automatically, it
+     "For the purpose of constructing good documentation automatically, it
      is useful to specify the type of value typically returned by a function
      or method.  For example, the function ", TO "isModule", " returns a boolean
      value, and this is specified when creating the method function with the
@@ -703,8 +726,6 @@ document {
 	  TO "clearEcho",
 	  TO "setEcho",
      	  "Dumping and restoring the state of the system:",
-	  TO "dumpdata",
-	  TO "loaddata",
 	  TO "restart",
 	  TO "addStartFunction",
 	  TO "addEndFunction",

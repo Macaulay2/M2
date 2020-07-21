@@ -1,6 +1,4 @@
--- -*- M2-comint -*- {* hash: -607525885 *}
--- COMPILE TIME: Oct  7 2016, 07:56:28
---loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- hash: -607525885
 
 i1 : R = QQ[x,y,z];
 
@@ -8,18 +6,18 @@ i2 : system = {y-x^2, z-x^3, (x+y+z-1)/x};
 
 i3 : sols = solveRationalSystem(system)
 
-o3 = {{-.771845+1.11514*ii, -.647799-1.72143*ii, 2.41964+.606291*ii},
+o3 = {{.543689, .295598, .160713}, {-.771845-1.11514*ii, -.647799+1.72143*ii,
      ------------------------------------------------------------------------
-     {-.771845-1.11514*ii, -.647799+1.72143*ii, 2.41964-.606291*ii},
+     2.41964-.606291*ii}, {-.771845+1.11514*ii, -.647799-1.72143*ii,
      ------------------------------------------------------------------------
-     {.543689, .295598, .160713}}
+     2.41964+.606291*ii}}
 
 o3 : List
 
 i4 : peek first sols
 
-o4 = Point{ConditionNumber => 33.5121                                                   }
-           Coordinates => {-.771845+1.11514*ii, -.647799-1.72143*ii, 2.41964+.606291*ii}
+o4 = Point{ConditionNumber => 4.87567                }
+           Coordinates => {.543689, .295598, .160713}
            LastT => 1
            SolutionStatus => Regular
 

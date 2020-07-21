@@ -1,0 +1,237 @@
+" Vim dictionary file
+" Language: Macaulay2
+" author: Manoj Kummini.
+" I dumped the Dictionaries at startup and collected all the words.
+
+clearAll clearOutput edit exit help listLocalSymbols
+clistUserSymbols profileSummary quit restart
+cshowClassStructure showStructure showUserStructure
+viewHelp
+true false
+BesselJ BesselY Gamma abs acos agm alarm
+ancestor any append apply applyKeys
+atEndOfFile atan atan2 characters class
+commandInterpreter concatenate
+cpuTime csc csch currentDirectory
+deepSplice difference disassemble drop
+erf erfc exec exp expm1 fileExists
+flagLookup floor fork format frames
+getNetFile getc getenv groupID hash
+imaginaryPart installMethod instance
+isGlobalSymbol isInfinite isInputFile
+isReady isRegularFile join keys kill
+locate log log1p lookup lookupCount merge
+minimizeFilename minus mkdir mutable
+openDatabase openDatabaseOut openFiles
+openOut openOutAppend override pack pairs
+prepend printString processID protect
+readlink realPart realpath recursionDepth
+relativizeFilename remove removeDirectory
+scan scanPairs sec sech select separate
+sinh size2 sleep splice sqrt stack substring
+tanh times toCC toList toRR toSequence
+values wait wrap xor youngest zeta EXAMPLE
+gradedModuleMap hold html hypertext ideal
+length makePackageIndex mathML max
+monomialIdeal net options package pretty
+toExternalString toString transpose
+pseudocode read readDirectory regex
+registerFinalizer removeFile reorganize
+reverse run sequence set setEcho setGroupID
+sin symlinkFile take tally tan uncurry
+unsequence unstack utf8 chainComplex code
+export exportMutable expression flatten gcd
+gradedModule info intersect isSorted lcm
+maxPosition commonest directSum examples
+methods min minPosition runLengthEncode tex
+texMath undocumented unique vars applyPairs
+applyValues ascii asin clearEcho
+collectGarbage combine connectionCount copy
+cos cosh cot coth currentLineNumber
+currentTime debugError echoOff
+echoOn eint erase fileLength fileMode
+fileTime firstkey functionBody get
+getGlobalSymbol hashTable horizontalJoin
+identity isANumber isDirectory isFinite
+isListener isOpen isOutputFile linkFile
+localDictionaries mergePairs mingle
+newClass newNetFile nextkey openIn openInOut
+openListener parent plus power powermod
+EulerConstant Constant ii Constant pi infinity
+stderr stdio
+End SYNOPSIS addEndFunction addStartFunction
+ancestors applicationDirectory
+baseFilename beginDocumentation benchmark
+columnate delete demark error even first getNonUnit
+globalAssignFunction globalAssignment
+load makeDocumentTag method mod monoid
+notImplemented number odd on pager peek print same
+stashValue subtable synonym syzygyScheme table
+isPrimitive isTable last lines
+applicationDirectorySuffix applyTable assert
+cacheValue ceiling centerString
+getSymbol globalAssign
+globalReleaseFunction groebnerBasis
+infoHelp input integrate inversePermutation
+toAbsolutePath toLower toUpper tutorial uniform
+monomialCurveIdeal needs seeParsing showHtml
+temporaryFileName userSymbols vector zero
+SPACE and break catch continue do else for
+from global if in list local new not of or return
+shield step symbol then throw time timing to try when
+while
+Fano Hom LUdecomposition Proj
+Spec TEST Wikipedia accumulate acosh acot addHook
+adjoint adjoint1 all ambient apropos asinh autoload
+baseName between binomial borel capture char clean
+coefficient coefficientRing coimage cokernel
+columnAdd columnMult columnPermute columnSwap
+commonRing comodule complement complete components
+compositions compress cone conjugate content contract
+contract' cover coverMap debug decompose default
+degree degreeLength degrees degreesMonoid degreesRing
+denominator depth describe diagonalMatrix dictionary
+diff diff' dim dismiss divideByVariable
+eagonNorthcott elements endPackage entries euler
+eulers exponents findSynonyms fittingIdeal flip fold
+frac fraction fromDual gbRemove gbSnapshot
+gcdCoefficients genera generateAssertions generator
+genericMatrix genericSkewMatrix
+genericSymmetricMatrix genus getChangeMatrix getWWW
+heft height hilbertFunction homogenize homomorphism
+httpHeaders image index indices inducesWellDefinedMap
+insert installAssignmentMethod installHilbertFunction
+instances inverse irreducibleCharacteristicSeries
+isAffineRing isBorel isCommutative isConstant
+isDirectSum isField isFreeModule isHomogeneous
+isIdeal isInjective isIsomorphism isModule
+isMonomialIdeal isPolynomialRing isPrime
+isProbablePrime isQuotientModule isQuotientOf
+isQuotientRing isReal isRing isSkewCommutative
+isSquareFree isSubmodule isSubquotient isSubset
+isSurjective isUnit isWellDefined jacobian koszul
+leadCoefficient leadComponent leadMonomial leadTerm
+liftable listForm listSymbols lngamma makeDirectory
+match member memoize methodOptions minimalPrimes
+module monomialSubideal multidegree
+newCoordinateSystem norm nullhomotopy numColumns
+numRows numerator numeric numgens ofClass pad part
+partition partitions parts pdim peek' permanents
+permutations pfaffians pivots poincare poincareN
+positions precision preimage presentation product
+profile projectiveHilbertPolynomial promote
+pseudoRemainder quotient' quotientRemainder
+quotientRemainder' rank reduceHilbert relations
+remainder remainder' removeHook removeLowestDimension
+replace reshape ring rotate round rowAdd rowMult
+rowPermute rowSwap runHooks scanKeys scanLines
+scanValues schreyerOrder searchPath selectInSubring
+selectVariables separateRegexp setRandomSeed setup
+setupEmacs sheaf sheafHom show singularLocus size
+someTerms source standardForm standardPairs sublists
+submatrix submatrix' subquotient subsets substitute
+sum super support switch symmetricPower target
+tensorAssociativity terms toDual toField
+topCoefficients topComponents trace truncate
+truncateOutput ultimate unbag use value variety
+wedgeProduct weightRange width GF Grassmannian SVD
+Schubert annihilator associatedPrimes basis betti
+check codim coefficients cohomology copyDirectory
+copyFile cotangentSheaf determinant document dual
+eigenvalues eigenvectors extend exteriorPower factor
+fillMatrix findFiles flattenRing forceGB gb
+generators getPackage graphIdeal graphRing
+hilbertPolynomial hilbertSeries homology
+independentSets inducedMap installPackage kernel lift
+loadPackage map markedGB matrix mingens
+minimalPresentation minors modulo monomials moveFile
+mutableIdentity mutableMatrix needsPackage netList
+newPackage newRing position prune pushForward
+quotient radical random randomMutableMatrix
+regularity res resolution rsort saturate showTex
+smithNormalForm solve sort sortColumns status
+symlinkDirectory symmetricAlgebra syz tangentSheaf
+tensor trim uninstallPackage 
+QQ ZZ CC RR
+Ext HH OO Tor hh id sheafExt 
+AbsoluteLinks AfterEval
+AfterNoPrint AfterPrint Algorithm Alignment Ascending
+Authors AuxiliaryFiles Bareiss BaseFunction BaseRow
+BasisElementLimit Bayer BeforePrint Binary Binomial
+Boxes CacheExampleOutput CallLimit Caveat Center
+Certification ChangeMatrix CheckDocumentation
+ClosestFit CodimensionLimit CoefficientRing Cofactor
+Complement CompleteIntersection Configuration
+Consequences CurrentVersion Date DebuggingMode
+Decompose Degree DegreeLift DegreeLimit DegreeMap
+DegreeOrder DegreeRank Degrees Dense Density
+Descending Description Dispatch DivideConquer Down
+Email Encapsulate EncapsulateDirectory Engine Exclude
+FileName FindOne First FlatMonoid Flexible
+FollowLinks Format GBDegrees GLex GRevLex Generic
+Global GlobalAssignHook GlobalReleaseHook GroupLex
+GroupRevLex HardDegreeLimit Heading Headline Heft
+Height Hermitian Hilbert HomePage Homogeneous
+Homogeneous2 HorizontalSpace IgnoreExampleErrors
+InfoDirSection Inhomogeneous Inputs InstallPrefix
+Intersection InverseMethod Inverses Iterate Join
+KeepZeroes Key Left LengthLimit Lex Limit Linear
+LinearAlgebra LoadDocumentation Local LongPolynomial
+MakeDocumentation MakeInfo MakeLinks
+MaxReductionCount MaximalRank MinimalGenerators
+MinimalMatrix Minimize Monomial MonomialOrder
+MonomialSize Monomials NCLex Name NewFromMethod
+NewMethod NewOfFromMethod NewOfMethod NoPrint Options
+Order Outputs PackagePrefix PairLimit PairsRemaining
+Position Postfix Prefix PrimaryTag PrimitiveElement
+Print Projective Quotient Reduce
+RemakeAllDocumentation Repository RerunExamples
+Result RevLex Reverse Right RunExamples SeeAlso
+SeparateExec SizeLimit SkewCommutative Sort
+SortStrategy SourceCode SourceRing Standard
+StopBeforeComputation StopWithMinimalGenerators
+Strategy Subnodes SubringLimit Sugarless Syzygies
+SyzygyLimit SyzygyMatrix SyzygyRows TeXmacs Toric
+TotalPairs Truncate TypicalValue Undo Unmixed Up
+UpdateOnly UpperTriangular Usage UseHilbertFunction
+UseSyzygies UserMode Variable VariableBaseName
+Variables Verbose Verify Version VerticalSpace
+Weights WeylAlgebra Wrap argument baseRings cache dd
+end incomparable indexComponents
+minimalPresentationMap minimalPresentationMapInv oo
+ooo oooo order pruningMap returnCode subscript
+superscript topLevelMode debugLevel defaultPrecision
+engineDebugLevel errorDepth gbTrace interpreterDepth
+lineNumber loadDepth maxExponent minExponent
+printWidth printingAccuracy printingLeadLimit
+printingPrecision printingTimeLimit
+printingTrailLimit recursionLimit
+AffineVariety Array
+AssociativeExpression BasicList BettiTally Boolean
+CacheFunction CacheTable ChainComplex ChainComplexMap
+CoherentSheaf CompiledFunction CompiledFunctionBody
+CompiledFunctionClosure ComplexField Constant
+Database Descent Dictionary DocumentTag EngineRing
+Expression File FilePosition ForestNode FractionField
+Function FunctionBody FunctionClosure GaloisField
+GeneralOrderedMonoid GlobalDictionary GradedModule
+GradedModuleMap GroebnerBasis GroebnerBasisOptions
+HashTable HeaderType Ideal ImmutableType
+IndeterminateNumber IndexedVariable
+IndexedVariableTable InexactField InexactFieldFamily
+InexactNumber InexactNumber' InfiniteNumber Keyword
+LibxmlAttribute LibxmlNode List LocalDictionary
+Manipulator Matrix MethodFunction
+MethodFunctionWithOptions Module ModuleMap Monoid
+MonoidElement MonomialIdeal MutableHashTable
+MutableList MutableMatrix Net NetFile Nothing Number
+OneExpression Option OptionTable OrderedMonoid
+Package Partition PolynomialRing
+ProjectiveHilbertPolynomial ProjectiveVariety
+Pseudocode QuotientRing RealField Resolution Ring
+RingElement RingFamily RingMap ScriptedFunctor
+SelfInitializingType Sequence Set SheafOfRings String
+SumOfTwists Symbol Tally Thing Time TreeNode Type
+Variety Vector VirtualTally VisibleList WrapperType
+ZeroExpression Holder Minus NonAssociativeProduct
+Parenthesize Product Sum

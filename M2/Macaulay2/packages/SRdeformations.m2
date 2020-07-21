@@ -3793,7 +3793,6 @@ value get(F))
 loadComplex("testc")
 
 
-F = dumpdata("daten.txt");
 
 *-
 

@@ -22,9 +22,33 @@
 #define NEWLINE "\n"
 #endif
 
-extern char *libfac_version;
-
 #include "../c/compat.h"
+
+/* set this jump and the flag below if the handler should always jump;
+   e.g., for interrupting a slow 3rd party or system library routine */
+#include <setjmp.h>
+#ifdef _POSIX_C_SOURCE
+# define JMPBUF sigjmp_buf
+# define SETJMP(env) sigsetjmp(env, TRUE)
+# define LONGJUMP(env) siglongjmp(env, 1)
+#else
+# define JMPBUF jmp_buf
+# define SETJMP(env) setjmp(env)
+# define LONGJUMP(env) longjmp(env, 1)
+#endif
+
+struct ArgCell
+{
+  int argc, envc;
+  /* const */ char * /* const */ * argv;
+  /* const */ char * /* const */ * envp;
+};
+
+struct JumpCell
+{
+  JMPBUF addr;
+  bool is_set;
+};
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -46,15 +70,12 @@ extern char *libfac_version;
 #include <memory.h>
 #endif
 
-#if TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# if HAVE_SYS_TIME_H
-#  include <sys/time.h>
-# else
-#  include <time.h>
-# endif
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+
+#ifdef HAVE_TIME_H
+#include <time.h>
 #endif
 
 #ifdef HAVE_SYS_WAIT_H
@@ -84,8 +105,6 @@ extern char *libfac_version;
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
-
-#include <setjmp.h>
 
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>		/* just for window width */
@@ -139,23 +158,15 @@ void *sbrk();		/* not really ansi standard, sigh */
 #undef ERROR
 #define ERROR (-1)      /* in Windows NT there is a file that sets ERROR to 0 */
 
-#include <scc-core.h>
 #define FATAL(s) fatal("%s:%d: fatal error: %s",__FILE__,__LINE__,s)
 
 extern char current_date[];
 extern char current_time[];
 extern int system_errno();
-extern const char *progname;
 
-#include "../dumpdata/dumpdata.h"
-
- /* set this jump and the flag below if the handler should always jump; e.g., for interrupting a slow 3rd party or system library routine */
- #ifdef HAVE_SIGLONGJMP
-  extern sigjmp_buf interrupt_jump;
- #else
-  extern jmp_buf interrupt_jump;
- #endif
-extern bool interrupt_jump_set;
+#ifdef WITH_PYTHON
+#include <Python.h>
+#endif
 
 /*
 // Local Variables:

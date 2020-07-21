@@ -19,7 +19,6 @@ newPackage(
     Headline => "semidefinite programming",
     Configuration => {"CSDPexec"=>"","MOSEKexec"=>"mosek","SDPAexec"=>"sdpa","DefaultSolver"=>null},
     AuxiliaryFiles => true,
-    PackageImports => {"SimpleDoc"},
     PackageExports => {"NumericalAlgebraicGeometry"}
 )
 
@@ -68,13 +67,15 @@ chooseDefaultSolver = execs -> (
     solvers := {"CSDP", "MOSEK", "SDPA"}; --sorted by preference
     found := for i to #solvers-1 list
         if execs#i=!=null then solvers#i else continue;
-    print if #found>0 then "Solvers configured: "|demark(", ",found)
+    if notify then
+      print if #found>0 then "Solvers configured: "|demark(", ",found)
         else "Warning: No external solver was found.";
     found = append(found,"M2");
     defaultSolver = ((options SemidefiniteProgramming).Configuration)#"DefaultSolver";
     if not member(defaultSolver,found) then
         defaultSolver = first found;
-    print("Default solver: " | defaultSolver);
+    if notify then
+      print("Default solver: " | defaultSolver);
     defaultSolver)
 
 -- Change a solver path
@@ -863,7 +864,8 @@ readMOSEK = (fout,fout2,n,Verbosity) -> (
 --###################################
 
 --checkOptimize
-checkOptimize = (solver) -> (
+checkOptimize = method( Options => {Verbosity => 0} )
+checkOptimize(String) := o -> (solver) -> (
     tol := .001;
     equal := (y0,y) -> y=!=null and norm(y0-y)<tol*(1+norm(y0));
     checkZ := (C,A,y,Z) -> if y===null then false
@@ -881,7 +883,7 @@ checkOptimize = (solver) -> (
         A = (A1,A2);
         y0 = matrix{{7},{9}};
         b = matrix{{-1},{-1}};
-        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),y0,Solver=>solver);
+        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),y0,Solver=>solver,Verbosity=>o.Verbosity);
         yopt = matrix{{2.},{2.}};
         equal(yopt,y)
         );
@@ -893,7 +895,7 @@ checkOptimize = (solver) -> (
         A = (A1,A2);
         b = matrix {{0},{1}};
         y0 = matrix {{0},{-.486952}};
-        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),y0,Solver=>solver);
+        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),y0,Solver=>solver,Verbosity=>o.Verbosity);
         yopt = matrix{{1.97619},{.466049}};
         equal(yopt,y)
         );
@@ -904,7 +906,7 @@ checkOptimize = (solver) -> (
         A2 = matrix{{0,0,0,1/2},{0,-1,0,0},{0,0,0,0},{1/2,0,0,0}};
         A = (A1,A2);
         b = matrix{{-1},{0}};
-        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),Solver=>solver);
+        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),Solver=>solver,Verbosity=>o.Verbosity);
         yopt = matrix{{0.},{4.}};
         equal(yopt,y)
         );
@@ -914,7 +916,7 @@ checkOptimize = (solver) -> (
         A1 = matrix {{0,0,0,1/2},{0,-1,0,0},{0,0,0,0},{1/2,0,0,0}};
         A = sequence A1;
         b = matrix {{-1}};
-        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),Solver=>solver);
+        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),Solver=>solver,Verbosity=>o.Verbosity);
         yopt = 4.;
         equal(yopt,y)
         );
@@ -926,7 +928,7 @@ checkOptimize = (solver) -> (
         A3 = matrix(RR, {{0, 0, 1/2}, {0, -1, 0}, {1/2, 0, 0}});
         A = (A1,A2,A3);
         b = matrix(RR, {{0}, {0}, {0}});
-        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b), Solver=>solver);
+        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b), Solver=>solver,Verbosity=>o.Verbosity);
         checkZ(C,A,y,Z)
         );
 

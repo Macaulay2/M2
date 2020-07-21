@@ -1116,6 +1116,7 @@ relabelNet = N -> (
 -- simple polynomial reduction
 reduceEqs = F -> (
     (M,C) := coefficients matrix {F};
+    C = lift(C, coefficientRing ring C);
     C = transpose rowReduce transpose C;
     return first entries (M*C);
 )

@@ -17,8 +17,6 @@ export (s:string) + (t:string) : string := join(s,t);
 export (s:string) + (c:char) : string := join(s,string(c));
 export (c:char) + (t:string) : string := join(string(c),t);
 
--- numdigits(x:int):int := ( n:=0; while x>0 do ( n=n+1; x=x/10 ); n);
-digit(x:int):char := if x<10 then '0' + x else 'a' + (x - 10);
 export reverse(s:string):string := (
 	n := length(s);
 	new string len n do ( n = n-1 ; provide s.n));

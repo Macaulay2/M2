@@ -166,7 +166,7 @@ class DPoly
 
   int degree(int level, int var, const poly f) const;
   poly diff(int level, int var, const poly f);
-  poly power_mod(int level, const poly f, mpz_t n, const poly g);  // f^n mod g
+  poly power_mod(int level, const poly f, mpz_srcptr n, const poly g);  // f^n mod g
   poly lowerP(int level, const poly f);
 
   static bool is_one(int level, const poly f);
@@ -316,7 +316,7 @@ class DRing : public our_new_delete
 
   void set_from_int(poly &result, mpz_srcptr r);  // written
 
-  bool set_from_rational(poly &result, mpq_ptr r);  // written
+  bool set_from_mpq(poly &result, mpq_srcptr r);  // written
 
   void set_random(poly &result) { result = D.random(level); }
   void elem_text_out(buffer &o,
@@ -351,7 +351,7 @@ class DRing : public our_new_delete
     result = D.diff(level, var, f);
   }
   int extension_degree(int firstvar);  // returns -1 if infinite
-  void power_mod(poly &result, const poly f, mpz_t n, const poly g) const
+  void power_mod(poly &result, const poly f, mpz_srcptr n, const poly g) const
   {
     result = D.power_mod(level, f, n, g);
   }  // f^n mod g

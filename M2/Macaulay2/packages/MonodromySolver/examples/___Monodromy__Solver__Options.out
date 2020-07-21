@@ -7,7 +7,7 @@
 
 i1 : options monodromySolve
 
-o1 = OptionTable{AugmentEdgeCount => 0                                 }
+o1 = OptionTable{AugmentEdgeCount => 0                                }
                  AugmentGraphFunction => null
                  AugmentNodeCount => 0
                  AugmentNumberOfRepeats => null
@@ -22,7 +22,7 @@ o1 = OptionTable{AugmentEdgeCount => 0                                 }
                  NumberOfRepeats => 10
                  Potential => null
                  Randomizer => null
-                 SelectEdgeAndDirection => selectRandomEdgeAndDirection
+                 SelectEdgeAndDirection => selectFirstEdgeAndDirection
                  StoppingCriterion => null
                  TargetSolutionCount => null
                  Verbose => false

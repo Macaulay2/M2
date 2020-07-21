@@ -117,12 +117,12 @@ class ARingZZpFFPACK : public RingInterface
   {
     // Note that the max modulus is small enough (about 70 million in 2013)
     // so that the coercion to an int will be correct.
-    result.int_val = static_cast<int>(a);
+    result = ring_elem(static_cast<int>(a));
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-    result = a.int_val;
+    result = a.get_int();
   }
 
   /** @} */
@@ -151,7 +151,7 @@ class ARingZZpFFPACK : public RingInterface
 
   void set_from_mpz(ElementType &result, mpz_srcptr a) const;
 
-  bool set_from_mpq(ElementType &result, const mpq_ptr a) const;
+  bool set_from_mpq(ElementType &result, mpq_srcptr a) const;
 
   bool set_from_BigReal(ElementType &result, gmp_RR a) const { return false; }
   ElementType computeGenerator() const;
@@ -190,7 +190,7 @@ class ARingZZpFFPACK : public RingInterface
 
   void power_mpz(ElementType &result,
                  const ElementType a,
-                 const mpz_ptr n) const;
+                 mpz_srcptr n) const;
 
   void syzygy(const ElementType a,
               const ElementType b,

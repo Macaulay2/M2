@@ -1,27 +1,15 @@
--- -*- M2-comint -*- hash: -240537506
---loading configuration for package "FourTiTwo" from file /home/aleykin3/.Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /home/aleykin3/.Macaulay2/init-Topcom.m2
--- COMPILE TIME: Oct 31 2019, 08:32:16
---loading configuration for package "Bertini" from file /home/aleykin3/.Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- hash: 408841555
 
 i1 : makeB'InputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},
        BertiniInputConfiguration=>{{TrackType,1}},
-       B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
-
-o1 = /tmp/M2-26277-0/0/input
-
-o1 : File
+       B'Polynomials=>{"(x^2+y^2+z^2-1)*y"});
 
 i2 : runBertini(storeBM2Files)
 
 i3 : thePoints=importMainDataFile(storeBM2Files)
 
-o3 = {{-.219962+.20422*ii, 1.1526e-18+1.15257e-16*ii, .225537+1.01942*ii},
-     ------------------------------------------------------------------------
-     {.834556+.109194*ii, -.941079+.377836*ii, .355377+.744126*ii},
-     ------------------------------------------------------------------------
-     {-1.23932-.03284*ii, 1.00037-.063534*ii, .018469+1.23769*ii}}
+o3 = {{.0299281-.31537*ii, -1.09008e-16-2.56554e-17*ii, .046797+1.04793*ii}, {3.04234-.182804*ii, -.542537-2.82288*ii, -.859692+1.13455*ii}, {-.764667+1.0007*ii, 1.39601+.446141*ii, .229276+.621026*ii}}
 
 o3 : List
 
@@ -36,11 +24,7 @@ o4 : List
 
 i5 : sortMainDataComponents(thePoints)
 
-o5 = {{{-.219962+.20422*ii, 1.1526e-18+1.15257e-16*ii, .225537+1.01942*ii}},
-     ------------------------------------------------------------------------
-     {{.834556+.109194*ii, -.941079+.377836*ii, .355377+.744126*ii},
-     ------------------------------------------------------------------------
-     {-1.23932-.03284*ii, 1.00037-.063534*ii, .018469+1.23769*ii}}}
+o5 = {{{.0299281-.31537*ii, -1.09008e-16-2.56554e-17*ii, .046797+1.04793*ii}}, {{3.04234-.182804*ii, -.542537-2.82288*ii, -.859692+1.13455*ii}, {-.764667+1.0007*ii, 1.39601+.446141*ii, .229276+.621026*ii}}}
 
 o5 : List
 

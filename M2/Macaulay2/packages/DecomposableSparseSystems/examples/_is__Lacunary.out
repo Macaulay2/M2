@@ -1,0 +1,23 @@
+-- -*- M2-comint -*- hash: 108594010
+
+i1 : R=QQ[x,y];
+
+i2 : F={3+x^2*y^2-(17/3)*x^4*y^4,2-x^2+5*y^2-13*x^2*y^2};
+
+i3 : isLacunary F
+
+o3 = true
+
+i4 : A = {matrix{{0,2,4},{0,2,4}},matrix{{0,0,2,2},{0,2,0,2}}};
+
+i5 : isLacunary A
+
+o5 = true
+
+i6 : B = {matrix{{0,2,4},{0,2,4}},matrix{{0,1,0},{0,0,1}}};
+
+i7 : isLacunary B
+
+o7 = false
+
+i8 : 
