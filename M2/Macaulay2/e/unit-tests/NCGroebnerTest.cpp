@@ -4,6 +4,7 @@
 #include "engine.h"
 #include "poly.hpp"
 #include "aring-glue.hpp"
+#include "NCAlgebras/MemoryBlock.hpp"
 #include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCAlgebras/FreeAlgebraQuotient.hpp"
 #include "NCAlgebras/WordTable.hpp"
@@ -13,6 +14,41 @@
 #include "NCAlgebras/NCReduction.hpp"
 #include <iostream>
 
+/** MemoryBlock tests
+ */
+
+bool testMemoryBlock()
+{
+  MemoryBlock B;
+  for (size_t i = 0; i < 1000; ++i)
+    {
+      size_t sz = 4 + (32343 * i) % 10;
+      auto range = B.allocateArray<int>(sz);
+      for (int j = 0; j < sz; j++)
+        range.first[j] = 100 * i + j;
+      if (i % 93 == 0)
+        {
+          range = B.shrinkLastAllocate(range.first, range.second, range.first + 4);
+          for (int j = 0; j < 4; j++)
+            range.first[j] = 100 * i + j;
+        }
+      if ((range.second - range.first != sz) and (range.second - range.first != 4))
+        return false;
+      //      std::cout << "i = " << i << " sz = " << sz << " elems = ";
+      //      for (int* a = range.first; a != range.second; ++a)
+      //        std::cout << *a << " ";
+      //      std::cout << std::endl << "memory usage: " << B.getMemoryUsedInBytes() << std::endl;
+    }
+  return true;
+}
+
+TEST(MemoryBlock, tryit)
+{
+  EXPECT_TRUE(testMemoryBlock()); // TODO: this test is a bit lame currently
+}
+
+/** Monoid tests
+ */
 const Monoid* degreeMonoid(const std::vector<std::string>& names)
 {
   std::vector<int> wts;
@@ -50,14 +86,6 @@ std::vector<int> monom1 {2, 0, 1};  // cab
 std::vector<int> monom2 {2, 2};  // cc
 std::vector<int> monom3 {1, 0, 1, 0};  // baba
 std::vector<int> word {2, 0, 1, 2, 2, 1, 0, 1, 0};  // cabccbaba
-
-extern const QQ * globalQQ;
-
-TEST(MemoryBlock, tryit)
-{
-  extern bool testMemoryBlock();
-  EXPECT_TRUE(testMemoryBlock()); // TODO: this test is a bit lame currently
-}
 
 TEST(NCReduction, tryit)
 {

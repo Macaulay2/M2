@@ -403,6 +403,7 @@ if(BUILD_TESTING)
     unit-tests/ARingCCTest.cpp
     unit-tests/ARingRRRTest.cpp
     unit-tests/ARingCCCTest.cpp
+    unit-tests/NCGroebnerTest.cpp
 
     unit-tests/RingTest.hpp
     unit-tests/RingZZTest.cpp
