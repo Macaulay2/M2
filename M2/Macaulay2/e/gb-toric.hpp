@@ -256,8 +256,8 @@ class binomialGB : public our_new_delete
       return *this;
     }
     binomial_gb_elem *operator*() { return elem->elem; }
-    bool operator==(const iterator &p) { return p.elem == elem; }
-    bool operator!=(const iterator &p) { return p.elem != elem; }
+    bool operator==(const iterator &p) const { return p.elem == elem; }
+    bool operator!=(const iterator &p) const { return p.elem != elem; }
   };
 
   iterator begin() const { return iterator(first); }
