@@ -167,6 +167,7 @@ COMMANDS2 = \
 COMMANDS = \
 	flint \
 	rand \
+	regex \
 	ntl-internal \
 	ntl-debugio \
 	matrix-kbasis \
