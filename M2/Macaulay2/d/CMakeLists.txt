@@ -16,7 +16,6 @@ file(GENERATE OUTPUT distributed-packages.h CONTENT "#define DISTRIBUTED_PACKAGE
 
 set(CLIST
   M2types.c M2lib.c M2mem.c types.h
-  regex.c
   scclib.c ../c/scc-core.h
   memdebug.c memdebug.h
   debug.c debug.h
@@ -134,7 +133,7 @@ add_library(M2-interpreter OBJECT ${CLIST} ${TAGS}
   $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
   $<$<BOOL:${WITH_PYTHON}>:python-c.c>)
 
-target_link_libraries(M2-interpreter PRIVATE M2-supervisor M2-regex) # scclib.c uses regex
+target_link_libraries(M2-interpreter PRIVATE M2-supervisor)
 
 target_include_directories(M2-interpreter
   PUBLIC
