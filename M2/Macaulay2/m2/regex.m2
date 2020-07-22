@@ -45,7 +45,12 @@ match(String, String) := (re, str) -> null =!= (lastMatch = rawRegex(re, str, de
 -- replace
 -----------------------------------------------------------------------------
 
-replace(String, String, String) := String => replaceStrings
+-- previously in methods.m2
+replace(String, String, String) := String => regexReplace
+
+-- previously in html0.m2
+toLower = s -> replace("(\\w+)", "\\L$1", s)
+toUpper = s -> replace("(\\w+)", "\\U$1", s)
 
 -----------------------------------------------------------------------------
 -- regexQuote

@@ -5,7 +5,6 @@ header "#include <engine.h>";
 
 import noErrorMessage:string;
 import regexmatchErrorMessage:string;
-import regexreplace(pattern:string, replacement: string, text:string, errflag:string, ignorecase:bool):string;
 import regexselect(pattern:string, replacement: string, text:string, errflag:array(string), ignorecase:bool):array(string);
 
 toPairs(r:array(int)):Expr := Expr(
@@ -73,20 +72,17 @@ rawRegex(e:Expr):Expr := (
     else WrongNumArgs(2,5));
 setupfun("regex", rawRegex).Protected = false; -- will be overloaded in m2/regex.m2
 
-foo := "foo";
-replace(e:Expr):Expr := (
-     ignorecase := false;
-     when e is a:Sequence do
-     if length(a) == 3 then
-     when a.0 is regexp:stringCell do
-     when a.1 is replacement:stringCell do
-     when a.2 is text:stringCell do (
-	  r := regexreplace(regexp.v,replacement.v,text.v,foo,ignorecase);
-	  if r == foo then buildErrorPacket("replace: "+regexmatchErrorMessage)
-	  else toExpr(r))
-     else WrongArgString(3)
-     else WrongArgString(2)
-     else WrongArgString(1)
-     else WrongNumArgs(3)
-     else WrongNumArgs(3));
-setupfun("replaceStrings",replace);
+rawReplace(e:Expr):Expr := (
+    when e is s:Sequence do
+    if length(s) == 3 then
+    when s.0 is regexp:stringCell do
+    when s.1 is replacement:stringCell do
+    when s.2 is text:stringCell do (
+	toExpr(Ccode(string, "rawRegexReplace(",
+	    regexp.v, ",", 0, ",", length(text.v), ",", replacement.v, ",", text.v, ",", 0, ")")))
+    else WrongArgString(3)
+    else WrongArgString(2)
+    else WrongArgString(1)
+    else WrongNumArgs(3)
+    else WrongNumArgs(3));
+setupfun("regexReplace", rawReplace);
