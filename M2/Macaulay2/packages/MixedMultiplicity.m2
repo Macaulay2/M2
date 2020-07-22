@@ -1,12 +1,12 @@
-﻿-- ------------------------------------------------------------------------------
+﻿--------------------------------------------------------------------------------
 -- PURPOSE : Compute the defining ideal of the multi-Rees algebra and 
---	     mixed multiplicities of ideals in a polynomial   
---           ring. Also to compute mixed volumes of lattice polytopes
---           and sectional Milnor numbers of hypersurfaces with an 
---           isolated singularity 
+--	     mixed multiplicities of ideals in a polynomial ring. 
+--    	     Also to compute mixed volumes of lattice polytopes and 
+--    	     sectional Milnor numbers of hypersurfaces with an 
+--           isolated singularity. 
 -- PROGRAMMERs : Mixed multiplicity code written by Kriti Goel and
 --		 Sudeshna Roy under the guidance of J. K. Verma, IIT Bombay. 
--- ------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 newPackage(
 	"MixedMultiplicity",
