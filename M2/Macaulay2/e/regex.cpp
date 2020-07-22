@@ -22,11 +22,6 @@ enum RawRegexFlags {
 
 regex rawRegexCompile(const M2_string pattern, const int flags)
 {
-#if 0
-  std::cerr << "regexp:\t" << M2_tocharstar(pattern) << std::endl
-            << "string:\t" << M2_tocharstar(text) << std::endl;
-#endif
-
   regex_constants::syntax_option_type regex_flags =
       regex::no_except; /* don't throw exceptions */
   regex_flags |= flags & REGEX_FLAVOR_ECMAScript ? regex::ECMAScript : 0;
@@ -47,6 +42,11 @@ M2_arrayint rawRegexSearch(const M2_string pattern,
                            const M2_string text,
                            const int flags)
 {
+#if DEBUG
+  std::cerr << "regexp:\t" << M2_tocharstar(pattern) << std::endl
+            << "string:\t" << M2_tocharstar(text) << std::endl;
+#endif
+
   M2_arrayint m = M2_makearrayint(0);
   if (start < 0 || text->len < start) return m;
 
@@ -57,33 +57,41 @@ M2_arrayint rawRegexSearch(const M2_string pattern,
       return m;
     }
 
+  bool status = false;
   cmatch matches {};
 
   // https://www.boost.org/doc/libs/1_73_0/libs/regex/doc/html/boost_regex/ref/match_flag_type.html
-  regex_constants::match_flag_type match_flags = match_default;
-  match_flags |= flags & REGEX_MATCH_ANY ? match_any : match_flags;
-  match_flags |=
-      flags & REGEX_MATCH_CONTINUOUS ? match_continuous : match_flags;
+  regex_constants::match_flag_type flag = match_continuous;
+  flag |= flags & REGEX_MATCH_ANY ? match_any : flag;
+  flag |= flags & REGEX_MATCH_CONTINUOUS ? match_continuous : flag;
 
-  if (range < 0) start = std::max(0, start + range);
-  if (range == 0) match_flags |= match_continuous;
-  if (range <= 0) range = text->len - start;
-  if (range > 0) range = std::min(range, text->len - start);
+  auto lead = start;
+  auto head = (const char*)&text->array;
+  auto tail = (const char*)&text->array + text->len;
 
-  /* TODO: not quite backwards compatible with $ and negative range */
-  if (start + range < text->len) match_flags |= match_not_eol;
-  if (start > 0) match_flags |= match_prev_avail;
+  if (range >= 0)
+    for (; lead <= std::min(start + range, text->len); lead++)
+      {
+	flag |= lead != 0 ? match_prev_avail : flag;
+        status = regex_search(head + lead, tail, matches, expression, flag);
+        if (status) break;
+      }
 
-  auto head = (const char*)&text->array[start];
-  auto tail = (const char*)&text->array[start + range];
-  auto status = regex_search(head, tail, matches, expression, match_flags);
+  flag |= match_prev_avail;
+  if (range < 0)
+    for (; std::max(0, start + range) <= lead; lead--)
+      {
+	flag &= lead == 0 ? ~match_prev_avail : flag;
+        status = regex_search(head + lead, tail, matches, expression, flag);
+        if (status) break;
+      }
   if (!status) return m;
 
   m = M2_makearrayint(2 * matches.size());
   for (auto i = 0; i < matches.size(); i++)
     {
       m->array[2 * i] =
-          start + std::distance(matches.prefix().first, matches[i].first);
+          lead + std::distance(matches.prefix().first, matches[i].first);
       m->array[2 * i + 1] = std::distance(matches[i].first, matches[i].second);
     }
   return m;
@@ -96,6 +104,12 @@ M2_string rawRegexReplace(const M2_string pattern,
                           const M2_string text,
                           const int flags)
 {
+#ifdef DEBUG
+  std::cerr << "regexp:\t" << M2_tocharstar(pattern) << std::endl
+            << "subst.:\t" << M2_tocharstar(replacement) << std::endl
+            << "string:\t" << M2_tocharstar(text) << std::endl;
+#endif
+
   auto expression = rawRegexCompile(pattern, flags);
   if (expression.status() != 0)
     {
@@ -107,12 +121,12 @@ M2_string rawRegexReplace(const M2_string pattern,
   std::ostream_iterator<char> stream_iter(stream);
 
   // TODO: add format_first_only option
-  regex_constants::match_flag_type match_flags = format_default;
+  regex_constants::match_flag_type flag = format_default;
 
-  auto head = (const char*)&text->array[start];
-  auto tail = (const char*)&text->array[start + range];
+  auto head = (const char*)&text->array + start;
+  auto tail = (const char*)&text->array + start + range;
   auto substitute = M2_tocharstar(replacement);
-  regex_replace(stream_iter, head, tail, expression, substitute, match_flags);
+  regex_replace(stream_iter, head, tail, expression, substitute, flag);
 
   std::string output(stream.str());
   return M2_tostring(output.c_str());
@@ -135,7 +149,6 @@ M2_ArrayString rawRegexSelect(const M2_string pattern,
       if (match->len == 0) break;
 
       auto pair = match->array;
-      auto substitute = M2_tocharstar(replacement);
       auto part =
           rawRegexReplace(pattern, pair[0], pair[1], replacement, text, flags);
 
