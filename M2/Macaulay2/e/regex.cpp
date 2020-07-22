@@ -60,31 +60,47 @@ M2_arrayint rawRegexSearch(const M2_string pattern,
   bool status = false;
   cmatch matches {};
 
-  // https://www.boost.org/doc/libs/1_73_0/libs/regex/doc/html/boost_regex/ref/match_flag_type.html
-  regex_constants::match_flag_type flag = match_continuous;
-  flag |= flags & REGEX_MATCH_ANY ? match_any : flag;
-  flag |= flags & REGEX_MATCH_CONTINUOUS ? match_continuous : flag;
-
   auto lead = start;
   auto head = (const char*)&text->array;
   auto tail = (const char*)&text->array + text->len;
 
-  if (range >= 0)
-    for (; lead <= std::min(start + range, text->len); lead++)
-      {
-	flag |= lead != 0 ? match_prev_avail : flag;
-        status = regex_search(head + lead, tail, matches, expression, flag);
-        if (status) break;
-      }
+  // https://www.boost.org/doc/libs/1_73_0/libs/regex/doc/html/boost_regex/ref/match_flag_type.html
+  regex_constants::match_flag_type flag = match_default;
+  flag |= flags & REGEX_MATCH_ANY ? match_any : flag;
+  flag |= flags & REGEX_MATCH_CONTINUOUS ? match_continuous : flag;
 
-  flag |= match_prev_avail;
-  if (range < 0)
-    for (; std::max(0, start + range) <= lead; lead--)
-      {
-	flag &= lead == 0 ? ~match_prev_avail : flag;
-        status = regex_search(head + lead, tail, matches, expression, flag);
-        if (status) break;
-      }
+  if (lead == 0 and range == text->len)
+    {
+      /* not fully backwards compatible with nonzero range */
+      flag |= lead > 0 ? match_prev_avail : flag;
+
+      if (range < 0) start = std::max(0, start + range);
+      if (range == 0) flag |= match_continuous;
+
+      status = regex_search(head + lead, tail, matches, expression, flag);
+    }
+  else
+    {
+      /* backwards compatible with GNU regex, but doesn't support lookaround */
+      flag |= match_continuous;
+
+      if (range >= 0)
+        for (; lead <= std::min(start + range, text->len); lead++)
+          {
+            flag |= lead != 0 ? match_prev_avail : flag;
+            status = regex_search(head + lead, tail, matches, expression, flag);
+            if (status) break;
+          }
+
+      flag |= match_prev_avail;
+      if (range < 0)
+        for (; std::max(0, start + range) <= lead; lead--)
+          {
+            flag &= lead == 0 ? ~match_prev_avail : flag;
+            status = regex_search(head + lead, tail, matches, expression, flag);
+            if (status) break;
+          }
+    }
   if (!status) return m;
 
   m = M2_makearrayint(2 * matches.size());
