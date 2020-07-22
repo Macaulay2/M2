@@ -21,40 +21,6 @@ struct re_pattern_buffer regex_pattern;
 #define re_search_empty_return (-1)
 #define match_length(match,i) (match_end(match,i) - match_start(match,i))
 
-M2_arrayint regex_regexmatch(M2_string pattern, int start, int range, M2_string text, M2_bool ignorecase) {
-  static struct M2_arrayint_struct empty[1] = {{0}};
-  const char *regcomp_return;
-  regex_regexmatchErrorMessage = &noErrorMessage;
-  if (! (0 <= start && start <= text->len)) return empty;
-  re_set_syntax(SYNTAX_FLAGS);
-  if (last_pattern != pattern) {
-    if (last_pattern != NULL) regfree(&regex_pattern), last_pattern = NULL;
-    regcomp_return = re_compile_pattern(pattern->array, pattern->len, &regex_pattern);
-    if (regcomp_return != NULL) {
-      regex_regexmatchErrorMessage = M2_tostring(regcomp_return);
-      regfree(&regex_pattern);
-      return empty;
-    }
-    last_pattern = pattern;
-  }
-  {
-    int regexec_return;
-    static struct re_registers match;
-    regexec_return = re_search(&regex_pattern, text->array, text->len, start, range, &match);
-    if (regexec_return == re_search_empty_return) return empty;
-    else {
-      int n = match_num(match);
-      M2_arrayint m = M2_makearrayint(2*n);
-      int i;
-      for (i = 0; i<n; i++) {
-	m->array[2*i  ] = match_start(match,i);
-	m->array[2*i+1] = match_length(match,i);
-      }
-      return m;
-    }
-  }
-}
-
 void grow(int *len, int off, char **str, int newlen) {
   int d = 2**len+1;
   if (newlen < d) newlen = d;

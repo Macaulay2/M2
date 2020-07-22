@@ -265,7 +265,7 @@ map = method(
 
 setupMethods(Dispatch => Thing, {transpose} )
 setupMethods(TypicalValue => Boolean,
-     {isBorel, isWellDefined, isInjective, isSurjective, isUnit, match,
+     {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
 	  isSubset,isHomogeneous, isIsomorphism, isPrime, isPseudoprime, isField, isConstant
 	  })
 setupMethods(TypicalValue => ZZ,
@@ -301,14 +301,6 @@ toExternalString Nothing := simpleToString
 toExternalString Thing := x -> (
      if hasAttribute(x,ReverseDictionary) then return toString getAttribute(x,ReverseDictionary);
      error("can't convert anonymous object of class ",toString class x," to external string"))
-
-regexQuote = method(Dispatch => Thing, TypicalValue => String)
-regexQuote String := s -> (
-     specialChars := {"\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "[",
-	  "]", "{", "}"};
-     concatenate apply(characters s, c ->
-	  if member(c, specialChars) then "\\" | c else c)
-     )
 
 options = method(Dispatch => Thing, TypicalValue => OptionTable)
 setupMethods(Dispatch => Thing, {max,min,directSum,intersect,vars})
@@ -445,9 +437,6 @@ between(Thing,VisibleList) := List => (m,v) -> mingle(v,#v-1:m)
 length Dictionary := s -> #s
 length String := s -> #s
 length VisibleList := s -> #s
-
-lastMatch = null
-match(String,String) := X -> null =!= (lastMatch = regex X)
 
 Nothing == Nothing := Boolean => (x,y) -> x === y			    -- actually, x and y must both be "null"!
 
@@ -607,9 +596,6 @@ storefuns #toString = (x,e) -> (
 Function Thing = (f,x,e) -> (
      if not storefuns#?f then error("no method for storing values of function ", toString f);
      storefuns#f (x,e))
-
--- replace
-replace(String,String,String) := String => replaceStrings
 
 -- baseName
 baseName Thing := R -> (

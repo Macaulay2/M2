@@ -4,6 +4,7 @@ option.m2
 methods.m2
 autoload.m2
 system.m2
+regex.m2
 run.m2
 
 profile.m2

@@ -2157,10 +2157,10 @@ extern "C" {
   /*******************************/
 
   M2_arrayint rawRegexSearch(const M2_string pattern,
-                             const int start,
-                             const int range,
+                             int start,
+                             int range,
                              const M2_string text,
-                             const M2_bool ignorecase);
+                             const int flags);
 
 #if defined(__cplusplus)
 }
