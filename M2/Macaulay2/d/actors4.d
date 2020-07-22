@@ -126,15 +126,12 @@ select(n:int,f:Expr):Expr := (
 	  else if y != False then return buildErrorPacket("select: expected predicate to yield true or false");
 	  );
      Expr(list(new Sequence len found do foreach p at i in b do if p then provide toExpr(i))));
-select(pat:string,rep:string,subj:string,ignorecase:bool):Expr := (
-     r := regexselect(pat,rep,subj,foo,ignorecase);
-     if r == foo then return buildErrorPacket("select: "+regexmatchErrorMessage);
-     Expr(list(new Sequence len length(r) do foreach s in r do provide toExpr(s))));
+select(pat:string,rep:string,subj:string,ignorecase:bool):Expr := rawSelect(pat,rep,subj,ignorecase);
 select(e:Expr,f:Expr,ignorecase:bool):Expr := (
      when e
      is pat:stringCell do (
      	  when f is subj:stringCell
-	  do select(pat.v,"\\0",subj.v,ignorecase)
+	  do select(pat.v,"$&",subj.v,ignorecase)
      	  else WrongArgString(2)
 	  )
      is obj:HashTable do (

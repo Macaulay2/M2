@@ -2169,6 +2169,13 @@ extern "C" {
                             const M2_string text,
                             const int flags);
 
+  M2_ArrayString rawRegexSelect(const M2_string pattern,
+                                int start,
+                                int range,
+                                const M2_string replacement,
+                                const M2_string text,
+                                const int flags);
+
 #if defined(__cplusplus)
 }
 #endif

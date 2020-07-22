@@ -3,17 +3,11 @@ use util;
 
 header "#include <engine.h>";
 
-import noErrorMessage:string;
-import regexmatchErrorMessage:string;
-import regexselect(pattern:string, replacement: string, text:string, errflag:array(string), ignorecase:bool):array(string);
-
 toPairs(r:array(int)):Expr := Expr(
-     list (
-	  new Sequence len length(r)/2 at i do
-	  provide new Sequence len 2 at j do
-	  provide toExpr(r.(2*i+j))
-	  )
-     );
+    list (
+	new Sequence len length(r)/2 at i do
+	provide new Sequence len 2 at j do
+	provide toExpr(r.(2*i+j))));
 
 rawRegex(e:Expr):Expr := (
     when e is s:Sequence do
@@ -78,11 +72,16 @@ rawReplace(e:Expr):Expr := (
     when s.0 is regexp:stringCell do
     when s.1 is replacement:stringCell do
     when s.2 is text:stringCell do (
-	toExpr(Ccode(string, "rawRegexReplace(",
-	    regexp.v, ",", 0, ",", length(text.v), ",", replacement.v, ",", text.v, ",", 0, ")")))
+	toExpr(Ccode(string,
+		"rawRegexReplace(", regexp.v, ",", 0, ",", length(text.v), ",", replacement.v, ",", text.v, ",", 0, ")")))
     else WrongArgString(3)
     else WrongArgString(2)
     else WrongArgString(1)
     else WrongNumArgs(3)
     else WrongNumArgs(3));
 setupfun("regexReplace", rawReplace);
+
+-- used in actors4.d
+export rawSelect(regexp:string,replacement:string,text:string,ignorecase:bool):Expr := toExpr(
+    Ccode(ArrayString,
+	"rawRegexSelect(", regexp, ",", 0, ",", length(text), ",", replacement, ",", text, ",", 0, ")"));

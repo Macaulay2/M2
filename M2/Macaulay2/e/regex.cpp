@@ -29,6 +29,11 @@ M2_arrayint rawRegexSearch(const M2_string pattern,
   M2_arrayint m = M2_makearrayint(0);
   if (start < 0 || text->len < start) return m;
 
+#if 0
+  std::cerr << "regexp:\t" << M2_tocharstar(pattern) << std::endl
+            << "string:\t" << M2_tocharstar(text) << std::endl;
+#endif
+
   regex_constants::syntax_option_type regex_flags =
       regex::no_except; /* don't throw exceptions */
   regex_flags |= flags & REGEX_FLAVOR_ECMAScript ? regex::ECMAScript : 0;
@@ -115,4 +120,38 @@ M2_string rawRegexReplace(const M2_string pattern,
 
   std::string output(stream.str());
   return M2_tostring(output.c_str());
+}
+
+M2_ArrayString rawRegexSelect(const M2_string pattern,
+                              int start,
+                              int range,
+                              const M2_string replacement,
+                              const M2_string text,
+                              const int flags)
+{
+  std::vector<std::string> strings;
+  std::vector<char*> cstrings;
+
+  while (start < text->len)
+    {
+      auto match = rawRegexSearch(
+          pattern, start, range, text, flags | REGEX_SYNTAX_NOSUBS);
+      if (match->len == 0) break;
+
+      auto pair = match->array;
+      auto substitute = M2_tocharstar(replacement);
+      auto part =
+          rawRegexReplace(pattern, pair[0], pair[1], replacement, text, flags);
+
+      std::string str = M2_tocharstar(part);
+      strings.push_back(str);
+
+      range = start + range - pair[0] - pair[1];
+      start = pair[0] + pair[1];
+    }
+
+  cstrings.reserve(strings.size());
+
+  for (auto& str : strings) cstrings.push_back(&str[0]);
+  return M2_tostrings(cstrings.size(), cstrings.data());
 }
