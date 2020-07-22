@@ -20,15 +20,8 @@ enum RawRegexFlags {
   REGEX_MATCH_CONTINUOUS = (1 << 17), /* match must start at the beginning */
 };
 
-M2_arrayint rawRegexSearch(const M2_string pattern,
-                           int start,
-                           int range,
-                           const M2_string text,
-                           const int flags)
+regex rawRegexCompile(const M2_string pattern, const int flags)
 {
-  M2_arrayint m = M2_makearrayint(0);
-  if (start < 0 || text->len < start) return m;
-
 #if 0
   std::cerr << "regexp:\t" << M2_tocharstar(pattern) << std::endl
             << "string:\t" << M2_tocharstar(text) << std::endl;
@@ -45,6 +38,19 @@ M2_arrayint rawRegexSearch(const M2_string pattern,
   regex_flags |= regex::no_mod_s; /* forced for backwards compatibility */
 
   regex expression(M2_tocharstar(pattern), regex_flags);
+  return expression;
+}
+
+M2_arrayint rawRegexSearch(const M2_string pattern,
+                           int start,
+                           int range,
+                           const M2_string text,
+                           const int flags)
+{
+  M2_arrayint m = M2_makearrayint(0);
+  if (start < 0 || text->len < start) return m;
+
+  auto expression = rawRegexCompile(pattern, flags);
   if (expression.status() != 0)
     {
       std::cerr << "regex: invalid pattern" << std::endl;
@@ -90,17 +96,7 @@ M2_string rawRegexReplace(const M2_string pattern,
                           const M2_string text,
                           const int flags)
 {
-  regex_constants::syntax_option_type regex_flags =
-      regex::no_except; /* don't throw exceptions */
-  regex_flags |= flags & REGEX_FLAVOR_ECMAScript ? regex::ECMAScript : 0;
-  regex_flags |= flags & REGEX_FLAVOR_BASIC ? regex::basic : 0;
-  regex_flags |= flags & REGEX_FLAVOR_EXTENDED ? regex::extended : 0;
-  regex_flags |= flags & REGEX_SYNTAX_ICASE ? regex::icase : 0;
-  regex_flags |= flags & REGEX_SYNTAX_NOSUBS ? regex::nosubs : 0;
-  regex_flags |= flags & REGEX_SYNTAX_NO_MOD_M ? regex::no_mod_m : 0;
-  regex_flags |= regex::no_mod_s; /* forced for backwards compatibility */
-
-  regex expression(M2_tocharstar(pattern), regex_flags);
+  auto expression = rawRegexCompile(pattern, flags);
   if (expression.status() != 0)
     {
       std::cerr << "regex: invalid pattern" << std::endl;
