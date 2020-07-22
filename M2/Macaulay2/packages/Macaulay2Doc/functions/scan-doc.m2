@@ -30,7 +30,7 @@ doc///
    scan(4, print)
    v = {a,b,c}; scan(#v, i -> print(i,v#i))
   Text
-   The keyword @TO break@ can be used to terminate the scan prematurely, 
+   The keyword @TO "break"@ can be used to terminate the scan prematurely,
    and optionally to specify a return value for the expression. Here we
    use it to locate the first even number in a list.
   Example

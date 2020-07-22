@@ -29,7 +29,7 @@ o4 : A
 
 i5 : B = A/ncIdeal{f,g,h}
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/3.ter ... Complete!
+Complete!
 
 o5 = B
 
@@ -37,8 +37,7 @@ o5 : NCQuotientRing
 
 i6 : centralElements(B,3)
 
-     |  3          3 |
-o6 = | y -yxz+xyz-x  |
+o6 = | y^3-y*x*z+x*y*z-x^3 |
 
 o6 : NCMatrix
 
@@ -64,16 +63,13 @@ Normal monomials of degree 3:
 none
 Components of the normal variety, excluding normal monomials:
 
-o10 = {| n_(y^2*z) n_(y*x*z)+n_(x*y*z) n_(x^2*z) n_(y^3)-n_(x*y*z) n_(x*y^2)
-      -----------------------------------------------------------------------
-      n_(y*x*y) n_(x^2*y) n_(x*y*x) n_(x^3)+n_(x*y*z) |}
+o10 = {| n_(y^2*z) n_(y*x*z)+n_(x*y*z) n_(x^2*z) n_(y^3)-n_(x*y*z) n_(x*y^2) n_(y*x*y) n_(x^2*y) n_(x*y*x) n_(x^3)+n_(x*y*z) |}
 
 o10 : List
 
 i11 : basis(3,B)
 
-      |  3        2          2   3   2              2  |
-o11 = | x   xyx  x y  yxy  xy   y   x z  yxz  xyz  y z |
+o11 = | x^3 x*y*x x^2*y y*x*y x*y^2 y^3 x^2*z y*x*z x*y*z y^2*z |
 
 o11 : NCMatrix
 
@@ -99,7 +95,7 @@ o14 : NCIdeal
 
 i15 : B' = A/(I+J)
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/5.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/8.ter ... Complete!
+Complete!
 
 o15 = B'
 
@@ -107,53 +103,41 @@ o15 : NCQuotientRing
 
 i16 : k = ncMatrix {gens B'}
 
-o16 = | x  y  z |
+o16 = | x y z |
 
 o16 : NCMatrix
 
 i17 : M = rightKernelBergman rightKernelBergman k
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/10.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/13.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/14.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/17.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/18.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/21.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/22.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/25.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/26.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/29.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/30.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/33.ter ... Complete!
+Complete!
 
-      |               2           |
-o17 = | -z    yz    -y    -yx-2xy |
-      |                           |
-      |                2    2     |
-      |  x  yx+xy  yz+x   -y +3xz |
-      |                           |
-      |                       2   |
-      |  y   -xz    -xy      x    |
-      |                           |
-      |  0   -2y    -2x     -2z   |
+o17 = | -z y*z     -y^2    -y*x-2*x*y |
+      | x  y*x+x*y y*z+x^2 -y^2+3*x*z |
+      | y  -x*z    -x*y    x^2        |
+      | 0  -2*y    -2*x    -2*z       |
 
 o17 : NCMatrix
 
 i18 : N = rightKernelBergman M
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/34.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/37.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/38.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/41.ter ... Complete!
+Complete!
 
-      |            2            3 |
-o18 = |  0  2yx  2y -2xz  -yxz-x  |
-      |                           |
-      |                      2    |
-      | -z   x      y      -y +xz |
-      |                           |
-      |                         2 |
-      |  x   y      -z     -yz+x  |
-      |                           |
-      | -y   -z     -x       0    |
+o18 = | 0  2*y*x 2*y^2-2*x*z -y*x*z-x^3 |
+      | -z x     y           -y^2+x*z   |
+      | x  y     -z          -y*z+x^2   |
+      | -y -z    -x          0          |
 
 o18 : NCMatrix
 
@@ -165,63 +149,37 @@ o19 : NCRingMap
 
 i20 : liftM = BprimeToB M
 
-      |               2           |
-o20 = | -z    yz    -y    -yx-2xy |
-      |                           |
-      |                2    2     |
-      |  x  yx+xy  yz+x   -y +3xz |
-      |                           |
-      |                       2   |
-      |  y   -xz    -xy      x    |
-      |                           |
-      |  0   -2y    -2x     -2z   |
+o20 = | -z y*z     -y^2    -y*x-2*x*y |
+      | x  y*x+x*y y*z+x^2 -y^2+3*x*z |
+      | y  -x*z    -x*y    x^2        |
+      | 0  -2*y    -2*x    -2*z       |
 
 o20 : NCMatrix
 
 i21 : liftN = BprimeToB N
 
-      |            2            3 |
-o21 = |  0  2yx  2y -2xz  -yxz-x  |
-      |                           |
-      |                      2    |
-      | -z   x      y      -y +xz |
-      |                           |
-      |                         2 |
-      |  x   y      -z     -yz+x  |
-      |                           |
-      | -y   -z     -x       0    |
+o21 = | 0  2*y*x 2*y^2-2*x*z -y*x*z-x^3 |
+      | -z x     y           -y^2+x*z   |
+      | x  y     -z          -y*z+x^2   |
+      | -y -z    -x          0          |
 
 o21 : NCMatrix
 
 i22 : liftM*liftN
 
-      |                      3             3                                       |
-o22 = |         0          2y -2yxz+2xyz-2x           0                  0         |
-      |                                                                            |
-      |   3             3                                                          |
-      | 2y -2yxz+2xyz-2x           0                  0                  0         |
-      |                                                                            |
-      |                                         3             3                    |
-      |         0                  0          2y -2yxz+2xyz-2x           0         |
-      |                                                                            |
-      |                                                            3             3 |
-      |         0                  0                  0          2y -2yxz+2xyz-2x  |
+o22 = | 0                           2*y^3-2*y*x*z+2*x*y*z-2*x^3 0                           0                           |
+      | 2*y^3-2*y*x*z+2*x*y*z-2*x^3 0                           0                           0                           |
+      | 0                           0                           2*y^3-2*y*x*z+2*x*y*z-2*x^3 0                           |
+      | 0                           0                           0                           2*y^3-2*y*x*z+2*x*y*z-2*x^3 |
 
 o22 : NCMatrix
 
 i23 : jId = promote(j,B)*(ncMatrix applyTable(entries id_(ZZ^4), i -> promote(i,B)))
 
-      |  3          3                                              |
-o23 = | y -yxz+xyz-x         0              0              0       |
-      |                                                            |
-      |                 3          3                               |
-      |       0        y -yxz+xyz-x         0              0       |
-      |                                                            |
-      |                                3          3                |
-      |       0              0        y -yxz+xyz-x         0       |
-      |                                                            |
-      |                                               3          3 |
-      |       0              0              0        y -yxz+xyz-x  |
+o23 = | y^3-y*x*z+x*y*z-x^3 0                   0                   0                   |
+      | 0                   y^3-y*x*z+x*y*z-x^3 0                   0                   |
+      | 0                   0                   y^3-y*x*z+x*y*z-x^3 0                   |
+      | 0                   0                   0                   y^3-y*x*z+x*y*z-x^3 |
 
 o23 : NCMatrix
 
@@ -229,76 +187,45 @@ i24 : assignDegrees(jId,{2,2,2,3},{5,5,5,6});
 
 i25 : M' = jId // liftM
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/42.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/45.ter ... Complete!
+Complete!
 
-      |              2       1     1 3 |
-o25 = |  yx     0   y -xz  - -yxz- -x  |
-      |                      2     2   |
-      |                                |
-      |  1      1     1       1 2 1    |
-      |  -x   - -z    -y    - -y +-xz  |
-      |  2      2     2       2   2    |
-      |                                |
-      |  1     1       1      1   1 2  |
-      |  -y    -x    - -z   - -yz+-x   |
-      |  2     2       2      2   2    |
-      |                                |
-      |   1     1      1               |
-      | - -z  - -y   - -x       0      |
-      |   2     2      2               |
+o25 = | y*x    0      y^2-x*z -1/2*y*x*z-1/2*x^3 |
+      | 1/2*x  -1/2*z 1/2*y   -1/2*y^2+1/2*x*z   |
+      | 1/2*y  1/2*x  -1/2*z  -1/2*y*z+1/2*x^2   |
+      | -1/2*z -1/2*y -1/2*x  0                  |
 
 o25 : NCMatrix
 
 i26 : N
 
-      |            2            3 |
-o26 = |  0  2yx  2y -2xz  -yxz-x  |
-      |                           |
-      |                      2    |
-      | -z   x      y      -y +xz |
-      |                           |
-      |                         2 |
-      |  x   y      -z     -yz+x  |
-      |                           |
-      | -y   -z     -x       0    |
+o26 = | 0  2*y*x 2*y^2-2*x*z -y*x*z-x^3 |
+      | -z x     y           -y^2+x*z   |
+      | x  y     -z          -y*z+x^2   |
+      | -y -z    -x          0          |
 
 o26 : NCMatrix
 
 i27 : liftM*M'
 
-      |  3          3                                              |
-o27 = | y -yxz+xyz-x         0              0              0       |
-      |                                                            |
-      |                 3          3                               |
-      |       0        y -yxz+xyz-x         0              0       |
-      |                                                            |
-      |                                3          3                |
-      |       0              0        y -yxz+xyz-x         0       |
-      |                                                            |
-      |                                               3          3 |
-      |       0              0              0        y -yxz+xyz-x  |
+o27 = | y^3-y*x*z+x*y*z-x^3 0                   0                   0                   |
+      | 0                   y^3-y*x*z+x*y*z-x^3 0                   0                   |
+      | 0                   0                   y^3-y*x*z+x*y*z-x^3 0                   |
+      | 0                   0                   0                   y^3-y*x*z+x*y*z-x^3 |
 
 o27 : NCMatrix
 
 i28 : M'*liftM
 
-      |  3          3                                              |
-o28 = | y -yxz+xyz-x         0              0              0       |
-      |                                                            |
-      |                 3          3                               |
-      |       0        y -yxz+xyz-x         0              0       |
-      |                                                            |
-      |                                3          3                |
-      |       0              0        y -yxz+xyz-x         0       |
-      |                                                            |
-      |                                               3          3 |
-      |       0              0              0        y -yxz+xyz-x  |
+o28 = | y^3-y*x*z+x*y*z-x^3 0                   0                   0                   |
+      | 0                   y^3-y*x*z+x*y*z-x^3 0                   0                   |
+      | 0                   0                   y^3-y*x*z+x*y*z-x^3 0                   |
+      | 0                   0                   0                   y^3-y*x*z+x*y*z-x^3 |
 
 o28 : NCMatrix
 
 i29 : C = skewPolynomialRing(QQ,(-1)_QQ,{x,y,z,w})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/46.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/49.ter ... Complete!
+Complete!
 
 o29 = C
 
@@ -338,7 +265,7 @@ o35 = true
 
 i36 : D = oreExtension(C,sigma,a)
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/51.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/54.ter ... Complete!
+Complete!
 
 o36 = D
 
@@ -379,20 +306,13 @@ Normal monomials of degree 2:
 a
 Components of the normal variety, excluding normal monomials:
 
-o42 = {| P_(w*a) P_(z*a) P_(y*a) P_(x*a) P_(z*w) P_(y*w) P_(x*w) P_(y*z)
-      -----------------------------------------------------------------------
-      P_(x*z) P_(x*y) P_(z^2)^2-P_(y^2)P_(w^2) P_(y^2)P_(z^2)-P_(x^2)P_(w^2)
-      -----------------------------------------------------------------------
-      P_(x^2)P_(z^2)-P_(w^2)^2 P_(y^2)^2-P_(w^2)^2
-      -----------------------------------------------------------------------
-      P_(x^2)P_(y^2)-P_(z^2)P_(w^2) P_(x^2)^2-P_(y^2)P_(w^2) |}
+o42 = {| P_(w*a) P_(z*a) P_(y*a) P_(x*a) P_(z*w) P_(y*w) P_(x*w) P_(y*z) P_(x*z) P_(x*y) P_(z^2)^2-P_(y^2)P_(w^2) P_(y^2)P_(z^2)-P_(x^2)P_(w^2) P_(x^2)P_(z^2)-P_(w^2)^2 P_(y^2)^2-P_(w^2)^2 P_(x^2)P_(y^2)-P_(z^2)P_(w^2) P_(x^2)^2-P_(y^2)P_(w^2) |}
 
 o42 : List
 
 i43 : basis(2,D)
 
-      |  2       2           2               2                   2 |
-o43 = | x   xy  y   xz  yz  z   xw  yw  zw  w   xa  ya  za  wa  a  |
+o43 = | x^2 x*y y^2 x*z y*z z^2 x*w y*w z*w w^2 x*a y*a z*a w*a a^2 |
 
 o43 : NCMatrix
 
@@ -404,11 +324,11 @@ i45 : E' = QQ[x,y,z,w,SkewCommutative=>true]
 
 o45 = E'
 
-o45 : PolynomialRing
+o45 : PolynomialRing, 4 skew commutative variables
 
 i46 : E = toNCRing E'
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/56.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/59.ter ... Complete!
+Complete!
 
 o46 = E
 
@@ -459,7 +379,7 @@ i54 : C'' = toM2Ring(C,SkewCommutative=>true)
 
 o54 = C''
 
-o54 : PolynomialRing
+o54 : PolynomialRing, 4 skew commutative variables
 
 i55 : y*x
 
@@ -475,7 +395,7 @@ o56 : C''
 
 i57 : Dop = oppositeRing D
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/61.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12599-0/64.ter ... Complete!
+Complete!
 
 o57 = Dop
 
@@ -523,13 +443,9 @@ i65 : B = endomorphismRing(M,X);
 
 i66 : gensI = gens ideal B
 
-                                                                          
-o66 = {X X +-X , -X +X X , -X +X X , X X , X X , X X +-X , X X , X X +-X ,
-        0 1   0    3  0 2    2  1 2   0 3   1 3   2 3   2   1 0   2 0   1 
-      -----------------------------------------------------------------------
-                                    2    2        2    2
-      X X , X X +-X , X X , X X , X  , X  +-X , X  , X  +-X }
-       2 1   3 0   0   3 1   3 2   0    1    1   2    3    3
+                                                                                                         2    2        2    2
+o66 = {X X +-X , -X +X X , -X +X X , X X , X X , X X +-X , X X , X X +-X , X X , X X +-X , X X , X X , X  , X  +-X , X  , X  +-X }
+        0 1   0    3  0 2    2  1 2   0 3   1 3   2 3   2   1 0   2 0   1   2 1   3 0   0   3 1   3 2   0    1    1   2    3    3
 
 o66 : List
 

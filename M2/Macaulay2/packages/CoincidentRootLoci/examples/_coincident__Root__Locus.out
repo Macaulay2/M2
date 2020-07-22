@@ -1,17 +1,17 @@
 -- -*- M2-comint -*- hash: -654157542
-***************************************************************************
-CoincidentRootLoci v.0.1.1 loaded successfully (last updated: June 1, 2018)
-***************************************************************************
+****************************************************************************
+CoincidentRootLoci v.0.1.2 loaded successfully (last updated: June 22, 2020)
+****************************************************************************
 
 i1 : time X = coincidentRootLocus {6,4,3,3,2}
-     -- used 0.810919 seconds
+     -- used 0.735396 seconds
 
 o1 = CRL(6,4,3,3,2)
 
 o1 : CoincidentRootLocus
 
 i2 : time describe X
-     -- used 1.62558 seconds
+     -- used 1.67586 seconds
 
 o2 = Coincident root locus associated with the partition {6, 4, 3, 3, 2} defined over QQ
      ambient: P^18 = Proj(QQ[t_0, t_1, t_2, t_3, t_4, t_5, t_6, t_7, t_8, t_9, t_10, t_11, t_12, t_13, t_14, t_15, t_16, t_17, t_18])
@@ -22,7 +22,7 @@ o2 = Coincident root locus associated with the partition {6, 4, 3, 3, 2} defined
      ({6, 6, 4, 2},{10, 3, 3, 2},{9, 4, 3, 2},{7, 6, 3, 2},{8, 4, 3, 3},{6, 6, 3, 3},{6, 5, 4, 3})
 
 i3 : time describe dual X
-     -- used 0.276993 seconds
+     -- used 0.284271 seconds
 
 o3 = Dual of the coincident root locus associated with the partition {6, 4, 3, 3, 2} defined over QQ
      which coincides with the join of the coincident root loci associated with the partitions:

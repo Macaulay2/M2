@@ -226,7 +226,7 @@ document {
      PARA{
 	  "Use this file to get input from the terminal, or to display information
 	  on the user's screen.  This is the file always used by ", TO "print", "
-	  and used ", TO "<<", " if it is not explicitly given a file."
+	  and ", TO "<<", " if it is not explicitly given a file."
 	  },
      EXAMPLE lines ///
      << "hi" << endl
@@ -1090,8 +1090,9 @@ document {
      Outputs => {
 	  "the complete path to the current directory, together with an extra slash"
 	  },
-     EXAMPLE {PRE("i1 : currentDirectory()" | newline | newline |
-	  "o1 = /home/m2user/")},
+     EXAMPLE lines ///
+     currentDirectory()
+     ///,
      PARA {
 	  "If a component of the path to the current directory no longer exist, an error will be signalled."
 	  }

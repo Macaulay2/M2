@@ -201,3 +201,6 @@ PositivityToricBundles
 SparseResultants
 DecomposableSparseSystems
 MixedMultiplicity
+PencilsOfQuadrics
+ThreadedGB
+VectorGraphics

@@ -11,20 +11,20 @@ newPackage("NumericalImplicitization",
 	 HomePage => "https://web.math.princeton.edu/~jkileel/"}
         },
     PackageExports => {"NumericalAlgebraicGeometry"},
-    Certification => {
-	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
-	 "article title" => "Numerical implicitization",
-	 "acceptance date" => "11 April 2019",
-	 "published article URI" => "https://msp.org/jsag/2019/9-1/p07.xhtml",
-	 "published article DOI" => "10.2140/jsag.2019.9.55",
-	 "published code URI" => "https://msp.org/jsag/2019/9-1/jsag-v9-n1-x07-NumericalImplicitization.m2",
-	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NumericalImplicitization.m2",
-	 "release at publication" => "2f801d123692462f4a65ccb135d411be425c28bd",	    -- git commit number in hex
-	 "version at publication" => "2.1.0",
-	 "volume number" => "9",
-	 "volume URI" => "https://msp.org/jsag/2019/9-1/"
-	 }
+    Certification => {	
+	"journal name" => "The Journal of Software for Algebra and Geometry",	
+	"journal URI" => "http://j-sag.org/",	
+	"article title" => "Numerical implicitization",	
+	"acceptance date" => "11 April 2019",	
+	"published article URI" => "https://msp.org/jsag/2019/9-1/p07.xhtml",	
+	"published article DOI" => "10.2140/jsag.2019.9.55",	
+	"published code URI" => "https://msp.org/jsag/2019/9-1/jsag-v9-n1-x07-NumericalImplicitization.m2",	
+	"repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NumericalImplicitization.m2",	
+	"release at publication" => "2f801d123692462f4a65ccb135d411be425c28bd",	    -- git commit number in hex	
+	"version at publication" => "2.1.0",	
+	"volume number" => "9",	
+	"volume URI" => "https://msp.org/jsag/2019/9-1/"	
+	}
     )
     export {
         "numericalSourceSample",
@@ -209,6 +209,7 @@ makeInterpolationMatrix = method()
 makeInterpolationMatrix (Matrix, List) := List => (mons, pts) -> (
     X := apply(#gens ring mons, i -> inputGate ("x"|i));
     Y := matrix{apply(flatten entries mons, m -> monomialGate(m, X))};
+    -- E := makeEvaluator(Y, matrix{X});
     E := makeSLProgram(matrix{X}, Y);
     out := mutableMatrix(ring pts#0, numrows Y, numcols Y);
     apply(pts/mutableMatrix, p -> (
@@ -258,26 +259,33 @@ numericalHilbertFunction (RingMap, Ideal, ZZ) := NumericalInterpolationTable => 
 
 
 realPartMatrix := A -> matrix apply(entries A, r -> r/realPart)
-imPartMatrix := A -> matrix apply(entries A, r -> r/imaginaryPart)
+imPartMatrix := A -> if class ring A === RealField then 0 else matrix apply(entries A, r -> r/imaginaryPart)
 
 
 extractImageEquations = method(Options => {symbol Threshold => 5, symbol AttemptZZ => false})
 extractImageEquations NumericalInterpolationTable := Matrix => opts -> T -> (
-    if not opts.AttemptZZ then (
-        (V, mons) := (last T.interpolationSVD, T.interpolationBasis);
-        clean(10.0^(-opts.Threshold), mons*sub(conjugate transpose V^{numrows V-T.hilbertFunctionValue..numrows V-1}, ring mons))
-    ) else (
-        A := T.interpolationMatrix;
-        B := random(RR)*realPartMatrix A + random(RR)*imPartMatrix A;
-        C := matrix apply(entries B, r -> r/(e -> lift(round(10^(1+opts.Threshold)*round(opts.Threshold, e)), ZZ)));
-        D := submatrix(LLL(id_(ZZ^(numcols C)) || C), toList (0..<numcols T.interpolationBasis), toList(0..<T.hilbertFunctionValue));
-        E := T.interpolationBasis*sub(D, ring T.interpolationBasis);
+    n := opts.Threshold;
+    (V, mons) := (last T.interpolationSVD, T.interpolationBasis);
+    A := clean(10.0^(-n), conjugate transpose V^{numrows V-T.hilbertFunctionValue..numrows V-1});
+    if not opts.AttemptZZ === false then (
+        if opts.AttemptZZ === 2 then (
+            B := if class ring A === ComplexField then matrix table(numrows A, numcols A, (i,j) -> matrix{{realPart A_(i,j),imaginaryPart A_(i,j)}}) else A;
+            C := matrix apply(entries B, r -> r/(e -> lift(round(10^(1+n)*round(n, e)), ZZ)));
+            D := submatrix(LLL(C), numcols A..numcols C-1);
+            E := mons*colReduce(sub(D, ring mons), 10.0^(-n));
+        ) else (
+            A = T.interpolationMatrix;
+            B = random(RR)*realPartMatrix A + random(RR)*imPartMatrix A;
+            C = matrix apply(entries B, r -> r/(e -> lift(round(10^(1+n)*round(n, e)), ZZ)));
+            D = submatrix(LLL(id_(ZZ^(numcols C)) || C), toList (0..<numcols mons), toList(0..<T.hilbertFunctionValue));
+            E = mons*sub(D, ring mons);
+        );
         val := sub(E, T.imagePoints#0);
-        if clean(10.0^(-opts.Threshold), val) != 0 then (
+        if clean(10.0^(-n), val) != 0 then (
             << "Warning: some of the integer equations may be inexact. Their values at a sample image point are " << val << endl;
         );
         E
-    )
+    ) else mons*sub(A, ring mons)
 )
 extractImageEquations (Matrix, Ideal, ZZ) := Matrix => opts -> (F, I, d) -> extractImageEquations(numericalHilbertFunction(F, I, d), opts)
 extractImageEquations (List, Ideal, ZZ) := Matrix => opts -> (F, I, d) -> extractImageEquations(numericalHilbertFunction(matrix{F}, I, d), opts)
@@ -403,7 +411,7 @@ myTrack = method(Options => options pseudoWitnessSet)
 myTrack (List, List, List) := List => opts -> (startSystem, targetSystem, startSolutions) -> (
     k := coefficientRing ring startSystem#0;
     randomGamma := random k;
-    if #startSolutions > max(20, 2*opts.MaxThreads) and opts.MaxThreads > 1 then ( -- prints many errors, but continues to run
+    if #startSolutions > max(10, 2*opts.MaxThreads) and opts.MaxThreads > 1 then ( -- prints many errors, but continues to run
         --setIOExclusive(); -- buggy: causes isReady to indefinitely hang
 	startSolutionsList := pack(ceiling(#startSolutions/opts.MaxThreads), startSolutions);
         threadList := {};
@@ -1454,7 +1462,7 @@ doc ///
 	Text
             This is a type of hash table storing the output of a 
             pseudo-witness set computation using monodromy, 
-            with the following keys:
+            with the following keys:
         Code
             UL {
                 {TEX "\\bf isCompletePseudoWitnessSet: whether the pseudo-witness set has passed the trace test, according to the trace test threshold"},
@@ -1873,6 +1881,15 @@ check "NumericalImplicitization"
 -- Future: Alpha-certify option, improvements to interpolation (using non-monomial bases, Jacobi SVD)
 
 
+-- Guarantee correct number of sample points, starting from initial point p
+goodPts = {}
+sampleSize = 100
+eps = 1e-10
+elapsedTime while #goodPts < sampleSize do (
+    q = first numericalSourceSample(I, p);
+    if q#?SolutionStatus and q#SolutionStatus === Regular and clean(eps, sub(gens I, matrix q)) == 0 then goodPts = goodPts | {q};
+)
+
 -- high degree rational normal curve
 R = CC[s,t],; F = basis(40,R); I = ideal 0_R;
 numericalImageDim(F, I)
@@ -1935,7 +1952,7 @@ all((toList T.imagePoints)/(p -> clean(1e-11, sub(E, toList(0..<#(p#Coordinates)
 -- (line) secant of (P^1)^n in P^31, n = 5: degree 3256
 n = 5
 R = CC[a_1..a_n,b_1..b_n,s,t];
-F = s*(terms product apply(toList(1..n), i->(1 + a_i))) + t*(terms product apply(toList(1..n), i->(1 + b_i)));
+F = s*(terms product apply(toList(1..n), i-> 1 + a_i)) + t*(terms product apply(toList(1..n), i-> 1 + b_i));
 allowableThreads = maxAllowableThreads
 time W = pseudoWitnessSet(F, ideal 0_R, Repeats => 1)
 elapsedTime W = pseudoWitnessSet(F, ideal 0_R, Repeats => 1, MaxThreads => allowableThreads) 

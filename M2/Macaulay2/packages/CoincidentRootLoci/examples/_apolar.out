@@ -1,7 +1,7 @@
 -- -*- M2-comint -*- hash: -891682273
-***************************************************************************
-CoincidentRootLoci v.0.1.1 loaded successfully (last updated: June 1, 2018)
-***************************************************************************
+****************************************************************************
+CoincidentRootLoci v.0.1.2 loaded successfully (last updated: June 22, 2020)
+****************************************************************************
 
 i1 : (n,s) = (6,4)
 
@@ -19,7 +19,7 @@ o2 : QQ[t , t ]
          0   1
 
 i3 : time phi = apolar(n,s)
-     -- used 0.0662131 seconds
+     -- used 0.0320872 seconds
 
 o3 = -- rational map --
      source: Proj(QQ[t , t , t , t , t , t , t ])
@@ -87,7 +87,7 @@ o3 = -- rational map --
 o3 : RationalMap (cubic rational map from PP^6 to 6-dimensional subvariety of PP^9)
 
 i4 : time P = switch plucker phi switch switch F
-     -- used 0.0878129 seconds
+     -- used 0.0799894 seconds
 
                   3          2 2           3        4        4          2 2  
 o4 = ideal (20458t t  - 4533t t  - 52230t t  + 4213t , 10229t  - 325779t t  +
@@ -105,7 +105,7 @@ i5 : diff(gens P,F) == 0
 o5 = true
 
 i6 : time switch phi^* plucker switch P
-     -- used 0.0222614 seconds
+     -- used 0.0215766 seconds
 
         6     5       4 2     3 3     2 4       5     6
 o6 = 18t  + 2t t  + 9t t  + 2t t  + 4t t  + 3t t  + 6t

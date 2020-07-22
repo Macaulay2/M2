@@ -85,53 +85,13 @@ export {
 	"multiplicitiesReorder"
 }
 
-noGfan = raiseError -> if raiseError then error "could not find gfan"
-
-tryGfanPath = gfanPath -> run(gfanPath | "gfan --help 2> /dev/null")
-
--- we expect a trailing slash in the path, but the paths given in the
--- PATH environment variable likely will not have one, so we add one
--- if needed
-addSlash = gfanPath -> (
-	if last gfanPath != "/" then return gfanPath | "/"
-	else return gfanPath
-)
-
-checkGfanPath = gfanPath -> (
-	if gfanVerbose == true then
-		print("checking for gfan in " | gfanPath | "...");
-	if tryGfanPath(gfanPath) == 0 then (
-		if gfanVerbose == true then print("  found");
-		return true
-	) else (
-		if gfanVerbose == true then print("  not found");
-		return false
-	)
-)
-
-findGfanPath = {"RaiseError" => true} >> opts -> () -> (
-	-- try user-configured path first
-	gfanPath := gfanInterface#Options#Configuration#"path";
-	if gfanPath != "" then (
-		gfanPath = addSlash(gfanPath);
-		if checkGfanPath(gfanPath) then return gfanPath;
-	);
-	-- now try M2-installed gfan
-	gfanPath = addSlash(prefixDirectory | currentLayout#"programs");
-	if checkGfanPath(gfanPath) then return gfanPath;
-	-- finally, try PATH
-	if getenv "PATH" == "" then return noGfan(opts#"RaiseError");
-	paths := apply(separate(":", getenv "PATH"), addSlash);
-	gfanPath = scan(paths, gfanPath ->
-		if checkGfanPath(gfanPath) then break gfanPath
-	);
-	if class(gfanPath) === String then return gfanPath
-	else noGfan(opts#"RaiseError");
-)
-
 fig2devPath = gfanInterface#Options#Configuration#"fig2devpath"
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
-gfanPath = null
+-- for backward compatibility
+if not programPaths#?"gfan" and gfanInterface#Options#Configuration#"path" != ""
+    then programPaths#"gfan" = gfanInterface#Options#Configuration#"path"
+
+gfanProgram = null
 
 gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
 gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
@@ -1052,34 +1012,29 @@ runGfanCommand = (cmd, opts, data) -> (
 )
 
 runGfanCommandCaptureBoth = (cmd, opts, data) -> (
-	if gfanPath === null then gfanPath = findGfanPath();
+	if gfanProgram === null then
+	    gfanProgram = findProgram("gfan", "gfan --help",
+		Verbose => gfanVerbose);
 	tmpFile := gfanMakeTemporaryFile data;
-	
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
 
-	if gfanVerbose then << ex << endl;
-	returnvalue := run ex;
-	errorMsg := "";
-     	if(not returnvalue == 0) then
-	(
-	    errorMsg = "Gfan returned an error message.\n";
-	    errorMsg = errorMsg | "COMMAND:" | ex | "\n";
-	    errorMsg = errorMsg | "INPUT:\n";
-	    errorMsg = errorMsg | get(tmpFile);
-	    errorMsg = errorMsg | "ERROR:\n";
-	    errorMsg = errorMsg | get(tmpFile |".err");
-	     );
-	out := get(tmpFile | ".out");
-	err := get(tmpFile | ".err");
+	args := replace("^gfan ", "", cmd) | concatenate apply(keys opts, key ->
+	    gfanArgumentToString(cmd, key, opts#key));
+	gfanRun := runProgram(gfanProgram, args | " < " | tmpFile,
+	    RaiseError => false, KeepFiles => gfanKeepFiles,
+	    Verbose => gfanVerbose);
 	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
-	if length(errorMsg) > 0 then error errorMsg;
+
+	-- we display our own error message instead of using the runProgram
+	-- default so we can display data
+	if gfanRun#"return value" != 0 then error(
+	    "Gfan returned an error message.\n" |
+	    "COMMAND: " | gfanRun#"command" | "\n" |
+	    "INPUT:\n" | data |
+	    "ERROR:\n" | gfanRun#"error");
+
 	outputFileName := null;
-	if gfanKeepFiles then outputFileName = tmpFile|".out";
-	(out,err, "GfanFileName"=>outputFileName)
+	if gfanKeepFiles then outputFileName = gfanRun#"output file";
+	(gfanRun#"output", gfanRun#"error", "GfanFileName"=>outputFileName)
 )
 
 runGfanCommandCaptureError = (cmd, opts, data) -> (
@@ -2588,8 +2543,9 @@ gfanFunctions = hashTable {
 --)
 --WARNING - the word PARA was deleted from the next function (it used to read "l -> PARA {l})
 gfanHelp = (functionStr) -> (
-	if gfanPath === null then gfanPath = findGfanPath("RaiseError" => false);
-	if gfanPath === null then {}
+	if gfanProgram === null then gfanProgram = findProgram("gfan",
+	    "gfan --help", RaiseError => false);
+	if gfanProgram === null then {}
 	else apply( lines runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") , l-> {l})
 )
 
@@ -2632,14 +2588,17 @@ doc ///
 			with @EM "Macaulay2"@ (since version 1.3) and so, it is not necessary to install {\tt gfan}
 			separately.
 
-			The {\tt gfanInterface} package contains the configuration option {\tt "path"} which
-			allows the user to specify which {\tt gfan} executables are used. When the path unspecified,
-			it defaults to an empty string and the binaries provided by Macaulay 2 are used.
+			The user can specify which {\tt gfan} executables are used by setting the appropriate key
+			in the @TO "programPaths"@ hash table.	When the path is unspecified, then the binaries
+			provided by Macaulay2 are used, if present.  If they are not present, then the directories
+			specified in the user's {\tt PATH} environment variable are searched.
 
-			You can change the path, if needed, while loading the package:
+			You can change the path, if needed, by setting the appropriate key in @TO "programPaths"@
+			and loading the package:
 
 		Example
-			loadPackage("gfanInterface", Configuration => { "path" => "/directory/to/gfan/"}, Reload => true)
+			programPaths#"gfan" = "/directory/to/gfan/"
+			loadPackage("gfanInterface", Reload => true)
 
 		Text
 			The path to the executables should end in a slash.
@@ -2647,6 +2606,20 @@ doc ///
 			{\tt gfanInterface.m2} either before installing or in the installed copy.
 			You will find the path configuration near the top of the file.
 
+			If {\tt gfanInterface} is already installed and loaded, you can find the path
+			of the source file by the following command:
+
+		Example
+			gfanInterface#"source file"
+
+		Text
+			If you want to use {\tt gfan} executables outside of @EM "Macaulay2"@, they can be found with
+			{\tt currentLayout#"programs"}:
+
+		Example
+			prefixDirectory | currentLayout#"programs"
+
+		Text
 			If you would like to see the input and output files used to communicate with {\tt gfan}
 			you can set the {\tt "keepfiles"} configuration option to {\tt true}. If {\tt "verbose"}
 			is set to {\tt true}, {\tt gfanInterface} will output the names of the temporary files used.

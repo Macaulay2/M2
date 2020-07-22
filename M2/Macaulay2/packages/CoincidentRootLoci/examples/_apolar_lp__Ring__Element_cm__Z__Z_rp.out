@@ -1,7 +1,7 @@
 -- -*- M2-comint -*- hash: 1143288321
-***************************************************************************
-CoincidentRootLoci v.0.1.1 loaded successfully (last updated: June 1, 2018)
-***************************************************************************
+****************************************************************************
+CoincidentRootLoci v.0.1.2 loaded successfully (last updated: June 22, 2020)
+****************************************************************************
 
 i1 : F = randomBinaryForm 7
 
@@ -13,7 +13,7 @@ o1 : QQ[t , t ]
          0   1
 
 i2 : time apolar(F,4)
-     -- used 0.00455213 seconds
+     -- used 0.00408932 seconds
 
                  4          3             2 2             3          4
 o2 = ideal(75621t  + 740842t t  - 3587636t t  - 2099787t t  + 741116t )
@@ -23,7 +23,7 @@ o2 : Ideal of QQ[t , t ]
                   0   1
 
 i3 : time apolar(F,5)
-     -- used 0.00537165 seconds
+     -- used 0.00463927 seconds
 
                  3 2        2 3          4        5       4          2 3  
 o3 = ideal (1355t t  - 5785t t  - 3840t t  + 1321t , 1355t t  - 7610t t  -

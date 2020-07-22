@@ -124,7 +124,7 @@ configFileString =
 ///--Configuration file for package "PKG", automatically generated
 
 -- This print statement may be commented out:
-stderr << "--loading configuration for package \"PKG\" from file " << currentFileName << endl
+if notify then stderr << "--loading configuration for package \"PKG\" from file " << currentFileName << endl
 
 -- This file will be overwritten if a future version of the package has 
 -- different options, but the values will be retained and a backup file

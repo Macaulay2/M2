@@ -63,6 +63,18 @@ check-stripped:
 	file @pre_programsdir@/* $(BUILTLIBPATH)/bin/* @pre_bindir@/M2-binary usr-dist/bin/M2-binary usr-host/bin/* | (! grep "not stripped")
 
 ## submodules
+
+ifeq (@SHARED@,no)
+SUBMODULE_CONFIGOPTIONS += --disable-shared
+else
+# Our current strategy with submodules is to use them in place, so they don't have to be
+# installed.  We like avoiding the installation step, because running "make install" a second time
+# causes files to be copied again.  With shared libraries, though, the libraries have to be installed
+# for use at run-time and then distributed as part of binary distributions.  So we disable the building of
+# shared libraries here.
+SUBMODULE_CONFIGOPTIONS += --disable-shared
+endif
+
 ifneq (@build_alias@,)
 # it was ../configure --build=@build_alias@
 SUBMODULE_CONFIGOPTIONS += --build=@build_alias@
@@ -87,7 +99,7 @@ submodules/fflas_ffpack/Makefile: LIBS += @LINALGLIBS@
 # don't even come with "uninstall" targets, typically.
 # include/config.Makefile.in for lines that add the locations of the the
 # include files and libraries to CPPFLAGS and LDFLAGS.
-BUILDSUBTARGETS = check all run-configure check
+BUILDSUBTARGETS = check all run-configure check install
 
 # Even for submodules not scheduled to be built, we might as well arrange
 # for these targets to fire also for them when doing them for all submodules:
@@ -120,14 +132,14 @@ $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
 all-in-$1: run-configure-in-$1 build-in-$1 copy-license-files-from-$1
 copy-license-files-from-submodules: copy-license-files-from-$1
 copy-license-files-from-$1:; $(MKDIR_P) $(BUILTLIBPATH)/licenses/$1 && for i in $$(LICENSE_FILES); do cp -v @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1 ; done
-build-in-$1:; + $(MAKE) -C submodules/$1 all
-
+build-in-$1: submodules/$1/Makefile
+	$(MAKE) -C submodules/$1 all
 check-in-$1: run-configure-in-$1
 ifeq ($(no-check-$1),)
-	+ ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
+	ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
 endif
 
-install-in-$1: all-in-$1; + $(MAKE) -C submodules/$1 install
+install-in-$1: build-in-$1; + $(MAKE) -C submodules/$1 install
 
 # it may look odd to make submodules/$1/Makefile, but this allows recovery if the submodule
 # has been updated or cleaned, and needing scripts (such as "missing") installed by libtool 

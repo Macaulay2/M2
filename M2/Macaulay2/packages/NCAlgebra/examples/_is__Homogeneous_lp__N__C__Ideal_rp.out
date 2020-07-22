@@ -40,7 +40,7 @@ o7 = true
 
 i8 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12561-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12561-0/3.ter ... Complete!
+Complete!
 
 o8 = B
 
@@ -48,16 +48,10 @@ o8 : NCQuotientRing
 
 i9 : M = ncMatrix {{x,y,z,0}, {-y*z-2*x^2,-y*x,z*x-x*z,x},{x*y-2*y*x,x*z,-x^2,y}, {-y^2-z*x,x^2,-x*y,z}}
 
-o9 = |    x      y      z    0 |
-     |                         |
-     |       2        2        |
-     | -yz-2x   -yx  y -2xz  x |
-     |                         |
-     |                   2     |
-     | -2yx+xy   xz    -x    y |
-     |                         |
-     |    2       2            |
-     | -2y +xz   x     -xy   z |
+o9 = | x          y    z         0 |
+     | -y*z-2*x^2 -y*x y^2-2*x*z x |
+     | -2*y*x+x*y x*z  -x^2      y |
+     | -2*y^2+x*z x^2  -x*y      z |
 
 o9 : NCMatrix
 
@@ -67,16 +61,10 @@ o10 = false
 
 i11 : assignDegrees(M,{1,0,0,0},{2,2,2,1})
 
-o11 = |    x      y      z    0 |
-      |                         |
-      |       2        2        |
-      | -yz-2x   -yx  y -2xz  x |
-      |                         |
-      |                   2     |
-      | -2yx+xy   xz    -x    y |
-      |                         |
-      |    2       2            |
-      | -2y +xz   x     -xy   z |
+o11 = | x          y    z         0 |
+      | -y*z-2*x^2 -y*x y^2-2*x*z x |
+      | -2*y*x+x*y x*z  -x^2      y |
+      | -2*y^2+x*z x^2  -x*y      z |
 
 o11 : NCMatrix
 
@@ -86,7 +74,7 @@ o12 = true
 
 i13 : N = ncMatrix {gens B}
 
-o13 = | x  y  z |
+o13 = | x y z |
 
 o13 : NCMatrix
 

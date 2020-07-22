@@ -85,7 +85,6 @@ export {
 	"runExternalM2ReturnAnswer",
 	-- Various Options:
 	"M2Location",
-	"KeepFiles",
 	"KeepStatistics",
 	"KeepStatisticsCommand",
 	"PreRunScript"
@@ -334,10 +333,12 @@ Node
 -*
   These are the options to automatically provide when calling the M2 executable.
   We would use --script (=--stop --no-debug --silent -q ), but we do NOT want
-  -q so that our child processes can find installed packages, namely, this package.
+  -q so that our child processes can find installed packages, namely, this package,
+  unless the parent M2 was also called with -q.
 *-
 M2Options:=" --stop --no-debug --silent ";
-
+debug Core
+if noinitfile then M2Options = M2Options | " -q ";
 
 mydoc=concatenate(mydoc,///
 Node
@@ -477,7 +478,6 @@ safelyRemoveFile := (s,f) -> (
 mydoc=concatenate(mydoc,///
 Node
 	Key
-		KeepFiles
 		[runExternalM2,KeepFiles]
 	Headline
 		indicate whether or not temporary files should be saved
@@ -760,7 +760,7 @@ runExternalM2 = {
 	);	
 	if (M2Loc===null) then (
 		-- TODO, do we need rootPath for Cygwin?
-		M2Loc=relativizeFilename(first(commandLine));
+		M2Loc=toAbsolutePath(first(commandLine));
 	);
 	if not(fileExists(M2Loc)) then (
 		error "runExternalM2: error finding location of M2 program; check M2Location option";
