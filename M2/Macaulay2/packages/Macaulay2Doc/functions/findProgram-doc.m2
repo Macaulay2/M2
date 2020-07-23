@@ -97,15 +97,15 @@ document {
     PARA {"Note that if a program consists of a single executable binary ",
 	"file, then ", TT "name", " should coincide with the name of this ",
 	"file."},
-    EXAMPLE lines ///
-	programPaths#"gfan" = "/path/to/gfan/"
-	gfan = findProgram("gfan", "gfan --help", Verbose => true)///,
+    EXAMPLE {///programPaths#"gfan" = "/path/to/gfan/"///,
+	///gfan = findProgram("gfan", "gfan --help", Verbose => true,
+	    RaiseError => false)///},
     PARA {"One program that is shipped with a variety of prefixes in ",
 	"different distributions and for which the ", TT "Prefix",
 	" option is useful is TOPCOM:"},
     EXAMPLE {///findProgram("topcom", "cube 3", Verbose => true, Prefix => {
     (".*", "topcom-"),
     ("^(cross|cube|cyclic|hypersimplex|lattice)$", "TOPCOM-"),
-    ("^cube$", "topcom_")})///},
+    ("^cube$", "topcom_")}, RaiseError => false)///},
     SeeAlso => {"Program", "programPaths", "runProgram"}
 }

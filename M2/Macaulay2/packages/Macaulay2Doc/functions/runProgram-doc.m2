@@ -53,11 +53,10 @@ document {
     PARA {"This method runs an external program which has already been ",
 	"loaded using ", TO "findProgram", ".  The results of this run are ",
 	"available in a ", TO "ProgramRun", " object."},
-    EXAMPLE lines ///
-    	gfan = findProgram("gfan", "gfan --help")
-	runProgram(gfan, "_version")
-	oo#"output"
-	runProgram(gfan, "_foo", RaiseError => false)
-	oo#"error"///,
+    EXAMPLE {///ls = findProgram("ls", "ls .")///,
+	///runProgram(ls, "--version")///,
+	///oo#"output"///,
+	///runProgram(ls, "this-file-does-not-exist", RaiseError => false)///,
+	///oo#"error"///},
     SeeAlso => {"ProgramRun", "findProgram"}
 }
