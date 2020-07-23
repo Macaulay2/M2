@@ -19,6 +19,7 @@ m4_include(config/gtest.m4)
 m4_include(config/openmp.m4)
 m4_include(config/search-libraries.m4)
 m4_include(config/ax_boost_base.m4)
+m4_include(config/ax_boost_regex.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -1278,6 +1279,9 @@ then
     CPPFLAGS=$SAVECPPFLAGS
     LIBS=$SAVELIBS
 fi
+
+AX_BOOST_REGEX
+LIBS="$LIBS $BOOST_REGEX_LIB"
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)

@@ -115,7 +115,7 @@ endif
 
 # the order of this list should agree with that in ../../configure.ac
 M2_LIBRARIES :=
-M2_LIBRARIES +=  @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@ -lboost_regex
+M2_LIBRARIES +=  @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@
 
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
