@@ -35,6 +35,9 @@ regex rawRegexCompile(const M2_string pattern, const int flags)
   regex_flags |= regex::no_mod_s; /* forced for backwards compatibility */
 
   regex expression(M2_tocharstar(pattern), regex_flags);
+  if (expression.status() != 0)
+    std::cerr << "regex: could not compile the regular expression: "
+              << M2_tocharstar(pattern) << std::endl;
   return expression;
 }
 
@@ -53,12 +56,7 @@ M2_arrayint rawRegexSearch(const M2_string pattern,
   if (start < 0 || text->len < start) return m;
 
   auto expression = rawRegexCompile(pattern, flags);
-  if (expression.status() != 0)
-    {
-      std::cerr << "regex: could not compile pattern: "
-                << M2_tocharstar(pattern) << std::endl;
-      return m;
-    }
+  if (expression.status() != 0) return m;
 
   bool status = false;
   cmatch matches {};
@@ -130,12 +128,7 @@ M2_string rawRegexReplace(const M2_string pattern,
 #endif
 
   auto expression = rawRegexCompile(pattern, flags);
-  if (expression.status() != 0)
-    {
-      std::cerr << "regex: could not compile pattern: "
-                << M2_tocharstar(pattern) << std::endl;
-      return text;
-    }
+  if (expression.status() != 0) return text;
 
   std::ostringstream stream(std::ios::out);
   std::ostream_iterator<char> stream_iter(stream);
