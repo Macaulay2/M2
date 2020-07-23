@@ -1,4 +1,4 @@
-﻿--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- PURPOSE : Compute the defining ideal of the multi-Rees algebra and 
 --	     mixed multiplicities of ideals in a polynomial ring. 
 --    	     Also to compute mixed volumes of lattice polytopes and 
