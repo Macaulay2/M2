@@ -3,6 +3,8 @@
 #include <boost/regex.hpp>
 #include <iostream>
 
+#define DEBUG_REGEX 0
+
 using namespace boost;
 
 enum RawRegexFlags {
@@ -42,7 +44,7 @@ M2_arrayint rawRegexSearch(const M2_string pattern,
                            const M2_string text,
                            const int flags)
 {
-#if DEBUG
+#if DEBUG_REGEX > 0
   std::cerr << "regexp:\t" << M2_tocharstar(pattern) << std::endl
             << "string:\t" << M2_tocharstar(text) << std::endl;
 #endif
@@ -53,7 +55,8 @@ M2_arrayint rawRegexSearch(const M2_string pattern,
   auto expression = rawRegexCompile(pattern, flags);
   if (expression.status() != 0)
     {
-      std::cerr << "regex: invalid pattern" << std::endl;
+      std::cerr << "regex: could not compile pattern: "
+                << M2_tocharstar(pattern) << std::endl;
       return m;
     }
 
@@ -120,7 +123,7 @@ M2_string rawRegexReplace(const M2_string pattern,
                           const M2_string text,
                           const int flags)
 {
-#ifdef DEBUG
+#if DEBUG_REGEX > 1
   std::cerr << "regexp:\t" << M2_tocharstar(pattern) << std::endl
             << "subst.:\t" << M2_tocharstar(replacement) << std::endl
             << "string:\t" << M2_tocharstar(text) << std::endl;
@@ -129,7 +132,8 @@ M2_string rawRegexReplace(const M2_string pattern,
   auto expression = rawRegexCompile(pattern, flags);
   if (expression.status() != 0)
     {
-      std::cerr << "regex: invalid pattern" << std::endl;
+      std::cerr << "regex: could not compile pattern: "
+                << M2_tocharstar(pattern) << std::endl;
       return text;
     }
 

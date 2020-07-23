@@ -244,7 +244,7 @@ endforeach()
 foreach(_program IN LISTS PROGRAM_OPTIONS)
   string(TOUPPER "${BUILD_PROGRAMS}" BUILD_PROGRAMS)
   string(TOUPPER "${_program}" _name)
-  if(${_name})
+  if(EXISTS ${${_name}})
     if(${_name} MATCHES ${M2_INSTALL_PROGRAMSDIR})
       # we built it
       list(APPEND INSTALLED_PROGRAMS ${_program})
@@ -262,6 +262,7 @@ foreach(_program IN LISTS PROGRAM_OPTIONS)
     endif()
   else()
     # was not found
+    unset(${_name} CACHE)
   endif()
 endforeach()
 
