@@ -21,8 +21,8 @@ html TEX := str -> (
      	  f(///(^|[^\$])\$([^$]*[^\$])\$([^$]|$)///,///\1<i>\2</i>\3///);
 	  );
      if match(///(^|[^\\])\$///,str) then error("unmatched dollar signs in TeX string ",abbrev());
-     f(///\\\{///,///\lbrace ///);
-     f(///\\\}///,///\rbrace ///);
+     f(///\\\{///,///\\lbrace ///);
+     f(///\\\}///,///\\rbrace ///);
 
      --	    \begin{pmatrix}	    <table><tr><td>
      --				    bb
