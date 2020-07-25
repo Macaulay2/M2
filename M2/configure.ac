@@ -1240,6 +1240,28 @@ AC_CHECK_HEADER(boost/version.hpp,
 	AC_MSG_ERROR([boost library not installed, but required])
 	])
 
+AC_MSG_CHECKING([if we can link against Boost.Stacktrace library])
+SAVECPPFLAGS=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS -DBOOST_STACKTRACE_LINK"
+SAVELIBS=$LIBS
+FOUND_stacktrace_library=no
+for stacktrace_library in backtrace addr2line
+do
+    LIBS="$SAVELIBS -lboost_stacktrace_${stacktrace_library}"
+    AC_LINK_IFELSE(
+        [AC_LANG_PROGRAM([#include <boost/stacktrace.hpp>
+         ], [boost::stacktrace::stacktrace();])],
+        [AC_MSG_RESULT([yes, ${stacktrace_library}])
+         FOUND_stacktrace_library=yes
+         break],)
+done
+if test $FOUND_stacktrace_library = no
+then
+    AC_MSG_RESULT([no, will use header-only library])
+    CPPFLAGS=$SAVECPPFLAGS
+    LIBS=$SAVELIBS
+fi
+
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
 AC_SUBST(ULIMIT_V,yes)

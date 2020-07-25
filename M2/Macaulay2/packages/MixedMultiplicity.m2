@@ -1,12 +1,12 @@
-------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- PURPOSE : Compute the defining ideal of the multi-Rees algebra and 
---	     mixed multiplicities of ideals in a polynomial   
---           ring. Also to compute mixed volumes of lattice polytopes
---           and sectional Milnor numbers of hypersurfaces with an 
---           isolated singularity 
+--	     mixed multiplicities of ideals in a polynomial ring. 
+--    	     Also to compute mixed volumes of lattice polytopes and 
+--    	     sectional Milnor numbers of hypersurfaces with an 
+--           isolated singularity. 
 -- PROGRAMMERs : Mixed multiplicity code written by Kriti Goel and
 --		 Sudeshna Roy under the guidance of J. K. Verma, IIT Bombay. 
-------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 newPackage(
 	"MixedMultiplicity",
@@ -421,8 +421,8 @@ doc ///
 	  the function $B(u_0,u_1,...,u_r) = l(R/I_0^{u_0}I_1^{u_1}...I_r^{u_r})$ is a polynomial 
 	  function in $u_0,u_1,...,u_r$ of degree $d.$ The coefficients of the top degree
 	  term are called the mixed multiplicities of the ideals $I_0,I_1,...,I_r.$ 
-	  This result was generalized for ideals of positive height by D. Katz - J. K. Verma 
-	  and D. Viet. D. Rees studied these numbers using complete and joint reductions 
+	  This result was generalized for ideals of positive height in the works of D. Katz, J. K. Verma 
+	  and N. V. Trung. D. Rees studied these numbers using complete and joint reductions 
 	  of ideals. 
 	  
 	  Our algorithm requires computation of the defining ideal of the multi-Rees algebra 
