@@ -56,7 +56,6 @@ document {
 	 (select, String, String, String),
 	 "separateRegexp",
  	 "about",
-	 "backupFileRegexp",
 	 "findFiles",
 	 "pretty"
 	  }
@@ -157,7 +156,6 @@ document {
       PARA{
 	  "In addition to the functions mentioned below, regular expressions appear in ",
 	  TO "about", ", ",
-	  TO "backupFileRegexp", ", ",
 	  TO "findFiles", ", and ",
 	  TO "pretty", ".",
 	  },

@@ -26,7 +26,7 @@ RegexFlags = new HashTable from {
 RegexPerl  = RegexFlags#"ECMAScript" | RegexFlags#"NoModS"
 RegexPOSIX = RegexFlags#"Extended"   | RegexFlags#"MatchNotDotNewline" -- RegexFlags#"NoEscapeInLists"
 
--- Note: the default may be adjusted by in the user's init file, without using "debug Core", this way:
+-- Note: the default may be adjusted by adding the following to the user's init.m2 file:
 --   Core#"private dictionary"#"defaultRegexFlags" <- RegexPerl
 defaultRegexFlags = RegexPOSIX
 defaultMatchFlags = RegexFlags#"Nosubs" | RegexFlags#"MatchAny"
@@ -83,6 +83,7 @@ match(String, String) := opts -> (re, str) ->
     null =!= (lastMatch = regex(re, str, Flags => (
 		if opts.Flags =!= null then opts.Flags
 		else defaultRegexFlags | defaultMatchFlags)))
+match(List, String) := opts -> (rs, str) -> any(rs, re -> match(re, str, opts))
 
 -----------------------------------------------------------------------------
 -- replace

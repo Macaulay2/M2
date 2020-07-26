@@ -1222,7 +1222,6 @@ exportMutable {
 	"allowableThreads",
 	"applicationDirectorySuffix",
 	"backtrace",
-	"backupFileRegexp",
 	"compactMatrixForm",
 	"current",
 	"currentLayout",
