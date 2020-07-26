@@ -330,6 +330,8 @@ export {
 	"Range",
 	"RealField",
 	"Reduce",
+	"RegexPOSIX",
+	"RegexPerl",
 	"Reload",
 	"RemakeAllDocumentation",
 	"Repository",

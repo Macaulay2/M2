@@ -7,22 +7,29 @@ RegexFlags = new HashTable from {
     "ECMAScript" => 0,        -- ECMAScript flavor (default)
     "Extended"   => (1 << 1), -- POSIX ERE flavor
 
-    "Icase"      => (1 << 5),  -- ignore case
-    "Nosubs"     => (1 << 6),  -- ignore subexpressions
+    "Icase"  => (1 << 5),  -- ignore case
+    "Nosubs" => (1 << 6),  -- ignore subexpressions
+    "Collate" => (1 << 8), -- makes [a-b] locale sensitive
 
-    "NoModM"     => (1 << 12), -- don't match ^ $ with newlines
-    "NoModS"     => (1 << 13), -- don't match . with newlines
+    "NoModM"   => (1 << 12), -- don't match ^ $ with newlines
+    "NoModS"   => (1 << 13), -- don't match . with newlines
+
+    "NoEscapeInLists" => (1 << 17), -- disable \ escapes in lists
+    "NoBkRefs"        => (1 << 18), -- disable backreferences
 
     "MatchAny"           => (1 << 25), -- return any match
     "MatchContinuous"    => (1 << 27), -- match must start at the beginning
     "MatchPrevAvail"     => (1 << 30), -- lead-1 is a valid iterator position
-    "MatchMotDotNewline" => (1 << 31), -- doesn't match . with newlines
+    "MatchNotDotNewline" => (1 << 31), -- doesn't match . with newlines
     }
 
+RegexPerl  = RegexFlags#"ECMAScript" | RegexFlags#"NoModS"
+RegexPOSIX = RegexFlags#"Extended"   | RegexFlags#"MatchNotDotNewline" -- RegexFlags#"NoEscapeInLists"
+
 -- Note: the default may be adjusted by in the user's init file, without using "debug Core", this way:
---   Core#"private dictionary"#"defaultRegexFlags" <- (value Core#"private dictionary"#"RegexFlags")#"NoModS"
-defaultRegexFlags = RegexFlags#"Extended" | RegexFlags#"MatchMotDotNewline"
-defaultMatchFlags = defaultRegexFlags | RegexFlags#"Nosubs" | RegexFlags#"MatchAny"
+--   Core#"private dictionary"#"defaultRegexFlags" <- RegexPerl
+defaultRegexFlags = RegexPOSIX
+defaultMatchFlags = RegexFlags#"Nosubs" | RegexFlags#"MatchAny"
 
 -----------------------------------------------------------------------------
 -- regex
@@ -73,7 +80,9 @@ selectRegexp(String, ZZ, String) := (re, n, s) -> (
 lastMatch = null
 match = method(TypicalValue => Boolean, Options => {Flags => null})
 match(String, String) := opts -> (re, str) ->
-    null =!= (lastMatch = regex(re, str, Flags => if opts.Flags =!= null then opts.Flags else defaultMatchFlags))
+    null =!= (lastMatch = regex(re, str, Flags => (
+		if opts.Flags =!= null then opts.Flags
+		else defaultRegexFlags | defaultMatchFlags)))
 
 -----------------------------------------------------------------------------
 -- replace

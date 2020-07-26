@@ -19,7 +19,7 @@ enum RegexFlags {
   icase = (1 << 5),  /* ignore case */
   nosubs = (1 << 6), /* ignore subexpressions */
   //  optimize
-  //  collate
+  collate = (1 << 8), /* make [a-b] locale sensitive */
 
   /* flags for Perl and POSIX */
   //  newline_alt
@@ -34,8 +34,8 @@ enum RegexFlags {
   //  no_empty_expressions
 
   /* flags for POSIX ERE */
-  //  no_escape_in_lists
-  //  no_bk_refs
+  no_escape_in_lists = (1 << 17), /* disable \ escapes in lists */
+  no_bk_refs = (1 << 18),         /* disable backreferences */
 
   /* The rest are based on standard Boost match flag types. */
   // https://www.boost.org/doc/libs/1_73_0/libs/regex/doc/html/boost_regex/ref/match_flag_type.html
@@ -88,8 +88,13 @@ boost::regex regex_compile(const M2_string pattern, const long flags)
   regex_flags |= flags & extended ? boost::regex::extended : 0;
   regex_flags |= flags & icase ? boost::regex::icase : 0;
   regex_flags |= flags & nosubs ? boost::regex::nosubs : 0;
+  regex_flags |= flags & collate ? boost::regex::collate : 0;
   regex_flags |= flags & no_mod_m ? boost::regex::no_mod_m : 0;
   regex_flags |= flags & no_mod_s ? boost::regex::no_mod_s : 0;
+  /* the following are on by default on POSIX ERE, so we disable them */
+  regex_flags &= flags & no_escape_in_lists ? regex_flags
+                                            : ~boost::regex::no_escape_in_lists;
+  regex_flags &= flags & no_bk_refs ? regex_flags : ~boost::regex::no_bk_refs;
 
   /* compile the state machine */
   boost::regex expression(M2_tocharstar(pattern), regex_flags);
