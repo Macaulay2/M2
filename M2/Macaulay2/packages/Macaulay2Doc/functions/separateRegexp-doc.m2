@@ -16,6 +16,8 @@ doc ///
   s:String
    the string to split
   n:ZZ
+  Flags=>ZZ
+   option for choosing the regex flavor, such as @TO "RegexPOSIX"@ and @TO "RegexPerl"@
  Outputs
   :List
     the substrings obtained by breaking {\tt s}
