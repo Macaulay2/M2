@@ -9,7 +9,7 @@
 /* Keep this enum in sync with RegexFlags in m2/regex.m2 */
 enum RegexFlags {
   /* The first section is based on standard Boost syntax option types. */
-  // https://www.boost.org/doc/libs/1_73_0/libs/regex/doc/html/boost_regex/ref/syntax_option_type/syntax_option_type_perl.html
+  // https://www.boost.org/doc/libs/release/libs/regex/doc/html/boost_regex/ref/syntax_option_type/syntax_option_type_perl.html
   perl = 0, /* ECMAScript flavor (default) */
   //  basic
   extended = (1 << 1), /* POSIX ERE flavor */
@@ -38,7 +38,7 @@ enum RegexFlags {
   no_bk_refs = (1 << 18),         /* disable backreferences */
 
   /* The rest are based on standard Boost match flag types. */
-  // https://www.boost.org/doc/libs/1_73_0/libs/regex/doc/html/boost_regex/ref/match_flag_type.html
+  // https://www.boost.org/doc/libs/release/libs/regex/doc/html/boost_regex/ref/match_flag_type.html
   //  match_not_bob
   //  match_not_eob
   //  match_not_bol

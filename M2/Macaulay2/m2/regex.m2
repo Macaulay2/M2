@@ -37,8 +37,8 @@ defaultMatchFlags = RegexFlags#"Nosubs" | RegexFlags#"MatchAny"
 
 regex' := regex
 regex = method(TypicalValue => List, Options => {Flags => null})
-regex(String,         String) := opts -> (re, str)              -> regex(re, 0,    length str, str, opts)
-regex(String, ZZ,     String) := opts -> (re, head, str)        -> regex(re, head, length str, str, opts)
+regex(String,         String) := opts -> (re,              str) -> regex(re, 0,    length str, str, opts)
+regex(String, ZZ,     String) := opts -> (re, head,        str) -> regex(re, head, length str, str, opts)
 regex(String, ZZ, ZZ, String) := opts -> (re, head, range, str) -> (
     tail := length str;
     flags := if opts.Flags =!= null then opts.Flags else defaultRegexFlags;
@@ -57,28 +57,29 @@ protect symbol regex
 
 -- previously in nets.m2
 separateRegexp = method(Options => options regex)
-separateRegexp(String,     String) := opts -> (re,    s) -> separateRegexp(re, 0, s, opts)
-separateRegexp(String, ZZ, String) := opts -> (re, n, s) -> (
+separateRegexp(String,     String) := opts -> (re,    str) -> separateRegexp(re, 0, str, opts)
+separateRegexp(String, ZZ, String) := opts -> (re, n, str) -> (
+    tail := length str;
     offset := 0;
-    while offset <= #s
+    while offset <= tail
     list (
-	m := regex(re,offset,s);
+	m := regex(re, offset, str);
 	if m#?n
-	then first (substring(s,offset,m#n#0-offset), offset = m#n#0+m#n#1)
-	else first (substring(s,offset), offset = #s + 1)))
+	then first (substring(str, offset, m#n#0 - offset), offset = m#n#0 + m#n#1)
+	else first (substring(str, offset), offset = tail + 1)))
 
 selectRegexp = method()
-selectRegexp(String,     String) := (re,    s) -> selectRegexp(re, 0, s)
-selectRegexp(String, ZZ, String) := (re, n, s) -> (
-    m := regex(re, s);
-    if m#?n then substring(m#n#0,m#n#1,s) else error "regular expression didn't match")
+selectRegexp(String,     String) := (re,    str) -> selectRegexp(re, 0, str)
+selectRegexp(String, ZZ, String) := (re, n, str) -> (
+    m := regex(re, str);
+    if m#?n then substring(m#n#0, m#n#1, str) else error "regular expression didn't match")
 
 -----------------------------------------------------------------------------
 -- match
 -----------------------------------------------------------------------------
 
 lastMatch = null
-match = method(TypicalValue => Boolean, Options => {Flags => null})
+match = method(TypicalValue => Boolean, Options => options regex)
 match(String, String) := opts -> (re, str) ->
     null =!= (lastMatch = regex(re, str, Flags => (
 		if opts.Flags =!= null then opts.Flags
