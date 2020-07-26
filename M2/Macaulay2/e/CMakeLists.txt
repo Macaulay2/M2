@@ -98,7 +98,6 @@ set(CPPONLYFILES
   ntl-debugio.cpp
   ntl-internal.cpp
   rand.cpp
-  regex.cpp
   res-a2-gb.cpp
   ring-vecs.cpp
   x-aring.cpp
@@ -310,7 +309,7 @@ target_include_directories(M2-engine PUBLIC
   $<INSTALL_INTERFACE:include/Macaulay2>)
 
 # TODO: make engine independent of interpreter headers
-target_link_libraries(M2-engine PUBLIC M2-interpreter Boost::regex)
+target_link_libraries(M2-engine PUBLIC M2-interpreter)
 
 if(EIGEN3_FOUND)
   target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)

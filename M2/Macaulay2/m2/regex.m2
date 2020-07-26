@@ -2,41 +2,56 @@
 -- Enum for passing internal flags to the regex engine
 -----------------------------------------------------------------------------
 
--- Keep this enum in sync with RawRegexFlags in Macaulay2/e/regex.cpp
-RawRegexFlags = new HashTable from {
-  "REGEX_FLAVOR_ECMAScript" => (1 << 0), -- ECMAScript flavor (default)
-  "REGEX_FLAVOR_BASIC"      => (1 << 1), -- POSIX BRE flavor
-  "REGEX_FLAVOR_EXTENDED"   => (1 << 2), -- POSIX ERE flavor
+-- Keep this enum in sync with RegexFlags in Macaulay2/e/regex.cpp
+RegexFlags = new HashTable from {
+    "ECMAScript" => 0,        -- ECMAScript flavor (default)
+    "Extended"   => (1 << 1), -- POSIX ERE flavor
 
-  "REGEX_SYNTAX_ICASE"    => (1 << 8),  -- ignore case
-  "REGEX_SYNTAX_NOSUBS"   => (1 << 9),  -- ignore subexpressions
-  "REGEX_SYNTAX_NO_MOD_M" => (1 << 14), -- don't match ^ $ with newlines
-  -- Note: this one is forced in e/regex.cpp for backwards compatibility
-  "REGEX_SYNTAX_NO_MOD_S" => (1 << 15), -- don't match . with newlines
+    "Icase"      => (1 << 5),  -- ignore case
+    "Nosubs"     => (1 << 6),  -- ignore subexpressions
 
-  "REGEX_MATCH_ANY"        => (1 << 16), -- return any match
-  "REGEX_MATCH_CONTINUOUS" => (1 << 17), -- match must start at the beginning
-  }
+    "NoModM"     => (1 << 12), -- don't match ^ $ with newlines
+    "NoModS"     => (1 << 13), -- don't match . with newlines
 
-defaultRegexFlags := RawRegexFlags#"REGEX_FLAVOR_ECMAScript" | RawRegexFlags#"REGEX_SYNTAX_NO_MOD_S";
+    "MatchAny"           => (1 << 25), -- return any match
+    "MatchContinuous"    => (1 << 27), -- match must start at the beginning
+    "MatchPrevAvail"     => (1 << 30), -- lead-1 is a valid iterator position
+    "MatchMotDotNewline" => (1 << 31), -- doesn't match . with newlines
+    }
 
-defaultMatchFlags := defaultRegexFlags | RawRegexFlags#"REGEX_SYNTAX_NOSUBS" | RawRegexFlags#"REGEX_MATCH_ANY";
+-- Note: the default may be adjusted by in the user's init file, without using "debug Core", this way:
+--   Core#"private dictionary"#"defaultRegexFlags" <- (value Core#"private dictionary"#"RegexFlags")#"NoModS"
+defaultRegexFlags = RegexFlags#"Extended" | RegexFlags#"MatchMotDotNewline"
+defaultMatchFlags = defaultRegexFlags | RegexFlags#"Nosubs" | RegexFlags#"MatchAny"
 
 -----------------------------------------------------------------------------
 -- regex
 -----------------------------------------------------------------------------
 
-rawRegex := regex
-regex = method(TypicalValue => List)
-regex(String, String)         := (re,             str) -> rawRegex(re,             str, defaultRegexFlags)
-regex(String, ZZ, String)     := (re, head,       str) -> rawRegex(re, head,       str, defaultRegexFlags)
-regex(String, ZZ, ZZ, String) := (re, head, tail, str) -> rawRegex(re, head, tail, str, defaultRegexFlags)
+regex' := regex
+regex = method(TypicalValue => List, Options => {Flags => null})
+regex(String,         String) := opts -> (re, str)              -> regex(re, 0,    length str, str)
+regex(String, ZZ,     String) := opts -> (re, head, str)        -> regex(re, head, length str, str)
+regex(String, ZZ, ZZ, String) := opts -> (re, head, range, str) -> (
+    tail := length str;
+    flags := if opts.Flags =!= null then opts.Flags else defaultRegexFlags;
+    if head + range >= tail then return regex'(re, head, tail, str, flags);
+    -- When head + range != tail, this is backwards compatible with GNU regex in Extended POSIX flavor;
+    -- however, the lookbehind feature of ECMAScript flavor doesn't work in this case.
+    flags = flags | (if head + range != tail then RegexFlags#"MatchContinuous" else 0);
+    if range >= 0
+    then for lead from 0 to range when head + lead <= tail do (
+	ret := regex'(re, head + lead, tail, str, flags);
+	if ret =!= null then return ret)
+    else for lead from 0 to -range when head - lead >= 0 do (
+	ret := regex'(re, head - lead, tail, str, flags);
+	if ret =!= null then return ret))
 protect symbol regex
 
 -- previously in nets.m2
-separateRegexp = method()
-separateRegexp(String,String) := (re,s) -> separateRegexp(re,0,s)
-separateRegexp(String,ZZ,String) := (re,n,s) -> (
+separateRegexp = method(Options => options regex)
+separateRegexp(String,     String) := opts -> (re,    s) -> separateRegexp(re, 0, s)
+separateRegexp(String, ZZ, String) := opts -> (re, n, s) -> (
     offset := 0;
     while offset <= #s
     list (
@@ -46,7 +61,7 @@ separateRegexp(String,ZZ,String) := (re,n,s) -> (
 	else first (substring(s,offset), offset = #s + 1)))
 
 selectRegexp = method()
-selectRegexp(String, String)     := (re,    s) -> selectRegexp(re, 0, s)
+selectRegexp(String,     String) := (re,    s) -> selectRegexp(re, 0, s)
 selectRegexp(String, ZZ, String) := (re, n, s) -> (
     m := regex(re, s);
     if m#?n then substring(m#n#0,m#n#1,s) else error "regular expression didn't match")
@@ -56,15 +71,18 @@ selectRegexp(String, ZZ, String) := (re, n, s) -> (
 -----------------------------------------------------------------------------
 
 lastMatch = null
-match = method(TypicalValue => Boolean)
-match(String, String) := (re, str) -> null =!= (lastMatch = rawRegex(re, str, defaultMatchFlags))
+match = method(TypicalValue => Boolean, Options => {Flags => null})
+match(String, String) := opts -> (re, str) ->
+    null =!= (lastMatch = regex(re, str, Flags => if opts.Flags =!= null then opts.Flags else defaultMatchFlags))
 
 -----------------------------------------------------------------------------
 -- replace
 -----------------------------------------------------------------------------
 
 -- previously in methods.m2
-replace(String, String, String) := String => regexReplace
+replace = method(Options => options regex)
+replace(String, String, String) := String => opts -> (re, s, r) ->
+    regexReplace(re, s, r, if opts.Flags =!= null then opts.Flags else defaultRegexFlags)
 
 -- previously in html0.m2
 toLower = s -> replace("(\\w+)", "\\L$1", s)

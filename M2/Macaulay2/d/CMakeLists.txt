@@ -24,6 +24,8 @@ set(CLIST
   gdbm_interface.c
   )
 
+set(CXXLIST boost-regex.cpp)
+
 # CAUTION: order is important in this list
 # TODO: can there be #ifdefs in D sources?
 set(DLIST
@@ -61,7 +63,7 @@ set(DLIST
   convertr.d
   common.d
   util.d
-  regex.d
+  regex.dd
   struct.d
   classes.dd
   buckets.dd
@@ -110,7 +112,7 @@ if(ETAGS)
   set_source_files_properties(TAGS PROPERTIES GENERATED true)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/TAGS
     COMMENT "Generating d/TAGS file"
-    COMMAND ${ETAGS} -o TAGS ${CLIST} ${DLIST}
+    COMMAND ${ETAGS} -o TAGS ${CLIST} ${CXXLIST} ${DLIST}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
@@ -128,12 +130,12 @@ endforeach()
 
 # TODO: gmp.d, basic.d, and equality.d require elements from M2-engine
 # for that reason, interpreter cannot be compiled as a static library, yet
-add_library(M2-interpreter OBJECT ${CLIST} ${TAGS}
+add_library(M2-interpreter OBJECT ${CLIST} ${CXXLIST} ${TAGS}
   distributed-packages.h
   $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
   $<$<BOOL:${WITH_PYTHON}>:python-c.c>)
 
-target_link_libraries(M2-interpreter PRIVATE M2-supervisor)
+target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex)
 
 target_include_directories(M2-interpreter
   PUBLIC

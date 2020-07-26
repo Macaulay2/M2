@@ -148,6 +148,7 @@ export {
 	"FilePosition",
 	"FindOne",
 	"First",
+	"Flags",
 	"FlatMonoid",
 	"Flexible",
 	"FollowLinks",
