@@ -37,8 +37,8 @@ defaultMatchFlags = RegexFlags#"Nosubs" | RegexFlags#"MatchAny"
 
 regex' := regex
 regex = method(TypicalValue => List, Options => {Flags => null})
-regex(String,         String) := opts -> (re, str)              -> regex(re, 0,    length str, str)
-regex(String, ZZ,     String) := opts -> (re, head, str)        -> regex(re, head, length str, str)
+regex(String,         String) := opts -> (re, str)              -> regex(re, 0,    length str, str, opts)
+regex(String, ZZ,     String) := opts -> (re, head, str)        -> regex(re, head, length str, str, opts)
 regex(String, ZZ, ZZ, String) := opts -> (re, head, range, str) -> (
     tail := length str;
     flags := if opts.Flags =!= null then opts.Flags else defaultRegexFlags;
@@ -57,7 +57,7 @@ protect symbol regex
 
 -- previously in nets.m2
 separateRegexp = method(Options => options regex)
-separateRegexp(String,     String) := opts -> (re,    s) -> separateRegexp(re, 0, s)
+separateRegexp(String,     String) := opts -> (re,    s) -> separateRegexp(re, 0, s, opts)
 separateRegexp(String, ZZ, String) := opts -> (re, n, s) -> (
     offset := 0;
     while offset <= #s
