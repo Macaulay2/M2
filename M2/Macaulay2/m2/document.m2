@@ -542,7 +542,7 @@ separateM2output String := r -> (
      m := regex("^i1 : ",r);
      if m#?0 then r = substring(m#0#0,r);
      while r#?-1 and r#-1 == "\n" do r = substring(0,#r-1,r);
-     separateRegexp(M2outputRE,M2outputREindex,r))
+     separate(M2outputRE,M2outputREindex,r))
 
 makeExampleOutputFileName := (fkey,pkg) -> (			 -- may return 'null'
      if pkg#?"package prefix" and pkg#"package prefix" =!= null 

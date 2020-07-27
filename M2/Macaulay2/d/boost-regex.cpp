@@ -13,6 +13,7 @@ enum RegexFlags {
   perl = 0, /* ECMAScript flavor (default) */
   //  basic
   extended = (1 << 1), /* POSIX ERE flavor */
+  literal = (1 << 2),  /* treat the pattern text as literal */
   //  awk
   //  grep
   //  egrep
@@ -45,8 +46,8 @@ enum RegexFlags {
   //  match_not_eol
   //  match_not_bow
   //  match_not_eow
-  match_any = (1 << 25), /* return any match */
-  //  match_not_null
+  match_any = (1 << 25),        /* return any match */
+  match_not_null = (1 << 26),   /* match must be nonempty */
   match_continuous = (1 << 27), /* match must start at the beginning */
   //  match_partial
   //  match_single_line
@@ -67,6 +68,7 @@ enum RegexFlags {
   //  format_all
 };
 
+/* returns a compile state machine for regex */
 boost::regex regex_compile(const M2_string pattern, const long flags)
 {
   typedef std::pair<int /* pattern_hash */, long /* flags */> ExpressionKey;
@@ -83,9 +85,9 @@ boost::regex regex_compile(const M2_string pattern, const long flags)
 
   /* parse and set the flags */
   boost::regex_constants::syntax_option_type regex_flags =
-      boost::regex::no_except; /* don't throw exceptions */
-  regex_flags |= flags & perl ? boost::regex::ECMAScript : 0;
+      boost::regex::no_except; /* never throw exceptions */
   regex_flags |= flags & extended ? boost::regex::extended : 0;
+  regex_flags |= flags & literal ? boost::regex::literal : 0;
   regex_flags |= flags & icase ? boost::regex::icase : 0;
   regex_flags |= flags & nosubs ? boost::regex::nosubs : 0;
   regex_flags |= flags & collate ? boost::regex::collate : 0;
@@ -114,6 +116,8 @@ boost::regex regex_compile(const M2_string pattern, const long flags)
 
 extern "C" {
 
+/* returns an array of pairs (s, r), indicating starting point
+ * and length of the first match and its capture groups */
 M2_arrayint regex_search(const M2_string pattern,
                          const size_t start,
                          const size_t range,
@@ -141,6 +145,7 @@ M2_arrayint regex_search(const M2_string pattern,
 
   boost::regex_constants::match_flag_type flag = boost::match_default;
   flag |= flags & match_any ? boost::match_any : flag;
+  flag |= flags & match_not_null ? boost::match_not_null : flag;
   flag |= flags & match_continuous ? boost::match_continuous : flag;
   flag |= flags & match_not_dot_newline ? boost::match_not_dot_newline : flag;
   flag |= start > 0 ? boost::match_prev_avail : flag;
@@ -158,20 +163,21 @@ M2_arrayint regex_search(const M2_string pattern,
   return m;
 }
 
+/* returns a string where matched substrings are formatted according to input */
 M2_string regex_replace(const M2_string pattern,
                         const int start,
                         const int range,
-                        const M2_string replacement,
+                        const M2_string format,
                         const M2_string text,
                         long flags)
 {
 #if DEBUG_REGEX & 4
-  std::cerr << "subst.:\t" << M2_tocharstar(replacement) << std::endl
+  std::cerr << "format:\t" << M2_tocharstar(format) << std::endl
             << "string:\t" << M2_tocharstar(text) << std::endl;
 #endif
 
   /* setting the default flags for replace */
-  flags = flags == -1 ? perl | nosubs | no_mod_s : flags;
+  flags = flags == -1 ? perl | no_mod_s : flags;
 
   auto expression = regex_compile(pattern, flags);
   if (expression.status() != 0) return text;
@@ -183,32 +189,35 @@ M2_string regex_replace(const M2_string pattern,
   auto tail = (const char*)&text->array + start + range;
 
   // TODO: add format_first_only option
-  boost::regex_constants::match_flag_type flag = boost::match_default;
+  boost::regex_constants::match_flag_type flag = boost::format_default;
   flag |= flags & match_not_dot_newline ? boost::match_not_dot_newline : flag;
   flag |= start > 0 ? boost::match_prev_avail : flag;
 
-  auto substitute = M2_tocharstar(replacement);
+  auto substitute = M2_tocharstar(format);
   boost::regex_replace(stream_iter, head, tail, expression, substitute, flag);
 
   std::string output(stream.str());
   return M2_tostring(output.c_str());
 }
 
-M2_ArrayString regex_select(const M2_string pattern,
+/* returns an array of substrings of text matching the pattern,
+ * where each match is formatted according to format */
+M2_ArrayString regex_format(const M2_string pattern,
                             int start,
                             int range,
-                            const M2_string replacement,
+                            const M2_string format,
                             const M2_string text,
                             long flags)
 {
 #if DEBUG_REGEX & 8
-  std::cerr << "subst.:\t" << M2_tocharstar(replacement) << std::endl
+  std::cerr << "format:\t" << M2_tocharstar(format) << std::endl
             << "string:\t" << M2_tocharstar(text) << std::endl;
 #endif
 
-  /* setting the default flags for select */
-  flags = flags == -1 ? perl | nosubs | no_mod_s : flags;
+  /* setting the default flags for format */
+  flags = (flags == -1 ? perl | no_mod_s : flags) | match_not_null;
 
+  std::string str;
   std::vector<std::string> strings;
   std::vector<char*> cstrings;
 
@@ -218,14 +227,58 @@ M2_ArrayString regex_select(const M2_string pattern,
       if (match->len == 0) break;
 
       auto pair = match->array;
-      auto part =
-          regex_replace(pattern, pair[0], pair[1], replacement, text, flags);
+      auto part = regex_replace(pattern, pair[0], pair[1], format, text, flags);
 
-      std::string str = M2_tocharstar(part);
+      str = M2_tocharstar(part);
       strings.push_back(str);
 
       range = start + range - pair[0] - pair[1];
       start = pair[0] + pair[1];
+    }
+
+  cstrings.reserve(strings.size());
+
+  for (auto& str : strings) cstrings.push_back(&str[0]);
+  return M2_tostrings(cstrings.size(), cstrings.data());
+}
+
+/* returns a an array of substrings of text separated by the pattern */
+M2_ArrayString regex_separate(const M2_string pattern,
+                              int start,
+                              int range,
+                              const M2_string text,
+                              long flags)
+{
+#if DEBUG_REGEX & 16
+  std::cerr << "string:\t" << M2_tocharstar(text) << std::endl;
+#endif
+
+  /* setting the default flags for separate */
+  flags = (flags == -1 ? perl | no_mod_s : flags) | match_not_null;
+
+  std::string str;
+  std::vector<std::string> strings;
+  std::vector<char*> cstrings;
+
+  while (start < text->len)
+    {
+      auto match = regex_search(pattern, start, range, text, flags);
+      if (match->len == 0) break;
+
+      auto pair = match->array;
+      auto part = M2_substr(text, start, pair[0] - start);
+
+      str = M2_tocharstar(part);
+      strings.push_back(str);
+
+      range = start + range - pair[0] - pair[1];
+      start = pair[0] + pair[1];
+    }
+
+  if (start <= text->len)
+    {
+      str = M2_tocharstar(M2_substr(text, start, text->len - start));
+      strings.push_back(str);
     }
 
   cstrings.reserve(strings.size());

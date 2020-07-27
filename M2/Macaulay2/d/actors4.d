@@ -126,7 +126,7 @@ select(n:int,f:Expr):Expr := (
 	  else if y != False then return buildErrorPacket("select: expected predicate to yield true or false");
 	  );
      Expr(list(new Sequence len found do foreach p at i in b do if p then provide toExpr(i))));
-select(pat:string,rep:string,subj:string,ignorecase:bool):Expr := regexSelect(pat,rep,subj,ignorecase);
+select(pat:string,rep:string,subj:string,ignorecase:bool):Expr := regexFormat(pat, rep, subj, ignorecase); -- see regex.dd
 select(e:Expr,f:Expr,ignorecase:bool):Expr := (
      when e
      is pat:stringCell do (
@@ -985,19 +985,6 @@ lines(s:string,ch:string):Expr := (
      then Expr(lines(s,ch.0,ch.1))
      else WrongArg(1,"a string of length 1 or 2")
      );
-linesfun(e:Expr):Expr := (
-     when e
-     is a:Sequence do
-     if length(a) == 2 then
-     when a.1
-     is s:stringCell do
-     when a.0 is ch:stringCell do lines(s.v,ch.v)
-     else WrongArgString(1)
-     else WrongArgString(2)
-     else WrongNumArgs(2)
-     is s:stringCell do linesE(s.v)
-     else WrongArgString());
-setupfun("separate",linesfun);
 
 tostring(n:MysqlConnection):string := tostring(Ccode(constcharstarOrNull, "
      #if WITH_MYSQL

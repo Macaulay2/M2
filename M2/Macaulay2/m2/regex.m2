@@ -6,6 +6,7 @@
 RegexFlags = new HashTable from {
     "ECMAScript" => 0,        -- ECMAScript flavor (default)
     "Extended"   => (1 << 1), -- POSIX ERE flavor
+    "Literal"    => (1 << 2), -- treat the pattern text as literal
 
     "Icase"  => (1 << 5),  -- ignore case
     "Nosubs" => (1 << 6),  -- ignore subexpressions
@@ -32,6 +33,12 @@ defaultRegexFlags = RegexPOSIX
 defaultMatchFlags = RegexFlags#"Nosubs" | RegexFlags#"MatchAny"
 
 -----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
+
+defaultOpts := (opt, def) -> if opt =!= null then opt else def
+
+-----------------------------------------------------------------------------
 -- regex
 -----------------------------------------------------------------------------
 
@@ -41,7 +48,7 @@ regex(String,         String) := opts -> (re,              str) -> regex(re, 0, 
 regex(String, ZZ,     String) := opts -> (re, head,        str) -> regex(re, head, length str, str, opts)
 regex(String, ZZ, ZZ, String) := opts -> (re, head, range, str) -> (
     tail := length str;
-    flags := if opts.Flags =!= null then opts.Flags else defaultRegexFlags;
+    flags := defaultOpts(opts.Flags, defaultRegexFlags);
     if head + range >= tail then return regex'(re, head, tail, str, flags);
     -- When head + range != tail, this is backwards compatible with GNU regex in Extended POSIX flavor;
     -- however, the lookbehind feature of ECMAScript flavor doesn't work in this case.
@@ -55,18 +62,32 @@ regex(String, ZZ, ZZ, String) := opts -> (re, head, range, str) -> (
 	if ret =!= null then return ret))
 protect symbol regex
 
--- previously in nets.m2
-separateRegexp = method(Options => options regex)
-separateRegexp(String,     String) := opts -> (re,    str) -> separateRegexp(re, 0, str, opts)
-separateRegexp(String, ZZ, String) := opts -> (re, n, str) -> (
-    tail := length str;
-    offset := 0;
-    while offset <= tail
-    list (
-	m := regex(re, offset, str);
+-----------------------------------------------------------------------------
+-- separate
+-----------------------------------------------------------------------------
+
+separate' = separate
+separate = method(TypicalValue => List, Options => options regex)
+separate(            String) := opts -> (       str) -> separate'("\r?\n", str, -1)
+separate(String,     String) := opts -> (re,    str) -> separate'(re, str, defaultOpts(opts.Flags, RegexFlags#"Literal"))
+separate(String, ZZ, String) := opts -> (re, n, str) -> (
+    (offset, tail) := (0, length str);
+    while offset <= tail list (
+	m := regex(re, offset, tail, str);
 	if m#?n
 	then first (substring(str, offset, m#n#0 - offset), offset = m#n#0 + m#n#1)
 	else first (substring(str, offset), offset = tail + 1)))
+protect symbol separate
+
+-- TODO: deprecate this
+separateRegexp = method(TypicalValue => List, Options => options regex)
+separateRegexp(String, String) := opts -> (re, str) -> separate(re, str, Flags =>
+    defaultOpts(opts.Flags, defaultRegexFlags))
+separateRegexp(String, ZZ, String) := lookup(separate, String, ZZ, String)
+
+-----------------------------------------------------------------------------
+-- select / format
+-----------------------------------------------------------------------------
 
 selectRegexp = method()
 selectRegexp(String,     String) := (re,    str) -> selectRegexp(re, 0, str)
@@ -81,10 +102,9 @@ selectRegexp(String, ZZ, String) := (re, n, str) -> (
 lastMatch = null
 match = method(TypicalValue => Boolean, Options => options regex)
 match(String, String) := opts -> (re, str) ->
-    null =!= (lastMatch = regex(re, str, Flags => (
-		if opts.Flags =!= null then opts.Flags
-		else defaultRegexFlags | defaultMatchFlags)))
-match(List, String) := opts -> (rs, str) -> any(rs, re -> match(re, str, opts))
+    null =!= (lastMatch = regex(re, str, Flags =>
+	    defaultOpts(opts.Flags, defaultRegexFlags | defaultMatchFlags)))
+match(List,   String) := opts -> (rs, str) -> any(rs, re -> match(re, str, opts))
 
 -----------------------------------------------------------------------------
 -- replace
@@ -93,7 +113,7 @@ match(List, String) := opts -> (rs, str) -> any(rs, re -> match(re, str, opts))
 -- previously in methods.m2
 replace = method(Options => options regex)
 replace(String, String, String) := String => opts -> (re, s, r) ->
-    regexReplace(re, s, r, if opts.Flags =!= null then opts.Flags else defaultRegexFlags)
+    regexReplace(re, s, r, defaultOpts(opts.Flags, defaultRegexFlags))
 
 -- previously in html0.m2
 toLower = s -> replace("(\\w+)", "\\L$1", s)
