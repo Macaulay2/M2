@@ -88,9 +88,8 @@ doc ///
     "regular expressions"
     match
     replace
+    separate
     regexQuote
-    separateRegexp
-    (select, String, String)
     (select, String, String, String)
     substring
 ///
@@ -195,9 +194,8 @@ doc ///
     match
     regex
     replace
-    (select, String, String)
+--    separate -- TODO: fix the repeated reference warning
     (select, String, String, String)
-    separateRegexp
   Caveat
     Regular expression matching is done by calls to a C library, where the convention is that
     the end of a string is signalled by a byte containing zero, whereas in Macaulay2, strings may contain

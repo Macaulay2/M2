@@ -1,51 +1,47 @@
---- status: TODO
---- author(s): 
---- notes: 
+--- status: Rewritten July 2020
+--- author(s): Mahrud
+--- notes:
 
-document { 
-     Key => select,
-     Headline => "select from a list, hash table, or string",
-     SeeAlso => {partition}
-     }
+doc ///
+  Key
+    select
+  Headline
+    select from a list, hash table, or string
+  SeeAlso
+    partition
+///
 
-document {
-     Key => (select,String,String),
-     Headline => "select substrings matching a regular expression from a string",
-     Usage => "select(p,s)",
-     Inputs => {
-	  "p" => "a regular expression describing a pattern",
-	  "s" => "a subject string to be searched"
-	  },
-     Outputs => {
-	  {"a list of nonoverlapping substrings of ", TT "s", " matching the pattern ", TT "p"}
-	  },
-     EXAMPLE {
-	  ///sort select("[[:alpha:]]+","Dog, cat, and deer.")///,
-	  ///select("^.*$","asdf\nqwer\nqewr")///
-	  },
-     SeeAlso => {(select,String,String,String), "regular expressions"}
-     }
-
-document {
-     Key => (select,String,String,String),
-     Headline => "select substrings matching a regular expression from a string",
-     Usage => "select(p,r,s)",
-     Inputs => {
-	  "p" => "a regular expression describing a pattern",
-	  "r" => "a replacement string",
-	  "s" => "a subject string to be searched"
-	  },
-     Outputs => {
-	  {"the list with one entry for each substring of ", TT "s", " matching ", TT "p", ", obtained
-	       	from ", TT "r", " by replacing each occurrence of a backslash and
-		a digit by the string matching the corresponding parenthesized
-		subexpression of ", TT "p"}
-	  },
-     EXAMPLE {
-	  ///select("([a-z]+);","\\1","dog; cat, deer;")///
-	  },
-     SeeAlso => {(select,String,String), "regular expressions"}
-     }
+doc ///
+  Key
+    (select, String, String, String)
+    (select, String, String)
+  Headline
+    select or format substrings matching a regular expression
+  Usage
+    l = select(re, form, str)
+    l = select(re, str)
+  Inputs
+    re:String
+      a regular expression describing a pattern
+    str:String
+      a subject string to be searched
+    form:String
+      a replacement or regex formatting string
+  Outputs
+    l:List
+      a list of mutually exclusive substrings of @TT "str"@ matching the pattern @TT "re"@;
+      if @TT "form"@ is given, the matching substrings are formatted according to it by replacing
+      each occurrence of @TT "\\1"@, @TT "\\2"@, ... or @TT "$1"@, @TT "$2"@, ... with the string
+      matching the corresponding parenthesized subexpression of @TT "p"@.
+  Description
+    Example
+      select("[[:alpha:]]+", "Dog, cat, and deer.")
+      select("^.*$", "asdf\nqwer\nqewr")
+    Example
+      select("([a-z]+);", "$1", "dog; cat, deer;")
+  SeeAlso
+    "regular expressions"
+///
 
 document { 
      Key => (select,ZZ,BasicList,Function),

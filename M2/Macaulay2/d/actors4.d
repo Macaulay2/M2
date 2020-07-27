@@ -924,68 +924,6 @@ substrfun(e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("substring",substrfun);
 
-linesE(s:string):Expr := (
-     v := lines(s);
-     list(new Sequence len length(v) do foreach t in v do provide toExpr(t)));
-lines(s:string,c:char):Expr := (
-     nlines := 1;
-     i := 0;
-     while true do (
-	  j := index(s,i,c);
-	  if j == -1 then (
-     	       -- if i != length(s) then nlines = nlines + 1;
-	       break;
-	       );
-	  i = j+1;
-	  nlines = nlines + 1;
-	  );
-     i = 0;
-     list(new Sequence len nlines do (
-	       while true do (
-		    j := index(s,i,c);
-		    if j == -1 then (
-			 -- if i != length(s) then provide Expr(substr(s,i));
-			 provide toExpr(substr(s,i));
-			 break;
-			 )
-		    else (
-			 provide toExpr(substr(s,i,j-i));
-			 i = j+1;
-			 )))));
-lines(s:string,c:char,d:char):Expr := (
-     -- nlines := 0;
-     nlines := 1;
-     i := 0;
-     while true do (
-	  j := index(s,i,c,d);
-	  if j == -1 then (
-     	       -- if i != length(s) then nlines = nlines + 1;
-	       break;
-	       );
-	  i = j+2;
-	  nlines = nlines + 1;
-	  );
-     i = 0;
-     list(new Sequence len nlines do (
-	       while true do (
-		    j := index(s,i,c,d);
-	  	    if j == -1 then (
-			 -- if i != length(s) then provide Expr(substr(s,i));
-			 provide toExpr(substr(s,i));
-			 break;
-			 )
-		    else (
-			 provide toExpr(substr(s,i,j-i));
-			 i = j+2;
-			 )))));
-lines(s:string,ch:string):Expr := (
-     if length(ch) == 1
-     then Expr(lines(s,ch.0))
-     else if length(ch) == 2
-     then Expr(lines(s,ch.0,ch.1))
-     else WrongArg(1,"a string of length 1 or 2")
-     );
-
 tostring(n:MysqlConnection):string := tostring(Ccode(constcharstarOrNull, "
      #if WITH_MYSQL
        mysql_get_host_info(", n, ")

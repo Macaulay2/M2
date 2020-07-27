@@ -6,6 +6,7 @@ doc ///
   Key
      match
     (match, String, String)
+    [match, Flags]
     "lastMatch"
   Headline
     regular expression matching

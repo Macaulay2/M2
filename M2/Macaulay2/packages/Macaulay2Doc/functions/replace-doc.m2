@@ -12,6 +12,7 @@ doc ///
 doc ///
   Key
     (replace, String, String, String)
+    [replace, Flags]
   Headline
     regular expression replacement of substrings
   Usage
