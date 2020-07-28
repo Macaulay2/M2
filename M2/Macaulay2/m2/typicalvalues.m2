@@ -87,13 +87,6 @@ openListener String := File => openListener
 pack(BasicList,ZZ) := List => pack
 pack(ZZ,BasicList) := List => pack
 reverse BasicList := BasicList => reverse
-select(String,String) := List => select
-select(String,String,String) := List => select
-select(BasicList,Function) := BasicList => select
-select(HashTable,Function) := HashTable => select
-select(ZZ,Function) := List => select
-select(ZZ,BasicList,Function) := BasicList => select
-select(ZZ,HashTable,Function) := HashTable => select
 set VisibleList := Set => set
 tally VisibleList := Tally => tally
 splice BasicList := BasicList => splice

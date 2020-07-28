@@ -144,7 +144,7 @@ lastWI := 0
      
 loads := minimizeFilename concatenate(currentFileDirectory, "loadsequence")
 if notify then stderr << "--about to read " << loads << endl
-scan(select("^\\w+\\.m2", get loads), load)
+scan(select("^\\w+\\.m2", "$&", get loads, -1), load)
 if notify then stderr << "--read " << loads << endl
 
 -- after this point, private global symbols, such as noinitfile, are no longer visible

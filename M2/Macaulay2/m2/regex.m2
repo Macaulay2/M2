@@ -75,25 +75,23 @@ separate(String, ZZ, String) := opts -> (re, n, str) -> (
     while offset <= tail list (
 	m := regex(re, offset, tail, str);
 	if m#?n
-	then first (substring(str, offset, m#n#0 - offset), offset = m#n#0 + m#n#1)
+	then first (substring(str, offset, m#n#0 - offset), offset = m#n#0 + max(1, m#n#1))
 	else first (substring(str, offset), offset = tail + 1)))
 protect symbol separate
 
 -- TODO: deprecate this
 separateRegexp = method(TypicalValue => List, Options => options regex)
-separateRegexp(String, String) := opts -> (re, str) -> separate(re, str, Flags =>
-    defaultOpts(opts.Flags, defaultRegexFlags))
+separateRegexp(String, String) := opts -> (re, str) -> separate'(re, str,  defaultOpts(opts.Flags, defaultRegexFlags))
 separateRegexp(String, ZZ, String) := lookup(separate, String, ZZ, String)
 
 -----------------------------------------------------------------------------
--- select / format
+-- select
 -----------------------------------------------------------------------------
 
-selectRegexp = method(Options => options regex)
-selectRegexp(String,     String) := opts -> (re,    str) -> selectRegexp(re, 0, str, opts)
-selectRegexp(String, ZZ, String) := opts -> (re, n, str) -> (
-    m := regex(re, str, opts);
-    if m#?n then substring(m#n, str) else error "regular expression didn't match")
+select(String,         String) := List => opts -> (re,       str) -> select(re, "$&", str, opts)
+select(String, String, String) := List => opts -> (re, form, str) -> (
+    select'(re, form, str, defaultOpts(opts.Flags, defaultRegexFlags)))
+protect symbol select
 
 -----------------------------------------------------------------------------
 -- match
@@ -101,10 +99,10 @@ selectRegexp(String, ZZ, String) := opts -> (re, n, str) -> (
 
 lastMatch = null
 match = method(TypicalValue => Boolean, Options => options regex)
+match(List,   String) := opts -> (rs, str) -> any(rs, re -> match(re, str, opts))
 match(String, String) := opts -> (re, str) ->
     null =!= (lastMatch = regex(re, str, Flags =>
 	    defaultOpts(opts.Flags, defaultRegexFlags | defaultMatchFlags)))
-match(List,   String) := opts -> (rs, str) -> any(rs, re -> match(re, str, opts))
 
 -----------------------------------------------------------------------------
 -- replace

@@ -3,7 +3,7 @@ use common;
 use util;
 
 import search  (pattern:string, start:int, range:int,                      text:string, flags:long):array(int);
-import format  (pattern:string, start:int, range:int, replacement: string, text:string, flags:long):array(string);
+import select  (pattern:string, start:int, range:int, replacement: string, text:string, flags:long):array(string);
 import replace (pattern:string, start:int, range:int, replacement: string, text:string, flags:long):string;
 import separate(pattern:string, start:int, range:int,                      text:string, flags:long):array(string);
 
@@ -90,7 +90,5 @@ regexSeparate(e:Expr):Expr := (
 setupfun("separate", regexSeparate).Protected = false; -- will be overloaded in m2/regex.m2
 
 -- used in actors4.d
-export regexFormat(regexp:string,replacement:string,text:string,ignorecase:bool):Expr := (
-    flags := long(-1);
-    if ignorecase then flags = long((1<<1)|(1<<5)|(1<<31)); -- indicated case insensitive POSIX Extended flavor
-    toExpr(format(regexp, 0, length(text), replacement, text, flags)));
+export regexSelect(regexp:string, form:string, text:string, flags:long):Expr := (
+    toExpr(select(regexp, 0, length(text), form, text, flags)));

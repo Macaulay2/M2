@@ -202,7 +202,7 @@ M2_string regex_replace(const M2_string pattern,
 
 /* returns an array of substrings of text matching the pattern,
  * where each match is formatted according to format */
-M2_ArrayString regex_format(const M2_string pattern,
+M2_ArrayString regex_select(const M2_string pattern,
                             int start,
                             int range,
                             const M2_string format,
@@ -214,7 +214,7 @@ M2_ArrayString regex_format(const M2_string pattern,
             << "string:\t" << M2_tocharstar(text) << std::endl;
 #endif
 
-  /* setting the default flags for format */
+  /* setting the default flags for select */
   flags = (flags == -1 ? perl | no_mod_s : flags) | match_not_null;
 
   std::string str;

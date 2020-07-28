@@ -126,15 +126,8 @@ select(n:int,f:Expr):Expr := (
 	  else if y != False then return buildErrorPacket("select: expected predicate to yield true or false");
 	  );
      Expr(list(new Sequence len found do foreach p at i in b do if p then provide toExpr(i))));
-select(pat:string,rep:string,subj:string,ignorecase:bool):Expr := regexFormat(pat, rep, subj, ignorecase); -- see regex.dd
-select(e:Expr,f:Expr,ignorecase:bool):Expr := (
-     when e
-     is pat:stringCell do (
-     	  when f is subj:stringCell
-	  do select(pat.v,"$&",subj.v,ignorecase)
-     	  else WrongArgString(2)
-	  )
-     is obj:HashTable do (
+select(e:Expr,f:Expr):Expr := (
+     when e is obj:HashTable do (
 	  if obj.Mutable then return WrongArg(0+1,"an immutable hash table");
 	  u := newHashTable(obj.Class,obj.parent);
 	  u.beingInitialized = true;
@@ -180,14 +173,16 @@ select(n:int,a:Sequence,f:Expr):Expr := (
 	  else b.i = false);
      new Sequence len found do (
 	  foreach p at i in b do if p then provide a.i));
-select(n:Expr,e:Expr,f:Expr,ignorecase:bool):Expr := (
-     when n is pat:stringCell do
-     when e is rep:stringCell do
-     when f is subj:stringCell do select(pat.v,rep.v,subj.v,ignorecase)
-     else WrongArgString(3)
-     else WrongArgString(2)
-     is n:ZZcell do
-     if isInt(n) then
+select(n:Expr,e:Expr,f:Expr,g:Expr):Expr := (
+     when n
+     is regexp:stringCell do (
+	 when e is form:stringCell do
+	 when f is text:stringCell do
+	 when g is flags:ZZcell do regexSelect(regexp.v, form.v, text.v, toLong(flags)) -- see regex.dd
+	 else WrongArgZZ(4)
+	 else WrongArgString(3)
+	 else WrongArgString(2))
+     is n:ZZcell do if isInt(n) then
      when e
      is obj:HashTable do (
 	  if obj.Mutable then return WrongArg(1+1,"an immutable hash table");
@@ -222,15 +217,13 @@ select(n:Expr,e:Expr,f:Expr,ignorecase:bool):Expr := (
      else WrongArg(0+1,"an integer or string")
      else WrongArgZZ(0+1));
 select(e:Expr):Expr := (
-     ignorecase := false;
-     when e is a:Sequence do (
-	  if length(a) == 2
-	  then select(a.0,a.1,ignorecase)
-	  else if length(a) == 3
-	  then select(a.0,a.1,a.2,ignorecase)
-	  else WrongNumArgs(2,3))  -- could change this later
-     else WrongNumArgs(2,3));
-setupfun("select",select);
+     when e is a:Sequence do
+     if length(a) == 2 then select(a.0,a.1) else
+     if length(a) == 3 then select(a.0,a.1,a.2,toExpr(-1)) else
+     if length(a) == 4 then select(a.0,a.1,a.2,a.3)
+     else WrongNumArgs(2,4)
+     else WrongNumArgs(2,4));
+setupfun("select", select).Protected = false; -- will be overloaded in m2/lists.m2 and m2/regex.m2
 
 any(f:Expr,n:int):Expr := (
      for i from 0 to n-1 do (
