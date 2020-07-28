@@ -109,9 +109,11 @@ match(String, String) := opts -> (re, str) ->
 -----------------------------------------------------------------------------
 
 -- previously in methods.m2
+replace' := replace
 replace = method(Options => options regex)
 replace(String, String, String) := String => opts -> (re, s, r) ->
-    regexReplace(re, s, r, defaultOpts(opts.Flags, defaultRegexFlags))
+    replace'(re, s, r, defaultOpts(opts.Flags, defaultRegexFlags))
+protect symbol replace
 
 -- previously in html0.m2
 toLower = s -> replace("(\\w+)", "\\L$1", s)

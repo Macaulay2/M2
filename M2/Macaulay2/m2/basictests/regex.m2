@@ -22,5 +22,3 @@ assert not match("a\\b","ab")
 assert match("a\\>","a b")
 assert match("a\\>","a")
 assert not match("a\\>"," ab")
-
-assert( regexReplace("^a","x","a \na \naaa a") === "x \nx \nxaa a" )

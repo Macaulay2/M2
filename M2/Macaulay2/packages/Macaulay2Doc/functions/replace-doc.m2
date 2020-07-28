@@ -14,14 +14,14 @@ doc ///
     (replace, String, String, String)
     [replace, Flags]
   Headline
-    regular expression replacement of substrings
+    replace substrings matching a regular expression
   Usage
     s = replace(re, replacement, str)
   Inputs
     re:String
       a regular expression
     replacement:String
-      a replacement string
+      a replacement string, may include backreferences
     str:String
       a subject string to be processed
     Flags=>ZZ
@@ -31,15 +31,25 @@ doc ///
       the string obtained from @TT "str"@ by replacing its substrings matching @TT "re"@ by copies of @TT "replacement"@.
   Description
     Text
-      If a backslash followed by a digit occurs in @TT "replacement"@ then in the result they are replaced
-      by the string matching the corresponding parenthesized subexpression of @TT "re"@.
+      For an introduction to regular expressions, see @TO "regular expressions"@.
     Example
       replace("[a-z]+", "x", "Dog cat cat.")
-      replace("([a-z]+)", "(\\1)", "Dog cat cat.")
+    Text
+      The @TT "replacement"@ string can contain backreferences such as @TT "$1"@ or @TT "\\\\1"@, which
+      will be replaced by the string matching the corresponding parenthesized subexpression of @TT "re"@.
+    Example
+      replace("(\\w+)\\.?", "A \\1.", "Dog cat cat.")
+    Text
+      Special operators such as the lowercase operator @TT "\\\\L"@ may also be used to manipulate the
+      replacement substring.
+    Example
+      replace("(\\w+)\\.?", "A \\L$1.", "Dog cat cat.")
   SeeAlso
     "regular expressions"
     regex
     match
+    separate
+    (select, String, String, String)
 ///
 
 doc ///

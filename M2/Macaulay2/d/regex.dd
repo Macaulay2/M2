@@ -65,7 +65,7 @@ regexReplace(e:Expr):Expr := (
 	else WrongArgString(1))
     else WrongNumArgs(3,4)
     else WrongNumArgs(3,4));
-setupfun("regexReplace", regexReplace);
+setupfun("replace", regexReplace).Protected = false; -- will be overloaded in m2/regex.m2
 
 regexSeparate(e:Expr):Expr := (
     when e is text:stringCell do (
