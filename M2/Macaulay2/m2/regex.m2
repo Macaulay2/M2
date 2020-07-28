@@ -98,8 +98,10 @@ protect symbol select
 -----------------------------------------------------------------------------
 
 lastMatch = null
-match = method(TypicalValue => Boolean, Options => options regex)
-match(List,   String) := opts -> (rs, str) -> any(rs, re -> match(re, str, opts))
+match = method(TypicalValue => Boolean, Options => options regex ++ {Strategy => any})
+match(List,   String) := opts -> (rs, str) -> (
+    if member(opts.Strategy, {any, all}) then (opts.Strategy)(rs, re -> match(re, str, opts))
+    else error concatenate("unknown quantifier for match: ", toString opts.Strategy))
 match(String, String) := opts -> (re, str) ->
     null =!= (lastMatch = regex(re, str, Flags =>
 	    defaultOpts(opts.Flags, defaultRegexFlags | defaultMatchFlags)))
