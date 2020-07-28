@@ -449,12 +449,6 @@ formatDocumentTag Array := s -> (
 -----------------------------------------------------------------------------
 -- fixing up hypertext
 -----------------------------------------------------------------------------
-trimline0 := x -> selectRegexp ( "^((.*[^ \t])?)[ \t]*$",1, x)
-trimline  := x -> selectRegexp ( "^[ \t]*((.*[^ \t])?)[ \t]*$",1, x)
-trimline1 := x -> selectRegexp ( "^[ \t]*(.*)$",1, x)
-addspaces0:= x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else concatenate(x," ")
-addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
-
 fixup Thing      := z -> error("unrecognizable item ",toString z," of class ",toString class z," encountered while processing documentation node ", toString currentHelpTag)
 fixup List       := z -> fixup toSequence z
 fixup Sequence   := 
@@ -483,11 +477,9 @@ fixup MarkUpType := z -> (
      else error("isolated mark up type encountered: ",toString z)
      ) -- convert PARA to PARA{}
 -- fixup Function   := z -> z				       -- allow BaseFunction => f 
-fixup String     := s -> (				       -- remove clumsy newlines within strings
-     if not match("\n",s) then return s;
-     ln := separate s;
-     concatenate ({addspaces0 trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
+fixup String     := s -> demark_" " separate("[ \t]*\n[ \t]*", s, Flags=>RegexPerl) -- remove clumsy newlines within strings
 
+-- TODO: move this, and above, to hypertext.m2
 hypertext = method(Dispatch => Thing)
 hypertext Hypertext := fixup
 hypertext Sequence := hypertext List := x -> fixup DIV x

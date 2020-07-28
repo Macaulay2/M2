@@ -89,11 +89,11 @@ separateRegexp(String, ZZ, String) := lookup(separate, String, ZZ, String)
 -- select / format
 -----------------------------------------------------------------------------
 
-selectRegexp = method()
-selectRegexp(String,     String) := (re,    str) -> selectRegexp(re, 0, str)
-selectRegexp(String, ZZ, String) := (re, n, str) -> (
-    m := regex(re, str);
-    if m#?n then substring(m#n#0, m#n#1, str) else error "regular expression didn't match")
+selectRegexp = method(Options => options regex)
+selectRegexp(String,     String) := opts -> (re,    str) -> selectRegexp(re, 0, str, opts)
+selectRegexp(String, ZZ, String) := opts -> (re, n, str) -> (
+    m := regex(re, str, opts);
+    if m#?n then substring(m#n, str) else error "regular expression didn't match")
 
 -----------------------------------------------------------------------------
 -- match
