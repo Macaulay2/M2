@@ -16,18 +16,18 @@ doc ///
   Headline
     replace substrings matching a regular expression
   Usage
-    s = replace(re, replacement, str)
+    replace(re, replacement, str)
   Inputs
     re:String
       a regular expression
     replacement:String
-      a replacement string, may include backreferences
+      a replacement or regex formatting string, may include backreferences
     str:String
       a subject string to be processed
     Flags=>ZZ
       option for choosing the regex flavor, such as @TO "RegexPOSIX"@ and @TO "RegexPerl"@
   Outputs
-    s:String
+    :String
       the string obtained from @TT "str"@ by replacing its substrings matching @TT "re"@ by copies of @TT "replacement"@.
   Description
     Text

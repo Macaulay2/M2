@@ -12,8 +12,8 @@ doc ///
   Headline
     regular expression matching
   Usage
-    b = match(re, str)
-    b = match(patterns, str)
+    match(re, str)
+    match(patterns, str)
   Inputs
     re:String
       a regular expression
@@ -26,7 +26,7 @@ doc ///
     Strategy=>Function
       logical quantifier for matching a list of patterns, typically @TO all@ or @TO any@
   Outputs
-    b:Boolean
+    :Boolean
       whether the string @TT "str"@ is a match for the regular expression @TT "re"@,
       or at least one of @TT "patterns"@ when @TT "Strategy => any"@ (default)
   Consequences

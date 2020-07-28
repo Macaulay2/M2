@@ -15,32 +15,57 @@ doc ///
   Key
     (select, String, String, String)
     (select, String, String)
+    [select, Flags]
   Headline
-    select or format substrings matching a regular expression
+    select and reformat substrings matching a regular expression
   Usage
-    l = select(re, form, str)
-    l = select(re, str)
+    select(re, replacement, str)
+    select(re, str)
   Inputs
     re:String
       a regular expression describing a pattern
+    replacement:String
+      a replacement or regex formatting string, may include backreferences
     str:String
       a subject string to be searched
-    form:String
-      a replacement or regex formatting string
+    Flags=>ZZ
+      option for choosing the regex flavor, such as @TO "RegexPOSIX"@ and @TO "RegexPerl"@
   Outputs
-    l:List
+    :List
       a list of mutually exclusive substrings of @TT "str"@ matching the pattern @TT "re"@;
-      if @TT "form"@ is given, the matching substrings are formatted according to it by replacing
-      each occurrence of @TT "\\1"@, @TT "\\2"@, ... or @TT "$1"@, @TT "$2"@, ... with the string
-      matching the corresponding parenthesized subexpression of @TT "p"@.
+      if @TT "replacement"@ is given, the matching substrings are formatted based on it.
   Description
+    Text
+      For an introduction to regular expressions, see @TO "regular expressions"@.
     Example
       select("[[:alpha:]]+", "Dog, cat, and deer.")
-      select("^.*$", "asdf\nqwer\nqewr")
+      select("^.*$", "ABC\nDEF\r\nGHI")
+    Text
+      The @TT "replacement"@ string can contain backreferences such as @TT "$1"@ or @TT "\\\\1"@, which
+      will be replaced by the string matching the corresponding parenthesized subexpression of @TT "re"@.
     Example
-      select("([a-z]+);", "$1", "dog; cat, deer;")
+      select("([a-zA-Z]+);", "$1", "Dog; cat, deer;")
+    Text
+      Special operators such as the lowercase operator @TT "\\\\L"@ may also be used to manipulate the
+      replacement substring.
+    Example
+      select("([a-zA-Z]+);", "\\L$1", "Dog; cat, deer;")
+    Text
+      The @TT "Flags"@ option can be used to specify the regular expression flavor used to match.
+      For instance, @TT "Flags => RegexPerl"@ allows the use of lookahead and lookbehinds.
+    Example
+      s = "catfish cats dogs"
+      select("cat(?!fish)", s, Flags => RegexPerl)
+      select("\\w+(?=s\\b)", s, Flags => RegexPerl)
+      s = "goldfish swordfish catfish catdog"
+      select("\\w+(?=fish)", s, Flags => RegexPerl)
+      select("(?<=cat)\\w+", s, Flags => RegexPerl)
   SeeAlso
     "regular expressions"
+    "strings and nets"
+    regex
+    replace
+    separate
 ///
 
 document { 

@@ -35,6 +35,18 @@ assert(concatenate separate(" x[A-Za-z]*", s, Flags => RegexPOSIX) === "algng kf
 assert(concatenate separate(" (x)[A-Za-z]*", 1, s, Flags => RegexPOSIX) === "algng jfr kfjxse hgfj ooi wj kvexr anvi endj kfi")
 assert(demark_" " separate("[ \t]*\r?\n[ \t]*", " A\n\t  B  \r\n  \tC ", Flags=>RegexPerl) === " A B C ")
 
+-- tests for select
+assert(select("[[:alpha:]]+", "Dog, cat, and deer.") === {"Dog","cat","and","deer"})
+assert(select("^.*$", "ABC\nDEF\r\nGHI") === {"ABC","DEF","GHI"})
+assert(select("([a-zA-Z]+);", "$1", "Dog; cat, deer;") === {"Dog","deer"})
+assert(select("([a-zA-Z]+);", "\\L$1", "Dog; cat, deer;") === {"dog","deer"})
+s = "catfish cats dogs"
+assert(select("cat(?!fish)", s, Flags => RegexPerl) === {"cat"})
+assert(select("\\w+(?=s\\b)", s, Flags => RegexPerl) === {"cat", "dog"})
+s = "goldfish swordfish catfish catdog"
+assert(select("\\w+(?=fish)", s, Flags => RegexPerl) === {"gold","sword","cat"})
+assert(select("(?<=cat)\\w+", s, Flags => RegexPerl) === {"fish","dog"})
+
 -- tests for match
 assert not match(".a",   "  \na  ")
 assert     match("^a",   "  \na  ")
