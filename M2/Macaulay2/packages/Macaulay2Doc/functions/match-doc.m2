@@ -71,6 +71,7 @@ doc ///
       The @TT "Strategy"@ option is not used when the first input is not a list.
   SeeAlso
     "regular expressions"
+    "strings and nets"
     regex
     replace
     substring

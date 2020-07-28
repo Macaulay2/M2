@@ -21,6 +21,20 @@ assert(replace("a(b+).(c+)", "\\2\\1", " abbcc ab\nccc ") === " cbb ab\nccc ")
 assert(replace("a", "b", "-a-a-") === "-b-b-")
 assert(replace("^a", "x", "a \na \naaa a") === "x \nx \nxaa a")
 
+-- tests for separate
+s = "A\nB\r\nC"
+assert(separate s === {"A","B","C"})
+assert(separate s === lines s)
+assert(separate "\n\nA\n\nB\n\n" === {"","","A","","B","",""})
+assert(separate(".", "ABC.DEF") === {"ABC", "DEF"})
+assert(separateRegexp("[,.;]", "A:B.C,D,E;F.") === {"A:B","C","D","E","F",""})
+assert(separate("[,.;]", "A:B.C,D,E;F.", Flags => RegexPOSIX) === {"A:B","C","D","E","F",""})
+assert(concatenate separate("[\t ]+", " A 	 B C   D	E  F     G", Flags => RegexPOSIX) === "ABCDEFG")
+s = "algng xjfr kfjxse xhgfj xooi xwj kvexr anvi endj xkfi"
+assert(concatenate separate(" x[A-Za-z]*", s, Flags => RegexPOSIX) === "algng kfjxse kvexr anvi endj")
+assert(concatenate separate(" (x)[A-Za-z]*", 1, s, Flags => RegexPOSIX) === "algng jfr kfjxse hgfj ooi wj kvexr anvi endj kfi")
+assert(demark_" " separate("[ \t]*\r?\n[ \t]*", " A\n\t  B  \r\n  \tC ", Flags=>RegexPerl) === " A B C ")
+
 -- tests for match
 assert not match(".a",   "  \na  ")
 assert     match("^a",   "  \na  ")

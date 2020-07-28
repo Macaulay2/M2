@@ -46,6 +46,7 @@ doc ///
       replace("(\\w+)\\.?", "A \\L$1.", "Dog cat cat.")
   SeeAlso
     "regular expressions"
+    "strings and nets"
     regex
     match
     separate

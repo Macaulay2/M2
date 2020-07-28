@@ -68,10 +68,6 @@ doc ///
   Example
    s = "algng xjfr kfjxse xhgfj xooi xwj kvexr anvi endj xkfi";
    concatenate separate(" x[A-Za-z]*", s, Flags => RegexPOSIX)
---  Text
---   This is equivalent to using the @TO select@ function, and using the lookbehind syntax of @TO RegexPOSIX@.
---  Example
---   concatenate select("(?<!x)\\w+", s, Flags => RegexPOSIX)
 
   Text
    Example 5:
@@ -85,8 +81,8 @@ doc ///
  SeeAlso
   "regular expressions"
   "strings and nets"
+  regex
   concatenate
   demark
-  format
   lines
 ///
