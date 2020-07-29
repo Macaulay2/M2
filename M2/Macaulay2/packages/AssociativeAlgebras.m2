@@ -1,4 +1,4 @@
-newPackage(
+     newPackage(
         "AssociativeAlgebras",
         Version => "0.7", 
         Date => "10 June 2020",
@@ -13,10 +13,22 @@ newPackage(
         DebuggingMode => true
         )
 
--- MES TODO: changes to make to interface:
--- add FreeAlgebraQuotient
--- NCGB --> ncGB
--- 
+-- MES + FM TODO 2020.07.29
+--   1. Interreduction in GB code, as well as ensuring inhomogeneous
+--      ideals are handled correctly. 
+--   2. F4 matrices seem to be larger than they need to be.
+--   3. F4 code should work on inhomogeneous ideals
+--   4. Make tests more robust
+--   5. Finish documentation for AssociativeAlgebras
+--   6. Change basis to use hooks and use it instead of ncBasis
+--   7. Same as 6. for NCGB and gb
+--   8. isWellDefined and kernel (both are related to flattenRing)
+--   9. Degree information in a ring tower is not kept -- do we want this?
+-- Next steps:
+--   1. Free Resolutions
+--   2. GB over commutative rings (not just fields)
+--   3. Anick resolution
+
 export {
     "freeAlgebra",
     "ncBasis",
@@ -42,7 +54,10 @@ export {
     "quadraticClosure",
     "oppositeRing",
     "isLeftRegular",
-    "isRightRegular"
+    "isRightRegular",
+    "isCentral",
+    "isNormal",
+    "normalAutomorphism"
     }
 
 -- FM: better way to do this?
@@ -69,6 +84,7 @@ commonEngineRingInitializations = value Core#"private dictionary"#"commonEngineR
 raw = value Core#"private dictionary"#"raw"
 rawPairs = value Core#"private dictionary"#"rawPairs"
 rawQuotientRing = value Core#"private dictionary"#"rawQuotientRing"
+rawGetTerms = value Core#"private dictionary"#"rawGetTerms"
 rawSparseListFormMonomial = value Core#"private dictionary"#"rawSparseListFormMonomial"
 rawNCFreeAlgebra = value Core#"private dictionary"#"rawNCFreeAlgebra"
 rawNCBasis = value Core#"private dictionary"#"rawNCBasis"
@@ -219,7 +235,12 @@ freeAlgebra(Ring, List) := FreeAlgebra => (A, args)  -> (
 		    ) (rawP#0, rawP#1 / rawSparseListFormMonomial)
         );
    net R := f -> net expression f;
-   -- TODO: implement this: leadMonomial R := f -> new R from rawTerm(raw R, raw 1_A, rawLeadMonomial(n, raw f));
+   leadMonomial R := f -> (
+       if f == 0 then return f;
+       rawLT := rawGetTerms(numgens R, raw f, 0, 0);
+       rawP := first last rawPairs(raw coefficientRing R, rawLT);
+       product(apply(rawSparseListFormMonomial rawP, p -> R_(p#0)^(p#1)))
+       );
    R
    );
 
@@ -438,7 +459,7 @@ isLeftRegular (RingElement, ZZ) := (f,d) -> (
    A := ring f;
    if not isHomogeneous f then error "Expected a homogeneous element.";
    r := rank rightMultiplicationMap(f,d);
-   s := #(flatten entries basis(d,A));
+   s := #(flatten entries ncBasis(d,A));
    r == s
 )
 
@@ -447,7 +468,7 @@ isRightRegular (RingElement, ZZ) := (f,d) -> (
    A := ring f;
    if not isHomogeneous f then error "Expected a homogeneous element.";
    r := rank leftMultiplicationMap(f,d);
-   s := #(flatten entries basis(d,A));
+   s := #(flatten entries ncBasis(d,A));
    r == s
 )
 
@@ -487,7 +508,7 @@ normalAutomorphism RingElement := f -> (
 
 isCentral = method()
 isCentral RingElement := f -> (
-   varsList := gens f.ring;
+   varsList := gens ring f;
    all(varsList, x -> (f*x - x*f) == 0)   
 )
 
@@ -596,6 +617,7 @@ toNCRing Ring := FreeAlgebraQuotient => R -> (
    I := ideal (commRelations | extRelations | ((flatten entries gens ideal R) / phi));
    commIgb := gb ideal R;
    maxDeg := (((flatten entries gens commIgb) / degree) | {{0}}) / sum // max;
+   maxDeg = max(2,maxDeg);
    Igb := NCGB(I, 2*maxDeg);
    A/I
 )
@@ -854,7 +876,8 @@ NCRing ** NCRing := (A,B) -> (
 BUG ///
 --- things to get fixed:
 1) basis rather than ncBasis
-2) Check that the type "Ring" inputs above are actually either FreeAlgebra or FreeAlgebraQuotient
+2) Check that the type "Ring" inputs above are actually
+either FreeAlgebra or FreeAlgebraQuotient
 
 --- bringing over ring constructions
 restart
@@ -918,6 +941,12 @@ needsPackage "AssociativeAlgebras"
 R = QQ{a,b,c, Weights=>{{1,0,0},{0,1,0},{0,0,1}}}
 I = ideal {a^2 - 1, b^2 - 1, c^2 - 1, a*b*a - b*a*b, b*c*b - c*b*c, a*c - c*a}
 NCGB(I,10)
+
+restart
+needsPackage "AssociativeAlgebras"
+R = QQ{a,b,c,d}
+J = ideal{ a*c - 1, b*d - 1, a^2 - b^3, a^3 - b^5, a*c - c*a, b*d - d*b }
+J' = ideal flatten entries NCGB(J,50)
 
 S = R/I
 centralElements(S,3)
@@ -1122,7 +1151,7 @@ doc ///
 	 f = y*z + z*y - x^2
 	 g = x*z + z*x - y^2
 	 h = z^2 - x*y - y*x
-	 B = A/ncIdeal{f,g,h}
+	 B = A/ideal{f,g,h}
       Text
          It is known that this algebra has a unique (up to rescaling) central element 
 	 of degree 3. We can verify this claim computationally using @ TO centralElements @
@@ -1137,7 +1166,7 @@ doc ///
 	 See the discussion above for interpreting the output of @ TO normalElements @.
       Example
          normalElements(B,3,n,o)
-	 basis(3,B)
+	 ncBasis(3,B)
       Text
          The user can create noncommutative rings in ways other than specifying a
 	 presentation. For our second example, consider a skew polynomial ring on four
@@ -1160,7 +1189,7 @@ doc ///
       Example
          use C
          sigma = map(C,C,{y,z,w,x})
-	 isWellDefined sigma
+	   -- isWellDefined sigma
       Text
          We form the Ore extension of C by sigma. See @ TO oreExtension @.
       Example         
@@ -1191,7 +1220,7 @@ doc ///
 	 be satisfied by the coefficients of the monomial basis for an element expressed
 	 in that basis to be normal. In this case, the basis of D in degree 2 is
       Example
-         basis(2,D)	 
+         ncBasis(2,D)	 
       Text
          The output of normalElements tells us that in order for a degree 2 element of D
 	 to be normal, it must be an expresison in powers of the generators. The coefficients
@@ -1207,8 +1236,9 @@ doc ///
          E' = QQ[x,y,z,w,SkewCommutative=>true]
 	 E = toNCRing E'
 	 f = map(E,C,gens E)
-	 f x^2       
 	 use C
+	 f x^2       
+	 use E
 	 x^2 == 0
 ///
 
@@ -1470,12 +1500,9 @@ TEST ///
   assert(leadCoefficient f == 2)
   assert(degree f == {4})
   assert(someTerms(f,0,2) == f)
-  assert(leadMonomial f == b^4) -- FAILS: needs a monoid...
+  assert(leadMonomial f == b^4)
   assert(isHomogeneous f)
 
-  debug Core
-  rawLeadMonomial(numgens R, raw f)
-  
   g = b*c*b-b
   assert not isHomogeneous g
   
@@ -1495,7 +1522,7 @@ TEST ///
   assert(leadTerm f == 2/(a^3-a-1)*b^4)
 ///
 
-TEST ///
+BUG ///
 -*
   restart
   needsPackage "AssociativeAlgebras"
@@ -1519,8 +1546,7 @@ TEST ///
 
   -- same monomial lead term s-pair  
   f = f1*w + lot
-  g = g1*w + lot
-  
+  g = g1*w + lot  
 ///
 
 TEST /// 
@@ -1550,7 +1576,6 @@ TEST ///
   I = ideal"b3-c2dc2"
   assert isHomogeneous I
   NCGB(I, 10)
-
 ///
 
 TEST ///
@@ -1862,7 +1887,8 @@ TEST ///
   assert(numcols ncBasis(5,A) == 21)
   assert(numcols ncBasis(6,A) == 28)
   assert(numcols ncBasis(10,A) == 66)
-  
+
+  -*  
   -- Did these in order, in same session, right after defining I (reason for speedup: almost certainly skype)
   elapsedTime NCGB(I, 20); -- best time so far: Map.  5.9 sec, at home it is 4.2 sec (same computer)... 
     -- 27/12/2019, Mike MBP: now 2.7 sec
@@ -1875,6 +1901,7 @@ TEST ///
 
   elapsedTime NCGB(I, 23); 
     -- 27/12/2019, Mike MBP: 12.2 sec
+  *-
 ///
 
 ///
@@ -2008,6 +2035,26 @@ rawNCBasis(raw gbS,{500},{500},-1);
 rawNCBasis(raw gbS,{1000},{1000},-1);
 ///
 
+TEST ///
+-*
+restart
+needsPackage "AssociativeAlgebras"
+*-
+A = QQ[x,y]
+R = A{b,c,d}
+f = 3*x*y*b^2*c*b + 2*b^4
+assert(leadMonomial f == b^4)
+assert(ring leadCoefficient f === A)
+assert(leadCoefficient f == 2_A)
+assert(leadTerm f == 2*b^4)
+g = f - 2*b^4
+assert(leadMonomial g == b^2*c*b)
+assert(ring leadCoefficient g === A)
+assert(leadCoefficient g == 3*x*y)
+assert(leadTerm g == 3*x*y*b^2*c*b)
+assert(leadMonomial 0_R == 0_R)
+///
+
 -- Toying with adding FreeMonoids
 
 FreeMonoid = new Type of Monoid
@@ -2048,7 +2095,6 @@ check "AssociativeAlgebras"
   -- 21 Feb 2020: 2 tests fail (and all unit tests in NCGroebnerTest pass too):
   --   leadMonomial, and negative Weights in ring def.
 
-
 doc ///
 Key
 Headline
@@ -2064,21 +2110,6 @@ Description
 Caveat
 SeeAlso
 ///
-
-restart
-needsPackage "AssociativeAlgebras"
-debug Core
-A = QQ[x,y]
-R = A{b,c,d}
-f = 3*x*y*b^2*c*b + 2*b^4
-rawP = rawPairs(raw coefficientRing R, raw f)
-(rawP#0, rawP#1 / rawSparseListFormMonomial)
--- this code can be used, for example, to get the 'monomial part' of terms.
-toList apply(last rawP / rawSparseListFormMonomial, t -> product(apply(t, p -> R_(p#0)^(p#1))))
---- this is how terms is computed.  rawTerm calls IM2_RingElement_term in the engine.
---- Q: Do we change this code to work for AssociativeAlgebra objects as well, or will they
----    get their own function?  (We added a separate function for these types of things in the past).
-apply(rawP#0,rawP#1,(c,m) -> new R from rawTerm(raw R, c, m))
 
 -- XXX
 restart
