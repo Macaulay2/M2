@@ -1012,9 +1012,8 @@ fi
 
 AC_MSG_CHECKING(whether the package csdp is installed)
 if test "`type -t csdp`" = file
-then AC_MSG_RESULT([yes, will build anyway])
-     dnl because the package SemidefiniteProgramming doesn't look for it on the PATH
-     BUILD_csdp=yes
+then AC_MSG_RESULT([yes])
+     FILE_PREREQS="$FILE_PREREQS `type -p csdp`"
 else AC_MSG_RESULT([no, will build])
      BUILD_csdp=yes
 fi
