@@ -21,12 +21,21 @@ export {"doc", "multidoc", "packageTemplate", -- functions
     "Node", "Item", "CannedExample", "Pre", "Code", "Acknowledgement", "Contributors", "References" -- temporary nodes
     }
 
+-- A class for a processed documentation node
+Node = new SelfInitializingType of BasicList
+Hypertext.synonym = "processed documentation node"
+
 -- Primary functions
 doc = method()
-doc String := docstring -> document toDoc(KeyFunctions, docstring)
+doc String := str -> (
+    docstring := if fileExists str then get str else str;
+    parsed := toDoc(NodeFunctions, docstring);
+    document \ (
+	if all(parsed, elt -> instance(elt, Node)) then apply(parsed, node -> toList node)
+	else if not any(parsed, elt -> instance(elt, Node)) then {parsed}))
 
-multidoc = method()
-multidoc String := multidocstring -> document \ toDoc(NodeFunctions, multidocstring)
+-- Setup synonyms
+document String := opts -> multidoc = doc
 
 packageTemplate = method()
 packageTemplate String := (packagename) -> replace("%%NAME%%", packagename, packagetemplate)
@@ -49,14 +58,7 @@ applySplit = (functionTable, textlines) -> apply(splitByIndent(textlines, false)
 
 -- Mapping tables for evaluating docstring keywords
 NodeFunctions = new HashTable from {
-    "Node" => (textlines, keylinenum) -> (
-	parsed := deepSplice applySplit(KeyFunctions, textlines);
-	if any(parsed, i -> member(first i, {Inputs, Outputs})) and not any(parsed, i -> first i === Usage)
-	then error("multidoc node, line ", toString keylinenum, " of string: Inputs or Outputs specified, but Usage not provided");
-	parsed)
-     }
-
-KeyFunctions = new HashTable from {
+    "Node"            => (textlines, keylinenum) -> new Node from nodeCheck(applySplit(NodeFunctions, textlines), keylinenum),
     "Key"             => (textlines, keylinenum) -> Key             => getKeys(textlines, keylinenum),
     "Headline"        => (textlines, keylinenum) -> Headline        => singleString(Headline, textlines, keylinenum),
     "Usage"           => (textlines, keylinenum) -> Usage           => multiString(Usage, textlines, keylinenum),
@@ -184,6 +186,14 @@ getExample = (textlines, keylinenum, canned) -> (
     EXAMPLE if canned then { PRE reassemble(getIndent textlines#0, textlines) }
     else apply(splitByIndent(textlines, false), (i, j) -> reassemble(getIndent textlines#0, take(textlines, {i,j}))))
 
+-- Checking for common errors in a processed documentation node
+nodeCheck = (processed, keylinenum) -> (
+    -- TODO: add more checks
+    if any(processed, i -> member(first i, {Inputs, Outputs})) and not any(processed, i -> first i === Usage)
+    then error("line ", toString keylinenum, " of documentation string: Inputs or Outputs specified, but Usage not provided")
+    -- TODO: attempt to fix some of the errors
+    else processed)
+
 -- helper functions for writing documentation
 load("./SimpleDoc/helpers.m2")
 
@@ -197,8 +207,8 @@ load("./SimpleDoc/example.m2")
 beginDocumentation()
 
 -- load the multidocstring
-multidoc get (currentFileDirectory | "SimpleDoc/doc.txt")
-multidoc get (currentFileDirectory | "SimpleDoc/helpers-doc.txt")
+document get (currentFileDirectory | "SimpleDoc/doc.txt")
+document get (currentFileDirectory | "SimpleDoc/helpers-doc.txt")
 
 -- load the documentation and tests for the example
 value docExample
@@ -215,7 +225,7 @@ restart
 debug Core
 debug SimpleDoc
 text = substring(8, length docExample - 4 - 8 +1, docExample)
-toDoc(KeyFunctions, text)
+toDoc(NodeFunctions, text)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SimpleDoc RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false RerunExamples=true"
