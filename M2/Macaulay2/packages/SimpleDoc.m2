@@ -125,11 +125,10 @@ splitByIndent = (textlines, empties) -> (
 safevalue = t -> try value t else ( stderr << "in the evaluation of: " << stack lines t << endl; value t )
 
 -- render @...@ blocks
--- TODO: use negative lookaheads to simplify this
 render = (textlines, keylinenum) -> (
     if #textlines == 0 then return "";
-    text := concatenate between(" ", getText \ textlines);
-    segments := separateRegexp(///(^|[^\\])(@)///, 2, text);
+    text := demark(" ", getText \ textlines);
+    segments := separate(///(?<!\\)@///, text, Flags => RegexPerl);
     segments = apply(segments, segment -> replace(///\\@///, "@", segment));
     if not odd(#segments) then error("unmatched @ near line ", toString keylinenum);
     parsed := for i to #segments - 1 list (
