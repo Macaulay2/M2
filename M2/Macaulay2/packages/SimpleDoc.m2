@@ -1,5 +1,6 @@
 -- -*- coding: utf-8 -*-
 -- TODO: add linter
+-- TODO: -- comment in @...@ breaks render
 newPackage(
     "SimpleDoc",
     Version => "1.2",
@@ -17,13 +18,12 @@ newPackage(
 
 export {"doc", "multidoc", "packageTemplate", -- functions
     "arXiv", "stacksProject", "wikipedia", -- helper functions
-    "docTemplate", "docExample", "testExample", "simpleDocFrob", -- templates and examples
-    -*"Node",*- "Item", "CannedExample", "Pre", "Code" -- temporary nodes
+    "docTemplate", "docExample", "testExample", "simpleDocFrob" -- templates and examples
     }
 
--- A class for a processed documentation node
-Node = new SelfInitializingType of BasicList
-Hypertext.synonym = "processed documentation node"
+-- The class of processed documentation nodes
+Node = new IntermediateMarkUpType of Hypertext
+Node.synonym = "processed documentation node"
 
 -- Primary functions
 doc = method()
@@ -32,7 +32,8 @@ doc String := str -> (
     parsed := toDoc(NodeFunctions, docstring);
     document \ (
 	if all(parsed, elt -> instance(elt, Node)) then apply(parsed, node -> toList node)
-	else if not any(parsed, elt -> instance(elt, Node)) then {parsed}))
+	else if not any(parsed, elt -> instance(elt, Node)) then {parsed}
+	else error("expected either a single or a list of documentation nodes")))
 
 -- Setup synonyms
 document String := opts -> doc

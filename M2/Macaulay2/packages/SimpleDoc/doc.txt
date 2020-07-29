@@ -136,31 +136,33 @@ Node
         { TOH Consequences,
             PARA {
                 "Each subsection of the this section should start with the keyword ",
-                TO Item, "; the text in each item may include markup."}},
+                TT "Item", "; the text in each item may include markup."}},
         { TOH Description,
             PARA {"The text in this section occurs in subsections with keywords:"},
             UL {
-                { TOH Text,
+                { TT "Text", " -- prose containing markup or tex",
                     PARA {
                         "The text in this subsection can be separated into paragraphs
                         with blank lines. A paragraph, when rendered in HTML, is
                         typically enclosed in an HTML ", TT "<p>", " tag, except if its
                         top level markup is an instance of ", TO HypertextContainer,
                         " or ", TO HypertextParagraph, "."}},
-                { TOH Example,
+                { TT "Example", " -- examples of the usage",
                     PARA {
                         "The text in this subsection consists of lines of Macaulay2 code
                         to be used as examples in the documentation node. Output will
                         be generated automatically and incorporated into the display."}},
-                { TOH CannedExample,
+                { TT "CannedExample", " -- pre-evaluated example results",
                     PARA {
                         "The text in this subsection consists of lines containing an
                         interaction with Macaulay2, to displayed as an example."}},
-                { TOH Pre,
+			-- document this
+                { TT "Pre", " -- preformatted text",
                     PARA {
                         "The text in this subsection, with common indentation removed,
                         is wrapped with ", TO PRE, "."}},
-                { TOH Code,
+			-- document this
+                { TT "Code", " -- custom Macaulay2 code",
                     PARA {
                         "The text in this subsection, with common indentation removed,
                         is wrapped with parentheses and evaluated; the result is spliced

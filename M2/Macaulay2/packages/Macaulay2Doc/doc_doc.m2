@@ -108,7 +108,7 @@ document { -- This node is used as an example in the node: Consequences
      BaseFunction => document,
      Consequences => {
 	  { "the headline string will be used to annotate itemized 
-		  lists of cross references to the documentation ", TO "Key" }
+	      lists of cross-references to the documentation ", TO "Key" }
 	  },
 	"The headline of a documentation node, gives a brief, half line, description of the thing being documented. 
 	As an example, the headline for this documentation node was obtained with the code:",
@@ -188,7 +188,7 @@ document {
 	example here is the ", TT "Consequences", " entry for the documentation node ", TO Headline, ":", 
 	PRE ///Consequences => {
 	  { "the headline string will be used to annotate itemized 
-		  lists of cross references to the documentation ", TO "Key" }
+	      lists of crossreferences to the documentation ", TO "Key" }
 	  },///,
 	SeeAlso => {document}
 	}
@@ -228,7 +228,7 @@ document {
 	}
 document {
      Key => {[document,SeeAlso],SeeAlso},
-     Headline => "crossreferences in documentation",
+     Headline => "cross-references in documentation",
      Usage =>  "document { ... , SeeAlso => { ... }, ... }",
      BaseFunction => document,
      "This option inserts into a documentation page a sentence instructing the reader to see some other topics.",
