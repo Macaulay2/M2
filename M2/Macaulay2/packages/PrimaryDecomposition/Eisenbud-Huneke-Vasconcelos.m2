@@ -354,7 +354,6 @@ associatedPrimes Module := List => opts -> M -> ( -- modified code in ass1 for m
      if c == dim polyRing and isHomogeneous M then return {sub(ideal gens polyRing, ring M)};
      d := pdim M;
      n := if opts.CodimensionLimit >= 0 then min(d, opts.CodimensionLimit) else d;
-     -- C := resolution(M1, LengthLimit => 1+n);
      if M.cache#?"associatedPrimesCodimLimit" then (
           if n < d and n <= M.cache#"associatedPrimesCodimLimit" then return select(previousPrimes, P -> codim P <= n);
           c = 1 + M.cache#"associatedPrimesCodimLimit";
@@ -365,7 +364,6 @@ associatedPrimes Module := List => opts -> M -> ( -- modified code in ass1 for m
           if debugLevel > 0 then print("Computing associated primes of codim " | toString i);
           if i == dim polyRing and isHomogeneous M then sub(ideal gens polyRing, ring M) else (
                A := ann(if i == c then M1 else Ext^i(M1, polyRing));
-               -- A := image transpose C.dd_i : ker transpose C.dd_(i+1); -- ann Ext^i(M, R) (consider colon.m2)
                select(minimalPrimes A, P -> codim P == i)
           )
      )))/(P -> trim sub(P, ring M))
@@ -373,13 +371,13 @@ associatedPrimes Module := List => opts -> M -> ( -- modified code in ass1 for m
 )
 associatedPrimes Ring := List => opts -> R -> associatedPrimes comodule ideal R
 
-primaryDecomposition Module := List => o -> M -> ( -- returns a primary decomposition of 0 in M
+primaryDecomposition Module := List => o -> M -> ( 
+     -- Returns a primary decomposition of 0 in M. Assumes all embedded primes appear after all primes they contain, i.e. isSubset(AP#i, AP#j) => i \le j (equivalently, the ordering of associated primes is a linear extension of the partial order by inclusion). This is the case for associatedPrimes(Module), which returns associated primes ordered by codimension
      if not M.cache#?"primaryComponents" then M.cache#"primaryComponents" = new MutableHashTable;
      AP := associatedPrimes M;
-     if #AP == 1 then M.cache#"primaryComponents"#(AP#0) = 0*M;
      if #values(M.cache#"primaryComponents") != #AP then (
           H := hashTable apply(AP, p -> p => select(#AP, i -> isSubset(AP#i, p)));
-          for i to #AP - 1 do ( -- assumes all embedded primes appear after all primes they contain, i.e. isSubset(AP#i, AP#j) => i \le j
+          for i to #AP - 1 do (
                if debugLevel > 0 then print("Prime: " | toString(i+1) | "/" | toString(#AP));
                p := AP#i;
                if M.cache#"primaryComponents"#?p then continue;
@@ -387,9 +385,9 @@ primaryDecomposition Module := List => o -> M -> ( -- returns a primary decompos
                isolComp := if f == 1 then 0*M else saturate(0*M, f);
                if #(H#p) > 1 then (
                     j0 := max(2, ceiling(max((ann M)_*/degree/sum) / min(p_*/degree/sum)));
-                    colonMod := intersect apply(delete(i, H#p), k -> M.cache#"primaryComponents"#(AP#k));
+                    B := intersect apply(delete(i, H#p), k -> M.cache#"primaryComponents"#(AP#k));
                     (j, Q) := (2*j0, getEmbeddedComponent(M, bracketPower(p,j0)*M, p, o));
-                    while not isSubset(intersect(colonMod, Q), isolComp)
+                    while not isSubset(intersect(B, Q), isolComp)
                     do (j, Q) = (2*j, getEmbeddedComponent(M, bracketPower(p,j)*M, p, o));
                ) else Q = isolComp;
                M.cache#"primaryComponents"#p = Q;
@@ -410,7 +408,11 @@ getEmbeddedComponent (Module, Module, Ideal) := o -> (M, N, P) -> ( -- N is cand
      if strat === null then (
           if debugLevel > 0 then print("Determining strategy for top components...");
           strat = "Hom";
-          try ( alarm 30; if sum values betti resolution Q < 1000 then strat = "Sat" );
+          try ( 
+               alarm 30; 
+               if sum values betti resolution Q < 1000 then strat = "Sat";
+               alarm 0;
+          );
      );
      if debugLevel > 0 then print("Using strategy " | strat);
      C := if strat == "Hom" then equidimHull Q 
@@ -452,27 +454,23 @@ equidimHull Module := Module => M -> ( -- equidimensional hull of 0 in a module 
      R := ring M;
      if debugLevel > 0 then print("Finding maximal regular sequence...");
      S := comodule maxRegSeq annihilator M;
-     -- G := mingens ann M;
-     -- c := codim M;
-     -- S := comodule ideal(G*random(R^(numcols G), R^c)); -- should be (the quotient by) a maximal R-regular sequence contained in ann(M)
      if debugLevel > 0 then print("Computing Ext ...");
      if numColumns mingens M == 1 then (
           if debugLevel > 0 then print("Using case for cyclic module...");
-          E := Hom(M, S); -- = Ext^c(M, R) by choice of S
+          E := Hom(M, S); -- = Ext^c(M, R)
           if debugLevel > 0 then print("Getting annihilator ...");
           return subquotient(generators annihilator E, relations M);
      );
      -- the following uses code from doubleDualMap in AnalyzeSheafOnP1
      h := coverMap M;
-     ddh := Hom(Hom(h, S), S); -- = Ext^c(Ext^c(h, R), R) by choice of S
+     ddh := Hom(Hom(h, S), S); -- = Ext^c(Ext^c(h, R), R)
      if debugLevel > 0 then print("Getting hull as kernel of " | toString(numRows matrix ddh) | " by " | toString(numColumns matrix ddh) | " matrix...");
      kernel map(target ddh, M, matrix ddh)
 )
 
 maxRegSeq = method(Options => {Strategy => "Quick"})
 maxRegSeq Ideal := Ideal => opts -> I -> (
-     -- attempts to find sparse maximal regular sequence contained in an ideal
-     -- ideal should be in a CM ring (with sufficiently large coefficientRing)
+     -- attempts to find sparse maximal regular sequence contained in an ideal (in a CM ring)
      G := sort flatten entries mingens I;
      t := timing codim I;
      c := last t;
@@ -490,7 +488,7 @@ maxRegSeq Ideal := Ideal => opts -> I -> (
                     K := J + ideal cand;
                     if debugLevel > 0 then print("Testing regular sequence...");
                     n := if opts.Strategy == "Quick" then ( 
-                         try ( alarm t0; codim K ) else infinity
+                         try ( alarm t0; r := codim K; alarm 0; r ) else -1
                     ) else codim K;
                     if n == 1 + #J_* then (
                          J = K;
@@ -509,10 +507,51 @@ maxRegSeq Ideal := Ideal => opts -> I -> (
      for count to (#G)^2//2 do (
           A := transpose matrix apply(m, i -> sum ind_(apply(n//2, j -> random n)));
           J1 := J + ideal(matrix{G} * (map(k^(#J_*),k^m,0) || id_(k^m) || A));
-          try ( alarm t0; if codim J1 == #J1_* then return J1 )
+          try ( alarm t0; r := codim J1; alarm 0; if r == #J1_* then return J1 )
      );
      print "Could not find regular sequence. Try again with Strategy => 'Full'"
 )
+
+
+-- Radical membership test for homogeneous ideals
+-- Based on Theorem 1.5 in https://www.jstor.org/stable/pdf/1990996.pdf
+
+isInRadical = method()
+isInRadical (Ideal, RingElement) := Boolean => (I, f) -> ( -- should assume degrees are > 2
+	R := ring I;
+	if ring f =!= R then error "Expected same ring";
+	if not isHomogeneous I then error "Expected homogeneous ideal";
+	degs := reverse sort((flatten entries mingens I)/degree/sum);
+	n := min(#support I, #degs);
+	degs = drop(degs_{0..<n}, -1) | {last degs};
+	g := f;
+	if debugLevel > 0 then print("Upper bound of " | toString(product degs) | " for radical");
+	for i to floor(log_2 product degs) do ( 
+		if debugLevel > 0 then print("Testing power " | toString(2^(i+1)));
+		g = g^2 % I;
+		if g == 0 then return true;
+	);
+	false
+)
+
+TEST /// -- isInRadical test: sharp bound example
+d = (4,5,6,7)
+n = #d
+k = ZZ/101
+R = k[x_0..x_n]
+I = ideal homogenize(matrix{{x_1^(d#0)} | apply(toList(1..n-2), i -> x_i - x_(i+1)^(d#i)) | {x_(n-1) - x_0^(d#-1)}}, x_n)
+D = product(I_*/degree/sum)
+assert(x_0^(D-1) % I != 0 and x_0^D % I == 0)
+elapsedTime assert(isInRadical(I, x_0))
+f = random(1,R)
+elapsedTime assert(not isInRadical(I, f))
+
+A = random(R^(n+1), R^(n+1))
+J = sub(I, vars R * A);
+f = ((vars R)*A)_{0} _(0,0)
+elapsedTime assert(isInRadical(J, f))
+elapsedTime assert(not isInRadical(J, x_0))
+///
 
 TEST /// -- non-cyclic modules
 R = QQ[x_0..x_3]
@@ -531,7 +570,6 @@ assert(intersect comps == 0 and all(comps, isPrimary_N))
 ///
 
 TEST /// -- multiply embedded prime
--- Use new topComponents(Module, Module, ZZ)
 R = QQ[x_0..x_3]
 I = intersect((ideal(x_0..x_3))^5, (ideal(x_0..x_2))^4, (ideal(x_0..x_1))^3)
 M = comodule I
