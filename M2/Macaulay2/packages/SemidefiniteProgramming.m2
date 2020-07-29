@@ -89,6 +89,27 @@ changeSolver = (solver, execpath) -> (
 	sdpaexec)
     )
 
+findCSDP = raiseError -> (
+    fin := temporaryFileName() | ".dat-s";
+    fin <<  ///3 =mdim
+1 =nblocks
+3
+0 0 0
+1 1 1 1 -1
+1 1 1 2 -1.5
+1 1 1 3 -1.5
+1 1 2 3 -.5
+2 1 1 2 -.5
+2 1 1 3 -1.5
+2 1 2 3 -1.5
+2 1 3 3 -1
+3 1 1 3 -.5
+3 1 2 2 1
+/// << close;
+    findProgram("csdp", "csdp " | fin, RaiseError => raiseError))
+
+csdpProgram = findCSDP false
+
 csdpexec = makeGlobalPath ((options SemidefiniteProgramming).Configuration)#"CSDPexec"
 if csdpexec === null then csdpexec = prefixDirectory | currentLayout#"programs" | "csdp"
 
@@ -554,19 +575,21 @@ solveCSDP = method( Options => {Verbosity => 0} )
 solveCSDP(Matrix,Sequence,Matrix) := o -> (C,A,b) -> (
     -- CSDP expects the file fparam to be in the working directory.
     -- That's why we need to change directory before executing csdp.
-    if csdpexec===null then error "csdp executable not found";
+    if csdpProgram === null then csdpProgram = findCSDP true;
     n := numColumns C;
     fin := temporaryFileName() | ".dat-s";
     (dir,fin1) := splitFileName(fin);
     fparam := dir | "param.csdp";
     fout := temporaryFileName();
-    fout2 := temporaryFileName();
     writeSDPA(fin,C,A,b);
     writeCSDPparam(fparam);
     verbose1("Executing CSDP", o);
     verbose1("Input file: " | fin, o);
-    runcmd("cd " | dir | " && " | csdpexec | " " | fin1 | " " | fout | ">" | fout2, o.Verbosity);
+    csdpRun := runProgram(csdpProgram, fin1 | " " | fout,
+	RunDirectory => dir, KeepFiles => true, RaiseError => false);
+    handleErrors(csdpRun#"return value", csdpRun#"error file", o.Verbosity);
     verbose1("Output file: " | fout, o);
+    fout2 := csdpRun#"output file";
     (X,y,Z,sdpstatus) := readCSDP(fout,fout2,n,o.Verbosity);
     y = checkDualSol(C,A,y,Z,o.Verbosity);
     (X,y,Z,sdpstatus))
@@ -574,6 +597,10 @@ solveCSDP(Matrix,Sequence,Matrix) := o -> (C,A,b) -> (
 runcmd = (cmd,Verbosity) -> (
     tmp := temporaryFileName() | ".err";
     r := run(cmd | " 2> " | tmp);
+    handleErrors(r, tmp, Verbosity)
+    )
+
+handleErrors = (r, tmp, Verbosity) -> (
     if r == 32512 then error "Executable not found.";
     if r == 11 then error "Segmentation fault.";
     if r>0 then (
