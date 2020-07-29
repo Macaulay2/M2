@@ -108,7 +108,11 @@ findCSDP = raiseError -> (
 /// << close;
     findProgram("csdp", "csdp " | fin, RaiseError => raiseError))
 
+findSDPA = raiseError -> findProgram("sdpa", "sdpa --version",
+    RaiseError => raiseError)
+
 csdpProgram = findCSDP false
+sdpaProgram = findSDPA false
 
 csdpexec = makeGlobalPath ((options SemidefiniteProgramming).Configuration)#"CSDPexec"
 if csdpexec === null then csdpexec = prefixDirectory | currentLayout#"programs" | "csdp"
@@ -719,14 +723,16 @@ checkDualSol = (C,A,y,Z,Verbosity) -> (
 
 solveSDPA = method( Options => {Verbosity => 0} )
 solveSDPA(Matrix,Sequence,Matrix) := o -> (C,A,b) -> (
-    if sdpaexec===null then error "sdpa executable not found";
+    if sdpaProgram === null then sdpaProgram = findSDPA true;
     n := numColumns C;
     fin := temporaryFileName() | ".dat-s";
     fout := temporaryFileName() ;
     writeSDPA(fin,C,A,b);
     verbose1("Executing SDPA", o);
     verbose1("Input file: " | fin, o);
-    runcmd(sdpaexec | " " | fin | " " | fout | "> /dev/null", Verbosity);
+    sdpaRun := runProgram(sdpaProgram, fin | " " | fout,
+	KeepFiles => true, RaiseError => false);
+    handleErrors(sdpaRun#"return value", sdpaRun#"error file", o.Verbosity);
     verbose1("Output file: " | fout, o);
     (X,y,Z,sdpstatus) := readSDPA(fout,n,o.Verbosity);
     (X,y,Z,sdpstatus))
