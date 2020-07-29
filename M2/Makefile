@@ -240,8 +240,8 @@ clean-in-submodules:
 	git submodule foreach git clean -xdfq
 
 # Fetch the M2-emacs submodule
-fetch-M2-emacs: Macaulay2/editors/emacs/Makefile.in
-Macaulay2/editors/emacs/Makefile.in:; git submodule update --init Macaulay2/editors/emacs
+fetch-M2-emacs: Macaulay2/editors/emacs/M2.el
+Macaulay2/editors/emacs/M2.el:; git submodule update --init Macaulay2/editors/emacs
 
 # Local Variables:
 # mode: Makefile

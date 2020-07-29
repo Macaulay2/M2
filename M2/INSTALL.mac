@@ -21,6 +21,7 @@ sleep 1
 brew install bdw-gc libatomic_ops gdbm glpk boost libmpc libomp xz
 stty -onlcr -echo
 git describe --dirty --long --always --abbrev=40 --all
+gmake get-libtool
 gmake -f Makefile
 rm -rf tmp
 mkdir tmp
