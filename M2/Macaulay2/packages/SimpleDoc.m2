@@ -18,7 +18,7 @@ newPackage(
 export {"doc", "multidoc", "packageTemplate", -- functions
     "arXiv", "stacksProject", "wikipedia", -- helper functions
     "docTemplate", "docExample", "testExample", "simpleDocFrob", -- templates and examples
-    -*"Node",*- "Item", "CannedExample", "Pre", "Code", "Acknowledgement", "Contributors", "References" -- temporary nodes
+    -*"Node",*- "Item", "CannedExample", "Pre", "Code" -- temporary nodes
     }
 
 -- A class for a processed documentation node
@@ -67,9 +67,9 @@ NodeFunctions = new HashTable from {
     "Outputs"         => (textlines, keylinenum) -> Outputs         => items(textlines, keylinenum),
     "Consequences"    => (textlines, keylinenum) -> Consequences    => applySplit(ConsequencesFuntions, textlines),
     "Description"     => (textlines, keylinenum) -> toSequence applySplit(DescriptionFunctions, textlines),
-    "Acknowledgement" => (textlines, keylinenum) -> -* Acknowledgement => *- {markup(textlines, keylinenum)},
-    "Contributors"    => (textlines, keylinenum) -> -* Contributors    => *- {markup(textlines, keylinenum)},
-    "References"      => (textlines, keylinenum) -> -* References      => *- {markup(textlines, keylinenum)},
+    "Acknowledgement" => (textlines, keylinenum) -> Acknowledgement => {markup(textlines, keylinenum)},
+    "Contributors"    => (textlines, keylinenum) -> Contributors    => {markup(textlines, keylinenum)},
+    "References"      => (textlines, keylinenum) -> References      => {markup(textlines, keylinenum)},
     "ExampleFiles"    => (textlines, keylinenum) -> ExampleFiles    => getText \ textlines,
     "Caveat"          => (textlines, keylinenum) -> Caveat          => {markup(textlines, keylinenum)},
     "SeeAlso"         => (textlines, keylinenum) -> SeeAlso         => apply(select(getText \ textlines, p -> #p > 0), value),

@@ -193,6 +193,32 @@ document {
 	SeeAlso => {document}
 	}
 document {
+     Key => {[document,Acknowledgement],Acknowledgement},
+	Headline => "acknowledgements",
+	Usage => "document { ... , Acknowledgements => {\"NSF\"}, ... }",
+	BaseFunction => document,
+	"This part of the documentation can be used to acknowledge funding sources
+	and collaborators.",
+	SeeAlso => {document}
+	}
+document {
+     Key => {[document,Contributors],Contributors},
+	Headline => "non-author contributors",
+	Usage => "document { ... , Contributors => {\"previous authors\"}, ... }",
+	BaseFunction => document,
+	"This part of the documentation can be used to list contributors and
+	previous authors to the package who are no longer maintainers for it.",
+	SeeAlso => {document}
+	}
+document {
+     Key => {[document,References],References},
+	Headline => "references",
+	Usage => "document { ... , References => {\"bibliography\"}, ... }",
+	BaseFunction => document,
+	"This part of the documentation can be used to list references for the package.",
+	SeeAlso => {document}
+	}
+document {
      Key => {[document,Caveat],Caveat}, 
 	Headline => "warnings",
 	Usage => "document { ... , Caveat => {\"warning\"}, ... }",
