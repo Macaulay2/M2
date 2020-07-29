@@ -35,7 +35,8 @@ doc String := str -> (
 	else if not any(parsed, elt -> instance(elt, Node)) then {parsed}))
 
 -- Setup synonyms
-document String := opts -> multidoc = doc
+document String := opts -> doc
+multidoc = doc
 
 packageTemplate = method()
 packageTemplate String := (packagename) -> replace("%%NAME%%", packagename, packagetemplate)
@@ -128,12 +129,15 @@ safevalue = t -> try value t else ( stderr << "in the evaluation of: " << stack 
 render = (textlines, keylinenum) -> (
     if #textlines == 0 then return "";
     text := demark(" ", getText \ textlines);
-    segments := separate(///(?<!\\)@///, text, Flags => RegexPerl);
-    segments = apply(segments, segment -> replace(///\\@///, "@", segment));
-    if not odd(#segments) then error("unmatched @ near line ", toString keylinenum);
-    parsed := for i to #segments - 1 list (
-	if segments#i == "" then continue;
-	if even i then TEX segments#i else safevalue concatenate("(", segments#i, ")"));
+    (offset, tail) := (0, length text);
+    parsed := while offset < tail list (
+	m := regex(///(?<!\\)@(.*?)(?<!\\)(@|$)///, offset, text, Flags => RegexPerl);
+	-- No @ found, the rest of the string is TEX
+	if not m#?1 then first (TEX replace(///\\@///, "@", substring(offset, text)), offset = tail)
+	-- The second @ matched the end of the string, i.e. there is an unmatched @
+	else if m#2#0 == tail then error("unmatched @ near line ", toString keylinenum)
+	-- A pair of @ were found, we evaluate the content
+	else (offset = m#2#0 + 1; safevalue concatenate("(", replace(///\\@///, "@", substring(m#1, text)), ")")));
     if instance(parsed, List) and #parsed == 1 then first parsed else parsed)
 
 markup = (textlines, keylinenum) -> (
