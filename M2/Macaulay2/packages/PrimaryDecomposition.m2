@@ -28,9 +28,9 @@ export {
 --     "flattener",
      "localize",
 --     "minSat",
-     "primaryComponent"
+     "primaryComponent",
 --     "quotMin",
---     "radicalContainment"
+    "radicalContainment"
      }
 
 -- private symbols used as keys:
@@ -45,11 +45,10 @@ protect H, protect U, protect W
 
 primaryDecomposition = method( TypicalValue => List, Options => { Strategy => null } )
 
-
+load "./PrimaryDecomposition/radical.m2"
 load "./PrimaryDecomposition/GTZ.m2"
 load "./PrimaryDecomposition/Shimoyama-Yokoyama.m2"
 load "./PrimaryDecomposition/Eisenbud-Huneke-Vasconcelos.m2"
-load "./PrimaryDecomposition/radical.m2"
 
 binomialCD = (I) -> error "Binomial strategy not implemented yet"
 
@@ -143,7 +142,7 @@ isPrimary(Ideal,Ideal) := (Q,P) -> (
      )
 isPrimary (Module, Module) := (M, Q) -> #associatedPrimes(M/Q) == 1
 
-minimalPrimes MonomialIdeal := decompose MonomialIdeal := {} >> opts -> (cacheValue symbol minimalPrimes) (
+minimalPrimes MonomialIdeal := decompose MonomialIdeal := (cacheValue symbol minimalPrimes) (
      (I) -> (
 	  minI := dual radical I;
           if minI == 1 then {monomialIdeal(0_(ring I))}

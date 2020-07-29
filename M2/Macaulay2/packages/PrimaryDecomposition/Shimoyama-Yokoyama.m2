@@ -176,29 +176,6 @@ findNonMember(J,I)
 
 ///
 
--- Determine whether g is in rad(I)
-radicalContainment = (g,I) -> (
-     R := ring I;
-     n := numgens R;
-     S := (coefficientRing R) (monoid[Variables=>n+1,MonomialSize=>16]);
-     mapto := map(S,R,submatrix(vars S,{0..n-1}));
-     I = mapto I;
-     g = mapto g;
-     J := I + ideal(g*S_n-1);
-     1_S % J == 0_S
-     )
-
-TEST ///
-R = ZZ/32003[a..f]
-F = map(R,R,symmetricPower(2,matrix{{a,b,c}}))
-I = ker F
-J = I^2
-G = I_0
-debug PrimaryDecomposition
-radicalContainment(G,J)
-radicalContainment(G-a^2,J)
-///
-
 ---------------------------------------------
 -- (Hopefully) Fast quotient routines -------
 ---------------------------------------------

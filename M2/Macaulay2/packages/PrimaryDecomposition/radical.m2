@@ -134,10 +134,50 @@ rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
      if ring I =!= ring Iorig then radI = G radI;
      trim radI
      )
+     
+
+-- Determine whether g is in rad(I)
+radicalContainment = method(Options => {Strategy => "Rabinowitsch"})
+radicalContainment (RingElement, Ideal) := Boolean => opts -> (g,I) -> (
+     R := ring I;
+     if ring g =!= R then error "Expected same ring";
+     if isHomogeneous I and opts.Strategy == "Kollar" then (
+          -- Radical membership test for homogeneous ideals
+          -- Based on Theorem 1.5 in https://www.jstor.org/stable/pdf/1990996.pdf
+          -- should assume degrees are > 2
+          degs := reverse sort((flatten entries mingens I)/degree/sum);
+          n := min(#support I, #degs);
+          degs = drop(degs_{0..<n}, -1) | {last degs};
+          if debugLevel > 0 then print("Upper bound of " | toString(product degs) | " for radical");
+          for i to floor(log_2 product degs) do ( 
+               if debugLevel > 0 then print("Testing power " | toString(2^(i+1)));
+               g = g^2 % I;
+               if g == 0 then return true;
+          );
+          false
+     ) else (
+          n = numgens R;
+          S := (coefficientRing R) (monoid[Variables=>n+1,MonomialSize=>16]);
+          mapto := map(S,R,submatrix(vars S,{0..n-1}));
+          I = mapto I;
+          g = mapto g;
+          J := I + ideal(g*S_n-1);
+          1_S % J == 0_S
+     )
+)
+
+TEST ///
+R = ZZ/32003[a..f]
+F = map(R,R,symmetricPower(2,matrix{{a,b,c}}))
+I = ker F
+J = I^2
+G = I_0
+debug PrimaryDecomposition
+radicalContainment(G,J)
+radicalContainment(G-a^2,J)
+///
 
 end
-
-
 
 
 restart
@@ -289,3 +329,27 @@ peek H
 F = (intersect values H)_0
 C1 = saturate(I,F)
 I : C1
+
+
+TEST /// -- radicalContainment test: sharp bound example
+d = (4,5,6,7)
+n = #d
+k = ZZ/101
+R = k[x_0..x_n]
+I = ideal homogenize(matrix{{x_1^(d#0)} | apply(toList(1..n-2), i -> x_i - x_(i+1)^(d#i)) | {x_(n-1) - x_0^(d#-1)}}, x_n)
+D = product(I_*/degree/sum)
+assert(x_0^(D-1) % I != 0 and x_0^D % I == 0)
+elapsedTime assert(radicalContainment(x_0, I, Strategy => "Kollar"))
+elapsedTime assert(radicalContainment(x_0, I))
+f = random(1,R)
+elapsedTime assert(not radicalContainment(f, I, Strategy => "Kollar")) -- ~3s
+elapsedTime assert(not radicalContainment(f, I)) -- ~1s
+
+A = random(R^(n+1), R^(n+1))
+J = sub(I, vars R * A);
+f = ((vars R)*A)_{0} _(0,0)
+elapsedTime assert(radicalContainment(f, J, Strategy => "Kollar")) -- ~15s
+elapsedTime assert(radicalContainment(f, J)) -- ~75 s
+elapsedTime assert(not radicalContainment(x_0, J, Strategy => "Kollar")) -- ~7s
+elapsedTime assert(not radicalContainment(x_0, J)) -- ~22s
+///
