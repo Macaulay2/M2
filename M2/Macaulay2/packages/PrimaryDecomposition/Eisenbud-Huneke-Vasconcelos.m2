@@ -512,47 +512,6 @@ maxRegSeq Ideal := Ideal => opts -> I -> (
      print "Could not find regular sequence. Try again with Strategy => 'Full'"
 )
 
-
--- Radical membership test for homogeneous ideals
--- Based on Theorem 1.5 in https://www.jstor.org/stable/pdf/1990996.pdf
-
-isInRadical = method()
-isInRadical (Ideal, RingElement) := Boolean => (I, f) -> ( -- should assume degrees are > 2
-	R := ring I;
-	if ring f =!= R then error "Expected same ring";
-	if not isHomogeneous I then error "Expected homogeneous ideal";
-	degs := reverse sort((flatten entries mingens I)/degree/sum);
-	n := min(#support I, #degs);
-	degs = drop(degs_{0..<n}, -1) | {last degs};
-	g := f;
-	if debugLevel > 0 then print("Upper bound of " | toString(product degs) | " for radical");
-	for i to floor(log_2 product degs) do ( 
-		if debugLevel > 0 then print("Testing power " | toString(2^(i+1)));
-		g = g^2 % I;
-		if g == 0 then return true;
-	);
-	false
-)
-
-TEST /// -- isInRadical test: sharp bound example
-d = (4,5,6,7)
-n = #d
-k = ZZ/101
-R = k[x_0..x_n]
-I = ideal homogenize(matrix{{x_1^(d#0)} | apply(toList(1..n-2), i -> x_i - x_(i+1)^(d#i)) | {x_(n-1) - x_0^(d#-1)}}, x_n)
-D = product(I_*/degree/sum)
-assert(x_0^(D-1) % I != 0 and x_0^D % I == 0)
-elapsedTime assert(isInRadical(I, x_0))
-f = random(1,R)
-elapsedTime assert(not isInRadical(I, f))
-
-A = random(R^(n+1), R^(n+1))
-J = sub(I, vars R * A);
-f = ((vars R)*A)_{0} _(0,0)
-elapsedTime assert(isInRadical(J, f))
-elapsedTime assert(not isInRadical(J, x_0))
-///
-
 TEST /// -- non-cyclic modules
 R = QQ[x_0..x_3]
 I = monomialCurveIdeal(R,{1,2,3})
