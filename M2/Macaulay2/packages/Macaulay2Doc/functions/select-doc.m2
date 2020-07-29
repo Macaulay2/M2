@@ -23,7 +23,7 @@ doc ///
     select(re, str)
   Inputs
     re:String
-      a regular expression describing a pattern
+      a @TO2 {"regular expressions", "regular expression"}@ describing a pattern
     replacement:String
       a replacement or regex formatting string, may include backreferences
     str:String

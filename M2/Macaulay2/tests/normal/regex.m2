@@ -1,14 +1,18 @@
-assert( regex(".*/","/aa/bb") === {(0, 4)} )
-assert( regex("a|b","a") === {(0,1)} )
-assert( regex("^a+$"," \naaa\n ") === {(2,3)} )
-assert( regex("$a","$a") === null )
-assert( regex(".*","a\nb") === {(0, 1)} )
-assert( select("a+","aaa aaaa") === {"aaa","aaaa"} )
-assert( (regex("a+"," aaa ")) === {(1,3)} )
-assert( (regex("a+",0," aaa ")) === {(1,3)} )
-assert( (regex("a+",0,0," aaa ")) === null )
-assert( (regex("a+",0,1," aaa ")) === {(1,3)} )
-assert( (regex("a+",0,100," aaa ")) === {(1,3)} )
+-- tests for regex
+assert(regex("^(.*[^ ])? *$", " abcdef ") === {(0, 8), (0, 7)})
+assert(regex("^ *([^ ].*[^ ])? *$", " abcdef ") === {(0, 8), (1, 6)})
+assert(regex("^ *([^ ].*)$", " abcdef ") === {(0, 8), (1, 7)})
+assert(regex(".?", "") === {(0, 0)})
+assert(regex(".*/", "/aa/bb") === {(0, 4)})
+assert(regex("a|b", "a") === {(0,1)})
+assert(regex("^a+$", " \naaa\n ") === {(2,3)})
+assert(regex("$a"," $a") === null)
+assert(regex(".*", "a\nb") === {(0, 1)})
+assert(regex("a+", " aaa ") === {(1,3)})
+assert(regex("a+", 0, " aaa ") === {(1,3)})
+assert(regex("a+", 0, 0, " aaa ") === null)
+assert(regex("a+", 0, 1, " aaa ") === {(1,3)})
+assert(regex("a+", 0, 100, " aaa ") === {(1,3)})
 
 -- tests for replace
 s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -36,6 +40,7 @@ assert(concatenate separate(" (x)[A-Za-z]*", 1, s, Flags => RegexPOSIX) === "alg
 assert(demark_" " separate("[ \t]*\r?\n[ \t]*", " A\n\t  B  \r\n  \tC ", Flags=>RegexPerl) === " A B C ")
 
 -- tests for select
+assert(select("a+","aaa aaaa") === {"aaa","aaaa"})
 assert(select("[[:alpha:]]+", "Dog, cat, and deer.") === {"Dog","cat","and","deer"})
 assert(select("^.*$", "ABC\nDEF\r\nGHI") === {"ABC","DEF","GHI"})
 assert(select("([a-zA-Z]+);", "$1", "Dog; cat, deer;") === {"Dog","deer"})

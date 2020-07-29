@@ -21,7 +21,7 @@ doc ///
   separate(pat, n, str)
  Inputs
   pat:String
-   a pattern
+   a pattern, optionally a @TO2 {"regular expressions", "regular expression"}@
   str:String
    the string to split
   n:ZZ

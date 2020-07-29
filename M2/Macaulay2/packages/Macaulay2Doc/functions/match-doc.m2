@@ -16,7 +16,7 @@ doc ///
     match(patterns, str)
   Inputs
     re:String
-      a regular expression
+      a @TO2 {"regular expressions", "regular expression"}@ describing a pattern
     str:String
       a subject string to be searched
     patterns:List
