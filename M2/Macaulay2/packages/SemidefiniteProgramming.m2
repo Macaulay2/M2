@@ -108,10 +108,14 @@ findCSDP = raiseError -> (
 /// << close;
     findProgram("csdp", "csdp " | fin, RaiseError => raiseError))
 
+findMOSEK = raiseError -> findProgram("mosek", "mosek",
+    RaiseError => raiseError)
+
 findSDPA = raiseError -> findProgram("sdpa", "sdpa --version",
     RaiseError => raiseError)
 
 csdpProgram = findCSDP false
+mosekProgram = findMOSEK false
 sdpaProgram = findSDPA false
 
 csdpexec = makeGlobalPath ((options SemidefiniteProgramming).Configuration)#"CSDPexec"
@@ -598,12 +602,6 @@ solveCSDP(Matrix,Sequence,Matrix) := o -> (C,A,b) -> (
     y = checkDualSol(C,A,y,Z,o.Verbosity);
     (X,y,Z,sdpstatus))
 
-runcmd = (cmd,Verbosity) -> (
-    tmp := temporaryFileName() | ".err";
-    r := run(cmd | " 2> " | tmp);
-    handleErrors(r, tmp, Verbosity)
-    )
-
 handleErrors = (r, tmp, Verbosity) -> (
     if r == 32512 then error "Executable not found.";
     if r == 11 then error "Segmentation fault.";
@@ -786,15 +784,17 @@ readSDPA = (fout,n,Verbosity) -> (
 
 solveMOSEK = method( Options => {Verbosity => 0} )
 solveMOSEK(Matrix,Sequence,Matrix) := o -> (C,A,b) -> (
-    if mosekexec===null then error "mosek executable not found";
+    if mosekProgram === null then mosekProgram = findMOSEK true;
     n := numColumns C;
     fin := temporaryFileName() | ".cbf";
     fout := replace(".cbf",".sol",fin);
-    fout2 := temporaryFileName();
     writeMOSEK(fin,C,A,b);
     verbose1("Executing MOSEK", o);
     verbose1("Input file: " | fin, o);
-    runcmd(mosekexec | " " | fin | ">" | fout2, Verbosity);
+    mosekRun := runProgram(mosekProgram, fin, KeepFiles => true,
+	RaiseError => false);
+    fout2 := mosekRun#"output file";
+    handleErrors(mosekRun#"return value", mosekRun#"error file", o.Verbosity);
     verbose1("Output file: " | fout, o);
     (X,y,Z,sdpstatus) := readMOSEK(fout,fout2,n,o.Verbosity);
     (X,y,Z,sdpstatus))
