@@ -41,26 +41,9 @@ export {
     "Scaling"
 }
 
-exportMutable {
-    "csdpexec",
-    "sdpaexec",
-    "mosekexec"
-    }
-
 --##########################################################################--
 -- GLOBAL VARIABLES 
 --##########################################################################--
-
--- Solver executables
-makeGlobalPath = (fname) -> (
-    -- Turns a file name into a global path of the file
-    -- Used to find global file names of external solvers
-    tmp := temporaryFileName();
-    r := run( "which '" | fname | "' > " | tmp);
-    if r>0 then return;
-    fname = replace("\n","",get tmp);
-    if first fname != "/" then fname = currentDirectory() | fname;
-    "'" | fname | "'")
 
 -- Choose default solver
 chooseDefaultSolver = execs -> (
@@ -80,14 +63,33 @@ chooseDefaultSolver = execs -> (
 
 -- Change a solver path
 changeSolver = (solver, execpath) -> (
-    if solver == "CSDP" then csdpexec = execpath;
-    if solver == "SDPA" then sdpaexec = execpath;
-    if solver == "mosek" then mosekexec = execpath;
+    execpath = replace(baseFilename execpath | "$", "", execpath);
+    if solver == "CSDP" then (
+	programPaths#"csdp" = execpath;
+	csdpProgram = findCSDP false;
+    );
+    if solver == "SDPA" then (
+	programPaths#"sdpa" = execpath;
+	sdpaProgram = findSDPA false;
+    );
+    if solver == "mosek" then (
+	programPaths#"mosek" = execpath;
+	mosekProgram = findMOSEK false;
+    );
     SemidefiniteProgramming.defaultSolver = chooseDefaultSolver(
-	csdpexec,
-	mosekexec,
-	sdpaexec)
+	csdpProgram,
+	mosekProgram,
+	sdpaProgram)
     )
+
+-- for backward compatibility
+scan({"CSDP", "MOSEK", "SDPA"}, solver ->
+    if not programPaths#?(toLower solver) and not member(
+        SemidefiniteProgramming#Options#Configuration#(solver | "exec"),
+        {"", toLower solver}) then programPaths#(toLower solver) =
+            replace(toLower solver | "$", "",
+                SemidefiniteProgramming#Options#Configuration#(solver | "exec"))
+)
 
 findCSDP = raiseError -> (
     fin := temporaryFileName() | ".dat-s";
@@ -118,12 +120,7 @@ csdpProgram = findCSDP false
 mosekProgram = findMOSEK false
 sdpaProgram = findSDPA false
 
-csdpexec = makeGlobalPath ((options SemidefiniteProgramming).Configuration)#"CSDPexec"
-if csdpexec === null then csdpexec = prefixDirectory | currentLayout#"programs" | "csdp"
-
-mosekexec = makeGlobalPath ((options SemidefiniteProgramming).Configuration)#"MOSEKexec"
-sdpaexec = makeGlobalPath ((options SemidefiniteProgramming).Configuration)#"SDPAexec"
-defaultSolver = chooseDefaultSolver(csdpexec,mosekexec,sdpaexec)
+defaultSolver = chooseDefaultSolver(csdpProgram, mosekProgram, sdpaProgram)
 
 -- SDP status
 StatusFeas = "SDP solved, primal-dual feasible"
