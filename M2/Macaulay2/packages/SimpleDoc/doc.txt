@@ -73,7 +73,7 @@ Node
     "multidoc"
     "docExample"
     "docTemplate"
-    "Node"
+--    "Node"
   Headline
     a simple documentation function
   Usage

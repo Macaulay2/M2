@@ -18,7 +18,7 @@ newPackage(
 export {"doc", "multidoc", "packageTemplate", -- functions
     "arXiv", "stacksProject", "wikipedia", -- helper functions
     "docTemplate", "docExample", "testExample", "simpleDocFrob", -- templates and examples
-    "Node", "Item", "CannedExample", "Pre", "Code", "Acknowledgement", "Contributors", "References" -- temporary nodes
+    -*"Node",*- "Item", "CannedExample", "Pre", "Code", "Acknowledgement", "Contributors", "References" -- temporary nodes
     }
 
 -- A class for a processed documentation node
