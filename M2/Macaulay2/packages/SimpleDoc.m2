@@ -130,14 +130,17 @@ render = (textlines, keylinenum) -> (
     if #textlines == 0 then return "";
     text := demark(" ", getText \ textlines);
     (offset, tail) := (0, length text);
-    parsed := while offset < tail list (
-	m := regex(///(?<!\\)@(.*?)(?<!\\)(@|$)///, offset, text, Flags => RegexPerl);
-	-- No @ found, the rest of the string is TEX
-	if not m#?1 then first (TEX replace(///\\@///, "@", substring(offset, text)), offset = tail)
-	-- The second @ matched the end of the string, i.e. there is an unmatched @
-	else if m#2#0 == tail then error("unmatched @ near line ", toString keylinenum)
-	-- A pair of @ were found, we evaluate the content
-	else (offset = m#2#0 + 1; safevalue concatenate("(", replace(///\\@///, "@", substring(m#1, text)), ")")));
+    parsed := splice while offset < tail list (
+	m := regex(///(.*?)(?<!\\)(@|$)(.*?)(?<!\\)(@|$)///, offset, text, Flags => RegexPerl);
+	-- The text before any @ should be processed via TEX
+	pre := TEX replace(///\\@///, "@", substring(m#1, text)); offset = m#2#0;
+	-- No @ were found
+	if offset == tail then (if m#1#1 == 0 then continue else continue pre);
+	-- An unmatched @ was found
+	if m#4#0 == tail then error("unmatched @ near line ", toString keylinenum, ":\n\t", substring(m#3, text));
+	-- A pair of @ were found
+	block := concatenate("(", replace(///\\@///, "@", substring(m#3, text)), ")"); offset = m#4#0 + 1;
+	if m#1#1 == 0 then continue safevalue block else continue (pre, safevalue block));
     if instance(parsed, List) and #parsed == 1 then first parsed else parsed)
 
 markup = (textlines, keylinenum) -> (
