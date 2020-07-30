@@ -953,16 +953,27 @@ if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
 fi
 
-dnl we can't use the test below for the presence of 4ti2 until the package FourTiTwo knows
-dnl how to find programs such as "markov" under the name "4ti2-markov", and until our *.dmg and
-dnl *.deb making procedures know how to include them or set the dependencies appropriately
-BUILD_4ti2=yes
-dnl AC_MSG_CHECKING(whether the package 4ti2 is installed)
-dnl if test "`type -t 4ti2-circuits`" = file
-dnl then AC_MSG_RESULT(yes)
-dnl else AC_MSG_RESULT([no, will build])
-dnl      BUILD_4ti2=yes
-dnl fi
+dnl debian: 4ti2-
+dnl suse: 4ti2_
+dnl fedora: /usr/lib/4ti2/bin or /usr/lib64/4ti2/bin
+AC_MSG_CHECKING(whether the package 4ti2 is installed)
+SAVE=$PATH
+PATH="/usr/lib/4ti2/bin:/usr/lib64/4ti2/bin:$PATH"
+FOUND_4ti2=no
+for fourti2_prefix in "" "4ti2-" "4ti2_"
+do
+    if test "`type -t ${fourti2_prefix}circuits`" = file
+    then AC_MSG_RESULT([yes, using prefix "$fourti2_prefix"])
+         FILE_PREREQS="$FILE_PREREQS `type -p ${fourti2_prefix}circuits`"
+         FOUND_4ti2=yes
+         break
+    fi
+done
+if test $FOUND_4ti2 = no
+then AC_MSG_RESULT([no, will build])
+     BUILD_4ti2=yes
+fi
+PATH=$SAVE
 
 AC_MSG_CHECKING(whether the package cohomcalg is installed)
 if test "`type -t cohomcalg`" = file
@@ -982,16 +993,12 @@ fi
 
 AC_MSG_CHECKING(whether the package gfan is installed)
 if test "`type -t gfan`" = file
-then AC_MSG_RESULT([yes, will build anyway])
-     dnl currently the gfanInterface package doesn't know how to find gfan if we don't build it.
-     dnl see https://github.com/Macaulay2/M2/pull/1123
-     dnl Also our *.dmg and *.deb making procedures need to know how to include it or set the dependencies appropriately
+then AC_MSG_RESULT([yes])
+     FILE_PREREQS="$FILE_PREREQS `type -p gfan`"
+else AC_MSG_RESULT([no, will build])
      BUILD_gfan=yes
      dnl we'll also build cddlib until gfan can find its files in /usr/include instead of in /usr/include/cdd
      BUILD_cddlib=yes
-     BUILD_ALWAYS="$BUILD_ALWAYS gfan cddlib"
-else AC_MSG_RESULT([no, will build])
-     BUILD_gfan=yes
 fi
 
 AC_MSG_CHECKING(whether the package lrs is installed)
@@ -1030,21 +1037,49 @@ dnl else AC_MSG_RESULT([no, will build])
 dnl      BUILD_normaliz=yes
 dnl fi
 
-AC_MSG_CHECKING(whether the package nauty is installed)
-if test "`type -t nauty-complg`" = file
-then AC_MSG_RESULT([yes, will build anyway])
-     dnl because the package Nauty doesn't look for it on the PATH
-     BUILD_nauty=yes
-else AC_MSG_RESULT([no, will build])
-     BUILD_nauty=yes
+dnl debian/fedora: nauty-
+AC_MSG_CHECKING(whether the package nauty (>= 2.7) is installed)
+FOUND_nauty=no
+for nauty_prefix in "" "nauty-"
+do
+    if test "`type -t ${nauty_prefix}complg`" = file
+    then nauty_version=`${nauty_prefix}complg --version | cut -d " " -f 3`
+         if test `echo "$nauty_version >= 2.7000" | bc -l` = 1
+         then AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
+             FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
+             FOUND_nauty=yes
+             break
+         else FOUND_nauty=old
+         fi
+    fi
+done
+if test $FOUND_nauty != yes
+then
+    if test $FOUND_nauty = old
+    then AC_MSG_RESULT([yes, but < 2.7, will build])
+    else AC_MSG_RESULT([no, will build])
+    fi
+    BUILD_nauty=yes
 fi
 
+dnl debian: topcom-
+dnl fedora: TOPCOM- (only for cube)
+dnl gentoo: topcom_ (only for cube, 4 others)
+dnl we save ourselves some trouble and check one of the programs that
+dnl only debian gives a prefix
 AC_MSG_CHECKING(whether the package topcom is installed)
-if test "`type -t points2finetriangs`" = file
-then AC_MSG_RESULT([yes, will build anyway])
-     BUILD_topcom=yes
-     dnl currently the package Topcom uses only the internal Macaulay2 path to run its programs
-else AC_MSG_RESULT([no, will build])
+FOUND_topcom=no
+for topcom_prefix in "" "topcom-"
+do
+    if test "`type -t ${topcom_prefix}points2finetriangs`" = file
+    then AC_MSG_RESULT([yes, using prefix "$topcom_prefix"])
+         FILE_PREREQS="$FILE_PREREQS `type -p ${topcom_prefix}points2finetriangs`"
+         FOUND_topcom=yes
+         break
+    fi
+done
+if test $FOUND_topcom = no
+then AC_MSG_RESULT([no, will build])
      BUILD_topcom=yes
 fi
 
