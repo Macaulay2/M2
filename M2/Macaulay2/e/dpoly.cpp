@@ -416,11 +416,15 @@ char *DPoly::to_string(int level, const poly f)
   std::ostringstream o;
   append_to_stream(o, level, f);
   o << '\0';
-  const char *s = o.str().c_str();  // only valid until o is destroyed
-  size_t n = strlen(s);
+  size_t n = o.str().length();
   char *result = new char[n + 1];
-  strcpy(result, s);
-  return result;
+  memcpy(result, o.str().c_str(), n);
+  return result;  
+  // const char *s = o.str().c_str();  // only valid until o is destroyed
+  // size_t n = strlen(s);
+  // char *result = new char[n + 1];
+  // strcpy(result, s);
+  // return result;
 }
 
 void DPoly::display_poly(FILE *fil, int level, const poly f)

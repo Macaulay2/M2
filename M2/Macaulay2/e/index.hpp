@@ -40,6 +40,13 @@ class Index
     return tmp;
   }
 
+  Index<T>& operator=(const Index<T> &i)
+  {
+    ind = i.ind;
+    collection = i.collection;
+    return *this;
+  }
+
   int valid() { return collection->valid(ind); }
   void *val() { return ind; }
 };
