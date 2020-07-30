@@ -63,14 +63,23 @@ findProgram(String, List) := opts -> (name, cmds) -> (
 )
 
 runProgram = method(TypicalValue => ProgramRun,
-    Options => {RaiseError => true, KeepFiles => false, Verbose => false})
+    Options => {
+	RaiseError => true,
+	KeepFiles => false,
+	Verbose => false,
+	RunDirectory => null
+	})
 runProgram(Program, String) := opts -> (program, args) ->
     runProgram(program, program#"name", args, opts)
 runProgram(Program, String, String) := opts -> (program, name, args) -> (
     tmpFile := temporaryFileName();
     outFile := tmpFile | ".out";
     errFile := tmpFile | ".err";
-    cmd := program#"path" | addPrefix(name, program#"prefix") | " " | args;
+    cmd := if opts.RunDirectory =!= null then (
+	if not isDirectory opts.RunDirectory then
+	    makeDirectory opts.RunDirectory;
+	"cd " | opts.RunDirectory | " && " ) else "";
+    cmd = cmd | program#"path" | addPrefix(name, program#"prefix") | " " | args;
     returnValue := run (cmd | " > " | outFile | " 2> " | errFile);
     message := "running: " | cmd | "\n";
     output := get outFile;
