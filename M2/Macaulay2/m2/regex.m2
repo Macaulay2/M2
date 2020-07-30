@@ -30,6 +30,8 @@ RegexPOSIX = symbol RegexPOSIX
 regexFlags = {RegexPOSIX}
 matchFlags = {"Nosubs", "MatchAny"}
 
+specialChars := {"\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "[", "]", "{", "}"}
+
 -----------------------------------------------------------------------------
 -- Local utilities
 -----------------------------------------------------------------------------
@@ -77,7 +79,11 @@ protect symbol regex
 separate' = separate
 separate = method(TypicalValue => List, Options => options regex)
 separate(            String) := opts -> (       str) -> separate'("\r?\n", str, -1)
-separate(String,     String) := opts -> (re,    str) -> separate'(re, str, setRegexFlags(opts, regexFlags))
+separate(String,     String) := opts -> (re,    str) -> (
+    flags := if length re == 1 and member(re, specialChars) then (
+	stderr << "warning: unescaped delimiter '" << re << "' found in call to 'separate'" << endl;
+	RegexFlags#"Literal") else setRegexFlags(opts, regexFlags);
+    separate'(re, str, flags))
 separate(String, ZZ, String) := opts -> (re, n, str) -> (
     (offset, tail) := (0, length str);
     while offset <= tail list (
@@ -132,5 +138,4 @@ toUpper = s -> replace("(\\w+)", "\\U$1", s)
 
 regexQuote = method(Dispatch => Thing, TypicalValue => String)
 regexQuote String := s -> (
-    specialChars := {"\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "[", "]", "{", "}"};
     concatenate apply(characters s, c -> if member(c, specialChars) then "\\" | c else c))

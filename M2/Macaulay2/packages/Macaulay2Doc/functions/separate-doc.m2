@@ -73,6 +73,10 @@ doc ///
    concatenate separate(" (x)[A-Za-z]*", 1, s)
   Text
    @TT "separateRegexp"@ is a deprecated synonym for @TT "separate"@.
+ Caveat
+  For backwards compatibility, if the pattern is a single character and it is an unescaped special character,
+  such as @TT "+"@, @TT "*"@, or @TT "."@, then it is treated as a literal character. In future code, the pattern
+  must be escaped.
  SeeAlso
   "regular expressions"
   "strings and nets"
