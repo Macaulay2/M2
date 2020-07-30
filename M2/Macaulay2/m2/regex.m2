@@ -27,8 +27,6 @@ RegexFlags = new HashTable from {
 RegexPerl = symbol RegexPerl
 RegexPOSIX = symbol RegexPOSIX
 
--- Note: the default may be adjusted by adding the following to the user's init.m2 file:
---   Core#"private dictionary"#"defaultRegexFlags" <- RegexPerl
 regexFlags = {RegexPOSIX}
 matchFlags = {"Nosubs", "MatchAny"}
 

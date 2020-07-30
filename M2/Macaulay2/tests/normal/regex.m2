@@ -30,7 +30,7 @@ s = "A\nB\r\nC"
 assert(separate s === {"A","B","C"})
 assert(separate s === lines s)
 assert(separate "\n\nA\n\nB\n\n" === {"","","A","","B","",""})
-assert(separate(".", "ABC.DEF") === {"ABC", "DEF"})
+assert(separate("\\.", "ABC.DEF") === {"ABC", "DEF"})
 assert(separateRegexp("[,.;]", "A:B.C,D,E;F.") === {"A:B","C","D","E","F",""})
 assert(separate("[,.;]", "A:B.C,D,E;F.", Flags => RegexPOSIX) === {"A:B","C","D","E","F",""})
 assert(concatenate separate("[\t ]+", " A 	 B C   D	E  F     G", Flags => RegexPOSIX) === "ABCDEFG")
