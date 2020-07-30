@@ -168,7 +168,7 @@ multiString = (key, textlines, keylinenum) -> (
 -- used for inputs, outputs, and options
 items = (textlines, keylinenum) -> apply(splitByIndent(textlines, false), (s, e) -> (
 	line := getText textlines#s;
-	ps := separateRegexp("[[:space:]]*(:|=>)[[:space:]]*", line); -- split by ":" or "=>"
+	ps := separate("[[:space:]]*(:|=>)[[:space:]]*", line); -- split by ":" or "=>"
 	if #ps =!= 2 then error("line ", toString getLinenum textlines#s, " of string: expected line containing a colon or a double arrow");
 	result := if s === e then "" else render(textlines_{s+1..e}, getLinenum textlines#s);
 	if ps#1 != "" then result = value ps#1 => result;
