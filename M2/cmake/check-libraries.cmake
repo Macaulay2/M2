@@ -187,6 +187,7 @@ find_program(COHOMCALG	NAMES	cohomcalg)
 find_program(GFAN	NAMES	gfan)
 # TODO: library or program?
 find_program(LRSLIB	NAMES	lrs)
+# TODO: check for alternatives as well: sdpa or mosek
 find_program(CSDP	NAMES	csdp)
 find_program(NORMALIZ	NAMES	normaliz)
 find_program(NAUTY	NAMES	dreadnaut)

@@ -183,7 +183,7 @@ jobs:
         run: |
           # cmake --build . --target M2-unit-tests
           # ctest -R "unit-tests"
-          ctest -R "normal/" -E "command|program|schenck|threads|doc-links" -j4
+          ctest -R "normal/" -E "command|program|schenck|threads|doc-links" -j4 --output-on-failure
 
       - name: Run Tests using Autotools
         if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest'
