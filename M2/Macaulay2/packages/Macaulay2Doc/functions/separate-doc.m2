@@ -9,6 +9,7 @@ doc ///
   (separate, String, String)
   (separate, String, ZZ, String)
   [separate, Flags]
+  "separateRegexp"
  Headline
   split a string into substrings
  Usage
