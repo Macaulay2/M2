@@ -21,8 +21,8 @@ doc ///
       a subject string to be searched
     patterns:List
       a list of regular expressions
-    Flags=>ZZ
-      option for choosing the regex flavor, such as @TO "RegexPOSIX"@ and @TO "RegexPerl"@
+    Flags=>Symbol
+      the regex flavor: either @TO "RegexPOSIX"@ or @TO "RegexPerl"@; @TO null@ indicates POSIX Extended flavor.
     Strategy=>Function
       logical quantifier for matching a list of patterns, typically @TO all@ or @TO any@
   Outputs

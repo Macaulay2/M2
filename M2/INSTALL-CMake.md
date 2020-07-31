@@ -18,7 +18,7 @@ There are various tools needed to compile Macaulay2 dependencies.
 - On Mac OS X, using Homebrew, install `autoconf automake bison libtool pkg-config yasm`.
 
 There are 7 libraries that must be found on the system.
-- On Debian/Ubuntu, install `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-stacktrace-dev libatomic-ops-dev`.
+- On Debian/Ubuntu, install `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev libatomic-ops-dev`.
 - On Mac OS X, using Homebrew, install `eigen libxml2 readline gdbm boost libatomic_ops`.
 
 Finally, there are 2 optional libraries that help with building other requirements.

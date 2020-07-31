@@ -28,9 +28,8 @@ doc ///
       when omitted, the search extends to the end of the string.
     str:String
       the subject string to be searched
-    Flags=>ZZ
-      option for choosing the regex flavor, such as @TO "RegexPOSIX"@ and @TO "RegexPerl"@, or passing internal
-      flags to the @HREF {"https://www.boost.org/doc/libs/release/libs/regex/", "Boost.Regex"}@ library.
+    Flags=>Symbol
+      the regex flavor: either @TO "RegexPOSIX"@ or @TO "RegexPerl"@; @TO null@ indicates POSIX Extended flavor.
   Outputs
     :List
       a list of pairs of integers; each pair denotes the beginning position and the length of a substring.

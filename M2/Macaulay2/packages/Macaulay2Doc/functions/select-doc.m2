@@ -28,8 +28,8 @@ doc ///
       a replacement or regex formatting string, may include backreferences
     str:String
       a subject string to be searched
-    Flags=>ZZ
-      option for choosing the regex flavor, such as @TO "RegexPOSIX"@ and @TO "RegexPerl"@
+    Flags=>Symbol
+      the regex flavor: either @TO "RegexPOSIX"@ or @TO "RegexPerl"@; @TO null@ indicates POSIX Extended flavor.
   Outputs
     :List
       a list of mutually exclusive substrings of @TT "str"@ matching the pattern @TT "re"@;

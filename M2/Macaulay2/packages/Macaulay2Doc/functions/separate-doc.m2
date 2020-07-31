@@ -23,8 +23,8 @@ doc ///
    the string to split
   n:ZZ
    the index of the parenthesized expression to split on
-  Flags=>ZZ
-   option for choosing the regex flavor, such as @TO "RegexPOSIX"@ and @TO "RegexPerl"@
+  Flags=>Symbol
+   the regex flavor: either @TO "RegexPOSIX"@ or @TO "RegexPerl"@; @TO null@ indicates POSIX Extended flavor.
  Outputs
   :List
    a list of strings obtained by breaking @TT "str"@ at every match to the pattern @TT "re"@, or, if a natural
