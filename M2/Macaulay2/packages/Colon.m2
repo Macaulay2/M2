@@ -356,10 +356,13 @@ IdealIdealSaturateAlgorithms = new HashTable from {
 	    I = ideal syz gb(m, Syzygies => true));
 	ideal (presentation ring I ** R)),
 
+    Eliminate => opts -> (I, J) -> saturate(I, J, opts ++ {Strategy => Elimination}), -- backwards compatibility
     Elimination => opts -> (I, J) -> (
 	intersectionByElimination for g in J_* list saturate(I, g, opts)),
 
     GRevLex => opts -> (I, J) -> (
+	-- FIXME: this might not be necessary, but the code isn't designed for this case.
+	if not isFlatPolynomialRing ring I then return null;
 	-- First check that all generators are variables of the ring
 	-- TODO: can this strategy work with generators of the irrelevant ideal?
 	if any(index \ J_*, v -> v === null) then return null;
@@ -378,6 +381,7 @@ scan({Iterate, Elimination, GRevLex}, strategy -> addHook(IdealIdealSaturateAlgo
 -- Algorithms for Ideal : RingElement^infinity
 IdealElementSaturateAlgorithms = new HashTable from {
     null   => symbol IdealElementSaturateHooks,
+    Iterate => opts -> (I, f) -> saturate(I, ideal f, opts), -- backwards compatibility
     Linear => opts -> (I, f) -> (
 	-- assumptions for this case:
 	--   (1) the ring is of the form k[x1..xn].  No quotients, k a field or ZZ, grevlex order
@@ -424,6 +428,7 @@ IdealElementSaturateAlgorithms = new HashTable from {
 	(g1, notused) := divideByVariable(g, A_n);
 	ideal iback g1),
 
+    Eliminate => opts -> (I, f) -> saturate(I, f, opts ++ {Strategy => Elimination}), -- backwards compatibility
     Elimination => opts -> (I, f) -> (
 	-- Eliminate(t, (I, t * f - 1))
 	-- assumptions for this case:
@@ -438,6 +443,8 @@ IdealElementSaturateAlgorithms = new HashTable from {
 	ideal fback p1),
 
     GRevLex => opts -> (I, v) -> (
+	-- FIXME: this might not be necessary, but the code isn't designed for this case.
+	if not isFlatPolynomialRing ring I then return null;
 	-- First check that v is a variable of the ring
 	-- TODO: can this strategy work with generators of the irrelevant ideal?
 	if index v === null then return null;
@@ -524,7 +531,8 @@ TEST ///
   K = QQ;
   S = K[u, v, a, c, Degrees => {2, 3, 1, 2}];
   P = ideal(v^3-u^3*a^3, u*v^2-c^2*a^4);
-  assert(saturate(P, a) == quotient(Q, a))
+  Q = saturate(P, a)
+  assert(Q == quotient(Q, a))
 ///
 
 -- Tests for saturationZero
