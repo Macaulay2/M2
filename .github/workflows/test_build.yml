@@ -91,6 +91,7 @@ jobs:
       - name: Install requirements for Linux
         if: runner.os == 'Linux'
         run: |
+          sudo apt-get update
           sudo apt-get install -y -q --no-install-recommends clang-10 gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
