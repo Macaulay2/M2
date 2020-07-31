@@ -12,7 +12,7 @@ quotient = method(
 	  BasisElementLimit => infinity,
 	  PairLimit => infinity,
 	  MinimalGenerators => true,
-	  Strategy => Iterate
+	  Strategy => null
 	  }
      )
 

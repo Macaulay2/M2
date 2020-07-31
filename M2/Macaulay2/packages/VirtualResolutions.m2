@@ -68,7 +68,7 @@ debug Core;
 ----- created. We hope this is eventually removed.
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-ourSaturation = (I,irr) -> saturationByElimination(I, decompose irr);
+ourSaturation = (I,irr) -> saturate(I, decompose irr, Strategy => Elimination);
 
 
 --------------------------------------------------------------------

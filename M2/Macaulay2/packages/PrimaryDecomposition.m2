@@ -10,7 +10,7 @@ newPackage(
 	{Name => "Carolyn Yackel", Email => "cyackel@math.indiana.edu"},
 	{Name => "Justin Chen", Email => "justin.chen@math.gatech.edu"}
      },
-     PackageExports => {}
+     PackageExports => {"Colon"}
      )
 
 export {

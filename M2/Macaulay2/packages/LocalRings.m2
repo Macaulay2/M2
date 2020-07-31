@@ -29,7 +29,7 @@ newPackage(
         {Name => "David Eisenbud", Email => "de@msri.org",           HomePage => "http://www.msri.org/~de/"}
         },
     Headline => "operations over a local ring (R, P)",
-    PackageExports => {"PruneComplex"},
+    PackageExports => {"PruneComplex", "Colon"},
     AuxiliaryFiles => true
     )
 
@@ -442,38 +442,19 @@ inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
 
 -- (symbol:, Thing, Thing)
 -- We rely on the fact that ideal and module quotients commute with localization
--- TODO: find a way to handle the options from quotient
-localQuotient = (A, B) -> (
+localQuotient := opts -> (A, B) -> (
     RP := ring A;
-    if ring B =!= RP then error "expected objects of the same ring";
     if instance(RP, LocalRing) then (
         if isSubset(B, A) then (
             if class A === Ideal or class B === Module
             then return ideal 1_RP
-            else return ambient A;
-            );
+            else return ambient A);
         R := RP;
         while class R === LocalRing do R = last R.baseRings;
         A' := liftUp(A, R);
         B' := liftUp(B, R);
-        C' := quotient(A', B');
-        C' ** RP
-        )
-    else quotient(A, B)
-    )
-
---FIXME: get quotient to work, currently A:B works
---quotient(Ideal ,Ideal      ) := Ideal  => opts -> (I,J) -> (quotientIdeal opts)(I,J)
---quotient(Ideal ,RingElement) := Ideal  => opts -> (I,f) -> (quotientIdeal opts)(I,ideal(f))
---quotient(Module,Ideal      ) := Module => opts -> (M,I) -> (quotientModule opts)(M,I)
---quotient(Module,RingElement) := Module => opts -> (M,f) -> (quotientModule opts)(M,ideal(f))
---quotient(Module,Module     ) := Ideal  => opts -> (M,N) -> (quotientAnn opts)(M,N)
-
-Ideal  : Ideal       := Ideal  => (I,J) -> localQuotient(I,J)
-Ideal  : RingElement := Ideal  => (I,r) -> localQuotient(I,ideal(r))
-Module : Ideal       := Module => (M,I) -> localQuotient(M,I)
-Module : RingElement := Module => (M,r) -> localQuotient(M,ideal(r))
-Module : Module      := Ideal  => (M,N) -> localQuotient(M,N)
+        C' := quotient(A', B', opts);
+        C' ** RP))
 
 -- annihilator
 -- We rely on the fact that ideal and module annihilators commute with localization
@@ -494,12 +475,10 @@ annihilator Module := Ideal => opts -> (cacheValue symbol annihilator) (M -> (
 
 -- saturate
 -- We rely on the fact that ideal and module saturations commute with localization
-oldSaturateIdeal  = lookup(saturate, Ideal,  Ideal)
-oldSaturateModule = lookup(saturate, Module, Ideal)
 localSaturate := opts -> (A, B) -> (
     RP := ring A;
-    if ring B =!= RP then error "expected objects of the same ring";
     if instance(RP, LocalRing) then (
+	if instance(B, RingElement) then B = ideal B;
         if isSubset(B, A) then (
             if class A === Ideal
             then return ideal 1_RP
@@ -511,18 +490,23 @@ localSaturate := opts -> (A, B) -> (
         B' := liftUp(B, R);
         C' := saturate(A', B', opts);
         C' ** RP             -- Any options we need to care about?
-        )
-    else if class A === Ideal
-    then (oldSaturateIdeal  opts)(A, B)
-    else (oldSaturateModule opts)(A, B)
-    )
+        ))
 
-saturate Ideal                := Ideal  => opts ->  I     -> (localSaturate opts)(I, ideal vars ring I)
-saturate(Ideal, Ideal)        := Ideal  => opts -> (I, J) -> (localSaturate opts)(I, J)
-saturate(Ideal, RingElement)  := Ideal  => opts -> (I, f) -> (localSaturate opts)(I, ideal(f))
-saturate Module               := Module => opts ->  M     -> (localSaturate opts)(M, ideal vars ring M)
-saturate(Module, Ideal)       := Module => opts -> (M, I) -> (localSaturate opts)(M, I)
-saturate(Module, RingElement) := Module => opts -> (M, f) -> (localSaturate opts)(M, ideal(f))
+--=============================== addHooks Section for Colons ===============================--
+
+-- Installing local hooks for quotient and saturate
+debug Colon -- TODO: is this needed?
+
+scan({	symbol IdealIdealQuotientHooks,
+	symbol ModuleIdealQuotientHooks,
+	symbol ModuleModuleQuotientHooks}, HookList -> addHook(HookList, (opts, I, J) -> (
+	    if debugLevel > 0 then stderr << "  -- localQuotient(" << toString class I << ", " << toString class J << ")" << endl;
+	    (localQuotient opts)(I, J))))
+scan({	symbol IdealIdealSaturateHooks,
+	symbol IdealElementSaturateHooks,
+	symbol ModuleIdealSaturateHooks}, HookList -> addHook(HookList, (opts, I, J) -> (
+	    if debugLevel > 0 then stderr << "  -- localSaturate(" << toString class I << ", " << toString class J << ")" << endl;
+	    (localSaturate opts)(I, J))))
 
 --================================= Tests and Documentation =================================--
 
