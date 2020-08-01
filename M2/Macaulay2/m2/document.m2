@@ -537,19 +537,12 @@ extractExamples := docBody -> (
 
 M2outputRE := "(\n+)i+[1-9][0-9]* : "
 M2outputREindex := 1
--- if called during installation (and thus generating html and info docs)
--- then wrap examples to 77 characters.  otherwise, compute the width from
--- printWidth, allowing space for the output prompt and box boundary
-separateM2output = method(Options => {"Install" => false})
-separateM2output String := o -> r -> (
+separateM2output = method()
+separateM2output String := r -> (
      m := regex("^i1 : ",r);
      if m#?0 then r = substring(m#0#0,r);
      while r#?-1 and r#-1 == "\n" do r = substring(0,#r-1,r);
-     wrapWidth := if o#"Install" then 77
-	  else printWidth - interpreterDepth - length toString lineNumber - 5;
-     apply(separateRegexp(M2outputRE,M2outputREindex,r), ex ->
-	  toString stack apply(lines ex, line -> wrap(wrapWidth, line)))
-     )
+     separateRegexp(M2outputRE,M2outputREindex,r))
 
 makeExampleOutputFileName := (fkey,pkg) -> (			 -- may return 'null'
      if pkg#?"package prefix" and pkg#"package prefix" =!= null 
@@ -678,7 +671,7 @@ fixupTable := new HashTable from {
 				   if f === null then error("SourceCode: ", toString m, ": not a method");
 				   c := code f;
 				   if c === null then error("SourceCode: ", toString m, ": code for method not found");
-				   c)))}}
+				   reproduciblePaths toString c)))}}
 	  else v),
      Subnodes => v -> (
 	  v = nonnull enlist v;

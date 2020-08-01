@@ -12,20 +12,20 @@ o3 : List
 
 i4 : peek S_0
 
-o4 = Point{AccuracyEst => 4.49338e-11        }
-           AccuracyEstInternal => 7.79225e-12
-           ConditionNumber => 2.37577
+o4 = Point{AccuracyEst => 5.55221e-14        }
+           AccuracyEstInternal => 1.09532e-14
+           ConditionNumber => 3.19545
            Coordinates => {1, 1.41421}
            CycleNumber => 1
-           FinalTValue => .0015625
-           FunctionResidual => 4.22465e-15
+           FinalTValue => .000390625
+           FunctionResidual => 1.11886e-16
            MaxPrecisionUtilized => 52
            Multiplicity => 1
-           NewtonResidual => 2.85482e-17
+           NewtonResidual => 8.23628e-17
            PathNumber => 0
            PathsWithSameEndpoint => {}
            PrecisionIncreased => 0
-           SolutionNumber => 0
+           SolutionNumber => 1
 
 i5 : R = CC[x];
 
@@ -33,7 +33,7 @@ i6 : F = {x^2*(x-1)};
 
 i7 : S = bertiniZeroDimSolve F
 
-o7 = {{1}, {-4.3305e-15+6.29344e-15*ii}}
+o7 = {{1}, {3.51449e-14+6.41131e-14*ii}}
 
 o7 : List
 

@@ -21,7 +21,7 @@ o3 : NumericalVariety
 
 i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-o4 = {{-1.92365e-61+4.70655e-62*ii, 2.0809e-61+5.7384e-62*ii, .0526028+.36213*ii}}
+o4 = {{9.83944e-68-8.625e-70*ii, 9.79349e-68+1.82104e-68*ii, .352544-.003583*ii}}
 
 o4 : VerticalList
 
@@ -35,9 +35,9 @@ i6 : peek oo_0 --then list position
 
 o6 = WitnessSet{ComponentNumber => 0                                                                             }
                 IsIrreducible => true
-                Points => {{-1.92365e-61+4.70655e-62*ii, 2.0809e-61+5.7384e-62*ii, .0526028+.36213*ii}}
-                Slice => | .662635+.650536ii .359389-.656455ii -.113703+1.27646ii .468226-.0259701ii |
-                WitnessDataFileName => /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-74779-0/1/witness_data
+                Points => {{9.83944e-68-8.625e-70*ii, 9.79349e-68+1.82104e-68*ii, .352544-.003583*ii}}
+                Slice => | .676227+.312984ii -.430765+.527252ii .795595-.72831ii -.277873+.259612ii |
+                WitnessDataFileName => /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-38830-0/1/witness_data
                                      3      2      2       2     3      2
                 Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)
 

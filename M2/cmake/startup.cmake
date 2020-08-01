@@ -54,7 +54,7 @@ set(mandir	${prefix}/${CMAKE_INSTALL_MANDIR})
 set(docdir	${prefix}/${CMAKE_INSTALL_DOCDIR})
 # These locations are Macaulay2 conventions
 set(libm2dir	${libdir}/Macaulay2)
-set(emacsdir	${datarootdir}/emacs/site-lisp)
+set(emacsdir	${datarootdir}/emacs/site-lisp/Macaulay2)
 set(GFTABLESDIR	${datarootdir}/Macaulay2/Core/factory/)
 set(packagesdir	${datarootdir}/Macaulay2)
 set(programsdir	${libexecdir}/Macaulay2/bin)
@@ -70,8 +70,8 @@ set(librariesdir ${libm2dir}/lib)
 ## Set variables for configuring Macaulay2/d/startup.c
 
 ## read startup.m2.in and apply regex to address and content
-file(GLOB STARTUP_M2_ADDR "Macaulay2/m2/startup.m2.in")
-file(READ "Macaulay2/m2/startup.m2.in"   STARTUP_M2_CONTENT)
+set(STARTUP_M2_ADDR "Macaulay2/Core/startup.m2.in")
+file(READ       "${STARTUP_M2_ADDR}"     STARTUP_M2_CONTENT)
 _STARTUP_REGEX([[${STARTUP_M2_ADDR}]]    STARTUP_M2_ADDR    NO)
 _STARTUP_REGEX([[${STARTUP_M2_CONTENT}]] STARTUP_M2_CONTENT YES)
 string(CONFIGURE "${STARTUP_M2_CONTENT}" STARTUP_M2_CONTENT @ONLY)
@@ -80,7 +80,7 @@ string(CONFIGURE "${STARTUP_M2_CONTENT}" STARTUP_M2_CONTENT @ONLY)
 set(TEST_STRINGS "")
 set(TEST_STRINGS_TEMPLATE "   {\n   @BASICTEST_M2_ADDR@,\n   @BASICTEST_M2_CONTENT@\n   },\n")
 
-file(GLOB BASICTEST_FILES "Macaulay2/m2/basictests/*.m2")
+file(GLOB BASICTEST_FILES RELATIVE ${CMAKE_SOURCE_DIR} "Macaulay2/Core/basictests/*.m2")
 foreach(BASICTEST_FILE ${BASICTEST_FILES})
   file(TO_NATIVE_PATH "${BASICTEST_FILE}"    BASICTEST_M2_ADDR)
   file(READ           "${BASICTEST_FILE}"    BASICTEST_M2_CONTENT)

@@ -9,7 +9,6 @@ include ../../include/config.Makefile
 # In this directory, we compile "scc1", the D to C translator, which we want to run
 # on the "build" machine, in the sense of autoconf.  So we do not want the cross-compiling compiler:
 CC = @CC_FOR_BUILD@
-LDFLAGS = $(LDFLAGS_FOR_BUILD)
 
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@

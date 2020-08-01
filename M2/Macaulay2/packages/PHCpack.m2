@@ -1136,7 +1136,7 @@ solveSystem List := List =>  o->system -> (
   local newR;
   R := ring ideal system;
 
-  stdio << "*** variables in the ring : " << gens R << " ***" << endl;
+  -- stdio << "*** variables in the ring : " << gens R << " ***" << endl;
 
   n := #system;
   if n < numgens R then

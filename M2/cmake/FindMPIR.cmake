@@ -8,7 +8,9 @@
 # Once done this will define
 #
 #  MPIR_FOUND             - system has MPIR lib
+#  MPIR_ROOT              - the MPIR install prefix
 #  MPIR_INCLUDE_DIRS      - the MPIR include directory
+#  MPIR_LIBRARY_DIRS      - the MPIR library directory
 #  MPIR_LIBRARIES         - Libraries needed to use MPIR
 #  MPIR_VERSION           - MPIR version
 
@@ -58,7 +60,9 @@ macro(_mpir_check_version)
 endmacro(_mpir_check_version)
 
 if(NOT MPIR_VERSION_OK)
+  set(MPIR_ROOT NOTFOUND)
   set(MPIR_INCLUDE_DIRS NOTFOUND)
+  set(MPIR_LIBRARY_DIRS NOTFOUND)
   set(MPIR_LIBRARIES NOTFOUND)
   set(MPIRXX_LIBRARIES NOTFOUND)
 
@@ -87,9 +91,15 @@ if(NOT MPIR_VERSION_OK)
     set(MPIR_LIBRARIES ${MPIRXX_LIBRARIES} ${MPIR_LIBRARIES})
   endif()
 
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(MPIR DEFAULT_MSG MPIR_INCLUDE_DIRS MPIR_LIBRARIES MPIR_VERSION_OK)
+  if(MPIRXX_LIBRARIES)
+    get_filename_component(MPIR_LIBRARY_DIRS "${MPIRXX_LIBRARIES}" DIRECTORY)
+  endif()
 
-  mark_as_advanced(MPIR_INCLUDE_DIRS MPIR_LIBRARIES)
+  string(REGEX REPLACE "/include(/${CMAKE_LIBRARY_ARCHITECTURE}$)?" "" MPIR_ROOT "${MPIR_INCLUDE_DIRS}")
+
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(MPIR DEFAULT_MSG MPIR_ROOT MPIR_INCLUDE_DIRS MPIR_LIBRARIES MPIR_LIBRARY_DIRS MPIR_VERSION_OK)
+
+  mark_as_advanced(MPIR_ROOT MPIR_INCLUDE_DIRS MPIR_LIBRARIES MPIR_LIBRARY_DIRS)
 
 endif()

@@ -236,6 +236,11 @@ if(VERBOSE)
   message("## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)
      Compiler flags    = ${COMPILE_OPTIONS}
      Linker flags      = ${LINK_OPTIONS}\n")
+  message("## CMake path variables
+     CMAKE_SYSTEM_PREFIX_PATH
+       ${CMAKE_SYSTEM_PREFIX_PATH}
+     CMAKE_C_IMPLICIT_LINK_DIRECTORIES
+       ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES}\n")
 endif()
 
 ###############################################################################

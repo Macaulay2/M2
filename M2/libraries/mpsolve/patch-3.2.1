@@ -47,3 +47,23 @@ diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/einsteinium-gcc9-devel
 -	$(GTK_LIBS)
 -
 -nodist_EXTRA_mpsolve_SOURCES = dummy.cxx
+
+--- mpsolve-3.2.1/configure.ac-orig	2020-07-09 02:28:06.018935996 -0500
++++ mpsolve-3.2.1/configure.ac	2020-07-09 02:28:20.903885679 -0500
+@@ -311,13 +311,13 @@
+     # Add GMP_CFLAGS and GMP_LIBS to CFLAGS and LDFLAGS in case they are set.
+     # This is an easy way for the user to override system libgmp or to provide
+     # its location if it's not installed system-wide. 
+-    AS_IF([test -z $GMP_CFLAGS], [], [
++    AS_IF([test -z "$GMP_CFLAGS"], [], [
+       CFLAGS="$GMP_CFLAGS $CFLAGS"
+     ])
+-    AS_IF([test -z $GMP_LDFLAGS], [], [
++    AS_IF([test -z "$GMP_LDFLAGS"], [], [
+       LDFLAGS="$GMP_LDFLAGS $LDFLAGS"
+     ])
+-    AS_IF([test -z $GMP_LIBS], [], [
++    AS_IF([test -z "$GMP_LIBS"], [], [
+       LDFLAGS="$GMP_LIBS $LDFLAGS"
+     ])
+ 
