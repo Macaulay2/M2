@@ -81,12 +81,8 @@ doc ///
       m = regex("<b>(.*?)</b>", s, Flags => RegexPerl);
       substring(m#1#0, m#1#1, s)
 
-    Text
-      The global variable @TO "regexFlags"@ allows changing the default flags for all functions using regular expressions.
-    Example
-      regexFlags = RegexPerl
-      regex("A(?!C)", "AC AB")
-      regex("A(?=B)", "AC AB")
+      regex("A(?!C)", "AC AB", Flags => RegexPerl);
+      regex("A(?=B)", "AC AB", Flags => RegexPerl);
   SeeAlso
     "regular expressions"
     "strings and nets"
@@ -101,7 +97,6 @@ doc ///
 doc ///
   Key
     "regular expressions"
-    "regexFlags"
     "RegexPOSIX"
     "RegexPerl"
   Headline
@@ -188,8 +183,6 @@ doc ///
 	  {TT "RegexPOSIX", " -- the \"best\" match is obtained using the \"leftmost-longest\" rule;"},
 	  {TT "RegexPerl", " -- the \"first\" match is arrived at by a depth-first search."},
 	  }@
-
-      The default flavor can also be adjusted using the global variable @TT "regexFlags"@.
 
       @HEADER2 "Additional ECMAScript Syntax"@
 

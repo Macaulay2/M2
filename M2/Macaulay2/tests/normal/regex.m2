@@ -85,7 +85,7 @@ assert match("cat(?=fish)", s, Flags => RegexPerl)
 assert(substring(lastMatch#0#0, lastMatch#0#1 + 4, s) == "catfish")
 
 -- tests for regexQuote
-assert match(regexQuote ///foo\///, ///foo\///)
+assert match(regexQuote "foo\\", "foo\\")
 assert match(regexQuote "foo^", "foo^")
 assert match(regexQuote "foo$", "foo$")
 assert match(regexQuote "foo.", "foo.")
@@ -98,7 +98,7 @@ assert match(regexQuote "[foo]", "[foo]")
 assert match(regexQuote "{foo}", "{foo}")
 
 -- the following matches would all return true without regexQuote
-assert not match(regexQuote ///\w///, "foo")
+assert not match(regexQuote "\\w",  "foo")
 assert not match(regexQuote "^foo", "foo")
 assert not match(regexQuote "foo$", "foo")
 assert not match(regexQuote "foo.", "fooo")

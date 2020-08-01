@@ -27,10 +27,13 @@ RegexFlags = new HashTable from {
 RegexPerl = symbol RegexPerl
 RegexPOSIX = symbol RegexPOSIX
 
+-- Note: for experiments, the default can be changed in ./Macaulay2/init.m2:
+--   Core#"private dictionary"#"regexFlags" <- {RegexPerl}
 regexFlags = {RegexPOSIX}
 matchFlags = {"Nosubs", "MatchAny"}
 
-specialChars := {"\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "[", "]", "{", "}"}
+regexSpecialChars = concatenate(
+    "([", apply({"\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "[", "]", "{", "}"}, c -> "\\" | c), "])")
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -80,7 +83,7 @@ separate' = separate
 separate = method(TypicalValue => List, Options => options regex)
 separate(            String) := opts -> (       str) -> separate'("\r?\n", str, -1)
 separate(String,     String) := opts -> (re,    str) -> (
-    flags := if length re == 1 and member(re, specialChars) then (
+    flags := if length re == 1 and match(regexSpecialChars, re) then (
 	stderr << "warning: unescaped delimiter '" << re << "' found in call to 'separate'" << endl;
 	RegexFlags#"Literal") else setRegexFlags(opts, regexFlags);
     separate'(re, str, flags))
@@ -137,5 +140,4 @@ toUpper = s -> replace("(\\w+)", "\\U$1", s)
 -----------------------------------------------------------------------------
 
 regexQuote = method(Dispatch => Thing, TypicalValue => String)
-regexQuote String := s -> (
-    concatenate apply(characters s, c -> if member(c, specialChars) then "\\" | c else c))
+regexQuote String := s -> replace(regexSpecialChars, "\\\\$1", s)

@@ -1257,7 +1257,6 @@ exportMutable {
 	"printingTrailLimit",
 	"programPaths",
 	"recursionLimit",
-	"regexFlags",
 	"scriptCommandLine",
 	"stopIfError",
 	"topLevelMode"
