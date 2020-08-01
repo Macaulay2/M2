@@ -1262,7 +1262,8 @@ AC_CHECK_HEADER(boost/version.hpp,
 	AC_MSG_ERROR([boost library not installed, but required])
 	])
 
-AC_MSG_CHECKING([if we can link against Boost.Stacktrace library])
+AC_MSG_CHECKING([whether the Boost::Stacktrace library is available])
+AC_LANG(C++)
 SAVECPPFLAGS=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS -DBOOST_STACKTRACE_LINK"
 SAVELIBS=$LIBS
@@ -1273,7 +1274,7 @@ do
     AC_LINK_IFELSE(
         [AC_LANG_PROGRAM([#include <boost/stacktrace.hpp>
          ], [boost::stacktrace::stacktrace();])],
-        [AC_MSG_RESULT([yes, ${stacktrace_library}])
+        [AC_MSG_RESULT([yes, boost_stacktrace_${stacktrace_library}])
          FOUND_stacktrace_library=yes
          break],)
 done
