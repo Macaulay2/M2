@@ -16,15 +16,12 @@ newPackage(
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"},
 	{Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}},
     PackageExports => {},
-    AuxiliaryFiles => false,
+    AuxiliaryFiles => true,
     DebuggingMode => true
     )
 
 export {
     "saturationZero",
---    "grevLexRing",
---    "eliminationInfo",
---    "saturationByGRevLexHelper",
     "intersectionByElimination"
     }
 
@@ -191,11 +188,11 @@ IdealIdealQuotientAlgorithms = new HashTable from {
 	if not isHomogeneous I
 	or not isHomogeneous J or not isLinearForm J_0
 	then return null;
-	error("quotient strategy Linear is not yet implemented")),
+	stderr << "warning: quotient strategy Linear is not yet implemented" << endl; null),
     }
 
 -- Installing hooks for Ideal : Ideal
-scan({Linear, Quotient, Iterate}, strategy -> addHook(IdealIdealQuotientAlgorithms#null,
+scan({Quotient, Iterate, Linear}, strategy -> addHook(IdealIdealQuotientAlgorithms#null,
 	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); IdealIdealQuotientAlgorithms#strategy opts)(I, J)))
 
 -- Algorithms for Module : Ideal
@@ -236,11 +233,11 @@ ModuleIdealQuotientAlgorithms = new HashTable from {
 	if not isHomogeneous M
 	or not isHomogeneous J or not isLinearForm J_0
 	then return null;
-	error("quotient strategy Linear is not yet implemented")),
+	stderr << "warning: quotient strategy Linear is not yet implemented" << endl; null),
     }
 
 -- Installing hooks for Module : Ideal
-scan({Linear, Quotient, Iterate}, strategy -> addHook(ModuleIdealQuotientAlgorithms#null,
+scan({Quotient, Iterate, Linear}, strategy -> addHook(ModuleIdealQuotientAlgorithms#null,
 	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); ModuleIdealQuotientAlgorithms#strategy opts)(I, J)))
 
 -- Algorithms for Module : Module
@@ -521,6 +518,7 @@ TEST ///
   -- of degree 3 supported at x=y=0
   P = homogenize(x * x^d - y, z)
   assert(saturate(ideal P, z) == ideal y)
+  -- FIXME: GRevLex is failing currently, but it should work
   for strategy in {GRevLex, "Unused"} do
   assert(saturate(ideal P, z, Strategy => strategy) == ideal y)
 ///
@@ -534,6 +532,10 @@ TEST ///
   Q = saturate(P, a)
   assert(Q == quotient(Q, a))
 ///
+
+TEST get(currentFileDirectory | "Colon/saturate3.m2")
+TEST get(currentFileDirectory | "Colon/saturate4.m2")
+TEST get(currentFileDirectory | "Colon/saturate5.m2")
 
 -- Tests for saturationZero
 TEST ///
@@ -560,8 +562,7 @@ TEST ///
 ----- Documentation section
 --------------------------------------------------------------------
 
-end--
-
+-*
 beginDocumentation()
 
 doc ///
@@ -601,15 +602,20 @@ doc ///
 
       If M is an ideal saturationZero checks whether the saturation comodule of M by B is zero.
 ///
+*-
 
 --------------------------------------------------------------------
 ----- Development section
 --------------------------------------------------------------------
 
+saturationByGRevLex     = (I,J) -> saturate(I, J, Strategy => GRevLex)
+saturationByElimination = (I,J) -> saturate(I, J, Strategy => Elimination)
+
 end--
 
 restart
-needsPackage "Colon"
+debugLevel = 1
+debug needsPackage "Colon"
 
 kk = ZZ/32003
 R = kk(monoid[x_0, x_1, x_2, x_3, x_4, Degrees => {2:{1, 0}, 3:{0, 1}}, Heft => {1,1}])
@@ -631,16 +637,25 @@ I = ideal(x_0^2*x_2^2*x_3^2+44*x_0*x_1*x_2^2*x_3^2+2005*x_1^2*x_2^2*x_3^2+12870
      3681*x_0^5*x_1^2*x_3+11630*x_0^4*x_1^3*x_3-4218*x_0^3*x_1^4*x_3+6881*x_0^2*
      x_1^5*x_3-6685*x_0*x_1^6*x_3+12813*x_1^7*x_3-11966*x_0^7*x_4+7648*x_0^6*x_1
      *x_4-10513*x_0^5*x_1^2*x_4+3537*x_0^4*x_1^3*x_4+2286*x_0^3*x_1^4*x_4+733*x_
-     0^2*x_1^5*x_4+11541*x_0*x_1^6*x_4+660*x_1^7*x_4)
+     0^2*x_1^5*x_4+11541*x_0*x_1^6*x_4+660*x_1^7*x_4);
 
-ans1 = elapsedTime saturationByGRevLex(saturationByGRevLex(I, B0), B1);
-ans2 = elapsedTime saturationByGRevLex(saturationByGRevLex(I, B1), B0);
+--              B0       B1
+-- GRevLex      25.95s   0.18s
+-- Elimination  28.35s   0.29s
+-- Iterate      60.02s   0.05s
+for B in {B0, B1} do (
+    for strategy in {GRevLex, Elimination, Iterate} do
+    print(strategy, (try elapsedTime saturate(I, B, Strategy => strategy);)))
 
-elapsedTime saturationByGRevLex(I, x_0);
-elapsedTime saturationByGRevLex(I, x_1);
+ans1 = elapsedTime saturationByGRevLex(saturationByGRevLex(I, B0), B1); -- 25.53s
+ans2 = elapsedTime saturationByGRevLex(saturationByGRevLex(I, B1), B0); -- 22.93s
 
-ans3 = elapsedTime saturationByElimination(saturationByElimination(I, B0), B1);
-ans4 = elapsedTime saturationByElimination(saturationByElimination(I, B1), B0);
+elapsedTime saturationByGRevLex(I, x_0); -- 9.01s
+elapsedTime saturationByGRevLex(I, x_1); -- 8.77s
+
+-- TODO: what a discrepency
+ans3 = elapsedTime saturationByElimination(saturationByElimination(I, B0), B1); -- 49.22s
+ans4 = elapsedTime saturationByElimination(saturationByElimination(I, B1), B0); -- 28.63
 
 
 elapsedTime J1 = saturationByElimination(I, x_0);
@@ -669,9 +684,9 @@ betti J2
 betti J1
 
 restart
-needsPackage "Colon"
-load "badsaturations.m2"
+load "./Colon/badsaturations.m2"
 
+-- TODO: how was this so fast before??
 J = paramRatCurve({2,2},{3,3},{4,2});
 elapsedTime genSat(J,2) -- 200 sec
 elapsedTime genSat2(J,2) -- 50 sec
@@ -744,15 +759,37 @@ fto I
 fto
 
 ----------------------------
--- example:
+-- Benchmarking example:
 restart
 needsPackage "Colon"
+
 R = ZZ/101[vars(0..14)]
 M = genericMatrix(R, a, 3, 5)
 I = minors(3, M);
 codim I
-J = ideal((gens I) * random(R^10, R^5))
--- ~6100s previously
-elapsedTime(J : I)
+d = 4
+J = ideal((gens I) * random(R^10, R^d));
+
+-- algorithm; d =   2    3    4    5
+-- null          0.45   40
+-- Linear         N/A  N/A  N/A  N/A
+-- Iterate       0.41   40
+-- Quotient        22  271
+elapsedTime J'  = quotient(J, I);
+for strategy in {Linear, Iterate, Quotient} do
+print(strategy, (try (elapsedTime J'  === quotient(J, I, Strategy => strategy)) else "not applicable"))
+
+-- algorithm; d =   2    3    4    5
+-- null          0.45  430
+-- GRevLex        N/A  N/A  N/A  N/A
+-- Elimination   2.87  378
+-- Iterate         20  575
+elapsedTime J'' = saturate(J, I);
+for strategy in {GRevLex, Elimination, Iterate} do
+print(strategy, (try (elapsedTime J'' === saturate(J, I, Strategy => strategy)) else "not applicable"))
+
+elapsedTime quotient(J, I, Strategy => Iterate);
+elapsedTime saturate(J, I, Strategy => Elimination);
+
 degree I
 elapsedTime(J : I_0);
