@@ -1,17 +1,19 @@
 
 newPackage(
        "SparseResultants",
-        Version => "0.9.2", 
-        Date => "July 16, 2020",
+        Version => "1.0", 
+        Date => "July 23, 2020",
         Headline => "computations with sparse resultants",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
         PackageExports => {"Resultants"},
         DebuggingMode => false
 )
 
-export{"sparseResultant", "sparseDiscriminant", "exponentsMatrix", "genericLaurentPolynomials", "denseResultant", "denseDiscriminant", "genericMultihomogeneousPolynomial",
-       "MultidimensionalMatrix", "multidimensionalMatrix", "genericMultidimensionalMatrix", "randomMultidimensionalMatrix", "transposition", "degreeDeterminant",
-       "genericSymmetricMultidimensionalMatrix", "genericSkewMultidimensionalMatrix"}
+export{"sparseResultant", "sparseDiscriminant", 
+       "denseResultant", "denseDiscriminant",
+       "exponentsMatrix", "genericLaurentPolynomials", "genericMultihomogeneousPolynomial",
+       "MultidimensionalMatrix", "multidimensionalMatrix", "permute", "reverseSize", "sylvesterMatrix", "degreeDeterminant",
+       "randomMultidimensionalMatrix", "genericMultidimensionalMatrix", "genericSymmetricMultidimensionalMatrix", "genericSkewMultidimensionalMatrix"}
 
 SPARSERESULTANT := local SPARSERESULTANT;
 
@@ -27,6 +29,22 @@ SparseResultant SPACE Thing := (R,F) -> R (sequence F);
 
 net SparseResultant := (R) -> net("sparse ")|net(if R#"Unmixed" then "unmixed" else "mixed")|net(" resultant associated to ")|net(R#"exponents")|net(" over ")|net(if char R == 0 then ZZ else ZZ/(char R));
 
+describe SparseResultant := (R) -> (
+    str := (toString net R)|newline;
+    W := R#"dualizedChowForm";
+    if W =!= null then (
+        f := R#"map";
+        str = str|"associated monomial map: PP^"|toString(numgens target f -1)|" --> PP^"|toString(numgens source f -1)|newline;
+        X := trim kernel f;
+        str = str|"associated toric variety: (dim = "|toString(max(dim X -1,-1))|", degree = "|toString(degree X)|", degrees gens = "|toString(flatten degrees X)|")"|newline;
+        str = str|"dualized Chow form: polynomial of degree "|toString(first degree W)|" in the coordinate ring of GG"|toString take(Grass ring W,2)|" with "|toString(# terms W)|" terms";
+    ) else (
+        E := R#"universalRes";
+        str = str|"expansion: polynomial of degree "|toString(degree E)|" in "|toString(numgens ring E)|" variables with "|toString(# terms E)|" terms";
+    );
+    str
+);
+
 sparseResultant = method(Dispatch => Thing, Options => {Unmixed => null, CoefficientRing => ZZ});
 
 sparseResultant Thing := o -> I -> ( 
@@ -34,24 +52,19 @@ sparseResultant Thing := o -> I -> (
     if #I == 1 then if instance(first I,VisibleList) then I = toList first I;
     if o.Unmixed =!= null then if not instance(o.Unmixed,Boolean) then error "Unmixed option accepts a boolean value";
     if o.CoefficientRing =!= ZZ then (try assert(o.CoefficientRing === ZZ/(char o.CoefficientRing)) else error "CoefficientRing option accepts ZZ or a ring of the form ZZ/p with p prime");
-    if unique apply(I,i -> instance(i,Matrix)) === {true} then (
-        if unique apply(I,i -> ring i === ZZ) === {true} then (
-            if # I > 1 then (
-                if o.Unmixed === true then error "the input 'Unmixed=>true' is inconsistent with the other ones";
-                return sparseMixedResultant(I,char o.CoefficientRing); 
-            ) else (
-                if o.Unmixed === false then error "the input 'Unmixed=>false' is inconsistent with the other ones";
-                return sparseUnmixedResultant(first I,char o.CoefficientRing);
-            );
+    if all(I,i -> instance(i,Matrix) and ring i === ZZ) then (
+        if # I > 1 then (
+            if o.Unmixed === true then error "the input 'Unmixed=>true' is inconsistent with the other ones";
+            return sparseMixedResultant(I,char o.CoefficientRing); 
+        ) else (
+            if o.Unmixed === false then error "the input 'Unmixed=>false' is inconsistent with the other ones";
+            return sparseUnmixedResultant(first I,char o.CoefficientRing);
         );
     );
-    if #I == 1 then if instance(first I,Matrix) then (
-        if o.CoefficientRing =!= ZZ then error "the CoefficientRing option cannot be used when the polynomials are given in input (the right coefficient ring is taken automatically)";
-        if o.Unmixed === true then return sparseUnmixedResultant(first I) else return sparseMixedResultant(first I);
-    );
-    if unique apply(I,i -> instance(i,RingElement)) === {true} then (
-        if o.CoefficientRing =!= ZZ then error "the CoefficientRing option cannot be used when the polynomials are given in input (the right coefficient ring is taken automatically)";
-        if o.Unmixed === true then return sparseUnmixedResultant(I) else return sparseMixedResultant(I);
+    if all(I,i -> instance(i,RingElement)) or (#I == 1 and instance(first I,Matrix)) then (
+        if isPolynomialRing ring first I then if o.CoefficientRing =!= ZZ then error "the CoefficientRing option cannot be used when the polynomials are given in input (the right coefficient ring is taken automatically)";
+        if instance(first I,Matrix) then I = first I;
+        if o.Unmixed === true then (return sparseUnmixedResultant I) else (return sparseMixedResultant I);
     );
     error("expected one of the following:"|newline|"-- one or more matrices of integers to represent the exponent vectors of the monomials, or"|newline|"-- a list/sequence/row matrix of n+1 Laurent polynomials in n variables");
 );
@@ -157,7 +170,7 @@ sparseMixedResultant (List,ZZ) := (lM,ch) -> (
         mm := apply(n+1,i -> matrix{apply(entries transpose lM_i,u -> product(n,i -> (v_i)^(u_i)))});
         A := apply(n+1,i -> transpose sub(last coefficients(submatrix(L,{i}),Monomials=>mm_i),coefficientRing ring L));
         for i to n do (
-            if sub(A_i,ring L) * (transpose mm_i) - submatrix(L,{i}) != 0 then error("make sure that the involved monomials in the polynomial number "|toString(i)|" are in the list "|toString(flatten entries mm_i));
+            if sub(A_i,ring L) * (transpose mm_i) - submatrix(L,{i}) != 0 then error("make sure that the involved monomials in the polynomial number "|toString(i+1)|" are in the list "|toString(flatten entries mm_i));
         );
         sub(Res,flatten for i to n list for j to numColumns(lM_i)-1 list a_(i,j) => (A_i)_(0,j))
     );
@@ -209,16 +222,16 @@ denseResultant = method(Dispatch => Thing, Options => {CoefficientRing => ZZ, Al
 denseResultant Thing := o -> I -> ( 
     I = toList sequence I;
     if #I == 1 then if instance(first I,VisibleList) then I = toList first I;
-    if unique apply(I,i -> instance(i,ZZ)) === {true} then (
+    if all(I,i -> instance(i,ZZ)) then (
         if o.Algorithm =!= "Poisson" then error "the Algorithm option can be only used when the polynomials are given in input"; 
         return sparseResultant(exponentsMatrix genericLaurentPolynomials I,CoefficientRing=>o.CoefficientRing);
     );
     if #I == 1 then if instance(first I,Matrix) then if numRows first I == 1 then I = flatten entries first I;
-    if unique apply(I,i -> instance(i,RingElement)) === {true} then (
+    if all(I,i -> instance(i,RingElement)) then (
         R := ring first I;
-        if isPolynomialRing R and unique apply(I,i -> ring i === R) === {true} then (
+        if isPolynomialRing R and all(I,i -> ring i === R) then (
             if o.CoefficientRing =!= ZZ then error "the CoefficientRing option cannot be used when the polynomials are given in input (the right coefficient ring is taken automatically)";
-            return affineResultant(I,Algorithm => o.Algorithm);
+            return affineResultant(I,Algorithm=>o.Algorithm);
         );
     );   
     error("expected a sequence of n+1 integers or a list/sequence/row matrix of n+1 Laurent polynomials in n variables");
@@ -234,6 +247,15 @@ SparseDiscriminant SPACE Thing := (D,F) -> (D#"evaluation") F;
 
 net SparseDiscriminant := (D) -> net("sparse discriminant associated to ")|net(D#"exponents")|net(" over ")|net(if char D == 0 then ZZ else ZZ/(char D));
 
+describe SparseDiscriminant := (D) -> (
+    str := (toString net D)|newline;
+    f := D#"map";
+    str = str|"associated monomial map: PP^"|toString(numgens target f -1)|" --> PP^"|toString(numgens source f -1)|newline;
+    Y := D#"dualVar";
+    str = str|"dual variety of the associated toric variety: hypersurface in PP^"|toString(numgens ring Y -1)|" of degree "|toString(first degree Y)|" defined by a polynomial with "|toString(# terms Y)|" terms";
+    str
+);
+
 sparseDiscriminant = method(Options => {CoefficientRing => ZZ});
 
 sparseDiscriminant (Matrix) := o -> (M) -> (
@@ -248,7 +270,7 @@ sparseDiscriminant (Matrix) := o -> (M) -> (
     if l-1 <= n then error "hypothesis not satisfied by the set of monomials (there are too few monomials)";
     f := mapFromMons(M,ch);    
     w := dualvariety(trim kernel f);
-    w = if numgens w == 1 then w_0 else 1_(ring w);
+    w = if numgens w == 1 then w_0 else error("the sparse discriminant associated to "|(toString M)|" does not exist");
     val := method();
     val (RingElement) := (L) -> (
         v := gens ring L;
@@ -416,52 +438,57 @@ exponentsMatrix VisibleList := o -> F -> exponentsMatrix(toSequence F,Unmixed=>o
 exponentsMatrix RingElement := o -> F -> exponentsMatrix({F},Unmixed=>o.Unmixed);
 
 genericLaurentPolynomials = method(Dispatch => Thing, Options => {CoefficientRing => ZZ});
-genericLaurentPolynomials Sequence := o -> lM -> ( 
-    lM = sequence lM;
-    if # select(lM,i -> not instance(i,ZZ)) == 0 then (
-        if min lM < 0 then error "expected nonnegative integers, the degrees of the generic polynomials";
-        N := exponentsMatrix genericPolynomials toList lM;
-        if not instance(N,Sequence) then N = #lM : N;
-        return genericLaurentPolynomials(apply(N,m -> submatrix'(m,{0},)),CoefficientRing=>o.CoefficientRing);
-    );
-    try n := numRows first lM else error "expected a list of matrices";
-    for M in lM do (
-        if not instance(M,Matrix) then error "expected a list of matrices";
-        if ring M =!= ZZ then error "expected a list of matrices over ZZ";
-        if n =!= numRows M then error "the matrices must have the same number of rows";
-    );
-    if #lM =!= n+1 then error("expected "|toString(n+1)|" matrices, one more than the common number of rows of the matrices");
-    lM = apply(lM,m -> trimExponents m);
-    K := o.CoefficientRing;
-    if not instance(K,Ring) then error "CoefficientRing option expects a ring";
-    opts := if min apply(n+1,i -> min flatten entries lM_i) < 0 then (MonomialOrder=>Lex,Inverses=>true) else (MonomialOrder=>GRevLex,Inverses=>false);
-    local vi;
-    A := apply(n+1,i -> (vi = vars i; K[vi_0..vi_(numColumns(lM_i)-1),opts_0,opts_1]));
-    R := A_0; for i from 1 to n do R = R**A_i;
-    R = K[gens R,opts_0,opts_1];
-    x := local x; P := R[x_1..x_n,opts_0,opts_1];
-    apply(0..n,i -> (matrix{apply(entries transpose lM_i,u -> product(n,i -> x_(i+1)^(u_i)))} * transpose(sub(vars A_i,R)))_(0,0))
-);    
-genericLaurentPolynomials VisibleList := o -> lM -> genericLaurentPolynomials(toSequence lM,CoefficientRing=>o.CoefficientRing);
+genericLaurentPolynomials Sequence := o -> lM -> memGenLaurPols(lM,o.CoefficientRing);
+genericLaurentPolynomials VisibleList := o -> lM -> memGenLaurPols(toSequence lM,o.CoefficientRing);
+
+memGenLaurPols = memoize(
+    (lM,K) -> (
+        if all(lM,i -> instance(i,ZZ)) then (
+            if min lM < 0 then error "expected nonnegative integers, the degrees of the generic polynomials";
+            N := exponentsMatrix genericPolynomials toList lM;
+            if not instance(N,Sequence) then N = #lM : N;
+            return memGenLaurPols(apply(N,m -> submatrix'(m,{0},)),K);
+        );
+        try n := numRows first lM else error "expected a list of matrices";
+        for M in lM do (
+            if not instance(M,Matrix) then error "expected a list of matrices";
+            if ring M =!= ZZ then error "expected a list of matrices over ZZ";
+            if n =!= numRows M then error "the matrices must have the same number of rows";
+        );
+        if #lM =!= n+1 then error("expected "|toString(n+1)|" matrices, one more than the common number of rows of the matrices");
+        lM = apply(lM,m -> trimExponents m);
+        if not instance(K,Ring) then error "CoefficientRing option expects a ring";
+        opts := if min apply(n+1,i -> min flatten entries lM_i) < 0 then (MonomialOrder=>Lex,Inverses=>true) else (MonomialOrder=>GRevLex,Inverses=>false);
+        local vi;
+        A := apply(n+1,i -> (vi = vars i; K[vi_0..vi_(numColumns(lM_i)-1),opts_0,opts_1]));
+        R := A_0; for i from 1 to n do R = R**A_i;
+        R = K[gens R,opts_0,opts_1];
+        x := local x; P := R[x_1..x_n,opts_0,opts_1];
+        apply(0..n,i -> (matrix{apply(entries transpose lM_i,u -> product(n,i -> x_(i+1)^(u_i)))} * transpose(sub(vars A_i,R)))_(0,0))
+    )
+);
 
 genericMultihomogeneousPolynomial = method(Options => {CoefficientRing => ZZ, Variable => "a"});
-genericMultihomogeneousPolynomial (VisibleList,VisibleList) := o -> (k,d) -> ( 
-    d = toList d; k = toList k;
-    n := #k;
-    if n != #d then error "expected two lists of the same length";
-    if n == 0 or #select(d|k,i -> not instance(i,ZZ)) > 0 then error "expected two lists of integers"; 
-    if #select(d|k,i -> i < 0) > 0 then error "expected two lists of nonnegative integers"; 
-    if #select(k,i -> i <= 0) > 0 then error "the number of variables must be positive"; 
-    K := o.CoefficientRing;
-    if not instance(K,Ring) then error "CoefficientRing option expects a ring";
-    a := if instance(o.Variable,Symbol) then o.Variable else if instance(o.Variable,String) then getSymbol(o.Variable) else error "Variable option expects a symbol";
-    A := K[a_(n:0) .. a_(apply(0 .. n-1,i->binomial(k_i-1+d_i,k_i-1)-1))];
-    local x;
-    R := apply(n,i -> (x = vars(23+i); A[x_0..x_(k_i-1)]));
-    P := R_0; for i from 1 to n-1 do P = P ** R_i;
-    mm := apply(n,i -> flatten entries sub(gens (ideal vars R_i)^(d_i),P));
-    local b;
-    sum(gens A,e -> (b = last baseName e; e * product(n,i -> (mm_i)_(b_i))))
+genericMultihomogeneousPolynomial (VisibleList,VisibleList) := o -> (k,d) -> memGenMultHomPols(k,d,o.CoefficientRing,o.Variable);
+
+memGenMultHomPols = memoize(
+    (k,d,K,var) -> (
+        d = toList d; k = toList k;
+        n := #k;
+        if n != #d then error "expected two lists of the same length";
+        if n == 0 or #select(d|k,i -> not instance(i,ZZ)) > 0 then error "expected two lists of integers"; 
+        if #select(d|k,i -> i < 0) > 0 then error "expected two lists of nonnegative integers"; 
+        if #select(k,i -> i <= 0) > 0 then error "the number of variables must be positive"; 
+        if not instance(K,Ring) then error "CoefficientRing option expects a ring";
+        a := if instance(var,Symbol) then var else if instance(var,String) then getSymbol(var) else error "Variable option expects a symbol";
+        A := K[a_(n:0) .. a_(apply(0 .. n-1,i->binomial(k_i-1+d_i,k_i-1)-1))];
+        local x;
+        R := apply(n,i -> (x = vars(23+i); A[x_0..x_(k_i-1)]));
+        P := R_0; for i from 1 to n-1 do P = P ** R_i;
+        mm := apply(n,i -> flatten entries sub(gens (ideal vars R_i)^(d_i),P));
+        local b;
+        sum(gens A,e -> (b = last baseName e; e * product(n,i -> (mm_i)_(b_i))))
+    )
 );
 
 -- Hyperdeterminants --
@@ -482,13 +509,41 @@ multidimensionalMatrix (List) := (L) -> (
     F := makeMultilinearForm(L,X);
     L' := makeHyperrectangularArray(F,X);
     new MultidimensionalMatrix from {
-        "format" => reverse n,
+        "format" => n,
         "entries" => L',
         "multilinearForm" => F,
         "varsMultilinearForm" => X,
         "ring" => coefficientRing ring F  
     }
 );
+
+multidimensionalMatrix (RingElement) := (F) -> (
+    R := ring F;
+    if not isPolynomialRing R then error "expected a polynomial";
+    x := gens R;
+    h := # unique apply(x,degree);
+    X := apply(entries diagonalMatrix toList(h:1),d -> select(x,u -> take(degree u,h) == d));
+    if flatten X =!= x then error "expected a polynomial ring with the (Z^n)-grading where the degree of each variable is a standard basis vector";
+    if take(degree F,h) =!= toList(h : 1) then error "expected a polynomial of multidegree (1,1,...,1)";
+    if not all(terms F,m -> unique take(degree m,h) == {1}) then error "expected a multilinear form";
+    K := coefficientRing R;
+    n := apply(X,i -> #i); 
+    X' := gensRing(K,n);
+    R' := ring first first X';
+    F' := sub(F,vars R');
+    L := makeHyperrectangularArray(F',X');
+    new MultidimensionalMatrix from {
+        "format" => n,
+        "entries" => L,
+        "multilinearForm" => F',
+        "varsMultilinearForm" => X',
+        "ring" => K  
+    }
+);
+
+multidimensionalMatrix (Matrix) := (M) -> multidimensionalMatrix entries M;
+
+matrix (MultidimensionalMatrix) := o -> (M) -> (if dim M != 2 then error "expected a two-dimensional matrix"; matrix entries M);
 
 size (MultidimensionalMatrix) := (M) -> M#"format";
 
@@ -511,6 +566,8 @@ MultidimensionalMatrix _ Sequence := (M,l) -> (
 
 ring (MultidimensionalMatrix) := (M) -> M#"ring";
 
+sub (MultidimensionalMatrix,Ring) := (M,R) -> applyToEntries(M,a -> sub(a,R));
+
 RingElement * MultidimensionalMatrix := (a,M) -> applyToEntries(M,m -> a*m);
 
 ZZ * MultidimensionalMatrix := (a,M) -> applyToEntries(M,m -> a*m);
@@ -523,8 +580,6 @@ QQ * MultidimensionalMatrix := (a,M) -> (
 MultidimensionalMatrix * MultidimensionalMatrix := (A,B) -> (
     kr := last size A;
     if kr != first size B then error "expected two matrices of formats k_1x...xk_r and l_1x...xl_s with k_r==l_1";
-    K := ring A;
-    if K =!= ring B then error "expected two matrices over the same ring";
     r := dim A;
     s := dim B;
     e := l -> sum(kr,h -> A_(append(take(l,r-1),h)) * B_(prepend(h,take(l,-(s-1)))));
@@ -563,18 +618,23 @@ MultidimensionalMatrix == ZZ := (M,n) -> (
 
 ZZ == MultidimensionalMatrix := (n,M) -> M == n;
 
-transposition = method();
-transposition (MultidimensionalMatrix,List) := (M,l) -> (
+MultidimensionalMatrix ! := (M) -> M#"multilinearForm";
+
+permute = method();
+permute (MultidimensionalMatrix,List) := (M,l) -> (
     if not all(l,i -> instance(i,ZZ)) then error "expected a list of integers";
     d := dim M;
     if sort l != toList(0 .. d-1) then error("expected a permutation of the set "|toString toList(0 .. d-1));
-    X := reverse M#"varsMultilinearForm"; 
-    X' := reverse for i to d-1 list X_(l_i);
+    X := M#"varsMultilinearForm"; 
+    X' := for i to d-1 list X_(l_i);
     K := ring M;
-    R := K[flatten X'];
-    X' = apply(X',X0->apply(X0,u -> sub(u,R)));
-    multidimensionalMatrix makeHyperrectangularArray(sub(M#"multilinearForm",R),X')
+    D := entries diagonalMatrix toList(d : 1);
+    R := K[flatten X',Degrees=>apply(d,i -> #(X'_i) : D_i)];
+    multidimensionalMatrix sub(M#"multilinearForm",R)
 );
+
+reverseSize = method();
+reverseSize (MultidimensionalMatrix) := (M) -> permute(M,reverse toList(0 .. dim M -1));
 
 makeRing = method();
 makeRing (List) := (L) -> (
@@ -588,32 +648,34 @@ makeRing (List) := (L) -> (
     );
     for i to #n-2 do L = flatten L;
     K := ring matrix{L};
-    gensRing(K,n)
+    gensRing(K,reverse n)
 );
 
 gensRing = memoize(
     (K,n) -> (
         x := apply(#n,i -> getSymbol("x"|toString(i)));
         X := apply(#n,i -> toList((x_i)_0 .. (x_i)_(n_i-1)));
-        R := K[flatten X];
+        d := entries diagonalMatrix toList(#n : 1);
+        R := K[flatten X,Degrees=>apply(#n,i -> n_i : d_i)];
         apply(X,X0->apply(X0,u -> u_R))
     )
 );
 
 makeMultilinearForm = method();
 makeMultilinearForm (List,List) := (L,X) -> (
-    if not instance(first L,List) then return ((matrix{last X})*transpose(matrix{L}))_(0,0);
-    X' := take(X,#X-1);
+    if not instance(first L,List) then return ((matrix{first X})*transpose(matrix{L}))_(0,0);
+    X' := take(X,-(#X-1));
     return makeMultilinearForm(apply(L,l -> makeMultilinearForm(l,X')),X);
 );
 
 makeHyperrectangularArray = method();
 makeHyperrectangularArray (RingElement,List) := (F,X) -> (
     K := coefficientRing ring F;
-    R := K[X_0]; for i from 1 to #X-1 do R = R[X_i];
+    n := #X - 1;
+    R := K[X_n]; for i from 1 to n do R = R[X_(n-i)];
     coeffs := (G) -> flatten entries sub(last coefficients(matrix G,Monomials=>vars ring G),coefficientRing ring G);
     C := sub(F,R);
-    for i to #X-1 do C = applyToEntries(C,coeffs);
+    for i to n do C = applyToEntries(C,coeffs);
     return C;
 );
 
@@ -621,23 +683,16 @@ applyToEntries = method();
 applyToEntries (Thing,Function) := (M,f) -> if instance(M,List) then apply(M,m -> applyToEntries(m,f)) else f(M);
 applyToEntries (MultidimensionalMatrix,Function) := (M,f) -> multidimensionalMatrix applyToEntries(entries M,f);
 
-genericMultidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix, Options => {CoefficientRing => ZZ, Variable => "a"});
-genericMultidimensionalMatrix (VisibleList,Boolean) := o -> (n,b) -> ( -- undocumented
-    F := genericMultihomogeneousPolynomial(toSequence n,#n:1,CoefficientRing=>o.CoefficientRing,Variable=>o.Variable);
-    K := coefficientRing coefficientRing ring F;
-    if b then F = sub(sub(F,apply(gens coefficientRing ring F,u -> u => random(K))),K[gens ring F]);
-    x := gens ring F;
-    p := apply(#n+1,i -> sum take(n,i));
-    X := reverse apply(#n,i -> take(x,{p_i,p_(i+1)-1}));
-    multidimensionalMatrix makeHyperrectangularArray(F,X)
-);
-genericMultidimensionalMatrix (VisibleList) := o -> (n) -> genericMultidimensionalMatrix(n,false,CoefficientRing=>o.CoefficientRing,Variable=>o.Variable);
+genericMultidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix, Dispatch => Thing, Options => {CoefficientRing => ZZ, Variable => "a"});
+genericMultidimensionalMatrix Sequence := o -> n -> multidimensionalMatrix genericMultihomogeneousPolynomial(n,#n:1,CoefficientRing=>o.CoefficientRing,Variable=>o.Variable);
+genericMultidimensionalMatrix VisibleList := o -> n -> genericMultidimensionalMatrix(toSequence n,CoefficientRing=>o.CoefficientRing,Variable=>o.Variable);
 
-randomMultidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix, Options => {CoefficientRing => ZZ});
-randomMultidimensionalMatrix (VisibleList) := o -> (n) -> (
-    x := local x;
-    genericMultidimensionalMatrix(n,true,CoefficientRing=>o.CoefficientRing,Variable=>x)
+randomMultidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix, Dispatch => Thing, Options => {CoefficientRing => ZZ});
+randomMultidimensionalMatrix Sequence := o -> n -> (
+    R := ring first first gensRing(o.CoefficientRing,toList n);
+    multidimensionalMatrix random(toList(#n : 1),R)
 );
+randomMultidimensionalMatrix VisibleList := o -> n -> randomMultidimensionalMatrix(toSequence n,CoefficientRing=>o.CoefficientRing);
 
 removeOneDim = method();
 removeOneDim (MultidimensionalMatrix) := (M) -> (
@@ -651,7 +706,6 @@ removeOneDim (MultidimensionalMatrix) := (M) -> (
 
 canApplySchlafli = method(Options => {Strategy => null});
 canApplySchlafli (List) := o -> (n) -> (
-    n = reverse n;
     if #n == 1 then return (true,0);
     if #n == 2 then if n_0 == n_1 then return (true,0) else return (false,-1);
     if o.Strategy =!= "forceSchlafliMethod" and o.Strategy =!= "Dense_forceSchlafliMethod" and o.Strategy =!= "NotDense_forceSchlafliMethod" then if #n == 3 and #unique n <= 2 then (
@@ -673,9 +727,10 @@ schlafliMethod (MultidimensionalMatrix) := o -> M -> (
     F := M#"multilinearForm";
     K := ring M;
     X := M#"varsMultilinearForm";  
-    Xi0 := X_(toList delete(i0,0..(dim M -1)));  
-    G := sub(F,(K[X_i0])[flatten Xi0]);
-    N := multidimensionalMatrix makeHyperrectangularArray(G,Xi0);
+    Xi0 := X_(toList delete(i0,0..(dim M -1)));
+    D := entries diagonalMatrix toList(dim(M)-1 : 1);   
+    G := sub(F,(K[X_i0])[flatten Xi0,Degrees=>apply(dim(M)-1,i -> #(Xi0_i) : D_i)]);
+    N := multidimensionalMatrix G;
     detN := schlafliMethod(N,Strategy=>o.Strategy);
     if detN == 0 then return 0_(ring M);
     d := first degree detN;
@@ -697,12 +752,67 @@ determinant (MultidimensionalMatrix) := o -> (M) -> (
     if n == {1} then return first entries M;
     if min n == 1 then return determinant(removeOneDim M,Strategy=>o.Strategy);
     if #n == 2 then return determinant(matrix entries M,Strategy=>null);
-    if #n == 3 then if first canApplySchlafli(n,Strategy=>o.Strategy) then return schlafliMethod(M,Strategy=>o.Strategy);
+    if #n == 3 then (
+        if first canApplySchlafli(n,Strategy=>o.Strategy) then return schlafliMethod(M,Strategy=>o.Strategy);
+        if sort n === {2,3,4} then return det234 M;
+        if sort n === {2,4,5} then return det245 M;
+    );
     if n == {2,2,2,2} then return schlafliMethod(M,Strategy=>o.Strategy);
     if o.Strategy === "forceSchlafliMethod" or o.Strategy === "Dense_forceSchlafliMethod" or o.Strategy === "NotDense_forceSchlafliMethod" then return schlafliMethod(M,Strategy=>o.Strategy);
+    if 2*max(k) == sum k then return det sylvesterMatrix M;
     K := if char ring M == 0 then ZZ else ZZ/(char ring M);
     A := sparseDiscriminant(exponentsMatrix genericMultihomogeneousPolynomial(n,toList(#n:1),CoefficientRing=>K),CoefficientRing=>K);
     A (M#"multilinearForm")
+);
+
+det234 = (M) -> ( -- determinant of format 2x3x4
+    if size M =!= {2,3,4} then if sort size M == {2,3,4} then M = permute(M,{position(size M,i -> i == 2),position(size M,i -> i == 3),position(size M,i -> i == 4)});
+    assert(size M == {2,3,4});
+    K := ring M;
+    p := local p;
+    ringG35 := K[p_(0,1,2,3),p_(0,1,2,4),p_(0,1,3,4),p_(0,2,3,4),p_(1,2,3,4),p_(0,1,2,5),p_(0,1,3,5),p_(0,2,3,5),p_(1,2,3,5),p_(0,1,4,5),p_(0,2,4,5),p_(1,2,4,5),p_(0,3,4,5),p_(1,3,4,5),p_(2,3,4,5)];
+    W := p_(0,1,2,5)*p_(0,1,4,5)*p_(0,3,4,5)-p_(0,1,2,4)*p_(0,2,4,5)*p_(0,3,4,5)-p_(0,1,2,5)*p_(0,1,3,5)*p_(1,3,4,5)+p_(0,1,2,4)*p_(0,2,3,5)*p_(1,3,4,5)-p_(0,1,2,3)*p_(1,2,3,5)*p_(1,3,4,5)+p_(0,1,2,3)*p_(0,2,4,5)*p_(1,3,4,5)-p_(0,1,2,4)*p_(0,2,3,4)*p_(2,3,4,5)+p_(0,1,2,3)*p_(1,2,3,4)*p_(2,3,4,5)+p_(0,1,2,4)*p_(0,1,3,5)*p_(2,3,4,5)-2*p_(0,1,2,3)*p_(0,1,4,5)*p_(2,3,4,5);
+    g := gens ringG35;
+    N := transpose matrix flatten entries M;
+    mm := apply(subsets(6,4),m -> det submatrix(N,m));
+    sub(W,apply(15,j -> g_j => mm_j))
+);
+
+det245 = (M) -> ( -- determinant of format 2x4x5
+    if size M =!= {2,4,5} then if sort size M == {2,4,5} then M = permute(M,{position(size M,i -> i == 2),position(size M,i -> i == 4),position(size M,i -> i == 5)});
+    assert(size M == {2,4,5});
+    K := ring M;
+    p := local p;
+    ringG47 := K[p_(0,1,2,3,4),p_(0,1,2,3,5),p_(0,1,2,4,5),p_(0,1,3,4,5),p_(0,2,3,4,5),p_(1,2,3,4,5),p_(0,1,2,3,6),p_(0,1,2,4,6),p_(0,1,3,4,6),p_(0,2,3,4,6),p_(1,2,3,4,6),p_(0,1,2,5,6),p_(0,1,3,5,6),p_(0,2,3,5,6),p_(1,2,3,5,6),p_(0,1,4,5,6),p_(0,2,4,5,6),p_(1,2,4,5,6),p_(0,3,4,5,6),p_(1,3,4,5,6),p_(2,3,4,5,6),p_(0,1,2,3,7),p_(0,1,2,4,7),p_(0,1,3,4,7),p_(0,2,3,4,7),p_(1,2,3,4,7),p_(0,1,2,5,7),p_(0,1,3,5,7),p_(0,2,3,5,7),p_(1,2,3,5,7),p_(0,1,4,5,7),p_(0,2,4,5,7),p_(1,2,4,5,7),p_(0,3,4,5,7),p_(1,3,4,5,7),p_(2,3,4,5,7),p_(0,1,2,6,7),p_(0,1,3,6,7),p_(0,2,3,6,7),p_(1,2,3,6,7),p_(0,1,4,6,7),p_(0,2,4,6,7),p_(1,2,4,6,7),p_(0,3,4,6,7),p_(1,3,4,6,7),p_(2,3,4,6,7),p_(0,1,5,6,7),p_(0,2,5,6,7),p_(1,2,5,6,7),p_(0,3,5,6,7),p_(1,3,5,6,7),p_(2,3,5,6,7),p_(0,4,5,6,7),p_(1,4,5,6,7),p_(2,4,5,6,7),p_(3,4,5,6,7)];
+    -- code: W = dualizedChowForm map parametrize rationalMap map(QQ[x_0,x_1,y_0,y_1,y_2,y_3,Degrees=>{2:{1,0},4:{0,1}}],QQ[p_(0,0),p_(0,1),p_(0,2),p_(0,3),p_(1,0),p_(1,1),p_(1,2),p_(1,3)],{x_0*y_0,x_0*y_1,x_0*y_2,x_0*y_3,x_1*y_0,x_1*y_1,x_1*y_2,x_1*y_3});
+    W := p_(0,1,2,3,7)*p_(0,1,2,6,7)*p_(0,1,5,6,7)*p_(0,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,3,6,7)*p_(0,1,5,6,7)*p_(0,4,5,6,7)-p_(0,1,2,3,7)*p_(0,1,2,5,7)*p_(0,2,5,6,7)*p_(0,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,3,5,7)*p_(0,2,5,6,7)*p_(0,4,5,6,7)-p_(0,1,2,3,5)*p_(0,2,3,5,7)*p_(0,2,5,6,7)*p_(0,4,5,6,7)+p_(0,1,2,3,5)*p_(0,1,3,6,7)*p_(0,2,5,6,7)*p_(0,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,3,5,6)*p_(0,3,5,6,7)*p_(0,4,5,6,7)+p_(0,1,2,3,5)*p_(0,2,3,5,6)*p_(0,3,5,6,7)*p_(0,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,2,5,7)*p_(0,3,5,6,7)*p_(0,4,5,6,7)-2*p_(0,1,2,3,5)*p_(0,1,2,6,7)*p_(0,3,5,6,7)*p_(0,4,5,6,7)-p_(0,1,2,3,7)*p_(0,1,2,6,7)*p_(0,1,4,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,3,6,7)*p_(0,1,4,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,7)*p_(0,1,2,5,7)*p_(0,2,4,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,3,5,7)*p_(0,2,4,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,5)*p_(0,2,3,5,7)*p_(0,2,4,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,5)*p_(0,1,3,6,7)*p_(0,2,4,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,7)*p_(0,1,2,4,7)*p_(1,2,4,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,3,4,7)*p_(1,2,4,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,5)*p_(0,2,3,4,7)*p_(1,2,4,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,4)*p_(1,2,3,4,7)*p_(1,2,4,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,4)*p_(0,2,3,5,7)*p_(1,2,4,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,4)*p_(0,1,3,6,7)*p_(1,2,4,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,3,5,6)*p_(0,3,4,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,5)*p_(0,2,3,5,6)*p_(0,3,4,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,2,5,7)*p_(0,3,4,6,7)*p_(1,4,5,6,7)+2*p_(0,1,2,3,5)*p_(0,1,2,6,7)*p_(0,3,4,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,3,4,6)*p_(1,3,4,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,5)*p_(0,2,3,4,6)*p_(1,3,4,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,4)*p_(1,2,3,4,6)*p_(1,3,4,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,4)*p_(0,2,3,5,6)*p_(1,3,4,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,2,4,7)*p_(1,3,4,6,7)*p_(1,4,5,6,7)-2*p_(0,1,2,3,4)*p_(0,1,2,6,7)*p_(1,3,4,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,7)*p_(0,1,2,4,7)*p_(0,2,5,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,3,4,7)*p_(0,2,5,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,5)*p_(0,2,3,4,7)*p_(0,2,5,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,4)*p_(0,2,3,5,7)*p_(0,2,5,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,4)*p_(0,1,3,6,7)*p_(0,2,5,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,4)*p_(0,2,3,4,7)*p_(1,2,5,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,3,4,6)*p_(0,3,5,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,5)*p_(0,2,3,4,6)*p_(0,3,5,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,4)*p_(0,2,3,5,6)*p_(0,3,5,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,2,4,7)*p_(0,3,5,6,7)*p_(1,4,5,6,7)+2*p_(0,1,2,3,4)*p_(0,1,2,6,7)*p_(0,3,5,6,7)*p_(1,4,5,6,7)+p_(0,1,2,3,4)*p_(0,2,3,4,6)*p_(1,3,5,6,7)*p_(1,4,5,6,7)-p_(0,1,2,3,7)*p_(0,1,2,5,7)*p_(0,2,4,5,7)*p_(2,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,3,5,7)*p_(0,2,4,5,7)*p_(2,4,5,6,7)-p_(0,1,2,3,5)*p_(0,2,3,5,7)*p_(0,2,4,5,7)*p_(2,4,5,6,7)+p_(0,1,2,3,7)*p_(0,1,2,4,7)*p_(1,2,4,5,7)*p_(2,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,3,4,7)*p_(1,2,4,5,7)*p_(2,4,5,6,7)+p_(0,1,2,3,5)*p_(0,2,3,4,7)*p_(1,2,4,5,7)*p_(2,4,5,6,7)-p_(0,1,2,3,4)*p_(1,2,3,4,7)*p_(1,2,4,5,7)*p_(2,4,5,6,7)+p_(0,1,2,3,4)*p_(0,2,3,5,7)*p_(1,2,4,5,7)*p_(2,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,3,5,6)*p_(0,3,4,5,7)*p_(2,4,5,6,7)+p_(0,1,2,3,5)*p_(0,2,3,5,6)*p_(0,3,4,5,7)*p_(2,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,2,5,7)*p_(0,3,4,5,7)*p_(2,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,3,4,6)*p_(1,3,4,5,7)*p_(2,4,5,6,7)-p_(0,1,2,3,5)*p_(0,2,3,4,6)*p_(1,3,4,5,7)*p_(2,4,5,6,7)+p_(0,1,2,3,4)*p_(1,2,3,4,6)*p_(1,3,4,5,7)*p_(2,4,5,6,7)-p_(0,1,2,3,4)*p_(0,2,3,5,6)*p_(1,3,4,5,7)*p_(2,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,2,4,7)*p_(1,3,4,5,7)*p_(2,4,5,6,7)+p_(0,1,2,3,5)*p_(0,2,3,4,5)*p_(2,3,4,5,7)*p_(2,4,5,6,7)-p_(0,1,2,3,4)*p_(1,2,3,4,5)*p_(2,3,4,5,7)*p_(2,4,5,6,7)-p_(0,1,2,3,5)*p_(0,1,3,4,6)*p_(2,3,4,5,7)*p_(2,4,5,6,7)+2*p_(0,1,2,3,4)*p_(0,1,3,5,6)*p_(2,3,4,5,7)*p_(2,4,5,6,7)+p_(0,1,2,3,5)*p_(0,1,2,4,7)*p_(2,3,4,5,7)*p_(2,4,5,6,7)-2*p_(0,1,2,3,4)*p_(0,1,2,5,7)*p_(2,3,4,5,7)*p_(2,4,5,6,7)+p_(0,1,2,3,7)*p_(0,1,2,5,7)*p_(0,1,4,6,7)*p_(2,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,3,5,7)*p_(0,1,4,6,7)*p_(2,4,5,6,7)+p_(0,1,2,3,5)*p_(0,1,3,5,7)*p_(0,2,4,6,7)*p_(2,4,5,6,7)-p_(0,1,2,3,4)*p_(0,1,3,5,7)*p_(1,2,4,6,7)*p_(2,4,5,6,7)-2*p_(0,1,2,3,5)*p_(0,1,2,5,7)*p_(0,3,4,6,7)*p_(2,4,5,6,7)-p_(0,1,2,3,5)*p_(0,2,3,4,5)*p_(1,3,4,6,7)*p_(2,4,5,6,7)+p_(0,1,2,3,4)*p_(1,2,3,4,5)*p_(1,3,4,6,7)*p_(2,4,5,6,7)+p_(0,1,2,3,5)*p_(0,1,3,4,6)*p_(1,3,4,6,7)*p_(2,4,5,6,7)-2*p_(0,1,2,3,4)*p_(0,1,3,5,6)*p_(1,3,4,6,7)*p_(2,4,5,6,7)-p_(0,1,2,3,5)*p_(0,1,2,4,7)*p_(1,3,4,6,7)*p_(2,4,5,6,7)+4*p_(0,1,2,3,4)*p_(0,1,2,5,7)*p_(1,3,4,6,7)*p_(2,4,5,6,7)-2*p_(0,1,2,3,7)*p_(0,1,2,4,7)*p_(0,1,5,6,7)*p_(2,4,5,6,7)+2*p_(0,1,2,3,6)*p_(0,1,3,4,7)*p_(0,1,5,6,7)*p_(2,4,5,6,7)+p_(0,1,2,3,4)*p_(0,1,3,6,7)*p_(0,1,5,6,7)*p_(2,4,5,6,7)-2*p_(0,1,2,3,5)*p_(0,1,3,4,7)*p_(0,2,5,6,7)*p_(2,4,5,6,7)-p_(0,1,2,3,4)*p_(0,1,3,5,7)*p_(0,2,5,6,7)*p_(2,4,5,6,7)+2*p_(0,1,2,3,4)*p_(0,1,3,4,7)*p_(1,2,5,6,7)*p_(2,4,5,6,7)+p_(0,1,2,3,5)*p_(0,2,3,4,5)*p_(0,3,5,6,7)*p_(2,4,5,6,7)-p_(0,1,2,3,5)*p_(0,1,3,4,6)*p_(0,3,5,6,7)*p_(2,4,5,6,7)+2*p_(0,1,2,3,4)*p_(0,1,3,5,6)*p_(0,3,5,6,7)*p_(2,4,5,6,7)+4*p_(0,1,2,3,5)*p_(0,1,2,4,7)*p_(0,3,5,6,7)*p_(2,4,5,6,7)-p_(0,1,2,3,4)*p_(0,1,2,5,7)*p_(0,3,5,6,7)*p_(2,4,5,6,7)-p_(0,1,2,3,4)*p_(0,2,3,4,5)*p_(1,3,5,6,7)*p_(2,4,5,6,7)-p_(0,1,2,3,4)*p_(0,1,3,4,6)*p_(1,3,5,6,7)*p_(2,4,5,6,7)-2*p_(0,1,2,3,4)*p_(0,1,2,4,7)*p_(1,3,5,6,7)*p_(2,4,5,6,7)+p_(0,1,2,3,4)*p_(0,1,3,4,5)*p_(2,3,5,6,7)*p_(2,4,5,6,7)-3*p_(0,1,2,3,5)*p_(0,1,2,3,7)*p_(0,4,5,6,7)*p_(2,4,5,6,7)+3*p_(0,1,2,3,4)*p_(0,1,2,3,7)*p_(1,4,5,6,7)*p_(2,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,3,5,6)*p_(0,3,4,5,6)*p_(3,4,5,6,7)-p_(0,1,2,3,5)*p_(0,2,3,5,6)*p_(0,3,4,5,6)*p_(3,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,3,4,6)*p_(1,3,4,5,6)*p_(3,4,5,6,7)+p_(0,1,2,3,5)*p_(0,2,3,4,6)*p_(1,3,4,5,6)*p_(3,4,5,6,7)-p_(0,1,2,3,4)*p_(1,2,3,4,6)*p_(1,3,4,5,6)*p_(3,4,5,6,7)+p_(0,1,2,3,4)*p_(0,2,3,5,6)*p_(1,3,4,5,6)*p_(3,4,5,6,7)-p_(0,1,2,3,5)*p_(0,2,3,4,5)*p_(2,3,4,5,6)*p_(3,4,5,6,7)+p_(0,1,2,3,4)*p_(1,2,3,4,5)*p_(2,3,4,5,6)*p_(3,4,5,6,7)+p_(0,1,2,3,5)*p_(0,1,3,4,6)*p_(2,3,4,5,6)*p_(3,4,5,6,7)-2*p_(0,1,2,3,4)*p_(0,1,3,5,6)*p_(2,3,4,5,6)*p_(3,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,3,5,6)*p_(0,2,4,5,7)*p_(3,4,5,6,7)+p_(0,1,2,3,5)*p_(0,2,3,5,6)*p_(0,2,4,5,7)*p_(3,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,2,5,7)*p_(0,2,4,5,7)*p_(3,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,3,4,6)*p_(1,2,4,5,7)*p_(3,4,5,6,7)-p_(0,1,2,3,5)*p_(0,2,3,4,6)*p_(1,2,4,5,7)*p_(3,4,5,6,7)+p_(0,1,2,3,4)*p_(1,2,3,4,6)*p_(1,2,4,5,7)*p_(3,4,5,6,7)-p_(0,1,2,3,4)*p_(0,2,3,5,6)*p_(1,2,4,5,7)*p_(3,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,2,4,7)*p_(1,2,4,5,7)*p_(3,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,2,5,6)*p_(0,3,4,5,7)*p_(3,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,2,4,6)*p_(1,3,4,5,7)*p_(3,4,5,6,7)-p_(0,1,2,3,5)*p_(0,1,2,4,6)*p_(2,3,4,5,7)*p_(3,4,5,6,7)+2*p_(0,1,2,3,4)*p_(0,1,2,5,6)*p_(2,3,4,5,7)*p_(3,4,5,6,7)+p_(0,1,2,3,6)*p_(0,1,3,5,6)*p_(0,1,4,6,7)*p_(3,4,5,6,7)-p_(0,1,2,3,6)*p_(0,1,2,5,7)*p_(0,1,4,6,7)*p_(3,4,5,6,7)+p_(0,1,2,3,5)*p_(0,1,2,6,7)*p_(0,1,4,6,7)*p_(3,4,5,6,7)-p_(0,1,2,3,5)*p_(0,1,3,5,6)*p_(0,2,4,6,7)*p_(3,4,5,6,7)-p_(0,1,2,3,5)*p_(0,1,2,5,7)*p_(0,2,4,6,7)*p_(3,4,5,6,7)+2*p_(0,1,2,3,5)*p_(0,2,3,4,5)*p_(1,2,4,6,7)*p_(3,4,5,6,7)-2*p_(0,1,2,3,4)*p_(1,2,3,4,5)*p_(1,2,4,6,7)*p_(3,4,5,6,7)-2*p_(0,1,2,3,5)*p_(0,1,3,4,6)*p_(1,2,4,6,7)*p_(3,4,5,6,7)+4*p_(0,1,2,3,4)*p_(0,1,3,5,6)*p_(1,2,4,6,7)*p_(3,4,5,6,7)+2*p_(0,1,2,3,5)*p_(0,1,2,4,7)*p_(1,2,4,6,7)*p_(3,4,5,6,7)-2*p_(0,1,2,3,4)*p_(0,1,2,5,7)*p_(1,2,4,6,7)*p_(3,4,5,6,7)+2*p_(0,1,2,3,5)*p_(0,1,2,5,6)*p_(0,3,4,6,7)*p_(3,4,5,6,7)-p_(0,1,2,3,5)*p_(0,1,2,4,6)*p_(1,3,4,6,7)*p_(3,4,5,6,7)-p_(0,1,2,3,4)*p_(0,1,2,5,6)*p_(1,3,4,6,7)*p_(3,4,5,6,7)+p_(0,1,2,3,5)*p_(0,1,2,4,5)*p_(2,3,4,6,7)*p_(3,4,5,6,7)-2*p_(0,1,2,3,6)*p_(0,1,3,4,6)*p_(0,1,5,6,7)*p_(3,4,5,6,7)+2*p_(0,1,2,3,6)*p_(0,1,2,4,7)*p_(0,1,5,6,7)*p_(3,4,5,6,7)-3*p_(0,1,2,3,4)*p_(0,1,2,6,7)*p_(0,1,5,6,7)*p_(3,4,5,6,7)-2*p_(0,1,2,3,5)*p_(0,2,3,4,5)*p_(0,2,5,6,7)*p_(3,4,5,6,7)+4*p_(0,1,2,3,5)*p_(0,1,3,4,6)*p_(0,2,5,6,7)*p_(3,4,5,6,7)-2*p_(0,1,2,3,4)*p_(0,1,3,5,6)*p_(0,2,5,6,7)*p_(3,4,5,6,7)-p_(0,1,2,3,5)*p_(0,1,2,4,7)*p_(0,2,5,6,7)*p_(3,4,5,6,7)+3*p_(0,1,2,3,4)*p_(0,1,2,5,7)*p_(0,2,5,6,7)*p_(3,4,5,6,7)+2*p_(0,1,2,3,4)*p_(0,2,3,4,5)*p_(1,2,5,6,7)*p_(3,4,5,6,7)-p_(0,1,2,3,4)*p_(0,1,3,4,6)*p_(1,2,5,6,7)*p_(3,4,5,6,7)-2*p_(0,1,2,3,4)*p_(0,1,2,4,7)*p_(1,2,5,6,7)*p_(3,4,5,6,7)-2*p_(0,1,2,3,5)*p_(0,1,2,4,6)*p_(0,3,5,6,7)*p_(3,4,5,6,7)-2*p_(0,1,2,3,4)*p_(0,1,2,5,6)*p_(0,3,5,6,7)*p_(3,4,5,6,7)+3*p_(0,1,2,3,4)*p_(0,1,2,4,6)*p_(1,3,5,6,7)*p_(3,4,5,6,7)-3*p_(0,1,2,3,4)*p_(0,1,2,4,5)*p_(2,3,5,6,7)*p_(3,4,5,6,7)+3*p_(0,1,2,3,5)*p_(0,1,2,3,6)*p_(0,4,5,6,7)*p_(3,4,5,6,7)-3*p_(0,1,2,3,4)*p_(0,1,2,3,6)*p_(1,4,5,6,7)*p_(3,4,5,6,7)+3*p_(0,1,2,3,4)*p_(0,1,2,3,5)*p_(2,4,5,6,7)*p_(3,4,5,6,7); 
+    g := gens ringG47;
+    N := transpose matrix flatten entries M;
+    mm := apply(subsets(8,5),m -> det submatrix(N,m));
+    sub(W,apply(56,j -> g_j => mm_j))
+);
+
+sylvesterMatrix = method(TypicalValue => Matrix);
+sylvesterMatrix (MultidimensionalMatrix) := (M) -> (
+    -- see p. 459 in [Gelfand-Kapranov-Zelevinsky]
+    n := size M;
+    k := apply(n,i -> i-1);
+    r := dim M -1;
+    i0 := maxPosition k;
+    if 2*k_i0 != sum k then error "expected a multidimensional matrix of boundary format";
+    K := ring M;
+    F := M#"multilinearForm";
+    X := M#"varsMultilinearForm";
+    R := (K[flatten(take(X,i0) | take(X,-(r-i0)))])[X_i0];
+    f := flatten entries sub(last coefficients(sub(F,R),Monomials=>vars R),coefficientRing R);
+    x := apply(take(X,i0) | take(X,-(r-i0)),u -> flatten entries sub(matrix{u},coefficientRing R));
+    k' := take(k,i0) | take(k,-(r-i0));
+    m := for j from 1 to r list sum take(k',j-1);
+    S := flatten entries gens product(r,i -> (ideal x_i)^(m_i));
+    T := gens product(r,i -> (ideal x_i)^(m_i+1));
+    D := matrix flatten for i to k_i0 list apply(S,s -> flatten entries sub(last coefficients(s*f_i,Monomials=>T),K));
+    if not(numRows D == numColumns D and numRows D == lift((k_i0+1)! / product(k',i -> i!),ZZ)) then error "something went wrong";
+    D
 );
 
 degreeDeterminant = method();
@@ -711,6 +821,9 @@ degreeDeterminant (List) := (L) -> (
     if min L <= 0 then error "expected a list of positive integers";
     L = apply(L,i -> i-1);
     n := #L;
+    i0 := maxPosition L;
+    L' := take(L,i0) | take(L,-(n-1-i0));
+    if L_i0 == sum L' then return lift((L_i0 + 1)! / product(L',i -> i!),ZZ);
     x := local x;
     R := ZZ[x_1..x_n];
     X := local X;
@@ -745,7 +858,7 @@ isSymmetric = method(TypicalValue => Boolean);
 isSymmetric (MultidimensionalMatrix) := (M) -> (
     for s in permutations(#(M#"format")) do (
         -- <<"-- testing permutation "<<s<<endl;
-        if not(M == transposition(M,s)) then return false; 
+        if not(M == permute(M,s)) then return false; 
     );
     return true;
 );
@@ -784,7 +897,7 @@ isSkewSymmetric = method(TypicalValue => Boolean);
 isSkewSymmetric (MultidimensionalMatrix) := (M) -> (
     for s in permutations(#(M#"format")) do (
         -- <<"-- testing permutation "<<s<<", sign: "<<sgn s<<endl;
-        if not((sgn s) * M == transposition(M,s)) then return false; 
+        if not((sgn s) * M == permute(M,s)) then return false; 
     );
     return true;
 );
@@ -808,9 +921,9 @@ document {
     Headline => "computations with sparse resultants", 
     PARA{"This package provides the methods ",TO "sparseResultant"," and ",TO "sparseDiscriminant"," to calculate sparse resultants and sparse discriminants. As an application, the method ",TO (determinant,MultidimensionalMatrix)," is also provided. See also the package ",TO Resultants,", which includes methods to calculate dense resultants and dense discriminants."},
     PARA{"For the definitions, see one of the following books:"}, 
-    PARA{"(1) ",HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea; "},
-    PARA{"(2) ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky."},
-    Caveat => {"Currently, the algorithms implemented are based on elimination via Gröbner basis methods. This should be significantly improved by implementing more specialized algorithms."}
+    PARA{"(1) ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky;"},
+    PARA{"(2) ",HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea."},
+    Caveat => {"Currently, most of the algorithms implemented are based on elimination via Gröbner basis methods. This should be significantly improved by implementing more specialized algorithms."}
 }
 
 document { 
@@ -959,8 +1072,30 @@ document {
         "multidimensionalMatrix {{{1, 0}, {4, 3}}, {{3, 1}, {5, 9}}}",
         "multidimensionalMatrix {{{7/3, 8, 0}, {6, 8, 3}}, {{3, 8, 2}, {9, 2, 4}}, {{0, 2, 9}, {1, 9, 5}}, {{2, 8, 4}, {9, 7, 7}}}"
     },
-    SeeAlso => {MultidimensionalMatrix,(det,MultidimensionalMatrix),randomMultidimensionalMatrix,genericMultidimensionalMatrix} 
+    SeeAlso => {(multidimensionalMatrix,RingElement),MultidimensionalMatrix,(det,MultidimensionalMatrix),randomMultidimensionalMatrix,genericMultidimensionalMatrix} 
 }
+
+document { 
+    Key => {(multidimensionalMatrix,RingElement)}, 
+    Headline => "make a multidimensional matrix from a multilinear form", 
+    Usage => "multidimensionalMatrix F", 
+    Inputs => {"F" => RingElement => {"a homogeneous polynomial of multidegree ",TEX///$(1,\ldots,1)$///," in a polynomial ring ",TEX///$R$///," with the ",TEX///$\mathbb{Z}^n$///,"-grading where the degree of each variable is a standard basis vector; in other words, ",TEX///$R$///," is the homogeneous coordinate ring of a product of ",TEX///$n$///," projective spaces."}},
+    Outputs => {MultidimensionalMatrix => {"the ",TEX///$n$///,"-dimensional matrix having as entries the coefficients of ",TEX///$F$///,"."}},
+    PARA {"If ",TEX///$F$///," is a multilinear form on ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\ldots\times\mathbb{P}^{k_n}$///,", then the format of the corresponding matrix is ",TEX///$(k_1+1)\times(k_2+1)\times\ldots\times(k_n+1)$///,". You can use ",TO permute," or ",TO reverseSize," to rearrange the dimensions."},
+    EXAMPLE {
+        "R = ZZ[x_1..x_3,y_1..y_4,z_1..z_2,Degrees=>{3:{1,0,0},4:{0,1,0},2:{0,0,1}}];",
+        "F = random({1,1,1},R)",
+        "M = multidimensionalMatrix F"
+    },
+    PARA {"The inverse operation can be obtained using the command \"",TT"!","\" as follows:"},
+    EXAMPLE {
+        "F' = M!",
+        "assert(M === multidimensionalMatrix F')",
+        "assert(sub(F',vars ring F) === F)",
+    },
+    SeeAlso => {(multidimensionalMatrix,List),MultidimensionalMatrix} 
+}
+undocumented {(symbol !,MultidimensionalMatrix)}
 
 document { 
     Key => {MultidimensionalMatrix}, 
@@ -970,17 +1105,33 @@ document {
 }
 
 document { 
-    Key => {transposition,(transposition,MultidimensionalMatrix,List)}, 
-    Headline => "transpose a multidimensional matrix", 
-    Usage => "transposition(M,s)", 
+    Key => {permute,(permute,MultidimensionalMatrix,List)}, 
+    Headline => "permute the dimensions of a multidimensional matrix", 
+    Usage => "permute(M,s)", 
     Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix"},
-               "s" => List => {"a permutation of the set ",TEX///$\{0,1\ldots,n-1\}$///}},
-    Outputs => {MultidimensionalMatrix => {"the ",TEX///$s$///,"-transposition of ",TEX///$M$///,"."}},
+               "s" => List => {"a permutation of the set ",TEX///$\{0,1,\ldots,n-1\}$///}},
+    Outputs => {MultidimensionalMatrix => {"the same as the input, but with the dimensions re-ordered according to the specified permutation."}},
+    PARA {"According to the definition given on page 449 of the book ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", the output of this method is ",TEX///$s'(M)$///,", where ",TEX///$s'$///," is the inverse permutation of ",TEX///$s$///,"."},
     EXAMPLE {
-        "M = multidimensionalMatrix {{{3, 8}, {5, 9}, {4, 0}}, {{9, 6}, {3, 6}, {3, 1}}, {{7, 6}, {2, 0}, {0, 4}}, {{7, 2}, {3, 2}, {2, 5}}}",
-        "transposition(M,{1,0,2})",
-        "transposition(M,{2,0,1})"
-     }
+        "M = genericMultidimensionalMatrix {4,3,2}",
+        "permute(M,{1,0,2})",
+        "permute(M,{2,0,1})"
+     },
+     SeeAlso => {reverseSize,transpose}
+}
+
+document { 
+    Key => {reverseSize,(reverseSize,MultidimensionalMatrix)}, 
+    Headline => "reverse the dimensions of a multidimensional matrix", 
+    Usage => "reverseSize M", 
+    Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix"}},
+    Outputs => {MultidimensionalMatrix => {"the same as ",TO permute,TT"(M,{n-1,...,1,0})","."}},
+    EXAMPLE {
+        "M = genericMultidimensionalMatrix {4,3,2}",
+        "reverseSize M",
+        "assert(M === reverseSize reverseSize M)"
+     },
+     SeeAlso => {permute,transpose}
 }
 
 document { 
@@ -1015,7 +1166,7 @@ document {
 undocumented {(symbol -,MultidimensionalMatrix)}
 
 document { 
-    Key => {(symbol *,RingElement,MultidimensionalMatrix),(symbol *,ZZ,MultidimensionalMatrix),(symbol *,QQ,MultidimensionalMatrix)}, 
+    Key => {(symbol *,RingElement,MultidimensionalMatrix)}, 
     Headline => "multiplication of a scalar with a multidimensional matrix", 
     Usage => "e * N", 
     Inputs => {"e" => RingElement,
@@ -1028,6 +1179,7 @@ document {
      },
      SeeAlso => {(symbol *,MultidimensionalMatrix,MultidimensionalMatrix)}
 }
+undocumented{(symbol *,ZZ,MultidimensionalMatrix),(symbol *,QQ,MultidimensionalMatrix)}
 
 document { 
     Key => {(symbol *,MultidimensionalMatrix,MultidimensionalMatrix)}, 
@@ -1046,7 +1198,8 @@ document {
      SeeAlso => {(symbol *,RingElement,MultidimensionalMatrix)}
 }
 
-undocumented {(net,MultidimensionalMatrix),(symbol ==,ZZ,MultidimensionalMatrix),(symbol ==,MultidimensionalMatrix,ZZ)}
+undocumented {(net,MultidimensionalMatrix),(symbol ==,ZZ,MultidimensionalMatrix),(symbol ==,MultidimensionalMatrix,ZZ),(sub,MultidimensionalMatrix,Ring),
+              (matrix,MultidimensionalMatrix),(multidimensionalMatrix,Matrix)}
 
 document { 
     Key => {(symbol ==,MultidimensionalMatrix,MultidimensionalMatrix)}, 
@@ -1084,14 +1237,14 @@ document {
     Usage => "det M", 
     Inputs => {"M" => MultidimensionalMatrix},
     Outputs => {RingElement => {"the hyperdeterminant of ",TEX///$M$///}},
-    PARA {"This is calculated using Schlafli's method where it is known to work. Use an optional input as ",TT "Strategy=>\"forceSchlafliMethod\""," to try to force this approach (but without ensuring the correctness of the calculation). For details, see the Chapter 14 in the book ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky."},
+    PARA {"This is calculated using Schlafli's method where it is known to work. Use an optional input as ",TT "Strategy=>\"forceSchlafliMethod\""," to try to force this approach (but without ensuring the correctness of the calculation). For matrices of boundary format, the calculation passes through ",TO sylvesterMatrix,". For details, see the Chapter 14 in the book ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},"."},
     EXAMPLE {
-        "M = multidimensionalMatrix {{{{3, 2}, {9, 6}}, {{4, 7}, {2, 2}}}, {{{2, 6}, {9, 0}}, {{0, 5}, {4, 3}}}}",
+        "M = randomMultidimensionalMatrix(2,2,2,2)",
         "time det M",
-        "M = multidimensionalMatrix {{{0, 2, 9}, {4, 3, 1}, {0, 5, 9}, {8, 6, 1}, {1, 3, 5}}, {{1, 8, 3}, {0, 0, 0}, {4, 8, 2}, {4, 3, 4}, {6, 5, 6}}, {{1, 6, 5}, {9, 5, 5}, {9, 6, 5}, {6, 7, 7}, {2, 6, 9}}, {{5, 7, 1}, {4, 0, 5}, {2, 8, 9}, {5, 5, 2}, {3, 2, 6}}, {{0, 0, 2}, {6, 5, 4}, {7, 2, 6}, {0, 9, 7}, {7, 3, 0}}}",
+        "M = randomMultidimensionalMatrix(2,2,2,2,5)",
         "time det M"
      },
-     SeeAlso => {MultidimensionalMatrix, degreeDeterminant, sparseDiscriminant}
+     SeeAlso => {MultidimensionalMatrix, degreeDeterminant, sparseDiscriminant, sylvesterMatrix}
 }
 
 document { 
@@ -1113,31 +1266,30 @@ document {
 document { 
     Key => {genericMultidimensionalMatrix,(genericMultidimensionalMatrix,VisibleList),[genericMultidimensionalMatrix,CoefficientRing],[genericMultidimensionalMatrix,Variable]}, 
     Headline => "make a generic multidimensional matrix of variables", 
-    Usage => "genericMultidimensionalMatrix {d_1,...,d_n}", 
-    Inputs => {{TT"{d_1,...,d_n}",", a list of positive integers."}},
+    Usage => "genericMultidimensionalMatrix(d_1,...,d_n)", 
+    Inputs => {{TT"(d_1,...,d_n)",", a sequence of positive integers."}},
     Outputs => {{"the generic multidimensional matrix of format ",TEX///$d_1\times\ldots\times d_n$///,"."}},
     EXAMPLE {
-        "genericMultidimensionalMatrix {2,2,2}",
-        "genericMultidimensionalMatrix({2,2,2},CoefficientRing=>ZZ/101)",
-        "genericMultidimensionalMatrix({2,2,2},CoefficientRing=>ZZ/101,Variable=>\"b\")",
-        "det oo"
+        "genericMultidimensionalMatrix(2,4,3)",
+        "genericMultidimensionalMatrix((2,2,3),CoefficientRing=>ZZ/101)",
+        "genericMultidimensionalMatrix((2,1,3),CoefficientRing=>ZZ/101,Variable=>\"b\")"
     },
-    SeeAlso => {randomMultidimensionalMatrix,(determinant,MultidimensionalMatrix),genericSymmetricMultidimensionalMatrix,genericSkewMultidimensionalMatrix}
+    SeeAlso => {randomMultidimensionalMatrix,genericSymmetricMultidimensionalMatrix,genericSkewMultidimensionalMatrix}
 }
-undocumented{(genericMultidimensionalMatrix,VisibleList,Boolean)}
 
 document { 
     Key => {randomMultidimensionalMatrix,(randomMultidimensionalMatrix,VisibleList),[randomMultidimensionalMatrix,CoefficientRing]}, 
     Headline => "random multidimensional matrix", 
-    Usage => "randomMultidimensionalMatrix {d_1,...,d_n}", 
-    Inputs => {{TT"{d_1,...,d_n}",", a list of positive integers."}},
+    Usage => "randomMultidimensionalMatrix(d_1,...,d_n)", 
+    Inputs => {{TT"(d_1,...,d_n)",", a sequence of positive integers."}},
     Outputs => {{"a random multidimensional matrix of format ",TEX///$d_1\times\ldots\times d_n$///,"."}},
     EXAMPLE {
-        "randomMultidimensionalMatrix {2,2,2}",
-        "randomMultidimensionalMatrix({2,3,2},CoefficientRing=>ZZ/3331)"
+        "randomMultidimensionalMatrix(2,4,3)",
+        "randomMultidimensionalMatrix((2,2,3),CoefficientRing=>ZZ/101)"
     },
     SeeAlso => {genericMultidimensionalMatrix}
 }
+undocumented{(genericMultidimensionalMatrix,Sequence),(randomMultidimensionalMatrix,Sequence)}
 
 document { 
     Key => {(entries,MultidimensionalMatrix)}, 
@@ -1199,7 +1351,7 @@ document {
     Usage => "genericSymmetricMultidimensionalMatrix(n,d)", 
     Inputs => {{TT"(n,d)",", two positive integers."}},
     Outputs => {{"the generic symmetric multidimensional matrix of format ",TEX///$d\times\ldots\times d$///," (",TEX///$n$///," times)."}},
-    PARA {"An ",TEX///$n$///,"-dimensional matrix ",TEX///$M$///," is symmetric if for every permutation ",TEX///$s$///," of the set ",TEX///$\{0,\ldots,n-1\}$///," we have ",TO transposition,TT"(M,s) == M","."},
+    PARA {"An ",TEX///$n$///,"-dimensional matrix ",TEX///$M$///," is symmetric if for every permutation ",TEX///$s$///," of the set ",TEX///$\{0,\ldots,n-1\}$///," we have ",TO permute,TT"(M,s) == M","."},
     EXAMPLE {
         "genericSymmetricMultidimensionalMatrix(3,2)",
         "genericSymmetricMultidimensionalMatrix(3,2,CoefficientRing=>ZZ/101)",
@@ -1214,13 +1366,30 @@ document {
     Usage => "genericSkewMultidimensionalMatrix(n,d)", 
     Inputs => {{TT"(n,d)",", two positive integers."}},
     Outputs => {{"the generic skew symmetric multidimensional matrix of format ",TEX///$d\times\ldots\times d$///," (",TEX///$n$///," times)."}},
-    PARA {"An ",TEX///$n$///,"-dimensional matrix ",TEX///$M$///," is skew symmetric if for every permutation ",TEX///$s$///," of the set ",TEX///$\{0,\ldots,n-1\}$///," we have ",TO transposition,TT"(M,s) == sign(s)*M","."},
+    PARA {"An ",TEX///$n$///,"-dimensional matrix ",TEX///$M$///," is skew symmetric if for every permutation ",TEX///$s$///," of the set ",TEX///$\{0,\ldots,n-1\}$///," we have ",TO permute,TT"(M,s) == sign(s)*M","."},
     EXAMPLE {
         "genericSkewMultidimensionalMatrix(3,4)",
         "genericSkewMultidimensionalMatrix(3,4,CoefficientRing=>ZZ/101)",
         "genericSkewMultidimensionalMatrix(3,4,CoefficientRing=>ZZ/101,Variable=>\"b\")",
     },
     SeeAlso => {genericMultidimensionalMatrix,genericSymmetricMultidimensionalMatrix}
+}
+
+document { 
+    Key => {sylvesterMatrix,(sylvesterMatrix,MultidimensionalMatrix)}, 
+    Headline => "Sylvester-type matrix for the hyperdeterminant of boundary format", 
+    Usage => "sylvesterMatrix M", 
+    Inputs => {"M" => MultidimensionalMatrix => {"a multidimensional matrix of boundary format."}},
+    Outputs => {Matrix => {"a square matrix whose determinant is ",TEX///$det(M)$///," (up to sign)."}},
+    PARA{"This is an implementation of Theorem 3.3, Chapter 14, in ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},"."},
+    EXAMPLE {
+        "M = randomMultidimensionalMatrix {4,2,3}",
+        "S = sylvesterMatrix M",
+        "det M",
+        "det S",
+        "assert(oo == ooo or oo == -ooo)"
+     },
+     SeeAlso => {(determinant,MultidimensionalMatrix)}
 }
 
 -- Tests -- 
@@ -1411,14 +1580,20 @@ assert(matrix entries removeOneDim A'B' == (matrix entries removeOneDim A') * (m
 assert(size((randomMultidimensionalMatrix {5,2,2}) * (randomMultidimensionalMatrix {2,3,4,2})) == {5,2,3,4,2})
 assert(size((randomMultidimensionalMatrix({5,2,1,2},CoefficientRing=>ZZ/3331)) * (randomMultidimensionalMatrix({2,3,4,2,1},CoefficientRing=>ZZ/3331))) == {5,2,1,3,4,2,1})
 --
+equalUpToSign = (A,B) -> A == B or A == -B;
+--
 detConvolution = method();
 detConvolution (MultidimensionalMatrix,MultidimensionalMatrix) := (A,B) -> (
     Na := degreeDeterminant A;
     Nb := degreeDeterminant B;
     l := first size B;
     detA := det A;
+    assert equalUpToSign(detA,det sylvesterMatrix A);
     detB := det B;
-    detAB := det(A*B);
+    assert equalUpToSign(detB,det sylvesterMatrix B);
+    AB := A*B;
+    detAB := det AB;
+    assert equalUpToSign(detAB,det sylvesterMatrix AB);
     assert(detA^Nb * detB^Na == detAB^l);
     <<"formula: "<<detAB<<"^"<<l<<" = "<<detA<<"^"<<Nb<<" * "<<detB<<"^"<<Na<<endl;
 );
@@ -1426,23 +1601,49 @@ detConvolution (List,List) := (l,m) -> detConvolution(randomMultidimensionalMatr
 detConvolution({3,3},{3,3})
 detConvolution({1,4,1,4},{4,1,4})
 detConvolution({2,2,3},{3,3})
-detConvolution({2,3,3},{3,3})
-detConvolution({2,2},{2,3,3})
 detConvolution({3,2,2},{2,2})
--- detConvolution({2,2,3},{3,2,2}) -- fail since 2x2x2x2 is not a boundary format
+-- det 2x3x4 --
+-- assert(60600 == # terms det genericMultidimensionalMatrix {2,3,4})
+detConvolution({2,3,4},{4,4})
+detConvolution({3,2,4},{4,4})
+detConvolution({2,4,3},{3,3})
+detConvolution({4,2,3},{3,3})
+detConvolution({3,4,2},{2,2})
+detConvolution({4,3,2},{2,2})
+detConvolution({2,2},{2,3,4})
+detConvolution({2,2},{2,4,3})
+detConvolution({3,3},{3,2,4})
+detConvolution({3,3},{3,4,2})
+detConvolution({4,4},{4,2,3})
+detConvolution({4,4},{4,3,2})
+-- det 2x4x5 --
+detConvolution({2,4,5},{5,5})
+detConvolution({4,2,5},{5,5})
+detConvolution({2,5,4},{4,4})
+detConvolution({5,2,4},{4,4})
+detConvolution({4,5,2},{2,2})
+detConvolution({5,4,2},{2,2})
+detConvolution({2,2},{2,4,5})
+detConvolution({2,2},{2,5,4})
+detConvolution({4,4},{4,2,5})
+detConvolution({4,4},{4,5,2})
+detConvolution({5,5},{5,2,4})
+detConvolution({5,5},{5,4,2})
+-- 
+time detConvolution({2,2,2,4},{4,2,5})
 ///;
 
-TEST /// -- transposition
+TEST /// -- permute
 A = randomMultidimensionalMatrix {3,4}
-assert(matrix entries transposition(A,{1,0}) == transpose matrix entries A)
+assert(matrix entries permute(A,{1,0}) == transpose matrix entries A)
 -- 
 perm = (L,s) -> (assert(#L == #s); for i to #L-1 list L_(s_i));
 M = genericMultidimensionalMatrix {2,5,3,1,2};
 assert(last baseName M_(1,4,2,0,1) == (1,4,2,0,1) and last baseName M_(1,3,2,0,1) == (1,3,2,0,1) and last baseName M_(1,0,0,0,1) == (1,0,0,0,1) and last baseName M_(0,0,0,0,0) == (0,0,0,0,0))
 s = {1,0,4,2,3}
 s' = {1,0,3,4,2}
-sM = transposition(M,s);
-assert(transposition(sM,s') == M and sM != M)
+sM = permute(M,s);
+assert(permute(sM,s') == M and sM != M)
 assert(size sM == perm(size M,s))
 for i to 15 do (
     a = (random(0,4),random(0,1),random(0,1),random(0,2),random(0,0));
@@ -1453,8 +1654,8 @@ for i to 15 do (
 M = randomMultidimensionalMatrix({2,2,3},CoefficientRing=>ZZ/33331);
 s = {1,2,0};
 s' = {2,0,1};
-sM = transposition(M,s);
-assert(transposition(sM,s') == M and sM != M)
+sM = permute(M,s);
+assert(permute(sM,s') == M and sM != M)
 assert(size sM == perm(size M,s))
 for i to 10 do (
     a = (random(0,1),random(0,2),random(0,1));
@@ -1471,6 +1672,40 @@ assert(isSymmetric A)
 B = genericSkewMultidimensionalMatrix(3,4)
 assert(isSkewSymmetric B)
 ///
+
+TEST ///
+L = ((2,2,2,4),(2,2,3,6),(2,3,3,12),(2,3,4,12),(2,4,4,24),(2,4,5,20),(3,3,3,36),(3,3,4,48),(3,3,5,30),(3,4,4,108),(3,4,5,120),(4,4,4,272));
+assert all(L,l -> degreeDeterminant(toList take(l,3)) == last l)
+///
+
+TEST ///
+M = randomMultidimensionalMatrix {3,2,4}
+F = M!
+N = multidimensionalMatrix F
+assert(M == N)
+assert(M === N)
+--
+M = genericMultidimensionalMatrix {3,2,4}
+F = M!
+N = multidimensionalMatrix F
+assert(M == N)
+assert(M === N)
+--
+a := local a;
+K := ZZ[a_0..a_10]
+M = multidimensionalMatrix {{{1, 4*a_0^2-a_1, 9, 8*a_2}, {4, 4, 9, 8*a_4-7*a_2^3+1}}, {{4, 6*a_3+1, 2, 6}, {2, 1, 0, 1}}, {{8, 1, 7, 6}, {1, 7, 7, 8}}}
+F = M!
+N = multidimensionalMatrix F
+assert(M == N)
+assert(M === N)
+--
+K := QQ[a_0..a_10,Degrees=>{5:{1,0},6:{0,1}}]
+M = multidimensionalMatrix {{{a_10^4, 4*a_0^2-a_1, 9, 8*a_2}, {4, 4, 9, 8*a_4-7*a_2^3+1}}, {{4, 6*a_3+1, 2, 6}, {2, 1, 0, 1}}, {{8, 1, 7, 6}, {1, 7, 7, 8}}}
+F = M!
+N = multidimensionalMatrix F
+assert(M == N)
+assert(M === N)
+///;
 
 end 
 
