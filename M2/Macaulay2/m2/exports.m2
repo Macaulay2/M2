@@ -342,6 +342,7 @@ export {
 	"RingFamily",
 	"RingMap",
 	"RowExpression",
+	"RunDirectory",
 	"RunExamples",
 	"SPACE",
 	"SVD",

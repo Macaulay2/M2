@@ -27,3 +27,8 @@ copyFile(fn, dir | "/foo-bar")
 prefix = ("bar", "foo-")
 program = findProgram(name, {name, "bar"}, Prefix => {prefix})
 assert(program#"prefix" == prefix)
+
+fn << "touch baz" << close
+program = findProgram(name, name)
+runProgram(program, name, RunDirectory => dir | "/foo/bar")
+assert(fileExists(dir | "/foo/bar/baz"))
