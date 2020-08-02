@@ -1,6 +1,5 @@
 -- -*- coding: utf-8 -*-
 -- TODO: add linter
--- TODO: -- comment in @...@ breaks render
 newPackage(
     "SimpleDoc",
     Version => "1.2",
@@ -81,6 +80,7 @@ DescriptionFunctions = new HashTable from {
     "Example"       => (textlines, keylinenum) -> getExample(textlines, keylinenum, false),
     "CannedExample" => (textlines, keylinenum) -> getExample(textlines, keylinenum, true),
     "Text"          => (textlines, keylinenum) -> markup(textlines, keylinenum),
+    "Subnodes"      => (textlines, keylinenum) -> menu(textlines, keylinenum),
     "Pre"           => (textlines, keylinenum) -> PRE reassemble(min\\getIndent\textlines, textlines),
     "Code"          => (textlines, keylinenum) -> getCode(textlines, keylinenum),
     }
@@ -127,9 +127,7 @@ splitByIndent = (textlines, empties) -> (
 safevalue = t -> try value t else ( stderr << "in the evaluation of: " << stack lines t << endl; value t )
 
 -- render @...@ blocks
-render = (textlines, keylinenum) -> (
-    if #textlines == 0 then return "";
-    text := demark(" ", getText \ textlines);
+render = (text, keylinenum) -> (
     (offset, tail) := (0, length text);
     parsed := splice while offset < tail list (
 	m := regex(///(.*?)(?<!\\)(@|$)(.*?)(?<!\\)(@|$)///, offset, text, Flags => RegexPerl);
@@ -149,7 +147,10 @@ markup = (textlines, keylinenum) -> (
     textlines = prepend(textline, textlines);
     intervals := splitByIndent(textlines, true);
     DIV apply(intervals, (s, e) -> (
-	    result := render(textlines_{s+1..e}, getLinenum textlines#s);
+	    if s === e then return PARA "";
+	    -- TODO: strip "-- comment" from ends of lines, except when -- appears in a string
+	    text := demark(" ", getText \ textlines_{s+1..e});
+	    result := render(text, getLinenum textlines#s);
 	    if instance(result, HypertextContainer) or instance(result, HypertextParagraph) then result else PARA result)))
 
 singleString = (key, textlines, keylinenum) -> (
@@ -170,10 +171,40 @@ items = (textlines, keylinenum) -> apply(splitByIndent(textlines, false), (s, e)
 	line := getText textlines#s;
 	ps := separate("[[:space:]]*(:|=>)[[:space:]]*", line); -- split by ":" or "=>"
 	if #ps =!= 2 then error("line ", toString getLinenum textlines#s, " of string: expected line containing a colon or a double arrow");
-	result := if s === e then "" else render(textlines_{s+1..e}, getLinenum textlines#s);
+	text := demark(" ", getText \ textlines_{s+1..e});
+	result := if s === e then "" else render(text, getLinenum textlines#s);
 	if ps#1 != "" then result = value ps#1 => result;
 	if ps#0 != "" then result = (if match("=>", line) then value else identity) ps#0 => result;
 	result))
+
+-- used for making manus within the description
+submenu = (textlines, keylinenum) -> (
+    if #textlines == 1 then return (
+	line := getText textlines#0;
+	if line === "" then null
+	else if match("^:", line) then HEADER3 render(substring(1, line), getLinenum textlines#0)
+	else if match("^@", line) then HEADER3 render(line, getLinenum textlines#0)
+	else TOH value getText textlines#0);
+    intervals := splitByIndent(textlines, false);
+    UL flatten apply(intervals, (s, e) ->
+	LI sublists(textlines_{s..e},
+	    line -> getIndent line > getIndent textlines_s,
+	    section -> (
+		result := submenu(section, getLinenum section#0);
+		if not instance(result, UL) then
+		if #result == 1 then UL{result} else UL result else result),
+	    line -> submenu({line}, getLinenum line))))
+
+menu = (textlines, keylinenum) -> (
+    if #textlines == 0 then return "";
+    if not match("^(:|@)", getText textlines#0)
+    then textlines = prepend(makeTextline(":Menu", keylinenum), textlines);
+    intervals := splitByIndent(textlines, true);
+    DIV apply(intervals, (s, e) ->
+	sublists(textlines_{s..e},
+	    line -> getIndent line > getIndent textlines_s,
+	    section -> submenu(section, getLinenum section#0),
+	    line -> submenu({line}, getLinenum line))))
 
 -- reassemble textlines into a docstring
 reassemble = (indent, textlines) -> concatenate between(newline,

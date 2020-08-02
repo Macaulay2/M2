@@ -229,6 +229,21 @@ doc ///
           {TT "(?'NAME'...)", " -- named sub-expression, may be referred to by a named back-reference"},
           }@
 
+    Subnodes
+     :String processing functions that accept regular expressions
+       match
+       regex
+       replace
+       separate
+       (select, String, String, String)
+     :Other functions that accept regular expressions
+       about
+       apropos
+       findFiles
+       copyDirectory
+       symlinkDirectory
+
+    Text
       @HEADER2 "Complete References"@
 
       For complete documentation on regular expressions supported in Macaulay2, see the Boost.Regex manual on

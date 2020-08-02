@@ -15,13 +15,13 @@ Node
       i.e., using indentation to separate blocks.
 
       @TO (document, String)@ is a synonyms for @TO doc@.
+    Subnodes
+      :Documentation helpers
+        arXiv
+        stacksProject
+        wikipedia
   Contributors
     Andrew Hoefel contributed to this package.
-  Subnodes
-    :Documentation helpers
-    arXiv
-    stacksProject
-    wikipedia
   SeeAlso
     "Macaulay2Doc::writing documentation"
     "Macaulay2Doc::hypertext list format"
@@ -73,7 +73,6 @@ Node
     "multidoc"
     "docExample"
     "docTemplate"
---    "Node"
   Headline
     a simple documentation function
   Usage
@@ -227,9 +226,10 @@ Node
 		TO doc, " resulting in a separate documentation node."}}}@
 
     For backwards compatibility, the function @TT "multidoc"@ is a synonym for @TO doc@.
---    Here is the input submitted to @ TO multidoc @ to document (most of) this package:
---  Code
---   EXAMPLE { PRE concatenate between("\n", lines get(SimpleDoc#"source directory" | "SimpleDoc/doc.txt")) }
+
+    Here is the input submitted to @ TO multidoc @ to document (most of) this package:
+   Code
+    EXAMPLE { PRE concatenate between("\n", lines get(SimpleDoc#"source directory" | "SimpleDoc/doc.txt")) }
   SeeAlso
     document
     "testExample"
