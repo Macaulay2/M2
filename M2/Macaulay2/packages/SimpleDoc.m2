@@ -182,8 +182,8 @@ submenu = (textlines, keylinenum) -> (
     if #textlines == 1 then return (
 	line := getText textlines#0;
 	if line === "" then null
-	else if match("^:", line) then HEADER3 render(substring(1, line), getLinenum textlines#0)
-	else if match("^@", line) then HEADER3 render(line, getLinenum textlines#0)
+	else if match("^:", line) then render(substring(1, line), getLinenum textlines#0)
+	else if match("^@", line) then render(line, getLinenum textlines#0)
 	else TOH value getText textlines#0);
     intervals := splitByIndent(textlines, false);
     UL flatten apply(intervals, (s, e) ->
@@ -204,7 +204,7 @@ menu = (textlines, keylinenum) -> (
 	sublists(textlines_{s..e},
 	    line -> getIndent line > getIndent textlines_s,
 	    section -> submenu(section, getLinenum section#0),
-	    line -> submenu({line}, getLinenum line))))
+	    line -> HEADER3 submenu({line}, getLinenum line))))
 
 -- reassemble textlines into a docstring
 reassemble = (indent, textlines) -> concatenate between(newline,

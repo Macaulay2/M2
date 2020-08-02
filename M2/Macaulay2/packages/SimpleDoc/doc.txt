@@ -13,18 +13,18 @@ Node
       The new format is parsed by @TO (doc, String)@ for writing either a single or
       multiple documentation nodes from string or file and adheres to the off-side rule;
       i.e., using indentation to separate blocks.
-
-      @TO (document, String)@ is a synonyms for @TO doc@.
     Subnodes
+      :Getting started with SimpleDoc
+        @TO2 {doc, "Using SimpleDoc for documentation"}@
+        @TO2 {"Text", "Using markup in documentation"}@
+        @TO2 {"Text::html(TEX)", "Using TeX in documentation"}@
+	@TO2 {"Macaulay2Doc::conventions for documentation", "Style guide for documentation"}@
       :Documentation helpers
         arXiv
         stacksProject
         wikipedia
   Contributors
     Andrew Hoefel contributed to this package.
-  SeeAlso
-    "Macaulay2Doc::writing documentation"
-    "Macaulay2Doc::hypertext list format"
 Node
   Key
      packageTemplate
@@ -207,7 +207,7 @@ Node
     such as $\PP^3$ or $x_i^{33} + 1/2$, to be displayed in the html form of the documentation.
     Also allowed is a pair of {\tt \@} characters, enclosing Macaulay2 code to be executed,
     yielding appropriate hypertext.  For example, {\tt \@TO Key\@} will insert a link to another
-    node of the documentation. See @TO "Macaulay2Doc::hypertext list format"@ for other hypertext types.
+    node of the documentation. See @TO "Text"@ for other hypertext types.
 
     @HEADER2 "An example of a documentation node"@
 
@@ -225,7 +225,8 @@ Node
     @UL {{ TT "Node", PARA {"The text following each such keyword is handled just as by ",
 		TO doc, " resulting in a separate documentation node."}}}@
 
-    For backwards compatibility, the function @TT "multidoc"@ is a synonym for @TO doc@.
+    @TO (document, String)@ is a synonyms for @TO doc@.
+    For backwards compatibility, the function @TT "multidoc"@ is also a synonym for @TO doc@.
 
     Here is the input submitted to @ TO multidoc @ to document (most of) this package:
    Code
