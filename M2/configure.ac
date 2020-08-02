@@ -1032,13 +1032,12 @@ for nauty_prefix in "" "nauty-"
 do
     if test "`type -t ${nauty_prefix}complg`" = file
     then nauty_version=`${nauty_prefix}complg --version | cut -d " " -f 3`
-         if test `echo "$nauty_version >= 2.7000" | bc -l` = 1
-         then AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
-             FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
-             FOUND_nauty=yes
-             break
-         else FOUND_nauty=old
-         fi
+	AX_COMPARE_VERSION([$nauty_version], [ge], [2.7000],
+	    [AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
+	     FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
+	     FOUND_nauty=yes
+	     break],
+	    [FOUND_nauty=old])
     fi
 done
 if test $FOUND_nauty != yes
