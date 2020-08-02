@@ -53,7 +53,7 @@ cmake -GNinja -S../.. -B. \
 ```
 The `-S../..` argument indicates the location of the source and `-B.` indicates the build directory. After those, arguments of type `-DNAME=VALUE` set the `NAME` variable to `VALUE`. For instance, `CMAKE_BUILD_TYPE` determines various compiler flags to be used. Defined options are `Release`, `Debug`, `RelWithDebInfo`, and `RelMinSize`, with `RelWithDebInfo` being the default. The value of `CMAKE_INSTALL_PREFIX` determines the installation prefix.
 
-We build with MPIR as the multiple precision arithmetic library by default. To use GMP, use `-DUSING_MPIR=OFF` instead.
+We use GMP as the default multiple precision arithmetic library. To use MPIR instead, add `-DUSING_MPIR=ON`.
 
 This command generates the `build.ninja` files used by the Ninja build system, which is much more efficient. To generate a `Makefile` instead, remove `-GNinja` and use `make` instead of `ninja` in subsequent commands.
 
@@ -133,7 +133,7 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `LINTING:BOOL=OFF`: enable linting C++ sources (see `cmake/prechecks.cmake`)
 - `MEMDEBUG:BOOL=OFF`: enable memory allocation debugging
 - `PROFILING:BOOL=OFF`: enable profiling build flags
-- `USING_MPIR:BOOL=ON`: use MPIR instead of GMP
+- `USING_MPIR:BOOL=OFF`: use MPIR instead of GMP
 - `WITH_OMP:BOOL=OFF`: link with the OpenMP library
 - `WITH_PYTHON:BOOL=OFF`: link with the Python library
 - `WITH_SQL:BOOL=OFF`: link with the MySQL library
@@ -146,7 +146,7 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `BUILD_TESTING:BOOL=ON`: build the testing targets
   - `SKIP_TESTS:STRING="mpsolve;googletest"`: tests to skip
   - `SLOW_TESTS:STRING="eigen;ntl;flint"`: slow tests to skip
-- `BUILD_LIBRARIES:STRING="GTest;MPIR;MPFR;NTL;Flint;Factory;Frobby;Givaro"`: build libraries, even if found on the system
+- `BUILD_LIBRARIES:STRING="GTest"`: build libraries, even if found on the system
 - `BUILD_PROGRAMS:STRING="4ti2;Nauty;TOPCOM"`: build programs, even if found on the system
 - `CMAKE_BUILD_TYPE:STRING=RelWithDebInfo`: valid CMake build types are `Debug` `Release` `RelWithDebInfo` `MinSizeRel`
 - `CMAKE_INSTALL_PREFIX:PATH=/usr`: installation prefix
