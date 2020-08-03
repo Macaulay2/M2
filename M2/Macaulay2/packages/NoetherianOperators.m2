@@ -57,7 +57,9 @@ export {
      "InterpolationBasis",
      "InterpolationTolerance",
      "InterpolationDegreeLimit",
-     "NoetherianDegreeLimit"
+     "NoetherianDegreeLimit", 
+     
+     "getNoetherianOperatorsHilb"
      }
 
 --TruncDualData private keys
@@ -999,6 +1001,96 @@ modConstant = f -> (
     g := (flatten entries coe) / (i -> sub(i,QQ));
     f // gcd(g)
 )
+
+
+
+------- Noetherian operators code with the use of punctual Hilbert schemes
+--------------------------------------------------------------------------
+
+getCoef = f -> (
+    L := flatten exponents f;
+    c := 1;
+    for n in L do c = c * (n!);
+    1 / c
+)
+
+--- This function returns the ring we shall use to parametrize the punctual Hilbert scheme
+getHilb = (P, depVars) -> (
+    R := ring P;
+    varsHilb := apply(depVars, i -> value("symbol h" | toString(i)) );
+    S := (frac(R/P))(monoid[varsHilb]);
+    S
+)
+
+-- This map receives an ideal Q in R=QQ[x_1..x_n] primary to a maximal ideal P
+-- and it returns an ideal I in S=(frac(R/P))[y_1..y_c] which is primary with respect to (y_1..y_c).
+mapRtoHilb = (Q, P, S, depVars, indVars) ->
+(
+    R := ring Q;
+    n := numgens R;        
+    m := 0; -- compute the exponent that determines the order of the diff ops
+    while (Q : P^m) != ideal(1_R) do m = m + 1;       
+    -- map from R into the "base changed" module of principal parts
+    diag :=  ideal apply(depVars, w -> value(value("symbol h" | toString(w)))_S );
+    L := apply(gens R, w -> if any(indVars, z -> z == w) 
+	               then sub(w, S) else sub(w, S) + value(value("symbol h" | toString(w)))_S);
+    mapRtoS := map(S, R, L);
+    ideal mingens ((mapRtoS Q) + diag^m)    
+)
+
+liftNoethOp = (A, D) -> (
+    FF := coefficientRing ring A;
+    L := lcm apply(flatten entries last coefficients A, w -> denominator(sub(w, FF)));
+    sub(L*A, D)
+)  
+ 
+-- This function returns a set of Noetherian operators given the ideal I in the punctual Hilbert scheme
+-- that parametrizes the primary ideal Q.
+getNoetherianOpsfromHilb = (I, R, S, depVars) -> (
+    mm := ideal vars S; -- maximal irrelevant ideal of S
+    m := 0; -- compute the exponent that determines the order of the diff ops
+    while (I : mm^m) != ideal(1_S) do m = m + 1;   
+    allMons := {}; 
+    for i from 0 to m-1 do allMons = join(allMons, flatten entries basis(i, S));
+    X := S/I;
+    basisX := flatten entries basis X; 
+    LinX := apply(allMons, v -> sub(v, X)); 
+    FF := coefficientRing S;
+    diffVars := apply(depVars, w -> value("symbol d" | toString(w)) );
+    W := FF(monoid[diffVars]);
+    D := R(monoid[diffVars]);
+    mapStoW := map(W, S, gens W);
+    noethOps:= {};  
+    for f in basisX do (	
+	valFunct := apply(LinX, v -> sub(v // f, FF)); 
+	op := 0_W;
+	for i from 0 to (length allMons)-1 do (
+	    c := getCoef(allMons_i); 
+	    op = op + c * valFunct_i * mapStoW(allMons_i);
+	);     
+	noethOps = append(noethOps, op);
+     );
+   apply(noethOps, w -> liftNoethOp(w, D))   
+)
+
+
+-- This function can compute the Noetherian operators of a primary ideal Q.
+-- Here we pass first through the punctual Hilbert scheme 
+getNoetherianOperatorsHilb = Q -> (
+    R := ring Q;
+    P := radical Q;
+    indVars := support first independentSets P;
+    depVars := gens R - set indVars;	
+    S := getHilb(P, depVars);
+    I := mapRtoHilb(Q, P, S, depVars, indVars);
+    noethOps := getNoetherianOpsfromHilb(I, R, S, depVars);
+    noethOps    
+) 
+ 
+----------------------------------------------------------
+
+
+
 
 beginDocumentation()
 
