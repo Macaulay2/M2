@@ -357,26 +357,44 @@ n = numcols F.dd_3;
 e = getSymbol("e")
 f = getSymbol("f")
 g = getSymbol("g")                
-P = (ring F)[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>(toList(0..(m-1)) | toList((m+l)..(m+l+n-1))), Degrees => (toList ((m:1) | (l:2) | (n:3)))]
+--    P := getSymbol("P");       
+--- only do the next line if homogeneous.
+degreesP = flatten apply(3, j -> apply(degrees source F.dd_(j+1), d -> {j+1} | d))
+--  Otherwise just add on homological degrees
+-- degreesP = flatten apply(3, j -> apply(degrees source F.dd_(j+1), d -> {j+1,0}))
+P = ((ring F)[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>(toList(0..(m-1)) | toList((m+l)..(m+l+n-1))), Degrees => degreesP, Join => false])
+-- if you wish to flatten the ring, then use this command instead
+-- it seems to make basis work as intended
+P = first flattenRing ((ring F)[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>(toList(0..(m-1)) | toList((m+l)..(m+l+n-1))), Degrees => degreesP, Join => false])
+--------
+phi = map(P,Q,{P_(m+l+n),P_(m+l+n+1),P_(m+l+n+2)})
+eVector = matrix {apply(m, i -> P_(i))}
 fVector = matrix {apply(l, i -> P_(m+i))}
 gVector = matrix {apply(n, i -> P_(m+l+i))}
-eeGens = apply(pairs mult#0, p -> first flatten entries (P_(p#0#0-1)*P_(p#0#1-1) - fVector*(p#1)))
-efGens = apply(pairs mult#1, p -> first flatten entries (P_(p#0#0-1)*P_(m+p#0#1-1) - gVector*(p#1)))
+eeGens = apply(pairs mult#0, p -> first flatten entries (P_(p#0#0-1)*P_(p#0#1-1) - fVector*(phi(p#1))))
+efGens = apply(pairs mult#1, p -> first flatten entries (P_(p#0#0-1)*P_(m+p#0#1-1) - gVector*(phi(p#1))))
 I = (ideal eeGens) + (ideal efGens)
+isHomogeneous I
 A = P/I
-B = A/(ideal sub(vars Q, A))
-e_1*e_2
+J = ideal mingens (I + ideal sub(vars Q, P))
+B = P/J
 
-use A
-netList table (m,m,(i,j) -> if j > i then e_(i+1)*e_(j+1) else 0)
-netList table (m,m,(i,j) -> if i < j then e_(i+1)*e_(j+1) else (if i == j then 0 else "-"))
-netList table (m,l,(i,j) -> e_(i+1)*f_(j+1))
-
-netList table (m+1,m+1,(i,j) -> if i == 0 and j == 0 then " " else (if i == 0 then e_j else (if j == 0 then e_i else ( if i < j then e_i*e_j else (if i == j then 0 else "-")))))
-
-netList ( {toList(e_1..e_m)} | table (m,m,(i,j) -> if i < j then e_(i+1)*e_(j+1) else (if i == j then 0 else "-")) )
-netList table (m,l,(i,j) -> e_(i+1)*f_(j+1))
-
+--- now make the multiplication table in A
+-- A_1 times A_1
+oneTimesOneA = matrix table(m,m,(i,j) -> (A_i)*(A_j))
+-- put on the row and column labels for fun
+matrix entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA))
+-- A_1 times A_2
+oneTimesTwoA = matrix table(m,l,(i,j) -> (A_i)*(A_(m+j)))
+matrix entries ((matrix {{0}} | fVector) || ((transpose eVector) | oneTimesTwoA))
+--- now make the multiplication table in B
+-- B_1 times B_1
+oneTimesOneB = matrix table(m,m,(i,j) -> (B_i)*(B_j))
+-- put on the row and column labels for fun
+matrix entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneB))
+-- B_1 times B_2
+oneTimesTwoB = matrix table(m,l,(i,j) -> (B_i)*(B_(m+j)))
+matrix entries ((matrix {{0}} | fVector) || ((transpose eVector) | oneTimesTwoB))
 
 p = (m#1)#(6,5)
 p**((ring p)/ideal vars ring p) ==0
