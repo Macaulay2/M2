@@ -59,7 +59,9 @@ export {
      "InterpolationDegreeLimit",
      "NoetherianDegreeLimit", 
      
-     "getNoetherianOperatorsHilb"
+     --functions from punctual Hilb approach
+     "getNoetherianOperatorsHilb",
+     "getIdealFromNoetherianOperators"
      }
 
 --TruncDualData private keys
@@ -1020,8 +1022,7 @@ getHilb = (P, depVars) -> (
 
 -- This map receives an ideal Q in R=QQ[x_1..x_n] primary to a maximal ideal P
 -- and it returns an ideal I in S=(frac(R/P))[y_1..y_c] which is primary with respect to (y_1..y_c).
-mapRtoHilb = (Q, P, S, depVars, indVars) ->
-(
+mapRtoHilb = (Q, P, S, depVars, indVars) -> (
     R := ring Q;
     n := numgens R;        
     m := 0; -- compute the exponent that determines the order of the diff ops
@@ -1042,7 +1043,7 @@ liftNoethOp = (A, R, D) -> (
     sub(m*A, D)
 )  
 
-unpackRow = (row, S, FF) -> (
+unpackRow = (row, FF) -> (
    (mons, coeffs) := coefficients row;
    sub(coeffs, FF)
 )    
@@ -1056,20 +1057,20 @@ invSystemFromHilbToNoethOps = (I, R, S, depVars) -> (
     FF := coefficientRing S; 
     allMons := basis(0, m-1, S); 
     gensI := flatten entries mingens I;
-    diffMat := unpackRow(diff(gensI_0, allMons), S, FF);
+    diffMat := unpackRow(diff(gensI_0, allMons), FF);
     for i from 1 to length gensI - 1 do (
-	auxMat := unpackRow(diff(gensI_i, allMons), S, FF);
+	auxMat := unpackRow(diff(gensI_i, allMons), FF);
 	diffMat = diffMat || auxMat;
      );
     noethOps := flatten entries (allMons * mingens ker diffMat);  
     diffVars := apply(depVars, w -> value("symbol d" | toString(w)) );
     W := FF(monoid[diffVars]);
-    D := R(monoid[diffVars]);
+    --D := R(monoid[diffVars]);
+    D := diffAlg(R);
     mapStoW := map(W, S, gens W);
     apply(noethOps, w -> liftNoethOp(mapStoW(w), R, D))   
 )
    
-    
 -- This function can compute the Noetherian operators of a primary ideal Q.
 -- Here we pass first through the punctual Hilbert scheme 
 getNoetherianOperatorsHilb = Q -> (
@@ -1082,6 +1083,47 @@ getNoetherianOperatorsHilb = Q -> (
     noethOps := invSystemFromHilbToNoethOps(I, R, S, depVars);
     noethOps    
 ) 
+
+-- computes the annihilator ideal of a polynomial F in a polynomial ring 
+-- Input: a polynomial. Output: a zero-dimension ideal that corresponds with the annihilator
+polynomialAnn = (F) -> (
+    deg := (degree F)_0;
+    S := ring F;
+    allMons := basis(1, deg + 1, S);
+    diffMat := diff(allMons, F);
+    (mons, coeffs) := coefficients diffMat;
+    ideal mingens ideal (allMons * mingens ker coeffs)        
+)
+
+-- computes the annilihator of a vector space V of polynomials
+-- typically one expects that V is close under differentiation
+-- Input: a list which is a basis of V. Output: the ideal annihilator.
+vectorAnn = (V) -> (
+    intersect(apply(V, F -> polynomialAnn(F)))    
+)    
+  
+--- Implements the inverse procedure of Noetherian operators
+--- Given a prime ideal and a set of Noetherian operators, it computes the corresponding primary ideal
+--- Input: L a list of Noetherian operators (inside R[dx_1,...,dx_n]); a prime ideal P.
+--- Output: The corresponding primary ideal Q 
+getIdealFromNoetherianOperators = (L, P) -> (
+    R := ring P;
+    indVars := support first independentSets P;
+    FF := frac(R/P);
+    D := ring L_0;
+    S := FF[gens D];
+    V := apply(L, F -> sub(F, S));
+    I := vectorAnn(V);
+    I = ideal apply(flatten entries gens I, f -> liftNoethOp(f, R, D));    
+    X := D/(I+P);
+    Lmap := apply(gens R, w -> sub(w, D) + value(value("symbol d" | toString(w)))_D);
+    mapRtoX := map(X, R, Lmap);
+    Q := ker mapRtoX;
+    for v in indVars do 
+    	Q = saturate(Q, ideal(v));
+    Q
+) 
+
  
 ----------------------------------------------------------
 
@@ -1966,7 +2008,9 @@ assert( Q == ideal(3*x_1^2*x_2^2-x_2^3*x_3-x_1^3*x_4-3*x_1*x_2*x_3*x_4+2*x_3^2*x
       ^2*x_3*x_4-2*x_2*x_3^2*x_4,4*x_2^3*x_3^3+4*x_1^3*x_3^2*x_4-12*x_1*x_2*x_3^3*x_4+4*x_3^4*x_4
       ^2-x_1^4+6*x_1^2*x_2*x_3+3*x_2^2*x_3^2-8*x_1*x_3^2*x_4) );
 time noetherianOperators(Q)
-time getNoetherianOperatorsHilb(Q)
+L = time getNoetherianOperatorsHilb(Q)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
 
@@ -1975,9 +2019,10 @@ time getNoetherianOperatorsHilb(Q)
 -- Example 1 : Contains the computations in Example 3.10
 R=QQ[x_1,x_2,x_3,x_4];
 Q=ideal{x_1^2,x_1*x_2,x_1*x_3,x_1*x_4-x_3^2+x_1,x_3^2*x_4-x_2^2,x_3^2*x_4-x_3^2-x_2*x_3+2*x_1};
-getNoetherianOperatorsHilb(Q)
 time noetherianOperators(Q)
-time getNoetherianOperatorsHilb(Q)
+L = time getNoetherianOperatorsHilb(Q)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
 
@@ -2003,7 +2048,9 @@ joinIdeals = (J, K) ->
 ) 
 Q=joinIdeals(P,M)
 time noetherianOperators(Q)
-time getNoetherianOperatorsHilb(Q)
+L = time getNoetherianOperatorsHilb(Q)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
 
@@ -2014,7 +2061,9 @@ time getNoetherianOperatorsHilb(Q)
 R = QQ[x_1, x_2, x_3]
 Q = ideal(x_1^2, x_2^2, x_1-x_2*x_3)
 time noetherianOperators(Q)
-time getNoetherianOperatorsHilb(Q)
+L = time getNoetherianOperatorsHilb(Q)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
 
@@ -2036,17 +2085,23 @@ isPrime Q1
 isPrime Q2
 P2 = radical Q2 -- it is equal to (x_1, x_2, x_3)
 time noetherianOperators(Q2)
-time getNoetherianOperatorsHilb(Q2)
+L = time getNoetherianOperatorsHilb(Q2)
+Q2' = getIdealFromNoetherianOperators(L, radical Q2)
+Q2 == Q2'
 ---- the Noetherian operators of Q3
 isPrime Q3
 P3 = radical Q3 -- it is equal to (x2, x3, x4)
 time noetherianOperators(Q3)
-time getNoetherianOperatorsHilb(Q3)
+L = time getNoetherianOperatorsHilb(Q3)
+Q3' = getIdealFromNoetherianOperators(L, radical Q3)
+Q3 == Q3'
 ---- the Noetherian operators of Q4
 isPrime Q4
 P4 = radical Q4 -- it is equal to (x1, x2, x3, x4)
 time noetherianOperators(Q4)
-time getNoetherianOperatorsHilb(Q4)
+L = time getNoetherianOperatorsHilb(Q4)
+Q4' = getIdealFromNoetherianOperators(L, radical Q4)
+Q4 == Q4'
 ----------------------------------------------------
 ----------------------------------------------------
 
@@ -2058,7 +2113,9 @@ R = QQ[x_1,x_2,x_3]
 Q = ideal(random(3, R), random(2, R), random(2, R), random(4, R))
 assert(dim Q == 0)
 time noetherianOperators(Q)
-time getNoetherianOperatorsHilb(Q)
+L = time getNoetherianOperatorsHilb(Q)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
 
@@ -2069,7 +2126,9 @@ time getNoetherianOperatorsHilb(Q)
 R = QQ[x_1,x_2,x_3]
 Q = ideal(x_1^2, x_2^2, x_3^2, x_1*x_2 + x_1*x_3 +x_2*x_3)
 time noetherianOperators(Q)
-time getNoetherianOperatorsHilb(Q)
+L = time getNoetherianOperatorsHilb(Q)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
 
@@ -2084,7 +2143,9 @@ primDec = primaryDecomposition J
 -- here we will only take care of the first primary component...
 Q = primDec_0
 time noetherianOperators(Q)
-time getNoetherianOperatorsHilb(Q)
+L = time getNoetherianOperatorsHilb(Q)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
 
@@ -2097,7 +2158,9 @@ mm= ideal vars R
 n=4
 Q=mm^n
 time noetherianOperators(Q)
-time getNoetherianOperatorsHilb(Q)
+L = time getNoetherianOperatorsHilb(Q)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
 
@@ -2108,7 +2171,9 @@ time getNoetherianOperatorsHilb(Q)
 R = QQ[x_1,x_2,x_3]
 Q = ideal(x_1^2,x_2^2,x_3^2)
 time noetherianOperators(Q)
-time getNoetherianOperatorsHilb(Q)
+L = time getNoetherianOperatorsHilb(Q)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
 
