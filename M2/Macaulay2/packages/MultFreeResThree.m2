@@ -150,7 +150,7 @@ genmulttables = F -> (
     -- 	    EF#(i,j) = (matrix entries e);
     -- 	    );
     -- 	);
---    {EE,for i from 0 to 10 list Q_i}
+    EE
     )
 
 multtableslink = (F,i,j,k) -> (
@@ -227,14 +227,17 @@ eeProdH = F -> (
     m := numcols F.dd_1;
     l := numcols F.dd_2;
     n := numcols F.dd_3;        
-    e := getSymbol("e".Variable);    
-    f := getSymbol("f".Variable);
-    g := getSymbol("g".Variable);                
---    P := getSymbol("P");                    
-    P1 := (ring t#(1,1))[e_1..e_m];
-    P2 := P1[f_1..f_l];
-    P3 := P2[g_1..g_n];
-    first flattenRing P3;
+    e := getSymbol("e");    
+    f := getSymbol("f");
+    g := getSymbol("g");                
+--    P := getSymbol("P");       
+P1 := (ring t#(1,1))[Variables => m, VariableBaseName => e];
+    P2 := P1[Variables => l, VariableBaseName => f];    
+    P3 := P2[Variables => n, VariableBaseName => g];        
+    -- P1 := (ring t#(1,1))[Variables => l, VariableBaseName => f];
+    -- P2 := P1[f_1..f_l];
+    -- P3 := P2[g_1..g_n];
+    use first flattenRing P3;
     f_1*f_2
     -- matrix{toList(P_2..P_8)}
 --    for i from 1 to l list f_i*f_1
