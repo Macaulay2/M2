@@ -35,7 +35,8 @@ newPackage ( "MultFreeResThree",
     )
 
 export { "genmulttables", "multTables", "multTablesLink", "eeProd", "efProd", 
-    "mapX", "mapY", "makeRes" , "findRegSeq" , "eeProdH" }
+    "mapX", "mapY", "makeRes" , "findRegSeq" , "eeProdH",
+    "eeMultTable", "efMultTable", "codimThreeAlgStructure", "codimThreeTorAlgebra", "Labels" }
 
 -- exportMutable{ "u" }
 --==========================================================================
@@ -246,7 +247,6 @@ P1 := (ring t#(1,1))[Variables => m, VariableBaseName => e];
 --x*f_1
     )
 
-
 eeProd = (F,i,j) -> (
     m := multTables F;
     (m#0)#(i,j)
@@ -310,6 +310,84 @@ findRegSeq = ( M, L ) -> (
 P
 )
 
+codimThreeAlgStructure = method()
+codimThreeAlgStructure(ChainComplex, List) := (F, sym) -> (
+   if length F != 3 then
+     error "Expected a chain complex of length three which is free of rank one in degree zero.";
+   if #sym != 3 or any(sym, s -> (class baseName s =!= Symbol))  then
+     error "Expected a list of three symbols.";
+   mult := multTables(F);
+   Q := ring F;
+   m := numcols F.dd_1;
+   l := numcols F.dd_2;
+   n := numcols F.dd_3;        
+   degreesP := if isHomogeneous F then 
+                  flatten apply(3, j -> apply(degrees source F.dd_(j+1), d -> {j+1} | d))
+	       else
+	          flatten apply(3, j -> apply(degrees source F.dd_(j+1), d -> {0} | d));
+   skewList := toList((0..(m-1)) | ((m+l)..(m+l+n-1)));
+   e := baseName (sym#0);
+   f := baseName (sym#1);
+   g := baseName (sym#2);
+   -- use this line if you want to ensure that 'basis' works properly on the returned ring.
+   --P := first flattenRing (Q[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>skewList, Degrees => degreesP, Join => false]);
+   P := Q[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>skewList, Degrees => degreesP, Join => false];
+   phi := map(P,Q,{P_(m+l+n),P_(m+l+n+1),P_(m+l+n+2)});
+   eVector := matrix {apply(m, i -> P_(i))};
+   fVector := matrix {apply(l, i -> P_(m+i))};
+   gVector := matrix {apply(n, i -> P_(m+l+i))};
+   eeGens := apply(pairs mult#0, p -> first flatten entries (P_(p#0#0-1)*P_(p#0#1-1) - fVector*(phi(p#1))));
+   efGens := apply(pairs mult#1, p -> first flatten entries (P_(p#0#0-1)*P_(m+p#0#1-1) - gVector*(phi(p#1))));
+   I := (ideal eeGens) + (ideal efGens);
+   A := P/I;
+   A.cache#"l" = l;
+   A.cache#"m" = m;
+   A.cache#"n" = n;
+   A
+)
+
+codimThreeTorAlgebra = method()
+codimThreeTorAlgebra(ChainComplex,List) := (F,sym) -> (
+   A := codimThreeAlgStructure(F,sym);
+   P := ambient A;
+   Q := ring F;
+   I := ideal A;
+   J := ideal mingens (I + ideal sub(vars Q, P));
+   B := P/J;
+   B.cache#"l" = A.cache#"l";
+   B.cache#"m" = A.cache#"m";
+   B.cache#"n" = A.cache#"n";
+   B
+)
+
+eeMultTable = method(Options => {Labels => true})
+eeMultTable(Ring) := opts -> A -> (
+   if not (A.cache#?"l" and A.cache#?"m" and A.cache#?"n") then
+      error "Expected an algebra created with a CodimThree routine.";
+   l := A.cache#"l";
+   m := A.cache#"m";
+   n := A.cache#"n";
+   eVector := matrix {apply(m, i -> A_i)};
+   oneTimesOneA := matrix table(m,m,(i,j) -> (A_i)*(A_j));
+   -- put on the row and column labels for fun
+   result := matrix entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
+   if (opts.Labels) then result else oneTimesOneA
+)
+
+efMultTable = method(Options => options eeMultTable)
+efMultTable(Ring) := opts -> A -> (
+   if not (A.cache#?"l" and A.cache#?"m" and A.cache#?"n") then
+      error "Expected an algebra created with a CodimThree routine.";
+   l := A.cache#"l";
+   m := A.cache#"m";
+   n := A.cache#"n";
+   eVector := matrix {apply(m, i -> A_i)};
+   fVector := matrix {apply(l, i -> A_(m+i))};
+   oneTimesTwoA := matrix table(m,l,(i,j) -> (A_i)*(A_(m+j)));
+   -- put on the row and column labels for fun
+   result := matrix entries ((matrix {{0}} | fVector) || ((transpose eVector) | oneTimesTwoA));
+   if (opts.Labels) then result else oneTimesTwoA
+)
 
 TEST ///
 Q = QQ[x,y,z];
@@ -346,55 +424,24 @@ m = multTables(F)
 peek (m#0)
 peek (mult#1)
 
+---- new code 8/4/2020
 restart
-debug loadPackage "MultFreeResThree"
+loadPackage "MultFreeResThree"
 Q = QQ[x,y,z];
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2, x^2*z, z^3);
 mult = multTables(F)
 m = numcols F.dd_1;
 l = numcols F.dd_2;
 n = numcols F.dd_3;        
-e = getSymbol("e")
-f = getSymbol("f")
-g = getSymbol("g")                
---    P := getSymbol("P");       
---- only do the next line if homogeneous.
-degreesP = flatten apply(3, j -> apply(degrees source F.dd_(j+1), d -> {j+1} | d))
---  Otherwise just add on homological degrees
--- degreesP = flatten apply(3, j -> apply(degrees source F.dd_(j+1), d -> {j+1,0}))
-P = ((ring F)[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>(toList(0..(m-1)) | toList((m+l)..(m+l+n-1))), Degrees => degreesP, Join => false])
--- if you wish to flatten the ring, then use this command instead
--- it seems to make basis work as intended
-P = first flattenRing ((ring F)[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>(toList(0..(m-1)) | toList((m+l)..(m+l+n-1))), Degrees => degreesP, Join => false])
---------
-phi = map(P,Q,{P_(m+l+n),P_(m+l+n+1),P_(m+l+n+2)})
-eVector = matrix {apply(m, i -> P_(i))}
-fVector = matrix {apply(l, i -> P_(m+i))}
-gVector = matrix {apply(n, i -> P_(m+l+i))}
-eeGens = apply(pairs mult#0, p -> first flatten entries (P_(p#0#0-1)*P_(p#0#1-1) - fVector*(phi(p#1))))
-efGens = apply(pairs mult#1, p -> first flatten entries (P_(p#0#0-1)*P_(m+p#0#1-1) - gVector*(phi(p#1))))
-I = (ideal eeGens) + (ideal efGens)
-isHomogeneous I
-A = P/I
-J = ideal mingens (I + ideal sub(vars Q, P))
-B = P/J
+A = codimThreeAlgStructure(F,{e,f,g})
+B = codimThreeTorAlgebra(F,{e,f,g})
 
---- now make the multiplication table in A
--- A_1 times A_1
-oneTimesOneA = matrix table(m,m,(i,j) -> (A_i)*(A_j))
--- put on the row and column labels for fun
-matrix entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA))
--- A_1 times A_2
-oneTimesTwoA = matrix table(m,l,(i,j) -> (A_i)*(A_(m+j)))
-matrix entries ((matrix {{0}} | fVector) || ((transpose eVector) | oneTimesTwoA))
---- now make the multiplication table in B
--- B_1 times B_1
-oneTimesOneB = matrix table(m,m,(i,j) -> (B_i)*(B_j))
--- put on the row and column labels for fun
-matrix entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneB))
--- B_1 times B_2
-oneTimesTwoB = matrix table(m,l,(i,j) -> (B_i)*(B_(m+j)))
-matrix entries ((matrix {{0}} | fVector) || ((transpose eVector) | oneTimesTwoB))
+eeMultTable A
+eeMultTable(A, Labels=>false)
+eeMultTable B
+
+efMultTable A
+efMultTable B
 
 p = (m#1)#(6,5)
 p**((ring p)/ideal vars ring p) ==0
