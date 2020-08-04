@@ -320,7 +320,8 @@ If the problem persists, run `cmake --debug-trycompile` and open an issue with t
 
 <b>Clang</b>: The Clang compiler installed via Homebrew or built from source typically includes OpenMP, but by default the system root is set to the Xcode SDK directory which does not contain the `libomp.dylib` library. The following command tells Clang how to find the correct library path:
 ```
-LIBRARY_PATH=`llvm-config --libdir` cmake -S../.. -B. -GNinja -DCMAKE_BUILD_TYPE=Release
+export LIBRARY_PATH=`llvm-config --libdir`
+cmake -S../.. -B. -GNinja -DCMAKE_BUILD_TYPE=Release
 ```
 The `llvm-config` executable is typically located at `/usr/local/opt/llvm/bin/llvm-config`.
 

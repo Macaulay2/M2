@@ -973,9 +973,8 @@ then if test "$OS" = Darwin -a "$DMG" = yes
      	  # Also, the package CohomCalg looks only in the directory where Macaulay2's binaries are
 	  AC_MSG_RESULT([yes, will build anyway])
           BUILD_cohomcalg=yes
-     else AC_MSG_RESULT([yes, will build anyway])
-     	  # the package CohomCalg looks only in the directory where Macaulay2's binaries are
-          BUILD_cohomcalg=yes
+     else AC_MSG_RESULT([yes])
+          FILE_PREREQS="$FILE_PREREQS `type -p cohomcalg`"
      fi
 else AC_MSG_RESULT([no, will build])
      BUILD_cohomcalg=yes
@@ -983,16 +982,12 @@ fi
 
 AC_MSG_CHECKING(whether the package gfan is installed)
 if test "`type -t gfan`" = file
-then AC_MSG_RESULT([yes, will build anyway])
-     dnl currently the gfanInterface package doesn't know how to find gfan if we don't build it.
-     dnl see https://github.com/Macaulay2/M2/pull/1123
-     dnl Also our *.dmg and *.deb making procedures need to know how to include it or set the dependencies appropriately
+then AC_MSG_RESULT([yes])
+     FILE_PREREQS="$FILE_PREREQS `type -p gfan`"
+else AC_MSG_RESULT([no, will build])
      BUILD_gfan=yes
      dnl we'll also build cddlib until gfan can find its files in /usr/include instead of in /usr/include/cdd
      BUILD_cddlib=yes
-     BUILD_ALWAYS="$BUILD_ALWAYS gfan cddlib"
-else AC_MSG_RESULT([no, will build])
-     BUILD_gfan=yes
 fi
 
 AC_MSG_CHECKING(whether the package lrs is installed)
@@ -1012,9 +1007,8 @@ fi
 
 AC_MSG_CHECKING(whether the package csdp is installed)
 if test "`type -t csdp`" = file
-then AC_MSG_RESULT([yes, will build anyway])
-     dnl because the package SemidefiniteProgramming doesn't look for it on the PATH
-     BUILD_csdp=yes
+then AC_MSG_RESULT([yes])
+     FILE_PREREQS="$FILE_PREREQS `type -p csdp`"
 else AC_MSG_RESULT([no, will build])
      BUILD_csdp=yes
 fi
@@ -1031,21 +1025,48 @@ dnl else AC_MSG_RESULT([no, will build])
 dnl      BUILD_normaliz=yes
 dnl fi
 
-AC_MSG_CHECKING(whether the package nauty is installed)
-if test "`type -t nauty-complg`" = file
-then AC_MSG_RESULT([yes, will build anyway])
-     dnl because the package Nauty doesn't look for it on the PATH
-     BUILD_nauty=yes
-else AC_MSG_RESULT([no, will build])
-     BUILD_nauty=yes
+dnl debian/fedora: nauty-
+AC_MSG_CHECKING(whether the package nauty (>= 2.7) is installed)
+FOUND_nauty=no
+for nauty_prefix in "" "nauty-"
+do
+    if test "`type -t ${nauty_prefix}complg`" = file
+    then nauty_version=`${nauty_prefix}complg --version | cut -d " " -f 3`
+	AX_COMPARE_VERSION([$nauty_version], [ge], [2.7000],
+	    [AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
+	     FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
+	     FOUND_nauty=yes
+	     break],
+	    [FOUND_nauty=old])
+    fi
+done
+if test $FOUND_nauty != yes
+then
+    if test $FOUND_nauty = old
+    then AC_MSG_RESULT([yes, but < 2.7, will build])
+    else AC_MSG_RESULT([no, will build])
+    fi
+    BUILD_nauty=yes
 fi
 
+dnl debian: topcom-
+dnl fedora: TOPCOM- (only for cube)
+dnl gentoo: topcom_ (only for cube, 4 others)
+dnl we save ourselves some trouble and check one of the programs that
+dnl only debian gives a prefix
 AC_MSG_CHECKING(whether the package topcom is installed)
-if test "`type -t points2finetriangs`" = file
-then AC_MSG_RESULT([yes, will build anyway])
-     BUILD_topcom=yes
-     dnl currently the package Topcom uses only the internal Macaulay2 path to run its programs
-else AC_MSG_RESULT([no, will build])
+FOUND_topcom=no
+for topcom_prefix in "" "topcom-"
+do
+    if test "`type -t ${topcom_prefix}points2finetriangs`" = file
+    then AC_MSG_RESULT([yes, using prefix "$topcom_prefix"])
+         FILE_PREREQS="$FILE_PREREQS `type -p ${topcom_prefix}points2finetriangs`"
+         FOUND_topcom=yes
+         break
+    fi
+done
+if test $FOUND_topcom = no
+then AC_MSG_RESULT([no, will build])
      BUILD_topcom=yes
 fi
 
@@ -1239,6 +1260,29 @@ AC_CHECK_HEADER(boost/version.hpp,
 	[
 	AC_MSG_ERROR([boost library not installed, but required])
 	])
+
+AC_MSG_CHECKING([whether the Boost::Stacktrace library is available])
+AC_LANG(C++)
+SAVECPPFLAGS=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS -DBOOST_STACKTRACE_LINK"
+SAVELIBS=$LIBS
+FOUND_stacktrace_library=no
+for stacktrace_library in backtrace addr2line
+do
+    LIBS="$SAVELIBS -lboost_stacktrace_${stacktrace_library}"
+    AC_LINK_IFELSE(
+        [AC_LANG_PROGRAM([#include <boost/stacktrace.hpp>
+         ], [boost::stacktrace::stacktrace();])],
+        [AC_MSG_RESULT([yes, boost_stacktrace_${stacktrace_library}])
+         FOUND_stacktrace_library=yes
+         break],)
+done
+if test $FOUND_stacktrace_library = no
+then
+    AC_MSG_RESULT([no, will use header-only library])
+    CPPFLAGS=$SAVECPPFLAGS
+    LIBS=$SAVELIBS
+fi
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)

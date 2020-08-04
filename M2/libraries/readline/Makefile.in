@@ -40,7 +40,7 @@ $(PATCHFILE) :
 ifneq (@WGET@,false)
 	cd $(TARFILE_DIR) && @WGET@ $(PATCHURL)/$(notdir $@)
 else
-	cd $(TARFILE_DIR) && @CURL@ -o $(notdir $@) $(PATCHURL)/$(notdir $@)
+	cd $(TARFILE_DIR) && @CURL@ --location -o $(notdir $@) $(PATCHURL)/$(notdir $@)
 endif
 else
 $(PATCHFILE) :; echo "patch file not available, and downloading not enabled: $@" >&2 ; false
