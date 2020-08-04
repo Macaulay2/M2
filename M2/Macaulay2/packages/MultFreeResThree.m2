@@ -344,12 +344,12 @@ matrix {l}
 
 m = multTables(F)
 peek (m#0)
-peek (m#1)
+peek (mult#1)
 
 restart
 debug loadPackage "MultFreeResThree"
 Q = QQ[x,y,z];
-F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
+F = res ideal (x*y, y*z, x^3, y^3-x*z^2, x^2*z, z^3);
 mult = multTables(F)
 m = numcols F.dd_1;
 l = numcols F.dd_2;
@@ -357,7 +357,6 @@ n = numcols F.dd_3;
 e = getSymbol("e")
 f = getSymbol("f")
 g = getSymbol("g")                
---    P := getSymbol("P");       
 P = (ring F)[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>(toList(0..(m-1)) | toList((m+l)..(m+l+n-1))), Degrees => (toList ((m:1) | (l:2) | (n:3)))]
 fVector = matrix {apply(l, i -> P_(m+i))}
 gVector = matrix {apply(n, i -> P_(m+l+i))}
@@ -366,6 +365,17 @@ efGens = apply(pairs mult#1, p -> first flatten entries (P_(p#0#0-1)*P_(m+p#0#1-
 I = (ideal eeGens) + (ideal efGens)
 A = P/I
 B = A/(ideal sub(vars Q, A))
+e_1*e_2
+
+use A
+netList table (m,m,(i,j) -> if j > i then e_(i+1)*e_(j+1) else 0)
+netList table (m,m,(i,j) -> if i < j then e_(i+1)*e_(j+1) else (if i == j then 0 else "-"))
+netList table (m,l,(i,j) -> e_(i+1)*f_(j+1))
+
+netList table (m+1,m+1,(i,j) -> if i == 0 and j == 0 then " " else (if i == 0 then e_j else (if j == 0 then e_i else ( if i < j then e_i*e_j else (if i == j then 0 else "-")))))
+
+netList ( {toList(e_1..e_m)} | table (m,m,(i,j) -> if i < j then e_(i+1)*e_(j+1) else (if i == j then 0 else "-")) )
+netList table (m,l,(i,j) -> e_(i+1)*f_(j+1))
 
 
 p = (m#1)#(6,5)
