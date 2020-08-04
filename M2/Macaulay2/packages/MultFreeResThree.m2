@@ -325,7 +325,7 @@ end
 
 uninstallPackage "MultFreeResThree"
 restart
-loadPackage "MultFreeResThree"
+debug loadPackage "MultFreeResThree"
 check "MultFreeResThree"
 
 Q = QQ[x,y,z];
@@ -345,6 +345,28 @@ matrix {l}
 m = multTables(F)
 peek (m#0)
 peek (m#1)
+
+restart
+debug loadPackage "MultFreeResThree"
+Q = QQ[x,y,z];
+F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
+mult = multTables(F)
+m = numcols F.dd_1;
+l = numcols F.dd_2;
+n = numcols F.dd_3;        
+e = getSymbol("e")
+f = getSymbol("f")
+g = getSymbol("g")                
+--    P := getSymbol("P");       
+P = (ring F)[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>(toList(0..(m-1)) | toList((m+l)..(m+l+n-1))), Degrees => (toList ((m:1) | (l:2) | (n:3)))]
+fVector = matrix {apply(l, i -> P_(m+i))}
+gVector = matrix {apply(n, i -> P_(m+l+i))}
+eeGens = apply(pairs mult#0, p -> first flatten entries (P_(p#0#0-1)*P_(p#0#1-1) - fVector*(p#1)))
+efGens = apply(pairs mult#1, p -> first flatten entries (P_(p#0#0-1)*P_(m+p#0#1-1) - gVector*(p#1)))
+I = (ideal eeGens) + (ideal efGens)
+A = P/I
+B = A/(ideal sub(vars Q, A))
+
 
 p = (m#1)#(6,5)
 p**((ring p)/ideal vars ring p) ==0
