@@ -17,7 +17,7 @@ print("Solving problem X^9 in G(3,6)");
 
 SchPblm = randomSchubertProblemInstance(
   {{1},{1},{1},{1},{1},{1},{1},{1},{1}},3,6);
-time S = solveSchubertProblem(SchPblm, 3,6);
+elapsedTime S = solveSchubertProblem(SchPblm, 3,6);
 assert all(S,s->checkIncidenceSolution(s, SchPblm))
 
  end

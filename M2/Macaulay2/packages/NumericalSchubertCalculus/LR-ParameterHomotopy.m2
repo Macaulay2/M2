@@ -8,14 +8,20 @@
 solveSchubertProblemViaMonodromy = method(Options=>{Verbose=>false})
 solveSchubertProblemViaMonodromy (List, ZZ, ZZ) := o -> (conds, k, n) -> (
     (X,P,PS) := parametricSchubertProblem(conds,k,n);
+    GS := gateSystem(P,X,PS);
+    -*
     R := FFF[P/(p->p.Name)][X/(x->x.Name)];
     PR := P/(p->R_(p.Name));
     XR := X/(x->R_(x.Name));
     PSR := value(PS,valueHashTable(P|X,PR|XR));
+    *-
     -- get seed solution
     (s0,XX,inverse'flags) := oneSolutionForOneInstance(conds,k,n);
     p0 := point{inverse'flags/entries//flatten//flatten};
-    elapsedTime (V,npaths) := monodromySolve(polySystem PSR, p0, {s0}, 
+    elapsedTime (V,npaths) := monodromySolve(
+	--polySystem PSR, 
+	GS,
+	p0, {s0}, 
 	NumberOfNodes=>4, NumberOfEdges=>1, 
 	--"new tracking routine"=>false, 
 	Verbose=>o.Verbose);
