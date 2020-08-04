@@ -31,7 +31,7 @@ newPackage ( "MultFreeResThree",
     -- 	 "volume URI" => "http://msp.org/jsag/2014/6-1/"
     -- 	 }
     Reload => true,
-    DebuggingMode => false
+    DebuggingMode => true
     )
 
 export { "genmulttables", "multTables", "multTablesLink", "eeProd", "efProd", 
@@ -113,45 +113,37 @@ genmulttables = F -> (
     m := numcols F.dd_1;
     l := numcols F.dd_2;
     n := numcols F.dd_3;
-    L := {};
-    for i from 1 to m-1 do (
-    	for j from i+1 to m do (
-	    for k from 1 to n do (
-	    	L = append(L, {i,j,k} )
-	    	)
-	    )
-	);
+    uIndices := (subsets(toList(1..m),2) ** toList(1..n)) / flatten;
     u := getSymbol("u");
---    Q := P[for l in L list getSymbol("u")_l];
-    Q := P[for l in L list u_l];    
+    uIndexHash := hashTable apply(#uIndices, i -> uIndices#i => i);
+    Q := P[for l in uIndices list u_l];    
     F = F**Q;
     d1:= matrix entries F.dd_1;
     d2:= matrix entries F.dd_2;    
     d3:= matrix entries F.dd_3;    
     
     EE := new MutableHashTable;
-    for i from 1 to m-1 do (
+    for i from 1 to m do (
 	for j from i+1 to m do (
 	 a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1};
     	 b := ( matrix entries transpose a ) // d2;
-	 c := matrix for k from 1 to n list {Q_(n*( (i-1)*m - binomial(i,2) + j - i -1) + k - 1)} ;
---	 print(c);
-	 EE#(i,j) = ( d3*c + matrix entries b );
+	 us := transpose matrix {apply(n, k -> Q_(uIndexHash#{i,j,k+1}))};
+	 EE#(i,j) = ( d3*us + matrix entries b );
 	 EE#(j,i) = -EE#(i,j);
 	 );
      EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0);
      );
 
-    -- EF := new MutableHashTable;
-    -- for i from 1 to m do (
-    -- 	for j from 1 to l do (
-    -- 	    c := sum(1..m, k -> d2_(k-1,j-1) * (EE#(i,k)));
-    -- 	    d := d1_(0,i-1)*((id_(Q^l))_(j-1));
-    -- 	    e := (matrix entries (matrix d - c)) // d3;
-    -- 	    EF#(i,j) = (matrix entries e);
-    -- 	    );
-    -- 	);
-    EE
+    EF := new MutableHashTable;
+    for i from 1 to m do (
+    	for j from 1 to l do (
+    	    c := sum(1..m, k -> d2_(k-1,j-1) * (EE#(i,k)));
+    	    d := d1_(0,i-1)*((id_(Q^l))_(j-1));
+    	    e := (matrix entries (matrix d - c)) // d3;
+    	    EF#(i,j) = (matrix entries e);
+    	    );
+    	);
+    {EE,EF}
     )
 
 multtableslink = (F,i,j,k) -> (
@@ -428,8 +420,10 @@ peek (mult#1)
 restart
 loadPackage "MultFreeResThree"
 Q = QQ[x,y,z];
-F = res ideal (x*y, y*z, x^3, y^3-x*z^2, x^2*z, z^3);
-mult = multTables(F)
+F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
+
+gmt = genmulttables F
+
 m = numcols F.dd_1;
 l = numcols F.dd_2;
 n = numcols F.dd_3;        
