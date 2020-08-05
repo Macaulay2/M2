@@ -36,7 +36,7 @@ newPackage ( "MultFreeResThree",
 
 export { "genmulttables", "multTables", "multTablesLink", "eeProd", "efProd", 
     "mapX", "mapY", "makeRes" , "findRegSeq" , "eeProdH",
-    "eeMultTable", "efMultTable", "codimThreeAlgStructure", "codimThreeTorAlgebra", "Labels" }
+    "eeMultTable", "efMultTable", "codimThreeAlgStructure", "codimThreeTorAlgebra", "Labels", "Compact" }
 
 -- exportMutable{ "u" }
 --==========================================================================
@@ -215,38 +215,14 @@ multTables = ( cacheValue "multTables" ) multtables
 
 multTablesLink =  multtableslink
 
-eeProdH = F -> (
-    t := (multTables F)#0;
-    m := numcols F.dd_1;
-    l := numcols F.dd_2;
-    n := numcols F.dd_3;        
-    e := getSymbol("e");    
-    f := getSymbol("f");
-    g := getSymbol("g");                
---    P := getSymbol("P");       
-P1 := (ring t#(1,1))[Variables => m, VariableBaseName => e];
-    P2 := P1[Variables => l, VariableBaseName => f];    
-    P3 := P2[Variables => n, VariableBaseName => g];        
-    -- P1 := (ring t#(1,1))[Variables => l, VariableBaseName => f];
-    -- P2 := P1[f_1..f_l];
-    -- P3 := P2[g_1..g_n];
-    use first flattenRing P3;
-    f_1*f_2
-    -- matrix{toList(P_2..P_8)}
---    for i from 1 to l list f_i*f_1
---    c := matrix {for i from 1 to l list f_i};
---    matrix table(m,m,(i,j) ->  c*(t#(i+1,j+1)**P) )    
---x*f_1
-    )
-
 eeProd = (F,i,j) -> (
-    m := multTables F;
-    (m#0)#(i,j)
+    mult := multTables F;
+    (mult#0)#(i,j)
     )
 
 efProd = (F,i,j) -> (
-    m := multTables F;
-    (m#1)#(i,j)
+    mult := multTables F;
+    (mult#1)#(i,j)
     )
 
 mapX = (F,i,j,k) -> (
@@ -303,6 +279,7 @@ P
 )
 
 codimThreeAlgStructure = method()
+
 codimThreeAlgStructure(ChainComplex, List) := (F, sym) -> (
    if length F != 3 then
      error "Expected a chain complex of length three which is free of rank one in degree zero.";
@@ -339,6 +316,7 @@ codimThreeAlgStructure(ChainComplex, List) := (F, sym) -> (
 )
 
 codimThreeTorAlgebra = method()
+
 codimThreeTorAlgebra(ChainComplex,List) := (F,sym) -> (
    A := codimThreeAlgStructure(F,sym);
    P := ambient A;
@@ -352,7 +330,8 @@ codimThreeTorAlgebra(ChainComplex,List) := (F,sym) -> (
    B
 )
 
-eeMultTable = method(Options => {Labels => true})
+eeMultTable = method(Options => {Labels => true, Compact => false})
+
 eeMultTable(Ring) := opts -> A -> (
    if not (A.cache#?"l" and A.cache#?"m" and A.cache#?"n") then
       error "Expected an algebra created with a CodimThree routine.";
@@ -360,13 +339,17 @@ eeMultTable(Ring) := opts -> A -> (
    m := A.cache#"m";
    n := A.cache#"n";
    eVector := matrix {apply(m, i -> A_i)};
-   oneTimesOneA := matrix table(m,m,(i,j) -> (A_i)*(A_j));
-   -- put on the row and column labels for fun
-   result := matrix entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
+   if (opts.Compact) then (
+       oneTimesOneA := matrix table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else 0))
+   else (
+       oneTimesOneA = matrix table(m,m,(i,j) -> (A_i)*(A_j));
+       );
+   result := entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
    if (opts.Labels) then result else oneTimesOneA
-)
+   )
 
 efMultTable = method(Options => options eeMultTable)
+
 efMultTable(Ring) := opts -> A -> (
    if not (A.cache#?"l" and A.cache#?"m" and A.cache#?"n") then
       error "Expected an algebra created with a CodimThree routine.";
@@ -398,44 +381,56 @@ restart
 debug loadPackage "MultFreeResThree"
 check "MultFreeResThree"
 
+-- dev space
+
+needsPackage "TorAlgebra"'
+needsPackage "PruneComplex"
+
 Q = QQ[x,y,z];
+
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
-d1 = matrix entries F.dd_1
-d2 = matrix entries F.dd_2
-d3 = matrix entries F.dd_3
-
-eeProdH (F)
-
-ring(f_1)
-use P
-f_1*g_1
-describe l
-matrix {l}
-
-m = multTables(F)
+mult = multTables(F)
 peek (m#0)
 peek (mult#1)
+eeProd(F,2,3)
+efProd(F,2,3)
 
 ---- new code 8/4/2020
 restart
 loadPackage "MultFreeResThree"
-Q = QQ[x,y,z];
+
+Q = ZZ/2[x,y,z];
+
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
 
-gmt = genmulttables F
+I = ideal (random(3,Q), random(2,Q), random(2,Q), random(3,Q))
+codim I
+torAlgClass(Q/I)
+F = res I
 
-m = numcols F.dd_1;
-l = numcols F.dd_2;
-n = numcols F.dd_3;        
 A = codimThreeAlgStructure(F,{e,f,g})
 B = codimThreeTorAlgebra(F,{e,f,g})
 
-eeMultTable A
+netList eeMultTable (A, Compact => false)
 eeMultTable(A, Labels=>false)
-eeMultTable B
+
+netList entries eeMultTable B
+eeMultTable(A, Labels=>false)
 
 efMultTable A
 efMultTable B
+
+gmt = genmulttables F
+
+use A
+netList table (m,m,(i,j) -> if j > i then e_(i+1)*e_(j+1) else 0)
+netList table (m,m,(i,j) -> if i < j then e_(i+1)*e_(j+1) else (if i == j then 0 else "-"))
+netList table (m,l,(i,j) -> e_(i+1)*f_(j+1))
+
+netList table (m+1,m+1,(i,j) -> if i == 0 and j == 0 then " " else (if i == 0 then e_j else (if j == 0 then e_i else ( if i < j then e_i*e_j else (if i == j then 0 else "-")))))
+
+netList ( {toList(e_1..e_m)} | table (m,m,(i,j) -> if i < j then e_(i+1)*e_(j+1) else (if i == j then 0 else "-")) )
+netList table (m,l,(i,j) -> e_(i+1)*f_(j+1))
 
 --- another example
 restart
@@ -446,18 +441,8 @@ F = res I
 A = codimThreeAlgStructure(F,{e,f,g})
 B = codimThreeTorAlgebra(F,{e,f,g})
 
-
-p = (m#1)#(6,5)
-p**((ring p)/ideal vars ring p) ==0
-{(e1,f6;4)
-    
-T1 = matrix table(6,6,(i,j) -> if (m#0)#(i+1,j+1) )    
-
-numrows p
-n = multTablesLink(F,1,2,4)
-peek (n#0)
-peek (n#1)
-peek (n#2)
+eeMultTable A
+efMultTable B
 
 findRegSeq(d1,{1,2,4})
 
