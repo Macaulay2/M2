@@ -72,8 +72,8 @@ NodeFunctions = new HashTable from {
     "References"      => (textlines, keylinenum) -> References      => {markup(textlines, keylinenum)},
     "ExampleFiles"    => (textlines, keylinenum) -> ExampleFiles    => getText \ textlines,
     "Caveat"          => (textlines, keylinenum) -> Caveat          => {markup(textlines, keylinenum)},
-    "SeeAlso"         => (textlines, keylinenum) -> SeeAlso         => apply(select(getText \ textlines, p -> #p > 0), value),
-    "Subnodes"        => (textlines, keylinenum) -> Subnodes        => apply(getText \ textlines, p -> if match("^:", p) then substring(1, p) else TO value p),
+    "SeeAlso"         => (textlines, keylinenum) -> SeeAlso         => apply(getNonempty textlines, value),
+    "Subnodes"        => (textlines, keylinenum) -> Subnodes        => apply(getNonempty textlines, p -> if match("^:", p) then substring(1, p) else TO value p),
  }
 
 DescriptionFunctions = new HashTable from {
@@ -99,6 +99,7 @@ ConsequencesFuntions = new HashTable from {
 getText = textline -> textline#0
 getIndent = textline -> textline#1
 getLinenum = textline -> textline#2
+getNonempty = textlines -> select(getText \ textlines, text -> 0 < length text)
 -- We use this creation function:
 makeTextline = (line, linenum) -> (
     text := replace("(^[[:space:]]+|[[:space:]]+$)", "", line);
@@ -196,10 +197,10 @@ submenu = (textlines, keylinenum) -> (
 	    line -> submenu({line}, getLinenum line))))
 
 menu = (textlines, keylinenum) -> (
-    if #textlines == 0 then return "";
+    textlines = select(textlines, textline -> 0 < length getText textline);
     if not match("^(:|@)", getText textlines#0)
     then textlines = prepend(makeTextline(":Menu", keylinenum), textlines);
-    intervals := splitByIndent(textlines, true);
+    intervals := splitByIndent(textlines, false);
     DIV apply(intervals, (s, e) ->
 	sublists(textlines_{s..e},
 	    line -> getIndent line > getIndent textlines_s,
@@ -211,7 +212,7 @@ reassemble = (indent, textlines) -> concatenate between(newline,
     for line in textlines list ( if getIndent line =!= infinity then getIndent line - indent : " ", getText line ))
 
 getKeys = (textlines, keylinenum) -> (
-    keyList := select(apply(getText \ textlines, value), key -> key =!= null);
+    keyList := apply(getNonempty textlines, value);
     if #keyList == 0 then error("Key (line ", toString keylinenum, " of string): expected at least one key");
     keyList)
 

@@ -18,7 +18,8 @@ Node
         @TO2 {doc, "Using SimpleDoc for documentation"}@
         @TO2 {"Text", "Using markup in documentation"}@
         @TO2 {"Text::html(TEX)", "Using TeX in documentation"}@
-	@TO2 {"Macaulay2Doc::conventions for documentation", "Style guide for documentation"}@
+        @TO2 {"Macaulay2Doc::conventions for documentation", "Style guide for documentation"}@
+
       :Documentation helpers
         arXiv
         stacksProject
