@@ -43,9 +43,15 @@ document {
 }
 
 document {
+    Key => AdditionalPaths,
+    Headline => "list of non-standard paths to search for a program"
+}
+
+document {
     Key => {findProgram,
 	(findProgram, String, String),
 	(findProgram, String, List),
+	[findProgram, AdditionalPaths],
 	[findProgram, Prefix],
 	[findProgram, RaiseError],
 	[findProgram, Verbose]},
@@ -70,7 +76,10 @@ document {
 	    "form ", TT "(regex, prefix)", " where ", TT "regex", " is a ",
 	    TO2("regular expressions", "regular expression"), " that should ",
 	    "match all binary executables that need the prefix and ",
-	    TT "prefix", " is the prefix itself."}
+	    TT "prefix", " is the prefix itself."},
+	AdditionalPaths => List => {
+	    "a list of strings containing any paths to check for the program ",
+	    "in addition to the default ones."}
     },
     Outputs => {Program => { "the program that was loaded.  ",
 	"If the program is not found and ", TT "RaiseError", " is set to ",
@@ -84,6 +93,7 @@ document {
 	{"The path specified by ",
 	    TT "prefixDirectory | currentLayout#\"programs\"",
 	    ", where the programs shipped with Macaulay2 are installed."},
+	{"Each path specified by the ", TT "AdditionalPaths", " option."},
 	{"Each path specified by the user's ", TT "PATH",
 	    " environment variable."}
     },

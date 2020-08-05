@@ -953,16 +953,27 @@ if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
 fi
 
-dnl we can't use the test below for the presence of 4ti2 until the package FourTiTwo knows
-dnl how to find programs such as "markov" under the name "4ti2-markov", and until our *.dmg and
-dnl *.deb making procedures know how to include them or set the dependencies appropriately
-BUILD_4ti2=yes
-dnl AC_MSG_CHECKING(whether the package 4ti2 is installed)
-dnl if test "`type -t 4ti2-circuits`" = file
-dnl then AC_MSG_RESULT(yes)
-dnl else AC_MSG_RESULT([no, will build])
-dnl      BUILD_4ti2=yes
-dnl fi
+dnl debian: 4ti2-
+dnl suse: 4ti2_
+dnl fedora: /usr/lib/4ti2/bin or /usr/lib64/4ti2/bin
+AC_MSG_CHECKING(whether the package 4ti2 is installed)
+SAVE=$PATH
+PATH="/usr/lib/4ti2/bin:/usr/lib64/4ti2/bin:$PATH"
+FOUND_4ti2=no
+for fourti2_prefix in "" "4ti2-" "4ti2_"
+do
+    if test "`type -t ${fourti2_prefix}circuits`" = file
+    then AC_MSG_RESULT([yes, using prefix "$fourti2_prefix"])
+         FILE_PREREQS="$FILE_PREREQS `type -p ${fourti2_prefix}circuits`"
+         FOUND_4ti2=yes
+         break
+    fi
+done
+if test $FOUND_4ti2 = no
+then AC_MSG_RESULT([no, will build])
+     BUILD_4ti2=yes
+fi
+PATH=$SAVE
 
 AC_MSG_CHECKING(whether the package cohomcalg is installed)
 if test "`type -t cohomcalg`" = file

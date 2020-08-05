@@ -32,3 +32,6 @@ fn << "touch baz" << close
 program = findProgram(name, name)
 runProgram(program, name, RunDirectory => dir | "/foo/bar")
 assert(fileExists(dir | "/foo/bar/baz"))
+
+program = findProgram("foo", name, AdditionalPaths => {dir})
+assert(program#"path" == dir)

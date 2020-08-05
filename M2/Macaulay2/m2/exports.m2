@@ -46,6 +46,7 @@ export {
 	"?",
 	"@",
 	"@@",
+	"AdditionalPaths",
 	"Adjacent",
 	"AffineVariety",
 	"AfterEval",
