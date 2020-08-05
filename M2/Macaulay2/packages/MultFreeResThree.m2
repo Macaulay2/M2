@@ -324,7 +324,7 @@ codimThreeAlgStructure(ChainComplex, List) := (F, sym) -> (
    -- use this line if you want to ensure that 'basis' works properly on the returned ring.
    --P := first flattenRing (Q[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>skewList, Degrees => degreesP, Join => false]);
    P := Q[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>skewList, Degrees => degreesP, Join => false];
-   phi := map(P,Q,{P_(m+l+n),P_(m+l+n+1),P_(m+l+n+2)});
+   phi := map(P,Q,apply(numgens Q, i -> P_(m+l+n+i)));
    eVector := matrix {apply(m, i -> P_(i))};
    fVector := matrix {apply(l, i -> P_(m+i))};
    gVector := matrix {apply(n, i -> P_(m+l+i))};
@@ -436,6 +436,16 @@ eeMultTable B
 
 efMultTable A
 efMultTable B
+
+--- another example
+restart
+loadPackage "MultFreeResThree"
+Q = QQ[u,v,w,x,y,z]
+I = ideal(x^2,(y+w^2)^2,z^2,x*(y+w^2))
+F = res I
+A = codimThreeAlgStructure(F,{e,f,g})
+B = codimThreeTorAlgebra(F,{e,f,g})
+
 
 p = (m#1)#(6,5)
 p**((ring p)/ideal vars ring p) ==0
