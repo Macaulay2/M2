@@ -147,6 +147,15 @@ Node
                         typically enclosed in an HTML ", TT "<p>", " tag, except if its
                         top level markup is an instance of ", TO HypertextContainer,
                         " or ", TO HypertextParagraph, "."}},
+                { TT "Subnodes", " -- classify documentation nodes under headings",
+                    PARA {
+                        "The lines in this section beginning with ", TT ":", " or ",
+                        TT "\@", " are treated as subsections. The remaining lines are
+                        treated as keys to a documentation node and are processed by the ",
+                        TO TOH, " function, producing a link followed by the headline.
+                        The purpose is to allow a classification of the documentation
+                        nodes grouped under a subsections. Further indentation is treated
+			as further sub-classifications."}},
                 { TT "Example", " -- examples of the usage",
                     PARA {
                         "The text in this subsection consists of lines of Macaulay2 code
