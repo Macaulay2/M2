@@ -419,6 +419,34 @@ tauMaps(QuotientRing,ZZ,ZZ,ZZ) := (A,l,m,n) -> (
   {rank lTensmn + rank lmTensn - rank psi,lTensmn, lmTensn, psi}
 )
 
+torAlgebraClassCodim3 = method()
+torAlgebraClassCodim3 QuotientRing := A -> (
+  -- check to ensure that A is torAlgebra for codim 3 example
+  p := rank multMap(A,1,1);
+  q := rank multMap(A,1,2);
+  r := rank homothetyMap(A,2,1);
+  tau := first tauMaps(A,1,1,1);
+  if (p >= 4 or p == 2) then
+      return ("H(" | p | "," | q | ")")
+  else if (p == 3) then
+  (
+      if (q > 1) then return ("H(" | p | "," | q | ")")
+      else if (q == 1 and r != 1) then return "C(3)"
+      else if (q == 0 and tau == 0) then return ("H(" | p | "," | q | ")")
+      else return "T";
+  )
+  else if (p == 1) then
+  (
+      if (q != r) then return "B"
+      else return ("H(" | p | "," | q | ")");
+  )
+  else if (p == 0) then
+  (
+      if (q != r) then return ("G(" | r | ")")
+      else return ("H(" | p | "," | q | ")");
+  );
+)
+
 TEST ///
 Q = QQ[x,y,z];
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
@@ -474,34 +502,39 @@ restart
 debug loadPackage "MultFreeResThree"
 Q = ZZ/3[x,y,z];
 F = res ideal (x^2, y^3, z^4, x*y*z)
-F = res ideal (x^2, y^3, z^4, x*y)
+--F = res ideal (x^2, y^3, z^4, x*y)
 B = codimThreeTorAlgebra(F,{e,f,g})
-tau = (tauMaps(B,1,1,1))#0
+torAlgebraClassCodim3(B)
 
-(A_1 ** A_1) ** A_1  A_1 ** (A_1 ** A_1)
+changeBasisT(F,B,{e_1,e_2,e_4})
+changeBasisHpq(F,B,e_(p+1),{f_(p+1)..f_(p+q)})
+changeBasisGr(F,B,{es},g) -- e's + 'orientation class' g determine the fs?
+changeBasisC3(F,B) --?
+changeBasisB(F,B,{e_1,e_2},g_1) -- e's and g inform choice of fs
 
-b11 = multMap(B,1,1)
-B1 = (ZZ/3)^(numcols basis(1,B))
-idA1 = id_B1
-b11**idA1
-idA1**b11
-tauMap = matrix {{b11**idA1},{idA1**b11}}
-rank(b11**idA1)
-rank(idA1**b11)
-rank tauMap
+X = multMap(B,1,1)
+Xe1 = multMap(e_1,1)
+Xe2 = multMap(e_2,1)
+Xe3 = multMap(e_3,1)
+Xe4 = multMap(e_4,1)
+genX = a*Xe1 + b*Xe2 + c*Xe3 + d*Xe4
+min3 = minors(3,genX)
+min2 = minors(2,genX)
+primaryDecomposition min2
+
+PX -> reduced echelon form
+P = id_((ZZ/3)^6)
+P = P^{1,3,5,0,2,4}
+P = diagonalMatrix(ZZ/3,{-1,-1,-1,1,1,1})*P
+P*X
+
+e_1 \otimes A_1 \to A_2
+e_2 \otimes A_1 \to A_2
+e_3 \otimes A_1 \to A_2
+e_4 \otimes A_1 \to A_2
+
 netList eeMultTable (A, Compact => false)
 eeMultTable(A, Labels=>false)
-
-tensorAssociativity(B1,B1,B1)
-
-es                         fs
-(matrix {{1,2},{3,4}}) ** (matrix {{1,0},{0,1}})
-
-e1**f1,e1**f2,e2**f1,e2**f2
-
-e1**(e1**e1) e1**(e1**e2) e1**(e2**e1) e1**(e2**e2) e2**(e1**e1) e2**(e1**e2) e2**(e2**e1) e2**(e2**e2) 
-
-(e1**e1)**e1 (e1**e1)**e2 (e1**e2)**e1 (e1**e2)**e2 (e2**e1)**e1
 
 netList entries eeMultTable B
 eeMultTable(A, Labels=>false)
@@ -1539,7 +1572,25 @@ L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 6, 4, 7, 1, "Golod", 0, 0, "-"} )
 ///
 
+-- oana's example
+restart
+debug loadPackage "MultFreeResThree"
+loadPackage "DGAlgebras"
+Q = QQ[x,y,z,w]
+I= ideal (w^2, y*w+z*w, x*w, y*z+z^2, y^2+z*w, x*y+x*z, x^2+z*w)
+R = Q/I
+B = HH(koszulComplexDGA R)
+qij = (i,j) -> rank multMap(B,i,j)
+rij = (i,j) -> rank homothetyMap(B,i,j)
+qij (1,1)
+qij (1,2)
+qij (1,3)
+qij (2,2)
+rij (1,1)
+rij (1,2)
+rij (2,1)
+rij (1,3)
+rij (3,1)
+rij (2,2)
+
 end
-
-
-
