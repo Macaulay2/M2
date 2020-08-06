@@ -236,15 +236,18 @@ mapY = (F,i,j,k) -> (
     )
 
 makeRes = (d1,d2,d3) -> ( 
-    d1 = matrix entries d1; 
-    d2 = matrix entries d2;
-    d3 = matrix entries d3;
+    --d1 = matrix entries d1; 
+    --d2 = matrix entries d2;
+    --d3 = matrix entries d3;
+    -- to build the maps correctly, what you should do is:
+    -- map(R^{degrees} (target), R^{degrees} (source), 
     F := new ChainComplex; 
     F.ring = ring d1;
     F#0 = target d1; 
     F#1 = source d1; F.dd#1 = d1; 
     F#2 = source d2; F.dd#2 = d2;
     F#3 = source d3; F.dd#3 = d3; 
+    F#4 = (F.ring)^{}; F.dd#4 = map(F#3,F#4,0);
     F 
     )
 
@@ -339,11 +342,10 @@ eeMultTable(Ring) := opts -> A -> (
    m := A.cache#"m";
    n := A.cache#"n";
    eVector := matrix {apply(m, i -> A_i)};
-   if (opts.Compact) then (
-       oneTimesOneA := matrix table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else 0))
-   else (
-       oneTimesOneA = matrix table(m,m,(i,j) -> (A_i)*(A_j));
-       );
+   oneTimesOneA := if (opts.Compact) then 
+                      matrix table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else 0)
+   		   else
+       		      matrix table(m,m,(i,j) -> (A_i)*(A_j));
    result := entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
    if (opts.Labels) then result else oneTimesOneA
    )
@@ -362,6 +364,58 @@ efMultTable(Ring) := opts -> A -> (
    -- put on the row and column labels for fun
    result := matrix entries ((matrix {{0}} | fVector) || ((transpose eVector) | oneTimesTwoA));
    if (opts.Labels) then result else oneTimesTwoA
+)
+
+multMap = method()
+multMap(QuotientRing, ZZ, ZZ) := (A,m,n) -> (
+    Abasism := basis(m,A);
+    Abasisn := basis(n,A);
+    AbasismPlusn := basis(m+n,A);
+    
+    AmTimesAn := matrix {flatten entries ((transpose Abasism) * Abasisn)};
+    sub(last coefficients(AmTimesAn, Monomials=>AbasismPlusn), coefficientRing A)
+)
+
+multMap(RingElement,ZZ) := (f,m) -> (
+    -- returns the matrix of left multiplication by f
+    A := ring f;
+    n := first degree f;
+    Abasism := basis(m,A);
+    AbasismPlusn := basis(m+n,A);
+    fTimesAbasism := f*Abasism;
+    sub(last coefficients(fTimesAbasism, Monomials=>AbasismPlusn), coefficientRing A)
+)
+
+rankMultMap = method()
+rankMultMap(QuotientRing,ZZ,ZZ) := (A,m,n) -> rank multMap(A,m,n);
+
+-*
+r_ij = rank (A_i -> Hom(A_j, A_(i+j)))
+
+f |-> multiplication by f on the left.
+*-
+
+homothetyMap = method()
+homothetyMap(QuotientRing,ZZ,ZZ) := (A,m,n) -> (
+    Abasism := basis(m,A);
+    homothetyList := apply(flatten entries Abasism, f -> transpose matrix {flatten entries multMap(f,n)});
+    matrix {homothetyList}
+)
+
+rankHomothetyMap = method()
+rankHomothetyMap(QuotientRing,ZZ,ZZ) := (A,m,n) -> rank homothetyMap(A,m,n);
+
+tauMaps = method()
+tauMaps(QuotientRing,ZZ,ZZ,ZZ) := (A,l,m,n) -> (
+  kk := coefficientRing A;
+  multMaplm := multMap(A,l,m);
+  multMapmn := multMap(A,m,n);
+  Al := kk^(numcols basis(l,A));
+  An := kk^(numcols basis(n,A));
+  lTensmn := (id_Al) ** multMapmn;
+  lmTensn := multMaplm ** (id_An);
+  psi := matrix {{lTensmn},{lmTensn}}; 
+  {rank lTensmn + rank lmTensn - rank psi,lTensmn, lmTensn, psi}
 )
 
 TEST ///
@@ -397,12 +451,9 @@ efProd(F,2,3)
 
 ---- new code 8/4/2020
 restart
-loadPackage "MultFreeResThree"
-
-Q = ZZ/2[x,y,z];
-
+debug loadPackage "MultFreeResThree"
+Q = ZZ/3[x,y,z];
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
-
 I = ideal (random(3,Q), random(2,Q), random(2,Q), random(3,Q))
 codim I
 torAlgClass(Q/I)
@@ -411,8 +462,45 @@ F = res I
 A = codimThreeAlgStructure(F,{e,f,g})
 B = codimThreeTorAlgebra(F,{e,f,g})
 
+rankMultMap(B,1,1)
+rankMultMap(B,1,2)
+multMap(f_6,1)
+
+homothetyMap(B,2,1)
+
+--- tau example
+restart
+debug loadPackage "MultFreeResThree"
+Q = ZZ/3[x,y,z];
+F = res ideal (x^2, y^3, z^4, x*y*z)
+F = res ideal (x^2, y^3, z^4, x*y)
+B = codimThreeTorAlgebra(F,{e,f,g})
+tau = (tauMaps(B,1,1,1))#0
+
+(A_1 ** A_1) ** A_1  A_1 ** (A_1 ** A_1)
+
+b11 = multMap(B,1,1)
+B1 = (ZZ/3)^(numcols basis(1,B))
+idA1 = id_B1
+b11**idA1
+idA1**b11
+tauMap = matrix {{b11**idA1},{idA1**b11}}
+rank(b11**idA1)
+rank(idA1**b11)
+rank tauMap
 netList eeMultTable (A, Compact => false)
 eeMultTable(A, Labels=>false)
+
+tensorAssociativity(B1,B1,B1)
+
+es                         fs
+(matrix {{1,2},{3,4}}) ** (matrix {{1,0},{0,1}})
+
+e1**f1,e1**f2,e2**f1,e2**f2
+
+e1**(e1**e1) e1**(e1**e2) e1**(e2**e1) e1**(e2**e2) e2**(e1**e1) e2**(e1**e2) e2**(e2**e1) e2**(e2**e2) 
+
+(e1**e1)**e1 (e1**e1)**e2 (e1**e2)**e1 (e1**e2)**e2 (e2**e1)**e1
 
 netList entries eeMultTable B
 eeMultTable(A, Labels=>false)
@@ -434,17 +522,21 @@ netList table (m,l,(i,j) -> e_(i+1)*f_(j+1))
 
 --- another example
 restart
-loadPackage "MultFreeResThree"
+debug loadPackage "MultFreeResThree"
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2,(y+w^2)^2,z^2,x*(y+w^2))
 F = res I
 A = codimThreeAlgStructure(F,{e,f,g})
 B = codimThreeTorAlgebra(F,{e,f,g})
 
+
+
 eeMultTable A
 efMultTable B
 
 findRegSeq(d1,{1,2,4})
+
+makeRes(F.dd_1,F.dd_2,F.dd_3)
 
 L = makeRes(d1,d2,d3)
 
