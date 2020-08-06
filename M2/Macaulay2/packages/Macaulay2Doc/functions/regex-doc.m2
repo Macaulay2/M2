@@ -126,34 +126,66 @@ doc ///
       Additionally, the substrings matched by parenthesized subexpressions are captured for later use in
       replacement strings.
 
-      @HEADER3 "Special characters"@
+    Subnodes
+      :Syntax for special characters
+        :Wildcard
+          @TT "."@	-- match any character except the newline character
+        :Anchors
+          @TT "^"@	-- match the beginning of the string or the beginning of a line
+          @TT "$"@	-- match the end of the string or the end of a line
+        :Sub-expressions
+          @TT "(...)"@	-- marked sub-expression, may be referred to by a back-reference
+          @TT "\\\\i"@	-- match the same string that the i-th parenthesized sub-expression matched
+        :Repeats
+          @TT "*"@	-- match previous expression 0 or more times
+          @TT "+"@	-- match previous expression 1 or more times
+          @TT "?"@	-- match previous expression 1 or 0 times
+          @TT "{m}"@	-- match previous expression exactly m times
+          @TT "{m,n}"@	-- match previous expression at least m and at most n times
+          @TT "{,n}"@	-- match previous expression at most n times
+          @TT "{m,}"@	-- match previous expression at least m times
+        :Alternation
+          @TT "|"@	-- match expression to left or expression to right
+        :Word and buffer boundaries
+          @TT "\\\\b"@	-- match word boundary
+          @TT "\\\\B"@	-- match within word
+          @TT "\\\\<"@	-- match beginning of word
+          @TT "\\\\>"@	-- match end of word
+          @TT "\\\\`"@	-- match beginning of string
+          @TT "\\\\'"@	-- match end of string
+        :Character sets
+          @TT "[...]"@	-- match any single character that is a member of the set
+           @TT "[abc]"@	-- match either @TT "a"@, @TT "b"@, or @TT "c"@
+           @TT "[A-C]"@	-- match any character from @TT "A"@ through @TT "Z"@
+          @TT "[^...]"@	-- match non-listed characters, ranges, or classes
+        :Character classes
+          @TT "[:alnum:]"@	-- any alpha-numeric character
+          @TT "[:alpha:]"@	-- any alphabetic character
+          @TT "[:blank:]"@	-- any whitespace or tab character
+          @TT "[:cntrl:]"@	-- any control character
+          @TT "[:digit:]"@	-- any decimal digit
+          @TT "[:graph:]"@	-- any graphical character (same as [:print:] except omits space)
+          @TT "[:lower:]"@	-- any lowercase character
+          @TT "[:print:]"@	-- any printable character
+          @TT "[:punct:]"@	-- any punctuation character
+          @TT "[:space:]"@	-- any whitespace, tab, carriage return, newline, vertical tab, and form feed
+          @TT "[:unicode:]"@	-- any unicode character with code point above 255 in value
+          @TT "[:upper:]"@	-- any uppercase character
+          @TT "[:word:]"@	-- any word character (alphanumeric characters plus the underscore
+          @TT "[:xdigit:]"@	-- any hexadecimal digit character
+        :"Single character" character classes
+          @TT "\\\\d"@	-- same as @TT "[[:digit:]]"@
+          @TT "\\\\l"@	-- same as @TT "[[:lower:]]"@
+          @TT "\\\\s"@	-- same as @TT "[[:space:]]"@
+          @TT "\\\\u"@	-- same as @TT "[[:upper:]]"@
+          @TT "\\\\w"@	-- same as @TT "[[:word:]]"@
+          @TT "\\\\D"@	-- same as @TT "[^[:digit:]]"@
+          @TT "\\\\L"@	-- same as @TT "[^[:lower:]]"@
+          @TT "\\\\S"@	-- same as @TT "[^[:space:]]"@
+          @TT "\\\\U"@	-- same as @TT "[^[:upper:]]"@
+          @TT "\\\\W"@	-- same as @TT "[^[:word:]]"@
 
-      @UL {
-          {TT ".", " -- match any character except newline"},
-          {TT "^", " -- match the beginning of the string or the beginning of a line"},
-          {TT "$", " -- match the end of the string or the end of a line"},
-          {TT "(...)", " -- marked sub-expression, may be referred to by a back-reference"},
-          {TT "*", " -- match previous expression 0 or more times"},
-          {TT "+", " -- match previous expression 1 or more times"},
-          {TT "?", " -- match previous expression 1 or 0 times"},
-          {TT "{m}", " -- match previous expression exactly m times"},
-          {TT "{m,n}", " -- match previous expression at least m and at most n times"},
-          {TT "{,n}", " -- match previous expression at most n times"},
-          {TT "{m,}", " -- match previous expression at least m times"},
-          {TT "\\i", " -- match the same string that the i-th parenthesized sub-expression matched"},
-          {TT "|", " -- match expression to left or expression to right"},
-          {TT "[...]", " -- match listed characters, ranges, or classes"},
-          {TT "[^...]", " -- match non-listed characters, ranges, or classes"},
-          {TT "\\b", " -- match word boundary"},
-          {TT "\\B", " -- match within word"},
-          {TT "\\<", " -- match beginning of word"},
-          {TT "\\>", " -- match end of word"},
-          {TT "\\w", " -- match word-constituent character"},
-          {TT "\\W", " -- match non-word-constituent character"},
-          {TT "\\`", " -- match beginning of string"},
-          {TT "\\'", " -- match end of string"}
-          }@
-
+    Text
       The special character @TT "\\"@ may be confusing, as inside a string delimited by quotation marks
       (@TT ////"..."////@), you type two of them to specify a special character, whereas inside a string
       delimited by triple slashes (@TT "////...////"@), you only need one. Thus regular expressions delimited
@@ -161,25 +193,7 @@ doc ///
 
       In order to match one of the special characters itself, precede it with a backslash or use @TO regexQuote@.
 
-      @HEADER3 "Character classes"@
-
-      There are the following character classes.
-
-      @UL {
-          {TT "[:alnum:]", " -- letters and digits"},
-          {TT "[:alpha:]", " -- letters"},
-          {TT "[:blank:]", " -- a space or tab"},
-          {TT "[:cntrl:]", " -- control characters"},
-          {TT "[:digit:]", " -- digits"},
-          {TT "[:graph:]", " -- same as [:print:] except omits space"},
-          {TT "[:lower:]", " -- lowercase letters"},
-          {TT "[:print:]", " -- printable characters"},
-          {TT "[:punct:]", " -- neither control nor alphanumeric characters"},
-          {TT "[:space:]", " -- space, tab, carriage return, newline, vertical tab, and form feed"},
-          {TT "[:upper:]", " -- uppercase letters"},
-          {TT "[:xdigit:]", " -- hexadecimal digits"},
-          }@
-
+    Text
       @HEADER2 "Flavors of Regular Expressions"@
 
       The regular expression functions in Macaulay2 are powered by calls to the
@@ -202,32 +216,38 @@ doc ///
 
       The Perl flavor adds the following, non-backward compatible constructions:
 
-      @UL {
-          {TT "(?#...)", " -- ignored and treated as a comment"},
-          {TT "(?:...)", " -- non-marked sub-expression, may not be referred to by a back-reference"},
-          {TT "(?=...)", " -- positive lookahead; consumes zero characters, only if pattern matches"},
-          {TT "(?!...)", " -- negative lookahead; consumes zero characters, only if pattern does not match"},
-          {TT "(?<=...)", " -- positive lookbehind; consumes zero characters, only if pattern could be matched against the characters preceding the current position (pattern must be of fixed length)"},
-          {TT "(?<!...)", " -- negative lookbehind; consumes zero characters, only if pattern could not be matched against the characters preceding the current position (pattern must be of fixed length)"},
-          {TT "*?", " -- match the previous atom 0 or more times, while consuming as little input as possible"},
-          {TT "+?", " -- match the previous atom 1 or more times, while consuming as little input as possible"},
-          {TT "??", " -- match the previous atom 1 or 0 times, while consuming as little input as possible"},
-          {TT "{m,}?", " -- match the previous atom m or more times, while consuming as little input as possible"},
-          {TT "{m,n}?", " -- match the previous atom at between m and n times, while consuming as little input as possible"},
-          {TT "*+", " -- match the previous atom 0 or more times, while giving nothing back"},
-          {TT "++", " -- match the previous atom 1 or more times, while giving nothing back"},
-          {TT "?+", " -- match the previous atom 1 or 0 times, while giving nothing back"},
-          {TT "{m,}+", " -- match the previous atom m or more times, while giving nothing back"},
-          {TT "{m,n}+", " -- match the previous atom at between m and n times, while giving nothing back"},
-          {TT "\\g1", " -- match whatever matched sub-expression 1"},
-          {TT "\\g{1}", " -- match whatever matched sub-expression 1"},
-          {TT "\\g-1", " -- match whatever matched the last opened sub-expression"},
-          {TT "\\g{-2}", " -- match whatever matched the last but one opened sub-expression"},
-          {TT "\\g{that}", " -- match whatever matched the sub-expression named \"that\""},
-          {TT "\\k<that>", " -- match whatever matched the sub-expression named \"that\""},
-          {TT "(?<NAME>...)", " -- named sub-expression, may be referred to by a named back-reference"},
-          {TT "(?'NAME'...)", " -- named sub-expression, may be referred to by a named back-reference"},
-          }@
+    Subnodes
+      :Non-marking grouping; i.e., a grouping that does not generate a sub-expression
+        @TT "(?#...)"@	-- ignored and treated as a comment
+        @TT "(?:...)"@	-- non-marked sub-expression, may not be referred to by a back-reference
+        @TT "(?=...)"@	-- positive lookahead; consumes zero characters, only if pattern matches
+        @TT "(?!...)"@	-- negative lookahead; consumes zero characters, only if pattern does not match
+        @TT "(?<=..)"@	-- positive lookbehind; consumes zero characters, only if pattern could be matched against the characters preceding the current position (pattern must be of fixed length)
+        @TT "(?<!..)"@	-- negative lookbehind; consumes zero characters, only if pattern could not be matched against the characters preceding the current position (pattern must be of fixed length)
+        @TT "(?>...)"@	-- match independently of the surrounding pattern and the expression will never backtrack into the pattern
+      :Non-greedy repeats
+        @TT "*?"@	-- match the previous atom 0 or more times, while consuming as little input as possible
+        @TT "+?"@	-- match the previous atom 1 or more times, while consuming as little input as possible
+        @TT "??"@	-- match the previous atom 1 or 0 times, while consuming as little input as possible
+        @TT "{m,}?"@	-- match the previous atom m or more times, while consuming as little input as possible
+        @TT "{m,n}?"@	-- match the previous atom at between m and n times, while consuming as little input as possible
+      :Possessive repeats
+        @TT "*+"@	-- match the previous atom 0 or more times, while giving nothing back
+        @TT "++"@	-- match the previous atom 1 or more times, while giving nothing back
+        @TT "?+"@	-- match the previous atom 1 or 0 times, while giving nothing back
+        @TT "{m,}+"@	-- match the previous atom m or more times, while giving nothing back
+        @TT "{m,n}+"@	-- match the previous atom at between m and n times, while giving nothing back
+      :Back references
+        @TT "\\g1"@	-- match whatever matched sub-expression 1
+        @TT "\\g{1}"@	-- match whatever matched sub-expression 1
+        @TT "\\g-1"@	-- match whatever matched the last opened sub-expression
+        @TT "\\g{-2}"@	-- match whatever matched the last but one opened sub-expression
+        @TT "\\g{that}"@	-- match whatever matched the sub-expression named "that"
+        @TT "\\k<that>"@	-- match whatever matched the sub-expression named "that"
+        @TT "(?<NAME>...)"@	-- named sub-expression, may be referred to by a named back-reference
+        @TT "(?'NAME'...)"@	-- named sub-expression, may be referred to by a named back-reference
+    Text
+      See references below for more in depth syntax for controlling the backtracking algorithm.
 
     Subnodes
      :String processing functions that accept regular expressions

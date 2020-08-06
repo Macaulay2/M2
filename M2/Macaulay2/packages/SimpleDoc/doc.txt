@@ -94,6 +94,10 @@ Node
     everything else must be further indented. Lines beginning with white space followed
     by two hyphens are ignored and can be used for commenting.
 
+    @TO (document, String)@ is a synonyms for @TO doc@.
+    For backwards compatibility, the function @TT "multidoc"@ is also a synonym for @TO doc@.
+
+   Text
     @HEADER2 "Template for documentation strings"@
 
     The variable {\tt docTemplate} is a @TO String@, which can be cut and pasted into a
@@ -155,7 +159,7 @@ Node
                         TO TOH, " function, producing a link followed by the headline.
                         The purpose is to allow a classification of the documentation
                         nodes grouped under a subsections. Further indentation is treated
-			as further sub-classifications."}},
+                        as further sub-classifications."}},
                 { TT "Example", " -- examples of the usage",
                     PARA {
                         "The text in this subsection consists of lines of Macaulay2 code
@@ -165,12 +169,10 @@ Node
                     PARA {
                         "The text in this subsection consists of lines containing an
                         interaction with Macaulay2, to displayed as an example."}},
-			-- document this
                 { TT "Pre", " -- preformatted text",
                     PARA {
                         "The text in this subsection, with common indentation removed,
                         is wrapped with ", TO PRE, "."}},
-			-- document this
                 { TT "Code", " -- custom Macaulay2 code",
                     PARA {
                         "The text in this subsection, with common indentation removed,
@@ -210,6 +212,7 @@ Node
                 colon are subheadings used to classify the subnodes."}}
         }@
 
+   Text
     @HEADER2 "Markup keywords allowed in documentation strings"@
 
     The markup keywords allowed include many TeX commands, as allowed in @TO TEX@; for
@@ -219,6 +222,18 @@ Node
     yielding appropriate hypertext.  For example, {\tt \@TO Key\@} will insert a link to another
     node of the documentation. See @TO "Text"@ for other hypertext types.
 
+   Text
+    @HEADER2 "Documenting multiple nodes at once"@
+
+    If the least indented keyword in the documentation string {\tt s} is @TT "Node"@,
+    possibly occurring multiple times, multiple documentation nodes will be prepared.
+
+    @UL {{ TT "Node", PARA {"The text following each such keyword is handled just as by ",
+                TO doc, " resulting in a separate documentation node."}}}@
+
+    See below for an example of how the @TT "Node"@ keyword is used in documenting this package.
+
+   Text
     @HEADER2 "An example of a documentation node"@
 
     The variable {\tt docExample} is a @TO String@ containing an example of the use of
@@ -227,17 +242,6 @@ Node
     EXAMPLE { PRE docExample }
 
    Text
-    @HEADER2 "Documenting multiple nodes at once"@
-
-    If the least indented keyword in the documentation string {\tt s} is @TT "Node"@,
-    possibly occurring multiple times, multiple documentation nodes will be prepared.
-
-    @UL {{ TT "Node", PARA {"The text following each such keyword is handled just as by ",
-		TO doc, " resulting in a separate documentation node."}}}@
-
-    @TO (document, String)@ is a synonyms for @TO doc@.
-    For backwards compatibility, the function @TT "multidoc"@ is also a synonym for @TO doc@.
-
     Here is the input submitted to @ TO multidoc @ to document (most of) this package:
    Code
     EXAMPLE { PRE concatenate between("\n", lines get(SimpleDoc#"source directory" | "SimpleDoc/doc.txt")) }
