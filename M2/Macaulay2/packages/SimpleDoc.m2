@@ -67,6 +67,7 @@ NodeFunctions = new HashTable from {
     "Outputs"         => (textlines, keylinenum) -> Outputs         => items(textlines, keylinenum),
     "Consequences"    => (textlines, keylinenum) -> Consequences    => applySplit(ConsequencesFuntions, textlines),
     "Description"     => (textlines, keylinenum) -> toSequence applySplit(DescriptionFunctions, textlines),
+    "Synopsis"        => (textlines, keylinenum) -> SYNOPSIS   applySplit(SynopsisFunctions, textlines),
     "Acknowledgement" => (textlines, keylinenum) -> Acknowledgement => {markup(textlines, keylinenum)},
     "Contributors"    => (textlines, keylinenum) -> Contributors    => {markup(textlines, keylinenum)},
     "References"      => (textlines, keylinenum) -> References      => {markup(textlines, keylinenum)},
@@ -75,6 +76,16 @@ NodeFunctions = new HashTable from {
     "SeeAlso"         => (textlines, keylinenum) -> SeeAlso         => apply(getNonempty textlines, value),
     "Subnodes"        => (textlines, keylinenum) -> Subnodes        => apply(getNonempty textlines, p -> if match("^:", p) then substring(1, p) else TO value p),
  }
+
+SynopsisFunctions = new HashTable from {
+    "Heading"      => (textlines, keylinenum) -> Heading      =>       singleString(Heading,      textlines, keylinenum),
+    "BaseFunction" => (textlines, keylinenum) -> BaseFunction => value singleString(BaseFunction, textlines, keylinenum),
+    "Usage"        => NodeFunctions#"Usage",
+    "Inputs"       => NodeFunctions#"Inputs",
+    "Outputs"      => NodeFunctions#"Outputs",
+    "Consequences" => NodeFunctions#"Consequences",
+    "Description"  => NodeFunctions#"Description",
+    }
 
 DescriptionFunctions = new HashTable from {
     "Example"       => (textlines, keylinenum) -> getExample(textlines, keylinenum, false),

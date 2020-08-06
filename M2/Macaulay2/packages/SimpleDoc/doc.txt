@@ -181,6 +181,18 @@ Node
                         before passing the list to ", TO document, "."}}
                 }
             },
+        { TT "Synopsis", " -- prepare documentation for different usages of a function", BR{},
+            PARA {
+                "Each section with this keyword prepares a standardized synopsis similar
+                to the ", TO SYNOPSIS, " template of the classic ", TO document, " command.
+                The text in this section occurs in subsections with the following keywords:"},
+            UL {
+                { TO Heading, " -- similar to the ", TO Headline, " keyword" },
+                { TO BaseFunction, " -- the basename of the function; see ", TO [SYNOPSIS, BaseFunction] },
+                { "Keywords that can be repeated once for each synopsis: ", TO Usage, " (required), ",
+                    TO Inputs, ", ", TO Outputs, ", ", TO Consequences, ", and ", TO Description, "."}
+                }, BR{}
+            },
         { TOH Acknowledgement, BR{},
           TOH Contributors, BR{},
           TOH References,
