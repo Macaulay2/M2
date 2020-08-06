@@ -1,150 +1,333 @@
-document {
-     Key => Package,
-     Headline => "the class of all packages",
-     "A package is a body of Macaulay2 source code devoted to a 
-     particular topic.  Many packages are distributed with Macaulay2, 
-     and others are available from various users on the internet.",
-     PARA{},
-     "See ", TO "packages", " for an overview about using and writing packages.",
-     PARA{},
-     BOLD "Available packages",
-     UL {
-	  TO "packages provided with Macaulay2",
-	  {"The directory containing the packages is ", HREF { currentLayout#"packages",currentLayout#"packages" }}
-	  },
-     PARA{},
-     BOLD "Functions useful when ", TO "using packages", ".",
-     UL {
-	  TO needsPackage,
-	  TO loadPackage,
-	  TO installPackage,
-	  TO check,
-	  TO debug
-	  },
-     BOLD "Parts of a package.  See ", TO "creating a package", ".",
-     UL {
-	  TO newPackage,
-	  TO export,
-	  TO exportMutable,
-	  TO beginDocumentation,
-	  TO document,
-	  TO TEST
-	  },
-     BOLD "Functions useful while writing and debugging a package", ".",
-     UL {
-	  TO "debugging",
-	  TO debug,
-	  TO check
-	  },
-     BOLD "Functions that are only rarely used.",
-     UL {
-	  TO dismiss,
-	  TO uninstallPackage,
-	  TO use,
-	  TO makePackageIndex,
-	  TO "loadedPackages"
-	  },
-     }
+undocumented {
+    Authors,
+    AuxiliaryFiles,
+    Configuration,
+    Date,
+    Email,
+    HomePage,
+    InfoDirSection,
+    Name,
+    PackageExports,
+    PackageImports,
+    Version,
+    }
 
-document {
-     Key => {loadPackage,(loadPackage,String),
-	  [loadPackage,FileName],[loadPackage,DebuggingMode],[loadPackage,Reload],[loadPackage,Configuration],[loadPackage,LoadDocumentation]},
-     Headline => "load a package",     
-     Usage => "loadPackage \"PACKAGENAME\"",
-     Inputs => { 
-	  "PACKAGENAME" => String => "the name of the package",
-	  FileName => String => "the name of the file containing the source code of the package, from which it should be loaded",
-	  LoadDocumentation => Boolean => {"whether to load the documentation of the package, too; see ", TO "beginDocumentation"},
-	  DebuggingMode => Boolean => {
-	       "the value of ", TO "debuggingMode", " during loading the package; specifying it here overrides the 
-	       value specified as an option to ", TO "newPackage", " by the package itself; however, if ", TO "debuggingMode", " 
-	       is already ", TT "false", ", it will remain so."
-	       },
-	  Configuration => List => {"a list of options ", TT "KEY => VALUE", ", overriding the defaults specified in 
-	       the source code of the package and the (possibly updated) values in the file in the user's application
-	       directory."},
-	  Reload => Boolean => {"whether to reload the package, if it has been loaded before"}
-	  },
-     Outputs => { Package => "the package just loaded." },
-     Consequences => { {"Loads the package PACKAGENAME that is in the file PACKAGENAME.m2"} },
-     PARA { "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", "
-    	   and should contain a package named ", TT "PACKAGENAME", "." },
-     PARA {
-	  "If the variable ", TO "notify", " is set to true, then an informational message is displayed after the file is loaded."
-	  },
-     EXAMPLE {
-	  ///notify = true///,
-	  ///loadPackage "FirstPackage"///
-	  },
-     SeeAlso => {"packages", "an example of a package", needsPackage, load }
-     }
-document {
-     Key => {(loadPackage,Package)},
-     Headline => "reload an already loaded package",
-     Usage => "loadPackage PACKAGE",
-     Inputs => {
-       "PACKAGE" => "the already loaded package"
-     },
-     Outputs => { Package => "the package just reloaded" },
-     Consequences => {{"Reloads the package PACKAGE"}},
-     PARA { "This reloads a package. ",
-       "The package ", TT "PACKAGE", " should already have been loaded at an earlier step, ",
-       "using a command such as ", TT "loadPackage(\"PACKAGE\")", " or ",
-       TT "needsPackage(\"PACKAGE\")", ", i.e., using the name of the package ",
-       "as a string. If that has been done, then this command will reload the package."},
-     PARA { "In fact this version of the command is simply a convenient short form ",
-     "of ", TT "loadPackage", " with the option ", TT "Reload", " set to ",
-     TT "true", ". All options of ", TT "loadPackage", " (other than ", TT "Reload",
-     ") are available." },
-     EXAMPLE lines ///
-       loadPackage "FirstPackage"
-       loadPackage FirstPackage
-     ///,
-     SeeAlso => {loadPackage, needsPackage}
-     }
-       
-document {
-     Key => {(needsPackage,String),needsPackage,
-	  [needsPackage, LoadDocumentation],[needsPackage,Configuration],[needsPackage,DebuggingMode],[needsPackage,FileName]},
-     Headline => "load a package if not already loaded",
-     Usage => "needsPackage \"PACKAGENAME\"",
-     Inputs => { 
-	  "PACKAGENAME" => "the name of the package",
-	  FileName => String => "the name of the file containing the source code of the package, from which it should be loaded",
-	  LoadDocumentation => Boolean => {"whether to load the documentation of the package, too; see ", TO "beginDocumentation"},
-	  DebuggingMode => Boolean => {
-	       "the value of the variable ", TO "debuggingMode", " during loading the package; specifying it here overrides the 
-	       value specified as an option to ", TO "newPackage", " by the package itself"
-	       },
-	  Configuration => List => {"a list of options ", TT "KEY => VALUE", ", overriding the defaults specified in 
-	       the source code of the package and the (possibly updated) values in the file in the user's application
-	       directory."}
-	  },
-     Outputs => { 
-	  { "the package requested"}
-	  },
-     Consequences => { 
-	  {
-	       "loads the package ", TT "PACKAGENAME", " by loading the file ", TT "PACKAGENAME.m2", ", which should appear
-	       in one of the directories occuring in the list ", TO "path", ", unless it has
-	       already been loaded, in which case it ensures that the package's dictionary of exported symbols 
-	       occurs in ", TO "dictionaryPath", ", and are thus available to the user.  In addition, the function ", TO "needsPackage", "
-	       is applied to each of the packages whose names are specified by the ", TO "PackageExports", " option of ", TO "newPackage", " 
-	       for the requested package."
-	       },
-	  {
-	       "if the variable ", TO "notify", " is set to true, then an informational message is displayed after the file is loaded"
-	       }
-	  },
-     PARA { "For example, to load the sample package ", TT "FirstPackage", ":"},
-     EXAMPLE {
-	  ///notify = true///,
-	  ///needsPackage "FirstPackage"///,
-	  ///needsPackage "FirstPackage"///	  
-	  },
-     "The second time the package was not reloaded.",
-     SeeAlso => {"packages", "an example of a package", loadPackage, needsPackage }
-     }
+doc ///
+Node
+  Key
+    Package
+  Headline
+    the class of all packages
+  Description
+    Text
+      See @TO "packages"@ for an overview about using and writing Macaulay2 packages.
+
+    Subnodes
+      :Available packages:
+        "packages provided with Macaulay2"
+        :The directory containing the packages is @HREF { currentLayout#"packages", currentLayout#"packages" }@
+
+      :Functions useful when @TO "using packages"@:
+        needsPackage
+        loadPackage
+        installPackage
+        check
+        debug
+
+      :Functions useful when @TO "creating a package"@:
+        newPackage
+        export
+        exportMutable
+        beginDocumentation
+        document
+        TEST
+
+      :Functions useful when debugging a package:
+        "debugging"
+        debug
+        check
+
+      :Functions that are only rarely used:
+        use
+        dismiss
+        readPackage
+        uninstallPackage
+        makePackageIndex
+        "loadedPackages"
+  SeeAlso
+    "packages"
+    "creating a package"
+    "SimpleDoc :: packageTemplate"
+
+Node
+  Key
+     readPackage
+    (readPackage, String)
+    (readPackage, Package)
+    [readPackage, FileName]
+  Headline
+    read the package preamble
+  Usage
+    readPackage PackageName
+  Inputs
+    PackageName:String
+      the name of the package, or a @TO Package@ object
+    FileName=>String
+      the name of the file containing the source code of the package, from which it should be read
+  Outputs
+    :OptionTable
+      containing the options given to @TO newPackage@ in the preamble of the package
+  Description
+    Text
+      The file @TT "PackageName.m2"@ should be on the load @TO "path"@ and should contain a package named @TT "PackageName"@.
+      This function is mostly used for getting information about a package quickly and without processing the entire package.
+    Example
+      opts = readPackage "NormalToricVarieties"
+      "1.9" <= opts.Version
+  SeeAlso
+    Package
+    newPackage
+    loadPackage
+
+Node
+  Key
+     loadPackage
+    (loadPackage, String)
+    (loadPackage, Package)
+    [loadPackage, Configuration]
+    [loadPackage, DebuggingMode]
+    [loadPackage, FileName]
+    [loadPackage, LoadDocumentation]
+    [loadPackage, Reload]
+  Headline
+    load a package
+  Usage
+    loadPackage PackageName
+  Inputs
+    PackageName:String
+      the name of the package, or a @TO Package@ object
+    FileName=>String
+      the name of the file containing the source code of the package, from which it should be loaded
+    LoadDocumentation=>Boolean
+      whether to load the documentation of the package, too; see @TO beginDocumentation@
+    DebuggingMode=>Boolean
+      the value of @TO "debuggingMode"@ during loading the package; specifying it here overrides the
+      value specified as an option to @TO newPackage@ by the package itself; however, if @TO "debuggingMode"@
+      is already @TT "false"@ it will remain so.
+    Configuration=>List
+      a list of options @TT "KEY => VALUE"@ overriding the defaults specified in the source code of the package
+      and the (possibly updated) values in the file in the user's application directory.
+    Reload=>Boolean
+      whether to reload the package, if it has been loaded before.
+      If the input was an already loaded @TO Package@, this is automatically set to true.
+  Outputs
+    :Package
+      the package just loaded; if the input was an already loaded @TO Package@, this is the reloaded package
+  Consequences
+    Item
+      Loads (or reloads) the package @TT "PackageName"@ that is in the file @TT "PackageName.m2"@.
+  Description
+    Text
+      The file @TT "PackageName.m2"@ should be on the load @TO "path"@ and should contain a package named @TT "PackageName"@.
+
+      If the variable @TO "notify"@ is set to true, then an informational message is displayed after the file is loaded.
+    Example
+      notify = true
+      loadPackage "FirstPackage"
+    Text
+      If that has been done, then this command will reload the package instead:
+    Example
+      loadPackage FirstPackage
+    Text
+      In fact this version of the command is simply a convenient shortcut for @TT "loadPackage"@ with the option
+      @TT "Reload"@ overriden to true. All options of @TT "loadPackage"@.
+  SeeAlso
+    "packages"
+    readPackage
+    dismiss
+    needsPackage
+    "packages provided with Macaulay2"
+
+Node
+  Key
+     needsPackage
+    (needsPackage, String)
+    [needsPackage, Configuration]
+    [needsPackage, DebuggingMode]
+    [needsPackage, FileName]
+    [needsPackage, LoadDocumentation]
+    [needsPackage, Reload]
+  Headline
+    load a package if not already loaded
+  Usage
+    needsPackage PackageName
+  Inputs
+    PackageName:String
+      the name of the package
+    FileName=>String
+      the name of the file containing the source code of the package, from which it should be loaded
+    LoadDocumentation=>Boolean
+      whether to load the documentation of the package, too; see @TO beginDocumentation@
+    DebuggingMode=>Boolean
+      the value of the variable @TO "debuggingMode"@ during loading the package; specifying it here overrides the
+      value specified as an option to @TO newPackage@ by the package itself
+    Configuration=>List
+      a list of options @TT "KEY => VALUE"@ overriding the defaults specified in the source code of
+      the package and the (possibly updated) values in the file in the user's application directory.
+    Reload=>Boolean
+      whether to reload the package, if it has been loaded from a different source before
+  Outputs
+    :Package
+      the package requested
+  Consequences
+    Item
+      loads the package @TT "PackageName"@ by loading the file @TT "PackageName.m2"@ which should appear
+      in one of the directories occuring in the list @TO "path"@, unless it has already been loaded, in
+      which case it ensures that the package's dictionary of exported symbols occurs in @TO "dictionaryPath"@
+      and are thus available to the user. In addition, the function @TO needsPackage@ is applied to each
+      of the packages whose names are specified by the @TO [newPackage, PackageExports]@ option for the
+      requested package. If the variable @TO "notify"@ is set to true, then an informational message is
+      displayed after the file is loaded.
+  Description
+    Text
+      For example, to load the sample package @TT "FirstPackage"@:
+    Example
+      notify = true
+      needsPackage "FirstPackage"
+      needsPackage "FirstPackage"
+    Text
+      The second time the package was not reloaded.
+  SeeAlso
+    "packages"
+    dismiss
+    loadPackage
+    "packages provided with Macaulay2"
+
+Node
+  Key
+     newPackage
+    (newPackage, String)
+    [newPackage, Authors]
+    [newPackage, AuxiliaryFiles]
+    [newPackage, CacheExampleOutput]
+    [newPackage, Certification]
+    [newPackage, Configuration]
+    [newPackage, Date]
+    [newPackage, DebuggingMode]
+    [newPackage, Headline]
+    [newPackage, HomePage]
+    [newPackage, InfoDirSection]
+    [newPackage, OptionalComponentsPresent]
+    [newPackage, PackageExports]
+    [newPackage, PackageImports]
+    [newPackage, Reload]
+    [newPackage, UseCachedExampleOutput]
+    [newPackage, Version]
+  Headline
+    the preamble of a package
+  Usage
+    newPackage ( PackageName, ... )
+  Inputs
+    PackageName:String
+      the name of the new package
+    Version=>String
+      the version number of the package.
+      A version number less than 1.0 indicates that the package is under development, and the user interface may change.
+    Date=>String
+      the date of this version of the package
+    InfoDirSection=>String
+      the title of the section in the info page directory where the menu entry for this package should be made
+    Headline=>String
+      a brief (5-10 words) description of the package
+    Authors=>List
+      a list of lists of options, one for each author. The suboptions are of the form
+      @TT "Name => x"@, @TT "Email => x"@, or @TT "HomePage => x"@, where @TT "x"@ is a string.
+    HomePage=>String
+      the URI pointing to the home page of the package, if any
+    DebuggingMode=>Boolean
+      whether @TO "debuggingMode"@ should be true during package loading.  However, if @TO "debuggingMode"@
+      is already @TT "false"@, it will remain so.
+    AuxiliaryFiles=>Boolean
+      whether the package source to be distributed includes a directory for
+      auxiliary files, with the same name as the package
+    PackageExports=>List
+      a list of names of other packages to load, both for the user and for the code of the new package
+    PackageImports=>List
+      a list of names of other packages to load, just for the code of the new package
+    CacheExampleOutput=>Boolean
+      whether @TO installPackage@ should cache (newer) example output in a subdirectory of the auxiliary file directory
+      named @TT "examples"@, for use in a future installation. This value can be overridden by a value explicitly specified
+      when @TO installPackage@ is called. After the directory is created, it will necessary for the user also to specify
+      @TT "AuxiliaryFiles => true"@.
+    OptionalComponentsPresent=>Boolean
+      whether all optional external components of the package are present on the system. Unless the user sets this
+      option or @TT "CacheExampleOutput"@ to @TT "true"@, this option will be initialized to @TT "true"@.
+    UseCachedExampleOutput=>Boolean
+      whether @TO installPackage@ should copy previously cached example output, if it is present and
+      corresponds to the current example input for a node, rather than rerunning the examples, which might
+      be important if optional external software is not present in the system. This is relevant only when
+      @TT "CacheExampleOutput"@ and @TT "AuxiliaryFiles"@ are set to @TT "true"@. Unless set by the user,
+      it is set to the negation of the value of @TT "OptionalComponentsPresent"@.
+    Certification=>List
+      the certification block inserted by the maintainers of @EM "Macaulay2"@ after the package has been accepted
+      for publication by a journal, such as The Journal of Software for Algebra and Geometry: @EM "Macaulay2"@.
+      Authors should not undertake to create such a certification block themselves.
+    Configuration=>List
+      a list of configuration options for the package. The keys and values should be constant expressions,
+      such as strings and integers, not incorporating symbols to be exported by the package (and not yet defined).
+      The first time the package is loaded by the user, unless the @TT "-q"@ option is specified on the @TT "M2"@ command
+      line, these options will be stored in a file in the user's application directory (see @TO applicationDirectory@).
+      The user can change the configuration by editing the file. The user can override the configuration settings when
+      loading the package; see @TO [loadPackage, Configuration]@ and @TO [needsPackage, Configuration]@.
+      The file will be overwritten when a newer version of the package with different configuration options is loaded,
+      but a backup will be made and the user's settings for the surviving options will be retained.
+    Reload=>Boolean
+      whether to reload the package, if it has been loaded before
+  Consequences
+    Item
+      a package is created
+  Description
+    Text
+      The dictionaries for the symbols in the packages loaded by the user are moved out of the way to avoid conflicts, so
+      just the standard pre-loaded packages are visible to the source code of the package.  In addition, the package
+      @TO "SimpleDoc :: SimpleDoc"@ is made available. If functions from additional packages are needed by the code in
+      the new package, then @TO needsPackage@ can be used (after the use of @TT "newPackage"@) to provide them.
+      If functions from additional packages are needed by the user who will load the new package, then @TO needsPackage@
+      can be used (before the use of @TT "newPackage"@) to provide them.
+    Example
+      newPackage("Foo",
+	  Version => "1.1",
+	  Headline => "making Foo",
+	  Configuration => { "foo" => 42, "bar" => "x" }
+	  )
+      endPackage "Foo"
+    Text
+      The options can be recovered with @TO options@ as follows.
+    Example
+      opts = options Foo
+      opts.Headline
+    Text
+      Here is a template for a typical @TT "newPackage"@ entry in a package.
+    Code
+      EXAMPLE { PRE ////newPackage("PackageName",
+	      Headline => "one line description",
+	      Version => "0.1",
+	      Date => "month XX, 20XX",
+	      Authors => {
+		  {Name => "author1", Email => "email1", HomePage => "url1"},
+		  {Name => "author2", Email => "email2", HomePage => "url2"}},
+	      DebuggingMode => false,
+	      HomePage => "http://univ.edu/~user/PackageName/",
+	      Configuration => {}
+	      )////}
+  SeeAlso
+    "packages"
+    "creating a package"
+    readPackage
+    loadPackage
+    needsPackage
+///
+
 document {
      Key => {makePackageIndex,(makePackageIndex, List), (makePackageIndex, Sequence)},
      Headline => "",
@@ -159,8 +342,6 @@ document {
 	 obtain the same consequence."},
      SeeAlso => {"packages"}
      }
-
-undocumented (export,Symbol)
 
 document {
      Key => {export, (export,List), (export,String)},
@@ -186,8 +367,6 @@ document {
      PARA{ "Use ", TO exportMutable, " to export symbols whose values the user is permitted to modify." },
      SeeAlso => {debug}
      }
-
-undocumented (exportMutable,Symbol)
 
 document {
      Key => {exportMutable, (exportMutable,List), (exportMutable,String)},
@@ -245,101 +424,6 @@ document {
      Caveat => "When creating tests, try to ensure that they run relatively quickly.",
      SeeAlso => { beginDocumentation, assert }
      }
-
-document {
-     Key => {(newPackage,String), newPackage, Date, [newPackage,Date], Authors, [newPackage,Authors], Version, [newPackage, Version],
-	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,Configuration,[newPackage,Configuration],
-	  InfoDirSection, [newPackage,InfoDirSection],AuxiliaryFiles,[newPackage,AuxiliaryFiles],[newPackage,CacheExampleOutput],
-	  [newPackage,PackageExports], PackageExports, [newPackage,PackageImports], PackageImports,
-	  [newPackage,Certification], [newPackage,Reload], [newPackage,UseCachedExampleOutput], [newPackage, OptionalComponentsPresent]
-	  }, 
-     Headline => "package item: start a new package",
-     Usage => "newPackage ( pkgname )",
-     Inputs => {
-	  "pkgname" => "the name of the new package",
-	  Version => String => {"the version number of the package.  A version number less than 1.0 indicates that the package is under
-	       development, and the user interface may change."},
-	  Date => String => "the date of this version of the package",
-	  InfoDirSection => String => {"the title of the section in the info page directory where the menu entry for this package should be made"},
-	  Headline => String => {"a brief (5-10 words) description of the package"},
-	  Authors => List => {"a list of lists of options, one for each author.  The suboptions are of the form
-	       ", TT "Name => x", ", ", TT "Email => x", ", or ", TT "HomePage => x", ", where ", TT "x", " is a string."
-	       },
-	  HomePage => String => "the URI pointing to the home page of the package, if any",
-	  DebuggingMode => Boolean => {"whether ", TO "debuggingMode", " should be true during package loading.  However, if ", TO "debuggingMode", " 
-	       is already ", TT "false", ", it will remain so."},
-          AuxiliaryFiles => Boolean => {"whether the package source to be distributed includes a directory for
-	       auxiliary files, with the same name as the package"},
-	  PackageExports => List => {"a list of names of other packages to load, both for the user and for the code of the new package"},
-	  PackageImports => List => {"a list of names of other packages to load, just for the code of the new package"},
-	  CacheExampleOutput => Boolean => {
-	       "whether ", TO "installPackage", " should cache (newer) example output in a subdirectory of the ", TO2{[newPackage,AuxiliaryFiles],"auxiliary file directory"}, "
-	       named ", TT "examples", ", for use in a future installation.  This value can be overridden by a value explicitly specified
-	       when ", TO "installPackage", " is called.  After the directory is created, it will necessary for the user also to specify
-	       ", TT "AuxiliaryFiles=>true", "."
-	       },
-     	  OptionalComponentsPresent => Boolean => {"whether all optional external components of the package are present on the system.
-	       Unless the user sets this option or ", TT "CacheExampleOutput", " to ", TT "true", ", this option will be initialized to 
-	       ", TT "true", "."},
-          UseCachedExampleOutput => Boolean => {"whether ", TO "installPackage", " should copy previously cached example output, if it is present and
-	       corresponds to the current example input for a node, rather than rerunning the examples, which might be important if optional external
-	       software is not present in the system.  This is relevant only when ", TT "CacheExampleOutput", " and ", TT "AuxiliaryFiles", " are set 
-	       to ", TT "true", ".  Unless set by the user, it is set to the negation of the value of ", TT "OptionalComponentsPresent", "."},
-	  Certification => List => {
-	       "the certification block inserted by the maintainers of ", EM "Macaulay2", " after the package has been accepted for publication by a 
-	       journal, such as The Journal of Software for Algebra and Geometry: ", EM "Macaulay2", ".  Authors should
-	       not undertake to create such a certification block themselves."
-	       },
-	  Configuration => List => {"a list of configuration options for the package.  The keys and values should be constant expressions,
-	       such as strings and integers, not incorporating symbols to be exported by the package (and not yet defined).
-	       The first time the package is loaded by the user, unless the ", TT "-q", " option is specified on the ", TT "M2", " command
-	       line, these options will be stored in a file in the user's application
-	       directory (see ", TO "applicationDirectory", ").  The user can change the configuration by editing the file.  
-	       The user can override the configuration settings when loading the package; see ", TO [loadPackage,Configuration], " and 
-	       ", TO [needsPackage,Configuration], ".  The file will be overwritten when a newer version of the package 
-	       with different configuration options is loaded, but a backup will be made and the user's settings for the surviving options will be retained.
-	       "
-	       },
-	  Reload => Boolean => {"whether to reload the package, if it has been loaded before"}
-	  },
-     Consequences => {"a package is created"},
-     PARA {
-	  "The dictionaries for the symbols in the packages loaded by the user are moved out of the way to avoid conflicts, so
-	  just the standard pre-loaded packages are visible to the source code of the package.  In addition, the package
-	  ", TO2( "SimpleDoc::SimpleDoc", "SimpleDoc"), " is made available.  If functions from additional packages are needed
-	  by the code in the new package, then ", TO "needsPackage", " can be used (after the use of ", TO "newPackage", ") to provide them.
-	  If functions from additional packages are needed by the user who will load the new package, then 
-	  ", TO "needsPackage", " can be used (before the use of ", TO "newPackage", ") to provide them."
-	  },
-     EXAMPLE { 
-///newPackage("Foo", 
-     Version => "1.1", 
-     Headline => "making Foo",
-     Configuration => { "foo" => 42, "bar" => "x" }
-     )///,
-          ///endPackage "Foo"///
-     	  },
-     "The options can be recovered with ", TO "options", " as follows.",
-     EXAMPLE lines ///
-     	  options Foo
-	  oo.Headline
-     	  (options Core).Version
-     ///,
-     PARA { "Here is a template for a typical ", TT "newPackage", " entry in a package."},
-     PRE ///newPackage("PACKAGENAME",
-    Headline => "one line description",
-    Version => "0.1",
-    Date => "month XX, 20XX",
-    Authors => {
-	 {Name => "author1", Email => "email1", HomePage => "url1"}
-	 {Name => "author2", Email => "email2", HomePage => "url2"},
-	 },
-    DebuggingMode => false,
-    HomePage => "http://univ.edu/~user/PACKAGENAME/",
-    Configuration => {}
-    )///,
-	SeeAlso => {"packages"}
-  }
      
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
