@@ -1,168 +1,163 @@
-document {
-     Key => "writing documentation",
-     HEADER3 "Introduction",
-     "Documentation for user defined ", TO "packages", 
-     " and Macaulay2 itself is written using 
-     the ", TO document, " function, using a straightforward ",
-     TO2("hypertext list format", "hypertext"), 
-     " markup language. 
-     It is then formatted via ", TO "installPackage", 
-     " as the documentation built in to Macaulay2, 
-     the online HTML documentation, and the info pages.
-     Much of the format and structure of the documentation is 
-     automatically generated.  Each documentation entry must be 
-     part of a package, and occur 
-     after the ", TO beginDocumentation, " section of the package.",     
-     HEADER3  "Documentation templates",
-     "Each documentation entry is either an overview topic, or 
-     documentation of an individual feature, such as a symbol, a function
-     name, a function call (that is, a function name, together with
-     specific types of its arguments), an optional argument to a function, or
-     a package",
-     PARA{},
-     "The easiest way to
-     write documentation for an entry is to start with one of the following examples 
-     or templates, and then modify it.",
-     UL {
-	  { TO("package documentation template")
-	  },
-	  { TO("function name documentation template")
-	  },
-	  { TO("function documentation template")
-	  },
-	  { TO("optional argument name documentation template")
-	  },
-	  { TO("optional argument documentation template")
-	  },
-	  { TO("overview documentation template")
-	  }
-     },
-     HEADER3 "The documentation writing cycle",
-     "Start with the package that you wish to document, and select
-     one, or several of the above examples or templates.
-     Cycle through the following steps as you refine your documentation.",
-     UL {
-	  "edit your doc entries as desired",
-	  {"generate the html pages for your package, using e.g., ",
-	       PRE///installPackage("yourPackage")///,
-     	      "A link to your package documentation is placed in the ", 
-	      TT "index.html", " file in the directory ",
-              TO2(applicationDirectory, TT "applicationDirectory()")},
-	  {"view your html using your favorite web browser, or use ",
-	       TO viewHelp, " as in e.g., ",
-	       PRE///viewHelp "doc entry name"///,
-	       "which displays this page in your browser."}
-	  },
-     HEADER3 "Documentation style conventions",
-	"There are a few stylistic conventions that should be noted:",
-	UL {
-		{"Lowercase is used for all titles, unless a proper noun is being used."},
-		{"The name of any Macaulay2 function, option, or variable, occurring in the documentation 
-		should be an active hyperlink. This can be accomplished with the tag ", TO "TO", "."},
-		{"If one needs to refer to the ", TT "i", "-th coefficient of some object, then use the format as given here."}
-		},
-  SeeAlso => {
-       document,
-       "hypertext list format",
-       SYNOPSIS
-     }
-  }
-document {
-     Key => "hypertext list format",
-     "Documentation text is composed of a list of text 
-     and hypertext items. A single text string, even though it is not a list, is 
-     generally accepted as a hypertext list. Math support is currently
-     rudimentary.  Macaulay2 examples may be included in the list",
-     PARA{},
-     "Each element of the list may be a text string, or one of the elements
-     below.",
-     "The following items are used by themselves",
-     UL {
-	  {TT "BR", " -- break to the next line"},
-	  {TT "HR", " -- a horizontal rule (line)"},
-	  TO "PARA",
-	  },
-     "Items that take a text string (or other hypertext list) as argument",
-     UL {
-	  {TT "TT s", " -- makes the argument ", TT "s", " into a 
-	                typewriter like, fixed font"},
-	  {TT "EM s", " -- change the font of ", TT "s", " to
-	                emphasize it"},
-	  {TT "PRE s", " -- considers the string ", TT "s", " to be
-	                preformatted."},
-	  {TT "SUB s", " -- subscript"},
-	  {TT "SUP s", " -- superscript"},
-	  },
-     "Items that place hyperlinks into the documentation",
-     UL {
-	  TO TO,
-	  TO TOH,
-	  TO TO2
-	  },
-     "Other useful hypertext elements",
-     UL {
-     	  TOH UL,
-	  TOH EXAMPLE},
-     SUBSECTION "Example",
-       "For example, the hypertext list",
+doc ///
+Node
+  Key
+    "writing documentation"
+    "conventions for documentation"
+  Description
+    Text
+      Documentation for user defined @TO "packages"@ and Macaulay2 itself is written using two main methods:
 
-       PRE///{ 
-  HR{},
-  "When referring to a ", 
-  EM "Macaulay2", 
-  " identifier such as ",
-  TT "matrix",   
-  ", use the TT element, or use a cross-reference, as in ",
-  TO matrix, 
-  ".  Incorporate ", 
-  EM "Macaulay2", 
-  " examples (during ",
-  TO (installPackage,String), 
-  ") as illustrated here.",
-  EXAMPLE "matrix{{1,2},{3,4}}",
-  HR{}
- }///,
+    Subnodes
+      :Macaulay2 documentation methods
+        :the @TO (document, List)@ function, using a list-based @TO2("hypertext list format", "hypertext")@ markup format;
+        :the @TO "SimpleDoc :: doc(String)"@ function, using a string-based @TO "SimpleDoc :: SimpleDoc"@ format.
+    Text
+      It is then formatted via @TO "installPackage"@ as the documentation built into Macaulay2,
+      the online HTML documentation, and the info pages. Much of the format and structure of the
+      documentation is automatically generated. Each documentation entry must be part of a package,
+      and occur after the @TO beginDocumentation@ section of the package.
+    Text
+      @HEADER3 "Documentation templates"@
 
-  PARA{},
-  
-  "when used in a ", TO "document", " node, produces",PARA{},
+      Each documentation entry is either an overview topic, or documentation of an individual feature,
+      such as a symbol, a function name, a function call (that is, a function name, together with
+      specific types of its arguments), an optional argument to a function, or a package.
 
-{ 
-  HR{},
-  "When referring to a ", 
-  EM "Macaulay2", 
-  " identifier such as ",
-  TT "matrix",   
-  ", use the TT element, or use a cross-reference, as in ",
-  TO matrix, 
-  ".  Incorporate ", 
-  EM "Macaulay2", 
-  " examples (during ",
-  TO (installPackage,String), 
-  ") as illustrated here.",
-  EXAMPLE "matrix{{1,2},{3,4}}",
-  HR{}
-},
+      The easiest way to write documentation for an entry is to modify one of the following examples as a template.
+    Subnodes
+      :Templates for using the @TO (document, List)@ method
+        "package documentation template"
+        "function name documentation template"
+        "function documentation template"
+        "optional argument name documentation template"
+        "optional argument documentation template"
+        "overview documentation template"
+      :Templates for using the @TO "SimpleDoc :: doc(String)"@ method
+        "SimpleDoc :: docTemplate"
+        "SimpleDoc :: packageTemplate"
+    Text
+      @HEADER3 "The documentation writing cycle"@
 
-SeeAlso => {
-     "conventions for documentation",
-     "writing documentation"
-  }
-}  
+      Start with the package that you wish to document, and select one, or several of the above
+      examples or templates. Cycle through the following steps as you refine your documentation.
 
+      @OL {
+          {"Edit your documentation entries as desired"},
+          {"Generate the html pages for your package, using ", PRE////installPackage("YourPackage")////},
+          {"Review the generated HTML documentation using ", TO viewHelp, " which displays this page in a browser."}
+          }@
+    Text
+      @HEADER3 "Documentation style conventions"@
 
+      There are a few stylistic conventions that should be noted. While not hard and fast rules,
+      keeping these stylistic conventions in mind makes for easier reading by users.
 
-  
-     
-document {
-     Key => "conventions for documentation",
-     "While not hard and fast rules, keeping these stylistic conventions
-     in mind makes for easier reading by users",
-     UL {
-	  { "Start with a documentation template, see ", TO "writing documentation", "." },
-	  { TO Inputs, ", ", TO Outputs, ", and ", TO Consequences, " should not end with periods."}
-	  }
-     }
+      @UL {
+          {"Lowercase is used for all titles, unless a proper noun is being used."},
+          {"Use ", TO TO, " to reference any Macaulay2 function, option, or variable occurring in the documentation as a hyperlink."},
+          {"If one needs to refer to the ", TT "i", "-th coefficient of some object, then use the format as given here."},
+          {TO Inputs, ", ", TO Outputs, ", and ", TO Consequences, " should not end with periods."}
+          }@
+  SeeAlso
+    viewHelp
+    installPackage
+    "SimpleDoc :: SimpleDoc"
+  Subnodes
+    beginDocumentation
+    :Documentation functions and templates based on the hypertext list format
+    "hypertext list format"
+    document
+    SYNOPSIS
+    EXAMPLE
+    "package documentation template"
+    "function name documentation template"
+    "function documentation template"
+    "optional argument name documentation template"
+    "optional argument documentation template"
+    "overview documentation template"
+
+Node
+  Key
+    "hypertext list format"
+  Description
+    Text
+      Documentation text is composed of a list of text and hypertext items. A single text string, even though
+      it is not a list, is generally accepted as a hypertext list. Macaulay2 examples may be included in the
+      list using the @TO EXAMPLE@ tag. See @TO "Text :: Text"@ for the full list of hypertext types.
+
+      Each element of the list may be a text string, or one of the elements below.
+      The following items are used by themselves:
+
+      @UL {
+          TOH BR,
+          TOH HR,
+          }@
+
+      Items that take a text string (or other hypertext list) as argument:
+
+      @UL {
+          TOH HEADER1,
+          TOH HEADER2,
+          TOH HEADER3,
+          TOH HEADER4,
+          TOH HEADER5,
+          TOH HEADER6,
+          TOH SUBSECTION,
+          TOH PARA,
+          TOH SPAN,
+          TOH ITALIC,
+          TOH TT,
+          TOH EM,
+          TOH PRE,
+          TOH SUB,
+          TOH SUP,
+          }@
+
+      Items that place hyperlinks into the documentation:
+
+      @UL {
+          TOH HREF,
+          TOH TO,
+          TOH TO2,
+          TOH TOH
+          }@
+
+      Other useful hypertext elements:
+
+      @UL {
+          TOH OL,
+          TOH UL,
+          TOH LI,
+          TOH DL,
+          TOH DT,
+          TOH DD,
+          TOH CODE,
+          TOH EXAMPLE
+          }@
+
+    Text
+      @SUBSECTION "Example"@
+
+      For example, the hypertext list:
+    Code
+      EXAMPLE{ PRE ////{  HR{}, "When referring to a ", EM "Macaulay2", " identifier such as ", TT "matrix",
+              ", use the TT element, or use a cross-reference, as in ", TO matrix, ".  Incorporate ", EM "Macaulay2",
+              " examples (during ", TO (installPackage,String), ") as illustrated here.", EXAMPLE "matrix{{1,2},{3,4}}", HR{} }////}
+    Text
+      when used as the input to @TO document@ produces:
+    Code
+      {  HR{}, "When referring to a ", EM "Macaulay2", " identifier such as ", TT "matrix",
+          ", use the TT element, or use a cross-reference, as in ", TO matrix, ".  Incorporate ", EM "Macaulay2",
+          " examples (during ", TO (installPackage,String), ") as illustrated here.", EXAMPLE "matrix{{1,2},{3,4}}", HR{} }
+  SeeAlso
+    html
+    net
+    info
+    Hypertext
+    (show, Hypertext)
+    "writing documentation"
+///
+
 document {
      Key => "function name documentation template",
  	PRE ///document {
