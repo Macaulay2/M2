@@ -83,6 +83,14 @@ doc ///
 
       regex("A(?!C)", "AC AB", Flags => RegexPerl);
       regex("A(?=B)", "AC AB", Flags => RegexPerl);
+
+    Text
+      @SUBSECTION "Passing internal flags to the C++ interface"@
+
+      The @TT "Flags"@ option can also be used to pass internal flags to the C++ interface as a list of strings or
+      as an integer. The permissible strings and values are not documented, as they are intended for use only within Core
+      and are subject to change without notice. See @HREF { currentLayout#"packages" | "Core/regex.m2", "Core/regex.m2" }@
+      for the list of currently admissible flags and their effects.
   SeeAlso
     "regular expressions"
     "strings and nets"
