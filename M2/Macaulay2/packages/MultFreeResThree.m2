@@ -342,10 +342,11 @@ eeMultTable(Ring) := opts -> A -> (
    m := A.cache#"m";
    n := A.cache#"n";
    eVector := matrix {apply(m, i -> A_i)};
-   oneTimesOneA := if (opts.Compact) then 
-                      matrix table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else 0)
-   		   else
-       		      matrix table(m,m,(i,j) -> (A_i)*(A_j));
+   if (opts.Compact) then (
+       oneTimesOneA := table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else 0))
+   else (
+       oneTimesOneA = matrix table(m,m,(i,j) -> (A_i)*(A_j));
+       );
    result := entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
    if (opts.Labels) then result else oneTimesOneA
    )
@@ -444,7 +445,7 @@ Q = QQ[x,y,z];
 
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
 mult = multTables(F)
-peek (m#0)
+peek (mult#0)
 peek (mult#1)
 eeProd(F,2,3)
 efProd(F,2,3)
