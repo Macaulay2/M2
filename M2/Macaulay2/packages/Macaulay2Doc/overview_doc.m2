@@ -23,18 +23,9 @@ Node
       such as a symbol, a function name, a function call (that is, a function name, together with
       specific types of its arguments), an optional argument to a function, or a package.
 
-      The easiest way to write documentation for an entry is to modify one of the following examples as a template.
-    Subnodes
-      :Templates for using the @TO (document, List)@ method
-        "package documentation template"
-        "function name documentation template"
-        "function documentation template"
-        "optional argument name documentation template"
-        "optional argument documentation template"
-        "overview documentation template"
-      :Templates for using the @TO "SimpleDoc :: doc(String)"@ method
-        "SimpleDoc :: docTemplate"
-        "SimpleDoc :: packageTemplate"
+      The easiest way to write documentation for an entry is to start with an examples as a template.
+      See the documentation on either of the documentation methods above for templates and examples.
+
     Text
       @HEADER3 "The documentation writing cycle"@
 
@@ -63,18 +54,10 @@ Node
     installPackage
     "SimpleDoc :: SimpleDoc"
   Subnodes
-    beginDocumentation
-    :Documentation functions and templates based on the hypertext list format
     "hypertext list format"
     document
-    SYNOPSIS
     EXAMPLE
-    "package documentation template"
-    "function name documentation template"
-    "function documentation template"
-    "optional argument name documentation template"
-    "optional argument documentation template"
-    "overview documentation template"
+    SYNOPSIS
 
 Node
   Key
@@ -156,202 +139,34 @@ Node
     Hypertext
     (show, Hypertext)
     "writing documentation"
+
+Node
+  Key
+    beginDocumentation
+  Headline
+    start documentation section of a package
+  Usage
+    beginDocumentation()
+  Consequences
+    Item
+      Initiates the documentation section of a package.
+      If the documentation has previously been processed and stored, then the rest of the file
+      after the invocation of @TT "beginDocumentation"@ will be skipped. Otherwise the packages
+      @TO "SimpleDoc :: SimpleDoc"@ and @TO "Text :: Text"@ will be loaded and the rest of the
+      file will be loaded.
+  Description
+    Text
+      Documentation for a package, and tests for the package, should be placed after this point
+      in a package file. This way, documentation can be loaded separately, Macaulay2 examples
+      in the documentation can be run, and the whole documentation can be stored in a database.
+
+      For an example, see @TO "an example of a package"@.
+
+      To write documentation without using the function @TT "beginDocumentation"@, which is just
+      an optimization, use @TO needsPackage@ to load the packages @TO "SimpleDoc :: SimpleDoc"@
+      and @TO "Text :: Text"@.
+  SeeAlso
+    installPackage
+    TEST
+    check
 ///
-
-document {
-     Key => "function name documentation template",
- 	PRE ///document {
-     Key => functionName,
-     Headline => "one line description",
-     Usage => "usage",
-     Inputs => {
-	  -- each input is a hypertext list
-	  },
-     Outputs => {
-	  -- each output is a hypertext list
-	  },
-     Consequences => {
-          -- each effect is a hypertext list
-	  },
-     "There can be explanatory prose here in the form of a hypertext list.",
-     EXAMPLE {
-	  "m2code",
-	  "m2code",
-	  "m2code"
-	  },
-     "There can be explanatory prose here in the form of a hypertext list.",
-     Caveat => {"warning"}
-     }///,
-     SeeAlso => {"writing documentation",
-	  "hypertext list format",
-	  document}
-     }
-document {
-     Key => "function documentation template",
- 	PRE ///document {
-     Key => (functionName, argumentClass1, argumentClass2, ...),
-     Headline => "one line description", -- only if different functionName Headline
-     Usage => "usage",
-     Inputs => {
-	  -- each input is a hypertext list
-	  },
-     Outputs => {
-	  -- each output is a hypertext list
-	  },
-     Consequences => {
-          -- each effect is a hypertext list
-	  },
-     "There can be explanatory prose here in the form of a hypertext list.",
-     EXAMPLE {
-	  "m2code",
-	  "m2code",
-	  "m2code"
-	  },
-     "There can be explanatory prose here in the form of a hypertext list.",
-     Caveat => {"warning"}
-     }///,
-     SeeAlso => {"writing documentation",
-	  "hypertext list format",
-	  document}
-     }
-document {
-     Key => "optional argument name documentation template",
- 	PRE ///document {
-     Key => optionName,
-     Headline => "one line description",
-     "There can be explanatory prose here in the form of a hypertext list.",
-     EXAMPLE {
-	  "m2code",
-	  "m2code",
-	  "m2code"
-	  },
-     "There can be explanatory prose here in the form of a hypertext list.",
-     Caveat => {"warning"}
-     }///,
-     SeeAlso => {"writing documentation",
-	  "hypertext list format",
-	  document}
-     }
-document {
-     Key => "optional argument documentation template",
- 	PRE ///document {
-     Key => [functionName, optionName],
-     Headline => "one line description",
-     Usage => "usage",
-     Inputs => {
-	  -- each input is a hypertext list
-	  },
-     Consequences => {
-          -- each effect is a hypertext list
-	  },
-     "There can be explanatory prose here in the form of a hypertext list.",
-     EXAMPLE {
-	  "m2code",
-	  "m2code",
-	  "m2code"
-	  },
-     "There can be explanatory prose here in the form of a hypertext list.",
-     Caveat => {"warning"}
-     }///,
-     SeeAlso => {"writing documentation",
-	  "hypertext list format",
-	  document}
-     }
-document {
-     Key => "overview documentation template",
- 	PRE ///document {
-     Key => "description of this page",
-     Headline => "one line description",
-     "There can be explanatory prose here in the form of a hypertext list.",
-     EXAMPLE {
-	  "m2code",
-	  "m2code",
-	  "m2code"
-	  },
-     "There can be explanatory prose here in the form of a hypertext list.",
-     Caveat => {"warning"}
-     }///,
-     SeeAlso => {"writing documentation",
-	  "hypertext list format",
-	  document}
-     }
-document {
-     Key => "package documentation template",
- 	PRE ///document {
-     Key => PACKAGENAME,
-     Headline => "one line description",
-     "There can be explanatory prose here in the form of a hypertext list.",
-     EXAMPLE {
-	  "m2code",
-	  "m2code",
-	  "m2code"
-	  },
-     "There can be explanatory prose here in the form of a hypertext list.",
-     Caveat => {"warning"}
-     Subnodes => {
-	  TO functionName1,
-	  TO functionName2 -- and so on
-	  }
-     }///,
-     SeeAlso => {"writing documentation",
-	  "hypertext list format",
-	  document}
-     }
-
-undocumented {(SYNOPSIS, Sequence),(SYNOPSIS, Thing),(SYNOPSIS, List)}
-
-document {
-     Key => [SYNOPSIS, Heading],
-     "Specifies a subheading for the synopsis.  The default is simply \"Synopsis\"."
-     }
-
-document { Key => {SYNOPSIS,[SYNOPSIS, Usage],[SYNOPSIS, Outputs],[SYNOPSIS, Inputs],[SYNOPSIS, Consequences],
-	  [SYNOPSIS, BaseFunction]},
-     PARA {
-	  "This function prepares a standardized synopsis in hypertext for use in documentation nodes."
-	  },
-     "Here is an empty template for use with SYNOPSIS.",
-     PRE "     SYNOPSIS (
-	  Heading => \"\",
-	  Usage => \"\"
-	  BaseFunction => fn,
-	  Inputs => {
-	       },
-	  Consequences => {
-	       }
-	  Outputs => {
-	       },
-	  PARA {
-	       },
-	  EXAMPLE lines ///
-	  ///
-	  ),
-",
-     PARA {
-	  "The options are used just as with ", TO "document", "."
-	  },
-     "Here is an example of its use.",
-     PRE "     SYNOPSIS {
-	  Heading => \"using binary methods for method functions\",
-	  Usage => \"f(x,y)\",
-	  Inputs => {
-	       \"f\" => { \"a method function\" },
-	       \"x\" => { \"an object of type \", TT \"X\" },
-	       \"y\" => { \"an object of type \", TT \"Y\" }
-	       },
-	  Outputs => {
-	       { \"the previously installed method for \", TT \"f(X,Y)\", \" is called with arguments \", TT \"(x,y)\", \", and the return value is returned.
-  		    If no such method has been installed, then Macaulay2 searches for a method
-		    for \", TT \"f(X',Y')\", \", where \", TT \"X'\", \" is an ancestor of \", TT \"X\", \" and \", TT \"Y'\", \" is an ancestor of \", TT \"Y\", \"
-		    (see \", TO \"inheritance\", \" for details).\"
-		    }
-	       },
-	  \"The second line of the following example illustrates the syntax above, using \", TO \"source\", \", which happens to be a method function.\",
-	  EXAMPLE lines ///
-	       source(String,String) := peek;
-	       source(\"foo\",\"bar\")
-	  ///,
-	  PARA \"The same syntax works for 3 or 4 arguments.\"
-	  }
-",
-     }

@@ -1,15 +1,14 @@
 -- -*- coding: utf-8 -*-
 scan((
      -- some optional arguments
-	  FollowLinks,Hilbert,Options,InstallPrefix,Exclude,CompleteIntersection,MaximalRank,MaxReductionCount,Reverse,
-	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
-	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose,RunExamples,SourceRing,
-	  Inverses,WeylAlgebra,Degrees,MonomialSize,CheckDocumentation,IgnoreExampleErrors,MakeDocumentation,MakeInfo,MakeLinks,
-	  RemakeAllDocumentation,RerunExamples,UserMode,Generic,DegreeRank,Heft,Limit,SizeLimit,StopWithMinimalGenerators,
+	  FollowLinks,Hilbert,Options,Exclude,CompleteIntersection,MaximalRank,MaxReductionCount,Reverse,
+	  Algorithm,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,Description,Variables,
+	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,Unmixed,Decompose,SourceRing,
+	  Inverses,WeylAlgebra,Degrees,MonomialSize,Generic,DegreeRank,Heft,Limit,SizeLimit,StopWithMinimalGenerators,
 	  StopBeforeComputation,DegreeLimit,BasisElementLimit,SyzygyLimit,PairLimit,CodimensionLimit,Strategy,Syzygies,
-	  ChangeMatrix,SyzygyRows,MinimalMatrix,SyzygyMatrix,Certification,Reload,
-	  KeepZeroes,Heading,ClosestFit,Density,Height,UpperTriangular,Local,Binomial,Monomial,DegreeMap,DegreeLift,
-	  Join,CacheExampleOutput,Reduce,Result,SeparateExec),
+	  ChangeMatrix,SyzygyRows,MinimalMatrix,SyzygyMatrix,Certification,
+	  KeepZeroes,ClosestFit,Density,Height,UpperTriangular,Local,Binomial,Monomial,DegreeMap,DegreeLift,
+	  Join,Reduce,Result),
      s -> if s =!= null then document {
 	  Key => s,
 	  Headline => "name for an optional argument",
@@ -26,6 +25,12 @@ scan((
 	  "A symbol used as the value of an optional argument, for some function(s)."
 	  }
      )
+
+document { Key => "epkg",
+     "The program ", TT "epkg", " is used to ", EM "encapsulate", " the files of a package
+     in a subdirectory for easy later removal.  Symbolic links make it look like they have
+     been installed in the right place.  See ", HREF "https://github.com/DanGrayson/epkg", "."
+     }
 
 document {
      Key => "initial help",				    -- display by the help command by default

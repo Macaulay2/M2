@@ -1,3 +1,5 @@
+-- see functions/package-doc.m2 for all package related functions
+
 -- subnodes of "Macaulay2"
 doc ///
 Node
@@ -98,10 +100,23 @@ Node
     "creating a package"
     "packages provided with Macaulay2"
   Subnodes
+    package
+    Package
     loadPackage
+    readPackage
     needsPackage
-    dismiss
+    installPackage
+    installedPackages
+    uninstallPackage
+    uninstallAllPackages
+    (use, Package)
+    (check, Package)
+    (debug, Package)
+    (dismiss, Package)
+    (options, Package)
+    makePackageIndex
     "loadedPackages"
+    "PackageDictionary"
 
 Node
   Key
@@ -145,11 +160,17 @@ Node
       there are no errors in the package documentation and that all the tests pass.
   SeeAlso
     "packages"
+    "writing documentation"
   Subnodes
     "an example of a package"
+    "currentPackage"
+    :Components of a package
     newPackage
-    installPackage
-    uninstallPackage
+    export
+    exportMutable
+    beginDocumentation
+    TEST
+    endPackage
 
 Node
   Key

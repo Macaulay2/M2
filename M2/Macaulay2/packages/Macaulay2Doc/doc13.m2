@@ -285,24 +285,6 @@ document { Key => {applicationDirectory, "application directory"},
      EXAMPLE "applicationDirectory()",
      SeeAlso => "applicationDirectorySuffix"}
 
-document {
-     Key => installedPackages,
-     Usage => "installedPackages()",
-     Outputs => { 
-	  List => {{"a list of strings containing the names of the packages that have been installed in the user's ", TO "application directory", "."}},
-	  },
-     SeeAlso => { installPackage }
-     }
-
-document {
-     Key => uninstallAllPackages,
-     Usage => "uninstallAllPackages()",
-     Consequences => {
-	  { "the packages that have been installed in the user's ", TO "application directory", " are uninstalled." }
-	  },
-     SeeAlso => { installPackage, uninstallPackage }
-     }
-
 document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ),(round,CC)},
      Headline => "round a number",
      SYNOPSIS (
@@ -410,8 +392,6 @@ document { Key => Verbose,
      Headline => "request verbose feedback" }
 document { Key => PrimaryTag,
      Headline => "for internal use only: a symbol used in storing documentation" }
-document { Key => LoadDocumentation,
-     Headline => "when loading a package, load the documentation, too" }
 document { Key => {ofClass,(ofClass, Type),(ofClass, ImmutableType),(ofClass, List)}, 
      Headline => "English phrases for types",
      Usage => "ofClass T",
@@ -606,15 +586,6 @@ document { Key => OutputDictionary,
      ///,
      SeeAlso => { "dictionaryPath" }
      }
-document { Key => PackageDictionary,
-     Headline => "the dictionary for names of packages",
-     SeeAlso => { "dictionaryPath" },
-     "This dictionary is used just for names of packages.",
-     EXAMPLE lines ///
-         dictionaryPath
-	 values PackageDictionary
-     ///
-     }
 document { Key => Pseudocode,
      Headline => "the class of pseudocodes",
      "The Macaulay2 interpreter compiles its language into pseudocode, which is evaluated later, step by step.  At each
@@ -795,20 +766,6 @@ document { Key => {(unbag, Bag), unbag},
 	  y = Bag {x}
 	  unbag y
      ///
-     }
-document { Key => {undocumented,(undocumented, Thing), (undocumented, List)},
-     Headline => "declare that something need not be documented",
-     Usage => "undocumented key",
-     Inputs => { "key" => { "a documentation key, or a list of keys" }},
-     Consequences => { { "the documentation key(s) are designated as keys not needing documentation, thus avoiding warning messages when a package is installed" }},
-     SeeAlso => { installPackage, "documentation keys" },
-     EXAMPLE lines ///
-     	  f = method()
-	  f List := x -> 1
-	  f VisibleList := x -> 2
-	  f BasicList := x -> 3
-	  undocumented { f, (f,List) }
-     ///,
      }
 document { Key => "documentation keys",
      PARA {"The Macaulay2 documentation is linked together by cross-references from one documentation node to another.  Each node is identified by a

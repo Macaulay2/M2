@@ -1257,18 +1257,6 @@ document { Key => (module, Vector),
 	  class v
      ///}
 
-document { Key => {package,(package, Dictionary), (package, Thing),
-	  (package, HashTable), (package, Function), (package, Symbol),
-	  (package, Sequence)
-	  },
-     Headline => "get containing package",
-     Usage => "package x",
-     Inputs => {"x"},
-     Outputs => {{"the package in which the documentation key ", TT "x", " was defined"}},
-     EXAMPLE lines ///
-     	  package sin
-	  package poly
-     ///}
 document { Key => {(rotate, ZZ, VisibleList),rotate},
      Headline => "rotate a list",
      Usage => "rotate(n,v)",
@@ -1709,13 +1697,6 @@ document { Key => "debugError",
      "In certain situations, after an error occurs, the offending code, in the form of a function, will be stored in the
      variable ", TO "debugError", ", so the user can debug it by running it."
      }
-document { Key => "currentPackage",
-     Headline => "the current package",
-     EXAMPLE lines ///
-     	  newPackage "Foo"
-	  currentPackage
-	  endPackage "Foo"
-     ///}
 
 document { Key => {quotientRemainder,(quotientRemainder, Matrix, GroebnerBasis), (quotientRemainder, Matrix, Matrix)},
      Headline => "matrix quotient and remainder",
