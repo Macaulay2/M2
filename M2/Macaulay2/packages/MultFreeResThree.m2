@@ -368,7 +368,7 @@ efMultTable(Ring) := opts -> A -> (
 )
 
 multMap = method()
-multMap(QuotientRing, ZZ, ZZ) := (A,m,n) -> (
+multMap(Ring, ZZ, ZZ) := (A,m,n) -> (
     Abasism := basis(m,A);
     Abasisn := basis(n,A);
     AbasismPlusn := basis(m+n,A);
@@ -388,26 +388,20 @@ multMap(RingElement,ZZ) := (f,m) -> (
 )
 
 rankMultMap = method()
-rankMultMap(QuotientRing,ZZ,ZZ) := (A,m,n) -> rank multMap(A,m,n);
-
--*
-r_ij = rank (A_i -> Hom(A_j, A_(i+j)))
-
-f |-> multiplication by f on the left.
-*-
+rankMultMap(Ring,ZZ,ZZ) := (A,m,n) -> rank multMap(A,m,n);
 
 homothetyMap = method()
-homothetyMap(QuotientRing,ZZ,ZZ) := (A,m,n) -> (
+homothetyMap(Ring,ZZ,ZZ) := (A,m,n) -> (
     Abasism := basis(m,A);
     homothetyList := apply(flatten entries Abasism, f -> transpose matrix {flatten entries multMap(f,n)});
     matrix {homothetyList}
 )
 
 rankHomothetyMap = method()
-rankHomothetyMap(QuotientRing,ZZ,ZZ) := (A,m,n) -> rank homothetyMap(A,m,n);
+rankHomothetyMap(Ring,ZZ,ZZ) := (A,m,n) -> rank homothetyMap(A,m,n);
 
 tauMaps = method()
-tauMaps(QuotientRing,ZZ,ZZ,ZZ) := (A,l,m,n) -> (
+tauMaps(Ring,ZZ,ZZ,ZZ) := (A,l,m,n) -> (
   kk := coefficientRing A;
   multMaplm := multMap(A,l,m);
   multMapmn := multMap(A,m,n);
@@ -445,6 +439,24 @@ torAlgebraClassCodim3 QuotientRing := A -> (
       if (q != r) then return ("G(" | r | ")")
       else return ("H(" | p | "," | q | ")");
   );
+)
+
+poincareSeriesCodim3 = method()
+poincareSeriesCodim3 QuotientRing := R -> (
+   I := ideal R;
+   F := res I;
+   A := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
+   p := rank multMap(A,1,1);
+   q := rank multMap(A,1,2);
+   r := rank homothetyMap(A,2,1);
+   tau := first tauMaps(A,1,1,1);
+   m := numcols basis(1,A);
+   n := numcols basis(3,A);
+   e := numcols mingens ideal vars R;
+   G := ZZ[getSymbol "T",Weights=>{-1},Global=>false];
+   num := (1 + G_0)^(e-1);
+   den := 1 - G_0 - (m-1)*G_0^2 - (n-p)*G_0^3 + q*G_0^4 - tau*G_0^5;
+   (expression num) / (expression den)
 )
 
 TEST ///
@@ -501,10 +513,43 @@ homothetyMap(B,2,1)
 restart
 debug loadPackage "MultFreeResThree"
 Q = ZZ/3[x,y,z];
-F = res ideal (x^2, y^3, z^4, x*y*z)
---F = res ideal (x^2, y^3, z^4, x*y)
+--I = ideal (x^2, y^3, z^4, x*y*z)
+I = ideal (x^2, y^3, z^4, x*y)
+F = res I
 B = codimThreeTorAlgebra(F,{e,f,g})
 torAlgebraClassCodim3(B)
+poincareSeriesCodim3(Q/I)
+
+tau = tauMaps(B,1,1,1)
+X = tau#1
+Y = tau#2
+Z = tau#3
+I = id_(source tau#1);
+P = matrix {{I},{I}};
+assert((X++Y)*P == Z)
+
+mingens (image (X ++ Y) / image Z)
+(X ++ Y)P = Z
+
+0 1 0 0  0 1
+0 0 0 1  0 1
+
+q_11 = rank(A_1 \otimes A_1 \to A_2)
+2*((rank A_2)(rank A_1)-q_11*(rank A_1))
+
+V = A_1 ** A_1 ** A_1
+W_1 = A_1 ** A_2
+W_2 = A_2 ** A_1
+
+V --> V \oplus V -phi-> W_1 \oplus W_2
+
+\psi : V --> im \phi
+
+tau = coker \psi
+
+|X 0| |I|   |X|
+|0 Y| |I| = |Y|
+
 
 changeBasisT(F,B,{e_1,e_2,e_4})
 changeBasisHpq(F,B,e_(p+1),{f_(p+1)..f_(p+q)})
@@ -1572,25 +1617,4 @@ L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 6, 4, 7, 1, "Golod", 0, 0, "-"} )
 ///
 
--- oana's example
-restart
-debug loadPackage "MultFreeResThree"
-loadPackage "DGAlgebras"
-Q = QQ[x,y,z,w]
-I= ideal (w^2, y*w+z*w, x*w, y*z+z^2, y^2+z*w, x*y+x*z, x^2+z*w)
-R = Q/I
-B = HH(koszulComplexDGA R)
-qij = (i,j) -> rank multMap(B,i,j)
-rij = (i,j) -> rank homothetyMap(B,i,j)
-qij (1,1)
-qij (1,2)
-qij (1,3)
-qij (2,2)
-rij (1,1)
-rij (1,2)
-rij (2,1)
-rij (1,3)
-rij (3,1)
-rij (2,2)
 
-end
