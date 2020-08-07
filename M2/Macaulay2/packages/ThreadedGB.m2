@@ -502,7 +502,7 @@ doc ///
       Lineages are reported as well.
     Example
       S = QQ[x,y,z,w];
-      tgb({x*y-z^2,y*z-w^2},2,Verbose=>true);
+      -- tgb({x*y-z^2,y*z-w^2},2,Verbose=>true);
 ///
 doc ///
   Key
