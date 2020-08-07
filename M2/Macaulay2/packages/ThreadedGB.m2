@@ -332,7 +332,7 @@ doc ///
     Example
       QQ[a..d]
       I=ideal( -c^3+a^2+b*d, a*b*c-1,a*b*c)
-      T = tgb(I,2,Verbose=>true)
+      -- T = tgb(I,2,Verbose=>true)
     Text
       In particular, the lineages of null values tell us what S-polynomials didn't reduce to zero until $1$ was found as
       a remainder.
@@ -393,7 +393,7 @@ doc ///
       QQ[a..d];
       f0 = a*b-c^2;
       f1 = b*c-d^2;
-      tgb({f0,f1},2,Verbose=>true)
+      -- tgb({f0,f1},2,Verbose=>true)
     Text
       In the above example, the S-polynomial S(f0,f1) didn't reduce to zero hence the remainder was added to the
       output with key "(0-1)". The additional two S-polynomials reduced and the process ended.
