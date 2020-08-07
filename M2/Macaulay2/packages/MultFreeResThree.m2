@@ -459,6 +459,30 @@ poincareSeriesCodim3 QuotientRing := R -> (
    (expression num) / (expression den)
 )
 
+changeBasisT = method()
+changeBasisT(ChainComplex,List) := (F,inputEs) -> (
+  --- this function performs the change of basis of F required
+  --- so that the multiplication table of the tor algebra computed from F
+  --- is of the desired form.
+  Q := ring F;
+  B := ring first inputEs;
+  eList := inputEs;
+  annEs := ann ideal eList;
+  eList = eList | flatten entries ((gens annEs)*sub(matrix basis(1,annEs),B));
+  P1 := matrix entries sub(last coefficients(matrix{eList}, Monomials=>basis(1,B)), Q);
+  newF1 := Q^(-apply(eList, x -> drop(degree x,1)));
+  newdd1 := (F.dd#1)*map(F#1,newF1,P1);
+  newdd2 := map(newF1,F#1,P1^(-1))*(F.dd#2);
+  fList := matrix {{eList#1*eList#2,eList#2*eList#0,eList#0*eList#1}};
+  fList = fList | basis(2,B)*(mingens coker multMap(B,1,1));
+  P2 := matrix entries sub(last coefficients(fList, Monomials=>basis(2,B)), Q);
+  newF2 := Q^(-apply(flatten entries fList, x -> drop(degree x,1)));
+  newdd2 = newdd2*map(F#2,newF2,P2);
+  newdd3 := map(newF2,F#2,P2^(-1))*F.dd#3;
+  G := makeRes(newdd1,newdd2,newdd3);
+  G
+)
+
 TEST ///
 Q = QQ[x,y,z];
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
@@ -550,33 +574,38 @@ tau = coker \psi
 |X 0| |I|   |X|
 |0 Y| |I| = |Y|
 
-
+-- these functions take the information required to make the change of coordinates
+-- and will perform the change and return the new complex.
 changeBasisT(F,B,{e_1,e_2,e_4})
 changeBasisHpq(F,B,e_(p+1),{f_(p+1)..f_(p+q)})
 changeBasisGr(F,B,{es},g) -- e's + 'orientation class' g determine the fs?
 changeBasisC3(F,B) --?
 changeBasisB(F,B,{e_1,e_2},g_1) -- e's and g inform choice of fs
 
-X = multMap(B,1,1)
-Xe1 = multMap(e_1,1)
-Xe2 = multMap(e_2,1)
-Xe3 = multMap(e_3,1)
-Xe4 = multMap(e_4,1)
-genX = a*Xe1 + b*Xe2 + c*Xe3 + d*Xe4
-min3 = minors(3,genX)
-min2 = minors(2,genX)
-primaryDecomposition min2
+--- change of basis working space -- T case
+restart
+debug loadPackage "MultFreeResThree"
+Q = ZZ/3[x,y,z];
+I = ideal (x^2, y^3, z^4, x*y*z)
+F = res I
+B = codimThreeTorAlgebra(F,{e,f,g})
+G = changeBasisT(F,{e_1,e_2,e_4})
+C = codimThreeTorAlgebra(G,{e,f,g})
+netList eeMultTable(C)
 
-PX -> reduced echelon form
-P = id_((ZZ/3)^6)
-P = P^{1,3,5,0,2,4}
-P = diagonalMatrix(ZZ/3,{-1,-1,-1,1,1,1})*P
-P*X
+--- change of basis working space -- class H(3,2)
+restart
+debug loadPackage "MultFreeResThree"
+Q = ZZ/3[x,y,z];
+I = ideal (x^2, y^3, z^4, x*y)
+F = res I
+B = codimThreeTorAlgebra(F,{e,f,g})
+G = changeBasisT(F,{e_1,e_2,e_4})
+C = codimThreeTorAlgebra(G,{e,f,g})
+netList eeMultTable(C)
 
-e_1 \otimes A_1 \to A_2
-e_2 \otimes A_1 \to A_2
-e_3 \otimes A_1 \to A_2
-e_4 \otimes A_1 \to A_2
+netList eeMultTable(C)
+netList entries efMultTable(C)
 
 netList eeMultTable (A, Compact => false)
 eeMultTable(A, Labels=>false)
