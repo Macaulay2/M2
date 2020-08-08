@@ -310,7 +310,12 @@ codimThreeAlgStructure(ChainComplex, List) := (F, sym) -> (
    gVector := matrix {apply(n, i -> P_(m+l+i))};
    eeGens := apply(pairs mult#0, p -> first flatten entries (P_(p#0#0-1)*P_(p#0#1-1) - fVector*(phi(p#1))));
    efGens := apply(pairs mult#1, p -> first flatten entries (P_(p#0#0-1)*P_(m+p#0#1-1) - gVector*(phi(p#1))));
-   I := (ideal eeGens) + (ideal efGens);
+   I := (ideal eeGens) +
+        (ideal efGens) +
+	(ideal apply(m..(m+l-1), i -> P_i))^2 +
+	(ideal apply(0..(m-1), i -> P_i))*(ideal apply((m+l)..(m+l+n-1), i -> P_i)) + 
+	(ideal apply(m..(m+l-1), i -> P_i))*(ideal apply((m+l)..(m+l+n-1), i -> P_i)) +
+	(ideal apply((m+l)..(m+l+n-1), i -> P_i))^2;
    A := P/I;
    A.cache#"l" = l;
    A.cache#"m" = m;
@@ -464,23 +469,67 @@ changeBasisT(ChainComplex,List) := (F,inputEs) -> (
   --- this function performs the change of basis of F required
   --- so that the multiplication table of the tor algebra computed from F
   --- is of the desired form.
-  Q := ring F;
-  B := ring first inputEs;
-  eList := inputEs;
-  annEs := ann ideal eList;
-  eList = eList | flatten entries ((gens annEs)*sub(matrix basis(1,annEs),B));
-  P1 := matrix entries sub(last coefficients(matrix{eList}, Monomials=>basis(1,B)), Q);
-  newF1 := Q^(-apply(eList, x -> drop(degree x,1)));
-  newdd1 := (F.dd#1)*map(F#1,newF1,P1);
-  newdd2 := map(newF1,F#1,P1^(-1))*(F.dd#2);
-  fList := matrix {{eList#1*eList#2,eList#2*eList#0,eList#0*eList#1}};
-  fList = fList | basis(2,B)*(mingens coker multMap(B,1,1));
-  P2 := matrix entries sub(last coefficients(fList, Monomials=>basis(2,B)), Q);
-  newF2 := Q^(-apply(flatten entries fList, x -> drop(degree x,1)));
-  newdd2 = newdd2*map(F#2,newF2,P2);
-  newdd3 := map(newF2,F#2,P2^(-1))*F.dd#3;
-  G := makeRes(newdd1,newdd2,newdd3);
-  G
+   Q := ring F;
+   B := ring first inputEs;
+   eList := inputEs;
+   annEs := ann ideal eList;
+   eList = eList | flatten entries ((gens annEs)*sub(matrix basis(1,annEs),B));
+   P1 := matrix entries sub(last coefficients(matrix{eList}, Monomials=>basis(1,B)), Q);
+   newF1 := Q^(-apply(eList, x -> drop(degree x,1)));
+   newdd1 := (F.dd#1)*map(F#1,newF1,P1);
+   newdd2 := map(newF1,F#1,P1^(-1))*(F.dd#2);
+   fList := matrix {{eList#1*eList#2,eList#2*eList#0,eList#0*eList#1}};
+   fList = fList | basis(2,B)*(mingens coker multMap(B,1,1));
+   P2 := matrix entries sub(last coefficients(fList, Monomials=>basis(2,B)), Q);
+   newF2 := Q^(-apply(flatten entries fList, x -> drop(degree x,1)));
+   newdd2 = newdd2*map(F#2,newF2,P2);
+   newdd3 := map(newF2,F#2,P2^(-1))*F.dd#3;
+   G := makeRes(newdd1,newdd2,newdd3);
+   G
+)
+
+changeBasisHpq = method()
+changeBasisHpq(ChainComplex,RingElement) := (F,ee) -> (
+   Q := ring F;
+   B := ring ee;
+   
+   multMap1 := multMap(ee,1);
+   imagMultMap1 := mingens image multMap1;
+   eList := flatten entries (basis(1,B)*(imagMultMap1 // multMap1));
+   -- the next line remove components of distinguished element (not sure if necessary)
+   eList = eList / (f -> f % ideal {ee});
+   eList = eList | {ee};
+   dubAnnMod := (ann ann ee) / (ideal ee);
+   newEs := flatten entries ((gens dubAnnMod)*(matrix basis(1,dubAnnMod)));
+   newEs = newEs / (f -> f % ideal {ee});
+   eList = eList | newEs;
+   
+   fList := flatten entries (basis(2,B)*imagMultMap1);
+   multMap2 := multMap(ee,2);
+   imagMultMap2 := mingens image multMap2;
+   fList = fList | flatten entries (basis(2,B)*(imagMultMap2 // multMap2));
+   -- complete fList to a basis in degree two now
+   -- this is probably a very bad way to do it...
+   newFs := basis(2,B)*(matrix basis(2, (ideal basis(2,B))/(sub(ideal fList,B))));
+   fList = fList | flatten entries newFs;
+   
+   gList := flatten entries (basis(3,B)*imagMultMap2);
+   gList = gList | flatten entries (basis(3,B)*(mingens coker multMap2));
+   
+   newF1 := Q^(-apply(eList, x -> drop(degree x,1)));
+   newF2 := Q^(-apply(fList, x -> drop(degree x,1)));
+   newF3 := Q^(-apply(gList, x -> drop(degree x,1)));
+
+   P1 := matrix entries sub(last coefficients(matrix{eList}, Monomials=>basis(1,B)), Q);
+   P2 := matrix entries sub(last coefficients(matrix{fList}, Monomials=>basis(2,B)), Q);
+   P3 := matrix entries sub(last coefficients(matrix{gList}, Monomials=>basis(3,B)), Q);
+
+   newdd1 := (F.dd#1)*map(F#1,newF1,P1);
+   newdd2 := map(newF1,F#1,P1^(-1))*(F.dd#2)*map(F#2,newF2,P2);
+   newdd3 := map(newF2,F#2,P2^(-1))*(F.dd#3)*map(F#3,newF3,P3);
+
+   G := makeRes(newdd1,newdd2,newdd3);
+   G
 )
 
 TEST ///
@@ -591,17 +640,37 @@ F = res I
 B = codimThreeTorAlgebra(F,{e,f,g})
 G = changeBasisT(F,{e_1,e_2,e_4})
 C = codimThreeTorAlgebra(G,{e,f,g})
+(net F.dd) | (net G.dd)
 netList eeMultTable(C)
 
 --- change of basis working space -- class H(3,2)
 restart
 debug loadPackage "MultFreeResThree"
-Q = ZZ/3[x,y,z];
+Q = ZZ/53[x,y,z];
 I = ideal (x^2, y^3, z^4, x*y)
 F = res I
 B = codimThreeTorAlgebra(F,{e,f,g})
-G = changeBasisT(F,{e_1,e_2,e_4})
+netList eeMultTable(B)
+G = changeBasisHpq(F,e_4)
 C = codimThreeTorAlgebra(G,{e,f,g})
+netList eeMultTable(C)
+netList entries efMultTable(C)
+
+--- change of basis working space -- class H(0,0)
+--- this one is Golod, so hard to tell if it is really 'working'
+--- but good to have this case anyway.
+restart
+debug loadPackage "MultFreeResThree"
+Q = QQ[x,y,z]
+I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
+F = res I
+B = codimThreeTorAlgebra(F,{e,f,g})
+netList eeMultTable(B)
+G = changeBasisHpq(F,e_1)
+C = codimThreeTorAlgebra(G,{e,f,g})
+netList eeMultTable(C)
+netList entries efMultTable(C)
+
 netList eeMultTable(C)
 
 netList eeMultTable(C)
@@ -636,8 +705,6 @@ I = ideal(x^2,(y+w^2)^2,z^2,x*(y+w^2))
 F = res I
 A = codimThreeAlgStructure(F,{e,f,g})
 B = codimThreeTorAlgebra(F,{e,f,g})
-
-
 
 eeMultTable A
 efMultTable B
