@@ -329,9 +329,10 @@ codimThreeTorAlgebra(ChainComplex,List) := (F,sym) -> (
    A := codimThreeAlgStructure(F,sym);
    P := ambient A;
    Q := ring F;
-   I := ideal A;
-   J := ideal mingens (I + ideal sub(vars Q, P));
-   B := P/J;
+   kk := coefficientRing Q;
+   PP := kk monoid P;
+   I := ideal mingens sub(ideal A, PP);
+   B := PP/I;
    B.cache#"l" = A.cache#"l";
    B.cache#"m" = A.cache#"m";
    B.cache#"n" = A.cache#"n";
@@ -400,6 +401,16 @@ homothetyMap(Ring,ZZ,ZZ) := (A,m,n) -> (
     Abasism := basis(m,A);
     homothetyList := apply(flatten entries Abasism, f -> transpose matrix {flatten entries multMap(f,n)});
     matrix {homothetyList}
+)
+
+multPairingDualMap = method()
+multPairingDualMap(Ring,ZZ,ZZ,RingElement) := (A,m,n,w) -> (
+   -- this function returns the map A_m --> A_n^*
+   -- provided w is a basis of the image of the multiplication
+   -- map A_m ** A_n \to A_(m+n)
+    Abasism := basis(m,A);
+    multMapList := apply(flatten entries Abasism, f -> multMap(f,n));
+    matrix {multMapList}
 )
 
 rankHomothetyMap = method()
@@ -496,8 +507,27 @@ changeBasisHpq(ChainComplex,RingElement) := (F,ee) -> (
    multMap1 := multMap(ee,1);
    imagMultMap1 := mingens image multMap1;
    eList := flatten entries (basis(1,B)*(imagMultMap1 // multMap1));
-   -- the next line remove components of distinguished element (not sure if necessary)
-   eList = eList / (f -> f % ideal {ee});
+
+   -- now we add in some indeterminants to track the lifts, and choose
+   -- the first few es carefully so that they have trivial products.
+   a := getSymbol "a";
+   p := #eList;
+   varRing := (coefficientRing B)[a_1..a_p];
+   overC := varRing monoid B;
+   newI := sub(ideal B, overC);
+   C := overC/newI;
+   eeC := sub(ee,C);
+
+   if eList != {} then (
+      -- need to get this to work for general p!!!!
+      genEList := apply(#eList, i -> sub(eList#i,C) + sub(varRing_i,C)*eeC);
+      products := subsets(genEList,2) / product;
+      prodCoeffs := last coefficients(matrix {products}, Monomials => basis(2,C));
+      soln := mingens ideal flatten entries prodCoeffs;
+      eList = apply(genEList, f -> sub(f % sub(soln, C), B));
+   );
+
+   --- now continue...
    eList = eList | {ee};
    dubAnnMod := (ann ann ee) / (ideal ee);
    newEs := flatten entries ((gens dubAnnMod)*(matrix basis(1,dubAnnMod)));
@@ -566,15 +596,21 @@ efProd(F,2,3)
 ---- new code 8/4/2020
 restart
 debug loadPackage "MultFreeResThree"
-Q = ZZ/3[x,y,z];
+Q = ZZ/53[x,y,z];
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
 I = ideal (random(3,Q), random(2,Q), random(2,Q), random(3,Q))
+F = res I
 codim I
 torAlgClass(Q/I)
 F = res I
 
 A = codimThreeAlgStructure(F,{e,f,g})
 B = codimThreeTorAlgebra(F,{e,f,g})
+torAlgebraClassCodim3 B
+netList eeMultTable B
+
+netList entries efMultTable B
+efMultTable B
 
 rankMultMap(B,1,1)
 rankMultMap(B,1,2)
@@ -656,6 +692,37 @@ C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable(C)
 netList entries efMultTable(C)
 
+--- playing around with trying to find a distinguished element on a random example
+--- for class H(3,2)
+restart
+debug loadPackage "MultFreeResThree"
+kk = ZZ/32003
+Q = kk[x,y,z]
+I = ideal (random(3,Q), random(2,Q), random(2,Q), random(3,Q))
+F = res I
+B = codimThreeTorAlgebra(F,{e,f,g})
+netList eeMultTable B
+netList entries efMultTable B
+G = changeBasisHpq(F,e_2)
+C = codimThreeTorAlgebra(G,{e,f,g})
+netList eeMultTable C
+netList entries efMultTable C
+
+-- this is a change of coords away from example sent on 8/8
+restart
+debug loadPackage "MultFreeResThree"
+kk = ZZ/32003
+Q = kk[x,y,z]
+I = ideal (x^5 + y^5, x^5 - y^5, x*y^2*z^2 + x^5, x^2*y^2*z, x^3*y^2-y^5, x^4*y, z^3)
+F = res I
+B = codimThreeTorAlgebra(F,{e,f,g})
+netList eeMultTable B
+netList entries efMultTable B
+G = changeBasisHpq(F,e_1)
+C = codimThreeTorAlgebra(G,{e,f,g})
+netList eeMultTable C
+netList entries efMultTable C
+
 --- example from Lars -- class H(6,5)
 restart
 debug loadPackage "MultFreeResThree"
@@ -664,6 +731,7 @@ I = ideal (x^5, y^5, x*y^4, x^2*y^3, x^3*y^2, x^4*y, z^3)
 F = res I
 B = codimThreeTorAlgebra(F,{e,f,g})
 netList eeMultTable(B)
+netList entries efMultTable B
 G = changeBasisHpq(F,e_1)
 C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable(C)
@@ -683,6 +751,38 @@ G = changeBasisHpq(F,e_1)
 C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable(C)
 netList entries efMultTable(C)
+
+--- change of basis working space G(2)
+restart
+debug loadPackage "MultFreeResThree"
+Q = QQ[u,v,w,x,y,z]
+I = ideal(x*y^2,x*y*z,y*z^2,x^4-y^3*z,x*z^3-y^4)
+F = res I
+B = codimThreeTorAlgebra(F,{e,f,g})
+netList eeMultTable B
+netList entries efMultTable B
+-- changeBasisG(F,g_2)
+-- can find basis of image of multMap(B,1,2) to get the 'top class'
+-- A_2 --> Hom(A_1,A_3)
+-- f |-> left multiplication by f
+homothetyMap(B,2,1)
+-- need to restrict the codomain of homothety map
+-- to get a map from A_2 to A_1^*
+Abasism = basis(2,B)
+-- complete 'top class' to a basis using quotients
+-- use change of basis to tweak multMap, then project onto
+-- first row.
+-- in this example, the matrix is:
+proj = sub(matrix{{0,1}},Q)
+multMapList = apply(flatten entries Abasism, f -> transpose (proj*multMap(f,1)))
+M = matrix {multMapList}
+-- ker M are the 'other' fs
+-- coker M are the 'other es
+-- the rest is a pairing that we have to diagonalize.
+otherFs = basis(2,B)*(gens ker M)
+otherEs = basis(1,B)*(matrix mingens coker M)
+otherEs = flatten entries ((gens ann ideal(f_1..f_6))*(matrix basis(1,ann ideal (f_1..f_6))))
+
 
 netList eeMultTable(C)
 
