@@ -656,6 +656,19 @@ C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable(C)
 netList entries efMultTable(C)
 
+--- example from Lars -- class H(6,5)
+restart
+debug loadPackage "MultFreeResThree"
+Q = ZZ/53[x,y,z]
+I = ideal (x^5, y^5, x*y^4, x^2*y^3, x^3*y^2, x^4*y, z^3)
+F = res I
+B = codimThreeTorAlgebra(F,{e,f,g})
+netList eeMultTable(B)
+G = changeBasisHpq(F,e_1)
+C = codimThreeTorAlgebra(G,{e,f,g})
+netList eeMultTable(C)
+netList entries efMultTable(C)
+
 --- change of basis working space -- class H(0,0)
 --- this one is Golod, so hard to tell if it is really 'working'
 --- but good to have this case anyway.
