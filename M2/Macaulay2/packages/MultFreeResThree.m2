@@ -702,8 +702,8 @@ tau = coker \psi
 changeBasisT(F,B,{e_1,e_2,e_4}) -- (currently) based on es list
 changeBasisHpq(F,e_(p+1))       -- can determine based on distinguised element (open set of them)
 changeBasisG(F)                 -- can determine based on class.
-changeBasisC3(F,B)              -- no need to do anything
-changeBasisB(F,B,{e_1,e_2},g_1) -- e's and g inform choice of fs
+changeBasisB(F)                 -- can determine based on class.
+changeBasisC3(F)                -- no need to do anything
 
 --- Example of a class T ring
 restart
