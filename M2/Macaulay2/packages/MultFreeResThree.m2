@@ -284,6 +284,7 @@ P
 codimThreeAlgStructure = method()
 
 codimThreeAlgStructure(ChainComplex, List) := (F, sym) -> (
+   if F.cache#?"Algebra Structure" then return F.cache#"Algebra Structure";
    if length F != 3 then
      error "Expected a chain complex of length three which is free of rank one in degree zero.";
    if #sym != 3 or any(sym, s -> (class baseName s =!= Symbol))  then
@@ -320,12 +321,14 @@ codimThreeAlgStructure(ChainComplex, List) := (F, sym) -> (
    A.cache#"l" = l;
    A.cache#"m" = m;
    A.cache#"n" = n;
+   F.cache#"Algebra Structure" = A;
    A
 )
 
 codimThreeTorAlgebra = method()
 
 codimThreeTorAlgebra(ChainComplex,List) := (F,sym) -> (
+   if F.cache#?"Tor Algebra Structure" then return F.cache#"Tor Algebra Structure";
    A := codimThreeAlgStructure(F,sym);
    P := ambient A;
    Q := ring F;
@@ -336,6 +339,7 @@ codimThreeTorAlgebra(ChainComplex,List) := (F,sym) -> (
    B.cache#"l" = A.cache#"l";
    B.cache#"m" = A.cache#"m";
    B.cache#"n" = A.cache#"n";
+   F.cache#"Tor Algebra Structure" = B;
    B
 )
 
@@ -500,15 +504,18 @@ changeBasisT(ChainComplex,List) := (F,inputEs) -> (
   --- this function performs the change of basis of F required
   --- so that the multiplication table of the tor algebra computed from F
   --- is of the desired form.
-   Q := ring F;
-   B := ring first inputEs;
-   eList := inputEs;
-   annEs := ann ideal eList;
-   eList = eList | flatten entries ((gens annEs)*sub(matrix basis(1,annEs),B));
-   fList := flatten entries matrix {{eList#1*eList#2,eList#2*eList#0,eList#0*eList#1}};
-   fList = fList | flatten entries (basis(2,B)*(mingens coker multMap(B,1,1)));
-   gList := flatten entries basis(3,B);
-   performBasisChange(F,eList,fList,gList)
+
+  --- need to find correct basis e_1,e_2,e_3 such that 
+
+  Q := ring F;
+  B := ring first inputEs;
+  eList := inputEs;
+  annEs := ann ideal eList;
+  eList = eList | flatten entries ((gens annEs)*sub(matrix basis(1,annEs),B));
+  fList := flatten entries matrix {{eList#1*eList#2,eList#2*eList#0,eList#0*eList#1}};
+  fList = fList | flatten entries (basis(2,B)*(mingens coker multMap(B,1,1)));
+  gList := flatten entries basis(3,B);
+  performBasisChange(F,eList,fList,gList)
 )
 
 changeBasisHpq = method()
@@ -557,6 +564,27 @@ changeBasisHpq(ChainComplex,RingElement) := (F,ee) -> (
    gList = gList | flatten entries (basis(3,B)*(mingens coker multMap2));
 
    performBasisChange(F,eList,fList,gList)
+)
+
+changeBasisHpq(ChainComplex) := F -> (
+   --- this function selects an element ee of degree one such that left mult by ee
+   --- has full rank.  This is a generic condition, but we would like to choose
+   --- it homogeneously (if grading exists)
+
+   -- first try the es to see if any of them will work
+   B := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
+   p := rank multMap(B,1,1);
+   eGens := apply(B.cache#"m", i -> B_i);
+   goodEGens := select(eGens, ee -> rank multMap(ee,1) == p);
+   if goodEGens != {} then return changeBasisHpq(F,first goodEGens);
+
+   -- choose a random homogeneous element of each internal degree in degree 1.
+   eGenDegs := eGens / degree // unique;   
+   randElts := apply(eGenDegs, d -> random(d,B));
+   goodRands := select(randElts, ee -> rank multMap(ee,1) == p);
+   if goodRands != {} then return changeBasisHpq(F,first goodRands);
+   
+   << "Unable to determine a distinguished element for multiplication table." << endl;
 )
 
 changeBasisG = method()
@@ -699,8 +727,8 @@ tau = coker \psi
 
 -- these functions take the information required to make the change of coordinates
 -- and will perform the change and return the new complex.
-changeBasisT(F,B,{e_1,e_2,e_4}) -- (currently) based on es list
-changeBasisHpq(F,e_(p+1))       -- can determine based on distinguised element (open set of them)
+changeBasisT(F,B,{e_1,e_2,e_4}) -- (currently) based on es list :(
+changeBasisHpq(F)               -- can determine based on class.
 changeBasisG(F)                 -- can determine based on class.
 changeBasisB(F)                 -- can determine based on class.
 changeBasisC3(F)                -- no need to do anything
@@ -708,7 +736,8 @@ changeBasisC3(F)                -- no need to do anything
 --- Example of a class T ring
 restart
 debug loadPackage "MultFreeResThree"
-Q = ZZ/3[x,y,z];
+kk = ZZ/32003
+Q = kk[x,y,z];
 I = ideal (x^2, y^3, z^4, x*y*z)
 F = res I
 B = codimThreeTorAlgebra(F,{e,f,g})
@@ -720,6 +749,23 @@ C = codimThreeTorAlgebra(G,{e,f,g})
 (net F.dd) | (net G.dd)
 netList eeMultTable(C)
 netList efMultTable(C)
+
+a = getSymbol "a";
+m = 4
+varRing = (coefficientRing B)[a_(1,1)..a_(3,m)]
+overC = varRing monoid B
+newI = sub(ideal B, overC)
+C = overC/newI
+overD = varRing[ee_1,ee_2,ee_3,SkewCommutative=>true]
+J = ideal (ee_1*ee_2*ee_3)
+D = overD/J
+genMat = matrix entries transpose sub(genericMatrix(varRing,m,3),C)
+ringOuts = flatten entries (genMat*(transpose basis(1,C))) | flatten entries sub(vars varRing, C)
+phi = map(C,D,ringOuts)
+
+phi1 = sub(last coefficients(phi basis(1,D), Monomials=>basis(1,C)), varRing)
+phi2 = sub(last coefficients(phi basis(2,D), Monomials=>basis(2,C)), varRing)
+radical minors(3,phi2)
 
 --- H(3,2) example
 restart
@@ -746,7 +792,7 @@ F = res I
 B = codimThreeTorAlgebra(F,{e,f,g})
 netList eeMultTable B
 netList efMultTable B
-G = changeBasisHpq(F,e_2)
+G = changeBasisHpq(F) 
 C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable C
 netList efMultTable C
