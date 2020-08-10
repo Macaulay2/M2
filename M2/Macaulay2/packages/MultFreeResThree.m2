@@ -461,6 +461,11 @@ torAlgebraClassCodim3 QuotientRing := A -> (
   );
 )
 
+torAlgebraClassCodim3 ChainComplex := F -> (
+   B := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
+   torAlgebraClassCodim3 B
+)
+
 performBasisChange = method()
 performBasisChange(ChainComplex, List, List, List) := (F, eList, fList, gList) -> (
    Q := ring F;
@@ -504,9 +509,6 @@ changeBasisT(ChainComplex,List) := (F,inputEs) -> (
   --- this function performs the change of basis of F required
   --- so that the multiplication table of the tor algebra computed from F
   --- is of the desired form.
-
-  --- need to find correct basis e_1,e_2,e_3 such that 
-
   Q := ring F;
   B := ring first inputEs;
   eList := inputEs;
@@ -518,6 +520,22 @@ changeBasisT(ChainComplex,List) := (F,inputEs) -> (
   performBasisChange(F,eList,fList,gList)
 )
 
+-- this function tries to find an appropriate change of basis.
+-- WIP : This is a work in progress.  Not sure how to correctly choose 
+-- a random change of coordinates that will also be homogeneous if a grading is present.
+changeBasisT(ChainComplex) := F -> (
+   -- this function tries to choose a random change of coordinates for e_1,e_2,e_3
+   B := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
+   kk := coefficientRing B;
+   eList := select(gens B, d -> first degree d == 1);
+   eDegs := eList / degree // unique;
+   -- random homog change of coords in degree 1
+   genEs := flatten apply(eDegs, d -> random(d,B));
+   changeBasisT(F, genEs)
+)
+
+-- this method changes basis so that ee is the distinguished element in the
+-- H(p,q) classification
 changeBasisHpq = method()
 changeBasisHpq(ChainComplex,RingElement) := (F,ee) -> (
    Q := ring F;
@@ -578,7 +596,7 @@ changeBasisHpq(ChainComplex) := F -> (
    goodEGens := select(eGens, ee -> rank multMap(ee,1) == p);
    if goodEGens != {} then return changeBasisHpq(F,first goodEGens);
 
-   -- choose a random homogeneous element of each internal degree in degree 1.
+   -- choose a random (homogeneous) element of each internal degree in degree 1.
    eGenDegs := eGens / degree // unique;   
    randElts := apply(eGenDegs, d -> random(d,B));
    goodRands := select(randElts, ee -> rank multMap(ee,1) == p);
@@ -587,10 +605,19 @@ changeBasisHpq(ChainComplex) := F -> (
    << "Unable to determine a distinguished element for multiplication table." << endl;
 )
 
+-- This version finds gTop and then calls the below function to finish the rest
+-- of the computation
 changeBasisG = method()
 changeBasisG(ChainComplex) := F -> (
    B := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
    gTop := first flatten entries (basis(3,B)*(matrix mingens image multMap(B,1,2)));
+   changeBasisG(F,gTop)
+)
+
+-- This version finds a basis of es and fs so that 'gTop' is the top
+-- class of the Tor algebra
+changeBasisG(ChainComplex, RingElement) := (F, gTop) -> (
+   B := ring gTop;
    gList := {gTop} | flatten entries mingens ((ideal basis(3,B))/(ideal gTop));
    proj := (last coefficients(matrix{gList}, Monomials=>basis(3,B)))^{0};
    multMapList := apply(flatten entries basis(2,B), f -> transpose (proj*multMap(f,1)));
@@ -607,11 +634,20 @@ changeBasisG(ChainComplex) := F -> (
    performBasisChange(F,eList,fList,gList)
 )
 
+-- This version finds gTop and then calls the below function to finish the rest
+-- of the computation
 changeBasisB = method()
 changeBasisB(ChainComplex) := F -> (
    B := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
-   kk := coefficientRing B;
    gTop := first flatten entries (basis(3,B)*(matrix mingens image multMap(B,1,2)));
+   changeBasisB(F,gTop)
+)
+
+-- This version finds a basis of es and fs so that 'gTop' is the top
+-- class of the Tor algebra
+changeBasisB(ChainComplex, RingElement) := (F, gTop) -> (
+   B := ring gTop;
+   kk := coefficientRing B;
    gList := {gTop} | flatten entries mingens ((ideal basis(3,B))/(ideal gTop));
    proj := (last coefficients(matrix{gList}, Monomials=>basis(3,B)))^{0};
    multMapList := apply(flatten entries basis(2,B), f -> transpose (proj*multMap(f,1)));
@@ -626,6 +662,21 @@ changeBasisB(ChainComplex) := F -> (
    eList := goodEs | otherEs;
    fList := goodFs | {goodEs#0*goodEs#1} | otherFs;
    performBasisChange(F,eList,fList,gList)
+)
+
+changeBasisCodim3 = method()
+changeBasisCodim3(ChainComplex) := F -> (
+   torClass := torAlgebraClassCodim3 F;
+   if torClass#0 == "H" then
+      changeBasisHpq F
+   else if torClass#0 == "T" then
+      changeBasisT F
+   else if torClass#0 == "C" then
+      F
+   else if torClass#0 == "B" then
+      changeBasisB F
+   else if torClass#0 == "G" then
+      changeBasisG F
 )
 
 TEST ///
@@ -727,8 +778,8 @@ tau = coker \psi
 
 -- these functions take the information required to make the change of coordinates
 -- and will perform the change and return the new complex.
-changeBasisT(F,B,{e_1,e_2,e_4}) -- (currently) based on es list :(
-changeBasisHpq(F)               -- can determine based on class.
+changeBasisT(F)                 -- can determine based on class (open set)
+changeBasisHpq(F)               -- can determine based on class (open set)
 changeBasisG(F)                 -- can determine based on class.
 changeBasisB(F)                 -- can determine based on class.
 changeBasisC3(F)                -- no need to do anything
@@ -743,29 +794,27 @@ F = res I
 B = codimThreeTorAlgebra(F,{e,f,g})
 netList eeMultTable B
 netList efMultTable B
-G = changeBasisT(F,{e_1,e_2,e_4})
-isHomogeneous G
-C = codimThreeTorAlgebra(G,{e,f,g})
-(net F.dd) | (net G.dd)
+G = changeBasisCodim3 F
+C = codimThreeTorAlgebra(G, {e,f,g})
 netList eeMultTable(C)
 netList efMultTable(C)
 
-a = getSymbol "a";
-m = 4
-varRing = (coefficientRing B)[a_(1,1)..a_(3,m)]
-overC = varRing monoid B
-newI = sub(ideal B, overC)
-C = overC/newI
-overD = varRing[ee_1,ee_2,ee_3,SkewCommutative=>true]
-J = ideal (ee_1*ee_2*ee_3)
-D = overD/J
-genMat = matrix entries transpose sub(genericMatrix(varRing,m,3),C)
-ringOuts = flatten entries (genMat*(transpose basis(1,C))) | flatten entries sub(vars varRing, C)
-phi = map(C,D,ringOuts)
-
-phi1 = sub(last coefficients(phi basis(1,D), Monomials=>basis(1,C)), varRing)
-phi2 = sub(last coefficients(phi basis(2,D), Monomials=>basis(2,C)), varRing)
-radical minors(3,phi2)
+--- Example of a class T ring
+restart
+debug loadPackage "MultFreeResThree"
+kk = ZZ/32003
+Q = kk[x,y,z];
+I = ideal (x^3, y^3, z^3, x*y*z)
+F = res I
+torAlgebraClassCodim3 F
+B = codimThreeTorAlgebra(F,{e,f,g})
+netList eeMultTable B
+netList efMultTable B
+G = changeBasisCodim3 F -- BUG
+G = changeBasisT(F, {e_1,e_2,e_4})
+C = codimThreeTorAlgebra(G, {e,f,g})
+netList eeMultTable(C)
+netList efMultTable(C)
 
 --- H(3,2) example
 restart
@@ -775,7 +824,10 @@ I = ideal (x^2, y^3, z^4, x*y)
 F = res I
 B = codimThreeTorAlgebra(F,{e,f,g})
 netList eeMultTable(B)
+--- can specify the distinguished element
 G = changeBasisHpq(F,e_4)
+--- or try to find one automatically
+G = changeBasisHpq(F)
 isHomogeneous G
 C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable(C)
@@ -792,6 +844,7 @@ F = res I
 B = codimThreeTorAlgebra(F,{e,f,g})
 netList eeMultTable B
 netList efMultTable B
+G = changeBasisCodim3(F) 
 G = changeBasisHpq(F) 
 C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable C
@@ -808,6 +861,7 @@ B = codimThreeTorAlgebra(F,{e,f,g})
 netList eeMultTable B
 netList efMultTable B
 G = changeBasisHpq(F,e_1)
+G = changeBasisHpq(F)
 C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable C
 netList efMultTable C
@@ -819,8 +873,9 @@ Q = ZZ/53[x,y,z]
 I = ideal (x^5, y^5, x*y^4, x^2*y^3, x^3*y^2, x^4*y, z^3)
 F = res I
 B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable(B)
+netList eeMultTable B
 netList efMultTable B
+G = changeBasisCodim3(F)
 G = changeBasisHpq(F,e_1)
 C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable(C)
@@ -837,6 +892,7 @@ F = res I
 B = codimThreeTorAlgebra(F,{e,f,g})
 netList eeMultTable B
 netList efMultTable B
+G = changeBasisCodim3(F)
 G = changeBasisHpq(F,e_1)
 C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable(C)
@@ -852,6 +908,24 @@ F = res I
 B = codimThreeTorAlgebra(F,{e,f,g})
 netList eeMultTable B
 netList efMultTable B
+G = changeBasisCodim3(F)
+G = changeBasisG(F)
+C = codimThreeTorAlgebra(G,{e,f,g})
+netList eeMultTable C
+netList efMultTable C
+
+--- 'generic' G example
+restart
+debug loadPackage "MultFreeResThree"
+kk = ZZ/32003
+Q = kk[x,y,z]
+I = ideal fromDual matrix{{random(4,Q),random(9,Q)}};
+F = res I
+torAlgebraClassCodim3 F
+B = codimThreeTorAlgebra(F,{e,f,g})
+netList eeMultTable B
+netList efMultTable B
+G = changeBasisCodim3(F)
 G = changeBasisG(F)
 C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable C
@@ -868,6 +942,23 @@ B = codimThreeTorAlgebra(F,{e,f,g})
 netList eeMultTable B
 netList efMultTable B
 G = changeBasisB F
+G = changeBasisCodim3 F
+C = codimThreeTorAlgebra(G,{e,f,g})
+netList eeMultTable C
+netList efMultTable C
+
+--- 'generic' B example
+restart
+debug loadPackage "MultFreeResThree"
+kk = ZZ/32003
+Q = kk[x,y,z]
+I = ideal fromDual matrix{{random(2,Q),random(3,Q)}};
+F = res I
+B = codimThreeTorAlgebra(F,{e,f,g})
+netList eeMultTable B
+netList efMultTable B
+G = changeBasisB F
+G = changeBasisCodim3 F
 C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable C
 netList efMultTable C
