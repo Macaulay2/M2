@@ -695,7 +695,7 @@ myKernel Matrix := Matrix => MM -> (
 )
 
 
-noetherianOperators = method(Options => {DegreeLimit => 5, DependentSet => null}) 
+noetherianOperators = method(Options => {DegreeLimit => -1, DependentSet => null}) 
 noetherianOperators (Ideal, Ideal) := List => opts -> (I, P) -> (
     R := ring I;
     depVars := if opts.DependentSet === null then gens R - set support first independentSets P
@@ -707,14 +707,19 @@ noetherianOperators (Ideal, Ideal) := List => opts -> (I, P) -> (
     kP := toField(S/SradI);
     local M; local M'; local K; local bd; local bx;
     numOps := -1;
-    for i in 1..opts.DegreeLimit do (
+    i := 1;
+    terminate := false;
+    while not terminate do (
         bx = flatten entries sub(basis(0,i - 1,R),S);
         bd = basis(0,i,S);
         M = diff(bd, transpose matrix {flatten (table(bx,SI_*,(i,j) -> i*j))});
         M' = sub(M, kP);
         K = myKernel (M');
-        if numColumns K == numOps then break;
+        if numColumns K == numOps then terminate = true;
+        if opts.DegreeLimit >= 0 and i == opts.DegreeLimit then terminate = true;
         numOps = numColumns K;
+        i = i + 1;
+        if debugLevel > 0 then "Symbolic Noetherian degree: "<<i<<endl;
     );
     K = transpose first rowReduce(transpose K, true);
     S' := diffAlg S;
