@@ -1,13 +1,13 @@
 newPackage ( "TorAlgebra",
-    Version => "2.0",
-    Date => "9 February 2018",
+    Version => "2.1",
+    Date => "15 August 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
 	  HomePage => "http://www.math.ttu.edu/~lchriste/index.html" },
 	{ Name => "Oana Veliche", 
 	  Email => "o.veliche@northeastern.edu",
-	  HomePage => "https://cos.northeastern.edu/faculty/oana-veliche/" }
+	  HomePage => "https://web.northeastern.edu/oveliche/index.html" }
 	},
     Headline => "classification of local rings based on multiplication in homology",
     PackageImports => {"LocalRings"},
