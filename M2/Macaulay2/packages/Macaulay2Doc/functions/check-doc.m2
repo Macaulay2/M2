@@ -75,7 +75,7 @@ Node
 
       For example, to run the tests for the @TO "LLLBases :: LLLBases"@ package (Lenstra-Lenstra-Lovasz bases), use:
     Code
-      EXAMPLE { PRE ////installPackage "LLLBases"
+      EXAMPLE { PRE ////needsPackage "LLLBases"
 	  check_1 LLLBases
 	  check LLLBases//// }
     Text

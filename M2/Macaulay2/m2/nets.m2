@@ -106,6 +106,7 @@ net Thing := toString
 net Symbol := toString
 File << Symbol := File => (o,s) -> o << toString s		    -- provisional
 File << Thing  := File => (o,s) -> o << toString s		    -- provisional
+Nothing << Thing := File => (o,s) -> null
 -----------------------------------------------------------------------------
 
 Net == String := (n,s) -> (				    -- should install in engine

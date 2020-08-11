@@ -279,6 +279,15 @@ radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null, Strat
 regularity = method( TypicalValue => ZZ, Options => { Weights => null } )
 associatedPrimes = method( TypicalValue => List, Options =>{ Strategy => 1 } )
 
+-- defined in d/actors4.d
+format' := format
+format = method(Dispatch => Thing, TypicalValue => String)
+format RR :=
+format CC :=
+format String   := String => x -> format' x
+format Sequence := String => s -> format' s
+protect symbol format
+
 toString = method(Dispatch => Thing, TypicalValue => String)
 toString Thing := simpleToString			    -- if all else fails...
 toString String := identity

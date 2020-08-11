@@ -12,14 +12,13 @@ Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/"
 -- html output
 -----------------------------------------------------------------------------
 
-endswith := (suff,str) -> substring(str,-#suff) == suff
-
 -- we've turned off checking for existence of files...
 
 local prefix; local topNodeButton
 local nullButton; local masterIndexButton; local tocButton; local homeButton; -* local directoryButton; *-
 local NEXT; local PREV; local UP; local tableOfContents; local linkTable; local SRC
 local nextButton; local prevButton; local upButton; local backwardButton; local forwardButton
+
 local masterIndex
 
 hadDocumentationWarning := false
@@ -80,7 +79,7 @@ toURL String := pth -> (
 	       );
 	  r))
 
-toURL (String,String) := (prefix,tail) -> (		    -- this is the good one
+toURL(String, String) := (prefix,tail) -> (		    -- this is the good one
      -- we assume we are installing an html file in the directory installPrefix|htmlDirectory
      r := if prefix === installPrefix    -- note: installPrefix might be null, if we aren't installing a package
           and htmlDirectory =!= null
@@ -97,15 +96,10 @@ htmlFilename1 = (fkey,pkgname,layout) -> (
      basefilename := if fkey === pkgname then topFileName else toFilename fkey|".html";
      replace("PKG",pkgname,layout#"packagehtml") | basefilename)
 
-htmlFilename2 = (tag,layout) -> (
-     fkey := formattedKey tag;
-     pkgname := packageName tag;
-     htmlFilename1(fkey,pkgname,layout))
-
 htmlFilename = method(Dispatch => Thing)
 htmlFilename DocumentTag := tag -> (
-     pkgname := packageName tag;
-     fkey := formattedKey tag;
+     pkgname := package tag;
+     fkey := format tag;
      basefilename := if fkey === pkgname then topFileName else toFilename fkey|".html";
      if currentPackage#"pkgname" === pkgname
      then (
@@ -147,7 +141,7 @@ backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename
 
 
 linkTitle := s -> concatenate( " title=\"", htmlLiteral s, "\"" )
-linkTitleTag := tag -> "pkgname" => htmlLiteral concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
+linkTitleTag := tag -> "pkgname" => htmlLiteral concatenate(format tag, commentize headline tag)
 
 -- produce html form of documentation, for Macaulay2 and for packages
 
@@ -169,10 +163,9 @@ commentize := s -> if s =!= null then concatenate(" -- ",s)
 checkIsTag := tag -> ( assert(class tag === DocumentTag); tag )
 
 alpha := characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-indAl := new HashTable from apply(#alpha, i -> alpha#i => i)
 numAnchorsMade := 0
 makeAnchors := n -> (
-     ret := SPAN apply(take(alpha,{numAnchorsMade,n-1}), c -> ANCHOR{ "id" => c, ""});
+     ret := SPAN apply(take(alpha, {numAnchorsMade, n-1}), c -> ANCHOR{ "id" => c, ""});
      numAnchorsMade = n;
      ret)
 anchorsUpTo := entry -> if alpha#?numAnchorsMade and entry >= alpha#numAnchorsMade then makeAnchors length select(alpha, c -> entry >= c)
@@ -202,8 +195,8 @@ ForestNode = new Type of BasicList			    -- list of tree nodes, the descendent l
 TreeNode = new Type of BasicList			    -- first entry is DocumentTag for this node, second entry is a forest node
 
 traverse := method()
-traverse(ForestNode,Function) := (n,f) -> scan(n,t -> traverse(t,f))
-traverse(TreeNode,Function) := (t,f) -> (f t#0, traverse(t#1,f))
+traverse(ForestNode, Function) := (n,f) -> scan(n,t -> traverse(t,f))
+traverse(TreeNode,   Function) := (t,f) -> (f t#0, traverse(t#1,f))
 
 net ForestNode := x -> stack apply(toList x,net)
 net TreeNode := x -> (
@@ -220,21 +213,21 @@ local nodesToScope
 local missingReferences
 local repeatedReferences
 
-makeTree := x -> (
-     visits := if visitCount#?x then visitCount#x else 0;
-     visitCount#x = visits + 1;
+makeTree := p -> x -> (
+     visitCount#x = if visitCount#?x then append(visitCount#x, p) else {p};
      if linkTable#?x then (
-	  if visits > 0
+	  if #visitCount#x > 1
      	  then (
 	       if not repeatedReferences#?x then (
 		    repeatedReferences#x = true;
-		    stderr << "--error: repeated reference(s) to documentation as subnode: " << x << endl;
+		    stderr << "--error: repeated reference(s) to documentation as subnode: " << x << endl
+		           << "--  Parent nodes: " << peek visitCount#x << endl;
 		    -- this kind of structural problem is bad because it can make circular structures in the NEXT and PREV links
 		    hadDocumentationError = true
 		    );
 	       new TreeNode from { x , new ForestNode}
 	       )
-     	  else new TreeNode from { x, new ForestNode from apply(linkTable#x,makeTree)})
+	  else new TreeNode from { x, new ForestNode from apply(linkTable#x,(makeTree x))})
      else (
 	  if not missingReferences#?x then (
 	       missingReferences#x = true;
@@ -246,7 +239,7 @@ makeTree := x -> (
 	       );
 	  new TreeNode from { x , new ForestNode}
 	  ))
-makeForest := x -> new ForestNode from makeTree \ x
+makeForest := x -> new ForestNode from (makeTree topDocumentTag) \ x
 
 leaves := () -> keys set flatten values linkTable
 roots := () -> (
@@ -286,10 +279,10 @@ assembleTree := (pkg,nodes) -> (
      duplicateReferences = new MutableHashTable;
      linkTable = new HashTable from apply(nodes, tag -> (   -- collect links from each tag to its subnodes
 	       checkIsTag tag;
-	       fkey := DocumentTag.FormattedKey tag;
+	       fkey := format tag;
 	       if pkg#"raw documentation"#?fkey then (
 		    doc := pkg#"raw documentation"#fkey;
-		    tag => getPrimary \ first \ select(if doc.?Subnodes then toList doc.Subnodes else {}, x -> class x === TO))
+		    tag => getPrimaryTag \ first \ select(if doc.?Subnodes then toList doc.Subnodes else {}, x -> class x === TO))
 	       else (
 		    tag => {}
 		    )
@@ -334,7 +327,7 @@ capture String := s -> (
 makeMasterIndex := (keylist,verbose) -> (
      numAnchorsMade = 0;
      fn := installPrefix | htmlDirectory | indexFileName;
-     title := DocumentTag.FormattedKey topDocumentTag | " : Index";
+     title := format topDocumentTag | " : Index";
      if verbose then stderr << "--making '" << title << "' in " << fn << endl;
      r := HTML {
 	  defaultHEAD title,
@@ -355,7 +348,7 @@ makeMasterIndex := (keylist,verbose) -> (
 
 maketableOfContents := (verbose) -> (
      fn := installPrefix | htmlDirectory | tocFileName;
-     title := DocumentTag.FormattedKey topDocumentTag | " : Table of Contents";
+     title := format topDocumentTag | " : Table of Contents";
      if verbose then stderr << "--making  " << title << "' in " << fn << endl;
      fn
      << html HTML {
@@ -397,9 +390,6 @@ installPackage = method(
 	  Verbose => true,
 	  DebuggingMode => null
 	  })
-uninstallPackage = method(Options => { 
-          InstallPrefix => () -> applicationDirectory() | "local/"
-	  })
 
 removeFiles = p -> scan(reverse findFiles p, fn -> if fileExists fn or readlink fn =!= null then (
 	  if isDirectory fn then (
@@ -409,7 +399,9 @@ removeFiles = p -> scan(reverse findFiles p, fn -> if fileExists fn or readlink 
 	       if length readDirectory fn == 2 then removeDirectory fn)
 	  else removeFile fn))
 
-uninstallPackage String := opts -> pkg -> (
+uninstallPackage = method(Options => { InstallPrefix => () -> applicationDirectory() | "local/" })
+uninstallPackage Package := opts -> pkg -> uninstallPackage(toString pkg, opts)
+uninstallPackage String  := opts -> pkg -> (
      checkPackageName pkg;
      installPrefix := minimizeFilename(runfun opts.InstallPrefix | "/");
      apply(findFiles apply({1,2},
@@ -421,6 +413,16 @@ uninstallPackage String := opts -> pkg -> (
 	  removeFiles);
      tallyInstalledPackages();
      )
+
+uninstallAllPackages = () -> for p in installedPackages() do (
+    << "-- uninstalling package " << p << endl; uninstallPackage p)
+
+installedPackages = () -> (
+    prefix := applicationDirectory() | "local/";
+    layout := Layout#(detectCurrentLayout prefix);
+    packages := prefix | layout#"packages";
+    if isDirectory packages then for pkg in readDirectory packages list (
+	if match("\\.m2$", pkg) then replace("\\.m2$", "", pkg) else continue) else {})
 
 installPackage String := opts -> pkg -> (
      -- if pkg =!= "Macaulay2Doc" then needsPackage "Macaulay2Doc";  -- load the core documentation
@@ -574,9 +576,9 @@ installPackage Package := opts -> pkg -> (
 	  -- remove any keys from the processed database no longer used
 	  scan(keys rawdocDatabase - set keys rawDoc, key -> remove(rawdocDatabase,key));
 	  scan(nodes, tag -> (
-		    fkey := DocumentTag.FormattedKey tag;
+		    fkey := format tag;
 		    if rawDoc#?fkey then (
-			 v := toExternalStringWithText rawDoc#fkey;
+			 v := lookInPackage(getpkg "Text", rawDoc#fkey, toExternalString);
 			 if rawdocDatabase#?fkey then (
 			      if rawdocDatabase#fkey === v 
 			      then rawDocUnchanged#fkey = true
@@ -690,11 +692,11 @@ installPackage Package := opts -> pkg -> (
 	       tag -> if isUndocumented tag then (
 		    if debugLevel > 0 then stderr << "--undocumented " << tag << endl;
 		    )
-	       else if isSecondary tag then (
+	       else if not isPrimaryTag tag then (
 		    if debugLevel > 0 then stderr << "--is secondary " << tag << endl;
 		    )
 	       else (
-		    fkey := DocumentTag.FormattedKey tag;
+		    fkey := format tag;
 		    if not opts.MakeInfo 		    -- when making the info file, we need to process all the documentation
 		    and not opts.RemakeAllDocumentation
 		    and rawDocUnchanged#?fkey then (
@@ -727,7 +729,7 @@ installPackage Package := opts -> pkg -> (
 
 	  -- make table of contents, including next, prev, and up links
 	  if verbose then stderr << "--assembling table of contents" << endl;
-	  assembleTree(pkg,getPrimary \ select(nodes,tag -> not isUndocumented tag)); -- sets tableOfContents
+	  assembleTree(pkg, getPrimaryTag \ select(nodes,tag -> not isUndocumented tag)); -- sets tableOfContents
 	  -- if chkdoc then stderr << "+++++" << endl << "table of contents, in tree form:" << endl << tableOfContents << endl << "+++++" << endl;
 	  pkg#"table of contents" = Bag {tableOfContents}; -- we bag it because it might be big!
 	  pkg#"links up" = UP;
@@ -741,14 +743,14 @@ installPackage Package := opts -> pkg -> (
 	       numDocumentationWarnings = 0;
 	       scan((if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg)#"exported symbols", s -> (
 			 tag := makeDocumentTag s;
-			 if not isUndocumented tag and not hasDocumentation s and signalDocError tag
-			 then stderr << "--warning: symbol has no documentation: " << tag << ", package " << packageName tag << endl;
+			 if signalDocError tag and not isUndocumented tag and not hasDocumentation tag
+			 then stderr << "--warning: symbol has no documentation: " << tag << ", package " << package tag << endl;
 			 f := value s;
 			 if instance(f, Function) then (
 			      scan(methods f, m -> if isDocumentableMethod m then (
 					tag := makeDocumentTag m;
-					if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
-					then stderr << "--warning: method has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << ", package " << packageName tag << endl;
+					if signalDocError tag and not isUndocumented tag and not hasDocumentation tag and not dispatcherMethod m
+					then stderr << "--warning: method has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << ", package " << package tag << endl;
 					));
 			      ))));
 
@@ -782,22 +784,22 @@ installPackage Package := opts -> pkg -> (
 	       infofile << (if pkg.Options.Headline =!= null then pkg.Options.Headline else infotitle | ", a Macaulay2 package") << endl;
 	       infofile << "END-INFO-DIR-ENTRY" << endl << endl;
 	       byteOffsets := new MutableHashTable;
-	       topNodeName := DocumentTag.FormattedKey topDocumentTag;
+	       topNodeName := format topDocumentTag;
 	       chk := if topNodeName === "Top" then identity else n -> if n === "Top" then error "encountered a documentation node named 'Top'";
 	       infoTagConvert' := n -> if n === topNodeName then "Top" else infoTagConvert n;
 	       traverse(unbag pkg#"table of contents", tag -> (
-			 if DocumentTag.PackageName tag =!= pkg#"pkgname" then (
+			 if package tag =!= pkg#"pkgname" then (
 			      error("internal error: alien entry in table of contents: ",toString tag);
 			      );
-			 fkey := DocumentTag.FormattedKey tag;
+			 fkey := format tag;
 			 chk fkey;
 			 byteOffsets# #byteOffsets = concatenate("Node: ",infoTagConvert' fkey,"\177",toString fileLength infofile);
 			 infofile << "\037" << endl << "File: " << infobasename << ", Node: " << infoTagConvert' fkey;
-			 if NEXT#?tag then infofile << ", Next: " << infoTagConvert' DocumentTag.FormattedKey NEXT#tag;
-			 if PREV#?tag then infofile << ", Prev: " << infoTagConvert' DocumentTag.FormattedKey PREV#tag;
+			 if NEXT#?tag then infofile << ", Next: " << infoTagConvert' format NEXT#tag;
+			 if PREV#?tag then infofile << ", Prev: " << infoTagConvert' format PREV#tag;
 			 -- nodes without an Up: link tend to make the emacs info reader unable to construct the table of contents,
 			 -- and the display isn't as nice after that error occurs
-			 infofile << ", Up: " << if UP#?tag then infoTagConvert' DocumentTag.FormattedKey UP#tag else "Top";
+			 infofile << ", Up: " << if UP#?tag then infoTagConvert' format UP#tag else "Top";
 			 infofile << endl << endl << info getPDoc fkey << endl));
 	       infofile << "\037" << endl << "Tag Table:" << endl;
 	       scan(values byteOffsets, b -> infofile << b << endl);
@@ -823,11 +825,11 @@ installPackage Package := opts -> pkg -> (
 	       installPrefix|htmlDirectory|".Certification" << toExternalString pkg.Options.Certification << close;
 	       );
 	  scan(nodes, tag -> if not isUndocumented tag then (
-		    fkey := DocumentTag.FormattedKey tag;
+		    fkey := format tag;
 		    (prefix,tail) := htmlFilename tag;
 		    fn := prefix|tail;
 		    if fileExists fn then return;
-		    if isSecondary tag then return;
+		    if not isPrimaryTag tag then return;
 		    if debugLevel > 0 then stderr << "--creating empty html page for " << tag << " in " << fn << endl;
 		    fn << close));
 	  for n in (topFileName, indexFileName, tocFileName) do (
@@ -841,11 +843,11 @@ installPackage Package := opts -> pkg -> (
 	  if verbose then stderr << "--making html pages in " << installPrefix|htmlDirectory << endl;
      	  scan(nodes, tag -> if not isUndocumented tag then (
 	       -- key := DocumentTag.Key tag;
-	       fkey := DocumentTag.FormattedKey tag;
+	       fkey := format tag;
 	       (prefix,tail) := htmlFilename tag;
 	       fn := prefix|tail;
 	       if fileExists fn and fileLength fn > 0 and not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
-	       if isSecondary tag then return;
+	       if not isPrimaryTag tag then return;
 	       if debugLevel > 0 then stderr << "--making html page for " << tag << endl;
 	       fn
 	       << html HTML { 
@@ -930,7 +932,7 @@ makePackageIndex List := path -> (
 			      if debugLevel > 10 then stderr << "--checking package directory " << pkgdir << endl;
 			      apply(toSequence values Layout, layout -> (
 				   packagelayout := layout#"packages";
-				   if not endswith(packagelayout,pkgdir) then (
+				   if not match(packagelayout | "$", pkgdir) then (
 					if debugLevel > 10 then stderr << "--package directory " << format pkgdir << " does not end with " << format packagelayout << endl;
 					return;
 					);

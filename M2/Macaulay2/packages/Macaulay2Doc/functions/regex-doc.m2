@@ -156,7 +156,7 @@ doc ///
         :Character sets
           @TT "[...]"@	-- match any single character that is a member of the set
            @TT "[abc]"@	-- match either @TT "a"@, @TT "b"@, or @TT "c"@
-           @TT "[A-C]"@	-- match any character from @TT "A"@ through @TT "Z"@
+           @TT "[A-C]"@	-- match any character from @TT "A"@ through @TT "C"@
           @TT "[^...]"@	-- match non-listed characters, ranges, or classes
         :Character classes
           @TT "[:alnum:]"@	-- any alpha-numeric character

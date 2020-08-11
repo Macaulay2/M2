@@ -990,6 +990,7 @@ export {
 	"rank",
 	"read",
 	"readDirectory",
+	"readPackage",
 	"readlink",
 	"realPart",
 	"realpath",
