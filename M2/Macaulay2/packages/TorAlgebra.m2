@@ -24,7 +24,9 @@ newPackage ( "TorAlgebra",
 	 "version at publication" => "1.0",
 	 "volume number" => "6",
 	 "volume URI" => "http://msp.org/jsag/2014/6-1/"
-	 }
+	 },
+    Reload => true,
+    DebuggingMode => false
     )
 
 export { 
@@ -146,16 +148,18 @@ toralgdata = R -> (
 		m = 1;
 		)
 	    else (
-		if isHomogeneous R then (
+		if isHomogeneous ideal R then (
 		    I := ideal R;
 		    F := res I;
 		    )
 		else (
 		    setMaxIdeal ideal vars Q;		
 		    I = ideal localMingens (localResolution ideal R).dd_1;
+		    if not isSubset(I, (ideal vars Q)^2) then error "Not able to properly prune ring. Please provide presentation without linear terms." else (
 		    F = localResolution I;
 		    R = Q/I;
 		    );
+		);
 		c = length F;
 		e = numgens ideal vars R;
 		h = c - codim R;
@@ -844,11 +848,12 @@ doc ///
 
     Text 
       Let $I$ be an ideal of a regular local ring $Q$ with residue
-      field $k$. The minimal free resolution of $R=Q/I$ carries a
-      structure of a differential graded algebra. If the length of the
-      resolution, which is called the codepth of $R$, is at most $3$,
-      then the induced algebra structure on Tor$_Q*$ ($R,k$) is unique
-      and provides for a classification of such local rings.
+      field $k$. The length of the minimal free resolution of $R=Q/I$
+      is called the codepth of $R$; if it is at most $3$, then the
+      resolution carries a structure of a differential graded
+      algebra. While the DG algebra structure may not be unique, the
+      induced algebra structure on Tor$_Q*$ ($R,k$) is unique and
+      provides for a classification of such local rings.
       
       According to the multiplicative structure on Tor$_Q*$ ($R,k$), a
       non-zero local ring $R$ of codepth at most 3 belongs to exactly one of
@@ -1727,6 +1732,7 @@ end
 
 uninstallPackage "TorAlgebra"
 restart
+loadPackage "TorAlgebra"
 installPackage "TorAlgebra"
 check "TorAlgebra"
 
