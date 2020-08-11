@@ -279,7 +279,7 @@ toralgdata = R -> (
 --    	   if c >= 4
     
     if cls == "UNDETERMINED" then (
-	if isHomogeneous R then (
+	if isHomogeneous ideal R then (
 	    L := res( ideal vars R, LengthLimit => limit ); 
 	    )
 	else (
@@ -363,7 +363,7 @@ toralgdata = R -> (
 		num = n + l*t + t^2 - t^3;
 		)
 	    else (
-		if isHomogeneous R then (
+		if isHomogeneous ideal R then (
 		    data := computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries)
 		    )
 		else (
@@ -399,7 +399,7 @@ toralgdata = R -> (
 		num = n + l*t - t^2 - t^3 + t^4;
 		)
 	    else (
-		if isHomogeneous R then (
+		if isHomogeneous ideal R then (
 		    data = computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries)
 		    )
 		else (
@@ -435,7 +435,7 @@ toralgdata = R -> (
 		num = n + (l-1)*t - 3*t^2 - t^3 + t^4;
 		)
 	    else (
-		if isHomogeneous R then (
+		if isHomogeneous ideal R then (
 		    data = computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2,L.dd_3), tries)
 		    )
 		else (
