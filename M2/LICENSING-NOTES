@@ -20,6 +20,8 @@ Libraries that may be linked with M2:
 -lntl		ntl			GPL 2 or later
 -lpari		pari			GPL 2 or later
 -lreadline	readline		GPL 3
+-lboost_regex	Boost.Regex		Boost Software License, Version 1.0
+-lboost_stacktrace Boost.Stacktrace	Boost Software License, Version 1.0
 
 Libraries we may link with in the future:
 

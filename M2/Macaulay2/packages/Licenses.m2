@@ -26,6 +26,7 @@ licenses = set {
      "LGPL 2.1 or later",
      "LGPL 3 or later",
      "CeCILL-B",
+     "Boost",
      "MIT",
      "public domain",
      "modified BSD",
@@ -119,6 +120,12 @@ licenseInfo = hashTable {
               "License: http://www.gnu.org/licenses/gpl.html GPL version 3 or higher"
             }
         },
+    "boost version" => hashTable {
+        "1.69" => VerticalList {
+              "Boost",
+              "License: https://www.boost.org/users/license.html Boost Software License"
+            }
+        },
     "mysql version" => hashTable {
         },
     "ntl version" => hashTable {
@@ -126,11 +133,6 @@ licenseInfo = hashTable {
 	      "LGPL 2.1 or later",
 	      "NTL is open-source software distributed under the terms of the GNU Lesser General Public License (LGPL) version 2.1 or later."
 	      }
-        },
-    "pari version" => hashTable {
-	 "2.9.2" => VerticalList {
-	      "GPL 2 or later",
-	      "PARI/GP is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version."     }
         },
     "python version" => hashTable {
         },

@@ -46,7 +46,6 @@ document {
 	  "libraries",
 	  TO "Singular-Factory",
 	  TO "frobby",
-	  TO "pari",
 	  TO "MPIR",
 	  TO "GNU MP",
 	  TO "MPFR",
@@ -311,29 +310,16 @@ doc ///
       portable C++ libraries suitable for eventual standardization.
 
       Macaulay2 incorporates the following Boost libraries:
+    Subnodes
+      @HREF {"https://www.boost.org/doc/libs/release/libs/stacktrace/", "Boost.Stacktrace"}@ (since version 1.16)
+        :used internally for printing stack traces
+      @HREF {"https://www.boost.org/doc/libs/release/libs/regex/", "Boost.Regex"}@ (since version 1.17)
+        :used by the @TO regex@ function, as well as other functions using @TO "regular expressions"@.
 
-      @UL {
-	  PARA {HREF {"https://www.boost.org/doc/libs/release/libs/stacktrace/", "Boost.Stacktrace"}, " (since version 1.16) ",
-              "used internally for printing stack traces"},
-	  PARA {HREF {"https://www.boost.org/doc/libs/release/libs/regex/", "Boost.Regex"}, " (since version 1.17) ",
-              "used by the ", TO regex, " function, as well as other functions using ", TO "regular expressions", "."}
-	  }@
     Text
       Note: the program @TO "normaliz"@ utilizes the
       @HREF {"https://www.boost.org/doc/libs/release/libs/dynamic_bitset/", "Boost dynamic_bitset class"}@.
 ///
-document {
-     Key => "pari",
-     PARA {
-	  "Starting with version 1.2, and up through version 1.15,
-	  Macaulay2 incorporated ", TT "pari", ", a free library for fast
-	  computations in number theory, available at ", HREF "http://pari.math.u-bordeaux.fr/", 
-      ", originally developed by
-	  Henri Cohen and his co-workers at Université Bordeaux I, France.
-	  In the stated versions, it is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", 
-      TT "isPseudoprime", ", and ", TO (isPrime,ZZ), "."
-	  }
-     }
 
 document {
      Key => "frobby",

@@ -415,7 +415,6 @@ help Array := key -> (
     (fn, opt) := (key#0, key#1);
     default := if (options fn)#?opt then (options fn)#opt
     else error("function ", fn, " does not accept option key ", opt);
-    print default;
     fixup DIV {
 	topheader key,
 	synopsis key,

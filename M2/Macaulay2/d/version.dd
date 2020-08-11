@@ -14,6 +14,7 @@ declarations "
 
 header "
    #include <atomic_ops.h>
+   #include <boost/version.hpp>
    #include <mpfr.h>
    #include <memtailor.h>
    #include <mathic.h>
@@ -205,6 +206,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	   \"not present\"
 	 #endif
 	 "),
+   "boost version" => Ccode(constcharstar,"BOOST_LIB_VERSION"),
    "memtailor version" => Ccode(constcharstar,"MEMTAILOR_VERSION_STRING"),
    "mathic version" => Ccode(constcharstar,"MATHIC_VERSION_STRING"),
    "mathicgb version" => Ccode(constcharstar,"MATHICGB_VERSION_STRING"),

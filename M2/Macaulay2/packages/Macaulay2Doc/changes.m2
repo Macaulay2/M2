@@ -120,9 +120,10 @@ document {
 	      },
          LI { "functionality improved",
 	       UL {
-		    LI { "The Pari library has been removed.  Its functionality has been 
-			 subsumed by the ", TO "MPSolve", " library (for the ", TO "roots", " function for finding roots of a univariate
-			 polynomial), and the ", TO "FLINT", " library, for integer factorization and primality testing." },
+		    LI { "The PARI library has been removed.  Its functionality has been subsumed by the ", TO "MPSolve",
+			" library (for the ", TO "roots", " function for finding roots of a univariate polynomial), and the ",
+			TO "FLINT", " library, for integer factorization and primality testing." },
+		    LI { "The ", TO2{"Boost", "Boost.Stacktrace"}, " library has been added for printing stack traces in case of a crash." },
 		    LI { "Primality testing, provided by ", TO "isPrime", ", is now handled by the ", TO "FLINT", " library." },
 		    LI { "Probable prime testing, provided by ", TO "isPseudoprime", ", is now handled by the ", TO "FLINT", " library." },
                     LI { "Factorization of integers, provided by ", TO (factor,ZZ), ", is now handled by the ", TO "FLINT", " library." },
@@ -1714,7 +1715,7 @@ document {
 		    	 TO (map,Module,RingMap), "."
 			 },
 		    LI { "The total Ext functor now accepts multigraded modules, see ", TO (Ext,Module,Module), "." },
-		    LI { "Macaulay2 now incorporates ", TO "pari", ", a free library for computing in number theory.
+		    LI { "Macaulay2 now incorporates ", HREF {"http://pari.math.u-bordeaux.fr/", "PARI"}, ", a free library for computing in number theory.
 			 It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), "."
 			 },
 		    LI { "new packages, included:",
