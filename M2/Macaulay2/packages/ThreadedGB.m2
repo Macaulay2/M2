@@ -84,6 +84,7 @@ tgb (List,ZZ) := HashTable => o -> (basisList, nThreads) -> (
         if not isReady(tasksValues_i) then allReady = false;
     	);
       if allReady then allowableThreads=1;
+      if allReady then allowableThreads=1 else sleep 1;
     );
     -- final clean up:
     if # keys trivial > 0 then (
