@@ -211,6 +211,7 @@ newPackage = method(
 	Headline => null,
 	HomePage => null,
 	InfoDirSection => "Macaulay2 and its packages",
+	Keywords => {"Uncategorized"},
 	OptionalComponentsPresent => null,
 	PackageExports => {},
 	PackageImports => {},

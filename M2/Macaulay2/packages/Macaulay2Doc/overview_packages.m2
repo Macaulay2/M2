@@ -11,14 +11,23 @@ Node
       The ones that have been refereed are marked with a star.
     Code
       star := IMG {"src" => replace("PKG", "Style", currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
-      UL apply(sort select(separate_" " version#"packages", pkgname -> pkgname =!= "Macaulay2Doc"), pkgname -> (
-	      pkgopts := readPackage pkgname;
-	      LI {
-		  if pkgopts.Certification =!= null then (star, " "),
-		  TO (pkgname | "::" | pkgname),
-		  if pkgopts.Headline      =!= null then (" -- ", pkgopts.Headline)
-		  }
-	      ))
+      categories := new MutableHashTable from {};
+      scan(separate_" " version#"packages", pkgname -> (
+              pkgopts := readPackage pkgname;
+              apply(pkgopts.Keywords, keyword -> if not categories#?keyword
+                  then categories#keyword = new MutableList from {(pkgname, pkgopts)}
+                  else categories#keyword#(#categories#keyword) = (pkgname, pkgopts))));
+      DIV flatten apply(sort keys categories, keyword -> {
+              SUBSECTION {keyword},
+              UL apply(new List from categories#keyword, pkgpair -> (
+                      (pkgname, pkgopts) := pkgpair;
+                      LI {
+			  if pkgopts.Certification =!= null then (star, " "),
+			  TO (pkgname | "::" | pkgname),
+			  if pkgopts.Headline      =!= null then (" -- ", pkgopts.Headline)
+			  }
+                      ))
+              })
   SeeAlso
     "packages"
     "authors of Macaulay2 packages"
@@ -30,13 +39,12 @@ Node
     Text
       Here is a list of people who have authored packages that are distributed with Macaulay2.
     Code
-      authors := new MutableHashTable;
-      scan(separate_" " version#"packages", pkgname -> (
-	      pkgopts := readPackage pkgname;
-	      apply(pkgopts.Authors, author -> (
-		      author = new OptionTable from author;
-		      if author.?Name and (not authors#?(author.Name) or not instance(authors#(author.Name), HREF))
-		      then authors#(author.Name) = if author.?HomePage then HREF {author.HomePage, author.Name} else author.Name))));
+      authors := new HashTable from flatten apply(separate_" " version#"packages", pkgname -> (
+              pkgopts := readPackage pkgname;
+              apply(pkgopts.Authors, author -> (
+                      author = new OptionTable from author;
+                      if author.?Name and (not authors#?(author.Name) or not instance(authors#(author.Name), HREF))
+                      then author.Name => if author.?HomePage then HREF {author.HomePage, author.Name} else author.Name))));
       -- TODO: simplify this when sort takes a SortStrategy
       UL (last \ sort apply(pairs authors, (name, entry) -> (last separate(" ", name), LI entry)))
   SeeAlso
@@ -75,11 +83,11 @@ Node
       :Using existing packages
         loadPackage
         needsPackage
-	dismiss
+        dismiss
         "loadedPackages"
       :Creating a new package
         "creating a package"
-	newPackage
+        newPackage
         installPackage
         uninstallPackage
       :Writing documentation for a package
@@ -87,8 +95,8 @@ Node
         "SimpleDoc :: doc"
       :Debugging a package
         "the debugger"
-	(debug, Package)
-	(check, Package)
+        (debug, Package)
+        (check, Package)
     Text
       Documentation for the packages provided with Macaulay2 is already installed.
       To install documentation for another package, use @TO installPackage@.
@@ -100,8 +108,10 @@ Node
     "creating a package"
     "packages provided with Macaulay2"
   Subnodes
-    package
     Package
+    :Accessing packages
+    "loadedPackages"
+    package
     loadPackage
     readPackage
     needsPackage
@@ -109,13 +119,14 @@ Node
     installedPackages
     uninstallPackage
     uninstallAllPackages
+    :Interacting with packages
     (use, Package)
     (check, Package)
     (debug, Package)
     (dismiss, Package)
     (options, Package)
+    :Miscellaneous nodes
     makePackageIndex
-    "loadedPackages"
     "PackageDictionary"
 
 Node

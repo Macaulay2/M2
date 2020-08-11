@@ -222,6 +222,7 @@ export {
 	"KeepZeroes",
 	"Key",
 	"Keyword",
+	"Keywords",
 	"LUdecomposition",
 	"Layout",
 	"Left",
