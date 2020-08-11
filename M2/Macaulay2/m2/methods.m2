@@ -616,6 +616,16 @@ Function Thing = (f,x,e) -> (
      if not storefuns#?f then error("no method for storing values of function ", toString f);
      storefuns#f (x,e))
 
+-- defined in d/actors4.d
+locate' = locate -- TODO: why does (net, FunctionBody) in nets.m2 need locate'?
+locate = method(Dispatch => Thing, TypicalValue => Sequence)
+locate Nothing    := Sequence => x -> locate' x
+locate Function   := Sequence => x -> locate' x
+locate Pseudocode := Sequence => x -> locate' x
+locate Sequence   := Sequence => x -> locate' x
+locate Symbol     := Sequence => x -> locate' x
+protect symbol locate
+
 -- baseName
 baseName Thing := R -> (
      if hasAttribute(R,ReverseDictionary) then (

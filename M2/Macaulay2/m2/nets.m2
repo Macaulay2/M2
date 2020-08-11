@@ -51,7 +51,7 @@ net Function := toString Function := f -> (
      )
 
 net FunctionBody := toString FunctionBody := f -> (
-     t := locate f;
+     t := locate' f;
      if t === null then "-*FunctionBody*-" 
      else concatenate("-*FunctionBody[", t#0, ":", toString t#1| ":", toString (t#2+1), "-", toString t#3| ":", toString (t#4+1), "]*-")
      )

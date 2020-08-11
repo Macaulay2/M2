@@ -1458,7 +1458,7 @@ locate(e:Expr):Expr := (
 	  locate(f.model.body);
 	  locate2(f.model.body))
      else WrongArg("a function, symbol, sequence, or null"));
-setupfun("locate", locate).Protected = false; -- will be overloaded in m2/code.m2
+setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
 
 
 powermod(e:Expr):Expr := (

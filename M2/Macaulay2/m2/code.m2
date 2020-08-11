@@ -1,15 +1,5 @@
 --		Copyright 1993-1999, 2008 by Daniel R. Grayson
 
--- defined in d/actors4.d
-locate' := locate
-locate = method(Dispatch => Thing, TypicalValue => Sequence)
-locate Nothing    := Sequence => x -> locate' x
-locate Function   := Sequence => x -> locate' x
-locate Pseudocode := Sequence => x -> locate' x
-locate Sequence   := Sequence => x -> locate' x
-locate Symbol     := Sequence => x -> locate' x
-protect symbol locate
-
 getSourceLines = method(Dispatch => Thing) 
 getSourceLines Nothing := null -> null
 getSourceLines Sequence := x -> (
