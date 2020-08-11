@@ -515,6 +515,7 @@ changeBasisT(ChainComplex,List) := (F,inputEs) -> (
   B := ring first inputEs;
   eList := inputEs;
   annEs := ann ideal eList;
+  -- tack on the annihilator of inputEs in degree 1 to the eList.
   eList = eList | flatten entries ((gens annEs)*sub(matrix basis(1,annEs),B));
   fList := flatten entries matrix {{eList#1*eList#2,eList#2*eList#0,eList#0*eList#1}};
   fList = fList | flatten entries (basis(2,B)*(mingens coker multMap(B,1,1)));
@@ -532,7 +533,7 @@ changeBasisT(ChainComplex) := F -> (
    kk := coefficientRing B;
    eList := select(gens B, d -> first degree d == 1);
 
-   --- attempt to find the element we are after
+   --- attempt to find the generators we want of the truncated exterior subalgebra
    m := #eList;
    a := getSymbol "a";
    ee := getSymbol "ee";
@@ -620,7 +621,7 @@ changeBasisHpq(ChainComplex) := F -> (
    goodEGens := select(eGens, ee -> rank multMap(ee,1) == p);
    if goodEGens != {} then return changeBasisHpq(F,first goodEGens);
 
-   -- choose a random (homogeneous) element of each internal degree in degree 1.
+   -- next try a random (homogeneous) element of each internal degree in degree 1.
    eGenDegs := eGens / degree // unique;   
    randElts := apply(eGenDegs, d -> random(d,B));
    goodRands := select(randElts, ee -> rank multMap(ee,1) == p);
@@ -642,19 +643,28 @@ changeBasisG(ChainComplex) := F -> (
 -- class of the Tor algebra
 changeBasisG(ChainComplex, RingElement) := (F, gTop) -> (
    B := ring gTop;
+   -- complete gTop to a basis
    gList := {gTop} | flatten entries mingens ((ideal basis(3,B))/(ideal gTop));
+   -- compute the matrix of the map corresponding to the dual basis element of gTop
    proj := (last coefficients(matrix{gList}, Monomials=>basis(3,B)))^{0};
+   -- for each basis element, restrict codomain of mult map (from degree 1 to 3)
+   -- to the 'top class', and take the dual map.
    multMapList := apply(flatten entries basis(2,B), f -> transpose (proj*multMap(f,1)));
+   -- make a matrix out of all these maps.  This gives the map from
+   -- M : A_2 --> Hom(gTop^*,A_1^*) \cong A_1^*
    M := matrix {multMapList};
-   -- ker M are the 'other' fs
-   -- coker M are the 'other es
-   -- the rest is a pairing that we have to diagonalize.
+   -- the 'other fs' are those fs which don't participate in mult
    otherFs := flatten entries (basis(2,B)*sub(gens ker M,B));
+   -- the 'other es' are those es which don't participate in mult
+   -- these are found using the coker of M above
    otherEs := flatten entries (basis(1,B)*sub(matrix mingens coker M,B));
+   -- the good es are the duals of those elements in the image of M
    goodEs := flatten entries (basis(1,B)*sub(matrix mingens image M, B));
+   -- the good fs are the lifts of these under M
    goodFs := flatten entries (basis(2,B)*sub(matrix mingens image M // M,B));
    eList := goodEs | otherEs;
    fList := goodFs | otherFs;
+   -- change coordinates
    performBasisChange(F,eList,fList,gList)
 )
 
@@ -672,22 +682,35 @@ changeBasisB(ChainComplex) := F -> (
 changeBasisB(ChainComplex, RingElement) := (F, gTop) -> (
    B := ring gTop;
    kk := coefficientRing B;
+   -- complete gTop to a basis
    gList := {gTop} | flatten entries mingens ((ideal basis(3,B))/(ideal gTop));
+   -- compute the matrix of the map corresponding to the dual basis element of gTop
    proj := (last coefficients(matrix{gList}, Monomials=>basis(3,B)))^{0};
+   -- for each basis element, restrict codomain of mult map (from degree 1 to 3)
+   -- to the 'top class', and take the dual map.
    multMapList := apply(flatten entries basis(2,B), f -> transpose (proj*multMap(f,1)));
+   -- make a matrix out of all these maps.  This gives the map from
+   -- A_2 --> Hom(gTop^*,A_1^*) \cong A_1^*
    M := matrix {multMapList};
+   -- the 'other fs' are those fs which don't participate in mult
    otherFs := flatten entries (basis(2,B)*sub(gens ker M,B));
+   -- we choose f_1 and f_2 to be preimages of the image of the map A_2 --> A_1^*
    goodFs := flatten entries (basis(2,B)*sub(matrix mingens image M // M,B));
+   -- the good e_1 and e_2 are the partners of the f_1 and f_2 just found
    goodEcoords := apply(goodFs, x -> (sub((last coefficients(gTop,Monomials=>basis(3,B))),kk) // multMap(x,1)));
    goodEs := flatten apply(goodEcoords, c -> flatten entries (basis(1,B)*c));
+   -- complete es and fs to a basis
    otherEs := flatten entries (basis(1,B)*sub(matrix mingens coker M,B));
    f3 := goodEs#0*goodEs#1;
    otherFs = flatten entries mingens ((ideal otherFs)/(ideal f3));
    eList := goodEs | otherEs;
    fList := goodFs | {goodEs#0*goodEs#1} | otherFs;
+   -- change coordinates
    performBasisChange(F,eList,fList,gList)
 )
 
+-- this function determines the class of the resolution
+-- and calls the appropriate change of basis command
 changeBasisCodim3 = method()
 changeBasisCodim3(ChainComplex) := F -> (
    torClass := torAlgebraClassCodim3 F;
@@ -991,7 +1014,6 @@ F = res I
 B = codimThreeTorAlgebra(F,{e,f,g})
 netList eeMultTable B
 netList efMultTable B
-G = changeBasisB F
 G = changeBasisCodim3 F
 C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable C
