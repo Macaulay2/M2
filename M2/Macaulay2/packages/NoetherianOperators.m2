@@ -748,6 +748,7 @@ numNoethOpsAtPoint = method(Options => options noetherianOperators ++ options ap
 numNoethOpsAtPoint (Ideal, Point) := List => opts -> (I, p) -> numNoethOpsAtPoint(I, matrix p, opts)
 numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
     tol := if opts.Tolerance === null then defaultT(ring I) else opts.Tolerance;
+    if opts.DegreeLimit == -1 then error "noetherian operator degree limit cannot be infinity";
     R := ring I;
     var := if opts.DependentSet === null then gens R - set support first independentSets I
             else opts.DependentSet;
@@ -2181,14 +2182,3 @@ Q' = getIdealFromNoetherianOperators(L, radical Q)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
