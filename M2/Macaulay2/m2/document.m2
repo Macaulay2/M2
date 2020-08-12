@@ -84,7 +84,7 @@ verifyKey Array    := key -> (
 packageKey0 := method(Dispatch => Thing)
 packageKey0 Thing    := key -> currentPackage
 packageKey0 Sequence := key -> currentPackage		    -- this is a kludge, which allows Schubert2 to document (symbol SPACE,OO,RingElement)
--- packageKey0 Sequence := 				    -- this might be the right way to do it
+-- packageKey0 Sequence :=				    -- this might be the right way to do it
 packageKey0 Array    := key -> ( n := youngest apply(toSequence key, package); assert(n =!= null); n )
 
 packageKey := method()
@@ -124,7 +124,7 @@ normalizeDocumentKey    Thing := opts -> key -> (
 -- DocumentTag type declarations and basic constructors
 -----------------------------------------------------------------------------
 -- We need three bits of information about a document tag:
---     the original key	    	    e.g., (operator **,Module,Module)
+--     the original key		    e.g., (operator **,Module,Module)
 --     the formatted key            e.g., "Module ** Module"
 --     the package name             e.g., "Core", or "" if there is none
 -- Here we assemble them together, so we don't have to recompute the information later.
@@ -408,7 +408,7 @@ headline Thing := key -> (
 headline DocumentTag := tag -> (
      d := fetchPrimaryRawDocumentation tag;
      if d === null then (
-     	  -- this branch does get used, but why not combine fetchPrimaryRawDocumentation and fetchAnyRawDocumentation?
+	  -- this branch does get used, but why not combine fetchPrimaryRawDocumentation and fetchAnyRawDocumentation?
 	  d = fetchAnyRawDocumentation format tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then (
 	       if signalDocError tag and package tag === currentPackage#"pkgname" then (
@@ -444,7 +444,7 @@ processInputOutputItems := (key,fn) -> x -> (
      (mapo (y ->
 	       if optsymb === null and instance(y,Symbol) then optsymb = y
 	       else if idname === null and isId y then idname = y
-     	       else if istype y then (
+	       else if istype y then (
 		    if type === null
 		    or y === Nothing -- putting type Nothing in the doc's input list means don't display the type deduced from the description of the method
 		    then type = y
@@ -804,7 +804,7 @@ ofClass ImmutableType := T -> fixup (
     if parent T === Nothing then error "expected a class";
     if T === Nothing then TO "null"
     else if T.?synonym then SPAN {indefiniteArticle T.synonym, TO2 {T, T.synonym}}
-    else SPAN {"an instance of the type ", TO T})
+    else SPAN {"an instance of the type ", if isGlobalSymbol toString T then TO T else TT toString T})
 ofClass List          := x -> (
     if #x === 1 then ofClass x#0
     else if #x === 2 then (ofClass x#0, " or ", ofClass x#1)

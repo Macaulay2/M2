@@ -25,6 +25,12 @@ separateM2output String := str -> (
     while str#?-1 and str#-1 == "\n" do str = substring(0, #str - 1, str);
     separate(M2outputRE, M2outputREindex, str))
 
+-- TODO: where should this be used?
+capture = method()
+capture String := s -> (
+     (err, out) := internalCapture s;
+     (err, out, separateM2output out))
+
 -----------------------------------------------------------------------------
 -- extract examples
 -----------------------------------------------------------------------------

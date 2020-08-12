@@ -214,6 +214,10 @@ keyExists = (i,fkey) -> (
 	  close db;
 	  r))
 
+htmlFilename1 = (fkey,pkgname,layout) -> (
+     basefilename := if fkey === pkgname then topFileName else toFilename fkey|".html";
+     replace("PKG",pkgname,layout#"packagehtml") | basefilename)
+
 locateDocumentationNode (String,String) := (pkgname,fkey) -> (
      i := getPackageInfo pkgname;
      if i === null or not keyExists(i,fkey) then return null;

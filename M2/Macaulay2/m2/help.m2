@@ -546,9 +546,9 @@ about String   := o -> re -> lastabout = (
             pkgname := pkg#"pkgname";
             if packagesSeen#?pkgname then continue else packagesSeen#pkgname = 1;
             keyList := join (
-                if not pkg#?"raw documentation database" then {}
-                else select(keys pkg#"raw documentation database",
-                    matchfun_re if o.Body then pkg#"raw documentation database"),
+                if not pkg#?rawKeyDB then {}
+                else select(keys pkg#rawKeyDB,
+                    matchfun_re if o.Body then pkg#rawKeyDB),
                 select(keys pkg#"raw documentation",
                     matchfun_re if o.Body then pkg#"raw documentation"));
             apply(keyList, key -> pkgname | "::" | key)),

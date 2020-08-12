@@ -150,11 +150,11 @@ readPackage String  := opts -> pkgname -> (
 loadPackage = method(
     TypicalValue => Package,
     Options => {
-	Configuration => {},
-	DebuggingMode => null,
-	FileName => null,
+	Configuration     => {},
+	DebuggingMode     => null,
+	FileName          => null,
 	LoadDocumentation => false,
-	Reload => null
+	Reload            => null
 	})
 loadPackage Package := opts -> pkg     -> loadPackage(toString pkg, opts ++ { Reload => true })
 loadPackage String  := opts -> pkgname -> (
@@ -201,23 +201,23 @@ getpkgNoLoad = pkgname -> if PackageDictionary#?pkgname then value PackageDictio
 
 newPackage = method(
     Options => {
-	Authors => {},
-	AuxiliaryFiles => false,
-	CacheExampleOutput => null,
-	Certification => null,
-	Configuration => {},
-	Date => null,
-	DebuggingMode => false,
-	Headline => null,
-	HomePage => null,
-	InfoDirSection => "Macaulay2 and its packages",
-	Keywords => {"Uncategorized"},
+	Authors                   => {},
+	AuxiliaryFiles            => false,
+	CacheExampleOutput        => null,
+	Certification             => null,
+	Configuration             => {},
+	Date                      => null,
+	DebuggingMode             => false,
+	Headline                  => null,
+	HomePage                  => null,
+	InfoDirSection            => "Macaulay2 and its packages",
+	Keywords                  => {"Uncategorized"},
 	OptionalComponentsPresent => null,
-	PackageExports => {},
-	PackageImports => {},
-	Reload => false,
-	UseCachedExampleOutput => null,
-	Version => "0.0"
+	PackageExports            => {},
+	PackageImports            => {},
+	Reload                    => false,
+	UseCachedExampleOutput    => null,
+	Version                   => "0.0"
 	})
 newPackage String := opts -> pkgname -> (
     -- package name must be alphanumeric
@@ -228,15 +228,17 @@ newPackage String := opts -> pkgname -> (
 	    (AuxiliaryFiles, Boolean),
 	    (Configuration,  List),
 	    (DebuggingMode,  Boolean),
+	    (Headline,       String),
 	    (InfoDirSection, String),
 	    (PackageExports, List),
 	    (PackageImports, List),
 	    (Version,        String)}, (name, type) -> if not instance(opts#name, type) then
 	error("newPackage: expected ", toString name, " option of class ", toString type));
+    if opts.Headline === "" then
+        error("newPackage: expected non-empty Headline");
     -- optional package values
     scan({
 	    (Date,     String),
-	    (Headline, String),
 	    (HomePage, String)}, (name, type) -> if opts#name =!= null and not instance(opts#name, type) then
 	error("newPackage: expected ", toString name, " option of class ", toString type));
     -- the options coming from loadPackage are stored here
