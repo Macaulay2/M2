@@ -41,6 +41,10 @@ export {
      "adjointMatrix",
      "newGCorners",
 
+     --Data type keys
+     "Ops",
+     "Prime",
+
      "noetherianOperators",
      "hybridNoetherianOperators",
      "DependentSet",
@@ -610,6 +614,27 @@ basisIndices = (M, tol) -> (
 
 
 
+--
+-----  Noetherian operator data structures
+--
+SetOfNoethOps = new Type of HashTable;
+SetOfNoethOps#{Standard,AfterPrint} = x -> (
+    o := () -> concatenate(interpreterDepth:"o")
+    << endl;                 -- double space
+    << o() << lineNumber;
+    y := class x;
+    << " : " << "set of Noetherian operators";
+    if x#?Prime then << " over the prime "<<x#Prime;
+    << endl;
+)
+net SetOfNoethOps := N -> net N.Ops;
+SetOfNoethOps _ ZZ := (N, i) -> (N.Ops)#i;
+entries SetOfNoethOps := N -> N.Ops;
+
+-- Maybe not needed?
+NoethOp = new Type of HashTable;
+
+
 
 --
 -----  Noetherian operator code
@@ -724,7 +749,8 @@ noetherianOperators (Ideal, Ideal) := List => opts -> (I, P) -> (
     K = transpose first rowReduce(transpose K, true);
     S' := diffAlg S;
     bdd := sub(bd, vars S');
-    flatten entries (bdd * sub(K, S'))
+    L := sort flatten entries (bdd * sub(lift(K, S), S'));
+    new SetOfNoethOps from {Ops => L, Prime => P}
 )
 
 noetherianOperators (Ideal) := List => opts -> (I) -> noetherianOperators(I, ideal gens radical I, opts)
