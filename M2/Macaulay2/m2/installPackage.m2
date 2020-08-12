@@ -692,7 +692,7 @@ installPackage Package := opts -> pkg -> (
 	       tag -> if isUndocumented tag then (
 		    if debugLevel > 0 then stderr << "--undocumented " << tag << endl;
 		    )
-	       else if not isPrimaryTag tag then (
+	       else if isSecondaryTag tag then (
 		    if debugLevel > 0 then stderr << "--is secondary " << tag << endl;
 		    )
 	       else (
@@ -829,7 +829,7 @@ installPackage Package := opts -> pkg -> (
 		    (prefix,tail) := htmlFilename tag;
 		    fn := prefix|tail;
 		    if fileExists fn then return;
-		    if not isPrimaryTag tag then return;
+		    if isSecondaryTag tag then return;
 		    if debugLevel > 0 then stderr << "--creating empty html page for " << tag << " in " << fn << endl;
 		    fn << close));
 	  for n in (topFileName, indexFileName, tocFileName) do (
@@ -847,7 +847,7 @@ installPackage Package := opts -> pkg -> (
 	       (prefix,tail) := htmlFilename tag;
 	       fn := prefix|tail;
 	       if fileExists fn and fileLength fn > 0 and not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
-	       if not isPrimaryTag tag then return;
+	       if isSecondaryTag tag then return;
 	       if debugLevel > 0 then stderr << "--making html page for " << tag << endl;
 	       fn
 	       << html HTML { 

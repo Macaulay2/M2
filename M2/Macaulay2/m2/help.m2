@@ -121,7 +121,7 @@ optTO := i -> (
      i = makeDocumentTag(i, Package => null);
      fkey := format i;
      if not isUndocumented i then
-     if not isPrimaryTag i then (
+     if isSecondaryTag i then (
 	  primary := getPrimaryTag i;
 	  (format primary, fkey, next(), fixup if currentHelpTag === primary then fkey else SPAN {fkey, ", see ", TOH{primary}})
 	  )

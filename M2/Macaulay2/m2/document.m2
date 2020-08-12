@@ -382,7 +382,7 @@ fetchAnyRawDocumentation String      := fkey -> scan(keys PackageDictionary, pkg
 -- inquiring the status of a key or DocumentTag
 -----------------------------------------------------------------------------
 isMissingDoc    := tag -> fetchPrimaryRawDocumentation tag === null
-isPrimaryTag     = tag -> ( d := fetchRawDocumentation tag; d =!= null and not d#?PrimaryTag )
+isSecondaryTag   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?PrimaryTag )
 isUndocumented   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?"undocumented" and d#"undocumented" === true )
 hasDocumentation = key -> (
     tag := makeDocumentTag(key, Package => null);

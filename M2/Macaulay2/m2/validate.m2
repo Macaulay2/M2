@@ -19,7 +19,7 @@ flagError := x -> (haderror = true; warning x)
 
 noqname := (x, tag) -> (
     if instance(tag, IntermediateMarkUpType)
-    then warning(format toString x, " is an instance of an intermediate mark-up type ", format toString tag, " with no qname, appearing in hypertext during validation")
+    then warning(format toString x, " is an instance of an intermediate markup type ", format toString tag, " with no qname, appearing in hypertext during validation")
     else error(format toString x, " is of an unrecognized type ", format toString tag, " with no qname, appearing in hypertext during validation"))
 
 -----------------------------------------------------------------------------
