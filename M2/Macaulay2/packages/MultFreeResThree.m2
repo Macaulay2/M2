@@ -435,7 +435,7 @@ tauMaps(Ring,ZZ,ZZ,ZZ) := (A,l,m,n) -> (
 
 torAlgebraClassCodim3 = method()
 torAlgebraClassCodim3 QuotientRing := A -> (
-  -- check to ensure that A is torAlgebra for codim 3 example
+  -- check to ensure that A is torAlgebra for codim 3 example?  
   p := rank multMap(A,1,1);
   q := rank multMap(A,1,2);
   r := rank homothetyMap(A,2,1);
@@ -523,12 +523,9 @@ changeBasisT(ChainComplex,List) := (F,inputEs) -> (
   performBasisChange(F,eList,fList,gList)
 )
 
--- this function tries to find an appropriate change of basis.
--- WIP : This is a work in progress.  Not sure how to correctly choose 
--- a random change of coordinates that will also be homogeneous if a grading is present.
+-- this function tries to find an appropriate choice for e_1,e_2,e_3
+-- in the classification theorem of AKM
 changeBasisT(ChainComplex) := F -> (
-   -- this function tries to find an appropriate choice for e_1,e_2,e_3
-   -- in the classification theorem of AKM
    B := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
    kk := coefficientRing B;
    eList := select(gens B, d -> first degree d == 1);
@@ -571,7 +568,7 @@ changeBasisHpq(ChainComplex,RingElement) := (F,ee) -> (
    eList := flatten entries (basis(1,B)*(imagMultMap1 // multMap1));
 
    -- now we add in some indeterminants to track the lifts, and choose
-   -- the first few es carefully so that they have trivial products.
+   -- the first few es carefully so that they have trivial products among themselves
    a := getSymbol "a";
    p := #eList;
    varRing := (coefficientRing B)[a_1..a_p];
@@ -580,29 +577,39 @@ changeBasisHpq(ChainComplex,RingElement) := (F,ee) -> (
    C := overC/newI;
    eeC := sub(ee,C);
 
+   -- eList is a list of preimages of a basis of image of multiplication by ee
    if eList != {} then (
+      -- We purturb the preimages by a multiple of ee, in the hopes of finding
+      -- a set of elements that also have trivial products among themselves.
       genEList := apply(#eList, i -> sub(eList#i,C) + sub(varRing_i,C)*eeC);
       products := subsets(genEList,2) / product;
+      -- these are the coefficients of the pairwise products.  The coefficients
+      -- give a linear system of equations over (coefficientRing B)
       prodCoeffs := last coefficients(matrix {products}, Monomials => basis(2,C));
       soln := mingens ideal flatten entries prodCoeffs;
+      -- reduce modulo the ideal of soln to make the substitution
       eList = apply(genEList, f -> sub(f % sub(soln, C), B));
    );
 
+   -- the rest of the es are the annihilator ee (modulo ee)
    eList = eList | {ee};
-   dubAnnMod := (ann ann ee) / (ideal ee);
+   dubAnnMod := (ann ee) / (ideal ee);
    newEs := flatten entries ((gens dubAnnMod)*(matrix basis(1,dubAnnMod)));
    newEs = newEs / (f -> f % ideal {ee});
    eList = eList | newEs;
    
+   -- fs are a basis of the image of the multiplication map of ee in degree 1,
+   -- followed by a lift of the image of the multiplication map of ee in degree 2
    fList := flatten entries (basis(2,B)*imagMultMap1);
    multMap2 := multMap(ee,2);
    imagMultMap2 := mingens image multMap2;
    fList = fList | flatten entries (basis(2,B)*(imagMultMap2 // multMap2));
    -- complete fList to a basis in degree two now
-   -- this is probably a very bad way to do it...
    newFs := basis(2,B)*(matrix basis(2, (ideal basis(2,B))/(sub(ideal fList,B))));
    fList = fList | flatten entries newFs;
 
+   -- gs are a basis of the image of the multiplication map of ee in degree 2
+   -- then completed to a basis arbitrarily
    gList := flatten entries (basis(3,B)*imagMultMap2);
    gList = gList | flatten entries (basis(3,B)*(mingens coker multMap2));
 
@@ -621,7 +628,7 @@ changeBasisHpq(ChainComplex) := F -> (
    goodEGens := select(eGens, ee -> rank multMap(ee,1) == p);
    if goodEGens != {} then return changeBasisHpq(F,first goodEGens);
 
-   -- next try a random (homogeneous) element of each internal degree in degree 1.
+   -- next try a random (homogeneous) element of each internal degree in homological degree 1.
    eGenDegs := eGens / degree // unique;   
    randElts := apply(eGenDegs, d -> random(d,B));
    goodRands := select(randElts, ee -> rank multMap(ee,1) == p);
@@ -866,6 +873,24 @@ C = codimThreeTorAlgebra(G, {e,f,g})
 netList eeMultTable(C)
 netList efMultTable(C)
 
+--- A `random' example of a class T ring
+restart
+debug loadPackage "MultFreeResThree"
+kk = ZZ/32003
+Q = kk[x,y,z];
+I = ideal (random(3,Q), random(3,Q), random(3,Q), random(6,Q))
+F = res I
+torAlgebraClassCodim3 F
+B = codimThreeTorAlgebra(F,{e,f,g})
+netList eeMultTable B
+netList efMultTable B
+G = changeBasisCodim3 F
+isHomogeneous G
+--G = changeBasisT(F, {e_1,e_2,e_4})
+C = codimThreeTorAlgebra(G, {e,f,g})
+netList eeMultTable(C)
+netList efMultTable(C)
+
 --- Another example of a class T ring
 restart
 debug loadPackage "MultFreeResThree"
@@ -920,8 +945,6 @@ G = changeBasisHpq(F,e_1)
 C = codimThreeTorAlgebra(G,{e,f,g})
 netList eeMultTable C
 netList efMultTable C
-
-degree (massey(1,1,1)) = 4
 
 -- this is a change of coords away from example sent on 8/8
 restart
