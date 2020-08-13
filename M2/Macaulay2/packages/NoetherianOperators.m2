@@ -618,13 +618,15 @@ basisIndices = (M, tol) -> (
 -----  Noetherian operator data structures
 --
 SetOfNoethOps = new Type of HashTable;
+SetOfNoethOps / Function := (N, f) -> N.Ops / f;
 SetOfNoethOps#{Standard,AfterPrint} = x -> (
-    o := () -> concatenate(interpreterDepth:"o")
+    o := () -> concatenate(interpreterDepth:"o");
     << endl;                 -- double space
     << o() << lineNumber;
     y := class x;
     << " : " << "set of Noetherian operators";
-    if x#?Prime then << " over the prime "<<x#Prime;
+    if x#?Prime then << " over the prime "<<x#Prime
+    else if x#?Point then << " evaluated at "<< x#Point;
     << endl;
 )
 net SetOfNoethOps := N -> net N.Ops;
@@ -726,7 +728,9 @@ noetherianOperators (Ideal, Ideal) := List => opts -> (I, P) -> (
     depVars := if opts.DependentSet === null then gens R - set support first independentSets P
             else opts.DependentSet;
     indVars := gens R - set depVars;
-    S := (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
+    if not R#?cache then R#cache = new CacheTable;
+    if not R#cache#?"NoethNormRing" then R#cache#"NoethNormRing" = (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
+    S := R#cache#"NoethNormRing";
     SradI := sub(P, S);
     SI := sub(I,S);
     kP := toField(S/SradI);
@@ -776,13 +780,14 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
     tol := if opts.Tolerance === null then defaultT(ring I) else opts.Tolerance;
     if opts.DegreeLimit == -1 then error "noetherian operator degree limit cannot be infinity";
     R := ring I;
-    var := if opts.DependentSet === null then gens R - set support first independentSets I
+    depVars := if opts.DependentSet === null then gens R - set support first independentSets I
             else opts.DependentSet;
+    indVars := gens R - set depVars;
     local M; local M'; local K; local bd; local bx;
     numOps := -1;
     for i in 1..opts.DegreeLimit do (
         bx = flatten entries basis(0,i - 1,R, Variables => gens R);
-        bd = basis(0,i,R, Variables => var);
+        bd = basis(0,i,R, Variables => depVars);
         M = diff(bd, transpose matrix {flatten (table(bx,I_*,(i,j) -> i*j))});
         M' = evaluate(M,p);
         K = numericalKernel (M', tol);
@@ -793,7 +798,8 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
     -- Return elements in WeylAlgebra for nice formatting
     R' := diffAlg R;
     bdd := sub(bd, vars R');
-    flatten entries (bdd * sub(K, R'))
+    L := sort flatten entries (bdd * sub(K, R'));
+    new SetOfNoethOps from {Ops => L, Point => p}
 )
 
 hybridNoetherianOperators = method(Options => options numNoethOpsAtPoint)
@@ -802,8 +808,9 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
     depVars := if opts.DependentSet === null then gens R - set support first independentSets P
             else opts.DependentSet;
     indVars := gens R - set depVars;
-    S := (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
-    S' := diffAlg S;
+    if not R#?cache then R#cache = new CacheTable;
+    if not R#cache#?"NoethNormRing" then R#cache#"NoethNormRing" = (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
+    S := R#cache#"NoethNormRing";S' := diffAlg S;
     PS := sub(P, S);
     IS := sub(I,S);
     kP := toField(S/PS);
@@ -820,8 +827,8 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
     if debugLevel >= 1 then << "Good points: "<<#goodIdx<<"/"<<#pts<<endl;
     goodNops := noethOpsAtPoints#(goodIdx#0);
     
-    phi := map(RCC, ring goodNops#0, vars RCC);
-    sort flatten for op in goodNops list (
+    phi := map(RCC, ring goodNops_0, vars RCC);
+    L := sort flatten for op in goodNops.Ops list (
         bd := monomials phi op;
         bd = matrix{flatten entries bd / (mon -> S_((first exponents mon)_(depVars / index)))};
         done := false;
@@ -835,7 +842,8 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
         );
         bdd := sub(bd, vars S');
         flatten entries (bdd * sub(K // K_(0,0), S'))
-    )
+    );
+    new SetOfNoethOps from {Ops => L, Prime => P}
 ) 
 
 numericalNoetherianOperators = method(Options => {
