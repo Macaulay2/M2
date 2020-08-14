@@ -82,7 +82,7 @@ jobs:
           brew config
           # autoconf, libtool are already in the virtual env
           brew install automake ccache gnu-tar make ninja pkg-config yasm
-          brew install bdw-gc boost cddlib eigen flint glpk libatomic_ops libomp mpfr mpir ncurses ntl tbb
+          brew install bdw-gc boost cddlib eigen flint glpk libatomic_ops libomp mpfr mpfi mpir ncurses ntl tbb
 
 # ----------------------
 #   Install missing tools and libraries for Linux
@@ -95,7 +95,7 @@ jobs:
           sudo apt-get install -y -q --no-install-recommends clang-10 gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
-                  libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
+                  libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libmpfi-dev libntl-dev gfan \
                   libcdd-dev libgivaro-dev libboost-regex-dev fflas-ffpack w3c-markup-validator
           # TODO: help autotools detect flint from brew
           brew install flint
