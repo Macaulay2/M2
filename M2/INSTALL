@@ -221,10 +221,7 @@ various modern operating systems:
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
 	brew update |cat
-	brew install pkg-config autoconf automake gnu-tar libtool wget yasm make ctags ntl eigen |cat
-	brew install --build-bottle bdw-gc libatomic_ops gdbm glpk boost libmpc libomp xz |cat
-      You may omit the option "--build-bottle" if you will not be distributing your Macaulay2
-      binaries to other people with CPU's that may not have the same capabilities as yours.
+	brew install autoconf automake bdw-gc boost ccache cddlib ctags eigen flint gdbm glpk gmp gnu-tar libatomic_ops libmpc libomp libtool make mpfr mpir ncurses ninja ntl pkg-config tbb wget xz yasm |cat
       
     If you have previously installed homebrew, will be distributing your
       Macaulay2 binaries to other people, and perhaps not used the option
