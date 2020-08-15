@@ -63,11 +63,16 @@ document {
 	 LI { "functionality changed in a way that could break code:",
 	      UL {
 		   LI { "The variable ", TO "backupFileRegexp", " has been replaced by the ", TO "Exclude", "
-			option to ", TO "copyDirectory", "."    
+			option to ", TO "copyDirectory", "."
 			}
 		   }
+	      },
+	 LI { "functionality removed",
+	       UL {
+		    LI { "The ", TT "ForestNode", " and ", TT "TreeNode", " types have been made internal." },
+		    }
 	      }
-	 }
+          }
      }
 
 
@@ -1576,7 +1581,7 @@ document {
 			 This impacted functions which use ", TO "trim", ", especially ", TO "decompose", "."
 			 },
 		    LI {
-			 "The function ", TO "eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring,
+			 "The function ", TO "Elimination::eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring,
 			 with no quotient elements, and also quietly assumed that the ring was commutative.  Now error
 			 messages are given when it would have produced incorrect answers, and it handles Weyl and skew 
 			 commutative poly rings correctly.  Addtionally, this function now uses an elimination order 

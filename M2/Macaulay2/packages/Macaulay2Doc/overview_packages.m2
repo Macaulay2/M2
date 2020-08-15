@@ -46,7 +46,8 @@ Node
                       if author.?Name and (not authors#?(author.Name) or not instance(authors#(author.Name), HREF))
                       then author.Name => if author.?HomePage then HREF {author.HomePage, author.Name} else author.Name))));
       -- TODO: simplify this when sort takes a SortStrategy
-      UL (last \ sort apply(pairs authors, (name, entry) -> (last separate(" ", name), LI entry)))
+      c := 0;
+      UL (last \ sort apply(pairs authors, (name, entry) -> (last separate(" ", name), c = c + 1, LI entry)))
   SeeAlso
     "creating a package"
     "packages provided with Macaulay2"

@@ -52,7 +52,7 @@ export {"Arrangement", "arrangement", "arrangementLibrary", "CentralArrangement"
      "NaiveAlgorithm", "typeA", "typeB", "typeD", "graphic", "Flat", "flat", "flats",
      "circuits", "tolist", "closure", "meet", "vee", "subArrangement", "changeRing",
      "restriction", "arrangementSum", "EPY", "der", "HS", "isDecomposable", "isCentral", 
-     "multIdeal", "lct", "randomArrangement"}
+     "multIdeal", "lct", "randomArrangement", "Classic"}
 
 -- these are already defined: compress, trim, coefficients,
 -- euler, poincare, cone, rank, ring, matrix

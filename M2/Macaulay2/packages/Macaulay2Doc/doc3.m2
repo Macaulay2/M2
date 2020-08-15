@@ -1084,8 +1084,6 @@ document { Key => cache,
 	  peek F.cache
 	  F === ZZ^3
      ///}
-document { Key => {(capture, String),capture},
-     Headline => "evaluate Macaulay2 code and capture the output (under development)" }
 document { Key => "catch",
      Headline => "catch a thrown exception", SeeAlso => {"throw"},
      Usage => "catch c",

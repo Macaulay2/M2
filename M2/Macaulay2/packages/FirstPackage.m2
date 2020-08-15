@@ -27,6 +27,8 @@ doc ///
     {\em FirstPackage} is a basic package to be used as an example.
   Caveat
     Still trying to figure this out.
+  Subnodes
+    firstFunction
  Node
   Key
    (firstFunction,ZZ)

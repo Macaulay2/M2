@@ -38,7 +38,7 @@ capture String := s -> (
 extractExamplesLoop := method(Dispatch => Thing)
 extractExamplesLoop Thing       := x -> {}
 extractExamplesLoop Sequence    :=
-extractExamplesLoop Hypertext   := x -> join apply(toSequence x, extractExamplesLoop)
+extractExamplesLoop Hypertext   := x -> toList join apply(toSequence x, extractExamplesLoop)
 extractExamplesLoop ExampleItem := toList
 
 extractExamples = docBody -> (

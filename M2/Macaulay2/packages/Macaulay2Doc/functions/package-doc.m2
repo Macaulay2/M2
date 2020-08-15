@@ -33,6 +33,7 @@ undocumented {
     IgnoreExampleErrors,
     InstallPrefix,
     MakeDocumentation,
+    MakeHTML,
     MakeInfo,
     MakeLinks,
     RemakeAllDocumentation,
@@ -455,6 +456,7 @@ Node
     [installPackage, IgnoreExampleErrors]
     [installPackage, InstallPrefix]
     [installPackage, MakeDocumentation]
+    [installPackage, MakeHTML]
     [installPackage, MakeInfo]
     [installPackage, MakeLinks]
     [installPackage, RemakeAllDocumentation]
@@ -492,6 +494,8 @@ Node
       whether to check the package's documentation for consistency and completeness
     MakeDocumentation=>Boolean
       whether to make the documentation for the package during installation
+    MakeHTML=>Boolean
+      whether to make HTML documentation. This is a form of the documentation that can be viewed using a browser.
     MakeInfo=>Boolean
       whether to make the info pages. This is a form of the documentation that can be viewed using the
       Unix command @TT "info"@ or using @TT "emacs"@
@@ -539,7 +543,8 @@ Node
           {"load the package, if not already loaded (see ", TO loadPackage, ")"},
           {"determine which help pages have changed since last install"},
           {"run any new or previously failed examples, or all examples, as specified by the ", TO "RemakeAllExamples", " option"},
-          {"generate the html pages of modified help pages, or all html pages, as specificed by the ", TT "RemakeAllDocumentation", " option"},
+          {"generate the html pages, or not, as specified by the ", TT "MakeHTML", " option, for the modified help pages,
+	      or all html pages if ", TT "RemakeAllDocumentation", " is set to true"},
           {"generate the info pages, or not, as specified by the ", TT "MakeInfo", " option"},
           {"install the documentation and package in the location specified by the ", TT "InstallPrefix", " option"},
           {"place a link to this html documentation in the

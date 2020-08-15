@@ -211,6 +211,7 @@ documentableMethods = s -> select(methods s, isDocumentableMethod)
 
 documentationValue := method()
 documentationValue(Symbol, Thing) := (s, x) -> ()
+-- e.g. Macaulay2 :: MethodFunction
 documentationValue(Symbol, Type)  := (s, X) -> (
      syms := unique flatten(values \ dictionaryPath);
      a := smenu apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableMethod key), (key,Y) -> key);

@@ -199,7 +199,7 @@ document {
 	       "Z" => Type
 	       },
 	  Outputs => {Net => {"the source code of method for applying ", TT "f", " to
-		    arguments of type ", TT "X", ", ", TT "Y, and ", TT "Z"
+		    arguments of type ", TT "X", ", ", TT "Y", ", and ", TT "Z"
 		    }}
 	  },
      SYNOPSIS {
@@ -212,7 +212,7 @@ document {
 	       "T" => Type
 	       },
 	  Outputs => {Net => {"the source code of method for applying ", TT "f", " to
-		    arguments of type ", TT "X", ", ", TT "Y, and ", TT "Z", ", and ", TT "T"
+		    arguments of type ", TT "X", ", ", TT "Y", ", ", TT "Z", ", and ", TT "T"
 		    }}
 	  },
      SYNOPSIS {

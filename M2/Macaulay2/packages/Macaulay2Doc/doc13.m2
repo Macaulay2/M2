@@ -390,8 +390,6 @@ document { Key => UpdateOnly,
      Headline => "only copies of newer files should replace files" }
 document { Key => Verbose,
      Headline => "request verbose feedback" }
-document { Key => PrimaryTag,
-     Headline => "for internal use only: a symbol used in storing documentation" }
 document { Key => {ofClass,(ofClass, Type),(ofClass, ImmutableType),(ofClass, List)}, 
      Headline => "English phrases for types",
      Usage => "ofClass T",
@@ -497,17 +495,6 @@ document { Key => NumberedVerticalList,
      	 toList v
          ///,
      SeeAlso => { VerticalList }
-     }
-
-document { Key => ForestNode,
-     Headline => "a type of basic list used to represent a forest, i.e., a list of rooted trees",
-     "This type is sort of experimental, and is used mainly internally in assembling the table of contents for the documentation of a package.",
-     SeeAlso => {TreeNode}
-     }
-document { Key => TreeNode,
-     Headline => "a type of basic list used to represent a rooted tree",
-     "This type is sort of experimental, and is used mainly internally in assembling the table of contents for the documentation of a package.",
-     SeeAlso => {ForestNode}
      }
 
 document { Key => FunctionClosure,
