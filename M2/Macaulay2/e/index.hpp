@@ -11,9 +11,12 @@ class Index
   const T *collection;
 
  public:
-  Index() : collection(nullptr) {}
+  Index() : ind(nullptr), collection(nullptr) {}
   Index(void *i, const T *c) : ind(i), collection(c) {}
-  Index(const Index<T> &i) : ind(i.ind), collection(i.collection) {}
+
+  Index(const Index<T> &i) = default; 
+  Index<T>& operator=(const Index<T> &i) = default;
+
   Index<T> operator++()
   {
     ind = collection->next(ind);
@@ -38,13 +41,6 @@ class Index
     Index<T> tmp = *this;
     ind = collection->prev(ind);
     return tmp;
-  }
-
-  Index<T>& operator=(const Index<T> &i)
-  {
-    ind = i.ind;
-    collection = i.collection;
-    return *this;
   }
 
   int valid() { return collection->valid(ind); }
