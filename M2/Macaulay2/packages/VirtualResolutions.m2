@@ -477,15 +477,19 @@ multigradedRegularity(Ring,               Module) := List => (S, M') -> multigra
 multigradedRegularity(NormalToricVariety, Module) := List => (X, M)  -> multigradedRegularity(X, null, M)
 -- Note: some hacking is involved to deal with the differences between productOfProjectiveSpaces and toricProjectiveSpaces
 multigradedRegularity(Thing, Thing, Module) := List => (X, S, M) -> (
+    -- making local assignments so that productOfProjectiveSpaces does
+    -- not mess with the global ring by grabbing their global symbols.
+    x := local x; e := local e;
+    h := local h; k := local k;
     if class X === NormalToricVariety then (
         -- go from module over NormalToricVariety to module over productOfProjectiveSpaces
         -- assuming that the NormalToricVariety is a tensor product of toricProjectiveSpaces
         S = ring X;
-        (S', E') := productOfProjectiveSpaces(dimVector X, CoefficientField => coefficientRing S);
+        (S', E') := productOfProjectiveSpaces(dimVector X, CoefficientField => coefficientRing S, Variables => {symbol x, symbol e});
         M' := coker (map(S', S, gens S'))(presentation M);
         ) else (
         -- go from module over productOfProjectiveSpaces to module over tensor product of toricProjectiveSpaces
-        (S', E') = productOfProjectiveSpaces(dimVector S, CoefficientField => coefficientRing S);
+        (S', E') = productOfProjectiveSpaces(dimVector S, CoefficientField => coefficientRing S, Variables => {symbol x, symbol e});
         M' = coker (map(S', S, gens S'))(presentation M);
         X = fold((A,B) -> A**B, dimVector(S)/(i->toricProjectiveSpace(i, CoefficientRing => coefficientRing S)));
         M = coker (map(ring X, S, gens ring X))(presentation M);
