@@ -30,6 +30,7 @@ doc ///
       the subject string to be searched
     Flags=>Symbol
       the regex flavor: either @TO "RegexPOSIX"@ or @TO "RegexPerl"@; @TO null@ indicates POSIX Extended flavor.
+      If it is an integer, the value is interpreted as an internal flag (see below).
   Outputs
     :List
       a list of pairs of integers; each pair denotes the beginning position and the length of a substring.
@@ -87,10 +88,9 @@ doc ///
     Text
       @SUBSECTION "Passing internal flags to the C++ interface"@
 
-      The @TT "Flags"@ option can also be used to pass internal flags to the C++ interface as a list of strings or
-      as an integer. The permissible strings and values are not documented, as they are intended for use only within Core
-      and are subject to change without notice. See @HREF { currentLayout#"packages" | "Core/regex.m2", "Core/regex.m2" }@
-      for the list of currently admissible flags and their effects.
+      The @TT "Flags"@ option can also be used to pass internal flags to the C++ interface as an integer.
+      See @HREF { currentLayout#"packages" | "Core/regex.m2", "Core/regex.m2" }@ for the list of admissible
+      flags and their effects. Note: the permissible values are subject to change without notice.
   SeeAlso
     "regular expressions"
     "strings and nets"

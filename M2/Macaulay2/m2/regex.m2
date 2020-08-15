@@ -19,6 +19,7 @@ RegexFlags = new HashTable from {
     "NoBkRefs"        => (1 << 18), -- disable backreferences
 
     "MatchAny"           => (1 << 25), -- return any match
+    "MatchNotNull"       => (1 << 26), -- match must be nonempty
     "MatchContinuous"    => (1 << 27), -- match must start at the beginning
     "MatchPrevAvail"     => (1 << 30), -- lead-1 is a valid iterator position
     "MatchNotDotNewline" => (1 << 31), -- doesn't match . with newlines
@@ -39,9 +40,12 @@ regexSpecialChars = concatenate(
 -- Local utilities
 -----------------------------------------------------------------------------
 
-setRegexFlags := (opts, defaultFlags) -> (
+setRegexFlags = (opts, defaultFlags) -> (
     if instance(opts,       ZZ) then return opts;
     if instance(opts.Flags, ZZ) then return opts.Flags;
+    if  not instance(opts, List)
+    and not (opts.Flags === null or opts.Flags === RegexPOSIX or opts.Flags === RegexPerl)
+    then error("regex: unrecognized flag: ", opts.Flags);
     labels := if opts.Flags === null then defaultFlags else opts.Flags;
     labels  = if instance(labels, List) then labels else {labels};
     flags  := 0;
@@ -118,7 +122,7 @@ match(List,   String) := opts -> (rs, str) -> (
     if member(opts.Strategy, {any, all}) then (opts.Strategy)(rs, re -> match(re, str, opts))
     else error concatenate("unknown quantifier for match: ", toString opts.Strategy))
 match(String, String) := opts -> (re, str) ->
-    null =!= (lastMatch = regex(re, str, Flags => setRegexFlags(opts, regexFlags | matchFlags)))
+    null =!= (lastMatch = regex'(re, 0, length str, str, setRegexFlags(opts, regexFlags | matchFlags)))
 
 -----------------------------------------------------------------------------
 -- replace
