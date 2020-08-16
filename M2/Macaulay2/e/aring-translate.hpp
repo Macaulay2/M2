@@ -7,6 +7,7 @@
 // Contains functions which are "ring translational" //
 ///////////////////////////////////////////////////////
 
+#include "aring-RRi.hpp"
 #include "aring-RR.hpp"
 #include "aring-CC.hpp"
 #include "aring-RRR.hpp"

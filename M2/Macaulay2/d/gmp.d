@@ -39,6 +39,14 @@ export QQorNull := QQ or null;
 
 export QQcell := {+v:QQ};
 
+export RRimutable := Pointer "mpfr_ptr"; -- !!! needs to change
+
+export RRi := Pointer "mpfr_srcptr"; -- !!! needs to change
+
+export RRiorNull := RRi or null;
+
+export RRicell := {+v:RRi};
+
 export RRmutable := Pointer "mpfr_ptr";
 
 export RR := Pointer "mpfr_srcptr";

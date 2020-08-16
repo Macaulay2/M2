@@ -267,7 +267,9 @@ extern "C" {
        However, currently, not all of this is checked...
     */
 
-  const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec); /* drg: connected rawRRR */
+  const Ring /* or null */ *rawRingRRi(unsigned long prec); /* drg: connected rawRRi */
+
+  const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec); /* drg: connected rawRR */
 
   const Ring /* or null */ *IM2_Ring_CCC(unsigned long prec); /* drg: connected rawCCC */
 

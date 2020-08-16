@@ -122,6 +122,7 @@ set(SRCLIST
   SLP
   ZZ
   ZZp
+  aring-RRi
   aring-CC
   aring-CCC
   aring-RR
