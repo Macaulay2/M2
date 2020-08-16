@@ -6,11 +6,8 @@ getSourceLines Sequence := x -> (
      (filename,start,startcol,stop,stopcol,pos,poscol) -> if filename =!= "stdio" then (
 	  wp := set characters " \t\r);";
 	  file := (
-	       if match("startup\\.m2\\.in$", filename) or match("basictests/.*\\.m2$", filename) then (
-		   -- if running M2 from a build directory, open the copy in the source directory
-		   filename = if topSrcdir =!= null then topSrcdir | filename
-		   else prefixDirectory | currentLayout#"data" | replace("\\.in$", "", filename));
-	       if filename === "currentString" then currentString
+	       if match("startup.m2.in$", filename) then startupString
+	       else if filename === "currentString" then currentString
 	       else (
 		    if not fileExists filename then error ("couldn't find file ", filename);
 		    get filename
