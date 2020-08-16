@@ -589,6 +589,9 @@ leftshiftfun(e:Expr):Expr := (
 installMethod(Expr(LessLessS),ZZClass,ZZClass,
      Expr(CompiledFunction(leftshiftfun,nextHash()))
      );
+installMethod(Expr(LessLessS),RRiClass,ZZClass,
+     Expr(CompiledFunction(leftshiftfun,nextHash()))
+     );
 installMethod(Expr(LessLessS),RRClass,ZZClass,
      Expr(CompiledFunction(leftshiftfun,nextHash()))
      );
