@@ -667,7 +667,7 @@ AC_SUBST(BUILTLIBS)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll linbox gtest ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr mpfi readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll linbox gtest ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
@@ -864,6 +864,17 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(mpfr_digamma,"/usr/lib/libmpfr.a" "/usr/local/lib/libmpfr.a",,
 				        [AC_MSG_ERROR([libmpfr.a not found])])
      else AC_SEARCH_LIBS(mpfr_digamma,"mpfr",,[AC_MSG_ERROR([libmpfr not found])])
+     fi
+fi
+
+AC_LANG(C)
+AC_CHECK_HEADER(mpfi.h,,BUILD_mpfi=yes)
+if test $BUILD_mpfi = yes
+then BUILTLIBS="-lmpfi $BUILTLIBS"
+else if test $SHARED = no -a $TRY_STATIC = yes
+     then SEARCH_LIBRARIES(mpfi_set_prec,"/usr/lib/libmpfi.a" "/usr/local/lib/libmpfi.a",,
+				        [AC_MSG_ERROR([libmpfi.a not found])])
+     else AC_SEARCH_LIBS(mpfi_set_prec,"mpfi",,[AC_MSG_ERROR([libmpfi not found])])
      fi
 fi
 

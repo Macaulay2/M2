@@ -683,6 +683,12 @@ export rawConwayPolynomial(e:Expr):Expr := (
     );
 setupfun("rawConwayPolynomial",rawConwayPolynomial);
 
+export rawRRi(e:Expr):Expr := (
+     when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
+     else toExpr(Ccode(RawRingOrNull, "rawRingRRi(",toInt(prec),")" ))
+     else WrongArgZZ(1));
+setupfun("rawRRi",rawRRi);
+
 export rawRR(e:Expr):Expr := (
      when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
      else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRR(",toInt(prec),")" ))

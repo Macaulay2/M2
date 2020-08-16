@@ -62,6 +62,7 @@ INTERFACE = \
 	aring-zz-flint \
 	aring-qq-flint \
 	aring-zzp-flint \
+	aring-RRi \
 	aring-RR \
 	aring-CC \
 	aring-RRR \

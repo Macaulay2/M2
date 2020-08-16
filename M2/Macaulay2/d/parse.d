@@ -365,6 +365,7 @@ export TaskCell := {+ body:TaskCellBody };
 export Expr := (
      CCcell or
      RRcell or
+     RRicell or
      Boolean or
      CodeClosure or
      CompiledFunction or
