@@ -8,10 +8,10 @@ doc ///
   (separate, String)
   (separate, String, String)
   (separate, String, ZZ, String)
-  [separate, Flags]
+  [separate, POSIX]
   "separateRegexp"
  Headline
-  split a string into substrings
+  split a string into substrings using a regular expression
  Usage
   separate str
   separate(re, str)
@@ -23,8 +23,8 @@ doc ///
    the string to split
   n:ZZ
    the index of the parenthesized expression to split on
-  Flags=>Symbol
-   the regex flavor: either @TO "RegexPOSIX"@ or @TO "RegexPerl"@; @TO null@ indicates POSIX Extended flavor.
+  POSIX=>Boolean
+   if true, interpret the @TT "re"@ using the POSIX Extended flavor, otherwise the Perl flavor
  Outputs
   :List
    a list of strings obtained by breaking @TT "str"@ at every match to the pattern @TT "re"@, or, if a natural

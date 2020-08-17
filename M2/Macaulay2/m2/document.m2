@@ -477,7 +477,7 @@ fixup MarkUpType := z -> (
      else error("isolated mark up type encountered: ",toString z)
      ) -- convert PARA to PARA{}
 -- fixup Function   := z -> z				       -- allow BaseFunction => f 
-fixup String     := s -> demark_" " separate("[ \t]*\r?\n[ \t]*", s, Flags=>RegexPerl) -- remove clumsy newlines within strings
+fixup String     := s -> demark_" " separate("[ \t]*\r?\n[ \t]*", s) -- remove clumsy newlines within strings
 
 -- TODO: move this, and above, to hypertext.m2
 hypertext = method(Dispatch => Thing)

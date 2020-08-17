@@ -369,12 +369,12 @@ scanKeys(Database,Function) := (x,f) -> (
 
 -- TODO: eventually move this to lists.m2
 select' = select
-select = method(Options => {Flags => null})
-select(ZZ,            Function) := List      => opts -> select'
-select(ZZ, BasicList, Function) := BasicList => opts -> select'
-select(ZZ, HashTable, Function) := HashTable => opts -> select'
-select(    BasicList, Function) := BasicList => opts -> select'
-select(    HashTable, Function) := HashTable => opts -> select'
+select = method(Options => true)
+select(ZZ,            Function) := List      => {} >> o -> select'
+select(ZZ, BasicList, Function) := BasicList => {} >> o -> select'
+select(ZZ, HashTable, Function) := HashTable => {} >> o -> select'
+select(    BasicList, Function) := BasicList => {} >> o -> select'
+select(    HashTable, Function) := HashTable => {} >> o -> select'
 -- two more methods installed in regex.m2
 
 oldnumerator := numerator

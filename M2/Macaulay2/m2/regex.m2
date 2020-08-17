@@ -2,7 +2,9 @@
 -- Enum for passing internal flags to the regex engine
 -----------------------------------------------------------------------------
 
--- Keep this enum in sync with RegexFlags in Macaulay2/e/regex.cpp
+-- Keep this enum in sync with RegexFlags in Macaulay2/d/boost-regex.cpp
+-- The values are used as a bitmask in order to simplify passing flags to
+-- the various functions defined there.
 RegexFlags = new HashTable from {
     "ECMAScript" =>  0,       -- ECMAScript flavor (default)
     "Extended"   => (1 << 1), -- POSIX ERE flavor
@@ -25,14 +27,6 @@ RegexFlags = new HashTable from {
     "MatchNotDotNewline" => (1 << 31), -- doesn't match . with newlines
     }
 
-RegexPerl = symbol RegexPerl
-RegexPOSIX = symbol RegexPOSIX
-
--- Note: for experiments, the default can be changed in ./Macaulay2/init.m2:
---   Core#"private dictionary"#"regexFlags" <- {RegexPerl}
-regexFlags = {RegexPOSIX}
-matchFlags = {"Nosubs", "MatchAny"}
-
 regexSpecialChars = concatenate(
     "([", apply({"\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "[", "]", "{", "}"}, c -> "\\" | c), "])")
 
@@ -40,35 +34,27 @@ regexSpecialChars = concatenate(
 -- Local utilities
 -----------------------------------------------------------------------------
 
-setRegexFlags = (opts, defaultFlags) -> (
-    if instance(opts,       ZZ) then return opts;
-    if instance(opts.Flags, ZZ) then return opts.Flags;
-    if  not instance(opts, List)
-    and not (opts.Flags === null or opts.Flags === RegexPOSIX or opts.Flags === RegexPerl)
-    then error("regex: unrecognized flag: ", opts.Flags);
-    labels := if opts.Flags === null then defaultFlags else opts.Flags;
-    labels  = if instance(labels, List) then labels else {labels};
-    flags  := 0;
-    for label in labels do
-    if label === RegexPerl  then flags = flags | RegexFlags#"ECMAScript" | RegexFlags#"NoModS" else
-    if label === RegexPOSIX then flags = flags | RegexFlags#"Extended"   | RegexFlags#"MatchNotDotNewline" else
-    if RegexFlags#?label    then flags = flags | RegexFlags#label else error("regex: unrecognized flag: ", label);
-    flags)
+setRegexFlags = opts -> (
+    if instance(opts, ZZ) then return opts;
+    if opts.?POSIX and instance(opts.POSIX, Boolean) then if opts.POSIX
+    then RegexFlags#"Extended"   | RegexFlags#"MatchNotDotNewline"
+    else RegexFlags#"ECMAScript" | RegexFlags#"NoModS"
+    else error "regex: expected true or false for option POSIX => ...")
 
 -----------------------------------------------------------------------------
 -- regex
 -----------------------------------------------------------------------------
 
-regex' := regex
-regex = method(TypicalValue => List, Options => {Flags => null})
+regex' = regex
+regex = method(TypicalValue => List, Options => {POSIX => false})
 regex(String,         String) := opts -> (re,              str) -> regex(re, 0,    length str, str, opts)
 regex(String, ZZ,     String) := opts -> (re, head,        str) -> regex(re, head, length str, str, opts)
 regex(String, ZZ, ZZ, String) := opts -> (re, head, range, str) -> (
     tail := length str;
-    flags := setRegexFlags(opts, regexFlags);
+    flags := setRegexFlags opts;
     if head + range >= tail then return regex'(re, head, tail, str, flags);
     -- When head + range != tail, this is backwards compatible with GNU regex in Extended POSIX flavor;
-    -- however, the lookbehind feature of ECMAScript flavor doesn't work in this case.
+    -- however, the lookbehind feature of Perl flavor doesn't work in this case.
     flags = flags | (if head + range != tail then RegexFlags#"MatchContinuous" else 0);
     if range >= 0
     then for lead from 0 to range when head + lead <= tail do (
@@ -88,8 +74,8 @@ separate = method(TypicalValue => List, Options => options regex)
 separate(            String) := opts -> (       str) -> separate'("\r?\n", str, -1)
 separate(String,     String) := opts -> (re,    str) -> (
     flags := if length re == 1 and match(regexSpecialChars, re) then (
-	stderr << "warning: unescaped delimiter '" << re << "' found in call to 'separate'" << endl;
-	RegexFlags#"Literal") else setRegexFlags(opts, regexFlags);
+	stderr << "warning: unescaped special character '" << re << "' found in call to 'separate'" << endl;
+	RegexFlags#"Literal") else setRegexFlags opts;
     separate'(re, str, flags))
 separate(String, ZZ, String) := opts -> (re, n, str) -> (
     (offset, tail) := (0, length str);
@@ -107,9 +93,10 @@ separateRegexp = separate
 -- select
 -----------------------------------------------------------------------------
 
-select(String,         String) := List => opts -> (re,       str) -> select(re, "$&", str, opts)
-select(String, String, String) := List => opts -> (re, form, str) -> (
-    select'(re, form, str, setRegexFlags(opts, regexFlags)))
+select(String,         String) := List => {POSIX => true} >> opts ->
+    (re,       str) -> select'(re, "$&", str, setRegexFlags opts)
+select(String, String, String) := List => {POSIX => true} >> opts ->
+    (re, form, str) -> select'(re, form, str, setRegexFlags opts)
 protect symbol select
 
 -----------------------------------------------------------------------------
@@ -122,17 +109,17 @@ match(List,   String) := opts -> (rs, str) -> (
     if member(opts.Strategy, {any, all}) then (opts.Strategy)(rs, re -> match(re, str, opts))
     else error concatenate("unknown quantifier for match: ", toString opts.Strategy))
 match(String, String) := opts -> (re, str) ->
-    null =!= (lastMatch = regex'(re, 0, length str, str, setRegexFlags(opts, regexFlags | matchFlags)))
+    null =!= (lastMatch = regex'(re, 0, length str, str, setRegexFlags opts))
 
 -----------------------------------------------------------------------------
 -- replace
 -----------------------------------------------------------------------------
 
 -- previously in methods.m2
-replace' := replace
-replace = method(Options => options regex)
-replace(String, String, String) := String => opts -> (re, s, r) ->
-    replace'(re, s, r, setRegexFlags(opts, regexFlags))
+replace' = replace
+replace = method(Options => true)
+replace(String, String, String) := String => options regex >>
+    opts -> (re, s, r) -> replace'(re, s, r, setRegexFlags opts)
 protect symbol replace
 
 -- previously in html0.m2

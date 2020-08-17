@@ -6,7 +6,7 @@ doc ///
   Key
      match
     (match, String, String)
-    [match, Flags]
+    [match, POSIX]
     [match, Strategy]
     "lastMatch"
   Headline
@@ -21,8 +21,8 @@ doc ///
       a subject string to be searched
     patterns:List
       a list of regular expressions
-    Flags=>Symbol
-      the regex flavor: either @TO "RegexPOSIX"@ or @TO "RegexPerl"@; @TO null@ indicates POSIX Extended flavor.
+    POSIX=>Boolean
+      if true, interpret the @TT "re"@ using the POSIX Extended flavor, otherwise the Perl flavor
     Strategy=>Function
       logical quantifier for matching a list of patterns, typically @TO all@ or @TO any@
   Outputs
@@ -43,18 +43,18 @@ doc ///
       match ("cats", s)
       lastMatch
     Text
-      The @TT "Flags"@ option can be used to specify the regular expression flavor used to match.
-      For instance, @TT "Flags => RegexPerl"@ allows the use of lookahead and lookbehinds.
+      The @TT "POSIX => true"@ option can be used to specify the POSIX Extended flavor for the regular
+      expression used to match. Note that only the Perl flavor allows the use of lookahead and lookbehinds.
     Example
       s = "catfish cat dog"
-      match("cat(?!fish)", s, Flags => RegexPerl)
+      match("cat(?!fish)", s)
       substring(lastMatch#0#0, lastMatch#0#1 + 4, s)
 
-      match("cat(?=fish)", s, Flags => RegexPerl)
+      match("cat(?=fish)", s)
       substring(lastMatch#0#0, lastMatch#0#1 + 4, s)
 
-      match("(?<!cat)fish", "cat catfish dog", Flags => RegexPerl)
-      match("(?<!cat)fish", "cat swordfish dog", Flags => RegexPerl)
+      match("(?<!cat)fish", "cat catfish dog")
+      match("(?<!cat)fish", "cat swordfish dog")
     Text
       When the first input is a list, by default the output is true if @TT "str"@ is a match for at least
       one of the given regular expressions.

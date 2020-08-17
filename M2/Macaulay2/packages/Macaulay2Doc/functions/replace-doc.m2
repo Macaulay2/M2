@@ -12,7 +12,7 @@ doc ///
 doc ///
   Key
     (replace, String, String, String)
-    [replace, Flags]
+    [(replace, String, String, String), POSIX]
   Headline
     replace substrings matching a regular expression
   Usage
@@ -24,8 +24,8 @@ doc ///
       a replacement or regex formatting string, may include backreferences
     str:String
       a subject string to be processed
-    Flags=>Symbol
-      the regex flavor: either @TO "RegexPOSIX"@ or @TO "RegexPerl"@; @TO null@ indicates POSIX Extended flavor.
+    POSIX=>Boolean
+      if true, interpret the @TT "re"@ using the POSIX Extended flavor, otherwise the Perl flavor
   Outputs
     :String
       the string obtained from @TT "str"@ by replacing its substrings matching @TT "re"@ by copies of @TT "replacement"@.

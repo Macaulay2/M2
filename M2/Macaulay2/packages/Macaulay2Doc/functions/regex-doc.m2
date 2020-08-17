@@ -2,13 +2,15 @@
 --- author(s): Dan, Mahrud
 --- notes: functions below are all defined in regex.m2
 
+undocumented {POSIX}
+
 doc ///
   Key
      regex
     (regex, String,         String)
     (regex, String, ZZ,     String)
     (regex, String, ZZ, ZZ, String)
-    [regex, Flags]
+    [regex, POSIX]
   Headline
     evaluate a regular expression search
   Usage
@@ -28,9 +30,8 @@ doc ///
       when omitted, the search extends to the end of the string.
     str:String
       the subject string to be searched
-    Flags=>Symbol
-      the regex flavor: either @TO "RegexPOSIX"@ or @TO "RegexPerl"@; @TO null@ indicates POSIX Extended flavor.
-      If it is an integer, the value is interpreted as an internal flag (see below).
+    POSIX=>Boolean
+      if true, interpret the @TT "re"@ using the POSIX Extended flavor, otherwise the Perl flavor
   Outputs
     :List
       a list of pairs of integers; each pair denotes the beginning position and the length of a substring.
@@ -43,10 +44,6 @@ doc ///
       of each pair is the offset within @TT "str"@ of the substring matched, and the second is the length.
 
       See @TO "regular expressions"@ for a brief introduction to the topic.
-
-      By default, the POSIX Extended flavor of regex is used. This syntax is used by the Unix utilities
-      @TT "egrep"@ and @TT "awk"@. This flavor follows the @BOLD "leftmost, longest"@ rule for finding
-      matches. If there's a tie, the rule is applied to the first subexpression.
     Example
       s = "The cat is black.";
       m = regex("(\\w+) (\\w+) (\\w+)",s)
@@ -73,24 +70,28 @@ doc ///
       m = regex("a.*$", 4, -10, s)
 
     Text
-      Alternatively, one can choose the ECMAScript flavor of regex, which supports more features, such as
-      lookaheads and lookbehinds, for fine-tuning the matches. This syntax is used in Perl and JavaScript languages.
+      By default, the regular expressions are interpreted using the Perl flavor, which
+      supports features such as lookaheads and lookbehinds for fine-tuning the matches.
+      This syntax is used in Perl and JavaScript languages.
     Example
-      s = "<b>bold</b> and <b>strong</b>";
-      m = regex("<b>(.*)</b>",  s, Flags => RegexPOSIX);
-      substring(m#1#0, m#1#1, s)
-      m = regex("<b>(.*?)</b>", s, Flags => RegexPerl);
-      substring(m#1#0, m#1#1, s)
-
-      regex("A(?!C)", "AC AB", Flags => RegexPerl);
-      regex("A(?=B)", "AC AB", Flags => RegexPerl);
+      regex("A(?!C)", "AC AB")
+      regex("A(?=B)", "AC AB")
 
     Text
-      @SUBSECTION "Passing internal flags to the C++ interface"@
+      Alternatively, one can choose the POSIX Extended flavor of regex using @TT "POSIX => true"@.
+      This syntax is similar to the one used by the Unix utilities @TT "egrep"@ and @TT "awk"@ and
+      enforces the @BOLD "leftmost, longest"@ rule for finding matches. If there's a tie, the rule
+      is applied to the first subexpression.
+    Example
+      s = "<b>bold</b> and <b>strong</b>";
+      m = regex("<b>(.*)</b>", s, POSIX => true);
+      substring(m#1, s)
 
-      The @TT "Flags"@ option can also be used to pass internal flags to the C++ interface as an integer.
-      See @HREF { currentLayout#"packages" | "Core/regex.m2", "Core/regex.m2" }@ for the list of admissible
-      flags and their effects. Note: the permissible values are subject to change without notice.
+    Text
+      In the Perl flavor, one can specify whether repetitions should be possessive or non-greedy.
+    Example
+      m = regex("<b>(.*?)</b>", s);
+      substring(m#1, s)
   SeeAlso
     "regular expressions"
     "strings and nets"
@@ -105,8 +106,6 @@ doc ///
 doc ///
   Key
     "regular expressions"
-    "RegexPOSIX"
-    "RegexPerl"
   Headline
     syntax for regular expressions
   Description
@@ -182,19 +181,21 @@ doc ///
       @HREF {"https://www.boost.org/doc/libs/release/libs/regex/", "Boost.Regex"}@ C++ library, which supports multiple
       flavors, or standards, of regular expression.
 
-      In Macaulay2, the POSIX Extended flavor is the default, which can be specified by @TT "Flags => RegexPOSIX"@, but
-      a more powerful, ECMAScript flavor can be chosen by passing the option @TT "Flags => RegexPerl"@. In general, the
-      ECMAScript flavor supports all patterns designed for the POSIX Extended flavor, but allows for more fine-tuning in
-      the patterns. However, one key difference is what happens when there is more that one way to match a regular expression:
+      In Macaulay2, the Perl flavor is the default. Alternatively, the POSIX Extended flavor can be chosen by passing
+      the option @TT "POSIX => true"@. In general, the Perl flavor supports all patterns designed for the POSIX Extended
+      flavor, but allows for more fine-tuning in the patterns. One key difference is what happens when there is more that
+      one way to match a regular expression:
 
       @UL {
-	  {TT "RegexPOSIX", " -- the \"best\" match is obtained using the \"leftmost-longest\" rule;"},
-	  {TT "RegexPerl", " -- the \"first\" match is arrived at by a depth-first search."},
+	  {BOLD "Perl", " -- the \"first\" match is arrived at by a depth-first search."},
+	  {BOLD "POSIX", " -- the \"best\" match is obtained using the \"leftmost-longest\" rule;"},
 	  }@
 
-      @HEADER2 "Additional ECMAScript Syntax"@
+      If there's a tie in the POSIX flavor, the rule is applied to the first subexpression.
 
-      The ECMAScript flavor adds the following, non-backward compatible constructions:
+      @HEADER2 "Additional Perl Regular Expression Syntax"@
+
+      The Perl flavor adds the following, non-backward compatible constructions:
 
       @UL {
           {TT "(?#...)", " -- ignored and treated as a comment"},
@@ -226,8 +227,8 @@ doc ///
       @HEADER2 "Complete References"@
 
       For complete documentation on regular expressions supported in Macaulay2, see the Boost.Regex manual on
-      @HREF {"https://www.boost.org/doc/libs/release/libs/regex/doc/html/boost_regex/syntax/perl_syntax.html", "ECMAScript"}@ and
-      @HREF {"https://www.boost.org/doc/libs/release/libs/regex/doc/html/boost_regex/syntax/basic_extended.html", "POSIX Extended"}@
+      @HREF {"https://www.boost.org/doc/libs/release/libs/regex/doc/html/boost_regex/syntax/perl_syntax.html", "Perl"}@ and
+      @HREF {"https://www.boost.org/doc/libs/release/libs/regex/doc/html/boost_regex/syntax/basic_extended.html", "Extended"}@
       flavors, or read the entry for @TT "regex"@ in section 7 of the unix man pages.
 
       In addition to the functions mentioned below, regular expressions appear in @TO "about"@, @TO "apropos"@,
@@ -236,9 +237,10 @@ doc ///
     :functions that accept regular expressions
     match
     regex
-    replace
     separate
     (select, String, String, String)
+    (replace, String, String, String)
+    regexQuote
 ///
 
 doc ///

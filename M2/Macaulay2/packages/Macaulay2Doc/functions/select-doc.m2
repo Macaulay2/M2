@@ -15,7 +15,8 @@ doc ///
   Key
     (select, String, String, String)
     (select, String, String)
-    [select, Flags]
+    [(select, String, String), POSIX]
+    [(select, String, String, String), POSIX]
   Headline
     select and reformat substrings matching a regular expression
   Usage
@@ -28,8 +29,8 @@ doc ///
       a replacement or regex formatting string, may include backreferences
     str:String
       a subject string to be searched
-    Flags=>Symbol
-      the regex flavor: either @TO "RegexPOSIX"@ or @TO "RegexPerl"@; @TO null@ indicates POSIX Extended flavor.
+    POSIX=>Boolean
+      if true, interpret the @TT "re"@ using the POSIX Extended flavor, otherwise the Perl flavor
   Outputs
     :List
       a list of mutually exclusive substrings of @TT "str"@ matching the pattern @TT "re"@;
@@ -51,15 +52,15 @@ doc ///
     Example
       select("([a-zA-Z]+);", "\\L$1", "Dog; cat, deer;")
     Text
-      The @TT "Flags"@ option can be used to specify the regular expression flavor used to match.
-      For instance, @TT "Flags => RegexPerl"@ allows the use of lookahead and lookbehinds.
+      The @TT "POSIX => true"@ option can be used to specify the POSIX Extended flavor for the regular
+      expression used to match. Note that only the Perl flavor allows the use of lookahead and lookbehinds.
     Example
       s = "catfish cats dogs"
-      select("cat(?!fish)", s, Flags => RegexPerl)
-      select("\\w+(?=s\\b)", s, Flags => RegexPerl)
+      select("cat(?!fish)", s)
+      select("\\w+(?=s\\b)", s)
       s = "goldfish swordfish catfish catdog"
-      select("\\w+(?=fish)", s, Flags => RegexPerl)
-      select("(?<=cat)\\w+", s, Flags => RegexPerl)
+      select("\\w+(?=fish)", s)
+      select("(?<=cat)\\w+", s)
   SeeAlso
     "regular expressions"
     "strings and nets"
