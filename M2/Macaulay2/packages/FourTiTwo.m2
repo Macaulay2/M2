@@ -387,7 +387,7 @@ doc ///
 	       whose columns parametrize the toric variety; the toric ideal is the kernel of the map defined by {\tt A}.
 	       Otherwise, if InputType is set to "lattice", the rows of {\tt A} are a lattice basis and the toric ideal is the 
 	       saturation of the lattice basis ideal.	       
-	  s:InputType
+	  InputType=>String
 	       which is the string "lattice" if rows of {\tt A} specify a lattice basis
 	  R:Ring
 	       polynomial ring in which the toric ideal $I_A$ should live
