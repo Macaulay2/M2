@@ -113,8 +113,8 @@ briefSynopsis := key -> (
 	    then SPAN { "Operator: ", TO key#0#0 }), -- assignment operator for this operator
 	if o.?Usage        then                           o.Usage, -- TODO: handle getUsage here
 	if o.?Inputs       then  LI { "Inputs:",       UL o.Inputs },
-	if o.?Outputs      then  LI { "Outputs:",      UL o.Outputs },
 	if o.?Options      then  LI { TO2{"using functions with optional inputs", "Optional inputs"}, ":", UL o.Options },
+	if o.?Outputs      then  LI { "Outputs:",      UL o.Outputs },
 	if o.?Consequences then DIV { "Consequences:", UL o.Consequences }};
     if #r > 0 then fixup UL r)
 

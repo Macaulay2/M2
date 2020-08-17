@@ -364,6 +364,9 @@ Node
       but a backup will be made and the user's settings for the surviving options will be retained.
     Reload=>Boolean
       whether to reload the package, if it has been loaded before
+  Outputs
+    :Package
+      the new package
   Consequences
     Item
       a package is created
