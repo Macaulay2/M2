@@ -185,7 +185,10 @@ items = (textlines, keylinenum) -> apply(splitByIndent(textlines, false), (s, e)
 	if #ps =!= 2 then error("line ", toString getLinenum textlines#s, " of string: expected line containing a colon or a double arrow");
 	text := demark(" ", getText \ textlines_{s+1..e});
 	result := if s === e then "" else render(text, getLinenum textlines#s);
-	if ps#1 != "" then result = value ps#1 => result;
+	if ps#1 != "" then result = (
+	    type := value ps#1;
+	    if instance(type, List)   then between_", " {ofClass type, result} else
+	    if instance(type, String) then between_", " {        type, result} else type => result);
 	if ps#0 != "" then result = (if match("=>", line) then value else identity) ps#0 => result;
 	result))
 
