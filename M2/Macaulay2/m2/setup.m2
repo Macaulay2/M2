@@ -5,6 +5,7 @@ nonempty = x -> select(x, i -> i =!= "")
 dashes  = n -> concatenate (n:"-")
 spaces  = n -> concatenate n
 
+-- a first-in last-out list of symbol values
 varstack = new MutableHashTable
 pushvar = (sym,newval) -> (
      varstack#sym = if varstack#?sym then (value' sym,varstack#sym) else (value' sym, null);

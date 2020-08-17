@@ -13,6 +13,15 @@
  * pager
  *-
 
+-- TODO: deprecate this function
+-- called also from (locate, DocumentTag)
+checkLoadDocumentation = () -> (
+    if not isGlobalSymbol "Macaulay2Doc"
+    or not instance(pkg := value getGlobalSymbol "Macaulay2Doc", Package)
+    or not member(pkg, loadedPackages) or not member(pkg.Dictionary, dictionaryPath)
+    -- the documentation for things in the package Core is in the package Macaulay2Doc
+    then needsPackage "Macaulay2Doc")
+
 -----------------------------------------------------------------------------
 -- Local variables
 -----------------------------------------------------------------------------
@@ -36,7 +45,7 @@ operator := binary + prefix + postfix
 -- Local utilities
 -----------------------------------------------------------------------------
 
--- TODO: get rid of this, keep the doc from before
+-- TODO: use this to can documentation in the DocumentTag
 getDoc    :=  key       -> fetchRawDocumentation makeDocumentTag key
 getOption := (key, tag) -> (
      s := getDoc key;
@@ -105,6 +114,7 @@ briefSynopsis := key -> (
 	if o.?Usage        then                           o.Usage, -- TODO: handle getUsage here
 	if o.?Inputs       then  LI { "Inputs:",       UL o.Inputs },
 	if o.?Outputs      then  LI { "Outputs:",      UL o.Outputs },
+	if o.?Options      then  LI { TO2{"using functions with optional inputs", "Optional inputs"}, ":", UL o.Options },
 	if o.?Consequences then DIV { "Consequences:", UL o.Consequences }};
     if #r > 0 then fixup UL r)
 
@@ -436,7 +446,7 @@ help Array := key -> (
 	seealso key,
 	theMenu key })
 
-help DocumentTag := tag -> help DocumentTag.Key tag
+help DocumentTag := tag -> help tag.Key
 help Thing := x -> if hasAttribute(x, ReverseDictionary) then help getAttribute(x, ReverseDictionary) else error "no documentation found"
 help List  := l -> DIV between(HR{}, help \ l)
 help ZZ    := i -> (

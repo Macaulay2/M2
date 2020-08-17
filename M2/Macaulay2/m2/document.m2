@@ -8,13 +8,10 @@ rootURI = "file://";
 -- Local variables
 -----------------------------------------------------------------------------
 
-currentNodeName = null
+currentDocumentTag = null
 --currentHelpTag -- bring back from validate.m2
 
--- TODO: move things that depend on this to help.m2?
-prefix   := set flexiblePrefixOperators
-
-reservedNodeNames := {"Top", "Table of Contents", "Symbol Index"}
+reservedNodeNames := {"Top", "Table of Contents"}
 
 methodNames := set {NewFromMethod, NewMethod, NewOfFromMethod, NewOfMethod, id, Ext, Tor}
 
@@ -26,27 +23,7 @@ methodNames := set {NewFromMethod, NewMethod, NewOfFromMethod, NewOfMethod, id, 
 indefiniteArticle = s -> if match("[aeiouAEIOU]", s#0) and not match("^one ", s) then "an " else "a "
 indefinite        = s -> concatenate(indefiniteArticle s, s)
 
--- TODO: deprecate this function, because we should install the Macaulay2Doc package first
--- called also from help.m2
-checkLoadDocumentation = () -> (
-    if not isGlobalSymbol "Macaulay2Doc"
-    or not instance(pkg := value getGlobalSymbol "Macaulay2Doc", Package)
-    or not member(pkg, loadedPackages) or not member(pkg.Dictionary, dictionaryPath)
-    -- the documentation for things in the package Core is in the package Macaulay2Doc
-    then needsPackage "Macaulay2Doc")
-
 enlist := x -> if instance(x, List) then x else {x}
-
------------------------------------------------------------------------------
--- lookInPackage (TODO: find a better name?)
------------------------------------------------------------------------------
--- This is only used to inquire about a symbol from the Text package.
--- Probably only necessary because Text documents Hypertext objects.
--- Is there an alternative way?
-lookInPackage = (pkg, symb, func) -> (
-    if member(pkg.Dictionary, dictionaryPath) then return func symb;
-    dictionaryPath = prepend(pkg.Dictionary, dictionaryPath);
-    first (func symb, dictionaryPath = drop(dictionaryPath, 1)))
 
 -----------------------------------------------------------------------------
 -- verifying the document Key
@@ -56,12 +33,12 @@ verifyKey := method(Dispatch => Thing)
 verifyKey Thing    := key -> key
 verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Module)
     if      #key == 0 then error "documentation key () encountered"
-    else if #key == 1 and not instance(key#0, Function) then
-        error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function")
+    else if #key == 1 and not instance(key#0, Function)
+    then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function")
     else if #key  > 1
     and not any({Keyword, Command, Function, ScriptedFunctor}, type -> instance(key#0, type)) and not methodNames#?(key#0)
-    and not (instance(key#0, Sequence) and 2 == #key#0 and key#0#1 === symbol= and instance(key#0#0, Keyword)) then
-        error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function, command, scripted functor, or keyword");
+    and not (instance(key#0, Sequence) and 2 == #key#0 and key#0#1 === symbol= and instance(key#0#0, Keyword))
+    then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function, command, scripted functor, or keyword");
     --
     if (
 	-- this will all get screwed up with immutable types present
@@ -73,8 +50,8 @@ verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Mod
     else error("documentation key for ", format formatDocumentTag key, " encountered, but no method installed"))
 verifyKey Array    := key -> (
     (fn, opt) := (key#0, key#1); -- e.g., [res, Strategy]
-    if not instance(fn, Function) and not instance(fn, Sequence) then
-        error("expected first element of document key for optional argument to be a function or sequence: ", silentRobustString(40, 1, key));
+    if not instance(fn, Function) and not instance(fn, Sequence)
+    then error("expected first element of document key for optional argument to be a function or sequence: ", silentRobustString(40, 1, key));
     if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
 
 -----------------------------------------------------------------------------
@@ -129,20 +106,32 @@ normalizeDocumentKey    Thing := opts -> key -> (
 --     the package name             e.g., "Core", or "" if there is none
 -- Here we assemble them together, so we don't have to recompute the information later.
 
-DocumentTag = new Type of BasicList
+-- TODO: make this a MutableHashTable, so we can cache values in it
+-- the problem is that unique doesn't work with MutableHashTables
+DocumentTag = new Type of HashTable
 DocumentTag.synonym = "document tag"
 
-DocumentTag.Key = method(Dispatch => Thing)
-DocumentTag.Key DocumentTag := tag -> tag#0
-
-format   DocumentTag := tag -> tag#1
-package  DocumentTag := tag -> tag#2
+format   DocumentTag := tag -> tag.Format
+package  DocumentTag := tag -> tag.Package
 toString DocumentTag :=
 net      DocumentTag := tag -> concatenate (package tag, " :: ", format tag)
 
-DocumentTag ? DocumentTag := (x, y) -> x#1 ? y#1
-DocumentTag ? String      := (x, y) -> x#1 ? y
-String      ? DocumentTag := (x, y) -> x   ? y#1
+-- FIXME: this is kind of a hack
+toExternalString DocumentTag := tag -> (
+    "new DocumentTag from " | toExternalString {
+	tag.Key, tag.Format, tag.Package})
+
+new DocumentTag from BasicList := (T, t) -> (
+    new DocumentTag from new HashTable from {
+	Key                => t#0,
+	Format             => t#1,
+	symbol Package     => t#2,
+	"RawDocumentation" => if t#?3 then t#3 else null
+	})
+
+DocumentTag ? DocumentTag := (x, y) -> x.Format ? y.Format
+DocumentTag ? String      := (x, y) -> x.Format ? y
+String      ? DocumentTag := (x, y) -> x        ? y.Format
 
 -- helper for parsing " pkg :: key " to ("pkg", "key")
 parseDocumentTag := key -> (
@@ -153,13 +142,6 @@ parseDocumentTag := key -> (
     else if #segments == 2 then (segments#0, segments#1)
     else error("encountered invalid documentation tag: ", format key))
 
--- helper for printing the formal name of a package
-pkgTitle := method()
-pkgTitle Package := pkg -> if pkg === Core then "Macaulay2Doc" else pkg#"pkgname"
-pkgTitle Symbol  := toString
-pkgTitle String  := identity
-pkgTitle Nothing := x -> ""
-
 makeDocumentTag' := opts -> key -> (
     nkey := normalizeDocumentKey(key, opts);
     verifyKey nkey;
@@ -169,7 +151,15 @@ makeDocumentTag' := opts -> key -> (
     pkg = if class nkey === Symbol -* and package nkey =!= Core *- then package nkey
     else if opts#Package =!= null then opts#Package else packageKey(key, fkey);
     if pkg === null then error("makeDocumentTag: package cannot be determined: ", nkey);
-    new DocumentTag from { if instance(nkey, Symbol) then toString nkey else nkey, fkey, pkgTitle pkg })
+    new DocumentTag from new HashTable from {
+	Key            => if instance(nkey, Symbol) then toString nkey else nkey,
+	Format         => fkey,
+	symbol Package => (
+	    if instance(pkg, Package) then if pkg === Core then "Macaulay2Doc" else pkg#"pkgname" else
+	    if instance(pkg, Symbol) then toString pkg else
+	    if instance(pkg, String) then pkg else ""),
+	"RawDocumentation" => null
+	})
 
 makeDocumentTag = method(Dispatch => Thing, Options => { Package => null })
 makeDocumentTag DocumentTag := opts -> tag -> tag
@@ -180,15 +170,16 @@ makeDocumentTag String      := opts -> key -> (
     if match("^ |  +| $", key) then error("expected key to have only single interior spaces:", format key);
     local pkg;
     (pkg, key) = parseDocumentTag key;
-    if pkg =!= null and opts#Package =!= null and pkg =!= opts#Package then
-        error ("mismatching packages ", pkg, " and ", opts#Package, " specified for key ", key);
+    if pkg =!= null and opts#Package =!= null and pkg =!= opts#Package
+    then error ("mismatching packages ", pkg, " and ", opts#Package, " specified for key ", key);
     if pkg === null then pkg = opts#Package;
     (makeDocumentTag' new OptionTable from {Package => pkg}) key)
 
 -----------------------------------------------------------------------------
 -- unformatting document tags
 -----------------------------------------------------------------------------
--- we need to be able to do this only for the document tags we have shown to the user in formatted form
+-- we need to be able to do this only for the document
+-- tags we have shown to the user in formatted form
 -- TODO: https://github.com/Macaulay2/M2/issues/1317
 unformatTag = new MutableHashTable
 record := func -> symb -> ( val := func symb; if val =!= symb then unformatTag#val = symb; val )
@@ -201,6 +192,8 @@ record := func -> symb -> ( val := func symb; if val =!= symb then unformatTag#v
 -- The formatted tag is used for two purposes:
 --    for display in menus and links
 --    as the key for access in a database, where the key must be a string
+
+prefix := set flexiblePrefixOperators
 
 fSeq := new HashTable from {
     (4, NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toString s#3),
@@ -249,13 +242,13 @@ fSeq := new HashTable from {
     (2, class, ScriptedFunctor    ) => s -> (
 	hh := s#0;
 	if hh.?subscript and hh.?superscript then (
-	    stderr << "--warning: ambiguous scripted functor, with both subscript method and superscript method: " << s << endl;
+	    printerr("warning: ambiguous scripted functor, with both subscript method and superscript method: ", toString s);
 	    toString s)
 	else if hh.?subscript   then (toString hh, " _ ", toString s#1)
 	else if hh.?superscript then (toString hh, " ^ ", toString s#1)
 	else (toString hh, " ", toString s#1)),
 
-    -- TODO: Methods?
+    -- Methods
     5 => s -> (
 	t := if methodOptions s#0 =!= null then (methodOptions s#0).Dispatch else {Thing, Thing};
 	(toString s#0, "(",
@@ -347,7 +340,7 @@ fetchRawDocumentation(Package, String) := (pkg,     fkey) -> ( -- returns null i
     rawdoc := pkg#rawKey;
     if rawdoc#?fkey then rawdoc#fkey else if pkg#?rawKeyDB then (
 	rawdoc = pkg#rawKeyDB;
-	if isOpen rawdoc and rawdoc#?fkey then lookInPackage(getpkg "Text", rawdoc#fkey, value)))
+	if isOpen rawdoc and rawdoc#?fkey then evaluateWithPackage(getpkg "Text", rawdoc#fkey, value)))
 
 fetchRawDocumentationNoLoad = method()
 fetchRawDocumentationNoLoad(Nothing, Thing)  := (pkg,     fkey) -> null
@@ -357,7 +350,7 @@ fetchRawDocumentationNoLoad(Package, String) := (pkg,     fkey) -> ( -- returns 
     rawdoc := pkg#rawKey;
     if rawdoc#?fkey then rawdoc#fkey else if pkg#?rawKeyDB then (
 	rawdoc = pkg#rawKeyDB;
-	if isOpen rawdoc and rawdoc#?fkey then lookInPackage(getpkg "Text", rawdoc#fkey, value)))
+	if isOpen rawdoc and rawdoc#?fkey then evaluateWithPackage(getpkg "Text", rawdoc#fkey, value)))
 
 -----------------------------------------------------------------------------
 -- fetchPrimaryRawDocumentation, fetchAnyRawDocumentation
@@ -371,12 +364,29 @@ getPrimaryTag DocumentTag := tag -> (
 fetchPrimaryRawDocumentation = method()
 fetchPrimaryRawDocumentation DocumentTag := tag -> fetchRawDocumentation getPrimaryTag tag
 
+-- TODO: somehow cache this
 fetchAnyRawDocumentation = method()
-fetchAnyRawDocumentation DocumentTag := tag  -> fetchAnyRawDocumentation format tag
+fetchAnyRawDocumentation DocumentTag := tag -> fetchAnyRawDocumentation format tag
 fetchAnyRawDocumentation String      := fkey -> scan(keys PackageDictionary, pkg -> (
 	rawdoc := fetchRawDocumentation(pkg, fkey);
 	if rawdoc =!= null then (
 	    break if rawdoc#?PrimaryTag then fetchPrimaryRawDocumentation rawdoc#PrimaryTag else rawdoc)))
+
+-----------------------------------------------------------------------------
+-- store and fetch Processed Documentation
+-----------------------------------------------------------------------------
+-- TODO: improve this
+storeProcessedDocumentation = (pkg, tag, opts, verboseLog) -> (
+    fkey := format tag;
+    verboseLog("processing   ", toString tag);
+    pkg#"processed documentation"#fkey = (
+	processExamplesStrict = not opts.IgnoreExampleErrors;
+	-- sort of a kludge: what if an error occurs and the variable isn't reset?
+	first (help tag, processExamplesStrict = true )))
+
+fetchProcessedDocumentation = (pkg, fkey) -> (
+    if pkg#"processed documentation"#?fkey then pkg#"processed documentation"#fkey
+    else error("internal error: documentation node not processed yet: ", fkey));
 
 -----------------------------------------------------------------------------
 -- inquiring the status of a key or DocumentTag
@@ -393,32 +403,30 @@ hasDocumentation = key -> (
 locate DocumentTag := tag -> (
     checkLoadDocumentation();
     raw := fetchAnyRawDocumentation tag;
-    if raw =!= null then (raw#"filename", toString raw#"linenum",,,,,)) -- TODO: (filename, start,startcol, stop,stopcol, pos,poscol)
+    if raw =!= null
+    then (raw#"filename", raw#"linenum",,,,,) -- TODO: (filename, start,startcol, stop,stopcol, pos,poscol)
+    else (currentFileName, currentLineNumber(),,,,,))
 
 -----------------------------------------------------------------------------
 -- helpers for the document function
 -----------------------------------------------------------------------------
-
-commentize = s -> if s =!= null then concatenate(" -- ", s) else ""
 
 headline = method(Dispatch => Thing)
 headline Thing := key -> (
     s := fetchRawDocumentationNoLoad makeDocumentTag key;
     if s =!= null and s#?Headline then s#Headline)
 headline DocumentTag := tag -> (
-     d := fetchPrimaryRawDocumentation tag;
-     if d === null then (
-	  -- this branch does get used, but why not combine fetchPrimaryRawDocumentation and fetchAnyRawDocumentation?
-	  d = fetchAnyRawDocumentation format tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
-	  if d === null then (
-	       if signalDocError tag and package tag === currentPackage#"pkgname" then (
-		   dtag := DocumentTag.Key tag;
-		   stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString dtag << ", package " << package dtag << endl;
-		   );
-	       return null;
-	       ));
-     if d#?Headline then d#Headline
-     )
+    rawdoc := fetchPrimaryRawDocumentation tag;
+    if rawdoc === null and signalDocumentationWarning tag then (
+	if currentDocumentTag === null then return null;
+	loc := locate currentDocumentTag;
+	rawdoc = fetchAnyRawDocumentation tag;
+	if rawdoc === null
+	then printerr("warning: reference ", format tag, " was not found in any package. ",
+	    "First mentioned near:\n  ", loc#0, ":", toString loc#1)
+	else printerr("warning: reference ", format tag, " not found in package ", toString package tag, ". ",
+	    "Did you mean ", format toString rawdoc.DocumentTag, " near:\n  ", loc#0, ":", toString loc#1));
+    if rawdoc#?Headline then rawdoc#Headline)
 
 emptyOptionTable := new OptionTable from {}
 getOptionDefaultValues := method(Dispatch => Thing)
@@ -430,59 +438,109 @@ getOptionDefaultValues Function := f -> (
 getOptionDefaultValues Sequence := s -> (
      o := options s;
      if o =!= null then o else if s#?0 and instance(s#0, Function) then getOptionDefaultValues s#0 else emptyOptionTable)
+ 
+processInputOutputItems := (key, fn) -> item -> (
+    -- "inp" => ZZ => ("hypertext sequence")
+    --  opt  => ZZ => ("hypertext sequence")
+    optsymb := null; --  opt
+    inpname := null; -- "inp"
+    type := null;    -- ZZ
+    text := null;    -- ("hypertext sequence")
+    fn = if (instance(key, Sequence) or instance(key, Function)) and options key =!= null then key
+    else if fn =!= null then fn else key;
 
-istype := X -> parent X =!= Nothing
-isId := x -> instance(x,String) and match(///\`[[:alnum:]']+\'///,x)
-mapo := f -> g := x -> if instance(x, Option) then ( f x#0 ; g x#1 ) else f x
+    -- checking for various pieces of the synopsis item
+    isVariable   := y -> match(///\`[[:alnum:]']+\'///, y);
+    isOptionName := y -> all({text, inpname, optsymb}, x -> x === null) and instance(y, Symbol);
+    isInputName  := y -> all({text, inpname, optsymb}, x -> x === null) and instance(y, String) and isVariable y;
+    -- putting null or Nothing as input type means don't display the type deduced from the description of the method
+    isInputType  := y -> instance(y, Type) and (
+	if not (type === null or y === Nothing) and type =!= y then error("type mismatch: ", toString type, " =!= ", toString y, " in documentation for ", toExternalString fn)
+	else if type === null or y === Nothing   or type === y then true else false);
+    isInputText  := y -> text === null and any({String, Hypertext, List, Sequence}, T -> instance(y, T));
 
--- TODO: simplify this
-processInputOutputItems := (key,fn) -> x -> (
-     optsymb := null;
-     idname := null;
-     type := null;
-     text := null;
-     (mapo (y ->
-	       if optsymb === null and instance(y,Symbol) then optsymb = y
-	       else if idname === null and isId y then idname = y
-	       else if istype y then (
-		    if type === null
-		    or y === Nothing -- putting type Nothing in the doc's input list means don't display the type deduced from the description of the method
-		    then type = y
-		    else if type =!= y then error("type mismatch: ",toString type, " =!= ", toString y, " in documentation for ", toExternalString key)
-		    )
-	       else if text === null then text = y
-	       else error("can't parse input/output item in documentation for ",toString key)
-	       )
-	  ) x;
-     default := if optsymb =!= null and text =!= null and #text > 0 then (
-	  if fn === null or fn === () then
-	      error("default value for option ", toString optsymb, " not accessible, base function not specified (with BaseFunction => ...)");
-	  opts := if instance(key, Sequence) and options key =!= null then options key else options fn;
-	  if not opts#?optsymb then error("symbol ", optsymb, " is not the name of an optional argument for function ", format fn);
-	  t := toString opts#optsymb;
-	  if not match("^\\{\\*Function", t) then SPAN{"default value ", t});
-     r := SPAN splice between_", " nonnull nonempty {
-	  if idname =!= null then TT idname,
-	  if type =!= null and type =!= Nothing then ofClass type, -- type Nothing, treated as above
-	  default,
-	  text};
-     if optsymb =!= null then r = (
-	  if #r == 0
-	  then SPAN between(", ",
-	       nonnull (
-		    TO2{
-			 [ if options key =!= null then key else fn, optsymb],
-			 concatenate(toString optsymb," => ...") },
-		    LATER { () -> commentize (headline (
-				   if options key =!= null and (options key)#?optsymb
-				   then [key,optsymb]
-				   else if options fn =!= null and (options fn)#?optsymb
-				   then [fn,optsymb]
-				   else error (toString optsymb, " is not an option for ", toString key, ", nor for ", toString fn)
-				   )) }
-		    ))
-	  else SPAN (TT ( toString optsymb, " => " ), r));
-     r)
+    -- parse the chain of options
+    if debugLevel > 1 then printerr("raw synopsis item:\t", toExternalString item);
+    -- e.g: given 1=>2=>3, applies the lambda function to 1, then 2, then 3
+    mapo := f -> g := x -> if instance(x, Option) then ( f x#0 ; g x#1 ) else f x;
+    (mapo (y ->
+	    if          null === y then null
+	    else if isOptionName y then optsymb = y -- option symbol, e.g Strategy
+	    else if  isInputName y then inpname = y --    input name, e.g n
+	    else if  isInputType y then    type = y --    input type, e.g ZZ
+	    else if  isInputText y then    text = y --   description, e.g {"hypertext sequence"}
+	    else error("encountered unrecognizable synopsis item in documentation for ", toExternalString key))
+	) item;
+    if debugLevel > 1 then printerr("parsed synopsis item:\t", toExternalString (optsymb, inpname, type, text));
+
+    result := if optsymb === null then {
+	-- e.g: n, an integer, then description
+	if inpname =!= null then TT inpname,
+	if    type =!= null and type =!= Nothing then ofClass type, -- type Nothing, treated as above
+	text}
+    else if fn =!= null then (
+	-- e.g: Strategy => an integer, default value blah blah, then description
+	opts := getOptionDefaultValues fn;
+	if not opts#?optsymb then error("symbol ", optsymb, " is not the name of an optional argument for function ", format fn);
+	defval := toString opts#optsymb;
+	defval  = if not match("^-\\*Function", defval) then SPAN{"default value ", defval};
+	{
+	    (TO2 { [fn, optsymb], toString optsymb }, TT " => ",
+	    if type =!= null and type =!= Nothing then ofClass type else TT "..."), -- type Nothing, treated as above
+	    (defval,
+	    if text =!= null and text =!= "" then (", ", text)
+	    else LATER { () -> commentize headline([fn, optsymb]) })
+	})
+    else {TT {toString optsymb, " => ..."}};
+    SPAN nonnull deepSplice between_", " nonnull nonempty result)
+
+
+typicalValue := k -> (
+    if typicalValues#?k then typicalValues#k
+    else if class k === Sequence and typicalValues#?(k#0) then typicalValues#(k#0)
+    else Thing)
+
+getTypes := method(Dispatch => Thing)
+getTypes Thing    := x -> ({},{})
+getTypes Function := x -> ({},{typicalValue x})
+getTypes Sequence := x -> (
+     if #x > 1 and instance(x#-1,Symbol)
+     then ({},{})					    -- it's an option ...
+     else (
+	  x' := select(drop(toList x,1), T -> not ancestor(Nothing,T)); -- putting something like OO in the key indicates a fake dispatch
+	  if instance(x#0,Sequence) and #x#0 === 2 and x#0#1 === symbol =
+	  or #x == 2 and x#0 === symbol <-
+	  then ( x' | { Thing }, { Thing } )	   -- it's an assignment method
+	  else ( x'            , { typicalValue x } )
+	  ))
+
+processUsage := (key, fn, o) -> (
+    if not o.?Usage and (o.?Inputs or o.?Outputs)
+    then error "document: Inputs or Outputs specified, but Usage not provided";
+    inp := if o.?Inputs then o.Inputs else {};
+    out := if o.?Outputs then o.Outputs else {};
+    iso := x -> instance(x, Option) and #x==2 and instance(x#0, Symbol);
+    ino := select(inp, x -> iso x);
+    inp  = select(inp, x -> not iso x);
+    opt := getOptionDefaultValues key;
+    inoh:= new HashTable from ino;
+    if not isSubset(keys inoh, keys opt)
+    then error concatenate("not among the options for ", toString fn, ": ", between_", " keys (set keys inoh - set keys opt));
+    ino = join(ino, sortByName (keys opt - set keys inoh));
+    if o.?Usage then (
+	(inp', out') := getTypes key;
+	inp' = select(inp', T -> T =!= Nothing);
+	out' = select(out', T -> T =!= Nothing);
+	if out' === {Thing} then out' = {};		    -- not informative enough
+	if #inp === 0 then inp = inp';
+	if #out === 0 then out = out';
+	if #inp' =!= 0 then (
+	    if #inp =!= #inp' then error ("mismatched number of inputs in documentation for ", toExternalString key);
+	    inp = apply(inp',inp,(T,v) -> T => v));
+	if #out' =!= 0 then (
+	    if #out =!= #out' then error ("mismatched number of outputs in documentation for ", toExternalString key);
+	    out = apply(out',out,(T,v) -> T => v)));
+    apply((inp, out, ino), x -> apply(x, processInputOutputItems(key, fn))))
 
 -- "x" => List => { "a list of numbers" }
 -- "x" => List => "a list of numbers"
@@ -503,7 +561,7 @@ fixupList := (x, nm, l) -> (
     if #x < l then error(toString nm, " => ... : expected at least ", l, " item(s)");
     apply(nonnull x, fixupEntry))
 
--- TODO: do this processing later, not here
+-- TODO: do this processing in help.m2, not here
 getUsage := val -> (
     if not instance(val, String) then error "Usage: expected a string";
     val = apply(nonempty separate val, u -> replace("^[[:space:]]*(.*)[[:space:]]*$", "\\1", u));
@@ -533,29 +591,10 @@ getExampleFiles := val -> (
     auxiliaryFilesDirectory := currentPackage#"source directory" | currentPackage#"pkgname" | "/";
     val = apply(val, fn -> auxiliaryFilesDirectory | fn);
     for fn in val do if not fileExists fn then error ("example data file not found: ", fn);
-    currentPackage#"example data files"#currentNodeName = val; "")
+    currentPackage#"example data files"#(format currentDocumentTag) = val; "")
 getBaseFunction := val -> (
     if val =!= null and not instance(val, Function)
     then error "expected BaseFunction option value to be a function" else val)
-
-typicalValue := k -> (
-    if typicalValues#?k then typicalValues#k
-    else if class k === Sequence and typicalValues#?(k#0) then typicalValues#(k#0)
-    else Thing)
-
-getTypes := method(Dispatch => Thing)
-getTypes Thing    := x -> ({},{})
-getTypes Function := x -> ({},{typicalValue x})
-getTypes Sequence := x -> (
-     if #x > 1 and instance(x#-1,Symbol)
-     then ({},{})					    -- it's an option ...
-     else (
-	  x' := select(drop(toList x,1), T -> not ancestor(Nothing,T)); -- putting something like OO in the key indicates a fake dispatch
-	  if instance(x#0,Sequence) and #x#0 === 2 and x#0#1 === symbol =
-	  or #x == 2 and x#0 === symbol <-
-          then ( x' | { Thing }, { Thing } )	   -- it's an assignment method
-	  else ( x'            , { typicalValue x } )
-	  ))
 
 KeywordFunctions := new HashTable from {
     symbol DocumentTag => identity, -- TODO: what is this for?
@@ -596,8 +635,10 @@ documentOptions := new OptionTable from {
     ExampleFiles => null
     }
 
+-- TODO: improve logging
 document = method(Dispatch => Thing, Options => documentOptions)
 document List := opts -> args -> (
+    verboseLog := if debugLevel > 2 then printerr else identity;
     if opts =!= documentOptions then error "'document' expects its optional arguments inside the list";
     if currentPackage === null  then error "encountered 'document' command, but no package is open";
     o := new MutableHashTable;
@@ -617,12 +658,15 @@ document List := opts -> args -> (
     key = o.Key;
     fn := if instance(key, Sequence) then key#0 else if instance(key, Symbol) then value key else key;
     -- Set the document tag
-    o.DocumentTag = tag := makeDocumentTag(key, Package => null);
+    currentDocumentTag = o.DocumentTag = tag := makeDocumentTag(key, Package => null);
+    fkey := format tag;
+    verboseLog("Processing documentation for ", fkey);
+    if member(fkey, reservedNodeNames) then error("'document' encountered a reserved node name ", fkey);
     -- Check that all tags belong to this package and
     -- point the secondary keys to the primary one
     verfy := (key, tag) -> (
 	if package tag =!= currentPackage#"pkgname"
-	then error("item to be documented comes from another package: ", package tag, " :: ", toString key));
+	then error("item to be documented comes from another package: ", toString tag));
     verfy(key, tag);
     scan(rest, secondary -> (
 	    tag2 := makeDocumentTag(secondary, Package => null);
@@ -638,47 +682,18 @@ document List := opts -> args -> (
     -- Set the headline
     o.Headline = if o.?Headline then o.Headline else if instance(key, Sequence) and key#?0 then (
 	title := headline key#0; if title =!= null then title else "") else "";
-    if o.Headline === "" then remove(o, Headline);
+    if o.Headline === ""                        then remove(o, Headline);
+    if o.?Usage        and o.Usage === ""       then remove(o, Usage);
+    if o.?Consequences and #o.Consequences == 0 then remove(o, Consequences);
     --
-    currentNodeName = format tag;
-    if member(currentNodeName, reservedNodeNames) then error("'document' encountered a reserved node name ", format currentNodeName);
-    exampleOutputFilename = makeExampleOutputFileName(currentNodeName, currentPackage);
+    exampleOutputFilename = makeExampleOutputFileName(fkey, currentPackage);
     -- Process all keywords
     scan(keys o, key -> if o#key =!= {} then o#key = KeywordFunctions#key o#key);
-    -- Process Usage, Inputs, Outputs, Options, and Consequences
-    if o.?Usage and o.Usage === "" then remove(o, Usage);
-    if not o.?Usage and (o.?Inputs or o.?Outputs)
-    then error "document: Inputs or Outputs specified, but Usage not provided";
-    inp := if o.?Inputs then o.Inputs else {};
-    out := if o.?Outputs then o.Outputs else {};
-    iso := x -> instance(x, Option) and #x==2 and instance(x#0, Symbol);
-    ino := select(inp, x -> iso x);
-    inoh:= new HashTable from ino;
-    inp  = select(inp, x -> not iso x);
-    opt := getOptionDefaultValues key;
-    if not isSubset(keys inoh, keys opt)
-    then error concatenate("not among the options for ", toString fn, ": ", between_", " keys (set keys inoh - set keys opt));
-    ino = join(ino, sortByName (keys opt - set keys inoh));
-    if o.?Usage then (
-	(inp', out') := getTypes key;
-	inp' = select(inp', T -> T =!= Nothing);
-	out' = select(out', T -> T =!= Nothing);
-	if out' === {Thing} then out' = {};		    -- not informative enough
-	if #inp === 0 then inp = inp';
-	if #out === 0 then out = out';
-	if #inp' =!= 0 then (
-	    if #inp =!= #inp' then error ("mismatched number of inputs in documentation for ", toExternalString key);
-	    inp = apply(inp',inp,(T,v) -> T => v));
-	if #out' =!= 0 then (
-	    if #out =!= #out' then error ("mismatched number of outputs in documentation for ", toExternalString key);
-	    out = apply(out',out,(T,v) -> T => v)));
-    proc := processInputOutputItems(key, fn);
-    inp = proc \ inp;
-    out = proc \ out;
-    ino = proc \ ino;
-    if #inp > 0 then o.Inputs = inp else remove(o, Inputs);
+    -- Process Inputs, Outputs, Options
+    (inp, out, ino) := processUsage(key, fn, o);
+    if #inp > 0 then o.Inputs  = inp else remove(o, Inputs);
     if #out > 0 then o.Outputs = out else remove(o, Outputs);
-    if o.?Consequences and #o.Consequences == 0 then remove(o, Consequences);
+    if #ino > 0 then o.Options = ino else remove(o, Options);
     -- Generate Hypertext containers
     scan(keys KeywordFunctions, sym -> if o#?sym then (
 	    if sym === Consequences then scan(o#sym, x -> validate DIV x)
@@ -690,8 +705,9 @@ document List := opts -> args -> (
     o#"filename" = currentFileName;
     o#"linenum"  = currentLineNumber();
     o = new HashTable from o;
+    -- TODO: check for hadDocumentationWarning and Error
     storeRawDocumentation(tag, o);
-    currentNodeName = null;
+    currentDocumentTag = null;
     )
 
 -----------------------------------------------------------------------------
@@ -704,9 +720,10 @@ undocumented Thing := key -> if key =!= null then (
     tag := makeDocumentTag(key, Package => currentPackage);
     storeRawDocumentation(tag, new HashTable from {
 	    symbol DocumentTag => tag,
-	    "undocumented" => true,
-	    "filename" => currentFileName,
-	    "linenum" => currentLineNumber()}))
+	    "undocumented"     => true,
+	    "filename"         => currentFileName,
+	    "linenum"          => currentLineNumber()
+	    }))
 
 -- TODO: what does this do?
 undocumented keys undocumentedkeys

@@ -25,8 +25,10 @@ separateM2output String := str -> (
     while str#?-1 and str#-1 == "\n" do str = substring(0, #str - 1, str);
     separate(M2outputRE, M2outputREindex, str))
 
--- TODO: where should this be used?
+-- TODO: the output format is strange, and sometimes doesn't work
 capture = method()
+capture Net    := s -> capture toString s
+capture List   := s -> capture demark_newline s
 capture String := s -> (
      (err, out) := internalCapture s;
      (err, out, separateM2output out))
@@ -45,7 +47,7 @@ extractExamples = docBody -> (
     ex := extractExamplesLoop docBody;
     -- don't convert "ex" on the next line to a sequence,
     -- because the hash code for caching example outputs will change
-    if #ex > 0 then currentPackage#"example inputs"#currentNodeName = ex;
+    if #ex > 0 then currentPackage#"example inputs"#(format currentDocumentTag) = ex;
     docBody)
 
 -----------------------------------------------------------------------------

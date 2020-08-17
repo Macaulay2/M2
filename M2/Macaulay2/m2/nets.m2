@@ -261,6 +261,14 @@ netList VisibleList := o -> (x) -> (
 	  sum(1 .. br, i -> try height x#i else 1)	    -- this allows the base row to be absent
 	  ))
 
+commentize = method(Dispatch => Thing)
+commentize Nothing := s -> ""
+commentize String  :=
+commentize Thing   := s -> concatenate(" -- ", between("\n -- ", separate concatenate s))
+commentize Net     := S -> stack(commentize \ unstack S)
+
+printerr = msg -> (stderr << commentize msg << endl;) -- always return null
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

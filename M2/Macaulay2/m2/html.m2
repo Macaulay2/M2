@@ -117,16 +117,16 @@ html TO   := x -> (
      r := htmlLiteral format tag;
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
      if d#?"undocumented" and d#"undocumented" === true then (
-	  if signalDocError tag then (
+	  if signalDocumentationWarning tag then (
 	       stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
 	       warning();
 	       );
-	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ",toString DocumentTag.Key tag," -->)")
+	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ", toString tag.Key, " -->)")
 	  )
      else if d === null					    -- isMissingDoc
      then (
 	  warning("missing documentation: "|toString tag);
-	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ",toString DocumentTag.Key tag," -->)")
+	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ", toString tag.Key, " -->)")
 	  )
      else concatenate( "<a href=\"", toURL htmlFilename getPrimaryTag tag, "\" title=\"", htmlLiteral headline tag, "\">", r, "</a>", if x#?1 then x#1))
 
@@ -135,7 +135,7 @@ html TO2  := x -> (
      headline tag;		   -- this is a kludge, just to generate error messages about missing links
      d := fetchPrimaryRawDocumentation tag;
      if d#?"undocumented" and d#"undocumented" === true then (
-	  if signalDocError tag then (
+	  if signalDocumentationWarning tag then (
 	       stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
 	       warning();
 	       );

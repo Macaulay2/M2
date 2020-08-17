@@ -18,9 +18,9 @@ loadPackageOptions := new MutableHashTable
 newPackageOptions := new MutableHashTable
 
 -- prevent returning the same error more than once
-warnedAlready := new MutableHashTable
--- TODO: what does this do?
-addStartFunction(() -> warnedAlready = new MutableHashTable)
+seenWarnings := new MutableHashTable
+-- reset package warnings after Core is loaded
+addStartFunction(() -> seenWarnings = new MutableHashTable)
 
 configFileString := ///--Configuration file for package "PKG", automatically generated
 
@@ -54,7 +54,7 @@ warn0 := (sym, front, behind, syns) -> (
     then stderr << "--  use one of the synonyms " << demark(", ", syns) << endl
     else stderr << "--  use the synonym " << syns#0 << endl
     else stderr << "--  no synonym is available" << endl)
-warn := x -> if not warnedAlready#?x and debuggingMode then (warn0 x; warnedAlready#x = true)
+warn := x -> if not seenWarnings#?x and debuggingMode then (warn0 x; seenWarnings#x = true)
 
 checkShadow := () -> (
      d := dictionaryPath;
@@ -62,7 +62,7 @@ checkShadow := () -> (
      for i from 0 to n-1 do for j from i+1 to n-1 do (
 	  front := d#i;
 	  behind := d#j;
-	  if warnedAlready#?(front, behind) then continue;
+	  if seenWarnings#?(front, behind) then continue;
 	  scan(keys front, nam -> if behind#?nam and front#nam =!= behind#nam then (
 		    sym := behind#nam;
 		    syns := findSynonyms sym;
@@ -76,7 +76,7 @@ checkShadow := () -> (
 			      break));
 		    warn(nam, front, behind, syns);
 		    ));
-	  if not mutable front and not mutable behind then warnedAlready#(front, behind) = true;
+	  if not mutable front and not mutable behind then seenWarnings#(front, behind) = true;
 	  ))
 
 isOptionList := opts -> instance(opts, List) and all(opts, opt -> instance(opt, Option) and #opt == 2)
@@ -228,19 +228,18 @@ newPackage String := opts -> pkgname -> (
 	    (AuxiliaryFiles, Boolean),
 	    (Configuration,  List),
 	    (DebuggingMode,  Boolean),
-	    (Headline,       String),
 	    (InfoDirSection, String),
 	    (PackageExports, List),
 	    (PackageImports, List),
 	    (Version,        String)}, (name, type) -> if not instance(opts#name, type) then
 	error("newPackage: expected ", toString name, " option of class ", toString type));
-    if opts.Headline === "" then
-        error("newPackage: expected non-empty Headline");
     -- optional package values
     scan({
 	    (Date,     String),
+	    (Headline, String),
 	    (HomePage, String)}, (name, type) -> if opts#name =!= null and not instance(opts#name, type) then
 	error("newPackage: expected ", toString name, " option of class ", toString type));
+    -- TODO: if #opts.Headline > 100 then error "newPackage: Headline is capped at 100 characters";
     -- the options coming from loadPackage are stored here
     loadOptions := if loadPackageOptions#?pkgname then loadPackageOptions#pkgname else loadPackageOptions#"default";
     -- the options are stored for readPackage
@@ -542,7 +541,16 @@ debug Package := pkg -> (
     if not member(dict, dictionaryPath) then dictionaryPath = prepend(dict, dictionaryPath);
     checkShadow())
 
-protect Reload
+-----------------------------------------------------------------------------
+-- evaluateWithPackage
+-----------------------------------------------------------------------------
+-- This is only used to inquire about a symbol from the Text package.
+-- Probably only necessary because Text documents Hypertext objects.
+-- Is there an alternative way? Is is used by document.m2 and installPackage.m2
+evaluateWithPackage = (pkg, object, func) -> (
+    if member(pkg.Dictionary, dictionaryPath) then return func object;
+    dictionaryPath = prepend(pkg.Dictionary, dictionaryPath);
+    first (func object, dictionaryPath = drop(dictionaryPath, 1)))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

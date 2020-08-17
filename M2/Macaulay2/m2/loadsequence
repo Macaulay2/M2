@@ -77,6 +77,7 @@ local.m2
 packages.m2
 examples.m2
 document.m2
+installPackage.m2
 testing.m2
 help.m2
 
@@ -85,7 +86,6 @@ html.m2
 texhtml.m2
 markdown.m2
 latex.m2
-installPackage.m2
 
 varieties.m2
 webapp.m2
