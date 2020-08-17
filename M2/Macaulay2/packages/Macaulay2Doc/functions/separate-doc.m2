@@ -3,6 +3,7 @@
 --- notes: functions below are all defined in regex.m2
 
 doc ///
+Node
  Key
    separate
   (separate, String)
@@ -87,46 +88,6 @@ doc ///
   concatenate
 
 Node
-  Key
-     lines
-    (lines, String)
-    (lines, String, String)
-  Headline
-    split a string into lines
-  Usage
-    lines s
-    lines(nl, s)
-  Inputs
-    s:String
-    nl:String
-  Outputs
-    :List
-      an array of strings obtained from the string @TT "s"@ by breaking
-      it at the characters specified by the string @TT "nl"@
-  Description
-    Text
-      The form @TT "lines s"@ is designed to break lines correctly when the file
-      follows the Unix or MS-DOS convention. In other words, it will break a line
-      at @TT "\\r\\n"@ or @TT "\\n"@.
-    Example
-      lines "a\nb\nc\n"
-      peek oo
-      lines "a\nb\nc\nd"
-      peek oo
-      lines( "\\.", "a.b.c." )
-      peek oo
-      lines( "\\.", "a.b.c.d" )
-      peek oo
-  Caveat
-    For backwards compatibility, if the pattern is a single character and it is an unescaped special character,
-    such as @TT "+"@, @TT "*"@, or @TT "."@, then it is treated as a literal character. In future code, the pattern
-    must be escaped.
-  SeeAlso
-    "newline"
-    separate
-///
-
-doc ///
   Key
      lines
     (lines, String)
