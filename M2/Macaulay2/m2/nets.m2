@@ -5,29 +5,20 @@
 separateRegexp = method()
 separateRegexp(String,String) := (re,s) -> separateRegexp(re,0,s)
 separateRegexp(String,ZZ,String) := (re,n,s) -> (
-     oldoffset := offset := 0;
      stop := false;
+     offset := 0;
      while not stop and offset <= #s list (
-	  oldoffset = offset;
-	  m := regex(re,oldoffset,s);
+	  m := regex(re,offset,s);
 	  if m#?n
 	  then (
+	       oldoffset := offset;
 	       offset = m#n#0+m#n#1;
 	       if oldoffset == offset
-	       then (
-		    -- no progress is being made (the separator found is empty)
-		    if offset == #s
-		    then (
-			 -- and the empty separator is at the end of the string
-			 break;
-			 )
-		    else (
-		    	 stop = true;
-	       	    	 substring(s,oldoffset)))
+	       then error "separateRegexp: regular expression made no progress"
 	       else substring(s,oldoffset,m#n#0-oldoffset))
 	  else (
 	       stop = true;				    -- no separator found
-	       substring(s,oldoffset))))
+	       substring(s,offset))))
 
 selectRegexp = method()
 selectRegexp(String,String) := (re,s) -> selectRegexp(re,0,s)
