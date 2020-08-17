@@ -135,7 +135,7 @@ doc ///
           @TT "$"@	-- match the end of the string or the end of a line
         :Sub-expressions
           @TT "(...)"@	-- marked sub-expression, may be referred to by a back-reference
-          @TT "\\\\i"@	-- match the same string that the i-th parenthesized sub-expression matched
+          @TT "\\i"@	-- match the same string that the i-th parenthesized sub-expression matched
         :Repeats
           @TT "*"@	-- match previous expression 0 or more times
           @TT "+"@	-- match previous expression 1 or more times
@@ -147,12 +147,12 @@ doc ///
         :Alternation
           @TT "|"@	-- match expression to left or expression to right
         :Word and buffer boundaries
-          @TT "\\\\b"@	-- match word boundary
-          @TT "\\\\B"@	-- match within word
-          @TT "\\\\<"@	-- match beginning of word
-          @TT "\\\\>"@	-- match end of word
-          @TT "\\\\`"@	-- match beginning of string
-          @TT "\\\\'"@	-- match end of string
+          @TT "\\b"@	-- match word boundary
+          @TT "\\B"@	-- match within word
+          @TT "\\<"@	-- match beginning of word
+          @TT "\\>"@	-- match end of word
+          @TT "\\`"@	-- match beginning of string
+          @TT "\\'"@	-- match end of string
         :Character sets
           @TT "[...]"@	-- match any single character that is a member of the set
            @TT "[abc]"@	-- match either @TT "a"@, @TT "b"@, or @TT "c"@
@@ -174,16 +174,16 @@ doc ///
           @TT "[:word:]"@	-- any word character (alphanumeric characters plus the underscore
           @TT "[:xdigit:]"@	-- any hexadecimal digit character
         :"Single character" character classes
-          @TT "\\\\d"@	-- same as @TT "[[:digit:]]"@
-          @TT "\\\\l"@	-- same as @TT "[[:lower:]]"@
-          @TT "\\\\s"@	-- same as @TT "[[:space:]]"@
-          @TT "\\\\u"@	-- same as @TT "[[:upper:]]"@
-          @TT "\\\\w"@	-- same as @TT "[[:word:]]"@
-          @TT "\\\\D"@	-- same as @TT "[^[:digit:]]"@
-          @TT "\\\\L"@	-- same as @TT "[^[:lower:]]"@
-          @TT "\\\\S"@	-- same as @TT "[^[:space:]]"@
-          @TT "\\\\U"@	-- same as @TT "[^[:upper:]]"@
-          @TT "\\\\W"@	-- same as @TT "[^[:word:]]"@
+          @TT "\\d"@	-- same as @TT "[[:digit:]]"@
+          @TT "\\l"@	-- same as @TT "[[:lower:]]"@
+          @TT "\\s"@	-- same as @TT "[[:space:]]"@
+          @TT "\\u"@	-- same as @TT "[[:upper:]]"@
+          @TT "\\w"@	-- same as @TT "[[:word:]]"@
+          @TT "\\D"@	-- same as @TT "[^[:digit:]]"@
+          @TT "\\L"@	-- same as @TT "[^[:lower:]]"@
+          @TT "\\S"@	-- same as @TT "[^[:space:]]"@
+          @TT "\\U"@	-- same as @TT "[^[:upper:]]"@
+          @TT "\\W"@	-- same as @TT "[^[:word:]]"@
 
     Text
       The special character @TT "\\"@ may be confusing, as inside a string delimited by quotation marks

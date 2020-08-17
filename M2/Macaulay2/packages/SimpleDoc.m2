@@ -142,7 +142,7 @@ safevalue = t -> try value t else ( stderr << "in the evaluation of: " << stack 
 render = (text, keylinenum) -> (
     (offset, tail) := (0, length text);
     parsed := splice while offset < tail list (
-	m := regex(///(.*?)(?<!\\)(@|$)(.*?)(?<!\\)(@|$)///, offset, text, Flags => RegexPerl);
+	m := regex(///(.*?)(?<!\\)(@|$)(.*?)(?<!\\)(@|$)///, offset, text);
 	-- The text before any @ should be processed via TEX
 	pre := TEX replace(///\\@///, "@", substring(m#1, text)); offset = m#2#0;
 	-- No @ were found

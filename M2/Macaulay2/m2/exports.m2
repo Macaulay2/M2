@@ -332,6 +332,7 @@ export {
 	"RealField",
 	"Reduce",
 	"Reload",
+	"References",
 	"RemakeAllDocumentation",
 	"Repository",
 	"RerunExamples",
