@@ -24,7 +24,7 @@ enum RegexFlags {
 
   /* flags for Perl and POSIX */
   //  newline_alt
-  //  no_except: this is always on
+  //  no_except
   //  save_subexpression_location
 
   /* flags for Perl */
@@ -84,8 +84,7 @@ boost::regex regex_compile(const M2_string pattern, const long flags)
 #endif
 
   /* parse and set the flags */
-  boost::regex_constants::syntax_option_type regex_flags =
-      boost::regex::no_except; /* never throw exceptions */
+  boost::regex_constants::syntax_option_type regex_flags = boost::regex::normal;
   regex_flags |= flags & extended ? boost::regex::extended : 0;
   regex_flags |= flags & literal ? boost::regex::literal : 0;
   regex_flags |= flags & icase ? boost::regex::icase : 0;
@@ -99,10 +98,11 @@ boost::regex regex_compile(const M2_string pattern, const long flags)
   regex_flags &= flags & no_bk_refs ? regex_flags : ~boost::regex::no_bk_refs;
 
   /* compile the state machine */
-  boost::regex expression(M2_tocharstar(pattern), regex_flags);
-  if (expression.status() != 0)
-    std::cerr << "regex: could not compile the regular expression: "
-              << M2_tocharstar(pattern) << std::endl;
+  // clang-format off
+  boost::regex expression;
+  try { expression = boost::regex(M2_tocharstar(pattern), regex_flags); }
+  catch (std::exception& err) { throw; }
+  // clang-format on
 
   /* cache the compiled state machine */
   auto res = cache.emplace(key, expression);

@@ -18,10 +18,16 @@ regexSearch(e:Expr):Expr := (
     if length(s) == 2 then (
 	when s.0 is regexp:stringCell do
 	when s.1 is text:stringCell do (
-            r := search(regexp.v, 0, length(text.v), text.v, long(-1));
-            if length(r) != 0 then toPairs(r)
-            else nullE)
-        else WrongArgString(2)
+	    Ccode(returns, "try {");
+	    r := search(regexp.v, 0, length(text.v), text.v, long(-1));
+	    Ccode(returns, "
+		} catch (std::exception& e) {
+		    fprintf(stderr, \"--internal error: runtime error in compiling regular expression: %s\", e.what());
+		    return parse_nullE;
+		} catch (...) { return parse_nullE; }");
+	    if length(r) != 0 then toPairs(r)
+	    else nullE)
+	else WrongArgString(2)
 	else WrongArgString(1))
     else if length(s) == 5 then (
 	when s.0 is regexp:stringCell do
@@ -31,9 +37,15 @@ regexSearch(e:Expr):Expr := (
 	when s.4 is flags:ZZcell do (
 	    istart := toInt(start);
 	    irange := toInt(range);
-            r := search(regexp.v, istart, irange, text.v, toLong(flags));
-            if length(r) != 0 then toPairs(r)
-            else nullE)
+	    Ccode(returns, "try {");
+	    r := search(regexp.v, istart, irange, text.v, toLong(flags));
+	    Ccode(returns, "
+		} catch (std::exception& e) {
+		    fprintf(stderr, \"--internal error: runtime error in compiling regular expression: %s\", e.what());
+		    return parse_nullE;
+		} catch (...) { return parse_nullE; }");
+	    if length(r) != 0 then toPairs(r)
+	    else nullE)
 	else WrongArgZZ(5)
 	else WrongArgString(4)
 	else WrongArgZZ(3)
@@ -49,7 +61,14 @@ regexReplace(e:Expr):Expr := (
 	when s.0 is regexp:stringCell do
 	when s.1 is replacement:stringCell do
 	when s.2 is text:stringCell do (
-	    toExpr(replace(regexp.v, 0, length(text.v), replacement.v, text.v, long(-1))))
+	    Ccode(returns, "try {");
+	    r := replace(regexp.v, 0, length(text.v), replacement.v, text.v, long(-1));
+	    Ccode(returns, "
+		} catch (std::exception& e) {
+		    fprintf(stderr, \"--internal error: runtime error in compiling regular expression: %s\", e.what());
+		    return parse_nullE;
+		} catch (...) { return parse_nullE; }");
+	    toExpr(r))
 	else WrongArgString(3)
 	else WrongArgString(2)
 	else WrongArgString(1))
@@ -58,7 +77,14 @@ regexReplace(e:Expr):Expr := (
 	when s.1 is replacement:stringCell do
 	when s.2 is text:stringCell do
 	when s.3 is flags:ZZcell do (
-	    toExpr(replace(regexp.v, 0, length(text.v), replacement.v, text.v, toLong(flags))))
+	    Ccode(returns, "try {");
+	    r := replace(regexp.v, 0, length(text.v), replacement.v, text.v, toLong(flags));
+	    Ccode(returns, "
+		} catch (std::exception& e) {
+		    fprintf(stderr, \"--internal error: runtime error in compiling regular expression: %s\", e.what());
+		    return parse_nullE;
+		} catch (...) { return parse_nullE; }");
+	    toExpr(r))
 	else WrongArgZZ(4)
 	else WrongArgString(3)
 	else WrongArgString(2)
@@ -69,19 +95,40 @@ setupfun("replace", regexReplace).Protected = false; -- will be overloaded in m2
 
 regexSeparate(e:Expr):Expr := (
     when e is text:stringCell do (
-	toExpr(separate("\r?\n", 0, length(text.v), text.v, long(-1))))
+	Ccode(returns, "try {");
+	r := separate("\r?\n", 0, length(text.v), text.v, long(-1));
+	Ccode(returns, "
+	    } catch (std::exception& e) {
+		fprintf(stderr, \"--internal error: runtime error in compiling regular expression: %s\", e.what());
+		return parse_nullE;
+	    } catch (...) { return parse_nullE; }");
+	toExpr(r))
     else when e is s:Sequence do (
     if length(s) == 2 then (
 	when s.0 is regexp:stringCell do
 	when s.1 is text:stringCell do (
-	    toExpr(separate(regexp.v, 0, length(text.v), text.v, long(-1))))
+	    Ccode(returns, "try {");
+	    r := separate(regexp.v, 0, length(text.v), text.v, long(-1));
+	    Ccode(returns, "
+		} catch (std::exception& e) {
+		    fprintf(stderr, \"--internal error: runtime error in compiling regular expression: %s\", e.what());
+		    return parse_nullE;
+		} catch (...) { return parse_nullE; }");
+	    toExpr(r))
 	else WrongArgString(2)
 	else WrongArgString(1))
     else if length(s) == 3 then (
 	when s.0 is regexp:stringCell do
 	when s.1 is text:stringCell do
 	when s.2 is flags:ZZcell do (
-	    toExpr(separate(regexp.v, 0, length(text.v), text.v, toLong(flags))))
+	    Ccode(returns, "try {");
+	    r := separate(regexp.v, 0, length(text.v), text.v, toLong(flags));
+	    Ccode(returns, "
+		} catch (std::exception& e) {
+		    fprintf(stderr, \"--internal error: runtime error in compiling regular expression: %s\", e.what());
+		    return parse_nullE;
+		} catch (...) { return parse_nullE; }");
+	    toExpr(r))
 	else WrongArgZZ(3)
 	else WrongArgString(2)
 	else WrongArgString(1))
@@ -91,4 +138,11 @@ setupfun("separate", regexSeparate).Protected = false; -- will be overloaded in 
 
 -- used in actors4.d
 export regexSelect(regexp:string, form:string, text:string, flags:long):Expr := (
-    toExpr(select(regexp, 0, length(text), form, text, flags)));
+    Ccode(returns, "try {");
+    r := select(regexp, 0, length(text), form, text, flags);
+    Ccode(returns, "
+	} catch (std::exception& e) {
+	    fprintf(stderr, \"--internal error: runtime error in compiling regular expression: %s\", e.what());
+	    return parse_nullE;
+	} catch (...) { return parse_nullE; }");
+    toExpr(r));
