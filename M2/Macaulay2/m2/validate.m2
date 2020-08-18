@@ -97,7 +97,7 @@ fixup MarkUpType  := z -> (
     else error("isolated mark up type encountered: ", toString z))
 
 fixup HREF        := x -> if #x == 2 then HREF{x#0, fixup x#1} else x
-fixup String      := s -> demark_" " separate("[ \t]*\r?\n[ \t]*", s, Flags => RegexPerl)
+fixup String      := s -> demark_" " separate("[ \t]*\r?\n[ \t]*", s)
 
 fixup Option      :=
 fixup BR          :=

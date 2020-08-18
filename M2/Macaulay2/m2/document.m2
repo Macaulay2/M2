@@ -295,40 +295,13 @@ formatDocumentTag Sequence := record(
 -----------------------------------------------------------------------------
 -- storeRawDocumentation
 -----------------------------------------------------------------------------
-fixup Thing      := z -> error("unrecognizable item ",toString z," of class ",toString class z," encountered while processing documentation node ", toString currentHelpTag)
-fixup List       := z -> fixup toSequence z
-fixup Sequence   := 
-fixup Hypertext  := z -> splice apply(z,fixup)
-fixup LATER      := identity
-fixup Nothing    := x -> ()	      -- so it will get removed by splice later
-fixup Option     := identity
-fixup BR         := identity
-fixup PRE        := identity
-fixup CODE       := identity
-fixup ExampleItem := identity
-fixup LITERAL    := identity
-fixup ANCHOR     := identity
-fixup TO         := identity
-fixup TO2        := identity
-fixup TOH        := identity
-fixup HREF       := x -> if #x == 2 then HREF{x#0, fixup x#1} else x
-deprecated := z -> error (
-     if z === PARA then ( "using '", toString z, "' alone in documentation is no longer supported, use 'PARA{...}' around a paragraph" )
-     else ("using '", toString z, "' alone in documentation is no longer supported, use '", toString z, "{}' instead" ) )
-fixup MarkUpType := z -> (
-     if z === PARA or z === BR or z === HR
-     then (
-	  deprecated z;
-	  z{})
-     else error("isolated mark up type encountered: ",toString z)
-     ) -- convert PARA to PARA{}
--- fixup Function   := z -> z				       -- allow BaseFunction => f 
-fixup String     := s -> demark_" " separate("[ \t]*\r?\n[ \t]*", s) -- remove clumsy newlines within strings
-
--- TODO: move this, and above, to hypertext.m2
-hypertext = method(Dispatch => Thing)
-hypertext Hypertext := fixup
-hypertext Sequence := hypertext List := x -> fixup DIV x
+storeRawDocumentation := (tag, rawdoc) -> (
+    fkey := format tag;
+    if currentPackage#rawKey#?fkey and signalDocumentationError tag then (
+	rawdoc = currentPackage#rawKey#fkey;
+	error("error: documentation already provided for ", format tag, newline,
+	    rawdoc#"filename", ":", toString rawdoc#"linenum", ": ... here is the (end of the) previous documentation"));
+    currentPackage#rawKey#fkey = rawdoc)
 
 -----------------------------------------------------------------------------
 -- fetchRawDocumentation, fetchRawDocumentationNoLoad
