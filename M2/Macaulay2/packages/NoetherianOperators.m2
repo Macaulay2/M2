@@ -632,6 +632,7 @@ SetOfNoethOps#{Standard,AfterPrint} = x -> (
 )
 SetOfNoethOps _* := N -> N.Ops;
 numgens SetOfNoethOps := N -> #N.Ops;
+ring SetOfNoethOps := N -> ring N_0;
 net SetOfNoethOps := N -> net N.Ops;
 SetOfNoethOps _ ZZ := (N, i) -> (N.Ops)#i;
 entries SetOfNoethOps := N -> N.Ops;
@@ -1114,12 +1115,21 @@ invSystemFromHilbToNoethOps = (I, R, S, depVars) -> (
 	diffMat = diffMat || auxMat;
      );
     noethOps := flatten entries (allMons * mingens ker diffMat);  
-    diffVars := apply(depVars, w -> value("symbol d" | toString(w)) );
-    W := FF(monoid[diffVars]);
-    --D := R(monoid[diffVars]);
-    D := diffAlg(R);
-    mapStoW := map(W, S, gens W);
-    apply(noethOps, w -> liftNoethOp(mapStoW(w), R, D))   
+
+    indVars := gens R - set depVars;    
+    if not R#?cache then R#cache = new CacheTable;
+    if not R#cache#?"NoethNormRing" then R#cache#"NoethNormRing" = (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
+    T := R#cache#"NoethNormRing";
+    T' := diffAlg(T);
+    hilbRing := ring noethOps#0;
+    phi := map(T', hilbRing, vars T');
+    noethOps / phi
+    --diffVars := apply(depVars, w -> value("symbol d" | toString(w)) );
+    --W := FF(monoid[diffVars]);
+    ----D := R(monoid[diffVars]);
+    --D := diffAlg(R);
+    --mapStoW := map(W, S, gens W);
+    --apply(noethOps, w -> liftNoethOp(mapStoW(w), R, D))   
 )
    
 -- This function can compute the Noetherian operators of a primary ideal Q.
@@ -1132,7 +1142,7 @@ getNoetherianOperatorsHilb = Q -> (
     S := getHilb(P, depVars);
     I := mapRtoHilb(Q, P, S, depVars, indVars);
     noethOps := invSystemFromHilbToNoethOps(I, R, S, depVars);
-    noethOps    
+    new SetOfNoethOps from {Ops => noethOps, Prime => P}
 ) 
 
 -- computes the annihilator ideal of a polynomial F in a polynomial ring 
