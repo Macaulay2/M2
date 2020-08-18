@@ -44,6 +44,7 @@ export {
      --Data type keys
      "Ops",
      "Prime",
+     "LiftMap",
 
      "noetherianOperators",
      "hybridNoetherianOperators",
@@ -629,6 +630,8 @@ SetOfNoethOps#{Standard,AfterPrint} = x -> (
     else if x#?Point then << " evaluated at "<< x#Point;
     << endl;
 )
+SetOfNoethOps _* := N -> N.Ops;
+numgens SetOfNoethOps := N -> #N.Ops;
 net SetOfNoethOps := N -> net N.Ops;
 SetOfNoethOps _ ZZ := (N, i) -> (N.Ops)#i;
 entries SetOfNoethOps := N -> N.Ops;
@@ -797,9 +800,14 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
     K = colReduce(K, tol);
     -- Return elements in WeylAlgebra for nice formatting
     R' := diffAlg R;
-    bdd := sub(bd, vars R');
-    L := sort flatten entries (bdd * sub(K, R'));
-    new SetOfNoethOps from {Ops => L, Point => p}
+    phi := map(R', R, vars R');
+    if not R'#?cache then R'#cache = new CacheTable;
+    if not R'#cache#?"NoethNormRing" then R'#cache#"NoethNormRing" = (coefficientRing R)(monoid[depVars / (x -> phi x)]);
+    S' := R'#cache#"NoethNormRing";
+    liftMap := map(R', S');
+    bdd := sub(sub(bd, vars R'), S');
+    L := sort flatten entries (bdd * sub(K, S'));
+    new SetOfNoethOps from {Ops => L, Point => p, LiftMap => liftMap}
 )
 
 hybridNoetherianOperators = method(Options => options numNoethOpsAtPoint)
@@ -827,7 +835,7 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
     if debugLevel >= 1 then << "Good points: "<<#goodIdx<<"/"<<#pts<<endl;
     goodNops := noethOpsAtPoints#(goodIdx#0);
     
-    phi := map(RCC, ring goodNops_0, vars RCC);
+    phi := map(RCC, target goodNops.LiftMap, vars RCC) * goodNops.LiftMap;
     L := sort flatten for op in goodNops.Ops list (
         bd := monomials phi op;
         bd = matrix{flatten entries bd / (mon -> S_((first exponents mon)_(depVars / index)))};
@@ -873,8 +881,11 @@ numericalNoetherianOperators(Ideal, List) := List => opts -> (I, pts) -> (
     if debugLevel >= 1 then <<"Num good points: " << #goodIdx << " / " << #noethOpsAtPoints << endl;
     goodNops := noethOpsAtPoints_goodIdx;
     goodPts := pts_goodIdx;
-    transpose goodNops / (L -> formatNoethOps interpolateNOp(L, goodPts, R, Tolerance => opts.InterpolationTolerance))
 
+    apply(numgens goodNops#0, i -> (
+        L := goodNops / (N -> N.LiftMap N_i);
+        formatNoethOps interpolateNOp(L,goodPts, R, Tolerance => opts.InterpolationTolerance)
+    ))
 )
 -- compute the jth term of the ith Noetherian operator
 numericalNoetherianOperators(Ideal, List, ZZ, ZZ) := List => opts -> (I, pts, i, j) -> (
