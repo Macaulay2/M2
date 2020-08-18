@@ -291,6 +291,17 @@ cmake -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` .
 </details>
 
 <details>
+<summary><code>/usr/include/c++/10.1.0/bits/unique_ptr.h:594:9: error: no matching function for call to std::__uniq_ptr_data</code> when using GCC 10 or Clang 10</summary>
+
+This issue is due to an old version of FFLAS_FFPACK or Givaro libraries inserting an unnecessary `-fabi-version=6` flag to the compile command. Try uninstalling the packaged version of those libraries and building them using the `build-givaro` and `build-fflas_ffpack` targets.
+</details>
+
+<details>
+<summary><code>undefined reference to cblas_dgemm</code> on Arch Linux</summary>
+The default OpenBLAS package on Arch Linux does not include function declarations for LAPACK and CBLAS, causing issues with some libraries and parts of Macaulay2. Try installing the community package [OpenBLAS-LAPACK](https://aur.archlinux.org/packages/openblas-lapack/) instead.
+</details>
+
+<details>
 <summary>CMake is not using the local version of MPIR, Flint, etc.</summary>
 
 Currently, when CMake is set to use the MPIR library, it compiles MPIR and a number of other libraries from source, including MPFR, NTL, Flint, Factory, Frobby, and Givaro. This is done to avoid linking conflicts caused by the libraries linking instead with the GMP library. Therefore, in order to link with system libraries the `-DUSING_MPIR=OFF` option is required. See this [comment](https://github.com/Macaulay2/M2/issues/1275#issuecomment-644217756) for more details on the reasoning behind this.
