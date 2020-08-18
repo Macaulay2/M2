@@ -173,12 +173,15 @@ select(n:int,a:Sequence,f:Expr):Expr := (
 	  else b.i = false);
      new Sequence len found do (
 	  foreach p at i in b do if p then provide a.i));
-select(n:Expr,e:Expr,f:Expr,g:Expr):Expr := (
+select(n:Expr,e:Expr,f:Expr,g:Expr,h:Expr):Expr := (
      when n
      is regexp:stringCell do (
 	 when e is form:stringCell do
 	 when f is text:stringCell do
-	 when g is flags:ZZcell do regexSelect(regexp.v, form.v, text.v, toLong(flags)) -- see regex.dd
+	 when g is regexFlags:ZZcell do if !isInt(regexFlags) then WrongArgSmallInteger(4) else
+	 when h is matchFlags:ZZcell do if !isInt(matchFlags) then WrongArgSmallInteger(5) else (
+	     regexSelect(regexp.v, form.v, text.v, toInt(regexFlags), toInt(matchFlags))) -- see regex.dd
+	 else WrongArgZZ(5)
 	 else WrongArgZZ(4)
 	 else WrongArgString(3)
 	 else WrongArgString(2))
@@ -219,10 +222,10 @@ select(n:Expr,e:Expr,f:Expr,g:Expr):Expr := (
 select(e:Expr):Expr := (
      when e is a:Sequence do
      if length(a) == 2 then select(a.0,a.1) else
-     if length(a) == 3 then select(a.0,a.1,a.2,toExpr(-1)) else
-     if length(a) == 4 then select(a.0,a.1,a.2,a.3)
-     else WrongNumArgs(2,4)
-     else WrongNumArgs(2,4));
+     if length(a) == 3 then select(a.0,a.1,a.2,toExpr(defaultRegexFlags),toExpr(defaultMatchFlags)) else
+     if length(a) == 5 then select(a.0,a.1,a.2,a.3,a.4)
+     else WrongNumArgs(2,5)
+     else WrongNumArgs(2,5));
 setupfun("select", select).Protected = false; -- will be overloaded in m2/lists.m2 and m2/regex.m2
 
 any(f:Expr,n:int):Expr := (

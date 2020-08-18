@@ -261,8 +261,8 @@ if firstTime then (
 	  or regex("^a+$"," \naaa\n ") =!= {(2,3)}
 	  or regex("$a","$a") =!= null
 	  or regex(".*","a\nb") =!= {(0, 1)}
-	  or replace("a", "b", "-a-a-") =!= "-b-b-"
-	  or select("a+","$&","aaa aaaa",-1) =!= {"aaa","aaaa"}
+	  or replace("a","b","-a-a-") =!= "-b-b-"
+	  or select("a+","$&","aaa aaaa") =!= {"aaa","aaaa"}
 	  then error "regex regular expression library not working";
 	  t := hashTable {
 	       "exec" => "${exec_prefix}/",

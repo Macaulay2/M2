@@ -1,31 +1,7 @@
------------------------------------------------------------------------------
--- Enum for passing internal flags to the regex engine
------------------------------------------------------------------------------
+-* Copyright 2020 by Mahrud Sayrafi *-
 
--- Keep this enum in sync with RegexFlags in Macaulay2/d/boost-regex.cpp
--- The values are used as a bitmask in order to simplify passing flags to
--- the various functions defined there.
-RegexFlags = new HashTable from {
-    "ECMAScript" =>  0,       -- ECMAScript flavor (default)
-    "Extended"   => (1 << 1), -- POSIX ERE flavor
-    "Literal"    => (1 << 2), -- treat the pattern text as literal
-
-    "Icase"   => (1 << 5), -- ignore case
-    "Nosubs"  => (1 << 6), -- ignore subexpressions
-    "Collate" => (1 << 8), -- makes [a-b] locale sensitive
-
-    "NoModM"   => (1 << 12), -- don't match ^ $ with newlines
-    "NoModS"   => (1 << 13), -- don't match . with newlines
-
-    "NoEscapeInLists" => (1 << 17), -- disable \ escapes in lists
-    "NoBkRefs"        => (1 << 18), -- disable backreferences
-
-    "MatchAny"           => (1 << 25), -- return any match
-    "MatchNotNull"       => (1 << 26), -- match must be nonempty
-    "MatchContinuous"    => (1 << 27), -- match must start at the beginning
-    "MatchPrevAvail"     => (1 << 30), -- lead-1 is a valid iterator position
-    "MatchNotDotNewline" => (1 << 31), -- doesn't match . with newlines
-    }
+-- See variables matching "Regex$" defined in Macaulay2/d/regex.dd
+-- for a list of available flags. More flags can be added there.
 
 regexSpecialChars = concatenate(
     "([", apply({"\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "[", "]", "{", "}"}, c -> "\\" | c), "])")
@@ -37,8 +13,15 @@ regexSpecialChars = concatenate(
 setRegexFlags = opts -> (
     if instance(opts, ZZ) then return opts;
     if opts.?POSIX and instance(opts.POSIX, Boolean) then if opts.POSIX
-    then RegexFlags#"Extended"   | RegexFlags#"MatchNotDotNewline"
-    else RegexFlags#"ECMAScript" | RegexFlags#"NoModS"
+    then Regex$Extended  - (Regex$NoBkRefs | Regex$NoEscapeInLists)
+    else Regex$ECMAScript | Regex$NoModS
+    else error "regex: expected true or false for option POSIX => ...")
+
+setMatchFlags = opts -> (
+    if instance(opts, ZZ) then return opts;
+    if opts.?POSIX and instance(opts.POSIX, Boolean) then if opts.POSIX
+    then Regex$MatchNotDotNewline
+    else 0
     else error "regex: expected true or false for option POSIX => ...")
 
 -----------------------------------------------------------------------------
@@ -51,17 +34,17 @@ regex(String,         String) := opts -> (re,              str) -> regex(re, 0, 
 regex(String, ZZ,     String) := opts -> (re, head,        str) -> regex(re, head, length str, str, opts)
 regex(String, ZZ, ZZ, String) := opts -> (re, head, range, str) -> (
     tail := length str;
-    flags := setRegexFlags opts;
-    if head + range >= tail then return regex'(re, head, tail, str, flags);
+    (regexFlags, matchFlags) := (setRegexFlags opts, setMatchFlags opts);
+    if head + range >= tail then return regex'(re, head, tail, str, regexFlags, matchFlags);
     -- When head + range != tail, this is backwards compatible with GNU regex in Extended POSIX flavor;
     -- however, the lookbehind feature of Perl flavor doesn't work in this case.
-    flags = flags | (if head + range != tail then RegexFlags#"MatchContinuous" else 0);
+    matchFlags = matchFlags | (if head + range != tail then Regex$MatchContinuous else 0);
     if range >= 0
     then for lead from 0 to range when head + lead <= tail do (
-	ret := regex'(re, head + lead, tail, str, flags);
+	ret := regex'(re, head + lead, tail, str, regexFlags, matchFlags);
 	if ret =!= null then return ret)
     else for lead from 0 to -range when head - lead >= 0 do (
-	ret := regex'(re, head - lead, tail, str, flags);
+	ret := regex'(re, head - lead, tail, str, regexFlags, matchFlags);
 	if ret =!= null then return ret))
 protect symbol regex
 
@@ -71,12 +54,12 @@ protect symbol regex
 
 separate' = separate
 separate = method(TypicalValue => List, Options => options regex)
-separate(            String) := opts -> (       str) -> separate'("\r?\n", str, -1)
+separate(            String) := opts -> (       str) -> separate("\r?\n", str, opts)
 separate(String,     String) := opts -> (re,    str) -> (
-    flags := if length re == 1 and match(regexSpecialChars, re) then (
+    regexFlags := if length re == 1 and match(regexSpecialChars, re) then (
 	stderr << "warning: unescaped special character '" << re << "' found in call to 'separate'" << endl;
-	RegexFlags#"Literal") else setRegexFlags opts;
-    separate'(re, str, flags))
+	Regex$Literal) else setRegexFlags opts;
+    separate'(re, str, regexFlags, setMatchFlags opts))
 separate(String, ZZ, String) := opts -> (re, n, str) -> (
     (offset, tail) := (0, length str);
     while offset <= tail list (
@@ -94,9 +77,9 @@ separateRegexp = separate
 -----------------------------------------------------------------------------
 
 select(String,         String) := List => {POSIX => true} >> opts ->
-    (re,       str) -> select'(re, "$&", str, setRegexFlags opts)
+    (re,       str) -> select'(re, "$&", str, setRegexFlags opts, setMatchFlags opts)
 select(String, String, String) := List => {POSIX => true} >> opts ->
-    (re, form, str) -> select'(re, form, str, setRegexFlags opts)
+    (re, form, str) -> select'(re, form, str, setRegexFlags opts, setMatchFlags opts)
 protect symbol select
 
 -----------------------------------------------------------------------------
@@ -109,7 +92,7 @@ match(List,   String) := opts -> (rs, str) -> (
     if member(opts.Strategy, {any, all}) then (opts.Strategy)(rs, re -> match(re, str, opts))
     else error concatenate("unknown quantifier for match: ", toString opts.Strategy))
 match(String, String) := opts -> (re, str) ->
-    null =!= (lastMatch = regex'(re, 0, length str, str, setRegexFlags opts))
+    null =!= (lastMatch = regex'(re, 0, length str, str, setRegexFlags opts, setMatchFlags opts))
 
 -----------------------------------------------------------------------------
 -- replace
@@ -119,7 +102,7 @@ match(String, String) := opts -> (re, str) ->
 replace' = replace
 replace = method(Options => true)
 replace(String, String, String) := String => options regex >>
-    opts -> (re, s, r) -> replace'(re, s, r, setRegexFlags opts)
+    opts -> (re, s, r) -> replace'(re, s, r, setRegexFlags opts, setMatchFlags opts)
 protect symbol replace
 
 -- previously in html0.m2
