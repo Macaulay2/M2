@@ -57,7 +57,7 @@ separate = method(TypicalValue => List, Options => options regex)
 separate(            String) := opts -> (       str) -> separate("\r?\n", str, opts)
 separate(String,     String) := opts -> (re,    str) -> (
     regexFlags := if length re == 1 and match(regexSpecialChars, re) then (
-	stderr << "warning: unescaped special character '" << re << "' found in call to 'separate'" << endl;
+	stderr << "warning: unescaped special character '" << re << "' found (and escaped) in call to 'separate'" << endl;
 	Regex$Literal) else setRegexFlags opts;
     separate'(re, str, regexFlags, setMatchFlags opts))
 separate(String, ZZ, String) := opts -> (re, n, str) -> (
