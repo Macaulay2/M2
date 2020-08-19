@@ -76,9 +76,9 @@ separateRegexp = separate
 -- select
 -----------------------------------------------------------------------------
 
-select(String,         String) := List => {POSIX => true} >> opts ->
+select(String,         String) := List => options regex >> opts ->
     (re,       str) -> select'(re, "$&", str, setRegexFlags opts, setMatchFlags opts)
-select(String, String, String) := List => {POSIX => true} >> opts ->
+select(String, String, String) := List => options regex >> opts ->
     (re, form, str) -> select'(re, form, str, setRegexFlags opts, setMatchFlags opts)
 protect symbol select
 
