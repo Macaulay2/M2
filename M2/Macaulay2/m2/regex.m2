@@ -1,7 +1,7 @@
 -* Copyright 2020 by Mahrud Sayrafi *-
 
--- See variables matching "Regex$" defined in Macaulay2/d/regex.dd
--- for a list of available flags. More flags can be added there.
+-- See RegexFlags defined in Macaulay2/d/regex.dd for a list of available flags.
+-- More flags can be added there.
 
 regexSpecialChars = concatenate(
     "([", apply({"\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "[", "]", "{", "}"}, c -> "\\" | c), "])")
@@ -13,14 +13,14 @@ regexSpecialChars = concatenate(
 setRegexFlags = opts -> (
     if instance(opts, ZZ) then return opts;
     if opts.?POSIX and instance(opts.POSIX, Boolean) then if opts.POSIX
-    then Regex$Extended  - (Regex$NoBkRefs | Regex$NoEscapeInLists)
-    else Regex$ECMAScript | Regex$NoModS
+    then RegexFlags#"Extended"  - (RegexFlags#"NoBkRefs" | RegexFlags#"NoEscapeInLists")
+    else RegexFlags#"ECMAScript" | RegexFlags#"NoModS"
     else error "regex: expected true or false for option POSIX => ...")
 
 setMatchFlags = opts -> (
     if instance(opts, ZZ) then return opts;
     if opts.?POSIX and instance(opts.POSIX, Boolean) then if opts.POSIX
-    then Regex$MatchNotDotNewline
+    then RegexFlags#"MatchNotDotNewline"
     else 0
     else error "regex: expected true or false for option POSIX => ...")
 
@@ -38,7 +38,7 @@ regex(String, ZZ, ZZ, String) := opts -> (re, head, range, str) -> (
     if head + range >= tail then return regex'(re, head, tail, str, regexFlags, matchFlags);
     -- When head + range != tail, this is backwards compatible with GNU regex in Extended POSIX flavor;
     -- however, the lookbehind feature of Perl flavor doesn't work in this case.
-    matchFlags = matchFlags | (if head + range != tail then Regex$MatchContinuous else 0);
+    matchFlags = matchFlags | (if head + range != tail then RegexFlags#"MatchContinuous" else 0);
     if range >= 0
     then for lead from 0 to range when head + lead <= tail do (
 	ret := regex'(re, head + lead, tail, str, regexFlags, matchFlags);
@@ -58,7 +58,7 @@ separate(            String) := opts -> (       str) -> separate("\r?\n", str, o
 separate(String,     String) := opts -> (re,    str) -> (
     regexFlags := if length re == 1 and match(regexSpecialChars, re) then (
 	stderr << "warning: unescaped special character '" << re << "' found (and escaped) in call to 'separate'" << endl;
-	Regex$Literal) else setRegexFlags opts;
+	RegexFlags#"Literal") else setRegexFlags opts;
     separate'(re, str, regexFlags, setMatchFlags opts))
 separate(String, ZZ, String) := opts -> (re, n, str) -> (
     (offset, tail) := (0, length str);
