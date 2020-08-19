@@ -52,11 +52,13 @@ runfun := f -> if instance(f, Function) then f() else f
 
 -- returns the Layout index of the installPrefix, equal to 1 or 2
 initInstallDirectory := opts -> (
-    installPrefix = realpath toAbsolutePath(runfun opts.InstallPrefix);
-    if not match("/$", installPrefix) then installPrefix = installPrefix | "/";
+    installPrefix = toAbsolutePath(runfun opts.InstallPrefix);
+    if not fileExists installPrefix then makeDirectory installPrefix;
+    installPrefix = realpath installPrefix;
     installLayoutIndex := detectCurrentLayout installPrefix;
     if installLayoutIndex === null then installLayoutIndex = if opts.SeparateExec then 2 else 1;
-    (installLayoutIndex, installLayout = Layout#installLayoutIndex))
+    installLayout = Layout#installLayoutIndex;
+    installLayoutIndex)
 
 -----------------------------------------------------------------------------
 -- htmlFilename
@@ -543,10 +545,8 @@ installPackage Package := opts -> pkg -> (
     pushvar(symbol currentPackage, pkg);
     topDocumentTag = makeDocumentTag(pkg#"pkgname", Package => pkg);
 
-    -- set installPrefix, installLayout, and installLayoutPrefix
-    installPrefix = minimizeFilename(runfun opts.InstallPrefix | "/");
-    installLayoutIndex := first initInstallDirectory opts; -- TODO: make installLayout non-global
-
+    -- set installPrefix, installLayout, and installLayoutIndex
+    installLayoutIndex := initInstallDirectory opts; -- TODO: make installPrefix and installLayout non-global
     verboseLog("installing package ", toString pkg, " in ", minimizeFilename installPrefix, " with layout #", toString installLayoutIndex);
 
     currentSourceDir := pkg#"source directory";
@@ -774,10 +774,7 @@ installPackage Package := opts -> pkg -> (
 
     verboseLog("installed package ", toString pkg, " in ", installPrefix);
     popvar(symbol currentPackage);
-    if not noinitfile then (
-	setUpApplicationDirectory();
-	makePackageIndex();
-	);
+    if not noinitfile then makePackageIndex();
     htmlDirectory = null;
     installLayout = null;
     installPrefix = null;
