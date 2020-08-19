@@ -196,7 +196,7 @@ Node
       value specified as an option to @TO newPackage@ by the package itself; however, if @TO "debuggingMode"@
       is already @TT "false"@ it will remain so.
     Configuration=>List
-      a list of options @TT "KEY => VALUE"@ overriding the defaults specified in the source code of the package
+      the entries are options @TT "KEY => VALUE"@ overriding the defaults specified in the source code of the package
       and the (possibly updated) values in the file in the user's application directory.
     Reload=>Boolean
       whether to reload the package, if it has been loaded before.
@@ -253,7 +253,7 @@ Node
       the value of the variable @TO "debuggingMode"@ during loading the package; specifying it here overrides the
       value specified as an option to @TO newPackage@ by the package itself
     Configuration=>List
-      a list of options @TT "KEY => VALUE"@ overriding the defaults specified in the source code of
+      the entries are options @TT "KEY => VALUE"@ overriding the defaults specified in the source code of
       the package and the (possibly updated) values in the file in the user's application directory.
     Reload=>Boolean
       whether to reload the package, if it has been loaded from a different source before
@@ -298,6 +298,7 @@ Node
     [newPackage, Headline]
     [newPackage, HomePage]
     [newPackage, InfoDirSection]
+    [newPackage, Keywords]
     [newPackage, OptionalComponentsPresent]
     [newPackage, PackageExports]
     [newPackage, PackageImports]
@@ -321,8 +322,10 @@ Node
     Headline=>String
       a brief (5-10 words) description of the package
     Authors=>List
-      a list of lists of options, one for each author. The suboptions are of the form
+      each entry is a list of options the form
       @TT "Name => x"@, @TT "Email => x"@, or @TT "HomePage => x"@, where @TT "x"@ is a string.
+    Keywords=>List
+      the entries are keywords describing the package, used to classify the package in the list of @TO "packages provided with Macaulay2"@
     HomePage=>String
       the URI pointing to the home page of the package, if any
     DebuggingMode=>Boolean
@@ -332,9 +335,9 @@ Node
       whether the package source to be distributed includes a directory for
       auxiliary files, with the same name as the package
     PackageExports=>List
-      a list of names of other packages to load, both for the user and for the code of the new package
+      the entries are names of other packages to load, both for the user and for the code of the new package
     PackageImports=>List
-      a list of names of other packages to load, just for the code of the new package
+      the entries of names of other packages to load, just for the code of the new package
     CacheExampleOutput=>Boolean
       whether @TO installPackage@ should cache (newer) example output in a subdirectory of the auxiliary file directory
       named @TT "examples"@, for use in a future installation. This value can be overridden by a value explicitly specified
@@ -354,7 +357,7 @@ Node
       for publication by a journal, such as The Journal of Software for Algebra and Geometry: @EM "Macaulay2"@.
       Authors should not undertake to create such a certification block themselves.
     Configuration=>List
-      a list of configuration options for the package. The keys and values should be constant expressions,
+      the entries are configuration options for the package. The keys and values should be constant expressions,
       such as strings and integers, not incorporating symbols to be exported by the package (and not yet defined).
       The first time the package is loaded by the user, unless the @TT "-q"@ option is specified on the @TT "M2"@ command
       line, these options will be stored in a file in the user's application directory (see @TO applicationDirectory@).
@@ -608,7 +611,7 @@ Node
     installedPackages()
   Outputs
     :List
-      a list of strings containing the names of the packages that have been installed in the user's @TO "application directory"@.
+      the entries are strings containing the names of the packages that have been installed in the user's @TO "application directory"@.
   SeeAlso
     installPackage
     "loadedPackages"

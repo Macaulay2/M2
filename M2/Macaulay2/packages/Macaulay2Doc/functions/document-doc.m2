@@ -45,10 +45,10 @@ Node
       see @TOH SeeAlso@
     Subnodes=>List
       see @TOH Subnodes@
-    ExampleFiles=>List
-      see @TOH ExampleFiles@
     SourceCode=>List
       a list of functions whose source code should be displayed in the documentation
+    ExampleFiles=>List
+      see @TOH ExampleFiles@
   Consequences
     Item
       formatted documentation is created and stored in the @TO2 {"currentPackage", "current package"}@
