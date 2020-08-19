@@ -58,6 +58,8 @@ Node
     document
     EXAMPLE
     SYNOPSIS
+    :For programmers
+    "documentation keys"
 
 Node
   Key
@@ -139,6 +141,70 @@ Node
     Hypertext
     (show, Hypertext)
     "writing documentation"
+
+Node
+  Key
+    "documentation keys"
+  Description
+    Text
+      The Macaulay2 documentation is linked together by cross-references from one documentation node to another.
+      Each node is identified by a string, which is the title of the node. Some nodes, such as this one, have
+      titles that are simply invented by the author. Others have titles that are manufactured in a certain way
+      from the aspect of the program being documented, for the sake of uniformity.
+
+      For example, the title of the node describing resolutions of modules is @TT format "resolution Module"@.
+      The corresponding key is @TT "(resolution, Module)"@, and it is the job of the function @TO makeDocumentTag@
+      to convert keys to titles.
+
+    Subnodes
+      :Types of documentation keys
+        @TT format "a string"@
+	@TT "s"@ a symbol
+	@TT "(f,X)"@ a method function or unary operator @TT "f"@ that accepts an argument of type @TT "X"@
+	@TT "(f,X,Y)"@ a method function or binary operator @TT "f"@ that accepts 2 arguments, of types @TT "X"@ and @TT "Y"@
+	@TT "(f,X,Y,Z)"@ a method function @TT "f"@ that accepts 3 arguments, of types @TT "X"@, @TT "Y"@, and @TT "Z"@
+	@TT "(f,X,Y,Z,T)"@ a method function @TT "f"@ that accepts 4 arguments, of types @TT "X"@, @TT "Y"@, @TT "Z"@ and @TT "T"@
+	@TT "[f,A]"@ a function @TT "f"@ with an optional named @TT "A"@
+	@TT "(NewOfFromMethod,X,Y,Z)"@ the method for @TT "new X of Y from Z"@
+	@TT "(NewOfMethod,X,Y)"@ the method for @TT "new X of Y"@
+	@TT "(NewFromMethod,X,Z)"@ the method for @TT "new X from Z"@
+	@TT "(NewMethod,X)"@ the method for @TT "new X"@
+	@TT "((symbol ++, symbol =), X,Y)"@ the method for assignment @TT "X ++ Y = ..."@
+	@TT "(homology,X)"@ the method for @TT "HH X"@
+	@TT "(homology,ZZ,X)"@ the method for @TT "HH_ZZ X"@
+	@TT "(cohomology,ZZ,X)"@ the method for @TT "HH^ZZ X"@
+	@TT "(homology,ZZ,X,Y)"@ the method for @TT "HH_ZZ (X,Y)"@
+	@TT "(cohomology,ZZ,X,Y)"@ the method for @TT "HH^ZZ (X,Y)"@
+	@TT "(E,ZZ,X)"@ the method for @TT "E_ZZ X"@ or @TT "E^ZZ X"@, where @TT "E"@ is a scripted functor
+	@TT "(E,ZZ,X,Y)"@ the method for @TT "E_ZZ (X,Y)"@ or @TT "E^ZZ (X,Y)"@, where @TT "E"@ is a scripted functor
+
+    Example
+      makeDocumentTag "some title"
+      makeDocumentTag (symbol ++, Module, Module)
+      makeDocumentTag ((symbol _, symbol =), Symbol, Thing)
+      makeDocumentTag (Tor,ZZ,Module,Module)
+  Subnodes
+    makeDocumentTag
+
+Node
+  Key
+     DocumentTag
+     makeDocumentTag
+    (makeDocumentTag, Thing)
+    (makeDocumentTag, DocumentTag)
+    (makeDocumentTag, String)
+  Headline
+    the class of all document tags
+  Description
+    Text
+      This class is mainly for internal use, in constructing documentation.
+    Example
+      makeDocumentTag (res, Module)
+      peek oo
+      makeDocumentTag (koszul, ZZ, Matrix)
+      peek oo
+      makeDocumentTag [res, PairLimit]
+      peek oo
 
 Node
   Key

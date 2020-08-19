@@ -1,7 +1,6 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2009 by Daniel R. Grayson
 
-
 document {
      Key => "COPYING-GPL-2",
      Headline => "GNU General Public License, version 2",
@@ -23,6 +22,11 @@ document {
 	  SPAN {"See the GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007, available at ", HREF "http://www.gnu.org/licenses/gpl-3.0.txt", "."}
 	  )
      }
+
+-- TODO: combine these two
+document { Key => "copyright",
+     Headline => "a string containing the copyright notice for Macaulay2",
+     EXAMPLE "copyright" }
 
 document {
      Key => "Copyright and license",

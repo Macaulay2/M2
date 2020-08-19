@@ -3,6 +3,8 @@
 --- notes: functions below are all defined in help.m2
 --- FIXME: help "Macaulay2" doesn't do what this page ways
 
+undocumented {"Body"} -- about
+
 doc ///
   Key
      help
@@ -50,7 +52,7 @@ doc ///
           TT "help \"multigraded polynomial rings\""
           }@
   SeeAlso
-    "reading the documentation"
+    "initial help"
     viewHelp
     infoHelp
     apropos
@@ -100,11 +102,11 @@ doc ///
     The @TO help@ command allows other possible arguments, such as @TT "help methods ideal"@,
     but for @TT "viewHelp"@ the argument @TT "X"@ must refer to only one web page.
   SeeAlso
-    "reading the documentation"
     infoHelp
     help
     about
     apropos
+    makePackageIndex
 ///
 
 doc ///
@@ -158,9 +160,92 @@ doc ///
     the value of the Emacs variable @TT "Info-hide-note-references"@ to @TT "hide"@ in order to
     prevent Emacs from inserting a superfluous @TT "See"@ or @TT "see"@ in front of the hyperlinks.
   SeeAlso
-    "reading the documentation"
     viewHelp
     help
     about
     apropos
+///
+
+doc ///
+Node
+  Key
+     about
+    [about, Body]
+    (help, ZZ)
+    (about, Function)
+    (about, String)
+    (about, Symbol)
+    (about, Type)
+  Headline
+    search the documentation
+  Usage
+    about s
+  Inputs
+    s:{String, Function, Symbol, Type}
+    Body=>Boolean
+      whether also to search the bodies of the documentation nodes. By default, just their keys are searched.
+  Outputs
+    :NumberedVerticalList
+      a list of documentation node keys matching the regular expression in the string @TT "s"@, if @TT "s"@ is a string.
+      Otherwise the search matches against the name of @TT "s"@ as a complete word.
+  Description
+    Text
+      The documentation corresponding to the keys in the list returned can be displayed by applying the function
+      @TO "help"@ to it. To see the documentation corresponding to just one or some of the keys, give @TO "help"@
+      an integer or a list of integers to be used as indices in the list returned by the most recent application
+      of @TO "about"@.
+
+      The packages searched are the loaded packages and the packages installed under one of the prefixes listed
+      in @TO "prefixPath"@. The first search will take a few seconds while it reads all the documentation keys
+      into memory.
+
+    -- this example won't work until after Macaulay2Doc is installed.
+    Code
+      EXAMPLE { PRE ////
+	  about resolution
+	  help 5
+	  //// }
+  Caveat
+    Since @TT "s"@ is taken as a regular expression, parentheses serve
+    for grouping subexpressions, rather than matching themselves.
+  SeeAlso
+    help
+    apropos
+///
+
+-- the node displayed by the help command by default
+doc ///
+Node
+  Key
+    "initial help"
+  Description
+    Text
+      Welcome to Macaulay2
+
+      Try entering '2+2' at your next input prompt, which begins with @TT "i"@.
+      The two output prompts begin with @TT "o"@.  The first one, with the
+      equal sign, '=', gives the value computed from your input, and the second one, with
+      the colon, ':', tells what type of thing the value is.
+
+      Type one of these commands to get started reading the documentation:
+
+      @UL {
+	  SPAN (////copyright////, ////                         -- the copyright////),
+	  SPAN (////help "Macaulay2"////, ////                  -- top node of the documentation.////),
+	  SPAN (////help "reading the documentation"////, ////  -- ////),
+	  SPAN (////help "getting started"////, ////            -- ////),
+	  SPAN (////help "a first Macaulay2 session"////, ////  -- ////),
+	  SPAN (////help x////, ////                            -- show documentation for ////, TT ////x////),
+	  SPAN (////help about x////, ////                      -- show documentation about ////, TT ////x////),
+	  SPAN (////help about (x,Body=>true)////, ////         -- show documentation mentioning ////, TT ////x////),
+	  SPAN (////? f////, ////                               -- display brief documentation for a function ////, TT ////f////),
+	  SPAN (////printWidth = 80////, ////                   -- set print width to 80 characters////),
+	  SPAN (////viewHelp////, ////                          -- view documentation in a browser////),
+	  SPAN (////viewHelp x////, ////                        -- view documentation on ////, TT ////x////, //// in browser////),
+	  }@
+
+     "To read the documentation in info form, in case you happen to be running Macaulay2 in a
+     terminal window, replace ", TO "help", " by ", TO "infoHelp", " in any of the commands
+     above."
+     }
 ///

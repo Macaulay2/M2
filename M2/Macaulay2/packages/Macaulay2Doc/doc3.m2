@@ -813,8 +813,6 @@ document { Key => {localDictionaries,(localDictionaries, Symbol), (localDictiona
      ///
      }
 
-document { Key => DocumentTag,
-     Headline => "the class of all document tags", "This class is mainly for internal use, in constructing documentation." }
 document { Key => CompiledFunctionBody,
      Headline => "the class of all compiled function bodies",
      "A compiled function body is the body of a compiled function closure.  It is not a function.",
@@ -1157,9 +1155,7 @@ document { Key => "continue",
      continue
      ///
      }
-document { Key => "copyright",
-     Headline => "a string containing the copyright notice for Macaulay2",
-     EXAMPLE "copyright" }
+
 document { Key => {listSymbols,(listSymbols, Dictionary), (listSymbols, List)},
      Headline => "compact display of symbols and their values",
      Usage => "listSymbols v",
@@ -1218,19 +1214,6 @@ document { Key => listLocalSymbols,
 	  listLocalSymbols ZZ
 	  ///
 	  )
-     }
-
-document { Key => {makeDocumentTag,(makeDocumentTag, Thing), (makeDocumentTag, DocumentTag), (makeDocumentTag, String)},
-     Headline => "convert a documentation key to a documentation tag",
-     EXAMPLE lines ///
-     	  makeDocumentTag (res,Module)
-	  peek oo
-     	  makeDocumentTag (koszul,ZZ,Matrix)
-	  peek oo
-	  makeDocumentTag [res,PairLimit]
-	  peek oo
-     ///,
-     SeeAlso => {"documentation keys"}
      }
 
 document { Key => (module, Ring),

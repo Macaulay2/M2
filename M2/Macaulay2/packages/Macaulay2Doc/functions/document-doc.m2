@@ -1,6 +1,6 @@
 --- status: Rewritten August 2020
 --- author(s): Mahrud
---- notes: functions below are all defined in document.m2
+--- notes: functions below are all defined in document.m2, roughly in this order
 
 doc ///
 Node

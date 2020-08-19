@@ -574,15 +574,18 @@ doc ///
       The documentation for Macaulay2 is available in several formats and can
       be searched and viewed using the following functions:
 
-      @UL {
-	  TOH "about",
-	  TOH "apropos",
-	  TOH "help",
-	  TOH "viewHelp",
-	  TOH "infoHelp",
-	  TOH "examples"
-	  }@
+    Subnodes
+      :Finding documentation nodes
+        about
+	apropos
+      :Accessing documentation nodes
+        help
+	viewHelp
+	infoHelp
+      :Getting other information from documentaiton
+        examples
 
+    Text
       To begin, the @TO "about"@ method allows for searching all documentation nodes
       whose title or content contains a given string:
     Example
@@ -609,6 +612,13 @@ doc ///
 
       The documentation for most functions comes with example code.
       You can obtain the text of this example code using @TO "examples"@.
+  Subnodes
+    about
+    apropos
+    help
+    viewHelp
+    infoHelp
+    examples
 ///
 
 document {

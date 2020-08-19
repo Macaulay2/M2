@@ -33,34 +33,6 @@ document { Key => "epkg",
      }
 
 document {
-     Key => "initial help",				    -- display by the help command by default
-     "Welcome to Macaulay2",
-     PARA{},
-     "Try entering '2+2' at your next input prompt, which begins with ", TT "i", ".
-     The two output prompts begin with ", TT "o", ".  The first one, with the
-     equal sign, '=', gives the value computed from your input, and the second one, with
-     the colon, ':', tells what type of thing the value is.",
-     PARA{},
-     "Type one of these commands to get started reading the documentation:",
-     UL {
-     	  SPAN (///copyright///, ///                         -- the copyright///),
-     	  SPAN (///help "Macaulay2"///, ///                  -- top node of the documentation.///),
-     	  SPAN (///help "reading the documentation"///, ///  -- ///),
-     	  SPAN (///help "getting started"///, ///            -- ///),
-     	  SPAN (///help "a first Macaulay2 session"///, ///  -- ///),
-     	  SPAN (///help x///, ///                            -- show documentation for ///, TT ///x///),
-     	  SPAN (///help about x///, ///                      -- show documentation about ///, TT ///x///),
-     	  SPAN (///help about (x,Body=>true)///, ///         -- show documentation mentioning ///, TT ///x///),
-     	  SPAN (///? f///, ///                               -- display brief documentation for a function ///, TT ///f///),
-	  SPAN (///printWidth = 80///, ///                   -- set print width to 80 characters///),
-     	  SPAN (///viewHelp///, ///                          -- view documentation in a browser///),
-     	  SPAN (///viewHelp x///, ///                        -- view documentation on ///, TT ///x///, /// in browser///),
-	  },
-     "To read the documentation in info form, in case you happen to be running Macaulay2 in a 
-     terminal window, replace ", TO "help", " by ", TO "infoHelp", " in any of the commands 
-     above."
-     }
-document {
      Key => lookup,
      Headline => "look up methods",
      TT "lookup(M,A)", " -- provides the unary method named ", TT "M", " for class ", TT "A", ".
