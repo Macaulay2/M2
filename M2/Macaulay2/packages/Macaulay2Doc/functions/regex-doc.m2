@@ -178,20 +178,20 @@ doc ///
       @HEADER2 "Flavors of Regular Expressions"@
 
       The regular expression functions in Macaulay2 are powered by calls to the
-      @HREF {"https://www.boost.org/doc/libs/release/libs/regex/", "Boost.Regex"}@ C++ library, which supports multiple
-      flavors, or standards, of regular expression.
+      @HREF {"https://www.boost.org/doc/libs/release/libs/regex/", "Boost.Regex"}@
+      C++ library, which supports multiple flavors, or standards, of regular expression.
 
-      In Macaulay2, the Perl flavor is the default. Alternatively, the POSIX Extended flavor can be chosen by passing
-      the option @TT "POSIX => true"@. In general, the Perl flavor supports all patterns designed for the POSIX Extended
-      flavor, but allows for more fine-tuning in the patterns. One key difference is what happens when there is more that
-      one way to match a regular expression:
+      Since Macaulay2 @TO2{"changes, 1.17","v1.17"}@, the Perl flavor is the default. In general, the Perl flavor
+      supports all patterns designed for the POSIX Extended flavor, but allows for more fine-tuning in the patterns.
+      Alternatively, the POSIX Extended flavor can be chosen by passing the option @TT "POSIX => true"@.
+      One key difference is what happens when there is more that one way to match a regular expression:
 
       @UL {
-	  {BOLD "Perl", " -- the \"first\" match is arrived at by a depth-first search."},
-	  {BOLD "POSIX", " -- the \"best\" match is obtained using the \"leftmost-longest\" rule;"},
-	  }@
+         {BOLD "Perl", " -- the \"first\" match is arrived at by a depth-first search."},
+         {BOLD "POSIX", " -- the \"best\" match is obtained using the \"leftmost-longest\" rule;"},
+         }@
 
-      If there's a tie in the POSIX flavor, the rule is applied to the first subexpression.
+      If there's a tie in the POSIX flavor, the rule is applied to the first parenthetical subexpression.
 
       @HEADER2 "Additional Perl Regular Expression Syntax"@
 

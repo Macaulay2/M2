@@ -63,12 +63,12 @@ set(DLIST
   convertr.d
   common.d
   util.d
-  regex.dd
   struct.d
   classes.dd
   buckets.dd
   equality.dd
   hashtables.dd
+  regex.dd
   sets.dd
   evaluate.d
   mysql.d	# removed unless WITH_SQL
