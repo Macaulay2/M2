@@ -268,7 +268,7 @@ fSeq := new HashTable from {
 
 formatDocumentTag = method(Dispatch => Thing)
 formatDocumentTag Thing    := toString
-formatDocumentTag String   := s -> s
+formatDocumentTag String   := identity
 formatDocumentTag Array    := s -> (
     if instance(s#0, Sequence) and 0 < #s#0
     then concatenate(toString s#0#0, "(", between(",", apply(drop(s#0, 1), toString)), ", ", toString s#1, " => ...)")
@@ -330,8 +330,11 @@ fetchPrimaryRawDocumentation DocumentTag := tag -> fetchRawDocumentation getPrim
 
 -- TODO: somehow cache this
 fetchAnyRawDocumentation = method()
-fetchAnyRawDocumentation DocumentTag := tag -> fetchAnyRawDocumentation format tag
-fetchAnyRawDocumentation String      := fkey -> scan(keys PackageDictionary, pkg -> (
+fetchAnyRawDocumentation DocumentTag := tag  -> (
+    rawdoc := fetchRawDocumentation tag;
+    if rawdoc =!= null then rawdoc else fetchAnyRawDocumentation format tag)
+-- TODO: if Package$Core was the same as Macaulay2Doc, this would not be necessary
+fetchAnyRawDocumentation String      := fkey -> scan(prepend("Macaulay2Doc", keys PackageDictionary), pkg -> (
 	rawdoc := fetchRawDocumentation(pkg, fkey);
 	if rawdoc =!= null then (
 	    break if rawdoc#?PrimaryTag then fetchPrimaryRawDocumentation rawdoc#PrimaryTag else rawdoc)))
@@ -365,7 +368,6 @@ hasDocumentation = key -> (
     null =!= fetchRawDocumentation tag)
 
 locate DocumentTag := tag -> (
-    checkLoadDocumentation();
     raw := fetchAnyRawDocumentation tag;
     if raw =!= null
     then (raw#"filename", raw#"linenum",,,,,) -- TODO: (filename, start,startcol, stop,stopcol, pos,poscol)
@@ -770,6 +772,7 @@ tutorial = x -> (
 	  identity);
      x )
 
+-- TODO: make this TT toString X
 synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
 
 findSynonyms = method()
@@ -787,7 +790,7 @@ ofClass = method()
 ofClass Type          :=
 ofClass ImmutableType := T -> fixup (
     if parent T === Nothing then error "expected a class";
-    if T === Nothing then TO "null"
+    if T === Nothing then TO "Macaulay2Doc :: null"
     else if T.?synonym then SPAN {indefiniteArticle T.synonym, TO2 {T, T.synonym}}
     else SPAN {"an instance of the type ", if isGlobalSymbol toString T then TO T else TT toString T})
 ofClass List          := x -> (

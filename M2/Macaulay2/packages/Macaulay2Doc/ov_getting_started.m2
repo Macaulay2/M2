@@ -582,6 +582,7 @@ doc ///
         help
 	viewHelp
 	infoHelp
+	(symbol?, Symbol)
       :Getting other information from documentaiton
         examples
 
@@ -618,6 +619,7 @@ doc ///
     help
     viewHelp
     infoHelp
+    (symbol?, Symbol)
     examples
 ///
 

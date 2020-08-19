@@ -233,6 +233,11 @@ newPackage String := opts -> pkgname -> (
 	    (PackageImports, List),
 	    (Version,        String)}, (name, type) -> if not instance(opts#name, type) then
 	error("newPackage: expected ", toString name, " option of class ", toString type));
+    -- TODO: add a general type checking mechanism
+    scan({Certification, Configuration}, name -> if opts#name =!= null and not isOptionList opts#name then
+	error("newPackage: expected ", toString name, " option to be a list of options"));
+    if opts.Authors =!= null and any(opts.Authors, author -> not isOptionList author)
+    then error("newPackage: expected Authors option to be a list of zero or more lists of options");
     -- optional package values
     scan({
 	    (Date,     String),
@@ -263,11 +268,8 @@ newPackage String := opts -> pkgname -> (
 		if PackageDictionary#?pkgname then PackageDictionary#pkgname <- PackageDictionary#pkgname)
 	    else endPackage pkgname);
 	fileExitHooks = prepend(hook, fileExitHooks));
-    -- TODO: add a general type checking mechanism
-    defaultConfiguration := opts.Configuration;
-    defaultConfiguration = new OptionTable from if isOptionList opts.Configuration then defaultConfiguration
-    else error("expected Configuration option to be a list of options");
-    --
+    -- processing configuration
+    defaultConfiguration := new OptionTable from opts.Configuration;
     if not noinitfile then (
 	setUpApplicationDirectory();
 	configfilename := concatenate(applicationDirectory(), "init-", pkgname, ".m2");

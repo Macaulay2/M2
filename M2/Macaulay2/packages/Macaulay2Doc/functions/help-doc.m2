@@ -53,6 +53,7 @@ doc ///
           }@
   SeeAlso
     "initial help"
+    (symbol?, Symbol)
     viewHelp
     infoHelp
     apropos
@@ -169,6 +170,42 @@ doc ///
 doc ///
 Node
   Key
+    (symbol?, Symbol)
+    (symbol?, ScriptedFunctor)
+    (symbol?, Function)
+    (symbol?, Keyword)
+    (symbol?, Package)
+    (symbol?, Type)
+  Headline
+    view brief documentation of a symbol
+  Description
+    Text
+      A question mark followed by a symbol representing a function, type, option name, or package
+      prints a brief, compact list of various ways to use the given symbol.
+
+      @UL {
+          (TT "? Tally",    " -- displays brief information about ways to use objects of class ", TT "Tally", "."),
+          (TT "? betti",    " -- displays brief information about ways to use the function ", TT "betti", "."),
+          (TT "? Weights",  " -- displays brief information about ways to use the option ", TT "Weights", "."),
+          (TT "? Package",  " -- displays brief information about the package ", TT "Package", "."),
+          (TT "? symbol>>", " -- displays brief information about ways to use the operator ", TT ">>", "."),
+          (TT "? HH",       " -- displays brief information about ways to use the scripted functor ", TT "HH", ".")
+          }@
+
+      When using Macaulay2 in Emacs, moving the cursor to each line of the output beginning with
+      @TT "*"@ results in showing the documentation node corresponding to that line.
+
+  SeeAlso
+    "initial help"
+    methods
+    help
+    code
+    about
+///
+
+doc ///
+Node
+  Key
      about
     [about, Body]
     (help, ZZ)
@@ -210,6 +247,7 @@ Node
     for grouping subexpressions, rather than matching themselves.
   SeeAlso
     help
+    (symbol?, Symbol)
     apropos
 ///
 
