@@ -13,6 +13,8 @@ assert(regex("a+", 0, " aaa ") === {(1,3)})
 assert(regex("a+", 0, 0, " aaa ") === null)
 assert(regex("a+", 0, 1, " aaa ") === {(1,3)})
 assert(regex("a+", 0, 100, " aaa ") === {(1,3)})
+assert(regex("(a|ab)(c|bcd)(d*)", "abcd")                === {(0,4),(0,1),(1,3),(4,0)})
+assert(regex("(a|ab)(c|bcd)(d*)", "abcd", POSIX => true) === {(0,4),(0,2),(2,1),(3,1)})
 
 -- tests for replace
 s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
