@@ -137,6 +137,10 @@ String      ? DocumentTag := (x, y) -> x        ? y.Format
 parseDocumentTag := key -> (
     segments := separate("^[[:space:]]*|[[:space:]]*::[[:space:]]*|[[:space:]]*$", key);
     segments  = select(segments, segment -> segment =!= "");
+    -- this is important, because the names of info nodes get extracted from text where
+    -- lines might be wrapped and multiple spaces are reduced to one:
+    if any(segments, segment -> match(" {2,}", segment))
+    then error("expected key to have only single interior spaces:", format key);
     if      #segments == 0 then error("encountered empty documentation tag: ", format key)
     else if #segments == 1 then (null,       segments#0)
     else if #segments == 2 then (segments#0, segments#1)
@@ -165,24 +169,12 @@ makeDocumentTag = method(Dispatch => Thing, Options => { Package => null })
 makeDocumentTag DocumentTag := opts -> tag -> tag
 makeDocumentTag Thing       := opts -> key -> (makeDocumentTag' opts) key
 makeDocumentTag String      := opts -> key -> (
-    -- this is important, because the names of info nodes get extracted from text where
-    -- lines might be wrapped and multiple spaces are reduced to one:
-    if match("^ |  +| $", key) then error("expected key to have only single interior spaces:", format key);
     local pkg;
     (pkg, key) = parseDocumentTag key;
     if pkg =!= null and opts#Package =!= null and pkg =!= opts#Package
     then error ("mismatching packages ", pkg, " and ", opts#Package, " specified for key ", key);
     if pkg === null then pkg = opts#Package;
     (makeDocumentTag' new OptionTable from {Package => pkg}) key)
-
------------------------------------------------------------------------------
--- unformatting document tags
------------------------------------------------------------------------------
--- we need to be able to do this only for the document
--- tags we have shown to the user in formatted form
--- TODO: https://github.com/Macaulay2/M2/issues/1317
-unformatTag = new MutableHashTable
-record := func -> symb -> ( val := func symb; if val =!= symb then unformatTag#val = symb; val )
 
 -----------------------------------------------------------------------------
 -- formatting document tags
@@ -281,16 +273,15 @@ formatDocumentTag Array    := s -> (
     if instance(s#0, Sequence) and 0 < #s#0
     then concatenate(toString s#0#0, "(", between(",", apply(drop(s#0, 1), toString)), ", ", toString s#1, " => ...)")
     else concatenate(toString s#0,   "(..., ", toString s#1, " => ...)"))
-formatDocumentTag Sequence := record(
-    s -> concatenate (
-	if #s == 0                                           then toString
-	else if            fSeq#?(#s, s#0)                   then fSeq#(#s, s#0)
-	else if #s > 1 and fSeq#?(#s, s#0, s#1)              then fSeq#(#s, s#0, s#1)
-	else if #s > 1 and fSeq#?(#s, class, class s#0, s#1) then fSeq#(#s, class, class s#0, s#1)
-	else if            fSeq#?(#s, class, class s#0)      then fSeq#(#s, class, class s#0)
-	else if            fSeq#?(class s#-1, #s)            then fSeq#(class s#-1, #s)
-	else if            fSeq#?#s                          then fSeq#(#s)
-	else toString) s)
+formatDocumentTag Sequence := s -> concatenate (
+    if #s == 0                                           then toString
+    else if            fSeq#?(#s, s#0)                   then fSeq#(#s, s#0)
+    else if #s > 1 and fSeq#?(#s, s#0, s#1)              then fSeq#(#s, s#0, s#1)
+    else if #s > 1 and fSeq#?(#s, class, class s#0, s#1) then fSeq#(#s, class, class s#0, s#1)
+    else if            fSeq#?(#s, class, class s#0)      then fSeq#(#s, class, class s#0)
+    else if            fSeq#?(class s#-1, #s)            then fSeq#(class s#-1, #s)
+    else if            fSeq#?#s                          then fSeq#(#s)
+    else toString) s
 
 -----------------------------------------------------------------------------
 -- storeRawDocumentation
@@ -454,7 +445,7 @@ processInputOutputItems := (key, fn) -> item -> (
     else if fn =!= null then (
 	-- e.g: Strategy => an integer, default value blah blah, then description
 	opts := getOptionDefaultValues fn;
-	if not opts#?optsymb then error("symbol ", optsymb, " is not the name of an optional argument for function ", format fn);
+	if not opts#?optsymb then error("symbol ", optsymb, " is not the name of an optional argument for function ", toExternalString fn);
 	defval := toString opts#optsymb;
 	defval  = if not match("^-\\*Function", defval) then SPAN{"default value ", defval};
 	{
@@ -469,23 +460,24 @@ processInputOutputItems := (key, fn) -> item -> (
 
 
 typicalValue := k -> (
-    if typicalValues#?k then typicalValues#k
-    else if class k === Sequence and typicalValues#?(k#0) then typicalValues#(k#0)
+    if  typicalValues#?k     then typicalValues#k
+    else if instance(k, Sequence)
+    and typicalValues#?(k#0) then typicalValues#(k#0)
     else Thing)
 
 getTypes := method(Dispatch => Thing)
 getTypes Thing    := x -> ({},{})
 getTypes Function := x -> ({},{typicalValue x})
 getTypes Sequence := x -> (
-     if #x > 1 and instance(x#-1,Symbol)
-     then ({},{})					    -- it's an option ...
-     else (
-	  x' := select(drop(toList x,1), T -> not ancestor(Nothing,T)); -- putting something like OO in the key indicates a fake dispatch
-	  if instance(x#0,Sequence) and #x#0 === 2 and x#0#1 === symbol =
-	  or #x == 2 and x#0 === symbol <-
-	  then ( x' | { Thing }, { Thing } )	   -- it's an assignment method
-	  else ( x'            , { typicalValue x } )
-	  ))
+    if #x > 1 and instance(x#-1, Symbol) then ({}, {}) -- it's an option ...
+    else (
+	-- putting something like OO in the key indicates a fake dispatch
+	x' := select(drop(toList x, 1), T -> not ancestor(Nothing, T));
+	if instance(x#0, Sequence)
+	and #x#0 === 2 and x#0#1 === symbol=
+	or  #x   === 2 and x#0   === symbol<-
+	then ( x' | { Thing }, { Thing } )	   -- it's an assignment method
+	else ( x'            , { typicalValue x } )))
 
 processUsage := (key, fn, o) -> (
     if not o.?Usage and (o.?Inputs or o.?Outputs)
@@ -504,6 +496,9 @@ processUsage := (key, fn, o) -> (
 	(inp', out') := getTypes key;
 	inp' = select(inp', T -> T =!= Nothing);
 	out' = select(out', T -> T =!= Nothing);
+	-- When T is not exported, its class evaluates to Symbol instead of Type
+	inp' = apply(inp', T -> if instance(T, Symbol) then value T else T);
+	out' = apply(out', T -> if instance(T, Symbol) then value T else T);
 	if out' === {Thing} then out' = {};		    -- not informative enough
 	if #inp === 0 then inp = inp';
 	if #out === 0 then out = out';
@@ -552,9 +547,9 @@ getSubnodes := val -> (
     val = nonnull enlist val;
     if #val == 0 then error "encountered empty Subnodes list"
     else MENU apply(val, x -> fixup (
-	    if class x === TO then x
-	    else if class x === TOH then TO {x#0}
-	    else if class x === String then x
+	    if      instance(x, TOH)       then TO {x#0}
+	    else if instance(x, String)    then x
+	    else if instance(x, Hypertext) then x
 	    else error ("unrecognizable Subnode list item: ", x))))
 getExampleFiles := val -> (
     if not currentPackage.Options.AuxiliaryFiles

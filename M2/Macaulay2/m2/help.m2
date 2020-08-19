@@ -126,7 +126,6 @@ synopsis := key -> ( s := briefSynopsis key; if s =!= null then DIV { SUBSECTION
 --   the second member is the corresponding hypertext entry in the UL list
 counter := 0
 next := () -> counter = counter + 1
--- TODO: used only once in format.m2
 optTO := i -> (
      i = makeDocumentTag(i, Package => null);
      fkey := format i;
@@ -146,16 +145,20 @@ menu       := s -> ul (last \         nonnull \\ optTO      \ toList s)
 smenu      := s -> ul (last \ sort \\ nonnull \\ optTO      \ toList s)
 smenuCLASS := s -> ul (last \ sort \\ nonnull \\ optTOCLASS \ toList s)
 
-redoMENU = r -> DIV prepend(
-     HEADER3 "Menu",
-     nonnull sublists(toList r,
-	  x -> class x === TO,
-	  v -> if #v != 0 then UL apply(v, i -> (
-		    t := optTO i#0;
-		    if t === null then error("undocumented menu item ",toString i#0);
-		    last t)),
-	  x -> HEADER4 {x}
-	  ))
+-- this is a simplified version of submenu in SimpleDoc
+redoMENU = contents -> (
+    contents = deepApply'(contents, identity, item -> instance(item, BasicList) and not isLink item);
+    DIV prepend(
+	HEADER3 "Menu",
+	nonnull sublists(contents,
+	    line    -> isLink line,
+	    section -> UL apply(section, line -> (
+		    if instance(line, TO2) then return line;
+		    link := optTO line#0;
+		    if link === null then error("undocumented menu item ", toString line#0);
+		    last link)),
+	    line -> if instance(line, Hypertext) then line else HEADER4 {line}))
+    )
 
 -----------------------------------------------------------------------------
 
@@ -361,12 +364,13 @@ theMenu         := key -> getOption(key, Subnodes)
 help = method(Dispatch => Thing)
 help String := key -> (
     checkLoadDocumentation();
-    if unformatTag#?key then help unformatTag#key
-    else if isGlobalSymbol key then ( help getGlobalSymbol key )
+    tag := getOption(key, symbol DocumentTag);
+    if tag.?Key and tag.Key =!= key then help tag.Key
+    else if      isGlobalSymbol key then help getGlobalSymbol key
     else (
 	body := makeDocBody key;
 	if body === null then (
-	    stderr << "--warning: there is no documentation for '" << key << "'" << endl;
+	    printerr("warning: there is no documentation for ", format key);
 	    body = ());
 	fixup DIV {
 	    topheader key,
@@ -470,16 +474,17 @@ frontpage := applicationDirectory() | topFileName;
 viewHelp = method(Dispatch=>Thing)
 -- TODO: check that key is a formatted key
 viewHelp String := key -> (
-    docpage := locateDocumentationNode key;
+    checkLoadDocumentation();
+    docpage := concatenate htmlFilename getPrimaryTag makeDocumentTag key;
     if docpage === null then error("missing documentation page for key ", key)
     else show new URL from { docpage })
 viewHelp Thing := key -> (
+    checkLoadDocumentation();
     if key === () then (
         if fileExists frontpage then show URL { frontpage }
         else error("missing documentation index: ", frontpage, ". Run makePackageIndex() or start M2 without -q"))
     else (
-        (prefix, tail) := htmlFilename getPrimaryTag makeDocumentTag key;
-        docpage := concatenate(prefix, tail);
+        docpage := concatenate htmlFilename getPrimaryTag makeDocumentTag key;
         if fileExists docpage then show URL { docpage }
         else error("missing documentation page: ", docpage)))
 

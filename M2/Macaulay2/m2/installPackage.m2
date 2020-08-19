@@ -62,7 +62,6 @@ initInstallDirectory := opts -> (
 -- htmlFilename
 -----------------------------------------------------------------------------
 -- determines the normalized filename of a key or tag
--- TODO: bring the code in system.m2 here and simplify this
 htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing       := key -> htmlFilename makeDocumentTag key
 htmlFilename DocumentTag := tag -> (
@@ -197,10 +196,12 @@ assembleTree := (pkg,nodes) -> (
     graph = new HashTable from apply(nodes, tag -> (
 	    checkIsTag tag;
 	    fkey := format tag;
-	    if pkg#"raw documentation"#?fkey then (
-		doc := pkg#"raw documentation"#fkey;
-		subnodes := if doc.?Subnodes then toList doc.Subnodes else {};
-		tag => getPrimaryTag \ first \ select(subnodes, x -> instance(x, TO)))
+	    if  pkg#"raw documentation"#?fkey
+	    and pkg#"raw documentation"#fkey.?Subnodes then (
+		subnodes := pkg#"raw documentation"#fkey.Subnodes;
+		subnodes  = select(deepApply(subnodes, identity), DocumentTag);
+		subnodes  = select(subnodes, node -> package node === toString pkg);
+		tag => getPrimaryTag \ subnodes)
 	    else tag => {}));
     -- build the forest
     tableOfContents := makeForest(graph, visits);

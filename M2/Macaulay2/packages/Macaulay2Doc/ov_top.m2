@@ -38,8 +38,8 @@ Node
       -- Mike wanted this: TO "saturation"
       -- Mike wanted this: TO "fibers of a map between varieties"
       -- Mike wanted this: TO "solving systems of polynomial equations"
-      -- "IntegralClosure :: IntegralClosure"
-      -- "PrimaryDecomposition :: primaryDecomposition"
+      "IntegralClosure :: IntegralClosure"
+      "PrimaryDecomposition :: primaryDecomposition"
       "combinatorial functions"
     :The Macaulay2 Language
       "The Macaulay2 language"

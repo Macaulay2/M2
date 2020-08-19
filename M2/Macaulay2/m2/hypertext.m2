@@ -209,6 +209,8 @@ new BR from List := (X,x) -> if all(x, e -> instance(e, Option)) then x else err
 br = BR{}
 hr = HR{}
 
+isLink = x -> instance(x, TO) or instance(x, TO2) or instance(x, TOH)
+
 new TO   from Thing     :=
 new TOH  from Thing     := (TO, x) -> new TO from {x}
 -- document tags can be sequences or arrays, so keep them intact

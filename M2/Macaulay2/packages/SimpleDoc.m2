@@ -73,8 +73,7 @@ NodeFunctions = new HashTable from {
     "References"      => (textlines, keylinenum) -> References      => {markup(textlines, keylinenum)},
     "Caveat"          => (textlines, keylinenum) -> Caveat          => {markup(textlines, keylinenum)},
     "SeeAlso"         => (textlines, keylinenum) -> SeeAlso         => apply(getNonempty textlines, value),
-    "Subnodes"        => (textlines, keylinenum) -> Subnodes        => apply(getNonempty textlines, p -> if match("^:", p) then substring(1, p) else TO value p),
---    "Subnodes"        => (textlines, keylinenum) -> Subnodes        => submenu(textlines, keylinenum), -- TODO: replace with this in refactor/document
+    "Subnodes"        => (textlines, keylinenum) -> Subnodes        => submenu(textlines, keylinenum),
     "SourceCode"      => (textlines, keylinenum) -> SourceCode      => apply(getNonempty textlines, value),
     "ExampleFiles"    => (textlines, keylinenum) -> ExampleFiles    => getText \ textlines,
     }

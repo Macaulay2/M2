@@ -384,6 +384,7 @@ select(ZZ, BasicList, Function) := BasicList => {} >> o -> select'
 select(ZZ, HashTable, Function) := HashTable => {} >> o -> select'
 select(    BasicList, Function) := BasicList => {} >> o -> select'
 select(    HashTable, Function) := HashTable => {} >> o -> select'
+select(    BasicList, Type)     := BasicList => {} >> o -> (L, T) -> select(L, e -> instance(e, T))
 -- two more methods installed in regex.m2
 
 oldnumerator := numerator
