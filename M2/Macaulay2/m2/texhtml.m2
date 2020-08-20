@@ -222,7 +222,7 @@ texToHTML String    := str -> (
      f("--TEMPORARY BACKSLASH--",///\///);
      str)
 
-html TEX := x -> apply(x, texToHTML)
+html TEX := x -> concatenate apply(x, texToHTML)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
