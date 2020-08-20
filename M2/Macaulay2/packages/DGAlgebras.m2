@@ -2025,9 +2025,6 @@ doc ///
       isHomologyAlgebraTrivial koszulComplexDGA R
       isGolod R
     Text
-      We can see which Massey product is nonvanishing using the new command @ TO masseyTripleProduct @.
-      See the example given there for details.
-    Text
       Note that since the Koszul complex is zero in homological degree beyond the embedding dimension, there are only finitely
       many Massey products that one needs to check to verify that a ring is Golod.
 ///
@@ -2202,7 +2199,7 @@ doc ///
       A = koszulComplexDGA(R)
       isHomologyAlgebraTrivial(A)
       cycleList = getGenerators(A)
-      assert(first findTrivialMasseyOperation(A) === null)
+      assert(not first findTrivialMasseyOperation(A))
     Text
       The related function @ TO findNaryTrivialMasseyOperation @ find only the nth order trivial Massey operations.
 ///
@@ -2969,7 +2966,7 @@ R = Q/I
 A = koszulComplexDGA(R)
 isHomologyAlgebraTrivial(A,GenDegreeLimit=>3)
 cycleList = getGenerators(A)
-assert(findTrivialMasseyOperation(A) =!= null)
+assert(first findTrivialMasseyOperation(A))
 
 -- this is a Teter ring, and the computation in Avramov and Levin's paper shows
 -- H(A) does not have trivial multiplication.
@@ -2980,7 +2977,7 @@ A = koszulComplexDGA(R)
 assert(not isHomologyAlgebraTrivial(A,GenDegreeLimit=>3))
 cycleList = getGenerators(A)
 prodList = apply(subsets(cycleList,2), l -> (first degree l#0 + first degree l#1,l#0*l#1));
-assert(findTrivialMasseyOperation(A) === null)
+assert(not first findTrivialMasseyOperation(A))
 ///
 
 TEST ///
