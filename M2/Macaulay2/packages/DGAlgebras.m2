@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage("DGAlgebras",
-     Headline => "data type for DG algebras",
-     Version => "1.0.1",
-     Date => "January 11, 2017",
+     Headline => "Data type for DG algebras",
+     Version => "1.1.0",
+     Date => "August 20, 2020",
      Authors => {
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
@@ -742,13 +742,13 @@ homologyAlgebra DGAlgebra := opts -> A -> (
 )
 
 isHomologyAlgebraTrivial = method(TypicalValue=>Boolean,Options=>{GenDegreeLimit=>infinity})
-isHomologyAlgebraTrivial DGAlgebra := opts -> A -> findTrivialMasseyOperation(A,opts,TMOLimit=>2) =!= null
+isHomologyAlgebraTrivial DGAlgebra := opts -> A -> first findTrivialMasseyOperation(A,opts,TMOLimit=>2)
 
 isGolod = method(TypicalValue=>Boolean)
-isGolod Ring := R -> findTrivialMasseyOperation(koszulComplexDGA(R)) =!= null
+isGolod Ring := R -> first findTrivialMasseyOperation(koszulComplexDGA(R))
 
 isGolodHomomorphism = method(TypicalValue=>Boolean,Options=>{GenDegreeLimit=>infinity,TMOLimit=>infinity})
-isGolodHomomorphism QuotientRing := opts -> R -> findTrivialMasseyOperation(acyclicClosure(ambient R, EndDegree=>opts.GenDegreeLimit) ** R, opts) =!= null
+isGolodHomomorphism QuotientRing := opts -> R -> first findTrivialMasseyOperation(acyclicClosure(ambient R, EndDegree=>opts.GenDegreeLimit) ** R, opts)
 
 DGAlgebra ** Ring := (A,S) -> (
   B := freeDGAlgebra(S, A.Degrees);
@@ -773,6 +773,7 @@ getBoundaryPreimage (DGAlgebra,List,ZZ) := (A,boundaryList,homDegree) -> (
    Anbasis := flatten entries getBasis(homDegree,A);
    Anplus1basis := getBasis(homDegree+1,A);
    local retVal;
+   isBoundary := true;
    if Anbasis == {} then retVal = 0 else (
       boundaryVec := (coefficients(matrix{boundaryList}, Monomials => Anbasis))#1;
       degreeList := apply(degrees target boundaryVec, l -> -drop(l,1));
@@ -781,12 +782,14 @@ getBoundaryPreimage (DGAlgebra,List,ZZ) := (A,boundaryList,homDegree) -> (
       -- if not all elements of the list are boundaries, then return null - the DGA does not admit a trivial massey operation.
       if dnplus1 * retVal != boundaryVec then (
          -- the below error is just for debugging purposes.
-	 --error "err";
-	 retVal = null;
+	 -- error "err";
+	 -- previously, null was returned if dnplus1 * retVal != boundaryVec.
+	 isBoundary = false;
+	 retVal = (false, boundaryVec - dnplus1*retVal);
+	 -- now, we wish to return the first occurrence of a nontrivial Massey product.
       );
    );
-   if retVal =!= null then if retVal == 0 then retVal = apply(#boundaryList, i -> 0_(A.natural)) else retVal = flatten entries (Anplus1basis * substitute(retVal, A.ring));
-   if retVal =!= null then assert(#retVal == #boundaryList);
+   if isBoundary then if retVal == 0 then retVal = (true,apply(#boundaryList, i -> 0_(A.natural))) else retVal = (true,flatten entries (Anplus1basis * substitute(retVal, A.ring)));
    retVal
 )
 getBoundaryPreimage (DGAlgebra,RingElement) := (A,b) -> getBoundaryPreimage(A,{b}, first degree b)
@@ -797,19 +800,23 @@ findTrivialMasseyOperation DGAlgebra := opts -> A -> (
    if maxDeg == infinity and opts.GenDegreeLimit == infinity then error "Must specify an upper bound on the generating degree";
    if maxDeg == infinity and opts.TMOLimit == infinity then error "Must specify an upper bound of order of Massey operations.";
    if opts.GenDegreeLimit != infinity then maxDeg = opts.GenDegreeLimit; 
-   -- here we really should take just the homology gens as a module (and even then, only the ones that are in deg leq than
-   -- half the max degree of the DGA).  This should really speed things up.
-   if maxDegree A != infinity then maxDeg = min(maxDeg, ceiling(maxDegree A / 2));
    cycleList := flatten apply(maxDeg, i -> representativeCycles(i+1,A));
-   retVal := hashTable apply(#cycleList, i -> ({i},cycleList#i));
+   tmoSoFar := hashTable apply(#cycleList, i -> ({i},cycleList#i));
+   hasTMO := true;
    n := 2;
    maxMasseys := min(maxDeg, opts.TMOLimit);
    while n <= maxMasseys do (
-      retVal = findNaryTrivialMasseyOperation(A,cycleList,retVal,n);
-      if retVal === null then ( << "No trivial Massey operation exists for this DG Algebra." << endl; n = maxMasseys );
+      (hasTMO,tmoSoFar) = findNaryTrivialMasseyOperation(A,cycleList,tmoSoFar,n);
+      if not hasTMO then ( 
+         -- if we are here, tmoSoFar instead has the TMOs to degree n-1, as well as the degree n 
+	 -- nonvanishing Massey operations (at least I think)
+	 -- << "No trivial Massey operation exists for this algebra.  The " << n << "-ary Massey operations" << endl;
+	 -- << "do not vanish and the lifts made thus far are reported in the return value.";
+     	 n = maxMasseys;
+      );
       n = n + 1;
    );
-   retVal
+   (hasTMO, tmoSoFar)
 )
 
 -- This method computes all the Nary TMOs.  It takes as input a DGAlgebra A, a list of cycles whose classes
@@ -833,13 +840,20 @@ findNaryTrivialMasseyOperation(DGAlgebra,List,HashTable,ZZ) := (A,cycleList,prev
    n := min (prodList / first);
    maxDegree := max (prodList / first);
    retVal := hashTable {};
+   hasTrivialMasseyOperation := true;
    while n <= maxDegree do (
       boundaryList := select(prodList, z -> z#0 == n);
       if boundaryList != {} then (
-         tempVar := getBoundaryPreimage(A,boundaryList / last,n);
-	 if (tempVar === null) then (
-	    -- if we are in here, then no trivial Massey operation exists
-            retVal = null;
+         (isBoundary,tempVar) := getBoundaryPreimage(A,boundaryList / last,n);
+	 if (isBoundary == false) then (
+	    -- if we are in here, then no trivial Massey operation exists, but tempVar contains
+	    -- the reduction of the possible nary products modulo the boundaries, and
+	    -- all lower massey operations vanish.  Can we report what the products are?
+	    -- yes, by using cycleList, together with boundaryList.  We wish to also
+	    -- put this information in retVal.
+            hasTrivialMasseyOperation = false;
+	    nontrivialTMOs := boundaryList_(select(#boundaryList, i -> tempVar_{i} != 0));
+      	    retVal = merge(prevTMOs, hashTable apply(nontrivialTMOs, p -> (p#1,p#2)), first);
 	    n = maxDegree;
 	 )
 	 else retVal = merge(retVal, hashTable apply(#tempVar, i -> (boundaryList#i#1,tempVar#i)),first);
@@ -847,8 +861,8 @@ findNaryTrivialMasseyOperation(DGAlgebra,List,HashTable,ZZ) := (A,cycleList,prev
       n = n + 1;
    );
    -- at this point, we want to concatenate all the new TMOs to the old hash table.
-   if retVal =!= null then retVal = cleanTMOHash merge(prevTMOs, retVal, first);
-   retVal
+   if hasTrivialMasseyOperation then retVal = cleanTMOHash merge(prevTMOs, retVal, first);
+   (hasTrivialMasseyOperation,retVal)
 )
 
 -- this computes the Massey product of a tuple of elements individually.
@@ -2004,13 +2018,15 @@ doc ///
       The above is a (CM) ring minimal of minimal multiplicity, hence Golod.  The next example was found
       by Lukas Katthan, and appears in his arXiv paper 1511.04883.  It is the first known example
       of an algebra that is not Golod, but whose Koszul complex has a trivial homology product.
-      A future version of this package will allow for computations of higher order (non-vanishing) Massey operations.
     Example
       Q = ZZ/101[x_1,x_2,y_1,y_2,z,w]
       I = ideal {x_1*x_2^2,z^2*w,y_1*y_2^2,x_2^2*z*w,y_2^2*z^2,x_1*x_2*y_1*y_2,x_2^2*y_2^2*z,x_1*y_1*z}
       R = Q/I
       isHomologyAlgebraTrivial koszulComplexDGA R
       isGolod R
+    Text
+      We can see which Massey product is nonvanishing using the new command @ TO masseyTripleProduct @.
+      See the example given there for details.
     Text
       Note that since the Koszul complex is zero in homological degree beyond the embedding dimension, there are only finitely
       many Massey products that one needs to check to verify that a ring is Golod.
