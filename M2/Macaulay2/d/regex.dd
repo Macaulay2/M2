@@ -22,7 +22,7 @@ header "#include <boost/regex.hpp>";
 
 -- used in actors4.d
 export defaultRegexFlags := Ccode(int, "boost::regex::perl | boost::regex::no_mod_s");
-export defaultMatchFlags := Ccode(int, "0");
+export defaultMatchFlags := Ccode(int, "boost::format_perl");
 
 -- The values are used as a bitmask in order to simplify passing flags to
 -- the various functions defined above. They are exported to top level so
@@ -32,16 +32,16 @@ setupconst("RegexFlags", Expr(toHashTable(Sequence(
 -- https://www.boost.org/doc/libs/release/libs/regex/doc/html/boost_regex/ref/syntax_option_type/syntax_option_type_perl.html
    "ECMAScript" => toExpr(Ccode(int, "boost::regex::ECMAScript")), -- ECMAScript flavor (default)
 --  basic
-   "Extended"   => toExpr(Ccode(int, "boost::regex::extended")),   -- POSIX ERE flavor
-   "Literal"    => toExpr(Ccode(int, "boost::regex::literal")),    -- treat the pattern text as literal
+   "extended"   => toExpr(Ccode(int, "boost::regex::extended")),   -- POSIX ERE flavor
+   "literal"    => toExpr(Ccode(int, "boost::regex::literal")),    -- treat the pattern text as literal
 --  awk
 --  grep
 --  egrep
 
-   "Icase"   => toExpr(Ccode(int, "boost::regex::icase")),   -- ignore case
-   "Nosubs"  => toExpr(Ccode(int, "boost::regex::nosubs")),  -- ignore subexpressions
+   "icase"   => toExpr(Ccode(int, "boost::regex::icase")),   -- ignore case
+   "nosubs"  => toExpr(Ccode(int, "boost::regex::nosubs")),  -- ignore subexpressions
 --  optimize
-   "Collate" => toExpr(Ccode(int, "boost::regex::collate")), -- makes [a-b] locale sensitive
+   "collate" => toExpr(Ccode(int, "boost::regex::collate")), -- makes [a-b] locale sensitive
 
 -- flags for Perl and POSIX
 --  newline_alt
@@ -49,15 +49,15 @@ setupconst("RegexFlags", Expr(toHashTable(Sequence(
 --  save_subexpression_location
 
 -- flags for Perl
-   "NoModM" => toExpr(Ccode(int, "boost::regex::no_mod_m")), -- don't match ^ $ with newlines
-   "NoModS" => toExpr(Ccode(int, "boost::regex::no_mod_s")), -- don't match . with newlines
+   "no_mod_m" => toExpr(Ccode(int, "boost::regex::no_mod_m")), -- don't match ^ $ with newlines
+   "no_mod_s" => toExpr(Ccode(int, "boost::regex::no_mod_s")), -- don't match . with newlines
 --  mod_s
 --  mod_x
 --  no_empty_expressions
 
 -- flags for POSIX ERE
-   "NoEscapeInLists" => toExpr(Ccode(int, "boost::regex::no_escape_in_lists")), -- disable \ escapes in lists
-   "NoBkRefs"        => toExpr(Ccode(int, "boost::regex::no_bk_refs")),         -- disable backreferences
+   "no_escape_in_lists" => toExpr(Ccode(int, "boost::regex::no_escape_in_lists")), -- disable \ escapes in lists
+   "no_bk_refs"         => toExpr(Ccode(int, "boost::regex::no_bk_refs")),         -- disable backreferences
 
 -- The rest are based on standard Boost match flag types.
 -- https://www.boost.org/doc/libs/release/libs/regex/doc/html/boost_regex/ref/match_flag_type.html
@@ -67,26 +67,30 @@ setupconst("RegexFlags", Expr(toHashTable(Sequence(
 --  match_not_eol
 --  match_not_bow
 --  match_not_eow
-   "MatchAny"        => toExpr(Ccode(int, "boost::match_any")),        -- return any match
-   "MatchNotNull"    => toExpr(Ccode(int, "boost::match_not_null")),   -- match must be nonempty
-   "MatchContinuous" => toExpr(Ccode(int, "boost::match_continuous")), -- match must start at the beginning
+   "match_any"        => toExpr(Ccode(int, "boost::match_any")),        -- return any match
+   "match_not_null"   => toExpr(Ccode(int, "boost::match_not_null")),   -- match must be nonempty
+   "match_continuous" => toExpr(Ccode(int, "boost::match_continuous")), -- match must start at the beginning
 --  match_partial
 --  match_single_line
-   "MatchPrevAvail"     => toExpr(Ccode(int, "boost::match_prev_avail")),      -- lead-1 is a valid iterator position
-   "MatchNotDotNewline" => toExpr(Ccode(int, "boost::match_not_dot_newline"))  -- doesn't match . with newlines
+   "match_prev_avail"      => toExpr(Ccode(int, "boost::match_prev_avail")),       -- lead-1 is a valid iterator position
+   "match_not_dot_newline" => toExpr(Ccode(int, "boost::match_not_dot_newline")),  -- doesn't match . with newlines
 --  match_not_dot_null
 --  match_posix
 --  match_perl
 --  match_nosubs
 --  match_extra
 
---  format_sed
---  format_perl
---  format_literal
+-- These are still match flag types, but apply to formatting strings for replace.
+-- For different format string syntaxes see:
+-- https://www.boost.org/doc/libs/release/libs/regex/doc/html/boost_regex/format.html
+   "format_perl"    => toExpr(Ccode(int, "boost::format_perl")),    -- perl style replacement
+   "format_sed"     => toExpr(Ccode(int, "boost::format_sed")),     -- sed style replacement
+   -- for some reason this one isn't exported as boost::format_literal
+   "format_literal" => toExpr(Ccode(int, "boost::regex_constants::format_literal")), -- treat string as a literal
 
---  format_no_copy
---  format_first_only
---  format_all
+   "format_no_copy"    => toExpr(Ccode(int, "boost::format_no_copy")),    -- don't copy non-matching segments
+   "format_first_only" => toExpr(Ccode(int, "boost::format_first_only")), -- Only replace first occurance
+   "format_all"        => toExpr(Ccode(int, "boost::format_all"))         -- enable all extentions to sytax
    ))));
 
 -----------------------------------------------------------------------------

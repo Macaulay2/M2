@@ -249,6 +249,42 @@ doc ///
     Text
       See references below for more in depth syntax for controlling the backtracking algorithm.
 
+    Text
+      @HEADER2 "String Formatting Syntax"@
+
+      The replacement string in @TO (replace, String, String, String)@ and @TO (select, String, String, String)@
+      supports additional syntax for escape sequences as well as inserting captured sub-expressions:
+
+    Subnodes
+     :Using Perl regular expression syntax (default)
+      :Syntax for inserting captured sub-expressions:
+        @TT "$&"@	-- outputs what matched the whole expression
+        @TT "$`"@	-- outputs the text between the end of the last match (or beginning if no previous match was found) and the start of the current match
+        @TT "$'"@	-- outputs the text following the end of the current match
+        @TT "$+"@	-- outputs what matched the last marked sub-expression in the regular expression
+        @TT "$^N"@	-- outputs what matched the last sub-expression to be actually matched
+        @TT "$n"@	-- outputs what matched the n-th sub-expression
+        @TT "${n}"@	-- outputs what matched the n-th sub-expression
+        @TT "$+{NAME}"@	-- outputs what matched the sub-expression named @TT "NAME"@ (Perl syntax only)
+        @TT "$$"@	-- outputs a literal @TT "$"@
+      :Syntax for manipulating the captured groups:
+        @TT "\\l"@	-- converts the next character to be outputted to lower case
+        @TT "\\u"@	-- converts the next character to be outputted to upper case
+        @TT "\\L"@	-- converts all subsequent characters to be outputted to lower case, until it reaches @TT "\\E"@
+        @TT "\\U"@	-- converts all subsequent characters to be outputted to upper case, until it reaches @TT "\\E"@
+        @TT "\\E"@	-- terminates a @TT "\\U"@ or @TT "\\L"@ sequence
+        @TT "\\"@	-- specifies an escape sequence (e.g. @TT "\\\\"@)
+     :Using POSIX Extended syntax (@TT "POSIX => true"@)
+      :Syntax for inserting captured groups:
+        @TT "&"@	-- outputs what matched the whole expression
+        @TT "\\0"@	-- outputs what matched the whole expression
+        @TT "\\n"@	-- if @TT "n"@ is in the range 1-9, outputs what matched the n-th sub-expression
+        @TT "\\"@	-- specifies an escape sequence (e.g. @TT "\\&"@)
+
+    Text
+      For the complete list, including characters escape sequences, see the Boost.Regex manual on
+      @HREF {"https://www.boost.org/doc/libs/release/libs/regex/doc/html/boost_regex/format/perl_format.html", "format string syntax"}@.
+
     Subnodes
      :String processing functions that accept regular expressions
        match
