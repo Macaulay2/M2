@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 Luigi made this change ZZZ
 =======
 A
@@ -9,6 +10,10 @@ oldPackage ( "TorAlgebra",
 No Luigi I don't like your change
 newPackage ( "TorAlgebra",
 >>>>>>> d6d0838f92661cd27728315d635a176058f4d70a
+=======
+Luigi made this change
+oldPackage ( "TorAlgebra",
+>>>>>>> dd87ecd98455dfbb7995f5f88a8fd6dfcd4f8413
     Version => "2.0",
     Date => "9 February 2018", This is OLD!!!
     Authors => {

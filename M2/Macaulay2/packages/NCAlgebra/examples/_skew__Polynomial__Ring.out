@@ -37,7 +37,7 @@ o5 : Matrix ZZ  <--- ZZ
 
 i6 : C = skewPolynomialRing(QQ,promote(N,QQ), {a,b,c,d})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12565-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12565-0/3.ter ... Complete!
+Complete!
 
 o6 = C
 

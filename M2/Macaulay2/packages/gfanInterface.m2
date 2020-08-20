@@ -1,10 +1,7 @@
+-- -*- coding: utf-8 -*-
+
 --TODO: gfan errors printed on screen in:
 -- QQ[x,y,z,w]; I=ideal(x-y,w+y-x); gfanTropicalStartingCone I; tropicalVariety I; tropicalVariety ideal(x);
-
--- comment out this obsolete line:
---   path = prepend ("~/src/M2/Workshop-2018-Leipzig/Tropical/", path)
-
--- -*- coding: utf-8 -*-
 
 newPackage(
 	"gfanInterface",
@@ -88,11 +85,14 @@ export {
 	"multiplicitiesReorder"
 }
 
-gfanPath = gfanInterface#Options#Configuration#"path"
-if gfanPath == "" then gfanPath = prefixDirectory | currentLayout#"programs"
-
 fig2devPath = gfanInterface#Options#Configuration#"fig2devpath"
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
+-- for backward compatibility
+if not programPaths#?"gfan" and gfanInterface#Options#Configuration#"path" != ""
+    then programPaths#"gfan" = gfanInterface#Options#Configuration#"path"
+
+gfanProgram = null
+
 gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
 gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
 --minmax switch disabled
@@ -1007,63 +1007,38 @@ toPolymakeFormat(Fan) := (F) ->(
 --------------------------------------------------------
 
 runGfanCommand = (cmd, opts, data) -> (
-	
-	tmpFile := gfanMakeTemporaryFile data;
-	
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
-
-	if gfanVerbose then << ex << endl;
-	returnvalue := run ex;
-     	if(not returnvalue == 0) then
-	(
---	     << "GFAN returned an error message.\n";
---	     << "COMMAND:" << ex << endl;
---	     << "INPUT:\n";
---	     << get(tmpFile);
---	     << "ERROR:\n";
---	     << get(tmpFile |".err");
-
-	     );
-		out := get(tmpFile | ".out");
-	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
-	outputFileName := null;
-	
-	if gfanKeepFiles then outputFileName = tmpFile|".out";
-	
-	(out, "GfanFileName" => outputFileName)
-	
+	(out, err, fileName) := runGfanCommandCaptureBoth(cmd, opts, data);
+	(out, fileName)
 )
 
 runGfanCommandCaptureBoth = (cmd, opts, data) -> (
+	if gfanProgram === null then
+	    gfanProgram = findProgram("gfan", "gfan --help",
+		Verbose => gfanVerbose);
 	tmpFile := gfanMakeTemporaryFile data;
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
-	if gfanVerbose then << ex << endl;
-	run ex;
-	out := get(tmpFile | ".out");
-	err := get(tmpFile | ".err");
+
+	args := replace("^gfan ", "", cmd) | concatenate apply(keys opts, key ->
+	    gfanArgumentToString(cmd, key, opts#key));
+	gfanRun := runProgram(gfanProgram, args | " < " | tmpFile,
+	    RaiseError => false, KeepFiles => gfanKeepFiles,
+	    Verbose => gfanVerbose);
 	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
+
+	-- we display our own error message instead of using the runProgram
+	-- default so we can display data
+	if gfanRun#"return value" != 0 then error(
+	    "Gfan returned an error message.\n" |
+	    "COMMAND: " | gfanRun#"command" | "\n" |
+	    "INPUT:\n" | data |
+	    "ERROR:\n" | gfanRun#"error");
+
 	outputFileName := null;
-	if gfanKeepFiles then outputFileName = tmpFile|".out";
-	(out,err, "GfanFileName"=>outputFileName)
+	if gfanKeepFiles then outputFileName = gfanRun#"output file";
+	(gfanRun#"output", gfanRun#"error", "GfanFileName"=>outputFileName)
 )
 
 runGfanCommandCaptureError = (cmd, opts, data) -> (
-	tmpFile := gfanMakeTemporaryFile data;
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
-	if gfanVerbose then << ex << endl;
-	run ex;
-	err := get(tmpFile | ".err");
-	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
+	(out, err, fileName) := runGfanCommandCaptureBoth(cmd, opts, data);
 	err
 )
 
@@ -2567,9 +2542,12 @@ gfanFunctions = hashTable {
 --	gfanFunctions#fn => apply( lines runGfanCommandCaptureError(gfanFunctions#fn, {"--help"}, {true}, ") , l->PARA {l})
 --)
 --WARNING - the word PARA was deleted from the next function (it used to read "l -> PARA {l})
-gfanHelp = (functionStr) ->
-	apply( lines runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") , l-> {l})
-
+gfanHelp = (functionStr) -> (
+	if gfanProgram === null then gfanProgram = findProgram("gfan",
+	    "gfan --help", RaiseError => false);
+	if gfanProgram === null then {}
+	else apply( lines runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") , l-> {l})
+)
 
 
 doc ///
@@ -2610,14 +2588,17 @@ doc ///
 			with @EM "Macaulay2"@ (since version 1.3) and so, it is not necessary to install {\tt gfan}
 			separately.
 
-			The {\tt gfanInterface} package contains the configuration option {\tt "path"} which
-			allows the user to specify which {\tt gfan} executables are used. When the path unspecified,
-			it defaults to an empty string and the binaries provided by Macaulay 2 are used.
+			The user can specify which {\tt gfan} executables are used by setting the appropriate key
+			in the @TO "programPaths"@ hash table.	When the path is unspecified, then the binaries
+			provided by Macaulay2 are used, if present.  If they are not present, then the directories
+			specified in the user's {\tt PATH} environment variable are searched.
 
-			You can change the path, if needed, while loading the package:
+			You can change the path, if needed, by setting the appropriate key in @TO "programPaths"@
+			and loading the package:
 
 		Example
-			loadPackage("gfanInterface", Configuration => { "path" => "/directory/to/gfan/"}, Reload => true)
+			programPaths#"gfan" = "/directory/to/gfan/"
+			loadPackage("gfanInterface", Reload => true)
 
 		Text
 			The path to the executables should end in a slash.

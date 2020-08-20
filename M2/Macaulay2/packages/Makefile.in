@@ -91,20 +91,19 @@ $(foreach i, $(PACKAGES), $(eval all: unmark-$i))
 endif
 $(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i))
 
-# make packages Style and Macaulay2Doc get installed before the others:
+# make packages Style, FirstPackage, and Macaulay2Doc get installed
+# before the others:
 $(foreach i, $(patsubst Style,,$(ALL_PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Style/.installed))
-$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Macaulay2Doc/.installed))
+$(foreach i, $(patsubst FirstPackage,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/FirstPackage/.installed))
+$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst FirstPackage,,$(patsubst Style,,$(ALL_PACKAGES)))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Macaulay2Doc/.installed))
 
 # the Info-validate function doesn't work well enough to be useful:
 # check::check-info
 
 clean::; rm -rf tmp
-clean::; $(MAKE) -C ComputationsBook $@
 big-check:
-check::; $(MAKE) -C ComputationsBook check
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
 distclean:clean
-	$(MAKE) -C ComputationsBook $@
 	rm -f Makefile
 
 ## here is the list of other files to install along with Macaulay2

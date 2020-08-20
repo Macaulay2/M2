@@ -8,9 +8,8 @@ o1 : NCPolynomialRing
 
 i2 : M = ncMatrix {{a,b,c,d},{b,c,d,a}}
 
-o2 = | a  b  c  d |
-     |            |
-     | b  c  d  a |
+o2 = | a b c d |
+     | b c d a |
 
 o2 : NCMatrix
 

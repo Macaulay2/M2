@@ -3,13 +3,16 @@
 use getline;
 use actors;
 use actors2;
-use version;
 use struct;
 use pthread;
 
-header "
-#include <engine.h>
-";
+header "#include <engine.h>";
+
+header "#ifndef WITH_PYTHON
+# define PyObject_Str(o) 0
+# define PyString_AS_STRING(o) 0
+# define Py_DECREF(o) 0
+#endif";
 
 internalName(s:string):string := (
      -- was "$" + s in 0.9.2
@@ -841,10 +844,11 @@ readfun(e:Expr):Expr := (
 	  oldprompt := stdIO.prompt;
 	  stdIO.prompt = readpromptfun;
 	  r := getLine(stdIO);
-	  when r is e:errmsg do buildErrorPacket(e.message)
-	  is s:stringCell do (
-	       stdIO.prompt = oldprompt;
-	       Expr(s)))
+	  stdIO.prompt = oldprompt;
+	  when r
+	  is e:errmsg do buildErrorPacket(e.message)
+	  is s:stringCell do Expr(s)
+	  )
      is s:Sequence do (
 	  if length(s) == 0
 	  then readE(stdIO)
@@ -998,7 +1002,7 @@ linesfun(e:Expr):Expr := (
 setupfun("separate",linesfun);
 
 tostring(n:MysqlConnection):string := tostring(Ccode(constcharstarOrNull, "
-     #if USE_MYSQL
+     #if WITH_MYSQL
        mysql_get_host_info(", n, ")
      #else
        \"not present\"
@@ -1022,15 +1026,15 @@ tostringfun(e:Expr):Expr := (
      is m:MysqlConnectionWrapper do toExpr(tostring(m))
      is res:MysqlResultWrapper do toExpr(
 	  "<<MysqlResult : "
-	  + tostring(Ccode(int, "\n # if USE_MYSQL \n mysql_num_rows(", res.res, ") \n #else \n 0 \n #endif \n"))
+	  + tostring(Ccode(int, "\n # if WITH_MYSQL \n mysql_num_rows(", res.res, ") \n #else \n 0 \n #endif \n"))
 	  + " by "
-	  + tostring(Ccode(int, "\n # if USE_MYSQL \n mysql_num_fields(", res.res, ") \n #else \n 0 \n #endif \n"))
+	  + tostring(Ccode(int, "\n # if WITH_MYSQL \n mysql_num_fields(", res.res, ") \n #else \n 0 \n #endif \n"))
 	  + ">>")
      is fld:MysqlFieldWrapper do toExpr(
 	  "<<MysqlField : "
-	  + tostring(Ccode(constcharstarOrNull,"(\n #if USE_MYSQL \n (", fld.fld, ")->name \n #else \n \"\" \n #endif \n )"))
+	  + tostring(Ccode(constcharstarOrNull,"(\n #if WITH_MYSQL \n (", fld.fld, ")->name \n #else \n \"\" \n #endif \n )"))
 	  + " : "
-	  + tostring(Ccode(int,"\n # if USE_MYSQL \n (", fld.fld, ")->type \n #else \n 0 \n #endif \n"))
+	  + tostring(Ccode(int,"\n # if WITH_MYSQL \n (", fld.fld, ")->type \n #else \n 0 \n #endif \n"))
 	  + ">>")
      is Net do toExpr("<<net>>")
      is CodeClosure do toExpr("<<pseudocode>>")
@@ -1561,7 +1565,7 @@ partsRR(x:Expr):Expr := (
 	  numbits := n * sz;
 	  sgn := toExpr(Ccode(long,"(long)(",xx,")->_mpfr_sign"));
 	  expt := toExpr(Ccode(long,"(long)(",xx,")->_mpfr_exp"));
-	  m := toInteger(0);
+	  m := zeroZZ;
 	  for i from int(n)-1 to 0 by -1 do (
 	       m = (m << sz) + toInteger(Ccode(ulong,"(unsigned long)(",xx,")->_mpfr_d[",i,"]"));
 	       );

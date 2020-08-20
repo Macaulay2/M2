@@ -522,7 +522,7 @@ const RingElement *IM2_RingElement_from_Integer(const Ring *R, gmp_ZZ d)
   return RingElement::make_raw(R, R->from_int(d));
 }
 
-const RingElement *IM2_RingElement_from_rational(const Ring *R, gmp_QQ r)
+const RingElement *IM2_RingElement_from_rational(const Ring *R, mpq_srcptr r)
 {
   ring_elem result;
   bool ok = R->from_rational(r, result);
@@ -557,17 +557,19 @@ gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a)
   const Ring *R = a->get_ring();
   if (R->is_ZZ())
     {
-      void *f = a->get_value().poly_val;
-      return static_cast<gmp_ZZ>(f);
+      // Note: RingElement ZZ elements are on the "gc" side of the memory barrier, and
+      // are read only.  Therefore we can just return the same value.
+      return a->get_value().get_mpz();
     }
   if (R->isFinitePrimeField())
     {
-      gmp_ZZ result = newitem(__mpz_struct);
+      mpz_ptr result = newitem(__mpz_struct);
 
       std::pair<bool, long> res = R->coerceToLongInteger(a->get_value());
       assert(res.first);
 
       mpz_init_set_si(result, static_cast<int>(res.second));
+      mpz_reallocate_limbs(result);
       return result;
     }
   ERROR("Expected ZZ or ZZ/p as base ring");
@@ -579,44 +581,34 @@ gmp_QQorNull IM2_RingElement_to_rational(const RingElement *a)
   if (!a->get_ring()->is_QQ())
     {
       ERROR("expected an element of QQ");
-      return 0;
+      return nullptr;
     }
-  void *f = a->get_value().poly_val;
-  return static_cast<gmp_QQ>(f);
+  return a->get_value().get_mpq();
 }
 
 gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
 {
   const Ring *R = a->get_ring();
-  gmp_RR result;
-  void *b;
-  double *c;
+  gmp_RRmutable result;
   const M2::ConcreteRing<M2::ARingRRR> *R1;
 
   switch (R->ringID())
     {
       case M2::ring_RR:
-        result = getmemstructtype(gmp_RR);
+        result = getmemstructtype(gmp_RRmutable);
         mpfr_init2(result, 53);
-        b = static_cast<void *>(a->get_value().poly_val);
-        c = static_cast<double *>(b);
-        mpfr_set_d(result, *c, GMP_RNDN);
-        return result;
+        mpfr_set_d(result, a->get_value().get_double(), GMP_RNDN);
+        return moveTo_gmpRR(result);
       case M2::ring_RRR:
         R1 =
             dynamic_cast<const M2::ConcreteRing<M2::ARingRRR> *>(a->get_ring());
-        result = getmemstructtype(gmp_RR);
+        result = getmemstructtype(gmp_RRmutable);
         mpfr_init2(result, R1->get_precision());
-        b = a->get_value().poly_val;
-        mpfr_set(result, static_cast<gmp_RR>(b), GMP_RNDN);
-        return result;
+        mpfr_set(result, a->get_value().get_mpfr(), GMP_RNDN);
+        return moveTo_gmpRR(result);
       default:
-        if (!a->get_ring()->is_RRR())
-          {
-            ERROR("expected an element of RRR");
-            return 0;
-          }
-        return a->get_value().mpfr_val;
+        ERROR("expected an element of RRR");
+        return nullptr;
     }
 }
 
@@ -842,8 +834,8 @@ gmp_ZZpairOrNull rawWeightRange(M2_arrayint wts, const RingElement *a)
       gmp_ZZpair p = new gmp_ZZpair_struct;
       p->a = newitem(__mpz_struct);
       p->b = newitem(__mpz_struct);
-      mpz_init_set_si(p->a, static_cast<long>(lo));
-      mpz_init_set_si(p->b, static_cast<long>(hi));
+      mpz_init_set_si(const_cast<mpz_ptr>(p->a), static_cast<long>(lo));
+      mpz_init_set_si(const_cast<mpz_ptr>(p->b), static_cast<long>(hi));
       return p;
   } catch (const exc::engine_error& e)
     {
@@ -1280,7 +1272,7 @@ gmp_ZZorNull rawSchurDimension(const RingElement *f)
           return 0;
         }
       ring_elem result = S->dimension(f->get_value());
-      return const_cast<mpz_ptr>(result.get_mpz());
+      return result.get_mpz();
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -1387,7 +1379,7 @@ const RingElement /* or null */ *rawLowerP(const RingElement *f)
 }
 
 const RingElement /* or null */ *rawPowerMod(const RingElement *f,
-                                             mpz_ptr n,
+                                             mpz_srcptr n,
                                              const RingElement *g)
 {
   const Tower *R = f->get_ring()->cast_to_Tower();

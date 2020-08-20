@@ -83,27 +83,27 @@ various modern operating systems:
 
   Ubuntu and Debian:
     Install packages as root with:
-      apt-get install -y -q sudo autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan
+      apt-get install -y -q sudo autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libboost-stacktrace-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan libeigen3-dev libtool-bin frobby libfrobby-dev libnauty2-dev libnauty2 nauty nauty-doc coinor-csdp coinor-csdp-doc
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
-    On all systems, add
+	# note: cohomcalg is available only starting with Ubuntu 19; it's okay to skip it
+    On some systems, you may have to add
         FC=gfortran
-      to the environment or to the "configure" command line below.  (The
-      program "make" has a default value of "f77" for "FC", the Fortran
-      compiler, but "f77" isn't available.)
+      to the environment or to the "configure" command line below, if the "make" default fortran
+      compiler "/usr/bin/f77" is not available.
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
     (To upgrade to a new release of Ubuntu, if desired, run "update-manager" if
-    you want a GUI, or run "do-release-upgrade" for a command line interface.
+    you want a GUI, or run "do-release-upgrade -d" for a command line interface.
     For Debian, run "apt-get update ; apt-get dist-upgrade".
 
   Raspbian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time libtool libmpc-dev yasm
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time libtool libmpc-dev yasm
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
@@ -114,14 +114,31 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo dnf -y install autoconf bison boost-devel cddlib-devel debuginfo-install emacs emacs factory-devel flex flint-devel frobby gc-devel gcc-c++ gdbm-devel git givaro-devel glpk-devel gmp-devel gtest-devel kernel-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch polymake readline-devel rpm-build rpm-sign rpmdevtools strace time which yasm
+      sudo dnf -y install autoconf bison boost-devel boost-stacktrace cddlib-devel cohomCalg csdp csdp-tools eigen3-devel emacs factory-devel factory-gftables fflas-ffpack-devel flex flint-devel frobby gcc-c++ gc-devel gdbm-devel git givaro-devel glpk-devel gmp-devel gtest gtest-devel kernel-devel lapack-devel libatomic_ops-devel libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel mpsolve nauty ncurses-devel ntl-devel patch pkgconf polymake qd readline-devel rpm-build rpmdevtools rpm-sign strace time which yasm rpmlint
 
-  Scientific linux (Red Hat, CentOS, ...):
-    Install packages with: (SL 7.x)
+  Red Hat Enterprise Linux 6.7
+    We have found that git 1.7.1 is too old, but have succeeded with these modules:
+	module purge
+	module load -f make/4.3
+	module load -f yasm/1.3.0
+	module load -f automake/1.15
+	module load -f gcc/4.9.0
+	module load -f libtool/2.4.3
+	module load -f autoconf/2.69
+	module load -f git/2.13.4    
+
+  CentOS 8 (covers Red Hat Enterprise Linux):
+    Install packages with:
+       -- from the standard repository:
+       sudo dnf install -y autoconf bison blas boost-devel emacs flex gc gcc-c++ gcc-gfortran gdbm-devel git-all gmp-devel lapack libatomic_ops libmpc libtool libxml2-devel make mpfr-devel ncurses-devel readline-devel redhat-lsb rpm-build rpm-sign time wget xz-devel zlib-devel
+       -- from the PowerTools repository
+       sudo dnf config-manager --set-enabled PowerTools
+       sudo dnf install -y eigen3-devel gtest texinfo yasm
+
+  Scientific Linux:
+    This distribution is obsolete.
+    Install packages with:
       sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel texinfo redhat-lsb wget
-    Install other software:
-      Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
-        way (untar, configure, make, make install).
     Note: Scientific Linux 7.1 has a modern version of gcc (version 4.8.3).  By contrast,
       Scientific Linux 6.5 has an old version (4.4.7) of gcc that may not work with a
       future version of Macaulay2.  However, one can install newer compilers
@@ -134,10 +151,12 @@ various modern operating systems:
       to update the environment of your currently running shell.  The latter
       command will also work in your shell initialization file, ".profile".
       Alternatively, see the instructions at https://www.softwarecollections.org/en/scls/rhscl/devtoolset-8/.
+    Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
+        way (untar, configure, make, make install).
 
   Suse Linux Leap 42.1:
 
-    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel pari-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build mpc-devel yasm
+    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build mpc-devel yasm
 
     Add
 
@@ -151,7 +170,7 @@ various modern operating systems:
 
       sudo pacman --sync --needed archlinux-keyring
       sudo pacman-key --populate archlinux
-      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip yasm gtest wget patch
+      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip yasm gtest wget patch eigen fflas-ffpack
 
     To upgrade the system:
 
@@ -174,7 +193,7 @@ various modern operating systems:
 
     To install packages potentially usable by Macaulay2, run this command:
 
-       emerge --ask -n 4ti2 blas-reference lapack-reference boehm-gc boost cddlib coinor-csdp flint fplll frobby gdbm gfan glpk gmp gtest libatomic_ops lrslib mpc mpfr mpir nauty normaliz ntl pari topcom
+       emerge --ask -n 4ti2 blas-reference lapack-reference boehm-gc boost cddlib coinor-csdp flint fplll frobby gdbm gfan glpk gmp gtest libatomic_ops lrslib mpc mpfr mpir nauty normaliz ntl topcom
 
        Note: various variables, licenses, and options will have to be set
 
@@ -185,6 +204,12 @@ various modern operating systems:
           xcode-select --install
        (Starting with Mac OS X version 10.15 (Catalina), /usr/include does not exist and cannot be
         made to exist, so our previous instructions for getting it no longer apply and have been removed.)
+       (Mac OS X version 10.14 (Mojave), one must run an additional command:
+	      sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
+  	    An alternative to the command above is to use the finder to navigate to the directory
+	      /Library/Developer/CommandLineTools/Packages
+	    and then to "open" the package file to get it installed.
+        Note: After upgrading the OS, if /usr/include is again missing, simply repeat.)
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 
@@ -196,7 +221,7 @@ various modern operating systems:
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
 	brew update |cat
-	brew install pkg-config autoconf automake gnu-tar libtool wget yasm make |cat
+	brew install pkg-config autoconf automake gnu-tar libtool wget yasm make ctags ntl eigen |cat
 	brew install --build-bottle bdw-gc libatomic_ops gdbm glpk boost libmpc libomp xz |cat
       You may omit the option "--build-bottle" if you will not be distributing your Macaulay2
       binaries to other people with CPU's that may not have the same capabilities as yours.
@@ -306,7 +331,7 @@ various modern operating systems:
      Installing multiple software in the same directory, such as in $HOME/local
      (as described above), makes it hard to remove or upgrade packages.  To
      solve that problem, use the program "epkg", available from
-     http://www.encap.org/epkg/.
+     https://github.com/DanGrayson/epkg.
 
 ----------------------
 Choosing a place for the repository
@@ -439,7 +464,7 @@ may add an option to the "make install" line, as follows:
         make install prefix=/foo/bar
 
 To make an encapsulated directory tree or distribution tarball suitable for use
-with the program "epkg" (see http://www.encap.org/epkg/), add the option
+with the program "epkg" (see https://github.com/DanGrayson/epkg), add the option
 
         --enable-encap
 
@@ -526,13 +551,13 @@ we briefly summarize them and the software they depend on:
  	         sudo apt-get install polymake
 
     Bertini needs bertini:
-	    http://www.nd.edu/~sommese/bertini/BertiniSource_v1.4.tar.gz
+	    http://www.nd.edu/~sommese/bertini/
 	which needs gmp and mpfr:
-	    https://gmplib.org/download/gmp/gmp-6.0.0a.tar.xz
-	    http://www.mpfr.org/mpfr-3.1.2/mpfr-3.1.2.tar.xz
+	    https://gmplib.org/
+	    http://www.mpfr.org/
 
     PHCpack needs PHCpack, download the binary:
-	    http://www.math.uic.edu/~jan/x86_64phcv23p.tar.gz
+            http://homepages.math.uic.edu/~jan/download.html
 
     AdjointIdeal ConvexInterface MapleInterface Parametrization need Maple.
 
@@ -592,3 +617,18 @@ will and then try:
     The partial word should be completed to "resolution".  Then press:
           C-a
     Verify that the cursor is now at the beginning of the line.
+
+----------------------
+Unexpected problems
+----------------------
+
+Suppose you encounter error messages like this one when compiling in libraries/mpir:
+
+       tmp-mul_1.s:94: Error: no such instruction: `mulx (%rsi),%r9,%r8'
+
+Then try adding --build=`./config/config.guess` to the command line of the
+'configure' command.  This will tell mpir to build itself using just machine
+instructions common to all the architectures in the same class as the
+architecture of your machine, instead of optimizing itself for speed according
+to your system.	 Mpir seems overconfident that the assembler on the machine
+knows about all the machine instructions on the machine.

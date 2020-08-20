@@ -1,0 +1,14 @@
+--- a/makefile	2020-06-19 06:57:40.128413417 -0500
++++ b/makefile	2020-06-19 07:01:27.258023656 -0500
+@@ -52,10 +52,7 @@
+ 
+ lrs: ${LRSOBJ}
+ 	$(CC) ${CFLAGS} -DMA -DB128 -L${LIBDIR} -o lrs ${LRSOBJ} -lgmp
+-	$(CC)  -O3   -DGMP -I${INCLUDEDIR} -o lrsgmp lrs.c lrslib.c lrsgmp.c lrsdriver.c -L${LIBDIR}  -lgmp
+-	$(CC) -O3 hvref.c -o hvref
+-	ln -s -f lrs redund
+-	ln -s -f lrsgmp redundgmp
++	$(CC) ${CFLAGS} -DGMP -I${INCLUDEDIR} -o lrsgmp lrs.c lrslib.c lrsgmp.c lrsdriver.c -L${LIBDIR}  -lgmp
+ 
+ lrs64: ${LRSOBJ64}
+ 	$(CC) ${CFLAGS} -DMA -L${LIBDIR} -o lrs ${LRSOBJ64} -lgmp

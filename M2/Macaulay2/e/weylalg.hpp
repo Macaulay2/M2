@@ -75,7 +75,7 @@ class WeylAlgebra : public PolyRing
   virtual const WeylAlgebra *cast_to_WeylAlgebra() const { return this; }
   virtual void text_out(buffer &o) const;
 
-  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
 
   ring_elem multinomial(const int *exptop, const int *exp) const;

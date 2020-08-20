@@ -32,6 +32,18 @@ TEST ///
 ///
 
 TEST ///
+    R = ZZ/101[w_0,w_1,w_2,w_3];
+    C = ideal(w_0*w_2-w_1^2, w_1*w_3-w_2^2, w_0*w_3-w_1*w_2);
+    assert (dim curveFromP3toP1P2(C) == 3)
+///
+
+TEST ///
+    R = ZZ/101[x_0,x_1,x_2,x_3];
+    C = ideal(x_0*x_2-x_1^2, x_1*x_3-x_2^2, x_0*x_3-x_1*x_2);
+    assert (dim curveFromP3toP1P2(C) == 3)
+///
+
+TEST ///
     R = ZZ/101[z_0,z_1,z_2,z_3];
     C = ideal(z_0*z_2-z_1^2, z_1*z_3-z_2^2, z_0*z_3-z_1*z_2);
     assert (dim curveFromP3toP1P2(C,PreserveDegree=>false) == 3)
@@ -173,9 +185,8 @@ TEST ///
             ideal(x_1 - 2*x_0, x_3 - 5*x_2),
             ideal(x_1 - 3*x_0, x_3 - 6*x_2)),
             B);
-    minres = res J;
-    vres = virtualOfPair(minres,{{3,1}});
-    vres' = virtualOfPair(J,{{3,1}},Strategy=>"Syzygies");
+    elapsedTime vres = virtualOfPair(res(J, LengthLimit => 2), {{3,1}});
+    elapsedTime vres' = virtualOfPair(J, {{3,1}}, LengthLimit => 2);
     assert isVirtual(B,vres);
     assert isVirtual(B,vres',Strategy=>"Determinantal");
 ///
@@ -200,7 +211,7 @@ TEST ///
     assert(multigradedRegularity(S, I) == {{1,5},{2,2},{4,1}})
 ///
 
-///
+TEST ///
     (S, E) = productOfProjectiveSpaces {1, 1, 2};
     irr = intersect(ideal(x_(0,0), x_(0,1)), ideal(x_(1,0), x_(1,1)), ideal(x_(2,0), x_(2,1), x_(2,2)))
     I = saturate(intersect apply(6,i-> ideal(random({1,0,0},S),random({0,1,0},S), random({0,0,1},S),random({0,0,1},S))), irr);

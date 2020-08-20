@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"MonodromySolver",
-    	Version => "1.12", 
-    	Date => "Nov 2017",
+    	Version => "1.13", 
+    	Date => "June 2020",
     	Authors => {
 	     {Name => "Timothy Duff", Email => "tduff3@gatech.edu"},
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
@@ -31,26 +31,26 @@ export{"Edges", "Graph", "Node1", "Node2", "TargetSolutionCount", "Potential", "
 debug NAGtypes
 debug NumericalAlgebraicGeometry
 debug Core
+needs "./MonodromySolver/Systems.m2"
 needs "./MonodromySolver/PointArray.m2"
 needs "./MonodromySolver/HomotopyGraphTypes.m2"
 needs "./MonodromySolver/solveViaMonodromy.m2"
+needs "./MonodromySolver/Tests.m2"
 
 
 beginDocumentation()
-needs "./MonodromySolver/Documents/DocMonodromysolver.m2"
+needs "./MonodromySolver/Documentation.m2"
 end
 
-restart
 uninstallPackage "MonodromySolver"
+restart
 installPackage "MonodromySolver"
-installPackage("MonodromySolver", RemakeAllDocumentation=>true)
 check "MonodromySolver"
-peek MonodromySolver
---help "OnesiteModificationA"
---viewHelp "OnesiteModificationA"
---examples "OnesiteModificationA"
-viewHelp MonodromySolver
-viewHelp potentialE
+
+uninstallPackage "MonodromySolver"
+restart
+installPackage("MonodromySolver", RemakeAllDocumentation=>true, RerunExamples=>true)
+check "MonodromySolver"
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"

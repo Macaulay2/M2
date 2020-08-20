@@ -24,18 +24,19 @@ big-check check:
 help:
 	$(MAKE) -C builds.tmp/$(DIRECTORY) $@
 configure builds.tmp/$(DIRECTORY)/include/configuration:
-	mkdir -p builds.tmp/$(DIRECTORY)
-	D=`cd ../.. ; /bin/pwd` ;\
-	E=`pwd` ;\
+	mkdir -p "builds.tmp/$(DIRECTORY)"
+	@ D=`cd ../.. ; /bin/pwd` ;\
+	  E=`pwd` ;\
 	  echo "make: Entering directory \`$$E/builds.tmp/$(DIRECTORY)'" &&\
-	  cd builds.tmp/$(DIRECTORY) && $$D/configure $(CONFIGOPTIONS) &&\
+	  cd "builds.tmp/$(DIRECTORY)" && ( set -x ; $$D/configure $(CONFIGOPTIONS)) &&\
 	  echo "make: Leaving directory \`$$E/builds.tmp/$(DIRECTORY)'"
 default: arch-chk all check check-links
-distclean: distclean1
+distclean: distclean1 distclean1-check
 distclean1:
 	if [ -e builds.tmp/$(DIRECTORY)/GNUmakefile ] ; \
 	then $(MAKE) -k -C builds.tmp/$(DIRECTORY) distclean -o config.status ; \
 	fi
+distclean1-check:
 	-! [ -d builds.tmp/$(DIRECTORY) ] || ! find builds.tmp/$(DIRECTORY) -type f | sed 's/^/========== /' | head -50 | grep . \
 		|| echo "========== files left after make distclean (first 50) ========" >&2
 install-it:; $(MAKE) -C builds.tmp/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
@@ -48,6 +49,8 @@ cygwin-signature:; $(MAKE) -C builds.tmp/$(DIRECTORY)/distributions/cygwin/serve
 pre-install post-install:
 rebuild-world: rebuild-world1 rebuild-world2 rebuild-world3
 rebuild-world1: arch-chk distclean2
+clean-rm-rf :
+	rm -rf "builds.tmp/$(DIRECTORY)"
 distclean2:
 	@if [ -f "builds.tmp/$(DIRECTORY)/GNUmakefile" ] ; then set -x ; $(MAKE) -f GNUmakefile -C "builds.tmp/$(DIRECTORY)" distclean ; fi
 rebuild-world2:make-configure

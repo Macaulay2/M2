@@ -79,7 +79,7 @@ TEST ///
 
 ///
 
-end
+end--
 
 debug Core
 

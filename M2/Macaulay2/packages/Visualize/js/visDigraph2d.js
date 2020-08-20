@@ -1083,7 +1083,7 @@ function exportTikz (event){
     var listGroup = document.getElementById("menuList");
     listGroup.insertBefore(tikzDiv,listGroup.childNodes[14]);
     document.getElementById("copyButton").setAttribute("data-clipboard-target","#tikzTextBox");
-    clipboard = new Clipboard('#copyButton');
+    clipboard = new ClipboardJS('#copyButton');
     clipboard.on('error', function(e) {
         window.alert("Press enter, then CTRL-C or CMD-C to copy")
     });  

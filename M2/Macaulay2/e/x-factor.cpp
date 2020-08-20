@@ -1,7 +1,5 @@
 // copyright Daniel R. Grayson, 1995
 
-#include "../d/M2inits.h"
-
 #include "exceptions.hpp"
 #include <M2/config.h>
 #include <assert.h>
@@ -104,6 +102,8 @@ void enter_factory::enter()
 {
   oldcharac = getCharacteristic();
   oldRatlState = isOn(SW_RATIONAL);
+  // needed for factory 4.1.1; already turned on by default in factory >= 4.1.2
+  On(SW_USE_EZGCD_P);
   switch (mode)
     {
       case modeZZ:
@@ -465,7 +465,7 @@ static CanonicalForm convertToFactory(const RingElement &g, bool inExtension)
   return f;
 }
 
-void displayCF(PolynomialRing *R, const CanonicalForm &h)  // for debugging
+void displayCF(const PolynomialRing *R, const CanonicalForm &h)  // for debugging
 {
   buffer o;
   const RingElement *g = convertToM2(R, h);

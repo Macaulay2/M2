@@ -29,7 +29,7 @@
 #  ifdef __GNUC__
 #   define alloca(size) __builtin_alloca (size)
 #  else
-#   if HAVE_ALLOCA_H
+#   ifdef HAVE_ALLOCA_H
 #    include <alloca.h>
 #   else
 #    ifdef __hpux

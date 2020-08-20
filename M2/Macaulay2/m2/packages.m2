@@ -124,7 +124,7 @@ configFileString =
 ///--Configuration file for package "PKG", automatically generated
 
 -- This print statement may be commented out:
-stderr << "--loading configuration for package \"PKG\" from file " << currentFileName << endl
+if notify then stderr << "--loading configuration for package \"PKG\" from file " << currentFileName << endl
 
 -- This file will be overwritten if a future version of the package has 
 -- different options, but the values will be retained and a backup file
@@ -258,7 +258,6 @@ newPackage String := opts -> (pkgname) -> (
 	  };
      newpkg#"test number" = 0;
      if newpkg#?"package prefix" then (
-	  -- these assignments might be premature, for any package that is loaded before dumpdata, as the "package prefix" might change:
 	  l := detectCurrentLayout newpkg#"package prefix";
 	  rawdbname := databaseFilename(Layout#l,newpkg#"package prefix", pkgname);
 	  if fileExists rawdbname then (

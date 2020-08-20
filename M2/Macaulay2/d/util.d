@@ -194,11 +194,8 @@ export engineErrorMessage():Expr := buildErrorPacket(EngineError("unknown engine
 export possibleEngineError(ret:bool):Expr := if ret then nullE else engineErrorMessage();
 
 export toExpr(h:int):Expr := Expr(ZZcell(toInteger(h)));
-export zeroE := toExpr(0);
-export oneE := toExpr(1);
 export twoE := toExpr(2);
 export threeE := toExpr(3);
-export minusoneE := toExpr(-1);
 export toExpr(h:long):Expr := Expr(ZZcell(toInteger(h)));
 export toExpr(h:ulong):Expr := Expr(ZZcell(toInteger(h)));
 export toExpr(h:ushort):Expr := Expr(ZZcell(toInteger(h)));
@@ -288,9 +285,8 @@ export toExpr(x:constcharstarOrNull):Expr := (
      );
 export toExpr(x:constucharstar) ::= toExpr(Ccode(constcharstar,"((const char *)",x,")"));
 export toExpr(x:constucharstarOrNull) ::= toExpr(Ccode(constcharstarOrNull,"((const char *)",x,")"));
-export arrayZZ := array(ZZ);
-export arrayarrayZZ := array(arrayZZ);
 export toExpr(x:arrayZZ):Expr := new Sequence len length(x) do foreach i in x do provide toExpr(i);
+export arrayarrayZZ := array(arrayZZ);
 export toExpr(x:arrayarrayZZ):Expr := new Sequence len length(x) do foreach i in x do provide toExpr(i);
 
 -- Local Variables:

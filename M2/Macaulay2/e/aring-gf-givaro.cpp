@@ -114,7 +114,7 @@ ARingGFGivaro::ARingGFGivaro(UTT charact_,
   getModPolynomialCoeffs();
 }
 
-const M2_arrayint ARingGFGivaro::findMinimalPolynomial(UTT charac, UTT dim)
+M2_arrayint ARingGFGivaro::findMinimalPolynomial(UTT charac, UTT dim)
 {
   // ARingGFGivaro tmp(charac,dim);
   // return tmp.getModPolynomialCoeffs();
@@ -409,7 +409,11 @@ void ARingGFGivaro::getGenerator(ElementType &result_gen) const
 
 bool ARingGFGivaro::is_unit(const ElementType f) const
 {
+#if HAVE_GIVARO_isunit
   return givaroField.isunit(f);
+#else
+  return givaroField.isUnit(f);
+#endif
 }
 
 bool ARingGFGivaro::is_zero(const ElementType f) const
@@ -482,7 +486,7 @@ void ARingGFGivaro::set_from_mpz(ElementType &result, mpz_srcptr a) const
   givaroField.init(result, b);
 }
 
-bool ARingGFGivaro::set_from_mpq(ElementType &result, const mpq_ptr a) const
+bool ARingGFGivaro::set_from_mpq(ElementType &result, mpq_srcptr a) const
 {
   ElementType n, d;
   set_from_mpz(n, mpq_numref(a));
@@ -589,7 +593,7 @@ void ARingGFGivaro::power(ElementType &result,
 /// otherwise instead of mpz_fdiv_ui a different function has to be called)
 void ARingGFGivaro::power_mpz(ElementType &result,
                               const ElementType a,
-                              const mpz_ptr n) const
+                              mpz_srcptr n) const
 {
   STT n1 = static_cast<STT>(mpz_fdiv_ui(n, givaroField.cardinality() - 1));
 
@@ -702,8 +706,7 @@ void ARingGFGivaro::eval(const RingMap *map,
                          int first_var,
                          ring_elem &result) const
 {
-  ring_elem a(reinterpret_cast<Nterm *>(f));
-  result = map->get_ring()->power(map->elem(first_var), a);
+  result = map->get_ring()->power(map->elem(first_var), f);
 }
 };
 

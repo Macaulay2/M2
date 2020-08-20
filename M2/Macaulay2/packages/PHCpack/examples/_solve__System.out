@@ -1,6 +1,4 @@
--- -*- M2-comint -*- {* hash: -1663871215 *}
--- COMPILE TIME: Oct  7 2016, 07:56:28
---loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- hash: -1663871215
 
 i1 : R = CC[x,y,z]
 
@@ -16,7 +14,6 @@ o2 = {x + y + z - 1, x  + y , x + y - z - 3}
 o2 : List
 
 i3 : L = solveSystem(S)
-*** variables in the ring : {x, y, z} ***
 
 o3 = {{1-ii, 1+ii, -1}, {1+ii, 1-ii, -1}}
 
@@ -47,7 +44,6 @@ i7 : #system > numcols vars R --overdetermined system
 o7 = true
 
 i8 : solns = solveSystem(system);
-*** variables in the ring : {x, y, z} ***
 *** after parseSolutions, ring has {x, y, z} ***
 
 i9 : numSolns = #solns

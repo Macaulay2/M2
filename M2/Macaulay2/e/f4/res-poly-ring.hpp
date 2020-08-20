@@ -44,7 +44,7 @@ class poly
   poly& operator=(poly&& other) = default;
 };
 
-class ResPolyRing
+class ResPolyRing : public our_new_delete
 {
  public:
   ResPolyRing(const ResGausser* G, const ResMonoid* M, const Monoid* origM)

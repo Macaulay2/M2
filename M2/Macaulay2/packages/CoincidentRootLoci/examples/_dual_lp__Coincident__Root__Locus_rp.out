@@ -1,17 +1,17 @@
 -- -*- M2-comint -*- hash: 11533842
-***************************************************************************
-CoincidentRootLoci v.0.1.1 loaded successfully (last updated: June 1, 2018)
-***************************************************************************
+****************************************************************************
+CoincidentRootLoci v.0.1.2 loaded successfully (last updated: June 22, 2020)
+****************************************************************************
 
 i1 : time X = coincidentRootLocus {5,3,2,2,1,1}
-     -- used 0.409399 seconds
+     -- used 0.391221 seconds
 
 o1 = CRL(5,3,2,2,1,1)
 
 o1 : CoincidentRootLocus
 
 i2 : time dual X
-     -- used 0.145752 seconds
+     -- used 0.13656 seconds
 
 o2 = CRL(11,1,1,1) * CRL(13,1) * CRL(14) * CRL(14) (dual of CRL(5,3,2,2,1,1))
 

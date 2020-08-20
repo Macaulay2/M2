@@ -184,7 +184,7 @@ document { Key => "finding the Macaulay2 files",
      ", TT "share", ", so now we know, from the output above, that the Macaulay
      2 files have been installed with a prefix ", TT "/foo/bar", " as the name
      of its root directory.  It will follow, for example, that the M2 emacs
-     init file is located at ", TT "/foo/bar/share/emacs/site-lisp/M2-init.el", ".",
+     init file is located at ", TT "/foo/bar/share/emacs/site-lisp/Macaulay2/M2-init.el", ".",
      PARA {},
      "Another way to locate the files of Macaulay2 is to ask M2, assuming you
      can run it.  Start M2 and type the following expression.",
@@ -296,7 +296,7 @@ document { Key => "teaching emacs how to find M2-init.el",
      "If you are lucky, then the Macaulay2 directory tree has been installed
      with the same root as the emacs directory tree.  For example, if emacs
      and Macaulay2 are both installed in /usr, then ", TT "M2-init.el", " is located at
-     ", TT "/usr/share/emacs/site-lisp/M2-init.el", ", and emacs already knows
+     ", TT "/usr/share/emacs/site-lisp/Macaulay2/M2-init.el", ", and emacs already knows
      to look in that directory for source files.",
      PARA {},
      "The simplest way to teach emacs how to find ", TT "M2-init.el", " is to let M2 do it for you.  Run M2,
@@ -310,13 +310,10 @@ document { Key => "teaching emacs how to find M2-init.el",
      ", and ask for the description of the variable ", TT "load-path", ".",
      PARA {},
      "Let's assume that you have located the Macaulay2 source code, and that
-     ", TT "M2-init.el", " is located at ", TT "/foo/bar/share/emacs/site-lisp/M2-init.el", ",
+     ", TT "M2-init.el", " is located at ", TT "/foo/bar/share/emacs/site-lisp/Macaulay2/M2-init.el", ",
      and that you want to tell emacs to search that directory, too.  
      Insert the following command into the file .emacs in your home directory.",
-     PRE ///    (setq load-path 
-          (append
-           '( "/foo/bar/share/emacs/site-lisp" )
-           load-path))///,
+     PRE ///(add-to-list 'load-path "/foo/bar/share/emacs/site-lisp/Macaulay2")///,
      "The next time you start emacs, emacs will look also in that directory for 
      files, and it should find ", TT "M2-init.el", "."
      }
@@ -421,9 +418,7 @@ document {
           to examine the online emacs manual that can be read with ", TT "info", "
           mode; you may enter or re-enter that mode with the keystrokes ", TT "C-h i", ".  "
           },
-     PARA {"The Macaulay2 emacs interface consists of several files
-	  in the directory ", 
-	  TT "share/emacs/site-lisp/",
+     PARA {"The Macaulay2 emacs interface consists of several files in the directory ", TT "share/emacs/site-lisp/Macaulay2/",
 	  " in the Macaulay2 distribution tree.  If you're lucky, then your system administrator has installed Macaulay2 so
 	  that directory ends up in the same place where emacs looks for its files, as listed by the emacs variable ", TT "loadpath", ".
 	  If not, then in order for emacs to be able to find these files, place the following lines
@@ -929,7 +924,7 @@ document {
      It also provides for dynamic completion of symbols in the language.",
      PARA{},
      "There is an ASCII version of this section of the documentation distributed
-     in the file ", TT (Layout#1#"emacs" | "M2-emacs-hlp.txt"), ". It might be useful for you to visit
+     in the file ", TT (Layout#1#"emacs" | "M2-emacs-help.txt"), ". It might be useful for you to visit
      that file with emacs now, thereby avoiding having to cut and paste bits of
      text into emacs buffers for the deomonstrations below.",
      PARA{},
@@ -1099,9 +1094,8 @@ document {
 document {
      Key => "how Macaulay2 finds its files",
      "When you run Macaulay2, it has to find and load a sequence of
-     startup files containing code written in the Macaulay2 language,
-     or it has to find a data file containing a memory dump from a
-     previous session.  Here is the way it does that.",
+     startup files containing code written in the Macaulay2 language.
+     Here is the way it does that.",
      PARA{},
      "Its first task is to discover the path to the binary file ", TT "M2", " that is currently running.  On some systems, that
      information is available from the ", TT "/proc", " file system.  Otherwise, it examines the command name you used to run the
@@ -1113,15 +1107,6 @@ document {
      ", TO "prefixDirectory", ", which you can examine to see whether it all worked out.
      For detailed information about the relative location of Macaulay2 files,
      see ", TO "Layout", ".",
-     PARA{},
-     "A possible data memory dump file may be located in the directory ", TT replace("PKG","Core",Layout#1#"packagecache"), " 
-     and loaded with ", TO "loaddata", ".  If the file is present and and loading it works, then startup will be quicker.  
-     If it's absent then the necessary setup files will be loaded instead;
-     if problems with it are encountered, it is always safe to delete it.
-     The name of the file data dump file is of the form \"Macaulay2-*-data\",
-     where \"*\" is replaced by the value of the environment
-     variable name M2ARCH if present, or else is a value computed at compile time and
-     stored in the hash table called ", TO "version", " and accessible as ", TT "version#\"architecture\"", ".",
      Subnodes => {
 	  TO "Layout",
      	  TO "prefixDirectory"

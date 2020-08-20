@@ -1,15 +1,16 @@
 --		Copyright 1993-1999, 2008 by Daniel R. Grayson
 
-emptyStack = stack()
-
 getSourceLines = method(Dispatch => Thing) 
 getSourceLines Nothing := null -> null
 getSourceLines Sequence := x -> (
      (filename,start,startcol,stop,stopcol,pos,poscol) -> if filename =!= "stdio" then (
 	  wp := set characters " \t\r);";
 	  file := (
-	       if filename === "layout.m2" then startupString
-	       else if filename === "currentString" then currentString
+	       if match("startup\\.m2\\.in$", filename) or match("basictests/.*\\.m2$", filename) then (
+		   -- if running M2 from a build directory, open the copy in the source directory
+		   filename = if topSrcdir =!= null then topSrcdir | filename
+		   else prefixDirectory | currentLayout#"data" | replace("\\.in$", "", filename));
+	       if filename === "currentString" then currentString
 	       else (
 		    if not fileExists filename then error ("couldn't find file ", filename);
 		    get filename
@@ -163,6 +164,12 @@ methods Thing := F -> (
 			      then found#key = true)))));
      -- sort -- too slow
      previousMethodsFound = new NumberedVerticalList from sortByName keys found)
+
+hooks = method()
+hooks   (MutableHashTable,Thing) := (obj,key) -> previousMethodsFound = new NumberedVerticalList from obj#key
+hooks   (HashTable,Thing) := (obj,key) -> previousMethodsFound = new NumberedVerticalList from (obj.cache)#key
+hooks   (Symbol) := (sym) -> previousMethodsFound = new NumberedVerticalList from (value sym)
+
 
 debuggerUsageMessage = ///--debugger activation depth control:
     errorDepth=3   	-- activate at positions in user code (default)

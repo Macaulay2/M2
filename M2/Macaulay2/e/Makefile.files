@@ -4,16 +4,21 @@
 ## Source code ###
 ##################
 
-
-
-INTERFACE2 = \
-	interrupted \
-	newdelete \
+INTERFACE2 = interrupted
 
 INTERFACE = \
+	eigen \
 	monomial-sets \
 	mutablecomplex \
 	localring \
+	bibasis/bibasis \
+	bibasis/allocator \
+	bibasis/launcher \
+	bibasis/monom \
+	bibasis/monomDL \
+	bibasis/monomDRL \
+	bibasis/monomLex \
+	bibasis/settings-manager \
 	f4/res-monomial-sorter \
 	f4/res-varpower-monomial \
 	f4/res-f4-monlookup \
@@ -160,6 +165,8 @@ COMMANDS2 = \
 	polyroots
 
 COMMANDS = \
+	flint \
+	rand \
 	ntl-internal \
 	ntl-debugio \
 	matrix-kbasis \
@@ -169,7 +176,6 @@ COMMANDS = \
         res-a2-gb \
 	engine \
 	x-aring \
-	x-monom \
 	x-monoid \
 	x-relem \
 	x-free \
@@ -186,7 +192,7 @@ NAMES_H = ringelem \
 	index \
 	res-a0-pair
 
-C_FILES = error table exptable monordering complex rand
+C_FILES = error table exptable monordering complex
 
 D_FILES = 
 DD_FILES = #test

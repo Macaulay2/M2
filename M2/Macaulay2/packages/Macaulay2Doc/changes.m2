@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.16",
 	  TO "changes, 1.15",
 	  TO "changes, 1.14",
 	  TO "changes, 1.13",
@@ -32,16 +33,80 @@ document {
 
 document {
      Key => "changes made for the next release",
+     }
+
+document {
+     Key => "changes, 1.16",
      UL {
-	  LI { "functionality added or improved:",
+	 LI { "functionality added:",
+	      UL {
+		   LI { "The location of Macaulay2's emacs files has changed from ", TT "site-lisp", " to ", TT "site-lisp/Macaulay2", ", so
+			users, after installing this version of Macaulay2, may once again need to run ", TO "setupEmacs", " (or ", TO "setup", ")."
+			}
+		   }
+	      },
+     	  LI { "new packages:",
+     	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "SimplicialPosets::SimplicialPosets", ", a package by Nathan Nichols for constructing Stanley simplicial poset rings, has been added." },
+		    LI { TO "SlackIdeals::SlackIdeals", ", a package by Amy Wiebe and Antonio Macchia for slack ideals of polytopes and matroids, has been added." },
+		    LI { TO "PositivityToricBundles::PositivityToricBundles", ", a package by Andreas Hochenegger for checking positivity of toric vector bundles, has been added." },
+		    LI { TO "SparseResultants::SparseResultants", ", a package by Giovanni Staglianò for computations with sparse resultants, has been added." },
+		    LI { TO "DecomposableSparseSystems::DecomposableSparseSystems", ", a package by Taylor Brysiewicz, Jose Israel Rodriguez, Frank Sottile, and Thomas Yahl for solving decomposable sparse systems, has been added." },
+		    LI { TO "MixedMultiplicity::MixedMultiplicity", ", a package by Kriti Goel, Sudeshna Roy, and J. K. Verma for mixed multiplicities of ideals, has  been added." },
+		    LI { TO "ThreadedGB::ThreadedGB", ", a package by Sonja Petrovic, Sara Jamshidi Zelenberg, and Tanner Zielinski for computing a Groebner basis using the classical Buchberger algorithm with multiple threads, has been added." },
+		    LI { TO "PencilsOfQuadrics::PencilsOfQuadrics", ", a package by Frank-Olaf Schreyer, David Eisenbud, and Yeongrak Kim for Clifford algebras of pencils of quadratic forms, has been added." },
+		    LI { TO "VectorGraphics::VectorGraphics", ", a package by Paul Zinn-Justin for producing scalable vector graphics, has been added." }
+		    }
+	       },
+     	  LI { "packages that have been published and certified:",
+     	       UL {
+     	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "DeterminantalRepresentations::DeterminantalRepresentations", ", a package by Justin Chen and Papri Dey for computing determinantal representations, has been published." },
+		    LI { star, " ", TO "Seminormalization::Seminormalization", ", a package by Karl Schwede and Bernard Serbinowski for computing seminormalization of rings, has been published." },
+		    LI { star, " ", TO "SumsOfSquares::SumsOfSquares", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. Parrilo, and Helfried Peyrl for sums of squares, has been published." }
+		    }
+	       },
+	 LI { "functionality added:",
+	      UL {
+		   LI {
+			"The function ", TO "installPackage", " now returns, as its value, the package that was installed.
+			This makes it more convenient to both install and check a package, because one can type ", TT "check installPackage \"FOO\"", "."
+			},
+	           LI { "The ", TO "roots", " command is now handled by the ", TO "MPSolve", " library, and is more robust, 
+                     	but no longer takes an optional argument ", TT "Unique", "."
+                     	},
+	           LI { "The ", TO "Complexes::Complexes", " package has new data types and routines for homological algebra.
+            		Eventually, it will replace the current facilities for homological algebra. We are making this available in order to get feedback from users before
+            		making this change.  Please email the authors with any and all comments or suggestions."
+            		}
+		   }
+	      },
+         LI { "functionality improved",
 	       UL {
+		    LI { "The Pari library has been removed.  Its functionality has been 
+			 subsumed by the ", TO "MPSolve", " library (for the ", TO "roots", " function for finding roots of a univariate
+			 polynomial), and the ", TO "FLINT", " library, for integer factorization and primality testing." },
+		    LI { "Primality testing, provided by ", TO "isPrime", ", is now handled by the ", TO "FLINT", " library." },
+		    LI { "Probable prime testing, provided by ", TO "isPseudoprime", ", is now handled by the ", TO "FLINT", " library." },
+                    LI { "Factorization of integers, provided by ", TO (factor,ZZ), ", is now handled by the ", TO "FLINT", " library." },
+                    LI { "The ", TO "FLINT", " library, and several others, no longer need to be patched while building Macaulay2.
+			 This involved a reorganization of the way memory management is done in the engine and the interpreter.
+		      	 As a result, we can use versions of several basic libraries as provided by the operating system, including ", 
+		      	 TO "GNU MP", ",", TO "MPIR", ",", TO "MPFR", ", and the ", TO "NTL library", "." 
+			 },
 		    LI {
-			 "The function ", TO "installPackage", " now returns, as its value, the package that was installed.
-			 This makes it more convenient to both install and check a package, because one can type ", TT "check installPackage \"FOO\"", "."
-			 }
+			 TEX {
+			      "The ", TO "CompleteIntersectionResolutions::CompleteIntersectionResolutions", " package now has an implementation of
+			      the dual of the (infinite) Tate resolution of any module over a complete intersection $R$ as a finitely generated 
+			      module over $R[t_1..t_c]$, the ring of Eisenbud operators.  As a byproduct, this gives another method for computing the 
+			      global $Ext_R(M,N)$.  Also implemented {\\em layered} resolutions (in the sense of Eisenbud-Peeva) of Cohen-Macaulay modules over $R$."
+			      }
+			 },
+		    LI { "The ", TO "ReesAlgebra::ReesAlgebra", " has new functionality, with the defaults changed to make the computation faster." }
 		    }
 	       }
-     	  }
+          }
      }
 
 document {
@@ -1466,7 +1531,7 @@ document {
 			 },
 		    LI {
 			 "A bug in Gröbner bases over the integers was fixed, which, under certain situations, led to
-			 in incomplete Gröbner basis."},
+			 an incomplete Gröbner basis."},
 		    LI {
 			 "A bug in Gröbner bases over fields and the integers was fixed, which caused, under some situations,
 			 the list of \"trimmed\" generators to be incomplete (but the Gröbner basis itself was correct).

@@ -2,7 +2,7 @@
 
 i1 : A = skewPolynomialRing(QQ,(-1)_QQ,{w,x,y,z})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12677-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12677-0/3.ter ... Complete!
+Complete!
 
 o1 = A
 
@@ -29,8 +29,7 @@ o4 : B
 
 i5 : f basis(2,A)
 
-     |  6   3 2   4   3   4   3  2    2        2    3   4    3  2     2        2   2        2 |
-o5 = | a   a b   b   a b+a   b +b a  b +ba+ab+a   -a b+a   -b +b a  -b +ba-ab+a   b -ba-ab+a  |
+o5 = | a^6 a^3*b^2 b^4 a^3*b+a^4 b^3+b^2*a b^2+b*a+a*b+a^2 -a^3*b+a^4 -b^3+b^2*a -b^2+b*a-a*b+a^2 b^2-b*a-a*b+a^2 |
 
 o5 : NCMatrix
 

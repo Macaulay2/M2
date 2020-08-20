@@ -18,6 +18,8 @@
 #include "buffer.hpp"
 #include "ringelem.hpp"
 
+#include <iostream>
+
 class PolynomialRing;
 class RingElement;
 
@@ -31,7 +33,18 @@ class ARingGFFlintBig : public RingInterface
 {
  public:
   static const RingID ringID = ring_GFFlintBig;
-  typedef nmod_poly_struct ElementType;
+  typedef fq_nmod_struct ElementType;
+  // this type is defined in fq_nmod.h
+  // for debugging purposes (flint version 2.5):
+  // this is nmod_poly_struct, defined in nmod_poly.h
+  // typedef struct
+  // {
+  //   mp_ptr coeffs;
+  //   slong alloc;
+  //   slong length;
+  //   nmod_t mod;
+  // } nmod_poly_struct;
+  
   typedef ElementType elem;
 
   ARingGFFlintBig(const PolynomialRing& R, const ring_elem a);
@@ -134,7 +147,7 @@ class ARingGFFlintBig : public RingInterface
     set_from_long(result, b);
   }
 
-  bool set_from_mpq(ElementType& result, mpq_ptr a) const
+  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
     ElementType n, d;
     init(n);
@@ -233,28 +246,89 @@ class ARingGFFlintBig : public RingInterface
       fq_nmod_pow_ui(&result, &a, n, mContext);
   }
 
-  void power_mpz(ElementType& result, const ElementType& a, mpz_ptr n) const
+  void power_mpz(ElementType& result, const ElementType& a, mpz_srcptr n) const
   {
+#if 0
+    std::cout << "entering GFBigFLint::power_mpz" << std::endl;
+
+    if (mGeneratorComputed)
+      {
+        std::cout << " gen: " <<  " limbs: " << mCachedGenerator.coeffs << std::endl;
+        std::cout << " gen: " <<  " alloc: " << mCachedGenerator.alloc << std::endl;
+        std::cout << " gen: " <<  " length: " << mCachedGenerator.length << std::endl;
+        std::cout << " sizeof(nmod_poly_struct) = " << sizeof(ElementType) << std::endl;
+        std::cout << " sizeof(nmod_t) = " << sizeof(nmod_t) << std::endl;
+
+        
+      }
+    std::cout << " a: " <<  " limbs: " << a.coeffs << std::endl;
+    std::cout << " a: " <<  " alloc: " << a.alloc << std::endl;
+    std::cout << " a: " <<  " length: " << a.length << std::endl;
+#endif    
     if (is_zero(a))
       {
         set_zero(result);
         return;
       }
-    bool neg = false;
+    mpz_t abs_n;
+    mpz_init(abs_n);
+#if 0    
+    mpz_set_si(abs_n, 3);
+    std::cout << " abs_n: " << static_cast<void*>(abs_n) << " limbs: " << abs_n[0]._mp_d << std::endl;
+#endif
+    mpz_abs(abs_n, n);
+    //    std::cout << " abs_n: " << static_cast<void*>(abs_n) << " limbs: " << abs_n[0]._mp_d << std::endl;    
+    ElementType base;
+    init(base);
+#if 0    
+    std::cout << " base: " <<  " limbs: " << base.coeffs << std::endl;
+    std::cout << " base: " <<  " alloc: " << base.alloc << std::endl;
+    std::cout << " base: " <<  " length: " << base.length << std::endl;
+    std::cout << " sizeof(nmod_poly_struct) = " << sizeof(ElementType) << std::endl;
+    std::cout << " sizeof(nmod_t) = " << sizeof(nmod_t) << std::endl;
+#endif    
     if (mpz_sgn(n) < 0)
-      {
-        neg = true;
-        mpz_neg(n, n);
-        invert(result, a);
-      }
+      invert(base, a);
     else
-      copy(result, a);
-
+      copy(base, a);
+#if 0    
+    std::cout << " base: " <<  " limbs: " << base.coeffs << std::endl;
+    std::cout << " base: " <<  " alloc: " << base.alloc << std::endl;
+    std::cout << " base: " <<  " length: " << base.length << std::endl;
+    std::cout << " sizeof(nmod_poly_struct) = " << sizeof(ElementType) << std::endl;
+    std::cout << " sizeof(nmod_t) = " << sizeof(nmod_t) << std::endl;
+#endif
     fmpz_t fn;
-    fmpz_init_set_readonly(fn, n);
-    fq_nmod_pow(&result, &result, fn, mContext);
+#if 1
+    fmpz_init_set_readonly(fn, abs_n);
+    // std::cout << "  about to call fq_nmod_pow" << std::endl;    
+    // std::cout << " abs_n: " << static_cast<void*>(abs_n) << " limbs: " << abs_n[0]._mp_d << std::endl;
+    fq_nmod_pow(&result, &base, fn, mContext);
+    // std::cout << "  done calling fq_nmod_pow" << std::endl;
+    // std::cout << " abs_n: " << static_cast<void*>(abs_n) << " limbs: " << abs_n[0]._mp_d << std::endl;
     fmpz_clear_readonly(fn);
-    if (neg) mpz_neg(n, n);
+#else
+    fmpz_init(fn);
+    fmpz_set_si(fn, 3);
+
+    std::cout << "  about to call fq_nmod_pow" << std::endl;    
+    std::cout << " abs_n: " << static_cast<void*>(abs_n) << " limbs: " << abs_n[0]._mp_d << std::endl;
+    fq_nmod_pow(&result, &base, fn, mContext);
+    std::cout << "  done calling fq_nmod_pow" << std::endl;
+    std::cout << " abs_n: " << static_cast<void*>(abs_n) << " limbs: " << abs_n[0]._mp_d << std::endl;
+#endif
+
+#if 0
+    std::cout << "  about to clear abs_n" << std::endl;
+    std::cout << " abs_n: " << static_cast<void*>(abs_n) << " limbs: " << abs_n[0]._mp_d << std::endl;
+#endif    
+    mpz_clear(abs_n);
+#if 0    
+    std::cout << " abs_n: " << static_cast<void*>(abs_n) << " limbs: " << abs_n[0]._mp_d << std::endl;
+    std::cout << "  about to clear base" << std::endl;
+#endif
+    clear(base);
+    //    std::cout << " ... leaving GFBigFLint::power_mpz" << std::endl;
   }
 
   void swap(ElementType& a, ElementType& b) const
