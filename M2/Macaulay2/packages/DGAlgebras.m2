@@ -794,7 +794,7 @@ getBoundaryPreimage (DGAlgebra,List,ZZ) := (A,boundaryList,homDegree) -> (
 )
 getBoundaryPreimage (DGAlgebra,RingElement) := (A,b) -> getBoundaryPreimage(A,{b}, first degree b)
 
-findTrivialMasseyOperation = method(TypicalValue=>HashTable, Options=>{GenDegreeLimit=>infinity,TMOLimit=>infinity})
+findTrivialMasseyOperation = method(TypicalValue=>Sequence, Options=>{GenDegreeLimit=>infinity,TMOLimit=>infinity})
 findTrivialMasseyOperation DGAlgebra := opts -> A -> (
    maxDeg := maxDegree A;
    if maxDeg == infinity and opts.GenDegreeLimit == infinity then error "Must specify an upper bound on the generating degree";
@@ -825,7 +825,7 @@ findTrivialMasseyOperation DGAlgebra := opts -> A -> (
 -- The hash table has (key,values) of the form (list giving the 'tensor monomial' of the MO, the MO itself)
 -- It returns a hash table which, given the 'tensor monomial' gives the element of Massey operation for that monomial.
 -- If at some stage, this can't be computed, then null is returned.
-findNaryTrivialMasseyOperation = method(TypicalValue=>HashTable)
+findNaryTrivialMasseyOperation = method(TypicalValue=>Sequence)
 findNaryTrivialMasseyOperation(DGAlgebra,List,HashTable,ZZ) := (A,cycleList,prevTMOs,N) -> (
    -- build the list of 'monomials'
    degreeList := cycleList / degree / first;
@@ -2166,9 +2166,10 @@ doc ///
   Inputs
     A:DGAlgebra
   Outputs
-    tmo:HashTable
-      A hash table with keys given by monomials in a generating set of the positive degree homology of A and values the element that bounds the Massey
-      product corresponding to that monomial.
+    seq:Sequence
+      A sequence seq whose first entry reports whether a trivial Massey operation has been found, and the second
+      entry is a hash table with keys given by monomials in a generating set of the positive degree homology of
+      A and values the element that bounds the Massey product corresponding to that monomial.
   Description
     Text
       This function the element that bounds all potentially nonzero Massey products (before taking homology class).
@@ -2189,8 +2190,8 @@ doc ///
       A = koszulComplexDGA(R)
       isHomologyAlgebraTrivial(A,GenDegreeLimit=>3)
       cycleList = getGenerators(A)
-      tmo = findTrivialMasseyOperation(A)
-      assert(tmo =!= null)
+      (hasTMO, tmoSoFar) = findTrivialMasseyOperation(A)
+      assert(hasTMO)
     Text
       Below is an example of a Teter ring (Artinian Gorenstein ring modulo its socle), and the computation in Avramov and Levin's
       paper shows that H(A) does not have trivial multiplication, hence no trivial Massey operation can exist.
@@ -2201,7 +2202,7 @@ doc ///
       A = koszulComplexDGA(R)
       isHomologyAlgebraTrivial(A)
       cycleList = getGenerators(A)
-      assert(findTrivialMasseyOperation(A) === null)
+      assert(first findTrivialMasseyOperation(A) === null)
     Text
       The related function @ TO findNaryTrivialMasseyOperation @ find only the nth order trivial Massey operations.
 ///
