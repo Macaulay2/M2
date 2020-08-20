@@ -6,8 +6,9 @@
 #include <M2/config.h>
 #include <stdint.h>
 
+#ifndef NDEBUG
+
 #include "debug.h"
-#include <gmp.h>
 #include <mpfr.h>
 #include <string.h>
 
@@ -38,20 +39,11 @@ int badBlock() {
 
 #if 0
 /* GC_check_annotated_obj is no longer globally defined */
-#ifndef NDEBUG
 extern unsigned int GC_debug_header_size;
 extern void *GC_check_annotated_obj(void *); /* returns NULL or pointer to clobbered debug header location */
-void GC_check(void *p) {
-  void *q = (char *)p - GC_debug_header_size;
-  if (NULL != GC_check_annotated_obj(q)) trap();
-}
-void gmp_GC_check(void *p) {
-  extern void *GC_malloc_function(size_t);
-  //  if (__gmp_allocate_func == GC_malloc_function) 
-    GC_check(p);
-}
 #endif
-#endif
+
+#endif /* NDEBUG */
 
 /*
  Local Variables:

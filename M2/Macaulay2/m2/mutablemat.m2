@@ -182,6 +182,8 @@ randomMutableMatrix(ZZ,ZZ,RR,ZZ) := options -> (n,m,percentagezero,maxentry) -> 
 
 LUdecomposition = method()
 LUdecomposition MutableMatrix := (A) -> (
+     if not isField ring A then
+       error("LU not implemented over ring " | toString ring A);
      nrows := rawNumberOfRows raw A;
      L := mutableMatrix(ring A,0,0,Dense=>true);
      U := mutableMatrix(ring A,0,0,Dense=>true);
@@ -191,10 +193,15 @@ LUdecomposition Matrix := (A) -> (
      (p,L,U) := LUdecomposition mutableMatrix A;
      (p, matrix L,matrix U))
 
-solve = method(Options => { ClosestFit => false, MaximalRank => false, Precision=>0, Invertible=>false })
+solve = method(Options => { ClosestFit => false,
+	                    MaximalRank => false,
+			    Precision=>0,
+			    Invertible=>false })
 
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      R := ring A;
+     if not isField R then
+       error("solve not implemented over ring " | toString ring A);
      if opts.ClosestFit then (
          if (opts#Precision !=0) then (
 		     A=mutableMatrix(promote(matrix(A), CC_(opts#Precision)));
@@ -213,7 +220,8 @@ solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      )
 
 solve(Matrix,Matrix) := opts -> (A,b) -> (
-    if not isBasicMatrix A or not isBasicMatrix b then error "expected matrices between free modules";
+     if not isBasicMatrix A or not isBasicMatrix b then
+       error "expected matrices between free modules";
      if ultimate(coefficientRing, ring A) === ZZ then (
          return (b // A);
         );
@@ -279,14 +287,27 @@ QRDecomposition Matrix := A -> (
      (Q,R) := QRDecomposition A;
      (matrix Q,matrix R))
 
-rank MutableMatrix := (M) -> rawLinAlgRank raw M
+rank MutableMatrix := (M) -> (
+    if isField ring M then
+      rawLinAlgRank raw M
+    else
+      rank matrix M
+    )
 
-determinant MutableMatrix := opts -> (M) -> promote(rawLinAlgDeterminant raw M, ring M)
+determinant MutableMatrix := opts -> (M) -> (
+    if numRows M =!= numColumns M then error "expected a square matrix";
+    if isField ring M then
+      promote(rawLinAlgDeterminant raw M, ring M)
+    else
+      determinant matrix M
+    )
 
-inverse MutableMatrix := (A) -> (
-     R := ring A;
-     if numRows A =!= numColumns A then error "expected square matrix";
-     map(R,rawLinAlgInverse raw A)
+inverse MutableMatrix := (M) -> (
+     if numRows M =!= numColumns M then error "expected square matrix";
+     if isField ring M then
+       map(ring M, rawLinAlgInverse raw M)
+     else
+       mutableMatrix inverse matrix M
      )
 
 nullSpace = method()
@@ -309,6 +330,12 @@ rowRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, true)
 
 columnRankProfile = method()
 columnRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, false)
+
+reducedRowEchelonForm = method()
+reducedRowEchelonForm Matrix := (M) -> (
+    matrix reducedRowEchelonForm(mutableMatrix M)
+    )
+reducedRowEchelonForm MutableMatrix := (M) -> map(ring M, rawLinAlgRREF raw M)
      
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

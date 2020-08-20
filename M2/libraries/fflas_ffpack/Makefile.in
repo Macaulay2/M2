@@ -24,7 +24,7 @@ LICENSEFILES = COPYING
 # INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/include/fflas-ffpack && \
 # 		@INSTALL_DATA@ include/config-blas.h $(LIBRARIESDIR)/include/. && \
 # 		@INSTALL_DATA@ include/fflas-ffpack/*.{h,inl} $(LIBRARIESDIR)/include/fflas-ffpack/.
-CONFIGOPTIONS += LIBS="@LINALGLIBS@ @FCLIBS_STATIC@ @FCLIBS_DYNAMIC@"
+CONFIGOPTIONS += LIBS="@LINALGLIBS@ @FCLIBS@"
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/fflas_ffpack/Makefile
 # Local Variables:

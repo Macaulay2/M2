@@ -1,13 +1,10 @@
--- -*- M2-comint -*- {* hash: -1010838168 *}
--- COMPILE TIME: Oct  7 2016, 07:56:28
---loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- hash: -1010838168
 
 i1 : R = CC[x,y,z];
 
 i2 : f = { x^2 - y, x^3 - z };
 
 i3 : (w,ns) = topWitnessSet(f,1)
-*** variables in the ring : {x, y, z, zz1} ***
 
 o3 = (w, {})
 
@@ -23,20 +20,16 @@ o5 = 3
 
 i6 : toString equations(w)
 
-o6 = {x^2-y+(-.989379-.145358*ii)*zz1, x^3-z+(-.283677-.95892*ii)*zz1, zz1}
+o6 = {x^2-y+(.380139-.924929*ii)*zz1, x^3-z+(-.45571+.890128*ii)*zz1, zz1}
 
 i7 : toString slice(w)
 
-o7 = {(.885551+.464542*ii)*x+(-.303144+.952945*ii)*y+(-.819783-.572674*ii)*z
-     +(-.908238-.418453*ii)*zz1+.876214+.481923*ii}
+o7 = {(-.205377-.978683*ii)*x+(.943327-.331864*ii)*y+(.673112+.739541*ii)*z
+     +(-.911067-.412259*ii)*zz1-.883724+.468009*ii}
 
 i8 : toString points(w)
 
-o8 = VerticalList{{1.35584+.375465*ii, 1.69733+1.01814*ii,
-     1.91904+2.01773*ii, -2.44528e-32-2.6353e-32*ii}, {-.496385-.392738*ii,
-     .0921552+.389899*ii, .107384-.229733*ii, -4.92701e-33+3.20371e-33*ii},
-     {-.562241+.972084*ii, -.628832-1.09309*ii, 1.41613+.003303*ii,
-     -5.96417e-32-9.04424e-33*ii}}
+o8 = VerticalList{Point{...4...}, Point{...4...}, Point{...4...}}
 
 i9 : R = CC[x,y,z]; f = { (x^2-y)*(x-2), (x^3 - z)*(y-2), (x*y - z)*(z-2) }
 
@@ -46,7 +39,6 @@ o10 = {x  - 2x  - x*y + 2y, x y - 2x  - y*z + 2z, x*y*z - 2x*y - z  + 2z}
 o10 : List
 
 i11 : (w,ns) = topWitnessSet(f,1);
-*** variables in the ring : {x, y, z, zz1} ***
 
 i12 : dim(w)
 

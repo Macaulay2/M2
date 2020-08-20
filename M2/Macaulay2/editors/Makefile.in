@@ -1,0 +1,27 @@
+# @configure_input@
+include ../../include/config.Makefile
+VPATH = @srcdir@
+ARGS = --script
+.NOTPARALLEL:
+
+MADEFILES = M2-symbols.el M2-emacs-help.txt M2-emacs.m2
+SRCFILES = M2-init.el M2-mode.el M2.el README.md
+
+all: @pre_emacsdir@ $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES))
+verify: $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES)) $(addprefix emacs/, $(SRCFILES) $(MADEFILES)); ls -lrt $^
+Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/editors/Makefile
+
+@pre_emacsdir@ :; @INSTALL@ -d "$@"
+@pre_emacsdir@/% : $(addprefix emacs/, %) ; @INSTALL_DATA@ $^ @pre_emacsdir@
+
+emacs/M2-symbols.el : make-M2-symbols.m2 ../m2/exports.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
+	@pre_exec_prefix@/bin/M2 $(ARGS) @srcdir@/make-M2-symbols.m2 -e 'exit 0'
+emacs/M2-emacs.m2 emacs/M2-emacs-help.txt: emacs/make-M2-emacs-help.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
+	cd emacs; @pre_exec_prefix@/bin/M2 $(ARGS) @abs_srcdir@/emacs/make-M2-emacs-help.m2 -e 'exit 0'
+
+clean::; rm -rf @pre_emacsdir@/* atom emacs prism vim
+distclean:: clean; rm -f Makefile
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/editors "
+# End:

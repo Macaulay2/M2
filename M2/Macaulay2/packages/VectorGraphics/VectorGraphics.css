@@ -1,0 +1,55 @@
+/* svg stuff (used by Graphics.m2) */
+
+svg.M2Svg {
+    vertical-align: middle;
+    position: relative;
+    display: inline;
+    stroke: black;
+    stroke-opacity: 1;
+    fill: none;
+    fill-opacity: 1;
+    cursor: grab;
+}
+
+.katex svg.M2Svg path { /* because of KaTeX annoying def */
+    stroke: inherit;
+}
+
+svg.M2Svg text {
+/*    font-size: 14px; /* /* just a reminder since code in M2 anyway:
+absolute sounds bad but actually it's not really absolute since it's in svg units */
+}
+
+svg.M2Svg foreign-object {
+/*    font-size: 14px;*/ /* same. absolute sounds bad but actually it's not really absolute since it's in svg units */
+}
+
+.gfxauto {
+    fill-opacity: 75%;
+    cursor: pointer;
+}
+
+.gfxauto .gfxautoplay {
+    visibility: inherit;
+}
+
+.gfxauto .gfxautostop {
+    visibility: hidden;
+}
+
+.gfxauto.active .gfxautoplay {
+    visibility: hidden;
+}
+
+.gfxauto.active .gfxautostop {
+    visibility: inherit;
+}
+
+
+svg.M2Svg > .gfxauto {
+    visibility: hidden;
+}
+
+svg.M2Svg:hover > .gfxauto {
+    visibility: visible;
+}

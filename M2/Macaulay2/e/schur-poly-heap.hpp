@@ -3,7 +3,7 @@
 #ifndef _schur_poly_heap_hpp_
 #define _schur_poly_heap_hpp_
 
-class schur_poly_heap
+class schur_poly_heap : public our_new_delete
 {
   ring_elem heap[GEOHEAP_SIZE];
   const SchurRing2 *S;

@@ -21,7 +21,7 @@ document {
       "o7#0",
     },
     PARA {
-      "The roots are computed using ", TO "pari", ".",
+      "The roots are computed using ", TO "MPsolve", ".",
     },
 }
 

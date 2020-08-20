@@ -1,5 +1,8 @@
 --		Copyright 1994-2006 by Daniel R. Grayson
 
+rootPath = "";
+rootURI = "file://";
+
 binary := set flexibleBinaryOperators
 prefix := set flexiblePrefixOperators
 postfix := set flexiblePostfixOperators
@@ -652,13 +655,13 @@ fixupTable := new HashTable from {
      Headline => chkIsStringFixup Headline,
      Heading => chkIsString Heading,
      Description => val -> extractExamples fixup val,
-     Caveat  => v -> if v =!= {} then fixup DIV1 { SUBSECTION "Caveat", DIV v } else v,
-     SeeAlso => v -> if v =!= {} then fixup DIV1 { SUBSECTION "See also", UL (TO \ enlist v) } else v,
+     Caveat  => v -> if v =!= {} then fixup DIV { SUBSECTION "Caveat", v } else v,
+     SeeAlso => v -> if v =!= {} then fixup DIV { SUBSECTION "See also", UL (TO \ enlist v) } else v,
      SourceCode => v -> (
 	  if v =!= {} 
 	  then DIV { 
 	       "class" => "waystouse",
-	       fixup DIV1 {
+	       fixup DIV {
 		    SUBSECTION "Code", 
 		    PRE demark(
 			 newline,
@@ -668,7 +671,7 @@ fixupTable := new HashTable from {
 				   if f === null then error("SourceCode: ", toString m, ": not a method");
 				   c := code f;
 				   if c === null then error("SourceCode: ", toString m, ": code for method not found");
-				   c)))}}
+				   reproduciblePaths toString c)))}}
 	  else v),
      Subnodes => v -> (
 	  v = nonnull enlist v;
@@ -711,9 +714,10 @@ storeRawDocumentation := (tag,opts) -> (
      fkey := DocumentTag.FormattedKey tag;
      if currentPackage#rawKey#?fkey and signalDocError tag
      then (
-	  stderr << currentFileName << ":" << currentLineNumber() << ": warning: documentation already provided for '" << tag << "'" << endl;
+	  stderr << currentFileName << ":" << currentLineNumber() << ": error: documentation already provided for '" << tag << "'" << endl;
 	  doc := currentPackage#rawKey#fkey;
 	  stderr << doc#"filename" << ":" << doc#"linenum" << ": ... here is the (end of the) previous documentation" << endl;
+	  error "quitting";
 	  );
      currentPackage#rawKey#fkey = opts;
      )
@@ -733,28 +737,6 @@ undocumented keys undocumentedkeys
 undocumentedkeys = null
 undocumented' = x -> error "late use of function undocumented'"
 
------------------------------------------------------------------------------
--- getting help from the documentation
------------------------------------------------------------------------------
-
-getExampleInputs := method(Dispatch => Thing)
-getExampleInputs Thing       := t -> ()
-getExampleInputs Sequence    := 
-getExampleInputs Hypertext   := t -> apply(toSequence t, getExampleInputs)
-getExampleInputs ExampleItem := t -> 1 : t#0
-
-examples = method(Dispatch => Thing)
-examples Hypertext := x -> stack deepSplice getExampleInputs x
-examples Thing := x -> (
-     checkLoadDocumentation();
-     d := fetchRawDocumentation makeDocumentTag(x,Package=>null);
-     if d =!= null and d.?Description then (stack deepSplice getExampleInputs d.Description)^-1)
-apropos = method()
-apropos String := (pattern) -> (
-     last \ sort unique select(
-	  flatten \\ pairs \ dictionaryPath, 
-	  (nam,sym) -> match(pattern,nam) and not match("\\$",nam)
-	  ))
 -----------------------------------------------------------------------------
 headline = method(Dispatch => Thing)
 headline Thing := key -> getOptionNoLoad(key,Headline)	    -- old method
@@ -832,13 +814,6 @@ ofClass ImmutableType := ofClass Type := X -> fixup (
      else SPAN {"an instance of the type ", TO X}
      )
 
-rootPath = "";
-rootURI = "file://";
-if version#"operating system" === "MicrosoftWindows" then (
-     rootPath = first lines get "!cygpath -m /"; 	   -- e.g.: "C:/cygwin"
-     rootURI = "file:///" | rootPath;		   -- e.g.: "file:///C:/cygwin"
-     )
-
 makeDocBody = method(Dispatch => Thing)
 makeDocBody Thing := key -> (
      tag := makeDocumentTag key;
@@ -852,7 +827,7 @@ makeDocBody Thing := key -> (
 	       docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
 	       then DIV { docBody}
-	       else DIV1 { SUBSECTION "Description", DIV {docBody} })
+	       else DIV { SUBSECTION "Description", docBody })
 	  else DIV { COMMENT "empty documentation body" }))
 
 topheader := s -> (
@@ -893,7 +868,7 @@ op := s -> if operator#?s then (
 
 type := S -> (
      s := value S;
-     if not instance(s, Function) and class s =!= Package then DIV1 {
+     if not instance(s, Function) and class s =!= Package then DIV {
 	  "class" => "waystouse",
 	  SUBSECTION "For the programmer",  
 	  fixup PARA deepSplice { "The object ", TO S, " is ", ofClass class s,
@@ -1124,10 +1099,11 @@ fmeth := f -> (						    -- compare with documentationValue(Symbol,Function) bel
      b := documentableMethods f;
      if #b > 0 then (
 	  c := smenu b;
-	  if #c > 0 then DIV1 { SUBSECTION { "Ways to use ", toString f }, c } 
+	  if #c > 0 then DIV { SUBSECTION { "Ways to use ", toString f }, c }
 	  )
      )
 
+-- TODO: is this duplicate?
 briefSynopsis := key -> (
      o := getDoc key;
      if o === null then return null;
@@ -1143,16 +1119,16 @@ briefSynopsis := key -> (
 	       else if instance(key#0,Sequence) and #key#0 === 2 and key#0#1 === symbol =
 	       then SPAN { "Operator: ", TO key#0#0 }	    -- assignment operator for this operator
 	       ),
-	  if o.?Inputs then DIV1 { "Inputs:", UL o.Inputs },
-	  if o#?"optional inputs" then DIV1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL o#"optional inputs" },
-	  if o.?Outputs then DIV1 { "Outputs:", UL o.Outputs },
-	  if o.?Consequences and #o.Consequences > 0 then DIV1 { "Consequences:", UL o.Consequences },
+	  if o.?Inputs then LI { "Inputs:", UL o.Inputs },
+	  if o#?"optional inputs" then LI { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL o#"optional inputs" },
+	  if o.?Outputs then LI { "Outputs:", UL o.Outputs },
+	  if o.?Consequences and #o.Consequences > 0 then DIV { "Consequences:", UL o.Consequences },
 	  };
      if #r > 0 then fixup UL r)
 
 synopsis := key -> (
      s := briefSynopsis key;
-     if s =!= null then DIV1 { SUBSECTION "Synopsis", s }
+     if s =!= null then DIV { SUBSECTION "Synopsis", s }
      )
 
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
@@ -1264,7 +1240,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
      fn := pkg#"pkgname" | ".m2";
      au := pkg.Options.Authors;
      (
-     	  if #au > 0 then DIV1 {
+	  if #au > 0 then DIV {
      	       SUBSECTION (if #au === 1 then "Author" else "Authors"), 
 	       fixup UL apply(au,
 		    au -> (
@@ -1275,7 +1251,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 			 if defs.HomePage =!= null then nam = HREF{defs.HomePage, nam};
 			 em := defs.Email;
 			 if em =!= null then em = SPAN{" <",HREF{concatenate("mailto:",em),em},">"};
-			 DIV1 {nam,em}
+			 LI {nam,em}
 			 )
 		    )
 	       },
@@ -1283,7 +1259,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 	       if not instance(cert,List) then error(toString pkg, ": Certification option: expected a list");
 	       if not all(cert,x -> instance(x,Option) and #x==2) then error(toString pkg, ": Certification option: expected a list of options");
 	       cert = new HashTable from cert;
-	       DIV1 { 
+	       DIV {
 		    SUBSECTION {
 			 "Certification ",
 			 IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"}
@@ -1306,13 +1282,13 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 			 }
 		    }
 	       ),
-	  DIV1 { SUBSECTION "Version", "This documentation describes version ", BOLD pkg.Options.Version, " of ",
+	  DIV { SUBSECTION "Version", PARA { "This documentation describes version ", BOLD pkg.Options.Version, " of ",
 	       if pkg#"pkgname" === "Macaulay2Doc" then "Macaulay2" else pkg#"pkgname",
-	       "." },
+	       "." } },
 	  if pkg#"pkgname" =!= "Macaulay2Doc"
-	  then DIV1 {
+	  then DIV {
 	       SUBSECTION "Source code",
-	       "The source code from which this documentation is derived is in the file ", 
+	       PARA { "The source code from which this documentation is derived is in the file ",
 	       HREF {
 		    if installLayout =!= null
 		    then installLayout#"packages" | fn
@@ -1330,17 +1306,18 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 			 },
 		    "."
 		    )
+		}
 	       },
-	  if #e > 0 then DIV1 {
+	  if #e > 0 then DIV {
 	       SUBSECTION "Exports",
-	       DIV1 {
+	       DIV {
 	       	    "class" => "exports",
 		    fixup UL {
-			 if #b > 0 then DIV1 {"Types", smenu b},
-			 if #a > 0 then DIV1 {"Functions and commands", smenu a},
-			 if #m > 0 then DIV1 {"Methods", smenu m},
-			 if #c > 0 then DIV1 {"Symbols", smenu c},
-			 if #d > 0 then DIV1 {"Other things", smenuCLASS d}}}}))
+			 if #b > 0 then LI {"Types", smenu b},
+			 if #a > 0 then LI {"Functions and commands", smenu a},
+			 if #m > 0 then LI {"Methods", smenu m},
+			 if #c > 0 then LI {"Symbols", smenu c},
+			 if #d > 0 then LI {"Other things", smenuCLASS d}}}}))
 
 theAugmentedMenu := S -> (
      f := value S;
@@ -1362,7 +1339,7 @@ help Symbol := S -> (
      currentHelpTag = makeDocumentTag S;
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      ret := fixup DIV { topheader S, synopsis S, makeDocBody S,
-	  if #a > 0 then DIV1 { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
+	  if #a > 0 then DIV { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
           caveat S, seealso S,
      	  documentationValue(S,value S),
 	  sourcecode S, type S, 

@@ -1803,7 +1803,6 @@ doc ///
       The key Generate points to the function that is used to generate random elements according to the given model. 
     Example
       myModel = ER(2,2,0.5)
-      peek myModel
   SeeAlso
     Model
 ///

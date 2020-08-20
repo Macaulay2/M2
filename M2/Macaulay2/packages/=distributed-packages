@@ -1,6 +1,6 @@
 Style
-Macaulay2Doc
 FirstPackage
+Macaulay2Doc
 Parsing
 Classic
 Browse
@@ -198,3 +198,9 @@ SchurComplexes
 SimplicialPosets
 SlackIdeals
 PositivityToricBundles
+SparseResultants
+DecomposableSparseSystems
+MixedMultiplicity
+PencilsOfQuadrics
+ThreadedGB
+VectorGraphics

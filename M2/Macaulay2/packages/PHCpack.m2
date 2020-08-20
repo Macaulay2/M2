@@ -1,3 +1,7 @@
+phcPresent := run ("type phc >/dev/null 2>&1") === 0
+phcVersion := if phcPresent then replace("PHCv([0-9.]+) .*\n","\\1",get "! phc --version")
+phcVersionNeeded := "2.4.77"
+phcPresentAndModern := phcPresent and match("^[0-9.]+$",phcVersion) and phcVersion >= phcVersionNeeded
 
 newPackage(
   "PHCpack",
@@ -29,11 +33,6 @@ newPackage(
      HomePage => "https://math.berkeley.edu/~seigal/"}
   },
   Headline => "interface to PHCpack",
-  Configuration => { 
-    "path" => "",
-    "PHCexe"=>"phc", 
-    "keep files" => true
-  },
   Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry",
 	"journal URI" => "http://j-sag.org/",
@@ -50,8 +49,15 @@ newPackage(
   DebuggingMode => false,
   AuxiliaryFiles => true,
   CacheExampleOutput => true,
-  PackageExports => {"NAGtypes"}
+  PackageExports => {"NAGtypes"},
+  OptionalComponentsPresent => phcPresentAndModern
 )
+
+checkIsRunnable = () -> (
+     if not phcPresent then error "phc not present";
+     if not phcPresentAndModern 
+     then error ("phc present but not modern enough; need version ", phcVersionNeeded, " but found version ",phcVersion);
+     )
 
 --Copyright 2013 Elizabeth Gross, Sonja Petrovic, Jan Verschelde.
 --  You may redistribute this file under the terms of the GNU General
@@ -105,8 +111,12 @@ protect Append
 --##########################################################################--
 
 PHCDBG = 0; -- debug level (10=keep temp files)
-path'PHC = (options PHCpack).Configuration#"path";
-PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe"; 
+
+-- We used to allow the user to set this in the "Configuration" of the package, but we need
+-- to know whether the program is present before "newPackage" runs, and thus there is no
+-- good way to get the option early enough.
+PHCexe = "phc "|(if member("--no-randomize",commandLine) then "-0123456 " else "")  
+
 -- this is the executable string that make sures that calls to PHCpack run:
 -- NOTE: the absolute path should be put into the init-PHCpack.m2 file 
 
@@ -241,7 +251,7 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
 --         );
 --         close f;
 --         foutname := fname | ".sols";
---         run("phc -z "|fname|" "|foutname);
+--         if checkIsRunnable() then run(PHCexe|" -z "|fname|" "|foutname);
 --         parseSolutions(get foutname,R)
 --     )
 -- )
@@ -301,7 +311,8 @@ parseIntermediateSolutions (String,Ring) := (output,R) -> (
         f << "===========================================================================" << endl;
         f << get oldf;
         close f;
-        run("phc -z "|pf#0|".final "|pf#0|".sols");
+        checkIsRunnable();
+	run(PHCexe|"-z "|pf#0|".final "|pf#0|".sols");
         results = append(results,parseSolutions(pf#0|".sols",R));
     );
     results
@@ -477,6 +488,7 @@ witnessSetFromFile (String) := (name) -> (
   d := dimEmbedding(e);
   witnessPointsFile := temporaryFileName() | "PHCwitnessPoints";
   if fileExists witnessPointsFile then removeFile witnessPointsFile;
+  checkIsRunnable();
   run(PHCexe|" -z " | name | " "|witnessPointsFile);
   eR := ring first e;
   g := parseSolutions(witnessPointsFile,eR);
@@ -662,6 +674,7 @@ cascade (List) := o -> (system) -> (
     ( stdio << "calling phc -c < " << PHCbatchFile;
     stdio << " > " << PHCsessionFile << endl
     );
+    checkIsRunnable();
     run(PHCexe|" -c < " | PHCbatchFile | " > " | PHCsessionFile);
   if o.Verbose then
     ( stdio << "output of phc -c is in file " << PHCoutputFile << endl;
@@ -696,12 +709,13 @@ cascade (List) := o -> (system) -> (
         ) else (
           supsols := points(supwit);
           genpts := witnessSuperSetsFilter(result,supsols);
-          g := toList(apply(genpts,x->point{x}));
+	  g := toList(apply(genpts,x->if class x === Point then x else point{x}));
           ws := witnessSet(ideal(equations(supwit)),ideal(slice(supwit)),g);
           if #g!=0 then result = append(result,(i,ws));
         );
       ) else (
-        run(PHCexe | " -z " | fil | " " | PHCsolsFile);
+        checkIsRunnable(); 
+	run(PHCexe | " -z " | fil | " " | PHCsolsFile);
         use R;
 	supwit = witnessSetFromFile(fil);
         if o.Verbose then
@@ -751,6 +765,7 @@ constructEmbedding (List, ZZ) := o->  (system, dimension) -> (
   (  stdio << "calling phc -c < " << PHCbatchFile;
      stdio << " > " << PHCsessionFile << endl
      );
+  checkIsRunnable(); 
   run(PHCexe|" -c < " | PHCbatchFile | " > " | PHCsessionFile);
   if o.Verbose then
     stdio << "output of phc -c is in file " << PHCoutputFile << endl;
@@ -806,6 +821,7 @@ factorWitnessSet (WitnessSet ) := o->  w -> (
   close bat;
   if o.Verbose then
     stdio << "... calling monodromy breakup ..." << endl;
+  checkIsRunnable(); 
   run(PHCexe|" -f < " | PHCbatchFile | " > " | PHCsessionFile);
   if o.Verbose then
     (stdio << "session information of phc -f is in " << PHCsessionFile << endl;
@@ -878,6 +894,7 @@ isWitnessSetMember (WitnessSet,Point) := o-> (witset,testpoint) -> (
     stdio << "calling phc -f < " << PHCbatchFile;
     stdio << " > " << PHCsessionFile << endl;
   );
+  checkIsRunnable(); 
   run(PHCexe|" -f < " | PHCbatchFile | " > " | PHCsessionFile);
   if o.Verbose then
     stdio << "output of phc -f is in file " << PHCoutputFile << endl;
@@ -943,10 +960,12 @@ mixedVolume  List := Sequence => opt -> system -> (
   
   if opt.interactive then (
     << endl << "If you need a start system, the filename MUST be " << endl << endl << startfile << endl << endl << endl;
+    checkIsRunnable(); 
     run(PHCexe|" -m "|infile|" "|outfile);
   ) else (
   -- launching mixed volume calculator :
   execstr := PHCexe|" -m "|(if opt.numThreads > 1 then ("-t"|opt.numThreads|" ") else "")|infile|" "|outfile|" < "|cmdfile|" > "|sesfile;
+  checkIsRunnable(); 
   ret := run(execstr);
   if ret =!= 0 then 
     error "error occurred while executing PHCpack command: phc -m";
@@ -979,6 +998,7 @@ mixedVolume  List := Sequence => opt -> system -> (
     solsfile := startfile | ".sols";
     p := startSystemFromFile(startfile);
     execstr = PHCexe|" -z "|startfile|" "|solsfile;
+    checkIsRunnable(); 
     ret = run(execstr);
     if ret =!= 0 then
       error "error occurred while executing PHCpack command: phc -z";
@@ -1069,12 +1089,14 @@ refineSolutions (List,List,ZZ) := o-> (f,sols,dp) -> (
   bat << s;
   close bat;
   -- stdio << "running phc -v, writing output to " << PHCsessionFile << endl;
+  checkIsRunnable(); 
   run(PHCexe|" -v < " | PHCbatchFile | " > " | PHCsessionFile);
   if o.Verbose then
     (  stdio << "using temporary file " << PHCoutputFile;
     stdio << " for storing refined solutions " << endl;
     stdio << "solutions in Maple format in " << PHCsolutions << endl
     );
+  checkIsRunnable(); 
   run(PHCexe|" -z " | PHCoutputFile | " " | PHCsolutions);
   b := ceiling(log_2(10^dp));
   result := parseSolutions(PHCsolutions,R,Bits=>b);
@@ -1114,7 +1136,7 @@ solveSystem List := List =>  o->system -> (
   local newR;
   R := ring ideal system;
 
-  stdio << "*** variables in the ring : " << gens R << " ***" << endl;
+  -- stdio << "*** variables in the ring : " << gens R << " ***" << endl;
 
   n := #system;
   if n < numgens R then
@@ -1141,12 +1163,14 @@ solveSystem List := List =>  o->system -> (
     |(if o.numThreads > 1 then ("-t"|o.numThreads|" ") else "")
     |(if o.randomSeed > -1 then ("-0"|o.randomSeed|" ") else "")
     |infile|" "|outfile;
+  checkIsRunnable(); 
   ret := run(execstr);
   if ret =!= 0 then 
     error "error occurred while executing PHCpack command: phc -b";
   if o.Verbose then
     stdio << "solutions are in the file " << solnsfile << endl;
   execstr = PHCexe|" -z "|infile|" " |solnsfile;
+  checkIsRunnable(); 
   ret = run(execstr);
   if ret =!= 0 then 
     error "error occurred while executing PHCpack command: phc -z";
@@ -1218,10 +1242,12 @@ solveRationalSystem  List :=  o-> system -> (
   
   -- launching blackbox solver:
   execstr := PHCexe|" -b " |infile|" "|outfile;
+  checkIsRunnable(); 
   ret := run(execstr);
   if ret =!= 0 then 
     error "error occurred while executing PHCpack command: phc -b";
   execstr = PHCexe|" -z "|infile|" " |solnsfile;
+  checkIsRunnable(); 
   ret = run(execstr);
   if ret =!= 0 then 
     error "error occurred while executing PHCpack command: phc -z";
@@ -1370,8 +1396,10 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
     );
     close bat;
     << batchfile << endl;
+    checkIsRunnable(); 
     run(PHCexe|" -p "|(if o.numThreads > 1 then 
        ("-t"|o.numThreads) else "")|"<"|batchfile|" >phc_session.log");
+    checkIsRunnable(); 
     run(PHCexe|" -z "|outfile|" "|Tsolsfile);
   )
   -- making batch file
@@ -1382,6 +1410,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
     << "running (cat "|batchfile|"; cat) | PHCexe -p "<< endl;
     -- (cat batch; cat) | phc -p
     run("(cat "|batchfile|"; cat) | "|PHCexe|" -p ");
+    checkIsRunnable(); 
     run(PHCexe|" -z "|outfile|" "|Tsolsfile);
       
   ) else (
@@ -1426,8 +1455,10 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
     close bat;
   );
 
+  checkIsRunnable(); 
   run(PHCexe|" -p "|(if o.numThreads > 1 then 
      ("-t"|o.numThreads) else "")|"<"|batchfile|" >phc_session.log");
+  checkIsRunnable(); 
   run(PHCexe|" -z "|outfile|" "|Tsolsfile);
   
   );
@@ -1800,7 +1831,7 @@ versionNumber(Nothing) :=  o -> (Nothing) -> (
 --     then the output of phc --version is printed to screen.
 -- OUT: information about the current version of phc.
   filename := temporaryFileName() | "PHCversion";
-  run(PHCexe|" --version > "|filename);
+  run("phc --version > "|filename);
   data := get filename;
   if o.Verbose then
     stdio << data << endl;
@@ -1915,10 +1946,10 @@ TEST///
 
 TEST///
       R = CC [x,y]
-      system={x^2*y}
+      system={x^2*(y^2-1)}
       V=numericalIrreducibleDecomposition(system)
-      assert (dim V == 1) --there are two components of dimension 1
-      assert ((# V#1)==2)
+      assert all(components V, c->dim c==1) --there are three components of dimension 1
+      assert (#components V == 3)
 ///;      
 
 -----------------------------------

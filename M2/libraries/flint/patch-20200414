@@ -1,0 +1,16 @@
+diff -ur /Users/mike/src/M2-eigen/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/flint/tmp/./Makefile.in ./Makefile.in
+--- /Users/mike/src/M2-eigen/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/flint/tmp/./Makefile.in	2020-04-10 08:57:55.000000000 -0400
++++ ./Makefile.in	2020-04-14 11:18:37.000000000 -0400
+@@ -212,9 +212,9 @@
+ 	mkdir -p "$(DESTDIR)$(PREFIX)/include/flint/flintxx"
+ 	cp flintxx/*.h "$(DESTDIR)$(PREFIX)/include/flint/flintxx"
+ 	cp *xx.h "$(DESTDIR)$(PREFIX)/include/flint"
+-	$(AT)if [ "$(OS)" = "Darwin" ]; then \
+-		install_name_tool -id "$(DESTDIR)$(PREFIX)/$(LIBDIR)/$(FLINT_LIB)" "$(DESTDIR)$(PREFIX)/$(LIBDIR)/$(FLINT_LIBNAME)"; \
+-	fi
++#	$(AT)if [ "$(OS)" = "Darwin" ]; then \
++#		install_name_tool -id "$(DESTDIR)$(PREFIX)/$(LIBDIR)/$(FLINT_LIB)" "$(DESTDIR)$(PREFIX)/$(LIBDIR)/$(FLINT_LIBNAME)"; \
++#	fi
+ 
+ build:
+ 	mkdir -p build

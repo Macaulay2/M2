@@ -1,5 +1,3 @@
---path = prepend ("~/src/M2/Workshop-2018-Leipzig/Tropical/", path)
---Delete the line above when the "loading the wrong version" has been fixed.
 --polymakeOkay := try replace( "polymake version ", "", first lines get "!polymake --version 2>&1") >= "3.0" else false;
 --polymakeOkay := try replace( "polymake version ", "", first lines get "!polymake --version") >= "3.0" else false;
 
@@ -59,7 +57,8 @@ export {
 
 polymakeCommand = (options Tropical)#Configuration#"polymakeCommand"
 if polymakeCommand !="" then polymakeOkay=true else polymakeOkay=false;
-if polymakeOkay then << "-- polymake is installed\n" else << "-- polymake not present\n";
+if notify then
+  if polymakeOkay then << "-- polymake is installed\n" else << "-- polymake not present\n";
 
 
 ------------------------------------------------------------------------------

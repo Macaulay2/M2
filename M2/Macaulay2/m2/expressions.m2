@@ -188,10 +188,12 @@ toString'(Function, Equation) := (fmt,v) -> (
 ZeroExpression = new Type of Holder
 ZeroExpression.synonym = "zero expression"
 ZERO = new ZeroExpression from {0}
+unhold ZeroExpression := identity
 -----------------------------------------------------------------------------
 OneExpression = new Type of Holder
 OneExpression.synonym = "one expression"
 ONE = new OneExpression from {1}
+unhold OneExpression := identity
 -----------------------------------------------------------------------------
 Parenthesize = new WrapperType of Expression
 Parenthesize.synonym = "possibly parenthesized expression"
@@ -362,7 +364,8 @@ Expression + Expression     := Sum => (x,y) -> new Sum from {x,y}
 	   - Minus          := x -> expression x#0
            - Expression     := x -> new Minus from {x}
            - Holder         := x -> new Minus from {x#0}
-Expression - Expression     := Sum => (x,y) -> x + -y
+Expression - Expression     := Sum => (x,y) -> x + Minus y
+Thing - Minus               := Sum => (x,y) -> expression x + y#0
 Product    * OneExpression  :=
 Expression * OneExpression  :=
 Holder     * OneExpression  := (x,y) -> x
@@ -999,8 +1002,8 @@ html Expression := v -> (
 texMath Minus := v -> (
      term := v#0;
      if precedence term <= precedence v
-     then "{-\\left(" | texMath term | "\\right)}"
-     else "{-" | texMath term | "}"
+     then "-\\left(" | texMath term | "\\right)"
+     else "-" | texMath term
      )
 
 html Minus := v -> (
@@ -1020,25 +1023,17 @@ html Divide := x -> (
      if precedence x#1 <= p then b = "(" | b | ")";
      a | " / " | b)
 
-html OneExpression := html ZeroExpression :=
-texMath OneExpression := texMath ZeroExpression := toString
-
 texMath Sum := v -> (
      n := # v;
      if n === 0 then "0"
      else (
 	  p := precedence v;
-	  seps := newClass(MutableList, apply(n+1, i->"+"));
-	  seps#0 = seps#n = "";
-	  v = apply(n, i -> (
-		    if class v#i === Minus
-		    then ( seps#i = "-"; v#i#0 )
-		    else v#i ));
+	  seps := apply(toList(1..n-1), i -> if class v#i === Minus then "" else "+");
 	  names := apply(n, i -> (
-		    if precedence v#i <= p
-		    then "(" | texMath v#i | ")"
+		    if precedence v#i <= p and class v#i =!= Minus
+		    then "\\left(" | texMath v#i | "\\right)"
 		    else texMath v#i ));
-	  concatenate mingle ( seps, names )))
+	  concatenate mingle ( names, seps )))
 
 html Sum := v -> (
      n := # v;
@@ -1215,6 +1210,7 @@ showTex Thing := x -> (
      if 0 =!= chkrun("(xdvi "|f|".dvi && rm -f "|f|".tex "|f|".dvi "|f|".log "|f|".aux)&")
      then error ("xdvi failed on input file "|f|".tex");
      )
+show TEX := showTex
 
 -----------------------------------------------------------------------------
 print = x -> (<< net x << endl;) -- !! one may want to modify this depending on the type of output !!
@@ -1279,7 +1275,7 @@ Expression#{Standard,AfterPrint} = x -> (
 
 -----------------------------------------------------------------------------
 
-expression VisibleList := v -> new Holder from { apply(v,unhold @@ expression) }
+expression VisibleList := v -> new Holder from { apply(v, expression) }
 expression Thing :=
 expression Symbol :=
 expression Function :=
@@ -1360,7 +1356,7 @@ texAltLiteralTable = hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{
     "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
 -- not \^{} for KaTeX compatibility because of https://github.com/Khan/KaTeX/issues/1366
 texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
-texMath String := s -> "\\texttt{" | texAltLiteral s | "%\n}" -- here we refuse to consider \n issues. the final %\n is intentional!
+texMath String := s -> "\\texttt{" | texAltLiteral s | "}"
 -- this truncates very big nets
 maxlen := 3000; -- randomly chosen
 texMath Net := n -> (
@@ -1371,7 +1367,7 @@ texMath Net := n -> (
 	    i=i+1;
 	    len=len+#x;
 	    if i<#n and len>maxlen then (
-		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\[-1mm]";
+		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\";
 		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
 		break
 		);

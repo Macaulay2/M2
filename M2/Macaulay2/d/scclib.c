@@ -10,7 +10,7 @@
 
 #include "../system/supervisorinterface.h"
 
-extern void stack_trace();
+extern void M2_stack_trace();
 
 void
 fatal(const char *s,...)   {
@@ -23,7 +23,7 @@ fatal(const char *s,...)   {
 #ifndef NDEBUG
      trap();
 #endif
-     /* stack_trace(); */
+     M2_stack_trace();
      exit(1);
      }
 
@@ -31,11 +31,11 @@ void fatalarrayindex(int indx, int len, const char *file, int line, int column) 
      char msg[100];
      sprintf(msg,"array index %d out of bounds 0 .. %d",indx,len-1);
      if (column == -1) {
-     	  fatal(errfmtnc,file,line,msg);
-	  }
+         fatal(errfmtnc,file,line,msg);
+         }
      else {
-     	  fatal(errfmt,file,line,column,msg);
-	  }
+         fatal(errfmt,file,line,column,msg);
+         }
      /* eventually when there is an interpreter we will have break loop here */
      }
 
@@ -44,33 +44,33 @@ void fatalarraylen(int len, const char *file, int line, int column)
      char msg[100];
      sprintf(msg,"new array length %d less than zero",len);
      if (column == -1) {
-     	  fatal(errfmtnc,file,line,msg);
-	  }
+         fatal(errfmtnc,file,line,msg);
+         }
      else {
-     	  fatal(errfmt,file,line,column,msg);
-	  }
+         fatal(errfmt,file,line,column,msg);
+         }
      }
 
 void invalidTypeTag(int typecode, const char *file, int line, int column) {
      char msg[100];
      sprintf(msg,"internal error: unrecognized type code: %d\n",typecode);
      if (column == -1) {
-     	  fatal(errfmtnc,file,line,msg);
-	  }
+         fatal(errfmtnc,file,line,msg);
+         }
      else {
-     	  fatal(errfmt,file,line,column,msg);
-	  }
+         fatal(errfmt,file,line,column,msg);
+         }
      }
 
 void invalidNullPointer(const char *file, int line, int column) {
      char msg[100];
      sprintf(msg,"internal error: invalid null pointer\n");
      if (column == -1) {
-     	  fatal(errfmtnc,file,line,msg);
-	  }
+         fatal(errfmtnc,file,line,msg);
+         }
      else {
-     	  fatal(errfmt,file,line,column,msg);
-	  }
+         fatal(errfmt,file,line,column,msg);
+         }
      }
 
 int system_openin(M2_string filename) {
@@ -120,14 +120,8 @@ M2_string system_getcwd()
 {
      /* this function now adds a terminal / to the directory name */
      char buf[700];
-     /* We have to get the cwd each time, because otherwise we might pick up the
-        cwd from when dumpdata was run, which could have been different from now. */
      static const char slash[] = "/";
      char *x = getcwd(buf,sizeof(buf)-strlen(slash));
-#if defined(_WIN32)
-     char *p;
-     for (p=x; *p; p++) if (*p == '\\') *p = '/';
-#endif
      if (0 != strcmp(buf,slash)) strcat(buf,slash);
      if (x != NULL) return M2_tostring(x);
      return M2_tostring("");
@@ -223,10 +217,6 @@ int system_strnumcmp(M2_string s,M2_string t) {
      if (slen < tlen) return -1;
      return ret;
 }
-
-#ifndef PACKAGE_NAME
-#error "M2/config.h not included"
-#endif
 
 int fix_status(int status) {
      /* We can't handle status codes bigger than 127 if the shell intervenes. */
@@ -371,103 +361,6 @@ M2_string system_errfmt(M2_string filename, int lineno, int colno, int loaddepth
 	GC_FREE(fn);
 	return ret;
 }
-
-#include <readline/readline.h>
-#include <readline/history.h>
-
-static char *M2_completion_generator(const char *text, int state) {
-  static int i;
-  static char **v;
-  char *p;
-  if (state == 0) {
-    M2_string s;
-    M2_ArrayString ret;
-    i = 0;
-#ifdef free
-#warning "'free' defined as macro, but we want to use the libc function"
-#define free x
-#endif
-    if (v != NULL) free(v);
-    s = M2_tostring(text);
-    ret = expr_completions(s);
-    GC_FREE(s);
-    v = M2_tocharstarstarmalloc(ret); /* readline will use free() to free these strings */
-    GC_FREE(ret);
-  }
-  p = v[i];
-  if (p != NULL) i++;
-  return p;
-}
-
-static char **M2_completion(const char *text, int start, int end) {
-  rl_attempted_completion_over = TRUE;
-  /* if (start > 0 && rl_line_buffer[start-1] == '"') ... filename completion ... */
-  return rl_completion_matches(text, M2_completion_generator);
-}
-
-
-void system_initReadlineVariables(void) {
-  static char readline_name[] = "M2";
-  static char basic_word_break_characters[] = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r";
-  rl_readline_name = readline_name;
-  rl_attempted_completion_function = M2_completion;
-  rl_basic_word_break_characters = basic_word_break_characters;
-  using_history();		/* this might also initialize readine, by calling rl_readline, on Mac OS X */
-}
-
-static int read_via_readline(char *buf,int len,char *prompt) {
-  static char *p;		/* buffer, NULL if newline has already been returned */
-  static int plen;		/* number of chars in p */
-  static int i;			/* number of chars in p already returned */
-  int r;			/* number of chars to return this time */
-  if (len == 0) return 0;
-  if (p == NULL) {
-    interrupt_jump_set = TRUE; /* for the interrupt handler */
-    if (sigsetjmp(interrupt_jump,TRUE)) { /* long jump occurred */
-	 fprintf(stderr,"^C\n");
-	 interrupt_jump_set = FALSE;
-	 rl_cleanup_after_signal();
-	 rl_free_line_state();
-	 return ERROR;
-	 }
-    p = readline(prompt);
-    interrupt_jump_set = FALSE;
-    if (p == NULL) return 0;	/* EOF */
-    i = 0;
-    plen = strlen(p);
-    if (*p) add_history(p);
-  }
-  r = plen - i;
-  if (r > len) r = len;
-  memmove(buf,p+i,r), i+=r;
-  if (i == plen && r < len) {
-    free(p), p = NULL;
-    buf[r++] = '\n';		/* readline() doesn't include the \n at the end */
-  }
-  return r;
-}
-
-int system_readline(M2_string buffer, int len, int offset, M2_string prompt) {
-  char *p = M2_tocharstar(prompt);
-  int r;
-  if (offset < 0 || (int)buffer->len - offset < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
-  r = read_via_readline(buffer->array + offset,len,p);
-  GC_FREE(p);
-  return r;
-}
-
-#if 0
-M2_ArrayString system_history(void) {
-  M2_ArrayString a;
-  HIST_ENTRY **h = history_list();
-  int i,n;
-  for (n=0; h != NULL && h[n] != NULL && h[n]->data != NULL; n++);
-  a = (M2_ArrayString) getmem (sizeofarray(a,n));
-  a->len = n;
-  for (i=0; i<n; i++) a->array[i] = M2_tostring(h[i]->line);
-  return a;
-}
-#endif
 
 /* stupid ANSI forces some systems to put underscores in front of useful identifiers */
 #if !defined(S_ISREG)
@@ -759,13 +652,14 @@ char *name;
 	  }
      else {
 	  struct hostent *t;
-	  if (sigsetjmp(interrupt_jump,TRUE)) {
+	  /* FIXME
+	  if (SETJMP(interrupt_jump)) {
 	       interrupt_jump_set = FALSE;
 	       return ERROR;
 	  }
-	  else interrupt_jump_set = TRUE;
+	  else interrupt_jump_set = TRUE; */
 	  t = gethostbyname(name); /* this function is obsolete because it doesn't handle IPv6; we use it only if getaddrinfo is not available */
-	  interrupt_jump_set = FALSE;
+	  // interrupt_jump_set = FALSE;
 	  if (t == NULL) {
 	       hostname_error_message = hstrerror(h_errno);
 	       return ERROR;
@@ -863,20 +757,21 @@ int openlistener(char *interface0, char *service) {
 }
 
 int opensocket(char *host, char *service) {
+  /* FIXME
+  if (SETJMP(interrupt_jump)) {
+    interrupt_jump_set = FALSE;
+    return ERROR;
+  } else { interrupt_jump_set = TRUE; }
+  */
 #ifdef HAVE_SOCKET
 #if defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS
   struct addrinfo *addr;
   int so;
-  if (sigsetjmp(interrupt_jump,TRUE)) {
-       interrupt_jump_set = FALSE;
-       return ERROR;
-  }
-  else interrupt_jump_set = TRUE;
   if (0 != set_addrinfo(&addr,NULL,host,service)) return ERROR;
   so = socket(addr->ai_family,SOCK_STREAM,0);
   if (ERROR == so) { freeaddrinfo(addr); return ERROR; }
   if (ERROR == connect(so,addr->ai_addr,addr->ai_addrlen)) { freeaddrinfo(addr); close(so); return ERROR; }
-  interrupt_jump_set = FALSE;
+  // interrupt_jump_set = FALSE;
   freeaddrinfo(addr);
   return so;
 #else
@@ -961,9 +856,9 @@ int system_run(M2_string command){
 
 struct FUNCTION_CELL *pre_final_list, *final_list, *thread_prepare_list;
 
-void system_atend(void (*f)()){
+void system_atend(void (*func)()){
      struct FUNCTION_CELL *this_final = (struct FUNCTION_CELL *)getmem(sizeof(struct FUNCTION_CELL));
-     this_final -> fun = f;
+     this_final -> func = func;
      this_final -> next = pre_final_list;
      pre_final_list = this_final;
      }
@@ -972,18 +867,6 @@ int system_strncmp(M2_string s,M2_string t,int n) {
   return strncmp(s->array,t->array,n);
 }
 
-#define re_compile_fastmap M2_re_compile_fastmap
-#define re_compile_pattern M2_re_compile_pattern
-#define re_match M2_re_match
-#define re_match_2 M2_re_match_2
-#define re_search M2_re_search
-#define re_search_2 M2_re_search_2
-#define re_set_registers M2_re_set_registers
-#define re_set_syntax M2_re_set_syntax
-#define regcomp M2_regcomp
-#define regerror M2_regerror
-#define regexec M2_regexec
-#define regfree M2_regfree
 #include "regex.h"
 
 #define SYNTAX_FLAGS ((RE_SYNTAX_POSIX_EXTENDED | (ignorecase ? RE_ICASE : 0)) & ~RE_DOT_NEWLINE)
@@ -1185,12 +1068,6 @@ M2_ArrayString system_regexselect(M2_string pattern, M2_string replacement, M2_s
     ret->len = retct;
     return ret;
   }
-}
-
-bool gotArg(const char *arg, const char **argv) {
-  /* used in M2lib.c, but we put them here to prevent it from being optimized away: */
-  for (; *argv; argv++) if (0 == strcmp(arg,*argv)) return TRUE;
-  return FALSE;
 }
 
 void do_nothing () { }

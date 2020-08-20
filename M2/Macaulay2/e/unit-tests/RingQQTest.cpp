@@ -9,7 +9,7 @@ static mpz_t maxH;
 #include "ZZp.hpp"
 
 template <>
-ring_elem getElement<QQ>(const QQ &R, int index)
+ring_elem getElement<RingQQ>(const RingQQ &R, int index)
 {
   if (index < 50) return R.from_long(index - 25);
   if (!maxH_initialized)
@@ -20,8 +20,7 @@ ring_elem getElement<QQ>(const QQ &R, int index)
     }
   gmp_QQ a1 = rawRandomQQ(maxH);
   ring_elem result;
-  bool ok = R.from_rational(a1, result);
-  assert(ok);
+  EXPECT_TRUE(R.from_rational(a1, result));
   return result;
 }
 ////////////////////////////////////////////////////////
@@ -31,7 +30,7 @@ TEST(RingQQ, create)
   EXPECT_TRUE(R != 0);
 
   EXPECT_TRUE(dynamic_cast<const Z_mod *>(R) == 0);
-  EXPECT_TRUE(dynamic_cast<const QQ *>(R) != 0);
+  EXPECT_TRUE(dynamic_cast<const RingQQ *>(R) != 0);
   EXPECT_EQ(R->coefficient_type(), Ring::COEFF_QQ);
   EXPECT_FALSE(R->is_ZZ());
   EXPECT_EQ(ringName(*R), "QQGMP");

@@ -75,7 +75,7 @@ document {
 	       stored in ", TT "obj#key", " if ", TT "obj", " is mutable, or in ", TT "obj.cache#key", " if not" }
 	  },
      SourceCode => {(addHook,HashTable,Thing,Function), (addHook,MutableHashTable,Thing,Function)},
-     SeeAlso => { (runHooks,HashTable,Thing,Thing), (removeHook,HashTable,Thing,Function) }
+     SeeAlso => { "using hooks", (runHooks,HashTable,Thing,Thing), (removeHook,HashTable,Thing,Function) }
      }
 document {
      Key => { (addHook,Symbol,Function) },
@@ -86,7 +86,7 @@ document {
 	       stored as the value of ", TT "sym" }
 	  },
      SourceCode => {(addHook,HashTable,Thing,Function), (addHook,MutableHashTable,Thing,Function)},
-     SeeAlso => { (runHooks,Symbol,Thing), (removeHook,Symbol,Function) }
+     SeeAlso => { "using hooks", (runHooks,Symbol,Thing), (removeHook,Symbol,Function) }
      }
 undocumented {(removeHook,MutableHashTable,Thing,Function)}
 document {
@@ -101,7 +101,7 @@ document {
 	  { "the function ", TT "hook", " is removed from the list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key" }
 	  },
      SourceCode => {(removeHook,HashTable,Thing,Function), (removeHook,MutableHashTable,Thing,Function)},
-     SeeAlso => { (runHooks,HashTable,Thing,Thing), (removeHook,HashTable,Thing,Function) }
+     SeeAlso => { "using hooks", (runHooks,HashTable,Thing,Thing), (removeHook,HashTable,Thing,Function) }
      }
 document {
      Key => { (removeHook,Symbol,Function)},
@@ -110,7 +110,7 @@ document {
      Consequences => {
 	  { "the function ", TT "hook", " is removed from the list of hooks stored in the value of ", TT "sym" }
 	  },
-     SeeAlso => { (runHooks,Symbol,Thing), (addHook,Symbol,Function) }
+     SeeAlso => { "using hooks", (runHooks,Symbol,Thing), (addHook,Symbol,Function) }
      }
 undocumented {(runHooks,MutableHashTable,Thing,Thing)}
 document {
@@ -122,28 +122,79 @@ document {
      Usage => "runHooks(obj,key,arg)",
      Inputs => { "obj", "key", "arg" },
      Outputs => {{
-	       "If one of the functions uses ", TO "break", " to return a value, that value will be returned.  Otherwise ", TO "null", " will be returned."
+	       "If one of the hook functions returns a non-", TO "null", " value, that value will be returned.  Otherwise ", TO "null", " will be returned."
 	       }},
-     Consequences => {
-	  { "each function ", TT "hook", " in list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key", " is
-	       called with ", TT "arg", " as its argument or sequence of arguments." }
-	  },
-     SourceCode => { (runHooks,HashTable,Thing,Thing), (runHooks,MutableHashTable,Thing,Thing) },
-     SeeAlso => { addHook, removeHook }
+     PARA { "Each function ", TT "hook", " in the list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key", " is
+            called with ", TT "arg", " as its argument or sequence of arguments. Any optional argument for ", TT "runHooks",
+            " that matches any key in ", TT "options hook", " will be passed on to ", TT "hook", ". Otherwise it will be ignored." 
+       },
+     SeeAlso => { "using hooks", addHook, removeHook }
      }
 document {
      Key => { (runHooks,Symbol,Thing) },
      Usage => "runHooks(sym,arg)",
      Inputs => { "sym", "arg" },
      Outputs => {{
-	       "If one of the functions uses ", TO "break", " to return a value, that value will be returned.  Otherwise ", TO "null", " will be returned."
-	       }},
-     Consequences => {
-	  { "each function ", TT "hook", " in list of hooks stored in value of ", TT "sym", " is
-	       called with ", TT "arg", " as its argument or sequence of arguments." }
-	  },
-     SeeAlso => { (addHook,Symbol,Function), (removeHook,Symbol,Function) }
+	       "If one of the hook functions returns a non-", TO "null", " value, that value will be returned.  Otherwise ", TO "null", " will be returned."
+            }},
+     PARA {
+	"Each function ", TT "hook", " in the list of hooks stored in the value of ", TT "sym", " is
+     called with ", TT "arg", " as its argument or sequence of arguments. Any optional argument for ", TT "runHooks",
+     " that matches any key in ", TT "options hook", " will be passed on to ", TT "hook", ". Otherwise it will be ignored." 
+	},
+     SeeAlso => { "using hooks", (addHook,Symbol,Function), (removeHook,Symbol,Function) }
      }
+
+
+document {
+     Key => {hooks,(hooks, MutableHashTable, Thing),(hooks, HashTable, Thing),(hooks, Symbol)},
+     Headline => "list hooks",
+     SYNOPSIS (
+       Usage => "methods(X, f)",
+       Inputs => {
+            "x" => { ofClass{MutableHashTable} }
+            },
+       Outputs => {{
+              ofClass VerticalList, " of those hooks associated with ", TT "X#f"
+              }},
+       EXAMPLE lines ///
+            instance(Ideal, MutableHashTable)
+            addHook(Ideal, symbol foo, I -> gens I);
+            addHook(Ideal, symbol foo, I -> if dim I == 0 then vars ring I);
+            Ideal#?(symbol foo)
+            hooks(Ideal, symbol foo)
+       ///
+       ),
+     SYNOPSIS (
+       Usage => "methods(X, f)",
+       Inputs => {
+            "x" => { ofClass{HashTable} }
+            },
+       Outputs => {{
+              ofClass VerticalList, " of those hooks associated with ", TT "X.cache#f"
+              }},
+       EXAMPLE lines ///
+            ht = new HashTable from {cache => new MutableHashTable};
+            addHook(ht, symbol foo, i -> i + 1);
+            hooks(ht, symbol foo)
+       ///
+       ),
+     SYNOPSIS (
+       Usage => "hooks(sym)",
+       Inputs => {
+            "sym" => Symbol
+            },
+       Outputs => {{
+              ofClass VerticalList, " of those hooks stored in the value of ", TT "sym"
+              }},
+       EXAMPLE lines ///
+            addHook(symbol bar, i-> i + 1)
+            hooks(symbol bar)
+       ///
+       ),
+     SeeAlso => { "using hooks" }
+     }
+
 undocumented {(generateAssertions, List)}
 document { Key => {generateAssertions,(generateAssertions, String)},
      Headline => "generate assert statements from experimental input",
@@ -232,7 +283,7 @@ document { Key => {applicationDirectory, "application directory"},
 	  },
      PARA { "The function ", TO "applicationDirectorySuffix", " determines the value of ", TT "applicationDirectory", ", and can be modified by the user." },
      EXAMPLE "applicationDirectory()",
-     SeeAlso => applicationDirectorySuffix}
+     SeeAlso => "applicationDirectorySuffix"}
 
 document {
      Key => installedPackages,
