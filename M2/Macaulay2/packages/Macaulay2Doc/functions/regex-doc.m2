@@ -2,8 +2,6 @@
 --- author(s): Dan, Mahrud
 --- notes: functions below are all defined in regex.m2
 
-undocumented {POSIX}
-
 doc ///
   Key
      regex
@@ -11,6 +9,7 @@ doc ///
     (regex, String, ZZ,     String)
     (regex, String, ZZ, ZZ, String)
     [regex, POSIX]
+    POSIX
   Headline
     evaluate a regular expression search
   Usage
@@ -110,16 +109,22 @@ doc ///
     syntax for regular expressions
   Description
     Text
+
       A regular expression is a string that specifies a pattern that describes a set of matching subject strings.
-      All characters match themselves, except for the following special characters:
+      Typically the string is compiled into a deterministic finite automaton whose execution, guided by the
+      subject string, determines whether there is a match.
 
-      @PRE {CODE {".[{}()\\*+?|^$"}}@
+      Characters match themselves, except for the following special characters.
 
-      Regular expressions are constructed inductively as follows:
-      a concatenation of regular expressions matches the concatenation of corresponding matching subject strings.
-      Regular expressions separated by the character @TT "|"@ match strings matched by any. Parentheses can be used
-      for grouping, and results about which substrings of the target string matched which parenthesized subexpression
-      of the regular expression can be returned.
+      @PRE {CODE {".  [  {  }  (  )  \\  *  +  ?  |  ^  $"}}@
+
+      Regular expressions are constructed inductively as follows: the empty regular expression matches the
+      empty string; a concatenation of regular expressions matches the concatenation of the corresponding
+      matching strings.  Regular expressions separated by the character @TT "|"@ match strings matched by any
+      of them.  Parentheses can be used for grouping, except that now, with the use of the @ TO "Boost" @
+      library, their insertion may alter the matching of subexpressions of ambiguous expressions.
+      Additionally, the substrings matched by parenthesized subexpressions are captured for later use in
+      replacement strings.
 
       @HEADER3 "Special characters"@
 

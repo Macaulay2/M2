@@ -44,7 +44,14 @@ document {
 		       there are multiple options to match the regular expression.
 		       Internally, the new implementation incorporates the ", TO2{"Boost", "Boost.Regex"}, " library." }
                    }
-              }
+              },
+	 LI { "functionality changed in a way that could break code:",
+	      UL {
+		   LI { "The variable ", TO "backupFileRegexp", " has been replaced by the ", TO "Exclude", "
+			option to ", TO "copyDirectory", "."    
+			}
+		   }
+	      }
 	 }
      }
 
