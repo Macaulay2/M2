@@ -30,6 +30,8 @@ getProgramPath = (name, cmds, opts) -> (
 	pathsToTry = append(pathsToTry, programPaths#name);
     -- now try M2-installed path
     pathsToTry = append(pathsToTry, prefixDirectory | currentLayout#"programs");
+    -- any additional paths specified by the caller
+    pathsToTry = pathsToTry | opts.AdditionalPaths;
     -- finally, try PATH
     if getenv "PATH" != "" then
 	pathsToTry = join(pathsToTry, separate(":", getenv "PATH"));
@@ -50,7 +52,12 @@ getProgramPath = (name, cmds, opts) -> (
 )
 
 findProgram = method(TypicalValue => Program,
-    Options => {RaiseError => true, Verbose => false, Prefix => {}})
+    Options => {
+	RaiseError => true,
+	Verbose => false,
+	Prefix => {},
+	AdditionalPaths => {}
+    })
 findProgram(String, String) := opts -> (name, cmd) ->
     findProgram(name, {cmd}, opts)
 findProgram(String, List) := opts -> (name, cmds) -> (
@@ -63,14 +70,23 @@ findProgram(String, List) := opts -> (name, cmds) -> (
 )
 
 runProgram = method(TypicalValue => ProgramRun,
-    Options => {RaiseError => true, KeepFiles => false, Verbose => false})
+    Options => {
+	RaiseError => true,
+	KeepFiles => false,
+	Verbose => false,
+	RunDirectory => null
+	})
 runProgram(Program, String) := opts -> (program, args) ->
     runProgram(program, program#"name", args, opts)
 runProgram(Program, String, String) := opts -> (program, name, args) -> (
     tmpFile := temporaryFileName();
     outFile := tmpFile | ".out";
     errFile := tmpFile | ".err";
-    cmd := program#"path" | addPrefix(name, program#"prefix") | " " | args;
+    cmd := if opts.RunDirectory =!= null then (
+	if not isDirectory opts.RunDirectory then
+	    makeDirectory opts.RunDirectory;
+	"cd " | opts.RunDirectory | " && " ) else "";
+    cmd = cmd | program#"path" | addPrefix(name, program#"prefix") | " " | args;
     returnValue := run (cmd | " > " | outFile | " 2> " | errFile);
     message := "running: " | cmd | "\n";
     output := get outFile;

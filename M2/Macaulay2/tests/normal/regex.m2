@@ -41,6 +41,12 @@ assert not match(regexQuote "(foo)", "foo")
 assert not match(regexQuote "[foo]", "foo")
 assert not match(regexQuote "foo{1}", "foo")
 
+assert (separateRegexp ("-","a-cd-xxx-yyy-") == {"a", "cd", "xxx", "yyy", ""})
+
+assert (try separateRegexp(".?", "ABCD") else true)
+    -- i3 : separateRegexp(".?", "ABCD")
+    -- stdio:3:1:(3): error: separateRegexp: regular expression made no progress
+
 end
 print generateAssertions ///
 6

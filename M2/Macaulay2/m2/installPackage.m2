@@ -443,7 +443,7 @@ reproduciblePaths = outstr -> (
      if any({srcdir, builddir, homedir}, dir -> match(dir, outstr))
      then (
 	 -- .m2 files in source directory
-	 outstr = replace(srcdir | "Macaulay2/m2",
+	 outstr = replace(srcdir | "Macaulay2/\\b(m2|Core)\\b",
 	     finalPrefix | Layout#1#"packages" | "Core", outstr);
 	 outstr = replace(srcdir | "Macaulay2/packages/",
 	     finalPrefix | Layout#1#"packages", outstr);
@@ -455,6 +455,8 @@ reproduciblePaths = outstr -> (
 	     outstr = replace(prefixdir | Layout#2#key,
 		 finalPrefix | Layout#1#key, outstr));
 	 outstr = replace(prefixdir, finalPrefix, outstr);
+	 -- usr-build/bin is in PATH during build
+	 outstr = replace(builddir | "usr-build/", finalPrefix, outstr);
 	 -- home directory
 	 outstr = replace(homedir, "/home/m2user", outstr);
 	 );

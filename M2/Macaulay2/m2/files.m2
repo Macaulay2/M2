@@ -493,9 +493,8 @@ installMethod(setup, () -> (
      --     executes commands from the first one that exists and is readable.
      mungeFile(     if fileExists "~/.bash_profile" then "~/.bash_profile"
 	       else if fileExists "~/.bash_login"   then "~/.bash_login"
-	       else "~/.bash_profile",
+	       else "~/.profile",
 	       startToken,endToken,M2profileRead) or
-     mungeFile("~/.profile",startToken,endToken,M2profileRead) or
      -- zsh:
      mungeFile("~/.zprofile",startToken,endToken,M2profileRead) or
      -- csh and tcsh:

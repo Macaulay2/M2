@@ -1,8 +1,7 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2009 by Daniel R. Grayson
--- The generated contents of Core/startup.m2.in are incorporated into the executable file bin/M2-binary
--- as the string 'startupString' and, for convenience, distributed as startup.m2. Therefore, changing
--- startup.m2 has no effect on the system; instead, modify startup.m2.in and recompile M2-binary.
+-- layout.m2, includes the former contents of ../m2/startup.m2
+-- this file gets incorporated into the executable file bin/M2 as the string 'startupString'
 -- we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 
 interpreterDepth = loadDepth = errorDepth = 0
@@ -509,7 +508,7 @@ action2 := hashTable {
      "--srcdir" => arg -> if phase == 2 then (
 	  if not match("/$",arg) then arg = arg|"/";
 	  srcdirs = append(srcdirs,arg);
-	  initialPath = join(initialPath,select({arg|"Macaulay2/Core/",arg|"Macaulay2/packages/"},isDirectory));
+	  initialPath = join(initialPath,select({arg|"Macaulay2/m2/",arg|"Macaulay2/packages/"},isDirectory));
 	  ),
      "-E" => arg -> if phase == 3 then valueNotify arg,
      "-e" => arg -> if phase == 4 then valueNotify arg,
@@ -625,10 +624,10 @@ path = (x -> select(x, i -> i =!= null)) deepSplice {
 	  if prefixDirectory =!= null then (
 	       if topBuilddir =!= null then (
 		    if topSrcdir =!= null then (
-			 topSrcdir|"Macaulay2/Core/",
+		    	 topSrcdir|"Macaulay2/m2/",
 		    	 topSrcdir|"Macaulay2/packages/"
 			 ),
-		    topBuilddir|"Macaulay2/Core/"
+		    topBuilddir|"Macaulay2/m2/"
 		    -- topBuilddir|"Macaulay2/packages/"
 		    ),
 	       prefixDirectory | replaceStrings("PKG","Core",currentLayout#"package"),

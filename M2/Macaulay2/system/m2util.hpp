@@ -4,7 +4,6 @@
 #include "mutexclass.hpp"
 
 #include <M2/gc-include.h>
-#include <gc/gc_cpp.h>
 
 extern M2_string M2_tostring_3(const char *);
 struct parse_Sequence_struct {unsigned short type_;int len;parse_Expr array[1];};
