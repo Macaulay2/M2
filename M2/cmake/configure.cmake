@@ -298,7 +298,6 @@ check_include_files(sys/wait.h	HAVE_SYS_WAIT_H)
 check_include_files(termios.h	HAVE_TERMIOS_H)
 check_include_files(time.h	HAVE_TIME_H)
 check_include_files(unistd.h	HAVE_UNISTD_H)
-check_include_files(regex.h	HAVE_REGEX_H)
 # TODO: clear out d/types.h
 
 include(CheckFunctionExists)

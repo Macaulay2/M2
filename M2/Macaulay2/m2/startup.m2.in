@@ -259,10 +259,10 @@ if firstTime then (
 	  if regex(".*/","/aa/bb") =!= {(0, 4)}
 	  or regex("a|b","a") =!= {(0,1)}
 	  or regex("^a+$"," \naaa\n ") =!= {(2,3)}
-	  or replaceStrings("a","b","-a-a-") =!= "-b-b-"
 	  or regex("$a","$a") =!= null
 	  or regex(".*","a\nb") =!= {(0, 1)}
-	  or select("a+","aaa aaaa") =!= {"aaa","aaaa"}
+	  or replace("a","b","-a-a-") =!= "-b-b-"
+	  or select("a+","$&","aaa aaaa") =!= {"aaa","aaaa"}
 	  then error "regex regular expression library not working";
 	  t := hashTable {
 	       "exec" => "${exec_prefix}/",
@@ -290,11 +290,10 @@ if firstTime then (
 	       "packageexampleoutput" => "@docdir@/PKG/example-output/"
 	       };
 	  Layout = hashTable {
-	       1 => applyValues( t, x -> replaceStrings("^\\$\\{(pre_)?(exec_)?prefix\\}/","",x)),
+	       1 => applyValues( t, x -> replace("^\\$\\{(pre_)?(exec_)?prefix\\}/", "", x)),
 	       2 => applyValues( t, x -> 
-		    replaceStrings("^\\$\\{(pre_)?prefix\\}","common",	    -- as in configure.ac
-			 replaceStrings("^\\$\\{(pre_)?exec_prefix\\}",version#"machine", -- as in configure.ac
-			      x)))};
+		    replace("^\\$\\{(pre_)?prefix\\}", "common",				-- as in configure.ac
+			 replace("^\\$\\{(pre_)?exec_prefix\\}", version#"machine", x)))};	-- as in configure.ac
 	  finalPrefix = "@prefix@";
 	  if last finalPrefix != "/" then finalPrefix = finalPrefix | "/";
 	  );
@@ -630,7 +629,7 @@ path = (x -> select(x, i -> i =!= null)) deepSplice {
 		    topBuilddir|"Macaulay2/m2/"
 		    -- topBuilddir|"Macaulay2/packages/"
 		    ),
-	       prefixDirectory | replaceStrings("PKG","Core",currentLayout#"package"),
+	       prefixDirectory | replace("PKG", "Core", currentLayout#"package"),
 	       prefixDirectory | currentLayout#"packages"
 	       )
 	  }

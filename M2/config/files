@@ -103,7 +103,6 @@ Macaulay2/tests/ComputationsBook/schemes/Makefile
 Macaulay2/tests/ComputationsBook/solving/Makefile
 Macaulay2/tests/ComputationsBook/toricHilbertScheme/Makefile
 Macaulay2/tests/ComputationsBook/varieties/Makefile
-Macaulay2/regex/Makefile
 Macaulay2/srcdir
 Macaulay2/system/Makefile
 Macaulay2/tests/Makefile

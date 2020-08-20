@@ -84,7 +84,7 @@ safevalue = t -> (
 markup2 = (textlines, keylinenum) -> (
      if #textlines === 0 then return "";
      s := concatenate between(" ",getText \ textlines);
-     sp := separateRegexp(///(^|[^\])(@)///, 2, s);
+     sp := separateRegexp(///(^|[^\\])(@)///, 2, s);
      sp = apply(sp, s -> replace(///\\@///,"@",s));
      if not odd(#sp) then error "unmatched @";
      t := for i from 0 to #sp-1 list if even i then if sp#i != "" then TEX sp#i else "" else safevalue concatenate("(",sp#i,")");

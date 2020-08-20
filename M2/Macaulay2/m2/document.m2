@@ -449,12 +449,6 @@ formatDocumentTag Array := s -> (
 -----------------------------------------------------------------------------
 -- fixing up hypertext
 -----------------------------------------------------------------------------
-trimline0 := x -> selectRegexp ( "^((.*[^ \t])?)[ \t]*$",1, x)
-trimline  := x -> selectRegexp ( "^[ \t]*((.*[^ \t])?)[ \t]*$",1, x)
-trimline1 := x -> selectRegexp ( "^[ \t]*(.*)$",1, x)
-addspaces0:= x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else concatenate(x," ")
-addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
-
 fixup Thing      := z -> error("unrecognizable item ",toString z," of class ",toString class z," encountered while processing documentation node ", toString currentHelpTag)
 fixup List       := z -> fixup toSequence z
 fixup Sequence   := 
@@ -483,11 +477,9 @@ fixup MarkUpType := z -> (
      else error("isolated mark up type encountered: ",toString z)
      ) -- convert PARA to PARA{}
 -- fixup Function   := z -> z				       -- allow BaseFunction => f 
-fixup String     := s -> (				       -- remove clumsy newlines within strings
-     if not match("\n",s) then return s;
-     ln := separate s;
-     concatenate ({addspaces0 trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
+fixup String     := s -> demark_" " separate("[ \t]*\r?\n[ \t]*", s) -- remove clumsy newlines within strings
 
+-- TODO: move this, and above, to hypertext.m2
 hypertext = method(Dispatch => Thing)
 hypertext Hypertext := fixup
 hypertext Sequence := hypertext List := x -> fixup DIV x
@@ -542,7 +534,7 @@ separateM2output String := r -> (
      m := regex("^i1 : ",r);
      if m#?0 then r = substring(m#0#0,r);
      while r#?-1 and r#-1 == "\n" do r = substring(0,#r-1,r);
-     separateRegexp(M2outputRE,M2outputREindex,r))
+     separate(M2outputRE,M2outputREindex,r))
 
 makeExampleOutputFileName := (fkey,pkg) -> (			 -- may return 'null'
      if pkg#?"package prefix" and pkg#"package prefix" =!= null 

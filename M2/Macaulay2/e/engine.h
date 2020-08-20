@@ -2151,6 +2151,7 @@ extern "C" {
   // NAG end  
   const Matrix /* or null */ *rawGbBoolean(const Matrix *m);
   const Matrix /* or null */ *rawBIBasis(const Matrix* m, int toGroebner);
+
 #if defined(__cplusplus)
 }
 #endif
