@@ -64,7 +64,7 @@ Node
       The headings @TO Usage@, @TO BaseFunction@, @TO Inputs@, @TO Outputs@, and @TO Consequences@,
       are useful only for documentation of the first type, as well as in a call to @TO SYNOPSIS@.
 
-    Subnodes
+    Tree
       :Templates for using the @TO (document, List)@ method
         "package documentation template"
         "function documentation template"
@@ -106,7 +106,7 @@ Node
                   ...
                   },
               }////}
-    Subnodes
+    Tree
       :Other Functions generating @TO "hypertext list format"@ that you may use:
         SYNOPSIS
         EXAMPLE
@@ -406,7 +406,8 @@ Node
       the documentation subnodes listed will appear as decendents of this node in the documentation tree
   Description
     Text
-      This option inserts into a documentation page a menu of subnodes.
+      This option inserts into a documentation page a menu of subnodes and defines how the tree structure
+      of the documentation is constructed. This is relevant when printing the documentation.
 
       @SUBSECTION {"Example of usage as an optional argument to ", TO (document, List)}@
     Code
@@ -415,21 +416,11 @@ Node
               TO "a link name",
               TO "another link name"
               },//// }
-    Text
-      The @TT "Subnodes"@ option defines how the tree structure of the documentation is constructed.
-      This is relevant when printing the documentation.
 
     Text
       @SUBSECTION {"Example of usage as a keyword in ", TO "SimpleDoc :: doc(String)"}@
 
       When used as a main section of a documentation node, @TT "Subnodes"@ can be used as follows:
-    Code
-      EXAMPLE { PRE ////Subnodes
-          :A heading
-          myFunction
-          "a link name"//// }
-    Text
-      When used as a main section of the @TT "Description"@ node, @TT "Subnodes"@ can be used as follows:
     Code
       EXAMPLE { PRE ////Subnodes
           :Heading 1

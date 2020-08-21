@@ -80,7 +80,7 @@ Node
       Macaulay2 searches for the file @TT "FirstPackage.m2"@ on your search @TO "path"@.
       The packages provided with Macaulay2 are on your search path, as is your current
       working directory.
-    Subnodes
+    Tree
       :Using existing packages
         loadPackage
         needsPackage
@@ -140,7 +140,7 @@ Node
       code for working with objects of a certain category, generating examples for testing a conjecture,
       or an implemention of algorithms introduced in the literature.
 
-    Subnodes
+    Tree
       :There are five parts to a Macaulay2 package
         :the preamble, initiated by @TO newPackage@
         :a list of exported functions and variables, set via @TO export@ and @TO exportMutable@

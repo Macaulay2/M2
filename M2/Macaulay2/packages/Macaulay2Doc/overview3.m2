@@ -314,7 +314,7 @@ doc ///
       portable C++ libraries suitable for eventual standardization.
 
       Macaulay2 incorporates the following Boost libraries:
-    Subnodes
+    Tree
       @HREF {"https://www.boost.org/doc/libs/release/libs/stacktrace/", "Boost.Stacktrace"}@ (since version 1.16)
         :used internally for printing stack traces
       @HREF {"https://www.boost.org/doc/libs/release/libs/regex/", "Boost.Regex"}@ (since version 1.17)

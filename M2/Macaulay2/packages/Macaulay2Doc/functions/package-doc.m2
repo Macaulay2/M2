@@ -53,7 +53,7 @@ Node
     Text
       See @TO "packages"@ for an overview about using and writing Macaulay2 packages.
 
-    Subnodes
+    Tree
       :Available packages:
         "packages provided with Macaulay2"
         :The directory containing the packages is @HREF { currentLayout#"packages", currentLayout#"packages" }@
@@ -569,7 +569,7 @@ Node
       The files of the package are placed in subdirectories of the appropriate prefix directory as specified by @TO "Layout"@,
       depending on the value of the @TT "SeparateExec"@ option:
 
-    Subnodes
+    Tree
       :when @TT "SeparateExec"@ is false the files are installed as follows:
         @TT (Layout#1#"packages"|"PackageName.m2")@,
         @TT (Layout#1#"info"|"PackageName.info")@,

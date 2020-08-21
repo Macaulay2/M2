@@ -7,7 +7,7 @@ Node
     Text
       Documentation for user defined @TO "packages"@ and Macaulay2 itself is written using two main methods:
 
-    Subnodes
+    Tree
       :Macaulay2 documentation methods
         :the @TO (document, List)@ function, using a list-based @TO2("hypertext list format", "hypertext")@ markup format;
         :the @TO "SimpleDoc :: doc(String)"@ function, using a string-based @TO "SimpleDoc :: SimpleDoc"@ format.
@@ -156,7 +156,7 @@ Node
       The corresponding key is @TT "(resolution, Module)"@, and it is the job of the function @TO makeDocumentTag@
       to convert keys to titles.
 
-    Subnodes
+    Tree
       :Types of documentation keys
         @TT format "a string"@
 	@TT "s"@ a symbol

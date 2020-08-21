@@ -574,7 +574,7 @@ doc ///
       The documentation for Macaulay2 is available in several formats and can
       be searched and viewed using the following functions:
 
-    Subnodes
+    Tree
       :Finding documentation nodes
         about
 	apropos
