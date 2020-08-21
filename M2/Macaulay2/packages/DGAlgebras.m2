@@ -17,7 +17,11 @@ export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff",
         "torMap", "homologyAlgebra", "torAlgebra", "maxDegree", "StartDegree", "EndDegree", "ringMap",
 	"isHomologyAlgebraTrivial", "findTrivialMasseyOperation", "findNaryTrivialMasseyOperation", "AssertWellDefined",
 	"isGolod", "isGolodHomomorphism", "GenDegreeLimit", "RelDegreeLimit", "TMOLimit",
-	"InitializeDegreeZeroHomology", "InitializeComplex", "isAcyclic", "getDegNModule"
+	"InitializeDegreeZeroHomology", "InitializeComplex", "isAcyclic", "getDegNModule",
+    	-- documented so far
+	"masseyTripleProduct",
+    	-- still to document
+	"getBoundaryPreimage",  "homologyClass", "homologyModule","dgAlgebraMultMap"
 }
 
 -- Questions:
@@ -58,6 +62,7 @@ export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff",
 -----------------------------------------------------
 -- Set DG algebra types and constructor functions. -- 
 -----------------------------------------------------
+
 -- protected symbols (I don't want to export these symbols, but I use them internally in the code at various places)
 protect diffs
 protect basisAlgebra
@@ -885,7 +890,10 @@ getBoundaryPreimage (DGAlgebra,List,ZZ) := (A,boundaryList,homDegree) -> (
          retVal = (true,flatten entries (Anplus1basis * substitute(retVal, A.ring)));
    retVal
 )
-getBoundaryPreimage (DGAlgebra,RingElement) := (A,b) -> getBoundaryPreimage(A,{b}, first degree b)
+getBoundaryPreimage (DGAlgebra,RingElement) := (A,b) -> (
+   (lifted,myLift) := getBoundaryPreimage(A,{b}, first degree b);
+   (lifted,first myLift)
+)
 
 findTrivialMasseyOperation = method(TypicalValue=>Sequence, Options=>{GenDegreeLimit=>infinity,TMOLimit=>infinity})
 findTrivialMasseyOperation DGAlgebra := opts -> A -> (
@@ -974,7 +982,7 @@ representativeCycle = method()
 representativeCycle(DGAlgebra, RingElement) := (A, h) -> (
    --- this function takes an element h in HH(A) and returns
    --- a cycle representing h
-   H := A.cache.homologyAlgebra#homologyAlgebra;
+   H := HH(A);
    phi := map(A.natural,H,H.cache.cycles);
    phi h
 )
@@ -1001,6 +1009,8 @@ masseyTripleProductOnCycles = method()
 masseyTripleProductOnCycles(DGAlgebra, RingElement, RingElement, RingElement) := (A,z1,z2,z3) -> (
    -- this function computes a cycle representing the Massey operation
    -- of <h1,h2,h3> where hi is represented by zi.
+   if ring z1 =!= A.natural or ring z2 =!= A.natural or ring z3 =!= A.natural then
+      error "Expected elements of the underlying algebra of input DGAlgebra.";
    l := first degree z1;
    m := first degree z2;
    n := first degree z3;
@@ -1010,7 +1020,7 @@ masseyTripleProductOnCycles(DGAlgebra, RingElement, RingElement, RingElement) :=
    if not lifted12 then error "The product z1z2 was not a boundary.";
    (lifted23,lift23) := getBoundaryPreimage(A,(-1)^(m+1)*z2*z3);
    if not lifted23 then error "The product z2z3 was not a boundary.";
-   result := (-1)^(l+m)*(first lift12)*z3 + (-1)^(l+1)*z1*(first lift23);
+   result := (-1)^(l+m)*lift12*z3 + (-1)^(l+1)*z1*lift23;
    result
 )
 
@@ -1039,6 +1049,13 @@ masseyTripleProduct = method()
 masseyTripleProduct(DGAlgebra, RingElement, RingElement, RingElement) := (A,h1,h2,h3) -> (
    -- this function computes the Massey triple product <h1,h2,h3>
    H := HH(A);
+   if ring h1 =!= H or ring h2 =!= H or ring h3 =!= H then
+   (
+      if ring h1 =!= A.natural or ring h2 =!= A.natural or ring h3 =!= A.natural then
+         error "Expected elements of the homology algebra of input DGAlgebra."
+      else
+         return masseyTripleProductOnCycles(A,h1,h2,h3);
+   );
    if (h1*h2 != 0 or h2*h3 != 0) then return 0_H;
    z1 := representativeCycle(A,h1);
    z2 := representativeCycle(A,h2);
@@ -2380,6 +2397,69 @@ doc ///
 
 doc ///
   Key
+    masseyTripleProduct
+    (masseyTripleProduct,DGAlgebra,RingElement,RingElement,RingElement)
+  Headline
+    Computes the Massey triple product of a set of cycles or homology classes
+  Usage
+    h = masseyTripleProduct(A,h1,h2,h3)
+  Inputs
+    A:DGAlgebra
+    h1:RingElement
+    h2:RingElement
+    h3:RingElement
+  Outputs
+    h:RingElement
+      The return value is either the homology class of the Massey triple product defined
+      by the inputs or a cycle representing the homology class.
+  Description
+    Text
+       These functions compute the Massey triple product of either three homology classes
+       or three cycles that represent nonzero homology classes for which the Massey triple product
+       is defined.
+    Text
+       For an example, we return to an example due to Lukas Katthan which was discussed in @ TO isGolod @.
+       First, we define the algebra:
+    Example
+       Q = QQ[x_1,x_2,y_1,y_2,z]
+       I = ideal (x_1*x_2^2,y_1*y_2^2,z^3,x_1*x_2*y_1*y_2,y_2^2*z^2,x_2^2*z^2,x_1*y_1*z,x_2^2*y_2^2*z)
+       R = Q/I
+       KR = koszulComplexDGA R
+    Text
+       The following are cycles:
+    Example
+       z1 = z^2*T_5
+       z2 = y_2^2*T_3
+       z3 = x_2^2*T_1
+    Text
+       and z1*z2, z2*z3 vanish in homology:
+    Example
+       (lifted12,lift12) = getBoundaryPreimage(KR,z1*z2)
+       (lifted23,lift23) = getBoundaryPreimage(KR,z2*z3)
+    Text
+       Note that the first return value of @ TO getBoundaryPreimage @ indicates that the inputs
+       are indeed boundaries, and the second value is the lift of the boundary along the differential.
+    Text
+       Given cycles z1,z2,z3 such that z1*z2 and z2*z3 are boundaries, 
+       the Massey triple product of the homology classes represented by z1,z2 and z3 
+       is the homology class of lift12*z3 + z1*lift23.  To see this, we compute and check:
+    Example
+       z123 = masseyTripleProduct(KR,z1,z2,z3)
+       z123 == lift12*z3 + z1*lift23
+    Text
+       One may also compute Massey triple products directly on elements of the homology
+       algebra itself, as is seen with the command masseyTripleProduct:
+    Example
+       H = HH(KR)
+       h1 = homologyClass(KR,z1)
+       h2 = homologyClass(KR,z2)
+       h3 = homologyClass(KR,z3)
+       h123 = masseyTripleProduct(KR,h1,h2,h3)
+       h123 == homologyClass(KR,z123)
+///
+
+doc ///
+  Key
     expandGeomSeries
     (expandGeomSeries,List,ZZ)
     (expandGeomSeries,RingElement,ZZ)
@@ -3215,7 +3295,7 @@ z2 = y_2^2*T_3
 z3 = x_2^2*T_1
 getBoundaryPreimage(KR,z1*z2)
 getBoundaryPreimage(KR,z2*z3)
-z123 = masseyTripleProductOnCycles(KR,z1,z2,z3)
+z123 = masseyTripleProduct(KR,z1,z2,z3)
 H = HH(KR)
 h1 = homologyClass(KR,z1)
 h2 = homologyClass(KR,z2)
