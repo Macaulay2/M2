@@ -755,11 +755,35 @@ noetherianOperators (Ideal, Ideal) := List => opts -> (I, P) -> (
         if debugLevel > 0 then "Symbolic Noetherian degree: "<<i<<endl;
     );
     K = transpose first rowReduce(transpose K, true);
-    S' := diffAlg S;
-    bdd := sub(bd, vars S');
-    L := sort flatten entries (bdd * sub(lift(K, S), S'));
+    error"dbg";
+
+    R' := diffAlg R;
+    StoR := map(R,S);
+    RtoR' := map(R',R, vars R');
+
+    bdd := RtoR' StoR bd;
+    KK := lift(K, S);
+
+    -- Clear denominators from KK
+    L := sort for i to numColumns KK - 1 list (
+        commonFactor := flatten entries KK_i / 
+            flatten @@ entries @@ last @@ coefficients //
+            flatten /
+            (c -> lift(c, coefficientRing S)) /
+            denominator //
+            lcm;
+        cleared := sub(promote(commonFactor, coefficientRing S) * KK_i, R);
+        (bdd * (promote(cleared, R')))_(0)
+    );
+
     new SetOfNoethOps from {Ops => L, Prime => P}
 )
+
+
+clearDenominators = (M,R) -> (
+
+)
+
 
 noetherianOperators (Ideal) := List => opts -> (I) -> noetherianOperators(I, ideal gens radical I, opts)
 noetherianOperators (Ideal, Point) := List => opts -> (I, p) -> (
