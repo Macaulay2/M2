@@ -7,7 +7,7 @@ newPackage("DGAlgebras",
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
 	   Email => "moorewf@wfu.edu"}},
-     DebuggingMode => false,
+     DebuggingMode => true,
      PackageExports => {"IntegralClosure"}
      )
 
@@ -23,6 +23,13 @@ export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff",
     	-- still to document
 	"homologyModule","dgAlgebraMultMap"
 }
+
+--warning: symbol has no documentation: DGAlgebras :: dgAlgebraMultMap, package DGAlgebras
+--warning: method has no documentation: DGAlgebras :: dgAlgebraMultMap(DGAlgebra,RingElement), key (dgAlgebraMultMap,DGAlgebra,RingElement), package DGAlgebras
+--warning: method has no documentation: DGAlgebras :: masseyTripleProduct(DGAlgebra,ZZ,ZZ,ZZ), key (masseyTripleProduct,DGAlgebra,ZZ,ZZ,ZZ), package DGAlgebras
+--warning: symbol has no documentation: DGAlgebras :: homologyModule, package DGAlgebras
+--warning: method has no documentation: DGAlgebras :: homologyModule(DGAlgebra,Module), key (homologyModule,DGAlgebra,Module), package DGAlgebras
+--warning: symbol has no documentation: DGAlgebras :: ringMap, package DGAlgebras
 
 -- Questions:
 -- is there a way to present graded pieces of graded A-modules as modules over A_0?
@@ -866,9 +873,13 @@ DGAlgebra ** DGAlgebra := (A,B) -> (
 
 getBoundaryPreimage = method()
 getBoundaryPreimage (DGAlgebra,List) := (A,boundaryList) -> (
-   homDegree := first degree first boundaryList;
-   if any(boundaryList, b -> first degree b != homDegree) then
+   nonzeroes := select(boundaryList, b -> b != 0);
+   if nonzeroes == {} then return (true,boundaryList);
+   homDegree := first degree first nonzeroes;
+   if any(boundaryList, b -> b != 0 and first degree b != homDegree) then
+   (
       error "Expected a list of elements of the same homological degree.";
+   );
    dnplus1 := polyDifferential(homDegree+1,A);
    Anbasis := flatten entries getBasis(homDegree,A);
    Anplus1basis := getBasis(homDegree+1,A);
