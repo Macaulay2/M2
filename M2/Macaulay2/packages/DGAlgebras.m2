@@ -19,9 +19,9 @@ export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff",
 	"isGolod", "isGolodHomomorphism", "GenDegreeLimit", "RelDegreeLimit", "TMOLimit",
 	"InitializeDegreeZeroHomology", "InitializeComplex", "isAcyclic", "getDegNModule",
     	-- documented so far
-	"masseyTripleProduct",
+	"masseyTripleProduct","getBoundaryPreimage","homologyClass",
     	-- still to document
-	"getBoundaryPreimage",  "homologyClass", "homologyModule","dgAlgebraMultMap"
+	"homologyModule","dgAlgebraMultMap"
 }
 
 -- Questions:
@@ -339,6 +339,8 @@ polyDifferential (ZZ,DGAlgebra) := (n,A) -> (
 
 polyDifferential (DGAlgebra,RingElement) := (A,f) -> sum apply(terms f, m -> polyDiffMonomial(A,m))
 
+diff (DGAlgebra,RingElement) := (A,f) -> polyDifferential(A,f);
+
 homology (ZZ,DGAlgebra) := opts -> (n,A) -> (
   dn := 0;
   dnplus1 := 0;
@@ -523,6 +525,8 @@ makeHomologyRing (DGAlgebra,List,List,Boolean) := (A, cycleList, relList, ForceG
      HA.cache = new CacheTable;
      HA.cache#(symbol basisAlgebra) = polyRing'/I';
   );
+  use A.natural;
+  use A.ring;
   HA
 )
 
@@ -545,7 +549,8 @@ findEasyRelations (DGAlgebra,List) := (A, cycleList) -> (
   degList := apply(numgens A.natural + numgens A.ring, i -> degree varsList#i);
   degList = degList | apply(cycleList, i -> degree i);
   if (not isHomogeneous A) then degList = pack(degList / first, 1);
-  B := baseRing[varsList,MonomialOrder=>{numgens A.natural + numgens A.ring,#cycleList},Degrees=>degList, SkewCommutative=>skewList];
+  monB := monoid [varsList,MonomialOrder=>{numgens A.natural + numgens A.ring,#cycleList},Degrees=>degList, SkewCommutative=>skewList];
+  B := baseRing monB;
   K := substitute(ideal A.natural, B) + substitute(ideal A.ring, B) + ideal apply(#cycleList, i -> B_(numAvars+i) - substitute(cycleList#i,B));
   if A.isHomogeneous then assert(isHomogeneous K);
   easyRels := 0;
@@ -860,7 +865,10 @@ DGAlgebra ** DGAlgebra := (A,B) -> (
 )
 
 getBoundaryPreimage = method()
-getBoundaryPreimage (DGAlgebra,List,ZZ) := (A,boundaryList,homDegree) -> (
+getBoundaryPreimage (DGAlgebra,List) := (A,boundaryList) -> (
+   homDegree := first degree first boundaryList;
+   if any(boundaryList, b -> first degree b != homDegree) then
+      error "Expected a list of elements of the same homological degree.";
    dnplus1 := polyDifferential(homDegree+1,A);
    Anbasis := flatten entries getBasis(homDegree,A);
    Anplus1basis := getBasis(homDegree+1,A);
@@ -890,8 +898,9 @@ getBoundaryPreimage (DGAlgebra,List,ZZ) := (A,boundaryList,homDegree) -> (
          retVal = (true,flatten entries (Anplus1basis * substitute(retVal, A.ring)));
    retVal
 )
+
 getBoundaryPreimage (DGAlgebra,RingElement) := (A,b) -> (
-   (lifted,myLift) := getBoundaryPreimage(A,{b}, first degree b);
+   (lifted,myLift) := getBoundaryPreimage(A,{b});
    (lifted,first myLift)
 )
 
@@ -945,7 +954,7 @@ findNaryTrivialMasseyOperation(DGAlgebra,List,HashTable,ZZ) := (A,cycleList,prev
    while n <= maxDegree do (
       boundaryList := select(prodList, z -> z#0 == n);
       if boundaryList != {} then (
-         (isBoundary,tempVar) := getBoundaryPreimage(A,boundaryList / last,n);
+         (isBoundary,tempVar) := getBoundaryPreimage(A,boundaryList / last);
 	 if (isBoundary == false) then (
 	    -- if we are in here, then no trivial Massey operation exists, but tempVar contains
 	    -- the reduction of the possible nary products modulo the boundaries, and
@@ -991,6 +1000,8 @@ homologyClass = method()
 homologyClass(DGAlgebra, RingElement) := (A,z) -> (
    -- this function returns an element of H that is represented by
    -- the element z
+   if diff(A,z) != 0 then
+      error "Expected a cycle.";
    H := HH(A);
    if z == 0 then return 0_H;
    R := A.ring;
@@ -1195,8 +1206,8 @@ pushForward(RingMap,ChainComplex) := opts -> (f,C) -> chainComplex apply(0..((le
 
 -- The function below will return HH(f) as a module map over HH_0(A) (provided HH_0(B)
 -- is a finite HH_0(A)-module). 
-homology (DGAlgebraMap,ZZ) := opts -> (f,n) -> (
-)
+--homology (DGAlgebraMap,ZZ) := opts -> (f,n) -> (
+--)
 
 homology DGAlgebraMap := opts -> f -> (
    A := source f;
@@ -2524,15 +2535,88 @@ doc ///
 
 doc ///
   Key
-    ringMap
+    (diff,DGAlgebra,RingElement)
   Headline
-    RingMap of a DGAlgebraMap in degree zero.
+    Computes the differential of a ring element in a DGAlgebra
   Usage
-    phi = phiLift.ringMap
+    b = diff(A,a)
   Inputs
-    phiLift:DGAlgebraMap
+    A:DGAlgebra
+    a:RingElement
   Outputs
-    phi:RingMap
+    b:RingElement
+///
+
+doc ///
+  Key
+    getBoundaryPreimage
+    (getBoundaryPreimage,DGAlgebra,RingElement)
+    (getBoundaryPreimage,DGAlgebra,List)
+  Headline
+    Attempt to find a preimage of a boundary under the differential of a DGAlgebra.
+  Usage
+    (lifted,myLift) = getBoundaryPreimage(A,z)
+  Inputs
+    A:DGAlgebra
+    z:RingElement
+  Outputs
+    seq:Sequence
+  Description
+    Text
+      The first element in the return value is a boolean value indicating whether the
+      lift was possible.  If true, the second coordinate of the return value is the lift.
+      If false, then the second coordinate of the return value is the reduction of the
+      input modulo the image.
+    Example
+       Q = QQ[x_1,x_2,y_1,y_2,z]
+       I = ideal (x_1*x_2^2,y_1*y_2^2,z^3,x_1*x_2*y_1*y_2,y_2^2*z^2,x_2^2*z^2,x_1*y_1*z,x_2^2*y_2^2*z)
+       R = Q/I
+       KR = koszulComplexDGA R
+    Text
+       The following are cycles:
+    Example
+       z1 = z^2*T_5
+       z2 = y_2^2*T_3
+       z3 = x_2^2*T_1
+       {diff(KR,z1),diff(KR,z1),diff(KR,z1)}
+    Text
+       and z1*z2, z2*z3 vanish in homology:
+    Example
+       (lifted12,lift12) = getBoundaryPreimage(KR,z1*z2)
+       (lifted23,lift23) = getBoundaryPreimage(KR,z2*z3)
+    Text
+       We can check that the differential of the lift is the supposed boundary:
+    Example
+       diff(KR,lift23) == z2*z3
+///
+
+doc ///
+  Key
+    homologyClass
+    (homologyClass,DGAlgebra,RingElement)
+  Headline
+    Computes the element of the homology algebra corresponding to a cycle in a DGAlgebra.
+  Usage
+    h = homologyClass(A,z)
+  Inputs
+    A:DGAlgebra
+    z:RingElement
+  Outputs
+    h:RingElement
+  Description
+    Text
+      This function computes the element in the homology algebra of a cycle in a @ TO DGAlgebra @.
+      In order to do this, the @ TO homologyAlgebra @ is retrieved (or computed, if it hasn't been
+      already).
+    Example
+      Q = QQ[x,y,z]
+      I = ideal (x^3,y^3,z^3)
+      R = Q/I
+      KR = koszulComplexDGA R
+      z1 = x^2*T_1
+      z2 = y^2*T_2
+      H = HH(KR)
+      homologyClass(KR,z1*z2)
 ///
 
 doc ///
@@ -2688,7 +2772,6 @@ doc ///
 doc ///
   Key
     (homology,DGAlgebraMap)
-    (homology,DGAlgebraMap,ZZ)
   Headline
     Computes the homomorphism in homology associated to a DGAlgebraMap.
   Usage
@@ -2707,10 +2790,14 @@ doc ///
       g = dgAlgebraMap(K1,K2,matrix{{Y_2,Y_3}})
       toComplexMap g
       HHg = HH g
-    Text
-      One can also supply the second argument (a ZZ) in order to obtain the map on homology in a specified degree.
-      (This is currently not available).
 ///
+
+-- moved this out of the documentation since it is not complete
+--    (homology,DGAlgebraMap,ZZ)
+
+--    Text
+--      One can also supply the second argument (a ZZ) in order to obtain the map on homology in a specified degree.
+--      (This is currently not available).
 
 doc ///
   Key
