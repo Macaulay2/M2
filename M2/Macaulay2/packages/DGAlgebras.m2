@@ -24,12 +24,9 @@ export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff",
 	"homologyModule","dgAlgebraMultMap"
 }
 
---warning: symbol has no documentation: DGAlgebras :: dgAlgebraMultMap, package DGAlgebras
---warning: method has no documentation: DGAlgebras :: dgAlgebraMultMap(DGAlgebra,RingElement), key (dgAlgebraMultMap,DGAlgebra,RingElement), package DGAlgebras
---warning: method has no documentation: DGAlgebras :: masseyTripleProduct(DGAlgebra,ZZ,ZZ,ZZ), key (masseyTripleProduct,DGAlgebra,ZZ,ZZ,ZZ), package DGAlgebras
+-- still to document:
 --warning: symbol has no documentation: DGAlgebras :: homologyModule, package DGAlgebras
 --warning: method has no documentation: DGAlgebras :: homologyModule(DGAlgebra,Module), key (homologyModule,DGAlgebra,Module), package DGAlgebras
---warning: symbol has no documentation: DGAlgebras :: ringMap, package DGAlgebras
 
 -- Questions:
 -- is there a way to present graded pieces of graded A-modules as modules over A_0?
@@ -877,9 +874,7 @@ getBoundaryPreimage (DGAlgebra,List) := (A,boundaryList) -> (
    if nonzeroes == {} then return (true,boundaryList);
    homDegree := first degree first nonzeroes;
    if any(boundaryList, b -> b != 0 and first degree b != homDegree) then
-   (
       error "Expected a list of elements of the same homological degree.";
-   );
    dnplus1 := polyDifferential(homDegree+1,A);
    Anbasis := flatten entries getBasis(homDegree,A);
    Anplus1basis := getBasis(homDegree+1,A);
@@ -2482,6 +2477,50 @@ doc ///
 
 doc ///
   Key
+    (masseyTripleProduct,DGAlgebra,ZZ,ZZ,ZZ)
+  Headline
+    Computes the matrix representing all triple Massey operations.
+  Usage
+    mat = masseyTripleProduct(A,l,m,n)
+  Inputs
+    A:DGAlgebra
+    l:ZZ
+    m:ZZ
+    n:ZZ
+  Outputs
+    mat:Matrix
+  Description
+    Text
+      Given a triple of homology classes h1,h2,h3, such that h1h2 = h2h3 = 0,
+      the Massey triple product of h1,h2 and h3 may be defined as in
+      @ TO masseyTripleProduct @.  This command computes a basis of the homology
+      algebra of A in degrees l,m and n respectively, and expresses the triple
+      Massey operation of each triple, provided it is defined.  If a triple product
+      is not defined (i.e. if either h1h2 or h2h3 is not zero) then the triple
+      product is reported as zero in the matrix.
+    Text
+      The following example appears in "On the Hopf algebra of a Local Ring" by Avramov
+      as an example of a nonvanishing Massey operation which an algebra generator:
+    Example
+      Q = QQ[t_1,t_2,t_3,t_4]
+      I = ideal (t_1^3,t_2^3,t_3^3-t_1*t_2^2,t_1^2*t_3^2,t_1*t_2*t_3^2,t_2^2*t_4,t_4^2)
+      R = Q/I
+      KR = koszulComplexDGA R
+      H = HH(KR)
+      masseys = masseyTripleProduct(KR,1,1,1);
+      rank masseys
+    Text
+      As you can see, this command is useful to determine the number of linearly independent
+      elements that arise as triple Massey products.
+    Text
+      For example, the following Massey triple product is nonvanishing and is an
+      algebra generator:
+    Example
+      masseyTripleProduct(KR,X_2,X_4,X_1)
+///
+
+doc ///
+  Key
     expandGeomSeries
     (expandGeomSeries,List,ZZ)
     (expandGeomSeries,RingElement,ZZ)
@@ -2669,6 +2708,7 @@ doc ///
 doc ///
   Key
     DGAlgebraMap
+    ringMap
   Headline
     The class of all DG Algebra maps
   Description
@@ -2809,6 +2849,99 @@ doc ///
 --    Text
 --      One can also supply the second argument (a ZZ) in order to obtain the map on homology in a specified degree.
 --      (This is currently not available).
+
+doc ///
+  Key
+    dgAlgebraMultMap
+    (dgAlgebraMultMap,DGAlgebra,RingElement)
+  Headline
+    Returns the chain map corresponding to multiplication by a cycle.
+  Usage
+    phi = dgAlgebraMultMap(A,z)
+  Inputs
+    A:DGAlgebra
+    z:RingElement
+  Outputs
+    phi:ChainComplexMap
+  Description
+    Text
+      If A is a DGAlgebra, and z is a cycle of A, then left multiplication of A by z gives
+      a chain map from A to A.  This command converts A to a complex using @ TO toComplex @,
+      and constructs a @ TO ChainComplexMap @ that represents left multiplication by z.
+      This command is used to determine the module structure that is computed in
+      @ TO homologyModule @.
+    Example
+      R = QQ[x,y,z]/ideal{x^3,y^3,z^3}
+      KR = koszulComplexDGA R
+      z1 = x^2*T_1
+      phi = dgAlgebraMultMap(KR,z1)
+    Text
+      As you can see, the degree of phi is the homological degree of z:
+    Example
+      degree phi == first degree z
+    Text
+      Care is also taken to ensure the resulting map is homogeneous if R and z are:
+    Example
+      isHomogeneous phi
+    Text
+      One may then view the action of multiplication by the homology class of z upon
+      taking the induced map in homology:
+    Example
+      Hphi = prune HH(phi); (Hphi#0,Hphi#1,Hphi#2)
+///
+
+doc ///
+  Key
+    homologyModule
+    (homologyModule,DGAlgebra,Module)
+  Headline
+    Compute the homology of a DGModule as a module over a DGAlgebra.
+  Usage
+    HM = homologyModule(A,M)
+  Inputs
+    A:DGAlgebra
+    M:Module
+  Outputs
+    HM:Module
+  Description
+    Text
+      Given a DGAlgebra A over a ring R, and an R-module M, A ** M carries the structure
+      of a left DG module over A.  It follows that H(A ** M) is a module over H(A).
+      Although DGModules have yet to be implemented as objects in Macaulay2 in their own right,
+      the current infrastructure (with a little extra work) allows us to determine the module structure
+      of this type of DG module as a module over the homology algebra of A.
+    Text
+      Currently, this code will only work on DGAlgebras that are finite over their ring
+      of definition, such as Koszul complexes.  (Truncations of) module structures in case
+      of non-finite DGAlgebras may be made available in a future update.
+    Text
+      For an example, we will compute the module structure of the Koszul homology of
+      the canonical module over the Koszul homology algebra.
+    Example
+      Q = QQ[x,y,z,w]
+      I = ideal (w^2, y*w+z*w, x*w, y*z+z^2, y^2+z*w, x*y+x*z, x^2+z*w)
+      R = Q/I
+      KR = koszulComplexDGA R
+      cxKR = toComplex KR
+      HKR = HH(KR)
+    Text
+      The following is the graded canonical module of R:
+    Example
+      degList = first entries vars Q / degree / first
+      M = Ext^4(Q^1/I,Q^{-(sum degList)}) ** R
+    Text
+      We obtain the Koszul homology module using the following command:
+    Example
+      HKM = homologyModule(KR,M);
+    Text
+      One may notice the duality of HKR and HKM by considering their Hilbert series:
+    Example
+      hsHKR = value numerator reduceHilbert hilbertSeries HKR
+      hsHKM = value numerator reduceHilbert hilbertSeries HKM
+      AA = ring hsHKR
+      e = numgens Q
+      hsHKR == T_0^e*T_1^e*sub(hsHKM, {T_0 => T_0^(-1), T_1 => T_1^(-1)})
+///
 
 doc ///
   Key
@@ -3362,7 +3495,8 @@ installPackage "DGAlgebras"
 check "DGAlgebras"
 viewHelp DGAlgebras
 
--- Below, we provide some of the examples used in development, unsupported and undocumented for the user.
+-- Below, we provide some of the examples used in development, unsupported
+-- and undocumented for the user.
 
 --- homologyModule code
 restart
