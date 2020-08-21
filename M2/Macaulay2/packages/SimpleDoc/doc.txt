@@ -13,7 +13,7 @@ Node
       The new format is parsed by @TO (doc, String)@ for writing either a single or
       multiple documentation nodes from string or file and adheres to the off-side rule;
       i.e., using indentation to separate blocks.
-    Subnodes
+    Tree
       :Getting started with SimpleDoc
         @TO2 {doc, "Using SimpleDoc for documentation"}@
         @TO2 {"Text", "Using markup in documentation"}@
@@ -151,7 +151,7 @@ Node
                         typically enclosed in an HTML ", TT "<p>", " tag, except if its
                         top level markup is an instance of ", TO HypertextContainer,
                         " or ", TO HypertextParagraph, "."}},
-                { TT "Subnodes", " -- classify documentation nodes under headings",
+                { TT "Tree", " -- classify documentation nodes under headings",
                     PARA {
                         "The lines in this section beginning with ", TT ":", " or ",
                         TT "\@", " are treated as subsections. The remaining lines are

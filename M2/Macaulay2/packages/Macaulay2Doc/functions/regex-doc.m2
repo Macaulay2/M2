@@ -126,7 +126,7 @@ doc ///
       Additionally, the substrings matched by parenthesized subexpressions are captured for later use in
       replacement strings.
 
-    Subnodes
+    Tree
       :Syntax for special characters
         :Wildcard
           @TT "."@	-- match any character except the newline character
@@ -216,7 +216,7 @@ doc ///
 
       The Perl flavor adds the following, non-backward compatible constructions:
 
-    Subnodes
+    Tree
       :Non-marking grouping; i.e., a grouping that does not generate a sub-expression
         @TT "(?#...)"@	-- ignored and treated as a comment
         @TT "(?:...)"@	-- non-marked sub-expression, may not be referred to by a back-reference
@@ -255,7 +255,7 @@ doc ///
       The replacement string in @TO (replace, String, String, String)@ and @TO (select, String, String, String)@
       supports additional syntax for escape sequences as well as inserting captured sub-expressions:
 
-    Subnodes
+    Tree
      :Using Perl regular expression syntax (default)
       :Syntax for inserting captured sub-expressions:
         @TT "$&"@	-- outputs what matched the whole expression
@@ -285,7 +285,7 @@ doc ///
       For the complete list, including characters escape sequences, see the Boost.Regex manual on
       @HREF {"https://www.boost.org/doc/libs/release/libs/regex/doc/html/boost_regex/format/perl_format.html", "format string syntax"}@.
 
-    Subnodes
+    Tree
      :String processing functions that accept regular expressions
        match
        regex

@@ -91,7 +91,7 @@ DescriptionFunctions = new HashTable from {
     "Example"       => (textlines, keylinenum) -> getExample(textlines, keylinenum, false),
     "CannedExample" => (textlines, keylinenum) -> getExample(textlines, keylinenum, true),
     "Text"          => (textlines, keylinenum) -> markup(textlines, keylinenum),
-    "Subnodes"      => (textlines, keylinenum) -> menu(textlines, keylinenum),
+    "Tree"          => (textlines, keylinenum) -> menu(textlines, keylinenum),
     "Pre"           => (textlines, keylinenum) -> PRE reassemble(min\\getIndent\textlines, textlines),
     "Code"          => (textlines, keylinenum) -> getCode(textlines, keylinenum),
     }
