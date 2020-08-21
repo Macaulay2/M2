@@ -337,7 +337,7 @@ getDescription := (key, tag, rawdoc) -> (
     desc := getOption(rawdoc, Description);
     if desc =!= null and #desc > 0 then (
 	desc = processExamples(package tag, format tag, desc);
-	if instance(tag.Key, String) then DIV { desc } -- overview key
+	if instance(key, String) then DIV { desc } -- overview key
 	else DIV { SUBSECTION "Description", desc })
     else DIV { COMMENT "empty documentation body" })
 
