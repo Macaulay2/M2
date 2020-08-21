@@ -18,15 +18,9 @@ export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff",
 	"isHomologyAlgebraTrivial", "findTrivialMasseyOperation", "findNaryTrivialMasseyOperation", "AssertWellDefined",
 	"isGolod", "isGolodHomomorphism", "GenDegreeLimit", "RelDegreeLimit", "TMOLimit",
 	"InitializeDegreeZeroHomology", "InitializeComplex", "isAcyclic", "getDegNModule",
-    	-- documented so far
 	"masseyTripleProduct","getBoundaryPreimage","homologyClass",
-    	-- still to document
 	"homologyModule","dgAlgebraMultMap"
 }
-
--- still to document:
---warning: symbol has no documentation: DGAlgebras :: homologyModule, package DGAlgebras
---warning: method has no documentation: DGAlgebras :: homologyModule(DGAlgebra,Module), key (homologyModule,DGAlgebra,Module), package DGAlgebras
 
 -- Questions:
 -- is there a way to present graded pieces of graded A-modules as modules over A_0?
