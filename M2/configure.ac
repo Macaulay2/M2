@@ -18,6 +18,8 @@ m4_include(config/relpaths.m4)
 m4_include(config/gtest.m4)
 m4_include(config/openmp.m4)
 m4_include(config/search-libraries.m4)
+m4_include(config/ax_boost_base.m4)
+m4_include(config/ax_boost_regex.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -346,7 +348,7 @@ dnl      fi
 dnl fi
 
 AC_HEADER_TIME()
-AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h elf.h execinfo.h stdlib.h syscall.h sys/types.h sys/stat.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h regex.h)
+AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h elf.h execinfo.h stdlib.h syscall.h sys/types.h sys/stat.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 dnl winsock2.h should be included before including windows.h
 dnl  pthread.h includes windows.h
@@ -1249,28 +1251,11 @@ then AC_LANG(C)
      AC_CHECK_HEADER(python2.7/Python.h,,AC_MSG_ERROR(include file python2.7/Python.h not found))
 fi
 
-AC_LANG(C++)
-AC_CHECK_HEADER(boost/version.hpp,
-	[
-	AC_CHECK_HEADER(boost/stacktrace.hpp,,
-	    [
-	    AC_MSG_ERROR([[boost library installed, but not modern enough to contain 'boost/stacktrace.hpp']])
-	    dnl As of July, 2020:
-	    dnl These do not contain the file:
-	    dnl   Ubuntu 16.04 comes with boost 1.58
-	    dnl These do contain the file:
-	    dnl   Ubuntu 18.04 comes with boost 1.65
-	    dnl   Debian 10    comes with boost 1.67
-	    dnl   Ubuntu 20.04 comes with boost 1.71
-	    dnl   Homebrew Mac comes with boost 1.72
-	    ],
-	    [
-	    #define _GNU_SOURCE
-	    ])
-	],
-	[
-	AC_MSG_ERROR([boost library not installed, but required])
-	])
+dnl boost 1.65 was the first release containing the stacktrace library
+AX_BOOST_BASE([1.65],,
+    [AC_MSG_ERROR([boost library >= 1.65 not installed, but required])])
+CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
+LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
 
 AC_MSG_CHECKING([whether the Boost::Stacktrace library is available])
 AC_LANG(C++)
@@ -1294,6 +1279,9 @@ then
     CPPFLAGS=$SAVECPPFLAGS
     LIBS=$SAVELIBS
 fi
+
+AX_BOOST_REGEX
+LIBS="$LIBS $BOOST_REGEX_LIB"
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)

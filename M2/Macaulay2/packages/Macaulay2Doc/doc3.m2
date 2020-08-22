@@ -647,7 +647,7 @@ document { Key => symlinkFile,
      SeeAlso => { symlinkDirectory }
      }
 
-document { Key => {(copyDirectory, String, String),copyDirectory,[copyDirectory, Exclude],[copyDirectory, FollowLinks],[copyDirectory, Verbose]},
+document { Key => {(copyDirectory, String, String),copyDirectory,[copyDirectory, Exclude],[copyDirectory, UpdateOnly],[copyDirectory, FollowLinks],[copyDirectory, Verbose]},
      Usage => "copyDirectory(src,dst)",
      Inputs => {
 	  "src" => String,

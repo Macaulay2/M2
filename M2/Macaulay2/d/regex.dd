@@ -1,0 +1,244 @@
+-- Copyright 2020 by Mahrud Sayrafi
+
+use arithmetic;
+use hashtables;
+use common;
+use util;
+
+-----------------------------------------------------------------------------
+-- C++ interface functions defined in boost-regex.cpp
+-----------------------------------------------------------------------------
+
+import search  (pattern:string, start:int, range:int,                      text:string, regexFlags:int, matchFlags:int):array(int);
+import select  (pattern:string, start:int, range:int, replacement: string, text:string, regexFlags:int, matchFlags:int):array(string);
+import replace (pattern:string, start:int, range:int, replacement: string, text:string, regexFlags:int, matchFlags:int):string;
+import separate(pattern:string, start:int, range:int,                      text:string, regexFlags:int, matchFlags:int):array(string);
+
+-----------------------------------------------------------------------------
+-- Exported variables for passing enum flags to Boost.Regex
+-----------------------------------------------------------------------------
+
+header "#include <boost/regex.hpp>";
+
+-- used in actors4.d
+export defaultRegexFlags := Ccode(int, "boost::regex::perl | boost::regex::no_mod_s");
+export defaultMatchFlags := Ccode(int, "0");
+
+-- The values are used as a bitmask in order to simplify passing flags to
+-- the various functions defined above. They are exported to top level so
+-- they can be used in Macaulay2/m2/regex.m2.
+setupconst("RegexFlags", Expr(toHashTable(Sequence(
+-- The first section is based on standard Boost syntax option types.
+-- https://www.boost.org/doc/libs/release/libs/regex/doc/html/boost_regex/ref/syntax_option_type/syntax_option_type_perl.html
+   "ECMAScript" => toExpr(Ccode(int, "boost::regex::ECMAScript")), -- ECMAScript flavor (default)
+--  basic
+   "Extended"   => toExpr(Ccode(int, "boost::regex::extended")),   -- POSIX ERE flavor
+   "Literal"    => toExpr(Ccode(int, "boost::regex::literal")),    -- treat the pattern text as literal
+--  awk
+--  grep
+--  egrep
+
+   "Icase"   => toExpr(Ccode(int, "boost::regex::icase")),   -- ignore case
+   "Nosubs"  => toExpr(Ccode(int, "boost::regex::nosubs")),  -- ignore subexpressions
+--  optimize
+   "Collate" => toExpr(Ccode(int, "boost::regex::collate")), -- makes [a-b] locale sensitive
+
+-- flags for Perl and POSIX
+--  newline_alt
+--  no_except
+--  save_subexpression_location
+
+-- flags for Perl
+   "NoModM" => toExpr(Ccode(int, "boost::regex::no_mod_m")), -- don't match ^ $ with newlines
+   "NoModS" => toExpr(Ccode(int, "boost::regex::no_mod_s")), -- don't match . with newlines
+--  mod_s
+--  mod_x
+--  no_empty_expressions
+
+-- flags for POSIX ERE
+   "NoEscapeInLists" => toExpr(Ccode(int, "boost::regex::no_escape_in_lists")), -- disable \ escapes in lists
+   "NoBkRefs"        => toExpr(Ccode(int, "boost::regex::no_bk_refs")),         -- disable backreferences
+
+-- The rest are based on standard Boost match flag types.
+-- https://www.boost.org/doc/libs/release/libs/regex/doc/html/boost_regex/ref/match_flag_type.html
+--  match_not_bob
+--  match_not_eob
+--  match_not_bol
+--  match_not_eol
+--  match_not_bow
+--  match_not_eow
+   "MatchAny"        => toExpr(Ccode(int, "boost::match_any")),        -- return any match
+   "MatchNotNull"    => toExpr(Ccode(int, "boost::match_not_null")),   -- match must be nonempty
+   "MatchContinuous" => toExpr(Ccode(int, "boost::match_continuous")), -- match must start at the beginning
+--  match_partial
+--  match_single_line
+   "MatchPrevAvail"     => toExpr(Ccode(int, "boost::match_prev_avail")),      -- lead-1 is a valid iterator position
+   "MatchNotDotNewline" => toExpr(Ccode(int, "boost::match_not_dot_newline"))  -- doesn't match . with newlines
+--  match_not_dot_null
+--  match_posix
+--  match_perl
+--  match_nosubs
+--  match_extra
+
+--  format_sed
+--  format_perl
+--  format_literal
+
+--  format_no_copy
+--  format_first_only
+--  format_all
+   ))));
+
+-----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
+
+toPairs(r:array(int)):Expr := Expr(
+    list (
+	new Sequence len length(r)/2 at i do
+	provide new Sequence len 2 at j do
+	provide toExpr(r.(2*i+j))));
+
+-----------------------------------------------------------------------------
+-- Exported Regular Expression Functions
+-----------------------------------------------------------------------------
+
+regexSearch(e:Expr):Expr := (
+    when e is s:Sequence do
+    if length(s) == 2 then (
+	when s.0 is regexp:stringCell do
+	when s.1 is text:stringCell do (
+	    Ccode(void, "try {");
+	    r := search(regexp.v, 0, length(text.v), text.v, defaultRegexFlags, defaultMatchFlags);
+	    Ccode(void, "
+		} catch (std::exception& e) {
+		    fprintf(stderr, \"-- %s\\n\", e.what());
+		    return ", buildErrorPacket("unable to compile regular expression"), ";
+		}");
+	    if length(r) != 0 then toPairs(r)
+	    else nullE)
+	else WrongArgString(2)
+	else WrongArgString(1))
+    else if length(s) == 6 then (
+	when s.0 is regexp:stringCell do
+	when s.1 is start:ZZcell do if !isInt(start) then WrongArgSmallInteger(2) else
+	when s.2 is range:ZZcell do if !isInt(range) then WrongArgSmallInteger(3) else
+	when s.3 is text:stringCell do
+	when s.4 is regexFlags:ZZcell do if !isInt(regexFlags) then WrongArgSmallInteger(5) else
+	when s.5 is matchFlags:ZZcell do if !isInt(matchFlags) then WrongArgSmallInteger(6) else (
+	    istart := toInt(start);
+	    irange := toInt(range);
+	    Ccode(void, "try {");
+	    r := search(regexp.v, istart, irange, text.v, toInt(regexFlags), toInt(matchFlags));
+	    Ccode(void, "
+		} catch (std::exception& e) {
+		    fprintf(stderr, \"-- %s\\n\", e.what());
+		    return ", buildErrorPacket("unable to compile regular expression"), ";
+		}");
+	    if length(r) != 0 then toPairs(r)
+	    else nullE)
+	else WrongArgZZ(6)
+	else WrongArgZZ(5)
+	else WrongArgString(4)
+	else WrongArgZZ(3)
+	else WrongArgZZ(2)
+	else WrongArgString(1))
+    else WrongNumArgs(2,6)
+    else WrongNumArgs(2,6));
+setupfun("regex", regexSearch).Protected = false; -- will be overloaded in m2/regex.m2
+
+regexReplace(e:Expr):Expr := (
+    when e is s:Sequence do
+    if length(s) == 3 then (
+	when s.0 is regexp:stringCell do
+	when s.1 is replacement:stringCell do
+	when s.2 is text:stringCell do (
+	    Ccode(void, "try {");
+	    r := replace(regexp.v, 0, length(text.v), replacement.v, text.v, defaultRegexFlags, defaultMatchFlags);
+	    Ccode(void, "
+		} catch (std::exception& e) {
+		    fprintf(stderr, \"-- %s\\n\", e.what());
+		    return ", buildErrorPacket("unable to compile regular expression"), ";
+		}");
+	    toExpr(r))
+	else WrongArgString(3)
+	else WrongArgString(2)
+	else WrongArgString(1))
+    else if length(s) == 5 then (
+	when s.0 is regexp:stringCell do
+	when s.1 is replacement:stringCell do
+	when s.2 is text:stringCell do
+	when s.3 is regexFlags:ZZcell do if !isInt(regexFlags) then WrongArgSmallInteger(4) else
+	when s.4 is matchFlags:ZZcell do if !isInt(matchFlags) then WrongArgSmallInteger(5) else (
+	    Ccode(void, "try {");
+	    r := replace(regexp.v, 0, length(text.v), replacement.v, text.v, toInt(regexFlags), toInt(matchFlags));
+	    Ccode(void, "
+		} catch (std::exception& e) {
+		    fprintf(stderr, \"-- %s\\n\", e.what());
+		    return ", buildErrorPacket("unable to compile regular expression"), ";
+		}");
+	    toExpr(r))
+	else WrongArgZZ(5)
+	else WrongArgZZ(4)
+	else WrongArgString(3)
+	else WrongArgString(2)
+	else WrongArgString(1))
+    else WrongNumArgs(3,5)
+    else WrongNumArgs(3,5));
+setupfun("replace", regexReplace).Protected = false; -- will be overloaded in m2/regex.m2
+
+regexSeparate(e:Expr):Expr := (
+    when e is text:stringCell do (
+	Ccode(void, "try {");
+	r := separate("\r?\n", 0, length(text.v), text.v, defaultRegexFlags, defaultMatchFlags);
+	Ccode(void, "
+	    } catch (std::exception& e) {
+		fprintf(stderr, \"-- %s\\n\", e.what());
+		return ", buildErrorPacket("unable to compile regular expression"), ";
+	    }");
+	toExpr(r))
+    else when e is s:Sequence do (
+    if length(s) == 2 then (
+	when s.0 is regexp:stringCell do
+	when s.1 is text:stringCell do (
+	    Ccode(void, "try {");
+	    r := separate(regexp.v, 0, length(text.v), text.v, defaultRegexFlags, defaultMatchFlags);
+	    Ccode(void, "
+		} catch (std::exception& e) {
+		    fprintf(stderr, \"-- %s\\n\", e.what());
+		    return ", buildErrorPacket("unable to compile regular expression"), ";
+		}");
+	    toExpr(r))
+	else WrongArgString(2)
+	else WrongArgString(1))
+    else if length(s) == 4 then (
+	when s.0 is regexp:stringCell do
+	when s.1 is text:stringCell do
+	when s.2 is regexFlags:ZZcell do if !isInt(regexFlags) then WrongArgSmallInteger(3) else
+	when s.3 is matchFlags:ZZcell do if !isInt(matchFlags) then WrongArgSmallInteger(4) else (
+	    Ccode(void, "try {");
+	    r := separate(regexp.v, 0, length(text.v), text.v, toInt(regexFlags), toInt(matchFlags));
+	    Ccode(void, "
+		} catch (std::exception& e) {
+		    fprintf(stderr, \"-- %s\\n\", e.what());
+		    return ", buildErrorPacket("unable to compile regular expression"), ";
+		}");
+	    toExpr(r))
+	else WrongArgZZ(4)
+	else WrongArgZZ(3)
+	else WrongArgString(2)
+	else WrongArgString(1))
+    else WrongNumArgs(1,4))
+    else WrongNumArgs(1,4));
+setupfun("separate", regexSeparate).Protected = false; -- will be overloaded in m2/regex.m2
+
+-- used in actors4.d
+export regexSelect(regexp:string, form:string, text:string, regexFlags:int, matchFlags:int):Expr := (
+    Ccode(void, "try {");
+    r := select(regexp, 0, length(text), form, text, regexFlags, matchFlags);
+    Ccode(void, "
+	} catch (std::exception& e) {
+	    fprintf(stderr, \"-- %s\\n\", e.what());
+	    return ", buildErrorPacket("unable to compile regular expression"), ";
+	}");
+    toExpr(r));
