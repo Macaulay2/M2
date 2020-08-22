@@ -1409,7 +1409,7 @@ writeBergmanInputFile (NCRing,String,String) := opts -> (B,genListString,tempInp
       -- if we don't want to recompute the GB, we need to tell Bergman that there are no
       -- Spairs to work on for twice the max degree of the gens we send it so it
       -- doesn't try to create any more Spairs.
-      fil << "(load (mkbmpathexpand \"$bmload/hseries.fas\"))" << endl;
+      fil << "(load (mkbmpathexpand \"$bmload/lap/clisp/unix/hseries.fas\"))" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(sethseriesminima" << concatenate(opts#DegreeLimit:" skipcdeg") << ")" << endl;
@@ -1671,7 +1671,7 @@ writeHSInitFile := (tempInit,
 		    tempPBOutput,
 		    tempHSOutput) -> (
    fil := openOut tempInit;
-   fil << "(load (mkbmpathexpand \"$bmload/hseries.fas\"))" << endl;
+   fil << "(setf (getenv \"bmload\") (mkbmpathexpand \"$bmload/lap/clisp/unix\"))" << endl;
    fil << "(ncpbhgroebner " 
        << "\"" << tempInput << "\" "
        << "\"" << tempGBOutput << "\" "
