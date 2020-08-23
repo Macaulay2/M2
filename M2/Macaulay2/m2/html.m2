@@ -3,6 +3,33 @@
 -- html output
 -----------------------------------------------------------------------------
 
+KaTeX := () -> (
+    katexPath := locateCorePackageFileRelative("Style",
+	layout -> replace("PKG", "Style", layout#"package") | "katex", installPrefix, htmlDirectory);
+    katexTemplate := ///
+    <link rel="stylesheet" href="%PATH%/katex.min.css">
+    <script defer src="%PATH%/katex.min.js"></script>
+    <script defer src="%PATH%/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body);"></script>
+    <script>
+      var macros = {
+          "\\P": "\\mathbb{P}"
+      }, delimiters = [
+          { left: "$$",  right: "$$",  display: true},
+          { left: "\\[", right: "\\]", display: true},
+          { left: "$",   right: "$",   display: false},
+          { left: "\\(", right: "\\)", display: false}
+      ];
+      document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, { delimiters: delimiters, macros: macros });
+      });
+    </script>
+    <style>.katex { font-size: 1em; }</style>
+    <link href="%PATH%/contrib/copy-tex.min.css" rel="stylesheet" type="text/css" />
+    <script src="%PATH%/contrib/copy-tex.min.js"></script>
+    <script src="%PATH%/contrib/render-a11y-string.min.js"></script>///;
+    LITERAL replace("%PATH%", katexPath, katexTemplate))
+
 -- The default stylesheet for documentation
 defaultStylesheet := () -> LINK {
     "rel" => "stylesheet", "type" => "text/css",
@@ -14,7 +41,7 @@ defaultStylesheet := () -> LINK {
 -- character encoding.  Locally-stored documentation does not have an HTTP header.)
 defaultCharset := () -> META { "http-equiv" => "Content-Type", "content" => "text/html; charset=utf-8" }
 
-defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet() }
+defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet(), KaTeX() }
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -77,9 +104,7 @@ html Hypertext := x -> (
 -- Exceptional (html, MarkUpType) methods
 -----------------------------------------------------------------------------
 
--- TEX  -- see texhtml.m2
 -- TOH  -- see format.m2
--- MENU -- see format.m2 -- e.g. help sum
 
 html String := htmlLiteral
 
@@ -105,7 +130,7 @@ html HREF := x -> (
      concatenate("<a href=\"", htmlLiteral toURL first x, "\">", r, "</a>")
      )
 
--- TODO
+html TEX     := x -> concatenate apply(x, html)
 html LITERAL := x -> concatenate x
 
 html MENU := x -> html redoMENU x
