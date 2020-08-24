@@ -7,13 +7,21 @@ KaTeX := () -> (
     katexPath := locateCorePackageFileRelative("Style",
 	layout -> replace("PKG", "Style", layout#"package") | "katex", installPrefix, htmlDirectory);
     katexTemplate := ///
-    <link rel="stylesheet" href="%PATH%/katex.min.css">
+    <link rel="stylesheet" href="%PATH%/katex.min.css" />
     <script defer src="%PATH%/katex.min.js"></script>
     <script defer src="%PATH%/contrib/auto-render.min.js"
         onload="renderMathInElement(document.body);"></script>
     <script>
       var macros = {
-          "\\P": "\\mathbb{P}"
+          "\\break": "\\\\",
+          "\\R": "\\mathbb{R}",
+          "\\C": "\\mathbb{C}",
+          "\\ZZ": "\\mathbb{Z}",
+          "\\NN": "\\mathbb{N}",
+          "\\QQ": "\\mathbb{Q}",
+          "\\RR": "\\mathbb{R}",
+          "\\CC": "\\mathbb{C}",
+          "\\PP": "\\mathbb{P}"
       }, delimiters = [
           { left: "$$",  right: "$$",  display: true},
           { left: "\\[", right: "\\]", display: true},
@@ -106,7 +114,37 @@ html Hypertext := x -> (
 
 -- TOH  -- see format.m2
 
-html String := htmlLiteral
+html LITERAL := x -> concatenate x
+html String  := x -> htmlLiteral x
+html TEX     := x -> concatenate apply(x, s -> (
+	if not instance(s, String) then return html s;
+	-- parsing matching braces wrapped with \url{...}
+	re   := "(\\\\(url)\\{((?:[^}{]+|(?1))*+)\\})";
+	form := "DELIMITER, \\U\\2\\E{DELIMITER\\3DELIMITER}, DELIMITER";
+	while match(re, s) do (
+	    tag := toUpper substring(lastMatch#2, s);
+	    if not match("URL", tag) then error("unknown TeX sequence: ", tag);
+	    if debugLevel > 1 then printerr("parsing ", tag, " in TEX");
+	    s = replace(re, form, s));
+	-- parsing matching braces wrapped with {\xx ...}
+	re   = "(\\{\\\\(bf|tt|em|cal|it) *((?:[^}{]+|(?1))*+)\\})";
+	form = "DELIMITER, \\U\\2\\E{DELIMITER\\3DELIMITER}, DELIMITER";
+	while match(re, s) do (
+	    tag = toUpper substring(lastMatch#2, s);
+	    if not match("BF|TT|EM|CAL|IT", tag) then error("unknown TeX sequence: ", tag);
+	    if debugLevel > 1 then printerr("parsing ", tag, " in TEX");
+	    s = replace(re, form, s));
+	s = format s;
+	-- replacing a few mis-matched typenames
+	s = replace("DELIMITER, BF{", "\", BOLD{", s);
+	s = replace("DELIMITER, IT{", "\", ITALIC{", s);
+	s = replace("DELIMITER, CAL{", "\", ITALIC{", s); -- TODO: deprecate this
+	s = replace("DELIMITER, URL{", "\", HREF{", s);
+	s = replace("DELIMITER", "\"", s);
+	-- evaluate Hypertext types
+	s = evaluateWithPackage(getpkg "Text", s, value);
+	if instance(s, String) then html s
+	else concatenate apply(s, html)))
 
 html HTML := x -> demark(newline, {
     	///<?xml version="1.0" encoding="utf-8" ?>///,
@@ -129,9 +167,6 @@ html HREF := x -> (
      r = if match("^ +$", r) then #r : "&nbsp;&nbsp;" else r;
      concatenate("<a href=\"", htmlLiteral toURL first x, "\">", r, "</a>")
      )
-
-html TEX     := x -> concatenate apply(x, html)
-html LITERAL := x -> concatenate x
 
 html MENU := x -> html redoMENU x
 

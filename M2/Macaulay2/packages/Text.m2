@@ -486,7 +486,7 @@ document {
      Outputs => { {"a string containing the result of converting ", TT "t", " to html"} },
      Caveat => { "The algorithm used assumes that the html produced will be contained in a
 	  HTML P container, as can be produced with ", TO "PARA", ", especially if display
-	  math is used ($$ .. $$)." },
+	  math is used (", CODE {"$$ .. $$"}, ")." },
      PARA {
 	  "This method handles conversion to html, but only for a limited subset of TeX.
 	  Nevertheless, it can be useful in documentation nodes.  It is useful to use
@@ -507,23 +507,23 @@ document {
 	       ///TEX ////A formula: $a\times \ {b\over c^3}$/////////,
 	       ///TEX ////A ``formula'' {\bf can be} `printed'. /////////,
 	       ///TEX ////A formula, $$\{x_1^2,\dots,x_n^2\},$$ can be displayed./////////,
-	       ///TEX ////Matrices can be displayed if there is only one of them in the string: $$\begin{pmatrix}3&4&x^2+1\\5&6&7\end{pmatrix}.$$/////////,
+	       ///TEX ////$$\begin{pmatrix}3&4&x^2+1\\5&6&7\end{pmatrix}.$$/////////,
 	       ///TEX ////${\mathbf a+b+c} \in {\mathbb R}, {\mathcal 1234}, 1234$/////////,
 	       ///TEX ////{\tt res(Module)} is the {\cal method} for {\em making} {\it resolutions}./////////,
 	       ///TEX ////\url{http://www.math.uiuc.edu/Macaulay2/}/////////,
 	       ///TEX ////$\frac x4 + \frac{x^2+1}{y+3} + {3\over 4}$/////////,
 	       ///TEX ////$R^\times, x_{i,j}$/////////,
-	       ///TEX ////\"a \"o \"u \# \& \'e $x\,\,\,y$ \^a \^e \`e \NN \QQ \RR \ZZ \PP \Gamma \Lambda \Omega \Psi \Theta \aleph \alpha/////////,
-	       ///TEX ////\backslash \beta \beth \bullet \cap \cdots a \cong b \cos x + a \cup b, \daleth \delta \ell \emptyset/////////,
-	       ///TEX ////\epsilon \equiv \exists \forall \gamma \ge \gimel \ge \infty \in \int x \lambda \ldots \leftarrow a \le b \leq c/////////,
+	       ///TEX ////$\text{\"a \"o \"u \# \& \'e x\,\,\,y \^a \^e \`e} \NN \QQ \RR \CC \ZZ \PP \Gamma \Lambda \Omega \Psi \Theta \aleph \alpha$/////////,
+	       ///TEX ////$\backslash \beta \beth \bullet \cap \cdots a \cong b \cos x + a \cup b, \daleth \delta \ell \emptyset$/////////,
+	       ///TEX ////$\epsilon \equiv \exists \forall \gamma \ge \gimel \ge \infty \in \int x \lambda \ldots \leftarrow a \le b \leq c$/////////,
 	       ///TEX ////$4 < 5 < 6 > 3 > 2, \mu \mapsto \mu^2, \{x \mid x \in \ZZ, x \ne 0, x \cong{} 3 \mod\ 11\}$/////////,
-	       ///TEX ////1 2\break 3 4 5\break 6 7 \nu \omega \oplus \otimes \partial \phi \break \pi x\prime/////////,
-	       ///TEX ////\prod_{i \in \ZZ} x_i/////////,
+	       ///TEX ////$1 2\break 3 4 5\break 6 7 \nu \omega \oplus \otimes \partial \phi \break \pi x\prime$/////////,
+	       ///TEX ////$\prod_{i \in \ZZ} x_i$/////////,
 	       ///TEX ////$\psi + \rho \rightarrow A\setminus B, \sigma, \sin 1.1, A \subset B, C \subseteq D, E \supset F, G \supseteq H$/////////,
-	       ///TEX ////\sum_{i=1}^n y_i/////////,
-	       ///TEX ////\tau{} + \theta{} \to{} x \wedge{} \wp{} + \xi{} - \lbrace\zeta\rbrace/////////
+	       ///TEX ////$\sum_{i=1}^n y_i$/////////,
+	       ///TEX ////$\tau{} + \theta{} \to{} x \wedge{} \wp{} + \xi{} - \lbrace\zeta\rbrace$/////////
 	       },
-	  s -> LI { PARA {TT s}, PARA { EM "will display as" }, PARA {value s} }
+	  s -> LI { PRE {s}, PARA { EM "will display as" }, PARA {value s} }
 	  ),
      }
 
