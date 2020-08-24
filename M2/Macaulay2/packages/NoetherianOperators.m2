@@ -755,7 +755,6 @@ noetherianOperators (Ideal, Ideal) := List => opts -> (I, P) -> (
         if debugLevel > 0 then "Symbolic Noetherian degree: "<<i<<endl;
     );
     K = transpose first rowReduce(transpose K, true);
-    error"dbg";
 
     R' := diffAlg R;
     StoR := map(R,S);
@@ -778,12 +777,6 @@ noetherianOperators (Ideal, Ideal) := List => opts -> (I, P) -> (
 
     new SetOfNoethOps from {Ops => L, Prime => P}
 )
-
-
-clearDenominators = (M,R) -> (
-
-)
-
 
 noetherianOperators (Ideal) := List => opts -> (I) -> noetherianOperators(I, ideal gens radical I, opts)
 noetherianOperators (Ideal, Point) := List => opts -> (I, p) -> (
@@ -823,16 +816,10 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
         numOps = numColumns K;
     );
     K = colReduce(K, tol);
-    -- Return elements in WeylAlgebra for nice formatting
     R' := diffAlg R;
-    phi := map(R', R, vars R');
-    if not R'#?cache then R'#cache = new CacheTable;
-    if not R'#cache#?"NoethNormRing" then R'#cache#"NoethNormRing" = (coefficientRing R)(monoid[depVars / (x -> phi x)]);
-    S' := R'#cache#"NoethNormRing";
-    liftMap := map(R', S');
-    bdd := sub(sub(bd, vars R'), S');
-    L := sort flatten entries (bdd * sub(K, S'));
-    new SetOfNoethOps from {Ops => L, Point => p, LiftMap => liftMap}
+    bdd := (map(R', R, vars R')) bd;
+    L := sort flatten entries (bdd * promote(K, R'));
+    new SetOfNoethOps from {Ops => L, Point => p}
 )
 
 hybridNoetherianOperators = method(Options => options numNoethOpsAtPoint)
@@ -841,9 +828,8 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
     depVars := if opts.DependentSet === null then gens R - set support first independentSets P
             else opts.DependentSet;
     indVars := gens R - set depVars;
-    if not R#?cache then R#cache = new CacheTable;
-    if not R#cache#?"NoethNormRing" then R#cache#"NoethNormRing" = (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
-    S := R#cache#"NoethNormRing";S' := diffAlg S;
+    S := (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
+    S' := S;
     PS := sub(P, S);
     IS := sub(I,S);
     kP := toField(S/PS);
@@ -859,11 +845,10 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
     goodIdx := positions(noethOpsAtPoints, i -> (i / monomials) == most#0);
     if debugLevel >= 1 then << "Good points: "<<#goodIdx<<"/"<<#pts<<endl;
     goodNops := noethOpsAtPoints#(goodIdx#0);
-    
-    phi := map(RCC, target goodNops.LiftMap, vars RCC) * goodNops.LiftMap;
+
+    phi := map(R, ring goodNops, vars R);
     L := sort flatten for op in goodNops.Ops list (
-        bd := monomials phi op;
-        bd = matrix{flatten entries bd / (mon -> S_((first exponents mon)_(depVars / index)))};
+        bd := matrix{exponents op / (i -> sub(R_i,S))};
         done := false;
         d := 0;
         while not done do (
@@ -873,8 +858,18 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
             K := myKernel M;
             if numColumns K == 1 then done = true else d = d+1;
         );
-        bdd := sub(bd, vars S');
-        flatten entries (bdd * sub(K // K_(0,0), S'))
+        KK := lift(K, S);
+        -- Clear denominators
+        commonFactor := flatten entries KK / 
+            flatten @@ entries @@ last @@ coefficients //
+            flatten /
+            (c -> lift(c, coefficientRing S)) /
+            denominator //
+            lcm;
+        cleared := sub(promote(commonFactor, coefficientRing S) * KK, R);
+        R' := diffAlg(R);
+        bdd := sub(bd, vars R');
+        (bdd * (promote(cleared, R')))_(0,0)
     );
     new SetOfNoethOps from {Ops => L, Prime => P}
 ) 
