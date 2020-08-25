@@ -901,9 +901,8 @@ numericalNoetherianOperators(Ideal, List) := List => opts -> (I, pts) -> (
     if debugLevel >= 1 then <<"Num good points: " << #goodIdx << " / " << #noethOpsAtPoints << endl;
     goodNops := noethOpsAtPoints_goodIdx;
     goodPts := pts_goodIdx;
-
     apply(numgens goodNops#0, i -> (
-        L := goodNops / (N -> N.LiftMap N_i);
+        L := goodNops / (N -> N_i);
         formatNoethOps interpolateNOp(L,goodPts, R, Tolerance => opts.InterpolationTolerance)
     ))
 )
@@ -955,7 +954,7 @@ interpolateNOp = method(Options => {Tolerance => 1e-6})
 interpolateNOp(List,List,Ring) := List => opts -> (specializedNops, pts, R) -> (
     mons := flatten entries monomials specializedNops#0;
     coeffs := transpose (specializedNops / (i -> (coefficients i)#1) / entries / flatten);
-    coeffs = coeffs / (i -> i / (j -> sub(j, CC)));
+    coeffs = coeffs / (i -> i / (j -> sub(j, coefficientRing R)));
     interpolatedCoefficients := coeffs / (i -> 
         try rationalInterpolation(pts, i, R, Tolerance => opts.Tolerance) / 
             (j -> (matrix j)_(0,0)) / (j -> cleanPoly(opts.Tolerance, j))--// 
