@@ -46,6 +46,7 @@ export {
      "Prime",
      "LiftMap",
 
+     "diffAlg",
      "noetherianOperators",
      "hybridNoetherianOperators",
      "DependentSet",
@@ -1183,23 +1184,31 @@ vectorAnn = (V) -> (
 --- Given a prime ideal and a set of Noetherian operators, it computes the corresponding primary ideal
 --- Input: L a list of Noetherian operators (inside R[dx_1,...,dx_n]); a prime ideal P.
 --- Output: The corresponding primary ideal Q 
-getIdealFromNoetherianOperators = (L, P) -> (
+getIdealFromNoetherianOperators = method()
+getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     R := ring P;
     indVars := support first independentSets P;
     FF := frac(R/P);
-    D := ring L_0;
-    S := FF[gens D];
+    R' := ring L_0;
+    if not R' === diffAlg(R) then error "noetherian operators must be in the diffAlg of the prime";
+    S := FF[gens R'];
     V := apply(L, F -> sub(F, S));
     I := vectorAnn(V);
-    I = ideal apply(flatten entries gens I, f -> liftNoethOp(f, R, D));    
-    X := D/(I+P);
-    Lmap := apply(gens R, w -> sub(w, D) + value(value("symbol d" | toString(w)))_D);
+    I = I_* / (f -> liftNoethOp(f, R')) // ideal;
+    
+    X := R'/(I+P);
+    Lmap := apply(numgens R, i -> R_i => promote(R_i, R') + R'_i);
     mapRtoX := map(X, R, Lmap);
     Q := ker mapRtoX;
     for v in indVars do 
     	Q = saturate(Q, ideal(v));
     Q
 ) 
+
+getIdealFromNoetherianOperators(SetOfNoethOps) := N -> (
+    if not N.?Prime then error"expected symbolic Noetherian operators";
+    getIdealFromNoetherianOperators(N.Ops, N.Prime)
+)
 
  
 ----------------------------------------------------------
