@@ -1105,13 +1105,13 @@ mapRtoHilb = (Q, P, S, depVars, indVars) -> (
     ideal mingens ((mapRtoS Q) + diag^m)    
 )
 
-liftNoethOp = (A, R, D) -> (
-    FF := coefficientRing ring A;
-    L := apply(flatten entries last coefficients A, 
-	           w -> lift(denominator(sub(w, FF)),R));
-    m := if L == {} then 1_R else lcm L;	       
-    sub(m*A, D)
-)  
+liftNoethOp = (d, R') -> (
+    m := flatten entries last coefficients d /
+        (c -> lift(c, coefficientRing ring c)) /
+        denominator //
+        lcm;
+    sub(d*m, R')
+)
 
 unpackRow = (row, FF) -> (
    (mons, coeffs) := coefficients row;
@@ -1132,16 +1132,14 @@ invSystemFromHilbToNoethOps = (I, R, S, depVars) -> (
 	auxMat := unpackRow(diff(gensI_i, allMons), FF);
 	diffMat = diffMat || auxMat;
      );
-    noethOps := flatten entries (allMons * mingens ker diffMat);  
+    R' := diffAlg R;
+    T := frac(R)[gens R'];
+    StoT := map(T, S, apply(#depVars, i -> T_(index depVars#i)));
+    K := mingens ker diffMat;
+    KK := StoT promote(K, S);
 
-    indVars := gens R - set depVars;    
-    if not R#?cache then R#cache = new CacheTable;
-    if not R#cache#?"NoethNormRing" then R#cache#"NoethNormRing" = (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
-    T := R#cache#"NoethNormRing";
-    T' := diffAlg(T);
-    hilbRing := ring noethOps#0;
-    phi := map(T', hilbRing, vars T');
-    noethOps / phi
+    noethOps := flatten entries StoT (allMons * mingens ker diffMat);
+    noethOps / (d -> liftNoethOp(d, R'))
     --diffVars := apply(depVars, w -> value("symbol d" | toString(w)) );
     --W := FF(monoid[diffVars]);
     ----D := R(monoid[diffVars]);
