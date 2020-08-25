@@ -130,6 +130,8 @@ STRONG     = new MarkUpType of Hypertext
 SUB        = new MarkUpType of Hypertext
 SUP        = new MarkUpType of Hypertext
 TT         = new MarkUpType of Hypertext
+BF = BOLD
+IT = ITALIC
 
 -- Lists (TODO: OL)
 OL         = new MarkUpType of HypertextContainer
@@ -160,8 +162,7 @@ TH         = new MarkUpType of TD
 CDATA      = new MarkUpType of Hypertext
 COMMENT    = new MarkUpType of Hypertext
 
-TEX        = new MarkUpType of Hypertext -- TEX should be processed further so its output can be checked
-
+TEX        = new IntermediateMarkUpType of Hypertext
 ExampleItem = new IntermediateMarkUpType of Hypertext
 HREF       = new IntermediateMarkUpType of Hypertext
 LATER      = new IntermediateMarkUpType of Hypertext
@@ -202,12 +203,41 @@ EXAMPLE VisibleList := x -> (
 -----------------------------------------------------------------------------
 -- MarkUpType constructors
 -----------------------------------------------------------------------------
--- TODO: Move this
 
 new HR from List :=
 new BR from List := (X,x) -> if all(x, e -> instance(e, Option)) then x else error "expected empty list"
 br = BR{}
 hr = HR{}
+
+new TEX from String    := (T, t) -> T {t}
+new TEX from BasicList := (T, t) -> (
+    -- TODO: https://www.overleaf.com/learn/latex/Font_sizes,_families,_and_styles#Reference_guide
+    -- we do this so {"{\tt", TO sum, "}"} can be rendered correctly
+    s := demark_"," \\ toExternalString \ t;
+    -- parsing matching braces wrapped with \url{...}
+    re   := ///((?:\\\\(url))?\{((?:[^}{]+|(?1))*+)\})///;
+    off  := 0;
+    while (m := regex(re, off, s)) =!= null do (
+	off = m#3#0;
+	tag := toUpper substring(m#2, s);
+	if match("URL", tag) then (
+	    tag = "HREF";
+	    if debugLevel > 1 then printerr("parsing ", tag, " in TEX");
+	    s = replace(regexQuote substring(m#1, s), "\"," | tag | "{" | format substring(m#3, s) | "},\"", s);
+	    continue));
+    -- parsing matching braces wrapped with {\xx ...}
+    re   = ///(\{(?:\\\\(bf|tt|em|it))? *((?:[^}{]+|(?1))*+)\})///;
+    off  = 0;
+    while (m = regex(re, off, s)) =!= null do (
+	off = m#3#0;
+	tag = toUpper substring(m#2, s);
+	if match("BF|TT|EM|IT", tag) then (
+	    if debugLevel > 1 then printerr("parsing ", tag, " in TEX");
+	    s = replace(regexQuote substring(m#1, s), "\"," | tag | "{" | format substring(m#3, s) | "},\"", s);
+	    continue));
+    -- evaluate Hypertext types
+    s = value s;
+    if instance(s, BasicList) then s else {s})
 
 isLink = x -> instance(x, TO) or instance(x, TO2) or instance(x, TOH)
 

@@ -6,8 +6,8 @@ newPackage("Text",
      )
 
 exportFrom_Core {
-     "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
-     "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "IMG", "ITALIC",
+     "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BF", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
+     "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "IMG", "ITALIC", "IT",
      "LABEL", "LATER", "LI", "LINK", "LITERAL", "MENU", "META", "PARA", "PRE", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD", "TH",
      "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "OL", "validate",
      "MarkUpType", "IntermediateMarkUpType",
@@ -460,7 +460,7 @@ document { Key => MENU,
      }
 
 document {
-     Key => ITALIC,
+     Key => {ITALIC, "IT"},
      Headline => "hypertext italic font",
      Usage => "ITALIC x",
 	Inputs => {"x" => {}},
@@ -509,7 +509,7 @@ document {
 	       ///TEX ////A formula, $$\{x_1^2,\dots,x_n^2\},$$ can be displayed./////////,
 	       ///TEX ////$$\begin{pmatrix}3&4&x^2+1\\5&6&7\end{pmatrix}.$$/////////,
 	       ///TEX ////${\mathbf a+b+c} \in {\mathbb R}, {\mathcal 1234}, 1234$/////////,
-	       ///TEX ////{\tt res(Module)} is the {\cal method} for {\em making} {\it resolutions}./////////,
+	       ///TEX ////{\tt res(Module)} is the {\it method} for {\em making} {\it resolutions}./////////,
 	       ///TEX ////\url{http://www.math.uiuc.edu/Macaulay2/}/////////,
 	       ///TEX ////$\frac x4 + \frac{x^2+1}{y+3} + {3\over 4}$/////////,
 	       ///TEX ////$R^\times, x_{i,j}$/////////,
@@ -583,7 +583,7 @@ document {
      }
 
 document {
-     Key => BOLD,
+     Key => {BOLD, "BF"},
      Headline => "hypertext BOLD item",
 	Usage => "BOLD x",
 	Inputs => {"x" => {}},

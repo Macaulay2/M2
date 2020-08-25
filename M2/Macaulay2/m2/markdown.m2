@@ -65,9 +65,9 @@ markdown COMMENT := x -> concatenate("<!--", apply(x, markdown), "-->")
 
 -- TODO: implement other literal character changes based on this reference:
 --       https://daringfireball.net/projects/markdown/syntax#code
-markdown TEX     :=
 markdown LITERAL :=
 markdown String  := identity
+markdown TEX     := x -> concatenate apply(x, markdown)
 
 -- Headers
 markdown HEADER1 := x -> concatenate(newline, 1:"#", " ", apply(x, markdown), newline)

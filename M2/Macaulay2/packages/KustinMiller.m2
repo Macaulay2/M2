@@ -652,7 +652,7 @@ doc ///
       
       We provide a general command @TO kustinMillerComplex@ for the Kustin-Miller complex construction and demonstrate it on several examples connecting unprojection theory
       and combinatorics such as stellar subdivisions of simplicial complexes [6],
-      minimal resolutions of Stanley-Reisner rings of boundary complexes {\Delta}(d,m) 
+      minimal resolutions of Stanley-Reisner rings of boundary complexes $\Delta(d,m)$
       of cyclic polytopes of dimension d on m vertices [7], and the classical 
       (non-monomial) Tom example of unprojection [2].
       
@@ -858,7 +858,7 @@ doc ///
     :SimplicialComplex
   Description
    Text
-      Boundary complex of a cyclic polytope of dimension d on the variables of R as vertices, i.e., {\Delta}(d,m) if m is the number of variables of R.
+      Boundary complex of a cyclic polytope of dimension d on the variables of R as vertices, i.e., $\Delta(d,m)$ if m is the number of variables of R.
 
    Example
      K=QQ;
@@ -1365,8 +1365,8 @@ doc ///
   Description
    Text
     In the following example we construct the minimal resolution of the Stanley-Reisner ring of
-    the cyclic polytope {\Delta}(4,8) of embedding codimension 4 (as a subcomplex of the simplex on 8 vertices) 
-    from those of the cyclic polytopes {\Delta}(2,6) and {\Delta}(4,7) (the last one being Pfaffian).
+    the cyclic polytope $\Delta(4,8)$ of embedding codimension 4 (as a subcomplex of the simplex on 8 vertices)
+    from those of the cyclic polytopes $\Delta(2,6)$ and $\Delta(4,7)$ (the last one being Pfaffian).
 
     This process can be iterated to give a recursive construction of the
     resolutions of all cyclic polytopes, for details see
@@ -1390,7 +1390,7 @@ doc ///
 
      We compare with the combinatorics, that is, check that
      the Kustin-Miller complex at the special fiber z=0 indeed resolves 
-     the Stanley-Reisner ring of {\Delta}(4,8).
+     the Stanley-Reisner ring of $\Delta(4,8)$.
 
    Example
      R'=K[x_1..x_8];
