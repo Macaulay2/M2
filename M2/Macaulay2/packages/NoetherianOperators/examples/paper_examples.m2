@@ -25,12 +25,12 @@ zeroDimensionalDual(origin S, I)
 R = QQ[t,x,y]
 I = ideal(x^2 - t*y, y^2)
 -- Symbolic version
-noetherianOperators(I, DependentSet => {x,y}) // sort // netList
+netList noetherianOperators(I, DependentSet => {x,y})
 
 -- numerical version
 pts = toList(1..6) / (i -> matrix{{i_QQ, 0, 0}})
-nops = pts / (p -> numNoethOpsAtPoint(I, p, DependentSet => {x,y}));
-netList nops
+nops = pts / (p -> numNoethOpsAtPoint(I, p, DependentSet => {x,y}, DegreeLimit => 5));
+netList (nops / (n -> n.Ops))
 -- interpolating e.g. last coefficient
 vals = {6,3,2,3/2, 6/5, 1} -- coefficient in _dx*dy
 ts = {matrix{{1}},matrix{{2}},matrix{{3}},matrix{{4}},matrix{{5}},matrix{{6}}} -- corresponding value of t

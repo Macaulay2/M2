@@ -632,11 +632,18 @@ SetOfNoethOps#{Standard,AfterPrint} = x -> (
     << endl;
 )
 SetOfNoethOps _* := N -> N.Ops;
+SetOfNoethOps _ ZZ := (N, i) -> (N.Ops)#i;
+
+entries SetOfNoethOps := N -> N.Ops;
+net SetOfNoethOps := N -> net N.Ops;
+netList SetOfNoethOps := opts -> N -> netList(N.Ops, opts);
 numgens SetOfNoethOps := N -> #N.Ops;
 ring SetOfNoethOps := N -> ring N_0;
-net SetOfNoethOps := N -> net N.Ops;
-SetOfNoethOps _ ZZ := (N, i) -> (N.Ops)#i;
-entries SetOfNoethOps := N -> N.Ops;
+sort SetOfNoethOps := opts -> N -> new SetOfNoethOps from {
+    Ops => sort(N.Ops, opts),
+    if N.?Prime then Prime => N.Prime
+    else if N.?Point then Point => N.Point
+}
 
 -- Maybe not needed?
 NoethOp = new Type of HashTable;
@@ -2095,7 +2102,7 @@ assert( Q == ideal(3*x_1^2*x_2^2-x_2^3*x_3-x_1^3*x_4-3*x_1*x_2*x_3*x_4+2*x_3^2*x
       ^2-x_1^4+6*x_1^2*x_2*x_3+3*x_2^2*x_3^2-8*x_1*x_3^2*x_4) );
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2107,7 +2114,7 @@ R=QQ[x_1,x_2,x_3,x_4];
 Q=ideal{x_1^2,x_1*x_2,x_1*x_3,x_1*x_4-x_3^2+x_1,x_3^2*x_4-x_2^2,x_3^2*x_4-x_3^2-x_2*x_3+2*x_1};
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2135,7 +2142,7 @@ joinIdeals = (J, K) ->
 Q=joinIdeals(P,M)
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2148,7 +2155,7 @@ R = QQ[x_1, x_2, x_3]
 Q = ideal(x_1^2, x_2^2, x_1-x_2*x_3)
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2172,21 +2179,21 @@ isPrime Q2
 P2 = radical Q2 -- it is equal to (x_1, x_2, x_3)
 time noetherianOperators(Q2)
 L = time getNoetherianOperatorsHilb(Q2)
-Q2' = getIdealFromNoetherianOperators(L, radical Q2)
+Q2' = getIdealFromNoetherianOperators(L)
 Q2 == Q2'
 ---- the Noetherian operators of Q3
 isPrime Q3
 P3 = radical Q3 -- it is equal to (x2, x3, x4)
-time noetherianOperators(Q3)
+time noetherianOperators(Q3) --TODO: this is broken
 L = time getNoetherianOperatorsHilb(Q3)
-Q3' = getIdealFromNoetherianOperators(L, radical Q3)
+Q3' = getIdealFromNoetherianOperators(L)
 Q3 == Q3'
 ---- the Noetherian operators of Q4
 isPrime Q4
 P4 = radical Q4 -- it is equal to (x1, x2, x3, x4)
-time noetherianOperators(Q4)
+time noetherianOperators(Q4) --TODO: this is broken
 L = time getNoetherianOperatorsHilb(Q4)
-Q4' = getIdealFromNoetherianOperators(L, radical Q4)
+Q4' = getIdealFromNoetherianOperators(L)
 Q4 == Q4'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2200,7 +2207,7 @@ Q = ideal(random(3, R), random(2, R), random(2, R), random(4, R))
 assert(dim Q == 0)
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2213,7 +2220,7 @@ R = QQ[x_1,x_2,x_3]
 Q = ideal(x_1^2, x_2^2, x_3^2, x_1*x_2 + x_1*x_3 +x_2*x_3)
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2230,7 +2237,7 @@ primDec = primaryDecomposition J
 Q = primDec_0
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2245,7 +2252,7 @@ n=4
 Q=mm^n
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2258,7 +2265,7 @@ R = QQ[x_1,x_2,x_3]
 Q = ideal(x_1^2,x_2^2,x_3^2)
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
