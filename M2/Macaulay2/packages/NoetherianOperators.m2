@@ -740,9 +740,7 @@ noetherianOperators (Ideal, Ideal) := List => opts -> (I, P) -> (
     depVars := if opts.DependentSet === null then gens R - set support first independentSets P
             else opts.DependentSet;
     indVars := gens R - set depVars;
-    if not R#?cache then R#cache = new CacheTable;
-    if not R#cache#?"NoethNormRing" then R#cache#"NoethNormRing" = (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
-    S := R#cache#"NoethNormRing";
+    S := (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
     SradI := sub(P, S);
     SI := sub(I,S);
     kP := toField(S/SradI);
