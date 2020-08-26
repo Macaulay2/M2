@@ -835,7 +835,6 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
             else opts.DependentSet;
     indVars := gens R - set depVars;
     S := (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
-    S' := S;
     PS := sub(P, S);
     IS := sub(I,S);
     kP := toField(S/PS);
@@ -874,7 +873,7 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
             lcm;
         cleared := sub(promote(commonFactor, coefficientRing S) * KK, R);
         R' := diffAlg(R);
-        bdd := sub(bd, vars R');
+        bdd := (map(R',R,vars R'))(sub(bd, R));
         (bdd * (promote(cleared, R')))_(0,0)
     );
     new SetOfNoethOps from {Ops => L, Prime => P}
