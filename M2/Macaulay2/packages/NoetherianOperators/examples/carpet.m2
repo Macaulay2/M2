@@ -77,3 +77,15 @@ pts = bertiniSample(1, ws, BertiniInputConfiguration => {RandomSeed => 1});
 -- at first, every set of 5 variables is a potential set of dependent variables
 candidates = subsets(gens S, 5)
 candidates#(position(candidates, l -> numericalImageDim(matrix{l}, sub(primes#4,S), pts#0) == 0))
+
+
+-- Finding dependent sets
+needsPackage "NumericalImplicitization"
+-- pick a point on any component
+ws = (components nid)#1 -- corresponds to primes#4
+pts = bertiniSample(1, ws, BertiniInputConfiguration => {RandomSeed => 1});
+
+-- since codimention is 5, we will have 5 dependent variables
+-- at first, every set of 5 variables is a potential set of dependent variables
+candidates = subsets(gens S, 5)
+candidates#(position(candidates, l -> numericalImageDim(matrix{l}, sub(primes#4,S), pts#0) == 0))

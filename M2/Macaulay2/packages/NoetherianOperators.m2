@@ -41,6 +41,12 @@ export {
      "adjointMatrix",
      "newGCorners",
 
+     --Data type keys
+     "Ops",
+     "Prime",
+     "LiftMap",
+
+     "diffAlg",
      "noetherianOperators",
      "hybridNoetherianOperators",
      "DependentSet",
@@ -610,6 +616,39 @@ basisIndices = (M, tol) -> (
 
 
 
+--
+-----  Noetherian operator data structures
+--
+SetOfNoethOps = new Type of HashTable;
+SetOfNoethOps / Function := (N, f) -> N.Ops / f;
+SetOfNoethOps#{Standard,AfterPrint} = x -> (
+    o := () -> concatenate(interpreterDepth:"o");
+    << endl;                 -- double space
+    << o() << lineNumber;
+    y := class x;
+    << " : " << "set of Noetherian operators";
+    if x#?Prime then << " over the prime "<<x#Prime
+    else if x#?Point then << " evaluated at "<< x#Point;
+    << endl;
+)
+SetOfNoethOps _* := N -> N.Ops;
+SetOfNoethOps _ ZZ := (N, i) -> (N.Ops)#i;
+
+entries SetOfNoethOps := N -> N.Ops;
+net SetOfNoethOps := N -> net N.Ops;
+netList SetOfNoethOps := opts -> N -> netList(N.Ops, opts);
+numgens SetOfNoethOps := N -> #N.Ops;
+ring SetOfNoethOps := N -> ring N_0;
+sort SetOfNoethOps := opts -> N -> new SetOfNoethOps from {
+    Ops => sort(N.Ops, opts),
+    if N.?Prime then Prime => N.Prime
+    else if N.?Point then Point => N.Point
+}
+
+-- Maybe not needed?
+NoethOp = new Type of HashTable;
+
+
 
 --
 -----  Noetherian operator code
@@ -722,9 +761,27 @@ noetherianOperators (Ideal, Ideal) := List => opts -> (I, P) -> (
         if debugLevel > 0 then "Symbolic Noetherian degree: "<<i<<endl;
     );
     K = transpose first rowReduce(transpose K, true);
-    S' := diffAlg S;
-    bdd := sub(bd, vars S');
-    flatten entries (bdd * sub(K, S'))
+
+    R' := diffAlg R;
+    StoR := map(R,S);
+    RtoR' := map(R',R, vars R');
+
+    bdd := RtoR' StoR bd;
+    KK := lift(K, S);
+
+    -- Clear denominators from KK
+    L := sort for i to numColumns KK - 1 list (
+        commonFactor := flatten entries KK_i / 
+            flatten @@ entries @@ last @@ coefficients //
+            flatten /
+            (c -> lift(c, coefficientRing S)) /
+            denominator //
+            lcm;
+        cleared := sub(promote(commonFactor, coefficientRing S) * KK_i, R);
+        (bdd * (promote(cleared, R')))_(0)
+    );
+
+    new SetOfNoethOps from {Ops => L, Prime => P}
 )
 
 noetherianOperators (Ideal) := List => opts -> (I) -> noetherianOperators(I, ideal gens radical I, opts)
@@ -750,13 +807,14 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
     tol := if opts.Tolerance === null then defaultT(ring I) else opts.Tolerance;
     if opts.DegreeLimit == -1 then error "noetherian operator degree limit cannot be infinity";
     R := ring I;
-    var := if opts.DependentSet === null then gens R - set support first independentSets I
+    depVars := if opts.DependentSet === null then gens R - set support first independentSets I
             else opts.DependentSet;
+    indVars := gens R - set depVars;
     local M; local M'; local K; local bd; local bx;
     numOps := -1;
     for i in 1..opts.DegreeLimit do (
         bx = flatten entries basis(0,i - 1,R, Variables => gens R);
-        bd = basis(0,i,R, Variables => var);
+        bd = basis(0,i,R, Variables => depVars);
         M = diff(bd, transpose matrix {flatten (table(bx,I_*,(i,j) -> i*j))});
         M' = evaluate(M,p);
         K = numericalKernel (M', tol);
@@ -764,10 +822,10 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
         numOps = numColumns K;
     );
     K = colReduce(K, tol);
-    -- Return elements in WeylAlgebra for nice formatting
     R' := diffAlg R;
-    bdd := sub(bd, vars R');
-    flatten entries (bdd * sub(K, R'))
+    bdd := (map(R', R, vars R')) bd;
+    L := sort flatten entries (bdd * promote(K, R'));
+    new SetOfNoethOps from {Ops => L, Point => p}
 )
 
 hybridNoetherianOperators = method(Options => options numNoethOpsAtPoint)
@@ -777,7 +835,6 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
             else opts.DependentSet;
     indVars := gens R - set depVars;
     S := (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
-    S' := diffAlg S;
     PS := sub(P, S);
     IS := sub(I,S);
     kP := toField(S/PS);
@@ -793,11 +850,10 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
     goodIdx := positions(noethOpsAtPoints, i -> (i / monomials) == most#0);
     if debugLevel >= 1 then << "Good points: "<<#goodIdx<<"/"<<#pts<<endl;
     goodNops := noethOpsAtPoints#(goodIdx#0);
-    
-    phi := map(RCC, ring goodNops#0, vars RCC);
-    sort flatten for op in goodNops list (
-        bd := monomials phi op;
-        bd = matrix{flatten entries bd / (mon -> S_((first exponents mon)_(depVars / index)))};
+
+    phi := map(R, ring goodNops, vars R);
+    L := sort flatten for op in goodNops.Ops list (
+        bd := matrix{exponents op / (i -> sub(R_i,S))};
         done := false;
         d := 0;
         while not done do (
@@ -807,9 +863,20 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
             K := myKernel M;
             if numColumns K == 1 then done = true else d = d+1;
         );
-        bdd := sub(bd, vars S');
-        flatten entries (bdd * sub(K // K_(0,0), S'))
-    )
+        KK := lift(K, S);
+        -- Clear denominators
+        commonFactor := flatten entries KK / 
+            flatten @@ entries @@ last @@ coefficients //
+            flatten /
+            (c -> lift(c, coefficientRing S)) /
+            denominator //
+            lcm;
+        cleared := sub(promote(commonFactor, coefficientRing S) * KK, R);
+        R' := diffAlg(R);
+        bdd := (map(R',R,vars R'))(sub(bd, R));
+        (bdd * (promote(cleared, R')))_(0,0)
+    );
+    new SetOfNoethOps from {Ops => L, Prime => P}
 ) 
 
 numericalNoetherianOperators = method(Options => {
@@ -839,8 +906,10 @@ numericalNoetherianOperators(Ideal, List) := List => opts -> (I, pts) -> (
     if debugLevel >= 1 then <<"Num good points: " << #goodIdx << " / " << #noethOpsAtPoints << endl;
     goodNops := noethOpsAtPoints_goodIdx;
     goodPts := pts_goodIdx;
-    transpose goodNops / (L -> formatNoethOps interpolateNOp(L, goodPts, R, Tolerance => opts.InterpolationTolerance))
-
+    apply(numgens goodNops#0, i -> (
+        L := goodNops / (N -> N_i);
+        formatNoethOps interpolateNOp(L,goodPts, R, Tolerance => opts.InterpolationTolerance)
+    ))
 )
 -- compute the jth term of the ith Noetherian operator
 numericalNoetherianOperators(Ideal, List, ZZ, ZZ) := List => opts -> (I, pts, i, j) -> (
@@ -890,7 +959,7 @@ interpolateNOp = method(Options => {Tolerance => 1e-6})
 interpolateNOp(List,List,Ring) := List => opts -> (specializedNops, pts, R) -> (
     mons := flatten entries monomials specializedNops#0;
     coeffs := transpose (specializedNops / (i -> (coefficients i)#1) / entries / flatten);
-    coeffs = coeffs / (i -> i / (j -> sub(j, CC)));
+    coeffs = coeffs / (i -> i / (j -> sub(j, coefficientRing R)));
     interpolatedCoefficients := coeffs / (i -> 
         try rationalInterpolation(pts, i, R, Tolerance => opts.Tolerance) / 
             (j -> (matrix j)_(0,0)) / (j -> cleanPoly(opts.Tolerance, j))--// 
@@ -1041,13 +1110,13 @@ mapRtoHilb = (Q, P, S, depVars, indVars) -> (
     ideal mingens ((mapRtoS Q) + diag^m)    
 )
 
-liftNoethOp = (A, R, D) -> (
-    FF := coefficientRing ring A;
-    L := apply(flatten entries last coefficients A, 
-	           w -> lift(denominator(sub(w, FF)),R));
-    m := if L == {} then 1_R else lcm L;	       
-    sub(m*A, D)
-)  
+liftNoethOp = (d, R') -> (
+    m := flatten entries last coefficients d /
+        (c -> lift(c, coefficientRing ring c)) /
+        denominator //
+        lcm;
+    sub(d*m, R')
+)
 
 unpackRow = (row, FF) -> (
    (mons, coeffs) := coefficients row;
@@ -1068,13 +1137,20 @@ invSystemFromHilbToNoethOps = (I, R, S, depVars) -> (
 	auxMat := unpackRow(diff(gensI_i, allMons), FF);
 	diffMat = diffMat || auxMat;
      );
-    noethOps := flatten entries (allMons * mingens ker diffMat);  
-    diffVars := apply(depVars, w -> value("symbol d" | toString(w)) );
-    W := FF(monoid[diffVars]);
-    --D := R(monoid[diffVars]);
-    D := diffAlg(R);
-    mapStoW := map(W, S, gens W);
-    apply(noethOps, w -> liftNoethOp(mapStoW(w), R, D))   
+    R' := diffAlg R;
+    T := frac(R)[gens R'];
+    StoT := map(T, S, apply(#depVars, i -> T_(index depVars#i)));
+    K := mingens ker diffMat;
+    KK := StoT promote(K, S);
+
+    noethOps := flatten entries StoT (allMons * mingens ker diffMat);
+    noethOps / (d -> liftNoethOp(d, R'))
+    --diffVars := apply(depVars, w -> value("symbol d" | toString(w)) );
+    --W := FF(monoid[diffVars]);
+    ----D := R(monoid[diffVars]);
+    --D := diffAlg(R);
+    --mapStoW := map(W, S, gens W);
+    --apply(noethOps, w -> liftNoethOp(mapStoW(w), R, D))   
 )
    
 -- This function can compute the Noetherian operators of a primary ideal Q.
@@ -1087,7 +1163,7 @@ getNoetherianOperatorsHilb = Q -> (
     S := getHilb(P, depVars);
     I := mapRtoHilb(Q, P, S, depVars, indVars);
     noethOps := invSystemFromHilbToNoethOps(I, R, S, depVars);
-    noethOps    
+    new SetOfNoethOps from {Ops => noethOps, Prime => P}
 ) 
 
 -- computes the annihilator ideal of a polynomial F in a polynomial ring 
@@ -1112,23 +1188,31 @@ vectorAnn = (V) -> (
 --- Given a prime ideal and a set of Noetherian operators, it computes the corresponding primary ideal
 --- Input: L a list of Noetherian operators (inside R[dx_1,...,dx_n]); a prime ideal P.
 --- Output: The corresponding primary ideal Q 
-getIdealFromNoetherianOperators = (L, P) -> (
+getIdealFromNoetherianOperators = method()
+getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     R := ring P;
     indVars := support first independentSets P;
     FF := frac(R/P);
-    D := ring L_0;
-    S := FF[gens D];
+    R' := ring L_0;
+    if not R' === diffAlg(R) then error "noetherian operators must be in the diffAlg of the prime";
+    S := FF[gens R'];
     V := apply(L, F -> sub(F, S));
     I := vectorAnn(V);
-    I = ideal apply(flatten entries gens I, f -> liftNoethOp(f, R, D));    
-    X := D/(I+P);
-    Lmap := apply(gens R, w -> sub(w, D) + value(value("symbol d" | toString(w)))_D);
+    I = I_* / (f -> liftNoethOp(f, R')) // ideal;
+    
+    X := R'/(I+P);
+    Lmap := apply(numgens R, i -> R_i => promote(R_i, R') + R'_i);
     mapRtoX := map(X, R, Lmap);
     Q := ker mapRtoX;
     for v in indVars do 
     	Q = saturate(Q, ideal(v));
     Q
 ) 
+
+getIdealFromNoetherianOperators(SetOfNoethOps) := N -> (
+    if not N.?Prime then error"expected symbolic Noetherian operators";
+    getIdealFromNoetherianOperators(N.Ops, N.Prime)
+)
 
  
 ----------------------------------------------------------
@@ -2015,7 +2099,7 @@ assert( Q == ideal(3*x_1^2*x_2^2-x_2^3*x_3-x_1^3*x_4-3*x_1*x_2*x_3*x_4+2*x_3^2*x
       ^2-x_1^4+6*x_1^2*x_2*x_3+3*x_2^2*x_3^2-8*x_1*x_3^2*x_4) );
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2027,7 +2111,7 @@ R=QQ[x_1,x_2,x_3,x_4];
 Q=ideal{x_1^2,x_1*x_2,x_1*x_3,x_1*x_4-x_3^2+x_1,x_3^2*x_4-x_2^2,x_3^2*x_4-x_3^2-x_2*x_3+2*x_1};
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2055,7 +2139,7 @@ joinIdeals = (J, K) ->
 Q=joinIdeals(P,M)
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2068,7 +2152,7 @@ R = QQ[x_1, x_2, x_3]
 Q = ideal(x_1^2, x_2^2, x_1-x_2*x_3)
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2092,21 +2176,21 @@ isPrime Q2
 P2 = radical Q2 -- it is equal to (x_1, x_2, x_3)
 time noetherianOperators(Q2)
 L = time getNoetherianOperatorsHilb(Q2)
-Q2' = getIdealFromNoetherianOperators(L, radical Q2)
+Q2' = getIdealFromNoetherianOperators(L)
 Q2 == Q2'
 ---- the Noetherian operators of Q3
 isPrime Q3
 P3 = radical Q3 -- it is equal to (x2, x3, x4)
-time noetherianOperators(Q3)
+time noetherianOperators(Q3) --TODO: this is broken
 L = time getNoetherianOperatorsHilb(Q3)
-Q3' = getIdealFromNoetherianOperators(L, radical Q3)
+Q3' = getIdealFromNoetherianOperators(L)
 Q3 == Q3'
 ---- the Noetherian operators of Q4
 isPrime Q4
 P4 = radical Q4 -- it is equal to (x1, x2, x3, x4)
-time noetherianOperators(Q4)
+time noetherianOperators(Q4) --TODO: this is broken
 L = time getNoetherianOperatorsHilb(Q4)
-Q4' = getIdealFromNoetherianOperators(L, radical Q4)
+Q4' = getIdealFromNoetherianOperators(L)
 Q4 == Q4'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2120,7 +2204,7 @@ Q = ideal(random(3, R), random(2, R), random(2, R), random(4, R))
 assert(dim Q == 0)
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2133,7 +2217,7 @@ R = QQ[x_1,x_2,x_3]
 Q = ideal(x_1^2, x_2^2, x_3^2, x_1*x_2 + x_1*x_3 +x_2*x_3)
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2150,7 +2234,7 @@ primDec = primaryDecomposition J
 Q = primDec_0
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2165,7 +2249,7 @@ n=4
 Q=mm^n
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2178,7 +2262,7 @@ R = QQ[x_1,x_2,x_3]
 Q = ideal(x_1^2,x_2^2,x_3^2)
 time noetherianOperators(Q)
 L = time getNoetherianOperatorsHilb(Q)
-Q' = getIdealFromNoetherianOperators(L, radical Q)
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
