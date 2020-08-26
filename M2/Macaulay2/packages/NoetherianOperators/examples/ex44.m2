@@ -19,7 +19,7 @@ elapsedTime nops#3 = noetherianOperators(I, primes#3)
 -- This takes very long
 elapsedTime nops#4 = noetherianOperators(I, primes#4)
 -- The hybrid method performs much faster
-elapsedTime nops#4 = hybridNoetherianOperators(I, primes#4)
+elapsedTime nops#4 = hybridNoetherianOperators(I, primes#4, DegreeLimit => 10)
 
 netList nops#0
 netList nops#1

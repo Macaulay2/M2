@@ -40,10 +40,10 @@ elapsedTime numericalNoetherianOperators(I', pts, DependentSet => {0, 1, 2, 3, 4
 
 
 -- Noetherian operators of J
-foo = noetherianOperators(J, DependentSet => {1, 2, 4, 5, 6} / (i -> R_i))
-bar = hybridNoetherianOperators(J, radical J, DependentSet => {1, 2, 4, 5, 6} / (i -> R_i), DegreeLimit => 2)
-foobar = getNoetherianOperatorsHilb(J)
+n1 = noetherianOperators(J, DependentSet => {1, 2, 4, 5, 6} / (i -> R_i))
+n2 = hybridNoetherianOperators(J, radical J, DependentSet => {1, 2, 4, 5, 6} / (i -> R_i), DegreeLimit => 2)
+n3 = getNoetherianOperatorsHilb(J)
 
-getIdealFromNoetherianOperators(foo) == J
-getIdealFromNoetherianOperators(bar) == J
-getIdealFromNoetherianOperators(foobar) == J
+getIdealFromNoetherianOperators(n1) == J
+getIdealFromNoetherianOperators(n2) == J
+getIdealFromNoetherianOperators(n3) == J
