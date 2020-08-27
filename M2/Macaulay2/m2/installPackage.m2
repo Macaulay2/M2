@@ -323,7 +323,8 @@ separateExampleOutput = r -> (
 capture = method()
 capture String := s -> (
      (err,out) := internalCapture s;
-     (err,out,separateExampleOutput out))
+     (err,out,separateExampleOutput out)		    -- provisional
+     )
 
 -----------------------------------------------------------------------------
 -- installing packages -- eventually to be merged with 
