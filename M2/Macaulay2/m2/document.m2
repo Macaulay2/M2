@@ -655,8 +655,6 @@ document List := opts -> args -> (
     if o.Headline === ""                        then remove(o, Headline);
     if o.?Usage        and o.Usage === ""       then remove(o, Usage);
     if o.?Consequences and #o.Consequences == 0 then remove(o, Consequences);
-    --
-    exampleOutputFilename = makeExampleOutputFileName(fkey, currentPackage);
     -- Process all keywords
     scan(keys o, key -> if o#key =!= {} then o#key = KeywordFunctions#key o#key);
     -- Process Inputs, Outputs, Options

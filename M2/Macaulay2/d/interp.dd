@@ -525,7 +525,7 @@ value(e:Expr):Expr := (
 setupfun("value'",value);
 
 --May need thread work?
-internalCapture(e:Expr):Expr := (
+capture(e:Expr):Expr := (
      when e
      is s:stringCell do (
      	  flush(stdIO);
@@ -555,7 +555,7 @@ internalCapture(e:Expr):Expr := (
 	  previousLineNumber = -1;
 	  Expr(Sequence( when r is err:Error do True else False, toExpr(out) )))
      else WrongArg(1,"a string"));
-setupfun("internalCapture",internalCapture);
+setupfun("capture", capture).Protected = false; -- will be overloaded in m2/examples.m2
 
 normalExit := 0;
 errorExit := 1;

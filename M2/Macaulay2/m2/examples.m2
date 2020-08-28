@@ -4,34 +4,33 @@
 
 processExamplesStrict = true
 
-exampleOutputFilename = null
-
-exampleCounter := 0
-exampleResults := {}
-
 -----------------------------------------------------------------------------
--- separateM2output
+-- local utilities
 -----------------------------------------------------------------------------
 
 M2outputRE      := "(\n+)i+[1-9][0-9]* : "
 M2outputREindex := 1
 
--- TODO: needed in installPackage.m2
-separateM2output = method()
-separateM2output String := str -> (
+separateM2output := str -> (
     m := regex("^i1 : ", str);
     if m#?0 then str = substring(m#0#0, str);
     -- TODO: do this with regex instead
     while str#?-1 and str#-1 == "\n" do str = substring(0, #str - 1, str);
     separate(M2outputRE, M2outputREindex, str))
 
--- TODO: the output format is strange, and sometimes doesn't work
+-----------------------------------------------------------------------------
+-- capture
+-----------------------------------------------------------------------------
+
+-- TODO: the output format is provisional
+-- TODO: does't capture stderr
+capture' := capture
 capture = method()
-capture Net    := s -> capture toString s
-capture List   := s -> capture demark_newline s
-capture String := s -> (
-     (err, out) := internalCapture s;
-     (err, out, separateM2output out))
+capture Net    := s -> capture' toString s
+capture List   := s -> capture' demark_newline s
+capture String := s -> capture' s -- output is (Boolean, String) => (Err?, Output)
+
+protect symbol capture
 
 -----------------------------------------------------------------------------
 -- extract examples
@@ -51,37 +50,50 @@ extractExamples = docBody -> (
     docBody)
 
 -----------------------------------------------------------------------------
--- extract examples
+-- storeExampleOutput
 -----------------------------------------------------------------------------
 
--- may return 'null'
-makeExampleOutputFileName = (fkey, pkg) -> (
+getExampleOutputFilename := (pkg, fkey) -> (
     if pkg#?"package prefix" and pkg#"package prefix" =!= null then (
 	packageLayout := detectCurrentLayout pkg#"package prefix";
 	if packageLayout === null then error "internal error: package layout not detected";
-	pkg#"package prefix" | replace("PKG", pkg#"pkgname", Layout#packageLayout#"packageexampleoutput") | toFilename fkey | ".out"))
+	pkg#"package prefix" | replace("PKG", pkg#"pkgname", Layout#packageLayout#"packageexampleoutput") | toFilename fkey | ".out")
+    else error "internal error: package prefix is undefined")
 
-checkForExampleOutputFile := (node,pkg) -> (
-    exampleCounter = 0;
-    exampleResults = {};
-    if pkg#"example results"#?node then (
-	exampleResults = pkg#"example results"#node;
-	true)
-    else if exampleOutputFilename =!= null then (
-	if fileExists exampleOutputFilename then (
-	    if debugLevel > 1 then stderr << "--reading example results from " << exampleOutputFilename << endl;
-	    exampleResults = pkg#"example results"#node = drop(separateM2output get exampleOutputFilename, -1);
-	    true)
-	else (
-	    if debugLevel > 0 then stderr << "--example output file not present: " << exampleOutputFilename << endl;
-	    false))
-    else false)
+readCachedExampleResults := (pkg, fkey) -> (
+    verboseLog := if debugLevel > 1 then printerr else identity;
+    fn := getExampleOutputFilename(pkg, fkey);
+    pkg#"example results"#fkey = if fileExists fn
+    then ( verboseLog("info: reading cached example results from ", fn); drop(separateM2output get fn, -1) )
+    else ( verboseLog("info: example output file not present: ", fn); {} ))
+
+storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
+    if fileExists outf then (
+	outstr := reproduciblePaths get outf;
+	outf << outstr << close;
+	pkg#"example results"#fkey = drop(separateM2output outstr, -1))
+    else verboseLog("warning: missing file ", outf));
+
+captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash, changeFunc, usermode, verboseLog) -> (
+--    verboseLog("info: capturing example output in the same process");
+--    (err, output) := evaluateWithPackage(pkg, inputs, capture);
+--    outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close)
+    (
+	verboseLog("info: computing example results in separate process");
+	data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
+	desc := "example results for " | fkey;
+	inf << inputs << endl << close;
+	if runFile(inf, inputhash, outf, errf, desc, pkg, changeFunc fkey, usermode, data)
+	then ( removeFile inf; cacheFunc fkey )))
 
 -----------------------------------------------------------------------------
 -- process examples
 -----------------------------------------------------------------------------
+-- TODO: make this functional
 
-currentExampleKey := ""
+local currentExampleKey
+local currentExampleCounter
+local currentExampleResults
 
 processExamplesLoop = method(Dispatch => Thing)
 processExamplesLoop TO       :=
@@ -91,24 +103,20 @@ processExamplesLoop Option   :=
 processExamplesLoop String   := identity
 
 processExamplesLoop Sequence    :=
-processExamplesLoop Hypertext   := x -> apply(x,processExamplesLoop)
+processExamplesLoop Hypertext   := x -> apply(x, processExamplesLoop)
 processExamplesLoop ExampleItem := x -> (
-    ret := (
-	if exampleResults#?exampleCounter then PRE exampleResults#exampleCounter
-	else (
-	    if #exampleResults === exampleCounter then (
-		if processExamplesStrict
-		then error("example results terminate prematurely: ", toString currentExampleKey)
-		else stderr << "--warning: example results terminate prematurely: " << currentExampleKey << endl);
-	    PRE concatenate("i", toString (exampleCounter + 1), " : -- example results terminated prematurely")));
-    exampleCounter = exampleCounter + 1;
-    ret)
+    result := if currentExampleResults#?currentExampleCounter then PRE currentExampleResults#currentExampleCounter else (
+	if #currentExampleResults === currentExampleCounter then (
+	    if processExamplesStrict
+	    then error("example results terminate prematurely: ", toString currentExampleKey)
+	    else printerr("warning: example results terminate prematurely: ", toString currentExampleKey));
+	PRE concatenate("i", toString (currentExampleCounter + 1), " : -- example results terminated prematurely"));
+    currentExampleCounter = currentExampleCounter + 1;
+    result)
 
-processExamples = (pkg, fkey, docBody) -> (
-    pkg = getpkg pkg;
-    exampleOutputFilename = makeExampleOutputFileName(fkey, pkg);
-    if checkForExampleOutputFile(fkey, pkg) then (
-	currentExampleKey = fkey;
-	docBody = processExamplesLoop docBody;
-	currentExampleKey = "");
-    docBody)
+processExamples = (pkgname, fkey, docBody) -> (
+    pkg := getpkg pkgname;
+    currentExampleKey = fkey;
+    currentExampleCounter = 0;
+    currentExampleResults = if pkg#"example results"#?fkey then pkg#"example results"#fkey else readCachedExampleResults(pkg, fkey);
+    processExamplesLoop docBody)

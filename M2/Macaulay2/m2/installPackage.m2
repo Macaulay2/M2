@@ -484,6 +484,57 @@ reproduciblePaths = outstr -> (
      outstr
     )
 
+generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutputDir, verboseLog, pkgopts, opts) -> (
+    fnbase := temporaryFileName();
+    inpfn  := fkey ->           fnbase | toFilename fkey | ".m2";
+    outfn' := fkey ->       exampleDir | toFilename fkey | ".out";
+    outfn  := fkey -> exampleOutputDir | toFilename fkey | ".out";
+    errfn  := fkey -> exampleOutputDir | toFilename fkey | ".errors";
+    gethash := outf -> (
+	f := get outf;
+	-- this regular expression detects the format used in runFile
+	m := regex("\\`.* hash: *(-?[0-9]+)", f);
+	if m =!= null then value substring(m#1, f));
+    changeFunc := fkey -> () -> remove(rawDocumentationCache, fkey);
+
+    possiblyCache := (outf, outf') -> fkey -> (
+	if opts.CacheExampleOutput =!= false and pkgopts.CacheExampleOutput === true
+	and ( not fileExists outf' or fileExists outf' and fileTime outf > fileTime outf' ) then (
+	    verboseLog("caching example results for ", fkey, " in ", outf');
+	    if not isDirectory exampleDir then makeDirectory exampleDir;
+	    copyFile(outf, outf', Verbose => true)));
+
+    scan(pairs pkg#"example inputs", (fkey, inputs) -> (
+	    inpf  := inpfn  fkey; -- input file
+	    outf' := outfn' fkey; -- cached file
+	    outf  := outfn  fkey; -- output file
+	    errf  := errfn  fkey; -- error file
+	    inputhash := hash inputs;
+	    -- use cached example results
+	    if  not opts.RunExamples
+	    or  not opts.RerunExamples and fileExists outf  and gethash outf  === inputhash then (
+		(possiblyCache(outf, outf'))(fkey))
+	    -- use distributed example results
+	    else if pkgopts.UseCachedExampleOutput
+	    and not opts.RerunExamples and fileExists outf' and gethash outf' === inputhash then (
+		if fileExists errf then removeFile errf; copyFile(outf', outf))
+	    -- run and capture example results
+	    else elapsedTime captureExampleOutput(
+		pkg, fkey, demark_newline inputs,
+		possiblyCache(outf, outf'),
+		inpf, outf, errf,
+		inputhash, changeFunc,
+		if opts.UserMode === null then not noinitfile else opts.UserMode, verboseLog);
+	    storeExampleOutput(pkg, fkey, outf, verboseLog)));
+
+    -- check for obsolete example output files and remove them
+    if chkdoc then (
+	exampleOutputFiles := set apply(keys pkg#"example inputs", outfn);
+	scan(readDirectory exampleOutputDir, fn -> (
+		fn = exampleOutputDir | fn;
+		if match("\\.out$", fn) and not exampleOutputFiles#?fn then removeFile fn)));
+    )
+
 -----------------------------------------------------------------------------
 -- installPackage
 -----------------------------------------------------------------------------
@@ -581,9 +632,6 @@ installPackage Package := opts -> pkg -> (
 	else if pkgopts.AuxiliaryFiles
 	then error("installPackage: package ", toString pkg, " has no directory of auxiliary files, but newPackage was given AuxiliaryFiles => true"));
 
-    -- copy package source subdirectory examples
-    exampleOutputDir := installPrefix | replace("PKG", pkg#"pkgname", installLayout#"packageexampleoutput");
-
     if opts.MakeDocumentation then (
 	-- here's where we get the list of nodes from the raw documentation
 	nodes := packageTagList(pkg, topDocumentTag);
@@ -592,19 +640,6 @@ installPackage Package := opts -> pkg -> (
 
 	-- copy package doc subdirectory if we loaded the package from a distribution
 	-- ... to be implemented, but we seem to be copying the examples already, but only partially
-
-	fnbase := temporaryFileName();
-	infn  := fkey ->           fnbase | toFilename fkey | ".m2";
-	outfn := fkey -> exampleOutputDir | toFilename fkey | ".out";
-	tmpfn := fkey -> exampleOutputDir | toFilename fkey | ".errors";
-	makeDirectory exampleOutputDir;
-
-	-- check for obsolete example output files and remove them
-	if chkdoc then (
-	    exampleOutputFiles := set apply(keys pkg#"example inputs", outfn);
-	    scan(readDirectory exampleOutputDir, fn -> (
-		    fn = exampleOutputDir | fn;
-		    if match("\\.out$", fn) and not exampleOutputFiles#?fn then removeFile fn)));
 
 	-- cache raw documentation in database, and check for changes
 	rawDocumentationCache := new MutableHashTable;
@@ -644,51 +679,15 @@ installPackage Package := opts -> pkg -> (
 		verboseLog("  running test ", key, ", function ", str);
 		str()));
 
+	-- directories for cached and generated example outputs
+	exampleDir := realpath currentSourceDir | pkg#"pkgname" | "/examples" | "/";
+	exampleOutputDir := installPrefix | replace("PKG", pkg#"pkgname", installLayout#"packageexampleoutput");
+	makeDirectory exampleOutputDir;
+
 	-- make example output files, or else copy them from old package directory tree
 	verboseLog("making example result files in ", minimizeFilename exampleOutputDir);
-	exampleDir := realpath currentSourceDir | pkg#"pkgname" | "/examples" | "/";
-	outfn' := fkey -> exampleDir | toFilename fkey | ".out";
-	gethash := outf -> (
-	    f := get outf;
-	    -- this regular expression detects the format used in runFile
-	    m := regex("\\`.* hash: *(-?[0-9]+)", f);
-	    if m =!= null then value substring(m#1, f));
-
-	hadError = false;
-	numErrors = 0;
-	scan(pairs pkg#"example inputs", (fkey, inputs) -> (
-		examplefiles := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
-		-- args:
-		inf  := infn fkey;
-		outf := outfn fkey;
-		outf' := outfn' fkey;
-		tmpf := tmpfn fkey;
-		desc := "example results for " | fkey;
-		changefun := () -> remove(rawDocumentationCache, fkey);
-		inputhash := hash inputs;
-		possiblyCache := () -> (
-		    if opts.CacheExampleOutput =!= false and pkgopts.CacheExampleOutput === true
-		    and ( not fileExists outf' or fileExists outf' and fileTime outf > fileTime outf' ) then (
-			verboseLog("caching example output for ", fkey, " in ", outf');
-			if not isDirectory exampleDir then makeDirectory exampleDir;
-			copyFile(outf, outf', Verbose => true)));
-		if not opts.RunExamples
-		or not opts.RerunExamples and fileExists outf and gethash outf === inputhash then possiblyCache()
-		else if pkg.Options.UseCachedExampleOutput
-		and not opts.RerunExamples and fileExists outf' and gethash outf' === inputhash	then (
-		    if fileExists tmpf then removeFile tmpf;
-		    copyFile(outf', outf))
-		else (
-		    inf << demark_newline inputs << endl << close;
-		    if elapsedTime runFile(inf,inputhash,outf,tmpf,desc,pkg,changefun,if opts.UserMode === null then not noinitfile else opts.UserMode,examplefiles)
-		    then ( removeFile inf; possiblyCache(); ));
-		-- read, separate, and store example output
-		if fileExists outf then (
-		    outstr := reproduciblePaths get outf;
-		    outf << outstr << close;
-		    pkg#"example results"#fkey = drop(separateM2output outstr, -1))
-		else verboseLog("warning: missing file ", outf);
-		));
+	(hadError, numErrors) = (false, 0); -- declared in run.m2
+	generateExampleResults(pkg, rawDocumentationCache, exampleDir, exampleOutputDir, verboseLog, pkgopts, opts);
 
 	if not opts.IgnoreExampleErrors and hadError
 	then error("installPackage: ", toString numErrors, " error(s) occurred running examples for package ", pkg#"pkgname",
