@@ -1888,7 +1888,11 @@ fileLength(e:Expr):Expr := (
 	       if ret == ERROR
 	       then Expr(buildErrorPacket(syscallErrorMessage("getting the length of a file")))
 	       else toExpr(ret))
-	  else if f.output then toExpr(getFileFOSS(f).bytesWritten + getFileFOSS(f).outindex)
+	  else if f.output then (
+	       foss := getFileFOSS(f);
+	       r := toExpr(foss.bytesWritten + foss.outindex);
+	       releaseFileFOSS(f);
+	       r)
      	  else buildErrorPacket("file not open"))
      is f:stringCell do (
 	  filename := f.v;

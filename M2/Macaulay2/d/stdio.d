@@ -420,6 +420,7 @@ simpleout(o:file,x:string):int := (
 	  i = i + b;
 	  j = j + b;
 	  foss.outindex = j;
+	  foss.outbol = j;				    -- is this right?
 	  );
      releaseFileFOSS(o);
      NOERROR);
@@ -531,10 +532,10 @@ export (o:file) << (n:Net) : file := (
      foss := getFileFOSS(o);
      if o.output then (
 	  if !foss.hadNet then (
-	       if foss.outindex != foss.outbol 
-	       then ( 
-		    -- remove the first part of the line from the buffer and add it, as a net, put on the (currently empty) list of nets
-		    m := foss.outindex - foss.outbol;
+	       m := foss.outindex - foss.outbol;
+	       if m < 0 then Ccode(returns,"puts(\"internal error: beginning of line marker not within buffer\"); abort();");
+	       if m > 0 then ( 
+		    -- remove the first part of the line from the buffer and add it, as a net, to the (currently empty) list of nets
 		    s := toNet(new string len m do for i from foss.outbol to foss.outindex - 1 do provide foss.outbuffer.i);
 		    -- Ccode(void,"printf(\"adding a string of length %d starting at %d to the list of nets\\n\",", m, ",", foss.outbol, ");");
 		    foss.nets = NetList(foss.nets,s);

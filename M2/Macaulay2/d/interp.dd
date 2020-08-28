@@ -524,8 +524,6 @@ value(e:Expr):Expr := (
      else WrongArg(1,"a string, a symbol, or pseudocode"));
 setupfun("value'",value);
 
-tmpbuf := new string len 100 do provide ' ' ;
-
 --May need thread work?
 internalCapture(e:Expr):Expr := (
      when e
@@ -537,7 +535,9 @@ internalCapture(e:Expr):Expr := (
 	  foss.capturing = true;
 	  releaseFileFOSS(stdIO);
 	  oldbuf := foss.outbuffer;
-	  foss.outbuffer = tmpbuf;
+	  oldbol := foss.outbol;
+	  oldindex := foss.outindex;
+	  foss.outbuffer = new string len 100 do provide ' ';
 	  stringFile := stringTokenFile("currentString", s.v+newline);
 	  stringFile.posFile.file.echo = true;
 	  oldLineNumber := lineNumber;
@@ -548,7 +548,8 @@ internalCapture(e:Expr):Expr := (
 	  out := substrAlwaysCopy(foss.outbuffer,0,foss.outindex);
      	  foss.capturing = false;
 	  foss.outbuffer = oldbuf;
-	  foss.outindex = 0;
+	  foss.outbol = oldbol;
+	  foss.outindex = oldindex;
 	  setLineNumber(oldLineNumber);
 	  setDebuggingMode(oldDebuggingMode);
 	  previousLineNumber = -1;
