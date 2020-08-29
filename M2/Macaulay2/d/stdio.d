@@ -123,8 +123,8 @@ export stdIO  := newFile("stdio",  0,
      true,  STDIN ,0!=isatty(0), newbuffer(), 0,0,false,false,noprompt,noprompt,false,true,false,0,
      true,  STDOUT,0!=isatty(1), newbuffer(), 0,0,false,dummyNetList,0,-1,false,1);
 
-export interpreterDepth := 0;
-export lineNumber := 0;
+export threadLocal interpreterDepth := 0;
+export threadLocal lineNumber := 0;
 texmacsprompt():string := (
      s := "";
      for i from 1 to interpreterDepth do s = s + "i";
@@ -376,27 +376,28 @@ simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarg
 	  )
      else (
      	  foss.outbol = 0;
-	  off := 0;
-	  n := 0;
-	  while n >= 0 && off < foss.outindex && !test(interruptedFlag) do (
-	       n = write(o.outfd,foss.outbuffer,foss.outindex-off,off);
-	       if n > 0 then (
-		    off = off + n;
-		    foss.lastCharOut = int(foss.outbuffer.(off-1));
-		    foss.bytesWritten = foss.bytesWritten + n));
-	  if 0 < off then (
-	       for k from off to foss.outindex-1 do foss.outbuffer.(k-off) = foss.outbuffer.k;
-	       foss.outindex = foss.outindex - off);
-	  if n == -1 then (
-	       fileErrorMessage(o,"writing");
-	       releaseFileFOSS(o);
-	       endFileOutput(o);
-	       return -1);
-	  if test(interruptedFlag) then (
-	       foss.outindex = 0;				    -- erase the output buffer after an interrupt
-	       releaseFileFOSS(o);
-	       endFileOutput(o);
-	       return ERROR);
+	  offset := 0;
+	  numWritten := 0;
+	  while numWritten >= 0 && offset < foss.outindex && !test(interruptedFlag) do (
+	       oldoffset := offset;
+	       numToWrite := foss.outindex - offset;
+	       if numToWrite + offset > foss.outindex then Ccode(returns,"puts(\"internal error: end of text marker not within buffer (8)\"); abort();");
+	       numWritten = write(o.outfd,foss.outbuffer,numToWrite,offset);
+	       oldindex := foss.outindex;
+	       if oldindex != foss.outindex then Ccode(returns,"printf(\"internal error: field changes mysteriously from %d to %d\\n\",",oldindex,",",foss.outindex,"); abort();");	       
+	       if test(interruptedFlag) || numWritten == ERROR then (
+		    fileErrorMessage(o,"writing");
+	       	    foss.outindex = 0;
+		    releaseFileFOSS(o);
+		    endFileOutput(o);
+		    return ERROR);
+	       offset = offset + numWritten;
+	       if offset < 0 || offset > foss.outindex then Ccode(returns,"puts(\"internal error: end of text marker not within buffer (6)\"); abort();");
+	       foss.lastCharOut = int(foss.outbuffer.(offset-1));
+	       foss.bytesWritten = foss.bytesWritten + numWritten);
+	  for k from offset to foss.outindex-1 do foss.outbuffer.(k-offset) = foss.outbuffer.k;
+	  foss.outindex = foss.outindex - offset;
+	  if foss.outindex < 0 then Ccode(returns,"puts(\"internal error: end of text marker not within buffer (2)\"); abort();");
 	  );
      releaseFileFOSS(o);
      endFileOutput(o);
@@ -421,6 +422,7 @@ simpleout(o:file,x:string):int := (
 	  j = j + b;
 	  foss.outindex = j;
 	  foss.outbol = j;				    -- is this right?
+	  if foss.outindex < 0 then Ccode(returns,"puts(\"internal error: end of text marker not within buffer (3)\"); abort();");
 	  );
      releaseFileFOSS(o);
      NOERROR);
@@ -540,6 +542,7 @@ export (o:file) << (n:Net) : file := (
 		    -- Ccode(void,"printf(\"adding a string of length %d starting at %d to the list of nets\\n\",", m, ",", foss.outbol, ");");
 		    foss.nets = NetList(foss.nets,s);
 		    foss.outindex = foss.outbol;
+	       	    if foss.outindex < 0 then Ccode(returns,"puts(\"internal error: end of text marker not within buffer (4)\"); abort();");
 		    );
      	       foss.hadNet = true;
 	       );
@@ -558,6 +561,7 @@ export (o:file) << (c:char) : file := (
 	  else (
 	       if foss.outindex == length(foss.outbuffer)
 	       && ERROR == flush(o) then (releaseFileFOSS(o); return o);
+	       if foss.outindex < 0 then Ccode(returns,"puts(\"internal error: end of text marker not within buffer\"); abort();");
 	       foss.outbuffer.(foss.outindex) = c;
 	       foss.outindex = foss.outindex + 1;
 	       );

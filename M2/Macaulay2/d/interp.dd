@@ -252,6 +252,9 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					else buildErrorPacket("error occurred in parsing")))))))));
 
 interpreterDepthS := setupvar("interpreterDepth",zeroE);
+setInterpreterDepth(n:int):void := (
+     interpreterDepth = n;
+     setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
 incrementInterpreterDepth():void := (
      interpreterDepth = interpreterDepth + 1;
      setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
@@ -540,9 +543,11 @@ internalCapture(e:Expr):Expr := (
 	  foss.outbuffer = new string len 100 do provide ' ';
 	  stringFile := stringTokenFile("currentString", s.v+newline);
 	  stringFile.posFile.file.echo = true;
+     	  oldInterpreterDepth := interpreterDepth;
+	  setInterpreterDepth(1);
 	  oldLineNumber := lineNumber;
-	  previousLineNumber = -1;
 	  setLineNumber(0);
+	  previousLineNumber = -1;
 	  setprompt(stringFile,topLevelPrompt);
 	  r := readeval3(stringFile,true,newStaticLocalDictionaryClosure(),false,false,true);
 	  out := substrAlwaysCopy(foss.outbuffer,0,foss.outindex);
@@ -550,6 +555,7 @@ internalCapture(e:Expr):Expr := (
 	  foss.outbuffer = oldbuf;
 	  foss.outbol = oldbol;
 	  foss.outindex = oldindex;
+	  setInterpreterDepth(oldInterpreterDepth);
 	  setLineNumber(oldLineNumber);
 	  setDebuggingMode(oldDebuggingMode);
 	  previousLineNumber = -1;

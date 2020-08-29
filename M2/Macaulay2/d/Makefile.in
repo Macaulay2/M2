@@ -238,7 +238,7 @@ redo-startup:clean-startup.c startup.c cat-startup.c
 
 all: $(M2_LIBDEPS)
 tags: @srcdir@/TAGS
-@srcdir@/TAGS: $(M2_SRCFILES); cd @srcdir@ && @ETAGS@ $(M2_SRCFILES)
+@srcdir@/TAGS: $(M2_SRCFILES); cd @srcdir@ && @ETAGS@ @srcdir@/../system/*.{hpp,h,cpp} $(M2_SRCFILES)
 clean-bin:; rm -f *.o *-tmp.c *-tmp.cc *.sig.tmp *-exports.h.tmp
 clean::; rm -f typecode.db *-exports.h *-exports.h.tmp *-tmp.c *-tmp.cc *.log a.out *.o *.sym *.out *.a *.oo *.sig *.sig.tmp *.sg *.dep *.dp *.dep.tmp core gmon.out mapfile restart.tmp TAGS
 distclean: clean; rm -f Makefile ../m2/startup.m2 @srcdir@/TAGS
