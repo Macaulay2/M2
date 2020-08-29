@@ -745,10 +745,11 @@ noetherianOperators (Ideal, Ideal) := List => opts -> (I, P) -> (
     SI := sub(I,S);
     kP := toField(S/SradI);
     local M; local M'; local K; local bd; local bx;
-    numOps := -1;
+    numOps := 1;
     i := 1;
     terminate := false;
     while not terminate do (
+        if debugLevel > 0 then "noetherianOperators: trying degree "<<i<<endl;
         bx = flatten entries sub(basis(0,i - 1,R),S);
         bd = basis(0,i,S);
         M = diff(bd, transpose matrix {flatten (table(bx,SI_*,(i,j) -> i*j))});
@@ -758,7 +759,6 @@ noetherianOperators (Ideal, Ideal) := List => opts -> (I, P) -> (
         if opts.DegreeLimit >= 0 and i == opts.DegreeLimit then terminate = true;
         numOps = numColumns K;
         i = i + 1;
-        if debugLevel > 0 then "Symbolic Noetherian degree: "<<i<<endl;
     );
     K = transpose first rowReduce(transpose K, true);
 
@@ -811,21 +811,25 @@ numNoethOpsAtPoint = method(Options => options noetherianOperators ++ options ap
 numNoethOpsAtPoint (Ideal, Point) := List => opts -> (I, p) -> numNoethOpsAtPoint(I, matrix p, opts)
 numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
     tol := if opts.Tolerance === null then defaultT(ring I) else opts.Tolerance;
-    if opts.DegreeLimit == -1 then error "noetherian operator degree limit cannot be infinity";
+    --if opts.DegreeLimit == -1 then error "noetherian operator degree limit cannot be infinity";
     R := ring I;
     depVars := if opts.DependentSet === null then gens R - set support first independentSets I
             else opts.DependentSet;
     indVars := gens R - set depVars;
     local M; local M'; local K; local bd; local bx;
-    numOps := -1;
-    for i in 1..opts.DegreeLimit do (
+    numOps := 1;
+    i := 1;
+    terminate := false;
+    while not terminate do (
+        if debugLevel > 0 then <<"numNoethOpsAtPoint: trying degree "<<i<<endl;
         bx = flatten entries basis(0,i - 1,R, Variables => gens R);
         bd = basis(0,i,R, Variables => depVars);
         M = diff(bd, transpose matrix {flatten (table(bx,I_*,(i,j) -> i*j))});
         M' = evaluate(M,p);
         K = numericalKernel (M', tol);
-        if numColumns K == numOps then break;
+        if numColumns K == numOps or i == opts.DegreeLimit then break;
         numOps = numColumns K;
+        i = i + 1;
     );
     K = colReduce(K, tol);
     R' := diffAlg R;
@@ -835,7 +839,7 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
 )
 
 hybridNoetherianOperators = method(Options => options numNoethOpsAtPoint)
-hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
+hybridNoetherianOperators (Ideal, Ideal, Point) := List => opts -> (I,P, pt) -> (
     R := ring I;
     depVars := if opts.DependentSet === null then gens R - set support first independentSets P
             else opts.DependentSet;
@@ -846,28 +850,19 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
     kP := toField(S/PS);
 
     RCC := CC monoid R;
-    ws := first components bertiniPosDimSolve(sub(P,RCC));
-    pts := bertiniSample(5,ws);
+    nopsAtPoint := numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC)));
 
-    noethOpsAtPoints := pts / (pt -> numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC))));
-    -- remove bad points, i.e. points where the noetherian operators look different than the majority
-    monLists := noethOpsAtPoints / (i -> i/monomials);
-    most := commonest tally monLists;
-    goodIdx := positions(noethOpsAtPoints, i -> (i / monomials) == most#0);
-    if debugLevel >= 1 then << "Good points: "<<#goodIdx<<"/"<<#pts<<endl;
-    goodNops := noethOpsAtPoints#(goodIdx#0);
-
-    phi := map(R, ring goodNops, vars R);
-    L := sort flatten for op in goodNops.Ops list (
+    phi := map(R, ring nopsAtPoint, vars R);
+    L := sort flatten for op in nopsAtPoint.Ops list (
         bd := matrix{exponents op / (i -> sub(R_i,S))};
-        done := false;
-        d := 0;
-        while not done do (
-            if debugLevel >= 1 then <<"Using degree "<<d<<" multiples"<<endl;
+        maxdeg := flatten entries bd / sum @@ degree // max;
+        K := bd;
+        for d from 0 to maxdeg - 1 do (
+            if debugLevel >= 1 then <<"hybridNoetherianOperators: trying degree "<<d<<" multiples of generators"<<endl;
             G := transpose basis(0,d,S) ** transpose gens IS;
             M := sub(diff(bd, G), kP);
-            K := myKernel M;
-            if numColumns K == 1 then done = true else d = d+1;
+            K = myKernel M;
+            if numColumns K == 1 then break;
         );
         KK := lift(K, S);
         R' := diffAlg(R);
@@ -876,7 +871,16 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
         (bdd * liftColumns(KK, R'))_(0,0)
     );
     new SetOfNoethOps from {Ops => sort L, Prime => P}
-) 
+)
+
+hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
+    R := ring I;
+    RCC := CC monoid R;
+    ws := first components bertiniPosDimSolve(sub(P,RCC));
+    pt := first bertiniSample(1,ws);
+    hybridNoetherianOperators(I,P,pt, opts)
+)
+
 
 numericalNoetherianOperators = method(Options => {
     Tolerance => 1e-6,
@@ -903,10 +907,10 @@ numericalNoetherianOperators(Ideal, List) := List => opts -> (I, pts) -> (
     most := commonest tally monLists;
     goodIdx := positions(noethOpsAtPoints, i -> (i / monomials) == most#0);
     if debugLevel >= 1 then <<"Num good points: " << #goodIdx << " / " << #noethOpsAtPoints << endl;
-    goodNops := noethOpsAtPoints_goodIdx;
+    nopsAtPoint := noethOpsAtPoints_goodIdx;
     goodPts := pts_goodIdx;
-    apply(numgens goodNops#0, i -> (
-        L := goodNops / (N -> N_i);
+    apply(numgens nopsAtPoint#0, i -> (
+        L := nopsAtPoint / (N -> N_i);
         formatNoethOps interpolateNOp(L,goodPts, R, Tolerance => opts.InterpolationTolerance)
     ))
 )
