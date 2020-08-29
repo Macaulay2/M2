@@ -76,6 +76,7 @@ getExampleOutputFilename := (pkg, fkey) -> (
     else error "internal error: package prefix is undefined")
 
 getExampleOutput := (pkg, fkey) -> (
+    -- TODO: only get from cache if the hash hasn't changed
     if pkg#"example results"#?fkey then return pkg#"example results"#fkey;
     verboseLog := if debugLevel > 1 or true then printerr else identity;
     filename := getExampleOutputFilename(pkg, fkey);

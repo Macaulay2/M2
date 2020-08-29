@@ -166,7 +166,7 @@ makeDocumentTag' := opts -> key -> (
 	})
 
 makeDocumentTag = method(Dispatch => Thing, Options => { Package => null })
-makeDocumentTag DocumentTag := opts -> tag -> tag
+makeDocumentTag DocumentTag := opts -> identity
 makeDocumentTag Thing       := opts -> key -> (makeDocumentTag' opts) key
 makeDocumentTag String      := opts -> key -> (
     local pkg;

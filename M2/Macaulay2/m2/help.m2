@@ -426,21 +426,17 @@ help = Command help
 frontpage := applicationDirectory() | topFileName;
 
 viewHelp = method(Dispatch => Thing)
--- TODO: check that key is a formatted key
-viewHelp String := key -> (
-    tag := getOption(fetchAnyRawDocumentation makeDocumentTag key, symbol DocumentTag);
-    docpage := concatenate htmlFilename tag;
-    if docpage === null then error("missing documentation page for key ", key)
-    else show new URL from { docpage })
-viewHelp Thing := key -> (
+viewHelp String := key -> viewHelp makeDocumentTag key
+viewHelp Thing  := key -> (
     if key === () then (
         if fileExists frontpage then show URL { frontpage }
+	-- TODO: generate this on-demand
         else error("missing documentation index: ", frontpage, ". Run makePackageIndex() or start M2 without -q"))
-    else (
-	tag := getOption(fetchAnyRawDocumentation makeDocumentTag key, symbol DocumentTag);
-	docpage := concatenate htmlFilename tag;
-        if fileExists docpage then show URL { docpage }
-        else error("missing documentation page: ", docpage)))
+    else viewHelp makeDocumentTag key)
+viewHelp DocumentTag := tag -> (
+    tag = getOption(fetchAnyRawDocumentation tag, symbol DocumentTag);
+    docpage := concatenate htmlFilename tag;
+    if fileExists docpage then show URL { docpage } else show help tag)
 
 viewHelp = new Command from viewHelp
 
