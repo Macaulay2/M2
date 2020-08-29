@@ -768,20 +768,26 @@ noetherianOperators (Ideal, Ideal) := List => opts -> (I, P) -> (
 
     bdd := RtoR' StoR bd;
     KK := lift(K, S);
+    -- Clear denominators
+    L := first entries (bdd * liftColumns(KK,R'));
+    new SetOfNoethOps from {Ops => sort L, Prime => P}
+)
 
-    -- Clear denominators from KK
-    L := sort for i to numColumns KK - 1 list (
-        commonFactor := flatten entries KK_i / 
-            flatten @@ entries @@ last @@ coefficients //
-            flatten /
-            (c -> lift(c, coefficientRing S)) /
-            denominator //
-            lcm;
-        cleared := sub(promote(commonFactor, coefficientRing S) * KK_i, R);
-        (bdd * (promote(cleared, R')))_(0)
-    );
 
-    new SetOfNoethOps from {Ops => L, Prime => P}
+-- Clears denominators of a matrix:
+-- multiplies each column of M by the lcm of the denominators
+liftColumns = (M,R') -> (
+    cols := transpose entries M;
+    lcms := cols / (col -> (
+        col / 
+        flatten @@ entries @@ last @@ coefficients // 
+        flatten / 
+        (c -> lift(c, coefficientRing ring c)) /
+        denominator //
+        lcm
+    ));
+    K := transpose matrix apply(cols, lcms, (c, m) -> c / times_m);
+    sub(K, R')
 )
 
 noetherianOperators (Ideal) := List => opts -> (I) -> noetherianOperators(I, ideal gens radical I, opts)
@@ -825,7 +831,7 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
     R' := diffAlg R;
     bdd := (map(R', R, vars R')) bd;
     L := sort flatten entries (bdd * promote(K, R'));
-    new SetOfNoethOps from {Ops => L, Point => p}
+    new SetOfNoethOps from {Ops => sort L, Point => p}
 )
 
 hybridNoetherianOperators = method(Options => options numNoethOpsAtPoint)
@@ -864,19 +870,12 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
             if numColumns K == 1 then done = true else d = d+1;
         );
         KK := lift(K, S);
-        -- Clear denominators
-        commonFactor := flatten entries KK / 
-            flatten @@ entries @@ last @@ coefficients //
-            flatten /
-            (c -> lift(c, coefficientRing S)) /
-            denominator //
-            lcm;
-        cleared := sub(promote(commonFactor, coefficientRing S) * KK, R);
         R' := diffAlg(R);
+        -- Clear denominators
         bdd := (map(R',R,vars R'))(sub(bd, R));
-        (bdd * (promote(cleared, R')))_(0,0)
+        (bdd * liftColumns(KK, R'))_(0,0)
     );
-    new SetOfNoethOps from {Ops => L, Prime => P}
+    new SetOfNoethOps from {Ops => sort L, Prime => P}
 ) 
 
 numericalNoetherianOperators = method(Options => {
@@ -1163,7 +1162,7 @@ getNoetherianOperatorsHilb = Q -> (
     S := getHilb(P, depVars);
     I := mapRtoHilb(Q, P, S, depVars, indVars);
     noethOps := invSystemFromHilbToNoethOps(I, R, S, depVars);
-    new SetOfNoethOps from {Ops => noethOps, Prime => P}
+    new SetOfNoethOps from {Ops => sort noethOps, Prime => P}
 ) 
 
 -- computes the annihilator ideal of a polynomial F in a polynomial ring 
