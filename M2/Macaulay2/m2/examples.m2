@@ -1,6 +1,10 @@
 -----------------------------------------------------------------------------
--- process examples
+-- Methods for processing and accessing examples from the documentation
 -----------------------------------------------------------------------------
+-* Exported:
+ * capture
+ * examples
+ *-
 
 processExamplesStrict = true
 
@@ -37,17 +41,27 @@ protect symbol capture
 -----------------------------------------------------------------------------
 
 extractExamplesLoop := method(Dispatch => Thing)
-extractExamplesLoop Thing       := x -> {}
+extractExamplesLoop Thing       := x -> ()
 extractExamplesLoop Sequence    :=
-extractExamplesLoop Hypertext   := x -> toList join apply(toSequence x, extractExamplesLoop)
-extractExamplesLoop ExampleItem := toList
+extractExamplesLoop Hypertext   := x -> deepSplice apply(toSequence x, extractExamplesLoop)
+extractExamplesLoop ExampleItem := toSequence
 
 extractExamples = docBody -> (
-    ex := extractExamplesLoop docBody;
+    ex := toList extractExamplesLoop docBody;
     -- don't convert "ex" on the next line to a sequence,
     -- because the hash code for caching example outputs will change
     if #ex > 0 then currentPackage#"example inputs"#(format currentDocumentTag) = ex;
     docBody)
+
+-----------------------------------------------------------------------------
+-- examples: get a list of examples in a documentation node
+-----------------------------------------------------------------------------
+
+examples = method(Dispatch => Thing)
+examples Hypertext := dom -> stack extractExamplesLoop dom
+examples Thing     := key -> (
+    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
+    if rawdoc =!= null and rawdoc.?Description then (stack extractExamplesLoop rawdoc.Description)^-1)
 
 -----------------------------------------------------------------------------
 -- storeExampleOutput
@@ -89,19 +103,14 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
 -----------------------------------------------------------------------------
 -- process examples
 -----------------------------------------------------------------------------
--- TODO: make this functional
+-- TODO: make this reentrant
 
 local currentExampleKey
 local currentExampleCounter
 local currentExampleResults
 
 processExamplesLoop = method(Dispatch => Thing)
-processExamplesLoop TO       :=
-processExamplesLoop TO2      :=
-processExamplesLoop TOH      :=
-processExamplesLoop Option   :=
-processExamplesLoop String   := identity
-
+processExamplesLoop Thing       := identity
 processExamplesLoop Sequence    :=
 processExamplesLoop Hypertext   := x -> apply(x, processExamplesLoop)
 processExamplesLoop ExampleItem := x -> (

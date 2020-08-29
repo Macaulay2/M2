@@ -1,12 +1,11 @@
 -----------------------------------------------------------------------------
 -- Methods for getting help and accessing the documentation
 -----------------------------------------------------------------------------
--* Summary:
+-* Exported:
  * help
  * (symbol?, Thing)
  * viewHelp
  * infoHelp
- * examples
  * apropos
  * about
  * pager
@@ -471,21 +470,6 @@ briefDocumentation Thing       := key -> (
 ? Package  :=
 ? Symbol   :=
 ? Type     := briefDocumentation
-
------------------------------------------------------------------------------
--- get a list of examples in a documentation node
------------------------------------------------------------------------------
-getExampleInputs := method(Dispatch => Thing)
-getExampleInputs Thing     := t -> ()
-getExampleInputs Sequence  :=
-getExampleInputs Hypertext := t -> apply(toSequence t, getExampleInputs)
-getExampleInputs ExampleItem := t -> 1 : t#0 -- a Sequence
-
-examples = method(Dispatch => Thing)
-examples Hypertext := key -> stack deepSplice getExampleInputs key
-examples Thing     := key -> (
-    tag := fetchAnyRawDocumentation makeDocumentTag key;
-    if tag =!= null and tag.?Description then (stack deepSplice getExampleInputs tag.Description)^-1)
 
 -----------------------------------------------------------------------------
 -- get a list of commands whose name matches the regex
