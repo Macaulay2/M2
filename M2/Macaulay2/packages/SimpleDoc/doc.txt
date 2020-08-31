@@ -6,19 +6,24 @@ Node
     simpler documentation for functions and methods
   Description
     Text
-      This package provides a human-readable serialization format for documentation nodes
-      as an alternative to the classic way of @TO "Macaulay2Doc::writing documentation"@
-      using the @TO document@ method.
+      This package provides a simple, human-readable text format for documentation nodes
+      as an alternative to the classic @TO "Macaulay2Doc :: hypertext list format"@
+      accepted by the @TO "Macaulay2Doc :: document(List)"@ function.
 
-      The new format is parsed by @TO (doc, String)@ for writing either a single or
-      multiple documentation nodes from string or file and adheres to the off-side rule;
-      i.e., using indentation to separate blocks.
+      The new format is accepted by the @TO (doc, String)@ function for writing either a
+      single or multiple documentation nodes from a string or file and adheres to the
+      @wikipedia "off-side rule"@, i.e., using indentation to separate blocks.
     Tree
       :Getting started with SimpleDoc
+        @TO2 {"Macaulay2Doc :: writing documentation", "Writing documentation in Macaulay2"}@
         @TO2 {doc, "Using SimpleDoc for documentation"}@
         @TO2 {"Text", "Using markup in documentation"}@
         @TO2 {"Text::html(TEX)", "Using TeX in documentation"}@
-        @TO2 {"Macaulay2Doc::conventions for documentation", "Style guide for documentation"}@
+
+      :Templates for using the @TO (doc, String)@ method
+        "docExample"
+        "docTemplate"
+        packageTemplate
 
       :Documentation helpers
         arXiv
@@ -26,6 +31,7 @@ Node
         wikipedia
   Contributors
     Andrew Hoefel contributed to this package.
+
 Node
   Key
      packageTemplate
@@ -45,17 +51,35 @@ Node
   SeeAlso
     "docExample"
     "testExample"
+
+Node
+  Key
+    "docExample"
+  Headline
+    an example of a documentation string
+  Usage
+    docExample
+  Description
+   Text
+    The variable {\tt docExample} is a @TO String@ containing an example of the use of
+    @TO (doc, String)@ to write a documentation page, visible @TO2 {(simpleDocFrob, ZZ, Matrix), "here"}@.
+   Code
+    EXAMPLE { PRE docExample }
+  SeeAlso
+    packageTemplate
+    "testExample"
+
 Node
   Key
     "testExample"
   Headline
-    an example testcase
+    an example of a test string
   Usage
     testExample
   Description
    Text
      The variable {\tt testExample} is a @TO String@ containing an example of
-     the use of @TO (TEST, String)@ to write a test case.
+     the use of @TO "Macaulay2Doc :: TEST(String)"@ to write a test case.
    Code
     EXAMPLE { PRE testExample }
    Text
@@ -66,13 +90,14 @@ Node
     TEST
     check
     packageTemplate
+    "docExample"
+
 Node
   Key
      doc
     (doc, String)
     (document, String)
     "multidoc"
-    "docExample"
     "docTemplate"
   Headline
     a simple documentation function
@@ -94,7 +119,7 @@ Node
     everything else must be further indented. Lines beginning with white space followed
     by two hyphens are ignored and can be used for commenting.
 
-    @TO (document, String)@ is a synonyms for @TO doc@.
+    @TO (document, String)@ is a synonym for @TO doc@.
     For backwards compatibility, the function @TT "multidoc"@ is also a synonym for @TO doc@.
 
    Text
@@ -111,7 +136,8 @@ Node
 
     The only keyword which is always required is @TO Key@. Other valid keywords are:
 
-    @UL {
+   Code
+    UL {
         { TOH Key,
             PARA {
                 "Each line in this section is evaluated as a Macaulay2 expression
@@ -154,7 +180,7 @@ Node
                 { TT "Tree", " -- classify documentation nodes under headings",
                     PARA {
                         "The lines in this section beginning with ", TT ":", " or ",
-                        TT "\@", " are treated as subsections. The remaining lines are
+                        TT "@", " are treated as subsections. The remaining lines are
                         treated as keys to a documentation node and are processed by the ",
                         TO TOH, " function, producing a link followed by the headline.
                         The purpose is to allow a classification of the documentation
@@ -200,12 +226,6 @@ Node
                 "The text in these sections is parsed and rendered similar to the ",
                 TO Text, " subsection and can be used to acknowledge funding sources,
                 collaborators, and non-author contributors, or to provide references."}},
-        { TOH ExampleFiles,
-            PARA {
-                "Each line in this section should be the name of a file in the
-                auxiliary files directory of the package; the name of that directory
-                is the same as the name of the package.  Copies of the corresponding
-                files will be made available in the running path of the examples."}},
         { TOH Caveat,
             PARA {
                 "The text in these sections is parsed and rendered similar to the ",
@@ -221,8 +241,18 @@ Node
                 giving links to the subnodes of the current documentation node.
                 The purpose is to allow the documentation of the package to be
                 arranged linearly, as in a book.  The lines beginning with a
-                colon are subheadings used to classify the subnodes."}}
-        }@
+                colon are subheadings used to classify the subnodes."}},
+        { TOH SourceCode,
+            PARA {
+                "The lines in this section are parsed as a list of functions whose
+                source code should be displayed in the documentation."}},
+        { TOH ExampleFiles,
+            PARA {
+                "Each line in this section should be the name of a file in the
+                auxiliary files directory of the package; the name of that directory
+                is the same as the name of the package.  Copies of the corresponding
+                files will be made available in the running path of the examples."}}
+        }
 
    Text
     @HEADER2 "Markup keywords allowed in documentation strings"@
@@ -230,9 +260,18 @@ Node
     The markup keywords allowed include many TeX commands, as allowed in @TO TEX@; for
     details and examples see @TO (html, TEX)@, allowing various mathematical expressions,
     such as $\PP^3$ or $x_i^{33} + 1/2$, to be displayed in the html form of the documentation.
+
     Also allowed is a pair of {\tt \@} characters, enclosing Macaulay2 code to be executed,
-    yielding appropriate hypertext.  For example, {\tt \@TO Key\@} will insert a link to another
-    node of the documentation. See @TO "Text"@ for other hypertext types.
+    yielding appropriate hypertext.  For example
+   Pre
+    The @TO Key@ section is required.
+   Text
+    will include a link to another node of the documentation. This package also provides a
+    number of helper functions, such as the @TO arXiv@ function, which may be used to succinctly
+    reference e-Prints. See @TO "Text"@ for other hypertext types.
+
+    Note that any Macaulay2 code resulting in a @TO String@ or @TO Hypertext@ may be used inside
+    {\tt \@...\@}, but for longer code it is easier to use the @TT "Code"@ keyword described above.
 
    Text
     @HEADER2 "Documenting multiple nodes at once"@
@@ -243,21 +282,10 @@ Node
     @UL {{ TT "Node", PARA {"The text following each such keyword is handled just as by ",
                 TO doc, " resulting in a separate documentation node."}}}@
 
-    See below for an example of how the @TT "Node"@ keyword is used in documenting this package.
+    See @HREF {SimpleDoc#"source directory" | "SimpleDoc/doc.txt", "SimpleDoc/doc.txt"}@
+    for an example of how the @TT "Node"@ keyword is used in documenting this package.
 
-   Text
-    @HEADER2 "An example of a documentation node"@
-
-    The variable {\tt docExample} is a @TO String@ containing an example of the use of
-    @TO (doc, String)@ to write a documentation page, visible @TO2 {(simpleDocFrob, ZZ, Matrix), "here"}@.
-   Code
-    EXAMPLE { PRE docExample }
-
-   Text
-    Here is the input submitted to @ TO multidoc @ to document (most of) this package:
-   Code
-    EXAMPLE { PRE concatenate between("\n", lines get(SimpleDoc#"source directory" | "SimpleDoc/doc.txt")) }
   SeeAlso
     document
     "testExample"
-    "docTemplate"
+    "docExample"

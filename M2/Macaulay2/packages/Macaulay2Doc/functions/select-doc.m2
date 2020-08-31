@@ -53,8 +53,7 @@ doc ///
     Example
       select("([a-zA-Z]+);", "\\L$1", "Dog; cat, deer;")
     Text
-      The @TT "POSIX => true"@ option can be used to specify the POSIX Extended flavor for the regular
-      expression used to match. Note that only the Perl flavor allows the use of lookahead and lookbehinds.
+      Lookahead and lookbehinds can be used to precisely control the regular expression matches.
     Example
       s = "catfish cats dogs";
       select("cat(?!fish)s?", s)
@@ -62,12 +61,15 @@ doc ///
       s = "goldfish swordfish catfish catdog";
       select("\\w+(?=fish)", s)
       select("(?<=cat)\\w+", s)
+    Text
+      The @TT "POSIX => true"@ option can be used to specify the POSIX Extended flavor for the regular
+      expression used to match. Note that only the Perl flavor allows the use of lookahead and lookbehinds.
   SeeAlso
     "regular expressions"
     "strings and nets"
     regex
-    replace
     separate
+    (replace, String, String, String)
 ///
 
 document { 

@@ -46,8 +46,7 @@ doc ///
     Example
       replace("(\\w+)\\.?", "A \\L$1.", "Dog cat cat.")
     Text
-      The @TT "POSIX => true"@ option can be used to specify the POSIX Extended flavor for the regular
-      expression used to match. Note that only the Perl flavor allows the use of lookahead and lookbehinds.
+      Lookahead and lookbehinds can be used to precisely control the regular expression matches.
     Example
       s = "catfish cats dogs";
       replace("cat(?!fish)s?", "\\U$&", s)
@@ -55,6 +54,9 @@ doc ///
       s = "goldfish swordfish catfish catdog";
       replace("\\w+(?=fish)", "\\U$&", s)
       replace("(?<=cat)\\w+", "\\U$&", s)
+    Text
+      The @TT "POSIX => true"@ option can be used to specify the POSIX Extended flavor for the regular
+      expression used to match. Note that only the Perl flavor allows the use of lookahead and lookbehinds.
   SeeAlso
     "regular expressions"
     "strings and nets"

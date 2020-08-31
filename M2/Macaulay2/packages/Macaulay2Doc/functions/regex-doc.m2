@@ -95,10 +95,10 @@ doc ///
     "regular expressions"
     "strings and nets"
     match
-    replace
     separate
-    regexQuote
+    (replace, String, String, String)
     (select, String, String, String)
+    regexQuote
     substring
 ///
 
@@ -289,9 +289,9 @@ doc ///
      :String processing functions that accept regular expressions
        match
        regex
-       replace
        separate
        (select, String, String, String)
+       (replace, String, String, String)
      :Other functions that accept regular expressions
        about
        apropos

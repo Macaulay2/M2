@@ -52,9 +52,9 @@ toDoc = (functionTable, text) -> (
 
 applySplit = (functionTable, textlines) -> apply(splitByIndent(textlines, false), (s, e) -> (
 	key := getText textlines#s;
-	if not functionTable#?key then error splice(
+	if not functionTable#?key then error(
 	    "unrecognized keyword, line ", toString getLinenum textlines#s, " of string: ", format key, "; ",
-	    "expected: ", toSequence between(" ", sort keys functionTable));
+	    "expected: ", demark_", " sort keys functionTable);
 	functionTable#key(textlines_{s+1..e}, getLinenum textlines#s)))
 
 -- Mapping tables for evaluating docstring keywords
@@ -71,11 +71,14 @@ NodeFunctions = new HashTable from {
     "Acknowledgement" => (textlines, keylinenum) -> Acknowledgement => {markup(textlines, keylinenum)},
     "Contributors"    => (textlines, keylinenum) -> Contributors    => {markup(textlines, keylinenum)},
     "References"      => (textlines, keylinenum) -> References      => {markup(textlines, keylinenum)},
-    "ExampleFiles"    => (textlines, keylinenum) -> ExampleFiles    => getText \ textlines,
     "Caveat"          => (textlines, keylinenum) -> Caveat          => {markup(textlines, keylinenum)},
     "SeeAlso"         => (textlines, keylinenum) -> SeeAlso         => apply(getNonempty textlines, value),
     "Subnodes"        => (textlines, keylinenum) -> Subnodes        => apply(getNonempty textlines, p -> if match("^:", p) then substring(1, p) else TO value p),
- }
+--    "Subnodes"        => (textlines, keylinenum) -> Subnodes        => submenu(textlines, keylinenum), -- TODO: replace with this in refactor/document
+    "SourceCode"      => (textlines, keylinenum) -> SourceCode      => apply(getNonempty textlines, value),
+    "ExampleFiles"    => (textlines, keylinenum) -> ExampleFiles    => getText \ textlines,
+    }
+
 
 SynopsisFunctions = new HashTable from {
     "Heading"      => (textlines, keylinenum) -> Heading      =>       singleString(Heading,      textlines, keylinenum),
@@ -194,6 +197,7 @@ items = (textlines, keylinenum) -> apply(splitByIndent(textlines, false), (s, e)
 
 -- used for making manus within the description
 submenu = (textlines, keylinenum) -> (
+    textlines = select(textlines, textline -> 0 < length getText textline);
     if #textlines == 1 then return (
 	line := getText textlines#0;
 	if line === "" then null
