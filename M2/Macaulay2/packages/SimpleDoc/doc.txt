@@ -282,7 +282,7 @@ Node
     @UL {{ TT "Node", PARA {"The text following each such keyword is handled just as by ",
                 TO doc, " resulting in a separate documentation node."}}}@
 
-    See @HREF {SimpleDoc#"source directory" | "SimpleDoc/doc.txt", "SimpleDoc/doc.txt"}@
+    See @HREF {currentLayout#"packages" | "SimpleDoc/doc.txt", "SimpleDoc/doc.txt"}@
     for an example of how the @TT "Node"@ keyword is used in documenting this package.
 
   SeeAlso
