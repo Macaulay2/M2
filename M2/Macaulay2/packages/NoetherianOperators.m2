@@ -1144,9 +1144,8 @@ invSystemFromHilbToNoethOps = (I, R, S, depVars) -> (
     T := frac(R)[gens R'];
     StoT := map(T, S, apply(#depVars, i -> T_(index depVars#i)));
     K := mingens ker diffMat;
-    KK := StoT promote(K, S);
-
-    noethOps := flatten entries StoT (allMons * mingens ker diffMat);
+    
+    noethOps := flatten entries StoT (allMons * K);
     noethOps / (d -> liftNoethOp(d, R'))
     --diffVars := apply(depVars, w -> value("symbol d" | toString(w)) );
     --W := FF(monoid[diffVars]);
