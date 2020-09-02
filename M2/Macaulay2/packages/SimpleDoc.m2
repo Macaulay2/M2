@@ -32,7 +32,7 @@ doc String := str -> (
     document \ (
 	if all(parsed, elt -> instance(elt, Node)) then apply(parsed, node -> toList node)
 	else if not any(parsed, elt -> instance(elt, Node)) then {parsed}
-	else error("expected either a single or a list of documentation nodes")))
+	else error("expected either a single or a list of documentation nodes"));)
 
 -- Setup synonyms
 document String := opts -> doc

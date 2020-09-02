@@ -65,7 +65,7 @@ Node
     stacksProject(tag, description)
   Inputs
     tag:String
-      an alphanumeric Stacks Project tag "TTTT"
+      an alphanumeric Stacks Project tag of the form "TTTT"
     title:String
       the link title
   Outputs
