@@ -38,7 +38,8 @@ document {
               UL {
                    LI { "The ", TO document, " function now accepts three new options: ", TT "Acknowledgement", ", ",
 		       TT "Contributors", ", and ", TT "References", ". The content of each will appear under a subsection
-		       of the same name in the documentation." },
+		       of the same name in the documentation. Moreover, ", TO (document, String), " is now a synonym for ",
+		       TO "SimpleDoc :: doc(String)", "." },
                    LI { "The ", TO regex, " function, as well as other functions that accept ", TO "regular expressions",
                        ", have been rewritten to use the Perl regular expression syntax by default, which allows more
 		       fine-grained control of the matches. The POSIX Extended flavor is still available as an option.
