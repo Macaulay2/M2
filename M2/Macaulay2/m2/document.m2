@@ -674,9 +674,8 @@ document List := opts -> args -> (
     o#"linenum"  = currentLineNumber();
     o = new HashTable from o;
     -- TODO: check for hadDocumentationWarning and Error
-    storeRawDocumentation(tag, o);
     currentDocumentTag = null;
-    )
+    storeRawDocumentation(tag, o))
 
 -----------------------------------------------------------------------------
 -- undocumented
