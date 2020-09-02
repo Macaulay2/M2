@@ -1407,7 +1407,7 @@ Node
     exceptionalDivisor X
   Inputs
     X:AbstractVariety
-     a blowup, built using @ TO blowup @@
+     a blowup, built using @ TO blowup @
   Outputs
     :AbstractSheaf
       the exceptional divisor on X, expressed as a line bundle

@@ -26,14 +26,14 @@ doc ///
     re:String
       a @TO2 {"regular expressions", "regular expression"}@ describing a pattern
     replacement:String
-      a replacement or regex formatting string, may include backreferences
+      following the @TO2 {"regular expressions", "formatting syntax"}@
     str:String
       a subject string to be searched
     POSIX=>Boolean
       if true, interpret the @TT "re"@ using the POSIX Extended flavor, otherwise the Perl flavor
   Outputs
     :List
-      a list of mutually exclusive substrings of @TT "str"@ matching the pattern @TT "re"@;
+      of mutually exclusive substrings of @TT "str"@ matching the pattern @TT "re"@;
       if @TT "replacement"@ is given, the matching substrings are formatted based on it.
   Description
     Text
@@ -42,8 +42,9 @@ doc ///
       select("[[:alpha:]]+", "Dog, cat, and deer.")
       select("^.*$", "ABC\nDEF\r\nGHI")
     Text
-      The @TT "replacement"@ string can contain backreferences such as @TT "$1"@ or @TT "\\\\1"@, which
-      will be replaced by the string matching the corresponding parenthesized subexpression of @TT "re"@.
+      The @TT "replacement"@ string may contain @TO2 {"regular expressions", "formatting syntax"}@
+      such as backreferences @TT "$1"@ or @TT "\\\\1"@, which will be replaced by the string matching
+      the corresponding parenthesized subexpression of @TT "re"@.
     Example
       select("([a-zA-Z]+);", "$1", "Dog; cat, deer;")
     Text
@@ -52,21 +53,23 @@ doc ///
     Example
       select("([a-zA-Z]+);", "\\L$1", "Dog; cat, deer;")
     Text
-      The @TT "POSIX => true"@ option can be used to specify the POSIX Extended flavor for the regular
-      expression used to match. Note that only the Perl flavor allows the use of lookahead and lookbehinds.
+      Lookaheads and lookbehinds can be used to precisely control the regular expression matches.
     Example
-      s = "catfish cats dogs"
-      select("cat(?!fish)", s)
+      s = "catfish cats dogs";
+      select("cat(?!fish)s?", s)
       select("\\w+(?=s\\b)", s)
-      s = "goldfish swordfish catfish catdog"
+      s = "goldfish swordfish catfish catdog";
       select("\\w+(?=fish)", s)
       select("(?<=cat)\\w+", s)
+    Text
+      The @TT "POSIX => true"@ option can be used to specify the POSIX Extended flavor for the regular
+      expression used to match. Note that only the Perl flavor allows the use of lookaheads and lookbehinds.
   SeeAlso
     "regular expressions"
     "strings and nets"
     regex
-    replace
     separate
+    (replace, String, String, String)
 ///
 
 document { 

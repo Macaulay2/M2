@@ -13,15 +13,15 @@ regexSpecialChars = concatenate(
 setRegexFlags = opts -> (
     if instance(opts, ZZ) then return opts;
     if opts.?POSIX and instance(opts.POSIX, Boolean) then if opts.POSIX
-    then RegexFlags#"Extended"  - (RegexFlags#"NoBkRefs" | RegexFlags#"NoEscapeInLists")
-    else RegexFlags#"ECMAScript" | RegexFlags#"NoModS"
+    then RegexFlags#"extended"  - (RegexFlags#"no_bk_refs" | RegexFlags#"no_escape_in_lists")
+    else RegexFlags#"ECMAScript" | RegexFlags#"no_mod_s"
     else error "regex: expected true or false for option POSIX => ...")
 
 setMatchFlags = opts -> (
     if instance(opts, ZZ) then return opts;
     if opts.?POSIX and instance(opts.POSIX, Boolean) then if opts.POSIX
-    then RegexFlags#"MatchNotDotNewline"
-    else 0
+    then RegexFlags#"format_sed" | RegexFlags#"match_not_dot_newline"
+    else RegexFlags#"format_perl"
     else error "regex: expected true or false for option POSIX => ...")
 
 -----------------------------------------------------------------------------
@@ -38,7 +38,7 @@ regex(String, ZZ, ZZ, String) := opts -> (re, head, range, str) -> (
     if head + range >= tail then return regex'(re, head, tail, str, regexFlags, matchFlags);
     -- When head + range != tail, this is backwards compatible with GNU regex in Extended POSIX flavor;
     -- however, the lookbehind feature of Perl flavor doesn't work in this case.
-    matchFlags = matchFlags | (if head + range != tail then RegexFlags#"MatchContinuous" else 0);
+    matchFlags = matchFlags | (if head + range != tail then RegexFlags#"match_continuous" else 0);
     if range >= 0
     then for lead from 0 to range when head + lead <= tail do (
 	ret := regex'(re, head + lead, tail, str, regexFlags, matchFlags);
@@ -58,7 +58,7 @@ separate(            String) := opts -> (       str) -> separate("\r?\n", str, o
 separate(String,     String) := opts -> (re,    str) -> (
     regexFlags := if length re == 1 and match(regexSpecialChars, re) then (
 	stderr << "warning: unescaped special character '" << re << "' found (and escaped) in call to 'separate'" << endl;
-	RegexFlags#"Literal") else setRegexFlags opts;
+	RegexFlags#"literal") else setRegexFlags opts;
     separate'(re, str, regexFlags, setMatchFlags opts))
 separate(String, ZZ, String) := opts -> (re, n, str) -> (
     (offset, tail) := (0, length str);

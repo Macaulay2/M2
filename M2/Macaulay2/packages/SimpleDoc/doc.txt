@@ -1,192 +1,291 @@
 -- -*- mode: M2; coding: utf-8 -*-
 Node
- Key
-  multidoc
-  (multidoc,String)
- Headline
-  a simple documentation function, allowing multiple documentation nodes
- Usage
-  multidoc s
- Inputs
-  s:String
- Consequences
-  Item
-   The string {\tt s} is handled by parsing it the same way @ TO doc @ does,
-   but expecting the least indented keyword to be {\bf Node}, which can occur
-   multiple times.  The text following each such keyword is handled just as by
-   @ TO doc @, resulting in a documentation node.
- Description
-  Text
-   Here is the input submitted to @ TO multidoc @ to document (most of) this package:
-  Code
-   EXAMPLE { PRE concatenate between("\n", lines get(SimpleDoc#"source directory" | "SimpleDoc/doc.txt")) }
-Node
-  Key
-    packageTemplate
-    (packageTemplate,String)
-  Headline
-    a template for a package
-  Usage
-    packageTemplate s
-  Inputs
-    s:String
-      the name of the package
-  Description
-   Text
-     This routine returns a barebones package template
-     that you can use to start writing a package.
-   Example
-     print packageTemplate "WonderfulModules"
-  SeeAlso
-    "docExample"
-Node
-  Key
-    "docTemplate"
-  Headline
-    a template for a documentation node
-  Usage
-    docTemplate
-  Description
-   Text
-     docTemplate is a @TO String@, which can
-     be cut and paste into a text file,
-     to be used as a template for writing
-     documentation for functions and other objects
-     in a package.
-   Example
-     print docTemplate
-  SeeAlso
-    "docExample"
-Node
-  Key
-    simpleDocFrob
-  Headline
-    an example of a function to document
-Node
-  Key
-    "docExample"
-  Headline
-    an example documentation node
-  Usage
-    docExample
-  Description
-   Text
-     The variable docExample is a @TO String@ containing an example of
-     the use of @TO (doc,String)@ to write a documentation page, visible
-     @TO2 {(simpleDocFrob,ZZ,Matrix), "here"}@.
-   Example
-     docExample
-  SeeAlso
-    "docTemplate"
-Node
   Key
     SimpleDoc
   Headline
     simpler documentation for functions and methods
-  Subnodes
-    doc
-    "docExample"
-    multidoc
-    packageTemplate
-    "docTemplate"
+  Description
+    Text
+      This package provides a simple, human-readable text format for documentation nodes
+      as an alternative to the classic @TO "Macaulay2Doc :: hypertext list format"@
+      accepted by the @TO "Macaulay2Doc :: document(List)"@ function.
+
+      The new format is accepted by the @TO (doc, String)@ function for writing either a
+      single or multiple documentation nodes from a string or file and adheres to the
+      @wikipedia "off-side rule"@, i.e., using indentation to separate blocks.
+    Tree
+      :Getting started with SimpleDoc
+        @TO2 {"Macaulay2Doc :: writing documentation", "Writing documentation in Macaulay2"}@
+        @TO2 {doc, "Using SimpleDoc for documentation"}@
+        @TO2 {"Text", "Using markup in documentation"}@
+        @TO2 {"Text::html(TEX)", "Using TeX in documentation"}@
+
+      :Templates for using the @TO (doc, String)@ method
+        "docExample"
+        "docTemplate"
+        packageTemplate
+
+      :Documentation helpers
+        arXiv
+        stacksProject
+        wikipedia
+  Contributors
+    Andrew Hoefel contributed to this package.
+
 Node
   Key
-    doc
-    (doc,String)
+     packageTemplate
+    (packageTemplate, String)
+  Headline
+    a template for a package
+  Usage
+    packageTemplate name
+  Inputs
+    name:String
+      the name of the package
+  Description
+   Text
+     This routine returns a barebones package template that can be used to start writing a package.
+   Example
+     print packageTemplate "WonderfulModules"
+  SeeAlso
+    "docExample"
+    "testExample"
+
+Node
+  Key
+    "docExample"
+  Headline
+    an example of a documentation string
+  Usage
+    docExample
+  Description
+   Text
+    The variable {\tt docExample} is a @TO String@ containing an example of the use of
+    @TO (doc, String)@ to write a documentation page, visible @TO2 {(simpleDocFrob, ZZ, Matrix), "here"}@.
+   Code
+    EXAMPLE { PRE docExample }
+  SeeAlso
+    packageTemplate
+    "testExample"
+
+Node
+  Key
+    "testExample"
+  Headline
+    an example of a test string
+  Usage
+    testExample
+  Description
+   Text
+     The variable {\tt testExample} is a @TO String@ containing an example of
+     the use of @TO "Macaulay2Doc :: TEST(String)"@ to write a test case.
+   Code
+    EXAMPLE { PRE testExample }
+   Text
+     The @TO check@ method executes all package tests defined this way.
+   Example
+     check SimpleDoc
+  SeeAlso
+    TEST
+    check
+    packageTemplate
+    "docExample"
+
+Node
+  Key
+     doc
+    (doc, String)
+    (document, String)
+    "multidoc"
+    "docTemplate"
   Headline
     a simple documentation function
   Usage
     doc s
+    document s
   Inputs
     s:String
-      See the example below for the format of {\tt s}
+      a structured source for the documentation, either as a string or a filename
   Consequences
    Item
-    Documentation is created and stored so that after @TO installPackage@ is used, 
-    the corresponding documentation is available via @TO help@ and @TO viewHelp@
+    Documentation is created and stored so that after @TO installPackage@ is used,
+    @TO help@ and @TO viewHelp@ can be used to access the corresponding documentation node(s)
   Description
    Text
-    The string {\tt s} contains text describing the documentation to be
-    produced.
+    The string {\tt s} contains a series of sections describing the documentation to be
+    produced. The first line of each section contains only a keyword that specifies the
+    purpose of that section. The keywords must all be indented to the same level, and
+    everything else must be further indented. Lines beginning with white space followed
+    by two hyphens are ignored and can be used for commenting.
 
-    Lines beginning with white space followed by two hyphens are ignored.
+    @TO (document, String)@ is a synonym for @TO doc@.
+    For backwards compatibility, the function @TT "multidoc"@ is also a synonym for @TO doc@.
 
-    The text is divided into sections, each of which begins with a keyword
-    alone on a line; the keywords must all be indented to the same level, and
-    everything else must be further indented.
+   Text
+    @HEADER2 "Template for documentation strings"@
 
-    The valid keywords are: {\bf Key}, {\bf Headline}, {\bf Usage}, {\bf
-    Inputs}, {\bf Outputs}, {\bf Consequences}, {\bf Description}, {\bf
-    SeeAlso}, {\bf Subnodes}, {\bf Caveat}, and {\bf ExampleFiles}.
+    The variable {\tt docTemplate} is a @TO String@, which can be cut and pasted into a
+    text file, to be used as a template for writing documentation for functions and other
+    objects in a package.
+   Code
+    EXAMPLE { PRE docTemplate }
 
-    The only keyword which is always required is {\bf Key}.
+   Text
+    @HEADER2 "Description of keywords allowed in documentation strings"@
 
-    Each line in the {\bf Key} section is evaluated as a Macaulay2 expression
-    to yield a documentation key.  The various types of documentation keys are
-    described in @TO [document,Key]@.  (If a string is desired as a key, it
-    must be surrounded by quotation marks.)
+    The only keyword which is always required is @TO Key@. Other valid keywords are:
 
-    The body of the {\bf Headline} section should have a single line, which
-    will be interpreted as a string.  The lines of the {\bf Usage} section may
-    be used to present alternative usages, and they will be collected into a
-    single string.
+   Code
+    UL {
+        { TOH Key,
+            PARA {
+                "Each line in this section is evaluated as a Macaulay2 expression
+                to yield a documentation key. If the key is a string, for instance
+                the title of a tutorial, it must be surrounded by quotation marks.
+                Examples for documentation keys are given in ", TO [document,Key], "."}},
+        { TOH Headline,
+            PARA {"The body of this section should be a single line description of the node."}},
+        { TOH Usage,
+            PARA {"The lines of this section present alternative usages of the key."}},
+        { TOH Inputs, BR{},
+          TOH Outputs,
+            PARA {
+                "The text in these sections is divided into subsections, each of which
+                corresponds to one input or output value. The first line of each
+                subsection contains the name of the variable corresponding to it, as
+                referred to in the usage line, a colon, and the type of the variable.
+                The name of the variable must be a nonempty string of alphanumeric
+                characters or quotation marks.  For example, the first line might be ",
+                TT "s2:String", ".  The variable name and type are both optional."},
+            PARA {
+                "For optional inputs, one puts the name of the option, a double arrow,
+                and the expected type of value; for example, the first line might be ",
+                TT "Precision=>ZZ", ". Subsequent lines of the subsection, indented
+                further, describe the variable and may include markup."}},
+        { TOH Consequences,
+            PARA {
+                "Each subsection of the this section should start with the keyword ",
+                TT "Item", "; the text in each item may include markup."}},
+        { TOH Description,
+            PARA {"The text in this section occurs in subsections with keywords:"},
+            UL {
+                { TT "Text", " -- prose containing markup or tex",
+                    PARA {
+                        "The text in this subsection can be separated into paragraphs
+                        with blank lines. A paragraph, when rendered in HTML, is
+                        typically enclosed in an HTML ", TT "<p>", " tag, except if its
+                        top level markup is an instance of ", TO HypertextContainer,
+                        " or ", TO HypertextParagraph, "."}},
+                { TT "Tree", " -- classify documentation nodes under headings",
+                    PARA {
+                        "The lines in this section beginning with ", TT ":", " or ",
+                        TT "@", " are treated as subsections. The remaining lines are
+                        treated as keys to a documentation node and are processed by the ",
+                        TO TOH, " function, producing a link followed by the headline.
+                        The purpose is to allow a classification of the documentation
+                        nodes grouped under a subsections. Further indentation is treated
+                        as further sub-classifications."}},
+                { TT "Example", " -- examples of the usage",
+                    PARA {
+                        "The text in this subsection consists of lines of Macaulay2 code
+                        to be used as examples in the documentation node. Output will
+                        be generated automatically and incorporated into the display."}},
+                { TT "CannedExample", " -- pre-evaluated example results",
+                    PARA {
+                        "The text in this subsection consists of lines containing an
+                        interaction with Macaulay2, to displayed as an example."}},
+                { TT "Pre", " -- preformatted text",
+                    PARA {
+                        "The text in this subsection, with common indentation removed,
+                        is wrapped with ", TO PRE, "."}},
+                { TT "Code", " -- custom Macaulay2 code",
+                    PARA {
+                        "The text in this subsection, with common indentation removed,
+                        is wrapped with parentheses and evaluated; the result is spliced
+                        into the list of documentation items at the appropriate point
+                        before passing the list to ", TO document, "."}}
+                }
+            },
+        { TT "Synopsis", " -- prepare documentation for different usages of a function", BR{},
+            PARA {
+                "Each section with this keyword prepares a standardized synopsis similar
+                to the ", TO SYNOPSIS, " template of the classic ", TO document, " command.
+                The text in this section occurs in subsections with the following keywords:"},
+            UL {
+                { TO Heading, " -- similar to the ", TO Headline, " keyword" },
+                { TO BaseFunction, " -- the basename of the function; see ", TO [SYNOPSIS, BaseFunction] },
+                { "Keywords that can be repeated once for each synopsis: ", TO Usage, " (required), ",
+                    TO Inputs, ", ", TO Outputs, ", ", TO Consequences, ", and ", TO Description, "."}
+                }, BR{}
+            },
+        { TOH Acknowledgement, BR{},
+          TOH Contributors, BR{},
+          TOH References,
+            PARA {
+                "The text in these sections is parsed and rendered similar to the ",
+                TO Text, " subsection and can be used to acknowledge funding sources,
+                collaborators, and non-author contributors, or to provide references."}},
+        { TOH Caveat,
+            PARA {
+                "The text in these sections is parsed and rendered similar to the ",
+                TO Text, " subsection and can be used to inform users of potential
+                limits of the implementation."}},
+        { TOH SeeAlso,
+            PARA {
+                "The lines in this section are parsed as in the ", TO Key, " section
+                and are displayed as links to other relevant documentation nodes."}},
+        { TOH Subnodes,
+            PARA {
+                "The lines in this section not beginning with a colon are keys
+                giving links to the subnodes of the current documentation node.
+                The purpose is to allow the documentation of the package to be
+                arranged linearly, as in a book.  The lines beginning with a
+                colon are subheadings used to classify the subnodes."}},
+        { TOH SourceCode,
+            PARA {
+                "The lines in this section are parsed as a list of functions whose
+                source code should be displayed in the documentation."}},
+        { TOH ExampleFiles,
+            PARA {
+                "Each line in this section should be the name of a file in the
+                auxiliary files directory of the package; the name of that directory
+                is the same as the name of the package.  Copies of the corresponding
+                files will be made available in the running path of the examples."}}
+        }
 
-    The text in an {\bf Inputs} or {\bf Outputs} section is divided into
-    subsections, each of which corresponds to one input or output value.  The
-    first line of each subsection contains the name of the variable
-    corresponding to it, as referred to in the usage line, a colon, and the
-    type of the variable.  The name of the variable must be a nonempty string
-    of alphanumeric characters or quotation marks.  For example, the first line
-    might be {\tt s2:String}.  The variable name and type are both optional.
-    (For optional inputs, one puts the name of the option, a double arrow, and
-    the expected type of value; for example, the first line might be {\tt
-    Precision => ZZ}.)  Subsequent lines of the subsection, indented further,
-    describe the variable and may include markup.
+   Text
+    @HEADER2 "Markup keywords allowed in documentation strings"@
 
-    Markup allowed includes many TeX commands, as allowed in @TO TEX@; for
-    details and examples see @TO (html,TEX)@, allowing various mathematical
-    expressions, such as $\PP^3$ or $x_i^{33} + 1/2$, to be displayed in the
-    html form of the documentation.  Also allowed is a pair of {\tt \@}
-    characters, enclosing Macaulay2 code to be executed, yielding appropriate
-    hypertext.  For example, {\tt \@TO Key\@} will insert a link to another
-    node of the documentation.
+    The markup keywords allowed include many TeX commands, as allowed in @TO TEX@; for
+    details and examples see @TO (html, TEX)@, allowing various mathematical expressions,
+    such as $\PP^3$ or $x_i^{33} + 1/2$, to be displayed in the html form of the documentation.
 
-    Each subsection of the {\bf Consequences} section should start with the
-    keyword {\bf Item}; the text in each subsection can be marked up as
-    described above.
+    Also allowed is a pair of {\tt \@} characters, enclosing Macaulay2 code to be executed,
+    yielding appropriate hypertext.  For example
+   Pre
+    The @TO Key@ section is required.
+   Text
+    will include a link to another node of the documentation. This package also provides a
+    number of helper functions, such as the @TO arXiv@ function, which may be used to succinctly
+    reference e-Prints. See @TO "Text"@ for other hypertext types.
 
-    The text in the {\bf Description} section occurs in subsections labeled
-    with the keywords {\bf Text}, {\bf Example}, {\bf CannedExample}, {\bf
-    Pre}, and {\bf Code}.  The text in a {\bf Text} subsection can be separated
-    into paragraphs with blank lines.  (A paragraph, when rendered in HTML,
-    will normally be enclosed in an HTML P tag, except if its top level markup is an instance of
-    @TO HypertextContainer@ or @TO HypertextParagraph@.)
+    Note that any Macaulay2 code resulting in a @TO String@ or @TO Hypertext@ may be used inside
+    {\tt \@...\@}, but for longer code it is easier to use the @TT "Code"@ keyword described above.
 
-    The text in an {\bf Example} subsection consists of lines
-    of Macaulay2 code to be used as examples in the documentation node; within
-    in each complete expression, indent lines after the first one more than the
-    first; output will be generated automatically and incorporated into the
-    display.  The text in a {\bf CannedExample} subsection consists of lines
-    containing an interaction with Macaulay2, to displayed as an example.  The
-    text in a {\bf Pre} section, with common indentation removed, is wrapped
-    with @ TO PRE @.  The text in a {\bf Code} section, with common indentation
-    removed, is wrapped with parentheses and evaluated; the result is spliced
-    into the list of documentation items at the appropriate point before
-    passing the list to @TO document@.
+   Text
+    @HEADER2 "Documenting multiple nodes at once"@
 
-    Each line in the {\bf ExampleFiles} section should be the name of a file
-    in the auxiliary files directory of the package; the name of that directory
-    is the same as the name of the package.  Copies of the corresponding files 
-    will be made visible in the current directory while the example code is
-    running.     
+    If the least indented keyword in the documentation string {\tt s} is @TT "Node"@,
+    possibly occurring multiple times, multiple documentation nodes will be prepared.
 
-    The lines in the {\bf Subnodes} section not beginning with a colon are keys
-    giving links to the subnodes of the current documentation node.  The
-    purpose is to allow the documentation of the package to be arranged
-    linearly, as in a book.  The lines in the {\bf Subnodes} section beginning
-    with a colon are subheadings used to classify the subnodes.
+    @UL {{ TT "Node", PARA {"The text following each such keyword is handled just as by ",
+                TO doc, " resulting in a separate documentation node."}}}@
+
+    See @HREF {currentLayout#"packages" | "SimpleDoc/doc.txt", "SimpleDoc/doc.txt"}@
+    for an example of how the @TT "Node"@ keyword is used in documenting this package.
+
   SeeAlso
-    multidoc
     document
+    "testExample"
     "docExample"
-    "docTemplate"
