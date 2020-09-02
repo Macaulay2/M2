@@ -113,7 +113,7 @@ html MENU := x -> html redoMENU x
 -- TODO: reduce this
 html TO   := x -> (
      tag := x#0;
-     d := fetchPrimaryRawDocumentation tag;
+     d := fetchRawDocumentation getPrimaryTag tag;
      r := htmlLiteral format tag;
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
      if d#?"undocumented" and d#"undocumented" === true then (
@@ -133,7 +133,7 @@ html TO   := x -> (
 html TO2  := x -> (
      tag := x#0;
      headline tag;		   -- this is a kludge, just to generate error messages about missing links
-     d := fetchPrimaryRawDocumentation tag;
+     d := fetchRawDocumentation getPrimaryTag tag;
      if d#?"undocumented" and d#"undocumented" === true then (
 	  if signalDocumentationWarning tag then (
 	       stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;

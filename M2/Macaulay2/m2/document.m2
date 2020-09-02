@@ -317,7 +317,7 @@ fetchRawDocumentationNoLoad(Package, String) := (pkg,     fkey) -> ( -- returns 
 	if isOpen rawdoc and rawdoc#?fkey then evaluateWithPackage(getpkg "Text", rawdoc#fkey, value)))
 
 -----------------------------------------------------------------------------
--- fetchPrimaryRawDocumentation, fetchAnyRawDocumentation
+-- getPrimaryTag, fetchAnyRawDocumentation
 -----------------------------------------------------------------------------
 getPrimaryTag = method()
 getPrimaryTag DocumentTag := tag -> (
@@ -325,19 +325,15 @@ getPrimaryTag DocumentTag := tag -> (
     do tag = rawdoc#PrimaryTag;
     tag)
 
-fetchPrimaryRawDocumentation = method()
-fetchPrimaryRawDocumentation DocumentTag := tag -> fetchRawDocumentation getPrimaryTag tag
-
 -- TODO: somehow cache this
 fetchAnyRawDocumentation = method()
 fetchAnyRawDocumentation DocumentTag := tag  -> (
-    rawdoc := fetchRawDocumentation tag;
-    if rawdoc =!= null then rawdoc else fetchAnyRawDocumentation format tag)
+    rawdoc := fetchRawDocumentation getPrimaryTag tag;
+    if rawdoc =!= null then rawdoc else if package tag =!= "User" then fetchAnyRawDocumentation format tag)
 -- TODO: if Package$Core was the same as Macaulay2Doc, this would not be necessary
 fetchAnyRawDocumentation String      := fkey -> scan(prepend("Macaulay2Doc", keys PackageDictionary), pkg -> (
-	rawdoc := fetchRawDocumentation(pkg, fkey);
-	if rawdoc =!= null then (
-	    break if rawdoc#?PrimaryTag then fetchPrimaryRawDocumentation rawdoc#PrimaryTag else rawdoc)))
+	rawdoc := fetchRawDocumentation getPrimaryTag makeDocumentTag(fkey, Package => pkg);
+	if rawdoc =!= null then break rawdoc))
 
 -----------------------------------------------------------------------------
 -- store and fetch Processed Documentation
@@ -358,7 +354,7 @@ fetchProcessedDocumentation = (pkg, fkey) -> (
 -----------------------------------------------------------------------------
 -- inquiring the status of a key or DocumentTag
 -----------------------------------------------------------------------------
-isMissingDoc    := tag -> fetchPrimaryRawDocumentation tag === null
+isMissingDoc    := tag -> fetchRawDocumentation getPrimaryTag tag === null
 isSecondaryTag   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?PrimaryTag )
 isUndocumented   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?"undocumented" and d#"undocumented" === true )
 hasDocumentation = key -> (
@@ -382,7 +378,7 @@ headline Thing := key -> (
     s := fetchRawDocumentationNoLoad makeDocumentTag key;
     if s =!= null and s#?Headline then s#Headline)
 headline DocumentTag := tag -> (
-    rawdoc := fetchPrimaryRawDocumentation tag;
+    rawdoc := fetchRawDocumentation getPrimaryTag tag;
     if rawdoc === null and signalDocumentationWarning tag then (
 	if currentDocumentTag === null then return null;
 	loc := locate currentDocumentTag;
