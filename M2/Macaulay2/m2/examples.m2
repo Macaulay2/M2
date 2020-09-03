@@ -63,11 +63,10 @@ extractExamples = docBody -> (
 -----------------------------------------------------------------------------
 
 examples = method(Dispatch => Thing)
-examples Hypertext := dom -> stack extractExamplesLoop dom
+examples Hypertext := dom -> raise(stack extractExamplesLoop dom, -1)
 examples Thing     := key -> (
     rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    if rawdoc =!= null and rawdoc.?Description
-    then stack extractExamplesLoop rawdoc.Description)
+    if rawdoc =!= null and rawdoc.?Description then examples DIV{rawdoc.Description})
 
 -----------------------------------------------------------------------------
 -- storeExampleOutput
@@ -87,7 +86,7 @@ getExampleOutput := (pkg, fkey) -> (
     filename := getExampleOutputFilename(pkg, fkey);
     output := if fileExists filename
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
-    else if height (ex := examples fkey) =!= 0
+    else if width (ex := examples fkey) =!= 0
     then ( verboseLog("info: capturing example results on-demand"); last capture ex );
     pkg#"example results"#fkey = if output === null then {} else drop(separateM2output output, -1))
 
