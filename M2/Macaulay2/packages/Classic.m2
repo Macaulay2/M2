@@ -11,6 +11,7 @@ newPackage ( "Classic",
 
 -- the following comment is needed:
 -- start --
+export "poly"
 symbolP = (x -> (
 	  if not isGlobalSymbol x then error("symbol ",x," undefined");
  	  getGlobalSymbol x)) % letterParser
@@ -29,13 +30,15 @@ polyP = plus @@ deepSplice % +monomialP | terminalParser 0
 parenExprP = ((l,x,r) -> x) % andP("(", futureParser parenExprP | polyP, ")")
 listPolyP = toList % seqP_"," polyP
 arrayPolyP = toList % seqP_";" listPolyP
-export "poly" ; poly = method()
-poly String :=  RingElement => polyP : nonspaceAnalyzer
-ideal String := Ideal => ideal % listPolyP : nonspaceAnalyzer
-monomialIdeal String := MonomialIdeal => 
-                 monomialIdeal % listPolyP : nonspaceAnalyzer
-matrix String := Matrix => opts -> 
-                  matrix_opts % arrayPolyP : nonspaceAnalyzer
+poly = method()
+polyParser = polyP : nonspaceAnalyzer
+poly String :=  RingElement => x -> polyParser x
+idealParser = ideal % listPolyP : nonspaceAnalyzer
+ideal String := Ideal => x -> idealParser x
+monomialIdealParser = monomialIdeal % listPolyP : nonspaceAnalyzer
+monomialIdeal String := MonomialIdeal => x -> monomialIdealParser x
+matrix String := Matrix => 
+                 opts -> matrix_opts % arrayPolyP : nonspaceAnalyzer
 -- end --
 -- the preceding comment is needed:
 
@@ -153,6 +156,14 @@ document {
      ///,
      SeeAlso => {(poly,String), (ideal,String)}
      }
+
+TEST ///
+     R = QQ[x,y,z]
+     assert (poly "x2y3-11z+1" == x^2 * y^3 - 11*z + 1)
+     assert (ideal "x2,y3-1,z+3" == ideal (x^2, y^3-1, z+3))
+     assert (monomialIdeal "x2,yz2" == monomialIdeal (x^2, y*z^2))
+     assert (matrix "x,11y,z;x2,y-1,z5" == matrix {{x,11*y,z},{x^2,y-1,z^5}})
+///
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Classic pre-install"
