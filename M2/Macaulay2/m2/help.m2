@@ -371,6 +371,7 @@ getBody := (key, tag, rawdoc) -> (
 -- View help within Macaulay2
 -----------------------------------------------------------------------------
 
+-- TODO: help symbol% before Macaulay2Doc is installed doesn't work
 help = method(Dispatch => Thing)
 -- overview nodes and formatted documentation keys
 help String := key -> (
@@ -425,6 +426,7 @@ help = Command help
 -- the top level help page
 frontpage := applicationDirectory() | topFileName;
 
+-- TODO: viewHelp "blah" should not open page for null
 viewHelp = method(Dispatch => Thing)
 viewHelp String := key -> viewHelp makeDocumentTag key
 viewHelp Thing  := key -> (

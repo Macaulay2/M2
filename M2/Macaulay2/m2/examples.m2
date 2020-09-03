@@ -34,7 +34,11 @@ capture Net    := s -> capture toString s
 capture List   := s -> capture demark_newline s
 --capture String := s -> capture' s -- output is (Boolean, String) => (Err?, Output)
 -- TODO: do this in interp.dd instead
-capture String := s -> (pushvar(symbol interpreterDepth, 1); first(capture' s, popvar symbol interpreterDepth))
+capture String := s -> (
+    pushvar(symbol interpreterDepth, 1);
+    ret := capture' s;
+    popvar symbol interpreterDepth;
+    ret)
 protect symbol capture
 
 -----------------------------------------------------------------------------
@@ -62,7 +66,8 @@ examples = method(Dispatch => Thing)
 examples Hypertext := dom -> stack extractExamplesLoop dom
 examples Thing     := key -> (
     rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    if rawdoc =!= null and rawdoc.?Description then (stack extractExamplesLoop rawdoc.Description)^-1)
+    if rawdoc =!= null and rawdoc.?Description
+    then stack extractExamplesLoop rawdoc.Description)
 
 -----------------------------------------------------------------------------
 -- storeExampleOutput
@@ -82,8 +87,9 @@ getExampleOutput := (pkg, fkey) -> (
     filename := getExampleOutputFilename(pkg, fkey);
     output := if fileExists filename
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
-    else ( verboseLog("info: capturing example results on-demand"); last capture examples fkey );
-    pkg#"example results"#fkey = drop(separateM2output output, -1))
+    else if height (ex := examples fkey) =!= 0
+    then ( verboseLog("info: capturing example results on-demand"); last capture ex );
+    pkg#"example results"#fkey = if output === null then {} else drop(separateM2output output, -1))
 
 -- used in installPackage.m2
 -- TODO: store in a database instead
@@ -96,13 +102,12 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 
 -- used in installPackage.m2
 captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash, changeFunc, usermode, verboseLog) -> (
---    verboseLog("info: capturing example output in the same process");
+    desc := "example results for " | fkey;
+--    printerr("capturing ", desc);
 --    (err, output) := evaluateWithPackage(pkg, inputs, capture);
---    outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close)
+--    if not err then ( outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close ) else
     (
-	verboseLog("info: computing example results in separate process");
 	data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
-	desc := "example results for " | fkey;
 	inf << inputs << endl << close;
 	if runFile(inf, inputhash, outf, errf, desc, pkg, changeFunc fkey, usermode, data)
 	then ( removeFile inf; cacheFunc fkey )))

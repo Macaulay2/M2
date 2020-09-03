@@ -259,6 +259,8 @@ infoTagConvert DocumentTag := tag -> (
      fkey = tagConvert fkey;
      if pkgname =!= currentPackage#"pkgname" then concatenate("(",pkgname,")", fkey) else fkey)
 
+-- TODO: can this be simplified?
+-- checking if doc is missing can be very slow if node is from another package
 info TO  := x -> (
      tag := x#0;
      f := format tag;

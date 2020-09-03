@@ -321,6 +321,7 @@ fetchRawDocumentationNoLoad(Package, String) := (pkg,     fkey) -> ( -- returns 
 -----------------------------------------------------------------------------
 getPrimaryTag = method()
 getPrimaryTag DocumentTag := tag -> (
+    -- TODO: slow if package isn't loaded
     while (rawdoc := fetchRawDocumentation tag; rawdoc =!= null and rawdoc#?PrimaryTag)
     do tag = rawdoc#PrimaryTag;
     tag)
@@ -329,7 +330,7 @@ getPrimaryTag DocumentTag := tag -> (
 fetchAnyRawDocumentation = method()
 fetchAnyRawDocumentation DocumentTag := tag  -> (
     rawdoc := fetchRawDocumentation getPrimaryTag tag;
-    if rawdoc =!= null then rawdoc else if package tag =!= "User" then fetchAnyRawDocumentation format tag)
+    if rawdoc =!= null then rawdoc else fetchAnyRawDocumentation format tag)
 -- TODO: if Package$Core was the same as Macaulay2Doc, this would not be necessary
 fetchAnyRawDocumentation String      := fkey -> scan(prepend("Macaulay2Doc", keys PackageDictionary), pkg -> (
 	rawdoc := fetchRawDocumentation getPrimaryTag makeDocumentTag(fkey, Package => pkg);
