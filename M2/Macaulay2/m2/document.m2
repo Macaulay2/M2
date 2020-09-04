@@ -449,12 +449,6 @@ formatDocumentTag Array := s -> (
 -----------------------------------------------------------------------------
 -- fixing up hypertext
 -----------------------------------------------------------------------------
-trimline0 := x -> selectRegexp ( "^((.*[^ \t])?)[ \t]*$",1, x)
-trimline  := x -> selectRegexp ( "^[ \t]*((.*[^ \t])?)[ \t]*$",1, x)
-trimline1 := x -> selectRegexp ( "^[ \t]*(.*)$",1, x)
-addspaces0:= x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else concatenate(x," ")
-addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
-
 fixup Thing      := z -> error("unrecognizable item ",toString z," of class ",toString class z," encountered while processing documentation node ", toString currentHelpTag)
 fixup List       := z -> fixup toSequence z
 fixup Sequence   := 
@@ -483,11 +477,9 @@ fixup MarkUpType := z -> (
      else error("isolated mark up type encountered: ",toString z)
      ) -- convert PARA to PARA{}
 -- fixup Function   := z -> z				       -- allow BaseFunction => f 
-fixup String     := s -> (				       -- remove clumsy newlines within strings
-     if not match("\n",s) then return s;
-     ln := separate s;
-     concatenate ({addspaces0 trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
+fixup String     := s -> demark_" " separate("[ \t]*\r?\n[ \t]*", s) -- remove clumsy newlines within strings
 
+-- TODO: move this, and above, to hypertext.m2
 hypertext = method(Dispatch => Thing)
 hypertext Hypertext := fixup
 hypertext Sequence := hypertext List := x -> fixup DIV x
@@ -537,19 +529,12 @@ extractExamples := docBody -> (
 
 M2outputRE := "(\n+)i+[1-9][0-9]* : "
 M2outputREindex := 1
--- if called during installation (and thus generating html and info docs)
--- then wrap examples to 77 characters.  otherwise, compute the width from
--- printWidth, allowing space for the output prompt and box boundary
-separateM2output = method(Options => {"Install" => false})
-separateM2output String := o -> r -> (
+separateM2output = method()
+separateM2output String := r -> (
      m := regex("^i1 : ",r);
      if m#?0 then r = substring(m#0#0,r);
      while r#?-1 and r#-1 == "\n" do r = substring(0,#r-1,r);
-     wrapWidth := if o#"Install" then 77
-	  else printWidth - interpreterDepth - length toString lineNumber - 5;
-     apply(separateRegexp(M2outputRE,M2outputREindex,r), ex ->
-	  toString stack apply(lines ex, line -> wrap(wrapWidth, line)))
-     )
+     separate(M2outputRE,M2outputREindex,r))
 
 makeExampleOutputFileName := (fkey,pkg) -> (			 -- may return 'null'
      if pkg#?"package prefix" and pkg#"package prefix" =!= null 
@@ -662,6 +647,9 @@ fixupTable := new HashTable from {
      Headline => chkIsStringFixup Headline,
      Heading => chkIsString Heading,
      Description => val -> extractExamples fixup val,
+     Acknowledgement => v -> if v =!= {} then fixup DIV { SUBSECTION "Acknowledgement", v } else v,
+     Contributors => v -> if v =!= {} then fixup DIV { SUBSECTION "Contributors", v } else v,
+     References => v -> if v =!= {} then fixup DIV { SUBSECTION "References", v } else v,
      Caveat  => v -> if v =!= {} then fixup DIV { SUBSECTION "Caveat", v } else v,
      SeeAlso => v -> if v =!= {} then fixup DIV { SUBSECTION "See also", UL (TO \ enlist v) } else v,
      SourceCode => v -> (
@@ -678,7 +666,7 @@ fixupTable := new HashTable from {
 				   if f === null then error("SourceCode: ", toString m, ": not a method");
 				   c := code f;
 				   if c === null then error("SourceCode: ", toString m, ": code for method not found");
-				   c)))}}
+				   reproduciblePaths toString c)))}}
 	  else v),
      Subnodes => v -> (
 	  v = nonnull enlist v;
@@ -697,6 +685,9 @@ fixupTable := new HashTable from {
 	  currentPackage#"example data files"#currentNodeName = v;
 	  "")
      }
+acknowledgement := key -> getOption(key,Acknowledgement)
+contributors := key -> getOption(key,Contributors)
+references := key -> getOption(key,References)
 caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
 sourcecode := key -> getOption(key,SourceCode)
@@ -711,6 +702,9 @@ documentOptions := new OptionTable from {
      Headline => null,
      SeeAlso => null,
      SourceCode => null,
+     Contributors => null,
+     Acknowledgement => null,
+     References => null,
      Caveat => null,
      Subnodes => null,
      ExampleFiles => null
@@ -1168,7 +1162,7 @@ help String := key -> (
 	       stderr << "--warning: there is no documentation for '" << key << "'" << endl;
 	       b = ();
 	       );
-	  fixup DIV {topheader key, b, caveat key, seealso key, theMenu key}))
+	  fixup DIV {topheader key, b, acknowledgement key, contributors key, references key, caveat key, seealso key, theMenu key}))
 
 instances = method()
 instances Type := HashTable => X -> hashTable apply(select(flatten(values \ dictionaryPath), i -> instance(value i,X)), i -> (i,value i))
@@ -1347,7 +1341,8 @@ help Symbol := S -> (
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      ret := fixup DIV { topheader S, synopsis S, makeDocBody S,
 	  if #a > 0 then DIV { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
-          caveat S, seealso S,
+          acknowledgement S, contributors S, references S,
+	  caveat S, seealso S,
      	  documentationValue(S,value S),
 	  sourcecode S, type S, 
 	  theMenu S
@@ -1374,6 +1369,7 @@ help Array := key -> (		    -- optional argument
 		    },
 	       SPAN{ "Option name: ", TOH {opt} }
 	       },
+	  acknowledgement key, contributors key, references key,
 	  caveat key, seealso key, theMenu key })
 
 help Sequence := key -> (						    -- method key
@@ -1381,7 +1377,7 @@ help Sequence := key -> (						    -- method key
      if key === () then return if inDebugger then debuggerUsageMessage else help "initial help" ;
      if null === lookup key then error("expected ", toString key, " to be a method");
      currentHelpTag = makeDocumentTag(key,Package=>null);
-     ret := fixup DIV { topheader key, synopsis key, makeDocBody key, caveat key, sourcecode key, seealso key, theMenu key };
+     ret := fixup DIV { topheader key, synopsis key, makeDocBody key, acknowledgement key, contributors key, references key, caveat key, sourcecode key, seealso key, theMenu key };
      currentHelpTag = null;
      ret)
 
@@ -1442,9 +1438,6 @@ tutorial = x -> (
 	  sublist -> EXAMPLE sublist,
 	  identity);
      x )
-
-Wikipedia = method(TypicalValue => Hypertext)
-Wikipedia String := s -> PARA { "See ", HREF{ "http://en.wikipedia.org/wiki/" | s }, "."}
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

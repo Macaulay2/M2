@@ -548,6 +548,17 @@ load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgeb
 
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/simple-tests.tst.m2")
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/border-case-errors.m2")
+
+
+TEST ///
+if Bertini.Options.OptionalComponentsPresent then
+load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/Bertini/Bertini.test.m2")
+///
+
+TEST ///
+if PHCpack.Options.OptionalComponentsPresent then
+load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/PHCpack/PHCpack.test.m2")
+///
 end
 
 -- Here place M2 code that you find useful while developing this

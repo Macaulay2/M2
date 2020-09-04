@@ -52,16 +52,16 @@ export {
 -- add symbols as needed
 -- note that the length of a diacritic (as a string in M2) is 2
 texStore = hashTable {
-    ///Macaulay2///     => ///\emph{Macaulay2}///,
-    ///Macaulay 2///     => ///\emph{Macaulay2}///,
+    ///Macaulay2///     => ///\\emph{Macaulay2}///,
+    ///Macaulay 2///     => ///\\emph{Macaulay2}///,
     ///Mbar_\{g,n\}///    => ///$Mbar_{g,n}$///,
-    ///á///             => ///{\'a}///,
-    ///å///             => ///{\aa}///,
-    ///æ///             => ///{\ae}///,
-    ///è///             => ///{\`e}///,
-    ///é///             => ///{\'e}///,
-    ///ò///             => ///{\`o}///,
-    ///ø///             => ///{\o}///,
+    ///á///             => ///{\\'a}///,
+    ///å///             => ///{\\aa}///,
+    ///æ///             => ///{\\ae}///,
+    ///è///             => ///{\\`e}///,
+    ///é///             => ///{\\'e}///,
+    ///ò///             => ///{\\`o}///,
+    ///ø///             => ///{\\o}///,
 }
 
 -- PREPARE THE HEADLINE FOR USE IN THE BIBTEX TITLE

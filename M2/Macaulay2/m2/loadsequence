@@ -4,6 +4,7 @@ option.m2
 methods.m2
 autoload.m2
 system.m2
+regex.m2
 run.m2
 
 profile.m2
@@ -19,7 +20,6 @@ lists.m2
 nets.m2
 robust.m2
 content.m2
-string.m2
 hypertext.m2
 validate.m2
 expressions.m2

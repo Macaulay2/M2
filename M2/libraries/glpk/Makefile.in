@@ -3,7 +3,13 @@
 VERSION = 4.59
 URL = http://macaulay2.com/Downloads/OtherSourceCode
 HOMEPAGE = http://www.gnu.org/software/glpk/
-CONFIGOPTIONS = --disable-shared
+
+ifeq (@SHARED@,no)
+CONFIGOPTIONS += --disable-shared
+else 
+CONFIGOPTIONS += --enable-shared
+endif
+
 INSTALLTARGET = install-strip
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/glpk/Makefile

@@ -259,10 +259,6 @@ skipwhite(file:PosFile):int := (
 		    c == int('\n') || c == EOF
 		    ) do getc(file);
 	       )
-	  else if c == int('{') && peek(file,1) == int('*') then (
-	       -- block comment: {* ... *}, deprecated style, not colored by emacs
-	       return DEPRECATED
-	       )
 	  else if c == int('-') && peek(file,1) == int('*') then (
 	       -- block comment: -* ... *-
 	       getc(file); getc(file);

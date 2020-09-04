@@ -14,7 +14,7 @@
 # use CMAKE_BUILD_TYPE=RelMinSize            for minimized release
 # use BUILD_TESTING=ON                       to build the testing tree
 
-option(USING_MPIR	"Use MPIR instead of GMP"		ON)
+option(USING_MPIR	"Use MPIR instead of GMP"		OFF)
 option(DEVELOPMENT	"Set the DEVELOPMENT macro in config.h"	OFF)
 option(EXPERIMENT	"Set the EXPERIMENT macro in config.h"	OFF)
 option(LINTING		"Enable linting source files"		OFF)
@@ -236,6 +236,11 @@ if(VERBOSE)
   message("## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)
      Compiler flags    = ${COMPILE_OPTIONS}
      Linker flags      = ${LINK_OPTIONS}\n")
+  message("## CMake path variables
+     CMAKE_SYSTEM_PREFIX_PATH
+       ${CMAKE_SYSTEM_PREFIX_PATH}
+     CMAKE_C_IMPLICIT_LINK_DIRECTORIES
+       ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES}\n")
 endif()
 
 ###############################################################################
@@ -293,7 +298,6 @@ check_include_files(sys/wait.h	HAVE_SYS_WAIT_H)
 check_include_files(termios.h	HAVE_TERMIOS_H)
 check_include_files(time.h	HAVE_TIME_H)
 check_include_files(unistd.h	HAVE_UNISTD_H)
-check_include_files(regex.h	HAVE_REGEX_H)
 # TODO: clear out d/types.h
 
 include(CheckFunctionExists)

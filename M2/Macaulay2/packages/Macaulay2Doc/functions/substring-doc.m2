@@ -55,7 +55,6 @@ doc ///
  SeeAlso
   lines
   separate
-  separateRegexp
   "strings and nets"
   "regular expressions"
 ///

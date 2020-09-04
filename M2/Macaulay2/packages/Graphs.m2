@@ -343,7 +343,7 @@ net Digraph := Net => G -> (
     ))
 
 toString Digraph := String => D -> (
-    horizontalJoin(
+    concatenate(
         toLower toString class D, 
         " (",
         toString vertexSet D,
