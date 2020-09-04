@@ -1053,7 +1053,7 @@ document { Key => {(netList, VisibleList),
      Usage => "netList v",
      Inputs => { 
 	  "v" => {"a list of lists of things to be converted to nets and displayed as a table in a net"},
-	  Boxes => Boolean => {"whether to draw boxes around the individual nets"},
+	  Boxes => {"whether to draw boxes around the individual nets. can be a Boolean or a pair of Booleans/lists of rows/columns to insert lines"},
 	  BaseRow => ZZ => {"the index of the base row, for the purpose of setting the baseline of the net produced.  The value
 	       is allowed to be as large as the length of ", TT "v", ", larger by 1 than one might expect."},
 	  HorizontalSpace => ZZ => {"the amount of space horizontally between entries or between entries and their enclosing boxes"},
@@ -1070,7 +1070,9 @@ document { Key => {(netList, VisibleList),
 	  netList(f,Boxes=>true,HorizontalSpace=>1,VerticalSpace=>1)
 	  netList(f,Boxes=>true,Alignment=>Center)
 	  netList(f,Boxes=>true,BaseRow=>1)
+	  netList(f,Boxes=>{{1},{1}})
 	  netList apply(5,i->apply(i+1,j->(i,j)))
+	  netList(apply(5,i->apply(i+1,j->(i,j))),Boxes=>{true,false})
      ///}
 
 document { Key => cache,
