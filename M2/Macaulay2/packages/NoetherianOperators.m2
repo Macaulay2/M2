@@ -504,7 +504,7 @@ numericalKernel (Matrix) := Matrix => o -> M -> (
     (S,U,Vh) := SVD M;
     r := #select(S, s ->(s > tol));
     K := transpose Vh^{n-r..n-1};
-    if R == CC then K = conjugate K;
+    if K == 0 then K else conjugate K
     )
 
 --performs Gaussian reduction on M
@@ -692,17 +692,19 @@ getDepIndVars = (P,depSet) -> (
 -- Clears denominators of a matrix:
 -- multiplies each column of M by the lcm of the denominators
 liftColumns = (M,R') -> (
-    cols := transpose entries M;
-    lcms := cols / (col -> (
-        col / 
-        flatten @@ entries @@ last @@ coefficients // 
-        flatten / 
-        (c -> lift(c, coefficientRing ring c)) /
-        denominator //
-        lcm
-    ));
-    K := transpose matrix apply(cols, lcms, (c, m) -> c / times_m);
-    sub(K, R')
+    try denominator lift(M_(0,0), coefficientRing M_(0,0)) then (
+    	cols := transpose entries M;
+    	lcms := cols / (col -> (
+        	col / 
+        	flatten @@ entries @@ last @@ coefficients // 
+        	flatten / 
+        	(c -> lift(c, coefficientRing ring c)) /
+        	denominator //
+        	lcm
+    		));
+    	M = transpose matrix apply(cols, lcms, (c, m) -> c / times_m);
+	) else null;
+    sub(M, R')
 )
 
 noetherianOperators (Ideal) := List => opts -> (I) -> noetherianOperators(I, ideal gens radical I, opts)
@@ -711,7 +713,7 @@ noetherianOperators (Ideal, Point) := List => opts -> (I, p) -> (
     noetherianOperators(I,P,opts)
 )
 
-numNoethOpsAtPoint = method(Options => {DegreeLimit => -1, DependentSet => null, Strategy => BM, Tolerance => null, Normalize=>false}) 
+numNoethOpsAtPoint = method(Options => options noetherianOperators) 
 numNoethOpsAtPoint (Ideal, Point) := List => o -> (I, p) -> numNoethOpsAtPoint(I, matrix p, o)
 numNoethOpsAtPoint (Ideal, Matrix) := List => o -> (I, p) -> (
     R := ring I;
@@ -723,9 +725,16 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => o -> (I, p) -> (
 	    if member(R_i,depVars) then sub(R_i,S) else p_(0,i)
 	    ));
     RtoS := map(S,R,matrix{subs});
-    N := noetherianOperators(RtoS I, RtoS P, o ++ {Rational => true});
+    o = changeOptions(o, {symbol Rational, symbol DependentSet}, {true, gens S});
+    N := noetherianOperators(RtoS I, RtoS P, o);
     L := apply(entries N, D -> sub(D,R'));
     new SetOfNoethOps from {Ops => L, Prime => P}
+    )
+
+changeOptions = (o,keyList,valList) -> (
+    o = new MutableHashTable from o;
+    apply(#keyList, i -> (o#(keyList#i) = valList#i));
+    new OptionTable from o
     )
 
 hybridNoetherianOperators = method(Options => options numNoethOpsAtPoint)
@@ -935,7 +944,8 @@ rationalInterpolation(List, List, Matrix, Matrix) := opts -> (pts, vals, numBasi
     numIdx := select(toList(0..<nn+nd), even);
     denIdx := select(toList(0..<nn+nd), odd);
     idx := positions(0..<numColumns K, i -> 
-            (norm(evaluate(matrix (numBasis * K^numIdx_i), testPt)) > opts.Tolerance) and (norm(evaluate(matrix (denBasis * K^denIdx_i), testPt)) > opts.Tolerance)
+            (norm(evaluate(matrix (numBasis * K^numIdx_i), testPt)) > opts.Tolerance) and 
+	    (norm(evaluate(matrix (denBasis * K^denIdx_i), testPt)) > opts.Tolerance)
         );
     if idx === {} then error "No fitting rational function found";
     norms := apply(idx, i -> entries K_i / abs // sum);
@@ -1163,20 +1173,18 @@ doc ///
 ///
 
 
-///
+doc ///
      Key
-          truncatedDual
-	  (truncatedDual,Point,Ideal,ZZ)
-	  (truncatedDual,Point,Matrix,ZZ)
+          numNoethOpsAtPoint
+	  (numNoethOpsAtPoint,Ideal,Point)
+	  (numNoethOpsAtPoint,Ideal,Matrix)
      Headline
-          truncated dual space of a polynomial ideal
+          truncated dual space of a polynomial ideal at a point
      Usage
-          S = truncatedDual(p, I, d)
+          S = numNoethOpsAtPoint(I,p)
      Inputs
      	  p:Point
 	  I:Ideal
-               or a one-row @TO Matrix@ of generators
-	  d:ZZ
      Outputs
           S:DualSpace
      Description
@@ -1187,12 +1195,12 @@ doc ///
 	  Example
 	       R = CC[x,y];
 	       I = ideal{x^2, y*x}
-	       truncatedDual(origin(R),I,3)
+	       numNoethOpsAtPoint(I,origin(R),DegreeLimit=>3)
 	  Text
 	       The functionals in the dual at a point p are expressed in coordinates centered at p.
 	  Example
-	       p = point matrix{{0., 1}}
-	       truncatedDual(p,I,3)
+	       p = point matrix{{0_CC, 1}}
+	       numNoethOpsAtPoint(I,p,DegreeLimit=>3)
 	  Text
 	       Over inexact fields, the computation accounts for the possibility of small numerical error in the point p.
 	       The optional argument @TO "Tolerance (NoetherianOperators)"@ can be set to adjust the tolerance of the numerical computations.
@@ -1200,13 +1208,30 @@ doc ///
 	       
 	       In this example, the point q is slightly away from the variety of I, but an appropriate @TT "Tolerance"@ value can overcome the error. 
 	  Example
-	       q = point matrix{{0. + 1e-10, 1}}
+	       q = point matrix{{0_CC + 1e-10, 1}}
 	       tol = 1e-6;
-	       S = truncatedDual(q,I,3, Tolerance => tol)
-	       (m,c) = coefficients gens S;
+	       S = numNoethOpsAtPoint(I,q,Tolerance=>tol,DegreeLimit=>3)
+	       (m,c) = coefficients matrix{entries S};
 	       m*clean(tol, c)
+          Text
+	       If no degree limit is specified then the full dual space is computed if it is finite dimensional.  If a sufficient number of dependent variables is not given then termination will fail.
+	  Example
+	       R = QQ[a,b];
+	       I = ideal{a^3,b^3}
+	       D = numNoethOpsAtPoint(I,origin(R))
+	       #entries D
 	  Text
-	       See also @TO zeroDimensionalDual@.
+	       The dimension of the dual space at p is the multiplicity of the solution at p.
+	  Example
+	       S = CC[x,y];
+	       J = ideal{(y-2)^2,y-x^2}
+	       p = point matrix{{1.4142136_CC,2}};
+	       D = numNoethOpsAtPoint(J,p)
+	       #entries D
+	  Text
+	       See also @TO truncatedDual@.
+     Caveat
+	  The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
 ///
 
 ///
