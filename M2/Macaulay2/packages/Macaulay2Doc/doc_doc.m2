@@ -68,7 +68,7 @@ document {
 	  -- Mike wanted this: TOH "hypertext format",
 	  TOH EXAMPLE,
 	  },
-     SeeAlso => {"writing documentation", "conventions for documentation", hypertext, Wikipedia}
+     SeeAlso => {"writing documentation", "conventions for documentation", hypertext}
      }
 
 document {
@@ -108,7 +108,7 @@ document { -- This node is used as an example in the node: Consequences
      BaseFunction => document,
      Consequences => {
 	  { "the headline string will be used to annotate itemized 
-		  lists of cross references to the documentation ", TO "Key" }
+	      lists of cross-references to the documentation ", TO "Key" }
 	  },
 	"The headline of a documentation node, gives a brief, half line, description of the thing being documented. 
 	As an example, the headline for this documentation node was obtained with the code:",
@@ -188,8 +188,34 @@ document {
 	example here is the ", TT "Consequences", " entry for the documentation node ", TO Headline, ":", 
 	PRE ///Consequences => {
 	  { "the headline string will be used to annotate itemized 
-		  lists of cross references to the documentation ", TO "Key" }
+	      lists of crossreferences to the documentation ", TO "Key" }
 	  },///,
+	SeeAlso => {document}
+	}
+document {
+     Key => {[document,Acknowledgement],Acknowledgement},
+	Headline => "acknowledgements",
+	Usage => "document { ... , Acknowledgements => {\"NSF\"}, ... }",
+	BaseFunction => document,
+	"This part of the documentation can be used to acknowledge funding sources
+	and collaborators.",
+	SeeAlso => {document}
+	}
+document {
+     Key => {[document,Contributors],Contributors},
+	Headline => "non-author contributors",
+	Usage => "document { ... , Contributors => {\"previous authors\"}, ... }",
+	BaseFunction => document,
+	"This part of the documentation can be used to list contributors and
+	previous authors to the package who are no longer maintainers for it.",
+	SeeAlso => {document}
+	}
+document {
+     Key => {[document,References],References},
+	Headline => "references",
+	Usage => "document { ... , References => {\"bibliography\"}, ... }",
+	BaseFunction => document,
+	"This part of the documentation can be used to list references for the package.",
 	SeeAlso => {document}
 	}
 document {
@@ -202,7 +228,7 @@ document {
 	}
 document {
      Key => {[document,SeeAlso],SeeAlso},
-     Headline => "crossreferences in documentation",
+     Headline => "cross-references in documentation",
      Usage =>  "document { ... , SeeAlso => { ... }, ... }",
      BaseFunction => document,
      "This option inserts into a documentation page a sentence instructing the reader to see some other topics.",

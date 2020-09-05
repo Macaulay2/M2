@@ -773,13 +773,11 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
 numericalNoetherianOperators = method(Options => {
     Tolerance => 1e-6,
     InterpolationTolerance => 1e-6,
-    --NumBasis => null,
-    --DenBasis => null,
-    --InterpolationBasis => null,
-    --InterpolationDegreeLimit => 2,
+    InterpolationDegreeLimit => -1,
     NoetherianDegreeLimit => 5,
     DependentSet => null})
-numericalNoetherianOperators(Ideal, List) := List => opts -> (I, pts) -> (
+-- Witness set is a witness set, and pt is a trusted point with the "correct" dx-support
+numericalNoetherianOperators(Ideal, WitnessSet, Point) := List => opts -> (I, ws, pt) -> (
     tol := opts.Tolerance;
     S := ring I;
     depSet := if opts.DependentSet === null then error"Expected dependent set"
@@ -788,50 +786,78 @@ numericalNoetherianOperators(Ideal, List) := List => opts -> (I, pts) -> (
     R := CC monoid S;
     J := sub(I,R);
 
-    idx := 0;
-    noethOpsAtPoints := pts / (p -> (if debugLevel >= 1 then <<(idx=idx+1)<<"/"<<#pts<<endl; numNoethOpsAtPoint(J, p, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => opts.NoetherianDegreeLimit)));
-    -- remove bad points, i.e. points where the noetherian operators look different than the majority
-    monLists := noethOpsAtPoints / (i -> i/monomials);
-    most := commonest tally monLists;
-    goodIdx := positions(noethOpsAtPoints, i -> (i / monomials) == most#0);
-    if debugLevel >= 1 then <<"Num good points: " << #goodIdx << " / " << #noethOpsAtPoints << endl;
-    nopsAtPoint := noethOpsAtPoints_goodIdx;
-    goodPts := pts_goodIdx;
-    apply(numgens nopsAtPoint#0, i -> (
-        L := nopsAtPoint / (N -> N_i);
-        formatNoethOps interpolateNOp(L,goodPts, R, Tolerance => opts.InterpolationTolerance)
-    ))
+    nopsTemplate := numNoethOpsAtPoint(J, pt, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => opts.NoetherianDegreeLimit);
+    
+    nopsTemplate / (tmpl -> interpolateFromTemplate(I, ws, tmpl, opts))
 )
--- compute the jth term of the ith Noetherian operator
-numericalNoetherianOperators(Ideal, List, ZZ, ZZ) := List => opts -> (I, pts, i, j) -> (
-    tol := opts.Tolerance;
-    S := ring I;
-    depSet := if opts.DependentSet === null then error"Expected dependent set"
-            else opts.DependentSet;
-    indSet := gens S - set depSet;
-    R := CC monoid S;
-    J := sub(I,R);
 
-    idx := 0;
-    noethOpsAtPoints := pts / (p -> (if debugLevel >= 1 then <<(idx=idx+1)<<"/"<<#pts<<endl; numNoethOpsAtPoint(J, p, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => opts.NoetherianDegreeLimit)));
-    -- remove bad points, i.e. points where the noetherian operators look different than the majority
-    monLists := noethOpsAtPoints / (i -> i/monomials);
-    most := commonest tally monLists;
-    goodIdx := positions(noethOpsAtPoints, i -> (i / monomials) == most#0);
-    if debugLevel >= 1 then <<"Num good points: " << #goodIdx << " / " << #noethOpsAtPoints << endl;
-    goodNops := noethOpsAtPoints_goodIdx;
-    goodPts := pts_goodIdx;
-    L := (transpose goodNops)#i;
-    mons := flatten entries monomials L#0;
-    coeffs := transpose (L / (i -> (coefficients i)#1) / entries / flatten);
-    coeffs = {coeffs#j};
-    coeffs = coeffs / (i -> i / (j -> sub(j, CC)));
-    interpolatedCoefficients := coeffs / (i -> 
-        try rationalInterpolation(goodPts, i, R, Tolerance => opts.InterpolationTolerance) / 
-            (j -> (matrix j)_(0,0)) / (j -> cleanPoly(opts.Tolerance, j))--// 
-            --(fg -> (fg#0/leadCoefficient fg#0, fg#1/leadCoefficient fg#0))
-        else {"?","?"});
-    formatNoethOps apply(interpolatedCoefficients, {mons#j}, (i,j) -> (i,j))
+interpolateFromTemplate = options numericalNoetherianOperators >> opts -> (I, ws, tmpl) -> (
+    ptList := new List;
+    opList := new List;
+    (mon,coef) := coefficients(tmpl);
+    nops := for m in flatten entries mon list (
+        d := 0;
+        local intCoef;
+        tmp := ("?","?");
+        while(d <= opts.InterpolationDegreeLimit or opts.InterpolationDegreeLimit < 0) do (
+            intBasis := rsort basis(0, d, coefficientRing ring tmpl);
+            neededPoints := 2*numColumns intBasis + 1;
+            if neededPoints - #ptList > 0 and debugLevel > 0 then 
+                <<"Computing "<<neededPoints - #ptList<<" new specialized NOps"<<endl;
+            newNops := newSpecializedNop(I, ws, tmpl, neededPoints - #ptList, opts);
+            opList = opList | newNops#0;
+            ptList = ptList | newNops#1;
+            
+            liftedCoeffs := take(opList, neededPoints)  /
+                coefficient_m /
+                (i -> lift(i, ultimate(coefficientRing, ring i)));
+            neededPtList := take(toList ptList, neededPoints);
+            try tmp = rationalInterpolation(neededPtList, liftedCoeffs, intBasis, intBasis, Tolerance => opts.InterpolationTolerance) then break
+                else d = d+1;
+        );
+        tmp = tmp / (j -> cleanPoly(opts.Tolerance, j));
+        (tmp, m)
+    );
+    if debugLevel > 0 then <<"Done interpolating from template "<<tmpl<<endl;
+    formatNoethOps nops
+    
+)
+
+-- Create new specialized Noeth op at a random point using tmpl as a template
+newSpecializedNop = options numericalNoetherianOperators >> opts -> (I, ws, tmpl,n) -> (
+    if n < 1 then return {{},{}};
+    pts := bertiniSample(n,ws);
+    R := ring I;
+    R' := ring tmpl;
+
+    (mon,coef) := coefficients tmpl;
+    bd := (map(coefficientRing R', R', vars coefficientRing R'))(mon);
+    maxdeg := flatten entries bd / sum @@ degree // max;
+    bx := basis(0, maxdeg-1, R);
+    M := diff(bd, transpose sub(gens I ** bx, ring bd));
+
+    opPts := for pt in pts list (
+        M' := evaluate(M, pt);
+        K := numericalKernel(M', opts.Tolerance);
+        -- If we don't get one kernel element, try again
+        if numColumns K != 1 then (
+            if debugLevel > 0 then <<"newSpecializedNop: bad point, trying again"<<endl;
+            continue
+        )
+        else {(mon*colReduce(K, opts.Tolerance))_(0,0), pt}
+    );
+    if #opPts < n then opPts = opPts | newSpecializedNop(I, ws, tmpl, n-#opPts, opts);
+    return transpose opPts;
+)
+
+-- choose a "trusted" point at random
+numericalNoetherianOperators(Ideal, WitnessSet) := List => opts -> (I, ws) -> numericalNoetherianOperators(I,ws,first bertiniSample(1,ws), opts)
+
+-- choose the first component given by Bertini as the witness set.
+-- If I is not primary, the behavior is undefined
+numericalNoetherianOperators(Ideal) := List => opts -> I -> (
+    ws := first components bertiniPosDimSolve(I);
+    numericalNoetherianOperators(I,ws, opts)
 )
 
 formatNoethOps = xs -> fold(plus,
@@ -845,22 +871,6 @@ cleanPoly = (tol, x) -> (
     coef = matrix applyTable(entries coef, f -> cleanComplex(tol,sub(f,CC)));
     (mon * coef)_(0,0)
 )
-
-interpolateNOp = method(Options => {Tolerance => 1e-6})
-interpolateNOp(List,List,Ring) := List => opts -> (specializedNops, pts, R) -> (
-    mons := flatten entries monomials specializedNops#0;
-    coeffs := transpose (specializedNops / (i -> (coefficients i)#1) / entries / flatten);
-    coeffs = coeffs / (i -> i / (j -> sub(j, coefficientRing R)));
-    interpolatedCoefficients := coeffs / (i -> 
-        try rationalInterpolation(pts, i, R, Tolerance => opts.Tolerance) / 
-            (j -> (matrix j)_(0,0)) / (j -> cleanPoly(opts.Tolerance, j))--// 
-            --(fg -> (fg#0/leadCoefficient fg#0, fg#1/leadCoefficient fg#0))
-        else {"?","?"});
-    apply(interpolatedCoefficients, mons, (i,j) -> (i,j))
-)
-
-
-
 
 conjugate(Matrix) := Matrix => M -> (
     matrix table(numrows M, numcols M, (i,j) -> conjugate(M_(i,j)))
@@ -903,7 +913,7 @@ noethOpsFromComponents(HashTable) := List => H -> (
 -- pts: list of points (each point as a row matrix)
 -- vals: list of values (in CC)
 -- numBasis: basis for numerator (row matrix)
--- colBasis: basis for denominator (row matrix)
+-- denBasis: basis for denominator (row matrix)
 -- Outputs a sequence (numerator, denominator)
 rationalInterpolation = method(Options => {Tolerance => 1e-6})
 rationalInterpolation(List, List, Matrix, Matrix) := opts -> (pts, vals, numBasis, denBasis) -> (
@@ -933,7 +943,7 @@ rationalInterpolation(List, List, Matrix, Matrix) := opts -> (pts, vals, numBasi
     minPos := position(norms, i -> abs(i - minNorm) < opts.Tolerance);
     K = unmingleVector(K_(idx#minPos), nn, nd);
 
-    ((numBasis * K^{0..(nn - 1)}), (denBasis * K^{nn .. (nn+nd-1)}))
+    ((numBasis * K^{0..(nn - 1)})_(0,0), (denBasis * K^{nn .. (nn+nd-1)})_(0,0))
 )
 rationalInterpolation(List, List, Matrix) := (RingElement, RingElement) => opts -> (pts, vals, bas) -> (
     rationalInterpolation(pts,vals,bas,bas,opts)
@@ -1032,9 +1042,8 @@ invSystemFromHilbToNoethOps = (I, R, S, depVars) -> (
     T := frac(R)[gens R'];
     StoT := map(T, S, apply(#depVars, i -> T_(index depVars#i)));
     K := mingens ker diffMat;
-    KK := StoT promote(K, S);
-
-    noethOps := flatten entries StoT (allMons * mingens ker diffMat);
+    
+    noethOps := flatten entries StoT (allMons * K);
     noethOps / (d -> liftNoethOp(d, R'))
     --diffVars := apply(depVars, w -> value("symbol d" | toString(w)) );
     --W := FF(monoid[diffVars]);

@@ -8,6 +8,7 @@
 # Once done this will define
 #
 #  NTL_FOUND		- system has the NTL library with correct version
+#  NTL_ROOT		- the NTL install prefix
 #  NTL_INCLUDE_DIR	- the NTL include directory
 #  NTL_LIBRARIES	- the NTL library
 #  NTL_VERSION		- NTL version
@@ -59,6 +60,7 @@ macro(_NTL_check_version)
 endmacro(_NTL_check_version)
 
 if(NOT NTL_FOUND)
+  set(NTL_ROOT NOTFOUND)
   set(NTL_INCLUDE_DIR NOTFOUND)
   set(NTL_LIBRARIES NOTFOUND)
 
@@ -86,9 +88,11 @@ if(NOT NTL_FOUND)
       )
   endif()
 
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(NTL DEFAULT_MSG NTL_INCLUDE_DIR NTL_LIBRARIES NTL_VERSION_OK)
+  string(REGEX REPLACE "/include(/${CMAKE_LIBRARY_ARCHITECTURE}$)?" "" NTL_ROOT "${NTL_INCLUDE_DIR}")
 
-  mark_as_advanced(NTL_INCLUDE_DIR NTL_LIBRARIES)
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(NTL DEFAULT_MSG NTL_ROOT NTL_INCLUDE_DIR NTL_LIBRARIES NTL_VERSION_OK)
+
+  mark_as_advanced(NTL_ROOT NTL_INCLUDE_DIR NTL_LIBRARIES)
 
 endif()

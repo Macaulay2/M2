@@ -5,6 +5,7 @@ use actors;
 use actors2;
 use struct;
 use pthread;
+use regex;
 
 header "#include <engine.h>";
 
@@ -125,18 +126,8 @@ select(n:int,f:Expr):Expr := (
 	  else if y != False then return buildErrorPacket("select: expected predicate to yield true or false");
 	  );
      Expr(list(new Sequence len found do foreach p at i in b do if p then provide toExpr(i))));
-select(pat:string,rep:string,subj:string,ignorecase:bool):Expr := (
-     r := regexselect(pat,rep,subj,foo,ignorecase);
-     if r == foo then return buildErrorPacket("select: "+regexmatchErrorMessage);
-     Expr(list(new Sequence len length(r) do foreach s in r do provide toExpr(s))));
-select(e:Expr,f:Expr,ignorecase:bool):Expr := (
-     when e
-     is pat:stringCell do (
-     	  when f is subj:stringCell
-	  do select(pat.v,"\\0",subj.v,ignorecase)
-     	  else WrongArgString(2)
-	  )
-     is obj:HashTable do (
+select(e:Expr,f:Expr):Expr := (
+     when e is obj:HashTable do (
 	  if obj.Mutable then return WrongArg(0+1,"an immutable hash table");
 	  u := newHashTable(obj.Class,obj.parent);
 	  u.beingInitialized = true;
@@ -182,14 +173,19 @@ select(n:int,a:Sequence,f:Expr):Expr := (
 	  else b.i = false);
      new Sequence len found do (
 	  foreach p at i in b do if p then provide a.i));
-select(n:Expr,e:Expr,f:Expr,ignorecase:bool):Expr := (
-     when n is pat:stringCell do
-     when e is rep:stringCell do
-     when f is subj:stringCell do select(pat.v,rep.v,subj.v,ignorecase)
-     else WrongArgString(3)
-     else WrongArgString(2)
-     is n:ZZcell do
-     if isInt(n) then
+select(n:Expr,e:Expr,f:Expr,g:Expr,h:Expr):Expr := (
+     when n
+     is regexp:stringCell do (
+	 when e is form:stringCell do
+	 when f is text:stringCell do
+	 when g is regexFlags:ZZcell do if !isInt(regexFlags) then WrongArgSmallInteger(4) else
+	 when h is matchFlags:ZZcell do if !isInt(matchFlags) then WrongArgSmallInteger(5) else (
+	     regexSelect(regexp.v, form.v, text.v, toInt(regexFlags), toInt(matchFlags))) -- see regex.dd
+	 else WrongArgZZ(5)
+	 else WrongArgZZ(4)
+	 else WrongArgString(3)
+	 else WrongArgString(2))
+     is n:ZZcell do if isInt(n) then
      when e
      is obj:HashTable do (
 	  if obj.Mutable then return WrongArg(1+1,"an immutable hash table");
@@ -224,15 +220,13 @@ select(n:Expr,e:Expr,f:Expr,ignorecase:bool):Expr := (
      else WrongArg(0+1,"an integer or string")
      else WrongArgZZ(0+1));
 select(e:Expr):Expr := (
-     ignorecase := false;
-     when e is a:Sequence do (
-	  if length(a) == 2
-	  then select(a.0,a.1,ignorecase)
-	  else if length(a) == 3
-	  then select(a.0,a.1,a.2,ignorecase)
-	  else WrongNumArgs(2,3))  -- could change this later
-     else WrongNumArgs(2,3));
-setupfun("select",select);
+     when e is a:Sequence do
+     if length(a) == 2 then select(a.0,a.1) else
+     if length(a) == 3 then select(a.0,a.1,a.2,toExpr(defaultRegexFlags),toExpr(defaultMatchFlags)) else
+     if length(a) == 5 then select(a.0,a.1,a.2,a.3,a.4)
+     else WrongNumArgs(2,5)
+     else WrongNumArgs(2,5));
+setupfun("select", select).Protected = false; -- will be overloaded in m2/lists.m2 and m2/regex.m2
 
 any(f:Expr,n:int):Expr := (
      for i from 0 to n-1 do (
@@ -925,81 +919,6 @@ substrfun(e:Expr):Expr := (
      else WrongNumArgs(2,3)
      else WrongNumArgs(2,3));
 setupfun("substring",substrfun);
-
-linesE(s:string):Expr := (
-     v := lines(s);
-     list(new Sequence len length(v) do foreach t in v do provide toExpr(t)));
-lines(s:string,c:char):Expr := (
-     nlines := 1;
-     i := 0;
-     while true do (
-	  j := index(s,i,c);
-	  if j == -1 then (
-     	       -- if i != length(s) then nlines = nlines + 1;
-	       break;
-	       );
-	  i = j+1;
-	  nlines = nlines + 1;
-	  );
-     i = 0;
-     list(new Sequence len nlines do (
-	       while true do (
-		    j := index(s,i,c);
-		    if j == -1 then (
-			 -- if i != length(s) then provide Expr(substr(s,i));
-			 provide toExpr(substr(s,i));
-			 break;
-			 )
-		    else (
-			 provide toExpr(substr(s,i,j-i));
-			 i = j+1;
-			 )))));
-lines(s:string,c:char,d:char):Expr := (
-     -- nlines := 0;
-     nlines := 1;
-     i := 0;
-     while true do (
-	  j := index(s,i,c,d);
-	  if j == -1 then (
-     	       -- if i != length(s) then nlines = nlines + 1;
-	       break;
-	       );
-	  i = j+2;
-	  nlines = nlines + 1;
-	  );
-     i = 0;
-     list(new Sequence len nlines do (
-	       while true do (
-		    j := index(s,i,c,d);
-	  	    if j == -1 then (
-			 -- if i != length(s) then provide Expr(substr(s,i));
-			 provide toExpr(substr(s,i));
-			 break;
-			 )
-		    else (
-			 provide toExpr(substr(s,i,j-i));
-			 i = j+2;
-			 )))));
-lines(s:string,ch:string):Expr := (
-     if length(ch) == 1
-     then Expr(lines(s,ch.0))
-     else if length(ch) == 2
-     then Expr(lines(s,ch.0,ch.1))
-     else WrongArg(1,"a string of length 1 or 2")
-     );
-linesfun(e:Expr):Expr := (
-     when e
-     is a:Sequence do
-     if length(a) == 2 then
-     when a.1
-     is s:stringCell do
-     when a.0 is ch:stringCell do lines(s.v,ch.v)
-     else WrongArgString(1)
-     else WrongArgString(2)
-     else WrongNumArgs(2)
-     is s:stringCell do linesE(s.v)
-     else WrongArgString());
-setupfun("separate",linesfun);
 
 tostring(n:MysqlConnection):string := tostring(Ccode(constcharstarOrNull, "
      #if WITH_MYSQL

@@ -406,9 +406,6 @@ document { Key => (conjugate,Partition),
      ///}
 document { Key => UpdateOnly,
      Headline => "only copies of newer files should replace files" }
-document { Key => [copyDirectory, UpdateOnly],
-     Usage => "copyDirectory(..., UpdateOnly => true)",
-     Consequences => {{ "during the indicated copy operation, newer files will not be replaced by copies of older ones" }}}
 document { Key => Verbose,
      Headline => "request verbose feedback" }
 document { Key => PrimaryTag,
@@ -737,13 +734,6 @@ document { Key => "backtrace",
      Headline => "whether a backtrace is displayed following an error message",
      Usage => "backtrace = false",
      Consequences => { "a backtrace will not displayed following an error message" }
-     }
-document { Key => "backupFileRegexp",
-     Headline => "a regular expression for recognizing names of backup files",
-     "This regular expression is used by ", TO "copyDirectory", " and ", TO "symlinkDirectory", ": they will ignore backup files when copying all the files in
-     a directory, and just copy the other ones.",
-     Caveat => "Perhaps, instead of this being a global variable, there should be a way
-     to change the default values for optional arguments to functions.  We may change this."
      }
 document { Key => "prefixDirectory",
      Headline => "the prefix directory",

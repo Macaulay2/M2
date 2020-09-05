@@ -16,6 +16,7 @@ on:
       - master
       - development
       - global
+      - release-1.16
   pull_request:
     branches:
       - master
@@ -24,141 +25,189 @@ on:
     # cron time in UTC; set to 6a EDT
     - cron: '0 10 * * *'
 
-env:
-#  CMAKE_VERSION: 3.17
-#  NINJA_VERSION: 1.9.0
-  BUILD_TYPE: Release  # add Buildfast
-  BUILD_DIR: M2/BUILD/cicd
+defaults:
+  run:
+    working-directory: M2/BUILD/build
 
 jobs:
   build:
     if: github.repository == 'Macaulay2/M2' || contains(github.ref, 'global')
-    name: ${{matrix.os}}-${{matrix.build-type}}-${{matrix.compiler}}
+    name: ${{ matrix.os }}-${{ matrix.build-system }}-${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false  # eventually make this true
       matrix:
-        os: [macos-latest, ubuntu-latest]
-        build-type: [cmake, autotools]
-        compiler: [gcc9, default]  # add clang
-#       language: [cxx17, cxx14]
+        os:
+          - macos-latest
+          - ubuntu-latest
+        build-system:
+          - cmake
+          - autotools
+        compiler:
+#          - clang10
+          - gcc9
+          - default
+#          - xcode11
+        # fine-tuning some configurations and excluding a few
         include:
           - compiler: gcc9
             cxx: g++-9
             cc: gcc-9
           - os: macos-latest
-            make: gmake
+            build-system: cmake
+            compiler: clang10
+            cxx: clang++
+            cc: clang
           - os: ubuntu-latest
-            make: make
-
+            build-system: cmake
+            compiler: clang10
+            cxx: clang++-10
+            cc: clang-10
+        exclude:
+          - os: macos-latest
+            compiler: gcc9
+#          - os: ubuntu-latest
+#            compiler: xcode11
 
     steps:
-      - uses: actions/checkout@v1  # this set up the virtual environment, which has a whole lot
-                                   # as of this writing: gcc9, clang10, cmake3.17, homebrew...
+      - uses: actions/checkout@v2
 
 # ----------------------
-#   Install missing tools and libraries using homebrew (macOS and Linux)
+#   Install missing tools and libraries for macOS
 # ----------------------
 
-      - name: Install missing dev tools (homebrew)
-        id: get_dev_tools_brew
-        if: ${{ runner.os == 'macOS' }}
-        # autoconf, libtool are already in the virtual env
+      - name: Install requirements for macOS
+        if: runner.os == 'macOS'
         run: |
           brew config
-          brew install ninja pkg-config autoconf automake gnu-tar libtool yasm make
-
-      - name: Install libraries (homebrew)
-        id: get_dev_libraries_brew
-        if: ${{ runner.os == 'macOS' }}
-        # mpfr, gdbm, libmpc, xz are already in the virtual env
-        run: brew install boost flint ntl mpir bdw-gc libatomic_ops glpk libomp eigen ncurses cddlib
+          # autoconf, libtool are already in the virtual env
+          brew install automake ccache gnu-tar make ninja pkg-config yasm
+          brew install bdw-gc boost cddlib eigen flint glpk libatomic_ops libomp mpfr mpir ncurses ntl tbb
 
 # ----------------------
-#   Install missing tools and libraries using apt-get (Debian-based Linux only)
+#   Install missing tools and libraries for Linux
 # ----------------------
 
-      - name: Install missing dev tools (apt-get)
-        id: get_dev_tools_aptget
-        if: ${{ runner.os == 'Linux' }}
-        # make is really gmake
-        run: sudo apt-get install -y ninja-build
-
-      - name: Install libraries (apt-get)
-        id: get_dev_libraries_aptget
-        if: ${{ runner.os == 'Linux' }}
-        # trim all this garbage
-        run: sudo apt-get install -y -q autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libboost-stacktrace-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan libeigen3-dev libtool-bin
+      - name: Install requirements for Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y -q --no-install-recommends clang-10 gfortran libtool-bin ninja-build yasm ccache
+          sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
+                  libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
+                  libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
+                  libcdd-dev libgivaro-dev libboost-regex-dev fflas-ffpack w3c-markup-validator
+          # TODO: help autotools detect flint from brew
+          brew install flint
 
 # ----------------------
 #   Steps common to all build variants
 # ----------------------
 
-      - name: Create build directory
-        id: step_build_dir
-        run: mkdir $BUILD_DIR
-
-# ----------------------
-#   Configure and build M2 using cmake
-# ----------------------
-
-      - name: Configure Macaulay2 (cmake)
-        id: step_configure_cmake
-        if: ${{ matrix.build-type == 'cmake' }}
-        working-directory: M2/BUILD/cicd  # use ${{ defaults.dir }} or something along those lines
-        env:
-          CXX: ${{matrix.cxx}}
-          CC: ${{matrix.cc}}
-        run: cmake -S../.. -B. -G"Ninja" -DCMAKE_BUILD_TYPE=Release
-
-      - name: Build Macaulay2 (cmake)
-        id: step_build
-        if: ${{ matrix.build-type == 'cmake' }}
-        working-directory: M2/BUILD/cicd
+      - name: Prepare build environment
         run: |
-          cmake --build . --target build-libraries  -j4
-          cmake --build . --target build-programs   -j4
-          cmake --build . --target M2-core          -j4
-          cmake --build . --target install-packages -j4
+          echo "::set-env name=CC::${{ matrix.cc }}"
+          echo "::set-env name=CXX::${{ matrix.cxx }}"
+          echo "::set-env name=LD_LIBRARY_PATH::`brew --prefix`/lib:$LD_LIBRARY_PATH"
 
-# ----------------------
-#   Configure and build M2 the old way
-# ----------------------
+          if [[ "${{ runner.os }}" == "Linux" ]]; then
+            PATH=/usr/lib/ccache:$PATH
+            # Necessary for clang-10 on Linux
+            # echo "::set-env name=LIBRARY_PATH::`llvm-config-10 --libdir`"
+          else
+            # PATH=`brew --prefix llvm`/bin:$PATH
+            PATH=`brew --prefix ccache`/libexec:$PATH
+            PATH=`brew --prefix make`/libexec/gnubin:$PATH
+            # Necessary for clang on macOS
+            # echo "::set-env name=LIBRARY_PATH::`llvm-config --libdir`"
+          fi
+          echo "::set-env name=PATH::$PATH"
 
-      - name: Configure Macaulay2 (autotools)
-        id: step_configure_autotools
-        if: ${{ matrix.build-type == 'autotools' }}
-        env:
-          CXX: ${{matrix.cxx}}
-          CC: ${{matrix.cc}}
-        run: |
-          cd M2
-          ${{matrix.make}} get-tools
-          ${{matrix.make}} -f Makefile
-          cd BUILD/cicd
-          ../../configure --prefix=/usr --enable-download --enable-build-libraries="readline"
-
-      - name: Save artifacts (autotools)
-        if: always() && matrix.build-type == 'autotools'
-        uses: actions/upload-artifact@v1
+      - uses: actions/cache@v2
+        if: matrix.build-system == 'cmake' # TODO: remove when autotools is more efficient with space
+        id: restore-cache
         with:
-           name: config-log-${{matrix.os}}-${{matrix.compiler}}
-           path: M2/BUILD/cicd/config.log
+          path: |
+            ~/.ccache
+            ~/M2/BUILD/build/usr-host
+          key: build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-${{ hashFiles('**/cmake/*-libraries.cmake') }}
+          restore-keys: |
+            build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-
+            build-cache-${{ runner.os }}-${{ matrix.compiler }}-
+            build-cache-${{ runner.os }}-
 
-      - name: Build Macaulay2 (autotools)
-        id: step_build_autotools
-        if: ${{ matrix.build-type == 'autotools' }}
-        working-directory: M2/BUILD/cicd
-        run: ${{matrix.make}}
+
+# ----------------------
+#   Configure and build M2 using CMake
+# ----------------------
+
+      - name: Configure Macaulay2 using CMake
+        if: matrix.build-system == 'cmake'
+        run: |
+          cmake -S../.. -B. -GNinja \
+            -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` \
+            -DBUILD_NATIVE=OFF -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK" # TODO: remove when the packages are updated
+
+      - name: Build libraries using Ninja
+        if: matrix.build-system == 'cmake' # && steps.restore-cache.outputs.cache-hit != 'true'
+        run: |
+          cmake --build . --target build-libraries build-programs
+
+      - name: Build Macaulay2 using Ninja
+        if: matrix.build-system == 'cmake'
+        run: |
+          cmake --build . --target M2-core install-packages
+
+# ----------------------
+#   Configure and build M2 using Autotools
+# ----------------------
+
+      - name: Configure Macaulay2 using Autotools
+        if: matrix.build-system == 'autotools'
+        run: |
+          make -C ../.. get-libtool get-automake get-autoconf
+          make -C ../.. all
+          ../../configure --enable-download
+
+      - name: Build Macaulay2 using Make
+        if: matrix.build-system == 'autotools'
+        run: |
+          make
 
 # ----------------------
 #   Run tests
 # ----------------------
 
-      - name: Run Tests (autotools, ubuntu)
-        if: matrix.build-type == 'autotools' && matrix.os == 'ubuntu-latest'
-        working-directory: M2/BUILD/cicd
+      - name: Run Tests using CTest
+        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest'
         run: |
-          ${{matrix.make}} check
-          ${{matrix.make}} -C Macaulay2/html-check-links check
-          ${{matrix.make}} validate-html
+          # cmake --build . --target M2-unit-tests
+          # ctest -R "unit-tests"
+          ctest -R "normal/" -E "command|program|schenck|threads|doc-links" -j4 --output-on-failure
+
+      - name: Run Tests using Autotools
+        if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest'
+        run: |
+          make check
+          make -C Macaulay2/html-check-links check
+          make validate-html
+
+# ----------------------
+#   Upload build logs
+# ----------------------
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+           name: ${{ matrix.os }}-${{ matrix.build-system }}-${{ matrix.compiler }}-logs
+           path: |
+             # Autotools
+             M2/BUILD/build/config.log
+             M2/BUILD/build/libraries/*/build/*/config.log
+             # CMake
+             M2/BUILD/build/CMakeFiles/CMakeCache.txt
+             M2/BUILD/build/CMakeFiles/CMake(Error|Output).log
+             M2/BUILD/build/libraries/*/build/config.log
+             # Example errors
+             M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors

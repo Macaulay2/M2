@@ -340,28 +340,28 @@ gfanParseIdeals String := (s) -> (
 
 gfanParseIdeal = method()
 gfanParseIdeal String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	value concatenate G
 )
 
 gfanParseMarkedIdeal = method()
 gfanParseMarkedIdeal String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	markedPolynomialList transpose apply(gfanParseList(concatenate G), p -> gfanParseMarkedPoly(p))
 )
 
 gfanParseMarkedIdeals = method()
 gfanParseMarkedIdeals String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	apply(gfanParseList(concatenate G), L -> markedPolynomialList transpose apply(L, p -> gfanParseMarkedPoly(p)))
 )
 
 gfanParseMPL = method()
 gfanParseMPL String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	new MarkedPolynomialList from
 		transpose apply(gfanParseList(concatenate G), p -> gfanParseMarkedPoly(p))
@@ -369,7 +369,7 @@ gfanParseMPL String := (s) -> (
 
 gfanParseLMPL = method()
 gfanParseLMPL String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	apply(gfanParseList(concatenate G), L ->
 		new MarkedPolynomialList from transpose apply(L, p -> gfanParseMarkedPoly(p)))
@@ -1013,7 +1013,7 @@ runGfanCommand = (cmd, opts, data) -> (
 
 runGfanCommandCaptureBoth = (cmd, opts, data) -> (
 	if gfanProgram === null then
-	    gfanProgram = loadProgram("gfan", "gfan --help",
+	    gfanProgram = findProgram("gfan", "gfan --help",
 		Verbose => gfanVerbose);
 	tmpFile := gfanMakeTemporaryFile data;
 
@@ -2543,7 +2543,7 @@ gfanFunctions = hashTable {
 --)
 --WARNING - the word PARA was deleted from the next function (it used to read "l -> PARA {l})
 gfanHelp = (functionStr) -> (
-	if gfanProgram === null then gfanProgram = loadProgram("gfan",
+	if gfanProgram === null then gfanProgram = findProgram("gfan",
 	    "gfan --help", RaiseError => false);
 	if gfanProgram === null then {}
 	else apply( lines runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") , l-> {l})

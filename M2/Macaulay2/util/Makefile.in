@@ -21,7 +21,7 @@ Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/util/Makefile
 CPPFLAGS += -I@srcdir@/../../include
 all: gc_tested
 gc_test : gc_test.c
-gc_test : LDLIBS += @LIBS@
+gc_test : LDLIBS += @LIBS@ @BUILTLIBS@
 
 gc_tested: gc_test; LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" ./$< && touch $@
 # Local Variables:
