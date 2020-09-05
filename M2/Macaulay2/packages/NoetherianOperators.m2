@@ -16,7 +16,7 @@ newPackage(
      },
      Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
      PackageExports => {"Truncations", "Bertini"},
-     AuxiliaryFiles => false,
+     AuxiliaryFiles => true,
      DebuggingMode => true
 )
 
@@ -34,11 +34,11 @@ export {
      "DZ",
      "BM",
      "Normalize",
+     "Rational",
      "ProduceSB",
      "numericalKernel",
      "numericalImage",
      "colReduce",
-     "adjointMatrix",
      "newGCorners",
 
      --Data type keys
@@ -87,7 +87,8 @@ protect \ {
 -----------------------------------------------------------------------------------------
 
 -- Default tolerance value respectively for exact fields and inexact fields
-defaultT := R -> if precision 1_R == infinity then 0 else 1e-6;
+defaultT = R -> if precision 1_R == infinity then 0 else 1e-6;
+getTolerance = (R,tol) -> if tol === null then defaultT(R) else tol;
 
 shiftGens := (p,Igens) -> (
     R := ring Igens;
@@ -96,61 +97,6 @@ shiftGens := (p,Igens) -> (
 
 listFactorial = L -> product(L, l->l!)
 
-truncatedDual = method(TypicalValue => DualSpace, Options => {Strategy => BM, Tolerance => null, Normalize=>false})
-truncatedDual(Point,Ideal,ZZ) := o -> (p,I,d) -> truncatedDual(p,gens I,d,o)
-truncatedDual(Ideal,Ideal,ZZ) := o -> (P,I,d) -> truncatedDual(P,gens I,d,o)
-truncatedDual(Point,Matrix,ZZ) := o -> (p,Igens,d) -> (
-    R := ring Igens;
-    P := ideal ((gens R) - p.Coordinates);
-    truncatedDual(P,Igens,d,o)
-    )
-truncatedDual(Ideal,Matrix,ZZ) := o -> (P,Igens,d) -> (
-    R := newRing(ring Igens, MonomialOrder => {Position => Down});
-    Igens = sub(Igens, R);
-    P = sub(P, R);
-    if d < 0 then return dualSpace(map(R^1,R^0,0),origin(R));
-    t := if o.Tolerance === null then defaultT(R) else o.Tolerance;
-    R' := diffAlg(P,R);
-    ops := basis(0,d,R);
-    polys := gens idealBasis(Igens,d,false);
-    M := if o.Normalize then contract(ops,transpose polys) else diff(ops,transpose polys);
-    M = sub(M,R/P);
-    if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
-    kern := if numgens coefficientRing R == 0 and t > 0 then (
-    colReduce(numericalKernel(M,t),t)
-	) else (
-        K := kernel M;
-        gens gb K
-    );
-    --print(M,gens P,ops,polys,kern);
-    dBasis := sub(ops,vars R')*sub(kern,R);
-    dualSpace(dBasis,origin(R))
-    --TDD := initializeDualData(Igens,false,t,Strategy=>o.Strategy);
-    --TDD = nextTDD(d,TDD,t);
-    --dualSpace(TDD,p)
-    )
-
-
-zeroDimensionalDual = method(TypicalValue => DualSpace, Options => {Strategy => BM, Tolerance => null, Normalize=>false})
-zeroDimensionalDual(Point,Ideal) := o -> (p,I) -> zeroDimensionalDual(p,gens I,o)
-zeroDimensionalDual(Ideal,Ideal) := o -> (P,I) -> zeroDimensionalDual(P,gens I,o)
-zeroDimensionalDual(Point,Matrix) := o -> (p,Igens) -> (
-    R := ring Igens;
-    P := ideal ((gens R) - p.Coordinates);
-    zeroDimensionalDual(P,Igens,o)
-    )
-zeroDimensionalDual(Ideal,Matrix) := o -> (P,Igens) -> (  
-    R := ring Igens;  
-    dBasis := polySpace map(R^1,R^0,0);
-    d := 0;
-    dDim := -1;
-    while dim dBasis != dDim do (
-	dDim = dim dBasis;
-	dBasis = truncatedDual(P,Igens,d,o);
-	d = d+1;
-	);
-    dBasis
-    )
 
 --An object that stores the data for an ongoing iterative tuncated dual space computation
 TruncDualData = new Type of MutableHashTable
@@ -220,7 +166,7 @@ eliminatingDual (Point,Ideal,List,ZZ) := o -> (p,I,ind,d) -> eliminatingDual (p,
 eliminatingDual (Point,Matrix,List,ZZ) := o -> (p,Igens,ind,d) -> (
     R := ring Igens;
     if d < 0 then return dualSpace(map(R^1,R^0,0),p);
-    t := if o.Tolerance === null then defaultT(R) else o.Tolerance;
+    t := getTolerance(R,o.Tolerance);
     Igens = shiftGens(p,Igens);
     n := numgens R;
     if not all(ind, i->class i === ZZ) or not all(ind, i -> i>=0 and i<n)
@@ -266,7 +212,7 @@ gCorners = method(TypicalValue => Matrix, Options => {Strategy => BM, Tolerance 
 gCorners (Point,Ideal) := o -> (p,I) -> gCorners(p,gens I,o)
 gCorners (Point,Matrix) := o -> (p,Igens) -> (
     R := ring Igens;
-    t := if o.Tolerance === null then defaultT(R) else o.Tolerance;
+    t := getTolerance(R,o.Tolerance);
     Igens = sub(Igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
 
     ecart := max apply(flatten entries Igens, g->(gDegree g - lDegree g)); --max ecart of generators
@@ -491,7 +437,7 @@ reduceSpace = method(Options => {Monomials => null,Tolerance=>1e-6})
 reduceSpace PolySpace := o -> S -> (
     if dim S == 0 then return polySpace(gens S,Reduced=>true);
     (mons,coefs) := coefficients(gens S, Monomials => o.Monomials);
-    M := mons*(colReduce(coefs,o.Tolerance));
+    M := mons*(colReduce(coefs,Tolerance=>o.Tolerance));
     polySpace(M,Reduced=>true)
     )
 reduceSpace DualSpace := o -> L -> dualSpace(reduceSpace L.Space,L.BasePoint)
@@ -526,7 +472,7 @@ check DualSpace := D -> check polySpace gens D
 numericalImage = method(Options => {Tolerance => null})
 numericalImage Matrix := o -> M -> (
     R := ultimate(coefficientRing, ring M);
-    tol := if o.Tolerance === null then defaultT(R) else o.Tolerance;
+    tol := getTolerance(R,o.Tolerance);
     numericalImage(M,tol)
     )
 numericalImage (Matrix, Number) := o -> (M, tol) -> (
@@ -543,54 +489,45 @@ numericalImage (Matrix, Number) := o -> (M, tol) -> (
 	)
     )
 
-numericalKernel = method(Options => {Tolerance => null})
-numericalKernel Matrix := o -> M -> (
-    R := ultimate(coefficientRing, ring M);
-    tol := if o.Tolerance === null then defaultT(R) else o.Tolerance;
-    numericalKernel(M,tol)
-    )
-numericalKernel (Matrix, Number) := o -> (M, tol) -> (
-    R := ring M;
-    M = sub(M, ultimate(coefficientRing, R));
-    if numrows M == 0 then return id_(source M);
-    if numcols M == 0 then return map(R^0,R^0,0);
-    if precision 1_R < infinity then (
-	(svs, U, Vt) := SVD M;
-	cols := positions(svs, sv->(sv > tol));
-	submatrix'(adjointMatrix Vt,,cols)
-	) else (
-	gens kernel M
-	)
-    )
+myKernel2 = method(Options => {Tolerance => null})
+myKernel2(Matrix) := Matrix => o -> M -> (
+    try SVD M then numericalKernel(M,o) else gens kernel M
+    ) 
 
--- produces the conjugate transpose
-adjointMatrix = method(TypicalValue => Matrix)
-adjointMatrix Matrix := M -> (
-    M' := mutableMatrix transpose M;
-    for i from 0 to (numrows M')-1 do (
-	for j from 0 to (numcols M')-1 do M'_(i,j) = conjugate(M'_(i,j));
-	);
-    matrix M'
+numericalKernel = method(Options => {Tolerance => null})
+numericalKernel (Matrix) := Matrix => o -> M -> (
+    R := ring M;
+    tol := getTolerance(R,o.Tolerance);
+    (m,n) := (numrows M, numcols M);
+    if m == 0 then return id_(source M);
+    if n == 0 then return map(R^0,R^0,0);
+    (S,U,Vh) := SVD M;
+    r := #select(S, s ->(s > tol));
+    K := transpose Vh^{n-r..n-1};
+    if R == CC then K = conjugate K;
     )
 
 --performs Gaussian reduction on M
-colReduce = method(TypicalValue => Matrix)
-colReduce (Matrix, Number) := (M, tol) -> (
-    M = new MutableMatrix from sub(transpose M, ultimate(coefficientRing, ring M));
+colReduce = method(Options => {Tolerance => null, Normalize => true})
+colReduce Matrix := o -> M -> (
+    tol := getTolerance(ring M,o.Tolerance);
+    if tol == 0 then return gens gb M;
+    M = mutableMatrix sub(M, ultimate(coefficientRing, ring M));
     (m,n) := (numrows M, numcols M);
-    i := 0; --row of pivot
-    for j from 0 to n-1 do (
-	if i == m then break;
-	a := i + maxPosition apply(i..m-1, l->(abs M_(l,j)));
-	c := M_(a,j);
-	if abs c <= tol then (for k from i to m-1 do M_(k,j) = 0; continue);
-	rowSwap(M,a,i);
-	for l from 0 to n-1 do M_(i,l) = M_(i,l)/c; --rowMult(M,i,1/c); is bugged
-	for k from 0 to m-1 do rowAdd(M,k,-M_(k,j),i);
-	i = i+1;
+    j := 0; --column of pivot
+    for i from 0 to m-1 do (
+	if debugLevel >= 1 then <<i<<"/"<<m-1<<endl;
+	if j == n then break;
+	a := j + maxPosition apply(i..n-1, l->(abs M_(i,l)));
+	c := M_(i,a);
+	if abs c <= tol then (for k from j to n-1 do M_(i,k) = 0; continue);
+	columnSwap(M,a,j);
+	if o.Normalize then (columnMult(M,j,1/c); c = 1);
+	for k from 0 to n-1 do if k != j then columnAdd(M,k,-M_(i,k)/c,j);
+	j = j+1;
 	);
-    M = (transpose new Matrix from M)_{0..i-1};
-    if tol > 0 then clean(tol,M) else M
+    M = (new Matrix from M)^{0..j-1};
+    clean(tol,M)
     )
 
 --a list of column indices for a basis of the column space of M
@@ -684,94 +621,72 @@ sanityCheck = (nops, I) -> (
     all(foo, i -> sub(i,ring I)%(radical I) == 0)
 )
 
-
-rowReduce = (MM,normalizePivots) -> (
-    M := new MutableMatrix from MM;
-    K := if isField ring M then ring M else toField ring M;
-    (m,n) := (numrows M, numcols M);
-    i := 0; --row of pivot
-    pivs := {};
-    for j from 0 to n-1 do (
-        if debugLevel >= 1 then <<j<<"/"<<n-1<<endl;
-        if i == m then break;
-        b := position(i..m-1, l->M_(l,j) != 0);
-        a := i + if b === null then 0 else b;
-        c := M_(a,j);
-        if c == 0 then continue;
-        pivs = pivs | {j};
-        rowSwap(M,a,i);
-        if normalizePivots then (
-            for l from 0 to n-1 do M_(i,l) = M_(i,l)/c;
-            for k from 0 to m-1 do rowAdd(M,k,-M_(k,j),i);
-        ) else (
-            for k from 0 to m-1 do (
-                if k != i then (
-                    e := M_(k,j);
-                    for l from 0 to n-1 do M_(k,l) = M_(k,l)*c;
-                    rowAdd(M,k,-e,i);
-                )
-            )
-        );
-        i = i+1;
-    );
-    (matrix M, pivs)
-)
-
 myKernel = method()
 myKernel Matrix := Matrix => MM -> (
-    (M,pivs) := rowReduce(MM, true);
-    nonPivs := toList(0..<numColumns M) - set pivs;
-    if #nonPivs == 0 then (R := ring MM; return map(R^(numColumns MM), R^0, 0));
-    -transpose matrix (for j in nonPivs list (
-            apply(numColumns M, i -> if member(i,pivs) then (
-                pivRow := position(toList(0..<numRows M), k -> M_(k,i) != 0);
-                M_(pivRow, j) / M_(pivRow, i)
-                )
-                else if i == j then -1_(ring MM) else 0
-            )
-        )
+    R := ring MM;
+    M := transpose colReduce transpose MM;
+    (m,n) := (numrows M, numcols M);
+    es := entries M;
+    pivs := apply(m, i -> position(es#i, e -> (e != 0)));
+    nonPivs := toList(0..<n) - set pivs;
+    if #nonPivs == 0 then return map(R^n, R^0, 0);
+    transpose matrix apply(nonPivs, j -> (
+            apply(n, i -> (
+		    pivRow := position(pivs, k -> i==k);
+		    if pivRow =!= null then (
+                    	-M_(pivRow,j) / M_(pivRow,i)
+                	) else if i == j then 1_R else 0
+            	    ))
+    	    ))
     )
-)
 
 
-noetherianOperators = method(Options => {DegreeLimit => -1, DependentSet => null}) 
-noetherianOperators (Ideal, Ideal) := List => opts -> (I, P) -> (
+noetherianOperators = method(Options => {DegreeLimit => -1, DependentSet => null, Strategy => BM, Tolerance => null, Normalize=>false, Rational=>false}) 
+noetherianOperators(Ideal, Ideal) := List => o -> (I, P) -> (
     R := ring I;
-    depVars := if opts.DependentSet === null then gens R - set support first independentSets P
-            else opts.DependentSet;
-    indVars := gens R - set depVars;
-    S := (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
-    SradI := sub(P, S);
-    SI := sub(I,S);
-    kP := toField(S/SradI);
-    local M; local M'; local K; local bd; local bx;
-    numOps := 1;
-    i := 1;
-    terminate := false;
-    while not terminate do (
-        if debugLevel > 0 then "noetherianOperators: trying degree "<<i<<endl;
-        bx = flatten entries sub(basis(0,i - 1,R),S);
-        bd = basis(0,i,S);
-        M = diff(bd, transpose matrix {flatten (table(bx,SI_*,(i,j) -> i*j))});
-        M' = sub(M, kP);
-        K = myKernel (M');
-        if numColumns K == numOps then terminate = true;
-        if opts.DegreeLimit >= 0 and i == opts.DegreeLimit then terminate = true;
-        numOps = numColumns K;
-        i = i + 1;
-    );
-    K = transpose first rowReduce(transpose K, true);
-
+    t := getTolerance(R,o.Tolerance);
+    (depVars,indVars) := getDepIndVars(P, o.DependentSet);
+    -- use the original coefficient field if appropriate, else a rational function field
+    F := if #indVars == 0 then coefficientRing R else frac((coefficientRing R)(monoid[indVars]));
+    S := F(monoid[depVars]);
+    PS := sub(P,S); IS := sub(I,S);
     R' := diffAlg R;
-    StoR := map(R,S);
-    RtoR' := map(R',R, vars R');
+    -- extend the field only if the point is not specified to be rational
+    kP := if o.Rational then F else toField(S/PS);
+    StokP := map(kP,S/PS)*map(S/PS,S);
+    kPtoS := M -> liftColumns(lift(sub(M,S/PS),S),R');
+    StoR' := map(R',S,vars R');
+    degreeNops := d -> (
+	ops := basis(0,d,S);
+    	polys := gens idealBasis(IS,d,false);
+    	M := diff(ops, transpose polys);
+    	M = StokP M;
+	K := myKernel2(M, Tolerance=>t);
+    	if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
+	R'ops := StoR' ops;
+	-- Clear denominators
+    	R'ops * kPtoS(K)
+    	);
+    L := map(kP^1,kP^0,0);
+    if o.DegreeLimit >= 0 then L = degreeNops o.DegreeLimit else (
+	d := 0;
+	Ldim := -1;
+	while Ldim != numcols L do (
+	    Ldim = numcols L;
+	    L = degreeNops d;
+	    d = d+1;
+	    );
+	);
+    new SetOfNoethOps from {Ops => (sort first entries L), Prime => P}
+    )
 
-    bdd := RtoR' StoR bd;
-    KK := lift(K, S);
-    -- Clear denominators
-    L := first entries (bdd * liftColumns(KK,R'));
-    new SetOfNoethOps from {Ops => sort L, Prime => P}
-)
+getDepIndVars = (P,depSet) -> (
+    depVars := if depSet === null then (
+	gens(ring P) - set support first independentSets P
+	) else depSet;
+    indVars := gens(ring P) - set depVars;
+    (depVars,indVars)
+    )
 
 
 -- Clears denominators of a matrix:
@@ -796,54 +711,27 @@ noetherianOperators (Ideal, Point) := List => opts -> (I, p) -> (
     noetherianOperators(I,P,opts)
 )
 
-approxKer = method(Options => {Tolerance => null})
-approxKer(Matrix) := Matrix => o -> A -> (
-    tol := if o.Tolerance === null then defaultT(ring A) else o.Tolerance;
-    d := numcols A;
-    (S,U,Vh) := SVD A;
-    n := #select(S, s -> clean(tol, s) == 0);
-    K := transpose Vh^{d-n..d-1};
-    if K == 0 then K else conjugate K
-)
-
-
-numNoethOpsAtPoint = method(Options => options noetherianOperators ++ options approxKer)
-numNoethOpsAtPoint (Ideal, Point) := List => opts -> (I, p) -> numNoethOpsAtPoint(I, matrix p, opts)
-numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
-    tol := if opts.Tolerance === null then defaultT(ring I) else opts.Tolerance;
-    --if opts.DegreeLimit == -1 then error "noetherian operator degree limit cannot be infinity";
+numNoethOpsAtPoint = method(Options => {DegreeLimit => -1, DependentSet => null, Strategy => BM, Tolerance => null, Normalize=>false}) 
+numNoethOpsAtPoint (Ideal, Point) := List => o -> (I, p) -> numNoethOpsAtPoint(I, matrix p, o)
+numNoethOpsAtPoint (Ideal, Matrix) := List => o -> (I, p) -> (
     R := ring I;
-    depVars := if opts.DependentSet === null then gens R - set support first independentSets I
-            else opts.DependentSet;
-    indVars := gens R - set depVars;
-    local M; local M'; local K; local bd; local bx;
-    numOps := 1;
-    i := 1;
-    terminate := false;
-    while not terminate do (
-        if debugLevel > 0 then <<"numNoethOpsAtPoint: trying degree "<<i<<endl;
-        bx = flatten entries basis(0,i - 1,R, Variables => gens R);
-        bd = basis(0,i,R, Variables => depVars);
-        M = diff(bd, transpose matrix {flatten (table(bx,I_*,(i,j) -> i*j))});
-        M' = evaluate(M,p);
-        K = numericalKernel (M', tol);
-        if numColumns K == numOps or i == opts.DegreeLimit then break;
-        numOps = numColumns K;
-        i = i + 1;
-    );
-    K = colReduce(K, tol);
+    P := ideal(vars R - p);
+    (depVars,indVars) := getDepIndVars(P,o.DependentSet);
     R' := diffAlg R;
-    bdd := (map(R', R, vars R')) bd;
-    L := sort flatten entries (bdd * promote(K, R'));
-    new SetOfNoethOps from {Ops => sort L, Point => p}
-)
+    S := (coefficientRing R)(monoid[depVars]);
+    subs := apply(numgens R, i->(
+	    if member(R_i,depVars) then sub(R_i,S) else p_(0,i)
+	    ));
+    RtoS := map(S,R,matrix{subs});
+    N := noetherianOperators(RtoS I, RtoS P, o ++ {Rational => true});
+    L := apply(entries N, D -> sub(D,R'));
+    new SetOfNoethOps from {Ops => L, Prime => P}
+    )
 
 hybridNoetherianOperators = method(Options => options numNoethOpsAtPoint)
 hybridNoetherianOperators (Ideal, Ideal, Point) := List => opts -> (I,P, pt) -> (
     R := ring I;
-    depVars := if opts.DependentSet === null then gens R - set support first independentSets P
-            else opts.DependentSet;
-    indVars := gens R - set depVars;
+    (depVars,indVars) := getDepIndVars(P,opts.DependentSet);
     S := (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
     PS := sub(P, S);
     IS := sub(I,S);
@@ -1031,8 +919,8 @@ rationalInterpolation(List, List, Matrix, Matrix) := opts -> (pts, vals, numBasi
     
     local K;
     M = mingleMatrix(M, nn, nd);
-    ker := approxKer(M, Tolerance => opts.Tolerance);
-    K = colReduce(ker, opts.Tolerance);
+    ker := numericalKernel(M, Tolerance => opts.Tolerance);
+    K = colReduce(ker, Tolerance=>opts.Tolerance);
     --remove bad columns using testPt
     numIdx := select(toList(0..<nn+nd), even);
     denIdx := select(toList(0..<nn+nd), odd);
@@ -1257,7 +1145,6 @@ doc ///
 		   {TO "numericalKernel"},
 		   {TO "numericalImage"},
 		   {TO "colReduce"},
-		   {TO "adjointMatrix"}
 		   }@
 
 	       The algorithm used for computing truncated dual spaces is that of B. Mourrain ("Isolated points, duality and residues." 
@@ -1267,7 +1154,7 @@ doc ///
 ///
 
 
-doc ///
+///
      Key
           truncatedDual
 	  (truncatedDual,Point,Ideal,ZZ)
@@ -1313,14 +1200,14 @@ doc ///
 	       See also @TO zeroDimensionalDual@.
 ///
 
-TEST ///
+///
 R = CC[x,y]
 I1 = ideal{x^2,x*y}
 D1 = truncatedDual(origin R, I1, 4)
 assert(hilbertFunction({0,1,2,3,4}, D1) == {1,2,1,1,1})
 ///
 
-doc ///
+///
      Key
           zeroDimensionalDual
 	  (zeroDimensionalDual,Point,Ideal)
@@ -1360,7 +1247,7 @@ doc ///
 	  The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
 ///
 
-TEST ///
+///
 R = CC[x,y]
 I2 = ideal{x^2,y^2}
 D2 = zeroDimensionalDual(origin R, I2)
@@ -1732,8 +1619,6 @@ doc ///
 	  [localHilbertRegularity,Tolerance]
 	  [eliminatingDual,Tolerance]
 	  [gCorners,Tolerance]
-	  [zeroDimensionalDual,Tolerance]
-	  [truncatedDual,Tolerance]
 	  [reduceSpace,Tolerance]
      Headline
           optional argument for numerical tolernace
@@ -1752,8 +1637,6 @@ doc ///
      Key
           "Strategy (NoetherianOperators)"
 	  [gCorners,Strategy]
-	  [truncatedDual,Strategy]
-	  [zeroDimensionalDual,Strategy]
      Headline
           optional argument for dual space algorithm
      Description
@@ -1838,17 +1721,14 @@ assert(numcols Mimage == 1)
 doc ///
      Key
           numericalKernel
-	  (numericalKernel,Matrix,Number)
 	  (numericalKernel,Matrix)
 	  [numericalKernel,Tolerance]
      Headline
           Kernel of a matrix
      Usage
-          V = numericalKernel(M, tol)
+          V = numericalKernel(M)
      Inputs
 	  M:Matrix
-	  tol:Number
-	       a positive number, the numerical tolerance
      Outputs
           V:Matrix
      Description
@@ -1856,26 +1736,24 @@ doc ///
 	       Computes the kernel of a matrix M numerically using singular value decomposition.
 	  Example
 	       M = matrix {{1., 1, 1}}
-	       numericalKernel(M, 0.01)
+	       numericalKernel(M, Tolerance=>0.01)
 	  Text
 	       Singular values less than the tolerance are treated as zero.
 	  Example
 	       M = matrix {{1., 1}, {1.001, 1}}
-	       numericalKernel(M, 0.01)
+	       numericalKernel(M, Tolerance=>0.01)
 ///
 
 doc ///
      Key
           colReduce
-	  (colReduce,Matrix,Number)
+	  (colReduce,Matrix)
      Headline
           Column reduces a matrix
      Usage
-          N = colReduce(M, tol)
+          N = colReduce M
      Inputs
 	  M:Matrix
-	  tol:Number
-	       a positive value, the numerical tolerance
      Outputs
           N:Matrix
 	       in reduced column echelon form
@@ -1884,38 +1762,18 @@ doc ///
 	       Performs Gaussian column reduction on a matrix M, retaining only the linearly independent columns.
 	  Example
 	       M = matrix {{1., 2, 3}, {2, 4, 0}}
-	       colReduce(M, 0.01) 
+	       colReduce(M, Tolerance=>0.01) 
 	  Text
 	       Entries with absolute value below the tolerance are treated as zero and not used as pivots.
 	  Example
 	       N = matrix {{0.001, 0, 0}, {1, 1, 3}, {2, 2, 5.999}}
-	       colReduce(N, 0.01)
+	       colReduce(N, Tolerance=>0.01)
 ///
 
 TEST ///
 N = matrix {{0.001, 0, 0}, {1, 1, 3}, {2, 2, 5.999}}
-N = colReduce(N, 0.01)
+N = colReduce(N, Tolerance=>0.01)
 assert(numcols N == 1)
-///
-
-doc ///
-     Key
-          adjointMatrix
-	  (adjointMatrix,Matrix)
-     Headline
-          Conjugate transpose of a complex matrix
-     Usage
-          N = adjointMatrix M
-     Inputs
-	  M:Matrix
-     Outputs
-          N:Matrix
-     Description
-          Text
-	       Returns the conjugate transpose of a matrix with complex entries.
-	  Example
-	       M = matrix {{1+ii,2*ii},{0,1}}
-	       adjointMatrix M
 ///
 
 

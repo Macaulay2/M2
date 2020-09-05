@@ -1,5 +1,6 @@
--- Example 2.2
+restart
 needsPackage "NoetherianOperators"
+-- Example 2.2
 R = QQ[x,y]
 n = 4
 I = ideal((x+y+1)^n)
@@ -19,7 +20,7 @@ F = frac(R/P)
 S = F[y_1,y_2]
 gamma = map(S,R, {y_1 + x_1, y_2 + x_2, x_3})
 I = gamma Q
-zeroDimensionalDual(origin S, I)
+numNoethOpsAtPoint(I,origin S)
 
 -- Example 4.2
 R = QQ[t,x,y]
