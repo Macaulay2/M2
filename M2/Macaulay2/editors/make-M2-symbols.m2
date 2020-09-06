@@ -15,8 +15,8 @@ Function or  Function := (f, g) -> s -> f s or  g s
 
 is := X -> (name, symb) -> instance(value symb, X)
 
-isAlpha        := s -> match("^[[:alpha:]]+$",s)
-isAlphaNumeric := s -> match("^[[:alnum:]]+$",s)
+isAlpha        := s -> match("^[[:alpha:]]+$", s)
+isAlphaNumeric := s -> match("^[[:alnum:]]+$", s)
 
 -- Things we want to highlight:
 isType     := is Type
@@ -50,6 +50,18 @@ if #bad > 0 then error(
 	{"\n\t", -* TODO: symbolLocation name, ": here is the first use of ", *- toString name}))
 
 -------------------------------------------------------------------------------
+-- Put the symbols into bins
+SYMBOLS   = first \ select(symbols, (name, symb) -> isAlphaNumeric name)
+KEYWORDS  = first \ select(symbols, isKeyword)
+DATATYPES = first \ select(symbols, isType)
+FUNCTIONS = first \ select(symbols, isFunction)
+CONSTANTS = first \ select(symbols, isConst)
+CONSTANTS = CONSTANTS | {"Node", "Item", "Example", "CannedExample", "Pre", "Code"} -- SimpleDoc words
+-- TODO: get this to work
+--DOCWORDS  = format "doc ///\\\\(/?/?[^/]\\\\|\\\\(//\\\\)*////[^/]\\\\)*\\\\(//\\\\)*///"
+STRINGS   = format "///\\\\(/?/?[^/]\\\\|\\\\(//\\\\)*////[^/]\\\\)*\\\\(//\\\\)*///"
+
+-------------------------------------------------------------------------------
 -- Substitute symbols, keywords, types, functions, and constants
 
 -- This banner is added to the top of generated grammars
@@ -57,57 +69,58 @@ banner := "Auto-generated for Macaulay2-@M2VERSION@. Do not modify this file man
 
 symbolsForVim = template -> (
     output := concatenate("\"\" ", banner, newline, newline, template);
-    output = replace("@M2VERSION@",  version#"VERSION", output);
-    output = replace("@M2SYMBOLS@",   demark(" ", first \ select(symbols, (name, symb) -> isAlphaNumeric name)), output);
-    output = replace("@M2KEYWORDS@",  demark(" ", first \ select(symbols, isKeyword)),  output);
-    output = replace("@M2DATATYPES@", demark(" ", first \ select(symbols, isType)),     output);
-    output = replace("@M2FUNCTIONS@", demark(" ", first \ select(symbols, isFunction)), output);
-    output = replace("@M2CONSTANTS@", demark(" ", first \ select(symbols, isConst)),    output);
-    output = replace("@M2STRINGS@", format "///\\(/?/?[^/]\\|\\(//\\)*////[^/]\\)*\\(//\\)*///", output);
+    output = replace("@M2VERSION@",   version#"VERSION",      output);
+    output = replace("@M2SYMBOLS@",   demark(" ", SYMBOLS),   output);
+    output = replace("@M2KEYWORDS@",  demark(" ", KEYWORDS),  output);
+    output = replace("@M2DATATYPES@", demark(" ", DATATYPES), output);
+    output = replace("@M2FUNCTIONS@", demark(" ", FUNCTIONS), output);
+    output = replace("@M2CONSTANTS@", demark(" ", CONSTANTS), output);
+    output = replace("@M2STRINGS@",               STRINGS,    output);
     output)
 
 symbolsForEmacs = template -> (
     output := concatenate(";; ", banner, newline, newline, template);
-    output = replace("@M2VERSION@",  version#"VERSION", output);
-    output = replace("@M2SYMBOLS@",   demark(" ", format \ first \ select(symbols, (name, symb) -> isAlphaNumeric name)), output);
-    output = replace("@M2KEYWORDS@",  demark(" ", format \ first \ select(symbols, isKeyword)),  output);
-    output = replace("@M2DATATYPES@", demark(" ", format \ first \ select(symbols, isType)),     output);
-    output = replace("@M2FUNCTIONS@", demark(" ", format \ first \ select(symbols, isFunction)), output);
-    output = replace("@M2CONSTANTS@", demark(" ", format \ first \ select(symbols, isConst)),    output);
-    output = replace("@M2STRINGS@", format "///\\(/?/?[^/]\\|\\(//\\)*////[^/]\\)*\\(//\\)*///", output);
+    output = replace("@M2VERSION@",   version#"VERSION",               output);
+    output = replace("@M2SYMBOLS@",   demark(" ", format \ SYMBOLS),   output);
+    output = replace("@M2KEYWORDS@",  demark(" ", format \ KEYWORDS),  output);
+    output = replace("@M2DATATYPES@", demark(" ", format \ DATATYPES), output);
+    output = replace("@M2FUNCTIONS@", demark(" ", format \ FUNCTIONS), output);
+    output = replace("@M2CONSTANTS@", demark(" ", format \ CONSTANTS), output);
+--    output = replace("@M2DOCWORDS@",  demark(" ", format \ DOCWORDS),  output);
+    output = replace("@M2STRINGS@",                        STRINGS,    output);
     output)
 
 symbolsForAtom = template -> (
     output := concatenate("## ", banner, newline, newline, template);
-    output = replace("@M2VERSION@",  version#"VERSION", output);
-    --output = replace("@M2SYMBOLS@",   demark("|", first \ select(symbols, (name, symb) -> isAlphaNumeric name)), output);
-    output = replace("@M2KEYWORDS@",  demark("|", first \ select(symbols, isKeyword)),  output);
-    output = replace("@M2DATATYPES@", demark("|", first \ select(symbols, isType)),     output);
-    output = replace("@M2FUNCTIONS@", demark("|", first \ select(symbols, isFunction)), output);
-    output = replace("@M2CONSTANTS@", demark("|", first \ select(symbols, isConst)),    output);
-    output = replace("@M2STRINGS@", format "///\\(/?/?[^/]\\|\\(//\\)*////[^/]\\)*\\(//\\)*///", output);
+    output = replace("@M2VERSION@",   version#"VERSION",      output);
+    --output = replace("@M2SYMBOLS@",   demark("|", SYMBOLS),   output);
+    output = replace("@M2KEYWORDS@",  demark("|", KEYWORDS),  output);
+    output = replace("@M2DATATYPES@", demark("|", DATATYPES), output);
+    output = replace("@M2FUNCTIONS@", demark("|", FUNCTIONS), output);
+    output = replace("@M2CONSTANTS@", demark("|", CONSTANTS), output);
+    output = replace("@M2STRINGS@",               STRINGS,    output);
     output)
 
 symbolsForPrism = template -> (
     output := concatenate("// ", banner, newline, newline, template);
-    output = replace("@M2VERSION@",  version#"VERSION", output);
-    output = replace("@M2SYMBOLS@",   demark(",", format \ first \ select(symbols, (name, symb) -> isAlphaNumeric name)), output);
-    output = replace("@M2KEYWORDS@",  demark("|", first \ select(symbols, isKeyword)),  output);
-    output = replace("@M2DATATYPES@", demark("|", first \ select(symbols, isType)),     output);
-    output = replace("@M2FUNCTIONS@", demark("|", first \ select(symbols, isFunction)), output);
-    output = replace("@M2CONSTANTS@", demark("|", first \ select(symbols, isConst)),    output);
-    output = replace("@M2STRINGS@", format "///\\(/?/?[^/]\\|\\(//\\)*////[^/]\\)*\\(//\\)*///", output);
+    output = replace("@M2VERSION@",   version#"VERSION",      output);
+    output = replace("@M2SYMBOLS@",   demark(",", format \ SYMBOLS), output);
+    output = replace("@M2KEYWORDS@",  demark("|", KEYWORDS),  output);
+    output = replace("@M2DATATYPES@", demark("|", DATATYPES), output);
+    output = replace("@M2FUNCTIONS@", demark("|", FUNCTIONS), output);
+    output = replace("@M2CONSTANTS@", demark("|", CONSTANTS), output);
+    output = replace("@M2STRINGS@",               STRINGS,    output);
     output)
 
 symbolsForRouge = template -> (
     output := concatenate("## ", banner, newline, newline, template);
-    output = replace("@M2VERSION@",  version#"VERSION", output);
-    --output = replace("@M2SYMBOLS@",   demark("|", first \ select(symbols, (name, symb) -> isAlphaNumeric name)), output);
-    output = replace("@M2KEYWORDS@",  demark(" ", first \ select(symbols, isKeyword)),  output);
-    output = replace("@M2DATATYPES@", demark("|", first \ select(symbols, isType)),     output);
-    output = replace("@M2FUNCTIONS@", demark("|", first \ select(symbols, isFunction)), output);
-    output = replace("@M2CONSTANTS@", demark("|", first \ select(symbols, isConst)),    output);
-    output = replace("@M2STRINGS@", format "///\\(/?/?[^/]\\|\\(//\\)*////[^/]\\)*\\(//\\)*///", output);
+    output = replace("@M2VERSION@",   version#"VERSION",      output);
+    --output = replace("@M2SYMBOLS@",   demark("|", SYMBOLS),   output);
+    output = replace("@M2KEYWORDS@",  demark(" ", KEYWORDS),  output);
+    output = replace("@M2DATATYPES@", demark("|", DATATYPES), output);
+    output = replace("@M2FUNCTIONS@", demark("|", FUNCTIONS), output);
+    output = replace("@M2CONSTANTS@", demark("|", CONSTANTS), output);
+    output = replace("@M2STRINGS@",               STRINGS,    output);
     output)
 
 -------------------------------------------------------------------------------

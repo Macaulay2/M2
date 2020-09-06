@@ -3,6 +3,7 @@
 --- notes: functions below are all defined in regex.m2
 
 doc ///
+Node
  Key
    separate
   (separate, String)
@@ -85,9 +86,8 @@ doc ///
   lines
   demark
   concatenate
-///
 
-doc ///
+Node
   Key
      lines
     (lines, String)

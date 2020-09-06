@@ -647,6 +647,9 @@ fixupTable := new HashTable from {
      Headline => chkIsStringFixup Headline,
      Heading => chkIsString Heading,
      Description => val -> extractExamples fixup val,
+     Acknowledgement => v -> if v =!= {} then fixup DIV { SUBSECTION "Acknowledgement", v } else v,
+     Contributors => v -> if v =!= {} then fixup DIV { SUBSECTION "Contributors", v } else v,
+     References => v -> if v =!= {} then fixup DIV { SUBSECTION "References", v } else v,
      Caveat  => v -> if v =!= {} then fixup DIV { SUBSECTION "Caveat", v } else v,
      SeeAlso => v -> if v =!= {} then fixup DIV { SUBSECTION "See also", UL (TO \ enlist v) } else v,
      SourceCode => v -> (
@@ -682,6 +685,9 @@ fixupTable := new HashTable from {
 	  currentPackage#"example data files"#currentNodeName = v;
 	  "")
      }
+acknowledgement := key -> getOption(key,Acknowledgement)
+contributors := key -> getOption(key,Contributors)
+references := key -> getOption(key,References)
 caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
 sourcecode := key -> getOption(key,SourceCode)
@@ -696,6 +702,9 @@ documentOptions := new OptionTable from {
      Headline => null,
      SeeAlso => null,
      SourceCode => null,
+     Contributors => null,
+     Acknowledgement => null,
+     References => null,
      Caveat => null,
      Subnodes => null,
      ExampleFiles => null
@@ -1153,7 +1162,7 @@ help String := key -> (
 	       stderr << "--warning: there is no documentation for '" << key << "'" << endl;
 	       b = ();
 	       );
-	  fixup DIV {topheader key, b, caveat key, seealso key, theMenu key}))
+	  fixup DIV {topheader key, b, acknowledgement key, contributors key, references key, caveat key, seealso key, theMenu key}))
 
 instances = method()
 instances Type := HashTable => X -> hashTable apply(select(flatten(values \ dictionaryPath), i -> instance(value i,X)), i -> (i,value i))
@@ -1332,7 +1341,8 @@ help Symbol := S -> (
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      ret := fixup DIV { topheader S, synopsis S, makeDocBody S,
 	  if #a > 0 then DIV { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
-          caveat S, seealso S,
+          acknowledgement S, contributors S, references S,
+	  caveat S, seealso S,
      	  documentationValue(S,value S),
 	  sourcecode S, type S, 
 	  theMenu S
@@ -1359,6 +1369,7 @@ help Array := key -> (		    -- optional argument
 		    },
 	       SPAN{ "Option name: ", TOH {opt} }
 	       },
+	  acknowledgement key, contributors key, references key,
 	  caveat key, seealso key, theMenu key })
 
 help Sequence := key -> (						    -- method key
@@ -1366,7 +1377,7 @@ help Sequence := key -> (						    -- method key
      if key === () then return if inDebugger then debuggerUsageMessage else help "initial help" ;
      if null === lookup key then error("expected ", toString key, " to be a method");
      currentHelpTag = makeDocumentTag(key,Package=>null);
-     ret := fixup DIV { topheader key, synopsis key, makeDocBody key, caveat key, sourcecode key, seealso key, theMenu key };
+     ret := fixup DIV { topheader key, synopsis key, makeDocBody key, acknowledgement key, contributors key, references key, caveat key, sourcecode key, seealso key, theMenu key };
      currentHelpTag = null;
      ret)
 
@@ -1427,9 +1438,6 @@ tutorial = x -> (
 	  sublist -> EXAMPLE sublist,
 	  identity);
      x )
-
-Wikipedia = method(TypicalValue => Hypertext)
-Wikipedia String := s -> PARA { "See ", HREF{ "http://en.wikipedia.org/wiki/" | s }, "."}
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

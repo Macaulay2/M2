@@ -71,8 +71,7 @@ M2_arrayint regex_search(const M2_string pattern,
   auto tail = (const char*)&text->array + text->len;
 
   boost::regex_constants::match_flag_type flag =
-      boost::regex_constants::match_flag_type(match_flags |
-                                              boost::match_default);
+      boost::regex_constants::match_flag_type(match_flags);
   flag |= start > 0 ? boost::match_prev_avail : flag;
 
   status = boost::regex_search(head, tail, matches, expression, flag);
@@ -111,10 +110,8 @@ M2_string regex_replace(const M2_string pattern,
   auto head = (const char*)&text->array + start;
   auto tail = (const char*)&text->array + start + range;
 
-  // TODO: add format_first_only option
   boost::regex_constants::match_flag_type flag =
-      boost::regex_constants::match_flag_type(match_flags |
-                                              boost::format_default);
+      boost::regex_constants::match_flag_type(match_flags);
   flag |= start > 0 ? boost::match_prev_avail : flag;
 
   auto substitute = M2_tocharstar(format);
