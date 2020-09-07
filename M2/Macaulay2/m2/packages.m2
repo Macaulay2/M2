@@ -393,7 +393,7 @@ newPackage String := opts -> pkgname -> (
 
 export = method(Dispatch => Thing)
 export String := x -> export {x}
-export List   := v -> currentPackage#"exported symbols" = join_(currentPackage#"exported symbols") (
+export List   := v -> (
     if currentPackage === null then error "no current package";
     pd := currentPackage#"private dictionary";
     d  := currentPackage.Dictionary;
@@ -419,7 +419,9 @@ export List   := v -> currentPackage#"exported symbols" = join_(currentPackage#"
 	    syn := title | "$" | nam;
 	    d#syn = d#nam = sym;
 	    syms#sym = true));
-    keys syms)
+    syms = keys syms;
+    currentPackage#"exported symbols" = join(currentPackage#"exported symbols", syms);
+    syms)
 
 exportMutable = method(Dispatch => Thing)
 exportMutable String := x -> exportMutable {x}
