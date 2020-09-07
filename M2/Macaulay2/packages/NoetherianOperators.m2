@@ -817,6 +817,12 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
 )
 
 
+noetherianOperatorsViaMacaulayMatrix (Ideal) := List => true >> opts -> (I) -> noetherianOperatorsViaMacaulayMatrix(I, ideal gens radical I, opts)
+noetherianOperatorsViaMacaulayMatrix (Ideal, Point) := List => true >> opts -> (I, p) -> (
+    P := ideal ((gens ring I) - p.Coordinates);
+    noetherianOperatorsViaMacaulayMatrix(I,P,opts)
+)
+
 -- Clears denominators of a matrix:
 -- multiplies each column of M by the lcm of the denominators
 liftColumns = (M,R') -> (
@@ -833,12 +839,6 @@ liftColumns = (M,R') -> (
     sub(K, R')
 )
 
-noetherianOperatorsViaMacaulayMatrix (Ideal) := List => opts -> (I) -> noetherianOperatorsViaMacaulayMatrix(I, ideal gens radical I, opts)
-noetherianOperatorsViaMacaulayMatrix (Ideal, Point) := List => opts -> (I, p) -> (
-    P := ideal ((gens ring I) - p.Coordinates);
-    noetherianOperatorsViaMacaulayMatrix(I,P,opts)
-)
-
 approxKer = method(Options => {Tolerance => null})
 approxKer(Matrix) := Matrix => o -> A -> (
     tol := if o.Tolerance === null then defaultT(ring A) else o.Tolerance;
@@ -852,11 +852,11 @@ approxKer(Matrix) := Matrix => o -> A -> (
 
 --numNoethOpsAtPoint = method(Options => options noetherianOperatorsViaMacaulayMatrix ++ options approxKer)
 numNoethOpsAtPoint = method(Options => true)
-numNoethOpsAtPoint (Ideal, Point) := List => opts -> (I, p) -> numNoethOpsAtPoint(I, matrix p, opts)
-numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
-    tol := if opts.Tolerance === null then defaultT(ring I) else opts.Tolerance;
+numNoethOpsAtPoint (Ideal, Point) := List => true >> opts -> (I, p) -> numNoethOpsAtPoint(I, matrix p, opts)
+numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
+    tol := if not opts.?Tolerance then defaultT(ring I) else opts.Tolerance;
     R := ring I;
-    depVars := if opts.DependentSet === null then gens R - set support first independentSets I
+    depVars := if not opts.?DependentSet then gens R - set support first independentSets I
             else opts.DependentSet;
     indVars := gens R - set depVars;
     local M; local M'; local K; local bd; local bx;
@@ -870,7 +870,7 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
         M = diff(bd, transpose matrix {flatten (table(bx,I_*,(i,j) -> i*j))});
         M' = evaluate(M,p);
         K = numericalKernel (M', tol);
-        if numColumns K == numOps or i == opts.DegreeLimit then break;
+        if numColumns K == numOps or (opts.?DegreeLimit and i == opts.DegreeLimit) then break;
         numOps = numColumns K;
         i = i + 1;
     );
@@ -881,10 +881,10 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
     new SetOfNoethOps from {Ops => sort L, Point => p}
 )
 
-hybridNoetherianOperators = method(Options => options numNoethOpsAtPoint)
-hybridNoetherianOperators (Ideal, Ideal, Point) := List => opts -> (I,P, pt) -> (
+hybridNoetherianOperators = method(Options => true)
+hybridNoetherianOperators (Ideal, Ideal, Point) := List => true >> opts -> (I,P, pt) -> (
     R := ring I;
-    depVars := if opts.DependentSet === null then gens R - set support first independentSets P
+    depVars := if not opts.?DependentSet then gens R - set support first independentSets P
             else opts.DependentSet;
     indVars := gens R - set depVars;
     S := (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
@@ -916,7 +916,7 @@ hybridNoetherianOperators (Ideal, Ideal, Point) := List => opts -> (I,P, pt) -> 
     new SetOfNoethOps from {Ops => sort L, Prime => P}
 )
 
-hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
+hybridNoetherianOperators (Ideal, Ideal) := List => true >> opts -> (I,P) -> (
     R := ring I;
     RCC := CC monoid R;
     ws := first components bertiniPosDimSolve(sub(P,RCC));
@@ -924,53 +924,57 @@ hybridNoetherianOperators (Ideal, Ideal) := List => opts -> (I,P) -> (
     hybridNoetherianOperators(I,P,pt, opts)
 )
 
-hybridNoetherianOperators (Ideal) := List => opts -> I -> hybridNoetherianOperators(I, radical I, opts)
+hybridNoetherianOperators (Ideal) := List => true >> opts -> I -> hybridNoetherianOperators(I, radical I, opts)
 
 
-numericalNoetherianOperators = method(Options => {
-    Tolerance => 1e-6,
-    InterpolationTolerance => 1e-6,
-    InterpolationDegreeLimit => -1,
-    NoetherianDegreeLimit => 5,
-    DependentSet => null})
+--numericalNoetherianOperators = method(Options => {
+--    Tolerance => 1e-6,
+--    InterpolationTolerance => 1e-6,
+--    InterpolationDegreeLimit => -1,
+--    NoetherianDegreeLimit => 5,
+--    DependentSet => null})
+numericalNoetherianOperators = method(Options => true)
 -- Witness set is a witness set, and pt is a trusted point with the "correct" dx-support
-numericalNoetherianOperators(Ideal, WitnessSet, Point) := List => opts -> (I, ws, pt) -> (
-    tol := opts.Tolerance;
+numericalNoetherianOperators(Ideal, WitnessSet, Point) := List => true >> opts -> (I, ws, pt) -> (
+    tol := if not opts.?Tolerance then defaultT(CC) else opts.Tolerance;
     S := ring I;
-    depSet := if opts.DependentSet === null then error"Expected dependent set"
+    depSet := if not opts.?DependentSet then error"expected option DependentSet"
             else opts.DependentSet;
     indSet := gens S - set depSet;
+    noethDegLim := if not opts.?NoetherianDegreeLimit then -1 else opts.NoetherianDegreeLimit;
+    -- other valid options: InterpolationDegreeLimit, InterpolationTolerance
     R := CC monoid S;
     J := sub(I,R);
 
-    nopsTemplate := numNoethOpsAtPoint(J, pt, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => opts.NoetherianDegreeLimit);
+    nopsTemplate := numNoethOpsAtPoint(J, pt, opts, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => noethDegLim);
     
-    nopsTemplate / (tmpl -> interpolateFromTemplate(I, ws, tmpl, opts))
+    nopsTemplate / (tmpl -> interpolateFromTemplate(I, ws, tmpl, opts, Tolerance => tol))
 )
 -- choose a "trusted" point at random
-numericalNoetherianOperators(Ideal, WitnessSet) := List => opts -> (I, ws) -> numericalNoetherianOperators(I,ws,first bertiniSample(1,ws), opts)
+numericalNoetherianOperators(Ideal, WitnessSet) := List => true >> opts -> (I, ws) -> numericalNoetherianOperators(I,ws,first bertiniSample(1,ws), opts)
 
 -- choose the first component given by Bertini as the witness set.
 -- If I is not primary, the behavior is undefined
-numericalNoetherianOperators(Ideal) := List => opts -> I -> (
+numericalNoetherianOperators(Ideal) := List => true >> opts -> I -> (
     ws := first components bertiniPosDimSolve(I);
     numericalNoetherianOperators(I,ws, opts)
 )
 
-interpolateFromTemplate = options numericalNoetherianOperators >> opts -> (I, ws, tmpl) -> (
+interpolateFromTemplate = true >> opts -> (I, ws, tmpl) -> (
     ptList := new List;
     opList := new List;
     (mon,coef) := coefficients(tmpl);
+    interpTol := if not opts.?InterpolationTolerance then defaultT(CC) else opts.InterpolationTolerance;
     nops := for m in flatten entries mon list (
         d := 0;
         local intCoef;
         tmp := ("?","?");
-        while(d <= opts.InterpolationDegreeLimit or opts.InterpolationDegreeLimit < 0) do (
+        while(not opts.?InterpolationDegreeLimit or d <= opts.InterpolationDegreeLimit) do (
             intBasis := rsort basis(0, d, coefficientRing ring tmpl);
             neededPoints := 2*numColumns intBasis + 1;
             if neededPoints - #ptList > 0 and debugLevel > 0 then 
                 <<"Computing "<<neededPoints - #ptList<<" new specialized NOps"<<endl;
-            newNops := newSpecializedNop(I, ws, tmpl, neededPoints - #ptList, opts);
+            newNops := newSpecializedNop(I, ws, tmpl, neededPoints - #ptList, opts, Tolerance => opts.Tolerance);
             opList = opList | newNops#0;
             ptList = ptList | newNops#1;
             
@@ -978,7 +982,7 @@ interpolateFromTemplate = options numericalNoetherianOperators >> opts -> (I, ws
                 coefficient_m /
                 (i -> lift(i, ultimate(coefficientRing, ring i)));
             neededPtList := take(toList ptList, neededPoints);
-            try tmp = rationalInterpolation(neededPtList, liftedCoeffs, intBasis, intBasis, Tolerance => opts.InterpolationTolerance) then break
+            try tmp = rationalInterpolation(neededPtList, liftedCoeffs, intBasis, intBasis, Tolerance => interpTol) then break
                 else d = d+1;
         );
         tmp = tmp / (j -> cleanPoly(opts.Tolerance, j));
@@ -990,7 +994,7 @@ interpolateFromTemplate = options numericalNoetherianOperators >> opts -> (I, ws
 )
 
 -- Create new specialized Noeth op at a random point using tmpl as a template
-newSpecializedNop = options numericalNoetherianOperators >> opts -> (I, ws, tmpl,n) -> (
+newSpecializedNop = true >> opts -> (I, ws, tmpl,n) -> (
     if n < 1 then return {{},{}};
     pts := bertiniSample(n,ws);
     R := ring I;
@@ -1212,7 +1216,8 @@ invSystemFromHilbToNoethOps = (I, R, S, depVars) -> (
    
 -- This function can compute the Noetherian operators of a primary ideal Q.
 -- Here we pass first through the punctual Hilbert scheme 
-getNoetherianOperatorsHilb = Q -> (
+getNoetherianOperatorsHilb = method(Options => true)
+getNoetherianOperatorsHilb Ideal := SetOfNoethOps => true >> opts -> Q -> (
     R := ring Q;
     P := radical Q;
     indVars := support first independentSets P;
