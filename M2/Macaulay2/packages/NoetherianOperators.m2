@@ -747,7 +747,7 @@ noetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,P) -> 
         "Numerical" => numericalNoetherianOperators --TODO this method is missing
     };
     strat := if opts.?Strategy then opts.Strategy else "Hybrid";
-    if strats#?strat then strats#strat(I, opts) 
+    if strats#?strat then strats#strat(I, P, opts) 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
 
@@ -768,12 +768,6 @@ noetherianOperators (Ideal, WitnessSet, Point) := SetOfNoethOps => true >> opts 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
 
-noetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> I -> (
-
-)
-
-
-
 
 
 -- End Master method
@@ -782,10 +776,11 @@ noetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> I -> (
 
 
 
-noetherianOperatorsViaMacaulayMatrix = method(Options => {DegreeLimit => -1, DependentSet => null}) 
-noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => opts -> (I, P) -> (
+--noetherianOperatorsViaMacaulayMatrix = method(Options => {DegreeLimit => -1, DependentSet => null}) 
+noetherianOperatorsViaMacaulayMatrix = method(Options => true) 
+noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (I, P) -> (
     R := ring I;
-    depVars := if opts.DependentSet === null then gens R - set support first independentSets P
+    depVars := if not opts.?DependentSet then gens R - set support first independentSets P
             else opts.DependentSet;
     indVars := gens R - set depVars;
     S := (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
@@ -797,14 +792,14 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => opts -> (I, P) ->
     i := 1;
     terminate := false;
     while not terminate do (
-        if debugLevel > 0 then "noetherianOperatorsViaMacaulayMatrix: trying degree "<<i<<endl;
+        if debugLevel > 0 then <<"noetherianOperatorsViaMacaulayMatrix: trying degree "<<i<<endl;
         bx = flatten entries sub(basis(0,i - 1,R),S);
         bd = basis(0,i,S);
         M = diff(bd, transpose matrix {flatten (table(bx,SI_*,(i,j) -> i*j))});
         M' = sub(M, kP);
         K = myKernel (M');
         if numColumns K == numOps then terminate = true;
-        if opts.DegreeLimit >= 0 and i == opts.DegreeLimit then terminate = true;
+        if opts.?DegreeLimit and i == opts.DegreeLimit then terminate = true;
         numOps = numColumns K;
         i = i + 1;
     );
@@ -855,7 +850,8 @@ approxKer(Matrix) := Matrix => o -> A -> (
 )
 
 
-numNoethOpsAtPoint = method(Options => options noetherianOperatorsViaMacaulayMatrix ++ options approxKer)
+--numNoethOpsAtPoint = method(Options => options noetherianOperatorsViaMacaulayMatrix ++ options approxKer)
+numNoethOpsAtPoint = method(Options => true)
 numNoethOpsAtPoint (Ideal, Point) := List => opts -> (I, p) -> numNoethOpsAtPoint(I, matrix p, opts)
 numNoethOpsAtPoint (Ideal, Matrix) := List => opts -> (I, p) -> (
     tol := if opts.Tolerance === null then defaultT(ring I) else opts.Tolerance;
