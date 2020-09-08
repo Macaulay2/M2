@@ -401,9 +401,9 @@ export List   := v -> (
     syms := new MutableHashTable;
     scan(v, sym -> (
 	    local nam;
-	    -- TODO: what does this do?
+	    -- a synonym, e.g. "res" => "resolution"
 	    if instance(sym, Option) then (
-		nam = sym#0;			    -- synonym
+		nam = sym#0;
 		if class nam =!= String then error("expected a string: ", nam);
 		if pd#?nam then error("symbol intended as exported synonym already used internally: ", format nam, "\n", symbolLocation pd#nam, ": it was used here");
 		if class sym#1 =!= String then error("expected a string: ", nam);

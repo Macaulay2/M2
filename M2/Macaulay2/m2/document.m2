@@ -139,6 +139,7 @@ makeDocumentTag' := opts -> key -> (
     -- Try to detect the package
     pkg = if pkg =!= null then pkg
     else  if opts#Package =!= null then opts#Package
+    else  if instance(nkey, String) then currentPackage -- FIXME
     else  if instance(nkey, Sequence) then currentPackage -- this is a kludge, which allows Schubert2 to document (symbol SPACE,OO,RingElement)
     else  if (pkg' := package nkey) =!= null then pkg'
     else  if member(fkey, allPackages()) then fkey
@@ -148,7 +149,7 @@ makeDocumentTag' := opts -> key -> (
 	if currentDocumentTag === null   then error("makeDocumentTag: package cannot be determined: ", nkey) else
 	if signalDocumentationError fkey then (
 	    loc := locate currentDocumentTag;
-	    if rawdoc === null then printerr("warning: reference ", fkey, " was not found in any package. ",
+	    printerr("warning: reference ", format fkey, " was not found in any package. ",
 		"First mentioned near:\n  ", loc#0, ":", toString loc#1));
 	pkg = currentPackage);
     new DocumentTag from new HashTable from {
@@ -612,7 +613,7 @@ document List := opts -> args -> (
     key = o.Key;
     fn := if instance(key, Sequence) then key#0 else if instance(key, Symbol) then value key else key;
     -- Set the document tag
-    currentDocumentTag = o.DocumentTag = tag := makeDocumentTag(key, Package => null);
+    currentDocumentTag = o.DocumentTag = tag := makeDocumentTag(key, Package => currentPackage);
     fkey := format tag;
     verboseLog("Processing documentation for ", fkey);
     if member(fkey, reservedNodeNames) then error("'document' encountered a reserved node name ", fkey);
@@ -623,7 +624,7 @@ document List := opts -> args -> (
 	then error("item to be documented comes from another package: ", toString tag));
     verfy(key, tag);
     scan(rest, secondary -> (
-	    tag2 := makeDocumentTag(secondary, Package => null);
+	    tag2 := makeDocumentTag(secondary, Package => currentPackage);
 	    verfy(secondary, tag2);
 	    storeRawDocumentation(tag2, new HashTable from {
 		    PrimaryTag => tag,
