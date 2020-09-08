@@ -403,7 +403,7 @@ document {
 document {
     Key => Unique,
     Headline => "do not return repeated polynomial roots",
-    "A boolean", TO "boolean", ", to select whether to return repeated roots or not.",
+    "A boolean", TO Boolean, ", to select whether to return repeated roots or not.",
 }
 
 document {

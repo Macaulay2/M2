@@ -548,7 +548,7 @@ Node
       @UL {
           {"load the package, if not already loaded (see ", TO loadPackage, ")"},
           {"determine which help pages have changed since last install"},
-          {"run any new or previously failed examples, or all examples, as specified by the ", TO "RemakeAllExamples", " option"},
+          {"run any new or previously failed examples, or all examples, as specified by the ", TO "RerunExamples", " option"},
           {"generate the html pages, or not, as specified by the ", TT "MakeHTML", " option, for the modified help pages,
 	      or all html pages if ", TT "RemakeAllDocumentation", " is set to true"},
           {"generate the info pages, or not, as specified by the ", TT "MakeInfo", " option"},
@@ -597,7 +597,6 @@ Node
     documentation correctly, it may be necessary to install one of them twice.
   SeeAlso
     "Layout"
-    "epkg"
     "packages"
     "prefixPath"
     installedPackages
@@ -636,7 +635,6 @@ Node
       the links to the files and the files of the specified package created by @TO installPackage@,
       in case encapsulation is enabled, are removed, for every version of the package.
   SeeAlso
-    "epkg"
     "packages"
     "prefixPath"
     installPackage

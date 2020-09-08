@@ -1,3 +1,5 @@
+-- TODO: move the rest here from doc10.m2
+
 doc ///
    Key
      FastNonminimal

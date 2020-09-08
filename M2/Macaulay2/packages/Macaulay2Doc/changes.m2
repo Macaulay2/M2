@@ -62,7 +62,7 @@ document {
 	       },
 	 LI { "functionality changed in a way that could break code:",
 	      UL {
-		   LI { "The variable ", TO "backupFileRegexp", " has been replaced by the ", TO "Exclude", "
+		   LI { "The variable ", TT "backupFileRegexp", " has been replaced by the ", TO "Exclude", "
 			option to ", TO "copyDirectory", "."
 			}
 		   }
@@ -544,8 +544,8 @@ document {
      	       }},     
      	  LI { "functionality added or improved:",
      	       UL {
-		    LI { "The function ", TO "localRing", ", for localizing a polynomial ring at a prime ideal, has been added." },
-		    LI { "The function ", TO "length", " now can compute length of Artinian modules over local rings." },
+		    LI { "The function ", TO "LocalRings :: localRing", ", for localizing a polynomial ring at a prime ideal, has been added." },
+		    LI { "The function ", TO (length, Module), " now can compute length of Artinian modules over local rings." },
 		    LI {
 			 "The function ", TO "newPackage", " now takes two new options: 
 			 ", TT "OptionalComponentsPresent", " tells whether all optional external components of the package are present on the system,
@@ -619,7 +619,7 @@ document {
 			     		" for polyhedra and polyhedral complexes." }
 			   	   },
 		       	      "An important difference is that objects of these classes can no longer be used as keys into hash tables, since these objects
-		       	      are implemented as mutable hash tables. In particular ", TO "symbol===", " no longer works on cones.  Instead, use 
+		       	      are implemented as mutable hash tables. In particular ", TO symbol===, " no longer works on cones.  Instead, use
 		       	      a sorted list of e.g. vertices and lineality space.",
 		       	      PARA{"If you need the old behavior, load the package ", TO "OldPolyhedra::OldPolyhedra", ". 
 		       		   However, if possible, change your code to run with the new package."}
@@ -628,7 +628,7 @@ document {
          		 },     
 	  LI { "functionality added or improved:",
 	       UL {
-		    LI { "The functions ", TO "toDual", " and ", TO "fromDual", " have been improved and moved to the new package ", TO "InverseSystems::InverseSystems",
+		    LI { "The functions ", TO "InverseSystems::toDual", " and ", TO "InverseSystems::fromDual", " have been improved and moved to the new package ", TO "InverseSystems::InverseSystems",
 			 ": they are now compatible with linear changes of coordinates." }
 	  	   }
 	       },
@@ -961,7 +961,7 @@ document {
 		    LI { "The new function ", TO "homomorphism'", " complements ", TO "homomorphism", ".  From a map between modules it
 			 produces the element of Hom." },
 		    LI { "The new function ", TO "compose", " expresses composition of maps between modules as a bilinear map between Hom-modules." },
-		    LI { "Bracket powers of ideals (", TO "(symbol ^,Ideal,Array)", ") have been added, thanks to Frank Moore." },
+		    LI { "Bracket powers of ideals (", TO (symbol ^,Ideal,Array), ") have been added, thanks to Frank Moore." },
             LI { "Several bugs related to computing Groebner bases in polynomial rings over ZZ have been fixed.  ", TT "trim I", " in this case
                 now returns an ideal or module with a Groebner basis as generating set, as a minimal generating set isn't well-defined.  In a future release, we hope to 
                 provide a function to determine a smaller set of generators.  ", TT "mingens I", " also returns the Groebner basis matrix.  In a future release this
@@ -1023,7 +1023,7 @@ document {
 	  LI { "improved packages:",
 	        UL {
 		    LI { TO "SchurRings::SchurRings", ", has been updated, with support for several groups of variables,  documentation, working plethysm, and more.
-                	 The old version is being kept as ", TO "OldSchurRings", " as there are incompatible changes.  Specifically, symmRing is now called
+                	 The old version is being kept as ", TT "SchurRingsOld", " as there are incompatible changes.  Specifically, symmRing is now called
                 	 symmetricRing, and has more variables (three sets, h, e, p) than the old version.  Please use the new version, and if there is a problem
                 	 that requires you to use the old version, please email Mike Stillman."
 			 },

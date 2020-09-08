@@ -537,7 +537,7 @@ document {
      all(#x, i -> y#(x#i) == i)
      ///,
      PARA {
-	  "We compose permutations with ", TT "_", "; see ", TO "(symbol _, VisibleList, List)", "."
+	  "We compose permutations with ", TT "_", "; see ", TO (symbol_, VisibleList, List), "."
 	  },
      EXAMPLE lines ///
      x_x_x
