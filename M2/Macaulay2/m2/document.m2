@@ -138,7 +138,7 @@ makeDocumentTag' := opts -> key -> (
     (pkg, fkey) = parseDocumentTag fkey;
     -- Try to detect the package
     pkg = if pkg =!= null then pkg
-    else  if opts#Package =!= null then opts#Package
+    else  if opts#Package =!= null then toString opts#Package
     else  if instance(nkey, String) then currentPackage -- FIXME
     else  if instance(nkey, Sequence) then currentPackage -- this is a kludge, which allows Schubert2 to document (symbol SPACE,OO,RingElement)
     else  if (pkg' := package nkey) =!= null then pkg'
@@ -168,8 +168,8 @@ makeDocumentTag Thing       := opts -> key -> (makeDocumentTag' opts) key
 makeDocumentTag String      := opts -> key -> (
     local pkg;
     (pkg, key) = parseDocumentTag key;
-    if pkg =!= null and opts#Package =!= null and pkg =!= opts#Package
-    then error ("mismatching packages ", pkg, " and ", opts#Package, " specified for key ", key);
+    if pkg =!= null and opts#Package =!= null and pkg =!= toString opts#Package
+    then error ("mismatching packages ", pkg, " and ", toString opts#Package, " specified for key ", key);
     if pkg === null then pkg = opts#Package;
     (makeDocumentTag' new OptionTable from {Package => pkg}) key)
 
@@ -435,8 +435,9 @@ processInputOutputItems := (key, fn) -> item -> (
 	if not opts#?optsymb then error("symbol ", optsymb, " is not the name of an optional argument for function ", toExternalString fn);
 	defval := toString opts#optsymb;
 	defval  = if not match("^-\\*Function", defval) then SPAN{"default value ", defval};
+	name   := TT toString optsymb; -- TO2 { [fn, optsymb], toString optsymb };
 	{
-	    (TO2 { [fn, optsymb], toString optsymb }, TT " => ",
+	    (name, TT " => ",
 	    if type =!= null and type =!= Nothing then ofClass type else TT "..."), -- type Nothing, treated as above
 	    (defval,
 	    if text =!= null and text =!= "" then (", ", text)
@@ -649,7 +650,7 @@ document List := opts -> args -> (
     if #ino > 0 then o.Options = ino else remove(o, Options);
     -- Generate Hypertext containers
     scan(keys KeywordFunctions, sym -> if o#?sym then (
-	    if sym === Consequences then scan(o#sym, x -> validate DIV x)
+	    if sym === Consequences then scan(o#sym, x -> validate LI x)
 	    else if sym === Key then null
 	    else if sym === BaseFunction then null
 	    else if sym === symbol DocumentTag then null

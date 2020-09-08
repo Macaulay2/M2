@@ -46,9 +46,9 @@ Node
     Subnodes=>List
       see @TOH Subnodes@
     SourceCode=>List
-      a list of functions whose source code should be displayed in the documentation
+      containing functions whose source code should be displayed in the documentation
     ExampleFiles=>List
-      see @TOH ExampleFiles@
+      containing filenames of auxiliary data files which will be available in the directory where the example code is run
   Consequences
     Item
       formatted documentation is created and stored in the @TO2 {"currentPackage", "current package"}@
@@ -133,6 +133,8 @@ Node
     [document, Caveat]
     [document, SeeAlso]
     [document, Subnodes]
+--    [document, SourceCode]
+--    [document, ExampleFiles]
 
 Node
   Key
