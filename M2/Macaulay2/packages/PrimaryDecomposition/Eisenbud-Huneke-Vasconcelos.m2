@@ -348,11 +348,14 @@ associatedPrimes Module := List => opts -> M -> ( -- modified code in ass1 for m
      M.cache#"AssociatedPrimes" = (
      ringRel := presentation ring M;
      polyRing := ring ringRel;
-     M1 := lift(M, polyRing);
-     -- M1 := subquotient(lift(gens M, polyRing), lift(relations M, polyRing) | ringRel);
+     -- M1 := lift(M, polyRing); -- issue: cannot lift non-free modules
+     -- liftRingRel := id_(polyRing^(numrows relations M)) ** ringRel;
+     liftRingRel := id_(target relations M) ** ringRel;
+     M1 := subquotient(lift(gens M, polyRing), lift(relations M, polyRing) | liftRingRel);
      c := codim M1;
-     if c == dim polyRing and isHomogeneous M then return {sub(ideal gens polyRing, ring M)};
-     d := pdim M;
+     if c == dim polyRing and (isHomogeneous M or all(gens polyRing, v -> radicalContainment(v, ann M1))) then return {sub(ideal gens polyRing, ring M)};
+     if debugLevel > 0 then print("Computing resolution to find associated primes...");
+     d := pdim M1;
      n := if opts.CodimensionLimit >= 0 then min(d, opts.CodimensionLimit) else d;
      if M.cache#?"associatedPrimesCodimLimit" then (
           if n < d and n <= M.cache#"associatedPrimesCodimLimit" then return select(previousPrimes, P -> codim P <= n);
@@ -361,7 +364,7 @@ associatedPrimes Module := List => opts -> M -> ( -- modified code in ass1 for m
      if n < d then M.cache#"associatedPrimesCodimLimit" = n
      else remove(M.cache, "associatedPrimesCodimLimit");
      previousPrimes | (flatten apply(toList(c..n), i -> (
-          if debugLevel > 0 then print("Computing associated primes of codim " | toString i);
+          if debugLevel > 0 then print("Extracting associated primes of codim " | toString i);
           if i == dim polyRing and isHomogeneous M then sub(ideal gens polyRing, ring M) else (
                A := ann(if i == c then M1 else Ext^i(M1, polyRing));
                select(minimalPrimes A, P -> codim P == i)
@@ -404,16 +407,16 @@ bracketPower = (I, n) -> ideal apply(I_*, f -> f^n)
 getEmbeddedComponent = method(Options => options primaryDecomposition)
 getEmbeddedComponent (Module, Module, Ideal) := o -> (M, N, P) -> ( -- N is candidate for P-primary component of M
      Q := M/N;
-     strat := o.Strategy;
-     if strat === null then (
-          if debugLevel > 0 then print("Determining strategy for top components...");
-          strat = "Hom";
-          try ( 
-               alarm 30; 
-               if sum values betti resolution Q < 1000 then strat = "Sat";
-               alarm 0;
-          );
-     );
+     strat := if o.Strategy === null then "Sat" else o.Strategy;
+     -- if strat === null then (
+          -- if debugLevel > 0 then print("Determining strategy for top components...");
+          -- strat = "Hom";
+          -- try ( 
+               -- alarm 30; 
+               -- if sum values betti resolution Q < 1000 then strat = "Sat";
+               -- alarm 0;
+          -- );
+     -- );
      if debugLevel > 0 then print("Using strategy " | strat);
      C := if strat == "Hom" then equidimHull Q 
           else if strat == "Sat" then kernelOfLocalization(Q, P)
@@ -422,8 +425,7 @@ getEmbeddedComponent (Module, Module, Ideal) := o -> (M, N, P) -> ( -- N is cand
 )
 
 kernelOfLocalization = method()
-kernelOfLocalization (Module, Ideal) := Module => (M, P) -> ( -- returns kernel of localization map M -> M_P
-     -- if not isPrime P then error "Expected second argument to be a prime ideal";
+kernelOfLocalization (Module, Ideal) := Module => (M, P) -> ( -- returns kernel of localization map M -> M_P (expects P to be a prime ideal)
      AP := associatedPrimes M;
      f := product(AP, p -> ( i := position(p_*, g -> g % P != 0); if i === null then 1 else p_i ));
      if debugLevel > 0 then print("Computing saturation...");
@@ -454,11 +456,11 @@ equidimHull Module := Module => M -> ( -- equidimensional hull of 0 in a module 
      R := ring M;
      if debugLevel > 0 then print("Finding maximal regular sequence...");
      S := comodule maxRegSeq annihilator M;
-     if debugLevel > 0 then print("Computing Ext ...");
+     if debugLevel > 0 then print("Computing Ext...");
      if numColumns mingens M == 1 then (
           if debugLevel > 0 then print("Using case for cyclic module...");
           E := Hom(M, S); -- = Ext^c(M, R)
-          if debugLevel > 0 then print("Getting annihilator ...");
+          if debugLevel > 0 then print("Getting annihilator...");
           return subquotient(generators annihilator E, relations M);
      );
      -- the following uses code from doubleDualMap in AnalyzeSheafOnP1
@@ -469,9 +471,9 @@ equidimHull Module := Module => M -> ( -- equidimensional hull of 0 in a module 
 )
 
 maxRegSeq = method(Options => {Strategy => "Quick"})
-maxRegSeq Ideal := Ideal => opts -> I -> (
+maxRegSeq Ideal := Ideal => opts -> I -> ( if debugLevel > 0 then print toString I;
      -- attempts to find sparse maximal regular sequence contained in an ideal (in a CM ring)
-     G := sort flatten entries mingens I;
+     G := sort(flatten entries mingens I, f -> (sum degree f, #terms f));
      t := timing codim I;
      c := last t;
      t0 := 1 + ceiling first t;
@@ -480,7 +482,7 @@ maxRegSeq Ideal := Ideal => opts -> I -> (
      J := ideal(G#0);
      for i from 1 to #G-1 do (
           (j, foundNextNZD) := (#G-1, false); -- starts searching from end
-          while not foundNextNZD and j >= c do (
+          while not foundNextNZD and j >= max(c, i+1) do (
                coeffList := {0_k, 1_k};
                if debugLevel > 0 then print("Trying generators " | toString(i, j));
                for a in coeffList do (
@@ -492,6 +494,7 @@ maxRegSeq Ideal := Ideal => opts -> I -> (
                     ) else codim K;
                     if n == 1 + #J_* then (
                          J = K;
+                         if debugLevel > 0 then print "Found nonzerodivisor!";
                          foundNextNZD = true;
                          break;
                     );
@@ -500,16 +503,42 @@ maxRegSeq Ideal := Ideal => opts -> I -> (
           );
           if #J_* == c then ( if debugLevel > 0 then print("Found regular sequence!"); return J );
      );
-     m := c - #J_*;
-     n := #G - c;
-     ind := entries id_(k^n);
      if debugLevel > 0 then print "Could not find sparse regular sequence. Trying denser elements...";
-     for count to (#G)^2//2 do (
-          A := transpose matrix apply(m, i -> sum ind_(apply(n//2, j -> random n)));
-          J1 := J + ideal(matrix{G} * (map(k^(#J_*),k^m,0) || id_(k^m) || A));
-          try ( alarm t0; r := codim J1; alarm 0; if r == #J1_* then return J1 )
+     G1 := select(G, g -> g % J != 0);
+     m := c - #J_*;
+     for i from 3 to ceiling(#G1//2)+1 do (
+          J1 := J + ideal matrix apply(m, j -> {matrix{randomSubset(G1, i)}*random(k^i,k^1)});
+          try (
+               alarm t0;
+               r := codim J1;
+               alarm 0;
+               if r == #J1_* then return J1;
+          );
      );
-     print "Could not find regular sequence. Try again with Strategy => 'Full'"
+     -- n := #G - c;
+     -- ind := entries id_(k^n);
+     -- for count to (#G)^2//2 do (
+          -- A := transpose matrix apply(m, i -> sum ind_(apply(n//2, j -> random n)));
+          -- J1 := J + ideal(matrix{G} * (map(k^(#J_*),k^m,0) || id_(k^m) || A));
+          -- try (
+               -- alarm t0;
+               -- r := codim J1;
+               -- alarm 0;
+               -- if r == #J1_* then return J1;
+          -- );
+     -- );
+     print "Could not find regular sequence. Try again with Strategy => \"Full\""
+)
+
+randomSubset = method()
+randomSubset (List, ZZ) := List => (L, k) -> ( -- gets random size k subset of L (samples without replacement)
+    i := random(#L);
+    {L#i} | (if k == 1 then {} else randomSubset(L_(delete(i, toList(0..<#L))), k-1))
+)
+
+sort (List, Function) := opts -> (L, f) -> (
+	H := hashTable(identity, apply(L, l -> f(l) => l));
+	deepSplice join apply(sort keys H, k -> H#k)
 )
 
 TEST /// -- non-cyclic modules

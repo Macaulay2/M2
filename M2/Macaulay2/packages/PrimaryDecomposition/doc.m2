@@ -394,16 +394,17 @@ document {
 	  "M" => Module
 	  },
      Outputs => {
-	  List => {"of ", TO2(Module,"submodules"), ", a minimal list of primary submodules whose intersection is ", TT "0"}
+	  List => {"of primary ", TO2(Module,"submodules"), " of ", TT "M", ", whose intersection is ", TT "0"}
 	  },
-     "This routine returns an irredundant primary decomposition for the zero submodule of ", 
-     TT "M", ", i.e. a list of submodules ", TT "Q_i", " of ", TT "M", 
+     "This routine returns a minimal primary decomposition for the zero submodule of ", 
+     TT "M", ", i.e. a minimal list of submodules ", TT "Q_i", " of ", TT "M", 
      " such that the intersection of all the ", TT "Q_i", " is ", TT "0", " and ", TT "Ass(M/Q_i) = {p_i}",
-     " for some unique associated prime ", TT "p_i", " of ", TT "M", ", which is minimal (both
-     inclusion-wise and cardinality-wise). The ",
-     TT "i", "-th element of this output is primary to the ", TT "i", "-th element of the output of ",
-     TT "associatedPrimes M", ". The algorithm used is inspired by the
-     Eisenbud-Huneke-Vasconcelos algorithm, modified to work for modules.",
+     " for some associated prime ", TT "p_i", " of ", TT "M", ". Here minimality means that the",
+     " decomposition consists of as few submodules as possible while also being irredundant,",
+     " i.e. no submodule in the list contains the intersection of the others. The ",
+     TT "i", "-th element of this output is primary to the ", TT "i", "-th element of ",
+     TT "associatedPrimes M", ". The algorithm used is inspired by the",
+     " Eisenbud-Huneke-Vasconcelos algorithm, modified to work for modules.",
      PARA{},
      EXAMPLE {
 	  "R = QQ[x_0..x_3]",
@@ -420,10 +421,10 @@ document {
      TO subquotient, ", which is an ordered pair consisting of (generators, relations) 
      represented as column matrices. As submodules of ", TT "M", ", each module in the 
      output list has the same relations as ", TT "M", ", and has generators which are ", 
-     TT "R", "-linear combinations of generators of ", TT "M", ".",
+     TT "R", "-linear combinations of generators of ", TT "M", ", where ", TT "R = ring M", ".",
      PARA{},
      "To obtain a primary decomposition of a submodule ", TT "N", ", run this function on
-     the quotient ", TT "M/N", ". Note that in general ", TT "/", " does not check
+     the quotient ", TT "M/N", ". Note that in general the ", TT "/", " command does not check
      whether the second input is actually a submodule of the first, and a non-sensible 
      result may be returned if this is not the case.",
      -- EXAMPLE {
@@ -436,9 +437,7 @@ document {
      as can be seen by calling ", TT "primaryDecomposition comodule I", " for an ideal ",
      TT "I", ". For convenience, one can also call ", TT "primaryDecomposition R", " for a
      ring ", TT "R", " (which is most useful when ", TT "R", " is a ", TO "QuotientRing",
-     "). The corresponding list of associated prime ideals is cached in ", 
-     TT ///M.cache#"AssociatedPrimes"///, ", and can be obtained with ", TT "associatedPrimes M", 
-     ". When computing primary decompositions of ideals with this method, remember to add 
+     "). When computing primary decompositions of ideals with this method, remember to add 
      back the original ideal, to obtain the corresponding primary ideals, as in the following example.",
      EXAMPLE {
 	  "I = intersect((ideal(x_0..x_3))^5, (ideal(x_0..x_2))^4, (ideal(x_0..x_1))^3)",
@@ -451,21 +450,32 @@ document {
      PARA{},
      "The results of the computation are stored in ", TT ///M.cache#"primaryComponents"///, 
      ", which is a ", TO "HashTable", " whose keys are associated primes and values are      
-     the corresponding primary components. The computation may be interrupted at any point,
+     the corresponding primary components. The corresponding list of associated prime ideals is
+     cached in ", TT ///M.cache#"AssociatedPrimes"///, ", and can be obtained with ", 
+     TT "associatedPrimes M", ". The computation may be interrupted at any point,
      and can be resumed later without recomputing already-known primary components. To
      display detailed information throughout the computation, set the global variable ",
      TO "debugLevel", " to a value greater than 0, e.g. ", TT "debugLevel = 1", ".",
+     PARA{},
+     "This method has one optional input ", TT "Strategy", ", which accepts 3 values, namely: ",
+     TT ///"Sat"///, ", ", TT ///"Hom"///, ", and ", TT ///"Res"///, ". These are used only to determine
+     the algorithm for finding embedded components. The default value is ", 
+     TT ///"Sat"///, ", which is typically the fastest on common examples of interest. However, ", 
+     TT ///"Hom"///, " can be significantly faster on some slightly larger examples. It is
+     recommended to try different ", TT "Strategy", " values if the computation of a 
+     particular (embedded) component is taking too long - one can start the computation with 
+     one strategy, and interrupt and resume with a different strategy (even multiple times) if 
+     desired.",
      Caveat => {"Note that although isolated components (i.e. those corresponding to minimal
-     primes) are uniquely determined by the module, embedded components are never unique,
-     and thus specifying generators of an embedded component requires non-canonical choices.
-     For speed purposes, this algorithm searches for embedded components obtained by adding 
-     a bracket power of the embedded prime, with exponent determined by the degrees of
-     generators of the embedded prime and ", TT "ann M", ". In particular, the generators 
-     of an embedded component may not be of minimal possible degree."},
+     primes) are unique, embedded components are never unique, and thus specifying
+     generators of an embedded component requires non-canonical choices. For speed 
+     purposes, this algorithm searches for embedded components obtained by adding a 
+     bracket power of the embedded prime, with exponent determined by the degrees of
+     generators of the embedded prime and ", TT "ann M", ". In particular, the
+     generators of an embedded component may not be of minimal possible degree."},
      SeeAlso => {(primaryDecomposition,Ideal),(associatedPrimes,Module),isPrimary,topComponents}
      }
-
-
+     
 document {
      Key => {radicalContainment,(radicalContainment,RingElement,Ideal),[radicalContainment,Strategy]},
      Headline => "whether an element is contained in the radical of an ideal",
@@ -481,11 +491,12 @@ document {
      "Determines if a given element ", TT "g", " is contained in the radical of a given ideal ", 
      TT "I", ". There are 2 algorithms implemented for doing so: the first (default) uses the 
      Rabinowitsch trick in the proof of the Nullstellensatz, and is called with ", 
-     TT "Strategy => 'Rabinowitsch'", ". The second uses a theorem of Kollar to obtain an
-     effective upper bound on the required power to check containment, together with
-     repeated squaring, and is called with ", TT "Strategy => 'Kollar'", ". This strategy 
-     is generally quite fast if a Grobner basis of ", TT "I", " has already been computed. A
-     recommended way to do so is to run ", TT "g % I == 0", " before calling this function.",
+     TT ///Strategy => "Rabinowitsch"///, ". The second algorithm, for homogeneous ideals, 
+     uses a theorem of Kollar to obtain an effective upper bound on the required power to 
+     check containment, together with repeated squaring, and is called with ", 
+     TT ///Strategy => "Kollar"///, ". The latter algorithm is generally quite fast if a Grobner basis 
+     of ", TT "I", " has already been computed. A recommended way to do so is to check
+     ordinary containment, i.e. ", TT "g % I == 0", ", before calling this function.",
      PARA{},
      EXAMPLE lines ///
      	  d = (4,5,6,7)

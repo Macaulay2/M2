@@ -183,8 +183,7 @@ GTZ1 Ideal := (I) -> (
      comps
      )
 
-end---------------------------------------
-
+end
 -- Bayes example #138
 loadPackage "ExampleIdeals"
 time H = examplesBayes();
