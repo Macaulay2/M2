@@ -521,7 +521,7 @@ Description
     elements.
     
     The actual format allowed for matrices is described in @TO "matrixFromString"@.  
-    After calling @TO "kreuzerSkarke"@ to get a list of @TO "KSEntry"@'s, one uses @TO "(matrix, KSEntry)"@
+    After calling @TO "kreuzerSkarke"@ to get a list of @TO "KSEntry"@'s, one uses @TO (matrix, KSEntry)@
     to obtain a matrix .  Then
     use this function to obtain the matrix.
   Example

@@ -3863,7 +3863,7 @@ Description
   apply (5, i-> hilbertFunction(i, extra))
 SeeAlso
   "IntegralClosure"
-  "makeS2"
+  "IntegralClosure::makeS2"
   "BGG"
   "cohomology"
   "HH^ZZ SumOfTwists"
