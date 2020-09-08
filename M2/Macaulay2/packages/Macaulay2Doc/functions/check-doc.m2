@@ -55,7 +55,7 @@ Node
       if true, do not use the @TT "-q"@ in arguments to the Macaulay2 executable when running tests,
       thereby allowing it to load the user's @TO "initialization file"@, allowing it to load packages
       previously installed in the user's @TO2 {"applicationDirectory", "application directory"}@
-      and allowing packages it loads to read their configuration files from the the user's
+      and allowing packages it loads to read their configuration files from the user's
       @TO2 {"applicationDirectory", "application directory"}@. If false, the @TT "-q"@ argument is added.
       If @TO "null"@, then add @TT "-q"@ if it appears as an option in @TO "commandLine"@.
   Consequences
@@ -63,7 +63,7 @@ Node
       the tests in the package @TT "pkg"@ are run (in separate Macaulay2 processes, with the random number
       seed initialized to 0), and any errors are reported.
     Item
-      if @TT "i"@ is given, only the The i-th test in the package is run and any errors are reported.
+      if @TT "i"@ is given, only the i-th test in the package is run and any errors are reported.
   Description
     Text
       It is important for package authors to provide tests to ensure that the package is functioning properly.
@@ -74,15 +74,15 @@ Node
       the package and load the file from the main package source file.
 
       For example, to run the tests for the @TO "LLLBases :: LLLBases"@ package (Lenstra-Lenstra-Lovasz bases), use:
-    Code
-      EXAMPLE { PRE ////needsPackage "LLLBases"
-	  check_1 LLLBases
-	  check LLLBases//// }
+    CannedExample
+      needsPackage "LLLBases"
+      check_1 LLLBases
+      check LLLBases
     Text
       Alternatively, if the package is installed somewhere accessible, one can do the following.
-    Code
-      EXAMPLE { PRE ////check_1 "LLLBases"
-	  check "LLLBases"//// }
+    CannedExample
+      check_1 "LLLBases"
+      check "LLLBases"
   Caveat
     Currently, if the package was only partially loaded because the documentation was
     obtainable from a database (see @TO "beginDocumentation"@), then the package will be reloaded,

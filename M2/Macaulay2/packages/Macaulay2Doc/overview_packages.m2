@@ -146,7 +146,7 @@ Node
         :a list of exported functions and variables, set via @TO export@ and @TO exportMutable@
         :the code that constitutes the package
         :the documentation for the package, which comes after @TO beginDocumentation@
-        :a number tests for the new package, add using @TO TEST@
+        :a number of tests for the new package, added using @TO TEST@
 
     Text
       See @TO "an example of a package"@ for the basic template for new packages, or

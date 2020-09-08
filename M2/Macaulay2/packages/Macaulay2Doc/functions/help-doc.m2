@@ -237,11 +237,9 @@ Node
       into memory.
 
     -- this example won't work until after Macaulay2Doc is installed.
-    Code
-      EXAMPLE { PRE ////
-	  about resolution
-	  help 5
-	  //// }
+    CannedExample
+      about resolution
+      help 5
   Caveat
     Since @TT "s"@ is taken as a regular expression, parentheses serve
     for grouping subexpressions, rather than matching themselves.
@@ -282,8 +280,6 @@ Node
 	  SPAN (////viewHelp x////, ////                        -- view documentation on ////, TT ////x////, //// in browser////),
 	  }@
 
-     "To read the documentation in info form, in case you happen to be running Macaulay2 in a
-     terminal window, replace ", TO "help", " by ", TO "infoHelp", " in any of the commands
-     above."
-     }
+      To read the documentation in info form, in case you happen to be running Macaulay2 in a
+      terminal window, replace @TO "help"@ by @TO "infoHelp"@ in any of the commands above.
 ///

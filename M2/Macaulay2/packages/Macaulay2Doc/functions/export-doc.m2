@@ -35,7 +35,7 @@ Node
 
       Use @TO exportMutable@ to export symbols whose values the user is permitted to modify.
 
-      Use @TO (debug, Package)@ to export private symbols of a package.
+      Use @TO (debug, Package)@ to import private symbols of a package.
   SeeAlso
     exportMutable
     (debug, Package)
@@ -64,7 +64,7 @@ Node
 
       No single-letter symbol should be exported, as such symbols are reserved as variables for the user.
 
-      Use @TO (debug, Package)@ to export private symbols of a package.
+      Use @TO (debug, Package)@ to import private symbols of a package.
   SeeAlso
     export
     (debug, Package)

@@ -216,12 +216,12 @@ Node
       notify = true
       loadPackage "FirstPackage"
     Text
-      If that has been done, then this command will reload the package instead:
+      If the input is a loaded package, then this command will reload the package instead:
     Example
       loadPackage FirstPackage
     Text
       In fact this version of the command is simply a convenient shortcut for @TT "loadPackage"@ with the option
-      @TT "Reload"@ overriden to true. All options of @TT "loadPackage"@.
+      @TT "Reload"@ overriden to true.
   SeeAlso
     "packages"
     readPackage

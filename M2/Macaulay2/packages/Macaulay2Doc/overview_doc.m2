@@ -23,13 +23,13 @@ Node
       such as a symbol, a function name, a function call (that is, a function name, together with
       specific types of its arguments), an optional argument to a function, or a package.
 
-      The easiest way to write documentation for an entry is to start with an examples as a template.
+      The easiest way to write documentation for an entry is to start with an example as a template.
       See the documentation on either of the documentation methods above for templates and examples.
 
     Text
       @HEADER3 "The documentation writing cycle"@
 
-      Start with the package that you wish to document, and select one, or several of the above
+      Start with the package that you wish to document, and select one or several of the above
       examples or templates. Cycle through the following steps as you refine your documentation.
 
       @OL {
@@ -46,7 +46,6 @@ Node
       @UL {
           {"Lowercase is used for all titles, unless a proper noun is being used."},
           {"Use ", TO TO, " to reference any Macaulay2 function, option, or variable occurring in the documentation as a hyperlink."},
-          {"If one needs to refer to the ", TT "i", "-th coefficient of some object, then use the format as given here."},
           {TO Inputs, ", ", TO Outputs, ", and ", TO Consequences, " should not end with periods."}
           }@
   SeeAlso
