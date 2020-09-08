@@ -136,13 +136,21 @@ makeDocumentTag' := opts -> key -> (
     fkey := formatDocumentTag nkey;
     local pkg;
     (pkg, fkey) = parseDocumentTag fkey;
+    -- Try to detect the package
     pkg = if pkg =!= null then pkg
     else  if opts#Package =!= null then opts#Package
     else  if instance(nkey, Sequence) then currentPackage -- this is a kludge, which allows Schubert2 to document (symbol SPACE,OO,RingElement)
     else  if (pkg' := package nkey) =!= null then pkg'
     else  if member(fkey, allPackages()) then fkey
     else  if (rawdoc := fetchAnyRawDocumentation fkey) =!= null then package rawdoc.DocumentTag;
-    if pkg === null then error("makeDocumentTag: package cannot be determined: ", nkey);
+    -- If not detected, signal an error and failover to currentPackage
+    if pkg === null then (
+	if currentDocumentTag === null   then error("makeDocumentTag: package cannot be determined: ", nkey) else
+	if signalDocumentationError fkey then (
+	    loc := locate currentDocumentTag;
+	    if rawdoc === null then printerr("warning: reference ", fkey, " was not found in any package. ",
+		"First mentioned near:\n  ", loc#0, ":", toString loc#1));
+	pkg = currentPackage);
     new DocumentTag from new HashTable from {
 	Key            => if instance(nkey, Symbol) then toString nkey else nkey,
 	Format         => fkey,
@@ -368,15 +376,6 @@ headline Thing := key -> (
     if s =!= null and s#?Headline then s#Headline)
 headline DocumentTag := tag -> (
     rawdoc := fetchRawDocumentation getPrimaryTag tag;
-    if rawdoc === null and signalDocumentationWarning tag then (
-	if currentDocumentTag === null then return null;
-	loc := locate currentDocumentTag;
-	rawdoc = fetchAnyRawDocumentation tag;
-	if rawdoc === null
-	then printerr("warning: reference ", format tag, " was not found in any package. ",
-	    "First mentioned near:\n  ", loc#0, ":", toString loc#1)
-	else printerr("warning: reference ", format tag, " not found in package ", toString package tag, ". ",
-	    "Did you mean ", format toString rawdoc.DocumentTag, " near:\n  ", loc#0, ":", toString loc#1));
     if rawdoc#?Headline then rawdoc#Headline)
 
 emptyOptionTable := new OptionTable from {}
@@ -389,7 +388,7 @@ getOptionDefaultValues Function := f -> (
 getOptionDefaultValues Sequence := s -> (
      o := options s;
      if o =!= null then o else if s#?0 and instance(s#0, Function) then getOptionDefaultValues s#0 else emptyOptionTable)
- 
+
 processInputOutputItems := (key, fn) -> item -> (
     -- "inp" => ZZ => ("hypertext sequence")
     --  opt  => ZZ => ("hypertext sequence")
@@ -658,7 +657,6 @@ document List := opts -> args -> (
     o#"filename" = currentFileName;
     o#"linenum"  = currentLineNumber();
     o = new HashTable from o;
-    -- TODO: check for hadDocumentationWarning and Error
     currentDocumentTag = null;
     storeRawDocumentation(tag, o))
 

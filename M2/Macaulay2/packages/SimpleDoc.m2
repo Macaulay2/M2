@@ -234,6 +234,7 @@ reassemble = (indent, textlines) -> concatenate between(newline,
 getKeys = (textlines, keylinenum) -> (
     keyList := apply(getNonempty textlines, value);
     if #keyList == 0 then error("Key (line ", toString keylinenum, " of string): expected at least one key");
+    Core#"private dictionary"#"currentDocumentTag" <- makeDocumentTag(keyList#0, Package => currentPackage); -- for debugging purposes
     keyList)
 
 getCode = (textlines, keylinenum) -> (
