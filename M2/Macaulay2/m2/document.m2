@@ -55,22 +55,6 @@ verifyKey Array    := key -> (
     if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
 
 -----------------------------------------------------------------------------
--- identifying the package of a document tag
------------------------------------------------------------------------------
--- TODO: deprecate this
-packageKey0 := method(Dispatch => Thing)
-packageKey0 Thing    := key -> currentPackage
-packageKey0 Sequence := key -> currentPackage		    -- this is a kludge, which allows Schubert2 to document (symbol SPACE,OO,RingElement)
--- packageKey0 Sequence :=				    -- this might be the right way to do it
-packageKey0 Array    := key -> ( n := youngest apply(toSequence key, package); assert(n =!= null); n )
-
-packageKey := method()
-packageKey(Array, String) := (key, fkey) -> packageKey0 key
-packageKey(Thing, String) := (key, fkey) -> (
-    r := scan(loadedPackages, pkg -> if fetchRawDocumentation(pkg,fkey) =!= null then break pkg);
-    if r === null then packageKey0 key else r)
-
------------------------------------------------------------------------------
 -- normalizeDocumentKey
 -----------------------------------------------------------------------------
 -- The normalized form for simple objects will be the symbol whose value is the object
@@ -152,8 +136,12 @@ makeDocumentTag' := opts -> key -> (
     fkey := formatDocumentTag nkey;
     local pkg;
     (pkg, fkey) = parseDocumentTag fkey;
-    pkg = if class nkey === Symbol -* and package nkey =!= Core *- then package nkey
-    else if opts#Package =!= null then opts#Package else packageKey(key, fkey);
+    pkg = if pkg =!= null then pkg
+    else  if opts#Package =!= null then opts#Package
+    else  if instance(nkey, Sequence) then currentPackage -- this is a kludge, which allows Schubert2 to document (symbol SPACE,OO,RingElement)
+    else  if (pkg' := package nkey) =!= null then pkg'
+    else  if member(fkey, allPackages()) then fkey
+    else  if (rawdoc := fetchAnyRawDocumentation fkey) =!= null then package rawdoc.DocumentTag;
     if pkg === null then error("makeDocumentTag: package cannot be determined: ", nkey);
     new DocumentTag from new HashTable from {
 	Key            => if instance(nkey, Symbol) then toString nkey else nkey,

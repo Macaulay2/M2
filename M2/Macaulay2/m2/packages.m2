@@ -511,6 +511,7 @@ package Dictionary := d -> (
     else scan(values PackageDictionary, pkg -> if class value pkg === Package and (value pkg).Dictionary === d then break (value pkg))
     )
 package Thing      := x -> ( d := dictionary x; if d =!= null then package d )
+package String     := s -> ( if (d := fetchAnyRawDocumentation s) =!= null then package d.DocumentTag )
 package Symbol     := s -> (
     n := toString s;
     r := scan(values PackageDictionary, p ->

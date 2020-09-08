@@ -426,7 +426,6 @@ help = Command help
 -- the top level help page
 frontpage := applicationDirectory() | topFileName;
 
--- TODO: viewHelp "blah" should not open page for null
 viewHelp = method(Dispatch => Thing)
 viewHelp String := key -> viewHelp makeDocumentTag key
 viewHelp Thing  := key -> (
