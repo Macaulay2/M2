@@ -68,7 +68,8 @@ export {
      --functions from punctual Hilb approach
      "getNoetherianOperatorsHilb",
      "getIdealFromNoetherianOperators",
-     "joinIdeals"
+     "joinIdeals",
+     "mapToPunctualHilbertScheme"
      }
 
 --TruncDualData private keys
@@ -1019,6 +1020,15 @@ getHilb = (P, depVars) -> (
     varsHilb := apply(depVars, i -> value("symbol h" | toString(i)) );
     S := (frac(R/P))(monoid[varsHilb]);
     S
+)
+
+mapToPunctualHilbertScheme = (Q) -> (
+    R := ring Q;
+    P := radical Q;
+    indVars := support first independentSets P;
+    depVars := gens R - set indVars;	
+    S := getHilb(P, depVars);
+    mapRtoHilb(Q, P, S, depVars, indVars)
 )
 
 -- This map receives an ideal Q in R=QQ[x_1..x_n] primary to a maximal ideal P
