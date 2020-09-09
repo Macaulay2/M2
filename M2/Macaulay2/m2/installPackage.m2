@@ -52,7 +52,7 @@ runfun := f -> if instance(f, Function) then f() else f
 
 -- returns the Layout index of the installPrefix, equal to 1 or 2
 initInstallDirectory := opts -> (
-    installPrefix = toAbsolutePath(runfun opts.InstallPrefix);
+    installPrefix = toAbsolutePath opts.InstallPrefix;
     if not fileExists installPrefix then makeDirectory installPrefix;
     installPrefix = realpath installPrefix;
     installLayoutIndex := detectCurrentLayout installPrefix;
@@ -548,7 +548,7 @@ installPackage = method(
 	DebuggingMode          => null,
 	FileName               => null,
 	IgnoreExampleErrors    => false,
-	InstallPrefix          => () -> applicationDirectory() | "local/",
+	InstallPrefix          => applicationDirectory() | "local/",
 	MakeDocumentation      => true,
 	MakeHTML               => true,
 	MakeInfo               => true,
@@ -803,11 +803,11 @@ removeFiles = p -> scan(reverse findFiles p, fn -> if fileExists fn or readlink 
 	    if length readDirectory fn == 2 then removeDirectory fn)
 	else removeFile fn))
 
-uninstallPackage = method(Options => { InstallPrefix => () -> applicationDirectory() | "local/" })
+uninstallPackage = method(Options => { InstallPrefix => applicationDirectory() | "local/" })
 uninstallPackage Package := opts -> pkg -> uninstallPackage(toString pkg, opts)
 uninstallPackage String  := opts -> pkg -> (
     checkPackageName pkg;
-    installPrefix := minimizeFilename(runfun opts.InstallPrefix | "/");
+    installPrefix := minimizeFilename opts.InstallPrefix;
     apply(findFiles apply({1, 2},
 	    i -> apply(flatten {
 		    Layout#i#"packages" | pkg | ".m2", Layout#i#"info" | pkg | ".info",

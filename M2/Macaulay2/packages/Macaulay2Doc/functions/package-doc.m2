@@ -507,9 +507,8 @@ Node
       Unix command @TT "info"@ or using @TT "emacs"@
     InstallPrefix=>String
       the installation prefix for installation of the files of the package, in case encapsulation is not enabled,
-      or for installation of the links to the files, in case encapsulation is enabled. The value of this option can
-      be a string or a function of no arguments returning a string. The default value is the subdirectory named
-      @TT "local"@ of the user's @TO "application directory"@.
+      or for installation of the links to the files, in case encapsulation is enabled. The default value is the
+      subdirectory named @TT "local"@ of the user's @TO "application directory"@.
     MakeLinks=>Boolean
       whether to make links to the files after installing them, in case encapsulation is enabled
     RemakeAllDocumentation=>Boolean
@@ -570,13 +569,13 @@ Node
       depending on the value of the @TT "SeparateExec"@ option:
 
     Tree
-      :when @TT "SeparateExec"@ is false the files are installed as follows:
+      :Install paths given @TT "SeparateExec => false"@:
         @TT (Layout#1#"packages"|"PackageName.m2")@,
         @TT (Layout#1#"info"|"PackageName.info")@,
         @TT replace("PKG", "PackageName", Layout#1#"packagelib")@,
         @TT replace("PKG", "PackageName", Layout#1#"package")@, and
         @TT replace("PKG", "PackageName", Layout#1#"packagedoc")@;
-      :when it is true the paths to the files are modified to reflect the type of your machine:
+      :Install paths given @TT "SeparateExec => true"@:
         @TT (Layout#2#"packages"|"PackageName.m2")@,
         @TT (Layout#2#"info"|"PackageName.info")@,
         @TT replace("PKG", "PackageName", Layout#2#"packagelib")@,
@@ -584,6 +583,7 @@ Node
         @TT replace("PKG", "PackageName", Layout#2#"packagedoc")@.
 
     Text
+      Note that in the latter case, the paths reflect the type of your machine.
       In addition, if no errors occurred during running the examples, then an empty file whose name is
       @TT (replace("PKG", "PackageName", Layout#1#"packagelib")|".installed")@ or
       @TT (replace("PKG", "PackageName", Layout#2#"packagelib")|".installed")@ is created,

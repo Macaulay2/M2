@@ -64,6 +64,9 @@ document {
 	      UL {
 		   LI { "The variable ", TT "backupFileRegexp", " has been replaced by the ", TO "Exclude", "
 			option to ", TO "copyDirectory", "."
+			},
+		   LI { "The option ", TO [installPackage, InstallPrefix], " no longer accepts a function as input.
+		        only strings containing a path to the installation prefix are accepted."
 			}
 		   }
 	      },
