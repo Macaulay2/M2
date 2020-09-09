@@ -298,22 +298,22 @@ net TO  := x -> (
      )
 net TO2 := x -> x#1
 
+-- TODO: move this back from help.m2
 net  MENU := x -> net redoMENU x
-info MENU := r -> (
-     pre := "* ";
-     savePW := printWidth;
-     printWidth = 0; -- wrapping a menu item makes it hard for emacs info to follow links
-     ret := sublists(toList r,
-	  x -> class x === TO,
-	  v -> stack apply(v, i -> pre | wrap (
-		    fkey := format i#0;
-		    icon := infoTagConvert getPrimaryTag i#0;
+info MENU := x -> (
+    contents := deepApply'(x, identity, item -> instance(item, BasicList) and not isLink item);
+    pushvar(symbol printWidth, 0); -- wrapping a menu item makes it hard for emacs info to follow links
+    ret := join(
+	{"* Menu:", ""},
+	nonnull sublists(contents,
+	    line    -> isLink line,
+	    section -> stack apply(section, line -> "* " | wrap(
+		    fkey := format line#0;
+		    icon := infoTagConvert getPrimaryTag line#0;
 		    cfkey := infoLinkConvert fkey;
-		    t := cfkey | if cfkey === icon then "::" else ": " | icon | ".";
-		    h := headline i#0;
-		    if h =!= null then t = concatenate(t,28-#t:" ","  ") | h;
-		    t)),
-	  x -> stack("",info DIV x)
-	  );
-     printWidth = savePW;
-     stack join({"* Menu:",""}, ret))
+		    text := cfkey | if cfkey === icon then "::" else ": " | icon | ".";
+		    title := headline line#0;
+		    if title =!= null then concatenate(text, 28-#text:" ", "  ") | title else text)),
+	    line -> stack("", info if instance(line, Hypertext) then line else DIV {line})));
+     popvar symbol printWidth;
+     stack ret)
