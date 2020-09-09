@@ -220,40 +220,36 @@ alignmentFunctions := new HashTable from {
 netList VisibleList := o -> (x) -> (
      x = apply(x, row -> if instance(row,List) then row else {row});
      (br,hs,vs,bx,algn) := (o.BaseRow,o.HorizontalSpace,o.VerticalSpace,o.Boxes,splice o.Alignment);
-     if #x == 0 then return if bx then stack(2 : "++") else stack();
      if br < 0
      or br >= #x+1					    -- this allows the base row to be absent
      then error "netList: base row out of bounds";
      x = apply(x, row->apply(row, netn));
      n := maxN(length \ x);
-     if n == 0 then return if bx then stack(2 : "++") else stack();
+     if n == 0 then ( x={{net000}}; n=1; );
+     if not instance(bx,List) then bx={bx,bx};
+     bxrows := set if bx#0 === true then 0..#x else if bx#0 === false then {} else bx#0;
+     bxcols := set if bx#1 === true then 0..n else if bx#1 === false then {} else bx#1;
      x = apply(x, row -> if #row == n then row else join(row, n-#row : stack()));
      colwids := max \ transpose applyTable(x,width);
-     if not instance(algn,List) then algn = n : algn ;
+     if not instance(algn,List) then algn = n : algn;
      algn = apply(algn, key -> alignmentFunctions#key);
      x = apply(x, row -> apply(n, i -> algn#i(colwids#i,row#i)));
-     if bx then (
-     	  if hs > 0 then (
-	       colwids = apply(colwids, wid -> wid+2*hs);
-	       hsep := spaces hs;                                 -- "spaces" puts characters on the baseline, what about an empty net of width hs?
-	       x = apply(x, row -> apply(row, i -> horizontalJoin(hsep,i,hsep)));
-	       );
-	  x = apply(x, row -> mingle(#row+1:"|"^(max(height\row)+vs,max(depth\row)+vs), row));
-	  )
-     else if hs > 0 then (
-	  hsep = spaces hs;                                 -- "spaces" puts characters on the baseline, what about an empty net of width hs?
-	  x = apply(x,i -> between(hsep,i));
-	  );
-     x = apply(x, horizontalJoin);
-     if bx then (
-	  hbar := concatenate mingle(#colwids+1:"+",apply(colwids,wid -> wid:"-"));
-	  x = mingle(#x+1:hbar,x);
-	  br = 2*br + 1;
-	  )
-     else if vs > 0 then (
-     	  x = between(stack(vs : ""),x);
-	  br = 2*br;
-	  );
+     x = apply(#x, i -> (
+	     h := max(height \ x#i);
+	     if member(i,bxrows) then h = h + vs;
+	     d := max(depth \ x#i);
+	     if member(i+1,bxrows) or i<#x-1 then d = d + vs;
+	     sep := "|"^(h,d);
+	     nosep := ""^(h,d);
+	     hsep := (spaces hs)^(h,d);
+	     (if member(0,bxcols) then sep | hsep else nosep)
+	     | (horizontalJoin mingle(x#i,apply(1..#colwids-1,j->if member(j,bxcols) then hsep|sep|hsep else hsep)))
+	     | (if member(#colwids,bxcols) then hsep | sep else nosep)
+	     ));
+     colwids = apply(#colwids, i -> colwids#i+hs*(if member(i,bxcols) then 2 else if i<#colwids-1 or member(#colwids,bxcols) then 1 else 0));
+     hbar := concatenate mingle(apply(#colwids+1,i->if member(i,bxcols) then "+" else ""),apply(colwids,wid -> wid:"-"));
+     x = mingle(apply(#x+1,i->if member(i,bxrows) then hbar else net000),x);
+     br = 2*br + 1;
      (stack x)^(
 	  sum(0 .. br-1, i -> depth x#i)
 	  +
