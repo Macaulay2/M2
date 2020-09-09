@@ -19,7 +19,7 @@ Node
                   else categories#keyword#(#categories#keyword) = (pkgname, pkgopts))));
       DIV flatten apply(sort keys categories, keyword -> {
               SUBSECTION {keyword},
-              UL apply(new List from categories#keyword, pkgpair -> (
+              UL apply(sort new List from categories#keyword, pkgpair -> (
                       (pkgname, pkgopts) := pkgpair;
                       LI {
 			  TO (pkgname | "::" | pkgname),

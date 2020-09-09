@@ -5,6 +5,7 @@ newPackage("Markov",
 	  {Name => "Mike Stillman"}
 	  },
      DebuggingMode => false,
+     Keywords => {"Statistics"},
      Headline => "Markov ideals arising from Bayesian networks in statistics",
      Version => "1.2",
      PackageImports => {"Elimination"}

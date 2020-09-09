@@ -7,6 +7,7 @@ newPackage(
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
+	Keywords => {"Miscellaneous"},
         DebuggingMode => false,
 	AuxiliaryFiles => true,
 	PackageImports => {"Text"},

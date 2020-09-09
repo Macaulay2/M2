@@ -10,6 +10,7 @@ newPackage( "SegreClasses",
          HomePage => "http://coreyharris.name"}
     },
     Headline => "test containment of varieties and computes algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products, via a very general Segre class computation",
+    Keywords => {"Intersection Theory"},
     DebuggingMode => false
 );
 

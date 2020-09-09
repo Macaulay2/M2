@@ -5,6 +5,7 @@ newPackage(
      Headline => "Kronecker and rational normal forms",
      Authors => {{Name => "Edward Carter",
                Email => "edward.carter@gmail.com"}},
+     Keywords => {"Commutative Algebra"},
      DebuggingMode => false
      )
     

@@ -11,6 +11,7 @@ newPackage(
 	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
 	     }, 
     	Headline => "betti diagram operations useful for investigating the Boij-Soederberg conjectures",
+	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false
     	)
 

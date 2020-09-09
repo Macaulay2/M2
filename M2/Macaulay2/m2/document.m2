@@ -139,10 +139,10 @@ makeDocumentTag' := opts -> key -> (
     -- Try to detect the package
     pkg = if pkg =!= null then pkg
     else  if opts#Package =!= null then opts#Package
+    else  if member(fkey, allPackages()) then fkey
     else  if instance(nkey, String) then currentPackage -- FIXME
     else  if instance(nkey, Sequence) then currentPackage -- this is a kludge, which allows Schubert2 to document (symbol SPACE,OO,RingElement)
     else  if (pkg' := package nkey) =!= null then pkg'
-    else  if member(fkey, allPackages()) then fkey
     else  if (rawdoc := fetchAnyRawDocumentation fkey) =!= null then package rawdoc.DocumentTag;
     -- If not detected, signal an error and failover to currentPackage
     if pkg === null then (

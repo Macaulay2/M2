@@ -7,8 +7,9 @@ newPackage(
     Authors => {{Name => "Amy Wiebe", Email => "w.amy.math@gmail.com"},
 	{Name => "Antonio Macchia", Email => "macchia.antonello@gmail.com"}},
     Headline => "Slack ideals of polytopes and matroids",
-    PackageImports => {"Polyhedra", "Matroids", "EdgeIdeals", "LLLBases", "Elimination", "SimpleDoc"},
-    PackageExports => {"Polyhedra", "Matroids", "EdgeIdeals", "LLLBases", "Elimination", "SimpleDoc"},
+    Keywords => {"Commutative Algebra", "Matroids"},
+    PackageImports => {"Polyhedra", "Matroids", "EdgeIdeals", "LLLBases", "Elimination"},
+    PackageExports => {"Polyhedra", "Matroids", "EdgeIdeals", "LLLBases", "Elimination"},
     DebuggingMode => true
     )
 

@@ -29,6 +29,7 @@ newPackage(
         {Name => "David Eisenbud", Email => "de@msri.org",           HomePage => "http://www.msri.org/~de/"}
         },
     Headline => "operations over a local ring (R, P)",
+    Keywords => {"Commutative Algebra"},
     PackageExports => {"PruneComplex"},
     AuxiliaryFiles => true
     )

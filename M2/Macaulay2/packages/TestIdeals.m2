@@ -77,6 +77,7 @@ Authors => {
      }
 },
 Headline => "singularities in positive characteristic",
+Keywords => {"Commutative Algebra"},
 AuxiliaryFiles=>true,
 PackageExports=>{"Depth"},
 Certification => {

@@ -21,6 +21,7 @@ newPackage(
                 HomePage => "http://www.math.cornell.edu/~mike"}
             },
         Headline => "SVD (singular value decomposition) of a complex over the reals and related functions",
+	Keywords => {"Homological Algebra", "Commutative Algebra"},
 	PackageExports => {"LLLBases"},
         DebuggingMode => false
         )

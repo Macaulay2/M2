@@ -5,6 +5,7 @@ newPackage("XML",
     	Date => "September 1, 2010",
     	Authors => {{Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "an XML parser",
+	Keywords => {"Miscellaneous"},
     	DebuggingMode => false)
 export {
      "XMLnode", "tag", "children", "parse", "toXMLnode", "Trim", "toLibxmlNode",

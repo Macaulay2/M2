@@ -31,6 +31,7 @@ newPackage(
 		    HomePage => "http://math.mit.edu/~ssam/"
 		    }},
 	  Headline => "maps between representations of the general linear group based on the Pieri formulas",
+	  Keywords => {"Representation Theory"},
 	  DebuggingMode => false
 	  )
 

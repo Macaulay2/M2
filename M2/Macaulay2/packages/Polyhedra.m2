@@ -24,6 +24,7 @@ newPackage("Polyhedra",
 	 "volume number" => "1",
 	 "volume URI" => "http://j-sag.org/Volume1/"
 	 },
+    Keywords => {"Convex Geometry"},
     Authors => {
       {
          Name => "René Birkner",

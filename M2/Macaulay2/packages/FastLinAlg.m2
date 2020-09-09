@@ -15,6 +15,7 @@ Version => "0.21", Date => "May 25th, 2020", Authors => {
     Email=> "yuhuiyao4ever@gmail.com"
     }
 }, --this file is in the public domain
+Keywords => {"Linear Algebra"},
 Headline => "A package for faster linear algebra operations.")
 export{
 --  "selectSmallestTerms",

@@ -5,6 +5,7 @@ newPackage(
      Date => "July 1, 2008",
      AuxiliaryFiles => true,
      Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},
+     Keywords => {"Commutative Algebra"},
      Headline => "functions for primary decomposition"
      )
 

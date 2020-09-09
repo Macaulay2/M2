@@ -11,6 +11,7 @@ newPackage(
         Date => "April 12, 2020",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
+	Keywords => {"Commutative Algebra"},
         PackageExports => {"Resultants","Cremona"},
     	DebuggingMode => false,
     	Reload => false

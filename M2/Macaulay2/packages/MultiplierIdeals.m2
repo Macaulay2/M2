@@ -41,6 +41,7 @@ newPackage(
   },
   Headline => "multiplier ideals, log canonical thresholds,
     and jumping numbers",
+  Keywords => {"D-modules"},
   PackageImports=>{
     "ReesAlgebra",
     "Normaliz"

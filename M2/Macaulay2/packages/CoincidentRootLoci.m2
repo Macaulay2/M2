@@ -8,6 +8,7 @@ newPackage(
     	Headline => "coincident root loci",
         Authors => {{Name => "Maria Chiara Brambilla", Email => "brambilla@dipmat.univpm.it"},
                     {Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
+	Keywords => {"Real Algebraic Geometry", "Interfaces"},
         PackageExports => {"Cremona","Resultants"},
         DebuggingMode => false,
         AuxiliaryFiles => true,

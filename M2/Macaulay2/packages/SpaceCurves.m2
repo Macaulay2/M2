@@ -13,6 +13,7 @@ newPackage(
                   HomePage => "https://math.berkeley.edu/~myzhang/"}
 	      },
         Headline => "space curves",
+	Keywords => {"Examples and Random Objects"},
         DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",

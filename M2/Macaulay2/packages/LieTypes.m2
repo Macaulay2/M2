@@ -8,6 +8,7 @@ newPackage(
     Authors => {
 	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"}
 	  },
+    Keywords => {"Lie Groups and Lie Algebras"},
     PackageImports => {"ReesAlgebra"},
     Certification => {
 	 -- same article as for package ConformalBlocks

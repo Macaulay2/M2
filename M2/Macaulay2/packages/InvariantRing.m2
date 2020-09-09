@@ -29,6 +29,7 @@ newPackage(
 	     {Name => "Thomas Hawes", Email => "thomas.hawes@maths.ox.ac.uk"}
 	     },
     	Headline => "construct the invariant ring of a finite group",
+	Keywords => {"Representation Theory", "Group Theory"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",
