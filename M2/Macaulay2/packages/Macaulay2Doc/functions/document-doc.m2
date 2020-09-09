@@ -7,10 +7,6 @@ Node
   Key
      document
     (document, List)
-    [document, ExampleFiles]
-    [document, SourceCode]
-    ExampleFiles
-    SourceCode
   Usage
     document { Key => key, ... }
   Headline
@@ -46,9 +42,9 @@ Node
     Subnodes=>List
       see @TOH Subnodes@
     SourceCode=>List
-      containing functions whose source code should be displayed in the documentation
+      see @TOH SourceCode@
     ExampleFiles=>List
-      containing filenames of auxiliary data files which will be available in the directory where the example code is run
+      see @TOH ExampleFiles@
   Consequences
     Item
       formatted documentation is created and stored in the @TO2 {"currentPackage", "current package"}@
@@ -78,7 +74,7 @@ Node
           document {
               Key          => {myFunc, (myFunc, MyType), [myFunc, MyOption], ...},
               Headline     => "one line description of myFunc", -- not needed for overviews
-              BaseFunction => "myFunc", -- usually not needed
+              BaseFunction => myFunc, -- usually not needed
               Usage        => "myFunc x",
               Inputs       => { inputs, ... },
               Outputs      => { outputs, ... },
@@ -133,8 +129,8 @@ Node
     [document, Caveat]
     [document, SeeAlso]
     [document, Subnodes]
---    [document, SourceCode]
---    [document, ExampleFiles]
+    [document, SourceCode]
+    [document, ExampleFiles]
 
 Node
   Key
@@ -212,6 +208,10 @@ Node
   Description
     Text
       The @TT "BaseFunction"@ entry gives the function that uses the feature being documented.
+
+      Here is a sample usage of this entry:
+    Code
+      EXAMPLE { PRE ////BaseFunction => myFunc//// }
 
 Node
   Key
@@ -387,10 +387,10 @@ Node
     Text
       This option inserts into a documentation page a sentence instructing the reader to see some other topics.
 
-      The entries may have the special forms used with @TO "TO"@. As an example, here is the code for the @TT "SeeAlso"@
-      part of this documentation node.
+      The entries may have the special forms used with @TO "TO"@.
+      As an example, here is the code for the @TT "SeeAlso"@ part of a documentation node referencing this node.
     Code
-      EXAMPLE { PRE ////SeeAlso => {document, TO}//// }
+      EXAMPLE { PRE ////SeeAlso => {[document, SeeAlso]}//// }
   SeeAlso
     TOH
     Subnodes
@@ -435,6 +435,40 @@ Node
   SeeAlso
     TOH
     "SimpleDoc :: doc(String)"
+
+Node
+  Key
+    SourceCode
+    [document, SourceCode]
+  Headline
+    sources displayed in a documentation node
+  Description
+    Text
+      This option inserts the source code of the listed functions into a documentation page.
+
+      As an example, here is the code for the @TT "SourceCode"@ part
+      of the documentation node for @TO (variety, SheafOfRings)@.
+    Code
+      EXAMPLE { PRE ////SourceCode => {(variety, SheafOfRings)}//// }
+  SeeAlso
+    code
+
+Node
+  Key
+    ExampleFiles
+    [document, ExampleFiles]
+  Headline
+    data files corresponding to a documentation node
+  Description
+    Text
+      This option lists filenames of data files in the auxiliary directory which
+      should be made available in the directory where the example code is run.
+
+      Here is a sample usage of this entry:
+    Code
+      EXAMPLE { PRE ////ExampleFiles => {"datafile1", "datafile2"}//// }
+  SeeAlso
+    [newPackage, AuxiliaryFiles]
 ///
 
 doc ///
