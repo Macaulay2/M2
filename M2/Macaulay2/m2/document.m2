@@ -138,7 +138,7 @@ makeDocumentTag' := opts -> key -> (
     (pkg, fkey) = parseDocumentTag fkey;
     -- Try to detect the package
     pkg = if pkg =!= null then pkg
-    else  if opts#Package =!= null then toString opts#Package
+    else  if opts#Package =!= null then opts#Package
     else  if instance(nkey, String) then currentPackage -- FIXME
     else  if instance(nkey, Sequence) then currentPackage -- this is a kludge, which allows Schubert2 to document (symbol SPACE,OO,RingElement)
     else  if (pkg' := package nkey) =!= null then pkg'
