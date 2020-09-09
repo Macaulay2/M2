@@ -1051,9 +1051,11 @@ document { Key => {(netList, VisibleList),
 	  [netList, Alignment]},
      Headline => "a table of boxes",
      Usage => "netList v",
-     Inputs => { 
+     Inputs => {
 	  "v" => {"a list of lists of things to be converted to nets and displayed as a table in a net"},
-	  Boxes => {"whether to draw boxes around the individual nets. can be a Boolean or a pair of Booleans/lists of rows/columns to insert lines"},
+	  Boxes => {"whether to draw boxes around the individual nets.
+	      Can be a Boolean, or a pair controlling separately the horizontal and vertical lines of the boxes.
+	      Each element of the pair is either a Boolean (draw all or none) or a list of rows/columns where lines are to inserted."},
 	  BaseRow => ZZ => {"the index of the base row, for the purpose of setting the baseline of the net produced.  The value
 	       is allowed to be as large as the length of ", TT "v", ", larger by 1 than one might expect."},
 	  HorizontalSpace => ZZ => {"the amount of space horizontally between entries or between entries and their enclosing boxes"},
