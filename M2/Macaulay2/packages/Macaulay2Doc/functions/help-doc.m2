@@ -193,7 +193,7 @@ Node
           }@
 
       When using Macaulay2 in Emacs, moving the cursor to each line of the output beginning with
-      @TT "*"@ results in showing the documentation node corresponding to that line.
+      @TT "*"@ and pressing Enter results in showing the full documentation node corresponding to that line.
 
   SeeAlso
     "initial help"

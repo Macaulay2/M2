@@ -163,14 +163,16 @@ documentationValue(Symbol, Symbol) := (S, S') -> (
     a := smenu apply(select(opts, f -> isDocumentableMethod f), f -> [f, S]);
     if #a > 0 then DIV { -- "class" => "waystouse", -- we want this one to be larger
 	 SUBSECTION {"Functions with optional argument named ", TT toString S, " :"}, a})
+-- e.g. Macaulay2Doc :: help
+documentationValue(Symbol, Command)         := (S, c) -> documentationValue(S, c#0)
 -- e.g. Macaulay2Doc :: sum
 documentationValue(Symbol, ScriptedFunctor) :=
 documentationValue(Symbol, Function)        :=
 documentationValue(Symbol, Keyword)         := (S, f) -> (
     -- methods of f
     a := smenu documentableMethods f;
-    DIV nonnull splice ( "class" => "waystouse",
-	if #a > 0 then SUBSECTION {"Ways to use ", TT toString f, ":"}, a))
+    if #a > 0 then DIV nonnull splice ( "class" => "waystouse",
+	SUBSECTION {"Ways to use ", TT toString f, ":"}, a))
 
 -- TODO: simplify this process
 -- e.g. Macaulay2Doc :: Macaulay2Doc
@@ -418,7 +420,10 @@ help ZZ    := i -> (
 
 -- Turning help into a Command ensures that entering "help"
 -- prints the "initial help" node instead of "MethodFunction"
-help = Command help
+help = new Command from help
+-- This ensures that "methods help" and "?help" work as expected
+setAttribute(help#0, ReverseDictionary, symbol help)
+-- TODO: make this automatic for Commands
 
 -----------------------------------------------------------------------------
 -- View help in a browser or via the info command
@@ -440,6 +445,8 @@ viewHelp DocumentTag := tag -> (
     if fileExists docpage then show URL { docpage } else show help tag)
 
 viewHelp = new Command from viewHelp
+-- This ensures that "methods viewHelp" and "?viewHelp" work as expected
+setAttribute(viewHelp#0, ReverseDictionary, symbol viewHelp)
 
 infoHelp = key -> (
     tag := makeDocumentTag(key, Package => null);
@@ -463,6 +470,7 @@ briefDocumentation Thing       := key -> (
 
 ? ScriptedFunctor :=
 ? Function :=
+? Command  :=
 ? Keyword  :=
 ? Package  :=
 ? Symbol   :=

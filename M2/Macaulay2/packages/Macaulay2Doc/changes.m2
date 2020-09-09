@@ -36,6 +36,7 @@ document {
      UL {
          LI { "functionality improved",
               UL {
+                   LI { "A brief documentation of various types of objects can be viewed usin ", TO (symbol?, Symbol), "." },
                    LI { "The ", TO document, " function now accepts three new options: ", TT "Acknowledgement", ", ",
 		       TT "Contributors", ", and ", TT "References", ". The content of each will appear under a subsection
 		       of the same name in the documentation. Moreover, ", TO (document, String), " is now a synonym for ",

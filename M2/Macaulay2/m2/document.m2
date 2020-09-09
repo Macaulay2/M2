@@ -436,8 +436,7 @@ processInputOutputItems := (key, fn) -> item -> (
 	opttag := getPrimaryTag makeDocumentTag([fn, optsymb]);
 	name := if tag === opttag then TT toString optsymb else TO2 { opttag, toString optsymb };
 	type  = if type =!= null and type =!= Nothing then ofClass type else TT "..."; -- type Nothing is treated as above
-	defval := toString opts#optsymb;
-	defval  = if not match("^-\\*Function", defval) then SPAN{"default value ", defval};
+	defval := SPAN{"default value ", replace("^-\\*Function.*?\\*-", "-*Function*-", toString opts#optsymb)};
 	text = if text =!= null and #text > 0 then text else if tag =!= opttag then headline opttag;
 	text = if text =!= null and #text > 0 then (", ", text);
 	-- e.g: Key => an integer, default value 42, the meaning of the universe
