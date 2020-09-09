@@ -399,6 +399,7 @@ processInputOutputItems := (key, fn) -> item -> (
     text := null;    -- ("hypertext sequence")
     fn = if (instance(key, Sequence) or instance(key, Function)) and options key =!= null then key
     else if fn =!= null then fn else key;
+    tag := getPrimaryTag makeDocumentTag key;
 
     -- checking for various pieces of the synopsis item
     isVariable   := y -> match(///\`[[:alnum:]']+\'///, y);
@@ -430,19 +431,17 @@ processInputOutputItems := (key, fn) -> item -> (
 	if    type =!= null and type =!= Nothing then ofClass type, -- type Nothing, treated as above
 	text}
     else if fn =!= null then (
-	-- e.g: Strategy => an integer, default value blah blah, then description
 	opts := getOptionDefaultValues fn;
 	if not opts#?optsymb then error("symbol ", optsymb, " is not the name of an optional argument for function ", toExternalString fn);
+	opttag := getPrimaryTag makeDocumentTag([fn, optsymb]);
+	name := if tag === opttag then TT toString optsymb else TO2 { opttag, toString optsymb };
+	type  = if type =!= null and type =!= Nothing then ofClass type else TT "..."; -- type Nothing is treated as above
 	defval := toString opts#optsymb;
 	defval  = if not match("^-\\*Function", defval) then SPAN{"default value ", defval};
-	name   := TT toString optsymb; -- TO2 { [fn, optsymb], toString optsymb };
-	{
-	    (name, TT " => ",
-	    if type =!= null and type =!= Nothing then ofClass type else TT "..."), -- type Nothing, treated as above
-	    (defval,
-	    if text =!= null and text =!= "" then (", ", text)
-	    else LATER { () -> commentize headline([fn, optsymb]) })
-	})
+	text = if text =!= null and #text > 0 then text else if tag =!= opttag then headline opttag;
+	text = if text =!= null and #text > 0 then (", ", text);
+	-- e.g: Key => an integer, default value 42, the meaning of the universe
+	{ (name, TT " => ", type), nonnull (defval, text) })
     else {TT {toString optsymb, " => ..."}};
     SPAN nonnull deepSplice between_", " nonnull nonempty result)
 

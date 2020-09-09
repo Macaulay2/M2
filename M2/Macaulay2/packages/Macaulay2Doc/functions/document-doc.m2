@@ -16,35 +16,20 @@ Node
       with @TO Hypertext@, @TO String@, and special documentation entries as
       optional arguments such as @TT "Key => \"...\""@ (required)
     Key=>List
-      see @TOH Key@
     Headline=>List
-      see @TOH Headline@
     BaseFunction=>List
-      see @TOH BaseFunction@
     Usage=>List
-      see @TOH Usage@
     Inputs=>List
-      see @TOH Inputs@
     Outputs=>List
-      see @TOH Outputs@
     Consequences=>List
-      see @TOH Consequences@
     Acknowledgement=>List
-      see @TOH Acknowledgement@
     Contributors=>List
-      see @TOH Contributors@
     References=>List
-      see @TOH References@
     Caveat=>List
-      see @TOH Caveat@
     SeeAlso=>List
-      see @TOH SeeAlso@
     Subnodes=>List
-      see @TOH Subnodes@
     SourceCode=>List
-      see @TOH SourceCode@
     ExampleFiles=>List
-      see @TOH ExampleFiles@
   Consequences
     Item
       formatted documentation is created and stored in the @TO2 {"currentPackage", "current package"}@
