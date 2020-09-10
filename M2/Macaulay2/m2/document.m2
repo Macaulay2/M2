@@ -103,7 +103,7 @@ net      DocumentTag := tag -> concatenate (package tag, " :: ", format tag)
 -- FIXME: this is kind of a hack
 toExternalString DocumentTag := tag -> (
     "new DocumentTag from " | toExternalString {
-	tag.Key, tag.Format, tag.Package})
+	toString tag.Key, tag.Format, tag.Package})
 
 new DocumentTag from BasicList := (T, t) -> (
     new DocumentTag from new HashTable from {
@@ -153,7 +153,7 @@ makeDocumentTag' := opts -> key -> (
 		"First mentioned near:\n  ", loc#0, ":", toString loc#1));
 	pkg = currentPackage);
     new DocumentTag from new HashTable from {
-	Key            => if instance(nkey, Symbol) then toString nkey else nkey,
+	Key            => nkey,
 	Format         => fkey,
 	symbol Package => (
 	    if instance(pkg, Package) then if pkg === Core then "Macaulay2Doc" else pkg#"pkgname" else
@@ -319,9 +319,8 @@ fetchRawDocumentationNoLoad(Package, String) := (pkg,     fkey) -> ( -- returns 
 getPrimaryTag = method()
 getPrimaryTag DocumentTag := tag -> (
     -- TODO: slow if package isn't loaded
-    while (rawdoc := fetchRawDocumentation tag; rawdoc =!= null and rawdoc#?PrimaryTag)
-    do tag = rawdoc#PrimaryTag;
-    tag)
+    if (rawdoc := fetchRawDocumentation tag) =!= null
+    and rawdoc#?PrimaryTag then rawdoc#PrimaryTag else tag)
 
 -- TODO: somehow cache this
 fetchAnyRawDocumentation = method()
@@ -390,7 +389,8 @@ getOptionDefaultValues Sequence := s -> (
      o := options s;
      if o =!= null then o else if s#?0 and instance(s#0, Function) then getOptionDefaultValues s#0 else emptyOptionTable)
 
-processInputOutputItems := (key, fn) -> item -> (
+processSignature := (tag, fn) -> item -> (
+    key := if tag =!= null then tag.Key;
     -- "inp" => ZZ => ("hypertext sequence")
     --  opt  => ZZ => ("hypertext sequence")
     optsymb := null; --  opt
@@ -399,7 +399,6 @@ processInputOutputItems := (key, fn) -> item -> (
     text := null;    -- ("hypertext sequence")
     fn = if (instance(key, Sequence) or instance(key, Function)) and options key =!= null then key
     else if fn =!= null then fn else key;
-    tag := getPrimaryTag makeDocumentTag key;
 
     -- checking for various pieces of the synopsis item
     isVariable   := y -> match(///\`[[:alnum:]']+\'///, y);
@@ -433,7 +432,7 @@ processInputOutputItems := (key, fn) -> item -> (
     else if fn =!= null then (
 	opts := getOptionDefaultValues fn;
 	if not opts#?optsymb then error("symbol ", optsymb, " is not the name of an optional argument for function ", toExternalString fn);
-	opttag := getPrimaryTag makeDocumentTag([fn, optsymb]);
+	opttag := getPrimaryTag makeDocumentTag([fn, optsymb], Package => package tag);
 	name := if tag === opttag then TT toString optsymb else TO2 { opttag, toString optsymb };
 	type  = if type =!= null and type =!= Nothing then ofClass type else TT "..."; -- type Nothing is treated as above
 	defval := SPAN{"default value ", replace("^-\\*Function.*?\\*-", "-*Function*-", toString opts#optsymb)};
@@ -451,10 +450,10 @@ typicalValue := k -> (
     and typicalValues#?(k#0) then typicalValues#(k#0)
     else Thing)
 
-getTypes := method(Dispatch => Thing)
-getTypes Thing    := x -> ({},{})
-getTypes Function := x -> ({},{typicalValue x})
-getTypes Sequence := x -> (
+getSignature := method(Dispatch => Thing)
+getSignature Thing    := x -> ({},{})
+getSignature Function := x -> ({},{typicalValue x})
+getSignature Sequence := x -> (
     if #x > 1 and instance(x#-1, Symbol) then ({}, {}) -- it's an option ...
     else (
 	-- putting something like OO in the key indicates a fake dispatch
@@ -465,21 +464,21 @@ getTypes Sequence := x -> (
 	then ( x' | { Thing }, { Thing } )	   -- it's an assignment method
 	else ( x'            , { typicalValue x } )))
 
-processUsage := (key, fn, o) -> (
+isOption := opt -> instance(opt, Option) and #opt == 2 and instance(opt#0, Symbol);
+
+processUsage := (tag, fn, o) -> (
     if not o.?Usage and (o.?Inputs or o.?Outputs)
     then error "document: Inputs or Outputs specified, but Usage not provided";
-    inp := if o.?Inputs then o.Inputs else {};
+    arg := if o.?Inputs then o.Inputs else {};
     out := if o.?Outputs then o.Outputs else {};
-    iso := x -> instance(x, Option) and #x==2 and instance(x#0, Symbol);
-    ino := select(inp, x -> iso x);
-    inp  = select(inp, x -> not iso x);
-    opt := getOptionDefaultValues key;
+    (ino, inp) := toSequence values partition(isOption, arg, {true, false});
+    opt := getOptionDefaultValues tag.Key;
     inoh:= new HashTable from ino;
     if not isSubset(keys inoh, keys opt)
     then error concatenate("not among the options for ", toString fn, ": ", between_", " keys (set keys inoh - set keys opt));
     ino = join(ino, sortByName (keys opt - set keys inoh));
     if o.?Usage then (
-	(inp', out') := getTypes key;
+	(inp', out') := getSignature tag.Key;
 	inp' = select(inp', T -> T =!= Nothing);
 	out' = select(out', T -> T =!= Nothing);
 	-- When T is not exported, its class evaluates to Symbol instead of Type
@@ -489,12 +488,12 @@ processUsage := (key, fn, o) -> (
 	if #inp === 0 then inp = inp';
 	if #out === 0 then out = out';
 	if #inp' =!= 0 then (
-	    if #inp =!= #inp' then error ("mismatched number of inputs in documentation for ", toExternalString key);
+	    if #inp =!= #inp' then error ("mismatched number of inputs in documentation for ", format tag);
 	    inp = apply(inp',inp,(T,v) -> T => v));
 	if #out' =!= 0 then (
-	    if #out =!= #out' then error ("mismatched number of outputs in documentation for ", toExternalString key);
+	    if #out =!= #out' then error ("mismatched number of outputs in documentation for ", format tag);
 	    out = apply(out',out,(T,v) -> T => v)));
-    apply((inp, out, ino), x -> apply(x, processInputOutputItems(key, fn))))
+    apply((inp, out, ino), x -> apply(x, processSignature(tag, fn))))
 
 -- "x" => List => { "a list of numbers" }
 -- "x" => List => "a list of numbers"
@@ -626,7 +625,7 @@ document List := opts -> args -> (
 	    tag2 := makeDocumentTag(secondary, Package => currentPackage);
 	    verfy(secondary, tag2);
 	    storeRawDocumentation(tag2, new HashTable from {
-		    PrimaryTag => tag,
+		    PrimaryTag => tag, -- tag must be primary
 		    symbol DocumentTag => tag2,
 		    "filename" => currentFileName,
 		    "linenum" => currentLineNumber()
@@ -642,7 +641,7 @@ document List := opts -> args -> (
     -- Process all keywords
     scan(keys o, key -> if o#key =!= {} then o#key = KeywordFunctions#key o#key);
     -- Process Inputs, Outputs, Options
-    (inp, out, ino) := processUsage(key, fn, o);
+    (inp, out, ino) := processUsage(tag, fn, o);
     if #inp > 0 then o.Inputs  = inp else remove(o, Inputs);
     if #out > 0 then o.Outputs = out else remove(o, Outputs);
     if #ino > 0 then o.Options = ino else remove(o, Options);
@@ -700,7 +699,7 @@ SYNOPSIS Thing    :=
 SYNOPSIS Sequence := o -> x -> (
     o = applyPairs(o, (k, v) -> (k, if v =!= {} then KeywordFunctions#k v else v));
     fn := o#BaseFunction;
-    proc := processInputOutputItems(, fn);
+    proc := processSignature(, fn);
     fixup DIV nonnull {
 	SUBSECTION o.Heading,
 	UL {

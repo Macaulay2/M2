@@ -305,6 +305,7 @@ getTechnical := (S, s) -> DIV ( "class" => "waystouse",
 
 getOption := (rawdoc, tag) -> if rawdoc =!= null and rawdoc#?tag then rawdoc#tag
 
+-- Compare with SYNOPSIS in document.m2
 getSynopsis := (key, tag, rawdoc) -> (
     if rawdoc === null then return null;
     result := nonnull {
