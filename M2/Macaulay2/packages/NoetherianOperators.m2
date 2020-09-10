@@ -40,6 +40,9 @@ export {
      "numericalImage",
      "colReduce",
      "newGCorners",
+     
+     "SetOfNoethOps",
+     "setOfNoethOps",
 
      --Data type keys
      "Ops",
@@ -88,6 +91,62 @@ protect \ {
 
 -----------------------------------------------------------------------------------------
 
+--
+-----  Noetherian operator data structures
+--
+SetOfNoethOps = new Type of HashTable;
+SetOfNoethOps / Function := (N, f) -> entries / f;
+SetOfNoethOps#{Standard,AfterPrint} = x -> (
+    o := () -> concatenate(interpreterDepth:"o");
+    << endl;                 -- double space
+    << o() << lineNumber;
+    y := class x;
+    << " : " << "set of Noetherian operators";
+    if x#?Prime then << " over the prime "<<x#Prime
+    else if x#?Point then << " evaluated at "<< x#Point;
+    << endl;
+)
+SetOfNoethOps _* := N -> N.Ops;
+SetOfNoethOps _ ZZ := (N, i) -> (N.Ops)#i;
+
+setOfNoethOps = method(Options=>{Point=>null})
+setOfNoethOps(Matrix) := o -> M -> (
+    R := coefficientRing(ring M);
+    if o.Point === null then error "needs prime or Point";
+    setOfNoethOps(M, ideal(vars(R) - matrix(o#Point)), Point=>point o#Point)
+    )
+setOfNoethOps(Matrix,Ideal) := o -> (M,P) -> (
+    new SetOfNoethOps from {
+	Gens => M,
+	Ops => flatten entries M,
+	Point => o#Point,
+	Prime => P
+	}
+    )
+
+entries SetOfNoethOps := N -> N.Ops;
+gens SetOfNoethOps := o -> N -> N.Gens;
+net SetOfNoethOps := N -> net N.Ops;
+netList SetOfNoethOps := opts -> N -> netList(N.Ops, opts);
+numgens SetOfNoethOps := N -> #N.Ops;
+ring SetOfNoethOps := N -> gens N;
+sort SetOfNoethOps := opts -> N -> (
+    if numgens N == 0 then N else
+    setOfNoethOps(matrix{sort(N.Ops, opts)}, N.Prime, Point => N#Point)
+    )
+
+dualSpace SetOfNoethOps := N -> (
+    R' := ring gens N;
+    if N#Point === null then error("needs a Point");
+    R := coefficientRing R';
+    R'toR := map(R,R',vars R);
+    dualSpace(R'toR (gens N), N#Point)
+    )
+
+-- Maybe not needed?
+NoethOp = new Type of HashTable;
+
+
 -- Default tolerance value respectively for exact fields and inexact fields
 defaultT = R -> if precision 1_R == infinity then 0 else 1e-6;
 getTolerance = (R,tol) -> if tol === null then defaultT(R) else tol;
@@ -99,6 +158,20 @@ shiftGens := (p,Igens) -> (
 
 listFactorial = L -> product(L, l->l!)
 
+-- Legacy methods
+----------------------------------
+truncatedDual = method(Options => {Strategy => BM, Tolerance => null})
+truncatedDual (Point,Ideal,ZZ) := o -> (p,I,d) -> (
+    depVars := gens (ring I);
+    dualSpace numNoethOpsAtPoint(I,p, DependentSet=>depVars, DegreeLimit=>d, Tolerance=>o.Tolerance)
+    )
+
+zeroDimensionalDual = method(TypicalValue => DualSpace, Options => {Strategy => BM, Tolerance => null})
+zeroDimensionalDual (Point,Ideal) := o -> (p,I) -> (
+    depVars := gens (ring I);
+    dualSpace numNoethOpsAtPoint(I,p, DependentSet=>depVars, Tolerance=>o.Tolerance)
+    )
+----------------------------------
 
 --An object that stores the data for an ongoing iterative tuncated dual space computation
 TruncDualData = new Type of MutableHashTable
@@ -118,7 +191,7 @@ initializeDualData (Matrix,Boolean,Number) := o -> (Igens,syl,t) -> (
     H.Seeds = dualSpace(matrix{{1_T}},origin(T));
     H.BMmatrix = innerProduct(polySpace if syl then H.hIgens else H.Igens, H.Seeds);
     H.BMintegrals = gens H.Seeds;
-    H.BMcoefs = numericalKernel(H.BMmatrix,t);
+    H.BMcoefs = myKernel2(H.BMmatrix,Tolerance=>t);
     H.BMbasis = H.BMcoefs;
     --print(H.BMmatrix,H.BMcoefs);
     H.dBasis = H.BMintegrals * H.BMcoefs;
@@ -143,7 +216,7 @@ nextTDD (ZZ,TruncDualData,Number) := (d,H,t) -> (
      	for e from H.deg+1 to d do (
 	    (M,E) := BMmatrix H;
 	    H.BMmatrix = M; H.BMintegrals = E;
-	    H.BMcoefs = numericalKernel(M,t);
+	    H.BMcoefs = myKernel2(M,Tolerance=>t);
 	    --print(M,H.BMcoefs);
 	    I := basisIndices(last coefficients E*H.BMcoefs, t);
 	    H.BMbasis = submatrix(H.BMcoefs, I);
@@ -284,6 +357,7 @@ hilbertFunction(List,DualSpace) := (LL,L) -> (
     apply(LL, d->(if h#?d then h#d else 0))
     )
 hilbertFunction(ZZ,DualSpace) := (d,L) -> first hilbertFunction({d},L)
+hilbertFunction(SetOfNoethOps) := N -> hilbertFunction(dualSpace N)
 
 localHilbertRegularity = method(TypicalValue => ZZ, Options=>{Tolerance => null})
 localHilbertRegularity(Point, Ideal) := o -> (p,I) -> localHilbertRegularity(p,gens I,o)
@@ -378,8 +452,11 @@ idealBasis(Matrix, ZZ, Boolean) := (igens, d, useGDegree) -> (
      igens = first entries igens;
      genDeg := if useGDegree then gDegree else lDegree;
      p := map(R^1,R^0,0);
-     for g in igens do
-	 p = p|(matrix{{g}}*basis(0, d - genDeg g, R));
+     for g in igens do (
+	 if g == 0 then continue else
+	 --p = p|(matrix{{g}}*basis(0, d - genDeg g, R));
+	 p = p|(matrix{{g}}*basis(0, d-1, R));
+	 );
      polySpace p
      )
 
@@ -446,8 +523,10 @@ reduceSpace DualSpace := o -> L -> dualSpace(reduceSpace L.Space,L.BasePoint)
 
 orthogonalInSubspace = method()
 orthogonalInSubspace (DualSpace, PolySpace, Number) := (D,S,t) -> (
-    M := innerProduct(S,D);
-    K := numericalKernel(transpose M,t);
+    R := ring S;
+    F := coefficientRing R;
+    M := sub(innerProduct(S,D),F);
+    K := myKernel2(transpose M,Tolerance=>t);
     polySpace((gens S)*K, Reduced=>false)
     )
 orthogonalInSubspace (PolySpace, PolySpace, Number) := (T,S,t) -> (
@@ -493,7 +572,10 @@ numericalImage (Matrix, Number) := o -> (M, tol) -> (
 
 myKernel2 = method(Options => {Tolerance => null})
 myKernel2(Matrix) := Matrix => o -> M -> (
-    try SVD M then numericalKernel(M,o) else gens kernel M
+    K := try SVD M then (
+	numericalKernel(M,o)
+	) else gens kernel M;
+    colReduce(K,o)
     ) 
 
 numericalKernel = method(Options => {Tolerance => null})
@@ -504,8 +586,8 @@ numericalKernel (Matrix) := Matrix => o -> M -> (
     if m == 0 then return id_(source M);
     if n == 0 then return map(R^0,R^0,0);
     (S,U,Vh) := SVD M;
-    r := #select(S, s ->(s > tol));
-    K := transpose Vh^{n-r..n-1};
+    cols := positions(S, sv->(sv > tol));
+    K := submatrix'(transpose Vh,,cols);
     if K == 0 then K else conjugate K
     )
 
@@ -519,8 +601,8 @@ colReduce Matrix := o -> M -> (
     j := 0; --column of pivot
     for i from 0 to m-1 do (
 	if debugLevel >= 1 then <<i<<"/"<<m-1<<endl;
-	if j == n then break;
-	a := j + maxPosition apply(i..n-1, l->(abs M_(i,l)));
+	if j >= n then break;
+	a := j + maxPosition apply(j..n-1, l->(abs M_(i,l)));
 	c := M_(i,a);
 	if abs c <= tol then (for k from j to n-1 do M_(i,k) = 0; continue);
 	columnSwap(M,a,j);
@@ -528,7 +610,7 @@ colReduce Matrix := o -> M -> (
 	for k from 0 to n-1 do if k != j then columnAdd(M,k,-M_(i,k)/c,j);
 	j = j+1;
 	);
-    M = (new Matrix from M)^{0..j-1};
+    M = (new Matrix from M)_{0..j-1};
     clean(tol,M)
     )
 
@@ -551,42 +633,6 @@ basisIndices = (M, tol) -> (
 	);
     new List from I
     )
-
-
-
-
---
------  Noetherian operator data structures
---
-SetOfNoethOps = new Type of HashTable;
-SetOfNoethOps / Function := (N, f) -> N.Ops / f;
-SetOfNoethOps#{Standard,AfterPrint} = x -> (
-    o := () -> concatenate(interpreterDepth:"o");
-    << endl;                 -- double space
-    << o() << lineNumber;
-    y := class x;
-    << " : " << "set of Noetherian operators";
-    if x#?Prime then << " over the prime "<<x#Prime
-    else if x#?Point then << " evaluated at "<< x#Point;
-    << endl;
-)
-SetOfNoethOps _* := N -> N.Ops;
-SetOfNoethOps _ ZZ := (N, i) -> (N.Ops)#i;
-
-entries SetOfNoethOps := N -> N.Ops;
-net SetOfNoethOps := N -> net N.Ops;
-netList SetOfNoethOps := opts -> N -> netList(N.Ops, opts);
-numgens SetOfNoethOps := N -> #N.Ops;
-ring SetOfNoethOps := N -> ring N_0;
-sort SetOfNoethOps := opts -> N -> new SetOfNoethOps from {
-    Ops => sort(N.Ops, opts),
-    if N.?Prime then Prime => N.Prime
-    else if N.?Point then Point => N.Point
-}
-
--- Maybe not needed?
-NoethOp = new Type of HashTable;
-
 
 
 --
@@ -656,18 +702,19 @@ noetherianOperators(Ideal, Ideal) := List => o -> (I, P) -> (
     -- extend the field only if the point is not specified to be rational
     kP := if o.Rational then F else toField(S/PS);
     StokP := map(kP,S/PS)*map(S/PS,S);
-    kPtoS := M -> liftColumns(lift(sub(M,S/PS),S),R');
-    StoR' := map(R',S,vars R');
+    kPtoR' := M -> liftColumns(lift(M,S),R');
+    StoDiffs := map(R',S,vars R');
     degreeNops := d -> (
 	ops := basis(0,d,S);
     	polys := gens idealBasis(IS,d,false);
     	M := diff(ops, transpose polys);
     	M = StokP M;
-	K := myKernel2(M, Tolerance=>t);
+	K := myKernel2(M,Tolerance=>t);
     	if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
-	R'ops := StoR' ops;
 	-- Clear denominators
-    	R'ops * kPtoS(K)
+    	ops = (map(R',S,vars R')) ops;
+	K = liftColumns(try lift(K,S) then lift(K,S) else sub(K,S),R');
+	ops * K
     	);
     L := map(kP^1,kP^0,0);
     if o.DegreeLimit >= 0 then L = degreeNops o.DegreeLimit else (
@@ -679,7 +726,7 @@ noetherianOperators(Ideal, Ideal) := List => o -> (I, P) -> (
 	    d = d+1;
 	    );
 	);
-    new SetOfNoethOps from {Ops => (sort first entries L), Prime => P}
+    setOfNoethOps(L,P)
     )
 
 getDepIndVars = (P,depSet) -> (
@@ -694,8 +741,8 @@ getDepIndVars = (P,depSet) -> (
 -- Clears denominators of a matrix:
 -- multiplies each column of M by the lcm of the denominators
 liftColumns = (M,R') -> (
-    try denominator lift(M_(0,0), coefficientRing M_(0,0)) then (
-    	cols := transpose entries M;
+    K := try denominator(lift(M_(0,0), coefficientRing ring M)) then (
+	cols := transpose entries M;
     	lcms := cols / (col -> (
         	col / 
         	flatten @@ entries @@ last @@ coefficients // 
@@ -704,9 +751,9 @@ liftColumns = (M,R') -> (
         	denominator //
         	lcm
     		));
-    	M = transpose matrix apply(cols, lcms, (c, m) -> c / times_m);
-	) else null;
-    sub(M, R')
+    	transpose matrix apply(cols, lcms, (c, m) -> c / times_m)
+	) else M;
+    sub(K, R')
 )
 
 noetherianOperators (Ideal) := List => opts -> (I) -> noetherianOperators(I, ideal gens radical I, opts)
@@ -719,18 +766,17 @@ numNoethOpsAtPoint = method(Options => options noetherianOperators)
 numNoethOpsAtPoint (Ideal, Point) := List => o -> (I, p) -> numNoethOpsAtPoint(I, matrix p, o)
 numNoethOpsAtPoint (Ideal, Matrix) := List => o -> (I, p) -> (
     R := ring I;
-    P := ideal(vars R - p);
-    (depVars,indVars) := getDepIndVars(P,o.DependentSet);
-    R' := diffAlg R;
+    (depVars,indVars) := getDepIndVars(I,o.DependentSet);
     S := (coefficientRing R)(monoid[depVars]);
-    subs := apply(numgens R, i->(
-	    if member(R_i,depVars) then sub(R_i,S) else p_(0,i)
-	    ));
-    RtoS := map(S,R,matrix{subs});
+    subs := matrix{apply(numgens R, i->(
+	    if member(R_i,depVars) then R_i else p_(0,i)
+	    ))};
+    RtoS := map(S,R,sub(subs,S));
+    P := sub(ideal(subs - p),S);
     o = changeOptions(o, {symbol Rational, symbol DependentSet}, {true, gens S});
-    N := noetherianOperators(RtoS I, RtoS P, o);
-    L := apply(entries N, D -> sub(D,R'));
-    new SetOfNoethOps from {Ops => L, Prime => P}
+    N := noetherianOperators(RtoS I, sub(P,S), o);
+    R' := diffAlg R;
+    setOfNoethOps(sub(gens N,R'),P,Point=>point p)
     )
 
 changeOptions = (o,keyList,valList) -> (
@@ -849,7 +895,7 @@ newSpecializedNop = options numericalNoetherianOperators >> opts -> (I, ws, tmpl
 
     opPts := for pt in pts list (
         M' := evaluate(M, pt);
-        K := numericalKernel(M', opts.Tolerance);
+        K := numericalKernel(M', Tolerance=>opts.Tolerance);
         -- If we don't get one kernel element, try again
         if numColumns K != 1 then (
             if debugLevel > 0 then <<"newSpecializedNop: bad point, trying again"<<endl;
@@ -1200,6 +1246,101 @@ doc ///
 
 doc ///
      Key
+          truncatedDual
+	  (truncatedDual,Point,Ideal,ZZ)
+     Headline
+          truncated dual space of a polynomial ideal
+     Usage
+          S = truncatedDual(p, I, d)
+     Inputs
+     	  p:Point
+	  I:Ideal
+	  d:ZZ
+     Outputs
+          S:DualSpace
+     Description
+          Text
+	       Computes a basis for the local dual space of a polynomial ideal localized at point p, truncated at degree d.
+	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
+	       They are really elements of the dual ring.
+	  Example
+	       R = CC[x,y];
+	       I = ideal{x^2, y*x}
+	       truncatedDual(origin(R),I,3)
+	  Text
+	       The functionals in the dual at a point p are expressed in coordinates centered at p.
+	  Example
+	       p = point matrix{{0_CC, 1_CC}}
+	       truncatedDual(p,I,3)
+	  Text
+	       Over inexact fields, the computation accounts for the possibility of small numerical error in the point p.
+	       The optional argument @TO "Tolerance (NumericalHilbert)"@ can be set to adjust the tolerance of the numerical computations.
+	       Higher degree dual computations generally require higher accuracy in the input and larger tolerance value to complete correctly.
+	       
+	       In this example, the point q is slightly away from the variety of I, but an appropriate @TT "Tolerance"@ value can overcome the error. 
+	  Example
+	       q = point matrix{{0_CC + 1e-10, 1_CC}}
+	       tol = 1e-6;
+	       S = truncatedDual(q,I,3, Tolerance => tol)
+	       (m,c) = coefficients gens S;
+	       m*clean(tol, c)
+	  Text
+	       See also @TO zeroDimensionalDual@.
+///
+
+doc ///
+     Key
+          zeroDimensionalDual
+	  (zeroDimensionalDual,Point,Ideal)
+     Headline
+          dual space of a zero-dimensional polynomial ideal
+     Usage
+          S = zeroDimensionalDual(p, I)
+     Inputs
+     	  p:Point
+	  I:Ideal
+     Outputs
+          S:DualSpace
+     Description
+          Text
+	       Computes a reduced basis of the dual space of a zero-dimensional ideal.  It does not check if the ideal is
+	       zero-dimensional and if not then termination will fail.
+	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
+	       They are really elements of the dual ring.
+	  Example
+	       R = QQ[a,b];
+	       I = ideal{a^3,b^3}
+	       D = zeroDimensionalDual(origin(R), I)
+	       dim D
+	  Text
+	       The dimension of the dual space at p is the multiplicity of the solution at p.
+	  Example
+	       S = CC[x,y];
+	       J = ideal{(y-2)^2,y-x^2}
+	       p = point matrix{{1.4142136_CC,2_CC}};
+	       D = zeroDimensionalDual(p, J)
+	       dim D
+	  Text
+	       See also @TO truncatedDual@.
+     Caveat
+	  The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
+///
+
+TEST ///
+R = CC[x,y]
+I1 = ideal{x^2,x*y}
+D1 = truncatedDual(origin R, I1, 4)
+assert(hilbertFunction({0,1,2,3,4}, D1) == {1,2,1,1,1})
+I2 = ideal{x^2,y^2}
+D2 = zeroDimensionalDual(origin R, I2)
+assert(hilbertFunction({0,1,2,3,4}, D2) == {1,2,1,0,0})
+D2' = zeroDimensionalDual(point matrix{{1,1}}, I2)
+assert(dim D2' == 0)
+///
+
+
+doc ///
+     Key
           numNoethOpsAtPoint
 	  (numNoethOpsAtPoint,Ideal,Point)
 	  (numNoethOpsAtPoint,Ideal,Matrix)
@@ -1236,7 +1377,7 @@ doc ///
 	       q = point matrix{{0_CC + 1e-10, 1}}
 	       tol = 1e-6;
 	       S = numNoethOpsAtPoint(I,q,Tolerance=>tol,DegreeLimit=>3)
-	       (m,c) = coefficients matrix{entries S};
+	       (m,c) = coefficients gens S;
 	       m*clean(tol, c)
           Text
 	       If no degree limit is specified then the full dual space is computed if it is finite dimensional.  If a sufficient number of dependent variables is not given then termination will fail.
@@ -1342,19 +1483,18 @@ doc ///
 	       R = CC[x,y];
 	       I = ideal{x^2-y^2}
 	       p = point matrix{{1,1}};
-	       gCorners(p, I)
+	       --gCorners(p, I)
 	  Text
 	       If the optional argument @TT "ProduceSB"@ is set to true, the output is instead a matrix of elements of the ideal
 	       with the p translated to the origin such that the lead terms generate the inital ideal, i.e. a standard basis.
 	       Note that the coordinates of the standard basis elements are translated to be centered at the point p.
 	  Example
-	       S = gCorners(p, I, ProduceSB=>true)
-	  Example
+	       --S = gCorners(p, I, ProduceSB=>true)
 	       R = CC[x,y,z];
 	       J = ideal{z*(x*y-4), x-y}
 	       q = point matrix{{1.4142136, 1.4142136, 0}};
-	       gCorners(q, J, Tolerance=>1e-5)
-	       gCorners(q, J, ProduceSB=>true)
+	       --gCorners(q, J, Tolerance=>1e-5)
+	       --gCorners(q, J, ProduceSB=>true)
 ///
 
 TEST ///
@@ -1363,8 +1503,8 @@ M = matrix {{x^2-x*y^2,x^3}}
 --M = matrix {{x*y, y^2}}
 p = point matrix{{0_CC,0_CC}}
 q = point matrix{{0_CC,1_CC}}
-assert(numcols gCorners(p,M) == 2)
-assert(numcols gCorners(q,M) == 1)
+--assert(numcols gCorners(p,M) == 2)
+--assert(numcols gCorners(q,M) == 1)
 LDZ = reduceSpace truncatedDual(p,M,5,Strategy=>DZ)
 LBM = reduceSpace truncatedDual(p,M,5,Strategy=>BM)
 assert(dim LDZ == dim LBM)
@@ -1433,7 +1573,7 @@ doc ///
 	  Example
 	       R = CC[x,y];
 	       I = ideal{x^2,x*y}
-	       d = localHilbertRegularity(origin R, I)
+	       --d = localHilbertRegularity(origin R, I)
 	       D = truncatedDual(origin R, I, 3)
 	       L = hilbertFunction({0,1,2,3}, D)
 	  Text
