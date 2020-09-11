@@ -47,6 +47,7 @@ export {
 
     "diffAlg",
     "noetherianOperators",
+    "numericalNoetherianOperators",
     "DependentSet",
     "noethOpsFromComponents",
     "coordinateChangeOps",
@@ -725,14 +726,13 @@ myKernel Matrix := Matrix => MM -> (
     )
 )
 
--- Master method
+-- dispatcher method
 noetherianOperators = method(Options => true)
 noetherianOperators (Ideal) := SetOfNoethOps => true >> opts -> I -> (
     strats := new HashTable from {
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
         "PunctualHilbert" => getNoetherianOperatorsHilb,
-        "Numerical" => numericalNoetherianOperators
     };
     strat := if opts.?Strategy then opts.Strategy else "Hybrid";
     if strats#?strat then strats#strat(I, opts) 
@@ -744,7 +744,6 @@ noetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,P) -> 
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
         "PunctualHilbert" => getNoetherianOperatorsHilb, --TODO this method is missing
-        "Numerical" => numericalNoetherianOperators --TODO this method is missing
     };
     strat := if opts.?Strategy then opts.Strategy else "Hybrid";
     if strats#?strat then strats#strat(I, P, opts) 
@@ -759,18 +758,11 @@ noetherianOperators (Ideal, Ideal, Point) := SetOfNoethOps => true >> opts -> I 
 
 )
 
-noetherianOperators (Ideal, WitnessSet, Point) := SetOfNoethOps => true >> opts -> (I, ws, pt) -> (
-    strats := new HashTable from {
-        "Numerical" => numericalNoetherianOperators
-    };
-    strat := if opts.?Strategy then opts.Strategy else "Numerical";
-    if strats#?strat then strats#strat(I, ws, pt, opts)
-    else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
 
 
 
--- End Master method
+-- End dispatcher method
 
 
 

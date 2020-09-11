@@ -10,4 +10,5 @@ debugLevel = 1
 noetherianOperators(I, Strategy => "Hybrid")
 noetherianOperators(I, Strategy => "MacaulayMatrix")
 noetherianOperators(I, Strategy => "PunctualHilbert")
-noetherianOperators(I, Strategy => "Numerical", DependentSet => {x,y})
+
+numericalNoetherianOperators(I, DependentSet => {x,y})
