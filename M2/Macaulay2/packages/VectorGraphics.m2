@@ -83,18 +83,19 @@ gParse Vector := x -> (
     if rank class x === 2 then x || vector {0,1.} else (
 	 gParseFlag=true; if rank class x === 3 then x || vector {1.} else if rank class x === 4 then x)
      )
+gParse GraphicsObject := identity
 
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
     -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
     gParseFlag = false;
     temp := gParse(opts0 | apply(#opts, i -> if i < #opts0 and class opts#i =!= Option then opts0#i#0 => opts#i else opts#i));
-    new T from append(temp,symbol Is3d => gParseFlag)
+    new T from (if gParseFlag then append(temp,symbol Is3d => true) else temp)
 )
 
 perspective = g -> (
     persp := if g.?Perspective then g.Perspective else 1000.; -- some arbitrary number
-    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,persp},{0,0,-1/persp,1}} -- useful to have output {x,y,z+p,1+z/p}
+    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,-1/persp,1}} -- useful to have output {x,-y,-z,1-z/p}
 )
 
 viewPort = g -> (
@@ -108,7 +109,7 @@ viewPort1 GraphicsObject := x -> null
 -- * the data-* stuff is lightened (can be recreated from the normal parameters)
 -- * the event listeners for 3d rotating the object with the mouse are deactivated
 -- * lighting is deactivated
-is3d = x -> if x.?Is3d then x.Is3d else true; -- the else clause should never happen
+is3d = x -> if x.?Is3d then x.Is3d else false;
 
 distance = g -> (
     if not g.cache.?Distance then svg g; -- need to be rendered
@@ -226,11 +227,12 @@ viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw 
 
 -- to make lists of them
 GraphicsList = new GraphicsType of GraphicsObject from ( "g", { symbol Contents => {} } )
--- slightly simpler syntax: gList (a,b,c, opt=>xxx) rather than GraphicsList { {a,b,c}, opt=>xxx }
+-- slightly simpler syntax: gList (a,b,c, opt=>xxx) rather than GraphicsList { {a,b,c}, opt=>xxx }, plus updates Is3d correctly
 gList = x -> (
     x=flatten toList sequence x;
     x1 := select(x, y -> instance(y,GraphicsObject));
     x2 := select(x, y -> instance(y,Option));
+    if any(x1,is3d) then x2 = append(x2, Is3d => true);
     GraphicsList append(x2,symbol Contents => x1)
     )
 viewPort1 GraphicsList := x -> (
@@ -424,24 +426,30 @@ new SVG from GraphicsObject := (S,g) -> (
 	);
     -- axes
     axes:=null; axeslabels:=null; defsList:={};
-    if g.?Axes and g.Axes =!= false then ( -- TEMP: coordinates wrong
+    if g.?Axes and g.Axes =!= false then (
 	arr := arrow();
+	-- determine intersection of viewport with axes
+	xmin := (r#0_0-p_(0,3))/p_(0,0);
+	xmax := (r#1_0-p_(0,3))/p_(0,0);
+	if xmax < xmin then ( temp:=xmin; xmin=xmax; xmax=temp; );
+	ymin := (r#0_1-p_(1,3))/p_(1,1);
+	ymax := (r#1_1-p_(1,3))/p_(1,1);
+	if ymax < ymin then ( temp:=ymin; ymin=ymax; ymax=temp; );
+	if is3d g then (
+	    zmax := 0.25*(xmax-xmin+ymax-ymin);
+	    zmin := -zmax;
+	    );
 	axes = gList(
-	    Line { Point1 => vector if is3d g then {r#0_0,0,0} else {r#0_0,0}, Point2 => vector if is3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
-	    Line { Point1 => vector if is3d g then {0,r#0_1,0} else {0,r#0_1}, Point2 => vector if is3d g then {0,r#1_1,0} else {0,r#1_1}, "marker-end" => arr },
-	    if is3d g then Line { Point1 => vector{0,0,min(r#0_0,r#0_1)}, Point2 => vector {0,0,max(r#1_0,r#1_1)}, "marker-end" => arr },
+	    Line { Point1 => vector {xmin,0,0,1}, Point2 => vector {xmax,0,0,1}, "marker-end" => arr },
+	    Line { Point1 => vector {0,ymin,0,1}, Point2 => vector {0,ymax,0,1}, "marker-end" => arr },
+	    if is3d g then Line { Point1 => vector{0,0,zmin,1}, Point2 => vector {0,0,zmax,1}, "marker-end" => arr },
 	    "stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
 	    );
 	axeslabels = gList(
-	    GraphicsHtml { Point => 1.06*vector if is3d g then {r#1_0,0,0} else {r#1_0,0}, HtmlContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x , FontSize => 0.08*min(rr_0,rr_1)},
-	    GraphicsHtml { Point => 1.06*vector if is3d g then {0,r#1_1,0} else {0,r#1_1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
-	    if is3d g then GraphicsHtml { Point => 1.06*vector{0,0,max(r#1_0,r#1_1)}, HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)}
-	    -*
-	    GraphicsText { Point => 1.06*vector if is3d g then {r#1_0,0,0} else {r#1_0,0}, HtmlContent => if instance(g.Axes,List) then toString g.Axes#0 else "x", FontSize => 0.08*min(rr_0,rr_1)},
-	    GraphicsText { Point => 1.06*vector if is3d g then {0,r#1_1,0} else {0,r#1_1}, HtmlContent => if instance(g.Axes,List) then toString g.Axes#1 else "y", FontSize => 0.08*min(rr_0,rr_1)},
-	    if is3d g then GraphicsText { Point => 1.06*vector{0,0,max(r#1_0,r#1_1)}, HtmlContent => if instance(g.Axes,List) then toString g.Axes#2 else "z", FontSize => 0.08*min(rr_0,rr_1)},
-	    "stroke" => "none", "fill"=>"black"
-	    *-
+	    -- we use GraphicsHtml here despite limitations of ForeignObject. could use GraphicsText instead
+	    GraphicsHtml { Point => vector {xmax*1.06,0,0,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x, FontSize => 0.08*min(rr_0,rr_1)},
+	    GraphicsHtml { Point => vector {0,ymax*1.06,0,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
+	    if is3d g then GraphicsHtml { Point => vector {0,0,zmax*1.06,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)}
 	    );
 	defsList = scanDefs axes | scanDefs axeslabels;
 	axes=svg(axes,p,p);
@@ -856,10 +864,13 @@ multidoc ///
    SVG text
   Description
    Text
-    Some SVG text. The text itself is the option TextContent (a string). Text can be "stroke"d or "fill"ed.
+    Some SVG text. The location of the start of the text is given by the option Point.
+    The text itself is the option TextContent (a string).
+    The text can be "stroke"d or "fill"ed.
     Font size should be specified with FontSize.
    Example
-    GraphicsText{(0,0),"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
+    GraphicsText{TextContent=>"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
+    gList(GraphicsText{(0,0),"P",FontSize=>14},GraphicsText{(7,0),"AUL",FontSize=>10})
   Caveat
    Currently, cannot be rotated. (coming soon)
  Node
@@ -931,10 +942,11 @@ multidoc ///
     Produces a translation encoded as a 4x4 matrix that can be used as an argument to @TO{TransformMatrix}@ or @TO{AnimMatrix}@.
     The vector can be 2d or 3d.
    Example
-    v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
+    v={vector{7.456, 5.201, -4.166}, vector{2.7263, -2.992, 9.144},
+       vector{-8.130, 5.783, 0.671}, vector {-2.052, -7.993, -5.649}};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     tetra=gList(apply(4,i->Polygon{f#i,"fill"=>"white"}))
-    g = memoize(n -> if n==0 then tetra else gList apply(4,i->g(n-1)++{TransformMatrix=>translation v#i}))
+    g = memoize(n -> if n==0 then tetra else gList apply(4,i->g(n-1)++{TransformMatrix=>translation(2^(n-1)*v#i)}))
     apply(4,g)
   Usage
    translation ( vector )
@@ -994,9 +1006,9 @@ multidoc ///
    Text
     An option to create a rotation animation for the @ TO {VectorGraphics} @ 3d object.
     The value can be a single 4x4 matrix, or a list which is cycled.
-    The syntax n => ... can be used to repeat a sequence n times (where 0 means infinity).
+    The syntax {\tt n => ...} can be used to repeat a sequence n times (where {\tt 0} means infinity).
     The animation automatically loops (use {\tt 0 => \{ \}} to stop!)
-    In order for the animation to work, VectorGraphics.css and VectorGraphics.js must be included in the web page.
+    In order for the animation to work, {\tt VectorGraphics.css} and {\tt VectorGraphics.js} must be included in the web page.
    Example
     (anim1=rotation(0.1,(0,0,1),(0,0,0)); anim2=rotation(-0.1,(0,0,1),(0,0,0)); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 });
     gList(Polygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red",AnimMatrix=>anim1},Circle{(1,0),0.1},Circle{(0,0),1})
