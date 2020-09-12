@@ -8,6 +8,7 @@ newPackage(
              HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"
              }},
         Headline => "interface to CohomCalg software for computing cohomology of torus invariant divisors on a toric variety",
+        AuxiliaryFiles => true,
         PackageExports => {"NormalToricVarieties"},
         Configuration => {
             "executable" => "",
@@ -17,7 +18,6 @@ newPackage(
 
 -- TODO:
 --   add in documentation for these "monomialfile" routines
---   document cohomCalgExecutable
 --   document Silent
 --   add in use of --Verbose1, ..., Verbose6.
 
@@ -37,12 +37,11 @@ export {
 --  if L is a list (of either degree vectors or toric divisors), returns a list of the same length.
 -- allow the use of Verbose1, ..., and perhaps monomialfile
 
-exportMutable {
-    "cohomCalgExecutable"
-    }
-
-cohomCalgExecutable = CohomCalg#Options#Configuration#"executable"
-if cohomCalgExecutable == "" then cohomCalgExecutable = prefixDirectory | currentLayout#"programs" | "cohomcalg"
+-- for backward compatibility
+if not programPaths#?"cohomcalg" and
+    CohomCalg#Options#Configuration#"executable" != "" then
+        programPaths#"cohomcalg" = replace("cohomcalg$", "",
+	    CohomCalg#Options#Configuration#"executable")
 silent = (
     if CohomCalg#Options#Configuration#"silent" == "false" then false 
     else if CohomCalg#Options#Configuration#"silent" == "true"  then true 
@@ -82,22 +81,26 @@ toCohomCalg List := (L) -> (
         )
     )
 
+cohomCalgProgram = null
+
 -- The actual call to cohomcalg
--- It is required that the user has placed the
--- executable at cohomCalgExecutable, which is usually set to "cohomcalg"
 -- Also, cohomcalg has a limit of 1024 computations at a time
 cohomCalg0 = (X,pneeded,issilent) -> (
+    if cohomCalgProgram === null then
+        cohomCalgProgram = findProgram("cohomcalg",
+	    "cohomcalg " | prefixDirectory |
+	    replace("PKG", "CohomCalg", currentLayout#"package") | "dP1.in");
     -- X: NormalToricVariety
     -- pneeded: list of multi-degrees, of size <= 1024
     -- issilent: Boolean, whether to quiet the output of cohomcalg.
     H := X.cache.CohomCalg;
     filename := temporaryFileName();
     filename << (toCohomCalg X) | (toCohomCalg pneeded) << close;
-    executable := "!"|cohomCalgExecutable|" --integrated " | filename;
-    if issilent then executable = executable | " 2>/dev/null";
+    executable := runProgram(cohomCalgProgram, "--integrated " | filename);
     if debugLevel >= 1 then << "-- CohomCalg: using temporary file " << filename << endl;
-    if debugLevel >= 2 then << "-- CohomCalg: going to call: " << executable << endl;
-    valstr := get executable;
+    if debugLevel >= 2 then << "-- CohomCalg: going to call: " << executable#"command" << endl;
+    if not issilent then << executable#"error";
+    valstr := executable#"output";
     if debugLevel >= 5 then << "-- CohomCalg: output = " << net valstr << endl;
     --val := replace("\\*", "**", valstr);
     val := replace("False", "false", valstr);
@@ -329,26 +332,6 @@ SeeAlso
   "ReflexivePolytopesDB::ReflexivePolytopesDB"
 ///
 
-doc ///
-Key
-  "cohomCalgExecutable"
-Headline
-  the path to the CohomCalg software exectuable file
-Usage
-  cohomCalgExecutable = "cohomcalg"
-Description
-  Text
-    This package level exported mutable string contains the location of the executable.
-    Normally, you do not need to worry about this, as CohomCalg is distributed with
-    Macaulay2, and this variable points to the executable which comes with Macaulay2.
-    
-    This can be useful to find the executable, or, if you have compiled a newer version,
-    then you can set this to be where you keep that.
-  Example
-    cohomCalgExecutable
-SeeAlso
-  cohomCalg
-///
 
 TEST ///
   needsPackage "CohomCalg"

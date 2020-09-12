@@ -1,6 +1,8 @@
 DEBIAN_REVISION=
 
 overnight:
+	git status
+	git checkout -- ../../Macaulay2/packages
 	git pull
 	git submodule sync
 	git submodule update

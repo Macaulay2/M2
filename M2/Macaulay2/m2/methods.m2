@@ -179,7 +179,7 @@ setupMethods := (args, symbols) -> (
 
 setupMethods((), { 
       localRing,
-	  entries, borel, gcdCoefficients, singularLocus, replace,
+	  entries, borel, gcdCoefficients, singularLocus,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, trace, target, source,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
@@ -265,7 +265,7 @@ map = method(
 
 setupMethods(Dispatch => Thing, {transpose} )
 setupMethods(TypicalValue => Boolean,
-     {isBorel, isWellDefined, isInjective, isSurjective, isUnit, match,
+     {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
 	  isSubset,isHomogeneous, isIsomorphism, isPrime, isPseudoprime, isField, isConstant
 	  })
 setupMethods(TypicalValue => ZZ,
@@ -301,14 +301,6 @@ toExternalString Nothing := simpleToString
 toExternalString Thing := x -> (
      if hasAttribute(x,ReverseDictionary) then return toString getAttribute(x,ReverseDictionary);
      error("can't convert anonymous object of class ",toString class x," to external string"))
-
-regexQuote = method(Dispatch => Thing, TypicalValue => String)
-regexQuote String := s -> (
-     specialChars := {"\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "[",
-	  "]", "{", "}"};
-     concatenate apply(characters s, c ->
-	  if member(c, specialChars) then "\\" | c else c)
-     )
 
 options = method(Dispatch => Thing, TypicalValue => OptionTable)
 setupMethods(Dispatch => Thing, {max,min,directSum,intersect,vars})
@@ -374,6 +366,16 @@ scanKeys(Database,Function) := (x,f) -> (
 	       f s;
 	       s = nextkey x;
 	       ))
+
+-- TODO: eventually move this to lists.m2
+select' = select
+select = method(Options => true)
+select(ZZ,            Function) := List      => {} >> o -> select'
+select(ZZ, BasicList, Function) := BasicList => {} >> o -> select'
+select(ZZ, HashTable, Function) := HashTable => {} >> o -> select'
+select(    BasicList, Function) := BasicList => {} >> o -> select'
+select(    HashTable, Function) := HashTable => {} >> o -> select'
+-- two more methods installed in regex.m2
 
 oldnumerator := numerator
 erase symbol numerator
@@ -446,9 +448,6 @@ length Dictionary := s -> #s
 length String := s -> #s
 length VisibleList := s -> #s
 
-lastMatch = null
-match(String,String) := X -> null =!= (lastMatch = regex X)
-
 Nothing == Nothing := Boolean => (x,y) -> x === y			    -- actually, x and y must both be "null"!
 
 -- installation of assignment methods
@@ -510,19 +509,35 @@ dispatcherFunctions = join (dispatcherFunctions, {
 
 addHook = method()
 removeHook = method()
-runHooks = method()
+runHooks = method(Options => true)
 
 addHook   (MutableHashTable,Thing,Function) := (obj,key,hook) -> obj#key = if obj#?key then prepend(hook,obj#key) else {hook}
 removeHook(MutableHashTable,Thing,Function) := (obj,key,hook) -> if obj#?key then obj#key = delete(obj#key,hook)
-runHooks  (MutableHashTable,Thing,Thing   ) := (obj,key,arg ) -> if obj#?key then scan(obj#key, hook -> hook arg)
+runHooks  (MutableHashTable,Thing,Thing   ) := true >> opts -> (obj,key,arg ) -> (if obj#?key then scan(obj#key, hook -> (
+          result := (if options hook =!= null then (
+               hookOpts := select(keys options hook, k -> opts#?k) / (k -> k => opts#k);
+               hook(arg, new OptionTable from hookOpts)
+               ) else hook arg 
+          );
+          if not instance(result, Nothing) then break result)))
 
 addHook   (HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; c#key = if c#?key then prepend(hook,c#key) else {hook})
 removeHook(HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; if c#?key then c#key = delete(c#key,hook))
-runHooks  (HashTable,Thing,Thing   ) := (obj,key,arg ) -> (c := obj.cache; if c#?key then scan(c#key, hook -> hook arg))
+runHooks  (HashTable,Thing,Thing   ) := true >> opts -> (obj,key,arg ) -> (c := obj.cache; if c#?key then scan(c#key, hook -> (
+          result := (if options hook =!= null then ( 
+               hookOpts := select(keys options hook, k -> opts#?k) / (k -> k => opts#k);
+               hook(arg, new OptionTable from hookOpts)
+               ) else hook arg);
+          if not instance(result, Nothing) then break result)))
 
 addHook   (Symbol,Function) := (sym,hook) -> sym <- if value sym =!= sym then prepend(hook,value sym) else {hook}
 removeHook(Symbol,Function) := (sym,hook) -> if value sym =!= sym then sym <- delete(value sym,hook)
-runHooks  (Symbol,Thing   ) := (sym,arg ) -> if value sym =!= sym then scan(value sym, hook -> hook arg)
+runHooks  (Symbol,Thing   ) := true >> opts -> (sym,arg ) -> if value sym =!= sym then scan(value sym, hook -> (
+          result := (if options hook =!= null then ( 
+               hookOpts := select(keys options hook, k -> opts#?k) / (k -> k => opts#k);
+               hook(arg, new OptionTable from hookOpts)
+               ) else hook arg);
+          if not instance(result, Nothing) then break result))
 
 -- and keys
 protect QuotientRingHook
@@ -591,9 +606,6 @@ storefuns #toString = (x,e) -> (
 Function Thing = (f,x,e) -> (
      if not storefuns#?f then error("no method for storing values of function ", toString f);
      storefuns#f (x,e))
-
--- replace
-replace(String,String,String) := String => replaceStrings
 
 -- baseName
 baseName Thing := R -> (

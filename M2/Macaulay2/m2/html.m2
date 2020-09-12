@@ -36,16 +36,16 @@ popIndentLevel  = (n, s) -> (indentLevel = indentLevel - n; s)
 -- whether fn exists on the path
 -- TODO: check executable
 runnable := fn -> (
-    if fn == "" then false;
+    if fn == "" then return false;
     if isAbsolutePath fn then fileExists fn
     else 0 < # select(1, apply(separate(":", getenv "PATH"), p -> p|"/"|fn), fileExists))
 
 -- preferred web browser
 -- TODO: cache this value
 browser := () -> (
-    if runnable "open" then "open" -- Apple varieties
+    if runnable getenv "WWWBROWSER" then getenv "WWWBROWSER" -- compatibility
+    else if version#"operating system" === "Darwin" and runnable "open" then "open" -- Apple varieties
     else if runnable "xdg-open" then "xdg-open" -- most Linux distributions
-    else if runnable getenv "WWWBROWSER" then getenv "WWWBROWSER" -- compatibility
     else if runnable "firefox" then "firefox" -- backup
     else error "neither open nor xdg-open is found and WWWBROWSER is not set")
 

@@ -165,9 +165,6 @@ $(M2_LASTCFILES:.c=.o) : CPPFLAGS += -I.
 # to get scc-core.h:
 M2INCLUDES += -I@srcdir@/../c
 
-# we use this to override the regex library in the system
-M2INCLUDES += -I@srcdir@/../regex
-
 # it's important that *our* directories get searched first:
 CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)
 
@@ -206,9 +203,6 @@ ifeq (@HAVE_WFRAME_ADDRESS@,yes)
 M2lib.o : M2_CFLAGS += -Wno-frame-address
 endif
 
-# flags needed to sidestep system regex
-scclib.o : CPPFLAGS += -Dre_compile_fastmap=M2_re_compile_fastmap -Dre_compile_pattern=M2_re_compile_pattern -Dre_match=M2_re_match -Dre_match_2=M2_re_match_2 -Dre_search=M2_re_search -Dre_search_2=M2_re_search_2 -Dre_set_registers=M2_re_set_registers -Dre_set_syntax=M2_re_set_syntax -Dregcomp=M2_regcomp -Dregerror=M2_regerror -Dregexec=M2_regexec -Dregfree=M2_regfree
-
 M2lib.o scclib.o : | interp-exports.h.tmp
 scclib.o : expr-exports.h M2mem.h debug.h types.h ../c/compat.h ../e/engine.h
 M2lib.o : types.h ../c/compat.c debug.h M2mem.h ../c/compat.h ../e/engine.h
@@ -224,13 +218,15 @@ startup.c: startup-header.h ../m2/startup.m2 @srcdir@/../m2/basictests/*.m2 Make
 	@(\
 	 cat @srcdir@/startup-header.h; \
 	 echo 'cached_file startupFile = {' ; \
-	     echo @abs_top_srcdir@/Macaulay2/m2/startup.m2.in | sed $(BSTRING) ; \
+	     echo Macaulay2/Core/startup.m2.in | sed $(BSTRING) ; \
 	     echo  ',' ; \
 	     cat ../m2/startup.m2 | sed $(SSTRING) ; \
 	 echo  '};' ; \
 	 echo 'cached_file testStrings[] = {' ; \
 	 for i in @abs_top_srcdir@/Macaulay2/m2/basictests/*.m2 ; \
-	 do echo '{' ; echo $$i | sed $(BSTRING) ; echo  ',' ; cat $$i | sed $(SSTRING) ; echo  '},' ; \
+	 do echo '{' ; echo Macaulay2/Core/basictests/`basename $$i` | \
+	     sed $(BSTRING) ; echo  ',' ; cat $$i | sed $(SSTRING) ; \
+	     echo  '},' ; \
 	 done ; \
 	 echo '};' ; \
 	 cat @srcdir@/startup-trailer.h; \

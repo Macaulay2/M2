@@ -524,26 +524,20 @@ value(e:Expr):Expr := (
      else WrongArg(1,"a string, a symbol, or pseudocode"));
 setupfun("value'",value);
 
-tmpbuf := new string len 100 do provide ' ' ;
-
 --May need thread work?
 internalCapture(e:Expr):Expr := (
      when e
      is s:stringCell do (
      	  flush(stdIO);
-	  oldfd := stdIO.outfd;
 	  oldDebuggingMode := debuggingMode;
 	  setDebuggingMode(false);
-	  oldStderrE := getGlobalVariable(stderrS);
-	  oldstderr := stdError;
-	  stdError = stdIO;
-	  setGlobalVariable(stderrS,getGlobalVariable(stdioS));
           foss := getFileFOSS(stdIO);
-	  --thread workaround -- unlock fileFOSS
+	  foss.capturing = true;
 	  releaseFileFOSS(stdIO);
-	  stdIO.outfd = NOFD;
 	  oldbuf := foss.outbuffer;
-	  foss.outbuffer = tmpbuf;
+	  oldbol := foss.outbol;
+	  oldindex := foss.outindex;
+	  foss.outbuffer = new string len 100 do provide ' ';
 	  stringFile := stringTokenFile("currentString", s.v+newline);
 	  stringFile.posFile.file.echo = true;
 	  oldLineNumber := lineNumber;
@@ -552,11 +546,10 @@ internalCapture(e:Expr):Expr := (
 	  setprompt(stringFile,topLevelPrompt);
 	  r := readeval3(stringFile,true,newStaticLocalDictionaryClosure(),false,false,true);
 	  out := substrAlwaysCopy(foss.outbuffer,0,foss.outindex);
-	  stdIO.outfd = oldfd;
+     	  foss.capturing = false;
 	  foss.outbuffer = oldbuf;
-	  foss.outindex = 0;
-	  setGlobalVariable(stderrS,oldStderrE);
-	  stdError = oldstderr;
+	  foss.outbol = oldbol;
+	  foss.outindex = oldindex;
 	  setLineNumber(oldLineNumber);
 	  setDebuggingMode(oldDebuggingMode);
 	  previousLineNumber = -1;

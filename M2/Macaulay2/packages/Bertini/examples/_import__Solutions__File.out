@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 1382198196
+-- -*- M2-comint -*- hash: 1841199191
 
 i1 : R=QQ[x,y]
 
@@ -8,11 +8,7 @@ o1 : PolynomialRing
 
 i2 : makeB'InputFile(storeBM2Files,
          AffVariableGroup=>{{x,y}},
-         B'Polynomials=>{x^2-1,y^3-1})
-
-o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-74799-0/0/input
-
-o2 : File
+         B'Polynomials=>{x^2-1,y^3-1});
 
 i3 : runBertini(storeBM2Files)
 

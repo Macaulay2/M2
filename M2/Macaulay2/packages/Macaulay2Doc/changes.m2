@@ -33,7 +33,43 @@ document {
 
 document {
      Key => "changes made for the next release",
+     UL {
+         LI { "functionality improved",
+              UL {
+                   LI { "The ", TO document, " function now accepts three new options: ", TT "Acknowledgement", ", ",
+		       TT "Contributors", ", and ", TT "References", ". The content of each will appear under a subsection
+		       of the same name in the documentation. Moreover, ", TO (document, String), " is now a synonym for ",
+		       TO "SimpleDoc :: doc(String)", "." },
+                   LI { "The ", TO regex, " function, as well as other functions that accept ", TO "regular expressions",
+                       ", have been rewritten to use the Perl regular expression syntax by default, which allows more
+		       fine-grained control of the matches. The POSIX Extended flavor is still available as an option.
+		       The functionality is unchanged in almost all cases, except for regular expressions containing
+		       escaped special characters, where another backslash may be needed, and, in rare cases, where
+		       there are multiple options to match the regular expression.
+		       Internally, the new implementation incorporates the ", TO2{"Boost", "Boost.Regex"}, " library." }
+                   }
+              },
+	 LI { "improved packages:",
+	      UL {
+		   LI {
+		       "The ", TO "SimpleDoc :: doc(String)", " method from the ", TO "SimpleDoc :: SimpleDoc", " package
+		       has been rewritten to support documenting multiple nodes at once. The following keywords were added: ",
+		       TT "Node", ", ", TT "Synopsis", ", ", TT "Tree", ", ", TT "Acknowledgement", ", ", TT "Contributors", ", ",
+		       TT "References", ", and ", TT "SourceCode", ". Moreover, two new functions, ", TO "SimpleDoc :: arXiv",
+		       " and ", TO "SimpleDoc :: stacksProject", " were added to help with referencing external documents."
+		       }
+		   }
+	       },
+	 LI { "functionality changed in a way that could break code:",
+	      UL {
+		   LI { "The variable ", TO "backupFileRegexp", " has been replaced by the ", TO "Exclude", "
+			option to ", TO "copyDirectory", "."    
+			}
+		   }
+	      }
+	 }
      }
+
 
 document {
      Key => "changes, 1.16",
@@ -801,6 +837,7 @@ document {
 	  LI {
 	       "obsolete methods",
 	       UL {
+		    LI { TT "Wikipedia(String)", " has been replaced: use ", TO "SimpleDoc :: wikipedia", " instead" },
 		    LI { "'map(Ideal)' has been removed: use 'map(module I,module I, 1)' instead" },
 		    LI { "'map(Ideal,Ideal)' has been removed: use 'map(module I,module J)' instead" },
 		    LI { "'map(Module,Matrix)' has been replaced: use 'map(M,,f)' instead" },
@@ -2183,7 +2220,7 @@ document {
 	  TO "toCC", ", ",
 	  TO "toRR", ", ",
 	  TO "utf8", ", ",
-	  TO "Wikipedia", ", and ",
+	  TO "wikipedia", ", and ",
 	  TO "zeta", "."
 	  },
      PARA ///

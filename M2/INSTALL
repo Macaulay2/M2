@@ -83,7 +83,7 @@ various modern operating systems:
 
   Ubuntu and Debian:
     Install packages as root with:
-      apt-get install -y -q sudo autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan libeigen3-dev libtool-bin frobby libfrobby-dev
+      apt-get install -y -q sudo autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-regex-dev libboost-stacktrace-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan libeigen3-dev libtool-bin frobby libfrobby-dev libnauty2-dev libnauty2 nauty nauty-doc coinor-csdp coinor-csdp-doc
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
@@ -114,7 +114,18 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo dnf -y install autoconf bison boost-devel cddlib-devel cohomCalg csdp csdp-tools eigen3-devel emacs factory-devel factory-gftables fflas-ffpack-devel flex flint-devel frobby gcc-c++ gc-devel gdbm-devel git givaro-devel glpk-devel gmp-devel gtest gtest-devel kernel-devel lapack-devel libatomic_ops-devel libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel mpsolve nauty ncurses-devel ntl-devel patch pkgconf polymake qd readline-devel rpm-build rpmdevtools rpm-sign strace time which yasm
+      sudo dnf -y install autoconf bison boost-devel boost-stacktrace cddlib-devel cohomCalg csdp csdp-tools eigen3-devel emacs factory-devel factory-gftables fflas-ffpack-devel flex flint-devel frobby gcc-c++ gc-devel gdbm-devel git givaro-devel glpk-devel gmp-devel gtest gtest-devel kernel-devel lapack-devel libatomic_ops-devel libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel mpsolve nauty ncurses-devel ntl-devel patch pkgconf polymake qd readline-devel rpm-build rpmdevtools rpm-sign strace time which yasm rpmlint
+
+  Red Hat Enterprise Linux 6.7
+    We have found that git 1.7.1 is too old, but have succeeded with these modules:
+	module purge
+	module load -f make/4.3
+	module load -f yasm/1.3.0
+	module load -f automake/1.15
+	module load -f gcc/4.9.0
+	module load -f libtool/2.4.3
+	module load -f autoconf/2.69
+	module load -f git/2.13.4    
 
   CentOS 8 (covers Red Hat Enterprise Linux):
     Install packages with:
@@ -210,10 +221,7 @@ various modern operating systems:
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
 	brew update |cat
-	brew install pkg-config autoconf automake gnu-tar libtool wget yasm make ctags ntl eigen |cat
-	brew install --build-bottle bdw-gc libatomic_ops gdbm glpk boost libmpc libomp xz |cat
-      You may omit the option "--build-bottle" if you will not be distributing your Macaulay2
-      binaries to other people with CPU's that may not have the same capabilities as yours.
+	brew install autoconf automake bdw-gc boost ccache cddlib ctags eigen flint gdbm glpk gmp gnu-tar libatomic_ops libmpc libomp libtool make mpfr mpir ncurses ninja ntl pkg-config tbb wget xz yasm |cat
       
     If you have previously installed homebrew, will be distributing your
       Macaulay2 binaries to other people, and perhaps not used the option

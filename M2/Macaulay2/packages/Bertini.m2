@@ -1,7 +1,9 @@
+bertiniPresent := run ("type bertini >/dev/null 2>&1") === 0
+
 newPackage(
   "Bertini",
   Version => "2.1.2.3",
-  Date => "July 31, 2019",
+  Date => "July 2020",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
@@ -21,7 +23,8 @@ newPackage(
   AuxiliaryFiles => true,
   PackageExports => {"NAGtypes"},
   PackageImports => {"NAGtypes"},
-  CacheExampleOutput => true
+  CacheExampleOutput => true,
+  OptionalComponentsPresent => bertiniPresent
 )
 
 exportMutable{"storeBM2Files"
@@ -198,7 +201,7 @@ DBG = 0 -- debug level (10=keep temp files)
 BERTINIexe=(options Bertini).Configuration#"BERTINIexecutable"
 --needsPackage"NAGtypes"
 needsPackage "SimpleDoc"
-     storeBM2Files = temporaryFileName()
+     storeBM2Files = temporaryFileName();
      makeDirectory storeBM2Files
 -- Bertini interface for M2
 -- used by ../NumericalAlgebraicGeometry.m2
@@ -1868,7 +1871,7 @@ importMainDataFile(String) := o->(aString)->(
       theLine0:=separate(" ",allInfo_0);
       aNewPoint.SolutionNumber=value (theLine0_1);
       if o.Verbose then print theLine0;
-      aNewPoint.PathNumber=value replace(")","",(theLine0_4));
+      aNewPoint.PathNumber=value replace("\\)","",(theLine0_4));
       --Estimated condition number
       theLine1:=separate(":",allInfo_1);
       aNewPoint.ConditionNumber=valueBM2(theLine1_1);
@@ -2980,12 +2983,12 @@ doc ///
       If B'Polynomials is not used then the user should use the  NamePolynomials option.
     Example
       R=QQ[x1,x2,y]
-      theDir = temporaryFileName()
+      theDir = temporaryFileName();
       makeDirectory theDir
       makeB'InputFile(theDir,
 	      BertiniInputConfiguration=>{MPType=>2},
      	  AffVariableGroup=>{{x1,x2},{y}},
-	      B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
+	      B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2});
     Example
       R=QQ[x1,x2,y,X]
       makeB'InputFile(theDir,
@@ -2996,7 +2999,7 @@ doc ///
   	     {X,x1+x2+1},
   	     {f1,y*X^2+1},
   	     {f2,x1-x2+1},
-  	     {f3,y-2}})
+  	     {f3,y-2}});
     Example
       R=QQ[x1,x2,y,X]
       makeB'InputFile(theDir,
@@ -3004,7 +3007,7 @@ doc ///
      	   AffVariableGroup=>{{x1,x2},{y}},
 	        B'Polynomials=>{y*X^2+1,x1-x2+1,y-2},
 	         B'Functions=>{
-	            {X,x1+x2+1}})
+	            {X,x1+x2+1}});
     Text
       Variables must begin with a letter (lowercase or capital) and can only
       contain letters, numbers, underscores, and square brackets.
@@ -3031,7 +3034,7 @@ doc ///
       This function can be used to write "start" files and any other solution file using the option NameStartFile=>"AnyNameYouWant".
     Example
       coordinatesOfTwoPnts={{1,0},{3,4}}
-      writeStartFile(storeBM2Files,coordinatesOfTwoPnts)
+      writeStartFile(storeBM2Files,coordinatesOfTwoPnts);
 ///
 
 
@@ -3066,7 +3069,7 @@ doc ///
      R=QQ[x,y]
      makeB'InputFile(storeBM2Files,
      	 AffVariableGroup=>{{x,y}},
-	 B'Polynomials=>{x^2-1,y^3-1})
+	 B'Polynomials=>{x^2-1,y^3-1});
      runBertini(storeBM2Files)
      importSolutionsFile(storeBM2Files)
      importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")
@@ -3091,7 +3094,7 @@ doc ///
      After Bertini does a parameter homotopy many files are created.
      This function imports the parameters from  the "final_parameters" file as the default.
    Example
-     writeParameterFile(storeBM2Files,{1,2},NameParameterFile=>"final_parameters")
+     writeParameterFile(storeBM2Files,{1,2},NameParameterFile=>"final_parameters");
      importParameterFile(storeBM2Files)
 
 ///;
@@ -3116,7 +3119,7 @@ doc ///
      makeB'InputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},
        BertiniInputConfiguration=>{{TrackType,1}},
-       B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
+       B'Polynomials=>{"(x^2+y^2+z^2-1)*y"});
      runBertini(storeBM2Files)
      thePoints=importMainDataFile(storeBM2Files)
      witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
@@ -3147,7 +3150,7 @@ doc ///
      If the NameIncidenceMatrixFile option is set when we want to import files with a different name.
    Example
     makeB'InputFile(storeBM2Files,
-    	BertiniInputConfiguration=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
+    	BertiniInputConfiguration=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    );
     runBertini(storeBM2Files)
     makeSampleSolutionsFile(storeBM2Files,2,SpecifyComponent=>{1,0})
     makeMembershipFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file")
@@ -3328,13 +3331,13 @@ doc///
      makeB'InputFile(storeBM2Files,
 	      AffVariableGroup=>{{x,y}},
 	      RandomReal=>{c1,c2},--c1=.1212, c2=.4132 may be written to the input file.
-	      B'Polynomials=>{x-c1,y-c2})
+	      B'Polynomials=>{x-c1,y-c2});
    Example
      R=QQ[x,y,c1,c2]
      makeB'InputFile(storeBM2Files,
 	      AffVariableGroup=>{{x,y}},
 	      RandomComplex=>{c1,c2},--c1=.1212+ii*.1344, c2=.4132-ii*.2144 are written to the input file.
-	      B'Polynomials=>{x-c1,y-c2})
+	      B'Polynomials=>{x-c1,y-c2});
    Text
      AFTER Bertini is run, the random values are stored in a file named "random_values".
 
@@ -3360,7 +3363,7 @@ doc///
 	      BertiniInputConfiguration=>{MPType=>2},
 	      AffVariableGroup=>{{z}},
 	       B'Constants=>{a=>2,b=>3+2*ii,c=>3/2},
-	        B'Polynomials=>{a*z^2+b*z+c})
+	        B'Polynomials=>{a*z^2+b*z+c});
 ///;
 
 
@@ -3428,7 +3431,7 @@ doc ///
    Text
      This function takes the file f in the directory s and renames it to n.
    Example
-     writeParameterFile(storeBM2Files,{2,3,5,7})
+     writeParameterFile(storeBM2Files,{2,3,5,7});
      fileExists(storeBM2Files|"/final_parameters")
      moveB'File(storeBM2Files,"final_parameters","start_parameters")
      fileExists(storeBM2Files|"/final_parameters")
@@ -3439,14 +3442,14 @@ doc ///
    Text
      The options MoveToDirectory and SubFolder give greater control for where to move the file.
    Example
-     Dir1 = temporaryFileName()
+     Dir1 = temporaryFileName();
      makeDirectory Dir1
-     writeParameterFile(storeBM2Files,{2,3,5,7})
+     writeParameterFile(storeBM2Files,{2,3,5,7});
      moveB'File(storeBM2Files,"final_parameters","start_parameters",MoveToDirectory=>Dir1)
      fileExists(Dir1|"/start_parameters")
    Example
      makeDirectory (storeBM2Files|"/Dir2")
-     writeParameterFile(storeBM2Files,{2,3,5,7})
+     writeParameterFile(storeBM2Files,{2,3,5,7});
      moveB'File(storeBM2Files,"final_parameters","start_parameters",SubFolder=>"Dir2")
      fileExists(storeBM2Files|"/Dir2/start_parameters")
 
@@ -3538,7 +3541,7 @@ doc ///
      s1=makeB'Section({x,y,1})
      makeB'InputFile(storeBM2Files,
        AffVariableGroup=>{x,y},
-       B'Polynomials=>{f,s1})
+       B'Polynomials=>{f,s1});
      runBertini(storeBM2Files)
      #importSolutionsFile(storeBM2Files)==3
 
@@ -3582,7 +3585,7 @@ doc ///
      --Using the NameB'Slice option we can put a slice in the B'Functions option.
      aSlice=makeB'Slice(3,{x,y,z,1},NameB'Slice=>"f");
      aSlice#NameB'Slice
-     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"})
+     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"});
    Example
      --We can use slices to determine multidegrees.
      f1="x0*y0+x1*y0+x2*y2"
@@ -3593,17 +3596,17 @@ doc ///
      yySlice=makeB'Slice({0,2},variableGroups)
      makeB'InputFile(storeBM2Files,
     	 HomVariableGroup=>variableGroups,
-    	 B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections)
+    	 B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections);
      runBertini(storeBM2Files)
      xxDegree=#importSolutionsFile(storeBM2Files)
      makeB'InputFile(storeBM2Files,
     	 HomVariableGroup=>variableGroups,
-    	 B'Polynomials=>{f1,f2}|xySlice#ListB'Sections)
+    	 B'Polynomials=>{f1,f2}|xySlice#ListB'Sections);
      runBertini(storeBM2Files)
      xyDegree=#importSolutionsFile(storeBM2Files)
      makeB'InputFile(storeBM2Files,
     	 HomVariableGroup=>variableGroups,
-    	 B'Polynomials=>{f1,f2}|yySlice#ListB'Sections)
+    	 B'Polynomials=>{f1,f2}|yySlice#ListB'Sections);
      runBertini(storeBM2Files)
      yyDegree=#importSolutionsFile(storeBM2Files)
 

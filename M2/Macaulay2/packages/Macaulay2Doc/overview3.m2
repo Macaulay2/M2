@@ -58,7 +58,7 @@ document {
 	  TO "givaro",
 	  TO "fflas-ffpack",
 	  TO "MPSolve",
-	  -- TO "boost", -- we don't link with boost, but normaliz does
+	  TO "Boost",
 	  "programs and their libraries",
 	  TO "4ti2",
 	  TO "gfan",
@@ -300,6 +300,28 @@ doc ///
         (roots, RingElement)
 ///
 
+doc ///
+  Key
+    "Boost"
+  Headline
+    a collection of C++ source libraries
+  Description
+    Text
+      @HREF {"https://www.boost.org/", "Boost"}@ is a collection of free peer-reviewed and
+      portable C++ libraries suitable for eventual standardization.
+
+      Macaulay2 incorporates the following Boost libraries:
+
+      @UL {
+	  PARA {HREF {"https://www.boost.org/doc/libs/release/libs/stacktrace/", "Boost.Stacktrace"}, " (since version 1.16) ",
+              "used internally for printing stack traces"},
+	  PARA {HREF {"https://www.boost.org/doc/libs/release/libs/regex/", "Boost.Regex"}, " (since version 1.17) ",
+              "used by the ", TO regex, " function, as well as other functions using ", TO "regular expressions", "."}
+	  }@
+    Text
+      Note: the program @TO "normaliz"@ utilizes the
+      @HREF {"https://www.boost.org/doc/libs/release/libs/dynamic_bitset/", "Boost dynamic_bitset class"}@.
+///
 document {
      Key => "pari",
      PARA {
@@ -541,7 +563,7 @@ document { Key => "frequently encountered problems",
 
 document {
      Key => "specifying typical values",
-     "For the purpose of construction good documentation automatically, it
+     "For the purpose of constructing good documentation automatically, it
      is useful to specify the type of value typically returned by a function
      or method.  For example, the function ", TO "isModule", " returns a boolean
      value, and this is specified when creating the method function with the

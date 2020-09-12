@@ -38,7 +38,7 @@ check-make:
 make-configure : check-autoconf configure
 configure: configure.ac config/files config/*.m4; autoconf
 
-get-tools: usr-build/aclocal-path get-m4 get-pkg get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
+get-tools: usr-build/aclocal-path get-m4 get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
 which-tools:
 	@ for i in m4 autoconf automake libtool; \
 		do echo $$i: ; which $$i ; $$i --version | head -1 ; done
@@ -55,6 +55,7 @@ get-automake:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.16.1
 get-libtool:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=libtool VERSION=2.4.6
+get-automake: get-pkg
 get-pkg: usr-build/share/aclocal/pkg.m4
 usr-build/aclocal-path2:get-automake
 usr-build/share/aclocal/pkg.m4: usr-build/pkg.m4
@@ -239,8 +240,8 @@ clean-in-submodules:
 	git submodule foreach git clean -xdfq
 
 # Fetch the M2-emacs submodule
-fetch-M2-emacs: Macaulay2/editors/emacs/Makefile.in
-Macaulay2/editors/emacs/Makefile.in:; git submodule update --init Macaulay2/editors/emacs
+fetch-M2-emacs: Macaulay2/editors/emacs/M2.el
+Macaulay2/editors/emacs/M2.el:; git submodule update --init Macaulay2/editors/emacs
 
 # Local Variables:
 # mode: Makefile

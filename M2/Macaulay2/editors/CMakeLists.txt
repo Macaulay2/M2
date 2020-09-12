@@ -21,12 +21,14 @@ set(GRAMMAR_FILES
   vim/m2.vim.dict
   emacs/M2-symbols.el)
 
+set(GRAMMAR_TEMPLATES ${GRAMMAR_FILES})
+list(TRANSFORM GRAMMAR_TEMPLATES APPEND ".in")
 add_custom_target(M2-editors DEPENDS ${GRAMMAR_FILES})
 add_custom_command(OUTPUT ${GRAMMAR_FILES}
   COMMENT "Generating M2 grammar files for editors"
   COMMAND ${M2} ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/make-M2-symbols.m2
-  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/make-M2-symbols.m2
-  DEPENDS M2-core)
+  MAIN_DEPENDENCY make-M2-symbols.m2
+  DEPENDS M2-core ${GRAMMAR_TEMPLATES})
 
 ###############################################################################
 ## Generating the M2-mode package for Emacs
@@ -37,11 +39,16 @@ set(M2_INSTALL_EMACSDIR
 file(COPY emacs/ DESTINATION ${M2_INSTALL_EMACSDIR}
   FILES_MATCHING PATTERN "M2*" PATTERN "*.in" EXCLUDE)
 
-add_custom_target(M2-emacs ALL
+set(EMACS_FILES M2-emacs-help.txt M2-emacs.m2 M2-symbols.el.gz)
+list(TRANSFORM EMACS_FILES PREPEND ${M2_INSTALL_EMACSDIR}/)
+add_custom_target(M2-emacs ALL DEPENDS ${EMACS_FILES})
+add_custom_command(OUTPUT ${EMACS_FILES}
   COMMENT "Generating Emacs package"
   COMMAND ${M2} ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/emacs/make-M2-emacs-help.m2
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/emacs/M2-symbols.el ${M2_INSTALL_EMACSDIR}
   COMMAND gzip -nf9 M2-symbols.el
+  # This command updates the generated content in the M2-emacs submodule
   COMMAND ${CMAKE_COMMAND} -E copy M2-emacs-help.txt M2-emacs.m2 M2-symbols.el.gz ${CMAKE_CURRENT_SOURCE_DIR}/emacs
+  MAIN_DEPENDENCY emacs/make-M2-emacs-help.m2
   WORKING_DIRECTORY ${M2_INSTALL_EMACSDIR}
-  DEPENDS M2-editors)
+  DEPENDS emacs/M2-symbols.el make-M2-symbols.m2)

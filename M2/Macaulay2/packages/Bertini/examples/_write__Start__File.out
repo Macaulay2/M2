@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -484322668
+-- -*- M2-comint -*- hash: 647005171
 
 i1 : coordinatesOfTwoPnts={{1,0},{3,4}}
 
@@ -6,10 +6,6 @@ o1 = {{1, 0}, {3, 4}}
 
 o1 : List
 
-i2 : writeStartFile(storeBM2Files,coordinatesOfTwoPnts)
-
-o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-74874-0/0/start
-
-o2 : File
+i2 : writeStartFile(storeBM2Files,coordinatesOfTwoPnts);
 
 i3 : 
