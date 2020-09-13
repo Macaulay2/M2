@@ -1433,12 +1433,7 @@ doc///
         number of threads the the function will use in a brute force search for a point 
     Description
         Text
-            When calling {\tt randomPoints}, and functions that call it, with a {\tt BruteForce} strategy, this denotes the number of threads for brute force point checking.
-        Example
-            R = ZZ/11[x,y,z];
-            I = ideal(x,y);
-            allowableThreads = 8;
-            randomPoints(I, NumThreadsToUse=>4)
+            When calling {\tt randomPoints}, and functions that call it, with a {\tt BruteForce} strategy, this denotes the number of threads to use in brute force point checking.
     Caveat
         Currently multi threading creates instability.  Use at your own risk.
     SeeAlso
