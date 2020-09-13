@@ -34,8 +34,11 @@ document {
 document {
      Key => "changes made for the next release",
      UL {
-         LI { "functionality improved",
+         LI { "functionality improved:",
               UL {
+		   LI { "The option ", TO Boxes, " of ", TO netList,
+		       " has been made more flexible to allow customization of the box;",
+		       " it now accepts as input a pair of lists of rows and columns." },
                    LI { "A brief documentation of various types of objects can be viewed usin ", TO (symbol?, Symbol), "." },
                    LI { "The ", TO document, " function now accepts three new options: ", TT "Acknowledgement", ", ",
 		       TT "Contributors", ", and ", TT "References", ". The content of each will appear under a subsection
