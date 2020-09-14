@@ -965,6 +965,9 @@ numericalNoetherianOperators(Ideal, Point) := SetOfNoethOps => true >> opts -> (
     )
     else error "expected an ideal in a polynomial ring over QQ, CC or RR"
 )
+numericalNoetherianOperators(Ideal, Matrix) := SetOfNoethOps => true >> opts -> (I,pt) -> numericalNoetherianOperators(I, point pt, opts)
+
+
 
 interpolateFromTemplate = true >> opts -> (I, ws, tmpl) -> (
     ptList := new List;

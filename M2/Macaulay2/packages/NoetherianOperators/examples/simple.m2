@@ -7,8 +7,16 @@ P = ideal(y,x)
 p = point{{0_CC, 12, 0}}
 debugLevel = 1
 
+numericalNoetherianOperators(I, p, DependentSet => {x,y})
+numericalNoetherianOperators(I, DependentSet => {x,y})
+
 noetherianOperators(I, Strategy => "Hybrid")
 noetherianOperators(I, Strategy => "MacaulayMatrix")
 noetherianOperators(I, Strategy => "PunctualHilbert")
 
-numericalNoetherianOperators(I, DependentSet => {x,y})
+noetherianOperators(I, radical I, Strategy => "Hybrid")
+noetherianOperators(I, radical I, Strategy => "MacaulayMatrix")
+noetherianOperators(I, radical I, Strategy => "PunctualHilbert")
+
+S = CC[x,t,y]
+numericalNoetherianOperators(sub(I, S), p, DependentSet => {x,y} )
