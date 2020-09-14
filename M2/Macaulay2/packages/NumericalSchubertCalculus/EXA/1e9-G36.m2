@@ -1,20 +1,21 @@
-debug 
-needsPackage "NumericalSchubertCalculus"
--- setRandomSeed 21 -- fails!
+debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 0
-setVerboseLevel 0;
 
 -- Problem (1)^9 = 42 in G(3,6)
-Pblm = randomSchubertProblemInstance(
+problem = randomSchubertProblemInstance(
     {{1},{1},{1},{1},{1},{1},{1},{1},{1}},3,6
     );
-
-setVerboseLevel 1
-elapsedTime S = solveSchubertProblem(Pblm,3,6);
-assert all(S,s->checkIncidenceSolution(s,Pblm))
-
-printStatistics()
+k = 3; n = 6;
+print "Monodromy..."
+elapsedTime solsM = solveSchubertProblemViaMonodromy(problems,k,n,Verbose=>false)
+print "LR..."
+setVerboseLevel 0
+elapsedTime solsLR = solveSchubertProblem(problem,k,n);
 end
 
 restart
-load "NumericalSchubertCalculus/EXA/1e9-G36.m2"
+errorDepth=2
+load "NumericalSchubertCalculus/EXA/1e9-G36-SLP.m2"
+
+
+
