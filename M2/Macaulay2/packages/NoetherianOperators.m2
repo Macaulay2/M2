@@ -954,6 +954,18 @@ numericalNoetherianOperators(Ideal) := List => true >> opts -> I -> (
     numericalNoetherianOperators(I,ws, opts)
 )
 
+-- if a point is given, computes the evaluated Nops
+numericalNoetherianOperators(Ideal, Point) := SetOfNoethOps => true >> opts -> (I,pt) -> (
+    if not opts.?DependentSet then error "expected option DependentSet";
+    S := ring I;
+    if ancestor(InexactField, class coefficientRing S) then numNoethOpsAtPoint(I, pt, opts)
+    else if coefficientRing S === QQ then (
+        R := CC monoid S;
+        numNoethOpsAtPoint(sub(I,R), pt, opts, DependentSet => (opts.DependentSet / (x -> sub(x, R))))
+    )
+    else error "expected an ideal in a polynomial ring over QQ, CC or RR"
+)
+
 interpolateFromTemplate = true >> opts -> (I, ws, tmpl) -> (
     ptList := new List;
     opList := new List;
