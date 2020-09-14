@@ -203,8 +203,6 @@ locateCorePackageFile = (pkgname,f) -> locatePackageFile(prefixDirectory,current
 
 locateCorePackageFileRelative = (pkgname,f,installPrefix,installTail) -> locatePackageFileRelative(prefixDirectory,currentLayout,pkgname,f,installPrefix,installTail)
 
-locateDocumentationNode = method()
-
 keyExists = (i,fkey) -> (
      if i#?"doc keys" 
      then i#"doc keys"#?fkey
@@ -213,34 +211,6 @@ keyExists = (i,fkey) -> (
 	  r := db#?fkey;
 	  close db;
 	  r))
-
-locateDocumentationNode (String,String) := (pkgname,fkey) -> (
-     i := getPackageInfo pkgname;
-     if i === null or not keyExists(i,fkey) then return null;
-     layout := Layout#(i#"layout index");
-     fn := i#"prefix" | htmlFilename1(fkey,pkgname,layout);
-     if not fileExists fn then error ("internal error: html documentation file does not exist: ",fn);
-     fn)
-
-locateDocumentationNode String := fkey -> (			    -- search packages for one with a documentation node under this formatted key, unless it contains "::"
-     r := regex(" *:: *",fkey);
-     if r === null then (
-	  for prefix in prefixPath
-	  do if installedPackagesByPrefix#?prefix
-	  then (
-	       pkgtable := installedPackagesByPrefix#prefix#"package table";
-	       for pkgname in keys pkgtable do (
-		    q := pkgtable#pkgname;
-		    if keyExists(q,fkey) then (
-			 layout := Layout#(q#"layout index");
-			 fn := prefix | htmlFilename1(fkey,pkgname,layout);
-			 if not fileExists fn then error ("internal error: html documentation file does not exist: ",fn);
-			 return fn))))
-     else (
-	  (off,len) := r#0;
-	  pkgname := substring(0,off,fkey);
-	  fkey = substring(off+len,fkey);
-	  locateDocumentationNode(pkgname,fkey)))
 
 getPackageInfoList = () -> flatten (
      for prefix in prefixPath 

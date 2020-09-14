@@ -668,7 +668,7 @@ Description
       the given weights to the generators.
       A weight
       is a list of integers of a length 
-      that is the same for all generators, see @TO "degreeLength(Liealgebra)"@. 
+      that is the same for all generators, see @TO "degreeLength(LieAlgebra)"@. 
       The first component (also just called the degree) is positive, 
       see @TO "firstDegree(LieElement)"@. 
       If the option @TO LastWeightHomological@ is {\tt true}, 
@@ -1212,7 +1212,7 @@ Outputs
 SeeAlso
   "image(LieAlgebraMap,LieSubSpace)"
   "image(LieDerivation,LieSubSpace)"
-  "image(LieDerivation"
+  "image(LieDerivation)"
   "kernel(LieAlgebraMap)"
   "inverse(LieAlgebraMap,LieSubSpace)"
   "isSurjective(LieAlgebraMap)"

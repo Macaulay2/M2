@@ -1193,9 +1193,9 @@ document {
     Headline => "prints the table of (degree,genus) pairs",
     {
     TT "dgTable", " prints the table of (degree,genus) pairs, where the horizontal
-    axis is the degree and the vertical is the genus. The input can be a ", TT "List",
-    " of ", TO "Divisor", ", ", TO "Curve", ", ", TO "PostulationChar", " or ",
-    TT "Ideal", "."	
+    axis is the degree and the vertical is the genus. The input can be a ", TO "List",
+    " of ", TO "Divisor", ", ", TO "Curve", ", ", TT "PostulationChar", " or ",
+    TO "Ideal", "."
     } 
 }
 document {

@@ -234,6 +234,10 @@ replace(ZZ,Thing,VisibleList) := VisibleList => {} >> o -> (i,x,s) -> (
 isSorted = method(Dispatch => Thing)
 isSorted VisibleList := s -> all(#s-1, i -> s#i <= s#(i+1))
 
+deepApply' = (L, f, g) -> flatten if g L then toList apply(L, e -> deepApply'(e, f, g)) else toList{f L}
+deepApply  = (L, f) ->  deepApply'(L, f, e -> instance(e, BasicList))
+deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not memory efficient
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

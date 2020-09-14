@@ -32,7 +32,7 @@ doc String := str -> (
     document \ (
 	if all(parsed, elt -> instance(elt, Node)) then apply(parsed, node -> toList node)
 	else if not any(parsed, elt -> instance(elt, Node)) then {parsed}
-	else error("expected either a documentation node or a list of documentation nodes"));)
+	else error("expected either a documentation node or a list of documentation nodes")))
 
 -- Setup synonyms
 document String := opts -> doc
@@ -68,13 +68,12 @@ NodeFunctions = new HashTable from {
     "Consequences"    => (textlines, keylinenum) -> Consequences    => applySplit(ConsequencesFuntions, textlines),
     "Description"     => (textlines, keylinenum) -> toSequence applySplit(DescriptionFunctions, textlines),
     "Synopsis"        => (textlines, keylinenum) -> SYNOPSIS   applySplit(SynopsisFunctions, textlines),
-    "Acknowledgement" => (textlines, keylinenum) -> Acknowledgement => {markup(textlines, keylinenum)},
-    "Contributors"    => (textlines, keylinenum) -> Contributors    => {markup(textlines, keylinenum)},
-    "References"      => (textlines, keylinenum) -> References      => {markup(textlines, keylinenum)},
-    "Caveat"          => (textlines, keylinenum) -> Caveat          => {markup(textlines, keylinenum)},
+    "Acknowledgement" => (textlines, keylinenum) -> Acknowledgement => DIV markup(textlines, keylinenum),
+    "Contributors"    => (textlines, keylinenum) -> Contributors    => DIV markup(textlines, keylinenum),
+    "References"      => (textlines, keylinenum) -> References      => DIV markup(textlines, keylinenum),
+    "Caveat"          => (textlines, keylinenum) -> Caveat          => DIV markup(textlines, keylinenum),
     "SeeAlso"         => (textlines, keylinenum) -> SeeAlso         => apply(getNonempty textlines, value),
-    "Subnodes"        => (textlines, keylinenum) -> Subnodes        => apply(getNonempty textlines, p -> if match("^:", p) then substring(1, p) else TO value p),
---    "Subnodes"        => (textlines, keylinenum) -> Subnodes        => submenu(textlines, keylinenum), -- TODO: replace with this in refactor/document
+    "Subnodes"        => (textlines, keylinenum) -> Subnodes        => submenu(textlines, keylinenum),
     "SourceCode"      => (textlines, keylinenum) -> SourceCode      => apply(getNonempty textlines, value),
     "ExampleFiles"    => (textlines, keylinenum) -> ExampleFiles    => getText \ textlines,
     }
@@ -93,14 +92,14 @@ SynopsisFunctions = new HashTable from {
 DescriptionFunctions = new HashTable from {
     "Example"       => (textlines, keylinenum) -> getExample(textlines, keylinenum, false),
     "CannedExample" => (textlines, keylinenum) -> getExample(textlines, keylinenum, true),
-    "Text"          => (textlines, keylinenum) -> markup(textlines, keylinenum),
+    "Text"          => (textlines, keylinenum) -> DIV markup(textlines, keylinenum),
     "Tree"          => (textlines, keylinenum) -> menu(textlines, keylinenum),
     "Pre"           => (textlines, keylinenum) -> PRE reassemble(min\\getIndent\textlines, textlines),
     "Code"          => (textlines, keylinenum) -> getCode(textlines, keylinenum),
     }
 
 ConsequencesFuntions = new HashTable from {
-    "Item" => (textlines, keylinenum) -> markup(textlines, keylinenum)
+    "Item" => (textlines, keylinenum) -> flatten \\ toList \ markup(textlines, keylinenum)
     }
 
 -- Processing functions
@@ -161,7 +160,7 @@ markup = (textlines, keylinenum) -> (
     textline := makeTextline("", if #textlines == 0 then "unknown" else getLinenum textlines#0 - 1);
     textlines = prepend(textline, textlines);
     intervals := splitByIndent(textlines, true);
-    DIV apply(intervals, (s, e) -> (
+    apply(intervals, (s, e) -> (
 	    if s === e then return PARA "";
 	    -- TODO: strip "-- comment" from ends of lines, except when -- appears in a string
 	    text := demark(" ", getText \ textlines_{s+1..e});
@@ -235,6 +234,7 @@ reassemble = (indent, textlines) -> concatenate between(newline,
 getKeys = (textlines, keylinenum) -> (
     keyList := apply(getNonempty textlines, value);
     if #keyList == 0 then error("Key (line ", toString keylinenum, " of string): expected at least one key");
+    Core#"private dictionary"#"currentDocumentTag" <- makeDocumentTag(keyList#0, Package => currentPackage); -- for debugging purposes
     keyList)
 
 getCode = (textlines, keylinenum) -> (

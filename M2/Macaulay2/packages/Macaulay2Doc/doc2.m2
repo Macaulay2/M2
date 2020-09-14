@@ -618,7 +618,6 @@ undocumented {
      (symbol ?, Thing, InfiniteNumber),
      (symbol ?, TOH, TOH),
      (symbol ?, InfiniteNumber, Thing),
-     (symbol ?, Function),
      (symbol ?, ZZ, MonoidElement),
      (symbol ?, MonoidElement, ZZ),
      (symbol ?, RingElement, ZZ),

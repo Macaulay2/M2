@@ -57,7 +57,7 @@ document {
 	   },
       "The distinction is small since a monomial ideal can be 
       constructed using ", TT "ideal", " .  However, there are a 
-      few functions, like ", TO "primaryDecomposition", " that run 
+      few functions, like ", TO "PrimaryDecomposition::primaryDecomposition", " that run
       faster if you define a monomial ideal 
       using ", TT "monomialIdeal", ".",
 
@@ -486,7 +486,7 @@ document {
      SUBSECTION "introduction",
        "It is now possible to find the primary decomposition 
        of an ideal in Macaulay2.  The 
-       function ", TO "primaryDecomposition", " applied to an 
+       function ", TO "PrimaryDecomposition::primaryDecomposition", " applied to an
        ideal ", TT "I", " returns a list of ideals.  These ideals 
        have two key features, first, their intersection is equal to 
        the ideal ", TT "I", " and second the ideals are primary.  Therefore 
@@ -512,8 +512,8 @@ document {
        ,
      SUBSECTION "strategies",
        "The algorithms available for computing primary decompositions are 
-       Shimoyama-Yokoyama, ", TO "ShimoyamaYokoyama", ",  
-       Eisenbud-Huneke-Vasconcelos, ", TO "EisenbudHunekeVasconcelos", ", a 
+       Shimoyama-Yokoyama, ", TO "PrimaryDecomposition::ShimoyamaYokoyama", ",
+       Eisenbud-Huneke-Vasconcelos, ", TO "PrimaryDecomposition::EisenbudHunekeVasconcelos", ", a
        hybrid of these two algorithms (ShimoyamaYokoyama and EisenbudHunekeVasconcelos), ", TT "Hybrid", ", 
        and Gianni-Trager-Zacharias, ", TT "GTZ", ".  The 
        default algorithm in Macaulay2 is Shimoyama-Yokoyama.  Two 
@@ -522,7 +522,7 @@ document {
        irreducible decomposition of a monomial ideal 
        and ", TT "Binomial", " which computes a cellular decomposition 
        of a binomial ideal.  For more information on the strategy 
-       options see ", TO "primaryDecomposition(..., Strategy => ...)", ".",
+       options see ", TO "PrimaryDecomposition::primaryDecomposition(..., Strategy => ...)", ".",
        EXAMPLE {
 	    "primaryDecomposition(I, Strategy => EisenbudHunekeVasconcelos)",
 	    },

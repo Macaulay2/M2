@@ -189,7 +189,14 @@ void* interpFunc(ArgCell* vargs)
     "_prepare()" functions have "__attribute__ ((constructor))" in their declaration.
   */
   interp_process();
+
   clean_up();
+
+#ifdef MEMDEBUG
+  fprintf(stderr, "gc: heap size = %d, free space divisor = %ld, collections = %ld\n",
+	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
+#endif
+
   exit(0);
   return NULL;
 }

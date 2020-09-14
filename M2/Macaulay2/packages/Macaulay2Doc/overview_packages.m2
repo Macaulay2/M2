@@ -1,103 +1,227 @@
+-- see functions/package-doc.m2 for all package related functions
 
-star := IMG {
-     "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png",
-     "alt" => "a gold star"
-     }
+-- subnodes of "Macaulay2"
+doc ///
+Node
+  Key
+    "packages provided with Macaulay2"
+  Description
+    Text
+      Here is a list of the packages that are distributed with Macaulay2.
+      The ones that have been refereed are marked with a star.
+    Code
+      star := IMG {"src" => replace("PKG", "Style", currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
+      categories := new MutableHashTable from {};
+      scan(separate_" " version#"packages", pkgname -> (
+              pkgopts := readPackage pkgname;
+              apply(pkgopts.Keywords, keyword -> if not categories#?keyword
+                  then categories#keyword = new MutableList from {(pkgname, pkgopts)}
+                  else categories#keyword#(#categories#keyword) = (pkgname, pkgopts))));
+      DIV flatten apply(sort keys categories, keyword -> {
+              SUBSECTION {keyword},
+              UL apply(new List from categories#keyword, pkgpair -> (
+                      (pkgname, pkgopts) := pkgpair;
+                      LI {
+			  if pkgopts.Certification =!= null then (star, " "),
+			  TO (pkgname | "::" | pkgname),
+			  if pkgopts.Headline      =!= null then (" -- ", pkgopts.Headline)
+			  }
+                      ))
+              })
+  SeeAlso
+    "packages"
+    "authors of Macaulay2 packages"
 
-document { Key => "packages provided with Macaulay2",
-     PARA{
-     	  "Here is a list of the packages that are distributed with Macaulay2.  The ones that have been
-	  refereed are marked with a star."
-	  },
-     UL apply(sort select(separate_" " version#"packages", pkg -> pkg =!= "Macaulay2Doc"), 
-	  pkg -> (
-	       local p;
-	       (dictionaryPath,loadedPackages,currentPackage,p) = (dictionaryPath,loadedPackages,currentPackage,
-	            -- temporarily commented out:
-		    -- try 
-		    needsPackage(pkg,DebuggingMode => false)
-		    -- else (
-		    -- 	 stderr << "--warning: *** package " << pkg << " failed to load while generating list of packages provided with Macaulay2" << endl;
-		    -- 	 if PackageDictionary#?pkg and instance(value PackageDictionary#pkg,Package)
-		    -- 	 then value PackageDictionary#pkg
-		    -- 	 else first ( newPackage pkg, endPackage pkg ) -- just fake it
-		    -- 	 )
-		    );
-	       LI {
-		    if (options p).Certification =!= null then (star," "),
-		    TO (pkg|"::"|pkg),
-		    if (options p).Headline =!= null then (" -- ", (options p).Headline)
-		    }
-	       ))
-     }
-     
-document { Key => "packages",
-     "A package is a body of Macaulay2 source code devoted to a 
-     particular topic.  Many packages are distributed with Macaulay2, 
-     and others are available from various users on the internet.",
-     PARA{}, "For more detailed information about packages, see ", 
-     TO Package, ".",
-     SeeAlso => { "packages provided with Macaulay2" },
-     Subnodes => {
-     "Using existing packages",
-	  TO needsPackage,
-	  TO loadPackage,
-	  TO installPackage,
-	  TO "loadedPackages",
-     "Creating new packages",
-     	  TO "creating a package"
-	  }
-     }
+Node
+  Key
+    "authors of Macaulay2 packages"
+  Description
+    Text
+      Here is a list of people who have authored packages that are distributed with Macaulay2.
+    Code
+      authors := new HashTable from flatten apply(separate_" " version#"packages", pkgname -> (
+              pkgopts := readPackage pkgname;
+              apply(pkgopts.Authors, author -> (
+                      author = new OptionTable from author;
+                      if author.?Name and (not authors#?(author.Name) or not instance(authors#(author.Name), HREF))
+                      then author.Name => if author.?HomePage then HREF {author.HomePage, author.Name} else author.Name))));
+      -- TODO: simplify this when sort takes a SortStrategy
+      c := 0;
+      UL (last \ sort apply(pairs authors, (name, entry) -> (last separate(" ", name), c = c + 1, LI entry)))
+  SeeAlso
+    "creating a package"
+    "packages provided with Macaulay2"
+///
 
-document { Key => "using packages",
-     "A package is a body of Macaulay2 source code devoted to a 
-     particular topic.  Many packages are distributed with Macaulay2, 
-     and others are available from various users on the internet.",
-     PARA{}, "For more detailed information about packages, see ", 
-     TO Package, ".",
-     PARA{},
-     "To load a package, say FirstPackage, use ", TO loadPackage, " or ", TO needsPackage, ", as in:",
-     PRE///    loadPackage "FirstPackage"///,
-     "or",
-     PRE///    needsPackage "FirstPackage"///,
-     "Macaulay2 searches for the file FirstPackage.m2 on your search ", TO "path", ".
-     The packages provided with Macaulay2 are on your search path,
-     as is your current working directory.",
-     PARA{},
-     "Documentation for the packages provided with Macaulay2 is already installed.  TO
-     install documentation for another package, use ", TO installPackage, ".",
-     PRE///    installPackage FirstPackage///,
-     "You may see what packages have been loaded with the variable ", TO "loadedPackages", ".",
-     PRE///    loadedPackages///,
-     SeeAlso => {
-     	  "packages provided with Macaulay2",
-	  "creating a package"
-	  }
-     }
+-- subnodes of "The Macaulay2 language"
+doc ///
+Node
+  Key
+    "packages"
+    "using packages" -- deprecate this
+  Headline
+    Macaulay2 packages
+  Description
+    Text
+      A package is a body of Macaulay2 source code devoted to a particular topic.
+      Many packages are distributed with Macaulay2, and others are available from
+      the author's homepage.
 
-document { Key => "loadedPackages",
-     Headline => "the list of loaded packages",
-     "The value of the variable ", TT "loadedPackages", " is a list of the packages that have been loaded.",
-     EXAMPLE "loadedPackages"
-     }
-     
-     
---     "Writing documentation for packages",
---	  TO document,
---     "Debugging your package",
---	  TO "the debugger",
---	  TO (debug,Package),
---	  TO (check,Package)
---	  }
---     }
+      To load a package, say @TT "FirstPackage"@, enter:
+    Pre
+      loadPackage "FirstPackage"
+    Text
+      or
+    Pre
+      needsPackage "FirstPackage"
+    Text
+      For technical information about packages, see @TO Package@.
 
---     Subnodes => {
+      Macaulay2 searches for the file @TT "FirstPackage.m2"@ on your search @TO "path"@.
+      The packages provided with Macaulay2 are on your search path, as is your current
+      working directory.
+    Tree
+      :Using existing packages
+        loadPackage
+        needsPackage
+        dismiss
+        "loadedPackages"
+      :Creating a new package
+        "creating a package"
+        newPackage
+        installPackage
+        uninstallPackage
+      :Writing documentation for a package
+        "writing documentation"
+        "SimpleDoc :: doc"
+      :Debugging a package
+        "the debugger"
+        (debug, Package)
+        (check, Package)
+    Text
+      Documentation for the packages provided with Macaulay2 is already installed.
+      To install documentation for another package, use @TO installPackage@.
+    Pre
+      installPackage FirstPackage
+    Text
+      You may see what packages have been loaded with the variable @TO "loadedPackages"@.
+  SeeAlso
+    "creating a package"
+    "packages provided with Macaulay2"
+  Subnodes
+    Package
+    :Accessing packages
+    "loadedPackages"
+    package
+    loadPackage
+    readPackage
+    needsPackage
+    installPackage
+    installedPackages
+    uninstallPackage
+    uninstallAllPackages
+    :Interacting with packages
+    (use, Package)
+    (check, Package)
+    (debug, Package)
+    (dismiss, Package)
+    (options, Package)
+    :Miscellaneous nodes
+    makePackageIndex
+    "PackageDictionary"
+
+Node
+  Key
+    "creating a package"
+    "informing others about your package" -- deprecate this
+  Description
+    Text
+      Creating a package is the most common way of contributing to Macaulay2. Packages can contain
+      code for working with objects of a certain category, generating examples for testing a conjecture,
+      or an implemention of algorithms introduced in the literature.
+
+    Tree
+      :There are five parts to a Macaulay2 package
+        :the preamble, initiated by @TO newPackage@
+        :a list of exported functions and variables, set via @TO export@ and @TO exportMutable@
+        :the code that constitutes the package
+        :the documentation for the package, which comes after @TO beginDocumentation@
+        :a number of tests for the new package, added using @TO TEST@
+
+    Text
+      See @TO "an example of a package"@ for the basic template for new packages, or
+      @TO "SimpleDoc :: packageTemplate"@ for a utility for generating the skeleton for a new package.
+
+      The name of the package must be the name of the file, without the @TT ".m2"@ suffix.
+      Thus a package @TT "NewMath"@ will be in a file named @TT "NewMath.m2"@.
+      Other sources required by the package may be stored in a subdirectory named @TT "NewMath"@
+      located in the same directory as the package.
+    Text
+      @HEADER3 "Documenting and testing a package"@
+
+      The documentation and tests included in a package inform others about how to use your package
+      and ensure that your package continues to work with future versions of Macaulay2.
+      See @TO "writing documentation"@ for more information.
+    Text
+      @HEADER3 "Distributing a package"@
+
+      To add your package to the list of packages distributed with Macaulay2, authors can submit their package via a
+      @HREF {"https://github.com/Macaulay2/M2/pulls", "pull request to the GitHub repository for Macaulay2"}@.
+
+      Before submitting your package, use the @TO installPackage@ and @TO check@ functions to ensure
+      there are no errors in the package documentation and that all the tests pass.
+  SeeAlso
+    "packages"
+    "writing documentation"
+  Subnodes
+    "an example of a package"
+    "currentPackage"
+    :Components of a package
+    newPackage
+    export
+    exportMutable
+    beginDocumentation
+    TEST
+    endPackage
+
+Node
+  Key
+    "loadedPackages"
+  Headline
+    the list of loaded packages
+  Description
+    Text
+      The value of the variable @TT "loadedPackages"@ is a list of the packages that have been loaded.
+    Example
+      loadedPackages
+  SeeAlso
+    "packages provided with Macaulay2"
+    dismiss
+    needsPackage
+
+Node
+  Key
+    "an example of a package"
+  Description
+    Text
+      Here is a basic example of a complete package:
+    Code
+      EXAMPLE { PRE get (first searchPath(path, "FirstPackage.m2") | "FirstPackage.m2") }
+    Text
+      Also see @TO "SimpleDoc :: packageTemplate"@, a utility for generating the skeleton for a new package.
+  SeeAlso
+    "packages"
+    newPackage
+    export
+    exportMutable
+    beginDocumentation
+    "SimpleDoc :: doc"
+    TEST
+///
+
+--     Subnodes
 --	  TO "using packages",				    -- ?
 --	  TO "writing packages",			    -- ?
---     	  -- these next ones might not be needed:
---     	  TO "loading a library",
---     	  TO "how to get documentation on a library",
---     	  "available libraries",
 --	  TO "blow ups",
 --	  TO "convex hulls and polar cones",
 --	  TO "Dmodules",
@@ -106,82 +230,3 @@ document { Key => "loadedPackages",
 --	  TO "invariants of finite groups",
 --	  TO "Lenstra-Lenstra-Lovasz (LLL) lattice basis reduction",
 --	  TO "SAGBI bases",
---	  }
-
---document {
---     Key => "using packages",
---     Subnodes => {
---	  TO (needsPackage,String),
---	  TO (loadPackage,String),
---	  TO (installPackage,String)
---	  }
---     }
-
-     
-document { Key => "creating a package",
-	"There are four parts to a Macaulay2 package: a preamble, which 
-	is initiated by the ", TO "newPackage",
-	" function, a section where one defines which variables will be 
-	exported to global variables, a section containing 
-	the actual coding that constitutes the package, and a 
-	section containing documentation and tests for the new package.",
-	PARA{},
-	"A basic template for new packages:",
-	PRE///newPackage( ... )
-	
-  export{ ... }
-  exportMutable{ ... }
-	
-  -- Macaulay2 code goes here
-	
-  beginDocumentation()
-  document { ... }  -- several document's and TEST's, interspersed
-  TEST " ... "///,
-	"The name of the package must be the name of the file, without the
-	'.m2' suffix.  Thus a package 'PACKAGENAME' will be in a file named
-	'PACKAGENAME.m2'.  If the package were more complex, then by convention,
-	there should be a directory named 'PACKAGENAME' on the load ", TO "path", 
-	", and the file
-	'PACKAGENAME.m2' in this directory would load the necessary files.",
-     Subnodes => {
-	  TO "an example of a package",
-	  "Parts of a package",
-	  TO "newPackage",
-	  TO "export",
-	  TO "exportMutable",
-	  TO beginDocumentation,
-	  TO document,
-	  TO TEST,
-	  "Documenting, testing, and distributing a package",
-	  TO "writing documentation",
-	  TO check,
-	  TO "informing others about your package"
-	  },
-     }
-
-document {
-     Key => "informing others about your package",
-     "We keep a list of user defined packages on the Macaulay2 web site.
-     Contact Macaulay2@math.uiuc.edu to have your package placed on the
-     list."
-     }
-
-document {
-     Key => "an example of a package",
-     "Here is a basic example of a complete package:",
-     TABLE { "class" => "examples",  TR TD PRE get (first searchPath(path,"FirstPackage.m2") | "FirstPackage.m2")  },
-     SeeAlso => {
-	     "packages",
-	     newPackage,
-	     export,
-	     exportMutable,
-	     beginDocumentation,
-	     document,
-	     TEST
-	     }
-	}
-
-
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Macaulay2Doc RemakeAllDocumentation=true "
--- End:

@@ -78,7 +78,7 @@ argumentMode = defaultMode
 -- returns false if error
 runFile = (inf, inputhash, outf, tmpf, desc, pkg, announcechange, usermode, examplefiles) -> (
      announcechange();
-     stderr << "--making " << desc << ( if debugLevel > 0 then " in file " | outf else "" ) << endl;
+     stderr << " -- making " << desc << ( if debugLevel > 0 then " in file " | outf else "" ) << endl;
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below

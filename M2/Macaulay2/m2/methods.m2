@@ -279,6 +279,15 @@ radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null, Strat
 regularity = method( TypicalValue => ZZ, Options => { Weights => null } )
 associatedPrimes = method( TypicalValue => List, Options =>{ Strategy => 1 } )
 
+-- defined in d/actors4.d
+format' := format
+format = method(Dispatch => Thing, TypicalValue => String)
+format RR :=
+format CC :=
+format String   := String => x -> format' x
+format Sequence := String => s -> format' s
+protect symbol format
+
 toString = method(Dispatch => Thing, TypicalValue => String)
 toString Thing := simpleToString			    -- if all else fails...
 toString String := identity
@@ -375,6 +384,7 @@ select(ZZ, BasicList, Function) := BasicList => {} >> o -> select'
 select(ZZ, HashTable, Function) := HashTable => {} >> o -> select'
 select(    BasicList, Function) := BasicList => {} >> o -> select'
 select(    HashTable, Function) := HashTable => {} >> o -> select'
+select(    BasicList, Type)     := BasicList => {} >> o -> (L, T) -> select(L, e -> instance(e, T))
 -- two more methods installed in regex.m2
 
 oldnumerator := numerator
@@ -606,6 +616,16 @@ storefuns #toString = (x,e) -> (
 Function Thing = (f,x,e) -> (
      if not storefuns#?f then error("no method for storing values of function ", toString f);
      storefuns#f (x,e))
+
+-- defined in d/actors4.d
+locate' = locate -- TODO: why does (net, FunctionBody) in nets.m2 need locate'?
+locate = method(Dispatch => Thing, TypicalValue => Sequence)
+locate Nothing    := Sequence => x -> locate' x
+locate Function   := Sequence => x -> locate' x
+locate Pseudocode := Sequence => x -> locate' x
+locate Sequence   := Sequence => x -> locate' x
+locate Symbol     := Sequence => x -> locate' x
+protect symbol locate
 
 -- baseName
 baseName Thing := R -> (

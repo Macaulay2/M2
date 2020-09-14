@@ -108,42 +108,44 @@ html HREF := x -> (
 -- TODO
 html LITERAL := x -> concatenate x
 
+html MENU := x -> html redoMENU x
+
 -- TODO: reduce this
 html TO   := x -> (
      tag := x#0;
-     d := fetchPrimaryRawDocumentation tag;
-     r := htmlLiteral DocumentTag.FormattedKey tag;
+     d := fetchRawDocumentation getPrimaryTag tag;
+     r := htmlLiteral format tag;
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
      if d#?"undocumented" and d#"undocumented" === true then (
-	  if signalDocError tag then (
+	  if signalDocumentationWarning tag then (
 	       stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
 	       warning();
 	       );
-	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ",toString DocumentTag.Key tag," -->)")
+	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ", toString tag.Key, " -->)")
 	  )
      else if d === null					    -- isMissingDoc
      then (
 	  warning("missing documentation: "|toString tag);
-	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ",toString DocumentTag.Key tag," -->)")
+	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ", toString tag.Key, " -->)")
 	  )
-     else concatenate( "<a href=\"", toURL htmlFilename getPrimary tag, "\" title=\"", htmlLiteral headline tag, "\">", r, "</a>", if x#?1 then x#1))
+     else concatenate( "<a href=\"", toURL htmlFilename getPrimaryTag tag, "\" title=\"", htmlLiteral headline tag, "\">", r, "</a>", if x#?1 then x#1))
 
 html TO2  := x -> (
      tag := x#0;
      headline tag;		   -- this is a kludge, just to generate error messages about missing links
-     d := fetchPrimaryRawDocumentation tag;
+     d := fetchRawDocumentation getPrimaryTag tag;
      if d#?"undocumented" and d#"undocumented" === true then (
-	  if signalDocError tag then (
+	  if signalDocumentationWarning tag then (
 	       stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
 	       warning();
 	       );
-	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ",DocumentTag.FormattedKey tag," -->)")
+	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ", format tag, " -->)")
 	  )
      else if d === null					    -- isMissingDoc
      then (
 	  warning("missing documentation: "|toString tag);
-	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ",DocumentTag.FormattedKey tag," -->)"))
-     else concatenate("<a href=\"", toURL htmlFilename getPrimary tag, "\">", htmlLiteral x#1, "</a>"))
+	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ", format tag, " -->)"))
+     else concatenate("<a href=\"", toURL htmlFilename getPrimaryTag tag, "\">", htmlLiteral x#1, "</a>"))
 
 html VerticalList         := x -> html UL apply(x, html)
 html NumberedVerticalList := x -> html OL apply(x, html)
@@ -164,4 +166,5 @@ show URL := url -> (
         setGroupID(0,0);
         try exec cmd;
         stderr << "exec failed: " << toExternalString cmd << endl;
-        exit 1))
+        exit 1);
+    sleep 1;) -- let the browser print errors before the next M2 prompt

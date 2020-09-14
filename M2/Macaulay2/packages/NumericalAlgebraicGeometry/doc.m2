@@ -992,9 +992,9 @@ document {
 	"X"=>"(a row vector of) variables",
 	"T"=>"homotopy (continuation) parameter" 
 	 },
-    Outputs => { "HS", 
-	-- ofClass {GateHomotopyof, GateParameterHomotopy}, 
-	", a homotopy that can be used with some routines of ", TO "NumericalAG" },    
+    Outputs => { "HS", {
+	    ofClass {GateHomotopy, GateParameterHomotopy},
+	    ", a homotopy that can be used with some routines of ", TO "NumericalAlgebraicGeometry" }},
     "Optional arguments:",
     UL{
 	{TO "Software", "-- specifies how the homotopy is evaluated: ", TT "(M2,M2engine)"}

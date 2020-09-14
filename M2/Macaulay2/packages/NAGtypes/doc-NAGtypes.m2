@@ -133,7 +133,7 @@ document {
 	     },
 	Outputs => {"t"=> "contains solutions sorted as described below"},
 	"The sorting is done lexicographically regarding each complex n-vector as real 2n-vector. ",
-	"The output format of ", TO "track", " and ", TO "solveSystem", " is respected.", BR{}, 
+	"The output format of ", TO "NumericalAlgebraicGeometry::track", " and ", TO "NumericalAlgebraicGeometry::solveSystem", " is respected.", BR{}, 
 	"For the corresponding coordinates a and b (of two real 2n-vectors) a < b if b-a is larger than ", 
 	TO Tolerance, ". ", 
      	PARA {},
@@ -146,7 +146,7 @@ sortSolutions s
 	Caveat => {"The sorting described above does not possess good properties, since there may be near ties in specific coordinate values between several points. ",
 	    "A better way is to specify a random weight (of length 2n where n=#points) as an optional parameter ", TO [sortSolutions,Weights], 
 	    ", which provides a linear functional that evaluates to distinct (and sufficiently) real numbers on the given points. " }, 
-	SeeAlso => {"solveSystem", "track", "areEqual"}
+	SeeAlso => {"NumericalAlgebraicGeometry::solveSystem", "NumericalAlgebraicGeometry::track", "areEqual"}
 	}
 
 document { Key => {Tolerance, 
@@ -226,7 +226,7 @@ A = point {{-1,1e-7}, {1e-7*ii,-1}}
 B = point {{-1,0}, {0, -1}}
 A == B
         ///,
-	SeeAlso => {"solveSystem", "track", sortSolutions}
+	SeeAlso => {"NumericalAlgebraicGeometry::solveSystem", "NumericalAlgebraicGeometry::track", sortSolutions}
 	}
 
 

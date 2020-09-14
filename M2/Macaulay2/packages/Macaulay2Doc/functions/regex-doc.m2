@@ -156,7 +156,7 @@ doc ///
         :Character sets
           @TT "[...]"@	-- match any single character that is a member of the set
            @TT "[abc]"@	-- match either @TT "a"@, @TT "b"@, or @TT "c"@
-           @TT "[A-C]"@	-- match any character from @TT "A"@ through @TT "Z"@
+           @TT "[A-C]"@	-- match any character from @TT "A"@ through @TT "C"@
           @TT "[^...]"@	-- match non-listed characters, ranges, or classes
         :Character classes
           @TT "[:alnum:]"@	-- any alpha-numeric character
@@ -200,7 +200,8 @@ doc ///
       @HREF {"https://www.boost.org/doc/libs/release/libs/regex/", "Boost.Regex"}@
       C++ library, which supports multiple flavors, or standards, of regular expression.
 
-      Since Macaulay2 @TO2{"changes, 1.17","v1.17"}@, the Perl flavor is the default. In general, the Perl flavor
+      -- TODO: change the link to "changes, 1.17" after release
+      Since Macaulay2 @TO2{"changes made for the next release","v1.17"}@, the Perl flavor is the default. In general, the Perl flavor
       supports all patterns designed for the POSIX Extended flavor, but allows for more fine-tuning in the patterns.
       Alternatively, the POSIX Extended flavor can be chosen by passing the option @TT "POSIX => true"@.
       One key difference is what happens when there is more that one way to match a regular expression:

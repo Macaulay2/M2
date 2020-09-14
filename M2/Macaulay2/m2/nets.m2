@@ -51,7 +51,7 @@ net Function := toString Function := f -> (
      )
 
 net FunctionBody := toString FunctionBody := f -> (
-     t := locate f;
+     t := locate' f;
      if t === null then "-*FunctionBody*-" 
      else concatenate("-*FunctionBody[", t#0, ":", toString t#1| ":", toString (t#2+1), "-", toString t#3| ":", toString (t#4+1), "]*-")
      )
@@ -106,6 +106,7 @@ net Thing := toString
 net Symbol := toString
 File << Symbol := File => (o,s) -> o << toString s		    -- provisional
 File << Thing  := File => (o,s) -> o << toString s		    -- provisional
+Nothing << Thing := File => (o,s) -> null
 -----------------------------------------------------------------------------
 
 Net == String := (n,s) -> (				    -- should install in engine
@@ -255,6 +256,14 @@ netList VisibleList := o -> (x) -> (
 	  +
 	  sum(1 .. br, i -> try height x#i else 1)	    -- this allows the base row to be absent
 	  ))
+
+commentize = method(Dispatch => Thing)
+commentize Nothing := s -> ""
+commentize String  :=
+commentize Thing   := s -> concatenate(" -- ", between("\n -- ", separate concatenate s))
+commentize Net     := S -> stack(commentize \ unstack S)
+
+printerr = msg -> (stderr << commentize msg << endl;) -- always return null
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

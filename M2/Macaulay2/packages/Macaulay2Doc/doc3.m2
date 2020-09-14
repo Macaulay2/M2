@@ -813,8 +813,6 @@ document { Key => {localDictionaries,(localDictionaries, Symbol), (localDictiona
      ///
      }
 
-document { Key => DocumentTag,
-     Headline => "the class of all document tags", "This class is mainly for internal use, in constructing documentation." }
 document { Key => CompiledFunctionBody,
      Headline => "the class of all compiled function bodies",
      "A compiled function body is the body of a compiled function closure.  It is not a function.",
@@ -1088,8 +1086,6 @@ document { Key => cache,
 	  peek F.cache
 	  F === ZZ^3
      ///}
-document { Key => {(capture, String),capture},
-     Headline => "evaluate Macaulay2 code and capture the output (under development)" }
 document { Key => "catch",
      Headline => "catch a thrown exception", SeeAlso => {"throw"},
      Usage => "catch c",
@@ -1163,9 +1159,7 @@ document { Key => "continue",
      continue
      ///
      }
-document { Key => "copyright",
-     Headline => "a string containing the copyright notice for Macaulay2",
-     EXAMPLE "copyright" }
+
 document { Key => {listSymbols,(listSymbols, Dictionary), (listSymbols, List)},
      Headline => "compact display of symbols and their values",
      Usage => "listSymbols v",
@@ -1226,19 +1220,6 @@ document { Key => listLocalSymbols,
 	  )
      }
 
-document { Key => {makeDocumentTag,(makeDocumentTag, Thing), (makeDocumentTag, DocumentTag), (makeDocumentTag, String)},
-     Headline => "convert a documentation key to a documentation tag",
-     EXAMPLE lines ///
-     	  makeDocumentTag (res,Module)
-	  peek oo
-     	  makeDocumentTag (koszul,ZZ,Matrix)
-	  peek oo
-	  makeDocumentTag [res,PairLimit]
-	  peek oo
-     ///,
-     SeeAlso => {"documentation keys"}
-     }
-
 document { Key => (module, Ring),
      Usage => "module R",
      Inputs => {"R"},
@@ -1261,18 +1242,6 @@ document { Key => (module, Vector),
 	  class v
      ///}
 
-document { Key => {package,(package, Dictionary), (package, Thing),
-	  (package, HashTable), (package, Function), (package, Symbol),
-	  (package, Sequence)
-	  },
-     Headline => "get containing package",
-     Usage => "package x",
-     Inputs => {"x"},
-     Outputs => {{"the package in which the documentation key ", TT "x", " was defined"}},
-     EXAMPLE lines ///
-     	  package sin
-	  package poly
-     ///}
 document { Key => {(rotate, ZZ, VisibleList),rotate},
      Headline => "rotate a list",
      Usage => "rotate(n,v)",
@@ -1713,13 +1682,6 @@ document { Key => "debugError",
      "In certain situations, after an error occurs, the offending code, in the form of a function, will be stored in the
      variable ", TO "debugError", ", so the user can debug it by running it."
      }
-document { Key => "currentPackage",
-     Headline => "the current package",
-     EXAMPLE lines ///
-     	  newPackage "Foo"
-	  currentPackage
-	  endPackage "Foo"
-     ///}
 
 document { Key => {quotientRemainder,(quotientRemainder, Matrix, GroebnerBasis), (quotientRemainder, Matrix, Matrix)},
      Headline => "matrix quotient and remainder",

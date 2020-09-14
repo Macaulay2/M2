@@ -3487,7 +3487,7 @@ doc ///
      	  E:SpectralSequence
 	  k:InfiniteNumber
      Outputs
-     	  P:Page
+	  P:SpectralSequencePage
      Description
      	  Text 
 	      Returns the infinity page a spectral sequence.
