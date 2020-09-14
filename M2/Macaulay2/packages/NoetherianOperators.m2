@@ -1218,7 +1218,12 @@ getNoetherianOperatorsHilb Ideal := SetOfNoethOps => true >> opts -> Q -> (
     I := mapRtoHilb(Q, P, S, depVars, indVars);
     noethOps := invSystemFromHilbToNoethOps(I, R, S, depVars);
     new SetOfNoethOps from {Ops => sort noethOps, Prime => P}
-) 
+)
+
+getNoetherianOperatorsHilb (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (Q,P) -> (
+    if P != radical Q then error "expected second argument to be the radical of the first"
+    else getNoetherianOperatorsHilb(Q,opts)
+)
 
 -- computes the annihilator ideal of a polynomial F in a polynomial ring 
 -- Input: a polynomial. Output: a zero-dimension ideal that corresponds with the annihilator
