@@ -750,17 +750,18 @@ noetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,P) -> 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
 
-noetherianOperators (Ideal, Ideal, Point) := SetOfNoethOps => true >> opts -> I -> (
-
-)
-
-noetherianOperators (Ideal, Ideal, Point) := SetOfNoethOps => true >> opts -> I -> (
-
-)
-
-)
-
-
+-- I'm not sure what this is supposed to do.
+-- Strategy => "Numerical" should probably call numNoethOpsAtPoint
+-- noetherianOperators (Ideal, Matrix) := SetOfNoethOps => true >> opts -> (I, pt) -> (
+--     strats := new HashTable from {
+--         "Numerical" => numNoethOpsAtPoint,
+--     };
+--     strat := if opts.?Strategy then opts.Strategy else "Numerical";
+--     if strats#?strat then strats#strat(I, pt, opts) 
+--     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
+-- 
+-- )
+-- noetherianOperators (Ideal, Point) := SetOfNoethOps => true >> opts -> (I, pt) -> noetherianOperators(I, matrix pt)
 
 -- End dispatcher method
 
