@@ -849,7 +849,8 @@ numNoethOpsAtPoint (Ideal, Point) := List => true >> opts -> (I, p) -> numNoethO
 numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     tol := if not opts.?Tolerance then defaultT(ring I) else opts.Tolerance;
     R := ring I;
-    depVars := if not opts.?DependentSet then gens R - set support first independentSets I
+    -- depVars := if not opts.?DependentSet then gens R - set support first independentSets I
+    depVars := if not opts.?DependentSet then error "expected option DependentSet"
             else opts.DependentSet;
     indVars := gens R - set depVars;
     local M; local M'; local K; local bd; local bx;
