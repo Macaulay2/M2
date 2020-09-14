@@ -64,6 +64,23 @@ document {
 		       }
 		   }
 	       },
+	 LI { "functionality changed:",
+	      UL {
+		   LI { 
+			"The destinations of the links at the tops of the web pages portraying documentation nodes in a package have been
+			altered.  The links labeled ", TT "next", " and ", TT "previous", " have been interchanged with the links labelled ",
+			TT "forward", " and ", TT "backward", ".  This was done to bring the terminology into agreement with that used in the
+			info nodes portraying documentation nodes.  The result can be described as follows.  By virtue of the ",
+			TO "Subnodes", " option, each node is provided with a certain number of subnodes, so the documentation as a whole may be
+			regarded as an ordered union of rooted trees, with the top node of the package serving as the root of the first one.
+			(Ideally it would be the only one.)  The ", TT "next", " and ", TT "previous", " links can be used to traverse the
+			(sibling) subnodes of a given node, in sequence.  (The various roots are also regarded as siblings.)  The ",
+			TT "forward", " and ", TT "backward", " links can be used to traverse all the nodes, in depth-first sequence.  Ideally,
+			the documentation would be structured so such a traversal results in a readable document with topics presented in a
+			logical sequence."
+			}
+		   }
+	      },
 	 LI { "functionality changed in a way that could break code:",
 	      UL {
 		   LI { "The variable ", TT "backupFileRegexp", " has been replaced by the ", TO "Exclude", "
