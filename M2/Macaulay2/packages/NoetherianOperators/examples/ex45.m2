@@ -31,18 +31,16 @@ elapsedTime nid = bertiniPosDimSolve(I', BertiniInputConfiguration => {RandomSee
 
 
 ws = (components nid)#0
-pts = bertiniSample(100, ws, BertiniInputConfiguration => {RandomSeed => 1});
-elapsedTime numericalNoetherianOperators(I', pts, DependentSet => {1, 2, 4, 5, 6} / (i -> S_i), InterpolationTolerance => 1e-12, NoetherianDegreeLimit => 2)
+elapsedTime numericalNoetherianOperators(I', ws, DependentSet => {1, 2, 4, 5, 6} / (i -> S_i), InterpolationTolerance => 1e-12)
 
 ws = (components nid)#1
-pts = bertiniSample(20, ws, BertiniInputConfiguration => {RandomSeed => 1});
-elapsedTime numericalNoetherianOperators(I', pts, DependentSet => {0, 1, 2, 3, 4} / (i -> S_i), InterpolationTolerance => 1e-6, NoetherianDegreeLimit => 3)
+elapsedTime numericalNoetherianOperators(I', ws, DependentSet => {0, 1, 2, 3, 4} / (i -> S_i), InterpolationTolerance => 1e-6)
 
 
 -- Noetherian operators of J
-n1 = noetherianOperators(J, DependentSet => {1, 2, 4, 5, 6} / (i -> R_i))
-n2 = hybridNoetherianOperators(J, radical J, DependentSet => {1, 2, 4, 5, 6} / (i -> R_i), DegreeLimit => 2)
-n3 = getNoetherianOperatorsHilb(J)
+n1 = noetherianOperators(J, Strategy => "MacaulayMatrix", DependentSet => {1, 2, 4, 5, 6} / (i -> R_i))
+n2 = noetherianOperators(J, Strategy => "Hybrid", DependentSet => {1, 2, 4, 5, 6} / (i -> R_i))
+n3 = noetherianOperators(J, Strategy => "PunctualHilbert")
 
 getIdealFromNoetherianOperators(n1) == J
 getIdealFromNoetherianOperators(n2) == J

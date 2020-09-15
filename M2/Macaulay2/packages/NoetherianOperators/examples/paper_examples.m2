@@ -4,15 +4,15 @@ needsPackage "NoetherianOperators"
 R = QQ[x,y]
 n = 4
 I = ideal((x+y+1)^n)
-noetherianOperators I
-noetherianOperators(I, DependentSet => {R_1})
+noetherianOperators(I, Strategy => "MacaulayMatrix")
+noetherianOperators(I, Strategy => "MacaulayMatrix", DependentSet => {R_1})
 
 -- Example 3.16
 x = symbol x;
 R = QQ[x_1..x_3]
 Q = ideal((x_1^2 - x_3)^2, x_2 - x_3 * (x_1^2 - x_3))
 P = radical Q
-noetherianOperators(Q,P)
+noetherianOperators(Q,P, Strategy => "MacaulayMatrix")
 
 -- Example 3.16, through punctual Hilbert scheme
 y = symbol y;
@@ -21,16 +21,18 @@ S = F[y_1,y_2]
 gamma = map(S,R, {y_1 + x_1, y_2 + x_2, x_3})
 I = gamma Q
 numNoethOpsAtPoint(I,origin S)
+-- or
+noetherianOperators(Q, Strategy => "PunctualHilbert")
 
 -- Example 4.2
 R = QQ[t,x,y]
 I = ideal(x^2 - t*y, y^2)
 -- Symbolic version
-netList noetherianOperators(I, DependentSet => {x,y})
+netList noetherianOperators(I, Strategy => "MacaulayMatrix", DependentSet => {x,y})
 
 -- numerical version
 pts = toList(1..6) / (i -> matrix{{i_QQ, 0, 0}})
-nops = pts / (p -> numNoethOpsAtPoint(I, p, DependentSet => {x,y}, DegreeLimit => 5));
+nops = pts / (p -> numericalNoetherianOperators(I, p, DependentSet => {x,y}, DegreeLimit => 5));
 netList (nops / (n -> n.Ops))
 -- interpolating e.g. last coefficient
 vals = {6,3,2,3/2, 6/5, 1} -- coefficient in _dx*dy
@@ -47,9 +49,7 @@ needsPackage "Bertini"
 R = CC[t,x,y]
 I = ideal(x^2 - t*y, y^2)
 nv = first components numericalIrreducibleDecomposition(I, Software => BERTINI)
-pts = apply(9, i -> sample(nv))
-numericalNoetherianOperators(I, pts, DependentSet => {x,y})
-
+numericalNoetherianOperators(I, nv, DependentSet => {x,y})
 
 -- Example 4.4 is in the file ex44.m2
 -- Example 4.5 is in the file ex45.m2
