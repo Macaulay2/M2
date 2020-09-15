@@ -705,7 +705,7 @@ noetherianOperators(Ideal, Ideal) := List => o -> (I, P) -> (
     	polys := sub(idealBasis(I,d),S);
     	M := diff(ops, transpose polys);
     	M = StokP M;
-	K := myKernel2(M,Tolerance=>t);
+	K := myKernel(M);
     	if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
 	-- Clear denominators
     	ops = (map(R',S,vars R')) ops;
@@ -897,7 +897,7 @@ newSpecializedNop = options numericalNoetherianOperators >> opts -> (I, ws, tmpl
             if debugLevel > 0 then <<"newSpecializedNop: bad point, trying again"<<endl;
             continue
         )
-        else {(mon*colReduce(K, opts.Tolerance))_(0,0), pt}
+        else {(mon*colReduce(K, Tolerance => opts.Tolerance))_(0,0), pt}
     );
     if #opPts < n then opPts = opPts | newSpecializedNop(I, ws, tmpl, n-#opPts, opts);
     return transpose opPts;
