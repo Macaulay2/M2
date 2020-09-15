@@ -95,7 +95,7 @@ protect \ {
 -----  Noetherian operator data structures
 --
 SetOfNoethOps = new Type of HashTable;
-SetOfNoethOps / Function := (N, f) -> entries / f;
+SetOfNoethOps / Function := (N, f) -> (entries N) / f;
 SetOfNoethOps#{Standard,AfterPrint} = x -> (
     o := () -> concatenate(interpreterDepth:"o");
     << endl;                 -- double space
@@ -129,7 +129,7 @@ gens SetOfNoethOps := o -> N -> N.Gens;
 net SetOfNoethOps := N -> net N.Ops;
 netList SetOfNoethOps := opts -> N -> netList(N.Ops, opts);
 numgens SetOfNoethOps := N -> #N.Ops;
-ring SetOfNoethOps := N -> gens N;
+ring SetOfNoethOps := N -> ring gens N;
 sort SetOfNoethOps := opts -> N -> (
     if numgens N == 0 then N else
     setOfNoethOps(matrix{sort(N.Ops, opts)}, N.Prime, Point => N#Point)
@@ -208,7 +208,7 @@ nextTDD (ZZ,TruncDualData,Number) := (d,H,t) -> (
     S := ring H.hIgens;
     if H.strategy == DZ then (
 	Rd := polySpace basis(0,d,R);
-	Id := idealBasis(H.Igens,d,H.syl);
+	Id := idealBasis(H.Igens,d);
 	H.dBasis = gens orthogonalInSubspace(Id,Rd,t);
 	); 
     if H.strategy == BM then (
@@ -446,18 +446,14 @@ newSBasis = (dBasis,newGCs,d,t) -> (
 
 -- PolySpace of ideal basis through degree d.
 idealBasis = method()
-idealBasis(Ideal, ZZ, Boolean) := (I, d, useGDegree) -> idealBasis(gens I, d, useGDegree)
-idealBasis(Matrix, ZZ, Boolean) := (igens, d, useGDegree) -> (
-     R := ring igens;
-     igens = first entries igens;
-     genDeg := if useGDegree then gDegree else lDegree;
-     p := map(R^1,R^0,0);
-     for g in igens do (
+idealBasis(Ideal, ZZ) := (I,d) -> (
+     R := ring I;
+     B := set{};
+     for g in flatten entries gens I do (
 	 if g == 0 then continue else
-	 --p = p|(matrix{{g}}*basis(0, d - genDeg g, R));
-	 p = p|(matrix{{g}}*basis(0, d-1, R));
+	 B = B + set apply(flatten entries basis(0,d-1,R), m->m*g);
 	 );
-     polySpace p
+     if #B == 0 then map(R^1,R^0,0) else matrix{toList B}
      )
 
 --lead monomial and lead monomial degree according to ordering associated with
@@ -572,7 +568,7 @@ numericalImage (Matrix, Number) := o -> (M, tol) -> (
 
 myKernel2 = method(Options => {Tolerance => null})
 myKernel2(Matrix) := Matrix => o -> M -> (
-    K := try SVD M then (
+    K := if precision M < infinity then (
 	numericalKernel(M,o)
 	) else gens kernel M;
     colReduce(K,o)
@@ -706,7 +702,7 @@ noetherianOperators(Ideal, Ideal) := List => o -> (I, P) -> (
     StoDiffs := map(R',S,vars R');
     degreeNops := d -> (
 	ops := basis(0,d,S);
-    	polys := gens idealBasis(IS,d,false);
+    	polys := sub(idealBasis(I,d),S);
     	M := diff(ops, transpose polys);
     	M = StokP M;
 	K := myKernel2(M,Tolerance=>t);
@@ -1608,12 +1604,13 @@ doc ///
 	       R = CC[x,y];
 	       I = ideal{x^2-y^3}
 	       --bound the x degree to 2
-	       eliminatingDual(origin R, I, {0}, 2)
+	       --eliminatingDual(origin R, I, {0}, 2)
 	  Text
 	       This function generalizes @TO truncatedDual@ in that if v includes all the variables
 	       in the ring, then its behavior is the same.
 	  Example
-	       eliminatingDual(origin R, I, {0,1}, 2)
+	       0
+	       --eliminatingDual(origin R, I, {0,1}, 2)
 	  Text
 	       See also @TO truncatedDual@.
      Caveat
