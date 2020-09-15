@@ -11,6 +11,7 @@ newPackage(
 	     {Name => "Zhan Jiang", Email => "zoeng@umich.edu", HomePage => "http://www-personal.umich.edu/~zoeng/"}
 	     },
     	Headline => "compute a random point in a given variety over a finite field",
+        PackageImports => {"SwitchingFields", "MinimalPrimes"}, 
 		DebuggingMode => false, 
 		Reload=>false,
 		AuxiliaryFiles => false -- set to true if package comes with auxiliary files
@@ -47,8 +48,6 @@ export {
     }
 exportMutable {}
 
-needsPackage "SwitchingFields";
-needsPackage "MinimalPrimes";
 installMinprimes();
 
 optRandomPoints := {
@@ -1121,7 +1120,7 @@ doc ///
         ExtendField => b
     Inputs
         b:Boolean
-            whether or not the base field is allowed to be extended
+            whether the base field is allowed to be extended
     Description
         Text
             Various functions which produce points, or call functions which produce points, may naturally find scheme theoretic points that are not rational over the base field (for example, by intersecting with a random linear space).  Setting {\tt ExtendField => true} will tell the function that such points are valid.  Setting {\tt ExtendField => false} will tell the function ignore such points.  This sometimes can slow computation, and other times can speed it up.  In some cases, points over extended fields may also have better randomness properties for applications.

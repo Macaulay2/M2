@@ -3,7 +3,7 @@ Version => "0.3", Date => "August 11th, 2019", Authors => {
      {Name => "Karl Schwede",
      Email=> "kschwede@gmail.com",
      HomePage=> "http://www.math.utah.edu/~schwede"
-     }, --Karl Schwede was partially supported by  NSF FRG Grant DMS #1265261/1501115, NSF CAREER Grant DMS #1252860/1501102
+     }, --Karl Schwede was partially supported by  NSF FRG Grant DMS #1265261/1501115, NSF CAREER Grant DMS #1252860/1501102, and NSF grant #1801849
      {Name => "Daniel Smolkin",
      Email=> "smolkin@math.utah.edu",
      HomePage=> "http://www.math.utah.edu/~smolkin"
@@ -15,7 +15,7 @@ Version => "0.3", Date => "August 11th, 2019", Authors => {
      {Name => "C.J. Bott",
      Email => "cjamesbott@gmail.com"}
 }, --this file is in the public domain
-Headline => "A package for working with rational maps.", DebuggingMode => true, Reload=>true)
+Headline => "rational maps between varieties", DebuggingMode => true, Reload=>true, PackageImports => {"FastLinAlg"})
 export{
 	"isBirationalMap",
 	"idealOfImageOfMap",
@@ -47,7 +47,6 @@ export{
     "AssumeDominant" --option to assume's that the map is dominant (ie, don't compute the kernel)
 }
 
-needsPackage("FastLinAlg");
 
 StrategyGRevLexSmallestTerm = new HashTable from {LexLargest=>0, LexSmallestTerm => 0, LexSmallest=>0, GRevLexSmallestTerm => 100, GRevLexSmallest => 0, GRevLexLargest=>0,Random=>0,RandomNonzero=>0,Points => 0};
 ----------------------------------------------------------------
@@ -1238,7 +1237,7 @@ beginDocumentation();
 
 document {
     Key => RationalMaps,
-    Headline => "A package for computations with rational maps.",
+    Headline => "rational maps between varieties",
     EM "RationalMaps", " is a package for computing things related to maps between projective varieties.",
     BR{},BR{},
     "It focuses on finding where a birational map is undefined, checking whether a map is a closed embedding, checking birationality and computing inverse maps",
