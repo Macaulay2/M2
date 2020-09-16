@@ -191,7 +191,7 @@ initializeDualData (Matrix,Boolean,Number) := o -> (Igens,syl,t) -> (
     H.Seeds = dualSpace(matrix{{1_T}},origin(T));
     H.BMmatrix = innerProduct(polySpace if syl then H.hIgens else H.Igens, H.Seeds);
     H.BMintegrals = gens H.Seeds;
-    H.BMcoefs = myKernel2(H.BMmatrix,Tolerance=>t);
+    H.BMcoefs = numSymKernel(H.BMmatrix,Tolerance=>t);
     H.BMbasis = H.BMcoefs;
     --print(H.BMmatrix,H.BMcoefs);
     H.dBasis = H.BMintegrals * H.BMcoefs;
@@ -216,7 +216,7 @@ nextTDD (ZZ,TruncDualData,Number) := (d,H,t) -> (
      	for e from H.deg+1 to d do (
 	    (M,E) := BMmatrix H;
 	    H.BMmatrix = M; H.BMintegrals = E;
-	    H.BMcoefs = myKernel2(M,Tolerance=>t);
+	    H.BMcoefs = numSymKernel(M,Tolerance=>t);
 	    --print(M,H.BMcoefs);
 	    I := basisIndices(last coefficients E*H.BMcoefs, t);
 	    H.BMbasis = submatrix(H.BMcoefs, I);
@@ -522,7 +522,7 @@ orthogonalInSubspace (DualSpace, PolySpace, Number) := (D,S,t) -> (
     R := ring S;
     F := coefficientRing R;
     M := sub(innerProduct(S,D),F);
-    K := myKernel2(transpose M,Tolerance=>t);
+    K := numSymKernel(transpose M,Tolerance=>t);
     polySpace((gens S)*K, Reduced=>false)
     )
 orthogonalInSubspace (PolySpace, PolySpace, Number) := (T,S,t) -> (
@@ -566,13 +566,11 @@ numericalImage (Matrix, Number) := o -> (M, tol) -> (
 	)
     )
 
-myKernel2 = method(Options => {Tolerance => null})
-myKernel2(Matrix) := Matrix => o -> M -> (
-    K := if precision M < infinity then (
-	numericalKernel(M,o)
-	) else gens kernel M;
-    colReduce(K,o)
-    ) 
+numSymKernel = method(Options => {Tolerance => null})
+numSymKernel(Matrix) := Matrix => o -> M -> (
+    if precision M < infinity then colReduce(numericalKernel(M,o),o)
+    else myKernel(M)
+    )
 
 numericalKernel = method(Options => {Tolerance => null})
 numericalKernel (Matrix) := Matrix => o -> M -> (
@@ -705,7 +703,7 @@ noetherianOperators(Ideal, Ideal) := List => o -> (I, P) -> (
     	polys := sub(idealBasis(I,d),S);
     	M := diff(ops, transpose polys);
     	M = StokP M;
-	K := myKernel(M);
+	K := numSymKernel(M,Tolerance=>t);
     	if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
 	-- Clear denominators
     	ops = (map(R',S,vars R')) ops;
