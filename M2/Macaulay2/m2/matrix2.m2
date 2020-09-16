@@ -415,7 +415,7 @@ homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      -- why did we have this?
      -- wts = apply(wts, i -> if instance(i,InfiniteNumber) then 0 else i);
      i := homogCheck(R,f,v,wts);
-     if debugLevel > 0 then << (new FunctionApplication from {rawHomogenize, (f.RawMatrix, index v, wts)}) << endl;
+     if debugLevel > 10 then << (new FunctionApplication from {rawHomogenize, (f.RawMatrix, index v, wts)}) << endl;
      map(target f, source f, rawHomogenize(f.RawMatrix, i, wts)))
 
 homogenize(RingElement, RingElement) :=
