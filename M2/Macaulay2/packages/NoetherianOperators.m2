@@ -688,7 +688,7 @@ noetherianOperators (Ideal) := SetOfNoethOps => true >> opts -> I -> (
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
         "PunctualHilbert" => getNoetherianOperatorsHilb,
     };
-    strat := if opts.?Strategy then opts.Strategy else "Hybrid";
+    strat := if opts.?Strategy then opts.Strategy else "MacaulayMatrix";
     if strats#?strat then strats#strat(I, opts) 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
@@ -699,7 +699,7 @@ noetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,P) -> 
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
         "PunctualHilbert" => getNoetherianOperatorsHilb, --TODO this method is missing
     };
-    strat := if opts.?Strategy then opts.Strategy else "Hybrid";
+    strat := if opts.?Strategy then opts.Strategy else "MacaulayMatrix";
     if strats#?strat then strats#strat(I, P, opts) 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
