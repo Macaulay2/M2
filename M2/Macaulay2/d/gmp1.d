@@ -51,6 +51,11 @@ base := 10;
 getstr(returnexponent:long, base:int, sigdigs:int, x:RR) ::= tostring(
      Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
 	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)"));
+
+getstr(returnexponent:long, base:int, sigdigs:int, x:RRi) ::= tostring(  -- Added for MPFI
+     Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
+	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)"));  -- End added for MPFI
+
 export format(
      s:int,			  -- number of significant digits (0 means all)
      ac:int,	    -- accuracy, how far to right of point to go (-1 means all)
@@ -136,6 +141,92 @@ export format(
 		    if ex != long(0) then tostring(ex) else ""
 		    ))));
 
+export format(  -- Added for MPFI
+     s:int,			  -- number of significant digits (0 means all)
+     ac:int,	    -- accuracy, how far to right of point to go (-1 means all)
+     l:int,					   -- max number leading zeroes
+     t:int,				    -- max number extra trailing digits
+     sep:string,		     -- separator between mantissa and exponent
+     x:RRi						-- the number to format
+     ) : array(string) := (	   -- return: ("-","132.456") or ("","123.456")
+     ng := sign(x);
+     if isinf(x) then return array(string)(if ng then "-" else "","infinity");
+     if isnan(x) then return array(string)(if ng then "-" else "","NotANumber");
+     meaningful := int(floor(precision(x) / log2ten));
+     if s == 0 || s > meaningful then s = meaningful; -- print at most the "meaningful" digits
+     sgn := "";
+     if ng then (
+	  sgn = "-";
+	  x = -x;
+	  );
+     if x === 0 then return array(string)(if ng then "-" else "","0");
+     ex := long(0);
+     mantissa := getstr(ex, base, s, x);
+     nt := 0;
+     for i from length(mantissa)-1 to 0 by -1 do (
+	  if mantissa.i != '0' then break;
+	  nt = nt + 1;
+	  );
+     s = length(mantissa) - nt;
+     mantissa = substr(mantissa,0,s);
+     pt := 0;
+     if ex < 0 then (
+	  t = 0;
+	  if -ex <= l then (
+	       l = int(-ex);
+	       ex = long(0);
+	       )
+	  else l = 0)
+     else (
+	  l = 0;
+	  if ex <= s then (
+	       pt = int(ex);
+	       ex = long(0);
+	       t = 0;
+	       )
+	  else if ex <= s+t then (
+	       pt = int(ex);
+	       t = int(ex)-s;
+	       ex = long(0);
+	       )
+	  else t = 0);
+     if pt == 0 && l == 0 && ex != long(0) then (
+	  pt = 1;
+	  ex = ex - 1;
+	  );
+     manlen := length(mantissa);
+     maxmanlen := ac-l+pt+ex;
+     if ac != -1 && long(manlen) > maxmanlen then (
+	  if maxmanlen < 0 then return array(string)("","0");
+	  manlen = int(ac-l+pt+ex);
+	  if mantissa.manlen >= '5' then (		    -- round, at least in base 10
+	       while manlen > 0 do (
+		    if mantissa.(manlen-1) == '9'
+		    then manlen = manlen - 1
+		    else (
+		    	 mantissa.(manlen-1) = mantissa.(manlen-1) + 1;
+		    	 break;
+			 ));
+	       if manlen == 0 then (
+		    mantissa = "1";
+		    manlen = 1;
+		    if l > 0 then l = l-1 else ex = ex + 1 ) ) );
+     if manlen == 0 then return array(string)("","0");
+     array(string)(
+	  sgn,
+	  concatenate(
+	       array(string)(
+		    if pt == 0 then "." else "",
+		    if l == 0 then "" else new string len l do provide '0',
+		    substr(mantissa,0,pt),
+		    if pt > 0 && pt < manlen then "." else "",
+		    substr(mantissa,pt,manlen-pt),
+		    new string len t do provide '0',
+		    if ex != long(0) then sep else "",
+		    if ex != long(0) then tostring(ex) else ""
+		    ))));  -- End added for MPFI
+
+
 export printingPrecision := 6;				    -- 0 indicates all
 export printingAccuracy := -1;				    -- -1 indicates all
 export printingLeadLimit := 5;
@@ -146,6 +237,9 @@ export printingSeparator := "e";			    -- was "*10^"
 
 export tostringRR(x:RR):string := concatenate(format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,x));
 tostringRRpointer = tostringRR;
+
+export tostringRRi(x:RRi):string := concatenate(format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,x));  -- Added for MPFI
+tostringRRipointer = tostringRRi;  -- Added for MPFI
 
 
 export toExternalString(x:RR):string := (
