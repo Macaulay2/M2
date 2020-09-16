@@ -184,7 +184,7 @@ initializeDualData (Matrix,Boolean,Number) := o -> (Igens,syl,t) -> (
     H.Seeds = dualSpace(matrix{{1_T}},origin(T));
     H.BMmatrix = innerProduct(polySpace if syl then H.hIgens else H.Igens, H.Seeds);
     H.BMintegrals = gens H.Seeds;
-    H.BMcoefs = myKernel2(H.BMmatrix,Tolerance=>t);
+    H.BMcoefs = numSymKernel(H.BMmatrix,Tolerance=>t);
     H.BMbasis = H.BMcoefs;
     --print(H.BMmatrix,H.BMcoefs);
     H.dBasis = H.BMintegrals * H.BMcoefs;
@@ -209,7 +209,7 @@ nextTDD (ZZ,TruncDualData,Number) := (d,H,t) -> (
      	for e from H.deg+1 to d do (
 	    (M,E) := BMmatrix H;
 	    H.BMmatrix = M; H.BMintegrals = E;
-	    H.BMcoefs = myKernel2(M,Tolerance=>t);
+	    H.BMcoefs = numSymKernel(M,Tolerance=>t);
 	    --print(M,H.BMcoefs);
 	    I := basisIndices(last coefficients E*H.BMcoefs, t);
 	    H.BMbasis = submatrix(H.BMcoefs, I);
@@ -515,7 +515,7 @@ orthogonalInSubspace (DualSpace, PolySpace, Number) := (D,S,t) -> (
     R := ring S;
     F := coefficientRing R;
     M := sub(innerProduct(S,D),F);
-    K := myKernel2(transpose M,Tolerance=>t);
+    K := numSymKernel(transpose M,Tolerance=>t);
     polySpace((gens S)*K, Reduced=>false)
     )
 orthogonalInSubspace (PolySpace, PolySpace, Number) := (T,S,t) -> (
@@ -559,13 +559,11 @@ numericalImage (Matrix, Number) := o -> (M, tol) -> (
 	)
     )
 
-myKernel2 = method(Options => {Tolerance => null})
-myKernel2(Matrix) := Matrix => o -> M -> (
-    K := if precision M < infinity then (
-	numericalKernel(M,o)
-	) else gens kernel M;
-    colReduce(K,o)
-)
+numSymKernel = method(Options => {Tolerance => null})
+numSymKernel(Matrix) := Matrix => o -> M -> (
+    if precision M < infinity then colReduce(numericalKernel(M,o),o)
+    else myKernel(M)
+    )
 
 numericalKernel = method(Options => {Tolerance => null})
 numericalKernel (Matrix) := Matrix => o -> M -> (
@@ -581,26 +579,31 @@ numericalKernel (Matrix) := Matrix => o -> M -> (
     )
 
 --performs Gaussian reduction on M
-colReduce = method(Options => {Tolerance => null, Normalize => true})
+colReduce = method(Options => {Tolerance => null, Normalize => true, Reverse => false})
 colReduce Matrix := o -> M -> (
+    if o.Reverse then M = matrix reverse(entries M);
     tol := getTolerance(ring M,o);
-    if tol == 0 then return gens gb M;
-    M = mutableMatrix sub(M, ultimate(coefficientRing, ring M));
-    (m,n) := (numrows M, numcols M);
-    j := 0; --column of pivot
-    for i from 0 to m-1 do (
-	if debugLevel >= 1 then <<i<<"/"<<m-1<<endl;
-	if j >= n then break;
-	a := j + maxPosition apply(j..n-1, l->(abs M_(i,l)));
-	c := M_(i,a);
-	if abs c <= tol then (for k from j to n-1 do M_(i,k) = 0; continue);
-	columnSwap(M,a,j);
-	if o.Normalize then (columnMult(M,j,1/c); c = 1);
-	for k from 0 to n-1 do if k != j then columnAdd(M,k,-M_(i,k)/c,j);
-	j = j+1;
+    if tol == 0 then M = gens gb M
+    else (
+    	M = mutableMatrix sub(M, ultimate(coefficientRing, ring M));
+    	(m,n) := (numrows M, numcols M);
+    	j := 0; --column of pivot
+    	for i in reverse(0..m-1) do (
+	    if debugLevel >= 1 then <<i<<"/"<<m-1<<endl;
+	    if j >= n then break;
+	    a := j + maxPosition apply(j..n-1, l->(abs M_(i,l)));
+	    c := M_(i,a);
+	    if abs c <= tol then (for k from j to n-1 do M_(i,k) = 0; continue);
+	    columnSwap(M,a,j);
+	    if o.Normalize then (columnMult(M,j,1/c); c = 1);
+	    for k from 0 to n-1 do if k != j then columnAdd(M,k,-M_(i,k)/c,j);
+	    j = j+1;
+	    );
+    	M = (new Matrix from M)_{0..j-1};
+    	if precision M < infinity then M = clean(tol,M);
 	);
-    M = (new Matrix from M)_{0..j-1};
-    clean(tol,M)
+    if o.Reverse then M = matrix reverse(entries M);
+    M
     )
 
 --a list of column indices for a basis of the column space of M
@@ -661,7 +664,7 @@ sanityCheck = (nops, I) -> (
 myKernel = method()
 myKernel Matrix := Matrix => MM -> (
     R := ring MM;
-    M := transpose colReduce transpose MM;
+    M := transpose colReduce(transpose MM, Reverse=>true);
     (m,n) := (numrows M, numcols M);
     es := entries M;
     pivs := apply(m, i -> position(es#i, e -> (e != 0)));
@@ -733,18 +736,15 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
     R' := diffAlg R;
     -- extend the field only if the point is not specified to be rational
     kP := if opts.?Rational and opts.Rational then F else toField(S/PS);
-    StokP := map(kP,S/PS)*map(S/PS,S);
-    kPtoR' := M -> liftColumns(lift(M,S),R');
-    StoDiffs := map(R',S,vars R');
     degreeNops := d -> (
 	ops := basis(0,d,S);
     	polys := sub(idealBasis(I,d),S);
-    	M := diff(ops, transpose polys);
-    	M = StokP M;
-	K := myKernel(M);
+    	M' := diff(ops, transpose polys);
+    	M := (map(kP,S/PS)*map(S/PS,S)) M';
+	K := numSymKernel(M,Tolerance=>t);
     	if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
 	-- Clear denominators
-    	ops = (map(R',S,vars R')) ops;
+    	ops = (map(R',R,vars R')*map(R,S)) ops;
 	K = liftColumns(try lift(K,S) then lift(K,S) else sub(K,S),R');
 	ops * K
     	);
