@@ -1124,7 +1124,7 @@ isRankAtLeastSingle(ZZ, Matrix) := opts -> (n1, M0) -> (
   if (n1 > numRows M0) or (n1 > numColumns M0) then return false;
   if (M0 == 0) then return (n1 <= 0);
   if (n1 == numRows M0) and (n1 == numColumns M0) then return (rank M0 == n1);
-  if (not (opts.MaxMinors === null)) then (if (opts.MaxMinors <= 0) then return (rank M0 == n1););
+  if (not (opts.MaxMinors === null)) and (opts.MaxMinors <= 0) then return (rank M0 == n1);
   val := getSubmatrixOfRank(n1, M0, opts);
   if (val === null) then ( return (rank M0 >= n1); ) else return true;
   )
@@ -1378,13 +1378,13 @@ doc ///
         : List
     Description
         Text
-            Returns the row and column coordinates in the original matrix for a specified sized submatrix of terms lower in degree than other terms of the matrix.
+            Returns a list containing the row and column coordinates in the original matrix for a specified sized submatrix of terms lower in degree than other terms of the matrix.
         Example
             R = QQ[x,y,z];
             M=matrix{{x^2,x^3,x^4},{y^4,y^2,y^3},{z^3,z^4,z^2}}
             chooseSubmatrixSmallestDegree(2, M)
         Text
-            It returns a list with two entries, first a list of rows, and then a list of columns.  It returns a list with two entries, first a list of rows, and then a list of columns.  In this case, {\tt z^2} is the smallest element, and after removing that row and column from consideration, {\tt y^2} is smallest.  Thus we want rows 2 and 1 and columns 2 and 1.
+            This returns a list with two entries, first a list of rows, and then a list of columns.  In this case, {\tt z^2} is the smallest element, and after removing that row and column from consideration, {\tt y^2} is smallest.  Thus we want rows 2 and 1 and columns 2 and 1.
         Text
             The option {\tt PeriodicCheckFunction} can be set to a function which will periodically compare partially computed ideal of minors via the given function.  For instance, one can set it to periodically check whether the dimension of the ideal is at most zero via {\tt PeriodicCheckFunction => (J -> dim J <= 0)}.
 ///
@@ -1404,8 +1404,8 @@ doc ///
         : List
     Description
         Text
-            This returns the row and column coordinates in the original matrix for a specified sized submatrix of
-            terms likely higher in degree than other terms of the matrix.
+            This returns a list containing two entries, the row and column coordinates in the original matrix for a specified sized submatrix.  
+            In this case, the terms of that submatrix are likely higher in degree than other terms of the matrix.
         Example
             R = QQ[x,y,z];
             M=matrix{{x^2,x^3,x^4},{y^4,y^2,y^3},{z^3,z^4,z^2}}
@@ -1429,7 +1429,7 @@ doc ///
         : List
     Description
         Text
-            Returns the row and column coordinates in the original matrix for a specified sized random submatrix.
+            This returns a list with two entries, first a list of random rows, and then a list of random columns.  These specify a random submatrix of the desired size, {\tt n1}.
         Example
             R = QQ[x,y,z];
             M=matrix{{x^2,x^3,x^4},{y^4,y^2,y^3},{z^3,z^4,z^2}};
@@ -1450,7 +1450,7 @@ doc ///
         n1: ZZ
         M1: Matrix
     Outputs
-        : List
+        : Boolean
     Description
         Text
             This function tries to quickly determine if the matrix has a given rank.
@@ -1487,6 +1487,7 @@ doc ///
         M1: Matrix
     Outputs
         : List
+            the first entry is a list of rows, the second is a list of columns
     Description
         Text
             This function looks at submatrices of the given matrix, and tries to find
@@ -1885,7 +1886,7 @@ doc ///
         [isCodimAtLeast, PairLimit]
         SPairsFunction
     Headline
-        returns true if we can quickly see if the codim is at least a given number
+        returns true if we can quickly see whether the codim is at least a given number
     Usage
         isCodimAtLeast(n, I)
     Inputs
@@ -1928,7 +1929,7 @@ doc ///
         [isDimAtMost, SPairsFunction]
         [isDimAtMost, PairLimit]
     Headline
-        returns true if we can quickly see if the dim is at most a given number
+        returns true if we can quickly see whether the dim is at most a given number
     Usage
         isDimAtMost(n, I)
     Inputs
