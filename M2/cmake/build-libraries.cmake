@@ -168,7 +168,6 @@ ExternalProject_Add(build-bdwgc
   BINARY_DIR        libraries/bdwgc/build
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
-                    -DCMAKE_OSX_ARCHITECTURES=${CMAKE_SYSTEM_PROCESSOR} # https://github.com/ivmai/bdwgc/issues/319
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -Dbuild_tests=${BUILD_TESTING}
@@ -254,8 +253,8 @@ set(MP_INCLUDE_DIR ${${MP_LIBRARY}_INCLUDE_DIRS})
 # NOTE: mpfr puts pointers to gmp numbers in thread local variables, unless
 # specially configured, so we shouldn't tell gmp to use libgc (we used to do that)
 ExternalProject_Add(build-mpfr
-  URL               ${M2_SOURCE_URL}/mpfr-4.0.2.tar.xz
-  URL_HASH          SHA256=1d3be708604eae0e42d578ba93b390c2a145f17743a744d8f3f8c2ad5855a38a
+  URL               https://www.mpfr.org/mpfr-current/mpfr-4.1.0.tar.xz
+  URL_HASH          SHA256=0c98a3f1732ff6ca4ea690552079da9c597872d30e96ec28414ee23c95558a7f
   PREFIX            libraries/mpfr
   SOURCE_DIR        libraries/mpfr/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -644,8 +643,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries fflas_ffpack mp FFLAS_FFPACK_FOUND)
 
 # https://www.gnu.org/software/glpk/
 ExternalProject_Add(build-glpk
-  URL               ${M2_SOURCE_URL}/glpk-4.59.tar.gz
-  URL_HASH          SHA256=e398be2e7cb8a98584325268704729872558a4a88555bc8a54139d017eb9ebae
+  URL               https://ftp.gnu.org/gnu/glpk/glpk-4.65.tar.gz
+  URL_HASH          SHA256=4281e29b628864dfe48d393a7bedd781e5b475387c20d8b0158f329994721a10
   PREFIX            libraries/glpk
   SOURCE_DIR        libraries/glpk/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -968,8 +967,8 @@ _ADD_COMPONENT_DEPENDENCY(programs nauty "" NAUTY)
 # TODO: what to do when OpenMP is not found
 string(REPLACE " " "%20" normaliz_OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}")
 ExternalProject_Add(build-normaliz
-  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.5/normaliz-3.8.5.tar.gz
-  URL_HASH          SHA256=cf4fdaaa6ffcd8d268b1f16dd4b64cf86f1eab55177e611f8ef672e7365435a0
+  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.8/normaliz-3.8.8.tar.gz
+  URL_HASH          SHA256=aed49fce48bdf9660c5f7081f79dd78cedcaeaa98dd66d35016e07ee038bd5e7
   PREFIX            libraries/normaliz
   SOURCE_DIR        libraries/normaliz/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -1105,9 +1104,9 @@ ExternalProject_Add(build-polymake
 
 # http://homepages.math.uic.edu/~jan/download.html
 ExternalProject_Add(build-phcpack
-  URL               https://github.com/janverschelde/PHCpack/archive/v2.4.77.tar.gz
-  URL_HASH          SHA256=cc4f4274253dc4a6794d5f7e01f10622b6d3f58bea1f8da83467e6f7e1d90e88
-  DOWNLOAD_NAME     PHCpack-v2.4.77.tar.gz
+  URL               https://github.com/janverschelde/PHCpack/archive/v2.4.79.tar.gz
+  URL_HASH          SHA256=5b3542555958eb3692fa2d37a325b47466b2ab8b0854cc47995e5a83d2bc0146
+  DOWNLOAD_NAME     PHCpack-v2.4.79.tar.gz
   PREFIX            libraries/phcpack
   SOURCE_DIR        libraries/phcpack/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
