@@ -1,9 +1,6 @@
 Building Macaulay2 from Source using CMake
 ==========================================
 
-## Warning!
-This is not (yet) the official building instructions for Macaulay2. Please let us know of any issues.
-
 ## Why CMake?
 CMake is a cross-platform system for generating build environments using native tools such as Makefiles and Ninja or IDEs such as Xcode and Visual Studio. See this article on [why the KDE project switched to CMake](https://lwn.net/Articles/188693/) and this list of [cool CMake features](https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/Really-Cool-CMake-Features).
 
@@ -15,14 +12,17 @@ If using a packaged distribution, confirm using `cmake --version` that you have 
 
 There are various tools needed to compile Macaulay2 dependencies.
 - On Debian/Ubuntu, install `autoconf build-essential bison libtool pkg-config yasm`.
+- On Fedora/CentOS, install `autoconf automake bison libtool pkg-config yasm`.
 - On Mac OS X, using Homebrew, install `autoconf automake bison libtool pkg-config yasm`.
 
 There are 7 libraries that must be found on the system.
 - On Debian/Ubuntu, install `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev libatomic-ops-dev`.
+- On Fedora/CentOS, install `openblas-devel eigen3-devel libxml2-devel readline-devel gdbm-devel boost-devel libatomic_ops-devel`.
 - On Mac OS X, using Homebrew, install `eigen libxml2 readline gdbm boost libatomic_ops`.
 
 Finally, there are 2 optional libraries that help with building other requirements.
 - On Debian/Ubuntu, install `libomp-dev libtbb-dev`.
+- On Fedora/CentOS, install `libomp-devel tbb-devel`.
 - On Mac OS X, using Homebrew, install `libomp tbb`.
 
 **NOTE**: the source directory must not contain any build artifacts from an in-source build. If you have built Macaulay2 in-source before, clean the build artifacts first by running `make clean distclean` in the source directory.
@@ -52,8 +52,6 @@ cmake -GNinja -S../.. -B. \
       -DCMAKE_INSTALL_PREFIX=/usr
 ```
 The `-S../..` argument indicates the location of the source and `-B.` indicates the build directory. After those, arguments of type `-DNAME=VALUE` set the `NAME` variable to `VALUE`. For instance, `CMAKE_BUILD_TYPE` determines various compiler flags to be used. Defined options are `Release`, `Debug`, `RelWithDebInfo`, and `RelMinSize`, with `RelWithDebInfo` being the default. The value of `CMAKE_INSTALL_PREFIX` determines the installation prefix.
-
-We use GMP as the default multiple precision arithmetic library. To use MPIR instead, add `-DUSING_MPIR=ON`.
 
 This command generates the `build.ninja` files used by the Ninja build system, which is much more efficient. To generate a `Makefile` instead, remove `-GNinja` and use `make` instead of `ninja` in subsequent commands.
 
@@ -294,6 +292,12 @@ cmake -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` .
 <summary><code>/usr/include/c++/10.1.0/bits/unique_ptr.h:594:9: error: no matching function for call to std::__uniq_ptr_data</code> when using GCC 10 or Clang 10</summary>
 
 This issue is due to an old version of FFLAS_FFPACK or Givaro libraries inserting an unnecessary `-fabi-version=6` flag to the compile command. Try uninstalling the packaged version of those libraries and building them using the `build-givaro` and `build-fflas_ffpack` targets.
+</details>
+
+<details>
+<summary><code>/usr/include/boost/regex/v4/cpp_regex_traits.hpp:966: undefined reference to `boost::re_detail_107100::cpp_regex_traits_implementation<char>::transform_primary(char const*, char const*) const'</code></summary>
+
+Same as above.
 </details>
 
 <details>

@@ -236,7 +236,7 @@ ExternalProject_Add(build-mpir
 if(NOT MP_FOUND)
   if(MP_LIBRARY STREQUAL GMP)
     # gmp is a prerequisite
-    message(FATAL_ERROR "gmp integer package specified, but not found")
+    message(WARNING "gmp integer package specified, but not found")
   elseif(MP_LIBRARY STREQUAL MPIR)
     # Add this to the libraries target
     _ADD_COMPONENT_DEPENDENCY(libraries mpir "" MPIR_FOUND)
@@ -475,8 +475,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries frobby mp FROBBY_FOUND)
 # https://github.com/cddlib/cddlib
 # https://www.inf.ethz.ch/personal/fukudak/cdd_home/
 ExternalProject_Add(build-cddlib
-  URL               https://github.com/cddlib/cddlib/releases/download/0.94j/cddlib-0.94j.tar.gz
-  URL_HASH          SHA256=27d7fcac2710755a01ef5381010140fc57c95f959c3c5705c58539d8c4d17bfb
+  URL               https://github.com/cddlib/cddlib/releases/download/0.94k/cddlib-0.94k.tar.gz
+  URL_HASH          SHA256=de7397d7fe32758a6b53453a889ec7619b6c68a15d84eb132421f3d7d457be44
   PREFIX            libraries/cddlib
   SOURCE_DIR        libraries/cddlib/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -485,10 +485,10 @@ ExternalProject_Add(build-cddlib
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
-                      CPPFLAGS=${CPPFLAGS}
+                      "CPPFLAGS=${CPPFLAGS} -I${MP_INCLUDE_DIRS}"
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
+                      "LDFLAGS=${LDFLAGS} -L${MP_LIBRARY_DIRS}"
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
                       AR=${CMAKE_AR}
@@ -507,7 +507,7 @@ ExternalProject_Add(build-cddlib
 if(NOT CDDLIB_ROOT)
   set(CDDLIB_ROOT ${M2_HOST_PREFIX})
   set(CDDLIB_LIBRARY_DIR ${CDDLIB_ROOT}/lib)
-  set(CDDLIB_INCLUDE_DIR ${CDDLIB_ROOT}/include)
+  set(CDDLIB_INCLUDE_DIR ${CDDLIB_ROOT}/include/cddlib)
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDDLIB_FOUND)
 
