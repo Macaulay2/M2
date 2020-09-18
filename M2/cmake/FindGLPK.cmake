@@ -17,7 +17,7 @@ find_library(GLPK_LIBRARIES NAMES glpk libglpk
   PATHS ${LIB_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/lib
   )
 
-string(REGEX REPLACE "/include(/${CMAKE_LIBRARY_ARCHITECTURE}$)?" "" GLPK_ROOT "${GLPK_INCLUDE_DIR}")
+string(REGEX REPLACE "/include.*" "" GLPK_ROOT "${GLPK_INCLUDE_DIR}")
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GLPK DEFAULT_MSG GLPK_ROOT GLPK_INCLUDE_DIR GLPK_LIBRARIES)

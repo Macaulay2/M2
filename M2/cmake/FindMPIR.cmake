@@ -95,7 +95,7 @@ if(NOT MPIR_VERSION_OK)
     get_filename_component(MPIR_LIBRARY_DIRS "${MPIRXX_LIBRARIES}" DIRECTORY)
   endif()
 
-  string(REGEX REPLACE "/include(/${CMAKE_LIBRARY_ARCHITECTURE}$)?" "" MPIR_ROOT "${MPIR_INCLUDE_DIRS}")
+  string(REGEX REPLACE "/include.*" "" MPIR_ROOT "${MPIR_INCLUDE_DIRS}")
 
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(MPIR DEFAULT_MSG MPIR_ROOT MPIR_INCLUDE_DIRS MPIR_LIBRARIES MPIR_LIBRARY_DIRS MPIR_VERSION_OK)
