@@ -136,6 +136,8 @@ EquivariantGB
 ExampleSystems
 RationalMaps
 FastLinAlg
+RandomRationalPoints
+SwitchingFields
 SpectralSequences
 SectionRing
 OldPolyhedra
