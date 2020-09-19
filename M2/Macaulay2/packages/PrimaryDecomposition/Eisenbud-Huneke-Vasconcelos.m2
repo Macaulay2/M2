@@ -387,13 +387,11 @@ primaryDecomposition Module := List => o -> M -> (
                if M.cache#"primaryComponents"#?p then continue;
                f := product(AP - set AP_(H#p), q -> q_(position(q_*, g -> g % p != 0)));
                isolComp := if f == 1 then 0*M else saturate(0*M, f);
-               if #(H#p) > 1 then (
+               Q := if #(H#p) > 1 then (
                     j0 := max(2, ceiling(max((ann M)_*/degree/sum) / min(p_*/degree/sum)));
                     B := intersect apply(delete(i, H#p), k -> M.cache#"primaryComponents"#(AP#k));
-                    (j, Q) := (2*j0, getEmbeddedComponent(M, bracketPower(p,j0)*M, p, o));
-                    while not isSubset(intersect(B, Q), isolComp)
-                    do (j, Q) = (2*j, getEmbeddedComponent(M, bracketPower(p,j)*M, p, o));
-               ) else Q = isolComp;
+		    getEmbeddedComponent(M, p, j0, {B, isolComp}, o)
+	       ) else isolComp;
                M.cache#"primaryComponents"#p = Q;
           );
      );
@@ -406,23 +404,36 @@ primaryDecomposition Ring := List => opts -> R -> primaryDecomposition comodule 
 bracketPower = (I, n) -> ideal apply(I_*, f -> f^n)
 
 getEmbeddedComponent = method(Options => options primaryDecomposition)
-getEmbeddedComponent (Module, Module, Ideal) := o -> (M, N, P) -> ( -- N is candidate for P-primary component of M
-     Q := M/N;
-     strat := if o.Strategy === null then "Sat" else o.Strategy;
-     -- if strat === null then (
-          -- if debugLevel > 0 then print("Determining strategy for top components...");
-          -- strat = "Hom";
-          -- try ( 
-               -- alarm 30; 
-               -- if sum values betti resolution Q < 1000 then strat = "Sat";
-               -- alarm 0;
-          -- );
-     -- );
-     if debugLevel > 0 then print("Using strategy " | strat);
-     C := if strat == "Hom" then equidimHull(Q, codim P)
-          else if strat == "Sat" then kernelOfLocalization(Q, P)
-          else if strat == "Res" then topComponents(Q, codim P);
-     trim subquotient(generators C | generators N, relations M)
+getEmbeddedComponent (Module, Ideal, ZZ, List) := o -> (M, p, j, L) -> (
+     foundValidComponent := false;
+     while not foundValidComponent do (
+	if debugLevel > 0 then print("Trying bracket power " | toString(j) | " for candidate embedded component...");
+	N := bracketPower(p, j)*M;
+	Q := M/N;
+	strat := if o.Strategy === null then "Sat" else o.Strategy;
+	-- if strat === null then (
+		-- if debugLevel > 0 then print("Determining strategy for top components...");
+		-- strat = "Hom";
+		-- try ( 
+		-- alarm 30; 
+		-- if sum values betti resolution Q < 1000 then strat = "Sat";
+		-- alarm 0;
+		-- );
+	-- );
+	C := if codim p == dim ring Q then (
+		if debugLevel > 0 then print("Embedded prime is maximal!");
+		0*Q
+	) else (
+		if debugLevel > 0 then print("Using strategy " | strat);
+		if strat == "Hom" then equidimHull(Q, codim p)
+		else if strat == "Sat" then kernelOfLocalization(Q, p)
+		else if strat == "Res" then topComponents(Q, codim p)
+	);
+	C = trim subquotient(generators C | generators N, relations M);
+	foundValidComponent = isSubset(intersect(L#0, C), L#1);
+	j = 2*j;
+     );
+     C
 )
 
 kernelOfLocalization = method()
@@ -476,7 +487,7 @@ equidimHull Module := Module => M -> equidimHull(M, codim M)
 
 regSeqInIdeal = method(Options => {Strategy => "Quick"})
 regSeqInIdeal (Ideal, ZZ, ZZ, ZZ) := Ideal => opts -> (I, n, c, initialTime) -> ( 
-     if debugLevel > 0 then print(toString I, n, c, initialTime);
+     if debugLevel > 1 then print(toString I, n, c, initialTime);
      -- attempts to find sparse maximal regular sequence contained in an ideal (in a CM ring)
      G := sort(flatten entries mingens I, f -> (sum degree f, #terms f));
      if c == #G then return ideal G;
@@ -486,51 +497,37 @@ regSeqInIdeal (Ideal, ZZ, ZZ, ZZ) := Ideal => opts -> (I, n, c, initialTime) -> 
      for pair in searchList do (
           (i, j) := (pair#0, pair#1);
           coeffList := {0_k, 1_k};
-          if debugLevel > 0 then print("Trying generators " | toString(i, j));
+          if debugLevel > 1 then print("Trying generators " | toString(i, j));
           for a in coeffList do (
                cand := G#i + a*G#j;
                K := J + ideal cand;
-               if debugLevel > 0 then print("Testing regular sequence...");
+               if debugLevel > 1 then print("Testing regular sequence...");
                m := if opts.Strategy == "Quick" then ( 
                     try ( alarm initialTime; r := codim K; alarm 0; r ) else -1
                ) else codim K;
                if m == 1 + #J_* then (
                     J = K;
-                    if debugLevel > 0 then print "Found nonzerodivisor!";
+                    if debugLevel > 1 then print "Found nonzerodivisor!";
                     break;
-               ) else if m == -1 and debugLevel > 0 then print "Exceeded time for codim check";
+               ) else if m == -1 and debugLevel > 1 then print "Exceeded time for codim check";
           );
-          if #J_* == n then ( if debugLevel > 0 then print("Found regular sequence!"); return J );
+          if #J_* == n then ( if debugLevel > 1 then print("Found regular sequence!"); return J );
      );
-     if debugLevel > 0 then print "Could not find sparse regular sequence. Trying denser elements...";
-     G1 := select(G, g -> g % J != 0);
-     for i from 3 to ceiling(#G1//2)+1 do (
-          J1 := J + ideal matrix apply(c-#J_*, j -> {matrix{randomSubset(G1, i)}*random(k^i,k^1)});
-          try (
-               alarm initialTime;
-               r := codim J1;
-               alarm 0;
-               if r == #J1_* then return J1;
-          );
-     );
-     error "Could not find regular sequence. Try again with Strategy => \"Full\"";
+     if debugLevel > 1 then print "Could not find sparse regular sequence. Trying denser elements...";
+     G1 := matrix{select(G, g -> g % J != 0)};
+     J1 := J + ideal apply(n-#J_*, j -> G1*random(k^(numcols G1),k^1));
+     if codim J1 == #J1_* then J1 else error "Could not find regular sequence. Try again with Strategy => \"Full\""
 )
 regSeqInIdeal (Ideal, ZZ) := Ideal => opts -> (I, n) -> (
-     if debugLevel > 0 then print "Timing initial codim check...";
+     if debugLevel > 1 then print "Timing initial codim check...";
      t := timing codim I;
      t0 := 2 + ceiling first t;
-     if debugLevel > 0 then print("Setting time limit of " | toString t0 | " seconds for each check...");
+     if debugLevel > 1 then print("Setting time limit of " | toString t0 | " seconds for each check...");
      c := last t;
      n = min(n, c);
      if c == infinity then ideal take(gens ring I, min(n, dim ring I)) else regSeqInIdeal(I, n, c, t0)
 )
 regSeqInIdeal Ideal := Ideal => opts -> I -> regSeqInIdeal(I, dim ring I + 1)
-
-randomSubset = method()
-randomSubset (List, ZZ) := List => (L, k) -> ( -- gets random size k subset of L (samples without replacement)
-    i := random(#L);
-    {L#i} | (if k == 1 then {} else randomSubset(L_(delete(i, toList(0..<#L))), k-1))
-)
 
 sort (List, Function) := opts -> (L, f) -> (
 	H := hashTable(identity, apply(L, l -> f(l) => l));

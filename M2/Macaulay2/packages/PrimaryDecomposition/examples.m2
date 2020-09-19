@@ -61,7 +61,7 @@ I = ideal(
     a*b^3*f^2,
     a^4*f^2)
     
-(I = clear I; time primaryDecomposition I)     -- 4.89 [24.67 seconds] (5 components)
+(I = clear I; time primaryDecomposition I)     -- 4.89 [24.67 seconds] (5 components) (2020: 0.0026501 seconds)
 (I = clear I; time minimalPrimes I)                --  .3 [1.92 -  2.99]
 (I = clear I; time radical I)                  -- 2.48 [30.48]
 (I = clear I; time topComponents I)                      --  .22 [2.67]
@@ -69,6 +69,7 @@ I = ideal(
 (I = clear I; time (I : ideal vars R))         --  .09 [0.57]
 (I = clear I; time saturate(I, ideal vars R))  --  .07 [0.53]
 (I = clear I; time associatedPrimes I)                      -- 1.35
+elapsedTime primaryDecomposition comodule I     -- 0.499971 seconds
 
 ///////////////////////////////////////////////////////
 //Sturmfels: 16 Komponenten
@@ -94,7 +95,7 @@ I = ideal(
     v*z+w*y)
 
 (I = clear I; time res coker gens I)           -- .07 [0.76]
-(I = clear I; time primaryDecomposition I)     -- 58.76 [256.0 seconds (roughly 89-99 sec with Singular)]
+(I = clear I; time primaryDecomposition I)     -- 58.76 [256.0 seconds (roughly 89-99 sec with Singular)] (2020: 2.95525 seconds)
                                                --        343.24 seconds now [4/23/97]. what happened?
 					       --        with debugging: 296.08 sec????
 					       --        with fastgb.m2: 223.87!
@@ -107,6 +108,7 @@ I = ideal(
 (I = clear I; time removeLowestDimension I)    --  .46  [2.49]
 (I = clear I; time (I : ideal vars R))         --  .12  [0.59]
 (I = clear I; time saturate(I, ideal vars R))  --  .13  [1.62]
+elapsedTime primaryDecomposition comodule I      -- 1.15161 seconds
     
 ////////////////////////////////////////////////////////////
 //J_S/Y:  11 Komponenten
@@ -134,13 +136,14 @@ I = ideal(
     x^6*y+3*x^5*y+3*x^4*y+x^3*y)
 
 (I = clear I; time res coker gens I)           --  .13 [0.47 seconds]
-(I = clear I; time primaryDecomposition I)     -- 6.61 [22.54 seconds]
+(I = clear I; time primaryDecomposition I)     -- 6.61 [22.54 seconds] (2020: 0.435623 seconds)
 (I = clear I; time minimalPrimes I)                --  .23 [0.8 sec]
 (I = clear I; time radical I)                  -- 2.1  [8.48 sec]
 (I = clear I; time topComponents I)                      --  .4  [0.98 sec]
 (I = clear I; time removeLowestDimension I)    --  .68 [3.58 sec]
 (I = clear I; time (I : ideal vars R))         --  .07 [0.27 sec]
 (I = clear I; time saturate(I, ideal vars R))  --  .09 [0.41 sec]
+elapsedTime primaryDecomposition comodule I      -- 0.611954 seconds
     
 /////////////////////////////////////////////////////////////
 //ST_S/Y:  4 Komponenten 
@@ -160,7 +163,7 @@ I = ideal(
     w*y-v*z)
     
 (I = clear I; time res coker gens I)           -- 0.00 [0.05]
-(I = clear I; time primaryDecomposition I)     -- 20.28 [136.46 (with lots of debug output)]
+(I = clear I; time primaryDecomposition I)     -- 20.28 [136.46 (with lots of debug output)] (2020: 0.950533 seconds)
      	       	    	      	   	       --        fastgb 86.32
      	       	    	      	   	       --        Singular92i: 45 sec
 (I = clear I; time minimalPrimes I)                --  1.11  [7.19 sec]
@@ -169,6 +172,7 @@ I = ideal(
 (I = clear I; time removeLowestDimension I)    --   .2
 (I = clear I; time (I : ideal vars R))         --   .06
 (I = clear I; time saturate(I, ideal vars R))  --   .04
+elapsedTime primaryDecomposition comodule I      -- 0.613022 seconds
     
 /////////////////////////////////////////////////////////////
 //Bu_S/Y  (Wang2): 10 Komponenten 
@@ -191,8 +195,14 @@ I = ideal(
     8*g*e*c*b+8*d*a^3+4*d*a^2+4*d*a-8*a^4-12*a^3-14*a^2-3*a-1,
     12*g*e*b^2+12*d*a^3+12*d*a^2+8*d*a-12*a^4-18*a^3-14*a^2-a-1,
     -24*d*a^3-24*d*a^2-8*d*a+24*a^4+36*a^3+26*a^2+7*a+1)
-    
-    
+
+-- PD branch: MinimalPrimes.m2 bug, returns 8 components??
+elapsedTime primaryDecomposition I      -- ?, > 24 seconds
+elapsedTime primaryDecomposition minimalPresentation I      -- ?, > 132 seconds (v1.15)
+elapsedTime associatedPrimes comodule I      -- 40.2124 seconds
+elapsedTime associatedPrimes comodule minimalPresentation I      -- 11.8017 seconds
+elapsedTime primaryDecomposition comodule minimalPresentation I      -- +36.4446 seconds (v1.15)
+
 /////////////////////////////////////////////////////////////
 //Go_S/Y:   3 Komponenten (equidimensional)
 //17 variables, 19 generators of degree 2 (inhomogeneous)
@@ -228,13 +238,17 @@ I = ideal(
     d*g+k)
     
 (I = clear I; time res coker gens I)           -- TOO LONG at moment
-(I = clear I; time primaryDecomposition I)     -- alas, doesn't yet work...
+(I = clear I; time primaryDecomposition I)     -- alas, doesn't yet work... (2020: 1.11019 seconds)
 (I = clear I; time minimalPrimes I)                -- 35.68
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
 (I = clear I; time (I : ideal vars R))         -- 29.9 sec
 (I = clear I; time saturate(I, ideal vars R))  -- 48.48 sec
+
+elapsedTime associatedPrimes comodule I      -- ?, > 11 seconds
+elapsedTime associatedPrimes comodule minimalPresentation I      -- 0.0860828 seconds
+elapsedTime primaryDecomposition comodule minimalPresentation I      -- +0.0467698 seconds
     
 /////////////////////////////////////////////////////////////
 //Wang:
@@ -261,6 +275,11 @@ I = ideal(
     -b^2-c^2+2*b*x+2*c*y,
     -d^2-f^2-g^2+2*d*x+2*f*y+2*g*z)
     
+-- 6 components
+elapsedTime primaryDecomposition minimalPresentation I      -- ?, > 126 seconds
+elapsedTime associatedPrimes comodule I      -- ?, > 100 seconds
+elapsedTime associatedPrimes comodule minimalPresentation I      -- 29.6342 seconds
+elapsedTime primaryDecomposition comodule minimalPresentation I      -- +3.30046 seconds
     
 //////////////////////////////////////////////////////////
 //Horrocks:  6 Komponenten
@@ -313,7 +332,7 @@ I = ideal(
     a^4*d+3/4*a^3*b*e+1/4*a^3*c*f-2*a*e^2*f^2)
     
 (I = clear I; time res coker gens I)           --   .03
-(I = clear I; time primaryDecomposition I)     -- 11.58 [67.26 sec (lots of debug output)]
+(I = clear I; time primaryDecomposition I)     -- 11.58 [67.26 sec (lots of debug output)] (2020: 0.645988 seconds)
      	       	    	      	   	       --        fastgb 54.94
 (I = clear I; time minimalPrimes I)                --  6.65 [25.69 sec]
 (I = clear I; time radical I)                  --  ????
@@ -321,6 +340,8 @@ I = ideal(
 (I = clear I; time removeLowestDimension I)    --   .46
 (I = clear I; time (I : ideal vars R))         --   .17
 (I = clear I; time saturate(I, ideal vars R))  --   .15
+
+elapsedTime primaryDecomposition comodule I      -- 0.50963 seconds
     
 //////////////////////////////////////////////////////////
 //Arnborg-Lazard:   14 Komponenten
@@ -340,13 +361,15 @@ I = ideal(
     x^2*y^2*z^2+x^2*y^2*z+x*y^2*z+x*y*z+x*z+z+1)
 XXX    
 (I = clear I; time res coker gens I)           --   .25
-(I = clear I; time primaryDecomposition I)     --  PROBLEMS: figure it out.
+(I = clear I; time primaryDecomposition I)     --  PROBLEMS: figure it out. (2020: ?, > 55 seconds)
 (I = clear I; time minimalPrimes I)                --  3.01 [12.0 sec (or actually around 144 sec??)]
 (I = clear I; time radical I)                  -- 16.03
 (I = clear I; time topComponents I)                      --  2.58 
 (I = clear I; time removeLowestDimension I)    --   .5
 (I = clear I; time (I : ideal vars R))         --   .17
 (I = clear I; time saturate(I, ideal vars R))  --   .17
+
+elapsedTime primaryDecomposition comodule I      -- 0.350286 seconds
 
 restart
 load "c3primedec.m2"
@@ -374,6 +397,9 @@ I = ideal(
     -2*c*d-a*e-2*b*e-h^2,
     -d^2-2*c*e-a*h-2*b*h)
     
+elapsedTime primaryDecomposition I      -- 1.89797 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.720859 seconds
+    
 //////////////////////////////////////////////////////////
 //Katsura4:  9  Komponenten
 //min_ass_prim_l        :   5 sec
@@ -385,12 +411,19 @@ I = ideal(
 //Factorisation over algebraic function field required!
 
 R = ZZ/32003[w,t,u,x,y,z]
+R = ZZ/32003[t,u,w,x,y,z]
 I = ideal(
     2*x^2+2*y^2+2*z^2+2*t^2+u^2-u,
     x*y+2*y*z+2*z*t+2*t*u-t,
     2*x*z+2*y*t+t^2+2*z*u-z,
     2*x*t+2*z*t+2*y*u-y,
     2*x+2*y+2*z+2*t+u-1)
+
+-- PD branch: MinimalPrimes.m2 bug, claims minimalPresentation I has 7 components??
+elapsedTime primaryDecomposition I      -- 34.2427 seconds
+elapsedTime primaryDecomposition minimalPresentation I      -- 1.00763 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.425938 seconds
+elapsedTime primaryDecomposition comodule minimalPresentation I      -- 0.21072 seconds
     
 //////////////////////////////////////////////////////////
 //Katsura5:  6  Komponenten
@@ -409,6 +442,11 @@ I = ideal(
     2*x*t+2*y*u+2*t*u+2*z*v-z, 
     t^2+2*x*v+2*y*v+2*z*v-y, 
     2*x+2*y+2*z+2*t+2*u+v-1)
+
+elapsedTime primaryDecomposition I      -- 1.15266 seconds
+elapsedTime primaryDecomposition minimalPresentation I      -- 1.20007 seconds
+elapsedTime primaryDecomposition comodule I      -- 3.09784 seconds
+elapsedTime primaryDecomposition comodule minimalPresentation I      -- 1.0022 seconds
     
 //////////////////////////////////////////////////////////
 //Cyclic roots 5 homog:  25  Komponenten
@@ -429,13 +467,17 @@ I = ideal(
     a*b*c*d*e-h^5)
 
 (I = clear I; time res coker gens I)           -- 6.66 sec (is a complete intersection).
-(I = clear I; time primaryDecomposition I)     -- 
+(I = clear I; time primaryDecomposition I)     -- (2020: 14.4884 seconds)
 (I = clear I; time minimalPrimes I)                -- 47.32 (probably missing components...)
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
 (I = clear I; time (I : ideal vars R))         -- 
 (I = clear I; time saturate(I, ideal vars R))  -- 
+
+elapsedTime primaryDecomposition minimalPresentation I      -- 11.6943 seconds
+elapsedTime primaryDecomposition comodule I      -- 19.1435 seconds
+elapsedTime primaryDecomposition comodule minimalPresentation I      -- 14.4086 seconds
     
 //////////////////////////////////////////////////////////
 //Cyclic roots 5:  20  Komponenten
@@ -454,6 +496,11 @@ I = ideal(
     b*c*d*e+1*a*c*d*e+1*a*b*d*e+1*a*b*c*e+1*a*b*c*d,
     a*b*c*d*e-1)
     
+elapsedTime primaryDecomposition I      -- ?, > 82 seconds
+elapsedTime primaryDecomposition minimalPresentation I      -- ?, > 47 seconds
+elapsedTime primaryDecomposition comodule I      -- 3.87698 seconds
+elapsedTime primaryDecomposition comodule minimalPresentation I      -- 3.59261 seconds
+    
 //////////////////////////////////////////////////////////
 //Cyclic roots 4:  8  Komponenten
 //min_ass_prim_l        :   1 sec
@@ -470,6 +517,11 @@ I = ideal(
     1*c*d+1*b*c+1*a*b+a*d,
     1*b*c*d+1*a*b*c+a*b*d+a*c*d,
     1*a*b*c*d-1)
+    
+elapsedTime primaryDecomposition I      -- 0.506085 seconds
+elapsedTime primaryDecomposition minimalPresentation I      -- 0.319286 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.578901 seconds
+elapsedTime primaryDecomposition comodule minimalPresentation I      -- 0.397705 seconds
     
 //////////////////////////////////////////////////////////
 //Kahn4:  1  Komponente
@@ -490,13 +542,15 @@ I = ideal(
 
 (I = clear I; time res coker gens I)           -- amazingly hard...C.I. so could write it down
      	       	    	      	   	       -- but slanted degree: 261.09 (min betti nums buggy)
-(I = clear I; time primaryDecomposition I)     -- fastgb 27.31
+(I = clear I; time primaryDecomposition I)     -- fastgb 27.31 (2020: 2.79454 seconds)
 (I = clear I; time minimalPrimes I)                -- 2.35
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
 (I = clear I; time (I : ideal vars R))         -- 
 (I = clear I; time saturate(I, ideal vars R))  -- 
+
+elapsedTime primaryDecomposition comodule I      -- 0.194006 seconds
     
 //////////////////////////////////////////////////////////
 //Iarrobino:  1  Komponente
@@ -526,7 +580,7 @@ I = ideal(
     u^2+y*z)
 
 (I = clear I; time res coker gens I)           -- 8.48
-(I = clear I; time primaryDecomposition I)     -- fastgb: 6.0 sec
+(I = clear I; time primaryDecomposition I)     -- fastgb: 6.0 sec (2020: 0.0548841 seconds)
      	       	    	      	   	       -- could notice: codim=numvars, homog, therefore
 					       -- already primary to max ideal
 (I = clear I; time minimalPrimes I)                -- 5.36
@@ -535,6 +589,8 @@ I = ideal(
 (I = clear I; time removeLowestDimension I)    -- 
 (I = clear I; time (I : ideal vars R))         -- 
 (I = clear I; time saturate(I, ideal vars R))  -- 
+
+elapsedTime primaryDecomposition comodule I      -- 0.0035826 seconds
     
 //////////////////////////////////////////////////////////
 //Marko:  30  Komponenten
@@ -571,6 +627,10 @@ I = ideal(
     f^2*g^2+d^2*k^2+b,
     f^2*h^2+e^2*k^2+a)
     
+elapsedTime primaryDecomposition I      -- ?, > 42 seconds
+elapsedTime primaryDecomposition minimalPresentation I      -- ?, > 75 seconds
+elapsedTime primaryDecomposition comodule I      -- 4.00854 seconds
+elapsedTime primaryDecomposition comodule minimalPresentation I      -- 1.92809 seconds
     
 /////////////////////////////////////////////////////////////
 //Theo0:  11 Komponenten
@@ -602,7 +662,9 @@ I = ideal(
     b*f,
     f^2,
     a^4*c^2*g)
-    
+
+elapsedTime primaryDecomposition I      -- 0.724436 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.558389 seconds
     
 //////////////////////////////////////////////////////////
 //Theo1:  4  Komponenten
@@ -623,6 +685,9 @@ I = ideal(
     -2*d*f*x-2*c*g*x+b*e,
     -2*d*v*x-2*c*w*x+b*u)
     
+elapsedTime primaryDecomposition I      -- 0.54616 seconds
+elapsedTime associatedPrimes comodule I      -- 140.27 seconds
+elapsedTime primaryDecomposition comodule I      -- +0.100055 seconds
     
 //////////////////////////////////////////////////////////
 //Theo2:  3  Komponenten
@@ -639,7 +704,9 @@ I = ideal(
     f*a+b*e,
     e*c-f*d*g,
     f*c+d*e)
-    
+
+elapsedTime primaryDecomposition I      -- 0.148539 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.23323 seconds
     
 //////////////////////////////////////////////////////////
 //Theo3:  4  Komponenten
@@ -655,8 +722,10 @@ I = ideal(
     f*e^2+f^3*g,
     f*c+d*e,
     f*a+b*e)
-    
-    
+
+elapsedTime primaryDecomposition I      -- 0.240392 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.568772 seconds
+
 //////////////////////////////////////////////////////////
 //Theo4:  4  Komponenten
 //min_ass_prim_l        :   20 sec
@@ -671,7 +740,10 @@ I = ideal(
     a*f+b*e+c*d-c*f*g,
     a*e+b*d-b*f*g-c*e*g-c*f*h,
     a*d-b*f*h-c*e*h)
-    
+
+-- PD branch: MinimalPrimes.m2 bug, returns 2 components?? (components (a,b,c) and (d,e,f) missing)
+elapsedTime primaryDecomposition I      -- 1.01217 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.121144 seconds
     
 //////////////////////////////////////////////////////////
 //Becker-Niermann:  2  Komponenten
@@ -687,7 +759,9 @@ I = ideal(
     x^2+x*y^2*z-2*x*y+y^4+y^2+z^2,
     -x^3*y^2+x*y^2*z+x*y*z^3-2*x*y+y^4,
     -2*x^2*y+x*y^4+y*z^4-3)
-    
+
+elapsedTime primaryDecomposition I      -- 0.37626 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.353672 seconds
     
 //////////////////////////////////////////////////////////
 //Vershelde-Cools:  3  Komponenten
@@ -704,6 +778,8 @@ I = ideal(
     42*y^5+33*y^4+21*x^2*y+17*x^2*z+63*y^3+11*x*y+77*y^2+91*y+1,
     26*y^2+44*x*z+12*y+9)
     
+elapsedTime primaryDecomposition I      -- 0.131144 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.126458 seconds
     
 //////////////////////////////////////////////////////////
 //Caprasse4 :  19  Komponenten
@@ -718,10 +794,13 @@ I = ideal(
 R = ZZ/32003[x,y,z,t]
 I = ideal(
     y^2*z+2*x*y*t-2*x-z,
-    -x^3*z+4*x*y^2*z+4*x^2*y*t+2*y^3*t+4*x^2-10y^2+4*x*z-10y*t+2,
+    -x^3*z+4*x*y^2*z+4*x^2*y*t+2*y^3*t+4*x^2-10*y^2+4*x*z-10*y*t+2,
     2*y*z*t+x*t^2-x-2*z,
-    -x*z^3+4*y*z^2*t+4*x*z*t^2+2*y*t^3+4*x*z+4*z^2-10y*t-10t^2+2)
+    -x*z^3+4*y*z^2*t+4*x*z*t^2+2*y*t^3+4*x*z+4*z^2-10*y*t-10*t^2+2)
     
+-- PD branch: MinimalPrimes.m2 bug, returns 14 components??
+elapsedTime primaryDecomposition I      -- ?, > 93 seconds
+elapsedTime primaryDecomposition comodule I      -- 1.22104 seconds
     
 //////////////////////////////////////////////////////////
 //Moeller :  3  Komponenten
@@ -738,7 +817,9 @@ I = ideal(
     2*x*y+2*y*z+2*z*t-y, 
     y^2+2*x*z+2*y*t-z, 
     x+2*y+2*z+2*t-1)
-    
+
+elapsedTime primaryDecomposition I      -- 0.122413 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.100089 seconds
     
 //////////////////////////////////////////////////////////
 //Cassou :  2  Komponenten
@@ -753,11 +834,13 @@ I = ideal(
 R = ZZ/32003[b,c,d,e,w]
 I = ideal(
     15*b^4*c*d^2+6*b^4*c^3+21*b^4*c^2*d-144*b^2*c-8*b^2*c^2*e-28*b^2*c*d*e-648*b^2*d+36*b^2*d^2*e+9*b^4*d^3-120,
-    30c^3*b^4*d-32*d*e^2*c-720d*b^2*c-24*c^3*b^2*e-432*c^2*b^2+576*e*c-576*d*e+16*c*b^2*d^2*e+16*d^2*e^2+16*e^2*c^2+9*c^4*b^4
-    +5184+39*d^2*b^4*c^2+18*d^3*b^4*c-432*d^2*b^2+24*d^3*b^2*e-16*c^2*b^2*d*e-240c,
-    216*d*b^2*c-162*d^2*b^2-81*c^2*b^2+5184+1008*e*c-1008*d*e+15*c^2*b^2*d*e-15*c^3*b^2*e-80d*e^2*c+40d^2*e^2+40e^2*c^2,
+    30*c^3*b^4*d-32*d*e^2*c-720*d*b^2*c-24*c^3*b^2*e-432*c^2*b^2+576*e*c-576*d*e+16*c*b^2*d^2*e+16*d^2*e^2+16*e^2*c^2+9*c^4*b^4
+    +5184+39*d^2*b^4*c^2+18*d^3*b^4*c-432*d^2*b^2+24*d^3*b^2*e-16*c^2*b^2*d*e-240*c,
+    216*d*b^2*c-162*d^2*b^2-81*c^2*b^2+5184+1008*e*c-1008*d*e+15*c^2*b^2*d*e-15*c^3*b^2*e-80*d*e^2*c+40*d^2*e^2+40*e^2*c^2,
     261+4*d*b^2*c-3*d^2*b^2-4*c^2*b^2+22*e*c-22*d*e)
     
+elapsedTime primaryDecomposition I      -- 0.110627 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.275257 seconds
     
 //////////////////////////////////////////////////////////
 //mat3-2 :  2  Komponenten
@@ -781,13 +864,15 @@ I = ideal(
     c*g+f*h+i^2)
 
 (I = clear I; time res coker gens I)           -- 1.32 (pd=9)
-(I = clear I; time primaryDecomposition I)     -- 
+(I = clear I; time primaryDecomposition I)     -- (2020: 0.916876 seconds)
 (I = clear I; time minimalPrimes I)                -- 481.42 sec
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
 (I = clear I; time (I : ideal vars R))         --  .75
 (I = clear I; time saturate(I, ideal vars R))  -- 1.25 sec
+
+elapsedTime primaryDecomposition comodule I      -- 0.283149 seconds
 
 -- Here is the result of minimalPrimes I above:
 -- {ideal | a+e+i fg-di -ce+bf bg+eh+hi ch-bi -eg+dh bd+e2+ei cg+ei+i2 fh-ei cd+ef+fi |}    
@@ -814,13 +899,16 @@ I = ideal(
     (a-k)*(a-j))
 
 (I = clear I; time res coker gens I)           --  1.09
-(I = clear I; time primaryDecomposition I)     -- 35.11 sec
+(I = clear I; time primaryDecomposition I)     -- 35.11 sec (2020: 0.433618 seconds)
 (I = clear I; time minimalPrimes I)                --   .66 sec
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
 (I = clear I; time (I : ideal vars R))         -- 
 (I = clear I; time saturate(I, ideal vars R))  -- 
+
+elapsedTime primaryDecomposition comodule I      -- ?, > 60 seconds
+-- Resolution for prime 6/9 does not interrupt gracefully
     
 //////////////////////////////////////////////////////////
 //parametric curve :  1  Komponenten
@@ -836,7 +924,9 @@ I = ideal(
     t^10-x,
     t^31-t^6-t-y,
     t^8-z)
-    
+
+elapsedTime primaryDecomposition I      -- 0.0129646 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.0204477 seconds
     
 //////////////////////////////////////////////////////////
 //Gerdt/Ge_S/Y : 9  Komponenten
@@ -864,6 +954,13 @@ I = ideal(
     -y^2*w+1/2*y*z*w+y*t*w-z*t*w+2*t^2*w-3*x*u*w+6*x*v*w-3*x*w^2,
     8*x*y*w-4*x*z*w+8*x*t*w)
     
+elapsedTime primaryDecomposition I      -- 0.978626 seconds
+elapsedTime primaryDecomposition minimalPresentation I      -- 0.822466 seconds
+elapsedTime associatedPrimes comodule I      -- 26.1688 seconds
+elapsedTime associatedPrimes comodule minimalPresentation I      -- 3.38966 seconds
+elapsedTime primaryDecomposition comodule I      -- +20.0805 seconds
+elapsedTime primaryDecomposition comodule minimalPresentation I      -- +6.41747 seconds
+    
 //////////////////////////////////////////////////////////
 //Liu : 1  Komponenten
 //min_ass_prim_l        :    1 sec
@@ -879,7 +976,13 @@ I = ideal(
     z*(t-x)-y+a,
     t*(x-y)-z+a,
     x*(y-z)-t+a)
-    
+
+-- 3 components
+elapsedTime primaryDecomposition I      -- 0.152942 seconds
+elapsedTime primaryDecomposition minimalPresentation I      -- 0.129181 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.205969 seconds
+elapsedTime primaryDecomposition comodule minimalPresentation I      -- 0.110607 seconds
+-- Note: Singular's primdecGTZ() gives extremely complicated output
     
 //////////////////////////////////////////////////////////
 //Moeller2 : 27  Komponenten
@@ -900,31 +1003,18 @@ I = ideal(
     a*b*c*x+a*b*w*d+a*v*c*d+u*b*c*d)
 
 (I = clear I; time res coker gens I)           -- 
-(I = clear I; time primaryDecomposition I)     -- 
+(I = clear I; time primaryDecomposition I)     -- (2020: ?, > 45 seconds)
 (I = clear I; time minimalPrimes I)                -- 
 (I = clear I; time radical I)                  -- 
 (I = clear I; time topComponents I)                      -- 
 (I = clear I; time removeLowestDimension I)    -- 
 (I = clear I; time (I : ideal vars R))         -- 
 (I = clear I; time saturate(I, ideal vars R))  -- 
-    
-//////////////////////////////////////////////////////////
-//Wang1 : 2  Komponenten
-//min_ass_prim_l        :    1 sec
-//prim_dec_tree_charsets:    1 sec
-//newMinAssPrimes       :      sec
-//minAssPrimes          :    0 sec
-//decomp                :    1 sec/
-//////////////////////////////////////////////////////////
-//Factorisation over algebraic function field required!
-    
-R = ZZ/32003[x,y,z,t]
-I = ideal(
-    t^2+x*t^2-y*t-x*y*t+x*y+3*y,
-    x*t+z-x*y,
-    z*t-2*y^2-x*y-1)
-    
-    
+
+elapsedTime primaryDecomposition minimalPresentation I      -- 18.6102 seconds
+elapsedTime primaryDecomposition comodule I      -- 153.32 seconds
+elapsedTime primaryDecomposition comodule minimalPresentation I      -- 13.7346 seconds
+
 //////////////////////////////////////////////////////////
 //Hunecke1 :  12  Komponenten
 //min_ass_prim_l        :       sec
@@ -972,6 +1062,25 @@ I = ideal(
 (I = clear I; time removeLowestDimension I)    -- 
 (I = clear I; time (I : ideal vars R))         -- 33.27
 (I = clear I; time saturate(I, ideal vars R))  -- 
+
+//////////////////////////////////////////////////////////
+//Wang1 : 2  Komponenten
+//min_ass_prim_l        :    1 sec
+//prim_dec_tree_charsets:    1 sec
+//newMinAssPrimes       :      sec
+//minAssPrimes          :    0 sec
+//decomp                :    1 sec/
+//////////////////////////////////////////////////////////
+//Factorisation over algebraic function field required!
+    
+R = ZZ/32003[x,y,z,t]
+I = ideal(
+    t^2+x*t^2-y*t-x*y*t+x*y+3*y,
+    x*t+z-x*y,
+    z*t-2*y^2-x*y-1)
+    
+elapsedTime primaryDecomposition I      -- 0.130139 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.0792369 seconds
     
 //////////////////////////////////////////////////////////
 //Wang3 :   Komponenten
@@ -989,7 +1098,6 @@ R = ZZ/32003[y,a,b,c,m,n,o,p,q,s]
 I = ideal(
     j*a*c*o*b(p^2)+i*d*e*a*l(y^2-p^1))
     
-    
 //////////////////////////////////////////////////////////
 //Wang4 :   Komponenten
 //min_ass_prim_l        :     sec
@@ -1004,6 +1112,10 @@ I = ideal(
     x^2+y^2+z^2-t^2,
     x*y+z^2-1,
     x*y*z-x^2-y^2-z+1)
+
+-- 1 component    
+elapsedTime primaryDecomposition I      -- 0.0590246 seconds
+elapsedTime primaryDecomposition comodule I      -- 0.0604325 seconds
     
 /////////////////////////////////////////////////////////////////////////////
     

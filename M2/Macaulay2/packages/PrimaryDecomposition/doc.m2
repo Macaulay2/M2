@@ -413,16 +413,16 @@ document {
      TT "associatedPrimes M", ". The algorithm used is inspired by the",
      " Eisenbud-Huneke-Vasconcelos algorithm, modified to work for modules.",
      PARA{},
-     EXAMPLE {
-	  "R = QQ[x_0..x_3]",
-	  "(I1,I2,I3) = ({1,2,3},{2,3},{4,5})/monomialCurveIdeal_R",
-          "M = comodule I1 ++ comodule I2 ++ comodule I3",
-	  "associatedPrimes M",
-	  "C = primaryDecomposition M;",
-	  "netList C",
-	  "intersect C == 0 and all(C, isPrimary_M)",
-	  "C/degree"
-	  },
+     EXAMPLE lines ///
+	  R = QQ[x_0..x_3]
+	  (I1,I2,I3) = ({1,2,3},{2,3},{4,5})/monomialCurveIdeal_R
+          M = comodule I1 ++ comodule I2 ++ comodule I3
+	  associatedPrimes M
+	  C = primaryDecomposition M;
+	  netList C
+	  intersect C == 0 and all(C, isPrimary_M)
+	  C/degree
+     ///,
      PARA{},
      "Recall that in Macaulay2, a module is commonly represented as a ",
      TO "subquotient", ", which is an ordered pair consisting of (generators, relations) 
@@ -446,14 +446,14 @@ document {
      ring ", TT "R", " (which is most useful when ", TT "R", " is a ", TO "QuotientRing",
      "). When computing primary decompositions of ideals with this function, remember to add 
      back the original ideal to obtain the desired primary ideals, as in the following example.",
-     EXAMPLE {
-	  "I = intersect((ideal(x_0..x_3))^5, (ideal(x_0..x_2))^4, (ideal(x_0..x_1))^3)",
-	  "S = R/I",
-	  "associatedPrimes S",
-	  "comps = primaryDecomposition S",
-	  "apply(comps, Q -> ideal mingens(I + ideal gens Q))",
-	  "I == intersect oo"
-	  },
+     EXAMPLE lines ///
+	  I = intersect((ideal(x_0..x_3))^5, (ideal(x_0..x_2))^4, (ideal(x_0..x_1))^3)
+	  S = R/I
+	  associatedPrimes S
+	  comps = primaryDecomposition S
+	  apply(comps, Q -> ideal mingens(I + ideal gens Q))
+	  I == intersect oo
+     ///,
      PARA{},
      "The results of the computation are stored in ", TT ///M.cache#"primaryComponents"///, 
      ", which is a ", TO "HashTable", " whose keys are associated primes and values are      
@@ -462,17 +462,18 @@ document {
      TT "associatedPrimes M", ". The computation may be interrupted at any point,
      and can be resumed later without recomputing already-known primary components. To
      display detailed information throughout the computation, set the global variable ",
-     TO "debugLevel", " to a value greater than 0, e.g. ", TT "debugLevel = 1", ".",
+     TO "debugLevel", " to a value greater than 0, e.g. ", TT "debugLevel = 1", " (or ", 
+     TT "debugLevel = 2", " for even more detail).",
      PARA{},
-     "This method has one optional input ", TT "Strategy", ", which accepts 3 values, namely: ",
-     TT ///"Sat"///, ", ", TT ///"Hom"///, ", and ", TT ///"Res"///, ". These are used only to determine
-     the algorithm for finding embedded components. The default value is ", 
-     TT ///"Sat"///, ", which is typically the fastest on common examples of interest. However, ", 
-     TT ///"Hom"///, " can be significantly faster on certain larger examples. It is
-     recommended to try different ", TT "Strategy", " values if the computation of a 
-     particular embedded component is taking too long - one can start the computation with 
-     one strategy, and interrupt and resume with a different strategy (even multiple times) if 
-     desired.",
+     "This function has one optional input ", TT "Strategy", ", which accepts 3 values, namely: ",
+     TT ///"Hom"///, ", ", TT ///"Res"///, ", and ", TT ///"Sat"///, ". These are used only to determine
+     the algorithm for finding embedded components. The ", TT ///"Res"///, " strategy is closest
+     to the original Eisenbud-Huneke-Vasconcelos method, while the default (and typically 
+     fastest) strategy is ", TT ///"Sat"///, ". However, ", TT ///"Hom"///, " can be significantly faster 
+     on certain larger examples (but also slower on others). It is recommended to try different ", 
+     TT "Strategy", " values if the computation of a particular embedded component is taking too
+     long - one can start the computation with one strategy, and interrupt and resume with a
+     different strategy (even multiple times) if desired.",
      Caveat => {"Note that although isolated components (i.e. those corresponding to minimal
      primes) are unique, embedded components are never unique, and thus specifying
      generators of an embedded component requires non-canonical choices. For speed 
@@ -481,6 +482,33 @@ document {
      generators of the embedded prime and ", TT "ann M", ". In particular, the
      generators of an embedded component may not be of minimal possible degree."},
      SeeAlso => {(primaryDecomposition,Ideal),(associatedPrimes,Module),isPrimary,topComponents}
+     }
+
+document {
+     Key => {kernelOfLocalization,(kernelOfLocalization,Module,Ideal)},
+     Headline => "the kernel of the localization map",
+     Usage => "kernelOfLocalization(M, P)",
+     Inputs => {
+	  "M" => Module,
+	  "P" => Ideal => "the prime ideal to localize at"
+	  },
+     Outputs => {
+	  Module => {"the kernel of the localization map ", TT "M -> M_P"}
+	  },
+     "This method computes the kernel of the natural map from a module to its localization at a
+     given prime ideal. The efficiency of this method is intimately tied to the efficiency of
+     computation of associated primes for the module - if the associated primes of ", TT "M",
+     " have previously been computed, then this method should finish quickly.",
+     PARA{},
+     EXAMPLE lines ///
+          R = QQ[x_0..x_3]
+	  (I1,I2,I3) = ({1,2,3},{2,3},{4,5})/monomialCurveIdeal_R
+          M = comodule I1 ++ comodule I2 ++ comodule I3
+          elapsedTime kernelOfLocalization(M, I1)
+          elapsedTime kernelOfLocalization(M, I2)
+          elapsedTime kernelOfLocalization(M, I3)
+     ///,
+     SeeAlso => {(associatedPrimes, Module), (primaryDecomposition, Module)}
      }
 
 document {
@@ -533,7 +561,7 @@ document {
 	  Ideal => {"generated by a regular sequence of length ", TT "n", " contained in ", TT "I"}
 	  },
      "This method computes a regular sequence of length ", TT "n", " contained in a given ideal ", 
-     TT "I", ". It attempts to do so by first taking ", ///"sparse"///, " combinations of the generators, ",
+     TT "I", ". It attempts to do so by first trying ", ///"sparse"///, " combinations of the generators, ",
      " i.e. elements which are either generators or sums of two generators. If a sparse ",
      "regular sequence is not found, then dense combinations of generators will be tried.",
      PARA{},
@@ -542,9 +570,9 @@ document {
      "in a polynomial (or at least Cohen-Macaulay) ring, so that ", TT "codim I = grade I", ".",
      PARA{},
      EXAMPLE lines ///
-     R = QQ[x_0..x_7]
-     I = intersect(ideal(x_0,x_1,x_2,x_3), ideal(x_4,x_5,x_6,x_7), ideal(x_0,x_2,x_4,x_6), ideal(x_1,x_3,x_5,7))
-     elapsedTime regSeqInIdeal I
+          R = QQ[x_0..x_7]
+          I = intersect(ideal(x_0,x_1,x_2,x_3), ideal(x_4,x_5,x_6,x_7), ideal(x_0,x_2,x_4,x_6), ideal(x_1,x_3,x_5,7))
+          elapsedTime regSeqInIdeal I
      ///,
      PARA{},
      "If ", TT "I", " is the unit ideal, then an ideal of variables of the ring is returned.",

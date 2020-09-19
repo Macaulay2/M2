@@ -30,6 +30,7 @@ export {
 --     "minSat",
      "primaryComponent",
 --     "quotMin",
+    "kernelOfLocalization",
     "regSeqInIdeal",
     "radicalContainment"
      }
