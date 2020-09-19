@@ -15,6 +15,7 @@ declarations "
 header "
    #include <atomic_ops.h>
    #include <mpfr.h>
+   #include <mpfi.h>
    #include <memtailor.h>
    #include <mathic.h>
    #include <gdbm.h>
