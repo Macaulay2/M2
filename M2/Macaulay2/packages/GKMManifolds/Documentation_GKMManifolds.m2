@@ -532,7 +532,8 @@ doc ///
 		Text
 			For $X$ a GKM manifold with an action of a torus $T$ whose character ring is $R$,
 			a $T$-equivariant $K$-class $C \in K_T^0(X)$ of is encoded by its image in $K_T^0(X^T) = \prod_{x\in X^T} R$,
-			under the injective restriction map $K_T^0(X) \to K_T^0(X^T)$.  See REFERENCE HERE.
+			under the injective restriction map $K_T^0(X) \to K_T^0(X^T)$.
+			See [Corollary 5.12; VV03] or [Corollary A.5; RK03] for details.
 
 		Text
 			A @TO "TKClass"@ C is a @TO "HashTable"@
@@ -547,6 +548,7 @@ doc ///
 
 	SeeAlso
 		tKClass
+		(isWellDefined, TKClass)
 		pushforward
 		pullback
 		tChi
@@ -654,8 +656,10 @@ doc ///
 			it satisfies the following "edge compatibility condition":
 
 			For each one-dimensional $T$-orbit-closure in $X$ with boundary points $x$ and $x'$, one has
-			$f_x \equiv f_{x'} \mod 1 - T^\lambda_{x,x'}$ where $\lambda_{x,x'}$ is the character of the action of $T$ on the
+			$$f_x \equiv f_{x'} \ \mod \ 1 - T^{\lambda(x,x')}$$
+			where $\lambda(x,x')$ is the character of the action of $T$ on the
 			one-dimensional orbit.
+			See [Corollary 5.12; VV03] or [Corollary A.5; RK03] for details.
 
 		Example
 			PP3 = tProjectiveSpace 3
@@ -1021,7 +1025,7 @@ doc ///
 		f:TMap
 	Outputs
 		:FunctionClosure
-			whose input is a TKClass on the target T-variety of f and output is its pullback along f
+			whose input is a @TO TKClass@ on the target @TO TVariety@ of f and output is its pullback along f
 	Description
 		Text
 			Given two $T$-varieties $X$ and $Y$, this method computes the pullback of a @TO TKClass@ on $Y$ 
@@ -1053,7 +1057,7 @@ doc ///
 		f:TMap
 	Outputs
 		:FunctionClosure
-			whose input is a TKClass on the source T-variety of f and output is its pushforward along f
+			whose input is a @TO TKClass@ on the source @TO TVariety@ of f and output is its pushforward along f
 	Description
 		Text
 			Given two $T$-varieties $X$ and $Y$, this method computes the pushforward of a @TO TKClass@ on $X$ 
@@ -1071,6 +1075,7 @@ doc ///
 		tFlagMap
 		(pullback, TMap)
 		pushforward
+		tChi
 ///
 
 doc ///
@@ -1097,6 +1102,7 @@ doc ///
 			tChi O1
 	SeeAlso
 		pushforward
+		ampleTKClass
 
 ///
 
@@ -1172,7 +1178,7 @@ doc ///
 			$\mathbb A^1 \subset \mathbb P^1$ (where $v_1 \in \mathbb A^1$).
 
 		Text
-			A @TO MomentGraph@ is a @TO MutableHashTable@ with three keys:
+			A @TO MomentGraph@ is a @TO HashTable@ with three keys:
 
 			@UL{
 			{TT "vertices", ", whose values represent the vertices of the moment graph"},
@@ -1501,17 +1507,38 @@ doc ///
 		Text
 			Defines a @TO Poset@ $P$ to be a cell order on the @TO MomentGraph@ $G$.  Overwrites if there was 
 			one already defined on $G$.
-		Example
-			PP3 = tProjectiveSpace 3
-			cellOrder PP3
-			V = (momentGraph PP3).vertices
-			P = poset(V, {{V_0,V_1},{V_1,V_2},{V_2,V_3}})
-			cellOrder(momentGraph PP3, P)
-			cellOrder PP3
+		CannedExample
+			i2 : PP3 = tProjectiveSpace 3
+
+			o2 = a T-variety with an action of a 4-dimensional torus
+
+			o2 : TVariety
+
+			i3 : cellOrder PP3
+			stdio:3:1:(3): error:  no cell order defined on this moment graph
+
+			i4 : V = (momentGraph PP3).vertices
+
+			o4 = {set {0}, set {1}, set {2}, set {3}}
+
+			o4 : List
+
+			i5 : P = poset(V, {{V_0,V_1},{V_1,V_2},{V_2,V_3}})
+
+			o5 = P
+
+			o5 : Poset
+
+			i6 : cellOrder(momentGraph PP3, P)
+
+			i7 : cellOrder PP3
+
+			o7 = P
+
+			o7 : Poset
 	SeeAlso
 		cellOrder
 		bruhatOrder
-
 
 ///
 
@@ -1535,12 +1562,31 @@ doc ///
 			Given a @TO TVariety@ $X$ created by either @TO tGeneralizedFlagVariety@ or @TO tGeneralizedSchubertVariety@, 
 			computes and returns the Bruhat order corresponding to the Bruhat decomposition.  The resulting poset is 
 			cached in $X$, and can be accessed by either @TO cellOrder@ or @TO bruhatOrder@.
-		Example
-			Fl3 = tGeneralizedFlagVariety("A",2,{1,2})
-			cellOrder Fl3
-			P = bruhatOrder Fl3
-			#(coveringRelations P) == 8
-			cellOrder Fl3
+		CannedExample
+			i1 : Fl3 = tGeneralizedFlagVariety("A",2,{1,2})
+
+			o1 = a T-variety with an action of a 3-dimensional torus
+
+			o1 : TVariety
+
+			i2 : cellOrder Fl3
+			stdio:2:1:(3): error:  no cell order defined on this moment graph
+
+			i2 : P = bruhatOrder Fl3
+
+			o2 = P
+
+			o2 : Poset
+
+			i3 : #(coveringRelations P) == 8
+
+			o3 = true
+
+			i4 : cellOrder Fl3
+
+			o4 = P
+
+			o4 : Poset
 	SeeAlso
 		cellOrder
 		tGeneralizedFlagVariety
@@ -1602,9 +1648,9 @@ doc ///
 			T-action on a T-invariant affine chart around the corresponding point.
 	Description
 		Text
-			Assume $X$ is a $T$-variety for which there exists a contracting $T$-invariant around each
-			$T$-fixed point (the generalized flag varieties have this property). This 
-			method produces a @TO HashTable@ whose keys are the $T$-fixed points of
+			Assume $X$ is a $T$-variety for which there exists a contracting $T$-invariant affine chart around each
+			$T$-fixed point.  For instance, generalized flag varieties and smooth toric varieties have this property.
+			This returns a @TO HashTable@ whose keys are the $T$-fixed points of 
 			$X$ and the values are the negatives of characters of the T-action on the associated 
 			contracting affine chart.
 			
@@ -1675,16 +1721,16 @@ doc ///
 			of the form "A", "B", "C" or "D"
 	Description
 		Text
-			If $X$ is a generalized flag variety constructed using the method
-			@TO tGeneralizedFlagVariety@, this method outputs the Lie type of $X$. 
+			If $X$ is a generalized flag variety or a generalized Schubert variety constructed using the method
+			@TO tGeneralizedFlagVariety@ or @TO tGeneralizedSchubertVariety@, this method outputs the Lie type of $X$. 
 
 		Example
 			X = tGeneralizedFlagVariety("A",3,{2}); -- The Grassmannian Gr(2,4)
-			Y = tGeneralizedFlagVariety("B",3,{2}); -- The Orthogonal Grassmannian SOGr(2,7)
-			Z = X** X;
+			Y = tGeneralizedFlagVariety("B",2,{1}); -- The Orthogonal Grassmannian SOGr(1,5)
 			lieType(X)
 			lieType(Y)
-			lieType(Z);	 	
+		Text
+			If the T-variety is not a generalized flag variety or a generalized Schubert variety, prints error.
 	Caveat
 		The method @TO tProjectiveSpace@ dose not cache the Lie type.						
 	SeeAlso
@@ -2046,9 +2092,15 @@ doc ///
 			setIndicator(T2,3)
 		Text
 			If the set is not admissible it produces an error.
-		Example
-			T3 = set{1,"1*","2*",3};		
-			setIndicator(T3,4)
+		CannedExample
+			i1 : T3 = set{1,"1*","2*",3}		
+
+			o1 = set {1, 1*, 2*, 3}
+
+			o1 : Set
+
+			i2 : setIndicator(T3,4)
+			stdio:2:1:(3): error:  the signed subset is not admissible 
 	SeeAlso
 		tGeneralizedFlagVariety
 

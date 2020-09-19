@@ -23,7 +23,7 @@ newPackage("GKMManifolds",
 	HomePage => "https://github.com/chrisweur/GKMManifolds",
 	PackageExports => {"Graphs", "Matroids", "NormalToricVarieties"},
 	AuxiliaryFiles => true,
-	DebuggingMode => true
+	DebuggingMode => false
 )
 export {
 	"TVariety",
@@ -103,8 +103,8 @@ affineToricRing(Matrix) := QuotientRing => A -> affineToricRing(entries transpos
 toFraction = method();
 toFraction(RingElement,RingElement,Ring) := (f,g,S) -> (
     R := ring f;
-    if not R === ring g then << " the two polynomials live in different rings " << return error;
-    if not (#gens R) == (#gens S) then << " the temporary ring is no good " << return error;
+    if not R === ring g then error " the two polynomials live in different rings ";
+    if not (#gens R) == (#gens S) then error " the temporary ring is no good ";
     Exps := -((transpose (exponents f | exponents g))/min);
     mult := product(#Exps, i -> R_i^(Exps_i));
     numer := sub(mult*f, apply(#(gens R), i -> R_i=>S_i));
@@ -113,7 +113,7 @@ toFraction(RingElement,RingElement,Ring) := (f,g,S) -> (
     goBack := ratFct -> (
 	N := numerator ratFct;
 	D := denominator ratFct;
-	if not #(terms D) == 1 then << "denominator not a monomial" << return error;
+	if not #(terms D) == 1 then error "denominator not a monomial";
 	sub(N, apply(#(gens S), i -> S_i=>R_i))*(sub(D, apply(#(gens S), i -> S_i=>R_i)))^(-1)
 	);
     {rat, goBack}
@@ -141,7 +141,7 @@ makeHTpt(ZZ) := Ring => n -> (
 --G.HTpt : a polynomial ring, represent the T-equivariant cohomology ring of a point
 
 
-MomentGraph = new Type of MutableHashTable
+MomentGraph = new Type of HashTable
 
 MomentGraph.synonym = "moment graph"
 
@@ -175,8 +175,7 @@ cellOrder(MomentGraph,Poset) := (G,P) -> (
 	print "warning: overwriting a previously defined cell order on this moment graph "
 	);
     if G.vertices =!= P.GroundSet then (
-	<< "the ground set of the poset is not the vertices of this moment graph " <<
-	return error
+	error "the ground set of the poset is not the vertices of this moment graph "
 	);
     G.cache.cellOrder = P;
     )
@@ -184,7 +183,7 @@ cellOrder(MomentGraph,Poset) := (G,P) -> (
 
 cellOrder(MomentGraph) := Poset => G -> (
     if G.cache.?cellOrder then G.cache.cellOrder
-    else << " no cell order defined on this moment graph" << return error
+    else error " no cell order defined on this moment graph"
     )
 
 --------------------------------------< T-varieties >-------------------------------------------
@@ -228,8 +227,7 @@ tVariety(List, Ring) := TVariety => (L,R) -> (
 --tVariety created from G, a moment graph, and a character ring R compatible with G.HTpt
 tVariety(MomentGraph,Ring) := TVariety => (G,R) -> (
     if not #(gens R) == #(gens G.HTpt) then (
-	<< "HTpt not compatible with the character ring" <<
-	return error
+	error "HTpt not compatible with the character ring"
 	);
     new TVariety from {
 	symbol points => G.vertices,
@@ -251,7 +249,7 @@ tVariety(MomentGraph) := TVariety => G -> (
 --returns the moment graph of the T-variety X if it is defined
 momentGraph(TVariety) := MomentGraph => X -> (
     if X.?momentGraph then X.momentGraph
-    else << "no moment graph defined for this T-variety" << return error
+    else error "no moment graph defined for this T-variety"
     )
 
 
@@ -262,12 +260,10 @@ momentGraph(TVariety,MomentGraph) := (X,G) -> (
 	print " warning: overwriting a previously defined moment graph on this T-variety "
 	);
     if #(gens X.charRing) != #(gens G.HTpt) then (
-	<< "HTpt not compatible with the character ring" <<
-	return error
+	error "HTpt not compatible with the character ring"
 	);
     if not G.vertices === X.points then (
-	<< "the torus-fixed points are not compatible" <<
-	return error
+	error "the torus-fixed points are not compatible"
 	);
     X.momentGraph = G;
     )
@@ -292,7 +288,7 @@ charts = method()
 
 charts(TVariety) := X -> (
     if X.?charts then X.charts
-    else << "no charts defined for this T-variety" << return error
+    else error "no charts defined for this T-variety"
     )
 
 charts(TVariety,List) := (X,L) -> (
@@ -300,8 +296,7 @@ charts(TVariety,List) := (X,L) -> (
 	print " warning: overwriting previously defined charts on this T-variety " 
 	);
     if not #X.points == #L then (
-	<< "number of charts in the list not equal to number of points" <<
-	return error
+	error "number of charts in the list not equal to number of points"
 	);
     X.charts = hashTable apply(#X.points, i -> (X.points_i,L_i))
     )
@@ -315,7 +310,7 @@ toCharRing = (X,f) -> (
     if f == 1 then return 1_(X.charRing);
     R := ring f; n := #(gens R);
     if not #(gens X.charRing) == n then
-        << "rings have different number of variables" << return error;
+        error "rings have different number of variables";
     sub(f,apply(n, i -> R_i=>X.charRing_i))    
 )
 
@@ -349,7 +344,7 @@ tProjectiveSpace(ZZ) := TVariety => n -> (
 --the product is endowed with the diagonal action of T
 TVariety ** TVariety := TVariety => (X,Y) -> (
     R := X.charRing;
-    if not R === Y.charRing then << "character rings need be same" << return error;
+    if not R === Y.charRing then error "character rings need be same";
     L := elements ((set X.points) ** (set Y.points));
     XxY := tVariety(L,R);
     if X.?charts and Y.?charts then (
@@ -363,8 +358,7 @@ TVariety ** TVariety := TVariety => (X,Y) -> (
 --the product function above does NOT automatically compute the product moment graph
 MomentGraph ** MomentGraph := MomentGraph => (G1,G2) -> (
     if numgens G1.HTpt =!= numgens G2.HTpt then (
-	<< " the two HTpt are different " <<
-	return error
+	error " the two HTpt are different "
 	);
     H := G1.HTpt;
     V := (elements((set G1.vertices) ** (set G2.vertices)))/splice;
@@ -439,8 +433,7 @@ tVariety(TKClass) := TVariety => C -> C.tvar
 isWellDefined(TKClass) := Boolean => C -> (
     X := C.tvar;
     if not X.?momentGraph then (
-	<< "a moment graph needs to be defined for this T-variety" <<
-	return error
+	error "a moment graph needs to be defined for this T-variety "
 	);
     G := X.momentGraph;
     R := X.charRing;
@@ -475,7 +468,7 @@ trivialTKClass(TVariety) := TKClass => X -> (
 --multiplying two TKClasses
 TKClass * TKClass := (C1,C2) -> (
     X1 := C1.tvar; X2 := C2.tvar;
-    if not X1 === X2 then << "the T-varieties are different" << return error;
+    if not X1 === X2 then error "the T-varieties are different";
     L := apply(X1.points, p -> C1.hilb#p * C2.hilb#p);
     tKClass(X1,L)
 )
@@ -485,8 +478,7 @@ TKClass ^ ZZ := (C,d) -> (
     else if d == 0 then return trivialTKClass C.tvar
     else if d < 0 then (
 	if not all(values C.hilb, f -> 1 == #terms f) then (
-	    << "unable to compute the inverse of this K-class" <<
-	    return error
+	    error "unable to compute the inverse of this K-class"
 	    );
 	L := apply(C.tvar.points, p -> (C.hilb#p)^(-1));
 	Cneg := tKClass(C.tvar,L);
@@ -498,7 +490,7 @@ TKClass ^ ZZ := (C,d) -> (
 --adding two TKClasses
 TKClass + TKClass := (C1,C2) -> (
     X1 := C1.tvar; X2 := C2.tvar;
-    if not X1 === X2 then << "the T-varieties are different" << return error;
+    if not X1 === X2 then error "the T-varieties are different";
     L := apply(X1.points, p -> C1.hilb#p + C2.hilb#p);
     tKClass(X1,L)
 )
@@ -507,7 +499,7 @@ TKClass + TKClass := (C1,C2) -> (
 ampleTKClass = method();
 ampleTKClass(TVariety) := TKClass => X -> (
     if X.cache.?ampleTKClass then return X.cache.ampleTKClass
-    else << "no distinguished ample line bundle on this T-variety" << return error;
+    else error "no distinguished ample line bundle on this T-variety";
 )
 
 
@@ -517,7 +509,7 @@ ampleTKClass(TVariety,TKClass) := (X,C) -> (
     if X.cache?ampleTKClass then (
 	print " warning: overwriting a previously defined ampleTKClasson this T-variety "
 	);
-    if C.tvar =!= X then << "not a TKClass of this T-variety" << return error;
+    if C.tvar =!= X then error "not a TKClass of this T-variety";
     X.cache.ampleTKClass = C
     )
 
@@ -538,7 +530,7 @@ net TMap := phi -> net ofClass class phi | " of T-varieties "
 --a TMap is given by providing the source X and target Y and a list L of pairs (X point, Y point)
 tMap = method();
 tMap(TVariety,TVariety,List) := TMap => (X,Y,L) -> (
-    if not X.charRing === Y.charRing then << "character rings need be same" << return error;
+    if not X.charRing === Y.charRing then error "character rings need be same";
     new TMap from {
 	symbol source => X,
 	symbol target => Y,
@@ -554,8 +546,7 @@ pullback(TMap) := FunctionClosure => phi -> (
     Y := phi.target;
     if not phi.cache.?pullback then phi.cache.pullback = C -> (
 	if C.tvar =!= Y then (
-	    << "the TKClass to pullback is not a TKClass of the target T-variety" <<
-	    return error
+	    error "the TKClass to pullback is not a TKClass of the target T-variety"
 	    );
 	L := apply(X.points, p -> C.hilb#((phi.ptsMap)#p));
 	tKClass(X,L)
@@ -575,7 +566,7 @@ pushforward(TMap) := FunctionClosure => phi -> (
     x := symbol x;
     S := QQ[x_0..x_(#(gens R)-1)];
     pushforwardFct := C -> (
-	if not C.tvar === X then << "TKClass not of the source T-variety" << return error;
+	if not C.tvar === X then error " TKClass not of the source T-variety ";
 	L := apply(Y.points, q -> (
 	    	preimages := select(X.points, p -> (phi.ptsMap)#p === q);
 	    	if #preimages == 0 then return 0_R;
@@ -622,8 +613,7 @@ compose(TMap,TMap) := TMap => (f,g) -> (
     Y1 := g.target;
     Y2 := f.source;
     if not Y1.points === Y2.points then (
-	<< "check sources and targets of the T-maps" <<
-	return error
+	error " check sources and targets of the T-maps "
 	);
     Z := f.target; X := g.source;
     ptPairs := apply(X.points, p -> (p, f.ptsMap#(g.ptsMap#p)));
@@ -658,18 +648,15 @@ tChi(TKClass) := RingElement => C -> (
 --one should consider OUTER normal cones of cones, not inner normal cones
 tVariety(NormalToricVariety,Ring) := TVariety => (X,R) -> (
     if not isSmooth X then (
-	<< " the normal toric variety is not smooth " <<
-	return error
+	error " the normal toric variety is not smooth "
 	);
     n := dim X;
     if not n == #(gens R) then (
-	<< " the character ring is incompatible with the torus of the toric variety " <<
-	return error
+	error " the character ring is incompatible with the torus of the toric variety "
 	);
     pts := select(max X, i -> #i == n);
     if pts == {} then (
-	<< " no torus-fixed points on this normal toric variety " <<
-	return error
+	error " no torus-fixed points on this normal toric variety "
 	);
     rys := rays X;
     chrts := apply(pts, p -> - entries transpose inverse matrix rys_p);
@@ -694,10 +681,7 @@ tVariety(NormalToricVariety) := TVariety => X -> tVariety(X,makeCharRing dim X)
 --given a T-variety X, returns a normal toric variety if X was constructed from one
 normalToricVariety(TVariety) := NormalToricVariety => opts -> X -> (
     if X.cache.?normalToricVariety then X.cache.normalToricVariety
-    else (
-	<< " no normal toric variety structure on this T-variety " <<
-	return error
-	)
+    else error " no normal toric variety structure on this T-variety "
     )
 
 
@@ -707,8 +691,7 @@ normalToricVariety(TVariety) := NormalToricVariety => opts -> X -> (
 --outputs the TKClass of D on Y
 tKClass(TVariety,ToricDivisor) := TKClass => (Y,D) -> (
     if not normalToricVariety D === normalToricVariety Y then (
-	<< " the toric divisor is not of this T-variety " <<
-	return error
+	error " the toric divisor is not of this T-variety "
 	);
     R := Y.charRing;
     hlbs := apply(Y.points, p -> (
@@ -738,8 +721,7 @@ unastrsk = i -> if instance(i,String) then value first i else if instance(i,ZZ) 
 setIndicator = method()
 setIndicator(Set,ZZ) := List => (s,n) -> (
     if (elements s)/unastrsk != unique (elements s/unastrsk) then (
-	<< " the signed subset is not admissible " <<
-	return error
+	error " the signed subset is not admissible "
 	);
     apply(n, i -> (
 	    if member(i,s) then 1
@@ -800,7 +782,7 @@ highestWeight := (LT,d,L) -> (
 		)
 	    );
 	if all(hw, i -> liftable(i,ZZ)) then hw/(i -> lift(i,ZZ))
-	else << " spin groups not implemented yet " << return error
+	else error " spin groups not implemented yet "
 	)
     else if LT == "D" then (
 	hw = sum(L, i -> (
@@ -810,7 +792,7 @@ highestWeight := (LT,d,L) -> (
 		)
 	    );
 	if all(hw, i -> liftable(i,ZZ)) then hw/(i -> lift(i,ZZ))
-	else << " spin groups not implemented yet " << return error
+	else error " spin groups not implemented yet "
 	)
     )
 
@@ -872,16 +854,13 @@ toRoot := LT -> (
 tGeneralizedFlagVariety = method()
 tGeneralizedFlagVariety(String,ZZ,List) := TVariety => (LT,d,L) -> (
     if not member(LT,{"A","B","C","D"}) then (
-	<< " the first entry must be one of \"A\", \"B\", \"C\", or \"D\" " <<
-	return error
+	error " the first entry must be one of \"A\", \"B\", \"C\", or \"D\" "
 	);
     if d <= 0 then (
-	<< " the second entry (dimension) must be a positive integer " <<
-	return error
+	error " the second entry (dimension) must be a positive integer "
 	);
     if not all(L, i -> 1 <= i and i <= d) then (
-	<< " indices for the weights must be between 1 and the dimension (inclusive) " <<
-	return error
+	error " indices for the weights must be between 1 and the dimension (inclusive) "
 	);
     toRootFunc := toRoot LT;
     R := if LT == "A" then makeCharRing(d+1) else makeCharRing d;
@@ -918,7 +897,7 @@ tGeneralizedFlagVariety(String,ZZ,List) := TVariety => (LT,d,L) -> (
 tGeneralizedFlagVariety(String,ZZ,List,Ring) := TVariety => (LT,d,L,R) -> (
     X := tGeneralizedFlagVariety(LT,d,L);
     S := X.charRing;
-    if #(gens R) != #(gens S) then << " check character ring " << return error;
+    if #(gens R) != #(gens S) then error " check character ring ";
     conversion := map(R,S,gens R);
     X.charRing = R;
     C := ampleTKClass X;
@@ -930,7 +909,7 @@ tGeneralizedFlagVariety(String,ZZ,List,Ring) := TVariety => (LT,d,L,R) -> (
 lieType = method()
 lieType(TVariety) := String => X -> (
     if X.cache.?lieType then X.cache.lieType
-    else << " no Lie Type defined for this T-variety " << return error
+    else error " no Lie Type defined for this T-variety "
     )
 
 --given a generalized flag variety, computes & stores the bruhat order for its moment graph
@@ -938,8 +917,7 @@ lieType(TVariety) := String => X -> (
 bruhatOrder = method()
 bruhatOrder(TVariety) := Poset => X -> (
     if not X.cache.?lieType then (
-	<< " not a generalized flag variety " <<
-	return error
+	error " not a generalized flag variety "
 	);
     if X.momentGraph.cache.?cellOrder then return X.momentGraph.cache.cellOrder;
     LT := lieType X;
@@ -962,8 +940,7 @@ tGeneralizedSchubertVariety = method()
 tGeneralizedSchubertVariety(TVariety,Thing) := TVariety => (X,v) -> (
     G := momentGraph X;
     if not member(v,G.vertices) then (
-	<< " the second entry must be a vertex of the moment graph of the TVariety " <<
-	return error
+	error " the second entry must be a vertex of the moment graph of the TVariety "
 	);
     P := bruhatOrder X;
     V := principalFilter(P,v);
@@ -999,8 +976,7 @@ rowRed = M -> (
 tOrbClosure = method()
 tOrbClosure(TVariety,List) := TKClass => (X,MatLst) -> ( 
     if X.cache.?lieType then Typ := X.cache.lieType else (
-	 << "T-orbit closures are only implemented for Lie types" << 
-	 return error
+	 error "T-orbit closures are only implemented for Lie types"
 	 );
     R := X.charRing;
     m := numgens X.charRing;
@@ -1011,11 +987,11 @@ tOrbClosure(TVariety,List) := TKClass => (X,MatLst) -> (
     if not all(MatLst, v -> numcols v == (
 	    if Typ === "A" then m
 	    else if Typ === "B" then 2*m+1
-	    else 2*m )
-	) then << "the column size of the matrices are incorrect" << return error;
+	    else 2*m
+	    )
+	) then error "the column size of the matrices are incorrect";
     if not rks === apply(MatLst, v -> rank v) then (
-	<< " the rank of the matrices are incorrect" << 
-	return error
+	error " the rank of the matrices are incorrect "
 	);
     (if Typ === "A" then Gens := apply(gens QS, v -> v^(-1))
 	else if Typ  === "C" or Typ === "D" then Gens = apply(gens QS, v -> v^(-1)) | gens QS
@@ -1062,8 +1038,7 @@ tOrbitClosure(TVariety,Matrix) := TKClass => opts -> (X,A) -> (
     MatLst := apply(rks, i -> A^(apply(i, j -> j)));
     if opts.RREFMethod then return tOrbClosure(X,MatLst);
     if X.cache.?lieType then Typ := X.cache.lieType else (
-	 << "T-orbit closures are only implemented for Lie types" << 
-	 return error
+	 error "T-orbit closures are only implemented for Lie types"
 	 );
     R := X.charRing;
     n := numgens R;
@@ -1073,12 +1048,10 @@ tOrbitClosure(TVariety,Matrix) := TKClass => opts -> (X,A) -> (
 	else 2*n
 	);
     if not numcols A == col then (
-	<< "the column size of the matrices are incorrect" <<
-	return error
+	error "the column size of the matrices are incorrect"
 	);
     if not rks === apply(MatLst, v -> rank v) then (
-	<< " the rank of the matrices are incorrect" << 
-	return error
+	error " the rank of the matrices are incorrect"
 	);
     nonzeroMinors := Mat -> select(subsets(numcols Mat, numrows Mat), l -> determinant Mat_l != 0);
     toWeights := l -> (
@@ -1180,10 +1153,9 @@ tFlagMap(List,List,ZZ,Ring) := TMap => (Kso,Kta,n,R) -> (
 tFlagMap = method();
 tFlagMap(TVariety,TVariety) := TMap => (X,Y) -> (
     if not (X.cache.?lieType and Y.cache.?lieType) then (
-	<< "both T-varieties need have a lieType" <<
-	return error
+	error "both T-varieties need have a lieType"
 	);
-    if not X.charRing === Y.charRing then << "character ring need be same" << return error;
+    if not X.charRing === Y.charRing then error "character ring need be same";
     ptPairs := apply(X.points, p -> (p,first select(Y.points, q -> isSubset(q,p))));
     tMap(X,Y,ptPairs)
 )
@@ -1206,7 +1178,7 @@ flagMatroid = method()
 --Does not check concordance of matroids in the list, but checks same cardinality of ground set.
 flagMatroid(List) := FlagMatroid => L -> (
     E := (first L).groundSet; n := #E;
-    if any(L, m -> not #m.groundSet == n) then << "ground set not all same size" << return error;
+    if any(L, m -> not #m.groundSet == n) then error "ground set not all same size";
     new FlagMatroid from {
 	symbol groundSet => E,
 	symbol constituents => L,
@@ -1217,7 +1189,9 @@ flagMatroid(List) := FlagMatroid => L -> (
 --Given l x n matrix A and a list r of ranks, outputs the associated flag matroid
 flagMatroid(Matrix,List) := FlagMatroid => (A,r) -> (
     k := #r; l := numcols A;
-    if r == {} or any(k-1, i -> r_i > r_(i+1)) or r_(k-1) > l then << "check rank sequence" << return error;
+    if r == {} or any(k-1, i -> r_i > r_(i+1)) or r_(k-1) > l then (
+	error "check rank sequence"
+	);
     ML := apply(k, i -> matroid A^(toList(0..(r_i-1))) );
     flagMatroid ML
 )
@@ -1315,7 +1289,7 @@ tKClass(TVariety,FlagMatroid) := TKClass => (X,M) -> (
     K := M.constituents/rank;
     R := X.charRing;
     if not (#(gens R) == #E and (first X.points)/(s -> #s) == K) then 
-    	<< "wrong flag variety for the flag matroid" << return error;
+    	error "wrong flag variety for the flag matroid";
     B := bases M;
     L := apply(X.points, p -> (
 	if not member(p,B) then return 0_R;
@@ -1424,7 +1398,7 @@ kTutte(FlagMatroid) := RingElement => M -> (
 
 
 
-load "GKMManifolds/Documentations_GKMManifolds.m2"
+load "GKMManifolds/Documentation_GKMManifolds.m2"
 load "GKMManifolds/Tests_GKMManifolds.m2"
 
 
@@ -1465,4 +1439,23 @@ o12 = x y  + 2x y  + 2x y  + 3x y  - 6x y  + 3x y  + 4x y + 18x y  + 18x y  + 4x
       + 18x y  + 14x*y  + 5y  + 2x  + 6x y + 6x*y  + 2y
 
 o12 : ZZ[x, y]
--*--
+--*-
+
+--canned example for displaying error messages
+--for bruhatOrder
+Fl3 = tGeneralizedFlagVariety("A",2,{1,2})
+cellOrder Fl3
+P = bruhatOrder Fl3
+#(coveringRelations P) == 8
+cellOrder Fl3
+--for (cellOrder, MomentGraph, Poset)
+PP3 = tProjectiveSpace 3
+cellOrder PP3
+V = (momentGraph PP3).vertices
+P = poset(V, {{V_0,V_1},{V_1,V_2},{V_2,V_3}})
+cellOrder(momentGraph PP3, P)
+cellOrder PP3
+--for setIndicator
+T3 = set{1,"1*","2*",3}		
+setIndicator(T3,4)
+
