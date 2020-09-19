@@ -2,4 +2,4 @@
 
 extern int mpz_hash(mpz_srcptr x);
 extern int mpfr_hash(mpfr_srcptr x);
-extern int mpfi_hash(mpfr_srcptr x);  // Added for MPFI
+extern int mpfi_hash(mpfi_srcptr x);

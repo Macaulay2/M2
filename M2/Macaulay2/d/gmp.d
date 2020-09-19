@@ -39,13 +39,13 @@ export QQorNull := QQ or null;
 
 export QQcell := {+v:QQ};
 
-export RRimutable := Pointer "mpfr_ptr"; -- Added for MPFI
+export RRimutable := Pointer "mpfi_ptr";
 
-export RRi := Pointer "mpfr_srcptr"; -- Added for MPFI
+export RRi := Pointer "mpfi_srcptr";
 
 export RRiorNull := RRi or null;
 
-export RRicell := {+v:RRi};  -- Added for MPFI
+export RRicell := {+v:RRi};
 
 export RRmutable := Pointer "mpfr_ptr";
 
@@ -162,10 +162,10 @@ init(x:RRmutable,prec:ulong):RRmutable := (
     Ccode( RRmutable, "(mpfr_init2(", x, ",(mpfr_prec_t)",prec,"),",x,")" )
    );
 
-init(x:RRimutable,prec:ulong):RRimutable := ( -- Added for MPFI
+init(x:RRimutable,prec:ulong):RRimutable := (
 if prec < minprec then prec = minprec else if prec > maxprec then prec = maxprec;
-Ccode( RRimutable, "(mpfr_init2(", x, ",(mpfr_prec_t)",prec,"),",x,")" )
-); -- End added for MPFI
+Ccode( RRimutable, "(mpfi_init2(", x, ",(mpfr_prec_t)",prec,"),",x,")" )
+);
 
 export newRRmutable(prec:ulong):RRmutable := init(GCmalloc(RRmutable),prec);
 
@@ -173,7 +173,7 @@ export newRRimutable(prec:ulong):RRimutable := init(GCmalloc(RRimutable),prec); 
 
 clear(x:RRmutable) ::= Ccode( void, "mpfr_clear(",  x, ")" );
 
-clear(x:RRimutable) ::= Ccode( void, "mpfr_clear(",  x, ")" ); -- Added for MPFI
+clear(x:RRimutable) ::= Ccode( void, "mpfi_clear(",  x, ")" );
 
 clear(z:CCmutable):void := ( clear(z.re); clear(z.im); );
 
@@ -206,29 +206,43 @@ export moveToRR(z:RRmutable):RR := (
     Ccode(RR,y)
    );
 
-export moveToRRi(z:RRimutable):RRi := ( -- Added for MPFI
+export moveToRRi(z:RRimutable):RRi := (
     y := GCmalloc(RRimutable);
+
+    -- left
     Ccode(void, "
-    int limb_size = (",z,"->_mpfr_prec - 1) / GMP_NUMB_BITS + 1;
+    int limb_size = (",z,"->left._mpfr_prec - 1) / GMP_NUMB_BITS + 1;
     mp_limb_t *p = (mp_limb_t*) getmem_atomic(limb_size * sizeof(mp_limb_t));
-    memcpy(p, ",z,"->_mpfr_d, limb_size * sizeof(mp_limb_t));
-    ",y,"->_mpfr_prec = ",z,"->_mpfr_prec;
-    ",y,"->_mpfr_sign = ",z,"->_mpfr_sign;
-    ",y,"->_mpfr_exp  = ",z,"->_mpfr_exp;
-    ",y,"->_mpfr_d    = p;
+    memcpy(p, ",z,"->left._mpfr_d, limb_size * sizeof(mp_limb_t));
+    ",y,"->left._mpfr_prec = ",z,"->left._mpfr_prec;
+    ",y,"->left._mpfr_sign = ",z,"->left._mpfr_sign;
+    ",y,"->left._mpfr_exp  = ",z,"->left._mpfr_exp;
+    ",y,"->left._mpfr_d    = p;
     ");
+
+    -- right
+    Ccode(void, "
+    limb_size = (",z,"->right._mpfr_prec - 1) / GMP_NUMB_BITS + 1;
+    p = (mp_limb_t*) getmem_atomic(limb_size * sizeof(mp_limb_t));
+    memcpy(p, ",z,"->right._mpfr_d, limb_size * sizeof(mp_limb_t));
+    ",y,"->right._mpfr_prec = ",z,"->right._mpfr_prec;
+    ",y,"->right._mpfr_sign = ",z,"->right._mpfr_sign;
+    ",y,"->right._mpfr_exp  = ",z,"->right._mpfr_exp;
+    ",y,"->right._mpfr_d    = p;
+    ");
+
     Ccode(RRi,y)
-    ); -- End added for MPFI
+    );
 
 export moveToRRandclear(z:RRmutable):RR := (
      w := moveToRR(z);
      clear(z);
      w);
 
-export moveToRRiandclear(z:RRimutable):RRi := ( -- Added for MPFI
+export moveToRRiandclear(z:RRimutable):RRi := (
     w := moveToRRi(z);
     clear(z);
-    w); -- End added for MPFI
+    w);
      
 set(x:ZZmutable, y:ZZ   ) ::= Ccode( void, "mpz_set   (", x, ",", y, ")" );
 set(x:ZZmutable, n:int  ) ::= Ccode( void, "mpz_set_si(", x, ",", n, ")" );
@@ -758,11 +772,11 @@ flagged0() ::= 0 != Ccode( int, "mpfr_erangeflag_p()" );
 setflag0() ::= Ccode( void, "mpfr_set_erangeflag()" );
 isfinite0(x:RR) ::=Ccode(bool,"mpfr_number_p(",x,")");
 isinf0 (x:RR) ::= Ccode(bool,"mpfr_inf_p(",x,")");
-isinf0 (x:RRi) ::= Ccode(bool,"mpfr_inf_p(",x,")");  -- Added for MPFI
+isinf0 (x:RRi) ::= Ccode(bool,"mpfi_inf_p(",x,")"); -- Behavior might be different for mpfi
 isnan0 (x:RR) ::= Ccode(bool,"mpfr_nan_p(",x,")");
-isnan0 (x:RRi) ::= Ccode(bool,"mpfr_nan_p(",x,")");  -- Added for MPFI
+isnan0 (x:RRi) ::= Ccode(bool,"mpfi_nan_p(",x,")");  -- Behavior might be different for mpfi
 sign0(x:RR) ::= 0 != Ccode(int,"mpfr_signbit(",x,")");
-sign0(x:RRi) ::= 0 != Ccode(int,"mpfr_signbit(",x,")");  -- Added for MPFI
+sign0(x:RRi) ::= 0 != Ccode(int,"mpfi_is_neg(",x,")");  -- Behavior might be different for mpfi
 exponent0(x:RR) ::= Ccode(long,"(long)mpfr_get_exp(",x,")"); -- sometimes int, sometimes long, see gmp.h for type mp_exp_t
 sizeinbase0(x:ZZ,b:int) ::= Ccode( int, "mpz_sizeinbase(",  x, ",", b, ")" );
 
@@ -798,11 +812,11 @@ export moveToCCandclear(z:CCmutable):CC := (
 
 precision0(x:RR) ::= Ccode(ulong,"(unsigned long)mpfr_get_prec(", x, ")");
 
-precision0(x:RRi) ::= Ccode(ulong,"(unsigned  long)mpfr_get_prec(", x, ")");  -- Added for MPFI
+precision0(x:RRi) ::= Ccode(ulong,"(unsigned  long)mpfi_get_prec(", x, ")"); -- Behavior might be different for mpfi
 
 export precision(x:RR):ulong := precision0(x);
 
-export precision(x:RRi):ulong := precision0(x); -- Added for MPFI
+export precision(x:RRi):ulong := precision0(x);
 
 export precision(x:CC):ulong := precision0(x.re);
 
@@ -912,7 +926,7 @@ export isfinite(x:RR):bool := isfinite0(x);
 
 export isinf(x:RR):bool := isinf0(x);
 
-export isinf(x:RRi):bool := isinf0(x);  -- Added for MPFI
+export isinf(x:RRi):bool := isinf0(x);
 
 export isnan(x:RR):bool := isnan0(x);
 
@@ -931,8 +945,8 @@ export (x:RR) === (y:RR):bool := (			    -- weak equality
     );
 
 export (x:RRi) === (y:RRi):bool := (                -- weak equality  -- Added for MPFI
-    Ccode( void, "mpfr_clear_flags()" );
-    0 != Ccode( int, "mpfr_equal_p(",  x, ",",  y, ")" )
+    -- Ccode( void, "mpfr_clear_flags()" ); -- no mpfi version
+    0 != Ccode( int, "mpfi_cmp(",  x, ",",  y, ")" ) -- Behavior might be different for mpfi
     && !flagged0()
     );  -- End added for MPFI
 
@@ -944,13 +958,13 @@ export strictequality(x:RR,y:RR):bool := (
      && precision0(x) == precision0(y)
     );
 
-export strictequality(x:RRi,y:RRi):bool := ( -- Added for MPFI
-     Ccode( void, "mpfr_clear_flags()" );
-     0 != Ccode( int, "mpfr_equal_p(",  x, ",",  y, ")" )
+export strictequality(x:RRi,y:RRi):bool := (
+     -- Ccode( void, "mpfr_clear_flags()" ); -- No equivalent in mpfi
+     0 != Ccode( int, "mpfi_cmp(",  x, ",",  y, ")" ) -- Behavior might be different for mpfi
      && !flagged0()
      && sign0(x) == sign0(y)
      && precision0(x) == precision0(y)
-    ); -- End added for MPFI
+    );
 
 compare0(x:RR, y:RR) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp(",  x, ",",  y, "))" );
 
@@ -967,7 +981,7 @@ export (x:RR)  <= (y:RR) : bool := compare0(x,y) <= 0 && !flagged0();
 
 compare0(x:RR, y:long) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_si(",  x, ",", y, "))" );
 
-compare0(x:RRi, y:long) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_si(",  x, ",", y, "))" );  -- Added for MPFI
+compare0(x:RRi, y:long) ::= Ccode( int,  "(mpfi_cmp_si(",  x, ",", y, "))" ); -- Removed clear, doesn't exist in mpfi  -- Bevavior for mpfi might be different
 
 compare0(x:RR, y:int ) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_si(",  x, ",(long)", y, "))" );
 
@@ -983,7 +997,7 @@ export (x:RR)  >= (y:int) : bool :=  compare0(x,long(y)) >= 0 && !flagged0();
 
 export (x:RR) === (y:int) : bool :=  compare0(x,long(y)) == 0 && !flagged0();
 
-export (x:RRi) === (y:int) : bool :=  compare0(x,long(y)) == 0 && !flagged0();  -- Added for MPFI
+export (x:RRi) === (y:int) : bool :=  compare0(x,long(y)) == 0 && !flagged0();
 
 export (x:RR)  <  (y:int) : bool :=  compare0(x,long(y)) <  0 && !flagged0();
 
@@ -1082,10 +1096,11 @@ export - (y:RR) : RR := (
      Ccode( void, "mpfr_neg(", z, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
 
-export - (y:RRi) : RRi := (  -- Added for MPFI
+export - (y:RRi) : RRi := (
     z := newRRimutable(precision0(y));
-    Ccode( void, "mpfr_neg(", z, ",",  y, ", GMP_RNDN)" );
-    moveToRRiandclear(z));  -- End added for MPFI
+    Ccode( void, "mpfi_neg(", z, ",",  y, ")" );
+    -- Behavior might be different for mpfi and removed an argument.
+    moveToRRiandclear(z));
 
 export (x:RR) - (y:RR) : RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
@@ -1610,7 +1625,7 @@ export yn(n:long,x:RR):RR := (
 
 export sign(x:RR):bool := 0 != Ccode(int,"mpfr_signbit(",x,")");
 
-export sign(x:RRi):bool := 0 != Ccode(int,"mpfr_signbit(",x,")");  -- Added for MPFI
+export sign(x:RRi):bool := 0 != Ccode(int,"mpfi_is_neg(",x,")");  -- Behavior might not be the same
 
 
 -- complex transcendental functions
