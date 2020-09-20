@@ -21,7 +21,7 @@ defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStyle
 -----------------------------------------------------------------------------
 
 -- TODO: urlEncode
-htmlLiteral = s -> if s === null or not match("<|&|]]>|\42", s) then s else (
+htmlLiteral = s -> if s === null or regex("<|&|]]>|\42", s) === null then s else (
      s = replace("&", "&amp;", s); -- this one must come first
      s = replace("<", "&lt;", s);
      s = replace("]]>", "]]&gt;", s);
