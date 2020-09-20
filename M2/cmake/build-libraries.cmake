@@ -1125,7 +1125,7 @@ ExternalProject_Add(build-phcpack
   USES_TERMINAL_BUILD ON
   USES_TERMINAL_TEST ON
   )
-#_ADD_COMPONENT_DEPENDENCY(libraries phcpack "???" PHC)
+#_ADD_COMPONENT_DEPENDENCY(libraries phcpack "???" PHCPACK)
 
 
 # https://www3.nd.edu/~sommese/bertini/

@@ -196,7 +196,8 @@ find_program(TOPCOM	NAMES	checkregularity)
 # we provide targets build-polymake, build-bertini, build-phcpack for building them.
 find_program(POLYMAKE	NAMES	polymake)
 find_program(BERTINI	NAMES	bertini)
-find_program(PHC	NAMES	phc)
+find_program(PHCPACK	NAMES	phc)
+find_program(HOM4PS2	NAMES	hom4ps2) # TODO: http://www.math.nsysu.edu.tw/~leetsung/works/HOM4PS_soft.htm
 # TODO: Maple and package convex
 
 set(PROGRAM_OPTIONS 4ti2 cohomCalg Gfan lrslib CSDP Nauty Normaliz TOPCOM)
