@@ -13,7 +13,7 @@ doc ///
 	Key
 		GKMManifolds
 	Headline
-		a package for computations with GKM manifolds and moment graphs
+		computations with GKM manifolds and moment graphs
 	Description
 		Text
 			A GKM manifold is a variety $X$, often assumed to be smooth and complete, with an 
@@ -78,16 +78,20 @@ doc ///
 
 		Text
 			For type $B_n$, the group $G$ is $SO_{2n+1}$, where we set the standard symmetric bilinear form on $\mathbb C^{2n+1}$ 
-			to be is given by the matrix $\begin{pmatrix} 0 & I_n & 0 \\ I_n & 0 & 0 \\ 0 & 0 & 1 \end{pmatrix}$ and the torus $T$ is $diag(t_1, \ldots,t_n, t_1^{-1}, \ldots, t_n^{-1}, 1)$.
+			to be is given by the matrix
+			$$\begin{pmatrix} 0 & I_n & 0 \\ I_n & 0 & 0 \\ 0 & 0 & 1 \end{pmatrix}$$
+			and the torus $T$ is $diag(t_1, \ldots,t_n, t_1^{-1}, \ldots, t_n^{-1}, 1)$.
 
 		Text
 			For type $C_n$, the group $G$ is $Sp_{2n}$, where we set the standard alternating bilinear form on 
-			$\mathbb C^{2n}$ to be given by the matrix $\begin{pmatrix} 0 & -I_n \\ I_n & 0 \end{pmatrix}$ 
+			$\mathbb C^{2n}$ to be given by the matrix
+			$$\begin{pmatrix} 0 & -I_n \\ I_n & 0 \end{pmatrix}$$
 			and the torus $T$ is $diag(t_1, \ldots,t_n, t_1^{-1}, \ldots, t_n^{-1})$.
 
 		Text
 			For type $D_n$, the group $G$ is $SO_{2n}$, where we set the standard symmetric bilinear form on 
-			$\mathbb C^{2n}$ to be given by the matrix $\begin{pmatrix} 0 & I_n \\ I_n & 0 \end{pmatrix}$
+			$\mathbb C^{2n}$ to be given by the matrix
+			$$\begin{pmatrix} 0 & I_n \\ I_n & 0 \end{pmatrix}$$
 			and the torus $T$ is $diag(t_1, \ldots,t_n, t_1^{-1} \ldots, t_n^{-1})$.
 
 		Text
@@ -103,7 +107,7 @@ doc ///
 
 			($C_n$): $\{w_1, \ldots, w_n\}= \{e_1, e_1+e_2, \ldots , e_1+\cdots+e_{n-1}, e_1 + \cdots +e_n\}$
 
-			($D_n$): $\{w_1, \ldots, w_n\}= \{e_1, e_1+e_2, \ldots , e_1+\cdots+e_{n-2}, (1/2)(e_1+\cdots+e_{n-2} +e_{n-1}- e_{n}), (1/2)(e_1+\cdots+e_{n-2}+e_{n-1}+e_n\}$
+			($D_n$): $\{w_1, \ldots, w_n\}= \{e_1, e_1+e_2, \ldots , e_1+\cdots+e_{n-2}, (1/2)(e_1+\cdots+e_{n-2} +e_{n-1}- e_{n}), (1/2)(e_1+\cdots+e_{n-2}+e_{n-1}+e_n)\}$
 
 		Text
 			For a sequence $(a_1, \ldots, a_n)\in \mathbb N^n$ of nonnegative integers, 
