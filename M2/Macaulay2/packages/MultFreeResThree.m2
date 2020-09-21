@@ -1,11 +1,6 @@
 newPackage ( "MultFreeResThree",
-<<<<<<< HEAD
-    Version => "0.1",
-    Date => "22 April 2020",
-=======
     Version => "0.5",
     Date => "3 June 2020",
->>>>>>> dd87ecd98455dfbb7995f5f88a8fd6dfcd4f8413
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
@@ -36,14 +31,6 @@ newPackage ( "MultFreeResThree",
     -- 	 "volume URI" => "http://msp.org/jsag/2014/6-1/"
     -- 	 }
     Reload => true,
-<<<<<<< HEAD
-    DebuggingMode => false
-    )
-
-export { "multtable", "multtable1", "multTables", "eeproduct", "multtablelink" }
-
-
-=======
     DebuggingMode => true
     )
 
@@ -52,7 +39,6 @@ export { "genmulttables", "multTables", "multTablesLink", "eeProd", "efProd",
     "eeMultTable", "efMultTable", "codimThreeAlgStructure", "codimThreeTorAlgebra", "Labels", "Compact" }
 
 -- exportMutable{ "u" }
->>>>>>> dd87ecd98455dfbb7995f5f88a8fd6dfcd4f8413
 --==========================================================================
 -- EXPORTED FUNCTIONS
 --==========================================================================
@@ -90,16 +76,11 @@ export { "genmulttables", "multTables", "multTablesLink", "eeProd", "efProd",
 -- PoincareSeries: rational function, Poincare series in closed form
 -- BassSeries: rational function, Bass series in closed form
 
-<<<<<<< HEAD
-multtable = (d1,d2,d3) -> (
-    Q := ring d1; --add check that all matrices come from same ring
-=======
 multtables = F -> (
     Q := ring F;
     d1:= matrix entries F.dd_1;
     d2:= matrix entries F.dd_2;    
     d3:= matrix entries F.dd_3;    
->>>>>>> dd87ecd98455dfbb7995f5f88a8fd6dfcd4f8413
     m := numcols d1;
     l := numcols d2;
     n := numcols d3;
@@ -124,42 +105,6 @@ multtables = F -> (
     	    EF#(i,j) = (matrix entries e);
 	    );
 	);
-<<<<<<< HEAD
-
-    EEE := new MutableHashTable;
-    for i from 1 to m do (
-	for j from i+1 to m do (
-	    for k from j+1 to m do(
-    	    c := sum(1..l, s -> (EE#(i,j))_(s-1,0)*(EF#(k,s)));
-    	    EEE#(i,j,k) = (matrix entries c);
-	    EEE#(j,i,k) = -EEE#(i,j,k);
-	    EEE#(i,k,j) = -EEE#(i,j,k);
-	    EEE#(k,j,i) = -EEE#(i,j,k);
-	    EEE#(j,k,i) = EEE#(i,j,k);
-	    EEE#(k,i,j) = EEE#(i,j,k);
-	    );
-	);
-    );
-    for i from 1 to m do(
-	for j from 1 to m do(
-	    EEE#(i,i,j) = matrix entries map(Q^n,Q^1,(i,j) -> 0);
-	    EEE#(i,j,i) = matrix entries map(Q^n,Q^1,(i,j) -> 0);
-	    EEE#(j,i,i) = matrix entries map(Q^n,Q^1,(i,j) -> 0);
-	   );
-     );
-	
- {EE,EF}
- )
-
-multtable1 = F -> (
-    Q := ring F;
-    d1:= matrix entries F.dd_1;
-    d2:= matrix entries F.dd_2;    
-    d3:= matrix entries F.dd_3;    
-    m := numcols d1;
-    l := numcols d2;
-    n := numcols d3;
-=======
     {EE,EF}
     )
 
@@ -176,19 +121,14 @@ genmulttables = F -> (
     d1:= matrix entries F.dd_1;
     d2:= matrix entries F.dd_2;    
     d3:= matrix entries F.dd_3;    
->>>>>>> dd87ecd98455dfbb7995f5f88a8fd6dfcd4f8413
     
     EE := new MutableHashTable;
     for i from 1 to m do (
 	for j from i+1 to m do (
 	 a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1};
     	 b := ( matrix entries transpose a ) // d2;
-<<<<<<< HEAD
-	 EE#(i,j) = ( matrix entries b );
-=======
 	 us := transpose matrix {apply(n, k -> Q_(uIndexHash#{i,j,k+1}))};
 	 EE#(i,j) = ( d3*us + matrix entries b );
->>>>>>> dd87ecd98455dfbb7995f5f88a8fd6dfcd4f8413
 	 EE#(j,i) = -EE#(i,j);
 	 );
      EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0);
@@ -196,19 +136,6 @@ genmulttables = F -> (
 
     EF := new MutableHashTable;
     for i from 1 to m do (
-<<<<<<< HEAD
-	for j from 1 to l do (
-    	    c := sum(1..m, k -> d2_(k-1,j-1) * (EE#(i,k)));
-    	    d := d1_(0,i-1)*((id_(Q^l))_(j-1));
-	    e := (matrix entries (matrix d - c)) // d3;
-    	    EF#(i,j) = (matrix entries e);
-	    );
-	);
-    {EE,EF}
-    )
-
-multtablelink = (F,i,j,k) -> (
-=======
     	for j from 1 to l do (
     	    c := sum(1..m, k -> d2_(k-1,j-1) * (EE#(i,k)));
     	    d := d1_(0,i-1)*((id_(Q^l))_(j-1));
@@ -220,7 +147,6 @@ multtablelink = (F,i,j,k) -> (
     )
 
 multtableslink = (F,i,j,k) -> (
->>>>>>> dd87ecd98455dfbb7995f5f88a8fd6dfcd4f8413
     Q := ring F;
     d1:= matrix entries F.dd_1;
     d2:= matrix entries F.dd_2;    
@@ -229,11 +155,7 @@ multtableslink = (F,i,j,k) -> (
     l := numcols d2;
     n := numcols d3;
 
-<<<<<<< HEAD
-    mtable := multtable1 F;
-=======
     mtable := multtables F;
->>>>>>> dd87ecd98455dfbb7995f5f88a8fd6dfcd4f8413
     EE := mtable#0;
     EF := mtable#1;
         
@@ -283,23 +205,6 @@ multtableslink = (F,i,j,k) -> (
     	    Y#(s,t) =  matrix entries (sum(A) // d2t) ;
     	    ) ;
     	);
-<<<<<<< HEAD
- Y
- )
-
---EEE = (i,j,k) -> (
---l := numgens source d2 ;
---c := sum(1..l, s -> (EE(i,j))_(s-1,0)*EF(k,s));
---return matrix entries c)
-
-multTables = ( cacheValue "multTables" ) multtable1
-
-eeproduct = (F,i,j) -> (
-    mtable := multTables F;
-    (mtable#0)#(i,j)
-    )
-
-=======
     
  {X,Y,EEE}
  )
@@ -835,7 +740,6 @@ assert ( (eeProd(F,1,2))_(0,0) == y )
 assert ( (efProd(F,1,4))_(0,0) == -x )
 ///
 
->>>>>>> dd87ecd98455dfbb7995f5f88a8fd6dfcd4f8413
 end
 --==========================================================================
 -- end of package code
@@ -843,28 +747,6 @@ end
 
 uninstallPackage "MultFreeResThree"
 restart
-<<<<<<< HEAD
-loadPackage "MultFreeResThree"
---check "TorAlgebra"
-
-Q = QQ[x,y,z]
-
-I = ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3)
-
-F = res I
-    d1 = matrix entries (F.dd)_1;
-    d2 = matrix entries (F.dd)_2;
-    d3 = matrix entries (F.dd)_3;    
-
-m
-time eeproduct(F,1,2)
-
-m = multtable1 F
-m = multTables F
-m = multtablelink (F,1,2,3)
-peek m
-(sum m)
-=======
 debug loadPackage "MultFreeResThree"
 check "MultFreeResThree"
 
@@ -1200,7 +1082,6 @@ mapX(F,1,2,3)
 mapY(F,1,2,3)
 
 peek m(sum m)
->>>>>>> dd87ecd98455dfbb7995f5f88a8fd6dfcd4f8413
 m_0
 #m
 
@@ -2186,10 +2067,4 @@ L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 6, 4, 7, 1, "Golod", 0, 0, "-"} )
 ///
 
-<<<<<<< HEAD
-end
-
-
-=======
->>>>>>> dd87ecd98455dfbb7995f5f88a8fd6dfcd4f8413
 
