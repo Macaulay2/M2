@@ -20,7 +20,7 @@ document {
      and the list of associated primes is in the same order as 
      the list of primary components returned by ", TO primaryDecomposition, ". Conversely,
      calling ", TO associatedPrimes, " beforehand will speed up the process of ", 
-     TO primaryDecomposition, ".",
+     TO (primaryDecomposition, Module), ".",
      EXAMPLE {
 	  "R = QQ[a..d]",
 	  "M = coker(transpose matrix{{1_R,1,1,1}} | diagonalMatrix vars R)",
@@ -53,15 +53,19 @@ document {
 	  primaryDecomposition I
      ///,
      PARA{},
-     "If the option ", TO CodimensionLimit, " is provided (with module input), then only 
-     associated primes of codimension at most this value are found (unless all associated 
-     primes have already been found). Calling ",
-     TT "associatedPrimes M", " with a different value of ", TO CodimensionLimit, 
-     " will remember the primes already found. The default value is -1, meaning all associated 
-     primes are found.",
-     PARA{},
      "The list of associated primes corresponds to the list of primary components of ", TT "I", ": the
      ", TT "i", "-th associated prime is the radical of the ", TT "i", "-th primary component.",
+     PARA{},
+     "If a value to the option ", TO CodimensionLimit, " is provided, then only associated primes 
+     of codimension at most this value are returned. This can save time if the big height 
+     (= maximal codimension of an associated prime) is less than the projective dimension. ",
+     "Calling ", TT "associatedPrimes M", " with a different value of ", TO CodimensionLimit, " 
+     will remember the primes already found, only performing further computation if necessary. 
+     The default value (which is the same as not specifying the value) is -1, which is 
+     equivalent to ", TT "CodimensionLimit => infinity", " the first time ", 
+     TT "associatedPrimes M", " is called, but will not do any further computation on subsequent
+     runs, only returning the previously found primes. To force computation of all associated 
+     primes after some have been already found, use ", TT "CodimensionLimit => infinity", ".",
      PARA {
 	 "Original author (for ideals): ", "C. Yackel, http://faculty.mercer.edu/yackel_ca/", 
 	 ". Updated for modules by J. Chen.",

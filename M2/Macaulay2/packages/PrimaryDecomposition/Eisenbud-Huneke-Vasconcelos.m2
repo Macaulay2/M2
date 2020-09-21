@@ -10,14 +10,17 @@
 --
 --
 
-ass1 := (I) -> (
-     if I.cache#?"AssociatedPrimes" then I.cache#"AssociatedPrimes" else I.cache#"AssociatedPrimes" = (
+ass1 = method(Options => options associatedPrimes)
+ass1 Ideal := List => o -> (I) -> (
+     if I.cache#?"AssociatedPrimes" and o.CodimensionLimit < 0 then return I.cache#"AssociatedPrimes";
+     I.cache#"AssociatedPrimes" = (
      assassinator := {};
      RI := ring I;
      polyRing := ring presentation RI;
      I1 := lift(I, polyRing);
      i := codim I1;
      d := dim polyRing;
+     if o.CodimensionLimit >= 0 then d = min(d, o.CodimensionLimit);
      local currentext;
      C := resolution(cokernel generators I, LengthLimit => d+1);
      --here we look at the associated primes of the i-th
@@ -66,7 +69,7 @@ ass2 := (I) -> (
      ))
 
 
-associatedPrimes Ideal := List => o -> (I) -> ass1 I
+associatedPrimes Ideal := List => o -> (I) -> ass1(I, o)
 
 TEST ///
 -- This last little code is to check if two lists are the
@@ -339,44 +342,42 @@ trim substitute(J1,T)
 
 -- Primary decomposition code for modules
 
-associatedPrimes Module := List => opts -> M -> ( -- modified code in ass1 for modules
-     previousPrimes := {};
-     if M.cache#?"AssociatedPrimes" then (
-          previousPrimes = M.cache#"AssociatedPrimes";
-          if not M.cache#?"associatedPrimesCodimLimit" then return previousPrimes;
-     );
-     M.cache#"AssociatedPrimes" = (
+associatedPrimes Module := List => o -> M -> ( -- modified code in ass1 for modules
+     if not M.cache#?"AssociatedPrimes" then M.cache#"AssociatedPrimes" = {};
+     k := if o.CodimensionLimit < 0 then infinity else o.CodimensionLimit;
+     p := if M.cache#?"associatedPrimesCodimLimit" then M.cache#"associatedPrimesCodimLimit" else -2;
+     if p >= o.CodimensionLimit then return select(M.cache#"AssociatedPrimes", P -> codim P <= k);
      ringRel := presentation ring M;
-     polyRing := ring ringRel;
-     -- M1 := lift(M, polyRing); -- issue: cannot lift non-free modules
-     -- liftRingRel := id_(polyRing^(numrows relations M)) ** ringRel;
-     liftRingRel := id_(target relations M) ** ringRel;
-     M1 := subquotient(lift(gens M, polyRing), lift(relations M, polyRing) | liftRingRel);
+     S := ring ringRel; -- S is the ambient polynomial ring which ring M is a quotient of
+     -- M1 := lift(M, S); -- issue: cannot lift non-free modules
+     liftRingRel := id_(lift(target relations M, S)) ** ringRel;
+     M1 := subquotient(lift(gens M, S), lift(relations M, S) | liftRingRel);
      c := codim M1;
-     if c == dim polyRing and (isHomogeneous M or all(gens polyRing, v -> radicalContainment(v, ann M1))) then return {sub(ideal gens polyRing, ring M)};
-     if debugLevel > 0 then print("Computing resolution to find associated primes...");
-     d := length resolution M1; -- pdim calls minimalPresentation
-     if debugLevel > 1 then print(betti res M1);
-     n := if opts.CodimensionLimit >= 0 then min(d, opts.CodimensionLimit) else d;
-     if M.cache#?"associatedPrimesCodimLimit" then (
-          if n < d and n <= M.cache#"associatedPrimesCodimLimit" then return select(previousPrimes, P -> codim P <= n);
-          c = 1 + M.cache#"associatedPrimesCodimLimit";
+     if k < c then (
+          if debugLevel > 0 then print("Value of CodimensionLimit is less than codimension");
+          return {};
      );
-     if n < d then M.cache#"associatedPrimesCodimLimit" = n
-     else remove(M.cache, "associatedPrimesCodimLimit");
-     previousPrimes | (flatten apply(toList(c..n), i -> (
-          if debugLevel > 0 then print("Extracting associated primes of codim " | toString i);
-          if i == dim polyRing and isHomogeneous M then sub(ideal gens polyRing, ring M) else (
-               A := ann(if i == c then M1 else Ext^i(M1, polyRing));
-               select(minimalPrimes A, P -> codim P == i)
-          )
-     )))/(P -> trim sub(P, ring M))
-     )
+     if c == dim S and (isHomogeneous M or all(gens S, v -> radicalContainment(v, ann M1))) then M.cache#"AssociatedPrimes" = {sub(ideal gens S, ring M)} else (
+          if debugLevel > 0 then print("Computing resolution to find associated primes...");
+          F := resolution(M1, LengthLimit => k+1);
+          if debugLevel > 1 then print(betti F);
+          for i from max(1+p, c) to min(length F, k) do (
+               if debugLevel > 0 then print("Extracting associated primes of codim " | toString i);
+               newPrimes := apply(if i == dim S and isHomogeneous M then {ideal gens S} else (
+                    A := ann(if i == c then M1 else Ext^i(M1, S));
+                    if codim A > i then {} else select(minimalPrimes A, P -> codim P == i)
+               ), P -> trim sub(P, ring M));
+               M.cache#"AssociatedPrimes" = M.cache#"AssociatedPrimes" | newPrimes;
+               M.cache#"associatedPrimesCodimLimit" = i;
+          );
+     );
+     if k >= dim S then M.cache#"associatedPrimesCodimLimit" = infinity;
+     M.cache#"AssociatedPrimes"
 )
-associatedPrimes Ring := List => opts -> R -> associatedPrimes comodule ideal R
+associatedPrimes Ring := List => o -> R -> associatedPrimes(comodule ideal R, o)
 
-primaryDecomposition Module := List => o -> M -> ( 
-     -- Returns a primary decomposition of 0 in M. Assumes all embedded primes appear after all primes they contain, i.e. isSubset(AP#i, AP#j) => i \le j (equivalently, the ordering of associated primes is a linear extension of the partial order by inclusion). This is the case for associatedPrimes(Module), which returns associated primes ordered by codimension
+-- Returns a primary decomposition of 0 in M. Assumes all embedded primes appear after all primes they contain, i.e. isSubset(AP#i, AP#j) => i \le j (equivalently, the ordering of associated primes is a linear extension of the partial order by inclusion). This is the case for associatedPrimes(Module), which returns associated primes ordered by codimension
+primaryDecomposition Module := List => o -> M -> (
      if not M.cache#?"primaryComponents" then M.cache#"primaryComponents" = new MutableHashTable;
      AP := associatedPrimes M;
      if #values(M.cache#"primaryComponents") != #AP then (
@@ -387,57 +388,47 @@ primaryDecomposition Module := List => o -> M -> (
                if M.cache#"primaryComponents"#?p then continue;
                f := product(AP - set AP_(H#p), q -> q_(position(q_*, g -> g % p != 0)));
                isolComp := if f == 1 then 0*M else saturate(0*M, f);
-               Q := if #(H#p) > 1 then (
-                    j0 := max(2, ceiling(max((ann M)_*/degree/sum) / min(p_*/degree/sum)));
-                    B := intersect apply(delete(i, H#p), k -> M.cache#"primaryComponents"#(AP#k));
-		    getEmbeddedComponent(M, p, j0, {B, isolComp}, o)
-	       ) else isolComp;
-               M.cache#"primaryComponents"#p = Q;
+               M.cache#"primaryComponents"#p = if #(H#p) > 1 then (
+                    B := intersect apply(H#p - set{i}, k -> M.cache#"primaryComponents"#(AP#k));
+                    getEmbeddedComponent(M, p, C -> isSubset(intersect(B, C), isolComp), o)
+               ) else isolComp;
           );
      );
      apply(AP, p -> M.cache#"primaryComponents"#p)
 )
-primaryDecomposition Ring := List => opts -> R -> primaryDecomposition comodule ideal R
+primaryDecomposition Ring := List => o -> R -> primaryDecomposition(comodule ideal R, o)
 
 -- Additional functions useful for primary decomposition
 
 bracketPower = (I, n) -> ideal apply(I_*, f -> f^n)
 
 getEmbeddedComponent = method(Options => options primaryDecomposition)
-getEmbeddedComponent (Module, Ideal, ZZ, List) := o -> (M, p, j, L) -> (
+getEmbeddedComponent (Module, Ideal, Function) := o -> (M, p, checkFunction) -> (
      foundValidComponent := false;
+     j := max(2, ceiling(max((ann M)_*/degree/sum) / min(p_*/degree/sum)));
      while not foundValidComponent do (
-	if debugLevel > 0 then print("Trying bracket power " | toString(j) | " for candidate embedded component...");
-	N := bracketPower(p, j)*M;
-	Q := M/N;
-	strat := if o.Strategy === null then "Sat" else o.Strategy;
-	-- if strat === null then (
-		-- if debugLevel > 0 then print("Determining strategy for top components...");
-		-- strat = "Hom";
-		-- try ( 
-		-- alarm 30; 
-		-- if sum values betti resolution Q < 1000 then strat = "Sat";
-		-- alarm 0;
-		-- );
-	-- );
-	C := if codim p == dim ring Q then (
-		if debugLevel > 0 then print("Embedded prime is maximal!");
-		0*Q
-	) else (
-		if debugLevel > 0 then print("Using strategy " | strat);
-		if strat == "Hom" then equidimHull(Q, codim p)
-		else if strat == "Sat" then kernelOfLocalization(Q, p)
-		else if strat == "Res" then topComponents(Q, codim p)
-	);
-	C = trim subquotient(generators C | generators N, relations M);
-	foundValidComponent = isSubset(intersect(L#0, C), L#1);
-	j = 2*j;
+          if debugLevel > 0 then print("Trying bracket power " | toString(j) | " for candidate embedded component...");
+          N := bracketPower(p, j)*M;
+          Q := M/N;
+          strat := if o.Strategy === null then "Sat" else o.Strategy;
+          C := if codim p == dim ring Q then (
+               if debugLevel > 0 then print("Embedded prime is maximal!");
+               0*Q
+          ) else (
+               if debugLevel > 0 then print("Using strategy " | strat);
+               if strat == "Res" then topComponents(Q, codim p)
+               else if strat == "Sat" then kernelOfLocalization(Q, p)
+               else if strat == "Hom" then equidimHull(Q, codim p)
+          );
+          C = trim subquotient(generators C | generators N, relations M);
+          foundValidComponent = checkFunction C;
+          j = 2*j;
      );
      C
 )
 
 kernelOfLocalization = method()
-kernelOfLocalization (Module, Ideal) := Module => (M, P) -> ( -- returns kernel of localization map M -> M_P (expects P to be a prime ideal)
+kernelOfLocalization (Module, Ideal) := Module => (M, P) -> (
      AP := associatedPrimes M;
      f := product(AP, p -> ( i := position(p_*, g -> g % P != 0); if i === null then 1 else p_i ));
      if debugLevel > 0 then print("Computing saturation...");
@@ -446,19 +437,17 @@ kernelOfLocalization (Module, Ideal) := Module => (M, P) -> ( -- returns kernel 
 
 topComponents (Module, ZZ) := Module => (M, e) -> (
      S := ring M;
-     if not isPolynomialRing S or not isAffineRing S then error "expected a polynomial ring";
      N := 0*M;
-     f := pdim M;  -- will compute a resolution if needed...
+     f := pdim M;  -- calls minimalPresentation, will compute a resolution if needed...
      while f > e do (
-	E := Ext^f(M,S);
-	if codim E == f then (
-		if debugLevel > 0 then print("Getting annihilator of Ext...");
-		I := annihilator E;
-		if debugLevel > 0 then print("Removing components of codim " | toString(f));
-		N = N : I;
-		-- M = M/N;
-	);
-	f = f-1;
+          E := Ext^f(M,S);
+          if codim E == f then (
+               if debugLevel > 0 then print("Getting annihilator of Ext...");
+               I := annihilator E;
+               if debugLevel > 0 then print("Removing components of codim " | toString(f));
+               N = N : I;
+          );
+          f = f-1;
      );
      N
 )
@@ -486,9 +475,8 @@ equidimHull (Module, ZZ) := Module => (M, c) -> (
 equidimHull Module := Module => M -> equidimHull(M, codim M)
 
 regSeqInIdeal = method(Options => {Strategy => "Quick"})
-regSeqInIdeal (Ideal, ZZ, ZZ, ZZ) := Ideal => opts -> (I, n, c, initialTime) -> ( 
+regSeqInIdeal (Ideal, ZZ, ZZ, ZZ) := Ideal => opts -> (I, n, c, initialTime) -> ( -- attempts to find sparse maximal regular sequence contained in an ideal (in a CM ring)
      if debugLevel > 1 then print(toString I, n, c, initialTime);
-     -- attempts to find sparse maximal regular sequence contained in an ideal (in a CM ring)
      G := sort(flatten entries mingens I, f -> (sum degree f, #terms f));
      if c == #G then return ideal G;
      k := coefficientRing ring I;
