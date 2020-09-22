@@ -124,9 +124,8 @@ netList SetOfNoethOps := opts -> N -> netList(N.Ops, opts);
 numgens SetOfNoethOps := N -> #N.Ops;
 ring SetOfNoethOps := N -> ring gens N;
 sort SetOfNoethOps := opts -> N -> (
-    if numgens N == 0 then N else
-    setOfNoethOps(matrix{sort(N.Ops, opts)}, N.Prime, Point => N#Point)
-    )
+    new SetOfNoethOps from applyPairs(N, (i,j) -> if i === symbol Ops then (i, sort j) else (i,j))
+)
 
 dualSpace SetOfNoethOps := N -> (
     R' := ring gens N;
@@ -776,21 +775,21 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Point) := List => true >> opts -> (
     noetherianOperatorsViaMacaulayMatrix(I,P,opts)
 )
 
+
 -- Clears denominators of a matrix:
 -- multiplies each column of M by the lcm of the denominators
 liftColumns = (M,R') -> (
-    K := try denominator(lift(M_(0,0), coefficientRing ring M)) then (
+    if instance(ultimate(coefficientRing, ring M), InexactField) then return sub(M,R');
 	cols := transpose entries M;
-    	lcms := cols / (col -> (
-        	col / 
-        	flatten @@ entries @@ last @@ coefficients // 
-        	flatten / 
-        	(c -> lift(c, coefficientRing ring c)) /
-        	denominator //
-        	lcm
-    		));
-    	transpose matrix apply(cols, lcms, (c, m) -> c / times_m)
-	) else M;
+    lcms := cols / (col -> (
+    	col / 
+    	flatten @@ entries @@ last @@ coefficients // 
+    	flatten / 
+    	(c -> lift(c, coefficientRing ring c)) /
+    	denominator //
+    	lcm
+    	));
+    K :=transpose matrix apply(cols, lcms, (c, m) -> c / times_m);
     sub(K, R')
 )
 
