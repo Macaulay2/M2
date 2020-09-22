@@ -39,21 +39,23 @@ export QQorNull := QQ or null;
 
 export QQcell := {+v:QQ};
 
+export RR := Pointer "mpfr_srcptr";
+
+export RRorNull := RR or null;
+
+export RRcell := {+v:RR};
+
 export RRimutable := Pointer "mpfi_ptr";
 
 export RRi := Pointer "mpfi_srcptr";
+export leftRR(x:RRi):RR := Ccode( RR, "&", x, "->left" );
+export rightRR(x:RRi):RR := Ccode( RR, "&", x, "->right" );
 
 export RRiorNull := RRi or null;
 
 export RRicell := {+v:RRi};
 
 export RRmutable := Pointer "mpfr_ptr";
-
-export RR := Pointer "mpfr_srcptr";
-
-export RRorNull := RR or null;
-
-export RRcell := {+v:RR};
 
 export CCmutable := { re:RRmutable, im:RRmutable };
 
