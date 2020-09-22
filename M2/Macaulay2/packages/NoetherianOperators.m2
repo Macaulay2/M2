@@ -60,6 +60,7 @@ export {
     "InterpolationTolerance",
     "InterpolationDegreeLimit",
     "NoetherianDegreeLimit",
+    "Sampler",
 
     --functions from punctual Hilb approach
     "getNoetherianOperatorsHilb",
@@ -812,7 +813,7 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
 )
 
 hybridNoetherianOperators = method(Options => true)
-hybridNoetherianOperators (Ideal, Ideal, Point) := List => true >> opts -> (I,P, pt) -> (
+hybridNoetherianOperators (Ideal, Ideal, Point) := SetOfNoethOps => true >> opts -> (I,P, pt) -> (
     R := ring I;
     (depVars,indVars) := getDepIndVars(P,opts);
     S := (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
@@ -844,15 +845,12 @@ hybridNoetherianOperators (Ideal, Ideal, Point) := List => true >> opts -> (I,P,
     new SetOfNoethOps from {Ops => sort L, Prime => P}
 )
 
-hybridNoetherianOperators (Ideal, Ideal) := List => true >> opts -> (I,P) -> (
-    R := ring I;
-    RCC := CC monoid R;
-    ws := first components bertiniPosDimSolve(sub(P,RCC));
-    pt := first bertiniSample(1,ws);
-    hybridNoetherianOperators(I,P,pt, opts)
+hybridNoetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,P) -> (
+    f := if opts.?Sampler then opts.Sampler else J -> first bertiniSample(1,first components bertiniPosDimSolve(J));
+    hybridNoetherianOperators(I,P,f P, opts)
 )
 
-hybridNoetherianOperators (Ideal) := List => true >> opts -> I -> hybridNoetherianOperators(I, radical I, opts)
+hybridNoetherianOperators (Ideal) := SetOfNoethOps => true >> opts -> I -> hybridNoetherianOperators(I, radical I, opts)
 
 
 --numericalNoetherianOperators = method(Options => {
