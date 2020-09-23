@@ -1181,6 +1181,13 @@ export rawToRR(e:Expr):Expr := (
      else WrongArg("a raw ring element"));
 setupfun("rawToRR",rawToRR);
 
+export rawToRRi(e:Expr):Expr := ( -- Need interval implemented
+   --  when e
+   --  is x:RawRingElementCell do toExpr(Ccode(RRiorNull, "IM2_RingElement_to_BigReal(",x.p, ")" ))
+   --  else
+    WrongArg("a raw ring element"));
+setupfun("rawToRRi",rawToRRi);
+
 export rawToCC(e:Expr):Expr := (
      when e
      is x:RawRingElementCell do toExpr(Ccode(CCorNull, "IM2_RingElement_to_BigComplex(",x.p, ")" ))

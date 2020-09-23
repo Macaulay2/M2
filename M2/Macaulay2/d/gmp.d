@@ -828,41 +828,83 @@ export toRR(x:RR,prec:ulong):RR := (
      Ccode( void, "mpfr_set(",  z, ",",  x, ", GMP_RNDN)" );
      moveToRRandclear(z));
 
+export toRRi(x:RRi,prec:ulong):RRi := (
+    if precision0(x) == prec then return x;
+    z := newRRimutable(prec);
+    Ccode( void, "mpfi_set(",  z, ",",  x, ")" );
+    moveToRRiandclear(z));
+
 export toRR(s:string,prec:ulong):RR := (
      z := newRRmutable(prec);
      Ccode( void,  "mpfr_set_str(",  z,", (char *)",  s, "->array,", "0,", "GMP_RNDN", ")" ); 
      moveToRRandclear(z));
+
+export toRRi(s:string,prec:ulong):RRi := (
+    z := newRRimutable(prec);
+    Ccode( void,  "mpfi_set_str(",  z,",",  s, "->array,", "10", ")" );
+    moveToRRiandclear(z));
 
 export toRR(x:QQ,prec:ulong):RR := (
      z := newRRmutable(prec);
      Ccode( void, "mpfr_set_q(",  z, ",",  x, ", GMP_RNDN)" );
      moveToRRandclear(z));
 
+export toRRi(x:QQ,prec:ulong):RRi := (
+    z := newRRimutable(prec);
+    Ccode( void, "mpfi_set_q(",  z, ",",  x, ")" );
+    moveToRRiandclear(z));
+
 export toRR(x:QQ):RR := toRR(x,defaultPrecision);
+
+export toRRi(x:QQ):RRi := toRRi(x,defaultPrecision);
 
 export toRR(x:ZZ,prec:ulong):RR := (
      z := newRRmutable(prec);
      Ccode( void, "mpfr_set_z(",  z, ",",  x, ", GMP_RNDN)" );
      moveToRRandclear(z));
 
+export toRRi(x:ZZ,prec:ulong):RRi := (
+    z := newRRimutable(prec);
+    Ccode( void, "mpfi_set_z(",  z, ",",  x, ")" );
+    moveToRRiandclear(z));
+
 export toRR(x:ZZ):RR := toRR(x,defaultPrecision);
+
+export toRRi(x:ZZ):RRi := toRRi(x,defaultPrecision);
 
 export toRR(n:int,prec:ulong):RR := (
      x := newRRmutable(prec);
      Ccode( void, "mpfr_set_si(",  x, ",(long)", n, ", GMP_RNDN)" );
      moveToRRandclear(x));
 
+export toRRi(n:int,prec:ulong):RRi := (
+    x := newRRimutable(prec);
+    Ccode( void, "mpfi_set_si(",  x, ",(long)", n, ")" );
+    moveToRRiandclear(x));
+
 export toRR(n:ulong,prec:ulong):RR := (
      x := newRRmutable(prec);
      Ccode( void, "mpfr_set_ui(",  x, ",(unsigned long)", n, ", GMP_RNDN)" );
      moveToRRandclear(x));
+
+export toRRi(n:ulong,prec:ulong):RRi := (
+    x := newRRimutable(prec);
+    Ccode( void, "mpfi_set_ui(",  x, ",(unsigned long)", n, ")" );
+    moveToRRiandclear(x));
 
 export toRR(n:double,prec:ulong):RR := (
      x := newRRmutable(prec);
      Ccode( void, "mpfr_set_d(",  x, ",", n, ", GMP_RNDN)" );
      moveToRRandclear(x));
 
-export toRR(n:double):RR := toRR(n,defaultPrecision);	   
+export toRRi(n:double,prec:ulong):RRi := (
+    x := newRRimutable(prec);
+    Ccode( void, "mpfi_set_d(",  x, ",", n, ")" );
+    moveToRRiandclear(x));
+
+export toRR(n:double):RR := toRR(n,defaultPrecision);
+
+export toRRi(n:double):RRi := toRRi(n,defaultPrecision);
 
 export infinityRR(prec:ulong,sign:int):RR := (
      x := newRRmutable(prec);

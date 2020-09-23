@@ -328,6 +328,8 @@ export {
 	"QuotientRing",
 	"RR",
 	"RR'",
+    "RRi",
+    "RRi'",
 	"RaiseError",
 	"Range",
 	"RealField",
