@@ -1442,6 +1442,7 @@ setupfun("toCC",toCC);
 precision(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(precision(x.v))
+     is x:RRicell do toExpr(precision(x.v))
      is x:CCcell do toExpr(precision(x.v))
      else WrongArgRR());
 setupfun("precision0",precision);

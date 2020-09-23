@@ -1148,6 +1148,7 @@ export {
 	"toList",
 	"toLower",
 	"toRR",
+    "toRRi",
 	"toSequence",
 	"toString",
 	"toUpper",
