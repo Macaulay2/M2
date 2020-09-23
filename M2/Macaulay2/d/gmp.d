@@ -773,6 +773,9 @@ isZero0    (x:RR) ::=  0 == Ccode(int, "mpfr_sgn(", x, ")");
 flagged0() ::= 0 != Ccode( int, "mpfr_erangeflag_p()" );
 setflag0() ::= Ccode( void, "mpfr_set_erangeflag()" );
 isfinite0(x:RR) ::=Ccode(bool,"mpfr_number_p(",x,")");
+isfinite0(x:RRmutable) ::=Ccode(bool,"mpfr_number_p(",x,")");
+isfinite0(x:RRi) ::=Ccode(bool,"mpfi_is_zero(",x,")");
+isfinite0(x:RRimutable) ::=Ccode(bool,"mpfi_is_zero(",x,")");
 isinf0 (x:RR) ::= Ccode(bool,"mpfr_inf_p(",x,")");
 isinf0 (x:RRi) ::= Ccode(bool,"mpfi_inf_p(",x,")"); -- Behavior might be different for mpfi
 isnan0 (x:RR) ::= Ccode(bool,"mpfr_nan_p(",x,")");
@@ -1119,6 +1122,11 @@ export (x:RR) + (y:RR) : RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_add(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (x:RRi) + (y:RRi) : RRi := (
+     z := newRRimutable(min(precision0(x),precision0(y)));
+     Ccode( void, "mpfi_add(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
 
 export (x:RR) + (y:int) : RR := (
      z := newRRmutable(precision0(x));
@@ -1281,6 +1289,16 @@ export round(x:RR) : ZZ := (
      w := newZZmutable();
      Ccode( void, "mpfr_get_z(", w, ",", x, ", GMP_RNDN)" );
      moveToZZandclear(w));
+                                    
+export round(x:RRi) : ZZ := ( -- Added for MPFI, can be shortened?
+     if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
+     w := newRRmutable(precision0(x));
+     Ccode( void, "mpfi_get_fr(", w, ",", x, ")" );
+     if !isfinite0(w) then return zeroZZ;			    -- nothing else to do!
+     y := newZZmutable();
+     Ccode( void, "mpfr_get_z(", y, ",", w, ", GMP_RNDN)" );
+     clear(w);
+     moveToZZandclear(y));
 
 export (x:RR) << (n:long) : RR := (
      if n == long(0) then return x;
