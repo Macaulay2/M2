@@ -10,7 +10,6 @@
 
 using respolyHeap = geobucket<const res2_poly, res2term *>;
 
-#include <iostream>
 bool res2_comp::stop_conditions_ok()
 {
   if (stop_.length_limit != 0 && stop_.length_limit->len > 0)
@@ -479,11 +478,8 @@ void res2_comp::initialize(const Matrix *mat,
       res2_pair *p = new_base_res2_pair(i);
       base_components.push_back(p);
     }
-  for (auto i = base_components.size() - 1; i >= 0; i--)
-    {
-      res2_pair *p = base_components[i];
-      insert_pair(p);
-    }
+  for (auto p = base_components.rbegin(); p != base_components.rend(); ++p)
+    insert_pair(*p);
 
   // Do level 1
   for (auto i = 0; i < generator_matrix->n_cols(); i++)

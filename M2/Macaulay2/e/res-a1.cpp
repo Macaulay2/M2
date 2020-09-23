@@ -1469,15 +1469,15 @@ Matrix *res_comp::make_minimal(int i) const
 // Skeleton construction: test code //
 //////////////////////////////////////
 
+
 void res_comp::skeleton_init(VECTOR(res_pair *)& reslevel)
 {
   // Do level 0
   res_pair *pp = NULL;
-  for (auto i = base_components.size() - 1; i >= 0; i--)
+  for (auto p = base_components.rbegin(); p != base_components.rend(); ++p)
     {
-      res_pair *p = base_components[i];
-      p->next = pp;
-      pp = p;
+      (*p)->next = pp;
+      pp = *p;
     }
   reslevel.push_back(pp);
 
