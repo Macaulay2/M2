@@ -12,7 +12,7 @@ newPackage(
         "RandomComplexes",
         Version => "0.2", 
         Date => "4 April 2018",
-        Authors => {{Name => "Frank Schreyer", 
+        Authors => {{Name => "Frank-Olaf Schreyer", 
                         Email => "schreyer@math.uni-sb.de",
 		        HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
                     {Name => "Michael E. Stillman", 

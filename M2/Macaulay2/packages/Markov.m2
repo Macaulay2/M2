@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage("Markov",
      Authors => {
-	  {Name => "Luis Garcia"},
+	  {Name => "Luis Garcia-Puente"},
 	  {Name => "Mike Stillman"}
 	  },
      DebuggingMode => false,

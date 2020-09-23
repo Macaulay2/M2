@@ -5,7 +5,7 @@ newPackage(
      Authors => {
 	  {Name => "Han-Bom Moon",
 	   Email => "hmoon8@fordham.edu"},
-          {Name=> "David Swinarski", 
+          {Name=> "Dave Swinarski", 
 	   Email=> "dswinarski@fordham.edu",
 	   HomePage=>"http://faculty.fordham.edu/dswinarski"}
 	  },

@@ -35,7 +35,7 @@ Authors => {
      {Name => "Drew Ellingson",
      Email => "drewtell@umich.edu"
      },
-     {Name => "Daniel Hernandez",
+     {Name => "Daniel Hernández",
      Email => "hernandez@ku.edu",
      HomePage => "https://hernandez.faculty.ku.edu"
      },

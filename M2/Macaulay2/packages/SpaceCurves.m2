@@ -2,7 +2,7 @@ newPackage(
         "SpaceCurves",
         Version => "1.0", 
         Date => "May 26th 2018",
-        Authors => {{Name => "Frank Schreyer", 
+        Authors => {{Name => "Frank-Olaf Schreyer", 
                   Email => "schreyer@math.uni-sb.de", 
                   HomePage => "https://www.math.uni-sb.de/ag/schreyer/"},
 	      {Name => "Mike Stillman", 

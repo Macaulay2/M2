@@ -18,7 +18,7 @@ newPackage(
 	    {Name => "Claudiu Raicu", 
 		  Email => "craicu@nd.edu", 
 		  HomePage => "https://www3.nd.edu/~craicu/"}, 
-	    {Name => "Steven V. Sam", 
+	    {Name => "Steven V Sam",
 		  Email => "ssam@sd.edu", 
 		  HomePage => "http://math.ucsd.edu/~ssam/"}, 
 	    {Name => "Joao Pedro Santos", 
