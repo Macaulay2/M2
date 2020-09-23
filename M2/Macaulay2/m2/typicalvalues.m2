@@ -57,9 +57,6 @@ isOpen(Database) := Boolean => isOpen
 isOutputFile(File) := Boolean => isOutputFile
 mutable(Thing) := Boolean => mutable
 instance(Thing,Type) := Boolean => instance
-regex(String,String) := List => regex
-regex(String,ZZ,String) := List => regex
-regex(String,ZZ,ZZ,String) := List => regex
 characters String := List => characters
 concatenate Nothing := concatenate String := concatenate Symbol := concatenate ZZ := concatenate BasicList := String => concatenate
 deepSplice BasicList := BasicList => deepSplice
@@ -90,13 +87,6 @@ openListener String := File => openListener
 pack(BasicList,ZZ) := List => pack
 pack(ZZ,BasicList) := List => pack
 reverse BasicList := BasicList => reverse
-select(String,String) := List => select
-select(String,String,String) := List => select
-select(BasicList,Function) := BasicList => select
-select(HashTable,Function) := HashTable => select
-select(ZZ,Function) := List => select
-select(ZZ,BasicList,Function) := BasicList => select
-select(ZZ,HashTable,Function) := HashTable => select
 set VisibleList := Set => set
 tally VisibleList := Tally => tally
 splice BasicList := BasicList => splice
@@ -134,9 +124,6 @@ Function Thing := Thing => x -> (dummy x;)
 scan(BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan
 scanPairs(HashTable,Function) := Nothing => scanPairs
-locate Symbol := locate Pseudocode := locate Function := locate Sequence := locate Nothing := Sequence => locate
-separate String := List => separate
-separate(String,String) := List => separate
 lines(String,String) := List => lines
 lines String := List => lines
 linkFile(String,String) := Nothing => linkFile

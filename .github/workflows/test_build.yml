@@ -96,7 +96,7 @@ jobs:
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
-                  libcdd-dev libgivaro-dev fflas-ffpack w3c-markup-validator
+                  libcdd-dev libgivaro-dev libboost-regex-dev fflas-ffpack w3c-markup-validator
           # TODO: help autotools detect flint from brew
           brew install flint
 
@@ -144,7 +144,7 @@ jobs:
       - name: Configure Macaulay2 using CMake
         if: matrix.build-system == 'cmake'
         run: |
-          cmake -S../.. -B. -GNinja -DUSING_MPIR=OFF \
+          cmake -S../.. -B. -GNinja \
             -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` \
             -DBUILD_NATIVE=OFF -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK" # TODO: remove when the packages are updated
 
@@ -183,7 +183,7 @@ jobs:
         run: |
           # cmake --build . --target M2-unit-tests
           # ctest -R "unit-tests"
-          ctest -R "normal/" -E "command|program|schenck|threads|doc-links" -j4
+          ctest -R "normal/" -E "command|program|schenck|threads|doc-links" -j4 --output-on-failure
 
       - name: Run Tests using Autotools
         if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest'

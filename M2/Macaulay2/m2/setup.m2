@@ -5,6 +5,7 @@ nonempty = x -> select(x, i -> i =!= "")
 dashes  = n -> concatenate (n:"-")
 spaces  = n -> concatenate n
 
+-- a first-in last-out list of symbol values
 varstack = new MutableHashTable
 pushvar = (sym,newval) -> (
      varstack#sym = if varstack#?sym then (value' sym,varstack#sym) else (value' sym, null);
@@ -144,7 +145,7 @@ lastWI := 0
      
 loads := minimizeFilename concatenate(currentFileDirectory, "loadsequence")
 if notify then stderr << "--about to read " << loads << endl
-scan(select(lines get loads, line -> match(".m2", line)), load)
+scan(select("^\\w+\\.m2", "$&", get loads), load)
 if notify then stderr << "--read " << loads << endl
 
 -- after this point, private global symbols, such as noinitfile, are no longer visible

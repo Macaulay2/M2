@@ -181,8 +181,8 @@ Description
     polynomial ring over a field k then length is the same as the degree.
 
     If M is over a local ring then length is computed by summing the output of
-    the Hilbert-Samuel function until it vanishes. Note that in this case the @TO LocalRings@
-    package must be loaded first.
+    the Hilbert-Samuel function until it vanishes. Note that in this case the
+    @TO "LocalRings :: LocalRings"@ package must be loaded first.
 Consequences
   Item
     In the local case, the length of the module is stored in M.cache.length.

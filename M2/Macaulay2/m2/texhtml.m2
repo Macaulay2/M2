@@ -1,8 +1,9 @@
 -- tex to html conversion -*- coding: utf-8 -*-
 
-html TEX := str -> (
+texToHTML = method()
+texToHTML Hypertext := html
+texToHTML String    := str -> (
      local oldstr;
-     str = concatenate str;
      origstr := str;
      abbrev := () -> format if #origstr > 20 then (substring(0,20,origstr) | "...") else origstr;
      f := (p,r) -> (
@@ -20,9 +21,9 @@ html TEX := str -> (
      	  f(///(^|[^\$])\$\$([^$]*[^\$])?\$\$([^$]|$)///,///\1</p><div style="text-align:center"><i>\2</i></div><p>\3///);
      	  f(///(^|[^\$])\$([^$]*[^\$])\$([^$]|$)///,///\1<i>\2</i>\3///);
 	  );
-     if match(///(^|[^\])\$///,str) then error("unmatched dollar signs in TeX string ",abbrev());
-     f(///\\\{///,///\lbrace ///);
-     f(///\\\}///,///\rbrace ///);
+     if match(///(^|[^\\])\$///,str) then error("unmatched dollar signs in TeX string ",abbrev());
+     f(///\\\{///,///\\lbrace ///);
+     f(///\\\}///,///\\rbrace ///);
 
      --	    \begin{pmatrix}	    <table><tr><td>
      --				    bb
@@ -220,6 +221,8 @@ html TEX := str -> (
      f("--TEMPORARY AMPERSAND--","&");
      f("--TEMPORARY BACKSLASH--",///\///);
      str)
+
+html TEX := x -> concatenate apply(x, texToHTML)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

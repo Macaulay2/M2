@@ -39,7 +39,7 @@ find_program(ETAGS NAMES etags)
 
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
-find_package(Boost	REQUIRED QUIET COMPONENTS ${Boost_stacktrace})
+find_package(Boost	REQUIRED QUIET COMPONENTS regex ${Boost_stacktrace})
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
 # TODO: replace gdbm with capnproto.org or msgpack.org
 # Alternatively protobuf: https://developers.google.com/protocol-buffers/docs/proto#maps
@@ -187,6 +187,7 @@ find_program(COHOMCALG	NAMES	cohomcalg)
 find_program(GFAN	NAMES	gfan)
 # TODO: library or program?
 find_program(LRSLIB	NAMES	lrs)
+# TODO: check for alternatives as well: sdpa or mosek
 find_program(CSDP	NAMES	csdp)
 find_program(NORMALIZ	NAMES	normaliz)
 find_program(NAUTY	NAMES	dreadnaut)
@@ -243,7 +244,7 @@ endforeach()
 foreach(_program IN LISTS PROGRAM_OPTIONS)
   string(TOUPPER "${BUILD_PROGRAMS}" BUILD_PROGRAMS)
   string(TOUPPER "${_program}" _name)
-  if(${_name})
+  if(EXISTS ${${_name}})
     if(${_name} MATCHES ${M2_INSTALL_PROGRAMSDIR})
       # we built it
       list(APPEND INSTALLED_PROGRAMS ${_program})
@@ -261,6 +262,7 @@ foreach(_program IN LISTS PROGRAM_OPTIONS)
     endif()
   else()
     # was not found
+    unset(${_name} CACHE)
   endif()
 endforeach()
 

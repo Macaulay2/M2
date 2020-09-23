@@ -33,12 +33,8 @@ wrapHorizontalJoin := x -> wrap horizontalJoin x
 -- Hypertext  > HypertextParagraph, HypertextContainer
 -- MarkUpType > IntermediateMarkUpType
 
--- comment a string
-commentize := s -> if s =!= null then concatenate(" -- ", s)
 -- skip Options; TODO: define parser Option := null instead
 noopts := x -> select(x,e -> class e =!= Option)
--- so the user can cut paste the menu line to get help!
-* String := x -> help x
 
 -----------------------------------------------------------------------------
 -- Setup uniform rendering
@@ -241,38 +237,41 @@ info TABLE := x -> (
 -----------------------------------------------------------------------------
 
 -- node names in info files are delimited by commas and parentheses somehow...
-infoLiteral := new MutableHashTable
-scan(characters ascii(0 .. 255), c -> infoLiteral#c = c)
-infoLiteral#"(" = "_lp"
-infoLiteral#"_" = "_us"
-infoLiteral#")" = "_rp"
-infoLiteral#"," = "_cm"
-infoLiteral#"." = "_pd"
-infoLiteral#"*" = "_st"
-infoLiteral#":" = "_co"
-infoLit := n -> concatenate apply(characters n, c -> infoLiteral#c);
+infoLiterals := new MutableHashTable from {
+    "(" => "_lp",
+    "_" => "_us",
+    ")" => "_rp",
+    "," => "_cm",
+    "." => "_pd",
+    "*" => "_st",
+    ":" => "_co",
+    }
+infoLinkConvert := str -> replace(":", "_colon_", str)
+infoLiteral     := str -> fold(pairs infoLiterals, str, (c, str) -> replace(regexQuote c#0, c#1, str))
+tagConvert      := str -> infoLiteral if match("(^ | $)", str) then concatenate("\"", str, "\"") else str
+
 infoTagConvert = method()
-tagConvert := n -> infoLit if n#0 === " " or n#-1 === " " then concatenate("\"",n,"\"") else n
-infoTagConvert String := tagConvert
+infoTagConvert String      := tagConvert
 infoTagConvert DocumentTag := tag -> (
-     pkgname := DocumentTag.PackageName tag;
-     fkey := DocumentTag.FormattedKey tag;
+     pkgname := package tag;
+     fkey := format tag;
      if pkgname === fkey then fkey = "Top";
      fkey = tagConvert fkey;
-     if pkgname =!= currentPackage#"pkgname" then fkey = concatenate("(",pkgname,")",fkey);
-     fkey)
-infoLinkConvert := s -> replace(":","_colon_",s)
+     if pkgname =!= currentPackage#"pkgname" then concatenate("(",pkgname,")", fkey) else fkey)
+
+-- TODO: can this be simplified?
+-- checking if doc is missing can be very slow if node is from another package
 info TO  := x -> (
      tag := x#0;
-     f := DocumentTag.FormattedKey tag;
+     f := format tag;
      if x#?1 then f = f|x#1;
-     tag = getPrimary tag;
+     tag = getPrimaryTag tag;
      concatenate(
 	  if fetchRawDocumentation tag === null
 	  then (f, " (missing documentation)")
 	  else ("*note ", infoLinkConvert f, ": ", infoTagConvert tag, ",")))
 info TO2 := x -> (
-     tag := getPrimary x#0;
+     tag := getPrimaryTag x#0;
      concatenate(
 	  if fetchRawDocumentation tag === null
 	  then (x#1, " (missing documentation)")
@@ -281,9 +280,9 @@ info TO2 := x -> (
      )
 info TOH := x -> (
      tag := x#0;
-     f := DocumentTag.FormattedKey tag;
+     f := format tag;
      if x#?1 then f = f|x#1;
-     tag = getPrimary tag;
+     tag = getPrimaryTag tag;
      concatenate(
 	  if fetchRawDocumentation tag === null
 	  then (f," (missing documentation)")
@@ -294,40 +293,27 @@ info TOH := x -> (
 
 net TO  := x -> (
      if class x#0 === DocumentTag
-     then concatenate( "\"", DocumentTag.FormattedKey x#0, "\"", if x#?1 then x#1)
+     then concatenate( "\"", format x#0, "\"", if x#?1 then x#1)
      else horizontalJoin( "\"", net x#0, "\"", if x#?1 then x#1)
      )
 net TO2 := x -> x#1
 
-
-redoMENU := r -> DIV prepend(
-     HEADER3 "Menu",
-     nonnull sublists(toList r,
-	  x -> class x === TO,
-	  v -> if #v != 0 then UL apply(v, i -> (
-		    t := optTO i#0;
-		    if t === null then error("undocumented menu item ",toString i#0);
-		    last t)),
-	  x -> HEADER4 {x}
-	  ))
--- TODO: move this away
-html MENU := x -> html redoMENU x
-net  MENU := x -> net  redoMENU x
-info MENU := r -> (
-     pre := "* ";
-     savePW := printWidth;
-     printWidth = 0; -- wrapping a menu item makes it hard for emacs info to follow links
-     ret := sublists(toList r,
-	  x -> class x === TO,
-	  v -> stack apply(v, i -> pre | wrap (
-		    fkey := DocumentTag.FormattedKey i#0;
-		    icon := infoTagConvert getPrimary i#0;
+-- TODO: move this back from help.m2
+net  MENU := x -> net redoMENU x
+info MENU := x -> (
+    contents := deepApply'(x, identity, item -> instance(item, BasicList) and not isLink item);
+    pushvar(symbol printWidth, 0); -- wrapping a menu item makes it hard for emacs info to follow links
+    ret := join(
+	{"* Menu:", ""},
+	nonnull sublists(contents,
+	    line    -> isLink line,
+	    section -> stack apply(section, line -> "* " | wrap(
+		    fkey := format line#0;
+		    icon := infoTagConvert getPrimaryTag line#0;
 		    cfkey := infoLinkConvert fkey;
-		    t := cfkey | if cfkey === icon then "::" else ": " | icon | ".";
-		    h := headline i#0;
-		    if h =!= null then t = concatenate(t,28-#t:" ","  ") | h;
-		    t)),
-	  x -> stack("",info DIV x)
-	  );
-     printWidth = savePW;
-     stack join({"* Menu:",""}, ret))
+		    text := cfkey | if cfkey === icon then "::" else ": " | icon | ".";
+		    title := headline line#0;
+		    if title =!= null then concatenate(text, 28-#text:" ", "  ") | title else text)),
+	    line -> stack("", info if instance(line, Hypertext) then line else DIV {line})));
+     popvar symbol printWidth;
+     stack ret)

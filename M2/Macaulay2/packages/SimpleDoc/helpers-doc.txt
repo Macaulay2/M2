@@ -1,0 +1,81 @@
+-- -*- mode: M2; coding: utf-8 -*-
+Node
+  Key
+     wikipedia
+    (wikipedia, String)
+    (wikipedia, String, String)
+  Headline
+    link to a Wikipedia article
+  Usage
+    wikipedia(url, title)
+    wikipedia title
+  Inputs
+    url:String
+      the article's url slug, optional
+    title:String
+      a Wikipedia article's title
+  Outputs
+    :Hypertext
+      a link to the Wikipedia entry with the given title usable inside a documentation node
+  Description
+    Example
+      wikipedia "Bessel function"
+      html oo
+      wikipedia("Bessel_function#Definitions", "Bessel function")
+      html oo
+  SeeAlso
+    document
+    arXiv
+    stacksProject
+Node
+  Key
+     arXiv
+    (arXiv, String)
+    (arXiv, String, String)
+  Headline
+    link to an arXiv article
+  Usage
+    arXiv ref
+    arXiv(ref, title)
+  Inputs
+    ref:String
+      an arXiv identifier "YYMM.NNNNN" or "math/YYMMNNN"
+    title:String
+      the link title, optional
+  Outputs
+    :Hypertext
+      a link to the abstract of the article with the given identifier, usable inside a documentation node
+  Description
+    Example
+      arXiv "1411.5724"
+      html oo
+      arXiv("math/0003033", "Macaulay2 and the geometry of schemes")
+      html oo
+  SeeAlso
+    document
+    stacksProject
+    wikipedia
+Node
+  Key
+     stacksProject
+    (stacksProject, String, String)
+  Headline
+    link to a Stacks Project tag
+  Usage
+    stacksProject(tag, description)
+  Inputs
+    tag:String
+      an alphanumeric Stacks Project tag of the form "TTTT"
+    title:String
+      the link title
+  Outputs
+    :Hypertext
+      a link to the Stacks Project node with the given tag, usable inside a documentation node
+  Description
+    Example
+      stacksProject("01HR", "Affine schemes")
+      html oo
+  SeeAlso
+    document
+    arXiv
+    wikipedia

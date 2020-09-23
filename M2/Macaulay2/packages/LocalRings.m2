@@ -33,6 +33,9 @@ newPackage(
     AuxiliaryFiles => true
     )
 
+-- These two are defined in m2/localring.m2
+exportFrom_Core { "LocalRing", "localRing" }
+
 export {
     "liftUp",
     "presentationComplex",

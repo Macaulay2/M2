@@ -18,7 +18,7 @@ There are various tools needed to compile Macaulay2 dependencies.
 - On Mac OS X, using Homebrew, install `autoconf automake bison libtool pkg-config yasm`.
 
 There are 7 libraries that must be found on the system.
-- On Debian/Ubuntu, install `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-stacktrace-dev libatomic-ops-dev`.
+- On Debian/Ubuntu, install `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev libatomic-ops-dev`.
 - On Mac OS X, using Homebrew, install `eigen libxml2 readline gdbm boost libatomic_ops`.
 
 Finally, there are 2 optional libraries that help with building other requirements.
@@ -320,7 +320,8 @@ If the problem persists, run `cmake --debug-trycompile` and open an issue with t
 
 <b>Clang</b>: The Clang compiler installed via Homebrew or built from source typically includes OpenMP, but by default the system root is set to the Xcode SDK directory which does not contain the `libomp.dylib` library. The following command tells Clang how to find the correct library path:
 ```
-LIBRARY_PATH=`llvm-config --libdir` cmake -S../.. -B. -GNinja -DCMAKE_BUILD_TYPE=Release
+export LIBRARY_PATH=`llvm-config --libdir`
+cmake -S../.. -B. -GNinja -DCMAKE_BUILD_TYPE=Release
 ```
 The `llvm-config` executable is typically located at `/usr/local/opt/llvm/bin/llvm-config`.
 

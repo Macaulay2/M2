@@ -1357,7 +1357,7 @@ nmzFilename="polytope";
 rmNmzFiles();
 nmzFilename
 ///,
-PARA{},"If you want to change the directory where the files are saved (default is the current directory) you have two possibilities. If you want work in the same directory most of the time, you can define this in a file \"start.m2\" in the current directory and add a line in \"init.m2\" such that it is read when starting Macaulay 2. If you want to switch between directories more frequently, you can specify the directory in the global variable ", TO nmzDataPath, ".",
+PARA{},"If you want to change the directory where the files are saved (default is the current directory) you have two possibilities. If you want work in the same directory most of the time, you can define this in a file \"start.m2\" in the current directory and add a line in \"init.m2\" such that it is read when starting Macaulay 2. If you want to switch between directories more frequently, you can specify the directory in the global variable ", TO "nmzDataPath", ".",
 }
 
 document {

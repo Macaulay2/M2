@@ -277,7 +277,7 @@ function gfxReorder(el) {
 }
 
 function checkData(el) {
-    var mat = el.gfxdata.cmatrix.transpose();
+    var mat = el.gfxdata.cmatrix.inverse();
     if ((el.tagName=="polyline")||(el.tagName=="polygon")) {
 	if (!el.gfxdata.coords) {
 	    var pts = el.points;
@@ -370,12 +370,12 @@ class Matrix extends Float32Array {
 	    doubleArrayToFloat32Array(matrix_identity,this);
 	    this.leftmultiply(mat);
 	}
-	else if (mat instanceof Array)
+	else if (mat instanceof Array && mat[0] instanceof Array)
 	{
 	    super(dim*dim);
 	    doubleArrayToFloat32Array(mat,this);
 	}
-	else if (mat instanceof Float32Array)
+	else if (mat instanceof Float32Array || mat instanceof Array)
 	{
 	    super(mat);
 	}
@@ -452,6 +452,14 @@ class Matrix extends Float32Array {
 		u[k]+=this[k+dim*l]*vec[l];
 	}
 	return u;
+    }
+
+    inverse() // size 4 only!
+    {
+	var A2323 = this[10] * this[15] - this[11] * this[14], A1323 = this[9] * this[15] - this[11] * this[13], A1223 = this[9] * this[14] - this[10] * this[13], A0323 = this[8] * this[15] - this[11] * this[12], A0223 = this[8] * this[14] - this[10] * this[12], A0123 = this[8] * this[13] - this[9] * this[12], A2313 = this[6] * this[15] - this[7] * this[14], A1313 = this[5] * this[15] - this[7] * this[13], A1213 = this[5] * this[14] - this[6] * this[13], A2312 = this[6] * this[11] - this[7] * this[10], A1312 = this[5] * this[11] - this[7] * this[9], A1212 = this[5] * this[10] - this[6] * this[9], A0313 = this[4] * this[15] - this[7] * this[12], A0213 = this[4] * this[14] - this[6] * this[12], A0312 = this[4] * this[11] - this[7] * this[8], A0212 = this[4] * this[10] - this[6] * this[8], A0113 = this[4] * this[13] - this[5] * this[12], A0112 = this[4] * this[9] - this[5] * this[8];
+	var det = this[0] * ( this[5] * A2323 - this[6] * A1323 + this[7] * A1223 ) - this[1] * ( this[4] * A2323 - this[6] * A0323 + this[7] * A0223 ) + this[2] * ( this[4] * A1323 - this[5] * A0323 + this[7] * A0123 ) - this[3] * ( this[4] * A1223 - this[5] * A0223 + this[6] * A0123 );
+	det = 1 / det;
+	return new Matrix( [ det *   ( this[5] * A2323 - this[6] * A1323 + this[7] * A1223 ), det * - ( this[1] * A2323 - this[2] * A1323 + this[3] * A1223 ), det *   ( this[1] * A2313 - this[2] * A1313 + this[3] * A1213 ), det * - ( this[1] * A2312 - this[2] * A1312 + this[3] * A1212 ), det * - ( this[4] * A2323 - this[6] * A0323 + this[7] * A0223 ), det *   ( this[0] * A2323 - this[2] * A0323 + this[3] * A0223 ), det * - ( this[0] * A2313 - this[2] * A0313 + this[3] * A0213 ), det *   ( this[0] * A2312 - this[2] * A0312 + this[3] * A0212 ), det *   ( this[4] * A1323 - this[5] * A0323 + this[7] * A0123 ), det * - ( this[0] * A1323 - this[1] * A0323 + this[3] * A0123 ), det *   ( this[0] * A1313 - this[1] * A0313 + this[3] * A0113 ), det * - ( this[0] * A1312 - this[1] * A0312 + this[3] * A0112 ), det * - ( this[4] * A1223 - this[5] * A0223 + this[6] * A0123 ), det *   ( this[0] * A1223 - this[1] * A0223 + this[2] * A0123 ), det * - ( this[0] * A1213 - this[1] * A0213 + this[2] * A0113 ), det *   ( this[0] * A1212 - this[1] * A0212 + this[2] * A0112 ) ] );
     }
 
     transpose()

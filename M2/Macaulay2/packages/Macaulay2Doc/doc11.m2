@@ -199,7 +199,7 @@ document {
 	       "Z" => Type
 	       },
 	  Outputs => {Net => {"the source code of method for applying ", TT "f", " to
-		    arguments of type ", TT "X", ", ", TT "Y, and ", TT "Z"
+		    arguments of type ", TT "X", ", ", TT "Y", ", and ", TT "Z"
 		    }}
 	  },
      SYNOPSIS {
@@ -212,7 +212,7 @@ document {
 	       "T" => Type
 	       },
 	  Outputs => {Net => {"the source code of method for applying ", TT "f", " to
-		    arguments of type ", TT "X", ", ", TT "Y, and ", TT "Z", ", and ", TT "T"
+		    arguments of type ", TT "X", ", ", TT "Y", ", ", TT "Z", ", and ", TT "T"
 		    }}
 	  },
      SYNOPSIS {
@@ -537,7 +537,7 @@ document {
      all(#x, i -> y#(x#i) == i)
      ///,
      PARA {
-	  "We compose permutations with ", TT "_", "; see ", TO "(symbol _, VisibleList, List)", "."
+	  "We compose permutations with ", TT "_", "; see ", TO (symbol_, VisibleList, List), "."
 	  },
      EXAMPLE lines ///
      x_x_x

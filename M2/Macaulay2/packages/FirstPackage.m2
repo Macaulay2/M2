@@ -1,14 +1,13 @@
 -- -*- coding: utf-8 -*-
 newPackage(
-	"FirstPackage",
-    	Version => "1.1", 
-    	Date => "August 5, 2012",
-    	Authors => {{Name => "Jane Doe", 
-		  Email => "doe@math.uiuc.edu", 
-		  HomePage => "http://www.math.uiuc.edu/~doe/"}},
-    	Headline => "an example Macaulay2 package",
-    	DebuggingMode => false
-    	)
+    "FirstPackage",
+    Version => "1.1",
+    Date => "August 5, 2012",
+    Authors => {
+	{Name => "Jane Doe", Email => "doe@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~doe/"}},
+    Headline => "an example Macaulay2 package",
+    DebuggingMode => false
+    )
 
 export {"firstFunction"}
 
@@ -16,7 +15,8 @@ firstFunction = method(TypicalValue => String)
 firstFunction ZZ := String => n -> if n == 1 then "Hello World!" else "D'oh!"
 
 beginDocumentation()
-multidoc ///
+
+doc ///
  Node
   Key
    FirstPackage
@@ -27,6 +27,8 @@ multidoc ///
     {\em FirstPackage} is a basic package to be used as an example.
   Caveat
     Still trying to figure this out.
+  Subnodes
+    firstFunction
  Node
   Key
    (firstFunction,ZZ)

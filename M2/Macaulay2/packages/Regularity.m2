@@ -18,7 +18,7 @@ newPackage(
 --         subschemes of P^n using quotients of monomial ideals",
 --         Journal of Pure and Applied Algebra 164/2001
 
-export{"mRegularity"}
+export{"mRegularity", "CM", "MonCurve"}
 
 
 -- ========================================================================
@@ -153,9 +153,6 @@ regMonCurve = (I,d) -> (
     m := ideal (apply (X,i-> f i));
     return (max apply((entries gens gb (I:m))_0,degree))_0
     )
-
-protect CM
-protect MonCurve
 
 delta = I -> min(flatten apply(flatten entries mingens I,degree))
      

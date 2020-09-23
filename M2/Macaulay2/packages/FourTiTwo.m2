@@ -44,10 +44,21 @@ export {
      "toricGraverDegrees"
      }
 
+-- for backward compatibility
+if not programPaths#?"4ti2" and FourTiTwo#Options#Configuration#"path" != ""
+    then programPaths#"4ti2" = FourTiTwo#Options#Configuration#"path"
 
-path'4ti2 = (options FourTiTwo).Configuration#"path"
--- NOTE: the absolute path should be put into the .init file for 4ti2 inside the .Macaulay2 directory.
-if path'4ti2 == "" then path'4ti2 = prefixDirectory | currentLayout#"programs"
+fourTiTwo = null
+
+run4ti2 = (exe, args) -> (
+    if fourTiTwo === null then
+	fourTiTwo = findProgram("4ti2", "markov -h",
+	    Prefix => {(".*", "4ti2-"), -- debian
+		       (".*", "4ti2_")}, -- suse
+	    AdditionalPaths =>
+		{"/usr/lib/4ti2/bin", "/usr/lib64/4ti2/bin"}); -- fedora
+     runProgram(fourTiTwo, exe, args)
+)
 
 getFilename = () -> (
      filename := temporaryFileName();
@@ -106,9 +117,7 @@ toricMarkov Matrix := Matrix => o -> (A) -> (
        	  F = openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr := path'4ti2|"markov -q " |rootPath |filename;
-     ret := run(execstr);
-     if ret =!= 0 then error "error occurred while executing external program 4ti2: markov";
+     run4ti2("markov", rootPath | filename);
      getMatrix(filename|".mar")
      )
 toricMarkov(Matrix,Ring) := o -> (A,S) -> toBinomial(toricMarkov(A,o), S)
@@ -124,9 +133,7 @@ toricGroebner Matrix := o -> (A) -> (
 	  cost := concatenate apply(o.Weights, x -> (x|" "));
 	  (filename|".cost") << "1 " << #o.Weights << endl << cost << endl  << close;
 	  );
-     execstr := path'4ti2|"groebner -q "|rootPath|filename;
-     ret := run(execstr);
-     if ret =!= 0 then error "error occurred while executing external program 4ti2: groebner";
+     run4ti2("groebner", rootPath | filename);
      getMatrix(filename|".gro")
      )
 toricGroebner(Matrix,Ring) := o -> (A,S) -> toBinomial(toricGroebner(A,o), S)
@@ -138,9 +145,7 @@ toricCircuits Matrix := Matrix => (A ->(
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr := path'4ti2|"circuits -q " | rootPath | filename;
-     ret := run(execstr);
-     if ret =!= 0 then error "error occurred while executing external program 4ti2: circuits";
+     run4ti2("circuits", rootPath | filename);
      getMatrix(filename|".cir")
      ))
 
@@ -151,9 +156,7 @@ toricGraver Matrix := Matrix => (A ->(
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr := path'4ti2|"graver -q " | rootPath | filename;
-     ret := run(execstr);
-     if ret =!= 0 then error "error occurred while executing external program 4ti2: graver";
+     run4ti2("graver -q ", rootPath | filename);
      getMatrix(filename|".gra")
      ))
 toricGraver (Matrix,Ring) := Ideal => ((A,S)->toBinomial(toricGraver(A),S))
@@ -168,9 +171,7 @@ hilbertBasis Matrix := Matrix => o -> (A ->(
        	  F = openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr := path'4ti2|"hilbert -q " |rootPath | filename;
-     ret := run(execstr);
-     if ret =!= 0 then error "error occurred while executing external program 4ti2: hilbert";
+     run4ti2("hilbert", rootPath | filename);
      getMatrix(filename|".hil")
      ))
 
@@ -182,9 +183,7 @@ rays Matrix := Matrix => (A ->(
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr := path'4ti2|"rays -q " |rootPath | filename;
-     ret := run(execstr);
-     if ret =!= 0 then error "error occurred while executing external program 4ti2: rays";
+     run4ti2("rays", rootPath | filename);
      getMatrix(filename|".ray")
      ))
 
@@ -200,12 +199,9 @@ toricGraverDegrees Matrix := Matrix => (A ->(
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr := path'4ti2|"graver -q " | rootPath | filename;
-     ret := run(execstr);
-     if ret =!= 0 then error "error occurred while executing external program 4ti2: graver"; -- getMatrix(filename|".gra")
-     execstr = path'4ti2|"output --degrees " | rootPath | filename|".gra";
-     ret = run(execstr);
-     if ret =!= 0 then error "error occurred while executing external program 4ti2: output";
+     run4ti2("graver", rootPath | filename);
+     ret := run4ti2("output", "--degrees " | rootPath | filename|".gra");
+     print ret#"output"
      ))
 
 
@@ -391,7 +387,7 @@ doc ///
 	       whose columns parametrize the toric variety; the toric ideal is the kernel of the map defined by {\tt A}.
 	       Otherwise, if InputType is set to "lattice", the rows of {\tt A} are a lattice basis and the toric ideal is the 
 	       saturation of the lattice basis ideal.	       
-	  s:InputType
+	  InputType=>String
 	       which is the string "lattice" if rows of {\tt A} specify a lattice basis
 	  R:Ring
 	       polynomial ring in which the toric ideal $I_A$ should live

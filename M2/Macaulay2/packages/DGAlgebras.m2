@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage("DGAlgebras",
-     Headline => "data type for DG algebras",
-     Version => "1.0.1",
-     Date => "January 11, 2017",
+     Headline => "Data type for DG algebras",
+     Version => "1.1.0",
+     Date => "August 20, 2020",
      Authors => {
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
@@ -17,7 +17,9 @@ export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff",
         "torMap", "homologyAlgebra", "torAlgebra", "maxDegree", "StartDegree", "EndDegree", "ringMap",
 	"isHomologyAlgebraTrivial", "findTrivialMasseyOperation", "findNaryTrivialMasseyOperation", "AssertWellDefined",
 	"isGolod", "isGolodHomomorphism", "GenDegreeLimit", "RelDegreeLimit", "TMOLimit",
-	"InitializeDegreeZeroHomology", "InitializeComplex", "isAcyclic", "getDegNModule"
+	"InitializeDegreeZeroHomology", "InitializeComplex", "isAcyclic", "getDegNModule",
+	"masseyTripleProduct","getBoundaryPreimage","homologyClass",
+	"homologyModule","dgAlgebraMultMap"
 }
 
 -- Questions:
@@ -58,6 +60,7 @@ export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff",
 -----------------------------------------------------
 -- Set DG algebra types and constructor functions. -- 
 -----------------------------------------------------
+
 -- protected symbols (I don't want to export these symbols, but I use them internally in the code at various places)
 protect diffs
 protect basisAlgebra
@@ -68,6 +71,9 @@ globalAssignment DGAlgebra
 --DGAlgebraMap still in development
 DGAlgebraMap = new Type of MutableHashTable
 globalAssignment DGAlgebraMap
+
+-- this command is in the core, but we need it here.
+spots  = C -> select(keys C, i -> class i === ZZ)
 
 -- Modify the standard output for a DGAlgebra
 net DGAlgebra := A -> (
@@ -331,6 +337,8 @@ polyDifferential (ZZ,DGAlgebra) := (n,A) -> (
 
 polyDifferential (DGAlgebra,RingElement) := (A,f) -> sum apply(terms f, m -> polyDiffMonomial(A,m))
 
+diff (DGAlgebra,RingElement) := (A,f) -> polyDifferential(A,f);
+
 homology (ZZ,DGAlgebra) := opts -> (n,A) -> (
   dn := 0;
   dnplus1 := 0;
@@ -515,6 +523,8 @@ makeHomologyRing (DGAlgebra,List,List,Boolean) := (A, cycleList, relList, ForceG
      HA.cache = new CacheTable;
      HA.cache#(symbol basisAlgebra) = polyRing'/I';
   );
+  use A.natural;
+  use A.ring;
   HA
 )
 
@@ -537,7 +547,8 @@ findEasyRelations (DGAlgebra,List) := (A, cycleList) -> (
   degList := apply(numgens A.natural + numgens A.ring, i -> degree varsList#i);
   degList = degList | apply(cycleList, i -> degree i);
   if (not isHomogeneous A) then degList = pack(degList / first, 1);
-  B := baseRing[varsList,MonomialOrder=>{numgens A.natural + numgens A.ring,#cycleList},Degrees=>degList, SkewCommutative=>skewList];
+  monB := monoid [varsList,MonomialOrder=>{numgens A.natural + numgens A.ring,#cycleList},Degrees=>degList, SkewCommutative=>skewList];
+  B := baseRing monB;
   K := substitute(ideal A.natural, B) + substitute(ideal A.ring, B) + ideal apply(#cycleList, i -> B_(numAvars+i) - substitute(cycleList#i,B));
   if A.isHomogeneous then assert(isHomogeneous K);
   easyRels := 0;
@@ -741,14 +752,98 @@ homologyAlgebra DGAlgebra := opts -> A -> (
   HA     
 )
 
+--------- homologyModule code ----------------------
+
+--- this function takes a DGAlgebra A and a cycle z as input
+--- it returns the ChainComplexMap corresponding to left multiplication
+--- by z
+dgAlgebraMultMap = method()
+dgAlgebraMultMap (DGAlgebra,RingElement) := (A,z) -> (
+   R := A.ring;
+   d := first degree z;
+   cxA := toComplex A;
+   zChainMap := map(cxA,cxA ** R^(-(drop(degree z,1))),
+          i -> sub(last coefficients(z*getBasis(i,A),Monomials=>getBasis(i+d,A)), R),
+	  Degree=>d);
+   -- uncomment the next line if you would like this function
+   -- to check that the result is indeed a chain map.
+   --assert(zChainMap*KR.dd - (-1)^d*KR.dd*zChainMap);
+   zChainMap
+)
+
+-- internal use function
+moduleRelationsFromCycleAction = method()
+moduleRelationsFromCycleAction (DGAlgebra,RingElement,Module) := (A,z,M) -> (
+   R := ring M;
+   if A.ring =!= R then error "Expected a DGAlgebra and module over same ring.";
+   HA := HH(A);
+   h := homologyClass(A,z);
+   -- may add ability to provide maxdeg as an optional argument for toComplex later
+   cxA := toComplex A;
+   
+   -- since z is a cycle, left multiplication by z is a chain map on A
+   zChainMap := dgAlgebraMultMap(A,z);
+   -- tensoring with M gives the action of z on A ** M
+   zCMtensM := zChainMap ** M;
+   -- determine the action of the homology class of z at the level of homology
+   HM := HH(target zCMtensM);  
+   -- prune the homology to ensure we have minimal generators
+   pruneHM := prune HM;
+   pruneZActionHM := prune HH(zCMtensM);
+   -- ll for Loewy length
+   ll := #(spots pruneHM);
+
+   -- at this point we have all the multiplication tables, but we need to put them
+   -- together to get a module structure.  Since HM is finite dimensional, this is not
+   -- too bad.  The next part of the code combines all the actions into a large matrix
+   -- representing the full multiplication table by z and uses this to construct a list of relations
+   -- that represent the action of z, of the form ze_j = (z acting on e_j written in terms of basis).
+
+   -- this next block of code constructs the full multiplication table
+   -- for z on HM.  It constructs it as a block matrix, where the (i,j)th block
+   -- is the left multiplication map M_i --> M_j.  Of course most of these are zero
+   -- since z should be a cycle in a single homological degree.
+
+   -- these commands ensure that the resulting matrix will have the right degrees
+   -- over HA so that the result will be a graded module.
+   degsHMTarget := flatten apply(spots pruneHM, p -> apply(degrees pruneHM#p, d -> {p} | d));
+   degsHMSource := flatten apply(spots pruneHM, p -> apply(degrees pruneHM#p, d -> ({p} | d) + degree z));
+   -- this function builds the blocks as mentioned above
+   buildBlocks := (i,j) -> (
+       if j + first degree z != i then map(pruneHM#i,pruneHM#j,0)
+       else if not pruneZActionHM#?j then map(pruneHM#i,pruneHM#j,0)
+       else pruneZActionHM#j
+       );
+   -- use map to build the matrix (using the matrix constructor for block matrices)
+   matActOfZ := map(HA^(-degsHMTarget),HA^(-degsHMSource),tensor(map(HA,R),matrix table(ll,ll,buildBlocks)));
+   -- now subtract from this z times an appropriately graded identity to indicate
+   -- that this matrix is the result of z acting on HM.
+   relsFromZAction := map(HA^(-degsHMTarget),HA^(-degsHMSource),h) - matActOfZ;
+   relsFromZAction
+)
+
+homologyModule = method()
+homologyModule (DGAlgebra,Module) := (A,M) -> (
+   -- A is a DG module over a ring R, and M is an R-module.
+   -- the return value is a minimal presentation of H(A ** M) as
+   -- an H(A)-module.
+   HA := HH(A);
+   -- first compute all the 'relations' from a cycle acting on HH(A ** M)
+   allActions := apply(HA.cache.cycles, z -> moduleRelationsFromCycleAction(A,z,M));
+   -- place these in a block row vector and compute a minimal presentation
+   -- of the result
+   HMoverHA := minimalPresentation coker matrix {allActions};
+   HMoverHA
+)
+
 isHomologyAlgebraTrivial = method(TypicalValue=>Boolean,Options=>{GenDegreeLimit=>infinity})
-isHomologyAlgebraTrivial DGAlgebra := opts -> A -> findTrivialMasseyOperation(A,opts,TMOLimit=>2) =!= null
+isHomologyAlgebraTrivial DGAlgebra := opts -> A -> first findTrivialMasseyOperation(A,opts,TMOLimit=>2)
 
 isGolod = method(TypicalValue=>Boolean)
-isGolod Ring := R -> findTrivialMasseyOperation(koszulComplexDGA(R)) =!= null
+isGolod Ring := R -> first findTrivialMasseyOperation(koszulComplexDGA(R))
 
 isGolodHomomorphism = method(TypicalValue=>Boolean,Options=>{GenDegreeLimit=>infinity,TMOLimit=>infinity})
-isGolodHomomorphism QuotientRing := opts -> R -> findTrivialMasseyOperation(acyclicClosure(ambient R, EndDegree=>opts.GenDegreeLimit) ** R, opts) =!= null
+isGolodHomomorphism QuotientRing := opts -> R -> first findTrivialMasseyOperation(acyclicClosure(ambient R, EndDegree=>opts.GenDegreeLimit) ** R, opts)
 
 DGAlgebra ** Ring := (A,S) -> (
   B := freeDGAlgebra(S, A.Degrees);
@@ -768,11 +863,17 @@ DGAlgebra ** DGAlgebra := (A,B) -> (
 )
 
 getBoundaryPreimage = method()
-getBoundaryPreimage (DGAlgebra,List,ZZ) := (A,boundaryList,homDegree) -> (
+getBoundaryPreimage (DGAlgebra,List) := (A,boundaryList) -> (
+   nonzeroes := select(boundaryList, b -> b != 0);
+   if nonzeroes == {} then return (true,boundaryList);
+   homDegree := first degree first nonzeroes;
+   if any(boundaryList, b -> b != 0 and first degree b != homDegree) then
+      error "Expected a list of elements of the same homological degree.";
    dnplus1 := polyDifferential(homDegree+1,A);
    Anbasis := flatten entries getBasis(homDegree,A);
    Anplus1basis := getBasis(homDegree+1,A);
    local retVal;
+   isBoundary := true;
    if Anbasis == {} then retVal = 0 else (
       boundaryVec := (coefficients(matrix{boundaryList}, Monomials => Anbasis))#1;
       degreeList := apply(degrees target boundaryVec, l -> -drop(l,1));
@@ -781,35 +882,51 @@ getBoundaryPreimage (DGAlgebra,List,ZZ) := (A,boundaryList,homDegree) -> (
       -- if not all elements of the list are boundaries, then return null - the DGA does not admit a trivial massey operation.
       if dnplus1 * retVal != boundaryVec then (
          -- the below error is just for debugging purposes.
-	 --error "err";
-	 retVal = null;
+	 -- error "err";
+
+	 -- previously, null was returned if dnplus1 * retVal != boundaryVec.
+	 isBoundary = false;
+	 retVal = (false, boundaryVec - dnplus1*retVal);
+	 -- now, we wish to return a pair.  The first entry is whether the lift is possible
+	 -- The second entry the reduction of the input mod the image.
       );
    );
-   if retVal =!= null then if retVal == 0 then retVal = apply(#boundaryList, i -> 0_(A.natural)) else retVal = flatten entries (Anplus1basis * substitute(retVal, A.ring));
-   if retVal =!= null then assert(#retVal == #boundaryList);
+   if isBoundary then
+      if retVal == 0 then
+         retVal = (true,apply(#boundaryList, i -> 0_(A.natural)))
+      else 
+         retVal = (true,flatten entries (Anplus1basis * substitute(retVal, A.ring)));
    retVal
 )
-getBoundaryPreimage (DGAlgebra,RingElement) := (A,b) -> getBoundaryPreimage(A,{b}, first degree b)
 
-findTrivialMasseyOperation = method(TypicalValue=>HashTable, Options=>{GenDegreeLimit=>infinity,TMOLimit=>infinity})
+getBoundaryPreimage (DGAlgebra,RingElement) := (A,b) -> (
+   (lifted,myLift) := getBoundaryPreimage(A,{b});
+   (lifted,first myLift)
+)
+
+findTrivialMasseyOperation = method(TypicalValue=>Sequence, Options=>{GenDegreeLimit=>infinity,TMOLimit=>infinity})
 findTrivialMasseyOperation DGAlgebra := opts -> A -> (
    maxDeg := maxDegree A;
    if maxDeg == infinity and opts.GenDegreeLimit == infinity then error "Must specify an upper bound on the generating degree";
    if maxDeg == infinity and opts.TMOLimit == infinity then error "Must specify an upper bound of order of Massey operations.";
    if opts.GenDegreeLimit != infinity then maxDeg = opts.GenDegreeLimit; 
-   -- here we really should take just the homology gens as a module (and even then, only the ones that are in deg leq than
-   -- half the max degree of the DGA).  This should really speed things up.
-   if maxDegree A != infinity then maxDeg = min(maxDeg, ceiling(maxDegree A / 2));
    cycleList := flatten apply(maxDeg, i -> representativeCycles(i+1,A));
-   retVal := hashTable apply(#cycleList, i -> ({i},cycleList#i));
+   tmoSoFar := hashTable apply(#cycleList, i -> ({i},cycleList#i));
+   hasTMO := true;
    n := 2;
    maxMasseys := min(maxDeg, opts.TMOLimit);
    while n <= maxMasseys do (
-      retVal = findNaryTrivialMasseyOperation(A,cycleList,retVal,n);
-      if retVal === null then ( << "No trivial Massey operation exists for this DG Algebra." << endl; n = maxMasseys );
+      (hasTMO,tmoSoFar) = findNaryTrivialMasseyOperation(A,cycleList,tmoSoFar,n);
+      if not hasTMO then ( 
+         -- if we are here, tmoSoFar instead has the TMOs to degree n-1, as well as the degree n 
+	 -- nonvanishing Massey operations (at least I think)
+	 -- << "No trivial Massey operation exists for this algebra.  The " << n << "-ary Massey operations" << endl;
+	 -- << "do not vanish and the lifts made thus far are reported in the return value.";
+     	 n = maxMasseys;
+      );
       n = n + 1;
    );
-   retVal
+   (hasTMO, tmoSoFar)
 )
 
 -- This method computes all the Nary TMOs.  It takes as input a DGAlgebra A, a list of cycles whose classes
@@ -818,7 +935,7 @@ findTrivialMasseyOperation DGAlgebra := opts -> A -> (
 -- The hash table has (key,values) of the form (list giving the 'tensor monomial' of the MO, the MO itself)
 -- It returns a hash table which, given the 'tensor monomial' gives the element of Massey operation for that monomial.
 -- If at some stage, this can't be computed, then null is returned.
-findNaryTrivialMasseyOperation = method(TypicalValue=>HashTable)
+findNaryTrivialMasseyOperation = method(TypicalValue=>Sequence)
 findNaryTrivialMasseyOperation(DGAlgebra,List,HashTable,ZZ) := (A,cycleList,prevTMOs,N) -> (
    -- build the list of 'monomials'
    degreeList := cycleList / degree / first;
@@ -833,13 +950,20 @@ findNaryTrivialMasseyOperation(DGAlgebra,List,HashTable,ZZ) := (A,cycleList,prev
    n := min (prodList / first);
    maxDegree := max (prodList / first);
    retVal := hashTable {};
+   hasTrivialMasseyOperation := true;
    while n <= maxDegree do (
       boundaryList := select(prodList, z -> z#0 == n);
       if boundaryList != {} then (
-         tempVar := getBoundaryPreimage(A,boundaryList / last,n);
-	 if (tempVar === null) then (
-	    -- if we are in here, then no trivial Massey operation exists
-            retVal = null;
+         (isBoundary,tempVar) := getBoundaryPreimage(A,boundaryList / last);
+	 if (isBoundary == false) then (
+	    -- if we are in here, then no trivial Massey operation exists, but tempVar contains
+	    -- the reduction of the possible nary products modulo the boundaries, and
+	    -- all lower massey operations vanish.  Can we report what the products are?
+	    -- yes, by using cycleList, together with boundaryList.  We wish to also
+	    -- put this information in retVal.
+            hasTrivialMasseyOperation = false;
+	    nontrivialTMOs := boundaryList_(select(#boundaryList, i -> tempVar_{i} != 0));
+      	    retVal = merge(prevTMOs, hashTable apply(nontrivialTMOs, p -> (p#1,p#2)), first);
 	    n = maxDegree;
 	 )
 	 else retVal = merge(retVal, hashTable apply(#tempVar, i -> (boundaryList#i#1,tempVar#i)),first);
@@ -847,28 +971,120 @@ findNaryTrivialMasseyOperation(DGAlgebra,List,HashTable,ZZ) := (A,cycleList,prev
       n = n + 1;
    );
    -- at this point, we want to concatenate all the new TMOs to the old hash table.
-   if retVal =!= null then retVal = cleanTMOHash merge(prevTMOs, retVal, first);
-   retVal
-)
-
--- this computes the Massey product of a tuple of elements individually.
--- code under development.
-masseyProduct = method(TypicalValue=>RingElement)
-masseyProduct(DGAlgebra,List) := (A,cycleList) -> (
-   --boundary := {sum apply(#m-1, i -> ((-1)^((tensMonDegree take(m,i+1)) + i + 1))*(getTMO(prevTMOs,take(m,i+1)))*(getTMO(prevTMOs,drop(m,i+1))))))};
-   --tempVar := getBoundaryPreimage(A,boundaryList / last,n);
-   null
+   if hasTrivialMasseyOperation then retVal = cleanTMOHash merge(prevTMOs, retVal, first);
+   (hasTrivialMasseyOperation,retVal)
 )
 
 masseyMonomials = method(TypicalValue=>List)
 masseyMonomials (List,HashTable,ZZ) := (degreeList, nonzeroMons, n) -> (
-   -- this is not near sufficient.  Need to generate all noncomm. monomials on the keys of nonzeroMons of weight n.
    select((cartesianPower(2,keys nonzeroMons)) / flatten, m -> #m == n)
 )
 
 cartesianPower = (n,myList) -> (
    retVal := if n == 2 then toList ((set myList) ** (set myList)) else toList ((set myList) ** (set cartesianPower(n-1,myList)));
    if n > 2 then apply(retVal, p -> flatten {p#0,flatten p#1}) else retVal / toList
+)
+
+----- Triple Massey operations code  ------
+
+representativeCycle = method()
+representativeCycle(DGAlgebra, RingElement) := (A, h) -> (
+   --- this function takes an element h in HH(A) and returns
+   --- a cycle representing h
+   H := HH(A);
+   phi := map(A.natural,H,H.cache.cycles);
+   phi h
+)
+
+homologyClass = method()
+homologyClass(DGAlgebra, RingElement) := (A,z) -> (
+   -- this function returns an element of H that is represented by
+   -- the element z
+   if diff(A,z) != 0 then
+      error "Expected a cycle.";
+   H := HH(A);
+   if z == 0 then return 0_H;
+   R := A.ring;
+   d := degree z;
+   basisHd := basis(d,H);
+   phi := map(A.natural,H,H.cache.cycles);
+   basisHdCycles := phi basisHd;
+   bound := A.dd_((first d)+1);
+   cycleCoeffs := sub(last coefficients(z, Monomials => getBasis(first d,A)),R);
+   homolCoeffs := sub(last coefficients(basisHdCycles, Monomials => getBasis(first d,A)),R);
+   cycleInHomol := sub((cycleCoeffs // (homolCoeffs | bound))^{0..(numcols homolCoeffs - 1)},coefficientRing R);
+   first flatten entries (basisHd * cycleInHomol)
+)
+
+masseyTripleProductOnCycles = method()
+masseyTripleProductOnCycles(DGAlgebra, RingElement, RingElement, RingElement) := (A,z1,z2,z3) -> (
+   -- this function computes a cycle representing the Massey operation
+   -- of <h1,h2,h3> where hi is represented by zi.
+   if ring z1 =!= A.natural or ring z2 =!= A.natural or ring z3 =!= A.natural then
+      error "Expected elements of the underlying algebra of input DGAlgebra.";
+   l := first degree z1;
+   m := first degree z2;
+   n := first degree z3;
+   --lift12 := diffPreimage(A,(-1)^(l+1)*z1*z2);
+   --lift23 := diffPreimage(A,(-1)^(m+1)*z2*z3);
+   (lifted12,lift12) := getBoundaryPreimage(A,(-1)^(l+1)*z1*z2);
+   if not lifted12 then error "The product z1z2 was not a boundary.";
+   (lifted23,lift23) := getBoundaryPreimage(A,(-1)^(m+1)*z2*z3);
+   if not lifted23 then error "The product z2z3 was not a boundary.";
+   result := (-1)^(l+m)*lift12*z3 + (-1)^(l+1)*z1*lift23;
+   result
+)
+
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+-- %%%%%%%  Brief note on quadruple Massey operations   %%%%%%
+
+-- To compute Massey quadruple product, one computes:
+-- lift13*z4 + lift12*lift34 + z1*lift24
+
+-- Furthermore, according to O'Niell's paper, the two Massey
+-- operations must vanish *simulaneously*.  That is, one must
+-- trivialize the Massey operations defining lift13 and lift24 with
+-- the same lifts lift12, lift23 and lift34.  to check that they
+-- simultaneously vanish, one must perform a calculation similar to
+-- the findTMO code in DGAlgebras, but only for those two Massey
+-- operations.
+
+-- Note that if all (r-1)-ary Massey operations are defined and
+-- vanish, then all r-ary Massey operations are defined and uniquely
+-- determined.  This doesn't really help us in the general case of
+-- defining a quadruple product as discussed above, however.
+
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+masseyTripleProduct = method()
+masseyTripleProduct(DGAlgebra, RingElement, RingElement, RingElement) := (A,h1,h2,h3) -> (
+   -- this function computes the Massey triple product <h1,h2,h3>
+   H := HH(A);
+   if ring h1 =!= H or ring h2 =!= H or ring h3 =!= H then
+   (
+      if ring h1 =!= A.natural or ring h2 =!= A.natural or ring h3 =!= A.natural then
+         error "Expected elements of the homology algebra of input DGAlgebra."
+      else
+         return masseyTripleProductOnCycles(A,h1,h2,h3);
+   );
+   if (h1*h2 != 0 or h2*h3 != 0) then return 0_H;
+   z1 := representativeCycle(A,h1);
+   z2 := representativeCycle(A,h2);
+   z3 := representativeCycle(A,h3);
+   homologyClass(A, masseyTripleProductOnCycles(A,z1,z2,z3))
+)
+
+masseyTripleProduct(DGAlgebra, ZZ, ZZ, ZZ) := (A,l,m,n) -> (
+   -- this function computes the map representing the
+   -- triple Massey products H_l \otimes H_m \otimes H_n \to H_{l+m+n+1}
+   H := HH(A);
+   basisHl := flatten entries basis(l,H);
+   basisHm := flatten entries basis(m,H);
+   basisHn := flatten entries basis(n,H);
+   domainBasis := (basisHl ** basisHm ** basisHn) / flatten;
+   codomainBasis := basis(l+m+n+1,H);
+   masseyProducts := matrix {apply(domainBasis, d -> masseyTripleProduct(A,d#0,d#1,d#2))};
+   sub(last coefficients(masseyProducts,Monomials=>codomainBasis), coefficientRing A.ring)
 )
 
 ----- DGAlgebraMap functions --------
@@ -990,8 +1206,8 @@ pushForward(RingMap,ChainComplex) := opts -> (f,C) -> chainComplex apply(0..((le
 
 -- The function below will return HH(f) as a module map over HH_0(A) (provided HH_0(B)
 -- is a finite HH_0(A)-module). 
-homology (DGAlgebraMap,ZZ) := opts -> (f,n) -> (
-)
+--homology (DGAlgebraMap,ZZ) := opts -> (f,n) -> (
+--)
 
 homology DGAlgebraMap := opts -> f -> (
    A := source f;
@@ -2004,7 +2220,6 @@ doc ///
       The above is a (CM) ring minimal of minimal multiplicity, hence Golod.  The next example was found
       by Lukas Katthan, and appears in his arXiv paper 1511.04883.  It is the first known example
       of an algebra that is not Golod, but whose Koszul complex has a trivial homology product.
-      A future version of this package will allow for computations of higher order (non-vanishing) Massey operations.
     Example
       Q = ZZ/101[x_1,x_2,y_1,y_2,z,w]
       I = ideal {x_1*x_2^2,z^2*w,y_1*y_2^2,x_2^2*z*w,y_2^2*z^2,x_1*x_2*y_1*y_2,x_2^2*y_2^2*z,x_1*y_1*z}
@@ -2150,9 +2365,10 @@ doc ///
   Inputs
     A:DGAlgebra
   Outputs
-    tmo:HashTable
-      A hash table with keys given by monomials in a generating set of the positive degree homology of A and values the element that bounds the Massey
-      product corresponding to that monomial.
+    seq:Sequence
+      A sequence seq whose first entry reports whether a trivial Massey operation has been found, and the second
+      entry is a hash table with keys given by monomials in a generating set of the positive degree homology of
+      A and values the element that bounds the Massey product corresponding to that monomial.
   Description
     Text
       This function the element that bounds all potentially nonzero Massey products (before taking homology class).
@@ -2173,8 +2389,8 @@ doc ///
       A = koszulComplexDGA(R)
       isHomologyAlgebraTrivial(A,GenDegreeLimit=>3)
       cycleList = getGenerators(A)
-      tmo = findTrivialMasseyOperation(A)
-      assert(tmo =!= null)
+      (hasTMO, tmoSoFar) = findTrivialMasseyOperation(A)
+      assert(hasTMO)
     Text
       Below is an example of a Teter ring (Artinian Gorenstein ring modulo its socle), and the computation in Avramov and Levin's
       paper shows that H(A) does not have trivial multiplication, hence no trivial Massey operation can exist.
@@ -2185,9 +2401,116 @@ doc ///
       A = koszulComplexDGA(R)
       isHomologyAlgebraTrivial(A)
       cycleList = getGenerators(A)
-      assert(findTrivialMasseyOperation(A) === null)
+      assert(not first findTrivialMasseyOperation(A))
     Text
       The related function @ TO findNaryTrivialMasseyOperation @ find only the nth order trivial Massey operations.
+///
+
+doc ///
+  Key
+    masseyTripleProduct
+    (masseyTripleProduct,DGAlgebra,RingElement,RingElement,RingElement)
+  Headline
+    Computes the Massey triple product of a set of cycles or homology classes
+  Usage
+    h = masseyTripleProduct(A,h1,h2,h3)
+  Inputs
+    A:DGAlgebra
+    h1:RingElement
+    h2:RingElement
+    h3:RingElement
+  Outputs
+    h:RingElement
+      The return value is either the homology class of the Massey triple product defined
+      by the inputs or a cycle representing the homology class.
+  Description
+    Text
+       These functions compute the Massey triple product of either three homology classes
+       or three cycles that represent nonzero homology classes for which the Massey triple product
+       is defined.
+    Text
+       For an example, we return to an example due to Lukas Katthan which was discussed in @ TO isGolod @.
+       First, we define the algebra:
+    Example
+       Q = QQ[x_1,x_2,y_1,y_2,z]
+       I = ideal (x_1*x_2^2,y_1*y_2^2,z^3,x_1*x_2*y_1*y_2,y_2^2*z^2,x_2^2*z^2,x_1*y_1*z,x_2^2*y_2^2*z)
+       R = Q/I
+       KR = koszulComplexDGA R
+    Text
+       The following are cycles:
+    Example
+       z1 = z^2*T_5
+       z2 = y_2^2*T_3
+       z3 = x_2^2*T_1
+    Text
+       and z1*z2, z2*z3 vanish in homology:
+    Example
+       (lifted12,lift12) = getBoundaryPreimage(KR,z1*z2)
+       (lifted23,lift23) = getBoundaryPreimage(KR,z2*z3)
+    Text
+       Note that the first return value of @ TO getBoundaryPreimage @ indicates that the inputs
+       are indeed boundaries, and the second value is the lift of the boundary along the differential.
+    Text
+       Given cycles z1,z2,z3 such that z1*z2 and z2*z3 are boundaries, 
+       the Massey triple product of the homology classes represented by z1,z2 and z3 
+       is the homology class of lift12*z3 + z1*lift23.  To see this, we compute and check:
+    Example
+       z123 = masseyTripleProduct(KR,z1,z2,z3)
+       z123 == lift12*z3 + z1*lift23
+    Text
+       One may also compute Massey triple products directly on elements of the homology
+       algebra itself, as is seen with the command masseyTripleProduct:
+    Example
+       H = HH(KR)
+       h1 = homologyClass(KR,z1)
+       h2 = homologyClass(KR,z2)
+       h3 = homologyClass(KR,z3)
+       h123 = masseyTripleProduct(KR,h1,h2,h3)
+       h123 == homologyClass(KR,z123)
+///
+
+doc ///
+  Key
+    (masseyTripleProduct,DGAlgebra,ZZ,ZZ,ZZ)
+  Headline
+    Computes the matrix representing all triple Massey operations.
+  Usage
+    mat = masseyTripleProduct(A,l,m,n)
+  Inputs
+    A:DGAlgebra
+    l:ZZ
+    m:ZZ
+    n:ZZ
+  Outputs
+    mat:Matrix
+  Description
+    Text
+      Given a triple of homology classes h1,h2,h3, such that h1h2 = h2h3 = 0,
+      the Massey triple product of h1,h2 and h3 may be defined as in
+      @ TO masseyTripleProduct @.  This command computes a basis of the homology
+      algebra of A in degrees l,m and n respectively, and expresses the triple
+      Massey operation of each triple, provided it is defined.  If a triple product
+      is not defined (i.e. if either h1h2 or h2h3 is not zero) then the triple
+      product is reported as zero in the matrix.
+    Text
+      The following example appears in "On the Hopf algebra of a Local Ring" by Avramov
+      as an example of a nonvanishing Massey operation which an algebra generator:
+    Example
+      Q = QQ[t_1,t_2,t_3,t_4]
+      I = ideal (t_1^3,t_2^3,t_3^3-t_1*t_2^2,t_1^2*t_3^2,t_1*t_2*t_3^2,t_2^2*t_4,t_4^2)
+      R = Q/I
+      KR = koszulComplexDGA R
+      H = HH(KR)
+      masseys = masseyTripleProduct(KR,1,1,1);
+      rank masseys
+    Text
+      As you can see, this command is useful to determine the number of linearly independent
+      elements that arise as triple Massey products.
+    Text
+      For example, the following Massey triple product is nonvanishing and is an
+      algebra generator:
+    Example
+      masseyTripleProduct(KR,X_2,X_4,X_1)
 ///
 
 doc ///
@@ -2256,15 +2579,88 @@ doc ///
 
 doc ///
   Key
-    ringMap
+    (diff,DGAlgebra,RingElement)
   Headline
-    RingMap of a DGAlgebraMap in degree zero.
+    Computes the differential of a ring element in a DGAlgebra
   Usage
-    phi = phiLift.ringMap
+    b = diff(A,a)
   Inputs
-    phiLift:DGAlgebraMap
+    A:DGAlgebra
+    a:RingElement
   Outputs
-    phi:RingMap
+    b:RingElement
+///
+
+doc ///
+  Key
+    getBoundaryPreimage
+    (getBoundaryPreimage,DGAlgebra,RingElement)
+    (getBoundaryPreimage,DGAlgebra,List)
+  Headline
+    Attempt to find a preimage of a boundary under the differential of a DGAlgebra.
+  Usage
+    (lifted,myLift) = getBoundaryPreimage(A,z)
+  Inputs
+    A:DGAlgebra
+    z:RingElement
+  Outputs
+    seq:Sequence
+  Description
+    Text
+      The first element in the return value is a boolean value indicating whether the
+      lift was possible.  If true, the second coordinate of the return value is the lift.
+      If false, then the second coordinate of the return value is the reduction of the
+      input modulo the image.
+    Example
+       Q = QQ[x_1,x_2,y_1,y_2,z]
+       I = ideal (x_1*x_2^2,y_1*y_2^2,z^3,x_1*x_2*y_1*y_2,y_2^2*z^2,x_2^2*z^2,x_1*y_1*z,x_2^2*y_2^2*z)
+       R = Q/I
+       KR = koszulComplexDGA R
+    Text
+       The following are cycles:
+    Example
+       z1 = z^2*T_5
+       z2 = y_2^2*T_3
+       z3 = x_2^2*T_1
+       {diff(KR,z1),diff(KR,z1),diff(KR,z1)}
+    Text
+       and z1*z2, z2*z3 vanish in homology:
+    Example
+       (lifted12,lift12) = getBoundaryPreimage(KR,z1*z2)
+       (lifted23,lift23) = getBoundaryPreimage(KR,z2*z3)
+    Text
+       We can check that the differential of the lift is the supposed boundary:
+    Example
+       diff(KR,lift23) == z2*z3
+///
+
+doc ///
+  Key
+    homologyClass
+    (homologyClass,DGAlgebra,RingElement)
+  Headline
+    Computes the element of the homology algebra corresponding to a cycle in a DGAlgebra.
+  Usage
+    h = homologyClass(A,z)
+  Inputs
+    A:DGAlgebra
+    z:RingElement
+  Outputs
+    h:RingElement
+  Description
+    Text
+      This function computes the element in the homology algebra of a cycle in a @ TO DGAlgebra @.
+      In order to do this, the @ TO homologyAlgebra @ is retrieved (or computed, if it hasn't been
+      already).
+    Example
+      Q = QQ[x,y,z]
+      I = ideal (x^3,y^3,z^3)
+      R = Q/I
+      KR = koszulComplexDGA R
+      z1 = x^2*T_1
+      z2 = y^2*T_2
+      H = HH(KR)
+      homologyClass(KR,z1*z2)
 ///
 
 doc ///
@@ -2306,6 +2702,7 @@ doc ///
 doc ///
   Key
     DGAlgebraMap
+    ringMap
   Headline
     The class of all DG Algebra maps
   Description
@@ -2420,7 +2817,6 @@ doc ///
 doc ///
   Key
     (homology,DGAlgebraMap)
-    (homology,DGAlgebraMap,ZZ)
   Headline
     Computes the homomorphism in homology associated to a DGAlgebraMap.
   Usage
@@ -2439,9 +2835,106 @@ doc ///
       g = dgAlgebraMap(K1,K2,matrix{{Y_2,Y_3}})
       toComplexMap g
       HHg = HH g
+///
+
+-- moved this out of the documentation since it is not complete
+--    (homology,DGAlgebraMap,ZZ)
+
+--    Text
+--      One can also supply the second argument (a ZZ) in order to obtain the map on homology in a specified degree.
+--      (This is currently not available).
+
+doc ///
+  Key
+    dgAlgebraMultMap
+    (dgAlgebraMultMap,DGAlgebra,RingElement)
+  Headline
+    Returns the chain map corresponding to multiplication by a cycle.
+  Usage
+    phi = dgAlgebraMultMap(A,z)
+  Inputs
+    A:DGAlgebra
+    z:RingElement
+  Outputs
+    phi:ChainComplexMap
+  Description
     Text
-      One can also supply the second argument (a ZZ) in order to obtain the map on homology in a specified degree.
-      (This is currently not available).
+      If A is a DGAlgebra, and z is a cycle of A, then left multiplication of A by z gives
+      a chain map from A to A.  This command converts A to a complex using @ TO toComplex @,
+      and constructs a @ TO ChainComplexMap @ that represents left multiplication by z.
+      This command is used to determine the module structure that is computed in
+      @ TO homologyModule @.
+    Example
+      R = QQ[x,y,z]/ideal{x^3,y^3,z^3}
+      KR = koszulComplexDGA R
+      z1 = x^2*T_1
+      phi = dgAlgebraMultMap(KR,z1)
+    Text
+      As you can see, the degree of phi is the homological degree of z:
+    Example
+      degree phi == first degree z
+    Text
+      Care is also taken to ensure the resulting map is homogeneous if R and z are:
+    Example
+      isHomogeneous phi
+    Text
+      One may then view the action of multiplication by the homology class of z upon
+      taking the induced map in homology:
+    Example
+      Hphi = prune HH(phi); (Hphi#0,Hphi#1,Hphi#2)
+///
+
+doc ///
+  Key
+    homologyModule
+    (homologyModule,DGAlgebra,Module)
+  Headline
+    Compute the homology of a DGModule as a module over a DGAlgebra.
+  Usage
+    HM = homologyModule(A,M)
+  Inputs
+    A:DGAlgebra
+    M:Module
+  Outputs
+    HM:Module
+  Description
+    Text
+      Given a DGAlgebra A over a ring R, and an R-module M, A ** M carries the structure
+      of a left DG module over A.  It follows that H(A ** M) is a module over H(A).
+      Although DGModules have yet to be implemented as objects in Macaulay2 in their own right,
+      the current infrastructure (with a little extra work) allows us to determine the module structure
+      of this type of DG module as a module over the homology algebra of A.
+    Text
+      Currently, this code will only work on DGAlgebras that are finite over their ring
+      of definition, such as Koszul complexes.  (Truncations of) module structures in case
+      of non-finite DGAlgebras may be made available in a future update.
+    Text
+      For an example, we will compute the module structure of the Koszul homology of
+      the canonical module over the Koszul homology algebra.
+    Example
+      Q = QQ[x,y,z,w]
+      I = ideal (w^2, y*w+z*w, x*w, y*z+z^2, y^2+z*w, x*y+x*z, x^2+z*w)
+      R = Q/I
+      KR = koszulComplexDGA R
+      cxKR = toComplex KR
+      HKR = HH(KR)
+    Text
+      The following is the graded canonical module of R:
+    Example
+      degList = first entries vars Q / degree / first
+      M = Ext^4(Q^1/I,Q^{-(sum degList)}) ** R
+    Text
+      We obtain the Koszul homology module using the following command:
+    Example
+      HKM = homologyModule(KR,M);
+    Text
+      One may notice the duality of HKR and HKM by considering their Hilbert series:
+    Example
+      hsHKR = value numerator reduceHilbert hilbertSeries HKR
+      hsHKM = value numerator reduceHilbert hilbertSeries HKM
+      AA = ring hsHKR
+      e = numgens Q
+      hsHKR == T_0^e*T_1^e*sub(hsHKM, {T_0 => T_0^(-1), T_1 => T_1^(-1)})
 ///
 
 doc ///
@@ -2952,7 +3445,7 @@ R = Q/I
 A = koszulComplexDGA(R)
 isHomologyAlgebraTrivial(A,GenDegreeLimit=>3)
 cycleList = getGenerators(A)
-assert(findTrivialMasseyOperation(A) =!= null)
+assert(first findTrivialMasseyOperation(A))
 
 -- this is a Teter ring, and the computation in Avramov and Levin's paper shows
 -- H(A) does not have trivial multiplication.
@@ -2963,7 +3456,7 @@ A = koszulComplexDGA(R)
 assert(not isHomologyAlgebraTrivial(A,GenDegreeLimit=>3))
 cycleList = getGenerators(A)
 prodList = apply(subsets(cycleList,2), l -> (first degree l#0 + first degree l#1,l#0*l#1));
-assert(findTrivialMasseyOperation(A) === null)
+assert(not first findTrivialMasseyOperation(A))
 ///
 
 TEST ///
@@ -2996,7 +3489,46 @@ installPackage "DGAlgebras"
 check "DGAlgebras"
 viewHelp DGAlgebras
 
--- Below, we provide some of the examples used in development, unsupported and undocumented for the user.
+-- Below, we provide some of the examples used in development, unsupported
+-- and undocumented for the user.
+
+--- homologyModule code
+restart
+debug needsPackage "DGAlgebras"
+Q = QQ[x,y,z,w]
+I = ideal (w^2, y*w+z*w, x*w, y*z+z^2, y^2+z*w, x*y+x*z, x^2+z*w)
+R = Q/I
+KR = koszulComplexDGA R
+cxKR = toComplex KR
+HKR = HH(KR)
+degList = first entries vars Q / degree / first
+-- This is the (graded) canonical module of M
+M = Ext^4(Q^1/I,Q^{-(sum degList)}) ** R
+KM = cxKR ** M
+HKM = homologyModule(KR,M)
+reduceHilbert hilbertSeries HKR
+reduceHilbert hilbertSeries HKM
+
+--- massey operations code
+restart
+needsPackage "DGAlgebras"
+Q = QQ[x_1,x_2,y_1,y_2,z]
+I = ideal (x_1*x_2^2,y_1*y_2^2,z^3,x_1*x_2*y_1*y_2,y_2^2*z^2,x_2^2*z^2,x_1*y_1*z,x_2^2*y_2^2*z)
+R = Q/I
+KR = koszulComplexDGA R
+z1 = z^2*T_5
+z2 = y_2^2*T_3
+z3 = x_2^2*T_1
+getBoundaryPreimage(KR,z1*z2)
+getBoundaryPreimage(KR,z2*z3)
+z123 = masseyTripleProduct(KR,z1,z2,z3)
+H = HH(KR)
+h1 = homologyClass(KR,z1)
+h2 = homologyClass(KR,z2)
+h3 = homologyClass(KR,z3)
+--- BUG - need to check the h's are in the homology algebra
+h123 = masseyTripleProduct(KR,h1,h2,h3)
+h123 == homologyClass z123
 
 -- Bug from the Macaulay2 Google Group
 restart

@@ -340,28 +340,28 @@ gfanParseIdeals String := (s) -> (
 
 gfanParseIdeal = method()
 gfanParseIdeal String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	value concatenate G
 )
 
 gfanParseMarkedIdeal = method()
 gfanParseMarkedIdeal String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	markedPolynomialList transpose apply(gfanParseList(concatenate G), p -> gfanParseMarkedPoly(p))
 )
 
 gfanParseMarkedIdeals = method()
 gfanParseMarkedIdeals String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	apply(gfanParseList(concatenate G), L -> markedPolynomialList transpose apply(L, p -> gfanParseMarkedPoly(p)))
 )
 
 gfanParseMPL = method()
 gfanParseMPL String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	new MarkedPolynomialList from
 		transpose apply(gfanParseList(concatenate G), p -> gfanParseMarkedPoly(p))
@@ -369,7 +369,7 @@ gfanParseMPL String := (s) -> (
 
 gfanParseLMPL = method()
 gfanParseLMPL String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	apply(gfanParseList(concatenate G), L ->
 		new MarkedPolynomialList from transpose apply(L, p -> gfanParseMarkedPoly(p)))
