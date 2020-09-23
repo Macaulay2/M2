@@ -9,8 +9,10 @@ globalAssignment ImmutableType
 -- these types are pre-defined
 
 RR.synonym = "real number"
+RRi.synonym = "real interval number"
 CC.synonym = "complex number"
 RR.texMath = ///{\mathbb R}///
+RR.texMath = ///{\square\mathbb R}///
 CC.texMath = ///{\mathbb C}///
 Number.synonym = "number"
 InexactFieldFamily.synonym = "inexact field family"
@@ -29,23 +31,30 @@ InexactField.synonym = "inexact field"
 raw InexactField := R -> R.RawRing
 
 RR.InexactField = RealField    = new Type of InexactField   ; RealField.synonym = "real field"
+RRi.InexactField = RealField    = new Type of InexactField   ; RealField.synonym = "real field"
 CC.InexactField = ComplexField = new Type of InexactField; ComplexField.synonym = "complex field"
 
 Nothing' = Nothing					    -- maybe we'll want to rename it later...
 RingFamily_* := RR -> RR#(symbol _*)
+RingFamily_* := RRi -> RRi#(symbol _*)
 RingFamily_* = (RR,e) -> RR#(symbol _*) = e
+RingFamily_* = (RRi,e) -> RRi#(symbol _*) = e
 InexactNumber' = new Type of Nothing'
 RR_* = RR' = new Type of InexactNumber'
+RRi_* = RRi' = new Type of InexactNumber'
 CC_* = CC' = new Type of InexactNumber'
 
 setAttribute(CC',PrintNet,"CC" | "*"^-1)
 setAttribute(RR',PrintNet,"RR" | "*"^-1)
+setAttribute(RRi',PrintNet,"RRi" | "*"^-1)
 setAttribute(CC',PrintNames,"CC_*")
 setAttribute(RR',PrintNames,"RR_*")
+setAttribute(RRi',PrintNames,"RRi_*")
 setAttribute(InexactNumber',PrintNet,"InexactNumber" | "*"^-1)
 
 protect back
 RR'.back = RR
+RRi'.back = RRi
 CC'.back = CC
 new RealField of Nothing' from ZZ := memoize (
      (RealField,Nothing',prec) -> newClass(RealField,Nothing',
@@ -62,7 +71,7 @@ new ComplexField of Nothing' from ZZ := memoize(
 	       symbol precision => prec,
 	       symbol Engine => true,
 	       symbol isBasic => true,
-	       symbol baseRings => {ZZ,QQ,RR},
+	       symbol baseRings => {ZZ,QQ,RR,RRi},
 	       symbol RawRing => rawCC prec
 	       }))
 precision InexactField := R -> R.precision
@@ -110,6 +119,7 @@ numeric(ZZ, InfiniteNumber) := (prec,infinity) -> infinity#0 * infty prec
 ZZ _ RealField :=
 QQ _ RealField :=
 RR _ RealField := (x,R) -> toRR(R.precision,x)
+RRi _ RealField := (x,R) -> toRRi(R.precision,x)
 ZZ _ ComplexField :=
 QQ _ ComplexField :=
 RR _ ComplexField :=
@@ -147,9 +157,11 @@ promote(RR,QQ) := (z,QQ) -> if z === 0. then 0/1 else if isFinite z then (
      ) else error "promote(RR,QQ): non-finite number encountered"
 
 ring RR := x -> new RealField of RR' from precision x
+ring RRi := x -> new RealField of RRi' from precision x
 ring CC := x -> new ComplexField of CC' from precision x
 
 new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x)
+new RRi from RawRingElement := (RRR,x) -> ( assert( RRR === RRi ); rawToRRi x)
 new CC from RawRingElement := (CCC,x) -> ( assert( CCC === CC ); rawToCC x)
 
 -- arithmetic operations
