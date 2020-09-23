@@ -39,8 +39,8 @@ newPackage(
 	     "acceptance date" => "2012-02-06",
 	     "published article URI" => "http://j-sag.org/Volume4/jsag-1-2012.pdf",
 	     "published code URI" => "http://j-sag.org/Volume4/Binomials.m2",
-	     "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Binomials.m2",
-	     "release at publication" => 14467,
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Binomials.m2",
+	     "release at publication" => "6c927c4f11724e29840c889e5ac7a426b17685ab",
 	     "version at publication" => "1.0",
 	     "volume number" => "4",
 	     "volume URI" => "http://j-sag.org/Volume4/"

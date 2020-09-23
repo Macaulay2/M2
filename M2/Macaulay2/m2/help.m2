@@ -219,22 +219,19 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    cert  = new HashTable from cert;
 	    -- TODO: compare with the one in installPackage.m2
 	    star := IMG { "src" => replace("PKG", "Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
+	    commit := replace("(?<=/blob/)master", toString cert#"release at publication", cert#"repository code URI");
 	    DIV {
 		SUBSECTION {"Certification ", star},
 		PARA {
-		    "Version ",       BOLD cert#"version at publication", " of this package was accepted for
-		    publication in ", HREF{cert#"volume URI", "volume " | cert#"volume number"}, " of
-		    the journal ",    HREF{cert#"journal URI",            cert#"journal name"},
-		    " on ",                cert#"acceptance date", ", in the
-		    article ",        HREF{cert#"published article URI",  cert#"article title"}, ". That version can
-		    be obtained ",    HREF{cert#"published code URI", "from the journal"},
-		    " or from the ", EM "Macaulay2", " source code repository, ",
-		    -- make a hot link if it's github, but not if it's svn
-		    -- github calls it a commit number, svn calls it a release number:
-		    if match("github.com", cert#"repository code URI")
-		    then             (HREF{cert#"repository code URI", cert#"repository code URI"}, "commit")
-		    else               (TT cert#"repository code URI", "release"), ", ",
-		    " number ", toString cert#"release at publication", "."}}
+		    "Version ", BOLD cert#"version at publication", " of this package was accepted for publication",
+		    " in ",     HREF{cert#"volume URI", "volume " | cert#"volume number"},
+		    " of ",     HREF{cert#"journal URI",            cert#"journal name"},
+		    " on ",          cert#"acceptance date", ", in the article ",
+		                HREF{cert#"published article URI",  cert#"article title"}, ".",
+		    " That version can be obtained",
+		    " from ",   HREF{cert#"published code URI", "the journal"}, " or",
+		    " from ",   HREF{commit, ("the ", EM "Macaulay2", " source code repository")},
+		    "."}}
 	    ),
 	DIV {
 	    SUBSECTION "Version",

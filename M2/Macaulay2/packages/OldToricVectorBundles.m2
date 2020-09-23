@@ -26,8 +26,8 @@ newPackage("OldToricVectorBundles",
 	 "acceptance date" => "2010-06-15",
 	 "published article URI" => "http://j-sag.org/Volume2/jsag-3-2010.pdf",
 	 "published code URI" => "http://j-sag.org/Volume2/ToricVectorBundles.m2",
-	 "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/ToricVectorBundles.m2",
-	 "release at publication" => 11367,	    -- as an integer
+	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ToricVectorBundles.m2",
+	 "release at publication" => "314a1e7a1a5f612124f23e2161c58eabeb491f46",
 	 "version at publication" => "1.0",
 	 "volume number" => "2",
 	 "volume URI" => "http://j-sag.org/Volume2/"
