@@ -71,7 +71,7 @@ new ComplexField of Nothing' from ZZ := memoize(
 	       symbol precision => prec,
 	       symbol Engine => true,
 	       symbol isBasic => true,
-	       symbol baseRings => {ZZ,QQ,RR},
+	       symbol baseRings => {ZZ,QQ,RR,RRi},
 	       symbol RawRing => rawCC prec
 	       }))
 new RealIntervalField of Nothing' from ZZ := memoize (
