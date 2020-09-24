@@ -43,5 +43,5 @@ document {
      EXAMPLE lines ///
 	  annihilator(M, Strategy=>Quotient)
 	  ///,
-     SeeAlso => {(quotient, Module, Module), Ext}
+     SeeAlso => {"Colon::quotient(Module,Module)", Ext}
      }

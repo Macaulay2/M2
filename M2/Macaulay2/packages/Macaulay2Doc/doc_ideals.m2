@@ -72,9 +72,9 @@ document {
 	  TO associatedPrimes,
 	  TO "PrimaryDecomposition::primaryDecomposition",
 	  TO topComponents,
-	  TO saturate,
-	  TO quotient,
-	  TO (symbol :,Ideal,Ideal),
+	  TO "Colon::saturate(Ideal,Ideal)",
+	  TO "Colon::quotient(Ideal,Ideal)",
+--	  (symbol:, Ideal, Ideal), -- TODO: get this to work across packages
 	  TO intersect
 	  },
      "Ideals from geometry",
@@ -202,4 +202,3 @@ document {
      },
      SeeAlso => {"ideals"}
      }
- 

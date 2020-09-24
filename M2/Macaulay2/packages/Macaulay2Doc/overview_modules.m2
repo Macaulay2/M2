@@ -74,9 +74,9 @@ document {
      "Annihilators, quotients and Gröbner bases:",
      UL {
 	  TO (gb, Module),
-	  TO (symbol :, Module, Ideal),
+--	  TO (symbol :, Module, Ideal), -- TODO: get this to work across packages
 	  TO (annihilator, Module),
-	  TO (saturate, Module, Ideal),
+	  TO "Colon::saturate(Module,Ideal)",
 	  },
      "Common homological computations:",
      UL {

@@ -3,45 +3,7 @@
 --- author(s): MES, some from before
 --- notes: 
 
-document {
-     Key => [saturate,Strategy],
-     "There are four strategy values:",
-     SUBSECTION "Iterate",
-         TT "saturate(I,J,Strategy => Iterate)", " -- indicates that successive ideal
-	 or module quotients should be used.",
-	 PARA{},
-	 "This value is the default.",
-     SUBSECTION "Linear",
-         TT "saturate(I,J,Strategy => Linear)", 
-	 TT "Strategy => Linear", " -- indicates that the reverse lex order should
-	 be used to compute the saturation.",
-	 PARA{},
-	 "This presumes that ", TT "J", " is a single, linear polynomial, and that ", TT "I", " 
-	 is homogeneous.",
-     SUBSECTION "Bayer",
-     	 TT "saturate(I,f,Strategy => Bayer)", " -- indicates that the method of Bayer's 
-	 thesis should be used.",
-	 PARA{},
-	 "The method is to compute ", TT "(I:f)", " for ", TT "I", " and ", TT "f", " homogeneous,
-	 add a new variable ", TT "z", ", compute a Gröbner basis of ", TT "(I,f-z)", " in reverse 
-	 lex order, divide by ", TT "z", ", and finally replace ", TT "z", " by ", TT "f", ".",
-     SUBSECTION "Elimination",
-	 TT "saturate(I,f,Strategy => Elimination)", " -- indicates that the
-	 saturation ", TT "(I:f)", " should be computed by eliminating
-	 f", TT "z", " from ", TT "(I,f*z-1)", ", where ", TT "z", " is a new variable."
-     }
-
-document {
-     Key => [saturate,DegreeLimit],
-     TT "DegreeLimit => n", " -- keyword for an optional argument used with
-     ", TO "saturate", " which specifies that the computation should halt after dealing 
-     with degree n."
-     }
-
-undocumented {
-     (saturate, Vector)
-     }
-
+undocumented { (saturate, Vector) }
 
 document { 
      Key => {saturate,
@@ -95,6 +57,35 @@ document {
      This will be changed in a later version.",
      SeeAlso => {quotient, "PrimaryDecomposition::PrimaryDecomposition"}
      }
+
+document {
+     Key => [saturate, Strategy],
+     "There are four strategy values:",
+     SUBSECTION "Iterate",
+         TT "saturate(I,J,Strategy => Iterate)", " -- indicates that successive ideal
+	 or module quotients should be used.",
+	 PARA{},
+	 "This value is the default.",
+     SUBSECTION "Linear",
+         TT "saturate(I,J,Strategy => Linear)", 
+	 TT "Strategy => Linear", " -- indicates that the reverse lex order should
+	 be used to compute the saturation.",
+	 PARA{},
+	 "This presumes that ", TT "J", " is a single, linear polynomial, and that ", TT "I", " 
+	 is homogeneous.",
+     SUBSECTION "Bayer",
+     	 TT "saturate(I,f,Strategy => Bayer)", " -- indicates that the method of Bayer's 
+	 thesis should be used.",
+	 PARA{},
+	 "The method is to compute ", TT "(I:f)", " for ", TT "I", " and ", TT "f", " homogeneous,
+	 add a new variable ", TT "z", ", compute a Gröbner basis of ", TT "(I,f-z)", " in reverse 
+	 lex order, divide by ", TT "z", ", and finally replace ", TT "z", " by ", TT "f", ".",
+     SUBSECTION "Elimination",
+	 TT "saturate(I,f,Strategy => Elimination)", " -- indicates that the
+	 saturation ", TT "(I:f)", " should be computed by eliminating
+	 f", TT "z", " from ", TT "(I,f*z-1)", ", where ", TT "z", " is a new variable."
+     }
+
 document { 
      Key => [saturate, MinimalGenerators],
      Headline => "whether to compute minimal generators",
@@ -120,3 +111,46 @@ document {
      SeeAlso => {monomialCurveIdeal, "Truncations::truncate"}
      }
 
+document {
+     Key => [saturate, DegreeLimit],
+     TT "DegreeLimit => n", " -- keyword for an optional argument used with
+     ", TO "saturate", " which specifies that the computation should halt after dealing 
+     with degree n."
+     }
+
+for n in {BasisElementLimit, PairLimit} do document {
+     Key => [saturate,n],
+     PARA {
+     	  "The value for this optional argument is passed through to ", TO gb, " when
+     	  one of the following methods is used: ", TO (saturate,Ideal), ", ", TO (saturate,Ideal,Ideal), ",
+     	  ", TO (saturate,Ideal,RingElement), "."
+	  }
+     }
+
+-*
+doc ///
+  Key
+     saturationZero
+    (saturationZero,Module,Ideal)
+    (saturationZero,Ideal,Ideal)
+  Headline
+    checks whether the saturation of a module with respects to a given ideal is zero
+  Usage
+    saturationZero(M, B)
+    saturationZero(I, B)
+  Inputs
+    M:Module
+    B:Ideal
+    I:Ideal
+  Outputs
+    :Boolean
+  Description
+    Text
+      Given an module M and an ideal B saturationZero checks whether the saturation of M by B is zero. If it is
+      saturationZero returns true otherwise it returns false. This is done without computing the saturation of M by B.
+      Instead we check whether for each generator of B some power of it annihilates the module M. We do this
+      generator by generator.
+
+      If M is an ideal saturationZero checks whether the saturation comodule of M by B is zero.
+///
+*-

@@ -566,6 +566,7 @@ document {
 
 document {
      Key => {(quotientRemainder,RingElement,RingElement),
+	  (quotientRemainder,InexactNumber,RingElement), (quotientRemainder,RingElement,InexactNumber),
 	  (quotientRemainder,Number,RingElement), (quotientRemainder,RingElement,Number)},
      Headline => "quotient and remainder",
      Usage => "(q,r) = quotientRemainder(f,g)",
@@ -692,24 +693,6 @@ document { Key => (symbol ||,GradedModuleMap,GradedModuleMap),
      f = gradedModuleMap( matrix "1;2", matrix "2,3" )
      f||f
      ///
-     }
-
-for n in {BasisElementLimit, PairLimit, DegreeLimit} do document {
-     Key => [quotient,n],
-     PARA {
-     	  "The value for this optional argument is passed through to ", TO gb, " when
-     	  one of the following methods is used: ", TO (quotient,Ideal,Ideal), ", ", TO (quotient,Ideal,RingElement), ",
-     	  ", TO (quotient,Module,Ideal), ", ", TO (quotient,Module,Module), ", and ", TO (quotient,Module,RingElement), "."
-	  }
-     }
-
-for n in {BasisElementLimit,PairLimit} do document {
-     Key => [saturate,n],
-     PARA {
-     	  "The value for this optional argument is passed through to ", TO gb, " when
-     	  one of the following methods is used: ", TO (saturate,Ideal), ", ", TO (saturate,Ideal,Ideal), ",
-     	  ", TO (saturate,Ideal,RingElement), "."
-	  }
      }
 
 document {

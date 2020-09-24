@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {minimalPrimes, decompose, (minimalPrimes, Ideal), (decompose, Ideal)-*,(minimalPrimes, MonomialIdeal), (decompose, MonomialIdeal)*-}, -- the latter two are in PrimaryDecomposition
+     Key => {minimalPrimes, decompose -*, (minimalPrimes, Ideal), (decompose, Ideal),(minimalPrimes, MonomialIdeal), (decompose, MonomialIdeal)*-}, -- FIXME: move to MinimalPrimes
      Headline => "minimal associated primes of an ideal",
      Usage => "minimalPrimes I\ndecompose I",
      Inputs => {"I" => Ideal,

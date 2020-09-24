@@ -5,6 +5,8 @@
 --
 -- UPDATE HISTORY : created 14 April 2018 at M2@UW;
 --                  updated July 2020
+--
+-- TODO : 1. move annihilator functions here as well?
 ---------------------------------------------------------------------------
 newPackage(
     "Colon",
@@ -15,7 +17,7 @@ newPackage(
 	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"},
 	{Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}},
-    PackageExports => {},
+    PackageExports => { "Elimination" },
     AuxiliaryFiles => true,
     DebuggingMode => true
     )
@@ -353,6 +355,7 @@ IdealIdealSaturateAlgorithms = new HashTable from {
 	    I = ideal syz gb(m, Syzygies => true));
 	ideal (presentation ring I ** R)),
 
+    -- TODO: is there a performance hit because neither Eliminate nor Elimination are symbols?
     Eliminate => opts -> (I, J) -> saturate(I, J, opts ++ {Strategy => Elimination}), -- backwards compatibility
     Elimination => opts -> (I, J) -> (
 	intersectionByElimination for g in J_* list saturate(I, g, opts)),
@@ -496,73 +499,15 @@ saturationZero(Module, Ideal) := (M, B) -> (
 --------------------------------------------------------------------
 
 -- basic tests for quotient
-TEST ///
-  R  = ZZ[x, y];
-  I  = ideal(6*x^3, 9*x*y, 8*y^2);
-  J1 = ideal(-3, x^2);
-  J2 = ideal(4*y);
-  assert(intersect(I:J1, I:J2) == ideal(8*y^2, 3*x*y, x*y^2, 6*x^3))
-  assert(I : (J1+J2) == ideal(8*y^2, 3*x*y, 6*x^3))
-  for strategy in {Quotient, Iterate} do
-  assert(quotient(I, J1, Strategy => strategy) == ideal(8*y^2, 3*x*y, x*y^2, 6*x^3))
-///
+load "./Colon/quotient-test.m2"
 
 -- basic tests for saturate
--- used to be in tests/normal/saturate.m2
-TEST ///
-  S = QQ[x, y, z]
-  d = 3
-  f = ideal x^d
-  R = S/f
-  -- a general effective cartier divisor
-  -- of degree 3 supported at x=y=0
-  P = homogenize(x * x^d - y, z)
-  assert(saturate(ideal P, z) == ideal y)
-  -- FIXME: GRevLex is failing currently, but it should work
-  for strategy in {GRevLex, "Unused"} do
-  assert(saturate(ideal P, z, Strategy => strategy) == ideal y)
-///
-
--- example by Leslie Roberts <robertsl@mast.queensu.ca>
--- used to be in tests/normal/saturate2.m2
-TEST ///
-  K = QQ;
-  S = K[u, v, a, c, Degrees => {2, 3, 1, 2}];
-  P = ideal(v^3-u^3*a^3, u*v^2-c^2*a^4);
-  Q = saturate(P, a)
-  assert(Q == quotient(Q, a))
-///
-
-TEST get(currentFileDirectory | "Colon/saturate3.m2")
-TEST get(currentFileDirectory | "Colon/saturate4.m2")
-TEST get(currentFileDirectory | "Colon/saturate5.m2")
-
--- Tests for saturationZero
-TEST ///
-  S = ZZ/11[x_0..x_4];
-  irr = intersect(ideal(x_0, x_1), ideal(x_2, x_3, x_4));
-  I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
-  I' = saturate(I, irr);
-  R = S^1/I';
-  t = (saturate(R, irr) == 0);
-  assert(saturationZero(R, irr) == t)
-///
-
-TEST ///
-  S = ZZ/11[x_0..x_4];
-  irr = intersect(ideal(x_0, x_1), ideal(x_2, x_3, x_4));
-  I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
-  I' = saturate(I, irr);
-  R = S^1/I';
-  t = (saturate(R, irr) == 0);
-  assert(saturationZero(I', irr) == t)
-///
+load "./Colon/saturate-test.m2"
 
 --------------------------------------------------------------------
 ----- Documentation section
 --------------------------------------------------------------------
 
--*
 beginDocumentation()
 
 doc ///
@@ -570,39 +515,27 @@ doc ///
     Colon
   Headline
     saturation and ideal and submodule colon/quotient routines
-  Description
-    Text
-    Example
-  Caveat
-  SeeAlso
+--  Description
+--    Text
+--    Example
+--  Caveat
+--  SeeAlso
 ///
 
-doc ///
-  Key
-     saturationZero
-    (saturationZero,Module,Ideal)
-    (saturationZero,Ideal,Ideal)
-  Headline
-    checks whether the saturation of a module with respects to a given ideal is zero
-  Usage
-    saturationZero(M, B)
-    saturationZero(I, B)
-  Inputs
-    M:Module
-    B:Ideal
-    I:Ideal
-  Outputs
-    :Boolean
-  Description
-    Text
-      Given an module M and an ideal B saturationZero checks whether the saturation of M by B is zero. If it is
-      saturationZero returns true otherwise it returns false. This is done without computing the saturation of M by B.
-      Instead we check whether for each generator of B some power of it annihilates the module M. We do this
-      generator by generator.
+-*
+Where should these be documented?
+quotient
+(quotient, MonomialIdeal, MonomialIdeal)
+(quotient, MonomialIdeal, RingElement)
 
-      If M is an ideal saturationZero checks whether the saturation comodule of M by B is zero.
-///
+saturate
+(saturate, MonomialIdeal, MonomialIdeal)
+(saturate, MonomialIdeal, RingElement)
 *-
+
+-- TODO: review
+load "./Colon/quotient-doc.m2"
+load "./Colon/saturate-doc.m2"
 
 --------------------------------------------------------------------
 ----- Development section
