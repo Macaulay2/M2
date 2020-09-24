@@ -31,7 +31,7 @@ InexactField.synonym = "inexact field"
 raw InexactField := R -> R.RawRing
 
 RR.InexactField = RealField    = new Type of InexactField   ; RealField.synonym = "real field"
-RRi.InexactField = RealField    = new Type of InexactField   ; RealField.synonym = "real field"
+RRi.InexactField = RealField    = new Type of InexactField   ; RealField.synonym = "real interval field"
 CC.InexactField = ComplexField = new Type of InexactField; ComplexField.synonym = "complex field"
 
 Nothing' = Nothing					    -- maybe we'll want to rename it later...
@@ -204,7 +204,7 @@ random RingFamily := opts -> R -> random(default R,opts)
 
 -- algebraic operations and functions
 
-RR.isBasic = CC.isBasic = true
+RR.isBasic = CC.isBasic = RRi.isBasic = true
 
 InexactFieldFamily Array := (T,X) -> (default T) X
 Thing ** InexactFieldFamily := (X,T) -> X ** default T

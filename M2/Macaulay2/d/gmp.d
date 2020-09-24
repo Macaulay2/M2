@@ -908,7 +908,15 @@ export toRRi(n:double,prec:ulong):RRi := (
 export toRR(n:double):RR := toRR(n,defaultPrecision);
 
 export toRRi(n:double):RRi := toRRi(n,defaultPrecision);
-
+                                    
+export interval(a:ZZ,b:ZZ,prec:ulong):RRi := (
+     x := newRRimutable(prec);
+     Ccode( void, "mpfr_set_z( &", x, "->left," , a, ",GMP_RNDD)");
+     Ccode( void, "mpfr_set_z( &", x, "->right," , b, ",GMP_RNDU)");
+     moveToRRiandclear(x));
+                                    
+export interval(a:ZZ,b:ZZ):RRi := interval(a,b,defaultPrecision);
+                                              
 export infinityRR(prec:ulong,sign:int):RR := (
      x := newRRmutable(prec);
      Ccode(void, "mpfr_set_inf(",x,",",sign,")");

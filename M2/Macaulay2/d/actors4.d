@@ -1307,6 +1307,15 @@ toRRi(e:Expr):Expr := (
 	  )
      else WrongArg("an integral, rational, or real number, or a pair"));
 setupfun("toRRi",toRRi);
+                                                     
+interval(e:Expr):Expr := (
+    when e is s:Sequence do (
+            when s.0 is x:ZZcell do (
+                    when s.1 is y:ZZcell do (toExpr(interval(x.v,y.v)))
+                    else WrongArg("not implemented yet"))
+            else WrongArg("not implemented yet"))
+    else WrongArg("not implemented yet"));
+setupfun("interval",interval);
 
 toCC(e:Expr):Expr := (
      when e

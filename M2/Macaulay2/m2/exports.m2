@@ -759,6 +759,7 @@ export {
 	"instances",
 	"integrate",
 	"intersect",
+    "interval",
 	"inverse",
 	"inversePermutation",
 	"irreducibleCharacteristicSeries",
