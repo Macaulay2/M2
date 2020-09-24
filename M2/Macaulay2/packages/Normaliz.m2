@@ -368,29 +368,20 @@ readMultipleNmzData String:=nmzSuffix->
     s:=lines(inf);
 
     L:={};
-    t:="";
-    b:=0;
-
-    while(b<#s)
-    do(
-      nmzGen:={};
-      numRows:=value s#b;
-      numCols:=value s#(b+1);
-      if(numRows==0)
-        then L=append(L,matrix(for j from 0 to numCols-1 list {}))
-      else(
-        for i from b+2 to b+1+numRows
-        do(
-          t = select("[0-9-]+",s#i);
-          gen:=apply(t,value);
-          nmzGen=append(nmzGen,gen);
-        );
-        -- function matrix expects nonempty list
-        if(nmzGen!={})
-        then  L=append(L,matrix(nmzGen));
-        --else  L=append(L,{{}});  -- better {{},{},...,{}};
-      );
-      b=b+numRows+3;
+    i := 0;
+    j := 0;
+    while i < #s do (
+        while j < #s and match("[0-9-]+", s#j) do j = j + 1;
+        nmzGen := if i == j then {{}}
+            else apply(take(s, {i, j - 1}), t -> value \ select("[0-9-]+", t));
+        -- versions between 3.4.0 and 3.5.1 did not print row/column data
+        -- we remove it if present
+        if #nmzGen > 2 and
+            nmzGen#0#0 == #nmzGen - 2 and -- number of rows
+            nmzGen#1#0 == #nmzGen#2 -- number of columns
+        then nmzGen = drop(nmzGen, 2);
+        L = append(L, matrix nmzGen);
+        i = j = j + 1;
     );
     return L;
 );
