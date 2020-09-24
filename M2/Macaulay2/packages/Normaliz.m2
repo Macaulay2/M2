@@ -321,33 +321,9 @@ readNmzData(String):=(nmzSuffix)->
     if member(nmzSuffix, {"inv", "in", "out", "cst"}) then
         error("readNmzData: To read .inv use getNumInvs(), to read .cst use readMultipleNmzData, to read .out or .in there is no function provided");
 
-    if(nmzSuffix=="sup") then ( -- for backward compatibility, should only appear if nmzUserCalled
-          L:=readMultipleNmzData "cst";
-          return L#0;
-    );
-
-    checkNmzFile("readNmzData");
-
-    if not fileExists(nmzFile|"."|nmzSuffix) then
-        error("readNmzData: No file "|nmzFile|"."|nmzSuffix|" found. Perhaps you need to activate another option.");
-
-
-    if debugLevel > 0 then << "--reading " << nmzFile << "." << nmzSuffix << endl;
-    inf:=get(nmzFile|"."|nmzSuffix);
-    s:=lines(inf);
-    nmzGen:={};
-    numRows:=value s#0;
-    numCols:=value s#1;
-    t:="";
-    for i from 2 to numRows+1
-    do(
-       t = select("[0-9-]+",s#i);
-       gen:=apply(t,value);
-       nmzGen=append(nmzGen,gen);
-    );
-    if(nmzGen!={})
-    then  return(matrix(nmzGen))
-    else return;   -- should not appear unless the user calls it
+    L := readMultipleNmzData if nmzSuffix=="sup" then "cst" -- for backward compatibility, should only appear if nmzUserCalled
+        else nmzSuffix;
+    return L#0;
 );
 
 -- reads several matrices from one output file and returns them as list
