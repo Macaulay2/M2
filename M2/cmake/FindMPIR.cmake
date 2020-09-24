@@ -60,7 +60,6 @@ macro(_mpir_check_version)
 endmacro(_mpir_check_version)
 
 if(NOT MPIR_VERSION_OK)
-  set(MPIR_ROOT NOTFOUND)
   set(MPIR_INCLUDE_DIRS NOTFOUND)
   set(MPIR_LIBRARY_DIRS NOTFOUND)
   set(MPIR_LIBRARIES NOTFOUND)

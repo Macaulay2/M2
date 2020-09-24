@@ -60,7 +60,6 @@ macro(_NTL_check_version)
 endmacro(_NTL_check_version)
 
 if(NOT NTL_FOUND)
-  set(NTL_ROOT NOTFOUND)
   set(NTL_INCLUDE_DIR NOTFOUND)
   set(NTL_LIBRARIES NOTFOUND)
 
