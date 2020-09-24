@@ -63,6 +63,7 @@ isWeylAlgebra Ring := R -> (
 ZZ.isCommutative = true
 QQ.isCommutative = true
 RR.isCommutative = true
+RRi.isCommutative = true
 
 isRing = method(TypicalValue => Boolean)
 isRing Thing := R -> false

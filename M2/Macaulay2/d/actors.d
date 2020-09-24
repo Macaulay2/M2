@@ -43,6 +43,10 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
      	  is y:CCcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, RR, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
+     is x:RRicell do (
+        when rhs is y:RRicell do toExpr(x.v + y.v) -- # typical value: symbol +, RRi, RRi, RRi
+                 else buildErrorPacket(EngineError("Failed to create sum"))
+                      )
      is x:CCcell do (
 	  when rhs
 	  is y:ZZcell do toExpr(x.v + toRR(y.v,precision(x.v.re)))	    -- # typical value: symbol +, CC, ZZ, CC
