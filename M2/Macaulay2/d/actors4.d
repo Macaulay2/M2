@@ -1356,6 +1356,37 @@ toRR(e:Expr):Expr := (
 	  )
      else WrongArg("an integral, rational, or real number, or a pair"));
 setupfun("toRR",toRR);
+                                                     
+toRRi(e:Expr):Expr := (
+     when e
+     is x:ZZcell do toExpr(toRRi(x.v,defaultPrecision))
+     is x:QQcell do toExpr(toRRi(x.v,defaultPrecision))
+     is RRicell do e
+     is s:Sequence do (
+	  if length(s) != 2 then WrongNumArgs(1,2) else
+	  when s.0 is prec:ZZcell do (
+	       if !isULong(prec.v) then WrongArgSmallUInteger(1)
+	       else (
+	       	    when s.1
+     	       	    is x:ZZcell do toExpr(toRRi(x.v,toULong(prec.v)))
+	       	    is x:QQcell do toExpr(toRRi(x.v,toULong(prec.v)))
+     	       	    is x:RRicell do toExpr(toRRi(x.v,toULong(prec.v)))
+		    else WrongArg(1,"an integral, rational, or real number")
+		    )
+	       )
+	  else WrongArgZZ(1)
+	  )
+     else WrongArg("an integral, rational, or real number, or a pair"));
+setupfun("toRRi",toRRi);
+                                                     
+interval(e:Expr):Expr := (
+    when e is s:Sequence do (
+            when s.0 is x:ZZcell do (
+                    when s.1 is y:ZZcell do (toExpr(interval(x.v,y.v)))
+                    else WrongArg("not implemented yet"))
+            else WrongArg("not implemented yet"))
+    else WrongArg("not implemented yet"));
+setupfun("interval",interval);
 
 toCC(e:Expr):Expr := (
      when e
@@ -1420,6 +1451,7 @@ setupfun("toCC",toCC);
 precision(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(precision(x.v))
+     is x:RRicell do toExpr(precision(x.v))
      is x:CCcell do toExpr(precision(x.v))
      else WrongArgRR());
 setupfun("precision0",precision);
