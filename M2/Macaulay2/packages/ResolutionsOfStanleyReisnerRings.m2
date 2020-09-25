@@ -12,7 +12,7 @@ newPackage(
     Version => "0.1",
     Date => "July 15, 2020",
     	Authors => {{Name => "Ashleigh Adams", Email => "adams869@umn.edu", HomePage => "http://www.ashleigh-adams.com"}},
-    Headline => "Routines for comparing resolutions of Stanley-Reisner rings and computing various systems of parameters",
+    Headline => "Comparing resolutions of Stanley-Reisner rings and computing various systems of parameters",
     PackageExports => {"SimplicialComplexes", "Posets", "SimplicialDecomposability"},
     DebuggingMode => false  
     )
@@ -20,8 +20,8 @@ newPackage(
 -------------------
 -- Exports
 ------------------- 
-export {"kSOP","uSOP","colorfulPresentation","universalPresentation","barycentricSubdivision","sumBetti","equalBettiTally"}
-exportMutable("Kolors")
+export {"colorfulSOP","universalSOP","colorfulPresentation","universalPresentation","barycentricSubdivision","sumBetti","equalBettiTally"}
+exportMutable("Colors")
 
 -------------------
 -- Exported Code
@@ -45,85 +45,85 @@ barycentricSubdivision (List) := F -> (
 ---------------------------------------------------
 
 -- Used in balancedColoring function, it returns the color of a vertex
-vertexColor = (a,Kolors) -> (
-   for i from 0 to #Kolors-1 do ( if member(a,Kolors#i) then return i; );
+vertexColor = (a,Colors) -> (
+   for i from 0 to #Colors-1 do ( if member(a,Colors#i) then return i; );
 );
 
 -----------------------------------------
 --Colorful System of Parameters  
 -----------------------------------------
 
-kSOP = method(TypicalValue => List)
-kSOP (SimplicialComplex,ZZ) := (B,n) -> (
+colorfulSOP = method(TypicalValue => List)
+colorfulSOP (SimplicialComplex,ZZ) := (B,n) -> (
    R      := ring(B);
-   Kolors := new MutableList from {};
-   for i from 0 to dim(B) do ( Kolors = append(Kolors,{}); );
-   for i from 1 to n do ( Kolors#0 = append(Kolors#0,R_i); );
+   Colors := new MutableList from {};
+   for i from 0 to dim(B) do ( Colors = append(Colors,{}); );
+   for i from 1 to n do ( Colors#0 = append(Colors#0,R_i); );
    ColorsNotAllowed := {0};
-   AlreadyColored   := splice{1..#Kolors#0};
-   NotColored       := splice{#Kolors#0+1..#faces(0,B,useFaceClass=>true)};
+   AlreadyColored   := splice{1..#Colors#0};
+   NotColored       := splice{#Colors#0+1..#faces(0,B,useFaceClass=>true)};
    
    --Gives a proper coloring to the graph of B
-   for i from 1 to #Kolors#0 do (
+   for i from 1 to #Colors#0 do (
       for c in NotColored do (
          if isFaceOf(face{R_i,R_c},B) then (
             for a in AlreadyColored do (
                if isFaceOf(face{R_c,R_a},B) then (
-                  ColorOfVertA := vertexColor(R_a,Kolors);
+                  ColorOfVertA := vertexColor(R_a,Colors);
                      if not member(ColorOfVertA,ColorsNotAllowed) then (
                         ColorsNotAllowed = append(ColorsNotAllowed,ColorOfVertA);
                      );
                );
              );
          );
-         m := 0; while member(m,ColorsNotAllowed) do ( m = m+1; );
-         Kolors#m       = append(Kolors#m,R_c);
+         m  := max(ColorsNotAllowed) + 1;
+         Colors#m       = append(Colors#m,R_c);
          AlreadyColored = append(AlreadyColored,c);
          NotColored     = delete(c,NotColored);
       );
    );
    C := {};
    for j from 0 to dim(B) do (
-       C = append(C,(sum for i in Kolors#j list i));
+       C = append(C,(sum for i in Colors#j list i));
    );
    return C;
 );
 
 
-kSOP (SimplicialComplex) := (D) -> (
+colorfulSOP (SimplicialComplex) := (D) -> (
    B0     := barycentricSubdivision(D);
    R      := ring(B0);
    B      := faceDelete(R_0,B0);
    n      := #faces(0,D,useFaceClass=>true);
-   Kolors := new MutableList from {};
-   for i from 0 to dim(B) do ( Kolors = append(Kolors,{}); );
-   for i from 1 to n do ( Kolors#0 = append(Kolors#0,R_i); );
+   Colors := new MutableList from {};
+   for i from 0 to dim(B) do ( Colors = append(Colors,{}); );
+   for i from 1 to n do ( Colors#0 = append(Colors#0,R_i); );
    ColorsNotAllowed := {0};
-   AlreadyColored   := splice{1..#Kolors#0};
-   NotColored       := splice{#Kolors#0+1..#faces(0,B,useFaceClass=>true)};
+   AlreadyColored   := splice{1..#Colors#0};
+   NotColored       := splice{#Colors#0+1..#faces(0,B,useFaceClass=>true)};
    
    --Gives a proper coloring to the graph of B
-   for i from 1 to #Kolors#0 do (
+   for i from 1 to #Colors#0 do (
       for c in NotColored do (
          if isFaceOf(face{R_i,R_c},B) then (
             for a in AlreadyColored do (
                if isFaceOf(face{R_c,R_a},B) then (
-                  ColorOfVertA := vertexColor(R_a,Kolors);
+                  ColorOfVertA := vertexColor(R_a,Colors);
                      if not member(ColorOfVertA,ColorsNotAllowed) then (
                         ColorsNotAllowed = append(ColorsNotAllowed,ColorOfVertA);
                      );
                );
              );
          );
-         m := 0; while member(m,ColorsNotAllowed) do ( m = m+1; );
-         Kolors#m       = append(Kolors#m,R_c);
+         m  := max(ColorsNotAllowed) + 1;
+         Colors#m       = append(Colors#m,R_c);
          AlreadyColored = append(AlreadyColored,c);
          NotColored     = delete(c,NotColored);
       );
    );
    C := {};
    for j from 0 to dim(B) do (
-       C = append(C,(sum for i in Kolors#j list i));
+       C = append(C,(sum for i in Colors#j list i));
    );
    return C;
 );
@@ -151,7 +151,7 @@ colorfulPresentation (SimplicialComplex) := D -> (
    -----psi induces the grading on all ring related elements-----
    psi           := map(S,STrivial);
    I             := psi(ideal(B));
-   NonGradedKSOP := kSOP(B,#faces(0,D,useFaceClass=>true));
+   NonGradedKSOP := colorfulSOP(B,#faces(0,D,useFaceClass=>true));
    KSOP          := {};
    for k in NonGradedKSOP do (
        KSOP = append(KSOP,psi(k));
@@ -182,7 +182,7 @@ colorfulPresentation (List) := F -> (
    -----psi induces the grading on all ring related elements-----
    psi           := map(S,STrivial);
    I             := psi(ideal(B));
-   NonGradedKSOP := kSOP(B,#faces(0,D,useFaceClass=>true));
+   NonGradedKSOP := colorfulSOP(B,#faces(0,D,useFaceClass=>true));
    KSOP          := {};
    for k in NonGradedKSOP do (
        KSOP = append(KSOP,psi(k));
@@ -196,8 +196,8 @@ colorfulPresentation (List) := F -> (
 --Universal System of Parameters (USOP)
 ---------------------------------------
 
-uSOP = method(TypicalValue => List)
-uSOP (SimplicialComplex) := D -> (
+universalSOP = method(TypicalValue => List)
+universalSOP (SimplicialComplex) := D -> (
    Theta    := {};
    for i from 0 to dim(D) do ( 
      elts   := flatten(entries(faces(i,D)));
@@ -207,7 +207,7 @@ uSOP (SimplicialComplex) := D -> (
    return Theta;
 );
 
-uSOP (List) := F -> (
+universalSOP (List) := F -> (
    D        := simplicialComplex(F);
    Theta    := {};
    for i from 0 to dim(D) do ( 
@@ -229,7 +229,7 @@ universalPresentation (List) := F -> (
    S        := ring(D);
    r        := dim(D)+1;
    USOPRing := coefficientRing(ring(D))[vars(1..r), Degrees => splice{1..r}];
-   phi      := map(S, USOPRing, matrix {uSOP(D)});
+   phi      := map(S, USOPRing, matrix {universalSOP(D)});
    MD       := pushForward(phi,S^1/ideal(D));
    return(MD);
 );
@@ -238,7 +238,7 @@ universalPresentation (SimplicialComplex) := D -> (
    S        := ring(D);
    r        := dim(D)+1;
    USOPRing := coefficientRing(ring(D))[vars(1..r), Degrees => splice{1..r}];
-   phi      := map(S, USOPRing, matrix {uSOP(D)});
+   phi      := map(S, USOPRing, matrix {universalSOP(D)});
    MD       := pushForward(phi,S^1/ideal(D));
    return(MD);
 );
@@ -296,9 +296,6 @@ doc ///
             The goal of this work was primarily to help compute examples to provide evidence for Conjecture 6.1 [AR]. I have tried to generalize most of the functionality to make it useful in other areas.  This is work in progress and many interesting pieces are still missing. All suggestions and contributions are welcome.
 ///
 
-      --UL
-    	    --TO "kSOP", " -- computes the colorful system of parameters for the barycentric subdivision of a simplicial complex",
-					--TO "uSOP", " -- computes the universal system of parameters for a simplicial complex",
 
 doc ///
     Key 
@@ -313,7 +310,7 @@ doc ///
         F:List
             a list of facets defining a simplicial complex
     Outputs
-        B:SimplicialComplex
+        :SimplicialComplex
             the barycentric subdivision of a simplicial complex of {\tt D}
     Description
         Text
@@ -332,12 +329,12 @@ doc ///
 
 doc ///
     Key 
-        kSOP
+        colorfulSOP
     Headline
         Colorful System of Parameters (KSOP)
     Usage 
-        kSOP(B,n)
-        kSOP(D)
+        colorfulSOP(B,n)
+        colorfulSOP(D)
     Inputs
         B:SimplicialComplex
             the barycentric subdivision of a simplicial complex {\tt D}
@@ -346,7 +343,7 @@ doc ///
         D:SimplicialComplex
             any simplicial complex for which you want the KSOP for its barycentric subdivision
     Outputs
-        C:List
+        :List
             a list of sums of ring elements of the polynomial ring of {\tt B}
     Description
         Text
@@ -360,13 +357,13 @@ doc ///
             ComplexIncludingMinElt = barycentricSubdivision D;
             R = ring(ComplexIncludingMinElt);
             B = faceDelete(R_0,ComplexIncludingMinElt);
-            kSOP(B,n)
+            colorfulSOP(B,n)
         Text
             Also included is the option to input any simplicial complex {\tt D} in order to obtain the colorful system of parameters for the face ring of the corresponding barycentric subdivision of {\tt D}.
         Example
             S = QQ[a..e];
             D = simplicialComplex {a*b*c,c*d,e};
-            kSOP(D)
+            colorfulSOP(D)
     Caveat
          This current version requires the input of the barycentric subdivision of a simplicial complex {\tt D} without the minimal element of the face poset, which corresponds to the empty set of {\tt D}. This must be acomplished by using using the {\tt barycentricSubdivision} method, included in this package. It also has the option of inputting any simplicial complex. The system then takes the barycentric subdivision of {\tt D} and removes its minimal element in order to obtain the colorful system of parameters. 
     SeeAlso
@@ -378,18 +375,18 @@ doc ///
 
 doc ///
     Key
-        uSOP
+        universalSOP
     Headline
         Universal System of Parameters (USOP)
     Usage 
-        uSOP D
-        uSOP F
+        universalSOP D
+        universalSOP F
     Inputs
         D:SimplicialComplex
         F:List
             a list of facets defining a simplicial complex
     Outputs
-        Theta:List
+        :List
          a list of elements from the Stanley-Reisner ring of {\tt D}
     Description
         Text
@@ -398,8 +395,8 @@ doc ///
             S = ZZ/2[a..e];
             F = {a*b*c,c*d,e}
             D = simplicialComplex F
-            uSOP D
-            uSOP F
+            universalSOP D
+            universalSOP F
     SeeAlso
         SimplicialComplexes
 /// 
@@ -463,7 +460,7 @@ doc ///
         F:List
             A list of facets defining a simplicial complex {\tt D}
     Outputs
-        M:Module 
+        :Module 
             A graded presentation of the Stanley-Reisner ring over its universal parameter ring
     Description 
         Text
@@ -477,7 +474,7 @@ doc ///
             degrees M
     SeeAlso
         Module 
-        uSOP
+        universalSOP
 ///
 
 doc ///
@@ -493,7 +490,7 @@ doc ///
         F:List
             A list of facets defining a simplicial complex {\tt D}
     Outputs
-        M:Module 
+        :Module 
             A graded presentation of the Stanley-Reisner ring over its universal parameter ring
     Description 
         Text
@@ -507,14 +504,14 @@ doc ///
             degrees M 
     SeeAlso
         Module 
-        kSOP
+        colorfulSOP
 ///
 
 -------------------
 -- Tests
 -------------------
 
---kSOP,uSOP,colorfulPresentation,universalPresentation,barycentricSubdivision,sumBetti,equalBettiTally
+--colorfulSOP,universalSOP,colorfulPresentation,universalPresentation,barycentricSubdivision,sumBetti,equalBettiTally
 
 -- Tests barycentricSubdivision 
 TEST ///
@@ -528,26 +525,26 @@ TEST ///
     assert(B === simplicialComplex  {v_0*v_3*v_8*v_10,v_0*v_2*v_8*v_10,v_0*v_3*v_7*v_10,v_0*v_1*v_7*v_10,v_0*v_2*v_6*v_10,v_0*v_1*v_6*v_10,v_0*v_4*v_9,v_0*v_3*v_9,v_0*v_5});
 ///
 
--- Tests uSOP
+-- Tests universalSOP
 TEST ///
     S = QQ[a,b,c];
-    assert(uSOP simplicialComplex {a*b,c} === {a+b+c,a*b});
+    assert(universalSOP simplicialComplex {a*b,c} === {a+b+c,a*b});
     S = QQ[a..e];
-    assert(uSOP simplicialComplex {a*b*c,c*d,e} === {a+b+c+d+e,a*b+a*c+b*c+c*d,a*b*c});
+    assert(universalSOP simplicialComplex {a*b*c,c*d,e} === {a+b+c+d+e,a*b+a*c+b*c+c*d,a*b*c});
 ///
 
--- Tests kSOP
+-- Tests colorfulSOP
 TEST ///
    S         = QQ[a,b,c];
    B0        = barycentricSubdivision(simplicialComplex {a*b,c});
    STrivial  = ring(B0);
    B         = faceDelete(STrivial_0,B0);
-   assert(kSOP(B,3) === {v_1+v_2+v_3,v_4});
+   assert(colorfulSOP(B,3) === {v_1+v_2+v_3,v_4});
    S         = QQ[a..e];
    B0        = barycentricSubdivision(simplicialComplex {a*b*c,c*d,e});
    STrivial  = ring(B0);
    B         = faceDelete(STrivial_0,B0);
-   assert(kSOP(B,5) === {v_1+v_2+v_3+v_4+v_5,v_6+v_7+v_8+v_9,v_10});
+   assert(colorfulSOP(B,5) === {v_1+v_2+v_3+v_4+v_5,v_6+v_7+v_8+v_9,v_10});
 ///
 
 -- Tests equalBettiTally 
@@ -577,7 +574,7 @@ TEST ///
    D = simplicialComplex {a*b,c} 
    M = universalPresentation D;
    f = map(target generators M, source relations M, matrix{{0},{0},{c}})
-   assert(relations M === f);
+  c assert(relations M === f);
 ///
 
 
