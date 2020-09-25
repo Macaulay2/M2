@@ -143,6 +143,7 @@ groebnerBasis Matrix := opts -> x -> (
     R := ring x;
     if opts.Strategy =!= null 
       and char R > 0 -- MGB only works over prime finite fields
+      and 2^16 > char R -- FIXME: MGB fails for primes larger than 2^16
       and isPolynomialRing R
       and isCommutative R
       and instance(coefficientRing R, QuotientRing) -- really: want to say it is a prime field
