@@ -86,19 +86,19 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
       count = 1;
       mi_stash = new stash("mi_node", sizeof(Nmi_node));
     }
-  array<queue<Bag *> *> bins;
+  VECTOR(queue<Bag *> *) bins;
   Bag *b, *b1;
   while (elems.remove(b))
     {
       int d = varpower::simple_degree(b->monom().raw());
-      if (d >= bins.length())
-        for (int i = bins.length(); i <= d; i++) bins.append(NULL);
+      if (d >= bins.size())
+        for (int i = bins.size(); i <= d; i++) bins.push_back(NULL);
       if (bins[d] == NULL) bins[d] = new queue<Bag *>;
       bins[d]->insert(b);
     }
   int n = get_ring()->n_vars();
   int *exp = newarray_atomic(int, n);
-  for (int i = 0; i < bins.length(); i++)
+  for (int i = 0; i < bins.size(); i++)
     if (bins[i] != NULL)
       {
         while (bins[i]->remove(b))
@@ -124,17 +124,17 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
       count = 1;
       mi_stash = new stash("mi_node", sizeof(Nmi_node));
     }
-  array<queue<Bag *> *> bins;
+  VECTOR(queue<Bag *> *) bins;
   Bag *b;
   while (elems.remove(b))
     {
       int d = varpower::simple_degree(b->monom().raw());
-      if (d >= bins.length())
-        for (int i = bins.length(); i <= d; i++) bins.append(NULL);
+      if (d >= bins.size())
+        for (int i = bins.size(); i <= d; i++) bins.push_back(NULL);
       if (bins[d] == NULL) bins[d] = new queue<Bag *>;
       bins[d]->insert(b);
     }
-  for (int i = 0; i < bins.length(); i++)
+  for (int i = 0; i < bins.size(); i++)
     if (bins[i] != NULL)
       {
         while (bins[i]->remove(b)) insert(b);
@@ -209,9 +209,9 @@ int MonomialIdeal::search_expvector(const int *exp, Bag *&b) const
     }
 }
 
-void MonomialIdeal::find_all_divisors(const int *exp, array<Bag *> &b) const
+void MonomialIdeal::find_all_divisors(const int *exp, VECTOR(Bag *)& b) const
 {
-  b.shrink(0);
+  b.clear();
   if (mi == NULL) return;
 
   Nmi_node *p = mi;
@@ -234,7 +234,7 @@ void MonomialIdeal::find_all_divisors(const int *exp, array<Bag *> &b) const
 
       if (p->tag == Nmi_node::leaf)
         {
-          b.append(p->baggage());
+          b.push_back(p->baggage());
         }
       else
         p = p->down();

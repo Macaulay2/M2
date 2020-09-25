@@ -10,7 +10,6 @@
 
 using respolyHeap = geobucket<const res2_poly, res2term *>;
 
-#include <iostream>
 bool res2_comp::stop_conditions_ok()
 {
   if (stop_.length_limit != 0 && stop_.length_limit->len > 0)
@@ -23,7 +22,7 @@ bool res2_comp::stop_conditions_ok()
 int res2_comp::complete_thru_degree() const
 {
   int lo = hidegree + 1;
-  int len = resn.length() - 1;
+  int len = resn.size() - 1;
   for (int lev = 0; lev <= len; lev++)
     {
       for (res2_pair *p = resn[lev]->pairs; p != NULL; p = p->next)
@@ -73,7 +72,7 @@ enum ComputationStatusCode res2_comp::skeleton(int level)
 
 void res2_comp::increase_level(int newmax)
 {
-  for (int i = resn.length(); i <= newmax + 2; i++)
+  for (int i = resn.size(); i <= newmax + 2; i++)
     {
       res2_level *p = new res2_level;
       p->pairs = NULL;
@@ -83,7 +82,7 @@ void res2_comp::increase_level(int newmax)
       p->nleft = 0;
       p->nminimal = 0;
       p->nthrown = 0;
-      resn.append(p);
+      resn.push_back(p);
     }
   length_limit = newmax;
 }
@@ -94,7 +93,7 @@ enum ComputationStatusCode res2_comp::do_all_pairs(int level, int degree)
   // and then actually compute the ones in that degree.
   if (level <= 0 || level > length_limit + 1) return COMP_COMPUTING;
   //  if (degree <= 0 || degree > hidegree) return COMP_COMPUTING;
-  if (level < resn.length() && (resn[level]->next_pair == NULL ||
+  if (level < resn.size() && (resn[level]->next_pair == NULL ||
                                 degree < resn[level]->next_pair->degree))
     return COMP_COMPUTING;
   enum ComputationStatusCode ret = do_all_pairs(level, degree - 1);
@@ -422,8 +421,6 @@ void res2_comp::initialize(const Matrix *mat,
                            int SlantedDegreeLimit,
                            int SortStrategy)
 {
-  int i;
-
   set_status(COMP_COMPUTING);
   P = mat->get_ring()->cast_to_PolynomialRing();
   assert(P != NULL);
@@ -448,7 +445,7 @@ void res2_comp::initialize(const Matrix *mat,
   if (mat->n_rows() > 0)
     {
       lodegree = mat->rows()->primary_degree(0);
-      for (i = 1; i < mat->n_rows(); i++)
+      for (auto i = 1; i < mat->n_rows(); i++)
         if (lodegree > mat->rows()->primary_degree(i))
           lodegree = mat->rows()->primary_degree(i);
     }
@@ -456,7 +453,7 @@ void res2_comp::initialize(const Matrix *mat,
     lodegree = 0;
 
   // This can't actually set lodegree, can it?
-  for (i = 0; i < mat->n_cols(); i++)
+  for (auto i = 0; i < mat->n_cols(); i++)
     if (lodegree > mat->cols()->primary_degree(i) - 1)
       lodegree = mat->cols()->primary_degree(i) - 1;
 
@@ -476,19 +473,16 @@ void res2_comp::initialize(const Matrix *mat,
 
   // Do level 0
   next_component = 0;
-  for (i = 0; i < mat->n_rows(); i++)
+  for (auto i = 0; i < mat->n_rows(); i++)
     {
       res2_pair *p = new_base_res2_pair(i);
-      base_components.append(p);
+      base_components.push_back(p);
     }
-  for (i = base_components.length() - 1; i >= 0; i--)
-    {
-      res2_pair *p = base_components[i];
-      insert_pair(p);
-    }
+  for (auto p = base_components.rbegin(); p != base_components.rend(); ++p)
+    insert_pair(*p);
 
   // Do level 1
-  for (i = 0; i < generator_matrix->n_cols(); i++)
+  for (auto i = 0; i < generator_matrix->n_cols(); i++)
     if ((*generator_matrix)[i] != NULL)
       {
         res2_pair *p = new_res2_pair(i);  // Makes a generator 'pair'
@@ -594,7 +588,7 @@ void res2_comp::remove_res2_level(res2_level *lev)
 res2_comp::~res2_comp()
 {
   int i;
-  for (i = 0; i < resn.length(); i++) remove_res2_level(resn[i]);
+  for (i = 0; i < resn.size(); i++) remove_res2_level(resn[i]);
 
   delete res2_pair_stash;
   delete mi_stash;
@@ -1073,19 +1067,19 @@ int res2_comp::find_divisor(const MonomialIdeal *mi,
 {
   // Find all the posible matches, use some criterion for finding the best...
   res2_pair *p;
-  array<Bag *> bb;
+  VECTOR(Bag *) bb;
   mi->find_all_divisors(exp, bb);
-  if (bb.length() == 0) return 0;
+  if (bb.size() == 0) return 0;
   result = reinterpret_cast<res2_pair *>((bb[0]->basis_ptr()));
   // Now search through, and find the best one.  If only one, just return it.
   if (M2_gbTrace >= 5)
     if (mi->length() > 1)
       {
         buffer o;
-        o << ":" << mi->length() << "." << bb.length() << ":";
+        o << ":" << mi->length() << "." << bb.size() << ":";
         emit(o.str());
       }
-  if (bb.length() == 1)
+  if (bb.size() == 1)
     {
       if (mi->length() == 1)
         n_ones++;
@@ -1097,7 +1091,7 @@ int res2_comp::find_divisor(const MonomialIdeal *mi,
   //  int n = R->n_terms(result->syz);
 
   unsigned int lowest = result->pair_num;
-  for (int i = 1; i < bb.length(); i++)
+  for (int i = 1; i < bb.size(); i++)
     {
       p = reinterpret_cast<res2_pair *>(bb[i]->basis_ptr());
       if (p->pair_num < lowest)
@@ -1823,36 +1817,11 @@ void res2_comp::handle_pair_by_degree(res2_pair *p)
 //////////// res-a0-aux /////////////////////
 #include "matrix-con.hpp"
 
-#if 0
 M2_arrayint res2_comp::betti_skeleton() const
 {
-  fprintf(stdout, "In res-a0.cpp:betti_skeleton old\n");
-  int lo = lodegree;
-  int hi = lo+hidegree;
-  int len = resn.length()-1;
-  int *bettis;
-  betti_init(lo,hi,len,bettis);
-  for (int lev=0; lev<=len; lev++)
-    {
-      for (res2_pair *p = resn[lev]->pairs; p != NULL; p = p->next)
-        {
-          int d = p->degree;
-          bettis[lev+(len+1)*d]++;
-        }
-    }
-  M2_arrayint result = betti_make(lo,hi,len,bettis);
-  deletearray(bettis);
-  return result;
-}
-#endif
-
-#if 1
-M2_arrayint res2_comp::betti_skeleton() const
-{
-  fprintf(stdout, "In res-a0.cpp:betti_skeleton new\n");
   int lo = lodegree;
   int hi = lo + hidegree;
-  int len = resn.length() - 1;
+  int len = resn.size() - 1;
   BettiDisplay B(lo, hi, len);
 
   for (int lev = 0; lev <= len; lev++)
@@ -1865,13 +1834,12 @@ M2_arrayint res2_comp::betti_skeleton() const
     }
   return B.getBetti();
 }
-#endif
 
 M2_arrayint res2_comp::betti_remaining() const
 {
   int lo = lodegree;
   int hi = lo + hidegree;
-  int len = resn.length() - 1;
+  int len = resn.size() - 1;
   int *bettis;
   betti_init(lo, hi, len, bettis);
   for (int lev = 0; lev <= len; lev++)
@@ -1893,7 +1861,7 @@ M2_arrayint res2_comp::betti_minimal() const
 {
   int lo = lodegree;
   int hi = lo + hidegree;
-  int len = resn.length() - 1;
+  int len = resn.size() - 1;
   int *bettis;
   betti_init(lo, hi, len, bettis);
   for (int lev = 0; lev <= len; lev++)
@@ -1914,7 +1882,7 @@ M2_arrayint res2_comp::betti_nmonoms() const
 {
   int lo = lodegree;
   int hi = lo + hidegree;
-  int len = resn.length() - 1;
+  int len = resn.size() - 1;
   int *bettis;
   betti_init(lo, hi, len, bettis);
   for (int lev = 0; lev <= len; lev++)
@@ -2058,7 +2026,7 @@ void res2_comp::text_out(buffer &o) const
 
   // If the printlevel is high enough, display each element
   if (M2_gbTrace >= 2)
-    for (int lev = 0; lev < resn.length(); lev++)
+    for (int lev = 0; lev < resn.size(); lev++)
       {
         if (resn[lev]->pairs == NULL) continue;
         o << "---- level " << lev << " ----" << newline;
@@ -2071,7 +2039,7 @@ FreeModule *res2_comp::free_of(int i) const
 {
   FreeModule *result;
   result = P->make_Schreyer_FreeModule();
-  if (i < 0 || i >= resn.length()) return result;
+  if (i < 0 || i >= resn.size()) return result;
 
   int *deg = degree_monoid()->make_one();
   int n = 0;
@@ -2088,7 +2056,7 @@ FreeModule *res2_comp::minimal_free_of(int i) const
 {
   FreeModule *result;
   result = P->make_Schreyer_FreeModule();
-  if (i < 0 || i >= resn.length() - 1) return result;
+  if (i < 0 || i >= resn.size() - 1) return result;
   if (do_by_level > 0) return free_of(i);
 
   int *deg = degree_monoid()->make_one();
@@ -2124,8 +2092,8 @@ Matrix *res2_comp::make(int level) const
 
 void res2_comp::reduce_minimal(int x,
                                res2term *&f,
-                               array<res2_pair *> &elems,
-                               array<res2term *> &stripped) const
+                               VECTOR(res2_pair *)& elems,
+                               VECTOR(res2term *)& stripped) const
 {
   // Reduce any components of 'f' that correspond to non minimal syzygies.
   monomial MINIMAL_mon = ALLOCATE_MONOMIAL(monom_size);
@@ -2155,22 +2123,22 @@ Matrix *res2_comp::make_minimal(int i) const
   const FreeModule *F = minimal_free_of(i - 1);
   const FreeModule *G = minimal_free_of(i);
   MatrixConstructor result(F, G, NULL);
-  if (i <= 0 || i >= resn.length() - 1) return result.to_matrix();
+  if (i <= 0 || i >= resn.size() - 1) return result.to_matrix();
   if (do_by_level > 0) return make(i);
 
-  array<res2_pair *> elems;
-  array<res2term *> stripped;
+  VECTOR(res2_pair *) elems;
+  VECTOR(res2term *) stripped;
 
   int n = 0;
   for (res2_pair *p = resn[i]->pairs; p != NULL; p = p->next)
     {
       p->me = n++;
-      elems.append(p);
-      stripped.append(static_cast<res2term *>(NULL));
+      elems.push_back(p);
+      stripped.push_back(static_cast<res2term *>(NULL));
     }
 
   int thisx = 0;
-  for (int x = 0; x < elems.length(); x++)
+  for (int x = 0; x < elems.size(); x++)
     {
       res2_pair *p = elems[x];
       if (p->syz_type == SYZ2_MINIMAL)

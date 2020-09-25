@@ -70,10 +70,10 @@ bool GF::initialize_GF(const RingElement *prim)
   _MINUS_ONE = (characteristic() == 2 ? _ONE : Q1_ / 2);
 
   // Get ready to create the 'one_table'
-  array<ring_elem> polys;
-  polys.append(_originalR->from_long(0));
+  VECTOR(ring_elem) polys;
+  polys.push_back(_originalR->from_long(0));
   ring_elem primelem = prim->get_value();
-  polys.append(_originalR->copy(primelem));
+  polys.push_back(_originalR->copy(primelem));
 
   ring_elem oneR = _originalR->one();
 
@@ -83,12 +83,12 @@ bool GF::initialize_GF(const RingElement *prim)
   for (i = 2; i < Q_; i++)
     {
       ring_elem g = _originalR->mult(polys[i - 1], primelem);
-      polys.append(g);
+      polys.push_back(g);
       if (_originalR->is_equal(g, oneR)) break;
       if (_originalR->is_equal(g, x)) _x_exponent = i;
     }
 
-  if (polys.length() != Q_)
+  if (polys.size() != Q_)
     {
       ERROR("GF: primitive element expected");
       return false;

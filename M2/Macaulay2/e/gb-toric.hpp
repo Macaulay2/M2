@@ -280,8 +280,8 @@ class binomialGB_comp : public GBComputation
   binomial_ring *R;
   binomial_s_pair_set *Pairs;  // Pairs and Generators
   binomialGB *Gmin;
-  array<binomial_gb_elem *> Gens;  // All of the generators
-  array<binomial_gb_elem *> G;  // All of the binomial_gb_elem's in one place.
+  VECTOR(binomial_gb_elem *) Gens;  // All of the generators
+  VECTOR(binomial_gb_elem *) G;  // All of the binomial_gb_elem's in one place.
 
   int top_degree;
 
@@ -311,11 +311,11 @@ class binomialGB_comp : public GBComputation
   // monomial masks.  Currently, using monideals is not yet
   // implemented, so this is 'false'.
 
-  array<binomial_gb_elem *> mingens;
+  VECTOR(binomial_gb_elem *) mingens;
   // Only valid for homogeneous case.  These point to GB elements
   // so don't free them by accident!
 
-  array<binomial_gb_elem *> mingens_subring;  // Same comment applies here!
+  VECTOR(binomial_gb_elem *) mingens_subring;  // Same comment applies here!
 
   void process_pair(binomial_s_pair p);
   ComputationStatusCode gb_done() const;

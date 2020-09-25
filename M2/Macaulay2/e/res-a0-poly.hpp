@@ -68,7 +68,7 @@ class res2_poly : public our_new_delete
   vec to_vector(const res2term *f,
                 const FreeModule *F,
                 int to_minimal = 0) const;
-  res2term *from_vector(const array<res2_pair *> &base, const vec v) const;
+  res2term *from_vector(const VECTOR(res2_pair *)& base, const vec v) const;
 
   int n_terms(const res2term *f) const;  // Used for stats
   void elem_text_out(buffer &o,

@@ -100,7 +100,7 @@ void partition_table::reset(int nvars)
     }
 }
 void partition_table::partition(MonomialIdeal *&I,
-                                array<MonomialIdeal *> &result)
+                                VECTOR(MonomialIdeal *)& result)
 // consumes and frees I
 {
   int k;
@@ -114,7 +114,7 @@ void partition_table::partition(MonomialIdeal *&I,
 
   if (n_sets == 1)
     {
-      result.append(I);
+      result.push_back(I);
       return;
     }
 
@@ -129,13 +129,13 @@ void partition_table::partition(MonomialIdeal *&I,
 
   if (n_sets == 1)
     {
-      result.append(I);
+      result.push_back(I);
       return;
     }
 
-  int first = result.length();
+  int first = result.size();
   for (k = 0; k < n_sets; k++)
-    result.append(new MonomialIdeal(I->get_ring(), mi_stash));
+    result.push_back(new MonomialIdeal(I->get_ring(), mi_stash));
 
   // Now partition the monomials
   Bag *b;
@@ -253,7 +253,7 @@ static void iquotient_and_sum(MonomialIdeal &I,
                               MonomialIdeal *&sum,
                               stash *mi_stash)
 {
-  array<queue<Bag *> *> bins;
+  VECTOR(queue<Bag *> *) bins;
   sum = new MonomialIdeal(I.get_ring(), mi_stash);
   quot = new MonomialIdeal(I.get_ring(), mi_stash);
   Bag *bmin = new Bag();
@@ -269,10 +269,10 @@ static void iquotient_and_sum(MonomialIdeal &I,
         {
           sum->insert_minimal(new Bag(0, I[i]->monom()));
           int d = varpower::simple_degree(b->monom().raw());
-          if (d >= bins.length())
-            for (int j = bins.length(); j <= d; j++)
+          if (d >= bins.size())
+            for (int j = bins.size(); j <= d; j++)
               // bins.append((queue<Bag *> *)NULL);
-              bins.append(NULL);
+              bins.push_back(NULL);
           if (bins[d] == NULL)  //(queue<Bag *> *)NULL)
             bins[d] = new queue<Bag *>;
           bins[d]->insert(b);
@@ -283,7 +283,7 @@ static void iquotient_and_sum(MonomialIdeal &I,
   // MES: is it worth looping through each degree, first checking
   // divisibility, and after that, insert_minimal of the ones that survive?
   Bag *b;
-  for (int j = 0; j < bins.length(); j++)
+  for (int j = 0; j < bins.size(); j++)
     if (bins[j] != NULL)
       {
         while (bins[j]->remove(b)) quot->insert(b);
@@ -299,7 +299,7 @@ void hilb_comp::next_monideal()
   // into the monomial ideal.  This allows Hilbert functions of such rings
   // to be computed as usual.
   part_table.partition(I, current->monids);
-  current->i = current->monids.length() - 1;
+  current->i = current->monids.size() - 1;
   current->first_sum = current->i + 1;  // This part is not used at top level
 }
 void hilb_comp::reset()
@@ -374,7 +374,7 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal *I)
   reset();
   MonomialIdeal *copyI = I->copy();
   part_table.partition(copyI, current->monids);
-  current->i = current->monids.length() - 1;
+  current->i = current->monids.size() - 1;
   current->first_sum = current->i + 1;  // This part is not used at top level
 }
 
@@ -388,7 +388,7 @@ hilb_comp::~hilb_comp()
 
       R->remove(p->h0);
       R->remove(p->h1);
-      for (int i = 0; i < p->monids.length(); i++) delete p->monids[i];
+      for (int i = 0; i < p->monids.size(); i++) delete p->monids[i];
       delete p;
     }
 
@@ -449,7 +449,7 @@ int hilb_comp::step()
       ring_elem f = current->h0;
       current->h0 = R->from_long(0);
       current->h1 = R->from_long(0);
-      current->monids.shrink(0);
+      current->monids.clear();
       if (current->up == NULL)
         {
           if (input_mat)
@@ -496,9 +496,9 @@ void hilb_comp::recurse(MonomialIdeal *&I, const int *pivot_vp)
   iquotient_and_sum(*I, pivot_vp, quot, sum, mi_stash);
   delete I;
   part_table.partition(sum, current->monids);
-  current->first_sum = current->monids.length() - 1;
+  current->first_sum = current->monids.size() - 1;
   part_table.partition(quot, current->monids);
-  current->i = current->monids.length() - 1;
+  current->i = current->monids.size() - 1;
 }
 
 void hilb_comp::do_ideal(MonomialIdeal *I)
@@ -611,7 +611,7 @@ void hilb_comp::stats() const
   while (p != NULL)
     {
       o << "----- depth " << d << " -------------" << newline;
-      o << "  " << p->monids.length() << " monomial ideals total" << newline;
+      o << "  " << p->monids.size() << " monomial ideals total" << newline;
       o << "  " << p->i << " = current location" << newline;
       o << "  " << p->first_sum + 1 << " sum monomial ideals" << newline;
       o << "  h0 = ";
@@ -620,7 +620,7 @@ void hilb_comp::stats() const
       o << "  h1 = ";
       R->elem_text_out(o, p->h1);
       o << newline;
-      for (int i = 0; i < p->monids.length(); i++)
+      for (int i = 0; i < p->monids.size(); i++)
         {
           o << "  ---- monomial ideal ---------------" << newline;
           o << "  ";
