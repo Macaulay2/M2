@@ -1290,6 +1290,7 @@ toRRi(e:Expr):Expr := (
      when e
      is x:ZZcell do toExpr(toRRi(x.v,defaultPrecision))
      is x:QQcell do toExpr(toRRi(x.v,defaultPrecision))
+     is x:RRcell do toExpr(toRRi(x.v,defaultPrecision))
      is RRicell do e
      is s:Sequence do (
 	  if length(s) != 2 then WrongNumArgs(1,2) else
@@ -1299,6 +1300,7 @@ toRRi(e:Expr):Expr := (
 	       	    when s.1
      	       	    is x:ZZcell do toExpr(toRRi(x.v,toULong(prec.v)))
 	       	    is x:QQcell do toExpr(toRRi(x.v,toULong(prec.v)))
+		    is x:RRcell do toExpr(toRRi(x.v,toULong(prec.v)))
      	       	    is x:RRicell do toExpr(toRRi(x.v,toULong(prec.v)))
 		    else WrongArg(1,"an integral, rational, or real number")
 		    )
@@ -1309,12 +1311,29 @@ toRRi(e:Expr):Expr := (
 setupfun("toRRi",toRRi);
                                                      
 interval(e:Expr):Expr := (
-    when e is s:Sequence do (
-            when s.0 is x:ZZcell do (
-                    when s.1 is y:ZZcell do (toExpr(interval(x.v,y.v)))
-                    else WrongArg("not implemented yet"))
-            else WrongArg("not implemented yet"))
-    else WrongArg("not implemented yet"));
+    when e
+    	 is x:ZZcell do toExpr(toRRi(x.v,defaultPrecision))
+	 is x:QQcell do toExpr(toRRi(x.v,defaultPrecision))
+	 is x:RRcell do toExpr(toRRi(x.v,defaultPrecision))
+	 is x:RRicell do e
+    	 is s:Sequence do (
+	    if length(s) > 3 then WrongNumArgs(1,3) else
+	    if length(s) == 2 then (
+               when s.0 is x:ZZcell do (
+               	    when s.1 is y:ZZcell do (toExpr(interval(x.v,y.v))) -- Add precision versions
+		    	 is y:QQcell do (toExpr(interval(x.v,y.v)))
+			 is y:RRcell do (toExpr(interval(x.v,y.v)))
+                    	 else WrongArg(1,"a pair of integral, rational, or real numbers"))
+	       else WrongArg("not implemented yet"))
+	    else when s.0 is prec:ZZcell do (
+	       when s.1 is x:ZZcell do (
+                    when s.2 is y:ZZcell do (toExpr(interval(x.v,y.v,toULong(prec.v)))) -- Add precision versions
+		    	 is y:QQcell do (toExpr(interval(x.v,y.v,toULong(prec.v))))
+			 is y:RRcell do (toExpr(interval(x.v,y.v,toULong(prec.v))))
+                    	 else WrongArg(1,"a pair of integral, rational, or real numbers"))
+	       else WrongArg(1,"a pair of integral, rational, or real numbers"))
+	    else WrongArg(1,"a pair or triple  of integral, rational, or real numbers"))
+   	 else WrongArg("not implemented yet"));
 setupfun("interval",interval);
 
 toCC(e:Expr):Expr := (
