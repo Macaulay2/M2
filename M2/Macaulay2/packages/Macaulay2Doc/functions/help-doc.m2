@@ -209,6 +209,7 @@ Node
      about
     [about, Body]
     (help, ZZ)
+    (viewHelp, ZZ)
     (about, Function)
     (about, String)
     (about, Symbol)
@@ -230,7 +231,7 @@ Node
       The documentation corresponding to the keys in the list returned can be displayed by applying the function
       @TO "help"@ to it. To see the documentation corresponding to just one or some of the keys, give @TO "help"@
       an integer or a list of integers to be used as indices in the list returned by the most recent application
-      of @TO "about"@.
+      of @TO "about"@. The function @TO "viewHelp"@ can also be given an integer for viewing the documentation.
 
       The packages searched are the loaded packages and the packages installed under one of the prefixes listed
       in @TO "prefixPath"@. The first search will take a few seconds while it reads all the documentation keys

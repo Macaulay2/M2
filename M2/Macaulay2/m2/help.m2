@@ -35,6 +35,12 @@ operator := binary + prefix + postfix
 -- Local utilities
 -----------------------------------------------------------------------------
 
+-- used by help and viewHelp
+seeAbout := (f, i) -> (
+    if     lastabout === null then error "no previous 'about' response";
+    if not lastabout#?i       then error("previous 'about' response contains no entry numbered ", i);
+    f lastabout#i)
+
 -----------------------------------------------------------------------------
 -- these menus have to get sorted, so optTO and optTOCLASS return pairs:
 --   the first member of the pair is the string to use for sorting
@@ -411,10 +417,7 @@ help Symbol := key -> (
 help DocumentTag := tag -> help tag.Key
 help Thing := x -> if hasAttribute(x, ReverseDictionary) then help getAttribute(x, ReverseDictionary) else error "no documentation found"
 help List  := l -> DIV between(HR{}, help \ l)
-help ZZ    := i -> (
-    if     lastabout === null then error "no previous 'about' response";
-    if not lastabout#?i       then error("previous 'about' response contains no entry numbered ", i);
-    help lastabout#i)
+help ZZ    := i -> seeAbout(help, i)
 
 -- so the user can cut paste the menu line "* sum" to get help!
 * String := x -> help x
@@ -444,6 +447,7 @@ viewHelp DocumentTag := tag -> (
     tag = getOption(fetchAnyRawDocumentation tag, symbol DocumentTag);
     docpage := concatenate htmlFilename tag;
     if fileExists docpage then show URL { docpage } else show help tag)
+viewHelp ZZ := i -> seeAbout(viewHelp, i)
 
 viewHelp = new Command from viewHelp
 -- This ensures that "methods viewHelp" and "?viewHelp" work as expected
