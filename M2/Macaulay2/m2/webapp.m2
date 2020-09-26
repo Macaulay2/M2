@@ -25,7 +25,8 @@ texWrap := x -> (  -- similar to 'tex', but only used by webapp.m2 to avoid thre
 
 htmlWithTex Thing := texWrap -- by default, we use tex (as opposed to html)
 
-stripTags := s -> replace(concatenate("[",webAppTags,"]"),"",s)
+webAppTagsRegex := concatenate("[",webAppTags,"]")
+stripTags := s -> replace(webAppTagsRegex,"",s)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 htmlWithTex Hypertext := html
