@@ -1320,14 +1320,34 @@ interval(e:Expr):Expr := (
 	    if length(s) > 3 then WrongNumArgs(1,3) else
 	    if length(s) == 2 then (
                when s.0 is x:ZZcell do (
-               	    when s.1 is y:ZZcell do (toExpr(interval(x.v,y.v))) -- Add precision versions
+               	    when s.1 is y:ZZcell do (toExpr(interval(x.v,y.v)))
+		    	 is y:QQcell do (toExpr(interval(x.v,y.v)))
+			 is y:RRcell do (toExpr(interval(x.v,y.v)))
+                    	 else WrongArg(1,"a pair of integral, rational, or real numbers"))
+	       is x:QQcell do (
+	       	    when s.1 is y:ZZcell do (toExpr(interval(x.v,y.v)))
+		    	 is y:QQcell do (toExpr(interval(x.v,y.v)))
+			 is y:RRcell do (toExpr(interval(x.v,y.v)))
+                    	 else WrongArg(1,"a pair of integral, rational, or real numbers"))
+	       is x:RRcell do (
+	       	    when s.1 is y:ZZcell do (toExpr(interval(x.v,y.v)))
 		    	 is y:QQcell do (toExpr(interval(x.v,y.v)))
 			 is y:RRcell do (toExpr(interval(x.v,y.v)))
                     	 else WrongArg(1,"a pair of integral, rational, or real numbers"))
 	       else WrongArg("not implemented yet"))
 	    else when s.0 is prec:ZZcell do (
 	       when s.1 is x:ZZcell do (
-                    when s.2 is y:ZZcell do (toExpr(interval(x.v,y.v,toULong(prec.v)))) -- Add precision versions
+                    when s.2 is y:ZZcell do (toExpr(interval(x.v,y.v,toULong(prec.v))))
+		    	 is y:QQcell do (toExpr(interval(x.v,y.v,toULong(prec.v))))
+			 is y:RRcell do (toExpr(interval(x.v,y.v,toULong(prec.v))))
+                    	 else WrongArg(1,"a pair of integral, rational, or real numbers"))
+		 is x:QQcell do (
+		    when s.2 is y:ZZcell do (toExpr(interval(x.v,y.v,toULong(prec.v))))
+		    	 is y:QQcell do (toExpr(interval(x.v,y.v,toULong(prec.v))))
+			 is y:RRcell do (toExpr(interval(x.v,y.v,toULong(prec.v))))
+                    	 else WrongArg(1,"a pair of integral, rational, or real numbers"))
+		is x:RRcell do (
+		    when s.2 is y:ZZcell do (toExpr(interval(x.v,y.v,toULong(prec.v))))
 		    	 is y:QQcell do (toExpr(interval(x.v,y.v,toULong(prec.v))))
 			 is y:RRcell do (toExpr(interval(x.v,y.v,toULong(prec.v))))
                     	 else WrongArg(1,"a pair of integral, rational, or real numbers"))
