@@ -1,8 +1,0 @@
-fixes for SimpleDoc
-
-      allow the user to use _ either in math mode, where it will make a TeX subscript,
-      or in literal mode, where it will display in \tt font
-
-      add multiline examples for M2: the next lines indented further  
-      are treated as one input line to M2
-

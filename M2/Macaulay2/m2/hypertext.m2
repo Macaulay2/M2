@@ -235,6 +235,9 @@ new TEX from BasicList := (T, t) -> (
 	    if debugLevel > 1 then printerr("parsing ", tag, " in TEX");
 	    s = replace(regexQuote substring(m#1, s), "\"," | tag | "{" | format substring(m#3, s) | "},\"", s);
 	    continue));
+    -- miscellaneous replacements
+    s = replace("---", "—", s);
+    s = replace("\\b--\\b", "–", s);
     -- evaluate Hypertext types
     s = value s;
     if instance(s, BasicList) then s else {s})

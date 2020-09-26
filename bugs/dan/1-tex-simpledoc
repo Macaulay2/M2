@@ -1,9 +1,3 @@
 tex isn't getting formatted for display in an emacs buffer, info node, or shell: we need a method for net(TEX), or ??
 
 can we restrict the use of ^ and _ to math mode?
-
-There must be a way to do \rm in a nested way:
-
-i30 : html TEX "$ x^2 { \\rm abc } y^2$ cde"
-
-o30 = <i> x<sup>2</sup> abc  y<sup>2</sup></i> cde
