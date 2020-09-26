@@ -399,15 +399,13 @@ groebnerBasis Matrix := opts -> x -> (
     and isCommutative R
     and instance(coefficientRing R, QuotientRing) -- really: want to say it is a prime field
     then (
-	mgbopts := opts#"MGBOptions";
-	if opts.Strategy === "F4" then mgbopts = append(mgbopts, "Reducer"=>"F4")
-	else if opts.Strategy =!= "MGB" then error ///expected Strategy to be "F4" or "MGB"///;
-	if gbTrace > 0 then << "-- computing mgb " << opts.Strategy << " " << mgbopts << endl;
-	-- use rawMGB
+	mgbopts := new MutableHashTable from opts#"MGBOptions";
+	if opts.Strategy === "F4" then mgbopts#"Reducer" = "F4"
+	else if opts.Strategy =!= "MGB" then error "expected Strategy to be \"F4\" or \"MGB\"";
 	mgbopts = new OptionTable from mgbopts;
-	g := engineMGB(x, new OptionTable from mgbopts);
-	generators forceGB g
-	)
+	if gbTrace > 0 then << "-- computing mgb " << opts.Strategy << " " << mgbopts << endl;
+	-- use engineMGB
+	generators forceGB engineMGB(x, mgbopts))
     else generators gb x)
 
 -----------------------------------------------------------------------------
