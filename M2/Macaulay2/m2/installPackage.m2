@@ -273,7 +273,7 @@ makePackageIndex List := path -> (
     -- TO DO : rewrite this function to use the results of tallyInstalledPackages
     tallyInstalledPackages();
     initInstallDirectory options installPackage;
-    docdirs := findDocumentationPaths path;
+    docdirs := toSequence findDocumentationPaths path;
     htmlDirectory = applicationDirectory();
     indexFilename := htmlDirectory | topFileName;
     verboseLog("making index of installed packages in ", indexFilename);
@@ -284,11 +284,11 @@ makePackageIndex List := path -> (
 		or run the ", TT "viewHelp", " command in Macaulay2 to open up your browser on this page.
 		See the ", homeButton, " for the latest version."},
 	    HEADER3 "Documentation",
-	    ul nonnull splice {
-		if prefixDirectory =!= null then (
+	    UL nonnull splice {
+		if prefixDirectory =!= null then LI (
 		    m2doc := prefixDirectory | replace("PKG", "Macaulay2Doc", currentLayout#"packagehtml") | topFileName;
 		    if fileExists m2doc then HREF { m2doc, "Macaulay2" }),
-		splice apply(docdirs, dirs -> (
+		apply(docdirs, dirs -> (
 			prefixDirectory := first dirs;
 			layout := Layout#(last dirs);
 			docdir := prefixDirectory | layout#"docdir";
@@ -296,10 +296,9 @@ makePackageIndex List := path -> (
 			pkghtmldir := pkgname -> prefixDirectory | replace("PKG", pkgname, layout#"packagehtml");
 			contents := select(readDirectory docdir, fn -> fn != "." and fn != ".." );
 			contents  = select(contents, pkg -> fileExists(pkghtmldir pkg | topFileName));
-			DIV {
+			if #contents > 0 then LI {
 			    HEADER3 {"Packages in ", TT toAbsolutePath prefixDirectory},
-			    if #contents > 0
-			    then UL apply(contents, pkgname -> (
+			    UL apply(contents, pkgname -> (
 				    pkgopts := readPackage pkgname;
 				    LI nonnull splice {
 					HREF { pkghtmldir pkgname | topFileName, pkgname }, -- TO (pkgname | "::" | pkgname),
