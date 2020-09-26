@@ -3,7 +3,7 @@ Version => "0.3", Date => "August 11th, 2019", Authors => {
      {Name => "Karl Schwede",
      Email=> "kschwede@gmail.com",
      HomePage=> "http://www.math.utah.edu/~schwede"
-     }, --Karl Schwede was partially supported by  NSF FRG Grant DMS #1265261/1501115, NSF CAREER Grant DMS #1252860/1501102
+     }, --Karl Schwede was partially supported by  NSF FRG Grant DMS #1265261/1501115, NSF CAREER Grant DMS #1252860/1501102, and NSF grant #1801849
      {Name => "Daniel Smolkin",
      Email=> "smolkin@math.utah.edu",
      HomePage=> "http://www.math.utah.edu/~smolkin"
@@ -15,7 +15,7 @@ Version => "0.3", Date => "August 11th, 2019", Authors => {
      {Name => "C.J. Bott",
      Email => "cjamesbott@gmail.com"}
 }, --this file is in the public domain
-Headline => "rational maps")
+Headline => "rational maps between varieties", DebuggingMode => true, Reload=>true, PackageImports => {"FastLinAlg"})
 export{
 	"isBirationalMap",
 	"idealOfImageOfMap",
@@ -47,9 +47,8 @@ export{
     "AssumeDominant" --option to assume's that the map is dominant (ie, don't compute the kernel)
 }
 
-needsPackage("FastLinAlg");
 
-StrategyGRevLexSmallestTerm = new HashTable from {LexLargest=>0, LexSmallestTerm => 0, LexSmallest=>0, GRevLexSmallestTerm => 100, GRevLexSmallest => 0, GRevLexLargest=>0,Random=>0,RandomNonzero=>0};
+StrategyGRevLexSmallestTerm = new HashTable from {LexLargest=>0, LexSmallestTerm => 0, LexSmallest=>0, GRevLexSmallestTerm => 100, GRevLexSmallest => 0, GRevLexLargest=>0,Random=>0,RandomNonzero=>0,Points => 0};
 ----------------------------------------------------------------
 --************************************************************--
 -------------------- Function Defitions ------------------------
@@ -1238,7 +1237,7 @@ beginDocumentation();
 
 document {
     Key => RationalMaps,
-    Headline => "rational maps",
+    Headline => "rational maps between varieties",
     EM "RationalMaps", " is a package for computing things related to maps between projective varieties.",
     BR{},BR{},
     "It focuses on finding where a birational map is undefined, checking whether a map is a closed embedding, checking birationality and computing inverse maps",
@@ -1529,10 +1528,6 @@ doc ///
 		(isBirationalOntoImage, Ideal, Ideal, BasicList)
 		(isBirationalOntoImage, Ring, Ring, BasicList)
 		(isBirationalOntoImage, RingMap)
-		--[isBirationalOntoImage, AssumeDominant]
-	--	[isBirationalOntoImage,Strategy]
-		--[isBirationalOntoImage,Verbose]
-		--[isBirationalOntoImage,HybridLimit]
         Headline
                 Checks if a map between projective varieties is birational onto its image.
         Usage
@@ -1556,28 +1551,26 @@ doc ///
                 val:Boolean
                         true if the map is birational onto its image, false if otherwise
         Description
-                Text
-                        This checks whether $f : X \to Y$ is birational onto its image.  We do this by computing the image and then calling {\tt isBirationalOntoImage}.  The option {\tt AssumeDominant} being true will cause the function to assume that the kernel of the associated ring map is zero (default value is false).  The source must be a variety, in particular its defining ideals must be prime.  In the following example, the map is not birational, but it is birational onto its image.
-                Example
-                        R=QQ[x,y];
-                        S=QQ[a,b,c,d];
-                        Pi = map(R, S, {x^3, x^2*y, x*y^2, y^3});
-                        isBirationalOntoImage(Pi, Verbose=>false)
-                        isBirationalMap(Pi,  Verbose=>false)
-		Text
-                        Sub-Hankel matrices have homaloidal determinants.
-                Example
-                        R = QQ[z_0..z_6];
-			H=map(R^4,4,(i,j)->R_(i+j));
-                        SH=sub(H,{z_5=>0,z_6=>0})
-			sh=map(R, R, transpose jacobian ideal det SH );
-			isBirationalOntoImage(sh, Verbose=>false)
-			S=QQ[t_0..t_4];
-			li=map(S,R,matrix{{t_0..t_4,0,0}});
-			phi=li*sh;
-			isBirationalOntoImage(phi, HybridLimit=>2)
-
-
+            Text
+                This checks whether $f : X \to Y$ is birational onto its image.  We do this by computing the image and then calling {\tt isBirationalOntoImage}.  The option {\tt AssumeDominant} being true will cause the function to assume that the kernel of the associated ring map is zero (default value is false).  The source must be a variety, in particular its defining ideals must be prime.  In the following example, the map is not birational, but it is birational onto its image.
+            Example
+                R=QQ[x,y];
+                S=QQ[a,b,c,d];
+                Pi = map(R, S, {x^3, x^2*y, x*y^2, y^3});
+                isBirationalOntoImage(Pi, Verbose=>false)
+                isBirationalMap(Pi,  Verbose=>false)
+            Text
+                Sub-Hankel matrices have homaloidal determinants.
+            Example
+                A = QQ[z_0..z_6];
+                H=map(A^4,4,(i,j)->A_(i+j));
+                SH=sub(H,{z_5=>0,z_6=>0})
+                sh=map(A, A, transpose jacobian ideal det SH );
+                isBirationalOntoImage(sh, Verbose=>false)
+                B=QQ[t_0..t_4];
+                li=map(B,A,matrix{{t_0..t_4,0,0}});
+                phi=li*sh;
+                isBirationalOntoImage(phi, HybridLimit=>2)
         SeeAlso
             isBirationalMap
 ///
