@@ -1,8 +1,7 @@
 --		Copyright 1995-2002,2012 by Daniel R. Grayson
 -- Notes:
 --   set debugLevel = 77 for debug information
--- TODO:
---   F4 is still used by MGB, but what is LinearAlgebra?
+--   see processAlgorithm for a set of TODO items
 
 -----------------------------------------------------------------------------
 -- Local variables
@@ -30,14 +29,11 @@ RawStatusCodes := new HashTable from {
     18 => "overflowed",              -- COMP_OVERFLOWED
     }
 
--- TODO: where should this go? also used in res.m2 and tests/engine/raw-gb.m2
-isComputationDone = c -> "done" === RawStatusCodes#c
-
 -- Keep this in sync with StrategyValues in e/engine.h
 RawStrategyCodes := new HashTable from {
     LongPolynomial => 1,
     Sort           => 2,
-    -- UseHilbert     => 4,
+    -- UseHilbertFunction => 4, -- this is defined in e/engine.h, but is it still usable?
     UseSyzygies    => 8
     }
 
@@ -82,6 +78,8 @@ addHook(symbol BeforeEvalHooks,() -> flagInhomogeneity = false)
 -- Local utilities
 -----------------------------------------------------------------------------
 
+warnexp := () -> printerr("warning: gb algorithm requested is experimental")
+
 -- TODO: implement general type checking
 checkListOfIntegers := method()
 checkListOfIntegers ZZ   := t -> {t}
@@ -98,29 +96,39 @@ toEngineNat  := n -> if n === infinity then -1 else n
 
 ---------------------------
 
-processStrategy := v -> (
-    if not instance(v, List) then v = {v};
-    sum(v, s -> if RawStrategyCodes#?s then RawStrategyCodes#s else error("unknown strategy encountered")))
+-- also used in res.m2 and tests/engine/raw-gb.m2
+isComputationDone = c -> if RawStatusCodes#?c then "done" === RawStatusCodes#c else error "unknown computation status code"
 
-warnexp := () -> printerr("warning: gb algorithm requested is experimental")
+processStrategy := strategies -> sum(flatten {strategies}, strategy ->
+    if RawStrategyCodes#?strategy then RawStrategyCodes#strategy else error "gb: unknown strategy encountered")
 
--- These must match the values in e/comp_gb.cpp
-processAlgorithm := (a, m) -> (
-     R := ring m;
-     k := ultimate(coefficientRing, R);
-     if (a === Homogeneous or a === Homogeneous2) and not isHomogeneous m then error "gb: homogeneous algorithm specified with inhomogeneous matrrix";
-     if k === ZZ and a =!= Inhomogeneous then error "gb: only the algorithm 'Inhomogeneous' may be used with base ring ZZ";
-     if R.?FlatMonoid and not R.FlatMonoid.Options.Global and a =!= Inhomogeneous then error "gb: only the algorithm 'Inhomogeneous' may be used with a non-global monomial ordering";
-     if a === Homogeneous then 1
-     else if a === Inhomogeneous then 2
---     else if a === F4 then error "the F4 algorithm option has been replaced by LinearAlgebra"
---     else if a === Faugere then error "the Faugere algorithm option has been replaced by LinearAlgebra"
-     else if a === Sugarless then 4
-     else if a === Homogeneous2 then 5
-     else if a === LinearAlgebra then (warnexp(); 6)
-     else if a === Toric then (warnexp(); 7)
-     else if a === Test then 8
-     else error ("unknown algorithm encountered"))
+-- TODO:
+--   move the codes below into a hashtable above
+--   implement condition checking mechanism similar to Colon.m2
+--   F4 is still used by groebnerBasis, is it the same as LinearAlgebra?
+--   integrate FGLM, GroebnerWalk, ThreadedGB, Hilbert driven Buchberger, etc.
+processAlgorithm := (alg, m) -> (
+    R := ring m;
+    k := ultimate(coefficientRing, R);
+    -- compatibility checking
+    if (alg === Homogeneous or alg === Homogeneous2) and not isHomogeneous m
+    then error "gb: homogeneous algorithm specified with inhomogeneous matrrix";
+    if k === ZZ and alg =!= Inhomogeneous
+    then error "gb: only the algorithm 'Inhomogeneous' may be used with base ring ZZ";
+    if R.?FlatMonoid and not R.FlatMonoid.Options.Global and alg =!= Inhomogeneous
+    then error "gb: only the algorithm 'Inhomogeneous' may be used with a non-global monomial ordering";
+    -- return algorithm code
+    -- Keep these in sync with the values in e/comp-gb.cpp (TODO: where?)
+    if      alg === Homogeneous   then 1
+    else if alg === Inhomogeneous then 2
+    -- else if alg === F4            then error "the F4 algorithm option has been replaced by LinearAlgebra"
+    -- else if alg === Faugere       then error "the Faugere algorithm option has been replaced by LinearAlgebra"
+    else if alg === Sugarless     then 4
+    else if alg === Homogeneous2  then 5
+    else if alg === LinearAlgebra then (warnexp(); 6)
+    else if alg === Toric         then (warnexp(); 7)
+    else if alg === Test          then 8
+    else error "unknown algorithm encountered")
 
 -----------------------------------------------------------------------------
 -- GroebnerBasis type declarations and basic constructors and functions
@@ -135,14 +143,20 @@ GroebnerBasisOptions.synonym = "Gröbner basis options"
 -- m:    a Matrix
 -- type: an GroebnerBasisOptions
 -- opts: an OptionTable
+-- TOOD: document this
 new GroebnerBasis from Sequence := (GB, S) -> (
-    (m, type, opts) := S;
+    (m, type, opts) := if #S === 3 then S else error "GroebnerBasis: expected three initial values";
+    -- TODO: implement recursive type checking
+    if not instance(m, Matrix) or not instance(type, GroebnerBasisOptions) or not instance(opts, OptionTable)
+    then error "GroebnerBasis: expected a sequence of type (Matrix, GroebnerBasisOptions, OptionTable)";
     if flagInhomogeneity and not isHomogeneous m then error "internal error: gb: inhomogeneous matrix flagged";
+    -- initialize the toplevel container
     G := new GroebnerBasis;
     if debugLevel > 5 then registerFinalizer(G, "gb (new GroebnerBasis from Sequence)");
     G.ring = ring m;
     G.matrix = Bag {m};
     G.target = target m;
+    -- initialize the engine computation, without starting it
     G.RawComputation = rawGB(
 	raw m,
 	type.Syzygies,
@@ -156,7 +170,7 @@ new GroebnerBasis from Sequence := (GB, S) -> (
 	processAlgorithm(opts.Algorithm, m),
 	processStrategy opts.Strategy,
 	opts.MaxReductionCount);
-    if debugLevel == 77 then printerr("new gb computed of type ", net type, " and hash ", toString hash G, " with options ", net opts);
+    if debugLevel == 77 then printerr("initialized new gb computation of type ", net type, " and hash ", toString hash G, " with options ", net opts);
     m.cache#type = G) -- do this last, in case of an interrupt
 
 
