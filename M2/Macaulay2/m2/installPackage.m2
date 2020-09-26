@@ -298,7 +298,7 @@ makePackageIndex List := path -> (
 			contents  = select(contents, pkg -> fileExists(pkghtmldir pkg | topFileName));
 			if #contents > 0 then LI {
 			    HEADER3 {"Packages in ", TT toAbsolutePath prefixDirectory},
-			    UL apply(contents, pkgname -> (
+			    UL apply(sort contents, pkgname -> (
 				    pkgopts := readPackage pkgname;
 				    LI nonnull splice {
 					HREF { pkghtmldir pkgname | topFileName, pkgname }, -- TO (pkgname | "::" | pkgname),
