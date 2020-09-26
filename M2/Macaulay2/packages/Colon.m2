@@ -362,7 +362,8 @@ IdealIdealSaturateAlgorithms = new HashTable from {
 
     GRevLex => opts -> (I, J) -> (
 	-- FIXME: this might not be necessary, but the code isn't designed for this case.
-	if not isFlatPolynomialRing ring I then return null;
+	if not isFlatPolynomialRing ring I
+	or not isGRevLexRing ring I then return null;
 	-- First check that all generators are variables of the ring
 	-- TODO: can this strategy work with generators of the irrelevant ideal?
 	if any(index \ J_*, v -> v === null) then return null;
@@ -444,7 +445,8 @@ IdealElementSaturateAlgorithms = new HashTable from {
 
     GRevLex => opts -> (I, v) -> (
 	-- FIXME: this might not be necessary, but the code isn't designed for this case.
-	if not isFlatPolynomialRing ring I then return null;
+	if not isFlatPolynomialRing ring I
+	or not isGRevLexRing ring I then return null;
 	-- First check that v is a variable of the ring
 	-- TODO: can this strategy work with generators of the irrelevant ideal?
 	if index v === null then return null;
