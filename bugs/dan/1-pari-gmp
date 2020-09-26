@@ -1,4 +1,0 @@
-on fedora we are forced to link dynamically with pari
-but we need to know whether it is configured for use with gmp (it is, on fedora)
-so, devise a run time test
-better: rewrite the gmp integer to pari integer conversion code to be compatible with both versions!
