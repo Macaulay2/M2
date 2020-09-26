@@ -131,7 +131,7 @@ resolutionInEngine := opts -> (M) -> (
      if C.?Resolution then (
 	  W = C.Resolution;
 	  if not W.?returnCode 
-	  or RawStatusCodes#(W.returnCode) =!= "done"
+	  or not isComputationDone W.returnCode
 	  or W.length < maxlevel
 	  or W.DegreeLimit < degreelimit
 	  then (
@@ -315,7 +315,7 @@ resolutionNonminimal = (opts,M) -> (
     if C.?Resolution then (
         W = C.Resolution;
         if not W.?returnCode 
-        or RawStatusCodes#(W.returnCode) =!= "done"
+        or not isComputationDone W.returnCode
         or W.length < maxlevel
         or W.DegreeLimit < degreelimit
         then (

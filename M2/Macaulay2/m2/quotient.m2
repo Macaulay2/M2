@@ -1,4 +1,5 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+-- Copyright 1993-1999 by Daniel R. Grayson
+-- Copyright 1996 by Michael E. Stillman
 
 -- This definition is used in several places, so it doesn't have
 -- a natural home.  It used to be in methods.m2, but
@@ -6,6 +7,7 @@
 
 assert( class infinity === InfiniteNumber )
 
+-- ideal quotient methods moved to packages/Colon.m2 in July 2020
 quotient = method(
      Options => {
 	  DegreeLimit => {},
@@ -15,6 +17,9 @@ quotient = method(
 	  Strategy => null
 	  }
      )
+
+-- moved to packages/Colon.m2 in July 2020
+saturate = method(Options => options quotient)
 
 gcdCoefficients(ZZ,ZZ) := (a,b) -> (
      m := {a,1,0};
@@ -30,8 +35,6 @@ gcdCoefficients(ZZ,ZZ) := (a,b) -> (
      n);
 
 mod = (i,n) -> i * 1_(ZZ/n)
-
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

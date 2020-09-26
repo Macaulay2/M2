@@ -259,8 +259,8 @@ netList VisibleList := o -> (x) -> (
 
 commentize = method(Dispatch => Thing)
 commentize Nothing := s -> ""
-commentize String  :=
-commentize Thing   := s -> concatenate(" -- ", between("\n -- ", separate concatenate s))
+commentize String  := s -> concatenate(" -- ", between("\n -- ", separate s))
+commentize Thing   := s -> commentize horizontalJoin s
 commentize Net     := S -> stack(commentize \ unstack S)
 
 printerr = msg -> (stderr << commentize msg << endl;) -- always return null
