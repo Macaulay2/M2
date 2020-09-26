@@ -57,7 +57,7 @@ Gcomp = rawGB(G,true,-1,{},false,0,0,0,10)
 rawStartComputation Gcomp
 m = rawGBSyzygies Gcomp
 m = rawGBGetMatrix Gcomp
-RawStatusCodes#(rawStatus1 Gcomp)
+assert isComputationDone rawStatus1 Gcomp
 rawStatus2 Gcomp -- last degree something was computed in
 
 assert(rawGBMatrixRemainder(Gcomp,mat{{x*y}}) === mat{{y^2}})

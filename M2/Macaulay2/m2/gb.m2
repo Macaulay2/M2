@@ -30,7 +30,7 @@ RawStatusCodes := new HashTable from {
     18 => "overflowed",              -- COMP_OVERFLOWED
     }
 
--- TODO: where should this go? also used in res.m2
+-- TODO: where should this go? also used in res.m2 and tests/engine/raw-gb.m2
 isComputationDone = c -> "done" === RawStatusCodes#c
 
 -- Keep this in sync with StrategyValues in e/engine.h
