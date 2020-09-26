@@ -939,7 +939,55 @@ export interval(a:ZZ,b:RR,prec:ulong):RRi := (
      moveToRRiandclear(x));
 
 export interval(a:ZZ, b:RR):RRi := interval(a,b,defaultPrecision);
-                                              
+
+export interval(a:QQ,b:ZZ,prec:ulong):RRi := (
+     x := newRRimutable(prec);
+     Ccode( void, "mpfr_set_q( &", x, "->left," , a, ",GMP_RNDD)");
+     Ccode( void, "mpfr_set_z( &", x, "->right," , b, ",GMP_RNDU)");
+     moveToRRiandclear(x));
+                                  
+export interval(a:QQ,b:ZZ):RRi := interval(a,b,defaultPrecision);
+
+export interval(a:QQ,b:QQ,prec:ulong):RRi := (
+     x := newRRimutable(prec);
+     Ccode( void, "mpfr_set_q( &", x, "->left," , a, ",GMP_RNDD)");
+     Ccode( void, "mpfr_set_q( &", x, "->right," , b, ",GMP_RNDU)");
+     moveToRRiandclear(x));
+
+export interval(a:QQ, b:QQ):RRi := interval(a,b,defaultPrecision);
+
+export interval(a:QQ,b:RR,prec:ulong):RRi := (
+     x := newRRimutable(prec);
+     Ccode( void, "mpfr_set_q( &", x, "->left," , a, ",GMP_RNDD)");
+     Ccode( void, "mpfr_set( &", x, "->right," , b, ",GMP_RNDU)");
+     moveToRRiandclear(x));
+
+export interval(a:QQ, b:RR):RRi := interval(a,b,defaultPrecision);
+
+export interval(a:RR,b:ZZ,prec:ulong):RRi := (
+     x := newRRimutable(prec);
+     Ccode( void, "mpfr_set( &", x, "->left," , a, ",GMP_RNDD)");
+     Ccode( void, "mpfr_set_z( &", x, "->right," , b, ",GMP_RNDU)");
+     moveToRRiandclear(x));
+                                  
+export interval(a:RR,b:ZZ):RRi := interval(a,b,defaultPrecision);
+
+export interval(a:RR,b:QQ,prec:ulong):RRi := (
+     x := newRRimutable(prec);
+     Ccode( void, "mpfr_set( &", x, "->left," , a, ",GMP_RNDD)");
+     Ccode( void, "mpfr_set_q( &", x, "->right," , b, ",GMP_RNDU)");
+     moveToRRiandclear(x));
+
+export interval(a:RR, b:QQ):RRi := interval(a,b,defaultPrecision);
+
+export interval(a:RR,b:RR,prec:ulong):RRi := (
+     x := newRRimutable(prec);
+     Ccode( void, "mpfr_set( &", x, "->left," , a, ",GMP_RNDD)");
+     Ccode( void, "mpfr_set( &", x, "->right," , b, ",GMP_RNDU)");
+     moveToRRiandclear(x));
+
+export interval(a:RR, b:RR):RRi := interval(a,b,defaultPrecision);
+
 export infinityRR(prec:ulong,sign:int):RR := (
      x := newRRmutable(prec);
      Ccode(void, "mpfr_set_inf(",x,",",sign,")");
@@ -1163,16 +1211,36 @@ export (x:RR) + (y:int) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_add_si(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+
+export (x:RRi) + (y:int) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_add_si(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
      
 export (x:RR) + (y:ZZ) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_add_z(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+
+export (x:RRi) + (y:ZZ) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_add_z(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
      
 export (x:RR) + (y:QQ) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_add_q(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+
+export (x:RRi) + (y:QQ) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_add_q(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
+
+export (x:RRi) + (y:RR) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_add_fr(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
 
 export - (y:RR) : RR := (
      z := newRRmutable(precision0(y));

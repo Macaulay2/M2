@@ -15,6 +15,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  is y:ZZcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, ZZ, ZZ, ZZ
      	  is y:QQcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, ZZ, QQ, QQ
      	  is y:RRcell do toExpr(y.v + x.v)			    -- # typical value: symbol +, ZZ, RR, RR
+	  is y:RRicell do toExpr(y.v + x.v)
      	  is y:CCcell do toExpr(toRR(x.v,precision(y.v.re)) + y.v)	    -- # typical value: symbol +, ZZ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
@@ -23,6 +24,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  is y:ZZcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, QQ, ZZ, QQ
      	  is y:QQcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, QQ, QQ, QQ
      	  is y:RRcell do toExpr(y.v + x.v)			    -- # typical value: symbol +, QQ, RR, RR
+	  is y:RRicell do toExpr(y.v + x.v)
      	  is y:CCcell do toExpr(toRR(x.v,precision(y.v.re)) + y.v)	    -- # typical value: symbol +, QQ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
@@ -40,12 +42,17 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  is y:ZZcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, RR, ZZ, RR
      	  is y:QQcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, RR, QQ, RR
      	  is y:RRcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, RR, RR, RR
+	  is y:RRicell do toExpr(y.v + x.v)
      	  is y:CCcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, RR, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
      is x:RRicell do (
         when rhs is y:RRicell do toExpr(x.v + y.v) -- # typical value: symbol +, RRi, RRi, RRi
-                 else buildErrorPacket(EngineError("Failed to create sum"))
+	     is y:ZZcell do toExpr(x.v + y.v)
+	     is y:QQcell do toExpr(x.v + y.v)
+	     is y:RRcell do toExpr(x.v + y.v)
+	     is Error do rhs
+	     else buildErrorPacket(EngineError("addition not implemented"))
                       )
      is x:CCcell do (
 	  when rhs
