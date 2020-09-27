@@ -22,25 +22,15 @@ TEST ///
   I4 = quotient(I2,I3)
   I5 = quotient(I2, c)
 
-  assert(I2 ==
-       intersect(I3,I4)
-       )
-
-  assert(ideal(c,d) ==
-       quotient(I2, I5)
-       )
-
-  assert(I3 ==
-       I2 : I1
-       )
+  assert(I2 == intersect(I3,I4))
+  assert(ideal(c,d) == quotient(I2, I5))
+  assert(I3 == I2 : I1)
 
 --  assert(ideal(d) + I2 ==
 --       quotient(I2,I1,DegreeLimit=>1)
 --       )
 
-  assert(I3 ==
-       quotient(I2,I1,Strategy=>Iterate)
-       )
+  assert(I3 == quotient(I2,I1,Strategy=>Iterate))
 
   quotient(I2,I1,MinimalGenerators=>false)
 --  stderr << \"  -- this fails currently\" << endl
@@ -102,16 +92,9 @@ TEST ///
   M = image matrix{{a,b},{c,d}}
   N = super M
   I = quotient(M,N)
-  assert(I ==
-            quotient(M,N,Strategy=>Iterative)
-	)
-
-  assert(I ==
-            M : N
-	)
-  assert(I ==
-            ann(N/M)
-	)
+  assert(I == quotient(M,N,Strategy=>Iterate))
+  assert(I == M : N)
+  assert(I == ann(N/M))
 ///
 
 TEST ///
@@ -120,16 +103,9 @@ TEST ///
   N = coker genericMatrix(R,a,3,5)
   M = image N_{}
   I = quotient(M,N)
-  assert(I ==
-            quotient(M,N,Strategy=>Iterative)
-	)
-
-  assert(I ==
-            M : N
-	)
-  assert(I ==
-            ann(N/M)
-	)
+  assert(I == quotient(M,N,Strategy=>Iterate))
+  assert(I == M : N)
+  assert(I == ann(N/M))
 ///
 
 TEST ///
@@ -160,4 +136,10 @@ TEST ///
   quotient(I, a^2+b^2+c^2+d^2, DegreeLimit=>20)
   gbTrace=3
   quotient(I, a+b+c+d, BasisElementLimit=>5, MinimalGenerators=>false)
+///
+
+-- FIXME
+///
+  -- Tests for ZZ
+  ideal 4 : ideal 6
 ///

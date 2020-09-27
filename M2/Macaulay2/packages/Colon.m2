@@ -27,6 +27,16 @@ export {
     "intersectionByElimination"
     }
 
+-- TODO: where should these be placed?
+
+-- TODO: is this the right function?
+ambient Ideal := Ideal => I -> ideal 1_(ring I)
+
+--Ideal % Matrix            :=
+--remainder(Ideal,  Matrix) := Matrix => (I, m) -> remainder(gens I, m)
+--Module % Matrix           :=
+--remainder(Module, Matrix) := Matrix => (M, m) -> remainder(gens M, m)
+
 --------------------------------------------------------------------
 -- Helpers
 --------------------------------------------------------------------
@@ -125,7 +135,7 @@ quotelem0 = (I, f) -> (
 --    case: x is a polynomial
 --    case: x is an ideal
 
---quotient = method(...) -- defined in matrix2.m2
+--quotient = method(...) -- defined in m2/quotient.m2
 quotient(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> quotientHelper(I, J, IdealIdealQuotientAlgorithms, opts)
 quotient(Ideal,  RingElement) := Ideal  => opts -> (I, f) -> quotient(I, ideal f, opts)
 Ideal  : RingElement          := Ideal  =>         (I, f) -> quotient(I, f)
@@ -141,8 +151,12 @@ Module : Module               := Ideal  =>         (M, N) -> quotient(M, N)
 
 -- Helper for quotient methods
 quotientHelper = (A, B, algorithms, opts) -> (
-    if ring A =!= ring B then error "expected objects in the same ring";
-    if B == 0 then return ideal 1_(ring A);
+    if (R := ring A) =!= ring B then error "expected objects in the same ring";
+    -- note: if B \sub A then A:B should be "everything", but this can get slow
+    B' := if instance(B, RingElement) then matrix{{B}} else gens B;
+    if B == 0 or (target B' == target gens A and B' % gens A == 0)
+    then return if class A === class B then ideal 1_R else ambient A; -- TODO: is there an easier way to do this?
+--    if ambient A == target B' and gens ambient A % B' == 0 then return A; -- TODO: what should this be for Module : Module?
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
@@ -158,7 +172,7 @@ quotientHelper = (A, B, algorithms, opts) -> (
 
     if C =!= null then doTrim C else if strategy === null
     then error("no applicable method for quotient(", class A, ", ", class B, ")")
-    else error("assumptions for quotient strategy ", toString strategy, " are not met"));
+    else error("assumptions for quotient strategy ", toString strategy, " are not met"))
 
 -- Algorithms for Ideal : Ideal
 IdealIdealQuotientAlgorithms = new HashTable from {
@@ -185,6 +199,7 @@ IdealIdealQuotientAlgorithms = new HashTable from {
 	-- g = map(R^1, null, g);
 	lift(ideal g, ring I)),
 
+    -- TODO
     Linear => opts -> (I, J) -> (
 	-- assumptions: J is a single linear element, and everything is homogeneous
 	if not isHomogeneous I
@@ -194,7 +209,7 @@ IdealIdealQuotientAlgorithms = new HashTable from {
     }
 
 -- Installing hooks for Ideal : Ideal
-scan({Quotient, Iterate, Linear}, strategy -> addHook(IdealIdealQuotientAlgorithms#null,
+scan({Quotient, Iterate-*, Linear*-}, strategy -> addHook(IdealIdealQuotientAlgorithms#null,
 	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); IdealIdealQuotientAlgorithms#strategy opts)(I, J)))
 
 -- Algorithms for Module : Ideal
@@ -255,8 +270,8 @@ ModuleModuleQuotientAlgorithms = new HashTable from {
 		-- I'm just guessing that M1 * f is better.  (drg)
 		if generators(M1 * f) % m != 0
 		then (
-		    M2 := quotient(I,f, opts, Strategy=>Quotient);
-		    M1 = intersect(M1,M2);
+		    M2 := quotient(I, f, opts, Strategy => Quotient);
+		    M1 = intersect(M1, M2);
 		    )));
 	M1),
 
@@ -288,7 +303,7 @@ scan({Quotient, Iterate}, strategy -> addHook(ModuleModuleQuotientAlgorithms#nul
 -- - should saturate(I) use the irrelevant ideal when multigraded?
 -- - should it be cached?
 
--- saturate = method(Options => options saturate) -- defined in colons.m2
+-- saturate = method(Options => options saturate) -- defined in m2/quotient.m2
 -- used when P = decompose irr
 saturate(Ideal,  List)        := Ideal  => opts -> (I, L) -> fold(L, I, (J, I) -> saturate(I, J, opts))
 
@@ -306,8 +321,11 @@ saturate Vector               := Module => opts ->  v     -> saturate(image matr
 
 -- Helper for saturation methods
 saturateHelper = (A, B, algorithms, opts) -> (
-    if ring A =!= ring B then error "expected objects in the same ring";
-    if B == 0 then return ideal 1_(ring A);
+    if (R := ring A) =!= ring B then error "expected objects in the same ring";
+    -- TODO: if B \sub A then A:B should be "everything", but this can get slow
+    B' := if instance(B, RingElement) then matrix{{B}} else gens B;
+    if B == 0 or (target B' == target gens A and B' % gens A == 0) then return ambient A;
+    if ambient A == target B' and gens ambient A % B' == 0 then return A;
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
@@ -321,7 +339,7 @@ saturateHelper = (A, B, algorithms, opts) -> (
 
     if C =!= null then doTrim C else if strategy === null
     then error("no applicable method for saturate(", class A, ", ", class B, ")")
-    else error("assumptions for saturation strategy ", toString strategy, " are not met"));
+    else error("assumptions for saturation strategy ", toString strategy, " are not met"))
 
 -- Helper for GRevLex strategy
 saturationByGRevLexHelper := (I, v, opts) -> (
