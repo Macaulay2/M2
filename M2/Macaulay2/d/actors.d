@@ -12,21 +12,21 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
      when lhs
      is x:ZZcell do (
 	  when rhs
-	  is y:ZZcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, ZZ, ZZ, ZZ
+	      is y:ZZcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, ZZ, ZZ, ZZ
      	  is y:QQcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, ZZ, QQ, QQ
      	  is y:RRcell do toExpr(y.v + x.v)			    -- # typical value: symbol +, ZZ, RR, RR
-	  is y:RRicell do toExpr(y.v + x.v)
+          is y:RRicell do toExpr(y.v + x.v)
      	  is y:CCcell do toExpr(toRR(x.v,precision(y.v.re)) + y.v)	    -- # typical value: symbol +, ZZ, CC, CC
-	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
+	      is Error do rhs
+	      else binarymethod(lhs,rhs,PlusS))
      is x:QQcell do (
 	  when rhs
-	  is y:ZZcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, QQ, ZZ, QQ
+	      is y:ZZcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, QQ, ZZ, QQ
      	  is y:QQcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, QQ, QQ, QQ
      	  is y:RRcell do toExpr(y.v + x.v)			    -- # typical value: symbol +, QQ, RR, RR
-	  is y:RRicell do toExpr(y.v + x.v)
+	      is y:RRicell do toExpr(y.v + x.v)
      	  is y:CCcell do toExpr(toRR(x.v,precision(y.v.re)) + y.v)	    -- # typical value: symbol +, QQ, CC, CC
-	  is Error do rhs
+	      is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
      is x:RawRingElementCell do (
 	  when rhs
@@ -39,21 +39,21 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,PlusS))
      is x:RRcell do (
 	  when rhs
-	  is y:ZZcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, RR, ZZ, RR
+	      is y:ZZcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, RR, ZZ, RR
      	  is y:QQcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, RR, QQ, RR
      	  is y:RRcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, RR, RR, RR
-	  is y:RRicell do toExpr(y.v + x.v)
+	      is y:RRicell do toExpr(y.v + x.v)
      	  is y:CCcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, RR, CC, CC
-	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
+	      is Error do rhs
+	      else binarymethod(lhs,rhs,PlusS))
      is x:RRicell do (
-        when rhs is y:RRicell do toExpr(x.v + y.v) -- # typical value: symbol +, RRi, RRi, RRi
+        when rhs
 	     is y:ZZcell do toExpr(x.v + y.v)
 	     is y:QQcell do toExpr(x.v + y.v)
 	     is y:RRcell do toExpr(x.v + y.v)
+         is y:RRicell do toExpr(x.v + y.v)
 	     is Error do rhs
-	     else buildErrorPacket(EngineError("addition not implemented"))
-                      )
+	     else buildErrorPacket(EngineError("addition not implemented")))
      is x:CCcell do (
 	  when rhs
 	  is y:ZZcell do toExpr(x.v + toRR(y.v,precision(x.v.re)))	    -- # typical value: symbol +, CC, ZZ, CC
@@ -100,6 +100,7 @@ plusfun1(rhs:Code):Expr := (
      is Error do r
      is ZZcell do r						    -- # typical value: symbol +, ZZ, ZZ
      is RRcell do r						    -- # typical value: symbol +, RR, RR
+     is RRicell do r
      is CCcell do r						    -- # typical value: symbol +, CC, CC
      is QQcell do r						    -- # typical value: symbol +, QQ, QQ
      is RawRingElementCell do r				    -- # typical value: symbol +, RawRingElement, RawRingElement
@@ -117,7 +118,8 @@ setup(PlusS,plusfun1,plusfun);
 export - (rhs:Expr) : Expr := (
      when rhs
      is x:ZZcell do toExpr(-x.v)				    -- # typical value: symbol -, ZZ, ZZ                            
-     is x:RRcell do toExpr(-x.v)				    -- # typical value: symbol -, RR, RR                            
+     is x:RRcell do toExpr(-x.v)				    -- # typical value: symbol -, RR, RR
+     is x:RRicell do toExpr(-x.v)
      is x:CCcell do toExpr(-x.v)				    -- # typical value: symbol -, CC, CC                            
      is x:QQcell do toExpr(-x.v)				    -- # typical value: symbol -, QQ, QQ                            
      is x:RawRingElementCell do toExpr(-x.p)			    -- # typical value: symbol -, RawRingElement, RawRingElement    
@@ -137,23 +139,25 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
      when lhs
      is x:ZZcell do (
 	  when rhs
-	  is y:ZZcell do toExpr(x.v - y.v)			    -- # typical value: symbol -, ZZ, ZZ, ZZ
+	      is y:ZZcell do toExpr(x.v - y.v)			    -- # typical value: symbol -, ZZ, ZZ, ZZ
      	  is y:QQcell do toExpr(x.v - y.v)			    -- # typical value: symbol -, ZZ, QQ, QQ
-	  is y:RRcell do toExpr(toRR(x.v,precision(y.v)) - y.v)		    -- # typical value: symbol -, ZZ, RR, RR
-	  is y:CCcell do toExpr(toRR(x.v,precision(y.v.re)) - y.v)	    -- # typical value: symbol -, ZZ, CC, CC
-	  is Error do rhs
-	  else binarymethod(lhs,rhs,MinusS))
+	      is y:RRcell do toExpr(toRR(x.v,precision(y.v)) - y.v)		    -- # typical value: symbol -, ZZ, RR, RR
+          is y:RRicell do toExpr(toRRi(x.v,precision(y.v)) - y.v)
+	      is y:CCcell do toExpr(toRR(x.v,precision(y.v.re)) - y.v)	    -- # typical value: symbol -, ZZ, CC, CC
+	      is Error do rhs
+	      else binarymethod(lhs,rhs,MinusS))
      is x:QQcell do (
-	  when rhs
-	  is y:ZZcell do toExpr(x.v - y.v)			    -- # typical value: symbol -, QQ, ZZ, QQ
+      when rhs
+	      is y:ZZcell do toExpr(x.v - y.v)			    -- # typical value: symbol -, QQ, ZZ, QQ
      	  is y:QQcell do toExpr(x.v - y.v)			    -- # typical value: symbol -, QQ, QQ, QQ
-	  is y:RRcell do toExpr(toRR(x.v,precision(y.v)) - y.v)		    -- # typical value: symbol -, QQ, RR, RR
-	  is y:CCcell do toExpr(toRR(x.v,precision(y.v.re)) - y.v)	    -- # typical value: symbol -, QQ, CC, CC
-	  is Error do rhs
-	  else binarymethod(lhs,rhs,MinusS))
+	      is y:RRcell do toExpr(toRR(x.v,precision(y.v)) - y.v)		    -- # typical value: symbol -, QQ, RR, RR
+          is y:RRicell do toExpr(toRRi(x.v,precision(y.v)) - y.v)
+	      is y:CCcell do toExpr(toRR(x.v,precision(y.v.re)) - y.v)	    -- # typical value: symbol -, QQ, CC, CC
+	      is Error do rhs
+	      else binarymethod(lhs,rhs,MinusS))
      is x:RawRingElementCell do (
 	  when rhs
-	  is y:RawRingElementCell do (			    -- # typical value: symbol -, RawRingElement, RawRingElement, RawRingElement
+	      is y:RawRingElementCell do (			    -- # typical value: symbol -, RawRingElement, RawRingElement, RawRingElement
 	       when x.p-y.p
 	       is t:RawRingElement do toExpr(t)
 	       is null do buildErrorPacket(EngineError("polynomial subtraction failed"))
@@ -165,9 +169,18 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:ZZcell do toExpr(x.v - y.v)			    -- # typical value: symbol -, RR, ZZ, RR
      	  is y:QQcell do toExpr(x.v - y.v)			    -- # typical value: symbol -, RR, QQ, RR
 	  is y:RRcell do toExpr(x.v - y.v)			    -- # typical value: symbol -, RR, RR, RR
+      is y:RRicell do toExpr(toRRi(x.v) - y.v)
 	  is y:CCcell do toExpr(x.v - y.v)			    -- # typical value: symbol -, RR, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
+    is x:RRicell do (
+      when rhs
+	       is y:ZZcell do toExpr(x.v - y.v)
+	       is y:QQcell do toExpr(x.v - y.v)
+	       is y:RRcell do toExpr(x.v - y.v)
+           is y:RRicell do toExpr(x.v - y.v) -- # typical value: symbol +, RRi, RRi, RRi
+	       is Error do rhs
+	       else buildErrorPacket(EngineError("subtration not implemented")))
      is x:CCcell do (
 	  when rhs
 	  is y:ZZcell do toExpr(x.v - toRR(y.v,precision(x.v.re)))	    -- # typical value: symbol -, CC, ZZ, CC
