@@ -31,7 +31,7 @@ InexactField.synonym = "inexact field"
 raw InexactField := R -> R.RawRing
 
 RR.InexactField = RealField    = new Type of InexactField   ; RealField.synonym = "real field"
-RRi.InexactField = RealField    = new Type of InexactField   ; RealField.synonym = "real interval field"
+RRi.InexactField = RealIntervalField    = new Type of InexactField   ; RealField.synonym = "real interval field"
 CC.InexactField = ComplexField = new Type of InexactField; ComplexField.synonym = "complex field"
 
 Nothing' = Nothing					    -- maybe we'll want to rename it later...
@@ -157,7 +157,7 @@ promote(RR,QQ) := (z,QQ) -> if z === 0. then 0/1 else if isFinite z then (
      ) else error "promote(RR,QQ): non-finite number encountered"
 
 ring RR := x -> new RealField of RR' from precision x
-ring RRi := x -> new RealField of RRi' from precision x
+ring RRi := x -> new RealIntervalField of RRi' from precision x
 ring CC := x -> new ComplexField of CC' from precision x
 
 new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x)
