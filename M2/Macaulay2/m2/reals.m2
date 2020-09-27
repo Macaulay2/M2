@@ -71,7 +71,7 @@ new ComplexField of Nothing' from ZZ := memoize(
 	       symbol precision => prec,
 	       symbol Engine => true,
 	       symbol isBasic => true,
-	       symbol baseRings => {ZZ,QQ,RR,RRi},
+	       symbol baseRings => {ZZ,QQ,RR},
 	       symbol RawRing => rawCC prec
 	       }))
 precision InexactField := R -> R.precision

@@ -1238,7 +1238,7 @@ export (x:RRi) + (y:QQ) : RRi := (
      moveToRRiandclear(z));
 
 export (x:RRi) + (y:RR) : RRi := (
-     z := newRRimutable(precision0(x));
+     z := newRRimutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfi_add_fr(", z, ",",  x, ",",  y, ")" );
      moveToRRiandclear(z));
 
@@ -1250,13 +1250,17 @@ export - (y:RR) : RR := (
 export - (y:RRi) : RRi := (
     z := newRRimutable(precision0(y));
     Ccode( void, "mpfi_neg(", z, ",",  y, ")" );
-    -- Behavior might be different for mpfi and removed an argument.
     moveToRRiandclear(z));
 
 export (x:RR) - (y:RR) : RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_sub(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (x:RRi) - (y:RRi) : RRi := (
+     z := newRRimutable(min(precision0(x),precision0(y)));
+     Ccode( void, "mpfi_sub(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
 
 export (x:RR) - (y:int) : RR := (
      z := newRRmutable(precision0(x));
@@ -1264,16 +1268,38 @@ export (x:RR) - (y:int) : RR := (
      moveToRRandclear(z));
 
 export (y:int) - (x:RR) : RR := -(x-y);
-     
+  
+export (x:RRi) - (y:int) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_sub_si(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
+                                    
+export (y:int) - (x:RRi) : RRi := -(x-y);
+                                    
 export (x:RR) - (y:ZZ) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_sub_z(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (x:RRi) - (y:ZZ) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_sub_z(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
      
 export (x:RR) - (y:QQ) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_sub_q(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (x:RRi) - (y:QQ) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_sub_q(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
+                                    
+export (x:RRi) - (y:RR) : RRi := (
+     z := newRRimutable(min(precision0(x),precision0(y)));
+     Ccode( void, "mpfi_sub_fr(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
 
 export abs(x:RR) : RR := if isNegative0(x) then -x else x;
 
