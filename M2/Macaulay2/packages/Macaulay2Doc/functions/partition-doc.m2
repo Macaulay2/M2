@@ -3,8 +3,12 @@
 --- notes: 
 
 document { 
-     Key => {partition,(partition,Function,VisibleList),
-	  (partition,Function,VisibleList,VisibleList),(partition,Function,VirtualTally)},
+     Key => {
+	  partition,
+	 (partition,Function,VisibleList),
+	 (partition,Function,VisibleList,VisibleList),
+	 (partition,Function,VirtualTally),
+	 (partition,Function,VirtualTally,VisibleList)},
      Headline => "partition a set or list by values of a function",
      Usage => "partition(f,L)\npartition(f,L,I)",
      Inputs => {

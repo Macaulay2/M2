@@ -13,10 +13,3 @@ document {
 	  },
      SeeAlso => { "ReesAlgebra::ReesAlgebra" }
      }
-
-document {
-     Key => Iterate,
-     PARA {
-	  "This symbol is defined in the core so it can be used as the name of an optional argument or strategy by multiple packages."
-	  }
-     }

@@ -216,11 +216,22 @@ document {
      }
 
 document {
+     Key => {unstack,(unstack, Net)},
+     Headline => "list the rows of a net",
+     TT "unstack x", " -- produces a list of strings, each containing the
+     characters in one row of the ", TT "Net", " ", TT "x", ".",
+     PARA{},
+     "The orginal net, adjusted so its height is 1, may be recovered
+     with ", TO "stack", ". The individual strings will have
+     all trailing spaces removed, unless this would make all of them
+     narrower than the original net, in which case the first string
+     retains its trailing spaces."
+     }
+
+document {
      Key => width,
      Headline => "width of a file or net"
      }
-
-
 
 document {
      Key => {height,(height,Net),(height,String)},
@@ -317,8 +328,13 @@ document {
      SeeAlso => {"strings and nets", height, depth}
      }
 
+undocumented {(format, Sequence)}
 document {
-     Key => format,
+     Key => {
+	  format,
+	 (format, CC),
+	 (format, RR),
+	 (format, String)},
      Headline => "format a string or a real number",
      SYNOPSIS (
      	  Usage => "format(s)",
@@ -360,6 +376,73 @@ document {
 	  ),
      SeeAlso => {toExternalString}
      }
+
+document {
+    Key => {ascii, (ascii, List), (ascii, String)},
+    Headline => "ASCII character conversion",
+    SYNOPSIS (
+     	Usage => "ascii v",
+     	Inputs => {"v" => "containing small integers"},
+     	Outputs => {{"the string whose characters have the ", wikipedia "ASCII", " codes listed in ", TT "v"}}),
+    SYNOPSIS (
+     	Usage => "ascii s",
+     	Inputs => {"s"},
+     	Outputs => {{"the list of (small integer) ", wikipedia "ASCII", " codes of the characters of ", TT "s"}}),
+    EXAMPLE {///ascii "abcdef"///, ///ascii oo///, ///first ascii "A"///}
+    }
+
+-- TODO: utf8check
+
+document {
+     Key => utf8,
+     Headline => "encode and decode unicode utf-8-encoded strings",
+     SYNOPSIS (
+     	  Usage => "utf8 x",
+	  Inputs => {
+	       "x" => List => {"a list of small natural numbers to serve as character codes"}
+	       },
+	  Outputs => {
+	       String => {"a string obtained by encoding the character codes in ", TT "x", " according to the utf-8 encoding standard"}
+	       },
+	  EXAMPLE lines ///
+	       s = utf8 {119, 111, 51, 32, 25105}
+	  ///
+	  ),
+     SYNOPSIS (
+     	  Usage => "utf8 s",
+	  Inputs => {
+	       "s" => String
+	       },
+	  Outputs => {
+	       List => {"a list of the integer codes obtained by decoding the string ", TT "s", " according to the utf-8 encoding standard"}
+	       },
+	  EXAMPLE lines ///
+	       utf8 s
+	  ///
+	  ),
+     PARA {
+	  "The two operations described above are inverse to each other."
+	  },
+     SeeAlso => {ascii},
+     }
+
+document { Key => toLower,
+     Headline => "convert to lower case",
+     Usage => "toLower s",
+     Inputs => {"s"=>String},
+     Outputs => {String => {"the string produced from ", TT "s", " by converting its characters to lower case"}},
+     EXAMPLE lines ///
+     	  toLower "A b C d E f"
+     ///}
+
+document { Key => toUpper,
+     Headline => "convert to upper case",
+     Usage => "toUpper s",
+     Inputs => {"s"=>String},
+     Outputs => {String => {"the string produced from ", TT "s", " by converting its characters to lower case"}},
+     EXAMPLE lines ///
+     	  toUpper "A b C d E f"
+     ///}
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

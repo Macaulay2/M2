@@ -6,6 +6,7 @@ doc ///
   Key
      match
     (match, String, String)
+    (match, List, String)
     [match, POSIX]
     [match, Strategy]
     "lastMatch"

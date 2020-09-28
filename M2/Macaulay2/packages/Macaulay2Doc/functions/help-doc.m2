@@ -3,8 +3,6 @@
 --- notes: functions below are all defined in help.m2
 --- FIXME: help "Macaulay2" doesn't do what this page ways
 
-undocumented {"Body"} -- about
-
 doc ///
   Key
      help
@@ -68,6 +66,7 @@ doc ///
      viewHelp
     (viewHelp, Thing)
     (viewHelp, String)
+    (viewHelp, DocumentTag)
   Headline
     view online documentation in a web browser
   Usage
@@ -245,9 +244,41 @@ Node
     Since @TT "s"@ is taken as a regular expression, parentheses serve
     for grouping subexpressions, rather than matching themselves.
   SeeAlso
-    help
+    (help, ZZ)
     (symbol?, Symbol)
     apropos
+    findSynonyms
+    "regular expressions"
+
+Node
+  Key
+     apropos
+    (apropos, String)
+  Headline
+    symbols matching a pattern
+  Usage
+    apropos pattern
+  Inputs
+    pattern:String
+      a regular expression pattern to match
+  Outputs
+    :List
+      of global symbols matching the given pattern
+  Description
+    Text
+      In the simplest case, the list of symbols containing the given string is returned.
+    Example
+      apropos "atrix"
+    Text
+      @TO2 {"regular expressions", "Regular expressions"}@ allow for more complicated requests.
+      For example, to find all functions that start with @TT "mat"@ or @TT "Mat"@:
+    Example
+      apropos "^[mM]at"
+  SeeAlso
+    help
+    about
+    findSynonyms
+    "regular expressions"
 ///
 
 -- the node displayed by the help command by default

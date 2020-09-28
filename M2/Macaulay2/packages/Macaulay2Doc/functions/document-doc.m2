@@ -2,6 +2,9 @@
 --- author(s): Mahrud
 --- notes: functions below are all defined in document.m2, roughly in this order
 
+-- documented in SimpleDoc
+undocumented { Description, (document, String) }
+
 doc ///
 Node
   Key

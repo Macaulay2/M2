@@ -59,6 +59,7 @@ undocumented {
     (html, Descent),
     (html, Function),
     (html, Net),
+    (html, Monoid),
     (html, Ring),
     (html, RingFamily),
     (html, Thing),
