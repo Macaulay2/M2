@@ -807,7 +807,7 @@ document {
 	  { "displays x in the appropriate viewer" }
 	  }
      }
-document { Key => {(validate, Hypertext),validate},
+document { Key => {validate, (validate, Hypertext)},
      Usage => "validate x",
      Inputs => { "x" => { TO "hypertext" } },
      Consequences => { { "The hypertext is checked for validity, to ensure that the HTML code returned by ", TT "html x", " is valid." }},
@@ -818,18 +818,13 @@ document { Key => {(validate, Hypertext),validate},
 	  }
      }
 
+isMissingDoc := value Core#"private dictionary"#"isMissingDoc";
+isUndocumented := value Core#"private dictionary"#"isUndocumented";
+scan({peek', show, validate, html, net, info, tex, texMath, mathML, NewFromMethod, toString, toExternalString, symbol?}, m ->
+    undocumented select(toList \\ makeDocumentTag \ methods m, x -> isMissingDoc x or isUndocumented x))
+
 undocumented {
-    (validate, CDATA),
-    (validate, COMMENT),
-    (validate, LITERAL),
-    (validate, MarkUpType, Set, BasicList),
-    (validate, Option),
-    (validate, String),
-    (validate, TEX),
-    (validate, TO),
-    (validate, TO2),
-    (validate, TOH),
-    (validate, Type, Set, BasicList),
-    -- TODO: document this
-    (examples,Hypertext)
+    (examples, Hypertext),
+    (htmlWithTex, Hypertext),
+    (hypertext, Hypertext)
     }
