@@ -141,42 +141,19 @@ html HREF := x -> (
 
 html MENU := x -> html redoMENU x
 
--- TODO: reduce this
-html TO   := x -> (
-     tag := x#0;
-     d := fetchRawDocumentation getPrimaryTag tag;
-     r := htmlLiteral format tag;
-     if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
-     if d#?"undocumented" and d#"undocumented" === true then (
-	  if signalDocumentationWarning tag then (
-	       stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
-	       warning();
-	       );
-	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ", toString tag.Key, " -->)")
-	  )
-     else if d === null					    -- isMissingDoc
-     then (
-	  warning("missing documentation: "|toString tag);
-	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ", toString tag.Key, " -->)")
-	  )
-     else concatenate( "<a href=\"", toURL htmlFilename getPrimaryTag tag, "\" title=\"", htmlLiteral headline tag, "\">", r, "</a>", if x#?1 then x#1))
-
+html TO   := x -> html TO2{tag := getPrimaryTag x#0, format tag}
 html TO2  := x -> (
-     tag := x#0;
-     headline tag;		   -- this is a kludge, just to generate error messages about missing links
-     d := fetchRawDocumentation getPrimaryTag tag;
-     if d#?"undocumented" and d#"undocumented" === true then (
-	  if signalDocumentationWarning tag then (
-	       stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
-	       warning();
-	       );
-	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ", format tag, " -->)")
-	  )
-     else if d === null					    -- isMissingDoc
-     then (
-	  warning("missing documentation: "|toString tag);
-	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ", format tag, " -->)"))
-     else concatenate("<a href=\"", toURL htmlFilename getPrimaryTag tag, "\">", htmlLiteral x#1, "</a>"))
+    tag := getPrimaryTag x#0;
+    fkey := format tag;
+    -- TODO: add this to htmlLiteral?
+    name := if match("^ +$", x#1) then #x#1 : "&nbsp;&nbsp;" else x#1;
+    if isUndocumented tag then (
+	if signalDocumentationWarning tag then warning("tag cited also declared as undocumented: " | fkey);
+	concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)"))
+    else if isMissingDoc tag then (
+	if signalDocumentationWarning tag then warning("missing documentation: " | fkey);
+	concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)"))
+    else concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, htmlLiteral name}))
 
 html VerticalList         := x -> html UL apply(x, html)
 html NumberedVerticalList := x -> html OL apply(x, html)

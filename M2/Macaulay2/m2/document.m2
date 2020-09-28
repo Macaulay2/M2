@@ -351,7 +351,7 @@ fetchProcessedDocumentation = (pkg, fkey) -> (
 -----------------------------------------------------------------------------
 -- inquiring the status of a key or DocumentTag
 -----------------------------------------------------------------------------
-isMissingDoc    := tag -> fetchRawDocumentation getPrimaryTag tag === null
+isMissingDoc     = tag -> ( d := fetchRawDocumentation tag; d === null )
 isSecondaryTag   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?PrimaryTag )
 isUndocumented   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?"undocumented" and d#"undocumented" === true )
 hasDocumentation = key -> (
