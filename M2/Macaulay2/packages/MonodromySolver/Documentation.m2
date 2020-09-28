@@ -740,6 +740,47 @@ doc ///
         "member"
     ///
 
+
+doc ///
+    Key
+        monodromyGroup
+        (monodromyGroup, System)
+        (monodromyGroup, System, Point, List)
+    Headline
+        compute the group of permutations implicitly defined by a homotopy graph
+    Usage
+        monodromyGroup S
+        monodromyGroup(S, p0, x0s)
+    Inputs
+        S:System
+        p0:Point
+        x0s:List
+    Description
+        Text
+            Still a bit experimental You will need to use a bigger graph than the default settings to fully generate imprimitive groups, as in the following example of an ED-degree calculation.
+        Example
+            setRandomSeed 100;
+            declareVariable \ {t_1,t_2,u_0,u_1,u_2,u_3};
+            paramMatrix = gateMatrix{{u_0,u_1,u_2,u_3}};
+            varMatrix = gateMatrix{{t_1,t_2}};
+            phi = transpose gateMatrix{{t_1^3, t_1^2*t_2, t_1*t_2^2, t_2^3}};
+            loss = sum for i from 0 to 3 list (u_i - phi_(i,0))^2;
+            dLoss = diff(varMatrix, gateMatrix{{loss}});
+            G = gateSystem(paramMatrix,varMatrix,transpose dLoss);
+            monodromyGroup(G,"msOptions" => {NumberOfEdges=>10})
+    ///
+    
+end
+restart
+needs "ed-gal.m2"
+monodromyGroup(G,FileName=>"eddGG","msOptions" => {Verbose=>true,NumberOfEdges=>10})
+
+    SeeAlso
+        "member"
+    ///
+
+
+
 -*
 doc ///
     Key
