@@ -1,6 +1,8 @@
 Building Macaulay2 from Source using CMake
 ==========================================
 
+![Build and Test Macaulay2](https://github.com/Macaulay2/M2/workflows/Build%20and%20Test%20Macaulay2/badge.svg?branch=master)
+
 ## Why CMake?
 CMake is a cross-platform system for generating build environments using native tools such as Makefiles and Ninja or IDEs such as Xcode and Visual Studio. See this article on [why the KDE project switched to CMake](https://lwn.net/Articles/188693/) and this list of [cool CMake features](https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/Really-Cool-CMake-Features).
 
@@ -229,7 +231,13 @@ Macaulay2 uses several external libraries and programs, which can be built using
   - `build-normaliz`: [Normaliz] software for computations in affine monoids, lattice polytopes, and rational cones
   - `build-topcom`:	[TOPCOM] software for computing triangulations of point configurations and oriented matroids
 
+Additionally, build targets are available for a few programs which are not built and distributed by default due to time or licensing constraints:
+  - `build-bertini`:	[Bertini] software for numerical algebraic geometry
+  - `build-phcpack`:	[PHCpack] software for solving polynomial systems by homotopy continuation methods
+  - `build-polymake`:	[polymake] software for research in polyhedral geometry
+
 [4ti2]: https://4ti2.github.io/
+[Bertini]: https://bertini.nd.edu/
 [CSDP]: https://github.com/coin-or/Csdp/wiki
 [Gfan]: https://users-math.au.dk/~jensen/software/gfan/gfan.html
 [Normaliz]: https://www.normaliz.uni-osnabrueck.de/
@@ -237,6 +245,8 @@ Macaulay2 uses several external libraries and programs, which can be built using
 [cohomCalg]: https://github.com/BenjaminJurke/cohomCalg
 [lrs]: http://cgm.cs.mcgill.ca/~avis/C/lrs.html
 [nauty]: http://pallini.di.uniroma1.it/
+[phcpack]: https://github.com/janverschelde/PHCpack
+[polymake]: https://polymake.org/
 
 Note that the targets for individual libraries and programs only build the respective component in the `libraries` subdirectory in the build directory, while the `build-libraries` and `build-programs` targets also invoke `build-[LIBRARY or PROGRAM]-install` on each component in order to install the artifacts in the `usr-host` subdirectory.
 
@@ -273,6 +283,10 @@ For specific packages, the following targets are also available:
 - `check-[PACKAGE]`: run the tests for the individual package
 - `all-[PACKAGE]`: install and run the tests for the individual package
 - `uninstall-[PACKAGE]`: uninstall the individual package
+
+### Targets for Generating Macaulay2 Syntax Highlighters
+- `M2-emacs`: generate the [M2.el](https://github.com/Macaulay2/M2-emacs) package for Emacs
+- `M2-editors`: generate various syntax highlighting grammar files
 
 
 ## FAQ

@@ -124,10 +124,10 @@ find_package(MPFR	4.0.1)
 find_package(NTL       10.5.0)
 find_package(Flint	2.6.0)
 find_package(Factory	4.1.0)
+find_package(MPSolve	3.2.0)
 # TODO: add minimum version checks
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 094h?
-find_package(MPSolve	3.2.0)
 find_package(GTest	1.10)
 find_package(Memtailor	1.0.0)
 find_package(Mathic	1.0.0)
