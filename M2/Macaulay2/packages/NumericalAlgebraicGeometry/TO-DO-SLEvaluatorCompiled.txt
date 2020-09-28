@@ -1,0 +1,13 @@
+in the kernel we need:
+* SLEvaluatorCompiled in SLP-...{hpp,cpp}
+* rawSLEvaluatorCompiled in engine.dd...
+* modify rawSLEvaluatorEvaluate (to call a fn from dll)
+
+in the front:
+* makeSLProgram should have an option "compiled"=>false
+  * store cCode in SLProgram
+* modify rawSLEvaluatorK for the case "compiled"=>true
+  * create dll (use temporaryFileName) 
+  * call rawSLEvaluatorCompiled
+  
+  
