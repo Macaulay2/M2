@@ -130,8 +130,6 @@ STRONG     = new MarkUpType of Hypertext
 SUB        = new MarkUpType of Hypertext
 SUP        = new MarkUpType of Hypertext
 TT         = new MarkUpType of Hypertext
-BF = BOLD
-IT = ITALIC
 
 -- Lists (TODO: OL)
 OL         = new MarkUpType of HypertextContainer
@@ -209,6 +207,15 @@ new BR from List := (X,x) -> if all(x, e -> instance(e, Option)) then x else err
 br = BR{}
 hr = HR{}
 
+-- used in the TEX constructor below
+convertTexTable := new HashTable from {
+    "url" => "HREF",
+    "bf" => "BOLD",
+    "em" => "EM",
+    "it" => "ITALIC",
+    "tt" => "TT",
+    }
+
 new TEX from String    := (T, t) -> T {t}
 new TEX from BasicList := (T, t) -> (
     -- TODO: https://www.overleaf.com/learn/latex/Font_sizes,_families,_and_styles#Reference_guide
@@ -219,9 +226,9 @@ new TEX from BasicList := (T, t) -> (
     off  := 0;
     while (m := regex(re, off, s)) =!= null do (
 	off = m#3#0;
-	tag := toUpper substring(m#2, s);
-	if match("URL", tag) then (
-	    tag = "HREF";
+	tag := substring(m#2, s);
+	if match("url", tag) then (
+	    tag = convertTexTable#tag;
 	    if debugLevel > 1 then printerr("parsing ", tag, " in TEX");
 	    s = replace(regexQuote substring(m#1, s), "\"," | tag | "{" | format substring(m#3, s) | "},\"", s);
 	    continue));
@@ -230,8 +237,9 @@ new TEX from BasicList := (T, t) -> (
     off  = 0;
     while (m = regex(re, off, s)) =!= null do (
 	off = m#3#0;
-	tag = toUpper substring(m#2, s);
-	if match("BF|TT|EM|IT", tag) then (
+	tag = substring(m#2, s);
+	if match("bf|tt|em|it", tag) then (
+	    tag = convertTexTable#tag;
 	    if debugLevel > 1 then printerr("parsing ", tag, " in TEX");
 	    s = replace(regexQuote substring(m#1, s), "\"," | tag | "{" | format substring(m#3, s) | "},\"", s);
 	    continue));
@@ -239,7 +247,7 @@ new TEX from BasicList := (T, t) -> (
     s = replace("---", "—", s);
     s = replace("\\b--\\b", "–", s);
     -- evaluate Hypertext types
-    s = value s;
+    s = evaluateWithPackage(getpkg "Text", s, value);
     if instance(s, BasicList) then s else {s})
 
 isLink = x -> instance(x, TO) or instance(x, TO2) or instance(x, TOH)

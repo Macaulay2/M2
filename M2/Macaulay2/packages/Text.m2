@@ -6,8 +6,8 @@ newPackage("Text",
      )
 
 exportFrom_Core {
-     "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BF", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
-     "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "IMG", "ITALIC", "IT",
+     "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
+     "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "IMG", "ITALIC",
      "LABEL", "LATER", "LI", "LINK", "LITERAL", "MENU", "META", "PARA", "PRE", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD", "TH",
      "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "OL", "validate",
      "MarkUpType", "IntermediateMarkUpType",
@@ -460,7 +460,7 @@ document { Key => MENU,
      }
 
 document {
-     Key => {ITALIC, "IT"},
+     Key => ITALIC,
      Headline => "hypertext italic font",
      Usage => "ITALIC x",
 	Inputs => {"x" => {}},
@@ -583,7 +583,7 @@ document {
      }
 
 document {
-     Key => {BOLD, "BF"},
+     Key => BOLD,
      Headline => "hypertext BOLD item",
 	Usage => "BOLD x",
 	Inputs => {"x" => {}},
