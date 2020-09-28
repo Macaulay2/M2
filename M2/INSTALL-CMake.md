@@ -290,7 +290,7 @@ For specific packages, the following targets are also available:
 
 
 ## FAQ
-Below are a list of common issues and errors. If you run into a problem not listed below, please open a [new issue](https://github.com/Macaulay2/M2/issues/new) on GitHub.
+Below are a list of common issues and errors. If you run into a problem not listed below or among the list of issues labeled with [build system](https://github.com/Macaulay2/M2/labels/build%20system), please open a [new issue](https://github.com/Macaulay2/M2/issues/new) on GitHub.
 
 
 <details>
@@ -312,6 +312,16 @@ This issue is due to an old version of FFLAS_FFPACK or Givaro libraries insertin
 <summary><code>/usr/include/boost/regex/v4/cpp_regex_traits.hpp:966: undefined reference to `boost::re_detail_107100::cpp_regex_traits_implementation<char>::transform_primary(char const*, char const*) const'</code></summary>
 
 Same as above.
+</details>
+
+<details>
+<summary><code>collect2: error: ld returned 1 exit status</code> on WSL2</summary>
+
+This issue is likely due to a memory exhaustion bug in WSL2. Try cleaning the build artifacts and building with parallelization disabled:
+```
+ninja clean
+ninja M2-core -j1
+```
 </details>
 
 <details>
