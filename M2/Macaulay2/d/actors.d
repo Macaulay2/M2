@@ -248,6 +248,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  is y:ZZcell do toExpr(x.v * y.v)			    -- # typical value: symbol *, ZZ, ZZ, ZZ
      	  is y:QQcell do toExpr(x.v * y.v)			    -- # typical value: symbol *, ZZ, QQ, QQ
      	  is y:RRcell do toExpr(toRR(x.v,precision(y.v)) * y.v)		    -- # typical value: symbol *, ZZ, RR, RR
+          is y:RRicell do toExpr(y.v * x.v)
      	  is y:CCcell do toExpr(x.v * y.v)	    -- # typical value: symbol *, ZZ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
@@ -256,6 +257,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  is y:ZZcell do toExpr(x.v * y.v)			    -- # typical value: symbol *, QQ, ZZ, QQ
      	  is y:QQcell do toExpr(x.v * y.v)			    -- # typical value: symbol *, QQ, QQ, QQ
      	  is y:RRcell do toExpr(y.v * x.v)			    -- # typical value: symbol *, QQ, RR, RR
+          is y:RRicell do toExpr(y.v * x.v)
      	  is y:CCcell do toExpr(y.v * toRR(x.v,precision(y.v.re)))	    -- # typical value: symbol *, QQ, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
@@ -283,10 +285,19 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  is y:ZZcell do toExpr(x.v * y.v)			    -- # typical value: symbol *, RR, ZZ, RR
      	  is y:QQcell do toExpr(x.v * y.v)			    -- # typical value: symbol *, RR, QQ, RR
      	  is y:RRcell do toExpr(x.v * y.v)			    -- # typical value: symbol *, RR, RR, RR
+          is y:RRicell do toExpr(y.v * x.v)
      	  is y:CCcell do toExpr(x.v * y.v)			    -- # typical value: symbol *, RR, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
-     is x:CCcell do (
+      is x:RRicell do (
+      when rhs
+	       is y:ZZcell do toExpr(x.v * y.v)
+	       is y:QQcell do toExpr(x.v * y.v)
+	       is y:RRcell do toExpr(x.v * y.v)
+           is y:RRicell do toExpr(x.v * y.v) -- # typical value: symbol *, RRi, RRi, RRi
+	       is Error do rhs
+	       else buildErrorPacket(EngineError("multiplication not implemented")))
+    is x:CCcell do (
 	  when rhs
 	  is y:ZZcell do toExpr(x.v * y.v)	    -- # typical value: symbol *, CC, ZZ, CC
      	  is y:QQcell do toExpr(x.v * toRR(y.v,precision(x.v.re)))	    -- # typical value: symbol *, CC, QQ, CC
@@ -359,6 +370,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       else toExpr(x.v / y.v))
      	  is y:RRcell do (					    -- # typical value: symbol /, ZZ, RR, RR
 	       toExpr(toRR(x.v,precision(y.v)) / y.v))
+          is y:RRicell do (toExpr(x.v / y.v))
      	  is y:CCcell do (					    -- # typical value: symbol /, ZZ, CC, CC
 	       toExpr(x.v / y.v))
 	  is Error do rhs
@@ -375,6 +387,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       else toExpr(x.v / y.v))
      	  is y:RRcell do (					    -- # typical value: symbol /, QQ, RR, RR
 	       toExpr(toRR(x.v,precision(y.v)) / y.v))
+          is y:RRicell do (toExpr(x.v / y.v))
      	  is y:CCcell do (					    -- # typical value: symbol /, QQ, CC, CC
 	       if y.v === 0 then buildErrorPacket("division by zero") else
 	       toExpr(toRR(x.v,precision(y.v.re)) / y.v))
@@ -392,10 +405,25 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       else toExpr(x.v / y.v))
      	  is y:RRcell do (					    -- # typical value: symbol /, RR, RR, RR
 	       toExpr(x.v / y.v))
+          is y:RRicell do (toExpr(x.v / y.v))
      	  is y:CCcell do (					    -- # typical value: symbol /, RR, CC, CC
 	       toExpr(x.v / y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
+    is x:RRicell do (
+      when rhs
+	       is y:ZZcell do (
+	         if y.v === 0
+	         then buildErrorPacket("division by zero")
+	         else toExpr(x.v / y.v))
+           is y:QQcell do (
+	         if y.v === 0
+	         then buildErrorPacket("division by zero")
+	         else toExpr(x.v / y.v))
+           is y:RRcell do (toExpr(x.v / y.v))
+           is y:RRicell do (toExpr(x.v / y.v))
+	       is Error do rhs
+	       else buildErrorPacket(EngineError("multiplication not implemented")))
      is x:CCcell do (
 	  when rhs
 	  is y:ZZcell do (					    -- # typical value: symbol /, CC, ZZ, CC

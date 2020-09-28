@@ -1307,11 +1307,21 @@ export (x:RR) * (y:RR) : RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_mul(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+ 
+export (x:RRi) * (y:RRi) : RRi := (
+     z := newRRimutable(min(precision0(x),precision0(y)));
+     Ccode( void, "mpfi_mul(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
 
 export (x:RR) * (y:ZZ) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_mul_z(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (x:RRi) * (y:ZZ) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_mul_z(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
 
 export (y:ZZ) * (x:RR) : RR := (
      z := newRRmutable(precision0(x));
@@ -1322,38 +1332,104 @@ export (x:RR) * (y:int) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_mul_si(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (x:RRi) * (y:int) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_mul_si(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
 
 export (y:int) * (x:RR) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_mul_si(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (y:int) * (x:RRi) : RRi := x*y;
      
 export (x:RR) * (y:QQ) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_mul_q(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (x:RRi) * (y:QQ) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_mul_q(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
+                                    
+export (x:RRi) * (y:RR) : RRi := (
+     z := newRRimutable(min(precision0(x),precision0(y)));
+     Ccode( void, "mpfi_mul_fr(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
 
 export (x:RR) / (y:RR) : RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_div(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (x:RRi) / (y:RRi) : RRi := (
+     z := newRRimutable(min(precision0(x),precision0(y)));
+     Ccode( void, "mpfi_div(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
 
 export (x:RR) / (y:long) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_div_si(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
-
+                                    
 export (x:RR) / (y:int) : RR := x / long(y);
+                                    
+export (x:RRi) / (y:long) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_div_si(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
+                                    
+export (y:long) / (x:RRi) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_si_div(", z, ",",  y, ",",  x, ")" );
+     moveToRRiandclear(z));
+                                    
+export (x:RRi) / (y:int) : RRi := x / long(y);
+                                    
+export (y:int) / (x:RRi) : RRi := long(y) / x;                                     
      
 export (x:RR) / (y:ZZ) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_div_z(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (x:RRi) / (y:ZZ) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_div_z(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
+                                    
+export (y:ZZ) / (x:RRi) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_z_div(", z, ",",  y, ",",  x, ")" );
+     moveToRRiandclear(z));
      
 export (x:RR) / (y:QQ) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_div_q(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (x:RRi) / (y:QQ) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_div_q(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
+                                    
+export (y:QQ) / (x:RRi) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_q_div(", z, ",",  y, ",",  x, ")" );
+     moveToRRiandclear(z));
+                                    
+export (x:RRi) / (y:RR) : RRi := (
+     z := newRRimutable(min(precision0(x),precision0(y)));
+     Ccode( void, "mpfi_div_fr(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
+                                    
+export (y:RR) / (x:RRi) : RRi := (
+     z := newRRimutable(min(precision0(x),precision0(y)));
+     Ccode( void, "mpfi_fr_div(", z, ",",  y, ",",  x, ")" );
+     moveToRRiandclear(z));
 
 export sqrt(x:RR):RR := (
      z := newRRmutable(precision0(x));
