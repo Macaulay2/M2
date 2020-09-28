@@ -1,8 +1,7 @@
 Building Macaulay2 from Source using CMake
 ==========================================
 
-## Warning!
-This is not (yet) the official building instructions for Macaulay2. Please let us know of any issues.
+![Build and Test Macaulay2](https://github.com/Macaulay2/M2/workflows/Build%20and%20Test%20Macaulay2/badge.svg?branch=master)
 
 ## Why CMake?
 CMake is a cross-platform system for generating build environments using native tools such as Makefiles and Ninja or IDEs such as Xcode and Visual Studio. See this article on [why the KDE project switched to CMake](https://lwn.net/Articles/188693/) and this list of [cool CMake features](https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/Really-Cool-CMake-Features).
@@ -15,14 +14,17 @@ If using a packaged distribution, confirm using `cmake --version` that you have 
 
 There are various tools needed to compile Macaulay2 dependencies.
 - On Debian/Ubuntu, install `autoconf build-essential bison libtool pkg-config yasm`.
+- On Fedora/CentOS, install `autoconf automake bison libtool pkg-config yasm`.
 - On Mac OS X, using Homebrew, install `autoconf automake bison libtool pkg-config yasm`.
 
 There are 7 libraries that must be found on the system.
-- On Debian/Ubuntu, install `libopenblas-dev libeigen3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev libatomic-ops-dev`.
-- On Mac OS X, using Homebrew, install `eigen libxml2 readline gdbm boost libatomic_ops`.
+- On Debian/Ubuntu, install `libopenblas-dev libgmp3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev libatomic-ops-dev`.
+- On Fedora/CentOS, install `openblas-devel gmp-devel libxml2-devel readline-devel gdbm-devel boost-devel libatomic_ops-devel`.
+- On Mac OS X, using Homebrew, install `gmp libxml2 readline gdbm boost libatomic_ops`.
 
 Finally, there are 2 optional libraries that help with building other requirements.
 - On Debian/Ubuntu, install `libomp-dev libtbb-dev`.
+- On Fedora/CentOS, install `libomp-devel tbb-devel`.
 - On Mac OS X, using Homebrew, install `libomp tbb`.
 
 **NOTE**: the source directory must not contain any build artifacts from an in-source build. If you have built Macaulay2 in-source before, clean the build artifacts first by running `make clean distclean` in the source directory.
@@ -52,8 +54,6 @@ cmake -GNinja -S../.. -B. \
       -DCMAKE_INSTALL_PREFIX=/usr
 ```
 The `-S../..` argument indicates the location of the source and `-B.` indicates the build directory. After those, arguments of type `-DNAME=VALUE` set the `NAME` variable to `VALUE`. For instance, `CMAKE_BUILD_TYPE` determines various compiler flags to be used. Defined options are `Release`, `Debug`, `RelWithDebInfo`, and `RelMinSize`, with `RelWithDebInfo` being the default. The value of `CMAKE_INSTALL_PREFIX` determines the installation prefix.
-
-We build with MPIR as the multiple precision arithmetic library by default. To use GMP, use `-DUSING_MPIR=OFF` instead.
 
 This command generates the `build.ninja` files used by the Ninja build system, which is much more efficient. To generate a `Makefile` instead, remove `-GNinja` and use `make` instead of `ninja` in subsequent commands.
 
@@ -133,7 +133,7 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `LINTING:BOOL=OFF`: enable linting C++ sources (see `cmake/prechecks.cmake`)
 - `MEMDEBUG:BOOL=OFF`: enable memory allocation debugging
 - `PROFILING:BOOL=OFF`: enable profiling build flags
-- `USING_MPIR:BOOL=ON`: use MPIR instead of GMP
+- `USING_MPIR:BOOL=OFF`: use MPIR instead of GMP
 - `WITH_OMP:BOOL=OFF`: link with the OpenMP library
 - `WITH_PYTHON:BOOL=OFF`: link with the Python library
 - `WITH_SQL:BOOL=OFF`: link with the MySQL library
@@ -146,7 +146,7 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `BUILD_TESTING:BOOL=ON`: build the testing targets
   - `SKIP_TESTS:STRING="mpsolve;googletest"`: tests to skip
   - `SLOW_TESTS:STRING="eigen;ntl;flint"`: slow tests to skip
-- `BUILD_LIBRARIES:STRING="GTest;MPIR;MPFR;NTL;Flint;Factory;Frobby;Givaro"`: build libraries, even if found on the system
+- `BUILD_LIBRARIES:STRING="GTest"`: build libraries, even if found on the system
 - `BUILD_PROGRAMS:STRING="4ti2;Nauty;TOPCOM"`: build programs, even if found on the system
 - `CMAKE_BUILD_TYPE:STRING=RelWithDebInfo`: valid CMake build types are `Debug` `Release` `RelWithDebInfo` `MinSizeRel`
 - `CMAKE_INSTALL_PREFIX:PATH=/usr`: installation prefix
@@ -231,7 +231,13 @@ Macaulay2 uses several external libraries and programs, which can be built using
   - `build-normaliz`: [Normaliz] software for computations in affine monoids, lattice polytopes, and rational cones
   - `build-topcom`:	[TOPCOM] software for computing triangulations of point configurations and oriented matroids
 
+Additionally, build targets are available for a few programs which are not built and distributed by default due to time or licensing constraints:
+  - `build-bertini`:	[Bertini] software for numerical algebraic geometry
+  - `build-phcpack`:	[PHCpack] software for solving polynomial systems by homotopy continuation methods
+  - `build-polymake`:	[polymake] software for research in polyhedral geometry
+
 [4ti2]: https://4ti2.github.io/
+[Bertini]: https://bertini.nd.edu/
 [CSDP]: https://github.com/coin-or/Csdp/wiki
 [Gfan]: https://users-math.au.dk/~jensen/software/gfan/gfan.html
 [Normaliz]: https://www.normaliz.uni-osnabrueck.de/
@@ -239,6 +245,8 @@ Macaulay2 uses several external libraries and programs, which can be built using
 [cohomCalg]: https://github.com/BenjaminJurke/cohomCalg
 [lrs]: http://cgm.cs.mcgill.ca/~avis/C/lrs.html
 [nauty]: http://pallini.di.uniroma1.it/
+[phcpack]: https://github.com/janverschelde/PHCpack
+[polymake]: https://polymake.org/
 
 Note that the targets for individual libraries and programs only build the respective component in the `libraries` subdirectory in the build directory, while the `build-libraries` and `build-programs` targets also invoke `build-[LIBRARY or PROGRAM]-install` on each component in order to install the artifacts in the `usr-host` subdirectory.
 
@@ -276,9 +284,13 @@ For specific packages, the following targets are also available:
 - `all-[PACKAGE]`: install and run the tests for the individual package
 - `uninstall-[PACKAGE]`: uninstall the individual package
 
+### Targets for Generating Macaulay2 Syntax Highlighters
+- `M2-emacs`: generate the [M2.el](https://github.com/Macaulay2/M2-emacs) package for Emacs
+- `M2-editors`: generate various syntax highlighting grammar files
+
 
 ## FAQ
-Below are a list of common issues and errors. If you run into a problem not listed below, please open a [new issue](https://github.com/Macaulay2/M2/issues/new) on GitHub.
+Below are a list of common issues and errors. If you run into a problem not listed below or among the list of issues labeled with [build system](https://github.com/Macaulay2/M2/labels/build%20system), please open a [new issue](https://github.com/Macaulay2/M2/issues/new) on GitHub.
 
 
 <details>
@@ -288,6 +300,33 @@ On macOS CMake automatically finds libraries installed on the Homebrew prefix. I
 ```
 cmake -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` .
 ```
+</details>
+
+<details>
+<summary><code>/usr/include/c++/10.1.0/bits/unique_ptr.h:594:9: error: no matching function for call to std::__uniq_ptr_data</code> when using GCC 10 or Clang 10</summary>
+
+This issue is due to an old version of FFLAS_FFPACK or Givaro libraries inserting an unnecessary `-fabi-version=6` flag to the compile command. Try uninstalling the packaged version of those libraries and building them using the `build-givaro` and `build-fflas_ffpack` targets.
+</details>
+
+<details>
+<summary><code>/usr/include/boost/regex/v4/cpp_regex_traits.hpp:966: undefined reference to `boost::re_detail_107100::cpp_regex_traits_implementation<char>::transform_primary(char const*, char const*) const'</code></summary>
+
+Same as above.
+</details>
+
+<details>
+<summary><code>collect2: error: ld returned 1 exit status</code> on WSL2</summary>
+
+This issue is likely due to a memory exhaustion bug in WSL2. Try cleaning the build artifacts and building with parallelization disabled:
+```
+ninja clean
+ninja M2-core -j1
+```
+</details>
+
+<details>
+<summary><code>undefined reference to cblas_dgemm</code> on Arch Linux</summary>
+The default OpenBLAS package on Arch Linux does not include function declarations for LAPACK and CBLAS, causing issues with some libraries and parts of Macaulay2. Try installing the community package [OpenBLAS-LAPACK](https://aur.archlinux.org/packages/openblas-lapack/) instead.
 </details>
 
 <details>

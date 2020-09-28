@@ -72,7 +72,6 @@ macro(_gmp_check_version)
 endmacro(_gmp_check_version)
 
 if(NOT GMP_VERSION_OK)
-  set(GMP_ROOT NOTFOUND)
   set(GMP_INCLUDE_DIRS NOTFOUND)
   set(GMP_LIBRARY_DIRS NOTFOUND)
   set(GMP_LIBRARIES NOTFOUND)
@@ -107,7 +106,7 @@ if(NOT GMP_VERSION_OK)
     get_filename_component(GMP_LIBRARY_DIRS "${GMPXX_LIBRARIES}" DIRECTORY)
   endif()
 
-  string(REGEX REPLACE "/include(/${CMAKE_LIBRARY_ARCHITECTURE}$)?" "" GMP_ROOT "${GMP_INCLUDE_DIRS}")
+  string(REGEX REPLACE "/include.*" "" GMP_ROOT "${GMP_INCLUDE_DIRS}")
 
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(GMP DEFAULT_MSG GMP_ROOT GMP_INCLUDE_DIRS GMP_LIBRARIES GMP_LIBRARY_DIRS GMP_VERSION_OK)
