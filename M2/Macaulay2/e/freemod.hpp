@@ -19,7 +19,7 @@ class FreeModule : public EngineObject
   FreeModule(const Ring *R, int n, bool has_schreyer_order);
 
  protected:
-  array<int *> components;  // Degrees of each component
+  VECTOR(int *) components;  // Degrees of each component
   SchreyerOrder *schreyer;  // NULL, if not a Schreyer order...
 
   const Ring *R;
@@ -53,7 +53,7 @@ class FreeModule : public EngineObject
   const Monoid *degree_monoid() const { return R->degree_monoid(); }
   const SchreyerOrder *get_schreyer_order() const { return schreyer; }
   const int *degree(int i) const { return components[i]; }
-  int rank() const { return components.length(); }
+  int rank() const { return components.size(); }
   int primary_degree(int i) const;
 
   bool is_equal(const FreeModule *F) const;

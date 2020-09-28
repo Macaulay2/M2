@@ -56,7 +56,7 @@ void GBinhom_comp::set_up0(const Matrix *m,
   if (GR->is_weyl_algebra()) is_ideal = false;
   need_resize = 0;
 
-  for (i = 0; i < F->rank(); i++) monideals.append(new MonomialIdeal(R));
+  for (i = 0; i < F->rank(); i++) monideals.push_back(new MonomialIdeal(R));
 }
 
 void GBinhom_comp::set_up(const Matrix *m,

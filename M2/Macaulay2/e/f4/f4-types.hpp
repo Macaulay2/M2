@@ -20,7 +20,6 @@
 #include "../stop.hpp"
 #include "f4-monlookup.hpp"
 
-#define VECTOR(T) std::vector<T, gc_allocator<T> >
 #define sizeofspair(s, len) \
   (sizeof(*s) - sizeof(s->lcm) + (len) * sizeof(s->lcm[0]))
 

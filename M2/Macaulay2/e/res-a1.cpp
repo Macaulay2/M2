@@ -25,7 +25,7 @@ void res_comp::initialize(const Matrix *mat, int LengthLimit, int /*strategy*/)
   res_pair_stash = new stash("respair", sizeof(res_pair));
   mi_stash = new stash("res minodes", sizeof(Nmi_node));
 
-  for (i = 0; i <= LengthLimit; i++) resn.append(new res_level);
+  for (i = 0; i <= LengthLimit; i++) resn.push_back(new res_level);
 
   max_degree = M->max_degree();
   length_limit = LengthLimit;
@@ -67,8 +67,8 @@ void res_comp::initialize(const Matrix *mat, int LengthLimit, int /*strategy*/)
       p->mi = new MonomialIdeal(P, mi_stash);
       p->syz_type = SYZ_MINIMAL;
       p->base_comp = p;
-      base_components.append(p);
-      search_mi.append(new MonomialIdeal(P, mi_stash));
+      base_components.push_back(p);
+      search_mi.push_back(new MonomialIdeal(P, mi_stash));
 
       int d = mat->rows()->primary_degree(i);
       res_degree *mypairs = make_degree_set(0, d);
@@ -99,7 +99,7 @@ void res_comp::initialize(const Matrix *mat, int LengthLimit, int /*strategy*/)
         npairs++;
       }
 
-  for (i = 0; i < base_components.length(); i++)
+  for (i = 0; i < base_components.size(); i++)
     {
       res_pair *p = base_components[i];
       p->compare_num = i;
@@ -119,9 +119,9 @@ res_comp::res_comp(const Matrix *m, int LengthLimit, int strategy)
 res_comp::~res_comp()
 {
   int i;
-  for (i = 0; i < resn.length(); i++) remove_res_level(resn[i]);
+  for (i = 0; i < resn.size(); i++) remove_res_level(resn[i]);
 
-  for (i = 0; i < search_mi.length(); i++) delete search_mi[i];
+  for (i = 0; i < search_mi.size(); i++) delete search_mi[i];
 
   delete res_pair_stash;
   delete mi_stash;
@@ -157,7 +157,7 @@ void res_comp::remove_res_level(res_level *lev)
 {
   if (lev == NULL) return;
   int i;
-  for (i = 0; i < lev->bin.length(); i++)
+  for (i = 0; i < lev->bin.size(); i++)
     {
       res_degree *mypairs = lev->bin[i];
       remove_res_degree(mypairs);
@@ -174,20 +174,20 @@ res_degree *res_comp::make_degree_set(int level, int deg)
 // If not, first create it, and then return it.
 {
   int i;
-  if (level >= resn.length())
+  if (level >= resn.size())
     {
       // Create new res_levels
-      for (i = resn.length(); i <= level; i++) resn.append(new res_level);
+      for (i = resn.size(); i <= level; i++) resn.push_back(new res_level);
     }
   res_level *lev = resn[level];
 
   deg -= lodegree;
   assert(deg >= 0);  // This would be an internal error
-  if (deg >= lev->bin.length())
+  if (deg >= lev->bin.size())
     {
       // Create new res_degrees
-      for (i = lev->bin.length(); i <= deg; i++)
-        lev->bin.append(new res_degree);
+      for (i = lev->bin.size(); i <= deg; i++)
+        lev->bin.push_back(new res_degree);
       if (deg + lodegree > hidegree) hidegree = deg + lodegree;
     }
 
@@ -197,10 +197,10 @@ res_degree *res_comp::make_degree_set(int level, int deg)
 res_degree *res_comp::get_degree_set(int level, int d) const
 // find (level,d) pair set, where 'd' is the slanted degree
 {
-  if (level < 0 || level >= resn.length()) return NULL;
+  if (level < 0 || level >= resn.size()) return NULL;
   res_level *lev = resn[level];
   d -= lodegree;
-  if (d < 0 || d >= lev->bin.length()) return NULL;
+  if (d < 0 || d >= lev->bin.size()) return NULL;
   return lev->bin[d];
 }
 
@@ -1110,7 +1110,7 @@ void res_comp::handle_pair(res_pair *p)
 // {
 //   int level, deg;
 //
-//   for (level=1; level < resn.length(); level++)
+//   for (level=1; level < resn.size(); level++)
 //     {
 //       n_level = level+1;
 //       for (deg=0; deg < resn[level]->bin.length(); deg++)
@@ -1173,7 +1173,7 @@ int res_comp::n_monoms(int lev, int d) const
   return result;
 }
 
-int res_comp::max_level() const { return resn.length(); }
+int res_comp::max_level() const { return resn.size(); }
 int res_comp::low_degree() const { return lodegree; }
 int res_comp::high_degree() const { return hidegree; }
 M2_arrayint res_comp::get_betti(int type) const
@@ -1321,10 +1321,10 @@ void res_comp::text_out(buffer &o) const
 
   // If the printlevel is high enough, display each element
   if (M2_gbTrace >= 2)
-    for (int lev = 0; lev < resn.length(); lev++)
+    for (int lev = 0; lev < resn.size(); lev++)
       {
         o << "---- level " << lev << " ----" << newline;
-        for (int i = 0; i < resn[lev]->bin.length(); i++)
+        for (int i = 0; i < resn[lev]->bin.size(); i++)
           {
             res_degree *mypairs = resn[lev]->bin[i];
             if (mypairs == NULL) continue;
@@ -1342,11 +1342,11 @@ const FreeModule *res_comp::free_of(int i) const
 {
   FreeModule *result;
   result = P->make_Schreyer_FreeModule();
-  if (i < 0 || i >= resn.length()) return result;
+  if (i < 0 || i >= resn.size()) return result;
   int *deg = P->degree_monoid()->make_one();
   int n = 0;
   res_level *lev = resn[i];
-  for (int j = 0; j < lev->bin.length(); j++)
+  for (int j = 0; j < lev->bin.size(); j++)
     {
       res_degree *mypairs = lev->bin[j];
       for (res_pair *p = mypairs->first; p != NULL; p = p->next)
@@ -1369,7 +1369,7 @@ const FreeModule *res_comp::minimal_free_of(int i) const
   int *deg = P->degree_monoid()->make_one();
   int nminimals = 0;
   res_level *lev = resn[i];
-  for (int j = 0; j < lev->bin.length(); j++)
+  for (int j = 0; j < lev->bin.size(); j++)
     {
       res_degree *mypairs = lev->bin[j];
       for (res_pair *p = mypairs->first; p != NULL; p = p->next)
@@ -1394,7 +1394,7 @@ Matrix *res_comp::make(int level) const
   int n = 0;
   if (G == 0) return result.to_matrix();
   res_level *lev = resn[level];
-  for (int j = 0; j < lev->bin.length(); j++)
+  for (int j = 0; j < lev->bin.size(); j++)
     {
       res_degree *mypairs = lev->bin[j];
       for (res_pair *p = mypairs->first; p != NULL; p = p->next)
@@ -1409,7 +1409,7 @@ Matrix *res_comp::make(int level) const
 
 void res_comp::reduce_minimal(int x,
                               resterm *&f,
-                              array<res_pair *> &elems) const
+                              VECTOR(res_pair *)& elems) const
 {
   monomial MINIMAL_mon = ALLOCATE_MONOMIAL(monom_size);
 
@@ -1441,15 +1441,15 @@ Matrix *res_comp::make_minimal(int i) const
   const FreeModule *G = minimal_free_of(i);
   MatrixConstructor result(F, G, NULL);
   if (i < 0 || i > length_limit) return result.to_matrix();
-  array<res_pair *> elems;
+  VECTOR(res_pair *) elems;
 
   res_level *lev = resn[i];
-  for (int j = 0; j < lev->bin.length(); j++)
+  for (int j = 0; j < lev->bin.size(); j++)
     for (res_pair *p = lev->bin[j]->first; p != NULL; p = p->next)
-      elems.append(p);
+      elems.push_back(p);
 
   int thisx = 0;
-  for (int x = 0; x < elems.length(); x++)
+  for (int x = 0; x < elems.size(); x++)
     {
       res_pair *p = elems[x];
       if (p->syz_type == SYZ_MINIMAL)
@@ -1469,30 +1469,28 @@ Matrix *res_comp::make_minimal(int i) const
 // Skeleton construction: test code //
 //////////////////////////////////////
 
-void res_comp::skeleton_init(array<res_pair *> &reslevel)
-{
-  int i;
 
+void res_comp::skeleton_init(VECTOR(res_pair *)& reslevel)
+{
   // Do level 0
   res_pair *pp = NULL;
-  for (i = base_components.length() - 1; i >= 0; i--)
+  for (auto p = base_components.rbegin(); p != base_components.rend(); ++p)
     {
-      res_pair *p = base_components[i];
-      p->next = pp;
-      pp = p;
+      (*p)->next = pp;
+      pp = *p;
     }
-  reslevel.append(pp);
+  reslevel.push_back(pp);
 
   // Do level 1
   pp = NULL;
-  for (i = 0; i < generator_matrix->n_cols(); i++)
+  for (auto i = 0; i < generator_matrix->n_cols(); i++)
     if ((*generator_matrix)[i] != NULL)
       {
         res_pair *p = new_res_pair(i);  // Makes a generator 'pair'
         p->next = pp;
         pp = p;
       }
-  reslevel.append(pp);
+  reslevel.push_back(pp);
 }
 
 void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
@@ -1595,10 +1593,10 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   delete mi;
 }
 
-int res_comp::skeleton_maxdegree(const array<res_pair *> &reslevel)
+int res_comp::skeleton_maxdegree(const VECTOR(res_pair *)& reslevel)
 {
   int result = lodegree;
-  for (int level = 0; level < reslevel.length(); level++)
+  for (int level = 0; level < reslevel.size(); level++)
     {
       for (res_pair *p = reslevel[level]; p != NULL; p = p->next)
         {
@@ -1609,14 +1607,14 @@ int res_comp::skeleton_maxdegree(const array<res_pair *> &reslevel)
   return result;
 }
 
-void res_comp::skeleton_stats(const array<res_pair *> &reslevel)
+void res_comp::skeleton_stats(const VECTOR(res_pair *)& reslevel)
 {
   buffer o;
   int level;
-  int maxlevel = reslevel.length() - 1;
+  int maxlevel = reslevel.size() - 1;
   int maxdegree = skeleton_maxdegree(reslevel);  // max slanted degree
   int *bettis = newarray_atomic_clear(int, (maxlevel + 1) * (maxdegree + 1));
-  for (level = 0; level < reslevel.length(); level++)
+  for (level = 0; level < reslevel.size(); level++)
     {
       for (res_pair *p = reslevel[level]; p != NULL; p = p->next)
         {
@@ -1665,7 +1663,7 @@ void res_comp::skeleton(int strategy)
 // Currently: this is just used for debugging
 {
   int level;
-  array<res_pair *> reslevel;
+  VECTOR(res_pair *) reslevel;
 
   // First, set reslevel[0], reslevel[1].
   skeleton_init(reslevel);
@@ -1673,7 +1671,7 @@ void res_comp::skeleton(int strategy)
   // Now loop through each level, until the length limit is hit,
   // or there are no new pairs
 
-  for (level = 1; level < reslevel.length(); level++)
+  for (level = 1; level < reslevel.size(); level++)
     {
       // Sort the pairs in the current level:
       res_pair *pp = reslevel[level];
@@ -1689,7 +1687,7 @@ void res_comp::skeleton(int strategy)
       head.next = NULL;
       ptrhead = &head;
       for (res_pair *p = pp; p != NULL; p = p->next) skeleton_pairs(ptrhead, p);
-      reslevel.append(head.next);
+      reslevel.push_back(head.next);
     }
 
   // Now display the skeleton and stats on it
