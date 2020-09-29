@@ -32,7 +32,7 @@ newPackage("Polyhedra",
         Email => "rbirkner@mi.fu-berlin.de"
         },
      {
-        Name => "Lars Kastner (Maintaining author)",
+        Name => "Lars Kastner", -- Maintaining author
         HomePage => "http://page.mi.fu-berlin.de/lkastner/",
         Email => "k.l@fu-berlin.de"
      }

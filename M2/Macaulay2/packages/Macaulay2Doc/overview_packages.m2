@@ -37,17 +37,19 @@ Node
     "authors of Macaulay2 packages"
   Description
     Text
-      Here is a list of people who have authored packages that are distributed with Macaulay2.
+      The following people have authored packages that are distributed with Macaulay2:
     Code
-      authors := new HashTable from flatten apply(separate_" " version#"packages", pkgname -> (
+      authors := new MutableHashTable from flatten apply(separate_" " version#"packages", pkgname -> (
               pkgopts := readPackage pkgname;
               apply(pkgopts.Authors, author -> (
                       author = new OptionTable from author;
                       if author.?Name and (not authors#?(author.Name) or not instance(authors#(author.Name), HREF))
                       then author.Name => if author.?HomePage then HREF {author.HomePage, author.Name} else author.Name))));
+      scan(select(keys authors, match_{"(C|c)ontribut", "(M|m)aintain", "(A|a)uthor", "(T|t)hank", "(Michael|Mike) Stillman"}),
+	      author -> remove(authors, author));
       -- TODO: simplify this when sort takes a SortStrategy
       c := 0;
-      UL (last \ sort apply(pairs authors, (name, entry) -> (last separate(" ", name), c = c + 1, LI entry)))
+      PARA{between_", " (last \ sort apply(pairs authors, (name, entry) -> (last separate(" ", name), c = c + 1, entry))), "."}
   SeeAlso
     "creating a package"
     "packages provided with Macaulay2"
