@@ -521,7 +521,10 @@ getUsage := val -> (
     if #val === 0 then error "Usage: expected content";
     DL flatten { "class" => "element", DT "Usage: ", DD \ TT \ val } )
 
-getHeadline   := (val, key)   -> if instance(val, String) then fixup val else error("expected ", toString key, " option to be a string")
+getHeadline   := (val, key)   -> (
+    title := if instance(val, String) then fixup val else error("expected ", toString key, " option to be a string");
+    if #title > 100 then warning("document: documentation headlines must be less than 100 characters long:\n  " | format title);
+    if #title > 200 then   error("document: documentation headlines must be less than 100 characters long:\n  " | format title);
 getSubsection := (val, title) -> fixup DIV { SUBSECTION title, val }
 getSourceCode :=  val         -> DIV {"class" => "waystouse",
     fixup DIV {SUBSECTION "Code", PRE demark_newline unstack stack apply(enlist val, m -> (
