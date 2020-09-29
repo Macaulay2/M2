@@ -1,5 +1,3 @@
-needsPackage "PHCpack" -- we use this for the OptionalComponentsPresent option below
-
 newPackage(
     "DecomposableSparseSystems",
     Version=>"1.0.0",
@@ -22,7 +20,7 @@ newPackage(
     PackageImports=>{"PHCpack","Polyhedra","DeterminantalRepresentations"},
     PackageExports=>{"NumericalAlgebraicGeometry"},
     AuxiliaryFiles=>true,
-    OptionalComponentsPresent => (options PHCpack).OptionalComponentsPresent,
+    OptionalComponentsPresent => (readPackage "PHCpack").OptionalComponentsPresent,
     CacheExampleOutput => true,
     DebuggingMode=>false
     )

@@ -1,7 +1,7 @@
 
 newPackage(
        "SparseResultants",
-        Version => "1.0", 
+        Version => "1.0.1", 
         Date => "July 23, 2020",
         Headline => "computations with sparse resultants",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
@@ -9,10 +9,10 @@ newPackage(
         DebuggingMode => false
 )
 
-export{"sparseResultant", "sparseDiscriminant", 
+export{"sparseResultant", "SparseResultant", "sparseDiscriminant", "SparseDiscriminant",
        "denseResultant", "denseDiscriminant",
        "exponentsMatrix", "genericLaurentPolynomials", "genericMultihomogeneousPolynomial",
-       "MultidimensionalMatrix", "multidimensionalMatrix", "permute", "reverseSize", "sylvesterMatrix", "degreeDeterminant",
+       "MultidimensionalMatrix", "multidimensionalMatrix", "permute", "shape", "reverseShape", "sortShape", "sylvesterMatrix", "degreeDeterminant",
        "randomMultidimensionalMatrix", "genericMultidimensionalMatrix", "genericSymmetricMultidimensionalMatrix", "genericSkewMultidimensionalMatrix"}
 
 SPARSERESULTANT := local SPARSERESULTANT;
@@ -21,11 +21,11 @@ SparseResultant = new Type of HashTable;
 
 char SparseResultant := (R) -> R#"characteristic";
 
-SparseResultant SPACE Matrix := (R,F) -> (R#"evaluation") F;
+SparseResultant Matrix := (R,F) -> (R#"evaluation") F;
 
-SparseResultant SPACE VisibleList := (R,F) -> (R#"evaluation") toList(F);
+SparseResultant VisibleList := (R,F) -> (R#"evaluation") toList(F);
 
-SparseResultant SPACE Thing := (R,F) -> R (sequence F);
+SparseResultant Thing := (R,F) -> R (sequence F);
 
 net SparseResultant := (R) -> net("sparse ")|net(if R#"Unmixed" then "unmixed" else "mixed")|net(" resultant associated to ")|net(R#"exponents")|net(" over ")|net(if char R == 0 then ZZ else ZZ/(char R));
 
@@ -45,7 +45,7 @@ describe SparseResultant := (R) -> (
     str
 );
 
-sparseResultant = method(Dispatch => Thing, Options => {Unmixed => null, CoefficientRing => ZZ});
+sparseResultant = method(TypicalValue => SparseResultant, Dispatch => Thing, Options => {Unmixed => null, CoefficientRing => ZZ});
 
 sparseResultant Thing := o -> I -> ( 
     I = toList sequence I;
@@ -120,19 +120,19 @@ sparseUnmixedResultant (Matrix) := (M) -> (
             s := map(R,ring M,matrix{{1}}|vars R);
             M' := s M;
             if unique apply(flatten entries M',m -> first degree m) === d then (
-                <<"--warning: "|newline|"--the input of sparseResultant should be n+1 non-homogeneous polynomials in n variables;"|newline|"--a dishomogenization of the input polynomials was performed successfully."<<endl;
+                <<"--warning: " << endl <<"--the input of sparseResultant should be n+1 non-homogeneous polynomials in n variables;" << endl <<"--a dishomogenization of the input polynomials was performed successfully."<<endl;
                 return sparseUnmixedResultant M';
             );
         );
     );
-    if numColumns M =!= #x + 1 then error "expected the number of polynomials to be one more than the number of variables";
+    if numColumns M =!= #x + 1 then error "expected the number of polynomials to be 1 plus the number of variables";
     N := transpose matrix sort unique flatten apply(flatten entries M,exponents);
     Res := sparseUnmixedResultant(N,char coefficientRing ring M);
     return (Res M);
 );
 
 sparseUnmixedResultant (List) := (L) -> (
-    try assert isPolynomialRing ring matrix {L} else error "expected a list (or row matrix) of Laurent polynomials";
+    if not (all(L,l -> instance(l,RingElement)) and all(L,l -> ring l === ring first L) and isPolynomialRing ring first L) then error "expected a list (or row matrix) of Laurent polynomials";
     sparseUnmixedResultant matrix {L}
 );
 
@@ -201,19 +201,19 @@ sparseMixedResultant (Matrix) := (M) -> (
             s := map(R,ring M,matrix{{1}}|vars R);
             M' := s M;
             if apply(flatten entries M',m -> first degree m) == flatten d then (
-                <<"--warning: "|newline|"--the input of sparseResultant should be n+1 non-homogeneous polynomials in n variables;"|newline|"--a dishomogenization of the input polynomials was performed successfully."<<endl;
+                <<"--warning: " << endl <<"--the input of sparseResultant should be n+1 non-homogeneous polynomials in n variables;"<< endl <<"--a dishomogenization of the input polynomials was performed successfully."<<endl;
                 return sparseMixedResultant M';
             );
         );
     );
-    if numColumns M =!= #x + 1 then error "expected the number of polynomials to be one more than the number of variables";
+    if numColumns M =!= #x + 1 then error "expected the number of polynomials to be 1 plus the number of variables";
     N := apply(flatten entries M,l -> transpose matrix sort exponents l);
     Res := sparseMixedResultant(N,char coefficientRing ring M);
     return (Res M);
 );
 
 sparseMixedResultant (List) := (L) -> (
-    try assert isPolynomialRing ring matrix {L} else error "expected a list (or row matrix) of Laurent polynomials";
+    if not (all(L,l -> instance(l,RingElement)) and all(L,l -> ring l === ring first L) and isPolynomialRing ring first L) then error "expected a list (or row matrix) of Laurent polynomials";
     sparseMixedResultant matrix {L}
 );
 
@@ -243,7 +243,7 @@ SparseDiscriminant = new Type of HashTable;
 
 char SparseDiscriminant := (D) -> D#"characteristic";
 
-SparseDiscriminant SPACE Thing := (D,F) -> (D#"evaluation") F;
+SparseDiscriminant Thing := (D,F) -> (D#"evaluation") F;
 
 net SparseDiscriminant := (D) -> net("sparse discriminant associated to ")|net(D#"exponents")|net(" over ")|net(if char D == 0 then ZZ else ZZ/(char D));
 
@@ -256,7 +256,7 @@ describe SparseDiscriminant := (D) -> (
     str
 );
 
-sparseDiscriminant = method(Options => {CoefficientRing => ZZ});
+sparseDiscriminant = method(TypicalValue => SparseDiscriminant, Options => {CoefficientRing => ZZ});
 
 sparseDiscriminant (Matrix) := o -> (M) -> (
     if o.CoefficientRing =!= ZZ then (try assert(o.CoefficientRing === ZZ/(char o.CoefficientRing)) else error "CoefficientRing option accepts ZZ or a ring of the form ZZ/p with p prime");
@@ -496,8 +496,10 @@ memGenMultHomPols = memoize(
 MultidimensionalMatrix = new Type of HashTable;
 
 MultidimensionalMatrix#{Standard,AfterPrint} = MultidimensionalMatrix#{Standard,AfterNoPrint} = M -> (
-    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << dim M << "-dimensional matrix of format " << printedSize M << " over " << ring M << endl;
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << dim M << "-dimensional matrix of shape " << printedShape M << " over " << ring M << endl;
 );
+
+MultidimensionalMatrix.Wrap = x -> wrap(printWidth,"-", net x);
 
 net MultidimensionalMatrix := M -> net entries M;
 
@@ -509,7 +511,7 @@ multidimensionalMatrix (List) := (L) -> (
     F := makeMultilinearForm(L,X);
     L' := makeHyperrectangularArray(F,X);
     new MultidimensionalMatrix from {
-        "format" => n,
+        "shape" => n,
         "entries" => L',
         "multilinearForm" => F,
         "varsMultilinearForm" => X,
@@ -533,7 +535,7 @@ multidimensionalMatrix (RingElement) := (F) -> (
     F' := sub(F,vars R');
     L := makeHyperrectangularArray(F',X');
     new MultidimensionalMatrix from {
-        "format" => n,
+        "shape" => n,
         "entries" => L,
         "multilinearForm" => F',
         "varsMultilinearForm" => X',
@@ -545,15 +547,16 @@ multidimensionalMatrix (Matrix) := (M) -> multidimensionalMatrix entries M;
 
 matrix (MultidimensionalMatrix) := o -> (M) -> (if dim M != 2 then error "expected a two-dimensional matrix"; matrix entries M);
 
-size (MultidimensionalMatrix) := (M) -> M#"format";
+shape = method();
+shape (MultidimensionalMatrix) := (M) -> M#"shape";
 
-printedSize = method();
-printedSize (MultidimensionalMatrix) := (M) -> (    
-    n := size M;
+printedShape = method();
+printedShape (MultidimensionalMatrix) := (M) -> (    
+    n := shape M;
     concatenate(for i to #n-2 list (toString n_i)|" x ")|(toString last n)
 );
 
-dim (MultidimensionalMatrix) := (M) -> # size M;
+dim (MultidimensionalMatrix) := (M) -> # shape M;
 
 entries (MultidimensionalMatrix) := (M) -> M#"entries";
 
@@ -578,33 +581,33 @@ QQ * MultidimensionalMatrix := (a,M) -> (
 );
 
 MultidimensionalMatrix * MultidimensionalMatrix := (A,B) -> (
-    kr := last size A;
-    if kr != first size B then error "expected two matrices of formats k_1x...xk_r and l_1x...xl_s with k_r==l_1";
+    kr := last shape A;
+    if kr != first shape B then error "expected two matrices of shapes k_1x...xk_r and l_1x...xl_s with k_r==l_1";
     r := dim A;
     s := dim B;
     e := l -> sum(kr,h -> A_(append(take(l,r-1),h)) * B_(prepend(h,take(l,-(s-1)))));
-    sizeAB := take(size A,r-1)|take(size B,-(s-1));
-    m := apply((# sizeAB : 0) .. toSequence apply(sizeAB,i -> i-1),e); 
-    for i in reverse sizeAB do m = pack(i,m);
+    shapeAB := take(shape A,r-1)|take(shape B,-(s-1));
+    m := apply((# shapeAB : 0) .. toSequence apply(shapeAB,i -> i-1),e); 
+    for i in reverse shapeAB do m = pack(i,m);
     multidimensionalMatrix first m
 );
 
 - MultidimensionalMatrix := (M) -> (-1) * M;
 
 MultidimensionalMatrix - MultidimensionalMatrix := (M,N) -> (
-    if size M != size N then error "expected matrix of the same format";
+    if shape M != shape N then error "expected matrix of the same shape";
     multidimensionalMatrix((entries M) - (entries N))
 );
 
 + MultidimensionalMatrix := (M) -> M;
 
 MultidimensionalMatrix + MultidimensionalMatrix := (M,N) -> (
-    if size M != size N then error "expected matrix of the same format";
+    if shape M != shape N then error "expected matrix of the same shape";
     multidimensionalMatrix((entries M) + (entries N))
 );
 
 MultidimensionalMatrix == MultidimensionalMatrix := (M,N) -> (
-    if size M != size N then return false;
+    if shape M != shape N then return false;
     if ring M =!= ring N then return false;
     M#"multilinearForm" == N#"multilinearForm"
 );
@@ -633,8 +636,11 @@ permute (MultidimensionalMatrix,List) := (M,l) -> (
     multidimensionalMatrix sub(M#"multilinearForm",R)
 );
 
-reverseSize = method();
-reverseSize (MultidimensionalMatrix) := (M) -> permute(M,reverse toList(0 .. dim M -1));
+reverseShape = method();
+reverseShape (MultidimensionalMatrix) := (M) -> permute(M,reverse toList(0 .. dim M -1));
+
+sortShape = method();
+sortShape (MultidimensionalMatrix) := (M) -> permute(M,apply(sort apply(dim M,i -> ((shape M)_i,i)),last));
 
 makeRing = method();
 makeRing (List) := (L) -> (
@@ -696,7 +702,7 @@ randomMultidimensionalMatrix VisibleList := o -> n -> randomMultidimensionalMatr
 
 removeOneDim = method();
 removeOneDim (MultidimensionalMatrix) := (M) -> (
-    if all(size M,i -> i == 1) then return multidimensionalMatrix {coefficient(product gens ring M#"multilinearForm",M#"multilinearForm")};
+    if all(shape M,i -> i == 1) then return multidimensionalMatrix {coefficient(product gens ring M#"multilinearForm",M#"multilinearForm")};
     X := select(M#"varsMultilinearForm",e -> #e > 1);
     R := (ring M)[flatten X];
     P := sub(sub(M#"multilinearForm",apply(select(M#"varsMultilinearForm",e -> #e == 1),t -> (first t)=>1)),R);
@@ -722,7 +728,7 @@ canApplySchlafli (List) := o -> (n) -> (
 schlafliMethod = method(Options => {Strategy => null});
 schlafliMethod (MultidimensionalMatrix) := o -> M -> (
     if dim M <= 2 then return determinant(M,Strategy=>o.Strategy);
-    (b,i0) := canApplySchlafli(size M,Strategy=>o.Strategy);
+    (b,i0) := canApplySchlafli(shape M,Strategy=>o.Strategy);
     if not b then error "Schlafli's method cannot be applied";
     F := M#"multilinearForm";
     K := ring M;
@@ -746,9 +752,9 @@ schlafliMethod (MultidimensionalMatrix) := o -> M -> (
 
 determinant (MultidimensionalMatrix) := o -> (M) -> (
     if o.Strategy =!= null and o.Strategy =!= "Dense" and o.Strategy =!= "NotDense" and o.Strategy =!= "forceSchlafliMethod" and o.Strategy =!= "Dense_forceSchlafliMethod" and o.Strategy =!= "NotDense_forceSchlafliMethod" then error "allowed strategies are \"Dense\", \"NotDense\", \"forceSchlafliMethod\", \"Dense_forceSchlafliMethod\", and \"NotDense_forceSchlafliMethod\"";
-    n := size M;
+    n := shape M;
     k := apply(n,i -> i-1);
-    if 2*max(k) > sum k then error("the determinant for matrices of format "|(printedSize M)|" does not exist");
+    if 2*max(k) > sum k then error("the determinant for matrices of shape "|(printedShape M)|" does not exist");
     if n == {1} then return first entries M;
     if min n == 1 then return determinant(removeOneDim M,Strategy=>o.Strategy);
     if #n == 2 then return determinant(matrix entries M,Strategy=>null);
@@ -765,9 +771,9 @@ determinant (MultidimensionalMatrix) := o -> (M) -> (
     A (M#"multilinearForm")
 );
 
-det234 = (M) -> ( -- determinant of format 2x3x4
-    if size M =!= {2,3,4} then if sort size M == {2,3,4} then M = permute(M,{position(size M,i -> i == 2),position(size M,i -> i == 3),position(size M,i -> i == 4)});
-    assert(size M == {2,3,4});
+det234 = (M) -> ( -- determinant of shape 2x3x4
+    if shape M =!= {2,3,4} then if sort shape M == {2,3,4} then M = sortShape M;
+    assert(shape M == {2,3,4});
     K := ring M;
     p := local p;
     ringG35 := K[p_(0,1,2,3),p_(0,1,2,4),p_(0,1,3,4),p_(0,2,3,4),p_(1,2,3,4),p_(0,1,2,5),p_(0,1,3,5),p_(0,2,3,5),p_(1,2,3,5),p_(0,1,4,5),p_(0,2,4,5),p_(1,2,4,5),p_(0,3,4,5),p_(1,3,4,5),p_(2,3,4,5)];
@@ -778,9 +784,9 @@ det234 = (M) -> ( -- determinant of format 2x3x4
     sub(W,apply(15,j -> g_j => mm_j))
 );
 
-det245 = (M) -> ( -- determinant of format 2x4x5
-    if size M =!= {2,4,5} then if sort size M == {2,4,5} then M = permute(M,{position(size M,i -> i == 2),position(size M,i -> i == 4),position(size M,i -> i == 5)});
-    assert(size M == {2,4,5});
+det245 = (M) -> ( -- determinant of shape 2x4x5
+    if shape M =!= {2,4,5} then if sort shape M == {2,4,5} then M = sortShape M;
+    assert(shape M == {2,4,5});
     K := ring M;
     p := local p;
     ringG47 := K[p_(0,1,2,3,4),p_(0,1,2,3,5),p_(0,1,2,4,5),p_(0,1,3,4,5),p_(0,2,3,4,5),p_(1,2,3,4,5),p_(0,1,2,3,6),p_(0,1,2,4,6),p_(0,1,3,4,6),p_(0,2,3,4,6),p_(1,2,3,4,6),p_(0,1,2,5,6),p_(0,1,3,5,6),p_(0,2,3,5,6),p_(1,2,3,5,6),p_(0,1,4,5,6),p_(0,2,4,5,6),p_(1,2,4,5,6),p_(0,3,4,5,6),p_(1,3,4,5,6),p_(2,3,4,5,6),p_(0,1,2,3,7),p_(0,1,2,4,7),p_(0,1,3,4,7),p_(0,2,3,4,7),p_(1,2,3,4,7),p_(0,1,2,5,7),p_(0,1,3,5,7),p_(0,2,3,5,7),p_(1,2,3,5,7),p_(0,1,4,5,7),p_(0,2,4,5,7),p_(1,2,4,5,7),p_(0,3,4,5,7),p_(1,3,4,5,7),p_(2,3,4,5,7),p_(0,1,2,6,7),p_(0,1,3,6,7),p_(0,2,3,6,7),p_(1,2,3,6,7),p_(0,1,4,6,7),p_(0,2,4,6,7),p_(1,2,4,6,7),p_(0,3,4,6,7),p_(1,3,4,6,7),p_(2,3,4,6,7),p_(0,1,5,6,7),p_(0,2,5,6,7),p_(1,2,5,6,7),p_(0,3,5,6,7),p_(1,3,5,6,7),p_(2,3,5,6,7),p_(0,4,5,6,7),p_(1,4,5,6,7),p_(2,4,5,6,7),p_(3,4,5,6,7)];
@@ -795,11 +801,11 @@ det245 = (M) -> ( -- determinant of format 2x4x5
 sylvesterMatrix = method(TypicalValue => Matrix);
 sylvesterMatrix (MultidimensionalMatrix) := (M) -> (
     -- see p. 459 in [Gelfand-Kapranov-Zelevinsky]
-    n := size M;
+    n := shape M;
     k := apply(n,i -> i-1);
     r := dim M -1;
     i0 := maxPosition k;
-    if 2*k_i0 != sum k then error "expected a multidimensional matrix of boundary format";
+    if 2*k_i0 != sum k then error "expected a multidimensional matrix of boundary shape";
     K := ring M;
     F := M#"multilinearForm";
     X := M#"varsMultilinearForm";
@@ -834,7 +840,6 @@ degreeDeterminant (List) := (L) -> (
     R' := R/ideal(apply(1..n,i -> x_i^(1+L_(i-1))));
     coefficient(m,(sub(S,R'))^(-2))
 );
-degreeDeterminant (MultidimensionalMatrix) := (M) -> degreeDeterminant size M;
 
 symmetricMultidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix);
 symmetricMultidimensionalMatrix (RingElement) := (F) -> (
@@ -856,7 +861,7 @@ symmetricMultidimensionalMatrix (RingElement) := (F) -> (
 
 isSymmetric = method(TypicalValue => Boolean);
 isSymmetric (MultidimensionalMatrix) := (M) -> (
-    for s in permutations(#(M#"format")) do (
+    for s in permutations(#(M#"shape")) do (
         -- <<"-- testing permutation "<<s<<endl;
         if not(M == permute(M,s)) then return false; 
     );
@@ -895,7 +900,7 @@ skewSymmetricMultidimensionalMatrix (RingElement) := (F) -> (
 
 isSkewSymmetric = method(TypicalValue => Boolean);
 isSkewSymmetric (MultidimensionalMatrix) := (M) -> (
-    for s in permutations(#(M#"format")) do (
+    for s in permutations(#(M#"shape")) do (
         -- <<"-- testing permutation "<<s<<", sign: "<<sgn s<<endl;
         if not((sgn s) * M == permute(M,s)) then return false; 
     );
@@ -923,20 +928,20 @@ document {
     PARA{"For the definitions, see one of the following books:"}, 
     PARA{"(1) ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky;"},
     PARA{"(2) ",HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea."},
-    Caveat => {"Currently, most of the algorithms implemented are based on elimination via Gröbner basis methods. This should be significantly improved by implementing more specialized algorithms."}
+    Caveat => {"Currently, most of the algorithms implemented are based on elimination via Gröbner basis methods. This should be significantly improved by implementing more specialized algorithms (see e.g. [",HREF{"http://link.springer.com/book/10.1007%2Fb138611","2"},", Chapter 7,Section 6])."}
 }
 
 document { 
     Key => {sparseResultant,(sparseResultant,Thing),[sparseResultant,Unmixed],[sparseResultant,CoefficientRing]}, 
     Headline => "sparse resultant (A-resultant)", 
     Usage => "sparseResultant A", 
-    Inputs => {"A" => Sequence => {"or a ",TO List," of ",TEX///$n+1$///," matrices ",TEX///$A_0,\ldots,A_n$///," over ",TEX///$\mathbb{Z}$///," and with ",TEX///$n$///," rows to represent the exponent vectors of Laurent polynomials ",TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables, ",TEX///$f_i = \sum_{\omega\in A_i} a_{\omega} x^{\omega}$///,". In the unmixed case, that is when ",TEX///$A_0=\cdots=A_n$///,", it is enough to pass just one of the matrices. Moreover, if one wants to perform computations only in characteristic ",TEX///$p>0$///,", then it is recommended to use the option ",TT "CoefficientRing=>ZZ/p","."}}, 
-    Outputs => {{"the universal sparse resultant associated to ",TEX///$A$///,", that is, a function that to a ", TO Sequence," (or a ",TO List,", or a row matrix) of ", TEX///$n+1$///," Laurent polynomials ", TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables over a coefficient ring ",TEX///$K$///,", involving only monomials from ",TEX///$A$///,", associates the sparse resultant of the polynomials ",TEX///$f_0,\ldots,f_n$///,", which is an element of ",TEX///$K$///,"."}}, 
+    Inputs => {"A" => Sequence => {"or a ",TO2 {List,"list"}," of ",TEX///$n+1$///," matrices ",TEX///$A_0,\ldots,A_n$///," over ",TEX///$\mathbb{Z}$///," and with ",TEX///$n$///," rows to represent the exponent vectors of Laurent polynomials ",TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables, ",TEX///$f_i = \sum_{\omega\in A_i} a_{i,\omega} x^{\omega}$///,". In the unmixed case, that is when ",TEX///$A_0=\cdots=A_n$///,", it is enough to pass just one of the matrices. Moreover, if one wants to perform computations only in characteristic ",TEX///$p>0$///,", then it is recommended to use the option ",TT "CoefficientRing=>ZZ/p","."}}, 
+    Outputs => {SparseResultant => {"the universal sparse resultant associated to ",TEX///$A$///,", that is, a function that to a ", TO2 {Sequence,"sequence"}," (or a ",TO2 {List,"list"},", or a row ", TO2 {Matrix,"matrix"},") of ", TEX///$n+1$///," Laurent polynomials ", TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables over a coefficient ring ",TEX///$K$///,", involving only monomials from ",TEX///$A$///,", associates the sparse resultant of the polynomials ",TEX///$f_0,\ldots,f_n$///,", which is an element of ",TEX///$K$///,"."}}, 
     PARA {"Alternatively, one can apply the method directly to the list of Laurent polynomials ",TEX///$f_0,\ldots,f_n$///,". In this case, the matrices ",TEX///$A_0,\ldots,A_n$///, " are automatically determined by ",TO "exponentsMatrix",". If you want require that ",TEX///$A_0=\cdots=A_n$///,", then use the option ",TT "Unmixed=>true"," (this could be faster). Below we consider some examples."},
     PARA {"In the first example, we calculate the sparse (mixed) resultant associated to the three sets of monomials ",TEX///$(1,x y,x^2 y,x),(y,x^2 y^2,x^2 y,x),(1,y,x y,x)$///,". Then we evaluate it at the three polynomials ",TEX///$f = c_{(1,1)}+c_{(1,2)} x y+c_{(1,3)} x^2 y+c_{(1,4)} x, g = c_{(2,1)} y+c_{(2,2)} x^2 y^2+c_{(2,3)} x^2 y+c_{(2,4)} x, h = c_{(3,1)}+c_{(3,2)} y+c_{(3,3)} x y+c_{(3,4)} x$///,"."},
     EXAMPLE {
         "time Res = sparseResultant(matrix{{0,1,1,2},{0,0,1,1}},matrix{{0,1,2,2},{1,0,1,2}},matrix{{0,0,1,1},{0,1,0,1}})",
-        "use QQ[c_(1,1)..c_(3,4)][x,y];",
+        "QQ[c_(1,1)..c_(3,4)][x,y];",
         "(f,g,h) = (c_(1,1)+c_(1,2)*x*y+c_(1,3)*x^2*y+c_(1,4)*x, c_(2,1)*y+c_(2,2)*x^2*y^2+c_(2,3)*x^2*y+c_(2,4)*x, c_(3,1)+c_(3,2)*y+c_(3,3)*x*y+c_(3,4)*x)",
         "time Res(f,g,h)",
         "assert(Res(f,g,h) == sparseResultant(f,g,h))"
@@ -944,7 +949,7 @@ document {
     PARA {"In the second example, we calculate the sparse unmixed resultant associated to the set of monomials ",TEX///$(1,x,y,xy)$///,". Then we evaluate it at the three polynomials ",TEX///$f = a_0 + a_1 x + a_2 y + a_3 x y, g = b_0 + b_1 x + b_2 y + b_3 x y, h = c_0 + c_1 x + c_2 y + c_3 x y$///,". Moreover, we perform all the computation over ",TEX///$\mathbb{Z}/3331$///,"."},    
     EXAMPLE {
         "time Res = sparseResultant(matrix{{0,0,1,1},{0,1,0,1}},CoefficientRing=>ZZ/3331)",
-        "use ZZ/3331[a_0..a_3,b_0..b_3,c_0..c_3][x,y];",
+        "ZZ/3331[a_0..a_3,b_0..b_3,c_0..c_3][x,y];",
         "(f,g,h) = (a_0 + a_1*x + a_2*y + a_3*x*y, b_0 + b_1*x + b_2*y + b_3*x*y, c_0 + c_1*x + c_2*y + c_3*x*y)",
         "time Res(f,g,h)",
         "assert(Res(f,g,h) == sparseResultant(f,g,h))"
@@ -952,7 +957,7 @@ document {
     PARA {"In the third and last example, we compare the sparse mixed resultant and the sparse unmixed resultant of three generic polynomials of degrees 1,2,2 in two variables."},
     EXAMPLE {
         "(f,g,h) = genericLaurentPolynomials(1,2,2)",
-        "time (MixedRes,UnmixedRes) = (sparseResultant(f,g,h),sparseResultant(f,g,h,Unmixed=>true))",
+        "time (MixedRes,UnmixedRes) = (sparseResultant(f,g,h),sparseResultant(f,g,h,Unmixed=>true));",
         "quotientRemainder(UnmixedRes,MixedRes)",
         "assert((denseResultant(2,2,2))(f,g,h) == UnmixedRes and (denseResultant(1,2,2))(f,g,h) == MixedRes)"
     },
@@ -960,13 +965,21 @@ document {
 }
 
 document { 
+    Key => {"SparseResultant"}, 
+    Headline => "the class of all sparse resultants", 
+    PARA {"An object of this class is created by the method ",TO sparseResultant,", when the input is given by ",TEX///$n+1$///," integral matrices ",TEX///$A_0,\ldots,A_n$///," with ",TEX///$n$///," rows. Such an object is just a function that to ", TEX///$n+1$///," Laurent polynomials ", TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,", with ",TEX///$f_i = \sum_{\omega\in \{columns of A_i\}} a_{i,\omega} x^{\omega}$///,", associates their sparse resultant ",TEX///$Res_{A_0,\ldots,A_n}(f_0,\ldots,f_n)$///,", which is a polynomial in the coefficients ",TEX///$a_{i,\omega}$///,". An error is thrown if the polynomials ",TEX///$f_i$///," do not have the correct form."}
+}
+
+undocumented {(char, SparseResultant), (describe, SparseResultant), (net, SparseResultant), (symbol SPACE, SparseResultant, Matrix), (symbol SPACE, SparseResultant, VisibleList), (symbol SPACE, SparseResultant, Thing)}
+
+document { 
     Key => {sparseDiscriminant,(sparseDiscriminant,Matrix),(sparseDiscriminant,RingElement),[sparseDiscriminant,CoefficientRing]}, 
     Headline => "sparse discriminant (A-discriminant)", 
     Usage => "sparseDiscriminant A", 
     Inputs => {"A" => Matrix => {"a matrix over ",TEX///$\mathbb{Z}$///," with ",TEX///$n$///," rows to represent the exponent vectors of a Laurent polynomial ",TEX///$f$///," in ", TEX///$n$///," variables, ",TEX///$f = \sum_{\omega\in A} a_{\omega} x^{\omega}$///,". If one wants to perform computations only in characteristic ",TEX///$p>0$///,", then it is recommended to use the option ",TT "CoefficientRing=>ZZ/p","."}}, 
-    Outputs => {{"the universal sparse discriminant associated to ",TEX///$A$///,", that is, a function that to a Laurent polynomial ", TEX///$f$///," in ", TEX///$n$///," variables over a coefficient ring ",TEX///$K$///,", involving only monomials from ",TEX///$A$///,", associates the sparse discriminant of ",TEX///$f$///,", which is an element of ",TEX///$K$///,"."}}, 
+    Outputs => {SparseDiscriminant => {"the universal sparse discriminant associated to ",TEX///$A$///,", that is, a function that to a Laurent polynomial ", TEX///$f$///," in ", TEX///$n$///," variables over a coefficient ring ",TEX///$K$///,", involving only monomials from ",TEX///$A$///,", associates the sparse discriminant of ",TEX///$f$///,", which is an element of ",TEX///$K$///,"."}}, 
     PARA {"Alternatively, one can apply the method directly to the Laurent polynomial ",TEX///$f$///,". In this case, the matrix ",TEX///$A$///," is automatically determined by ",TO "exponentsMatrix","."},
-    PARA {"As an example, we now calculate the sparse discriminant of a generic trilinear form on ",TEX///$\mathbb{P}^1\times\mathbb{P}^2\times \mathbb{P}^1$///,", that is, the hyperdeterminant of a generic three-dimensional matrix of size ",TEX///$2\times 3\times 2$///,"."},
+    PARA {"As an example, we now calculate the sparse discriminant of a generic trilinear form on ",TEX///$\mathbb{P}^1\times\mathbb{P}^2\times \mathbb{P}^1$///,", that is, the hyperdeterminant of a generic three-dimensional matrix of shape ",TEX///$2\times 3\times 2$///,"."},
     EXAMPLE {
         "f = genericMultihomogeneousPolynomial((2,3,2),(1,1,1))",
         "time sparseDiscriminant f",
@@ -977,13 +990,20 @@ document {
     SeeAlso => {sparseResultant, denseDiscriminant, discriminant, genericMultihomogeneousPolynomial, (determinant,MultidimensionalMatrix)}
 }
 
-undocumented {(exponentsMatrix,VisibleList),(exponentsMatrix,RingElement)}
+document { 
+    Key => {"SparseDiscriminant"}, 
+    Headline => "the class of all sparse discriminants", 
+    PARA {"An object of this class is created by the method ",TO sparseDiscriminant,", when the input is an integral matrix ",TEX///$A$///," with ",TEX///$n$///," rows. Such an object is just a function that to a Laurent polynomial ", TEX///$f$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,", with ",TEX///$f = \sum_{\omega\in \{columns of A\}} a_{\omega} x^{\omega}$///,", associates its sparse discriminant ",TEX///$Disc_{A}(f)$///,", which is a polynomial in the coefficients ",TEX///$a_{\omega}$///,". An error is thrown if the polynomial ",TEX///$f$///," does not have the correct form."}
+}
+
+undocumented {(char, SparseDiscriminant), (describe, SparseDiscriminant), (net, SparseDiscriminant), (symbol SPACE, SparseDiscriminant, Thing)}
+
 document { 
     Key => {exponentsMatrix,(exponentsMatrix,Sequence),[exponentsMatrix,Unmixed]}, 
     Headline => "exponents in one or more polynomials", 
     Usage => "exponentsMatrix(f_0,f_1,...)", 
     Inputs => {{TT "(f_0,f_1,...)"," one or more Laurent polynomials in the same ring."}},
-    Outputs => {{TT "(A_0,A_1,...)"," a sequence of matrices such that the columns of ",TT "A_i"," are the ",TO exponents," of ",TT "f_i",". If either the option ",TT "Unmixed"," is set to true or all the matrices ",TT"A_i"," are equal, then just one matrix is returned."}},
+    Outputs => {{TT "(A_0,A_1,...)"," a sequence of matrices such that the columns of ",TT "A_i"," are the ",TO exponents," of ",TT "f_i",". If either the option ",TT "Unmixed"," is set to true or all the matrices ",TT"A_i"," are equal, then just one matrix is returned whose columns are all the exponents occurring in at least one of the polynomials."}},
     EXAMPLE {
         "QQ[x,y,z];",
         "f = (x^2 - 7 + x*y*z^11 + y, -3*y^7*z + x^3*y + 5*x^2);",
@@ -994,12 +1014,13 @@ document {
     SeeAlso => {exponents, sparseResultant, genericLaurentPolynomials}
 }
 
-undocumented {(genericLaurentPolynomials,VisibleList)}
+undocumented {(exponentsMatrix,VisibleList),(exponentsMatrix,RingElement)}
+
 document { 
     Key => {genericLaurentPolynomials,(genericLaurentPolynomials,Sequence),[genericLaurentPolynomials,CoefficientRing]}, 
     Headline => "generic Laurent polynomials", 
     Usage => "genericLaurentPolynomials A", 
-    Inputs => {"A" => Sequence => {"or a ",TO List," of ",TEX///$n+1$///," matrices ",TEX///$A_0,\ldots,A_n$///," over ",TEX///$\mathbb{Z}$///," and with ",TEX///$n$///," rows to represent the exponent vectors of Laurent polynomials ",TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables. For the dense case, one can just pass the sequence of the degrees of ",TEX///$f_0,\ldots,f_n$///,"."}}, 
+    Inputs => {"A" => Sequence => {"or a ",TO2 {List,"list"}," of ",TEX///$n+1$///," matrices ",TEX///$A_0,\ldots,A_n$///," over ",TEX///$\mathbb{Z}$///," and with ",TEX///$n$///," rows to represent the exponent vectors of Laurent polynomials ",TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables. For the dense case, one can pass just the sequence of degrees of ",TEX///$f_0,\ldots,f_n$///,"."}}, 
     Outputs => {{"the generic Laurent polynomials ",TEX///$f_0,\ldots,f_n$///," in the ring ",TEX///$\mathbb{Z}[a_0,a_1,\ldots,b_0,b_1,\ldots][x_1,\ldots,x_n]$///,", involving only the monomials from ",TEX///$A$///,"."}},
     PARA{"This method helps to construct special types of sparse resultants, see for instance ",TO "denseResultant","."},
     EXAMPLE {
@@ -1009,6 +1030,8 @@ document {
     },
     SeeAlso => {sparseResultant, exponentsMatrix}
 }
+
+undocumented {(genericLaurentPolynomials,VisibleList)}
 
 document { 
     Key => {genericMultihomogeneousPolynomial,(genericMultihomogeneousPolynomial,VisibleList,VisibleList),[genericMultihomogeneousPolynomial,CoefficientRing],[genericMultihomogeneousPolynomial,Variable]}, 
@@ -1032,8 +1055,8 @@ document {
     Usage => "denseResultant(d_0,d_1,...)"|newline|"denseResultant(f_0,f_1,...)", 
     Inputs => {{TT"(d_0,d_1,...)",", a sequence of integers."},
                {TT"(f_0,f_1,...)",", a sequence of ",TEX///$n+1$///," Laurent polynomials in ",TEX///$n$///," variables."}}, 
-    Outputs => {{"for ",TT "(d_0,d_1,...)",", this is the same of ", TO sparseResultant," ",TO exponentsMatrix," ",TO genericLaurentPolynomials, TT"(d_0,d_1,...)",";"},
-                {"for ",TT "(f_0,f_1,...)",", this is the same of ", TO affineResultant,TT"{f_0,f_1,...}","."}}, 
+    Outputs => {{"for ",TT "(d_0,d_1,...)",", this is the same as ", TO sparseResultant," ",TO exponentsMatrix," ",TO genericLaurentPolynomials, TT"(d_0,d_1,...)",";"},
+                {"for ",TT "(f_0,f_1,...)",", this is the same as ", TO affineResultant,TT"{f_0,f_1,...}","."}}, 
     EXAMPLE {
         "(f0,f1,f2) = genericLaurentPolynomials(1,2,2)",
         "time denseResultant(f0,f1,f2); -- using Poisson formula",
@@ -1050,8 +1073,8 @@ document {
     Usage => "denseDiscriminant(d,n)"|newline|"denseDiscriminant f", 
     Inputs => {{TT"(d,n)",", a pair of two integers representing, respectively, the degree and the number of variables of a Laurent polynomial ",TEX///$f$///,"."},
                "f" => RingElement => {"a Laurent polynomial of degree ",TEX///$d$///," in ",TEX///$n$///," variables."}}, 
-    Outputs => {{"for ",TT "(d,n)",", this is the same of ", TO sparseDiscriminant," ", TO exponentsMatrix, EM "(generic polynomial of degree d in n variables);"},
-                {"for ",TT "f",", this is the same of ", TO affineDiscriminant,TT"(f)","."}}, 
+    Outputs => {{"for ",TT "(d,n)",", this is the same as ", TO sparseDiscriminant," ", TO exponentsMatrix, EM " \"generic polynomial of degree d in n variables\";"},
+                {"for ",TT "f",", this is the same as ", TO affineDiscriminant,TT"(f)","."}}, 
     EXAMPLE {
         "(d,n) := (2,3);",
         "time Disc = denseDiscriminant(d,n)",
@@ -1081,7 +1104,7 @@ document {
     Usage => "multidimensionalMatrix F", 
     Inputs => {"F" => RingElement => {"a homogeneous polynomial of multidegree ",TEX///$(1,\ldots,1)$///," in a polynomial ring ",TEX///$R$///," with the ",TEX///$\mathbb{Z}^n$///,"-grading where the degree of each variable is a standard basis vector; in other words, ",TEX///$R$///," is the homogeneous coordinate ring of a product of ",TEX///$n$///," projective spaces."}},
     Outputs => {MultidimensionalMatrix => {"the ",TEX///$n$///,"-dimensional matrix having as entries the coefficients of ",TEX///$F$///,"."}},
-    PARA {"If ",TEX///$F$///," is a multilinear form on ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\ldots\times\mathbb{P}^{k_n}$///,", then the format of the corresponding matrix is ",TEX///$(k_1+1)\times(k_2+1)\times\ldots\times(k_n+1)$///,". You can use ",TO permute," or ",TO reverseSize," to rearrange the dimensions."},
+    PARA {"If ",TEX///$F$///," is a multilinear form on ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\ldots\times\mathbb{P}^{k_n}$///,", then the shape of the corresponding matrix is ",TEX///$(k_1+1)\times(k_2+1)\times\ldots\times(k_n+1)$///,". You can use ",TO permute," to rearrange the dimensions."},
     EXAMPLE {
         "R = ZZ[x_1..x_3,y_1..y_4,z_1..z_2,Degrees=>{3:{1,0,0},4:{0,1,0},2:{0,0,1}}];",
         "F = random({1,1,1},R)",
@@ -1108,35 +1131,49 @@ document {
     Key => {permute,(permute,MultidimensionalMatrix,List)}, 
     Headline => "permute the dimensions of a multidimensional matrix", 
     Usage => "permute(M,s)", 
-    Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix"},
-               "s" => List => {"a permutation of the set ",TEX///$\{0,1,\ldots,n-1\}$///}},
-    Outputs => {MultidimensionalMatrix => {"the same as the input, but with the dimensions re-ordered according to the specified permutation."}},
+    Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix."},
+               "s" => List => {"a permutation of the set ",TEX///$\{0,1,\ldots,n-1\}$///,"."}},
+    Outputs => {MultidimensionalMatrix => {"with the same entries as the input, but with the dimensions re-ordered according to the specified permutation."}},
     PARA {"According to the definition given on page 449 of the book ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", the output of this method is ",TEX///$s'(M)$///,", where ",TEX///$s'$///," is the inverse permutation of ",TEX///$s$///,"."},
     EXAMPLE {
         "M = genericMultidimensionalMatrix {4,3,2}",
         "permute(M,{1,0,2})",
         "permute(M,{2,0,1})"
      },
-     SeeAlso => {reverseSize,transpose}
+     SeeAlso => {reverseShape, sortShape, transpose}
 }
 
 document { 
-    Key => {reverseSize,(reverseSize,MultidimensionalMatrix)}, 
+    Key => {reverseShape,(reverseShape,MultidimensionalMatrix)}, 
     Headline => "reverse the dimensions of a multidimensional matrix", 
-    Usage => "reverseSize M", 
-    Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix"}},
+    Usage => "reverseShape M", 
+    Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix."}},
     Outputs => {MultidimensionalMatrix => {"the same as ",TO permute,TT"(M,{n-1,...,1,0})","."}},
     EXAMPLE {
         "M = genericMultidimensionalMatrix {4,3,2}",
-        "reverseSize M",
-        "assert(M === reverseSize reverseSize M)"
+        "reverseShape M",
+        "assert(M === reverseShape reverseShape M)"
      },
-     SeeAlso => {permute,transpose}
+     SeeAlso => {permute, sortShape, transpose}
+}
+
+document { 
+    Key => {sortShape,(sortShape,MultidimensionalMatrix)}, 
+    Headline => "sort the dimensions of a multidimensional matrix", 
+    Usage => "sortShape M", 
+    Inputs => {"M" => MultidimensionalMatrix},
+    Outputs => {MultidimensionalMatrix => {"the same as ",TO permute,TT"(M,s)",", where ",TT"s"," is the sorting permutation of the shape of ",TT"M","."}},
+    EXAMPLE {
+        "M = genericMultidimensionalMatrix {4,1,3,2}",
+        "sortShape M",
+        "assert(sortShape M === permute(M,{1,3,2,0}))"
+     },
+     SeeAlso => {permute, reverseShape, transpose}
 }
 
 document { 
     Key => {(symbol +,MultidimensionalMatrix,MultidimensionalMatrix)}, 
-    Headline => "addition of two multidimensional matrices of the same format", 
+    Headline => "sum of two multidimensional matrices of the same shape", 
     Usage => "M + N", 
     Inputs => {"M" => MultidimensionalMatrix,
                "N" => MultidimensionalMatrix},
@@ -1151,11 +1188,11 @@ undocumented {(symbol +,MultidimensionalMatrix)}
 
 document { 
     Key => {(symbol -,MultidimensionalMatrix,MultidimensionalMatrix)}, 
-    Headline => "subtraction of two multidimensional matrices of the same format", 
+    Headline => "difference of two multidimensional matrices of the same shape", 
     Usage => "M - N", 
     Inputs => {"M" => MultidimensionalMatrix,
                "N" => MultidimensionalMatrix},
-    Outputs => {MultidimensionalMatrix => {"the subtraction ",TEX///$M-N$///}},
+    Outputs => {MultidimensionalMatrix => {"the difference ",TEX///$M-N$///}},
     EXAMPLE {
         "M = multidimensionalMatrix {{{1, 7}, {3, 6}, {1, 6}}, {{3, 5}, {4, 4}, {8, 0}}}",
         "N = multidimensionalMatrix {{{1, 7}, {6, 5}, {5, 5}}, {{4, 3}, {3, 8}, {4, 1}}}",
@@ -1167,11 +1204,11 @@ undocumented {(symbol -,MultidimensionalMatrix)}
 
 document { 
     Key => {(symbol *,RingElement,MultidimensionalMatrix)}, 
-    Headline => "multiplication of a scalar with a multidimensional matrix", 
+    Headline => "product of a scalar with a multidimensional matrix", 
     Usage => "e * N", 
     Inputs => {"e" => RingElement,
                "M" => MultidimensionalMatrix},
-    Outputs => {MultidimensionalMatrix => {"the multiplication ",TEX///$e*M$///}},
+    Outputs => {MultidimensionalMatrix => {"the product ",TEX///$e*M$///}},
     EXAMPLE {
         "M = multidimensionalMatrix {{{1, 7}, {3, 6}, {1, 6}}, {{3, 5}, {4, 4}, {8, 0}}}",
         "2 * M",
@@ -1185,9 +1222,9 @@ document {
     Key => {(symbol *,MultidimensionalMatrix,MultidimensionalMatrix)}, 
     Headline => "product of multidimensional matrices", 
     Usage => "M * N", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a multidimensional matrix of format ",TEX///$k_1\times\ldots\times k_r$///},
-               "N" => MultidimensionalMatrix => {"a multidimensional matrix of format ",TEX///$l_1\times\ldots\times l_s$///," with ",TEX///$k_r = l_1$///}},
-    Outputs => {MultidimensionalMatrix => {"the convolution (or product) ",TEX///$M * N$///,", which is a multidimensional matrix of format ",TEX///$k_1\times\ldots\times k_{r-1}\times l_2\times\ldots\times l_s$///}},
+    Inputs => {"M" => MultidimensionalMatrix => {"a multidimensional matrix of shape ",TEX///$k_1\times\ldots\times k_r$///},
+               "N" => MultidimensionalMatrix => {"a multidimensional matrix of shape ",TEX///$l_1\times\ldots\times l_s$///," with ",TEX///$k_r = l_1$///}},
+    Outputs => {MultidimensionalMatrix => {"the convolution (or product) ",TEX///$M * N$///,", which is a multidimensional matrix of shape ",TEX///$k_1\times\ldots\times k_{r-1}\times l_2\times\ldots\times l_s$///}},
     EXAMPLE {
         "M = randomMultidimensionalMatrix {4,3}",
         "N = randomMultidimensionalMatrix {3,2}",
@@ -1222,9 +1259,9 @@ document {
     Key => {(symbol _,MultidimensionalMatrix,Sequence)}, 
     Headline => "get entry of multidimensional matrix", 
     Usage => "M_l", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a multidimensional matrix of format ",TEX///$d_1\times\ldots\times d_n$///,},
-               "l" => Sequence => {"a sequence of ",TEX///$n$///," integers"}},
-    Outputs => {RingElement => {"the ",TEX///$l$///,"-th entry of the matrix ",TEX///$M$///,", where ",TEX///$M_{(0,\ldots,0)}$///," is the top left entry"}},
+    Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix."},
+               "l" => Sequence => {"a sequence of ",TEX///$n$///," nonnegative integers."}},
+    Outputs => {RingElement => {"the ",TEX///$l$///,"-th entry of the matrix ",TEX///$M$///," (note that indexes start from 0)."}},
     EXAMPLE {
         "M = genericMultidimensionalMatrix {2,3,2}",
         "M_(1,2,0)"
@@ -1232,12 +1269,12 @@ document {
 }
 
 document { 
-    Key => {(determinant,MultidimensionalMatrix)}, 
+    Key => {(determinant,MultidimensionalMatrix)},
     Headline => "hyperdeterminant of a multidimensional matrix", 
     Usage => "det M", 
     Inputs => {"M" => MultidimensionalMatrix},
     Outputs => {RingElement => {"the hyperdeterminant of ",TEX///$M$///}},
-    PARA {"This is calculated using Schlafli's method where it is known to work. Use an optional input as ",TT "Strategy=>\"forceSchlafliMethod\""," to try to force this approach (but without ensuring the correctness of the calculation). For matrices of boundary format, the calculation passes through ",TO sylvesterMatrix,". For details, see the Chapter 14 in the book ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},"."},
+    PARA {"This is calculated using Schlafli's method where it is known to work. Use an optional input as ",TT "Strategy=>\"forceSchlafliMethod\""," to try to force this approach (but without ensuring the correctness of the calculation). For matrices of boundary shape, the calculation passes through ",TO sylvesterMatrix,". For details, see the Chapter 14 in the book ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},"."},
     EXAMPLE {
         "M = randomMultidimensionalMatrix(2,2,2,2)",
         "time det M",
@@ -1248,12 +1285,11 @@ document {
 }
 
 document { 
-    Key => {degreeDeterminant,(degreeDeterminant,MultidimensionalMatrix),(degreeDeterminant,List)}, 
+    Key => {degreeDeterminant,(degreeDeterminant,List)}, 
     Headline => "degree of the hyperdeterminant of a generic multidimensional matrix", 
-    Usage => "degreeDeterminant n"|newline|"degreeDeterminant M", 
-    Inputs => {"n" => List => {"a list of positive integers ",TEX///$n=\{n_1,n_2,\ldots\}$///},
-               "M" => MultidimensionalMatrix => {"a multidimensional matrix of format ",TEX///$n_1\times n_2\times\ldots$///}},
-    Outputs => {ZZ => {"the degree of the hyperdeterminant of a generic multidimensional matrix of format ",TEX///$n_1\times n_2\times\ldots$///}},
+    Usage => "degreeDeterminant n", 
+    Inputs => {"n" => List => {"a list of positive integers ",TEX///$n=\{n_1,n_2,\ldots\}$///}},
+    Outputs => {ZZ => {"the degree of the hyperdeterminant of a generic multidimensional matrix of shape ",TEX///$n_1\times n_2\times\ldots$///}},
     EXAMPLE {
         "n = {2,3,2}",
         "time degreeDeterminant n",
@@ -1268,7 +1304,7 @@ document {
     Headline => "make a generic multidimensional matrix of variables", 
     Usage => "genericMultidimensionalMatrix(d_1,...,d_n)", 
     Inputs => {{TT"(d_1,...,d_n)",", a sequence of positive integers."}},
-    Outputs => {{"the generic multidimensional matrix of format ",TEX///$d_1\times\ldots\times d_n$///,"."}},
+    Outputs => {{"the generic multidimensional matrix of shape ",TEX///$d_1\times\ldots\times d_n$///,"."}},
     EXAMPLE {
         "genericMultidimensionalMatrix(2,4,3)",
         "genericMultidimensionalMatrix((2,2,3),CoefficientRing=>ZZ/101)",
@@ -1282,7 +1318,7 @@ document {
     Headline => "random multidimensional matrix", 
     Usage => "randomMultidimensionalMatrix(d_1,...,d_n)", 
     Inputs => {{TT"(d_1,...,d_n)",", a sequence of positive integers."}},
-    Outputs => {{"a random multidimensional matrix of format ",TEX///$d_1\times\ldots\times d_n$///,"."}},
+    Outputs => {{"a random multidimensional matrix of shape ",TEX///$d_1\times\ldots\times d_n$///," over the ring specified by the option ",TO2 {[randomMultidimensionalMatrix,CoefficientRing],"CoefficientRing"}," (the default ring is ",TO ZZ,")."}},
     EXAMPLE {
         "randomMultidimensionalMatrix(2,4,3)",
         "randomMultidimensionalMatrix((2,2,3),CoefficientRing=>ZZ/101)"
@@ -1320,14 +1356,14 @@ document {
 }
 
 document { 
-    Key => {(size,MultidimensionalMatrix)}, 
-    Headline => "format of a multidimensional matrix", 
-    Usage => "size M", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of format ",TEX///$k_1\times\ldots\times k_n$///}},
+    Key => {shape, (shape,MultidimensionalMatrix)}, 
+    Headline => "shape of a multidimensional matrix", 
+    Usage => "shape M", 
+    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of shape ",TEX///$k_1\times\ldots\times k_n$///}},
     Outputs => {List => {"the list of integers ",TEX///$\{k_1, \ldots, k_n\}$///}},
     EXAMPLE {
         "M = multidimensionalMatrix {{{0, 8, 3}, {7, 3, 2}, {2, 7, 0}, {4, 8, 4}}, {{0, 8, 1}, {3, 1, 0}, {4, 7, 4}, {0, 6, 9}}}",
-        "size M"
+        "shape M"
      },
      SeeAlso => {(dim,MultidimensionalMatrix)}
 }
@@ -1336,13 +1372,13 @@ document {
     Key => {(dim,MultidimensionalMatrix)}, 
     Headline => "dimension of a multidimensional matrix", 
     Usage => "dim M", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of format ",TEX///$k_1\times\ldots\times k_n$///}},
+    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of shape ",TEX///$k_1\times\ldots\times k_n$///}},
     Outputs => {ZZ => {"the integer ",TEX///$n$///}},
     EXAMPLE {
         "M = multidimensionalMatrix {{{0, 8, 3}, {7, 3, 2}, {2, 7, 0}, {4, 8, 4}}, {{0, 8, 1}, {3, 1, 0}, {4, 7, 4}, {0, 6, 9}}}",
         "dim M"
      },
-     SeeAlso => {(size,MultidimensionalMatrix)}
+     SeeAlso => {(shape,MultidimensionalMatrix)}
 }
 
 document { 
@@ -1350,7 +1386,7 @@ document {
     Headline => "make a generic symmetric multidimensional matrix of variables", 
     Usage => "genericSymmetricMultidimensionalMatrix(n,d)", 
     Inputs => {{TT"(n,d)",", two positive integers."}},
-    Outputs => {{"the generic symmetric multidimensional matrix of format ",TEX///$d\times\ldots\times d$///," (",TEX///$n$///," times)."}},
+    Outputs => {{"the generic symmetric multidimensional matrix of shape ",TEX///$d\times\ldots\times d$///," (",TEX///$n$///," times)."}},
     PARA {"An ",TEX///$n$///,"-dimensional matrix ",TEX///$M$///," is symmetric if for every permutation ",TEX///$s$///," of the set ",TEX///$\{0,\ldots,n-1\}$///," we have ",TO permute,TT"(M,s) == M","."},
     EXAMPLE {
         "genericSymmetricMultidimensionalMatrix(3,2)",
@@ -1365,7 +1401,7 @@ document {
     Headline => "make a generic skew symmetric multidimensional matrix of variables", 
     Usage => "genericSkewMultidimensionalMatrix(n,d)", 
     Inputs => {{TT"(n,d)",", two positive integers."}},
-    Outputs => {{"the generic skew symmetric multidimensional matrix of format ",TEX///$d\times\ldots\times d$///," (",TEX///$n$///," times)."}},
+    Outputs => {{"the generic skew symmetric multidimensional matrix of shape ",TEX///$d\times\ldots\times d$///," (",TEX///$n$///," times)."}},
     PARA {"An ",TEX///$n$///,"-dimensional matrix ",TEX///$M$///," is skew symmetric if for every permutation ",TEX///$s$///," of the set ",TEX///$\{0,\ldots,n-1\}$///," we have ",TO permute,TT"(M,s) == sign(s)*M","."},
     EXAMPLE {
         "genericSkewMultidimensionalMatrix(3,4)",
@@ -1377,9 +1413,9 @@ document {
 
 document { 
     Key => {sylvesterMatrix,(sylvesterMatrix,MultidimensionalMatrix)}, 
-    Headline => "Sylvester-type matrix for the hyperdeterminant of boundary format", 
+    Headline => "Sylvester-type matrix for the hyperdeterminant of a matrix of boundary shape", 
     Usage => "sylvesterMatrix M", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a multidimensional matrix of boundary format."}},
+    Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix of boundary shape ",TEX///$(k_1+1)\times\ldots\times (k_n+1)$///," (that is, ",TEX///$2 max\{k_1,\ldots,k_n\} = k_1+\ldots+k_n$///,")."}},
     Outputs => {Matrix => {"a square matrix whose determinant is ",TEX///$det(M)$///," (up to sign)."}},
     PARA{"This is an implementation of Theorem 3.3, Chapter 14, in ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},"."},
     EXAMPLE {
@@ -1573,20 +1609,20 @@ assert(matrix entries(A*B) == (matrix entries A) * (matrix entries B))
 A' = randomMultidimensionalMatrix {1,1,5,1,4}
 B' = randomMultidimensionalMatrix {4,1,2,1}
 A'B' = A' * B';
-assert(size A'B' == {1, 1, 5, 1, 1, 2, 1})
+assert(shape A'B' == {1, 1, 5, 1, 1, 2, 1})
 debug SparseResultants;
 assert(matrix entries removeOneDim A'B' == (matrix entries removeOneDim A') * (matrix entries removeOneDim B'))
 --
-assert(size((randomMultidimensionalMatrix {5,2,2}) * (randomMultidimensionalMatrix {2,3,4,2})) == {5,2,3,4,2})
-assert(size((randomMultidimensionalMatrix({5,2,1,2},CoefficientRing=>ZZ/3331)) * (randomMultidimensionalMatrix({2,3,4,2,1},CoefficientRing=>ZZ/3331))) == {5,2,1,3,4,2,1})
+assert(shape((randomMultidimensionalMatrix {5,2,2}) * (randomMultidimensionalMatrix {2,3,4,2})) == {5,2,3,4,2})
+assert(shape((randomMultidimensionalMatrix({5,2,1,2},CoefficientRing=>ZZ/3331)) * (randomMultidimensionalMatrix({2,3,4,2,1},CoefficientRing=>ZZ/3331))) == {5,2,1,3,4,2,1})
 --
 equalUpToSign = (A,B) -> A == B or A == -B;
 --
 detConvolution = method();
 detConvolution (MultidimensionalMatrix,MultidimensionalMatrix) := (A,B) -> (
-    Na := degreeDeterminant A;
-    Nb := degreeDeterminant B;
-    l := first size B;
+    Na := degreeDeterminant shape A;
+    Nb := degreeDeterminant shape B;
+    l := first shape B;
     detA := det A;
     assert equalUpToSign(detA,det sylvesterMatrix A);
     detB := det B;
@@ -1644,7 +1680,7 @@ s = {1,0,4,2,3}
 s' = {1,0,3,4,2}
 sM = permute(M,s);
 assert(permute(sM,s') == M and sM != M)
-assert(size sM == perm(size M,s))
+assert(shape sM == perm(shape M,s))
 for i to 15 do (
     a = (random(0,4),random(0,1),random(0,1),random(0,2),random(0,0));
     << a <<endl;
@@ -1656,7 +1692,7 @@ s = {1,2,0};
 s' = {2,0,1};
 sM = permute(M,s);
 assert(permute(sM,s') == M and sM != M)
-assert(size sM == perm(size M,s))
+assert(shape sM == perm(shape M,s))
 for i to 10 do (
     a = (random(0,1),random(0,2),random(0,1));
     << a <<endl;
