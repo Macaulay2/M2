@@ -149,7 +149,7 @@ makeDocumentTag' := opts -> key -> (
 	if currentDocumentTag === null   then error("makeDocumentTag: package cannot be determined: ", nkey) else
 	if signalDocumentationError fkey then (
 	    loc := locate currentDocumentTag;
-	    printerr("warning: reference ", format fkey, " was not found in any package. ",
+	    printerr("error: reference ", format fkey, " was not found in any package. ",
 		"First mentioned near:\n  ", loc#0, ":", toString loc#1));
 	pkg = currentPackage);
     new DocumentTag from new HashTable from {
@@ -287,7 +287,7 @@ storeRawDocumentation := (tag, rawdoc) -> (
     fkey := format tag;
     if currentPackage#rawKey#?fkey and signalDocumentationError tag then (
 	rawdoc = currentPackage#rawKey#fkey;
-	error("error: documentation already provided for ", format tag, newline,
+	printerr("error: documentation already provided for ", format tag, newline,
 	    rawdoc#"filename", ":", toString rawdoc#"linenum", ": ... here is the (end of the) previous documentation"));
     currentPackage#rawKey#fkey = rawdoc)
 
@@ -649,19 +649,11 @@ document List := opts -> args -> (
     if #inp > 0 then o.Inputs  = inp else remove(o, Inputs);
     if #out > 0 then o.Outputs = out else remove(o, Outputs);
     if #ino > 0 then o.Options = ino else remove(o, Options);
-    -- Generate Hypertext containers
-    scan(keys KeywordFunctions, sym -> if o#?sym then (
-	    if sym === Consequences then scan(o#sym, x -> validate LI x)
-	    else if sym === Key then null
-	    else if sym === BaseFunction then null
-	    else if sym === symbol DocumentTag then null
-	    else validate DIV o#sym));
     -- Set the location of the documentation
     o#"filename" = currentFileName;
     o#"linenum"  = currentLineNumber();
-    o = new HashTable from o;
     currentDocumentTag = null;
-    storeRawDocumentation(tag, o))
+    storeRawDocumentation(tag, new HashTable from o))
 
 -----------------------------------------------------------------------------
 -- undocumented

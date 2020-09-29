@@ -151,7 +151,7 @@ makeTree := (parent, graph, visits, node) -> (
 orphanNodes := (parent, graph) -> (
     nonLeaves := set keys graph - set flatten values graph;
     if not nonLeaves#?parent and signalDocumentationWarning parent then printerr("warning: top node ", parent, " not a root");
-    if #nonLeaves > 1 then printerr("info: there are ", toString(#nonLeaves - 1), " documentation nodes that are not listed as a subnode");
+    if #nonLeaves > 1 then printerr("warning: found ", toString(#nonLeaves - 1), " documentation node(s) not listed as a subnode");
     unique prepend(parent, sort keys nonLeaves))
 
 makeForest := (graph, visits) -> (
@@ -422,6 +422,7 @@ installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationC
 	    fn := concatenate htmlFilename tag;
 	    if isSecondaryTag tag
 	    or fileExists fn and fileLength fn > 0 and not opts.RemakeAllDocumentation and rawDocumentationCache#?fkey then return;
+--	    print fkey
 	    verboseLog("making html page for ", toString tag);
 	    fn << html validate HTML {
 		defaultHEAD {fkey, commentize headline fkey},
@@ -742,7 +743,7 @@ installPackage Package := opts -> pkg -> (
 				));
 			))));
 
-	if hadDocumentationError then error(
+	if chkdoc and hadDocumentationError then error(
 	    toString numDocumentationErrors, " errors(s) occurred in documentation for package ", toString pkg);
 
 	-- make info documentation
@@ -753,7 +754,7 @@ installPackage Package := opts -> pkg -> (
 	if opts.MakeHTML then installHTML(pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts)
 	else verboseLog("not making documentation in HTML format");
 
-	if hadDocumentationWarning then printerr("warning: ",
+	if chkdoc and hadDocumentationWarning then printerr("warning: ",
 	    toString numDocumentationWarnings, " warning(s) occurred in documentation for package ", toString pkg);
 
 	); -- end of opts.MakeDocumentation

@@ -134,26 +134,22 @@ html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
 html COMMENT := x -> concatenate("<!--",x,"-->")
 
 html HREF := x -> (
-     r := concatenate apply(sequence last x, html);
+     r := concatenate apply(splice drop(x, 1), html);
      r = if match("^ +$", r) then #r : "&nbsp;&nbsp;" else r;
      concatenate("<a href=\"", htmlLiteral toURL first x, "\">", r, "</a>")
      )
 
 html MENU := x -> html redoMENU x
 
-html TO   := x -> html TO2{tag := x#0, format tag}
+html TO   := x -> html TO2{tag := x#0, format tag | if x#?1 then x#1 else ""}
 html TO2  := x -> (
     tag := getPrimaryTag x#0;
     fkey := format tag;
     -- TODO: add this to htmlLiteral?
     name := if match("^ +$", x#1) then #x#1 : "&nbsp;&nbsp;" else x#1;
-    if isUndocumented tag then (
-	if signalDocumentationWarning tag then warning("tag cited also declared as undocumented: " | fkey);
-	concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)"))
-    else if isMissingDoc tag then (
-	if signalDocumentationWarning tag then warning("missing documentation: " | fkey);
-	concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)"))
-    else concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, htmlLiteral name}))
+    if isUndocumented tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
+    if isMissingDoc   tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
+    concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, htmlLiteral name}))
 
 html VerticalList         := x -> html UL apply(x, html)
 html NumberedVerticalList := x -> html OL apply(x, html)

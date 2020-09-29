@@ -263,14 +263,14 @@ infoTagConvert DocumentTag := tag -> (
 info TO  := x -> info TO2{x#0, format x#0 | if x#?1 then x#1 else ""}
 info TO2 := x -> (
      tag := x#0;
-     if isMissingDoc tag then concatenate(x#1, " (missing documentation)")
+     if isMissingDoc tag or isUndocumented tag then concatenate(x#1, " (missing documentation)")
      else concatenate("*note ", infoLinkConvert x#1, ": ", infoTagConvert tag, ","))
 info TOH := x -> (
      tag := x#0;
      f := format tag;
      if x#?1 then f = f|x#1;
      concatenate(
-	  if isMissingDoc tag then (f, " (missing documentation)")
+	  if isMissingDoc tag or isUndocumented tag then (f, " (missing documentation)")
 	  else ("*note ", infoLinkConvert f, ": ", infoTagConvert tag, ","),
 	  commentize headline tag))
 
