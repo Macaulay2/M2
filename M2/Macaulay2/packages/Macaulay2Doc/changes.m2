@@ -42,7 +42,7 @@ document {
                    LI { "A brief documentation of various types of objects can be viewed usin ", TO (symbol?, Symbol), "." },
                    LI { "The ", TO document, " function now accepts three new options: ", TT "Acknowledgement", ", ",
 		       TT "Contributors", ", and ", TT "References", ". The content of each will appear under a subsection
-		       of the same name in the documentation. Moreover, ", TO (document, String), " is now a synonym for ",
+		       of the same name in the documentation. Moreover, ", TO "SimpleDoc :: document(String)", " is now a synonym for ",
 		       TO "SimpleDoc :: doc(String)", "." },
                    LI { "The ", TO regex, " function, as well as other functions that accept ", TO "regular expressions",
                        ", have been rewritten to use the Perl regular expression syntax by default, which allows more
@@ -66,6 +66,10 @@ document {
 	       },
 	 LI { "functionality changed:",
 	      UL {
+		   LI {
+		       "$\\LaTeX$ typesetting for the web documentation is now rendered using ",
+		       HREF{"https://katex.org/","$\\KaTeX$"}, ", a JavaScript math typesetting library for browsers."
+		   },
 		   LI { 
 			"The destinations of the links at the tops of the web pages portraying documentation nodes in a package have been
 			altered.  The links labeled ", TT "next", " and ", TT "previous", " have been interchanged with the links labelled ",
