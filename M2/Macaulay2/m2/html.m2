@@ -141,7 +141,7 @@ html HREF := x -> (
 
 html MENU := x -> html redoMENU x
 
-html TO   := x -> html TO2{tag := getPrimaryTag x#0, format tag}
+html TO   := x -> html TO2{tag := x#0, format tag}
 html TO2  := x -> (
     tag := getPrimaryTag x#0;
     fkey := format tag;
