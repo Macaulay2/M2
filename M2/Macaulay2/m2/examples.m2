@@ -82,7 +82,7 @@ getExampleOutputFilename := (pkg, fkey) -> (
 getExampleOutput := (pkg, fkey) -> (
     -- TODO: only get from cache if the hash hasn't changed
     if pkg#"example results"#?fkey then return pkg#"example results"#fkey;
-    verboseLog := if debugLevel > 1 or true then printerr else identity;
+    verboseLog := if debugLevel > 1 then printerr else identity;
     filename := getExampleOutputFilename(pkg, fkey);
     output := if fileExists filename
     then ( verboseLog("info: reading cached example results from ", filename); get filename )

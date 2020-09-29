@@ -1112,15 +1112,15 @@ Matrix /* or null */ *Matrix::koszul_monomials(int nskew,
   int *bexp = newarray_atomic(int, nvars);
   int *result_exp = newarray_atomic(int, nvars);
   int *m = M->make_one();
-  array<Bag *> divisors;
+  VECTOR(Bag *) divisors;
   for (int i = 0; i < ncols; i++)
     {
       if (c->elem(i) == nullptr) continue;
       a = P->lead_flat_monomial(c->elem(i)->coeff);
       M->to_expvector(a, aexp);
-      divisors.shrink(0);
+      divisors.clear();
       A->find_all_divisors(aexp, divisors);
-      for (int j = 0; j < divisors.length(); j++)
+      for (int j = 0; j < divisors.size(); j++)
         {
           int rownum = divisors[j]->basis_elem();
           const int *b = P->lead_flat_monomial(r->elem(rownum)->coeff);

@@ -137,6 +137,7 @@ dismiss Package := pkg     -> (
 -----------------------------------------------------------------------------
 
 -- TODO: also use this to read the contents of Configuration
+-- TODO: raise an error if the package header causes new symbols to be exported
 readPackage = method(TypicalValue => OptionTable, Options => { FileName => null })
 readPackage Package := opts -> pkg     -> options pkg
 readPackage String  := opts -> pkgname -> (
