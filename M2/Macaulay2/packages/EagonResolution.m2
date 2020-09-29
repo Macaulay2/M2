@@ -19,14 +19,14 @@ export {
     "golodBetti",   -- the betti table "as if" the module is Golod.
     "verticalStrand", --make a vertical strand of the Eagon complex
     "horizontalStrand", --make a vertical strand of the Eagon complex    
-    "beta", -- the maps responsible for any non-minimality.
+    "eagonBeta", -- the maps responsible for any non-minimality.
     "picture", -- compressed display of labeled matrices; various options
     "mapComponent",
 --Symbols:
     "EagonData", -- the result of the eagon computation
     "Transpose", -- option for picture
     "DisplayBlocks", --option for picture
-    "Display", -- option for picture and for beta
+    "Display", -- option for picture and for eagonBeta
     "CompressBeta" --option for eagon
     }
 protect EagonLength
@@ -262,7 +262,7 @@ eagon(Ring, ZZ) := EagonData => o -> (R,b) ->(
     west := "dHor";
     --The differential verticaldiff of Y^n is the sum of maps eagon#{"dVert",n,i} and eagon#{"NW",n,i}.
     north := "dVert";
-    beta := "beta";
+    eagonBeta := "eagonBeta";
 
     --Make the free modules Eagon#{0,n,i}. 
     --two special cases:
@@ -294,7 +294,7 @@ eagon(Ring, ZZ) := EagonData => o -> (R,b) ->(
 
     Eagon#{north,1,1} = (Eagon#{north,0,2})*(Eagon#{0,1,1})^[0] +
 	                    ebasis(K,1)*(Eagon#{0,1,1})^[1];
-    Eagon#{beta,1,1} = ebasis(K,1);			    
+    Eagon#{eagonBeta,1,1} = ebasis(K,1);			    
     Eagon#{west,1,1} = K.dd_2 | ebasis(K,1);
     
     for i from 2 to g+1 do(
@@ -303,7 +303,7 @@ eagon(Ring, ZZ) := EagonData => o -> (R,b) ->(
 	                    (Eagon#{north,0,i+1})*(Eagon#{0,1,i})^[0] +
 	                    ebasis(K,i)*(Eagon#{0,1,i})^[1]
 			    );
-        Eagon#{beta,1,i} = ebasis(K,i);			    
+        Eagon#{eagonBeta,1,i} = ebasis(K,i);			    
 	Eagon#{west,1,i} = K.dd_(i+1) | ebasis(K,i);
 			);
     		
@@ -311,14 +311,14 @@ eagon(Ring, ZZ) := EagonData => o -> (R,b) ->(
     for n from 2 to b do(
        Eagon#{north, n, g+2} = map(Eagon#{0,n,g+1}, Eagon#{0,n,g+2},0);
        Eagon#{west,n,0} = Eagon#{north, n-1,1};
-       Eagon#{beta,n,0} = Eagon#{beta, n-1,1};       
+       Eagon#{eagonBeta,n,0} = Eagon#{eagonBeta, n-1,1};       
     	    	    
     for i from 1 to g+1 do(
 
---for beta:
+--for eagonBeta:
         toLift := -(if #components Eagon#{0,n-2,i} ===1 then 
 	   id_(Eagon#{0,n-2,i}) else Eagon#{0,n-2,i}_[0])*
-             Eagon#{beta,n-1,i}*
+             Eagon#{eagonBeta,n-1,i}*
              eTensor(Eagon#{north, n-2,1},X(i));
         M := Eagon#{north,n-2,i+1};
      
@@ -335,13 +335,13 @@ eagon(Ring, ZZ) := EagonData => o -> (R,b) ->(
 		 if toLift % M' == 0 then(
 		     (M = M';
 		      if o.Verbose == true then 
-		         <<"Used "<<p+1<<" of "<<numInd<<" blocks of beta "<<(n,i)<<endl;
+		         <<"Used "<<p+1<<" of "<<numInd<<" blocks of eagonBeta "<<(n,i)<<endl;
 		      break)))));
 
-     Eagon#{beta,n,i} = toLift//M;
+     Eagon#{eagonBeta,n,i} = toLift//M;
  
 
-     Eagon#{west,n,i} = Eagon#{0,n-1,i}_[0]*Eagon#{beta,n,i}*(Eagon#{0,n,i})^[1]+
+     Eagon#{west,n,i} = Eagon#{0,n-1,i}_[0]*Eagon#{eagonBeta,n,i}*(Eagon#{0,n,i})^[1]+
 	                   Eagon#{0,n-1,i}_[1]* (Eagon#{west,n-1,0}**X(i))  *(Eagon#{0,n,i})^[1]+
 	                   (if Eagon#?{west,n-1,i+1} then 
 			            Eagon#{0,n-1,i}_[0]*Eagon#{west,n-1,i+1}*Eagon#{0,n,i}^[0] 
@@ -351,7 +351,7 @@ eagon(Ring, ZZ) := EagonData => o -> (R,b) ->(
          Eagon#{north,n,i} = -- special case because Y^n_0 is not a tensor product with Y^(n-1)_0
 	                    (
 	                    (Eagon#{north,n-1,i+1})*((Eagon#{0,n,i})^[0])+
-	                    Eagon#{0,n-1,i}_[0]*Eagon#{beta,n,i}*(Eagon#{0,n,i})^[1]+
+	                    Eagon#{0,n-1,i}_[0]*Eagon#{eagonBeta,n,i}*(Eagon#{0,n,i})^[1]+
 			    Eagon#{0,n-1,i}_[1]*(Eagon#{north, n-2,1}**X(i))*(Eagon#{0,n,i}^[1])
 			    )
      else
@@ -359,7 +359,7 @@ eagon(Ring, ZZ) := EagonData => o -> (R,b) ->(
 	    Eagon#{0,n,i-1}_[0]*
 	                    (
 	                    (Eagon#{north,n-1,i+1})*((Eagon#{0,n,i})^[0])+
-	                    Eagon#{0,n-1,i}_[0]*Eagon#{beta,n,i}*(Eagon#{0,n,i})^[1]+
+	                    Eagon#{0,n-1,i}_[0]*Eagon#{eagonBeta,n,i}*(Eagon#{0,n,i})^[1]+
 			    Eagon#{0,n-1,i}_[1]*(Eagon#{north, n-2,1}**X(i))*(Eagon#{0,n,i}^[1])
 			    );
   ));
@@ -371,22 +371,22 @@ eagon(Ring, ZZ) := EagonData => o -> (R,b) ->(
   E
 )
 
---beta--
-beta = method(Options => {Display => "picture", Verbose => false})
---There are no maps beta(E,0) or beta(E,1); the display starts with beta(E,2).
+--eagonBeta--
+eagonBeta = method(Options => {Display => "picture", Verbose => false})
+--There are no maps eagonBeta(E,0) or eagonBeta(E,1); the display starts with eagonBeta(E,2).
 
-beta(EagonData, ZZ) := o -> (E,n) -> (
+eagonBeta(EagonData, ZZ) := o -> (E,n) -> (
          if o.Display == "picture" then 
-             picture(E#{"beta",n,0},Verbose => o.Verbose)
+             picture(E#{"eagonBeta",n,0},Verbose => o.Verbose)
          else if o.Display == "DisplayBlocks" then 
-	     displayBlocks E#{"beta",n,0} 
+	     displayBlocks E#{"eagonBeta",n,0} 
          else 
-	     E#{"beta",n,0}
+	     E#{"eagonBeta",n,0}
          )
 
-beta EagonData := List => o-> E -> (
+eagonBeta EagonData := List => o-> E -> (
     b := max apply(select(keys E, k-> k_0 === 0 and k_2 === 0), k->k_1);
-    netList apply(b-1, n -> beta(E,n+2,Display => o.Display, Verbose => o.Verbose))
+    netList apply(b-1, n -> eagonBeta(E,n+2,Display => o.Display, Verbose => o.Verbose))
     )
 
 extractBlocks = method()
@@ -773,7 +773,7 @@ doc///
      The i-th homology of Y^n_* is H_i(Y^n) = H_0(Y^n_*)**X_i (proved in Gulliksen-Levin). Part of the
      inductive construction will be a map inducing this isomorphism
      
-     alpha^n_i = beta^n_i + dHor^n_0**1: Y^n_0**X_i \to Y^{n-1}_{i+1} ++ Y^{n-1}_0**X_i = Y^n
+     alpha^n_i = eagonBeta^n_i + dHor^n_0**1: Y^n_0**X_i \to Y^{n-1}_{i+1} ++ Y^{n-1}_0**X_i = Y^n
      
      
      Assume that the differential of Y^n and the maps dVert^n and alpha^n are known. We take
@@ -788,9 +788,9 @@ doc///
      
      dVert^n_{i+1}  Y^n_{i+1} -> Y^n_i ++ Y^{n-1}_0**X_i.
      
-     and alpha^{n+1}_i = beta^{n+1}_i + dHor^n_0**1:  Y^n_0**X_i \to  Y^n_i ++ Y^{n-1}_0**X(i).
+     and alpha^{n+1}_i = eagonBeta^{n+1}_i + dHor^n_0**1:  Y^n_0**X_i \to  Y^n_i ++ Y^{n-1}_0**X(i).
      
-     It remains to define beta^{n+1}_i; we take this to be
+     It remains to define eagonBeta^{n+1}_i; we take this to be
      the negative of
      
      a lifting along the map from Y^{n+1}_{i-1} \subset Y^n_i to Y^n_{i-1} of the composite
@@ -804,13 +804,13 @@ doc///
      needsPackage "DGAlgebras"; isGolod R
      E = eagon(R,6)
     Text
-     We can see the vertical and horizontal strands, and the beta maps
+     We can see the vertical and horizontal strands, and the eagonBeta maps
     Example
      verticalStrand(E,3)
      horizontalStrand(E,2)
      horizontalStrand (E,0)
      F = eagonResolution E     
-     beta E     
+     eagonBeta E     
     Text
      With the default option CompressBeta => true, only a subset of the components of Y^{n+1}_{i-1} are used.
      To see the effect of CompressBeta => true, consider:
@@ -819,10 +819,10 @@ doc///
      E = eagon(R,6, Verbose =>true)
      eagon(R,-1)
      En = eagon(R,6,CompressBeta => false)
-     beta (E,4), beta(E,5)
-     beta (En,4), beta(En,5)
+     eagonBeta (E,4), eagonBeta(E,5)
+     eagonBeta (En,4), eagonBeta(En,5)
     Text
-     There are also ways to investigate the components of dVert, dHor, and beta; see 
+     There are also ways to investigate the components of dVert, dHor, and eagonBeta; see 
      @TO picture@, @TO DisplayBlocks@, and @TO mapComponent@.
    SeeAlso
     verticalStrand
@@ -923,13 +923,13 @@ doc ///
      R = S/I
      E = eagon(R,4);
      picture E
-     picture E#{"beta",3,0}
+     picture E#{"eagonBeta",3,0}
      picture E
      picture verticalStrand(E,1)
 
    SeeAlso
     eagon
-    "beta"
+    "eagonBeta"
     eagonResolution
     DisplayBlocks
     mapComponent
@@ -979,32 +979,32 @@ doc ///
 ///
 
 
---docbeta
+--doceagonBeta
 doc///
    Key
-    beta
-    (beta,EagonData)
-    (beta,EagonData,ZZ)
-    [beta, Display]
-    [beta, Verbose]
+    eagonBeta
+    (eagonBeta,EagonData)
+    (eagonBeta,EagonData,ZZ)
+    [eagonBeta, Display]
+    [eagonBeta, Verbose]
    Headline
-    print the beta maps in the Eagon resolution
+    print the eagonBeta maps in the Eagon resolution
    Usage
-    N = beta E
-    N = beta(E,n)
+    N = eagonBeta E
+    N = eagonBeta(E,n)
    Inputs
     E:EagonData
      created by eagon(R,b)
     n:ZZ
-     which beta to show
+     which eagonBeta to show
    Outputs
     N:Net
      either a "Display" display (with Display => "picture", the default) or a "displayBlocks" display
      with Display => "DisplayBlocks" or a plain matrix if Display => <anything else>.
-     With Verbose => true, the display includes (rank target beta,rank source beta)
+     With Verbose => true, the display includes (rank target eagonBeta,rank source eagonBeta)
    Description
     Text
-     The beta maps are the components of the Eagon resolution,
+     The eagonBeta maps are the components of the Eagon resolution,
      starting from the 2nd differential that may or may not be minimal, 
      and are therefore most interesting. With the default option 
      
@@ -1014,9 +1014,9 @@ doc///
      the displayBlocks output
      with Display => "DisplayBlocks" or a plain matrix if Display => <any other string>.
      
-     In the notes of Gulliksen-Levin it is proven that R is Golod if and only if the maps beta can be
+     In the notes of Gulliksen-Levin it is proven that R is Golod if and only if the maps eagonBeta can be
      taken with values in the Koszul complex; thus in particular, if R is Golod, then 
-     there are no "new" betas after beta(E,numgens R+1). Since R is Golod iff all the beta matrices have
+     there are no "new" eagonBetas after eagonBeta(E,numgens R+1). Since R is Golod iff all the eagonBeta matrices have
      all entries in the maximal ideal, this proves in particular that R is Golod if and only if
      the Betti numbers of the resolution of coker vars R agree up to the step numgens R with 
      the Betti numbers of the Eagon resolution.
@@ -1026,10 +1026,10 @@ doc///
      I = ideal"a3,b3,c3"
      R = S/I
      E = eagon(R,4);
-     beta(E,4)
-     beta(E,4,Display => "DisplayBlocks")
-     beta(E,4,Display => "")     
-     beta E
+     eagonBeta(E,4)
+     eagonBeta(E,4,Display => "DisplayBlocks")
+     eagonBeta(E,4,Display => "")     
+     eagonBeta E
    SeeAlso
     eagon
     picture
@@ -1126,7 +1126,7 @@ doc ///
    Description
     Text
      The source and target of a a map in the Eagon double complex, such as
-     dVert, dHor, and beta, are direct sums of tensor products of the form
+     dVert, dHor, and eagonBeta, are direct sums of tensor products of the form
      K_i**X_{u_1}**..**X_{u_s} where K_i is a term of the Koszul complex and X_i
      is a term of the S-free resolution of R, all tensored with R.
      This tensor product is represented by a symbol that is a two element Sequence
@@ -1146,8 +1146,8 @@ doc ///
      mapComponent(E#{"dHor",3,0}, (0,{1}),(1,{1}))
      picture E#{"dVert",3,1}
      mapComponent(E#{"dVert",3,1}, (0,{2}),(0,{1,1})) 
-     picture E#{"beta",3,1}
-     mapComponent(E#{"beta",3,1}, (0,{2}),(0,{1,1})) 
+     picture E#{"eagonBeta",3,1}
+     mapComponent(E#{"eagonBeta",3,1}, (0,{2}),(0,{1,1})) 
    SeeAlso
     picture
     DisplayBlocks
@@ -1272,9 +1272,9 @@ doc ///
    Key
     Display
    Headline
-    Option for beta, default is "picture"
+    Option for eagonBeta, default is "picture"
    Usage
-    beta(E,Display => "picture")
+    eagonBeta(E,Display => "picture")
    Inputs
     E:EagonData
    Description
@@ -1284,8 +1284,8 @@ doc ///
     Example
      R = ZZ/101[x,y,z]/ideal"x3,y3,z3"
      E = eagon(R,5);
-     beta(E,3)
-     beta(E,3,Display =>"DisplayBlocks")
+     eagonBeta(E,3)
+     eagonBeta(E,3,Display =>"DisplayBlocks")
    SeeAlso
     eagon
 ///
@@ -1306,18 +1306,18 @@ doc ///
     E:EagonData
    Description
     Text
-     beta(E,i) := E#{"beta",n,0} 
+     eagonBeta(E,i) := E#{"eagonBeta",n,0} 
      is defined by lifting another map along the map dVert^n_i. If
      CompressBeta => true, the default, then the lifting uses
      the smallest initial subsequence of the blocks of source dVert as possible,
-     and thus the columns of picture beta(E,i) will have fewer nonzero entries.
+     and thus the columns of picture eagonBeta(E,i) will have fewer nonzero entries.
      if Verbose =>true, then data about the usage is printed.
     Example
      R = ZZ/101[x,y,z]/ideal"x3,y3,z3"
      E = eagon(R,4,CompressBeta =>true, Verbose =>true);
    SeeAlso
     eagon
-    beta
+    eagonBeta
 ///
 doc ///
    Key
