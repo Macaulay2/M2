@@ -216,33 +216,28 @@ convertTexTable := new HashTable from {
     "tt" => "TT",
     }
 
+-- the regex should match the tag and content
+-- inside braces as subexpressions #2 and #3
+convertTex := (tags, re, str) -> (
+    off  := 0;
+    while (m := regex(re, off, str)) =!= null do (
+	off = m#3#0;
+	tag := substring(m#2, str);
+	if match(tags, tag) then (
+	    tag = convertTexTable#tag;
+	    if debugLevel > 1 then printerr("parsing ", tag, " in TEX");
+	    str = replace(regexQuote substring(m#1, str), "\"," | tag | "{" | format substring(m#3, str) | "},\"", str)));
+    str)
+
 new TEX from String    := (T, t) -> T {t}
 new TEX from BasicList := (T, t) -> (
     -- TODO: https://www.overleaf.com/learn/latex/Font_sizes,_families,_and_styles#Reference_guide
     -- we do this so {"{\tt", TO sum, "}"} can be rendered correctly
     s := demark_"," \\ toExternalString \ t;
-    -- parsing matching braces wrapped with \url{...}
-    re   := ///((?:\\\\(url))?\{((?:[^}{]+|(?1))*+)\})///;
-    off  := 0;
-    while (m := regex(re, off, s)) =!= null do (
-	off = m#3#0;
-	tag := substring(m#2, s);
-	if match("url", tag) then (
-	    tag = convertTexTable#tag;
-	    if debugLevel > 1 then printerr("parsing ", tag, " in TEX");
-	    s = replace(regexQuote substring(m#1, s), "\"," | tag | "{" | format substring(m#3, s) | "},\"", s);
-	    continue));
-    -- parsing matching braces wrapped with {\xx ...}
-    re   = ///(\{(?:\\\\(bf|tt|em|it))? *((?:[^}{]+|(?1))*+)\})///;
-    off  = 0;
-    while (m = regex(re, off, s)) =!= null do (
-	off = m#3#0;
-	tag = substring(m#2, s);
-	if match("bf|tt|em|it", tag) then (
-	    tag = convertTexTable#tag;
-	    if debugLevel > 1 then printerr("parsing ", tag, " in TEX");
-	    s = replace(regexQuote substring(m#1, s), "\"," | tag | "{" | format substring(m#3, s) | "},\"", s);
-	    continue));
+    -- parsing nested braces contained in \url{...}
+    s = convertTex("url", ///((?:\\\\(url))?\{((?:[^}{]+|(?1))*+)\})///, s);
+    -- parsing nested braces contained in {\xx ...}
+    s = convertTex("bf|tt|em|it", ///(\{(?:\\\\(bf|tt|em|it))? *((?:[^}{]+|(?1))*+)\})///, s);
     -- miscellaneous replacements
     s = replace("---", "—", s);
     s = replace("\\b--\\b", "–", s);
