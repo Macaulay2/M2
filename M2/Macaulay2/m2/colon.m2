@@ -155,13 +155,17 @@ quotientAnn := opts -> (I,J) -> (
      if domins then trim IJ else IJ)
 
 quotient(Ideal ,Ideal      ) := Ideal  => opts -> (I,J) -> (quotientIdeal opts)(I,J)
+quotient(Ideal ,Number     ) :=
 quotient(Ideal ,RingElement) := Ideal  => opts -> (I,f) -> (quotientIdeal opts)(I,ideal(f))
 quotient(Module,Ideal      ) := Module => opts -> (M,I) -> (quotientModule opts)(M,I)
+quotient(Module,Number     ) :=
 quotient(Module,RingElement) := Module => opts -> (M,f) -> (quotientModule opts)(M,ideal(f))
 quotient(Module,Module     ) := Ideal  => opts -> (M,N) -> (quotientAnn opts)(M,N)
 Ideal : Ideal := Ideal => (I,J) -> quotient(I,J)
+Ideal : Number      := 
 Ideal : RingElement := Ideal => (I,r) -> quotient(I,r)
 Module : Ideal := Module => (M,I) -> quotient(M,I)
+Module : Number      :=
 Module : RingElement := Module => (M,r) -> quotient(M,r)
 Module : Module := Ideal => (M,N) -> quotient(M,N)
     
