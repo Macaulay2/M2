@@ -463,7 +463,8 @@ IdealElementSaturateAlgorithms = new HashTable from {
 
     GRevLex => opts -> (I, v) -> (
 	-- FIXME: this might not be necessary, but the code isn't designed for this case.
-	if not isFlatPolynomialRing ring I
+	if not isHomogeneous I
+	or not isFlatPolynomialRing ring I
 	or not isGRevLexRing ring I then return null;
 	-- First check that v is a variable of the ring
 	-- TODO: can this strategy work with generators of the irrelevant ideal?
