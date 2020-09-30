@@ -495,11 +495,11 @@ document {
      PARA {
 	 TEX "Equations in ", CODE "$..$", " or ", CODE "\\(...\\)", " appear in inline mode, such as $x^2-1$,
 	 while those in ", CODE "$$..$$", " or ", CODE "\\[...\\]", " appear in display mode:" },
-     BLOCKQUOTE TEX {tex genericMatrix(QQ[x,y,z,w],2,2), "."},
+     BLOCKQUOTE PARA TEX {tex genericMatrix(QQ[x,y,z,w],2,2), "."},
      PARA {
 	 "In addition, ", CODE "{\\bf ...}", ", ", CODE "{\\em ...}", ", ", CODE "{\\it ...}", ", ", CODE "{\\tt ...}",
 	 ", and ", CODE "\\url{...}", " are converted to ", TO Hypertext, " objects:" },
-     BLOCKQUOTE TEX ///{\tt res(Module)} is the {\it method} for {\em making} {\bf resolutions} (see \url{https://macaulay2.com}).///,
+     BLOCKQUOTE PARA TEX ///{\tt res(Module)} is the {\it method} for {\em making} {\bf resolutions} (see \url{https://macaulay2.com}).///,
      PARA {
 	 "Here are some examples designed to illustrate various other features of this function when viewed in a browser:" },
      DIV { "style" => "display: flex",,
