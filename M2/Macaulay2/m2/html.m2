@@ -28,7 +28,7 @@ KaTeX := () -> (
           { left: "\\(", right: "\\)", display: false}
       ];
       document.addEventListener("DOMContentLoaded", function() {
-        renderMathInElement(document.body, { delimiters: delimiters, macros: macros });
+        renderMathInElement(document.body, { delimiters: delimiters, macros: macros, trust: true });
       });
     </script>
     <style type="text/css">.katex { font-size: 1em; }</style>
