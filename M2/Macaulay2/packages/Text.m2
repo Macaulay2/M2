@@ -811,8 +811,8 @@ document {
      Key => {validate, (validate, Hypertext)},
      Headline => "validate a hypertext object",
      Usage => "validate x",
-     Inputs => { "x" => Hypertext => "a hypertext object to validate" } },
-     Outputs => { "x" => Hypertext => "the input hypertext object, possibly with errors fixed" } },
+     Inputs => { "x" => Hypertext => "a hypertext object to validate" },
+     Outputs => { "x" => Hypertext => "the input hypertext object, possibly with errors fixed" },
      Consequences => { { "The hypertext is checked for validity, to ensure that the HTML code returned by ", TT "html validate x", " is valid." }},
      PARA {
 	  "This function is somewhat provisional.  In particular, it is hard to check everything, because our hypertext format includes
