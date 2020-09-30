@@ -58,7 +58,7 @@ class GBTrace : public newdelete
 
 class GBTracer
 {
-  array<gbvector *> basis;
+  VECTOR(gbvector *) basis;
 
   FreeModule *F;
   GBRing *GR;

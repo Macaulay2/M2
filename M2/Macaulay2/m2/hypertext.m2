@@ -331,13 +331,15 @@ addAttribute(IMG,    htmlAttr | {"alt", "src", "srcset", "width", "height",
 
 -- Written by P. Zinn-Justin
 style = method(Options => true)
-style Hypertext := true >> o -> x -> style(x, pairs o)
-style(Hypertext, VisibleList) := true >> o -> (x, s) -> ( -- here s is a pair of key/values
-    str := concatenate apply(s, e -> if class e#0 === String then e#0|":"|toString e#1|";");
+style Hypertext := true >> o -> x -> (
+    str := concatenate apply(keys o, key -> if class key === String then key|":"|toString o#key|";");
     if str === "" then return x;
     i := position(toList x, y -> class y === Option and y#0 === "style");
-    if i===null then append(x,"style"=>str) else
-    new class x from replace(i,"style"=>x#i#1|(if #x#i#1>0 and last x#i#1 =!= ";" then ";" else "")|str,toList x)
+    if i=!=null then (
+	str = concatenate(x#i#1, if #x#i#1>0 and last x#i#1 =!= ";" then ";",str);
+	x = drop(x,{i,i});
+	);
+    append(x,"style"=>str)
     )
 
 -- Local Variables:

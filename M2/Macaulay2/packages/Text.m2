@@ -816,6 +816,16 @@ document { Key => {(validate, Hypertext),validate},
 	  eliminated, or a more-final type of hypertext, convertible immediately to HTML, will have to be developed."
 	  }
      }
+document { Key => {(style, Hypertext),style},
+    Usage => "style (x,opts)",
+    Inputs => { "x" => { TO "hypertext" } },
+    Consequences => { { "Returns a new Hypertext object with its style option updated." }},
+    EXAMPLE lines ///
+    d = DIV { "Hello" }
+    d = style(d, "font-weight" => "bold")
+    peek d
+    ///
+    }
 
 undocumented {
     (validate, CDATA),
