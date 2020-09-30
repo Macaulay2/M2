@@ -441,7 +441,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	if xmax < xmin then ( temp:=xmin; xmin=xmax; xmax=temp; );
 	ymin := (r#0_1-p_(1,3))/p_(1,1);
 	ymax := (r#1_1-p_(1,3))/p_(1,1);
-	if ymax < ymin then ( temp=ymin; ymin=ymax; ymax=temp; );
+	if ymax < ymin then ( temp2:=ymin; ymin=ymax; ymax=temp2; );
 	if is3d g then (
 	    zmax := 0.25*(xmax-xmin+ymax-ymin);
 	    zmin := -zmax;
