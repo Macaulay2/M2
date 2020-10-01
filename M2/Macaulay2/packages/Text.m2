@@ -481,7 +481,7 @@ document {
      }
 
 document {
-     Key => (html,TEX),
+     Key => (html, TEX),
      Headline => "conversion of TeX to html",
      Usage => "html t",
      Inputs => { "t" },
@@ -494,8 +494,8 @@ document {
 	 HREF{"https://en.wikibooks.org/wiki/LaTeX/Mathematics","this page"}, " for an introduction to math mode in $\\LaTeX$." },
      PARA {
 	 TEX "Equations in ", CODE "$..$", " or ", CODE "\\(...\\)", " appear in inline mode, such as $x^2-1$,
-	 while those in ", CODE "$$..$$", " or ", CODE "\\[...\\]", " appear in display mode:" },
-     BLOCKQUOTE PARA TEX {tex genericMatrix(QQ[x,y,z,w],2,2), "."},
+	 while those in ", CODE "$$..$$", " or ", CODE "\\[...\\]", " appear in display mode:",
+	 TEX {"$$", texMath genericMatrix(QQ[x,y,z,w],2,2), ".$$"} },
      PARA {
 	 "In addition, ", CODE "{\\bf ...}", ", ", CODE "{\\em ...}", ", ", CODE "{\\it ...}", ", ", CODE "{\\tt ...}",
 	 ", and ", CODE "\\url{...}", " are converted to ", TO Hypertext, " objects:" },
@@ -554,7 +554,8 @@ document {
 	 ( BLOCKQUOTE PRE s, value s )),
      PARA {
 	 TEX ///The macro can be used at any point after:
-	 $$ 0 \to 2\OO_{\\P^3}(-3) \to 3\OO_{\\P^3}(-2) \to \OO_{\\P^3} \to \OO_C \to 0 $$///}
+	 $$ 0 \to 2\OO_{\\P^3}(-3) \to 3\OO_{\\P^3}(-2) \to \OO_{\\P^3} \to \OO_C \to 0 $$///},
+     SeeAlso => {TEX, tex, texMath, (show, TEX)}
      }
 
 
