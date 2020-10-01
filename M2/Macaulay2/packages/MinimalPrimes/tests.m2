@@ -1596,6 +1596,15 @@ TEST ///
   assert(C1'_1 == C2_0 or C1'_1 == C2_1);
 ///
 
+TEST ///
+  d = 4;
+  for k in {QQ, ZZ/101, GF(81)} do (
+      S = k[x_0..x_d] ** k[y_0..y_d];
+      I = minors(2, genericMatrix(S, d+1, 2));
+      C = minimalPrimes I;
+      assert(#C == 1 and C#0 == I))
+///
+
 end--
 
 -- UHOH problem with finite fields

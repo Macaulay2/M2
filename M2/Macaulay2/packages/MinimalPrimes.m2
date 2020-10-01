@@ -135,43 +135,9 @@ decompose MonomialIdeal := {} >> opts -> (cacheValue symbol minimalPrimes) (
 
 load "./MinimalPrimes/factorTower.m2"
 
-if USEMGB then (
-  myGB = (I) -> (
-      L := groebnerBasis(I, Strategy=>"MGB");
-      J := ideal L;
-      forceGB gens J;
-      J
-      );
-  MGB = (I) -> flatten entries gens myGB I;
-) else (
-  MGB = (I) -> flatten entries gens gb I;
-  myGB = (I) -> ideal gens gb I;
-  );
-
-    mySat0 = (I, var) -> (
-        if not isHomogeneous I then error "expected homogeneous input";
-        if index var === null then error "expected variable";
-        i := index var;
-        R := ring I;
-        n := numgens R - 1;
-        phi := map(R,R,sub(vars R, {R_n => var, var => R_n}));
-        J := phi I;
-        L := MGB J;
-        (M1,maxdeg) := divideByVariable(matrix{L}, R_n);
-        --<< "maxdeg = " << maxdeg << endl;
-        if maxdeg == 0 then I else ideal phi M1
-        )
-
-  mySat = (J, G) -> (
-      facs := (factors G)/last;
-      Jsat := J;
-      for f in facs do (
-          Jsat = if index f =!= null and isHomogeneous J and char ring J > 0 then 
-              mySat0(Jsat, f)
-          else 
-              saturate(Jsat, f);
-          );
-      Jsat)
+MGB   =  I     -> flatten entries if USEMGB then groebnerBasis(I, Strategy=>"MGB") else gens gb I
+-- TODO: what does factors G do? is this a better strategy for saturate?
+mySat = (J, G) -> (for f in last \ factors G do J = saturate(J, f); J)
 
 -- This function is called from minimalPrimes/decompose
 --   under an option Strategy=>"Legacy".

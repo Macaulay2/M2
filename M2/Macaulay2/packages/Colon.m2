@@ -64,6 +64,7 @@ isFlatPolynomialRing = (R) -> (
      kk := coefficientRing R;
      isPolynomialRing R and (kk === ZZ or isField kk))
 
+-- TODO: can this work with multigraded ideals?
 isGRevLexRing = (R) -> (
      -- returns true if the monomial order in the polynomial ring R
      -- is graded reverse lexicographic order, w.r.t. the first degree
@@ -148,6 +149,10 @@ Module : Ideal                := Module =>         (M, I) -> quotient(M, I)
 
 quotient(Module, Module)      := Ideal  => opts -> (M, N) -> quotientHelper(M, N, ModuleModuleQuotientAlgorithms, opts)
 Module : Module               := Ideal  =>         (M, N) -> quotient(M, N)
+
+-- TODO: this should be unnecessary via https://github.com/Macaulay2/M2/issues/1519
+quotient(Thing, Number) := opts -> (t, n) -> quotient(t, n_(ring t), opts)
+Thing : Number := (t, n) -> t : n_(ring t)
 
 -- Helper for quotient methods
 quotientHelper = (A, B, algorithms, opts) -> (
@@ -319,6 +324,9 @@ saturate(Vector, Ideal)       := Module => opts -> (v, J) -> saturate(image matr
 saturate(Vector, RingElement) := Module => opts -> (v, f) -> saturate(image matrix {v}, f, opts)
 saturate Vector               := Module => opts ->  v     -> saturate(image matrix {v}, opts)
 
+-- TODO: this should be unnecessary via https://github.com/Macaulay2/M2/issues/1519
+saturate(Thing, Number) := opts -> (t, n) -> saturate(t, n_(ring t), opts)
+
 -- Helper for saturation methods
 saturateHelper = (A, B, algorithms, opts) -> (
     if (R := ring A) =!= ring B then error "expected objects in the same ring";
@@ -347,7 +355,7 @@ saturationByGRevLexHelper := (I, v, opts) -> (
     (R1, fto, fback) := grevLexRing(index v, R);
     g1 := groebnerBasis(fto I, Strategy => "F4");
     (g1', maxpower) := divideByVariable(g1, R1_(numgens R1 - 1));
-    (ideal fback g1', maxpower))
+    if maxpower == 0 then (I, 0) else (ideal fback g1', maxpower))
 
 -- Algorithms for Module : Ideal^infinity
 ModuleIdealSaturateAlgorithms = new HashTable from {
@@ -381,7 +389,10 @@ IdealIdealSaturateAlgorithms = new HashTable from {
     GRevLex => opts -> (I, J) -> (
 	-- FIXME: this might not be necessary, but the code isn't designed for this case.
 	if not isFlatPolynomialRing ring I
-	or not isGRevLexRing ring I then return null;
+	or not isHomogeneous I
+	or not isHomogeneous J
+	or not isGRevLexRing ring I
+	then return null;
 	-- First check that all generators are variables of the ring
 	-- TODO: can this strategy work with generators of the irrelevant ideal?
 	if any(index \ J_*, v -> v === null) then return null;
@@ -465,7 +476,8 @@ IdealElementSaturateAlgorithms = new HashTable from {
 	-- FIXME: this might not be necessary, but the code isn't designed for this case.
 	if not isHomogeneous I
 	or not isFlatPolynomialRing ring I
-	or not isGRevLexRing ring I then return null;
+	or not isGRevLexRing ring I
+	then return null;
 	-- First check that v is a variable of the ring
 	-- TODO: can this strategy work with generators of the irrelevant ideal?
 	if index v === null then return null;
