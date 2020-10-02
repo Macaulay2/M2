@@ -285,9 +285,9 @@ makePackageIndex List := path -> (
 		See the ", homeButton, " for the latest version."},
 	    HEADER3 "Documentation",
 	    UL nonnull splice {
-		if prefixDirectory =!= null then LI (
+		if prefixDirectory =!= null then (
 		    m2doc := prefixDirectory | replace("PKG", "Macaulay2Doc", currentLayout#"packagehtml") | topFileName;
-		    if fileExists m2doc then HREF { m2doc, "Macaulay2" }),
+		    if fileExists m2doc then LI HREF { m2doc, "Macaulay2 documentation" }),
 		apply(docdirs, dirs -> (
 			prefixDirectory := first dirs;
 			layout := Layout#(last dirs);
@@ -422,7 +422,6 @@ installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationC
 	    fn := concatenate htmlFilename tag;
 	    if isSecondaryTag tag
 	    or fileExists fn and fileLength fn > 0 and not opts.RemakeAllDocumentation and rawDocumentationCache#?fkey then return;
---	    print fkey
 	    verboseLog("making html page for ", toString tag);
 	    fn << html validate HTML {
 		defaultHEAD {fkey, commentize headline fkey},

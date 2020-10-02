@@ -36,7 +36,7 @@ chk := (p, x) -> (
 validate = method()
 validate(Type, BasicList) := (T, x) -> (
     haderror = false;
-    if not T.?qname then noqname(T, x);
+    if not T.?qname then return noqname(T, x);
     if not validContent#?(T.qname) then error("internal error: valid content for qname ", toString T, " not recorded yet");
     scan(x, e -> chk(T, e));
     if haderror then error("validation failed: ", x))
