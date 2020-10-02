@@ -160,8 +160,7 @@ TH         = new MarkUpType of TD
 CDATA      = new MarkUpType of Hypertext
 COMMENT    = new MarkUpType of Hypertext
 
-TEX        = new MarkUpType of Hypertext -- TEX should be processed further so its output can be checked
-
+TEX        = new IntermediateMarkUpType of Hypertext
 ExampleItem = new IntermediateMarkUpType of Hypertext
 HREF       = new IntermediateMarkUpType of Hypertext
 LATER      = new IntermediateMarkUpType of Hypertext
@@ -202,12 +201,49 @@ EXAMPLE VisibleList := x -> (
 -----------------------------------------------------------------------------
 -- MarkUpType constructors
 -----------------------------------------------------------------------------
--- TODO: Move this
 
 new HR from List :=
 new BR from List := (X,x) -> if all(x, e -> instance(e, Option)) then x else error "expected empty list"
 br = BR{}
 hr = HR{}
+
+-- used in the TEX constructor below
+convertTexTable := new HashTable from {
+    "url" => "HREF",
+    "bf" => "BOLD",
+    "em" => "EM",
+    "it" => "ITALIC",
+    "tt" => "TT",
+    }
+
+-- the regex should match the tag and content
+-- inside braces as subexpressions #2 and #3
+convertTex := (tags, re, str) -> (
+    off  := 0;
+    while (m := regex(re, off, str)) =!= null do (
+	off = m#3#0;
+	tag := substring(m#2, str);
+	if match(tags, tag) then (
+	    tag = convertTexTable#tag;
+	    if debugLevel > 1 then printerr("parsing ", tag, " in TEX");
+	    str = replace(regexQuote substring(m#1, str), "\"," | tag | "{" | format substring(m#3, str) | "},\"", str)));
+    str)
+
+new TEX from String    := (T, t) -> T {t}
+new TEX from BasicList := (T, t) -> (
+    -- TODO: https://www.overleaf.com/learn/latex/Font_sizes,_families,_and_styles#Reference_guide
+    -- we do this so {"{\tt", TO sum, "}"} can be rendered correctly
+    s := demark_"," \\ toExternalString \ t;
+    -- parsing nested braces contained in \url{...}
+    s = convertTex("url", ///((?:\\\\(url))?\{((?:[^}{]+|(?1))*+)\})///, s);
+    -- parsing nested braces contained in {\xx ...}
+    s = convertTex("bf|tt|em|it", ///(\{(?:\\\\(bf|tt|em|it))? *((?:[^}{]+|(?1))*+)\})///, s);
+    -- miscellaneous replacements
+    s = replace("---", "—", s);
+    s = replace("\\b--\\b", "–", s);
+    -- evaluate Hypertext types
+    s = evaluateWithPackage(getpkg "Text", s, value);
+    if instance(s, BasicList) then s else {s})
 
 isLink = x -> instance(x, TO) or instance(x, TO2) or instance(x, TOH)
 

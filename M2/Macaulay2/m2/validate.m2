@@ -44,7 +44,10 @@ validate Hypertext := x -> (
 validate HTML       := x -> (
     if #x != 2 then flagError "HTML should have 2 elements";
     if not instance(x#0, HEAD) then flagError "first element of HTML must be HEAD";
-    if not instance(x#1, BODY) then flagError "second element of HTML must be BODY";)
+    if not instance(x#1, BODY) then flagError "second element of HTML must be BODY";
+    -- TODO: make every part return the content, then use apply
+    scan(splice x, validate);
+    x)
 validate HEAD       := x -> (
     c := length select(toList x, y -> instance(y, TITLE));
     if c == 0 then flagError "HEAD should have a TITLE element";
@@ -63,7 +66,7 @@ validate COMMENT    := x -> (
      if match("--", concatenate x) then flagError "encountered \"--\" within COMMENT";
      if match("-$", concatenate x) then flagError "COMMENT ends with \"-\"";)
 validate BLOCKQUOTE := x -> if #x === 0 then flagError(toString class x, " should contain at least one element")
-validate LITERAL    :=
+validate LITERAL    := identity
 validate LATER      := x -> validate x#0()
 validate TEX        := x -> ( -* don't know what to do here yet... *- )
 

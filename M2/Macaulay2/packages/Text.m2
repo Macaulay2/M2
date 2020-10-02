@@ -20,7 +20,9 @@ document {
      Key => Text,
      Headline => "documentation and hypertext",
      PARA {
-	  "This package is a repository for functions related to documentation and hypertext."
+	  "This package is a repository for functions related to typesetting the documentation using $\\TeX$ and ",
+	  TO "Macaulay2Doc :: hypertext list format", ", usable with either ", TO document, " or ", TO "SimpleDoc :: doc", ". ",
+	  "In particular, see ", TO (html, TEX), ", ", TO (validate, Hypertext), ", and ", TO (show, Hypertext), "."
 	  }
      }
 
@@ -479,72 +481,96 @@ document {
      }
 
 document {
-     Key => (html,TEX),
+     Key => (html, TEX),
      Headline => "conversion of TeX to html",
      Usage => "html t",
      Inputs => { "t" },
      Outputs => { {"a string containing the result of converting ", TT "t", " to html"} },
-     Caveat => { "The algorithm used assumes that the html produced will be contained in a
-	  HTML P container, as can be produced with ", TO "PARA", ", especially if display
-	  math is used ($$ .. $$)." },
      PARA {
-	  "This method handles conversion to html, but only for a limited subset of TeX.
-	  Nevertheless, it can be useful in documentation nodes.  It is useful to use
-	  strings delimited by ", TO "///", ", because in strings delimited by ", TO "\42", ",
-	  the backslashes often used in TeX must be doubled."},
+	 TEX "This method produces an HTML string, mainly converting several simple text formatting environments,
+	 such as {\\bf bold face}, {\\it italics}, etc. Rendering mathematical characters and equations is done by ",
+	 HREF{"https://katex.org/","$\\KaTeX$"}, ", a JavaScript math typesetting library for browsers. See the list of ",
+	 HREF{"https://katex.org/docs/supported.html","supported functions and symbols"}, " for more information, or ",
+	 HREF{"https://en.wikibooks.org/wiki/LaTeX/Mathematics","this page"}, " for an introduction to math mode in $\\LaTeX$." },
+     PARA {
+	 TEX "Equations in ", CODE "$..$", " or ", CODE "\\(...\\)", " appear in inline mode, such as $x^2-1$,
+	 while those in ", CODE "$$..$$", " or ", CODE "\\[...\\]", " appear in display mode:",
+	 TEX {"$$", texMath genericMatrix(QQ[x,y,z,w],2,2), ".$$"} },
+     PARA {
+	 "In addition, ", CODE "{\\bf ...}", ", ", CODE "{\\em ...}", ", ", CODE "{\\it ...}", ", ", CODE "{\\tt ...}",
+	 ", and ", CODE "\\url{...}", " are converted to ", TO Hypertext, " objects:" },
+     BLOCKQUOTE PARA TEX ///{\tt res(Module)} is the {\it method} for {\em making} {\bf resolutions} (see \url{https://macaulay2.com}).///,
+     PARA {
+	 "Here are some examples designed to illustrate various other features of this function when viewed in a browser:" },
+     DIV { "style" => "display: flex",,
+     TABLE flatten { "style" => "margin: 1.5em",
+	 apply({
+		 "\\Gamma\\Omega\\pi",
+		 "\\partial\\ell\\infty",
+		 "\\Re\\Im\\aleph\\beth",
+		 "\\NN\\QQ\\RR\\CC\\ZZ\\PP",
+		 "\\binom{n}{k}",
+		 "\\sqrt[2]{\\frac{a}{b}}",
+		 "\\sum\\prod\\coprod",
+		 "\\bigoplus\\bigotimes",
+		 "\\bigcup\\bigcap",
+		 "\\bigvee\\bigwedge",
+		 "\\int\\oint\\iint\\iiint",
+		 "\\oint\\limits_{\\partial M}",
+		 "\\lim\\limits_{x\\to0}",
+		 "\\min\\limits_{x\\to\\infty}",
+		 "\\det\\limits_{x\\to0}",
+		 "\\Pr\\limits_{x\\in\\RR}",
+		 "\\begin{pmatrix}\n a & b \\\\\n c & d\n\\end{pmatrix}",
+		 "\\begin{vmatrix}\n a & b \\\\\n c & d\n\\end{vmatrix}"
+		 }, s ->
+	     TR {
+		 TD { "style" => "padding-right:0.5em; border-right:1px black solid;", DIV PRE concatenate("$", s, "$") },
+		 TD { "style" => "padding-left:0.5em;", PARA TEX concatenate("$", s, "$") }})
+	 },
+     TABLE flatten { "style" => "margin: 1.5em",
+	 apply({
+		 "mathnormal", "mathrm", "mathit", "mathbf", "mathsf", "mathtt", "mathfrak", "mathcal", "mathbb", "mathscr"
+		 }, f ->
+	     TR {
+		 TD { "style" => "padding-right:0.5em; border-right:1px black solid;", DIV PRE concatenate("$\\", f, "{...}$") },
+		 TD { "style" => "padding-left:0.5em;", PARA TEX concatenate("$\\", f, "{ABCD \\; abcd \\; 123}$") }})
+	 },
+     TABLE flatten { "style" => "margin: 1.5em",
+	 apply({
+		 "underline", "hat", "widehat", "tilde", "widetilde", "stackrel\\frown",
+		 "check", "breve", "bar", "grave", "acute", "dot", "ddot", "not", "mathring",
+		 "vec", "overrightarrow", "overleftarrow", "overline"}, f ->
+	     TR {
+		 TD { "style" => "padding-right:0.5em; border-right:1px black solid;", DIV PRE concatenate("$\\", f, "{a}$") },
+		 TD { "style" => "padding-left:0.5em;", PARA TEX concatenate("$\\", f, "{a}$") }})
+	 }
+     },
+     PARA {
+	 "Lastly, new macros can be defined using script tags. For instance, inserting the following ",
+	 TO LITERAL, " item in the documentation defines the structure sheaf:" },
      (
-	  a := ///TEX ////A formula: $a \times \ {b\over c^3}$/////////;
-     	  EXAMPLE {a, "html oo" }
-	  ),
+	 s := ///LITERAL ////<script type="text/javascript"> macros["\\OO"] = "\\mathcal{O}" </script>//// ///;
+	 ( BLOCKQUOTE PRE s, value s )),
      PARA {
-     	  "Here is the way the TeX above appears if used in documentation: ", value a, "."
-	  },
-     PARA {
-	  "Here are some examples designed to illustrate each feature of TeX we've implemented.  (This
-	  documentation page should be viewed in its html form.)"
-	  },
-     UL apply({
-	       ///TEX ////A formula: $a\times \ {b\over c^3}$/////////,
-	       ///TEX ////A ``formula'' {\bf can be} `printed'. /////////,
-	       ///TEX ////A formula, $$\{x_1^2,\dots,x_n^2\},$$ can be displayed./////////,
-	       ///TEX ////Matrices can be displayed if there is only one of them in the string: $$\begin{pmatrix}3&4&x^2+1\\5&6&7\end{pmatrix}.$$/////////,
-	       ///TEX ////${\mathbf a+b+c} \in {\mathbb R}, {\mathcal 1234}, 1234$/////////,
-	       ///TEX ////{\tt res(Module)} is the {\cal method} for {\em making} {\it resolutions}./////////,
-	       ///TEX ////\url{http://www.math.uiuc.edu/Macaulay2/}/////////,
-	       ///TEX ////$\frac x4 + \frac{x^2+1}{y+3} + {3\over 4}$/////////,
-	       ///TEX ////$R^\times, x_{i,j}$/////////,
-	       ///TEX ////\"a \"o \"u \# \& \'e $x\,\,\,y$ \^a \^e \`e \NN \QQ \RR \ZZ \PP \Gamma \Lambda \Omega \Psi \Theta \aleph \alpha/////////,
-	       ///TEX ////\backslash \beta \beth \bullet \cap \cdots a \cong b \cos x + a \cup b, \daleth \delta \ell \emptyset/////////,
-	       ///TEX ////\epsilon \equiv \exists \forall \gamma \ge \gimel \ge \infty \in \int x \lambda \ldots \leftarrow a \le b \leq c/////////,
-	       ///TEX ////$4 < 5 < 6 > 3 > 2, \mu \mapsto \mu^2, \{x \mid x \in \ZZ, x \ne 0, x \cong{} 3 \mod\ 11\}$/////////,
-	       ///TEX ////1 2\break 3 4 5\break 6 7 \nu \omega \oplus \otimes \partial \phi \break \pi x\prime/////////,
-	       ///TEX ////\prod_{i \in \ZZ} x_i/////////,
-	       ///TEX ////$\psi + \rho \rightarrow A\setminus B, \sigma, \sin 1.1, A \subset B, C \subseteq D, E \supset F, G \supseteq H$/////////,
-	       ///TEX ////\sum_{i=1}^n y_i/////////,
-	       ///TEX ////\tau{} + \theta{} \to{} x \wedge{} \wp{} + \xi{} - \lbrace\zeta\rbrace/////////
-	       },
-	  s -> LI { PARA {TT s}, PARA { EM "will display as" }, PARA {value s} }
-	  ),
+	 TEX ///The macro can be used at any point after:
+	 $$ 0 \to 2\OO_{\\P^3}(-3) \to 3\OO_{\\P^3}(-2) \to \OO_{\\P^3} \to \OO_C \to 0 $$///},
+     SeeAlso => {TEX, tex, texMath, (show, TEX)}
      }
 
+
 document {
-     Key => TEX,
+     Key => {TEX, (NewFromMethod, TEX, BasicList), (NewFromMethod, TEX, String)},
      Headline => "hypertext TEX item",
      Usage => "TEX x",
-     Inputs => {"x"},
+     Inputs => {"x" => ofClass{String, BasicList}},
      Outputs => {TEX},
      PARA {
-	  TT "TEX s", " includes the string ", TT "s", ", presumably
-	  containing TeX commands, in the TeX version of the documentation
-	  containing this ", TO "hypertext", " item.  The main benefit of this is that in the HTML
-	  and TeX versions of the documentation, good typesetting can done.  For details on the conversions
-	  to HTML that are currently implemented, see ", TO (html, TEX), "."},
-     PARA {
-	  "This item should be used only within a paragraph created by ", TO "PARA", ", because in the html
-	  code it generates, the first element ends the enclosign paragraph to create the centered math
-	  display."
-	  }
-     }
+	 "The constructor ", TT "TEX x", " returns an object which may contain one or more $\\LaTeX$
+	 equations and matrices, several simple text formatting environments, as well as other ",
+	 TO Hypertext, " items. It is useful to use strings delimited by ", TO "Macaulay2Doc :: ///",
+	 " because in strings delimited by ", TO "Macaulay2Doc :: \"", " the backslashes often used
+	 in $\\LaTeX$ must be doubled. For details on conversion to HTML see ", TO (html, TEX), "."}}
 
 document {
      Key => TT,

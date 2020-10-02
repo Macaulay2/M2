@@ -3,6 +3,40 @@
 -- html output
 -----------------------------------------------------------------------------
 
+KaTeX := () -> (
+    katexPath := locateCorePackageFileRelative("Style",
+	layout -> replace("PKG", "Style", layout#"package") | "katex", installPrefix, htmlDirectory);
+    katexTemplate := ///
+    <link rel="stylesheet" href="%PATH%/katex.min.css" />
+    <script defer="defer" type="text/javascript" src="%PATH%/katex.min.js"></script>
+    <script defer="defer" type="text/javascript" src="%PATH%/contrib/auto-render.min.js"></script>
+    <script defer="defer" type="text/javascript">
+      var macros = {
+          "\\break": "\\\\",
+          "\\R": "\\mathbb{R}",
+          "\\C": "\\mathbb{C}",
+          "\\ZZ": "\\mathbb{Z}",
+          "\\NN": "\\mathbb{N}",
+          "\\QQ": "\\mathbb{Q}",
+          "\\RR": "\\mathbb{R}",
+          "\\CC": "\\mathbb{C}",
+          "\\PP": "\\mathbb{P}"
+      }, delimiters = [
+          { left: "$$",  right: "$$",  display: true},
+          { left: "\\[", right: "\\]", display: true},
+          { left: "$",   right: "$",   display: false},
+          { left: "\\(", right: "\\)", display: false}
+      ];
+      document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, { delimiters: delimiters, macros: macros, trust: true });
+      });
+    </script>
+    <style type="text/css">.katex { font-size: 1em; }</style>
+    <link href="%PATH%/contrib/copy-tex.min.css" rel="stylesheet" type="text/css" />
+    <script defer="defer" type="text/javascript" src="%PATH%/contrib/copy-tex.min.js"></script>
+    <script defer="defer" type="text/javascript" src="%PATH%/contrib/render-a11y-string.min.js"></script>///;
+    LITERAL replace("%PATH%", katexPath, katexTemplate))
+
 -- The default stylesheet for documentation
 defaultStylesheet := () -> LINK {
     "rel" => "stylesheet", "type" => "text/css",
@@ -14,7 +48,7 @@ defaultStylesheet := () -> LINK {
 -- character encoding.  Locally-stored documentation does not have an HTTP header.)
 defaultCharset := () -> META { "http-equiv" => "Content-Type", "content" => "text/html; charset=utf-8" }
 
-defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet() }
+defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet(), KaTeX() }
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -77,11 +111,11 @@ html Hypertext := x -> (
 -- Exceptional (html, MarkUpType) methods
 -----------------------------------------------------------------------------
 
--- TEX  -- see texhtml.m2
 -- TOH  -- see format.m2
--- MENU -- see format.m2 -- e.g. help sum
 
-html String := htmlLiteral
+html LITERAL := x -> concatenate x
+html String  := x -> htmlLiteral x
+html TEX     := x -> concatenate apply(x, html)
 
 html HTML := x -> demark(newline, {
     	///<?xml version="1.0" encoding="utf-8" ?>///,
@@ -104,9 +138,6 @@ html HREF := x -> (
      r = if match("^ +$", r) then #r : "&nbsp;&nbsp;" else r;
      concatenate("<a href=\"", htmlLiteral toURL first x, "\">", r, "</a>")
      )
-
--- TODO
-html LITERAL := x -> concatenate x
 
 html MENU := x -> html redoMENU x
 

@@ -22,8 +22,8 @@ Node
               UL apply(new List from categories#keyword, pkgpair -> (
                       (pkgname, pkgopts) := pkgpair;
                       LI {
-			  if pkgopts.Certification =!= null then (star, " "),
 			  TO (pkgname | "::" | pkgname),
+			  if pkgopts.Certification =!= null then (" ", star),
 			  if pkgopts.Headline      =!= null then (" -- ", pkgopts.Headline)
 			  }
                       ))
