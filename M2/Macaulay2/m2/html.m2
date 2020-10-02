@@ -134,7 +134,7 @@ html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
 html COMMENT := x -> concatenate("<!--",x,"-->")
 
 html HREF := x -> (
-     r := concatenate apply(splice drop(x, 1), html);
+     r := concatenate apply(splice if #x > 1 then drop(x, 1) else x, html);
      r = if match("^ +$", r) then #r : "&nbsp;&nbsp;" else r;
      concatenate("<a href=\"", htmlLiteral toURL first x, "\">", r, "</a>")
      )
