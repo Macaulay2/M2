@@ -1094,7 +1094,7 @@ export strictequality(x:RRi,y:RRi):bool := (
 
 compare0(x:RR, y:RR) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp(",  x, ",",  y, "))" );
 
-compare0(x:RRi, y:RRi) ::= Ccode( int,  "(mpfr_clear_flags(),mpfr_cmp(",  x, ",",  y, "))" ); -- Added for MPFI
+compare0(x:RRi, y:RRi) ::= Ccode( int,  "(mpfi_cmp(",  x, ",",  y, "))" ); -- Removed clear, doesn't exist in Mpfi -- behavior might be different for mpfi
 
 export compare(x:RR, y:RR):int := compare0(x,y);	    -- use flagged(), too!
 export (x:RR)  >  (y:RR) : bool := compare0(x,y) >  0 && !flagged0();
@@ -1104,6 +1104,15 @@ export (x:RR)  <  (y:RR) : bool := compare0(x,y) <  0 && !flagged0();
 export (x:RR)  >= (y:RR) : bool := compare0(x,y) >= 0 && !flagged0();
 
 export (x:RR)  <= (y:RR) : bool := compare0(x,y) <= 0 && !flagged0();
+                                    
+export compare(x:RRi, y:RRi):int := compare0(x,y);	    -- use flagged(), too!
+export (x:RRi)  >  (y:RRi) : bool := compare0(x,y) >  0 && !flagged0();
+
+export (x:RRi)  <  (y:RRi) : bool := compare0(x,y) <  0 && !flagged0();
+
+export (x:RRi)  >= (y:RRi) : bool := compare0(x,y) >= 0 && !flagged0();
+
+export (x:RRi)  <= (y:RRi) : bool := compare0(x,y) <= 0 && !flagged0();
 
 compare0(x:RR, y:long) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_si(",  x, ",", y, "))" );
 
@@ -1118,16 +1127,24 @@ export compare(x:RR, y:long):int := Ccode( int, "(mpfr_clear_flags(), mpfr_cmp_s
 export compare(y:long, x:RR):int := Ccode( int, "(mpfr_clear_flags(),-mpfr_cmp_si(",  x, ",", y, "))" );
 
 export (x:RR)  >  (y:int) : bool :=  compare0(x,long(y)) >  0 && !flagged0();
+                                    
+export (x:RRi)  >  (y:int) : bool :=  compare0(x,long(y)) >  0 && !flagged0();
 
 export (x:RR)  >= (y:int) : bool :=  compare0(x,long(y)) >= 0 && !flagged0();
+                                    
+export (x:RRi)  >= (y:int) : bool :=  compare0(x,long(y)) >= 0 && !flagged0();
 
 export (x:RR) === (y:int) : bool :=  compare0(x,long(y)) == 0 && !flagged0();
 
 export (x:RRi) === (y:int) : bool :=  compare0(x,long(y)) == 0 && !flagged0();
 
 export (x:RR)  <  (y:int) : bool :=  compare0(x,long(y)) <  0 && !flagged0();
+                                    
+export (x:RRi)  <  (y:int) : bool :=  compare0(x,long(y)) <  0 && !flagged0();
 
 export (x:RR)  <= (y:int) : bool :=  compare0(x,long(y)) <= 0 && !flagged0();
+                                    
+export (x:RRi)  <= (y:int) : bool :=  compare0(x,long(y)) <= 0 && !flagged0();
 
 export (x:CC) === (y:int) : bool :=  x.re === y && x.im === 0;
 
@@ -1472,6 +1489,9 @@ export (x:RR) ^ (y:RR) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_pow(",  z, ",",  x, ",", y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+--export (x:RRi) ^ (y:RRi) : RRi := (
+      
 
 export floor(x:RR) : ZZ := (
      if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
@@ -1706,15 +1726,30 @@ export exp(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_exp(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export exp(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_exp(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export log(x:RR):RR := (				    -- works only if x>0
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_log(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export log(x:RRi):RRi := (				    -- works only if x>0
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_log(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export log(b:RR,x:RR):RR := (				    -- works only if x>0 and b>0
      if precision0(b) < precision0(x) then x = toRR(x,precision0(b))
      else if precision0(b) > precision0(x) then b = toRR(b,precision0(x));
+     log(x)/log(b));
+                                     
+export log(b:RRi,x:RRi):RRi := (				    -- works only if x>0 and b>0
+     if precision0(b) < precision0(x) then x = toRRi(x,precision0(b))
+     else if precision0(b) > precision0(x) then b = toRRi(b,precision0(x));
      log(x)/log(b));
 
 export sin(x:RR):RR := (
