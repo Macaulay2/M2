@@ -917,6 +917,7 @@ exp(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(exp(x.v))
      is x:RRcell do toExpr(exp(x.v))
+     is x:RRicell do toExpr(exp(x.v))
      is x:ZZcell do toExpr(exp(toRR(x.v)))
      is x:QQcell do toExpr(exp(toRR(x.v)))
      else buildErrorPacket("expected a number")
@@ -932,6 +933,11 @@ log(e:Expr):Expr := (
 	       is x:CCcell do toExpr(log(b.v,x.v))			            -- # typical value: log, RR, CC, CC
 	       is x:RRcell do (			            -- # typical value: log, RR, RR, CC
      	       	    if b.v>0 && x.v>0 then toExpr(log(b.v,x.v)) else toExpr(logc(b.v,x.v))
+		    )
+	       is x:RRicell do (
+     	       	    if b.v>0 && x.v>0 then toExpr(log(toRRi(b.v,precision(b.v)),x.v))
+                    else
+                        buildErrorPacket("Not defined")
 		    )
 	       is x:ZZcell do (	    -- # typical value: log, RR, ZZ, RR
 		    y := toRR(x.v,precision(b.v));
@@ -949,6 +955,11 @@ log(e:Expr):Expr := (
 		    c := toRR(b.v,precision(x.v));
 		    if c>0 && x.v>0 then toExpr(log(c,x.v)) else toExpr(logc(c,x.v))		    
 		    )
+	       is x:RRicell do (
+     	       	    if b.v>0 && x.v>0 then toExpr(log(toRRi(b.v,precision(x.v)),x.v))
+                    else
+                        buildErrorPacket("Not defined")
+		    )
 	       is x:ZZcell do (	       -- # typical value: log, ZZ, ZZ, RR
 		    if b.v>0 && x.v>0 then toExpr(log(toRR(b.v),toRR(x.v))) else toExpr(logc(toRR(b.v),toRR(x.v)))
 		    )
@@ -965,6 +976,11 @@ log(e:Expr):Expr := (
 		    c := toRR(b.v,precision(x.v));
 		    if c>0 && x.v>0 then toExpr(log(c,x.v)) else toExpr(logc(c,x.v))		    
 		    )
+	       is x:RRicell do (
+     	       	    if b.v>0 && x.v>0 then toExpr(log(toRRi(b.v,precision(x.v)),x.v))
+                    else
+                        buildErrorPacket("Not defined")
+		    )
 	       is x:ZZcell do (	       -- # typical value: log, QQ, ZZ, RR
 		    if b.v>0 && x.v>0 then toExpr(log(toRR(b.v),toRR(x.v))) else toExpr(logc(toRR(b.v),toRR(x.v)))
 		    )
@@ -972,9 +988,36 @@ log(e:Expr):Expr := (
 		    if b.v>0 && x.v>0 then toExpr(log(toRR(b.v),toRR(x.v))) else toExpr(logc(toRR(b.v),toRR(x.v)))
 		    )
 	       else WrongArg(1,"a number"))
+    is b:RRicell do (
+	       when a.1
+                is x:RRcell do (
+     	       	    if b.v>0 && x.v>0 then toExpr(log(b.v,toRRi(x.v,precision(x.v))))
+                                else
+                        buildErrorPacket("Not defined")
+		         )
+	       is x:RRicell do (
+     	       	    if b.v>0 && x.v>0 then toExpr(log(b.v,x.v))
+                    else
+                        buildErrorPacket("Not defined")
+		    )
+	       is x:ZZcell do (
+		    y := toRRi(x.v,precision(b.v));
+		            if b.v>0 && x.v>0 then toExpr(log(b.v,y))
+                    else
+                        buildErrorPacket("Not defined")
+		    )
+	       is x:QQcell do (
+		    y := toRRi(x.v,precision(b.v));
+		            if b.v>0 && y>0 then toExpr(log(b.v,y))
+                    else
+                        buildErrorPacket("Not defined")
+                           )
+	       else WrongArg(1,"a number"))
 	  else WrongArg(2,"a number"))
      is x:CCcell do toExpr(log(x.v))				    -- # typical value: log, CC, CC
      is x:RRcell do if isNegative(x.v) then toExpr(logc(x.v)) else toExpr(log(x.v))				    -- # typical value: log, RR, RR
+    is x:RRicell do if x.v<0 then buildErrorPacket("Not defined")
+                     else toExpr(log(x.v))
      is x:ZZcell do if x.v<0 then toExpr(logc(toRR(x.v))) else toExpr(log(toRR(x.v)))			    -- # typical value: log, ZZ, RR
      is x:QQcell do if x.v<0 then toExpr(logc(toRR(x.v))) else toExpr(log(toRR(x.v)))			    -- # typical value: log, QQ, RR
      else WrongArg("a number or a pair of numbers")

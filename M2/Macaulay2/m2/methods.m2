@@ -624,6 +624,7 @@ baseName Thing := R -> (
 exp = method()
 exp CC := CC => exp'
 exp RR := exp QQ := exp ZZ := RR => exp'
+exp RRi := RRi => exp'
 exp RingElement := RingElement => r -> (
      try
      promote(exp lift(r,RR),ring r)
