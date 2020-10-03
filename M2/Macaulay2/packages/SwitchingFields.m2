@@ -8,6 +8,7 @@ newPackage(
 	     {Name => "Sarasij Maitra", Email => "sm3vg@virginia.edu", HomePage => "https://people.virginia.edu/~sm3vg"}
 	     },
     	Headline => "Switch Base Fields and Obtain Natural Maps",
+	Keywords => {"Commutative Algebra"},
         Reload=>false,
         DebuggingMode => false,
 	AuxiliaryFiles => false -- set to true if package comes with auxiliary files
