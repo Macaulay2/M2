@@ -1134,8 +1134,8 @@ export (x:RR)  >= (y:int) : bool :=  compare0(x,long(y)) >= 0 && !flagged0();
 export (x:RRi)  >= (y:int) : bool :=  compare0(x,long(y)) >= 0 && !flagged0();
 
 export (x:RR) === (y:int) : bool :=  compare0(x,long(y)) == 0 && !flagged0();
-
-export (x:RRi) === (y:int) : bool :=  compare0(x,long(y)) == 0 && !flagged0();
+                                    
+export (x:RRi) === (y:int) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
 
 export (x:RR)  <  (y:int) : bool :=  compare0(x,long(y)) <  0 && !flagged0();
                                     
@@ -1158,6 +1158,8 @@ export (x:RR)  >  (y:double) : bool :=  compare0(x,y) >  0 && !flagged0();
 export (x:RR)  >= (y:double) : bool :=  compare0(x,y) >= 0 && !flagged0();
 
 export (x:RR) === (y:double) : bool :=  compare0(x,y) == 0 && !flagged0();
+                                    
+export (x:RRi) === (y:double) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
 
 export (x:RR)  <  (y:double) : bool :=  compare0(x,y) <  0 && !flagged0();
 
@@ -1174,6 +1176,8 @@ export (x:RR)  >  (y:ZZ) : bool :=  compare0(x,y) >  0 && !flagged0();
 export (x:RR)  >= (y:ZZ) : bool :=  compare0(x,y) >= 0 && !flagged0();
 
 export (x:RR) === (y:ZZ) : bool :=  compare0(x,y) == 0 && !flagged0();
+                                    
+export (x:RRi) === (y:ZZ) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
 
 export (y:ZZ) === (x:RR) : bool :=  compare0(x,y) == 0 && !flagged0();
 
@@ -1192,12 +1196,16 @@ export (x:RR)  >  (y:QQ) : bool :=  compare0(x,y) >  0 && !flagged0();
 export (x:RR)  >= (y:QQ) : bool :=  compare0(x,y) >= 0 && !flagged0();
 
 export (x:RR) === (y:QQ) : bool :=  compare0(x,y) == 0 && !flagged0();
+                                    
+export (x:RRi) === (y:QQ) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
 
 export (y:QQ) === (x:RR) : bool :=  compare0(x,y) == 0 && !flagged0();
 
 export (x:RR)  <  (y:QQ) : bool :=  compare0(x,y) <  0 && !flagged0();
 
 export (x:RR)  <= (y:QQ) : bool :=  compare0(x,y) <= 0 && !flagged0();
+                                    
+export (x:RRi) === (y:RR) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();                                    
 
 export hash(x:RR):int := int(precision0(x)) + Ccode(int, 
      "mpfr_hash(",					    -- see gmp_aux.c for this function
