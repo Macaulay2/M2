@@ -1070,11 +1070,10 @@ export (x:RR) === (y:RR):bool := (			    -- weak equality
      && !flagged0()
     );
 
-export (x:RRi) === (y:RRi):bool := (                -- weak equality  -- Added for MPFI
+export (x:RRi) === (y:RRi):bool := (                -- weak equality
     -- Ccode( void, "mpfr_clear_flags()" ); -- no mpfi version
-    0 != Ccode( int, "mpfi_cmp(",  x, ",",  y, ")" ) -- Behavior might be different for mpfi
-    && !flagged0()
-    );  -- End added for MPFI
+    leftRR(x) === leftRR(y) && rightRR(x) === rightRR(y) && !flagged0() -- equality is not defined in mpfi
+    );
 
 export strictequality(x:RR,y:RR):bool := (
      Ccode( void, "mpfr_clear_flags()" );
