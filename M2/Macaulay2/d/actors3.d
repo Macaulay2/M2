@@ -131,6 +131,9 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  )
       is xx:RRicell do (
           when y is yy:RRicell do toExpr(xx.v === yy.v)
+                        is yy:ZZcell do toExpr(xx.v === yy.v)
+                        is yy:QQcell do toExpr(xx.v === yy.v)
+                        is yy:RRcell do toExpr(xx.v === yy.v)
           else buildErrorPacket(EngineError("equality not implemented")))
      is xx:CCcell do (
 	  when y
