@@ -129,6 +129,9 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:CCcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, RR, CC, Boolean
 	  else equalmethod(x,y)
 	  )
+      is xx:RRicell do (
+          when y is yy:RRicell do toExpr(xx.v === yy.v)
+          else buildErrorPacket(EngineError("equality not implemented")))
      is xx:CCcell do (
 	  when y
 	  is yy:ZZcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CC, ZZ, Boolean
@@ -300,6 +303,16 @@ compare(left:Expr,right:Expr):Expr := (
 	       )
      	  is Error do right
 	  else binarycomparison(left,right))
+     is x:RRicell do ( -- This needs more work
+            when right is y:RRicell do (
+                r := compare(x.v,y.v);
+                if flagged() then incomparableE
+                else if r<0 then LessE
+                else if r>0 then GreaterE
+                else EqualEqualE
+                )
+            is Error do right
+            else buildErrorPacket(EngineError("comparison not implemented")))
      is x:CCcell do (
 	  when right
 	  is y:ZZcell do (
