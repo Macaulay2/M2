@@ -157,6 +157,7 @@ Thing : Number := (t, n) -> t : n_(ring t)
 -- Helper for quotient methods
 quotientHelper = (A, B, algorithms, opts) -> (
     if (R := ring A) =!= ring B then error "expected objects in the same ring";
+    if instance(B, RingElement) then B = sub(B, R);
     -- note: if B \sub A then A:B should be "everything", but this can get slow
     B' := if instance(B, RingElement) then matrix{{B}} else gens B;
     -- TODO: enable the first check when Matrix % Ideal works for a LocalRing
@@ -331,6 +332,7 @@ saturate(Thing, Number) := opts -> (t, n) -> saturate(t, n_(ring t), opts)
 -- Helper for saturation methods
 saturateHelper = (A, B, algorithms, opts) -> (
     if (R := ring A) =!= ring B then error "expected objects in the same ring";
+    if instance(B, RingElement) then B = sub(B, R);
     -- TODO: if B \sub A then A:B should be "everything", but this can get slow
     -- TODO: enable both checks when Matrix % Ideal works for a LocalRing
     -- B' := if instance(B, RingElement) then matrix{{B}} else gens B;
