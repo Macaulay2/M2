@@ -275,6 +275,63 @@ assert ( (eeProd(F,1,2))_(0,0) == y )
 assert ( (efProd(F,1,4))_(0,0) == -x )
 ///
 
+
+-- #16 B, graded
+TEST ///
+setRandomSeed "TorAlgebra";
+Q = QQ[x,y,z]
+I = ideal(x^2,x*y,z^2,y*z,z^2)
+assert( torAlgebraClassCodim3(I) === "B" )
+///
+
+-- #18 C(3), graded
+TEST ///
+Q = QQ[u,v,w,x,y,z]
+I = ideal (u*v,w*x,y*z)
+assert( torAlgebraClassCodim3(I) === "C(3)" )
+///
+
+-- #20 G(7) Gorenstein, graded
+TEST ///
+Q = QQ[x,y,z]
+I = ideal(x^3,x^2*z,x*(z^2+x*y),z^3-2*x*y*z,y*(z^2+x*y),y^2*z,y^3)
+assert( torAlgebraClassCodim3(I) === "G(7)" )
+///
+
+-- #22 G(2), graded
+TEST ///
+Q = QQ[u,v,w,x,y,z]
+I = ideal(x*y^2,x*y*z,y*z^2,x^4-y^3*z,x*z^3-y^4)
+assert( torAlgebraClassCodim3(I) === "G(2)" )
+///
+
+-- #24 H(0,0), graded
+TEST ///
+Q = QQ[x,y,z]
+I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
+assert( torAlgebraClassCodim3(I) === "H(0,0)" )
+///
+
+-- #24 H(0,0), graded
+TEST ///
+Q = QQ[x,y,z]
+I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
+assert( torAlgebraClassCodim3(I) === "H(0,0)" )
+///
+
+TEST ///
+Q = QQ[x,y,z]
+I = ideal(x^3,y^3,z^3,x*y*z)  
+assert( torAlgebraClassCodim3(I) === "T" )
+///
+
+TEST ///
+Q = QQ[x,y,z]
+I = ideal(x^5,y^5,x*y^4,x^2*y^3,x^3*y^2,x^4*y,z^3)  
+assert( torAlgebraClassCodim3(I) === "H(6,5)" )
+///
+
+
 end
 --==========================================================================
 -- end of package code
@@ -305,6 +362,7 @@ torAlgebraClassCodim3 I
 torAlgebraClassCodim3 F
 torAlgebraClassCodim3 B
 torAlgebraClassCodim3 A
+
 
 --==========================================================================
 -- DOCUMENTATION
