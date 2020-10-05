@@ -1597,6 +1597,26 @@ TEST ///
 ///
 
 TEST ///
+  R = QQ[h,l,s,z,y,x] -- notice: variables are not in order!
+  J = ideal(h*l-l^2-4*l*s+h*y,6*h*s^2-6*s^2*x+l*s+l*z,3*h^2*s+3*l*s^2+3*s^2*y-3*h*s*x-2*h*s-2*h*z,3*l^3+27*l^2*s+36*l*s^2-3*h^2*y-3*l^2*y-12*h*s*y-9*l*s*y-12*s^2*y+3*h*y^2-3*l^2*x-12*l*s*x+3*h*y*x+8*h*s+8*h*z,h^3+l^2*s-h^2*x,12*l^2*s*y+60*l*s^2*y+3*h^2*y^2-12*h*s*y^2+3*l*s*y^2+12*s^2*y^2+3*s*y^3-12*l*s*y*x-3*h*y^2*x-8*h*s*y-8*l*s*y-8*h*z*y-8*l*z*y)
+  P = ideal(s,l,h)
+  -- TODO: exactly which part of this should be false?
+  assert(not (isSubset(J, P) and codim J == codim P and all((J, P), isPrime)))
+///
+
+TEST ///
+  -- from an example of PlaneCurveSingularities in ReesAlgebra
+  R = ZZ/32003[x,y]
+  cusp = ideal(x^2-y^3)
+  mm = radical ideal singularLocus cusp
+  B = first flattenRing reesAlgebra(mm)
+  proj = map(B,R,{x,y})
+  totalTransform = proj cusp
+  D = decompose totalTransform
+  assert(length oo == 2)
+///
+
+TEST ///
   d = 4;
   for k in {QQ, ZZ/101, GF(81)} do (
       S = k[x_0..x_d] ** k[y_0..y_d];

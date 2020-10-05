@@ -159,8 +159,9 @@ quotientHelper = (A, B, algorithms, opts) -> (
     if (R := ring A) =!= ring B then error "expected objects in the same ring";
     -- note: if B \sub A then A:B should be "everything", but this can get slow
     B' := if instance(B, RingElement) then matrix{{B}} else gens B;
-    if B == 0 or (target B' == target gens A and B' % gens A == 0)
-    then return if class A === class B then ideal 1_R else ambient A; -- TODO: is there an easier way to do this?
+    -- TODO: enable the first check when Matrix % Ideal works for a LocalRing
+--    if B == 0 or (target B' == target gens A and B' % gens A == 0)
+--    then return if class A === class B then ideal 1_R else ambient A; -- TODO: is there an easier way to do this?
 --    if ambient A == target B' and gens ambient A % B' == 0 then return A; -- TODO: what should this be for Module : Module?
 
     strategy := opts.Strategy;
@@ -331,9 +332,10 @@ saturate(Thing, Number) := opts -> (t, n) -> saturate(t, n_(ring t), opts)
 saturateHelper = (A, B, algorithms, opts) -> (
     if (R := ring A) =!= ring B then error "expected objects in the same ring";
     -- TODO: if B \sub A then A:B should be "everything", but this can get slow
-    B' := if instance(B, RingElement) then matrix{{B}} else gens B;
-    if B == 0 or (target B' == target gens A and B' % gens A == 0) then return ambient A;
-    if ambient A == target B' and gens ambient A % B' == 0 then return A;
+    -- TODO: enable both checks when Matrix % Ideal works for a LocalRing
+    -- B' := if instance(B, RingElement) then matrix{{B}} else gens B;
+    -- if B == 0 or (target B' == target gens A and B' % gens A == 0) then return ambient A;
+    -- if ambient A == target B' and gens ambient A % B' == 0 then return A;
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
