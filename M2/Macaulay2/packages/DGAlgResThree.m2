@@ -75,6 +75,10 @@ codimThreeAlgStructure(ChainComplex, List) := (F, sym) -> (
    A
 )
 
+codimThreeAlgStructure( ChainComplex ) := (F) -> (
+    codimThreeAlgStructure(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
+    )
+
 codimThreeTorAlgebra = method()
 
 codimThreeTorAlgebra(ChainComplex,List) := (F,sym) -> (
@@ -92,6 +96,10 @@ codimThreeTorAlgebra(ChainComplex,List) := (F,sym) -> (
    F.cache#"Tor Algebra Structure" = B;
    B
 )
+
+codimThreeTorAlgebra( ChainComplex ) := (F) -> (
+    codimThreeTorAlgebra(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
+    )
 
 makeRes = (d1,d2,d3) -> ( 
     --d1 = matrix entries d1; 
@@ -143,9 +151,21 @@ efMultTable(Ring) := opts -> A -> (
    if (opts.Labels) then entries result else entries oneTimesTwoA
 )
 
-----------------------------------------------------------------------
+torAlgebraClassCodim3 = method()
+
+torAlgebraClassCodim3 ChainComplex := F -> (
+   B := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
+   toralgebraclass B
+)
+
+torAlgebraClassCodim3 Ideal := I -> (
+   torAlgebraClassCodim3 res I
+)
+
+
+--======================================================================
 -- Internal functions
-----------------------------------------------------------------------
+--======================================================================
 
 multtables = F -> (
     Q := ring F;
@@ -179,13 +199,12 @@ multtables = F -> (
     {EE,EF}
     )
  
-
 multMap = method()
+
 multMap(Ring, ZZ, ZZ) := (A,m,n) -> (
     Abasism := basis(m,A);
     Abasisn := basis(n,A);
     AbasismPlusn := basis(m+n,A);
-    
     AmTimesAn := matrix {flatten entries ((transpose Abasism) * Abasisn)};
     sub(last coefficients(AmTimesAn, Monomials=>AbasismPlusn), coefficientRing A)
 )
@@ -200,30 +219,16 @@ multMap(RingElement,ZZ) := (f,m) -> (
     sub(last coefficients(fTimesAbasism, Monomials=>AbasismPlusn), coefficientRing A)
 )
 
-rankMultMap = method()
-rankMultMap(Ring,ZZ,ZZ) := (A,m,n) -> rank multMap(A,m,n);
-
 homothetyMap = method()
+
 homothetyMap(Ring,ZZ,ZZ) := (A,m,n) -> (
     Abasism := basis(m,A);
     homothetyList := apply(flatten entries Abasism, f -> transpose matrix {flatten entries multMap(f,n)});
     matrix {homothetyList}
 )
 
-multPairingDualMap = method()
-multPairingDualMap(Ring,ZZ,ZZ,RingElement) := (A,m,n,w) -> (
-   -- this function returns the map A_m --> A_n^*
-   -- provided w is a basis of the image of the multiplication
-   -- map A_m ** A_n \to A_(m+n)
-    Abasism := basis(m,A);
-    multMapList := apply(flatten entries Abasism, f -> multMap(f,n));
-    matrix {multMapList}
-)
-
-rankHomothetyMap = method()
-rankHomothetyMap(Ring,ZZ,ZZ) := (A,m,n) -> rank homothetyMap(A,m,n);
-
 tauMaps = method()
+
 tauMaps(Ring,ZZ,ZZ,ZZ) := (A,l,m,n) -> (
   kk := coefficientRing A;
   multMaplm := multMap(A,l,m);
@@ -236,8 +241,7 @@ tauMaps(Ring,ZZ,ZZ,ZZ) := (A,l,m,n) -> (
   {rank lTensmn + rank lmTensn - rank psi,lTensmn, lmTensn, psi}
 )
 
-torAlgebraClassCodim3 = method()
-torAlgebraClassCodim3 QuotientRing := A -> (
+toralgebraclass = A -> (
   -- check to ensure that A is torAlgebra for codim 3 example?  
   p := rank multMap(A,1,1);
   q := rank multMap(A,1,2);
@@ -264,278 +268,6 @@ torAlgebraClassCodim3 QuotientRing := A -> (
   );
 )
 
-torAlgebraClassCodim3 ChainComplex := F -> (
-   B := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
-   torAlgebraClassCodim3 B
-)
-
-makeMonic = f -> (leadCoefficient(f))^(-1)*f
-
-performBasisChange = method()
-performBasisChange(ChainComplex, List, List, List) := (F, eList, fList, gList) -> (
-   Q := ring F;
-   B := ring first eList;
-   
-   newF1 := Q^(-apply(eList, x -> drop(degree x,1)));
-   newF2 := Q^(-apply(fList, x -> drop(degree x,1)));
-   newF3 := Q^(-apply(gList, x -> drop(degree x,1)));
-
-   P1 := matrix entries sub(last coefficients(matrix{eList}, Monomials=>basis(1,B)), Q);
-   P2 := matrix entries sub(last coefficients(matrix{fList}, Monomials=>basis(2,B)), Q);
-   P3 := matrix entries sub(last coefficients(matrix{gList}, Monomials=>basis(3,B)), Q);
-
-   newdd1 := (F.dd#1)*map(F#1,newF1,P1);
-   newdd2 := map(newF1,F#1,P1^(-1))*(F.dd#2)*map(F#2,newF2,P2);
-   newdd3 := map(newF2,F#2,P2^(-1))*(F.dd#3)*map(F#3,newF3,P3);
-   
-   makeRes(newdd1,newdd2,newdd3)
-)
-
-poincareSeriesCodim3 = method()
-poincareSeriesCodim3 QuotientRing := R -> (
-   I := ideal R;
-   F := res I;
-   A := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
-   p := rank multMap(A,1,1);
-   q := rank multMap(A,1,2);
-   r := rank homothetyMap(A,2,1);
-   tau := first tauMaps(A,1,1,1);
-   m := numcols basis(1,A);
-   n := numcols basis(3,A);
-   e := numcols mingens ideal vars R;
-   G := ZZ[getSymbol "T",Weights=>{-1},Global=>false];
-   num := (1 + G_0)^(e-1);
-   den := 1 - G_0 - (m-1)*G_0^2 - (n-p)*G_0^3 + q*G_0^4 - tau*G_0^5;
-   (expression num) / (expression den)
-)
-
-changeBasisT = method()
-changeBasisT(ChainComplex,List) := (F,inputEs) -> (
-  --- this function performs the change of basis of F required
-  --- so that the multiplication table of the tor algebra computed from F
-  --- is of the desired form.
-  Q := ring F;
-  B := ring first inputEs;
-  eList := inputEs;
-  annEs := ann ideal eList;
-  -- tack on the annihilator of inputEs in degree 1 to the eList.
-  eList = eList | flatten entries ((gens annEs)*sub(matrix basis(1,annEs),B));
-  fList := flatten entries matrix {{eList#1*eList#2,eList#2*eList#0,eList#0*eList#1}};
-  fList = fList | flatten entries (basis(2,B)*(mingens coker multMap(B,1,1)));
-  gList := flatten entries basis(3,B);
-  performBasisChange(F,eList,fList,gList)
-)
-
--- this function tries to find an appropriate choice for e_1,e_2,e_3
--- in the classification theorem of AKM
-changeBasisT(ChainComplex) := F -> (
-   B := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
-   kk := coefficientRing B;
-   eList := select(gens B, d -> first degree d == 1);
-
-   --- attempt to find the generators we want of the truncated exterior subalgebra
-   m := #eList;
-   a := getSymbol "a";
-   ee := getSymbol "ee";
-   D := kk[ee_1,ee_2,ee_3,SkewCommutative=>true];
-   
-   -- for each subset of size three of the degrees set, choose a random element
-   -- until you find a set of size 3 that is isomorphic to a truncated exterior algebra
-   -- for this, it suffices to check that the hom in degree two has full rank.
-   genDegs := unique subsets(eList / degree, 3);
-   goodGens := {};
-   for genDeg in genDegs list
-   (
-       potentialGens := apply(genDeg, g -> makeMonic(random(g,B)));
-       phi := map(B,D,potentialGens);
-       phi2 := sub(last coefficients(phi basis(2,D), Monomials => basis(2,B)),kk);
-       if (rank phi2 == 3 and isWellDefined phi) then 
-       (
-      	  goodGens = potentialGens;
-      	  break;
-       );
-   );
-   if goodGens == {} then error "Unable to find an appropriate change of basis for class T.";
-   changeBasisT(F, goodGens)
-)
-
--- this method changes basis so that ee is the distinguished element in the
--- H(p,q) classification
-changeBasisHpq = method()
-changeBasisHpq(ChainComplex,RingElement) := (F,ee) -> (
-   Q := ring F;
-   B := ring ee;
-   
-   multMap1 := multMap(ee,1);
-   imagMultMap1 := mingens image multMap1;
-   eList := flatten entries (basis(1,B)*(imagMultMap1 // multMap1));
-
-   -- now we add in some indeterminants to track the lifts, and choose
-   -- the first few es carefully so that they have trivial products among themselves
-   a := getSymbol "a";
-   p := #eList;
-   varRing := (coefficientRing B)[a_1..a_p];
-   overC := varRing monoid B;
-   newI := sub(ideal B, overC);
-   C := overC/newI;
-   eeC := sub(ee,C);
-
-   -- eList is a list of preimages of a basis of image of multiplication by ee
-   if eList != {} then (
-      -- We purturb the preimages by a multiple of ee, in the hopes of finding
-      -- a set of elements that also have trivial products among themselves.
-      genEList := apply(#eList, i -> sub(eList#i,C) + sub(varRing_i,C)*eeC);
-      products := subsets(genEList,2) / product;
-      -- these are the coefficients of the pairwise products.  The coefficients
-      -- give a linear system of equations over (coefficientRing B)
-      prodCoeffs := last coefficients(matrix {products}, Monomials => basis(2,C));
-      soln := mingens ideal flatten entries prodCoeffs;
-      -- reduce modulo the ideal of soln to make the substitution
-      eList = apply(genEList, f -> sub(f % sub(soln, C), B));
-   );
-
-   -- the rest of the es are the annihilator ee (modulo ee)
-   eList = eList | {ee};
-   dubAnnMod := (ann ee) / (ideal ee);
-   newEs := flatten entries ((gens dubAnnMod)*(matrix basis(1,dubAnnMod)));
-   newEs = newEs / (f -> f % ideal {ee});
-   eList = eList | newEs;
-   
-   -- fs are a basis of the image of the multiplication map of ee in degree 1,
-   -- followed by a lift of the image of the multiplication map of ee in degree 2
-   fList := flatten entries (basis(2,B)*imagMultMap1);
-   multMap2 := multMap(ee,2);
-   imagMultMap2 := mingens image multMap2;
-   fList = fList | flatten entries (basis(2,B)*(imagMultMap2 // multMap2));
-   -- complete fList to a basis in degree two now
-   newFs := basis(2,B)*(matrix basis(2, (ideal basis(2,B))/(sub(ideal fList,B))));
-   fList = fList | flatten entries newFs;
-
-   -- gs are a basis of the image of the multiplication map of ee in degree 2
-   -- then completed to a basis arbitrarily
-   gList := flatten entries (basis(3,B)*imagMultMap2);
-   gList = gList | flatten entries (basis(3,B)*(mingens coker multMap2));
-
-   performBasisChange(F,eList,fList,gList)
-)
-
-changeBasisHpq(ChainComplex) := F -> (
-   --- this function selects an element ee of degree one such that left mult by ee
-   --- has full rank.  This is a generic condition, but we would like to choose
-   --- it homogeneously (if grading exists)
-
-   -- first try the es to see if any of them will work
-   B := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
-   p := rank multMap(B,1,1);
-   eGens := apply(B.cache#"m", i -> B_i);
-   goodEGens := select(eGens, ee -> rank multMap(ee,1) == p);
-   if goodEGens != {} then return changeBasisHpq(F,first goodEGens);
-
-   -- next try a random (homogeneous) element of each internal degree in homological degree 1.
-   eGenDegs := eGens / degree // unique;   
-   randElts := apply(eGenDegs, d -> random(d,B));
-   goodRands := select(randElts, ee -> rank multMap(ee,1) == p);
-   if goodRands != {} then return changeBasisHpq(F,first goodRands);
-   
-   << "Unable to determine a distinguished element for multiplication table." << endl;
-)
-
--- This version finds gTop and then calls the below function to finish the rest
--- of the computation
-changeBasisG = method()
-changeBasisG(ChainComplex) := F -> (
-   B := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
-   gTop := first flatten entries (basis(3,B)*(matrix mingens image multMap(B,1,2)));
-   changeBasisG(F,gTop)
-)
-
--- This version finds a basis of es and fs so that 'gTop' is the top
--- class of the Tor algebra
-changeBasisG(ChainComplex, RingElement) := (F, gTop) -> (
-   B := ring gTop;
-   -- complete gTop to a basis
-   gList := {gTop} | flatten entries mingens ((ideal basis(3,B))/(ideal gTop));
-   -- compute the matrix of the map corresponding to the dual basis element of gTop
-   proj := (last coefficients(matrix{gList}, Monomials=>basis(3,B)))^{0};
-   -- for each basis element, restrict codomain of mult map (from degree 1 to 3)
-   -- to the 'top class', and take the dual map.
-   multMapList := apply(flatten entries basis(2,B), f -> transpose (proj*multMap(f,1)));
-   -- make a matrix out of all these maps.  This gives the map from
-   -- M : A_2 --> Hom(gTop^*,A_1^*) \cong A_1^*
-   M := matrix {multMapList};
-   -- the 'other fs' are those fs which don't participate in mult
-   otherFs := flatten entries (basis(2,B)*sub(gens ker M,B));
-   -- the 'other es' are those es which don't participate in mult
-   -- these are found using the coker of M above
-   otherEs := flatten entries (basis(1,B)*sub(matrix mingens coker M,B));
-   -- the good es are the duals of those elements in the image of M
-   goodEs := flatten entries (basis(1,B)*sub(matrix mingens image M, B));
-   -- the good fs are the lifts of these under M
-   goodFs := flatten entries (basis(2,B)*sub(matrix mingens image M // M,B));
-   eList := goodEs | otherEs;
-   fList := goodFs | otherFs;
-   -- change coordinates
-   performBasisChange(F,eList,fList,gList)
-)
-
--- This version finds gTop and then calls the below function to finish the rest
--- of the computation
-changeBasisB = method()
-changeBasisB(ChainComplex) := F -> (
-   B := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
-   gTop := first flatten entries (basis(3,B)*(matrix mingens image multMap(B,1,2)));
-   changeBasisB(F,gTop)
-)
-
--- This version finds a basis of es and fs so that 'gTop' is the top
--- class of the Tor algebra
-changeBasisB(ChainComplex, RingElement) := (F, gTop) -> (
-   B := ring gTop;
-   kk := coefficientRing B;
-   -- complete gTop to a basis
-   gList := {gTop} | flatten entries mingens ((ideal basis(3,B))/(ideal gTop));
-   -- compute the matrix of the map corresponding to the dual basis element of gTop
-   proj := (last coefficients(matrix{gList}, Monomials=>basis(3,B)))^{0};
-   -- for each basis element, restrict codomain of mult map (from degree 1 to 3)
-   -- to the 'top class', and take the dual map.
-   multMapList := apply(flatten entries basis(2,B), f -> transpose (proj*multMap(f,1)));
-   -- make a matrix out of all these maps.  This gives the map from
-   -- A_2 --> Hom(gTop^*,A_1^*) \cong A_1^*
-   M := matrix {multMapList};
-   -- the 'other fs' are those fs which don't participate in mult
-   otherFs := flatten entries (basis(2,B)*sub(gens ker M,B));
-   -- we choose f_1 and f_2 to be preimages of the image of the map A_2 --> A_1^*
-   goodFs := flatten entries (basis(2,B)*sub(matrix mingens image M // M,B));
-   -- the good e_1 and e_2 are the partners of the f_1 and f_2 just found
-   goodEcoords := apply(goodFs, x -> (sub((last coefficients(gTop,Monomials=>basis(3,B))),kk) // multMap(x,1)));
-   goodEs := flatten apply(goodEcoords, c -> flatten entries (basis(1,B)*c));
-   -- complete es and fs to a basis
-   otherEs := flatten entries (basis(1,B)*sub(matrix mingens coker M,B));
-   f3 := goodEs#0*goodEs#1;
-   otherFs = flatten entries mingens ((ideal otherFs)/(ideal f3));
-   eList := goodEs | otherEs;
-   fList := goodFs | {goodEs#0*goodEs#1} | otherFs;
-   -- change coordinates
-   performBasisChange(F,eList,fList,gList)
-)
-
--- this function determines the class of the resolution
--- and calls the appropriate change of basis command
-changeBasisCodim3 = method()
-changeBasisCodim3(ChainComplex) := F -> (
-   torClass := torAlgebraClassCodim3 F;
-   if torClass#0 == "H" then
-      changeBasisHpq F
-   else if torClass#0 == "T" then
-      changeBasisT F
-   else if torClass#0 == "C" then
-      F
-   else if torClass#0 == "B" then
-      changeBasisB F
-   else if torClass#0 == "G" then
-      changeBasisG F
-)
-
 TEST ///
 Q = QQ[x,y,z];
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
@@ -560,328 +292,19 @@ needsPackage "PruneComplex"
 
 Q = QQ[x,y,z];
 
-F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
+I = ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
+F = res I
+A = codimThreeAlgStructure (F)
+
 A = codimThreeAlgStructure (F, {e,f,g})
 B = codimThreeTorAlgebra (F, {e,f,g})
+torAlgebraClassCodim3 F
+torAlgebraClassCodim3 I
+
 
 torAlgebraClassCodim3 F
 torAlgebraClassCodim3 B
 torAlgebraClassCodim3 A
-
-eeMultTable A
-eeMultTable (B, Compact => true)
-describe A
----- new code 8/4/2020
-restart
-debug loadPackage "MultFreeResThree"
-Q = ZZ/53[x,y,z];
-F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
-I = ideal (random(3,Q), random(2,Q), random(2,Q), random(3,Q))
-F = res I
-codim I
-torAlgClass(Q/I)
-F = res I
-
-A = codimThreeAlgStructure(F,{e,f,g})
-B = codimThreeTorAlgebra(F,{e,f,g})
-torAlgebraClassCodim3 B
-netList eeMultTable B
-
-netList entries efMultTable B
-efMultTable B
-
-rankMultMap(B,1,1)
-rankMultMap(B,1,2)
-multMap(f_6,1)
-
-homothetyMap(B,2,1)
-
---- tau example
-restart
-debug loadPackage "MultFreeResThree"
-Q = ZZ/3[x,y,z];
---I = ideal (x^2, y^3, z^4, x*y*z)
-I = ideal (x^2, y^3, z^4, x*y)
-F = res I
-B = codimThreeTorAlgebra(F,{e,f,g})
-torAlgebraClassCodim3(B)
-poincareSeriesCodim3(Q/I)
-
-tau = tauMaps(B,1,1,1)
-X = tau#1
-Y = tau#2
-Z = tau#3
-I = id_(source tau#1);
-P = matrix {{I},{I}};
-assert((X++Y)*P == Z)
-
-mingens (image (X ++ Y) / image Z)
-(X ++ Y)P = Z
-
-0 1 0 0  0 1
-0 0 0 1  0 1
-
-q_11 = rank(A_1 \otimes A_1 \to A_2)
-2*((rank A_2)(rank A_1)-q_11*(rank A_1))
-
-V = A_1 ** A_1 ** A_1
-W_1 = A_1 ** A_2
-W_2 = A_2 ** A_1
-
-V --> V \oplus V -phi-> W_1 \oplus W_2
-
-\psi : V --> im \phi
-
-tau = coker \psi
-
-|X 0| |I|   |X|
-|0 Y| |I| = |Y|
-
--- these functions take the information required to make the change of coordinates
--- and will perform the change and return the new complex.
-changeBasisT(F)                 -- can determine based on class (open set)
-changeBasisHpq(F)               -- can determine based on class (open set)
-changeBasisGr(F)                -- can determine based on class.
-changeBasisB(F)                 -- can determine based on class.
-changeBasisC3(F)                -- no need to do anything
-
---- Example of a class T (truncated exterior algebra) ring
-restart
-debug loadPackage "MultFreeResThree"
-kk = ZZ/32003
-Q = kk[x,y,z];
-I = ideal (x^2, y^3, z^4, x*y*z)
-F = res I
-B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable B
-netList efMultTable B
-G = changeBasisCodim3 F
-isHomogeneous G
-C = codimThreeTorAlgebra(G, {e,f,g})
-netList eeMultTable(C)
-netList efMultTable(C)
-(net F.dd) | (net G.dd)
-
---- Another example of a class T ring
-restart
-debug loadPackage "MultFreeResThree"
-kk = ZZ/32003
-Q = kk[x,y,z];
-I = ideal (x^3, y^3, z^4, x*y*z)
-F = res I
-torAlgebraClassCodim3 F
-B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable B
-netList efMultTable B
-G = changeBasisCodim3 F
-isHomogeneous G
---G = changeBasisT(F, {e_1,e_2,e_4})
-C = codimThreeTorAlgebra(G, {e,f,g})
-netList eeMultTable(C)
-netList efMultTable(C)
-
---- A `random' example of a class T ring
-restart
-debug loadPackage "MultFreeResThree"
-kk = ZZ/32003
-Q = kk[x,y,z];
-I = ideal (random(3,Q), random(3,Q), random(3,Q), random(6,Q))
-F = res I
-torAlgebraClassCodim3 F
-B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable B
-netList efMultTable B
-G = changeBasisCodim3 F
-isHomogeneous G
---G = changeBasisT(F, {e_1,e_2,e_4})
-C = codimThreeTorAlgebra(G, {e,f,g})
-netList eeMultTable(C)
-netList efMultTable(C)
-
---- Another example of a class T ring
-restart
-debug loadPackage "MultFreeResThree"
-kk = ZZ/32003
-Q = kk[x,y,z];
-I = ideal (x^3, y^3, z^3, x*y*z)
-F = res I
-torAlgebraClassCodim3 F
-B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable B
-netList efMultTable B
-G = changeBasisCodim3 F
-isHomogeneous G
---G = changeBasisT(F, {e_1,e_2,e_4})
-C = codimThreeTorAlgebra(G, {e,f,g})
-netList eeMultTable(C)
-netList efMultTable(C)
-
---- H(3,2) example  (H - hypersurface)
-restart
-debug loadPackage "MultFreeResThree"
-Q = ZZ/53[x,y,z];
-I = ideal (x^2, y^3, z^4, x*y)
-F = res I
-B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable(B)
---- can specify the distinguished element
-G = changeBasisHpq(F,e_4)
---- or try to find one automatically
-G = changeBasisHpq(F)
-isHomogeneous G
-C = codimThreeTorAlgebra(G,{e,f,g})
-netList eeMultTable(C)
-netList efMultTable(C)
-
-p = rank (B_1 \otimes B_1 --> B_2)
-q = rank (B_1 \otimes B_2 --> B_3)
-
---- playing around with trying to find a distinguished element on a random example
---- for class H(3,2)
-restart
-debug loadPackage "MultFreeResThree"
-kk = ZZ/32003
-Q = kk[x,y,z]
-I = ideal (random(3,Q), random(2,Q), random(2,Q), random(3,Q))
-F = res I
-B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable B
-netList efMultTable B
-G = changeBasisCodim3(F) 
-G = changeBasisHpq(F,e_1)
-C = codimThreeTorAlgebra(G,{e,f,g})
-netList eeMultTable C
-netList efMultTable C
-
--- this is a change of coords away from example sent on 8/8
-restart
-debug loadPackage "MultFreeResThree"
-kk = ZZ/32003
-Q = kk[x,y,z]
-I = ideal (x^5 + y^5, x^5 - y^5, x*y^2*z^2 + x^5, x^2*y^2*z, x^3*y^2-y^5, x^4*y, z^3)
-F = res I
-B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable B
-netList efMultTable B
-G = changeBasisHpq(F,e_1)
-G = changeBasisHpq(F)
-C = codimThreeTorAlgebra(G,{e,f,g})
-netList eeMultTable C
-netList efMultTable C
-
---- example from Lars -- class H(6,5)
-restart
-debug loadPackage "MultFreeResThree"
-Q = ZZ/53[x,y,z]
-I = ideal (x^5, y^5, x*y^4, x^2*y^3, x^3*y^2, x^4*y, z^3)
-F = res I
-A = codimThreeAlgStructure(F,{e,f,g})
-B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable B
-netList efMultTable B
-torAlgebraClassCodim3 F
-torAlgebraClassCodim3 A
-torAlgebraClassCodim3 B
-G = changeBasisCodim3(F)
-G = changeBasisHpq(F,e_1)
-C = codimThreeTorAlgebra(G,{e,f,g})
-netList eeMultTable(C)
-netList efMultTable(C)
-
---- change of basis working space -- class H(0,0)
---- this one is Golod, so hard to tell if it is really 'working'
---- but good to have this case anyway.
-restart
-debug loadPackage "MultFreeResThree"
-Q = QQ[x,y,z]
-I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
-F = res I
-B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable B
-netList efMultTable B
-G = changeBasisCodim3(F)
-G = changeBasisHpq(F,e_1)
-C = codimThreeTorAlgebra(G,{e,f,g})
-netList eeMultTable(C)
-netList efMultTable(C)
-
---- change of basis working space G(2) (G - Gorenstein)
-restart
-debug loadPackage "MultFreeResThree"
-kk = ZZ/32003
-Q = kk[x,y,z]
-I = ideal(x*y^2,x*y*z,y*z^2,x^4-y^3*z,x*z^3-y^4)
-F = res I
-B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable B
-netList efMultTable B
-G = changeBasisCodim3(F)
-G = changeBasisG(F)
-C = codimThreeTorAlgebra(G,{e,f,g})
-netList eeMultTable C
-netList efMultTable C
-
---- 'generic' G example
-restart
-debug loadPackage "MultFreeResThree"
-kk = ZZ/32003
-Q = kk[x,y,z]
-I = ideal fromDual matrix{{random(4,Q),random(9,Q)}};
-F = res I
-torAlgebraClassCodim3 F
-B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable B
-netList efMultTable B
-G = changeBasisCodim3(F)
-G = changeBasisG(F)
-C = codimThreeTorAlgebra(G,{e,f,g})
-netList eeMultTable C
-netList efMultTable C
-
---- change of basis for class B (B - Brown)
-restart
-debug loadPackage "MultFreeResThree"
-kk = ZZ/32003
-Q = kk[x,y,z]
-I = ideal(x^2,x*y,z^2,y*z)
-F = res I
-B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable B
-netList efMultTable B
-G = changeBasisCodim3 F
-C = codimThreeTorAlgebra(G,{e,f,g})
-netList eeMultTable C
-netList efMultTable C
-
---- 'generic' B example
-restart
-debug loadPackage "MultFreeResThree"
-kk = ZZ/32003
-Q = kk[x,y,z]
-I = ideal fromDual matrix{{random(2,Q),random(3,Q)}};
-F = res I
-B = codimThreeTorAlgebra(F,{e,f,g})
-netList eeMultTable B
-netList efMultTable B
-G = changeBasisB F
-G = changeBasisCodim3 F
-C = codimThreeTorAlgebra(G,{e,f,g})
-netList eeMultTable C
-netList efMultTable C
-
----- another working area
-gmt = genmulttables F
-
-use A
-netList table (m,m,(i,j) -> if j > i then e_(i+1)*e_(j+1) else 0)
-netList table (m,m,(i,j) -> if i < j then e_(i+1)*e_(j+1) else (if i == j then 0 else "-"))
-netList table (m,l,(i,j) -> e_(i+1)*f_(j+1))
-
-netList table (m+1,m+1,(i,j) -> if i == 0 and j == 0 then " " else (if i == 0 then e_j else (if j == 0 then e_i else ( if i < j then e_i*e_j else (if i == j then 0 else "-")))))
-
-netList ( {toList(e_1..e_m)} | table (m,m,(i,j) -> if i < j then e_(i+1)*e_(j+1) else (if i == j then 0 else "-")) )
-netList table (m,l,(i,j) -> e_(i+1)*f_(j+1))
-
 
 --==========================================================================
 -- DOCUMENTATION
