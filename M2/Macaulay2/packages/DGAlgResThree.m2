@@ -21,9 +21,6 @@ newPackage ( "DGAlgResThree",
     Headline => "Multiplication in free resolutions of length three",
     Reload => true,
     DebuggingMode => true
-    Headline => "Multiplication in free resolution of length three",
-    Reload => true,
-    DebuggingMode => true
     )
 
 export { "eeProd", "efProd", 
@@ -34,81 +31,6 @@ export { "eeProd", "efProd",
 -- EXPORTED FUNCTIONS
 --==========================================================================
 
-multtables = F -> (
-    Q := ring F;
-    d1:= matrix entries F.dd_1;
-    d2:= matrix entries F.dd_2;    
-    d3:= matrix entries F.dd_3;    
-    m := numcols d1;
-    l := numcols d2;
-    n := numcols d3;
-    
-    EE := new MutableHashTable;
-    for i from 1 to m do (
-	for j from i+1 to m do (
-	 a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1};
-    	 b := ( matrix entries transpose a ) // d2;
-	 EE#(i,j) = ( matrix entries b );
-	 EE#(j,i) = -EE#(i,j);
-	 );
-     EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0);
-     );
-
-    EF := new MutableHashTable;
-    for i from 1 to m do (
-	for j from 1 to l do (
-    	    c := sum(1..m, k -> d2_(k-1,j-1) * (EE#(i,k)));
-    	    d := d1_(0,i-1)*((id_(Q^l))_(j-1));
-	    e := (matrix entries (matrix d - c)) // d3;
-    	    EF#(i,j) = (matrix entries e);
-	    );
-	);
-    {EE,EF}
-    )
- 
- 
--- Public functions
-
-multTables = ( cacheValue "multTables" ) multtables
-
-multTablesLink =  multtableslink
-
-eeProd = (F,i,j) -> (
-    mult := multTables F;
-    (mult#0)#(i,j)
-    )
-
-efProd = (F,i,j) -> (
-    mult := multTables F;
-    (mult#1)#(i,j)
-    )
-
-mapX = (F,i,j,k) -> (
-    m := multTablesLink (F,i,j,k);
-    m#0
-    )
-
-mapY = (F,i,j,k) -> (
-    m := multTablesLink (F,i,j,k);
-    m#1
-    )
-
-makeRes = (d1,d2,d3) -> ( 
-    --d1 = matrix entries d1; 
-    --d2 = matrix entries d2;
-    --d3 = matrix entries d3;
-    -- to build the maps correctly, what you should do is:
-    -- map(R^{degrees} (target), R^{degrees} (source), 
-    F := new ChainComplex; 
-    F.ring = ring d1;
-    F#0 = target d1; 
-    F#1 = source d1; F.dd#1 = d1; 
-    F#2 = source d2; F.dd#2 = d2;
-    F#3 = source d3; F.dd#3 = d3; 
-    F#4 = (F.ring)^{}; F.dd#4 = map(F#3,F#4,0);
-    F 
-    )
-
 codimThreeAlgStructure = method()
 
 codimThreeAlgStructure(ChainComplex, List) := (F, sym) -> (
@@ -117,7 +39,7 @@ codimThreeAlgStructure(ChainComplex, List) := (F, sym) -> (
      error "Expected a chain complex of length three which is free of rank one in degree zero.";
    if #sym != 3 or any(sym, s -> (class baseName s =!= Symbol))  then
      error "Expected a list of three symbols.";
-   mult := multTables(F);
+   mult := multtables(F);
    Q := ring F;
    m := numcols F.dd_1;
    l := numcols F.dd_2;
@@ -171,6 +93,22 @@ codimThreeTorAlgebra(ChainComplex,List) := (F,sym) -> (
    B
 )
 
+makeRes = (d1,d2,d3) -> ( 
+    --d1 = matrix entries d1; 
+    --d2 = matrix entries d2;
+    --d3 = matrix entries d3;
+    -- to build the maps correctly, what you should do is:
+    -- map(R^{degrees} (target), R^{degrees} (source), 
+    F := new ChainComplex; 
+    F.ring = ring d1;
+    F#0 = target d1; 
+    F#1 = source d1; F.dd#1 = d1; 
+    F#2 = source d2; F.dd#2 = d2;
+    F#3 = source d3; F.dd#3 = d3; 
+    F#4 = (F.ring)^{}; F.dd#4 = map(F#3,F#4,0);
+    F 
+    )
+
 eeMultTable = method(Options => {Labels => true, Compact => false})
 
 eeMultTable(Ring) := opts -> A -> (
@@ -189,7 +127,7 @@ eeMultTable(Ring) := opts -> A -> (
    if (opts.Labels) then result else oneTimesOneA
    )
 
-efMultTable = method(Options => options eeMultTable)
+efMultTable = method(Options => { Labels => true} )
 
 efMultTable(Ring) := opts -> A -> (
    if not (A.cache#?"l" and A.cache#?"m" and A.cache#?"n") then
@@ -204,6 +142,43 @@ efMultTable(Ring) := opts -> A -> (
    result := matrix entries ((matrix {{0}} | fVector) || ((transpose eVector) | oneTimesTwoA));
    if (opts.Labels) then entries result else entries oneTimesTwoA
 )
+
+----------------------------------------------------------------------
+-- Internal functions
+----------------------------------------------------------------------
+
+multtables = F -> (
+    Q := ring F;
+    d1:= matrix entries F.dd_1;
+    d2:= matrix entries F.dd_2;    
+    d3:= matrix entries F.dd_3;    
+    m := numcols d1;
+    l := numcols d2;
+    n := numcols d3;
+    
+    EE := new MutableHashTable;
+    for i from 1 to m do (
+	for j from i+1 to m do (
+	 a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1};
+    	 b := ( matrix entries transpose a ) // d2;
+	 EE#(i,j) = ( matrix entries b );
+	 EE#(j,i) = -EE#(i,j);
+	 );
+     EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0);
+     );
+
+    EF := new MutableHashTable;
+    for i from 1 to m do (
+	for j from 1 to l do (
+    	    c := sum(1..m, k -> d2_(k-1,j-1) * (EE#(i,k)));
+    	    d := d1_(0,i-1)*((id_(Q^l))_(j-1));
+	    e := (matrix entries (matrix d - c)) // d3;
+    	    EF#(i,j) = (matrix entries e);
+	    );
+	);
+    {EE,EF}
+    )
+ 
 
 multMap = method()
 multMap(Ring, ZZ, ZZ) := (A,m,n) -> (
@@ -573,10 +548,10 @@ end
 -- end of package code
 --==========================================================================
 
-uninstallPackage "MultFreeResThree"
+uninstallPackage "DGAlgResThree"
 restart
-debug loadPackage "MultFreeResThree"
-check "MultFreeResThree"
+debug loadPackage "DGAlgResThree"
+check "DGAlgResThree"
 
 -- dev space
 
@@ -586,12 +561,16 @@ needsPackage "PruneComplex"
 Q = QQ[x,y,z];
 
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
-mult = multTables(F)
-peek (mult#0)
-peek (mult#1)
-eeProd(F,2,3)
-efProd(F,2,3)
+A = codimThreeAlgStructure (F, {e,f,g})
+B = codimThreeTorAlgebra (F, {e,f,g})
 
+torAlgebraClassCodim3 F
+torAlgebraClassCodim3 B
+torAlgebraClassCodim3 A
+
+eeMultTable A
+eeMultTable (B, Compact => true)
+describe A
 ---- new code 8/4/2020
 restart
 debug loadPackage "MultFreeResThree"
@@ -796,9 +775,13 @@ debug loadPackage "MultFreeResThree"
 Q = ZZ/53[x,y,z]
 I = ideal (x^5, y^5, x*y^4, x^2*y^3, x^3*y^2, x^4*y, z^3)
 F = res I
+A = codimThreeAlgStructure(F,{e,f,g})
 B = codimThreeTorAlgebra(F,{e,f,g})
 netList eeMultTable B
 netList efMultTable B
+torAlgebraClassCodim3 F
+torAlgebraClassCodim3 A
+torAlgebraClassCodim3 B
 G = changeBasisCodim3(F)
 G = changeBasisHpq(F,e_1)
 C = codimThreeTorAlgebra(G,{e,f,g})
