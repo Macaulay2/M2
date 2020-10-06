@@ -723,22 +723,23 @@ noetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,P) -> 
 
 
 
---noetherianOperatorsViaMacaulayMatrix = method(Options => {DegreeLimit => -1, DependentSet => null}) 
+--noetherianOperatorsViaMacaulayMatrix = method(Options => {DegreeLimit => infinity, DependentSet => null}) 
 noetherianOperatorsViaMacaulayMatrix = method(Options => true) 
 noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (I, P) -> (
     R := ring I;
     t := getTolerance(R,opts);
     (depVars,indVars) := getDepIndVars(P, opts);
+    rat := if opts.?Rational then opts.Rational else false;
     -- use the original coefficient field if appropriate, else a rational function field
     F := if #indVars == 0 then coefficientRing R else frac((coefficientRing R)(monoid[indVars]));
     S := F(monoid[depVars]);
     PS := sub(P,S); IS := sub(I,S);
     R' := diffAlg R;
     -- extend the field only if the point is not specified to be rational
-    kP := if opts.?Rational and opts.Rational then F else toField(S/PS);
+    kP := if rat then F else toField(S/PS);
     degreeNops := d -> (
 	ops := basis(0,d,S);
-    	polys := sub(idealBasis(I,d),S);
+    	polys := idealBasis(IS,d);
     	M' := diff(ops, transpose polys);
     	M := (map(kP,S/PS)*map(S/PS,S)) M';
 	K := numSymKernel(M,Tolerance=>t);
@@ -748,13 +749,22 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
 	K = liftColumns(try lift(K,S) then lift(K,S) else sub(K,S),R');
 	ops * K
     	);
-    L := map(kP^1,kP^0,0);
-    if opts.?DegreeLimit and opts.DegreeLimit >= 0 then L = degreeNops opts.DegreeLimit else (
+    L := map(R'^1,R'^0,0);
+    degLimit := if opts.?DegreeLimit then opts.DegreeLimit else infinity;
+    if degLimit != infinity and opts.?Rational and not opts.Rational
+    then L = degreeNops opts.DegreeLimit else (
 	d := 0;
 	Ldim := -1;
-	while Ldim != numcols L do (
+	TDD := null;
+	if rat then (
+	    ISshift := sub(igens, matrix{gens S + apply(p.Coordinates,c->sub(c,S))});
+    	    TDD = truncDualData(gens ISshift,false,t);
+	while Ldim != numcols L and d <= degLimit do (
 	    Ldim = numcols L;
-	    L = degreeNops d;
+	    if rat then (
+		TDD = nextTDD(d,TDD,t);
+		L = 
+	    L = setOfNoethOps(degreeNops d,P);
 	    d = d+1;
 	    );
 	);
@@ -859,7 +869,7 @@ hybridNoetherianOperators (Ideal) := List => true >> opts -> I -> hybridNoetheri
 --numericalNoetherianOperators = method(Options => {
 --    Tolerance => 1e-6,
 --    InterpolationTolerance => 1e-6,
---    InterpolationDegreeLimit => -1,
+--    InterpolationDegreeLimit => infinity,
 --    NoetherianDegreeLimit => 5,
 --    DependentSet => null})
 numericalNoetherianOperators = method(Options => true)
@@ -870,7 +880,7 @@ numericalNoetherianOperators(Ideal, WitnessSet, Point) := List => true >> opts -
     depSet := if not opts.?DependentSet then error"expected option DependentSet"
             else opts.DependentSet;
     indSet := gens S - set depSet;
-    noethDegLim := if not opts.?NoetherianDegreeLimit then -1 else opts.NoetherianDegreeLimit;
+    noethDegLim := if not opts.?NoetherianDegreeLimit then infinity else opts.NoetherianDegreeLimit;
     -- other valid options: InterpolationDegreeLimit, InterpolationTolerance
     R := CC monoid S;
     J := sub(I,R);
