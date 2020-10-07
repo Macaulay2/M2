@@ -432,6 +432,8 @@ TEST /// -- test for I:f -> I
 ///
 
 TEST /// -- from Macaulay2Docs/tests/quotient.m2
+  -- note: this ring is over ZZ, so equalities
+  -- are checked in the local ring instead
   R = ZZ[x,y];
   RP = localRing(R, ideal gens R)
   i = ideal(6*x^3, 9*x*y, 8*y^2);
@@ -440,18 +442,17 @@ TEST /// -- from Macaulay2Docs/tests/quotient.m2
   j2 = ideal(4*y);
   A = i:j
   A' = liftUp i : liftUp j
-  assert(liftUp A === A')
+  assert(A == A' ** RP)
   B = i:j1
   B' = liftUp i : liftUp j1
-  assert(liftUp B === B')
+  assert(B == B' ** RP)
   C = i:j2
   C' = liftUp i : liftUp j2
-  assert(liftUp C === C')
+  assert(C == C' ** RP)
   C'' = i : (4*y)
   assert(C === C'')
---  intersect(B, C) -- FIXME two of the generators are just zero!
---  assert(liftUp intersect(B, C) === intersect(B', C'))
-  assert(liftUp intersect(B, C) == intersect(B', C'))
+--  intersect(B, C) -- FIXME one of the generators are just zero!
+  assert(intersect(B, C) == intersect(B', C') ** RP)
 ///
 
 TEST /// -- M:N -> I, annihilator

@@ -18,6 +18,7 @@
 -- Store L = {R_(x_0),...,R_(x_n)}
 -- along with generators of C_(x_0),...,C_(x_n)
 -- and gluing maps from C_(x_i) <-- C_(x_j)
+--        4. make remainder and % work with local rings
 ---------------------------------------------------------------------------
 newPackage(
     "LocalRings",
@@ -101,6 +102,7 @@ liftUp(Matrix, Ring)        := (m, R) ->
         liftUp(source m, R),
         rawLiftLocalMatrix(raw R, raw m))
 liftUp(MutableMatrix, Ring) := (m, R) -> mutableMatrix liftUp(matrix m, R)
+liftUp(RingElement, Ring)   := (r, R) -> (liftUp(matrix {{r}}, R))_(0,0)
 
 -- Computes syzygies of a matrix over local rings
 localSyzHook = method(Options => options syz)
@@ -448,12 +450,8 @@ inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
 localQuotient := opts -> (A, B) -> (
     RP := ring A;
     if instance(RP, LocalRing) then (
-        if isSubset(B, A) then (
-            if class A === Ideal or class B === Module
-            then return ideal 1_RP
-            else return ambient A);
         R := RP;
-        while class R === LocalRing do R = last R.baseRings;
+        while instance(R, LocalRing) do R = last R.baseRings;
         A' := liftUp(A, R);
         B' := liftUp(B, R);
         C' := quotient(A', B', opts);
@@ -473,27 +471,19 @@ annihilator Module := Ideal => opts -> (cacheValue symbol annihilator) (M -> (
         N' := annihilator(M', opts);             -- Any options we need to care about?
         N' ** RP
         )
-    else (oldAnnihilator opts)(M)
-    ))
+    else (oldAnnihilator opts)(M)))
 
 -- saturate
 -- We rely on the fact that ideal and module saturations commute with localization
 localSaturate := opts -> (A, B) -> (
     RP := ring A;
     if instance(RP, LocalRing) then (
-	if instance(B, RingElement) then B = ideal B;
-        if isSubset(B, A) then (
-            if class A === Ideal
-            then return ideal 1_RP
-            else return ambient A;
-            );
         R := RP;
         while class R === LocalRing do R = last R.baseRings;
         A' := liftUp(A, R);
         B' := liftUp(B, R);
         C' := saturate(A', B', opts);
-        C' ** RP             -- Any options we need to care about?
-        ))
+        C' ** RP))
 
 --=============================== addHooks Section for Colons ===============================--
 

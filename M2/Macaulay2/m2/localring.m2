@@ -33,7 +33,7 @@ localRing = method(TypicalValue => LocalRing)
        describe LocalRing := RP -> Describe (expression localRing) (expression ring RP.MaximalIdeal, expression max RP)
      expression LocalRing := RP -> if hasAttribute(RP, ReverseDictionary) then expression getAttribute(RP, ReverseDictionary) else describe RP
 toExternalString LocalRing:= RP -> toString describe RP
-coefficientRing LocalRing := RP -> coefficientRing ring RP.MaximalIdeal
+coefficientRing LocalRing := RP -> frac coefficientRing ring RP.MaximalIdeal
   isWellDefined LocalRing := RP -> isPrime RP.MaximalIdeal
   isCommutative LocalRing := RP -> isCommutative ring RP.MaximalIdeal -- FIXME make sure this is correct
    degreeLength LocalRing := RP -> degreeLength ring RP.MaximalIdeal

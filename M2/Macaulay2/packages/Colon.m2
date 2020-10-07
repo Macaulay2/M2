@@ -157,12 +157,10 @@ Thing : Number := (t, n) -> t : n_(ring t)
 -- Helper for quotient methods
 quotientHelper = (A, B, algorithms, opts) -> (
     if (R := ring A) =!= ring B then error "expected objects in the same ring";
-    if instance(B, RingElement) then B = sub(B, R);
+    if instance(B, RingElement) then B = ideal sub(B, R);
     -- note: if B \sub A then A:B should be "everything", but this can get slow
-    B' := if instance(B, RingElement) then matrix{{B}} else gens B;
-    -- TODO: enable the first check when Matrix % Ideal works for a LocalRing
---    if B == 0 or (target B' == target gens A and B' % gens A == 0)
---    then return if class A === class B then ideal 1_R else ambient A; -- TODO: is there an easier way to do this?
+    if B == 0 or (target gens B == target gens A and isSubset(B, A))
+    then return if class A === class B then ideal 1_R else ambient A; -- TODO: is there an easier way to do this?
 --    if ambient A == target B' and gens ambient A % B' == 0 then return A; -- TODO: what should this be for Module : Module?
 
     strategy := opts.Strategy;
@@ -332,12 +330,10 @@ saturate(Thing, Number) := opts -> (t, n) -> saturate(t, n_(ring t), opts)
 -- Helper for saturation methods
 saturateHelper = (A, B, algorithms, opts) -> (
     if (R := ring A) =!= ring B then error "expected objects in the same ring";
-    if instance(B, RingElement) then B = sub(B, R);
-    -- TODO: if B \sub A then A:B should be "everything", but this can get slow
-    -- TODO: enable both checks when Matrix % Ideal works for a LocalRing
-    -- B' := if instance(B, RingElement) then matrix{{B}} else gens B;
-    -- if B == 0 or (target B' == target gens A and B' % gens A == 0) then return ambient A;
-    -- if ambient A == target B' and gens ambient A % B' == 0 then return A;
+    B' := if instance(B, RingElement) then ideal sub(B, R) else B;
+    -- note: if B \sub A then A:B^infty should be "everything", but this can get slow
+    if B' == 0 or (target gens B' == target gens A and isSubset(B', A)) then return ambient A;
+    if ambient A == target gens B' and isSubset(ambient A, B') then return A;
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
