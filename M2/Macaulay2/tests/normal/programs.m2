@@ -1,5 +1,5 @@
 fn = temporaryFileName()
-fn << "echo -n Hello $1!" << close
+fn << ///printf "Hello %s!" "$1"/// << close
 name = baseFilename fn
 dir = replace(name | "$", "", fn)
 programPaths#name = dir
