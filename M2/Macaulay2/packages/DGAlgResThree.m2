@@ -23,9 +23,7 @@ newPackage ( "DGAlgResThree",
     DebuggingMode => true
     )
 
-export { "eeProd", "efProd", 
-    "mapX", "mapY", "makeRes" , "findRegSeq" , "eeProdH",
-    "eeMultTable", "efMultTable", "codimThreeAlgStructure", "codimThreeTorAlgebra", "Labels", "Compact" }
+export { "eeProd", "efProd", "makeRes", "eeMultTable", "efMultTable", "codimThreeAlgStructure", "codimThreeTorAlgebra", "Labels", "Compact" }
 
 --==========================================================================
 -- EXPORTED FUNCTIONS
@@ -348,6 +346,9 @@ needsPackage "TorAlgebra"'
 needsPackage "PruneComplex"
 
 Q = QQ[x,y,z];
+
+F = res coker vars Q
+chainComplex({F.dd_1,F.dd_2,F.dd_3})
 
 I = ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
 F = res I
