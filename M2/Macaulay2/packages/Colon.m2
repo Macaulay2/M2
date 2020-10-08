@@ -7,6 +7,7 @@
 --                  updated July 2020
 --
 -- TODO : 1. move annihilator functions here as well?
+--        2. deal with MonomialIdeals as well
 ---------------------------------------------------------------------------
 newPackage(
     "Colon",
@@ -147,6 +148,8 @@ quotient(Module, RingElement) := Module => opts -> (M, f) -> quotient(M, ideal f
 Module : RingElement          := Module =>         (M, f) -> quotient(M, f)
 Module : Ideal                := Module =>         (M, I) -> quotient(M, I)
 
+-- annihilator of (B+A)/A, where A and B have a common ambient module
+-- note: if A is an ideal and B=f, then this is isomorphic to R/(A:f)
 quotient(Module, Module)      := Ideal  => opts -> (M, N) -> quotientHelper(M, N, ModuleModuleQuotientAlgorithms, opts)
 Module : Module               := Ideal  =>         (M, N) -> quotient(M, N)
 
@@ -157,11 +160,19 @@ Thing : Number := (t, n) -> t : n_(ring t)
 -- Helper for quotient methods
 quotientHelper = (A, B, algorithms, opts) -> (
     if (R := ring A) =!= ring B then error "expected objects in the same ring";
-    if instance(B, RingElement) then B = ideal sub(B, R);
-    -- note: if B \sub A then A:B should be "everything", but this can get slow
-    if B == 0 or (target gens B == target gens A and isSubset(B, A))
-    then return if class A === class B then ideal 1_R else ambient A; -- TODO: is there an easier way to do this?
---    if ambient A == target B' and gens ambient A % B' == 0 then return A; -- TODO: what should this be for Module : Module?
+    if instance(B, RingElement) then B = ideal B;
+    -- TODO: implement bette class equality check; e.g. Ideal vs MonomialIdeal
+    if class A === class B and ambient A != ambient B
+    then error "expected objects to be contained in the same ambient object";
+    -- note: if B \subsub A then A:B should be "everything", but computing a gb for A can be slow
+    -- TODO: isSubset(0, A) should not compute gb of A
+    if B == 0 or isSubset(B, A) then return if class A === class B then ideal 1_R else ambient A;
+    -- note: ideal(..A..) :         f    = A <==> f is nzd / A
+    -- note: ideal(..A..) : ideal(..B..) = A <==>
+    -- note: module(.A.)  : ideal(..B..) = A <==> B is not contained in any associated primes of A
+    -- TODO: can either of the above be efficiently checked?
+    if class B =!= Module and isSubset(ambient A, B) then return A;
+    -- TODO: module(.A.)  : module(.B.)  = ???
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
@@ -259,7 +270,7 @@ ModuleIdealQuotientAlgorithms = new HashTable from {
     }
 
 -- Installing hooks for Module : Ideal
-scan({Quotient, Iterate, Linear}, strategy -> addHook(ModuleIdealQuotientAlgorithms#null,
+scan({Quotient, Iterate-*, Linear*-}, strategy -> addHook(ModuleIdealQuotientAlgorithms#null,
 	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); ModuleIdealQuotientAlgorithms#strategy opts)(I, J)))
 
 -- Algorithms for Module : Module
@@ -330,10 +341,15 @@ saturate(Thing, Number) := opts -> (t, n) -> saturate(t, n_(ring t), opts)
 -- Helper for saturation methods
 saturateHelper = (A, B, algorithms, opts) -> (
     if (R := ring A) =!= ring B then error "expected objects in the same ring";
-    B' := if instance(B, RingElement) then ideal sub(B, R) else B;
-    -- note: if B \sub A then A:B^infty should be "everything", but this can get slow
-    if B' == 0 or (target gens B' == target gens A and isSubset(B', A)) then return ambient A;
-    if ambient A == target gens B' and isSubset(ambient A, B') then return A;
+    B' := if instance(B, RingElement) then ideal B else B;
+    -- note: if B \subset A then A:B^infty should be "everything", but computing a gb for A can be slow
+    -- TODO: if radical A is cached and B \subset radical A then A : B^infty = ambient A
+    -- alternatively, can radical containment be efficiently checked?
+    if B' == 0 or isSubset(B', A) then return ambient A;
+    -- note: ideal(..A..) :            f^infty = A <==> f is nzd /A
+    -- note: ideal(..A..) : ideal(..B..)^infty = A <==> B is not contained in any associated primes of A
+    -- TODO: can either of the above be efficiently checked?
+    if isSubset(ambient A, B') then return A;
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
@@ -554,6 +570,38 @@ doc ///
 --  Caveat
 --  SeeAlso
 ///
+
+document {
+     Key => MinimalGenerators,
+     TT "MinimalGenerators => true", " -- an option for certain functions
+     which specifies whether to compute minimal generators for the result.",
+     PARA{},
+     UL {
+	  TO [quotient,MinimalGenerators],
+	  TO [saturate,MinimalGenerators],
+	  },
+     PARA{},
+     "The default value is ", TT "true", "."
+     }
+
+document {
+     Key => Bayer,
+     Headline => "a Strategy option value for saturate",
+     SeeAlso => {[saturate,Strategy]}
+     }
+
+document {
+     Key => Iterate,
+     Headline => "a Strategy option value for saturate",
+     SeeAlso => {[saturate,Strategy]}
+     }
+
+document {
+     Key => Linear,
+     Headline => "a Strategy option value for saturate",
+     SeeAlso => {[saturate,Strategy]}
+     }
+
 
 -*
 Where should these be documented?
