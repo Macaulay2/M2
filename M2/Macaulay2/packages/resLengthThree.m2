@@ -1,4 +1,4 @@
-newPackage ( "DGAlgResThree",
+newPackage ( "resLengthThree",
     Version => "0.6",
     Date => "1 October 2020",
     Authors => {
@@ -332,10 +332,10 @@ end
 -- end of package code
 --==========================================================================
 
-uninstallPackage "DGAlgResThree"
+uninstallPackage "resLengthThree"
 restart
-debug loadPackage "DGAlgResThree"
-check "DGAlgResThree"
+debug loadPackage "resLengthThree"
+check "resLengthThree"
 
 -- dev space
 
