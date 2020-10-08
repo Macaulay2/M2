@@ -1,4 +1,4 @@
-newPackage ( "resLengthThree",
+newPackage ( "ResLengthThree",
     Version => "0.6",
     Date => "1 October 2020",
     Authors => {
@@ -119,7 +119,7 @@ multTableOneOne = method(Options => {Labels => true, Compact => false})
 
 multTableOneOne(Ring) := opts -> A -> (
    if not (A.cache#?"l" and A.cache#?"m" and A.cache#?"n") then
-      error "Expected an algebra created with a CodimThree routine.";
+      error "Expected an algebra created with a resLengthThree routine.";
    l := A.cache#"l";
    m := A.cache#"m";
    n := A.cache#"n";
@@ -137,7 +137,7 @@ multTableOneTwo = method(Options => { Labels => true} )
 
 multTableOneTwo(Ring) := opts -> A -> (
    if not (A.cache#?"l" and A.cache#?"m" and A.cache#?"n") then
-      error "Expected an algebra created with a CodimThree routine.";
+      error "Expected an algebra created with a resLengthThree routine.";
    l := A.cache#"l";
    m := A.cache#"m";
    n := A.cache#"n";
@@ -152,7 +152,7 @@ multTableOneTwo(Ring) := opts -> A -> (
 resLengthThreeTorAlgClass = method()
 
 resLengthThreeTorAlgClass ChainComplex := F -> (
-    A := resLengthThreeTorAlg(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
+    A := resLengthThreeTorAlg(F);
   p := rank multMap(A,1,1);
   q := rank multMap(A,1,2);
   r := rank homothetyMap(A,2,1);
@@ -332,17 +332,53 @@ end
 -- end of package code
 --==========================================================================
 
-uninstallPackage "resLengthThree"
+uninstallPackage "ResLengthThree"
 restart
-debug loadPackage "resLengthThree"
-check "resLengthThree"
+debug loadPackage "ResLengthThree"
+check "ResLengthThree"
 
 -- dev space
 
 needsPackage "TorAlgebra"'
 needsPackage "PruneComplex"
 
-Q = QQ[x,y,z];
+Q = QQ[u,v,x,y,z];
+R = Q/ideal(u^2,u*v)
+I = ideal (x^2,y^2,z^2)
+F = res I
+resLengthThreeTorAlgClass I
+
+Q = QQ[u,v,x,y,z];
+R = Q/ideal(u^2-u*v^2)
+I = ideal (x^2,y^2,z^2)
+F = res I
+resLengthThreeTorAlgClass I
+
+P = QQ[u,v];
+Q = P/ideal(u^2-u*v)
+R = Q[x,y,z]
+I = ideal (x^2,y^2,z^2)
+G = resLengthThreeAlg res I
+netList multTableOneOne G
+netList multTableOneTwo G
+A = resLengthThreeTorAlg res I
+netList multTableOneOne A
+netList multTableOneTwo A
+
+P = QQ[u,v];
+Q = P/ideal(u^2-u*v^2)
+R = Q[x,y,z]
+I = ideal (x^2,y^2,z^2)
+G = resLengthThreeAlg res I
+netList multTableOneOne G
+netList multTableOneTwo G
+A = resLengthThreeTorAlg res I
+netList multTableOneOne A
+netList multTableOneTwo A
+
+rank multMap(A,1,1)
+basis(1,A)
+resLengthThreeTorAlgClass I
 
 
 --==========================================================================
@@ -353,9 +389,9 @@ beginDocumentation()
 
 doc ///
   Key
-    TorAlgebra
+    ResLengthThree
   Headline
-    Classification of local rings based on multiplication in homology
+    Computation of multiplicative structures on free resolutions of length three
   Description
 
     Text 
