@@ -23,21 +23,21 @@ newPackage ( "DGAlgResThree",
     DebuggingMode => true
     )
 
-export { "eeProd", "efProd", "makeRes", "eeMultTable", "efMultTable", "codimThreeAlgStructure", "codimThreeTorAlgebra", "Labels", "Compact" }
+export { "resLengthThreeAlg", "resLengthThreeTorAlg", "multTableOneOne", "multTableOneTwo", "resLengthThreeTorAlgClass", "makeRes", "Labels", "Compact" }
 
 --==========================================================================
 -- EXPORTED FUNCTIONS
 --==========================================================================
 
-codimThreeAlgStructure = method()
+resLengthThreeAlg = method()
 
-codimThreeAlgStructure(ChainComplex, List) := (F, sym) -> (
+resLengthThreeAlg(ChainComplex, List) := (F, sym) -> (
    if F.cache#?"Algebra Structure" then return F.cache#"Algebra Structure";
    if length F != 3 then
      error "Expected a chain complex of length three which is free of rank one in degree zero.";
    if #sym != 3 or any(sym, s -> (class baseName s =!= Symbol))  then
      error "Expected a list of three symbols.";
-   mult := multtables(F);
+   mult := multTables(F);
    Q := ring F;
    m := numcols F.dd_1;
    l := numcols F.dd_2;
@@ -73,15 +73,15 @@ codimThreeAlgStructure(ChainComplex, List) := (F, sym) -> (
    A
 )
 
-codimThreeAlgStructure( ChainComplex ) := (F) -> (
-    codimThreeAlgStructure(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
+resLengthThreeAlg( ChainComplex ) := (F) -> (
+    resLengthThreeAlg(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
     )
 
-codimThreeTorAlgebra = method()
+resLengthThreeTorAlg = method()
 
-codimThreeTorAlgebra(ChainComplex,List) := (F,sym) -> (
+resLengthThreeTorAlg(ChainComplex,List) := (F,sym) -> (
    if F.cache#?"Tor Algebra Structure" then return F.cache#"Tor Algebra Structure";
-   A := codimThreeAlgStructure(F,sym);
+   A := resLengthThreeAlg(F,sym);
    P := ambient A;
    Q := ring F;
    kk := coefficientRing Q;
@@ -95,8 +95,8 @@ codimThreeTorAlgebra(ChainComplex,List) := (F,sym) -> (
    B
 )
 
-codimThreeTorAlgebra( ChainComplex ) := (F) -> (
-    codimThreeTorAlgebra(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
+resLengthThreeTorAlg( ChainComplex ) := (F) -> (
+    resLengthThreeTorAlg(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
     )
 
 makeRes = (d1,d2,d3) -> ( 
@@ -115,9 +115,9 @@ makeRes = (d1,d2,d3) -> (
     F 
     )
 
-eeMultTable = method(Options => {Labels => true, Compact => false})
+multTableOneOne = method(Options => {Labels => true, Compact => false})
 
-eeMultTable(Ring) := opts -> A -> (
+multTableOneOne(Ring) := opts -> A -> (
    if not (A.cache#?"l" and A.cache#?"m" and A.cache#?"n") then
       error "Expected an algebra created with a CodimThree routine.";
    l := A.cache#"l";
@@ -133,9 +133,9 @@ eeMultTable(Ring) := opts -> A -> (
    if (opts.Labels) then result else oneTimesOneA
    )
 
-efMultTable = method(Options => { Labels => true} )
+multTableOneTwo = method(Options => { Labels => true} )
 
-efMultTable(Ring) := opts -> A -> (
+multTableOneTwo(Ring) := opts -> A -> (
    if not (A.cache#?"l" and A.cache#?"m" and A.cache#?"n") then
       error "Expected an algebra created with a CodimThree routine.";
    l := A.cache#"l";
@@ -149,23 +149,45 @@ efMultTable(Ring) := opts -> A -> (
    if (opts.Labels) then entries result else entries oneTimesTwoA
 )
 
-torAlgebraClassCodim3 = method()
+resLengthThreeTorAlgClass = method()
 
-torAlgebraClassCodim3 ChainComplex := F -> (
-   B := codimThreeTorAlgebra(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
-   toralgebraclass B
+resLengthThreeTorAlgClass ChainComplex := F -> (
+    A := resLengthThreeTorAlg(F,{getSymbol "e",getSymbol "f", getSymbol "g"});
+  p := rank multMap(A,1,1);
+  q := rank multMap(A,1,2);
+  r := rank homothetyMap(A,2,1);
+  tau := first tauMaps(A,1,1,1);
+  if (p >= 4 or p == 2) then
+      return ("H(" | p | "," | q | ")")
+  else if (p == 3) then
+  (
+      if (q > 1) then return ("H(" | p | "," | q | ")")
+      else if (q == 1 and r != 1) then return "C(3)"
+      else if (q == 0 and tau == 0) then return ("H(" | p | "," | q | ")")
+      else return "T";
+  )
+  else if (p == 1) then
+  (
+      if (q != r) then return "B"
+      else return ("H(" | p | "," | q | ")");
+  )
+  else if (p == 0) then
+  (
+      if (q != r) then return ("G(" | r | ")")
+      else return ("H(" | p | "," | q | ")");
+  );
 )
 
-torAlgebraClassCodim3 Ideal := I -> (
-   torAlgebraClassCodim3 res I
+resLengthThreeTorAlgClass Ideal := I -> (
+   resLengthThreeTorAlgClass res I
 )
 
 
 --======================================================================
--- Internal functions
+-- INTERNAL FUNCTIONS
 --======================================================================
 
-multtables = F -> (
+multTables = F -> (
     Q := ring F;
     d1:= matrix entries F.dd_1;
     d2:= matrix entries F.dd_2;    
@@ -239,96 +261,71 @@ tauMaps(Ring,ZZ,ZZ,ZZ) := (A,l,m,n) -> (
   {rank lTensmn + rank lmTensn - rank psi,lTensmn, lmTensn, psi}
 )
 
-toralgebraclass = A -> (
-  -- check to ensure that A is torAlgebra for codim 3 example?  
-  p := rank multMap(A,1,1);
-  q := rank multMap(A,1,2);
-  r := rank homothetyMap(A,2,1);
-  tau := first tauMaps(A,1,1,1);
-  if (p >= 4 or p == 2) then
-      return ("H(" | p | "," | q | ")")
-  else if (p == 3) then
-  (
-      if (q > 1) then return ("H(" | p | "," | q | ")")
-      else if (q == 1 and r != 1) then return "C(3)"
-      else if (q == 0 and tau == 0) then return ("H(" | p | "," | q | ")")
-      else return "T";
-  )
-  else if (p == 1) then
-  (
-      if (q != r) then return "B"
-      else return ("H(" | p | "," | q | ")");
-  )
-  else if (p == 0) then
-  (
-      if (q != r) then return ("G(" | r | ")")
-      else return ("H(" | p | "," | q | ")");
-  );
-)
+TEST ///
+Q = QQ[x,y,z];
+F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
+G = resLengthThreeAlg (F)
+assert ( e_1*e_2 == y*f_1 )
+assert ( e_1*f_4 == -x*g_1 )
+///
 
 TEST ///
 Q = QQ[x,y,z];
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
-assert ( (eeProd(F,1,2))_(0,0) == y )
-assert ( (efProd(F,1,4))_(0,0) == -x )
+G = resLengthThreeAlg (F)
+assert ( e_1*e_2 == y*f_1 )
+assert ( e_1*f_4 == -x*g_1 )
 ///
 
 
--- #16 B, graded
 TEST ///
-setRandomSeed "TorAlgebra";
 Q = QQ[x,y,z]
 I = ideal(x^2,x*y,z^2,y*z,z^2)
-assert( torAlgebraClassCodim3(I) === "B" )
+assert( resLengthThreeTorAlgClass(I) === "B" )
 ///
 
--- #18 C(3), graded
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal (u*v,w*x,y*z)
-assert( torAlgebraClassCodim3(I) === "C(3)" )
+assert( resLengthThreeTorAlgClass(I) === "C(3)" )
 ///
 
--- #20 G(7) Gorenstein, graded
+
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^3,x^2*z,x*(z^2+x*y),z^3-2*x*y*z,y*(z^2+x*y),y^2*z,y^3)
-assert( torAlgebraClassCodim3(I) === "G(7)" )
+assert( resLengthThreeTorAlgClass(I) === "G(7)" )
 ///
 
--- #22 G(2), graded
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x*y^2,x*y*z,y*z^2,x^4-y^3*z,x*z^3-y^4)
-assert( torAlgebraClassCodim3(I) === "G(2)" )
+assert( resLengthThreeTorAlgClass(I) === "G(2)" )
 ///
 
--- #24 H(0,0), graded
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
-assert( torAlgebraClassCodim3(I) === "H(0,0)" )
+assert( resLengthThreeTorAlgClass(I) === "H(0,0)" )
 ///
 
--- #24 H(0,0), graded
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
-assert( torAlgebraClassCodim3(I) === "H(0,0)" )
+assert( resLengthThreeTorAlgClass(I) === "H(0,0)" )
 ///
 
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^3,y^3,z^3,x*y*z)  
-assert( torAlgebraClassCodim3(I) === "T" )
+assert( resLengthThreeTorAlgClass(I) === "T" )
 ///
 
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^5,y^5,x*y^4,x^2*y^3,x^3*y^2,x^4*y,z^3)  
-assert( torAlgebraClassCodim3(I) === "H(6,5)" )
+assert( resLengthThreeTorAlgClass(I) === "H(6,5)" )
 ///
-
 
 end
 --==========================================================================
@@ -346,23 +343,6 @@ needsPackage "TorAlgebra"'
 needsPackage "PruneComplex"
 
 Q = QQ[x,y,z];
-
-F = res coker vars Q
-chainComplex({F.dd_1,F.dd_2,F.dd_3})
-
-I = ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
-F = res I
-A = codimThreeAlgStructure (F)
-
-A = codimThreeAlgStructure (F, {e,f,g})
-B = codimThreeTorAlgebra (F, {e,f,g})
-torAlgebraClassCodim3 F
-torAlgebraClassCodim3 I
-
-
-torAlgebraClassCodim3 F
-torAlgebraClassCodim3 B
-torAlgebraClassCodim3 A
 
 
 --==========================================================================
