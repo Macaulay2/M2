@@ -13,10 +13,12 @@ Node
       star := IMG {"src" => replace("PKG", "Style", currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
       categories := new MutableHashTable from {};
       scan(separate_" " version#"packages", pkgname -> (
-              pkgopts := readPackage pkgname;
-              apply(pkgopts.Keywords, keyword -> if not categories#?keyword
-                  then categories#keyword = new MutableList from {(pkgname, pkgopts)}
-                  else categories#keyword#(#categories#keyword) = (pkgname, pkgopts))));
+	      pkgopts := readPackage pkgname;
+	      -- populate categories
+	      scan(pkgopts.Keywords, keyword -> if not categories#?keyword
+		  then categories#keyword = new MutableList from {(pkgname, pkgopts)}
+		  else categories#keyword#(#categories#keyword) = (pkgname, pkgopts));
+	      ));
       DIV flatten apply(sort keys categories, keyword -> {
               SUBSECTION {keyword},
               UL apply(sort new List from categories#keyword, pkgpair -> (
@@ -39,17 +41,31 @@ Node
     Text
       The following people have authored packages that are distributed with Macaulay2:
     Code
-      authors := new MutableHashTable from flatten apply(separate_" " version#"packages", pkgname -> (
-              pkgopts := readPackage pkgname;
-              apply(pkgopts.Authors, author -> (
-                      author = new OptionTable from author;
-                      if author.?Name and (not authors#?(author.Name) or not instance(authors#(author.Name), HREF))
-                      then author.Name => if author.?HomePage then HREF {author.HomePage, author.Name} else author.Name))));
-      scan(select(keys authors, match_{"(C|c)ontribut", "(M|m)aintain", "(A|a)uthor", "(T|t)hank", "(Michael|Mike) Stillman"}),
-	      author -> remove(authors, author));
+      authors := new MutableHashTable from {};
+      scan(separate_" " version#"packages", pkgname -> (
+	      pkgopts := readPackage pkgname;
+	      -- populate authors
+	      scan(pkgopts.Authors, author -> (
+		      author = new OptionTable from author;
+		      name := if author.?Name then author.Name else return;
+		      if match({"(C|c)ontribut", "(M|m)aintain", "(A|a)uthor", "(T|t)hank"}, name) then return;
+		      if match("(Michael|Mike) Stillman", name) then name = "Michael E. Stillman";
+		      if authors#?name
+		      -- TODO: make append work with MutableList, then simplify this
+		      then authors#name#"packages"#(#authors#name#"packages") = pkgname
+		      else authors#name = new MutableHashTable from { "packages" => new MutableList from {pkgname}, "href" => "#" };
+		      authors#name#"href" = if authors#name#"href" =!= "#" then authors#name#"href"
+		      else if author.?HomePage then             author.HomePage
+		      else if author.?Email    then "mailto:" | author.Email));
+	      ));
       -- TODO: simplify this when sort takes a SortStrategy
       c := 0;
-      PARA{between_", " (last \ sort apply(pairs authors, (name, entry) -> (last separate(" ", name), c = c + 1, entry))), "."}
+      htmlLiteral := value Core#"private dictionary"#"htmlLiteral";
+      PARA{between_", \n" (last \ sort apply(pairs authors, (name, entry) -> (
+		      link := ANCHOR{htmlLiteral name,
+			  "href"  => htmlLiteral entry#"href",
+			  "title" => concatenate("Packages: ", demark_", " new List from entry#"packages")};
+		      (last separate(" ", name), c = c + 1, link)))), "."}
   SeeAlso
     "creating a package"
     "packages provided with Macaulay2"
