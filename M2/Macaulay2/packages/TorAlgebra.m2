@@ -1,6 +1,6 @@
 newPackage ( "TorAlgebra",
     Version => "2.1",
-    Date => "15 August 2020",
+    Date => "15 October 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
@@ -26,7 +26,7 @@ newPackage ( "TorAlgebra",
 	 "volume URI" => "http://msp.org/jsag/2014/6-1/"
 	 },
     Reload => true,
-    DebuggingMode => false
+    DebuggingMode => true
     )
 
 export { 
@@ -860,7 +860,7 @@ doc ///
       the (parametrized) classes designated {\bf B}, {\bf C}(c), {\bf G}(r), {\bf
       H}(p,q), {\bf S}, or {\bf T}. An overview of the theory can be
       found in L.L. Avramov, {\it A cohomological study of local rings
-      of embedding codepth 3}, @HREF"http://arxiv.org/abs/1105.3991"@.
+      of embedding codepth 3}, @HREF"https://doi.org/10.1016/j.jpaa.2012.03.012"@.
 
       There is a similar classification of Gorenstein local rings of codepth
       4, due to A.R. Kustin and M. Miller. There are four classes,
@@ -877,8 +877,8 @@ doc ///
       The package implements an algorithm for classification of local
       rings in the sense discussed above. For rings of codepth at most
       3 it is described in L.W. Christensen and O. Veliche, {\it Local
-      rings of embedding codepth 3: a classification algorithm},
-      @HREF"http://arxiv.org/abs/1402.4052"@. The classification of
+      rings of embedding codepth 3: A classification algorithm},
+      @HREF"http://dx.doi.org/10.2140/jsag.2014.6.1"@. The classification of
       Gorenstein rings of codepth 4 is analogous. 
       
       The package also recognizes Golod rings, Gorenstein rings, and
@@ -1736,3 +1736,25 @@ loadPackage "TorAlgebra"
 installPackage "TorAlgebra"
 check "TorAlgebra"
 
+-- dev space
+
+needsPackage "TorAlgebra"
+FF =  ZZ/3; Q = FF[x,y,z]
+
+I = ideal(x*y^2+x*y*z+z^3, x^2*y+y^3+y^2*z+x*z^2+y*z^2, x^3+y^3+x*y*z+y*z^2+z^3, x*z^3+y*z^3, x*y*z^2+z^4, y^3*z+y^2*z^2)
+I = ideal(x*y^2+x*y*z+z^3, x^2*y+y^3+y^2*z+x*z^2+y*z, x^3+y^3+x*y*z+y*z^2+z^2, x*z^3+y*z^3, x*y*z^2+z^4, y^3*z+y^2*z^2)
+
+I = ideal(random(1,Q) + random(4,Q),random(3,Q) + random(4,Q),random(3,Q) + random(4,Q),random(2,Q) + random(5,Q))
+I = ideal "xy2+y3+x2z+xyz+y2z+xz2+yz2+xy+y2+yz, y2z2+xz3+yz3+y3+x2z+xyz+xz2+yz2+xy+y2+yz+x, x3y+y3z+x2z2+xyz2+yz3+x3+y3+x2z+y2z+xz2+z3+xy+y2+yz+x, x4+y4+x2z2+yz3+x3+x2y+y3+x2z+xyz+xz2+z3+xy+y2+yz+x, x3z2+x2z3+y4+x3z+x2yz+x2z2+x2z+xyz+xz2+yz2+x2+y2+xz+x"
+
+for i from 1 to 100 do (
+    I = ideal(random(1,Q) + random(4,Q),random(3,Q) + random(4,Q),random(3,Q) + random(4,Q),random(2,Q) + random(5,Q));
+    if isHomogeneous(Q/I) and not isHomogeneous I then print(mingens I);
+    print(isHomogeneous I,isHomogeneous (Q/I));
+    )
+
+I = ideal(random(2,Q) + random(4,Q), random(2,Q) + random(3,Q), random(2,Q) + random(3,Q), random(2,Q) + random(4,Q));
+torAlgClass(Q/I)
+
+
+I = ideal "xy2+y3+x2z+y2z+xz2+yz2+x+y+z, x2y+y3+y2z+xz2+yz2, x3+y3+xyz+yz2+z3, z5+y3+xyz+yz2, xz4+y3+z3+x+y+z, y5+y3+xz2+yz2+z3+x+y+z"
