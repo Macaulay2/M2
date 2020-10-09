@@ -523,8 +523,8 @@ getUsage := val -> (
 
 getHeadline   := (val, key)   -> (
     title := if instance(val, String) then fixup val else error("expected ", toString key, " option to be a string");
-    if #title > 100 then warning("document: documentation headlines must be less than 100 characters long:\n  " | format title);
     if #title > 200 then   error("document: documentation headlines must be less than 100 characters long:\n  " | format title);
+    if #title > 100 then warning("document: documentation headlines must be less than 100 characters long:\n  " | format title);
     title)
 getSubsection := (val, title) -> fixup DIV { SUBSECTION title, val }
 getSourceCode :=  val         -> DIV {"class" => "waystouse",
