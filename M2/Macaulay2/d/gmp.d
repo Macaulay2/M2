@@ -1205,7 +1205,7 @@ export (x:RR)  <  (y:QQ) : bool :=  compare0(x,y) <  0 && !flagged0();
 
 export (x:RR)  <= (y:QQ) : bool :=  compare0(x,y) <= 0 && !flagged0();
                                     
-export (x:RRi) === (y:RR) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();                                    
+export (x:RRi) === (y:RR) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
 
 export hash(x:RR):int := int(precision0(x)) + Ccode(int, 
      "mpfr_hash(",					    -- see gmp_aux.c for this function

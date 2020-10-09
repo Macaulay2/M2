@@ -1359,20 +1359,20 @@ setupfun("toRR",toRR);
                                                      
 toRRi(e:Expr):Expr := (
      when e
-     is x:ZZcell do toExpr(toRRi(x.v,defaultPrecision))
-     is x:QQcell do toExpr(toRRi(x.v,defaultPrecision))
-     is x:RRcell do toExpr(toRRi(x.v,defaultPrecision))
-     is RRicell do e
+     is x:ZZcell do toExpr(toRRi(x.v,defaultPrecision))  -- # typical value: toRRi, ZZ, RRi
+     is x:QQcell do toExpr(toRRi(x.v,defaultPrecision))  -- # typical value: toRRi, QQ, RRi
+     is x:RRcell do toExpr(toRRi(x.v,defaultPrecision))  -- # typical value: toRRi, RR, RRi
+     is RRicell do e                                     -- # typical value: toRRi, RRi, RRi
      is s:Sequence do (
 	  if length(s) != 2 then WrongNumArgs(1,2) else
 	  when s.0 is prec:ZZcell do (
 	       if !isULong(prec.v) then WrongArgSmallUInteger(1)
 	       else (
 	       	    when s.1
-     	       	    is x:ZZcell do toExpr(toRRi(x.v,toULong(prec.v)))
-	       	    is x:QQcell do toExpr(toRRi(x.v,toULong(prec.v)))
-		    is x:RRcell do toExpr(toRRi(x.v,toULong(prec.v)))
-     	       	    is x:RRicell do toExpr(toRRi(x.v,toULong(prec.v)))
+     	       	    is x:ZZcell do toExpr(toRRi(x.v,toULong(prec.v)))  -- # typical value: toRRi, ZZ, ZZ, RRi
+	       	    is x:QQcell do toExpr(toRRi(x.v,toULong(prec.v)))  -- # typical value: toRRi, ZZ, QQ, RRi
+		    is x:RRcell do toExpr(toRRi(x.v,toULong(prec.v)))   -- # typical value: toRRi, ZZ, RR, RRi
+     	       	    is x:RRicell do toExpr(toRRi(x.v,toULong(prec.v)))   -- # typical value: toRRi, ZZ, RRi, RRi
 		    else WrongArg(1,"an integral, rational, or real number")
 		    )
 	       )
@@ -1426,6 +1426,18 @@ interval(e:Expr):Expr := (
 	    else WrongArg(1,"a pair or triple  of integral, rational, or real numbers"))
    	 else WrongArg("not implemented yet"));
 setupfun("interval",interval);
+                                                     
+rightRR(e:Expr):Expr := (
+     when e
+        is x:RRicell do toExpr(rightRR(x.v))
+        else WrongArg("expected an interval"));
+setupfun("rightRR",rightRR);
+                                                     
+leftRR(e:Expr):Expr := (
+     when e
+        is x:RRicell do toExpr(leftRR(x.v))
+        else WrongArg("expected an interval"));
+setupfun("leftRR",leftRR);
 
 toCC(e:Expr):Expr := (
      when e
