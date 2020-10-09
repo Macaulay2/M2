@@ -6,8 +6,9 @@
 #include "LLL.hpp"
 #include "text-io.hpp"
 #include "exceptions.hpp"
-#include "NAG.hpp"
+// TODO: why does swapping the following two lines cause an error
 #include "engine.h"
+#include "NAG.hpp"
 
 const FreeModule *IM2_Matrix_get_target(const Matrix *M) { return M->rows(); }
 const FreeModule *IM2_Matrix_get_source(const Matrix *M) { return M->cols(); }

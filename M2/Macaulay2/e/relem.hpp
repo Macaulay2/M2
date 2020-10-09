@@ -3,8 +3,8 @@
 #ifndef _ring_elem_hh_
 #define _ring_elem_hh_
 
-#include "engine.h"
 #include "ring.hpp"
+
 class Monomial;
 
 class RingElement : public EngineObject

@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "polyroots.hpp"
+
 #define abs(x) (((x) < 0) ? -(x) : (x))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 

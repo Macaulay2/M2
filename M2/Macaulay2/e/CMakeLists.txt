@@ -87,7 +87,7 @@ set(HPPONLYFILES
 
 # these files have .cpp file, but NOT .hpp file
 set(CPPONLYFILES
-  engine.cpp
+  engine.cpp # TODO: find a new home for the contents
   flint.cpp
   franzi-gb.cpp
   franzi-interface.cpp

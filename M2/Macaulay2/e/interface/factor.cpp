@@ -31,6 +31,7 @@ CanonicalForm Prem(const CanonicalForm &F, const CanonicalForm &G);
 #include "buffer.hpp"
 
 #include "tower.hpp"
+#include "engine.h"
 
 const bool notInExtension = false;
 
