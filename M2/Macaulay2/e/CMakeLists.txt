@@ -99,17 +99,17 @@ set(CPPONLYFILES
   rand.cpp
   res-a2-gb.cpp
   ring-vecs.cpp
-  x-aring.cpp
-  x-factor.cpp
-  x-factor.hpp
-  x-free.cpp
-  x-gb.cpp
-  x-mat.cpp
-  x-monideal.cpp
-  x-monoid.cpp
-  x-mutablemat.cpp
-  x-relem.cpp
-  x-ringmap.cpp
+
+  interface/aring.cpp
+  interface/factor.cpp
+  interface/freemodule.cpp
+  interface/groebner.cpp
+  interface/matrix.cpp
+  interface/monomial-ideal.cpp
+  interface/monoid.cpp
+  interface/mutable-matrix.cpp
+  interface/ring.cpp
+  interface/ringmap.cpp
   )
 
 # these files all have .hpp and .cpp files

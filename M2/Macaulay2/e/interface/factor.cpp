@@ -473,6 +473,7 @@ void displayCF(const PolynomialRing *R, const CanonicalForm &h)  // for debuggin
   emit(o.str());
 }
 
+// TODO: figure out where this should be used
 bool factoryGoodRing(const PolynomialRing *P)
 {
   struct enter_factory foo(P);

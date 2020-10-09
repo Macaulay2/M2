@@ -58,11 +58,6 @@ typedef struct M2PointArray M2PointArray;
 // NAG end
 #endif
 
-#if defined(NO_CONST)
-  /* we must do this after including system *.h files above */
-# define const
-#endif
-
 typedef EngineComputation EngineComputationOrNull;
 
 #if defined(__cplusplus)
@@ -2156,10 +2151,6 @@ extern "C" {
 }
 #endif
 
-#endif
-
-#if defined(NO_CONST)
-#undef const
 #endif
 
 /*
