@@ -103,7 +103,7 @@ net      DocumentTag := tag -> concatenate (package tag, " :: ", format tag)
 -- FIXME: this is kind of a hack
 toExternalString DocumentTag := tag -> (
     "new DocumentTag from " | toExternalString {
-	toString tag.Key, tag.Format, tag.Package})
+	if instance(tag.Key, Symbol) then toString tag.Key else tag.Key, tag.Format, tag.Package})
 
 new DocumentTag from BasicList := (T, t) -> (
     new DocumentTag from new HashTable from {
