@@ -160,8 +160,8 @@ INTERFACE = \
 	weylalg
 
 COMMANDS2 = \
-	x-monideal \
-	x-factor \
+	interface/monomial-ideal \
+	interface/factor \
 	polyroots
 
 COMMANDS = \
@@ -175,14 +175,14 @@ COMMANDS = \
 	ring-vecs \
         res-a2-gb \
 	engine \
-	x-aring \
-	x-monoid \
-	x-relem \
-	x-free \
-	x-mat \
-	x-gb \
-	x-ringmap \
-	x-mutablemat \
+	interface/aring \
+	interface/monoid \
+	interface/ring \
+	interface/freemodule \
+	interface/matrix \
+	interface/groebner \
+	interface/ringmap \
+	interface/mutable-matrix \
 	franzi-gb \
 	franzi-interface
 
