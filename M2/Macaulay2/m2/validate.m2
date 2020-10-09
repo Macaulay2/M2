@@ -70,8 +70,8 @@ validate TO         :=
 validate TOH        :=
 validate TO2        := x -> (
     tag := x#0;
-    if isUndocumented tag and signalDocumentationWarning tag then printerr("warning: undocumented node cited: " | format tag) else
-    if isMissingDoc   tag and signalDocumentationWarning tag then printerr("warning: missing documentation node cited: " | format tag);
+    if isUndocumented tag and signalDocumentationWarning tag then printerr("warning: undocumented node " | format tag | " cited by " | format currentDocumentTag) else
+    if isMissingDoc   tag and signalDocumentationWarning tag then printerr("warning: missing node: "     | format tag | " cited by " | format currentDocumentTag);
     apply(splice x, validate))
 
 validate CDATA      := x -> (
