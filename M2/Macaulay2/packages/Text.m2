@@ -27,37 +27,50 @@ document {
 	  }
      }
 
--- html.m2 documentation
+-- hypertext.m2 documentation
 -- Bart Snapp edited nearly all of these entries.
 document {
-     Key => HypertextContainer,
-     Headline => "the class of mark-up lists that can contain paragraphs",
-     PARA {
-	  "Mark-up lists of this time get special handling when converted to nets by ", TO "net", ", because
-	  the paragraphs must be collected and wrapped."
-	  }
+     Key => Hypertext,
+     Headline => "the class of markup lists used with hypertext",
+     PARA "Intended for internal use only.",
+     Subnodes => {TO (show, Hypertext), TO (style, Hypertext), TO validate} | TO \ select(sort currentPackage#"exported symbols", s -> parent value s === Hypertext)
      }
 document {
-     Key => Hypertext, 
-     Headline => "the class of mark-up lists used with hypertext",
-     PARA{},
-     "Intended for internal use only."
+     Key => HypertextContainer,
+     Headline => "the class of markup lists that can contain paragraphs",
+     PARA {
+	 "Mark-up lists of this type get special handling when converted to nets by ",
+	 TO "net", ", because the paragraphs must be collected and wrapped." },
+     Subnodes => TO \ select(sort currentPackage#"exported symbols", s -> parent value s === HypertextContainer)
      }
 document {
      Key => HypertextParagraph,
-     Headline => "the class of mark-up lists that constitute separate paragraphs",
-     PARA "Intended for internal use only."
+     Headline => "the class of markup lists that constitute separate paragraphs",
+     PARA "Intended for internal use only.",
+     Subnodes => TO \ select(sort currentPackage#"exported symbols", s -> parent value s === HypertextParagraph)
      }
 document {
      Key => MarkUpType,
-     Headline => "the class of mark-up types used with hypertext", 
-     "Some mark-up types allow options (attributes) to be inserted in their html tags.",
+     Headline => "the class of markup types used with hypertext",
+     "Some markup types allow options (attributes) to be inserted in their html tags.",
      EXAMPLE {
 	 ///DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT "resolution", ":"},
 	     "There are many ways to use ", TO "resolution", "."
 	     )///,
 	 "html oo"
-         }
+	 },
+     Subnodes => {TO (options, MarkUpType)} | TO \ select(sort currentPackage#"exported symbols", s -> parent value s === MarkUpType)
+     }
+document {
+     Key => IntermediateMarkUpType,
+     Headline => "the class of intermediate markup types",
+     "An intermediate markup type is one that needs further processing to put it into final form.
+     A good example of one is ", TO TOH, ", which represents a link to a documentation node,
+     together with the headline of that node, which may not have been created yet at the time
+     the ", TO TOH, " link is encountered.  Another example is ", TO HREF, ", which creates a
+     link using the HTML ", TT "<a>", " element: when the link is created, the relative path to
+     the target page depends on the path to the page incorporating the link.",
+     Subnodes => TO \ select(sort currentPackage#"exported symbols", s -> parent value s === IntermediateMarkUpType)
      }
 
 document {
@@ -114,11 +127,8 @@ document {
      PARA{},
      "The argument ", TT "x", " should be a string, possibly containing newlines.",
      "Here is an example.",
-     PRE "
-   1234   2345    4567    5678
-     34    345    3455       7
-",
-	"If one wishes to use quotation marks in the preformatted text, then ", TO "///", " should be used instead of quotation marks as delimiters.",
+     PRE "\n   1234   2345    4567    5678\n     34    345    3455       7\n",
+     "If one wishes to use quotation marks in the preformatted text, then ", TO "Macaulay2Doc :: ///", " should be used instead of quotation marks as delimiters.",
      SeeAlso => "hypertext"
      }
 
@@ -483,7 +493,7 @@ document {
 
 document {
      Key => (html, TEX),
-     Headline => "conversion of TeX to html",
+     Headline => "conversion of $\\TeX$ to html",
      Usage => "html t",
      Inputs => { "t" },
      Outputs => { {"a string containing the result of converting ", TT "t", " to html"} },
@@ -556,9 +566,8 @@ document {
      PARA {
 	 TEX ///The macro can be used at any point after:
 	 $$ 0 \to 2\OO_{\\P^3}(-3) \to 3\OO_{\\P^3}(-2) \to \OO_{\\P^3} \to \OO_C \to 0 $$///},
-     SeeAlso => {TEX, tex, texMath, (show, TEX)}
+     SeeAlso => {tex, texMath, (show, TEX)}
      }
-
 
 document {
      Key => {TEX, (NewFromMethod, TEX, BasicList), (NewFromMethod, TEX, String)},
@@ -571,7 +580,10 @@ document {
 	 equations and matrices, several simple text formatting environments, as well as other ",
 	 TO Hypertext, " items. It is useful to use strings delimited by ", TO "Macaulay2Doc :: ///",
 	 " because in strings delimited by ", TO "Macaulay2Doc :: \"", " the backslashes often used
-	 in $\\LaTeX$ must be doubled. For details on conversion to HTML see ", TO (html, TEX), "."}}
+	 in $\\LaTeX$ must be doubled. For details on conversion to HTML see ", TO (html, TEX), "."},
+     SeeAlso => {(show, TEX)},
+     Subnodes => {TO (html, TEX)}
+     }
 
 document {
      Key => TT,
@@ -681,7 +693,7 @@ document { Key => HR,
 document { Key => TR,
      Headline => "hypertext TR element" }
 document { Key => TD,
-     Headline => "hypertext TD element" }
+     Headline => "hypertext TD element", Subnodes => {TO TH} }
 document { Key => TH,
      Headline => "hypertext TH element" }
 document { Key => DL,
@@ -796,14 +808,6 @@ document {
      Headline => "a type of hypertext for holding example inputs awaiting outputs"
      }
 
-document { Key => IntermediateMarkUpType,
-     Headline => "the class of intermediate mark-up types",
-     "An intermediate mark-up type is one that needs further processing to put it into final form.  A good example of one is ", TO "TOH", ", which
-     represents a link to a documentation node, together with the headline of that node, which may not have been created yet at the time
-     the ", TT "TOH", " link is encountered.  Another good example is ", TO "HREF", ", which creates a link using the HTML ", TT "A", " element:
-     when the link is created, the relative path to the target page depends on the path to the page incorporating the link!"
-     }
-
 document {
      Key => PARA,
      Headline => "hypertext paragraph container",
@@ -815,6 +819,7 @@ document {
      },
      "For an example, see ", TO "Macaulay2Doc::hypertext list format", "."
      }
+
 document { Key => (options, MarkUpType),
      "Optional arguments of mark up types allow attributes to be added to html elements.",
      EXAMPLE lines ///
@@ -826,7 +831,7 @@ document { Key => (options, MarkUpType),
      ///
      }
 document {
-     Key => {(show, TEX), (show, Hypertext)},
+     Key => {(show, Hypertext), (show, TEX)},
      Usage => "show x",
      Inputs => { "x" => {ofClass{TEX,Hypertext}} },
      Consequences => {
@@ -860,7 +865,8 @@ document { Key => {(style, Hypertext),style},
 isMissingDoc := value Core#"private dictionary"#"isMissingDoc";
 isUndocumented := value Core#"private dictionary"#"isUndocumented";
 scan({peek', show, validate, html, net, info, tex, texMath, mathML, NewFromMethod, toString, toExternalString, symbol?}, m ->
-    undocumented select(toList \\ makeDocumentTag \ methods m, x -> isMissingDoc x or isUndocumented x))
+    undocumented select(toList \\ makeDocumentTag \ methods m, x ->
+	    any(x.Key, s -> toString package s === "Text") and (isMissingDoc x or isUndocumented x)))
 
 undocumented {
     (examples, Hypertext),
