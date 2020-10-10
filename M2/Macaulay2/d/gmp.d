@@ -165,13 +165,13 @@ init(x:RRmutable,prec:ulong):RRmutable := (
    );
 
 init(x:RRimutable,prec:ulong):RRimutable := (
-if prec < minprec then prec = minprec else if prec > maxprec then prec = maxprec;
-Ccode( RRimutable, "(mpfi_init2(", x, ",(mpfr_prec_t)",prec,"),",x,")" )
-);
+    if prec < minprec then prec = minprec else if prec > maxprec then prec = maxprec;
+    Ccode( RRimutable, "(mpfi_init2(", x, ",(mpfr_prec_t)",prec,"),",x,")" )
+    );
 
 export newRRmutable(prec:ulong):RRmutable := init(GCmalloc(RRmutable),prec);
 
-export newRRimutable(prec:ulong):RRimutable := init(GCmalloc(RRimutable),prec); -- Added for MPFI
+export newRRimutable(prec:ulong):RRimutable := init(GCmalloc(RRimutable),prec);
 
 clear(x:RRmutable) ::= Ccode( void, "mpfr_clear(",  x, ")" );
 
@@ -769,28 +769,38 @@ export imaginaryPart(z:CC):RR := z.im;
 isPositive0(x:RR) ::=  1 == Ccode(int, "mpfr_sgn(", x, ")");
 isNegative0(x:RR) ::= -1 == Ccode(int, "mpfr_sgn(", x, ")");
 isZero0    (x:RR) ::=  0 == Ccode(int, "mpfr_sgn(", x, ")");
+                                    
+isPositive0(x:RRi) ::=  0 < Ccode(int, "mpfi_is_strictly_pos(", x, ")");
+isNegative0(x:RRi) ::=  0 < Ccode(int, "mpfi_is_strictly_neg(", x, ")");
+isZero0    (x:RRi) ::=  0 < Ccode(int, "mpfi_is_zero(", x, ")");
+contains0  (x:RRi) ::= 0 < Ccode(int, "mpfi_has_zero(", x, ")");
 
 flagged0() ::= 0 != Ccode( int, "mpfr_erangeflag_p()" );
 setflag0() ::= Ccode( void, "mpfr_set_erangeflag()" );
 isfinite0(x:RR) ::=Ccode(bool,"mpfr_number_p(",x,")");
 isfinite0(x:RRmutable) ::=Ccode(bool,"mpfr_number_p(",x,")");
-isfinite0(x:RRi) ::=Ccode(bool,"mpfi_is_zero(",x,")");
-isfinite0(x:RRimutable) ::=Ccode(bool,"mpfi_is_zero(",x,")");
+isfinite0(x:RRi) ::=Ccode(bool,"mpfi_bounded_p(",x,")");
+isfinite0(x:RRimutable) ::=Ccode(bool,"mpfi_bounded_p(",x,")");
 isinf0 (x:RR) ::= Ccode(bool,"mpfr_inf_p(",x,")");
-isinf0 (x:RRi) ::= Ccode(bool,"mpfi_inf_p(",x,")"); -- Behavior might be different for mpfi
+isinf0 (x:RRi) ::= Ccode(bool,"mpfi_inf_p(",x,")");
 isnan0 (x:RR) ::= Ccode(bool,"mpfr_nan_p(",x,")");
-isnan0 (x:RRi) ::= Ccode(bool,"mpfi_nan_p(",x,")");  -- Behavior might be different for mpfi
+isnan0 (x:RRi) ::= Ccode(bool,"mpfi_nan_p(",x,")");
 sign0(x:RR) ::= 0 != Ccode(int,"mpfr_signbit(",x,")");
-sign0(x:RRi) ::= 0 != Ccode(int,"mpfi_is_neg(",x,")");  -- Behavior might be different for mpfi
+sign0(x:RRi) ::= 0 != Ccode(int,"mpfi_is_strictly_neg(",x,")");
+                                    
 exponent0(x:RR) ::= Ccode(long,"(long)mpfr_get_exp(",x,")"); -- sometimes int, sometimes long, see gmp.h for type mp_exp_t
+exponent0(x:RRi) ::= min(exponent0(rightRR(x)),exponent0(leftRR(x)));
 sizeinbase0(x:ZZ,b:int) ::= Ccode( int, "mpz_sizeinbase(",  x, ",", b, ")" );
 
 -- warning: these routines just check the sign bit, and don't verify finiteness!
 export isPositive(x:RR):bool := isPositive0(x);
+export isPositive(x:RRi):bool := isPositive0(x);
 
 export isNegative(x:RR):bool := isNegative0(x);
+export isNegative(x:RRi):bool := isNegative0(x);
 
 export isZero    (x:RR):bool := isZero0(x) && isfinite0(x);
+export isZero    (x:RRi):bool := isZero0(x) && isfinite0(x);
 
 export isZero    (x:CC):bool := isZero0(x.re) && isfinite0(x.re) && isZero0(x.im) && isfinite0(x.im);
 
@@ -803,7 +813,8 @@ export maxExponent := Ccode(long,"(long)mpfr_get_emax()");
 export exponent(x:ZZ):long := if isZero0(x) then minExponent else long(sizeinbase0(x,2));
 
 export exponent(x:RR):long := if isZero0(x) && isfinite0(x) then minExponent else if isfinite0(x) then exponent0(x) else maxExponent;
-
+export exponent(x:RRi):long := if isZero0(x) && isfinite0(x) then minExponent else if isfinite0(x) then exponent0(x) else maxExponent;
+                                    
 export exponent(x:CC):long := max(exponent(x.re),exponent(x.im));
 
 export newCCmutable(prec:ulong):CCmutable := CCmutable(newRRmutable(prec),newRRmutable(prec));
@@ -817,7 +828,7 @@ export moveToCCandclear(z:CCmutable):CC := (
 
 precision0(x:RR) ::= Ccode(ulong,"(unsigned long)mpfr_get_prec(", x, ")");
 
-precision0(x:RRi) ::= Ccode(ulong,"(unsigned  long)mpfi_get_prec(", x, ")"); -- Behavior might be different for mpfi
+precision0(x:RRi) ::= Ccode(ulong,"(unsigned  long)mpfi_get_prec(", x, ")");
 
 export precision(x:RR):ulong := precision0(x);
 
@@ -987,6 +998,16 @@ export interval(a:RR,b:RR,prec:ulong):RRi := (
      moveToRRiandclear(x));
 
 export interval(a:RR, b:RR):RRi := interval(a,b,defaultPrecision);
+                                    
+export midpointRR(x:RRi):RR := (
+     z := newRRmutable(precision0(x));
+     Ccode( RR, "mpfi_mid(",z, ",", x, ")");
+     moveToRRandclear(z));
+                                
+export widthRR(x:RRi):RR := (
+     z := newRRmutable(precision0(x));
+     Ccode( RR, "mpfi_diam_abs(",z, ",", x, ")");
+     moveToRRandclear(z));
 
 export infinityRR(prec:ulong,sign:int):RR := (
      x := newRRmutable(prec);

@@ -1438,6 +1438,18 @@ leftRR(e:Expr):Expr := (
         is x:RRicell do toExpr(leftRR(x.v))
         else WrongArg("expected an interval"));
 setupfun("leftRR",leftRR);
+                                                     
+widthRR(e:Expr):Expr := (
+     when e
+        is x:RRicell do toExpr(widthRR(x.v))
+        else WrongArg("expected an interval"));
+setupfun("widthRR",widthRR);
+                                                     
+midpointRR(e:Expr):Expr := (
+     when e
+        is x:RRicell do toExpr(midpointRR(x.v))
+        else WrongArg("expected an interval"));
+setupfun("midpointRR",midpointRR);
 
 toCC(e:Expr):Expr := (
      when e
