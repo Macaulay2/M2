@@ -46,6 +46,7 @@ newPackage(
       Email => "vqthanh@math.berkeley.edu",
       HomePage => "http://math.berkeley.edu/~thanh"}},
   Headline => "spectral sequences",
+  Keywords => {"Homological Algebra"},
   PackageImports => {"Truncations"},
   PackageExports => {"SimplicialComplexes", "ChainComplexExtras", "PushForward"}
   )

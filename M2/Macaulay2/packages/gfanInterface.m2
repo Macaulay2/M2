@@ -12,6 +12,7 @@ newPackage(
 		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"},
 	    {Name => "Diane Maclagan (current maintainer)", Email => "D.Maclagan@warwick.ac.uk", HomePage=>"http://homepages.warwick.ac.uk/staff/D.Maclagan/"}},
 	Headline => "interface to Anders Jensen's Gfan software",
+	Keywords => {"Interfaces"},
 	Configuration => {
 		"path" => "",
 		"fig2devpath" => "",

@@ -23,6 +23,7 @@ newPackage (
 		  HomePage => ""}
 	},
 	Headline => "specialized routines for differential forms",
+	Keywords => {"Commutative Algebra"},
 	Configuration => { 
 		"BaseRing" => F,
 		"VariableName" => "x",

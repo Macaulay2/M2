@@ -6,10 +6,11 @@ newPackage(
 	  {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de"},
 	  {Name => "Frank Moore", Email => "fmoore@math.unl.edu", HomePage => "http://www.math.unl.edu/~s-wmoore3"},
 	  {Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
-	  {Name => "Greg Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
+	  {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
 	  {Name => "Lily Silverstein", Email => "lsilverstein@cpp.edu", HomePage => "https://www.cpp.edu/faculty/lsilverstein/"}
 	  },
      Headline => "some additional ChainComplex Functions",
+     Keywords => {"Homological Algebra"},
      DebuggingMode =>false
      )
 

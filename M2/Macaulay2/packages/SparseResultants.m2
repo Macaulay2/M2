@@ -5,6 +5,7 @@ newPackage(
         Date => "September 30, 2020",
         Headline => "computations with sparse resultants",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
+	Keywords => {"Commutative Algebra"},
         PackageExports => {"Resultants"},
         DebuggingMode => false
 )

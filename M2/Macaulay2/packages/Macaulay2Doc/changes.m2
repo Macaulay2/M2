@@ -34,6 +34,11 @@ document {
 document {
      Key => "changes made for the next release",
      UL {
+	 LI { "functionality added:",
+	      UL {
+		   LI { "The function ", TO readPackage, " is added for retrieving the options in the preamble of a package quickly." }
+		   }
+	      },
          LI { "functionality improved:",
               UL {
 		   LI {

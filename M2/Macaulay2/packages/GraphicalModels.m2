@@ -22,6 +22,7 @@ newPackage(
 	  -- HomePage=>""}      
 	  },
      Headline => "discrete and Gaussian graphical models",
+     Keywords => {"Statistics", "Graph Theory"},
      PackageExports => { "Graphs" },
      PackageImports => { "IntegralClosure", "Elimination" },
      Certification => {

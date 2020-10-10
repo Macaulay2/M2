@@ -15,6 +15,7 @@ Version => "1.0", Date => "September 11th, 2020", Authors => {
     Email=> "yuhuiyao4ever@gmail.com"
     }
 }, --this file is in the public domain
+Keywords => {"Linear Algebra"},
 Headline => "faster linear algebra operations", PackageExports => {"RandomRationalPoints"}, PackageImports => {"RandomRationalPoints"}, DebuggingMode => false, Reload=>false)
 export{
 --  "selectSmallestTerms",

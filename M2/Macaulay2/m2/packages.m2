@@ -239,6 +239,10 @@ newPackage String := opts -> pkgname -> (
 	error("newPackage: expected ", toString name, " option to be a list of options"));
     if opts.Authors =!= null and any(opts.Authors, author -> not isOptionList author)
     then error("newPackage: expected Authors option to be a list of zero or more lists of options");
+    if opts.Authors =!= null and any(opts.Authors, author -> (
+	    author = new OptionTable from author;
+	    author.?Name and match_{"(C|c)ontribut", "(M|m)aintain", "(A|a)uthor", "(T|t)hank"} author.Name))
+    then warning("newPackage: use the Contributors or Acknowledgement keywords to acknowledge contributors in the package documentation");
     -- optional package values
     scan({
 	    (Date,     String),

@@ -6,10 +6,11 @@ newPackage(
     Date => "May 18, 2020",
     Headline => "a simple documentation function",
     Authors => {
-	{ Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "https://faculty.math.illinois.edu/~dan/" },
+	{ Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "https://faculty.math.illinois.edu/~dan/" },
 	{ Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "https://pi.math.cornell.edu/~mike/" },
 	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu", HomePage => "https://math.umn.edu/~mahrud/" }
 	},
+    Keywords => {"Miscellaneous"},
     PackageImports => { "Text" },
     DebuggingMode => false,
     AuxiliaryFiles => true

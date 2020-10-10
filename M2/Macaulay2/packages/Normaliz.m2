@@ -18,6 +18,7 @@ newPackage(
                     {Name=> "Christof Soeger",
                     Email=>"csoeger@uni-osnabrueck.de"}},
            Headline=>"interface to Normaliz in Macaulay2",
+           Keywords => {"Interfaces"},
            DebuggingMode => false,
 	   Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
@@ -26,8 +27,8 @@ newPackage(
 		"acceptance date" => "2010-08-08",
 		"published article URI" => "http://www.j-sag.org/Volume2/jsag-4-2010.pdf",
 		"published code URI" => "http://www.j-sag.org/Volume2/Normaliz.m2",
-		"repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Normaliz.m2",
-		"release at publication" => 11859,	    -- as an integer
+		"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Normaliz.m2",
+		"release at publication" => "d814bd64858da074bc73c626d27ff5494dfb7d4f",
 		"version at publication" => "2.0",
 		"volume number" => "2",
 		"volume URI" => "http://www.j-sag.org/volume2.html"
