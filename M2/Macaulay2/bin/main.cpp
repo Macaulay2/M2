@@ -193,8 +193,8 @@ void* interpFunc(ArgCell* vargs)
   clean_up();
 
 #ifdef MEMDEBUG
-  fprintf(stderr, "gc: heap size = %d, free space divisor = %ld, collections = %ld\n",
-	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
+  fprintf(stderr, "gc: heap size = %zu, free space divisor = %ld, collections = %ld\n",
+	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no /* -old_collections */);
 #endif
 
   exit(0);
