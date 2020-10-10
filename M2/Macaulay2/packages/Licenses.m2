@@ -4,6 +4,7 @@ newPackage ( "Licenses",
      Authors => {{Name => "Daniel R. Grayson", 
 	       Email => "danielrichardgrayson@gmail.com", 
 	       HomePage => "http://dangrayson.com/"}},
+     Keywords => {"Miscellaneous"},
      Headline => "licensing of Macaulay2"
      )
 

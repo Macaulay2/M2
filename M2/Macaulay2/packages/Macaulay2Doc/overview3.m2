@@ -386,7 +386,8 @@ document {
      early support, encouragement and suggestions.  We also acknowledge an
      intellectual debt to Dave Bayer, who, with Michael Stillman,
      wrote Macaulay, a specialized computer algebra system for algebraic
-     geometry and the predecessor of this program."
+     geometry and the predecessor of this program.",
+     SeeAlso => "authors of Macaulay2 packages"
      }
 
 -* -- Mike wanted this: 
@@ -594,8 +595,8 @@ document {
 	  TO "Daniel R. Grayson",
 	  TO "Michael E. Stillman",
      	  "Our co-author for the tutorials, long time supporter and user of Macaulay2, and collaborator on the project since 2007:",
-	  TO "David Eisenbud",
-	  }
+	  TO "David Eisenbud"},
+     SeeAlso => "authors of Macaulay2 packages"
      }
 
 document {

@@ -16,6 +16,7 @@ newPackage(
 	      HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}
                    },
     	Headline => "random plane curves",
+	Keywords => {"Examples and Random Objects"},
 	PackageExports => {"RandomObjects"},
 	PackageImports => {"Truncations"},
     	DebuggingMode => false

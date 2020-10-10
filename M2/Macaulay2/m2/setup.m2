@@ -133,12 +133,6 @@ input = (filename) -> (tryload(filename,simpleInput,false);)
 needs = s -> if not filesLoaded#?s then load s else (
      (fullfilename,filetime) := filesLoaded#s;
      if filetime < fileTime fullfilename then load fullfilename)
-warning = x -> (
-     if debugLevel > 0 then (
-     	  if x =!= () then stderr << "--warning: " << x << endl;
-	  error "warning issued, debugLevel > 0";
-	  );
-     )
 
 lastLN := 0
 lastWI := 0

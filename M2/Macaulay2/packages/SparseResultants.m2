@@ -2,9 +2,10 @@
 newPackage(
        "SparseResultants",
         Version => "1.0.1", 
-        Date => "July 23, 2020",
+        Date => "September 30, 2020",
         Headline => "computations with sparse resultants",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
+	Keywords => {"Commutative Algebra"},
         PackageExports => {"Resultants"},
         DebuggingMode => false
 )
@@ -15,11 +16,19 @@ export{"sparseResultant", "SparseResultant", "sparseDiscriminant", "SparseDiscri
        "MultidimensionalMatrix", "multidimensionalMatrix", "permute", "shape", "reverseShape", "sortShape", "sylvesterMatrix", "degreeDeterminant",
        "randomMultidimensionalMatrix", "genericMultidimensionalMatrix", "genericSymmetricMultidimensionalMatrix", "genericSkewMultidimensionalMatrix"}
 
+hasAttribute = value Core#"private dictionary"#"hasAttribute";
+getAttribute = value Core#"private dictionary"#"getAttribute";
+ReverseDictionary = value Core#"private dictionary"#"ReverseDictionary";
+
 SPARSERESULTANT := local SPARSERESULTANT;
 
 SparseResultant = new Type of HashTable;
 
+globalAssignment SparseResultant;
+
 char SparseResultant := (R) -> R#"characteristic";
+
+exponents SparseResultant := (R) -> R#"exponents";
 
 SparseResultant Matrix := (R,F) -> (R#"evaluation") F;
 
@@ -27,10 +36,22 @@ SparseResultant VisibleList := (R,F) -> (R#"evaluation") toList(F);
 
 SparseResultant Thing := (R,F) -> R (sequence F);
 
-net SparseResultant := (R) -> net("sparse ")|net(if R#"Unmixed" then "unmixed" else "mixed")|net(" resultant associated to ")|net(R#"exponents")|net(" over ")|net(if char R == 0 then ZZ else ZZ/(char R));
+toString SparseResultant := net SparseResultant := R -> (
+    if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
+    else "-*An example of sparse resultant*-"
+);
+
+SparseResultant#{Standard,AfterPrint} = SparseResultant#{Standard,AfterNoPrint} = (R) -> (
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class R << " ("; 
+    << "sparse " << (if R#"Unmixed" then "unmixed" else "mixed") << " resultant associated to " << R#"exponents"; 
+    if char R > 0 then (<< " over " << toString(ZZ/(char R)));
+    << ")" << endl;
+);
 
 describe SparseResultant := (R) -> (
-    str := (toString net R)|newline;
+    str := "sparse "|(if R#"Unmixed" then "unmixed" else "mixed")|" resultant associated to "|net(R#"exponents");
+    if char R > 0 then str = str|" over "|toString(ZZ/char R);
+    str = toString(str)|newline;
     W := R#"dualizedChowForm";
     if W =!= null then (
         f := R#"map";
@@ -241,14 +262,30 @@ SPARSEDISCRIMINANT := local SPARSEDISCRIMINANT;
 
 SparseDiscriminant = new Type of HashTable;
 
+globalAssignment SparseDiscriminant;
+
 char SparseDiscriminant := (D) -> D#"characteristic";
+
+exponents SparseDiscriminant := (D) -> D#"exponents";
 
 SparseDiscriminant Thing := (D,F) -> (D#"evaluation") F;
 
-net SparseDiscriminant := (D) -> net("sparse discriminant associated to ")|net(D#"exponents")|net(" over ")|net(if char D == 0 then ZZ else ZZ/(char D));
+toString SparseDiscriminant := net SparseDiscriminant := D -> (
+    if hasAttribute(D,ReverseDictionary) then toString getAttribute(D,ReverseDictionary)
+    else "-*An example of sparse discriminant*-"
+);
+
+SparseDiscriminant#{Standard,AfterPrint} = SparseDiscriminant#{Standard,AfterNoPrint} = (D) -> (
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class D << " ("; 
+    << "sparse discriminant associated to " << D#"exponents"; 
+    if char D > 0 then (<< " over " << toString(ZZ/(char D)));
+    << ")" << endl;
+);
 
 describe SparseDiscriminant := (D) -> (
-    str := (toString net D)|newline;
+    str := "sparse discriminant associated to "|net(D#"exponents");
+    if char D > 0 then str = str|" over "|toString(ZZ/char D);
+    str = toString(str)|newline;
     f := D#"map";
     str = str|"associated monomial map: PP^"|toString(numgens target f -1)|" --> PP^"|toString(numgens source f -1)|newline;
     Y := D#"dualVar";
@@ -948,7 +985,7 @@ document {
     },
     PARA {"In the second example, we calculate the sparse unmixed resultant associated to the set of monomials ",TEX///$(1,x,y,xy)$///,". Then we evaluate it at the three polynomials ",TEX///$f = a_0 + a_1 x + a_2 y + a_3 x y, g = b_0 + b_1 x + b_2 y + b_3 x y, h = c_0 + c_1 x + c_2 y + c_3 x y$///,". Moreover, we perform all the computation over ",TEX///$\mathbb{Z}/3331$///,"."},    
     EXAMPLE {
-        "time Res = sparseResultant(matrix{{0,0,1,1},{0,1,0,1}},CoefficientRing=>ZZ/3331)",
+        "time Res = sparseResultant(matrix{{0,0,1,1},{0,1,0,1}},CoefficientRing=>ZZ/3331);",
         "ZZ/3331[a_0..a_3,b_0..b_3,c_0..c_3][x,y];",
         "(f,g,h) = (a_0 + a_1*x + a_2*y + a_3*x*y, b_0 + b_1*x + b_2*y + b_3*x*y, c_0 + c_1*x + c_2*y + c_3*x*y)",
         "time Res(f,g,h)",
@@ -967,10 +1004,52 @@ document {
 document { 
     Key => {"SparseResultant"}, 
     Headline => "the class of all sparse resultants", 
-    PARA {"An object of this class is created by the method ",TO sparseResultant,", when the input is given by ",TEX///$n+1$///," integral matrices ",TEX///$A_0,\ldots,A_n$///," with ",TEX///$n$///," rows. Such an object is just a function that to ", TEX///$n+1$///," Laurent polynomials ", TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,", with ",TEX///$f_i = \sum_{\omega\in \{columns of A_i\}} a_{i,\omega} x^{\omega}$///,", associates their sparse resultant ",TEX///$Res_{A_0,\ldots,A_n}(f_0,\ldots,f_n)$///,", which is a polynomial in the coefficients ",TEX///$a_{i,\omega}$///,". An error is thrown if the polynomials ",TEX///$f_i$///," do not have the correct form."}
+    PARA {"An object of this class is created by the method ",TO sparseResultant,", when the input is given by ",TEX///$n+1$///," integral matrices ",TEX///$A_0,\ldots,A_n$///," with ",TEX///$n$///," rows. Such an object behaves like a function that to ", TEX///$n+1$///," Laurent polynomials ", TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,", with ",TEX///$f_i = \sum_{\omega\in \{columns of A_i\}} a_{i,\omega} x^{\omega}$///,", associates their sparse resultant ",TEX///$Res_{A_0,\ldots,A_n}(f_0,\ldots,f_n)$///,", which is a polynomial in the coefficients ",TEX///$a_{i,\omega}$///,". An error is thrown if the polynomials ",TEX///$f_i$///," do not have the correct form."}
 }
 
-undocumented {(char, SparseResultant), (describe, SparseResultant), (net, SparseResultant), (symbol SPACE, SparseResultant, Matrix), (symbol SPACE, SparseResultant, VisibleList), (symbol SPACE, SparseResultant, Thing)}
+document { 
+    Key => {(exponents,SparseResultant)}, 
+    Headline => "get the matrices of exponents", 
+    Usage => "exponents R", 
+    Inputs => {"R" => SparseResultant},
+    Outputs => {{"the matrices of exponents from which the sparse resultant ",TT"R"," is created"}},
+    EXAMPLE {
+        "R = denseResultant(2,2,1);",
+        "M = exponents R",
+        "assert(R === sparseResultant M)"
+     },
+     SeeAlso => {exponentsMatrix}
+}
+
+document { 
+    Key => {(char,SparseResultant)}, 
+    Headline => "get the characteristic", 
+    Usage => "char R", 
+    Inputs => {"R" => SparseResultant},
+    Outputs => {ZZ => {"the characteristic of the ring of the polynomial representing ",TT"R"}},
+    EXAMPLE {
+        "R = denseResultant(2,2,1,CoefficientRing=>ZZ/331);",
+        "char R",
+        "char denseResultant(2,2,1)"
+     }
+}
+
+document { 
+    Key => {(symbol SPACE, SparseResultant, Thing)}, 
+    Headline => "evaluate a sparse resultant", 
+    Usage => "R(f)", 
+    Inputs => {"R" => SparseResultant => {"associated to ",TEX///$n+1$///," integral matrices ",TEX///$A_0,\ldots,A_n$///," with ",TEX///$n$///," rows."},
+              {TEX///$n+1$///," Laurent polynomials ",TEX///$f = (f_0,\ldots,f_n)$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,", with ",TEX///$f_i = \sum_{\omega\in \{columns of A_i\}} a_{i,\omega} x^{\omega}$///,"."}},
+    Outputs => {RingElement => {"the ",TEX///$(A_0,\ldots,A_n)$///,"-resultant of ",TEX///$f_0,\ldots,f_n$///,"."}},
+    EXAMPLE {
+        "R = denseResultant(2,3);",
+        "f = genericLaurentPolynomials(2,3)",
+        "R(f)"
+     },
+     SeeAlso => {sparseResultant}
+}
+
+undocumented {(describe, SparseResultant), (toString, SparseResultant), (net, SparseResultant), (symbol SPACE, SparseResultant, VisibleList), (symbol SPACE, SparseResultant, Matrix)}
 
 document { 
     Key => {sparseDiscriminant,(sparseDiscriminant,Matrix),(sparseDiscriminant,RingElement),[sparseDiscriminant,CoefficientRing]}, 
@@ -993,10 +1072,52 @@ document {
 document { 
     Key => {"SparseDiscriminant"}, 
     Headline => "the class of all sparse discriminants", 
-    PARA {"An object of this class is created by the method ",TO sparseDiscriminant,", when the input is an integral matrix ",TEX///$A$///," with ",TEX///$n$///," rows. Such an object is just a function that to a Laurent polynomial ", TEX///$f$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,", with ",TEX///$f = \sum_{\omega\in \{columns of A\}} a_{\omega} x^{\omega}$///,", associates its sparse discriminant ",TEX///$Disc_{A}(f)$///,", which is a polynomial in the coefficients ",TEX///$a_{\omega}$///,". An error is thrown if the polynomial ",TEX///$f$///," does not have the correct form."}
+    PARA {"An object of this class is created by the method ",TO sparseDiscriminant,", when the input is an integral matrix ",TEX///$A$///," with ",TEX///$n$///," rows. Such an object behaves like a function that to a Laurent polynomial ", TEX///$f$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,", with ",TEX///$f = \sum_{\omega\in \{columns of A\}} a_{\omega} x^{\omega}$///,", associates its sparse discriminant ",TEX///$Disc_{A}(f)$///,", which is a polynomial in the coefficients ",TEX///$a_{\omega}$///,". An error is thrown if the polynomial ",TEX///$f$///," does not have the correct form."}
 }
 
-undocumented {(char, SparseDiscriminant), (describe, SparseDiscriminant), (net, SparseDiscriminant), (symbol SPACE, SparseDiscriminant, Thing)}
+document { 
+    Key => {(exponents,SparseDiscriminant)}, 
+    Headline => "get the matrix of exponents", 
+    Usage => "exponents D", 
+    Inputs => {"D" => SparseDiscriminant},
+    Outputs => {{"the matrix of exponents from which the sparse discriminant ",TT"D"," is created"}},
+    EXAMPLE {
+        "D = denseDiscriminant(2,2);",
+        "M = exponents D",
+        "assert(D === sparseDiscriminant M)"
+     },
+     SeeAlso => {exponentsMatrix}
+}
+
+document { 
+    Key => {(char,SparseDiscriminant)}, 
+    Headline => "get the characteristic", 
+    Usage => "char D", 
+    Inputs => {"D" => SparseDiscriminant},
+    Outputs => {ZZ => {"the characteristic of the ring of the polynomial representing ",TT"D"}},
+    EXAMPLE {
+        "D = denseDiscriminant(2,2,CoefficientRing=>ZZ/331);",
+        "char D",
+        "char denseDiscriminant(2,2)"
+     }
+}
+
+document { 
+    Key => {(symbol SPACE, SparseDiscriminant, Thing)}, 
+    Headline => "evaluate a sparse discriminant", 
+    Usage => "D(F)", 
+    Inputs => {"D" => SparseDiscriminant => {"associated to an integral matrix ",TEX///$A$///," with ",TEX///$n$///," rows."},
+              {"a Laurent polynomial ",TEX///$F = \sum_{\omega\in \{columns of A\}} a_{\omega} x^{\omega}$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,"."}},
+    Outputs => {RingElement => {"the ",TEX///$A$///,"-discriminant of ",TEX///$F$///,"."}},
+    EXAMPLE {
+        "D = denseDiscriminant(2,2);",
+        "QQ[a..f][x,y]; F = a*x^2+b*x*y+c*y^2+d*x+e*y+f",
+        "D(F)"
+     },
+     SeeAlso => {sparseDiscriminant}
+}
+
+undocumented {(describe, SparseDiscriminant), (toString, SparseDiscriminant), (net, SparseDiscriminant)}
 
 document { 
     Key => {exponentsMatrix,(exponentsMatrix,Sequence),[exponentsMatrix,Unmixed]}, 
@@ -1018,10 +1139,10 @@ undocumented {(exponentsMatrix,VisibleList),(exponentsMatrix,RingElement)}
 
 document { 
     Key => {genericLaurentPolynomials,(genericLaurentPolynomials,Sequence),[genericLaurentPolynomials,CoefficientRing]}, 
-    Headline => "generic Laurent polynomials", 
+    Headline => "generic (Laurent) polynomials", 
     Usage => "genericLaurentPolynomials A", 
-    Inputs => {"A" => Sequence => {"or a ",TO2 {List,"list"}," of ",TEX///$n+1$///," matrices ",TEX///$A_0,\ldots,A_n$///," over ",TEX///$\mathbb{Z}$///," and with ",TEX///$n$///," rows to represent the exponent vectors of Laurent polynomials ",TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables. For the dense case, one can pass just the sequence of degrees of ",TEX///$f_0,\ldots,f_n$///,"."}}, 
-    Outputs => {{"the generic Laurent polynomials ",TEX///$f_0,\ldots,f_n$///," in the ring ",TEX///$\mathbb{Z}[a_0,a_1,\ldots,b_0,b_1,\ldots][x_1,\ldots,x_n]$///,", involving only the monomials from ",TEX///$A$///,"."}},
+    Inputs => {"A" => Sequence => {"or a ",TO2 {List,"list"}," of ",TEX///$n+1$///," matrices ",TEX///$A_0,\ldots,A_n$///," over ",TEX///$\mathbb{Z}$///," and with ",TEX///$n$///," rows to represent the exponent vectors of (Laurent) polynomials ",TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables. For the dense case, one can pass just the sequence of degrees of ",TEX///$f_0,\ldots,f_n$///,"."}}, 
+    Outputs => {{"the generic (Laurent) polynomials ",TEX///$f_0,\ldots,f_n$///," in the ring ",TEX///$\mathbb{Z}[a_0,a_1,\ldots,b_0,b_1,\ldots][x_1,\ldots,x_n]$///,", involving only the monomials from ",TEX///$A$///,". (Note that, if all the exponents are nonnegative, then the ambient polynomial ring is taken without inverses of variables, so that ",TEX///$f_0,\ldots,f_n$///," are ordinary polynomials.)"}},
     PARA{"This method helps to construct special types of sparse resultants, see for instance ",TO "denseResultant","."},
     EXAMPLE {
         "M = (matrix{{2,3,4,5},{0,2,1,0}},matrix{{1,-1,0,2,3},{-2,0,-7,-1,0}},matrix{{-1,0,6},{-2,1,3}})",
@@ -1416,7 +1537,7 @@ document {
     Headline => "Sylvester-type matrix for the hyperdeterminant of a matrix of boundary shape", 
     Usage => "sylvesterMatrix M", 
     Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix of boundary shape ",TEX///$(k_1+1)\times\ldots\times (k_n+1)$///," (that is, ",TEX///$2 max\{k_1,\ldots,k_n\} = k_1+\ldots+k_n$///,")."}},
-    Outputs => {Matrix => {"a square matrix whose determinant is ",TEX///$det(M)$///," (up to sign)."}},
+    Outputs => {Matrix => {"a particular square matrix whose determinant is ",TEX///$det(M)$///," (up to sign), introduced by Gelfand, Kapranov, and Zelevinsky."}},
     PARA{"This is an implementation of Theorem 3.3, Chapter 14, in ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},"."},
     EXAMPLE {
         "M = randomMultidimensionalMatrix {4,2,3}",

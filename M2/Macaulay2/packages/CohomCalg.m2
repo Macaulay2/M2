@@ -8,6 +8,7 @@ newPackage(
              HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"
              }},
         Headline => "interface to CohomCalg software for computing cohomology of torus invariant divisors on a toric variety",
+	Keywords => {"Toric Geometry", "Interfaces"},
         AuxiliaryFiles => true,
         PackageExports => {"NormalToricVarieties"},
         Configuration => {

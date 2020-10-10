@@ -9,6 +9,7 @@ newPackage(
                   Email => "mike@math.cornell.edu", 
                   HomePage => "http://pi.math.cornell.edu/~mike"}},
         Headline => "Compute the Eagon Resolution of the residue field",
+	Keywords => {"CommutativeAlgebra"},
         DebuggingMode => false
         )
 

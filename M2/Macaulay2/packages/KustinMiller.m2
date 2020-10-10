@@ -12,6 +12,7 @@ newPackage(
 		  HomePage => "http://www.math.ist.utl.pt/~papadak/"}
                    },
     	Headline => "unprojection and the Kustin-Miller complex construction",
+	Keywords => {"Commutative Algebra"},
 	PackageExports => {"SimplicialComplexes"},
     	DebuggingMode => false,
 	Certification => {
@@ -21,8 +22,8 @@ newPackage(
 	     "acceptance date" => "2012-05-07",
 	     "published article URI" => "http://j-sag.org/Volume4/jsag-2-2012.pdf",
 	     "published code URI" => "http://j-sag.org/Volume4/KustinMiller.m2",
-	     "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/KustinMiller.m2",
-	     "release at publication" => 14712,
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/KustinMiller.m2",
+	     "release at publication" => "a611bb9148103fa0c7908595cc979c66d210bb70",
 	     "version at publication" => "1.4",
 	     "volume number" => "4",
 	     "volume URI" => "http://j-sag.org/Volume4/"
