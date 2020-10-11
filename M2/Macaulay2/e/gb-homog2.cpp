@@ -77,7 +77,7 @@ void GB_comp::initialize0(const Matrix *m,
     {
       // The 0th one is not used.
       monideal_pair *p = new monideal_pair(originalR);
-      _monideals.append(p);
+      _monideals.push_back(p);
     }
 }
 
@@ -194,7 +194,7 @@ s_pair *GB_comp::new_gen(int i, gbvector *f, ring_elem denom)
     {
       if (!_GR->gbvector_is_zero(fsyz))
         {
-          _syz.append(fsyz);
+          _syz.push_back(fsyz);
           _n_syz++;
         }
       return NULL;
@@ -575,7 +575,7 @@ void GB_comp::gb_insert(gbvector *f, gbvector *fsyz, int ismin)
   _M->to_varpower(f_m, vp);
   _monideals[p->f->comp]->mi_search->insert(new Bag(p, vp));
   _n_gb++;
-  _gb.append(p);
+  _gb.push_back(p);
   _M->remove(f_m);
 
   // Now we must be a bit careful about this next, but we only want one
@@ -639,7 +639,7 @@ int GB_comp::s_pair_step()
       if (_collect_syz)
         {
           // vec fsyzvec = _GR->gbvector_to_vec(_Fsyz,fsyz);
-          _syz.append(fsyz);
+          _syz.push_back(fsyz);
           _n_syz++;
           return SPAIR_SYZ;
         }
@@ -688,7 +688,7 @@ int GB_comp::gen_step()
       if (_collect_syz)
         {
           // vec fsyzvec = _GR->gbvector_to_vec(_Fsyz,fsyz);
-          _syz.append(fsyz);
+          _syz.push_back(fsyz);
           _n_syz++;
           return SPAIR_SYZ;
         }
@@ -1003,7 +1003,7 @@ const Matrix /* or null */ *GB_comp::get_gb()
 {
   start_computation();
   MatrixConstructor mat(_F, 0);
-  for (int i = 0; i < _gb.length(); i++)
+  for (int i = 0; i < _gb.size(); i++)
     {
       vec v = originalR->translate_gbvector_to_vec(_F, _gb[i]->f);
       mat.append(v);
@@ -1016,7 +1016,7 @@ const Matrix /* or null */ *GB_comp::get_mingens()
 {
   start_computation();
   MatrixConstructor mat(_F, 0);
-  for (int i = 0; i < _gb.length(); i++)
+  for (int i = 0; i < _gb.size(); i++)
     if (_gb[i]->is_min)
       mat.append(originalR->translate_gbvector_to_vec(_F, _gb[i]->f));
   return mat.to_matrix();
@@ -1026,7 +1026,7 @@ const Matrix /* or null */ *GB_comp::get_change()
 {
   start_computation();
   MatrixConstructor mat(_Fsyz, 0);
-  for (int i = 0; i < _gb.length(); i++)
+  for (int i = 0; i < _gb.size(); i++)
     mat.append(originalR->translate_gbvector_to_vec(_Fsyz, _gb[i]->fsyz));
   return mat.to_matrix();
 }
@@ -1035,7 +1035,7 @@ const Matrix /* or null */ *GB_comp::get_syzygies()
 {
   start_computation();
   MatrixConstructor mat(_Fsyz, 0);
-  for (int i = 0; i < _syz.length(); i++)
+  for (int i = 0; i < _syz.size(); i++)
     mat.append(originalR->translate_gbvector_to_vec(_Fsyz, _syz[i]));
   return mat.to_matrix();
 }
@@ -1044,7 +1044,7 @@ const Matrix /* or null */ *GB_comp::get_initial(int nparts)
 {
   start_computation();
   MatrixConstructor mat(_F, 0);
-  for (int i = 0; i < _gb.length(); i++)
+  for (int i = 0; i < _gb.size(); i++)
     {
       gbvector *f = _GR->gbvector_lead_term(nparts, _F, _gb[i]->f);
       mat.append(originalR->translate_gbvector_to_vec(_F, f));
@@ -1058,7 +1058,7 @@ const Matrix /* or null */ *GB_comp::get_parallel_lead_terms(M2_arrayint w)
 {
   start_computation();
   MatrixConstructor mat(_F, 0);
-  for (int i = 0; i < _gb.length(); i++)
+  for (int i = 0; i < _gb.size(); i++)
     {
       gbvector *f =
           _GR->gbvector_parallel_lead_terms(w, _F, _gb[i]->f, _gb[i]->f);
@@ -1180,7 +1180,7 @@ void GB_comp::text_out(buffer &o) const
 {
   _spairs->stats();
   if (M2_gbTrace >= 5 && M2_gbTrace % 2 == 1)
-    for (int i = 0; i < _gb.length(); i++)
+    for (int i = 0; i < _gb.size(); i++)
       {
         o << i << '\t';
         _GR->gbvector_text_out(o, _F, _gb[i]->f);
