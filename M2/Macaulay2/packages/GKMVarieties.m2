@@ -8,7 +8,7 @@
 
 
 
-newPackage("GKMManifolds",
+newPackage("GKMVarieties",
 	Version => "0.1",
 	Date => "August 1, 2020",
 	Authors => {
@@ -20,56 +20,52 @@ newPackage("GKMManifolds",
 	     HomePage => "https://math.berkeley.edu/~ritvik"}
 	    },
 	Headline => "computations with GKM manifolds and moment graphs",
-	HomePage => "https://github.com/chrisweur/GKMManifolds",
+	HomePage => "https://github.com/chrisweur/GKMVarieties",
 	PackageExports => {"Graphs", "Matroids", "NormalToricVarieties"},
 	AuxiliaryFiles => true,
 	--Keywords => {"Equivariant Cohomology", "Toric Geometry", "Flag Varieties", "Matroids"},
 	DebuggingMode => false
 )
 export {
-	"TVariety",
-	"tVariety",
-    	"TKClass",
-	"tKClass",
-	"ampleTKClass",
-	"trivialTKClass",
-	"TMap",
-	"tMap",
+	"GKMVariety",
+	"makeGKMVariety",
+	"KClass",
+	"makeKClass",
+	"ampleKClass",
+	"trivialKClass",
+	"EquivariantMap",
 	"pushforward",	
-	"diagonalTMap",
+	"diagonalMap",
 	"FlagMatroid",
 	"flagMatroid",
 	--"tFlagVariety",
-	"tFlagMap",
-	"kTutte",
-	"hilb",
-	"tvar",
+	"flagMap",
+	"flagGeomTuttePolynomial",
+	"KPolynomials",
 	"charts",
 	"points",
 	"ptsMap",
-	"charRing",
+	"characterRing",
 	"HTpt",
-	"tProjectiveSpace",
+	"projectiveSpace",
 	"MomentGraph",
 	"momentGraph",
 	"constituents",
-	"makeCharRing",
+	"makeCharacterRing",
 	--"makeHTpt",
-	"tGeneralizedFlagVariety",
+	"generalizedFlagVariety",
 	"lieType",
 	"cellOrder",
 	"bruhatOrder",
-	"tGeneralizedSchubertVariety",
-	"tChi",
-	"tOrbitClosure",
+	"generalizedSchubertVariety",
+	"orbitClosure",
 	"toFraction",
 	"affineToricRing",
 	"setIndicator",
 	--"unastrsk",
-	--"toCharRing",
+	--"toCharacterRing",
 	--"tHilbNumer",
-	"RREFMethod",
-	"latticePts"
+	"RREFMethod"
 }
 
 
@@ -121,7 +117,7 @@ toFraction(RingElement,RingElement,Ring) := (f,g,S) -> (
 )
 
 --auxiliary function:
---makes a polynomial ring with n variables, representing T-equivariant cohomology 
+--makes a polynomial ring with n variables, representing equivariant cohomology 
 --ring of a point where T =  = (kk^*)^n.
 makeHTpt = method()
 makeHTpt(ZZ) := Ring => n -> (
@@ -139,7 +135,7 @@ makeHTpt(ZZ) := Ring => n -> (
 --G.edges : a hash table whose keys are pairs {p,q} of vertices and values v are directed weights
 -- of the edge  p --> q where v is a list of numbers such that matrix{v} * basis(1,G.HTpt)
 -- gives the weight
---G.HTpt : a polynomial ring, represent the T-equivariant cohomology ring of a point
+--G.HTpt : a polynomial ring, represent the equivariant cohomology ring of a point
 
 
 MomentGraph = new Type of HashTable
@@ -166,7 +162,7 @@ momentGraph(List,HashTable,Ring) := MomentGraph => (V,E,H) -> (
 underlyingGraph(MomentGraph) := Graph => G -> graph(G.vertices, keys G.edges, EntryMode => "edges")
 
 
---If a moment graph G comes from a possibly singular GKM variety with a T-invariant
+--If a moment graph G comes from a possibly singular GKM variety with a torus invariant
 -- Whitney stratification consisting of affine spaces,
 --the vertices of G correspond to each strata,
 --and are ordered v1 <= v2 if the closure of stratum of v2 is contained in that of v1.
@@ -187,80 +183,80 @@ cellOrder(MomentGraph) := Poset => G -> (
     else error " no cell order defined on this moment graph"
     )
 
---------------------------------------< T-varieties >-------------------------------------------
+--------------------------------------< GKM varieties >-------------------------------------------
 
 
 --for setting up a character ring: given n, outputs the character ring of T = (kk^*)^n
-makeCharRing = method();
-makeCharRing(ZZ) := Ring => n -> (
+makeCharacterRing = method();
+makeCharacterRing(ZZ) := Ring => n -> (
     T := symbol T;
     ZZ[T_0..T_(n-1), MonomialOrder => GLex, Inverses=>true]
 )
 
 
---a TVariety X is a HashTable with minimal data of:
+--a GKMVariety X is a HashTable with minimal data of:
 --X.points : a list representing torus-invariant points
---X.charRing : a ring representing the character ring of the torus
---additionally, a TVariety X can have:
+--X.characterRing : a ring representing the character ring of the torus
+--additionally, a GKMVariety X can have:
 --X.charts : a hash table whose keys are X.points and values are (negative of) the characters 
 --of the affine chart at the point
---X.momentGraph : a MomentGraph which is the moment graph of the T-variety
-TVariety = new Type of MutableHashTable
+--X.momentGraph : a MomentGraph which is the moment graph of the GKM variety
+GKMVariety = new Type of MutableHashTable
 
-TVariety.synonym = "T-variety"
+GKMVariety.synonym = "GKM variety"
 
-globalAssignment TVariety
-net TVariety := X -> net ofClass class X | " with an action of a " | toString(#gens X.charRing) | "-dimensional torus"
+globalAssignment GKMVariety
+net GKMVariety := X -> net ofClass class X | " with an action of a " | toString(#gens X.characterRing) | "-dimensional torus"
 
 
-tVariety = method()
+makeGKMVariety = method()
 
---a list L representing the torus-fixed points, and a character ring R defines a TVariety
-tVariety(List, Ring) := TVariety => (L,R) -> (
-    new TVariety from {
+--a list L representing the torus-fixed points, and a character ring R defines a GKMVariety
+makeGKMVariety(List, Ring) := GKMVariety => (L,R) -> (
+    new GKMVariety from {
 	symbol points => L,
-	symbol charRing => R,
+	symbol characterRing => R,
 	cache => new CacheTable
 	}
     )
 
 
---tVariety created from G, a moment graph, and a character ring R compatible with G.HTpt
-tVariety(MomentGraph,Ring) := TVariety => (G,R) -> (
+--makeGKMVariety created from G, a moment graph, and a character ring R compatible with G.HTpt
+makeGKMVariety(MomentGraph,Ring) := GKMVariety => (G,R) -> (
     if not #(gens R) == #(gens G.HTpt) then (
 	error "HTpt not compatible with the character ring"
 	);
-    new TVariety from {
+    new GKMVariety from {
 	symbol points => G.vertices,
-	symbol charRing => R,
+	symbol characterRing => R,
 	symbol momentGraph => G,
 	cache => new CacheTable
 	}
     )
 
 
---tVariety created from a moment graph G
+--makeGKMVariety created from a moment graph G
 --the character ring is created from G.HTpt
-tVariety(MomentGraph) := TVariety => G -> (
-    R := makeCharRing numgens (G.HTpt);
-    tVariety(G,R)
+makeGKMVariety(MomentGraph) := GKMVariety => G -> (
+    R := makeCharacterRing numgens (G.HTpt);
+    makeGKMVariety(G,R)
     )
 
 
---returns the moment graph of the T-variety X if it is defined
-momentGraph(TVariety) := MomentGraph => X -> (
+--returns the moment graph of the GKM variety X if it is defined
+momentGraph(GKMVariety) := MomentGraph => X -> (
     if X.?momentGraph then X.momentGraph
-    else error "no moment graph defined for this T-variety"
+    else error "no moment graph defined for this GKM variety"
     )
 
 
---given TVariety X with X.momentGraph undefined, sets a moment graph G to be the
---moment graph of X, granted that the two sanity checks (charRing dimension, fixed points) work out
-momentGraph(TVariety,MomentGraph) := (X,G) -> (
+--given GKMVariety X with X.momentGraph undefined, sets a moment graph G to be the
+--moment graph of X, granted that the two sanity checks (characterRing dimension, fixed points) work out
+momentGraph(GKMVariety,MomentGraph) := (X,G) -> (
     if X.?momentGraph then (
-	print " warning: overwriting a previously defined moment graph on this T-variety "
+	print " warning: overwriting a previously defined moment graph on this GKM variety "
 	);
-    if #(gens X.charRing) != #(gens G.HTpt) then (
+    if #(gens X.characterRing) != #(gens G.HTpt) then (
 	error "HTpt not compatible with the character ring"
 	);
     if not G.vertices === X.points then (
@@ -270,31 +266,31 @@ momentGraph(TVariety,MomentGraph) := (X,G) -> (
     )
 
 
---tVariety created from list L of points and corresponding list M of their charts' characters,
+--makeGKMVariety created from list L of points and corresponding list M of their charts' characters,
 --and R the character ring of the torus
-tVariety(List,List,Ring) := TVariety => (L,M,R) -> (
-    new TVariety from {
+makeGKMVariety(List,List,Ring) := GKMVariety => (L,M,R) -> (
+    new GKMVariety from {
 	symbol points => L,
 	symbol charts => hashTable apply(#L, i -> (L_i,M_i)),
-	symbol charRing => R,
+	symbol characterRing => R,
 	cache => new CacheTable 
     	}
     )
 
---given a TVariety X, whose X.charts have not been defined yet,
---and a list L = {l_1, ... , l_m} where l_i is a list of characters of the T-action
+--given a GKMVariety X with an action of a torus T, whose X.charts have not been defined yet,
+--and a list L = {l_1, ... , l_m} where l_i is a list of characters of the torus action
 --at the affine chart around p_i where X.points = {p_1, ... , p_m}
 --defines X.charts to be the hash table whose keys are X.points and values the characters
 charts = method()
 
-charts(TVariety) := X -> (
+charts(GKMVariety) := X -> (
     if X.?charts then X.charts
-    else error "no charts defined for this T-variety"
+    else error "no charts defined for this GKM variety"
     )
 
-charts(TVariety,List) := (X,L) -> (
+charts(GKMVariety,List) := (X,L) -> (
     if X.?charts then (
-	print " warning: overwriting previously defined charts on this T-variety " 
+	print " warning: overwriting previously defined charts on this GKM variety " 
 	);
     if not #X.points == #L then (
 	error "number of charts in the list not equal to number of points"
@@ -305,49 +301,49 @@ charts(TVariety,List) := (X,L) -> (
 
 
 --internal auxiliary function: 
---input: a Laurent polynomial f and a TVariety X
---output: a Laurent polynomial f considered as an element of X.charRing
-toCharRing = (X,f) -> (
-    if f == 1 then return 1_(X.charRing);
+--input: a Laurent polynomial f and a GKMVariety X
+--output: a Laurent polynomial f considered as an element of X.characterRing
+toCharacterRing = (X,f) -> (
+    if f == 1 then return 1_(X.characterRing);
     R := ring f; n := #(gens R);
-    if not #(gens X.charRing) == n then
+    if not #(gens X.characterRing) == n then
         error "rings have different number of variables";
-    sub(f,apply(n, i -> R_i=>X.charRing_i))    
+    sub(f,apply(n, i -> R_i=>X.characterRing_i))    
 )
 
 
 --projective space PP^n as a T=(k^*)^(n+1) variety, where (t_0, ... , t_n) acts on the
 --coordinates [x_0, ... , x_n] by [t_0^(-1)x_0, ... , t_n^(-1)x_n]
 --input: an integer n and the character ring R of T
-tProjectiveSpace = method()
-tProjectiveSpace(ZZ,Ring) := TVariety => (n,R) -> (
+projectiveSpace = method()
+projectiveSpace(ZZ,Ring) := GKMVariety => (n,R) -> (
     V := apply(n+1, i -> set {i});
     E := hashTable apply(subsets(V,2), i -> 
 	({i_0, i_1}, setIndicator(i_1,n+1) - setIndicator(i_0,n+1))
 	);
     t := symbol t; H := QQ[t_0..t_n];
     G := momentGraph(V,E,H);
-    X := tVariety(G,R);
+    X := makeGKMVariety(G,R);
     L := apply(V, v -> (select(V, w -> w =!= v))/(w -> setIndicator(w,n+1) - setIndicator(v,n+1)));
     charts(X,L);
-    X.cache.ampleTKClass = tKClass(X, (X.points)/(i -> R_(setIndicator(i,n+1))));
+    X.cache.ampleKClass = makeKClass(X, (X.points)/(i -> R_(setIndicator(i,n+1))));
     X
     )
 
 --when only given an integer n
-tProjectiveSpace(ZZ) := TVariety => n -> (
-    R := makeCharRing(n+1);
-    tProjectiveSpace(n,R)
+projectiveSpace(ZZ) := GKMVariety => n -> (
+    R := makeCharacterRing(n+1);
+    projectiveSpace(n,R)
     )
 
 
 --product of two TVarieties X,Y with an action of a common torus T
 --the product is endowed with the diagonal action of T
-TVariety ** TVariety := TVariety => (X,Y) -> (
-    R := X.charRing;
-    if not R === Y.charRing then error "character rings need be same";
+GKMVariety ** GKMVariety := GKMVariety => (X,Y) -> (
+    R := X.characterRing;
+    if not R === Y.characterRing then error "character rings need be same";
     L := elements ((set X.points) ** (set Y.points));
-    XxY := tVariety(L,R);
+    XxY := makeGKMVariety(L,R);
     if X.?charts and Y.?charts then (
 	M := apply(L, l -> (X.charts)#(first l) | (Y.charts)#(last l));
 	charts(XxY,M);
@@ -388,15 +384,15 @@ MomentGraph ** MomentGraph := MomentGraph => (G1,G2) -> (
 --Given a list L of characters of torus of X, outputs the numerator in the Hilbert series
 --of the associated monomial subalgebra
 tHilbNumer = method();
-tHilbNumer(TVariety,List) := RingElement => (X,L) -> (
-    if L == {} then return toCharRing(X,1);
+tHilbNumer(GKMVariety,List) := RingElement => (X,L) -> (
+    if L == {} then return toCharacterRing(X,1);
     A := affineToricRing L;
     I := ideal A;
     f := value numerator hilbertSeries I;
-    toCharRing(X,f)
+    toCharacterRing(X,f)
 )
 
-cellOrder(TVariety) := Poset => X -> (
+cellOrder(GKMVariety) := Poset => X -> (
     G := momentGraph X;
     cellOrder G
     )
@@ -404,47 +400,47 @@ cellOrder(TVariety) := Poset => X -> (
 
 
 
---a TKClass C has data of:
---C.tvar = a TVariety X that the T-equiv K-class C lives on
---C.hilb = a hash table whose keys are points of X and values are the Hilbert series at the point
-TKClass = new Type of HashTable
+--a KClass C has data of:
+--C.variety = a GKMVariety X that the equivariant K-class C lives on
+--C.KPolynomials = a hash table whose keys are points of X and values are the Hilbert series at the point
+KClass = new Type of HashTable
 
-TKClass.synonym = "T-equivariant K-class"
+KClass.synonym = "equivariant K-class"
 
-globalAssignment TVariety
-net TKClass := C -> net ofClass class C | " on a T-variety "
+globalAssignment GKMVariety
+net KClass := C -> net ofClass class C | " on a GKM variety "
 
 
---a TKClass is given by a TVariety X and a list L of Laurent polynomials for each torus-invariant
+--a KClass is given by a GKMVariety X and a list L of Laurent polynomials for each torus-invariant
 --points in X, (listed in the order of X.points)
-tKClass = method();
-tKClass(TVariety,List) := TKClass => (X,L) -> (
+makeKClass = method();
+makeKClass(GKMVariety,List) := KClass => (X,L) -> (
     K := X.points;
-    if any(L, l -> ring l =!= X.charRing) then L = L/(f -> toCharRing(X,f));
-    new TKClass from {
-	symbol tvar => X,
-	symbol hilb => hashTable apply(#K, i -> (K_i,L_i))
+    if any(L, l -> ring l =!= X.characterRing) then L = L/(f -> toCharacterRing(X,f));
+    new KClass from {
+	symbol variety => X,
+	symbol KPolynomials => hashTable apply(#K, i -> (K_i,L_i))
     }
 )
 
-tVariety(TKClass) := TVariety => C -> C.tvar
+makeGKMVariety(KClass) := GKMVariety => C -> C.variety
 
 
---tests whether a TKClass satisfies the edge-compatibility criterion
-isWellDefined(TKClass) := Boolean => C -> (
-    X := C.tvar;
+--tests whether a KClass satisfies the edge-compatibility criterion
+isWellDefined(KClass) := Boolean => C -> (
+    X := C.variety;
     if not X.?momentGraph then (
-	error "a moment graph needs to be defined for this T-variety "
+	error "a moment graph needs to be defined for this GKM variety "
 	);
     G := X.momentGraph;
-    R := X.charRing;
+    R := X.characterRing;
     x := symbol x;
     S := QQ[x_0..x_(#gens R - 1)];
     badEdges := select(keys G.edges, e -> (
 	    pt1 := first e;
 	    pt2 := last e;
 	    lambda := G.edges#e;
-	    ratio := toFraction(C.hilb#pt1 - C.hilb#pt2,  1 - R_lambda, S);
+	    ratio := toFraction(C.KPolynomials#pt1 - C.KPolynomials#pt2,  1 - R_lambda, S);
 	    #(terms(QQ,denominator first ratio)) != 1
 	    )
 	);
@@ -456,83 +452,82 @@ isWellDefined(TKClass) := Boolean => C -> (
     )
 
 
---the trivial TKClass (where X^T --> R is a constant 1 function) of a TVariety X
---in other words, the TKClass of the structure sheaf of X
-trivialTKClass = method();
-trivialTKClass(TVariety) := TKClass => X -> (
-    R := X.charRing;
+--the trivial KClass (where X^T --> R is a constant 1 function) of a GKMVariety X
+--in other words, the KClass of the structure sheaf of X
+trivialKClass = method();
+trivialKClass(GKMVariety) := KClass => X -> (
+    R := X.characterRing;
     L := apply(X.points, p -> 1_R);
-    tKClass(X,L)
+    makeKClass(X,L)
 )
 
 
---multiplying two TKClasses
-TKClass * TKClass := (C1,C2) -> (
-    X1 := C1.tvar; X2 := C2.tvar;
-    if not X1 === X2 then error "the T-varieties are different";
-    L := apply(X1.points, p -> C1.hilb#p * C2.hilb#p);
-    tKClass(X1,L)
+--multiplying two KClasses
+KClass * KClass := (C1,C2) -> (
+    X1 := C1.variety; X2 := C2.variety;
+    if not X1 === X2 then error "the GKM varieties are different";
+    L := apply(X1.points, p -> C1.KPolynomials#p * C2.KPolynomials#p);
+    makeKClass(X1,L)
 )
 
-TKClass ^ ZZ := (C,d) -> (
+KClass ^ ZZ := (C,d) -> (
     if d > 0 then return product(d, i -> C)
-    else if d == 0 then return trivialTKClass C.tvar
+    else if d == 0 then return trivialKClass C.variety
     else if d < 0 then (
-	if not all(values C.hilb, f -> 1 == #terms f) then (
+	if not all(values C.KPolynomials, f -> 1 == #terms f) then (
 	    error "unable to compute the inverse of this K-class"
 	    );
-	L := apply(C.tvar.points, p -> (C.hilb#p)^(-1));
-	Cneg := tKClass(C.tvar,L);
+	L := apply(C.variety.points, p -> (C.KPolynomials#p)^(-1));
+	Cneg := makeKClass(C.variety,L);
 	return product(-d, i -> Cneg)
 	)
     )
 
 
---adding two TKClasses
-TKClass + TKClass := (C1,C2) -> (
-    X1 := C1.tvar; X2 := C2.tvar;
-    if not X1 === X2 then error "the T-varieties are different";
-    L := apply(X1.points, p -> C1.hilb#p + C2.hilb#p);
-    tKClass(X1,L)
+--adding two KClasses
+KClass + KClass := (C1,C2) -> (
+    X1 := C1.variety; X2 := C2.variety;
+    if not X1 === X2 then error "the GKM varieties are different";
+    L := apply(X1.points, p -> C1.KPolynomials#p + C2.KPolynomials#p);
+    makeKClass(X1,L)
 )
 
---if a TVariety X has a distinguished O(1) T-equivariant line bundle, then returns its TKClass
-ampleTKClass = method();
-ampleTKClass(TVariety) := TKClass => X -> (
-    if X.cache.?ampleTKClass then return X.cache.ampleTKClass
-    else error "no distinguished ample line bundle on this T-variety";
+--if a GKMVariety X has a distinguished O(1) equivariant line bundle, then returns its KClass
+ampleKClass = method();
+ampleKClass(GKMVariety) := KClass => X -> (
+    if X.cache.?ampleKClass then return X.cache.ampleKClass
+    else error "no distinguished ample line bundle on this GKM variety";
 )
 
 
---if a TVariety X does not have an ample class defined, and C is a TKClass on X, 
---sets the ampleTKClass of X to be C
-ampleTKClass(TVariety,TKClass) := (X,C) -> (
-    if X.cache?ampleTKClass then (
-	print " warning: overwriting a previously defined ampleTKClasson this T-variety "
+--if a GKMVariety X does not have an ample class defined, and C is a KClass on X, 
+--sets the ampleKClass of X to be C
+ampleKClass(GKMVariety,KClass) := (X,C) -> (
+    if X.cache?ampleKClass then (
+	print " warning: overwriting a previously defined ampleKClass on this GKM variety "
 	);
-    if C.tvar =!= X then error "not a TKClass of this T-variety";
-    X.cache.ampleTKClass = C
+    if C.variety =!= X then error "not a KClass of this GKM variety";
+    X.cache.ampleKClass = C
     )
 
 
---a TMap f has data of:
---f.source: the source tVariety X,
---f.target: the target tVariety Y
+--a EquivariantMap f has data of:
+--f.source: the source makeGKMVariety X,
+--f.target: the target makeGKMVariety Y
 --f.ptsMap: a hash table whose keys are X.points and values are the point Y.points that it maps to 
-TMap = new Type of HashTable
+EquivariantMap = new Type of HashTable
 
-TMap.synonym = "T-equivariant map"
+EquivariantMap.synonym = "equivariant map"
 
-globalAssignment TMap
-net TMap := phi -> net ofClass class phi | " of T-varieties "
+globalAssignment EquivariantMap
+net EquivariantMap := phi -> net ofClass class phi | " of GKM varieties "
 
 
 
---a TMap is given by providing the source X and target Y and a list L of pairs (X point, Y point)
-tMap = method();
-tMap(TVariety,TVariety,List) := TMap => (X,Y,L) -> (
-    if not X.charRing === Y.charRing then error "character rings need be same";
-    new TMap from {
+--a EquivariantMap is given by providing the source X and target Y and a list L of pairs (X point, Y point)
+map(GKMVariety,GKMVariety,List) := EquivariantMap => opts -> (X,Y,L) -> (
+    if not X.characterRing === Y.characterRing then error "character rings need be same";
+    new EquivariantMap from {
 	symbol source => X,
 	symbol target => Y,
 	symbol ptsMap => hashTable L,
@@ -540,64 +535,64 @@ tMap(TVariety,TVariety,List) := TMap => (X,Y,L) -> (
     }
 )
 
---pullback map of TKClasses given a TMap
+--pullback map of KClasses given a EquivariantMap
 --pullback = method(); --from version 1.16 onward "pullback" is a built-in global variable
-pullback(TMap) := FunctionClosure => phi -> (
+pullback(EquivariantMap) := FunctionClosure => phi -> (
     X := phi.source; 
     Y := phi.target;
     if not phi.cache.?pullback then phi.cache.pullback = C -> (
-	if C.tvar =!= Y then (
-	    error "the TKClass to pullback is not a TKClass of the target T-variety"
+	if C.variety =!= Y then (
+	    error "the KClass to pullback is not a KClass of the target GKM variety"
 	    );
-	L := apply(X.points, p -> C.hilb#((phi.ptsMap)#p));
-	tKClass(X,L)
+	L := apply(X.points, p -> C.KPolynomials#((phi.ptsMap)#p));
+	makeKClass(X,L)
     );
     phi.cache.pullback
 )
 
---given a TMap, computes the pushforward map as a function
+--given a EquivariantMap, computes the pushforward map as a function
 pushforward = method();
-pushforward(TMap) := FunctionClosure => phi -> (
+pushforward(EquivariantMap) := FunctionClosure => phi -> (
     if phi.cache.?pushforward then return phi.cache.pushforward;
     X := phi.source;
     Y := phi.target;
-    R := X.charRing;
+    R := X.characterRing;
     Ydenoms := hashTable apply(Y.points, q -> (q, product((Y.charts)#q, l -> 1-R_l)));
     Xdenoms := hashTable apply(X.points, p -> (p, product((X.charts)#p, l -> 1-R_l)));
     x := symbol x;
     S := QQ[x_0..x_(#(gens R)-1)];
     pushforwardFct := C -> (
-	if not C.tvar === X then error " TKClass not of the source T-variety ";
+	if not C.variety === X then error " KClass not of the source GKM variety ";
 	L := apply(Y.points, q -> (
 	    	preimages := select(X.points, p -> (phi.ptsMap)#p === q);
 	    	if #preimages == 0 then return 0_R;
 	    	Ydenom := Ydenoms#q;
-	    	toSum := apply(preimages, p -> toFraction(Ydenom * C.hilb#p, Xdenoms#p, S));
+	    	toSum := apply(preimages, p -> toFraction(Ydenom * C.KPolynomials#p, Xdenoms#p, S));
 	    	val := (last first toSum) sum(toSum/first)
 	    	)
 	    );
-	tKClass(Y,L)
+	makeKClass(Y,L)
     	);
     phi.cache.pushforward = pushforwardFct
     )
 
 
---given a TVariety X outputs the diagonal map X -> X x X
-diagonalTMap = method();
-diagonalTMap(TVariety) := TMap => X -> (
+--given a GKMVariety X outputs the diagonal map X -> X x X
+diagonalMap = method();
+diagonalMap(GKMVariety) := EquivariantMap => X -> (
     Y := X ** X;
     ptPairs := apply(X.points, p -> (
 	Q := first select(Y.points, q -> (first q) === (last q) and (first q) === p);
 	(p,Q)
 	)
     );
-    tMap(X,Y,ptPairs)
+    map(X,Y,ptPairs)
 )
 
 
 
 --given two maps, takes Cartesian product of them
-TMap ** TMap := TMap => (phi,psi) -> (
+EquivariantMap ** EquivariantMap := EquivariantMap => (phi,psi) -> (
     X := phi.source ** psi.source;
     Y := phi.target ** psi.target;
     ptPairs := apply(X.points, p -> (
@@ -605,49 +600,48 @@ TMap ** TMap := TMap => (phi,psi) -> (
 	(p,Q)
 	)
     );
-    tMap(X,Y,ptPairs)
+    map(X,Y,ptPairs)
 )
 
 
---composition f o g of two TMaps g: X --> Y, f: Y --> Z;
-compose(TMap,TMap) := TMap => (f,g) -> (
+--composition f o g of two EquivariantMaps g: X --> Y, f: Y --> Z;
+compose(EquivariantMap,EquivariantMap) := EquivariantMap => (f,g) -> (
     Y1 := g.target;
     Y2 := f.source;
     if not Y1.points === Y2.points then (
-	error " check sources and targets of the T-maps "
+	error " check sources and targets of the equivariant morphisms "
 	);
     Z := f.target; X := g.source;
     ptPairs := apply(X.points, p -> (p, f.ptsMap#(g.ptsMap#p)));
-    tMap(X,Z,ptPairs)
+    map(X,Z,ptPairs)
     )
 
---the T-equivariant Euler characteristic of a TKClass, i.e. the Lefschetz trace,
+--the equivariant Euler characteristic of a KClass, i.e. the Lefschetz trace,
 --i.e. the pushforward to a point
-tChi = method()
-tChi(TKClass) := RingElement => C -> (
-    X := C.tvar;
-    R := X.charRing;
+euler(KClass) := RingElement => C -> (
+    X := C.variety;
+    R := X.characterRing;
     pt := symbol pt;
-    tPoint := tVariety({pt},{{}},R);
+    tPoint := makeGKMVariety({pt},{{}},R);
     tpt := first tPoint.points;
-    structureMap := tMap(X,tPoint,apply(X.points, i -> (i,tpt)));
+    structureMap := map(X,tPoint,apply(X.points, i -> (i,tpt)));
     pushC := (pushforward(structureMap))C;
-    pushC.hilb#tpt
+    pushC.KPolynomials#tpt
     )
 
 
 -----------------------------------------------------------------------------------------------
 ---------------------------------< normal toric varieties >------------------------------------
 
---given a NormalToricVariety X, outputs a T-variety Y with the data
---Y.points are lists where each list is the indices of the rays defining the T-fixed point
+--given a NormalToricVariety X, outputs a GKM variety Y with the data
+--Y.points are lists where each list is the indices of the rays defining the torus fixed point
 --X need be smooth, non-degenerate, and must have fixed-points.
 
 --WARNING: as usual, if an affine chart AA^m has characters a_1, ... , a_m, the torus (kk^*)^n
 --acts on AA^m by t * (x_1, ... , x_m) = (t^(-a_1)x_1, ... , t^(-a_m)x_m)
 --in other words, to agree with the usual normal toric variety literature,
 --one should consider OUTER normal cones of cones, not inner normal cones
-tVariety(NormalToricVariety,Ring) := TVariety => (X,R) -> (
+makeGKMVariety(NormalToricVariety,Ring) := GKMVariety => (X,R) -> (
     if not isSmooth X then (
 	error " the normal toric variety is not smooth "
 	);
@@ -661,7 +655,7 @@ tVariety(NormalToricVariety,Ring) := TVariety => (X,R) -> (
 	);
     rys := rays X;
     chrts := apply(pts, p -> - entries transpose inverse matrix rys_p);
-    Y := tVariety(pts,chrts,R);
+    Y := makeGKMVariety(pts,chrts,R);
     GEdgePairs := select(subsets(pts,2), i -> #(unique flatten i) == #(first i) + 1);
     GEdges := hashTable apply(GEdgePairs, i -> (
 	    p := first i;
@@ -675,32 +669,30 @@ tVariety(NormalToricVariety,Ring) := TVariety => (X,R) -> (
     )
 
 
-tVariety(NormalToricVariety) := TVariety => X -> tVariety(X,makeCharRing dim X)
+makeGKMVariety(NormalToricVariety) := GKMVariety => X -> makeGKMVariety(X,makeCharacterRing dim X)
 
 
 
---given a T-variety X, returns a normal toric variety if X was constructed from one
-normalToricVariety(TVariety) := NormalToricVariety => opts -> X -> (
+--given a GKM variety X, returns a normal toric variety if X was constructed from one
+normalToricVariety(GKMVariety) := NormalToricVariety => opts -> X -> (
     if X.cache.?normalToricVariety then X.cache.normalToricVariety
-    else error " no normal toric variety structure on this T-variety "
+    else error " no normal toric variety structure on this GKM variety "
     )
 
 
---TODO: the following unfunction is untested
-
---given a ToricDivisor D on a TVariety Y whose normal toric variety is X,
---outputs the TKClass of D on Y
-tKClass(TVariety,ToricDivisor) := TKClass => (Y,D) -> (
+--given a ToricDivisor D on a GKMVariety Y whose normal toric variety is X,
+--outputs the KClass of D on Y
+makeKClass(GKMVariety,ToricDivisor) := KClass => (Y,D) -> (
     if not normalToricVariety D === normalToricVariety Y then (
-	error " the toric divisor is not of this T-variety "
+	error " the toric divisor is not of this GKM variety "
 	);
-    R := Y.charRing;
+    R := Y.characterRing;
     hlbs := apply(Y.points, p -> (
 	    l := flatten entries (matrix{(entries D)_p} * - matrix Y.charts#p);
 	    R_l
 	    )
 	);
-    tKClass(Y,hlbs)
+    makeKClass(Y,hlbs)
     )
 
 
@@ -767,7 +759,7 @@ evenSignedPermutations = L -> (
 ---------------------< internal auxiliary functions: roots and weights >-------------------------
 
 
---internal auxiliary functions for tGeneralizedFlagVariety
+--internal auxiliary functions for generalizedFlagVariety
 --given a classical Lie type LT, the root system dimension d, and list L = {l_1, ... , l_m},
 --outputs the highest weight vector w_(l_1) + ... + w_(l_m) where w_i's are fundamental weights
 --(w_d in the orthogonal case ("B" and "D"), strictly speaking we are using
@@ -843,7 +835,7 @@ toRoot := LT -> (
 --for example, A_3 = D_3 but the code will not recognized this and output different things)
 --a list L of integers each ranging from 1 to d.
 --output:
---a generalized flag variety G/P as a T-variety with charts,
+--a generalized flag variety G/P as a GKM variety with charts,
 --where G is the classical Lie group of type LT with an action of a d-torus T,
 --(except in the case of "A", we let T be the (d+1)-torus by *not* projectivizing the torus)
 --and P is the parabolic subgroup corresponding to W_([d]\L)
@@ -852,19 +844,19 @@ toRoot := LT -> (
 --whose highest weight vector equals sum(L, i -> w_i) where w_i is the i-th fundamental weight
 --(except in the orthogonal case "B,D", the "half"-fundamental weights are doubled
 --that is, we are not considering the Spin representations but representations of SO(n).
-tGeneralizedFlagVariety = method()
-tGeneralizedFlagVariety(String,ZZ,List) := TVariety => (LT,d,L) -> (
+generalizedFlagVariety = method()
+generalizedFlagVariety(String,ZZ,List) := GKMVariety => (LT,d,L) -> (
     if not member(LT,{"A","B","C","D"}) then (
-	error " the first entry must be one of \"A\", \"B\", \"C\", or \"D\" "
+	error " the first argument must be one of \"A\", \"B\", \"C\", or \"D\" "
 	);
     if d <= 0 then (
-	error " the second entry (dimension) must be a positive integer "
+	error " the second argument (dimension) must be a positive integer "
 	);
     if not all(L, i -> 1 <= i and i <= d) then (
 	error " indices for the weights must be between 1 and the dimension (inclusive) "
 	);
     toRootFunc := toRoot LT;
-    R := if LT == "A" then makeCharRing(d+1) else makeCharRing d;
+    R := if LT == "A" then makeCharacterRing(d+1) else makeCharacterRing d;
     extrWts := extremalWeights(LT,d,L);
     GEdgesDouble := new MutableHashTable;
     chrts := apply(extrWts, v -> (
@@ -880,7 +872,7 @@ tGeneralizedFlagVariety(String,ZZ,List) := TVariety => (LT,d,L) -> (
 	    lambdas
 	    )
 	);
-    X := tVariety(extrWts/redVecToFlag, chrts, R);
+    X := makeGKMVariety(extrWts/redVecToFlag, chrts, R);
     GEdges := hashTable apply(unique ((keys GEdgesDouble)/set), i -> (
 	    e := elements i;
 	    (e, GEdgesDouble#e)
@@ -889,41 +881,52 @@ tGeneralizedFlagVariety(String,ZZ,List) := TVariety => (LT,d,L) -> (
     H := if LT == "A" then makeHTpt(d+1) else makeHTpt d;
     G := momentGraph(X.points, GEdges, H);
     momentGraph(X,G);
-    X.cache.ampleTKClass = tKClass(X, apply(extrWts, i -> R_i));
+    X.cache.ampleKClass = makeKClass(X, apply(extrWts, i -> R_i));
     X.cache.lieType = LT;
     X
     )
 
---same as tGeneralizedFlagVariety but with the ring R provided for the character ring.
-tGeneralizedFlagVariety(String,ZZ,List,Ring) := TVariety => (LT,d,L,R) -> (
-    X := tGeneralizedFlagVariety(LT,d,L);
-    S := X.charRing;
+------------------------------------------------
+-- Lines 870 - 882 can be replaced with
+------------------------------------------------
+-*
+    chrts := apply(extrWts, v -> (
+	    lambdas := select(apply(delete(v,extrWts), w-> {w,toRootFunc(w-v)}), u-> #u_1 == 1);
+	    apply(lambdas, u -> GEdgesDouble#({v,u_0}/redVecToFlag) = first u_1);
+	    apply(lambdas, u -> u_1)
+	    );
+*-
+
+--same as generalizedFlagVariety but with the ring R provided for the character ring.
+generalizedFlagVariety(String,ZZ,List,Ring) := GKMVariety => (LT,d,L,R) -> (
+    X := generalizedFlagVariety(LT,d,L);
+    S := X.characterRing;
     if #(gens R) != #(gens S) then error " check character ring ";
     conversion := map(R,S,gens R);
-    X.charRing = R;
-    C := ampleTKClass X;
-    X.cache.ampleTKClass = tKClass(X, apply(X.points, i -> conversion C.hilb#i));
+    X.characterRing = R;
+    C := ampleKClass X;
+    X.cache.ampleKClass = makeKClass(X, apply(X.points, i -> conversion C.KPolynomials#i));
     X
     )
 
---if a TVariety is a generalized flag variety, returns its Lie type
+--if a GKMVariety is a generalized flag variety, returns its Lie type
 lieType = method()
-lieType(TVariety) := String => X -> (
+lieType(GKMVariety) := String => X -> (
     if X.cache.?lieType then X.cache.lieType
-    else error " no Lie Type defined for this T-variety "
+    else error " no Lie Type defined for this GKM variety "
     )
 
 --given a generalized flag variety, computes & stores the bruhat order for its moment graph
 --and then returns the poset
 bruhatOrder = method()
-bruhatOrder(TVariety) := Poset => X -> (
+bruhatOrder(GKMVariety) := Poset => X -> (
     if not X.cache.?lieType then (
 	error " not a generalized flag variety "
 	);
     if X.momentGraph.cache.?cellOrder then return X.momentGraph.cache.cellOrder;
     LT := lieType X;
     G := X.momentGraph;
-    n := #(gens X.charRing);
+    n := #(gens X.characterRing);
     posWt := apply(n, i -> n - i);
     negRoots := select(values G.edges, v -> sum(n, i -> v_i * posWt_i) < 0);
     ground := G.vertices;
@@ -935,52 +938,48 @@ bruhatOrder(TVariety) := Poset => X -> (
 
 --Schubert variety of a generalized flag variety
 --input: is (X,v), where X is a generalized flag variety and v is a vertex in its moment graph
---output: a TVariety representing a Schubert variety whose T-fixed points correspond to all
+--output: a GKMVariety representing a Schubert variety whose torus fixed points correspond to all
 --vertices w in the moment graph of X where v <= w
-tGeneralizedSchubertVariety = method()
-tGeneralizedSchubertVariety(TVariety,Thing) := TVariety => (X,v) -> (
+generalizedSchubertVariety = method()
+generalizedSchubertVariety(GKMVariety,Thing) := GKMVariety => (X,v) -> (
     G := momentGraph X;
     if not member(v,G.vertices) then (
-	error " the second entry must be a vertex of the moment graph of the TVariety "
+	error " the second argument must be a vertex of the moment graph of the GKMVariety "
 	);
     P := bruhatOrder X;
     V := principalFilter(P,v);
     E := hashTable apply(select(keys G.edges, k -> all(k, i -> member(i,V))), j -> (j,G.edges#j));
-    Y := tVariety(momentGraph(V,E,G.HTpt),X.charRing);
+    Y := makeGKMVariety(momentGraph(V,E,G.HTpt),X.characterRing);
     cellOrder(Y.momentGraph, subposet(P,V));
     Y.cache.lieType = lieType X;
     Y
     )
 
 --------------------------------------------------------------------------------------------------
---------------------------------< T-orbit closures of points >------------------------------------
+--------------------------------< Torus orbit closures of points >------------------------------------
 
 ---------------------------< auxiliary functions for TOrbClosure >--------------------------------
-convertToNum = (n,L) -> (
-    return apply(toList L, v -> if v === unastrsk(v) then v else n + unastrsk v)
-    )
+convertToNum = (n,L) -> apply(toList L, v -> if v === unastrsk(v) then v else n + unastrsk v)
 
-revMat = M -> return matrix apply( reverse entries M, v-> reverse v)
+
+revMat = M -> matrix apply( reverse entries M, v-> reverse v)
 
 -- Takes in a mutable matrix and outputs the RREF with the identitiy block in the beginning
-rowRed = M -> (
-    Mat := matrix revMat(M) ;
-    return mutableMatrix revMat transpose gens gb image transpose Mat;
-    )
+rowRed = M -> mutableMatrix revMat transpose gens gb image transpose matrix revMat M
 
 
 
---the T-equivariant K-class of a torus orbit closure of a point in a generalized flag variety
---input:  X a tGeneralizedFlagVariety and MatLst a list of matrices, {M1,...,Mn}, that defines a point in X.
+--the equivariant K-class of a torus orbit closure of a point in a generalized flag variety
+--input:  X a generalizedFlagVariety and MatLst a list of matrices, {M1,...,Mn}, that defines a point in X.
 --    	  For convenience we assume that the ranks of the M_i are distinct.    	
---output: The tKClass of the closure of the orbit of the point corresponding to {M1,...,Mn}
+--output: The makeKClass of the closure of the orbit of the point corresponding to {M1,...,Mn}
 tOrbClosure = method()
-tOrbClosure(TVariety,List) := TKClass => (X,MatLst) -> ( 
+tOrbClosure(GKMVariety,List) := KClass => (X,MatLst) -> ( 
     if X.cache.?lieType then Typ := X.cache.lieType else (
-	 error "T-orbit closures are only implemented for Lie types"
+	 error "Torus orbit closures are only implemented for Lie types"
 	 );
-    R := X.charRing;
-    m := numgens X.charRing;
+    R := X.characterRing;
+    m := numgens X.characterRing;
     x := symbol x;
     S := QQ[x_0..x_(m-1)];
     QS := frac(QQ[x_0..x_(m-1), Degrees => apply(m, i -> setIndicator(set {i},m))]);
@@ -992,7 +991,7 @@ tOrbClosure(TVariety,List) := TKClass => (X,MatLst) -> (
 	    )
 	) then error "the column size of the matrices are incorrect";
     if not rks === apply(MatLst, v -> rank v) then (
-	error " the rank of the matrices are incorrect "
+	error " the ranks of the matrices are incorrect "
 	);
     (if Typ === "A" then Gens := apply(gens QS, v -> v^(-1))
 	else if Typ  === "C" or Typ === "D" then Gens = apply(gens QS, v -> v^(-1)) | gens QS
@@ -1015,33 +1014,33 @@ tOrbClosure(TVariety,List) := TKClass => (X,MatLst) -> (
 		    );
 		degs := - unique delete(-infinity, degList);
 		tHilbSer := hilbertSeries affineToricRing degs;
-		numer := toCharRing(X,value numerator tHilbSer);
-		denom := toCharRing(X,value denominator tHilbSer);
+		numer := toCharacterRing(X,value numerator tHilbSer);
+		denom := toCharacterRing(X,value denominator tHilbSer);
 		fracVal := toFraction(numer * product(X.charts#pt, l -> (1-R_l)), denom, S);
 		(last fracVal)(first fracVal)
 		-* degs *-
 	    	)
 	    )
     	);
-    tKClass(X,Lst)
+    makeKClass(X,Lst)
     -* hashTable apply(#X.points, i -> (X.points_i, Lst_i)) --and comment this *-
     )
 
---same as the TOrbClosure but computed in the different way
+--same as the tOrbClosure but computed in the different way
 --(without row reducing but just computing minors)
---given a TVariety X that is a generalized flag variety consisting of linear subspaces of
+--given a GKMVariety X that is a generalized flag variety consisting of linear subspaces of
 --dimensions rks = {r_1, ... , r_k}, and a matrix A that is k' x (appropriate numcols),
 --where k' >= k, and the first r_i rows span an appropriate isotropic subspace,
---outputs the TKClass of the torus-orbit closure.
-tOrbitClosure = method(Options => {RREFMethod => false})
-tOrbitClosure(TVariety,Matrix) := TKClass => opts -> (X,A) -> (
+--outputs the KClass of the torus-orbit closure.
+orbitClosure = method(Options => {RREFMethod => false})
+orbitClosure(GKMVariety,Matrix) := KClass => opts -> (X,A) -> (
     rks :=  apply(first X.points, v -> #(elements v));
     MatLst := apply(rks, i -> A^(apply(i, j -> j)));
     if opts.RREFMethod then return tOrbClosure(X,MatLst);
     if X.cache.?lieType then Typ := X.cache.lieType else (
-	 error "T-orbit closures are only implemented for Lie types"
+	 error "Torus orbit closures are only implemented for Lie types"
 	 );
-    R := X.charRing;
+    R := X.characterRing;
     n := numgens R;
     col := (
 	if Typ === "A" then n
@@ -1052,7 +1051,7 @@ tOrbitClosure(TVariety,Matrix) := TKClass => opts -> (X,A) -> (
 	error "the column size of the matrices are incorrect"
 	);
     if not rks === apply(MatLst, v -> rank v) then (
-	error " the rank of the matrices are incorrect"
+	error " the ranks of the matrices are incorrect"
 	);
     nonzeroMinors := Mat -> select(subsets(numcols Mat, numrows Mat), l -> determinant Mat_l != 0);
     toWeights := l -> (
@@ -1083,13 +1082,13 @@ tOrbitClosure(TVariety,Matrix) := TKClass => opts -> (X,A) -> (
 	    --above "degs" is mathematically easier to verify but is slower
 	    degs := select(X.charts#pt, i -> member(start+i,basePolytopeWeights));
 	    tHilbSer := hilbertSeries affineToricRing degs;
-	    numer := toCharRing(X,value numerator tHilbSer);
-	    denom := toCharRing(X,value denominator tHilbSer);
+	    numer := toCharacterRing(X,value numerator tHilbSer);
+	    denom := toCharacterRing(X,value denominator tHilbSer);
 	    fracVal := toFraction(numer * product(X.charts#pt, l -> (1-R_l)), denom, S);
 	    (last fracVal)(first fracVal)
 	    )
 	);
-    tKClass(X,Lst)
+    makeKClass(X,Lst)
     )
 
 
@@ -1116,49 +1115,49 @@ swapIndicator = (s,n) -> (
 )
 
 
--*-----------< subsumed in tGeneralizedFlagVariety command now >--------------
+-*-----------< subsumed in generalizedFlagVariety command now >--------------
 --Given a list K = {k_1, ... , k_m} and a number n defining flag variety Fl(K;n) consisting of
---flags of linear subspaces of kk^n of dimensions k_1, ... , k_m, returns the TVariety where
+--flags of linear subspaces of kk^n of dimensions k_1, ... , k_m, returns the GKMVariety where
 --the action of T = (kk^*)^n on the vector space kk^n is (t.v) = (t^-1v)
 tFlagVariety = method();
-tFlagVariety(List,ZZ,Ring) := TVariety => (K,n,R) -> (
+tFlagVariety(List,ZZ,Ring) := GKMVariety => (K,n,R) -> (
     if not #(gens R) == n then << "check character ring" << return error;
     if not max K < n then << "check rank sequence K" << return error;
     E := set toList(0..(n-1));
     pts := (unique permutations sum(K/(k -> toList(k:1) | toList(n-k:0))))/vecToFlag;
     chrts := apply(pts, p -> (toList sum(p, l -> l**(E-l)))/(s -> swapIndicator(s,n)));
-    X := tVariety(pts,chrts,R);
+    X := makeGKMVariety(pts,chrts,R);
     L := apply(X.points, p -> (Exps := flagToVec(p,n); product(#Exps, i -> R_i^(Exps_i))));
-    X.cache.ampleTKClass = tKClass(X,L);
+    X.cache.ampleKClass = makeKClass(X,L);
     X
 )
 
 
---if one does not want to make the charRing beforehand.
+--if one does not want to make the characterRing beforehand.
 --NOT recommended for use...
-tFlagVariety(List,ZZ) := TVariety => (K,n) -> tFlagVariety(K,n,makeCharRing n)
+tFlagVariety(List,ZZ) := GKMVariety => (K,n) -> tFlagVariety(K,n,makeCharacterRing n)
 
 
 --Given two lists Kso, Kta (for rank sequences of source and target flag varieties) and n,
---creates the two TVarieties and makes a TMap between them (given the charRing R).
-tFlagMap(List,List,ZZ,Ring) := TMap => (Kso,Kta,n,R) -> (
+--creates the two TVarieties and makes a EquivariantMap between them (given the characterRing R).
+flagMap(List,List,ZZ,Ring) := EquivariantMap => (Kso,Kta,n,R) -> (
     Flso := tFlagVariety(Kso,n,R);
     Flta := tFlagVariety(Kta,n,R);
     ptPairs := apply(Flso.points, p -> (p,first select(Flta.points, q -> isSubset(q,p))));
-    tMap(Flso,Flta,ptPairs)
+    map(Flso,Flta,ptPairs)
 )
 ----------------*-
 
---if X and Y are already tGeneralizedFlagVariety, then the following outputs the corresponding
--- tFlagMap X --> Y
-tFlagMap = method();
-tFlagMap(TVariety,TVariety) := TMap => (X,Y) -> (
+--if X and Y are already generalizedFlagVariety, then the following outputs the corresponding
+-- flagMap X --> Y
+flagMap = method();
+flagMap(GKMVariety,GKMVariety) := EquivariantMap => (X,Y) -> (
     if not (X.cache.?lieType and Y.cache.?lieType) then (
-	error "both T-varieties need have a lieType"
+	error "both GKM varieties need have a lieType"
 	);
-    if not X.charRing === Y.charRing then error "character ring need be same";
+    if not X.characterRing === Y.characterRing then error "character ring need be same";
     ptPairs := apply(X.points, p -> (p,first select(Y.points, q -> isSubset(q,p))));
-    tMap(X,Y,ptPairs)
+    map(X,Y,ptPairs)
 )
 
 
@@ -1217,8 +1216,7 @@ bases(FlagMatroid) := List => M -> (
 
 
 --computes the lattice points of the base polytope of a flag matroid M
-latticePts = method()
-latticePts(FlagMatroid) := M -> (
+latticePoints(FlagMatroid) := M -> (
     n := #M.groundSet;
     BL := M.constituents/bases/(B -> B/(b -> setIndicator(b,n)));
     k := #BL;
@@ -1283,12 +1281,12 @@ rank(FlagMatroid) := ZZ => M -> sum(M.constituents/rank)
 rank(FlagMatroid,Set) := ZZ => (M,A) -> sum(M.constituents, m -> rank(m,A))
 -------------------------*-
 
---given a flag matroid M, returns the TKClass of its 'torus-orbit' in the flag-variety X
-tKClass(TVariety,FlagMatroid) := TKClass => (X,M) -> (
-    if not (lieType X) === "A" then error "the T-variety is not a flag variety";
+--given a flag matroid M, returns the KClass of its 'torus-orbit' in the flag-variety X
+makeKClass(GKMVariety,FlagMatroid) := KClass => (X,M) -> (
+    if not (lieType X) === "A" then error "the GKM variety is not a flag variety";
     E := M.groundSet;
     K := M.constituents/rank;
-    R := X.charRing;
+    R := X.characterRing;
     if not (#(gens R) == #E and (first X.points)/(s -> #s) == K) then 
     	error "wrong flag variety for the flag matroid";
     B := bases M;
@@ -1301,41 +1299,41 @@ tKClass(TVariety,FlagMatroid) := TKClass => (X,M) -> (
 	if #nonrays == 0 then ConeP else ConeP * product(nonrays, l -> (1-R_l))
 	)
     );
-    tKClass(X,L)
+    makeKClass(X,L)
 )
 
 
 --internal method
 --sets up the varieties involved in the Fourier-Mukai themed push-pull diagram for the
---flag geometric Tutte polynomial of a flag matroid.  The charRing R should be given.
+--flag geometric Tutte polynomial of a flag matroid.  The characterRing R should be given.
 --Given a list K and an integer n, sets up Fl(K;n) <-f- Fl(1,K,n-1;n) -g-> Fl(1;n) x Fl(n-1;n)
 fourierMukai = method();
 fourierMukai(List,ZZ,Ring) := List => (K,n,R) -> (
-    FlK := tGeneralizedFlagVariety("A",n-1,K,R);
-    Fl1Kn1 := tGeneralizedFlagVariety("A",n-1,unique ({1}|K|{n-1}), R);
-    Fl1 := tGeneralizedFlagVariety("A",n-1,{1},R);
-    Fln1 := tGeneralizedFlagVariety("A",n-1,{n-1},R);
-    piK := tFlagMap(Fl1Kn1,FlK);
-    f := tFlagMap(Fl1Kn1,Fl1); g := tFlagMap(Fl1Kn1,Fln1);
-    pi1n1 := compose(f ** g, diagonalTMap Fl1Kn1);
+    FlK := generalizedFlagVariety("A",n-1,K,R);
+    Fl1Kn1 := generalizedFlagVariety("A",n-1,unique ({1}|K|{n-1}), R);
+    Fl1 := generalizedFlagVariety("A",n-1,{1},R);
+    Fln1 := generalizedFlagVariety("A",n-1,{n-1},R);
+    piK := flagMap(Fl1Kn1,FlK);
+    f := flagMap(Fl1Kn1,Fl1); g := flagMap(Fl1Kn1,Fln1);
+    pi1n1 := compose(f ** g, diagonalMap Fl1Kn1);
     --<< "{{Fl(K;n), Fl(1,K,n-1;n),  Fl(1;n) x Fl(n-1;n)},{pi_K, pi_(1(n-1))}}" <<
     {{FlK, Fl1Kn1, pi1n1.target}, {piK, pi1n1}}
 )
 
-fourierMukai(List,ZZ) := List => (K,n) -> fourierMukai(K,n, makeCharRing n)
+fourierMukai(List,ZZ) := List => (K,n) -> fourierMukai(K,n, makeCharacterRing n)
 
 
----< auxiliary functions for converting T-equivariant class to in terms of alpha,  beta >---
+---< auxiliary functions for converting equivariant class to in terms of alpha,  beta >---
 
---takes in a tKClass C of Fl(1;n) x Fl(n-1;n) and outputs the matrix whose (i,j)th entry
---is the hilb value at the point {set{i}, [n]\set{j}}
+--takes in a makeKClass C of Fl(1;n) x Fl(n-1;n) and outputs the matrix whose (i,j)th entry
+--is the KPolynomials value at the point {set{i}, [n]\set{j}}
 toMatrix = C -> (
-    R := C.tvar.charRing;
+    R := C.variety.characterRing;
     n := #(gens R);
     E := set toList(0..(n-1));
     matrix apply(n, i -> apply(n, j -> (
         if i == j then return 0_R;
-	C.hilb#(({set{i}}, {E - set{j}}))
+	C.KPolynomials#(({set{i}}, {E - set{j}}))
 	))
     )
 )
@@ -1359,11 +1357,11 @@ equiToNonEquiStep = (i0,j0,X) -> (
 )
 
 --internal method
---Given a TKClass in P^(n-1) x P^(n-1) = Gr(n-1;n) x Gr(1;n),
+--Given a KClass in P^(n-1) x P^(n-1) = Gr(n-1;n) x Gr(1;n),
 --outputs the polynomial in representing its K-class
 --where x,y are the structure sheaves of the two hyperplanes
 toPolynomial = method();
-toPolynomial(TKClass) := Matrix => C -> (
+toPolynomial(KClass) := Matrix => C -> (
     T := toMatrix C;
     n := numcols T;
     TList := {T};
@@ -1380,27 +1378,27 @@ toPolynomial(TKClass) := Matrix => C -> (
 
 
 --given a flag matroid M, outputs the flag-geometric Tutte polynomial of M
-kTutte = method();
-kTutte(FlagMatroid) := RingElement => M -> (
-    if not M.cache.?kTutte then M.cache.kTutte = (
+flagGeomTuttePolynomial = method();
+flagGeomTuttePolynomial(FlagMatroid) := RingElement => M -> (
+    if not M.cache.?flagGeomTuttePolynomial then M.cache.flagGeomTuttePolynomial = (
 	n := #M.groundSet;
-    	R := makeCharRing n;
+    	R := makeCharacterRing n;
     	K := M.constituents/rank;
     	FM := fourierMukai(K,n,R);
     	FlK := first first FM;
     	f := first last FM; g := last last FM;
-    	yM := tKClass(FlK,M);
-    	YM := (pushforward g)( (pullback f)(yM * (ampleTKClass FlK)) );
+    	yM := makeKClass(FlK,M);
+    	YM := (pushforward g)( (pullback f)(yM * (ampleKClass FlK)) );
     	toPolynomial YM
     );
-    M.cache.kTutte
+    M.cache.flagGeomTuttePolynomial
 )
 
 
 
 
-load "GKMManifolds/Documentation_GKMManifolds.m2"
-load "GKMManifolds/Tests_GKMManifolds.m2"
+load "GKMVarieties/Documentation_GKMVarieties.m2"
+load "GKMVarieties/Tests_GKMVarieties.m2"
 
 
 
@@ -1411,18 +1409,21 @@ end
 
 
 restart
-uninstallPackage "GKMManifolds"
-installPackage "GKMManifolds" --42 seconds
-viewHelp GKMManifolds
-time check "GKMManifolds"
+uninstallPackage "GKMVarieties"
+installPackage "GKMVarieties" --42 seconds
+viewHelp GKMVarieties
+check "GKMVarieties"
 
-needsPackage "GKMManifolds"
+needsPackage "GKMVarieties"
 
---the canned examples
+
+
+
+-----------------------< canned examples >---------------------------
 FM = flagMatroid {uniformMatroid(1,5),uniformMatroid(3,5)}
-time kTutte FM -- 7 seconds
+time flagGeomTuttePolynomial FM -- 7 seconds
 FM = flagMatroid {uniformMatroid(2,6),uniformMatroid(4,6)}
---time kTutte FM --700 seconds
+--time flagGeomTuttePolynomial FM --700 seconds
 -*--
 i11 : FM = flagMatroid {uniformMatroid(2,6),uniformMatroid(4,6)}
 
@@ -1430,7 +1431,7 @@ o11 = a flag matroid with rank sequence {2, 4} on 6 elements
 
 o11 : FlagMatroid
 
-i12 : time kTutte FM
+i12 : time flagGeomTuttePolynomial FM
      -- used 691.322 seconds
 
        4 4     4 3     3 4     4 2     3 3     2 4     4       3 2      2 3       4     4      3 
@@ -1442,15 +1443,15 @@ o12 = x y  + 2x y  + 2x y  + 3x y  - 6x y  + 3x y  + 4x y + 18x y  + 18x y  + 4x
 o12 : ZZ[x, y]
 --*-
 
---canned example for displaying error messages
+--canned examples for displaying error messages
 --for bruhatOrder
-Fl3 = tGeneralizedFlagVariety("A",2,{1,2})
+Fl3 = generalizedFlagVariety("A",2,{1,2})
 cellOrder Fl3
 P = bruhatOrder Fl3
 #(coveringRelations P) == 8
 cellOrder Fl3
 --for (cellOrder, MomentGraph, Poset)
-PP3 = tProjectiveSpace 3
+PP3 = projectiveSpace 3
 cellOrder PP3
 V = (momentGraph PP3).vertices
 P = poset(V, {{V_0,V_1},{V_1,V_2},{V_2,V_3}})
