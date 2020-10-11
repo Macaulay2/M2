@@ -1015,11 +1015,16 @@ export infinityRR(prec:ulong,sign:int):RR := (
      moveToRRandclear(x));
 
 export infinityRR(prec:ulong):RR := infinityRR(prec,1);
+                                    
+export infinityRRi(prec:ulong,sign:int):RRi := toRRi(infinityRR(prec,sign));
+export infinityRRi(prec:ulong):RRi := toRRi(infinityRR(prec));
 
 export nanRR(prec:ulong):RR := (
      x := newRRmutable(prec);
      Ccode(void, "mpfr_set_nan(",x,")");
      moveToRRandclear(x));
+                                    
+export nanRRi(prec:ulong):RRi := toRRi(nanRR(prec));
 
 export toCC(x:RR,y:RR):CC := (
      if ( isnan0(x) || isnan0(y) ) then (prec := precision0(x); z := nanRR(prec); CC(z,z))
@@ -1064,12 +1069,18 @@ export toCC(x:double,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:double,y:double,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));
 
 export toDouble(x:RR):double := Ccode( double, "mpfr_get_d(",  x, ", GMP_RNDN)" );
+                                    
+export toDouble(x:RRi):double := toDouble(midpointRR(x));
 
 export toDouble(x:RRcell):double := Ccode( double, "mpfr_get_d(",  x.v, ", GMP_RNDN)" );
+                                    
+export toDouble(x:RRicell):double := toDouble(midpointRR(x.v));
 
 export flagged():bool := flagged0();
 
 export isfinite(x:RR):bool := isfinite0(x);
+                                    
+export isfinite(x:RRi):bool := isfinite0(x);
 
 export isinf(x:RR):bool := isinf0(x);
 
@@ -1077,7 +1088,7 @@ export isinf(x:RRi):bool := isinf0(x);
 
 export isnan(x:RR):bool := isnan0(x);
 
-export isnan(x:RRi):bool := isnan0(x);  -- Added for MPFI
+export isnan(x:RRi):bool := isnan0(x);
 
 export isfinite(x:CC):bool := isfinite0(x.re) && isfinite0(x.im);
 
@@ -1092,7 +1103,7 @@ export (x:RR) === (y:RR):bool := (			    -- weak equality
     );
 
 export (x:RRi) === (y:RRi):bool := (                -- weak equality
-    -- Ccode( void, "mpfr_clear_flags()" ); -- no mpfi version
+    Ccode( void, "mpfr_clear_flags()" ); -- No equivalent in mpfi
     leftRR(x) === leftRR(y) && rightRR(x) === rightRR(y) && !flagged0() -- equality is not defined in mpfi
     );
 
@@ -1105,8 +1116,8 @@ export strictequality(x:RR,y:RR):bool := (
     );
 
 export strictequality(x:RRi,y:RRi):bool := (
-     -- Ccode( void, "mpfr_clear_flags()" ); -- No equivalent in mpfi
-     0 != Ccode( int, "mpfi_cmp(",  x, ",",  y, ")" ) -- Behavior might be different for mpfi
+     Ccode( void, "mpfr_clear_flags()" ); -- No equivalent in mpfi
+     (x === y)
      && !flagged0()
      && sign0(x) == sign0(y)
      && precision0(x) == precision0(y)
@@ -1114,7 +1125,7 @@ export strictequality(x:RRi,y:RRi):bool := (
 
 compare0(x:RR, y:RR) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp(",  x, ",",  y, "))" );
 
-compare0(x:RRi, y:RRi) ::= Ccode( int,  "(mpfi_cmp(",  x, ",",  y, "))" ); -- Removed clear, doesn't exist in Mpfi -- behavior might be different for mpfi
+compare0(x:RRi, y:RRi) ::= Ccode( int,  "(mpfr_clear_flags(),mpfi_cmp(",  x, ",",  y, "))" ); -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
 
 export compare(x:RR, y:RR):int := compare0(x,y);	    -- use flagged(), too!
 export (x:RR)  >  (y:RR) : bool := compare0(x,y) >  0 && !flagged0();
@@ -1130,33 +1141,37 @@ export (x:RRi)  >  (y:RRi) : bool := compare0(x,y) >  0 && !flagged0();
 
 export (x:RRi)  <  (y:RRi) : bool := compare0(x,y) <  0 && !flagged0();
 
-export (x:RRi)  >= (y:RRi) : bool := compare0(x,y) >= 0 && !flagged0();
+export (x:RRi)  >= (y:RRi) : bool := (compare0(x,y)>0 || x===y) && !flagged0();
 
-export (x:RRi)  <= (y:RRi) : bool := compare0(x,y) <= 0 && !flagged0();
+export (x:RRi)  <= (y:RRi) : bool := (compare0(x,y)<0 || x===y) && !flagged0();
 
 compare0(x:RR, y:long) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_si(",  x, ",", y, "))" );
 
-compare0(x:RRi, y:long) ::= Ccode( int,  "(mpfi_cmp_si(",  x, ",", y, "))" ); -- Removed clear, doesn't exist in mpfi  -- Bevavior for mpfi might be different
+compare0(x:RRi, y:long) ::= Ccode( int,  "(mpfr_clear_flags(),mpfi_cmp_si(",  x, ",", y, "))" ); -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
 
 compare0(x:RR, y:int ) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_si(",  x, ",(long)", y, "))" );
 
-compare0(x:RRi, y:int ) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_si(",  x, ",(long)", y, "))" );  -- Added for MPFI
+compare0(x:RRi, y:int ) ::= Ccode( int, "(mpfr_clear_flags(),mpfi_cmp_si(",  x, ",(long)", y, "))" );  -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
 
 export compare(x:RR, y:long):int := Ccode( int, "(mpfr_clear_flags(), mpfr_cmp_si(",  x, ",", y, "))" );
 
 export compare(y:long, x:RR):int := Ccode( int, "(mpfr_clear_flags(),-mpfr_cmp_si(",  x, ",", y, "))" );
+                                    
+export compare(x:RRi, y:long):int := Ccode( int, "(mpfr_clear_flags(), mpfi_cmp_si(",  x, ",", y, "))" );  -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
+
+export compare(y:long, x:RRi):int := Ccode( int, "(mpfr_clear_flags(),-mpfi_cmp_si(",  x, ",", y, "))" ); -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
 
 export (x:RR)  >  (y:int) : bool :=  compare0(x,long(y)) >  0 && !flagged0();
                                     
 export (x:RRi)  >  (y:int) : bool :=  compare0(x,long(y)) >  0 && !flagged0();
 
 export (x:RR)  >= (y:int) : bool :=  compare0(x,long(y)) >= 0 && !flagged0();
-                                    
-export (x:RRi)  >= (y:int) : bool :=  compare0(x,long(y)) >= 0 && !flagged0();
 
 export (x:RR) === (y:int) : bool :=  compare0(x,long(y)) == 0 && !flagged0();
                                     
 export (x:RRi) === (y:int) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
+                                    
+export (x:RRi)  >= (y:int) : bool :=  ((compare0(x,long(y)) > 0) || (x === y)) && !flagged0();
 
 export (x:RR)  <  (y:int) : bool :=  compare0(x,long(y)) <  0 && !flagged0();
                                     
@@ -1164,35 +1179,57 @@ export (x:RRi)  <  (y:int) : bool :=  compare0(x,long(y)) <  0 && !flagged0();
 
 export (x:RR)  <= (y:int) : bool :=  compare0(x,long(y)) <= 0 && !flagged0();
                                     
-export (x:RRi)  <= (y:int) : bool :=  compare0(x,long(y)) <= 0 && !flagged0();
+export (x:RRi)  <= (y:int) : bool :=  (compare0(x,long(y)) < 0 || x === y) && !flagged0();
 
 export (x:CC) === (y:int) : bool :=  x.re === y && x.im === 0;
-
-compare0(x:RR, y:double) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_d(",  x, ",", y, "))" );
+                                    
+compare0(x:RR, y:double) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_d(",  x, ",", y, "))" );  
 
 export compare(x:RR, y:double):int := Ccode( int, "(mpfr_clear_flags(), mpfr_cmp_d(",  x, ",", y, "))" );
 
 export compare(y:double, x:RR):int := Ccode( int, "(mpfr_clear_flags(),-mpfr_cmp_d(",  x, ",", y, "))" );
+                                    
+compare0(x:RRi, y:double) ::= Ccode( int, "(mpfr_clear_flags(),mpfi_cmp_d(",  x, ",", y, "))" );  -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
+
+export compare(x:RRi, y:double):int := Ccode( int, "(mpfr_clear_flags(), mpfi_cmp_d(",  x, ",", y, "))" );  -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
+
+export compare(y:double, x:RRi):int := Ccode( int, "(mpfr_clear_flags(),-mpfi_cmp_d(",  x, ",", y, "))" );  -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
 
 export (x:RR)  >  (y:double) : bool :=  compare0(x,y) >  0 && !flagged0();
+                                    
+export (x:RRi)  >  (y:double) : bool :=  compare0(x,y) >  0 && !flagged0();
 
 export (x:RR)  >= (y:double) : bool :=  compare0(x,y) >= 0 && !flagged0();
 
 export (x:RR) === (y:double) : bool :=  compare0(x,y) == 0 && !flagged0();
                                     
 export (x:RRi) === (y:double) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
+                                    
+export (x:RRi)  >= (y:double) : bool :=  ((compare0(x,y) > 0) || (x === y)) && !flagged0();
 
 export (x:RR)  <  (y:double) : bool :=  compare0(x,y) <  0 && !flagged0();
+                                    
+export (x:RRi)  <  (y:double) : bool :=  compare0(x,y) <  0 && !flagged0();
 
 export (x:RR)  <= (y:double) : bool :=  compare0(x,y) <= 0 && !flagged0();
+                                    
+export (x:RRi)  <= (y:double) : bool :=  ((compare0(x,y) < 0) || (x === y)) && !flagged0();
 
 compare0(x:RR, y:ZZ) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_z(",  x, ",", y, "))" );
 
 export compare(x:RR, y:ZZ):int := Ccode( int, "(mpfr_clear_flags(), mpfr_cmp_z(",  x, ",", y, "))" );
 
 export compare(y:ZZ, x:RR):int := Ccode( int, "(mpfr_clear_flags(),-mpfr_cmp_z(",  x, ",", y, "))" );
+                                    
+compare0(x:RRi, y:ZZ) ::= Ccode( int, "(mpfr_clear_flags(),mpfi_cmp_z(",  x, ",", y, "))" );  -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
+
+export compare(x:RRi, y:ZZ):int := Ccode( int, "(mpfr_clear_flags(), mpfi_cmp_z(",  x, ",", y, "))" );  -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
+
+export compare(y:ZZ, x:RRi):int := Ccode( int, "(mpfr_clear_flags(),-mpfi_cmp_z(",  x, ",", y, "))" );  -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
 
 export (x:RR)  >  (y:ZZ) : bool :=  compare0(x,y) >  0 && !flagged0();
+                                    
+export (x:RRi)  >  (y:ZZ) : bool :=  compare0(x,y) >  0 && !flagged0();
 
 export (x:RR)  >= (y:ZZ) : bool :=  compare0(x,y) >= 0 && !flagged0();
 
@@ -1201,18 +1238,34 @@ export (x:RR) === (y:ZZ) : bool :=  compare0(x,y) == 0 && !flagged0();
 export (x:RRi) === (y:ZZ) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
 
 export (y:ZZ) === (x:RR) : bool :=  compare0(x,y) == 0 && !flagged0();
+                                    
+export (y:ZZ) === (x:RRi) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
+                                    
+export (x:RRi)  >= (y:ZZ) : bool :=  ((compare0(x,y) > 0) || (x === y)) && !flagged0();
 
 export (x:RR)  <  (y:ZZ) : bool :=  compare0(x,y) <  0 && !flagged0();
+                                    
+export (x:RRi)  <  (y:ZZ) : bool :=  compare0(x,y) <  0 && !flagged0();
 
 export (x:RR)  <= (y:ZZ) : bool :=  compare0(x,y) <= 0 && !flagged0();
+                                    
+export (x:RRi)  <= (y:ZZ) : bool :=  ((compare0(x,y) < 0) || (x === y)) && !flagged0();
 
 compare0(x:RR, y:QQ) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_q(",  x, ",", y, "))" );
 
 export compare(x:RR, y:QQ):int := Ccode( int, "(mpfr_clear_flags(), mpfr_cmp_q(",  x, ",", y, "))" );
 
 export compare(y:QQ, x:RR):int := Ccode( int, "(mpfr_clear_flags(),-mpfr_cmp_q(",  x, ",", y, "))" );
+                                    
+compare0(x:RRi, y:QQ) ::= Ccode( int, "(mpfr_clear_flags(),mpfi_cmp_q(",  x, ",", y, "))" );  -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
+
+export compare(x:RRi, y:QQ):int := Ccode( int, "(mpfr_clear_flags(), mpfi_cmp_q(",  x, ",", y, "))" );  -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
+
+export compare(y:QQ, x:RRi):int := Ccode( int, "(mpfr_clear_flags(),-mpfi_cmp_q(",  x, ",", y, "))" );  -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
 
 export (x:RR)  >  (y:QQ) : bool :=  compare0(x,y) >  0 && !flagged0();
+                                    
+export (x:RRi)  >  (y:QQ) : bool :=  compare0(x,y) >  0 && !flagged0();
 
 export (x:RR)  >= (y:QQ) : bool :=  compare0(x,y) >= 0 && !flagged0();
 
@@ -1221,12 +1274,22 @@ export (x:RR) === (y:QQ) : bool :=  compare0(x,y) == 0 && !flagged0();
 export (x:RRi) === (y:QQ) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
 
 export (y:QQ) === (x:RR) : bool :=  compare0(x,y) == 0 && !flagged0();
+                                    
+export (y:QQ) === (x:RRi) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
+                                    
+export (x:RRi)  >= (y:QQ) : bool :=  ((compare0(x,y) > 0) || (x === y)) && !flagged0();
 
 export (x:RR)  <  (y:QQ) : bool :=  compare0(x,y) <  0 && !flagged0();
+                                    
+export (x:RRi)  <  (y:QQ) : bool :=  compare0(x,y) <  0 && !flagged0();
 
 export (x:RR)  <= (y:QQ) : bool :=  compare0(x,y) <= 0 && !flagged0();
                                     
+export (x:RRi)  <= (y:QQ) : bool :=  ((compare0(x,y) < 0) || (x === y)) && !flagged0();
+                                    
 export (x:RRi) === (y:RR) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
+                                    
+export (y:RR) === (x:RRi) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
 
 export hash(x:RR):int := int(precision0(x)) + Ccode(int, 
      "mpfr_hash(",					    -- see gmp_aux.c for this function
@@ -1347,6 +1410,11 @@ export (x:RRi) - (y:RR) : RRi := (
      moveToRRiandclear(z));
 
 export abs(x:RR) : RR := if isNegative0(x) then -x else x;
+                                    
+export abs(x:RRi) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_abs(", z, ",",  x, ")" );
+     moveToRRiandclear(z));
 
 export (x:RR) * (y:RR) : RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
@@ -1372,6 +1440,11 @@ export (y:ZZ) * (x:RR) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_mul_z(", z, ",",  x, ",",  y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (y:ZZ) * (x:RRi) : RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_mul_z(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
 
 export (x:RR) * (y:int) : RR := (
      z := newRRmutable(precision0(x));
@@ -1480,58 +1553,348 @@ export sqrt(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_sqrt(",  z, ",",  x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export sqrt(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_sqrt(",  z, ",",  x, ")" );
+     moveToRRiandclear(z));
 
 export (x:RR) ^ (n:long) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_pow_si(",  z, ",",  x, ",", n, ", GMP_RNDN)" );
      moveToRRandclear(z));
-
+                                    
+export (x:RRi) ^ (n:long) : RRi := (
+    if (n == long(0)) then return toRRi(1,precision0(x));
+                                    
+    left := newRRmutable(precision0(x));
+    right := newRRmutable(precision0(x));
+    extra := newRRmutable(precision0(x));
+          
+    upper := newRRmutable(precision0(x));
+    lower := newRRmutable(precision0(x));
+          
+    if contains0(x) then Ccode(void, "mpfr_set_si(", extra, ",0, GMP_RNDN)")
+    else Ccode( void, "mpfr_set_inf(", extra, ",-1)" );
+                                    
+    Ccode( void, "mpfr_pow_si(",  left, ",",  leftRR(x), ",", n, ", GMP_RNDU)" );
+    Ccode( void, "mpfr_pow_si(",  right, ",",  rightRR(x), ",", n, ", GMP_RNDU)" );
+          
+    if (Ccode(int, "mpfr_cmp(", left, ",", right, ")") > 0)
+    then (if (Ccode(int, "mpfr_cmp(", left, ",", extra, ")") > 0)
+        then Ccode(void, "mpfr_set(", upper, ",", left, ", GMP_RNDU)")
+        else Ccode(void, "mpfr_set(", upper, ",", extra, ", GMP_RNDU)"))
+    else (if (Ccode(int, "mpfr_cmp(", right, ",", extra, ")") > 0)
+        then Ccode(void, "mpfr_set(", upper, ",", right, ", GMP_RNDU)")
+        else Ccode(void, "mpfr_set(", upper, ",", extra, ", GMP_RNDU)"));
+          
+    if !contains0(x) then Ccode( void, "mpfr_set_inf(", extra, ",1)" );
+                                    
+    Ccode( void, "mpfr_pow_si(",  left, ",",  leftRR(x), ",", n, ", GMP_RNDD)" );
+    Ccode( void, "mpfr_pow_si(",  right, ",",  rightRR(x), ",", n, ", GMP_RNDD)" );
+          
+    if (Ccode(int, "mpfr_cmp(", left, ",", right, ")") < 0)
+    then (if (Ccode(int, "mpfr_cmp(", left, ",", extra, ")") < 0)
+        then Ccode(void, "mpfr_set(", lower, ",", left, ", GMP_RNDD)")
+        else Ccode(void, "mpfr_set(", lower, ",", extra, ", GMP_RNDD)"))
+    else (if (Ccode(int, "mpfr_cmp(", right, ",", extra, ")") < 0)
+        then Ccode(void, "mpfr_set(", lower, ",", right, ", GMP_RNDD)")
+        else Ccode(void, "mpfr_set(", lower, ",", extra, ", GMP_RNDD)"));
+                 
+    clear(left);
+    clear(right);
+    clear(extra);
+                                    
+    interval(moveToRRandclear(lower),moveToRRandclear(upper)));
+                                    
 export (x:RR) ^ (n:ulong) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_pow_ui(",  z, ",",  x, ",", n, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (x:RRi) ^ (n:ulong) : RRi := (
+    if (n == ulong(0)) then return toRRi(1,precision0(x));
+                                    
+    left := newRRmutable(precision0(x));
+    right := newRRmutable(precision0(x));
+    extra := newRRmutable(precision0(x));
+          
+    upper := newRRmutable(precision0(x));
+    lower := newRRmutable(precision0(x));
+          
+    if contains0(x) then Ccode(void, "mpfr_set_ui(", extra, ",0, GMP_RNDN)")
+    else Ccode( void, "mpfr_set_inf(", extra, ",-1)" );
+                                    
+    Ccode( void, "mpfr_pow_ui(",  left, ",",  leftRR(x), ",", n, ", GMP_RNDU)" );
+    Ccode( void, "mpfr_pow_ui(",  right, ",",  rightRR(x), ",", n, ", GMP_RNDU)" );
+          
+    if (Ccode(int, "mpfr_cmp(", left, ",", right, ")") > 0)
+    then (if (Ccode(int, "mpfr_cmp(", left, ",", extra, ")") > 0)
+        then Ccode(void, "mpfr_set(", upper, ",", left, ", GMP_RNDU)")
+        else Ccode(void, "mpfr_set(", upper, ",", extra, ", GMP_RNDU)"))
+    else (if (Ccode(int, "mpfr_cmp(", right, ",", extra, ")") > 0)
+        then Ccode(void, "mpfr_set(", upper, ",", right, ", GMP_RNDU)")
+        else Ccode(void, "mpfr_set(", upper, ",", extra, ", GMP_RNDU)"));
+          
+    if !contains0(x) then Ccode( void, "mpfr_set_inf(", extra, ",1)" );
+                                    
+    Ccode( void, "mpfr_pow_ui(",  left, ",",  leftRR(x), ",", n, ", GMP_RNDD)" );
+    Ccode( void, "mpfr_pow_ui(",  right, ",",  rightRR(x), ",", n, ", GMP_RNDD)" );
+          
+    if (Ccode(int, "mpfr_cmp(", left, ",", right, ")") < 0)
+    then (if (Ccode(int, "mpfr_cmp(", left, ",", extra, ")") < 0)
+        then Ccode(void, "mpfr_set(", lower, ",", left, ", GMP_RNDD)")
+        else Ccode(void, "mpfr_set(", lower, ",", extra, ", GMP_RNDD)"))
+    else (if (Ccode(int, "mpfr_cmp(", right, ",", extra, ")") < 0)
+        then Ccode(void, "mpfr_set(", lower, ",", right, ", GMP_RNDD)")
+        else Ccode(void, "mpfr_set(", lower, ",", extra, ", GMP_RNDD)"));
+                 
+    clear(left);
+    clear(right);
+    clear(extra);
+                                    
+    interval(moveToRRandclear(lower),moveToRRandclear(upper)));
 
 export pow10(n:ulong,prec:ulong):RR := (
      z := newRRmutable(prec);
      Ccode( void, "mpfr_ui_pow_ui(",  z, ",", ulong(10), ",", n, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export pow10RRi(n:ulong,prec:ulong):RRi := (
+     left := newRRmutable(prec);
+     right := newRRmutable(prec);
+     Ccode( void, "mpfr_ui_pow_ui(",  left, ",", ulong(10), ",", n, ", GMP_RNDD)" );
+     Ccode( void, "mpfr_ui_pow_ui(",  right, ",", ulong(10), ",", n, ", GMP_RNDU)" );
+     interval(moveToRRandclear(left),moveToRRandclear(right)));
 
 export pow10(n:long,prec:ulong):RR := (
      if n < long(0)
      then (pow10(ulong(-n),prec))^long(-1)
      else pow10(ulong(n),prec));
+                                           
+export pow10RRi(n:long,prec:ulong):RRi := (
+     if n < long(0)
+     then (pow10RRi(ulong(-n),prec))^long(-1)
+     else pow10RRi(ulong(n),prec));
 
 export pow10(n:int,prec:ulong):RR := pow10(long(n),prec);
+                                           
+export pow10RRi(n:int,prec:ulong):RRi := pow10RRi(long(n),prec);
 
 export (n:ulong) ^ (x:RR) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_ui_pow(",  z, ",", n, ",",  x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (n:ulong) ^ (x:RRi) : RRi := (
+     if (n == ulong(1)) then return toRRi(1,precision0(x));
+                                     
+     left := newRRmutable(precision0(x));
+     right := newRRmutable(precision0(x));
+                                     
+     if (n > ulong(1)) then (
+        Ccode( void, "mpfr_ui_pow(",  left, ",", n, ",", leftRR(x), ", GMP_RNDD)" );
+        Ccode( void, "mpfr_ui_pow(",  right, ",", n, ",", rightRR(x), ", GMP_RNDU)" ))
+     else (
+        Ccode( void, "mpfr_ui_pow(",  left, ",", n, ",", rightRR(x), ", GMP_RNDD)" );
+        Ccode( void, "mpfr_ui_pow(",  right, ",", n, ",", leftRR(x), ", GMP_RNDU)" ));
+                                     
+     interval(moveToRRandclear(left),moveToRRandclear(right)));
 
 export (x:RR) ^ (y:ZZ) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_pow_z(",  z, ",",  x, ",", y, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                    
+export (x:RRi) ^ (y:ZZ) : RRi := (
+    if (isZero0(y)) then return toRRi(1,precision0(x));
+
+    left := newRRmutable(precision0(x));
+    right := newRRmutable(precision0(x));
+    extra := newRRmutable(precision0(x));
+
+    upper := newRRmutable(precision0(x));
+    lower := newRRmutable(precision0(x));
+
+    if contains0(x) then Ccode(void, "mpfr_set_ui(", extra, ",0, GMP_RNDN)")
+    else Ccode( void, "mpfr_set_inf(", extra, ",-1)" );
+
+    Ccode( void, "mpfr_pow_z(",  left, ",",  leftRR(x), ",", y, ", GMP_RNDU)" );
+    Ccode( void, "mpfr_pow_z(",  right, ",",  rightRR(x), ",", y, ", GMP_RNDU)" );
+
+    if (Ccode(int, "mpfr_cmp(", left, ",", right, ")") > 0)
+    then (if (Ccode(int, "mpfr_cmp(", left, ",", extra, ")") > 0)
+        then Ccode(void, "mpfr_set(", upper, ",", left, ", GMP_RNDU)")
+        else Ccode(void, "mpfr_set(", upper, ",", extra, ", GMP_RNDU)"))
+    else (if (Ccode(int, "mpfr_cmp(", right, ",", extra, ")") > 0)
+        then Ccode(void, "mpfr_set(", upper, ",", right, ", GMP_RNDU)")
+        else Ccode(void, "mpfr_set(", upper, ",", extra, ", GMP_RNDU)"));
+
+    if !contains0(x) then Ccode( void, "mpfr_set_inf(", extra, ",1)" );
+
+    Ccode( void, "mpfr_pow_z(",  left, ",",  leftRR(x), ",", y, ", GMP_RNDD)" );
+    Ccode( void, "mpfr_pow_z(",  right, ",",  rightRR(x), ",", y, ", GMP_RNDD)" );
+
+    if (Ccode(int, "mpfr_cmp(", left, ",", right, ")") < 0)
+    then (if (Ccode(int, "mpfr_cmp(", left, ",", extra, ")") < 0)
+        then Ccode(void, "mpfr_set(", lower, ",", left, ", GMP_RNDD)")
+        else Ccode(void, "mpfr_set(", lower, ",", extra, ", GMP_RNDD)"))
+    else (if (Ccode(int, "mpfr_cmp(", right, ",", extra, ")") < 0)
+        then Ccode(void, "mpfr_set(", lower, ",", right, ", GMP_RNDD)")
+        else Ccode(void, "mpfr_set(", lower, ",", extra, ", GMP_RNDD)"));
+
+    clear(left);
+    clear(right);
+    clear(extra);
+
+    interval(moveToRRandclear(lower),moveToRRandclear(upper)));
 
 export (x:RR) ^ (y:RR) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_pow(",  z, ",",  x, ",", y, ", GMP_RNDN)" );
      moveToRRandclear(z));
                                     
---export (x:RRi) ^ (y:RRi) : RRi := (
-      
+export (y:RR) ^ (x:RRi) : RRi := (
+     -- Needs y >= 0
+     if (y == toRR(1,precision0(y))) then return toRRi(1,min(precision0(x),precision0(y)));
+                                     
+     left := newRRmutable(min(precision0(x),precision0(y)));
+     right := newRRmutable(min(precision0(x),precision0(y)));
+                                     
+     if (y > toRR(1,precision0(y))) then (
+        Ccode( void, "mpfr_pow(",  left, ",", y, ",", leftRR(x), ", GMP_RNDD)" );
+        Ccode( void, "mpfr_pow(",  right, ",", y, ",", rightRR(x), ", GMP_RNDU)" ))
+     else (
+        Ccode( void, "mpfr_pow(",  left, ",", y, ",", rightRR(x), ", GMP_RNDD)" );
+        Ccode( void, "mpfr_pow(",  right, ",", y, ",", leftRR(x), ", GMP_RNDU)" ));
+                                     
+     interval(moveToRRandclear(left),moveToRRandclear(right)));
+                                    
+export (x:RRi) ^ (y:RR) : RRi := (
+    if (y == toRR(0,precision0(y))) then return toRRi(1,min(precision0(x),precision0(y)));
 
+    left := newRRmutable(min(precision0(x),precision0(y)));
+    right := newRRmutable(min(precision0(x),precision0(y)));
+    extra := newRRmutable(min(precision0(x),precision0(y)));
+
+    upper := newRRmutable(min(precision0(x),precision0(y)));
+    lower := newRRmutable(min(precision0(x),precision0(y)));
+
+    if contains0(x) then Ccode(void, "mpfr_set_ui(", extra, ",0, GMP_RNDN)")
+    else Ccode( void, "mpfr_set_inf(", extra, ",-1)" );
+
+    Ccode( void, "mpfr_pow(",  left, ",",  leftRR(x), ",", y, ", GMP_RNDU)" );
+    Ccode( void, "mpfr_pow(",  right, ",",  rightRR(x), ",", y, ", GMP_RNDU)" );
+
+    if (Ccode(int, "mpfr_cmp(", left, ",", right, ")") > 0)
+    then (if (Ccode(int, "mpfr_cmp(", left, ",", extra, ")") > 0)
+        then Ccode(void, "mpfr_set(", upper, ",", left, ", GMP_RNDU)")
+        else Ccode(void, "mpfr_set(", upper, ",", extra, ", GMP_RNDU)"))
+    else (if (Ccode(int, "mpfr_cmp(", right, ",", extra, ")") > 0)
+        then Ccode(void, "mpfr_set(", upper, ",", right, ", GMP_RNDU)")
+        else Ccode(void, "mpfr_set(", upper, ",", extra, ", GMP_RNDU)"));
+
+    if !contains0(x) then Ccode( void, "mpfr_set_inf(", extra, ",1)" );
+
+    Ccode( void, "mpfr_pow(",  left, ",",  leftRR(x), ",", y, ", GMP_RNDD)" );
+    Ccode( void, "mpfr_pow(",  right, ",",  rightRR(x), ",", y, ", GMP_RNDD)" );
+
+    if (Ccode(int, "mpfr_cmp(", left, ",", right, ")") < 0)
+    then (if (Ccode(int, "mpfr_cmp(", left, ",", extra, ")") < 0)
+        then Ccode(void, "mpfr_set(", lower, ",", left, ", GMP_RNDD)")
+        else Ccode(void, "mpfr_set(", lower, ",", extra, ", GMP_RNDD)"))
+    else (if (Ccode(int, "mpfr_cmp(", right, ",", extra, ")") < 0)
+        then Ccode(void, "mpfr_set(", lower, ",", right, ", GMP_RNDD)")
+        else Ccode(void, "mpfr_set(", lower, ",", extra, ", GMP_RNDD)"));
+
+    clear(left);
+    clear(right);
+    clear(extra);
+
+    interval(moveToRRandclear(lower),moveToRRandclear(upper)));
+                                    
+export (y:RRi) ^ (x:RRi) : RRi := (
+     -- Assumes that y > 0
+     if (y == toRRi(1,precision0(y))) then return toRRi(1,min(precision0(x),precision0(y)));
+
+     left := newRRmutable(min(precision0(x),precision0(y)));
+     right := newRRmutable(min(precision0(x),precision0(y)));
+                                     
+     upperright := newRRmutable(min(precision0(x),precision0(y)));
+     upperleft := newRRmutable(min(precision0(x),precision0(y)));
+     lowerright := newRRmutable(min(precision0(x),precision0(y)));
+     lowerleft := newRRmutable(min(precision0(x),precision0(y)));
+
+     Ccode( void, "mpfr_pow(",  upperleft, ",",  leftRR(y), ",", rightRR(x), ", GMP_RNDU)" );
+     Ccode( void, "mpfr_pow(",  upperright, ",",  rightRR(y), ",", rightRR(x), ", GMP_RNDU)" );
+     Ccode( void, "mpfr_pow(",  lowerleft, ",",  leftRR(y), ",", leftRR(x), ", GMP_RNDU)" );
+     Ccode( void, "mpfr_pow(",  lowerright, ",",  rightRR(y), ",", leftRR(x), ", GMP_RNDU)" );
+                                   
+     if (Ccode(int, "mpfr_cmp(", upperleft, ",", upperright, ")") > 0) then (
+         if (Ccode(int, "mpfr_cmp(", lowerleft, ",", lowerright, ")") > 0) then (
+             if (Ccode(int, "mpfr_cmp(", upperleft, ",", lowerleft, ")") > 0)
+             then Ccode(void, "mpfr_set(", right, ",", upperleft, ", GMP_RNDU)")
+             else Ccode(void, "mpfr_set(", right, ",", lowerleft, ", GMP_RNDU)"))
+         else (
+             if (Ccode(int, "mpfr_cmp(", upperleft, ",", lowerright, ")") > 0)
+             then Ccode(void, "mpfr_set(", right, ",", upperleft, ", GMP_RNDU)")
+             else Ccode(void, "mpfr_set(", right, ",", lowerright, ", GMP_RNDU)")))
+      else (
+         if (Ccode(int, "mpfr_cmp(", lowerleft, ",", lowerright, ")") > 0) then (
+             if (Ccode(int, "mpfr_cmp(", upperright, ",", lowerleft, ")") > 0)
+             then Ccode(void, "mpfr_set(", right, ",", upperright, ", GMP_RNDU)")
+             else Ccode(void, "mpfr_set(", right, ",", lowerleft, ", GMP_RNDU)"))
+         else (
+             if (Ccode(int, "mpfr_cmp(", upperright, ",", lowerright, ")") > 0)
+             then Ccode(void, "mpfr_set(", right, ",", upperright, ", GMP_RNDU)")
+             else Ccode(void, "mpfr_set(", right, ",", lowerright, ", GMP_RNDU)")));
+                                   
+     Ccode( void, "mpfr_pow(",  upperleft, ",",  leftRR(y), ",", rightRR(x), ", GMP_RNDD)" );
+     Ccode( void, "mpfr_pow(",  upperright, ",",  rightRR(y), ",", rightRR(x), ", GMP_RNDD)" );
+     Ccode( void, "mpfr_pow(",  lowerleft, ",",  leftRR(y), ",", leftRR(x), ", GMP_RNDD)" );
+     Ccode( void, "mpfr_pow(",  lowerright, ",",  rightRR(y), ",", leftRR(x), ", GMP_RNDD)" );
+                                   
+     if (Ccode(int, "mpfr_cmp(", upperleft, ",", upperright, ")") < 0) then (
+         if (Ccode(int, "mpfr_cmp(", lowerleft, ",", lowerright, ")") < 0) then (
+             if (Ccode(int, "mpfr_cmp(", upperleft, ",", lowerleft, ")") < 0)
+             then Ccode(void, "mpfr_set(", left, ",", upperleft, ", GMP_RNDD)")
+             else Ccode(void, "mpfr_set(", left, ",", lowerleft, ", GMP_RNDD)"))
+         else (
+             if (Ccode(int, "mpfr_cmp(", upperleft, ",", lowerright, ")") < 0)
+             then Ccode(void, "mpfr_set(", left, ",", upperleft, ", GMP_RNDD)")
+             else Ccode(void, "mpfr_set(", left, ",", lowerright, ", GMP_RNDD)")))
+      else (
+         if (Ccode(int, "mpfr_cmp(", lowerleft, ",", lowerright, ")") < 0) then (
+             if (Ccode(int, "mpfr_cmp(", upperright, ",", lowerleft, ")") < 0)
+             then Ccode(void, "mpfr_set(", left, ",", upperright, ", GMP_RNDD)")
+             else Ccode(void, "mpfr_set(", left, ",", lowerleft, ", GMP_RNDD)"))
+         else (
+             if (Ccode(int, "mpfr_cmp(", upperright, ",", lowerright, ")") < 0)
+             then Ccode(void, "mpfr_set(", left, ",", upperright, ", GMP_RNDD)")
+             else Ccode(void, "mpfr_set(", left, ",", lowerright, ", GMP_RNDD)")));
+                                   
+     clear(upperleft);
+     clear(lowerleft);
+     clear(upperright);
+     clear(upperleft);
+
+     interval(moveToRRandclear(left),moveToRRandclear(right)));
+                                    
 export floor(x:RR) : ZZ := (
      if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
      w := newZZmutable();
      Ccode( void, "mpfr_get_z(", w, ",", x, ", GMP_RNDD)" );
      moveToZZandclear(w));
+                                     
+export floor(x:RRi) : ZZ := floor(leftRR(x));
 
 export ceil(x:RR) : ZZ := (
      if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
      w := newZZmutable();
      Ccode( void, "mpfr_get_z(", w, ",", x, ", GMP_RNDU)" );
      moveToZZandclear(w));
+                                     
+export ceil(x:RRi) : ZZ := ceil(rightRR(x));
 
 export round(x:RR) : ZZ := (
      if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
@@ -1554,12 +1917,24 @@ export (x:RR) << (n:long) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_mul_2si(", z, ",", x, ",", n, ",GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export (x:RRi) << (n:long) : RRi := (
+     if n == long(0) then return x;
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_mul_2si(", z, ",", x, ",", n, ")" );
+     moveToRRiandclear(z));
 
 export (x:RR) >> (n:long) : RR := x << -n;
+                                     
+export (x:RRi) >> (n:long) : RRi := x << -n;
 
 export (x:RR) << (n:int) : RR := x << long(n);
+                                     
+export (x:RRi) << (n:int) : RRi := x << long(n);
 
 export (x:RR) >> (n:int) : RR := x << long(-n);
+                                     
+export (x:RRi) >> (n:int) : RRi := x << long(-n);
 
 -- complex arithmetic
 
@@ -1749,6 +2124,11 @@ export pi(prec:ulong):RR := (
      z := newRRmutable(prec);
      Ccode( void, "mpfr_const_pi(",  z, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export piRRi(prec:ulong):RRi := (
+     z := newRRimutable(prec);
+     Ccode( void, "mpfi_const_pi(",  z, ")" );
+     moveToRRiandclear(z));
 
 export exp(x:RR):RR := (
      z := newRRmutable(precision0(x));
@@ -1784,37 +2164,72 @@ export sin(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_sin(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export sin(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_sin(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export cos(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_cos(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export cos(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_cos(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export tan(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_tan(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export tan(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_tan(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export asin(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_asin(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export asin(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_asin(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export acos(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_acos(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export acos(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_acos(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export atan(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_atan(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export atan(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_atan(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export atan2(y:RR,x:RR):RR := (
      -- if isZero0(x) && isZero0(y) && isfinite0(x) && isfinite0(y) then return nanRR(min(precision0(x),precision0(y)));
      z := newRRmutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_atan2(", z, ",", y, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export atan2(y:RRi,x:RRi):RRi := (
+     z := newRRimutable(min(precision0(x),precision0(y)));
+     Ccode( void, "mpfi_atan2(", z, ",", y, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export agm(x:RR,y:RR):RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
@@ -1825,46 +2240,91 @@ export sinh(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_sinh(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export sinh(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_sinh(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export cosh(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_cosh(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export cosh(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_cosh(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export tanh(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_tanh(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export tanh(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_tanh(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export sec(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_sec(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export sec(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_sec(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export csc(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_csc(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export csc(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_csc(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export cot(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_cot(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export cot(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_cot(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export sech(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_sech(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export sech(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_sech(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export csch(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_csch(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export csch(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_csch(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export coth(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_coth(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export coth(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_coth(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export factorial(x:ulong):ZZ := (
      w := newZZmutable();
@@ -1875,11 +2335,21 @@ export log1p(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_log1p(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export log1p(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_log1p(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export expm1(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_expm1(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
+                                     
+export expm1(x:RRi):RRi := (
+     z := newRRimutable(precision0(x));
+     Ccode( void, "mpfi_expm1(", z, ",", x, ")" );
+     moveToRRiandclear(z));
 
 export Gamma(x:RR):RR := (
      z := newRRmutable(precision0(x));
@@ -1947,12 +2417,9 @@ export yn(n:long,x:RR):RR := (
      Ccode( void, "mpfr_yn(", z, ",",n,",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
 
-
-
 export sign(x:RR):bool := 0 != Ccode(int,"mpfr_signbit(",x,")");
 
-export sign(x:RRi):bool := 0 != Ccode(int,"mpfi_is_neg(",x,")");  -- Behavior might not be the same
-
+export sign(x:RRi):bool := 0 != Ccode(int,"mpfi_is_neg(",x,")");
 
 -- complex transcendental functions
 
