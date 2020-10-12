@@ -10,7 +10,7 @@ newPackage ( "ResLengthThree",
 	  HomePage => "http://www.math.ttu.edu/~lferraro" },
 	{ Name => "Francesca Gandini",
 	  Email => "fra.gandi.phd@gmail.com",
-	  HomePage => "TBD" },
+	  HomePage => "http://www.kzoo.edu/faculty/index.php?name=fgandini" },
 	{ Name => "Frank Moore",
 	  Email => "moorewf@wfu.edu",
 	  HomePage => "http://users.wfu.edu/moorewf/" },
@@ -23,7 +23,8 @@ newPackage ( "ResLengthThree",
     DebuggingMode => true
     )
 
-export { "resLengthThreeAlg", "resLengthThreeTorAlg", "multTableOneOne", "multTableOneTwo", "resLengthThreeTorAlgClass", "makeRes", "Labels", "Compact" }
+export { "resLengthThreeAlg", "resLengthThreeTorAlg", "multTableOneOne", "multTableOneTwo", 
+    "resLengthThreeTorAlgClass", "makeRes", "Labels", "Compact" }
 
 --==========================================================================
 -- EXPORTED FUNCTIONS
@@ -65,6 +66,7 @@ resLengthThreeAlg(ChainComplex, List) := (F, sym) -> (
 	(ideal apply(0..(m-1), i -> P_i))*(ideal apply((m+l)..(m+l+n-1), i -> P_i)) + 
 	(ideal apply(m..(m+l-1), i -> P_i))*(ideal apply((m+l)..(m+l+n-1), i -> P_i)) +
 	(ideal apply((m+l)..(m+l+n-1), i -> P_i))^2;
+   I = ideal mingens I;
    A := P/I;
    A.cache#"l" = l;
    A.cache#"m" = m;
@@ -277,7 +279,6 @@ assert ( e_1*e_2 == y*f_1 )
 assert ( e_1*f_4 == -x*g_1 )
 ///
 
-
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^2,x*y,z^2,y*z,z^2)
@@ -289,7 +290,6 @@ Q = QQ[u,v,w,x,y,z]
 I = ideal (u*v,w*x,y*z)
 assert( resLengthThreeTorAlgClass(I) === "C(3)" )
 ///
-
 
 TEST ///
 Q = QQ[x,y,z]
@@ -327,6 +327,125 @@ I = ideal(x^5,y^5,x*y^4,x^2*y^3,x^3*y^2,x^4*y,z^3)
 assert( resLengthThreeTorAlgClass(I) === "H(6,5)" )
 ///
 
+--==========================================================================
+-- DOCUMENTATION
+--==========================================================================
+
+beginDocumentation()
+
+document{
+  Key => ResLengthThree,
+  
+  Headline => "Computation of multiplicative structures on free resolutions of length three",
+
+  PARA { "Let $I$ be a homogeneous ideal contained in the irrelevant
+      maximal ideal of a graded ring $Q$ (obtained as a quotient of a
+      polynomial ring). If the length of the minimal free resolution
+      $F$ of $R=Q/I$ is $3$, then it carries a structure of a
+      differential graded algebra. The induced algebra structure on
+      Tor$_Q*$ ($R,k$) is unique and provides for a classification of
+      such quotient rings.  The package determines a multiplicative
+      structure on the free resolution as well as the induced
+      structure in homology."}
+      }
+
+document{
+  Key => {
+    resLengthThreeAlg, (resLengthThreeAlg, ChainComplex ), (resLengthThreeAlg, ChainComplex, List )
+    },
+
+  Headline => "the minimal free resolution presented as a graded-commutative ring",
+
+  Usage => "resLengthThreeAlg F, resLengthThreeAlg(F,L)", 
+
+  Inputs =>{
+      "F" => ChainComplex => " a free resolution of length three",
+      "L" => List => "a list of three symbols"
+      },
+  
+  Outputs => { 
+      QuotientRing => "the resolution presented as a quotient of a graded-commutative free algebra
+  over the ambient ring"},
+
+  PARA { "For a free resolution ", TT "F", " over a ring ", TT "Q", ", the function returns
+  the resolution ", TT "F", " as a quotient of a graded-commutative free algebra
+  over ", TT "Q", ". The basis vectors in degrees 1, 2, and 3 are named with the
+  symbols from the list ", TT "L", ". The defaul symbols are ", TT "e", ", ", TT "f", ", and ", TT "g", "." },
+  
+  EXAMPLE {
+	"Q = QQ[x,y,z];",
+	"F = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"describe F",
+	"e_1*e_2",
+	"e_1*f_2",
+	"e_1*f_3",	
+	"f_1*f_2",	
+	},
+
+  PARA { "The ambient ring ", TT "Q", " does not need to be a polynomial algebra." },
+
+  EXAMPLE {
+	"P = QQ[u,v,x,y,z];",
+	"Q = P/ideal(u^2,u*v);",
+	"F = resLengthThreeAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
+	"describe F",
+	"a_1*a_4",
+	"a_2*a_4",
+	"a_3*a_4"
+	},
+    
+Caveat => "The ambient ring Q must be homogeneous."
+}  
+
+document{
+  Key => {
+    resLengthThreeTorAlg, (resLengthThreeTorAlg, ChainComplex ), (resLengthThreeTorAlg, ChainComplex, List )
+    },
+
+  Headline => "the Tor algebra presented as a graded-commutative ring",
+
+  Usage => "resLengthThreeTorAlg F, resLengthThreeTorAlg(F,L)", 
+
+  Inputs =>{
+      "F" => ChainComplex => " a free resolution of length three",
+      "L" => List => "a list of three symbols"
+      },
+  
+  Outputs => { 
+      QuotientRing => "the Tor algebra presented as a quotient of a graded-commutative free algebra
+  over the ambient ring"},
+
+  PARA { "For a free resolution ", TT "F", " over a ring ", TT "Q", ", the function returns
+  the resolution ", TT "F", " as a quotient of a graded-commutative free algebra
+  over ", TT "Q", ". The basis vectors in degrees 1, 2, and 3 are named with the
+  symbols from the list ", TT "L", ". The defaul symbols are ", TT "e", ", ", TT "f", ", and ", TT "g", "." },
+  
+  EXAMPLE {
+	"Q = QQ[x,y,z];",
+	"F = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"describe F",
+	"e_1*e_2",
+	"e_1*f_2",
+	"e_1*f_3",	
+	"f_1*f_2",	
+	},
+
+  PARA { "The ambient ring ", TT "Q", " does not need to be a polynomial algebra." },
+
+  EXAMPLE {
+	"P = QQ[u,v,x,y,z];",
+	"Q = P/ideal(u^2,u*v);",
+	"F = resLengthThreeAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
+	"describe F",
+	"a_1*a_4",
+	"a_2*a_4",
+	"a_3*a_4"
+	},
+    
+Caveat => "The ambient ring Q must be homogeneous."
+}  
+
+
 end
 --==========================================================================
 -- end of package code
@@ -334,6 +453,7 @@ end
 
 uninstallPackage "ResLengthThree"
 restart
+installPackage "ResLengthThree"
 debug loadPackage "ResLengthThree"
 check "ResLengthThree"
 
@@ -342,6 +462,11 @@ check "ResLengthThree"
 needsPackage "TorAlgebra"'
 needsPackage "PruneComplex"
 
+P = ZZ[w,x,y,z]
+Q = P/ideal(4_P)
+I = ideal (x^2,y^2,z^2)
+A = resLengthThreeTorAlg res I
+describe A
 Q = QQ[u,v,x,y,z];
 R = Q/ideal(u^2,u*v)
 I = ideal (x^2,y^2,z^2)
@@ -381,129 +506,6 @@ basis(1,A)
 resLengthThreeTorAlgClass I
 
 
---==========================================================================
--- DOCUMENTATION
---==========================================================================
-
-beginDocumentation()
-
-doc ///
-  Key
-    ResLengthThree
-  Headline
-    Computation of multiplicative structures on free resolutions of length three
-  Description
-
-    Text 
-      Let $I$ be an ideal of a regular local ring $Q$ with residue
-      field $k$. The minimal free resolution of $R=Q/I$ carries a
-      structure of a differential graded algebra. If the length of the
-      resolution, which is called the codepth of $R$, is at most $3$,
-      then the induced algebra structure on Tor$_Q*$ ($R,k$) is unique
-      and provides for a classification of such local rings.
-      
-      The package also recognizes Golod rings, Gorenstein rings, and
-      complete intersection rings of any codepth. To recognize Golod
-      rings the package implements a test found in J. Burke, {\it Higher
-      homotopies and Golod rings}
-      @HREF"https://arxiv.org/abs/1508.03782"@. ///
-
-
-doc ///
-  Key
-    torAlgData
-  Headline
-    invariants of a local ring and its class (w.r.t. multiplication in homology)
-  Usage
-    torAlgData R
-  Inputs
-    R : QuotientRing
-        a quotient of a polynomial algebra  by an ideal contained in the irrelevant maximal ideal
-  Outputs
-      : HashTable
-        a hash table with invariants of the local ring obtained by
-  	localizing {\tt R} at the irrelevant maximal ideal
-  Description
-  
-    Text 
-      Computes invariants of the local ring obtained by localizing
-      {\tt R} at the irrelevant maximal ideal and, provided that it
-      has codepth at most 3, classifies it as belonging to one of the
-      (parametrized) classes {\bf B}, {\bf C}(c), {\bf G}(r), {\bf
-      H}(p,q), {\bf S}, or {\bf T}. Rings of higher codepth are
-      classified as {\bf C}(c) (complete intersection), {\bf Gorenstein},
-      {\bf Golod}, or {\tt no class}. Gorenstein rings of codepth 4 are further
-      classified as belonging to one of the (parametrized) classes
-      {\bf C}(4), {\bf GS}, {\bf GT}, or {\bf GH}(p). 
-      
-      Returns a hash table with the following data of the local ring:
-  
-      "c": codepth
-      
-      "e": embedding dimension
-      
-      "h": Cohen-Macaulay defect
-      
-      "m": minimal number of generators of defining ideal
-      
-      "n": type
-      
-      "Class": class ('B', 'C', 'G', 'GH', 'GS', 'GT', 'H', 'S', 'T',
-      'Golod', 'Gorenstein' `zero ring', or 'no class')
-      
-      "p": classification parameter
-      
-      "q": classification parameter
-      
-      "r": classification parameter
-      
-      "isCI": boolean
-      
-      "isGorenstein": boolean
-      
-      "isGolod": boolean
-      
-      "PoincareSeries": Poincar\'e series in closed from (rational function)
-      
-      "BassSeries": Bass series in closed from (rational function)
-      
-    Example
-      Q = QQ[x,y,z];
-      data = torAlgData (Q/ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3))
-      data#"PoincareSeries"
-
-    Example
-      Q = QQ[w,x,y,z];
-      torAlgData (Q/ideal (w^2-x*y*z,x^3,y^3,x^2*z,y^2*z,z^3-x*y*w,x*z*w,y*z*w,z^2*w-x^2*y^2))
-
-    Example
-      Q = QQ[v,w,x,y,z];
-      torAlgData (Q/(ideal(v^2-w^3)*ideal(v,w,x,y,z)))
-
-    Example
-      Q = QQ[u,v,w,x,y,z];
-      torAlgData (Q/ideal (u^2,v^2,w^2-y^4,x^2,x*y^15))
-
-    Text  
-      To extract data from the hash table returned by the function one may use  
-      @TO torAlgDataList@ and @TO torAlgDataPrint@.
-       
-  Caveat
-      If the embedding dimension of {\tt R} is large, then the response time
-      may be longer, in particular if {\tt R} is a quotient of a polynomial
-      algebra over a small field. The reason is that the function attempts to
-      reduce {\tt R} modulo a generic regular sequence of generators of the irrelevant
-      maximal ideal. The total number of attempts made can be controlled with
-      @TO setAttemptsAtGenericReduction@.
-      
-      If {\tt R} is a quotient of a polynomial algebra by a
-      homogeneous ideal, then it is graded and the relevant invariants
-      of the local ring obtained by localizing {\tt R} at the
-      irrelevant maximal ideal can be determined directly from {\tt R}.
-      If {\tt R} is a quotient of a polynomial algebra by a
-      non-homogeneous ideal, then the function uses the package @TO
-      LocalRings@ to compute some of the invariants.
-///
 
 
 --===================================================================================================
