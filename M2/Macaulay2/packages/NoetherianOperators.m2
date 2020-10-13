@@ -1354,6 +1354,13 @@ doc ///
 	       See also @TO zeroDimensionalDual@.
 ///
 
+///
+R = CC[x,y]
+I1 = ideal{x^2,x*y}
+D1 = truncatedDual(origin R, I1, 4)
+assert(hilbertFunction({0,1,2,3,4}, D1) == {1,2,1,1,1})
+///
+
 doc ///
      Key
           zeroDimensionalDual
@@ -1405,73 +1412,6 @@ assert(dim D2' == 0)
 ///
 
 
-doc ///
-     Key
-          numNoethOpsAtPoint
-	  (numNoethOpsAtPoint,Ideal,Point)
-	  (numNoethOpsAtPoint,Ideal,Matrix)
-     Headline
-          truncated dual space of a polynomial ideal at a point
-     Usage
-          S = numNoethOpsAtPoint(I,p)
-     Inputs
-     	  p:Point
-	  I:Ideal
-     Outputs
-          S:DualSpace
-     Description
-          Text
-	       Computes a basis for the local dual space of a polynomial ideal localized at point p, truncated at degree d.
-	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
-	       They are really elements of the dual ring.
-	  Example
-	       R = CC[x,y];
-	       I = ideal{x^2, y*x}
-	       numNoethOpsAtPoint(I,origin(R),DegreeLimit=>3)
-	  Text
-	       The functionals in the dual at a point p are expressed in coordinates centered at p.
-	  Example
-	       p = point matrix{{0_CC, 1}}
-	       numNoethOpsAtPoint(I,p,DegreeLimit=>3)
-	  Text
-	       Over inexact fields, the computation accounts for the possibility of small numerical error in the point p.
-	       The optional argument @TO "Tolerance (NoetherianOperators)"@ can be set to adjust the tolerance of the numerical computations.
-	       Higher degree dual computations generally require higher accuracy in the input and larger tolerance value to complete correctly.
-	       
-	       In this example, the point q is slightly away from the variety of I, but an appropriate @TT "Tolerance"@ value can overcome the error. 
-	  Example
-	       q = point matrix{{0_CC + 1e-10, 1}}
-	       tol = 1e-6;
-	       S = numNoethOpsAtPoint(I,q,Tolerance=>tol,DegreeLimit=>3)
-	       (m,c) = coefficients gens S;
-	       m*clean(tol, c)
-          Text
-	       If no degree limit is specified then the full dual space is computed if it is finite dimensional.  If a sufficient number of dependent variables is not given then termination will fail.
-	  Example
-	       R = QQ[a,b];
-	       I = ideal{a^3,b^3}
-	       D = numNoethOpsAtPoint(I,origin(R))
-	       #entries D
-	  Text
-	       The dimension of the dual space at p is the multiplicity of the solution at p.
-	  Example
-	       S = CC[x,y];
-	       J = ideal{(y-2)^2,y-x^2}
-	       p = point matrix{{1.4142136_CC,2}};
-	       D = numNoethOpsAtPoint(J,p)
-	       #entries D
-	  Text
-	       See also @TO truncatedDual@.
-     Caveat
-	  The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
-///
-
-///
-R = CC[x,y]
-I1 = ideal{x^2,x*y}
-D1 = truncatedDual(origin R, I1, 4)
-assert(hilbertFunction({0,1,2,3,4}, D1) == {1,2,1,1,1})
-///
 
 ///
      Key
@@ -2097,7 +2037,51 @@ doc ///
 	       Q == Q'	  
 ///
 
+-------------- Noetherian operators documentation
 
+doc ///
+Key
+    (noetherianOperators, Ideal)
+Headline
+    Noetherian operators of a primary ideal
+Usage
+    noetherianOperators Q
+    noetherianOperators (Q, Strategy => "MacaulayMatrix")
+Inputs
+    Q:Ideal
+        assumed to be primary
+--Outputs
+--Consequences
+--    Item
+Description
+    Text
+        Compute a set of Noetherian operators
+    Example
+        R = QQ[x,y,t];
+        I = ideal(x^2, y^2-x*t);
+        noetherianOperators I
+    Text
+        The optional argument {\tt Strategy} can be used to choose different algorithms.
+        The following algorithms are supported: 
+        {\tt "MacaulayMatrix"}, {\tt "PunctualHilbert"}, {\tt "Hybrid"}
+--    CannedExample
+--    Code
+--    Pre
+--ExampleFiles
+--Contributors
+--References
+Caveat
+    The behavior is undefined if {\tt Q} is not primary.
+    For non-primary ideals, use @TO (noetherianOperators, Ideal, Ideal)@
+--SeeAlso
+///
+
+doc ///
+Key
+    noetherianOperators
+Headline
+    Noetherian operators
+///
 
 -------------- Noetherian operators tests
 
