@@ -61,6 +61,7 @@ export {
     "InterpolationDegreeLimit",
     "NoetherianDegreeLimit",
     "Sampler",
+    "TrustedPoint",
 
     --functions from punctual Hilb approach
     "getNoetherianOperatorsHilb",
@@ -108,15 +109,15 @@ setOfNoethOps(Matrix) := o -> M -> (
     R := coefficientRing(ring M);
     if o.Point === null then error "needs prime or Point";
     setOfNoethOps(M, ideal(vars(R) - matrix(o#Point)), Point=>point o#Point)
-    )
+)
 setOfNoethOps(Matrix,Ideal) := o -> (M,P) -> (
     new SetOfNoethOps from {
-	Gens => M,
-	Ops => flatten entries M,
-	Point => o#Point,
-	Prime => P
-	}
-    )
+        Gens => M,
+        Ops => sort flatten entries M,
+        Point => o#Point,
+        Prime => P
+    }
+)
 
 entries SetOfNoethOps := N -> N.Ops;
 gens SetOfNoethOps := o -> N -> N.Gens;
@@ -904,9 +905,15 @@ hybridNoetherianOperators (Ideal) := SetOfNoethOps => true >> opts -> I -> hybri
 --    NoetherianDegreeLimit => 5,
 --    DependentSet => null})
 numericalNoetherianOperators = method(Options => true)
--- Witness set is a witness set, and pt is a trusted point with the "correct" dx-support
-numericalNoetherianOperators(Ideal, WitnessSet, Point) := List => true >> opts -> (I, ws, pt) -> (
+-- option TrustedPoint is a point with the "correct" dx-support
+-- option Sampler is a function f(n, I) which computes a list of n distinct points on the variety of I
+numericalNoetherianOperators(Ideal) := List => true >> opts -> (I) -> (
     tol := if not opts.?Tolerance then defaultT(CC) else opts.Tolerance;
+    sampler := if opts.?Sampler then opts.Sampler else (
+        ws := first components bertiniPosDimSolve(I);
+        (n,I) -> bertiniSample(n,ws)
+    );
+    goodPoint := if opts.?TrustedPoint then point(opts.TrustedPoint) else first sampler(1,I);
     S := ring I;
     depSet := if not opts.?DependentSet then error"expected option DependentSet"
             else opts.DependentSet;
@@ -916,18 +923,9 @@ numericalNoetherianOperators(Ideal, WitnessSet, Point) := List => true >> opts -
     R := CC monoid S;
     J := sub(I,R);
 
-    nopsTemplate := numNoethOpsAtPoint(J, pt, opts, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => noethDegLim);
+    nopsTemplate := numNoethOpsAtPoint(J, goodPoint, opts, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => noethDegLim);
     
-    nopsTemplate / (tmpl -> interpolateFromTemplate(I, ws, tmpl, opts, Tolerance => tol))
-)
--- choose a "trusted" point at random
-numericalNoetherianOperators(Ideal, WitnessSet) := List => true >> opts -> (I, ws) -> numericalNoetherianOperators(I,ws,first bertiniSample(1,ws), opts)
-
--- choose the first component given by Bertini as the witness set.
--- If I is not primary, the behavior is undefined
-numericalNoetherianOperators(Ideal) := List => true >> opts -> I -> (
-    ws := first components bertiniPosDimSolve(I);
-    numericalNoetherianOperators(I,ws, opts)
+    nopsTemplate / (tmpl -> interpolateFromTemplate(I, tmpl, opts, Tolerance => tol, Sampler => sampler))
 )
 
 -- if a point is given, computes the evaluated Nops
@@ -943,14 +941,13 @@ numericalNoetherianOperators(Ideal, Point) := SetOfNoethOps => true >> opts -> (
 )
 numericalNoetherianOperators(Ideal, Matrix) := SetOfNoethOps => true >> opts -> (I,pt) -> numericalNoetherianOperators(I, point pt, opts)
 
-
-
-interpolateFromTemplate = true >> opts -> (I, ws, tmpl) -> (
+interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
     ptList := new List;
     opList := new List;
     (mon,coef) := coefficients(tmpl);
     S := coefficientRing ring tmpl;
     interpTol := if not opts.?InterpolationTolerance then defaultT(CC) else opts.InterpolationTolerance;
+    sampler := if opts.?Sampler then opts.Sampler else (n,Q) -> first bertiniSample(n, first components bertiniPosDimSolve(Q));
     nops := for m in flatten entries mon list (
         d := 0;
         result := ("?","?");
@@ -960,7 +957,7 @@ interpolateFromTemplate = true >> opts -> (I, ws, tmpl) -> (
             neededPoints := numColumns numBasis + numColumns denBasis + 1;
             if neededPoints - #ptList > 0 and debugLevel > 0 then 
                 <<"Computing "<<neededPoints - #ptList<<" new specialized NOps"<<endl;
-            newNops := newSpecializedNop(I, ws, tmpl, neededPoints - #ptList, opts, Tolerance => opts.Tolerance);
+            newNops := newSpecializedNop(I, sampler, tmpl, neededPoints - #ptList, opts, Tolerance => opts.Tolerance);
             opList = opList | newNops#0;
             ptList = ptList | newNops#1;
             
@@ -980,9 +977,11 @@ interpolateFromTemplate = true >> opts -> (I, ws, tmpl) -> (
 )
 
 -- Create new specialized Noeth op at a random point using tmpl as a template
-newSpecializedNop = true >> opts -> (I, ws, tmpl,n) -> (
+-- sampler(n,I) is a function that generates a list of n points on the variety of I
+newSpecializedNop = true >> opts -> (I, sampler, tmpl,n) -> (
     if n < 1 then return {{},{}};
-    pts := bertiniSample(n,ws);
+    --pts := bertiniSample(n,ws);
+    pts := sampler(n,I);
     R := ring I;
     R' := ring tmpl;
 
@@ -1002,7 +1001,7 @@ newSpecializedNop = true >> opts -> (I, ws, tmpl,n) -> (
         )
         else {(mon*colReduce(K, Tolerance => opts.Tolerance))_(0,0), pt}
     );
-    if #opPts < n then opPts = opPts | newSpecializedNop(I, ws, tmpl, n-#opPts, opts);
+    if #opPts < n then opPts = opPts | newSpecializedNop(I, sampler, tmpl, n-#opPts, opts);
     return transpose opPts;
 )
 
@@ -1388,6 +1387,13 @@ doc ///
 	       See also @TO zeroDimensionalDual@.
 ///
 
+///
+R = CC[x,y]
+I1 = ideal{x^2,x*y}
+D1 = truncatedDual(origin R, I1, 4)
+assert(hilbertFunction({0,1,2,3,4}, D1) == {1,2,1,1,1})
+///
+
 doc ///
      Key
           zeroDimensionalDual
@@ -1439,73 +1445,6 @@ assert(dim D2' == 0)
 ///
 
 
-doc ///
-     Key
-          numNoethOpsAtPoint
-	  (numNoethOpsAtPoint,Ideal,Point)
-	  (numNoethOpsAtPoint,Ideal,Matrix)
-     Headline
-          truncated dual space of a polynomial ideal at a point
-     Usage
-          S = numNoethOpsAtPoint(I,p)
-     Inputs
-     	  p:Point
-	  I:Ideal
-     Outputs
-          S:DualSpace
-     Description
-          Text
-	       Computes a basis for the local dual space of a polynomial ideal localized at point p, truncated at degree d.
-	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
-	       They are really elements of the dual ring.
-	  Example
-	       R = CC[x,y];
-	       I = ideal{x^2, y*x}
-	       numNoethOpsAtPoint(I,origin(R),DegreeLimit=>3)
-	  Text
-	       The functionals in the dual at a point p are expressed in coordinates centered at p.
-	  Example
-	       p = point matrix{{0_CC, 1}}
-	       numNoethOpsAtPoint(I,p,DegreeLimit=>3)
-	  Text
-	       Over inexact fields, the computation accounts for the possibility of small numerical error in the point p.
-	       The optional argument @TO "Tolerance (NoetherianOperators)"@ can be set to adjust the tolerance of the numerical computations.
-	       Higher degree dual computations generally require higher accuracy in the input and larger tolerance value to complete correctly.
-	       
-	       In this example, the point q is slightly away from the variety of I, but an appropriate @TT "Tolerance"@ value can overcome the error. 
-	  Example
-	       q = point matrix{{0_CC + 1e-10, 1}}
-	       tol = 1e-6;
-	       S = numNoethOpsAtPoint(I,q,Tolerance=>tol,DegreeLimit=>3)
-	       (m,c) = coefficients gens S;
-	       m*clean(tol, c)
-          Text
-	       If no degree limit is specified then the full dual space is computed if it is finite dimensional.  If a sufficient number of dependent variables is not given then termination will fail.
-	  Example
-	       R = QQ[a,b];
-	       I = ideal{a^3,b^3}
-	       D = numNoethOpsAtPoint(I,origin(R))
-	       #entries D
-	  Text
-	       The dimension of the dual space at p is the multiplicity of the solution at p.
-	  Example
-	       S = CC[x,y];
-	       J = ideal{(y-2)^2,y-x^2}
-	       p = point matrix{{1.4142136_CC,2}};
-	       D = numNoethOpsAtPoint(J,p)
-	       #entries D
-	  Text
-	       See also @TO truncatedDual@.
-     Caveat
-	  The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
-///
-
-///
-R = CC[x,y]
-I1 = ideal{x^2,x*y}
-D1 = truncatedDual(origin R, I1, 4)
-assert(hilbertFunction({0,1,2,3,4}, D1) == {1,2,1,1,1})
-///
 
 ///
      Key
@@ -2131,7 +2070,51 @@ doc ///
 	       Q == Q'	  
 ///
 
+-------------- Noetherian operators documentation
 
+doc ///
+Key
+    (noetherianOperators, Ideal)
+Headline
+    Noetherian operators of a primary ideal
+Usage
+    noetherianOperators Q
+    noetherianOperators (Q, Strategy => "MacaulayMatrix")
+Inputs
+    Q:Ideal
+        assumed to be primary
+--Outputs
+--Consequences
+--    Item
+Description
+    Text
+        Compute a set of Noetherian operators
+    Example
+        R = QQ[x,y,t];
+        I = ideal(x^2, y^2-x*t);
+        noetherianOperators I
+    Text
+        The optional argument {\tt Strategy} can be used to choose different algorithms.
+        The following algorithms are supported: 
+        {\tt "MacaulayMatrix"}, {\tt "PunctualHilbert"}, {\tt "Hybrid"}
+--    CannedExample
+--    Code
+--    Pre
+--ExampleFiles
+--Contributors
+--References
+Caveat
+    The behavior is undefined if {\tt Q} is not primary.
+    For non-primary ideals, use @TO (noetherianOperators, Ideal, Ideal)@
+--SeeAlso
+///
+
+doc ///
+Key
+    noetherianOperators
+Headline
+    Noetherian operators
+///
 
 -------------- Noetherian operators tests
 
@@ -2480,10 +2463,10 @@ R = QQ[x_1..x_4]
 I = minors(2, matrix{{x_1..x_3},{x_2..x_4}})
 k = 6
 J = I_* / (f -> f^k) // ideal
-L' = elapsedTime noetherianOperators(Q,I, Strategy => "MacaulayMatrix")
-L' = elapsedTime noetherianOperators(Q,I, Strategy => "MacaulayMatrix", DegreeLimit => 7)
+L' = elapsedTime noetherianOperators(J,I, Strategy => "MacaulayMatrix")
 elapsedTime Q = first select(primaryDecomposition J, q -> radical q == I)
 L = elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
+Q' = getIdealFromNoetherianOperators(L)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
