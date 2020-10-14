@@ -445,45 +445,40 @@ inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
 
 --======================================= Experimental =======================================--
 
+baseRing := RP -> ( R := RP; while instance(R, LocalRing) do R = last R.baseRings; R )
+
 -- (symbol:, Thing, Thing)
 -- We rely on the fact that ideal and module quotients commute with localization
 localQuotient := opts -> (A, B) -> (
     RP := ring A;
     if instance(RP, LocalRing) then (
-        R := RP;
-        while instance(R, LocalRing) do R = last R.baseRings;
+        R := baseRing RP;
         A' := liftUp(A, R);
         B' := liftUp(B, R);
         C' := quotient(A', B', opts);
         C' ** RP))
-
--- annihilator
--- We rely on the fact that ideal and module annihilators commute with localization
-oldAnnihilator = lookup(annihilator, Module)
-annihilator Module := Ideal => opts -> (cacheValue symbol annihilator) (M -> (
-    RP := ring M;
-    if instance(RP, LocalRing) then (
-        if M == 0 then return ideal 1_RP;
-        R := RP;
-        while class R === LocalRing do R = last R.baseRings;
-        -- Does this theoretically work?
-        M' := liftUp(M, R);
-        N' := annihilator(M', opts);             -- Any options we need to care about?
-        N' ** RP
-        )
-    else (oldAnnihilator opts)(M)))
 
 -- saturate
 -- We rely on the fact that ideal and module saturations commute with localization
 localSaturate := opts -> (A, B) -> (
     RP := ring A;
     if instance(RP, LocalRing) then (
-        R := RP;
-        while class R === LocalRing do R = last R.baseRings;
+        R := baseRing RP;
         A' := liftUp(A, R);
         B' := liftUp(B, R);
         C' := saturate(A', B', opts);
         C' ** RP))
+
+-- annihilator
+-- We rely on the fact that ideal and module annihilators commute with localization
+localAnnihilator := opts -> A -> (
+    RP := ring A;
+    if instance(RP, LocalRing) then (
+        R := baseRing RP;
+        -- TODO: is this theoretically correct?
+        A' := liftUp(A, R);
+        B' := annihilator(A', opts);
+        B' ** RP))
 
 --=============================== addHooks Section for Colons ===============================--
 
@@ -500,6 +495,9 @@ scan({	symbol IdealIdealSaturateHooks,
 	symbol ModuleIdealSaturateHooks}, HookList -> addHook(HookList, (opts, I, J) -> (
 	    if debugLevel > 0 then stderr << "  -- localSaturate(" << toString class I << ", " << toString class J << ")" << endl;
 	    (localSaturate opts)(I, J))))
+scan({	symbol ModuleAnnihilatorHooks}, HookList -> addHook(HookList, (opts, M) -> (
+	    if debugLevel > 0 then stderr << "  -- localAnnihilator(" << toString class M, ")" << endl;
+	    (localAnnihilator opts) M)))
 
 --================================= Tests and Documentation =================================--
 

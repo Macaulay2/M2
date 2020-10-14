@@ -549,7 +549,8 @@ saturationZero(Module, Ideal) := (M, B) -> (
 -- annihilator = method(Options => {Strategy => null}) -- defined in m2/quotient.m2
 annihilator RingElement := Ideal => opts -> f -> annihilator(ideal f,  opts)
 annihilator Ideal       := Ideal => opts -> I -> annihilator(module I, opts)
-annihilator Module      := Ideal => opts -> M -> annihilatorHelper(M, ModuleAnnihilatorAlgorithms, opts)
+annihilator Module      := Ideal => opts -> (cacheValue symbol annihilator) (
+    M -> annihilatorHelper(M, ModuleAnnihilatorAlgorithms, opts))
 
 -- Helper for annihilator methods
 annihilatorHelper = (A, algorithms, opts) -> (
@@ -557,6 +558,7 @@ annihilatorHelper = (A, algorithms, opts) -> (
     if isWeylAlgebra R then error "annihilator has no meaning for objects over a Weyl algebra";
     -- TODO: add more instant checks
     f := presentation A;
+    -- TODO: is this any different from A == 0?
     F := target f;
     if numgens F === 0 then return ideal 1_R;
 
