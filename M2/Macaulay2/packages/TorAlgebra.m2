@@ -155,7 +155,7 @@ toralgdata = R -> (
 		else (
 		    setMaxIdeal ideal vars Q;		
 		    I = ideal localMingens (localResolution ideal R).dd_1;
-		    if not isSubset(I, (ideal vars Q)^2) then error "Not able to properly prune ring. Please provide presentation without linear terms." else (
+		    if not isSubset(I, (ideal vars Q)^2) then error "Please provide presentation without linear terms." else (
 		    F = localResolution I;
 		    R = Q/I;
 		    );
@@ -501,7 +501,7 @@ toralgdata = R -> (
 
 torAlgData = method()
 
-torAlgData( QuotientRing) := R -> toralgdata R
+torAlgData( QuotientRing ) := R -> toralgdata R
 
 torAlgData( Ideal ) := I -> toralgdata ((ring I)/I)
 
@@ -919,29 +919,32 @@ doc ///
 doc ///
   Key
     torAlgData
+    (torAlgData, QuotientRing)
   Headline
     invariants of a local ring and its class (w.r.t. multiplication in homology)
   Usage
     torAlgData R or torAlgData I
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra  by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
   Outputs
       : HashTable
-        a hash table with invariants of the local ring obtained by
+        with invariants of the local ring obtained by
   	localizing {\tt R} at the irrelevant maximal ideal
   Description
   
     Text 
-      Computes invariants of the local ring obtained by localizing
-      {\tt R} at the irrelevant maximal ideal and, provided that it
-      has codepth at most 3, classifies it as belonging to one of the
+      Computes invariants of the local ring obtained by localizing {\tt
+      R} at the irrelevant maximal ideal and, provided that it has
+      codepth at most 3, classifies it as belonging to one of the
       (parametrized) classes {\bf B}, {\bf C}(c), {\bf G}(r), {\bf
       H}(p,q), {\bf S}, or {\bf T}. Rings of higher codepth are
-      classified as {\bf C}(c) (complete intersection), {\bf Gorenstein},
-      {\bf Golod}, or {\tt no class}. Gorenstein rings of codepth 4 are further
-      classified as belonging to one of the (parametrized) classes
-      {\bf C}(4), {\bf GS}, {\bf GT}, or {\bf GH}(p). 
+      classified as {\bf C}(c) (complete intersection), {\bf
+      Gorenstein}, {\bf Golod}, or {\bf no class}. Gorenstein rings of
+      codepth 4 are further classified as belonging to one of the
+      (parametrized) classes {\bf C}(4), {\bf GS}, {\bf GT}, or {\bf
+      GH}(p). It is also possible to call the function on the defining
+      ideal of {\tt R}; see @TO (torAlgData,Ideal)@.
       
       Returns a hash table with the following data of the local ring:
   
@@ -1014,14 +1017,40 @@ doc ///
 
 doc ///
   Key
+    (torAlgData, Ideal)
+  Headline
+    invariants of a local ring and its class (w.r.t. multiplication in homology)
+  Usage
+    torAlgData R or torAlgData I
+  Inputs
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
+  Outputs
+      : HashTable
+        with invariants of the local ring obtained by
+  	localizing the quotient by {\tt I} at the irrelevant maximal ideal
+  Description
+  
+    Text 
+      See @TO (torAlgData,QuotientRing)@. 
+      
+    Example
+      Q = QQ[x,y,z];
+      data = torAlgData (ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3))
+      data#"PoincareSeries"
+///
+
+doc ///
+  Key
     torAlgClass
+    (torAlgClass, QuotientRing)
   Headline
     the class (w.r.t. multiplication in homology) of a local ring
   Usage
-    torAlgClass R
+    torAlgClass R or torAlgClass I
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
   Outputs
       : String
         the (parametrized) class of the local ring obtained by
@@ -1031,69 +1060,98 @@ doc ///
   Description
   
     Text 
-      Classifies the local ring obtained by localizing {\tt R} at
-      the irrelevant maximal ideal as belonging to one of the
-      (parametrized) classes {\bf B}, {\bf C}(c), {\bf G}(r), {\bf H}(p,q),
-      {\bf S}, or {\bf T}, provided that it is codepth at most 3.
-      
---    Example
+      Classifies the local ring obtained by localizing {\tt R} at the
+      irrelevant maximal ideal as belonging to one of the
+      (parametrized) classes {\bf B}, {\bf C}(c), {\bf G}(r), {\bf
+      H}(p,q), {\bf S}, or {\bf T}, provided that it is of codepth at
+      most 3.  It is also possible to call the function on the
+      defining ideal of {\tt R}; see @TO (torAlgClass,Ideal)@.
+            
+    Example
       Q = QQ[x,y,z];
-      -- torAlgClass Q
-      -- torAlgClass (Q/ideal (x*y))
-      -- torAlgClass (Q/ideal (x^2,y^2))
-      -- torAlgClass (Q/ideal (x^2,y^2,x*y))
-      -- torAlgClass (Q/ideal (x^2,x*y,y*z,z^2))
-      -- torAlgClass (Q/ideal (x^2,y^2,z^2))      
-      -- torAlgClass (Q/ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3))
-      -- torAlgClass (Q/ideal (x*z+y*z,x*y+y*z,x^2-y*z,y*z^2+z^3,y^3-z^3))
-      -- torAlgClass (Q/ideal (x^2,y^2,z^2,x*y))
-      -- torAlgClass (Q/ideal (x^2,y^2,z^2,x*y*z))
+      torAlgClass (Q/ideal(x))
+      torAlgClass (Q/ideal (x*y))
+      torAlgClass (Q/ideal (x^2,y^2))
+      torAlgClass (Q/ideal (x^2,y^2,x*y))
+      torAlgClass (Q/ideal (x^2,x*y,y*z,z^2))
+      torAlgClass (Q/ideal (x^2,y^2,z^2))      
+      torAlgClass (Q/ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3))
+      torAlgClass (Q/ideal (x*z+y*z,x*y+y*z,x^2-y*z,y*z^2+z^3,y^3-z^3))
+      torAlgClass (Q/ideal (x^2,y^2,z^2,x*y))
+      torAlgClass (Q/ideal (x^2,y^2,z^2,x*y*z))
       
     Text  
       If the local ring is Gorenstein or Golod of codepth 4, then it is classified
       as belonging to one of the (parametrized) classes {\bf C}(4), {\bf GH}(p), 
       {\bf GS}, {\bf GT}, or {\bf codepth 4 Golod}.
       
---    Example
-      -- Q = QQ[w,x,y,z];
-      -- torAlgClass (Q/ideal (w^2,x^2,y^2,z^2))
-      -- torAlgClass (Q/ideal (y*z,x*z,x*y+z^2,x^2,w*x+y^2+z^2,w^2+w*y+y^2+z^2))
-      -- torAlgClass (Q/ideal (z^2,x*z,w*z+y*z,y^2,x*y,w*y,x^2,w*x+y*z,w^2+y*z))
-      -- torAlgClass (Q/ideal (x^2,y^2,z^2,x*w,y*w,z*w,w^3-x*y*z))
-      -- torAlgClass (Q/(ideal (w,x,y,z))^2)
+    Example
+      Q = QQ[w,x,y,z];
+      torAlgClass (Q/ideal (w^2,x^2,y^2,z^2))
+      torAlgClass (Q/ideal (y*z,x*z,x*y+z^2,x^2,w*x+y^2+z^2,w^2+w*y+y^2+z^2))
+      torAlgClass (Q/ideal (z^2,x*z,w*z+y*z,y^2,x*y,w*y,x^2,w*x+y*z,w^2+y*z))
+      torAlgClass (Q/ideal (x^2,y^2,z^2,x*w,y*w,z*w,w^3-x*y*z))
+      torAlgClass (Q/(ideal (w,x,y,z))^2)
 
     Text	  
       If the local ring has codepth at least 5, then it is classified as belonging
       to one of the classes {\bf C}(c), if it is complete intersection, {\bf codepth c Gorenstein}, 
       if it is Gorenstein and not complete intersection, {\bf codepth c Golod}, if it is Golod,
-      and {\tt no class} otherwise.
+      and {\bf no class} otherwise.
             
-    -- Example
-    --   Q = QQ[u,v,w,x,y,z];
-    --   torAlgClass (Q/ideal (u^2,v^2,w^2,x^2+y^2, x^2+z^2))
-    --   torAlgClass (Q/ideal (w^2,v*w,z*w,y*w,v^2,z*v+x*w,y*v,x*v,z^2+x*w,y*z,x*z,y^2+x*w,x*y,x^2))
-    --   torAlgClass (Q/ideal (x^2*y^2,x^2*z,y^2*z,u^2*z,v^2*z,w^2*z))
-    --   torAlgClass (Q/ideal (u^2,v^2,w^2,x^2,z^2,x*y^15))
+    Example
+      Q = QQ[u,v,w,x,y,z];
+      torAlgClass (Q/ideal (u^2,v^2,w^2,x^2+y^2, x^2+z^2))
+      torAlgClass (Q/ideal (w^2,v*w,z*w,y*w,v^2,z*v+x*w,y*v,x*v,z^2+x*w,y*z,x*z,y^2+x*w,x*y,x^2))
+      torAlgClass (Q/ideal (x^2*y^2,x^2*z,y^2*z,u^2*z,v^2*z,w^2*z))
+      torAlgClass (Q/ideal (u^2,v^2,w^2,x^2,z^2,x*y^15))
       
     Text  
       If the defining ideal of {\tt R} is not contained in the irrelevant maximal ideal, 
-      then the resulting local ring is zero, and the function returns {\tt zero ring}.
+      then the resulting local ring is zero, and the function returns {\bf zero ring}.
       
-    -- Example
-    --   Q = QQ[x,y,z];
-    --   torAlgClass (Q/ideal (x^2-1))
+    Example
+      Q = QQ[x,y,z];
+      torAlgClass (Q/ideal (x^2-1))
+///
+
+doc ///
+  Key
+    (torAlgClass, Ideal)
+  Headline
+    the class (w.r.t. multiplication in homology) of a local ring
+  Usage
+    torAlgClass R or torAlgClass I
+  Inputs
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
+  Outputs
+      : String
+        the (parametrized) class of the local ring obtained by
+        localizing the quotient by {\tt I} at the irrelevant maximal ideal, provided
+        that this ring is non-zero and of codepth at most 3 or Gorenstein 
+	or Golod; otherwise "no class"
+  Description
+  
+    Text 
+      See @TO (torAlgClass,QuotientRing)@.	
+            
+    Example
+      Q = QQ[x,y,z];
+      torAlgClass (ideal (x^2,y^2,z^2))      
 ///
 
 doc ///
   Key
     isCI
+    (isCI, QuotientRing)
   Headline
     whether the ring is complete intersection
   Usage
-    isCI R
+    isCI R or isCI I
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
   Outputs
       : Boolean
         whether the local ring obtained by localizing {\tt R} at the irrelevant maximal ideal is complete intersection
@@ -1102,7 +1160,8 @@ doc ///
   
     Text 
       Checks if the local ring obtained by localizing {\tt R} at the
-      irrelevant maximal ideal is complete intersection.
+      irrelevant maximal ideal is complete intersection. It is also possible to call the function on the defining
+      ideal of {\tt R}; see @TO (isCI,Ideal)@.
       
     Example
       Q = QQ[x,y,z];
@@ -1112,24 +1171,51 @@ doc ///
 
 doc ///
   Key
-    isGorenstein
+    (isCI, Ideal)
   Headline
-    whether the ring Gorenstein
+    whether the ring is complete intersection
   Usage
-    isGorenstein R
+    isCI R or isCI I
   Inputs
-    R : QuotientRing
-        a quotient of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
   Outputs
       : Boolean
-        whether the local ring obtained by
-        localizing {\tt R} at the irrelevant maximal ideal is Gorenstein
-	
+        whether the local ring obtained by localizing the quotient by {\tt I} at the irrelevant maximal ideal is complete intersection 
+
+  Description
+  
+    Text 
+      Checks if the local ring obtained by localizing the quotient by {\tt I} at the
+      irrelevant maximal ideal is complete intersection. 
+      
+    Example
+      Q = QQ[x,y,z];
+      isCI (ideal (x^2,x*y,y*z,z^2))
+      isCI (ideal (x^2,y^2))
+///
+
+doc ///
+  Key
+    isGorenstein
+    (isGorenstein, QuotientRing)
+  Headline
+    whether the ring is Gorenstein
+  Usage
+    isGorenstein R or isGorenstein I
+  Inputs
+    R : QuotientRing
+        of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
+  Outputs
+      : Boolean
+        whether the local ring obtained by localizing {\tt R} at the irrelevant maximal ideal is Gorenstein
+
   Description
   
     Text 
       Checks if the local ring obtained by localizing {\tt R} at the
-      irrelevant maximal ideal is Gorenstein.
+      irrelevant maximal ideal is Gorenstein. It is also possible to call the function on the defining
+      ideal of {\tt R}; see @TO (isGorenstein,Ideal)@.
       
     Example
       Q = QQ[x,y,z];
@@ -1140,24 +1226,52 @@ doc ///
 
 doc ///
   Key
+    (isGorenstein, Ideal)
+  Headline
+    whether the ring is Gorenstein
+  Usage
+    isGorenstein R or isGorenstein I
+  Inputs
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
+  Outputs
+      : Boolean
+        whether the local ring obtained by localizing the quotient by {\tt I} at the irrelevant maximal ideal is Gorenstein
+
+  Description
+  
+    Text 
+      Checks if the local ring obtained by localizing the quotient by {\tt I} at the
+      irrelevant maximal ideal is Gorenstein.
+      
+    Example
+      Q = QQ[x,y,z];
+      isGorenstein (ideal (x^2,x*y,y*z,z^2))
+      isGorenstein (ideal (x^2,y^2))
+      isGorenstein (ideal (x*z+y*z,x*y+y*z,x^2-y*z,y*z^2+z^3,y^3-z^3))
+///
+
+doc ///
+  Key
     isGolod
+    (isGolod, QuotientRing)
   Headline
     whether the ring is Golod
   Usage
-    isGolod R
+    isGolod R or isGolod I
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
   Outputs
       : Boolean
-        whether the local ring obtained by
-        localizing {\tt R} at the irrelevant maximal ideal is Golod
-	
+        whether the local ring obtained by localizing {\tt R} at the irrelevant maximal ideal is Golod
+
   Description
   
     Text 
       Checks if the local ring obtained by localizing {\tt R} at the
-      irrelevant maximal ideal is Golod
+      irrelevant maximal ideal is Golod. It is also possible to call the function on the defining
+      ideal of {\tt R}; see @TO (isGolod,Ideal)@.
       
     Example
       Q = QQ[x,y,z];
@@ -1168,20 +1282,76 @@ doc ///
 
 doc ///
   Key
+    (isGolod, Ideal)
+  Headline
+    whether the ring is complete intersection
+  Usage
+    isGolod R or isGolod I
+  Inputs
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
+  Outputs
+      : Boolean
+        whether the local ring obtained by localizing the quotient by {\tt I} at the irrelevant maximal ideal is Golod
+
+  Description
+  
+    Text 
+      Checks if the local ring obtained by localizing the quotient by {\tt I} at the
+      irrelevant maximal ideal is Golod. 
+      
+    Example
+       Q = QQ[x,y,z];
+      isGolod (ideal (x^2,x*y,y*z,z^2))
+      isGolod (ideal (x^2))
+      isGolod ((ideal (x,y,z))^2)      
+///
+
+doc ///
+  Key
     torAlgDataList
+    (torAlgDataList, QuotientRing, List)
   Headline
     list invariants of a local ring
   Usage
-    torAlgDataList(R,L)
+    torAlgDataList(R,L) or torAlgDataList(I,L)
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra  by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra  by an ideal contained in the irrelevant maximal ideal
     L : List
-        a list of keys from the hash table returned by @TO torAlgData@
+        of keys from the hash table returned by @TO torAlgData@
 	
   Outputs
       : List
-        the list of values corresponding to the keys specified in {\tt L}
+        of values corresponding to the keys specified in {\tt L}
+	
+  Description
+    Text 
+      Extracts data from the hash table returned by @TO torAlgData@.  It is also possible to call the function on the
+      defining ideal of {\tt R}; see @TO (torAlgDataList,Ideal,List)@.
+
+    Example
+      Q = QQ[x,y,z];
+      R = Q/ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
+      torAlgDataList( R, {m, n, Class, p, q, r, PoincareSeries, BassSeries} )            
+///      
+
+doc ///
+  Key
+    (torAlgDataList, Ideal, List)
+  Headline
+    list invariants of a local ring
+  Usage
+    torAlgDataList(R,L) or torAlgDataList(I,L)
+  Inputs
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
+    L : List
+        of keys from the hash table returned by @TO torAlgData@
+	
+  Outputs
+      : List
+        of values corresponding to the keys specified in {\tt L}
 	
   Description
     Text 
@@ -1189,34 +1359,62 @@ doc ///
 
     Example
       Q = QQ[x,y,z];
-      R = Q/ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
-      torAlgDataList( R, {m, n, Class, p, q, r, PoincareSeries, BassSeries} )            
+      I = ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
+      torAlgDataList( I, {m, n, Class, p, q, r, PoincareSeries, BassSeries} )            
 ///      
       
 doc ///
   Key
     torAlgDataPrint
+    (torAlgDataPrint, QuotientRing, List)
   Headline
     print invariants of a local ring
   Usage
-    torAlgDataPrint (R,L)
+    torAlgDataPrint (R,L) or torAlgDataPrint(I,L)
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra  by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra  by an ideal contained in the irrelevant maximal ideal
     L : List 
-        a list of keys from the hash table returned by @TO torAlgData@    
+        of keys from the hash table returned by @TO torAlgData@    
   Outputs
       : String
-        the string of keys specified in {\tt L} together with their values
+        of keys specified in {\tt L} together with their values
   Description
     Text 
-       Extracts data from the hash table returned by @TO torAlgData@.
+      Extracts data from the hash table returned by @TO
+      torAlgData@. It is also possible to call the function on the
+      defining ideal of {\tt R}; see @TO (torAlgDataPrint,Ideal,List)@.
 
     Example
       Q = QQ[x,y,z];
       R = Q/ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
       torAlgDataPrint( R, {c, e, h, m, n, Class, p, q, r} )      
-     
+///
+
+doc ///
+  Key
+    (torAlgDataPrint, Ideal, List)
+  Headline
+    print invariants of a local ring
+  Usage
+    torAlgDataPrint (R,L) or torAlgDataPrint(I,L)
+  Inputs
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
+    L : List 
+        of keys from the hash table returned by @TO torAlgData@    
+  Outputs
+      : String
+        of keys specified in {\tt L} together with their values
+  Description
+    Text 
+      Extracts data from the hash table returned by @TO
+      torAlgData@. 
+
+    Example
+      Q = QQ[x,y,z];
+      I = ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
+      torAlgDataPrint( I, {c, e, h, m, n, Class, p, q, r} )      
 ///
 
 doc ///
@@ -1760,8 +1958,8 @@ end
 
 uninstallPackage "TorAlgebra"
 restart
-loadPackage "TorAlgebra"
 installPackage "TorAlgebra"
+loadPackage "TorAlgebra"
 check "TorAlgebra"
 
 -- dev space
