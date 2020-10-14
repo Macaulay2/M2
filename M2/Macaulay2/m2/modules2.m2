@@ -608,6 +608,7 @@ Module / Vector := Module => (M,v) -> (
      if class v =!= M 
      then error("expected ", toString v, " to be an element of ", toString M);
      M / image matrix {v})
+
 -----------------------------------------------------------------------------
 --topComponents Module := M -> (
 --     R := ring M;
@@ -618,25 +619,6 @@ Module / Vector := Module => (M,v) -> (
 --     is the codimension of the support of the module M."
 --     }
 -----------------------------------------------------------------------------
-
-annihilator = method(
-     Options => {
-	  Strategy => Intersection			    -- or Quotient
-	  }
-     )
-
-annihilator Module := Ideal => o -> (M) -> (
-     if isWeylAlgebra ring M then error "no meaning for modules over a Weyl algebra"; 
-     f := presentation M;
-     if o.Strategy === Intersection then (
-	  F := target f;
-	  if numgens F === 0 then ideal 1_(ring F)
-	  else intersect apply(numgens F, i -> ideal modulo(F_{i},f)))
-     else if o.Strategy === Quotient then image f : target f
-     else error "annihilator: expected Strategy option to be Intersection or Quotient")
-
-annihilator Ideal := Ideal => o -> I -> annihilator(module I, o)
-annihilator RingElement := Ideal => o -> f -> annihilator(ideal f, o)
 
 -----------------------------------------------------------------------------
 ZZ _ Module := Vector => (i,M) -> (

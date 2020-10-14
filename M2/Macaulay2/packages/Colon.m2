@@ -6,8 +6,7 @@
 -- UPDATE HISTORY : created 14 April 2018 at M2@UW;
 --                  updated July 2020
 --
--- TODO : 1. move annihilator functions here as well?
---        2. deal with MonomialIdeals as well
+-- TODO : 1. deal with MonomialIdeals as well
 ---------------------------------------------------------------------------
 newPackage(
     "Colon",
@@ -542,6 +541,52 @@ saturationZero(Module, Ideal) := (M, B) -> (
 	if (ann coker selectInSubring(1,leadTerm G)) == 0 then return false;
 	);
     true)
+
+--------------------------------------------------------------------
+-- Annihilators
+--------------------------------------------------------------------
+
+-- annihilator = method(Options => {Strategy => null}) -- defined in m2/quotient.m2
+annihilator RingElement := Ideal => opts -> f -> annihilator(ideal f,  opts)
+annihilator Ideal       := Ideal => opts -> I -> annihilator(module I, opts)
+annihilator Module      := Ideal => opts -> M -> annihilatorHelper(M, ModuleAnnihilatorAlgorithms, opts)
+
+-- Helper for annihilator methods
+annihilatorHelper = (A, algorithms, opts) -> (
+    R := ring A;
+    if isWeylAlgebra R then error "annihilator has no meaning for objects over a Weyl algebra";
+    -- TODO: add more instant checks
+    f := presentation A;
+    F := target f;
+    if numgens F === 0 then return ideal 1_R;
+
+    strategy := opts.Strategy;
+
+    C := if strategy === null then runHooks(algorithms#null, (opts, A))
+    else if algorithms#?strategy then (
+	debugInfo(annihilator, A, null, strategy); -- FIXME
+	(algorithms#strategy opts)(A))
+    else error("unrecognized Strategy for annihilator: '", toString strategy, "'; expected: ", toString keys algorithms);
+
+    if C =!= null then C else if strategy === null
+    then error("no applicable method for annihilator(", class A, ")")
+    else error("assumptions for annihilator strategy ", toString strategy, " are not met"))
+
+-- Algorithms for annihilator Module
+ModuleAnnihilatorAlgorithms = new HashTable from {
+    null         => symbol ModuleAnnihilatorHooks,
+    Quotient     => opts -> M -> (
+	f := presentation M;
+	image f : target f),
+    Intersection => opts -> M -> (
+	f := presentation M;
+	F := target f;
+	intersect apply(numgens F, i -> ideal modulo(F_{i}, f))),
+    }
+
+-- Installing hooks for annihilator Module
+scan({Quotient, Intersection}, strategy -> addHook(ModuleAnnihilatorAlgorithms#null,
+	(opts, M) -> (debugInfo(annihilator, M, null, strategy); ModuleAnnihilatorAlgorithms#strategy opts)(M))) -- FIXME
 
 --------------------------------------------------------------------
 ----- Tests section

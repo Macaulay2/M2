@@ -21,6 +21,9 @@ quotient = method(
 -- moved to packages/Colon.m2 in July 2020
 saturate = method(Options => options quotient)
 
+-- moved to packages/Colon.m2 in October 2020
+annihilator = method(Options => {Strategy => null}) -- Intersection or Quotient
+
 gcdCoefficients(ZZ,ZZ) := (a,b) -> (
      m := {a,1,0};
      n := {b,0,1};
