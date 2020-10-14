@@ -610,17 +610,6 @@ Module / Vector := Module => (M,v) -> (
      M / image matrix {v})
 
 -----------------------------------------------------------------------------
---topComponents Module := M -> (
---     R := ring M;
---     c := codim M; 
---     annihilator minimalPresentation Ext^c(M, R))
---document { topComponents,
---     TT "topComponents M", "produce the annihilator of Ext^c(M, R), where c
---     is the codimension of the support of the module M."
---     }
------------------------------------------------------------------------------
-
------------------------------------------------------------------------------
 ZZ _ Module := Vector => (i,M) -> (
      if i =!= 0 then error "expected 0 as element of module";
      m := map(M,(ring M)^1,0);

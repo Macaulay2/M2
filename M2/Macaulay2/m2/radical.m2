@@ -56,11 +56,14 @@ removeLowestDimension Ideal := Ideal => (I) -> (
 -- top dimensional part ---
 ---------------------------
 
+-- TODO: move this to PrimaryDecomposition?
+-- it is documented in packages/Macaulay2Doc/functions/top-doc.m2
+topComponents = method()
 topComponents Ideal := Ideal => (I) -> (
      R := ring I;
      c := codim I;
      annihilator Ext^c(cokernel generators I, R))
-     
+
 topComponents Module := Module => (M) -> (
     R := ring M;
     if not isPolynomialRing R or not isAffineRing R
@@ -83,6 +86,17 @@ topComponents Module := Module => (M) -> (
 	);
     M
     )
+
+-- This used to be commented out in modules2.m2
+-- if it isn't useful anymore, delete it
+--topComponents Module := M -> (
+--     R := ring M;
+--     c := codim M;
+--     annihilator minimalPresentation Ext^c(M, R))
+--document { topComponents,
+--     TT "topComponents M", "produce the annihilator of Ext^c(M, R), where c
+--     is the codimension of the support of the module M."
+--     }
 
 -------------
 -- radical --
