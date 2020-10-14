@@ -124,7 +124,7 @@ net TreeNode   := x -> (
 
 toDoc := method()
 toDoc ForestNode := x -> if #x>0 then UL apply(toList x, y -> toDoc y)
-toDoc TreeNode   := x -> DIV { TOH checkIsTag x#0, toDoc x#1 }
+toDoc TreeNode   := x -> DIV nonnull { TOH checkIsTag x#0, toDoc x#1 }
 
 traverse := method()
 traverse(ForestNode, Function) := (n, f) -> scan(n, t -> traverse(t, f))
@@ -151,7 +151,7 @@ makeTree := (parent, graph, visits, node) -> (
 orphanNodes := (parent, graph) -> (
     nonLeaves := set keys graph - set flatten values graph;
     if not nonLeaves#?parent and signalDocumentationWarning parent then printerr("warning: top node ", parent, " not a root");
-    if #nonLeaves > 1 then printerr("info: there are ", toString(#nonLeaves - 1), " documentation nodes that are not listed as a subnode");
+    if #nonLeaves > 1 then printerr("warning: found ", toString(#nonLeaves - 1), " documentation node(s) not listed as a subnode");
     unique prepend(parent, sort keys nonLeaves))
 
 makeForest := (graph, visits) -> (
@@ -273,22 +273,22 @@ makePackageIndex List := path -> (
     -- TO DO : rewrite this function to use the results of tallyInstalledPackages
     tallyInstalledPackages();
     initInstallDirectory options installPackage;
-    docdirs := findDocumentationPaths path;
+    docdirs := toSequence findDocumentationPaths path;
     htmlDirectory = applicationDirectory();
     indexFilename := htmlDirectory | topFileName;
     verboseLog("making index of installed packages in ", indexFilename);
-    indexFilename << html HTML {
+    indexFilename << html validate HTML {
 	defaultHEAD { "Macaulay2" },
 	BODY {
 	    PARA {"This is the directory for Macaulay2 and its packages. Bookmark this page for future reference,
 		or run the ", TT "viewHelp", " command in Macaulay2 to open up your browser on this page.
 		See the ", homeButton, " for the latest version."},
 	    HEADER3 "Documentation",
-	    ul nonnull splice {
+	    UL nonnull splice {
 		if prefixDirectory =!= null then (
 		    m2doc := prefixDirectory | replace("PKG", "Macaulay2Doc", currentLayout#"packagehtml") | topFileName;
-		    if fileExists m2doc then HREF { m2doc, "Macaulay2" }),
-		splice apply(docdirs, dirs -> (
+		    if fileExists m2doc then LI HREF { m2doc, "Macaulay2 documentation" }),
+		apply(docdirs, dirs -> (
 			prefixDirectory := first dirs;
 			layout := Layout#(last dirs);
 			docdir := prefixDirectory | layout#"docdir";
@@ -296,12 +296,11 @@ makePackageIndex List := path -> (
 			pkghtmldir := pkgname -> prefixDirectory | replace("PKG", pkgname, layout#"packagehtml");
 			contents := select(readDirectory docdir, fn -> fn != "." and fn != ".." );
 			contents  = select(contents, pkg -> fileExists(pkghtmldir pkg | topFileName));
-			DIV {
+			if #contents > 0 then LI {
 			    HEADER3 {"Packages in ", TT toAbsolutePath prefixDirectory},
-			    if #contents > 0
-			    then UL apply(contents, pkgname -> (
+			    UL apply(sort contents, pkgname -> (
 				    pkgopts := readPackage pkgname;
-				    LI splice {
+				    LI nonnull splice {
 					HREF { pkghtmldir pkgname | topFileName, pkgname }, -- TO (pkgname | "::" | pkgname),
 					if pkgopts.Certification =!= null then (" ", star),
 					if pkgopts.Headline      =!= null then commentize pkgopts.Headline}
@@ -372,7 +371,7 @@ makeSortedIndex := (nodes, verboseLog) -> (
      fn := installPrefix | htmlDirectory | indexFileName;
      title := format topDocumentTag | " : Index";
      verboseLog("making ", format title, " in ", fn);
-     r := HTML {
+     fn << html validate HTML {
 	  defaultHEAD title,
 	  BODY nonnull {
 	       DIV { topNodeButton(htmlDirectory, topFileName), " | ", tocButton(htmlDirectory, tocFileName), -* " | ", directoryButton, *- " | ", homeButton },
@@ -384,16 +383,13 @@ makeSortedIndex := (nodes, verboseLog) -> (
 			 anch := anchorsUpTo tag;
 			 if anch === null then LI TOH tag else LI {anch, TOH tag})),
 	       DIV remainingAnchors()
-	       }};
-     validate r;
-     fn << html r << endl << close
-     )
+	       }} << endl << close)
 
 makeTableOfContents := (pkg, verboseLog) -> (
      fn := installPrefix | htmlDirectory | tocFileName;
      title := format topDocumentTag | " : Table of Contents";
      verboseLog("making  ", format title, " in ", fn);
-     fn << html HTML {
+     fn << html validate HTML {
 	  defaultHEAD title,
 	  BODY {
 	       DIV { topNodeButton(htmlDirectory, topFileName), " | ", indexButton(htmlDirectory, indexFileName), -* " | ", directoryButton, *- " | ", homeButton },
@@ -401,8 +397,7 @@ makeTableOfContents := (pkg, verboseLog) -> (
 	       HEADER1 title,
 	       toDoc unbag pkg#"table of contents"
 	       }
-	  } << endl << close
-     )
+	  } << endl << close)
 
 installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts) -> (
     topDocumentTag := makeDocumentTag(pkg#"pkgname", Package => pkg);
@@ -428,7 +423,7 @@ installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationC
 	    if isSecondaryTag tag
 	    or fileExists fn and fileLength fn > 0 and not opts.RemakeAllDocumentation and rawDocumentationCache#?fkey then return;
 	    verboseLog("making html page for ", toString tag);
-	    fn << html HTML {
+	    fn << html validate HTML {
 		defaultHEAD {fkey, commentize headline fkey},
 		BODY {
 		    buttonBar tag,
@@ -747,7 +742,7 @@ installPackage Package := opts -> pkg -> (
 				));
 			))));
 
-	if hadDocumentationError then error(
+	if chkdoc and hadDocumentationError then error(
 	    toString numDocumentationErrors, " errors(s) occurred in documentation for package ", toString pkg);
 
 	-- make info documentation
@@ -758,7 +753,7 @@ installPackage Package := opts -> pkg -> (
 	if opts.MakeHTML then installHTML(pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts)
 	else verboseLog("not making documentation in HTML format");
 
-	if hadDocumentationWarning then printerr("warning: ",
+	if chkdoc and hadDocumentationWarning then printerr("warning: ",
 	    toString numDocumentationWarnings, " warning(s) occurred in documentation for package ", toString pkg);
 
 	); -- end of opts.MakeDocumentation

@@ -15,6 +15,7 @@ newPackage("FiniteFittingIdeals",
 	    HomePage => "http://www.math.kth.se/~gss",
 	    Email => "gss@math.kth.se"}
       	},
+    Keywords => {"Commutative Algebra"},
     DebuggingMode => false
     )
 

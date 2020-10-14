@@ -25,6 +25,7 @@ newPackage(
 	  }
 	  },
      Headline => "aids in computations related to depth",
+     Keywords => {"Commutative Algebra"},
      DebuggingMode => false
      )
 

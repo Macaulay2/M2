@@ -23,6 +23,7 @@ newPackage(
 	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
 	     },
     	Headline => "the Quillen-Suslin algorithm for bases of projective modules",
+	Keywords => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",

@@ -9,6 +9,7 @@ newPackage("DeterminantalRepresentations",
 		Email => "papridey@berkeley.edu"}
 	},
 	Headline => "determinantal representations",
+	Keywords => {"Representation Theory", "Commutative Algebra"},
 	HomePage => "https://github.com/papridey/DeterminantalRepresentations",
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	DebuggingMode => false,

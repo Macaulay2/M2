@@ -131,10 +131,10 @@ SUB        = new MarkUpType of Hypertext
 SUP        = new MarkUpType of Hypertext
 TT         = new MarkUpType of Hypertext
 
--- Lists (TODO: OL)
+-- Lists
 OL         = new MarkUpType of HypertextContainer
 UL         = new MarkUpType of HypertextContainer
-LI         = new MarkUpType of HypertextContainer
+LI         = new MarkUpType of HypertextParagraph
 DL         = new MarkUpType of HypertextContainer
 DT         = new MarkUpType of HypertextParagraph
 DD         = new MarkUpType of HypertextParagraph
@@ -160,8 +160,7 @@ TH         = new MarkUpType of TD
 CDATA      = new MarkUpType of Hypertext
 COMMENT    = new MarkUpType of Hypertext
 
-TEX        = new MarkUpType of Hypertext -- TEX should be processed further so its output can be checked
-
+TEX        = new IntermediateMarkUpType of Hypertext
 ExampleItem = new IntermediateMarkUpType of Hypertext
 HREF       = new IntermediateMarkUpType of Hypertext
 LATER      = new IntermediateMarkUpType of Hypertext
@@ -202,12 +201,49 @@ EXAMPLE VisibleList := x -> (
 -----------------------------------------------------------------------------
 -- MarkUpType constructors
 -----------------------------------------------------------------------------
--- TODO: Move this
 
 new HR from List :=
 new BR from List := (X,x) -> if all(x, e -> instance(e, Option)) then x else error "expected empty list"
 br = BR{}
 hr = HR{}
+
+-- used in the TEX constructor below
+convertTexTable := new HashTable from {
+    "url" => "HREF",
+    "bf" => "BOLD",
+    "em" => "EM",
+    "it" => "ITALIC",
+    "tt" => "TT",
+    }
+
+-- the regex should match the tag and content
+-- inside braces as subexpressions #2 and #3
+convertTex := (tags, re, str) -> (
+    off  := 0;
+    while (m := regex(re, off, str)) =!= null do (
+	off = m#3#0;
+	tag := substring(m#2, str);
+	if match(tags, tag) then (
+	    tag = convertTexTable#tag;
+	    if debugLevel > 1 then printerr("parsing ", tag, " in TEX");
+	    str = replace(regexQuote substring(m#1, str), "\"," | tag | "{" | format substring(m#3, str) | "},\"", str)));
+    str)
+
+new TEX from String    := (T, t) -> T {t}
+new TEX from BasicList := (T, t) -> (
+    -- TODO: https://www.overleaf.com/learn/latex/Font_sizes,_families,_and_styles#Reference_guide
+    -- we do this so {"{\tt", TO sum, "}"} can be rendered correctly
+    s := demark_"," \\ toExternalString \ t;
+    -- parsing nested braces contained in \url{...}
+    s = convertTex("url", ///((?:\\\\(url))?\{((?:[^}{]+|(?1))*+)\})///, s);
+    -- parsing nested braces contained in {\xx ...}
+    s = convertTex("bf|tt|em|it", ///(\{(?:\\\\(bf|tt|em|it))? *((?:[^}{]+|(?1))*+)\})///, s);
+    -- miscellaneous replacements
+    s = replace("---", "—", s);
+    s = replace("\\b--\\b", "–", s);
+    -- evaluate Hypertext types
+    s = evaluateWithPackage(getpkg "Text", s, value);
+    if instance(s, BasicList) then s else {s})
 
 isLink = x -> instance(x, TO) or instance(x, TO2) or instance(x, TOH)
 
@@ -219,10 +255,9 @@ new TO2  from List      :=
 new TO2  from Sequence  := (TO2, x) -> { makeDocumentTag x#0, concatenate drop(toSequence x,1) }
 new TOH  from List      := (TOH, x) -> { makeDocumentTag x#0 }
 new HREF from List      := (HREF, x) -> (
-     if #x > 2 or #x == 0 then error "HREF list should have length 1 or 2";
-     y := x#0;
-     if not (instance(y,String) or instance(y,Sequence) and #y===2 and instance(y#0,String) and instance(y#1,String))
-     then error "HREF expected URL to be a string or a pair of strings"; x)
+    url := if x#?0 and (instance(x#0, String) or instance(x#0, Sequence) and #x#0 === 2 and all(x#0, y -> instance(y, String)))
+    then x#0 else error "HREF expected URL to be a string or a sequence of 2 strings";
+    if x#?1 then prepend(url, drop(x, 1)) else {url})
 
 new OL from VisibleList :=
 new UL from VisibleList := (T, x) -> (

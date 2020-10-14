@@ -31,6 +31,7 @@ newPackage(
 	     {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	DebuggingMode => false,
     	Headline => "Rees algebras",
+	Keywords => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",

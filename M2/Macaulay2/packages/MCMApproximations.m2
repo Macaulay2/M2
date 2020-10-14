@@ -6,6 +6,7 @@ Authors => {{Name => "David Eisenbud",
 Email => "de@msri.org",
 HomePage => "http://www.msri.org/~de"}},
 Headline => "MCM approximations and complete intersections",
+Keywords => {"Commutative Algebra"},
 DebuggingMode => false
 )
 

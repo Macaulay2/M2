@@ -7,6 +7,7 @@ newPackage("DGAlgebras",
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
 	   Email => "moorewf@wfu.edu"}},
+     Keywords => {"Commutative Algebra"},
      DebuggingMode => false,
      PackageExports => {"IntegralClosure"}
      )

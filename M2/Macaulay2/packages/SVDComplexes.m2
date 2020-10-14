@@ -13,7 +13,7 @@ newPackage(
         Version => "0.3", 
         Date => "May 23, 2018",
         Authors => {
-            {Name => "Frank Schreyer", 
+            {Name => "Frank-Olaf Schreyer", 
 		        Email => "schreyer@math.uni-sb.de",
 		        HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
 	        {Name => "Mike Stillman", 
@@ -21,6 +21,7 @@ newPackage(
                 HomePage => "http://www.math.cornell.edu/~mike"}
             },
         Headline => "SVD (singular value decomposition) of a complex over the reals and related functions",
+	Keywords => {"Homological Algebra", "Commutative Algebra"},
 	PackageExports => {"LLLBases"},
         DebuggingMode => false
         )

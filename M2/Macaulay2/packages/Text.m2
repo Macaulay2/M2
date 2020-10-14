@@ -2,6 +2,7 @@
 --		Copyright 1993-2008 by Daniel R. Grayson
 
 newPackage("Text",
+     Keywords => {"Miscellaneous"},
      Headline => "documentation and hypertext"
      )
 
@@ -20,41 +21,56 @@ document {
      Key => Text,
      Headline => "documentation and hypertext",
      PARA {
-	  "This package is a repository for functions related to documentation and hypertext."
+	  "This package is a repository for functions related to typesetting the documentation using $\\TeX$ and ",
+	  TO "Macaulay2Doc :: hypertext list format", ", usable with either ", TO document, " or ", TO "SimpleDoc :: doc", ". ",
+	  "In particular, see ", TO (html, TEX), ", ", TO (validate, Hypertext), ", and ", TO (show, Hypertext), "."
 	  }
      }
 
--- html.m2 documentation
+-- hypertext.m2 documentation
 -- Bart Snapp edited nearly all of these entries.
 document {
-     Key => HypertextContainer,
-     Headline => "the class of mark-up lists that can contain paragraphs",
-     PARA {
-	  "Mark-up lists of this time get special handling when converted to nets by ", TO "net", ", because
-	  the paragraphs must be collected and wrapped."
-	  }
+     Key => Hypertext,
+     Headline => "the class of markup lists used with hypertext",
+     PARA "Intended for internal use only.",
+     Subnodes => {TO (show, Hypertext), TO (style, Hypertext), TO validate} | TO \ select(sort currentPackage#"exported symbols", s -> parent value s === Hypertext)
      }
 document {
-     Key => Hypertext, 
-     Headline => "the class of mark-up lists used with hypertext",
-     PARA{},
-     "Intended for internal use only."
+     Key => HypertextContainer,
+     Headline => "the class of markup lists that can contain paragraphs",
+     PARA {
+	 "Mark-up lists of this type get special handling when converted to nets by ",
+	 TO "net", ", because the paragraphs must be collected and wrapped." },
+     Subnodes => TO \ select(sort currentPackage#"exported symbols", s -> parent value s === HypertextContainer)
      }
 document {
      Key => HypertextParagraph,
-     Headline => "the class of mark-up lists that constitute separate paragraphs",
-     PARA "Intended for internal use only."
+     Headline => "the class of markup lists that constitute separate paragraphs",
+     PARA "Intended for internal use only.",
+     Subnodes => TO \ select(sort currentPackage#"exported symbols", s -> parent value s === HypertextParagraph)
      }
 document {
      Key => MarkUpType,
-     Headline => "the class of mark-up types used with hypertext", 
-     "Some mark-up types allow options (attributes) to be inserted in their html tags.",
+     Headline => "the class of markup types used with hypertext",
+     "Some markup types allow options (attributes) to be inserted in their html tags.",
      EXAMPLE {
 	 ///DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT "resolution", ":"},
 	     "There are many ways to use ", TO "resolution", "."
 	     )///,
 	 "html oo"
-         }
+	 },
+     Subnodes => {TO (options, MarkUpType)} | TO \ select(sort currentPackage#"exported symbols", s -> parent value s === MarkUpType)
+     }
+document {
+     Key => IntermediateMarkUpType,
+     Headline => "the class of intermediate markup types",
+     "An intermediate markup type is one that needs further processing to put it into final form.
+     A good example of one is ", TO TOH, ", which represents a link to a documentation node,
+     together with the headline of that node, which may not have been created yet at the time
+     the ", TO TOH, " link is encountered.  Another example is ", TO HREF, ", which creates a
+     link using the HTML ", TT "<a>", " element: when the link is created, the relative path to
+     the target page depends on the path to the page incorporating the link.",
+     Subnodes => TO \ select(sort currentPackage#"exported symbols", s -> parent value s === IntermediateMarkUpType)
      }
 
 document {
@@ -111,11 +127,8 @@ document {
      PARA{},
      "The argument ", TT "x", " should be a string, possibly containing newlines.",
      "Here is an example.",
-     PRE "
-   1234   2345    4567    5678
-     34    345    3455       7
-",
-	"If one wishes to use quotation marks in the preformatted text, then ", TO "///", " should be used instead of quotation marks as delimiters.",
+     PRE "\n   1234   2345    4567    5678\n     34    345    3455       7\n",
+     "If one wishes to use quotation marks in the preformatted text, then ", TO "Macaulay2Doc :: ///", " should be used instead of quotation marks as delimiters.",
      SeeAlso => "hypertext"
      }
 
@@ -479,71 +492,97 @@ document {
      }
 
 document {
-     Key => (html,TEX),
-     Headline => "conversion of TeX to html",
+     Key => (html, TEX),
+     Headline => "conversion of $\\TeX$ to html",
      Usage => "html t",
      Inputs => { "t" },
      Outputs => { {"a string containing the result of converting ", TT "t", " to html"} },
-     Caveat => { "The algorithm used assumes that the html produced will be contained in a
-	  HTML P container, as can be produced with ", TO "PARA", ", especially if display
-	  math is used ($$ .. $$)." },
      PARA {
-	  "This method handles conversion to html, but only for a limited subset of TeX.
-	  Nevertheless, it can be useful in documentation nodes.  It is useful to use
-	  strings delimited by ", TO "///", ", because in strings delimited by ", TO "\42", ",
-	  the backslashes often used in TeX must be doubled."},
+	 TEX "This method produces an HTML string, mainly converting several simple text formatting environments,
+	 such as {\\bf bold face}, {\\it italics}, etc. Rendering mathematical characters and equations is done by ",
+	 HREF{"https://katex.org/","$\\KaTeX$"}, ", a JavaScript math typesetting library for browsers. See the list of ",
+	 HREF{"https://katex.org/docs/supported.html","supported functions and symbols"}, " for more information, or ",
+	 HREF{"https://en.wikibooks.org/wiki/LaTeX/Mathematics","this page"}, " for an introduction to math mode in $\\LaTeX$." },
+     PARA {
+	 TEX "Equations in ", CODE "$..$", " or ", CODE "\\(...\\)", " appear in inline mode, such as $x^2-1$,
+	 while those in ", CODE "$$..$$", " or ", CODE "\\[...\\]", " appear in display mode:",
+	 TEX {"$$", texMath genericMatrix(QQ[x,y,z,w],2,2), ".$$"} },
+     PARA {
+	 "In addition, ", CODE "{\\bf ...}", ", ", CODE "{\\em ...}", ", ", CODE "{\\it ...}", ", ", CODE "{\\tt ...}",
+	 ", and ", CODE "\\url{...}", " are converted to ", TO Hypertext, " objects:" },
+     BLOCKQUOTE PARA TEX ///{\tt res(Module)} is the {\it method} for {\em making} {\bf resolutions} (see \url{https://macaulay2.com}).///,
+     PARA {
+	 "Here are some examples designed to illustrate various other features of this function when viewed in a browser:" },
+     DIV { "style" => "display: flex",,
+     TABLE flatten { "style" => "margin: 1.5em",
+	 apply({
+		 "\\Gamma\\Omega\\pi",
+		 "\\partial\\ell\\infty",
+		 "\\Re\\Im\\aleph\\beth",
+		 "\\NN\\QQ\\RR\\CC\\ZZ\\PP",
+		 "\\binom{n}{k}",
+		 "\\sqrt[2]{\\frac{a}{b}}",
+		 "\\sum\\prod\\coprod",
+		 "\\bigoplus\\bigotimes",
+		 "\\bigcup\\bigcap",
+		 "\\bigvee\\bigwedge",
+		 "\\int\\oint\\iint\\iiint",
+		 "\\oint\\limits_{\\partial M}",
+		 "\\lim\\limits_{x\\to0}",
+		 "\\min\\limits_{x\\to\\infty}",
+		 "\\det\\limits_{x\\to0}",
+		 "\\Pr\\limits_{x\\in\\RR}",
+		 "\\begin{pmatrix}\n a & b \\\\\n c & d\n\\end{pmatrix}",
+		 "\\begin{vmatrix}\n a & b \\\\\n c & d\n\\end{vmatrix}"
+		 }, s ->
+	     TR {
+		 TD { "style" => "padding-right:0.5em; border-right:1px black solid;", DIV PRE concatenate("$", s, "$") },
+		 TD { "style" => "padding-left:0.5em;", PARA TEX concatenate("$", s, "$") }})
+	 },
+     TABLE flatten { "style" => "margin: 1.5em",
+	 apply({
+		 "mathnormal", "mathrm", "mathit", "mathbf", "mathsf", "mathtt", "mathfrak", "mathcal", "mathbb", "mathscr"
+		 }, f ->
+	     TR {
+		 TD { "style" => "padding-right:0.5em; border-right:1px black solid;", DIV PRE concatenate("$\\", f, "{...}$") },
+		 TD { "style" => "padding-left:0.5em;", PARA TEX concatenate("$\\", f, "{ABCD \\; abcd \\; 123}$") }})
+	 },
+     TABLE flatten { "style" => "margin: 1.5em",
+	 apply({
+		 "underline", "hat", "widehat", "tilde", "widetilde", "stackrel\\frown",
+		 "check", "breve", "bar", "grave", "acute", "dot", "ddot", "not", "mathring",
+		 "vec", "overrightarrow", "overleftarrow", "overline"}, f ->
+	     TR {
+		 TD { "style" => "padding-right:0.5em; border-right:1px black solid;", DIV PRE concatenate("$\\", f, "{a}$") },
+		 TD { "style" => "padding-left:0.5em;", PARA TEX concatenate("$\\", f, "{a}$") }})
+	 }
+     },
+     PARA {
+	 "Lastly, new macros can be defined using script tags. For instance, inserting the following ",
+	 TO LITERAL, " item in the documentation defines the structure sheaf:" },
      (
-	  a := ///TEX ////A formula: $a \times \ {b\over c^3}$/////////;
-     	  EXAMPLE {a, "html oo" }
-	  ),
+	 s := ///LITERAL ////<script type="text/javascript"> macros["\\OO"] = "\\mathcal{O}" </script>//// ///;
+	 ( BLOCKQUOTE PRE s, value s )),
      PARA {
-     	  "Here is the way the TeX above appears if used in documentation: ", value a, "."
-	  },
-     PARA {
-	  "Here are some examples designed to illustrate each feature of TeX we've implemented.  (This
-	  documentation page should be viewed in its html form.)"
-	  },
-     UL apply({
-	       ///TEX ////A formula: $a\times \ {b\over c^3}$/////////,
-	       ///TEX ////A ``formula'' {\bf can be} `printed'. /////////,
-	       ///TEX ////A formula, $$\{x_1^2,\dots,x_n^2\},$$ can be displayed./////////,
-	       ///TEX ////Matrices can be displayed if there is only one of them in the string: $$\begin{pmatrix}3&4&x^2+1\\5&6&7\end{pmatrix}.$$/////////,
-	       ///TEX ////${\mathbf a+b+c} \in {\mathbb R}, {\mathcal 1234}, 1234$/////////,
-	       ///TEX ////{\tt res(Module)} is the {\cal method} for {\em making} {\it resolutions}./////////,
-	       ///TEX ////\url{http://www.math.uiuc.edu/Macaulay2/}/////////,
-	       ///TEX ////$\frac x4 + \frac{x^2+1}{y+3} + {3\over 4}$/////////,
-	       ///TEX ////$R^\times, x_{i,j}$/////////,
-	       ///TEX ////\"a \"o \"u \# \& \'e $x\,\,\,y$ \^a \^e \`e \NN \QQ \RR \ZZ \PP \Gamma \Lambda \Omega \Psi \Theta \aleph \alpha/////////,
-	       ///TEX ////\backslash \beta \beth \bullet \cap \cdots a \cong b \cos x + a \cup b, \daleth \delta \ell \emptyset/////////,
-	       ///TEX ////\epsilon \equiv \exists \forall \gamma \ge \gimel \ge \infty \in \int x \lambda \ldots \leftarrow a \le b \leq c/////////,
-	       ///TEX ////$4 < 5 < 6 > 3 > 2, \mu \mapsto \mu^2, \{x \mid x \in \ZZ, x \ne 0, x \cong{} 3 \mod\ 11\}$/////////,
-	       ///TEX ////1 2\break 3 4 5\break 6 7 \nu \omega \oplus \otimes \partial \phi \break \pi x\prime/////////,
-	       ///TEX ////\prod_{i \in \ZZ} x_i/////////,
-	       ///TEX ////$\psi + \rho \rightarrow A\setminus B, \sigma, \sin 1.1, A \subset B, C \subseteq D, E \supset F, G \supseteq H$/////////,
-	       ///TEX ////\sum_{i=1}^n y_i/////////,
-	       ///TEX ////\tau{} + \theta{} \to{} x \wedge{} \wp{} + \xi{} - \lbrace\zeta\rbrace/////////
-	       },
-	  s -> LI { PARA {TT s}, PARA { EM "will display as" }, PARA {value s} }
-	  ),
+	 TEX ///The macro can be used at any point after:
+	 $$ 0 \to 2\OO_{\\P^3}(-3) \to 3\OO_{\\P^3}(-2) \to \OO_{\\P^3} \to \OO_C \to 0 $$///},
+     SeeAlso => {tex, texMath, (show, TEX)}
      }
 
 document {
-     Key => TEX,
+     Key => {TEX, (NewFromMethod, TEX, BasicList), (NewFromMethod, TEX, String)},
      Headline => "hypertext TEX item",
      Usage => "TEX x",
-     Inputs => {"x"},
+     Inputs => {"x" => ofClass{String, BasicList}},
      Outputs => {TEX},
      PARA {
-	  TT "TEX s", " includes the string ", TT "s", ", presumably
-	  containing TeX commands, in the TeX version of the documentation
-	  containing this ", TO "hypertext", " item.  The main benefit of this is that in the HTML
-	  and TeX versions of the documentation, good typesetting can done.  For details on the conversions
-	  to HTML that are currently implemented, see ", TO (html, TEX), "."},
-     PARA {
-	  "This item should be used only within a paragraph created by ", TO "PARA", ", because in the html
-	  code it generates, the first element ends the enclosign paragraph to create the centered math
-	  display."
-	  }
+	 "The constructor ", TT "TEX x", " returns an object which may contain one or more $\\LaTeX$
+	 equations and matrices, several simple text formatting environments, as well as other ",
+	 TO Hypertext, " items. It is useful to use strings delimited by ", TO "Macaulay2Doc :: ///",
+	 " because in strings delimited by ", TO "Macaulay2Doc :: \"", " the backslashes often used
+	 in $\\LaTeX$ must be doubled. For details on conversion to HTML see ", TO (html, TEX), "."},
+     SeeAlso => {(show, TEX)},
+     Subnodes => {TO (html, TEX)}
      }
 
 document {
@@ -654,7 +693,7 @@ document { Key => HR,
 document { Key => TR,
      Headline => "hypertext TR element" }
 document { Key => TD,
-     Headline => "hypertext TD element" }
+     Headline => "hypertext TD element", Subnodes => {TO TH} }
 document { Key => TH,
      Headline => "hypertext TH element" }
 document { Key => DL,
@@ -769,14 +808,6 @@ document {
      Headline => "a type of hypertext for holding example inputs awaiting outputs"
      }
 
-document { Key => IntermediateMarkUpType,
-     Headline => "the class of intermediate mark-up types",
-     "An intermediate mark-up type is one that needs further processing to put it into final form.  A good example of one is ", TO "TOH", ", which
-     represents a link to a documentation node, together with the headline of that node, which may not have been created yet at the time
-     the ", TT "TOH", " link is encountered.  Another good example is ", TO "HREF", ", which creates a link using the HTML ", TT "A", " element:
-     when the link is created, the relative path to the target page depends on the path to the page incorporating the link!"
-     }
-
 document {
      Key => PARA,
      Headline => "hypertext paragraph container",
@@ -788,6 +819,7 @@ document {
      },
      "For an example, see ", TO "Macaulay2Doc::hypertext list format", "."
      }
+
 document { Key => (options, MarkUpType),
      "Optional arguments of mark up types allow attributes to be added to html elements.",
      EXAMPLE lines ///
@@ -799,17 +831,20 @@ document { Key => (options, MarkUpType),
      ///
      }
 document {
-     Key => {(show, TEX), (show, Hypertext)},
+     Key => {(show, Hypertext), (show, TEX)},
      Usage => "show x",
      Inputs => { "x" => {ofClass{TEX,Hypertext}} },
      Consequences => {
 	  { "displays x in the appropriate viewer" }
 	  }
      }
-document { Key => {(validate, Hypertext),validate},
+document {
+     Key => {validate, (validate, Hypertext)},
+     Headline => "validate a hypertext object",
      Usage => "validate x",
-     Inputs => { "x" => { TO "hypertext" } },
-     Consequences => { { "The hypertext is checked for validity, to ensure that the HTML code returned by ", TT "html x", " is valid." }},
+     Inputs => { "x" => Hypertext => "a hypertext object to validate" },
+     Outputs => { "x" => Hypertext => "the input hypertext object, possibly with errors fixed" },
+     Consequences => { { "The hypertext is checked for validity, to ensure that the HTML code returned by ", TT "html validate x", " is valid." }},
      PARA {
 	  "This function is somewhat provisional.  In particular, it is hard to check everything, because our hypertext format includes
 	  some entities of class ", TO "IntermediateMarkUpType", " that don't correspond directly to HTML.  Either those will have to be
@@ -827,18 +862,14 @@ document { Key => {(style, Hypertext),style},
     ///
     }
 
+isMissingDoc := value Core#"private dictionary"#"isMissingDoc";
+isUndocumented := value Core#"private dictionary"#"isUndocumented";
+scan({peek', show, validate, html, net, info, tex, texMath, mathML, NewFromMethod, toString, toExternalString, symbol?}, m ->
+    undocumented select(toList \\ makeDocumentTag \ methods m, x ->
+	    any(x.Key, s -> toString package s === "Text") and (isMissingDoc x or isUndocumented x)))
+
 undocumented {
-    (validate, CDATA),
-    (validate, COMMENT),
-    (validate, LITERAL),
-    (validate, MarkUpType, Set, BasicList),
-    (validate, Option),
-    (validate, String),
-    (validate, TEX),
-    (validate, TO),
-    (validate, TO2),
-    (validate, TOH),
-    (validate, Type, Set, BasicList),
-    -- TODO: document this
-    (examples,Hypertext)
+    (examples, Hypertext),
+    (htmlWithTex, Hypertext),
+    (hypertext, Hypertext)
     }

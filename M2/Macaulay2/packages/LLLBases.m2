@@ -4,6 +4,7 @@ newPackage("LLLBases",
      Date => "July 7, 2005",
      Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}},
      Headline => "Lenstra-Lenstra-Lovasz bases",
+     Keywords => {"Algebraic Number Theory", "Linear Algebra"},
      DebuggingMode => false
      )
 
