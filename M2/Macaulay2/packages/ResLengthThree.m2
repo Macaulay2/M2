@@ -86,7 +86,7 @@ resLengthThreeTorAlg(ChainComplex,List) := (F,sym) -> (
    A := resLengthThreeAlg(F,sym);
    P := ambient A;
    Q := ring F;
-   kk := coefficientRing Q;
+   kk := coefficientRing first flattenRing Q;
    PP := kk monoid P;
    I := ideal mingens sub(ideal A, PP);
    B := PP/I;
@@ -467,11 +467,19 @@ Q = P/ideal(4_P)
 I = ideal (x^2,y^2,z^2)
 A = resLengthThreeTorAlg res I
 describe A
+
 Q = QQ[u,v,x,y,z];
 R = Q/ideal(u^2,u*v)
 I = ideal (x^2,y^2,z^2)
 F = res I
+G = resLengthThreeAlg F
+A = resLengthThreeTorAlg F
 resLengthThreeTorAlgClass I
+netList multTableOneOne G
+netList multTableOneTwo G
+netList multTableOneOne A
+netList multTableOneTwo A
+
 
 Q = QQ[u,v,x,y,z];
 R = Q/ideal(u^2-u*v^2)
@@ -505,8 +513,35 @@ rank multMap(A,1,1)
 basis(1,A)
 resLengthThreeTorAlgClass I
 
+restart
+debug needsPackage "ResLengthThree"
+Q = ZZ/101[x,y,z];
+time for s1 from 2 to 5 do (
+  for s2 from s1 to 2*s1 do (
+      I := ideal fromDual matrix {{ random(s1,Q), random(s2,Q) }};
+      F := res I;
+      d1 := F.dd_1;
+      d2 := F.dd_2;
+      d3 := F.dd_3;
+      mult11 := (d1**(id_(source d1)) - (id_(source d1))**d1) // d2;
+      mult12 := (mult11 * (id_(source d1)**d2) - d1**(id_(source d2))) // d3;
+      --time multTables res I;
+      --time multTables' res I;
+  );
+);
 
+restart
+debug needsPackage "ResLengthThree"
+Q = QQ[x,y,z];
+I = ideal (x^2,y^2,z^2)
+F = res I
+d1 = F.dd_1
+d2 = F.dd_2
+d3 = F.dd_3
+mult11 = (d1**(id_(source d1)) - (id_(source d1))**d1) // d2
+mult12 = (mult11 * (id_(source d1)**d2) - d1**(id_(source d2))) // d3
 
+--  F1 ** F2 --> F1 ** F1 ++ F2 --mult and add--> F2
 
 --===================================================================================================
 -- TESTS
