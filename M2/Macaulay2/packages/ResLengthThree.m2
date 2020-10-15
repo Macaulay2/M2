@@ -338,15 +338,15 @@ document{
   
   Headline => "Computation of multiplicative structures on free resolutions of length three",
 
-  PARA { "Let $I$ be a homogeneous ideal contained in the irrelevant
-      maximal ideal of a graded ring $Q$ (obtained as a quotient of a
-      polynomial ring). If the length of the minimal free resolution
-      $F$ of $R=Q/I$ is $3$, then it carries a structure of a
-      differential graded algebra. The induced algebra structure on
-      Tor$_Q*$ ($R,k$) is unique and provides for a classification of
+  PARA { "Let ", EM  "I ", " be a homogeneous ideal contained in the irrelevant
+      maximal ideal of a graded ring ", EM "Q ", " (obtained as a quotient of a
+      polynomial ring). If the length of the minimal free resolution ",
+      EM "F ", " of ", TEX /// $R=Q/I$ ///, " is 3, then it carries a structure of a
+      differential graded algebra. The induced algebra structure on ",
+      TEX /// $A = Tor_Q^*(R,k)$ ///, " is unique and provides for a classification of
       such quotient rings.  The package determines a multiplicative
-      structure on the free resolution as well as the induced
-      structure in homology."}
+      structure on the free resolution ", EM "F ", " as well as the unique induced
+      structure on ", EM "A."}
       }
 
 document{
@@ -360,7 +360,7 @@ document{
 
   Inputs =>{
       "F" => ChainComplex => " a free resolution of length three",
-      "L" => List => "a list of three symbols"
+      "L" => List => "of three symbols"
       },
   
   Outputs => { 
@@ -374,8 +374,8 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"F = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
-	"describe F",
+	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"describe A",
 	"e_1*e_2",
 	"e_1*f_2",
 	"e_1*f_3",	
@@ -393,8 +393,22 @@ document{
 	"a_2*a_4",
 	"a_3*a_4"
 	},
-    
-Caveat => "The ambient ring Q must be homogeneous."
+
+  EXAMPLE {
+	"P = QQ[u,v];",
+	"Q = (P/ideal(u^2,u*v))[x,y,z];",
+	"A = resLengthThreeAlg ( res ideal (x^2,x*y,y^2,z^2))",
+	"describe A",
+	},
+
+  EXAMPLE {
+      "P = ZZ[x,y,z];",
+      "Q = P/ideal(4_P);",
+      "A = resLengthThreeAlg ( res ideal (x^2,y^2,z^2) )",
+      "describe A"
+	},
+        
+Caveat => { "The ambient ring ", TT "Q ", "must be homogeneous." }
 }  
 
 document{
@@ -408,22 +422,22 @@ document{
 
   Inputs =>{
       "F" => ChainComplex => " a free resolution of length three",
-      "L" => List => "a list of three symbols"
+      "L" => List => "of three symbols"
       },
   
   Outputs => { 
       QuotientRing => "the Tor algebra presented as a quotient of a graded-commutative free algebra
-  over the ambient ring"},
+  over the residue field of the ambient ring"},
 
   PARA { "For a free resolution ", TT "F", " over a ring ", TT "Q", ", the function returns
-  the resolution ", TT "F", " as a quotient of a graded-commutative free algebra
-  over ", TT "Q", ". The basis vectors in degrees 1, 2, and 3 are named with the
+  the algebra ", TEX /// $Tor_Q^*(R,k)$ ///, " as a quotient of a graded-commutative free algebra
+  over the residue field of ", TT "Q", ". The basis vectors in degrees 1, 2, and 3 are named with the
   symbols from the list ", TT "L", ". The defaul symbols are ", TT "e", ", ", TT "f", ", and ", TT "g", "." },
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"F = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
-	"describe F",
+	"A = resLengthThreeTorAlg res ideal (x^2,y^2,z^2)",
+	"describe A",
 	"e_1*e_2",
 	"e_1*f_2",
 	"e_1*f_3",	
@@ -435,16 +449,25 @@ document{
   EXAMPLE {
 	"P = QQ[u,v,x,y,z];",
 	"Q = P/ideal(u^2,u*v);",
-	"F = resLengthThreeAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
-	"describe F",
+	"A = resLengthThreeAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
+	"describe A",
 	"a_1*a_4",
 	"a_2*a_4",
 	"a_3*a_4"
 	},
-    
-Caveat => "The ambient ring Q must be homogeneous."
-}  
 
+  EXAMPLE {
+	"P = QQ[u,v];",
+	"Q = (P/ideal(u^2,u*v))[x,y,z];",
+	"A = resLengthThreeTorAlg ( res ideal (x^2,x*y,y^2,z^2) )",
+	"describe A",
+	},
+    
+    Caveat => { "For the function to return an algebra over the residue
+	field of the ambient ring ", TT "Q ", "that ring must a homogeneous
+	quotient of a polynomial algebra over a field."},
+
+}
 
 end
 --==========================================================================
@@ -458,6 +481,12 @@ debug loadPackage "ResLengthThree"
 check "ResLengthThree"
 
 -- dev space
+
+P = ZZ[x,y,z];
+Q = P/ideal(4_P)
+A = resLengthThreeAlg ( res ideal (x^2,y^2,z^2) )
+describe A
+
 
 needsPackage "TorAlgebra"'
 needsPackage "PruneComplex"
