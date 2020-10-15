@@ -359,7 +359,7 @@ document{
   Usage => "resLengthThreeAlg F, resLengthThreeAlg(F,L)", 
 
   Inputs =>{
-      "F" => ChainComplex => " a free resolution of length three",
+      "F" => ChainComplex => "a length three free resolution of a cyclic module",
       "L" => List => "of three symbols"
       },
   
@@ -394,6 +394,8 @@ document{
 	"a_3*a_4"
 	},
 
+  PARA { },
+  
   EXAMPLE {
 	"P = QQ[u,v];",
 	"Q = (P/ideal(u^2,u*v))[x,y,z];",
@@ -401,6 +403,8 @@ document{
 	"describe A",
 	},
 
+  PARA { },
+  
   EXAMPLE {
       "P = ZZ[x,y,z];",
       "Q = P/ideal(4_P);",
@@ -421,7 +425,7 @@ document{
   Usage => "resLengthThreeTorAlg F, resLengthThreeTorAlg(F,L)", 
 
   Inputs =>{
-      "F" => ChainComplex => " a free resolution of length three",
+      "F" => ChainComplex => "a length three free resolution of a cyclic module",
       "L" => List => "of three symbols"
       },
   
@@ -446,6 +450,8 @@ document{
 
   PARA { "The ambient ring ", TT "Q", " does not need to be a polynomial algebra." },
 
+-- These still don't return right...
+
   EXAMPLE {
 	"P = QQ[u,v,x,y,z];",
 	"Q = P/ideal(u^2,u*v);",
@@ -463,12 +469,73 @@ document{
 	"Q = (P/ideal(u^2,u*v))[x,y,z];",
 	"A = resLengthThreeTorAlg ( res ideal (x^2,x*y,y^2,z^2) )",
 	"describe A",
+	"a_1*a_4",
+	"a_2*a_4",
+	"a_3*a_4"
 	},
     
     Caveat => { "For the function to return an algebra over the residue
 	field of the ambient ring ", TT "Q ", "that ring must a homogeneous
 	quotient of a polynomial algebra over a field."},
 
+}
+
+document{
+  Key => {
+    multTableOneOne, (multTableOneOne, Ring)
+    },
+
+  Headline => "the multiplication table for products of elements in degree one",
+
+  Usage => "multTableOneOne A", 
+
+  Inputs =>{
+      "A" => Ring => { "created with ", TO resLengthThreeAlg, " or ", TO resLengthThreeTorAlg } 
+      },
+  
+  Outputs => { 
+      List => { "of the rows in the multiplication table; use ", TO netList, " to display it as a table" }
+      },
+
+  PARA { "For a length tree free resolution described as a
+  graded-commutative ring ", TT "A", " the function returns a list of
+  the rows of the table of products of elements in degree one. It does
+  the same for the graded-commutative homology algebra obtained from
+  ", TT "A", "." },
+  
+  EXAMPLE {
+	"Q = QQ[x,y,z];",
+	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"multTableOneOne A",
+	"netList multTableOneOne A"
+	},
+}
+
+document{
+  Key => {
+    [multTableOneOne, Labels], Labels
+    },
+
+  Headline => "an optional argument for multTableOneOne determining whether to label rows and columns",
+
+  Usage => "multTableOneOne A", 
+
+  Inputs =>{
+      "A" => Ring => { "created with ", TO resLengthThreeAlg, " or ", TO resLengthThreeTorAlg } 
+      },
+  
+  Outputs => { 
+      List => { "of the rows in the multiplication table; use ", TO netList, " to display it as a table" }
+      },
+
+  PARA { "The default value of ", TO Labels, " is ", TO true, ". Changing the value to ", TO false, " removes the row and column labels." },
+  
+  EXAMPLE {
+	"Q = QQ[x,y,z];",
+	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"multTableOneOne (A, Labels => false)",
+	"netList multTableOneOne A"
+	},
 }
 
 end
