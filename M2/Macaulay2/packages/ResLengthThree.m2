@@ -456,6 +456,8 @@ document{
 	"a_3*a_4"
 	},
 
+  PARA { },
+
   EXAMPLE {
 	"P = QQ[u,v];",
 	"Q = (P/ideal(u^2,u*v))[x,y,z];",
