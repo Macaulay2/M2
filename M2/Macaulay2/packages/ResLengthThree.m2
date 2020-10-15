@@ -31,7 +31,6 @@ export { "resLengthThreeAlg", "resLengthThreeTorAlg", "multTableOneOne", "multTa
 --==========================================================================
 
 resLengthThreeAlg = method()
-
 resLengthThreeAlg(ChainComplex, List) := (F, sym) -> (
    if F.cache#?"Algebra Structure" then return F.cache#"Algebra Structure";
    if length F != 3 then
@@ -79,6 +78,55 @@ resLengthThreeAlg( ChainComplex ) := (F) -> (
     resLengthThreeAlg(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
     )
 
+resLengthThreeAlg' = method()
+resLengthThreeAlg'(ChainComplex, List) := (F, sym) -> (
+   if F.cache#?"Algebra Structure" then return F.cache#"Algebra Structure";
+   if length F != 3 then
+     error "Expected a chain complex of length three which is free of rank one in degree zero.";
+   if #sym != 3 or any(sym, s -> (class baseName s =!= Symbol))  then
+     error "Expected a list of three symbols.";
+   mult := multTables'(F);
+   Q := ring F;
+   m := numcols F.dd_1;
+   l := numcols F.dd_2;
+   n := numcols F.dd_3;        
+   degreesP := if isHomogeneous F then 
+                  flatten apply(3, j -> apply(degrees source F.dd_(j+1), d -> {j+1} | d))
+	       else
+	          flatten apply(3, j -> apply(degrees source F.dd_(j+1), d -> {0} | d));
+   skewList := toList((0..(m-1)) | ((m+l)..(m+l+n-1)));
+   e := baseName (sym#0);
+   f := baseName (sym#1);
+   g := baseName (sym#2);
+   -- use this line if you want to ensure that 'basis' works properly on the returned ring.
+   --P := first flattenRing (Q[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>skewList, Degrees => degreesP, Join => false]);
+   P := Q[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>skewList, Degrees => degreesP, Join => false];
+   eVector := matrix {apply(m, i -> P_(i))};
+   fVector := matrix {apply(l, i -> P_(m+i))};
+   gVector := matrix {apply(n, i -> P_(m+l+i))};
+
+   eeGens := flatten entries (matrix {flatten entries (-((transpose eVector) * eVector))} - fVector*(mult#0));
+   efGens := flatten entries (matrix {flatten entries (-((transpose eVector) * fVector))} - gVector*(mult#1));
+
+   I := (ideal eeGens) +
+        (ideal efGens) +
+	(ideal apply(m..(m+l-1), i -> P_i))^2 +
+	(ideal apply(0..(m-1), i -> P_i))*(ideal apply((m+l)..(m+l+n-1), i -> P_i)) + 
+	(ideal apply(m..(m+l-1), i -> P_i))*(ideal apply((m+l)..(m+l+n-1), i -> P_i)) +
+	(ideal apply((m+l)..(m+l+n-1), i -> P_i))^2;
+   I = ideal mingens I;
+   A := P/I;
+   A.cache#"l" = l;
+   A.cache#"m" = m;
+   A.cache#"n" = n;
+   F.cache#"Algebra Structure" = A;
+   A
+)
+
+resLengthThreeAlg'( ChainComplex ) := (F) -> (
+    resLengthThreeAlg'(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
+    )
+
 resLengthThreeTorAlg = method()
 
 resLengthThreeTorAlg(ChainComplex,List) := (F,sym) -> (
@@ -99,6 +147,28 @@ resLengthThreeTorAlg(ChainComplex,List) := (F,sym) -> (
 
 resLengthThreeTorAlg( ChainComplex ) := (F) -> (
     resLengthThreeTorAlg(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
+    )
+
+resLengthThreeTorAlg' = method()
+
+resLengthThreeTorAlg'(ChainComplex,List) := (F,sym) -> (
+   if F.cache#?"Tor Algebra Structure" then return F.cache#"Tor Algebra Structure";
+   A := resLengthThreeAlg(F,sym);
+   P := ambient A;
+   Q := ring F;
+   kk := coefficientRing first flattenRing Q;
+   PP := kk monoid P;
+   I := ideal mingens sub(ideal A, PP);
+   B := PP/I;
+   B.cache#"l" = A.cache#"l";
+   B.cache#"m" = A.cache#"m";
+   B.cache#"n" = A.cache#"n";
+   F.cache#"Tor Algebra Structure" = B;
+   B
+)
+
+resLengthThreeTorAlg'( ChainComplex ) := (F) -> (
+    resLengthThreeTorAlg'(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
     )
 
 makeRes = (d1,d2,d3) -> ( 
@@ -154,7 +224,7 @@ multTableOneTwo(Ring) := opts -> A -> (
 resLengthThreeTorAlgClass = method()
 
 resLengthThreeTorAlgClass ChainComplex := F -> (
-    A := resLengthThreeTorAlg(F);
+  A := resLengthThreeTorAlg(F);
   p := rank multMap(A,1,1);
   q := rank multMap(A,1,2);
   r := rank homothetyMap(A,2,1);
@@ -182,6 +252,39 @@ resLengthThreeTorAlgClass ChainComplex := F -> (
 
 resLengthThreeTorAlgClass Ideal := I -> (
    resLengthThreeTorAlgClass res I
+)
+
+resLengthThreeTorAlgClass' = method()
+
+resLengthThreeTorAlgClass' ChainComplex := F -> (
+  A := resLengthThreeTorAlg'(F);
+  p := rank multMap(A,1,1);
+  q := rank multMap(A,1,2);
+  r := rank homothetyMap(A,2,1);
+  tau := first tauMaps(A,1,1,1);
+  if (p >= 4 or p == 2) then
+      return ("H(" | p | "," | q | ")")
+  else if (p == 3) then
+  (
+      if (q > 1) then return ("H(" | p | "," | q | ")")
+      else if (q == 1 and r != 1) then return "C(3)"
+      else if (q == 0 and tau == 0) then return ("H(" | p | "," | q | ")")
+      else return "T";
+  )
+  else if (p == 1) then
+  (
+      if (q != r) then return "B"
+      else return ("H(" | p | "," | q | ")");
+  )
+  else if (p == 0) then
+  (
+      if (q != r) then return ("G(" | r | ")")
+      else return ("H(" | p | "," | q | ")");
+  );
+)
+
+resLengthThreeTorAlgClass' Ideal := I -> (
+   resLengthThreeTorAlgClass' res I
 )
 
 
@@ -220,6 +323,24 @@ multTables = F -> (
 	);
     {EE,EF}
     )
+ 
+multTables' = F -> (
+    Q := ring F;
+    d1:= matrix entries F.dd_1;
+    d2:= matrix entries F.dd_2;    
+    d3:= matrix entries F.dd_3;    
+    m := numcols d1;
+    l := numcols d2;
+    n := numcols d3;
+    
+    multEE := (d1**(id_(source d1)) - (id_(source d1))**d1) // d2;
+    multEF := time (d1**(id_(source d2)) - multEE * (id_(source d1)**d2)) // d3;
+
+    {multEE,multEF}
+    --EE := hashTable flatten apply(m, i -> apply(m, j -> ((i+1,j+1), multEE_{m*i+j})));
+    --EF := hashTable flatten apply(m, i -> apply(l, j -> ((i+1,j+1), multFF_{m*i+j})));
+    --{EE,EF}
+) 
  
 multMap = method()
 
@@ -524,7 +645,7 @@ time for s1 from 2 to 5 do (
       d2 := F.dd_2;
       d3 := F.dd_3;
       mult11 := (d1**(id_(source d1)) - (id_(source d1))**d1) // d2;
-      mult12 := (mult11 * (id_(source d1)**d2) - d1**(id_(source d2))) // d3;
+      mult12 :=  - d1**(id_(source d2))) // d3 + -(mult11 * (id_(source d1)**d2)
       --time multTables res I;
       --time multTables' res I;
   );
@@ -532,15 +653,36 @@ time for s1 from 2 to 5 do (
 
 restart
 debug needsPackage "ResLengthThree"
-Q = QQ[x,y,z];
-I = ideal (x^2,y^2,z^2)
-F = res I
-d1 = F.dd_1
-d2 = F.dd_2
-d3 = F.dd_3
-mult11 = (d1**(id_(source d1)) - (id_(source d1))**d1) // d2
-mult12 = (mult11 * (id_(source d1)**d2) - d1**(id_(source d2))) // d3
+Q = ZZ/32003[x,y,z];
+I = ideal fromDual matrix {{random(5,Q), random(10,Q)}};
+--I = ideal (x^3,y^3,z^3)
+F = res I;
+time B = resLengthThreeAlg F
+time C = resLengthThreeAlg' F
+time resLengthThreeTorAlgClass F
+time resLengthThreeTorAlgClass' F
 
+A = ambient B
+d1 = F.dd_1;
+d2 = F.dd_2;
+d3 = F.dd_3;
+m = rank source d1
+l = rank source d2
+n = rank source d3
+mult11 = time (d1**(id_(source d1)) - (id_(source d1))**d1) // d2;
+mult12 = time (d1**(id_(source d2)) - mult11 * (id_(source d1)**d2)) // d3;
+EE = hashTable flatten apply(m, i -> apply(m, j -> ((i+1,j+1), mult11_{m*i+j})));
+EF = hashTable flatten apply(m, i -> apply(l, j -> ((i+1,j+1), mult12_{m*i+j})));
+mults = time multTables F;
+netList sort pairs first mults | netList sort pairs EE
+netList sort pairs last mults | netList sort pairs EF
+eVector = matrix {{e_1,e_2,e_3}}
+fVector = matrix {{f_1,f_2,f_3}}
+gVector = matrix {{g_1}}
+flatten entries (matrix {flatten entries (-((transpose eVector) * eVector))} - fVector*mult11)
+e1
+e2
+e3 * ( e1 e2 e3 )
 --  F1 ** F2 --> F1 ** F1 ++ F2 --mult and add--> F2
 
 --===================================================================================================
