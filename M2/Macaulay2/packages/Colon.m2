@@ -29,6 +29,8 @@ export {
     "intersectionByElimination"
     }
 
+exportFrom_Core {"saturate", "quotient", "annihilator", "MinimalGenerators"}
+
 -- TODO: where should these be placed?
 
 -- TODO: is this the right function?
@@ -339,6 +341,10 @@ saturate Vector               := Module => opts ->  v     -> saturate(image matr
 -- TODO: this should be unnecessary via https://github.com/Macaulay2/M2/issues/1519
 saturate(Thing, Number) := opts -> (t, n) -> saturate(t, n_(ring t), opts)
 
+-- TODO: where should these be defined?
+-- saturate(MonomialIdeal, MonomialIdeal)
+-- saturate(MonomialIdeal, RingElement)
+
 -- Helper for saturation methods
 saturateHelper = (A, B, algorithms, opts) -> (
     if (R := ring A) =!= ring B then error "expected objects in the same ring";
@@ -615,44 +621,60 @@ doc ///
   Key
     Colon
   Headline
-    saturation and ideal and submodule colon/quotient routines
---  Description
---    Text
+    ideal and submodule quotient, saturation, and annihilator routines
+  Description
+    Text
+      See @TO (quotient, Ideal, Ideal)@, @TO saturate@, and @TO annihilator@.
 --    Example
 --  Caveat
 --  SeeAlso
 ///
 
+for n in {BasisElementLimit, PairLimit, DegreeLimit} do
 document {
-     Key => MinimalGenerators,
-     TT "MinimalGenerators => true", " -- an option for certain functions
-     which specifies whether to compute minimal generators for the result.",
-     PARA{},
-     UL {
-	  TO [quotient,MinimalGenerators],
-	  TO [saturate,MinimalGenerators],
-	  },
-     PARA{},
-     "The default value is ", TT "true", "."
-     }
+    Key => {[quotient, n], [saturate, n]},
+    PARA {"The value for this optional argument for ", TO saturate, " and ", TO quotient, " is passed through to ", TO gb, "." }}
 
--- TODO: automate this
-for s in {Bayer, Iterate, Linear} do
-document {
-     Key => s,
-     Headline => "a Strategy option value for saturate",
-     SeeAlso => {[saturate, Strategy]}
-     }
+doc ///
+Node
+  Key
+    MinimalGenerators
+  Headline
+    whether to compute minimal generators and return a trimmed set of generators
+  Description
+    Text
+      The following returns two minimal generators (Serre's Theorem: a codim 2 Gorenstein ideal is a complete intersection.)
+    Example
+      S=ZZ/101[a,b]
+      i=ideal(a^4,b^4)
+      quotient(i, a^3+b^3)
+    Text
+      Without trimming we would get 4 generators instead.
+    Example
+      quotient(i, a^3+b^3, MinimalGenerators => false)
+    Text
+      Sometimes the extra time to find the minimal generators is too large.
+      This allows one to bypass this part of the computation.
+    Example
+      R = ZZ/101[x_0..x_4]
+      I = truncate(8, monomialCurveIdeal(R,{1,4,5,9}));
+      time gens gb I;
+      time J1 = saturate(I);
+      time J = saturate(I, MinimalGenerators=>false);
+      numgens J
+      numgens J1
+  SeeAlso
+    (quotient, Ideal, Ideal)
+    (saturate, Ideal, Ideal)
+    monomialCurveIdeal
+    "Truncations::truncate"
+///
 
 -*
 Where should these be documented?
 quotient
 (quotient, MonomialIdeal, MonomialIdeal)
 (quotient, MonomialIdeal, RingElement)
-
-saturate
-(saturate, MonomialIdeal, MonomialIdeal)
-(saturate, MonomialIdeal, RingElement)
 *-
 
 -- TODO: review

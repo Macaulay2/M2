@@ -12,15 +12,15 @@ Node
   Headline
     the annihilator ideal
   Usage
+    ann M
     annihilator M
   Inputs
-    M:
-      a module, an ideal, a ring element, or a coherent sheaf
+    M:{Ideal,Module,RingElement,CoherentSheaf}
     Strategy=>Symbol
-      either @TO "Quotient"@ or @TO "Intersection"@
+      either @TT "Quotient"@ or @TT "Intersection"@
   Outputs
     :Ideal
-      the annihilator ideal $ann(M) = \{ f \in R | fM = 0 \}$ where @TT "R"@ is the ring of @TT "M"@
+      the annihilator ideal $\mathrm{ann}(M) = \{ f \in R | fM = 0 \}$ where $R$ is the ring of $M$
   Description
     Text
       You may use @TT "ann"@ as a synonym for @TT "annihilator"@.
@@ -34,16 +34,17 @@ Node
     Text
       For another example, we compute the annihilator of an element in a quotient ring.
     Example
-      A = R/(a*b,a*c,a*d)
+      A = R/(a*b, a*c, a*d)
       ann a
     Text
-      Macaulay2 uses two algorithms to compute annihilators. The default is to compute the annihilator
-      of each generator of the module @TT "M"@ and to intersect these two by two. Each annihilator is
-      done using a submodule quotient. The other algorithm computes the annihilator in one large computation
-      and is used if @TT "Strategy => Quotient"@ is specified.
+      Currently two algorithms to compute annihilators are implemented.
+      The default is to compute the annihilator of each generator of the module @TT "M"@ and to intersect
+      these two by two. Each annihilator is done using a submodule quotient. The other algorithm computes
+      the annihilator in one large computation and is used if @TT "Strategy => Quotient"@ is specified.
     Example
       annihilator(M, Strategy => Quotient)
   SeeAlso
     (quotient, Module, Module)
+    monomialCurveIdeal
     Ext
 ///
