@@ -75,7 +75,7 @@ document {
      UL {
 	  TO (gb, Module),
 --	  TO (symbol :, Module, Ideal), -- TODO: get this to work across packages
-	  TO (annihilator, Module),
+	  TO "Colon::annihilator(Module)",
 	  TO "Colon::saturate(Module,Ideal)",
 	  },
      "Common homological computations:",
@@ -822,7 +822,7 @@ document {
 document {
      Key => "annihilator of a module",
      "The annihilator of a module M over a ring R, ann(M) = { f in R | fM = 0 }, is computed
-     using the ", TO "annihilator", " function.",
+     using the ", TO "Colon::annihilator", " function.",
      EXAMPLE {
 	  "R = QQ[a..i];",
 	  "M = cokernel genericMatrix(R,a,3,3)",

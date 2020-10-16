@@ -7,6 +7,7 @@
 --                  updated July 2020
 --
 -- TODO : 1. deal with MonomialIdeals as well
+--        2. cache computation under I.cache.QuotientComputation{J}
 ---------------------------------------------------------------------------
 newPackage(
     "Colon",
@@ -601,6 +602,9 @@ load "./Colon/quotient-test.m2"
 -- basic tests for saturate
 load "./Colon/saturate-test.m2"
 
+-- basic tests for annihilator
+load "./Colon/annihilator-test.m2"
+
 --------------------------------------------------------------------
 ----- Documentation section
 --------------------------------------------------------------------
@@ -632,24 +636,13 @@ document {
      "The default value is ", TT "true", "."
      }
 
+-- TODO: automate this
+for s in {Bayer, Iterate, Linear} do
 document {
-     Key => Bayer,
+     Key => s,
      Headline => "a Strategy option value for saturate",
-     SeeAlso => {[saturate,Strategy]}
+     SeeAlso => {[saturate, Strategy]}
      }
-
-document {
-     Key => Iterate,
-     Headline => "a Strategy option value for saturate",
-     SeeAlso => {[saturate,Strategy]}
-     }
-
-document {
-     Key => Linear,
-     Headline => "a Strategy option value for saturate",
-     SeeAlso => {[saturate,Strategy]}
-     }
-
 
 -*
 Where should these be documented?
@@ -665,6 +658,7 @@ saturate
 -- TODO: review
 load "./Colon/quotient-doc.m2"
 load "./Colon/saturate-doc.m2"
+load "./Colon/annihilator-doc.m2"
 
 --------------------------------------------------------------------
 ----- Development section
