@@ -197,7 +197,7 @@ multTableOneOne(Ring) := opts -> A -> (
    n := A.cache#"n";
    eVector := matrix {apply(m, i -> A_i)};
    if (opts.Compact) then (
-       oneTimesOneA := table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else 0))
+       oneTimesOneA := matrix table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else 0))
    else (
        oneTimesOneA = matrix table(m,m,(i,j) -> (A_i)*(A_j));
        );
@@ -634,7 +634,7 @@ document{
 
 document{
   Key => {
-    [multTableOneOne, Labels], Labels
+    [multTableOneOne, Labels],
     },
 
   Headline => "an optional argument for multTableOneOne determining whether to label rows and columns",
@@ -646,7 +646,7 @@ document{
       },
   
   Outputs => { 
-      List => { "of the rows in the multiplication table; use ", TO netList, " to display it as a table" }
+      Matrix => { "of the rows in the multiplication table." }
       },
 
   PARA { "The default value of ", TO Labels, " is ", TO true, ". Changing the value to ", TO false, " removes the row and column labels." },
@@ -655,9 +655,124 @@ document{
 	"Q = QQ[x,y,z];",
 	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
 	"multTableOneOne (A, Labels => false)",
-	"netList multTableOneOne A"
 	},
 }
+
+document{
+  Key => {
+    [multTableOneOne, Compact], Compact
+    },
+
+  Headline => "an optional argument for multTableOneOne that sets the products of e_ie_j to be zero for i>j" ,
+
+  Usage => "multTableOneOne A", 
+
+  Inputs =>{
+      "A" => Ring => { "created with ", TO resLengthThreeAlg, " or ", TO resLengthThreeTorAlg } 
+      },
+  
+  Outputs => { 
+      List => { "of the rows in the multiplication table; use ", TO netList, " to display it as a table" }
+      },
+
+  PARA { "The default value of ", TO Compact, " is ", TO false, ". Changing the value to ", TO true, " sets the products ",  TEX /// $e_ie_j=0$ ///, " for ",  TEX /// $i>j$ ///  },
+  
+  EXAMPLE {
+	"Q = QQ[x,y,z];",
+	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"multTableOneOne (A, Compact=> true)",
+	"netList multTableOneOne(A, Compact=>true)",
+	},
+}
+
+document{
+  Key => {
+    multTableOneTwo, (multTableOneTwo, Ring)
+    },
+
+  Headline => "the multiplication table for products of elements in degree one with elements in degree two",
+
+  Usage => "multTableOneTwo A", 
+
+  Inputs =>{
+      "A" => Ring => { "created with ", TO resLengthThreeAlg, " or ", TO resLengthThreeTorAlg } 
+      },
+  
+  Outputs => { 
+      List => { "of the rows in the multiplication table; use ", TO netList, " to display it as a table" }
+      },
+
+  PARA { "For a length tree free resolution described as a
+  graded-commutative ring ", TT "A", " the function returns a list of
+  the rows of the table of products of elements in degree one with elements in degree two. It does
+  the same for the graded-commutative homology algebra obtained from
+  ", TT "A", "." },
+  
+  EXAMPLE {
+	"Q = QQ[x,y,z];",
+	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"multTableOneTwo A",
+	"netList multTableOneTwo A"
+	},
+}
+
+document{
+  Key => {
+   Labels
+    },
+
+  Headline => "an optional argument for multTableOneOne and MultTableOneTwo determining whether to label rows and columns",
+
+  Usage => "multTableOneOne A", "multTableOneTwo A",
+
+  Inputs =>{
+      "A" => Ring => { "created with ", TO resLengthThreeAlg, " or ", TO resLengthThreeTorAlg } 
+      },
+  
+  Outputs => { 
+      Matrix => { "of the rows in the multiplication table. If used with multTableOneOne." },
+      List => { "of the rows in the multiplication table. If used with multTableOneTwo. Use ", TO netList, " to display it as a table" }
+      },
+
+  PARA { "The default value of ", TO Labels, " is ", TO true, ". Changing the value to ", TO false, " removes the row and column labels." },
+  
+  EXAMPLE {
+	"Q = QQ[x,y,z];",
+	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"multTableOneOne (A, Labels => false)",
+	"netList multTableOneTwo (A, Labels=>false)",
+	},
+}
+
+document{
+  Key => {
+    [multTableOneTwo, Labels],
+    },
+
+  Headline => "an optional argument for multTableOneTwo determining whether to label rows and columns",
+
+  Usage => "multTableOneTwo A", 
+
+  Inputs =>{
+      "A" => Ring => { "created with ", TO resLengthThreeAlg, " or ", TO resLengthThreeTorAlg } 
+      },
+  
+  Outputs => { 
+      List => { "of the rows in the multiplication table. Use ", TO netList, " to display it as a table" }
+      },
+
+  PARA { "The default value of ", TO Labels, " is ", TO true, ". Changing the value to ", TO false, " removes the row and column labels." },
+  
+  EXAMPLE {
+	"Q = QQ[x,y,z];",
+	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"netList multTableOneTwo (A, Labels => false)",
+	},
+}
+
+
+
+
 
 end
 --==========================================================================
