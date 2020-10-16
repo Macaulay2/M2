@@ -771,7 +771,71 @@ document{
 }
 
 
+document{
+  Key => {
+    resLengthThreeTorAlgClass, (resLengthThreeTorAlgClass, ChainComplex),(resLengthThreeTorAlgClass, Ideal),
+    },
 
+  Headline => "the class (w.r.t. multiplication in homology) of an ideal",
+
+  Usage => "resLengthThreeTorAlgClass F", 
+
+  Inputs =>{
+      "F" => ChainComplex => { "a length three free resolution of a cyclic module" } ,
+      "I" => Ideal => {"an ideal of codepth 3"},
+      },
+  
+  Outputs => { 
+      String => { "the (parametrized) class of the ideal I"}
+      },
+
+  PARA { "Classifies the ideal  ", TEX /// $I$ ///, "  as belonging to one of the (parametrized) classes ", BOLD /// B ///,", ",BOLD /// C///,"(c), ",BOLD /// G///,"(r), ",BOLD ///H///,"(p,q) ,
+     ", BOLD ///T///,", provided that it is codepth 3." },
+  
+  EXAMPLE {
+	"Q = QQ[x,y,z];",
+        "resLengthThreeTorAlgClass ideal(x*y,x^2,y*z,z^2)",
+	"resLengthThreeTorAlgClass ideal(x^2,y^2,z^2)",
+	"resLengthThreeTorAlgClass ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3)",
+	"resLengthThreeTorAlgClass ideal(x*z+y*z,x*y+y*z,x^2-y*z,y*z^2+z^3,y^3-z^3)",
+	"resLengthThreeTorAlgClass ideal(x^2,y^2,z^2,x*z)",
+	"resLengthThreeTorAlgClass ideal(x^2,y^2,z^2,x*y*z)",
+	},
+    
+  Caveat => { "The codepth of the ideal ", TEX///I///," must be exactly 3, and the length of the complex ",TEX///F///,
+      " must be exactly 3."},
+}
+
+
+document{
+  Key => {
+    makeRes,
+    },
+
+  Headline => "creates a resolution starting from three matrices",
+
+  Usage => "makeRes(d1,d2,d3)", 
+
+  Inputs =>{
+      "d1" => Matrix => {"matrix of the differential in degree 1"} ,
+      "d2" => Matrix => {"matrix of the differential in degree 2"},
+      "d3" => Matrix => {"matrix of the differential in degree 3"},
+      },
+  
+  Outputs => { 
+      ChainComplex => { "the resolution with differentials d1, d2, d3."}
+      },
+  
+    PARA { "Creates a resolution of length 3 that has the given three matrices as differentials." },
+
+EXAMPLE {
+	"Q = QQ[x,y,z];",
+        "d1=matrix{{-x^2,z^2-x*y,-y^2,-x*z,-y*z}}",
+	"d2=matrix{{0,0,z,0,-y},{0,0,0,-y,x},{-z,0,0,x,0},{0,y,-x,0,z},{y,-x,0,-z,0}}",
+	"d3=transpose d1",
+	"makeRes(d1,d2,d3)",
+	},
+}
 
 
 end
