@@ -448,6 +448,24 @@ I = ideal(x^5,y^5,x*y^4,x^2*y^3,x^3*y^2,x^4*y,z^3)
 assert( resLengthThreeTorAlgClass(I) === "H(6,5)" )
 ///
 
+
+TEST ///
+Q = QQ[x,y,z]
+d1=matrix{{-x^2,z^2-x*y,-y^2,-x*z,-y*z}}
+d2=matrix{{0,0,z,0,-y},{0,0,0,-y,x},{-z,0,0,x,0},{0,y,-x,0,z},{y,-x,0,-z,0}}
+d3=transpose d1
+F=makeRes(d1,d2,d3)
+A=resLengthThreeAlg(F) 
+assert(e_2*e_4===y*f_3+z*f_5)
+assert(e_1*e_2===-z*f_3-x*f_5)
+assert(e_3*e_5===-y*f_1)
+T=resLengthThreeTorAlg F
+assert(e_2*e_4===sub(0,T))
+assert(e_1*e_2===sub(0,T))
+assert(e_3*e_5===sub(0,T))
+///
+
+
 --==========================================================================
 -- DOCUMENTATION
 --==========================================================================
