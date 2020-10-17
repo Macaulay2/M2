@@ -202,7 +202,7 @@ multTableOneOne(Ring) := opts -> A -> (
        oneTimesOneA = matrix table(m,m,(i,j) -> (A_i)*(A_j));
        );
    result := entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
-   if (opts.Labels) then result else oneTimesOneA
+   if (opts.Labels) then result else entries oneTimesOneA
    )
 
 multTableOneTwo = method(Options => { Labels => true} )
@@ -646,7 +646,7 @@ document{
       },
   
   Outputs => { 
-      Matrix => { "of the rows in the multiplication table." }
+      List => { "of the rows in the multiplication table; use ", TO netList, " to display it as a table" }
       },
 
   PARA { "The default value of ", TO Labels, " is ", TO true, ". Changing the value to ", TO false, " removes the row and column labels." },
@@ -654,7 +654,7 @@ document{
   EXAMPLE {
 	"Q = QQ[x,y,z];",
 	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
-	"multTableOneOne (A, Labels => false)",
+	"netList multTableOneOne (A, Labels => false)",
 	},
 }
 
@@ -729,9 +729,8 @@ document{
       "A" => Ring => { "created with ", TO resLengthThreeAlg, " or ", TO resLengthThreeTorAlg } 
       },
   
-  Outputs => { 
-      Matrix => { "of the rows in the multiplication table. If used with multTableOneOne." },
-      List => { "of the rows in the multiplication table. If used with multTableOneTwo. Use ", TO netList, " to display it as a table" }
+  Outputs => {
+      List => { "of the rows in the multiplication table, use ", TO netList, " to display it as a table" }
       },
 
   PARA { "The default value of ", TO Labels, " is ", TO true, ". Changing the value to ", TO false, " removes the row and column labels." },
@@ -739,7 +738,7 @@ document{
   EXAMPLE {
 	"Q = QQ[x,y,z];",
 	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
-	"multTableOneOne (A, Labels => false)",
+	"netList multTableOneOne (A, Labels => false)",
 	"netList multTableOneTwo (A, Labels=>false)",
 	},
 }
