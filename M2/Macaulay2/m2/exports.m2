@@ -291,7 +291,6 @@ export {
 	"Options",
 	"Order",
 	"OrderedMonoid",
-	"OutputDictionary",
 	"Outputs",
 	"POSIX",
 	"Package",
@@ -1219,6 +1218,7 @@ export {
 }
 
 exportMutable {
+	"OutputDictionary",
 	"allowableThreads",
 	"applicationDirectorySuffix",
 	"backtrace",

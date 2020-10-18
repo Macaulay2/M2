@@ -29,7 +29,30 @@ capture List   := s -> capture demark_newline s
 -- TODO: do this in interp.dd instead
 capture String := s -> (
     pushvar(symbol interpreterDepth, 1);
+
+    oldPrivateDictionary := User#"private dictionary";
+    oldOutputDictionary := OutputDictionary;
+    oldDictionaryPath := dictionaryPath;
+    oldLoadedPackages := loadedPackages;
+
+    User#"private dictionary" = new Dictionary;
+    OutputDictionary = new GlobalDictionary;
+    dictionaryPath = {
+	currentPackage.Dictionary,
+	User#"private dictionary",
+	Core.Dictionary,
+	OutputDictionary,
+	PackageDictionary};
+    scan(Core#"pre-installed packages", needsPackage);
+    scan(currentPackage.Options.PackageExports, needsPackage);
+
     ret := capture' s;
+
+    User#"private dictionary" = oldPrivateDictionary;
+    OutputDictionary = oldOutputDictionary;
+    dictionaryPath = oldDictionaryPath;
+    loadedPackages = oldLoadedPackages;
+
     popvar symbol interpreterDepth;
     ret)
 protect symbol capture
@@ -95,10 +118,10 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 -- used in installPackage.m2
 captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash, changeFunc, usermode, verboseLog) -> (
     desc := "example results for " | fkey;
---    printerr("capturing ", desc);
---    (err, output) := evaluateWithPackage(pkg, inputs, capture);
---    if not err then ( outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close ) else
-    (
+    printerr("capturing ", desc);
+    (err, output) := evaluateWithPackage(pkg, inputs, capture);
+    if not err then outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close
+    else (
 	data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
 	inf << inputs << endl << close;
 	if runFile(inf, inputhash, outf, errf, desc, pkg, changeFunc fkey, usermode, data)
