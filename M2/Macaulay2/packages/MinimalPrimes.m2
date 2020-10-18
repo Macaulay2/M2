@@ -16,7 +16,7 @@ newPackage(
             },
 	Keywords => {"Commutative Algebra"},
         AuxiliaryFiles=>true,
-        PackageImports => {"Elimination"}
+        PackageImports => {"Elimination", "PrimaryDecomposition"}
         )
 
 -- << "warning!  This package is experimental.  The interface will change, and although" << endl;

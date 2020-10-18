@@ -26,7 +26,7 @@ newPackage(
         HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
     Headline => "routines for working with normal toric varieties and related objects",
     Keywords => {"Toric Geometry"},
-    PackageExports => {"Polyhedra", "Schubert2"},
+    PackageExports => {"Polyhedra", "Schubert2","PrimaryDecomposition"},
     PackageImports => {"FourierMotzkin","Normaliz","LLLBases"},
     DebuggingMode => false
     )

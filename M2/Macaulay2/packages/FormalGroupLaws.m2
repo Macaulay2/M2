@@ -11,7 +11,7 @@ newPackage(
 		},
 	Headline => "commutative formal group laws",
 	Keywords => {"Group Theory"},
-	PackageImports => {"Truncations"},
+	PackageExports => {"Truncations"},
 	DebuggingMode => false)
 
 -- Put here the name of functions that should be visible to users

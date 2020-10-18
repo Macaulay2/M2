@@ -7,8 +7,7 @@ newPackage(
                         HomePage => "http://www.msri.org/~de"}},
               Headline => "Analyzing Resolutions over a Complete Intersection",
 	      Keywords => {"Commutative Algebra"},
-	      PackageImports => {"Truncations"},
-	      PackageExports => {"MCMApproximations","BGG"},
+	      PackageExports => {"Truncations","MCMApproximations","BGG"},
 --note: this package requires  MCMApproximations.m2
 --in the version of August 21,2018	      
 	      DebuggingMode => false

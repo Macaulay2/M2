@@ -111,8 +111,6 @@ html Hypertext := x -> (
 -- Exceptional (html, MarkUpType) methods
 -----------------------------------------------------------------------------
 
--- TOH  -- see format.m2
-
 html LITERAL := x -> concatenate x
 html String  := x -> htmlLiteral x
 html TEX     := x -> concatenate apply(x, html)
@@ -150,6 +148,7 @@ html TO2  := x -> (
     if isUndocumented tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
     if isMissingDoc   tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
     concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, htmlLiteral name}))
+-- html TOH is in format.m2
 
 html VerticalList         := x -> html UL apply(x, html)
 html NumberedVerticalList := x -> html OL apply(x, html)

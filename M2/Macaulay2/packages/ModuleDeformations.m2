@@ -24,6 +24,7 @@ newPackage(
 	  "volume number" => "2",
 	  "volume URI" => "http://j-sag.org/Volume2/"
 	  },
+     PackageExports => {"Truncations"},
      DebuggingMode => false
 )
 

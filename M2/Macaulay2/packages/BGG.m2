@@ -12,8 +12,7 @@ newPackage(
 	     },
     	Headline => "Bernstein-Gelfand-Gelfand correspondence",
 	Keywords => {"Commutative Algebra"},
-	PackageExports => {"BoijSoederberg"},
-	PackageImports => {"Truncations"},
+	PackageExports => {"BoijSoederberg", "Truncations"},
     	DebuggingMode => false
     	)
 

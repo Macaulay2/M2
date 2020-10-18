@@ -385,7 +385,6 @@ newPackage String := opts -> pkgname -> (
     setAttribute(newpkg.Dictionary,           PrintNames, pkgname | ".Dictionary");
     setAttribute(newpkg#"private dictionary", PrintNames, pkgname | "#\"private dictionary\"");
     debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
-    -- if pkgname =!= "SimpleDoc" and pkgname =!= "Core" and pkgname =!= "Text" then needsPackage "SimpleDoc";
     scan(opts.PackageImports, needsPackage);
     scan(opts.PackageExports, needsPackage);
     newpkg.loadDepth = loadDepth;
@@ -496,17 +495,15 @@ endPackage String := title -> (
 
 
 beginDocumentation = () -> (
-    if loadPackageOptions#?(currentPackage#"pkgname") and not loadPackageOptions#(currentPackage#"pkgname").LoadDocumentation
+    pkgname := currentPackage#"pkgname";
+    if pkgname != "Classic" then needsPackage "Classic";
+    if loadPackageOptions#?pkgname and not loadPackageOptions#pkgname.LoadDocumentation
     and currentPackage#?rawKeyDB and isOpen currentPackage#rawKeyDB then (
-	if notify then stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
+	if notify then printerr("beginDocumentation: using documentation database, skipping the rest of ", currentFileName);
 	currentPackage#"documentation not loaded" = true;
 	return end);
-     if notify then stderr << "--beginDocumentation: reading the rest of " << currentFileName << endl;
-     if currentPackage#"pkgname" != "Text" and  currentPackage#"pkgname" != "SimpleDoc" then (
-	 needsPackage "Text";
-	 needsPackage "SimpleDoc";
-	  );
-     )
+    if notify then printerr("beginDocumentation: reading the rest of ", currentFileName);
+    if not member(pkgname, {"Text", "SimpleDoc"}) then needsPackage "SimpleDoc")
 
 ---------------------------------------------------------------------
 

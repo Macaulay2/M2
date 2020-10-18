@@ -23,7 +23,7 @@ newPackage(
 		   HomePage => ""}},
     	Headline => "correspondence scrolls",
 	Keywords => {"Commutative Algebra"},
-	PackageImports => { "Elimination" }
+	PackageExports => { "Elimination" }
 	)
 
 export {    

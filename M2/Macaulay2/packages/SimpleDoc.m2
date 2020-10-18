@@ -11,7 +11,7 @@ newPackage(
 	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu", HomePage => "https://math.umn.edu/~mahrud/" }
 	},
     Keywords => {"Miscellaneous"},
-    PackageImports => { "Text" },
+    PackageExports => { "Text" },
     DebuggingMode => false,
     AuxiliaryFiles => true
     )

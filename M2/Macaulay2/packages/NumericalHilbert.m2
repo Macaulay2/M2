@@ -1,14 +1,13 @@
 -- -*- coding: utf-8 -*-
 newPackage(
      "NumericalHilbert",
-     PackageExports => {"NAGtypes"},
      Version => "0.2", 
      Date => "June 16, 2014",
      Authors => {{Name => "Robert Krone", 
     	       Email => "krone@math.gatech.edu"}},
      Headline => "numerically compute local dual space and Hilbert functions",
      Keywords => {"Numerical Algebraic Geometry"},
-     PackageImports => {"Truncations"},
+     PackageExports => {"NAGtypes", "Truncations"},
      AuxiliaryFiles => true
 )
 

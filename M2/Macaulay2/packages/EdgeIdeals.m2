@@ -46,6 +46,7 @@ newPackage(
 	},
 	Headline => "edge ideals",
 	Keywords => {"Edge Ideals"},
+	PackageImports => {"PrimaryDecomposition"},
 	DebuggingMode => false
 )
 

@@ -32,6 +32,7 @@ newPackage(
     	DebuggingMode => false,
     	Headline => "Rees algebras",
 	Keywords => {"Commutative Algebra"},
+	PackageExports => {"PrimaryDecomposition"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",

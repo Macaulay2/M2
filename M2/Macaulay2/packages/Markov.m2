@@ -8,6 +8,7 @@ newPackage("Markov",
      Keywords => {"Statistics"},
      Headline => "Markov ideals arising from Bayesian networks in statistics",
      Version => "1.2",
+     PackageExports => {"PrimaryDecomposition"},
      PackageImports => {"Elimination"}
      )
 

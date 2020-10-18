@@ -9,6 +9,7 @@ newPackage("Matroids",
 	Headline => "a package for computations with matroids",
 	Keywords => {"Matroids"},
 	HomePage => "https://github.com/jchen419/Matroids-M2",
+	PackageImports => {"PrimaryDecomposition"},
 	PackageExports => {"Graphs", "Posets"},
 	DebuggingMode => false,
 	Certification => {
