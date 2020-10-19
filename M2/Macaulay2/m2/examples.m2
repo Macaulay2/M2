@@ -28,12 +28,18 @@ capture List   := s -> capture demark_newline s
 --capture String := s -> capture' s -- output is (Boolean, String) => (Err?, Output)
 -- TODO: do this in interp.dd instead
 capture String := s -> (
+    pushvar(symbol gbTrace,          0);
+    pushvar(symbol debugLevel,       0);
+    pushvar(symbol errorDepth,       3);
     pushvar(symbol interpreterDepth, 1);
+    pushvar(symbol debuggingMode, false);
+    pushvar(symbol stopIfError,    true);
+    pushvar(symbol notify,        false);
 
     oldPrivateDictionary := User#"private dictionary";
-    oldOutputDictionary := OutputDictionary;
     oldDictionaryPath := dictionaryPath;
     oldLoadedPackages := loadedPackages;
+    pushvar(symbol OutputDictionary, new GlobalDictionary);
 
     User#"private dictionary" = new Dictionary;
     OutputDictionary = new GlobalDictionary;
@@ -49,11 +55,17 @@ capture String := s -> (
     ret := capture' s;
 
     User#"private dictionary" = oldPrivateDictionary;
-    OutputDictionary = oldOutputDictionary;
     dictionaryPath = oldDictionaryPath;
     loadedPackages = oldLoadedPackages;
+    popvar symbol OutputDictionary;
 
+    popvar symbol gbTrace;
+    popvar symbol debugLevel;
+    popvar symbol errorDepth;
     popvar symbol interpreterDepth;
+    popvar symbol debuggingMode;
+    popvar symbol stopIfError;
+    popvar symbol notify;
     ret)
 protect symbol capture
 
@@ -118,14 +130,16 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 -- used in installPackage.m2
 captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash, changeFunc, usermode, verboseLog) -> (
     desc := "example results for " | fkey;
-    printerr("capturing ", desc);
-    (err, output) := evaluateWithPackage(pkg, inputs, capture);
-    if not err then outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close
-    else (
-	data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
-	inf << inputs << endl << close;
-	if runFile(inf, inputhash, outf, errf, desc, pkg, changeFunc fkey, usermode, data)
-	then ( removeFile inf; cacheFunc fkey )))
+    -- try capturing in the same process
+    if not match("no-capture-flag", inputs) then (
+	printerr("capturing ", desc);
+	(err, output) := evaluateWithPackage(pkg, inputs, capture);
+	if not err then return outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close);
+    -- fallback to using an external process
+    data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
+    inf << inputs << endl << close;
+    if runFile(inf, inputhash, outf, errf, desc, pkg, changeFunc fkey, usermode, data)
+    then ( removeFile inf; cacheFunc fkey ))
 
 -----------------------------------------------------------------------------
 -- process examples
