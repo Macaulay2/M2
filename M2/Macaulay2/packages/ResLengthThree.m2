@@ -172,9 +172,10 @@ resLengthThreeTorAlg'( ChainComplex ) := (F) -> (
     )
 
 makeRes = (d1,d2,d3) -> ( 
-    --d1 = matrix entries d1; 
-    --d2 = matrix entries d2;
-    --d3 = matrix entries d3;
+    -- first check that the differentials are ok
+    if ( (image matrix entries gens ker d1) != image matrix entries gens image d2 or 
+	(image matrix entries gens ker d2) != image matrix entries gens image d3 or
+	ker d3 !=0) then error "Expected differentials of resolution of length three";
     -- to build the maps correctly, what you should do is:
     -- map(R^{degrees} (target), R^{degrees} (source), 
     F := new ChainComplex; 
@@ -693,7 +694,7 @@ document{
       List => { "of the rows in the multiplication table; use ", TO netList, " to display it as a table" }
       },
 
-  PARA { "The default value of ", TO Compact, " is ", TO false, ". Changing the value to ", TO true, " sets the products ",  TEX /// $e_ie_j=0$ ///, " for ",  TEX /// $i>j$ ///  },
+  PARA { "The default value of ", TO Compact, " is ", TO false, ". Changing the value to ", TO true, " saves space by printing 0 for the products ",  TEX /// $e_ie_j=0$ ///, " for ",  TEX /// $i>j$ ///  },
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
@@ -834,9 +835,9 @@ document{
   Usage => "makeRes(d1,d2,d3)", 
 
   Inputs =>{
-      "d1" => Matrix => {"matrix of the differential in degree 1"} ,
-      "d2" => Matrix => {"matrix of the differential in degree 2"},
-      "d3" => Matrix => {"matrix of the differential in degree 3"},
+      "d1" => Matrix => {"of the differential in degree 1"} ,
+      "d2" => Matrix => {"of the differential in degree 2"},
+      "d3" => Matrix => {"of the differential in degree 3"},
       },
   
   Outputs => { 
@@ -868,10 +869,36 @@ check "ResLengthThree"
 
 -- dev space
 
+
+for 1 from 1 to replace(1,replace(1,".",X#1),X)
+entries oneTimesOne
+
 P = ZZ[x,y,z];
+
+toList(1,2,".", 3)
 Q = P/ideal(4_P)
 A = resLengthThreeAlg ( res ideal (x^2,y^2,z^2) )
 describe A
+
+Q = QQ[x,y,z]
+d1=matrix{{-x^2,z^2-x*y,-y^2,-x*z,-y*z}}
+d2=matrix{{0,0,z,0,-y},{0,0,0,-y,x},{-z,0,0,x,0},{0,y,-x,0,z},{y,-x,0,-z,0}}
+d3=transpose d1
+F=makeRes(d1,d2,d3)
+
+    F := new ChainComplex; 
+    F.ring = ring d1;
+    F#0 = target d1; 
+    F#1 = source d1; F.dd#1 = d1; 
+    F#2 = source d2; F.dd#2 = d2;
+    F#3 = source d3; F.dd#3 = d3; 
+    F#4 = (F.ring)^{}; F.dd#4 = map(F#3,F#4,0);
+
+(image matrix gens ker d2) != image d3 
+(image matrix entries gens ker d1) != image matrix gens image d2
+ker d3 !=  0
+image d3
+ker d2
 
 
 needsPackage "TorAlgebra"'
