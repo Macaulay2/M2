@@ -721,7 +721,7 @@ document{
     [multTableOneOne, Compact], Compact
     },
 
-  Headline => "an optional argument for multTableOneOne that sets the products of e_ie_j to be zero for i>j" ,
+  Headline => "an optional argument for multTableOneOne that prints dots below the diagonal" ,
 
   Usage => "multTableOneOne A", 
 
