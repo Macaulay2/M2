@@ -733,7 +733,7 @@ document{
       List => { "of the rows in the multiplication table; use ", TO netList, " to display it as a table" }
       },
 
-  PARA { "The default value of ", TO Compact, " is ", TO false, ". Changing the value to ", TO true, " saves space by printing 0 for the products ",  TEX /// $e_ie_j=0$ ///, " for ",  TEX /// $i>j$ ///  },
+  PARA { "The default value of ", TO Compact, " is ", TO false, ". Changing the value to ", TO true, " saves space by printing dots for the products ",  TEX /// $e_ie_j$ ///, " for ",  TEX /// $i>j$ ///  },
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
