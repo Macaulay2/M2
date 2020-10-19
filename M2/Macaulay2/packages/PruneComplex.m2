@@ -19,6 +19,7 @@ newPackage(
         {Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}
         },
     Headline => "pruning chain complexes over polynomial and local rings",
+    Keywords => {"Commutative Algebra", "Homological Algebra"},
     AuxiliaryFiles => true
     )
 

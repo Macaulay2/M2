@@ -7,6 +7,7 @@ newPackage(
 		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
     	Headline => "adjoint ideals of plane curves and related computations",
+	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false,
 	CacheExampleOutput => true,
 	PackageImports => {"IntegralClosure","MapleInterface"},

@@ -6,6 +6,7 @@ newPackage(
                   Email => "de@msri.org",
                   HomePage => "http://www.msri.org/~de/"}},
         Headline => "higher CI operators",
+	Keywords => {"Commutative Algebra"},
         DebuggingMode => false,
      	PackageImports => { "CompleteIntersectionResolutions" },
 	PackageExports =>{"MCMApproximations"}

@@ -11,6 +11,7 @@ newPackage(
 	     {Name => "Zhan Jiang", Email => "zoeng@umich.edu", HomePage => "http://www-personal.umich.edu/~zoeng/"}
 	     },
     	Headline => "compute a random point in a given variety over a finite field",
+	Keywords => {"Examples and Random Objects"},
         PackageImports => {"SwitchingFields", "MinimalPrimes"}, 
 		DebuggingMode => false, 
 		Reload=>false,

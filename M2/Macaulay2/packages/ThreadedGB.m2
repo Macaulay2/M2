@@ -18,6 +18,7 @@ newPackage("ThreadedGB",
 	    HomePage => "https://www.linkedin.com/in/tannerzielinski/"
 	}
     },
+    Keywords => {"Groebner Basis Algorithms"},
     Headline => "Compute a Groebner basis using the classical Buchberger with multiple threads"
   )
 export {

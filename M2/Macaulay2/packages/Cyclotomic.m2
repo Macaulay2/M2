@@ -28,6 +28,7 @@ newPackage(
     	Authors => {{Name => "Thomas Kahle", 
 		  Email => "thomas.kahle@jpberlin.de",
 		  HomePage => "http://thomas-kahle.de"}},
+	Keywords => {"Algebraic Number Theory"},
 	Headline => "cyclotomic fields"
     	)
 

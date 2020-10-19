@@ -71,7 +71,7 @@ void stash::text_out(buffer &o) const
 {
   char s[200];
   sprintf(s,
-          "%16s %9dk %9dk %10zd %10lu %10lu %10lu %10lu%s",
+          "%16s %9dk %9dk %10zd %10zu %10zu %10zu %10zu%s",
           name,
           static_cast<int>((element_size * highwater + 1023) / 1024),
           static_cast<int>((element_size * n_inuse + 1023) / 1024),

@@ -257,6 +257,7 @@ netList VisibleList := o -> (x) -> (
 	  sum(1 .. br, i -> try height x#i else 1)	    -- this allows the base row to be absent
 	  ))
 
+-- TODO: move to debugging, except for Net?
 commentize = method(Dispatch => Thing)
 commentize Nothing := s -> ""
 commentize String  :=
@@ -264,6 +265,9 @@ commentize Thing   := s -> concatenate(" -- ", between("\n -- ", separate concat
 commentize Net     := S -> stack(commentize \ unstack S)
 
 printerr = msg -> (stderr << commentize msg << endl;) -- always return null
+warning  = msg -> if debugLevel > 0 then (
+    if msg =!= () then printerr("warning: " | msg);
+    error "warning issued, debugLevel > 0");
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

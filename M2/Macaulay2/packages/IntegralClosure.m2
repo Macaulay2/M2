@@ -8,6 +8,7 @@ newPackage(
         {Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"}
         },
     Headline => "integral closure",
+    Keywords => {"Commutative Algebra"},
     PackageImports => { 
         "PrimaryDecomposition",  -- only used for an obscure "rad" function
         "ReesAlgebra" -- used for integral closure of an ideal
@@ -1641,8 +1642,8 @@ document {
 
 document {
      Key => [idealizer, Index],
-     Headline=> "Sets the starting index on the new variables used to
-     build the endomorphism ring Hom(J,J). If the program idealizer is
+     Headline => "Sets the starting index on the new variables used to build the endomorphism ring Hom(J,J)",
+     "If the program idealizer is
      used independently, the user will generally want to use the
      default value of 0.  However, when used as part of the
      integralClosure computation the number needs to start higher

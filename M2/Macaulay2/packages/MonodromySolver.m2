@@ -13,6 +13,7 @@ newPackage(
 	     },
     	HomePage => "http://www.math.gatech.edu/~leykin",
     	Headline => "solving polynomial systems via monodromy",
+	Keywords => {"Numerical Algebraic Geometry"},
 	PackageImports => {"PHCpack","NAGtypes"},
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
