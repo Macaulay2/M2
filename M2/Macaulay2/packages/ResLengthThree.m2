@@ -198,13 +198,52 @@ multTableOneOne(Ring) := opts -> A -> (
    n := A.cache#"n";
    eVector := matrix {apply(m, i -> A_i)};
    if (opts.Compact) then (
-       oneTimesOneA := matrix table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else 0))
+       oneTimesOneA := matrix table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else 0);
+       result := entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
+       result=new MutableList from result;
+       oneTimesOneA= new MutableList from entries oneTimesOneA;
+       for i from 1 to m do(
+	   for j from 1 to i-1 do(
+	       result#i=replace(j,".",result#i);
+	       );
+	   );
+       result#0=replace(0," ",result#0);
+       result= toList result;
+       for i from 0 to m-1 do(
+	   for j from 0 to i-1 do(
+	       oneTimesOneA#i=replace(j,".",oneTimesOneA#i);
+	       );
+	    );
+       oneTimesOneA= toList oneTimesOneA; 
+       )
    else (
        oneTimesOneA = matrix table(m,m,(i,j) -> (A_i)*(A_j));
+       result = entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
+       result= new MutableList from result;
+       result#0=replace(0," ",result#0);
+       result=toList result;
+       oneTimesOneA= entries oneTimesOneA;
        );
-   result := entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
-   if (opts.Labels) then result else entries oneTimesOneA
+   if (opts.Labels) then result else  oneTimesOneA
    )
+
+--multTableOneOne = method(Options => {Labels => true, Compact => false})
+
+--multTableOneOne(Ring) := opts -> A -> (
+--   if not (A.cache#?"l" and A.cache#?"m" and A.cache#?"n") then
+--      error "Expected an algebra created with a resLengthThree routine.";
+--   l := A.cache#"l";
+--   m := A.cache#"m";
+--   n := A.cache#"n";
+--   eVector := matrix {apply(m, i -> A_i)};
+--   if (opts.Compact) then (
+--       oneTimesOneA := matrix table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else 0))
+--   else (
+--       oneTimesOneA = matrix table(m,m,(i,j) -> (A_i)*(A_j));
+--       );
+--   result := entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
+--   if (opts.Labels) then result else entries oneTimesOneA
+--   )
 
 multTableOneTwo = method(Options => { Labels => true} )
 
