@@ -366,7 +366,7 @@ document {
 	  as ", TT ///error "debug me"///, ", and start stepping from there, as in the following demonstration."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo2.m2"
+     load "Macaulay2Doc/demo2.m2" -- no-capture-flag
      code f
      f 0
      return
@@ -391,7 +391,7 @@ document {
 	       }
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo3.m2"
+     load "Macaulay2Doc/demo3.m2" -- no-capture-flag
      get loadedFiles#(#loadedFiles-1)
      ///,
      PARA {

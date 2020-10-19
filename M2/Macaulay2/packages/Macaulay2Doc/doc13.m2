@@ -606,7 +606,7 @@ document { Key => disassemble,
 	  "It may be useful to disassemble code during debugging, as in the following demonstration."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demo1.m2" -- no-capture-flag
      code g
      g 2
      code current
@@ -619,7 +619,7 @@ document { Key => "current",
      Outputs => { Pseudocode => { "the pseudocode that produced an error, or ", TO "null", ", if none" } },
      "Use ", TO "value", " to evaluate the code again, for debugging purposes.",
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demo1.m2" -- no-capture-flag
      code g
      g 2
      code current
@@ -640,7 +640,7 @@ document { Key => (value, Pseudocode),
 	  variable fixed the problem in the code, by executing just the offending line."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demo1.m2" -- no-capture-flag
      g 2
      value current
      x = 11

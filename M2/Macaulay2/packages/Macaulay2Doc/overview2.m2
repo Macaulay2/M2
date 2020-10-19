@@ -580,7 +580,7 @@ document {
      PARA{},
      "First we create the file by writing the desired text to it.",
      EXAMPLE {
-	  "fn = temporaryFileName()",
+	  "fn = temporaryFileName() -- no-capture-flag",
 	  "fn << \"z^6+3*x*z^4+6*y*z^4+3*x^2*z^2+12*x*y*z^2+12*y^2*z^2+x^3+6*x^2*y+12*x*y^2+8*y^3\" << endl << close"
 	  },
      "Now we get the contents of the file, as a single string.",
@@ -637,7 +637,7 @@ document {
      a line of input as a string.  In response to the prompt, the user enters
      ", TT "sample", " and press return.",
      EXAMPLE {
-	  ///filename = read "file name : "
+	  ///filename = read "file name : " -- no-capture-flag
 sample///,
      	  },
      "Let's use ", TO "peek", " to verify that this string contains no newline

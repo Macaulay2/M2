@@ -38,7 +38,7 @@ Node
        I = (ideal vars R)^2
        dogb = I -> () -> res quotient module I
        f = dogb I
-       t = schedule f
+       t = schedule f -- no-capture-flag
   Text
     Note that @ TO schedule @ returns a task, not the result of the computation,
     which will be accessible only after the task has completed the computation.
@@ -123,7 +123,7 @@ Node
  Description
   Example
    n = 0
-   t = schedule(() -> while true do n = n+1)
+   t = schedule(() -> while true do n = n+1) -- no-capture-flag
    sleep 1
    t
    n
@@ -168,7 +168,7 @@ Node
   Example
    f = x -> 2^x
    t = createTask(f,3)
-   schedule t
+   schedule t -- no-capture-flag
    while not isReady t do sleep 1
    taskResult t
    u = schedule(f,4)
@@ -212,7 +212,7 @@ Node
    with initial value @ TO null @
  Description
   Example
-   threadVariable x
+   threadVariable x -- no-capture-flag
    x = 1
    t = schedule ( () -> ( x = 2 ; x ) )
    while not isReady t do null
@@ -253,7 +253,7 @@ Node
  Description
   Example
    f = x -> 2^x
-   t = createTask(f,3)
+   t = createTask(f,3) -- no-capture-flag
    schedule t
    while not isReady t do sleep 1
    taskResult t
@@ -292,7 +292,7 @@ Node
        g = () -> "g value";
        F = createTask f
        G = createTask g
-       addStartTask(F,G)
+       addStartTask(F,G) -- no-capture-flag
        schedule F
        while not isReady F do sleep 1
        taskResult F

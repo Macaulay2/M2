@@ -1119,7 +1119,7 @@ document { Key => commandInterpreter,
      "One more ", TT "i", " will be added to prompt each time the command interpreter is entered.  To leave it, type ", TT "end", " or the end of file character.",
      EXAMPLE lines ///
      	  f = (x -> y -> 11) 13
-     	  commandInterpreter f
+     	  commandInterpreter f -- no-capture-flag
 	  x
 	  end
 	  x
@@ -1150,7 +1150,7 @@ document { Key => "continue",
 	  error to recur."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demo1.m2" -- no-capture-flag
      code g
      g 2
      code f
@@ -1190,7 +1190,7 @@ document { Key => listLocalSymbols,
 	       "This usage works only in the debugger, where ", TO "current", " has a non-null value."
 	       },
 	  EXAMPLE lines ///
-	  load "Macaulay2Doc/demo1.m2"
+	  load "Macaulay2Doc/demo1.m2" -- no-capture-flag
 	  g 2
 	  listLocalSymbols
 	  ///,

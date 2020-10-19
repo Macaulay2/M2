@@ -363,7 +363,7 @@ document { Key => "the debugger",
      "We have a Macaulay2 source file with a pair of functions in it that
      we can use for demonstrating the debugger.  Let's load it so we can
      run the functions in it.",
-     EXAMPLE "load \"Macaulay2Doc/demo1.m2\"",
+     EXAMPLE "load \"Macaulay2Doc/demo1.m2\" -- no-capture-flag",
      "We can see what functions were provided to us with ", TO "listUserSymbols", ".",
      EXAMPLE "listUserSymbols",
      "Let's peek at the code of the function ", TT "g", ".",

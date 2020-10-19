@@ -644,7 +644,7 @@ document {
 	  "Here is an example as a debugger command."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demo1.m2" -- no-capture-flag
      g 2
      x
      break
