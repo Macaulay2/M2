@@ -72,6 +72,12 @@ export{
 ourSaturation = (I,irr) -> saturate(I, decompose irr, Strategy => Eliminate);
 
 
+-- TODO: complete this into the dual of submatrixByDegrees
+submatrixWinnow = (m, alphas) -> (
+    col := positions(degrees source m, deg -> any(alphas, alpha -> all(alpha - deg, x -> x >= 0)));
+    row := positions(degrees target m, deg -> any(alphas, alpha -> all(alpha - deg, x -> x >= 0)));
+    submatrix(m, row, col))
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 --Input: F a free chain complex on Cox(X), alphas a list of degrees
@@ -88,19 +94,15 @@ virtualOfPair (Module, List) := ChainComplex => opts -> (M, alphas) -> (
     if M.cache.?resolution then return virtualOfPair(M.cache.resolution, alphas, opts);
     if any(alphas, alpha -> #alpha =!= degreeLength ring M) then error "degree has wrong length";
     m := schreyerOrder gens gb presentation M;
-    apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha)));
+    m = submatrixWinnow(m, alphas);
     i := 2;
     L := {m} | while m != 0 and i <= opts.LengthLimit list (
-	i = i + 1;
-	m = map(R, rawKernelOfGB raw m); apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha))); m);
-    chainComplex L
-    )
+        i = i + 1; m = map(R, rawKernelOfGB raw m); m = submatrixWinnow(m, alphas));
+    chainComplex L)
 virtualOfPair (ChainComplex, List) := ChainComplex => opts -> (F, alphas) -> (
     if any(alphas, alpha -> #alpha =!= degreeLength ring F) then error "degree has wrong length";
-    L := apply(length F, i -> (
-            m := F.dd_(i+1); apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha))); m));
-    chainComplex L
-    );
+    L := apply(length F, i -> submatrixWinnow(F.dd_(i+1), alphas));
+    chainComplex L)
 
 
 --------------------------------------------------------------------
