@@ -68,12 +68,12 @@ doc ///
     Text
        @SUBSECTION "Contributors"@
     Text
-       The following people have generously contributed code or worked on
-       our code.
+       The following people have generously contributed code or worked on this package.
     Text
        @UL {
            {HREF("http://www.math.wisc.edu/~derman/","Daniel Erman")},
            {HREF("https://mast.queensu.ca/~ggsmith/","Gregory G. Smith")},
+           {HREF("https://math.berkeley.edu/~lch/", "Lauren Cranton Heller")},
            }@
 ///
 
@@ -460,6 +460,8 @@ doc ///
           this information by simply removing the summands in degrees not in L. This option is useful when a minimal free
           resolution of M can be more efficiently computed in the engine or is already known. Otherwise, induced Schreyer
           orders are used to speed up the computation of syzygies. Note that this speedup is often very significant.
+
+          When L contains more than one multidegree, summands with degrees in at least one member of L are kept.
 
           For example, consider the ideal of three points in $\mathbb{P}^1\times\mathbb{P}^1$.
         Example
