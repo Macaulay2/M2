@@ -197,6 +197,15 @@ multTableOneOne(Ring) := opts -> A -> (
    m := A.cache#"m";
    n := A.cache#"n";
    eVector := matrix {apply(m, i -> A_i)};
+
+   oneTimesOneA := table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else if opts.Compact then "." else (A_i)*(A_j));
+   topLine := {{" "} | flatten entries eVector};
+   sideLine := entries transpose eVector;
+   result := (topLine | apply(sideLine,oneTimesOneA, (i,j) -> i | j));
+   
+   if (opts.Labels) then result else oneTimesOneA
+
+   -*
    if (opts.Compact) then (
        oneTimesOneA := matrix table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else 0);
 
@@ -204,17 +213,13 @@ multTableOneOne(Ring) := opts -> A -> (
        oneTimesOneA' := table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else ".");
        --- can shorten this part of the code to have the check for 'compact' be where the "."
        --- is produced as in the next line.  
-       --oneTimesOneA' := table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else if opts.Compact then "." else (A_i)*(A_j));
-       topLine := {{" "} | flatten entries eVector};
-       sideLine := entries transpose eVector;
-       result' = netList (topLine | apply(sideLine,oneTimesOneA', (i,j) -> i | j));
        --------------
        
        result := entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
        result =new MutableList from result;
        oneTimesOneA = new MutableList from entries oneTimesOneA;
        for i from 1 to m do(
-	   for j from 1 to i-1 do(
+ 	   for j from 1 to i-1 do(
 	       result#i =replace(j,".",result#i);
 	       );
 	   );
@@ -235,7 +240,7 @@ multTableOneOne(Ring) := opts -> A -> (
        result=toList result;
        oneTimesOneA= entries oneTimesOneA;
        );
-   if (opts.Labels) then result else oneTimesOneA
+   *-
    )
 
 --multTableOneOne = method(Options => {Labels => true, Compact => false})
