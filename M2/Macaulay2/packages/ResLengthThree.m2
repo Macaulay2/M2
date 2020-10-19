@@ -196,14 +196,16 @@ multTableOneOne(Ring) := opts -> A -> (
    l := A.cache#"l";
    m := A.cache#"m";
    n := A.cache#"n";
+   
    eVector := matrix {apply(m, i -> A_i)};
-
    oneTimesOneA := table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else if opts.Compact then "." else (A_i)*(A_j));
    topLine := {{" "} | flatten entries eVector};
    sideLine := entries transpose eVector;
    result := (topLine | apply(sideLine,oneTimesOneA, (i,j) -> i | j));
    
    if (opts.Labels) then result else oneTimesOneA
+
+   )
 
    -*
    if (opts.Compact) then (
@@ -241,7 +243,6 @@ multTableOneOne(Ring) := opts -> A -> (
        oneTimesOneA= entries oneTimesOneA;
        );
    *-
-   )
 
 --multTableOneOne = method(Options => {Labels => true, Compact => false})
 
@@ -1078,6 +1079,8 @@ Q = QQ[x,y,z]
 A = resLengthThreeAlg res ideal (x^2,y^2,z^2)
 netList multTableOneOne (A, Compact=> true)
 netList multTableOneOne(A, Compact=>true, Labels =>false)
+netList multTableOneOne(A, Compact=>false, Labels =>true)
+netList multTableOneOne(A, Labels =>false)
 
 netList oneTimesOneA'
 netList topPart
