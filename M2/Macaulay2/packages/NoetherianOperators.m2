@@ -2062,8 +2062,15 @@ Description
         noetherianOperators I
     Text
         The optional argument {\tt Strategy} can be used to choose different algorithms.
-        The following algorithms are supported: 
+        The following algorithms are supported:
         {\tt "MacaulayMatrix"}, {\tt "PunctualHilbert"}, {\tt "Hybrid"}
+
+        @UL{
+            TO2 {"MacaulayMatrix", "\"MacaulayMatrix\""},
+            TO2 {"PunctualHilbert", "\"PunctualHilbert\""},
+            TO2 {"Hybrid", "\"Hybrid\""},
+        }@
+
 --    CannedExample
 --    Code
 --    Pre
@@ -2083,6 +2090,26 @@ Headline
     Noetherian operators
 ///
 
+doc ///
+Key
+    "MacaulayMatrix"
+Headline
+    strategy for computing Noetherian operators
+///
+
+doc ///
+Key
+    "Hybrid"
+Headline
+    strategy for computing Noetherian operators
+///
+
+doc ///
+Key
+    "PunctualHilbert"
+Headline
+    strategy for computing Noetherian operators
+///
 -------------- Noetherian operators tests
 
 
