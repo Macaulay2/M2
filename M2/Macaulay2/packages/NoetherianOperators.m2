@@ -43,6 +43,10 @@ export {
 
     "SetOfNoethOps",
     "setOfNoethOps",
+    "DiffOp",
+    "diffOp",
+    "NoethOp",
+    "noethOp",
 
     --Data type keys
     "Ops",
@@ -54,9 +58,9 @@ export {
     "DependentSet",
     "noethOpsFromComponents",
     "coordinateChangeOps",
-    "sanityCheck",
+    --"sanityCheck",
     "rationalInterpolation",
-    "applyNOp",
+    --"applyNOp",
     "InterpolationTolerance",
     "InterpolationDegreeLimit",
     "NoetherianDegreeLimit",
@@ -68,6 +72,7 @@ export {
     "getIdealFromNoetherianOperators",
     "joinIdeals",
     "mapToPunctualHilbertScheme"
+
 }
 
 --TruncDualData private keys
@@ -81,11 +86,12 @@ protect \ {
     BMintegrals,
     BMcoefs,
     BMbasis,
-    Seeds
+    Seeds,
+    Op
 }
 
 -----------------------------------------------------------------------------------------
-
+load "NoetherianOperators/pointSampling.m2"
 --
 -----  Noetherian operator data structures
 --
@@ -643,24 +649,57 @@ diffAlg(Ideal,Ring) := (P,R) -> (
     (R/P)(monoid[diffVars])
 )
 
--- Given an element N in Weyl algebra and a polynomial
--- f, compute the result of applying N to f.
-applyNOp = (N, f) -> (
-    m := map(ring f, ring N, vars ring f);
-    (a,b) := coefficients matrix{{N}};
-    diff(m a,f)*sub(b,ring f)
-    )
-
--- Try to see if gens of I applied with all Noeth Ops
--- vanish on rad(I)
-visualCheck = (nops, I) -> (
-    foo := table(nops, I_*, (n,i) -> applyNOp(n,i));
-    netList applyTable(foo, (i -> i%(radical I)))
+-- DiffOp is a type of hash table, which contains one key, Op. This is to make inheritance with NoethOp work.
+-- The value of Op is a HashTable, with keys corresponding to partial monomials, 
+--  and values corresponding to coefficients.
+DiffOp = new Type of HashTable
+DiffOp.synonym = "differential operator"
+diffOp = method()
+diffOp HashTable := DiffOp => H -> (
+    if #set(keys H / ring) > 1 then error"expected all elements in same ring";
+    if not all(keys H, m -> monomials m == m) then error"keys must be pure monomials";
+    new DiffOp from {Op => select(H, f -> f!=0)}
 )
+diffOp List := DiffOp => L -> diffOp hashTable L
+DiffOp + DiffOp := (D1, D2) -> diffOp merge(D1.Op, D2.Op, (a,b) -> a+b)
+RingElement * DiffOp := (r, D) -> diffOp applyValues(D.Op, x -> r*x)
+Number * DiffOp := (r, D) -> diffOp applyValues(D.Op, x -> r*x)
+DiffOp - DiffOp := (D1, D2) -> D1 + (-1)*D2
+- DiffOp := D -> (-1)*D
+DiffOp RingElement := (D, f) -> keys D.Op / (k -> (D.Op)#k * diff(k, f)) // sum
+expression DiffOp := D -> 
+    rsort(keys D.Op, MonomialOrder => Lex) / 
+    (k -> (D.Op)#k * expression(if k == 1 then 1 else ("d"| toString(k)))) //
+    sum
+net DiffOp := D -> net expression D
+DiffOp == DiffOp := (D1, D2) -> #keys((D1 - D2).Op) == 0
+toString DiffOp := D -> toString expression D
+--tex TODO
+--right R action TODO
+
+
+-- NoethOp is a child of DiffOp.
+-- It should contain one more key, Prime, with value the prime ideal
+NoethOp = new Type of DiffOp
+NoethOp.synonym = "Noetherian operator"
+new NoethOp from DiffOp := (NN, D) -> error toString("cannot construct " | net ofClass(NoethOp) | " from " | net ofClass(DiffOp))
+noethOp = method()
+noethOp (DiffOp, Ideal) := (D, P) -> new NoethOp from merge(D, hashTable{Prime => P}, (a,b) -> error"cannot create NoethOp from given input")
+
+/// TEST
+R = QQ[x,y,z]
+foo = diffOp{x => y, y=>2*x}
+bar = diffOp{x^2 => z*x + 3, y => x}
+foobar = diffOp{x => y, y=>3*x, x^2 => z*x + 3}
+foo2 = diffOp{1_R => x}
+assert(foobar == foo + bar)
+assert(foo(x^2) == 2*x*y)
+P = ideal(x, y-1)
+noethOp(foo, P)
+///
 
 sanityCheck = (nops, I) -> (
-    foo := flatten table(nops, I_*, (n,i) -> applyNOp(n,i));
-    all(foo, i -> sub(i,ring I)%(radical I) == 0)
+    all(flatten table(nops, I_*, (N,i) -> (N i)%(N.Prime) == 0), identity)
 )
 
 myKernel = method()
@@ -770,7 +809,14 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
             d = d+1;
         );
 	);
-    setOfNoethOps(L,P)
+    --error"dbg";
+    first entries L / (foo -> (
+        (mon,coe) := coefficients foo;
+        mon = flatten entries mon / (i -> (map(R, ring i, vars R)) i);
+        coe = flatten entries coe / (i -> sub(i, R));
+        noethOp(diffOp apply(mon, coe, (m,c) -> m => c), P)
+    ))
+    --setOfNoethOps(L,P)
 )
 
 getDepIndVars = true >> opts -> P -> (
