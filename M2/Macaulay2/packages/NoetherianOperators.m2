@@ -660,12 +660,23 @@ new DiffOp from HashTable := (DD,H) -> (
     merge(select(H, f -> f!=0), hashTable{1_R => 0}, (a,b) -> a)
 )
 new DiffOp from List := (DD,L) -> new DiffOp from hashTable L
+-- Vector space operations
 DiffOp + DiffOp := (D1, D2) -> new DiffOp from merge(D1, D2, (a,b) -> a+b)
 RingElement * DiffOp := (r, D) -> new DiffOp from applyValues(D, x -> r*x)
 Number * DiffOp := (r, D) -> new DiffOp from applyValues(D, x -> r*x)
 DiffOp - DiffOp := (D1, D2) -> D1 + (-1)*D2
 - DiffOp := D -> (-1)*D
+-- Application of DiffOp
 DiffOp RingElement := (D, f) -> keys D / (k -> (D)#k * diff(k, f)) // sum
+-- Comparison
+DiffOp ? DiffOp := (D1, D2) -> (
+    m := max keys(D1 - D2);
+    if not D2#?m then symbol >
+    else if not D1#?m then symbol <
+    else (D1#m) ? (D2#m)
+)
+DiffOp == DiffOp := (D1, D2) -> return (D1 ? D2) === (symbol ==)
+-- Printing
 -- Takes a monomial and returns an expression with
 -- a "d" appended to each variable name
 addDsymbol = x -> (
@@ -678,7 +689,6 @@ expression DiffOp := D ->
     (k -> (D)#k * if k == 1 then expression(1) else addDsymbol(k)) //
     sum
 net DiffOp := D -> net expression D
-DiffOp == DiffOp := (D1, D2) -> #values(D1-D2) == 1 and first values(D1-D2) == 0
 toString DiffOp := D -> toString expression D
 --tex TODO
 --right R action TODO
@@ -694,6 +704,7 @@ foo3 = new DiffOp from {1_R => 0}
 assert(foobar == foo + bar)
 assert(foo(x^2) == 2*x*y)
 assert(foo3 - foo == new DiffOp from {x => -y, 1_R => 0, y => -2*x})
+assert(foo2 > foo)
 ///
 
 sanityCheck = (nops, I) -> (
