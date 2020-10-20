@@ -44,9 +44,6 @@ export {
     "SetOfNoethOps",
     "setOfNoethOps",
     "DiffOp",
-    "diffOp",
-    "NoethOp",
-    "noethOp",
 
     --Data type keys
     "Ops",
@@ -654,48 +651,49 @@ diffAlg(Ideal,Ring) := (P,R) -> (
 --  and values corresponding to coefficients.
 DiffOp = new Type of HashTable
 DiffOp.synonym = "differential operator"
-diffOp = method()
-diffOp HashTable := DiffOp => H -> (
+new DiffOp from HashTable := (DD,H) -> (
     if #set(keys H / ring) > 1 then error"expected all elements in same ring";
+    if #(keys H) == 0 then error"expected at least one term";
     if not all(keys H, m -> monomials m == m) then error"keys must be pure monomials";
-    new DiffOp from {Op => select(H, f -> f!=0)}
+    R := ring first keys H;
+    -- this ensures every DiffOp contains at least the key 1_R
+    merge(select(H, f -> f!=0), hashTable{1_R => 0}, (a,b) -> a)
 )
-diffOp List := DiffOp => L -> diffOp hashTable L
-DiffOp + DiffOp := (D1, D2) -> diffOp merge(D1.Op, D2.Op, (a,b) -> a+b)
-RingElement * DiffOp := (r, D) -> diffOp applyValues(D.Op, x -> r*x)
-Number * DiffOp := (r, D) -> diffOp applyValues(D.Op, x -> r*x)
+new DiffOp from List := (DD,L) -> new DiffOp from hashTable L
+DiffOp + DiffOp := (D1, D2) -> new DiffOp from merge(D1, D2, (a,b) -> a+b)
+RingElement * DiffOp := (r, D) -> new DiffOp from applyValues(D, x -> r*x)
+Number * DiffOp := (r, D) -> new DiffOp from applyValues(D, x -> r*x)
 DiffOp - DiffOp := (D1, D2) -> D1 + (-1)*D2
 - DiffOp := D -> (-1)*D
-DiffOp RingElement := (D, f) -> keys D.Op / (k -> (D.Op)#k * diff(k, f)) // sum
+DiffOp RingElement := (D, f) -> keys D / (k -> (D)#k * diff(k, f)) // sum
+-- Takes a monomial and returns an expression with
+-- a "d" appended to each variable name
+addDsymbol = x -> (
+    R := ring x;
+    e := first exponents x;
+    product apply(numgens R, i -> (expression("d" | toString R_i))^(expression(e#i)))
+)
 expression DiffOp := D -> 
-    rsort(keys D.Op, MonomialOrder => Lex) / 
-    (k -> (D.Op)#k * expression(if k == 1 then 1 else ("d"| toString(k)))) //
+    rsort(keys D, MonomialOrder => Lex) / 
+    (k -> (D)#k * if k == 1 then expression(1) else addDsymbol(k)) //
     sum
 net DiffOp := D -> net expression D
-DiffOp == DiffOp := (D1, D2) -> #keys((D1 - D2).Op) == 0
+DiffOp == DiffOp := (D1, D2) -> #values(D1-D2) == 1 and first values(D1-D2) == 0
 toString DiffOp := D -> toString expression D
 --tex TODO
 --right R action TODO
 
 
--- NoethOp is a child of DiffOp.
--- It should contain one more key, Prime, with value the prime ideal
-NoethOp = new Type of DiffOp
-NoethOp.synonym = "Noetherian operator"
-new NoethOp from DiffOp := (NN, D) -> error toString("cannot construct " | net ofClass(NoethOp) | " from " | net ofClass(DiffOp))
-noethOp = method()
-noethOp (DiffOp, Ideal) := (D, P) -> new NoethOp from merge(D, hashTable{Prime => P}, (a,b) -> error"cannot create NoethOp from given input")
-
 /// TEST
 R = QQ[x,y,z]
-foo = diffOp{x => y, y=>2*x}
-bar = diffOp{x^2 => z*x + 3, y => x}
-foobar = diffOp{x => y, y=>3*x, x^2 => z*x + 3}
-foo2 = diffOp{1_R => x}
+foo = new DiffOp from {x => y, y=>2*x}
+bar = new DiffOp from {x^2 => z*x + 3, y => x}
+foobar = new DiffOp from {x => y, y=>3*x, x^2 => z*x + 3}
+foo2 = new DiffOp from {x^2*y => x}
+foo3 = new DiffOp from {1_R => 0}
 assert(foobar == foo + bar)
 assert(foo(x^2) == 2*x*y)
-P = ideal(x, y-1)
-noethOp(foo, P)
+assert(foo3 - foo == new DiffOp from {x => -y, 1_R => 0, y => -2*x})
 ///
 
 sanityCheck = (nops, I) -> (
@@ -814,7 +812,7 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
         (mon,coe) := coefficients foo;
         mon = flatten entries mon / (i -> (map(R, ring i, vars R)) i);
         coe = flatten entries coe / (i -> sub(i, R));
-        noethOp(diffOp apply(mon, coe, (m,c) -> m => c), P)
+        --noethOp(diffOp apply(mon, coe, (m,c) -> m => c), P)
     ))
     --setOfNoethOps(L,P)
 )
