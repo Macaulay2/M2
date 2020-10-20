@@ -782,7 +782,6 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
     F := if #indVars == 0 then coefficientRing R else frac((coefficientRing R)(monoid[indVars]));
     S := F(monoid[depVars]);
     PS := sub(P,S); IS := sub(I,S);
-    R' := diffAlg R;
     -- extend the field only if the point is not specified to be rational
     kP := if opts.?Rational and opts.Rational then F else toField(S/PS);
     degreeNops := d -> (
@@ -793,29 +792,35 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
         if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
         K := numSymKernel(M,Tolerance => t);
         -- Clear denominators
-        ops = (map(R',R,vars R')*map(R,S)) ops;
-        K = liftColumns(try lift(K,S) then lift(K,S) else sub(K,S),R');
-        ops * K
+        ops = (map(R,S)) ops;
+        K = liftColumns(try lift(K,S) then lift(K,S) else sub(K,S),R);
+        (K, ops)
     );
-    L := map(kP^1,kP^0,0);
+    L := 2: map(kP^1,kP^0,0);
     if m >= 0 then L = degreeNops(m) else (
         d := 0;
         Ldim := -1;
-        while Ldim != numcols L do (
-            Ldim = numcols L;
+        while Ldim != numcols first L do (
+            Ldim = numcols first L;
             L = degreeNops d;
             d = d+1;
         );
-	);
-    --error"dbg";
-    first entries L / (foo -> (
-        (mon,coe) := coefficients foo;
-        mon = flatten entries mon / (i -> (map(R, ring i, vars R)) i);
-        coe = flatten entries coe / (i -> sub(i, R));
-        --noethOp(diffOp apply(mon, coe, (m,c) -> m => c), P)
-    ))
-    --setOfNoethOps(L,P)
+    );
+    transpose entries first L / 
+        (c -> apply(c, flatten entries last L, (coef, mon) -> mon => coef)) /
+        (dOp -> new DiffOp from dOp)    
 )
+
+/// TEST
+R = QQ[x,y,t]
+I = ideal(x^2, y^2 - t*x)
+noetherianOperatorsViaMacaulayMatrix(I)
+///
+
+
+
+
+
 
 getDepIndVars = true >> opts -> P -> (
     depVars := if not opts.?DependentSet then (
