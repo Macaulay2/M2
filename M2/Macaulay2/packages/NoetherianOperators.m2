@@ -919,10 +919,8 @@ hybridNoetherianOperators (Ideal, Ideal, Point) := SetOfNoethOps => true >> opts
 
     RCC := CC monoid R;
     nopsAtPoint := numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC)));
-
-    phi := map(R, ring nopsAtPoint, vars R);
-    L := sort flatten for op in nopsAtPoint.Ops list (
-        bd := matrix{exponents op / (i -> sub(R_i,S))};
+    sort flatten for op in nopsAtPoint list (
+        bd := matrix{keys op / (m -> first exponents m) / (i -> sub(R_i, S))};
         maxdeg := flatten entries bd / sum @@ degree // max;
         K := bd;
         for d from 0 to maxdeg - 1 do (
@@ -933,12 +931,10 @@ hybridNoetherianOperators (Ideal, Ideal, Point) := SetOfNoethOps => true >> opts
             if numColumns K == 1 then break;
         );
         KK := lift(K, S);
-        R' := diffAlg(R);
         -- Clear denominators
-        bdd := (map(R',R,vars R'))(sub(bd, R));
-        (bdd * liftColumns(KK, R'))_(0,0)
-    );
-    new SetOfNoethOps from {Ops => sort L, Prime => P}
+        KK = liftColumns(KK, R);
+        diffOp apply(flatten entries bd, flatten entries KK, (m, f) -> sub(m,R) => f)
+    )
 )
 
 hybridNoetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,P) -> (
