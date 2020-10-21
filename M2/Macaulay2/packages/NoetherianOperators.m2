@@ -44,6 +44,7 @@ export {
     "SetOfNoethOps",
     "setOfNoethOps",
     "DiffOp",
+    "diffOp",
 
     --Data type keys
     "Ops",
@@ -653,23 +654,30 @@ DiffOp = new Type of HashTable
 DiffOp.synonym = "differential operator"
 new DiffOp from HashTable := (DD,H) -> (
     if #set(keys H / ring) > 1 then error"expected all elements in same ring";
-    if #(keys H) == 0 then error"expected at least one term";
     if not all(keys H, m -> monomials m == m) then error"keys must be pure monomials";
-    R := ring first keys H;
-    -- this ensures every DiffOp contains at least the key 1_R
-    merge(select(H, f -> f!=0), hashTable{1_R => 0}, (a,b) -> a)
+    H
 )
 new DiffOp from List := (DD,L) -> new DiffOp from hashTable L
+diffOp = method()
+diffOp DiffOp := D -> diffOp new HashTable from D
+diffOp HashTable := H -> (
+    H' := select(H, f -> f!= 0);
+    if #keys H' == 0 then new ZeroDiffOp 
+    else new DiffOp from H'
+)
+diffOp List := L -> diffOp hashTable L
 -- Vector space operations
-DiffOp + DiffOp := (D1, D2) -> new DiffOp from merge(D1, D2, (a,b) -> a+b)
-RingElement * DiffOp := (r, D) -> new DiffOp from applyValues(D, x -> r*x)
-Number * DiffOp := (r, D) -> new DiffOp from applyValues(D, x -> r*x)
+DiffOp + DiffOp := (D1, D2) -> diffOp merge(D1, D2, (a,b) -> a+b)
+RingElement * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
+Number * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
 DiffOp - DiffOp := (D1, D2) -> D1 + (-1)*D2
 - DiffOp := D -> (-1)*D
 -- Application of DiffOp
 DiffOp RingElement := (D, f) -> keys D / (k -> (D)#k * diff(k, f)) // sum
 -- Comparison
 DiffOp ? DiffOp := (D1, D2) -> (
+    --error"dbg";
+    if instance(D1 - D2, ZeroDiffOp) then return symbol ==;
     m := max keys(D1 - D2);
     if not D2#?m then symbol >
     else if not D1#?m then symbol <
@@ -693,18 +701,29 @@ toString DiffOp := D -> toString expression D
 --tex TODO
 --right R action TODO
 
+-- instances of ZeroDiffOp are differential operators that
+-- act as the zero operator
+ZeroDiffOp = new Type of DiffOp
+new ZeroDiffOp := (DD) -> hashTable{}
+new ZeroDiffOp from Thing := (DD, x) -> error"not implemented"
+new ZeroDiffOp of Thing from Thing := (DD, TT, x) -> error"not implemented"
+new ZeroDiffOp of Thing := (DD, TT) -> error"not implemented"
+ZeroDiffOp RingElement := (D,f) -> 0_(ring f)
+toExternalString ZeroDiffOp := D -> "new ZeroDiffOp"
+--ZeroDiffOp + DiffOp := ()
 
 /// TEST
 R = QQ[x,y,z]
-foo = new DiffOp from {x => y, y=>2*x}
-bar = new DiffOp from {x^2 => z*x + 3, y => x}
-foobar = new DiffOp from {x => y, y=>3*x, x^2 => z*x + 3}
-foo2 = new DiffOp from {x^2*y => x}
-foo3 = new DiffOp from {1_R => 0}
+foo = diffOp{x => y, y=>2*x}
+bar = diffOp{x^2 => z*x + 3, y => x}
+foobar = diffOp{x => y, y=>3*x, x^2 => z*x + 3}
+foo2 = diffOp{x^2*y => x}
+foo3 = diffOp{1_R => 0}
 assert(foobar == foo + bar)
 assert(foo(x^2) == 2*x*y)
-assert(foo3 - foo == new DiffOp from {x => -y, 1_R => 0, y => -2*x})
+assert(foo3 - foo == diffOp{x => -y, 1_R => 0, y => -2*x})
 assert(foo2 > foo)
+assert(instance(foo3, ZeroDiffOp))
 ///
 
 sanityCheck = (nops, I) -> (
@@ -819,7 +838,7 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
     );
     transpose entries first L / 
         (c -> apply(c, flatten entries last L, (coef, mon) -> mon => coef)) /
-        (dOp -> new DiffOp from dOp) //
+        diffOp //
         sort
 )
 
