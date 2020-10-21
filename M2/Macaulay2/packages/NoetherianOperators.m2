@@ -1235,12 +1235,19 @@ mapRtoHilb = (Q, P, S, depVars, indVars) -> (
     ideal mingens ((mapRtoS Q) + diag^m)    
 )
 
-liftNoethOp = (d, R') -> (
+liftNoethOp = (d, R) -> (
     m := flatten entries last coefficients d /
         (c -> lift(c, coefficientRing ring c)) /
         denominator //
         lcm;
-    sub(d*m, R')
+    sub(d*m, R)
+)
+
+liftCoeffs = (l, R) -> (
+    m := l /
+        denominator //
+        lcm;
+    l / (f -> sub(f*m, R))
 )
 
 unpackRow = (row, FF) -> (
@@ -1261,17 +1268,25 @@ invSystemFromHilbToNoethOps = (I, R, S, depVars) -> (
     gensI := flatten entries mingens I;
     diffMat := unpackRow(diff(gensI_0, allMons), FF);
     for i from 1 to length gensI - 1 do (
-	auxMat := unpackRow(diff(gensI_i, allMons), FF);
-	diffMat = diffMat || auxMat;
-     );
-    R' := diffAlg R;
-    T := frac(R)[gens R'];
-    StoT := map(T, S, apply(#depVars, i -> T_(index depVars#i)));
+        auxMat := unpackRow(diff(gensI_i, allMons), FF);
+        diffMat = diffMat || auxMat;
+    );
+    --R' := diffAlg R;
+    --T := frac(R)[gens R'];
+    StoR := map(R, S, apply(#depVars, i -> R_(index depVars#i)));
     if debugLevel > 0 then <<"Cols: " << numColumns diffMat <<", rows: "<< numRows diffMat<<endl;
     K := mingens ker diffMat;
     
-    noethOps := flatten entries StoT (allMons * K);
-    noethOps / (d -> liftNoethOp(d, R'))
+    monList := flatten entries StoR allMons;
+
+    transpose entries K / 
+        (l -> liftCoeffs(l, R)) /
+        (l -> apply(l, monList, (c,m) -> m => c )) /
+        diffOp //
+        sort
+
+    --noethOps := flatten entries StoT (allMons * K);
+    --noethOps / (d -> liftNoethOp(d, R'))
     --diffVars := apply(depVars, w -> value("symbol d" | toString(w)) );
     --W := FF(monoid[diffVars]);
     ----D := R(monoid[diffVars]);
@@ -1290,14 +1305,20 @@ getNoetherianOperatorsHilb Ideal := SetOfNoethOps => true >> opts -> Q -> (
     depVars := gens R - set indVars;	
     S := getHilb(P, depVars);
     I := mapRtoHilb(Q, P, S, depVars, indVars);
-    noethOps := invSystemFromHilbToNoethOps(I, R, S, depVars);
-    new SetOfNoethOps from {Ops => sort noethOps, Prime => P}
+    invSystemFromHilbToNoethOps(I, R, S, depVars)
 )
 
 getNoetherianOperatorsHilb (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (Q,P) -> (
     if P != radical Q then error "expected second argument to be the radical of the first"
     else getNoetherianOperatorsHilb(Q,opts)
 )
+
+/// TEST
+R = QQ[x,y,t]
+I = ideal(x^2, y^2 - t*x)
+getNoetherianOperatorsHilb(I)
+-- TODO add asserts
+///
 
 -- computes the annihilator ideal of a polynomial F in a polynomial ring 
 -- Input: a polynomial. Output: a zero-dimension ideal that corresponds with the annihilator
