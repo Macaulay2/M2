@@ -819,7 +819,8 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
     );
     transpose entries first L / 
         (c -> apply(c, flatten entries last L, (coef, mon) -> mon => coef)) /
-        (dOp -> new DiffOp from dOp)    
+        (dOp -> new DiffOp from dOp) //
+        sort
 )
 
 /// TEST
@@ -879,10 +880,14 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
 	    ))};
     RtoS := map(S,R,sub(subs,S));
     P := sub(ideal(subs - p),S);
-    N := noetherianOperatorsViaMacaulayMatrix(RtoS I, sub(P,S), opts, Rational => true, DependentSet => gens S);
-    R' := diffAlg R;
-    setOfNoethOps(sub(gens N,R'),P,Point=>point p)
+    noetherianOperatorsViaMacaulayMatrix(RtoS I, sub(P,S), opts, Rational => true, DependentSet => gens S)
 )
+/// TEST
+R = CC[x,y,t]
+I = ideal(x^2, y^2 - t*x)
+dop = last numNoethOpsAtPoint(I, point{{0_CC,0,3}}, DependentSet => {x,y})
+-- TODO add some asserts
+///
 
 hybridNoetherianOperators = method(Options => true)
 hybridNoetherianOperators (Ideal, Ideal, Point) := SetOfNoethOps => true >> opts -> (I,P, pt) -> (
@@ -923,6 +928,12 @@ hybridNoetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,
 )
 
 hybridNoetherianOperators (Ideal) := SetOfNoethOps => true >> opts -> I -> hybridNoetherianOperators(I, radical I, opts)
+
+/// TEST
+R = QQ[x,y,t]
+I = ideal(x^2, y^2 - t*x)
+hybridNoetherianOperators(I)
+///
 
 
 --numericalNoetherianOperators = method(Options => {
