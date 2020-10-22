@@ -40,12 +40,20 @@ onecheck = (n, pkg, usermode) -> (
 check = method(Options => {UserMode => null})
 check String  := opts -> pkg -> check(needsPackage (pkg, LoadDocumentation => true), opts)
 check Package := opts -> pkg -> (
+    if not pkg.Options.OptionalComponentsPresent then (
+        stderr << "--warning: optional components required for " <<
+            toString pkg << " tests are not present; skipping" << endl;
+        return);
     pkg = prep pkg;
     scan(keys pkg#"test inputs", n -> onecheck(n, pkg, if opts.UserMode === null then not noinitfile else opts.UserMode));
     if hadError then error(toString numErrors, " error(s) occurred running tests for package ", toString pkg);)
 
 check(ZZ, String)  := opts -> (n, pkg) -> check(n, needsPackage (pkg, LoadDocumentation => true), opts)
 check(ZZ, Package) := opts -> (n, pkg) -> (
+    if not pkg.Options.OptionalComponentsPresent then (
+        stderr << "--warning: optional components required for " <<
+            toString pkg << " tests are not present; skipping" << endl;
+        return);
     pkg = prep pkg;
     onecheck(n, pkg, if opts.UserMode === null then not noinitfile else opts.UserMode);
     if hadError then error("test #", toString n, " of package ", toString pkg, " failed");)
