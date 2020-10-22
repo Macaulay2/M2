@@ -153,7 +153,7 @@ resLengthThreeTorAlg' = method()
 
 resLengthThreeTorAlg'(ChainComplex,List) := (F,sym) -> (
    if F.cache#?"Tor Algebra Structure" then return F.cache#"Tor Algebra Structure";
-   A := resLengthThreeAlg(F,sym);
+   A := resLengthThreeAlg'(F,sym);
    P := ambient A;
    Q := ring F;
    kk := coefficientRing first flattenRing Q;
@@ -390,8 +390,8 @@ multTables' = F -> (
     l := numcols d2;
     n := numcols d3;
     
-    multEE := (d1**(id_(source d1)) - (id_(source d1))**d1) // d2;
-    multEF := time (d1**(id_(source d2)) - multEE * (id_(source d1)**d2)) // d3;
+    multEE := (matrix entries (d1**(id_(source d1)) - (id_(source d1))**d1)) // d2;
+    multEF := (matrix entries (d1**(id_(source d2)) - multEE * (id_(source d1)**d2))) // d3;
 
     {multEE,multEF}
     --EE := hashTable flatten apply(m, i -> apply(m, j -> ((i+1,j+1), multEE_{m*i+j})));
@@ -929,7 +929,17 @@ check "ResLengthThree"
 for 1 from 1 to replace(1,replace(1,".",X#1),X)
 entries oneTimesOne
 
-P = ZZ[x,y,z];
+Q = QQ[x,y,z];
+I = ideal(x^5,y^5,x*y^4,x^2*y^3,x^3*y^2,x^4*y,z^3)  
+F = res I
+
+multTables' F
+multTables F
+time resLengthThreeAlg F
+time resLengthThreeAlg' F
+time resLengthThreeTorAlg' F
+time resLengthThreeTorAlgClass' F
+time resLengthThreeTorAlgClass F
 
 toList(1,2,".", 3)
 Q = P/ideal(4_P)
