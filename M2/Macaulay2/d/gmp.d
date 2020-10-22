@@ -1814,8 +1814,8 @@ export (x:RRi) ^ (y:RR) : RRi := (
     interval(moveToRRandclear(lower),moveToRRandclear(upper)));
                                     
 export (y:RRi) ^ (x:RRi) : RRi := (
-     -- Assumes that y > 0
-     if (y == toRRi(1,precision0(y))) then return toRRi(1,min(precision0(x),precision0(y)));
+     -- Assumes that y >= 0
+--     if (y == toRRi(1,precision0(y))) then return toRRi(1,min(precision0(x),precision0(y)));
 
      left := newRRmutable(min(precision0(x),precision0(y)));
      right := newRRmutable(min(precision0(x),precision0(y)));
@@ -1848,7 +1848,7 @@ export (y:RRi) ^ (x:RRi) : RRi := (
              if (Ccode(int, "mpfr_cmp(", upperright, ",", lowerright, ")") > 0)
              then Ccode(void, "mpfr_set(", right, ",", upperright, ", GMP_RNDU)")
              else Ccode(void, "mpfr_set(", right, ",", lowerright, ", GMP_RNDU)")));
-                                   
+
      Ccode( void, "mpfr_pow(",  upperleft, ",",  leftRR(y), ",", rightRR(x), ", GMP_RNDD)" );
      Ccode( void, "mpfr_pow(",  upperright, ",",  rightRR(y), ",", rightRR(x), ", GMP_RNDD)" );
      Ccode( void, "mpfr_pow(",  lowerleft, ",",  leftRR(y), ",", leftRR(x), ", GMP_RNDD)" );
@@ -1872,11 +1872,11 @@ export (y:RRi) ^ (x:RRi) : RRi := (
              if (Ccode(int, "mpfr_cmp(", upperright, ",", lowerright, ")") < 0)
              then Ccode(void, "mpfr_set(", left, ",", upperright, ", GMP_RNDD)")
              else Ccode(void, "mpfr_set(", left, ",", lowerright, ", GMP_RNDD)")));
-                                   
+
      clear(upperleft);
      clear(lowerleft);
      clear(upperright);
-     clear(upperleft);
+     clear(lowerright);
 
      interval(moveToRRandclear(left),moveToRRandclear(right)));
                                     

@@ -601,6 +601,12 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       then toExpr(toCC(x.v,precision(y.v))^y.v)
 	       else toExpr(toRR(x.v,precision(y.v))^y.v)
 	       )
+	  is y:RRicell do (
+	       if isULong(x.v) then toExpr(toULong(x.v) ^ y.v)
+	       else if isNegative(x.v)
+	       then buildErrorPacket("negative base not implemented")
+	       else toExpr(toRR(x.v,precision(y.v))^y.v)
+	       )
 	  is y:CCcell do toExpr(toRR(x.v,precision(y.v))^y.v)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
@@ -622,6 +628,10 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	  is y:RRcell do (
 	       if isNegative(x.v)
 	       then toExpr(toCC(x.v,precision(y.v))^y.v)
+	       else toExpr(toRR(x.v,precision(y.v))^y.v))
+      is y:RRicell do (
+	       if isNegative(x.v)
+	       then buildErrorPacket("negative base not implemented")
 	       else toExpr(toRR(x.v,precision(y.v))^y.v))
 	  is y:CCcell do toExpr(toRR(x.v,precision(y.v))^y.v)
      	  is Error do rhs
@@ -646,9 +656,34 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       then toExpr(toCC(x.v)^y.v)
 	       else toExpr(x.v^y.v)
 	       )
+      is y:RRicell do (
+	       if isNegative(x.v)
+	       then buildErrorPacket("negative base not implemented")
+	       else toExpr(x.v^y.v)
+	       )
 	  is y:CCcell do toExpr(x.v^y.v)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
+    is x:RRicell do (
+	  when rhs
+	  is y:ZZcell do toExpr(x.v^y.v)
+	  is y:QQcell do (
+	       d := denominator(y.v);
+	       if d === 1 then toExpr(x.v^numerator(y.v))
+	       else if x.v >= 0 then toExpr(x.v^(toRRi(y.v)))
+           else buildErrorPacket("negative base not implemented")
+           )
+	  is y:RRcell do (
+	       if x.v >= 0
+	       then toExpr(x.v^y.v)
+	       else buildErrorPacket("negative base not implemented")
+	       )
+      is y:RRicell do (
+	       if x.v >= 0
+	       then toExpr(x.v^y.v)
+	       else buildErrorPacket("negative base not implemented")
+	       )
+      else buildErrorPacket("not implemented"))
      is x:CCcell do (
 	  when rhs
 	  is y:ZZcell do toExpr(x.v^y.v)
@@ -1097,6 +1132,7 @@ isFinite(e:Expr):Expr := (
      is x:ZZcell do True
      is x:QQcell do True
      is x:RRcell do toExpr(isfinite(x.v))
+     is x:RRicell do toExpr(isfinite(x.v))
      is x:CCcell do toExpr(isfinite(x.v))
      else WrongArg("a number")
      );
@@ -1108,6 +1144,7 @@ isANumber(e:Expr):Expr := (
      is x:ZZcell do True
      is x:QQcell do True
      is x:RRcell do toExpr(!isnan(x.v))
+     is x:RRicell do toExpr(!isnan(x.v))
      is x:CCcell do toExpr(!isnan(x.v))
      else WrongArg("a number")
      );
@@ -1119,6 +1156,7 @@ isInfinite(e:Expr):Expr := (
      is x:ZZcell do False
      is x:QQcell do False
      is x:RRcell do toExpr(isinf(x.v))
+     is x:RRicell do toExpr(isinf(x.v))
      is x:CCcell do toExpr(isinf(x.v))
      else WrongArg("a number")
      );
