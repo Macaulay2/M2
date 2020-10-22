@@ -10,6 +10,8 @@
 #include "engine-includes.hpp"
 #include "rand.h" // engine interface for random numbers
 
+#include "interface/monomial-ordering.h"
+
 #if defined(__cplusplus)
 class Monomial;
 class Monoid;
@@ -31,8 +33,6 @@ class StraightLineProgram;
 class PathTracker;
 class M2PointArray;
 // NAG end
-
-typedef struct MonomialOrdering MonomialOrdering;
 #else
 /* Define the externally visible types here */
 typedef struct Monomial Monomial;
@@ -45,7 +45,6 @@ typedef struct MutableMatrix MutableMatrix;
 typedef struct RingMap RingMap;
 typedef struct Computation Computation;
 typedef struct EngineComputation EngineComputation;
-typedef struct MonomialOrdering MonomialOrdering;
 typedef struct MonomialIdeal MonomialIdeal;
 typedef struct MutableComplex MutableComplex;
 // NAG begin

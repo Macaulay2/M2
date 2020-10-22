@@ -1,5 +1,6 @@
 #ifndef __monordering_h_
 #define __monordering_h_
+
 enum MonomialOrdering_type
 {
   MO_LEX = 1,

@@ -1,8 +1,10 @@
 #include "monordering.h"
 
 #include "error.h"
-#include "engine.h"
-#include "../d/M2mem.h"
+#include "interface/monomial-ordering.h"
+#include "engine-includes.hpp"
+
+// TODO: remove this when to_string methods are moved together
 #include <stdio.h>
 
 static struct mon_part_rec_ *mo_make(enum MonomialOrdering_type type,
