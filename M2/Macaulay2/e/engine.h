@@ -1670,23 +1670,6 @@ extern "C" {
   /**** Groebner basis and resolution routines ******/
   /**************************************************/
 
-  enum StrategyValues {
-    STRATEGY_LONGPOLYNOMIALS = 1,
-    STRATEGY_SORT = 2,
-    STRATEGY_USE_HILB = 4,
-    STRATEGY_USE_SYZ = 8
-  };
-
-  enum Algorithms {
-    GB_polyring_field = 1, /* The main GB algorithm to use */
-    GB_polyring_field_homog = 2
-  };
-
-  enum gbTraceValues {
-    /* The printlevel flags */
-    PRINT_SPAIR_TRACKING = 1024
-  };
-
   Computation /* or null */* IM2_Computation_set_stop(Computation *G,
                                      M2_bool always_stop,       /* 1 */
                                      M2_arrayint degree_limit,  /* 2*/

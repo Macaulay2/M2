@@ -1,8 +1,10 @@
 // Copyright 2004 Michael E. Stillman
 
+#include "polyquotient.hpp"
+
+#include "engine.h" // TODO: move rawExtendedGCDRingElement to interface/factor.h
 #include "intarray.hpp"
 #include "polyring.hpp"
-#include "polyquotient.hpp"
 #include "matrix-con.hpp"
 #include "matrix.hpp"
 #include "montableZZ.hpp"

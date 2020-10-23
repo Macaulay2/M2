@@ -3,10 +3,8 @@
 #ifndef _comp_hpp_
 #define _comp_hpp_
 
-#include "engine.h"
-/* engine.h includes definitions of the stop conditions
-   and of the status return values */
-// TODO: move the enum here
+#include "interface/computation.h"
+
 #include "hash.hpp"
 #include "stop.hpp"
 

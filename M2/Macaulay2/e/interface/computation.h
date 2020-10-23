@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+/**
+   Definitions of the stop conditions and of the status return values
+*/
 enum ComputationStatusCode {
   /* Keep this enum in sync with RawStatusCodes in Macaulay2/m2/gb.m2 */
   COMP_NEED_RESIZE = 1,         /* need resize */
@@ -25,6 +28,24 @@ enum ComputationStatusCode {
   COMP_DONE_SUBRING_LIMIT = 16, /* SubringLimit */
   COMP_COMPUTING = 17,          /* computing */
   COMP_OVERFLOWED = 18,         /* overflowed */
+};
+
+// TODO: should these move elsewhere?
+enum StrategyValues {
+  STRATEGY_LONGPOLYNOMIALS = 1,
+  STRATEGY_SORT = 2,
+  STRATEGY_USE_HILB = 4,
+  STRATEGY_USE_SYZ = 8
+};
+
+enum Algorithms {
+  GB_polyring_field = 1, /* The main GB algorithm to use */
+  GB_polyring_field_homog = 2
+};
+
+enum gbTraceValues {
+  /* The printlevel flags */
+  PRINT_SPAIR_TRACKING = 1024
 };
 
 #if defined(__cplusplus)
