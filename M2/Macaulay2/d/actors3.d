@@ -646,6 +646,7 @@ sin(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(sin(x.v))				    -- # typical value: sin, CC, CC
      is x:RRcell do toExpr(sin(x.v))				    -- # typical value: sin, RR, RR
+     is x:RRicell do toExpr(sin(x.v))				    -- # typical value: sin, RRi, RRi
      is x:ZZcell do toExpr(sin(toRR(x.v)))			    -- # typical value: sin, ZZ, RR
      is x:QQcell do toExpr(sin(toRR(x.v)))			    -- # typical value: sin, QQ, RR
      else buildErrorPacket("expected a number")
@@ -655,6 +656,7 @@ cos(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(cos(x.v))				    -- # typical value: cos, CC, CC
      is x:RRcell do toExpr(cos(x.v))				    -- # typical value: cos, RR, RR
+     is x:RRicell do toExpr(cos(x.v))				    -- # typical value: cos, RRi, RRi
      is x:ZZcell do toExpr(cos(toRR(x.v)))			    -- # typical value: cos, ZZ, RR
      is x:QQcell do toExpr(cos(toRR(x.v)))			    -- # typical value: cos, QQ, RR
      else buildErrorPacket("expected a number")
@@ -664,6 +666,7 @@ tan(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(tan(x.v))				    -- # typical value: tan, CC, CC
      is x:RRcell do toExpr(tan(x.v))				    -- # typical value: tan, RR, RR
+     is x:RRicell do toExpr(tan(x.v))				    -- # typical value: tan, RRi, RRi
      is x:ZZcell do toExpr(tan(toRR(x.v)))			    -- # typical value: tan, ZZ, RR
      is x:QQcell do toExpr(tan(toRR(x.v)))			    -- # typical value: tan, QQ, RR
      else buildErrorPacket("expected a number")
@@ -676,6 +679,11 @@ acos(e:Expr):Expr := (
 	  if x.v > 1 || x.v < -1
 	  then toExpr(acos(toCC(x.v)))
 	  else toExpr(acos(x.v))				    -- # typical value: acos, RR, RR
+	  )
+     is x:RRicell do (
+	  if x.v <= 1 && x.v >= -1
+	  then toExpr(acos(x.v))                    -- # typical value: acos, RRi, RRi
+	  else buildErrorPacket("Must be between -1 and 1")
 	  )
      is x:QQcell do (
 	  if x.v > 1 || x.v < -1
@@ -694,6 +702,7 @@ sec(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(sec(x.v))				    -- # typical value: sec, CC, CC
      is x:RRcell do toExpr(sec(x.v))				    -- # typical value: sec, RR, RR
+     is x:RRicell do toExpr(sec(x.v))				    -- # typical value: sec, RRi, RRi
      is x:ZZcell do toExpr(sec(toRR(x.v)))			    -- # typical value: sec, ZZ, RR
      is x:QQcell do toExpr(sec(toRR(x.v)))			    -- # typical value: sec, QQ, RR
      else buildErrorPacket("expected a number")
@@ -703,6 +712,7 @@ csc(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(csc(x.v))				    -- # typical value: csc, CC, CC
      is x:RRcell do toExpr(csc(x.v))				    -- # typical value: csc, RR, RR
+     is x:RRicell do toExpr(csc(x.v))				    -- # typical value: csc, RRi, RRi
      is x:ZZcell do toExpr(csc(toRR(x.v)))			    -- # typical value: csc, ZZ, RR
      is x:QQcell do toExpr(csc(toRR(x.v)))			    -- # typical value: csc, QQ, RR
      else buildErrorPacket("expected a number")
@@ -712,6 +722,7 @@ cot(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(cot(x.v))				    -- # typical value: cot, CC, CC
      is x:RRcell do toExpr(cot(x.v))				    -- # typical value: cot, RR, RR
+     is x:RRicell do toExpr(cot(x.v))				    -- # typical value: cot, RRi, RRi
      is x:ZZcell do toExpr(cot(toRR(x.v)))			    -- # typical value: cot, ZZ, RR
      is x:QQcell do toExpr(cot(toRR(x.v)))			    -- # typical value: cot, QQ, RR
      else buildErrorPacket("expected a number")
@@ -721,6 +732,7 @@ sech(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(sech(x.v))				    -- # typical value: sech, CC, CC
      is x:RRcell do toExpr(sech(x.v))				    -- # typical value: sech, RR, RR
+     is x:RRicell do toExpr(sech(x.v))				    -- # typical value: sech, RRi, RRi
      is x:ZZcell do toExpr(sech(toRR(x.v)))			    -- # typical value: sech, ZZ, RR
      is x:QQcell do toExpr(sech(toRR(x.v)))			    -- # typical value: sech, QQ, RR
      else buildErrorPacket("expected a number")
@@ -730,6 +742,7 @@ csch(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(csch(x.v))				    -- # typical value: csch, CC, CC
      is x:RRcell do toExpr(csch(x.v))				    -- # typical value: csch, RR, RR
+     is x:RRicell do toExpr(csch(x.v))				    -- # typical value: csch, RRi, RRi
      is x:ZZcell do toExpr(csch(toRR(x.v)))			    -- # typical value: csch, ZZ, RR
      is x:QQcell do toExpr(csch(toRR(x.v)))			    -- # typical value: csch, QQ, RR
      else buildErrorPacket("expected a number")
@@ -739,6 +752,7 @@ coth(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(coth(x.v))				    -- # typical value: coth, CC, CC
      is x:RRcell do toExpr(coth(x.v))				    -- # typical value: coth, RR, RR
+     is x:RRicell do toExpr(coth(x.v))				    -- # typical value: coth, RRi, RRi
      is x:ZZcell do toExpr(coth(toRR(x.v)))			    -- # typical value: coth, ZZ, RR
      is x:QQcell do toExpr(coth(toRR(x.v)))			    -- # typical value: coth, QQ, RR
      else buildErrorPacket("expected a number")
@@ -751,6 +765,11 @@ asin(e:Expr):Expr := (
 	  if x.v > 1 || x.v < -1
 	  then toExpr(asin(toCC(x.v)))
 	  else toExpr(asin(x.v))				    -- # typical value: asin, RR, RR
+	  )
+     is x:RRicell do (
+	  if x.v <= 1 && x.v >= -1
+	  then toExpr(asin(x.v))                    -- # typical value: asin, RRi, RRi
+	  else buildErrorPacket("Must be between -1 and 1")
 	  )
      is x:QQcell do (
 	  if x.v > 1 || x.v < -1
@@ -768,6 +787,7 @@ setupfun("asin",asin);
 log1p(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(log1p(x.v))				    -- # typical value: log1p, RR, RR
+     is x:RRicell do toExpr(log1p(x.v))				    -- # typical value: log1p, RRi, RRi
      is x:ZZcell do toExpr(log1p(toRR(x.v)))			    -- # typical value: log1p, ZZ, RR
      is x:QQcell do toExpr(log1p(toRR(x.v)))			    -- # typical value: log1p, QQ, RR
      else buildErrorPacket("expected a number")
@@ -776,6 +796,7 @@ setupfun("log1p",log1p);
 expm1(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(expm1(x.v))				    -- # typical value: expm1, RR, RR
+     is x:RRicell do toExpr(expm1(x.v))				    -- # typical value: expm1, RRi, RRi
      is x:ZZcell do toExpr(expm1(toRR(x.v)))			    -- # typical value: expm1, ZZ, RR
      is x:QQcell do toExpr(expm1(toRR(x.v)))			    -- # typical value: expm1, QQ, RR
      else buildErrorPacket("expected a number")
@@ -873,27 +894,38 @@ atan2(yy:Expr,xx:Expr):Expr := (
      is y:RRcell do (
 	  when xx
 	  is x:RRcell do toExpr(atan2(y.v,x.v))			            -- # typical value: atan2, RR, RR, RR
+	  is x:RRicell do toExpr(atan2(toRRi(y.v),x.v))			            -- # typical value: atan2, RR, RRi, RRi
 	  is x:ZZcell do toExpr(atan2(y.v,toRR(x.v,precision(y.v))))	    -- # typical value: atan2, RR, ZZ, RR
 	  is x:QQcell do toExpr(atan2(y.v,toRR(x.v,precision(y.v))))	    -- # typical value: atan2, RR, QQ, RR
 	  else WrongArg(1,"a number"))
      is y:ZZcell do (
 	  when xx
 	  is x:RRcell do toExpr(atan2(toRR(y.v,precision(x.v)),x.v))    -- -- # typical value: atan2, ZZ, RR, RR
+	  is x:RRicell do toExpr(atan2(toRRi(y.v,precision(x.v)),x.v))			            -- # typical value: atan2, ZZ, RRi, RRi
 	  is x:ZZcell do toExpr(atan2(toRR(y.v),toRR(x.v)))	       -- # typical value: atan2, ZZ, ZZ, RR
 	  is x:QQcell do toExpr(atan2(toRR(y.v),toRR(x.v)))	       -- # typical value: atan2, ZZ, QQ, RR
 	  else WrongArg(1,"a number"))
      is y:QQcell do (
 	  when xx
 	  is x:RRcell do toExpr(atan2(toRR(y.v,precision(x.v)),x.v))    -- # typical value: atan2, QQ, RR, RR
+	  is x:RRicell do toExpr(atan2(toRRi(y.v,precision(x.v)),x.v))			            -- # typical value: atan2, QQ, RRi, RRi
 	  is x:ZZcell do toExpr(atan2(toRR(y.v),toRR(x.v)))	    -- # typical value: atan2, QQ, ZZ, RR
 	  is x:QQcell do toExpr(atan2(toRR(y.v),toRR(x.v)))	    -- # typical value: atan2, QQ, QQ, RR
      	  else WrongArg(1,"a number"))
+     is y:RRicell do (
+	  when xx
+	  is x:RRcell do toExpr(atan2(y.v,toRRi(x.v)))			            -- # typical value: atan2, RRi, RR, RRi
+	  is x:RRicell do toExpr(atan2(y.v,x.v))			            -- # typical value: atan2, RRi, RRi, RRi
+	  is x:ZZcell do toExpr(atan2(y.v,toRRi(x.v,precision(y.v))))	    -- # typical value: atan2, RRi, ZZ, RRi
+	  is x:QQcell do toExpr(atan2(y.v,toRRi(x.v,precision(y.v))))	    -- # typical value: atan2, RRi, QQ, RRi
+	  else WrongArg(1,"a number"))
      else WrongArg(2,"a number")
      );
 atan(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(atan(x.v))				    -- # typical value: atan, CC, CC
      is x:RRcell do toExpr(atan(x.v))				    -- # typical value: atan, RR, RR
+     is x:RRicell do toExpr(atan(x.v))				    -- # typical value: atan, RRi, RRi
      is x:ZZcell do toExpr(atan(toRR(x.v)))			    -- # typical value: atan, ZZ, RR
      is x:QQcell do toExpr(atan(toRR(x.v)))	       -- # typical value: atan, QQ, RR
      is a:Sequence do if length(a) == 2 then buildErrorPacket("atan(x,y) has been replaced by atan2(y,x)")
@@ -910,6 +942,7 @@ cosh(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(cosh(x.v))				    -- # typical value: cosh, CC, CC
      is x:RRcell do toExpr(cosh(x.v))				    -- # typical value: cosh, RR, RR
+     is x:RRicell do toExpr(cosh(x.v))				    -- # typical value: cosh, RRi, RRi
      is x:ZZcell do toExpr(cosh(toRR(x.v)))			    -- # typical value: cosh, ZZ, RR
      is x:QQcell do toExpr(cosh(toRR(x.v)))			    -- # typical value: cosh, QQ, RR
      else buildErrorPacket("expected a number")
@@ -919,6 +952,7 @@ sinh(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(sinh(x.v))				    -- # typical value: sinh, CC, CC
      is x:RRcell do toExpr(sinh(x.v))				    -- # typical value: sinh, RR, RR
+     is x:RRicell do toExpr(sinh(x.v))				    -- # typical value: sinh, RRi, RRi
      is x:ZZcell do toExpr(sinh(toRR(x.v)))			    -- # typical value: sinh, ZZ, RR
      is x:QQcell do toExpr(sinh(toRR(x.v)))			    -- # typical value: sinh, QQ, RR
      else buildErrorPacket("expected a number")
@@ -928,6 +962,7 @@ tanh(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(tanh(x.v))				    -- # typical value: tanh, CC, CC
      is x:RRcell do toExpr(tanh(x.v))				    -- # typical value: tanh, RR, RR
+     is x:RRicell do toExpr(tanh(x.v))				    -- # typical value: tanh, RRi, RRi
      is x:ZZcell do toExpr(tanh(toRR(x.v)))			    -- # typical value: tanh, ZZ, RR
      is x:QQcell do toExpr(tanh(toRR(x.v)))			    -- # typical value: tanh, QQ, RR
      else buildErrorPacket("expected a number")
@@ -1088,6 +1123,11 @@ floor(e:Expr):Expr := (
 	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
 	  toExpr(floor(x.v))
 	  )
+     is x:RRicell do (
+	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
+	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
+	  toExpr(floor(x.v))
+	  )
      is x:CCcell do (
 	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
 	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
@@ -1142,6 +1182,11 @@ sqrt(a:Expr):Expr := (
 	  if x.v < 0
 	  then toExpr(toCC(0,sqrt(-x.v)))
 	  else toExpr(sqrt(x.v))			       -- # typical value: sqrt, RR, CC
+	  )
+     is x:RRicell do (
+	  if x.v >= 0
+	  then toExpr(sqrt(x.v))                   -- # typical value: sqrt, RRi, RRi
+	  else buildErrorPacket("Not implemented")
 	  )
      is x:CCcell do toExpr(sqrt(x.v))				    -- # typical value: sqrt, CC, CC
      is Error do a
