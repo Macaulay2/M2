@@ -1,3 +1,5 @@
+#include "polyroots.hpp"
+
 #include <mps/mps.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -5,7 +7,7 @@
 #include <mpfr.h>
 #include <string.h>
 
-#include "polyroots.hpp"
+#include "engine.h" // TODO: move IM2_Ring_CCC to interface/ring.h
 
 #define abs(x) (((x) < 0) ? -(x) : (x))
 #define max(a, b) (((a) > (b)) ? (a) : (b))

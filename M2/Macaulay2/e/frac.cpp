@@ -1,6 +1,9 @@
 // Copyright 1995 Michael E. Stillman
 
 #include "frac.hpp"
+
+#include "engine.h" // TODO: move rawGCDRingElement to interface/factor.h
+
 #include "text-io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"

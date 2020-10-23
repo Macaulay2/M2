@@ -1,6 +1,7 @@
 // Copyright 2010 Michael E. Stillman
 
 #include "tower.hpp"
+
 #include "dpoly.hpp"
 #include "ring.hpp"
 #include "varpower.hpp"
@@ -500,6 +501,7 @@ ring_elem Tower::translateFromTower(const PolynomialRing *P, ring_elem fT) const
 }
 #endif
 
+extern "C" // TODO: remove when this function is in e/interface
 const RingElement *rawTowerTranslatePoly(const Ring *newRing,
                                          const RingElement *F)
 {

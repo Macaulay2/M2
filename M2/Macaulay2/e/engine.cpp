@@ -34,6 +34,7 @@ static bool initialized = false;
  *  This routine must be called before any other engine routine is called.
  *  May be called multiple times.  The subsequent calls do nothing.
  */
+extern "C" // TODO: remove when this function is in e/interface
 void IM2_initialize()
 {
   if (initialized) return;

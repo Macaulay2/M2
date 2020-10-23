@@ -162,7 +162,7 @@ INTERFACE = \
 COMMANDS2 = \
 	interface/monomial-ideal \
 	interface/factor \
-	polyroots
+	interface/polyroots
 
 COMMANDS = \
 	rand \

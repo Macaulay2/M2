@@ -102,12 +102,15 @@ set(CPPONLYFILES
   interface/aring.cpp
   interface/factor.cpp
   interface/flint.cpp
+  interface/flint.h # TODO: move this
   interface/freemodule.cpp
   interface/groebner.cpp
   interface/matrix.cpp
   interface/monoid.cpp
   interface/monomial-ideal.cpp
   interface/mutable-matrix.cpp
+  interface/polyroots.cpp
+  interface/polyroots.hpp # TODO: should this become .h?
   interface/ring.cpp
   interface/ringmap.cpp
   )
@@ -117,7 +120,7 @@ set(SRCLIST
   Eschreyer
   GF
   LLL
-  NAG
+  NAG # TODO: move raw* functions to e/interface
   SLP
   ZZ
   ZZp
@@ -148,7 +151,7 @@ set(SRCLIST
   comp-gb
   comp-res
   comp
-  cra
+  cra # TODO: move rawRingElementRatConversion and rawMatrixRatConversion to e/interface
   debug
   det
   dmat
@@ -199,7 +202,6 @@ set(SRCLIST
   poly
   polyquotient
   polyring
-  polyroots
   qring
   reader
   reducedgb-ZZ
@@ -225,7 +227,7 @@ set(SRCLIST
   solvable
   spair
   text-io
-  tower
+  tower # TODO: move rawTowerTranslatePoly to e/interface
   util
   varpower
   weylalg

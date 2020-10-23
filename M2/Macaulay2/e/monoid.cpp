@@ -1,8 +1,12 @@
 // Copyright 1996 Michael E. Stillman
 
-#include <ctype.h>
-#include "text-io.hpp"
 #include "monoid.hpp"
+
+#include <ctype.h>
+
+#include "engine.h" // TODO: move rawNumberOfVariables to interface/monomial-ordering.h
+
+#include "text-io.hpp"
 #include "varpower.hpp"
 #include "ntuple.hpp"
 #include "polyring.hpp"

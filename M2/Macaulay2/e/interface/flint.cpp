@@ -1,17 +1,17 @@
+#include "flint.h"
+
+#include <iostream>
+#include <vector>
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #include <flint/arith.h>
 #include <flint/fmpz.h>
-//#include <flint/aprcl.h>
 #pragma GCC diagnostic pop
 
-#include "error.h"
 #include "engine-includes.hpp"
+#include "error.h"
 #include "gmp-util.h"
-#include "engine.h"
-
-#include <vector>
-#include <iostream>
 
 M2_bool rawZZisPrime(gmp_ZZ a)
 {

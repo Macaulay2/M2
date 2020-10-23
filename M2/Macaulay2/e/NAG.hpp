@@ -5,6 +5,7 @@
 #ifndef _nag_
 #define _nag_
 
+#include "engine.h" // TODO: remove
 #include "buffer.hpp"
 #include "matrix.hpp"
 #include "aring-CC.hpp"

@@ -1,13 +1,12 @@
 // Copyright 1995 Michael E. Stillman
 
-#include "relem.hpp"
 #include "matrix.hpp"
+
+#include "relem.hpp"
 #include "matrix-con.hpp"
 #include "LLL.hpp"
 #include "text-io.hpp"
 #include "exceptions.hpp"
-// TODO: why does swapping the following two lines cause an error
-#include "engine.h"
 #include "NAG.hpp"
 
 const FreeModule *IM2_Matrix_get_target(const Matrix *M) { return M->rows(); }
