@@ -105,6 +105,7 @@ absfun(e:Expr):Expr := (
      when e
      is i:ZZcell do toExpr(abs(i.v))				    -- # typical value: abs, ZZ, ZZ
      is x:RRcell do toExpr(if sign(x.v) then -x.v else x.v)		    -- # typical value: abs, RR, RR
+     is x:RRicell do toExpr(abs(x.v))            -- # typical value: abs, RRi, RRi
      is x:CCcell do toExpr(abs(x.v))				    -- # typical value: abs, CC, RR
      is r:QQcell do toExpr(abs(r.v))				    -- # typical value: abs, QQ, RR
      else WrongArg("a number, real or complex"));
@@ -976,7 +977,7 @@ tostringfun(e:Expr):Expr := (
      is DictionaryClosure do toExpr("<<a dictionary>>")
      is NetFile do toExpr("<<a netfile>>")
      is x:RRcell do toExpr(tostringRR(x.v))
-     is x:RRicell do toExpr(tostringRRi(x.v)) -- Added for MPFI
+     is x:RRicell do toExpr(tostringRRi(x.v))
      is z:CCcell do toExpr(tostringCC(z.v))
      is Error do toExpr("<<an error message>>")
      is Sequence do toExpr("<<a sequence>>")
@@ -1043,6 +1044,7 @@ format(e:Expr):Expr := (
      when e
      is s:stringCell do toExpr("\"" + present(s.v) + "\"")
      is RRcell do format(Expr(Sequence(e)))
+     is RRicell do format(Expr(Sequence(e)))
      is CCcell do format(Expr(Sequence(e)))
      is args:Sequence do (
 	  s := printingPrecision;
@@ -1269,6 +1271,7 @@ toRR(e:Expr):Expr := (
      is x:ZZcell do toExpr(toRR(x.v,defaultPrecision))
      is x:QQcell do toExpr(toRR(x.v,defaultPrecision))
      is RRcell do e
+     is x:RRicell do toExpr(midpointRR(x.v))
      is s:Sequence do (
 	  if length(s) != 2 then WrongNumArgs(1,2) else
 	  when s.0 is prec:ZZcell do (
@@ -1278,6 +1281,7 @@ toRR(e:Expr):Expr := (
      	       	    is x:ZZcell do toExpr(toRR(x.v,toULong(prec.v)))
 	       	    is x:QQcell do toExpr(toRR(x.v,toULong(prec.v)))
      	       	    is x:RRcell do toExpr(toRR(x.v,toULong(prec.v)))
+                 is x:RRicell do toExpr(midpointRR(x.v,toULong(prec.v)))
 		    else WrongArg(1,"an integral, rational, or real number")
 		    )
 	       )
@@ -1598,6 +1602,8 @@ partsRR(x:Expr):Expr := (
 	  Expr(Sequence(toExpr(p),sgn,expt,toExpr(m),toExpr(numbits))))
      else WrongArg("a real number"));
 setupfun("partsRR",partsRR);
+                                                     
+-- Should there be an RRi version of partsRR?
 
 segmentationFault(e:Expr):Expr := (segmentationFault();e);
 setupfun("segmentationFault",segmentationFault);
