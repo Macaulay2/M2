@@ -1003,6 +1003,11 @@ export midpointRR(x:RRi):RR := (
      z := newRRmutable(precision0(x));
      Ccode( RR, "mpfi_mid(",z, ",", x, ")");
      moveToRRandclear(z));
+                                    
+export midpointRR(x:RRi,prec:ulong):RR := (
+     z := newRRmutable(prec);
+     Ccode( RR, "mpfi_mid(",z, ",", x, ")");
+     moveToRRandclear(z));
                                 
 export widthRR(x:RRi):RR := (
      z := newRRmutable(precision0(x));
