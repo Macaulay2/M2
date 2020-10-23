@@ -186,6 +186,9 @@ export toExternalString(x:RR):string := (
 	       if ex != long(0) then tostring(ex) else ""
 	       )));
 
+export toExternalString(x:RRi):string := (
+     concatenate(array(string)("[", toExternalString(leftRR(x)),",", toExternalString(rightRR(x)),"]")));
+
 export format(
      s:int,			  -- number of significant digits (0 means all)
      ac:int,	    -- accuracy, how far to right of point to go (-1 means all)

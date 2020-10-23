@@ -31,7 +31,7 @@ InexactField.synonym = "inexact field"
 raw InexactField := R -> R.RawRing
 
 RR.InexactField = RealField    = new Type of InexactField   ; RealField.synonym = "real field"
-RRi.InexactField = RealIntervalField    = new Type of InexactField   ; RealField.synonym = "real interval field"
+RRi.InexactField = RealIntervalField    = new Type of InexactField   ; RealIntervalField.synonym = "real interval field"
 CC.InexactField = ComplexField = new Type of InexactField; ComplexField.synonym = "complex field"
 
 Nothing' = Nothing					    -- maybe we'll want to rename it later...
@@ -74,6 +74,15 @@ new ComplexField of Nothing' from ZZ := memoize(
 	       symbol baseRings => {ZZ,QQ,RR},
 	       symbol RawRing => rawCC prec
 	       }))
+new RealIntervalField of Nothing' from ZZ := memoize (
+     (RealIntervalField,Nothing',prec) -> newClass(RealIntervalField,Nothing',
+	  hashTable {
+	       symbol precision => prec,
+	       symbol Engine => true,
+	       symbol baseRings => {ZZ,QQ},
+	       symbol isBasic => true,
+	       symbol RawRing => rawRRi prec
+	       }))
 precision InexactField := R -> R.precision
 InexactFieldFamily _ ZZ := (T,prec) -> new T.InexactField of T#(symbol _*) from prec -- oops...
 default InexactFieldFamily := R -> R_defaultPrecision
@@ -83,6 +92,7 @@ default InexactFieldFamily := R -> R_defaultPrecision
 Number _ InexactFieldFamily := (x,RR) -> x_(default RR)
 
 promote(RawRingElement,RR') := (x,R) -> new RR from x
+promote(RawRingElement,RRi') := (x,R) -> new RRi from x
 promote(RawRingElement,CC') := (x,R) -> new CC from x
 promote(RawRingElement,Number) := (x,R) -> new R from x
 promote(RawRingElement,RingElement) := (x,R) -> new R from x
@@ -94,6 +104,10 @@ promote(ZZ,CC') :=
 promote(QQ,CC') := 
 promote(RR,CC') := 
 promote(CC,CC') := (i,K) -> toCC(K.precision,i)
+promote(ZZ,RRi') :=
+promote(QQ,RRi') :=
+promote(RR,RRi') :=
+promote(CC,RRi') := (i,K) -> toRRi(K.precision,i)
 lift(Number,InexactNumber) := opts -> (x,RR) -> lift(x,default RR,opts)
 
 liftable(Number,InexactNumber) := (x,RR) -> liftable(x,default RR)
@@ -110,6 +124,7 @@ numeric(ZZ,VisibleList) := (prec,x) -> apply(x, t -> numeric(prec,t))
 numeric Number := x -> numeric(defaultPrecision, x)
 numeric CC := identity
 numeric RR := identity
+numeric RRi := identity
 numeric(ZZ,Number) := toRR
 numeric(ZZ,CC) := toCC
 infty := prec -> 1/toRR(prec,0)
@@ -119,7 +134,7 @@ numeric(ZZ, InfiniteNumber) := (prec,infinity) -> infinity#0 * infty prec
 ZZ _ RealField :=
 QQ _ RealField :=
 RR _ RealField := (x,R) -> toRR(R.precision,x)
-RRi _ RealField := (x,R) -> toRRi(R.precision,x)
+RRi _ RealIntervalField := (x,R) -> toRRi(R.precision,x)
 ZZ _ ComplexField :=
 QQ _ ComplexField :=
 RR _ ComplexField :=
