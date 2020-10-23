@@ -1902,7 +1902,7 @@ export round(x:RR) : ZZ := (
      Ccode( void, "mpfr_get_z(", w, ",", x, ", GMP_RNDN)" );
      moveToZZandclear(w));
                                     
-export round(x:RRi) : ZZ := ( -- Added for MPFI, can be shortened?
+export round(x:RRi) : ZZ := (
      if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
      w := newRRmutable(precision0(x));
      Ccode( void, "mpfi_get_fr(", w, ",", x, ")" );
