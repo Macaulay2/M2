@@ -88,7 +88,6 @@ set(HPPONLYFILES
 # these files have .cpp file, but NOT .hpp file
 set(CPPONLYFILES
   engine.cpp # TODO: find a new home for the contents
-  flint.cpp
   franzi-gb.cpp
   franzi-interface.cpp
   matrix-kbasis.cpp
@@ -102,11 +101,12 @@ set(CPPONLYFILES
 
   interface/aring.cpp
   interface/factor.cpp
+  interface/flint.cpp
   interface/freemodule.cpp
   interface/groebner.cpp
   interface/matrix.cpp
-  interface/monomial-ideal.cpp
   interface/monoid.cpp
+  interface/monomial-ideal.cpp
   interface/mutable-matrix.cpp
   interface/ring.cpp
   interface/ringmap.cpp
