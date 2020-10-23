@@ -412,7 +412,7 @@ usage := arg -> (
      << "    -q                 don't load user's init.m2 file or use packages in home directory" << newline
      << "    -E '...'           evaluate expression '...' before initialization" << newline
      << "    -e '...'           evaluate expression '...' after initialization" << newline
-     << "    --top-srcdir '...' add top source or build tree '...' to initial path" << newline
+     << "    --srcdir '...'     add top source or build tree '...' to initial path" << newline
      << "    --check n          run tests to level n" << newline
      << "                           n=1: basic tests" << newline
      << "                           n=2: test Core" << newline
