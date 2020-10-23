@@ -227,6 +227,13 @@ compare(left:Expr,right:Expr):Expr := (
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
+      is y:RRicell do (
+	       if flagged() then incomparableE else
+	       if compare(x.v,leftRR(y.v)) < 0 then LessE
+              else if compare(x.v,rightRR(y.v)) > 0 then GreaterE
+              else if (compare(x.v,rightRR(y.v)) == 0) && (compare(x.v,leftRR(y.v)) == 0) then EqualEqualE
+              else incomparableE
+	       )
 	  is y:CCcell do (
 	       r := compare(x.v,y.v);
 	       if flagged() then incomparableE else
@@ -278,6 +285,13 @@ compare(left:Expr,right:Expr):Expr := (
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
+      is y:RRicell do (
+	       if flagged() then incomparableE else
+	       if compare(x.v,leftRR(y.v)) < 0 then LessE
+              else if compare(x.v,rightRR(y.v)) > 0 then GreaterE
+              else if (compare(x.v,rightRR(y.v)) == 0) && (compare(x.v,leftRR(y.v)) == 0) then EqualEqualE
+              else incomparableE
+	       )
 	  is y:CCcell do (
 	       r := compare(x.v,y.v);
 	       if flagged() then incomparableE else
@@ -302,6 +316,13 @@ compare(left:Expr,right:Expr):Expr := (
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
+      is y:RRicell do (
+	       if flagged() then incomparableE else
+	       if compare(x.v,leftRR(y.v)) < 0 then LessE
+              else if compare(x.v,rightRR(y.v)) > 0 then GreaterE
+              else if (compare(x.v,rightRR(y.v)) == 0) && (compare(x.v,leftRR(y.v)) == 0) then EqualEqualE
+              else incomparableE
+	       )
 	  is y:CCcell do (
 	       r := compare(x.v,y.v);
 	       if flagged() then incomparableE else
@@ -309,7 +330,7 @@ compare(left:Expr,right:Expr):Expr := (
 	       )
      	  is Error do right
 	  else binarycomparison(left,right))
-     is x:RRicell do ( -- This needs more work
+     is x:RRicell do (
             when right is y:RRicell do (
                 r := compare(x.v,y.v);
                 if flagged() then incomparableE
@@ -318,6 +339,27 @@ compare(left:Expr,right:Expr):Expr := (
                 else if x.v === y.v then EqualEqualE
                 else incomparableE
                 )
+            is y:RRcell do (
+	            if flagged() then incomparableE else
+	            if compare(rightRR(x.v),y.v) < 0 then LessE
+                else if compare(leftRR(x.v),y.v) > 0 then GreaterE
+                else if (compare(y.v,rightRR(x.v)) == 0) && (compare(y.v,leftRR(x.v)) == 0) then EqualEqualE
+                else incomparableE
+	            )
+            is y:QQcell do (
+	            if flagged() then incomparableE else
+	            if compare(rightRR(x.v),y.v) < 0 then LessE
+                else if compare(leftRR(x.v),y.v) > 0 then GreaterE
+                else if (compare(y.v,rightRR(x.v)) == 0) && (compare(y.v,leftRR(x.v)) == 0) then EqualEqualE
+                else incomparableE
+	            )
+            is y:ZZcell do (
+	            if flagged() then incomparableE else
+	            if compare(rightRR(x.v),y.v) < 0 then LessE
+                else if compare(leftRR(x.v),y.v) > 0 then GreaterE
+                else if (compare(y.v,rightRR(x.v)) == 0) && (compare(y.v,leftRR(x.v)) == 0) then EqualEqualE
+                else incomparableE
+	            )
             is Error do right
             else buildErrorPacket(EngineError("comparison not implemented")))
      is x:CCcell do (
