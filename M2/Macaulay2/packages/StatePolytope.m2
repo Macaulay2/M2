@@ -1,4 +1,6 @@
 -- -*- coding: utf-8 -*-
+polymake := findProgram("polymake", "polymake --version", RaiseError => false)
+
 newPackage(
 	"StatePolytope",
     	Version => "1.2", 
@@ -14,7 +16,8 @@ newPackage(
     	DebuggingMode => false,
 	AuxiliaryFiles => true,
 	CacheExampleOutput => true,
-	PackageImports => {"gfanInterface"}
+	PackageImports => {"gfanInterface"},
+	OptionalComponentsPresent => polymake =!= null
     	)
 
 export { 
@@ -60,8 +63,6 @@ fullStatePolytopePoints = method(
 fullStatePolytopePoints(ZZ,Ideal,List) := (m,I,initialIdealsList) -> (
      sum apply(m+1,k-> statePolytopePoints(k,I,initialIdealsList))
      )
-
-polymake = null
 
 runPolymake = args -> (
     if polymake === null then
