@@ -56,7 +56,7 @@ string(REPLACE " " ";" PACKAGES "${PACKAGES}")
 #################################################################################
 ## M2 arguments and commands that will be passed to M2 -e ${STR}
 set(M2 ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
-set(M2_ARGS -q --stop --silent --no-threads -e errorDepth=${errorDepth} -e debugLevel=${debugLevel})
+set(M2_ARGS -q --stop --silent --no-preload --no-threads -e errorDepth=${errorDepth} -e debugLevel=${debugLevel})
 set(M2_INSTALL_TEMPLATE [[installPackage("@package@",
   Verbose                => $<IF:$<BOOL:${VERBOSE}>,true,false>,
   RerunExamples          => ${RerunExamples},

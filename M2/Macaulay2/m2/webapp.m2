@@ -3,28 +3,38 @@
 -- htmlWithTex Thing produces some valid html code with possible TeX code
 -- topLevelMode=WebApp produces that plus possible pure text coming from the system
 -- hence, requires tags to help the browser app distinguish html from text
+webAppTags := apply((17,18,19,20,28,29,30,31,17),ascii);
     (webAppEndTag,            -- closing tag ~ </span>
 	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
 	webAppOutputTag,      -- it's html but it's output ~ <span class='M2Html M2Output'>
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
+	webAppUrlTag,         -- used internally
 	webAppTextTag,        -- other text ~ <span class='M2Text'>
 	webAppTexTag,         -- TeX start ~ \(
 	webAppTexEndTag       -- TeX end ~ \)
-	)=apply((17,18,19,20,28,30,31,17),ascii);
+	)=webAppTags;
 
 texMathStart := "\\(";
 texMathEnd := "\\)";
-texWrap := x -> texMathStart | texMath x | texMathEnd; -- similar to 'tex', but only used by webapp.m2 to avoid thread-safety issues
+texWrap := x -> (  -- similar to 'tex', but only used by webapp.m2 to avoid thread-safety issues -- TODO: rewrite in a thread-safe way
+    y := texMath x;
+    if class y =!= String then error "invalid texMath output";
+    texMathStart | y | texMathEnd
+    )
 
 htmlWithTex Thing := texWrap -- by default, we use tex (as opposed to html)
+
+webAppTagsRegex := concatenate("[",webAppTags,"]")
+stripTags := s -> replace(webAppTagsRegex,"",s)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 htmlWithTex Hypertext := html
 htmlWithTex Net := n -> concatenate("<pre style=\"display:inline-table;vertical-align:",
-    toString(100*(height n-1)), "%\">\n", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>") -- the % is relative to line-height
-htmlWithTex String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x, "</pre>",
-    if #x>0 and last x === "\n" then "<br/>") -- fix for html ignoring trailing \n
+    toString(100*(height n-1)), "%\">\n", apply(unstack n, x-> stripTags htmlLiteral x | "<br/>"), "</pre>") -- the % is relative to line-height
+htmlWithTex String := x -> concatenate("<pre style=\"display:inline\">\n", stripTags htmlLiteral x,
+    if #x>0 and last x === "\n" then " ", -- fix for html ignoring trailing \n
+    "</pre>")
 htmlWithTex Descent := x -> concatenate("<pre style=\"display:inline-table\">\n", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
@@ -57,6 +67,7 @@ Thing#{WebApp,Print} = x -> (
     webAppBegin(true);
     y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
     webAppEnd();
+    if class y =!= String then error "invalid htmlWithTex output";
     << endl << oprompt | webAppOutputTag | y | webAppEndTag << endl;
     )
 
@@ -71,6 +82,7 @@ htmlWithTexAfterPrint :=  y -> (
     webAppBegin(false);
     z := htmlWithTex \ y;
     webAppEnd();
+    if any(z, x -> class x =!= String) then error "invalid htmlWithTex output";
     << endl << on() | " : " | webAppHtmlTag | concatenate z | webAppEndTag << endl;
     )
 
@@ -140,7 +152,7 @@ if topLevelMode === WebApp then (
     pELBackup:=lookup(processExamplesLoop,ExampleItem);
     processExamplesLoop ExampleItem := x -> (
 	res := pELBackup x;
-	new webAppPRE from res );
+	new webAppPRE from res#0 );
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	webAppBegin(true);

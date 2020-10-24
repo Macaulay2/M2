@@ -10,14 +10,24 @@ addSlash = programPath -> (
     else return programPath
 )
 
-checkProgramPath = (name, cmds, opts) -> (
-    if all(cmds, cmd -> run(cmd | " >/dev/null 2>&1") == 0) then (
-	if opts.Verbose == true then print("    found");
-	return true;
-    ) else (
-	if opts.Verbose == true then print("    not found");
-	return false;
-    )
+checkProgramPath = (name, cmds, pathToTry, prefix, opts) -> (
+    found := all(cmds, cmd ->
+	run(pathToTry | addPrefix(cmd, prefix) | " >/dev/null 2>&1") == 0);
+    msg := "";
+    if found then (
+	if opts.MinimumVersion === null then msg = "    found"
+	else (
+	    thisVersion := get("!" | pathToTry |
+		addPrefix(opts.MinimumVersion_1, prefix));
+	    found = found and thisVersion >= opts.MinimumVersion_0;
+	    if found then msg = "    found version " | thisVersion | " >= " |
+		opts.MinimumVersion_0
+	    else msg = "   found, but version " | thisVersion | " < " |
+		opts.MinimumVersion_0;
+	)
+    ) else msg = "    not found";
+    if opts.Verbose == true then print(msg);
+    found
 )
 
 addPrefix = (cmd, prefix) ->
@@ -30,6 +40,8 @@ getProgramPath = (name, cmds, opts) -> (
 	pathsToTry = append(pathsToTry, programPaths#name);
     -- now try M2-installed path
     pathsToTry = append(pathsToTry, prefixDirectory | currentLayout#"programs");
+    -- any additional paths specified by the caller
+    pathsToTry = pathsToTry | opts.AdditionalPaths;
     -- finally, try PATH
     if getenv "PATH" != "" then
 	pathsToTry = join(pathsToTry, separate(":", getenv "PATH"));
@@ -42,15 +54,21 @@ getProgramPath = (name, cmds, opts) -> (
 	    if opts.Verbose == true and #prefixes > 1 then
 		print("  trying prefix \"" | prefix_1 |
 		    "\" for executables matching \"" | prefix_0 | "\"...");
-	    if checkProgramPath(name, apply(cmds, cmd ->
-		pathToTry | addPrefix(cmd, prefix)), opts) then break prefix)
+	    if checkProgramPath(name, cmds, pathToTry, prefix, opts) then
+	        break prefix)
 	);
 	if prefix =!= null then break (pathToTry, prefix)
     ))
 )
 
 findProgram = method(TypicalValue => Program,
-    Options => {RaiseError => true, Verbose => false, Prefix => {}})
+    Options => {
+	RaiseError => true,
+	Verbose => false,
+	Prefix => {},
+	AdditionalPaths => {},
+	MinimumVersion => null
+    })
 findProgram(String, String) := opts -> (name, cmd) ->
     findProgram(name, {cmd}, opts)
 findProgram(String, List) := opts -> (name, cmds) -> (
@@ -59,7 +77,11 @@ findProgram(String, List) := opts -> (name, cmds) -> (
 	if opts.RaiseError then error("could not find " | name)
 	else return null;
     new Program from {"name" => name, "path" => programPathAndPrefix_0,
-	"prefix" => programPathAndPrefix_1}
+	"prefix" => programPathAndPrefix_1} |
+	if opts.MinimumVersion =!= null then
+	    {"version" => get("!" | programPathAndPrefix_0 |
+		addPrefix(opts.MinimumVersion_1, programPathAndPrefix_1))}
+	else {}
 )
 
 runProgram = method(TypicalValue => ProgramRun,

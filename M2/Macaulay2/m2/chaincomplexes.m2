@@ -596,12 +596,12 @@ Hom(ChainComplex, Module) := ChainComplex => (C,N) -> (
      D := new ChainComplex;
      D.ring = ring C;
      b := D.dd;
+     scan(spots C, i -> D#-i = Hom(C_i,N));
      scan(spots c, i -> (
 	       j := - i + 1;
 	       f := b#j = (-1)^j * Hom(c_i,N);
 	       D#j = source f;
-	       D#(j-1) = target f;
-	       ));
+	       D#(j-1) = target f));
      D)
 
 Hom(Module, ChainComplex) := ChainComplex => (M,C) -> (

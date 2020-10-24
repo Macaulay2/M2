@@ -16,7 +16,7 @@ RUN apt-get update && \
 RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
 
 # Libraries we require
-RUN apt-get install -y libopenblas-dev libxml2-dev libreadline-dev libgdbm-dev libboost-stacktrace-dev && \
+RUN apt-get install -y libopenblas-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev && \
     apt-get clean # libomp-dev libtbb-dev
 
 # This is a dependency that we should get rid of

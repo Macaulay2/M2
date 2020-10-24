@@ -732,27 +732,6 @@ document {
      }
 
 document {
-     Key => {debug,(debug,Package)},
-     Headline => "open private dictionary of a package",
-     Usage => "debug p",
-     Inputs => {
-	  "p" => Package,
-	  },
-     Consequences => {
-	  {"the private dictionary of the package ", TT "p", " is added to ", TO "dictionaryPath", 
-	       " so its non-exported symbols are visible" }
-	  },
-     "For example, the private dictionary for Macaulay2 may be opened using",
-     EXAMPLE"debug Core",
-     "This allows access to the low level (\"raw\") routines implemented by the Macaulay2 engine,
-     although this is mainly useful for debugging Macaulay2 itself.",
-     EXAMPLE {
-	  "R = QQ[a..d];",
-	  "raw R"
-	  }
-     }
-
-document {
      Key => symbol dictionaryPath,
      "The value of ", TO "dictionaryPath", " is the list of global dictionaries whose symbols are visible.",
      EXAMPLE { "dictionaryPath" },

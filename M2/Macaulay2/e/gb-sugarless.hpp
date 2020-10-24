@@ -44,7 +44,7 @@ class GBinhom_comp : public GBComputation
   ReducedGB *minimal_gb;
   bool minimal_gb_valid;
 
-  array<MonomialIdeal *> monideals;  // baggage for each is 'gb_elem *'
+  VECTOR(MonomialIdeal *) monideals;  // baggage for each is 'gb_elem *'
                                      // This is the 'large' GB
 
   // Syzygies collected
