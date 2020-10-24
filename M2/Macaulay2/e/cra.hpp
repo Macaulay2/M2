@@ -5,13 +5,9 @@
 #ifndef _cra_hpp_
 #define _cra_hpp_
 
-#include "engine.h"
-// engine.h defines rawRingElementCRA, rawMatrixCRA
-
 // !!!! we need the balanced residue class in chinese remainder !!!
 
 #include "matrix.hpp"
-#include "matrix-con.hpp"
 
 class ChineseRemainder
 {

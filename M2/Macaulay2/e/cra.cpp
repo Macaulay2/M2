@@ -1,6 +1,9 @@
 #include "cra.hpp"
+
+#include "engine.h" // engine.h defines rawRingElementCRA, rawMatrixCRA
 #include "relem.hpp"
 #include "matrix.hpp"
+#include "matrix-con.hpp"
 #include "poly.hpp"
 
 void ChineseRemainder::CRA0(mpz_srcptr a,
@@ -364,13 +367,6 @@ const Matrix *rawMatrixCRA(const Matrix *f, const Matrix *g, mpz_srcptr m, mpz_s
   mpz_clear(vn);
   mpz_clear(mn);
   return result;
-}
-
-void showint(mpz_srcptr a)
-{
-  char s[1000];
-  mpz_get_str(s, 10, a);
-  fprintf(stderr, " %s ", s);
 }
 
 bool ChineseRemainder::ratConversion(mpz_srcptr c, mpz_srcptr m, mpq_t result)
