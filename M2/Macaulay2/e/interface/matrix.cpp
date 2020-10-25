@@ -2,12 +2,21 @@
 
 #include "matrix.hpp"
 
-#include "relem.hpp"
-#include "matrix-con.hpp"
-#include "LLL.hpp"
-#include "text-io.hpp"
-#include "exceptions.hpp"
+#include <M2/math-include.h>
+
 #include "NAG.hpp"
+#include "buffer.hpp"
+#include "dmat.hpp"
+#include "engine.h" // TODO: still neded for IM2_Matrix_coeffs, IM2_Matrix_concat
+#include "error.h"
+#include "exceptions.hpp"
+#include "mat.hpp"
+#include "matrix-con.hpp"
+#include "monoid.hpp"
+#include "mutablemat-defs.hpp"
+#include "relem.hpp"
+
+namespace M2 { class ARingCC; }
 
 const FreeModule *IM2_Matrix_get_target(const Matrix *M) { return M->rows(); }
 const FreeModule *IM2_Matrix_get_source(const Matrix *M) { return M->cols(); }

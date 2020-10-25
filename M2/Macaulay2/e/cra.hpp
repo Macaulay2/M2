@@ -3,6 +3,8 @@
 #ifndef _cra_hpp_
 #define _cra_hpp_
 
+#include <M2/math-include.h>
+
 #include "ringelem.hpp"  // for ring_elem, vec
 
 class Matrix;
@@ -88,3 +90,7 @@ class ChineseRemainder
 };
 
 #endif
+
+// Local Variables:
+// indent-tabs-mode: nil
+// End:

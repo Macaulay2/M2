@@ -1,9 +1,9 @@
 #ifndef _computation_h_
-#define _computation_h_
+#  define _computation_h_
 
-#if defined(__cplusplus)
+#  if defined(__cplusplus)
 extern "C" {
-#endif
+#  endif
 
 /**
    Definitions of the stop conditions and of the status return values
@@ -48,8 +48,12 @@ enum gbTraceValues {
   PRINT_SPAIR_TRACKING = 1024
 };
 
-#if defined(__cplusplus)
+#  if defined(__cplusplus)
 }
-#endif
+#  endif
 
 #endif /* _computation_h_ */
+
+// Local Variables:
+// indent-tabs-mode: nil
+// End:

@@ -2,16 +2,18 @@
 
 #include "monoid.hpp"
 
-#include <ctype.h>
+#include <assert.h>
+#include <string.h>
 
-#include "engine.h" // TODO: move rawNumberOfVariables to interface/monomial-ordering.h
-
-#include "text-io.hpp"
-#include "varpower.hpp"
-#include "ntuple.hpp"
-#include "polyring.hpp"
+#include "buffer.hpp"
+#include "error.h"
 #include "exceptions.hpp"
+#include "interface/monomial-ordering.h"
+#include "monordering.h"
+#include "ntuple.hpp"
 #include "overflow.hpp"
+#include "polyring.hpp"
+#include "varpower.hpp"
 
 Monoid *Monoid::trivial_monoid = 0;
 

@@ -20,19 +20,18 @@ typedef struct RingElement RingElement;
 extern "C" {
 #  endif
 
-const RingElement /* or null */ *rawGCDRingElement(const RingElement *f,
-                                                   const RingElement *g,
-                                                   const RingElement *mipo,
-                                                   M2_bool inExtension);
+const RingElement *rawGCDRingElement(const RingElement *f,
+                                     const RingElement *g,
+                                     const RingElement *mipo,
+                                     M2_bool inExtension);
 
-const RingElement /* or null */ *rawExtendedGCDRingElement(
-    const RingElement *f,
-    const RingElement *g,
-    const RingElement **A,
-    const RingElement **B);
+const RingElement *rawExtendedGCDRingElement(const RingElement *f,
+                                             const RingElement *g,
+                                             const RingElement **A,
+                                             const RingElement **B);
 
-const RingElement /* or null */ *rawPseudoRemainder(const RingElement *f,
-                                                    const RingElement *g);
+const RingElement *rawPseudoRemainder(const RingElement *f,
+                                      const RingElement *g);
 
 void rawFactor(const RingElement *f,
                engine_RawRingElementArrayOrNull *result_factors,

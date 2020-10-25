@@ -175,6 +175,7 @@ COMMANDS = \
         res-a2-gb \
 	engine \
 	interface/aring \
+	interface/cra \
 	interface/monoid \
 	interface/ring \
 	interface/freemodule \

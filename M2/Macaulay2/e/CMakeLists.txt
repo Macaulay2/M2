@@ -100,10 +100,12 @@ set(CPPONLYFILES
   ring-vecs.cpp
 
   interface/aring.cpp
+  interface/cra.cpp
+  interface/cra.h
   interface/factory.cpp
-  interface/factory.h # TODO: move this
+  interface/factory.h
   interface/flint.cpp
-  interface/flint.h # TODO: move this
+  interface/flint.h
   interface/freemodule.cpp
   interface/groebner.cpp
   interface/matrix.cpp
