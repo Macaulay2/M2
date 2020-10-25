@@ -10,9 +10,6 @@
 #include "engine-includes.hpp"
 #include "rand.h" // engine interface for random numbers
 
-#include "interface/monomial-ordering.h"
-#include "interface/computation.h"
-
 #if defined(__cplusplus)
 class Monomial;
 class Monoid;
@@ -60,6 +57,11 @@ typedef struct M2PointArray M2PointArray;
 
 typedef EngineComputation EngineComputationOrNull;
 
+#include "interface/computation.h"
+#include "interface/factory.h"
+#include "interface/flint.h"
+#include "interface/monomial-ordering.h"
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -67,16 +69,6 @@ extern "C" {
   M2_string IM2_last_error_message(void); /* drg: connected */
 
   M2_string engineMemory(); /* connected MES to engineMemory */
-
-  /*****************************************************/
-  /**** Integer primality and factorization (via flint)*/
-  /*****************************************************/
-
-  M2_bool rawZZisPrime(gmp_ZZ a);
-
-  M2_bool rawZZisProbablePrime(gmp_ZZ a);
-
-  gmp_arrayZZ rawZZfactor(gmp_ZZ a);
   
   /**************************************************/
   /**** Monomial routines ***************************/
@@ -1992,31 +1984,6 @@ extern "C" {
              result_std_monoms: the standard monomials (1 by d matrix)
      Question: should this return the separators as well?
   */
-
-  /**************************************************/
-  /**** Factory and libfac routines *****************/
-  /**************************************************/
-
-  const RingElement /* or null */ *rawGCDRingElement(
-                                             const RingElement *f, const RingElement *g,
-                                             const RingElement *mipo, M2_bool inExtension
-                                             ); /* connect to rawGCD */
-  const RingElement /* or null */ *rawExtendedGCDRingElement(
-                                                     const RingElement *f, const RingElement *g,
-                                                     const RingElement **A, const RingElement **B
-                                                     ); /* connected to rawExtendedGCD */
-  const RingElement /* or null */ *rawPseudoRemainder(const RingElement *f, const RingElement *g); /* connected to rawPseudoRemainder */
-  void rawFactor(const RingElement *f,
-                 engine_RawRingElementArrayOrNull *result_factors,
-                 M2_arrayintOrNull *result_powers); /* connected to rawFactor  */
-  void rawFactor2(const RingElement *f, const RingElement *minpoly,
-                 engine_RawRingElementArrayOrNull *result_factors,
-                 M2_arrayintOrNull *result_powers); /* connected to rawFactor  */
-  M2_arrayintOrNull rawIdealReorder(const Matrix *M);/* connected to rawIdealReorder */
-  engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M);/* connected to rawCharSeries */
-  engine_RawRingElementArrayOrNull rawRoots(const RingElement *g, long prec, int unique); /* connected to rawRoots */
-
-  void rawDummy(void);          /* connected to rawDummy */
 
   /**************************************************/
   /**** Special routines for objects over RRR,CCC ***/

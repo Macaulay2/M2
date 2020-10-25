@@ -161,7 +161,7 @@ INTERFACE = \
 
 COMMANDS2 = \
 	interface/monomial-ideal \
-	interface/factor \
+	interface/factory \
 	interface/polyroots
 
 COMMANDS = \

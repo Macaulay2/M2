@@ -3,7 +3,7 @@
 
 #include "localring.hpp"
 
-#include "engine.h" // TODO: move rawGCDRingElement to interface/factor.h
+#include "interface/factory.h"
 #include "text-io.hpp"
 #include "ringmap.hpp"
 #include "monoid.hpp"

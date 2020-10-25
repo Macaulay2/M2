@@ -1,17 +1,17 @@
 // copyright Daniel R. Grayson, 1995
 
-#include "exceptions.hpp"
-#include <M2/config.h>
+#include "factory.h"
+
+#include <M2/config.h> // need FACTORY_STREAMIO
+
 #include <assert.h>
-#include <iostream>
 #include <cstdio>
+#include <iostream>
+#include <utility>
+#include <vector>
 
 #define Matrix FactoryMatrix
 #include <factory/factory.h>  // from Messollen's libfac
-#if !HAVE_FACTORY_PREM
-CanonicalForm Prem(const CanonicalForm &F, const CanonicalForm &G);
-#endif
-#undef INT64
 #undef Matrix
 
 #pragma GCC diagnostic push
@@ -19,19 +19,19 @@ CanonicalForm Prem(const CanonicalForm &F, const CanonicalForm &G);
 #include <NTL/ZZ.h>
 #pragma GCC diagnostic pop
 
-#include "matrix.hpp"
-#include "ZZp.hpp"
-#include "ZZ.hpp"
-#include "frac.hpp"
-#include "poly.hpp"
-
-#include "relem.hpp"
-//#include "GF.hpp"
-#include "text-io.hpp"
 #include "buffer.hpp"
-
+#include "engine.h" // TODO: still need IM2_RingElement_to_string, IM2_Matrix_make1, ...
+#include "error.h"
+#include "exceptions.hpp"
+#include "matrix.hpp"
+#include "monoid.hpp"
+#include "poly.hpp"
+#include "polyring.hpp"
+#include "relem.hpp"
+#include "ring.hpp"
+#include "ringelem.hpp"
+#include "text-io.hpp"
 #include "tower.hpp"
-#include "engine.h"
 
 const bool notInExtension = false;
 

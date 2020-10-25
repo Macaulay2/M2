@@ -2,8 +2,7 @@
 
 #include "frac.hpp"
 
-#include "engine.h" // TODO: move rawGCDRingElement to interface/factor.h
-
+#include "interface/factory.h"
 #include "text-io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"

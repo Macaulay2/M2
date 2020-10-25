@@ -2,7 +2,7 @@
 
 #include "polyquotient.hpp"
 
-#include "engine.h" // TODO: move rawExtendedGCDRingElement to interface/factor.h
+#include "interface/factory.h"
 #include "intarray.hpp"
 #include "polyring.hpp"
 #include "matrix-con.hpp"

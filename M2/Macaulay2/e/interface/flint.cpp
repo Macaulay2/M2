@@ -17,7 +17,7 @@ M2_bool rawZZisPrime(gmp_ZZ a)
 {
   fmpz_t n;
   fmpz_init(n);
-  fmpz_set_mpz(n, a);  
+  fmpz_set_mpz(n, a);
   auto ret = fmpz_is_prime(n);
   fmpz_clear(n);
   if(ret<0) {
@@ -31,13 +31,15 @@ M2_bool rawZZisProbablePrime(gmp_ZZ a)
 {
   fmpz_t n;
   fmpz_init(n);
-  fmpz_set_mpz(n, a);  
+  fmpz_set_mpz(n, a);
   int ret = fmpz_is_probabprime(n);
   fmpz_clear(n);
   return ret;
 }
 
-gmp_arrayZZ flintToFrontend(std::vector<fmpz_t>); // this function copies data to front end type.
+// TODO: not yet implemented or connected to top level
+// This function is intended to copy data to front end type.
+gmp_arrayZZ flintToFrontend(std::vector<fmpz_t>);
 
 gmp_arrayZZ rawZZfactor(gmp_ZZ x)
 {
@@ -78,6 +80,5 @@ gmp_arrayZZ rawZZfactor(gmp_ZZ x)
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
 // indent-tabs-mode: nil
 // End:
