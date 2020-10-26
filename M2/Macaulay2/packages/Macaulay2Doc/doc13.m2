@@ -403,7 +403,7 @@ document { Key => {ofClass,(ofClass, Type),(ofClass, ImmutableType),(ofClass, Li
      	  ofClass Ring
 	  needsPackage "Text"
      	  SPAN ofClass {HashTable, ProjectiveVariety}
-	  document { Key => foo, "We may need ", ofClass ZZ, " and ", ofClass HashTable, "." }
+	  document { Key => foo, "We may need ", ofClass ZZ, " and ", ofClass HashTable, "." } -* no-capture-flag *-
 	  help foo
      ///}
 document { Key => inverse,
