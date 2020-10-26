@@ -523,6 +523,75 @@ assert(e_3*e_5===sub(0,T))
 ///
 
 
+
+--checking new code against very old one
+
+TEST ///
+Q= QQ[x,y,z]
+I = ideal(x*y, y*z, x^3, y^3-x*z^2,x^2*z, z^3)
+A = resLengthThreeAlg res I
+M = multTableOneOne(A)
+N = multTableOneTwo(A)
+
+
+F=res I
+d1 = matrix entries (F.dd)_1
+d2 = matrix entries (F.dd)_2
+d3 = matrix entries (F.dd)_3
+
+---- use matrix entries or grading will mess up matrices
+
+m = numgens source d1 
+l = numgens source d2 
+n = numgens source d3
+
+---- code to get multiplication of ei ej when d1 and d2 are already defined
+EE = (i,j) -> (
+m := numgens source d1 ;
+a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1} ;
+b := (matrix entries transpose a ) // d2;
+return matrix entries b)
+
+
+--- code for multiplication ei fj when d1, d2, and d3 are already defined and EE run first
+EF = (i,s) -> (
+m := numgens source d1 ;
+l := numgens source d2 ;
+c := sum(1..m, k -> d2_(k-1,s-1) * EE(i,k));
+d := d1_(0,i-1)*((id_(Q^l))_{s-1});
+a := (matrix entries (d - c))// d3;
+return matrix entries a)
+
+--- code for triple product ei ej ek
+EEE = (i,j,k) -> (
+l := numgens source d2 ;
+c := sum(1..l, s -> (EE(i,j))_(s-1,0)*EF(k,s));
+return matrix entries c)
+
+v= matrix{{f_1},{f_2},{f_3},{f_4},{f_5},{f_6},{f_7}}
+w= matrix{{g_1},{g_2}}
+
+--check multiplication e1 with all e's matches
+
+assert(  (( A**(matrix entries(transpose EE(1,2))) )*v)_(0,0) == (M_1)_2 )
+assert(  (( A**(matrix entries(transpose EE(1,3))) )*v)_(0,0) == (M_1)_3 )
+assert( (( A**(matrix entries(transpose EE(1,4))) )*v)_(0,0) == (M_1)_4 )
+assert(  (( A**(matrix entries(transpose EE(1,5))) )*v)_(0,0) == (M_1)_5 )
+assert(  (( A**(matrix entries(transpose EE(1,6))) )*v)_(0,0) == (M_1)_6 )
+
+--check multiplication e1 with all f's matches
+assert(  (( A**(matrix entries(transpose EF(1,1))) )*w)_(0,0) == (N_1)_1 )
+assert(  (( A**(matrix entries(transpose EF(1,2))) )*w)_(0,0) == (N_1)_2 )
+assert( (( A**(matrix entries(transpose EF(1,3))) )*w)_(0,0) == (N_1)_3 )
+assert(  (( A**(matrix entries(transpose EF(1,4))) )*w)_(0,0) == (N_1)_4 )
+assert(  (( A**(matrix entries(transpose EF(1,5))) )*w)_(0,0) == (N_1)_5 )
+assert( (( A**(matrix entries(transpose EF(1,6))) )*w)_(0,0) == (N_1)_6 )
+assert(  (( A**(matrix entries(transpose EF(1,7))) )*w)_(0,0) == (N_1)_7 )
+
+///
+
+
+
 --==========================================================================
 -- DOCUMENTATION
 --==========================================================================
@@ -987,7 +1056,8 @@ netList multTableOneOne G
 netList multTableOneTwo G
 netList multTableOneOne A
 netList multTableOneTwo A
-
+describe A
+describe G
 
 Q = QQ[u,v,x,y,z];
 R = Q/ideal(u^2-u*v^2)
@@ -1091,6 +1161,23 @@ netList multTableOneOne (A, Compact=> true)
 netList multTableOneOne(A, Compact=>true, Labels =>false)
 netList multTableOneOne(A, Compact=>false, Labels =>true)
 netList multTableOneOne(A, Labels =>false)
+
+netList multTableOneOne(A)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 netList oneTimesOneA'
 netList topPart
