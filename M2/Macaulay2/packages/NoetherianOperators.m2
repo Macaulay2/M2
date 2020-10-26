@@ -699,18 +699,21 @@ expression DiffOp := D ->
 net DiffOp := D -> net expression D
 toString DiffOp := D -> toString expression D
 --tex TODO
+-- other useful functions
+ring DiffOp := D -> ring first keys D
+substitute (DiffOp, Ring) := (D,R) -> applyPairs(D, (k,v) -> sub(k, R) => sub(v,R))
 --right R action TODO
 
 -- instances of ZeroDiffOp are differential operators that
 -- act as the zero operator
 ZeroDiffOp = new Type of DiffOp
 new ZeroDiffOp := (DD) -> hashTable{}
-new ZeroDiffOp from Thing := (DD, x) -> error"not implemented"
-new ZeroDiffOp of Thing from Thing := (DD, TT, x) -> error"not implemented"
-new ZeroDiffOp of Thing := (DD, TT) -> error"not implemented"
 ZeroDiffOp RingElement := (D,f) -> 0_(ring f)
 toExternalString ZeroDiffOp := D -> "new ZeroDiffOp"
---ZeroDiffOp + DiffOp := ()
+ring ZeroDiffOp := D -> error"the zero operator has no ring";
+-- new ZeroDiffOp from Thing := (DD, x) -> error"not implemented"
+-- new ZeroDiffOp of Thing from Thing := (DD, TT, x) -> error"not implemented"
+-- new ZeroDiffOp of Thing := (DD, TT) -> error"not implemented"
 
 /// TEST
 R = QQ[x,y,z]
@@ -815,16 +818,16 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
     -- extend the field only if the point is not specified to be rational
     kP := if opts.?Rational and opts.Rational then F else toField(S/PS);
     degreeNops := d -> (
-        ops := basis(0,d,S);
+        dBasis := basis(0,d,S);
         polys := sub(idealBasis(I,d, DependentSet => depVars),S);
-        M' := diff(ops, transpose polys);
+        M' := diff(dBasis, transpose polys);
         M := (map(kP,S/PS)*map(S/PS,S)) M';
         if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
         K := numSymKernel(M,Tolerance => t);
         -- Clear denominators
-        ops = (map(R,S)) ops;
+        dBasis = (map(R,S)) dBasis;
         K = liftColumns(try lift(K,S) then lift(K,S) else sub(K,S),R);
-        (K, ops)
+        (K, dBasis)
     );
     L := 2: map(kP^1,kP^0,0);
     if m >= 0 then L = degreeNops(m) else (
@@ -837,7 +840,7 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
         );
     );
     transpose entries first L / 
-        (c -> apply(c, flatten entries last L, (coef, mon) -> mon => coef)) /
+        (c -> apply(flatten entries last L, c, identity)) /
         diffOp //
         sort
 )
@@ -1280,8 +1283,7 @@ invSystemFromHilbToNoethOps = (I, R, S, depVars) -> (
     monList := flatten entries StoR allMons;
 
     transpose entries K / 
-        (l -> liftCoeffs(l, R)) /
-        (l -> apply(l, monList, (c,m) -> m => c )) /
+        (l -> apply(monList, liftCoeffs(l, R), identity )) /
         diffOp //
         sort
 
@@ -1312,7 +1314,6 @@ getNoetherianOperatorsHilb (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (Q
     if P != radical Q then error "expected second argument to be the radical of the first"
     else getNoetherianOperatorsHilb(Q,opts)
 )
-
 /// TEST
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
@@ -1345,23 +1346,35 @@ vectorAnn = (V) -> (
 getIdealFromNoetherianOperators = method()
 getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     R := ring P;
+    if ring first L != R then error "expected Noetherian operators and prime in same ring";
     indVars := support first independentSets P;
     FF := frac(R/P);
-    R' := ring L_0;
-    if not R' === diffAlg(R) then error "noetherian operators must be in the diffAlg of the prime";
-    S := FF[gens R'];
-    V := apply(L, F -> sub(F, S));
-    I := vectorAnn(V);
-    I = I_* / (f -> liftNoethOp(f, R')) // ideal;
+    --R' := ring L_0;
+    --if not R' === diffAlg(R) then error "noetherian operators must be in the diffAlg of the prime";
+    --S := FF[gens R];
+    --V := apply(L, F -> sub(F, S));
+    --I := vectorAnn(V);
+    --I = I_* / (f -> liftNoethOp(f, R')) // ideal;
     
-    X := R'/(I+P);
-    Lmap := apply(numgens R, i -> R_i => promote(R_i, R') + R'_i);
-    mapRtoX := map(X, R, Lmap);
-    Q := ker mapRtoX;
-    for v in indVars do 
-    	Q = saturate(Q, ideal(v));
-    Q
-) 
+    --X := R'/(I+P);
+    --Lmap := apply(numgens R, i -> R_i => promote(R_i, R') + R'_i);
+    --mapRtoX := map(X, R, Lmap);
+    --Q := ker mapRtoX;
+    --for v in indVars do 
+    --	Q = saturate(Q, ideal(v));
+    --Q
+)
+/// TEST
+R = QQ[x,y,t]
+I = ideal(x^2, y^2 - t*x)
+L = getNoetherianOperatorsHilb(I)
+P = radical I
+getIdealFromNoetherianOperators(L,P)
+
+bar = method()
+bar RingElement := r -> <<"hello"<<endl;
+-- TODO add asserts
+///
 
 getIdealFromNoetherianOperators(SetOfNoethOps) := N -> (
     if not N.?Prime then error"expected symbolic Noetherian operators";
