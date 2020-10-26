@@ -495,6 +495,20 @@ endPackage String := title -> (
 
 
 beginDocumentation = () -> (
+    if loadPackageOptions#?(currentPackage#"pkgname") and not loadPackageOptions#(currentPackage#"pkgname").LoadDocumentation
+    and currentPackage#?rawKeyDB and isOpen currentPackage#rawKeyDB then (
+       if notify then stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
+       currentPackage#"documentation not loaded" = true;
+       return end);
+     if notify then stderr << "--beginDocumentation: reading the rest of " << currentFileName << endl;
+     if currentPackage#"pkgname" != "Text" and  currentPackage#"pkgname" != "SimpleDoc" then (
+        needsPackage "Text";
+        needsPackage "SimpleDoc";
+         );
+     )
+
+-*
+beginDocumentation = () -> (
     pkgname := currentPackage#"pkgname";
     if pkgname != "Classic" then needsPackage "Classic";
     if loadPackageOptions#?pkgname and not loadPackageOptions#pkgname.LoadDocumentation
@@ -504,6 +518,7 @@ beginDocumentation = () -> (
 	return end);
     if notify then printerr("beginDocumentation: reading the rest of ", currentFileName);
     if not member(pkgname, {"Text", "SimpleDoc"}) then needsPackage "SimpleDoc")
+*-
 
 ---------------------------------------------------------------------
 
