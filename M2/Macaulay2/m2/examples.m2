@@ -28,13 +28,8 @@ capture List   := s -> capture demark_newline s
 --capture String := s -> capture' s -- output is (Boolean, String) => (Err?, Output)
 -- TODO: do this in interp.dd instead
 capture String := s -> (
-    pushvar(symbol gbTrace,          0);
-    pushvar(symbol debugLevel,       0);
-    pushvar(symbol errorDepth,       3);
-    pushvar(symbol interpreterDepth, 1);
-    pushvar(symbol debuggingMode, false);
-    pushvar(symbol stopIfError,    true);
-    pushvar(symbol notify,        false);
+    -- TODO: this should eventually be unnecessary
+    oldThreadLocalVars := (gbTrace, debugLevel, errorDepth, interpreterDepth, debuggingMode, stopIfError, notify);
 
     oldPrivateDictionary := User#"private dictionary";
     oldDictionaryPath := dictionaryPath;
@@ -59,13 +54,7 @@ capture String := s -> (
     loadedPackages = oldLoadedPackages;
     popvar symbol OutputDictionary;
 
-    popvar symbol gbTrace;
-    popvar symbol debugLevel;
-    popvar symbol errorDepth;
-    popvar symbol interpreterDepth;
-    popvar symbol debuggingMode;
-    popvar symbol stopIfError;
-    popvar symbol notify;
+    (gbTrace, debugLevel, errorDepth, interpreterDepth, debuggingMode, stopIfError, notify) = oldThreadLocalVars;
     ret)
 protect symbol capture
 
@@ -131,6 +120,7 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash, changeFunc, usermode, verboseLog) -> (
     desc := "example results for " | fkey;
     -- try capturing in the same process
+    -- TODO: eventually make this flag unnecessary
     if not match("no-capture-flag", inputs) then (
 	printerr("capturing ", desc);
 	(err, output) := evaluateWithPackage(pkg, inputs, capture);

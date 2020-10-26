@@ -22,7 +22,7 @@
 ---------------------------------------------------------------------------
 
 LocalRing = new Type of EngineRing
-LocalRing.synonym = "Local ring"
+LocalRing.synonym = "local ring"
 LocalRing#{Standard,AfterPrint} = RP -> (
      << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
      << "LocalRing, maximal " << RP.MaximalIdeal << endl;

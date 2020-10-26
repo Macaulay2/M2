@@ -133,7 +133,7 @@ betti fano
 needsPackage "Text"
 --$
 --^
-document {
+document { -* no-capture-flag *-
      Key => Fano2, 
         TT "Fano2(k,X,GR) or  Fano2(k,X)", " -- computes 
         the ideal of a Fano scheme in the Grassmannian.",
@@ -162,8 +162,8 @@ document {
 -- itself if no ambient ring is given.
 
 --^
-document {
-     Key => symbol Grassmannian2, 
+document { -* no-capture-flag *-
+    Key => Grassmannian2,
     TT "Grassmannian2(k,r,R) or 
         Grassmannian2(k,r)",
        "-- Given natural numbers k <= r,
