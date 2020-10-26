@@ -442,17 +442,18 @@ newSBasis = (dBasis,newGCs,d,t) -> (
     )
 
 
--- PolySpace of ideal basis through degree d.
+-- PolySpace of ideal basis through degree d-1.
 idealBasis = method(Options => true)
 idealBasis(Ideal, ZZ) := true >> opts -> (I,d) -> (
     R := ring I;
-    B := set{};
+    --B := set{};
     V := if opts.?DependentSet then opts.DependentSet else gens R;
-    for g in flatten entries gens I do (
-        if g == 0 then continue else
-        B = B + set apply(flatten entries basis(0,d-1,R, Variables => V), m->m*g);
-    );
-    if #B == 0 then map(R^1,R^0,0) else matrix{toList B}
+    matrix{ unique flatten entries (gens I ** basis(0,d-1,R, Variables => V))}
+    --for g in flatten entries gens I do (
+    --    if g == 0 then continue else
+    --    B = B + set apply(flatten entries basis(0,d-1,R, Variables => V), m->m*g);
+    --);
+    --if #B == 0 then map(R^1,R^0,0) else matrix{toList B}
 )
 
 --lead monomial and lead monomial degree according to ordering associated with
@@ -792,6 +793,26 @@ noetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,P) -> 
 -- End dispatcher method
 
 
+macaulayMatrixKernel := {Tolerance => 1e-6} >> opts -> (d,I, kP) -> (
+    S := ring I; 
+    dBasis := basis(0,d,S);
+    polys := transpose idealBasis(I,d);
+    M' := diff(dBasis, polys);
+    M := (map(kP,S)) M';
+    if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
+    K := numSymKernel(M,Tolerance => opts.Tolerance);
+    -- Clear denominators
+    -- dBasis = (map(R,S)) dBasis;
+    -- K = liftColumns(try lift(K,S) then lift(K,S) else sub(K,S),R);
+    (K, dBasis)
+)
+
+-- returns a list of Diff ops based on matrices M, dBasis
+matrixToDiffOps = (M, dBasis) ->
+    transpose entries M / 
+        (c -> apply(flatten entries dBasis, c, identity)) /
+        diffOp //
+        sort
 
 
 
@@ -817,32 +838,20 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
     PS := sub(P,S); IS := sub(I,S);
     -- extend the field only if the point is not specified to be rational
     kP := if opts.?Rational and opts.Rational then F else toField(S/PS);
-    degreeNops := d -> (
-        dBasis := basis(0,d,S);
-        polys := sub(idealBasis(I,d, DependentSet => depVars),S);
-        M' := diff(dBasis, transpose polys);
-        M := (map(kP,S/PS)*map(S/PS,S)) M';
-        if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
-        K := numSymKernel(M,Tolerance => t);
-        -- Clear denominators
-        dBasis = (map(R,S)) dBasis;
-        K = liftColumns(try lift(K,S) then lift(K,S) else sub(K,S),R);
-        (K, dBasis)
-    );
+
     L := 2: map(kP^1,kP^0,0);
-    if m >= 0 then L = degreeNops(m) else (
+    if m >= 0 then L = macaulayMatrixKernel(m, IS, kP, Tolerance => t) else (
         d := 0;
         Ldim := -1;
         while Ldim != numcols first L do (
+            --error"dbg";
             Ldim = numcols first L;
-            L = degreeNops d;
+            L = macaulayMatrixKernel(d, IS, kP, Tolerance => t);
             d = d+1;
         );
     );
-    transpose entries first L / 
-        (c -> apply(flatten entries last L, c, identity)) /
-        diffOp //
-        sort
+    -- Clear denominators, create list of DiffOps
+    matrixToDiffOps(liftColumns(lift(first L,S), R), sub(last L,R))
 )
 
 /// TEST
