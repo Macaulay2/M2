@@ -189,7 +189,7 @@ initializeDualData (Matrix,Boolean,Number) := o -> (Igens,syl,t) -> (
     H.Seeds = dualSpace(matrix{{1_T}},origin(T));
     H.BMmatrix = innerProduct(polySpace if syl then H.hIgens else H.Igens, H.Seeds);
     H.BMintegrals = gens H.Seeds;
-    H.BMcoefs = numSymKernel(H.BMmatrix,Tolerance=>t);
+    H.BMcoefs = myKernel(H.BMmatrix,Tolerance=>t);
     H.BMbasis = H.BMcoefs;
     --print(H.BMmatrix,H.BMcoefs);
     H.dBasis = H.BMintegrals * H.BMcoefs;
@@ -214,7 +214,7 @@ nextTDD (ZZ,TruncDualData,Number) := (d,H,t) -> (
      	for e from H.deg+1 to d do (
 	    (M,E) := BMmatrix H;
 	    H.BMmatrix = M; H.BMintegrals = E;
-	    H.BMcoefs = numSymKernel(M,Tolerance=>t);
+	    H.BMcoefs = myKernel(M,Tolerance=>t);
 	    --print(M,H.BMcoefs);
 	    I := basisIndices(last coefficients E*H.BMcoefs, t);
 	    H.BMbasis = submatrix(H.BMcoefs, I);
@@ -523,7 +523,7 @@ orthogonalInSubspace (DualSpace, PolySpace, Number) := (D,S,t) -> (
     R := ring S;
     F := coefficientRing R;
     M := sub(innerProduct(S,D),F);
-    K := numSymKernel(transpose M,Tolerance=>t);
+    K := myKernel(transpose M,Tolerance=>t);
     polySpace((gens S)*K, Reduced=>false)
     )
 orthogonalInSubspace (PolySpace, PolySpace, Number) := (T,S,t) -> (
@@ -567,11 +567,11 @@ numericalImage (Matrix, Number) := o -> (M, tol) -> (
 	)
     )
 
-numSymKernel = method(Options => {Tolerance => null})
-numSymKernel(Matrix) := Matrix => o -> M -> (
-    if precision M < infinity then colReduce(numericalKernel(M,o),o)
-    else myKernel(M)
-    )
+-- numSymKernel = method(Options => {Tolerance => null})
+-- numSymKernel(Matrix) := Matrix => o -> M -> (
+--     if precision M < infinity then colReduce(numericalKernel(M,o),o)
+--     else myKernel(M)
+-- )
 
 numericalKernel = method(Options => {Tolerance => null})
 numericalKernel (Matrix) := Matrix => o -> M -> (
@@ -735,8 +735,10 @@ sanityCheck = (nops, I) -> (
     all(flatten table(nops, I_*, (N,i) -> (N i)%(N.Prime) == 0), identity)
 )
 
-myKernel = method()
-myKernel Matrix := Matrix => MM -> (
+myKernel = method(Options => {Tolerance => null})
+myKernel Matrix := Matrix => opts -> MM -> (
+    if precision MM < infinity then return colReduce(numericalKernel(MM,opts),opts);
+
     R := ring MM;
     M := transpose colReduce(transpose MM, Reverse=>true);
     (m,n) := (numrows M, numcols M);
@@ -805,7 +807,7 @@ macaulayMatrixKernel := {Tolerance => 1e-6, DegreeLimit => -1} >> opts -> (I, kP
         M' := diff(dBasis, polys);
         M := (map(kP,S)) M';
         if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
-        K := numSymKernel(M,Tolerance => opts.Tolerance);
+        K := myKernel(M,Tolerance => opts.Tolerance);
         L = (K, dBasis);
         if opts.DegreeLimit >=0 or Ldim == numcols first L then break;
         d = d+1;
@@ -919,33 +921,33 @@ numNoethOpsAtPoint(I, point{{0_CC,0,3}}, DependentSet => {x,y})
 ///
 
 hybridNoetherianOperators = method(Options => true)
-hybridNoetherianOperators (Ideal, Ideal, Point) := SetOfNoethOps => true >> opts -> (I,P, pt) -> (
+hybridNoetherianOperators (Ideal, Ideal, Matrix) := SetOfNoethOps => true >> opts -> (I,P, pt) -> (
     R := ring I;
     (depVars,indVars) := getDepIndVars(P,opts);
     S := (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
     PS := sub(P, S);
     IS := sub(I,S);
     kP := toField(S/PS);
-
+    -- TODO: this precision should be specifiable
     RCC := CC monoid R;
     nopsAtPoint := numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC)));
     sort flatten for op in nopsAtPoint list (
-        bd := matrix{keys op / (m -> first exponents m) / (i -> sub(R_i, S))};
-        maxdeg := flatten entries bd / sum @@ degree // max;
-        K := bd;
+        dBasis := sub(matrix{keys op / (m -> R_(first exponents m))}, S);
+        maxdeg := flatten entries dBasis / sum @@ degree // max;
+        K := dBasis;
         for d from 0 to maxdeg - 1 do (
             if debugLevel >= 1 then <<"hybridNoetherianOperators: trying degree "<<d<<" multiples of generators"<<endl;
-            G := transpose basis(0,d,S) ** transpose gens IS;
-            M := sub(diff(bd, G), kP);
+            G := transpose (gens IS ** basis(0,d,S));
+            M := sub(diff(dBasis, G), kP);
             K = myKernel M;
             if numColumns K == 1 then break;
         );
-        KK := lift(K, S);
-        -- Clear denominators
-        KK = liftColumns(KK, R);
-        diffOp apply(flatten entries bd, flatten entries KK, (m, f) -> sub(m,R) => f)
+        -- Clear denominators and return a DiffOp
+        first matrixToDiffOps(liftColumns(lift(K, S), R), sub(dBasis, R))
+        --diffOp apply(flatten entries dBasis, flatten entries KK, (m, f) -> sub(m,R) => f)
     )
 )
+hybridNoetherianOperators (Ideal, Ideal, Point) := SetOfNoethOps => true >> opts -> (I,P, pt) -> hybridNoetherianOperators(I,P, matrix pt, opts)
 
 hybridNoetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,P) -> (
     f := if opts.?Sampler then opts.Sampler else J -> first bertiniSample(1,first components bertiniPosDimSolve(J));
@@ -957,7 +959,9 @@ hybridNoetherianOperators (Ideal) := SetOfNoethOps => true >> opts -> I -> hybri
 /// TEST
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
-hybridNoetherianOperators(I)
+elapsedTime hybridNoetherianOperators(I, Sampler => i -> point{{0_CC,0,3}})
+elapsedTime noetherianOperators I
+hybridNoetherianOperators(I, Sampler => i -> sub(realPoint(I),CC))
 ///
 
 
