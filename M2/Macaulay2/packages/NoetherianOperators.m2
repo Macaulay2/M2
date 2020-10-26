@@ -446,6 +446,7 @@ newSBasis = (dBasis,newGCs,d,t) -> (
 idealBasis = method(Options => true)
 idealBasis(Ideal, ZZ) := true >> opts -> (I,d) -> (
     R := ring I;
+    if d < 1 then return map(R^1,R^0,0);
     --B := set{};
     V := if opts.?DependentSet then opts.DependentSet else gens R;
     matrix{ unique flatten entries (gens I ** basis(0,d-1,R, Variables => V))}
@@ -793,18 +794,23 @@ noetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,P) -> 
 -- End dispatcher method
 
 
-macaulayMatrixKernel := {Tolerance => 1e-6} >> opts -> (d,I, kP) -> (
-    S := ring I; 
-    dBasis := basis(0,d,S);
-    polys := transpose idealBasis(I,d);
-    M' := diff(dBasis, polys);
-    M := (map(kP,S)) M';
-    if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
-    K := numSymKernel(M,Tolerance => opts.Tolerance);
-    -- Clear denominators
-    -- dBasis = (map(R,S)) dBasis;
-    -- K = liftColumns(try lift(K,S) then lift(K,S) else sub(K,S),R);
-    (K, dBasis)
+macaulayMatrixKernel := {Tolerance => 1e-6, DegreeLimit => -1} >> opts -> (I, kP) -> (
+    S := ring I;
+    L := 2: map(kP^1,kP^0,0);
+    d := max(opts.DegreeLimit, 1);
+    while true do (
+        Ldim := numcols first L;
+        dBasis := basis(0,d,S);
+        polys := transpose idealBasis(I,d);
+        M' := diff(dBasis, polys);
+        M := (map(kP,S)) M';
+        if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
+        K := numSymKernel(M,Tolerance => opts.Tolerance);
+        L = (K, dBasis);
+        if opts.DegreeLimit >=0 or Ldim == numcols first L then break;
+        d = d+1;
+    );
+    L
 )
 
 -- returns a list of Diff ops based on matrices M, dBasis
@@ -839,17 +845,7 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
     -- extend the field only if the point is not specified to be rational
     kP := if opts.?Rational and opts.Rational then F else toField(S/PS);
 
-    L := 2: map(kP^1,kP^0,0);
-    if m >= 0 then L = macaulayMatrixKernel(m, IS, kP, Tolerance => t) else (
-        d := 0;
-        Ldim := -1;
-        while Ldim != numcols first L do (
-            --error"dbg";
-            Ldim = numcols first L;
-            L = macaulayMatrixKernel(d, IS, kP, Tolerance => t);
-            d = d+1;
-        );
-    );
+    L := macaulayMatrixKernel(IS, kP, Tolerance => t, DegreeLimit => m);
     -- Clear denominators, create list of DiffOps
     matrixToDiffOps(liftColumns(lift(first L,S), R), sub(last L,R))
 )
@@ -903,6 +899,7 @@ numNoethOpsAtPoint = method(Options => true)
 numNoethOpsAtPoint (Ideal, Point) := List => true >> opts -> (I, p) -> numNoethOpsAtPoint(I, matrix p, opts)
 numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     tol := if not opts.?Tolerance then defaultT(ring I) else opts.Tolerance;
+    degLim := if not opts.?DegreeLimit then -1 else opts.DegreeLimit;
     R := ring I;
     (depVars,indVars) := getDepIndVars(I,opts);
     S := (coefficientRing R)(monoid[depVars]);
@@ -911,12 +908,13 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
 	    ))};
     RtoS := map(S,R,sub(subs,S));
     P := sub(ideal(subs - p),S);
-    noetherianOperatorsViaMacaulayMatrix(RtoS I, sub(P,S), opts, Rational => true, DependentSet => gens S)
+    L := macaulayMatrixKernel(RtoS I, coefficientRing S, DegreeLimit => degLim, Tolerance => tol);
+    matrixToDiffOps(promote(first L, R), sub(last L, R))
 )
 /// TEST
 R = CC[x,y,t]
 I = ideal(x^2, y^2 - t*x)
-dop = last numNoethOpsAtPoint(I, point{{0_CC,0,3}}, DependentSet => {x,y})
+numNoethOpsAtPoint(I, point{{0_CC,0,3}}, DependentSet => {x,y})
 -- TODO add some asserts
 ///
 
