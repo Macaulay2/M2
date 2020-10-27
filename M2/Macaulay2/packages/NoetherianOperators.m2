@@ -712,6 +712,7 @@ ZeroDiffOp = new Type of DiffOp
 new ZeroDiffOp := (DD) -> hashTable{}
 ZeroDiffOp RingElement := (D,f) -> 0_(ring f)
 toExternalString ZeroDiffOp := D -> "new ZeroDiffOp"
+-- maybe ZeroDiffOp should have a ring? TODO
 ring ZeroDiffOp := D -> error"the zero operator has no ring";
 -- new ZeroDiffOp from Thing := (DD, x) -> error"not implemented"
 -- new ZeroDiffOp of Thing from Thing := (DD, TT, x) -> error"not implemented"
@@ -731,6 +732,7 @@ assert(foo2 > foo)
 assert(instance(foo3, ZeroDiffOp))
 ///
 
+-- TODO fix
 sanityCheck = (nops, I) -> (
     all(flatten table(nops, I_*, (N,i) -> (N i)%(N.Prime) == 0), identity)
 )
@@ -906,8 +908,8 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     (depVars,indVars) := getDepIndVars(I,opts);
     S := (coefficientRing R)(monoid[depVars]);
     subs := matrix{apply(numgens R, i->(
-	    if member(R_i,depVars) then R_i else p_(0,i)
-	    ))};
+        if member(R_i,depVars) then R_i else p_(0,i)
+        ))};
     RtoS := map(S,R,sub(subs,S));
     P := sub(ideal(subs - p),S);
     L := macaulayMatrixKernel(RtoS I, coefficientRing S, DegreeLimit => degLim, Tolerance => tol);
@@ -1289,6 +1291,7 @@ invSystemFromHilbToNoethOps = (I, R, S, depVars) -> (
     --T := frac(R)[gens R'];
     StoR := map(R, S, apply(#depVars, i -> R_(index depVars#i)));
     if debugLevel > 0 then <<"Cols: " << numColumns diffMat <<", rows: "<< numRows diffMat<<endl;
+    -- ker to myKernel? TODO
     K := mingens ker diffMat;
     
     monList := flatten entries StoR allMons;
@@ -1381,9 +1384,6 @@ I = ideal(x^2, y^2 - t*x)
 L = getNoetherianOperatorsHilb(I)
 P = radical I
 getIdealFromNoetherianOperators(L,P)
-
-bar = method()
-bar RingElement := r -> <<"hello"<<endl;
 -- TODO add asserts
 ///
 
