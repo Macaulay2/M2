@@ -121,7 +121,7 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
     desc := "example results for " | fkey;
     -- try capturing in the same process
     -- TODO: eventually make this flag unnecessary
-    if not match("no-capture-flag", inputs) then (
+    if not match("no-capture-flag", inputs) and not match("ThreadedGB", pkg#"pkgname") then (
 	printerr("capturing ", desc);
 	(err, output) := evaluateWithPackage(pkg, inputs, capture);
 	if not err then return outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close);
