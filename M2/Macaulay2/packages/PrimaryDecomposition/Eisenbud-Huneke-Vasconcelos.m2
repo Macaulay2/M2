@@ -349,25 +349,29 @@ associatedPrimes Module := List => o -> M -> ( -- modified code in ass1 for modu
      if p >= o.CodimensionLimit then return select(M.cache#"AssociatedPrimes", P -> codim P <= k);
      ringRel := presentation ring M;
      S := ring ringRel; -- S is the ambient polynomial ring which ring M is a quotient of
-     -- M1 := lift(M, S); -- issue: cannot lift non-free modules
      liftRingRel := id_(lift(target relations M, S)) ** ringRel;
      M1 := subquotient(lift(gens M, S), lift(relations M, S) | liftRingRel);
+     mapback := I -> trim((map(ring M, S, vars ring M)) I);
      c := codim M1;
      if k < c then (
           if debugLevel > 0 then print("Value of CodimensionLimit is less than codimension");
           return {};
      );
-     if c == dim S and (isHomogeneous M or all(gens S, v -> radicalContainment(v, ann M1))) then M.cache#"AssociatedPrimes" = {sub(ideal gens S, ring M)} else (
+     if c == dim S or c == k then (
+          newPrimes := if ((c == dim S and isHomogeneous M) or all(gens S, v -> radicalContainment(v, ann M1))) then {ideal gens S} else minimalPrimes ann M1;
+          M.cache#"AssociatedPrimes" = newPrimes/mapback;
+          M.cache#"associatedPrimesCodimLimit" = c;
+     ) else (
           if debugLevel > 0 then print("Computing resolution to find associated primes...");
           F := resolution(M1, LengthLimit => k+1);
           if debugLevel > 1 then print(betti F);
           for i from max(1+p, c) to min(length F, k) do (
                if debugLevel > 0 then print("Extracting associated primes of codim " | toString i);
-               newPrimes := apply(if i == dim S and isHomogeneous M then {ideal gens S} else (
+               newPrimes = if i == dim S and isHomogeneous M then {ideal gens S} else (
                     A := ann(if i == c then M1 else Ext^i(M1, S));
-                    if codim A > i then {} else select(minimalPrimes A, P -> codim P == i)
-               ), P -> trim sub(P, ring M));
-               M.cache#"AssociatedPrimes" = M.cache#"AssociatedPrimes" | newPrimes;
+                    if codim A > i then {} else minimalPrimes(A, CodimensionLimit => i)
+               );
+               M.cache#"AssociatedPrimes" = M.cache#"AssociatedPrimes" | newPrimes/mapback;
                M.cache#"associatedPrimesCodimLimit" = i;
           );
      );
@@ -380,6 +384,7 @@ associatedPrimes Ring := List => o -> R -> associatedPrimes(comodule ideal R, o)
 primaryDecomposition Module := List => o -> M -> (
      if not M.cache#?"primaryComponents" then M.cache#"primaryComponents" = new MutableHashTable;
      AP := associatedPrimes M;
+     if M.cache#"associatedPrimesCodimLimit" != infinity then print "Warning: associatedPrimes called with CodimensionLimit, potentially missing some components. In case of error, re-run associatedPrimes with CodimensionLimit => infinity";
      if #values(M.cache#"primaryComponents") != #AP then (
           H := hashTable apply(AP, p -> p => select(#AP, i -> isSubset(AP#i, p)));
           for i to #AP - 1 do (
@@ -518,8 +523,8 @@ regSeqInIdeal (Ideal, ZZ) := Ideal => opts -> (I, n) -> (
 regSeqInIdeal Ideal := Ideal => opts -> I -> regSeqInIdeal(I, dim ring I + 1)
 
 sort (List, Function) := opts -> (L, f) -> (
-	H := hashTable(identity, apply(L, l -> f(l) => l));
-	deepSplice join apply(sort keys H, k -> H#k)
+     H := hashTable(identity, apply(L, l -> f(l) => l));
+     deepSplice join apply(sort keys H, k -> H#k)
 )
 
 TEST /// -- non-cyclic modules
@@ -535,6 +540,23 @@ assert(intersect comps == 0 and all(comps, isPrimary_M))
 N = coker map(M, R^1, transpose matrix{{1_R,1,1}}) -- coker of diagonal map
 assert(numcols mingens N == 2 and #associatedPrimes N == 5)
 comps = primaryDecomposition N
+assert(intersect comps == 0 and all(comps, isPrimary_N))
+///
+
+TEST /// -- modules over iterated quotient rings
+R = QQ[x,y,z,w,u]/(u^4 - x*y*z*w)
+S = R/(x^3 - y^2*z)
+T = S/(y*w^2 - z*x^2)
+N1 = coker gens ideal (T_0^4 - 1, T_1^4)
+N2 = comodule ideal (T_2^6, T_3^7)
+N3 = comodule ideal (T_4^3*T_0, T_1^2*T_2^2)
+M = N1 ++ N2 ++ N3
+assert(#associatedPrimes M == 4)
+comps = primaryDecomposition M
+assert(intersect comps == 0 and all(comps, isPrimary_M))
+N = coker map(M, (ring M)^1, transpose matrix{{1_(ring M),1,1}})
+assert(#associatedPrimes N == 2)
+elapsedTime comps = primaryDecomposition N
 assert(intersect comps == 0 and all(comps, isPrimary_N))
 ///
 
@@ -556,6 +578,47 @@ M = comodule I
 assert(#associatedPrimes M == 5)
 comps = primaryDecomposition M
 assert(sum(comps, Q -> degree(I + ideal gens Q)) == degree I)
+///
+
+TEST /// -- cf. https://groups.google.com/g/macaulay2/c/dFPzfS3tR2E
+R = ZZ/2[Z_1..Z_9]
+I = ideal(Z_6*Z_8+Z_5*Z_9,Z_3*Z_8+Z_2*Z_9,Z_6*Z_7+Z_4*Z_9,Z_4^3+Z_5^3+Z_6^3,Z_1*Z_2^2+Z_4*Z_5^2+Z_7*Z_8^2,Z_1^3+Z_5^3+Z_6^3+Z_8^3+Z_9^3,Z_1*Z_2*Z_4^2*Z_5*Z_9+Z_2^2*Z_5^3*Z_9+Z_2^2*Z_6^3*Z_9+Z_1^2*Z_7*Z_8^2*Z_9+Z_2^2*Z_8^3*Z_9+Z_2^2*Z_9^4)
+installMinprimes()
+M = comodule I
+elapsedTime associatedPrimes M; -- ~ 5 seconds
+elapsedTime primaryDecomposition M; -- ~ 5 seconds
+assert(all(primaryDecomposition M, isPrimary_M))
+assert(intersect apply(primaryDecomposition M, Q -> I + ideal gens Q) == I)
+-- note: primaryDecomposition I takes ~ 60 seconds, and if interrupted, gives missed components error on resume
+///
+
+TEST /// -- [associatedPrimes, CodimensionLimit] test
+R = QQ[x_0..x_5]
+exps = {6,7}
+supps = {ideal(R_0,R_1,R_2), ideal(R_0,R_3,R_4,R_5)}
+elapsedTime I = intersect apply(#supps, i -> (supps#i)^(exps#i));
+M = comodule I;
+elapsedTime AP = associatedPrimes(M, CodimensionLimit => 4) -- ~ 4 seconds
+-- elapsedTime associatedPrimes(M, CodimensionLimit => infinity) -- > 40 seconds (computing unnecessary Ext)
+assert(all(AP, P -> any(supps, Q -> Q == P)) and all(supps, P -> any(AP, Q -> Q == P)))
+elapsedTime comps = primaryDecomposition M; -- ~ 4 seconds
+assert(intersect comps == 0 and all(comps, isPrimary_M))
+///
+
+TEST /// -- Optimizing cases for associatedPrimes without computing res
+R = QQ[x_1..x_5]
+I = intersect apply(10, i -> ideal apply(gens R, v -> v - random QQ)); -- 10 points in A^5
+M = comodule I;
+elapsedTime AP = associatedPrimes M;
+elapsedTime comps = primaryDecomposition M;
+assert(intersect comps == 0 and all(comps, isPrimary_M))
+
+I = intersect apply(10, i -> ideal apply(delete(first random gens R, gens R), v -> v - random QQ)); -- 10 lines in A^5
+M = comodule I;
+elapsedTime AP = associatedPrimes(M, CodimensionLimit => codim M) -- ~ 5 seconds
+elapsedTime comps = primaryDecomposition M; -- ~ 5 seconds
+assert(intersect comps == 0 and all(comps, isPrimary_M))
+-- note: primaryDecomposition I is very slow
 ///
 
 -- Local Variables:
