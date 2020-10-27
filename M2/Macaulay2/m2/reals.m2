@@ -176,7 +176,7 @@ ring RRi := x -> new RealIntervalField of RRi' from precision x
 ring CC := x -> new ComplexField of CC' from precision x
 
 new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x)
-new RRi from RawRingElement := (RRR,x) -> ( assert( RRR === RRi ); rawToRRi x)
+new RRi from RawRingElement := (RRRi,x) -> ( assert( RRRi === RRi ); rawToRRi x)
 new CC from RawRingElement := (CCC,x) -> ( assert( CCC === CC ); rawToCC x)
 
 -- arithmetic operations
@@ -323,9 +323,11 @@ Constant ! := c -> (numeric c)!
 -- printing
 
 toString RealField := R -> concatenate("RR_",toString R.precision)
+toString RealIntervalField := R -> concatenate("RRi_",toString R.precision)
 toString ComplexField := R -> concatenate("CC_",toString R.precision)
 
 expression RealField := R -> new Subscript from {symbol RR, R.precision}
+expression RealIntervalField := R -> new Subscript from {symbol RRi, R.precision}
 expression ComplexField := R -> new Subscript from {symbol CC, R.precision}
 expression RR := x -> (
      if x < 0 
