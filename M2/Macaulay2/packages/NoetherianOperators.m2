@@ -162,13 +162,13 @@ truncatedDual = method(Options => {Strategy => BM, Tolerance => null})
 truncatedDual (Point,Ideal,ZZ) := o -> (p,I,d) -> (
     depVars := gens (ring I);
     dualSpace numNoethOpsAtPoint(I,p, DependentSet => depVars, DegreeLimit => d, Tolerance => o.Tolerance)
-    )
+)
 
 zeroDimensionalDual = method(TypicalValue => DualSpace, Options => {Strategy => BM, Tolerance => null})
 zeroDimensionalDual (Point,Ideal) := o -> (p,I) -> (
     depVars := gens (ring I);
     dualSpace numNoethOpsAtPoint(I,p, DependentSet => depVars, Tolerance => o.Tolerance)
-    )
+)
 ----------------------------------
 
 --An object that stores the data for an ongoing iterative tuncated dual space computation
@@ -1250,7 +1250,7 @@ mapRtoHilb = (Q, P, S, depVars, indVars) -> (
     mapRtoS := map(S, R, L);
     ideal mingens ((mapRtoS Q) + diag^m)    
 )
-
+-- old
 liftNoethOp = (d, R) -> (
     m := flatten entries last coefficients d /
         (c -> lift(c, coefficientRing ring c)) /
@@ -1258,12 +1258,19 @@ liftNoethOp = (d, R) -> (
         lcm;
     sub(d*m, R)
 )
-
+-- old
 liftCoeffs = (l, R) -> (
     m := l /
         denominator //
         lcm;
     l / (f -> sub(f*m, R))
+)
+
+liftColumnsPunctualHilbert = (M, R') -> (
+    cols := transpose entries M;
+    lcms := cols / (c -> c / denominator // lcm );
+    K := transpose matrix apply(cols, lcms, (c,m) -> c / times_m );
+    sub(K,R')
 )
 
 unpackRow = (row, FF) -> (
@@ -1279,36 +1286,39 @@ invSystemFromHilbToNoethOps = (I, R, S, depVars) -> (
     if debugLevel > 0 then <<"Precomputing Noetherian operator degree limit: ";
     while (I : mm^m) != ideal(1_S) do m = m + 1;  
     if debugLevel > 0 then <<m-1<<endl;
-    FF := coefficientRing S; 
-    allMons := basis(0, m-1, S); 
-    gensI := flatten entries mingens I;
-    diffMat := unpackRow(diff(gensI_0, allMons), FF);
-    for i from 1 to length gensI - 1 do (
-        auxMat := unpackRow(diff(gensI_i, allMons), FF);
-        diffMat = diffMat || auxMat;
-    );
-    --R' := diffAlg R;
-    --T := frac(R)[gens R'];
+    FF := coefficientRing S;
+    L := macaulayMatrixKernel(I,FF);
     StoR := map(R, S, apply(#depVars, i -> R_(index depVars#i)));
-    if debugLevel > 0 then <<"Cols: " << numColumns diffMat <<", rows: "<< numRows diffMat<<endl;
-    -- ker to myKernel? TODO
-    K := mingens ker diffMat;
+    matrixToDiffOps(liftColumnsPunctualHilbert(first L, R), StoR last L)
+
+    -- allMons := basis(0, m-1, S); 
+    -- gensI := flatten entries mingens I;
+    -- diffMat := unpackRow(diff(gensI_0, allMons), FF);
+    -- for i from 1 to length gensI - 1 do (
+    --     auxMat := unpackRow(diff(gensI_i, allMons), FF);
+    --     diffMat = diffMat || auxMat;
+    -- );
+    -- --R' := diffAlg R;
+    -- --T := frac(R)[gens R'];
+    -- if debugLevel > 0 then <<"Cols: " << numColumns diffMat <<", rows: "<< numRows diffMat<<endl;
+    -- -- ker to myKernel? TODO
+    -- K := mingens ker diffMat;
     
-    monList := flatten entries StoR allMons;
+    -- monList := flatten entries StoR allMons;
 
-    transpose entries K / 
-        (l -> apply(monList, liftCoeffs(l, R), identity )) /
-        diffOp //
-        sort
+    -- transpose entries K / 
+    --     (l -> apply(monList, liftCoeffs(l, R), identity )) /
+    --     diffOp //
+    --     sort
 
-    --noethOps := flatten entries StoT (allMons * K);
-    --noethOps / (d -> liftNoethOp(d, R'))
-    --diffVars := apply(depVars, w -> value("symbol d" | toString(w)) );
-    --W := FF(monoid[diffVars]);
-    ----D := R(monoid[diffVars]);
-    --D := diffAlg(R);
-    --mapStoW := map(W, S, gens W);
-    --apply(noethOps, w -> liftNoethOp(mapStoW(w), R, D))   
+    -- --noethOps := flatten entries StoT (allMons * K);
+    -- --noethOps / (d -> liftNoethOp(d, R'))
+    -- --diffVars := apply(depVars, w -> value("symbol d" | toString(w)) );
+    -- --W := FF(monoid[diffVars]);
+    -- ----D := R(monoid[diffVars]);
+    -- --D := diffAlg(R);
+    -- --mapStoW := map(W, S, gens W);
+    -- --apply(noethOps, w -> liftNoethOp(mapStoW(w), R, D))   
 )
    
 -- This function can compute the Noetherian operators of a primary ideal Q.
