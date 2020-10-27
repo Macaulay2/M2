@@ -31,10 +31,8 @@ export {
     "innerProduct",
     "reduceSpace",
     "orthogonalInSubspace",
-    "DZ",
-    "BM",
     "Normalize",
-     "Rational",
+    "Rational",
     "ProduceSB",
     "numericalKernel",
     "numericalImage",
@@ -154,13 +152,13 @@ listFactorial = L -> product(L, l->l!)
 
 -- Legacy methods
 ----------------------------------
-truncatedDual = method(Options => {Strategy => BM, Tolerance => null})
+truncatedDual = method(Options => {Tolerance => null})
 truncatedDual (Point,Ideal,ZZ) := o -> (p,I,d) -> (
     depVars := gens (ring I);
     dualSpace numNoethOpsAtPoint(I,p, DependentSet => depVars, DegreeLimit => d, Tolerance => o.Tolerance)
     )
 
-zeroDimensionalDual = method(TypicalValue => DualSpace, Options => {Strategy => BM, Tolerance => null})
+zeroDimensionalDual = method(TypicalValue => DualSpace, Options => {Tolerance => null})
 zeroDimensionalDual (Point,Ideal) := o -> (p,I) -> (
     depVars := gens (ring I);
     dualSpace numNoethOpsAtPoint(I,p, DependentSet => depVars, Tolerance => o.Tolerance)
@@ -169,21 +167,22 @@ zeroDimensionalDual (Point,Ideal) := o -> (p,I) -> (
 
 --An object that stores the data for an ongoing iterative tuncated dual space computation
 TruncDualData = new Type of MutableHashTable
-initializeDualData = method(Options => {Strategy => BM})
-initializeDualData (Matrix,Boolean,Number) := o -> (Igens,syl,t) -> (
+initializeDualData = method()
+initializeDualData (Matrix,Boolean,Number) := (Igens,syl,t) -> (
     H := new MutableHashTable;
     R := ring Igens;
+    F := coefficientRing R;
     H.Igens = Igens;
     H.syl = syl;
-    H.strategy = o.Strategy;
     H.deg = 0;
     h := symbol h;
-    S := (coefficientRing R)(monoid[{h}|gens R, MonomialOrder => {Weights => (numgens R+1):1, 1, (options R).MonomialOrder}]); --projectivization of R
+    S := F(monoid[{h}|gens R, MonomialOrder => {Weights => (numgens R+1):1, 1, (options R).MonomialOrder}]); --projectivization of R
     h = S_0;
     H.hIgens = homogenize(sub(Igens,S), h); 
     T := if syl then S else R;
     H.Seeds = dualSpace(matrix{{1_T}},origin(T));
     H.BMmatrix = innerProduct(polySpace if syl then H.hIgens else H.Igens, H.Seeds);
+    H.BMmatrix = sub(H.BMmatrix,F);
     H.BMintegrals = gens H.Seeds;
     H.BMcoefs = numSymKernel(H.BMmatrix,Tolerance=>t);
     H.BMbasis = H.BMcoefs;
@@ -200,25 +199,18 @@ nextTDD (TruncDualData,Number) := (H,t) -> nextTDD(H.deg + 1,H,t)
 nextTDD (ZZ,TruncDualData,Number) := (d,H,t) -> (
     R := ring H.Igens;
     S := ring H.hIgens;
-    if H.strategy == DZ then (
-	Rd := polySpace basis(0,d,R);
-	Id := idealBasis(H.Igens,d);
-	H.dBasis = gens orthogonalInSubspace(Id,Rd,t);
-	); 
-    if H.strategy == BM then (
-	dehomog := map(R,S,{1_R} | gens R);
-     	for e from H.deg+1 to d do (
-	    (M,E) := BMmatrix H;
-	    H.BMmatrix = M; H.BMintegrals = E;
-	    H.BMcoefs = numSymKernel(M,Tolerance=>t);
-	    --print(M,H.BMcoefs);
-	    I := basisIndices(last coefficients E*H.BMcoefs, t);
-	    H.BMbasis = submatrix(H.BMcoefs, I);
-	    H.dBasis = if H.syl then dehomog(E*H.BMcoefs) else H.dBasis | E*H.BMcoefs;
-	    if numcols H.BMcoefs == 0 then break;
-	    --print (e, numrows M, numcols M, numcols H.dBasis, dim reduceSpace polySpace H.dBasis);
-  	    );
-    	);
+    dehomog := map(R,S,{1_R} | gens R);
+    for e from H.deg+1 to d do (
+	(M,E) := BMmatrix H;
+	H.BMmatrix = M; H.BMintegrals = E;
+	H.BMcoefs = numSymKernel(M,Tolerance=>t);
+	--print(M,H.BMcoefs);
+	I := basisIndices(last coefficients E*H.BMcoefs, t);
+	H.BMbasis = submatrix(H.BMcoefs, I);
+	H.dBasis = if H.syl then dehomog(E*H.BMcoefs) else H.dBasis | E*H.BMcoefs;
+	if numcols H.BMcoefs == 0 then break;
+	--print (e, numrows M, numcols M, numcols H.dBasis, dim reduceSpace polySpace H.dBasis);
+	);
     H.deg = d;
     H
     )
@@ -277,7 +269,7 @@ truncate (PolySpace, List, ZZ) := (L,ind,d) -> (
     )
 truncate (DualSpace, List, ZZ) := (L,ind,d) -> dualSpace(truncate(L.Space,ind,d),L.BasePoint)
 
-gCorners = method(TypicalValue => Matrix, Options => {Strategy => BM, Tolerance => null, ProduceSB => false})
+gCorners = method(TypicalValue => Matrix, Options => {Tolerance => null, ProduceSB => false})
 gCorners (Point,Ideal) := o -> (p,I) -> gCorners(p,gens I,o)
 gCorners (Point,Matrix) := o -> (p,Igens) -> (
     R := ring Igens;
@@ -290,7 +282,7 @@ gCorners (Point,Matrix) := o -> (p,Igens) -> (
     finalDegree := max(flatten entries Igens / gDegree);
     d := 0;
     dBasis := dBasisReduced := polySpace map(R^1,R^0,0); -- Sylvester truncated dual space
-    TDD := initializeDualData(Igens,true,t,Strategy=>o.Strategy); -- initial parameters for computing truncated duals
+    TDD := initializeDualData(Igens,true,t); -- initial parameters for computing truncated duals
     while d <= finalDegree do (
     	TDD = nextTDD(d,TDD,t);
 	dBasis = polySpace TDD;
@@ -377,6 +369,7 @@ BMmatrix = H -> (
     (M,E,B,Bfull,homogeneous,Seeds) := (H.BMmatrix,H.BMintegrals,H.BMbasis,H.BMcoefs,H.syl,H.Seeds);
     --print(M,E,(numcols B, numrows B),(numcols Bfull, numrows Bfull));
     R := ring Igens;
+    F := coefficientRing R;
     n := numgens R;
     m := numcols Igens;
     snew := numcols B;
@@ -408,7 +401,7 @@ BMmatrix = H -> (
     else M = map(R^(m + s*#npairs),R^0,0);
     (Mnew, Enew) := (matrix{newMEs/first}, matrix{newMEs/last});
     if #newMEs == 0 then (Mnew, Enew) = (map(R^(numrows M),R^0,0),map(R^(numrows E),R^0,0));
-    M = M | Mnew;
+    M = sub(M | Mnew, F);
     E = if homogeneous then Enew else E | Enew;
     (M,E)
     );
@@ -610,15 +603,16 @@ colReduce Matrix := o -> M -> (
 
 --a list of column indices for a basis of the column space of M
 basisIndices = (M, tol) -> (
-    M = new MutableMatrix from sub(M, ultimate(coefficientRing, ring M));
+    M = new MutableMatrix from sub(M, coefficientRing ring M);--sub(M, ultimate(coefficientRing, ring M));
     (m,n) := (numrows M, numcols M);
     i := 0; --row of pivot
     I := new MutableList;
     for j from 0 to n-1 do (
 	if i == m then break;
-	a := i + maxPosition apply(i..m-1, l->(abs M_(l,j)));
+	a := if tol > 0 then i + maxPosition apply(i..m-1, l->(abs M_(l,j)))
+	else i + position(i..m-1, l -> M_(l,j) != 0);
 	c := M_(a,j);
-	if abs c <= tol then continue;
+	if tol > 0 and abs c <= tol then continue;
 	I#(#I) = j;
 	rowSwap(M,a,i);
 	for l from 0 to n-1 do M_(i,l) = M_(i,l)/c; --rowMult(M,i,1/c); is bugged
@@ -741,69 +735,58 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
 
     t := getTolerance(R,opts);
     (depVars,indVars) := getDepIndVars(P, opts);
-    rat := if opts.?Rational then opts.Rational else false;
     -- use the original coefficient field if appropriate, else a rational function field
     F := if #indVars == 0 then coefficientRing R else frac((coefficientRing R)(monoid[indVars]));
     S := F(monoid[depVars]);
     PS := sub(P,S); IS := sub(I,S);
+    pt := apply(gens S, v -> sub(sub(v, S/PS), S));
+    rat := if opts.?Rational then opts.Rational else false;
+    try assert(all(pt, isConstant)) then rat = true else null;
     R' := diffAlg R;
-    -- extend the field only if the point is not specified to be rational
-    kP := if rat then F else toField(S/PS);
-    degreeNops := d -> (
-<<<<<<< HEAD
-	ops := basis(0,d,S);
-    	polys := idealBasis(IS,d);
-    	M' := diff(ops, transpose polys);
-    	M := (map(kP,S/PS)*map(S/PS,S)) M';
-	K := numSymKernel(M,Tolerance=>t);
-    	if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
-	-- Clear denominators
-    	ops = (map(R',R,vars R')*map(R,S)) ops;
-	K = liftColumns(try lift(K,S) then lift(K,S) else sub(K,S),R');
-	ops * K
-    	);
-    L := map(R'^1,R'^0,0);
-    degLimit := if opts.?DegreeLimit then opts.DegreeLimit else infinity;
-    if degLimit != infinity and opts.?Rational and not opts.Rational
-    then L = degreeNops opts.DegreeLimit else (
-	d := 0;
-	Ldim := -1;
-	TDD := null;
-	if rat then (
-	    ISshift := sub(igens, matrix{gens S + apply(p.Coordinates,c->sub(c,S))});
-    	    TDD = truncDualData(gens ISshift,false,t);
-	while Ldim != numcols L and d <= degLimit do (
-	    Ldim = numcols L;
-	    if rat then (
-		TDD = nextTDD(d,TDD,t);
-		L = 
-	    L = setOfNoethOps(degreeNops d,P);
+    ops := null; K := null;
+    if rat then (
+	if m < 0 then m = infinity;
+        p := apply(gens S, v -> sub(sub(v, S/PS), S));
+	igens := sub(gens IS, matrix{gens S + p});
+	H := truncDualData(igens,false,t);
+	DB := map(S^1,S^0,0);
+	d := -1;
+	DBdim := -1;
+	while DBdim != numcols DB and d < m do (
 	    d = d+1;
+	    DBdim = numcols DB;
+	    H = nextTDD(d,H,t);
+	    DB = H.dBasis;
 	    );
-=======
-        ops := basis(0,d,S);
-        polys := sub(idealBasis(I,d, DependentSet => depVars),S);
-        M' := diff(ops, transpose polys);
-        M := (map(kP,S/PS)*map(S/PS,S)) M';
-        if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
-        K := numSymKernel(M,Tolerance => t);
-        -- Clear denominators
-        ops = (map(R',R,vars R')*map(R,S)) ops;
-        K = liftColumns(try lift(K,S) then lift(K,S) else sub(K,S),R');
-        ops * K
-    );
-    L := map(kP^1,kP^0,0);
-    if m >= 0 then L = degreeNops(m) else (
-        d := 0;
-        Ldim := -1;
-        while Ldim != numcols L do (
-            Ldim = numcols L;
-            L = degreeNops d;
-            d = d+1;
-        );
->>>>>>> 297a6b96459f57eea1d76b1e70fcb65b4cb254c6
+	(M,L) := coefficients DB;
+	K = colReduce(L,Tolerance=>t);
+	ops = matrix {apply(flatten entries M, m -> (1_F/sub(diff(m,m),F))*m)};
+    	)
+    else (
+        kP := toField(S/PS);
+	K = map(kP^1,kP^0,0);
+        degreeNops := d -> (
+            ops := basis(0,d,S);
+            polys := sub(idealBasis(I,d, DependentSet => depVars),S);
+            M' := diff(ops, transpose polys);
+            M := (map(kP,S/PS)*map(S/PS,S)) M';
+            if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
+            numSymKernel(M,Tolerance => t)
+	    );
+    	if m >= 0 then K = degreeNops m else (
+            Kdim := -1;
+            while Kdim != numcols K do (
+		m = m+1;
+            	Kdim = numcols K;
+            	K = degreeNops m;
+        	);
+    	    );
+	ops = basis(0,m,S);
 	);
-    setOfNoethOps(L,P)
+    -- Clear denominators
+    ops = (map(R',R,vars R')*map(R,S)) ops;
+    K = liftColumns(try lift(K,S) then lift(K,S) else sub(K,S),R');
+    setOfNoethOps(ops * K,P)
 )
 
 getDepIndVars = true >> opts -> P -> (
@@ -1544,9 +1527,7 @@ p = point matrix{{0_CC,0_CC}}
 q = point matrix{{0_CC,1_CC}}
 --assert(numcols gCorners(p,M) == 2)
 --assert(numcols gCorners(q,M) == 1)
-LDZ = reduceSpace truncatedDual(p,M,5,Strategy=>DZ)
-LBM = reduceSpace truncatedDual(p,M,5,Strategy=>BM)
-assert(dim LDZ == dim LBM)
+LBM = reduceSpace truncatedDual(p,M,5)
 ///
 
 doc ///
@@ -1872,55 +1853,6 @@ doc ///
 	       See also @TO Tolerance@.
 ///
 
-doc ///
-     Key
-          "Strategy (NoetherianOperators)"
-	  [gCorners,Strategy]
-     Headline
-          optional argument for dual space algorithm
-     Description
-          Text
-	       The two available algorithm choices are
-
-	       @UL {
-		   {TOH "BM"},
-		   {TOH "DZ"}
-		   }@
-
-	       Both should produce roughly 
-	       the same output, but there may be differences in performance.  Generally @TT "BM"@ should be more efficient and is the default, 
-	       but @TT "DZ"@ is left as an option to the user.
-
-///
-
-doc ///
-     Key
-	  DZ
-     Headline
-          Macaulay matrix algorithm for dual space computation
-     Description
-          Text
-	       This algorithm is a strategy for computing the truncated dual space of an ideal I at degree d.
-	       A matrix is formed with a column for each monomial in the ring of I of degree at most d, and a row for each
-	       monomial multiple of a generator of I which has any terms of degree d or less, storing its coefficients.
-	       Any vector in the kernel of this matrix is the coeffeicient vector of an element of the dual space.
-	  
-	       See: B.H. Dayton and Z. Zeng. Computing the multiplicity structure in solving polynomial systems. In M. Kauers,
-	       editor, @EM "Proceedings of the 2005 International Symposium on Symbolic and Algebraic Computation"@, pages 116-123. ACM, 2005.
-///
-
-doc ///
-     Key
-	  BM
-     Headline
-          Mourrain algorithm for dual space computation
-     Description
-          Text
-	       The Mourrain algorithm is a strategy for computing the truncated dual space of an ideal I at degree d.
-	  
-	       See: B. Mourrain. Isolated points, duality and residues. @EM "J. Pure Appl. Algebra"@, 117/118:469-493, 1997. 
-	       Algorithms for algebra (Eindhoven, 1996).
-///
 
 doc ///
      Key
@@ -2256,8 +2188,7 @@ M = matrix {{x^2-x*y^2,x^3}}
 --M = matrix {{x^9 - y}}
 p = point matrix{{0_CC,0_CC}}
 q = point matrix{{1_CC,0_CC}}
-L = reduceSpace truncatedDual(M,p,6,Strategy=>DZ)
-L = reduceSpace truncatedDual(M,p,6,Strategy=>BM)
+L = reduceSpace truncatedDual(M,p,6)
 --shiftDual(L,q,8)
 G = matrix{{x^2,x*y^2,y^4}}
 socles G
@@ -2268,7 +2199,6 @@ standardBasis(M)
 dualHilbert(M,Truncate=>25)
 dualBasis(M)
 dualInfo(M)
-dualInfo(M, Strategy=>DZ)
 dualInfo(M,Point=>{0.01,0.01})
 
 -- small example
