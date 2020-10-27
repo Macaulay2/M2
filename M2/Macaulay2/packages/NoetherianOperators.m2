@@ -41,16 +41,15 @@ export {
     "colReduce",
     "newGCorners",
 
-    "SetOfNoethOps",
-    "setOfNoethOps",
     "DiffOp",
     "diffOp",
 
-    --Data type keys
+    --Data type keys OLD
     "Ops",
     "Prime",
+    -- OLD
 
-    "diffAlg",
+    "diffAlg", -- OLD
     "noetherianOperators",
     "numericalNoetherianOperators",
     "DependentSet",
@@ -92,7 +91,7 @@ protect \ {
 load "NoetherianOperators/pointSampling.m2"
 --
 -----  Noetherian operator data structures
---
+-- TODO remove this
 SetOfNoethOps = new Type of HashTable;
 SetOfNoethOps / Function := (N, f) -> (entries N) / f;
 SetOfNoethOps#{Standard,AfterPrint} = x -> (
@@ -133,13 +132,31 @@ sort SetOfNoethOps := opts -> N -> (
     new SetOfNoethOps from applyPairs(N, (i,j) -> if i === symbol Ops then (i, sort j) else (i,j))
 )
 
-dualSpace SetOfNoethOps := N -> (
-    R' := ring gens N;
-    if N#Point === null then error("needs a Point");
-    R := coefficientRing R';
-    R'toR := map(R,R',vars R);
-    dualSpace(R'toR (gens N), N#Point)
-    )
+-- dualSpace SetOfNoethOps := N -> (
+--     R' := ring gens N;
+--     if N#Point === null then error("needs a Point");
+--     R := coefficientRing R';
+--     R'toR := map(R,R',vars R);
+--     dualSpace(R'toR (gens N), N#Point)
+--     )
+
+-- Create a dual space from a list of Noetherian operators
+-- Caveat: if Noetherian operators have non-constant coefficients,
+--          behavior is undefined.
+dualSpace (List, Point) := (L, p) -> (
+    gens := matrix{ L / (op -> keys op / (k -> op#k * k)) / sum };
+    dualSpace(gens, p)
+)
+/// TEST
+R = CC[x,y]
+foo1 = new DiffOp from {x => 12, x^2*y => 3}
+foo2 = new DiffOp from {1_R => 4, x*y => 4}
+pt = point{{1_CC,2}}
+a = dualSpace({foo1,foo2}, pt)
+b = dualSpace(matrix{{12*x + 3*x^2*y, 4*x*y + 4}}, pt)
+assert(gens a.Space == gens b.Space)
+assert(point a == point b)
+///
 
 -- Maybe not needed?
 NoethOp = new Type of HashTable;
@@ -161,13 +178,15 @@ listFactorial = L -> product(L, l->l!)
 truncatedDual = method(Options => {Strategy => BM, Tolerance => null})
 truncatedDual (Point,Ideal,ZZ) := o -> (p,I,d) -> (
     depVars := gens (ring I);
-    dualSpace numNoethOpsAtPoint(I,p, DependentSet => depVars, DegreeLimit => d, Tolerance => o.Tolerance)
+    L := numNoethOpsAtPoint(I,p, DependentSet => depVars, DegreeLimit => d, Tolerance => o.Tolerance);
+    dualSpace(L, p)
 )
 
 zeroDimensionalDual = method(TypicalValue => DualSpace, Options => {Strategy => BM, Tolerance => null})
 zeroDimensionalDual (Point,Ideal) := o -> (p,I) -> (
     depVars := gens (ring I);
-    dualSpace numNoethOpsAtPoint(I,p, DependentSet => depVars, Tolerance => o.Tolerance)
+    L := numNoethOpsAtPoint(I,p, DependentSet => depVars, Tolerance => o.Tolerance);
+    dualSpace(L, p)
 )
 ----------------------------------
 
@@ -355,7 +374,7 @@ hilbertFunction(List,DualSpace) := (LL,L) -> (
     apply(LL, d->(if h#?d then h#d else 0))
     )
 hilbertFunction(ZZ,DualSpace) := (d,L) -> first hilbertFunction({d},L)
-hilbertFunction(SetOfNoethOps) := N -> hilbertFunction(dualSpace N)
+-- hilbertFunction(SetOfNoethOps) := N -> hilbertFunction(dualSpace N)
 
 localHilbertRegularity = method(TypicalValue => ZZ, Options=>{Tolerance => null})
 localHilbertRegularity(Point, Ideal) := o -> (p,I) -> localHilbertRegularity(p,gens I,o)
@@ -904,6 +923,8 @@ numNoethOpsAtPoint (Ideal, Point) := List => true >> opts -> (I, p) -> numNoethO
 numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     tol := if not opts.?Tolerance then defaultT(ring I) else opts.Tolerance;
     degLim := if not opts.?DegreeLimit then -1 else opts.DegreeLimit;
+    -- if point is not in the correct ring, try to promote
+    p = promote(p, coefficientRing ring I);
     R := ring I;
     (depVars,indVars) := getDepIndVars(I,opts);
     S := (coefficientRing R)(monoid[depVars]);
@@ -992,8 +1013,10 @@ numericalNoetherianOperators(Ideal) := List => true >> opts -> (I) -> (
     R := CC monoid S;
     J := sub(I,R);
 
+
+
     nopsTemplate := numNoethOpsAtPoint(J, goodPoint, opts, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => noethDegLim);
-    
+    -- TODO: cache found pointlist in ideal
     nopsTemplate / (tmpl -> interpolateFromTemplate(I, tmpl, opts, Tolerance => tol, Sampler => sampler))
 )
 
@@ -1548,7 +1571,7 @@ assert(hilbertFunction({0,1,2,3,4}, D1) == {1,2,1,1,1})
 I2 = ideal{x^2,y^2}
 D2 = zeroDimensionalDual(origin R, I2)
 assert(hilbertFunction({0,1,2,3,4}, D2) == {1,2,1,0,0})
-D2' = zeroDimensionalDual(point matrix{{1,1}}, I2)
+D2' = zeroDimensionalDual(point matrix{{1_CC,1}}, I2)
 assert(dim D2' == 0)
 ///
 
