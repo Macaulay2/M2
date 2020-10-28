@@ -33,8 +33,9 @@ prep := pkg -> (
 
 onecheck = (n, pkg, usermode) -> (
      (filename, lineno, teststring) := pkg#"test inputs"#n;
-     stderr << "-- running test " << n << " of package " << pkg << " on line " << lineno << " in file " << filename << endl;
-     stderr << "--    rerun with: check_" << n << " \"" << pkg << "\"" << endl;
+     stderr << "-* running test " << n << " of package " << pkg << " in file:" << endl;
+     stderr << "   " << filename << ":" << lineno << ":1:" << endl;
+     stderr << "   rerun with: check_" << n << " \"" << pkg << "\" *-" << endl;
      runString(teststring, pkg, usermode);
      )
 
