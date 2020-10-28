@@ -13,7 +13,8 @@ TEST = method()
 TEST List   := testlist   -> TEST \ testlist
 TEST String := teststring -> (
     n := currentPackage#"test number";
-    currentPackage#"test inputs"#n = (currentFileName, currentLineNumber(),
+    currentPackage#"test inputs"#n = (
+        minimizeFilename currentFileName, currentLineNumber(),
         concatenate(sourceFileStamp(), newline, teststring));
     currentPackage#"test number" = n + 1;)
 -- TODO: support test titles
