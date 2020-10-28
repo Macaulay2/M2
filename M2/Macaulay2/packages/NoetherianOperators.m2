@@ -1369,8 +1369,11 @@ getNoetherianOperatorsHilb(I)
 ///
 
 -- computes the annihilator ideal of a polynomial F in a polynomial ring 
--- Input: a polynomial. Output: a zero-dimension ideal that corresponds with the annihilator
-polynomialAnn = (F) -> (
+-- Input: a DiffOp. Output: a zero-dimension ideal that corresponds with the annihilator
+polynomialAnn = (F') -> (
+    -- change the DiffOp to a RingElement. This assumes that
+    -- coefficients are in the coefficient ring.
+    F := keys F' / (k -> F'#k * k) // sum;
     deg := (degree F)_0;
     S := ring F;
     allMons := basis(1, deg + 1, S);
@@ -1393,9 +1396,28 @@ vectorAnn = (V) -> (
 getIdealFromNoetherianOperators = method()
 getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     R := ring P;
-    if ring first L != R then error "expected Noetherian operators and prime in same ring";
+    if ring first L =!= R then error "expected Noetherian operators and prime in same ring";
     indVars := support first independentSets P;
     FF := frac(R/P);
+    S := FF monoid R;
+
+    mapDiff := map(S,R, vars S);
+    mapCoef := map(coefficientRing S, R);
+    V := L / (op -> applyPairs(op, (a,b) -> (mapDiff a, promote(mapCoef b,S))));
+
+    I := vectorAnn(V);
+    R' := R monoid R;
+    coefs := liftColumnsPunctualHilbert(lift(last coefficients gens I, coefficientRing S), R);
+    mons := (map(R', S, vars R'))(first coefficients gens I);
+    I' := ideal(mons * coefs);
+
+    X := R'/(I'+P);
+    Lmap := apply(numgens R, i -> R_i => promote(R_i, R') + R'_i);
+    mapRtoX := map(X, R, Lmap);
+    Q := ker mapRtoX;
+    for v in indVars do 
+      Q = saturate(Q, ideal(v));
+    Q
     --R' := ring L_0;
     --if not R' === diffAlg(R) then error "noetherian operators must be in the diffAlg of the prime";
     --S := FF[gens R];
@@ -1408,7 +1430,7 @@ getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     --mapRtoX := map(X, R, Lmap);
     --Q := ker mapRtoX;
     --for v in indVars do 
-    --	Q = saturate(Q, ideal(v));
+    --  Q = saturate(Q, ideal(v));
     --Q
 )
 /// TEST
@@ -1419,6 +1441,7 @@ P = radical I
 getIdealFromNoetherianOperators(L,P)
 -- TODO add asserts
 ///
+
 
 getIdealFromNoetherianOperators(SetOfNoethOps) := N -> (
     if not N.?Prime then error"expected symbolic Noetherian operators";
@@ -2455,7 +2478,7 @@ assert( Q == ideal(3*x_1^2*x_2^2-x_2^3*x_3-x_1^3*x_4-3*x_1*x_2*x_3*x_4+2*x_3^2*x
       ^2-x_1^4+6*x_1^2*x_2*x_3+3*x_2^2*x_3^2-8*x_1*x_3^2*x_4) );
 elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix")
 L = elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
-Q' = getIdealFromNoetherianOperators(L)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2467,7 +2490,7 @@ R=QQ[x_1,x_2,x_3,x_4];
 Q=ideal{x_1^2,x_1*x_2,x_1*x_3,x_1*x_4-x_3^2+x_1,x_3^2*x_4-x_2^2,x_3^2*x_4-x_3^2-x_2*x_3+2*x_1};
 elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix")
 L = elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
-Q' = getIdealFromNoetherianOperators(L)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2483,7 +2506,7 @@ M=ideal{x_1^2,x_2^2,x_3^2,x_4^2};
 Q=joinIdeals(P,M)
 elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix")
 L = elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
-Q' = getIdealFromNoetherianOperators(L)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2496,7 +2519,7 @@ R = QQ[x_1, x_2, x_3]
 Q = ideal(x_1^2, x_2^2, x_1-x_2*x_3)
 elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix")
 L = elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
-Q' = getIdealFromNoetherianOperators(L)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2520,14 +2543,14 @@ isPrime Q2
 P2 = radical Q2 -- it is equal to (x_1, x_2, x_3)
 elapsedTime noetherianOperators(Q2, Strategy => "MacaulayMatrix")
 L = elapsedTime noetherianOperators(Q2, Strategy => "PunctualHilbert")
-Q2' = getIdealFromNoetherianOperators(L)
+Q2' = getIdealFromNoetherianOperators(L, Q2)
 Q2 == Q2'
 ---- the Noetherian operators of Q3
 isPrime Q3
 P3 = radical Q3 -- it is equal to (x2, x3, x4)
 elapsedTime noetherianOperators(Q3, Strategy => "MacaulayMatrix")
 L = elapsedTime noetherianOperators(Q3, Strategy => "PunctualHilbert")
-Q3' = getIdealFromNoetherianOperators(L)
+Q3' = getIdealFromNoetherianOperators(L, Q2)
 Q3 == Q3'
 ---- the Noetherian operators of Q4
 isPrime Q4
@@ -2535,7 +2558,7 @@ P4 = radical Q4 -- it is equal to (x1, x2, x3, x4)
 elapsedTime noetherianOperators(Q4, Strategy => "MacaulayMatrix")
 elapsedTime noetherianOperators(Q4, Strategy => "Hybrid")
 L = elapsedTime noetherianOperators(Q4, Strategy => "PunctualHilbert")
-Q4' = getIdealFromNoetherianOperators(L)
+Q4' = getIdealFromNoetherianOperators(L, Q2)
 Q4 == Q4'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2549,7 +2572,7 @@ Q = ideal(random(3, R), random(2, R), random(2, R), random(4, R))
 assert(dim Q == 0)
 elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix")
 L = elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
-Q' = getIdealFromNoetherianOperators(L)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2562,7 +2585,7 @@ R = QQ[x_1,x_2,x_3]
 Q = ideal(x_1^2, x_2^2, x_3^2, x_1*x_2 + x_1*x_3 +x_2*x_3)
 elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix")
 L = elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
-Q' = getIdealFromNoetherianOperators(L)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2579,7 +2602,7 @@ primDec = primaryDecomposition J
 Q = primDec_0
 elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix")
 L = elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
-Q' = getIdealFromNoetherianOperators(L)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2594,7 +2617,7 @@ n=6
 Q=mm^n
 elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix")
 L = elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
-Q' = getIdealFromNoetherianOperators(L)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2607,7 +2630,7 @@ R = QQ[x_1,x_2,x_3]
 Q = ideal(x_1^2,x_2^2,x_3^2)
 elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix")
 L = elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
-Q' = getIdealFromNoetherianOperators(L)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
@@ -2624,7 +2647,7 @@ J = I_* / (f -> f^k) // ideal
 L' = elapsedTime noetherianOperators(J,I, Strategy => "MacaulayMatrix")
 elapsedTime Q = first select(primaryDecomposition J, q -> radical q == I)
 L = elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
-Q' = getIdealFromNoetherianOperators(L)
+Q' = getIdealFromNoetherianOperators(L, radical Q)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
