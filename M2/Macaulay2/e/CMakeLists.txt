@@ -113,7 +113,6 @@ set(CPPONLYFILES
   interface/monomial-ideal.cpp
   interface/mutable-matrix.cpp
   interface/polyroots.cpp
-  interface/polyroots.hpp # TODO: should this become .h?
   interface/ring.cpp
   interface/ringmap.cpp
   )

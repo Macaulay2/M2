@@ -891,6 +891,5 @@ CFList convertToCFList(const Matrix &M, bool inExtension)
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e x-factor.o "
 // indent-tabs-mode: nil
 // End:

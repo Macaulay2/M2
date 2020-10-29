@@ -13,7 +13,7 @@ typedef struct RingElement RingElement;
 #  endif
 
 /**
-   Polynomial GCD and factorization via Factory
+   Polynomial GCD and factorization via Factory and MPSolve
  */
 
 #  if defined(__cplusplus)
@@ -46,11 +46,10 @@ M2_arrayintOrNull rawIdealReorder(const Matrix *M);
 
 engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M);
 
+/* uses MPSolve */
 engine_RawRingElementArrayOrNull rawRoots(const RingElement *g,
                                           long prec,
                                           int unique);
-
-void rawDummy(void);
 
 #  if defined(__cplusplus)
 }

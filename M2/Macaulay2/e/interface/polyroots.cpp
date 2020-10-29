@@ -1,13 +1,17 @@
-#include "polyroots.hpp"
+#include "interface/factory.h"
+#include "interface/ring.h"
 
 #include <mps/mps.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <gmp.h>
-#include <mpfr.h>
-#include <string.h>
 
-#include "engine.h" // TODO: move IM2_Ring_CCC to interface/ring.h
+#include "aring-CCC.hpp"
+#include "aring.hpp"
+#include "error.h"
+#include "monoid.hpp"
+#include "polyring.hpp"
+#include "relem.hpp"
+#include "ring.hpp"
+#include "ringelem.hpp"
 
 #define abs(x) (((x) < 0) ? -(x) : (x))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
