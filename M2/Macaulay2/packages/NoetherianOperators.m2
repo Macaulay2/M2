@@ -764,6 +764,21 @@ ring ZeroDiffOp := D -> error"the zero operator has no ring";
 -- new ZeroDiffOp of Thing from Thing := (DD, TT, x) -> error"not implemented"
 -- new ZeroDiffOp of Thing := (DD, TT) -> error"not implemented"
 
+-- Type used for interpolated differential operators
+-- As in DiffOp, each key corresponds to a monomial,
+-- but each value is the numerator and denominator of a rational function
+InterpolatedDiffOp = new Type of DiffOp
+new InterpolatedDiffOp from List := (TT, L) -> hashTable L
+expression InterpolatedDiffOp := D -> 
+    rsort(keys D, MonomialOrder => Lex) / 
+    (k -> ((expression D#k#0)/(expression D#k#1)) * if k == 1 then expression(1) else addDsymbol(k)) //
+    sum
+net InterpolatedDiffOp := D -> net expression D
+evaluate (InterpolatedDiffOp, Matrix) := (D, p) -> diffOp(applyValues(D, (n,d) -> 
+    (evaluate(matrix{{n}},p))_(0,0)/(evaluate(matrix{{d}},p))_(0,0)))
+evaluate (InterpolatedDiffOp, Point) := (D, p) -> evaluate(D, matrix p)
+
+
 /// TEST
 R = QQ[x,y,z]
 foo = diffOp{x => y, y=>2*x}
@@ -1059,6 +1074,7 @@ numericalNoetherianOperators(Ideal, Point) := SetOfNoethOps => true >> opts -> (
     S := ring I;
     if ancestor(InexactField, class coefficientRing S) then numNoethOpsAtPoint(I, pt, opts)
     else if coefficientRing S === QQ then (
+        -- TODO this shouldn't be hard-coded
         R := CC monoid S;
         numNoethOpsAtPoint(sub(I,R), pt, opts, DependentSet => (opts.DependentSet / (x -> sub(x, R))))
     )
@@ -1066,14 +1082,26 @@ numericalNoetherianOperators(Ideal, Point) := SetOfNoethOps => true >> opts -> (
 )
 numericalNoetherianOperators(Ideal, Matrix) := SetOfNoethOps => true >> opts -> (I,pt) -> numericalNoetherianOperators(I, point pt, opts)
 
+///TEST
+R = QQ[x,y,t]
+I = ideal(x^2, y^2 - t*x)
+p = point{{0_CC,0, 3}}
+nnops = numericalNoetherianOperators(I, DependentSet => {x,y})
+enops = nnops / (op -> evaluate(op, point{{0,0,3_CC}}))
+
+
+numericalNoetherianOperators(I,p, DependentSet => {x,y})
+///
+
+
 interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
     ptList := new List;
     opList := new List;
-    (mon,coef) := coefficients(tmpl);
-    S := coefficientRing ring tmpl;
+    -- (mon,coef) := coefficients(tmpl);
+    S := ring tmpl;
     interpTol := if not opts.?InterpolationTolerance then defaultT(CC) else opts.InterpolationTolerance;
     sampler := if opts.?Sampler then opts.Sampler else (n,Q) -> first bertiniSample(n, first components bertiniPosDimSolve(Q));
-    nops := for m in flatten entries mon list (
+    nops := keys tmpl / (m -> (
         d := 0;
         result := ("?","?");
         while(not opts.?InterpolationDegreeLimit or d <= opts.InterpolationDegreeLimit) do (
@@ -1086,19 +1114,19 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
             opList = opList | newNops#0;
             ptList = ptList | newNops#1;
             
+            --liftedCoeffs := take(opList, neededPoints)  /
+            --    (op -> lift(op#m, ultimate(coefficientRing, ring op)));
             liftedCoeffs := take(opList, neededPoints)  /
-                coefficient_m /
-                (i -> lift(i, ultimate(coefficientRing, ring i)));
-            neededPtList := take(toList ptList, neededPoints);
+                (op -> lift(op#m, ultimate(coefficientRing, ring op)));
+            neededPtList := take(ptList, neededPoints);
             try result = rationalInterpolation(neededPtList, liftedCoeffs, numBasis, denBasis, Tolerance => interpTol) then break
                 else d = d+1;
         );
         result = result / (j -> cleanPoly(opts.Tolerance, j));
-        (result, m)
-    );
+        (m => result)
+    ));
     if debugLevel > 0 then <<"Done interpolating from template "<<tmpl<<endl;
-    formatNoethOps nops
-    
+    new InterpolatedDiffOp from nops
 )
 
 -- Create new specialized Noeth op at a random point using tmpl as a template
@@ -1110,11 +1138,12 @@ newSpecializedNop = true >> opts -> (I, sampler, tmpl,n) -> (
     R := ring I;
     R' := ring tmpl;
 
-    (mon,coef) := coefficients tmpl;
-    bd := (map(coefficientRing R', R', vars coefficientRing R'))(mon);
-    maxdeg := flatten entries bd / sum @@ degree // max;
-    bx := basis(0, maxdeg-1, R);
-    M := diff(bd, transpose sub(gens I ** bx, ring bd));
+    -- (mon,coef) := coefficients tmpl;
+    -- bd := (map(coefficientRing R', R', vars coefficientRing R'))(mon);
+    bd := keys tmpl;
+    maxdeg := bd / sum @@ degree // max;
+    bx := basis(0, maxdeg-1, R');
+    M := diff(matrix{bd}, transpose (sub(gens I, R') ** bx));
 
     opPts := for pt in pts list (
         M' := evaluate(M, pt);
@@ -1124,13 +1153,15 @@ newSpecializedNop = true >> opts -> (I, sampler, tmpl,n) -> (
             if debugLevel > 0 then <<"newSpecializedNop: bad point, trying again"<<endl;
             continue
         )
-        else {(mon*colReduce(K, Tolerance => opts.Tolerance))_(0,0), pt}
+        -- else {diffOp(matrix{bd}*colReduce(K, Tolerance => opts.Tolerance))_(0,0), pt}
+        else {first matrixToDiffOps(promote(colReduce(K, Tolerance => opts.Tolerance), ring tmpl), matrix{bd}), pt}
     );
     if #opPts < n then opPts = opPts | newSpecializedNop(I, sampler, tmpl, n-#opPts, opts);
     return transpose opPts;
 )
 
 
+-- TODO maybe not needed anymore
 formatNoethOps = xs -> fold(plus,
     expression 0,
     apply(xs, x -> (expression x#0#0) / (expression x#0#1) * x#1)
