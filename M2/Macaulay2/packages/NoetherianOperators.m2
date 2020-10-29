@@ -16,6 +16,7 @@ newPackage(
      },
      Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
      PackageExports => {"Truncations", "Bertini"},
+     PackageImports => {"Dmodules"},
      AuxiliaryFiles => true,
      DebuggingMode => true
 )
@@ -671,6 +672,7 @@ diffAlg(Ideal,Ring) := (P,R) -> (
 -- DiffOp is a type of hash table, which contains one key, Op. This is to make inheritance with NoethOp work.
 -- The value of Op is a HashTable, with keys corresponding to partial monomials, 
 --  and values corresponding to coefficients.
+-- Constructors
 DiffOp = new Type of HashTable
 DiffOp.synonym = "differential operator"
 new DiffOp from HashTable := (DD,H) -> (
@@ -687,6 +689,31 @@ diffOp HashTable := H -> (
     else new DiffOp from H'
 )
 diffOp List := L -> diffOp hashTable L
+-- Create DiffOp from Weyl algebra element. 
+-- Output will be in ring R and R must contain the non
+diffOp (RingElement, Ring) := (f,R) -> (
+    R' := ring f;
+    createDpairs R';
+    (mon,coef) := coefficients(f, Variables => R'.dpairVars#1);
+    -- Create the map from R' to R that maps x => x and dx => x
+    rules := apply(R'.dpairVars#1, R'.dpairVars#0, (dx, x) -> dx => sub(x,R)) | apply(R'.dpairVars#0, x -> x => sub(x,R));
+    liftMap := map(R,R', rules);
+    diffOp apply(flatten entries liftMap(mon), flatten entries liftMap(coef), identity)
+)
+diffOp RingElement := f -> (
+    R' := ring f;
+    if not R'.?cache then R'.cache = new CacheTable;
+    -- TODO maybe makeWA should create this key?
+    if not R'.cache#?"preWA" then (
+        createDpairs R';
+        R'.cache#"preWA" = (coefficientRing R')(monoid[(R'.dpairVars#0)]);
+    );
+    R := R'.cache#"preWA";
+    diffOp(f, R)
+)
+
+
+
 -- Vector space operations
 DiffOp + DiffOp := (D1, D2) -> diffOp merge(D1, D2, (a,b) -> a+b)
 RingElement * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
@@ -749,6 +776,12 @@ assert(foo(x^2) == 2*x*y)
 assert(foo3 - foo == diffOp{x => -y, 1_R => 0, y => -2*x})
 assert(foo2 > foo)
 assert(instance(foo3, ZeroDiffOp))
+-- needsPackage "Dmodules"
+R' = makeWA(R)
+wa = diffOp(x^2*dx - dx^2 + dy^3 + (x-3)*dx)
+use ring wa
+dop = diffOp({x => x^2+x-3, x^2 => -1, y^3 => 1})
+assert(dop == wa)
 ///
 
 -- TODO fix
