@@ -13,7 +13,8 @@ TEST = method()
 TEST List   := testlist   -> TEST \ testlist
 TEST String := teststring -> (
     n := currentPackage#"test number";
-    currentPackage#"test inputs"#n = (currentFileName, currentLineNumber(),
+    currentPackage#"test inputs"#n = (
+        minimizeFilename currentFileName, currentLineNumber(),
         concatenate(sourceFileStamp(), newline, teststring));
     currentPackage#"test number" = n + 1;)
 -- TODO: support test titles
@@ -32,8 +33,9 @@ prep := pkg -> (
 
 onecheck = (n, pkg, usermode) -> (
      (filename, lineno, teststring) := pkg#"test inputs"#n;
-     stderr << "-- running test " << n << " of package " << pkg << " on line " << lineno << " in file " << filename << endl;
-     stderr << "--    rerun with: check_" << n << " \"" << pkg << "\"" << endl;
+     stderr << "-* running test " << n << " of package " << pkg << " in file:" << endl;
+     stderr << "   " << filename << ":" << lineno << ":1:" << endl;
+     stderr << "   rerun with: check_" << n << " \"" << pkg << "\" *-" << endl;
      runString(teststring, pkg, usermode);
      )
 
