@@ -3,10 +3,19 @@
 #ifndef _polyquotient_hpp_
 #define _polyquotient_hpp_
 
-#include <iostream>
+#include "engine-includes.hpp"
+
 #include "poly.hpp"
-#include "monideal.hpp"
+#include "polyring.hpp"
 #include "qring.hpp"
+#include "ringelem.hpp"
+
+class FreeModule;
+class GBComputation;
+class Ring;
+class buffer;
+class gbvector;
+struct RingMap;
 
 /**
  * \ingroup polynomialrings

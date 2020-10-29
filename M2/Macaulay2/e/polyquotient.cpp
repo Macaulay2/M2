@@ -2,15 +2,18 @@
 
 #include "polyquotient.hpp"
 
+#include "buffer.hpp"
+#include "comp-gb.hpp"
+#include "error.h"
 #include "interface/factory.h"
-#include "intarray.hpp"
-#include "polyring.hpp"
 #include "matrix-con.hpp"
 #include "matrix.hpp"
-#include "montableZZ.hpp"
-#include "montable.hpp"
-#include "comp-gb.hpp"
+#include "monoid.hpp"
+#include "polyring.hpp"
 #include "relem.hpp"
+#include "ring.hpp"
+
+struct RingMap;
 
 PolyRingQuotient::~PolyRingQuotient() {}
 #if 0
@@ -162,12 +165,12 @@ ring_elem PolyRingQuotient::invert(const ring_elem f) const
       const RingElement *u1;
       const RingElement *v1;
       const RingElement *ret = rawExtendedGCDRingElement(f1, g1, &u1, &v1);
-      if (ret == NULL)
+      if (ret == nullptr)
         {
-          // one reason this might return NULL is if the coefficient ring is not
+          // one reason this might return nullptr is if the coefficient ring is not
           // ZZ/n, ZZ, or QQ
           // now what do we do?
-          // we can't return NULL
+          // we can't return nullptr
           INTERNAL_ERROR("ring element gcd computation failed");
         }
       return u1->get_value();
@@ -213,14 +216,14 @@ GBComputation *PolyRingQuotient::make_gb(const ring_elem g) const
                                               /* , max_reduction_count */
                                               );
   G->set_stop_conditions(false,
-                         NULL,
+                         nullptr,
                          -1,
                          -1,  // syzygy limit
                          -1,
                          -1,
                          -1,
                          false,
-                         NULL);
+                         nullptr);
 
   G->start_computation();
   return G;
@@ -349,14 +352,14 @@ void PolyRingQuotient::syzygy(const ring_elem a,
                                               /* , max_reduction_count */
                                               );
   G->set_stop_conditions(false,
-                         NULL,
+                         nullptr,
                          -1,
                          1,  // syzygy limit
                          -1,
                          -1,
                          -1,
                          false,
-                         NULL);
+                         nullptr);
   G->start_computation();
   const Matrix *s = G->get_syzygies();
 
