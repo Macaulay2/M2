@@ -1,11 +1,13 @@
-// Copyright 1994-2002 by Michael E. Stillman
+// Copyright 1994-2020 by Michael E. Stillman
 
-#include "style.hpp"
-#include "mem.hpp"
-#include "hash.hpp"
-#include "poly.hpp"
-
-#include "aring-glue.hpp"
+#include "aring-glue.hpp"    // for initializeRationalRing
+#include "engine-exports.h"  // for M2_tostring, M2_string
+#include "error.h"           // for error_message
+#include "hash.hpp"          // for MutableEngineObject
+#include "mem.hpp"           // for doubles, doubling_stash
+#include "poly.hpp"          // for PolyRing
+#include "rand.h"            // for rawRandomInitialize
+#include "style.hpp"         // for GEOHEAP_SIZE
 
 unsigned int MutableEngineObject::mNextMutableHashValue = 13;
 
@@ -59,6 +61,7 @@ void IM2_initialize()
  */
 
 M2_string IM2_last_error_message() { return M2_tostring(error_message()); }
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

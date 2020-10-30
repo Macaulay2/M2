@@ -7,6 +7,7 @@
 #include "varpower.hpp"
 #include "ringmap.hpp"
 #include "polyring.hpp"
+#include "monoid.hpp"
 
 Tower::~Tower() {}
 bool Tower::initialize(long charac0,

@@ -12,6 +12,8 @@
 // promote needs ring.hpp.  After moving promote out, remove it here!
 #include "ring.hpp"
 
+#include "rand.h"
+
 namespace M2 {
 /**
    @ingroup rings

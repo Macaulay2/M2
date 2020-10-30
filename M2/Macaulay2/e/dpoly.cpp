@@ -4,6 +4,7 @@
 #include <sstream>
 #include <cassert>
 #include "ZZ.hpp"
+#include "rand.h"
 
 #include <vector>
 #define DEBUGGCDno

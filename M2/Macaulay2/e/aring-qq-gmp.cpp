@@ -2,6 +2,7 @@
 
 #include "aring-qq-gmp.hpp"
 #include "ringmap.hpp"
+#include "rand.h"
 
 #include <iostream>
 namespace M2 {

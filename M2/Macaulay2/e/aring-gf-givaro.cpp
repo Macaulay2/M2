@@ -2,8 +2,9 @@
 
 #include "aring-gf-givaro.hpp"
 #include "error.h"
-
+#include "rand.h"
 #include "ringmap.hpp"
+#include "monoid.hpp"
 
 // Uncomment the following line to see debugging output
 //#define DEBUG_GF

@@ -8,6 +8,7 @@
 #include "buffer.hpp"
 #include "ringelem.hpp"
 #include "ringmap.hpp"
+#include "rand.h"
 
 class RingMap;
 

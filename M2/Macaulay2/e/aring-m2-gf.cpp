@@ -7,7 +7,8 @@
 #include "polyring.hpp"
 #include "aring-m2-gf.hpp"
 #include "ringmap.hpp"
-
+#include "rand.h"
+#include "monoid.hpp"
 #include "interrupted.hpp"
 
 extern "C" void dringelem(const Ring *R, const ring_elem f);
