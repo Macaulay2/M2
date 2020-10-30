@@ -44,6 +44,7 @@ export {
 
     "DiffOp",
     "diffOp",
+    "normalize",
 
     --Data type keys OLD
     "Ops",
@@ -179,14 +180,16 @@ listFactorial = L -> product(L, l->l!)
 truncatedDual = method(Options => {Strategy => BM, Tolerance => null})
 truncatedDual (Point,Ideal,ZZ) := o -> (p,I,d) -> (
     depVars := gens (ring I);
-    L := numNoethOpsAtPoint(I,p, DependentSet => depVars, DegreeLimit => d, Tolerance => o.Tolerance);
+    t := getTolerance(ring first coordinates p,o);
+    L := numNoethOpsAtPoint(I,p, DependentSet => depVars, DegreeLimit => d, Tolerance => t);
     dualSpace(L, p)
 )
 
 zeroDimensionalDual = method(TypicalValue => DualSpace, Options => {Strategy => BM, Tolerance => null})
 zeroDimensionalDual (Point,Ideal) := o -> (p,I) -> (
     depVars := gens (ring I);
-    L := numNoethOpsAtPoint(I,p, DependentSet => depVars, Tolerance => o.Tolerance);
+    t := getTolerance(ring first coordinates p,o);
+    L := numNoethOpsAtPoint(I,p, DependentSet => depVars, Tolerance => t);
     dualSpace(L, p)
 )
 ----------------------------------
@@ -750,6 +753,8 @@ toString DiffOp := D -> toString expression D
 -- other useful functions
 ring DiffOp := D -> ring first keys D
 substitute (DiffOp, Ring) := (D,R) -> applyPairs(D, (k,v) -> sub(k, R) => sub(v,R))
+normalize = method();
+normalize DiffOp := D -> 1/(sub( D#(first sort keys D), coefficientRing ring D)) * D
 --right R action TODO
 
 -- instances of ZeroDiffOp are differential operators that
@@ -996,9 +1001,10 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     (depVars,indVars) := getDepIndVars(I,opts);
     S := (coefficientRing R)(monoid[depVars]);
     subs := matrix{apply(numgens R, i->(
-        if member(R_i,depVars) then R_i else p_(0,i)
+        if member(R_i,depVars) then R_i+p_(0,i) else p_(0,i)
         ))};
     RtoS := map(S,R,sub(subs,S));
+    -- TODO this is unused!
     P := sub(ideal(subs - p),S);
     L := macaulayMatrixKernel(RtoS I, coefficientRing S, DegreeLimit => degLim, Tolerance => tol);
     matrixToDiffOps(promote(first L, R), sub(last L, R))
@@ -1009,6 +1015,16 @@ I = ideal(x^2, y^2 - t*x)
 p = point{{0_CC,0,3}}
 nops = numNoethOpsAtPoint(I, p, DependentSet => {x,y})
 assert(all(nops, op -> abs((evaluate(matrix{{op(-t*x^3)}}, p))_(0,0)) < 1e-6))
+///
+
+/// TEST
+R = CC[x,y]
+J = ideal(y^2-4*y+4,-x^2+y)
+p = point{{1.41421,2}}
+L = numNoethOpsAtPoint(J,matrix p, DependentSet => {x,y}, Tolerance => 1e-3)
+assert(#L == 2)
+assert(all(values(L#0 - diffOp{1_R => 1}), v -> abs(sub(v,CC)) < 1e-6))
+assert(all(values(normalize(L#1) - normalize(diffOp{x => 1, y => 2*sqrt(2)})), v -> abs(sub(v,CC)) < 1e-6))
 ///
 
 hybridNoetherianOperators = method(Options => true)
@@ -2302,18 +2318,18 @@ doc ///
 	       P = minors(2,MM)
 	       M = ideal{x_1^2,x_2^2,x_3^2,x_4^2} 
 	       Q = joinIdeals(P,M);
-               L1 = getNoetherianOperatorsHilb(Q) -- A set of Noetherian operators
-	       Q1 = getIdealFromNoetherianOperators(L1.Ops, L1.Prime);
+           L1 = getNoetherianOperatorsHilb(Q) -- A set of Noetherian operators
+	       Q1 = getIdealFromNoetherianOperators(L1, P);
 	       Q == Q1
 	       L2 = getNoetherianOperatorsHilb(M) -- Another set of Noetherian operators
-       	       Q2 = getIdealFromNoetherianOperators(L2.Ops, P);
+       	       Q2 = getIdealFromNoetherianOperators(L2, P);
 	       Q == Q2
 	  Text
 	       The following example was given as the running example in the Introduction of @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
 	  Example
 	       Q = ideal(3*x_1^2*x_2^2-x_2^3*x_3-x_1^3*x_4-3*x_1*x_2*x_3*x_4+2*x_3^2*x_4^2,3*x_1^3*x_2*x_4-3*x_1*x_2^2*x_3*x_4-3*x_1^2*x_3*x_4^2+3*x_2*x_3^2*x_4^2+2*x_2^3-2*x_3*x_4^2,3*x_2^4*x_3-6*x_1*x_2^2*x_3*x_4+3*x_1^2*x_3*x_4^2+x_2^3-x_3*x_4^2,4*x_1*x_2^3*x_3+x_1^4*x_4-6*x_1^2*x_2*x_3*x_4-3*x_2^2*x_3^2*x_4+4*x_1*x_3^2*x_4^2,x_2^5-x_1*x_2^3*x_4-x_2^2*x_3*x_4^2+x_1*x_3*x_4^3,x_1*x_2^4-x_2^3*x_3*x_4-x_1*x_2*x_3*x_4^2+x_3^2*x_4^3,x_1^4*x_2-x_2^3*x_3^2-2*x_1^3*x_3*x_4+2*x_1*x_2*x_3^2*x_4,x_1^5-4*x_1^3*x_2*x_3+3*x_1*x_2^2*x_3^2+2*x_1^2*x_3^2*x_4-2*x_2*x_3^3*x_4,3*x_1^4*x_3*x_4-6*x_1^2*x_2*x_3^2*x_4+3*x_2^2*x_3^3*x_4+2*x_1^3*x_2+6*x_1*x_2^2*x_3-6*x_1^2*x_3*x_4-2*x_2*x_3^2*x_4,4*x_2^3*x_3^3+4*x_1^3*x_3^2*x_4-12*x_1*x_2*x_3^3*x_4+4*x_3^4*x_4^2-x_1^4+6*x_1^2*x_2*x_3+3*x_2^2*x_3^2-8*x_1*x_3^2*x_4)
       	       L = getNoetherianOperatorsHilb(Q)
-	       Q' = getIdealFromNoetherianOperators(L.Ops, P);
+	       Q' = getIdealFromNoetherianOperators(L, P);
 	       Q == Q'	  
 ///
 
