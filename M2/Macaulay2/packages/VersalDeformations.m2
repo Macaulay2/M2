@@ -6,13 +6,13 @@
 ---------------------------------------------------------------------------
 newPackage("VersalDeformations",
     Headline => "versal deformations and local Hilbert schemes",
-    Version => "2.1",
-    Date => "April 10, 2020",
+    Version => "2.2",
+    Date => "October 30, 2020",
     Authors => {
         {Name => "Nathan Ilten",
 	  HomePage => "http://www.sfu.ca/~nilten/",
 	  Email => "nilten@sfu.ca"}},
-    Keywords => {"Deformation Theory"},
+--  Keywords => {"Deformation Theory"},
     Configuration => {"DefaultDefParam"=>"t"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
@@ -213,7 +213,7 @@ lowestOrder:=(G,F,C,n)->(
     if G=={} then return (map(target F_0,target F_0,0),null);
     T:=newRing(ring G_0,Join=>false,DegreeMap=>(i->{1}),Degrees=>splice {(numgens ring G_0):1},MonomialOrder=>Weights=>splice {(numgens ring G_0):-1},Global=>false);
     I:=ideal sub(sum G,T);
-    GBcalc:=gb(I,DegreeLimit=>n,ChangeMatrix=>true);
+    GBcalc:=gb(I,DegreeLimit=>n+1,ChangeMatrix=>true);
     GB:=flatten entries gens GBcalc;
     LO:=apply(GB,f->leastTerm(f,n));
     keep:=positions(LO,i->i=!=null);
