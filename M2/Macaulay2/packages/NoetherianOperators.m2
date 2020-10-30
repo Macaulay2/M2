@@ -146,10 +146,13 @@ sort SetOfNoethOps := opts -> N -> (
 -- Caveat: if Noetherian operators have non-constant coefficients,
 --          behavior is undefined.
 dualSpace (List, Point) := (L, p) -> (
-    gens := matrix{ L / (op -> keys op / (k -> op#k * k)) / sum };
+    if #L == 0 then error"expected nonempty list";
+    L' := select(L, op -> not instance(op, ZeroDiffOp));
+    gens := matrix{ L' / (op -> keys op / (k -> op#k * k)) / sum };
+    if #L' == 0 then gens = sub(gens, ring first L);
     dualSpace(gens, p)
 )
-/// TEST
+TEST ///
 R = CC[x,y]
 foo1 = new DiffOp from {x => 12, x^2*y => 3}
 foo2 = new DiffOp from {1_R => 4, x*y => 4}
@@ -687,8 +690,9 @@ new DiffOp from List := (DD,L) -> new DiffOp from hashTable L
 diffOp = method()
 diffOp DiffOp := D -> diffOp new HashTable from D
 diffOp HashTable := H -> (
+    if #keys H == 0 then error "expected non-empty hash table";
     H' := select(H, f -> f!= 0);
-    if #keys H' == 0 then new ZeroDiffOp 
+    if #keys H' == 0 then new ZeroDiffOp from ring first keys H
     else new DiffOp from H'
 )
 diffOp List := L -> diffOp hashTable L
@@ -758,13 +762,12 @@ normalize DiffOp := D -> 1/(sub( D#(first sort keys D), coefficientRing ring D))
 --right R action TODO
 
 -- instances of ZeroDiffOp are differential operators that
--- act as the zero operator
+-- act as the zero operator. They have exactly one key with value zero
 ZeroDiffOp = new Type of DiffOp
-new ZeroDiffOp := (DD) -> hashTable{}
-ZeroDiffOp RingElement := (D,f) -> 0_(ring f)
-toExternalString ZeroDiffOp := D -> "new ZeroDiffOp"
+new ZeroDiffOp from Ring := (DD, R) -> hashTable{R_1 => 0_R}
+toExternalString ZeroDiffOp := D -> "new ZeroDiffOp from " | toExternalString(ring D)
 -- maybe ZeroDiffOp should have a ring? TODO
-ring ZeroDiffOp := D -> error"the zero operator has no ring";
+-- ring ZeroDiffOp := D -> error"the zero operator has no ring";
 -- new ZeroDiffOp from Thing := (DD, x) -> error"not implemented"
 -- new ZeroDiffOp of Thing from Thing := (DD, TT, x) -> error"not implemented"
 -- new ZeroDiffOp of Thing := (DD, TT) -> error"not implemented"
@@ -784,7 +787,7 @@ evaluate (InterpolatedDiffOp, Matrix) := (D, p) -> diffOp(applyValues(D, (n,d) -
 evaluate (InterpolatedDiffOp, Point) := (D, p) -> evaluate(D, matrix p)
 
 
-/// TEST
+TEST ///
 --DiffOp
 R = QQ[x,y,z]
 foo = diffOp{x => y, y=>2*x}
@@ -808,6 +811,9 @@ assert(dop == wa)
 -- InterpolatedDiffOp
 a = new InterpolatedDiffOp from {x => (x^2+y, y^2+x), y^2*x => (z+2, x^2+z^3*x)}
 assert((evaluate(a, point{{1,2,3}}))(x) == 3/5)
+
+
+assert(false)
 ///
 
 sanityCheck = (nops, I) -> (
@@ -834,7 +840,7 @@ myKernel Matrix := Matrix => opts -> MM -> (
     ))
 )
 
-/// TEST
+TEST ///
 M = random(QQ^4,QQ^2) * random(QQ^2,QQ^4)
 assert((myKernel M - gens kernel M) == 0)
 ///
@@ -935,7 +941,7 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
     matrixToDiffOps(liftColumns(lift(first L,S), R), sub(last L,R))
 )
 
-/// TEST
+TEST ///
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 nops = noetherianOperatorsViaMacaulayMatrix(I)
@@ -950,6 +956,12 @@ nops = noetherianOperatorsViaMacaulayMatrix(J)
 assert(all(nops, correct, (i,j) -> i == j))
 ///
 
+TEST ///
+R = QQ[x,y,z]
+I = ideal(x^2 - y, y^2)
+nops = noetherianOperatorsViaMacaulayMatrix(I, DegreeLimit => 10)
+assert(sanityCheck(nops, I))
+///
 
 
 
@@ -995,6 +1007,8 @@ numNoethOpsAtPoint (Ideal, Point) := List => true >> opts -> (I, p) -> numNoethO
 numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     tol := if not opts.?Tolerance then defaultT(ring I) else opts.Tolerance;
     degLim := if not opts.?DegreeLimit then -1 else opts.DegreeLimit;
+    -- if point is not on variety, return empty set
+    if( norm(2,evaluate(gens I, p)) > tol ) then return {new ZeroDiffOp from ring I};
     -- if point is not in the correct ring, try to promote
     p = promote(p, coefficientRing ring I);
     R := ring I;
@@ -1009,7 +1023,7 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     L := macaulayMatrixKernel(RtoS I, coefficientRing S, DegreeLimit => degLim, Tolerance => tol);
     matrixToDiffOps(promote(first L, R), sub(last L, R))
 )
-/// TEST
+TEST ///
 R = CC[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 p = point{{0_CC,0,3}}
@@ -1017,7 +1031,7 @@ nops = numNoethOpsAtPoint(I, p, DependentSet => {x,y})
 assert(all(nops, op -> abs((evaluate(matrix{{op(-t*x^3)}}, p))_(0,0)) < 1e-6))
 ///
 
-/// TEST
+TEST ///
 R = CC[x,y]
 J = ideal(y^2-4*y+4,-x^2+y)
 p = point{{1.41421,2}}
@@ -1063,7 +1077,7 @@ hybridNoetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,
 
 hybridNoetherianOperators (Ideal) := SetOfNoethOps => true >> opts -> I -> hybridNoetherianOperators(I, radical I, opts)
 
-/// TEST
+TEST ///
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 a = hybridNoetherianOperators(I, Sampler => i -> point{{0_CC,0,3}})
@@ -1118,11 +1132,14 @@ numericalNoetherianOperators(Ideal, Point) := SetOfNoethOps => true >> opts -> (
 )
 numericalNoetherianOperators(Ideal, Matrix) := SetOfNoethOps => true >> opts -> (I,pt) -> numericalNoetherianOperators(I, point pt, opts)
 
-///TEST
+TEST ///
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 p = point{{0_CC,0, 3}}
-nnops = numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}})
+ptList = new MutableHashTable from {i => 0, pts => {4,7,-12} / (i -> point{{0_CC,0,i}})}
+gen = I -> (ptList.i = (ptList.i+1)%3; ptList.pts#(ptList.i))
+sampler = (n,I) -> apply(n, i -> gen(I))
+nnops = numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}}, Sampler => sampler)
 enops = nnops / (op -> evaluate(op, point{{0,0,3_CC}}))
 snops = numericalNoetherianOperators(I, point{{0,0,3_CC}}, DependentSet => {x,y})
 
@@ -1467,7 +1484,7 @@ getNoetherianOperatorsHilb (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (Q
     if P != radical Q then error "expected second argument to be the radical of the first"
     else getNoetherianOperatorsHilb(Q,opts)
 )
-/// TEST
+TEST ///
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 hilb = getNoetherianOperatorsHilb(I)
@@ -1541,7 +1558,7 @@ getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     --  Q = saturate(Q, ideal(v));
     --Q
 )
-/// TEST
+TEST ///
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 L = getNoetherianOperatorsHilb(I)
@@ -2409,13 +2426,6 @@ Headline
 -------------- Noetherian operators tests
 
 
-
-TEST ///
-R = QQ[x,y,z]
-I = ideal(x^2 - y, y^2)
-nops = noetherianOperatorsViaMacaulayMatrix(I, DegreeLimit => 10)
-assert(sanityCheck(nops, I))
-///
 
 TEST ///
 R = QQ[x_0..x_3]
