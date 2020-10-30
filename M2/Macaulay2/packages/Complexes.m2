@@ -443,6 +443,7 @@ Complex.directSum = args -> (
         complex maps
         );
     D.cache.components = toList args;
+    D.cache.formation = FunctionApplication { directSum, args };
     D    
     )
 Complex ++ Complex := Complex => (C,D) -> directSum(C,D)
@@ -1084,6 +1085,7 @@ ComplexMap.directSum = args -> (
     maps := hashTable for i in spots list i => directSum(args/(f -> f_i));
     result := map(tar,src,maps,Degree=>deg);
     result.cache.components = toList args;
+    result.cache.formation = FunctionApplication { directSum, args };
     if all(args, isCommutativeCached) then 
         result.cache.isCommutative = true;
     result

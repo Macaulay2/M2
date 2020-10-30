@@ -239,6 +239,7 @@ GradedModuleMap ++ GradedModuleMap := GradedModuleMap => (f,g) -> (
      h.degree = f.degree;
      scan(union(spots f, spots g), i -> h#i = f_i ++ g_i);
      h.cache.components = {f,g};
+     h.cache.formation = BinaryOperation { symbol ++, f, g };
      h)
 
 GradedModuleMap.directSum = args -> (
@@ -254,6 +255,7 @@ GradedModuleMap.directSum = args -> (
 	  j -> directSum apply(args, f -> f_j), Degree => d);
      g.cache = new CacheTable;
      g.cache.components = toList args;
+     g.cache.formation = FunctionApplication { directSum, args };
      g
      )
 
@@ -316,6 +318,7 @@ GradedModule ++ GradedModule := GradedModule => (C,D) -> (
      if R =!= D.ring then error "expected graded modules over the same ring";
      scan(union(spots C, spots D), i -> E#i = C_i ++ D_i);
      E.cache.components = {C,D};
+     E.cache.formation = BinaryOperation { symbol ++, C, D };
      E)
 
 GradedModule ++ Module := GradedModule => (C,M) -> C ++ gradedModule M

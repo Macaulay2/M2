@@ -305,6 +305,7 @@ ChainComplexMap ++ ChainComplexMap := ChainComplexMap => (f,g) -> (
      complete g;
      scan(union(spots f, spots g), i -> h#i = f_i ++ g_i);
      h.cache.components = {f,g};
+     h.cache.formation = BinaryOperation { symbol ++, f, g };
      h)
 
 isHomogeneous ChainComplexMap := f -> (complete f; all(spots f, i -> isHomogeneous f_i))
@@ -552,11 +553,12 @@ chainComplex List := {} >> opts -> maps -> (
 directSum ChainComplex := C -> directSum(1 : C)
 ChainComplex.directSum = args -> (
      C := new ChainComplex;
-     C.cache.components = toList args;
      C.ring = ring args#0;
      scan(args,D -> (complete D; complete D.dd;));
      scan(unique flatten (args/spots), n -> C#n = directSum apply(args, D -> D_n));
      scan(spots C, n -> if C#?(n-1) then C.dd#n = directSum apply(args, D -> D.dd_n));
+     C.cache.components = toList args;
+     C.cache.formation = FunctionApplication { directSum, args };
      C)
 ChainComplex ++ ChainComplex := ChainComplex => (C,D) -> directSum(C,D)
 

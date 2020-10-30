@@ -46,6 +46,7 @@ Module ** Module := Module => (M,N) -> (
 			 if M.?relations then M.relations ** N))
 	       else cokernel map(R, rawModuleTensor( raw M.relations, raw N.relations )));
      Y#(symbol **,oM,oN) = T;
+     T.cache.formation = FunctionApplication (tensor, (M,N));
      T)
 
 Matrix ** Module := Matrix => (f,M) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else  f ** id_M
@@ -511,6 +512,7 @@ Hom(Module, Module) := Module => (M,N) -> (
      H := trim kernel (transpose presentation M ** N);
      H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f);
      Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
+     H.cache.formation = FunctionApplication { Hom, (M,N) };
      H)
 
 adjoint' = method()
