@@ -805,9 +805,8 @@ a = new InterpolatedDiffOp from {x => (x^2+y, y^2+x), y^2*x => (z+2, x^2+z^3*x)}
 assert((evaluate(a, point{{1,2,3}}))(x) == 3/5)
 ///
 
--- TODO fix
 sanityCheck = (nops, I) -> (
-    all(flatten table(nops, I_*, (N,i) -> (N i)%(N.Prime) == 0), identity)
+    all(flatten table(nops, I_*, (N,i) -> (N i)%(radical I) == 0), identity)
 )
 
 myKernel = method(Options => {Tolerance => null})
@@ -934,7 +933,16 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
 /// TEST
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
-noetherianOperatorsViaMacaulayMatrix(I)
+nops = noetherianOperatorsViaMacaulayMatrix(I)
+correct = {diffOp{1_R => 1}, diffOp{y => 1}, diffOp{y^2 => t, x => 2}, diffOp{y^3 => t, x*y => 6}}
+assert(all(nops, correct, (i,j) -> i == j))
+
+S = QQ[x,y]
+J = ideal(x^3, y^4, x*y^2)
+
+correct = sort {diffOp{1_S => 1},diffOp{x => 1},diffOp{y => 1},diffOp{x^2 => 1},diffOp{x*y => 1},diffOp{y^2 => 1},diffOp{x^2*y => 1},diffOp{y^3 => 1}}
+nops = noetherianOperatorsViaMacaulayMatrix(J)
+assert(all(nops, correct, (i,j) -> i == j))
 ///
 
 
@@ -952,6 +960,7 @@ getDepIndVars = true >> opts -> P -> (
 
 
 noetherianOperatorsViaMacaulayMatrix (Ideal) := List => true >> opts -> (I) -> noetherianOperatorsViaMacaulayMatrix(I, ideal gens radical I, opts)
+-- TODO is this needed?
 noetherianOperatorsViaMacaulayMatrix (Ideal, Point) := List => true >> opts -> (I, p) -> (
     P := ideal ((gens ring I) - p.Coordinates);
     noetherianOperatorsViaMacaulayMatrix(I,P,opts)
@@ -1445,7 +1454,9 @@ getNoetherianOperatorsHilb (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (Q
 /// TEST
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
-getNoetherianOperatorsHilb(I)
+hilb = getNoetherianOperatorsHilb(I)
+maca = noetherianOperatorsViaMacaulayMatrix(I)
+assert(all(hilb, maca, (i,j) -> i == j))
 -- TODO add asserts
 ///
 
@@ -1519,7 +1530,8 @@ R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 L = getNoetherianOperatorsHilb(I)
 P = radical I
-getIdealFromNoetherianOperators(L,P)
+Q = getIdealFromNoetherianOperators(L,P)
+assert(Q == I)
 -- TODO add asserts
 ///
 
