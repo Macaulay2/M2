@@ -43,6 +43,8 @@ export {
     "newGCorners",
 
     "DiffOp",
+    "ZeroDiffOp",
+    "InterpolatedDiffOp",
     "diffOp",
     "normalize",
 
@@ -55,8 +57,8 @@ export {
     "noetherianOperators",
     "numericalNoetherianOperators",
     "DependentSet",
-    "noethOpsFromComponents",
-    "coordinateChangeOps",
+    -- "noethOpsFromComponents", --TODO should be rewritten or removed
+    -- "coordinateChangeOps", --TODO should be rewritten or removed
     --"sanityCheck",
     "rationalInterpolation",
     --"applyNOp",
@@ -684,7 +686,8 @@ DiffOp.synonym = "differential operator"
 new DiffOp from HashTable := (DD,H) -> (
     if #set(keys H / ring) > 1 then error"expected all elements in same ring";
     if not all(keys H, m -> monomials m == m) then error"keys must be pure monomials";
-    H
+    R := ring first keys H;
+    applyValues(H, v -> sub(v,R))
 )
 new DiffOp from List := (DD,L) -> new DiffOp from hashTable L
 diffOp = method()
@@ -802,7 +805,7 @@ assert(foo2 > foo)
 assert(instance(foo3, ZeroDiffOp))
 assert(try diffOp{x+y => x} then false else true)
 assert(try diffOp{2*y*x^2 => x+z} then false else true)
--- needsPackage "Dmodules"
+needsPackage "Dmodules"
 R' = makeWA(R)
 wa = diffOp(x^2*dx - dx^2 + dy^3 + (x-3)*dx)
 use ring wa
@@ -811,9 +814,6 @@ assert(dop == wa)
 -- InterpolatedDiffOp
 a = new InterpolatedDiffOp from {x => (x^2+y, y^2+x), y^2*x => (z+2, x^2+z^3*x)}
 assert((evaluate(a, point{{1,2,3}}))(x) == 3/5)
-
-
-assert(false)
 ///
 
 sanityCheck = (nops, I) -> (
@@ -841,6 +841,7 @@ myKernel Matrix := Matrix => opts -> MM -> (
 )
 
 TEST ///
+debug NoetherianOperators
 M = random(QQ^4,QQ^2) * random(QQ^2,QQ^4)
 assert((myKernel M - gens kernel M) == 0)
 ///
@@ -942,6 +943,7 @@ noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (
 )
 
 TEST ///
+debug NoetherianOperators
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 nops = noetherianOperatorsViaMacaulayMatrix(I)
@@ -954,13 +956,6 @@ J = ideal(x^3, y^4, x*y^2)
 correct = sort {diffOp{1_S => 1},diffOp{x => 1},diffOp{y => 1},diffOp{x^2 => 1},diffOp{x*y => 1},diffOp{y^2 => 1},diffOp{x^2*y => 1},diffOp{y^3 => 1}}
 nops = noetherianOperatorsViaMacaulayMatrix(J)
 assert(all(nops, correct, (i,j) -> i == j))
-///
-
-TEST ///
-R = QQ[x,y,z]
-I = ideal(x^2 - y, y^2)
-nops = noetherianOperatorsViaMacaulayMatrix(I, DegreeLimit => 10)
-assert(sanityCheck(nops, I))
 ///
 
 
@@ -1007,10 +1002,10 @@ numNoethOpsAtPoint (Ideal, Point) := List => true >> opts -> (I, p) -> numNoethO
 numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     tol := if not opts.?Tolerance then defaultT(ring I) else opts.Tolerance;
     degLim := if not opts.?DegreeLimit then -1 else opts.DegreeLimit;
-    -- if point is not on variety, return empty set
-    if( norm(2,evaluate(gens I, p)) > tol ) then return {new ZeroDiffOp from ring I};
     -- if point is not in the correct ring, try to promote
     p = promote(p, coefficientRing ring I);
+    -- if point is not on variety, return empty set
+    if( norm(2,evaluate(gens I, p)) > tol ) then return {new ZeroDiffOp from ring I};
     R := ring I;
     (depVars,indVars) := getDepIndVars(I,opts);
     S := (coefficientRing R)(monoid[depVars]);
@@ -1024,6 +1019,7 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     matrixToDiffOps(promote(first L, R), sub(last L, R))
 )
 TEST ///
+debug NoetherianOperators
 R = CC[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 p = point{{0_CC,0,3}}
@@ -1032,6 +1028,7 @@ assert(all(nops, op -> abs((evaluate(matrix{{op(-t*x^3)}}, p))_(0,0)) < 1e-6))
 ///
 
 TEST ///
+debug NoetherianOperators
 R = CC[x,y]
 J = ideal(y^2-4*y+4,-x^2+y)
 p = point{{1.41421,2}}
@@ -1078,6 +1075,7 @@ hybridNoetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,
 hybridNoetherianOperators (Ideal) := SetOfNoethOps => true >> opts -> I -> hybridNoetherianOperators(I, radical I, opts)
 
 TEST ///
+debug NoetherianOperators
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 a = hybridNoetherianOperators(I, Sampler => i -> point{{0_CC,0,3}})
@@ -1133,6 +1131,7 @@ numericalNoetherianOperators(Ideal, Point) := SetOfNoethOps => true >> opts -> (
 numericalNoetherianOperators(Ideal, Matrix) := SetOfNoethOps => true >> opts -> (I,pt) -> numericalNoetherianOperators(I, point pt, opts)
 
 TEST ///
+debug NoetherianOperators
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 p = point{{0_CC,0, 3}}
@@ -1237,7 +1236,7 @@ conjugate(Matrix) := Matrix => M -> (
     matrix table(numrows M, numcols M, (i,j) -> conjugate(M_(i,j)))
 )
 
-coordinateChangeOps = method() -----TODO: fix this, now expects polynomial coefficients
+coordinateChangeOps = method() -----TODO: fix this, or remove
 coordinateChangeOps(RingElement, RingMap) := RingElement => (D, f) -> (
     R := f.target;
     WA := ring D;
@@ -1253,7 +1252,7 @@ coordinateChangeOps(RingElement, RingMap) := RingElement => (D, f) -> (
 )
 
 
-noethOpsFromComponents = method()
+noethOpsFromComponents = method() ------- TODO: fix this, or remove
 noethOpsFromComponents(HashTable) := List => H -> (
     nops := flatten values H;
     R := ring first nops;
@@ -1485,6 +1484,7 @@ getNoetherianOperatorsHilb (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (Q
     else getNoetherianOperatorsHilb(Q,opts)
 )
 TEST ///
+debug NoetherianOperators
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 hilb = getNoetherianOperatorsHilb(I)
@@ -1559,6 +1559,7 @@ getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     --Q
 )
 TEST ///
+debug NoetherianOperators
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 L = getNoetherianOperatorsHilb(I)
@@ -2428,14 +2429,23 @@ Headline
 
 
 TEST ///
+debug NoetherianOperators
 R = QQ[x_0..x_3]
 S = QQ[s,t]
 I0 = ker map(S,R,{s^5,s^3*t^2, s^2*t^3, t^5})
-nops = noetherianOperatorsViaMacaulayMatrix(I0, DegreeLimit => 10)
+nops = noetherianOperators(I0)
 assert(sanityCheck(nops, I0))
 I1 = ideal(x_0^2, x_1^2, x_2^2)
-nops = noetherianOperatorsViaMacaulayMatrix(I1, DegreeLimit => 10)
+nops = noetherianOperators(I1)
 assert(sanityCheck(nops,I1))
+///
+
+TEST ///
+debug NoetherianOperators
+R = QQ[x,y,z]
+I = ideal(x^2 - y, y^2)
+nops = noetherianOperators(I)
+assert(sanityCheck(nops, I))
 ///
 
 
@@ -2444,41 +2454,41 @@ R = QQ[x,y]
 I = ideal((x-1)^2,(x-1)*(y+1),(y+1)^3)
 J = ideal((x)^2,(x)*(y),(y)^3)
 Ps = associatedPrimes I
-nopsI = noetherianOperatorsViaMacaulayMatrix(I, first Ps)
-W = ring nopsI
-assert(set flatten entries gens nopsI === set{W_1^2, W_0, W_1, 1_W})
-nopsJ = noetherianOperatorsViaMacaulayMatrix(J, ideal gens R)
-W = ring nopsJ
-assert((sort flatten entries gens nopsJ) == sort{W_1^2, W_0, W_1, 1_W})
+nopsI = noetherianOperators(I, first Ps)
+assert(#(set nopsI - ({1_R, R_0, R_1, R_1^2} / (x -> diffOp{x=>1}))) == 0)
+nopsJ = noetherianOperators(J, ideal gens R)
+assert(#(set nopsJ - ({1_R, R_0, R_1, R_1^2} / (x -> diffOp{x=>1}))) == 0)
 ///
 
 
-TEST /// -- Linear coordinate change test
-R = QQ[x,y]
-I = ideal(x^2*(y-x))
-f = map(R,R,{2*x+y,x+y})
-J = f I
-NI = noetherianOperatorsViaMacaulayMatrix I
-NJ = noetherianOperatorsViaMacaulayMatrix J
-WI = ring first NI
-WJ = ring first NJ
-convertedNI = NI / (i-> sub(coordinateChangeOps(i,f), WJ))
-assert sanityCheck(convertedNI,J)
-assert sanityCheck(NJ,J)
-assert sanityCheck(NI,I)
-assert(set NI === set{1_WI, WI_0*WI_2 - WI_1*WI_2})
-assert(set NJ === set{1_WJ, WJ_0*WJ_2})
-assert(set convertedNI === set{1_WJ, WJ_0*WJ_2 - WJ_0*WJ_3})
-///
+-- TODO linear coordinate change should be rewritten or removed
+-- TEST /// -- Linear coordinate change test
+-- debug NoetherianOperators
+-- R = QQ[x,y]
+-- I = ideal(x^2,(y-x))
+-- f = map(R,R,{2*x+y,x+y})
+-- J = f I
+-- NI = noetherianOperatorsViaMacaulayMatrix I
+-- NJ = noetherianOperatorsViaMacaulayMatrix J
+-- WI = ring first NI
+-- WJ = ring first NJ
+-- convertedNI = NI / (i-> sub(coordinateChangeOps(i,f), WJ))
+-- assert sanityCheck(convertedNI,J)
+-- assert sanityCheck(NJ,J)
+-- assert sanityCheck(NI,I)
+-- assert(set NI === set{1_WI, WI_0*WI_2 - WI_1*WI_2})
+-- assert(set NJ === set{1_WJ, WJ_0*WJ_2})
+-- assert(set convertedNI === set{1_WJ, WJ_0*WJ_2 - WJ_0*WJ_3})
+-- ///
 
 TEST /// -- numNoethOpsAtPoint test
+debug NoetherianOperators
 R = CC[x,y,t]
 I = intersect(ideal(x^2-t*y, y^2), ideal(x+y+1))
-nv = numericalIrreducibleDecomposition(I, Software => BERTINI)
-Wsets = select(flatten values nv, x -> class x === WitnessSet )
-pt = first (Wsets / sample / matrix)
-l = numNoethOpsAtPoint(I, pt, Tolerance => 1e-2, DependentSet => {x,y})
-assert(toString(l/terms/(m -> m/exponents)) === "{{{{0, 0, 0, 0, 0, 0}}}, {{{0, 0, 0, 1, 0, 0}}}, {{{0, 0, 0, 2, 0, 0}}, {{0, 0, 0, 0, 1, 0}}}, {{{0, 0, 0, 3, 0, 0}}, {{0, 0, 0, 1, 1, 0}}}}")
+pt = point{{0,0,12}}
+l = numNoethOpsAtPoint(I, pt, Tolerance => 1e-6, DependentSet => {x,y})
+dif = l / normalize - {diffOp{1_R => 1}, diffOp{x => 1}, diffOp{x^2 => 6, y => 1}, diffOp{x^3 => 2, x*y => 1}}
+assert(all(dif, nop -> all(values nop, v -> abs sub(v,CC) < 1e-6)))
 ///
 
 
