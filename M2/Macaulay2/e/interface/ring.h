@@ -5,15 +5,17 @@
 
 // TODO: fix this
 #  if defined(__cplusplus)
-class Ring;
-class RingElement;
+class Computation;
 class Matrix;
 class Monoid;
+class Ring;
+class RingElement;
 #  else
-typedef struct Ring Ring;
-typedef struct RingElement RingElement;
+typedef struct Computation Computation;
 typedef struct Matrix Matrix;
 typedef struct Monoid Monoid;
+typedef struct Ring Ring;
+typedef struct RingElement RingElement;
 #  endif
 
 /**
@@ -107,15 +109,13 @@ const Ring /* or null */ *IM2_Ring_localization(const Ring *R, Computation *P);
    whose entries generate a prime ideal of R.
 */
 
-const Ring /* or null */ *IM2_Ring_quotient(
-    const Ring *R,
-    const Matrix *I); /*drg: connected rawQuotientRing */
+const Ring /* or null */ *IM2_Ring_quotient(const Ring *R, const Matrix *I);
+/*drg: connected rawQuotientRing */
 /* Given a quotient of an ambient poly ring R = A/J, and a GB I in R, form
    the quotient ring A/(I+J). */
 
-const Ring /* or null */ *IM2_Ring_quotient1(
-    const Ring *R,
-    const Ring *B); /*drg: connected rawQuotientRing */
+const Ring /* or null */ *IM2_Ring_quotient1(const Ring *R, const Ring *B);
+/*drg: connected rawQuotientRing */
 /* if R is a polynomial ring of the form A[x], and B = A/I (where A is a poly
    ring) then form the quotient ring B[x]. */
 
@@ -135,8 +135,8 @@ const Ring /* or null */ *rawARingTower2(const Ring *R1,
 const Ring /* or null */ *rawARingTower3(const Ring *R1,
                                          engine_RawRingElementArray eqns);
 
-const Ring /* or null */ *IM2_Ring_schur(
-    const Ring *R); /* drg: reconnected rawSchurRing */
+const Ring /* or null */ *IM2_Ring_schur(const Ring *R);
+/* drg: reconnected rawSchurRing */
 
 const Ring *rawSchurRing2(const Ring *A, int n);
 
@@ -151,29 +151,29 @@ M2_bool IM2_Ring_is_field(const Ring *K); /* drg: connected rawIsField*/
    rawGetNonUnit(K) can be used to obtain a non-unit, if one
    has been found. */
 
-M2_bool IM2_Ring_declare_field(
-    const Ring *K); /* drg: connected rawDeclareField*/
+M2_bool IM2_Ring_declare_field(const Ring *K);
+/* drg: connected rawDeclareField*/
 /* Declare that K is a field.  The ring K can then be used as the coefficient
    ring for computing Groebner bases,etc.  If false is returned, then
    the ring K has known non-units, and an error has been issued */
 
-const RingElement *rawGetNonUnit(
-    const Ring *K); /* drg: connected rawGetNonUnit */
+const RingElement *rawGetNonUnit(const Ring *K);
+/* drg: connected rawGetNonUnit */
 /* Return a non-unit for the ring K, if one has been found, or the zero
    element, if not. Perhaps we should name this 'get_non_unit'.  This
    function currently never seems to return a non-zero value, but I plan
    on fixing that (MES, June 2002). */
 
-const Ring /* or null */ *rawAmbientRing(
-    const Ring *R); /* drg: connected rawAmbientRing */
+const Ring /* or null */ *rawAmbientRing(const Ring *R);
+/* drg: connected rawAmbientRing */
 /* If R is a quotient of a polynomial ring, or is a fraction ring, return the
    polynomial ring over a basic ring of which this is a quotient (or fraction
    ring) of. For example, if R = frac(ZZ[s,t]/(s^2-1))[x,y,z]/(s*x+t*y+z^2),
    then the returned ring is ZZ[s,t][x,y,z]. This routine is provided only for
    debugging the engine. */
 
-const Ring /* or null */ *rawDenominatorRing(
-    const Ring *R); /* drg: connected rawDenominatorRing */
+const Ring /* or null */ *rawDenominatorRing(const Ring *R);
+/* drg: connected rawDenominatorRing */
 /* If elements of R may have denominators, then this routine returns true, and
    the ambient ring for denominators returned. Otherwise, NULL
    is returned, which is not to be considered an error.  This routine is

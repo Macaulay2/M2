@@ -1,6 +1,7 @@
 // Copyright 1995-2020 Michael E. Stillman
 
 #include "ring.hpp"
+
 #include "ZZ.hpp"          // for RingZZ
 #include "coeffrings.hpp"  // for CoefficientRingR
 #include "freemod.hpp"     // for FreeModule

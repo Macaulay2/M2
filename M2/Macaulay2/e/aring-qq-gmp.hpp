@@ -3,6 +3,7 @@
 #ifndef _aring_QQ_gmp_hpp_
 #define _aring_QQ_gmp_hpp_
 
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
@@ -11,8 +12,6 @@
 
 // promote needs ring.hpp.  After moving promote out, remove it here!
 #include "ring.hpp"
-
-#include "rand.h"
 
 namespace M2 {
 /**

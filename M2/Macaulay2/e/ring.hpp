@@ -4,6 +4,7 @@
 #define _ring_hh_
 
 #include <utility>           // for pair
+
 #include "aring.hpp"         // for RingID, ring_old
 #include "error.h"           // for ERROR
 #include "exceptions.hpp"    // for engine_error

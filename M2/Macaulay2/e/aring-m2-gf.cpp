@@ -3,11 +3,11 @@
 #include <vector>
 #include <iostream>
 
+#include "interface/random.h"
 #include "relem.hpp"
 #include "polyring.hpp"
 #include "aring-m2-gf.hpp"
 #include "ringmap.hpp"
-#include "rand.h"
 #include "monoid.hpp"
 #include "interrupted.hpp"
 

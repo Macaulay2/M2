@@ -1,8 +1,9 @@
 // Copyright 2008 by Michael Stillman
 
-#include "rand.h"
-#include "../d/M2mem.h"
-#include "ringelem.hpp"
+#include "engine-includes.hpp"
+
+#include "interface/random.h"
+#include "gmp-util.h"
 
 #define INITIALMAXINT 10
 
@@ -133,8 +134,20 @@ double randomDouble()
   return result;
 }
 
+int system_randomint()
+{
+#if 0
+  extern long random();
+  return random();
+#elif 0
+  extern long random00();
+  return random00();
+#else
+  return rawRandomInt((int32_t)~0 >> 1);
+#endif
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
 // End:
-

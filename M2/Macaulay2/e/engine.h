@@ -8,12 +8,10 @@
  */
 
 #include "engine-includes.hpp"
-#include "rand.h" // engine interface for random numbers
 
 #if defined(__cplusplus)
 class Monomial;
 class Monoid;
-class Ring;
 class FreeModule;
 class MonomialIdeal;
 class Matrix;
@@ -35,7 +33,6 @@ class M2PointArray;
 /* Define the externally visible types here */
 typedef struct Monomial Monomial;
 typedef struct Monoid Monoid;
-typedef struct Ring Ring;
 typedef struct RingElement RingElement;
 typedef struct FreeModule FreeModule;
 typedef struct Matrix Matrix;
@@ -61,6 +58,7 @@ typedef EngineComputation EngineComputationOrNull;
 #include "interface/factory.h"
 #include "interface/flint.h"
 #include "interface/monomial-ordering.h"
+#include "interface/random.h"
 #include "interface/ring.h"
 
 #if defined(__cplusplus)

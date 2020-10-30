@@ -1,10 +1,10 @@
 // Copyright 2013 Michael E. Stillman
 
 #include "aring-qq-gmp.hpp"
-#include "ringmap.hpp"
-#include "rand.h"
 
-#include <iostream>
+#include "interface/random.h"
+#include "ringmap.hpp"
+
 namespace M2 {
 
 ARingQQGMP::ARingQQGMP()

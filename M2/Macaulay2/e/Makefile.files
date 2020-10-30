@@ -165,7 +165,6 @@ COMMANDS2 = \
 	interface/polyroots
 
 COMMANDS = \
-	rand \
 	ntl-internal \
 	ntl-debugio \
 	matrix-kbasis \
@@ -177,6 +176,7 @@ COMMANDS = \
 	interface/aring \
 	interface/cra \
 	interface/monoid \
+	interface/random \
 	interface/ring \
 	interface/freemodule \
 	interface/flint \

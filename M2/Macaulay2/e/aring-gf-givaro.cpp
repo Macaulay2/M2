@@ -1,8 +1,9 @@
 // Copyright 2011 Michael E. Stillman
 
 #include "aring-gf-givaro.hpp"
+
+#include "interface/random.h"
 #include "error.h"
-#include "rand.h"
 #include "ringmap.hpp"
 #include "monoid.hpp"
 

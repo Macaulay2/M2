@@ -28,7 +28,6 @@ set(HFILES
   error.h
   exptable.h
   monordering.h
-  rand.h
   table.h
   gmp-util.h
   engine.h
@@ -95,7 +94,6 @@ set(CPPONLYFILES
   matrix-symm.cpp
   ntl-debugio.cpp
   ntl-internal.cpp
-  rand.cpp
   res-a2-gb.cpp
   ring-vecs.cpp
 
@@ -113,6 +111,8 @@ set(CPPONLYFILES
   interface/monomial-ideal.cpp
   interface/mutable-matrix.cpp
   interface/polyroots.cpp
+  interface/random.cpp
+  interface/random.h
   interface/ring.cpp
   interface/ringmap.cpp
   )

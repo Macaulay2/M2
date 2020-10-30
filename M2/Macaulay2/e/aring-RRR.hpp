@@ -3,11 +3,11 @@
 #ifndef _aring_RRR_hpp_
 #define _aring_RRR_hpp_
 
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
 #include "ringmap.hpp"
-#include "rand.h"
 
 class RRR;
 class RingMap;

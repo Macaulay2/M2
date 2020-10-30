@@ -7,7 +7,7 @@
 /* Used in monomial encoding/decoding/comparison */
 
 #include "engine-includes.hpp"
-#include "rand.h"
+
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #else
@@ -16,6 +16,8 @@
 #include <malloc.h>
 #endif
 #endif
+
+#include "interface/random.h"
 #include "monordering.h"
 
 typedef int *exponents;

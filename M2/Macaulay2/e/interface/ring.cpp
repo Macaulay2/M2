@@ -1,6 +1,7 @@
 // Copyright 2002 Michael E. Stillman
 
 #include "engine.h"
+#include "interface/ring.h"
 
 #include "monoid.hpp"
 #include "monomial.hpp"
