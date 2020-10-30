@@ -1,3 +1,6 @@
+// FIXME: this header is based on what is defined in groebner.cpp,
+// but the declarations in engine.h don't seem to match
+
 #ifndef _groebner_h_
 #  define _groebner_h_
 

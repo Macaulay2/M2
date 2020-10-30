@@ -120,6 +120,7 @@ set(CPPONLYFILES
   interface/ringelement.cpp
   interface/ringelement.h
   interface/ringmap.cpp
+  interface/ringmap.h
   )
 
 # these files all have .hpp and .cpp files

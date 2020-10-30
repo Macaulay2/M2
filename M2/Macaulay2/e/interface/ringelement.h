@@ -62,10 +62,26 @@ engine_RawRingElementPair IM2_RingElement_divmod(const RingElement *a,
 int rawRingElementCompare(const RingElement *a, const RingElement *b);
 
 const RingElement *IM2_RingElement_promote(const Ring *S, const RingElement *f);
+/* drg: connected rawPromote*/
 
 const RingElement /* or null */ *IM2_RingElement_lift(int *success_return,
                                                       const Ring *S,
                                                       const RingElement *f);
+/* drg: connected rawLift*/
+// returns null if lifting not possible
+
+/* Is this documentation correct for promote and lift?
+   We have several ways of moving from one ring to the next:
+   R ---> R[x1..xn]
+   R ---> R/I
+   R ---> frac R
+   Z/p[x]/F(x) ---> GF(p,n)
+   R ---> local(R,I)    (much later...)
+
+   Both of the following routines assume that S ---> 'this'
+   is one of these construction steps.  Promote takes an element of
+   S, and maps it into 'this', while lift goes the other way.
+*/
 
 M2_bool IM2_RingElement_is_graded(const RingElement *a);
 

@@ -1,23 +1,28 @@
-#include "engine.h"
-#include "exceptions.hpp"
+#include "engine.h" // TODO: need rawARingGFCoefficients, rawARingGF, etc.
+#include "interface/ring.h"
 
-#include "relem.hpp"
-#include "aring-glue.hpp"
-#include "aring-zzp.hpp"
-#include "aring-zz-flint.hpp"
-#include "aring-zzp-flint.hpp"
-#include "aring-gf-givaro.hpp"
-#include "aring-m2-gf.hpp"
+#include <algorithm>
+#include <utility>
+#include <vector>
+
+#include <memtailor.h>
+#include <mathic.h>
+
 #include "aring-gf-flint-big.hpp"
 #include "aring-gf-flint.hpp"
-#include "aring-zzp-ffpack.hpp"
-#include "aring-tower.hpp"
+#include "aring-gf-givaro.hpp"
+#include "aring-glue.hpp"
+#include "aring-m2-gf.hpp"
 #include "aring-qq.hpp"
-
+#include "aring-tower.hpp"
+#include "aring-zz-flint.hpp"
+#include "aring-zzp-ffpack.hpp"
+#include "aring-zzp-flint.hpp"
+#include "aring-zzp.hpp"
+#include "exceptions.hpp"
 #include "polyring.hpp"
+#include "relem.hpp"
 
-#include "memtailor.h"
-#include "mathic.h"
 memt::BufferPool testBuffer(16);
 
 const RingQQ *globalQQ;

@@ -1,13 +1,14 @@
 // Copyright 1995 Michael E. Stillman
 
-#include "matrix.hpp"
+#include "interface/matrix.h"
+#include "engine.h" // TODO: still neded for IM2_Matrix_coeffs, IM2_Matrix_concat
 
 #include <M2/math-include.h>
 
+#include "matrix.hpp"
 #include "NAG.hpp"
 #include "buffer.hpp"
 #include "dmat.hpp"
-#include "engine.h" // TODO: still neded for IM2_Matrix_coeffs, IM2_Matrix_concat
 #include "error.h"
 #include "exceptions.hpp"
 #include "mat.hpp"

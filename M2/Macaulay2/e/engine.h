@@ -53,12 +53,17 @@ typedef struct M2PointArray M2PointArray;
 #include "interface/computation.h"
 #include "interface/factory.h"
 #include "interface/flint.h"
+#include "interface/freemodule.h"
 #include "interface/groebner.h"
+#include "interface/matrix.h"
 #include "interface/monoid.h"
 #include "interface/monomial-ordering.h"
 #include "interface/random.h"
 #include "interface/ring.h"
 #include "interface/ringelement.h"
+#include "interface/ringmap.h"
+
+#include "interface/NAG.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -328,158 +333,6 @@ extern "C" {
 
   const RingElement /* or null */ *rawPowerMod(const RingElement *f, mpz_srcptr n, const RingElement *g);  /* connected */
   /* Currently only valid for tower rings */
-
-  /**************************************************/
-  /**** FreeModule routines *************************/
-  /**************************************************/
-  /* A FreeModule in the engine is always over a specific
-     ring, and is graded using the degree monoid of the ring.
-     Monomials in a free module are ordered, either in a way
-     determined by the ordering in the ring, or using an induced
-     (Schreyer) monomial ordering (in the case when the ring
-     is a polynomial ring of some sort) */
-  /* General notes: these are immutable obects, at least once
-     they are returned by the engine */
-  /* BUGS/TODO: the Schreyer orders produced by sum,tensor,
-     symm,exterior, and submodule, ignore the current tie
-     breaker values.
-     Also: I might keep all freemodules for a ring unique.
-     This is not currently done. */
-
-  const Ring *
-  IM2_FreeModule_ring(
-          const FreeModule *F); /* drg: connected rawRing*/
-
-  int
-  IM2_FreeModule_rank(
-          const FreeModule *F); /* drg: connected rawRank*/
-
-  M2_string
-  IM2_FreeModule_to_string(
-          const FreeModule *F); /* drg: connected */
-
-  unsigned int
-  rawFreeModuleHash(
-          const FreeModule *F); /* not quite connected */
-
-  const FreeModule /* or null */ *
-  IM2_FreeModule_make(
-          const Ring *R,
-          int rank); /* drg: connected rawFreeModule*/
-
-  const FreeModule /* or null */ *
-  IM2_FreeModule_make_degs(
-          const Ring *R,
-          M2_arrayint degs); /* drg: connected rawFreeModule*/
-    /* Make a graded free module over R.  'degs' should be of length
-     * divisible by the length 'd' of a degree vector, and the
-     * i th degree will be degs[i*d]..degs[i*d+d-1], starting at
-     * i = 0.
-     */
-
-  const FreeModule /* or null */ *
-  IM2_FreeModule_make_schreyer(
-          const Matrix *m); /* drg: connected rawSchreyerSource */
-    /* Returns G, (a copy of) the source free module of 'm', modified to
-     * use the induced order via m: compare two monomials of G via
-     * x^A e_i > x^B e_j iff either
-     * leadmonomial((in m)(x^A e_i)) > leadmonomial((in m)(x^B e_j))
-     * or these are the same monomial, and i > j.
-     * The case where the target of 'm' has a Schreyer order is
-     * handled efficiently.
-     */
-
-  M2_arrayint
-  IM2_FreeModule_get_degrees(
-          const FreeModule *F); /* drg: connected rawMultiDegree*/
-
-  const Matrix *
-  IM2_FreeModule_get_schreyer(
-          const FreeModule *F); /* drg: connected rawGetSchreyer*/
-
-  M2_bool
-  IM2_FreeModule_is_equal(
-          const FreeModule *F,
-          const FreeModule *G); /* drg: connected === */
-    /* Determines if F and G are the same graded module.  If one has a
-     * Schreyer order and one does not, but their ranks and degrees are the
-     * same, then they are considered equal by this routine.
-     */
-
-  const FreeModule /* or null */ *
-  IM2_FreeModule_sum(
-          const FreeModule *F,
-          const FreeModule *G); /* drg: connected rawDirectSum */
-    /* The direct sum of two free modules over the same ring, or NULL.
-     * If F or G has a Schreyer order, then so does their direct sum
-     */
-
-  const FreeModule /* or null */ *
-  IM2_FreeModule_tensor(
-          const FreeModule *F,
-          const FreeModule *G); /* drg: connected rawTensor*/
-    /* The tensor product of two free modules over the same ring, or NULL.
-     * If F has (ordered basis {f_1,...,f_r}, and
-     * G has (ordered) basis {g_1, ..., g_s}, then
-     * the result has (ordered) basis
-     *    {f_1 ** g_1, f_1 ** g_2, ..., f_1 ** g_s,
-     *     f_2 ** g_1, f_2 ** g_2, ..., f_2 ** g_s,
-     *     ...
-     *     f_r ** g_1, ...              f_r ** g_s}.
-     *  If F or G has a Schreyer order, what about their tensor product?
-     *  At the moment, the answer is almost yes...
-     */
-
-  const FreeModule /* or null */ *IM2_FreeModule_dual(
-          const FreeModule *F); /* drg: connected rawDual*/
-    /* Returns the graded dual F^* of F: if F has basis {f_1,...,f_r},
-     * with degrees {d_1, ..., d_r}, then F^* has rank r, with
-     * degrees {-d_1, ..., -d_r}.  The result does not have a
-     * Schreyer order (even if F does).
-     */
-
-  const FreeModule *
-  IM2_FreeModule_symm(
-          int n,
-          const FreeModule *F); /* drg: connected rawSymmetricPower*/
-    /* Returns the n th symmetric power G of F.
-     * If F has basis {f_1,...,f_r}, then G has basis
-     * the monomials of f_1, ..., f_r of degree exactly n, in
-     * descending lexicographic order.
-     * If F has a Schreyer order, then G is set to have one as well.
-     */
-
-
-  const FreeModule *
-  IM2_FreeModule_exterior(
-          int n,
-          const FreeModule *F); /* drg: connected rawExteriorPower*/
-    /* Returns the n th exterior power G of F.
-     * If F has basis {f_1,...,f_r}, then G has basis
-     * the squarefree monomials of f_1, ..., f_r of degree exactly n, in
-     * descending reverse lexicographic order.
-     * If F has a Schreyer order, then G is set to have one as well.
-     */
-
-  const FreeModule /* or null */ *
-  IM2_FreeModule_submodule(
-          const FreeModule *F,
-          M2_arrayint selection); /* drg: connected rawSubmodule*/
-    /* Returns a free module obtained by choosing basis elements of F:
-     * if F has basis {f_0, ..., f_(r-1)} with degrees {d_0, ..,d_(r-1)},
-     * and selection = [i_1, ..., i_s], where 0 <= i_j < r for all j,
-     * then return a free module of rank s, having degrees
-     * d_(i_1), ..., d_(i_s).  'selection' may include duplicate values.
-     * If F has a Schreyer order, the result has one as well.
-     */
-
-  M2_arrayintOrNull rawFreeModuleSelectByDegrees(const FreeModule* F,
-                                                 M2_arrayint lo,
-                                                 M2_arrayint hi); 
-  /* If F_i has multi-degree >= lo, AND <= hi, then add i to the result
-     IF: lo has length 0, then treat that as -infinity in each component.
-     Same with hi.
-  */
 
   /**************************************************/
   /**** Matrix routines *****************************/
@@ -807,61 +660,6 @@ extern "C" {
   /* Assuming that the columns of G form a GB, this computes
      a Groebner basis of the kernel of these elements, using an appropriate Schreyer order on the
      source of G. */
-
-
-  /**************************************************/
-  /**** RingMap routines ****************************/
-  /**************************************************/
-  /* My plan, Dan, is to make changes to how ring maps are
-     constructed, in the case when we have rings over polynomials
-     rings (including galois field bases) */
-
-  const Ring * IM2_RingMap_target(const RingMap *F); /* drg: connected rawTarget*/
-
-  M2_string IM2_RingMap_to_string(const RingMap *F); /* drg: connected */
-
-  unsigned int rawRingMapHash(const RingMap *F); /* TODO */ 
-
-  M2_bool IM2_RingMap_is_equal(const RingMap*, const RingMap*); /* drg: connected === */
-
-  const RingMap * IM2_RingMap_make(const Matrix *M, const Ring *base); /* TODO */
-
-  const RingMap * IM2_RingMap_make1(const Matrix *M); /* drg: connected rawRingMap */
-  /* WARNING: I want to change the interface to this routine */
-
-  const RingElement /* or null */ * IM2_RingMap_eval_ringelem(const RingMap *F,
-                                                      const RingElement *a); /* drg: connected rawRingMapEval*/
-
-  const Matrix /* or null */ * IM2_RingMap_eval_matrix(const RingMap *F,
-                                               const FreeModule *newTarget,
-                                               const Matrix *M); /* drg: connected rawRingMapEval*/
-
-  MutableMatrix /* or null */ * rawRingMapEvalMutableMatrix(const RingMap* F,
-                                                            const MutableMatrix* M);
-  /* drg: connected rawRingMapEval*/
-
-  const RingElement *IM2_RingElement_promote(const Ring *S, const RingElement *f); /* drg: connected rawPromote*/
-
-  const RingElement /* or null */ *IM2_RingElement_lift(int *success_return, const Ring *S, const RingElement *f); /* drg: connected rawLift*/
-  // returns null if lifting not possible
-
-    /* Is this documentation correct for promote and lift?
-       We have several ways of moving from one ring to the next:
-       R ---> R[x1..xn]
-       R ---> R/I
-       R ---> frac R
-       Z/p[x]/F(x) ---> GF(p,n)
-       R ---> local(R,I)    (much later...)
-
-       Both of the following routines assume that S ---> 'this'
-       is one of these construction steps.  Promote takes an element of
-       S, and maps it into 'this', while lift goes the other way.
-    */
-
-  const Matrix /* or null */ *IM2_Matrix_promote(const FreeModule *newTarget, const Matrix *f); /* connected to rawPromote*/
-
-  const Matrix /* or null */ *IM2_Matrix_lift(int *success_return, const FreeModule *newTarget, const Matrix *f); /* connected to rawLift */
-  // returns null if lifting not possible
 
   /**************************************************/
   /**** MutableMatrix routines **********************/
@@ -1712,70 +1510,6 @@ extern "C" {
   gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f);
   gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M);
 
-  // NAG begin
-  M2Homotopy /* or null */ *rawHomotopy(M2SLEvaluator *Hx, M2SLEvaluator *Hxt, M2SLEvaluator *HxH);
-  M2SLEvaluator /* or null */ *rawSLEvaluator(M2SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts);
-  M2SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(M2SLEvaluator* H, const MutableMatrix *parameters);
-  M2SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs);
-  M2_string rawSLEvaluatorToString(M2SLEvaluator *); /* connected */
-  M2_bool rawSLEvaluatorEvaluate(M2SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs);
-  M2_string rawHomotopyToString(M2Homotopy *); /* connected */
-  M2_string rawSLProgramToString(M2SLProgram *); /* connected */
-  unsigned int rawSLEvaluatorHash(M2SLEvaluator *); /* connected */
-  unsigned int rawHomotopyHash(M2Homotopy *); /* connected */
-  unsigned int rawSLProgramHash(M2SLProgram *); /* connected */
-
-  M2_bool rawHomotopyTrack(M2Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs,
-                           MutableMatrix* output_extras,  
-                           gmp_RR init_dt, gmp_RR min_dt,
-                           gmp_RR epsilon, // o.CorrectorTolerance,
-                           int max_corr_steps, 
-                           gmp_RR infinity_threshold,
-                           M2_bool checkPrecision);
-
-  gmp_ZZ rawSLPInputGate(M2SLProgram *S);
-  gmp_ZZ rawSLPSumGate(M2SLProgram *S, M2_arrayint a);
-  gmp_ZZ rawSLPProductGate(M2SLProgram *S, M2_arrayint a);
-  gmp_ZZ rawSLPDetGate(M2SLProgram *S, M2_arrayint a);
-  gmp_ZZ rawSLPsetOutputPositions(M2SLProgram *S, M2_arrayint a);
-  gmp_ZZ rawSLPDivideGate(M2SLProgram *S, M2_arrayint a);
-
-  StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program);
-  const Matrix /* or null */ *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals);
-  M2_string rawStraightLineProgramToString(StraightLineProgram *); /* connected */
-  unsigned int rawStraightLineProgramHash(StraightLineProgram *); /* connected */
-  const Matrix /* or null */ *rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const Matrix* start_sols ,
-                                    M2_bool is_projective,
-                                    gmp_RR init_dt, gmp_RR min_dt, gmp_RR max_dt,
-                                    gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase,
-                                    gmp_RR epsilon, int max_corr_steps,
-                                    int pred_type);
-
-  PathTracker /* or null */ *rawPathTrackerPrecookedSLPs(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr);
-  PathTracker /* or null */ *rawPathTracker(const Matrix *);
-  PathTracker /* or null */ *rawPathTrackerProjective(const Matrix *, const Matrix *, gmp_RR);
-  M2_string rawPathTrackerToString(PathTracker *); /* connected */
-  unsigned int rawPathTrackerHash(PathTracker *); /* connected */
-  void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
-                          gmp_RR init_dt, gmp_RR min_dt,
-                          gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase,
-                          gmp_RR epsilon, int max_corr_steps, gmp_RR end_zone_factor, gmp_RR infinity_threshold,
-                          int pred_type);
-  void rawLaunchPT(PathTracker* PT, const Matrix* start_sols);
-  const Matrix /* or null */ *rawGetSolutionPT(PathTracker* PT, int solN);
-  const Matrix /* or null */ *rawGetAllSolutionsPT(PathTracker* PT);
-  int rawGetSolutionStatusPT(PathTracker* PT, int solN);
-  int rawGetSolutionStepsPT(PathTracker* PT, int solN);
-  gmp_RRorNull rawGetSolutionLastTvaluePT(PathTracker* PT, int solN);
-  gmp_RRorNull rawGetSolutionRcondPT(PathTracker* PT, int solN);
-  const Matrix /* or null */ *rawRefinePT(PathTracker* PT, const Matrix* sols, gmp_RR tolerance, int max_corr_steps_refine);
-  // M2PointArray
-  unsigned int rawPointArrayHash(M2PointArray *); 
-  M2_string rawPointArrayToString(M2PointArray *);
-  M2PointArray /* or null */ *rawPointArray(double epsilon, int n);
-  int rawPointArrayLookup(M2PointArray *pa, const MutableMatrix *M, int col);
-  int rawPointArrayLookupOrAppend(M2PointArray *pa, const MutableMatrix *M, int col);
-  // NAG end  
   const Matrix /* or null */ *rawGbBoolean(const Matrix *m);
   const Matrix /* or null */ *rawBIBasis(const Matrix* m, int toGroebner);
 

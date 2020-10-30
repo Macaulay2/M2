@@ -1,6 +1,8 @@
 // copyright Daniel R. Grayson, 1995
 
 #include "interface/factory.h"
+#include "interface/ringelement.h"
+#include "engine.h" // TODO: still need IM2_Matrix_make1
 
 #include <M2/config.h> // need FACTORY_STREAMIO
 
@@ -20,7 +22,6 @@
 #pragma GCC diagnostic pop
 
 #include "buffer.hpp"
-#include "engine.h" // TODO: still need IM2_RingElement_to_string, IM2_Matrix_make1, ...
 #include "error.h"
 #include "exceptions.hpp"
 #include "matrix.hpp"
