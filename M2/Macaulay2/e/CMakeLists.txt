@@ -106,14 +106,19 @@ set(CPPONLYFILES
   interface/flint.h
   interface/freemodule.cpp
   interface/groebner.cpp
+  interface/groebner.h
   interface/matrix.cpp
   interface/monoid.cpp
+  interface/monoid.h
   interface/monomial-ideal.cpp
   interface/mutable-matrix.cpp
   interface/polyroots.cpp
   interface/random.cpp
   interface/random.h
   interface/ring.cpp
+  interface/ring.h
+  interface/ringelement.cpp
+  interface/ringelement.h
   interface/ringmap.cpp
   )
 

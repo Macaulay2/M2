@@ -178,11 +178,12 @@ COMMANDS = \
 	interface/monoid \
 	interface/random \
 	interface/ring \
+	interface/ringmap \
+	interface/ringelement \
 	interface/freemodule \
 	interface/flint \
 	interface/matrix \
 	interface/groebner \
-	interface/ringmap \
 	interface/mutable-matrix \
 	franzi-gb \
 	franzi-interface

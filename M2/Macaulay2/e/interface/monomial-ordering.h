@@ -13,68 +13,67 @@ typedef struct MonomialOrdering MonomialOrdering;
 extern "C" {
 #  endif
 
-MonomialOrdering *rawLexMonomialOrdering(
-    int nvars,
-    int packing); /* drg: connected rawMonomialOrdering*/
+MonomialOrdering *rawLexMonomialOrdering(int nvars, int packing);
+/* drg: connected rawMonomialOrdering*/
 /* Lex, LexSmall, LexTiny */
 
-MonomialOrdering /* or null */ *rawGRevLexMonomialOrdering(
-    M2_arrayint degs,
-    int packing); /* drg: connected rawMonomialOrdering*/
+MonomialOrdering /* or null */ *rawGRevLexMonomialOrdering(M2_arrayint degs,
+                                                           int packing);
+/* drg: connected rawMonomialOrdering*/
 /* GRevLex, GrevLexSmall, GRevLexTiny */
 
-MonomialOrdering *rawRevLexMonomialOrdering(
-    int nvars); /* drg: connected rawMonomialOrdering*/
+MonomialOrdering *rawRevLexMonomialOrdering(int nvars);
+/* drg: connected rawMonomialOrdering*/
 /* RevLex => n */
 
-MonomialOrdering *rawWeightsMonomialOrdering(
-    M2_arrayint wts); /* drg: connected rawMonomialOrdering*/
+MonomialOrdering *rawWeightsMonomialOrdering(M2_arrayint wts);
+/* drg: connected rawMonomialOrdering*/
 /* Weights => {...} */
 
-MonomialOrdering *rawGroupLexMonomialOrdering(
-    int nvars); /* drg: connected rawMonomialOrdering*/
+MonomialOrdering *rawGroupLexMonomialOrdering(int nvars);
+/* drg: connected rawMonomialOrdering*/
 /* GroupLex => n */
 
 MonomialOrdering *rawGroupRevLexMonomialOrdering(int nvars);
 /* GroupRevLex => n */
 
-MonomialOrdering *rawNClexMonomialOrdering(
-    int nvars); /* drg: connected rawMonomialOrdering*/
+MonomialOrdering *rawNClexMonomialOrdering(int nvars);
+/* drg: connected rawMonomialOrdering*/
 /* NCLex => n */
 
-MonomialOrdering *rawPositionMonomialOrdering(
-    M2_bool up_or_down); /* drg: connected rawMonomialOrdering */
+MonomialOrdering *rawPositionMonomialOrdering(M2_bool up_or_down);
+/* drg: connected rawMonomialOrdering */
 /* argument of true:  Position => Up, (should be the default)
  * argument of false: Position => Down
  */
 
 MonomialOrdering *rawProductMonomialOrdering(
-    engine_RawMonomialOrderingArray mo); /* drg: connected rawMonomialOrdering*/
+    engine_RawMonomialOrderingArray mo);
+/* drg: connected rawMonomialOrdering*/
 /* for tensor products */
 
-MonomialOrdering *rawJoinMonomialOrdering(
-    engine_RawMonomialOrderingArray mo); /* drg: connected rawMonomialOrdering*/
+MonomialOrdering *rawJoinMonomialOrdering(engine_RawMonomialOrderingArray mo);
+/* drg: connected rawMonomialOrdering*/
 /* default, when making monoids and polynomial rings */
 
-int rawNumberOfVariables(
-    const MonomialOrdering *mo); /* drg: connected rawNumberOfVariables*/
+int rawNumberOfVariables(const MonomialOrdering *mo);
+/* drg: connected rawNumberOfVariables*/
 
-int rawNumberOfInvertibleVariables(
-    const MonomialOrdering
-        *mo); /* drg: connected rawNumberOfInvertibleVariables*/
+int rawNumberOfInvertibleVariables(const MonomialOrdering *mo);
+/* drg: connected rawNumberOfInvertibleVariables*/
 
-M2_arrayint rawNonTermOrderVariables(
-    const MonomialOrdering *mo); /* Dan: PLEASE CONNECT */
+M2_arrayint rawNonTermOrderVariables(const MonomialOrdering *mo);
+/* Dan: PLEASE CONNECT */
 /* Returns an array of the indices of those variables which are less than 1 in
    the monomial ordering.  If this number is > 0, then the monomial ordering is
    not a term order, and local (tangent cone) algorithms must be used for GB's
  */
 
-M2_string IM2_MonomialOrdering_to_string(
-    const MonomialOrdering *mo); /* drg: connected */
+M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo);
+/* drg: connected */
 
-unsigned int rawMonomialOrderingHash(
-    const MonomialOrdering *mo); /* drg: connected hash */
+unsigned int rawMonomialOrderingHash(const MonomialOrdering *mo);
+/* drg: connected hash */
 /* Assigned sequentially */
 
 int moIsGRevLex(const struct MonomialOrdering *mo);

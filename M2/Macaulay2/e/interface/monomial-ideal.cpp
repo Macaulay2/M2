@@ -1,15 +1,28 @@
 // Copyright 2002 Michael E. Stillman
 
-#include "monomial.hpp"
-#include "monideal.hpp"
-#include "matrix.hpp"
-#include "engine.h"
-#include "hilb.hpp"
+#include "engine.h" // TODO: need IM2_MonomialIdeal_Hilbert, etc.
+
+#include "engine-includes.hpp"
+
 #include "assprime.hpp"
-#include "monideal-minprimes.hpp"
+#include "buffer.hpp"
+#include "error.h"
 #include "exceptions.hpp"
-#include "text-io.hpp"
 #include "finalize.hpp"
+#include "hilb.hpp"
+#include "index.hpp"
+#include "int-bag.hpp"
+#include "intarray.hpp"
+#include "matrix.hpp"
+#include "monideal-minprimes.hpp"
+#include "monideal.hpp"
+#include "monomial.hpp"
+#include "newdelete.hpp"
+#include "text-io.hpp"
+#include "varpower.hpp"
+
+class PolynomialRing;
+struct RingElement;
 
 engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n)
 {

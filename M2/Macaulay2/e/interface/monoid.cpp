@@ -1,9 +1,20 @@
 // (c) 1994-2002 Michael E. Stillman
 
-#include "monoid.hpp"
-#include "engine.h"
-#include "ring.hpp"
+#include "interface/monoid.h"
+
+#include "engine-includes.hpp"
+
 #include <cstdio>
+#include <vector>
+
+#include "buffer.hpp"
+#include "error.h"
+#include "interface/monomial-ordering.h"
+#include "monoid.hpp"
+#include "monordering.h"
+#include "ring.hpp"
+
+class PolynomialRing;
 
 Monoid* IM2_Monoid_trivial()
 {

@@ -1,4 +1,4 @@
-#include "flint.h"
+#include "interface/flint.h"
 
 #include <iostream>
 #include <vector>

@@ -1,24 +1,27 @@
 // Copyright 2004 Michael E. Stillman
 
-#include <iostream>
+#include "engine.h" // TODO: need IM2_FF_LU, IM2_HermiteNormalForm
 
-#include "engine.h"
+#include "engine-includes.hpp"
+
+#include <assert.h>
+#include <algorithm>
+#include <vector>
+
+#include "LLL.hpp"
+#include "aring-zzp-ffpack.hpp"
+#include "buffer.hpp"
+#include "error.h"
+#include "exceptions.hpp"
+#include "finalize.hpp"
+#include "fractionfreeLU.hpp"
+#include "interface/random.h"
+#include "mat.hpp"
+#include "matrix.hpp"
 #include "relem.hpp"
 #include "ring.hpp"
-#include "GF.hpp"
-
-#include "coeffrings.hpp"
-#include "aring-zz-gmp.hpp"
-#include "mat.hpp"
-#include "fractionfreeLU.hpp"
-#include "LLL.hpp"
-#include "exceptions.hpp"
-
-#include "matrix.hpp"
-#include "mutablemat.hpp"
-#include "aring-zzp-ffpack.hpp"
-
-#include "finalize.hpp"
+#include "ringelem.hpp"
+#include "util.hpp"
 
 MutableMatrix *IM2_MutableMatrix_identity(const Ring *R,
                                           int n,

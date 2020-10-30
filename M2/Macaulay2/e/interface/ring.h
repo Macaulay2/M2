@@ -33,6 +33,10 @@ M2_string IM2_Ring_to_string(const Ring *M); /* drg: connected */
 
 long rawRingCharacteristic(const Ring *R); /* connected: rawCharacteristic */
 
+///////////////////
+// Ring creation //
+///////////////////
+
 const Ring *IM2_Ring_ZZ(void); /* drg: connected rawZZ*/
 /* always returns the same object */
 
@@ -119,6 +123,15 @@ const Ring /* or null */ *IM2_Ring_quotient1(const Ring *R, const Ring *B);
 /* if R is a polynomial ring of the form A[x], and B = A/I (where A is a poly
    ring) then form the quotient ring B[x]. */
 
+const Ring /* or null */ *IM2_Ring_schur(const Ring *R);
+/* drg: reconnected rawSchurRing */
+
+const Ring *rawSchurRing1(const Ring *A);
+
+const Ring *rawSchurRing2(const Ring *A, int n);
+
+const Ring *rawSchurSnRing(const Ring *A, int n);
+
 const Ring /* or null */ *rawTowerRing1(long charac, M2_ArrayString names);
 /* Create a tower ring with the given variable names and characteristic */
 
@@ -127,6 +140,7 @@ const Ring /* or null */ *rawTowerRing2(const Ring *R1,
 const Ring /* or null */ *rawTowerRing3(const Ring *R1,
                                         engine_RawRingElementArray eqns);
 
+// FIXME: these three aren't defined in ring.cpp
 const Ring /* or null */ *rawARingTower1(const Ring *R1, M2_ArrayString names);
 /* Create a tower ring with the given variable names and base ring */
 
@@ -134,15 +148,6 @@ const Ring /* or null */ *rawARingTower2(const Ring *R1,
                                          M2_ArrayString new_names);
 const Ring /* or null */ *rawARingTower3(const Ring *R1,
                                          engine_RawRingElementArray eqns);
-
-const Ring /* or null */ *IM2_Ring_schur(const Ring *R);
-/* drg: reconnected rawSchurRing */
-
-const Ring *rawSchurRing2(const Ring *A, int n);
-
-const Ring *rawSchurRing1(const Ring *A);
-
-const Ring *rawSchurSnRing(const Ring *A, int n);
 
 M2_bool IM2_Ring_is_field(const Ring *K); /* drg: connected rawIsField*/
 /* Returns true if K is a field, or has been declared to be one.
@@ -178,6 +183,28 @@ const Ring /* or null */ *rawDenominatorRing(const Ring *R);
    the ambient ring for denominators returned. Otherwise, NULL
    is returned, which is not to be considered an error.  This routine is
    provided only for debugging the engine. */
+
+/////////////////////////////
+// GaloisField routines /////
+/////////////////////////////
+
+// FIXME: should these be moved elsewhere?
+
+/* FIXME
+bool findConwayPolynomial(long charac,
+                             long deg,
+                             bool find_random_if_no_conway_poly_available,
+                             std::vector<long> &result_poly);
+*/
+
+/* returns an array of non-negative integers, which represents the given Conway
+ polynomial If there is none, a list of length 0 is returned. if the boolean
+ argument is set to true, returns a random poly that flint finds
+*/
+M2_arrayintOrNull rawConwayPolynomial(
+    long charac,
+    long deg,
+    M2_bool find_random_if_no_conway_poly_available);
 
 #  if defined(__cplusplus)
 }

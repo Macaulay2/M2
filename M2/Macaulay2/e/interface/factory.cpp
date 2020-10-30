@@ -1,6 +1,6 @@
 // copyright Daniel R. Grayson, 1995
 
-#include "factory.h"
+#include "interface/factory.h"
 
 #include <M2/config.h> // need FACTORY_STREAMIO
 

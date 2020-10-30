@@ -16,7 +16,6 @@ class FreeModule;
 class MonomialIdeal;
 class Matrix;
 class MutableMatrix;
-class RingElement;
 class RingMap;
 class Computation;
 class EngineComputation;
@@ -33,7 +32,6 @@ class M2PointArray;
 /* Define the externally visible types here */
 typedef struct Monomial Monomial;
 typedef struct Monoid Monoid;
-typedef struct RingElement RingElement;
 typedef struct FreeModule FreeModule;
 typedef struct Matrix Matrix;
 typedef struct MutableMatrix MutableMatrix;
@@ -52,14 +50,15 @@ typedef struct M2PointArray M2PointArray;
 // NAG end
 #endif
 
-typedef EngineComputation EngineComputationOrNull;
-
 #include "interface/computation.h"
 #include "interface/factory.h"
 #include "interface/flint.h"
+#include "interface/groebner.h"
+#include "interface/monoid.h"
 #include "interface/monomial-ordering.h"
 #include "interface/random.h"
 #include "interface/ring.h"
+#include "interface/ringelement.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -72,32 +71,9 @@ extern "C" {
   /**************************************************/
   /**** Monomial routines ***************************/
   /**************************************************/
-  /* Monomials in the engine: are not associated with a monoid, and may have negative
-   * exponents.  Monomials are immutable objects.
+  /* Monomials in the engine: are not associated with a monoid,
+   * and may have negative exponents. Monomials are immutable objects.
    */
-
-  /**************************************************/
-  /**** Monoid routines *****************************/
-  /**************************************************/
-  Monoid *IM2_Monoid_trivial();  /* drg: connected rawMonoid*/
-    /* Always returns the same object */
-
-  engine_RawMonoidOrNull IM2_Monoid_make(const MonomialOrdering *mo,
-                                M2_ArrayString names,
-                                const Ring *DegreeRing,
-                                M2_arrayint degs,
-                                M2_arrayint hefts); /* drg: connected rawMonoid*/
-    /* This function will return NULL if the monomial order cannot be handled
-       currently, if the first components for each degree are not all
-       positive, or under various other "internal" error conditions */
-
-  unsigned int rawMonoidHash(const Monoid *M);  /* drg: connected hash */
-    /* Assigned sequentially */
-
-  M2_string IM2_Monoid_to_string(const Monoid *M);  /* drg: connected */
-    /* For debugging purposes */
-
-  int rawMonoidNumberOfBlocks(const Monoid *M); /* connected rawMonoidNumberOfBlocks */
   
   /**************************************************/
   /**** ARing routines ******************************/
@@ -150,74 +126,6 @@ extern "C" {
 
   const Ring /* or null */ *rawARingZZpFlint(unsigned long p); /* connected */
     /* Expects a prime number p in range 2 <= p <= 2^64-1 */
-
-  /* returns an array of non-negative integers, which represents the given Conway polynomial
-     If there is none, a list of length 0 is returned.
-     if the boolean argument is set to true, returns a random poly that flint finds 
-  */
-  M2_arrayintOrNull rawConwayPolynomial(long charac, 
-                                        long deg, 
-                                        M2_bool find_random_if_no_conway_poly_available);
-
-  /**************************************************/
-  /**** Ring element routines ***********************/
-  /**************************************************/
-  const RingElement *IM2_RingElement_from_Integer(const Ring *R,
-                                                  gmp_ZZ d);  /* drg: connected rawFromNumber*/
-
-  const RingElement /* or null */ *IM2_RingElement_from_rational(const Ring *R,
-                                                         mpq_srcptr r); /* rawFromNumber*/
-
-  gmp_ZZ /* or null */ IM2_RingElement_to_Integer(const RingElement *a); /* drg: connected rawToInteger*/
-    /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
-       Otherwise, NULL is returned, and an error is given */
-
-  gmp_QQ IM2_RingElement_to_rational(const RingElement *a); /* connected: rawToRational */
-    /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
-       Otherwise, NULL is returned, and an error is given */
-
-  const RingElement /* or null */ *IM2_RingElement_from_BigReal(const Ring *R,
-                                                        gmp_RR d); /* drg: waiting, rawFromNumber*/
-
-  const RingElement /* or null */ *IM2_RingElement_from_BigComplex(const Ring *R,
-                                                        gmp_CC d); /* drg: waiting, rawFromNumber*/
-
-  gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a); /* drg: implemented, connected to rawToRR */
-    /* If the ring of a is RR, this returns the underlying representation of 'a'.
-       Otherwise NULL is returned. */
-
-  gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a); /* drg: implemented, connected to rawToRR */
-
-
-  const RingElement /* or null */ *IM2_RingElement_make_var(const Ring *R, int v); /* drg: connected rawRingVar*/
-
-  M2_bool IM2_RingElement_is_zero(const RingElement *a); /* drg: connected rawIsZero*/
-
-  M2_bool IM2_RingElement_is_equal(const RingElement *a,
-                                   const RingElement *b); /* drg: connected === */
-
-  const RingElement /* or null */ *IM2_RingElement_invert(const RingElement *a);/* TODO */
-
-  engine_RawRingElementPair IM2_RingElement_divmod(const RingElement *a,
-                                                 const RingElement *b); /* drg: connected rawDivMod*/
-
-
-  int rawRingElementCompare(const RingElement *a,
-                            const RingElement *b);
-  /* Superficially compares two ring elements a,b from the same ring.  If the ring is
-     a polynomial ring, then the lead flat monomials are compared.
-     -1 means that a < b
-     0 means that a == b
-     1 means that a > b
-     If the two rings are different, then 0 is returned (without error).  The front end never will call
-     this function in that case though, as methods are installed for comparison on a ring by ring basis.
-  */
-
-  M2_string IM2_RingElement_to_string(const RingElement *a); /* drg: connected */
-
-  unsigned int rawRingElementHash(const RingElement *a);/* connected */
-
-  const Ring * IM2_RingElement_ring(const RingElement *a); /* drg: connected rawRing*/
 
   /**************************************************/
   /**** polynomial ring element routines ************/
