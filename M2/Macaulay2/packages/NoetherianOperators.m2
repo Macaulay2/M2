@@ -775,11 +775,12 @@ expression InterpolatedDiffOp := D ->
     sum
 net InterpolatedDiffOp := D -> net expression D
 evaluate (InterpolatedDiffOp, Matrix) := (D, p) -> diffOp(applyValues(D, (n,d) -> 
-    (evaluate(matrix{{n}},p))_(0,0)/(evaluate(matrix{{d}},p))_(0,0)))
+    promote((evaluate(matrix{{n}},p))_(0,0)/(evaluate(matrix{{d}},p))_(0,0), ring D)))
 evaluate (InterpolatedDiffOp, Point) := (D, p) -> evaluate(D, matrix p)
 
 
 /// TEST
+--DiffOp
 R = QQ[x,y,z]
 foo = diffOp{x => y, y=>2*x}
 bar = diffOp{x^2 => z*x + 3, y => x}
@@ -791,12 +792,17 @@ assert(foo(x^2) == 2*x*y)
 assert(foo3 - foo == diffOp{x => -y, 1_R => 0, y => -2*x})
 assert(foo2 > foo)
 assert(instance(foo3, ZeroDiffOp))
+assert(try diffOp{x+y => x} then false else true)
+assert(try diffOp{2*y*x^2 => x+z} then false else true)
 -- needsPackage "Dmodules"
 R' = makeWA(R)
 wa = diffOp(x^2*dx - dx^2 + dy^3 + (x-3)*dx)
 use ring wa
 dop = diffOp({x => x^2+x-3, x^2 => -1, y^3 => 1})
 assert(dop == wa)
+-- InterpolatedDiffOp
+a = new InterpolatedDiffOp from {x => (x^2+y, y^2+x), y^2*x => (z+2, x^2+z^3*x)}
+assert((evaluate(a, point{{1,2,3}}))(x) == 3/5)
 ///
 
 -- TODO fix
@@ -816,14 +822,18 @@ myKernel Matrix := Matrix => opts -> MM -> (
     nonPivs := toList(0..<n) - set pivs;
     if #nonPivs == 0 then return map(R^n, R^0, 0);
     transpose matrix apply(nonPivs, j -> (
-            apply(n, i -> (
+        apply(n, i -> (
 		    pivRow := position(pivs, k -> i==k);
-		    if pivRow =!= null then (
-                    	-M_(pivRow,j) / M_(pivRow,i)
-                	) else if i == j then 1_R else 0
-            	    ))
-    	    ))
-    )
+		    if pivRow =!= null then -M_(pivRow,j) / M_(pivRow,i)
+            else if i == j then 1_R else 0
+        ))
+    ))
+)
+
+/// TEST
+M = random(QQ^4,QQ^2) * random(QQ^2,QQ^4)
+assert((myKernel M - gens kernel M) == 0)
+///
 
 -- dispatcher method
 noetherianOperators = method(Options => true)
@@ -987,8 +997,9 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
 /// TEST
 R = CC[x,y,t]
 I = ideal(x^2, y^2 - t*x)
-numNoethOpsAtPoint(I, point{{0_CC,0,3}}, DependentSet => {x,y})
--- TODO add some asserts
+p = point{{0_CC,0,3}}
+nops = numNoethOpsAtPoint(I, p, DependentSet => {x,y})
+assert(all(nops, op -> abs((evaluate(matrix{{op(-t*x^3)}}, p))_(0,0)) < 1e-6))
 ///
 
 hybridNoetherianOperators = method(Options => true)
@@ -1030,9 +1041,9 @@ hybridNoetherianOperators (Ideal) := SetOfNoethOps => true >> opts -> I -> hybri
 /// TEST
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
-elapsedTime hybridNoetherianOperators(I, Sampler => i -> point{{0_CC,0,3}})
-elapsedTime noetherianOperators I
-hybridNoetherianOperators(I, Sampler => i -> sub(realPoint(I),CC))
+a = hybridNoetherianOperators(I, Sampler => i -> point{{0_CC,0,3}})
+b = noetherianOperators I
+assert(all(a,b, (a,b) -> a==b))
 ///
 
 
@@ -1086,11 +1097,17 @@ numericalNoetherianOperators(Ideal, Matrix) := SetOfNoethOps => true >> opts -> 
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 p = point{{0_CC,0, 3}}
-nnops = numericalNoetherianOperators(I, DependentSet => {x,y})
+nnops = numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}})
 enops = nnops / (op -> evaluate(op, point{{0,0,3_CC}}))
+snops = numericalNoetherianOperators(I, point{{0,0,3_CC}}, DependentSet => {x,y})
 
+S = ring first snops
 
-numericalNoetherianOperators(I,p, DependentSet => {x,y})
+enops = enops / (op -> 1/lift(op#(first sort keys op), coefficientRing ring op) * op)
+enops = enops / (i -> sub(i, S))
+snops = snops / (op -> 1/lift(op#(first sort keys op), coefficientRing ring op) * op)
+
+assert(all(snops - enops, i -> all(values i, j -> abs(lift(j,coefficientRing ring first snops)) < 1e-6)))
 ///
 
 
