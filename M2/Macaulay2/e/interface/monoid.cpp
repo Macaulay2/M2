@@ -2,8 +2,6 @@
 
 #include "interface/monoid.h"
 
-#include "engine-includes.hpp"
-
 #include <cstdio>
 #include <vector>
 
@@ -11,7 +9,6 @@
 #include "error.h"
 #include "interface/monomial-ordering.h"
 #include "monoid.hpp"
-#include "monordering.h"
 #include "ring.hpp"
 
 class PolynomialRing;

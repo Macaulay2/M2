@@ -9,7 +9,6 @@
 #include "error.h"
 #include "exceptions.hpp"
 #include "interface/monomial-ordering.h"
-#include "monordering.h"
 #include "ntuple.hpp"
 #include "overflow.hpp"
 #include "polyring.hpp"

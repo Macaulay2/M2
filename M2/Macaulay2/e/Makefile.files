@@ -159,11 +159,6 @@ INTERFACE = \
 	varpower \
 	weylalg
 
-COMMANDS2 = \
-	interface/monomial-ideal \
-	interface/factory \
-	interface/polyroots
-
 COMMANDS = \
 	ntl-internal \
 	ntl-debugio \
@@ -175,16 +170,20 @@ COMMANDS = \
 	engine \
 	interface/aring \
 	interface/cra \
+	interface/factory \
+	interface/flint \
+	interface/freemodule \
+	interface/groebner \
+	interface/matrix \
 	interface/monoid \
+	interface/monomial-ideal \
+	interface/monomial-ordering \
+	interface/mutable-matrix \
+	interface/polyroots \
 	interface/random \
 	interface/ring \
-	interface/ringmap \
 	interface/ringelement \
-	interface/freemodule \
-	interface/flint \
-	interface/matrix \
-	interface/groebner \
-	interface/mutable-matrix \
+	interface/ringmap \
 	franzi-gb \
 	franzi-interface
 
@@ -194,7 +193,7 @@ NAMES_H = ringelem \
 	index \
 	res-a0-pair
 
-C_FILES = error table exptable monordering complex
+C_FILES = error table exptable complex
 
 D_FILES = 
 DD_FILES = #test
@@ -203,7 +202,7 @@ DD_FILES = #test
 ## end of source code files ##
 ##############################
 
-CC_FILES := $(INTERFACE) $(INTERFACE2) $(COMMANDS) $(COMMANDS2)
+CC_FILES := $(INTERFACE) $(INTERFACE2) $(COMMANDS)
 FILES := $(CC_FILES) $(C_FILES)
 LOFILES := $(addsuffix .lo,$(CC_FILES) $(C_FILES))
 ENGINE_CCFILES := $(addsuffix .cpp,$(CC_FILES))

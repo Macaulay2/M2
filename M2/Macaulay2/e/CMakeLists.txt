@@ -19,7 +19,6 @@ set(CFILES
   complex.c
   error.c
   exptable.c
-  monordering.c
   table.c
   )
 # h files
@@ -27,7 +26,6 @@ set(HFILES
   complex.h
   error.h
   exptable.h
-  monordering.h
   table.h
   engine.h
   defgroups.h
@@ -114,6 +112,8 @@ set(CPPONLYFILES
   interface/monoid.h
   interface/monomial-ideal.cpp
   interface/monomial-ideal.h
+  interface/monomial-ordering.cpp
+  interface/monomial-ordering.h
   interface/mutable-matrix.cpp
   interface/mutable-matrix.h
   interface/polyroots.cpp # the declarations are in factory.h

@@ -1,11 +1,13 @@
-#include "monordering.h"
-
-#include "error.h"
 #include "interface/monomial-ordering.h"
-#include "engine-includes.hpp"
 
 // TODO: remove this when to_string methods are moved together
 #include <stdio.h>
+
+#include "error.h"
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
 static struct mon_part_rec_ *mo_make(enum MonomialOrdering_type type,
                                      int nvars,
@@ -534,9 +536,6 @@ M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo)
   return result;
 }
 
-/*
-// Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
-// indent-tabs-mode: nil
-// End:
-*/
+#if defined(__cplusplus)
+}
+#endif
