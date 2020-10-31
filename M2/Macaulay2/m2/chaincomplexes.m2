@@ -296,6 +296,7 @@ ZZ == ChainComplexMap := (i,f) -> f == i
 formation ChainComplexMap := f -> if f.cache.?formation then f.cache.formation
 
 ChainComplexMap ++ ChainComplexMap := ChainComplexMap => (f,g) -> (
+     -- why don't we implement ChainComplexMap.directSum instead?
      if f.degree != g.degree then (
 	  error "expected maps of the same degree";
 	  );
