@@ -159,7 +159,7 @@ set(SRCLIST
   comp-gb
   comp-res
   comp
-  cra # TODO: move rawRingElementRatConversion and rawMatrixRatConversion to e/interface
+  cra
   debug
   det
   dmat

@@ -103,7 +103,6 @@ M2_DFILES += interp.dd
 actors5.o : @srcdir@/startup-header.h
 actors5.o basic.o : \
 	@srcdir@/../e/engine.h \
-	@srcdir@/../e/rand.h \
 	@srcdir@/../e/newdelete.hpp \
 	@srcdir@/../d/M2mem.h \
 	@srcdir@/../d/debug.h \
