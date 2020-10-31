@@ -325,15 +325,11 @@ indices HashTable := X -> (
 directSum List := args -> directSum toSequence args
 directSum Sequence := args -> (
      if #args === 0 then error "expected more than 0 arguments";
-     y := youngest args;
-     key := (directSum, args);
-     if y =!= null and y#?key then y#key else (
-	  type := single apply(args, class);
-	  meth := lookup(symbol directSum, type);
-	  if meth === null then error "no method for direct sum";
-	  S := meth args;
-	  if y =!= null then y#key = S;
-	  S))
+     type := single apply(args, class);
+     meth := lookup(symbol directSum, type);
+     if meth === null then error "no method for direct sum";
+     S := meth args;
+     S)
 
 -- Number.directSum = v -> directSum apply(v, a -> matrix{{a}})
 
@@ -342,18 +338,14 @@ directSum Option := o -> directSum(1 : o)
 Option.directSum = args -> (
      if #args === 0 then error "expected more than 0 arguments";
      objects := apply(args,last);
-     y := youngest objects;
-     key := (directSum, args);
-     if y =!= null and y#?key then y#key else (
-	  type := single apply(objects, class);
-	  if not type.?directSum then error "no method for direct sum";
-	  X := type.directSum objects;
-	  if y =!= null then y#key = X;
-     	  keys := X.cache.indices = toList args/first;
-     	  ic := X.cache.indexComponents = new HashTable from apply(#keys, i -> keys#i => i);
-	  if X.?source then X.source.cache.indexComponents = ic;
-	  if X.?target then X.target.cache.indexComponents = ic;
-	  X))
+     type := single apply(objects, class);
+     if not type.?directSum then error "no method for direct sum";
+     X := type.directSum objects;
+     keys := X.cache.indices = toList args/first;
+     ic := X.cache.indexComponents = new HashTable from apply(#keys, i -> keys#i => i);
+     if X.?source then X.source.cache.indexComponents = ic;
+     if X.?target then X.target.cache.indexComponents = ic;
+     X)
 Matrix ++ Matrix := Matrix => directSum
 Module ++ Module := Module => directSum
 
