@@ -11,7 +11,7 @@
 
 #include "engine-includes.hpp"
 #include "error.h"
-#include "gmp-util.h"
+#include "interface/gmp-util.h"
 
 M2_bool rawZZisPrime(gmp_ZZ a)
 {

@@ -1,8 +1,8 @@
 // copyright Daniel R. Grayson, 1995
 
 #include "interface/factory.h"
+#include "interface/matrix.h"
 #include "interface/ringelement.h"
-#include "engine.h" // TODO: still need IM2_Matrix_make1
 
 #include <M2/config.h> // need FACTORY_STREAMIO
 

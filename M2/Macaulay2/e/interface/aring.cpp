@@ -4,9 +4,6 @@
 #include <utility>
 #include <vector>
 
-#include <memtailor.h>
-#include <mathic.h>
-
 #include "aring-gf-flint-big.hpp"
 #include "aring-gf-flint.hpp"
 #include "aring-gf-givaro.hpp"
@@ -21,8 +18,6 @@
 #include "exceptions.hpp"
 #include "polyring.hpp"
 #include "relem.hpp"
-
-memt::BufferPool testBuffer(16);
 
 const RingQQ *globalQQ;
 

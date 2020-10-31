@@ -1,8 +1,6 @@
 // Copyright 2004 Michael E. Stillman
 
-#include "engine.h" // TODO: need IM2_FF_LU, IM2_HermiteNormalForm
-
-#include "engine-includes.hpp"
+#include "interface/mutable-matrix.h"
 
 #include <assert.h>
 #include <algorithm>
@@ -15,6 +13,7 @@
 #include "exceptions.hpp"
 #include "finalize.hpp"
 #include "fractionfreeLU.hpp"
+#include "interface/gmp-util.h"
 #include "interface/random.h"
 #include "mat.hpp"
 #include "matrix.hpp"
@@ -756,90 +755,6 @@ M2_bool rawQR(const MutableMatrix *A,
   }
 }
 
-////////////////////////////////////////
-// Support for RRR and CCC operations //
-////////////////////////////////////////
-
-const Matrix /* or null */ *rawMatrixClean(gmp_RR epsilon, const Matrix *M)
-{
-  try
-    {
-      if (M->get_ring()->get_precision() == 0)
-        {
-          ERROR("expected ring over an RR or CC");
-          return 0;
-        }
-      return M->clean(epsilon);
-  } catch (const exc::engine_error& e)
-    {
-      ERROR(e.what());
-      return nullptr;
-  }
-}
-const RingElement /* or null */ *rawRingElementClean(gmp_RR epsilon,
-                                                     const RingElement *f)
-{
-  const Ring *R = f->get_ring();
-  if (R->get_precision() == 0)
-    {
-      ERROR("expected ring over an RR or CC");
-      return 0;
-    }
-  return RingElement::make_raw(R, R->zeroize_tiny(epsilon, f->get_value()));
-}
-MutableMatrix /* or null */ *rawMutableMatrixClean(gmp_RR epsilon,
-                                                   MutableMatrix *M)
-{
-  /* modifies M in place */
-  try
-    {
-      if (M->get_ring()->get_precision() == 0)
-        {
-          ERROR("expected ring over an RR or CC");
-          return 0;
-        }
-      M->clean(epsilon);
-      return M;
-  } catch (const exc::engine_error& e)
-    {
-      ERROR(e.what());
-      return nullptr;
-  }
-}
-
-static gmp_RRmutable get_norm_start(gmp_RR p, const Ring *R)
-{
-  if (R->get_precision() == 0)
-    {
-      ERROR("expected ring over an RR or CC");
-      return 0;
-    }
-  gmp_RRmutable norm = getmemstructtype(gmp_RRmutable);
-  mpfr_init2(norm, mpfr_get_prec(p));
-  mpfr_ui_div(norm, 1, p, GMP_RNDN);
-  if (!mpfr_zero_p(norm))
-    {
-      ERROR("Lp norm only implemented for p = infinity");
-      mpfr_clear(norm);
-      return 0;
-    }
-  return norm;
-}
-
-gmp_RRorNull rawMatrixNorm(gmp_RR p, const Matrix *M) { return M->norm(p); }
-gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f)
-{
-  gmp_RRmutable norm = get_norm_start(p, f->get_ring());
-  if (!norm) return 0;  // error already given.
-  f->get_ring()->increase_maxnorm(norm, f->get_value());
-  return moveTo_gmpRR(norm);
-}
-
-gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
-{
-  return M->norm();
-}
-
 //////////////////////////////////
 // Fast linear algebra routines //
 //////////////////////////////////
@@ -1100,6 +1015,90 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
   ERROR("not implemented: configure M2 with --enable-ffpack-fflas");
   return 0;
 #endif
+}
+
+////////////////////////////////////////
+// Support for RRR and CCC operations //
+////////////////////////////////////////
+
+const Matrix /* or null */ *rawMatrixClean(gmp_RR epsilon, const Matrix *M)
+{
+  try
+    {
+      if (M->get_ring()->get_precision() == 0)
+        {
+          ERROR("expected ring over an RR or CC");
+          return 0;
+        }
+      return M->clean(epsilon);
+  } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+  }
+}
+const RingElement /* or null */ *rawRingElementClean(gmp_RR epsilon,
+                                                     const RingElement *f)
+{
+  const Ring *R = f->get_ring();
+  if (R->get_precision() == 0)
+    {
+      ERROR("expected ring over an RR or CC");
+      return 0;
+    }
+  return RingElement::make_raw(R, R->zeroize_tiny(epsilon, f->get_value()));
+}
+MutableMatrix /* or null */ *rawMutableMatrixClean(gmp_RR epsilon,
+                                                   MutableMatrix *M)
+{
+  /* modifies M in place */
+  try
+    {
+      if (M->get_ring()->get_precision() == 0)
+        {
+          ERROR("expected ring over an RR or CC");
+          return 0;
+        }
+      M->clean(epsilon);
+      return M;
+  } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+  }
+}
+
+static gmp_RRmutable get_norm_start(gmp_RR p, const Ring *R)
+{
+  if (R->get_precision() == 0)
+    {
+      ERROR("expected ring over an RR or CC");
+      return 0;
+    }
+  gmp_RRmutable norm = getmemstructtype(gmp_RRmutable);
+  mpfr_init2(norm, mpfr_get_prec(p));
+  mpfr_ui_div(norm, 1, p, GMP_RNDN);
+  if (!mpfr_zero_p(norm))
+    {
+      ERROR("Lp norm only implemented for p = infinity");
+      mpfr_clear(norm);
+      return 0;
+    }
+  return norm;
+}
+
+gmp_RRorNull rawMatrixNorm(gmp_RR p, const Matrix *M) { return M->norm(p); }
+gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f)
+{
+  gmp_RRmutable norm = get_norm_start(p, f->get_ring());
+  if (!norm) return 0;  // error already given.
+  f->get_ring()->increase_maxnorm(norm, f->get_value());
+  return moveTo_gmpRR(norm);
+}
+
+gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
+{
+  return M->norm();
 }
 
 ////  #if 0

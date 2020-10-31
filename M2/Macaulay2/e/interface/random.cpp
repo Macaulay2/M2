@@ -1,9 +1,7 @@
 // Copyright 2008 by Michael Stillman
 
-#include "engine-includes.hpp"
-
 #include "interface/random.h"
-#include "gmp-util.h"
+#include "interface/gmp-util.h"
 
 #define INITIALMAXINT 10
 

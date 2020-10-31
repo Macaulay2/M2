@@ -29,7 +29,6 @@ set(HFILES
   exptable.h
   monordering.h
   table.h
-  gmp-util.h
   engine.h
   defgroups.h
   mpreal.h
@@ -98,21 +97,25 @@ set(CPPONLYFILES
   ring-vecs.cpp
 
   interface/aring.cpp
+  interface/aring.h
   interface/cra.cpp
   interface/cra.h
   interface/factory.cpp
   interface/factory.h
   interface/flint.cpp
   interface/flint.h
-  interface/freemodule.cpp
+  interface/freemodule.cpp # TODO: .h
+  interface/gmp-util.h # only has inline definitions
   interface/groebner.cpp
   interface/groebner.h
   interface/matrix.cpp
+  interface/matrix.h
   interface/monoid.cpp
   interface/monoid.h
-  interface/monomial-ideal.cpp
+  interface/monomial-ideal.cpp # TODO: .h
   interface/mutable-matrix.cpp
-  interface/polyroots.cpp
+  interface/mutable-matrix.h
+  interface/polyroots.cpp # the declarations are in factory.h
   interface/random.cpp
   interface/random.h
   interface/ring.cpp

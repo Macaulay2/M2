@@ -1,21 +1,26 @@
 // Copyright 1995 Michael E. Stillman
 
 #include "interface/matrix.h"
-#include "engine.h" // TODO: still neded for IM2_Matrix_coeffs, IM2_Matrix_concat
 
 #include <M2/math-include.h>
 
-#include "matrix.hpp"
-#include "NAG.hpp"
+#include "NAG.hpp" // TODO: can this be removed?
+#include "SLP-defs.hpp"
 #include "buffer.hpp"
 #include "dmat.hpp"
 #include "error.h"
 #include "exceptions.hpp"
+#include "freemod.hpp"
+#include "interface/NAG.h"
+#include "interface/gmp-util.h"
 #include "mat.hpp"
 #include "matrix-con.hpp"
+#include "matrix.hpp"
 #include "monoid.hpp"
 #include "mutablemat-defs.hpp"
 #include "relem.hpp"
+#include "ring.hpp"
+#include "ringelem.hpp"
 
 namespace M2 { class ARingCC; }
 
