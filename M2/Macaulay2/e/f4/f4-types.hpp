@@ -3,29 +3,15 @@
 #ifndef _F4types_h_
 #define _F4types_h_
 
-#include <vector>
+#include <memory>
 
-#include <M2/config.h>
-#include <stdio.h>
-#if HAVE_STDINT_H
-#include <stdint.h>
-#elif HAVE_INTTYPES_H
-#include <inttypes.h>
-#else
-#error integer type definitions not available
-#endif
-
-#include "../newdelete.hpp"
-#include "../engine.h"
-#include "../stop.hpp"
+#include "engine-includes.hpp"
 #include "f4-monlookup.hpp"
+#include "moninfo.hpp"
+#include "varpower-monomial.hpp"
 
 #define sizeofspair(s, len) \
   (sizeof(*s) - sizeof(s->lcm) + (len) * sizeof(s->lcm[0]))
-
-#include "varpower-monomial.hpp"
-#include "ntuple-monomial.hpp"
-#include "moninfo.hpp"
 
 // Coefficients.  The implementation of arrays of coeffs
 // is done as a private array.  Note that the length is
@@ -206,9 +192,6 @@ class PreSPairSorter
 };
 
 typedef F4MonomialLookupTableT<int32_t> MonomialLookupTable;
-
-template <typename MonInfo>
-class MonomialHashTable;
 
 #endif
 

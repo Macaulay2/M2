@@ -2,6 +2,8 @@
 
 #include "interface/monomial-ideal.h"
 
+#include <frobby.h> // TODO: move Frobby routines elsewhere?
+
 #include "assprime.hpp"
 #include "buffer.hpp"
 #include "error.h"
@@ -276,7 +278,10 @@ const RingElement /* or null */ *IM2_MonomialIdeal_Hilbert(
 }
 
 M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I) { return I->lcm(); }
-#include "frobby.h"
+
+/***********************/
+/*** Frobby routines ***/
+/***********************/
 
 class MyIdealConsumer : public Frobby::IdealConsumer, our_new_delete
 {

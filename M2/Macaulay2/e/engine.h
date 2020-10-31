@@ -10,48 +10,25 @@
 #include "engine-includes.hpp"
 
 #if defined(__cplusplus)
-class Monomial;
-class Monoid;
 class FreeModule;
-class MonomialIdeal;
 class Matrix;
 class MutableMatrix;
 class RingMap;
 class Computation;
-class EngineComputation;
 class MutableComplex;
-// NAG begin
-class M2SLEvaluator;
-class M2Homotopy;
-class M2SLProgram;
-class StraightLineProgram;
-class PathTracker;
-class M2PointArray;
-// NAG end
 #else
 /* Define the externally visible types here */
-typedef struct Monomial Monomial;
-typedef struct Monoid Monoid;
 typedef struct FreeModule FreeModule;
 typedef struct Matrix Matrix;
 typedef struct MutableMatrix MutableMatrix;
 typedef struct RingMap RingMap;
 typedef struct Computation Computation;
-typedef struct EngineComputation EngineComputation;
-typedef struct MonomialIdeal MonomialIdeal;
 typedef struct MutableComplex MutableComplex;
-// NAG begin
-typedef struct M2SLEvaluator M2SLEvaluator;
-typedef struct M2Homotopy M2Homotopy;
-typedef struct M2SLProgram M2SLProgram;
-typedef struct StraightLineProgram StraightLineProgram;
-typedef struct PathTracker PathTracker;
-typedef struct M2PointArray M2PointArray;
-// NAG end
 #endif
 
 #include "interface/aring.h"
 #include "interface/computation.h"
+#include "interface/cra.h"
 #include "interface/factory.h"
 #include "interface/flint.h"
 #include "interface/freemodule.h"
@@ -303,37 +280,6 @@ extern "C" {
                                                          int * complete_up_through_this_degree);
   /* WARNING: 'minimize' is completely ignored, and should be removed from the interface */
   /* drg: connected rawResolutionStatusLevel */
-
-  M2_arrayint rawMinimalBetti(Computation *G,
-                              M2_arrayint slanted_degree_limit,
-                              M2_arrayint length_limit); /* connectd: rawMinimialBetti */
-  
-  /****************************************************/
-  /**** Chinese remainder and rational reconstruction */
-  /****************************************************/
-
-  const RingElement * rawRingElementCRA(const RingElement *f,
-                                        const RingElement *g,
-                                        mpz_srcptr m,
-                                        mpz_srcptr n);
-
-  const Matrix * rawMatrixCRA(const Matrix *f,
-                              const Matrix *g,
-                              mpz_srcptr m,
-                              mpz_srcptr n);
-
-  const RingElement * rawRingElementRatConversion(const RingElement *f,
-                                  mpz_srcptr m,
-                                  const Ring *RQ);
-
-  // f should be an element in the polynomial ring R (over ZZ).
-  // RQ should be the same ring as R, but with rational coefficients
-
-  const Matrix * rawMatrixRatConversion(const Matrix *f,
-                                        mpz_srcptr m,
-                                        const Ring *RQ);
-  // f should be a matrix in the polynomial ring R (over ZZ).
-  // RQ should be the same ring as R, but with rational coefficients
 
   /**************************************************/
   /**** Specialized operations **********************/
