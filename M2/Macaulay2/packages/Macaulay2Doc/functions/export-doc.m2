@@ -89,5 +89,29 @@ Node
     Text
       This function can be used to export specific symbols from another packages private dictionary.
     Example
-      exportFrom(Core, {"HTML"})
+      exportFrom_Core {"HTML"}
+
+Node
+  Key
+     importFrom
+    (importFrom, Package, List)
+  Headline
+    import symbols to the current private dictionary
+  Usage
+    importFrom(pkg, {"symbol1", "symbol2"})
+  Inputs
+    :Package
+      the package containing the symbols
+    :List
+      of strings, corresponding to the symbols to export
+  Consequences
+    Item
+      package symbols provided in the list will be made available for use, but will not be exported
+  Description
+    Text
+      This function can be used to import specific symbols from another packages private dictionary.
+    Example
+      importFrom_Core {"raw"}
+  Caveat
+    This function may be replaced in the future.
 ///

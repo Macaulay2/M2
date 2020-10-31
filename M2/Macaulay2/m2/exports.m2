@@ -735,6 +735,7 @@ export {
 	"ii",
 	"image",
 	"imaginaryPart",
+	"importFrom",
 	"in",
 	"incomparable",
 	"independentSets",
