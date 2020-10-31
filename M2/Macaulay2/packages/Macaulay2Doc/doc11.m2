@@ -2,8 +2,8 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 document {
-     Key => { formation, (formation,Module) },
-     Headline => "recover the function application used to make a module",
+     Key => { formation, (formation,Module), (formation, ChainComplex), (formation, ChainComplexMap), (formation, GradedModule), (formation, GradedModuleMap) },
+     Headline => "recover the methods used to make a module",
      Usage => "formation M",
      Inputs => { "M" => Module => "a module" },
      Outputs => { Expression => { ofClass Expression, " whose value is the module itself" }},
@@ -25,14 +25,21 @@ document {
 	 t#1
      ///,
      PARA {
-	  "If the module was not obtained that way, then the resulting expression
-	  is simply a holder for the module itself."
+	  "If the module was not obtained that way, then ", TO "null", " is returned."
 	  },
      EXAMPLE lines ///
-         t = formation ZZ^6
-	 value t
+         formation ZZ^6
      ///,
-     SeeAlso => { directSum, (symbol ++, Module, Module), (symbol **, Module, Module), (Hom,Module,Module), Expression, FunctionApplication, Holder }	  
+     PARA {
+	  "The same remarks apply to certain other types of objects, such as chain complexes."
+	  },
+     EXAMPLE lines ///
+          R = QQ[x,y];
+	  C = res coker vars R;
+	  D = C ++ C
+	  formation D
+	  ///,
+     SeeAlso => { directSum, (symbol ++, Module, Module), (symbol **, Module, Module), (Hom,Module,Module), Expression, FunctionApplication}
      }
 TEST ///
      assert( (     M = ZZ^2 ++ ZZ^3) === ZZ^5 );

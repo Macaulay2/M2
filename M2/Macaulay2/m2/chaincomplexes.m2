@@ -292,6 +292,9 @@ ChainComplexMap == ZZ := (f,i) -> (
      if i === 0 then all(spots f, j -> f_j == 0)
      else source f == target f and f == i id_(source f))
 ZZ == ChainComplexMap := (i,f) -> f == i
+
+formation ChainComplexMap := f -> if f.cache.?formation then f.cache.formation
+
 ChainComplexMap ++ ChainComplexMap := ChainComplexMap => (f,g) -> (
      if f.degree != g.degree then (
 	  error "expected maps of the same degree";
@@ -549,6 +552,7 @@ chainComplex List := {} >> opts -> maps -> (
 	       ));
      C)
 
+formation ChainComplex := M -> if M.cache.?formation then M.cache.formation
 
 directSum ChainComplex := C -> directSum(1 : C)
 ChainComplex.directSum = args -> (

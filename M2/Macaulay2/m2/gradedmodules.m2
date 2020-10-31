@@ -214,6 +214,8 @@ ZZ == GradedModuleMap := (i,f) -> f == i
 
 degree GradedModuleMap := G -> G.degree
 
+formation GradedModule := M -> if M.cache.?formation then M.cache.formation
+
 directSum GradedModule := GradedModule => M -> directSum(1 : M)
 GradedModule.directSum = v -> (
      E := new GradedModule;
@@ -225,8 +227,11 @@ GradedModule.directSum = v -> (
      scan(v, M -> scan(spots M, i -> spts#i = 1));
      spts = keys spts;
      scan(spts, i -> E#i = directSum apply(v, M -> M_i));
-     E	       
-     )
+     E.cache.components = v;
+     E.cache.formation = FunctionApplication { directSum, v };
+     E)
+
+formation GradedModuleMap := M -> if M.cache.?formation then M.cache.formation
 
 GradedModuleMap ++ GradedModuleMap := GradedModuleMap => (f,g) -> (
      if f.degree != g.degree then (
