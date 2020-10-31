@@ -13,7 +13,7 @@ typedef struct RingElement RingElement;
 #  endif
 
 /**
-   Polynomial GCD and factorization via Factory and MPSolve
+   Polynomial GCD and factorization interface routines via Factory and MPSolve
  */
 
 #  if defined(__cplusplus)

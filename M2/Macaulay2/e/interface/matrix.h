@@ -17,7 +17,7 @@ typedef struct RingElement RingElement;
 #  endif
 
 /**
-   Matrix routines
+   Matrix interface routines
  */
 
 #  if defined(__cplusplus)

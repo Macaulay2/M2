@@ -17,7 +17,14 @@ typedef struct RingElement RingElement;
 #  endif
 
 /**
-   Polynomial GCD and factorization via Mutable-Matrix and MPSolve
+   MutableMatrix interface routines
+
+   Also:
+   Fraction free LU decomposition
+   LLL bases
+   Lapack routines for dense mutable matrices
+   Fast linear algebra routines
+   Special routines for objects over RRR,CCC
  */
 
 #  if defined(__cplusplus)

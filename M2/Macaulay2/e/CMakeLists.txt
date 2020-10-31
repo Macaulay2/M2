@@ -73,7 +73,6 @@ set(HPPONLYFILES
   schur-poly-heap.hpp
   smat.hpp
   stdinc-m2.hpp
-  stop.hpp
   style.hpp
   f4/moninfo2.hpp
   f4/res-memblock.hpp
@@ -96,6 +95,7 @@ set(CPPONLYFILES
 
   interface/aring.cpp
   interface/aring.h
+  interface/computation.h # no .cpp yet
   interface/cra.cpp
   interface/cra.h
   interface/factory.cpp

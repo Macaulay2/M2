@@ -21,7 +21,7 @@ typedef struct M2PointArray M2PointArray;
 #  endif
 
 /**
-   Numerical Algebraic Geometry
+   Numerical Algebraic Geometry interface routines
  */
 
 #  if defined(__cplusplus)

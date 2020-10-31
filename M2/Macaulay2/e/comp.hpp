@@ -4,9 +4,7 @@
 #define _comp_hpp_
 
 #include "interface/computation.h"
-
 #include "hash.hpp"
-#include "stop.hpp"
 
 class GroebnerBasis;
 

@@ -5,6 +5,10 @@
 
 #  include "engine-includes.hpp"
 
+/**
+   Randomization interface routines
+ */
+
 #  if defined(__cplusplus)
 extern "C" {
 #  endif

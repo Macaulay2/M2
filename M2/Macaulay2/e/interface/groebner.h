@@ -33,7 +33,7 @@ typedef struct RingMap RingMap;
 typedef EngineComputation EngineComputationOrNull;
 
 /**
-   Groebner computations interface
+   Groebner computations interface routines
  */
 
 #  if defined(__cplusplus)

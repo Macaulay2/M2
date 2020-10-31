@@ -3,6 +3,10 @@
 
 #  include "../d/M2mem.h"
 
+/**
+   Multiprecision arithmetic allocation utility routines
+ */
+
 #  if defined(__cplusplus)
 extern "C" {
 #  endif

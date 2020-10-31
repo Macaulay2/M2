@@ -13,7 +13,7 @@ typedef struct RingElement RingElement;
 #  endif
 
 /**
-   ARing routines
+   ARing interface routines
  */
 
 #  if defined(__cplusplus)

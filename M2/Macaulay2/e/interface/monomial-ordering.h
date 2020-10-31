@@ -6,7 +6,7 @@
 typedef struct MonomialOrdering MonomialOrdering;
 
 /**
-   MonomialOrdering routines
+   MonomialOrdering interface routines
  */
 
 enum MonomialOrdering_type {

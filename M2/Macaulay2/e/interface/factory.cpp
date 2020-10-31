@@ -4,8 +4,6 @@
 #include "interface/matrix.h"
 #include "interface/ringelement.h"
 
-#include <M2/config.h> // need FACTORY_STREAMIO
-
 #include <assert.h>
 #include <cstdio>
 #include <iostream>

@@ -1,6 +1,6 @@
 // Copyright 2002 Michael E. Stillman
 
-#include "interface/groebner.h" // TODO
+#include "interface/groebner.h"
 
 #include <iostream>
 #include <limits>

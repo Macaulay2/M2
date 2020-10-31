@@ -15,7 +15,7 @@ typedef struct RingElement RingElement;
 #  endif
 
 /**
-   Chinese remainder and rational reconstruction
+   Chinese remainder and rational reconstruction interface routines 
  */
 
 #  if defined(__cplusplus)

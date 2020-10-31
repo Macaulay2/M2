@@ -1,4 +1,5 @@
 #include "interface/flint.h"
+#include "interface/gmp-util.h"
 
 #include <iostream>
 #include <vector>
@@ -9,9 +10,7 @@
 #include <flint/fmpz.h>
 #pragma GCC diagnostic pop
 
-#include "engine-includes.hpp"
 #include "error.h"
-#include "interface/gmp-util.h"
 
 M2_bool rawZZisPrime(gmp_ZZ a)
 {

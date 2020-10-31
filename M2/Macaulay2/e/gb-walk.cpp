@@ -10,7 +10,6 @@
 #include "interface/computation.h"
 #include "interface/monomial-ordering.h"
 #include "reducedgb-marked.hpp"
-#include "stop.hpp"
 
 class Computation;
 class Matrix;

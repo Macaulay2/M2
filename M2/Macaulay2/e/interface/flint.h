@@ -4,7 +4,7 @@
 #  include "engine-includes.hpp"
 
 /**
-   Integer primality and factorization via Flint
+   Integer primality and factorization interface routines via Flint
  */
 
 #  if defined(__cplusplus)

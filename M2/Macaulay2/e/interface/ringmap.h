@@ -21,7 +21,7 @@ typedef struct RingMap RingMap;
 #  endif
 
 /**
-   RingMap routines interface
+   RingMap interface routines
 
    My plan, Dan, is to make changes to how ring maps are constructed, in the
    case when we have rings over polynomials rings (including galois field bases)

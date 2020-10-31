@@ -2,8 +2,6 @@
 
 #include "interface/ringelement.h"
 
-#include "engine-includes.hpp"
-
 #include <assert.h>
 #include <memory>
 #include <utility>

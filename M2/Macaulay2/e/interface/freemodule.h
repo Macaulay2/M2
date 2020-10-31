@@ -15,7 +15,7 @@ typedef struct Ring Ring;
 #  endif
 
 /**
-   FreeModule routines interface
+   FreeModule interface routines
 
    A FreeModule in the engine is always over a specific
      ring, and is graded using the degree monoid of the ring.
