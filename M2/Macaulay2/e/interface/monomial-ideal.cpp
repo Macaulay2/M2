@@ -1,8 +1,6 @@
 // Copyright 2002 Michael E. Stillman
 
-#include "engine.h" // TODO: need IM2_MonomialIdeal_Hilbert, etc.
-
-#include "engine-includes.hpp"
+#include "interface/monomial-ideal.h"
 
 #include "assprime.hpp"
 #include "buffer.hpp"
@@ -22,7 +20,7 @@
 #include "varpower.hpp"
 
 class PolynomialRing;
-struct RingElement;
+class RingElement;
 
 engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n)
 {

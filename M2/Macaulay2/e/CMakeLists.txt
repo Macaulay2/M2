@@ -112,7 +112,8 @@ set(CPPONLYFILES
   interface/matrix.h
   interface/monoid.cpp
   interface/monoid.h
-  interface/monomial-ideal.cpp # TODO: .h
+  interface/monomial-ideal.cpp
+  interface/monomial-ideal.h
   interface/mutable-matrix.cpp
   interface/mutable-matrix.h
   interface/polyroots.cpp # the declarations are in factory.h
