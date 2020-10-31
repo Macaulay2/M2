@@ -10,6 +10,7 @@ newPackage ( "TorAlgebra",
 	  HomePage => "https://cos.northeastern.edu/faculty/oana-veliche/" }
 	},
     Headline => "classification of local rings based on multiplication in homology",
+    Keywords => {"Commutative Algebra"},
     PackageImports => {"LocalRings"},
     Certification => { -- this package was certified under its old name, "CodepthThree"
 	 "journal name" => "The Journal of Software for Algebra and Geometry",

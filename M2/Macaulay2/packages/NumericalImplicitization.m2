@@ -10,6 +10,7 @@ newPackage("NumericalImplicitization",
 	 Email => "jkileel@math.princeton.edu",
 	 HomePage => "https://web.math.princeton.edu/~jkileel/"}
         },
+    Keywords => {"Numerical Algebraic Geometry"},
     PackageExports => {"NumericalAlgebraicGeometry"},
     Certification => {	
 	"journal name" => "The Journal of Software for Algebra and Geometry",	

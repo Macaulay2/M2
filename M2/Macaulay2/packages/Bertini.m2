@@ -19,6 +19,7 @@ newPackage(
      HomePage => "http://www.math.gatech.edu/~leykin"}
   },
   Headline => "interface to Bertini",
+  Keywords => {"Numerical Algebraic Geometry", "Interfaces"},
   Configuration => { "BERTINIexecutable"=>"bertini" },
   AuxiliaryFiles => true,
   PackageExports => {"NAGtypes"},

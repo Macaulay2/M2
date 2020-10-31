@@ -17,6 +17,7 @@ newPackage(
 
                    },
     	Headline => "random curves",
+	Keywords => {"Examples and Random Objects"},
 	PackageExports => {"RandomObjects","RandomSpaceCurves","RandomPlaneCurves","RandomGenus14Curves","RandomCanonicalCurves"},
     	DebuggingMode => false
         )

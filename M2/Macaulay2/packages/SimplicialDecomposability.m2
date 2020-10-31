@@ -14,6 +14,7 @@ newPackage (
                 Email => "dwcook@eiu.edu",
                 HomePage => "http://ux1.eiu.edu/~dwcook/"}},
    Headline => "various decomposability routines for simplicial complexes",
+   Keywords => {"Combinatorial Commutative Algebra"},
    DebuggingMode => false,
    Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
@@ -22,8 +23,8 @@ newPackage (
 	"acceptance date" => "2010-08-03",
 	"published article URI" => "http://www.j-sag.org/Volume2/jsag-5-2010.pdf",
 	"published code URI" => "http://www.j-sag.org/Volume2/SimplicialDecomposability.m2",
-	"repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/SimplicialDecomposability.m2",
-	"release at publication" => 11861,	    -- as an integer
+	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SimplicialDecomposability.m2",
+	"release at publication" => "d230ee4205bab933be32f3de7ae0ae0f52115c84",
 	"version at publication" => "1.0.5",
 	"volume number" => "2",
 	"volume URI" => "http://www.j-sag.org/volume2.html"

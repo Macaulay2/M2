@@ -20,6 +20,7 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
         Headline => "interface to a small part of topcom",
+	Keywords => {"Interfaces"},
         Configuration => {
             "path" => ""
             },

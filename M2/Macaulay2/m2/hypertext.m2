@@ -131,10 +131,10 @@ SUB        = new MarkUpType of Hypertext
 SUP        = new MarkUpType of Hypertext
 TT         = new MarkUpType of Hypertext
 
--- Lists (TODO: OL)
+-- Lists
 OL         = new MarkUpType of HypertextContainer
 UL         = new MarkUpType of HypertextContainer
-LI         = new MarkUpType of HypertextContainer
+LI         = new MarkUpType of HypertextParagraph
 DL         = new MarkUpType of HypertextContainer
 DT         = new MarkUpType of HypertextParagraph
 DD         = new MarkUpType of HypertextParagraph
@@ -255,10 +255,9 @@ new TO2  from List      :=
 new TO2  from Sequence  := (TO2, x) -> { makeDocumentTag x#0, concatenate drop(toSequence x,1) }
 new TOH  from List      := (TOH, x) -> { makeDocumentTag x#0 }
 new HREF from List      := (HREF, x) -> (
-     if #x > 2 or #x == 0 then error "HREF list should have length 1 or 2";
-     y := x#0;
-     if not (instance(y,String) or instance(y,Sequence) and #y===2 and instance(y#0,String) and instance(y#1,String))
-     then error "HREF expected URL to be a string or a pair of strings"; x)
+    url := if x#?0 and (instance(x#0, String) or instance(x#0, Sequence) and #x#0 === 2 and all(x#0, y -> instance(y, String)))
+    then x#0 else error "HREF expected URL to be a string or a sequence of 2 strings";
+    if x#?1 then prepend(url, drop(x, 1)) else {url})
 
 new OL from VisibleList :=
 new UL from VisibleList := (T, x) -> (

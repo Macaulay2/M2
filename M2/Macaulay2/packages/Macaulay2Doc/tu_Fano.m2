@@ -128,9 +128,11 @@ betti fano
 -- is just as well to write the documentation
 -- at this point .
 --
--- The documentation has the following form:
+-- The documentation has the following form.
 --^
 needsPackage "Text"
+--$
+--^
 document {
      Key => Fano2, 
         TT "Fano2(k,X,GR) or  Fano2(k,X)", " -- computes 
@@ -145,7 +147,7 @@ document {
         lying on X. If the optional third argument is not 
         present, the routine fabricates its own local ring, 
         and returns an ideal over it."
-        }
+        };
 --$
 -- If we take the variety that is the whole
 -- of ${\bf P}^r$, we get the Grassmannian.  
@@ -171,13 +173,12 @@ document {
         the first binomial(r+1,k+1) variables of R. 
         If R is not given, the routine makes and uses
         ZZ/31991[vars(0..binomial(r+1,k+1)-1]."
-        }
+        };
 --$
 -- In order to make {\tt Fano2} handle an optional
 -- number of arguments, we make it a method
--- instead of a function, as follows
+-- instead of a function, documenting it as follows.
 Fano2 = method()
-
 -- Here is the code for the first case, with
 -- comments interspersed:
 --^
@@ -232,7 +233,7 @@ Fano2(ZZ,Ideal,Ring) := (k,X,GR) -> (
   ker gr
 )
 --$
--- The second case reduces to the first:
+-- Here is the code for the second case, which reduces to the first.
 --^
 Fano2(ZZ, Ideal) := (k,X) -> (
   KK:=coefficientRing ring X;
@@ -244,7 +245,7 @@ Fano2(ZZ, Ideal) := (k,X) -> (
   Fano2(k,X,GR)
 )
 --$
--- With the 0 ideal we get the Grassmannian
+-- With the zero ideal we get the Grassmannian
 -- of projective $k$-planes in ${\bf P}^r$:
 
 Grassmannian2 = method()
