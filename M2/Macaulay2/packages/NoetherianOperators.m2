@@ -69,7 +69,7 @@ export {
     "TrustedPoint",
 
     --functions from punctual Hilb approach
-    "getNoetherianOperatorsHilb", --TODO remove
+    --"getNoetherianOperatorsHilb", --TODO remove
     "getIdealFromNoetherianOperators",
     "joinIdeals",
     "mapToPunctualHilbertScheme"
@@ -848,18 +848,18 @@ assert((myKernel M - gens kernel M) == 0)
 
 -- dispatcher method
 noetherianOperators = method(Options => true)
-noetherianOperators (Ideal) := SetOfNoethOps => true >> opts -> I -> (
+noetherianOperators (Ideal) := List => true >> opts -> I -> (
     strats := new HashTable from {
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
         "PunctualHilbert" => getNoetherianOperatorsHilb,
     };
-    strat := if opts.?Strategy then opts.Strategy else "MacaulayMatrix";
+    strat := if opts.?Strategy then opts.Strategy else "PunctualHilbert";
     if strats#?strat then strats#strat(I, opts) 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
 
-noetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,P) -> (
+noetherianOperators (Ideal, Ideal) := List => true >> opts -> (I,P) -> (
     strats := new HashTable from {
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
@@ -1039,7 +1039,7 @@ assert(all(values(normalize(L#1) - normalize(diffOp{x => 1, y => 2*sqrt(2)})), v
 ///
 
 hybridNoetherianOperators = method(Options => true)
-hybridNoetherianOperators (Ideal, Ideal, Matrix) := SetOfNoethOps => true >> opts -> (I,P, pt) -> (
+hybridNoetherianOperators (Ideal, Ideal, Matrix) := List => true >> opts -> (I,P, pt) -> (
     R := ring I;
     (depVars,indVars) := getDepIndVars(P,opts);
     S := (frac((coefficientRing R)(monoid[indVars])))(monoid[depVars]);
@@ -1065,14 +1065,14 @@ hybridNoetherianOperators (Ideal, Ideal, Matrix) := SetOfNoethOps => true >> opt
         --diffOp apply(flatten entries dBasis, flatten entries KK, (m, f) -> sub(m,R) => f)
     )
 )
-hybridNoetherianOperators (Ideal, Ideal, Point) := SetOfNoethOps => true >> opts -> (I,P, pt) -> hybridNoetherianOperators(I,P, matrix pt, opts)
+hybridNoetherianOperators (Ideal, Ideal, Point) := List => true >> opts -> (I,P, pt) -> hybridNoetherianOperators(I,P, matrix pt, opts)
 
-hybridNoetherianOperators (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (I,P) -> (
+hybridNoetherianOperators (Ideal, Ideal) := List => true >> opts -> (I,P) -> (
     f := if opts.?Sampler then opts.Sampler else J -> first bertiniSample(1,first components bertiniPosDimSolve(J));
     hybridNoetherianOperators(I,P,f P, opts)
 )
 
-hybridNoetherianOperators (Ideal) := SetOfNoethOps => true >> opts -> I -> hybridNoetherianOperators(I, radical I, opts)
+hybridNoetherianOperators (Ideal) := List => true >> opts -> I -> hybridNoetherianOperators(I, radical I, opts)
 
 TEST ///
 debug NoetherianOperators
@@ -1117,7 +1117,7 @@ numericalNoetherianOperators(Ideal) := List => true >> opts -> (I) -> (
 )
 
 -- if a point is given, computes the evaluated Nops
-numericalNoetherianOperators(Ideal, Point) := SetOfNoethOps => true >> opts -> (I,pt) -> (
+numericalNoetherianOperators(Ideal, Point) := List => true >> opts -> (I,pt) -> (
     if not opts.?DependentSet then error "expected option DependentSet";
     S := ring I;
     if ancestor(InexactField, class coefficientRing S) then numNoethOpsAtPoint(I, pt, opts)
@@ -1128,7 +1128,7 @@ numericalNoetherianOperators(Ideal, Point) := SetOfNoethOps => true >> opts -> (
     )
     else error "expected an ideal in a polynomial ring over QQ, CC or RR"
 )
-numericalNoetherianOperators(Ideal, Matrix) := SetOfNoethOps => true >> opts -> (I,pt) -> numericalNoetherianOperators(I, point pt, opts)
+numericalNoetherianOperators(Ideal, Matrix) := List => true >> opts -> (I,pt) -> numericalNoetherianOperators(I, point pt, opts)
 
 TEST ///
 debug NoetherianOperators
@@ -1469,7 +1469,7 @@ invSystemFromHilbToNoethOps = (I, R, S, depVars) -> (
 -- This function can compute the Noetherian operators of a primary ideal Q.
 -- Here we pass first through the punctual Hilbert scheme 
 getNoetherianOperatorsHilb = method(Options => true)
-getNoetherianOperatorsHilb Ideal := SetOfNoethOps => true >> opts -> Q -> (
+getNoetherianOperatorsHilb Ideal := List => true >> opts -> Q -> (
     R := ring Q;
     P := radical Q;
     indVars := support first independentSets P;
@@ -1479,7 +1479,7 @@ getNoetherianOperatorsHilb Ideal := SetOfNoethOps => true >> opts -> Q -> (
     invSystemFromHilbToNoethOps(I, R, S, depVars)
 )
 
-getNoetherianOperatorsHilb (Ideal, Ideal) := SetOfNoethOps => true >> opts -> (Q,P) -> (
+getNoetherianOperatorsHilb (Ideal, Ideal) := List => true >> opts -> (Q,P) -> (
     if P != radical Q then error "expected second argument to be the radical of the first"
     else getNoetherianOperatorsHilb(Q,opts)
 )
@@ -2292,6 +2292,11 @@ Description
 
 
 -------------- Noetherian operators documentation
+doc ///
+Key
+    DiffOp
+///
+
 
 doc ///
 Key
@@ -2300,11 +2305,13 @@ Headline
     Noetherian operators of a primary ideal
 Usage
     noetherianOperators Q
-    noetherianOperators (Q, Strategy => "MacaulayMatrix")
+    noetherianOperators (Q, Strategy => "PunctualHilbert")
 Inputs
     Q:Ideal
         assumed to be primary
---Outputs
+Outputs
+    :List
+        of @TO2{DiffOp, "differential operators"}@
 --Consequences
 --    Item
 Description
@@ -2317,11 +2324,11 @@ Description
     Text
         The optional argument {\tt Strategy} can be used to choose different algorithms.
         The following algorithms are supported:
-        {\tt "MacaulayMatrix"}, {\tt "PunctualHilbert"}, {\tt "Hybrid"}
+        {\tt "PunctualHilbert"} (default), {\tt "MacaulayMatrix"}, {\tt "Hybrid"}
 
         @UL{
-            TO2 {"MacaulayMatrix", "\"MacaulayMatrix\""},
             TO2 {"PunctualHilbert", "\"PunctualHilbert\""},
+            TO2 {"MacaulayMatrix", "\"MacaulayMatrix\""},
             TO2 {"Hybrid", "\"Hybrid\""},
         }@
 
@@ -2363,25 +2370,9 @@ Key
     "PunctualHilbert"
 Headline
     strategy for computing Noetherian operators
-///
-
-doc ///
-Key
-    getNoetherianOperatorsHilb
-    (getNoetherianOperatorsHilb, Ideal)
-Headline
-    Computes a set of Noetherian operators describing a primary ideal
-Usage
-    L = getNoetherianOperatorsHilb(Q)
-Inputs
-    Q : Ideal
-        a primary ideal
-Outputs
-    L : List
-        a set of Noetherian operators describing the primary ideal Q
 Description
     Text
-        This method contains an implementation of Algorithm 3.8 in @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@. 
+        This strategy implements Algorithm 3.8 in @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@. 
 
         Let $R$ be a polynomial ring $R = K[x_1,\ldots,x_n]$ over a field $K$ of characteristic zero. 
         Consider the Weyl algebra $D = R<dx_1,\ldots,dx_n>$, 
@@ -2403,16 +2394,33 @@ Description
         R=QQ[x_1,x_2,x_3,x_4]
         Q = ideal(x_1^2,x_1*x_2,x_1*x_3,x_1*x_4-x_3^2+x_1,x_3^2*x_4-x_2^2,x_3^2*x_4-x_3^2-x_2*x_3+2*x_1)
         isPrimary Q
-        getNoetherianOperatorsHilb(Q)
+        noetherianOperators(Q, Strategy => "PunctualHilbert")
 
-    Example 
+    --TODO: this example takes a bit too long
+    Example
         R = QQ[x_1,x_2,x_3,x_4]
-        k=6
+        k=3
         J = ideal((x_1^2-x_2*x_3)^k,(x_1*x_2-x_3*x_4)^k,(x_2^2-x_1*x_4)^k)
         Q = saturate(J,ideal(x_1*x_2*x_3*x_4))
         isPrimary Q
-        getNoetherianOperatorsHilb(Q)
+        noetherianOperators(Q, Strategy => "PunctualHilbert")
 ///
+
+-- doc ///
+-- Key
+--     getNoetherianOperatorsHilb
+--     (getNoetherianOperatorsHilb, Ideal)
+-- Headline
+--     Computes a set of Noetherian operators describing a primary ideal
+-- Usage
+--     L = getNoetherianOperatorsHilb(Q)
+-- Inputs
+--     Q : Ideal
+--         a primary ideal
+-- Outputs
+--     L : List
+--         a set of Noetherian operators describing the primary ideal Q
+-- ///
 
 
 
@@ -2426,7 +2434,7 @@ Usage
     Q = getIdealFromNoetherianOperators(L, P)
 Inputs
     L : List
-        a list of differential operators
+        of @TO2 {DiffOp, "differential operators"}@
     P : Ideal
         a prime ideal
 Outputs
@@ -2456,26 +2464,26 @@ Description
         P = minors(2,MM)
         M = ideal{x_1^2,x_2^2,x_3^2,x_4^2} 
         Q = joinIdeals(P,M);
-        L1 = getNoetherianOperatorsHilb(Q) -- A set of Noetherian operators
-        Q1 = getIdealFromNoetherianOperators(L1.Ops, L1.Prime);
+        L1 = noetherianOperators(Q) -- A set of Noetherian operators
+        Q1 = getIdealFromNoetherianOperators(L1, P);
         Q == Q1
-        L2 = getNoetherianOperatorsHilb(M) -- Another set of Noetherian operators
-        Q2 = getIdealFromNoetherianOperators(L2.Ops, P);
+        L2 = noetherianOperators(M) -- Another set of Noetherian operators
+        Q2 = getIdealFromNoetherianOperators(L2, P);
         Q == Q2
     Text
         The following example was given as the running example in the Introduction of @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
     Example
         Q = ideal(3*x_1^2*x_2^2-x_2^3*x_3-x_1^3*x_4-3*x_1*x_2*x_3*x_4+2*x_3^2*x_4^2,3*x_1^3*x_2*x_4-3*x_1*x_2^2*x_3*x_4-3*x_1^2*x_3*x_4^2+3*x_2*x_3^2*x_4^2+2*x_2^3-2*x_3*x_4^2,3*x_2^4*x_3-6*x_1*x_2^2*x_3*x_4+3*x_1^2*x_3*x_4^2+x_2^3-x_3*x_4^2,4*x_1*x_2^3*x_3+x_1^4*x_4-6*x_1^2*x_2*x_3*x_4-3*x_2^2*x_3^2*x_4+4*x_1*x_3^2*x_4^2,x_2^5-x_1*x_2^3*x_4-x_2^2*x_3*x_4^2+x_1*x_3*x_4^3,x_1*x_2^4-x_2^3*x_3*x_4-x_1*x_2*x_3*x_4^2+x_3^2*x_4^3,x_1^4*x_2-x_2^3*x_3^2-2*x_1^3*x_3*x_4+2*x_1*x_2*x_3^2*x_4,x_1^5-4*x_1^3*x_2*x_3+3*x_1*x_2^2*x_3^2+2*x_1^2*x_3^2*x_4-2*x_2*x_3^3*x_4,3*x_1^4*x_3*x_4-6*x_1^2*x_2*x_3^2*x_4+3*x_2^2*x_3^3*x_4+2*x_1^3*x_2+6*x_1*x_2^2*x_3-6*x_1^2*x_3*x_4-2*x_2*x_3^2*x_4,4*x_2^3*x_3^3+4*x_1^3*x_3^2*x_4-12*x_1*x_2*x_3^3*x_4+4*x_3^4*x_4^2-x_1^4+6*x_1^2*x_2*x_3+3*x_2^2*x_3^2-8*x_1*x_3^2*x_4)
-        L = getNoetherianOperatorsHilb(Q)
-        Q' = getIdealFromNoetherianOperators(L.Ops, P);
+        L = noetherianOperators(Q)
+        Q' = getIdealFromNoetherianOperators(L, P);
         Q == Q'  
     Text
         The next example was given by Palamodov to show that there exists primary ideals that cannot be described by using differential operators with constant coefficients.       
     Example
         R = QQ[x_1, x_2, x_3]
         Q = ideal(x_1^2, x_2^2, x_1-x_2*x_3)
-        L = getNoetherianOperatorsHilb(Q)
-        Q' = getIdealFromNoetherianOperators(L.Ops,radical Q)
+        L = noetherianOperators(Q)
+        Q' = getIdealFromNoetherianOperators(L,radical Q)
         Q == Q'
     Text 
         For the last example we consider an ideal defined by using the join construction.
@@ -2485,8 +2493,8 @@ Description
         P = minors(2, MM)
         M = ideal(x_1^2, x_5^2, x_9^2, x_2, x_3, x_4, x_6, x_7, x_8)
         Q = joinIdeals(P, M)
-        L = getNoetherianOperatorsHilb(Q) 
-        Q' = getIdealFromNoetherianOperators(L.Ops, radical Q) 
+        L = noetherianOperators(Q) 
+        Q' = getIdealFromNoetherianOperators(L, radical Q) 
         Q == Q'
 ///
 -------------- Noetherian operators tests
