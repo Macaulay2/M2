@@ -9,7 +9,7 @@
 #include "types.h"
 #include "debug.h"
 
-#include "engine.h" /* to get IM2_initialize() : */
+#include <engine.h> /* to get IM2_initialize() : */
 #include "supervisorinterface.h"
 
 #include <gdbm.h>

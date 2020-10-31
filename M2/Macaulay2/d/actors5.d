@@ -2,7 +2,7 @@
 use actors;
 use actors2;
 
-header "#include \"../e/engine.h\"";
+header "#include <interface/random.h>";
 
 getParsing(e:Expr):Expr := (
      when e
