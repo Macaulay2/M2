@@ -50,6 +50,7 @@ typedef struct M2PointArray M2PointArray;
 // NAG end
 #endif
 
+#include "interface/aring.h"
 #include "interface/computation.h"
 #include "interface/factory.h"
 #include "interface/flint.h"
@@ -79,58 +80,6 @@ extern "C" {
   /* Monomials in the engine: are not associated with a monoid,
    * and may have negative exponents. Monomials are immutable objects.
    */
-  
-  /**************************************************/
-  /**** ARing routines ******************************/
-  /**************************************************/
-
-  const Ring /* or null */ *rawARingZZp(unsigned long p); /* connected */
-    /* Expects a prime number p in range 2 <= p <= 32749 */
-
-  const Ring /* or null */ *rawARingGaloisField1(const RingElement *prim); /* connected */
-  /* same interface as rawGaloisField, but uses different internal code */
-
-  const Ring /* or null */ *rawARingGaloisFieldFlintBig(const RingElement *prim); /* connected */
-  /* same interface as rawGaloisField, but uses Flint GF code designed for wordsize p, but too big 
-     for lookup tables */
-
-  const Ring /* or null */ *rawARingGaloisFieldFlintZech(const RingElement *prim); /* connected */
-  /* same interface as rawGaloisField, but uses Flint GF code designed for wordsize p, 
-     and uses lookup tables */
-
-  const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *prim); /* connected */
-  /* same interface as rawGaloisField, but uses Givaro */
-
-  const Ring /* or null */ *rawARingGaloisField(int p, int n); /* connected */
-  /* creates a ring GF(p^n).  Constraints on p, n? */
-  /* returns null if the values p,n are too large  */
-
-
-  M2_arrayintOrNull rawARingGFPolynomial(const Ring *R);
-  /* given an ARingGF, return the coefficient array of the quotient polynoials.
-     So, if R = kk[a]/(f(a)), where kk = ZZ/p, then the (integer) coefficients
-     {f0, f1, f2, ..., f_(degree f)} is returned.
-   */
-
-  M2_arrayintOrNull rawARingGFCoefficients(const RingElement *f);
-  /* f can be written as a polynomial in the generator a, e.g.
-     f = f0 + a*f1 + ... + a^(d-1) * f_(d-1), where d = deg of the
-     ring over ZZ/p.  This function returns {f0, f1, ..., f_(d-1)},
-     where each entry is an integer */
-
-  const RingElement*  rawMultiplicativeGenerator(const Ring *R);
-  /* given an ARingGF, return the  the generator of the multiplicative group.
-    */
-
-  /**************************************************/
-  /**** ARing flint routines ************************/
-  /**************************************************/
-  const Ring* /* or null */ rawARingZZFlint(); /* connected */
-
-  const Ring* /* or null */ rawARingQQFlint(); /* connected */
-
-  const Ring /* or null */ *rawARingZZpFlint(unsigned long p); /* connected */
-    /* Expects a prime number p in range 2 <= p <= 2^64-1 */
 
   /**************************************************/
   /**** polynomial ring element routines ************/

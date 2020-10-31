@@ -1,5 +1,4 @@
-#include "engine.h" // TODO: need rawARingGFCoefficients, rawARingGF, etc.
-#include "interface/ring.h"
+#include "interface/aring.h"
 
 #include <algorithm>
 #include <utility>
