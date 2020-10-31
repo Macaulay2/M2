@@ -87,19 +87,6 @@ MonomialIdeal - MonomialIdeal := MonomialIdeal => (I,J) -> (
 
 radical MonomialIdeal := MonomialIdeal => options -> (I) -> newMonomialIdeal(ring I, rawRadical raw I)
 
-quotient(MonomialIdeal, MonomialIdeal) := MonomialIdeal => opts -> (I,J) -> newMonomialIdeal(ring I, rawColon(raw I, raw J))
-MonomialIdeal : MonomialIdeal := MonomialIdeal => (I,J) -> quotient(I,J)
-
-quotient(MonomialIdeal, RingElement) := opts -> (I,f) -> I : monomialIdeal terms f
-MonomialIdeal : RingElement := MonomialIdeal => (I,r) -> quotient(I,r)
-
-saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => o -> (I,J) -> newMonomialIdeal(ring I, rawSaturate(raw I, raw J))
-
-saturate(MonomialIdeal, RingElement) := Ideal => o -> (I,f) -> (
-     if size f === 1 and leadCoefficient f == 1 then saturate (I,monomialIdeal f)
-     else saturate(ideal I, ideal f)
-     )
-
 int := (I,J) -> (
      if ring I =!= ring J then error "expected monomial ideals in the same ring";
      newMonomialIdeal(ring I, rawIntersect(raw I, raw J)))

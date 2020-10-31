@@ -13,6 +13,7 @@ Node
    (saturate, Ideal)
    (saturate, Ideal, Ideal)
    (saturate, Ideal, RingElement)
+   (saturate, MonomialIdeal)
    (saturate, MonomialIdeal, MonomialIdeal)
    (saturate, MonomialIdeal, RingElement)
    (saturate, Module)

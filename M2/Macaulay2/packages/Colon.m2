@@ -6,8 +6,11 @@
 -- UPDATE HISTORY : created 14 April 2018 at M2@UW;
 --                  updated July 2020
 --
--- TODO : 1. deal with MonomialIdeals as well
+-- TODO : 1. deal with MonomialIdeals via hooks
 --        2. cache computation under I.cache.QuotientComputation{J}
+--        3. add tests for MonomialIdeals, possibly MonomialIdeals over local rings
+--        4. fix, rename, document, and test saturationZero
+--        5. turn intersectionByElimination into a Strategy of intersect?
 ---------------------------------------------------------------------------
 newPackage(
     "Colon",
@@ -30,6 +33,8 @@ export {
     }
 
 exportFrom_Core {"saturate", "quotient", "annihilator", "MinimalGenerators"}
+
+importFrom_Core {"raw", "rawColon", "rawSaturate", "newMonomialIdeal"}
 
 -- TODO: where should these be placed?
 
@@ -155,6 +160,12 @@ Module : Ideal                := Module =>         (M, I) -> quotient(M, I)
 -- note: if A is an ideal and B=f, then this is isomorphic to R/(A:f)
 quotient(Module, Module)      := Ideal  => opts -> (M, N) -> quotientHelper(M, N, ModuleModuleQuotientAlgorithms, opts)
 Module : Module               := Ideal  =>         (M, N) -> quotient(M, N)
+
+-- TODO: eventually, this should not be necessary, if MonomialIdeal inherits from Ideal
+quotient(MonomialIdeal, MonomialIdeal) := MonomialIdeal => opts -> (I, J) -> newMonomialIdeal(ring I, rawColon(raw I, raw J))
+quotient(MonomialIdeal, RingElement)   := MonomialIdeal => opts -> (I, f) -> I : monomialIdeal terms f
+MonomialIdeal : MonomialIdeal          := MonomialIdeal =>         (I, J) -> quotient(I, J)
+MonomialIdeal : RingElement            := MonomialIdeal =>         (I, f) -> quotient(I, f)
 
 -- TODO: this should be unnecessary via https://github.com/Macaulay2/M2/issues/1519
 quotient(Thing, Number) := opts -> (t, n) -> quotient(t, n_(ring t), opts)
@@ -337,6 +348,12 @@ saturate Module               := Module => opts ->  M     -> saturate(M, ideal v
 saturate(Vector, Ideal)       := Module => opts -> (v, J) -> saturate(image matrix {v}, J, opts)
 saturate(Vector, RingElement) := Module => opts -> (v, f) -> saturate(image matrix {v}, f, opts)
 saturate Vector               := Module => opts ->  v     -> saturate(image matrix {v}, opts)
+
+-- TODO: eventually, this should not be necessary, if MonomialIdeal inherits from Ideal
+saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => opts -> (I, J) -> newMonomialIdeal(ring I, rawSaturate(raw I, raw J))
+saturate(MonomialIdeal, RingElement)   := MonomialIdeal => opts -> (I, f) -> (
+    if size f === 1 and leadCoefficient f == 1 then saturate (I, monomialIdeal f) else saturate(ideal I, ideal f))
+saturate MonomialIdeal                 := MonomialIdeal => opts ->  I     -> saturate(I, monomialIdeal vars ring I, opts)
 
 -- TODO: this should be unnecessary via https://github.com/Macaulay2/M2/issues/1519
 saturate(Thing, Number) := opts -> (t, n) -> saturate(t, n_(ring t), opts)
@@ -553,6 +570,8 @@ saturationZero(Module, Ideal) := (M, B) -> (
 --------------------------------------------------------------------
 -- Annihilators
 --------------------------------------------------------------------
+
+-- TODO: annihilator routines for MonomialIdeals?
 
 -- annihilator = method(Options => {Strategy => null}) -- defined in m2/quotient.m2
 annihilator RingElement := Ideal => opts -> f -> annihilator(ideal f,  opts)
