@@ -196,7 +196,6 @@ I = ideal(
     12*g*e*b^2+12*d*a^3+12*d*a^2+8*d*a-12*a^4-18*a^3-14*a^2-a-1,
     -24*d*a^3-24*d*a^2-8*d*a+24*a^4+36*a^3+26*a^2+7*a+1)
 
--- PD branch: MinimalPrimes.m2 bug, returns 8 components??
 elapsedTime primaryDecomposition I      -- ?, > 24 seconds
 elapsedTime primaryDecomposition minimalPresentation I      -- ?, > 132 seconds (v1.15)
 elapsedTime associatedPrimes comodule I      -- 40.2124 seconds
@@ -411,7 +410,6 @@ elapsedTime primaryDecomposition comodule I      -- 0.720859 seconds
 //Factorisation over algebraic function field required!
 
 R = ZZ/32003[w,t,u,x,y,z]
-R = ZZ/32003[t,u,w,x,y,z]
 I = ideal(
     2*x^2+2*y^2+2*z^2+2*t^2+u^2-u,
     x*y+2*y*z+2*z*t+2*t*u-t,
@@ -419,7 +417,6 @@ I = ideal(
     2*x*t+2*z*t+2*y*u-y,
     2*x+2*y+2*z+2*t+u-1)
 
--- PD branch: MinimalPrimes.m2 bug, claims minimalPresentation I has 7 components??
 elapsedTime primaryDecomposition I      -- 34.2427 seconds
 elapsedTime primaryDecomposition minimalPresentation I      -- 1.00763 seconds
 elapsedTime primaryDecomposition comodule I      -- 0.425938 seconds
@@ -741,7 +738,6 @@ I = ideal(
     a*e+b*d-b*f*g-c*e*g-c*f*h,
     a*d-b*f*h-c*e*h)
 
--- PD branch: MinimalPrimes.m2 bug, returns 2 components?? (components (a,b,c) and (d,e,f) missing)
 elapsedTime primaryDecomposition I      -- 1.01217 seconds
 elapsedTime primaryDecomposition comodule I      -- 0.121144 seconds
     
@@ -798,7 +794,6 @@ I = ideal(
     2*y*z*t+x*t^2-x-2*z,
     -x*z^3+4*y*z^2*t+4*x*z*t^2+2*y*t^3+4*x*z+4*z^2-10*y*t-10*t^2+2)
     
--- PD branch: MinimalPrimes.m2 bug, returns 14 components??
 elapsedTime primaryDecomposition I      -- ?, > 93 seconds
 elapsedTime primaryDecomposition comodule I      -- 1.22104 seconds
     
