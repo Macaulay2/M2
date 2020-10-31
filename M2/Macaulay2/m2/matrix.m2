@@ -287,7 +287,7 @@ components Module := M -> if M.cache.?components then M.cache.components else {M
 components Matrix := f -> if f.cache.?components then f.cache.components else {f}
 
 formation = method()
-formation Module := M -> if M.cache.?formation then M.cache.formation else hold M
+formation Module := M -> if M.cache.?formation then M.cache.formation
 
 directSum Module := M -> Module.directSum (1 : M)
 Module.directSum = args -> (
