@@ -39,7 +39,7 @@ onecheck = (n, pkg, usermode) -> (
      runString(teststring, pkg, usermode);
      )
 
-check = method(Options => {UserMode => null})
+check = method(Options => {UserMode => null, Verbose => false})
 check String  := opts -> pkg -> check(-1, pkg, opts)
 check Package := opts -> pkg -> check(-1, pkg, opts)
 
@@ -58,4 +58,12 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
                 errorList = append(errorList, k)));
     if hadError then error("test", if numErrors > 1 then "s" else "",
         " #", demark(", ", toString \ errorList),
-        " of package ", toString pkg, " failed");)
+        " of package ", toString pkg, " failed",
+        if opts.Verbose then (
+            numTests := if n == -1 then pkg#"test number" else 1;
+            ":" | newline |
+            concatenate(apply(errorList, k ->
+                newline | get("!tail " | temporaryDirectory() |
+                toString(temporaryFilenameCounter + 2 * (k - numTests)) |
+                ".tmp")))
+        ) else "");)
