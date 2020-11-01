@@ -998,9 +998,13 @@ document {
      PARA{},
      "Use ", TO trim, " or ", TO minimalPresentation, " if a more compact presentation
      is desired.",
-     PARA{},
-     "Use ", TO (flip,Module,Module), " to produce the isomorphism M ** N --> N ** M.",
-     SeeAlso => {flip, (symbol**,Module,Matrix),(symbol**,Matrix,Matrix)}
+     PARA{
+     	  "Use ", TO (flip,Module,Module), " to produce the isomorphism M ** N --> N ** M.",
+	  },
+     PARA {
+	  "To recover the factors from the tensor product, use the function ", TO "formation", "."
+	  },
+     SeeAlso => {flip, (symbol**,Module,Matrix),(symbol**,Matrix,Matrix),formation}
      }
 document {
      Key => (symbol**,Matrix,Matrix),
