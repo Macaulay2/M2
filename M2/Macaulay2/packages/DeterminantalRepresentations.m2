@@ -1346,7 +1346,7 @@ assert(all(reps, A -> clean(1e-10, sub(f - det A, RR(monoid[gens S]))) == 0))
 SRR=RR[x1,x2,x3]
 fRR=sub(f, SRR)
 reps = detRep fRR
-assert(all(reps, L -> clean(1e-10, fRR - det L) == 0))
+assert(all(reps, L -> clean(1e-9, fRR - det L) == 0))
 SCC=CC[x1,x2,x3]
 fCC=sub(f, SCC)
 reps = detRep fCC
