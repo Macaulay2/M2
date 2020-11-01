@@ -14,7 +14,7 @@ realPoint = method(Options => {Tolerance => 1e-10, Iterations => 1000})
 realPoint Ideal := Matrix => opts -> I -> (
     p := nelderMead(I, opts, Initial => "random");
     if norm sub(gens I, p) > opts.Tolerance then (
-        print "Starting gradient descent";
+        if debugLevel > 0 then print "Starting gradient descent";
         p = lineSearch(I, p, opts);
     );
     p
@@ -32,7 +32,7 @@ nelderMead (FunctionClosure, List) := List => opts -> (F, V) -> (
     while counter < opts.Iterations do (
         if debugLevel > 1 then print("Using points: " | toString(V/first/entries/first));
         if V#0#1 < opts.Tolerance then (
-            print "Found solution to within tolerance";
+            if debugLevel > 0 then print "Found solution to within tolerance";
             break;
         );
         centroid := (1/n)*sum drop(V/first, -1);
@@ -60,7 +60,7 @@ nelderMead (FunctionClosure, List) := List => opts -> (F, V) -> (
         );
         V = sort(V, last);
         counter = counter+1;
-        if counter % 100 == 0 then print("Completed " | toString counter | " iterations");
+        if counter % 100 == 0 and debugLevel > 0 then print("Completed " | toString counter | " iterations");
         if V#-1#1 - V#0#1 < (opts.Tolerance)^(1.5) and V#0#1 > opts.Tolerance then (
             if debugLevel > 1 then print "Stuck in local minimum";
             break;
@@ -78,7 +78,7 @@ nelderMead Ideal := Matrix => opts -> I -> (
     F := x -> norm sub(gens I, x); -- x -> sub(sos, x);
     if not opts.Initial === "continue" then V = apply(V, v -> {matrix{v}, F(matrix{v})});
     V = nelderMead(F, V, opts);
-    if V#0#1 > opts.Tolerance then print "Solution not found within tolerance. Try running this function again with Initial => \"continue\", or alternatively use lineSearch";
+    if V#0#1 > opts.Tolerance  and debugLevel > 0 then print "Solution not found within tolerance. Try running this function again with Initial => \"continue\", or alternatively use lineSearch";
     I.cache#"nelderMeadSimplex" = V;
     V#0#0
 )
@@ -116,10 +116,10 @@ lineSearch (Ideal, Matrix) := Matrix => opts -> (I, s) -> (
         if debugLevel > 1 then print("Old: " | toString(F0) | ", new: " | toString(F1));
         y = y + alpha*p;
         if F1 < opts.Tolerance then (
-            print "Found solution to within tolerance";
+            if debugLevel > 0 then print "Found solution to within tolerance";
             break;
         );
-        if i % 25 == 0 then print("Completed " | toString i | " iterations");
+        if debugLevel > 0 and i % 25 == 0 then print("Completed " | toString i | " iterations");
     );
     y
 )
