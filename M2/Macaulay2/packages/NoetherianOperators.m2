@@ -235,7 +235,7 @@ nextTDD (ZZ,TruncDualData,Number) := (d,H,t) -> (
     for e from H.deg+1 to d do (
 	(M,E) := BMmatrix H;
 	H.BMmatrix = M; H.BMintegrals = E;
-	H.BMcoefs = numSymKernel(M,Tolerance=>t);
+	H.BMcoefs = myKernel(M,Tolerance=>t);
 	--print(M,H.BMcoefs);
 	I := basisIndices(last coefficients E*H.BMcoefs, t);
 	H.BMbasis = submatrix(H.BMcoefs, I);
@@ -1016,6 +1016,7 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
 numNoethOpsAtPointBM = method(Options => true)
 numNoethOpsAtPointBM (Ideal, Point) := List => true >> opts -> (I, p) -> numNoethOpsAtPointBM(I, matrix p, opts)
 numNoethOpsAtPointBM (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
+    error"dbg";
     tol := if not opts.?Tolerance then defaultT(ring I) else opts.Tolerance;
     degLim := if not opts.?DegreeLimit then -1 else opts.DegreeLimit;
     -- if point is not in the correct ring, try to promote
@@ -1024,69 +1025,44 @@ numNoethOpsAtPointBM (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     if( norm(2,evaluate(gens I, p)) > tol ) then return {new ZeroDiffOp from ring I};
     R := ring I;
     (depVars,indVars) := getDepIndVars(I,opts);
-    S := (coefficientRing R)(monoid[depVars]);
-    subs := matrix{apply(numgens R, i->(
-        if member(R_i,depVars) then R_i+p_(0,i) else p_(0,i)
-        ))};
-    RtoS := map(S,R,sub(subs,S));
-    -- TODO this is unused!
-    P := sub(ideal(subs - p),S);
-    L := macaulayMatrixKernel(RtoS I, coefficientRing S, DegreeLimit => degLim, Tolerance => tol);
-    matrixToDiffOps(promote(first L, R), sub(last L, R))
-        ------------------
+    -- S := (coefficientRing R)(monoid[depVars]);
+
+    ------
+    -- ViaMaca --
+    -------------
+    -- use the original coefficient field if appropriate, else a rational function field
+    -- F := if #indVars == 0 then coefficientRing R else frac((coefficientRing R)(monoid[indVars]));
+    F := coefficientRing R;
+    S := F(monoid[depVars]);
+    rules := (depVars / (x -> x=>sub(x,S) + p_(0, index x))) | (indVars / (x -> x => p_(0, index x)));
+    IS := (map(S,R, rules)) I;
+    pS := p_(depVars / index);
+
+
+    ------------------
     ---- ROBERT ------
     ------------------
-    pt := apply(gens S, v -> sub(sub(v, S/PS), S));
-    rat := if opts.?Rational then opts.Rational else false;
-    try assert(all(pt, isConstant)) then rat = true else null; -- TODO ???
+    -- pt := apply(gens S, v -> sub(sub(v, S/PS), S));
+    rat := true;
     R' := diffAlg R;
     ops := null; K := null;
-    if rat then (
-    if m < 0 then m = infinity;
-        p := apply(gens S, v -> sub(sub(v, S/PS), S));
-    igens := sub(gens IS, matrix{gens S + p});
-    H := truncDualData(igens,false,t);
+    if degLim < 0 then degLim = infinity;
+    -- p := apply(gens S, v -> sub(sub(v, S/PS), S));
+    igens := gens IS;
+    H := truncDualData(igens,false,tol);
     DB := map(S^1,S^0,0);
     d := -1;
     DBdim := -1;
-    while DBdim != numcols DB and d < m do (
+    while DBdim != numcols DB and d < degLim do (
         d = d+1;
         DBdim = numcols DB;
-        H = nextTDD(d,H,t);
+        H = nextTDD(d,H,tol);
         DB = H.dBasis;
         );
     (M,L) := coefficients DB;
-    K = colReduce(L,Tolerance=>t);
-    ops = matrix {apply(flatten entries M, m -> (1_F/sub(diff(m,m),F))*m)};
-        )
-    else ( -- Use MacaulayMatrix method
-        kP := toField(S/PS);
-    K = map(kP^1,kP^0,0);
-        degreeNops := d -> (
-            ops := basis(0,d,S);
-            polys := sub(idealBasis(I,d, DependentSet => depVars),S);
-            M' := diff(ops, transpose polys);
-            M := (map(kP,S/PS)*map(S/PS,S)) M';
-            if debugLevel >= 1 then  <<"Cols: "<<numColumns M<<", rows: "<<numRows M<<endl;
-            numSymKernel(M,Tolerance => t)
-        );
-        if m >= 0 then K = degreeNops m else (
-            Kdim := -1;
-            while Kdim != numcols K do (
-        m = m+1;
-                Kdim = numcols K;
-                K = degreeNops m;
-            );
-            );
-    ops = basis(0,m,S);
-    );
-    -- Clear denominators
-    ops = (map(R',R,vars R')*map(R,S)) ops;
-    K = liftColumns(try lift(K,S) then lift(K,S) else sub(K,S),R');
-    setOfNoethOps(ops * K,P)
-    --------------------
-    ----- ROBERT -------
-    --------------------
+    K = colReduce(L,Tolerance=>tol);
+    ops = matrixToDiffOps(K, M);
+    ops / (op -> sub(op, R))
 )
 
 TEST ///
@@ -1095,6 +1071,7 @@ R = CC[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 p = point{{0_CC,0,3}}
 nops = numNoethOpsAtPoint(I, p, DependentSet => {x,y})
+numNoethOpsAtPointBM(I, p, DependentSet => {x,y})
 assert(all(nops, op -> abs((evaluate(matrix{{op(-t*x^3)}}, p))_(0,0)) < 1e-6))
 ///
 
