@@ -28,7 +28,8 @@ newPackage (
       "CustomScipPrintLevel" => ""
       },
   PackageImports => {"LexIdeals"},
-  DebuggingMode => true
+  DebuggingMode => true,
+  CacheExampleOutput => true
 )
 
 -------------
