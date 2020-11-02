@@ -26,11 +26,13 @@ newPackage ( "ResLengthThree",
 export { "resLengthThreeAlg", "resLengthThreeTorAlg", "multTableOneOne", "multTableOneTwo", 
     "resLengthThreeTorAlgClass", "makeRes", "Labels", "Compact" }
 
+
 --==========================================================================
 -- EXPORTED FUNCTIONS
 --==========================================================================
 
 resLengthThreeAlg = method()
+
 resLengthThreeAlg(ChainComplex, List) := (F, sym) -> (
    if F.cache#?"Algebra Structure" then return F.cache#"Algebra Structure";
    if length F != 3 then
@@ -53,12 +55,13 @@ resLengthThreeAlg(ChainComplex, List) := (F, sym) -> (
    -- use this line if you want to ensure that 'basis' works properly on the returned ring.
    --P := first flattenRing (Q[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>skewList, Degrees => degreesP, Join => false]);
    P := Q[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>skewList, Degrees => degreesP, Join => false];
-   phi := map(P,Q,apply(numgens Q, i -> P_(m+l+n+i)));
    eVector := matrix {apply(m, i -> P_(i))};
    fVector := matrix {apply(l, i -> P_(m+i))};
    gVector := matrix {apply(n, i -> P_(m+l+i))};
-   eeGens := apply(pairs mult#0, p -> first flatten entries (P_(p#0#0-1)*P_(p#0#1-1) - fVector*(phi(p#1))));
-   efGens := apply(pairs mult#1, p -> first flatten entries (P_(p#0#0-1)*P_(m+p#0#1-1) - gVector*(phi(p#1))));
+
+   eeGens := flatten entries (matrix {flatten entries (-((transpose eVector) * eVector))} - fVector*(mult#0));
+   efGens := flatten entries (matrix {flatten entries (((transpose eVector) * fVector))} - gVector*(mult#1));
+
    I := (ideal eeGens) +
         (ideal efGens) +
 	(ideal apply(m..(m+l-1), i -> P_i))^2 +
@@ -78,54 +81,6 @@ resLengthThreeAlg( ChainComplex ) := (F) -> (
     resLengthThreeAlg(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
     )
 
-resLengthThreeAlg' = method()
-resLengthThreeAlg'(ChainComplex, List) := (F, sym) -> (
-   if F.cache#?"Algebra Structure" then return F.cache#"Algebra Structure";
-   if length F != 3 then
-     error "Expected a chain complex of length three which is free of rank one in degree zero.";
-   if #sym != 3 or any(sym, s -> (class baseName s =!= Symbol))  then
-     error "Expected a list of three symbols.";
-   mult := multTables'(F);
-   Q := ring F;
-   m := numcols F.dd_1;
-   l := numcols F.dd_2;
-   n := numcols F.dd_3;        
-   degreesP := if isHomogeneous F then 
-                  flatten apply(3, j -> apply(degrees source F.dd_(j+1), d -> {j+1} | d))
-	       else
-	          flatten apply(3, j -> apply(degrees source F.dd_(j+1), d -> {0} | d));
-   skewList := toList((0..(m-1)) | ((m+l)..(m+l+n-1)));
-   e := baseName (sym#0);
-   f := baseName (sym#1);
-   g := baseName (sym#2);
-   -- use this line if you want to ensure that 'basis' works properly on the returned ring.
-   --P := first flattenRing (Q[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>skewList, Degrees => degreesP, Join => false]);
-   P := Q[e_1..e_m,f_1..f_l,g_1..g_n,SkewCommutative=>skewList, Degrees => degreesP, Join => false];
-   eVector := matrix {apply(m, i -> P_(i))};
-   fVector := matrix {apply(l, i -> P_(m+i))};
-   gVector := matrix {apply(n, i -> P_(m+l+i))};
-
-   eeGens := flatten entries (matrix {flatten entries (-((transpose eVector) * eVector))} - fVector*(mult#0));
-   efGens := flatten entries (matrix {flatten entries (-((transpose eVector) * fVector))} - gVector*(mult#1));
-
-   I := (ideal eeGens) +
-        (ideal efGens) +
-	(ideal apply(m..(m+l-1), i -> P_i))^2 +
-	(ideal apply(0..(m-1), i -> P_i))*(ideal apply((m+l)..(m+l+n-1), i -> P_i)) + 
-	(ideal apply(m..(m+l-1), i -> P_i))*(ideal apply((m+l)..(m+l+n-1), i -> P_i)) +
-	(ideal apply((m+l)..(m+l+n-1), i -> P_i))^2;
-   I = ideal mingens I;
-   A := P/I;
-   A.cache#"l" = l;
-   A.cache#"m" = m;
-   A.cache#"n" = n;
-   F.cache#"Algebra Structure" = A;
-   A
-)
-
-resLengthThreeAlg'( ChainComplex ) := (F) -> (
-    resLengthThreeAlg'(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
-    )
 
 resLengthThreeTorAlg = method()
 
@@ -147,28 +102,6 @@ resLengthThreeTorAlg(ChainComplex,List) := (F,sym) -> (
 
 resLengthThreeTorAlg( ChainComplex ) := (F) -> (
     resLengthThreeTorAlg(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
-    )
-
-resLengthThreeTorAlg' = method()
-
-resLengthThreeTorAlg'(ChainComplex,List) := (F,sym) -> (
-   if F.cache#?"Tor Algebra Structure" then return F.cache#"Tor Algebra Structure";
-   A := resLengthThreeAlg'(F,sym);
-   P := ambient A;
-   Q := ring F;
-   kk := coefficientRing first flattenRing Q;
-   PP := kk monoid P;
-   I := ideal mingens sub(ideal A, PP);
-   B := PP/I;
-   B.cache#"l" = A.cache#"l";
-   B.cache#"m" = A.cache#"m";
-   B.cache#"n" = A.cache#"n";
-   F.cache#"Tor Algebra Structure" = B;
-   B
-)
-
-resLengthThreeTorAlg'( ChainComplex ) := (F) -> (
-    resLengthThreeTorAlg'(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
     )
 
 makeRes = (d1,d2,d3) -> ( 
@@ -244,24 +177,6 @@ multTableOneOne(Ring) := opts -> A -> (
        );
    *-
 
---multTableOneOne = method(Options => {Labels => true, Compact => false})
-
---multTableOneOne(Ring) := opts -> A -> (
---   if not (A.cache#?"l" and A.cache#?"m" and A.cache#?"n") then
---      error "Expected an algebra created with a resLengthThree routine.";
---   l := A.cache#"l";
---   m := A.cache#"m";
---   n := A.cache#"n";
---   eVector := matrix {apply(m, i -> A_i)};
---   if (opts.Compact) then (
---       oneTimesOneA := matrix table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else 0))
---   else (
---       oneTimesOneA = matrix table(m,m,(i,j) -> (A_i)*(A_j));
---       );
---   result := entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
---   if (opts.Labels) then result else entries oneTimesOneA
---   )
-
 multTableOneTwo = method(Options => { Labels => true} )
 
 multTableOneTwo(Ring) := opts -> A -> (
@@ -277,6 +192,7 @@ multTableOneTwo(Ring) := opts -> A -> (
    result := matrix entries ((matrix {{0}} | fVector) || ((transpose eVector) | oneTimesTwoA));
    if (opts.Labels) then entries result else entries oneTimesTwoA
 )
+
 
 resLengthThreeTorAlgClass = method()
 
@@ -311,77 +227,12 @@ resLengthThreeTorAlgClass Ideal := I -> (
    resLengthThreeTorAlgClass res I
 )
 
-resLengthThreeTorAlgClass' = method()
-
-resLengthThreeTorAlgClass' ChainComplex := F -> (
-  A := resLengthThreeTorAlg'(F);
-  p := rank multMap(A,1,1);
-  q := rank multMap(A,1,2);
-  r := rank homothetyMap(A,2,1);
-  tau := first tauMaps(A,1,1,1);
-  if (p >= 4 or p == 2) then
-      return ("H(" | p | "," | q | ")")
-  else if (p == 3) then
-  (
-      if (q > 1) then return ("H(" | p | "," | q | ")")
-      else if (q == 1 and r != 1) then return "C(3)"
-      else if (q == 0 and tau == 0) then return ("H(" | p | "," | q | ")")
-      else return "T";
-  )
-  else if (p == 1) then
-  (
-      if (q != r) then return "B"
-      else return ("H(" | p | "," | q | ")");
-  )
-  else if (p == 0) then
-  (
-      if (q != r) then return ("G(" | r | ")")
-      else return ("H(" | p | "," | q | ")");
-  );
-)
-
-resLengthThreeTorAlgClass' Ideal := I -> (
-   resLengthThreeTorAlgClass' res I
-)
-
 
 --======================================================================
 -- INTERNAL FUNCTIONS
 --======================================================================
-
-multTables = F -> (
-    Q := ring F;
-    d1:= matrix entries F.dd_1;
-    d2:= matrix entries F.dd_2;    
-    d3:= matrix entries F.dd_3;    
-    m := numcols d1;
-    l := numcols d2;
-    n := numcols d3;
-    
-    EE := new MutableHashTable;
-    for i from 1 to m do (
-	for j from i+1 to m do (
-	 a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1};
-    	 b := ( matrix entries transpose a ) // d2;
-	 EE#(i,j) = ( matrix entries b );
-	 EE#(j,i) = -EE#(i,j);
-	 );
-     EE#(i,i) = matrix entries map(Q^l,Q^1,(i,j) -> 0);
-     );
-
-    EF := new MutableHashTable;
-    for i from 1 to m do (
-	for j from 1 to l do (
-    	    c := sum(1..m, k -> d2_(k-1,j-1) * (EE#(i,k)));
-    	    d := d1_(0,i-1)*((id_(Q^l))_(j-1));
-	    e := (matrix entries (matrix d - c)) // d3;
-    	    EF#(i,j) = (matrix entries e);
-	    );
-	);
-    {EE,EF}
-    )
  
-multTables' = F -> (
+multTables = F -> (
     Q := ring F;
     d1:= matrix entries F.dd_1;
     d2:= matrix entries F.dd_2;    
@@ -394,9 +245,6 @@ multTables' = F -> (
     multEF := (matrix entries (d1**(id_(source d2)) - multEE * (id_(source d1)**d2))) // d3;
 
     {multEE,multEF}
-    --EE := hashTable flatten apply(m, i -> apply(m, j -> ((i+1,j+1), multEE_{m*i+j})));
-    --EF := hashTable flatten apply(m, i -> apply(l, j -> ((i+1,j+1), multFF_{m*i+j})));
-    --{EE,EF}
 ) 
  
 multMap = method()
@@ -441,10 +289,15 @@ tauMaps(Ring,ZZ,ZZ,ZZ) := (A,l,m,n) -> (
   {rank lTensmn + rank lmTensn - rank psi,lTensmn, lmTensn, psi}
 )
 
+
+--===================================================================================================
+-- TESTS
+--===================================================================================================
+
 TEST ///
 Q = QQ[x,y,z];
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
-G = resLengthThreeAlg (F)
+G = resLengthThreeAlg F;
 assert ( e_1*e_2 == y*f_1 )
 assert ( e_1*f_4 == -x*g_1 )
 ///
@@ -452,7 +305,7 @@ assert ( e_1*f_4 == -x*g_1 )
 TEST ///
 Q = QQ[x,y,z];
 F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
-G = resLengthThreeAlg (F)
+G = resLengthThreeAlg F
 assert ( e_1*e_2 == y*f_1 )
 assert ( e_1*f_4 == -x*g_1 )
 ///
@@ -460,137 +313,84 @@ assert ( e_1*f_4 == -x*g_1 )
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^2,x*y,z^2,y*z,z^2)
-assert( resLengthThreeTorAlgClass(I) === "B" )
+assert( resLengthThreeTorAlgClass I === "B" )
 ///
 
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal (u*v,w*x,y*z)
-assert( resLengthThreeTorAlgClass(I) === "C(3)" )
+assert( resLengthThreeTorAlgClass I === "C(3)" )
 ///
 
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^3,x^2*z,x*(z^2+x*y),z^3-2*x*y*z,y*(z^2+x*y),y^2*z,y^3)
-assert( resLengthThreeTorAlgClass(I) === "G(7)" )
+assert( resLengthThreeTorAlgClass I === "G(7)" )
 ///
 
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x*y^2,x*y*z,y*z^2,x^4-y^3*z,x*z^3-y^4)
-assert( resLengthThreeTorAlgClass(I) === "G(2)" )
+assert( resLengthThreeTorAlgClass I === "G(2)" )
 ///
 
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
-assert( resLengthThreeTorAlgClass(I) === "H(0,0)" )
+assert( resLengthThreeTorAlgClass res I === "H(0,0)" )
 ///
 
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
-assert( resLengthThreeTorAlgClass(I) === "H(0,0)" )
+assert( resLengthThreeTorAlgClass I === "H(0,0)" )
 ///
 
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^3,y^3,z^3,x*y*z)  
-assert( resLengthThreeTorAlgClass(I) === "T" )
+assert( resLengthThreeTorAlgClass I === "T" )
 ///
 
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^5,y^5,x*y^4,x^2*y^3,x^3*y^2,x^4*y,z^3)  
-assert( resLengthThreeTorAlgClass(I) === "H(6,5)" )
+assert( resLengthThreeTorAlgClass I === "H(6,5)" )
 ///
-
 
 TEST ///
 Q = QQ[x,y,z]
-d1=matrix{{-x^2,z^2-x*y,-y^2,-x*z,-y*z}}
-d2=matrix{{0,0,z,0,-y},{0,0,0,-y,x},{-z,0,0,x,0},{0,y,-x,0,z},{y,-x,0,-z,0}}
-d3=transpose d1
-F=makeRes(d1,d2,d3)
-A=resLengthThreeAlg(F) 
+d1 = matrix{{-x^2,z^2-x*y,-y^2,-x*z,-y*z}}
+d2 = matrix{{0,0,z,0,-y},{0,0,0,-y,x},{-z,0,0,x,0},{0,y,-x,0,z},{y,-x,0,-z,0}}
+d3 = transpose d1
+F = makeRes(d1,d2,d3)
+A = resLengthThreeAlg F 
 assert(e_2*e_4===y*f_3+z*f_5)
 assert(e_1*e_2===-z*f_3-x*f_5)
 assert(e_3*e_5===-y*f_1)
-T=resLengthThreeTorAlg F
+T = resLengthThreeTorAlg F
 assert(e_2*e_4===sub(0,T))
 assert(e_1*e_2===sub(0,T))
 assert(e_3*e_5===sub(0,T))
 ///
 
-
-
---checking new code against very old one
-
 TEST ///
-Q= QQ[x,y,z]
+Q = QQ[x,y,z]
 I = ideal(x*y, y*z, x^3, y^3-x*z^2,x^2*z, z^3)
-A = resLengthThreeAlg res I
-M = multTableOneOne(A)
-N = multTableOneTwo(A)
-
-
-F=res I
-d1 = matrix entries (F.dd)_1
-d2 = matrix entries (F.dd)_2
-d3 = matrix entries (F.dd)_3
-
----- use matrix entries or grading will mess up matrices
-
-m = numgens source d1 
-l = numgens source d2 
-n = numgens source d3
-
----- code to get multiplication of ei ej when d1 and d2 are already defined
-EE = (i,j) -> (
-m := numgens source d1 ;
-a := d1_(0,i-1)*(id_(Q^m))^{j-1} - d1_(0,j-1)*(id_(Q^m))^{i-1} ;
-b := (matrix entries transpose a ) // d2;
-return matrix entries b)
-
-
---- code for multiplication ei fj when d1, d2, and d3 are already defined and EE run first
-EF = (i,s) -> (
-m := numgens source d1 ;
-l := numgens source d2 ;
-c := sum(1..m, k -> d2_(k-1,s-1) * EE(i,k));
-d := d1_(0,i-1)*((id_(Q^l))_{s-1});
-a := (matrix entries (d - c))// d3;
-return matrix entries a)
-
---- code for triple product ei ej ek
-EEE = (i,j,k) -> (
-l := numgens source d2 ;
-c := sum(1..l, s -> (EE(i,j))_(s-1,0)*EF(k,s));
-return matrix entries c)
-
-v= matrix{{f_1},{f_2},{f_3},{f_4},{f_5},{f_6},{f_7}}
-w= matrix{{g_1},{g_2}}
-
---check multiplication e1 with all e's matches
-
-assert(  (( A**(matrix entries(transpose EE(1,2))) )*v)_(0,0) == (M_1)_2 )
-assert(  (( A**(matrix entries(transpose EE(1,3))) )*v)_(0,0) == (M_1)_3 )
-assert( (( A**(matrix entries(transpose EE(1,4))) )*v)_(0,0) == (M_1)_4 )
-assert(  (( A**(matrix entries(transpose EE(1,5))) )*v)_(0,0) == (M_1)_5 )
-assert(  (( A**(matrix entries(transpose EE(1,6))) )*v)_(0,0) == (M_1)_6 )
-
---check multiplication e1 with all f's matches
-assert(  (( A**(matrix entries(transpose EF(1,1))) )*w)_(0,0) == (N_1)_1 )
-assert(  (( A**(matrix entries(transpose EF(1,2))) )*w)_(0,0) == (N_1)_2 )
-assert( (( A**(matrix entries(transpose EF(1,3))) )*w)_(0,0) == (N_1)_3 )
-assert(  (( A**(matrix entries(transpose EF(1,4))) )*w)_(0,0) == (N_1)_4 )
-assert(  (( A**(matrix entries(transpose EF(1,5))) )*w)_(0,0) == (N_1)_5 )
-assert( (( A**(matrix entries(transpose EF(1,6))) )*w)_(0,0) == (N_1)_6 )
-assert(  (( A**(matrix entries(transpose EF(1,7))) )*w)_(0,0) == (N_1)_7 )
-
+G = resLengthThreeAlg res I
+assert( e_1*e_2 == y*f_1 )
+assert( e_1*e_3 == x*f_2 )
+assert( e_1*e_4 == -x*z*f_1 + y*f_3 - z*f_5 )
+assert( e_1*e_5 == x^2*f_1 + x*f_5 )
+assert( e_1*e_6 == z^2*f_1 + x*f_7 )
+assert( e_1*f_1 == 0 )
+assert( e_1*f_2 == 0 )
+assert( e_1*f_3 == 0 )
+assert( e_1*f_4 == -x*g_1 )
+assert( e_1*f_5 == 0 )
+assert( e_1*f_6 == g_2 )
+assert( e_1*f_7 == 0 )
 ///
-
-
 
 --==========================================================================
 -- DOCUMENTATION
@@ -603,16 +403,19 @@ document{
   
   Headline => "Computation of multiplicative structures on free resolutions of length three",
 
-  PARA { "Let ", EM  "I ", " be a homogeneous ideal contained in the irrelevant
-      maximal ideal of a graded ring ", EM "Q ", " (obtained as a quotient of a
-      polynomial ring). If the length of the minimal free resolution ",
-      EM "F ", " of ", TEX /// $R=Q/I$ ///, " is 3, then it carries a structure of a
-      differential graded algebra. The induced algebra structure on ",
-      TEX /// $A = Tor_Q^*(R,k)$ ///, " is unique and provides for a classification of
-      such quotient rings.  The package determines a multiplicative
-      structure on the free resolution ", EM "F ", " as well as the unique induced
-      structure on ", EM "A."}
-      }
+  PARA { "Let ", EM "I ", " be a homogeneous ideal contained in the 
+      irrelevant maximal ideal of a graded ring ", EM "Q ", "
+      (obtained as a quotient of a polynomial ring). If the length of
+      the minimal free resolution ", EM "F ", " of ", TEX /// $R=Q/I$
+      ///, " is 3, then it carries a structure of a differential
+      graded algebra. The induced algebra structure on ", TEX /// $A =
+      Tor_Q^*(R,k)$ ///, " is unique and provides for a classification
+      of such quotient rings.  The package determines a multiplicative
+      structure on the free resolution ", EM "F ", " as well as the
+      unique induced structure on ", EM "A ", "and the class of the
+      quotient ", EM "R ", "according to the classification scheme  }
+      of Avramov, Kustin, and Miller ", HREF "https://doi.org/10.1016/0021-8693(88)90056-7","." }
+}
 
 document{
   Key => {
@@ -980,8 +783,8 @@ EXAMPLE {
 	},
 }
 
-
 end
+
 --==========================================================================
 -- end of package code
 --==========================================================================
@@ -994,6 +797,18 @@ check "ResLengthThree"
 
 -- dev space
 
+Q = QQ[x,y,z];
+I = ideal"x2,y2,z2"
+F = res I;
+F.dd
+G = resLengthThreeAlg' F
+netList multTableOneOne G
+netList multTableOneTwo G
+
+M = multTables F
+peek M
+M' = multTables' F
+peek M
 
 for 1 from 1 to replace(1,replace(1,".",X#1),X)
 entries oneTimesOne
@@ -1142,16 +957,6 @@ e2
 e3 * ( e1 e2 e3 )
 --  F1 ** F2 --> F1 ** F1 ++ F2 --mult and add--> F2
 
---===================================================================================================
--- TESTS
---===================================================================================================
-
--- #0 zero ring, graded
-TEST ///
-Q = QQ[u,v,w,x,y,z]
-I = ideal( promote(1,Q) )
-assert( torAlgClass(Q/I) === "zero ring" )
-///
 
 restart
 needsPackage "ResLengthThree"
