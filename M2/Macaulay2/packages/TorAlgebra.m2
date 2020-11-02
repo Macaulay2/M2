@@ -1,6 +1,6 @@
 newPackage ( "TorAlgebra",
     Version => "2.1",
-    Date => "15 October 2020",
+    Date => "2 November 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
@@ -25,8 +25,8 @@ newPackage ( "TorAlgebra",
 	 "volume number" => "6",
 	 "volume URI" => "http://msp.org/jsag/2014/6-1/"
 	 },
-    Reload => true,
-    DebuggingMode => true
+    Reload => false,
+    DebuggingMode => false
     )
 
 export { 
@@ -501,9 +501,24 @@ toralgdata = R -> (
 
 torAlgData = method()
 
-torAlgData( QuotientRing ) := R -> toralgdata R
-
-torAlgData( Ideal ) := I -> toralgdata ((ring I)/I)
+torAlgData( QuotientRing ) := R -> (
+    if R.cache#?"torAlg" then result := R.cache#"torAlg" else (
+	if (ideal R).cache#?"torAlg" then result = (ideal R).cache#"torAlg" else (
+	    result = toralgdata R; 
+    	    R.cache#"torAlg" = result;
+    	    (ideal R).cache#"torAlg" = result;	    
+	    );
+    );
+    result
+    )
+    
+torAlgData( Ideal ) := I -> (
+    if I.cache#?"torAlg" then result := I.cache#"torAlg" else (
+	result = toralgdata ((ring I)/I);
+	I.cache#"torAlg" = result;
+	);
+    result
+    )
 
 
 ----------------------------------------------------------------------------
