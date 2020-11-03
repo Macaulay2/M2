@@ -1146,9 +1146,9 @@ export (x:RRi)  >  (y:RRi) : bool := compare0(x,y) >  0 && !flagged0();
 
 export (x:RRi)  <  (y:RRi) : bool := compare0(x,y) <  0 && !flagged0();
 
-export (x:RRi)  >= (y:RRi) : bool := (compare0(x,y)>0 || x===y) && !flagged0();
+export (x:RRi)  >= (y:RRi) : bool := (compare0(x,y)>0 || (leftRR(x) == rightRR(y))) && !flagged0();
 
-export (x:RRi)  <= (y:RRi) : bool := (compare0(x,y)<0 || x===y) && !flagged0();
+export (x:RRi)  <= (y:RRi) : bool := (compare0(x,y)<0 || (rightRR(x) == leftRR(y))) && !flagged0();
 
 compare0(x:RR, y:long) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_si(",  x, ",", y, "))" );
 
@@ -1176,7 +1176,7 @@ export (x:RR) === (y:int) : bool :=  compare0(x,long(y)) == 0 && !flagged0();
                                     
 export (x:RRi) === (y:int) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
                                     
-export (x:RRi)  >= (y:int) : bool :=  ((compare0(x,long(y)) > 0) || (x === y)) && !flagged0();
+export (x:RRi)  >= (y:int) : bool :=  ((compare0(x,long(y)) > 0) || (leftRR(x) === y)) && !flagged0();
 
 export (x:RR)  <  (y:int) : bool :=  compare0(x,long(y)) <  0 && !flagged0();
                                     
@@ -1184,7 +1184,7 @@ export (x:RRi)  <  (y:int) : bool :=  compare0(x,long(y)) <  0 && !flagged0();
 
 export (x:RR)  <= (y:int) : bool :=  compare0(x,long(y)) <= 0 && !flagged0();
                                     
-export (x:RRi)  <= (y:int) : bool :=  (compare0(x,long(y)) < 0 || x === y) && !flagged0();
+export (x:RRi)  <= (y:int) : bool :=  (compare0(x,long(y)) < 0 || rightRR(x) === y) && !flagged0();
 
 export (x:CC) === (y:int) : bool :=  x.re === y && x.im === 0;
                                     
@@ -1210,7 +1210,7 @@ export (x:RR) === (y:double) : bool :=  compare0(x,y) == 0 && !flagged0();
                                     
 export (x:RRi) === (y:double) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
                                     
-export (x:RRi)  >= (y:double) : bool :=  ((compare0(x,y) > 0) || (x === y)) && !flagged0();
+export (x:RRi)  >= (y:double) : bool :=  ((compare0(x,y) > 0) || (leftRR(x) === y)) && !flagged0();
 
 export (x:RR)  <  (y:double) : bool :=  compare0(x,y) <  0 && !flagged0();
                                     
@@ -1218,7 +1218,7 @@ export (x:RRi)  <  (y:double) : bool :=  compare0(x,y) <  0 && !flagged0();
 
 export (x:RR)  <= (y:double) : bool :=  compare0(x,y) <= 0 && !flagged0();
                                     
-export (x:RRi)  <= (y:double) : bool :=  ((compare0(x,y) < 0) || (x === y)) && !flagged0();
+export (x:RRi)  <= (y:double) : bool :=  ((compare0(x,y) < 0) || (rightRR(x) === y)) && !flagged0();
 
 compare0(x:RR, y:ZZ) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_z(",  x, ",", y, "))" );
 
@@ -1246,7 +1246,7 @@ export (y:ZZ) === (x:RR) : bool :=  compare0(x,y) == 0 && !flagged0();
                                     
 export (y:ZZ) === (x:RRi) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
                                     
-export (x:RRi)  >= (y:ZZ) : bool :=  ((compare0(x,y) > 0) || (x === y)) && !flagged0();
+export (x:RRi)  >= (y:ZZ) : bool :=  ((compare0(x,y) > 0) || (leftRR(x) === y)) && !flagged0();
 
 export (x:RR)  <  (y:ZZ) : bool :=  compare0(x,y) <  0 && !flagged0();
                                     
@@ -1254,7 +1254,7 @@ export (x:RRi)  <  (y:ZZ) : bool :=  compare0(x,y) <  0 && !flagged0();
 
 export (x:RR)  <= (y:ZZ) : bool :=  compare0(x,y) <= 0 && !flagged0();
                                     
-export (x:RRi)  <= (y:ZZ) : bool :=  ((compare0(x,y) < 0) || (x === y)) && !flagged0();
+export (x:RRi)  <= (y:ZZ) : bool :=  ((compare0(x,y) < 0) || (rightRR(x) === y)) && !flagged0();
 
 compare0(x:RR, y:QQ) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_q(",  x, ",", y, "))" );
 
@@ -1282,7 +1282,7 @@ export (y:QQ) === (x:RR) : bool :=  compare0(x,y) == 0 && !flagged0();
                                     
 export (y:QQ) === (x:RRi) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
                                     
-export (x:RRi)  >= (y:QQ) : bool :=  ((compare0(x,y) > 0) || (x === y)) && !flagged0();
+export (x:RRi)  >= (y:QQ) : bool :=  ((compare0(x,y) > 0) || (leftRR(x) === y)) && !flagged0();
 
 export (x:RR)  <  (y:QQ) : bool :=  compare0(x,y) <  0 && !flagged0();
                                     
@@ -1290,7 +1290,7 @@ export (x:RRi)  <  (y:QQ) : bool :=  compare0(x,y) <  0 && !flagged0();
 
 export (x:RR)  <= (y:QQ) : bool :=  compare0(x,y) <= 0 && !flagged0();
                                     
-export (x:RRi)  <= (y:QQ) : bool :=  ((compare0(x,y) < 0) || (x === y)) && !flagged0();
+export (x:RRi)  <= (y:QQ) : bool :=  ((compare0(x,y) < 0) || (rightRR(x) === y)) && !flagged0();
                                     
 export (x:RRi) === (y:RR) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
                                     
