@@ -488,6 +488,7 @@ export {
 	"autoload",
 	"baseFilename",
 	"baseName",
+	"baseRing",
 	"baseRings",
 	"basis",
 	"beginDocumentation",
