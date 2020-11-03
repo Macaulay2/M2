@@ -356,7 +356,9 @@ export LeftArrowE := Expr(LeftArrowS);
 
 export EqualEqualE := Expr(EqualEqualS);
 export LessE := Expr(LessS);
+export LessEqualE := Expr(LessEqualS);
 export GreaterE := Expr(GreaterS);
+export GreaterEqualE := Expr(GreaterEqualS);
 export incomparableE := Expr(incomparableS);
 
 export NewS := makeProtectedSymbolClosure("NewMethod");

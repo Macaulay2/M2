@@ -235,6 +235,7 @@ char InexactField := R -> 0
 -- symbolic/numeric constant expressions
 
 pi = new Constant from { symbol pi, pi0 }
+piRRi = new Constant from {symbol piRRi, piRRi0}
 EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler }
 ii = new Constant from { symbol ii, ConstantII }
 

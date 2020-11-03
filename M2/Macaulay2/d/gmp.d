@@ -1109,7 +1109,7 @@ export (x:RR) === (y:RR):bool := (			    -- weak equality
 
 export (x:RRi) === (y:RRi):bool := (                -- weak equality
     Ccode( void, "mpfr_clear_flags()" ); -- No equivalent in mpfi
-    leftRR(x) === leftRR(y) && rightRR(x) === rightRR(y) && !flagged0() -- equality is not defined in mpfi
+    leftRR(x) === leftRR(y) && rightRR(x) === rightRR(y) && leftRR(x) === rightRR(x) && !flagged0() -- equality is not defined in mpfi
     );
 
 export strictequality(x:RR,y:RR):bool := (
@@ -1295,6 +1295,14 @@ export (x:RRi)  <= (y:QQ) : bool :=  ((compare0(x,y) < 0) || (x === y)) && !flag
 export (x:RRi) === (y:RR) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
                                     
 export (y:RR) === (x:RRi) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
+                                    
+export contains (x:RRi, y:ZZ):bool := (leftRR(x) <= y) && (rightRR(x) >= y);
+                                    
+export contains (x:RRi, y:QQ):bool := (leftRR(x) <= y) && (rightRR(x) >= y);
+                                    
+export contains (x:RRi, y:RR):bool := (leftRR(x) <= y) && (rightRR(x) >= y);
+                                    
+export contains (x:RRi, y:RRi):bool := (leftRR(x) <= leftRR(y)) && (rightRR(x) >= rightRR(y));
 
 export hash(x:RR):int := int(precision0(x)) + Ccode(int, 
      "mpfr_hash(",					    -- see gmp_aux.c for this function

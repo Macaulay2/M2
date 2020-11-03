@@ -4308,6 +4308,13 @@ pi0(e:Expr):Expr := (
      else WrongArgZZ(1));
 setupfun("pi0",pi0);
 
+piRRi0(e:Expr):Expr := (
+     when e is prec:ZZcell do
+     if !isULong(prec) then WrongArgSmallUInteger(1)
+     else toExpr(piRRi(toULong(prec)))
+     else WrongArgZZ(1));
+setupfun("piRRi0",piRRi0);
+
 mpfrConstantEuler(e:Expr):Expr := (
      when e is prec:ZZcell do if !isULong(prec) then WrongArgSmallUInteger(1) else (
 	  z := newRRmutable(toULong(prec));
