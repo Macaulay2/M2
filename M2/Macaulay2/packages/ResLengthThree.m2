@@ -414,7 +414,7 @@ document{
       structure on the free resolution ", EM "F ", " as well as the
       unique induced structure on ", EM "A ", "and the class of the
       quotient ", EM "R ", "according to the classification scheme
-      of Avramov, Kustin, and Miller ", HREF "https://doi.org/10.1016/0021-8693(88)90056-7","." }
+      of ", HREF{"https://doi.org/10.1016/0021-8693(88)90056-7","Avramov, Kustin, and Miller"},"." }
 }
 
 document{
