@@ -423,7 +423,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
            is y:RRcell do (toExpr(x.v / y.v))    -- # typical value: symbol /, RRi, RR, RRi
            is y:RRicell do (toExpr(x.v / y.v))   -- # typical value: symbol /, RRi, RRi, RRi
 	       is Error do rhs
-	       else buildErrorPacket(EngineError("multiplication not implemented")))
+	       else buildErrorPacket(EngineError("division not implemented")))
      is x:CCcell do (
 	  when rhs
 	  is y:ZZcell do (					    -- # typical value: symbol /, CC, ZZ, CC

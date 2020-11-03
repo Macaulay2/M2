@@ -214,7 +214,10 @@ binarycomparison(left:Expr,right:Expr):Expr := (
      else buildErrorPacket("expected result of comparison to be one of the following symbols: <, >, ==, incomparable"));
 
 compare(left:Expr,right:Expr):Expr := (
-     if left == right then EqualEqualE else
+    if left == right then (when left is x:RRicell do (
+            if widthRR(x.v)>0 then incomparableE
+            else EqualEqualE)
+            else EqualEqualE) else
      when left
      is x:ZZcell do (
 	  when right
@@ -230,7 +233,9 @@ compare(left:Expr,right:Expr):Expr := (
       is y:RRicell do (
 	       if flagged() then incomparableE else
 	       if compare(x.v,leftRR(y.v)) < 0 then LessE
+              else if compare(x.v,leftRR(y.v)) <= 0 then LessEqualE
               else if compare(x.v,rightRR(y.v)) > 0 then GreaterE
+              else if compare(x.v,rightRR(y.v)) >= 0 then GreaterEqualE
               else if (compare(x.v,rightRR(y.v)) == 0) && (compare(x.v,leftRR(y.v)) == 0) then EqualEqualE
               else incomparableE
 	       )
@@ -288,7 +293,9 @@ compare(left:Expr,right:Expr):Expr := (
       is y:RRicell do (
 	       if flagged() then incomparableE else
 	       if compare(x.v,leftRR(y.v)) < 0 then LessE
+              else if compare(x.v,leftRR(y.v)) <= 0 then LessEqualE
               else if compare(x.v,rightRR(y.v)) > 0 then GreaterE
+              else if compare(x.v,rightRR(y.v)) >= 0 then GreaterEqualE
               else if (compare(x.v,rightRR(y.v)) == 0) && (compare(x.v,leftRR(y.v)) == 0) then EqualEqualE
               else incomparableE
 	       )
@@ -319,7 +326,9 @@ compare(left:Expr,right:Expr):Expr := (
       is y:RRicell do (
 	       if flagged() then incomparableE else
 	       if compare(x.v,leftRR(y.v)) < 0 then LessE
+              else if compare(x.v,leftRR(y.v)) <= 0 then LessEqualE
               else if compare(x.v,rightRR(y.v)) > 0 then GreaterE
+              else if compare(x.v,rightRR(y.v)) >= 0 then GreaterEqualE
               else if (compare(x.v,rightRR(y.v)) == 0) && (compare(x.v,leftRR(y.v)) == 0) then EqualEqualE
               else incomparableE
 	       )
@@ -332,31 +341,38 @@ compare(left:Expr,right:Expr):Expr := (
 	  else binarycomparison(left,right))
      is x:RRicell do (
             when right is y:RRicell do (
-                r := compare(x.v,y.v);
                 if flagged() then incomparableE
-                else if r<0 then LessE
-                else if r>0 then GreaterE
-                else if x.v === y.v then EqualEqualE
+                else if (((leftRR(x.v) === rightRR(x.v)) && (leftRR(x.v) === leftRR(y.v))) && (leftRR(x.v) === rightRR(y.v))) then EqualEqualE
+                else if compare(rightRR(x.v),leftRR(y.v)) < 0  then LessE
+                else if compare(rightRR(x.v),leftRR(y.v)) <= 0 then LessEqualE
+                else if compare(leftRR(x.v),rightRR(y.v)) > 0 then GreaterE
+                else if compare(leftRR(x.v),rightRR(y.v)) >= 0 then GreaterEqualE
                 else incomparableE
                 )
             is y:RRcell do (
 	            if flagged() then incomparableE else
 	            if compare(rightRR(x.v),y.v) < 0 then LessE
+                else if compare(rightRR(x.v),y.v) <= 0 then LessEqualE
                 else if compare(leftRR(x.v),y.v) > 0 then GreaterE
+                else if compare(leftRR(x.v),y.v) >= 0 then GreaterEqualE
                 else if (compare(y.v,rightRR(x.v)) == 0) && (compare(y.v,leftRR(x.v)) == 0) then EqualEqualE
                 else incomparableE
 	            )
             is y:QQcell do (
 	            if flagged() then incomparableE else
 	            if compare(rightRR(x.v),y.v) < 0 then LessE
+                else if compare(rightRR(x.v),y.v) <= 0 then LessEqualE
                 else if compare(leftRR(x.v),y.v) > 0 then GreaterE
+                else if compare(leftRR(x.v),y.v) >= 0 then GreaterEqualE
                 else if (compare(y.v,rightRR(x.v)) == 0) && (compare(y.v,leftRR(x.v)) == 0) then EqualEqualE
                 else incomparableE
 	            )
             is y:ZZcell do (
 	            if flagged() then incomparableE else
 	            if compare(rightRR(x.v),y.v) < 0 then LessE
+                else if compare(rightRR(x.v),y.v) <= 0 then LessEqualE
                 else if compare(leftRR(x.v),y.v) > 0 then GreaterE
+                else if compare(leftRR(x.v),y.v) >= 0 then GreaterEqualE
                 else if (compare(y.v,rightRR(x.v)) == 0) && (compare(y.v,leftRR(x.v)) == 0) then EqualEqualE
                 else incomparableE
 	            )
@@ -513,7 +529,7 @@ greaterequalfun2(lhs:Code,rhs:Code):Expr := (
      e := compareop(lhs,rhs);
      when e 
      is Error do e
-     else if GreaterS.symbol === e || EqualEqualS.symbol === e then True else False
+     else if GreaterS.symbol === e || EqualEqualS.symbol === e || GreaterEqualS.symbol === e then True else False
      );
 setup(GreaterEqualS,greaterequalfun1,greaterequalfun2);
 
@@ -531,7 +547,7 @@ lessequalfun2(lhs:Code,rhs:Code):Expr := (
      e := compareop(lhs,rhs);
      when e 
      is Error do e
-     else if LessS.symbol === e || EqualEqualS.symbol === e then True else False
+     else if LessS.symbol === e || EqualEqualS.symbol === e || LessEqualS.symbol === e then True else False
      );
 setup(LessEqualS,lessequalfun1,lessequalfun2);
 
@@ -1032,7 +1048,7 @@ log(e:Expr):Expr := (
      	       	    if b.v>0 && x.v>0 then toExpr(log(b.v,x.v)) else toExpr(logc(b.v,x.v))
 		    )
 	       is x:RRicell do (                     -- # typical value: log, RR, RRi, RRi
-     	       	    if b.v>0 && x.v>0 then toExpr(log(toRRi(b.v,precision(b.v)),x.v))
+     	       	    if b.v>0 && x.v>=0 then toExpr(log(toRRi(b.v,precision(b.v)),x.v))
                     else
                         buildErrorPacket("Not defined")
 		    )
@@ -1053,7 +1069,7 @@ log(e:Expr):Expr := (
 		    if c>0 && x.v>0 then toExpr(log(c,x.v)) else toExpr(logc(c,x.v))		    
 		    )
 	       is x:RRicell do (      -- # typical value: log, ZZ, RRi, RRi
-     	       	    if b.v>0 && x.v>0 then toExpr(log(toRRi(b.v,precision(x.v)),x.v))
+     	       	    if b.v>0 && x.v>=0 then toExpr(log(toRRi(b.v,precision(x.v)),x.v))
                     else
                         buildErrorPacket("Not defined")
 		    )
@@ -1074,7 +1090,7 @@ log(e:Expr):Expr := (
 		    if c>0 && x.v>0 then toExpr(log(c,x.v)) else toExpr(logc(c,x.v))		    
 		    )
 	       is x:RRicell do (      -- # typical value: log, QQ, RRi, RRi
-     	       	    if b.v>0 && x.v>0 then toExpr(log(toRRi(b.v,precision(x.v)),x.v))
+     	       	    if b.v>0 && x.v>=0 then toExpr(log(toRRi(b.v,precision(x.v)),x.v))
                     else
                         buildErrorPacket("Not defined")
 		    )
@@ -1088,24 +1104,24 @@ log(e:Expr):Expr := (
     is b:RRicell do (
 	       when a.1
                 is x:RRcell do (    -- # typical value: log, RRi, RR, RRi
-     	       	    if b.v>0 && x.v>0 then toExpr(log(b.v,toRRi(x.v,precision(x.v))))
+     	       	    if b.v>0 && x.v>=0 then toExpr(log(b.v,toRRi(x.v,precision(x.v))))
                                 else
                         buildErrorPacket("Not defined")
 		         )
 	       is x:RRicell do (        -- # typical value: log, RRi, RRi, RRi
-     	       	    if b.v>0 && x.v>0 then toExpr(log(b.v,x.v))
+     	       	    if b.v>0 && x.v>=0 then toExpr(log(b.v,x.v))
                     else
                         buildErrorPacket("Not defined")
 		    )
 	       is x:ZZcell do (          -- # typical value: log, RRi, ZZ, RRi
 		    y := toRRi(x.v,precision(b.v));
-		            if b.v>0 && x.v>0 then toExpr(log(b.v,y))
+		            if b.v>0 && x.v>=0 then toExpr(log(b.v,y))
                     else
                         buildErrorPacket("Not defined")
 		    )
 	       is x:QQcell do (          -- # typical value: log, RRi, QQ, RRi
 		    y := toRRi(x.v,precision(b.v));
-		            if b.v>0 && y>0 then toExpr(log(b.v,y))
+		            if b.v>0 && y>=0 then toExpr(log(b.v,y))
                     else
                         buildErrorPacket("Not defined")
                            )
@@ -1113,8 +1129,8 @@ log(e:Expr):Expr := (
 	  else WrongArg(2,"a number"))
      is x:CCcell do toExpr(log(x.v))				    -- # typical value: log, CC, CC
      is x:RRcell do if isNegative(x.v) then toExpr(logc(x.v)) else toExpr(log(x.v))				    -- # typical value: log, RR, RR
-    is x:RRicell do if x.v<0 then buildErrorPacket("Not defined")
-                     else toExpr(log(x.v))  -- # typical value: log, RRi, RRi
+    is x:RRicell do if x.v >= 0 then toExpr(log(x.v))  -- # typical value: log, RRi, RRi
+                     else buildErrorPacket("Not defined")
      is x:ZZcell do if x.v<0 then toExpr(logc(toRR(x.v))) else toExpr(log(toRR(x.v)))			    -- # typical value: log, ZZ, RR
      is x:QQcell do if x.v<0 then toExpr(logc(toRR(x.v))) else toExpr(log(toRR(x.v)))			    -- # typical value: log, QQ, RR
      else WrongArg("a number or a pair of numbers")
@@ -1226,7 +1242,7 @@ sqrt(a:Expr):Expr := (
 	  else toExpr(sqrt(x.v))			       -- # typical value: sqrt, RR, CC
 	  )
      is x:RRicell do (
-	  if x.v >= 0
+	  if leftRR(x.v) >= 0
 	  then toExpr(sqrt(x.v))                   -- # typical value: sqrt, RRi, RRi
 	  else buildErrorPacket("Not implemented")
 	  )
