@@ -19,8 +19,8 @@ newPackage ( "ResLengthThree",
 	  HomePage => "https://web.northeastern.edu/oveliche/index.html" }
 	},
     Headline => "Multiplication in free resolutions of length three",
-    Reload => true,
-    DebuggingMode => true
+    Reload => false,
+    DebuggingMode => false
     )
 
 export { "resLengthThreeAlg", "resLengthThreeTorAlg", "multTableOneOne", "multTableOneTwo", 
