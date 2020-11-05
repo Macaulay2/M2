@@ -1014,11 +1014,12 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     L := macaulayMatrixKernel(RtoS I, coefficientRing S, DegreeLimit => degLim, Tolerance => tol);
     matrixToDiffOps(promote(first L, R), sub(last L, R))
 )
--- BM version of numNoethOpsAtPoint
+
+-- BM version of numNoethOpsAtPoint, TODO clean up this mess
 numNoethOpsAtPointBM = method(Options => true)
 numNoethOpsAtPointBM (Ideal, Point) := List => true >> opts -> (I, p) -> numNoethOpsAtPointBM(I, matrix p, opts)
 numNoethOpsAtPointBM (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
-    error"dbg";
+    --error"dbg";
     tol := if not opts.?Tolerance then defaultT(ring I) else opts.Tolerance;
     degLim := if not opts.?DegreeLimit then -1 else opts.DegreeLimit;
     -- if point is not in the correct ring, try to promote
@@ -1064,6 +1065,8 @@ numNoethOpsAtPointBM (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     (M,L) := coefficients DB;
     K = colReduce(L,Tolerance=>tol);
     ops = matrixToDiffOps(K, M);
+    factorial := L -> L / (i -> i!) // product;
+    ops = ops / (op -> applyPairs(op, (m,c) -> (m, c / factorial first exponents m)));
     ops / (op -> sub(op, R))
 )
 
