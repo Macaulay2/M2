@@ -1,6 +1,6 @@
 newPackage ( "ResLengthThree",
-    Version => "0.6",
-    Date => "15 October 2020",
+    Version => "1.0",
+    Date => "5 November 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
@@ -19,8 +19,8 @@ newPackage ( "ResLengthThree",
 	  HomePage => "https://web.northeastern.edu/oveliche/index.html" }
 	},
     Headline => "Multiplication in free resolutions of length three",
-    Reload => false,
-    DebuggingMode => false
+    Reload => true,
+    DebuggingMode => true
     )
 
 export { "resLengthThreeAlg", "resLengthThreeTorAlg", "multTableOneOne", "multTableOneTwo", 
@@ -362,7 +362,7 @@ assert( e_1*f_7 == 0 )
 beginDocumentation()
 
 document{
-  Key => ResLengthThree,
+  Key => {ResLengthThree},
   
   Headline => "Computation of multiplicative structures on free resolutions of length three",
 
@@ -372,7 +372,7 @@ document{
       the minimal free resolution ", EM "F ", " of ", TEX /// $R=Q/I$
       ///, " is 3, then it carries a structure of a differential
       graded algebra. The induced algebra structure on ", TEX /// $A =
-      Tor_Q^*(R,k)$ ///, " is unique and provides for a classification
+      Tor^Q(R,k)$ ///, " is unique and provides for a classification
       of such quotient rings.  The package determines a multiplicative
       structure on the free resolution ", EM "F ", " as well as the
       unique induced structure on ", EM "A ", "and the class of the
@@ -420,9 +420,6 @@ document{
 	"Q = P/ideal(u^2,u*v);",
 	"F = resLengthThreeAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
 	"describe F",
-	"a_1*a_4",
-	"a_2*a_4",
-	"a_3*a_4"
 	},
 
   PARA { },
@@ -430,7 +427,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v];",
 	"Q = (P/ideal(u^2,u*v))[x,y,z];",
-	"A = resLengthThreeAlg ( res ideal (x^2,x*y,y^2,z^2))",
+	"A = resLengthThreeAlg res ideal (x^2,x*y,y^2,z^2)",
 	"describe A",
 	},
 
@@ -439,7 +436,7 @@ document{
   EXAMPLE {
       "P = ZZ[x,y,z];",
       "Q = P/ideal(4_P);",
-      "A = resLengthThreeAlg ( res ideal (x^2,y^2,z^2) )",
+      "A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
       "describe A"
 	},
         
@@ -465,7 +462,7 @@ document{
   over the residue field of the ambient ring"},
 
   PARA { "For a free resolution ", TT "F", " over a ring ", TT "Q", ", the function returns
-  the algebra ", TEX /// $Tor_Q^*(R,k)$ ///, " as a quotient of a graded-commutative free algebra
+  the algebra ", TEX /// $Tor^Q(R,k)$ ///, " as a quotient of a graded-commutative free algebra
   over the residue field of ", TT "Q", ". The basis vectors in degrees 1, 2, and 3 are named with the
   symbols from the list ", TT "L", ". The defaul symbols are ", TT "e", ", ", TT "f", ", and ", TT "g", "." },
   
@@ -484,11 +481,8 @@ document{
   EXAMPLE {
 	"P = QQ[u,v,x,y,z];",
 	"Q = P/ideal(u^2,u*v);",
-	"A = resLengthThreeAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
+	"A = resLengthThreeTorAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
 	"describe A",
-	"a_1*a_4",
-	"a_2*a_4",
-	"a_3*a_4"
 	},
 
   PARA { },
@@ -498,9 +492,6 @@ document{
 	"Q = (P/ideal(u^2,u*v))[x,y,z];",
 	"A = resLengthThreeTorAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
 	"describe A",
-	"a_1*a_4",
-	"a_2*a_4",
-	"a_3*a_4"
 	},
     
     Caveat => { "For the function to return an algebra over the residue
@@ -748,7 +739,7 @@ end
 
 --==========================================================================
 -- end of package code
---==========================================================================
+--===============================d===========================================
 
 uninstallPackage "ResLengthThree"
 restart
@@ -756,217 +747,3 @@ installPackage "ResLengthThree"
 debug loadPackage "ResLengthThree"
 check "ResLengthThree"
 
--- dev space
-
-Q = QQ[x,y,z];
-I = ideal"x2,y2,z2"
-F = res I;
-F.dd
-G = resLengthThreeAlg' F
-netList multTableOneOne G
-netList multTableOneTwo G
-
-M = multTables F
-peek M
-M' = multTables' F
-peek M
-
-for 1 from 1 to replace(1,replace(1,".",X#1),X)
-entries oneTimesOne
-
-Q = QQ[x,y,z];
-I = ideal(x^5,y^5,x*y^4,x^2*y^3,x^3*y^2,x^4*y,z^3)  
-F = res I
-
-multTables' F
-multTables F
-time resLengthThreeAlg F
-time resLengthThreeAlg' F
-time resLengthThreeTorAlg' F
-time resLengthThreeTorAlgClass' F
-time resLengthThreeTorAlgClass F
-
-toList(1,2,".", 3)
-Q = P/ideal(4_P)
-A = resLengthThreeAlg ( res ideal (x^2,y^2,z^2) )
-describe A
-
-Q = QQ[x,y,z]
-d1=matrix{{-x^2,z^2-x*y,-y^2,-x*z,-y*z}}
-d2=matrix{{0,0,z,0,-y},{0,0,0,-y,x},{-z,0,0,x,0},{0,y,-x,0,z},{y,-x,0,-z,0}}
-d3=transpose d1
-F=makeRes(d1,d2,d3)
-
-    F := new ChainComplex; 
-    F.ring = ring d1;
-    F#0 = target d1; 
-    F#1 = source d1; F.dd#1 = d1; 
-    F#2 = source d2; F.dd#2 = d2;
-    F#3 = source d3; F.dd#3 = d3; 
-    F#4 = (F.ring)^{}; F.dd#4 = map(F#3,F#4,0);
-
-(image matrix gens ker d2) != image d3 
-(image matrix entries gens ker d1) != image matrix gens image d2
-ker d3 !=  0
-image d3
-ker d2
-
-
-needsPackage "TorAlgebra"'
-needsPackage "PruneComplex"
-
-P = ZZ[w,x,y,z]
-Q = P/ideal(4_P)
-I = ideal (x^2,y^2,z^2)
-A = resLengthThreeTorAlg res I
-describe A
-
-Q = QQ[u,v,x,y,z];
-R = Q/ideal(u^2,u*v)
-I = ideal (x^2,y^2,z^2)
-F = res I
-G = resLengthThreeAlg F
-A = resLengthThreeTorAlg F
-resLengthThreeTorAlgClass I
-netList multTableOneOne G
-netList multTableOneTwo G
-netList multTableOneOne A
-netList multTableOneTwo A
-describe A
-describe G
-
-Q = QQ[u,v,x,y,z];
-R = Q/ideal(u^2-u*v^2)
-I = ideal (x^2,y^2,z^2)
-F = res I
-resLengthThreeTorAlgClass I
-
-P = QQ[u,v];
-Q = P/ideal(u^2-u*v)
-R = Q[x,y,z]
-I = ideal (x^2,y^2,z^2)
-G = resLengthThreeAlg res I
-netList multTableOneOne G
-netList multTableOneTwo G
-A = resLengthThreeTorAlg res I
-netList multTableOneOne A
-netList multTableOneTwo A
-
-P = QQ[u,v];
-Q = P/ideal(u^2-u*v^2)
-R = Q[x,y,z]
-I = ideal (x^2,y^2,z^2)
-G = resLengthThreeAlg res I
-netList multTableOneOne G
-netList multTableOneTwo G
-A = resLengthThreeTorAlg res I
-netList multTableOneOne A
-netList multTableOneTwo A
-
-rank multMap(A,1,1)
-basis(1,A)
-resLengthThreeTorAlgClass I
-
-restart
-debug needsPackage "ResLengthThree"
-Q = ZZ/101[x,y,z];
-time for s1 from 2 to 5 do (
-  for s2 from s1 to 2*s1 do (
-      I := ideal fromDual matrix {{ random(s1,Q), random(s2,Q) }};
-      F := res I;
-      d1 := F.dd_1;
-      d2 := F.dd_2;
-      d3 := F.dd_3;
-      mult11 := (d1**(id_(source d1)) - (id_(source d1))**d1) // d2;
-      mult12 :=  - d1**(id_(source d2))) // d3 + -(mult11 * (id_(source d1)**d2)
-      --time multTables res I;
-      --time multTables' res I;
-  );
-);
-
-restart
-debug needsPackage "ResLengthThree"
-Q = ZZ/32003[x,y,z];
-I = ideal fromDual matrix {{random(5,Q), random(10,Q)}};
---I = ideal (x^3,y^3,z^3)
-F = res I;
-time B = resLengthThreeAlg F
-time C = resLengthThreeAlg' F
-time resLengthThreeTorAlgClass F
-time resLengthThreeTorAlgClass' F
-
-A = ambient B
-d1 = F.dd_1;
-d2 = F.dd_2;
-d3 = F.dd_3;
-m = rank source d1
-l = rank source d2
-n = rank source d3
-mult11 = time (d1**(id_(source d1)) - (id_(source d1))**d1) // d2;
-mult12 = time (d1**(id_(source d2)) - mult11 * (id_(source d1)**d2)) // d3;
-EE = hashTable flatten apply(m, i -> apply(m, j -> ((i+1,j+1), mult11_{m*i+j})));
-EF = hashTable flatten apply(m, i -> apply(l, j -> ((i+1,j+1), mult12_{m*i+j})));
-mults = time multTables F;
-netList sort pairs first mults | netList sort pairs EE
-netList sort pairs last mults | netList sort pairs EF
-eVector = matrix {{e_1,e_2,e_3}}
-fVector = matrix {{f_1,f_2,f_3}}
-gVector = matrix {{g_1}}
-flatten entries (matrix {flatten entries (-((transpose eVector) * eVector))} - fVector*mult11)
-e1
-e2
-e3 * ( e1 e2 e3 )
---  F1 ** F2 --> F1 ** F1 ++ F2 --mult and add--> F2
-
-
-restart
-needsPackage "ResLengthThree"
-Q = QQ[x,y,z]
-A = resLengthThreeAlg res ideal (x^2,y^2,z^2)
-netList multTableOneOne (A, Compact=> true)
-netList multTableOneOne(A, Compact=>true, Labels =>false)
-netList multTableOneOne(A, Compact=>false, Labels =>true)
-netList multTableOneOne(A, Labels =>false)
-
-netList multTableOneOne(A)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-netList oneTimesOneA'
-netList topPart
-netList sidePart
-
-netList (topPart | apply(sidePart,oneTimesOneA', (i,j) -> i | j))
-
-restart
-debug needsPackage "ResLengthThree"
-P = QQ[u,v,x,y,z]
-Q = P/ideal(u^2,u*v)
-A = resLengthThreeAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )
-describe A
-a_1*a_4
-a_2*a_4
-a_3*a_4
-
-restart
-debug needsPackage "ResLengthThree"
-P = QQ[u,v]
-Q = (P/ideal(u^2,u*v))[x,y,z]
-A = resLengthThreeTorAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )
-describe A
-a_1*a_4
-a_2*a_4
-a_3*a_4
