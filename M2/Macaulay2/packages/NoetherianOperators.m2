@@ -695,6 +695,7 @@ diffOp HashTable := H -> (
 diffOp List := L -> diffOp hashTable L
 -- Create DiffOp from Weyl algebra element. 
 -- Output will be in ring R and R must contain the non
+diffOp (Ring, RingElement) := (R,f) -> diffOp(f,R)
 diffOp (RingElement, Ring) := (f,R) -> (
     R' := ring f;
     createDpairs R';
@@ -761,7 +762,7 @@ normalize DiffOp := D -> 1/(sub( D#(first sort keys D), coefficientRing ring D))
 -- instances of ZeroDiffOp are differential operators that
 -- act as the zero operator. They have exactly one key with value zero
 ZeroDiffOp = new Type of DiffOp
-new ZeroDiffOp from Ring := (DD, R) -> hashTable{R_1 => 0_R}
+new ZeroDiffOp from Ring := (DD, R) -> hashTable{1_R => 0_R}
 toExternalString ZeroDiffOp := D -> "new ZeroDiffOp from " | toExternalString(ring D)
 -- maybe ZeroDiffOp should have a ring? TODO
 -- ring ZeroDiffOp := D -> error"the zero operator has no ring";
@@ -774,6 +775,7 @@ toExternalString ZeroDiffOp := D -> "new ZeroDiffOp from " | toExternalString(ri
 -- but each value is the numerator and denominator of a rational function
 InterpolatedDiffOp = new Type of DiffOp
 new InterpolatedDiffOp from List := (TT, L) -> hashTable L
+new InterpolatedDiffOp from HashTable := (TT, H) -> H
 expression InterpolatedDiffOp := D -> 
     rsort(keys D, MonomialOrder => Lex) / 
     (k -> ((expression D#k#0)/(expression D#k#1)) * if k == 1 then expression(1) else addDsymbol(k)) //
