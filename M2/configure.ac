@@ -713,6 +713,7 @@ AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack givaro ")
 #    mpir and mpfr are used by fplll
 #    flint depends on gmp (or mpir) and mpfr
 #    frobby depends on gmp
+#    mpfi needs mpfr
 
 AC_SUBST(FILE_PREREQS)
 # This is the list of files found in the system that we need to be there for the user who
@@ -739,7 +740,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox boost 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr mpfi readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox boost 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
     [for i in $enableval
     do case "$LIBLIST $SUBLIST $PROGLIST" in
 	    *" $i "*) 
