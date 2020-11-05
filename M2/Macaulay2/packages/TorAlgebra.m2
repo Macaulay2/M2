@@ -1,6 +1,6 @@
 newPackage ( "TorAlgebra",
     Version => "2.1",
-    Date => "2 November 2020",
+    Date => "5 November 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
@@ -895,10 +895,10 @@ doc ///
       is called the codepth of $R$; if it is at most $3$, then the
       resolution carries a structure of a differential graded
       algebra. While the DG algebra structure may not be unique, the
-      induced algebra structure on Tor$_Q*$ ($R,k$) is unique and
+      induced algebra structure on Tor$^Q$ ($R,k$) is unique and
       provides for a classification of such local rings.
       
-      According to the multiplicative structure on Tor$_Q*$ ($R,k$), a
+      According to the multiplicative structure on Tor$^Q$ ($R,k$), a
       non-zero local ring $R$ of codepth at most 3 belongs to exactly one of
       the (parametrized) classes designated {\bf B}, {\bf C}(c), {\bf G}(r), {\bf
       H}(p,q), {\bf S}, or {\bf T}. An overview of the theory can be
