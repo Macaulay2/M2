@@ -206,8 +206,8 @@ document {
      SeeAlso => {
 	  selectInSubring,
 	  RingMap,
-	  "eliminate",
-	  "resultant",
+	  "Elimination::eliminate",
+	  "Elimination::resultant",
 	  apply,
 	  unique,
 	  length

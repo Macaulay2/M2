@@ -103,7 +103,6 @@ fghij"///,
 	  TO concatenate,
 	  TO format,
 	  TO lines,
-     	  TO separate,
 	  TO "regular expressions",
 	  "functions for handling nets",
 	  TO horizontalJoin,
@@ -274,46 +273,6 @@ document {
      Usage => "n = length s",
      Inputs => { "s" },
      Outputs => { "n" => { "the length of the string ", TT "s" } }
-     }
-
-document {
-     Key => {lines,(lines, String),(lines, String, String)},
-     Headline => "split a string into lines",
-     SYNOPSIS (
-	  Usage => "lines s",
-	  Inputs => {
-	       "s" => String
-	       },
-	  Outputs => {
-	       {"an array of strings obtained from the string ", TT "s", " by breaking it into lines"}
-	       }
-	  ),
-     SYNOPSIS (
-	  Usage => "lines(nl,s)",
-	  Inputs => {
-	       "s" => String,
-	       "nl" => String => {", of length 1 or 2"}
-	       },
-	  Outputs => {
-	       {"an array of strings obtained from the string ", TT "s", " by breaking it at the characters specified by the string ", TT "nl" }
-	       }
-	  ),
-     PARA{
-	  "The form ", TT "lines s", " is designed to break lines correctly
-	  when the file follows the Unix or MS-DOS convention.  In
-	  other words, it will break a line at \"\\r\\n\" or \"\\n\".",
-	  },
-     EXAMPLE lines ///
-     	  lines "a\nb\nc\n"
-	  peek oo
-     	  lines "a\nb\nc\nd"
-	  peek oo
-	  lines( ".", "a.b.c." )
-	  peek oo
-	  lines( ".", "a.b.c.d" )
-	  peek oo
-     ///,
-     SeeAlso => {"newline","separate"}
      }
 
 document {

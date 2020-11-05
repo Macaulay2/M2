@@ -6,6 +6,7 @@ newPackage(
                         Email => "de@msri.org", 
                         HomePage => "http://www.msri.org/~de"}},
               Headline => "Analyzing Resolutions over a Complete Intersection",
+	      Keywords => {"Commutative Algebra"},
 	      PackageImports => {"Truncations"},
 	      PackageExports => {"MCMApproximations","BGG"},
 --note: this package requires  MCMApproximations.m2
@@ -3863,7 +3864,7 @@ Description
   apply (5, i-> hilbertFunction(i, extra))
 SeeAlso
   "IntegralClosure"
-  "makeS2"
+  "IntegralClosure::makeS2"
   "BGG"
   "cohomology"
   "HH^ZZ SumOfTwists"

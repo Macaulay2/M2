@@ -544,7 +544,7 @@ document {
      	  such as ", TT "GLex", ".  There, the first part of the monomial 
 	  order is the degree, which is usually not zero."
           },
-     SeeAlso => {"monomial orderings", leadTerm, "eliminate"}
+     SeeAlso => {"monomial orderings", leadTerm, "Elimination::eliminate"}
      }
 
 document {

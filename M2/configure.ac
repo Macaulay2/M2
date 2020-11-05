@@ -18,6 +18,8 @@ m4_include(config/relpaths.m4)
 m4_include(config/gtest.m4)
 m4_include(config/openmp.m4)
 m4_include(config/search-libraries.m4)
+m4_include(config/ax_boost_base.m4)
+m4_include(config/ax_boost_regex.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -346,7 +348,7 @@ dnl      fi
 dnl fi
 
 AC_HEADER_TIME()
-AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h elf.h execinfo.h stdlib.h syscall.h sys/types.h sys/stat.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h regex.h)
+AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h elf.h execinfo.h stdlib.h syscall.h sys/types.h sys/stat.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 dnl winsock2.h should be included before including windows.h
 dnl  pthread.h includes windows.h
@@ -770,7 +772,9 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(gdbm_close,"/usr/lib/libgdbm.a" "/usr/local/lib/libgdbm.a",,[AC_MSG_ERROR([libgdbm.a not found])])
      else AC_SEARCH_LIBS(gdbm_close,"gdbm",,[AC_MSG_ERROR([libgdbm not found])])
      fi
-     LIBS_GDBM=$ac_cv_search_gdbm_close
+     if test "none required" != "$ac_cv_search_gdbm_close"
+     then LIBS_GDBM=$ac_cv_search_gdbm_close
+     fi
 fi
 
 AC_MSG_CHECKING(whether package bdw-gc is provided)
@@ -826,7 +830,9 @@ then USING_MPIR=1
 					    [AC_MSG_ERROR([libmpir.a not found])])
 	  else SEARCH_LIBRARIES(__gmpz_init,"-lmpirxx -lmpir",,[AC_MSG_ERROR([libmpir not found])])
 	  fi
-	  LIBS_GMP=$ac_cv_search___gmpz_init
+	  if test "none required" != "$ac_cv_search___gmpz_init"
+	  then LIBS_GMP=$ac_cv_search___gmpz_init
+	  fi
      fi
 else USING_MPIR=0		# i.e., using gmp
      AC_MSG_RESULT([using gmp])
@@ -841,7 +847,9 @@ else USING_MPIR=0		# i.e., using gmp
 					    [AC_MSG_ERROR([libgmp.a not found])])
 	  else SEARCH_LIBRARIES(__gmpz_init,"-lgmpxx -lgmp",,[AC_MSG_ERROR([libgmp not found])])
 	  fi
-     	  LIBS_GMP=$ac_cv_search___gmpz_init
+	  if test "none required" != "$ac_cv_search___gmpz_init"
+	  then LIBS_GMP=$ac_cv_search___gmpz_init
+	  fi
 	  dnl By the way: with Hombebrew on the Mac gmp comes with package configuration:
 	  dnl $ pkg-config gmp --cflags
 	  dnl -I/usr/local/Cellar/gmp/6.2.0/include
@@ -878,7 +886,9 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(glp_free,"/usr/lib/libglpk.a" "/usr/local/lib/libglpk.a",,[AC_MSG_ERROR([libglpk.a not found])])
      else AC_SEARCH_LIBS(glp_free,"glpk",,[AC_MSG_ERROR([libglpk not found])])
      fi
-     LIBS_GLPK=$ac_cv_search_glp_free
+     if test "none required" != "$ac_cv_search_glp_free"
+     then LIBS_GLPK=$ac_cv_search_glp_free
+     fi
 fi
 
 AC_MSG_CHECKING([whether givaro library is installed])
@@ -1024,17 +1034,17 @@ else AC_MSG_RESULT([no, will build])
      BUILD_csdp=yes
 fi
 
-dnl we can't use the test below for the presence of normaliz until the package Normaliz knows
-dnl how to find normaliz on the path, and until our *.dmg and
-dnl *.deb making procedures know how to include it or set the dependencies appropriately
-BUILD_normaliz=yes
-BUILD_ALWAYS="$BUILD_ALWAYS normaliz"
-dnl AC_MSG_CHECKING(whether the package normaliz is installed)
-dnl if test "`type -t normaliz`" = file
-dnl then AC_MSG_RESULT(yes)
-dnl else AC_MSG_RESULT([no, will build])
-dnl      BUILD_normaliz=yes
-dnl fi
+AC_MSG_CHECKING(whether the package normaliz is installed)
+if test "`type -t normaliz`" = file
+then normaliz_version=`normaliz --version | head -1 | cut -d " " -f 2`
+     AX_COMPARE_VERSION([$normaliz_version], [ge], [2.11],
+          [AC_MSG_RESULT([yes])
+           FILE_PREREQS="$FILE_PREREQS `type -p normaliz`"],
+          [AC_MSG_RESULT([yes, but < 2.11, will build])
+           BUILD_normaliz=yes])
+else AC_MSG_RESULT([no, will build])
+     BUILD_normaliz=yes
+fi
 
 dnl debian/fedora: nauty-
 AC_MSG_CHECKING(whether the package nauty (>= 2.7) is installed)
@@ -1249,28 +1259,11 @@ then AC_LANG(C)
      AC_CHECK_HEADER(python2.7/Python.h,,AC_MSG_ERROR(include file python2.7/Python.h not found))
 fi
 
-AC_LANG(C++)
-AC_CHECK_HEADER(boost/version.hpp,
-	[
-	AC_CHECK_HEADER(boost/stacktrace.hpp,,
-	    [
-	    AC_MSG_ERROR([[boost library installed, but not modern enough to contain 'boost/stacktrace.hpp']])
-	    dnl As of July, 2020:
-	    dnl These do not contain the file:
-	    dnl   Ubuntu 16.04 comes with boost 1.58
-	    dnl These do contain the file:
-	    dnl   Ubuntu 18.04 comes with boost 1.65
-	    dnl   Debian 10    comes with boost 1.67
-	    dnl   Ubuntu 20.04 comes with boost 1.71
-	    dnl   Homebrew Mac comes with boost 1.72
-	    ],
-	    [
-	    #define _GNU_SOURCE
-	    ])
-	],
-	[
-	AC_MSG_ERROR([boost library not installed, but required])
-	])
+dnl boost 1.65 was the first release containing the stacktrace library
+AX_BOOST_BASE([1.65],,
+    [AC_MSG_ERROR([boost library >= 1.65 not installed, but required])])
+CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
+LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
 
 AC_MSG_CHECKING([whether the Boost::Stacktrace library is available])
 AC_LANG(C++)
@@ -1294,6 +1287,9 @@ then
     CPPFLAGS=$SAVECPPFLAGS
     LIBS=$SAVELIBS
 fi
+
+AX_BOOST_REGEX
+LIBS="$LIBS $BOOST_REGEX_LIB"
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
@@ -1484,14 +1480,18 @@ else lapack_found=no
      if test $blas_found = no
      then AC_SEARCH_LIBS(sgemv_,refblas blas f77blas atlcblas,
                          blas_found=yes
-			 BLASLIBS=$ac_cv_search_sgemv_
+			 if test "none required" != "$ac_cv_search_sgemv_"
+			 then BLASLIBS=$ac_cv_search_sgemv_
+			 fi
 			 )
           # we've been told that both f77blas and atlcblas are needed.  If so, fix this somehow.
      fi
      if test $lapack_found = no
      then AC_SEARCH_LIBS(dgetrf_,lapack atllapack,
 	  		 lapack_found=yes
-			 LAPACKLIBS=$ac_cv_search_dgetrf_
+			 if test "none required" != "$ac_cv_search_dgetrf_"
+			 then LAPACKLIBS=$ac_cv_search_dgetrf_
+			 fi
 			 )
      fi
      if test $blas_found = no -o $lapack_found = no
@@ -1832,6 +1832,8 @@ AC_MSG_NOTICE([using FC                = $FC])
 AC_MSG_NOTICE([using AR                = $AR])
 AC_MSG_NOTICE([using RANLIB            = $RANLIB])
 AC_MSG_NOTICE([using LDFLAGS           = $LDFLAGS])
+AC_MSG_NOTICE([using BLASLIBS          = $BLASLIBS])
+AC_MSG_NOTICE([using LAPACKLIBS        = $LAPACKLIBS])
 AC_MSG_NOTICE([using LIBS_GDBM         = $LIBS_GDBM])
 AC_MSG_NOTICE([using LIBS_GLPK         = $LIBS_GLPK])
 AC_MSG_NOTICE([using LIBS_GMP          = $LIBS_GMP])

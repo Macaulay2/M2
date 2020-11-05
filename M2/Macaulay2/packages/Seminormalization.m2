@@ -11,6 +11,7 @@ newPackage( "Seminormalization",
 		}
 	},
 	Headline => "seminormalization of rings",
+	Keywords => {"Commutative Algebra"},
 	PackageImports => {"IntegralClosure"},
 	PackageExports => {"Pullback", "PushForward"},
 	Certification => {

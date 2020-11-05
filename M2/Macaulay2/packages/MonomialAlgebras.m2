@@ -8,6 +8,7 @@ newPackage(
          {Name => "Max Nitsche", Email => "nitsche@mis.mpg.de", HomePage => ""}
          },
     	Headline => "monomial algebras",
+	Keywords => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",

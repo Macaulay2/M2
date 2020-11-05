@@ -3,6 +3,40 @@
 -- html output
 -----------------------------------------------------------------------------
 
+KaTeX := () -> (
+    katexPath := locateCorePackageFileRelative("Style",
+	layout -> replace("PKG", "Style", layout#"package") | "katex", installPrefix, htmlDirectory);
+    katexTemplate := ///
+    <link rel="stylesheet" href="%PATH%/katex.min.css" />
+    <script defer="defer" type="text/javascript" src="%PATH%/katex.min.js"></script>
+    <script defer="defer" type="text/javascript" src="%PATH%/contrib/auto-render.min.js"></script>
+    <script defer="defer" type="text/javascript">
+      var macros = {
+          "\\break": "\\\\",
+          "\\R": "\\mathbb{R}",
+          "\\C": "\\mathbb{C}",
+          "\\ZZ": "\\mathbb{Z}",
+          "\\NN": "\\mathbb{N}",
+          "\\QQ": "\\mathbb{Q}",
+          "\\RR": "\\mathbb{R}",
+          "\\CC": "\\mathbb{C}",
+          "\\PP": "\\mathbb{P}"
+      }, delimiters = [
+          { left: "$$",  right: "$$",  display: true},
+          { left: "\\[", right: "\\]", display: true},
+          { left: "$",   right: "$",   display: false},
+          { left: "\\(", right: "\\)", display: false}
+      ];
+      document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, { delimiters: delimiters, macros: macros, trust: true });
+      });
+    </script>
+    <style type="text/css">.katex { font-size: 1em; }</style>
+    <link href="%PATH%/contrib/copy-tex.min.css" rel="stylesheet" type="text/css" />
+    <script defer="defer" type="text/javascript" src="%PATH%/contrib/copy-tex.min.js"></script>
+    <script defer="defer" type="text/javascript" src="%PATH%/contrib/render-a11y-string.min.js"></script>///;
+    LITERAL replace("%PATH%", katexPath, katexTemplate))
+
 -- The default stylesheet for documentation
 defaultStylesheet := () -> LINK {
     "rel" => "stylesheet", "type" => "text/css",
@@ -14,14 +48,14 @@ defaultStylesheet := () -> LINK {
 -- character encoding.  Locally-stored documentation does not have an HTTP header.)
 defaultCharset := () -> META { "http-equiv" => "Content-Type", "content" => "text/html; charset=utf-8" }
 
-defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet() }
+defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet(), KaTeX() }
 
 -----------------------------------------------------------------------------
 -- Local utilities
 -----------------------------------------------------------------------------
 
 -- TODO: urlEncode
-htmlLiteral = s -> if s === null or not match("<|&|]]>|\42", s) then s else (
+htmlLiteral = s -> if s === null or regex("<|&|]]>|\42", s) === null then s else (
      s = replace("&", "&amp;", s); -- this one must come first
      s = replace("<", "&lt;", s);
      s = replace("]]>", "]]&gt;", s);
@@ -77,11 +111,11 @@ html Hypertext := x -> (
 -- Exceptional (html, MarkUpType) methods
 -----------------------------------------------------------------------------
 
--- TEX  -- see texhtml.m2
 -- TOH  -- see format.m2
--- MENU -- see format.m2 -- e.g. help sum
 
-html String := htmlLiteral
+html LITERAL := x -> concatenate x
+html String  := x -> htmlLiteral x
+html TEX     := x -> concatenate apply(x, html)
 
 html HTML := x -> demark(newline, {
     	///<?xml version="1.0" encoding="utf-8" ?>///,
@@ -100,50 +134,22 @@ html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
 html COMMENT := x -> concatenate("<!--",x,"-->")
 
 html HREF := x -> (
-     r := html last x;
+     r := concatenate apply(splice if #x > 1 then drop(x, 1) else x, html);
      r = if match("^ +$", r) then #r : "&nbsp;&nbsp;" else r;
      concatenate("<a href=\"", htmlLiteral toURL first x, "\">", r, "</a>")
      )
 
--- TODO
-html LITERAL := x -> concatenate x
+html MENU := x -> html redoMENU x
 
--- TODO: reduce this
-html TO   := x -> (
-     tag := x#0;
-     d := fetchPrimaryRawDocumentation tag;
-     r := htmlLiteral DocumentTag.FormattedKey tag;
-     if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
-     if d#?"undocumented" and d#"undocumented" === true then (
-	  if signalDocError tag then (
-	       stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
-	       warning();
-	       );
-	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ",toString DocumentTag.Key tag," -->)")
-	  )
-     else if d === null					    -- isMissingDoc
-     then (
-	  warning("missing documentation: "|toString tag);
-	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ",toString DocumentTag.Key tag," -->)")
-	  )
-     else concatenate( "<a href=\"", toURL htmlFilename getPrimary tag, "\" title=\"", htmlLiteral headline tag, "\">", r, "</a>", if x#?1 then x#1))
-
+html TO   := x -> html TO2{tag := x#0, format tag | if x#?1 then x#1 else ""}
 html TO2  := x -> (
-     tag := x#0;
-     headline tag;		   -- this is a kludge, just to generate error messages about missing links
-     d := fetchPrimaryRawDocumentation tag;
-     if d#?"undocumented" and d#"undocumented" === true then (
-	  if signalDocError tag then (
-	       stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
-	       warning();
-	       );
-	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ",DocumentTag.FormattedKey tag," -->)")
-	  )
-     else if d === null					    -- isMissingDoc
-     then (
-	  warning("missing documentation: "|toString tag);
-	  concatenate("<tt>", htmlLiteral x#1, "</tt> (missing documentation<!-- tag: ",DocumentTag.FormattedKey tag," -->)"))
-     else concatenate("<a href=\"", toURL htmlFilename getPrimary tag, "\">", htmlLiteral x#1, "</a>"))
+    tag := getPrimaryTag x#0;
+    fkey := format tag;
+    -- TODO: add this to htmlLiteral?
+    name := if match("^ +$", x#1) then #x#1 : "&nbsp;&nbsp;" else x#1;
+    if isUndocumented tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
+    if isMissingDoc   tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
+    concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, htmlLiteral name}))
 
 html VerticalList         := x -> html UL apply(x, html)
 html NumberedVerticalList := x -> html OL apply(x, html)
@@ -164,4 +170,5 @@ show URL := url -> (
         setGroupID(0,0);
         try exec cmd;
         stderr << "exec failed: " << toExternalString cmd << endl;
-        exit 1))
+        exit 1);
+    sleep 1;) -- let the browser print errors before the next M2 prompt

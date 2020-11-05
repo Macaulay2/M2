@@ -8,6 +8,7 @@ newPackage(
         {Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"}
         },
     Headline => "integral closure",
+    Keywords => {"Commutative Algebra"},
     PackageImports => { 
         "PrimaryDecomposition",  -- only used for an obscure "rad" function
         "ReesAlgebra" -- used for integral closure of an ideal
@@ -1343,40 +1344,40 @@ doc ///
      to instead compute Hom(J^-1, J^-1).  This is usually a more time consuming
      computation, but it does potentially get to the answer in a smaller number of steps.
    Example
-     S = QQ[x,y]
-     f = ideal (y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
+     S = QQ[x,y,z]
+     f = ideal (x^8-z^6-y^2*z^4-z^3)
      R = S/f
      time R' = integralClosure R
      netList (ideal R')_*
      icFractions R
    Example
-     S = QQ[x,y]
-     f = ideal (y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
+     S = QQ[x,y,z]
+     f = ideal (x^8-z^6-y^2*z^4-z^3)
      R = S/f
      time R' = integralClosure(R, Strategy => Radical)
      netList (ideal R')_*
      icFractions R
    Example
-     S = QQ[x,y]
-     f = ideal (y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
+     S = QQ[x,y,z]
+     f = ideal (x^8-z^6-y^2*z^4-z^3)
      R = S/f
      time R' = integralClosure(R, Strategy => AllCodimensions)
      netList (ideal R')_*
    Example
-     S = QQ[x,y]
-     f = ideal (y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
+     S = QQ[x,y,z]
+     f = ideal (x^8-z^6-y^2*z^4-z^3)
      R = S/f
      time R' = integralClosure(R, Strategy => SimplifyFractions)
      netList (ideal R')_*     
    Example
-     S = QQ[x,y]
-     f = ideal (y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
+     S = QQ[x,y,z]
+     f = ideal (x^8-z^6-y^2*z^4-z^3)
      R = S/f
      time R' = integralClosure (R, Strategy => RadicalCodim1)
      netList (ideal R')_*
    Example
-     S = QQ[x,y]
-     f = ideal (y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)
+     S = QQ[x,y,z]
+     f = ideal (x^8-z^6-y^2*z^4-z^3)
      R = S/f
      time R' = integralClosure (R, Strategy => Vasconcelos)
      netList (ideal R')_*
@@ -1641,8 +1642,8 @@ document {
 
 document {
      Key => [idealizer, Index],
-     Headline=> "Sets the starting index on the new variables used to
-     build the endomorphism ring Hom(J,J). If the program idealizer is
+     Headline => "Sets the starting index on the new variables used to build the endomorphism ring Hom(J,J)",
+     "If the program idealizer is
      used independently, the user will generally want to use the
      default value of 0.  However, when used as part of the
      integralClosure computation the number needs to start higher

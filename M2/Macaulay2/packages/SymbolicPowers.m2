@@ -6,6 +6,7 @@ newPackage(
 	    {Name => "Eloisa Grifo", Email => "grifo@umich.edu", HomePage => "http://www-personal.umich.edu/~grifo/"}
 	    },
 	Headline => "symbolic powers",
+	Keywords => {"Commutative Algebra"},
 	DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",

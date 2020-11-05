@@ -15,8 +15,6 @@ doc///
   L: BasicList
   n: ZZ
   f: Function
- Outputs
-  : null
  Description
   Text
    {\tt scan(L, f)} applies the function {\tt f} to each element

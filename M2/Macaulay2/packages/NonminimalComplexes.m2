@@ -17,6 +17,7 @@ newPackage(
 		   Email => "mike@math.cornell.edu", 
 		   HomePage => "http://www.math.cornell.edu/~mike"} 
 		},
+	Keywords => {"Homological Algebra", "Commutative Algebra"},
      	PackageImports => { "SVDComplexes" },
         Headline => "non-minimal strands of a non-minimal resolution of a homogeneous module"
         )
