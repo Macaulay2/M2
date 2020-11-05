@@ -902,33 +902,33 @@ doc ///
       non-zero local ring $R$ of codepth at most 3 belongs to exactly one of
       the (parametrized) classes designated {\bf B}, {\bf C}(c), {\bf G}(r), {\bf
       H}(p,q), {\bf S}, or {\bf T}. An overview of the theory can be
-      found in L.L. Avramov, {\it A cohomological study of local rings
-      of embedding codepth 3}, @HREF"https://doi.org/10.1016/j.jpaa.2012.03.012"@.
+      found in L.L. Avramov,  @HREF("https://doi.org/10.1016/j.jpaa.2012.03.012","A cohomological study of local rings
+      of embedding codepth 3")@.
 
       There is a similar classification of Gorenstein local rings of codepth
       4, due to A.R. Kustin and M. Miller. There are four classes,
-      which in the original paper, {\it Classification of the
-      Tor-Algebras of Codimension Four Gorenstein Local rings}
-      @HREF"https://doi.org/10.1007/BF01215134"@, are called A, B, C,
-      and D, while in the survey {\it Homological asymptotics of
-      modules over local rings}
-      @HREF"https://doi.org/10.1007/978-1-4612-3660-3_3"@ by
+      which in the original paper
+      @HREF("https://doi.org/10.1007/BF01215134", "Classification of the
+      Tor-Algebras of Codimension Four Gorenstein Local rings")@, are called A, B, C,
+      and D, while in the survey 
+      @HREF("https://doi.org/10.1007/978-1-4612-3660-3_3","Homological asymptotics of
+      modules over local rings")@ by
       L.L. Avramov, they are called CI, GGO, GTE, and GH(p),
       respectively. Here we denote these classes {\bf C}(c), {\bf GS},
       {\bf GT}, and {\bf GH}(p), respectively.
   
       The package implements an algorithm for classification of local
       rings in the sense discussed above. For rings of codepth at most
-      3 it is described in L.W. Christensen and O. Veliche, {\it Local
-      rings of embedding codepth 3: A classification algorithm},
-      @HREF"http://dx.doi.org/10.2140/jsag.2014.6.1"@. The classification of
+      3 it is described in L.W. Christensen and O. Veliche, 
+      @HREF("http://dx.doi.org/10.2140/jsag.2014.6.1","Local
+      rings of embedding codepth 3: A classification algorithm")@. The classification of
       Gorenstein rings of codepth 4 is analogous. 
       
       The package also recognizes Golod rings, Gorenstein rings, and
       complete intersection rings of any codepth. To recognize Golod
-      rings the package implements a test found in J. Burke, {\it Higher
-      homotopies and Golod rings}
-      @HREF"https://arxiv.org/abs/1508.03782"@. ///
+      rings the package implements a test found in J. Burke,
+      @HREF("https://arxiv.org/abs/1508.03782","Higher
+      homotopies and Golod rings")@. ///
 
 
 doc ///
