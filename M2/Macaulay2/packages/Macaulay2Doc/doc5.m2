@@ -16,7 +16,7 @@ document {
 	  An error is signalled if the key ", TT "x", " does not occur in ", TT "defaults", "."
 	  },
      PARA {
-	  "A second possibility is for the argument ", TT "defaults", " to be ", TO "true", ",
+	  "A second possibility is for the argument ", TT "defaults", " to be ", TO "null", ",
 	  in which case the keys x are not checked for validity, and no default values
 	  are provided.  The main use of this is to separate the optional arguments from
 	  the other arguments, which can then be used for dispatching to the correct method."
@@ -729,27 +729,6 @@ document {
 	  {"a new link ", TT "n", " is made to the existing file reachable using the path ", TT "o"}
 	  },
      SeeAlso => { "moveFile", "copyFile" }
-     }
-
-document {
-     Key => {debug,(debug,Package)},
-     Headline => "open private dictionary of a package",
-     Usage => "debug p",
-     Inputs => {
-	  "p" => Package,
-	  },
-     Consequences => {
-	  {"the private dictionary of the package ", TT "p", " is added to ", TO "dictionaryPath", 
-	       " so its non-exported symbols are visible" }
-	  },
-     "For example, the private dictionary for Macaulay2 may be opened using",
-     EXAMPLE"debug Core",
-     "This allows access to the low level (\"raw\") routines implemented by the Macaulay2 engine,
-     although this is mainly useful for debugging Macaulay2 itself.",
-     EXAMPLE {
-	  "R = QQ[a..d];",
-	  "raw R"
-	  }
      }
 
 document {

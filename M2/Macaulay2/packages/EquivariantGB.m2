@@ -9,6 +9,7 @@ newPackage(
 	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"},
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
+     Keywords => {"Groebner Basis Algorithms"},
      PackageImports => {"FourTiTwo"},
      AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
      -- DebuggingMode should be true while developing a package, 

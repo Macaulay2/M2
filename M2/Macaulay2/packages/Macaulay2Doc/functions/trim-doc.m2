@@ -1,6 +1,6 @@
 document {
      -- this is the old version
-     Key => trim,
+     Key => {trim,(trim,Ideal),(trim,Ring),(trim,Module),(trim,QuotientRing)},
      Headline => "minimize generators and relations",
      "There are two ways to present a module ", TT "M", " over a ring.  One way is to take
      a free module F (whose generators are called the generators) and

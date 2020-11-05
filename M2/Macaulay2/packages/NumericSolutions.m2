@@ -24,6 +24,7 @@ newPackage (
  Version => "1.0",
  Date => "Apr 3, 2017",
  Headline => "solving systems of polynomial equalities",
+ Keywords => {"Numerical Algebraic Geometry"},
  Authors => {
   {Name => "Laura Menini", Email => "menini@disp.uniroma2.it"},
   {Name => "Corrado Possieri", Email => "possieri@ing.uniroma2.it"},

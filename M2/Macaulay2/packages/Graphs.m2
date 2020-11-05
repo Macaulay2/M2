@@ -37,6 +37,7 @@ newPackage select((
             {Name => "Contributers of note: Alex Diaz, Luis Garcia, Shaowei Lin, Sonja Mapes, Mike Stillman, Doug Torrance"}
         },
         Headline => "graphs and directed graphs (digraphs)",
+	Keywords => {"Graph Theory"},
         Configuration => {
             "DotBinary" => "dot",
             "JpgViewer" => "display"
@@ -343,7 +344,7 @@ net Digraph := Net => G -> (
     ))
 
 toString Digraph := String => D -> (
-    horizontalJoin(
+    concatenate(
         toLower toString class D, 
         " (",
         toString vertexSet D,

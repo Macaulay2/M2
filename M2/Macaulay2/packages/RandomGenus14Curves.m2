@@ -10,6 +10,7 @@ newPackage(
 		     HomePage => "http://www.crcg.de/wiki/User:Bothmer"}
                    },
     	Headline => "random smooth curves of genus 14",
+	Keywords => {"Examples and Random Objects"},
      	PackageExports => {"RandomObjects"},
 	PackageImports => {"Truncations"},
     	DebuggingMode => false

@@ -13,6 +13,7 @@ newPackage(
                   Email => "daniel@momo.math.rwth-aachen.de",
                   HomePage => "http://wwwb.math.rwth-aachen.de/~daniel/"}},
         Headline => "Methods for Janet bases and Pommaret bases in Macaulay 2",
+	Keywords => {"Groebner Basis Algorithms"},
         DebuggingMode => false
         )
 
