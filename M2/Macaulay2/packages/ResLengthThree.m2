@@ -19,8 +19,8 @@ newPackage ( "ResLengthThree",
 	  HomePage => "https://web.northeastern.edu/oveliche/index.html" }
 	},
     Headline => "Multiplication in free resolutions of length three",
-    Reload => true,
-    DebuggingMode => true
+    Reload => false,
+    DebuggingMode => false
     )
 
 export { "resLengthThreeAlg", "resLengthThreeTorAlg", "multTableOneOne", "multTableOneTwo", 
@@ -138,44 +138,7 @@ multTableOneOne(Ring) := opts -> A -> (
    
    if (opts.Labels) then result else oneTimesOneA
 
-   )
-
-   -*
-   if (opts.Compact) then (
-       oneTimesOneA := matrix table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else 0);
-
-       --- added by Frank, take off the primes if you would rather have this version.
-       oneTimesOneA' := table(m,m, (i,j) -> if i <= j then (A_i)*(A_j) else ".");
-       --- can shorten this part of the code to have the check for 'compact' be where the "."
-       --- is produced as in the next line.  
-       --------------
-       
-       result := entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
-       result =new MutableList from result;
-       oneTimesOneA = new MutableList from entries oneTimesOneA;
-       for i from 1 to m do(
- 	   for j from 1 to i-1 do(
-	       result#i =replace(j,".",result#i);
-	       );
-	   );
-       result#0 =replace(0," ",result#0);
-       result = toList result;
-       for i from 0 to m-1 do(
-	   for j from 0 to i-1 do(
-	       oneTimesOneA#i =replace(j,".",oneTimesOneA#i);
-	       );
-	    );
-       oneTimesOneA= toList oneTimesOneA; 
-       )
-   else (
-       oneTimesOneA = matrix table(m,m,(i,j) -> (A_i)*(A_j));
-       result = entries ((matrix {{0}} | eVector) || ((transpose eVector) | oneTimesOneA));
-       result= new MutableList from result;
-       result#0=replace(0," ",result#0);
-       result=toList result;
-       oneTimesOneA= entries oneTimesOneA;
-       );
-   *-
+)
 
 multTableOneTwo = method(Options => { Labels => true} )
 
@@ -518,8 +481,6 @@ document{
 
   PARA { "The ambient ring ", TT "Q", " does not need to be a polynomial algebra." },
 
--- These still don't return right...
-
   EXAMPLE {
 	"P = QQ[u,v,x,y,z];",
 	"Q = P/ideal(u^2,u*v);",
@@ -535,7 +496,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v];",
 	"Q = (P/ideal(u^2,u*v))[x,y,z];",
-	"A = resLengthThreeTorAlg ( res ideal (x^2,x*y,y^2,z^2) )",
+	"A = resLengthThreeTorAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
 	"describe A",
 	"a_1*a_4",
 	"a_2*a_4",
@@ -990,3 +951,22 @@ netList sidePart
 
 netList (topPart | apply(sidePart,oneTimesOneA', (i,j) -> i | j))
 
+restart
+debug needsPackage "ResLengthThree"
+P = QQ[u,v,x,y,z]
+Q = P/ideal(u^2,u*v)
+A = resLengthThreeAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )
+describe A
+a_1*a_4
+a_2*a_4
+a_3*a_4
+
+restart
+debug needsPackage "ResLengthThree"
+P = QQ[u,v]
+Q = (P/ideal(u^2,u*v))[x,y,z]
+A = resLengthThreeTorAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )
+describe A
+a_1*a_4
+a_2*a_4
+a_3*a_4
