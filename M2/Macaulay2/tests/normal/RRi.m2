@@ -16,6 +16,13 @@ assert not(I<J or I>J or I==J or I>=J or I<=J)
 assert contains(I,J)
 assert (J <= J)
 assert not(I <= I)
+assert not (I==I)
+assert (J==J)
+assert (I===I)
+assert not(I===interval(1,3))
+assert (0<I)
+assert (I<=interval(3,5))
+assert (J<interval(3,5))
 assert(leftRR sin J <= sin 2.0)
 assert(rightRR sin J >= sin 2.0)
 assert(leftRR sin J != rightRR sin J)
@@ -36,15 +43,35 @@ M = interval(-4,2.7)
 assert sameinterval(L+M,interval(-14/3,4.2))
 assert contains(L-M,interval(-10.1/3,5.5))
 assert contains(L*M,interval(-6,4.05))
+assert contains(K*K,K^2)
+assert not contains(K^2,K*K)
 assert sameinterval(L/I,L)
 assert sameinterval(L^2,interval(0,2.25))
 assert contains(L^3,interval(-8/27,3.375))
 assert contains(interval(-1,1),sin(L))
+assert isFinite(I)
+assert not isFinite(I/K)
+assert isANumber(I)
+assert isANumber(I/K)
+assert not isInfinite(I)
+assert isInfinite(I/K)
+assert contains(acos cos(numeric_100 piRRi),numeric_100 pi)
+assert (leftRR atan I == atan 1)
+assert (rightRR atan I == atan 3)
+assert (leftRR sinh I == sinh 1)
+assert (acosh(I) >= 0)
 
 --- TO FIX: ---------------------------------------------
 
 -*
 sqrt K -- produce a different error?
+*-
+
+-*
+Ok to divide by 0, gives infinity.
+Ok to take log of 0 (-infinity), just not negative values.
+Can't take arc-trig of inappropriate intervals.
+Some of these functions (like contains) should be isSubset
 *-
 
 -*
