@@ -12,7 +12,7 @@ document {
 	  (isHomogeneous,ChainComplex),
 	  (isHomogeneous,RingMap),
 	  (isHomogeneous,Vector),
-	  (isHomogeneous,Ideal),
+	  (isHomogeneous,Ideal)},
      Headline => "whether something is homogeneous (graded)",
      Usage => "isHomogeneous x",
      Inputs => {
