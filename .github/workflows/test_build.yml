@@ -111,8 +111,8 @@ jobs:
           echo "LD_LIBRARY_PATH=`brew --prefix`/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
           then echo "/usr/lib/ccache" >> $GITHUB_PATH
-          else echo `brew --prefix ccache`/libexec" >> $GITHUB_PATH
-               echo `brew --prefix make  `/libexec/gnubin" --prefix ccache`/libexec" >> $GITHUB_PATH
+          else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
+               echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
           fi
 
       - uses: actions/cache@v2
