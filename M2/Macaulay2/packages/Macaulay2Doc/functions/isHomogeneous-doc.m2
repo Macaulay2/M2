@@ -13,7 +13,6 @@ document {
 	  (isHomogeneous,RingMap),
 	  (isHomogeneous,Vector),
 	  (isHomogeneous,Ideal),
-	  (isHomogeneous,EngineRing)},
      Headline => "whether something is homogeneous (graded)",
      Usage => "isHomogeneous x",
      Inputs => {
@@ -81,7 +80,6 @@ document {
      Caveat => {"No computation on the generators and relations is performed.
 	 For example, if inhomogeneous generators of a homogeneous ideal are given, then the return value is ", TO false, "."},
      PARA{},
-     {"For developers: ", TT "isHomogeneous ", "also has a method for ", TO "EngineRing", "s."},
      SeeAlso => {degree, degrees, homogenize, "graded and multigraded polynomial rings", "graded modules", prune}
      }
 
