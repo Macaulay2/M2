@@ -925,7 +925,7 @@ export toRRi(n:RR,prec:ulong):RRi := (
        Ccode(void, "mpfi_set_fr(", x, ",", n, ")" );
        moveToRRiandclear(x));
 
-export toRRi(n:RR):RRi := toRRi(n,defaultPrecision);
+export toRRi(n:RR):RRi := toRRi(n,precision(n));
                                     
 export interval(a:ZZ,b:ZZ,prec:ulong):RRi := (
      x := newRRimutable(prec);
@@ -949,7 +949,7 @@ export interval(a:ZZ,b:RR,prec:ulong):RRi := (
      Ccode( void, "mpfr_set( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
 
-export interval(a:ZZ, b:RR):RRi := interval(a,b,defaultPrecision);
+export interval(a:ZZ, b:RR):RRi := interval(a,b,precision(b));
 
 export interval(a:QQ,b:ZZ,prec:ulong):RRi := (
      x := newRRimutable(prec);
@@ -973,7 +973,7 @@ export interval(a:QQ,b:RR,prec:ulong):RRi := (
      Ccode( void, "mpfr_set( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
 
-export interval(a:QQ, b:RR):RRi := interval(a,b,defaultPrecision);
+export interval(a:QQ, b:RR):RRi := interval(a,b,precision(b));
 
 export interval(a:RR,b:ZZ,prec:ulong):RRi := (
      x := newRRimutable(prec);
@@ -981,7 +981,7 @@ export interval(a:RR,b:ZZ,prec:ulong):RRi := (
      Ccode( void, "mpfr_set_z( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
                                   
-export interval(a:RR,b:ZZ):RRi := interval(a,b,defaultPrecision);
+export interval(a:RR,b:ZZ):RRi := interval(a,b,precision(a));
 
 export interval(a:RR,b:QQ,prec:ulong):RRi := (
      x := newRRimutable(prec);
@@ -989,7 +989,7 @@ export interval(a:RR,b:QQ,prec:ulong):RRi := (
      Ccode( void, "mpfr_set_q( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
 
-export interval(a:RR, b:QQ):RRi := interval(a,b,defaultPrecision);
+export interval(a:RR, b:QQ):RRi := interval(a,b,precision(a));
 
 export interval(a:RR,b:RR,prec:ulong):RRi := (
      x := newRRimutable(prec);
@@ -997,7 +997,7 @@ export interval(a:RR,b:RR,prec:ulong):RRi := (
      Ccode( void, "mpfr_set( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
 
-export interval(a:RR, b:RR):RRi := interval(a,b,defaultPrecision);
+export interval(a:RR, b:RR):RRi := interval(a,b,min(precision(a),precision(b)));
                                     
 export midpointRR(x:RRi):RR := (
      z := newRRmutable(precision0(x));

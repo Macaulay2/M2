@@ -1292,9 +1292,9 @@ setupfun("toRR",toRR);
                                                      
 toRRi(e:Expr):Expr := (
      when e
-     is x:ZZcell do toExpr(toRRi(x.v,defaultPrecision))  -- # typical value: toRRi, ZZ, RRi
-     is x:QQcell do toExpr(toRRi(x.v,defaultPrecision))  -- # typical value: toRRi, QQ, RRi
-     is x:RRcell do toExpr(toRRi(x.v,defaultPrecision))  -- # typical value: toRRi, RR, RRi
+     is x:ZZcell do toExpr(toRRi(x.v))  -- # typical value: toRRi, ZZ, RRi
+     is x:QQcell do toExpr(toRRi(x.v))  -- # typical value: toRRi, QQ, RRi
+     is x:RRcell do toExpr(toRRi(x.v))  -- # typical value: toRRi, RR, RRi
      is RRicell do e                                     -- # typical value: toRRi, RRi, RRi
      is s:Sequence do (
 	  if length(s) != 2 then WrongNumArgs(1,2) else
@@ -1316,9 +1316,9 @@ setupfun("toRRi",toRRi);
                                                      
 interval(e:Expr):Expr := (
     when e
-    	 is x:ZZcell do toExpr(toRRi(x.v,defaultPrecision))
-	 is x:QQcell do toExpr(toRRi(x.v,defaultPrecision))
-	 is x:RRcell do toExpr(toRRi(x.v,defaultPrecision))
+    	 is x:ZZcell do toExpr(toRRi(x.v))
+	 is x:QQcell do toExpr(toRRi(x.v))
+	 is x:RRcell do toExpr(toRRi(x.v))
 	 is x:RRicell do e
     	 is s:Sequence do (
 	    if length(s) > 3 then WrongNumArgs(1,3) else
