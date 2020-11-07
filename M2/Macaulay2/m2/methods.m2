@@ -525,6 +525,19 @@ addHook = method()
 removeHook = method()
 runHooks = method(Options => true)
 
+Hook = symbol Hook
+protect Hook
+
+addHook   (Sequence, Function) := (key, hook) -> (
+    sym := if key#?0 then getSymbol toString key#0 else error "addHooks: encountered empty method key";
+    if #key == 1 then addHook(sym, hook) else addHook(youngest drop(key, 1), (Hook, key), hook))
+removeHook(Sequence, Function) := (key, hook) -> (
+    sym := if key#?0 then getSymbol toString key#0 else error "removeHooks: encountered empty method key";
+    if #key == 1 then removeHook(sym, hook) else removeHook(youngest drop(key, 1), (Hook, key), hook))
+runHooks  (Sequence, Thing) := true >> opts -> (key, args) -> (
+    sym := if key#?0 then getSymbol toString key#0 else error "runHooks: encountered empty method key";
+    if #key == 1 then runHooks(sym, args) else runHooks(youngest drop(key, 1), (Hook, key), args))
+
 addHook   (MutableHashTable,Thing,Function) := (obj,key,hook) -> obj#key = if obj#?key then prepend(hook,obj#key) else {hook}
 removeHook(MutableHashTable,Thing,Function) := (obj,key,hook) -> if obj#?key then obj#key = delete(obj#key,hook)
 runHooks  (MutableHashTable,Thing,Thing   ) := true >> opts -> (obj,key,arg ) -> (if obj#?key then scan(obj#key, hook -> (

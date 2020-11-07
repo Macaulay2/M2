@@ -162,10 +162,14 @@ methods Thing := F -> (
      -- sort -- too slow
      previousMethodsFound = new NumberedVerticalList from sortByName keys found)
 
-hooks = method()
-hooks   (MutableHashTable,Thing) := (obj,key) -> previousMethodsFound = new NumberedVerticalList from obj#key
-hooks   (HashTable,Thing) := (obj,key) -> previousMethodsFound = new NumberedVerticalList from (obj.cache)#key
-hooks   (Symbol) := (sym) -> previousMethodsFound = new NumberedVerticalList from (value sym)
+hooks = method(Dispatch => Thing)
+hooks Symbol   :=  sym -> previousMethodsFound = new NumberedVerticalList from value sym
+hooks Sequence :=  key -> (
+    obj := if key#?0 then key#0 else error "hooks: encountered empty method key";
+    previousMethodsFound = new NumberedVerticalList from (
+	if instance(obj, MutableHashTable) then         obj#(key#1) else
+	if instance(obj, HashTable)        then (obj.cache)#(key#1) else
+	return hooks(youngest drop(key, 1), (Hook, key))))
 
 
 debuggerUsageMessage = ///--debugger activation depth control:
