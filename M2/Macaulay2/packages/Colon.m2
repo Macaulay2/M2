@@ -34,7 +34,7 @@ export {
 
 exportFrom_Core {"saturate", "quotient", "annihilator", "MinimalGenerators"}
 
-importFrom_Core {"raw", "rawColon", "rawSaturate", "newMonomialIdeal"}
+importFrom_Core {"printerr", "raw", "rawColon", "rawSaturate", "newMonomialIdeal"}
 
 -- TODO: where should these be placed?
 
@@ -46,12 +46,15 @@ ambient Ideal := Ideal => I -> ideal 1_(ring I)
 --Module % Matrix           :=
 --remainder(Module, Matrix) := Matrix => (M, m) -> remainder(gens M, m)
 
+-- TODO: is there a function that does this?
+class' := A -> if instance(A, RingElement) then RingElement else class A
+
 --------------------------------------------------------------------
 -- Helpers
 --------------------------------------------------------------------
 
-debugInfo = (func, A, B, strategy) -> if debugLevel > 0 then (
-    stderr << concatenate("  -- ", toString func, "(", toString class A, ", ", toString class B, ", Strategy => ", toString strategy, ")") << endl);
+debugInfo = (func, A, B, strategy) -> if debugLevel > 0 then printerr(
+    toString func, "(", toString class A, ", ", toString class' B, ", Strategy => ", toString strategy, ")")
 
 removeOptions := (opts, badopts) -> (
     opts = new MutableHashTable from opts;
@@ -194,7 +197,7 @@ quotientHelper = (A, B, algorithms, opts) -> (
     --opts = removeOptions(opts, {Strategy, MinimalGenerators});
     opts = removeQuotientOptions opts;
 
-    C := if strategy === null then runHooks(algorithms#null, (opts, A, B))
+    C := if strategy === null then runHooks((quotient, class A, class B), (opts, A, B))
     else if algorithms#?strategy then (
 	debugInfo(quotient, A, B, strategy);
 	(algorithms#strategy opts)(A, B))
@@ -206,7 +209,6 @@ quotientHelper = (A, B, algorithms, opts) -> (
 
 -- Algorithms for Ideal : Ideal
 IdealIdealQuotientAlgorithms = new HashTable from {
-    null    => symbol IdealIdealQuotientHooks,
     Iterate => opts -> (I, J) -> (
 	R := ring I;
 	M1 := ideal 1_R;
@@ -239,14 +241,13 @@ IdealIdealQuotientAlgorithms = new HashTable from {
     }
 
 -- Installing hooks for Ideal : Ideal
-scan({Quotient, Iterate-*, Linear*-}, strategy -> addHook(IdealIdealQuotientAlgorithms#null,
+scan({Quotient, Iterate-*, Linear*-}, strategy -> addHook((quotient, Ideal, Ideal),
 	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); IdealIdealQuotientAlgorithms#strategy opts)(I, J)))
 
 -- Algorithms for Module : Ideal
 ModuleIdealQuotientAlgorithms = new HashTable from {
-    null    => symbol ModuleIdealQuotientHooks,
     Iterate => opts -> (M, J) -> (
-	-- This is the iterative version, where I is a
+	-- This is the iterative version, where M is a
 	-- submodule of F/K, or ideal, and J is an ideal.
 	M1 := super M;
 	m := generators M | relations M;
@@ -261,10 +262,9 @@ ModuleIdealQuotientAlgorithms = new HashTable from {
     Quotient => opts -> (M, J) -> (
 	m := generators M;
 	F := target m;
-	mm := generators M;
-	if M.?relations then mm = mm | M.relations;
+	if M.?relations then m = m | M.relations;
 	j := transpose generators J;
-	g := (j ** F) | (target j ** mm);
+	g := (j ** F) | (target j ** m);
 	-- We would like to be able to inform the engine that
 	-- it is not necessary to compute various of the pairs
 	-- of the columns of the matrix g.
@@ -284,12 +284,11 @@ ModuleIdealQuotientAlgorithms = new HashTable from {
     }
 
 -- Installing hooks for Module : Ideal
-scan({Quotient, Iterate-*, Linear*-}, strategy -> addHook(ModuleIdealQuotientAlgorithms#null,
+scan({Quotient, Iterate-*, Linear*-}, strategy -> addHook((quotient, Module, Ideal),
 	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); ModuleIdealQuotientAlgorithms#strategy opts)(I, J)))
 
 -- Algorithms for Module : Module
 ModuleModuleQuotientAlgorithms = new HashTable from {
-    null    => symbol ModuleModuleQuotientHooks,
     Iterate => opts -> (I, J) -> (
 	R := ring I;
 	M1 := ideal 1_R;
@@ -323,7 +322,7 @@ ModuleModuleQuotientAlgorithms = new HashTable from {
     }
 
 -- Installing hooks for Module : Module
-scan({Quotient, Iterate}, strategy -> addHook(ModuleModuleQuotientAlgorithms#null,
+scan({Quotient, Iterate}, strategy -> addHook((quotient, Module, Module),
 	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); ModuleModuleQuotientAlgorithms#strategy opts)(I, J)))
 
 --------------------------------------------------------------------
@@ -379,14 +378,14 @@ saturateHelper = (A, B, algorithms, opts) -> (
     doTrim := if opts.MinimalGenerators then trim else identity;
     opts = removeOptions(opts, {Strategy, MinimalGenerators});
 
-    C := if strategy === null then runHooks(algorithms#null, (opts, A, B))
+    C := if strategy === null then runHooks((saturate, class A, class' B), (opts, A, B))
     else if algorithms#?strategy then (
 	debugInfo(saturate, A, B, strategy);
 	(algorithms#strategy opts)(A, B))
     else error("unrecognized Strategy for saturate: '", toString strategy, "'; expected: ", toString keys algorithms);
 
     if C =!= null then doTrim C else if strategy === null
-    then error("no applicable method for saturate(", class A, ", ", class B, ")")
+    then error("no applicable method for saturate(", class A, ", ", class' B, ")")
     else error("assumptions for saturation strategy ", toString strategy, " are not met"))
 
 -- Helper for GRevLex strategy
@@ -399,18 +398,16 @@ saturationByGRevLexHelper := (I, v, opts) -> (
 
 -- Algorithms for Module : Ideal^infinity
 ModuleIdealSaturateAlgorithms = new HashTable from {
-    null    => symbol ModuleIdealSaturateHooks,
     Iterate => opts -> (M, I) -> (
 	M' := quotient(M, I, opts); while M' != M do ( M = M'; M' = quotient(M, I, opts)); M ),
     }
 
 -- Installing hooks for Module : Ideal^infinity
-scan({Iterate}, strategy -> addHook(ModuleIdealSaturateAlgorithms#null,
+scan({Iterate}, strategy -> addHook((saturate, Module, Ideal),
 	(opts, I, J) -> (debugInfo(saturate, I, J, strategy); ModuleIdealSaturateAlgorithms#strategy opts)(I, J)))
 
 -- Algorithms for Ideal : Ideal^infinity
 IdealIdealSaturateAlgorithms = new HashTable from {
-    null    => symbol IdealIdealSaturateHooks,
     Iterate => opts -> (I, J) -> (
 	-- Iterated quotient
 	R := ring I;
@@ -445,12 +442,11 @@ IdealIdealSaturateAlgorithms = new HashTable from {
     }
 
 -- Installing hooks for Ideal : Ideal^infinity
-scan({Iterate, Elimination, GRevLex}, strategy -> addHook(IdealIdealSaturateAlgorithms#null,
+scan({Iterate, Elimination, GRevLex}, strategy -> addHook((saturate, Ideal, Ideal),
 	(opts, I, J) -> (debugInfo(saturate, I, J, strategy); IdealIdealSaturateAlgorithms#strategy opts)(I, J)))
 
 -- Algorithms for Ideal : RingElement^infinity
 IdealElementSaturateAlgorithms = new HashTable from {
-    null   => symbol IdealElementSaturateHooks,
     Iterate => opts -> (I, f) -> saturate(I, ideal f, opts), -- backwards compatibility
     Linear => opts -> (I, f) -> (
 	-- assumptions for this case:
@@ -538,7 +534,7 @@ IdealElementSaturateAlgorithms = new HashTable from {
     }
 
 -- Installing hooks for Ideal : RingElement^infinity
-scan({"Unused", Elimination, GRevLex, Bayer, Linear}, strategy -> addHook(IdealElementSaturateAlgorithms#null,
+scan({"Unused", Elimination, GRevLex, Bayer, Linear}, strategy -> addHook((saturate, Ideal, RingElement),
 	(opts, I, J) -> (debugInfo(saturate, I, J, strategy); IdealElementSaturateAlgorithms#strategy opts)(I, J)))
 
 --------------------------------------------------------------------
@@ -591,7 +587,7 @@ annihilatorHelper = (A, algorithms, opts) -> (
 
     strategy := opts.Strategy;
 
-    C := if strategy === null then runHooks(algorithms#null, (opts, A))
+    C := if strategy === null then runHooks((annihilator, class A), (opts, A))
     else if algorithms#?strategy then (
 	debugInfo(annihilator, A, null, strategy); -- FIXME
 	(algorithms#strategy opts)(A))
@@ -603,7 +599,6 @@ annihilatorHelper = (A, algorithms, opts) -> (
 
 -- Algorithms for annihilator Module
 ModuleAnnihilatorAlgorithms = new HashTable from {
-    null         => symbol ModuleAnnihilatorHooks,
     Quotient     => opts -> M -> (
 	f := presentation M;
 	image f : target f),
@@ -614,7 +609,7 @@ ModuleAnnihilatorAlgorithms = new HashTable from {
     }
 
 -- Installing hooks for annihilator Module
-scan({Quotient, Intersection}, strategy -> addHook(ModuleAnnihilatorAlgorithms#null,
+scan({Quotient, Intersection}, strategy -> addHook((annihilator, Module),
 	(opts, M) -> (debugInfo(annihilator, M, null, strategy); ModuleAnnihilatorAlgorithms#strategy opts)(M))) -- FIXME
 
 --------------------------------------------------------------------

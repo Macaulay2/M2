@@ -484,19 +484,17 @@ localAnnihilator := opts -> A -> (
 --=============================== addHooks Section for Colons ===============================--
 
 -- Installing local hooks for quotient and saturate
-debug Colon -- TODO: is this needed?
-
-scan({	symbol IdealIdealQuotientHooks,
-	symbol ModuleIdealQuotientHooks,
-	symbol ModuleModuleQuotientHooks}, HookList -> addHook(HookList, (opts, I, J) -> (
+scan({	(quotient, Ideal,  Ideal),
+	(quotient, Module, Ideal),
+	(quotient, Module, Module)}, m -> addHook(m, (opts, I, J) -> (
 	    if debugLevel > 0 then stderr << "  -- localQuotient(" << toString class I << ", " << toString class J << ")" << endl;
 	    (localQuotient opts)(I, J))))
-scan({	symbol IdealIdealSaturateHooks,
-	symbol IdealElementSaturateHooks,
-	symbol ModuleIdealSaturateHooks}, HookList -> addHook(HookList, (opts, I, J) -> (
+scan({	(saturate, Ideal,  Ideal),
+	(saturate, Ideal,  RingElement),
+	(saturate, Module, Ideal)}, m -> addHook(m, (opts, I, J) -> (
 	    if debugLevel > 0 then stderr << "  -- localSaturate(" << toString class I << ", " << toString class J << ")" << endl;
 	    (localSaturate opts)(I, J))))
-scan({	symbol ModuleAnnihilatorHooks}, HookList -> addHook(HookList, (opts, M) -> (
+scan({	(saturate, Module)}, m -> addHook(m, (opts, M) -> (
 	    if debugLevel > 0 then stderr << "  -- localAnnihilator(" << toString class M, ")" << endl;
 	    (localAnnihilator opts) M)))
 
