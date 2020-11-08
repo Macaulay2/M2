@@ -112,7 +112,6 @@ TEST ///
   R = ZZ/101[a..d]
   M = coker matrix{{a,b},{c,d}}
   m1 = basis(2,M)
-  image m1
   M1 = subquotient(matrix m1, relations M)
   Q1 = M1 : a
   Q2 = quotient(M1,ideal(a,b,c,d),Strategy=>Iterate)
@@ -142,4 +141,14 @@ TEST ///
 ///
   -- Tests for ZZ
   ideal 4 : ideal 6
+///
+
+TEST ///
+  R = ZZ[x, y];
+  (I,  J)  = ideal \ ({x^2, x*y, y^2}, {x, y});
+  (I', J') = monomialIdeal \ (I, J);
+  assert(I':J == I:J')
+  assert(I:J == ideal(I':J'))
+  assert(monomialIdeal(I:J) == I':J')
+  -- TODO: test MonomialIdeal : RingElement
 ///

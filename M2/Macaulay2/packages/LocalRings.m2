@@ -38,6 +38,8 @@ newPackage(
 -- These two are defined in m2/localring.m2
 exportFrom_Core { "LocalRing", "localRing" }
 
+importFrom_Core {"printerr"}
+
 export {
     "liftUp",
     "presentationComplex",
@@ -487,15 +489,15 @@ localAnnihilator := opts -> A -> (
 scan({	(quotient, Ideal,  Ideal),
 	(quotient, Module, Ideal),
 	(quotient, Module, Module)}, m -> addHook(m, (opts, I, J) -> (
-	    if debugLevel > 0 then stderr << "  -- localQuotient(" << toString class I << ", " << toString class J << ")" << endl;
+	    if debugLevel > 0 then printerr("localQuotient(", toString class I, ", ", toString class J, ")");
 	    (localQuotient opts)(I, J))))
 scan({	(saturate, Ideal,  Ideal),
 	(saturate, Ideal,  RingElement),
 	(saturate, Module, Ideal)}, m -> addHook(m, (opts, I, J) -> (
-	    if debugLevel > 0 then stderr << "  -- localSaturate(" << toString class I << ", " << toString class J << ")" << endl;
+	    if debugLevel > 0 then printerr("localSaturate(", toString class I, ", ", toString class J, ")");
 	    (localSaturate opts)(I, J))))
 scan({	(saturate, Module)}, m -> addHook(m, (opts, M) -> (
-	    if debugLevel > 0 then stderr << "  -- localAnnihilator(" << toString class M, ")" << endl;
+	    if debugLevel > 0 then printerr("localAnnihilator(", toString class M, ")");
 	    (localAnnihilator opts) M)))
 
 --================================= Tests and Documentation =================================--

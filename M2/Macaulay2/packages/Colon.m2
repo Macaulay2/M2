@@ -6,7 +6,7 @@
 -- UPDATE HISTORY : created 14 April 2018 at M2@UW;
 --                  updated July 2020
 --
--- TODO : 1. deal with MonomialIdeals via hooks
+-- TODO : 1. why are there shadowed symbols?
 --        2. cache computation under I.cache.QuotientComputation{J}
 --        3. add tests for MonomialIdeals, possibly MonomialIdeals over local rings
 --        4. fix, rename, document, and test saturationZero
@@ -37,6 +37,7 @@ exportFrom_Core {"saturate", "quotient", "annihilator", "MinimalGenerators"}
 importFrom_Core {"printerr", "raw", "rawColon", "rawSaturate", "newMonomialIdeal"}
 
 -- TODO: where should these be placed?
+trim MonomialIdeal := MonomialIdeal => opts -> (cacheValue (symbol trim => opts)) ((I) -> monomialIdeal trim(module I, opts))
 
 -- TODO: is this the right function?
 ambient Ideal := Ideal => I -> ideal 1_(ring I)
@@ -46,15 +47,18 @@ ambient Ideal := Ideal => I -> ideal 1_(ring I)
 --Module % Matrix           :=
 --remainder(Module, Matrix) := Matrix => (M, m) -> remainder(gens M, m)
 
--- TODO: is there a function that does this?
-class' := A -> if instance(A, RingElement) then RingElement else class A
+-- This is a map from method keys to strategy hash tables
+algorithms = new MutableHashTable from {}
 
 --------------------------------------------------------------------
 -- Helpers
 --------------------------------------------------------------------
 
+-- TODO: this is borrowed from symbolLocation, can it be formalized?
+--    loc := if (t := locate func) === null then "" else concatenate(
+--	t#0, ":", toString t#1, ":", toString (t#2+1), "-", toString t#3, ":", toString (t#4+1));
 debugInfo = (func, A, B, strategy) -> if debugLevel > 0 then printerr(
-    toString func, "(", toString class A, ", ", toString class' B, ", Strategy => ", toString strategy, ")")
+    toString func, "(", toString class A, ", ", toString class B, ", Strategy => ", toString strategy, ")")
 
 removeOptions := (opts, badopts) -> (
     opts = new MutableHashTable from opts;
@@ -149,33 +153,32 @@ quotelem0 = (I, f) -> (
 --    case: x is an ideal
 
 --quotient = method(...) -- defined in m2/quotient.m2
-quotient(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> quotientHelper(I, J, IdealIdealQuotientAlgorithms, opts)
+quotient(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> quotientHelper(I, J, (quotient, Ideal, Ideal), opts)
 quotient(Ideal,  RingElement) := Ideal  => opts -> (I, f) -> quotient(I, ideal f, opts)
 Ideal  : RingElement          := Ideal  =>         (I, f) -> quotient(I, f)
 Ideal  : Ideal                := Ideal  =>         (I, J) -> quotient(I, J)
 
-quotient(Module, Ideal)       := Module => opts -> (M, I) -> quotientHelper(M, I, ModuleIdealQuotientAlgorithms, opts)
+-- TODO: why is this the right thing to do?
+quotient(MonomialIdeal, RingElement) := MonomialIdeal => opts -> (I, f) -> (
+    quotient(I, if size f === 1 and leadCoefficient f == 1 then monomialIdeal f else ideal f, opts))
+MonomialIdeal : RingElement          := MonomialIdeal => opts -> (I, f) -> quotient(I, f)
+
+quotient(Module, Ideal)       := Module => opts -> (M, I) -> quotientHelper(M, I, (quotient, Module, Ideal), opts)
 quotient(Module, RingElement) := Module => opts -> (M, f) -> quotient(M, ideal f, opts)
 Module : RingElement          := Module =>         (M, f) -> quotient(M, f)
 Module : Ideal                := Module =>         (M, I) -> quotient(M, I)
 
 -- annihilator of (B+A)/A, where A and B have a common ambient module
 -- note: if A is an ideal and B=f, then this is isomorphic to R/(A:f)
-quotient(Module, Module)      := Ideal  => opts -> (M, N) -> quotientHelper(M, N, ModuleModuleQuotientAlgorithms, opts)
+quotient(Module, Module)      := Ideal  => opts -> (M, N) -> quotientHelper(M, N, (quotient, Module, Module), opts)
 Module : Module               := Ideal  =>         (M, N) -> quotient(M, N)
-
--- TODO: eventually, this should not be necessary, if MonomialIdeal inherits from Ideal
-quotient(MonomialIdeal, MonomialIdeal) := MonomialIdeal => opts -> (I, J) -> newMonomialIdeal(ring I, rawColon(raw I, raw J))
-quotient(MonomialIdeal, RingElement)   := MonomialIdeal => opts -> (I, f) -> I : monomialIdeal terms f
-MonomialIdeal : MonomialIdeal          := MonomialIdeal =>         (I, J) -> quotient(I, J)
-MonomialIdeal : RingElement            := MonomialIdeal =>         (I, f) -> quotient(I, f)
 
 -- TODO: this should be unnecessary via https://github.com/Macaulay2/M2/issues/1519
 quotient(Thing, Number) := opts -> (t, n) -> quotient(t, n_(ring t), opts)
 Thing : Number := (t, n) -> t : n_(ring t)
 
 -- Helper for quotient methods
-quotientHelper = (A, B, algorithms, opts) -> (
+quotientHelper = (A, B, key, opts) -> (
     if (R := ring A) =!= ring B then error "expected objects in the same ring";
     if instance(B, RingElement) then B = ideal B;
     -- TODO: implement bette class equality check; e.g. Ideal vs MonomialIdeal
@@ -197,18 +200,18 @@ quotientHelper = (A, B, algorithms, opts) -> (
     --opts = removeOptions(opts, {Strategy, MinimalGenerators});
     opts = removeQuotientOptions opts;
 
-    C := if strategy === null then runHooks((quotient, class A, class B), (opts, A, B))
-    else if algorithms#?strategy then (
+    C := if strategy === null then runHooks(key, (opts, A, B))
+    else if algorithms#key#?strategy then (
 	debugInfo(quotient, A, B, strategy);
-	(algorithms#strategy opts)(A, B))
-    else error("unrecognized Strategy for quotient: '", toString strategy, "'; expected: ", toString keys algorithms);
+	(algorithms#key#strategy opts)(A, B))
+    else error("unrecognized Strategy for quotient: '", toString strategy, "'; expected: ", toString keys algorithms#key);
 
     if C =!= null then doTrim C else if strategy === null
     then error("no applicable method for quotient(", class A, ", ", class B, ")")
     else error("assumptions for quotient strategy ", toString strategy, " are not met"))
 
 -- Algorithms for Ideal : Ideal
-IdealIdealQuotientAlgorithms = new HashTable from {
+algorithms#(quotient, Ideal, Ideal) = new HashTable from {
     Iterate => opts -> (I, J) -> (
 	R := ring I;
 	M1 := ideal 1_R;
@@ -238,14 +241,22 @@ IdealIdealQuotientAlgorithms = new HashTable from {
 	or not isHomogeneous J or not isLinearForm J_0
 	then return null;
 	stderr << "warning: quotient strategy Linear is not yet implemented" << endl; null),
+
+    Monomial => opts -> (I, J) -> (
+	if not isMonomialIdeal I
+	or not isMonomialIdeal J
+	then return null;
+	cast := if instance(I, MonomialIdeal) then identity else ideal;
+	-- TODO: make sure (monomialIdeal, MonomialIdeal) isn't forgetful
+	cast newMonomialIdeal(ring I, rawColon(raw monomialIdeal I, raw monomialIdeal J))),
     }
 
 -- Installing hooks for Ideal : Ideal
-scan({Quotient, Iterate-*, Linear*-}, strategy -> addHook((quotient, Ideal, Ideal),
-	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); IdealIdealQuotientAlgorithms#strategy opts)(I, J)))
+scan({Quotient, Iterate-*, Linear*-, Monomial}, strategy -> addHook(key := (quotient, Ideal, Ideal),
+	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); algorithms#key#strategy opts)(I, J)))
 
 -- Algorithms for Module : Ideal
-ModuleIdealQuotientAlgorithms = new HashTable from {
+algorithms#(quotient, Module, Ideal) = new HashTable from {
     Iterate => opts -> (M, J) -> (
 	-- This is the iterative version, where M is a
 	-- submodule of F/K, or ideal, and J is an ideal.
@@ -284,11 +295,11 @@ ModuleIdealQuotientAlgorithms = new HashTable from {
     }
 
 -- Installing hooks for Module : Ideal
-scan({Quotient, Iterate-*, Linear*-}, strategy -> addHook((quotient, Module, Ideal),
-	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); ModuleIdealQuotientAlgorithms#strategy opts)(I, J)))
+scan({Quotient, Iterate-*, Linear*-}, strategy -> addHook(key := (quotient, Module, Ideal),
+	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); algorithms#key#strategy opts)(I, J)))
 
 -- Algorithms for Module : Module
-ModuleModuleQuotientAlgorithms = new HashTable from {
+algorithms#(quotient, Module, Module) = new HashTable from {
     Iterate => opts -> (I, J) -> (
 	R := ring I;
 	M1 := ideal 1_R;
@@ -322,8 +333,8 @@ ModuleModuleQuotientAlgorithms = new HashTable from {
     }
 
 -- Installing hooks for Module : Module
-scan({Quotient, Iterate}, strategy -> addHook((quotient, Module, Module),
-	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); ModuleModuleQuotientAlgorithms#strategy opts)(I, J)))
+scan({Quotient, Iterate}, strategy -> addHook(key := (quotient, Module, Module),
+	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); algorithms#key#strategy opts)(I, J)))
 
 --------------------------------------------------------------------
 -- Saturations
@@ -336,11 +347,14 @@ scan({Quotient, Iterate}, strategy -> addHook((quotient, Module, Module),
 -- used when P = decompose irr
 saturate(Ideal,  List)        := Ideal  => opts -> (I, L) -> fold(L, I, (J, I) -> saturate(I, J, opts))
 
-saturate(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> saturateHelper(I, J, IdealIdealSaturateAlgorithms, opts)
-saturate(Ideal,  RingElement) := Ideal  => opts -> (I, f) -> saturateHelper(I, f, IdealElementSaturateAlgorithms, opts)
+saturate(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> saturateHelper(I, J, (saturate, Ideal, Ideal), opts)
+saturate(Ideal,  RingElement) := Ideal  => opts -> (I, f) -> saturateHelper(I, f, (saturate, Ideal, RingElement), opts)
 saturate Ideal                := Ideal  => opts ->  I     -> saturate(I, ideal vars ring I, opts)
 
-saturate(Module, Ideal)       := Module => opts -> (M, J) -> saturateHelper(M, J, ModuleIdealSaturateAlgorithms, opts)
+saturate(MonomialIdeal, RingElement) := MonomialIdeal => opts -> (I, f) -> (
+    saturate(I, if size f === 1 and leadCoefficient f == 1 then monomialIdeal f else ideal f, opts))
+
+saturate(Module, Ideal)       := Module => opts -> (M, J) -> saturateHelper(M, J, (saturate, Module, Ideal), opts)
 saturate(Module, RingElement) := Module => opts -> (M, f) -> saturate(M, ideal f, opts)
 saturate Module               := Module => opts ->  M     -> saturate(M, ideal vars ring M, opts)
 -- TODO: where are these used?
@@ -348,21 +362,11 @@ saturate(Vector, Ideal)       := Module => opts -> (v, J) -> saturate(image matr
 saturate(Vector, RingElement) := Module => opts -> (v, f) -> saturate(image matrix {v}, f, opts)
 saturate Vector               := Module => opts ->  v     -> saturate(image matrix {v}, opts)
 
--- TODO: eventually, this should not be necessary, if MonomialIdeal inherits from Ideal
-saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => opts -> (I, J) -> newMonomialIdeal(ring I, rawSaturate(raw I, raw J))
-saturate(MonomialIdeal, RingElement)   := MonomialIdeal => opts -> (I, f) -> (
-    if size f === 1 and leadCoefficient f == 1 then saturate (I, monomialIdeal f) else saturate(ideal I, ideal f))
-saturate MonomialIdeal                 := MonomialIdeal => opts ->  I     -> saturate(I, monomialIdeal vars ring I, opts)
-
 -- TODO: this should be unnecessary via https://github.com/Macaulay2/M2/issues/1519
 saturate(Thing, Number) := opts -> (t, n) -> saturate(t, n_(ring t), opts)
 
--- TODO: where should these be defined?
--- saturate(MonomialIdeal, MonomialIdeal)
--- saturate(MonomialIdeal, RingElement)
-
 -- Helper for saturation methods
-saturateHelper = (A, B, algorithms, opts) -> (
+saturateHelper = (A, B, key, opts) -> (
     if (R := ring A) =!= ring B then error "expected objects in the same ring";
     B' := if instance(B, RingElement) then ideal B else B;
     -- note: if B \subset A then A:B^infty should be "everything", but computing a gb for A can be slow
@@ -378,14 +382,14 @@ saturateHelper = (A, B, algorithms, opts) -> (
     doTrim := if opts.MinimalGenerators then trim else identity;
     opts = removeOptions(opts, {Strategy, MinimalGenerators});
 
-    C := if strategy === null then runHooks((saturate, class A, class' B), (opts, A, B))
-    else if algorithms#?strategy then (
+    C := if strategy === null then runHooks(key, (opts, A, B))
+    else if algorithms#key#?strategy then (
 	debugInfo(saturate, A, B, strategy);
-	(algorithms#strategy opts)(A, B))
-    else error("unrecognized Strategy for saturate: '", toString strategy, "'; expected: ", toString keys algorithms);
+	(algorithms#key#strategy opts)(A, B))
+    else error("unrecognized Strategy for saturate: '", toString strategy, "'; expected: ", toString keys algorithms#key);
 
     if C =!= null then doTrim C else if strategy === null
-    then error("no applicable method for saturate(", class A, ", ", class' B, ")")
+    then error("no applicable method for saturate(", class A, ", ", class B, ")")
     else error("assumptions for saturation strategy ", toString strategy, " are not met"))
 
 -- Helper for GRevLex strategy
@@ -397,17 +401,17 @@ saturationByGRevLexHelper := (I, v, opts) -> (
     if maxpower == 0 then (I, 0) else (ideal fback g1', maxpower))
 
 -- Algorithms for Module : Ideal^infinity
-ModuleIdealSaturateAlgorithms = new HashTable from {
+algorithms#(saturate, Module, Ideal) = new HashTable from {
     Iterate => opts -> (M, I) -> (
 	M' := quotient(M, I, opts); while M' != M do ( M = M'; M' = quotient(M, I, opts)); M ),
     }
 
 -- Installing hooks for Module : Ideal^infinity
-scan({Iterate}, strategy -> addHook((saturate, Module, Ideal),
-	(opts, I, J) -> (debugInfo(saturate, I, J, strategy); ModuleIdealSaturateAlgorithms#strategy opts)(I, J)))
+scan({Iterate}, strategy -> addHook(key := (saturate, Module, Ideal),
+	(opts, I, J) -> (debugInfo(saturate, I, J, strategy); algorithms#key#strategy opts)(I, J)))
 
 -- Algorithms for Ideal : Ideal^infinity
-IdealIdealSaturateAlgorithms = new HashTable from {
+algorithms#(saturate, Ideal, Ideal) = new HashTable from {
     Iterate => opts -> (I, J) -> (
 	-- Iterated quotient
 	R := ring I;
@@ -439,14 +443,22 @@ IdealIdealSaturateAlgorithms = new HashTable from {
 	-- TODO: when exactly is I returned?
 	if any(last \ L, x -> x == 0) then I
 	else intersectionByElimination(first \ L)),
+
+    Monomial => opts -> (I, J) -> (
+	if not isMonomialIdeal I
+	or not isMonomialIdeal J
+	then return null;
+	cast := if instance(I, MonomialIdeal) then identity else ideal;
+	-- TODO: make sure (monomialIdeal, MonomialIdeal) isn't forgetful
+	cast newMonomialIdeal(ring I, rawSaturate(raw monomialIdeal I, raw monomialIdeal J))),
     }
 
 -- Installing hooks for Ideal : Ideal^infinity
-scan({Iterate, Elimination, GRevLex}, strategy -> addHook((saturate, Ideal, Ideal),
-	(opts, I, J) -> (debugInfo(saturate, I, J, strategy); IdealIdealSaturateAlgorithms#strategy opts)(I, J)))
+scan({Iterate, Elimination, GRevLex, Monomial}, strategy -> addHook(key := (saturate, Ideal, Ideal),
+	(opts, I, J) -> (debugInfo(saturate, I, J, strategy); algorithms#key#strategy opts)(I, J)))
 
 -- Algorithms for Ideal : RingElement^infinity
-IdealElementSaturateAlgorithms = new HashTable from {
+algorithms#(saturate, Ideal, RingElement) = new HashTable from {
     Iterate => opts -> (I, f) -> saturate(I, ideal f, opts), -- backwards compatibility
     Linear => opts -> (I, f) -> (
 	-- assumptions for this case:
@@ -534,8 +546,8 @@ IdealElementSaturateAlgorithms = new HashTable from {
     }
 
 -- Installing hooks for Ideal : RingElement^infinity
-scan({"Unused", Elimination, GRevLex, Bayer, Linear}, strategy -> addHook((saturate, Ideal, RingElement),
-	(opts, I, J) -> (debugInfo(saturate, I, J, strategy); IdealElementSaturateAlgorithms#strategy opts)(I, J)))
+scan({"Unused", Elimination, GRevLex, Bayer, Linear}, strategy -> addHook(key := (saturate, Ideal, RingElement),
+	(opts, I, J) -> (debugInfo(saturate, I, J, strategy); algorithms#key#strategy opts)(I, J)))
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -573,10 +585,10 @@ saturationZero(Module, Ideal) := (M, B) -> (
 annihilator RingElement := Ideal => opts -> f -> annihilator(ideal f,  opts)
 annihilator Ideal       := Ideal => opts -> I -> annihilator(module I, opts)
 annihilator Module      := Ideal => opts -> (cacheValue symbol annihilator) (
-    M -> annihilatorHelper(M, ModuleAnnihilatorAlgorithms, opts))
+    M -> annihilatorHelper(M, (annihilator, Module), opts))
 
 -- Helper for annihilator methods
-annihilatorHelper = (A, algorithms, opts) -> (
+annihilatorHelper = (A, key, opts) -> (
     R := ring A;
     if isWeylAlgebra R then error "annihilator has no meaning for objects over a Weyl algebra";
     -- TODO: add more instant checks
@@ -587,18 +599,18 @@ annihilatorHelper = (A, algorithms, opts) -> (
 
     strategy := opts.Strategy;
 
-    C := if strategy === null then runHooks((annihilator, class A), (opts, A))
-    else if algorithms#?strategy then (
+    C := if strategy === null then runHooks(key, (opts, A))
+    else if algorithms#key#?strategy then (
 	debugInfo(annihilator, A, null, strategy); -- FIXME
-	(algorithms#strategy opts)(A))
-    else error("unrecognized Strategy for annihilator: '", toString strategy, "'; expected: ", toString keys algorithms);
+	(algorithms#key#strategy opts)(A))
+    else error("unrecognized Strategy for annihilator: '", toString strategy, "'; expected: ", toString keys algorithms#key);
 
     if C =!= null then C else if strategy === null
     then error("no applicable method for annihilator(", class A, ")")
     else error("assumptions for annihilator strategy ", toString strategy, " are not met"))
 
 -- Algorithms for annihilator Module
-ModuleAnnihilatorAlgorithms = new HashTable from {
+algorithms#(annihilator, Module) = new HashTable from {
     Quotient     => opts -> M -> (
 	f := presentation M;
 	image f : target f),
@@ -609,8 +621,8 @@ ModuleAnnihilatorAlgorithms = new HashTable from {
     }
 
 -- Installing hooks for annihilator Module
-scan({Quotient, Intersection}, strategy -> addHook((annihilator, Module),
-	(opts, M) -> (debugInfo(annihilator, M, null, strategy); ModuleAnnihilatorAlgorithms#strategy opts)(M))) -- FIXME
+scan({Quotient, Intersection}, strategy -> addHook(key := (annihilator, Module),
+	(opts, M) -> (debugInfo(annihilator, M, null, strategy); algorithms#key#strategy opts)(M))) -- FIXME
 
 --------------------------------------------------------------------
 ----- Tests section
@@ -683,13 +695,6 @@ Node
     monomialCurveIdeal
     "Truncations::truncate"
 ///
-
--*
-Where should these be documented?
-quotient
-(quotient, MonomialIdeal, MonomialIdeal)
-(quotient, MonomialIdeal, RingElement)
-*-
 
 -- TODO: review
 load "./Colon/quotient-doc.m2"

@@ -8,10 +8,9 @@ Node
 -- return an ideal
     (quotient, Ideal, Ideal)
     (quotient, Ideal, RingElement)
-    (quotient, MonomialIdeal, MonomialIdeal)
+    (quotient, MonomialIdeal, RingElement)
     (symbol:, Ideal, Ideal)
     (symbol:, Ideal, RingElement)
-    (symbol:, MonomialIdeal, MonomialIdeal)
 -- return a module
     (quotient, Module, Ideal)
     (quotient, Module, RingElement)
