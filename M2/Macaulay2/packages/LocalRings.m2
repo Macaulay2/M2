@@ -38,7 +38,7 @@ newPackage(
 -- These two are defined in m2/localring.m2
 exportFrom_Core { "LocalRing", "localRing" }
 
-importFrom_Core {"printerr"}
+importFrom_Core { "printerr", "raw", "rawLiftLocalMatrix" }
 
 export {
     "liftUp",
@@ -60,8 +60,6 @@ export {
 -- << "-- The LocalRings package is experimental, but old methods are still available.     --" << endl;
 -- << "-- See the documentation and comments in the package to learn more.                 --" << endl;
 -- << "--------------------------------------------------------------------------------------" << endl;
-
-debug Core;
 
 --==================================== Basic Operations ====================================--
 -- Note: The following methods are extended to local rings in this package:

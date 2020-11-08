@@ -23,6 +23,17 @@ newPackage(
     AuxiliaryFiles => true
     )
 
+importFrom_Core {
+    "LocalRing", "localRing",
+    "raw", "printerr",
+    "rawDeleteColumns",
+    "rawDeleteRows",
+    "rawMutableComplex",
+    "rawPruneBetti",
+    "rawPruneComplex",
+    "rawPruningMorphism",
+    }
+
 export {
     "toMutableComplex",
     "toChainComplex",
@@ -48,8 +59,6 @@ export {
 -- << "-- The PruneComplex package is experimental.                                        --" << endl;
 -- << "-- See the documentation and comments in the package to learn more.                 --" << endl;
 -- << "--------------------------------------------------------------------------------------" << endl;
-
-debug Core;
 
 --=================================== Chain Complex Operations ===================================--
 -- TODO see if the new Chain Complexes package can be incorporated
