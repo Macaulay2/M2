@@ -902,35 +902,10 @@ macaulayMatrixKernel := {Tolerance => null, DegreeLimit => -1, Rational => false
         );
         L
     ) else (
-        --error"dbg";
         tol := getTolerance(S,opts);
         degLim := opts.DegreeLimit;
-        -- if point is not in the correct ring, try to promote
-        -- p = promote(p, coefficientRing S);
-        -- (depVars,indVars) := getDepIndVars(I,opts);
-        -- S := (coefficientRing S)(monoid[depVars]);
-
-        ------
-        -- ViaMaca --
-        -------------
-        -- use the original coefficient field if appropriate, else a rational function field
-        -- F := if #indVars == 0 then coefficientRing S else frac((coefficientRing S)(monoid[indVars]));
-        -- F := coefficientRing S;
-        -- S := F(monoid[depVars]);
-        -- rules := (depVars / (x -> x=>sub(x,S) + p_(0, index x))) | (indVars / (x -> x => p_(0, index x)));
-        -- IS := sub(I, vars S + p)
-        -- pS := p_(depVars / index);
-
-
-        ------------------
-        ---- ROBERT ------
-        ------------------
         pt := sub(sub(vars S, kP), S);
-        -- rat := true;
-        -- S' := diffAlg S;
-        ops := null;
         if degLim < 0 then degLim = infinity;
-        -- p := apply(gens S, v -> sub(sub(v, S/PS), S));
         igens := sub(gens I, vars S + pt);
         H := truncDualData(igens,false,tol);
         DB := map(S^1,S^0,0);
@@ -1050,8 +1025,6 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
     degLim := if not opts.?DegreeLimit then -1 else opts.DegreeLimit;
     -- if point is not in the correct ring, try to promote
     p = promote(p, coefficientRing ring I);
-    -- if point is not on variety, return empty set TODO fix this
-    -- if( norm(2,evaluate(gens I, p)) > tol ) then return {new ZeroDiffOp from ring I};
     R := ring I;
     (depVars,indVars) := getDepIndVars(I,opts);
     S := (coefficientRing R)(monoid[depVars]);
@@ -1060,62 +1033,9 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
         ))};
     RtoS := map(S,R,sub(subs,S));
     -- TODO this is unused!
-    P := sub(ideal(subs - p),S);
+    -- P := sub(ideal(subs - p),S);
     L := macaulayMatrixKernel(RtoS I, coefficientRing S, DegreeLimit => degLim, Tolerance => tol, Rational => true);
     matrixToDiffOps(promote(last L, R), sub(first L, R))
-)
-
--- BM version of numNoethOpsAtPoint, TODO clean up this mess
-noethOpsAtPoint = method(Options => true)
-noethOpsAtPoint (Ideal, Point) := List => true >> opts -> (I, p) -> noethOpsAtPoint(I, matrix p, opts)
-noethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
-    --error"dbg";
-    tol := if not opts.?Tolerance then defaultT(ring I) else opts.Tolerance;
-    degLim := if not opts.?DegreeLimit then -1 else opts.DegreeLimit;
-    R := ring I;
-    -- if point is not in the correct ring, try to promote
-    p = promote(p, coefficientRing R);
-    (depVars,indVars) := getDepIndVars(I,opts);
-    -- S := (coefficientRing R)(monoid[depVars]);
-
-    ------
-    -- ViaMaca --
-    -------------
-    -- use the original coefficient field if appropriate, else a rational function field
-    -- F := if #indVars == 0 then coefficientRing R else frac((coefficientRing R)(monoid[indVars]));
-    F := coefficientRing R;
-    S := F(monoid[depVars]);
-    -- rules := (depVars / (x -> x=>sub(x,S) + p_(0, index x))) | (indVars / (x -> x => p_(0, index x)));
-    IS := sub(I, vars S + p);
-    pS := p_(depVars / index);
-
-
-    ------------------
-    ---- ROBERT ------
-    ------------------
-    -- pt := apply(gens S, v -> sub(sub(v, S/PS), S));
-    rat := true;
-    R' := diffAlg R;
-    ops := null; K := null;
-    if degLim < 0 then degLim = infinity;
-    -- p := apply(gens S, v -> sub(sub(v, S/PS), S));
-    igens := gens IS;
-    H := truncDualData(igens,false,tol);
-    DB := map(S^1,S^0,0);
-    d := -1;
-    DBdim := -1;
-    while DBdim != numcols DB and d < degLim do (
-        d = d+1;
-        DBdim = numcols DB;
-        H = nextTDD(d,H,tol);
-        DB = H.dBasis;
-        );
-    (M,L) := coefficients DB;
-    K = colReduce(L,Tolerance=>tol);
-    ops = matrixToDiffOps(K, M);
-    factorial := L -> L / (i -> i!) // product;
-    ops = ops / (op -> applyPairs(op, (m,c) -> (m, c / factorial first exponents m)));
-    ops / (op -> sub(op, R))
 )
 
 TEST ///
@@ -1124,16 +1044,8 @@ R = CC[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 p = point{{0_CC,0,3}}
 nops = numNoethOpsAtPoint(I, p, DependentSet => {x,y})
---noethOpsAtPoint(I, p, DependentSet => {x,y})
 assert(all(nops, op -> abs((evaluate(matrix{{op(-t*x^3)}}, p))_(0,0)) < 1e-6))
 ///
-
--- TEST ///
--- R = frac(QQ[t])[x,y]
--- I = ideal(x^2, y^2 - x*t)
--- p = matrix{{0,0}}
--- noethOpsAtPoint(I,p)
--- ///
 
 TEST ///
 debug NoetherianOperators
@@ -1229,6 +1141,7 @@ numericalNoetherianOperators(Ideal, Point) := List => true >> opts -> (I,pt) -> 
     if not opts.?DependentSet then error "expected option DependentSet";
     S := ring I;
     if ancestor(InexactField, class coefficientRing S) then numNoethOpsAtPoint(I, pt, opts)
+    -- TODO this should depend on the ring of the point, not on the ideal
     else if coefficientRing S === QQ then (
         -- TODO this shouldn't be hard-coded
         R := CC monoid S;
