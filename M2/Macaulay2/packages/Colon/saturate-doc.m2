@@ -90,32 +90,34 @@ Node
 	TT "saturate(I,f,Strategy => Elimination)", " -- indicates that the
 	saturation ", TT "(I:f)", " should be computed by eliminating
 	f", TT "z", " from ", TT "(I,f*z-1)", ", where ", TT "z", " is a new variable."
-///
 
--*
-doc ///
+Node
   Key
-     saturationZero
-    (saturationZero,Module,Ideal)
-    (saturationZero,Ideal,Ideal)
+     isSupportedInZeroLocus
+    (isSupportedInZeroLocus, Ideal,  Ideal)
+    (isSupportedInZeroLocus, Module, Ideal)
   Headline
-    checks whether the saturation of a module with respects to a given ideal is zero
+    whether support of a module is contained in the zero locus of the (irrelevant) ideal
   Usage
-    saturationZero(M, B)
-    saturationZero(I, B)
+    isSupportedInZeroLocus(M, B)
   Inputs
     M:Module
     B:Ideal
-    I:Ideal
   Outputs
     :Boolean
+      true if $M$ (or $R^1/I$, if an ideal of $R$ is given) is supported only on the zero locus of $B$;
+      that is, whether $\mathrm{supp}(M) \subset \mathrm{V}(B)$
   Description
     Text
-      Given an module M and an ideal B saturationZero checks whether the saturation of M by B is zero. If it is
-      saturationZero returns true otherwise it returns false. This is done without computing the saturation of M by B.
-      Instead we check whether for each generator of B some power of it annihilates the module M. We do this
-      generator by generator.
-
-      If M is an ideal saturationZero checks whether the saturation comodule of M by B is zero.
+      Given an module $M$ and an ideal $B$, {\tt isSupportedInZeroLocus} checks whether $\mathrm{ann}(M):B^\infty=R$.
+      If it is, {\tt isSupportedInZeroLocus} returns true otherwise it returns false. If the first argument is an ideal,
+      $M = R^1/I$ is taken as the module.
+    Example
+      S = ZZ/32003[x_0..x_4, Degrees=>{2:{1,0}, 3:{0,1}}];
+      irr = intersect(ideal(x_0,x_1), ideal(x_2,x_3,x_4));
+      M = S^1/(irr^2);
+      isSupportedInZeroLocus(M, irr)
+    Text
+      This is done without computing saturation of $M$. Instead, we check whether for each generator of $B$ some power
+      of it annihilates the module $M$.
 ///
-*-

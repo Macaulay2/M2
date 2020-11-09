@@ -1,22 +1,18 @@
 ---------------------------------------------------------------------------
--- PURPOSE : Computation of saturations and quotient ideals
---
--- PROGRAMMERS :
+-- PURPOSE : Computation of quotient, saturation, and annihilator
 --
 -- UPDATE HISTORY : created 14 April 2018 at M2@UW;
---                  updated July 2020
+--                  updated November 2020
 --
 -- TODO : 1. why are there shadowed symbols?
 --        2. cache computation under I.cache.QuotientComputation{J}
---        3. add tests for MonomialIdeals, possibly MonomialIdeals over local rings
---        4. fix, rename, document, and test saturationZero
 --        5. turn intersectionByElimination into a Strategy of intersect?
 ---------------------------------------------------------------------------
 newPackage(
     "Colon",
     Version => "0.2",
-    Date => "July 25, 2020",
-    Headline => "saturation and ideal and submodule colon/quotient routines",
+    Date => "November 8, 2020",
+    Headline => "quotient, saturation, and annihilator routines for ideals and modules",
     Authors => {
 	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"},
@@ -27,12 +23,9 @@ newPackage(
     DebuggingMode => true
     )
 
-export {
-    "saturationZero",
-    "intersectionByElimination"
-    }
+export { "isSupportedInZeroLocus" }
 
-exportFrom_Core {"saturate", "quotient", "annihilator", "MinimalGenerators"}
+exportFrom_Core { "quotient", "saturate", "annihilator", "MinimalGenerators" }
 
 importFrom_Core { "printerr", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "symbolLocation" }
 
@@ -339,7 +332,6 @@ scan({Quotient, Iterate}, strategy -> addHook(key := (quotient, Module, Module),
 --------------------------------------------------------------------
 -- TODO:
 -- - should saturate(I) use the irrelevant ideal when multigraded?
--- - should it be cached?
 
 -- saturate = method(Options => options saturate) -- defined in m2/quotient.m2
 -- used when P = decompose irr
@@ -547,30 +539,33 @@ scan({"Unused", Elimination, GRevLex, Bayer, Linear}, strategy -> addHook(key :=
 	(opts, I, J) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I, J)))
 
 --------------------------------------------------------------------
+-- isSupportedInZeroLocus
 --------------------------------------------------------------------
------ Input: (M, B) = (Module, Ideal)
------ Output: Returns true if saturate(M, B) == 0 and false otherwise
------ Description: This checks whether the saturation of a module M
------ with respects to an ideal B is zero. This is done by checking
------ whether for each generator of B some power of it annihilates
------ the module M. We do this generator by generator.
---------------------------------------------------------------------
---------------------------------------------------------------------
-saturationZero = method()
-saturationZero(Ideal,  Ideal) := (I, B) -> saturationZero(comodule I, B)
-saturationZero(Module, Ideal) := (M, B) -> (
-    Vars := flatten entries vars ring B;
-    bGens := flatten entries mingens B;
-    for i from 0 to #bGens-1 do (
-	b := bGens#i;
-	bVars := support b;
-	rVars := delete(bVars#1,delete(bVars#0,Vars))|bVars;
-	R := coefficientRing ring B [rVars,MonomialOrder=>{Position=>Up,#Vars-2,2}];
-	P := sub(presentation M,R);
-	G := gb P;
-	if (ann coker selectInSubring(1,leadTerm G)) == 0 then return false;
-	);
-    true)
+
+-- TODO: either in NormalToricVarieties or VirtualResolutions,
+-- implement isZeroSheaf(X, M), isFiniteLength(X, M) based on this
+isSupportedInZeroLocus = method()
+isSupportedInZeroLocus(Ideal,  Ideal) := (I, B) -> isSupportedInZeroLocus(comodule I, B)
+isSupportedInZeroLocus(Module, Ideal) := (M, B) -> (
+    -- Returns true if M is supported only on the zero locus of B
+    -- There are two ways to check this:
+    --  - saturate the annihilator of M with respect to B and compare it to ideal(1)
+    --  - check that a high enough power of elements of B annihilates M
+    -- In general, computing the saturation is unnecessary, but:
+    -- TODO: if the saturation of the annihilator is known, then checking
+    -- whether saturate(annihilator M, B) == ideal 1_(ring B) is faster
+    S := ring B;
+    n := numgens S;
+    all(B_*, g -> (
+	supp := index \ support g;
+	perm := toList(set(0..n-1) - set supp) | supp;
+	R := (coefficientRing S)[(S_*)_perm,
+	    MonomialSize  => 16,
+	    MonomialOrder => {Position => Up, n - #supp, #supp}];
+	-- TODO: can we compute gb once at the top instead?
+	G := groebnerBasis(sub(presentation M, R), Strategy => "F4"); -- TODO: try "MGB"
+	-- TODO: is "ann coker" necessary?
+	0 != ann coker selectInSubring(1, leadTerm G))))
 
 --------------------------------------------------------------------
 -- Annihilators

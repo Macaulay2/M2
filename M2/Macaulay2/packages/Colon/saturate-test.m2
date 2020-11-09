@@ -27,25 +27,30 @@ TEST get(currentFileDirectory | "saturate3.m2")
 TEST get(currentFileDirectory | "saturate4.m2")
 TEST get(currentFileDirectory | "saturate5.m2")
 
--- Tests for saturationZero
+-- Tests for isSupportedInZeroLocus
 TEST ///
   S = ZZ/11[x_0..x_4];
-  irr = intersect(ideal(x_0, x_1), ideal(x_2, x_3, x_4));
-  I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
-  I' = saturate(I, irr);
-  R = S^1/I';
-  t = (saturate(R, irr) == 0);
-  assert(saturationZero(R, irr) == t)
+  B = intersect(ideal(x_0, x_1), ideal(x_2, x_3, x_4));
+  I = saturate(ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3)), B);
+  M = S^1/I;
+  t = (saturate(ann M, B) == ideal 1_S);
+  assert(isSupportedInZeroLocus(M, B) == t)
+  assert(isSupportedInZeroLocus(I, B) == t)
 ///
 
 TEST ///
-  S = ZZ/11[x_0..x_4];
-  irr = intersect(ideal(x_0, x_1), ideal(x_2, x_3, x_4));
-  I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
-  I' = saturate(I, irr);
-  R = S^1/I';
-  t = (saturate(R, irr) == 0);
-  assert(saturationZero(I', irr) == t)
+  needsPackage "VirtualResolutions"
+  K = ZZ/32003;
+  X = fold(apply({1, 1, 2}, r -> toricProjectiveSpace(r, CoefficientRing => K)), (a, b) -> a ** b)
+  (S, B) = (ring X, ideal X);
+  -- 2 points in P1xP1xP2
+  I = saturate(intersect apply(2, i -> ideal(random({1,0,0},S), random({0,1,0},S), random({0,0,1},S), random({0,0,1},S))), B);
+  -- TODO: find a more complicated example, perhaps a false one
+  M = prune HH_1 virtualOfPair(I, {{1, 2, 2}});
+  -- FIXME: without prune we get an engine error:
+  -- terminate called after throwing an instance of 'std::logic_error'
+  -- what():  ERROR: Inserted duplicate entry into a KD tree.
+  assert(isSupportedInZeroLocus(M, B) == (saturate(ann M, B) == ideal 1_S))
 ///
 
 -- previously in packages/Macaulay2Doc/doc9.m2
