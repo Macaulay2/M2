@@ -34,7 +34,7 @@ export {
 
 exportFrom_Core {"saturate", "quotient", "annihilator", "MinimalGenerators"}
 
-importFrom_Core {"printerr", "raw", "rawColon", "rawSaturate", "newMonomialIdeal"}
+importFrom_Core { "printerr", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "symbolLocation" }
 
 -- TODO: where should these be placed?
 trim MonomialIdeal := MonomialIdeal => opts -> (cacheValue (symbol trim => opts)) ((I) -> monomialIdeal trim(module I, opts))
@@ -54,11 +54,10 @@ algorithms = new MutableHashTable from {}
 -- Helpers
 --------------------------------------------------------------------
 
--- TODO: this is borrowed from symbolLocation, can it be formalized?
---    loc := if (t := locate func) === null then "" else concatenate(
---	t#0, ":", toString t#1, ":", toString (t#2+1), "-", toString t#3, ":", toString (t#4+1));
-debugInfo = (func, A, B, strategy) -> if debugLevel > 0 then printerr(
-    toString func, "(", toString class A, ", ", toString class B, ", Strategy => ", toString strategy, ")")
+-- TODO: should this move to runHooks?
+-- TODO: not quite emacs compatible, perhaps M2-mode should be improved
+debugInfo = (func, key, strategy) -> if debugLevel > 0 then printerr(
+    toString key, " with Strategy => ", toString strategy, " from ", symbolLocation func)
 
 removeOptions := (opts, badopts) -> (
     opts = new MutableHashTable from opts;
@@ -202,8 +201,7 @@ quotientHelper = (A, B, key, opts) -> (
 
     C := if strategy === null then runHooks(key, (opts, A, B))
     else if algorithms#key#?strategy then (
-	debugInfo(quotient, A, B, strategy);
-	(algorithms#key#strategy opts)(A, B))
+	func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (A, B)
     else error("unrecognized Strategy for quotient: '", toString strategy, "'; expected: ", toString keys algorithms#key);
 
     if C =!= null then doTrim C else if strategy === null
@@ -211,7 +209,7 @@ quotientHelper = (A, B, key, opts) -> (
     else error("assumptions for quotient strategy ", toString strategy, " are not met"))
 
 -- Algorithms for Ideal : Ideal
-algorithms#(quotient, Ideal, Ideal) = new HashTable from {
+algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
     Iterate => opts -> (I, J) -> (
 	R := ring I;
 	M1 := ideal 1_R;
@@ -253,10 +251,10 @@ algorithms#(quotient, Ideal, Ideal) = new HashTable from {
 
 -- Installing hooks for Ideal : Ideal
 scan({Quotient, Iterate-*, Linear*-, Monomial}, strategy -> addHook(key := (quotient, Ideal, Ideal),
-	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); algorithms#key#strategy opts)(I, J)))
+	(opts, I, J) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I, J)))
 
 -- Algorithms for Module : Ideal
-algorithms#(quotient, Module, Ideal) = new HashTable from {
+algorithms#(quotient, Module, Ideal) = new MutableHashTable from {
     Iterate => opts -> (M, J) -> (
 	-- This is the iterative version, where M is a
 	-- submodule of F/K, or ideal, and J is an ideal.
@@ -296,10 +294,10 @@ algorithms#(quotient, Module, Ideal) = new HashTable from {
 
 -- Installing hooks for Module : Ideal
 scan({Quotient, Iterate-*, Linear*-}, strategy -> addHook(key := (quotient, Module, Ideal),
-	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); algorithms#key#strategy opts)(I, J)))
+	(opts, I, J) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I, J)))
 
 -- Algorithms for Module : Module
-algorithms#(quotient, Module, Module) = new HashTable from {
+algorithms#(quotient, Module, Module) = new MutableHashTable from {
     Iterate => opts -> (I, J) -> (
 	R := ring I;
 	M1 := ideal 1_R;
@@ -334,7 +332,7 @@ algorithms#(quotient, Module, Module) = new HashTable from {
 
 -- Installing hooks for Module : Module
 scan({Quotient, Iterate}, strategy -> addHook(key := (quotient, Module, Module),
-	(opts, I, J) -> (debugInfo(quotient, I, J, strategy); algorithms#key#strategy opts)(I, J)))
+	(opts, I, J) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I, J)))
 
 --------------------------------------------------------------------
 -- Saturations
@@ -384,8 +382,7 @@ saturateHelper = (A, B, key, opts) -> (
 
     C := if strategy === null then runHooks(key, (opts, A, B))
     else if algorithms#key#?strategy then (
-	debugInfo(saturate, A, B, strategy);
-	(algorithms#key#strategy opts)(A, B))
+	func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (A, B)
     else error("unrecognized Strategy for saturate: '", toString strategy, "'; expected: ", toString keys algorithms#key);
 
     if C =!= null then doTrim C else if strategy === null
@@ -401,17 +398,17 @@ saturationByGRevLexHelper := (I, v, opts) -> (
     if maxpower == 0 then (I, 0) else (ideal fback g1', maxpower))
 
 -- Algorithms for Module : Ideal^infinity
-algorithms#(saturate, Module, Ideal) = new HashTable from {
+algorithms#(saturate, Module, Ideal) = new MutableHashTable from {
     Iterate => opts -> (M, I) -> (
 	M' := quotient(M, I, opts); while M' != M do ( M = M'; M' = quotient(M, I, opts)); M ),
     }
 
 -- Installing hooks for Module : Ideal^infinity
 scan({Iterate}, strategy -> addHook(key := (saturate, Module, Ideal),
-	(opts, I, J) -> (debugInfo(saturate, I, J, strategy); algorithms#key#strategy opts)(I, J)))
+	(opts, I, J) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I, J)))
 
 -- Algorithms for Ideal : Ideal^infinity
-algorithms#(saturate, Ideal, Ideal) = new HashTable from {
+algorithms#(saturate, Ideal, Ideal) = new MutableHashTable from {
     Iterate => opts -> (I, J) -> (
 	-- Iterated quotient
 	R := ring I;
@@ -455,10 +452,10 @@ algorithms#(saturate, Ideal, Ideal) = new HashTable from {
 
 -- Installing hooks for Ideal : Ideal^infinity
 scan({Iterate, Elimination, GRevLex, Monomial}, strategy -> addHook(key := (saturate, Ideal, Ideal),
-	(opts, I, J) -> (debugInfo(saturate, I, J, strategy); algorithms#key#strategy opts)(I, J)))
+	(opts, I, J) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I, J)))
 
 -- Algorithms for Ideal : RingElement^infinity
-algorithms#(saturate, Ideal, RingElement) = new HashTable from {
+algorithms#(saturate, Ideal, RingElement) = new MutableHashTable from {
     Iterate => opts -> (I, f) -> saturate(I, ideal f, opts), -- backwards compatibility
     Linear => opts -> (I, f) -> (
 	-- assumptions for this case:
@@ -547,7 +544,7 @@ algorithms#(saturate, Ideal, RingElement) = new HashTable from {
 
 -- Installing hooks for Ideal : RingElement^infinity
 scan({"Unused", Elimination, GRevLex, Bayer, Linear}, strategy -> addHook(key := (saturate, Ideal, RingElement),
-	(opts, I, J) -> (debugInfo(saturate, I, J, strategy); algorithms#key#strategy opts)(I, J)))
+	(opts, I, J) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I, J)))
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -601,8 +598,7 @@ annihilatorHelper = (A, key, opts) -> (
 
     C := if strategy === null then runHooks(key, (opts, A))
     else if algorithms#key#?strategy then (
-	debugInfo(annihilator, A, null, strategy); -- FIXME
-	(algorithms#key#strategy opts)(A))
+	func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (A)
     else error("unrecognized Strategy for annihilator: '", toString strategy, "'; expected: ", toString keys algorithms#key);
 
     if C =!= null then C else if strategy === null
@@ -610,7 +606,7 @@ annihilatorHelper = (A, key, opts) -> (
     else error("assumptions for annihilator strategy ", toString strategy, " are not met"))
 
 -- Algorithms for annihilator Module
-algorithms#(annihilator, Module) = new HashTable from {
+algorithms#(annihilator, Module) = new MutableHashTable from {
     Quotient     => opts -> M -> (
 	f := presentation M;
 	image f : target f),
@@ -622,7 +618,7 @@ algorithms#(annihilator, Module) = new HashTable from {
 
 -- Installing hooks for annihilator Module
 scan({Quotient, Intersection}, strategy -> addHook(key := (annihilator, Module),
-	(opts, M) -> (debugInfo(annihilator, M, null, strategy); algorithms#key#strategy opts)(M))) -- FIXME
+	(opts, I) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I)))
 
 --------------------------------------------------------------------
 ----- Tests section

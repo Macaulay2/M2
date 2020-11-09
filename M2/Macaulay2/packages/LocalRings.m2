@@ -483,20 +483,22 @@ localAnnihilator := opts -> A -> (
 
 --=============================== addHooks Section for Colons ===============================--
 
+importFrom_Colon { "debugInfo", "algorithms" }
+
 -- Installing local hooks for quotient and saturate
 scan({	(quotient, Ideal,  Ideal),
 	(quotient, Module, Ideal),
-	(quotient, Module, Module)}, m -> addHook(m, (opts, I, J) -> (
-	    if debugLevel > 0 then printerr("localQuotient(", toString class I, ", ", toString class J, ")");
-	    (localQuotient opts)(I, J))))
+	(quotient, Module, Module)}, key -> (
+	func := algorithms#key#Local = localQuotient;
+	addHook(key, (opts, I, J) -> (debugInfo(func, key, Local); func opts) (I, J))))
 scan({	(saturate, Ideal,  Ideal),
 	(saturate, Ideal,  RingElement),
-	(saturate, Module, Ideal)}, m -> addHook(m, (opts, I, J) -> (
-	    if debugLevel > 0 then printerr("localSaturate(", toString class I, ", ", toString class J, ")");
-	    (localSaturate opts)(I, J))))
-scan({	(saturate, Module)}, m -> addHook(m, (opts, M) -> (
-	    if debugLevel > 0 then printerr("localAnnihilator(", toString class M, ")");
-	    (localAnnihilator opts) M)))
+	(saturate, Module, Ideal)}, key -> (
+	func := algorithms#key#Local = localSaturate;
+	addHook(key, (opts, I, J) -> (debugInfo(func, key, Local); func opts) (I, J))))
+scan({	(annihilator, Module)}, key -> (
+	func := algorithms#key#Local = localAnnihilator;
+	addHook(key, (opts, M)    -> (debugInfo(func, key, Local); func opts) (M))))
 
 --================================= Tests and Documentation =================================--
 
