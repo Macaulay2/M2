@@ -412,7 +412,7 @@ usage := arg -> (
      << "    -q                 don't load user's init.m2 file or use packages in home directory" << newline
      << "    -E '...'           evaluate expression '...' before initialization" << newline
      << "    -e '...'           evaluate expression '...' after initialization" << newline
-     << "    --top-srcdir '...' add top source or build tree '...' to initial path" << newline
+     << "    --srcdir '...'     add top source or build tree '...' to initial path" << newline
      << "    --check n          run tests to level n" << newline
      << "                           n=1: basic tests" << newline
      << "                           n=2: test Core" << newline
@@ -518,11 +518,17 @@ action2 := hashTable {
 	  if not match("/$",arg) then arg = arg | "/";
 	  prefixDirectory = arg;
 	  ),
-     "--check" => arg -> if phase == 1 then (
-	  if arg == "1" then runBasicTests()
-	  else if arg == "2" then error ("--check ",arg," not implemented yet")
-	  else if arg == "3" then error ("--check ",arg," not implemented yet")
-	  else error ("--check ",arg,": expected 1, 2, or 3")
+     "--check" => arg -> if arg != "1" and arg != "2" and arg != "3" then
+	       error ("--check ",arg,": expected 1, 2, or 3")
+	  else if phase == 1 and arg == "1" then
+	       runBasicTests()
+	  else if phase == 4 and arg == "2" then
+	       try check "Macaulay2Doc" then exit 0 else exit 1
+	  else if phase == 4 and arg == "3" then (
+	       fails := 0;
+	       scan(separate(" ", version#"packages"),
+		    pkg -> try check pkg else fails = fails + 1);
+	       exit fails
 	  )
      }
 

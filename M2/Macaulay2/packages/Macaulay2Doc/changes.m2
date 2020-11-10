@@ -36,7 +36,12 @@ document {
      UL {
 	 LI { "functionality added:",
 	      UL {
-		   LI { "The function ", TO readPackage, " is added for retrieving the options in the preamble of a package quickly." }
+		   LI { "The function ", TO readPackage, " has been added for retrieving the options in the preamble of a package quickly." },
+		   LI { "The function ", TO hooks, " has been added for retrieving the list of functions installed as hooks for handling computations of a specific type." },
+		   LI { "The function ", TO baseRing, " has been added for retrieving the ring from which a ring was formed." },
+		   LI { "The functions ", TO findProgram, " and ", TO runProgram, " have been added, to provide a uniform way for packages to locate external programs.
+			(The names and locations of such programs may vary from system to system." },
+		   LI { "The function ", TO formation, " has been added for retrieving the way a module was formed, whether as a direct sum, tensor product, or Hom-module." }
 		   }
 	      },
          LI { "functionality improved:",
@@ -52,8 +57,8 @@ document {
 		       " has been made more flexible to allow customization of the box;",
 		       " it now accepts as input a pair of lists of rows and columns." },
                    LI { "A brief documentation of various types of objects can be viewed usin ", TO (symbol?, Symbol), "." },
-                   LI { "The ", TO document, " function now accepts three new options: ", TT "Acknowledgement", ", ",
-		       TT "Contributors", ", and ", TT "References", ". The content of each will appear under a subsection
+                   LI { "The ", TO document, " function now accepts three new options: ", TO "Acknowledgement", ", ",
+		       TO "Contributors", ", and ", TO "References", ". The content of each will appear under a subsection
 		       of the same name in the documentation. Moreover, ", TO "SimpleDoc :: document(String)", " is now a synonym for ",
 		       TO "SimpleDoc :: doc(String)", "." },
                    LI { "The ", TO regex, " function, as well as other functions that accept ", TO "regular expressions",
@@ -100,7 +105,8 @@ document {
 			},
 		   LI { "The option ", TO [installPackage, InstallPrefix], " no longer accepts a function as input.
 		        only strings containing a path to the installation prefix are accepted."
-			}
+			},
+		   LI { "The function ", TT "localRing", " has been moved to the package ", TO "LocalRings::LocalRings", "." }
 		   }
 	      },
 	 LI { "functionality removed",
