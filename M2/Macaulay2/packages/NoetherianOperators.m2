@@ -1805,8 +1805,8 @@ p = point matrix{{0_CC,0_CC}}
 q = point matrix{{0_CC,1_CC}}
 assert(numcols gCorners(p,M) == 2)
 assert(numcols gCorners(q,M) == 1)
-LDZ = reduceSpace truncatedDual(p,M,5,Strategy=>DZ)
-LBM = reduceSpace truncatedDual(p,M,5,Strategy=>BM)
+LDZ = reduceSpace truncatedDual(p,M,5)
+LBM = reduceSpace truncatedDual(p,M,5)
 assert(dim LDZ == dim LBM)
 ///
 
