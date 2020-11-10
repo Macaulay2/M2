@@ -1,24 +1,25 @@
 -- -*- coding: utf-8 -*-
 newPackage(
-     "NoetherianOperators",
-     PackageExports => {"NAGtypes"},
-     Version => "1.0",
-     Date => "July 12, 2020",
-     Authors => {
+    "NoetherianOperators",
+    Version => "0.85",
+    Date => "Nov 7, 2020",
+    Authors => {
         {Name => "Robert Krone", 
-               Email => "krone@math.gatech.edu"},
+        Email => "krone@math.gatech.edu"},
         {Name => "Justin Chen", 
-               Email => "jchen646@gatech.edu"},
+        Email => "justin.chen@math.gatech.edu"},
         {Name => "Marc Harkonen", 
-               Email => "harkonen@gatech.edu"},
+        Email => "harkonen@gatech.edu"},
         {Name => "Yairon Cid-Ruiz",
-               Email => "ycidruiz@gmail.com"}   
-     },
-     Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
-     PackageExports => {"Truncations", "Bertini"},
-     PackageImports => {"Dmodules"},
-     AuxiliaryFiles => true,
-     DebuggingMode => true
+        Email => "ycidruiz@gmail.com"},
+        {Name => "Anton Leykin",
+        Email => "anton.leykin@gmail.com"},
+    },
+    Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
+    PackageExports => {"Truncations", "Bertini", "NAGtypes"},
+    PackageImports => {"Dmodules"},
+    AuxiliaryFiles => true,
+    DebuggingMode => true
 )
 
 export {
