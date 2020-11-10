@@ -1,6 +1,6 @@
 newPackage ( "ResLengthThree",
     Version => "1.0",
-    Date => "5 November 2020",
+    Date => "9 November 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
@@ -579,8 +579,8 @@ document{
   EXAMPLE {
 	"Q = QQ[x,y,z];",
 	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
-	"multTableOneOne (A, Compact=> true)",
-	"netList multTableOneOne(A, Compact=>true)",
+	"multTableOneOne (A, Compact => true)",
+	"netList multTableOneOne(A, Compact => true)",
 	},
 }
 
@@ -638,7 +638,7 @@ document{
 	"Q = QQ[x,y,z];",
 	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
 	"netList multTableOneOne (A, Labels => false)",
-	"netList multTableOneTwo (A, Labels=>false)",
+	"netList multTableOneTwo (A, Labels => false)",
 	},
 }
 
@@ -692,12 +692,12 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-        "resLengthThreeTorAlgClass ideal(x*y,x^2,y*z,z^2)",
-	"resLengthThreeTorAlgClass ideal(x^2,y^2,z^2)",
-	"resLengthThreeTorAlgClass ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3)",
-	"resLengthThreeTorAlgClass ideal(x*z+y*z,x*y+y*z,x^2-y*z,y*z^2+z^3,y^3-z^3)",
-	"resLengthThreeTorAlgClass ideal(x^2,y^2,z^2,x*z)",
-	"resLengthThreeTorAlgClass ideal(x^2,y^2,z^2,x*y*z)",
+        "resLengthThreeTorAlgClass ideal (x*y,x^2,y*z,z^2)",
+	"resLengthThreeTorAlgClass ideal (x^2,y^2,z^2)",
+	"resLengthThreeTorAlgClass ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3)",
+	"resLengthThreeTorAlgClass ideal (x*z+y*z,x*y+y*z,x^2-y*z,y*z^2+z^3,y^3-z^3)",
+	"resLengthThreeTorAlgClass ideal (x^2,y^2,z^2,x*z)",
+	"resLengthThreeTorAlgClass ideal (x^2,y^2,z^2,x*y*z)",
 	},
     
   Caveat => { "The codepth of the ideal ", TEX///I///," must be exactly 3, and the length of the complex ",TEX///F///,
