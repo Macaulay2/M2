@@ -1134,6 +1134,8 @@ numericalNoetherianOperators(Ideal) := List => true >> opts -> (I) -> (
 
     nopsTemplate := numNoethOpsAtPoint(J, goodPoint, opts, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => noethDegLim);
     -- TODO: cache found pointlist in ideal
+    if not S.?cache then S.cache = new CacheTable;
+    S.cache#"interp point list" = new List;
     nopsTemplate / (tmpl -> interpolateFromTemplate(I, tmpl, opts, Tolerance => tol, Sampler => sampler))
 )
 
@@ -1175,6 +1177,7 @@ assert(all(snops - enops, i -> all(values i, j -> abs(lift(j,coefficientRing rin
 
 
 interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
+    oldPtList := (ring I).cache#"interp point list";
     ptList := new List;
     opList := new List;
     -- (mon,coef) := coefficients(tmpl);
@@ -1187,18 +1190,31 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
         while(not opts.?InterpolationDegreeLimit or d <= opts.InterpolationDegreeLimit) do (
             numBasis := rsort basis(0, d, S);
             denBasis := rsort basis(0, d, S, Variables => gens S - set (opts.DependentSet / (x -> sub(x,S))));
-            neededPoints := numColumns numBasis + numColumns denBasis + 1;
-            if neededPoints - #ptList > 0 and debugLevel > 0 then 
-                <<"Computing "<<neededPoints - #ptList<<" new specialized NOps"<<endl;
-            newNops := newSpecializedNop(I, sampler, tmpl, neededPoints - #ptList, opts, Tolerance => opts.Tolerance);
-            opList = opList | newNops#0;
-            ptList = ptList | newNops#1;
+            -- generate as many new points and new specialized nops as necessary
+            while (neededPoints := numColumns numBasis + numColumns denBasis + 1 - #ptList) > 0 do (
+                if neededPoints > 0 and debugLevel > 0 then 
+                    <<"Computing "<<neededPoints<<" new specialized NOps"<<endl;
+                newPoints := max(neededPoints - #oldPtList, 0);
+                newPtList := take(oldPtList, neededPoints);
+                oldPtList = drop(oldPtList, neededPoints);
+                if newPoints > 0 and debugLevel > 0 then 
+                    <<"Generating "<<newPoints<<" new points"<<endl;
+                if newPoints > 0 then newPtList = newPtList | sampler(newPoints, I);
+                nopList := for p in newPtList list (
+                    nop := newSpecializedNop(I, p, tmpl, opts, Tolerance => opts.Tolerance);
+                    if nop === null then continue else {nop, p}
+                );
+                --newNops := newSpecializedNop(I, sampler, tmpl, neededPoints - #ptList, opts, Tolerance => opts.Tolerance);
+                opList = opList | first transpose nopList;
+                ptList = ptList | last transpose nopList;
+            );
             
             --liftedCoeffs := take(opList, neededPoints)  /
             --    (op -> lift(op#m, ultimate(coefficientRing, ring op)));
-            liftedCoeffs := take(opList, neededPoints)  /
+            interpPoints := numColumns numBasis + numColumns denBasis + 1;
+            liftedCoeffs := take(opList, interpPoints)  /
                 (op -> lift(op#m, ultimate(coefficientRing, ring op)));
-            neededPtList := take(ptList, neededPoints);
+            neededPtList := take(ptList, interpPoints);
             try result = rationalInterpolation(neededPtList, liftedCoeffs, numBasis, denBasis, Tolerance => interpTol) then break
                 else d = d+1;
         );
@@ -1206,15 +1222,16 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
         (m => result)
     ));
     if debugLevel > 0 then <<"Done interpolating from template "<<tmpl<<endl;
+    (ring I).cache#"interp point list" = ptList | oldPtList;
     new InterpolatedDiffOp from nops
 )
 
 -- Create new specialized Noeth op at a random point using tmpl as a template
 -- sampler(n,I) is a function that generates a list of n points on the variety of I
-newSpecializedNop = true >> opts -> (I, sampler, tmpl,n) -> (
-    if n < 1 then return {{},{}};
+newSpecializedNop = true >> opts -> (I, pt, tmpl) -> (
+    -- if n < 1 then return {{},{}};
     --pts := bertiniSample(n,ws);
-    pts := sampler(n,I);
+    -- pts := sampler(n,I);
     R := ring I;
     R' := ring tmpl;
 
@@ -1225,19 +1242,16 @@ newSpecializedNop = true >> opts -> (I, sampler, tmpl,n) -> (
     bx := basis(0, maxdeg-1, R');
     M := diff(matrix{bd}, transpose (sub(gens I, R') ** bx));
 
-    opPts := for pt in pts list (
-        M' := evaluate(M, pt);
-        K := numericalKernel(M', Tolerance=>opts.Tolerance);
-        -- If we don't get one kernel element, try again
-        if numColumns K != 1 then (
-            if debugLevel > 0 then <<"newSpecializedNop: bad point, trying again"<<endl;
-            continue
-        )
-        -- else {diffOp(matrix{bd}*colReduce(K, Tolerance => opts.Tolerance))_(0,0), pt}
-        else {first matrixToDiffOps(promote(colReduce(K, Tolerance => opts.Tolerance), ring tmpl), matrix{bd}), pt}
+    M' := evaluate(M, pt);
+    K := numericalKernel(M', Tolerance=>opts.Tolerance);
+    -- If we don't get one kernel element, try again
+    if numColumns K != 1 then (
+        if debugLevel > 0 then <<"newSpecializedNop: bad point, trying again"<<endl;
+        return null;
     );
-    if #opPts < n then opPts = opPts | newSpecializedNop(I, sampler, tmpl, n-#opPts, opts);
-    return transpose opPts;
+    -- else {diffOp(matrix{bd}*colReduce(K, Tolerance => opts.Tolerance))_(0,0), pt}
+    first matrixToDiffOps(promote(colReduce(K, Tolerance => opts.Tolerance), ring tmpl), matrix{bd})
+
 )
 
 
