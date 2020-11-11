@@ -1058,20 +1058,37 @@ numericalNoetherianOperators(Ideal) := List => true >> opts -> (I) -> (
     nopsTemplate / (tmpl -> interpolateFromTemplate(I, tmpl, opts, Tolerance => tol, Sampler => sampler))
 )
 
--- if a point is given, computes the evaluated Nops
-numericalNoetherianOperators(Ideal, Point) := List => true >> opts -> (I,pt) -> (
-    if not opts.?DependentSet then error "expected option DependentSet";
+-- computes specialized Nops at rational points
+specializedNoetherianOperators = method(Options => true)
+specializedNoetherianOperators(Ideal, Matrix) := List => true >> opts -> (I,pt) -> (
     S := ring I;
-    if ancestor(InexactField, class coefficientRing S) then numNoethOpsAtPoint(I, pt, opts)
-    -- TODO this should depend on the ring of the point, not on the ideal
+    R := ring pt;
+    if precision R == infinity and precision S == infinity then numNoethOpsAtPoint(I, pt, opts)
     else if coefficientRing S === QQ then (
-        -- TODO this shouldn't be hard-coded
-        R := CC monoid S;
-        numNoethOpsAtPoint(sub(I,R), pt, opts, DependentSet => (opts.DependentSet / (x -> sub(x, R))))
+        T := (ultimate(coefficientRing, R)) monoid S;
+        if opts.?DependentSet then opts.DependentSet = opts.DependentSet / (x -> sub(x, T));
+        numNoethOpsAtPoint(sub(I,T), pt, opts)
     )
-    else error "expected an ideal in a polynomial ring over QQ, CC or RR"
+    else (
+        if not liftable(pt, I) then error"point is not liftable to ring of ideal";
+        if not opts.?DependentSet then error "expected option DependentSet";
+        numNoethOpsAtPoint(I, pt, opts)
+    )
+
+
+    -- else if precision R == infinity and precision S == infinity then numNoethOpsAtPoint(I, pt, opts)
+    -- else ancestor(InexactField, class coefficientRing S) then (
+    --     if not opts.?DependentSet then error "expected option DependentSet";
+    --     numNoethOpsAtPoint(I, pt, opts)
+    -- -- TODO this should depend on the ring of the point, not on the ideal
+    -- else if coefficientRing S === QQ then (
+    --     -- TODO this shouldn't be hard-coded
+    --     R := CC monoid S;
+    --     numNoethOpsAtPoint(sub(I,R), pt, opts, DependentSet => (opts.DependentSet / (x -> sub(x, R))))
+    -- )
+    --else error "expected an ideal in a polynomial ring over QQ, CC or RR"
 )
-numericalNoetherianOperators(Ideal, Matrix) := List => true >> opts -> (I,pt) -> numericalNoetherianOperators(I, point pt, opts)
+specializedNoetherianOperators(Ideal, Point) := List => true >> opts -> (I,pt) -> specializedNoetherianOperators(I, matrix pt, opts)
 
 TEST ///
 debug NoetherianOperators
@@ -1083,7 +1100,7 @@ gen = I -> (ptList.i = (ptList.i+1)%3; ptList.pts#(ptList.i))
 sampler = (n,I) -> apply(n, i -> gen(I))
 nnops = numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}}, Sampler => sampler)
 enops = nnops / (op -> evaluate(op, point{{0,0,3_CC}}))
-snops = numericalNoetherianOperators(I, point{{0,0,3_CC}}, DependentSet => {x,y})
+snops = specializedNoetherianOperators(I, point{{0,0,3_CC}}, DependentSet => {x,y})
 
 S = ring first snops
 
@@ -1120,10 +1137,10 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
                     <<"Generating "<<newPoints<<" new points"<<endl;
                 if newPoints > 0 then newPtList = newPtList | sampler(newPoints, I);
                 nopList := for p in newPtList list (
-                    nop := newSpecializedNop(I, p, tmpl, opts, Tolerance => opts.Tolerance);
+                    nop := specializedNopsFromTemplate(I, p, tmpl, opts, Tolerance => opts.Tolerance);
                     if nop === null then continue else {nop, p}
                 );
-                --newNops := newSpecializedNop(I, sampler, tmpl, neededPoints - #ptList, opts, Tolerance => opts.Tolerance);
+                --newNops := specializedNopsFromTemplate(I, sampler, tmpl, neededPoints - #ptList, opts, Tolerance => opts.Tolerance);
                 opList = opList | first transpose nopList;
                 ptList = ptList | last transpose nopList;
             );
@@ -1147,7 +1164,7 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
 
 -- Create new specialized Noeth op at a random point using tmpl as a template
 -- sampler(n,I) is a function that generates a list of n points on the variety of I
-newSpecializedNop = true >> opts -> (I, pt, tmpl) -> (
+specializedNopsFromTemplate = true >> opts -> (I, pt, tmpl) -> (
     -- if n < 1 then return {{},{}};
     --pts := bertiniSample(n,ws);
     -- pts := sampler(n,I);
@@ -1165,7 +1182,7 @@ newSpecializedNop = true >> opts -> (I, pt, tmpl) -> (
     K := numericalKernel(M', Tolerance=>opts.Tolerance);
     -- If we don't get one kernel element, try again
     if numColumns K != 1 then (
-        if debugLevel > 0 then <<"newSpecializedNop: bad point, trying again"<<endl;
+        if debugLevel > 0 then <<"specializedNopsFromTemplate: bad point, trying again"<<endl;
         return null;
     );
     -- else {diffOp(matrix{bd}*colReduce(K, Tolerance => opts.Tolerance))_(0,0), pt}
