@@ -197,12 +197,15 @@ algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
 	stderr << "warning: quotient strategy Linear is not yet implemented" << endl; null),
 
     Monomial => opts -> (I, J) -> (
+	R := ring I;
 	if not isMonomialIdeal I
 	or not isMonomialIdeal J
+	or not isPolynomialRing R
+	or not isCommutative R
 	then return null;
 	cast := if instance(I, MonomialIdeal) then identity else ideal;
 	-- TODO: make sure (monomialIdeal, MonomialIdeal) isn't forgetful
-	cast newMonomialIdeal(ring I, rawColon(raw monomialIdeal I, raw monomialIdeal J))),
+	cast newMonomialIdeal(R, rawColon(raw monomialIdeal I, raw monomialIdeal J))),
     }
 
 -- Installing hooks for Ideal : Ideal
@@ -396,12 +399,15 @@ algorithms#(saturate, Ideal, Ideal) = new MutableHashTable from {
 	else intersect(first \ L)),
 
     Monomial => opts -> (I, J) -> (
+	R := ring I;
 	if not isMonomialIdeal I
 	or not isMonomialIdeal J
+	or not isPolynomialRing R
+	or not isCommutative R
 	then return null;
 	cast := if instance(I, MonomialIdeal) then identity else ideal;
 	-- TODO: make sure (monomialIdeal, MonomialIdeal) isn't forgetful
-	cast newMonomialIdeal(ring I, rawSaturate(raw monomialIdeal I, raw monomialIdeal J))),
+	cast newMonomialIdeal(R, rawSaturate(raw monomialIdeal I, raw monomialIdeal J))),
     }
 
 -- Installing hooks for Ideal : Ideal^infinity

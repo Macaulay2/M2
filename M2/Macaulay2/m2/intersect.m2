@@ -111,8 +111,8 @@ algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
 
     Monomial => opts -> L -> (
 	R := ring L#0;
-	-- TODO: is this the right assumption?
 	if not isPolynomialRing R
+	or not isCommutative R
 	or not all(L, isMonomialIdeal)
 	then return null;
 	-- TODO: make rawIntersect return MonomialIdeal when inputs are MonomialIdeals, then simplify this
