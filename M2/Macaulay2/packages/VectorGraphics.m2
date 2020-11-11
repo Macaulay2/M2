@@ -294,11 +294,6 @@ updateTransformMatrix := (g,m,p) -> ( -- (object,matrix,persepective matrix)
     if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*g.TransformMatrix;
     )
 
--*
-LiteralString := new WrapperType of Holder -- to make sure the text inside GraphicsText doesn't get html'ified
-htmlWithTex LiteralString := x -> htmlLiteral x#0
-*-
-
 svgLookup := hashTable { -- should be more systematic
     symbol TransformMatrix => (x,m) -> "data-matrix" => jsString x,
     symbol AnimMatrix => (x,m) -> "data-dmatrix" => jsString x,
@@ -335,7 +330,7 @@ svgLookup := hashTable { -- should be more systematic
 	apply(x, y -> y.cache.SVGElement)
 	),
     symbol TextContent => (x,m) -> x,
-    symbol HtmlContent => (x,m) -> htmlWithTex x
+    symbol HtmlContent => (x,m) -> html x
     }
 
 svg3dLookup := hashTable { -- should be more systematic
@@ -376,7 +371,7 @@ svg (GraphicsObject,List) := (g,l) -> (
 
 svg GraphicsObject := g -> svg(g,{})
 
-htmlWithTex GraphicsObject := html
+--htmlWithTex GraphicsObject := html
 
 globalAssignment GraphicsObject
 toString GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
@@ -576,7 +571,7 @@ toString HypertextInternalLink := net HypertextInternalLink := x -> (
 )
 
 noid := x -> select(x,e -> class e =!= Option or e#0 =!= "id")
-htmlWithTex HypertextInternalLink := html @@ noid -- bit of a hack: to prevent id from being printed directly in WebApp mode
+--htmlWithTex HypertextInternalLink := html @@ noid -- bit of a hack: to prevent id from being printed directly in WebApp mode TODO: fix
 
 svgFilter := new MarkUpType of HypertextInternalLink
 addAttribute(svgFilter,svgAttr | {"x","y","width","height"})
@@ -752,8 +747,9 @@ multidoc ///
    Text
     {\bf VectorGraphics} is a package to produce SVG 2d and 3d graphics.
     All usable types are descendents of the type GraphicsObject, and are self-initializing.
-    Coordinates can be entered as vectors in \mathbb{RR}^2, \mathbb{RR}^3 or \mathbb{RR}^4 (\mathbb{RR}^4 is projective
-    coordinates); alternatively, one can enter them as sequences. With the default perspective matrix,
+    Coordinates can be entered as vectors in $\mathbb{R}^2$, $\mathbb{R}^3$ or $\mathbb{R}^4$
+    ($\mathbb{R}^4$ is projective coordinates); alternatively, one can enter them as sequences.
+    With the default perspective matrix,
     the x axis points to the right, the y axis points up, and the z axis points towards the viewer.
     All types are option tables, i.e., their arguments are options. There are two types of options:
     VectorGraphics options, that are symbols (e.g., {\tt Radius} for circles);
@@ -1146,7 +1142,7 @@ multidoc ///
 undocumented { -- there's an annoying conflict with NAG for Point, Points
     Contents, TextContent, HtmlContent, SVGElement, Point, Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
-    (expression, GraphicsObject), (html,GraphicsObject), (htmlWithTex,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
+    (expression, GraphicsObject), (html,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
     (NewFromMethod,GraphicsObject,List), (NewFromMethod,GraphicsObject,OptionTable), (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
 }
 
