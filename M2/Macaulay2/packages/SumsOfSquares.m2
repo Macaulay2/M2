@@ -18,6 +18,7 @@ newPackage(
      {Name => "Special thanks: Ilir Dema, Nidhi Kaihnsa, Anton Leykin"}
     },
     Headline => "sums of squares",
+    Keywords => {"Real Algebraic Geometry"},
     AuxiliaryFiles => true,
     PackageImports => {"FourierMotzkin"},
     PackageExports => {"SemidefiniteProgramming"},

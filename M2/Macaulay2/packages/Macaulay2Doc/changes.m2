@@ -33,7 +33,90 @@ document {
 
 document {
      Key => "changes made for the next release",
+     UL {
+	 LI { "functionality added:",
+	      UL {
+		   LI { "The function ", TO readPackage, " has been added for retrieving the options in the preamble of a package quickly." },
+		   LI { "The function ", TO hooks, " has been added for retrieving the list of functions installed as hooks for handling computations of a specific type." },
+		   LI { "The function ", TO baseRing, " has been added for retrieving the ring from which a ring was formed." },
+		   LI { "The functions ", TO findProgram, " and ", TO runProgram, " have been added, to provide a uniform way for packages to locate external programs.
+			(The names and locations of such programs may vary from system to system." },
+		   LI { "The function ", TO formation, " has been added for retrieving the way a module was formed, whether as a direct sum, tensor product, or Hom-module." }
+		   }
+	      },
+         LI { "functionality improved:",
+              UL {
+		   LI {
+		       "$\\LaTeX$ typesetting for the web documentation is now rendered using ",
+		       HREF{"https://katex.org/","$\\KaTeX$"}, ", a JavaScript math typesetting library for browsers.
+		       As a result, $\\LaTeX$ equations and matrices are rendered correctly.
+		       One notable change is that mathematical characters and equations now must be enclosed in ",
+		       CODE "\\(...\\)", ", ", CODE "\\[...\\]", ", ", CODE "$...$", ", or ", CODE "$$...$$",
+		       " in order to be rendered. See ", TO "Text :: html(TEX)", " for more details and examples" },
+		   LI { "The option ", TO Boxes, " of ", TO netList,
+		       " has been made more flexible to allow customization of the box;",
+		       " it now accepts as input a pair of lists of rows and columns." },
+                   LI { "A brief documentation of various types of objects can be viewed usin ", TO (symbol?, Symbol), "." },
+                   LI { "The ", TO document, " function now accepts three new options: ", TO "Acknowledgement", ", ",
+		       TO "Contributors", ", and ", TO "References", ". The content of each will appear under a subsection
+		       of the same name in the documentation. Moreover, ", TO "SimpleDoc :: document(String)", " is now a synonym for ",
+		       TO "SimpleDoc :: doc(String)", "." },
+                   LI { "The ", TO regex, " function, as well as other functions that accept ", TO "regular expressions",
+                       ", have been rewritten to use the Perl regular expression syntax by default, which allows more
+		       fine-grained control of the matches. The POSIX Extended flavor is still available as an option.
+		       The functionality is unchanged in almost all cases, except for regular expressions containing
+		       escaped special characters, where another backslash may be needed, and, in rare cases, where
+		       there are multiple options to match the regular expression.
+		       Internally, the new implementation incorporates the ", TO2{"Boost", "Boost.Regex"}, " library." }
+                   }
+              },
+	 LI { "improved packages:",
+	      UL {
+		   LI {
+		       "The ", TO "SimpleDoc :: doc(String)", " method from the ", TO "SimpleDoc :: SimpleDoc", " package
+		       has been rewritten to support documenting multiple nodes at once. The following keywords were added: ",
+		       TT "Node", ", ", TT "Synopsis", ", ", TT "Tree", ", ", TT "Acknowledgement", ", ", TT "Contributors", ", ",
+		       TT "References", ", and ", TT "SourceCode", ". Moreover, two new functions, ", TO "SimpleDoc :: arXiv",
+		       " and ", TO "SimpleDoc :: stacksProject", " were added to help with referencing external documents."
+		       }
+		   }
+	       },
+	 LI { "functionality changed:",
+	      UL {
+		   LI { 
+			"The destinations of the links at the tops of the web pages portraying documentation nodes in a package have been
+			altered.  The links labeled ", TT "next", " and ", TT "previous", " have been interchanged with the links labelled ",
+			TT "forward", " and ", TT "backward", ".  This was done to bring the terminology into agreement with that used in the
+			info nodes portraying documentation nodes.  The result can be described as follows.  By virtue of the ",
+			TO "Subnodes", " option, each node is provided with a certain number of subnodes, so the documentation as a whole may be
+			regarded as an ordered union of rooted trees, with the top node of the package serving as the root of the first one.
+			(Ideally it would be the only one.)  The ", TT "next", " and ", TT "previous", " links can be used to traverse the
+			(sibling) subnodes of a given node, in sequence.  (The various roots are also regarded as siblings.)  The ",
+			TT "forward", " and ", TT "backward", " links can be used to traverse all the nodes, in depth-first sequence.  Ideally,
+			the documentation would be structured so such a traversal results in a readable document with topics presented in a
+			logical sequence."
+			}
+		   }
+	      },
+	 LI { "functionality changed in a way that could break code:",
+	      UL {
+		   LI { "The variable ", TT "backupFileRegexp", " has been replaced by the ", TO "Exclude", "
+			option to ", TO "copyDirectory", "."
+			},
+		   LI { "The option ", TO [installPackage, InstallPrefix], " no longer accepts a function as input.
+		        only strings containing a path to the installation prefix are accepted."
+			},
+		   LI { "The function ", TT "localRing", " has been moved to the package ", TO "LocalRings::LocalRings", "." }
+		   }
+	      },
+	 LI { "functionality removed",
+	       UL {
+		    LI { "The ", TT "ForestNode", " and ", TT "TreeNode", " types have been made internal." },
+		    }
+	      }
+          }
      }
+
 
 document {
      Key => "changes, 1.16",
@@ -84,9 +167,10 @@ document {
 	      },
          LI { "functionality improved",
 	       UL {
-		    LI { "The Pari library has been removed.  Its functionality has been 
-			 subsumed by the ", TO "MPSolve", " library (for the ", TO "roots", " function for finding roots of a univariate
-			 polynomial), and the ", TO "FLINT", " library, for integer factorization and primality testing." },
+		    LI { "The PARI library has been removed.  Its functionality has been subsumed by the ", TO "MPSolve",
+			" library (for the ", TO "roots", " function for finding roots of a univariate polynomial), and the ",
+			TO "FLINT", " library, for integer factorization and primality testing." },
+		    LI { "The ", TO2{"Boost", "Boost.Stacktrace"}, " library has been added for printing stack traces in case of a crash." },
 		    LI { "Primality testing, provided by ", TO "isPrime", ", is now handled by the ", TO "FLINT", " library." },
 		    LI { "Probable prime testing, provided by ", TO "isPseudoprime", ", is now handled by the ", TO "FLINT", " library." },
                     LI { "Factorization of integers, provided by ", TO (factor,ZZ), ", is now handled by the ", TO "FLINT", " library." },
@@ -502,8 +586,8 @@ document {
      	       }},     
      	  LI { "functionality added or improved:",
      	       UL {
-		    LI { "The function ", TO "localRing", ", for localizing a polynomial ring at a prime ideal, has been added." },
-		    LI { "The function ", TO "length", " now can compute length of Artinian modules over local rings." },
+		    LI { "The function ", TO "LocalRings :: localRing", ", for localizing a polynomial ring at a prime ideal, has been added." },
+		    LI { "The function ", TO (length, Module), " now can compute length of Artinian modules over local rings." },
 		    LI {
 			 "The function ", TO "newPackage", " now takes two new options: 
 			 ", TT "OptionalComponentsPresent", " tells whether all optional external components of the package are present on the system,
@@ -577,7 +661,7 @@ document {
 			     		" for polyhedra and polyhedral complexes." }
 			   	   },
 		       	      "An important difference is that objects of these classes can no longer be used as keys into hash tables, since these objects
-		       	      are implemented as mutable hash tables. In particular ", TO "symbol===", " no longer works on cones.  Instead, use 
+		       	      are implemented as mutable hash tables. In particular ", TO symbol===, " no longer works on cones.  Instead, use
 		       	      a sorted list of e.g. vertices and lineality space.",
 		       	      PARA{"If you need the old behavior, load the package ", TO "OldPolyhedra::OldPolyhedra", ". 
 		       		   However, if possible, change your code to run with the new package."}
@@ -586,7 +670,7 @@ document {
          		 },     
 	  LI { "functionality added or improved:",
 	       UL {
-		    LI { "The functions ", TO "toDual", " and ", TO "fromDual", " have been improved and moved to the new package ", TO "InverseSystems::InverseSystems",
+		    LI { "The functions ", TO "InverseSystems::toDual", " and ", TO "InverseSystems::fromDual", " have been improved and moved to the new package ", TO "InverseSystems::InverseSystems",
 			 ": they are now compatible with linear changes of coordinates." }
 	  	   }
 	       },
@@ -801,6 +885,7 @@ document {
 	  LI {
 	       "obsolete methods",
 	       UL {
+		    LI { TT "Wikipedia(String)", " has been replaced: use ", TO "SimpleDoc :: wikipedia", " instead" },
 		    LI { "'map(Ideal)' has been removed: use 'map(module I,module I, 1)' instead" },
 		    LI { "'map(Ideal,Ideal)' has been removed: use 'map(module I,module J)' instead" },
 		    LI { "'map(Module,Matrix)' has been replaced: use 'map(M,,f)' instead" },
@@ -918,7 +1003,7 @@ document {
 		    LI { "The new function ", TO "homomorphism'", " complements ", TO "homomorphism", ".  From a map between modules it
 			 produces the element of Hom." },
 		    LI { "The new function ", TO "compose", " expresses composition of maps between modules as a bilinear map between Hom-modules." },
-		    LI { "Bracket powers of ideals (", TO "(symbol ^,Ideal,Array)", ") have been added, thanks to Frank Moore." },
+		    LI { "Bracket powers of ideals (", TO (symbol ^,Ideal,Array), ") have been added, thanks to Frank Moore." },
             LI { "Several bugs related to computing Groebner bases in polynomial rings over ZZ have been fixed.  ", TT "trim I", " in this case
                 now returns an ideal or module with a Groebner basis as generating set, as a minimal generating set isn't well-defined.  In a future release, we hope to 
                 provide a function to determine a smaller set of generators.  ", TT "mingens I", " also returns the Groebner basis matrix.  In a future release this
@@ -980,7 +1065,7 @@ document {
 	  LI { "improved packages:",
 	        UL {
 		    LI { TO "SchurRings::SchurRings", ", has been updated, with support for several groups of variables,  documentation, working plethysm, and more.
-                	 The old version is being kept as ", TO "OldSchurRings", " as there are incompatible changes.  Specifically, symmRing is now called
+                	 The old version is being kept as ", TT "SchurRingsOld", " as there are incompatible changes.  Specifically, symmRing is now called
                 	 symmetricRing, and has more variables (three sets, h, e, p) than the old version.  Please use the new version, and if there is a problem
                 	 that requires you to use the old version, please email Mike Stillman."
 			 },
@@ -1538,7 +1623,7 @@ document {
 			 This impacted functions which use ", TO "trim", ", especially ", TO "decompose", "."
 			 },
 		    LI {
-			 "The function ", TO "eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring,
+			 "The function ", TO "Elimination::eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring,
 			 with no quotient elements, and also quietly assumed that the ring was commutative.  Now error
 			 messages are given when it would have produced incorrect answers, and it handles Weyl and skew 
 			 commutative poly rings correctly.  Addtionally, this function now uses an elimination order 
@@ -1677,7 +1762,7 @@ document {
 		    	 TO (map,Module,RingMap), "."
 			 },
 		    LI { "The total Ext functor now accepts multigraded modules, see ", TO (Ext,Module,Module), "." },
-		    LI { "Macaulay2 now incorporates ", TO "pari", ", a free library for computing in number theory.
+		    LI { "Macaulay2 now incorporates ", HREF {"http://pari.math.u-bordeaux.fr/", "PARI"}, ", a free library for computing in number theory.
 			 It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), "."
 			 },
 		    LI { "new packages, included:",
@@ -2183,7 +2268,7 @@ document {
 	  TO "toCC", ", ",
 	  TO "toRR", ", ",
 	  TO "utf8", ", ",
-	  TO "Wikipedia", ", and ",
+	  TO "wikipedia", ", and ",
 	  TO "zeta", "."
 	  },
      PARA ///

@@ -1,15 +1,16 @@
 newPackage ( "TorAlgebra",
-    Version => "2.0",
-    Date => "9 February 2018",
+    Version => "2.1",
+    Date => "5 November 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
 	  HomePage => "http://www.math.ttu.edu/~lchriste/index.html" },
 	{ Name => "Oana Veliche", 
 	  Email => "o.veliche@northeastern.edu",
-	  HomePage => "https://cos.northeastern.edu/faculty/oana-veliche/" }
+	  HomePage => "https://web.northeastern.edu/oveliche/index.html" }
 	},
     Headline => "classification of local rings based on multiplication in homology",
+    Keywords => {"Commutative Algebra"},
     PackageImports => {"LocalRings"},
     Certification => { -- this package was certified under its old name, "CodepthThree"
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -24,7 +25,9 @@ newPackage ( "TorAlgebra",
 	 "version at publication" => "1.0",
 	 "volume number" => "6",
 	 "volume URI" => "http://msp.org/jsag/2014/6-1/"
-	 }
+	 },
+    Reload => false,
+    DebuggingMode => false
     )
 
 export { 
@@ -146,16 +149,18 @@ toralgdata = R -> (
 		m = 1;
 		)
 	    else (
-		if isHomogeneous R then (
+		if isHomogeneous ideal R then (
 		    I := ideal R;
 		    F := res I;
 		    )
 		else (
 		    setMaxIdeal ideal vars Q;		
 		    I = ideal localMingens (localResolution ideal R).dd_1;
+		    if not isSubset(I, (ideal vars Q)^2) then error "Please provide presentation without linear terms." else (
 		    F = localResolution I;
 		    R = Q/I;
 		    );
+		);
 		c = length F;
 		e = numgens ideal vars R;
 		h = c - codim R;
@@ -275,7 +280,7 @@ toralgdata = R -> (
 --    	   if c >= 4
     
     if cls == "UNDETERMINED" then (
-	if isHomogeneous R then (
+	if isHomogeneous ideal R then (
 	    L := res( ideal vars R, LengthLimit => limit ); 
 	    )
 	else (
@@ -359,7 +364,7 @@ toralgdata = R -> (
 		num = n + l*t + t^2 - t^3;
 		)
 	    else (
-		if isHomogeneous R then (
+		if isHomogeneous ideal R then (
 		    data := computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries)
 		    )
 		else (
@@ -395,7 +400,7 @@ toralgdata = R -> (
 		num = n + l*t - t^2 - t^3 + t^4;
 		)
 	    else (
-		if isHomogeneous R then (
+		if isHomogeneous ideal R then (
 		    data = computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries)
 		    )
 		else (
@@ -431,7 +436,7 @@ toralgdata = R -> (
 		num = n + (l-1)*t - 3*t^2 - t^3 + t^4;
 		)
 	    else (
-		if isHomogeneous R then (
+		if isHomogeneous ideal R then (
 		    data = computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2,L.dd_3), tries)
 		    )
 		else (
@@ -495,7 +500,26 @@ toralgdata = R -> (
 	}
     )
 
-torAlgData = ( cacheValue "torAlg" ) toralgdata
+torAlgData = method()
+
+torAlgData( QuotientRing ) := R -> (
+    if R.cache#?"torAlg" then result := R.cache#"torAlg" else (
+	if (ideal R).cache#?"torAlg" then result = (ideal R).cache#"torAlg" else (
+	    result = toralgdata R; 
+    	    R.cache#"torAlg" = result;
+    	    (ideal R).cache#"torAlg" = result;	    
+	    );
+    );
+    result
+    )
+    
+torAlgData( Ideal ) := I -> (
+    if I.cache#?"torAlg" then result := I.cache#"torAlg" else (
+	result = toralgdata ((ring I)/I);
+	I.cache#"torAlg" = result;
+	);
+    result
+    )
 
 
 ----------------------------------------------------------------------------
@@ -524,7 +548,9 @@ setAttemptsAtGenericReduction = (R,n) -> (
 -- Returns the (parametrized) class of the ring ring obtained by localizing 
 -- R at the irrelevant maximal ideal
 
-torAlgClass = R -> (
+torAlgClass = method()
+
+torAlgClass (QuotientRing) := R -> (
     torAlg := torAlgData R;
     cls := torAlg#"Class";
     if cls == "zero ring" or cls == "S" 
@@ -554,6 +580,7 @@ torAlgClass = R -> (
 	);        
     S )        
 
+torAlgClass( Ideal ) := I -> torAlgClass((ring I)/I)
 
 ----------------------------------------------------------------------------
 -- torAlgDataPrint
@@ -563,7 +590,9 @@ torAlgClass = R -> (
 --
 -- Returns a string of keys and their values
 
-torAlgDataPrint = (R,L) -> (
+torAlgDataPrint = method()
+
+torAlgDataPrint( QuotientRing, List) := (R,L) -> (
     torAlg := torAlgData R;
     fn := temporaryFileName();
     for x in L do (
@@ -573,6 +602,8 @@ torAlgDataPrint = (R,L) -> (
     get fn
     )
 
+torAlgDataPrint( Ideal, List) := (I,L) -> torAlgDataPrint((ring I)/I, L)
+
 ----------------------------------------------------------------------------
 -- torAlgDataList
 --
@@ -581,10 +612,15 @@ torAlgDataPrint = (R,L) -> (
 --
 -- Returns a list of the values of the specified keys
 
-torAlgDataList = (R,L) -> (
+
+torAlgDataList = method()
+
+torAlgDataList( QuotientRing, List) := (R,L) -> (
     torAlg := torAlgData R;
     for x in L list torAlg#(toString x)
     )
+
+torAlgDataList( Ideal, List) := (I,L) -> torAlgDataList((ring I)/I, L)
 
 ----------------------------------------------------------------------------
 -- isCI
@@ -593,9 +629,13 @@ torAlgDataList = (R,L) -> (
 --
 -- Returns TRUE if R is complete intersection and FALSE otherwise
 
-isCI = R -> ( 
+isCI = method()
+
+isCI( QuotientRing ) := R -> ( 
     (torAlgData R)#"isCI"
     )
+
+isCI( Ideal ) := I -> isCI((ring I)/I)
 
 ----------------------------------------------------------------------------
 -- isGorenstein
@@ -604,9 +644,13 @@ isCI = R -> (
 --
 -- Returns TRUE if R is Gorenstein and FALSE otherwise
 
-isGorenstein = R -> (
+isGorenstein = method()
+
+isGorenstein( QuotientRing) := R -> (
     (torAlgData R)#"isGorenstein"
     )
+
+isGorenstein( Ideal ) := I -> isCI((ring I)/I)
 
 ----------------------------------------------------------------------------
 -- isGolod
@@ -615,9 +659,13 @@ isGorenstein = R -> (
 --
 -- Returns TRUE if R is Golod and FALSE otherwise
 
-isGolod = R -> (
+isGolod = method()
+
+isGolod( QuotientRing) := R -> (
     (torAlgData R)#"isGolod"
     )
+
+isGolod( Ideal ) := I -> isGolod((ring I)/I)
 
 --==========================================================================
 -- INTERNAL ROUTINES
@@ -844,71 +892,75 @@ doc ///
 
     Text 
       Let $I$ be an ideal of a regular local ring $Q$ with residue
-      field $k$. The minimal free resolution of $R=Q/I$ carries a
-      structure of a differential graded algebra. If the length of the
-      resolution, which is called the codepth of $R$, is at most $3$,
-      then the induced algebra structure on Tor$_Q*$ ($R,k$) is unique
-      and provides for a classification of such local rings.
+      field $k$. The length of the minimal free resolution of $R=Q/I$
+      is called the codepth of $R$; if it is at most $3$, then the
+      resolution carries a structure of a differential graded
+      algebra. While the DG algebra structure may not be unique, the
+      induced algebra structure on Tor$^Q$ ($R,k$) is unique and
+      provides for a classification of such local rings.
       
-      According to the multiplicative structure on Tor$_Q*$ ($R,k$), a
+      According to the multiplicative structure on Tor$^Q$ ($R,k$), a
       non-zero local ring $R$ of codepth at most 3 belongs to exactly one of
       the (parametrized) classes designated {\bf B}, {\bf C}(c), {\bf G}(r), {\bf
       H}(p,q), {\bf S}, or {\bf T}. An overview of the theory can be
-      found in L.L. Avramov, {\it A cohomological study of local rings
-      of embedding codepth 3}, @HREF"http://arxiv.org/abs/1105.3991"@.
+      found in L.L. Avramov,  @HREF("https://doi.org/10.1016/j.jpaa.2012.03.012","A cohomological study of local rings
+      of embedding codepth 3")@.
 
       There is a similar classification of Gorenstein local rings of codepth
       4, due to A.R. Kustin and M. Miller. There are four classes,
-      which in the original paper, {\it Classification of the
-      Tor-Algebras of Codimension Four Gorenstein Local rings}
-      @HREF"https://doi.org/10.1007/BF01215134"@, are called A, B, C,
-      and D, while in the survey {\it Homological asymptotics of
-      modules over local rings}
-      @HREF"https://doi.org/10.1007/978-1-4612-3660-3_3"@ by
+      which in the original paper
+      @HREF("https://doi.org/10.1007/BF01215134", "Classification of the
+      Tor-Algebras of Codimension Four Gorenstein Local rings")@, are called A, B, C,
+      and D, while in the survey 
+      @HREF("https://doi.org/10.1007/978-1-4612-3660-3_3","Homological asymptotics of
+      modules over local rings")@ by
       L.L. Avramov, they are called CI, GGO, GTE, and GH(p),
       respectively. Here we denote these classes {\bf C}(c), {\bf GS},
       {\bf GT}, and {\bf GH}(p), respectively.
   
       The package implements an algorithm for classification of local
       rings in the sense discussed above. For rings of codepth at most
-      3 it is described in L.W. Christensen and O. Veliche, {\it Local
-      rings of embedding codepth 3: a classification algorithm},
-      @HREF"http://arxiv.org/abs/1402.4052"@. The classification of
+      3 it is described in L.W. Christensen and O. Veliche, 
+      @HREF("http://dx.doi.org/10.2140/jsag.2014.6.1","Local
+      rings of embedding codepth 3: A classification algorithm")@. The classification of
       Gorenstein rings of codepth 4 is analogous. 
       
       The package also recognizes Golod rings, Gorenstein rings, and
       complete intersection rings of any codepth. To recognize Golod
-      rings the package implements a test found in J. Burke, {\it Higher
-      homotopies and Golod rings}
-      @HREF"https://arxiv.org/abs/1508.03782"@. ///
+      rings the package implements a test found in J. Burke,
+      @HREF("https://arxiv.org/abs/1508.03782","Higher
+      homotopies and Golod rings")@. ///
 
 
 doc ///
   Key
     torAlgData
+    (torAlgData, QuotientRing)
   Headline
     invariants of a local ring and its class (w.r.t. multiplication in homology)
   Usage
-    torAlgData R
+    torAlgData R or torAlgData I
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra  by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
   Outputs
       : HashTable
-        a hash table with invariants of the local ring obtained by
+        with invariants of the local ring obtained by
   	localizing {\tt R} at the irrelevant maximal ideal
   Description
   
     Text 
-      Computes invariants of the local ring obtained by localizing
-      {\tt R} at the irrelevant maximal ideal and, provided that it
-      has codepth at most 3, classifies it as belonging to one of the
+      Computes invariants of the local ring obtained by localizing {\tt
+      R} at the irrelevant maximal ideal and, provided that it has
+      codepth at most 3, classifies it as belonging to one of the
       (parametrized) classes {\bf B}, {\bf C}(c), {\bf G}(r), {\bf
       H}(p,q), {\bf S}, or {\bf T}. Rings of higher codepth are
-      classified as {\bf C}(c) (complete intersection), {\bf Gorenstein},
-      {\bf Golod}, or {\tt no class}. Gorenstein rings of codepth 4 are further
-      classified as belonging to one of the (parametrized) classes
-      {\bf C}(4), {\bf GS}, {\bf GT}, or {\bf GH}(p). 
+      classified as {\bf C}(c) (complete intersection), {\bf
+      Gorenstein}, {\bf Golod}, or {\bf no class}. Gorenstein rings of
+      codepth 4 are further classified as belonging to one of the
+      (parametrized) classes {\bf C}(4), {\bf GS}, {\bf GT}, or {\bf
+      GH}(p). It is also possible to call the function on the defining
+      ideal of {\tt R}; see @TO (torAlgData,Ideal)@.
       
       Returns a hash table with the following data of the local ring:
   
@@ -943,12 +995,12 @@ doc ///
       
     Example
       Q = QQ[x,y,z];
-      data = torAlgData (Q/ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3))
+      data = torAlgData (Q/ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3))
       data#"PoincareSeries"
 
     Example
       Q = QQ[w,x,y,z];
-      torAlgData (Q/ideal (w^2-x*y*z,x^3,y^3,x^2*z,y^2*z,z^3-x*y*w,x*z*w,y*z*w,z^2*w-x^2*y^2))
+      torAlgData (Q/ideal(w^2-x*y*z,x^3,y^3,x^2*z,y^2*z,z^3-x*y*w,x*z*w,y*z*w,z^2*w-x^2*y^2))
 
     Example
       Q = QQ[v,w,x,y,z];
@@ -956,7 +1008,7 @@ doc ///
 
     Example
       Q = QQ[u,v,w,x,y,z];
-      torAlgData (Q/ideal (u^2,v^2,w^2-y^4,x^2,x*y^15))
+      torAlgData (Q/ideal(u^2,v^2,w^2-y^4,x^2,x*y^15))
 
     Text  
       To extract data from the hash table returned by the function one may use  
@@ -981,14 +1033,40 @@ doc ///
 
 doc ///
   Key
+    (torAlgData, Ideal)
+  Headline
+    invariants of a local ring and its class (w.r.t. multiplication in homology)
+  Usage
+    torAlgData R or torAlgData I
+  Inputs
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
+  Outputs
+      : HashTable
+        with invariants of the local ring obtained by
+  	localizing the quotient by {\tt I} at the irrelevant maximal ideal
+  Description
+  
+    Text 
+      See @TO (torAlgData,QuotientRing)@. 
+      
+    Example
+      Q = QQ[x,y,z];
+      data = torAlgData (ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3))
+      data#"PoincareSeries"
+///
+
+doc ///
+  Key
     torAlgClass
+    (torAlgClass, QuotientRing)
   Headline
     the class (w.r.t. multiplication in homology) of a local ring
   Usage
-    torAlgClass R
+    torAlgClass R or torAlgClass I
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
   Outputs
       : String
         the (parametrized) class of the local ring obtained by
@@ -998,23 +1076,27 @@ doc ///
   Description
   
     Text 
-      Classifies the local ring obtained by localizing {\tt R} at
-      the irrelevant maximal ideal as belonging to one of the
-      (parametrized) classes {\bf B}, {\bf C}(c), {\bf G}(r), {\bf H}(p,q),
-      {\bf S}, or {\bf T}, provided that it is codepth at most 3.
+      Classifies the local ring obtained by localizing {\tt R} at the
+      irrelevant maximal ideal; it is also possible to call the function on the
+      defining ideal of {\tt R}; see @TO (torAlgClass,Ideal)@.  
       
+    Text  
+      If the local ring has codepth at most 3, then it is classified
+      as belonging to one of the (parametrized) classes {\bf B}, {\bf
+      C}(c), {\bf G}(r), {\bf H}(p,q), {\bf S}, or {\bf T}.
+            
     Example
       Q = QQ[x,y,z];
-      torAlgClass Q
-      torAlgClass (Q/ideal (x*y))
-      torAlgClass (Q/ideal (x^2,y^2))
-      torAlgClass (Q/ideal (x^2,y^2,x*y))
-      torAlgClass (Q/ideal (x^2,x*y,y*z,z^2))
-      torAlgClass (Q/ideal (x^2,y^2,z^2))      
-      torAlgClass (Q/ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3))
-      torAlgClass (Q/ideal (x*z+y*z,x*y+y*z,x^2-y*z,y*z^2+z^3,y^3-z^3))
-      torAlgClass (Q/ideal (x^2,y^2,z^2,x*y))
-      torAlgClass (Q/ideal (x^2,y^2,z^2,x*y*z))
+      torAlgClass (Q/ideal(x))
+      torAlgClass (Q/ideal(x*y))
+      torAlgClass (Q/ideal(x^2,y^2))
+      torAlgClass (Q/ideal(x^2,y^2,x*y))
+      torAlgClass (Q/ideal(x^2,x*y,y*z,z^2))
+      torAlgClass (Q/ideal(x^2,y^2,z^2))      
+      torAlgClass (Q/ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3))
+      torAlgClass (Q/ideal(x*z+y*z,x*y+y*z,x^2-y*z,y*z^2+z^3,y^3-z^3))
+      torAlgClass (Q/ideal(x^2,y^2,z^2,x*y))
+      torAlgClass (Q/ideal(x^2,y^2,z^2,x*y*z))
       
     Text  
       If the local ring is Gorenstein or Golod of codepth 4, then it is classified
@@ -1023,44 +1105,71 @@ doc ///
       
     Example
       Q = QQ[w,x,y,z];
-      torAlgClass (Q/ideal (w^2,x^2,y^2,z^2))
-      torAlgClass (Q/ideal (y*z,x*z,x*y+z^2,x^2,w*x+y^2+z^2,w^2+w*y+y^2+z^2))
-      torAlgClass (Q/ideal (z^2,x*z,w*z+y*z,y^2,x*y,w*y,x^2,w*x+y*z,w^2+y*z))
-      torAlgClass (Q/ideal (x^2,y^2,z^2,x*w,y*w,z*w,w^3-x*y*z))
-      torAlgClass (Q/(ideal (w,x,y,z))^2)
+      torAlgClass (Q/ideal(w^2,x^2,y^2,z^2))
+      torAlgClass (Q/ideal(y*z,x*z,x*y+z^2,x^2,w*x+y^2+z^2,w^2+w*y+y^2+z^2))
+      torAlgClass (Q/ideal(z^2,x*z,w*z+y*z,y^2,x*y,w*y,x^2,w*x+y*z,w^2+y*z))
+      torAlgClass (Q/ideal(x^2,y^2,z^2,x*w,y*w,z*w,w^3-x*y*z))
+      torAlgClass (Q/(ideal(w,x,y,z))^2)
 
     Text	  
       If the local ring has codepth at least 5, then it is classified as belonging
       to one of the classes {\bf C}(c), if it is complete intersection, {\bf codepth c Gorenstein}, 
       if it is Gorenstein and not complete intersection, {\bf codepth c Golod}, if it is Golod,
-      and {\tt no class} otherwise.
+      and {\bf no class} otherwise.
             
     Example
       Q = QQ[u,v,w,x,y,z];
-      torAlgClass (Q/ideal (u^2,v^2,w^2,x^2+y^2, x^2+z^2))
-      torAlgClass (Q/ideal (w^2,v*w,z*w,y*w,v^2,z*v+x*w,y*v,x*v,z^2+x*w,y*z,x*z,y^2+x*w,x*y,x^2))
-      torAlgClass (Q/ideal (x^2*y^2,x^2*z,y^2*z,u^2*z,v^2*z,w^2*z))
-      torAlgClass (Q/ideal (u^2,v^2,w^2,x^2,z^2,x*y^15))
+      torAlgClass (Q/ideal(u^2,v^2,w^2,x^2+y^2, x^2+z^2))
+      torAlgClass (Q/ideal(w^2,v*w,z*w,y*w,v^2,z*v+x*w,y*v,x*v,z^2+x*w,y*z,x*z,y^2+x*w,x*y,x^2))
+      torAlgClass (Q/ideal(x^2*y^2,x^2*z,y^2*z,u^2*z,v^2*z,w^2*z))
+      torAlgClass (Q/ideal(u^2,v^2,w^2,x^2,z^2,x*y^15))
       
     Text  
       If the defining ideal of {\tt R} is not contained in the irrelevant maximal ideal, 
-      then the resulting local ring is zero, and the function returns {\tt zero ring}.
+      then the resulting local ring is zero, and the function returns {\bf zero ring}.
       
     Example
       Q = QQ[x,y,z];
-      torAlgClass (Q/ideal (x^2-1))
+      torAlgClass (Q/ideal(x^2-1))
+///
+
+doc ///
+  Key
+    (torAlgClass, Ideal)
+  Headline
+    the class (w.r.t. multiplication in homology) of a local ring
+  Usage
+    torAlgClass R or torAlgClass I
+  Inputs
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
+  Outputs
+      : String
+        the (parametrized) class of the local ring obtained by
+        localizing the quotient by {\tt I} at the irrelevant maximal ideal, provided
+        that this ring is non-zero and of codepth at most 3 or Gorenstein 
+	or Golod; otherwise "no class"
+  Description
+  
+    Text 
+      See @TO (torAlgClass,QuotientRing)@.	
+            
+    Example
+      Q = QQ[x,y,z];
+      torAlgClass (ideal(x^2,y^2,z^2))      
 ///
 
 doc ///
   Key
     isCI
+    (isCI, QuotientRing)
   Headline
     whether the ring is complete intersection
   Usage
-    isCI R
+    isCI R or isCI I
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
   Outputs
       : Boolean
         whether the local ring obtained by localizing {\tt R} at the irrelevant maximal ideal is complete intersection
@@ -1069,86 +1178,198 @@ doc ///
   
     Text 
       Checks if the local ring obtained by localizing {\tt R} at the
-      irrelevant maximal ideal is complete intersection.
+      irrelevant maximal ideal is complete intersection. It is also possible to call the function on the defining
+      ideal of {\tt R}; see @TO (isCI,Ideal)@.
       
     Example
       Q = QQ[x,y,z];
-      isCI (Q/ideal (x^2,x*y,y*z,z^2))
-      isCI (Q/ideal (x^2,y^2))
+      isCI (Q/ideal(x^2,x*y,y*z,z^2))
+      isCI (Q/ideal(x^2,y^2))
+///
+
+doc ///
+  Key
+    (isCI, Ideal)
+  Headline
+    whether the ring is complete intersection
+  Usage
+    isCI R or isCI I
+  Inputs
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
+  Outputs
+      : Boolean
+        whether the local ring obtained by localizing the quotient by {\tt I} at the irrelevant maximal ideal is complete intersection 
+
+  Description
+  
+    Text 
+      Checks if the local ring obtained by localizing the quotient by {\tt I} at the
+      irrelevant maximal ideal is complete intersection. 
+      
+    Example
+      Q = QQ[x,y,z];
+      isCI (ideal(x^2,x*y,y*z,z^2))
+      isCI (ideal(x^2,y^2))
 ///
 
 doc ///
   Key
     isGorenstein
+    (isGorenstein, QuotientRing)
   Headline
-    whether the ring Gorenstein
+    whether the ring is Gorenstein
   Usage
-    isGorenstein R
+    isGorenstein R or isGorenstein I
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
   Outputs
       : Boolean
-        whether the local ring obtained by
-        localizing {\tt R} at the irrelevant maximal ideal is Gorenstein
-	
+        whether the local ring obtained by localizing {\tt R} at the irrelevant maximal ideal is Gorenstein
+
   Description
   
     Text 
       Checks if the local ring obtained by localizing {\tt R} at the
+      irrelevant maximal ideal is Gorenstein. It is also possible to call the function on the defining
+      ideal of {\tt R}; see @TO (isGorenstein,Ideal)@.
+      
+    Example
+      Q = QQ[x,y,z];
+      isGorenstein (Q/ideal(x^2,x*y,y*z,z^2))
+      isGorenstein (Q/ideal(x^2,y^2))
+      isGorenstein (Q/ideal(x*z+y*z,x*y+y*z,x^2-y*z,y*z^2+z^3,y^3-z^3))
+///
+
+doc ///
+  Key
+    (isGorenstein, Ideal)
+  Headline
+    whether the ring is Gorenstein
+  Usage
+    isGorenstein R or isGorenstein I
+  Inputs
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
+  Outputs
+      : Boolean
+        whether the local ring obtained by localizing the quotient by {\tt I} at the irrelevant maximal ideal is Gorenstein
+
+  Description
+  
+    Text 
+      Checks if the local ring obtained by localizing the quotient by {\tt I} at the
       irrelevant maximal ideal is Gorenstein.
       
     Example
       Q = QQ[x,y,z];
-      isGorenstein (Q/ideal (x^2,x*y,y*z,z^2))
-      isGorenstein (Q/ideal (x^2,y^2))
-      isGorenstein (Q/ideal (x*z+y*z,x*y+y*z,x^2-y*z,y*z^2+z^3,y^3-z^3))
+      isGorenstein (ideal(x^2,x*y,y*z,z^2))
+      isGorenstein (ideal(x^2,y^2))
+      isGorenstein (ideal(x*z+y*z,x*y+y*z,x^2-y*z,y*z^2+z^3,y^3-z^3))
 ///
 
 doc ///
   Key
     isGolod
+    (isGolod, QuotientRing)
   Headline
     whether the ring is Golod
   Usage
-    isGolod R
+    isGolod R or isGolod I
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
   Outputs
       : Boolean
-        whether the local ring obtained by
-        localizing {\tt R} at the irrelevant maximal ideal is Golod
-	
+        whether the local ring obtained by localizing {\tt R} at the irrelevant maximal ideal is Golod
+
   Description
   
     Text 
       Checks if the local ring obtained by localizing {\tt R} at the
-      irrelevant maximal ideal is Golod
+      irrelevant maximal ideal is Golod. It is also possible to call the function on the defining
+      ideal of {\tt R}; see @TO (isGolod,Ideal)@.
       
     Example
       Q = QQ[x,y,z];
-      isGolod (Q/ideal (x^2,x*y,y*z,z^2))
-      isGolod (Q/ideal (x^2))
-      isGolod (Q/(ideal (x,y,z))^2)      
+      isGolod (Q/ideal(x^2,x*y,y*z,z^2))
+      isGolod (Q/ideal(x^2))
+      isGolod (Q/(ideal(x,y,z))^2)      
+///
+
+doc ///
+  Key
+    (isGolod, Ideal)
+  Headline
+    whether the ring is Golod
+  Usage
+    isGolod R or isGolod I
+  Inputs
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
+  Outputs
+      : Boolean
+        whether the local ring obtained by localizing the quotient by {\tt I} at the irrelevant maximal ideal is Golod
+
+  Description
+  
+    Text 
+      Checks if the local ring obtained by localizing the quotient by {\tt I} at the
+      irrelevant maximal ideal is Golod. 
+      
+    Example
+       Q = QQ[x,y,z];
+      isGolod (ideal(x^2,x*y,y*z,z^2))
+      isGolod (ideal(x^2))
+      isGolod ((ideal(x,y,z))^2)      
 ///
 
 doc ///
   Key
     torAlgDataList
+    (torAlgDataList, QuotientRing, List)
   Headline
     list invariants of a local ring
   Usage
-    torAlgDataList(R,L)
+    torAlgDataList(R,L) or torAlgDataList(I,L)
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra  by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra  by an ideal contained in the irrelevant maximal ideal
     L : List
-        a list of keys from the hash table returned by @TO torAlgData@
+        of keys from the hash table returned by @TO torAlgData@
 	
   Outputs
       : List
-        the list of values corresponding to the keys specified in {\tt L}
+        of values corresponding to the keys specified in {\tt L}
+	
+  Description
+    Text 
+      Extracts data from the hash table returned by @TO torAlgData@.  It is also possible to call the function on the
+      defining ideal of {\tt R}; see @TO (torAlgDataList,Ideal,List)@.
+
+    Example
+      Q = QQ[x,y,z];
+      R = Q/ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
+      torAlgDataList( R, {m, n, Class, p, q, r, PoincareSeries, BassSeries} )            
+///      
+
+doc ///
+  Key
+    (torAlgDataList, Ideal, List)
+  Headline
+    list invariants of a local ring
+  Usage
+    torAlgDataList(R,L) or torAlgDataList(I,L)
+  Inputs
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
+    L : List
+        of keys from the hash table returned by @TO torAlgData@
+	
+  Outputs
+      : List
+        of values corresponding to the keys specified in {\tt L}
 	
   Description
     Text 
@@ -1156,34 +1377,62 @@ doc ///
 
     Example
       Q = QQ[x,y,z];
-      R = Q/ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
-      torAlgDataList( R, {m, n, Class, p, q, r, PoincareSeries, BassSeries} )            
+      I = ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
+      torAlgDataList( I, {m, n, Class, p, q, r, PoincareSeries, BassSeries} )            
 ///      
       
 doc ///
   Key
     torAlgDataPrint
+    (torAlgDataPrint, QuotientRing, List)
   Headline
     print invariants of a local ring
   Usage
-    torAlgDataPrint (R,L)
+    torAlgDataPrint (R,L) or torAlgDataPrint(I,L)
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra  by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra  by an ideal contained in the irrelevant maximal ideal
     L : List 
-        a list of keys from the hash table returned by @TO torAlgData@    
+        of keys from the hash table returned by @TO torAlgData@    
   Outputs
       : String
-        the string of keys specified in {\tt L} together with their values
+        of keys specified in {\tt L} together with their values
   Description
     Text 
-       Extracts data from the hash table returned by @TO torAlgData@.
+      Extracts data from the hash table returned by @TO
+      torAlgData@. It is also possible to call the function on the
+      defining ideal of {\tt R}; see @TO (torAlgDataPrint,Ideal,List)@.
 
     Example
       Q = QQ[x,y,z];
-      R = Q/ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
+      R = Q/ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
       torAlgDataPrint( R, {c, e, h, m, n, Class, p, q, r} )      
-     
+///
+
+doc ///
+  Key
+    (torAlgDataPrint, Ideal, List)
+  Headline
+    print invariants of a local ring
+  Usage
+    torAlgDataPrint (R,L) or torAlgDataPrint(I,L)
+  Inputs
+    I : Ideal
+        of a polynomial algebra contained in the irrelevant maximal ideal
+    L : List 
+        of keys from the hash table returned by @TO torAlgData@    
+  Outputs
+      : String
+        of keys specified in {\tt L} together with their values
+  Description
+    Text 
+      Extracts data from the hash table returned by @TO
+      torAlgData@. 
+
+    Example
+      Q = QQ[x,y,z];
+      I = ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
+      torAlgDataPrint( I, {c, e, h, m, n, Class, p, q, r} )      
 ///
 
 doc ///
@@ -1195,9 +1444,9 @@ doc ///
     setAttemptsAtGenericReduction(R,n)
   Inputs
     R : QuotientRing
-        a quotient of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
+        of a polynomial algebra by an ideal contained in the irrelevant maximal ideal
     n : ZZ
-        a positive integer
+        must be non-negative
   Outputs
       : ZZ
         the number of attempts that will be made to perform a generic reduction to compute the Bass 
@@ -1205,16 +1454,19 @@ doc ///
   Description
   
     Text 
-      Changes the number of attempts made to reduce {\tt R} modulo a generic regular sequence of
-      generators of the irrelevant maximal ideal in order to compute the Bass numbers of the
-      local ring obtained by localizing {\tt R} at the irrelevant maximal ideal. The function has
-      the effect of setting {\tt R.attemptsAtGenericReduction = n}, and the number of attempts made is 
-      at most {\tt n^2}. If {\tt R.attemptsAtGenericReduction} is not set, then at most 625 attempts
-      are made.
+      Changes the number of attempts made to reduce {\tt R} modulo
+      a generic regular sequence of generators of the irrelevant
+      maximal ideal in order to compute the Bass numbers of the local
+      ring obtained by localizing {\tt R} at the irrelevant maximal
+      ideal. The function has the effect of setting {\tt
+      R.attemptsAtGenericReduction = n}, and the number of attempts
+      made is at most {\tt n^2}. The default value is 25, so if {\tt
+      R.attemptsAtGenericReduction} is not set, then at most 625
+      attempts are made.
       
     Example
       Q = ZZ/2[u,v,w,x,y,z];
-      R = Q/ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
+      R = Q/ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
       R.?attemptsAtGenericReduction
       setAttemptsAtGenericReduction(R,100)
       R.attemptsAtGenericReduction
@@ -1228,7 +1480,7 @@ doc ///
 
     Example
       Q = ZZ/2[x,y,z];
-      R = Q/ideal (x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
+      R = Q/ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
       setAttemptsAtGenericReduction(R,0)
       torAlgClass R
 ///
@@ -1255,6 +1507,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal( promote(1,Q) )
 assert( torAlgClass(Q/I) === "zero ring" )
+assert( torAlgClass(I) === "zero ring" )
 ///
 
 -- #1 zero ring, local
@@ -1262,6 +1515,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal( x^2-1 )
 assert( torAlgClass(Q/I) === "zero ring" )
+assert( torAlgClass(I) === "zero ring" )
 ///
 
 -- #2 C(0), graded
@@ -1269,7 +1523,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(u+v+w+x+y+z)
 assert( torAlgClass(Q/I) === "C(0)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {5, 0, 0, 0, 1, "C", 0, 0, 0} )
 ///
 
@@ -1278,7 +1532,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x-y^2-z^7+u+v+w)
 assert( torAlgClass(Q/I) === "C(0)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert(L === {5, 0, 0, 0, 1, "C", 0, 0, 0} )
 ///
 
@@ -1287,7 +1541,7 @@ TEST ///
 Q = QQ[x]
 I = ideal(x^2)
 assert( torAlgClass(Q/I) === "C(1)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {1, 1, 0, 1, 1, "C", 0, 0, 0} )
 ///
 
@@ -1295,7 +1549,7 @@ assert( L === {1, 1, 0, 1, 1, "C", 0, 0, 0} )
 TEST ///
 Q = QQ[x]
 I = ideal(x^2-x^3)
-assert( torAlgClass(Q/I) === "C(1)" )
+assert( torAlgClass(I) === "C(1)" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert(L === {1, 1, 0, 1, 1, "C", 0, 0, 0} )
 ///
@@ -1304,7 +1558,7 @@ assert(L === {1, 1, 0, 1, 1, "C", 0, 0, 0} )
 TEST ///
 Q = ZZ/53[x,y]
 I = ideal(x*y)
-assert( torAlgClass(Q/I) === "C(1)" )
+assert( torAlgClass(I) === "C(1)" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {2, 1, 0, 1, 1, "C", 0, 0, 0} )
 ///
@@ -1314,7 +1568,7 @@ TEST ///
 Q = ZZ/53[x,y]
 I = ideal(x*y-x^3)
 assert( torAlgClass(Q/I) === "C(1)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert(L === {2, 1, 0, 1, 1, "C", 0, 0, 0} )
 ///
 
@@ -1323,7 +1577,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x*y,x+y+z,u+v+w)
 assert( torAlgClass(Q/I) === "C(1)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {4, 1, 0, 1, 1, "C", 0, 0, 0} )
 ///
 
@@ -1331,7 +1585,7 @@ assert( L === {4, 1, 0, 1, 1, "C", 0, 0, 0} )
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2-y^3+z^3)
-assert( torAlgClass(Q/I) === "C(1)" )
+assert( torAlgClass(I) === "C(1)" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 1, 0, 1, 1, "C", 0, 0, 0} )
 ///
@@ -1341,7 +1595,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x*y,u*v,x+y+z+u+v+w)
 assert( torAlgClass(Q/I) === "C(2)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {5, 2, 0, 2, 1, "C", 1, 0, 0} )
 ///
 
@@ -1349,7 +1603,7 @@ assert( L === {5, 2, 0, 2, 1, "C", 1, 0, 0} )
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x*y,u*v,z^2-w)
-assert( torAlgClass(Q/I) === "C(2)" )
+assert( torAlgClass(I) === "C(2)" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {5, 2, 0, 2, 1, "C", 1, 0, 0} ) 
 ///
@@ -1359,7 +1613,7 @@ TEST ///
 Q = QQ[x,y]
 I = ideal(x^2,x*y)
 assert( torAlgClass(Q/I) === "S" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {2, 2, 1, 2, 1, "S", 0, 0, 0} )
 ///
 
@@ -1367,7 +1621,7 @@ assert( L === {2, 2, 1, 2, 1, "S", 0, 0, 0} )
 TEST ///
 Q = QQ[x,y]
 I = ideal((x+y^2)^2,(x+y^2)*y)
-assert( torAlgClass(Q/I) === "S" )
+assert( torAlgClass(I) === "S" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert(L === {2, 2, 1, 2, 1, "S", 0, 0, 0} )
 ///
@@ -1376,7 +1630,7 @@ assert(L === {2, 2, 1, 2, 1, "S", 0, 0, 0} )
 TEST ///
 Q = ZZ/53[u,v,w,x,y,z]
 I = ideal(x^2,x*y,y*z,x+y+z+u+v+w)
-assert( torAlgClass(Q/I) === "S" )
+assert( torAlgClass(I) === "S" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {5, 2, 0, 3, 2, "S", 0, 0, 0} )
 ///
@@ -1386,26 +1640,24 @@ TEST ///
 Q = ZZ/53[u,v,w,x,y,z]
 I = ideal(x^2*y-y^2,x^3-x*y)
 assert( torAlgClass(Q/I) === "S" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 2, 1, 2, 1, "S", 0, 0, 0} ) 
 ///
 
 -- #16 B, graded
 TEST ///
-setRandomSeed "TorAlgebra";
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2,x*y,z^2,y*z,x+y+z+u+v+w)
-assert( torAlgClass(Q/I) === "B" )
+assert( torAlgClass(I) === "B" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {5, 3, 1, 4, 1, "B", 1, 1, 2} )
 ///
 
 -- #17 B, local
 TEST ///
-setRandomSeed "TorAlgebra";
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^4-z*w^2,y^3-x^2*w,z^3-x*y,w^3-x*y^2*z^2,z^2*x^3-y*w^2,u,v)
-assert( torAlgClass(Q/I) === "B" )
+assert( torAlgClass(I) === "B" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {4, 3, 0, 5, 2, "B", 1, 1, 2} ) 
 ///
@@ -1415,7 +1667,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal (u*v,w*x,y*z)
 assert( torAlgClass(Q/I) === "C(3)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 3, 0, 3, 1, "C", 3, 1, 3} ) 
 ///
 
@@ -1424,7 +1676,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(u*v,w*(x+w^2),y*z)
 assert( torAlgClass(Q/I) === "C(3)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 3, 0, 3, 1, "C", 3, 1, 3} )
 ///
 
@@ -1432,7 +1684,7 @@ assert( L === {6, 3, 0, 3, 1, "C", 3, 1, 3} )
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^3,x^2*z,x*(z^2+x*y),z^3-2*x*y*z,y*(z^2+x*y),y^2*z,y^3)
-assert( torAlgClass(Q/I) === "G(7), Gorenstein" )
+assert( torAlgClass(I) === "G(7), Gorenstein" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {3, 3, 0, 7, 1, "G", 0, 1, 7} ) 
 ///
@@ -1441,28 +1693,26 @@ assert( L === {3, 3, 0, 7, 1, "G", 0, 1, 7} )
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^6,x^4*z,x^2*(z^2+x^2*y),z^3-2*x^2*y*z,y*(z^2+x^2*y),y^2*z,y^3)
-assert( torAlgClass(Q/I) === "G(7), Gorenstein" )
+assert( torAlgClass(I) === "G(7), Gorenstein" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {3, 3, 0, 7, 1, "G", 0, 1, 7} )
 ///
 
 -- #22 G(2), graded
 TEST ///
-setRandomSeed "TorAlgebra";
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x*y^2,x*y*z,y*z^2,x^4-y^3*z,x*z^3-y^4)
 assert( torAlgClass(Q/I) === "G(2)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 3, 1, 5, 2, "G", 0, 1, 2} ) 
 ///
 
 -- #23 G(4), local
 TEST ///
-setRandomSeed "TorAlgebra";
 Q = QQ[u,v,w,x,y,z]
 I = ideal (x^6,x^2*(z^2+x^2*y),z^3-2*x^2*y*z,y*(z^2+x^2*y),y^2*z,y^3)+x^4*z*ideal(x,y,z)
 assert( torAlgClass(Q/I) === "G(4)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L ===  {6, 3, 0, 7, 2, "G", 0, 1, 4} )
 ///
 
@@ -1471,7 +1721,7 @@ TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
 assert( torAlgClass(Q/I) === "H(0,0)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {3, 3, 2, 5, 2, "H", 0, 0, 0} ) 
 ///
 
@@ -1480,7 +1730,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2,x*(y+v^2)^2)*ideal((y+v^2)*z,x*z,z^2)
 assert( torAlgClass(Q/I) === "H(0,0)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L ===  {6, 3, 2, 5, 2, "H", 0, 0, 0} )
 ///
 
@@ -1488,7 +1738,7 @@ assert( L ===  {6, 3, 2, 5, 2, "H", 0, 0, 0} )
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2,y^2,z^2,x*y,x+u+z,y+v+w) 
-assert( torAlgClass(Q/I) === "H(3,2)" )
+assert( torAlgClass(I) === "H(3,2)" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {4, 3, 0, 4, 2, "H", 3, 2, 2} ) 
 ///
@@ -1497,28 +1747,26 @@ assert( L === {4, 3, 0, 4, 2, "H", 3, 2, 2} )
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2,(y+w^2)^2,z^2,x*(y+w^2))
-assert( torAlgClass(Q/I) === "H(3,2)" )
+assert( torAlgClass(I) === "H(3,2)" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L ===  {6, 3, 0, 4, 2, "H", 3, 2, 2} )
 ///
 
 -- #28 T, graded
 TEST ///
-setRandomSeed "TorAlgebra";
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^3,y^3,z^3,x^2*y*z,x+y+x+u+v+w)
 assert( torAlgClass(Q/I) === "T" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L ===  {5, 3, 0, 4, 3, "T", 3, 0, 0} )
 ///
 
 -- #29 T, local
 TEST ///
-setRandomSeed "TorAlgebra";
 Q = QQ[u,v,w,x,y,z]
 I = ideal((x+u^2)^2,y^2,z^3,(x+u^2)*y*z^2) 
 assert( torAlgClass(Q/I) === "T" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 3, 0, 4, 3, "T", 3, 0, 0} ) 
 ///
 
@@ -1526,7 +1774,7 @@ assert( L === {6, 3, 0, 4, 3, "T", 3, 0, 0} )
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal( u^2,v^2,w^2,x^2,y+z )
-assert( torAlgClass(Q/I) === "C(4)" )
+assert( torAlgClass(I) === "C(4)" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {5, 4, 0, 4, 1, "C", 6, 4, 4} ) 
 ///
@@ -1536,7 +1784,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal( u^2-v^3,z^6,w^2,x^2,y )
 assert( torAlgClass(Q/I) === "C(4)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {5, 4, 0, 4, 1, "C", 6, 4, 4} ) 
 ///
 
@@ -1545,7 +1793,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2,y^2,z^2,x*w,y*w,z*w,u*w^2-x*y*z)
 assert( torAlgClass(Q/I) === "GT" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 4, 0, 7, 1, "GT", 3, 3, 7} ) 
 ///
 
@@ -1553,18 +1801,17 @@ assert( L === {6, 4, 0, 7, 1, "GT", 3, 3, 7} )
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2,y^2,z^2,x*w,y*w,z*w,w^2-x*y*z)
-assert( torAlgClass(Q/I) === "GT" )
+assert( torAlgClass(I) === "GT" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 4, 0, 7, 1, "GT", 3, 3, 7} ) 
 ///
 
 -- #34, GH(5) graded
 TEST ///
-setRandomSeed "TorAlgebra"
 Q = QQ[w,x,y,z]
 I = ideal fromDual(matrix random(3,Q))
 assert( torAlgClass(Q/I) === "GH(5)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {4, 4, 0, 6, 1, "GH", 5, 6, 6} ) 
 ///
 
@@ -1572,17 +1819,16 @@ assert( L === {4, 4, 0, 6, 1, "GH", 5, 6, 6} )
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(w^2-x*y*z,x^3,y^3,x^2*z,y^2*z,z^3-x*y*w,x*z*w,y*z*w,z^2*w-x^2*y^2)
-assert( torAlgClass(Q/I) === "GH(2)" )
+assert( torAlgClass(I) === "GH(2)" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 4, 0, 9, 1, "GH", 2, 3, 9} ) 
 ///
 
 -- #36 GS, graded
 TEST ///
-setRandomSeed "TorAlgebra"
 Q = QQ[w,x,y,z]
 I = ideal fromDual(matrix random(2,Q))
-assert( torAlgClass(Q/I) === "GS" )
+assert( torAlgClass(I) === "GS" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {4, 4, 0, 9, 1, "GS", 0, 0, 9} ) 
 ///
@@ -1592,7 +1838,7 @@ TEST ///
 Q = QQ[w,x,y,z]
 I = ideal(w^2,x^2,y^2)*ideal(y^2,z^2)
 assert( torAlgClass(Q/I) === "codepth 4 Golod" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {4, 4, 2, 6, 1, "Golod", 0, 0, "-"} ) 
 ///
 
@@ -1600,7 +1846,7 @@ assert( L === {4, 4, 2, 6, 1, "Golod", 0, 0, "-"} )
 TEST ///
 Q = QQ[w,x,y,z]
 I = ideal(w^2-y^3,x^2,y^2)*ideal(y^2,z^2)
-assert( torAlgClass(Q/I) === "codepth 4 Golod" )
+assert( torAlgClass(I) === "codepth 4 Golod" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {4, 4, 2, 6, 1, "Golod", 0, 0, "-"} ) 
 ///
@@ -1609,6 +1855,7 @@ assert( L === {4, 4, 2, 6, 1, "Golod", 0, 0, "-"} )
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2,y^2,z^2,x*w,y*w,z*w,w^2)
+assert( torAlgClass(I) === "codepth 4 no class" )
 assert( torAlgClass(Q/I) === "codepth 4 no class" )
 ///
 
@@ -1616,6 +1863,7 @@ assert( torAlgClass(Q/I) === "codepth 4 no class" )
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2,y^2,z^2,u+x*w,y*w,z*w,w^2)
+assert( torAlgClass(I) === "codepth 4 no class" )
 assert( torAlgClass(Q/I) === "codepth 4 no class" )
 ///
 
@@ -1624,7 +1872,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal( u^2,v^2,w^2,x^2,y^2 )
 assert( torAlgClass(Q/I) === "C(5)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 5, 0, 5, 1, "C", 10, 10, 5} ) 
 ///
 
@@ -1633,7 +1881,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal( u^2-v^3,z^6,w^2,x^2,y^3 )
 assert( torAlgClass(Q/I) === "C(5)" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 5, 0, 5, 1, "C", 10, 10, 5} ) 
 ///
 
@@ -1642,7 +1890,7 @@ TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2,y^2,z^2,x*w,y*w,z*w,w^3-x*y*z,v^2)
 assert( torAlgClass(Q/I) === "codepth 5 Gorenstein" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 5, 0, 8, 1, "Gorenstein", "UNDETERMINED", "UNDETERMINED", 8} ) 
 ///
 
@@ -1650,7 +1898,7 @@ assert( L === {6, 5, 0, 8, 1, "Gorenstein", "UNDETERMINED", "UNDETERMINED", 8} )
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2,y^2,z^2,x*w,y*w,z*w,w^2-x*y*z,v^2)
-assert( torAlgClass(Q/I) === "codepth 5 Gorenstein" )
+assert( torAlgClass(I) === "codepth 5 Gorenstein" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 5, 0, 8, 1, "Gorenstein", "UNDETERMINED", "UNDETERMINED", 8} ) 
 ///
@@ -1659,7 +1907,7 @@ assert( L === {6, 5, 0, 8, 1, "Gorenstein", "UNDETERMINED", "UNDETERMINED", 8} )
 TEST ///
 Q = QQ[v,w,x,y,z]
 I = ideal(w^2,x^2,y^2)*ideal(y^2,z^2,v^3-x*y*z)
-assert( torAlgClass(Q/I) === "codepth 5 Golod" )
+assert( torAlgClass(I) === "codepth 5 Golod" )
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {5, 5, 2, 9, 1, "Golod", 0, 0, "-"} ) 
 ///
@@ -1669,7 +1917,7 @@ TEST ///
 Q = QQ[v,w,x,y,z]
 I = ideal(v,w,x,y,z)*ideal(z^2-x*y*v)
 assert( torAlgClass(Q/I) === "codepth 5 Golod" )
-L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
+L = torAlgDataList(I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {5, 5, 4, 5, 1, "Golod", 0, 0, "-"} ) 
 ///
 
@@ -1677,6 +1925,7 @@ assert( L === {5, 5, 4, 5, 1, "Golod", 0, 0, "-"} )
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2,y^2,z^2,x*w,y*w,z*w,w^2,v^2)
+assert( torAlgClass(I) === "codepth 5 no class" )
 assert( torAlgClass(Q/I) === "codepth 5 no class" )
 ///
 
@@ -1684,6 +1933,7 @@ assert( torAlgClass(Q/I) === "codepth 5 no class" )
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x^2,y^2,z^2,x*w,y*w,z*w,w^2-x*y*z*v,v^2)
+assert( torAlgClass(I) === "codepth 5 no class" )
 assert( torAlgClass(Q/I) === "codepth 5 no class" )
 ///
 
@@ -1691,6 +1941,7 @@ assert( torAlgClass(Q/I) === "codepth 5 no class" )
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal (u^2,v^2,w^2,x^2,x*y^15,w*z^4)
+assert( torAlgClass(I) === "codepth 6 no class" )
 assert( torAlgClass(Q/I) === "codepth 6 no class" )
 ///
 
@@ -1728,5 +1979,5 @@ end
 uninstallPackage "TorAlgebra"
 restart
 installPackage "TorAlgebra"
+loadPackage "TorAlgebra"
 check "TorAlgebra"
-

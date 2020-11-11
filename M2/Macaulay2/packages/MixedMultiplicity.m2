@@ -27,6 +27,7 @@ newPackage(
 		}
 	},
 	Headline => "Mixed Multiplicities",
+	Keywords => {"Commutative Algebra"},
 	DebuggingMode => false,
 	Reload => true,
 	Headline => "Mixed Multiplicities of ideals"

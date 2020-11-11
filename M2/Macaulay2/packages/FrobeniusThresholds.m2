@@ -28,6 +28,7 @@ Authors => {
      }
 },
 Headline => "F-thresholds",
+Keywords => {"Commutative Algebra"},
 AuxiliaryFiles => true,
 PackageExports => {"TestIdeals"}
 )

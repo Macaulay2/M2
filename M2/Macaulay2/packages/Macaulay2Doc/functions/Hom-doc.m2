@@ -24,20 +24,28 @@ document {
      Outputs => {
 	  Module => {"The module Hom_R(M,N), where M and N are both R-modules"}
 	  },
-     "If ", TT "M", " or ", TT "N", " is an ideal or ring, it is regarded as a module in the evident way.",
-     PARA{},
+     PARA{
+     	  "If ", TT "M", " or ", TT "N", " is an ideal or ring, it is regarded as a module in the evident way.",
+	  },
      EXAMPLE lines ///
      	  R = QQ[x,y]/(y^2-x^3);
 	  M = image matrix{{x,y}}
 	  H = Hom(M,M)
 	  ///,
-     "Specific homomorphisms may be obtained using ", TO homomorphism, ".",
+     PARA {
+	  "To recover the modules used to create a Hom-module, use the function ", TO "formation", "."
+	  },
+     PARA {      
+     	  "Specific homomorphisms may be obtained using ", TO homomorphism, ", as follows."
+	  },
      EXAMPLE lines ///
 	  f0 = homomorphism H_{0}
 	  f1 = homomorphism H_{1}
 	  ///,
-     "In this example, f0 is the identity map, and f1 maps x to y and y to x^2.",
-     SeeAlso => {homomorphism, Ext, compose}
+     PARA {
+	  "In the example above, ", TT "f0", " is the identity map, and ", TT "f1", " maps x to y and y to x^2."
+	  },
+     SeeAlso => {homomorphism, Ext, compose, formation}
      }
 
 document { 

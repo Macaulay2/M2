@@ -12,6 +12,7 @@ newPackage(
 	  {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}
 	  },
      Headline => "place an ideal in Noether normal position",
+     Keywords => {"Commutative Algebra"},
      DebuggingMode => false
      )
 

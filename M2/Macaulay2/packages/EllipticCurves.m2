@@ -7,6 +7,7 @@ newPackage(
 		  Email => "oneto@math.su.se"},
 	    {Name => "Stefano Marseglia", 
 		  Email => "stefanom@math.su.se"}},
+	Keywords => {"Algebraic Number Theory"},
     	Headline => "group law on elliptic curves (and counting points with brute force methods)"
     	)
 
@@ -534,7 +535,7 @@ document {
 
 document {
     Key => (ellCurve,Thing,Thing,Thing),
-    Inputs => {"A"=>{"a coefficient in the field ", TT "K"}, "B"=>{"a coefficient in the field ", TO "K"}, "K"=>{"any field"}},
+    Inputs => {"A"=>{"a coefficient in the field ", TT "K"}, "B"=>{"a coefficient in the field ", TT "K"}, "K"=>{"any field"}},
     Outputs => {ofClass EllipticCurve},
     Usage => "ellCurve(A,B,K)",
     Headline => "A method for creating elliptic curves in short Weierstrass form.",

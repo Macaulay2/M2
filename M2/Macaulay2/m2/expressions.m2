@@ -913,8 +913,8 @@ net SparseMonomialVectorExpression := v -> (
 net Table := x -> netList (toList x, HorizontalSpace=>2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center)
 
 compactMatrixForm=true; -- governs net MatrixExpression
-matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpace => 1, VerticalSpace => 0, BaseRow => 0, Boxes => false, Alignment => Left },
-                                   false => new OptionTable from { HorizontalSpace => 2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center } }
+matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpace => 1, VerticalSpace => 0, BaseRow => 0, Alignment => Left },
+                                   false => new OptionTable from { HorizontalSpace => 2, VerticalSpace => 1, BaseRow => 0, Alignment => Center } }
 
 toCompactString := method(Dispatch => Thing)
 toCompactParen = x -> if precedence x < prec symbol * then "(" | toCompactString x | ")" else toCompactString x
@@ -936,27 +936,23 @@ net MatrixExpression := x -> (
     if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
     else (
 	x=applyTable(toList x,if compactMatrixForm then toCompactString else net);
-	m := netList(x,matrixDisplayOptions#compactMatrixForm);
-	side := "|" ^ (height m, depth m);
-	horizontalJoin(side," ",m," ",side)
-	)
-     )
+	netList(x,Boxes=>{false,{0,#x#0}},matrixDisplayOptions#compactMatrixForm)
+     ))
 html MatrixExpression := x -> html TABLE toList x
 
 net MatrixDegreeExpression := x -> (
     if all(x#0,r->all(r,i->class i===ZeroExpression)) then "0"
-    else horizontalJoin(stack( x#1 / toString ), " ", net MatrixExpression x#0)
-    )
+    else (
+	x=apply(#x#0,i->apply(prepend(x#1#i,x#0#i),if compactMatrixForm then toCompactString else net));
+	netList(x,Boxes=>{false,{1,#x#0}},matrixDisplayOptions#compactMatrixForm)
+     ))
 
 net VectorExpression := x -> (
     if all(x,i->class i===ZeroExpression) then "0"
      else (
 	 x=apply(toList x,y->{(if compactMatrixForm then toCompactString else net)y});
-	 m := netList(x,HorizontalSpace=>if compactMatrixForm then 1 else 2, VerticalSpace => if compactMatrixForm then 0 else 1, BaseRow => 0, Boxes => false, Alignment => Center);
-	 side := "|" ^ (height m, depth m);
-	 horizontalJoin(side," ",m," ",side)
-	 )
-     )
+	netList(x,Boxes=>{false,{0,1}},HorizontalSpace=>1,VerticalSpace=>if compactMatrixForm then 0 else 1,BaseRow=>0,Alignment=>Center)
+     ))
 html VectorExpression := x -> html TABLE apply(toList x,y->{y})
 
 -----------------------------------------------------------------------------
@@ -1225,7 +1221,7 @@ suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","bre
 suffixesRegExp := "("|demark("|",suffixes)|")\\'";
 texVariable := x -> (
     if x === "" then return "";
-    xx := separate("$",x); if #xx > 1 then return concatenate between("\\$",texVariable\xx);
+    xx := separate("\\$",x); if #xx > 1 then return concatenate between("\\$",texVariable\xx);
     if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb "|x#0|"}";
     if last x === "'" then return texVariable substring(x,0,#x-1) | "'";
     r := regex(suffixesRegExp,x); if r =!= null then (
@@ -1236,12 +1232,12 @@ texVariable := x -> (
     )
 texMath Symbol := x -> texVariable toString x;
 
+-----------------------------------------------------------------------------
+
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (files,x) -> apply(files, o -> o << x)
 
 o := () -> concatenate(interpreterDepth:"o")
-
-symbol briefDocumentation <- identity			    -- temporary assignment
 
 Thing#{Standard,AfterPrint} = x -> (
      << endl;				  -- double space
@@ -1251,27 +1247,26 @@ Thing#{Standard,AfterPrint} = x -> (
      << endl;
      )
 
--- Type#{Standard,AfterPrint} = x -> (
---      << endl;				  -- double space
---      << o() << lineNumber;
---      y := class x;
---      << " : " << y << ", with ancestors:";
---      while ( y = parent y; << " " << y; y =!= Thing ) do ();
---      << endl;
---      )
+-* TODO: add an option to re-enable these two
+Type#{Standard,AfterPrint} = x -> (
+     << endl;				  -- double space
+     << o() << lineNumber;
+     y := class x;
+     << " : " << y << ", with ancestors: ";
+     << concatenate between_" < " drop(toString \ ancestors y, 1);
+     << endl;
+     )
 
--*
 Function#{Standard,AfterPrint} = x -> (
      Thing#{Standard,AfterPrint} x;
-     -- briefDocumentation x; -- from now on, type "?foo" to get brief documentation on foo
+     briefDocumentation x;
      )
 *-
+
 Expression#{Standard,AfterPrint} = x -> (
      << endl;				  -- double space
      << o() << lineNumber << " : " << Expression << " of class " << class x << endl;
      )
-
-
 
 -----------------------------------------------------------------------------
 
@@ -1283,8 +1278,6 @@ expression Boolean :=
 expression Type := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
-
-? Function := x -> (briefDocumentation x;)
 
 Nothing#{Standard,AfterPrint} = identity
 ZZ#{Standard,AfterPrint} = identity

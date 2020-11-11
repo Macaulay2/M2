@@ -16,6 +16,7 @@ newPackage(
 		 HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}
                    },
     	Headline => "random smooth space curves",
+	Keywords => {"Examples and Random Objects"},
      	PackageExports => {"RandomObjects"},
     	DebuggingMode => false
         )

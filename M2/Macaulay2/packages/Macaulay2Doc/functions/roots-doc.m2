@@ -4,7 +4,7 @@ document {
     Usage => "roots p",
     Inputs => {
       "p" => "a univariate polynomial over ZZ, QQ, RR or CC.",
-      Precision => { "the number of precision bits used to compute the roots.", "The default ", TO "precision", " is 53 bits for polynomials over ", TO "ZZ", " or ", TO "QQ", " and the same as the coefficient ring for ", TO "RR[x]", " or ", TO "CC[x]", "." },
+      Precision => { "the number of precision bits used to compute the roots.", "The default ", TO "precision", " is 53 bits for polynomials over ", TO "ZZ", " or ", TO "QQ", " and the same as the coefficient ring for ", TT "RR[x]", " or ", TT "CC[x]", "." },
       Unique => Boolean => { "whether to return multiple roots one or multiple times." },
     },
     Outputs => {List => {"The roots of p each one represented as an elements of ", TO "CC", ".", }},
@@ -21,7 +21,7 @@ document {
       "o7#0",
     },
     PARA {
-      "The roots are computed using ", TO "MPsolve", ".",
+      "The roots are computed using ", TO "MPSolve", ".",
     },
 }
 

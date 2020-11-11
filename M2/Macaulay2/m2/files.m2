@@ -61,13 +61,8 @@ baseFilename = fn -> (
 
 findFiles = method(Options => new OptionTable from { Exclude => {}, FollowLinks => false })
 findFiles String := opts -> name -> (
-     excludes := opts.Exclude;
-     if class excludes =!= List then (
-     	  excludes = {excludes};
-	  opts = mergeopts(opts, new OptionTable from {Exclude => excludes});
-	  );
      bn := baseFilename name;
-     if any(excludes, pattern -> match(pattern, bn)) then return {};
+     if match(opts.Exclude, bn) then return {};
      if not fileExists name and readlink name === null then return {};
      if not (isDirectory name or opts.FollowLinks and isDirectory (name|"/.")) then return {name};
      if not name#-1 === "/" then name = name | "/";
@@ -75,8 +70,6 @@ findFiles String := opts -> name -> (
 	       f -> if f === "." or f === ".." then {} else findFiles(name|f,opts)))
      )
 findFiles List := opts -> names -> flatten apply(names,findFiles)
-
-backupFileRegexp = "\\.~[0-9.]+~$"					    -- we don't copy backup files.
 
 -- The unix 'cp' command is confusing when copying directories, because the
 -- result depends on whether the destination exists:
@@ -110,7 +103,9 @@ backupFileRegexp = "\\.~[0-9.]+~$"					    -- we don't copy backup files.
 -- For safety, we insist the destination directory already exist.
 -- Normally the base names of the source and destination directories will be
 -- the same.
-copyDirectory = method(Options => mergeopts( options copyFile, options findFiles, new OptionTable from { Verbose => false }))
+
+copyDirectory = method( Options =>
+    options copyFile ++ options findFiles ++ { Exclude => "\\.~[0-9.]+~$", Verbose => false })
 copyDirectory(String,String) := opts -> (src,dst) -> (
      if not fileExists src then error("directory not found: ",src);
      if not isDirectory src then error("file not a directory: ",src);
@@ -127,10 +122,12 @@ copyDirectory(String,String) := opts -> (src,dst) -> (
 	       else (
      		    if not isRegularFile srcf 
 		    then (if opts.Verbose then stderr << "--  skipping: non regular file: " << srcf << endl)
-		    else if match(backupFileRegexp,srcf)
-		    then (if opts.Verbose then stderr << "--  skipping: backup file: " << srcf << endl)
+		    else if match(opts.Exclude, srcf)
+		    then (if opts.Verbose then stderr << "--  skipping: excluded file: " << srcf << endl)
 		    else copyFile(srcf,tarf,applyPairs(options copyFile, (k,v) -> (k,opts#k)))))));
-symlinkDirectory = method( Options => mergeopts(options findFiles, new OptionTable from { Verbose => false, Undo => false }))
+
+symlinkDirectory = method( Options =>
+    options findFiles ++ { Exclude => "\\.~[0-9.]+~$", Undo => false, Verbose => false })
 symlinkDirectory(String,String) := opts -> (src,dst) -> (
      if not fileExists src then error("directory not found: ",src);
      if not isDirectory src then error("file not a directory: ",src);
@@ -149,8 +146,8 @@ symlinkDirectory(String,String) := opts -> (src,dst) -> (
 	       else (
      		    if not isRegularFile srcf 
 		    then (if opts.Verbose then stderr << "--  skipping: non regular file: " << srcf << endl)
-		    else if match(backupFileRegexp,srcf)
-		    then (if opts.Verbose then stderr << "--  skipping: backup file: " << srcf << endl)
+		    else if match(opts.Exclude, srcf)
+		    then (if opts.Verbose then stderr << "--  skipping: excluded file: " << srcf << endl)
 		    else (
 			 tardir := concatenate between("/",drop(separate("/",tarf),-1)); -- directory part of file name
 			 relsrcf := relativizeFilename(tardir,srcf);

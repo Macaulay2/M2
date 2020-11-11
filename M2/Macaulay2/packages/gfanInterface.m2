@@ -12,6 +12,7 @@ newPackage(
 		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"},
 	    {Name => "Diane Maclagan (current maintainer)", Email => "D.Maclagan@warwick.ac.uk", HomePage=>"http://homepages.warwick.ac.uk/staff/D.Maclagan/"}},
 	Headline => "interface to Anders Jensen's Gfan software",
+	Keywords => {"Interfaces"},
 	Configuration => {
 		"path" => "",
 		"fig2devpath" => "",
@@ -340,28 +341,28 @@ gfanParseIdeals String := (s) -> (
 
 gfanParseIdeal = method()
 gfanParseIdeal String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	value concatenate G
 )
 
 gfanParseMarkedIdeal = method()
 gfanParseMarkedIdeal String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	markedPolynomialList transpose apply(gfanParseList(concatenate G), p -> gfanParseMarkedPoly(p))
 )
 
 gfanParseMarkedIdeals = method()
 gfanParseMarkedIdeals String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	apply(gfanParseList(concatenate G), L -> markedPolynomialList transpose apply(L, p -> gfanParseMarkedPoly(p)))
 )
 
 gfanParseMPL = method()
 gfanParseMPL String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	new MarkedPolynomialList from
 		transpose apply(gfanParseList(concatenate G), p -> gfanParseMarkedPoly(p))
@@ -369,7 +370,7 @@ gfanParseMPL String := (s) -> (
 
 gfanParseLMPL = method()
 gfanParseLMPL String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	apply(gfanParseList(concatenate G), L ->
 		new MarkedPolynomialList from transpose apply(L, p -> gfanParseMarkedPoly(p)))
