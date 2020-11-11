@@ -1,0 +1,125 @@
+-- TODO: move this to an appropriate package
+-- TODO: now we can defined intersect for Set, CoherentSheaf, etc.
+-- TODO: add tests
+-- TODO: add intersection with a ring, via selectInSubring
+
+-- This is a map from method keys to strategy hash tables
+-- Also used in the Colon package
+algorithms = new MutableHashTable from {}
+
+-----------------------------------------------------------------------------
+-- utilities
+-----------------------------------------------------------------------------
+-- both are also used in Colon.m2
+
+-- TODO: should this move to runHooks?
+-- TODO: not quite emacs compatible, perhaps M2-mode should be improved
+debugInfo = (func, key, strategy) -> if debugLevel > 0 then printerr(
+    toString key, " with Strategy => ", toString strategy, " from ", symbolLocation func)
+
+eliminationInfo = method()
+eliminationInfo Ring := (cacheValue symbol eliminationInfo) (R -> (
+	X := local X;
+	n := numgens R;
+	R1 := (coefficientRing R)[X_0..X_n, MonomialOrder => Eliminate 1, MonomialSize => 16];
+	fto := map(R1, R, drop(generators R1, 1));
+	fback := map(R, R1, matrix{{0_R}} | vars R);
+	(R1, fto, fback)))
+
+-----------------------------------------------------------------------------
+-- Intersection of ideals and modules
+-----------------------------------------------------------------------------
+
+intersect = method(Dispatch => Thing, Options => {Strategy => null}) -- TODO: add MinimalGenerators?
+intersect Ideal    := Ideal  => opts -> I ->  Ideal.intersect (opts, 1 : I)
+intersect Module   := Module => opts -> M -> Module.intersect (opts, 1 : M)
+
+intersect List     :=           opts -> L -> intersect(opts, toSequence L)
+intersect Sequence :=           opts -> L -> (
+    if not #L > 0        then error "intersect: expected at least one object";
+    if not same apply(L, ring) then error "intersect: expected objects in the same ring";
+    if not same apply(L, class)
+    -- TODO: can this be simplified? perhaps by removing MonomialIdeal?
+    and not all(L, l -> instance(l, Ideal)) then error "intersect: expected objects of the same type";
+    type := class L#0;
+    func := lookup(symbol intersect, type);
+    if func === null     then error "intersect: no method for objects of type " | toString type;
+    (func opts) L)
+
+-- TODO: how to cache partial computation?
+intersectHelper := (L, key, opts) -> (
+    strategy := opts.Strategy;
+    C := if strategy === null then runHooks(key, (opts, L))
+    else if algorithms#key#?strategy then (
+	func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (L)
+    else error("unrecognized Strategy for intersect: '", toString strategy, "'; expected: ", toString keys algorithms#key);
+
+    if C =!= null then C else if strategy === null
+    then error("no applicable method for ", toString key)
+    else error("assumptions for intersect strategy ", toString strategy, " are not met"))
+
+-----------------------------------------------------------------------------
+
+Module.intersect = opts -> L -> intersectHelper(L, (intersect, Module, Module), opts)
+
+algorithms#(intersect, Module, Module) = new MutableHashTable from {
+    "Default" => opts -> L -> (
+	M := L#0;
+	R := ring M;
+	-- check that the modules are compatible
+	if not same apply(L, ambient)
+	or not same apply(L, N -> N.?relations)
+	or not same apply(L, N -> N.?relations and (N.relations == M.relations or image N.relations == image M.relations))
+	then error "intersect: all modules must be submodules of the same module";
+	--
+	relns := directSum apply(L, N -> if N.?relations then generators N | N.relations else generators N);
+	g := map(R^(#L), R^1, table(#L, 1, x -> 1)) ** id_(ambient M);
+	h := modulo(g, relns);
+	--
+	if M.?relations then h = compress( h % M.relations );
+	subquotient( h, if M.?relations then M.relations )),
+    }
+
+-- Installing hooks for intersect(Module, Module)
+scan({"Default"}, strategy -> addHook(key := (intersect, Module, Module),
+	(opts, L) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) L))
+
+-----------------------------------------------------------------------------
+
+Ideal.intersect = opts -> L -> intersectHelper(L, (intersect, Ideal, Ideal), opts)
+
+algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
+    "Default" => opts -> L -> ideal intersect(opts, apply(L, module)),
+
+    "Elimination" => opts -> L -> (
+	R := ring L#0;
+	-- TODO: is this the right assumption?
+	if not isPolynomialRing R
+	-- or not (isField(kk := coefficientRing R) or kk === ZZ)
+	then return null;
+	(R1, fto, fback) := eliminationInfo R;
+	fold(L, (I, J) -> (
+		I1 := R1_0 * fto I;
+		J1 := (1 - R1_0) * fto J;
+		L := I1 + J1;
+		--g := gens gb J;
+		--g := groebnerBasis(J, Strategy => "MGB");
+		g := groebnerBasis(L, Strategy => "F4"); -- TODO: try "MGB"
+		p1 := selectInSubring(1, g);
+		ideal fback p1))),
+
+    Monomial => opts -> L -> (
+	R := ring L#0;
+	-- TODO: is this the right assumption?
+	if not isPolynomialRing R
+	or not all(L, isMonomialIdeal)
+	then return null;
+	-- TODO: make rawIntersect return MonomialIdeal when inputs are MonomialIdeals, then simplify this
+	cast := if instance(L#0, MonomialIdeal) then monomialIdeal else ideal;
+	cast generators fold(L, (I, J) ->
+	    newMonomialIdeal(R, rawIntersect(raw monomialIdeal I, raw monomialIdeal J)))),
+    }
+
+-- Installing hooks for intersect(Ideal, Ideal)
+scan({"Default", "Elimination", Monomial}, strategy -> addHook(key := (intersect, Ideal, Ideal),
+	(opts, L) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) L))

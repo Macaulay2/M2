@@ -64,6 +64,7 @@ gradedmodules.m2
 chaincomplexes.m2
 res.m2
 monideal.m2
+intersect.m2
 radical.m2
 factor.m2
 integrate.m2

@@ -261,7 +261,7 @@ ggConcatBlocks = (tar,src,mats) -> (
      f)
 
 sameringMatrices = mats -> (
-     if sameresult(m -> (if m.?RingMap then m.RingMap,ring target m, ring source m), mats)
+     if same apply(mats, m -> (if m.?RingMap then m.RingMap,ring target m, ring source m))
      then mats
      else (
 	  R := try ring sum apply(toList mats, m -> 0_(ring target m)) else error "expected matrices over compatible rings";
