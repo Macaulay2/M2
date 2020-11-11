@@ -188,6 +188,9 @@ truncatedDual (Point,Ideal,ZZ) := o -> (p,I,d) -> (
     L := numNoethOpsAtPoint(I,p, DependentSet => depVars, DegreeLimit => d, Tolerance => t);
     dualSpace(L, p)
 )
+truncatedDual (Matrix, Ideal, ZZ) := o -> (p, I, d) -> truncatedDual(point p, I, d, o)
+truncatedDual (Point, Matrix, ZZ) := o -> (p, I, d) -> truncatedDual(p, ideal I, d, o)
+truncatedDual (Matrix, Matrix, ZZ) := o -> (p, I, d) -> truncatedDual(point p, ideal I, d, o)
 
 zeroDimensionalDual = method(TypicalValue => DualSpace, Options => {Tolerance => null})
 zeroDimensionalDual (Point,Ideal) := o -> (p,I) -> (
@@ -196,6 +199,9 @@ zeroDimensionalDual (Point,Ideal) := o -> (p,I) -> (
     L := numNoethOpsAtPoint(I,p, DependentSet => depVars, Tolerance => t);
     dualSpace(L, p)
 )
+zeroDimensionalDual (Matrix,Ideal) := o -> (p,I) -> zeroDimensionalDual(point p, I, o)
+zeroDimensionalDual (Point,Matrix) := o -> (p,I) -> zeroDimensionalDual(p, ideal I, o)
+zeroDimensionalDual (Matrix,Matrix) := o -> (p,I) -> zeroDimensionalDual(point p, ideal I, o)
 ----------------------------------
 
 --An object that stores the data for an ongoing iterative tuncated dual space computation
