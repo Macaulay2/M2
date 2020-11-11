@@ -47,20 +47,12 @@ export {
     "diffOp",
     "normalize",
 
-    --Data type keys OLD
-    "Ops",
-    "Prime",
-    -- OLD
-
-    "diffAlg", -- OLD
     "noetherianOperators",
     "numericalNoetherianOperators",
     "DependentSet",
     -- "noethOpsFromComponents", --TODO should be rewritten or removed
     -- "coordinateChangeOps", --TODO should be rewritten or removed
-    --"sanityCheck",
     "rationalInterpolation",
-    --"applyNOp",
     "InterpolationTolerance",
     "InterpolationDegreeLimit",
     "NoetherianDegreeLimit",
@@ -68,10 +60,9 @@ export {
     "TrustedPoint",
 
     --functions from punctual Hilb approach
-    --"getNoetherianOperatorsHilb", --TODO remove
     "getIdealFromNoetherianOperators",
     "joinIdeals",
-    "mapToPunctualHilbertScheme"
+    "mapToPunctualHilbertScheme" -- TODO does this have to be exported?
 
 }
 
@@ -92,57 +83,6 @@ protect \ {
 
 -----------------------------------------------------------------------------------------
 load "NoetherianOperators/pointSampling.m2"
---
------  Noetherian operator data structures
--- TODO remove this
-SetOfNoethOps = new Type of HashTable;
-SetOfNoethOps / Function := (N, f) -> (entries N) / f;
-SetOfNoethOps#{Standard,AfterPrint} = x -> (
-    o := () -> concatenate(interpreterDepth:"o");
-    << endl;                 -- double space
-    << o() << lineNumber;
-    y := class x;
-    << " : " << "set of Noetherian operators";
-    if x#?Prime then << " over the prime "<<x#Prime
-    else if x#?Point then << " evaluated at "<< x#Point;
-    << endl;
-)
-SetOfNoethOps _* := N -> N.Ops;
-SetOfNoethOps _ ZZ := (N, i) -> (N.Ops)#i;
-
-setOfNoethOps = method(Options=>{Point=>null})
-setOfNoethOps(Matrix) := o -> M -> (
-    R := coefficientRing(ring M);
-    if o.Point === null then error "needs prime or Point";
-    setOfNoethOps(M, ideal(vars(R) - matrix(o#Point)), Point=>point o#Point)
-)
-setOfNoethOps(Matrix,Ideal) := o -> (M,P) -> (
-    new SetOfNoethOps from {
-        Gens => M,
-        Ops => sort flatten entries M,
-        Point => o#Point,
-        Prime => P
-    }
-)
-
-entries SetOfNoethOps := N -> N.Ops;
-gens SetOfNoethOps := o -> N -> N.Gens;
-net SetOfNoethOps := N -> net N.Ops;
-netList SetOfNoethOps := opts -> N -> netList(N.Ops, opts);
-numgens SetOfNoethOps := N -> #N.Ops;
-ring SetOfNoethOps := N -> ring gens N;
-sort SetOfNoethOps := opts -> N -> (
-    new SetOfNoethOps from applyPairs(N, (i,j) -> if i === symbol Ops then (i, sort j) else (i,j))
-)
-
--- dualSpace SetOfNoethOps := N -> (
---     R' := ring gens N;
---     if N#Point === null then error("needs a Point");
---     R := coefficientRing R';
---     R'toR := map(R,R',vars R);
---     dualSpace(R'toR (gens N), N#Point)
---     )
-
 -- Create a dual space from a list of Noetherian operators
 -- Caveat: if Noetherian operators have non-constant coefficients,
 --          behavior is undefined.
@@ -163,10 +103,6 @@ b = dualSpace(matrix{{12*x + 3*x^2*y, 4*x*y + 4}}, pt)
 assert(gens a.Space == gens b.Space)
 assert(point a == point b)
 ///
-
--- Maybe not needed?
-NoethOp = new Type of HashTable;
-
 
 -- Default tolerance value respectively for exact fields and inexact fields
 defaultT = R -> if precision 1_R == infinity then 0 else 1e-6;
@@ -667,16 +603,6 @@ basisIndices = (M, tol) -> (
 --
 -----  Noetherian operator code
 --
-memoRing = memoize( (R,diffVars) -> R(monoid[diffVars]))
-diffAlg = method()
-diffAlg(Ring) := R -> (
-    diffVars := apply(gens R, i -> value("symbol d" | toString(i)) );
-    memoRing(R,diffVars)
-)
-diffAlg(Ideal,Ring) := (P,R) -> (
-    diffVars := apply(gens R, i -> value("symbol d" | toString(i)) );
-    (R/P)(monoid[diffVars])
-)
 
 -- DiffOp is a type of hash table, which contains one key, Op. This is to make inheritance with NoethOp work.
 -- The value of Op is a HashTable, with keys corresponding to partial monomials, 
@@ -771,11 +697,6 @@ normalize DiffOp := D -> 1/(sub( D#(first sort keys D), coefficientRing ring D))
 ZeroDiffOp = new Type of DiffOp
 new ZeroDiffOp from Ring := (DD, R) -> hashTable{1_R => 0_R}
 toExternalString ZeroDiffOp := D -> "new ZeroDiffOp from " | toExternalString(ring D)
--- maybe ZeroDiffOp should have a ring? TODO
--- ring ZeroDiffOp := D -> error"the zero operator has no ring";
--- new ZeroDiffOp from Thing := (DD, x) -> error"not implemented"
--- new ZeroDiffOp of Thing from Thing := (DD, TT, x) -> error"not implemented"
--- new ZeroDiffOp of Thing := (DD, TT) -> error"not implemented"
 
 -- Type used for interpolated differential operators
 -- As in DiffOp, each key corresponds to a monomial,
@@ -998,14 +919,7 @@ getDepIndVars = true >> opts -> P -> (
     (depVars,indVars)
 )
 
-
 noetherianOperatorsViaMacaulayMatrix (Ideal) := List => true >> opts -> (I) -> noetherianOperatorsViaMacaulayMatrix(I, ideal gens radical I, opts)
--- TODO is this needed?
-noetherianOperatorsViaMacaulayMatrix (Ideal, Point) := List => true >> opts -> (I, p) -> (
-    P := ideal ((gens ring I) - p.Coordinates);
-    noetherianOperatorsViaMacaulayMatrix(I,P,opts)
-)
-
 
 -- Clears denominators of a matrix:
 -- multiplies each column of M by the lcm of the denominators
@@ -1039,8 +953,7 @@ numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
         if member(R_i,depVars) then R_i+p_(0,i) else p_(0,i)
         ))};
     RtoS := map(S,R,sub(subs,S));
-    -- TODO this is unused!
-    -- P := sub(ideal(subs - p),S);
+
     L := macaulayMatrixKernel(RtoS I, coefficientRing S, DegreeLimit => degLim, Tolerance => tol, Rational => true);
     matrixToDiffOps(promote(last L, R), sub(first L, R))
 )
@@ -1074,7 +987,8 @@ hybridNoetherianOperators (Ideal, Ideal, Matrix) := List => true >> opts -> (I,P
     IS := sub(I,S);
     kP := toField(S/PS);
     -- TODO: this precision should be specifiable
-    RCC := CC monoid R;
+    --RCC := CC monoid R;
+    RCC := (ring pt) monoid R;
     nopsAtPoint := numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC)));
     sort flatten for op in nopsAtPoint list (
         dBasis := sub(matrix{keys op / (m -> R_(first exponents m))}, S);
@@ -1139,7 +1053,6 @@ numericalNoetherianOperators(Ideal) := List => true >> opts -> (I) -> (
 
 
     nopsTemplate := numNoethOpsAtPoint(J, goodPoint, opts, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => noethDegLim);
-    -- TODO: cache found pointlist in ideal
     if not S.?cache then S.cache = new CacheTable;
     S.cache#"interp point list" = new List;
     nopsTemplate / (tmpl -> interpolateFromTemplate(I, tmpl, opts, Tolerance => tol, Sampler => sampler))
@@ -1261,11 +1174,6 @@ newSpecializedNop = true >> opts -> (I, pt, tmpl) -> (
 )
 
 
--- TODO maybe not needed anymore
-formatNoethOps = xs -> fold(plus,
-    expression 0,
-    apply(xs, x -> (expression x#0#0) / (expression x#0#1) * x#1)
-)
 
 cleanComplex = (tol, x) -> clean(tol,realPart x) + ii*clean(tol, imaginaryPart x)
 cleanPoly = (tol, x) -> (
@@ -1437,21 +1345,6 @@ mapRtoHilb = (Q, P, S, depVars, indVars) -> (
     mapRtoS := map(S, R, L);
     ideal mingens ((mapRtoS Q) + diag^m)    
 )
--- old
-liftNoethOp = (d, R) -> (
-    m := flatten entries last coefficients d /
-        (c -> lift(c, coefficientRing ring c)) /
-        denominator //
-        lcm;
-    sub(d*m, R)
-)
--- old
-liftCoeffs = (l, R) -> (
-    m := l /
-        denominator //
-        lcm;
-    l / (f -> sub(f*m, R))
-)
 
 liftColumnsPunctualHilbert = (M, R') -> (
     cols := transpose entries M;
@@ -1477,35 +1370,6 @@ invSystemFromHilbToNoethOps = (I, R, S, depVars) -> (
     L := macaulayMatrixKernel(I,FF);
     StoR := map(R, S, apply(#depVars, i -> R_(index depVars#i)));
     matrixToDiffOps(liftColumnsPunctualHilbert(last L, R), StoR first L)
-
-    -- allMons := basis(0, m-1, S); 
-    -- gensI := flatten entries mingens I;
-    -- diffMat := unpackRow(diff(gensI_0, allMons), FF);
-    -- for i from 1 to length gensI - 1 do (
-    --     auxMat := unpackRow(diff(gensI_i, allMons), FF);
-    --     diffMat = diffMat || auxMat;
-    -- );
-    -- --R' := diffAlg R;
-    -- --T := frac(R)[gens R'];
-    -- if debugLevel > 0 then <<"Cols: " << numColumns diffMat <<", rows: "<< numRows diffMat<<endl;
-    -- -- ker to myKernel? TODO
-    -- K := mingens ker diffMat;
-    
-    -- monList := flatten entries StoR allMons;
-
-    -- transpose entries K / 
-    --     (l -> apply(monList, liftCoeffs(l, R), identity )) /
-    --     diffOp //
-    --     sort
-
-    -- --noethOps := flatten entries StoT (allMons * K);
-    -- --noethOps / (d -> liftNoethOp(d, R'))
-    -- --diffVars := apply(depVars, w -> value("symbol d" | toString(w)) );
-    -- --W := FF(monoid[diffVars]);
-    -- ----D := R(monoid[diffVars]);
-    -- --D := diffAlg(R);
-    -- --mapStoW := map(W, S, gens W);
-    -- --apply(noethOps, w -> liftNoethOp(mapStoW(w), R, D))   
 )
    
 -- This function can compute the Noetherian operators of a primary ideal Q.
@@ -1585,20 +1449,6 @@ getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     for v in indVars do 
       Q = saturate(Q, ideal(v));
     Q
-    --R' := ring L_0;
-    --if not R' === diffAlg(R) then error "noetherian operators must be in the diffAlg of the prime";
-    --S := FF[gens R];
-    --V := apply(L, F -> sub(F, S));
-    --I := vectorAnn(V);
-    --I = I_* / (f -> liftNoethOp(f, R')) // ideal;
-    
-    --X := R'/(I+P);
-    --Lmap := apply(numgens R, i -> R_i => promote(R_i, R') + R'_i);
-    --mapRtoX := map(X, R, Lmap);
-    --Q := ker mapRtoX;
-    --for v in indVars do 
-    --  Q = saturate(Q, ideal(v));
-    --Q
 )
 TEST ///
 debug NoetherianOperators
@@ -1610,14 +1460,6 @@ Q = getIdealFromNoetherianOperators(L,P)
 assert(Q == I)
 -- TODO add asserts
 ///
-
-
-getIdealFromNoetherianOperators(SetOfNoethOps) := N -> (
-    if not N.?Prime then error"expected symbolic Noetherian operators";
-    getIdealFromNoetherianOperators(N.Ops, N.Prime)
-)
-
- 
 ----------------------------------------------------------
 
 
