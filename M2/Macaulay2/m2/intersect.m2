@@ -2,6 +2,7 @@
 -- TODO: now we can defined intersect for Set, CoherentSheaf, etc.
 -- TODO: add tests
 -- TODO: add intersection with a ring, via selectInSubring
+-- TODO: how to cache partial computation?
 
 -- This is a map from method keys to strategy hash tables
 -- Also used in the Colon package
@@ -36,18 +37,18 @@ intersect Module   := Module => opts -> M -> Module.intersect (opts, 1 : M)
 
 intersect List     :=           opts -> L -> intersect(opts, toSequence L)
 intersect Sequence :=           opts -> L -> (
-    if not #L > 0        then error "intersect: expected at least one object";
-    if not same apply(L, ring) then error "intersect: expected objects in the same ring";
+    if not #L > 0 then error "intersect: expected at least one object";
     if not same apply(L, class)
     -- TODO: can this be simplified? perhaps by removing MonomialIdeal?
     and not all(L, l -> instance(l, Ideal)) then error "intersect: expected objects of the same type";
     type := class L#0;
     func := lookup(symbol intersect, type);
-    if func === null     then error "intersect: no method for objects of type " | toString type;
+    if func === null then error "intersect: no method for objects of type " | toString type;
     (func opts) L)
 
--- TODO: how to cache partial computation?
 intersectHelper := (L, key, opts) -> (
+    -- TODO: this line may need to move, but otherwise this helper can be used for any class
+    if not same apply(L, ring) then error "intersect: expected objects in the same ring";
     strategy := opts.Strategy;
     C := if strategy === null then runHooks(key, (opts, L))
     else if algorithms#key#?strategy then (

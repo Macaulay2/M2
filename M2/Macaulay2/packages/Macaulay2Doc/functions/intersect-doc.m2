@@ -9,13 +9,12 @@ Node
     intersect
   Headline
     compute an intersection
-
 Node
   Key
-    (intersect, Ideal)
-    (intersect, Module)
     (intersect, List)
     (intersect, Sequence)
+    (intersect, Ideal)
+    (intersect, Module)
     [intersect, Strategy]
   Headline
     compute an intersection of ideals or modules
