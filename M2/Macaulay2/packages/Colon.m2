@@ -666,6 +666,7 @@ load "./Colon/annihilator-doc.m2"
 
 saturationByGRevLex     = (I,J) -> saturate(I, J, Strategy => GRevLex)
 saturationByElimination = (I,J) -> saturate(I, J, Strategy => Elimination)
+intersectionByElimination =  L  -> intersect(L,   Strategy => "Elimination")
 
 end--
 
@@ -716,8 +717,8 @@ ans4 = elapsedTime saturationByElimination(saturationByElimination(I, B1), B0); 
 
 elapsedTime J1 = saturationByElimination(I, x_0);
 elapsedTime J2 = saturationByElimination(I, x_1);
-elapsedTime J = intersect(J1,J2);
-elapsedTime J' = intersect(J2,J1);
+elapsedTime J = intersectionByElimination(J1,J2);
+elapsedTime J' = intersectionByElimination(J2,J1);
 elapsedTime J'' = intersect(J1,J2);
 elapsedTime J''' = intersect(J2,J1);
 J == J'
@@ -767,7 +768,7 @@ I1 == I2
 elapsedTime I1 = saturate(I, x_1);
 elapsedTime (I2,pow) = saturationByGRevLex(I,x_1);
 I1 == I2
-elapsedTime J1 = intersect(I1,I2);
+elapsedTime J1 = intersectionByElimination(I1,I2);
 
 elapsedTime I1 = saturationByGRevLex(I, B0);
 elapsedTime I2 = saturationByGRevLex(I1, B1);
@@ -780,16 +781,16 @@ elapsedTime saturationByElimination(saturationByElimination(I, B1), B0);
 
 elapsedTime J0a = saturationByGRevLex(I,x_0);
 elapsedTime J0b = saturationByGRevLex(I,x_1);
---J1 = elapsedTime intersect(first J0a,first J0b);
+--J1 = elapsedTime intersectionByElimination(first J0a,first J0b);
 La = elapsedTime trim first J0a;
 Lb = elapsedTime trim first J0b;
-J1 = elapsedTime intersect(La, Lb);
+J1 = elapsedTime intersectionByElimination(La, Lb);
 J1a = elapsedTime saturationByGRevLex(J1,x_2);
 J1b = elapsedTime saturationByGRevLex(J1,x_3);
 J1c = elapsedTime saturationByGRevLex(J1,x_4);
 J1a#1, J1b#1, J1c#1
-J1ab = elapsedTime intersect(J1a,J1b);
-elapsedTime J2 = intersect{first J1a, first J1b, first J1c};
+J1ab = elapsedTime intersectionByElimination(J1a,J1b);
+elapsedTime J2 = intersectionByElimination{first J1a, first J1b, first J1c};
 elapsedTime saturationByGRevLex(I,B0);
 
 saturationByElimination(I,x_0);

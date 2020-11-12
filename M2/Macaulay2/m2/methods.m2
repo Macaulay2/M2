@@ -200,10 +200,6 @@ use Thing := identity
 
 dual = method(Options => true)
 
-minimalPrimes = method(Options => true)
-
-decompose = method(Options => true)
-
 default = method()
 --default Type := (X) -> (
 --     m := lookup(X,symbol default);
