@@ -12,9 +12,8 @@ Description
     The main routine is @TO "minprimes"@, although in a future
     release this will be renamed to {\tt minimalPrimes}.
 
---    Use @TO "installMinprimes"@ to replace the system versions of 'decompose Ideal',
---    'minimalPrimes Ideal' and 'isPrime Ideal'.  In many cases the new function is {\it much} faster,
---    although there are cases when the older, current, version is faster.
+    In many cases the new function is {\it much} faster,
+    although there are cases when the older, current, version is faster.
 Caveat
   Only works for ideals in (commutative)polynomial rings or quotients of
     polynomial rings over a prime field, might have bugs in small characteristic and larger degree
@@ -62,35 +61,6 @@ doc ///
      This will eventually be made to work over GF(q), and over other fields too.
    SeeAlso
 ///
-
--*
-doc ///
-   Key
-     installMinprimes
-   Headline
-     install experimental functions into Macaulay2
-   Usage
-     installMinprimes()
-   Consequences
-     Item
-       Changes the methods @TO (decompose,Ideal)@, @TO (minimalPrimes, Ideal)@, and
-         @TO (isPrime,Ideal)@
-   Description
-    Example
-      installMinprimes()
-      R = ZZ/32003[a..e]
-      I = ideal"a2b-c3,abd-c2e,ade-ce2"
-      C = minprimes I;
-      C1 = minimalPrimes I;
-      C == C1
-      netList C
-      C/isPrime
-   Caveat
-     This function will eventually go away, once this is no longer experimental code
-   SeeAlso
-     minprimes
-///
-*-
 
 document {
      Key => {

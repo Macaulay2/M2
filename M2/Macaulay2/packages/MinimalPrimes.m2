@@ -115,7 +115,7 @@ mySat = (J, G) -> (for f in last \ factors G do J = saturate(J, f); J)
 
 load "./MinimalPrimes/AnnotatedIdeal.m2"
 load "./MinimalPrimes/PDState.m2"
-load "./MinimalPrimes/splitIdeals.m2" -- splitIdeal, splitIdeals, splitFunction
+load "./MinimalPrimes/splitIdeals.m2"
 load "./MinimalPrimes/factorTower.m2"
 
 -- Redundancy control:
