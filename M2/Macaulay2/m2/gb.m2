@@ -68,11 +68,10 @@ gbDefaults = merge(computationOptionDefaults, stoppingOptionDefaults, x -> error
 notForSyz   := set { Syzygies, ChangeMatrix, CodimensionLimit, Hilbert, StopWithMinimalGenerators, SubringLimit }
 syzDefaults := select(pairs gbDefaults, (k, v) -> not notForSyz#?k)
 
--- TODO: what are these for?
 -- for internal use only, for general clean up
-Nothing#BeforeEval = x -> ( runHooks(symbol BeforeEvalHooks,()); )
+--Nothing#BeforeEval = x -> ( runHooks(symbol BeforeEvalHooks, ()); )
 flagInhomogeneity = false -- for debugging homogeneous problems, to make sure homogeneity is not lost
-addHook(symbol BeforeEvalHooks,() -> flagInhomogeneity = false)
+--addHook(symbol BeforeEvalHooks, () -> flagInhomogeneity = false)
 
 -----------------------------------------------------------------------------
 -- Local utilities

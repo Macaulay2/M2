@@ -3,7 +3,6 @@
 -- TODO: add tests
 -- TODO: add intersection with a ring, via selectInSubring
 -- TODO: how to cache partial computation?
--- TODO: make runHooks call with debugInfo
 
 -- This is a map from method keys to strategy hash tables
 -- Also used in the Colon package
@@ -13,11 +12,6 @@ algorithms = new MutableHashTable from {}
 -- utilities
 -----------------------------------------------------------------------------
 -- both are also used in Colon.m2
-
--- TODO: should this move to runHooks?
--- TODO: not quite emacs compatible, perhaps M2-mode should be improved
-debugInfo = (func, key, strategy) -> if debugLevel > 0 then printerr(
-    toString key, " with Strategy => ", toString strategy, " from ", symbolLocation func)
 
 eliminationInfo = method()
 eliminationInfo Ring := (cacheValue symbol eliminationInfo) (R -> (

@@ -1100,6 +1100,7 @@ export {
 	"stderr",
 	"stdio",
 	"step",
+	"strategies",
 	"sublists",
 	"submatrix",
 	"submatrix'",

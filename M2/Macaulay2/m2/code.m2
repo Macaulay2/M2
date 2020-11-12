@@ -162,14 +162,19 @@ methods Thing := F -> (
      -- sort -- too slow
      previousMethodsFound = new NumberedVerticalList from sortByName keys found)
 
-hooks = method(Dispatch => Thing)
-hooks Symbol   :=  sym -> previousMethodsFound = new NumberedVerticalList from value sym
-hooks Sequence :=  key -> (
-    obj := if key#?0 then key#0 else error "hooks: encountered empty method key";
+hooks = method(Dispatch => Thing, Options => {Strategy => null})
+hooks Symbol   := opts -> sym -> hooks(1:sym, opts)
+hooks Sequence := opts -> key -> (
+    store := getHookStore(key, false);
     previousMethodsFound = new NumberedVerticalList from (
-	if instance(obj, MutableHashTable) then         obj#(key#1) else
-	if instance(obj, HashTable)        then (obj.cache)#(key#1) else
-	return hooks(youngest drop(key, 1), (Hook, key))))
+	if store === null or not store#?key then {} else
+	if (alg := opts.Strategy) === null or not store#key.HookAlgorithms#?alg
+	then values store#key.HookAlgorithms else { store#key.HookAlgorithms#alg }))
+
+strategies = method(Dispatch => Thing)
+strategies Symbol   := sym -> strategies(1:sym)
+strategies Sequence := key -> (
+    if (store := getHookStore(key, false)) =!= null and store#?key then new HashTable from store#key.HookAlgorithms)
 
 
 debuggerUsageMessage = ///--debugger activation depth control:
