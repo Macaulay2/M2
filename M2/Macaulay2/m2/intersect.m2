@@ -95,8 +95,9 @@ algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
     -- TODO: can this be extended to do more than 2 at once?
     "Elimination" => opts -> L -> (
 	R := ring L#0;
-	-- TODO: is this the right assumption?
+	-- TODO: is this the right assumption? would a quotient ring work?
 	if not isPolynomialRing R
+	or not isCommutative R
 	-- or not (isField(kk := coefficientRing R) or kk === ZZ)
 	then return null;
 	(R', fto, fback) := eliminationInfo R;
