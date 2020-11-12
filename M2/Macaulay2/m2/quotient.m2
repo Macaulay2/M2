@@ -10,11 +10,11 @@ assert( class infinity === InfiniteNumber )
 -- ideal quotient methods moved to packages/Colon.m2 in July 2020
 quotient = method(
      Options => {
-	  DegreeLimit => {},
+	  DegreeLimit       => {},
 	  BasisElementLimit => infinity,
-	  PairLimit => infinity,
+	  PairLimit         => infinity,
 	  MinimalGenerators => true,
-	  Strategy => null
+	  Strategy          => null
 	  }
      )
 

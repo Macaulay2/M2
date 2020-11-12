@@ -3,6 +3,7 @@
 -- TODO: add tests
 -- TODO: add intersection with a ring, via selectInSubring
 -- TODO: how to cache partial computation?
+-- TODO: make runHooks call with debugInfo
 
 -- This is a map from method keys to strategy hash tables
 -- Also used in the Colon package
@@ -31,7 +32,13 @@ eliminationInfo Ring := (cacheValue symbol eliminationInfo) (R -> (
 -- Intersection of ideals and modules
 -----------------------------------------------------------------------------
 
-intersect = method(Dispatch => Thing, Options => {Strategy => null}) -- TODO: add MinimalGenerators?
+intersect = method(
+    Dispatch => Thing,
+    Options  => {
+	Strategy          => null,
+	MinimalGenerators => true
+	}
+    )
 intersect Ideal    := Ideal  => opts -> I ->  Ideal.intersect (opts, 1 : I)
 intersect Module   := Module => opts -> M -> Module.intersect (opts, 1 : M)
 
@@ -49,13 +56,16 @@ intersect Sequence :=           opts -> L -> (
 intersectHelper := (L, key, opts) -> (
     -- TODO: this line may need to move, but otherwise this helper can be used for any class
     if not same apply(L, ring) then error "intersect: expected objects in the same ring";
+
     strategy := opts.Strategy;
+    doTrim := if opts.MinimalGenerators then trim else identity;
+
     C := if strategy === null then runHooks(key, (opts, L))
     else if algorithms#key#?strategy then (
 	func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (L)
     else error("unrecognized Strategy for intersect: '", toString strategy, "'; expected: ", toString keys algorithms#key);
 
-    if C =!= null then C else if strategy === null
+    if C =!= null then doTrim C else if strategy === null
     then error("no applicable method for ", toString key)
     else error("assumptions for intersect strategy ", toString strategy, " are not met"))
 
@@ -101,8 +111,7 @@ algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
 	-- or not (isField(kk := coefficientRing R) or kk === ZZ)
 	then return null;
 	(R', fto, fback) := eliminationInfo R;
-	-- TODO: adding trim was necessary here to avoid failing tests; why?
-	trim fold(L, (I, J) -> (
+	fold(L, (I, J) -> (
 		I' := R'_0 * fto I;
 		J' := (1 - R'_0) * fto J;
 		U := I' + J';

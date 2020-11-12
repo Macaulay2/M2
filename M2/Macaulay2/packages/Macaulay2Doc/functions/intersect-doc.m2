@@ -16,6 +16,7 @@ Node
     (intersect, Ideal)
     (intersect, Module)
     [intersect, Strategy]
+    [intersect, MinimalGenerators]
   Headline
     compute an intersection of ideals or modules
   Usage
@@ -25,6 +26,8 @@ Node
       containing modules that are submodules of the same module or ideals in the same ring
     Strategy =>
       specifies the algorithm
+    MinimalGenerators=>Boolean
+      if false, the output will not be minimalized
   Outputs
     :{Ideal,Module}
       the intersection of the objects given
