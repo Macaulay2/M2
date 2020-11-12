@@ -92,22 +92,23 @@ Ideal.intersect = opts -> L -> intersectHelper(L, (intersect, Ideal, Ideal), opt
 algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
     "Default" => opts -> L -> ideal intersect(opts, apply(L, module)),
 
+    -- TODO: can this be extended to do more than 2 at once?
     "Elimination" => opts -> L -> (
 	R := ring L#0;
 	-- TODO: is this the right assumption?
 	if not isPolynomialRing R
 	-- or not (isField(kk := coefficientRing R) or kk === ZZ)
 	then return null;
-	(R1, fto, fback) := eliminationInfo R;
-	fold(L, (I, J) -> (
-		I1 := R1_0 * fto I;
-		J1 := (1 - R1_0) * fto J;
-		L := I1 + J1;
-		--g := gens gb J;
-		--g := groebnerBasis(J, Strategy => "MGB");
-		g := groebnerBasis(L, Strategy => "F4"); -- TODO: try "MGB"
-		p1 := selectInSubring(1, g);
-		ideal fback p1))),
+	(R', fto, fback) := eliminationInfo R;
+	-- TODO: adding trim was necessary here to avoid failing tests; why?
+	trim fold(L, (I, J) -> (
+		I' := R'_0 * fto I;
+		J' := (1 - R'_0) * fto J;
+		U := I' + J';
+		--g := generators gb U;
+		--g := groebnerBasis(U, Strategy => "MGB"); -- TODO: try "MGB"
+		g := groebnerBasis(U, Strategy => "F4");
+		fback ideal selectInSubring(1, g)))),
 
     Monomial => opts -> L -> (
 	R := ring L#0;
