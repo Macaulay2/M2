@@ -86,8 +86,8 @@ Node
 	"The method is to compute ", TT "(I:f)", " for ", TT "I", " and ", TT "f", " homogeneous,
 	add a new variable ", TT "z", ", compute a Gröbner basis of ", TT "(I,f-z)", " in reverse
 	lex order, divide by ", TT "z", ", and finally replace ", TT "z", " by ", TT "f", ".",
-      SUBSECTION "Elimination",
-	TT "saturate(I,f,Strategy => Elimination)", " -- indicates that the
+      SUBSECTION "Eliminate",
+	TT "saturate(I,f,Strategy => Eliminate)", " -- indicates that the
 	saturation ", TT "(I:f)", " should be computed by eliminating
 	f", TT "z", " from ", TT "(I,f*z-1)", ", where ", TT "z", " is a new variable."
 

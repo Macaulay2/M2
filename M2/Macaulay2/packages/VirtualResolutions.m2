@@ -69,7 +69,7 @@ export{
 ----- created. We hope this is eventually removed.
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-ourSaturation = (I,irr) -> saturate(I, decompose irr, Strategy => Elimination);
+ourSaturation = (I,irr) -> saturate(I, decompose irr, Strategy => Eliminate);
 
 
 --------------------------------------------------------------------
