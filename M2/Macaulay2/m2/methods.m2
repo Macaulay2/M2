@@ -200,10 +200,6 @@ use Thing := identity
 
 dual = method(Options => true)
 
-minimalPrimes = method(Options => true)
-
-decompose = method(Options => true)
-
 default = method()
 --default Type := (X) -> (
 --     m := lookup(X,symbol default);
@@ -316,7 +312,7 @@ toExternalString Thing := x -> (
      error("can't convert anonymous object of class ",toString class x," to external string"))
 
 options = method(Dispatch => Thing, TypicalValue => OptionTable)
-setupMethods(Dispatch => Thing, {max,min,directSum,intersect,vars})
+setupMethods(Dispatch => Thing, {max,min,directSum,vars})
 net = method(Dispatch => Thing, TypicalValue => Net)
 factor = method( Options => { } )
 
@@ -529,13 +525,13 @@ Hook = symbol Hook
 protect Hook
 
 addHook   (Sequence, Function) := (key, hook) -> (
-    sym := if key#?0 then getSymbol toString key#0 else error "addHooks: encountered empty method key";
+    sym := if key#?0 then getGlobalSymbol toString key#0 else error "addHooks: encountered empty method key";
     if #key == 1 then addHook(sym, hook) else addHook(youngest drop(key, 1), (Hook, key), hook))
 removeHook(Sequence, Function) := (key, hook) -> (
-    sym := if key#?0 then getSymbol toString key#0 else error "removeHooks: encountered empty method key";
+    sym := if key#?0 then getGlobalSymbol toString key#0 else error "removeHooks: encountered empty method key";
     if #key == 1 then removeHook(sym, hook) else removeHook(youngest drop(key, 1), (Hook, key), hook))
 runHooks  (Sequence, Thing) := true >> opts -> (key, args) -> (
-    sym := if key#?0 then getSymbol toString key#0 else error "runHooks: encountered empty method key";
+    sym := if key#?0 then getGlobalSymbol toString key#0 else error "runHooks: encountered empty method key";
     if #key == 1 then runHooks(sym, args) else runHooks(youngest drop(key, 1), (Hook, key), args))
 
 addHook   (MutableHashTable,Thing,Function) := (obj,key,hook) -> obj#key = if obj#?key then prepend(hook,obj#key) else {hook}

@@ -37,6 +37,14 @@ idealToFactorList Ideal := I -> flatten (I_* / factors / (l -> l / toList))
 ----exportMutable globalTowerList
 ----globalTowerList = {}
 
+-- This function determines whether or not the lead term of the input polynomial is linear
+--- Doesn't seem to be used here.  Maybe in gbRatRecon?
+hasLinearLeadTerm = method()
+hasLinearLeadTerm RingElement := f -> (
+    t := leadTerm f;
+    s := support t;
+    #s === 1 and s#0 == t)
+
 factorTower = method(Options => {Verbosity => 0})
 factorTower List := opts -> polyList -> (
     ----<< "factorTower: " << netList polyList << endl;

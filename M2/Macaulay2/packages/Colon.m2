@@ -6,7 +6,6 @@
 --
 -- TODO : 1. why are there shadowed symbols?
 --        2. cache computation under I.cache.QuotientComputation{J}
---        5. turn intersectionByElimination into a Strategy of intersect?
 ---------------------------------------------------------------------------
 newPackage(
     "Colon",
@@ -27,7 +26,7 @@ export { "isSupportedInZeroLocus" }
 
 exportFrom_Core { "quotient", "saturate", "annihilator", "MinimalGenerators" }
 
-importFrom_Core { "printerr", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "symbolLocation" }
+importFrom_Core { "algorithms", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo", "debugInfo" }
 
 -- TODO: where should these be placed?
 trim MonomialIdeal := MonomialIdeal => opts -> (cacheValue (symbol trim => opts)) ((I) -> monomialIdeal trim(module I, opts))
@@ -40,17 +39,9 @@ ambient Ideal := Ideal => I -> ideal 1_(ring I)
 --Module % Matrix           :=
 --remainder(Module, Matrix) := Matrix => (M, m) -> remainder(gens M, m)
 
--- This is a map from method keys to strategy hash tables
-algorithms = new MutableHashTable from {}
-
 --------------------------------------------------------------------
 -- Helpers
 --------------------------------------------------------------------
-
--- TODO: should this move to runHooks?
--- TODO: not quite emacs compatible, perhaps M2-mode should be improved
-debugInfo = (func, key, strategy) -> if debugLevel > 0 then printerr(
-    toString key, " with Strategy => ", toString strategy, " from ", symbolLocation func)
 
 removeOptions := (opts, badopts) -> (
     opts = new MutableHashTable from opts;
@@ -66,11 +57,8 @@ removeQuotientOptions := opts -> (
     --remove(opts,BasisElementLimit);
     new OptionTable from opts)
 
-isFlatPolynomialRing = (R) -> (
-     -- R should be a ring
-     -- determines if R is a poly ring over ZZ or a field
-     kk := coefficientRing R;
-     isPolynomialRing R and (kk === ZZ or isField kk))
+-- given a ring R, determines if R is a poly ring over ZZ or a field
+isFlatPolynomialRing = R -> isPolynomialRing R and (isField(kk := coefficientRing R) or kk === ZZ)
 
 -- TODO: can this work with multigraded ideals?
 isGRevLexRing = (R) -> (
@@ -80,7 +68,7 @@ isGRevLexRing = (R) -> (
      mo := (options monoid R).MonomialOrder;
      mo = select(mo, x -> x#0 =!= MonomialSize and x#0 =!= Position);
      isgrevlex := mo#0#0 === GRevLex and mo#0#1 === apply(degrees R, first);
-     #mo === 1 and isgrevlex and all(mo, x -> x#0 =!= Weights and x#0 =!= Lex))
+#mo === 1 and isgrevlex and all(mo, x -> x#0 =!= Weights and x#0 =!= Lex))
 
 -- Helper for Linear strategies
 isLinearForm := f -> (
@@ -100,31 +88,6 @@ grevLexRing(ZZ, Ring) := (i, R) -> (
     fto := map(R1, R, (generators R1)_perm);
     fback := map(R, R1, (generators R)_perm);
     (R1, fto, fback))
-
-eliminationInfo = method()
-eliminationInfo Ring := (cacheValue symbol eliminationInfo)(R -> (
-	X := local X;
-	n := numgens R;
-	R1 := (coefficientRing R)[X_0..X_n, MonomialOrder => Eliminate 1, MonomialSize => 16];
-	fto := map(R1, R, drop(generators R1, 1));
-	fback := map(R, R1, matrix{{0_R}} | vars R);
-	(R1, fto, fback)))
-
--- Fast intersection code
--- TODO: move elsewhere?
-intersectionByElimination = method()
-intersectionByElimination List          := (L)    -> fold(intersectionByElimination, L)
-intersectionByElimination(Ideal, Ideal) := (I, J) -> (
-    R := ring I;
-    (R1, fto, fback) := eliminationInfo R;
-    I1 := R1_0 * fto I;
-    J1 := (1 - R1_0) * fto J;
-    L := I1 + J1;
-    --g := gens gb J;
-    --g := groebnerBasis(J, Strategy => "MGB");
-    g := groebnerBasis(L, Strategy => "F4"); -- TODO: try "MGB"
-    p1 := selectInSubring(1, g);
-    ideal fback p1)
 
 -- TODO: where can this be used?
 quotelem0 = (I, f) -> (
@@ -218,8 +181,8 @@ algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
 	R := (ring I)/I;
 	mR := transpose generators J ** R;
 	g := syz gb(mR, opts,
-            Strategy   => LongPolynomial,
-            Syzygies   => true,
+	    Strategy   => LongPolynomial,
+	    Syzygies   => true,
 	    SyzygyRows => 1);
 	-- The degrees of g are not correct, so we fix that here:
 	-- g = map(R^1, null, g);
@@ -234,12 +197,15 @@ algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
 	stderr << "warning: quotient strategy Linear is not yet implemented" << endl; null),
 
     Monomial => opts -> (I, J) -> (
+	R := ring I;
 	if not isMonomialIdeal I
 	or not isMonomialIdeal J
+	or not isPolynomialRing R
+	or not isCommutative R
 	then return null;
 	cast := if instance(I, MonomialIdeal) then identity else ideal;
 	-- TODO: make sure (monomialIdeal, MonomialIdeal) isn't forgetful
-	cast newMonomialIdeal(ring I, rawColon(raw monomialIdeal I, raw monomialIdeal J))),
+	cast newMonomialIdeal(R, rawColon(raw monomialIdeal I, raw monomialIdeal J))),
     }
 
 -- Installing hooks for Ideal : Ideal
@@ -413,8 +379,7 @@ algorithms#(saturate, Ideal, Ideal) = new MutableHashTable from {
 
     -- TODO: is there a performance hit because neither Eliminate nor Elimination are symbols?
     Eliminate => opts -> (I, J) -> saturate(I, J, opts ++ {Strategy => Elimination}), -- backwards compatibility
-    Elimination => opts -> (I, J) -> (
-	intersectionByElimination for g in J_* list saturate(I, g, opts)),
+    Elimination => opts -> (I, J) -> intersect apply(J_*, g -> saturate(I, g, opts)),
 
     GRevLex => opts -> (I, J) -> (
 	-- FIXME: this might not be necessary, but the code isn't designed for this case.
@@ -431,15 +396,18 @@ algorithms#(saturate, Ideal, Ideal) = new MutableHashTable from {
 	-- Intersect them all
 	-- TODO: when exactly is I returned?
 	if any(last \ L, x -> x == 0) then I
-	else intersectionByElimination(first \ L)),
+	else intersect(first \ L)),
 
     Monomial => opts -> (I, J) -> (
+	R := ring I;
 	if not isMonomialIdeal I
 	or not isMonomialIdeal J
+	or not isPolynomialRing R
+	or not isCommutative R
 	then return null;
 	cast := if instance(I, MonomialIdeal) then identity else ideal;
 	-- TODO: make sure (monomialIdeal, MonomialIdeal) isn't forgetful
-	cast newMonomialIdeal(ring I, rawSaturate(raw monomialIdeal I, raw monomialIdeal J))),
+	cast newMonomialIdeal(R, rawSaturate(raw monomialIdeal I, raw monomialIdeal J))),
     }
 
 -- Installing hooks for Ideal : Ideal^infinity
@@ -504,7 +472,7 @@ algorithms#(saturate, Ideal, RingElement) = new MutableHashTable from {
 	R := ring I;
 	if not isFlatPolynomialRing R then return null;
 	(R1, fto, fback) := eliminationInfo R;
-        J := ideal(R1_0 * fto f - 1) + fto I;
+	J := ideal(R1_0 * fto f - 1) + fto I;
 	g := groebnerBasis(J, Strategy => "F4"); -- TODO: compare with MGB
 	p1 := selectInSubring(1, g);
 	ideal fback p1),
@@ -529,7 +497,7 @@ algorithms#(saturate, Ideal, RingElement) = new MutableHashTable from {
 	    I1 = I;
 	    I = ideal syz gb(matrix{{f}} | generators I,
 		Syzygies   => true,
-                SyzygyRows => 1)
+		SyzygyRows => 1)
 	    );
 	I)
     }
@@ -698,6 +666,7 @@ load "./Colon/annihilator-doc.m2"
 
 saturationByGRevLex     = (I,J) -> saturate(I, J, Strategy => GRevLex)
 saturationByElimination = (I,J) -> saturate(I, J, Strategy => Elimination)
+intersectionByElimination =  L  -> intersect(L,   Strategy => "Elimination")
 
 end--
 

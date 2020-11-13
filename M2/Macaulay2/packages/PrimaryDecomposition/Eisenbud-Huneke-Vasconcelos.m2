@@ -577,7 +577,6 @@ assert(sum(comps, Q -> degree(I + ideal gens Q)) == degree I)
 TEST /// -- cf. https://groups.google.com/g/macaulay2/c/dFPzfS3tR2E
 R = ZZ/2[Z_1..Z_9]
 I = ideal(Z_6*Z_8+Z_5*Z_9,Z_3*Z_8+Z_2*Z_9,Z_6*Z_7+Z_4*Z_9,Z_4^3+Z_5^3+Z_6^3,Z_1*Z_2^2+Z_4*Z_5^2+Z_7*Z_8^2,Z_1^3+Z_5^3+Z_6^3+Z_8^3+Z_9^3,Z_1*Z_2*Z_4^2*Z_5*Z_9+Z_2^2*Z_5^3*Z_9+Z_2^2*Z_6^3*Z_9+Z_1^2*Z_7*Z_8^2*Z_9+Z_2^2*Z_8^3*Z_9+Z_2^2*Z_9^4)
-installMinprimes()
 M = comodule I
 elapsedTime associatedPrimes M; -- ~ 5-15 seconds (?)
 elapsedTime primaryDecomposition M; -- ~ 5 seconds

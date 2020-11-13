@@ -87,56 +87,6 @@ MonomialIdeal - MonomialIdeal := MonomialIdeal => (I,J) -> (
 
 radical MonomialIdeal := MonomialIdeal => options -> (I) -> newMonomialIdeal(ring I, rawRadical raw I)
 
-int := (I,J) -> (
-     if ring I =!= ring J then error "expected monomial ideals in the same ring";
-     newMonomialIdeal(ring I, rawIntersect(raw I, raw J)))
-
-intersect(List) := x -> intersect toSequence x
-
-intersect(Sequence) := args -> (
-    -- first check that all modules have the same target
-    -- and the same base ring
-    if #args === 0 then error "expected at least one argument";
-    M := args#0;
-    R := ring M;
-    if class M === MonomialIdeal then (
-	 if not all(args, M -> class M === MonomialIdeal and R === ring M)
-	 then error "expected monomial ideals over the same ring";
-	 i := 1;
-	 while i < #args do (
-	      M = int(M,args#i);
-	      i = i+1;
-	      );
-	 M)
-    else if class M === Module then (
-    	 F := ambient args#0;
-	 if not all(args, N -> ambient N == F)
-	 or M.?relations 
-	 and not all(args, N -> 
-	      N.?relations 
-	      and (N.relations == M.relations
-		   or
-		   image N.relations == image M.relations
-		   )
-	      )
-    	 then error "all modules must be submodules of the same module";
-    	 relns := directSum apply(args, N -> (
-		   if N.?relations 
-		   then generators N | N.relations
-		   else generators N
-		   )
-	      );
-    	 g := map(R^(#args),R^1, table(#args,1,x->1)) ** id_F;
-	 h := modulo(g, relns);
-	 if M.?relations then h = compress( h % M.relations );
-    	 subquotient( h, if M.?relations then M.relations )
-	 )
-    else if class M === Ideal then (
-	 ideal intersect apply(args,module)
-	 )
-    else error "expected modules, ideals, or monomial ideals"
-    )
-
 borel MonomialIdeal := MonomialIdeal => (I) -> newMonomialIdeal(ring I, rawStronglyStableClosure raw I)
 isBorel MonomialIdeal := Boolean => m -> rawIsStronglyStable raw m
 

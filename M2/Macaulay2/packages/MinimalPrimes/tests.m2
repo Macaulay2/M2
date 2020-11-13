@@ -30,6 +30,13 @@ TOODAMNSLOW = (str) -> null
 -------------------------------
 -- simple tests of minprimes --
 -------------------------------
+
+TEST ///
+  R1 = QQ[d, f, j, k, m, r, t, A, D, G, I, K];
+  I1 = ideal ( I*K-K^2, r*G-G^2, A*D-D^2, j^2-j*t, d*f-f^2, d*f*j*k - m*r, A*D - G*I*K);
+  assert(#(minprimes I1) == 22)
+///
+
 TEST ///
   needsPackage "MinimalPrimes"
   R = ZZ/101[a..d]
@@ -1446,7 +1453,7 @@ TEST ///
   R2 = ZZ[a..d]
   assert try minprimes (ideal(a*d)) else true
   R3 = ZZ
-  assert try minprimes (ideal(0_ZZ)) else true
+  assert(minprimes ideal 0_ZZ == {ideal 0_ZZ})
   assert try minprimes (ideal(5_ZZ)) else true
   R4 = (frac R2)[x,y,z]
   assert try minprimes(ideal(a*x)) else true
@@ -1745,6 +1752,20 @@ TEST ///
   R = ZZ/31991[x,y]
   assert( (x^2-10748*y*x+y^2)*(y^2+x^2)*(x^2+10748*y*x+y^2) == x^6 + y^6 )
   assert ( # factor (x^6 + y^6) == 3 )
+///
+
+TEST /// -- test of makeFiberRings
+  debug needsPackage "MinimalPrimes"
+  R = QQ[x,r,v,u,b, MonomialOrder=>{Lex=>5}]
+  I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
+  (S, SF) = makeFiberRings({v,u}, R)
+  describe S
+  describe SF
+
+  use R
+  G = resultant(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b, b)
+  H = resultant(G, x^2+(b-2)*x*r+r^2+b^2-4*b, x)
+  factor H
 ///
 
 end--

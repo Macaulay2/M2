@@ -106,22 +106,14 @@ jobs:
 
       - name: Prepare build environment
         run: |
-          echo "::set-env name=CC::${{ matrix.cc }}"
-          echo "::set-env name=CXX::${{ matrix.cxx }}"
-          echo "::set-env name=LD_LIBRARY_PATH::`brew --prefix`/lib:$LD_LIBRARY_PATH"
-
-          if [[ "${{ runner.os }}" == "Linux" ]]; then
-            PATH=/usr/lib/ccache:$PATH
-            # Necessary for clang-10 on Linux
-            # echo "::set-env name=LIBRARY_PATH::`llvm-config-10 --libdir`"
-          else
-            # PATH=`brew --prefix llvm`/bin:$PATH
-            PATH=`brew --prefix ccache`/libexec:$PATH
-            PATH=`brew --prefix make`/libexec/gnubin:$PATH
-            # Necessary for clang on macOS
-            # echo "::set-env name=LIBRARY_PATH::`llvm-config --libdir`"
+          echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
+          echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=`brew --prefix`/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+          if [[ "${{ runner.os }}" == "Linux" ]]
+          then echo "/usr/lib/ccache" >> $GITHUB_PATH
+          else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
+               echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
           fi
-          echo "::set-env name=PATH::$PATH"
 
       - uses: actions/cache@v2
         if: matrix.build-system == 'cmake' # TODO: remove when autotools is more efficient with space

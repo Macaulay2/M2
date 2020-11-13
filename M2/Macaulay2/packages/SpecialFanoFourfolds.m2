@@ -1,21 +1,14 @@
--- These are the commands to install and view the documentation:
---   installPackage "SpecialFanoFourfolds";
---   viewHelp SpecialFanoFourfolds
-----------------------------------------------------------------
-
-if version#"VERSION" < "1.16" then error "this package requires Macaulay2 version 1.16 or newer";
 
 newPackage(
-       "SpecialFanoFourfolds",
-    	Version => "0.9.3", 
-        Date => "September 25, 2020",
-    	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
-    	Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
-	Keywords => {"Commutative Algebra"},
-        PackageExports => {"Resultants","Cremona"},
-    	DebuggingMode => false,
-    	Reload => false
-	)
+    "SpecialFanoFourfolds",
+    Version => "0.9.5", 
+    Date => "October 27, 2020",
+    Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
+    Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
+    PackageExports => {"Resultants","Cremona"},
+    DebuggingMode => false,
+    Reload => false
+)
 
 export{
    "SpecialGushelMukaiFourfold",
@@ -29,6 +22,7 @@ export{
    "parameterCount",
    "normalSheaf",
    "isAdmissible",
+   "isAdmissibleGM",
    "detectCongruence",
    "coneOfLines",
    "ideals",
@@ -273,6 +267,7 @@ associatedK3surface = method(Options => {Verbose => false});
 associatedK3surface (SpecialCubicFourfold) := o -> (X) -> (
     recognize X;
     (S,I) := ideals X;
+    ch := char coefficientRing X;
     local mu; local I2; local U; local U2; local P; local exceptionalLines; local exceptionalConics; local exceptionalQuarticCurve; local f;
     if X#"label" === "quinticDelPezzoSurface" then (
         if o.Verbose then <<"-- computing the map mu from P^5 to P^4 defined by the quadrics through the surface S_14"<<endl;
@@ -284,9 +279,9 @@ associatedK3surface (SpecialCubicFourfold) := o -> (X) -> (
         U2 = ideal inverse2(mu|I2);
         if o.Verbose then <<"-- computing the 5 exceptional lines on U and U'"<<endl;
         exceptionalLines = decompose top trim(U+U2);
-        if o.Verbose then <<"-- computing the map f from U to the minimial K3 surface of degree 14"<<endl;
+        if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree 14"<<endl;
         f = mapDefinedByDivisor(quotient U,{(arandom({1},ring U),1)}|apply(exceptionalLines,l->(l,1)));
-        if numgens target f != 8+1 then error "something went wrong";
+        if numgens target f != 8+1 then error "something went wrong on the target of the map defined by the divisor";
         if o.Verbose then <<"-- computing the image of f"<<endl;
         image f;
         return (mu,U,exceptionalLines,f);
@@ -301,9 +296,9 @@ associatedK3surface (SpecialCubicFourfold) := o -> (X) -> (
         U2 = trim lift(ideal matrix inverse2(mu|I2),ambient target mu);
         if o.Verbose then <<"-- computing the exceptional conic on U and U'"<<endl;
         exceptionalConics = {top trim(U+U2)};
-        if o.Verbose then <<"-- computing the map f from U to the minimial K3 surface of degree 14"<<endl;
+        if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree 14"<<endl;
         f = mapDefinedByDivisor(quotient U,{(ideal first gens ring U,1),(first exceptionalConics,2)});
-        if numgens target f != 8+1 then error "something went wrong";
+        if numgens target f != 8+1 then error "something went wrong on the target of the map defined by the divisor";
         if o.Verbose then <<"-- computing the image of f"<<endl;
         image f;
         return (rationalMap mu,U,exceptionalConics,f);
@@ -313,10 +308,10 @@ associatedK3surface (SpecialCubicFourfold) := o -> (X) -> (
         if o.Verbose then <<"   with points of multiplicity 2 along the surface S_38"<<endl;
         mu = fanoMap X;
         if o.Verbose then  <<"-- computing the surface U corresponding to the fourfold X"<<endl;
-        U = trim ideal apply(9,j -> interpoleImage(mu,I + ideal arandom S,{5},5));
+        U = trim ideal apply(9,j -> if ch <= 65521 then image(mu|(I + ideal arandom S),"F4") else interpoleImage(mu,I + ideal arandom S,{5},5));
         I2 = ideal arandom S;
         if o.Verbose then <<"-- computing the surface U' corresponding to another fourfold X'"<<endl;
-        U2 = trim ideal apply(9,j -> interpoleImage(mu,I2 + ideal arandom S,{5},5));
+        U2 = trim ideal apply(9,j -> if ch <= 65521 then image(mu|(I2 + ideal arandom S),"F4") else interpoleImage(mu,I2 + ideal arandom S,{5},5));
         if o.Verbose then <<"-- computing the 10 exceptional lines on U and U'"<<endl;
         P = ideal 1; while dim P != 1 or degree P != 10 do P = plucker(trim(U+U2),1); 
         exceptionalLines = apply(decompose trim lift(P,ambient ring P),l -> sub(plucker sub(l,ring P),vars ring U));
@@ -324,11 +319,11 @@ associatedK3surface (SpecialCubicFourfold) := o -> (X) -> (
         exceptionalQuarticCurve = U+U2; 
         for L in exceptionalLines do exceptionalQuarticCurve = quotient(exceptionalQuarticCurve,L); 
         exceptionalQuarticCurve = top exceptionalQuarticCurve;
-        if o.Verbose then <<"-- computing the map f from U to the minimial K3 surface of degree 38"<<endl;
+        if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree 38"<<endl;
         f = mapDefinedByDivisor(quotient U,{(ideal first gens ring U,1)}|apply(exceptionalLines,l->(l,1))|{(exceptionalQuarticCurve,4)});
-        if numgens target f != 20+1 then error "something went wrong";
+        if numgens target f != 20+1 then error "something went wrong on the target of the map defined by the divisor";
         if o.Verbose then <<"-- computing the image of f"<<endl;
-        interpoleImage(f,toList(153:2),2);
+        if ch <= 65521 then image(f,"F4") else interpoleImage(f,toList(153:2),2);
         return (mu,U,append(exceptionalLines,exceptionalQuarticCurve),f);
     );
     if X#"label" === "C42" then (
@@ -350,11 +345,11 @@ associatedK3surface (SpecialCubicFourfold) := o -> (X) -> (
         exceptionalConics = saturate(image pr,exceptionalLines); 
         exceptionalLines = trim lift(pr^* exceptionalLines,ring U); 
         exceptionalConics = trim lift(pr^* exceptionalConics,ring U); 
-        if o.Verbose then <<"-- computing the map f from U to the minimial K3 surface of degree 42"<<endl;
+        if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree 42"<<endl;
         f = mapDefinedByDivisor(quotient U,{(ideal first gens ring U,1),(exceptionalLines,1),(exceptionalConics,2)});
-        if numgens target f != 22+1 then error "something went wrong";
+        if numgens target f != 22+1 then error "something went wrong on the target of the map defined by the divisor";
         if o.Verbose then <<"-- computing the image of f"<<endl;
-        interpoleImage(f,toList(190:2),2);
+        if ch <= 65521 then image(f,"F4") else interpoleImage(f,toList(190:2),2);
         return (mu,U,{exceptionalLines,exceptionalConics},f);
     );
     if X#"label" === "FarkasVerra" then (
@@ -374,7 +369,7 @@ associatedK3surface (SpecialCubicFourfold) := o -> (X) -> (
         ); 
         exceptionalQuarticCurve = trim ideal select(exceptionalQuarticCurve_*,y -> degree y <= {2});
         if not(dim exceptionalQuarticCurve == 2 and degree exceptionalQuarticCurve == 4 and flatten degrees exceptionalQuarticCurve == {2,2,2,2,2,2}) then error "something went wrong";
-        if o.Verbose then <<"-- skipping computation of the map f from U to the minimial K3 surface of degree 26"<<endl;
+        if o.Verbose then <<"-- skipping computation of the map f from U to the minimal K3 surface of degree 26"<<endl;
         return (mu,U,{exceptionalQuarticCurve},null);
     );
     if X#"label" === "oneNodalSepticDelPezzoSurfaceC26" then (
@@ -391,7 +386,7 @@ associatedK3surface (SpecialCubicFourfold) := o -> (X) -> (
         exceptionalCubic = trim ideal select((intersect for i to 3 list (j := parametrize arandom({1},ring U); j top j^* exceptionalCubic))_*,l -> degree l <= {2}); 
         if not ? exceptionalCubic == "cubic curve of arithmetic genus 0 in PP^7 cut out by 7 hypersurfaces of degrees (1,1,1,1,2,2,2)" then error "something went wrong";
         if o.Verbose then <<"-- skipping computation of the normalization of U and"<<endl;
-        if o.Verbose then <<"   of the map f from U to the minimial K3 surface of degree 26"<<endl;
+        if o.Verbose then <<"   of the map f from U to the minimal K3 surface of degree 26"<<endl;
         return (mu,U,{exceptionalCubic},null);
     );
     error "not implemented yet: fourfold not recognized yet or not rational";
@@ -1033,6 +1028,7 @@ parametrize (SpecialGushelMukaiFourfold) := (X) -> (
 associatedK3surface (SpecialGushelMukaiFourfold) := o -> (X) -> (
     recognize X;
     (S,I) := ideals X;
+    ch := char coefficientRing X;
     local mu; local I2; local U; local U2; local f;
     if X#"label" === 1 then (
         if o.Verbose then <<"-- computing the map mu from the fivefold in P^8 to P^4 defined by the hypersurfaces"<<endl;
@@ -1047,7 +1043,7 @@ associatedK3surface (SpecialGushelMukaiFourfold) := o -> (X) -> (
         P := ideal 1; while dim P != 1 or degree P != 2 do P = plucker(trim(U+U2),1); 
         exceptionalLines := apply(decompose trim lift(P,ambient ring P),l -> sub(plucker sub(l,ring P),vars ring U));
         if not((# exceptionalLines == 1 and dim first exceptionalLines == 2 and degree first exceptionalLines == 2 and flatten degrees first exceptionalLines == {1,2,2,2,2}) or (# exceptionalLines == 2 and all(exceptionalLines,l->dim l == 2 and degree l == 1 and flatten degrees l == {1,1,1}))) then error "something went wrong";
-        if o.Verbose then <<"-- skipping computation of the map f from U to the minimial K3 surface of degree 10"<<endl;
+        if o.Verbose then <<"-- skipping computation of the map f from U to the minimal K3 surface of degree 10"<<endl;
         return (mu,U,exceptionalLines,null);
     );  
     if X#"label" === 3 then (
@@ -1055,7 +1051,7 @@ associatedK3surface (SpecialGushelMukaiFourfold) := o -> (X) -> (
         if o.Verbose then <<"   of degree 5 with points of multiplicity 3 along the surface S of degree 14 and genus 8"<<endl;
         mu = rationalMap fanoMap X;
         if o.Verbose then <<"-- computing the surface U corresponding to the fourfold X"<<endl;
-        U = trim ideal apply(9,j -> interpoleImage(mu,I + ideal arandom S,{3,3},3));
+        U = trim ideal apply(9,j -> if ch <= 65521 then image(mu|(I + ideal arandom S),"F4") else interpoleImage(mu,I + ideal arandom S,{3,3},3));
         if o.Verbose then <<"-- computing the normalization of U"<<endl;
         normU := normalization(quotient U,Verbose=>false);
         if o.Verbose then <<"-- inverting the normalization of U"<<endl;
@@ -1067,10 +1063,10 @@ associatedK3surface (SpecialGushelMukaiFourfold) := o -> (X) -> (
         if o.Verbose then <<"   of degree 3 with points of multiplicity 2 along the surface S of degree 9 and genus 2"<<endl;
         mu = fanoMap X;
         if o.Verbose then <<"-- computing the surface U corresponding to the fourfold X"<<endl;
-        U = trim ideal apply(13,j -> interpoleImage(mu,I + ideal arandom S,{5},5));
+        U = trim ideal apply(13,j -> (if o.Verbose then <<"-- (step "<<j+1<<" of 13)"<<endl; if ch <= 65521 then image(mu|(I + ideal arandom S),"F4") else interpoleImage(mu,I + ideal arandom S,{5},5)));
         I2 = trim((ideal source mu) + (ideal arandom S));
         if o.Verbose then <<"-- computing the surface U' corresponding to another fourfold X'"<<endl;
-        U2 = trim ideal apply(13,j -> interpoleImage(mu,I2 + ideal arandom S,{5},5));
+        U2 = trim ideal apply(13,j -> (if o.Verbose then <<"-- (step "<<j+1<<" of 13)"<<endl; if ch <= 65521 then image(mu|(I2 + ideal arandom S),"F4") else interpoleImage(mu,I2 + ideal arandom S,{5},5)));
         if o.Verbose then <<"-- computing the exceptional line and the exceptional cubic curve"<<endl;
         L := trim sub(plucker plucker(trim(U+U2),1),vars ring U);
         if not(dim L == 2 and degree L == 1) then error "something went wrong";
@@ -1082,8 +1078,14 @@ associatedK3surface (SpecialGushelMukaiFourfold) := o -> (X) -> (
         ); 
         C = trim ideal select(topC_*,t -> degree t <= {2});
         if not(dim C == 2 and degree C == 3) then error "something went wrong";
-        if o.Verbose then <<"-- skipping computation of the map f from U to the minimial K3 surface of degree 20"<<endl;
-        return (mu,U,{L,C},null);
+        if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree 20"<<endl;
+        f = rationalMap(sub(radical saturate ideal singularLocus U,quotient U),2,Dominant=>true);
+        f0 := mapDefinedByDivisor(target f,{(f ideal arandom(1,source f),1),(f C^3,1),(f L,1)});        
+        if numgens target f0 != 11+1 then error "something went wrong on the target of the map defined by the divisor";
+        f = f * f0;
+        if o.Verbose then <<"-- computing the image of f"<<endl;
+        if ch <= 65521 then image(f,"F4") else interpoleImage(f,toList(36:2),2);
+        return (mu,U,{L,C},f);
     );
     error "not implemented yet: fourfold not recognized yet or not rational";
 );
@@ -1256,6 +1258,18 @@ detectCongruence (SpecialGushelMukaiFourfold,ZZ) := (X,e) -> (
     try f (pointOnDP5 ideal source map X) else error "no congruences detected";
     f
 );
+
+isAdmissibleGM = method();
+
+isAdmissibleGM (ZZ) := (d) -> (
+   if d <= 8 then return false;
+   if d % 8 == 0 then return false;
+   if d % 8 != 2 and d % 8 != 4 then return false;
+   for p from 3 to floor(d/2) do if ((p % 4 == 0 or p % 4 == 2 or p % 4 == 3) and isPrime p and d % p == 0) then return false;
+   return true;
+);
+
+isAdmissibleGM (SpecialGushelMukaiFourfold) := (X) -> isAdmissible discriminant X;
 
 parameterCount (SpecialGushelMukaiFourfold) := o -> (X) -> (
    (S,G) := ideals X;
@@ -1722,6 +1736,26 @@ rationalMap (RationalMap,Ring) := o -> (Phi,Gr) -> (
    Psi
 );
 
+image (RationalMap,String) := (phi,alg) -> (
+   if alg =!= "F4" and alg =!= "MGB" then error "expected Strategy to be \"F4\" or \"MGB\"";
+   if phi#"idealImage" =!= null then return image phi;
+   n := phi#"dimAmbientTarget";
+   m := phi#"dimAmbientSource";
+   K := coefficientRing phi;
+   t := local t; x := local x;
+   R := K[t_0..t_n,x_0..x_m,MonomialOrder=>Eliminate(n+1)];
+   s := map(R,ambient source phi,{t_0..t_n});
+   F := s lift(matrix phi,ambient source phi);
+   I := s ideal source phi;  
+   s':= map(R,ambient target phi,{x_0..x_m});
+   J := s' ideal target phi;
+   V := I + J + ideal(F - matrix{{x_0..x_m}});
+   G := groebnerBasis(V,Strategy=>alg);
+   G' := ideal sub(selectInSubring(1,G),K[x_0..x_m]);
+   forceImage(phi,sub(sub(G',vars ambient target phi),target phi));
+   image phi
+);
+
 dimdegree = (X) -> if dim X <= 0 then 0 else if dim X == 1 then degree X else error "expected a zero-dimensional scheme"; 
 
 cycleClass = method();
@@ -2054,9 +2088,10 @@ mapDefinedByDivisor = method();
 mapDefinedByDivisor (QuotientRing,VisibleList) := (R,D) -> ( 
     for d in D do if not (instance(first d,Ideal) and instance(last d,ZZ) and #d == 2 and (ring first d === R or ring first d === ambient R) and last d > 0) then error "expected a list of pairs (I,n), where I is an ideal in the given quotient ring and n is a positive integer";
     D = apply(D,d -> if ring first d === ambient R then (trim sub(first d,R),last d) else d);
-    I := intersect for d in D list (first d)^(last d); 
+    I := trim intersect for d in D list (first d)^(last d); 
     J := quotient(ideal I_0,I);
-    rationalMap(J,max flatten degrees J)
+    d := first first degrees I;
+    rationalMap(J,d)
 );
 
 linearCombination = method();
@@ -2108,7 +2143,7 @@ reduceToPrimeCharacteristic (Ideal,ZZ) := (I,p) -> (
    R := K[x_1 .. x_(numgens ring I)];
    sub(I,vars R)
 );
-reduceToPrimeCharacteristic (Ideal) := (I) -> reduceToPrimeCharacteristic(I,nextPrime random(300,11000000));
+reduceToPrimeCharacteristic (Ideal) := (I) -> reduceToPrimeCharacteristic(I,nextPrime random(1000,11000000));
 
 assertSmoothness = method(); -- sufficient conditions for smoothness ('I' is assumed to be equidimensional)
 assertSmoothness (Ideal,ZZ) := (I,c) -> (
@@ -2353,6 +2388,15 @@ Inputs => {"phi" => RationalMap => {"an automorphism of ", TEX///$\mathbb{P}^n$/
 Outputs => {RationalMap => {"the induced automorphism of ", TO Grass, TEX///$(k,n)$///}}, 
 EXAMPLE {"P4 = Grass(0,4,ZZ/33331);", "G'1'4 = Grass(1,4,ZZ/33331);", "phi = rationalMap apply(5, i -> random(1,P4))", "Phi = rationalMap(phi,G'1'4)"}} 
 
+document { 
+Key => {(image,RationalMap,String)}, 
+Headline => "closure of the image of a rational map using the F4 algorithm (experimental)", 
+Usage => "image(phi,\"F4\")
+image(phi,\"MGB\")",
+Inputs => { "phi" => RationalMap,{"\"F4\" or \"MGB\""}}, 
+Outputs => {{"the ",TO2{"Ideal","ideal"}," defining the closure of the image of ",TT"phi","; the calculation passes through ",TO groebnerBasis,"(...,Strategy=>\"F4\") or ",TO groebnerBasis,"(...,Strategy=>\"MGB\")."}}, 
+SeeAlso => {(image,RationalMap),(image,RationalMap,ZZ),groebnerBasis}}
+
 document {Key => {tables, (tables, ZZ, Ring), (tables, ZZ), (tables, ZZ, Ring, Nothing), (tables, ZZ, Nothing)}, 
 Headline => "make examples of reducible subschemes of P^5", 
 Usage => "tables(i,K)", 
@@ -2395,11 +2439,20 @@ Inputs => {"I" => Ideal => {"the ideal of a subvariety ", TEX///$X\subset \mathb
 Outputs => {CoherentSheaf => {"the normal sheaf ", TEX///$\mathcal{N}_{X, Y}$///, " of ", TEX///$X$///, " in ", TEX///$Y$///}}} 
 
 document {Key => {isAdmissible, (isAdmissible, ZZ), (isAdmissible, SpecialCubicFourfold)}, 
-Headline => "whether an integer is admissible", 
+Headline => "whether an integer is admissible (in the sense of the theory of cubic fourfolds)", 
 Usage => "isAdmissible d", 
 Inputs => {"d" => ZZ}, 
-Outputs => {Boolean => {"wheter ", TT"d", " is admissible, i.e., it is an even integer ", TT"d>6", " which is not divisible by 4, 9 or any odd prime congruent to 2 modulo 3"}}, 
-EXAMPLE{"select(100,isAdmissible)"}} 
+Outputs => {Boolean => {"whether ", TT"d", " is admissible, i.e., it is an even integer ", TT"d>6", " which is not divisible by 4, 9 or any odd prime congruent to 2 modulo 3"}}, 
+EXAMPLE{"select(150,isAdmissible)"},
+SeeAlso => {isAdmissibleGM}} 
+
+document {Key => {isAdmissibleGM, (isAdmissibleGM, ZZ), (isAdmissibleGM, SpecialGushelMukaiFourfold)}, 
+Headline => "whether an integer is admissible (in the sense of the theory of GM fourfolds)", 
+Usage => "isAdmissibleGM d", 
+Inputs => {"d" => ZZ}, 
+Outputs => {Boolean => {"whether ",TEX///$d$///," is an integer ",TEX///$>$///," 8 and ",TEX///$\equiv$///," 2 or 4 (mod 8) such that the only odd primes that divide ",TEX///$d$///," are ",TEX///$\equiv$///," 1 (mod 4). In other words, whether a GM fourfold of discriminant ", TT"d", " has an associated K3 surface."}},
+EXAMPLE{"select(140,isAdmissibleGM)"},
+SeeAlso => {isAdmissible}} 
 
 document {Key => {detectCongruence, (detectCongruence, SpecialCubicFourfold), (detectCongruence, SpecialCubicFourfold, ZZ), (detectCongruence, SpecialGushelMukaiFourfold), (detectCongruence, SpecialGushelMukaiFourfold, ZZ)}, 
 Headline => "detect and return a congruence of (3e-1)-secant curves of degree e", 
@@ -2525,7 +2578,7 @@ Inputs => {"X" => SpecialCubicFourfold => {"containing a surface ", TEX///$S\sub
 Outputs => {{"the dominant ",TO2{RationalMap,"rational map"}," ",TEX///\psi:\mathbb{P}^5 ---> W///," defined by the linear system of hypersurfaces of degree ",TEX///$3e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{Ideal,"ideal"}," of the surface ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\psi$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the ideals of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{RationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to a minimal K3 surface, the associated K3 surface to ",TEX///$X$///,"."}},
 PARA {"Thus, the code ",TT "image last associatedK3surface X"," gives the ideal of the (minimal) associated K3 surface to ",TT"X",". For more details and notation, see the paper ",HREF{"https://arxiv.org/abs/1909.01263","Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds"},"."},
 EXAMPLE {"X = specialCubicFourfold \"quartic scroll\";", "describe X", "time (psi,U,C,f) = associatedK3surface(X,Verbose=>true);", "describe psi", "? U", "? first C", "? image f"},
-PARA {"The same method can be also applied to a ",TO2{SpecialGushelMukaiFourfold, "Gushel-Mukai fourfold"},". In this case the surface is required to admit a congruence of ",TEX///$(2e-1)$///,"-secant curves of degree ",TEX///$e$///," inside the unique del Pezzo fivefold containing the fourfold."},
+PARA {"The same method can be also applied to a ",TO2{SpecialGushelMukaiFourfold, "Gushel-Mukai fourfold"},". In this case the surface is required to admit a congruence of ",TEX///$(2e-1)$///,"-secant curves of degree ",TEX///$e$///," inside the unique del Pezzo fivefold containing the fourfold. For more details, see the paper ",EM "Explicit constructions of K3 surfaces of high genus and unirational Noether–Lefschetz divisors",", by M. Hoff and G. Staglianò."},
 EXAMPLE {"X = specialGushelMukaiFourfold \"tau-quadric\";", "describe X", "time (psi,U,C,f) = associatedK3surface X;", "describe psi", "? U", "? first C -- two disjoint lines"},
 SeeAlso => {detectCongruence}} 
 
@@ -2541,8 +2594,6 @@ assert(f S == tangentialChowForm(ideal((Grass(0,4,ZZ/33331,Variable=>"x"))_3,(Gr
 use ring S;
 assert(f S == ideal(x_(3,4,5),x_(2,4,5),x_(1,4,5),x_(0,4,5),x_(2,3,5),x_(1,3,5),x_(0,3,5),x_(1,2,5),x_(0,2,5),x_(0,1,5),x_(2,3,4),x_(1,3,4),x_(0,3,4),x_(1,2,4),x_(1,2,3)));
 ///
-
--- end
 
 TEST ///
 K := ZZ/3331;
