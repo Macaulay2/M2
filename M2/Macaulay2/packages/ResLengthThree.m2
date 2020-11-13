@@ -10,7 +10,7 @@ newPackage ( "ResLengthThree",
 	  HomePage => "http://www.math.ttu.edu/~lferraro" },
 	{ Name => "Francesca Gandini",
 	  Email => "fra.gandi.phd@gmail.com",
-	  HomePage => "http://www.kzoo.edu/faculty/index.php?name=fgandini" },
+	  HomePage => "https://github.com/fragandi" },
 	{ Name => "Frank Moore",
 	  Email => "moorewf@wfu.edu",
 	  HomePage => "http://users.wfu.edu/moorewf/" },
@@ -370,7 +370,7 @@ document{
       irrelevant maximal ideal of a graded ring ", EM "Q ", "
       (obtained as a quotient of a polynomial ring). If the length of
       the minimal free resolution ", EM "F ", " of ", TEX /// $R=Q/I$
-      ///, " is 3, then it carries a structure of a differential
+      ///, " is 3, then the resolution admits the structure of a differential
       graded algebra. The induced algebra structure on ", TEX /// $A =
       Tor^Q(R,k)$ ///, " is unique and provides for a classification
       of such quotient rings.  The package determines a multiplicative
@@ -517,10 +517,11 @@ document{
       List => { "of the rows in the multiplication table; use ", TO netList, " to display it as a table" }
       },
 
-  PARA { "For a length tree free resolution described as a
-  graded-commutative ring ", TT "A", " the function returns a list of
-  the rows of the table of products of elements in degree one. It does
-  the same for the graded-commutative homology algebra obtained from
+  PARA { "For a free resolution of length three described as a
+  graded-commutative ring ", TT "A", ", the function returns a list of
+  the rows of the multiplication table of elements in degree one. It also computes
+  the multiplication table for products of elements in degree one in the
+   graded-commutative homology algebra obtained from
   ", TT "A", "." },
   
   EXAMPLE {
@@ -601,11 +602,13 @@ document{
       List => { "of the rows in the multiplication table; use ", TO netList, " to display it as a table" }
       },
 
-  PARA { "For a length tree free resolution described as a
-  graded-commutative ring ", TT "A", " the function returns a list of
-  the rows of the table of products of elements in degree one with elements in degree two. It does
-  the same for the graded-commutative homology algebra obtained from
-  ", TT "A", "." },
+  PARA { "For a free resolution of length three described as a
+  graded-commutative ring ", TT "A", ", the function returns a list of
+  the rows of the multiplication table of elements in degree one with elements in degree two. 
+  It also computes
+  the multiplication table for products of elements in degree one with elements in degree two 
+  in the graded-commutative homology algebra obtained from
+  ", TT "A", "."  },
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
@@ -746,4 +749,4 @@ restart
 installPackage "ResLengthThree"
 debug loadPackage "ResLengthThree"
 check "ResLengthThree"
-
+viewHelp "ResLengthThree"
