@@ -450,7 +450,7 @@ baseRing := RP -> ( R := RP; while instance(R, LocalRing) do R = last R.baseRing
 
 -- (symbol:, Thing, Thing)
 -- We rely on the fact that ideal and module quotients commute with localization
-localQuotient := opts -> (A, B) -> (
+localQuotient := (opts, A, B) -> (
     RP := ring A;
     if instance(RP, LocalRing) then (
         R := baseRing RP;
@@ -461,7 +461,7 @@ localQuotient := opts -> (A, B) -> (
 
 -- saturate
 -- We rely on the fact that ideal and module saturations commute with localization
-localSaturate := opts -> (A, B) -> (
+localSaturate := (opts, A, B) -> (
     RP := ring A;
     if instance(RP, LocalRing) then (
         R := baseRing RP;
@@ -472,7 +472,7 @@ localSaturate := opts -> (A, B) -> (
 
 -- annihilator
 -- We rely on the fact that ideal and module annihilators commute with localization
-localAnnihilator := opts -> A -> (
+localAnnihilator := (opts, A) -> (
     RP := ring A;
     if instance(RP, LocalRing) then (
         R := baseRing RP;
@@ -483,22 +483,14 @@ localAnnihilator := opts -> A -> (
 
 --=============================== addHooks Section for Colons ===============================--
 
-importFrom_Colon { "debugInfo", "algorithms" }
-
 -- Installing local hooks for quotient and saturate
 scan({	(quotient, Ideal,  Ideal),
 	(quotient, Module, Ideal),
-	(quotient, Module, Module)}, key -> (
-	func := algorithms#key#Local = localQuotient;
-	addHook(key, (opts, I, J) -> (debugInfo(func, key, Local); func opts) (I, J))))
+	(quotient, Module, Module)}, key -> addHook(key, localQuotient,    Strategy => Local))
 scan({	(saturate, Ideal,  Ideal),
 	(saturate, Ideal,  RingElement),
-	(saturate, Module, Ideal)}, key -> (
-	func := algorithms#key#Local = localSaturate;
-	addHook(key, (opts, I, J) -> (debugInfo(func, key, Local); func opts) (I, J))))
-scan({	(annihilator, Module)}, key -> (
-	func := algorithms#key#Local = localAnnihilator;
-	addHook(key, (opts, M)    -> (debugInfo(func, key, Local); func opts) (M))))
+	(saturate, Module, Ideal)},  key -> addHook(key, localSaturate,    Strategy => Local))
+scan({	(annihilator, Module)},      key -> addHook(key, localAnnihilator, Strategy => Local))
 
 --================================= Tests and Documentation =================================--
 

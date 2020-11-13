@@ -5,8 +5,7 @@
 -- TODO: how to cache partial computation?
 
 -- This is a map from method keys to strategy hash tables
--- Also used in the Colon package
-algorithms = new MutableHashTable from {}
+algorithms := new MutableHashTable from {}
 
 -----------------------------------------------------------------------------
 -- utilities
@@ -48,16 +47,14 @@ intersect Sequence :=           opts -> L -> (
     (func opts) L)
 
 intersectHelper := (L, key, opts) -> (
+    -- For now, this is only for intersection of ideals and modules
     -- TODO: this line may need to move, but otherwise this helper can be used for any class
     if not same apply(L, ring) then error "intersect: expected objects in the same ring";
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
 
-    C := if strategy === null then runHooks(key, (opts, L))
-    else if algorithms#key#?strategy then (
-	func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (L)
-    else error("unrecognized Strategy for intersect: '", toString strategy, "'; expected: ", toString keys algorithms#key);
+    C := runHooks(key, (opts, L), Strategy => strategy);
 
     if C =!= null then doTrim C else if strategy === null
     then error("no applicable method for ", toString key)
@@ -68,7 +65,7 @@ intersectHelper := (L, key, opts) -> (
 Module.intersect = opts -> L -> intersectHelper(L, (intersect, Module, Module), opts)
 
 algorithms#(intersect, Module, Module) = new MutableHashTable from {
-    "Default" => opts -> L -> (
+    "Default" => (opts, L) -> (
 	M := L#0;
 	R := ring M;
 	-- check that the modules are compatible
@@ -86,18 +83,18 @@ algorithms#(intersect, Module, Module) = new MutableHashTable from {
     }
 
 -- Installing hooks for intersect(Module, Module)
-scan({"Default"}, strategy -> addHook(key := (intersect, Module, Module),
-	(opts, L) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) L))
+scan({"Default"}, strategy ->
+    addHook(key := (intersect, Module, Module), algorithms#key#strategy, Strategy => strategy))
 
 -----------------------------------------------------------------------------
 
 Ideal.intersect = opts -> L -> intersectHelper(L, (intersect, Ideal, Ideal), opts)
 
 algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
-    "Default" => opts -> L -> ideal intersect(opts, apply(L, module)),
+    "Default" => (opts, L) -> ideal intersect(opts, apply(L, module)),
 
     -- TODO: can this be extended to do more than 2 at once?
-    "Elimination" => opts -> L -> (
+    "Elimination" => (opts, L) -> (
 	R := ring L#0;
 	-- TODO: is this the right assumption? would a quotient ring work?
 	if not isPolynomialRing R
@@ -114,7 +111,7 @@ algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
 		g := groebnerBasis(U, Strategy => "F4");
 		fback ideal selectInSubring(1, g)))),
 
-    Monomial => opts -> L -> (
+    Monomial => (opts, L) -> (
 	R := ring L#0;
 	if not isPolynomialRing R
 	or not isCommutative R
@@ -127,5 +124,5 @@ algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
     }
 
 -- Installing hooks for intersect(Ideal, Ideal)
-scan({"Default", "Elimination", Monomial}, strategy -> addHook(key := (intersect, Ideal, Ideal),
-	(opts, L) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) L))
+scan({"Default", "Elimination", Monomial}, strategy ->
+    addHook(key := (intersect, Ideal, Ideal), algorithms#key#strategy, Strategy => strategy))

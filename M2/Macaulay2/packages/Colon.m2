@@ -6,6 +6,8 @@
 --
 -- TODO : 1. why are there shadowed symbols?
 --        2. cache computation under I.cache.QuotientComputation{J}
+--        3. which algorithms for Ideals can be adapted to submodules?
+--        4. move radical here, perhaps intersect as well
 ---------------------------------------------------------------------------
 newPackage(
     "Colon",
@@ -26,7 +28,7 @@ export { "isSupportedInZeroLocus" }
 
 exportFrom_Core { "quotient", "saturate", "annihilator", "MinimalGenerators" }
 
-importFrom_Core { "algorithms", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo", "debugInfo" }
+importFrom_Core { "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo" }
 
 -- TODO: where should these be placed?
 trim MonomialIdeal := MonomialIdeal => opts -> (cacheValue (symbol trim => opts)) ((I) -> monomialIdeal trim(module I, opts))
@@ -38,6 +40,9 @@ ambient Ideal := Ideal => I -> ideal 1_(ring I)
 --remainder(Ideal,  Matrix) := Matrix => (I, m) -> remainder(gens I, m)
 --Module % Matrix           :=
 --remainder(Module, Matrix) := Matrix => (M, m) -> remainder(gens M, m)
+
+-- This is a map from method keys to strategy hash tables
+algorithms := new MutableHashTable from {}
 
 --------------------------------------------------------------------
 -- Helpers
@@ -155,10 +160,7 @@ quotientHelper = (A, B, key, opts) -> (
     --opts = removeOptions(opts, {Strategy, MinimalGenerators});
     opts = removeQuotientOptions opts;
 
-    C := if strategy === null then runHooks(key, (opts, A, B))
-    else if algorithms#key#?strategy then (
-	func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (A, B)
-    else error("unrecognized Strategy for quotient: '", toString strategy, "'; expected: ", toString keys algorithms#key);
+    C := runHooks(key, (opts, A, B), Strategy => strategy);
 
     if C =!= null then doTrim C else if strategy === null
     then error("no applicable method for quotient(", class A, ", ", class B, ")")
@@ -166,18 +168,13 @@ quotientHelper = (A, B, key, opts) -> (
 
 -- Algorithms for Ideal : Ideal
 algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
-    Iterate => opts -> (I, J) -> (
+    Iterate => (opts, I, J) -> (
 	R := ring I;
-	M1 := ideal 1_R;
-	scan(numgens J, i -> (
-		f := J_i;
-		if generators(f * M1) % (generators I) != 0 then (
-		    M2 := quotient(I, f, opts, Strategy => Quotient);
-		    M1 = intersect(M1, M2);
-		    )));
-	M1),
+	fold(J_*, ideal 1_R, (f, M1) ->
+	    if generators(f * M1) % generators I == 0 then M1
+	    else intersect(M1, quotient(I, f, opts, Strategy => Quotient)))),
 
-    Quotient => opts -> (I, J) -> (
+    Quotient => (opts, I, J) -> (
 	R := (ring I)/I;
 	mR := transpose generators J ** R;
 	g := syz gb(mR, opts,
@@ -189,14 +186,14 @@ algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
 	lift(ideal g, ring I)),
 
     -- TODO
-    Linear => opts -> (I, J) -> (
+    Linear => (opts, I, J) -> (
 	-- assumptions: J is a single linear element, and everything is homogeneous
 	if not isHomogeneous I
 	or not isHomogeneous J or not isLinearForm J_0
 	then return null;
 	stderr << "warning: quotient strategy Linear is not yet implemented" << endl; null),
 
-    Monomial => opts -> (I, J) -> (
+    Monomial => (opts, I, J) -> (
 	R := ring I;
 	if not isMonomialIdeal I
 	or not isMonomialIdeal J
@@ -209,12 +206,12 @@ algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
     }
 
 -- Installing hooks for Ideal : Ideal
-scan({Quotient, Iterate-*, Linear*-, Monomial}, strategy -> addHook(key := (quotient, Ideal, Ideal),
-	(opts, I, J) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I, J)))
+scan({Quotient, Iterate-*, Linear*-, Monomial}, strategy ->
+    addHook(key := (quotient, Ideal, Ideal), algorithms#key#strategy, Strategy => strategy))
 
 -- Algorithms for Module : Ideal
 algorithms#(quotient, Module, Ideal) = new MutableHashTable from {
-    Iterate => opts -> (M, J) -> (
+    Iterate => (opts, M, J) -> (
 	-- This is the iterative version, where M is a
 	-- submodule of F/K, or ideal, and J is an ideal.
 	M1 := super M;
@@ -227,7 +224,7 @@ algorithms#(quotient, Module, Ideal) = new MutableHashTable from {
 		    )));
 	M1),
 
-    Quotient => opts -> (M, J) -> (
+    Quotient => (opts, M, J) -> (
 	m := generators M;
 	F := target m;
 	if M.?relations then m = m | M.relations;
@@ -243,7 +240,7 @@ algorithms#(quotient, Module, Ideal) = new MutableHashTable from {
 	if M.?relations then subquotient(h % M.relations, M.relations) else image h
 	),
 
-    Linear => opts -> (M, J) -> (
+    Linear => (opts, M, J) -> (
 	-- assumptions: J is a single linear element, and everything is homogeneous
 	if not isHomogeneous M
 	or not isHomogeneous J or not isLinearForm J_0
@@ -252,12 +249,12 @@ algorithms#(quotient, Module, Ideal) = new MutableHashTable from {
     }
 
 -- Installing hooks for Module : Ideal
-scan({Quotient, Iterate-*, Linear*-}, strategy -> addHook(key := (quotient, Module, Ideal),
-	(opts, I, J) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I, J)))
+scan({Quotient, Iterate-*, Linear*-}, strategy ->
+    addHook(key := (quotient, Module, Ideal), algorithms#key#strategy, Strategy => strategy))
 
 -- Algorithms for Module : Module
 algorithms#(quotient, Module, Module) = new MutableHashTable from {
-    Iterate => opts -> (I, J) -> (
+    Iterate => (opts, I, J) -> (
 	R := ring I;
 	M1 := ideal 1_R;
 	m := generators I | relations I;
@@ -272,7 +269,7 @@ algorithms#(quotient, Module, Module) = new MutableHashTable from {
 		    )));
 	M1),
 
-    Quotient => opts -> (M,J) -> (
+    Quotient => (opts, M, J) -> (
 	m := generators M;
 	if M.?relations then m = m | M.relations;
 	j := adjoint(generators J, (ring J)^1, source generators J);
@@ -290,8 +287,8 @@ algorithms#(quotient, Module, Module) = new MutableHashTable from {
     }
 
 -- Installing hooks for Module : Module
-scan({Quotient, Iterate}, strategy -> addHook(key := (quotient, Module, Module),
-	(opts, I, J) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I, J)))
+scan({Quotient, Iterate}, strategy ->
+    addHook(key := (quotient, Module, Module), algorithms#key#strategy, Strategy => strategy))
 
 --------------------------------------------------------------------
 -- Saturations
@@ -338,10 +335,7 @@ saturateHelper = (A, B, key, opts) -> (
     doTrim := if opts.MinimalGenerators then trim else identity;
     opts = removeOptions(opts, {Strategy, MinimalGenerators});
 
-    C := if strategy === null then runHooks(key, (opts, A, B))
-    else if algorithms#key#?strategy then (
-	func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (A, B)
-    else error("unrecognized Strategy for saturate: '", toString strategy, "'; expected: ", toString keys algorithms#key);
+    C := runHooks(key, (opts, A, B), Strategy => strategy);
 
     if C =!= null then doTrim C else if strategy === null
     then error("no applicable method for saturate(", class A, ", ", class B, ")")
@@ -357,31 +351,30 @@ saturationByGRevLexHelper := (I, v, opts) -> (
 
 -- Algorithms for Module : Ideal^infinity
 algorithms#(saturate, Module, Ideal) = new MutableHashTable from {
-    Iterate => opts -> (M, I) -> (
+    Iterate => (opts, M, I) -> (
 	M' := quotient(M, I, opts); while M' != M do ( M = M'; M' = quotient(M, I, opts)); M ),
     }
 
 -- Installing hooks for Module : Ideal^infinity
-scan({Iterate}, strategy -> addHook(key := (saturate, Module, Ideal),
-	(opts, I, J) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I, J)))
+scan({Iterate}, strategy ->
+    addHook(key := (saturate, Module, Ideal), algorithms#key#strategy, Strategy => strategy))
 
 -- Algorithms for Ideal : Ideal^infinity
 algorithms#(saturate, Ideal, Ideal) = new MutableHashTable from {
-    Iterate => opts -> (I, J) -> (
-	-- Iterated quotient
+    -- TODO: this is sometimes faster than Eliminate
+    Iterate => (opts, I, J) -> (
 	R := ring I;
 	m := transpose generators J;
-	while I != 0 do (
+	while (
 	    S := (ring I)/I;
 	    m = m ** S;
-	    I = ideal syz gb(m, Syzygies => true));
+	    I = ideal syz gb(m, Syzygies => true);
+	    I != 0) do ();
 	ideal (presentation ring I ** R)),
 
-    -- TODO: is there a performance hit because neither Eliminate nor Elimination are symbols?
-    Eliminate => opts -> (I, J) -> saturate(I, J, opts ++ {Strategy => Elimination}), -- backwards compatibility
-    Elimination => opts -> (I, J) -> intersect apply(J_*, g -> saturate(I, g, opts)),
+    Eliminate => (opts, I, J) -> intersect apply(J_*, g -> saturate(I, g, opts)),
 
-    GRevLex => opts -> (I, J) -> (
+    GRevLex => (opts, I, J) -> (
 	-- FIXME: this might not be necessary, but the code isn't designed for this case.
 	if not isFlatPolynomialRing ring I
 	or not isHomogeneous I
@@ -398,7 +391,7 @@ algorithms#(saturate, Ideal, Ideal) = new MutableHashTable from {
 	if any(last \ L, x -> x == 0) then I
 	else intersect(first \ L)),
 
-    Monomial => opts -> (I, J) -> (
+    Monomial => (opts, I, J) -> (
 	R := ring I;
 	if not isMonomialIdeal I
 	or not isMonomialIdeal J
@@ -411,13 +404,13 @@ algorithms#(saturate, Ideal, Ideal) = new MutableHashTable from {
     }
 
 -- Installing hooks for Ideal : Ideal^infinity
-scan({Iterate, Elimination, GRevLex, Monomial}, strategy -> addHook(key := (saturate, Ideal, Ideal),
-	(opts, I, J) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I, J)))
+scan({Iterate, Eliminate, GRevLex, Monomial}, strategy ->
+    addHook(key := (saturate, Ideal, Ideal), algorithms#key#strategy, Strategy => strategy))
 
 -- Algorithms for Ideal : RingElement^infinity
 algorithms#(saturate, Ideal, RingElement) = new MutableHashTable from {
-    Iterate => opts -> (I, f) -> saturate(I, ideal f, opts), -- backwards compatibility
-    Linear => opts -> (I, f) -> (
+    Iterate => (opts, I, f) -> saturate(I, ideal f, opts ++ {Strategy => Iterate}), -- backwards compatibility
+    Linear => (opts, I, f) -> (
 	-- assumptions for this case:
 	--   (1) the ring is of the form k[x1..xn].  No quotients, k a field or ZZ, grevlex order
 	--   (2) all variables have degree 1.
@@ -437,7 +430,7 @@ algorithms#(saturate, Ideal, RingElement) = new MutableHashTable from {
 	g := gens gb(fto I, opts);
 	ideal fback first divideByVariable(g, v)),
 
-    Bayer => opts -> (I, f) -> (
+    Bayer => (opts, I, f) -> (
 	-- Bayer method. This may be used if I, f are homogeneous.
 	-- Basic idea: in a ring R[z]/(f - z), with the RevLex order, compute GB of I.
 	-- assumptions for this case:
@@ -463,8 +456,7 @@ algorithms#(saturate, Ideal, RingElement) = new MutableHashTable from {
 	(g1, notused) := divideByVariable(g, A_n);
 	ideal iback g1),
 
-    Eliminate => opts -> (I, f) -> saturate(I, f, opts ++ {Strategy => Elimination}), -- backwards compatibility
-    Elimination => opts -> (I, f) -> (
+    Eliminate => (opts, I, f) -> (
 	-- Eliminate(t, (I, t * f - 1))
 	-- assumptions for this case:
 	--  I is an ideal in a flat polynomial ring (ring of the form k[x1..xn], no quotients, k a field or ZZ)
@@ -477,7 +469,7 @@ algorithms#(saturate, Ideal, RingElement) = new MutableHashTable from {
 	p1 := selectInSubring(1, g);
 	ideal fback p1),
 
-    GRevLex => opts -> (I, v) -> (
+    GRevLex => (opts, I, v) -> (
 	-- FIXME: this might not be necessary, but the code isn't designed for this case.
 	if not isHomogeneous I
 	or not isFlatPolynomialRing ring I
@@ -489,7 +481,7 @@ algorithms#(saturate, Ideal, RingElement) = new MutableHashTable from {
 	-- Saturate with respect to each variable separately
 	first saturationByGRevLexHelper(I, v, opts)),
 
-    "Unused" => opts -> (I, f) -> (
+    "Unused" => (opts, I, f) -> (
 	-- NOT USED; TODO: assumptions?
 	R := ring I;
 	I1 := ideal 1_R;
@@ -503,8 +495,8 @@ algorithms#(saturate, Ideal, RingElement) = new MutableHashTable from {
     }
 
 -- Installing hooks for Ideal : RingElement^infinity
-scan({"Unused", Elimination, GRevLex, Bayer, Linear}, strategy -> addHook(key := (saturate, Ideal, RingElement),
-	(opts, I, J) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I, J)))
+scan({"Unused", Iterate, Eliminate, GRevLex, Bayer, Linear}, strategy ->
+    addHook(key := (saturate, Ideal, RingElement), algorithms#key#strategy, Strategy => strategy))
 
 --------------------------------------------------------------------
 -- isSupportedInZeroLocus
@@ -559,10 +551,7 @@ annihilatorHelper = (A, key, opts) -> (
 
     strategy := opts.Strategy;
 
-    C := if strategy === null then runHooks(key, (opts, A))
-    else if algorithms#key#?strategy then (
-	func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (A)
-    else error("unrecognized Strategy for annihilator: '", toString strategy, "'; expected: ", toString keys algorithms#key);
+    C := runHooks(key, (opts, A), Strategy => strategy);
 
     if C =!= null then C else if strategy === null
     then error("no applicable method for annihilator(", class A, ")")
@@ -570,18 +559,18 @@ annihilatorHelper = (A, key, opts) -> (
 
 -- Algorithms for annihilator Module
 algorithms#(annihilator, Module) = new MutableHashTable from {
-    Quotient     => opts -> M -> (
+    Quotient     => (opts, M) -> (
 	f := presentation M;
 	image f : target f),
-    Intersection => opts -> M -> (
+    Intersection => (opts, M) -> (
 	f := presentation M;
 	F := target f;
 	intersect apply(numgens F, i -> ideal modulo(F_{i}, f))),
     }
 
 -- Installing hooks for annihilator Module
-scan({Quotient, Intersection}, strategy -> addHook(key := (annihilator, Module),
-	(opts, I) -> (func := algorithms#key#strategy; debugInfo(func, key, strategy); func opts) (I)))
+scan({Quotient, Intersection}, strategy ->
+    addHook(key := (annihilator, Module), algorithms#key#strategy, Strategy => strategy))
 
 --------------------------------------------------------------------
 ----- Tests section
@@ -665,8 +654,8 @@ load "./Colon/annihilator-doc.m2"
 --------------------------------------------------------------------
 
 saturationByGRevLex     = (I,J) -> saturate(I, J, Strategy => GRevLex)
-saturationByElimination = (I,J) -> saturate(I, J, Strategy => Elimination)
-intersectionByElimination =  L  -> intersect(L,   Strategy => "Elimination")
+saturationByElimination = (I,J) -> saturate(I, J, Strategy => Eliminate)
+intersectionByElimination =  L  -> intersect(L,   Strategy => Eliminate)
 
 end--
 
@@ -698,10 +687,10 @@ I = ideal(x_0^2*x_2^2*x_3^2+44*x_0*x_1*x_2^2*x_3^2+2005*x_1^2*x_2^2*x_3^2+12870
 
 --              B0       B1
 -- GRevLex      25.95s   0.18s
--- Elimination  28.35s   0.29s
+-- Eliminate    28.35s   0.29s
 -- Iterate      60.02s   0.05s
 for B in {B0, B1} do (
-    for strategy in {GRevLex, Elimination, Iterate} do
+    for strategy in {GRevLex, Eliminate, Iterate} do
     print(strategy, (try elapsedTime saturate(I, B, Strategy => strategy);)))
 
 ans1 = elapsedTime saturationByGRevLex(saturationByGRevLex(I, B0), B1); -- 25.53s
@@ -839,14 +828,14 @@ print(strategy, (try (elapsedTime J'  === quotient(J, I, Strategy => strategy)) 
 -- algorithm; d =   2    3    4    5
 -- null          0.45  430
 -- GRevLex        N/A  N/A  N/A  N/A
--- Elimination   2.87  378
+-- Eliminate     2.87  378
 -- Iterate         20  575
 elapsedTime J'' = saturate(J, I);
-for strategy in {GRevLex, Elimination, Iterate} do
+for strategy in {GRevLex, Eliminate, Iterate} do
 print(strategy, (try (elapsedTime J'' === saturate(J, I, Strategy => strategy)) else "not applicable"))
 
 elapsedTime quotient(J, I, Strategy => Iterate);
-elapsedTime saturate(J, I, Strategy => Elimination);
+elapsedTime saturate(J, I, Strategy => Eliminate);
 
 degree I
 elapsedTime(J : I_0);
