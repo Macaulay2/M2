@@ -216,6 +216,7 @@ Macaulay2 uses several external libraries and programs, which can be built using
   - `build-mathicgb`: [Mathicgb] library for signature Groebner bases library
   - `build-memtailor`: [Memtailor] library for special purpose memory allocators
   - `build-mpfr`:	[MPFR] GNU Multiple Precision Floating Point library
+  - `build-mpfi`:	[MPFI] a multiple precision interval arithmetic library based on MPFR
   - `build-mpir`:	[MPIR] Multiple Precision Integers & Rationals library (optional replacement for GMP)
   - `build-mpsolve`: [MPSolve] library for solving multiprecision polynomials
   - `build-ntl`:	[NTL] library for doing number theory
@@ -234,6 +235,7 @@ Macaulay2 uses several external libraries and programs, which can be built using
 [Mathicgb]: https://github.com/broune/mathicgb
 [Memtailor]: https://github.com/broune/memtailor
 [MPFR]: https://www.mpfr.org/
+[MPFI]: http://perso.ens-lyon.fr/nathalie.revol/software.html
 [MPIR]: http://mpir.org/
 [MPSolve]: https://github.com/robol/MPSolve
 [NTL]: https://www.shoup.net/ntl/
