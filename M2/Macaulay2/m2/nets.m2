@@ -270,10 +270,10 @@ warning  = msg -> if debugLevel > 0 then (
     error "warning issued, debugLevel > 0");
 
 -- This function is mainly used by runHooks, printing a line like this:
- -- (quotient,Ideal,Ideal) with Strategy => Monomial from ../../Macaulay2/packages/Colon.m2:199:22-208:82
+ -- (quotient,Ideal,Ideal) with Strategy => Monomial from -*Function[../../Macaulay2/packages/Colon.m2:196:30-205:82]*-
 -- TODO: the filenames are not emacs clickable, perhaps M2-mode should be improved
 debugInfo = (func, key, strategy, infoLevel) -> if debugLevel > infoLevel then printerr(
-    toString key, if strategy =!= null then (" with Strategy => ", toString strategy), " from ", symbolLocation func)
+    toString key, if strategy =!= null then (" with Strategy => ", toString strategy), " from ", toString func)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

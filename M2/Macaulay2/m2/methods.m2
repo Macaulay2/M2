@@ -553,16 +553,17 @@ addHook(Sequence,         Function) := opts -> (key,      hook) -> (
     store.HookPriority#ind = alg;
     store.HookAlgorithms#alg = hook)
 
+-- FIXME: removing and adding without strategy is buggy
 removeHook = method()
-removeHook(HashTable, Thing, Thing) := (obj, key, hook) -> removeHook((key, obj), hook)
-removeHook(Symbol,           Thing) := (sym,      hook) -> removeHook(1:sym,      hook)
-removeHook(Sequence,         Thing) := (key,      hook) -> (
+removeHook(HashTable, Thing, Function) := (obj, key, hook) -> removeHook((key, obj), hook)
+removeHook(Symbol,           Function) := (sym,      hook) -> removeHook(1:sym,      hook)
+removeHook(Sequence,         Function) := (key,      hook) -> (
     store := getHookStore(key, false);
     store  = if store =!= null and store#?key then store#key else return;
-    ind := scan(store.HookPriority, ind -> if store.HookPriority#ind === hook then break ind);
-    if ind =!= null then (
-	store.HookPriority = delete(ind, store.HookPriority);
-	remove(store.HookAlgorithms, ind)))
+    alg := scan(store.HookPriority, alg -> if store.HookAlgorithms#alg === hook then break alg);
+    if alg =!= null then (
+	store.HookPriority = delete(alg, store.HookPriority);
+	remove(store.HookAlgorithms, alg)))
 
 -- tracking debugInfo
 infoLevel    := -1

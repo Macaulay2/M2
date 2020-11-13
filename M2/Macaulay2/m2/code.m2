@@ -169,7 +169,8 @@ hooks Sequence := opts -> key -> (
     previousMethodsFound = new NumberedVerticalList from (
 	if store === null or not store#?key then {} else
 	if (alg := opts.Strategy) === null or not store#key.HookAlgorithms#?alg
-	then values store#key.HookAlgorithms else { store#key.HookAlgorithms#alg }))
+	then apply(store#key.HookPriority, alg -> store#key.HookAlgorithms#alg)
+	else { store#key.HookAlgorithms#alg }))
 
 strategies = method(Dispatch => Thing)
 strategies Symbol   := sym -> strategies(1:sym)
