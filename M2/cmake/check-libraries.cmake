@@ -8,7 +8,7 @@
 
 # These are the libraries linked with Macaulay2 in Macaulay2/{e,bin}/CMakeLists.txt
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
-set(LIBRARIES_LIST MPSOLVE MATHICGB MATHIC MEMTAILOR FROBBY FACTORY FLINT NTL MPFR MP BDWGC LAPACK)
+set(LIBRARIES_LIST MPSOLVE MATHICGB MATHIC MEMTAILOR FROBBY FACTORY FLINT NTL MPFI MPFR MP BDWGC LAPACK)
 set(LIBRARY_LIST   READLINE HISTORY GDBM ATOMICOPS)
 
 if(WITH_TBB)
@@ -121,6 +121,7 @@ endforeach()
 find_package(Eigen3	3.3.0 PATHS ${M2_HOST_PREFIX})
 find_package(BDWGC	7.6.4)
 find_package(MPFR	4.0.1)
+find_package(MPFI)
 find_package(NTL       10.5.0)
 find_package(Flint	2.6.0)
 find_package(Factory	4.1.0)
@@ -139,7 +140,7 @@ pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.1.1)
 # TODO: add FindModules for these two as well
 
 set(LIBRARY_OPTIONS
-  Eigen3 BDWGC MPIR MPFR NTL Flint Factory Frobby cddlib MPSolve
+  Eigen3 BDWGC MPIR MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve
   GTest Memtailor Mathic Mathicgb GLPK Givaro FFLAS_FFPACK)
 
 ###############################################################################

@@ -287,6 +287,23 @@ ExternalProject_Add(build-mpfr
 set(MPFR_INCLUDE_DIR ${MPFR_INCLUDE_DIRS}) # TODO: make this unnecessary in d/CMakeLists.txt
 _ADD_COMPONENT_DEPENDENCY(libraries mpfr mp MPFR_FOUND)
 
+# http://perso.ens-lyon.fr/nathalie.revol/software.html
+ExternalProject_Add(build-mpfi
+  URL               https://gforge.inria.fr/frs/download.php/file/37331/mpfi-1.5.3.tar.bz2
+  URL_HASH          SHA256=2383d457b208c6cd3cf2e66b69c4ce47477b2a0db31fbec0cd4b1ebaa247192f
+  PREFIX            libraries/mpfi
+  SOURCE_DIR        libraries/mpfi/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} all
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
+  EXCLUDE_FROM_ALL  ON
+  STEP_TARGETS      install test
+  )
+_ADD_COMPONENT_DEPENDENCY(libraries mpfi "" MPFI_FOUND)
 
 # http://shoup.net/ntl
 ExternalProject_Add(build-ntl
