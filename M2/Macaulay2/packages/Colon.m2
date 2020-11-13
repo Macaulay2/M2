@@ -310,7 +310,8 @@ saturate(MonomialIdeal, RingElement) := MonomialIdeal => opts -> (I, f) -> (
 saturate(Module, Ideal)       := Module => opts -> (M, J) -> saturateHelper(M, J, (saturate, Module, Ideal), opts)
 saturate(Module, RingElement) := Module => opts -> (M, f) -> saturate(M, ideal f, opts)
 saturate Module               := Module => opts ->  M     -> saturate(M, ideal vars ring M, opts)
--- TODO: where are these used?
+
+-- TODO: is M / saturate 0_M a correct computation of saturation of M?
 saturate(Vector, Ideal)       := Module => opts -> (v, J) -> saturate(image matrix {v}, J, opts)
 saturate(Vector, RingElement) := Module => opts -> (v, f) -> saturate(image matrix {v}, f, opts)
 saturate Vector               := Module => opts ->  v     -> saturate(image matrix {v}, opts)

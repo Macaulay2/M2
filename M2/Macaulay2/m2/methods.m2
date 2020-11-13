@@ -519,7 +519,6 @@ dispatcherFunctions = join (dispatcherFunctions, {
 -- also see hooks in code.m2
 -- TODO: get this to also work with methods like ((_, =), Y, Z) or ((SPACE, =), Function, Thing)
 
--- FIXME: this is a hack to avoid conflict with methods
 protect symbol Hooks
 protect symbol HookAlgorithms
 protect symbol HookPriority

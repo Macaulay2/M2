@@ -26,15 +26,15 @@ ass1 Ideal := List => o -> (I) -> (
      --here we look at the associated primes of the i-th
      --ext and pick out the height i components ala EisenbudHunekeVasconcelos
      while i <= d do ( 
-	  if debugLevel >= 2 then (<< "  associatedPrimes loop " << i << endl);
-	  currentext = Ext^i(polyRing^1/I1,polyRing);
-	  if codim currentext == i then (
-	       firstlist := minimalPrimes ann currentext;
-	       scan(firstlist, P -> (if codim P == i then (
-			      if debugLevel >= 1 then << "    " << P  << endl << endl ;
-			      assassinator = append(assassinator,P)))
-		    ) );
-	  i=i+1;);
+      if debugLevel >= 2 then (<< "  associatedPrimes loop " << i << endl);
+      currentext = Ext^i(polyRing^1/I1,polyRing);
+      if codim currentext == i then (
+           firstlist := minimalPrimes ann currentext;
+           scan(firstlist, P -> (if codim P == i then (
+                  if debugLevel >= 1 then << "    " << P  << endl << endl ;
+                  assassinator = append(assassinator,P)))
+            ) );
+      i=i+1;);
      assassinator = apply( assassinator, P -> (trim substitute(P, RI)) );
      assassinator
      ))
@@ -51,20 +51,20 @@ ass2 := (I) -> (
      currentI := lift(I,polyRing);
      topcurrentI := topComponents currentI;
      while not isSubset(topcurrentI, currentI) do(
-	if debugLevel >= 2 then print "  beginning new associatedPrimes loop";
+    if debugLevel >= 2 then print "  beginning new associatedPrimes loop";
         newcomponents = flatten minimalPrimes topcurrentI;
-	if debugLevel >=1 then (scan(newcomponents, P -> ( << endl << "    " << P << endl)));
-	assassinator = append(assassinator, newcomponents);
-	  currentI = currentI:topcurrentI;
-	  topcurrentI = topComponents currentI;
-	  );
+    if debugLevel >=1 then (scan(newcomponents, P -> ( << endl << "    " << P << endl)));
+    assassinator = append(assassinator, newcomponents);
+      currentI = currentI:topcurrentI;
+      topcurrentI = topComponents currentI;
+      );
      newcomponents = flatten minimalPrimes topcurrentI;
      if debugLevel >=1 then (scan(newcomponents, P -> ( << endl << "    " << P << endl)));
      assassinator = append(assassinator, newcomponents);
      assassinator = flatten assassinator;
      assassinator = apply(
-	  assassinator, P -> (trim substitute(P,RI))
-	  );
+      assassinator, P -> (trim substitute(P,RI))
+      );
      assassinator 
      ))
 
@@ -81,18 +81,18 @@ isSameList = (L1,L2) ->(
      counter1 := 0;
      counter2 := 0;
      if #L1 =!= #L2 then ret = false else(
-     	  while counter1 < #L1 and ret1 == true do (
-	     ret2 := false;
-	     counter2 = 0;
-	     while counter2 < #L2 and ret2 == false do(
-		    if L1#counter1 == L2#counter2 
-		    then ret2 = true;
-		    counter2 = counter2 + 1;
-		    );
-	       if ret2 == false then ret1 = false;
-	       counter1 = counter1 + 1;);
-	  ret = ret1;
-	  );
+          while counter1 < #L1 and ret1 == true do (
+         ret2 := false;
+         counter2 = 0;
+         while counter2 < #L2 and ret2 == false do(
+            if L1#counter1 == L2#counter2 
+            then ret2 = true;
+            counter2 = counter2 + 1;
+            );
+           if ret2 == false then ret1 = false;
+           counter1 = counter1 + 1;);
+      ret = ret1;
+      );
      ret	       
      )     	    
 
@@ -138,20 +138,20 @@ SYlocalize := (assroutine) -> (I,P) ->(
      if debugLevel >= 2 then (<< endl << "It equals " << Assasin << endl);
      RP := polyRing/P1;
      scan(Assasin, Q -> if not isSubset(Q,P) 
-	  then (IntersectionOfPrimes = 
-	       intersect(IntersectionOfPrimes,Q))
-	  );
+      then (IntersectionOfPrimes = 
+           intersect(IntersectionOfPrimes,Q))
+      );
      IOPrp := substitute(IntersectionOfPrimes,RP);
      if IntersectionOfPrimes == ideal(1_RI) 
      then ret = I
      else (
-	  if debugLevel >= 1 then (<< endl << "Finding a separator polynomial" << endl);
-	  f := lift((flatten entries generators gb IOPrp)#0, polyRing);
-	  if debugLevel >= 2 then (<< endl << "It equals " << f << endl);
-	  f = substitute (f,RI);
-	  if debugLevel >= 1 then (<< endl << "Saturating with respect to the separator polynomial" << endl);
-	  ret = saturate(I,f);
-	  );
+      if debugLevel >= 1 then (<< endl << "Finding a separator polynomial" << endl);
+      f := lift((flatten entries generators gb IOPrp)#0, polyRing);
+      if debugLevel >= 2 then (<< endl << "It equals " << f << endl);
+      f = substitute (f,RI);
+      if debugLevel >= 1 then (<< endl << "Saturating with respect to the separator polynomial" << endl);
+      ret = saturate(I,f);
+      );
      ret
      ) 
 
@@ -172,7 +172,7 @@ EHVlocalize := (I,P) ->(
      if debugLevel >= 2 then(<< endl << "It equals " << endl << I1 << endl);
      gensI1 := flatten entries mingens I1;
      gensI1 = apply(gensI1, g -> 
-	  if first degree g <= d then g else 0);
+      if first degree g <= d then g else 0);
      I2 := ideal gensI1;
      if debugLevel >= 1 then (<< endl << "Finding the final top" << endl);
      I3 := topComponents I2;
@@ -186,14 +186,14 @@ localize = method(Options =>{ Strategy => 1})
 
 localize (Ideal,Ideal) := Ideal => o -> (I,P) -> (
      if o.Strategy === 0 then (
-	  if debugLevel >=1 then print "localize:  Using Strategy 0";
-	  EHVlocalize(I,P))
+      if debugLevel >=1 then print "localize:  Using Strategy 0";
+      EHVlocalize(I,P))
      else if o.Strategy === 1 then (
-	  if debugLevel >=1 then print "localize:  Using Strategy 1";
-	  (SYlocalize ass1)(I,P))
+      if debugLevel >=1 then print "localize:  Using Strategy 1";
+      (SYlocalize ass1)(I,P))
      else (
-	  if debugLevel >=1 then print "localize:  Using Strategy 2";
-	  (SYlocalize ass2)(I,P))
+      if debugLevel >=1 then print "localize:  Using Strategy 2";
+      (SYlocalize ass2)(I,P))
      )
 
 TEST ///
@@ -227,34 +227,34 @@ outcome == trueanswer
 -- rather use EHVlocalize.  It's hard to know.  
 primarycomponent := (localizeroutine) -> 
      (I,P,inc) -> (
-	  polyRing := ring presentation ring I;
-	  I0 := lift(I,polyRing);
-	  P0 := lift(P,polyRing);
-	  ret := null;
-	  m := 1;
-	  I0P0 := localizeroutine (I0,P0);
-	  ImportantColonIdeal := saturate (I0P0,P0);
-	  while ret === null do (
-	       if debugLevel >= 1 then (<< endl << "primaryComponent checking power " << m << endl);
-	       if debugLevel >= 2 then (<< endl << "Computing topComponents of " << I0 << "+ the power of " << P0 << 
-		    endl);
-	       Q := topComponents (I0 + P0^m);
-	       if debugLevel >= 2 then (<< endl << "It equals " << Q << endl); 
-	       IIntersection := intersect(Q,ImportantColonIdeal);
-	       if isSubset(IIntersection,I0P0) 
-	       then ret = Q 
-	       else m = m+inc;
-	       );
-	  trim substitute(ideal mingens ret,ring I)
-	  )
+      polyRing := ring presentation ring I;
+      I0 := lift(I,polyRing);
+      P0 := lift(P,polyRing);
+      ret := null;
+      m := 1;
+      I0P0 := localizeroutine (I0,P0);
+      ImportantColonIdeal := saturate (I0P0,P0);
+      while ret === null do (
+           if debugLevel >= 1 then (<< endl << "primaryComponent checking power " << m << endl);
+           if debugLevel >= 2 then (<< endl << "Computing topComponents of " << I0 << "+ the power of " << P0 << 
+            endl);
+           Q := topComponents (I0 + P0^m);
+           if debugLevel >= 2 then (<< endl << "It equals " << Q << endl); 
+           IIntersection := intersect(Q,ImportantColonIdeal);
+           if isSubset(IIntersection,I0P0) 
+           then ret = Q 
+           else m = m+inc;
+           );
+      trim substitute(ideal mingens ret,ring I)
+      )
 
 primaryComponent = method( Options => { Strategy => 2, Increment =>1 })
 
 primaryComponent(Ideal,Ideal) := Ideal => o -> (I,P) -> (
      localizefcn := if o.Strategy === 1 then
-	  SYlocalize ass1
+      SYlocalize ass1
      else if o.Strategy === 2 then
-	  SYlocalize ass2
+      SYlocalize ass2
      else EHVlocalize;
      (primarycomponent localizefcn)(I,P,o.Increment))
 
@@ -281,31 +281,31 @@ EHVprimaryDecomposition = (I) -> (
     counter := 0;
     ListofPrimaries := {};
     while counter < nprimes do (
-	 newcomponent := primaryComponent(I, Assasin#counter);
-	 ListofPrimaries = append(ListofPrimaries, newcomponent);
-    	 counter = counter + 1;
-	 );
+     newcomponent := primaryComponent(I, Assasin#counter);
+     ListofPrimaries = append(ListofPrimaries, newcomponent);
+         counter = counter + 1;
+     );
      ListofPrimaries
      )
 
 --This computes a primary decomposition of an ideal.
 HprimaryDecomposition = (I,assstrategy,localizestrategy) -> (
      assroutine := (
-	  if assstrategy === 1 then ass1
-	  else ass2);
+      if assstrategy === 1 then ass1
+      else ass2);
      localizeroutine := (
-	  if localizestrategy === 1 then EHVlocalize
-	  else SYlocalize assroutine);
+      if localizestrategy === 1 then EHVlocalize
+      else SYlocalize assroutine);
      primarycomponentroutine := primarycomponent(localizeroutine);
      Assasin := assroutine I;
      nprimes := #Assasin;
      counter := 0;
      ListofPrimaries := {};
      while counter < nprimes do (
-	  newcomponent := primarycomponentroutine(I, Assasin#counter, 1);
-	  ListofPrimaries = append(ListofPrimaries, newcomponent);
-    	  counter = counter + 1;
-	  );
+      newcomponent := primarycomponentroutine(I, Assasin#counter, 1);
+      ListofPrimaries = append(ListofPrimaries, newcomponent);
+          counter = counter + 1;
+      );
      ListofPrimaries
      )
 
@@ -347,33 +347,26 @@ associatedPrimes Module := List => o -> M -> ( -- modified code in ass1 for modu
      k := if o.CodimensionLimit < 0 then infinity else o.CodimensionLimit;
      p := if M.cache#?"associatedPrimesCodimLimit" then M.cache#"associatedPrimesCodimLimit" else -2;
      if p >= o.CodimensionLimit then return select(M.cache#"AssociatedPrimes", P -> codim P <= k);
-     ringRel := presentation ring M;
-     S := ring ringRel; -- S is the ambient polynomial ring which ring M is a quotient of
-     liftRingRel := id_(lift(target relations M, S)) ** ringRel;
-     M1 := subquotient(lift(gens M, S), lift(relations M, S) | liftRingRel);
-     mapback := I -> trim((map(ring M, S, vars ring M)) I);
-     c := codim M1;
-     if k < c then (
-          if debugLevel > 0 then print("Value of CodimensionLimit is less than codimension");
-          return {};
+     rel := presentation ring M;
+     S := ring rel; -- S is the ambient polynomial ring which ring M is a quotient of
+     M1 := if ring M === S then M else (
+          liftRel := id_(lift(target relations M, S)) ** rel;
+          trim subquotient(lift(gens M, S), lift(relations M, S) | liftRel)
      );
-     if c == dim S or c == k then (
-          newPrimes := if ((c == dim S and isHomogeneous M) or all(gens S, v -> radicalContainment(v, ann M1))) then {ideal gens S} else minimalPrimes ann M1;
-          M.cache#"AssociatedPrimes" = newPrimes/mapback;
-          M.cache#"associatedPrimesCodimLimit" = c;
-     ) else (
-          if debugLevel > 0 then print("Computing resolution to find associated primes...");
-          F := resolution(M1, LengthLimit => k+1);
-          if debugLevel > 1 then print(betti F);
-          for i from max(1+p, c) to min(length F, k) do (
-               if debugLevel > 0 then print("Extracting associated primes of codim " | toString i);
-               newPrimes = if i == dim S and isHomogeneous M then {ideal gens S} else (
-                    A := ann(if i == c then M1 else Ext^i(M1, S));
-                    if codim A > i then {} else minimalPrimes(A, CodimensionLimit => i)
+     mapback := I -> trim((map(ring M, S, vars ring M)) I);
+     (A, c, d, C) := (trim ann M1, codim M1, dim S, null);
+     for i from max(1+p, c) to min(d, k) do (
+          if debugLevel > 0 then print("Extracting associated primes of codim " | toString i);
+          newPrimes := if i == d and ((isHomogeneous M and (c == d or pdim M1 == d)) or (c == d and all(gens S, v -> radicalContainment(v, A)))) then {ideal gens S} else (
+               if i > c then ( -- computes ann Ext^i(M1, S)
+                    if C === null then C = res(M1, LengthLimit => k+1);
+                    if length C < i then ( k = infinity; break; );
+                    A = trim ann minPres(ker transpose C.dd_(i+1) / image transpose C.dd_i);
                );
-               M.cache#"AssociatedPrimes" = M.cache#"AssociatedPrimes" | newPrimes/mapback;
-               M.cache#"associatedPrimesCodimLimit" = i;
+               if codim A > i then {} else minimalPrimes(A, CodimensionLimit => i)
           );
+          M.cache#"AssociatedPrimes" = M.cache#"AssociatedPrimes" | newPrimes/mapback;
+          M.cache#"associatedPrimesCodimLimit" = i;
      );
      if k >= dim S then M.cache#"associatedPrimesCodimLimit" = infinity;
      M.cache#"AssociatedPrimes"
@@ -383,8 +376,7 @@ associatedPrimes Ring := List => o -> R -> associatedPrimes(comodule ideal R, o)
 -- Returns a primary decomposition of 0 in M. Assumes all embedded primes appear after all primes they contain, i.e. isSubset(AP#i, AP#j) => i \le j (equivalently, the ordering of associated primes is a linear extension of the partial order by inclusion). This is the case for associatedPrimes(Module), which returns associated primes ordered by codimension
 primaryDecomposition Module := List => o -> M -> (
      if not M.cache#?"primaryComponents" then M.cache#"primaryComponents" = new MutableHashTable;
-     AP := associatedPrimes M;
-     if M.cache#"associatedPrimesCodimLimit" != infinity then print "Warning: associatedPrimes called with CodimensionLimit, potentially missing some components. In case of error, re-run associatedPrimes with CodimensionLimit => infinity";
+     AP := associatedPrimes(M, CodimensionLimit => infinity);
      if #values(M.cache#"primaryComponents") != #AP then (
           H := hashTable apply(AP, p -> p => select(#AP, i -> isSubset(AP#i, p)));
           for i to #AP - 1 do (
@@ -415,15 +407,17 @@ getEmbeddedComponent (Module, Ideal, Function) := o -> (M, p, checkFunction) -> 
           if debugLevel > 0 then print("Trying bracket power " | toString(j) | " for candidate embedded component...");
           N := bracketPower(p, j)*M;
           Q := M/N;
-          strat := if o.Strategy === null then "Sat" else o.Strategy;
+          Q.cache#"AssociatedPrimes" = {p};
+          Q.cache#"associatedPrimesCodimLimit" = codim p;
+          strat := toString o.Strategy;
           C := if codim p == dim ring Q then (
                if debugLevel > 0 then print("Embedded prime is maximal!");
                0*Q
           ) else (
-               if debugLevel > 0 then print("Using strategy " | strat);
+               if debugLevel > 0 then print("Using strategy " | if strat == "null" then "Sat" else strat);
                if strat == "Res" then topComponents(Q, codim p)
-               else if strat == "Sat" then kernelOfLocalization(Q, p)
                else if strat == "Hom" then equidimHull(Q, codim p)
+               else kernelOfLocalization(Q, p)
           );
           C = trim subquotient(generators C | generators N, relations M);
           foundValidComponent = checkFunction C;
@@ -434,7 +428,7 @@ getEmbeddedComponent (Module, Ideal, Function) := o -> (M, p, checkFunction) -> 
 
 kernelOfLocalization = method()
 kernelOfLocalization (Module, Ideal) := Module => (M, P) -> (
-     AP := associatedPrimes M;
+     AP := associatedPrimes(M, CodimensionLimit => infinity);
      f := product(AP, p -> ( i := position(p_*, g -> g % P != 0); if i === null then 1 else p_i ));
      if debugLevel > 0 then print("Computing saturation...");
      if f == 1 then 0*M else saturate(0*M, f)
@@ -584,7 +578,7 @@ TEST /// -- cf. https://groups.google.com/g/macaulay2/c/dFPzfS3tR2E
 R = ZZ/2[Z_1..Z_9]
 I = ideal(Z_6*Z_8+Z_5*Z_9,Z_3*Z_8+Z_2*Z_9,Z_6*Z_7+Z_4*Z_9,Z_4^3+Z_5^3+Z_6^3,Z_1*Z_2^2+Z_4*Z_5^2+Z_7*Z_8^2,Z_1^3+Z_5^3+Z_6^3+Z_8^3+Z_9^3,Z_1*Z_2*Z_4^2*Z_5*Z_9+Z_2^2*Z_5^3*Z_9+Z_2^2*Z_6^3*Z_9+Z_1^2*Z_7*Z_8^2*Z_9+Z_2^2*Z_8^3*Z_9+Z_2^2*Z_9^4)
 M = comodule I
-elapsedTime associatedPrimes M; -- ~ 5 seconds
+elapsedTime associatedPrimes M; -- ~ 5-15 seconds (?)
 elapsedTime primaryDecomposition M; -- ~ 5 seconds
 assert(all(primaryDecomposition M, isPrimary_M))
 assert(intersect apply(primaryDecomposition M, Q -> I + ideal gens Q) == I)
@@ -597,9 +591,11 @@ exps = {6,7}
 supps = {ideal(R_0,R_1,R_2), ideal(R_0,R_3,R_4,R_5)}
 elapsedTime I = intersect apply(#supps, i -> (supps#i)^(exps#i));
 M = comodule I;
+elapsedTime assert(associatedPrimes(M, CodimensionLimit => 2) == {})
 elapsedTime AP = associatedPrimes(M, CodimensionLimit => 4) -- ~ 4 seconds
 -- elapsedTime associatedPrimes(M, CodimensionLimit => infinity) -- > 40 seconds (computing unnecessary Ext)
 assert(all(AP, P -> any(supps, Q -> Q == P)) and all(supps, P -> any(AP, Q -> Q == P)))
+M.cache#"associatedPrimesCodimLimit" = infinity
 elapsedTime comps = primaryDecomposition M; -- ~ 4 seconds
 assert(intersect comps == 0 and all(comps, isPrimary_M))
 ///
@@ -614,8 +610,9 @@ assert(intersect comps == 0 and all(comps, isPrimary_M))
 
 I = intersect apply(10, i -> ideal apply(delete(first random gens R, gens R), v -> v - random QQ)); -- 10 lines in A^5
 M = comodule I;
-elapsedTime AP = associatedPrimes(M, CodimensionLimit => codim M) -- ~ 5 seconds
-elapsedTime comps = primaryDecomposition M; -- ~ 5 seconds
+elapsedTime AP = associatedPrimes(M, CodimensionLimit => codim M) -- < 2 seconds
+M.cache#"associatedPrimesCodimLimit" = infinity
+elapsedTime comps = primaryDecomposition M; -- ~ 6 seconds
 assert(intersect comps == 0 and all(comps, isPrimary_M))
 -- note: primaryDecomposition I is very slow
 ///
