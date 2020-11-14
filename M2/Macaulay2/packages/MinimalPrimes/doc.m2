@@ -6,7 +6,7 @@ Node
     minimal associated primes of an ideal
   Description
     Text
-      Find the minimal primes of an ideal in a polynomial ring over a prime field,
+      Find the @TO "minimal primes of an ideal"@ in a polynomial ring over a prime field,
       or a quotient ring of that. These are the geometric components of the corresponding algebraic set.
 
       Multiple strategies are implemented via @TO2 {"Macaulay2Doc :: using hooks", "hooks"}@.
@@ -18,10 +18,34 @@ Node
   Caveat
     Only works for ideals in (commutative) polynomial rings or quotients of polynomial rings over a prime field,
     might have bugs in small characteristic and larger degree (although, many of these cases are caught correctly).
-  SeeAlso
-    decompose
+  Subnodes
     minimalPrimes
-    isPrime
+    (isPrime, Ideal)
+    "minimal primes of an ideal"
+
+Node
+  Key
+    "minimal primes of an ideal"
+  Description
+    Text
+      @SUBSECTION "using {\tt minimalPrimes}"@
+
+      To obtain a list of the minimal associated primes for an ideal {\tt I}
+      (i.e. the smallest primes containing {\tt I}), use the function @TO minimalPrimes@.
+    Example
+      R = QQ[w,x,y,z];
+      I = ideal(w*x^2-42*y*z, x^6+12*w*y+x^3*z, w^2-47*x^4*z-47*x*z^2)
+      minimalPrimes I
+    Text
+      If the ideal given is a prime ideal then @TO minimalPrimes@ will return the ideal given.
+    Example
+      R = ZZ/101[w..z];
+      I = ideal(w*x^2-42*y*z, x^6+12*w*y+x^3*z, w^2-47*x^4*z-47*x*z^2);
+      minimalPrimes I
+    Text
+      See @TO "Macaulay2Doc :: associated primes of an ideal"@ for information on finding associated prime ideals
+      and @TO "Macaulay2Doc :: primary decomposition"@ for more information about finding the full primary decomposition
+      of an ideal.
 
 Node
   Key
@@ -29,7 +53,6 @@ Node
     minimalPrimes
    (decompose,     Ideal)
     decompose
---   "minprimes"
 -- FIXME: this is due to using Options => true
    [(minimalPrimes, Ideal), Verbosity]
    [(minimalPrimes, Ideal), Strategy]
@@ -95,30 +118,40 @@ Node
     Example
       dual radical I
       P == oo
-  Caveat
-    This will eventually be made to work over GF(q), and over other fields too.
   SeeAlso
+    (isPrime, Ideal)
     topComponents
     removeLowestDimension
     radical
     irreducibleCharacteristicSeries
-    (dual, MonomialIdeal)
-///
+    "Macaulay2Doc :: dual(MonomialIdeal)"
 
-///
 Node
   Key
-    isPrime
+    (isPrime, Ideal)
+    [(isPrime, Ideal), Strategy]
+    [(isPrime, Ideal), Verbosity]
   Headline
+    whether an ideal is prime
   Usage
+    isPrime I
   Inputs
+    I:Ideal
+      in a polynomial ring or quotient of one
+    Strategy => String
+      See @TO [(minimalPrimes, Ideal), Strategy]@
+    Verbosity => ZZ
+      See @TO [(minimalPrimes, Ideal), Verbosity]@
   Outputs
-  Consequences
+    :Boolean
+      @TO "true"@ if {\tt I} is a prime ideal, or @TO "false"@ otherwise
   Description
     Text
+      This function determines whether an ideal in a polynomial ring is prime.
     Example
-    Code
-    Pre
-  Caveat
+      R = QQ[a..d];
+      I = monomialCurveIdeal(R, {1, 5, 8})
+      isPrime I
   SeeAlso
+    minimalPrimes
 ///

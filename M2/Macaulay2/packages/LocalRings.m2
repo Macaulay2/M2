@@ -36,7 +36,7 @@ newPackage(
     )
 
 -- These two are defined in m2/localring.m2
-exportFrom_Core { "LocalRing", "localRing" }
+exportFrom_Core { "LocalRing", "localRing", "MaximalIdeal" }
 
 importFrom_Core { "printerr", "raw", "rawLiftLocalMatrix" }
 

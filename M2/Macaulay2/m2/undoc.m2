@@ -1,4 +1,12 @@
 undocumented {
+    -- documented in MinimalPrimes
+    minimalPrimes,
+    decompose,
+    -- documented in Colon
+    saturate,
+    -- documented in LocalRings
+    symbol MaximalIdeal,
+    -- etc.
     (net, LITERAL),
     (net, LATER),
     (expression, Constant),

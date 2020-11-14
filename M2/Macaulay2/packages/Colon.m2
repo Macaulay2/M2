@@ -24,7 +24,7 @@ newPackage(
     DebuggingMode => true
     )
 
-export { "isSupportedInZeroLocus" }
+export { "isSupportedInZeroLocus", "Iterate" }
 
 exportFrom_Core { "quotient", "saturate", "annihilator", "MinimalGenerators" }
 

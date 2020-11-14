@@ -70,9 +70,13 @@ document {
 	 "Original author (for ideals): ", "C. Yackel, http://faculty.mercer.edu/yackel_ca/", 
 	 ". Updated for modules by J. Chen.",
 	 },
-     SeeAlso => {(primaryDecomposition,Ideal),(primaryDecomposition, Module),
-     	       "radical", "minimalPrimes", "topComponents", 
-	       "removeLowestDimension"}
+     SeeAlso => {
+	 (primaryDecomposition, Ideal),
+	 (primaryDecomposition, Module),
+	 "radical",
+	 "MinimalPrimes :: minimalPrimes",
+	 "topComponents",
+	 "removeLowestDimension"}
      }
 
 
@@ -107,8 +111,12 @@ document {
      Caveat => "The ideal P is not checked to be prime.",
      BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
      Last modified June 2000.",
-     SeeAlso => {(primaryDecomposition,Ideal), radical, minimalPrimes, topComponents, 
-	  removeLowestDimension}
+     SeeAlso => {
+	 (primaryDecomposition, Ideal),
+	 radical,
+	 "MinimalPrimes :: minimalPrimes",
+	 topComponents,
+	 removeLowestDimension}
      }
 
 document {
@@ -157,7 +165,13 @@ document {
      PARA {
 	 BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
 	 Last modified June, 2000."},
-     SeeAlso => {(associatedPrimes,Ideal), (primaryDecomposition,Ideal), radical, minimalPrimes, topComponents, removeLowestDimension}
+     SeeAlso => {
+	 (associatedPrimes, Ideal),
+	 (primaryDecomposition, Ideal),
+	 radical,
+	 "MinimalPrimes :: minimalPrimes",
+	 topComponents,
+	 removeLowestDimension}
      }
 
 document {
@@ -394,7 +408,14 @@ document {
 	  "associatedPrimes I / print;"
 	  },
      Caveat => {"The ground ring must be a prime field."},
-     SeeAlso => {PrimaryDecomposition,(primaryDecomposition, Module),(associatedPrimes,Ideal), radical, minimalPrimes, topComponents, removeLowestDimension}
+     SeeAlso => {
+	 PrimaryDecomposition,
+	 (primaryDecomposition, Module),
+	 (associatedPrimes, Ideal),
+	 radical,
+	 "MinimalPrimes :: minimalPrimes",
+	 topComponents,
+	 removeLowestDimension}
      }
      
 document {

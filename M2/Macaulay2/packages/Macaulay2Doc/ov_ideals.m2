@@ -20,7 +20,7 @@ document {
 	  TO "intersection of ideals",
 	  TO "ideal quotients and saturation",
 	  TO "radical of an ideal",
-	  TO "minimal primes of an ideal",
+	  TO "MinimalPrimes :: minimal primes of an ideal",
 	  TO "associated primes of an ideal",
 	  TO "primary decomposition",
 	  -- TO "Gröbner bases", -- already referred to in the Mathematical Overview
@@ -421,45 +421,13 @@ document {
        "An alternate way to find the radical of an 
        ideal ", TT "I", " is to take the intersection of its 
        minimal prime ideals.  To find 
-       the ", TO "minimal primes of an ideal", TT "I", " use the 
-       function ", TO "minimalPrimes", ".  Then use ", TO "intersect", ".",
+       the ", TO "MinimalPrimes :: minimal primes of an ideal", TT "I", " use the
+       function ", TO "MinimalPrimes :: minimalPrimes", ".  Then use ", TO "intersect", ".",
        EXAMPLE {
 	    "intersect minimalPrimes I"
 	    }
      }
  
-document {
-     Key => "minimal primes of an ideal",
-     
-     SUBSECTION "using minimalPrimes",
-       "To obtain a list of the minimal associated primes for an 
-       ideal ", TT "I", " (i.e. the smallest primes 
-	    containing ", TT "I", "), use the function ", TO "minimalPrimes", ".",
-       EXAMPLE {
-	    "R = QQ[w,x,y,z];",
-	    "I = ideal(w*x^2-42*y*z, x^6+12*w*y+x^3*z, w^2-47*x^4*z-47*x*z^2)",
-	    "minimalPrimes I"
-	    },
- "If the ideal given is a prime ideal 
-       then ", TT "minimalPrimes", " will return the ideal given.",
-       EXAMPLE {
-	    "R = ZZ/101[w..z];",
-	    "I = ideal(w*x^2-42*y*z, x^6+12*w*y+x^3*z, w^2-47*x^4*z-47*x*z^2);",
-	    "minimalPrimes I"
-	    },
-
-     SUBSECTION "warning",
-       "Warning (15 May 2001):  If you stop a 
-       function mid process and then run ", TT "minimalPrimes", " an 
-       error is given.  Restarting Macaulay2 and then 
-       running ", TT "minimalPrimes", " works around this.",
-       PARA{},
-       "See ", TO "associated primes of an ideal", " for information 
-       on finding associated prime ideals 
-       and ", TO "primary decomposition", " for more information 
-       about finding the full primary decomposition of an ideal."   
-     }
-
 document {
      Key => "associated primes of an ideal",
        "The function ", TO "associatedPrimes", " returns a list of the 
@@ -477,7 +445,7 @@ document {
 	    },
      "See ", TO "primary decomposition", " for more information 
      about finding primary decompositions.  To find just the 
-     minimal prime ideals see ", TO "minimal primes of an ideal", "."   
+     minimal prime ideals see ", TO "MinimalPrimes :: minimal primes of an ideal", "."
      }
 
 document {

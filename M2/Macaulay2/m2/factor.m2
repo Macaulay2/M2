@@ -108,8 +108,6 @@ topCoefficients RingElement := f -> (
      	  (monoms,coeffs) := topCoefficients matrix{{f}};
      	  (monoms_(0,0), coeffs_(0,0))))
 
-isPrime Ideal := J -> (C := minimalPrimes J; #C === 1 and C#0 == J)
-
 roots = method(Options => true);
 roots RingElement := {Precision => -1, Unique => false} >> o -> p ->
   toList apply(rawRoots(raw p, o.Precision, o.Unique), r -> new CC from r)

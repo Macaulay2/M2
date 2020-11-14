@@ -64,7 +64,7 @@ newPackage(
 -- .  Document minprimes, something about the strategies
 -- .  Export only the symbols we want
 
-exportFrom_Core { "decompose", "isPrime", "minimalPrimes" }
+exportFrom_Core { "decompose", "minimalPrimes" }
 
 export { "minprimes" => "minimalPrimes" }
 
@@ -152,6 +152,18 @@ flattenRingMap := I -> (
     fback := if A === R then identity else map(R, A, generators(R, CoefficientRing => coefficientRing A));
     (J, fback))
 
+------------------------------
+--- isPrime ------------------
+------------------------------
+
+isPrimeOptions := {
+    Verbosity              => 0,
+    Strategy               => null,
+    "SquarefreeFactorSize" => 1
+    }
+isPrime Ideal := Boolean => isPrimeOptions >> opts -> I -> (
+    C := minimalPrimes(I, opts ++ {"CheckPrimeOnly" => true}); #C === 1 and C#0 == I)
+
 --------------------------------------------------------------------
 -- decompose, minimalPrimes, and minprimes
 --------------------------------------------------------------------
@@ -178,14 +190,19 @@ minprimesHelper := (I, opts) -> (
     doTrim := if opts.MinimalGenerators then trim else identity;
     key := (minimalPrimes, Ideal);
 
-    L := if not instance(strategy, VisibleList)
-    then runHooks(key, (opts, I), Strategy => strategy)
-    -- advanced strategies can still be used:
-    else minprimesWithStrategy(I,
-	Verbosity              => opts.Verbosity,
-	Strategy               => strategy,
-	CodimensionLimit       => opts.CodimensionLimit,
-	"SquarefreeFactorSize" => opts#"SquarefreeFactorSize");
+    -- TODO: under certain options, cache must be disregarded, but not completely!
+    cacheFunc   := if opts.CodimensionLimit === null then cacheValue symbol minimalPrimes else identity;
+    computation := I -> (
+	if not instance(strategy, VisibleList)
+	then runHooks(key, (opts, I), Strategy => strategy)
+	-- advanced strategies can still be used:
+	else minprimesWithStrategy(I,
+	    Verbosity              => opts.Verbosity,
+	    Strategy               => strategy,
+	    CodimensionLimit       => opts.CodimensionLimit,
+	    "SquarefreeFactorSize" => opts#"SquarefreeFactorSize"));
+
+    L := (cacheFunc computation) I;
 
     if L =!= null then doTrim \ L else if strategy === null
     then error("no applicable method for ", toString key)
@@ -196,7 +213,7 @@ minprimesHelper := (I, opts) -> (
 -- minimalPrimes = method(Options => true)
 -- returns a list of ideals, the minimal primes of I
 decompose     Ideal :=
-minimalPrimes Ideal := List => minimalPrimesOptions >> opts -> (cacheValue symbol minimalPrimes) (I -> minprimesHelper(I, opts))
+minimalPrimes Ideal := List => minimalPrimesOptions >> opts -> I -> minprimesHelper(I, opts)
 
 --------------------------------------------------------------------
 --- minprimes strategies
@@ -334,18 +351,6 @@ legacyMinimalPrimes = J -> (
 ----- Development section
 --------------------------------------------------------------------
 -- TODO: where should these go? Reduce redundancy
-
-------------------------------
---- isPrime ------------------
-------------------------------
--- TODO: replace with isPrime
-isPrime' = method(
-    Options => {
-	Verbosity              => 0,
-	Strategy               => BirationalStrat,
-	"SquarefreeFactorSize" => 1
-	})
-isPrime' Ideal := opts -> I -> ( C := minprimes(I, opts ++ {"CheckPrimeOnly" => true}); #C === 1 and C#0 == I )
 
 ------------------------------
 -- Radical containment -------
@@ -506,27 +511,26 @@ end--
 
 restart
 debugLevel = 1
-debug needsPackage "MinimalPrimes"
+debug MinimalPrimes
 
 R1 = QQ[d, f, j, k, m, r, t, A, D, G, I, K];
 I1 = ideal ( I*K-K^2, r*G-G^2, A*D-D^2, j^2-j*t, d*f-f^2, d*f*j*k - m*r, A*D - G*I*K);
-time minprimes(I1, CodimensionLimit=>6, Verbosity=>2)
-#(minprimes I1)
-#(oldMinPrimes I1)
-time minprimes(I1, CodimensionLimit=>7, Verbosity=>2)
-time minprimes(I1, CodimensionLimit=>6, Verbosity=>2);
+time # minprimes(ideal I1_*, CodimensionLimit => 6, Verbosity => 2)
+time # minprimes ideal I1_*
+time # minprimes(ideal I1_*, Strategy => "Legacy")
+time # minprimes(ideal I1_*, CodimensionLimit => 7, Verbosity => 2)
+time # minprimes(ideal I1_*, CodimensionLimit => 6, Verbosity => 2)
 
 restart
-needsPackage "MinimalPrimes"
-check MinimalPrimes
+debug MinimalPrimes
 
 R1 = QQ[d, f, j, k, m, r, t, A, D, G, I, K];
 I1 = ideal ( I*K-K^2, r*G-G^2, A*D-D^2, j^2-j*t, d*f-f^2, d*f*j*k - m*r, A*D - G*I*K);
--- C = doSplitIdeal(I1, Verbosity=>2)
+-- TODO: how to get this to work?
+C = doSplitIdeal(I1, Verbosity=>2)
 time minprimes(I1, CodimensionLimit=>6, Verbosity=>2)
 C = time minprimes I1
 C = time minprimes(I1, Strategy=>"NoBirational", Verbosity=>2)
-C = time minprimes(I1, Strategy=>"NoBirationa", Verbosity=>2)
 
 R1 = QQ[a,b,c]
 I1 = ideal(a^2-3, b^2-3)

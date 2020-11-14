@@ -169,7 +169,7 @@ isSubset(Ideal, AnnotatedIdeal) := (I, J) -> isSubset(I, ideal J) -- naive attem
 -- However in this case, I.isPrime will (TODO: check this!) have previously
 -- been set to "UNKNOWN", or maybe to "YES" during the IndependentSet or
 -- SplitTower computatations.
-isPrime AnnotatedIdeal := (I) -> (
+isPrime AnnotatedIdeal := {} >> o -> (I) -> (
     if I.?IndependentSet and not I.?isPrime
       then error "Our isPrime logic is wrong in this case.";
     if not I.?isPrime or I.isPrime === "UNKNOWN" then (
