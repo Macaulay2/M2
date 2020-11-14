@@ -1588,7 +1588,7 @@ document {
 			 with ", TT "map(E,F)", ".  (This was advertised as a change to 1.2, when the package was introduced,
 			      but the package was not pre-loaded, whereas now it is.)." },
 		    LI {
-			 "Fixed a long-standing bug in ", TO "saturate", " that caused it to give incorrect answers (too small)
+			 "Fixed a long-standing bug in ", TO "Colon :: saturate", " that caused it to give incorrect answers (too small)
 			 in the case that the following three conditions all held:
 			 the ring has a non-standard monomial ordering, such as a weight vector; all variables had degree 1;
 			 and the degree of the element being used to saturate was equal to 1."
@@ -1620,7 +1620,7 @@ document {
 		    LI {
 			 "A bug in Gröbner bases over fields and the integers was fixed, which caused, under some situations,
 			 the list of \"trimmed\" generators to be incomplete (but the Gröbner basis itself was correct).
-			 This impacted functions which use ", TO "trim", ", especially ", TO "decompose", "."
+			 This impacted functions which use ", TO "trim", ", especially ", TO "MinimalPrimes :: decompose", "."
 			 },
 		    LI {
 			 "The function ", TO "Elimination::eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring,

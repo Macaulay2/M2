@@ -214,6 +214,7 @@ export {
 	"InverseMethod",
 	"Inverses",
 	"Invertible",
+	"Iterate",
 	"Join",
 	"Jupyter",
 	"KeepFiles",

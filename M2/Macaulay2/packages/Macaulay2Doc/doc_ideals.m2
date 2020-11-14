@@ -23,7 +23,7 @@ document {
      "Common ways to make an ideal:",
      UL {
 	  TO "ideal",
-	  TO "annihilator",
+	  TO "Colon :: annihilator",
 	  TO "content",
 	  TO "fittingIdeal",
 	  TO (kernel, RingMap),
@@ -35,6 +35,7 @@ document {
 	  TO (generators, Ideal),
 	  TO (symbol _*,Ideal),
 	  TO (isSubset, Ideal, Ideal),
+	  TO "MinimalPrimes :: isPrime(Ideal)"
 	  },
      "Common operations on ideals:",
      UL {
@@ -72,8 +73,8 @@ document {
 	  TO associatedPrimes,
 	  TO "PrimaryDecomposition::primaryDecomposition",
 	  TO topComponents,
-	  TO "Colon::saturate(Ideal,Ideal)",
-	  TO "Colon::quotient(Ideal,Ideal)",
+	  TO "Colon :: saturate(Ideal,Ideal)",
+	  TO "Colon :: Ideal : Ideal",
 --	  (symbol:, Ideal, Ideal), -- TODO: get this to work across packages
 	  TO intersect
 	  },

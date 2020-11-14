@@ -2,27 +2,37 @@
 --- author(s): Decker 
 --- notes: 
 
-document { 
-     Key => {radical, (radical,Ideal),(radical,MonomialIdeal),[radical,Strategy],[radical,Unmixed],[radical,CompleteIntersection]},
-     Headline => "the radical of an ideal",
-     Usage => "radical I",
-     Inputs => { 
-	  "I" => Ideal,
-	  Unmixed => Boolean => {"whether it is known that the ideal ", TT "I", " is unmixed.  The ideal ", TT "I", " is
-	       said to be unmixed if all associated primes of ", TT "R/I", "
-     	       have the same dimension.  In this case the algorithm tends to be much faster."},
-	  Strategy => {"the strategy to use, either ", TT "Decompose", " or ", TT "Unmixed"},
-	  CompleteIntersection => Ideal => {"an ideal ", TT "J", " of the same height as ", TT "I", " whose
-	       generators form a maximal regular sequence contained in ", TT "I", ".
-	       Providing this option as a hint allows a separate, often faster, algorithm to be used to compute the radical.  This option
-     	       should only be used if ", TT "J", " is nice in some way.  
-	       For example, if ", TT "J", " is randomly generated, but ", TT "I", " is relatively sparse, 
-     	       then this will most likely run slower than just giving the ", TO "Unmixed", " option."
-	       },
-	  },
-     Outputs => {
-	  Ideal => {"the radical of ", TT "I", " ."}
-	  },
+doc ///
+Node
+  Key
+    radical
+   (radical, Ideal)
+   [radical, Strategy]
+   [radical, Unmixed]
+   [radical, CompleteIntersection]
+  Headline
+    the radical of an ideal
+  Usage
+    radical I
+  Inputs
+    I:Ideal
+    Unmixed=>Boolean
+      whether it is known that the ideal {\tt I} is unmixed.
+      The ideal $I$ is said to be unmixed if all associated primes of $R/I$ have the same dimension.
+      In this case the algorithm tends to be much faster.
+    Strategy=>Symbol
+      the strategy to use, either @TT "Decompose"@ or @TT "Unmixed"@
+    CompleteIntersection=>Ideal
+      an ideal @TT "J"@ of the same height as @TT "I"@ whose generators form a maximal regular sequence contained
+      in @TT "I"@. Providing this option as a hint allows a separate, often faster, algorithm to be used to compute
+      the radical. This option should only be used if @TT "J"@ is nice in some way. For example, if @TT "J"@ is
+      randomly generated, but @TT "I"@ is relatively sparse, then this will most likely run slower than just giving
+      the @TO "Unmixed"@ option.
+  Outputs
+    :Ideal
+      the radical of @TT "I"@
+  Description
+    Code
      "If I is an ideal in an affine ring (i.e. a quotient of a polynomial 
      ring over a field), and if the characteristic of this field is
      large enough (see below), then this routine yields the radical of
@@ -48,13 +58,13 @@ document {
 	  },
      PARA{},
      "For another example, see ", TO "component example", ".",
-     Caveat => {"The current implementation requires that the
-	  characteristic of the ground field is either zero
-	  or a \"large\" prime (unless ", TT "I", " is  ", ofClass MonomialIdeal, ")."},
-     SeeAlso => {
-	 "MinimalPrimes :: minimalPrimes",
-	 topComponents,
-	 removeLowestDimension,
-	 "Colon :: saturate",
-	 "Colon :: quotient"}
-     }
+  Caveat
+    The current implementation requires that the characteristic of the ground field is either zero
+    or a "large" prime (unless @TT "I"@ is @ofClass MonomialIdeal@).
+  SeeAlso
+    "MinimalPrimes :: minimalPrimes"
+    topComponents
+    removeLowestDimension
+    "Colon :: saturate"
+    "Colon :: Ideal : Ideal"
+///

@@ -3,6 +3,7 @@ undocumented {
     minimalPrimes,
     decompose,
     -- documented in Colon
+    annihilator,
     saturate,
     -- documented in LocalRings
     symbol MaximalIdeal,

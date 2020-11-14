@@ -19,7 +19,7 @@ document {
 	  of codimension $d$.///,
 	  TEX ///If $M$ is $R/I$, then $topComponents(I) = ann Ext^c(R/I,R)$, where $c = codim I$///
 	  },
-    SeeAlso => {"removeLowestDimension", "MinimalPrimes :: saturate", "MinimalPrimes :: quotient", "radical", "component example"},
+    SeeAlso => {"removeLowestDimension", "Colon :: saturate", "Colon :: Ideal : Ideal", "radical", "component example"},
     }
 
 document { 
@@ -39,7 +39,7 @@ document {
 	  "I=intersect(ideal(a,b),ideal(b,c),ideal(c,a),ideal(a^2,b^3,c^4));",
 	  "topComponents I" 
 	  },
-     SeeAlso => {(topComponents, Module),"removeLowestDimension", "MinimalPrimes :: saturate", "MinimalPrimes :: quotient", "radical", "component example"}
+     SeeAlso => {(topComponents, Module),"removeLowestDimension", "Colon :: saturate", "Colon :: Ideal : Ideal", "radical", "component example"}
      },
 
 document { 
@@ -56,12 +56,5 @@ document {
     "The method used is that of Eisenbud-Huneke-Vasconcelos. ", 
     "For a brief description see: ",TO "topComponents",".", 
      
-     SeeAlso => {(topComponents,Ideal),"removeLowestDimension", "MinimalPrimes :: saturate", "MinimalPrimes :: quotient", "radical","component example"}
+     SeeAlso => {(topComponents,Ideal),"removeLowestDimension", "Colon :: saturate", "Colon :: Ideal : Ideal", "radical","component example"}
      }
-
-
-
-
-
-
-
