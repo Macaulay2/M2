@@ -98,9 +98,34 @@ topComponents Module := Module => (M) -> (
 --     is the codimension of the support of the module M."
 --     }
 
--------------
--- radical --
--------------
+-----------------------------------------------------------------------------
+-- Radical of ideals
+-----------------------------------------------------------------------------
+
+radical = method(
+    Options => {
+	CompleteIntersection => null,
+	Strategy             => null,
+	Unmixed              => false
+	}
+    )
+
+-- Helper for radical
+radical Ideal := Ideal => opts -> I -> (
+    -- TODO: what does the Unmixed boolean add to strategy?
+    strategy := if opts.Unmixed then Unmixed else opts.Strategy;
+    key := (radical, Ideal);
+
+    computation := (cacheValue symbol radical) (I -> runHooks(key, (opts, I), Strategy => strategy));
+    C := computation I;
+
+    if C =!= null then C else if strategy === null
+    then error("no applicable method for ", toString key)
+    else error("assumptions for radical strategy ", toString strategy, " are not met"))
+
+--------------------------------------------------------------------
+-- helper routines for radical algorithms
+--------------------------------------------------------------------
 
 unmixedradical := (I) -> (
      -- First lift I to a polynomial ring...
@@ -135,16 +160,6 @@ unmixedradical := (I) -> (
 	  );
      trim (I*A)
      )
--- unmixed radical, another Eisenbud-Huneke-Vasconcelos method
--- to compute radical(m), given a max regular sequence n contained in m.
-
-unmixedradical2 := (J, CI) -> (
-  if ring J =!= ring CI then 
-      error "unmixedradical: expected ideals to be in the same ring";
-  D := jacobian CI;
-  c := numgens CI;  -- we assume that this is a complete intersection...
-  K := CI : minors(c, D);  -- maybe work mod CI?
-  K : (K : J)) -- do these mod K?
 
 radical1 := (I) -> (
     -- possibly massage input, by removing obvious extraneous powers?
@@ -157,24 +172,37 @@ radical1 := (I) -> (
         then J 
         else intersect(J, radical1 I1))
 
-protect Decompose
-radical Ideal := Ideal => options -> (I) -> (
-     if isMonomialIdeal I then
-          radical monomialIdeal I
-     else if class options.CompleteIntersection === Ideal then
-          unmixedradical2(I,options.CompleteIntersection)
-     else if options.Unmixed then 
-          unmixedradical I
-     else if options.Strategy === Decompose then (
-     	  C := minimalPrimes I;
-	  if #C === 0 
-	    then ideal(1_(ring I))
-            else intersect C)
-     else if options.Strategy === Unmixed then
-          radical1 I
-     else error "radical Ideal: unrecognized strategy"
-     )
+--------------------------------------------------------------------
 
+algorithms := new MutableHashTable from {}
+
+algorithms#(radical, Ideal) = new MutableHashTable from {
+    Unmixed => (opts, I) -> if opts.Unmixed then unmixedradical I else radical1 I,
+
+    Decompose => (opts, I) -> (
+	C := minimalPrimes I;
+	if #C === 0 then ideal 1_(ring I) else intersect C),
+
+    CompleteIntersection => (opts, I) -> (
+	-- unmixed radical, another Eisenbud-Huneke-Vasconcelos method
+	-- to compute radical(m), given a max regular sequence n contained in m.
+	if not instance(CI := opts.CompleteIntersection, Ideal)
+	or not ring I === ring CI
+	then return null;
+	c := numgens CI;  -- we assume that this is a complete intersection...
+	K := CI : minors(c, jacobian CI);  -- maybe work mod CI?
+	K : (K : I)), -- do these mod K?
+
+    Monomial => (opts, I) -> (
+	if not isMonomialIdeal I
+	then return null;
+	cast := if instance(I, MonomialIdeal) then monomialIdeal else ideal;
+	cast newMonomialIdeal(ring I, rawRadical raw monomialIdeal I)),
+    }
+
+-- Installing hooks for radical(Ideal)
+scan({Unmixed, Decompose, CompleteIntersection, Monomial}, strategy ->
+    addHook(key := (radical, Ideal), algorithms#key#strategy, Strategy => strategy))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
