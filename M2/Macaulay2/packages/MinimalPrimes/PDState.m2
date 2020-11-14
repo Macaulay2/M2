@@ -4,13 +4,15 @@
 PDState = new Type of MutableHashTable
 createPDState = method()
 createPDState Ideal := I -> (
-   new PDState from {"OriginalIdeal" => I,
-                     "PrimesSoFar" => new MutableHashTable from {},
-                     "IntersectionSoFar" => ideal (1_(ring I)),
-                     "isPrimeIdeal" => true,
-                     "isPrimaryIdeal" => true,
-                     "PrunedViaCodim" => 0}
-)
+    new PDState from {
+	"OriginalIdeal"     => I,
+	"PrimesSoFar"       => new MutableHashTable from {},
+	"IntersectionSoFar" => ideal (1_(ring I)),
+	"isPrimeIdeal"      => true,
+	"isPrimaryIdeal"    => true,
+	"PrunedViaCodim"    => 0
+	}
+    )
 
 updatePDState = method()
 updatePDState (PDState,List,ZZ) := (pdState,L,pruned) -> (

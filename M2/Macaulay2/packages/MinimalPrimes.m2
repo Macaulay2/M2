@@ -22,6 +22,7 @@ newPackage(
 	{Name => "Frank Moore",    Email => "moorewf@wfu.edu",       HomePage => "https://users.wfu.edu/moorewf"},
 	{Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "https://www.math.cornell.edu/~mike"},
 	{Name => "Franziska Hinkelmann"},
+	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"}},
     Keywords => {"Commutative Algebra"},
     PackageImports => { "Elimination" },
@@ -63,11 +64,11 @@ newPackage(
 -- .  Document minprimes, something about the strategies
 -- .  Export only the symbols we want
 
-export { "minprimes" }
-
 exportFrom_Core { "decompose", "isPrime", "minimalPrimes" }
 
-importFrom_Core { "raw", "rawCharSeries", "rawGBContains" }
+export { "minprimes" => "minimalPrimes" }
+
+importFrom_Core { "printerr", "raw", "rawCharSeries", "rawGBContains" }
 
 -*------------------------------------------------------------------
 -- Can we use these as keys to a ring's HashTable without exporting them?
@@ -82,7 +83,6 @@ importFrom_Core { "raw", "rawCharSeries", "rawGBContains" }
   DecomposeMonomials, Trim, CharacteristicSets, Minprimes, Squarefree
 -*------------------------------------------------------------------
 
-protect symbol Legacy
 protect symbol IndependentSet
 protect symbol Trim
 protect symbol Birational
@@ -136,80 +136,142 @@ selectMinimalIdeals = L -> (
             if findNonMemberIndex(ML#i, ML#j) === -1 then ML#j = null);
         ML#i))
 
+isSupportedRing := I -> (
+    A := ring first flattenRing I;
+    -- ring should be a commutative polynomial ring or a quotient of one
+    isPolynomialRing A and isCommutative A
+    -- base field should be QQ or ZZ/p or GF(q)
+    and (QQ === (kk := coefficientRing A) or instance(kk, QuotientRing) or instance(kk, GaloisField)))
+
+flattenRingMap := I -> (
+    -- R is the ring of I, and A is a polynomial ring over a prime field
+    R := ring I;
+    (J, F) := flattenRing I; -- the ring map is not needed
+    A := ring J;
+    -- the map back to R, TODO: why not use F?
+    fback := if A === R then identity else map(R, A, generators(R, CoefficientRing => coefficientRing A));
+    (J, fback))
+
 --------------------------------------------------------------------
 -- decompose, minimalPrimes, and minprimes
 --------------------------------------------------------------------
 
-minimalPrimesOptions = {
+-- TODO: simplify the options, preferably don't use Options => true
+minimalPrimesOptions := new OptionTable from {
     Verbosity              => 0,
-    Strategy               => "Birational", -- if null, calls older minprimesWorker code
+    Strategy               => null,
     CodimensionLimit       => null, -- only find minimal primes of codim <= this bound
+    MinimalGenerators      => true, -- whether to trim the output
     "IdealSoFar"           => null, -- used in inductive setting
     "RadicalSoFar"         => null, -- used in inductive setting
     "CheckPrimeOnly"       => false,
     "SquarefreeFactorSize" => 1
     }
 
--- currently defined in m2/factor.m2, to be moved here eventually
+-- Helper for minimalPrimes and decompose
+minprimesHelper := (I, opts) -> (
+    if I == 1 then return {};
+    J := first flattenRing I;
+    if J == 0 then return {I};
+
+    strategy := opts.Strategy;
+    doTrim := if opts.MinimalGenerators then trim else identity;
+    key := (minimalPrimes, Ideal);
+
+    L := if not instance(strategy, VisibleList)
+    then runHooks(key, (opts, I), Strategy => strategy)
+    -- advanced strategies can still be used:
+    else minprimesWithStrategy(I,
+	Verbosity              => opts.Verbosity,
+	Strategy               => strategy,
+	CodimensionLimit       => opts.CodimensionLimit,
+	"SquarefreeFactorSize" => opts#"SquarefreeFactorSize");
+
+    if L =!= null then doTrim \ L else if strategy === null
+    then error("no applicable method for ", toString key)
+    else error("assumptions for minimalPrimes strategy ", toString strategy, " are not met"))
+
+-- methods declared in m2/factor.m2, to be moved here eventually
+-- decompose = method(Options => true)
+-- minimalPrimes = method(Options => true)
+-- returns a list of ideals, the minimal primes of I
 decompose     Ideal :=
-minimalPrimes Ideal := minimalPrimesOptions >> opts -> (cacheValue symbol minimalPrimes) (I ->
-    if opts.Strategy === "Legacy" then legacyMinimalPrimes I else minprimes(I, opts, Verbosity => 0))
+minimalPrimes Ideal := List => minimalPrimesOptions >> opts -> (cacheValue symbol minimalPrimes) (I -> minprimesHelper(I, opts))
 
-decompose     MonomialIdeal :=
-minimalPrimes MonomialIdeal := {} >> opts -> (cacheValue symbol minimalPrimes) (I ->
-    monomialIdeal \ if (minI := dual radical I) == 1 then { 0_(ring I) } else support \ minI_*)
-
----------------------------------
+--------------------------------------------------------------------
 --- minprimes strategies
----------------------------------
--- TODO: turn into hooks
+--------------------------------------------------------------------
+
 strat0 = ({Linear, DecomposeMonomials}, infinity)
 strat1 = ({Linear, DecomposeMonomials, (Factorization, 3)}, infinity)
 BirationalStrat = ({strat1, (Birational, infinity)}, infinity)
 NoBirationalStrat = strat1
 stratEnd = {(IndependentSet, infinity), SplitTower, CharacteristicSets}
 
-getMinPrimesStrategy = strat -> (
-    -- input: string: String
-    -- output: is a strategy list/sequence, etc for use with minprimes
-    -- MES
-    if not instance(strat, String) then return strat;
-    if strat === "Legacy"       then Legacy            else
-    if strat === "NoBirational" then NoBirationalStrat else
-    if strat === "Birational"   then BirationalStrat   else
-    error("unknown strategy: " | strat))
+algorithms = new MutableHashTable from {}
 
-minprimes = method(Options => minimalPrimesOptions)
-minprimes Ideal := opts -> J -> (
-    -- returns a list of ideals, the minimal primes of I
-    A := ring J;
-    (I, F) := flattenRing J; -- the ring map is not needed
-    R := ring I;
-    if I == 0 then return {if A === R then I else ideal map(A^1, A^0, 0)};
-    if not isPolynomialRing R then error "expected ideal in a polynomial ring or a quotient of one";
-    if not isCommutative R    then error "expected commutative polynomial ring";
-    if (kk := coefficientRing R) =!= QQ
-    and not instance(kk, QuotientRing)
-    and not instance(kk, GaloisField)
-    then error "expected base field to be QQ or ZZ/p or GF(q)";
-    -- the map back to A, TODO: why not use F?
-    psi := if R === A then identity else J -> (
-	phi := map(A, R, generators(A, CoefficientRing => kk));
-	trim phi J);
-    -- note: at this point, R is the ring of I, and R is a polynomial ring over a prime field
-    C := minprimesWithStrategy(I,
-	Verbosity              => opts#Verbosity,
-	Strategy               => getMinPrimesStrategy opts#Strategy,
-	CodimensionLimit       => opts.CodimensionLimit,
-	"SquarefreeFactorSize" => opts#"SquarefreeFactorSize"
-	);
-    C / psi)
+algorithms#(minimalPrimes, Ideal) = new MutableHashTable from {
+    "Legacy" => (opts, I) -> (
+    	-- TODO: is this based on this paper?
+    	-- https://www-sop.inria.fr/members/Evelyne.Hubert/publications/PDF/Hubert00.pdf
+    	A := ring first flattenRing I;
+    	-- ring should be a commutative polynomial ring or a quotient of one
+    	if not isPolynomialRing A
+	or not isCommutative A
+    	-- base field should be QQ or ZZ/p
+    	or not (QQ === (kk := coefficientRing A)
+	    or instance(kk, QuotientRing))
+	then return null;
+	legacyMinimalPrimes I),
 
+    "NoBirational" => (opts, I) -> (
+	-- TODO: add heuristics for when Legacy is better
+	if not isSupportedRing I
+	then return null;
+	minprimesWithStrategy(I,
+    	    Verbosity              => opts.Verbosity,
+    	    Strategy               => NoBirationalStrat,
+    	    CodimensionLimit       => opts.CodimensionLimit,
+    	    "SquarefreeFactorSize" => opts#"SquarefreeFactorSize")),
+
+    "Birational" => (opts, I) -> (
+	-- TODO: add heuristics for when NoBirational is better
+	if not isSupportedRing I
+	then return null;
+	minprimesWithStrategy(I,
+    	    Verbosity              => opts.Verbosity,
+    	    Strategy               => BirationalStrat,
+    	    CodimensionLimit       => opts.CodimensionLimit,
+    	    "SquarefreeFactorSize" => opts#"SquarefreeFactorSize")),
+
+    Monomial => (opts, I) -> (
+	R := ring I;
+	if not isMonomialIdeal I
+	or not isPolynomialRing R
+	or not isCommutative R
+	then return null;
+	cast := if instance(I, MonomialIdeal) then monomialIdeal else ideal;
+	minI := dual radical monomialIdeal I;
+	-- TODO: make sure (monomialIdeal, MonomialIdeal) isn't forgetful
+	cast \ if minI == 1 then { 0_R } else support \ minI_*),
+    }
+
+-- Installing hooks for (minimalPrimes, Ideal)
+scan({"Legacy", "NoBirational", "Birational", Monomial}, strategy ->
+    addHook(key := (minimalPrimes, Ideal), algorithms#key#strategy, Strategy => strategy))
+
+--------------------------------------------------------------------
+-- minprimes algorithms
+--------------------------------------------------------------------
+
+-- This function is called under Birational, NoBirational, and advanced options
 minprimesWithStrategy = method(Options => options splitIdeals)
-minprimesWithStrategy Ideal := opts -> I -> (
+minprimesWithStrategy Ideal := opts -> J -> (
+    (I, fback) := flattenRingMap J;
+    --
     newstrat := {opts.Strategy, stratEnd};
-    if opts.CodimensionLimit === null
-    then opts = opts ++ {CodimensionLimit => numgens I};
+    if opts.CodimensionLimit === null then opts = opts ++ {CodimensionLimit => numgens I};
+    --
     pdState := createPDState(I);
     opts = opts ++ {"PDState" => pdState};
     M := splitIdeals({annotatedIdeal(I, {}, {}, {})}, newstrat, opts);
@@ -220,78 +282,53 @@ minprimesWithStrategy Ideal := opts -> I -> (
     --M = select(M, i -> codimLowerBound i <= opts#"CodimensionLimit");
     --(M1,M2) := separatePrime(M);
     if #M > 0 then (
-         ( << "warning: ideal did not split completely: " << #M << " did not split!" << endl;);
-         error "answer not complete";
-         );
-    if opts#Verbosity>=2 then (
-       << "Converting annotated ideals to ideals and selecting minimal primes..." << flush;
-    );
+	printerr("warning: ideal did not split completely: ", toString(#M), " did not split!");
+	error "answer not complete");
+    if opts.Verbosity >= 2 then printerr "Converting annotated ideals to ideals and selecting minimal primes...";
     answer := timing(selectMinimalIdeals \\ getPrimesInPDState pdState);
-    if opts#Verbosity>=2 then (
-       << " Time taken : " << answer#0 << endl;
-       if #(answer#1) < numRawPrimes then (
-            << "#minprimes=" << #(answer#1) << " #computed=" << numPrimesInPDState pdState << endl;
-            );
-    );
-    answer#1)
+    --
+    if opts.Verbosity >= 2 then (
+	printerr(" Time taken : ", toString answer#0);
+	if #answer#1 < numRawPrimes then printerr(
+	    "#minprimes=", toString(#answer#1),
+	    " #computed=", toString numPrimesInPDState pdState));
+    fback \ answer#1)
 
--- This function is called from minimalPrimes/decompose
---   under an option Strategy=>"Legacy".
---   'minimalPrimes' is responsible for stashing the value under the
---   cache value 'minimalPrimes'.
-legacyMinimalPrimes = I -> (
-          -- I: Ideal
-          -- result: list of prime ideals.
-          if not instance(I, Ideal) then error "expected an ideal";
-	  R := ring I;
-	  (I',F) := flattenRing I; -- F is not needed
-	  A := ring I';
-	  G := map(R, A, generators(R, CoefficientRing => coefficientRing A));
-	  --I = trim I';
-	  I = I';
-	  if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
-	  if not isCommutative A then
-	    error "expected commutative polynomial ring";
-	  kk := coefficientRing A;
-	  if kk =!= QQ and not instance(kk,QuotientRing) then
-	    error "expected base field to be QQ or ZZ/p";
-	  if I == 0 then return {if A === R then I else ideal map(R^1,R^0,0)};
-	  if debugLevel > 0 then homog := isHomogeneous I;
-	  ics := irreducibleCharacteristicSeries I;
-	  if debugLevel > 0 and homog then (
-	       if not all(ics#0, isHomogeneous) then error "minimalPrimes: irreducibleCharacteristicSeries destroyed homogeneity";
-	       );
-	  -- remove any elements which have numgens > numgens I (Krull's Hauptidealsatz)
-	  ngens := numgens I;
-	  ics0 := select(ics#0, CS -> numgens source CS <= ngens);
-	  Psi := apply(ics0, CS -> (
-		    chk := topCoefficients CS;
-		    chk = chk#1;  -- just keep the coefficients
-		    chk = first entries chk;
-		    iniCS := select(chk, i -> # support i > 0); -- this is bad if degrees are 0: degree i =!= {0});
-		    if gbTrace >= 1 then << "saturating with " << iniCS << endl;
-		    CS = ideal CS;
-		    --<< "saturating " << CS << " with respect to " << iniCS << endl;
-		    -- warning: over ZZ saturate does unexpected things.
-		    scan(iniCS, a -> CS = saturate(CS, a, Strategy=>Eliminate));
-     --	       scan(iniCS, a -> CS = saturate(CS, a));
-		    --<< "result is " << CS << endl;
-		    CS));
-	  Psi = select(Psi, I -> I != 1);
-	  Psi = new MutableList from Psi;
-	  p := #Psi;
-	  scan(0 .. p-1, i -> if Psi#i =!= null then
-	       scan(i+1 .. p-1, j ->
-		    if Psi#i =!= null and Psi#j =!= null then
-		    if isSubset(Psi#i, Psi#j) then Psi#j = null else
-		    if isSubset(Psi#j, Psi#i) then Psi#i = null));
-	  Psi = toList select(Psi,i -> i =!= null);
-	  components := apply(Psi, p -> ics#1 p);
-	  if A =!= R then (
-	       components = apply(components, P -> trim(G P));
-	       );
-	  components
-	  )
+-- This function is called under the option Strategy => "Legacy"
+legacyMinimalPrimes = J -> (
+    (I, fback) := flattenRingMap J;
+    --
+    if debugLevel > 0 then homog := isHomogeneous I;
+    ics := irreducibleCharacteristicSeries I;
+    if debugLevel > 0 and homog then (
+	if not all(ics#0, isHomogeneous) then error "minimalPrimes: irreducibleCharacteristicSeries destroyed homogeneity");
+    -- remove any elements which have numgens > numgens I (Krull's Hauptidealsatz)
+    ngens := numgens I;
+    ics0 := select(ics#0, CS -> numgens source CS <= ngens);
+    phi := apply(ics0, CS -> (
+	    chk := topCoefficients CS;
+	    chk = chk#1; -- just keep the coefficients
+	    chk = first entries chk;
+	    iniCS := select(chk, i -> # support i > 0); -- this is bad if degrees are 0: degree i =!= {0});
+	    if gbTrace >= 1 then << "saturating with " << iniCS << endl;
+	    CS = ideal CS;
+	    --<< "saturating " << CS << " with respect to " << iniCS << endl;
+	    -- warning: over ZZ saturate does unexpected things.
+	    scan(iniCS, a -> CS = saturate(CS, a, Strategy=>Eliminate));
+     	    -- scan(iniCS, a -> CS = saturate(CS, a));
+	    --<< "result is " << CS << endl;
+	    CS));
+    --
+    phi = select(phi, I -> I != 1);
+    phi = new MutableList from phi;
+    p := #phi;
+    scan(0 .. p-1, i -> if phi#i =!= null then
+	scan(i+1 .. p-1, j ->
+	    if phi#i =!= null and phi#j =!= null then
+	    if isSubset(phi#i, phi#j)            then phi#j = null else
+	    if isSubset(phi#j, phi#i)            then phi#i = null));
+    phi = toList select(phi,i -> i =!= null);
+    fback \ apply(phi, p -> ics#1 p))
 
 --------------------------------------------------------------------
 ----- Development section

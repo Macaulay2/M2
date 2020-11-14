@@ -38,7 +38,6 @@ TEST ///
 ///
 
 TEST ///
-  needsPackage "MinimalPrimes"
   R = ZZ/101[a..d]
   assert(minprimes ideal(0_R) == {ideal(0_R)})
   assert(minprimes ideal(1_R) == {})
@@ -54,7 +53,6 @@ TEST ///
 -- the following test sometimes crashes on the last line, but you might have to run it more than 30 times to observe it
 
 ///
-   needsPackage "MinimalPrimes"
    R = QQ[x,r,v,u,b, MonomialOrder=>{Lex=>5}]
    I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
    elapsedTime C = minprimes(I, Verbosity=>2);
@@ -1447,11 +1445,11 @@ TEST ///
 ///
 
 TEST ///
-  needsPackage "MinimalPrimes"
   R1 = ZZ/101[a..d]/a^2
   assert(minprimes ideal(a*d) === {ideal(a)})
   R2 = ZZ[a..d]
-  assert try minprimes (ideal(a*d)) else true
+  assert(minprimes ideal(a*d) == ideal \ {{a}, {d}})
+  assert(minprimes monomialIdeal(a*d) == monomialIdeal \ {{a}, {d}})
   R3 = ZZ
   assert(minprimes ideal 0_ZZ == {ideal 0_ZZ})
   assert try minprimes (ideal(5_ZZ)) else true
@@ -1464,7 +1462,6 @@ TEST ///
 ///
 
 TEST ///
-  needsPackage "MinimalPrimes"
   -- what about over GF?
   kk = GF(9, Variable=>a)
   R = kk[x,y,z,w]
