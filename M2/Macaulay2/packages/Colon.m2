@@ -112,6 +112,9 @@ quotelem0 = (I, f) -> (
 -- 3. case: x is a variable, I is homogeneous
 --    case: x is a polynomial
 --    case: x is an ideal
+-- 4. DegreeLimit: stop at a certain degree
+-- 5. BasisElementLimit: stop after one element
+-- 6. PairLimit: stop after 100 S-pairs
 
 -- keys: the second object in the quotient
 QuotientOptions = new SelfInitializingType of BasicList
