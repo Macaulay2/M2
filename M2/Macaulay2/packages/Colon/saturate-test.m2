@@ -32,10 +32,10 @@ TEST ///
   S = ZZ/11[x_0..x_4];
   B = intersect(ideal(x_0, x_1), ideal(x_2, x_3, x_4));
   I = saturate(ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3)), B);
-  M = S^1/I;
-  t = (saturate(ann M, B) == ideal 1_S);
-  assert(isSupportedInZeroLocus(M, B) == t)
-  assert(isSupportedInZeroLocus(I, B) == t)
+  M = comodule I;
+  -- t = (saturate(ann M, B) == ideal 1_S); -- this is commented out to make sure cache isn't used
+  time assert(isSupportedInZeroLocus(M, B) == false)
+  time assert(isSupportedInZeroLocus(I, B) == false)
 ///
 
 TEST ///
@@ -50,7 +50,9 @@ TEST ///
   -- FIXME: without prune we get an engine error:
   -- terminate called after throwing an instance of 'std::logic_error'
   -- what():  ERROR: Inserted duplicate entry into a KD tree.
-  assert(isSupportedInZeroLocus(M, B) == (saturate(ann M, B) == ideal 1_S))
+  debugLevel = 1
+  time assert(isSupportedInZeroLocus(M, B) == (saturate(ann M, B) == ideal 1_S)) -- 0.126s
+  time assert(isSupportedInZeroLocus(M, B) == (saturate(ann M, B) == ideal 1_S)) -- 0.001s woohoo caching!
 ///
 
 -- previously in packages/Macaulay2Doc/doc9.m2
@@ -64,18 +66,18 @@ TEST ///
   saturate(J,F)
 
   J = truncate(4,I)
-  time saturate(J,a)
-  time saturate(J,a,Strategy=>Bayer)
-  time saturate(J,a,Strategy=>Linear)
-  time saturate(J,a,Strategy=>Iterate)
-  time saturate(J,a,Strategy=>Eliminate)
+  time saturate(ideal J_*,a)
+  time saturate(ideal J_*,a,Strategy=>Bayer)
+  time saturate(ideal J_*,a,Strategy=>Linear)
+  time saturate(ideal J_*,a,Strategy=>Iterate)
+  time saturate(ideal J_*,a,Strategy=>Eliminate)
 
-  time saturate(J)
-  time saturate(J,Strategy=>Iterate)
-  assert(try saturate(J,Strategy=>Bayer) else true)
-  assert(try saturate(J,Strategy=>Linear) else true)
+  time saturate(ideal J_*)
+  time saturate(ideal J_*,Strategy=>Iterate)
+  assert(try saturate(ideal J_*,Strategy=>Bayer) else true)
+  assert(try saturate(ideal J_*,Strategy=>Linear) else true)
   -- FIXME: why was this supposed to fail?
-  -- assert(try saturate(J,Strategy=>Eliminate) else true)
+  -- assert(try saturate(ideal J_*,Strategy=>Eliminate) else true)
 ///
 
 TEST ///
@@ -83,6 +85,7 @@ TEST ///
   R = ZZ/101[a..d]
   M = subquotient(matrix{{a^2,b^2},{a*d,c^2}}, matrix{{c},{d}})
 
+  -- TODO: how to clear cache for modules?
   time saturate(M,a)
   -- FIXME: how did these work? Seems to be missing now
   -- time saturate(M,a,Strategy=>Bayer)
@@ -101,9 +104,9 @@ TEST ///
   -- best time so far for the following: 30.41 seconds
   -- but this doesn't yet include finding a minimal set
   -- of generators for the image
-  time saturate(J, ideal row2);
-  time saturate(J, ideal row2, Strategy=>Iterate);
-  time saturate(J, ideal row2, MinimalGenerators=>false);
+  time saturate(ideal J_*, ideal row2);
+  time saturate(ideal J_*, ideal row2, Strategy=>Iterate);
+  time saturate(ideal J_*, ideal row2, MinimalGenerators=>false);
 
   -- the time for the following is 40.58 seconds...
   -- but I think too many GB's are being done...
@@ -127,9 +130,9 @@ TEST ///
   F = row2_(0,0)
   -- For this example, just saturate w.r.t. F.
   -- best time: 21.76 seconds
-  time saturate(J, F)
-  time saturate(J, F, Strategy=>Bayer)  -- 21.76
-  time saturate(J, F, Strategy=>Eliminate) -- 26.08
+  time saturate(ideal J_*, F)
+  time saturate(ideal J_*, F, Strategy=>Bayer)  -- 21.76
+  time saturate(ideal J_*, F, Strategy=>Eliminate) -- 26.08
 ///
 
 TEST ///

@@ -225,7 +225,7 @@ minprimesHelper := (I, opts) -> (
 	new MinimalPrimesComputation from { CodimensionLimit => 0, Result => null });
 
     -- the actual computation of minimal primes occurs here
-    L := ((cacheComputation(opts, container)) computation);
+    L := (cacheComputation(opts, container)) computation;
 
     if L =!= null then doLimit \\ doTrim \ L else if strategy === null
     then error("no applicable method for ", toString key)

@@ -5,7 +5,6 @@
 --                  updated November 2020
 --
 -- TODO : 1. why are there shadowed symbols?
---        2. cache computation under I.cache.QuotientComputation{J}
 --        3. which algorithms for Ideals can be adapted to submodules?
 --        4. move radical here, perhaps intersect as well
 ---------------------------------------------------------------------------
@@ -28,7 +27,7 @@ export { "isSupportedInZeroLocus" }
 
 exportFrom_Core { "saturate", "annihilator" }
 
-importFrom_Core { "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo" }
+importFrom_Core { "printerr", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo" }
 
 -- TODO: where should these be placed?
 trim MonomialIdeal := MonomialIdeal => opts -> (cacheValue (symbol trim => opts)) ((I) -> monomialIdeal trim(module I, opts))
@@ -47,6 +46,8 @@ algorithms := new MutableHashTable from {}
 --------------------------------------------------------------------
 -- Helpers
 --------------------------------------------------------------------
+
+cacheHit := () -> if debugLevel > 0 then printerr "Colon: cache hit! 🎉";
 
 removeOptions := (opts, badopts) -> (
     opts = new MutableHashTable from opts;
@@ -112,6 +113,26 @@ quotelem0 = (I, f) -> (
 --    case: x is a polynomial
 --    case: x is an ideal
 
+-- keys: the second object in the quotient
+QuotientOptions = new SelfInitializingType of BasicList
+QuotientOptions.synonym = "quotient options"
+
+-- keys: TODO: BasisElementLimit, DegreeLimit, PairLimit
+QuotientComputation = new Type of MutableHashTable
+QuotientComputation.synonym = "quotient computation"
+
+isComputationDone = method(TypicalValue => Boolean, Options => true)
+isComputationDone QuotientComputation := Boolean => options quotient >> opts -> container -> (
+    -- this function determines whether we can use the cached result, or further computation is necessary
+    try container.Result =!= null -* TODO: BasisElementLimit, DegreeLimit, PairLimit *- else false)
+
+cacheComputation = method(TypicalValue => CacheFunction, Options => true)
+cacheComputation QuotientComputation := CacheFunction => options quotient >> opts -> container -> new CacheFunction from (
+    -- this function takes advantage of FunctionClosures by modifying the container
+    computation -> (
+	if isComputationDone(opts, container) then ( cacheHit(); container.Result ) else
+	if (result := computation(opts, container)) =!= null then ( container.Result = result )))
+
 --quotient = method(...) -- defined in m2/quotient.m2
 quotient(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> quotientHelper(I, J, (quotient, Ideal, Ideal), opts)
 quotient(Ideal,  RingElement) := Ideal  => opts -> (I, f) -> quotient(I, ideal f, opts)
@@ -139,28 +160,39 @@ Thing : Number := (t, n) -> t : n_(ring t)
 
 -- Helper for quotient methods
 quotientHelper = (A, B, key, opts) -> (
-    if (R := ring A) =!= ring B then error "expected objects in the same ring";
-    if instance(B, RingElement) then B = ideal B;
-    -- TODO: implement bette class equality check; e.g. Ideal vs MonomialIdeal
-    if class A === class B and ambient A != ambient B
-    then error "expected objects to be contained in the same ambient object";
-    -- note: if B \subsub A then A:B should be "everything", but computing a gb for A can be slow
-    -- TODO: isSubset(0, A) should not compute gb of A
-    if B == 0 or isSubset(B, A) then return if class A === class B then ideal 1_R else ambient A;
-    -- note: ideal(..A..) :         f    = A <==> f is nzd / A
-    -- note: ideal(..A..) : ideal(..B..) = A <==>
-    -- note: module(.A.)  : ideal(..B..) = A <==> B is not contained in any associated primes of A
-    -- TODO: can either of the above be efficiently checked?
-    if class B =!= Module and isSubset(ambient A, B) then return A;
-    -- TODO: module(.A.)  : module(.B.)  = ???
-
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
-    -- See TODO in removeQuotientOptions
-    --opts = removeOptions(opts, {Strategy, MinimalGenerators});
-    opts = removeQuotientOptions opts;
 
-    C := runHooks(key, (opts, A, B), Strategy => strategy);
+    -- this logic runs the strategies in order, or the specified strategy
+    computation := (opts, container) -> (
+	if (R := ring A) =!= ring B then error "expected objects in the same ring";
+	if instance(B, RingElement) then B = ideal B;
+	-- TODO: implement bette class equality check; e.g. Ideal vs MonomialIdeal
+	if class A === class B and ambient A != ambient B
+	then error "expected objects to be contained in the same ambient object";
+	-- note: if B \subsub A then A:B should be "everything", but computing a gb for A can be slow
+	-- TODO: isSubset(0, A) should not compute gb of A
+	if B == 0 or isSubset(B, A) then return if class A === class B then ideal 1_R else ambient A;
+	-- note: ideal(..A..) :         f    = A <==> f is nzd / A
+	-- note: ideal(..A..) : ideal(..B..) = A <==>
+	-- note: module(.A.)  : ideal(..B..) = A <==> B is not contained in any associated primes of A
+	-- TODO: can either of the above be efficiently checked?
+	if class B =!= Module and isSubset(ambient A, B) then return A;
+	-- TODO: module(.A.)  : module(.B.)  = ???
+
+	-- See TODO in removeQuotientOptions
+	--opts = removeOptions(opts, {Strategy, MinimalGenerators});
+	opts = removeQuotientOptions opts;
+	runHooks(key, (opts, A, B), Strategy => strategy));
+
+    -- this is the logic for caching partial quotient computations. A.cache contains an option:
+    --   QuotientOptions{ B } => QuotientComputation{ Result }
+    -- TODO: find an existing cacheKey that can be extended, and use it in the computation
+    cacheKey := QuotientOptions{ B };
+    container := try A.cache#cacheKey else A.cache#cacheKey = new QuotientComputation from { Result => null };
+
+    -- the actual computation of quotient occurs here
+    C := (cacheComputation(opts, container)) computation;
 
     if C =!= null then doTrim C else if strategy === null
     then error("no applicable method for quotient(", class A, ", ", class B, ")")
@@ -296,6 +328,17 @@ scan({Quotient, Iterate}, strategy ->
 -- TODO:
 -- - should saturate(I) use the irrelevant ideal when multigraded?
 
+-- keys: the second ideal of saturation
+SaturateOptions = new SelfInitializingType of QuotientOptions
+SaturateOptions.synonym = "saturate options"
+
+-- keys: TODO: BasisElementLimit, DegreeLimit, PairLimit
+SaturateComputation = new Type of QuotientComputation
+SaturateComputation.synonym = "saturate computation"
+
+-- TODO: isComputationDone and cacheComputation now can inherit from QuotientComputation,
+-- but perhaps there is something smarter that can be done in this specific case
+
 -- saturate = method(Options => options saturate) -- defined in m2/quotient.m2
 -- used when P = decompose irr
 saturate(Ideal,  List)        := Ideal  => opts -> (I, L) -> fold(L, I, (J, I) -> saturate(I, J, opts))
@@ -321,22 +364,33 @@ saturate(Thing, Number) := opts -> (t, n) -> saturate(t, n_(ring t), opts)
 
 -- Helper for saturation methods
 saturateHelper = (A, B, key, opts) -> (
-    if (R := ring A) =!= ring B then error "expected objects in the same ring";
-    B' := if instance(B, RingElement) then ideal B else B;
-    -- note: if B \subset A then A:B^infty should be "everything", but computing a gb for A can be slow
-    -- TODO: if radical A is cached and B \subset radical A then A : B^infty = ambient A
-    -- alternatively, can radical containment be efficiently checked?
-    if B' == 0 or isSubset(B', A) then return ambient A;
-    -- note: ideal(..A..) :            f^infty = A <==> f is nzd /A
-    -- note: ideal(..A..) : ideal(..B..)^infty = A <==> B is not contained in any associated primes of A
-    -- TODO: can either of the above be efficiently checked?
-    if isSubset(ambient A, B') then return A;
-
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
-    opts = removeOptions(opts, {Strategy, MinimalGenerators});
 
-    C := runHooks(key, (opts, A, B), Strategy => strategy);
+    -- this logic runs the strategies in order, or the specified strategy
+    computation := (opts, container) -> (
+	if (R := ring A) =!= ring B then error "expected objects in the same ring";
+	B' := if instance(B, RingElement) then ideal B else B;
+	-- note: if B \subset A then A:B^infty should be "everything", but computing a gb for A can be slow
+	-- TODO: if radical A is cached and B \subset radical A then A : B^infty = ambient A
+	-- alternatively, can radical containment be efficiently checked?
+	if B' == 0 or isSubset(B', A) then return ambient A;
+	-- note: ideal(..A..) :            f^infty = A <==> f is nzd /A
+	-- note: ideal(..A..) : ideal(..B..)^infty = A <==> B is not contained in any associated primes of A
+	-- TODO: can either of the above be efficiently checked?
+	if isSubset(ambient A, B') then return A;
+
+	opts = removeOptions(opts, {Strategy, MinimalGenerators});
+	runHooks(key, (opts, A, B), Strategy => strategy));
+
+    -- this is the logic for caching partial saturation computations. A.cache contains an option:
+    --   SaturateOptions{ B } => SaturateComputation{ Result }
+    -- TODO: find an existing cacheKey that can be extended, perhaps of type QuotientOptions, and use it in the computation
+    cacheKey := SaturateOptions{ B };
+    container := try A.cache#cacheKey else A.cache#cacheKey = new SaturateComputation from { Result => null };
+
+    -- the actual computation of saturation occurs here
+    C := (cacheComputation(opts, container)) computation;
 
     if C =!= null then doTrim C else if strategy === null
     then error("no applicable method for saturate(", class A, ", ", class B, ")")
@@ -505,17 +559,22 @@ scan({"Unused", Iterate, Eliminate, GRevLex, Bayer, Linear}, strategy ->
 
 -- TODO: either in NormalToricVarieties or VirtualResolutions,
 -- implement isZeroSheaf(X, M), isFiniteLength(X, M) based on this
+-- Note: this function isn't cached because the usecase in VirtualResolutions doesn't
+-- require it but it does take advantage of precomputed saturation of the annihilator
 isSupportedInZeroLocus = method()
 isSupportedInZeroLocus(Ideal,  Ideal) := (I, B) -> isSupportedInZeroLocus(comodule I, B)
 isSupportedInZeroLocus(Module, Ideal) := (M, B) -> (
     -- Returns true if M is supported only on the zero locus of B
-    -- There are two ways to check this:
-    --  - saturate the annihilator of M with respect to B and compare it to ideal(1)
-    --  - check that a high enough power of elements of B annihilates M
-    -- In general, computing the saturation is unnecessary, but:
-    -- TODO: if the saturation of the annihilator is known, then checking
-    -- whether saturate(annihilator M, B) == ideal 1_(ring B) is faster
     S := ring B;
+    -- There are two ways to check this:
+    -- 1. saturate the annihilator of M with respect to B and compare it to ideal(1)
+    -- In general, computing the saturation is unnecessary, but when the saturation of the
+    -- annihilator is known, it's faster to check whether saturate(annihilator M, B) == ideal 1
+    if M.cache.?annihilator then (
+	N := annihilator M;
+	cacheKey := SaturateOptions{ B };
+	try isComputationDone N.cache#cacheKey then ( cacheHit(); return saturate(N, B) == ideal 1_S ) else true);
+    -- 2. check that a high enough power of elements of B annihilates M
     n := numgens S;
     all(B_*, g -> (
 	supp := index \ support g;
@@ -531,8 +590,6 @@ isSupportedInZeroLocus(Module, Ideal) := (M, B) -> (
 --------------------------------------------------------------------
 -- Annihilators
 --------------------------------------------------------------------
-
--- TODO: annihilator routines for MonomialIdeals?
 
 -- annihilator = method(Options => {Strategy => null}) -- defined in m2/quotient.m2
 annihilator RingElement := Ideal => opts -> f -> annihilator(ideal f,  opts)
@@ -560,6 +617,7 @@ annihilatorHelper = (A, key, opts) -> (
 
 -- Algorithms for annihilator Module
 algorithms#(annihilator, Module) = new MutableHashTable from {
+    -- TODO: annihilator routines for MonomialIdeals?
     Quotient     => (opts, M) -> (
 	f := presentation M;
 	image f : target f),
