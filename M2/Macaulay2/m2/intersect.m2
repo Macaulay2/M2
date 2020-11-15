@@ -106,9 +106,9 @@ algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
 		I' := R'_0 * fto I;
 		J' := (1 - R'_0) * fto J;
 		U := I' + J';
-		--g := generators gb U;
+		g := generators gb U;
 		--g := groebnerBasis(U, Strategy => "MGB"); -- TODO: try "MGB"
-		g := groebnerBasis(U, Strategy => "F4");
+		--g := groebnerBasis(U, Strategy => "F4"); -- TODO: this failed check_4 PushForward
 		fback ideal selectInSubring(1, g)))),
 
     Monomial => (opts, L) -> (

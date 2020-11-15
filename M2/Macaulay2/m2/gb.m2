@@ -379,6 +379,7 @@ engineMGBF4 Ideal := opts -> I -> engineMGB(generators I, opts, "Reducer" => "F4
 -----------------------------------------------------------------------------
 -- groebnerBasis
 -----------------------------------------------------------------------------
+-- TODO: hookify this
 
 groebnerBasis = method(
     TypicalValue => Matrix,
@@ -396,6 +397,7 @@ groebnerBasis Matrix := opts -> x -> (
     and 2^16 > char R -- FIXME: MGB fails for primes larger than 2^16
     and isPolynomialRing R
     and isCommutative R
+    -- TODO: this fails for instance in check_4 PushForward
     and instance(coefficientRing R, QuotientRing) -- really: want to say it is a prime field
     then (
 	mgbopts := new MutableHashTable from opts#"MGBOptions";
