@@ -2,9 +2,10 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "0.9.5", 
-    Date => "October 27, 2020",
+    Date => "November 15, 2020",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
+    Keywords => {"Algebraic geometry"},
     PackageExports => {"Resultants","Cremona"},
     DebuggingMode => false,
     Reload => false
@@ -1736,26 +1737,6 @@ rationalMap (RationalMap,Ring) := o -> (Phi,Gr) -> (
    Psi
 );
 
-image (RationalMap,String) := (phi,alg) -> (
-   if alg =!= "F4" and alg =!= "MGB" then error "expected Strategy to be \"F4\" or \"MGB\"";
-   if phi#"idealImage" =!= null then return image phi;
-   n := phi#"dimAmbientTarget";
-   m := phi#"dimAmbientSource";
-   K := coefficientRing phi;
-   t := local t; x := local x;
-   R := K[t_0..t_n,x_0..x_m,MonomialOrder=>Eliminate(n+1)];
-   s := map(R,ambient source phi,{t_0..t_n});
-   F := s lift(matrix phi,ambient source phi);
-   I := s ideal source phi;  
-   s':= map(R,ambient target phi,{x_0..x_m});
-   J := s' ideal target phi;
-   V := I + J + ideal(F - matrix{{x_0..x_m}});
-   G := groebnerBasis(V,Strategy=>alg);
-   G' := ideal sub(selectInSubring(1,G),K[x_0..x_m]);
-   forceImage(phi,sub(sub(G',vars ambient target phi),target phi));
-   image phi
-);
-
 dimdegree = (X) -> if dim X <= 0 then 0 else if dim X == 1 then degree X else error "expected a zero-dimensional scheme"; 
 
 cycleClass = method();
@@ -2064,15 +2045,15 @@ interpoleImage (RationalMap,Ideal,List,ZZ) := o -> (g,X,D,j) -> (
     cont := 0;
     W := g point X;
     while select(flatten degrees W,d -> d <= j) =!= D do (
-        if o.Verbose then <<cont<<endl;
+        if o.Verbose then <<cont<<", ";
         W = intersect(W,g point X);
-        if o.Verbose then <<tally degrees W<<endl;
+        if o.Verbose then (<<"degrees: ";for l in pairs tally degrees W do (<<(first first l)<<"^"<<last l<<" ");<<endl);
         cont = cont + 1;
     );
     for i to 4 do (
-        if o.Verbose then <<"extra "<<i<<endl;
+        if o.Verbose then <<"extra "<<i<<", ";
         W = intersect(W,g point X);
-        if o.Verbose then <<tally degrees W<<endl;
+        if o.Verbose then (<<"degrees: ";for l in pairs tally degrees W do (<<(first first l)<<"^"<<last l<<" ");<<endl);
     );
     W = ideal select(W_*,w -> first degree w <= j);
     if flatten degrees W =!= D then error "something went wrong";
@@ -2085,14 +2066,7 @@ interpoleImage (RationalMap,List,ZZ) := o -> (g,D,j) -> (
 );
 
 mapDefinedByDivisor = method();
-mapDefinedByDivisor (QuotientRing,VisibleList) := (R,D) -> ( 
-    for d in D do if not (instance(first d,Ideal) and instance(last d,ZZ) and #d == 2 and (ring first d === R or ring first d === ambient R) and last d > 0) then error "expected a list of pairs (I,n), where I is an ideal in the given quotient ring and n is a positive integer";
-    D = apply(D,d -> if ring first d === ambient R then (trim sub(first d,R),last d) else d);
-    I := trim intersect for d in D list (first d)^(last d); 
-    J := quotient(ideal I_0,I);
-    d := first first degrees I;
-    rationalMap(J,d)
-);
+mapDefinedByDivisor (QuotientRing,VisibleList) := (R,D) -> rationalMap(R,new Tally from apply(D,d -> first d => last d));
 
 linearCombination = method();
 linearCombination (RingElement,Matrix) := (F,I) -> (
@@ -2388,15 +2362,6 @@ Inputs => {"phi" => RationalMap => {"an automorphism of ", TEX///$\mathbb{P}^n$/
 Outputs => {RationalMap => {"the induced automorphism of ", TO Grass, TEX///$(k,n)$///}}, 
 EXAMPLE {"P4 = Grass(0,4,ZZ/33331);", "G'1'4 = Grass(1,4,ZZ/33331);", "phi = rationalMap apply(5, i -> random(1,P4))", "Phi = rationalMap(phi,G'1'4)"}} 
 
-document { 
-Key => {(image,RationalMap,String)}, 
-Headline => "closure of the image of a rational map using the F4 algorithm (experimental)", 
-Usage => "image(phi,\"F4\")
-image(phi,\"MGB\")",
-Inputs => { "phi" => RationalMap,{"\"F4\" or \"MGB\""}}, 
-Outputs => {{"the ",TO2{"Ideal","ideal"}," defining the closure of the image of ",TT"phi","; the calculation passes through ",TO groebnerBasis,"(...,Strategy=>\"F4\") or ",TO groebnerBasis,"(...,Strategy=>\"MGB\")."}}, 
-SeeAlso => {(image,RationalMap),(image,RationalMap,ZZ),groebnerBasis}}
-
 document {Key => {tables, (tables, ZZ, Ring), (tables, ZZ), (tables, ZZ, Ring, Nothing), (tables, ZZ, Nothing)}, 
 Headline => "make examples of reducible subschemes of P^5", 
 Usage => "tables(i,K)", 
@@ -2635,4 +2600,11 @@ assert(apply(X,x -> recognize x) === toList(1..21));
 assert(apply(X,x -> x#"label") === toList(1..21));
 ///
 
+TEST ///
+f = last associatedK3surface(specialCubicFourfold "quartic scroll",Verbose=>true);
+assert(? image f == "surface of degree 14 and sectional genus 8 in PP^8 cut out by 15 hypersurfaces of degree 2");
+g = last associatedK3surface(specialCubicFourfold "quintic del Pezzo surface",Verbose=>true);
+assert(? image g == "surface of degree 14 and sectional genus 8 in PP^8 cut out by 15 hypersurfaces of degree 2");
+associatedK3surface(specialGushelMukaiFourfold "tau-quadric",Verbose=>true);
+///
 
