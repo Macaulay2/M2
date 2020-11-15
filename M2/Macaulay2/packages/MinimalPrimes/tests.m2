@@ -32,12 +32,6 @@ TOODAMNSLOW = (str) -> null
 -------------------------------
 
 TEST ///
-  R1 = QQ[d, f, j, k, m, r, t, A, D, G, I, K];
-  I1 = ideal ( I*K-K^2, r*G-G^2, A*D-D^2, j^2-j*t, d*f-f^2, d*f*j*k - m*r, A*D - G*I*K);
-  assert(#(minprimes I1) == 22)
-///
-
-TEST ///
   R = ZZ/101[a..d]
   assert(minprimes ideal(0_R) == {ideal(0_R)})
   assert(minprimes ideal(1_R) == {})

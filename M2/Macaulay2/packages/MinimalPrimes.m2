@@ -105,14 +105,6 @@ protect symbol fromAmbientField
 -- Support routines
 --------------------------------------------------------------------
 
--- TODO: is this used anywhere?
-USEMGB = false;
---if USEMGB then needsPackage "MGBInterface";
-MGB = I -> flatten entries if USEMGB then groebnerBasis(I, Strategy=>"MGB") else gens gb I
-
--- TODO: what does factors G do? is this a better strategy for saturate?
-mySat = (J, G) -> (for f in last \ factors G do J = saturate(J, f); J)
-
 load "./MinimalPrimes/AnnotatedIdeal.m2"
 load "./MinimalPrimes/PDState.m2"
 load "./MinimalPrimes/splitIdeals.m2"
@@ -174,11 +166,31 @@ minimalPrimesOptions := new OptionTable from {
     Strategy               => null,
     CodimensionLimit       => infinity, -- only find minimal primes of codim <= this bound
     MinimalGenerators      => true, -- whether to trim the output
-    "IdealSoFar"           => null, -- used in inductive setting
-    "RadicalSoFar"         => null, -- used in inductive setting
     "CheckPrimeOnly"       => false,
     "SquarefreeFactorSize" => 1
     }
+
+-- keys: none so far
+MinimalPrimesOptions = new SelfInitializingType of BasicList
+MinimalPrimesOptions.synonym = "minimal primes options"
+
+-- keys: CodimensionLimit and Result
+MinimalPrimesComputation = new Type of MutableHashTable
+MinimalPrimesComputation.synonym = "minimal primes computation"
+
+isComputationDone = method(TypicalValue => Boolean, Options => true)
+isComputationDone MinimalPrimesComputation := Boolean => minimalPrimesOptions >> opts -> container -> (
+    -- this function determines whether we can use the cached result, or further computation is necessary
+    try instance(container.Result, List) and opts.CodimensionLimit <= container.CodimensionLimit else false)
+
+cacheComputation = method(TypicalValue => CacheFunction, Options => true)
+cacheComputation MinimalPrimesComputation := CacheFunction => minimalPrimesOptions >> opts -> container -> new CacheFunction from (
+    -- this function takes advantage of FunctionClosures by modifying the container
+    computation -> (
+	if isComputationDone(opts, container) then container.Result else
+	if (result := computation(opts, container)) =!= null then (
+	    container.CodimensionLimit = opts.CodimensionLimit;
+	    container.Result = result)))
 
 -- Helper for minimalPrimes and decompose
 minprimesHelper := (I, opts) -> (
@@ -190,31 +202,30 @@ minprimesHelper := (I, opts) -> (
     doTrim := if opts.MinimalGenerators then trim else identity;
     key := (minimalPrimes, Ideal);
 
-    codimLimit := min(opts.CodimensionLimit, numgens I);
-    doLimit := L -> select(L, P -> codim P <= codimLimit);
+    codimLimit := min(opts.CodimensionLimit, numgens J);
+    doLimit := L -> select(L, P -> codim(P, Generic => true) <= codimLimit);
     opts = opts ++ { CodimensionLimit => codimLimit };
 
-    -- minimalPrimesComputedCodim is the highest codim found among the minimal primes previously computed
-    -- this logic determines whether we can get the cached output, or further computation is necessary
-    cacheFunc := computation -> (
-	if not I.cache#?"minimalPrimesComputedCodim" or I.cache#"minimalPrimesComputedCodim" < codimLimit
-	-- TODO: some caching of partial computation should occur here
-	then ( I.cache#"minimalPrimesComputedCodim" = codimLimit; I -> I.cache.minimalPrimes = computation I )
-	else ( cacheValue symbol minimalPrimes ) computation );
-
     -- this logic determines what strategies will be used
-    computation := I -> (
-	if not instance(strategy, VisibleList)
-	then runHooks(key, (opts, I), Strategy => strategy)
+    computation := (opts, container) -> (
+	if not instance(opts.Strategy, VisibleList)
+	then runHooks(key, (opts, I), Strategy => opts.Strategy)
 	-- advanced strategies can still be used:
 	else minprimesWithStrategy(I,
 	    Verbosity              => opts.Verbosity,
-	    Strategy               => strategy,
-	    CodimensionLimit       => codimLimit,
+	    Strategy               => opts.Strategy,
+	    CodimensionLimit       => opts.CodimensionLimit,
 	    "SquarefreeFactorSize" => opts#"SquarefreeFactorSize"));
 
+    -- this is the logic for caching partial minimal primes computations. I.cache contains an option:
+    --   MinimalPrimesOptions{} => MinimalPrimesComputation{ CodimensionLimit, Result }
+    -- currently there are no options that could go in MinimalPrimesOptions, but this pattern is useful for saturate, etc.
+    cacheKey := MinimalPrimesOptions{};
+    container := try I.cache#cacheKey else I.cache#cacheKey = (
+	new MinimalPrimesComputation from { CodimensionLimit => 0, Result => null });
+
     -- the actual computation of minimal primes occurs here
-    L := (cacheFunc computation) I;
+    L := ((cacheComputation(opts, container)) computation);
 
     if L =!= null then doLimit \\ doTrim \ L else if strategy === null
     then error("no applicable method for ", toString key)
@@ -406,6 +417,11 @@ setAmbientField(Ring, Ring) := (KR, RU) -> (
     numerator KR := (f) -> numerator KR.toAmbientField f;
     denominator KR := (f) -> denominator KR.toAmbientField f;
     )
+
+-- TODO: what does factors f do? is this always correct, or only for the purposes of MinimalPrimes
+mySat = (I, f) -> saturate(I, f, Strategy => Factorization)
+-- TODO: if this is always correct, move it to Colon
+addHook((saturate, Ideal, RingElement), (opts, I, f) -> saturate(I, last \ factors f, opts), Strategy => Factorization)
 
 -- needs documentation
 factors = method()
