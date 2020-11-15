@@ -50,7 +50,7 @@ K=ZZ/3331; ringP8=K[x_0..x_8]; ringP14=K[t_0..t_14];",
 -- of dimension 5 (so that the composition phi':P^8--->P^8 must have degree equal to deg(G(1,5))=14)
 phi'=phi*map(ringP14,ringP8,for i to 8 list random(1,ringP14))",
 "time degreeOfRationalMap phi'"},
-SeeAlso => {projectiveDegrees}} 
+SeeAlso => {(degree,RationalMap),projectiveDegrees}} 
 
 undocumented{(projectiveDegrees,MutableHashTable,ZZ),(projectiveDegrees,RingMap,ZZ)}
 
@@ -66,14 +66,14 @@ EXAMPLE {
 GF(331^2)[t_0..t_4]; phi=toMap minors(2,matrix{{t_0..t_3},{t_1..t_4}})", 
 "time projectiveDegrees(phi,MathMode=>true)",
 "psi=inverseMap(toMap(phi,Dominant=>infinity))", 
-"time projectiveDegrees(psi,MathMode=>true)",}, 
+"time projectiveDegrees(psi,MathMode=>true)"}, 
 EXAMPLE { 
 "-- Cremona transformation of P^6 defined by the quadrics through a rational octic surface
 phi = map specialCremonaTransformation(7,ZZ/300007)",
 "time projectiveDegrees phi", 
 "time projectiveDegrees(phi,NumDegrees=>1)"}, 
 PARA{"Another way to use this method is by passing an integer ",TT"i"," as second argument. However, this is equivalent to ",TT"first projectiveDegrees(phi,NumDegrees=>i)", " and generally it is not faster."},
-SeeAlso => {degreeOfRationalMap, SegreClass}} 
+SeeAlso => {(degrees,RationalMap),degreeOfRationalMap, SegreClass}} 
 
 document { 
 Key => {MathMode, [inverseMap,MathMode], [projectiveDegrees,MathMode],[degreeOfRationalMap,MathMode],[approximateInverseMap,MathMode],[isDominant,MathMode],[isBirational,MathMode],[SegreClass,MathMode],[ChernSchwartzMacPherson,MathMode],[EulerCharacteristic,MathMode]}, 
@@ -84,11 +84,11 @@ PARA{"If turned on in the methods ", TO inverseMap," and ", TO approximateInvers
 document { 
 Key => {Dominant, [toMap,Dominant], [rationalMap,Dominant]}, 
 -- Headline => "makes a dominant rational map" , 
-"This is an optional argument for ", TO toMap,". When ", TO true," or ",TO infinity," is passed to this option, the kernel of the returned ring map will be zero.",} 
+"This is an optional argument for ", TO toMap,". When ", TO true," or ",TO infinity," is passed to this option, the kernel of the returned ring map will be zero."} 
 
 document { 
 Key => {NumDegrees, [projectiveDegrees,NumDegrees]}, 
-"This is an optional argument for ", TO projectiveDegrees, " and accepts a non-negative integer, 1 less than the number of projective degrees to be computed.",} 
+"This is an optional argument for ", TO projectiveDegrees, " and accepts a non-negative integer, 1 less than the number of projective degrees to be computed."} 
 
 document {
 Key => {CodimBsInv, [approximateInverseMap,CodimBsInv]}, 
@@ -191,7 +191,7 @@ phi = map quadroQuadricCremonaTransformation(26,1)",
 "time psi = inverseMap phi", 
 "isInverseMap(phi,psi)"},
 Caveat => {"If the map passed is not birational and the option ", TO MathMode, " is set to ", TT "false", ", you might not get any error message."},
-SeeAlso => {approximateInverseMap}}
+SeeAlso => {approximateInverseMap,(inverse,RationalMap),inverse'}}
 
 document { 
 Key => {approximateInverseMap,(approximateInverseMap,RationalMap,ZZ),(approximateInverseMap,RationalMap),(approximateInverseMap,RingMap),(approximateInverseMap,RingMap,ZZ)}, 
@@ -220,7 +220,7 @@ time psi=approximateInverseMap(phi,CodimBsInv=>4)",
 phi * psi == 1",
 "-- in this case we can remedy enabling the option MathMode
 time psi = approximateInverseMap(phi,CodimBsInv=>4,MathMode=>true)",
-"phi * psi == 1",},
+"phi * psi == 1"},
 PARA{"The method also accepts as input a ",TO RingMap," representing a rational map between projective varieties. In this case, a ",TO RingMap," is returned as well."},
 Caveat => {"For the purpose of this method, the option ", TO MathMode, TT"=>true"," is too rigid, especially when the source of the passed map is not a projective space."},
 SeeAlso => {inverseMap}}
@@ -239,7 +239,7 @@ EXAMPLE {
 "time (p1,p2) = graph phi;",
 "p1",
 "p2",
-"p1 * phi == p2 and p2 * phi^-1 == p1",
+"assert(p1 * phi == p2 and p2 * phi^-1 == p1)",
 "describe p2",
 "projectiveDegrees p2"},
 PARA{"When the source of the rational map is a multi-projective variety, the method returns all the projections."},
@@ -273,7 +273,7 @@ Inputs => {
 Ideal => "I" => {"a homogeneous ideal of a graded quotient ring ",TEX///$K[x_0,\ldots,x_n]/J$///," defining a subscheme ",TEX///$X=V(I)$///," of ",TEX///$Y=Proj(K[x_0,\ldots,x_n]/J)\subseteq \mathbb{P}^n=Proj(K[x_0,\ldots,x_n])$///}}, 
 Outputs => { 
 RingElement => {"the push-forward to the Chow ring of ",TEX///$\mathbb{P}^n$///," of the Segre class ",TEX///$s(X,Y)$///," of ",TEX///$X$///," in ",TEX///$Y$///}}, 
-PARA{"This is an example of application of the method ", TO "projectiveDegrees","; see Proposition 4.4 in ",HREF{"http://link.springer.com/book/10.1007%2F978-3-662-02421-8","Intersection theory"},", by W. Fulton, and Subsection 2.3 in ",HREF{"http://www.math.lsa.umich.edu/~idolga/cremonalect.pdf","Lectures on Cremona transformations"},", by I. Dolgachev. See also the corresponding methods in the packages ", HREF{"http://www.math.fsu.edu/~aluffi/CSM/CSM.html", "CSM-A"},", by P. Aluffi, and ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/CharacteristicClasses/html/", "CharacteristicClasses"},", by M. Helmer and C. Jost."},
+PARA{"This is an example of application of the method ", TO "projectiveDegrees","; see Proposition 4.4 in ",HREF{"http://link.springer.com/book/10.1007%2F978-3-662-02421-8","Intersection theory"},", by W. Fulton, and Subsection 2.3 in ",HREF{"http://www.math.lsa.umich.edu/~idolga/cremonalect.pdf","Lectures on Cremona transformations"},", by I. Dolgachev. See also the corresponding methods in the packages ", HREF{"http://www.math.fsu.edu/~aluffi/CSM/CSM.html", "CSM-A"},", by P. Aluffi, and ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.16/share/doc/Macaulay2/CharacteristicClasses/html/", "CharacteristicClasses"},", by M. Helmer and C. Jost."},
 PARA{"In the example below, we take ", TEX///$Y\subset\mathbb{P}^7$///," to be the dual hypersurface of ",TEX///$\mathbb{P}^1\times\mathbb{P}^1\times\mathbb{P}^1\subset\mathbb{P}^7^*$///, " and ",TEX///$X\subset Y$///, " its singular locus. We compute the push-forward to the Chow ring of ",TEX///$\mathbb{P}^7$///, " of the Segre class both of ",TEX///$X$///, " in ",TEX///$Y$///, " and of ",TEX///$X$///, " in ",TEX///$\mathbb{P}^7$///, ", using both a probabilistic and a non-probabilistic approach."},
 EXAMPLE { 
 "P7 = ZZ/100003[x_0..x_7]",
@@ -304,7 +304,7 @@ Inputs => {
 Ideal => "I" => {"a homogeneous ideal defining a closed subscheme ",TEX///$X\subset\mathbb{P}^n$///}}, 
 Outputs => { 
 RingElement => {"the push-forward to the Chow ring of ",TEX///$\mathbb{P}^n$///," of the Chern-Schwartz-MacPherson class ",TEX///$c_{SM}(X)$///," of ",TEX///$X$///,". In particular, the coefficient of ",TEX///$H^n$///," gives the Euler characteristic of the support of ",TEX///$X$///,", where ",TEX///$H$///," denotes the hyperplane class."}}, 
-PARA{"This is an example of application of the method ", TO "projectiveDegrees",", due to results shown in ",HREF{"http://www.sciencedirect.com/science/article/pii/S0747717102000895","Computing characteristic classes of projective schemes"},", by P. Aluffi. See also the corresponding methods in the packages ", HREF{"http://www.math.fsu.edu/~aluffi/CSM/CSM.html", "CSM-A"},", by P. Aluffi, and ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/CharacteristicClasses/html/", "CharacteristicClasses"},", by M. Helmer and C. Jost."},
+PARA{"This is an example of application of the method ", TO "projectiveDegrees",", due to results shown in ",HREF{"http://www.sciencedirect.com/science/article/pii/S0747717102000895","Computing characteristic classes of projective schemes"},", by P. Aluffi. See also the corresponding methods in the packages ", HREF{"http://www.math.fsu.edu/~aluffi/CSM/CSM.html", "CSM-A"},", by P. Aluffi, and ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.16/share/doc/Macaulay2/CharacteristicClasses/html/", "CharacteristicClasses"},", by M. Helmer and C. Jost."},
 PARA{"In the example below, we compute the push-forward to the Chow ring of ",TEX///$\mathbb{P}^4$///, " of the Chern-Schwartz-MacPherson class of the cone over the twisted cubic curve, using both a probabilistic and a non-probabilistic approach."},
 EXAMPLE { 
 "GF(5^7)[x_0..x_4]",
@@ -332,7 +332,7 @@ Inputs => {
 Ideal => "I" => {"a homogeneous ideal defining a smooth projective variety ",TEX///$X\subset\mathbb{P}^n$///}}, 
 Outputs => { 
 ZZ => {"the topological Euler characteristics of ",TEX///$X$///,"."}}, 
-PARA{"This is an application of the method ", TO "SegreClass",". See also the corresponding methods in the packages ", HREF{"http://www.math.fsu.edu/~aluffi/CSM/CSM.html", "CSM-A"},", by P. Aluffi, and ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/CharacteristicClasses/html/", "CharacteristicClasses"},", by M. Helmer and C. Jost."},
+PARA{"This is an application of the method ", TO "SegreClass",". See also the corresponding methods in the packages ", HREF{"http://www.math.fsu.edu/~aluffi/CSM/CSM.html", "CSM-A"},", by P. Aluffi, and ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.16/share/doc/Macaulay2/CharacteristicClasses/html/", "CharacteristicClasses"},", by M. Helmer and C. Jost."},
 PARA{"In general, even if the input ideal defines a singular variety ",TEX///$X$///,", the returned value equals the degree of the component of dimension 0 of the Chern-Fulton class of ",TEX///$X$///,". The Euler characteristic of a singular variety can be computed via the method ",TO ChernSchwartzMacPherson,"."},
 PARA{"In the example below, we compute the Euler characteristic of ",TEX///$G(1,4)\subset\mathbb{P}^{9}$///,", using both a probabilistic and a non-probabilistic approach."},
 EXAMPLE { 
@@ -354,7 +354,7 @@ Headline => "inverse image via a rational map",
 Usage => "phi^** I", 
 Inputs => { 
 RationalMap => "phi",
-Ideal => "I" => {"a homogeneus ideal in the coordinate ring of the target of ",TT "phi"},}, 
+Ideal => "I" => {"a homogeneus ideal in the coordinate ring of the target of ",TT "phi"}}, 
 Outputs => { 
 Ideal => {"the ideal of the closure of the inverse image of ", TT"V(I)", " via ",TT"phi"}},
 PARA{"In most cases this is equivalent to ",TT"phi^* I", ", which is faster but may not take into account other representations of the map."},
@@ -366,14 +366,14 @@ EXAMPLE {
 "q = phi p",
 "time phi^** q",
 "oo == p"},
-SeeAlso => {(symbol _*,RationalMap),(target,RationalMap)}}
+SeeAlso => {(symbol _*,RationalMap),(symbol **,RationalMap,Ring),(target,RationalMap)}}
 
 document { 
 Key => {(symbol _*,RationalMap),(symbol SPACE,RationalMap,Ideal)}, 
 Headline => "direct image via a rational map", 
 Usage => "phi_* I", 
 Inputs => { 
-RationalMap => "phi" => {TT"I", " a homogeneus ideal in the coordinate ring of the source of ",TT "phi"},}, 
+RationalMap => "phi" => {TT"I", " a homogeneus ideal in the coordinate ring of the source of ",TT "phi"}}, 
 Outputs => { 
 Ideal => {"the ideal of the closure of the direct image of ", TT"V(I)", " via ",TT"phi"}},
 PARA{"In most cases this is equivalent to ",TT"phi I", ", which is faster but may not take into account other representations of the map."},
@@ -385,7 +385,7 @@ Headline => "power",
 Usage => "phi^n", 
 Inputs => { 
 RationalMap => "phi",
-ZZ => "n",}, 
+ZZ => "n"}, 
 Outputs => { 
 RationalMap => {TT"phi^n"}},
 PARA{"If the map is birational, then negative values may be used and the inverse will be computed using ",TT"inverseMap(phi,MathMode=>true,Verbose=>false)"," (see ",TO inverseMap,")."}}
@@ -398,8 +398,24 @@ Inputs => {
 RationalMap => "phi" => {"a birational map"}}, 
 Outputs => { 
 RationalMap => {"the inverse map of ",TT"phi"}},
-PARA{"This is equivalent both to ",TT"inverseMap(phi,MathMode=>true,Verbose=>false)"," and to ",TT"phi^(-1)",", see ",TO "inverseMap","."},},
-SeeAlso => {inverseMap,(symbol ^,RationalMap)}
+PARA{"This is equivalent both to ",TT"inverseMap(phi,MathMode=>true,Verbose=>false)"," and to ",TT"phi^(-1)",", see ",TO "inverseMap","."},
+SeeAlso => {inverseMap,(symbol ^,RationalMap,ZZ),inverse'}}
+
+document { 
+Key => {inverse',(inverse',RationalMap)}, 
+Headline => "inverse of a birational map using a middle ground approach between MathMode=>true and MathMode=>false", 
+Usage => "inverse' phi", 
+Inputs => { 
+RationalMap => "phi" => {"a birational map"}}, 
+Outputs => { 
+RationalMap => {"the inverse map of ",TT"phi"}},
+PARA{"This computes the inverse map of ",TT "phi"," using ",TT "psi = ",TO "inverseMap",TT" phi",". Then it is checked that ",
+TO2{(symbol SPACE,RationalMap,Ideal),"psi phi p"},TT" == p"," and ",TO2{(symbol SPACE,RationalMap,Ideal),"phi psi q"},TT" == q",", where ",TT"p,q"," are, respectively, a ",TO2{point,"random point"}," on the ",TO2{(source,RationalMap),"source"}," and the ",TO2{(target,RationalMap),"target"}," of ",TT"phi",". Finally, if the tests pass, the command ",TO forceInverseMap,TT"(phi,psi)"," is invoked and ",TT"psi"," is returned."},
+EXAMPLE {
+"R = QQ[x_0..x_4]; phi = rationalMap minors(4,random(R^{4:1},R^5)) -- special Cremona transformation of P^4 of type (4,4)",
+"time inverse' phi"
+},
+SeeAlso => {(inverse,RationalMap),inverseMap,(isInverseMap,RationalMap,RationalMap)}}
 
 document { 
 Key => {(ideal,RationalMap)}, 
@@ -408,7 +424,17 @@ Usage => "ideal phi",
 Inputs => { 
 RationalMap => "phi"}, 
 Outputs => { 
-Ideal => {"the ideal of the base locus of ",TT"phi"}}}
+Ideal => {"the ideal of the base locus of ",TT"phi"}},
+PARA {"This is generally difficult, but in some cases it is equivalent to ",TT"ideal matrix phi", ", which does not perform any computation."},
+EXAMPLE {
+"y = gens(QQ[x_0..x_5]/(x_2^2-x_2*x_3+x_1*x_4-x_0*x_5));",
+"phi = rationalMap {y_4^2-y_3*y_5,-y_2*y_4+y_3*y_4-y_1*y_5, -y_2*y_3+y_3^2-y_1*y_4, -y_1*y_2+y_1*y_3-y_0*y_4, y_1^2-y_0*y_3}",
+"time ideal phi",
+"assert(ideal phi == ideal matrix phi)",
+"phi' = last graph phi",
+"time ideal phi'",
+"assert(ideal phi' != ideal matrix phi')"},
+SeeAlso => {isMorphism,(matrix,RationalMap)}}
 
 document { 
 Key => {exceptionalLocus,(exceptionalLocus,RationalMap)}, 
@@ -418,17 +444,13 @@ Inputs => {
 RationalMap => "phi" => {"a birational map ",TEX///$X--->Y$///}}, 
 Outputs => { 
 Ideal => {"an ideal defining the closure in ",TT"X"," of the locus where ",TT "phi"," is not a local isomorphism"}},
-PARA{"This method simply calculates the inverse image of the base locus of the inverse map, which in turn is determined through the method ",TO (inverse,RationalMap),"."},
+PARA{"This method simply calculates the ",TO2{(symbol ^**,RationalMap,Ideal),"inverse image"}," of the ",TO2{(ideal,RationalMap),"base locus"}," of the inverse map, which in turn is determined through the method ",TO inverse',"."},
 PARA{"Below, we compute the exceptional locus of the map defined by the linear system of quadrics through the quintic rational normal curve in ",TEX///$\mathbb{P}^5$///,"."},
 EXAMPLE { 
 "P5 := ZZ/100003[x_0..x_5];",
 "phi = rationalMap(minors(2,matrix{{x_0,x_1,x_2,x_3,x_4},{x_1,x_2,x_3,x_4,x_5}}),Dominant=>2);",
-"psi = inverseMap phi;",
-"-- a fast probabilistic test
-assert last(p = point source phi, psi phi p == p)",
-"forceInverseMap(phi,psi)",
 "E = exceptionalLocus phi;",
-"E == phi^* ideal psi",
+"assert(E == phi^* ideal phi^-1)",
 "assert(E == minors(3,matrix{{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4},{x_2,x_3,x_4,x_5}}))"
 },
 SeeAlso => {(ideal,RationalMap),(inverseMap,RationalMap),(symbol ^**,RationalMap,Ideal),(isIsomorphism,RationalMap),forceInverseMap}}
@@ -462,7 +484,8 @@ Usage => "coefficientRing phi",
 Inputs => { 
 RationalMap => "phi"}, 
 Outputs => { 
-Ring => {"the coefficient ring of ",TT"phi"}}}
+Ring => {"the coefficient ring of ",TT"phi"}},
+SeeAlso => {(symbol **,RationalMap,Ring)}}
 
 document { 
 Key => {(degree,RationalMap)}, 
@@ -472,7 +495,7 @@ Inputs => {
 RationalMap => "phi"}, 
 Outputs => { 
 ZZ => {"the degree of ",TT"phi",". So this value is 1 if and only if the map is birational onto its image."}},
-PARA{"This is a shortcut for ",TT "degreeOfRationalMap(phi,MathMode=>true,Verbose=>false)",", see ",TO "degreeOfRationalMap","."}}
+PARA{"This is a shortcut for ",TT "degreeOfRationalMap(phi,MathMode=>true,Verbose=>false)",", see ",TO (degreeOfRationalMap,RationalMap),"."}}
 
 document { 
 Key => {(symbol !,RationalMap)}, 
@@ -497,8 +520,8 @@ EXAMPLE {
 "phi = rationalMap rationalMap map specialQuadraticTransformation(8,ZZ/33331);",
 "describe phi",
 "time phi(*) ;",
-"describe phi"}
-}
+"describe phi"},
+SeeAlso => {(describe,RationalMap)}}
 
 document { 
 Key => {(degrees,RationalMap),(multidegree,RationalMap)}, 
@@ -509,7 +532,7 @@ Inputs => {
 RationalMap => "phi"}, 
 Outputs => { 
 List => {"the list of projective degrees of ",TT"phi"}},
-PARA{"This is a shortcut for ",TT "projectiveDegrees(phi,MathMode=>true,Verbose=>false)",", see ",TO "projectiveDegrees","."}}
+PARA{"This is a shortcut for ",TT "projectiveDegrees(phi,MathMode=>true,Verbose=>false)",", see ",TO (projectiveDegrees,RationalMap),"."}}
 
 document { 
 Key => {(coefficients,RationalMap)}, 
@@ -539,6 +562,44 @@ EXAMPLE {
 "describe phi",
 "psi = flatten phi;",
 "describe psi"}}
+
+document { 
+Key => {(sub,RationalMap,PolynomialRing,PolynomialRing)},
+Headline => "substitute the ambient projective spaces of source and target", 
+Usage => "sub(phi,R,S)", 
+Inputs => { 
+RationalMap => "phi" => {TEX///$\phi:X\subseteq\mathbb{P}^n--->Y\subseteq\mathbb{P}^m$///},
+PolynomialRing => "R" => {"the coordinate ring of ",TEX///$\mathbb{P}^n$///},
+PolynomialRing => "S" => {"the coordinate ring of ",TEX///$\mathbb{P}^m$///}}, 
+Outputs => { 
+RationalMap => {"a rational map isomorphic to the original map such that the ",
+TO ambient," of the ",TO2{(source,RationalMap),"source"}," is ",TEX///$R$///," and the ",
+TO ambient," of the ",TO2{(target,RationalMap),"target"}," is ",TEX///$S$///}}, 
+EXAMPLE {
+"ZZ/3331[vars(0..5)];",
+"phi = rationalMap {e^2-d*f, c*e-b*f, c*d-b*e, c^2-a*f, b*c-a*e, b^2-a*d}",
+"R = ZZ/3331[x_0..x_5], S = ZZ/3331[y_0..y_5];",
+"sub(phi,R,S)"},
+SeeAlso => {(symbol **,RationalMap,Ring)}}
+
+document { 
+Key => {(super,RationalMap),(rationalMap,RationalMap)}, 
+Headline => "get the rational map whose target is a projective space", 
+Usage => "super phi
+rationalMap(phi,Dominant=>null)
+rationalMap phi", 
+Inputs => { 
+RationalMap => "phi" => {"whose target is a subvariety ",TEX///$Y\subset\mathbb{P}^n$///}}, 
+Outputs => { 
+RationalMap => {"the composition of ",TT"phi"," with the inclusion of ",TEX///$Y$///," into ",TEX///$\mathbb{P}^n$///}},
+PARA {"So that, for instance, if ",TT"phi"," is a dominant map, then the code ",TT"rationalMap(super phi,Dominant=>true)"," yields a map isomorphic to ",TT"phi","."},
+EXAMPLE {
+"phi = specialQuadraticTransformation 7;",
+"phi' = super phi;",
+"describe phi",
+"describe phi'",
+"describe rationalMap(phi',Dominant=>true)"},
+SeeAlso => {(target,RationalMap),ambient,super}}
 
 document { 
 Key => {(projectiveDegrees,RationalMap)}, 
@@ -620,7 +681,16 @@ Inputs => {
 Outputs => { 
 Ideal => {"the ideal defining the closure of the image of ",TT"Phi",", or its degree ",TT"d"," homogeneous component if ",TT"d", " is passed"}},
 PARA{"This computation is done through the kernel of a ring map representing the rational map. See ",TO (kernel,RingMap), " and ",TO (kernel,RingMap,ZZ)," for more details."},
-SeeAlso => {(kernel,RingMap,ZZ),(kernel,RingMap)}}
+SeeAlso => {(kernel,RingMap,ZZ),(kernel,RingMap),(image,RationalMap,String)}}
+
+document { 
+Key => {(image,RationalMap,String)}, 
+Headline => "closure of the image of a rational map using the F4 algorithm (experimental)", 
+Usage => "image(Phi,\"F4\")
+image(Phi,\"MGB\")",
+Inputs => { "Phi" => RationalMap,{"\"F4\" or \"MGB\""}}, 
+Outputs => {{"the ",TO2{"Ideal","ideal"}," defining the closure of the image of ",TT"Phi","; the calculation passes through ",TO groebnerBasis,"(...,Strategy=>\"F4\") or ",TO groebnerBasis,"(...,Strategy=>\"MGB\")."}}, 
+SeeAlso => {(image,RationalMap),(image,RationalMap,ZZ),groebnerBasis}}
 
 document { 
 Key => {parametrize,(parametrize,Ideal),(parametrize,QuotientRing),(parametrize,PolynomialRing)}, 
@@ -661,7 +731,7 @@ RationalMap => "Phi"},
 Outputs => { 
 Matrix => {"the matrix associated to the ring map defining the rational map ",TT"Phi"}},
 PARA{"This is equivalent to ",TT "matrix map Phi","."},
-SeeAlso => {(matrix,RingMap)}}
+SeeAlso => {(map,RationalMap),(matrix,RingMap)}}
 
 document { 
 Key => {(entries,RationalMap)}, 
@@ -711,12 +781,12 @@ EXAMPLE {
 SeeAlso => {(symbol |,RationalMap,Ideal)}}
 
 document { 
-Key => {rationalMap,(rationalMap,RingMap),(rationalMap,Matrix),(rationalMap,List),(rationalMap,Ideal),(rationalMap,Ideal,ZZ),(rationalMap,Ideal,List),(rationalMap,Ideal,ZZ,ZZ),(rationalMap,Ring),(rationalMap,Ring,Ring),(rationalMap,RationalMap),(rationalMap,Ring,Ring,Matrix),(rationalMap,Ring,Ring,List)}, 
+Key => {rationalMap,(rationalMap,RingMap),(rationalMap,Matrix),(rationalMap,List),(rationalMap,Ring),(rationalMap,Ring,Ring),(rationalMap,Ring,Ring,Matrix),(rationalMap,Ring,Ring,List)}, 
 Headline => "makes a rational map", 
 Usage => "rationalMap phi 
 rationalMap F", 
 Inputs => { 
-RingMap => { "or a ", TO Matrix, ", or a ",TO List,", etc."},}, 
+RingMap => { "or a ", TO Matrix, ", or a ",TO List,", etc."}}, 
 Outputs => { RationalMap => {"the rational map represented by ",TT"phi"," or by the ring map defined by ",TT"F"}}, 
 PARA{"This is the basic construction for a ",TO RationalMap,". The method is quite similar to ",TO toMap,", except that it returns a ", TO RationalMap," instead of a ",TO RingMap,"."},
 EXAMPLE { 
@@ -732,23 +802,41 @@ EXAMPLE {
 "phi' = toMap F'",
 "rationalMap phi'",
 "rationalMap F'"}, 
-SeeAlso => {toMap}}
+SeeAlso => {toMap,(rationalMap,Ideal),(rationalMap,Tally)}}
+
+document { 
+Key => {(rationalMap,Ideal,ZZ,ZZ),(rationalMap,Ideal,ZZ),(rationalMap,Ideal,List),(rationalMap,Ideal)}, 
+Headline => "makes a rational map from an ideal", 
+Usage => "rationalMap(I,d,e)
+rationalMap(I,d)
+rationalMap I", 
+Inputs => { 
+Ideal => "I" => {"a homogeneous ideal in the coordinate ring of a projective variety ",TEX///$X\subseteq\mathbb{P}^n$///},
+ZZ => "d" => {"a positive integer (or a ",TO2{List,"list"}," of integers in the case ",TEX///$X$///," is embedded in a product of projective spaces)"},
+ZZ => "e" => {"a positive integer (if omitted, it is taken to be 1)"}}, 
+Outputs => { RationalMap => {"the rational map ",TEX///$X--->\mathbb{P}^m$///," defined by the linear system of hypersurfaces of degree ",TEX///$d$///, " having points of multiplicity ",TEX///$e$///," along the projective subscheme of ",TEX///$X$///," defined by ",TEX///$I$///,"."}}, 
+PARA{"The code ",TT"rationalMap I"," is basically equivalent to ", TT"rationalMap(I,max degrees I)",". In the following example, we calculate the rational map defined by the linear system of cubic hypersurfaces in ",TEX///$\mathbb{P}^6$///," having double points along a Veronese surface ",TEX///$V\subset\mathbb{P}^5\subset\mathbb{P}^6$///,"."},
+EXAMPLE {
+"ZZ/33331[x_0..x_6]; V = ideal(x_4^2-x_3*x_5,x_2*x_4-x_1*x_5,x_2*x_3-x_1*x_4,x_2^2-x_0*x_5,x_1*x_2-x_0*x_4,x_1^2-x_0*x_3,x_6);", 
+"time phi = rationalMap(V,3,2)",
+"describe phi!"},
+SeeAlso => {toMap,rationalMap,(rationalMap,Tally)}}
 
 document { 
 Key => {toMap,(toMap,Matrix),(toMap,Ideal),(toMap,Ideal,ZZ),(toMap,Ideal,List),(toMap,Ideal,ZZ,ZZ),(toMap,List),(toMap,RingMap)}, 
 Headline => "rational map defined by a linear system", 
 Usage => "toMap(\"linear system\")", 
 Inputs => { 
-Matrix => { "or a ", TO List, ", etc."},}, 
+Matrix => { "or a ", TO List, ", etc."}}, 
 Outputs => { RingMap}, 
 PARA{"When the input represents a list of homogeneous elements ",TEX///$F_0,\ldots,F_m\in R=K[t_0,\ldots,t_n]/I$///," of the same degree, then the method returns the ring map ",TEX///$\phi:K[x_0,\ldots,x_m] \to R$///," that sends ",TEX///$x_i$///," into ",TEX///$F_i$///,"."}, 
 EXAMPLE { 
 "QQ[t_0,t_1];", 
 "linSys=gens (ideal(t_0,t_1))^5",
-"phi=toMap linSys",}, 
+"phi=toMap linSys"}, 
 PARA{"If a positive integer ",TEX///$d$///," is passed to the option ", TO Dominant, ", then the method returns the induced map on ",TEX///$K[x_0,\ldots,x_m]/J_d$///,", where ",TEX///$J_d$///," is the ideal generated by all homogeneous elements of degree ",TEX///$d$///," of the kernel of ",TEX///$\phi$///," (in this case ", TO (kernel,RingMap,ZZ), " is called)."},
 EXAMPLE { 
-"phi'=toMap(linSys,Dominant=>2)",}, 
+"phi'=toMap(linSys,Dominant=>2)"}, 
 PARA{"If the input is a pair consisting of a homogeneous ideal ",TEX///$I$///, " and an integer ",TEX///$v$///,", then the output will be the map defined by the linear system of hypersurfaces of degree ",TEX///$v$///, " which contain the projective subscheme defined by ",TEX///$I$///,"."},
 EXAMPLE { 
 "I=kernel phi",
@@ -757,9 +845,43 @@ PARA{"This is identical to ", TT "toMap(I,v,1)", ", while the output of ", TT "t
 EXAMPLE { 
 "toMap(I,2,1)", 
 "toMap(I,2,2)", 
-"toMap(I,3,2)"},} 
+"toMap(I,3,2)"}} 
 
-undocumented{(net,RationalMap),(describe,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap),(lift,RingMap),(symbol ~,RationalMap),(symbol **,RationalMap,Ring),(symbol (*),RationalMap),(rationalMap,PolynomialRing,List)}
+document { 
+Key => {(symbol **,RationalMap,Ring)},
+Headline => "change the coefficient ring of a rational map", 
+Usage => "phi ** K", 
+Inputs => { 
+RationalMap => "phi" => {"defined over a coefficient ring ",TT"F"},
+Ring => "K" => {"the new coefficient ring (which must be a field)"}}, 
+Outputs => { 
+RationalMap => {"a rational map defined over ",TT"K",", obtained by coercing the coefficients of the forms defining ",TT"phi", " into ",TT"K"}}, 
+PARA {"It is necessary that all forms in the old coefficient ring ",TT"F"," can be automatically coerced into the new coefficient ring ",TT"K","."},
+EXAMPLE {
+"QQ[vars(0..5)]",
+"phi = rationalMap {e^2-d*f, c*e-b*f, c*d-b*e, c^2-a*f, b*c-a*e, b^2-a*d}",
+"K = ZZ/65521;",
+"phi ** K",
+"phi ** frac(K[t])"
+},
+SeeAlso => {(coefficientRing,RationalMap)}}
+
+document { 
+Key => {(rationalMap,PolynomialRing,List)},
+Headline => "rational map defined by the linear system of hypersurfaces passing through random points with multiplicity", 
+Usage => "rationalMap(R,{a,i,j,k,...})",
+Inputs => { 
+PolynomialRing => "R",
+List => {"a list ",TEX///$\{a,i,j,k,\ldots\}$///," of nonnegative integers"}}, 
+Outputs => {RationalMap => {"the rational map defined by the linear system of hypersurfaces of degree ",TEX///$a$///," in ",TEX///$Proj(R)$///," having ",TEX///$i$///," random base points of multiplicity 1, ",TEX///$j$///," random base points of multiplicity 2, ",TEX///$k$///," random base points of multiplicity 3, and so on until the last integer in the given list."}},
+PARA{"In the example below, we take the rational map defined by the linear system of septic plane curves with 3 random simple base points and 9 random double points."}, 
+EXAMPLE { 
+"ringP2 = ZZ/65521[vars(0..2)];", 
+"phi = rationalMap(ringP2,{7,3,9})",
+"describe phi!"},
+SeeAlso => {(rationalMap,Ideal,ZZ,ZZ),point}} 
+
+undocumented{(net,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap),(lift,RingMap),(symbol ~,RationalMap),(symbol (*),RationalMap)}
 
 document { 
 Key => {specialCremonaTransformation,(specialCremonaTransformation,Ring,ZZ),(specialCremonaTransformation,ZZ,Ring),(specialCremonaTransformation,ZZ)}, 
@@ -770,7 +892,7 @@ Inputs => {
 "i" => ZZ => {"an integer between 1 and 12"},
 "K" => Ring => {"the ground field (optional, the default value is ",TO QQ,")"}}, 
 Outputs => { 
-RationalMap => {"an example of special Cremona transformation over ",TT"K",", according to the classification given in Table 1 of ",HREF{"https://arxiv.org/abs/1509.06028","arXiv:1509.06028"}}},
+RationalMap => {"an example of special Cremona transformation over ",TT"K",", according to the classification given in Table 1 of ",HREF{"https://www.degruyter.com/view/journals/advg/19/2/article-p191.xml","Special cubic Cremona transformations of P6 and P7"},"."}},
 PARA{"A Cremona transformation is said to be special if the base locus scheme is smooth and irreducible. To ensure this condition, the field ",TT"K"," must be large enough but no check is made."},
 EXAMPLE {
 "time apply(1..12,i -> describe specialCremonaTransformation(i,ZZ/3331))"},
@@ -786,7 +908,7 @@ Inputs => {
 "i" => ZZ => {"the ",TT"i","-th case in the classification for ",TT"P^n", " (for instance, if ",TT"n=5"," then ",TT"1<=i<=39",")"},
 "K" => Ring => {"the ground field (optional, the default value is ",TO QQ,")"}}, 
 Outputs => { 
-RationalMap => {"an example of quadro-quadric Cremona transformation over ",TT"K",", according to the classifications given in the paper ",HREF{"https://doi.org/10.5802/aif.2839","doi: 10.5802/aif.2839"}, ", by Pirio and Russo."}},
+RationalMap => {"an example of quadro-quadric Cremona transformation over ",TT"K",", according to the classifications given in the paper ",HREF{"https://aif.centre-mersenne.org/item/AIF_2014__64_1_71_0/","Quadro-quadric Cremona transformations in low dimensions via the JC-correspondence"}, ", by Pirio and Russo."}},
 EXAMPLE {
 "quadroQuadricCremonaTransformation(5,23)",
 "describe oo"},
@@ -807,7 +929,7 @@ Inputs => {
 "i" => ZZ => {"an integer between 1 and 11"},
 "K" => Ring => {"the ground field (optional, the default value is ",TO QQ,")"}}, 
 Outputs => { 
-RationalMap => {"an example of special quadratic birational transformation over ",TT"K",", according to the classification given in Table 1 of ",HREF{"https://arxiv.org/abs/1411.1227","arXiv:1411.1227"}}},
+RationalMap => {"an example of special quadratic birational transformation over ",TT"K",", according to the classification given in Table 1 of ",HREF{"https://www.sciencedirect.com/science/article/pii/S0747717115001029?via%3Dihub","Examples of special quadratic birational transformations into complete intersections of quadrics"},"."}},
 PARA{"The field ",TT"K"," is required to be large enough."},
 EXAMPLE {
 "time specialQuadraticTransformation 4",
@@ -823,7 +945,7 @@ Inputs => {
 "i" => ZZ => {"an integer between 1 and 9"},
 "K" => Ring => {"the ground field (optional, the default value is ",TO QQ,")"}}, 
 Outputs => { 
-RationalMap => {"an example of special cubic birational transformation over ",TT"K",", according to the classification given in Table 2 of ",HREF{"https://arxiv.org/abs/1901.01203","arXiv:1901.01203"}}},
+RationalMap => {"an example of special cubic birational transformation over ",TT"K",", according to the classification given in Table 2 of ",HREF{"https://link.springer.com/article/10.1007/s13348-019-00251-8","Special cubic birational transformations of projective spaces"},"."}},
 PARA{"The field ",TT"K"," is required to be large enough."},
 EXAMPLE {
 "time specialCubicTransformation 9",
@@ -842,7 +964,25 @@ document {
 Key => {BlowUpStrategy,[graph,BlowUpStrategy],[inverseMap,BlowUpStrategy], [projectiveDegrees,BlowUpStrategy],[degreeOfRationalMap,BlowUpStrategy],[isBirational,BlowUpStrategy],[SegreClass,BlowUpStrategy],[ChernSchwartzMacPherson,BlowUpStrategy],[EulerCharacteristic,BlowUpStrategy]}, 
 PARA{"This is an optional argument for ", TO graph,", and for the methods that eventually call it. Currently, the possible values are \"Eliminate\" and \"Saturate\", which indicate two different ways of computing the (closure of the) graph of a rational map. The default choice is \"Eliminate\" and this is generally preferable."}} 
 
-undocumented {(symbol ?,Ideal)}
+
+document { 
+Key => {(describe,RationalMap),(symbol ?,Ideal)}, 
+Headline => "describe a rational map", 
+Usage => "describe phi", 
+Inputs => { 
+"phi" => RationalMap}, 
+Outputs => { 
+{"a description of ",TT"phi",", giving some indication of what has already been calculated."}},
+EXAMPLE { 
+"ZZ/33331[t_0..t_4];",
+"phi = rationalMap minors(2,matrix{{t_0..t_3},{t_1..t_4}});",
+"describe phi",
+"I = image phi;",
+"describe phi",
+"? I",
+"phi!;",
+"describe phi"},
+SeeAlso => {(symbol !,RationalMap)}}
 
 document { 
 Key => {forceInverseMap,(forceInverseMap,RationalMap,RationalMap)}, 
@@ -854,7 +994,7 @@ Inputs => {
 Outputs => {Nothing => {TO null}}, 
 PARA{"This method allows to inform the system that two maps are one the inverse of the other without performing any computation. This is useful in particular if you calculate the inverse map using your own method."},
 Caveat => {"If the declaration is false, nonsensical answers may result."},
-SeeAlso => (isInverseMap,RationalMap,RationalMap)}
+SeeAlso => {(isInverseMap,RationalMap,RationalMap),(inverse,RationalMap)}}
 
 document { 
 Key => {forceImage,(forceImage,RationalMap,Ideal)}, 
@@ -871,7 +1011,7 @@ EXAMPLE {
 "time forceImage(Phi,ideal 0_(target Phi))", 
 "Phi;"},
 Caveat => {"If the declaration is false, nonsensical answers may result."},
-SeeAlso => forceInverseMap}
+SeeAlso => {(image,RationalMap),forceInverseMap}}
 
 undocumented {(point,Ideal),(point,Ideal,Boolean)}
 document { 
@@ -879,7 +1019,7 @@ Key => {point,(point,QuotientRing),(point,PolynomialRing)},
 Headline => "pick a random rational point on a projective variety", 
 Usage => "point R", 
 Inputs => { 
-Ring => "R" => {"the homogeneous coordinate ring of a closed subscheme ",TEX///$X\subset\mathbb{P}^n$///," over a finite ground field"}}, 
+Ring => "R" => {"the homogeneous coordinate ring of a closed subscheme ",TEX///$X\subseteq\mathbb{P}^n$///," over a finite ground field"}}, 
 Outputs => { 
 Ideal => {"an ideal in ",TT "R"," defining a point on ",TEX///$X$///}}, 
 PARA{"This method is a variant of the ",TO randomKRationalPoint," method. Here we apply it to check the birationality of a map."},
@@ -896,8 +1036,8 @@ Headline => "Segre embedding",
 Usage => "segre phi 
 segre R", 
 Inputs => { 
-"phi" => RationalMap => {"with source a closed subvariety ",TEX///$X\subset\mathbb{P}^{n_1}\times\mathbb{P}^{n_2}\times\cdots\times\mathbb{P}^{n_k}$///," of a product of projective spaces"}, 
-"R" => QuotientRing => {"or a ",TO PolynomialRing,", the coordinate ring of the subvariety ",TEX///$X\subset\mathbb{P}^{n_1}\times\mathbb{P}^{n_2}\times\cdots\times\mathbb{P}^{n_k}$///}}, 
+"phi" => RationalMap => {"with source a closed subvariety ",TEX///$X\subseteq\mathbb{P}^{n_1}\times\mathbb{P}^{n_2}\times\cdots\times\mathbb{P}^{n_k}$///," of a product of projective spaces"}, 
+"R" => QuotientRing => {"or a ",TO2{PolynomialRing,"polynomial ring"},", the coordinate ring of the subvariety ",TEX///$X\subseteq\mathbb{P}^{n_1}\times\mathbb{P}^{n_2}\times\cdots\times\mathbb{P}^{n_k}$///}}, 
 Outputs => { 
 RationalMap => {"the restriction to ",TEX///$X$///," of the Segre embedding of ",TEX///$\mathbb{P}^{n_1}\times\mathbb{P}^{n_2}\times\cdots\times\mathbb{P}^{n_k}$///,", where the linear span of the image is identified with a projective space"}},
 PARA{"More properly, this method accepts and returns objects of the class ",TT"MultihomogeneousRationalMap","."},
@@ -966,14 +1106,13 @@ Inputs => {RationalMap => "phi"},
 Outputs => {String => {"a string representation of ",TT "phi",", which can be used, in conjunction with ",TO "value",", to read the object back into the program later"}},
 PARA{"All internal data of the input are included in the returned string."},
 EXAMPLE {
-"phi = (specialCubicTransformation 2)!;",
+"phi = (specialCubicTransformation(2,ZZ/33331))!;",
 "str = toExternalString phi;",
 "#str",
 "time phi' = value str;",
 "time describe phi'",
 "time describe inverse phi'"}
 }
-undocumented{(sub,RationalMap,PolynomialRing,PolynomialRing)}
 
 document { 
 Key => {isMorphism,(isMorphism,RationalMap)}, 
@@ -996,11 +1135,29 @@ Headline => "whether a birational map is an isomorphism",
 Usage => "isIsomorphism phi", 
 Inputs => {"phi" => RationalMap}, 
 Outputs => {Boolean => {"whether ",TT"phi"," is an isomorphism"}},
-PARA{"This method computes the inverse rational map via the deterministic method ",TO (inverse,RationalMap),"."},
+PARA{"This method computes the inverse rational map using ",TO inverse',"."},
 EXAMPLE { 
 "P1 := QQ[a,b]; P4 := QQ[x,y,z,w];",
 "phi = rationalMap({a^4,a^3*b,a^2*b^2,a*b^3,b^4},Dominant=>true)",
 "isIsomorphism phi"},
 SeeAlso => {(ideal,RationalMap),isBirational,isMorphism}}
 
+document { 
+Key => {(rationalMap,Ring,Tally),(rationalMap,Tally)}, 
+Headline => "rational map defined by an effective divisor", 
+Usage => "rationalMap D
+rationalMap(R,D)", 
+Inputs => {"R" => Ring => {"the coordinate ring of a locally factorial projective variety ",TEX///$X\subseteq\mathbb{P}^n$///},
+"D" => Tally => {"a multiset of homogeneous ideals in ",TEX///$R$///," (or in ",TO ambient," ",TEX///$R$///,") defining pure codimension 1 subschemes of ",TEX///$X$///," with no embedded components; so that ",TT"D"," is interpreted as an effective divisor on ",TEX///$X$///}}, 
+Outputs => {RationalMap => {"the rational map defined by the complete linear system ",TEX///$|D|$///}},
+PARA{"In the example below, we take a smooth complete intersection ",TEX///$X\subset\mathbb{P}^5$///," of three quadrics containing a conic ",TEX///$C\subset\mathbb{P}^5$///,". Then we calculate the map defined by the linear system ",TEX///$|2H+C|$///,", where ",TEX///$H$///," is the hyperplane section class of ",TEX///$X$///,"."},
+EXAMPLE {
+"P5 = ZZ/65521[x_0..x_5];",
+"C = ideal(x_1^2-x_0*x_2,x_3,x_4,x_5)",
+"X = quotient ideal(-x_1^2+x_0*x_2-x_1*x_3+x_3^2-x_0*x_5+x_1*x_5+x_3*x_5,-x_0*x_3-x_1*x_3+x_2*x_4-x_3*x_4-x_4^2-x_1*x_5-x_2*x_5+x_5^2,-x_1^2+x_0*x_2+x_2*x_3+x_1*x_4-x_3*x_4-x_4*x_5);",
+"H = ideal random(1,X)",
+"D = new Tally from {H => 2,C => 1};",
+"time phi = rationalMap D",
+"time ? image(phi,\"F4\")"},
+SeeAlso => {rationalMap,(rationalMap,Ideal,ZZ),(image,RationalMap,String)}}
 
