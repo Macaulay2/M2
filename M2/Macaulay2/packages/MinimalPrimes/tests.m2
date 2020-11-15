@@ -50,6 +50,17 @@ TEST ///
   assert(minprimes ideal(1_A) == {})
 ///
 
+TEST /// -- test of CodimensionLimit option
+  R1 = QQ[d,f,j,k,m,r,t,A,D,G,I,K];
+  I1 = ideal(I*K-K^2, r*G-G^2, A*D-D^2, j^2-j*t, d*f-f^2, d*f*j*k-m*r, A*D-G*I*K);
+  time assert(18 == # minprimes(I1, CodimensionLimit => 6)) -- this should take some time
+  time assert(22 == # minprimes I1) -- this takes more time, reasonably
+  time assert(22 == # minprimes I1) -- fast, sweet!
+  time assert(22 == # minprimes(I1, Strategy => "Legacy")) -- fast
+  time assert(22 == # minprimes(I1, CodimensionLimit => 7, Verbosity => 2)) -- fast
+  time assert(18 == # minprimes(I1, CodimensionLimit => 6, Verbosity => 2)) -- fast
+///
+
 -- the following test sometimes crashes on the last line, but you might have to run it more than 30 times to observe it
 
 ///

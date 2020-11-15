@@ -172,7 +172,7 @@ isPrime Ideal := Boolean => isPrimeOptions >> opts -> I -> (
 minimalPrimesOptions := new OptionTable from {
     Verbosity              => 0,
     Strategy               => null,
-    CodimensionLimit       => null, -- only find minimal primes of codim <= this bound
+    CodimensionLimit       => infinity, -- only find minimal primes of codim <= this bound
     MinimalGenerators      => true, -- whether to trim the output
     "IdealSoFar"           => null, -- used in inductive setting
     "RadicalSoFar"         => null, -- used in inductive setting
@@ -190,8 +190,19 @@ minprimesHelper := (I, opts) -> (
     doTrim := if opts.MinimalGenerators then trim else identity;
     key := (minimalPrimes, Ideal);
 
-    -- TODO: under certain options, cache must be disregarded, but not completely!
-    cacheFunc   := if opts.CodimensionLimit === null then cacheValue symbol minimalPrimes else identity;
+    codimLimit := min(opts.CodimensionLimit, numgens I);
+    doLimit := L -> select(L, P -> codim P <= codimLimit);
+    opts = opts ++ { CodimensionLimit => codimLimit };
+
+    -- minimalPrimesComputedCodim is the highest codim found among the minimal primes previously computed
+    -- this logic determines whether we can get the cached output, or further computation is necessary
+    cacheFunc := computation -> (
+	if not I.cache#?"minimalPrimesComputedCodim" or I.cache#"minimalPrimesComputedCodim" < codimLimit
+	-- TODO: some caching of partial computation should occur here
+	then ( I.cache#"minimalPrimesComputedCodim" = codimLimit; I -> I.cache.minimalPrimes = computation I )
+	else ( cacheValue symbol minimalPrimes ) computation );
+
+    -- this logic determines what strategies will be used
     computation := I -> (
 	if not instance(strategy, VisibleList)
 	then runHooks(key, (opts, I), Strategy => strategy)
@@ -199,12 +210,13 @@ minprimesHelper := (I, opts) -> (
 	else minprimesWithStrategy(I,
 	    Verbosity              => opts.Verbosity,
 	    Strategy               => strategy,
-	    CodimensionLimit       => opts.CodimensionLimit,
+	    CodimensionLimit       => codimLimit,
 	    "SquarefreeFactorSize" => opts#"SquarefreeFactorSize"));
 
+    -- the actual computation of minimal primes occurs here
     L := (cacheFunc computation) I;
 
-    if L =!= null then doTrim \ L else if strategy === null
+    if L =!= null then doLimit \\ doTrim \ L else if strategy === null
     then error("no applicable method for ", toString key)
     else error("assumptions for minimalPrimes strategy ", toString strategy, " are not met"))
 
@@ -287,7 +299,6 @@ minprimesWithStrategy Ideal := opts -> J -> (
     (I, fback) := flattenRingMap J;
     --
     newstrat := {opts.Strategy, stratEnd};
-    if opts.CodimensionLimit === null then opts = opts ++ {CodimensionLimit => numgens I};
     --
     pdState := createPDState(I);
     opts = opts ++ {"PDState" => pdState};
@@ -296,7 +307,7 @@ minprimesWithStrategy Ideal := opts -> J -> (
     -- should we cache what we have done somewhere?
     if opts#"CheckPrimeOnly" then return pdState#"isPrime";
     numRawPrimes := numPrimesInPDState pdState;
-    --M = select(M, i -> codimLowerBound i <= opts#"CodimensionLimit");
+    --M = select(M, i -> codimLowerBound i <= opts.CodimensionLimit);
     --(M1,M2) := separatePrime(M);
     if #M > 0 then (
 	printerr("warning: ideal did not split completely: ", toString(#M), " did not split!");
@@ -511,17 +522,6 @@ end--
 
 restart
 debugLevel = 1
-debug MinimalPrimes
-
-R1 = QQ[d, f, j, k, m, r, t, A, D, G, I, K];
-I1 = ideal ( I*K-K^2, r*G-G^2, A*D-D^2, j^2-j*t, d*f-f^2, d*f*j*k - m*r, A*D - G*I*K);
-time # minprimes(ideal I1_*, CodimensionLimit => 6, Verbosity => 2)
-time # minprimes ideal I1_*
-time # minprimes(ideal I1_*, Strategy => "Legacy")
-time # minprimes(ideal I1_*, CodimensionLimit => 7, Verbosity => 2)
-time # minprimes(ideal I1_*, CodimensionLimit => 6, Verbosity => 2)
-
-restart
 debug MinimalPrimes
 
 R1 = QQ[d, f, j, k, m, r, t, A, D, G, I, K];
