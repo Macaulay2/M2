@@ -39,7 +39,7 @@ document {
 		   LI { "The function ", TO readPackage, " has been added for retrieving the options in the preamble of a package quickly." },
 		   LI { "The function ", TO hooks, " has been added for retrieving the list of functions installed as hooks for handling computations of a specific type." },
 		   LI { "The function ", TO baseRing, " has been added for retrieving the ring from which a ring was formed." },
-		   LI { "The function ", TO findProgram, " has been added, to provide a uniform way for packages to locate external programs.
+		   LI { "The functions ", TO findProgram, " and ", TO runProgram, " have been added, to provide a uniform way for packages to locate external programs.
 			(The names and locations of such programs may vary from system to system." },
 		   LI { "The function ", TO formation, " has been added for retrieving the way a module was formed, whether as a direct sum, tensor product, or Hom-module." }
 		   }
