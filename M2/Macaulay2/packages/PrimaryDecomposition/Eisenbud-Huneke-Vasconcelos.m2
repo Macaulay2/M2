@@ -75,26 +75,28 @@ TEST ///
 -- This last little code is to check if two lists are the
 -- same up to permutation.
 
-isSameList = (L1,L2) ->(
-     ret := null;
-     ret1 := true;
-     counter1 := 0;
-     counter2 := 0;
-     if #L1 =!= #L2 then ret = false else(
-          while counter1 < #L1 and ret1 == true do (
-         ret2 := false;
-         counter2 = 0;
-         while counter2 < #L2 and ret2 == false do(
-            if L1#counter1 == L2#counter2 
-            then ret2 = true;
-            counter2 = counter2 + 1;
-            );
-           if ret2 == false then ret1 = false;
-           counter1 = counter1 + 1;);
-      ret = ret1;
-      );
-     ret	       
-     )     	    
+-- isSameList = (L1,L2) ->(
+     -- ret := null;
+     -- ret1 := true;
+     -- counter1 := 0;
+     -- counter2 := 0;
+     -- if #L1 =!= #L2 then ret = false else(
+          -- while counter1 < #L1 and ret1 == true do (
+         -- ret2 := false;
+         -- counter2 = 0;
+         -- while counter2 < #L2 and ret2 == false do(
+            -- if L1#counter1 == L2#counter2 
+            -- then ret2 = true;
+            -- counter2 = counter2 + 1;
+            -- );
+           -- if ret2 == false then ret1 = false;
+           -- counter1 = counter1 + 1;);
+      -- ret = ret1;
+      -- );
+     -- ret	       
+     -- )     	    
+     
+isSameList = (L1, L2) -> all(L1, I -> any(L2, J -> I == J)) and all(L2, I -> any(L1, J -> I == J))
 
 R=ZZ/(101)[x,y,z];
 I=ideal (x^2,x*y);
@@ -358,11 +360,11 @@ associatedPrimes Module := List => o -> M -> ( -- modified code in ass1 for modu
      for i from max(1+p, c) to min(d, k) do (
           if debugLevel > 0 then print("Extracting associated primes of codim " | toString i);
           newPrimes := if i == d and ((isHomogeneous M and (c == d or pdim M1 == d)) or (c == d and all(gens S, v -> radicalContainment(v, A)))) then {ideal gens S} else (
-               if i > c then ( -- computes ann Ext^i(M1, S)
+               if i > c then (
                     if C === null then C = res(M1, LengthLimit => k+1);
                     if length C < i then ( k = infinity; break; );
                     A = trim ann minPres(ker transpose C.dd_(i+1) / image transpose C.dd_i);
-               );
+               ); -- computes ann Ext^i(M1, S)
                if codim A > i then {} else minimalPrimes(A, CodimensionLimit => i)
           );
           M.cache#"AssociatedPrimes" = M.cache#"AssociatedPrimes" | newPrimes/mapback;
@@ -578,7 +580,7 @@ TEST /// -- cf. https://groups.google.com/g/macaulay2/c/dFPzfS3tR2E
 R = ZZ/2[Z_1..Z_9]
 I = ideal(Z_6*Z_8+Z_5*Z_9,Z_3*Z_8+Z_2*Z_9,Z_6*Z_7+Z_4*Z_9,Z_4^3+Z_5^3+Z_6^3,Z_1*Z_2^2+Z_4*Z_5^2+Z_7*Z_8^2,Z_1^3+Z_5^3+Z_6^3+Z_8^3+Z_9^3,Z_1*Z_2*Z_4^2*Z_5*Z_9+Z_2^2*Z_5^3*Z_9+Z_2^2*Z_6^3*Z_9+Z_1^2*Z_7*Z_8^2*Z_9+Z_2^2*Z_8^3*Z_9+Z_2^2*Z_9^4)
 M = comodule I
-elapsedTime associatedPrimes M; -- ~ 5-15 seconds (?)
+elapsedTime associatedPrimes M; -- ~ 5 seconds
 elapsedTime primaryDecomposition M; -- ~ 5 seconds
 assert(all(primaryDecomposition M, isPrimary_M))
 assert(intersect apply(primaryDecomposition M, Q -> I + ideal gens Q) == I)
@@ -592,7 +594,7 @@ supps = {ideal(R_0,R_1,R_2), ideal(R_0,R_3,R_4,R_5)}
 elapsedTime I = intersect apply(#supps, i -> (supps#i)^(exps#i));
 M = comodule I;
 elapsedTime assert(associatedPrimes(M, CodimensionLimit => 2) == {})
-elapsedTime AP = associatedPrimes(M, CodimensionLimit => 4) -- ~ 4 seconds
+elapsedTime AP = associatedPrimes(M, CodimensionLimit => 4) -- ~ 3 seconds
 -- elapsedTime associatedPrimes(M, CodimensionLimit => infinity) -- > 40 seconds (computing unnecessary Ext)
 assert(all(AP, P -> any(supps, Q -> Q == P)) and all(supps, P -> any(AP, Q -> Q == P)))
 M.cache#"associatedPrimesCodimLimit" = infinity
@@ -612,7 +614,7 @@ I = intersect apply(10, i -> ideal apply(delete(first random gens R, gens R), v 
 M = comodule I;
 elapsedTime AP = associatedPrimes(M, CodimensionLimit => codim M) -- < 2 seconds
 M.cache#"associatedPrimesCodimLimit" = infinity
-elapsedTime comps = primaryDecomposition M; -- ~ 6 seconds
+elapsedTime comps = primaryDecomposition M; -- ~ 3 seconds
 assert(intersect comps == 0 and all(comps, isPrimary_M))
 -- note: primaryDecomposition I is very slow
 ///
