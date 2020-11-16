@@ -118,7 +118,7 @@ scan({net, info},
 	-- object or a sequence of such objects and BKs or SKs for later splicing.
 	parser' := value (toString parser | "'") <- method(Dispatch => Thing);
 	-- setup default rendering methods
-	parser' Hypertext := parser;
+	parser' Thing := parser;
 	-- { } indicates wrapping is already done or is not desired
 	parser' HypertextParagraph := x -> (SP, {parser x}, SP);
 	parser' HypertextContainer := x -> (BK, apply(toSequence x, parser'), BK);
@@ -140,7 +140,7 @@ scan({net, info},
 	    -- Drop the leading and trailing SPs or BKs
 	    l := position(x, e -> e =!= SP and e =!= BK);
 	    t := position(x, e -> e =!= SP and e =!= BK, Reverse => true);
-	    x = take(x, {l, t});
+	    if l =!= null and t =!= null then x = take(x, {l, t});
 	    -- ??
 	    x = splice sublists(x, i -> i === BK or i === SP,
 		SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);

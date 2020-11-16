@@ -154,7 +154,7 @@ html TO2  := x -> (
     name := if match("^ +$", x#1) then #x#1 : "&nbsp;&nbsp;" else x#1;
     if isUndocumented tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
     if isMissingDoc   tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
-    concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, htmlLiteral name}))
+    concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, name}))
 
 ----------------------------------------------------------------------------
 -- html'ing non Hypertext
