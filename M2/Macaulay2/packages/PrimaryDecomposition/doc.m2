@@ -1,4 +1,24 @@
 document {
+     Key => PrimaryDecomposition,
+     Headline => "functions for primary decomposition",
+     "This package provides computations with components
+     of ideals and modules, including minimal and associated primes, radicals, and
+     primary decompositions.",
+     Subnodes => {
+	  TO (associatedPrimes, Ideal),
+	  TO (localize,Ideal,Ideal),
+	  TO [localize,Strategy],
+	  TO (primaryComponent, Ideal, Ideal),
+	  TO [primaryComponent,Strategy],
+	  TO [primaryComponent,Increment],
+	  TO (primaryDecomposition, Ideal),
+	  TO (primaryDecomposition, Module),
+	  TO [primaryDecomposition,Strategy]
+	  },
+     SeeAlso => { (primaryDecomposition, Ideal), (primaryDecomposition, Module) }
+     }
+
+document {
      Key => {(associatedPrimes,Ideal),(associatedPrimes,MonomialIdeal),(associatedPrimes,Module),(associatedPrimes,Ring)},
      Headline => "find associated primes",
      Usage => "associatedPrimes I\nass I",
