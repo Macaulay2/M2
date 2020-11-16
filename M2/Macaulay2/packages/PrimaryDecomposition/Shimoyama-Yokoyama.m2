@@ -5,10 +5,6 @@
 -- authors: W. Decker, G. Smith, M. Stillman, C. Yackel
 --
 
--- this next file loads before this:
-
-debug Core
-
 quotMin = (I, facs, F) -> (
      J := quotient(I,F);
      if #facs > 1 then (

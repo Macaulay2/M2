@@ -19,7 +19,7 @@ document {
      }
 
 document {
-     Key => {(associatedPrimes,Ideal),(associatedPrimes,MonomialIdeal),(associatedPrimes,Module),(associatedPrimes,Ring)},
+     Key => {(associatedPrimes,Ideal),(associatedPrimes,Module),(associatedPrimes,Ring)},
      Headline => "find associated primes",
      Usage => "associatedPrimes I\nass I",
      Inputs => {
@@ -385,7 +385,7 @@ document { Key => {(irreducibleDecomposition,MonomialIdeal),irreducibleDecomposi
      Outputs => {{ "a list of irreducible monomial ideals whose intersection is ", TT "I" }}}
 
 document {
-     Key => {primaryDecomposition,(primaryDecomposition, Ideal),(primaryDecomposition,MonomialIdeal)},
+     Key => {primaryDecomposition,(primaryDecomposition, Ideal)},
      Headline => "irredundant primary decomposition of an ideal",
      Usage => "primaryDecomposition I",
      Inputs => {

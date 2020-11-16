@@ -202,6 +202,16 @@ isSquareFree = method(TypicalValue => Boolean)		    -- could be isRadical?
 -- isSquareFree Thing := x -> false
 isSquareFree MonomialIdeal := (I) -> all(first entries generators I, m -> all(first exponents m, i -> i<2))
 
+-- TODO: move to PrimaryDecomposition
+associatedPrimes = method(
+    TypicalValue => List,
+    Options => {
+	Strategy          => null,
+	CodimensionLimit  => infinity,
+	MinimalGenerators => true
+	}
+    )
+
 --  STANDARD PAIR DECOMPOSITION  ---------------------------
 -- algorithm 3.2.5 in Saito-Sturmfels-Takayama
 standardPairs = method()

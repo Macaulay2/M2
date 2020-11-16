@@ -172,6 +172,13 @@ minimalPrimesOptions := new OptionTable from {
     "SquarefreeFactorSize" => 1
     }
 
+-- methods declared in m2/factor.m2, to be moved here eventually
+-- decompose = method(Options => true)
+-- minimalPrimes = method(Options => true)
+-- returns a list of ideals, the minimal primes of I
+decompose     Ideal :=
+minimalPrimes Ideal := List => minimalPrimesOptions >> opts -> I -> minprimesHelper(I, opts)
+
 -- keys: none so far
 MinimalPrimesOptions = new SelfInitializingType of BasicList
 MinimalPrimesOptions.synonym = "minimal primes options"
@@ -195,7 +202,7 @@ cacheComputation MinimalPrimesComputation := CacheFunction => minimalPrimesOptio
 	    container.Result = result)))
 
 -- Helper for minimalPrimes and decompose
-minprimesHelper := (I, opts) -> (
+minprimesHelper = (I, opts) -> (
     if I == 1 then return {};
     J := first flattenRing I;
     if J == 0 then return {I};
@@ -232,13 +239,6 @@ minprimesHelper := (I, opts) -> (
     if L =!= null then doLimit \\ doTrim \ L else if strategy === null
     then error("no applicable method for ", toString key)
     else error("assumptions for minimalPrimes strategy ", toString strategy, " are not met"))
-
--- methods declared in m2/factor.m2, to be moved here eventually
--- decompose = method(Options => true)
--- minimalPrimes = method(Options => true)
--- returns a list of ideals, the minimal primes of I
-decompose     Ideal :=
-minimalPrimes Ideal := List => minimalPrimesOptions >> opts -> I -> minprimesHelper(I, opts)
 
 --------------------------------------------------------------------
 --- minprimes strategies
