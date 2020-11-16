@@ -1,6 +1,6 @@
 newPackage ( "ResLengthThree",
     Version => "1.0",
-    Date => "9 November 2020",
+    Date => "16 November 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
