@@ -166,7 +166,8 @@ htmlLiteral1 = fixDollar @@ htmlLiteral
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 html Net := n -> concatenate("<pre style=\"display:inline-table;vertical-align:",
-    toString(100*(height n-1)), "%\">\n", apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</pre>") -- the % is relative to line-height
+    toString(if height n+depth n>0 then 100*(height n-1) else 0), "%\">\n", -- the % is relative to line-height
+    apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</pre>")
 html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral1 x,
     if #x>0 and last x === "\n" then " ", -- fix for html ignoring trailing \n
     "</pre>")
