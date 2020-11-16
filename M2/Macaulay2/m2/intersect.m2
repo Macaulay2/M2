@@ -32,8 +32,8 @@ intersect = method(
 	MinimalGenerators => true
 	}
     )
-intersect Ideal    := Ideal  => opts -> I ->  Ideal.intersect (opts, 1 : I)
-intersect Module   := Module => opts -> M -> Module.intersect (opts, 1 : M)
+intersect Ideal    := Ideal  => opts -> I ->  (Ideal.intersect opts) sequence I
+intersect Module   := Module => opts -> M -> (Module.intersect opts) sequence M
 
 intersect List     :=           opts -> L -> intersect(opts, toSequence L)
 intersect Sequence :=           opts -> L -> (
@@ -43,7 +43,7 @@ intersect Sequence :=           opts -> L -> (
     and not all(L, l -> instance(l, Ideal)) then error "intersect: expected objects of the same type";
     type := class L#0;
     func := lookup(symbol intersect, type);
-    if func === null then error "intersect: no method for objects of type " | toString type;
+    if func === null then error("intersect: no method for objects of type " | toString type);
     (func opts) L)
 
 intersectHelper := (L, key, opts) -> (
