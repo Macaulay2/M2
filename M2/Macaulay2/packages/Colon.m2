@@ -47,7 +47,7 @@ algorithms := new MutableHashTable from {}
 -- Helpers
 --------------------------------------------------------------------
 
-cacheHit := () -> if debugLevel > 0 then printerr "Colon: cache hit! 🎉";
+cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
 
 removeOptions := (opts, badopts) -> (
     opts = new MutableHashTable from opts;
@@ -133,7 +133,7 @@ cacheComputation = method(TypicalValue => CacheFunction, Options => true)
 cacheComputation QuotientComputation := CacheFunction => options quotient >> opts -> container -> new CacheFunction from (
     -- this function takes advantage of FunctionClosures by modifying the container
     computation -> (
-	if isComputationDone(opts, container) then ( cacheHit(); container.Result ) else
+	if isComputationDone(opts, container) then ( cacheHit class container; container.Result ) else
 	if (result := computation(opts, container)) =!= null then ( container.Result = result )))
 
 --quotient = method(...) -- defined in m2/quotient.m2
@@ -576,7 +576,8 @@ isSupportedInZeroLocus(Module, Ideal) := (M, B) -> (
     if M.cache.?annihilator then (
 	N := annihilator M;
 	cacheKey := SaturateOptions{ B };
-	try isComputationDone N.cache#cacheKey then ( cacheHit(); return saturate(N, B) == ideal 1_S ) else true);
+	container := N.cache#cacheKey;
+	try isComputationDone container then ( cacheHit class container; return saturate(N, B) == ideal 1_S ) else true);
     -- 2. check that a high enough power of elements of B annihilates M
     n := numgens S;
     all(B_*, g -> (

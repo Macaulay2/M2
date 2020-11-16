@@ -485,39 +485,9 @@ SYprimaryDecomposition = (I) -> (		    -- called by a later file
 	  PDdonode C
 	  );
      if C.H != I then error "algorithm missed components!";
-     I.cache#"AssociatedPrimes" =  apply(C.U, i -> trim(i#1));
+     -- TODO: do this elsewhere
+--     I.cache#"AssociatedPrimes" =  apply(C.U, i -> trim(i#1));
      apply(C.U, i -> trim(i#0)))
-
-TEST ///
--- Simple examples
--- Example 1.
-
-R = ZZ/32003[a..d]
-I = ideal(a*b, c*d, a*c+b*d)
-time primaryDecomposition I
-  -- 3 components
-  -- (a,d), (b,c), ((c,d)^2,(a,b)^2,ac+bd)
-  
--- Example 2.
-R = ZZ/32003[a,b,c]
-I = ideal(a^2, a*b)
-time primaryDecomposition I
-  -- two components: (a), (a2, b)
-
--- Example 3.  
-R = ZZ/32003[a..d]
-I = ideal(a,b,c-1)
-J = ideal(c,d,a-1)
-L = intersect(I^2, J)
-time primaryDecomposition L
-
--- By hand: 
---C1 = PD ideal flatten entries generators L
---next C1
---donode C1
---peek C1
-
-///
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PrimaryDecomposition.installed "

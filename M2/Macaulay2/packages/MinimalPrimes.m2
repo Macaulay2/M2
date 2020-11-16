@@ -110,7 +110,7 @@ load "./MinimalPrimes/PDState.m2"
 load "./MinimalPrimes/splitIdeals.m2"
 load "./MinimalPrimes/factorTower.m2"
 
-cacheHit := () -> if debugLevel > 0 then printerr "MinimalPrimes: cache hit! 🎉";
+cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
 
 -- Redundancy control:
 -- find, if any, an element of I which is NOT in the ideal J.
@@ -196,7 +196,7 @@ cacheComputation = method(TypicalValue => CacheFunction, Options => true)
 cacheComputation MinimalPrimesComputation := CacheFunction => minimalPrimesOptions >> opts -> container -> new CacheFunction from (
     -- this function takes advantage of FunctionClosures by modifying the container
     computation -> (
-	if isComputationDone(opts, container) then ( cacheHit(); container.Result ) else
+	if isComputationDone(opts, container) then ( cacheHit class container; container.Result ) else
 	if (result := computation(opts, container)) =!= null then (
 	    container.CodimensionLimit = opts.CodimensionLimit;
 	    container.Result = result)))

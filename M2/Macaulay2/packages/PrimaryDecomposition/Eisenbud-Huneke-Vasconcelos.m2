@@ -12,8 +12,6 @@
 
 ass1 = method(Options => options associatedPrimes)
 ass1 Ideal := List => o -> (I) -> (
-     if I.cache#?"AssociatedPrimes" and o.CodimensionLimit < 0 then return I.cache#"AssociatedPrimes";
-     I.cache#"AssociatedPrimes" = (
      assassinator := {};
      RI := ring I;
      polyRing := ring presentation RI;
@@ -37,12 +35,11 @@ ass1 Ideal := List => o -> (I) -> (
       i=i+1;);
      assassinator = apply( assassinator, P -> (trim substitute(P, RI)) );
      assassinator
-     ))
+     )
 
 -- WARNING: this code below does NOT compute the associated primes of I.
 -- Why not? (MES, 3 Jul 2006).
 ass2 = (I) -> (
-     if I.cache#?"AssociatedPrimes" then I.cache#"AssociatedPrimes" else I.cache#"AssociatedPrimes" = (
      assassinator := {};
      local newcomponents;
      RI := ring I;
@@ -65,7 +62,7 @@ ass2 = (I) -> (
       assassinator, P -> (trim substitute(P,RI))
       );
      assassinator 
-     ))
+     )
 
 --In localize, P is an associated prime.
 --This routine computes the localization of I at P.
@@ -205,8 +202,10 @@ getEmbeddedComponent (Module, Ideal, Function) := o -> (M, p, checkFunction) -> 
           if debugLevel > 0 then print("Trying bracket power " | toString(j) | " for candidate embedded component...");
           N := bracketPower(p, j)*M;
           Q := M/N;
-          Q.cache#"AssociatedPrimes" = {p};
-          Q.cache#"associatedPrimesCodimLimit" = codim p;
+	  -- TODO: this shouldn't be done here and like this
+	  Q.cache#(AssociatedPrimesOptions{}) = new AssociatedPrimesComputation from {
+	      CodimensionLimit => codim p,
+	      Result => new MutableList from {p}};
           strat := toString o.Strategy;
           C := if codim p == dim ring Q then (
                if debugLevel > 0 then print("Embedded prime is maximal!");

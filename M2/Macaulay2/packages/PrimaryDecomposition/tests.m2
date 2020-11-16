@@ -56,7 +56,7 @@ testResult(Ideal,List) := (I,L) -> (
 	    ));
     )
 
-TEST ///
+TEST /// -- testing strategies
   debug PrimaryDecomposition
   w,x,y,z
   scan({  QQ, ZZ/3, ZZ/2, ZZ/101, ZZ/32003}, k -> (
@@ -79,33 +79,33 @@ TEST ///
       )
 ///
 
--- EHV
-
-TEST ///
 -- This last little code is to check if two lists are the same up to permutation.
+isSameList = (L1, L2) -> all(L1, I -> any(L2, J -> I == J)) and all(L2, I -> any(L1, J -> I == J))
+-*
+isSameList = (L1,L2) ->(
+    ret := null;
+    ret1 := true;
+    counter1 := 0;
+    counter2 := 0;
+    if #L1 =!= #L2 then ret = false else(
+	while counter1 < #L1 and ret1 == true do (
+	    ret2 := false;
+	    counter2 = 0;
+	    while counter2 < #L2 and ret2 == false do(
+		if L1#counter1 == L2#counter2
+		then ret2 = true;
+		counter2 = counter2 + 1;
+		);
+	    if ret2 == false then ret1 = false;
+	    counter1 = counter1 + 1;);
+	ret = ret1;
+	);
+    ret
+    )
+*-
 
--- isSameList = (L1,L2) ->(
-     -- ret := null;
-     -- ret1 := true;
-     -- counter1 := 0;
-     -- counter2 := 0;
-     -- if #L1 =!= #L2 then ret = false else(
-          -- while counter1 < #L1 and ret1 == true do (
-         -- ret2 := false;
-         -- counter2 = 0;
-         -- while counter2 < #L2 and ret2 == false do(
-            -- if L1#counter1 == L2#counter2
-            -- then ret2 = true;
-            -- counter2 = counter2 + 1;
-            -- );
-           -- if ret2 == false then ret1 = false;
-           -- counter1 = counter1 + 1;);
-      -- ret = ret1;
-      -- );
-     -- ret
-     -- )
-
-  isSameList = (L1, L2) -> all(L1, I -> any(L2, J -> I == J)) and all(L2, I -> any(L1, J -> I == J))
+TEST /// -- tests for associatedPrimes
+  debug PrimaryDecomposition
 
   R=ZZ/(101)[x,y,z];
   I=ideal (x^2,x*y);
@@ -114,7 +114,7 @@ TEST ///
   assert(isSameList(assoutcome,trueass))
 
   I=ideal (x^2,x*y);
-  assoutcome = associatedPrimes(I,Strategy=>1) -- FIXME strategy 2 doesn't exist!
+  assoutcome = associatedPrimes(I,Strategy=>2)
   isSameList(assoutcome, trueass)
   S=R/I;
   J=ideal(0_S);
@@ -132,7 +132,7 @@ TEST ///
   assert(isSameList(assoutcome, trueass))
 ///
 
-TEST ///
+TEST /// -- tests for localize
   R = ZZ/(101)[x,y];
   I = ideal (x^2,x*y);
   P1 = ideal (x);
@@ -153,7 +153,7 @@ TEST ///
   outcome == trueanswer
 ///
 
-TEST ///
+TEST /// -- tests for primaryComponent
   R = ZZ/(101)[x,y];
   I = ideal (x^2,x*y);
   P1 = ideal (x);
@@ -169,33 +169,33 @@ TEST ///
   primaryComponent(I,P2)
 ///
 
-TEST ///
-  R=ZZ/(101)[x,y,z];
-  I=ideal (x^2,x*y);
-  associatedPrimes(I,Strategy=>1)
-  associatedPrimes(I,Strategy=>2)
-  S=R/I;
-  J=ideal(0_S);
-  primaryDecomposition(J,Strategy=>EisenbudHunekeVasconcelos)
+TEST /// -- tests for EisenbudHunekeVasconcelos
+  R = ZZ/(101)[x,y,z];
+  I = ideal(x^2, x*y);
+  associatedPrimes(ideal I_*, Strategy => 1)
+  associatedPrimes(ideal I_*, Strategy => 2)
+  S = R/I;
+  J = ideal(0_S);
+  primaryDecomposition(J, Strategy => EisenbudHunekeVasconcelos)
   associatedPrimes J
-  P=ideal(x);
+  P = ideal x;
 
   R = ZZ/31991[x,y,z]
-  J=ideal (x*y^2,x*z^2);
-  P2=ideal(y,z);
-  associatedPrimes(J)
-  localize (J,P2)
-  primaryComponent(J,P2)
-  primaryDecomposition(J,Strategy=>EisenbudHunekeVasconcelos)
+  J = ideal(x*y^2, x*z^2);
+  P2 = ideal(y,z);
+  associatedPrimes J
+  localize(J, P2)
+  primaryComponent(J, P2)
+  primaryDecomposition(J, Strategy => EisenbudHunekeVasconcelos)
 
   R = ZZ/101[a..d]
   S = R/(a*b-c^2)
-  T = S/(a^3,b^3)
-  J = ideal(c)
+  T = S/(a^3, b^3)
+  J = ideal c
   ring presentation T
-  J1 = lift(J,ring presentation T)
+  J1 = lift(J, ring presentation T)
   J1 = J1 + ideal(R_3^5)
-  trim substitute(J1,T)
+  trim substitute(J1, T)
 ///
 
 TEST /// -- non-cyclic modules
@@ -252,17 +252,20 @@ TEST /// -- tough example for old primaryDecomposition, good on new code for mod
 ///
 
 TEST /// -- cf. https://groups.google.com/g/macaulay2/c/dFPzfS3tR2E
-  R = ZZ/2[Z_1..Z_9]
-  I = ideal(Z_6*Z_8+Z_5*Z_9,Z_3*Z_8+Z_2*Z_9,Z_6*Z_7+Z_4*Z_9,Z_4^3+Z_5^3+Z_6^3,Z_1*Z_2^2+Z_4*Z_5^2+Z_7*Z_8^2,Z_1^3+Z_5^3+Z_6^3+Z_8^3+Z_9^3,Z_1*Z_2*Z_4^2*Z_5*Z_9+Z_2^2*Z_5^3*Z_9+Z_2^2*Z_6^3*Z_9+Z_1^2*Z_7*Z_8^2*Z_9+Z_2^2*Z_8^3*Z_9+Z_2^2*Z_9^4)
-  M = comodule I
-  elapsedTime associatedPrimes M; -- ~ 5 seconds
-  elapsedTime primaryDecomposition M; -- ~ 5 seconds
-  assert(all(primaryDecomposition M, isPrimary_M))
-  assert(intersect apply(primaryDecomposition M, Q -> I + ideal gens Q) == I)
-  -- note: primaryDecomposition I takes ~ 60 seconds, and if interrupted, gives missed components error on resume
+  R = ZZ/2[Z_1..Z_9];
+  I = ideal(Z_6*Z_8+Z_5*Z_9,Z_3*Z_8+Z_2*Z_9,Z_6*Z_7+Z_4*Z_9,Z_4^3+Z_5^3+Z_6^3,Z_1*Z_2^2+Z_4*Z_5^2+Z_7*Z_8^2,Z_1^3+Z_5^3+Z_6^3+Z_8^3+Z_9^3,Z_1*Z_2*Z_4^2*Z_5*Z_9+Z_2^2*Z_5^3*Z_9+Z_2^2*Z_6^3*Z_9+Z_1^2*Z_7*Z_8^2*Z_9+Z_2^2*Z_8^3*Z_9+Z_2^2*Z_9^4);
+  M = comodule I;
+  elapsedTime assert(22 == #associatedPrimes M); -- ~ 5 seconds
+  elapsedTime assert(22 == #primaryDecomposition M) -- ~ 5 seconds
+  assert(all(primaryDecomposition M, isPrimary_M));
+  assert(intersect apply(primaryDecomposition M, Q -> I + ideal gens Q) == I);
+  -- TODO: other primaryDecomposition I strategies take ~ 60 seconds,
+  -- and if interrupted, give missed components error on resume
+  elapsedTime assert(22 == #primaryDecomposition I) -- should be instantaneous from cache
 ///
 
 TEST /// -- [associatedPrimes, CodimensionLimit] test
+  debug PrimaryDecomposition
   R = QQ[x_0..x_5]
   exps = {6,7}
   supps = {ideal(R_0,R_1,R_2), ideal(R_0,R_3,R_4,R_5)}
@@ -272,12 +275,13 @@ TEST /// -- [associatedPrimes, CodimensionLimit] test
   elapsedTime AP = associatedPrimes(M, CodimensionLimit => 4) -- ~ 3 seconds
   -- elapsedTime associatedPrimes(M, CodimensionLimit => infinity) -- > 40 seconds (computing unnecessary Ext)
   assert(all(AP, P -> any(supps, Q -> Q == P)) and all(supps, P -> any(AP, Q -> Q == P)))
-  M.cache#"associatedPrimesCodimLimit" = infinity
+  M.cache#(AssociatedPrimesOptions{}).CodimensionLimit = infinity
   elapsedTime comps = primaryDecomposition M; -- ~ 4 seconds
   assert(intersect comps == 0 and all(comps, isPrimary_M))
 ///
 
 TEST /// -- Optimizing cases for associatedPrimes without computing res
+  debug PrimaryDecomposition
   R = QQ[x_1..x_5]
   I = intersect apply(10, i -> ideal apply(gens R, v -> v - random QQ)); -- 10 points in A^5
   M = comodule I;
@@ -288,8 +292,37 @@ TEST /// -- Optimizing cases for associatedPrimes without computing res
   I = intersect apply(10, i -> ideal apply(delete(first random gens R, gens R), v -> v - random QQ)); -- 10 lines in A^5
   M = comodule I;
   elapsedTime AP = associatedPrimes(M, CodimensionLimit => codim M) -- < 2 seconds
-  M.cache#"associatedPrimesCodimLimit" = infinity
+  M.cache#(AssociatedPrimesOptions{}).CodimensionLimit = infinity
   elapsedTime comps = primaryDecomposition M; -- ~ 3 seconds
   assert(intersect comps == 0 and all(comps, isPrimary_M))
   -- note: primaryDecomposition I is very slow
+///
+
+TEST /// -- testing Shimoyama-Yokoyama
+  -- Simple examples
+  -- Example 1.
+  R = ZZ/32003[a..d]
+  I = ideal(a*b, c*d, a*c+b*d)
+  time primaryDecomposition I
+  -- 3 components
+  -- (a,d), (b,c), ((c,d)^2,(a,b)^2,ac+bd)
+
+  -- Example 2.
+  R = ZZ/32003[a,b,c]
+  I = ideal(a^2, a*b)
+  time primaryDecomposition I
+  -- two components: (a), (a2, b)
+
+  -- Example 3.
+  R = ZZ/32003[a..d]
+  I = ideal(a,b,c-1)
+  J = ideal(c,d,a-1)
+  L = intersect(I^2, J)
+  time primaryDecomposition L
+
+  -- By hand:
+  --C1 = PD ideal flatten entries generators L
+  --next C1
+  --donode C1
+  --peek C1
 ///

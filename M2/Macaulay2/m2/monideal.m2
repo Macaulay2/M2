@@ -208,7 +208,8 @@ associatedPrimes = method(
     Options => {
 	Strategy          => null,
 	CodimensionLimit  => infinity,
-	MinimalGenerators => true
+	MinimalGenerators => true,
+	cache             => null
 	}
     )
 
