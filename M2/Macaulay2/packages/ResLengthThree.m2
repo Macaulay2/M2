@@ -401,7 +401,7 @@ document{
   PARA { "For a free resolution ", TT "F", " over a ring ", TT "Q", ", the function returns
   the resolution ", TT "F", " as a quotient of a graded-commutative free algebra
   over ", TT "Q", ". The basis vectors in degrees 1, 2, and 3 are named with the
-  symbols from the list ", TT "L", ". The defaul symbols are ", TT "e", ", ", TT "f", ", and ", TT "g", "." },
+  symbols from the list ", TT "L", ". The default symbols are ", TT "e", ", ", TT "f", ", and ", TT "g", "." },
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
@@ -464,7 +464,7 @@ document{
   PARA { "For a free resolution ", TT "F", " over a ring ", TT "Q", ", the function returns
   the algebra ", TEX /// $Tor^Q(R,k)$ ///, " as a quotient of a graded-commutative free algebra
   over the residue field of ", TT "Q", ". The basis vectors in degrees 1, 2, and 3 are named with the
-  symbols from the list ", TT "L", ". The defaul symbols are ", TT "e", ", ", TT "f", ", and ", TT "g", "." },
+  symbols from the list ", TT "L", ". The default symbols are ", TT "e", ", ", TT "f", ", and ", TT "g", "." },
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
