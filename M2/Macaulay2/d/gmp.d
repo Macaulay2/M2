@@ -1303,6 +1303,14 @@ export contains (x:RRi, y:QQ):bool := (leftRR(x) <= y) && (rightRR(x) >= y);
 export contains (x:RRi, y:RR):bool := (leftRR(x) <= y) && (rightRR(x) >= y);
                                     
 export contains (x:RRi, y:RRi):bool := (leftRR(x) <= leftRR(y)) && (rightRR(x) >= rightRR(y));
+                                    
+export intersects (x:RRi, y:ZZ):bool := contains(x,y);
+                                    
+export intersects (x:RRi, y:QQ):bool := contains(x,y);
+                                    
+export intersects (x:RRi, y:RR):bool := contains(x,y);
+                                    
+export intersects (x:RRi, y:RRi):bool := !((x<y) || (x>y));
 
 export hash(x:RR):int := int(precision0(x)) + Ccode(int, 
      "mpfr_hash(",					    -- see gmp_aux.c for this function
