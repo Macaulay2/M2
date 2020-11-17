@@ -55,9 +55,7 @@ TEST /// -- test of CodimensionLimit option
   time assert(18 == # minprimes(I1, CodimensionLimit => 6, Verbosity => 2)) -- fast
 ///
 
--- the following test sometimes crashes on the last line, but you might have to run it more than 30 times to observe it
-
-///
+TEST ///
    R = QQ[x,r,v,u,b, MonomialOrder=>{Lex=>5}]
    I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
    elapsedTime C = minprimes(I, Verbosity=>2);
@@ -78,12 +76,14 @@ TEST /// -- test of CodimensionLimit option
    C2 = ideal(b^3-7*b^2+14*b-7,r^2-r*u-2*u^2*b^2+9*u^2*b-5*u^2+b^2-4*b,x+r*b-2*r+u*b^2-5*u*b+4*u)
    assert(C1 == C_0 or C1 == C_1)
    assert(C2 == C_0 or C2 == C_1)
+///
 
+TEST ///
    -- Over a tower of rings
    R = QQ[b][u][x,r,v, MonomialOrder=>{Lex=>3}]
    I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
    time C = minprimes(I, Verbosity=>2)
-   elapsedTime C = minimalPrimes(I, Strategy=>"Legacy", Verbosity=>2) -- does this line sometimes crash?  not sure...
+   elapsedTime C = minimalPrimes(ideal I_*, Strategy=>"Legacy", Verbosity=>2) -- does this line sometimes crash?  not sure...
    assert(#C == 2)
    assert(intersect C == I)
    C1 = ideal(b^3-7*b^2+14*b-7,r^2-r*u-2*u^2*b^2+9*u^2*b-5*u^2+b^2-4*b,x-u*b^2+5*u*b-4*u);
