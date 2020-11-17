@@ -751,7 +751,7 @@ sanityCheck = (nops, I) -> (
 myKernel = method(Options => {Tolerance => null, KernelStrategy => "Default"})
 myKernel Matrix := Matrix => opts -> MM -> (
     if precision MM < infinity then return colReduce(numericalKernel(MM,Tolerance => opts.Tolerance),Tolerance => opts.Tolerance);
-    if opts.KernelStrategy == "Default" then return gens kernel MM;
+    if opts.KernelStrategy == "Default" then return colReduce gens kernel MM;
 
     R := ring MM;
     M := transpose colReduce(transpose MM, Reverse=>true);
@@ -2258,19 +2258,11 @@ Description
     --TODO: this example takes a bit too long
     Example
         R = QQ[x_1,x_2,x_3,x_4]
-        k=6
+        k=3
         J = ideal((x_1^2-x_2*x_3)^k,(x_1*x_2-x_3*x_4)^k,(x_2^2-x_1*x_4)^k)
         Q = saturate(J,ideal(x_1*x_2*x_3*x_4))
         isPrimary Q
         elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
-        elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", BM => true)
-        elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", BM => false)
-        elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Gaussian", BM => true);
-        elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Gaussian", BM => false);
-        elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Gaussian", BM => true);
-        elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Default", BM => false);
-        elapsedTime hybridNoetherianOperators(Q, radical Q, pt, Strategy => "Hybrid", KernelStrategy => "Gaussian");
-        elapsedTime hybridNoetherianOperators(Q, radical Q, pt, Strategy => "Hybrid", KernelStrategy => "Default");
 ///
 
 -- doc ///
@@ -2720,3 +2712,25 @@ elapsedTime Q' = getIdealFromNoetherianOperators(L, radical Q)
 Q == Q'
 ----------------------------------------------------
 ----------------------------------------------------
+
+
+-----------------------------------------------------
+-- Example 11: timing example
+-- This example can be used to compare some timings
+----------------------------------------------------
+debugLevel = 2
+R = QQ[x_1,x_2,x_3,x_4]
+k=6
+J = ideal((x_1^2-x_2*x_3)^k,(x_1*x_2-x_3*x_4)^k,(x_2^2-x_1*x_4)^k)
+Q = saturate(J,ideal(x_1*x_2*x_3*x_4))
+isPrimary Q
+elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Default", BM => true)
+elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Gaussian", BM => true)
+elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Default", BM => false)
+elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Gaussian", BM => false)
+elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Default", BM => true)
+elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Gaussian", BM => true)
+elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Default", BM => false)
+elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Gaussian", BM => false)
+elapsedTime noetherianOperators(Q, Strategy => "Hybrid", KernelStrategy => "Default")
+elapsedTime noetherianOperators(Q, Strategy => "Hybrid", KernelStrategy => "Gaussian")
