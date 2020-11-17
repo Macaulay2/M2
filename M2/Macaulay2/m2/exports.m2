@@ -215,6 +215,8 @@ export {
 	"Inverses",
 	"Invertible",
 	"Iterate",
+    "intersects",
+    "intersection",
 	"Join",
 	"Jupyter",
 	"KeepFiles",
