@@ -370,7 +370,8 @@ REMAIN := symbol REMAIN
 if primdecComputation === symbol primdecComputation then
 primdecComputation = new Type of MutableHashTable
 
-protect thisNode
+-- private symbols used as keys:
+protect thisNode, protect H, protect U, protect W
 
 PDinitialize = (I) -> (
      if I.cache#?"PDC" then I.cache#"PDC"
@@ -485,7 +486,7 @@ SYprimaryDecomposition = (I) -> (		    -- called by a later file
 	  PDdonode C
 	  );
      if C.H != I then error "algorithm missed components!";
-     storeAssociatedPrimesComputation(I, apply(C.U, i -> trim(i#1)), infinity);
+     storeAssociatedPrimesComputation(comodule I, apply(C.U, i -> trim(i#1)), infinity);
      apply(C.U, i -> trim(i#0)))
 
 -- Local Variables:

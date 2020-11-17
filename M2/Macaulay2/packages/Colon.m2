@@ -200,7 +200,7 @@ quotientHelper = (A, B, key, opts) -> (
     C := (cacheComputation(opts, container)) computation;
 
     if C =!= null then doTrim C else if strategy === null
-    then error("no applicable method for quotient(", class A, ", ", class B, ")")
+    then error("no applicable strategy for ", toString key)
     else error("assumptions for quotient strategy ", toString strategy, " are not met"))
 
 -- Algorithms for Ideal : Ideal
@@ -398,7 +398,7 @@ saturateHelper = (A, B, key, opts) -> (
     C := (cacheComputation(opts, container)) computation;
 
     if C =!= null then doTrim C else if strategy === null
-    then error("no applicable method for saturate(", class A, ", ", class B, ")")
+    then error("no applicable strategy for ", toString key)
     else error("assumptions for saturation strategy ", toString strategy, " are not met"))
 
 -- Helper for GRevLex strategy
@@ -618,7 +618,7 @@ annihilatorHelper = (A, key, opts) -> (
     C := runHooks(key, (opts, A), Strategy => strategy);
 
     if C =!= null then C else if strategy === null
-    then error("no applicable method for annihilator(", class A, ")")
+    then error("no applicable strategy for ", toString key)
     else error("assumptions for annihilator strategy ", toString strategy, " are not met"))
 
 -- Algorithms for annihilator Module

@@ -11,7 +11,6 @@
 --                  updated Nov 2020
 --
 -- TODO :
---  1. combine the computation objects for associated primes and primary decomposition
 ---------------------------------------------------------------------------
 newPackage(
     "PrimaryDecomposition",
@@ -25,48 +24,42 @@ newPackage(
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"}},
     Keywords => {"Commutative Algebra"},
     PackageExports => { "Colon" },
+    PackageImports => { "Elimination" },
     AuxiliaryFiles => true,
     DebuggingMode => true
     )
 
 export {
     -- methods
-    "primaryDecomposition",
+    "isPrimary", "localize", "primaryComponent",
+    "primaryDecomposition", "associatedPrimes",
     "irreducibleDecomposition",
-    "isPrimary",
-    -- keys for strategies
-    "EisenbudHunekeVasconcelos",					    -- cryptic
-    "Hybrid",
-    "Increment",
-    "GTZ",
-    "ShimoyamaYokoyama",
---     "binomialCD",
---     "extract",
---     "findNonMember",
---     "flattener",
-    "localize",
---     "minSat",
-    "primaryComponent",
---     "quotMin",
-    "kernelOfLocalization",
-    "regSeqInIdeal",
-    "radicalContainment"
+    -- strategy symbols
+    "ShimoyamaYokoyama", "EisenbudHunekeVasconcelos",
+    -- option symbols
+    "HybridStrategy", "Increment", "GTZ",
+    -- defined in Eisenbud-Huneke-Vasconcelos.m2
+    --  EHVprimaryDecomposition, HprimaryDecomposition
+    "kernelOfLocalization", "regSeqInIdeal"
+    -- defined in Shimoyama-Yokoyama.m2
+    --  minSat, minSatPPD, quotMin
+    --  primdecComputation, flattener
+    --  sortByDegree, extract, findNonMember
     }
 
 importFrom_Core { "printerr", "raw", "rawIndices", "rawGBContains", "rawRemoveScalarMultiples" }
 
--- private symbols used as keys:
-
-protect H, protect U, protect W
-
---     EHVprimaryDecomposition,			    -- cryptic
---     HprimaryDecomposition,
---     Hybrid,
---     primdecComputation,
---     minSatPPD,
---     sortByDegree
-
 algorithms = new MutableHashTable from {}
+
+-- this needs to be loaded before Eisenbud-Huneke-Vasconcelos.m2
+associatedPrimes = method(
+    TypicalValue => List,
+    Options => {
+	Strategy          => null,     -- try "keys strategies(associatedPrimes, Ideal)"
+	CodimensionLimit  => infinity, -- maximum codimension to look for
+	MinimalGenerators => true      -- whether to trim the output
+	}
+    )
 
 --------------------------------------------------------------------
 -- Support routines
@@ -76,7 +69,7 @@ cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym t
 
 -- TODO: is there a better name for these two?
 isSupportedRing = method()
-isSupportedRing Module := M -> isSupportedRing ring presentation ring M
+isSupportedRing Module := M -> isSupportedRing ring presentation first flattenRing ring M
 isSupportedRing Ideal  := I -> isSupportedRing ring first flattenRing I
 isSupportedRing Ring   := A -> (
     -- ring should be a commutative polynomial ring or a quotient of one
@@ -97,9 +90,10 @@ flattenRingMap Module := M -> (
     -- R is the ring of M, and S is the ambient polynomial ring which R is a quotient of
     R := ring M;
     S := ring (rel := presentation R);
+--    S  = first flattenRing S; -- TODO
     (M', fback) := if R === S then (M, identity) else (
 	liftRel := id_(lift(target relations M, S)) ** rel;
-	M' = trim subquotient(lift(gens M, S), lift(relations M, S) | liftRel);
+	M' = trim subquotient(lift(generators M, S), lift(relations M, S) | liftRel);
 	fback = map(R, S, vars R); -- TODO: not generators(R, CoefficientRing => coefficientRing S)?
 	(M', fback)))
 
@@ -176,28 +170,32 @@ associatedPrimes Ideal  := List => opts -> I -> assassinsHelper(I, (associatedPr
 associatedPrimes Module := List => opts -> M -> assassinsHelper(M, (associatedPrimes, Module), opts)
 
 -- Helper for associatedPrimes
+-- A:    ideal or module
+-- key:  the key for runHooks
+-- opts: options for associatedPrimes
 assassinsHelper = (A, key, opts) -> (
+    -- TODO: are there any instant checks to do?
+    -- TODO: any better way to do this?
+    S := first flattenRing ring presentation ring A;
+
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
-
-    -- TODO: is this correct?
-    S := ring presentation ring A; -- S is the ambient polynomial ring which ring A is a quotient of
 
     codimLimit := min(opts.CodimensionLimit, dim S);
     doLimit := L -> select(L, P -> codim(P, Generic => true) <= codimLimit);
     opts = opts ++ { CodimensionLimit => codimLimit };
 
     -- this logic determines what strategies will be used
-    computation := (opts, container) -> runHooks(key, (opts ++ { Strategy => null }, A), Strategy => opts.Strategy);
+    computation := (opts, container) -> runHooks(key,
+	(opts ++ { Strategy => null, cache => container }, A), Strategy => opts.Strategy);
 
     -- this is the logic for caching partial associated primes computations. A.cache contains an option:
     --   AssociatedPrimesOptions{} => AssociatedPrimesComputation{ CodimensionLimit, Result }
     cacheKey := AssociatedPrimesOptions{};
-    container := try A.cache#cacheKey else A.cache#cacheKey = (
-	new AssociatedPrimesComputation from { CodimensionLimit => 0, Result => new MutableList from {} });
-
-    -- TODO: is this a good idea for letting the algorithms accumulate information?
-    opts = opts ++ { cache => new CacheTable from { cacheKey => container } };
+    -- TODO: can this be handled better?
+    M := if instance(A, Ideal) then comodule A else A;
+    container := try M.cache#cacheKey else M.cache#cacheKey = (
+	new AssociatedPrimesComputation from { CodimensionLimit => -1, Result => new MutableList from {} });
 
     -- the actual computation of associated primes occurs here
     -- TODO: is it a good idea for computation to return a MutableList?
@@ -210,11 +208,17 @@ assassinsHelper = (A, key, opts) -> (
 --------------------------------------------------------------------
 
 algorithms#(associatedPrimes, Ideal) = new MutableHashTable from {
-    1 => (opts, I) -> ass1(I, opts), -- see Eisenbud-Huneke-Vasconcelos.m2
+    -- TODO: can this be simplified?
+    1 => (opts, I) -> ass1(I, -- see Eisenbud-Huneke-Vasconcelos.m2
+	CodimensionLimit  => opts.CodimensionLimit,
+	MinimalGenerators => opts.MinimalGenerators),
 
-    2 => (opts, I) -> associatedPrimes(comodule I, opts),
+    -- TODO: can this be simplified?
+    2 => (opts, I) -> associatedPrimes(comodule I,
+	CodimensionLimit  => opts.CodimensionLimit,
+	MinimalGenerators => opts.MinimalGenerators),
 
-    3 => (opts, I) -> (
+    "cached" => (opts, I) -> (
 	-- take the radical of a cached primary decomposition
 	-- TODO: is there a way to do this for modules too?
 	cacheKey := PrimaryDecompositionOptions{};
@@ -241,9 +245,10 @@ algorithms#(associatedPrimes, Ideal) = new MutableHashTable from {
     }
 
 -- Installing hooks for (associatedPrimes, Ideal)
-scan({1, 2, Monomial, 3}, strategy ->
+scan({1, 2, Monomial, "cached"}, strategy ->
     addHook(key := (associatedPrimes, Ideal), algorithms#key#strategy, Strategy => strategy))
 
+-- used in Monomial strategy of associatedPrimes and primaryDecomposition
 ass0 = I -> (
     R := ring I;
     J := dual I;
@@ -258,8 +263,8 @@ ass0 = I -> (
 --------------------------------------------------------------------
 
 algorithms#(associatedPrimes, Module) = new MutableHashTable from {
-    1 => (opts, M0) -> (
-	-- modified code in ass1 for modules
+    "Default" => (opts, M0) -> (
+	-- modified code in ass1 for modules, based on EHV
 	-- returns a MutableList
 	(M, fback) := flattenRingMap M0;
 	S := ring M;
@@ -268,9 +273,9 @@ algorithms#(associatedPrimes, Module) = new MutableHashTable from {
 	d := dim S;
 	C := null; -- will be a resolution of M
 	k := opts.CodimensionLimit;
-	container := opts.cache#(AssociatedPrimesOptions{});
-	p := container.CodimensionLimit;
-	L := container.Result;
+	comp := opts.cache;
+	p := comp.CodimensionLimit;
+	L := comp.Result;
 	for i from max(p + 1, c) to min(d, k) do (
 	    if debugLevel > 0 then printerr("Extracting associated primes of codim " | toString i);
 	    newPrimes :=
@@ -283,36 +288,34 @@ algorithms#(associatedPrimes, Module) = new MutableHashTable from {
 		if c < i then (
 		    -- computes ann Ext^i(M, S)
 		    if C === null then C = res(M, LengthLimit => k + 1);
-		    if length C < i then break;
+		    if length C < i then ( comp.CodimensionLimit = d; break );
 		    A = trim ann minPres(ker transpose C.dd_(i+1) / image transpose C.dd_i));
 		if codim A <= i then minimalPrimes(A, CodimensionLimit => i) else {});
 	    -- cache the results
 	    scan(newPrimes, P -> L#(#L) = fback P);
-	    container.CodimensionLimit = i);
-	container.Result),
+	    comp.CodimensionLimit = i);
+	comp.Result),
     }
 
 -- Installing hooks for (associatedPrimes, Module)
-scan({1}, strategy ->
+scan({"Default"}, strategy ->
     addHook(key := (associatedPrimes, Module), algorithms#key#strategy, Strategy => strategy))
 
 --------------------------------------------------------------------
 -- Primary Decomposition
 --------------------------------------------------------------------
 
-Hybrid = new SelfInitializingType of BasicList
-
 primaryDecomposition = method(
     TypicalValue => List,
     Options => {
-	Strategy          => null,
-	MinimalGenerators => true, -- whether to trim the output
-	cache             => null
+	Strategy          => null, -- try "keys strategies(primaryDecomposition, Ideal)"
+	HybridStrategy    => null, -- {associated prime strategy, localize strategy}
+	MinimalGenerators => true  -- whether to trim the output
 	}
     )
 primaryDecomposition Ring   := List => opts -> R -> primaryDecomposition(comodule ideal R, opts)
-primaryDecomposition Ideal  := List => opts -> I -> primedecompHelper(I, (primaryDecomposition, Ideal), opts)
-primaryDecomposition Module := List => opts -> M -> primedecompHelper(M, (primaryDecomposition, Module), opts)
+primaryDecomposition Ideal  := List => opts -> I -> primarydecompHelper(I, (primaryDecomposition, Ideal), opts)
+primaryDecomposition Module := List => opts -> M -> primarydecompHelper(M, (primaryDecomposition, Module), opts)
 
 -- keys: none so far
 PrimaryDecompositionOptions = new SelfInitializingType of BasicList
@@ -324,8 +327,10 @@ PrimaryDecompositionComputation.synonym = "primary decomposition computation"
 
 isComputationDone PrimaryDecompositionComputation := Boolean => options primaryDecomposition >> opts -> container -> (
     -- this function determines whether we can use the cached result, or further computation is necessary
-    -- TODO: don't accept BasicList once (primaryDecomposition, Ideal) strategies also return mutable hash tables
-    try instance(container.Result, MutableHashTable) or instance(container.Result, BasicList) else false)
+    cacheKeyAP := AssociatedPrimesOptions{}; -- may depend on opts
+    -- TODO: (primaryDecomposition, Ideal) strategies should also return a mutable hash table
+    try instance(container.Result, BasicList)
+    or  instance(container.Result, MutableHashTable) and #keys(container.Result) == #container#cacheKeyAP.Result else false)
 
 cacheComputation PrimaryDecompositionComputation := CacheFunction => options primaryDecomposition >> opts -> container -> new CacheFunction from (
     -- this function takes advantage of FunctionClosures by modifying the container
@@ -334,48 +339,40 @@ cacheComputation PrimaryDecompositionComputation := CacheFunction => options pri
 	if (result := computation(opts, container)) =!= null then ( container.Result = result )))
 
 -- Helper for primaryDecomposition
-primedecompHelper = (A, key, opts) -> (
+-- A:    ideal or module
+-- key:  the key for runHooks
+-- opts: options for primaryDecomposition
+primarydecompHelper = (A, key, opts) -> (
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
 
     -- this logic determines what strategies will be used
-    computation := (opts, container) -> (
-	if not instance(opts.Strategy, Hybrid)
-	then runHooks(key, (opts, A), Strategy => opts.Strategy)
-	-- hybrid strategies can still be used:
-	-- if #opts.Strategy =!= 2 then error "primaryDeccomposition: the Hybrid strategy requires 2 arguments";
-	else HprimaryDecomposition(A, -- defined in EHV
-	    opts.Strategy#0, -- associated primes strategy
-	    opts.Strategy#1  -- localize strategy
-	    ));
+    computation := (opts, container) -> runHooks(key,
+	(opts ++ { Strategy => null, cache => container }, A), Strategy => opts.Strategy);
 
     -- this is the logic for caching partial primary decomposition computations. A.cache contains an option:
     --   PrimaryDecompositionOptions{} => PrimaryDecompositionComputation{ CodimensionLimit, Result }
     cacheKey := PrimaryDecompositionOptions{};
-    -- TODO: is caching primary decomposition of an ideal in its comodule correct?
+    -- TODO: can this be handled better?
     M := if instance(A, Ideal) then comodule A else A;
     container := try M.cache#cacheKey else M.cache#cacheKey = (
-	new PrimaryDecompositionComputation from { Result => null });
+	new PrimaryDecompositionComputation from { Result => new MutableHashTable from {} });
 
-    -- TODO: is this a good idea for letting the algorithms accumulate information?
-    opts = opts ++ { cache => new CacheTable from { cacheKey => container } };
-
-    -- if associated primes are cached, pass the result as an option
+    -- if associated primes are cached, store a pointer in the container
     cacheKeyAP  := AssociatedPrimesOptions{};
-    containerAP := if M.cache#?cacheKeyAP then opts.cache#cacheKeyAP = M.cache#cacheKeyAP;
+    if M.cache#?cacheKeyAP then container#cacheKeyAP = M.cache#cacheKeyAP;
 
     -- the actual computation of primary decomposition occurs here
     L := (cacheComputation(opts, container)) computation;
     -- TODO: make the (primaryDecomposition, Ideal) code to also return a hash table
-    -- TODO: does the order matter? should it be sorted like apply(AP, p -> container.Result#p)?
-    if instance(L, MutableHashTable) then L = values L;
+    if instance(L, MutableHashTable) then L = apply(associatedPrimes M, P -> L#P);
 
     if L =!= null then doTrim \ L else if strategy === null
-    then error("no applicable method for ", toString key)
+    then error("no applicable strategy for ", toString key)
     else error("assumptions for primaryDecomposition strategy ", toString strategy, " are not met"))
 
 --------------------------------------------------------------------
---- primedecomp strategies
+--- primarydecomp strategies
 --------------------------------------------------------------------
 
 algorithms#(primaryDecomposition, Module) = new MutableHashTable from {
@@ -386,34 +383,28 @@ algorithms#(primaryDecomposition, Module) = new MutableHashTable from {
 	-- (equivalently, the ordering of associated primes is a linear extension of the partial order by inclusion).
 	-- This is the case for associatedPrimes(Module), which returns associated primes ordered by codimension
 	S := ring M;
-	AP := try (
-	    -- the associated primes computation object
-	    -- the Result key is a mutable list of associated primes
-	    containerAP := opts.cache#(AssociatedPrimesOptions{});
-	    -- TODO: confirm that dim S is correct bound
-	    if isComputationDone(containerAP, CodimensionLimit => dim S)
-	    then ( cacheHit class containerAP; toList containerAP.Result ) else null) else null;
-	if AP === null then AP = associatedPrimes(M, CodimensionLimit => dim S);
 	-- the primary decomposition computation object
-	-- the Result key is a mutable hash table of primary components
-	-- each corresponding to an associated prime
-	container := opts.cache#(PrimaryDecompositionOptions{});
-	if container.Result === null then container.Result = new MutableHashTable from {};
+	-- the Result key is a mutable hash table with entries
+	--   associated prime => respective primary component
+	comp := opts.cache;
+	-- the list of associated primes, either from cache or computed
+	AP := associatedPrimes(M, CodimensionLimit => dim S);
 	-- check whether all components are found
-	if #values(container.Result) != #AP then (
+	if #values(comp.Result) != #AP then (
+	    -- hash table of embeddings among associated primes
 	    H := hashTable apply(AP, p -> p => select(#AP, i -> isSubset(AP#i, p)));
 	    for i to #AP - 1 do (
 		if debugLevel > 0 then printerr("Prime: " | toString(i+1) | "/" | toString(#AP));
 		p := AP#i;
-		if container.Result#?p then continue;
+		if comp.Result#?p then continue;
 		f := product(AP - set AP_(H#p), q -> q_(position(q_*, g -> g % p != 0)));
 		isolComp := if f == 1 then 0*M else saturate(0*M, f);
-		container.Result#p = if #(H#p) > 1 then (
-		    B := intersect apply(H#p - set{i}, k -> container.Result#(AP#k));
+		comp.Result#p = if #(H#p) > 1 then (
+		    B := intersect apply(H#p - set{i}, k -> comp.Result#(AP#k));
 		    getEmbeddedComponent(M, p, C -> isSubset(intersect(B, C), isolComp), Strategy => opts.Strategy)
 		    ) else isolComp);
 	    );
-	container.Result),
+	comp.Result),
     }
 
 -- Installing hooks for (primaryDecomposition, Module)
@@ -424,7 +415,12 @@ scan({1}, strategy ->
 
 -- TODO: make these algorithms also return a MutableHashTable { prime => primary component }
 algorithms#(primaryDecomposition, Ideal) = new MutableHashTable from {
-    1 => (opts, I) -> ideal \ relations \ primaryDecomposition(comodule I, opts),
+    "Comodule" => (opts, I) -> (
+	-- TODO: can this be simplified?
+	L := primaryDecomposition(comodule I,
+	    HybridStrategy    => opts.HybridStrategy,
+	    MinimalGenerators => opts.MinimalGenerators);
+	apply(L, Q -> I + ideal generators Q)),
 
     -- TODO: what order should these go in?
     -- TODO: add heuristics to rejecting them for speed
@@ -440,6 +436,16 @@ algorithms#(primaryDecomposition, Ideal) = new MutableHashTable from {
 	then return null;
 	(I', fback) := flattenRingMap I;
 	fback \ SYprimaryDecomposition I'),
+
+    HybridStrategy => (opts, I) -> (
+	-- the Hybrid strategy requires 2 arguments passed as a list to HybridStrategy
+	if not instance(opts.HybridStrategy, BasicList)
+	or not #opts.HybridStrategy === 2
+	then return null;
+	HprimaryDecomposition(I, -- defined in EHV
+	    opts.HybridStrategy#0, -- associated primes strategy
+	    opts.HybridStrategy#1  -- localize strategy
+	    )),
 
     Monomial => (opts, I) -> (
 	R := ring I;
@@ -465,7 +471,7 @@ algorithms#(primaryDecomposition, Ideal) = new MutableHashTable from {
     }
 
 -- Installing hooks for (primaryDecomposition, Ideal)
-scan({1, EisenbudHunekeVasconcelos, ShimoyamaYokoyama, Monomial}, strategy ->
+scan({"Comodule", EisenbudHunekeVasconcelos, ShimoyamaYokoyama, HybridStrategy, Monomial}, strategy ->
     addHook(key := (primaryDecomposition, Ideal), algorithms#key#strategy, Strategy => strategy))
 
 --------------------------------------------------------------------
@@ -483,6 +489,15 @@ irreducibleDecomposition MonomialIdeal := List => I -> (
 	    if #s === 0 then return monomialIdeal 0_R;
 	    monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v))))
     )
+
+
+-- Moved here from m2/monideals.m2 because it depends on associatedPrimes
+Delta := I -> (
+    X := generators ring I;
+    d := #X - pdim cokernel generators I;
+    toList \ select( apply(associatedPrimes I, J -> set X - set first entries generators J), Y -> #Y >= d ))
+
+standardPairs MonomialIdeal := I -> standardPairs(I, Delta I)
 
 --------------------------------------------------------------------
 ----- Tests section

@@ -43,10 +43,13 @@ testResult(Ideal,List) := (I,L) -> (
 	    assert(I != intersect L2)));
     L3 := associatedPrimes I;
     assert(#L == #L3);
+    -- print(radical \ L, L3);
     scan(#L, i -> (
 	    J := L_i;
 	    P := radical J;
-	    -- assert(P == L3_i); -- FIXME: this fails if the order of L and L3 are different
+	    -- This assertion is important, because the order of
+	    -- associated primes and primary components should match
+	    assert(P == L3_i);
 	    if isPrimary(J,P) then () else (
 		print(ring I);
 		print I;
@@ -57,7 +60,7 @@ testResult(Ideal,List) := (I,L) -> (
     )
 
 TEST /// -- testing strategies
-  debug PrimaryDecomposition
+  importFrom_PrimaryDecomposition {"testResult"}
   w,x,y,z
   scan({  QQ, ZZ/3, ZZ/2, ZZ/101, ZZ/32003}, k -> (
 	  Q := k[w,x,y,z];
@@ -65,22 +68,19 @@ TEST /// -- testing strategies
 		  ideal(x^4*y^5),
 		  ideal(w*x, y*z, w*y+x*z),
 		  intersect((ideal(w,x,y-1))^2, ideal(y,z,w-1))}, I -> (
-		  sl := {
-		      ShimoyamaYokoyama,
-		      EisenbudHunekeVasconcelos,
-		      new Hybrid from (1,2),
-		      new Hybrid from (2,2)};
+		  sl := {"Comodule", ShimoyamaYokoyama, EisenbudHunekeVasconcelos};
 		  if isMonomialIdeal I then sl = {Monomial} | sl;
-		  scan(sl, s -> testResult(I, primaryDecomposition(I, Strategy => s)))));
-	  scan({  new Hybrid from (1,1),
-		  new Hybrid from (2,1)}, s -> (
-		  testResult(ideal(x^4*y^5), primaryDecomposition(ideal(x^4*y^5), Strategy => s))));
+		  scan(sl, s -> testResult(I, primaryDecomposition(ideal I_*, Strategy => s)))));
+	  scan({  {1,1}, {1,2}, {2,1}, {2,2}},
+	      s -> testResult(ideal(x^4*y^5),
+		  primaryDecomposition(ideal(x^4*y^5), Strategy => HybridStrategy, HybridStrategy => s)));
 	  )
       )
 ///
 
 -- This last little code is to check if two lists are the same up to permutation.
-isSameList = (L1, L2) -> all(L1, I -> any(L2, J -> I == J)) and all(L2, I -> any(L1, J -> I == J))
+-- caveat: {1,1,2} and {1,2,2} are equal with this code
+isSameList = (L1, L2) -> #L1 == #L2 and all(L1, I -> any(L2, J -> I == J)) and all(L2, I -> any(L1, J -> I == J))
 -*
 isSameList = (L1,L2) ->(
     ret := null;
@@ -105,7 +105,7 @@ isSameList = (L1,L2) ->(
 *-
 
 TEST /// -- tests for associatedPrimes
-  debug PrimaryDecomposition
+  importFrom_PrimaryDecomposition { "isSameList" }
 
   R=ZZ/(101)[x,y,z];
   I=ideal (x^2,x*y);
@@ -265,7 +265,7 @@ TEST /// -- cf. https://groups.google.com/g/macaulay2/c/dFPzfS3tR2E
 ///
 
 TEST /// -- [associatedPrimes, CodimensionLimit] test
-  debug PrimaryDecomposition
+  importFrom_PrimaryDecomposition {"AssociatedPrimesOptions"}
   R = QQ[x_0..x_5]
   exps = {6,7}
   supps = {ideal(R_0,R_1,R_2), ideal(R_0,R_3,R_4,R_5)}
@@ -281,7 +281,7 @@ TEST /// -- [associatedPrimes, CodimensionLimit] test
 ///
 
 TEST /// -- Optimizing cases for associatedPrimes without computing res
-  debug PrimaryDecomposition
+  importFrom_PrimaryDecomposition {"AssociatedPrimesOptions"}
   R = QQ[x_1..x_5]
   I = intersect apply(10, i -> ideal apply(gens R, v -> v - random QQ)); -- 10 points in A^5
   M = comodule I;

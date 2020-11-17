@@ -482,7 +482,6 @@ export {
 	"asin",
 	"asinh",
 	"assert",
-	"associatedPrimes",
 	"atEndOfFile",
 	"atan",
 	"atan2",

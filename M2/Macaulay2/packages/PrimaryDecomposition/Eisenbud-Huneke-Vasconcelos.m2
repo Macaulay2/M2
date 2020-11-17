@@ -47,7 +47,7 @@ ass2 = (I) -> (
      currentI := lift(I,polyRing);
      topcurrentI := topComponents currentI;
      while not isSubset(topcurrentI, currentI) do(
-    if debugLevel >= 2 then print "  beginning new associatedPrimes loop";
+    if debugLevel >= 2 then printerr "  beginning new associatedPrimes loop";
         newcomponents = flatten minimalPrimes topcurrentI;
     if debugLevel >=1 then (scan(newcomponents, P -> ( << endl << "    " << P << endl)));
     assassinator = append(assassinator, newcomponents);
@@ -199,19 +199,20 @@ getEmbeddedComponent (Module, Ideal, Function) := o -> (M, p, checkFunction) -> 
      foundValidComponent := false;
      j := max(2, ceiling(max((ann M)_*/degree/sum) / min(p_*/degree/sum)));
      while not foundValidComponent do (
-          if debugLevel > 0 then print("Trying bracket power " | toString(j) | " for candidate embedded component...");
+          if debugLevel > 0 then printerr("Trying bracket power " | toString(j) | " for candidate embedded component...");
           N := bracketPower(p, j)*M;
           Q := M/N;
-	  -- TODO: where is this cache used?
+	  -- used later in kernelOfLocalization
 	  storeAssociatedPrimesComputation(Q, {p}, codim p);
           strat := toString o.Strategy;
           C := if codim p == dim ring Q then (
-               if debugLevel > 0 then print("Embedded prime is maximal!");
+               if debugLevel > 0 then printerr("Embedded prime is maximal!");
                0*Q
           ) else (
-               if debugLevel > 0 then print("Using strategy " | if strat == "null" then "Sat" else strat);
+               if debugLevel > 0 then printerr("Using strategy " | if strat == "null" then "Sat" else strat);
                if strat == "Res" then topComponents(Q, codim p)
                else if strat == "Hom" then equidimHull(Q, codim p)
+	       -- this function uses the cached associated primes computation
                else kernelOfLocalization(Q, p)
           );
           C = trim subquotient(generators C | generators N, relations M);
@@ -225,7 +226,7 @@ kernelOfLocalization = method()
 kernelOfLocalization (Module, Ideal) := Module => (M, P) -> (
      AP := associatedPrimes(M, CodimensionLimit => infinity);
      f := product(AP, p -> ( i := position(p_*, g -> g % P != 0); if i === null then 1 else p_i ));
-     if debugLevel > 0 then print("Computing saturation...");
+     if debugLevel > 0 then printerr("Computing saturation...");
      if f == 1 then 0*M else saturate(0*M, f)
 )
 
@@ -236,9 +237,9 @@ topComponents (Module, ZZ) := Module => (M, e) -> (
      while f > e do (
           E := Ext^f(M,S);
           if codim E == f then (
-               if debugLevel > 0 then print("Getting annihilator of Ext...");
+               if debugLevel > 0 then printerr("Getting annihilator of Ext...");
                I := annihilator E;
-               if debugLevel > 0 then print("Removing components of codim " | toString(f));
+               if debugLevel > 0 then printerr("Removing components of codim " | toString(f));
                N = N : I;
           );
           f = f-1;
@@ -249,28 +250,28 @@ topComponents (Module, ZZ) := Module => (M, e) -> (
 equidimHull = method() -- equidimensional hull of 0 in a module M
 equidimHull (Module, ZZ) := Module => (M, c) -> (
      R := ring M;
-     if debugLevel > 0 then print("Finding maximal regular sequence...");
+     if debugLevel > 0 then printerr("Finding maximal regular sequence...");
      S := comodule regSeqInIdeal(annihilator M, c, c, 2);
-     if debugLevel > 0 then print("Computing Ext...");
+     if debugLevel > 0 then printerr("Computing Ext...");
      if numColumns mingens M == 1 then (
-          if debugLevel > 0 then print("Using case for cyclic module...");
-          if debugLevel > 1 then print(toString M);
-          if debugLevel > 1 then print(toString S);
+          if debugLevel > 0 then printerr("Using case for cyclic module...");
+          if debugLevel > 1 then printerr(toString M);
+          if debugLevel > 1 then printerr(toString S);
           E := Hom(M, S); -- = Ext^c(M, R)
-          if debugLevel > 0 then print("Getting annihilator...");
+          if debugLevel > 0 then printerr("Getting annihilator...");
           return subquotient(generators annihilator E, relations M);
      );
      -- the following uses code from doubleDualMap in AnalyzeSheafOnP1
      h := coverMap M;
      ddh := Hom(Hom(h, S), S); -- = Ext^c(Ext^c(h, R), R)
-     if debugLevel > 0 then print("Getting hull as kernel of " | toString(numRows matrix ddh) | " by " | toString(numColumns matrix ddh) | " matrix...");
+     if debugLevel > 0 then printerr("Getting hull as kernel of " | toString(numRows matrix ddh) | " by " | toString(numColumns matrix ddh) | " matrix...");
      kernel map(target ddh, M, matrix ddh)
 )
 equidimHull Module := Module => M -> equidimHull(M, codim M)
 
 regSeqInIdeal = method(Options => {Strategy => "Quick"})
 regSeqInIdeal (Ideal, ZZ, ZZ, ZZ) := Ideal => opts -> (I, n, c, initialTime) -> ( -- attempts to find sparse maximal regular sequence contained in an ideal (in a CM ring)
-     if debugLevel > 1 then print(toString I, n, c, initialTime);
+     if debugLevel > 1 then printerr(toString I, n, c, initialTime);
      G := sort(flatten entries mingens I, f -> (sum degree f, #terms f));
      if c == #G then return ideal G;
      k := coefficientRing ring I;
@@ -279,32 +280,32 @@ regSeqInIdeal (Ideal, ZZ, ZZ, ZZ) := Ideal => opts -> (I, n, c, initialTime) -> 
      for pair in searchList do (
           (i, j) := (pair#0, pair#1);
           coeffList := {0_k, 1_k};
-          if debugLevel > 1 then print("Trying generators " | toString(i, j));
+          if debugLevel > 1 then printerr("Trying generators " | toString(i, j));
           for a in coeffList do (
                cand := G#i + a*G#j;
                K := J + ideal cand;
-               if debugLevel > 1 then print("Testing regular sequence...");
+               if debugLevel > 1 then printerr("Testing regular sequence...");
                m := if opts.Strategy == "Quick" then ( 
                     try ( alarm initialTime; r := codim K; alarm 0; r ) else -1
                ) else codim K;
                if m == 1 + #J_* then (
                     J = K;
-                    if debugLevel > 1 then print "Found nonzerodivisor!";
+                    if debugLevel > 1 then printerr "Found nonzerodivisor!";
                     break;
-               ) else if m == -1 and debugLevel > 1 then print "Exceeded time for codim check";
+               ) else if m == -1 and debugLevel > 1 then printerr "Exceeded time for codim check";
           );
-          if #J_* == n then ( if debugLevel > 1 then print("Found regular sequence!"); return J );
+          if #J_* == n then ( if debugLevel > 1 then printerr("Found regular sequence!"); return J );
      );
-     if debugLevel > 1 then print "Could not find sparse regular sequence. Trying denser elements...";
+     if debugLevel > 1 then printerr "Could not find sparse regular sequence. Trying denser elements...";
      G1 := matrix{select(G, g -> g % J != 0)};
      J1 := J + ideal apply(n-#J_*, j -> G1*random(k^(numcols G1),k^1));
      if codim J1 == #J1_* then J1 else error "Could not find regular sequence. Try again with Strategy => \"Full\""
 )
 regSeqInIdeal (Ideal, ZZ) := Ideal => opts -> (I, n) -> (
-     if debugLevel > 1 then print "Timing initial codim check...";
+     if debugLevel > 1 then printerr "Timing initial codim check...";
      t := timing codim I;
      t0 := 2 + ceiling first t;
-     if debugLevel > 1 then print("Setting time limit of " | toString t0 | " seconds for each check...");
+     if debugLevel > 1 then printerr("Setting time limit of " | toString t0 | " seconds for each check...");
      c := last t;
      n = min(n, c);
      if c == infinity then ideal take(gens ring I, min(n, dim ring I)) else regSeqInIdeal(I, n, c, t0)

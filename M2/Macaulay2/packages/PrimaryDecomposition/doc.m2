@@ -415,7 +415,7 @@ Node
 
 -- FIXME
 document {
-     Key => {[primaryDecomposition,Strategy],EisenbudHunekeVasconcelos,ShimoyamaYokoyama,Hybrid,GTZ},
+     Key => {[primaryDecomposition,Strategy],EisenbudHunekeVasconcelos,ShimoyamaYokoyama,HybridStrategy,GTZ},
      "The strategy option value should be one of the following.",
      UL {
           ("Monomial", " -- uses Alexander duality of a monomial ideal"),
@@ -423,7 +423,7 @@ document {
 	                     binomial ideal.  NOT IMPLEMENTED YET."),
 	  ("EisenbudHunekeVasconcelos", " -- uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
 	  ("ShimoyamaYokoyama", " -- uses the algorithm of Shimoyama-Yokoyama"),
-	  ("Hybrid"," -- uses parts of the above two algorithms"),
+	  ("HybridStrategy"," -- uses parts of the above two algorithms"),
 	  ("GTZ", " -- uses the algorithm of Gianni-Trager-Zacharias.
 	           NOT IMPLEMENTED YET."),
           (///"Hom"///, " -- only used in embedded component selection for modules"),
@@ -455,17 +455,17 @@ document {
 	  I = ideal(x^2,x*y)
 	  primaryDecomposition(I, Strategy => ShimoyamaYokoyama)
      ///,
-     HEADER3 "Strategy => Hybrid",
+     HEADER3 "HybridStrategy => {associated primes strategy, localize strategy}",
      "Use a hybrid of the Eisenbud-Huneke-Vasconcelos and Shimoyama-Yokoyama strategies.  The field ",
      TT "Strategy", " is a list of two integers, indicating the strategy to use for finding associated primes and localizing, respectively. ",
      "WARNING: Setting the second paramter to 1 works only if the ideal is homogeneous and equidimensional.",
      EXAMPLE lines ///
      	  Q = QQ[x,y]
 	  I = intersect(ideal(x^2), ideal(y^2))
-	  primaryDecomposition(I, Strategy => new Hybrid from (1,1))
-	  primaryDecomposition(I, Strategy => new Hybrid from (1,2))
-	  primaryDecomposition(I, Strategy => new Hybrid from (2,1))
-	  primaryDecomposition(I, Strategy => new Hybrid from (2,2))
+	  primaryDecomposition(I, HybridStrategy => {1,1})
+	  primaryDecomposition(I, HybridStrategy => {1,2})
+	  primaryDecomposition(I, HybridStrategy => {2,1})
+	  primaryDecomposition(I, HybridStrategy => {2,2})
      ///,
      HEADER3 concatenate("Strategy => ", ///"Hom"///, ", Strategy => ", ///"Sat"///, ", Strategy => ", ///"Res"///),
      "These strategies are only valid for the case of primary decomposition of modules ",

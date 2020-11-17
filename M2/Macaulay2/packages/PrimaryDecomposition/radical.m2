@@ -31,8 +31,6 @@ flatt2 = (I, m) -> (
      scan(p, i -> monset#(monslist#i) = substitute(ideal(compress transpose (cs_{i})),R));
      monset)
 
-
-needsPackage "Elimination"
 getMinimalPoly = method()
 getMinimalPoly(Ideal,RingElement,RingElement) := (I,u,x) -> (
      ux := u*x;
@@ -77,6 +75,8 @@ radical00(Ideal,RingElement) := (I,u) -> (
      I
      )
 
+-- TODO: move to MinimalPrimes
+-- make it a strategy of radical
 rad = method()
 rad Ideal := (Iorig) -> (
      -- returns the radical of Iorig
@@ -136,6 +136,7 @@ rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
      )
      
 
+-- TODO: move to MinimalPrimes
 -- Determine whether g is in rad(I)
 radicalContainment = method(Options => {Strategy => "Rabinowitsch"})
 radicalContainment (RingElement, Ideal) := Boolean => opts -> (g,I) -> (

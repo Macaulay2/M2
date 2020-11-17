@@ -206,12 +206,13 @@ minprimesHelper = (I, opts) -> (
     if I == 1 then return {};
     J := first flattenRing I;
     if J == 0 then return {I};
+    S := ring presentation ring J;
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
     key := (minimalPrimes, Ideal);
 
-    codimLimit := min(opts.CodimensionLimit, numgens J);
+    codimLimit := min(opts.CodimensionLimit, dim S, numgens J);
     doLimit := L -> select(L, P -> codim(P, Generic => true) <= codimLimit);
     opts = opts ++ { CodimensionLimit => codimLimit };
 
@@ -231,13 +232,13 @@ minprimesHelper = (I, opts) -> (
     -- currently there are no options that could go in MinimalPrimesOptions, but this pattern is useful for saturate, etc.
     cacheKey := MinimalPrimesOptions{};
     container := try I.cache#cacheKey else I.cache#cacheKey = (
-	new MinimalPrimesComputation from { CodimensionLimit => 0, Result => null });
+	new MinimalPrimesComputation from { CodimensionLimit => -1, Result => null });
 
     -- the actual computation of minimal primes occurs here
     L := (cacheComputation(opts, container)) computation;
 
     if L =!= null then doLimit \\ doTrim \ L else if strategy === null
-    then error("no applicable method for ", toString key)
+    then error("no applicable strategy for ", toString key)
     else error("assumptions for minimalPrimes strategy ", toString strategy, " are not met"))
 
 --------------------------------------------------------------------

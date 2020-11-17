@@ -202,20 +202,11 @@ isSquareFree = method(TypicalValue => Boolean)		    -- could be isRadical?
 -- isSquareFree Thing := x -> false
 isSquareFree MonomialIdeal := (I) -> all(first entries generators I, m -> all(first exponents m, i -> i<2))
 
--- TODO: move to PrimaryDecomposition
-associatedPrimes = method(
-    TypicalValue => List,
-    Options => {
-	Strategy          => null,
-	CodimensionLimit  => infinity,
-	MinimalGenerators => true,
-	cache             => null
-	}
-    )
-
 --  STANDARD PAIR DECOMPOSITION  ---------------------------
 -- algorithm 3.2.5 in Saito-Sturmfels-Takayama
 standardPairs = method()
+-- Note: (standardPairs, MonomialIdeal) is defined in PrimaryDecomposition.m2,
+-- because it depends on associatedPrimes
 standardPairs(MonomialIdeal, List) := (I,D) -> (
      R := ring I;
      X := generators R;
@@ -240,13 +231,6 @@ standardPairs(MonomialIdeal, List) := (I,D) -> (
 		    S = join(S, apply(B, b -> {psi(b), L}));
 	       	    )));
      S)
-Delta := (I) -> (
-     X := generators ring I;
-     d := #X - pdim cokernel generators I;
-     select( apply(associatedPrimes I, J -> set X - set first entries generators J), Y -> #Y >= d ) / toList
-     )
-
-standardPairs MonomialIdeal := (I) -> standardPairs(I,Delta I)
 
 --  LARGEST MONOMIAL IDEAL CONTAINED IN A GIVEN IDEAL  -----
 monomialSubideal = method();				    -- needs a new name?
