@@ -57,6 +57,8 @@ export {
     "NoetherianDegreeLimit",
     "DependentSet",
     "KernelStrategy",
+    "BM",
+
     "Sampler",
     "TrustedPoint",
 
@@ -822,11 +824,11 @@ macaulayMatrixKernel := true >> opts -> (I, kP) -> (
     degLim := if not opts.?DegreeLimit then -1 else opts.DegreeLimit;
     rat := if not opts.?Rational then false else opts.Rational;
     kerStrat := if not opts.?KernelStrategy then "Default" else opts.KernelStrategy;
-    strat := if not opts.?Strategy then null else opts.Strategy;
+    useBM := if not opts.?BM then null else opts.BM;
 
     rat = rat or all(gens S, v -> isConstant sub(sub(v, kP), S));
     --error "dbg";
-    if not rat or strat === "DZ" then (
+    if not rat or useBM === false then (
         if debugLevel > 1 then <<"macaulayMatrixKernel: using DZ strategy"<<endl;
         L := (map(S^1,S^1,0), map(kP^1,kP^0,0));
         d := max(degLim, 1);
@@ -844,7 +846,7 @@ macaulayMatrixKernel := true >> opts -> (I, kP) -> (
         );
         L
     ) 
-    else if not rat and strat == "BM" then error"expected rational point when Strategy => \"BM\""
+    else if not rat and useBM === true then error"expected rational point when Strategy => \"BM\""
     else (
         if debugLevel > 1 then <<"macaulayMatrixKernel: using BM strategy"<<endl;
         pt := sub(sub(vars S, kP), S);
@@ -1001,8 +1003,6 @@ hybridNoetherianOperators (Ideal, Ideal, Matrix) := List => true >> opts -> (I,P
     PS := sub(P, S);
     IS := sub(I,S);
     kP := toField(S/PS);
-    -- TODO: this precision should be specifiable
-    --RCC := CC monoid R;
     RCC := (ring pt) monoid R;
     nopsAtPoint := numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC)));
     sort flatten for op in nopsAtPoint list (
@@ -1013,7 +1013,7 @@ hybridNoetherianOperators (Ideal, Ideal, Matrix) := List => true >> opts -> (I,P
             if debugLevel >= 1 then <<"hybridNoetherianOperators: trying degree "<<d<<" multiples of generators"<<endl;
             G := transpose (gens IS ** basis(0,d,S));
             M := sub(diff(dBasis, G), kP);
-            K = myKernel M;
+            K = myKernel(M, KernelStrategy => if opts.?KernelStrategy then opts.KernelStrategy else "Default");
             if numColumns K == 1 then break;
         );
         -- Clear denominators and return a DiffOp
@@ -1036,7 +1036,7 @@ R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 a = hybridNoetherianOperators(I, Sampler => i -> point{{0_CC,0,3}}) / normalize
 b = noetherianOperators(I, Strategy => "PunctualHilbert") / normalize
-c = hybridNoetherianOperators(I, radical I, point{{0_QQ,0,3}}) / normalize-- TODO assert this
+c = hybridNoetherianOperators(I, radical I, point{{0_QQ,0,3}}) / normalize
 assert(all(a,b, (a,b) -> a==b))
 assert(all(a,c, (a,b) -> a==b))
 ///
@@ -1051,6 +1051,7 @@ assert(all(a,c, (a,b) -> a==b))
 numericalNoetherianOperators = method(Options => true)
 -- option TrustedPoint is a point with the "correct" dx-support
 -- option Sampler is a function f(n, I) which computes a list of n distinct points on the variety of I
+-- other valid options: InterpolationDegreeLimit, InterpolationTolerance
 numericalNoetherianOperators(Ideal) := List => true >> opts -> (I) -> (
     tol := if not opts.?Tolerance then defaultT(CC) else opts.Tolerance;
     sampler := if opts.?Sampler then opts.Sampler else (
@@ -1063,9 +1064,7 @@ numericalNoetherianOperators(Ideal) := List => true >> opts -> (I) -> (
             else opts.DependentSet;
     indSet := gens S - set depSet;
     noethDegLim := if not opts.?NoetherianDegreeLimit then infinity else opts.NoetherianDegreeLimit;
-    -- other valid options: InterpolationDegreeLimit, InterpolationTolerance
-    -- TODO this precision should be changable
-    R := CC monoid S;
+    R := (ultimate(coefficientRing, ring matrix goodPoint)) monoid S;
     J := sub(I,R);
 
 
@@ -1091,19 +1090,6 @@ specializedNoetherianOperators(Ideal, Matrix) := List => true >> opts -> (I,pt) 
         if not opts.?DependentSet then error "expected option DependentSet";
         numNoethOpsAtPoint(I, pt, opts)
     )
-
-
-    -- else if precision R == infinity and precision S == infinity then numNoethOpsAtPoint(I, pt, opts)
-    -- else ancestor(InexactField, class coefficientRing S) then (
-    --     if not opts.?DependentSet then error "expected option DependentSet";
-    --     numNoethOpsAtPoint(I, pt, opts)
-    -- -- TODO this should depend on the ring of the point, not on the ideal
-    -- else if coefficientRing S === QQ then (
-    --     -- TODO this shouldn't be hard-coded
-    --     R := CC monoid S;
-    --     numNoethOpsAtPoint(sub(I,R), pt, opts, DependentSet => (opts.DependentSet / (x -> sub(x, R))))
-    -- )
-    --else error "expected an ideal in a polynomial ring over QQ, CC or RR"
 )
 specializedNoetherianOperators(Ideal, Point) := List => true >> opts -> (I,pt) -> specializedNoetherianOperators(I, matrix pt, opts)
 
@@ -1431,8 +1417,8 @@ TEST ///
 debug NoetherianOperators
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
-hilb = getNoetherianOperatorsHilb(I)
-maca = noetherianOperatorsViaMacaulayMatrix(I)
+hilb = getNoetherianOperatorsHilb(I) / normalize
+maca = noetherianOperatorsViaMacaulayMatrix(I) / normalize
 assert(all(hilb, maca, (i,j) -> i == j))
 -- TODO add asserts
 ///
@@ -2272,11 +2258,19 @@ Description
     --TODO: this example takes a bit too long
     Example
         R = QQ[x_1,x_2,x_3,x_4]
-        k=3
+        k=6
         J = ideal((x_1^2-x_2*x_3)^k,(x_1*x_2-x_3*x_4)^k,(x_2^2-x_1*x_4)^k)
         Q = saturate(J,ideal(x_1*x_2*x_3*x_4))
         isPrimary Q
-        noetherianOperators(Q, Strategy => "PunctualHilbert")
+        elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
+        elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", BM => true)
+        elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", BM => false)
+        elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Gaussian", BM => true);
+        elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Gaussian", BM => false);
+        elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Gaussian", BM => true);
+        elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Default", BM => false);
+        elapsedTime hybridNoetherianOperators(Q, radical Q, pt, Strategy => "Hybrid", KernelStrategy => "Gaussian");
+        elapsedTime hybridNoetherianOperators(Q, radical Q, pt, Strategy => "Hybrid", KernelStrategy => "Default");
 ///
 
 -- doc ///
