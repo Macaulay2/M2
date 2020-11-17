@@ -298,6 +298,23 @@ TEST /// -- Optimizing cases for associatedPrimes without computing res
   -- note: primaryDecomposition I is very slow
 ///
 
+TEST /// -- testing monomial ideal inputs
+  R = QQ[a..g]
+  I = ideal(a*b*c^3, a^3*d*f^2, a*b*c*d*e, b*c^4*d^3, e*f^5)
+  C = primaryDecomposition I
+  A = associatedPrimes I
+  scan(#C, i -> radical(monomialIdeal C_i) == monomialIdeal A_i)
+  -- radical of a monomial ideal should immediately call the monomial ideal cdoe too
+  radical C_1
+  I = ideal(a^2,a*b,b^2)
+  C = primaryDecomposition I
+  irreducibleDecomposition monomialIdeal I
+
+  I = intersect(ideal(a^2,a*b,b^2), ideal(b,c,d^10))
+  C = primaryDecomposition I
+  associatedPrimes I
+///
+
 TEST /// -- testing Shimoyama-Yokoyama
   -- Simple examples
   -- Example 1.

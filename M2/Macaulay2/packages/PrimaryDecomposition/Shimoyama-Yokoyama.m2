@@ -485,8 +485,7 @@ SYprimaryDecomposition = (I) -> (		    -- called by a later file
 	  PDdonode C
 	  );
      if C.H != I then error "algorithm missed components!";
-     -- TODO: do this elsewhere
---     I.cache#"AssociatedPrimes" =  apply(C.U, i -> trim(i#1));
+     storeAssociatedPrimesComputation(I, apply(C.U, i -> trim(i#1)), infinity);
      apply(C.U, i -> trim(i#0)))
 
 -- Local Variables:

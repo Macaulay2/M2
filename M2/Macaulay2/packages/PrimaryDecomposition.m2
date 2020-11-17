@@ -103,6 +103,11 @@ flattenRingMap Module := M -> (
 	fback = map(R, S, vars R); -- TODO: not generators(R, CoefficientRing => coefficientRing S)?
 	(M', fback)))
 
+-- TODO: make this unnecessary
+storeAssociatedPrimesComputation = (M, L, c) -> (
+    M.cache#(AssociatedPrimesOptions{}) = new AssociatedPrimesComputation from {
+	CodimensionLimit => c, Result => new MutableList from L});
+
 -- TODO: move exported methods out of the files below
 load "./PrimaryDecomposition/radical.m2"
 load "./PrimaryDecomposition/GTZ.m2"
@@ -114,7 +119,8 @@ load "./PrimaryDecomposition/Eisenbud-Huneke-Vasconcelos.m2"
 --------------------------------------------------------------------
 
 isPrimary = method()
-isPrimary(Ideal)          :=  Q     -> isPrimary(Q, radical Q)
+isPrimary Ideal           :=  Q     -> isPrimary(Q, radical Q)
+-- TODO: the documentation says primality of P isn't checked
 isPrimary(Ideal,  Ideal)  := (Q, P) -> ( if isPrime P then Q == top Q else false )
 isPrimary(Module, Module) := (M, Q) -> #associatedPrimes(M / Q) == 1
 
@@ -136,7 +142,7 @@ localize(Ideal, Ideal) := Ideal => opts -> (I, P) -> (localizefcn opts.Strategy)
 -- Primary Component
 --------------------------------------------------------------------
 
-primaryComponent = method( Options => { Strategy => 2, Increment =>1 })
+primaryComponent = method( Options => { Strategy => 2, Increment => 1 })
 primaryComponent(Ideal, Ideal) := Ideal => opts -> (I, P) -> (primarycomponent (localizefcn opts.Strategy)) (I, P, opts.Increment)
 
 --------------------------------------------------------------------

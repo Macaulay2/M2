@@ -202,10 +202,8 @@ getEmbeddedComponent (Module, Ideal, Function) := o -> (M, p, checkFunction) -> 
           if debugLevel > 0 then print("Trying bracket power " | toString(j) | " for candidate embedded component...");
           N := bracketPower(p, j)*M;
           Q := M/N;
-	  -- TODO: this shouldn't be done here and like this
-	  Q.cache#(AssociatedPrimesOptions{}) = new AssociatedPrimesComputation from {
-	      CodimensionLimit => codim p,
-	      Result => new MutableList from {p}};
+	  -- TODO: where is this cache used?
+	  storeAssociatedPrimesComputation(Q, {p}, codim p);
           strat := toString o.Strategy;
           C := if codim p == dim ring Q then (
                if debugLevel > 0 then print("Embedded prime is maximal!");

@@ -5,6 +5,8 @@
 --                  updated November 2020
 --
 -- TODO : 1. why are there shadowed symbols?
+--        2. any strategies to incorporate from Shimoyama-Yokoyama.m2
+--           or greedySat in GTZ.m2 or getSaturation in newGTZ.m2
 --        3. which algorithms for Ideals can be adapted to submodules?
 --        4. move radical here, perhaps intersect as well
 ---------------------------------------------------------------------------
