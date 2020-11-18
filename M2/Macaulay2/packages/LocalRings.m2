@@ -347,11 +347,8 @@ addHook((trim, Module), Strategy => Local, (opts, M) -> (
 --   Let's say in the unit u in the column H_j, then we replace F_i by -1/u times the column
 --   [h_(n+1) h_(n+2) ... h_(n+m)]^T, remove the column H_j from H, and move on to F_(i+1).
 --   If there aren't any units in the i-th column, we replace F_i by a 0 column and move on to F_(i+1)
-oldQuotient = lookup(quotient, Matrix, Matrix)
-quotient(Matrix,Matrix) := Matrix => opts -> (f, g) -> (
+addHook((quotient, Matrix, Matrix), Strategy => Local, (opts, f, g) -> (
     RP := ring f;
-    if ring g =!= RP then error "expected objects of the same ring";
-    if target f =!= target g then error "expected maps with the same target";
     if instance(RP, LocalRing) then (
         G := syz liftUp(f | g);
         mat := for i from 0 to numColumns f - 1 list (
@@ -366,38 +363,24 @@ quotient(Matrix,Matrix) := Matrix => opts -> (f, g) -> (
         m := if mat === {} then 0_RP else raw matrix{mat};
         map(source g, source f, m,
 	    Degree => degree matrix f - degree matrix g)  -- set the degree in the engine instead
-        )
-    else (oldQuotient opts)(f, g)
-    )
+        )))
 
 -- inducedMap
--- TODO: verification of induced maps over local rings when opts.Verify = true
-oldInducedMap = lookup(inducedMap,Module,Module,Matrix)
-inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
+-- FIXME: Verify must be set to false because % doesn't work over local rings
+addHook((inducedMap, Module, Module, Matrix), Strategy => Local, (opts, N', M', f) -> (
     RP := ring f;
-    if ring N' =!= RP or ring M' =!= RP then error "inducedMap: expected modules and map over the same ring";
     if instance(RP, LocalRing) then (
         N := target f;
         M := source f;
-        if isFreeModule N and isFreeModule M and (N =!= ambient N' and rank N === rank ambient N' or M =!= ambient M' and rank M === rank ambient M')
-        then f = map(N = ambient N', M = ambient M', f)
-        else (
-	    if ambient N' =!= ambient N then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
-	    if ambient M' =!= ambient M then error "inducedMap: expected new source and source of map provided to be subquotients of same free module";
-	    );
         g := generators N * cover f * (generators M' // mingens image generators M);
         f' := g // mingens image generators N';
         f' = map(N',M',f',Degree => if opts.Degree === null then degree f else opts.Degree);
-        if false and opts.Verify then ( -- FIXME this is set to false because % doesn't work over local rings
-            if relations M % relations M' != 0 then error "inducedMap: expected new source not to have fewer relations";
-            if relations N % relations N' != 0 then error "inducedMap: expected new target not to have fewer relations";
-            if generators M' % mingens M != 0 then error "inducedMap: expected new source not to have more generators";
-            if g % mingens N' != 0 then error "inducedMap: expected matrix to induce a map";
-            if not isWellDefined f' then error "inducedMap: expected matrix to induce a well-defined map";
-            );
-        f')
-    else (oldInducedMap opts)(N',M',f)
-    )
+	(f', g, mingens N, mingens M))))
+
+-- TODO
+addHook((remainder, Matrix, Matrix), Strategy => Local, (f, g) -> (
+    RP := ring f;
+    if instance(RP, LocalRing) then error "remainder over local rings is not implemented"))
 
 --======================================= Experimental =======================================--
 

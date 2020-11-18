@@ -307,14 +307,18 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
 Matrix // Matrix := Matrix => (f,g) -> quotient(f,g)
 Matrix \\ Matrix := (g,f) -> f // g
 quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
-     if not isFreeModule source f or not isFreeModule source g
-     or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
+     if not isFreeModule source f or not isFreeModule target f
+     or not isFreeModule source g or not isFreeModule target g then error "expected maps between free modules";
      dual quotient(dual f, dual g))
 quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
+     if target f != target g then error "quotient: expected maps with the same target";
+     c := runHooks((quotient, Matrix, Matrix), (opts, f, g));
+     if c =!= null then c else error "quotient: no method implemented for this type of input")
+
+addHook((quotient, Matrix, Matrix), Strategy => Default, (opts, f, g) -> (
      L := source f;	     -- result may not be well-defined if L is not free
      M := target f;
      N := source g;
-     if M != target g then error "expected maps with the same target";
      if instance(ring M, InexactField)
        and numRows g === numColumns g
        and isFreeModule source g and isFreeModule source f
@@ -337,7 +341,7 @@ quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
 	       else gb(g',               ChangeMatrix => true)));
      map(N, L, f' // G, 
 	  Degree => degree f' - degree g'  -- set the degree in the engine instead
-	  ))
+	  )))
 
 RingElement // Matrix      := (r,f) -> (r * id_(target f)) // f
 Matrix      \\ RingElement := (f,r) -> r // f
@@ -357,11 +361,12 @@ remainder'(Matrix,Matrix) := Matrix => (f,g) -> (
      dual remainder(dual f, dual g))
 remainder(Matrix,Matrix) := Matrix % Matrix := Matrix => (n,m) -> (
      R := ring n;
-     if R =!= ring m then error "expected matrices over the same ring";
      if target m =!= target n then error "expected matrices with the same target";
      if not isFreeModule source n or not isFreeModule source m then error "expected maps from free modules";
      if not isQuotientModule target m then error "expected maps to a quotient module";
-     n % gb image m)
+     c := runHooks((remainder, Matrix, Matrix), (n, m));
+     if c =!= null then c else error "remainder: no method implemented for this type of input")
+addHook((remainder, Matrix, Matrix), Strategy => Default, (n, m) -> n % gb image m)
 
 Matrix % Module := Matrix => (f,M) -> f % gb M
 
