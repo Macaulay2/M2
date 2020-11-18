@@ -30,6 +30,7 @@ newPackage(
     )
 
 export {
+    "radicalContainment", -- TODO: move to MinimalPrimes
     -- methods
     "isPrimary", "localize", "primaryComponent",
     "primaryDecomposition", "associatedPrimes",
@@ -40,11 +41,13 @@ export {
     "HybridStrategy", "Increment", "GTZ",
     -- defined in Eisenbud-Huneke-Vasconcelos.m2
     --  EHVprimaryDecomposition, HprimaryDecomposition
-    "kernelOfLocalization", "regSeqInIdeal"
+    "kernelOfLocalization", "regSeqInIdeal",
     -- defined in Shimoyama-Yokoyama.m2
     --  minSat, minSatPPD, quotMin
     --  primdecComputation, flattener
     --  sortByDegree, extract, findNonMember
+    -- synonyms:
+    "ass" => "associatedPrimes"
     }
 
 importFrom_Core { "printerr", "raw", "rawIndices", "rawGBContains", "rawRemoveScalarMultiples" }
@@ -97,11 +100,6 @@ flattenRingMap Module := M -> (
 	fback = map(R, S, vars R); -- TODO: not generators(R, CoefficientRing => coefficientRing S)?
 	(M', fback)))
 
--- TODO: make this unnecessary
-storeAssociatedPrimesComputation = (M, L, c) -> (
-    M.cache#(AssociatedPrimesOptions{}) = new AssociatedPrimesComputation from {
-	CodimensionLimit => c, Result => new MutableList from L});
-
 -- TODO: move exported methods out of the files below
 load "./PrimaryDecomposition/radical.m2"
 load "./PrimaryDecomposition/GTZ.m2"
@@ -151,6 +149,19 @@ AssociatedPrimesOptions.synonym = "associated primes options"
 AssociatedPrimesComputation = new Type of MutableHashTable
 AssociatedPrimesComputation.synonym = "associated primes computation"
 
+new AssociatedPrimesComputation from Ideal  := (C, I) -> new C from comodule I
+new AssociatedPrimesComputation from Module := (C, M) -> (
+    cacheKey := AssociatedPrimesOptions{};
+    try M.cache#cacheKey else M.cache#cacheKey = new AssociatedPrimesComputation from {
+	Result => new MutableList from {}, CodimensionLimit => -1 })
+
+-- TODO: make this unnecessary
+storeAssociatedPrimesComputation = (M, L, c) -> (
+    container := new AssociatedPrimesComputation from M;
+    container.Result = new MutableList from L;
+    container.CodimensionLimit = c;
+    container)
+
 isComputationDone = method(TypicalValue => Boolean, Options => true)
 isComputationDone AssociatedPrimesComputation := Boolean => options associatedPrimes >> opts -> container -> (
     -- this function determines whether we can use the cached result, or further computation is necessary
@@ -191,11 +202,7 @@ assassinsHelper = (A, key, opts) -> (
 
     -- this is the logic for caching partial associated primes computations. A.cache contains an option:
     --   AssociatedPrimesOptions{} => AssociatedPrimesComputation{ CodimensionLimit, Result }
-    cacheKey := AssociatedPrimesOptions{};
-    -- TODO: can this be handled better?
-    M := if instance(A, Ideal) then comodule A else A;
-    container := try M.cache#cacheKey else M.cache#cacheKey = (
-	new AssociatedPrimesComputation from { CodimensionLimit => -1, Result => new MutableList from {} });
+    container := new AssociatedPrimesComputation from A;
 
     -- the actual computation of associated primes occurs here
     -- TODO: is it a good idea for computation to return a MutableList?
@@ -325,6 +332,16 @@ PrimaryDecompositionOptions.synonym = "primary decomposition options"
 PrimaryDecompositionComputation = new Type of MutableHashTable
 PrimaryDecompositionComputation.synonym = "primary decomposition computation"
 
+new PrimaryDecompositionComputation from Ideal  := (C, I) -> new C from comodule I
+new PrimaryDecompositionComputation from Module := (C, M) -> (
+    cacheKey := PrimaryDecompositionOptions{};
+    container := try M.cache#cacheKey else M.cache#cacheKey = new PrimaryDecompositionComputation from {
+	Result => new MutableHashTable from {} };
+    -- if associated primes are cached, store a pointer in the container
+    cacheKeyAP := AssociatedPrimesOptions{};
+    if M.cache#?cacheKeyAP then container#cacheKeyAP = M.cache#cacheKeyAP;
+    container)
+
 isComputationDone PrimaryDecompositionComputation := Boolean => options primaryDecomposition >> opts -> container -> (
     -- this function determines whether we can use the cached result, or further computation is necessary
     cacheKeyAP := AssociatedPrimesOptions{}; -- may depend on opts
@@ -352,20 +369,12 @@ primarydecompHelper = (A, key, opts) -> (
 
     -- this is the logic for caching partial primary decomposition computations. A.cache contains an option:
     --   PrimaryDecompositionOptions{} => PrimaryDecompositionComputation{ CodimensionLimit, Result }
-    cacheKey := PrimaryDecompositionOptions{};
-    -- TODO: can this be handled better?
-    M := if instance(A, Ideal) then comodule A else A;
-    container := try M.cache#cacheKey else M.cache#cacheKey = (
-	new PrimaryDecompositionComputation from { Result => new MutableHashTable from {} });
-
-    -- if associated primes are cached, store a pointer in the container
-    cacheKeyAP  := AssociatedPrimesOptions{};
-    if M.cache#?cacheKeyAP then container#cacheKeyAP = M.cache#cacheKeyAP;
+    container := new PrimaryDecompositionComputation from A;
 
     -- the actual computation of primary decomposition occurs here
     L := (cacheComputation(opts, container)) computation;
     -- TODO: make the (primaryDecomposition, Ideal) code to also return a hash table
-    if instance(L, MutableHashTable) then L = apply(associatedPrimes M, P -> L#P);
+    if instance(L, MutableHashTable) then L = apply(associatedPrimes A, P -> L#P);
 
     if L =!= null then doTrim \ L else if strategy === null
     then error("no applicable strategy for ", toString key)

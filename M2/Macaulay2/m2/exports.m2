@@ -1208,7 +1208,6 @@ export {
 export {
 	-- synonyms:
         "ann" => "annihilator",
-        "ass" => "associatedPrimes",
         "coker" => "cokernel",
         "det" => "determinant",
         "gens" => "generators",
