@@ -186,7 +186,7 @@ o27 = -- code for method: dual(MonomialIdeal,List)
 i28 : code(primaryDecomposition, MonomialIdeal)
 
 o28 = -- code for method: primaryDecomposition(MonomialIdeal)
-      primaryDecomposition Ideal  := List => opts -> I -> primedecompHelper(I, (primaryDecomposition, Ideal), opts)
+      primaryDecomposition Ideal  := List => opts -> I -> primarydecompHelper(I, (primaryDecomposition, Ideal), opts)
 
 i29 : L = primaryDecomposition I;
 
