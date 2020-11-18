@@ -13,7 +13,7 @@ newPackage(
         {Name => "Yairon Cid-Ruiz",
         Email => "ycidruiz@gmail.com"},
         {Name => "Anton Leykin",
-        Email => "anton.leykin@gmail.com"},
+        Email => "anton.leykin@gmail.com"}
     },
     Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
     PackageExports => {"Truncations", "Bertini", "NAGtypes"},
@@ -2175,20 +2175,18 @@ Outputs
 --    Item
 Description
     Text
-        Compute a set of Noetherian operators
+        Compute a set of Noetherian operators for the primary ideal I.
     Example
         R = QQ[x,y,t];
         I = ideal(x^2, y^2-x*t);
         noetherianOperators I
     Text
-        The optional argument {\tt Strategy} can be used to choose different algorithms.
-        The following algorithms are supported:
-        {\tt "PunctualHilbert"} (default), {\tt "MacaulayMatrix"}, {\tt "Hybrid"}
+        The optional argument {\tt Strategy} can be used to choose different algorithms. Each strategy may accept additional optional arguments, see the documentation page for each strategy for details.
 
         @UL{
-            TO2 {"PunctualHilbert", "\"PunctualHilbert\""},
-            TO2 {"MacaulayMatrix", "\"MacaulayMatrix\""},
-            TO2 {"Hybrid", "\"Hybrid\""},
+            TO2 {"Strategy => \"PunctualHilbert\"", "\"PunctualHilbert\" (default)"},
+            TO2 {"Strategy => \"MacaulayMatrix\"", "\"MacaulayMatrix\""},
+            TO2 {"Strategy => \"Hybrid\"", "\"Hybrid\""},
         }@
 
 --    CannedExample
@@ -2205,6 +2203,54 @@ Caveat
 
 doc ///
 Key
+    (noetherianOperators, Ideal, Ideal)
+Headline
+    Noetherian operators of a primary component
+Usage
+    noetherianOperators (I, P)
+    noetherianOperators (I, Strategy => "MacaulayMatrix")
+Inputs
+    I:Ideal
+        assumed to be unmixed
+    P:Ideal
+        a minimal prime of $I$
+Outputs
+    :List
+        of @TO2{DiffOp, "differential operators"}@
+--Consequences
+--    Item
+Description
+    Text
+        Compute a set of Noetherian operators for $P$-primary component of $I$.
+    Example
+        R = QQ[x,y,t];
+        I1 = ideal(x^2, y^2-x*t);
+        I2 = ideal((x-t)^2);
+        I = intersect(I1, I2);
+        noetherianOperators(I, radical I1)
+        noetherianOperators(I, radical I2) == noetherianOperators(I2)
+    Text
+        The optional argument {\tt Strategy} can be used to choose different algorithms. Each strategy may accept additional optional arguments, see the documentation page for each strategy for details.
+
+        @UL{
+            TO2 {"Strategy => \"MacaulayMatrix\"", "\"MacaulayMatrix\" (default)"},
+            TO2 {"Strategy => \"Hybrid\"", "\"Hybrid\""},
+        }@
+
+--    CannedExample
+--    Code
+--    Pre
+--ExampleFiles
+--Contributors
+--References
+--Caveat
+SeeAlso
+    noetherianOperators
+    (noetherianOperators, Ideal)
+///
+
+doc ///
+Key
     noetherianOperators
 Headline
     Noetherian operators
@@ -2212,21 +2258,70 @@ Headline
 
 doc ///
 Key
-    "MacaulayMatrix"
+    "Strategy => \"MacaulayMatrix\""
 Headline
     strategy for computing Noetherian operators
+Description
+    Text
+        This strategy implements Algorithm 2 in @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@,
+        and supports computing Noetherian operators of either primary ideals (@TO (noetherianOperators, Ideal)@), or primary components
+        of unmixed ideals (@TO (noetherianOperators, Ideal, Ideal)@).
+
+        The strategy relies on computing the kernel of successively larger Macaulay matrices. 
+        The behavior can be controlled with optional arguments:
+
+        {\tt DegreeLimit => ...}: takes an integer $d$, and stops computation at degree $d$. Note that if $d$ is set too low, this may lead to an incomplete answer. If unset, stops computation when the dimension of the kernel stabilizes.
+
+    Example
+        R = QQ[x,y,z];
+        I = (ideal(x,y,z))^3;
+        noetherianOperators(I, Strategy => "MacaulayMatrix")
+        noetherianOperators(I, Strategy => "MacaulayMatrix", DegreeLimit => 1)
+
+    Text
+        {\tt KernelStrategy => ...}: takes a string {\tt "Default"} or {\tt "Gaussian"}. The {\tt "Default"} strategy uses the Macaulay2 builtin function @TO kernel@
+        to compute kernels (via Grobner bases). The strategy {\tt "Gaussian"} computes kernels directly via a Gaussian reduction, and may offer performance improvements compared to {\tt "Default"}.
+
+        {\tt BM => ...}: takes a boolean value. If {\tt true}, uses the Mourrain algorithm to compute the kernel of the MacaulayMatrix. If {\tt false}, uses the method outlined in Algorithm 1 in @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@.
+        If unset, will choose automatically. See: B. Mourrain. Isolated points, duality and residues. @EM "J. Pure Appl. Algebra"@, 117/118:469-493, 1997. 
+           Algorithms for algebra (Eindhoven, 1996).
 ///
 
 doc ///
 Key
-    "Hybrid"
+    "Strategy => \"Hybrid\""
 Headline
     strategy for computing Noetherian operators
+Description
+    Text
+        This strategy implements a numerical-symbolic hybrid algorithm for computing Noetherian operators. The output is symbolic.
+        {\tt "Hybrid"} supports computing Noetherian operators of either primary ideals (@TO (noetherianOperators, Ideal)@), or primary components
+        of unmixed ideals (@TO (noetherianOperators, Ideal, Ideal)@).
+
+        The {\tt "Hybrid"} strategy finds a point on the variety of the component of interest, and computes a set of
+        specialized Noetherian operators (see @TO specializedNoetherianOperators@). Using this numerical data is then used
+        as a starting point for the symbolic computation of Noetherian operators, which in many cases lead to significant performance
+        improvements over the fully symbolic methods.
+
+        The strategy accepts the following optional arguments:
+
+        {\tt Sampler => f}, where {\tt f} is a function taking a primary ideal and returning a single point on the variety.
+        The default sampler uses a combination of @TO bertiniSample@ and @TO bertiniPosDimSolve@.
+        The user can supply a point to used by using a dummy sampler, as in the example below:
+    Example
+        R = QQ[x,y,t];
+        I = ideal(x^2, y^2-x*t);
+        p = point{{0_CC,0, 3}};
+        noetherianOperators(I, Strategy => "Hybrid", Sampler => I -> p)
+
+    Text
+        {\tt Tolerance => t}, where {\tt t} is a positive real number. This specifies the numerical precision when computing the
+        specialized Noetherian operators. The default value is {\tt 1e-6}.
 ///
 
 doc ///
 Key
-    "PunctualHilbert"
+    "Strategy => \"PunctualHilbert\""
 Headline
     strategy for computing Noetherian operators
 Description
