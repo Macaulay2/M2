@@ -174,6 +174,18 @@ info PRE := x -> wrap(printWidth, "-", net concatenate noopts x)
 net  CODE :=
 info CODE := x -> stack lines concatenate noopts x
 
+LIop := op -> x -> (
+     -* we want to join each element of our li horizontally, unless
+        we encounter a nested list, in which case we want to stack
+        vertically.  so first identify these *-
+     toStack := sublists(sublists(toList noopts x,
+          i -> member(class i, {OL, UL})), j -> not instance(j, List));
+     stack apply(toStack, y -> wrapHorizontalJoin(op \ y))
+     )
+
+info LI := LIop info
+net  LI := LIop net
+
 ULop := op -> x -> (
      s := "  * ";
      printWidth = printWidth - #s;
