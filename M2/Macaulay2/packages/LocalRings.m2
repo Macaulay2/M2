@@ -296,24 +296,8 @@ hilbertSamuelFunction (Ideal, Module, ZZ, ZZ) := List => (q, M, n0, n1) -> (
 
 --===================================== addHooks Section =====================================--
 
--- syz
--- this method doesn't have hooks so we redefine it to allow runHooks
-oldSyz = lookup(syz, Matrix)
-syz Matrix := Matrix => opts -> m -> (
-    c := runHooks(Matrix, symbol syz, (opts,m));
-    if c =!= null then return c;
-    error "syz: no method implemented for this type of matrix"
-    )
-
-addHook(Matrix, symbol syz, (opts,m) -> break (oldSyz opts)(m))
-
-addHook(Matrix, symbol syz, (opts,m) -> (
-        if instance(ring m, LocalRing) then break localSyzHook(opts,m)
-        ))
-
 -- res, resolution
--- this method already has hooks installed, so we can simply add a new one
-addHook(Module, symbol resolution, (opts,M) -> (
+addHook((resolution, Module), Strategy => Local, (opts, M) -> (
         RP := ring M;
         if instance(RP, LocalRing) then (
             M' := liftUp M;
@@ -325,54 +309,25 @@ addHook(Module, symbol resolution, (opts,M) -> (
             break CP)
         ))
 
+-- syz
+addHook((syz, Matrix), Strategy => Local, (opts, m) ->
+    if instance(ring m, LocalRing) then break localSyzHook(opts, m))
+
 -- mingens
--- this method doesn't have hooks so we redefine it to allow runHooks
-oldMingens = lookup(mingens, Module)
-mingens Module := Matrix => opts -> (cacheValue symbol mingens) (M -> (
-        c := runHooks(Module, symbol mingens, (opts, M));
-        if c =!= null then return c;
-        error "mingens: no method implemented for this type of module"
-        ))
-
-addHook(Module, symbol mingens, (opts,M) -> break (oldMingens opts)(M))
-
-addHook(Module, symbol mingens, (opts,M) -> (
-        if instance(ring M, LocalRing) then break localMingensHook(opts,M)
-        ))
+addHook((mingens, Module), Strategy => Local, (opts, M) ->
+    if instance(ring M, LocalRing) then break localMingensHook(opts, M))
 
 -- minimalPresentation
--- this method already has hooks installed, so we can simply add a new one
-addHook(Module, symbol minimalPresentation, (opts,M) -> (
-        if instance(ring M, LocalRing) then break localMinimalPresentationHook(opts,M)
-        ))
+addHook((minimalPresentation, Module), Strategy => Local, (opts, M) ->
+    if instance(ring M, LocalRing) then break localMinimalPresentationHook(opts,M))
 
 -- length
 -- this method doesn't have hooks so we redefine it to allow runHooks
-oldLength = lookup(length, Module)
-length Module := ZZ => (cacheValue symbol trim) (M -> (
-    c := runHooks(Module, symbol length, M);
-    if c =!= null then return c;
-    error "length: no method implemented for this type of module"
-    ))
-
-addHook(Module, symbol length, M -> break oldLength M)
-
-addHook(Module, symbol length, M -> (
-        if instance(ring M, LocalRing) then break (localLengthHook M)
-        ))
+addHook((length, Module), Strategy => Local, M ->
+    if instance(ring M, LocalRing) then break localLengthHook M)
 
 -- trim
--- this method doesn't have hooks so we redefine it to allow runHooks
-oldTrim = lookup(trim, Module)
-trim Module := Module => opts -> (cacheValue symbol trim) (M -> (
-    c := runHooks(Module, symbol trim, (opts,M));
-    if c =!= null then return c;
-    error "trim: no method implemented for this type of module"
-    ))
-
-addHook(Module, symbol trim, (opts,M) -> break (oldTrim opts)(M))
-
-addHook(Module, symbol trim, (opts,M) -> (
+addHook((trim, Module), Strategy => Local, (opts, M) -> (
         if instance(ring M, LocalRing) then (
             if isFreeModule M then break M;
             N := subquotient(mingens M, if M.?relations then mingens image relations M);

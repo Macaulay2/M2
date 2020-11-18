@@ -130,8 +130,14 @@ complement Matrix := Matrix => (f) -> (
      else if instance(R,QuotientRing) then map(target f,,R ** complement lift(f,ambient R))
      else error "complement: expected matrix over affine ring or finitely generated ZZ-algebra")
 
+-- the method is declared in gb.m2
+mingens Ideal  := Matrix => opts -> I -> mingens(module I, opts)
 mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
-	  if not member(opts.Strategy, {Complement, null}) then error "mingens: unrecognized Strategy option";
+        c := runHooks((mingens, Module), (opts, M));
+        if c =!= null then c else error "mingens: no method implemented for this type of module"))
+
+addHook((mingens, Module), Strategy => Complement,
+    (opts, M) -> (
  	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
 	  zr := f -> if f === null or f == 0 then null else f;
 	  F := ambient M;
@@ -153,13 +159,21 @@ mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
 		    else mingens mingb (id_F % mingb(M.relations)))
 	       else id_F)))
 
+trim = method (Options => { Strategy => null -* TODO: add DegreeLimit => {} *-})
 trim Ring := Ring => opts -> (R) -> R
 trim QuotientRing := opts -> (R) -> (
      f := presentation R;
      A := ring f;
      A/(trim(ideal f,opts)))
 
+-- TODO: why is the caching key an Option?
+trim Ideal  := Ideal  => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
 trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
+	c := runHooks((trim, Module), (opts, M));
+	if c =!= null then c else error "trim: no method implemented for this type of module"))
+
+-- FIXME: This is kind of a hack. The strategies should be separated in trimHelper
+trimHelper = ((opts, M) -> (
 	  -- we preserve the ambient free module of which M is subquotient and try to minimize the generators and relations
 	  --   without computing an entire gb
 	  -- does using "complement" as in "mingens Module" above offer a benefit?
@@ -177,7 +191,7 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 			 gns = if not epi raw gns' then mingens gns';
 			 if gns === M.generators and rlns === M.relations then M
 			 else subquotient(F, gns, zr rlns))
-		    else if opts.Strategy === null then (
+		    else if opts.Strategy === Inhomogeneous then (
 	  	    	 tot := mingb(M.generators|M.relations);
 		    	 rel := mingb(M.relations);
 			 if tot === M.generators and rel === M.relations 
@@ -207,7 +221,7 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 			      -- 		     );
 			      -- 		));
 			      M'))
-		    else if opts.Strategy === null then (
+		    else if opts.Strategy === Inhomogeneous then (
 	  	    	 tot = mingb M.generators;
 		    	 subquotient(F, if not epi raw tot then mingens tot, ))
 		    else error "trim: unrecognized Strategy option"));
@@ -220,13 +234,21 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 	  N.cache.trim = N;
 	  N))
 
+addHook((trim, Module), Strategy => Inhomogeneous, (opts, M) -> trimHelper(opts ++ {Strategy => Inhomogeneous}, M))
+addHook((trim, Module), Strategy => Complement,    (opts, M) -> trimHelper(opts ++ {Strategy => Complement},    M))
+
 syz Matrix := Matrix => opts -> (f) -> (
+    c := runHooks((syz, Matrix), (opts, f));
+    if c =!= null then return c;
+    error "syz: no strategy implemented for this type of matrix")
+
+addHook((syz, Matrix), Strategy => Default, (opts, f) -> (
      if not isFreeModule target f or not isFreeModule source f
      then error "expected map between free modules";
      if ring f === ZZ or not isHomogeneous f
      then syz gb (f, opts, Syzygies=>true)
      else mingens image syz gb (f, opts, Syzygies=>true)
-     )
+     ))
 
 modulo = method(
      Options => {

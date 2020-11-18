@@ -319,15 +319,6 @@ cohomology = method( Options => {
 	  } )
 homology = method( Options => { } )
 
-trim    = method ( Options => {
-	  Strategy => Complement				    -- or null
-	  -- DegreeLimit => {}
-	  } )
-mingens = method ( Options => { 
-	  Strategy => Complement				    -- or null
-	  -- DegreeLimit => {}
-	  } )
-
 mathML = method(Dispatch => Thing, TypicalValue => String)
 
 width File := fileWidth
@@ -584,11 +575,18 @@ runHooks(Sequence,         Thing) := true >> opts -> (key,      args) -> (
 	if debugLevel > 1 then printerr("runHooks: no hooks installed for ", toString key); return );
     pushInfoLevel 1;
     alg := if opts.?Strategy then opts.Strategy;
+    type := class alg;
+    -- if Strategy is not given, run through all available hooks
     result := if alg === null then scan(reverse store.HookPriority, alg -> (
-	    result = runHook(store.HookAlgorithms#alg, key, alg, args, opts);
+	    result = runHook(store.HookAlgorithms#alg, key, alg, args, opts ++ { Strategy => alg });
 	    if not instance(result, Nothing) then break result)) else
-    if store.HookAlgorithms#?alg then runHook(store.HookAlgorithms#alg, key, alg, args, opts)
-    else error("unrecognized Strategy => '", toString alg, "' for ", toString key, "; expected: ", new List from store.HookPriority);
+    -- if Strategy is given, and it is among the known strategies, run only that hook
+    if store.HookAlgorithms#?alg  then runHook(store.HookAlgorithms#alg,  key, alg,  args, opts) else
+    -- otherwise, if the class of alg is a known strategy, run only that hook
+    if store.HookAlgorithms#?type then runHook(store.HookAlgorithms#type, key, type, args, opts) else
+    -- otherwise, give an error with the list of possible strategies
+    error("unrecognized Strategy => '", toString alg, "' for ", toString key, newline,
+	"  available strategies are: ", demark_", " \\ toExternalString \ new List from store.HookPriority);
     popInfoLevel(1, result))
 
 -- and keys

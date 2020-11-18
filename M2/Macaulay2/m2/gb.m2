@@ -196,6 +196,9 @@ leadTerm         GroebnerBasis  := Matrix =>      G -> map(ring G, rawGBGetLeadT
 getChangeMatrix  GroebnerBasis  := Matrix =>      G -> map(ring G, rawGBChangeOfBasis G.RawComputation)
 generators       GroebnerBasis  := Matrix => o -> G -> map(target unbag G.matrix, , rawGBGetMatrix G.RawComputation)
 -- rawGBMinimalGenerators doesn't sort its columns, so we do that here
+
+-- more methods are installed in matrix2.m2
+mingens = method(Options => {Strategy => null})  -- Complement or Inhomogeneous -- TODO: add DegreeLimit => {}
 mingens          GroebnerBasis  := Matrix => o -> G -> map(target unbag G.matrix, , rawsort rawGBMinimalGenerators G.RawComputation)
 
 RingElement   // GroebnerBasis  := Matrix =>      (r, G) -> quotient(r * id_(target G), G)

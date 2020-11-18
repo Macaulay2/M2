@@ -111,6 +111,7 @@ export {
 	"Date",
 	"DebuggingMode",
 	"Decompose",
+	"Default",
 	"Degree",
 	"DegreeLift",
 	"DegreeLimit",
