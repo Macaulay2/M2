@@ -182,6 +182,7 @@ html Boolean :=
 html Function :=
 html Type := html @@ toString
 -- except not these descendants
+html Monoid :=
 html RingFamily :=
 html Ring := lookup(html,Thing)
 
