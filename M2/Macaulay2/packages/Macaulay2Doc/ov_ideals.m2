@@ -357,7 +357,7 @@ document {
  
 document {
      Key => "associated primes of an ideal",
-       "The function ", TO "associatedPrimes", " returns a list of the 
+       "The function ", TO "PrimaryDecomposition::associatedPrimes", " returns a list of the
        associated prime ideals for a given ideal ", "I", ".  The 
        associated prime ideals correspond to the irreducible 
        components of the variety associated to ", TT "I", ".  They are 
@@ -401,7 +401,7 @@ document {
 	    },
  "To obtain the associated prime ideals corresponding to the
        primary components returned by ", TT "primaryDecomposition", " use 
-       the function ", TO "associatedPrimes", ".  The first entry 
+       the function ", TO "PrimaryDecomposition::associatedPrimes", ".  The first entry
        in the list given by ", TT "associatedPrimes", " is the radical of the first 
        entry in the list given by ", TT "primary decomposition", "."
        ,

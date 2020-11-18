@@ -205,8 +205,8 @@ isSquareFree MonomialIdeal := (I) -> all(first entries generators I, m -> all(fi
 --  STANDARD PAIR DECOMPOSITION  ---------------------------
 -- algorithm 3.2.5 in Saito-Sturmfels-Takayama
 standardPairs = method()
--- Note: (standardPairs, MonomialIdeal) is defined in PrimaryDecomposition.m2,
--- because it depends on associatedPrimes
+-- Note: (standardPairs, MonomialIdeal) is redefined in PrimaryDecomposition.m2, because it depends on associatedPrimes
+standardPairs MonomialIdeal        :=  I    -> error "standardPairs(MonomialIdeal) will be redefined in the PrimaryDecomposition package"
 standardPairs(MonomialIdeal, List) := (I,D) -> (
      R := ring I;
      X := generators R;

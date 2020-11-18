@@ -70,12 +70,11 @@ document {
      UL {
 	  TO "MinimalPrimes::minimalPrimes",
 	  TO radical,
-	  TO associatedPrimes,
+	  TO "PrimaryDecomposition::associatedPrimes",
 	  TO "PrimaryDecomposition::primaryDecomposition",
 	  TO topComponents,
 	  TO "Colon :: saturate(Ideal,Ideal)",
 	  TO "Colon :: Ideal : Ideal",
---	  (symbol:, Ideal, Ideal), -- TODO: get this to work across packages
 	  TO intersect
 	  },
      "Ideals from geometry",

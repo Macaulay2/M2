@@ -182,6 +182,7 @@ Node
    (associatedPrimes, Ring)
    (associatedPrimes, Ideal)
    (associatedPrimes, Module)
+   [associatedPrimes, Strategy]
   Headline
     find associated primes
   Usage
@@ -243,6 +244,27 @@ Node
       TT "associatedPrimes M", " is called, but will not do any further computation on subsequent
       runs, only returning the previously found primes. To force computation of all associated
       primes after some have been already found, use ", TT "CodimensionLimit => infinity", ".
+
+      The @TT "Strategy"@ option value is currently not considered while computing associated primes.
+      There are three methods for computing associated primes in Macaulay2: If the ideal is a monomial
+      ideal, use code that Greg Smith and Serkan Hosten wrote. If a primary decomposition has already
+      been found, use the stashed associated primes found. If neither of these is the case, then use Ext
+      modules to find the associated primes (this is @TT "Strategy => 1"@).
+
+      In order to use the monomial ideal algorithm, it is necessary to make @TT "I"@ into a monomial ideal.
+    Example
+      S = QQ[a,b,c,d,e];
+      I1 = ideal(a,b,c);
+      I2 = ideal(a,b,d);
+      I3 = ideal(a,e);
+      P = I1*I2*I3
+      L1 = associatedPrimes P
+      L2 = apply(associatedPrimes monomialIdeal P, J -> ideal J)
+      M1 = set apply(L1, I -> sort flatten entries gens I)
+      M2 = set apply(L2, I -> sort flatten entries gens I)
+      assert(M1 === M2)
+    Text
+      The method using Ext modules comes from Eisenbud-Huneke-Vasconcelos, Invent. Math 110 (1992) 207-235.
 
       Original author (for ideals): @HREF {"http://faculty.mercer.edu/yackel_ca/", "C. Yackel"}@.
       Updated for modules by J. Chen.

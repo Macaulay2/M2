@@ -42,6 +42,7 @@ newPackage select((
             "DotBinary" => "dot",
             "JpgViewer" => "display"
             },
+	PackageImports => { "PrimaryDecomposition" },
         PackageExports => {
             "SimplicialComplexes"
             },
