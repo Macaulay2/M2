@@ -1,6 +1,5 @@
 undocumented {
     -- documented in MinimalPrimes
-    minimalPrimes,
     decompose,
     -- documented in Colon
     annihilator,

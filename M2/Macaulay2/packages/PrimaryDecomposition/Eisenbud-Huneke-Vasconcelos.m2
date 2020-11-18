@@ -230,23 +230,6 @@ kernelOfLocalization (Module, Ideal) := Module => (M, P) -> (
      if f == 1 then 0*M else saturate(0*M, f)
 )
 
-topComponents (Module, ZZ) := Module => (M, e) -> (
-     S := ring M;
-     N := 0*M;
-     f := pdim M;  -- calls minimalPresentation, will compute a resolution if needed...
-     while f > e do (
-          E := Ext^f(M,S);
-          if codim E == f then (
-               if debugLevel > 0 then printerr("Getting annihilator of Ext...");
-               I := annihilator E;
-               if debugLevel > 0 then printerr("Removing components of codim " | toString(f));
-               N = N : I;
-          );
-          f = f-1;
-     );
-     N
-)
-
 equidimHull = method() -- equidimensional hull of 0 in a module M
 equidimHull (Module, ZZ) := Module => (M, c) -> (
      R := ring M;

@@ -421,7 +421,7 @@ export {
 	"Vector",
 	"VectorExpression",
 	"Verbose",
-    "Verbosity",
+	"Verbosity",
 	"Verify",
 	"Version",
 	"VerticalList",
@@ -871,7 +871,6 @@ export {
 	"minimalPresentation",
 	"minimalPresentationMap",
 	"minimalPresentationMapInv",
-	"minimalPrimes",
 	"minimizeFilename",
 	"minors",
 	"minus",
@@ -985,7 +984,6 @@ export {
 	"quotient'",
 	"quotientRemainder",
 	"quotientRemainder'",
-	"radical",
 	"random",
 	"randomKRationalPoint",
 	"randomMutableMatrix",
@@ -997,7 +995,7 @@ export {
 	"realPart",
 	"realpath",
 	"recursionDepth",
-    "reducedRowEchelonForm",
+	"reducedRowEchelonForm",
 	"reduceHilbert",
 	"regex",
 	"regexQuote",
@@ -1011,7 +1009,6 @@ export {
 	"removeDirectory",
 	"removeFile",
 	"removeHook",
-	"removeLowestDimension",
 	"reorganize",
 	"replace",
 	"reshape",
@@ -1156,7 +1153,6 @@ export {
 	"toString",
 	"toUpper",
 	"topCoefficients",
-	"topComponents",
 	"trace",
 	"transpose",
 	"trim",
@@ -1216,8 +1212,7 @@ export {
         "numcols" => "numColumns",
         "numrows" => "numRows",
         "res" => "resolution",
-        "sub" => "substitute",
-        "top" => "topComponents"
+        "sub" => "substitute"
 }
 
 exportMutable {

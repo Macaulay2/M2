@@ -19,10 +19,10 @@ document {
 	  "components of ideals",
 	  TO "intersection of ideals",
 	  TO "Colon :: ideal quotients and saturation",
-	  TO "radical of an ideal",
+	  TO "MinimalPrimes :: radical of an ideal",
 	  TO "MinimalPrimes :: minimal primes of an ideal",
-	  TO "associated primes of an ideal",
-	  TO "primary decomposition",
+	  TO "PrimaryDecomposition :: associated primes",
+	  TO "PrimaryDecomposition :: primary decomposition",
 	  -- TO "Gröbner bases", -- already referred to in the Mathematical Overview
 	  },
      PARA{},
@@ -240,7 +240,8 @@ document {
 	  (symbol==,Ideal,ZZ),
 	  symbol!=,
 	  (symbol%,RingElement,Ideal),
-	  (isSubset,Ideal,Ideal)
+	  (isSubset,Ideal,Ideal),
+	  "MinimalPrimes :: radicalContainment"
 	  }
      }     
 
@@ -330,112 +331,6 @@ document {
      TO "selectInSubring", " along with the elimination ordering, see ", TO "Eliminate", "."
      }
 
-document {
-     Key => "radical of an ideal",
-      "There are two main ways to find the radical of an ideal.  The first 
-      is to use the function ", TO "radical", " and the second is to find 
-      the intersection of the minimal prime ideals.  On some large examples 
-      the second method is faster.",
-       
-     SUBSECTION "using radical",
-       EXAMPLE {
-	    "S = ZZ/101[x,y,z]",
-	    "I = ideal(x^3-y^2,y^2*z^2)",
-	    "radical I"
-	    },
-
-     SUBSECTION "using minimal prime ideals",
-       "An alternate way to find the radical of an 
-       ideal ", TT "I", " is to take the intersection of its 
-       minimal prime ideals.  To find 
-       the ", TO "MinimalPrimes :: minimal primes of an ideal", TT "I", " use the
-       function ", TO "MinimalPrimes :: minimalPrimes", ".  Then use ", TO "intersect", ".",
-       EXAMPLE {
-	    "intersect minimalPrimes I"
-	    }
-     }
- 
-document {
-     Key => "associated primes of an ideal",
-       "The function ", TO "PrimaryDecomposition::associatedPrimes", " returns a list of the
-       associated prime ideals for a given ideal ", "I", ".  The 
-       associated prime ideals correspond to the irreducible 
-       components of the variety associated to ", TT "I", ".  They are 
-       useful in many applications in commutative algebra, algebraic 
-       geometry and combinatorics.",  
-       -- For a tutorial about associated prime ideals and 
-       -- primary decomposition, see ", TO "commutative algebra", ".",
-       EXAMPLE {
-	    "R = ZZ/101[a..d];",
-	    "I = ideal(a*b-c*d, (a*c-b*d)^2);",
-	    "associatedPrimes I"
-	    },
-     "See ", TO "primary decomposition", " for more information 
-     about finding primary decompositions.  To find just the 
-     minimal prime ideals see ", TO "MinimalPrimes :: minimal primes of an ideal", "."
-     }
-
-document {
-     Key => "primary decomposition",
-     
-     SUBSECTION "introduction",
-       "It is now possible to find the primary decomposition 
-       of an ideal in Macaulay2.  The 
-       function ", TO "PrimaryDecomposition::primaryDecomposition", " applied to an
-       ideal ", TT "I", " returns a list of ideals.  These ideals 
-       have two key features, first, their intersection is equal to 
-       the ideal ", TT "I", " and second the ideals are primary.  Therefore 
-       these ideals form
-       a primary decomposition of the ideal.  Since the ideals are primary 
-       their corresponding varieties are irreducible.  
-       The decomposition returned is irredundant, which means that 
-       the radicals of the ideals returned are distinct prime ideals 
-       which are the associated prime ideals 
-       for ", TT "I", " (see ", TO "associated primes of an ideal", ")."
-       ,
-     SUBSECTION "example",
-       EXAMPLE {
-	    "R = ZZ/101[a..d];",
-	    "I = ideal(a*b-c*d, (a*c-b*d)^2);",
-	    "primaryDecomposition I"
-	    },
- "To obtain the associated prime ideals corresponding to the
-       primary components returned by ", TT "primaryDecomposition", " use 
-       the function ", TO "PrimaryDecomposition::associatedPrimes", ".  The first entry
-       in the list given by ", TT "associatedPrimes", " is the radical of the first 
-       entry in the list given by ", TT "primary decomposition", "."
-       ,
-     SUBSECTION "strategies",
-       "The algorithms available for computing primary decompositions are 
-       Shimoyama-Yokoyama, ", TO "PrimaryDecomposition::ShimoyamaYokoyama", ",
-       Eisenbud-Huneke-Vasconcelos, ", TO "PrimaryDecomposition::EisenbudHunekeVasconcelos", ", a
-       hybrid of these two algorithms (ShimoyamaYokoyama and EisenbudHunekeVasconcelos), ", TT "Hybrid", ", 
-       and Gianni-Trager-Zacharias, ", TT "GTZ", ".  The 
-       default algorithm in Macaulay2 is Shimoyama-Yokoyama.  Two 
-       other arguments for the strategy option are available.  These 
-       arguments are ", TT "Monomial", " which computes the unique 
-       irreducible decomposition of a monomial ideal 
-       and ", TT "Binomial", " which computes a cellular decomposition 
-       of a binomial ideal.  For more information on the strategy 
-       options see ", TO "PrimaryDecomposition::primaryDecomposition(..., Strategy => ...)", ".",
-       EXAMPLE {
-	    "primaryDecomposition(I, Strategy => EisenbudHunekeVasconcelos)",
-	    },
-       ,
---     	  "An example of a monomial ideal using both monomial and binomial.",
---     	  EXAMPLE {	  "I = ideal(a^2*b,a*c^2,b*d,c*d^2);",
---	       "primaryDecomposition(I, Strategy => Monomial)",
---	       "primaryDecomposition(I, Strategy => Binomial)"
---	       },
-     SUBSECTION "warning",
-       "Warning (15 May 2001):  This function is under construction.  For 
-       example, the 
-       strategies, ", TT "Monomial", ", ", TT "GTZ", " and ", TT "Hybrid", " are 
-       not written, or do not function as stated.  Further, both 
-       the ", TT "Monomial", " and ", TT "Binomial", " strategies may 
-       be moved to separate functions.  "
-     }
-
 end
 
 This node is old -- is there anything we want to save from it?
@@ -508,7 +403,7 @@ document {
       	  "radical J",
 	  },
      "See also: ", TO "intersect", ", ", TO (symbol :, Ideal, Ideal), ",
-     ", TO "saturate", ", and ", TO "radical", ".",
+     ", TO "saturate", ", and ", TO "MinimalPrimes::radical", ".",
      PARA{},
      "We may ask whether one ideal is contained in another.",
      EXAMPLE {

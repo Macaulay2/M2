@@ -1,9 +1,5 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
--- TODO: move these two to MinimalPrimes
-minimalPrimes = method(Options => true)
-decompose = method(Options => true)
-
 monic := t -> (
      c := leadCoefficient t;
      c' := 1 // c;

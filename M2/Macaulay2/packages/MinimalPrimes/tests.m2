@@ -1770,6 +1770,39 @@ TEST /// -- test of makeFiberRings
   factor H
 ///
 
+TEST /// -- radical test
+  R = ZZ/32003[a..f]
+  F = map(R,R,symmetricPower(2,matrix{{a,b,c}}))
+  I = ker F
+  J = I^2
+  G = I_0
+  radicalContainment(G,J)
+  radicalContainment(G-a^2,J)
+///
+
+TEST /// -- radicalContainment test: sharp bound example
+  d = (4,5,6,7)
+  n = #d
+  k = ZZ/101
+  R = k[x_0..x_n]
+  I = ideal homogenize(matrix{{x_1^(d#0)} | apply(toList(1..n-2), i -> x_i - x_(i+1)^(d#i)) | {x_(n-1) - x_0^(d#-1)}}, x_n)
+  D = product(I_*/degree/sum)
+  assert(x_0^(D-1) % I != 0 and x_0^D % I == 0)
+  elapsedTime assert(radicalContainment(x_0, I, Strategy => "Kollar"))
+  elapsedTime assert(radicalContainment(x_0, I))
+  f = random(1,R)
+  elapsedTime assert(not radicalContainment(f, I, Strategy => "Kollar")) -- ~3s
+  elapsedTime assert(not radicalContainment(f, I)) -- ~1s
+
+  A = random(R^(n+1), R^(n+1))
+  J = sub(I, vars R * A);
+  f = ((vars R)*A)_{0} _(0,0)
+  elapsedTime assert(radicalContainment(f, J, Strategy => "Kollar")) -- ~15s
+  elapsedTime assert(radicalContainment(f, J)) -- ~75 s
+  elapsedTime assert(not radicalContainment(x_0, J, Strategy => "Kollar")) -- ~7s
+  elapsedTime assert(not radicalContainment(x_0, J)) -- ~22s
+///
+
 end--
 
 -- UHOH problem with finite fields

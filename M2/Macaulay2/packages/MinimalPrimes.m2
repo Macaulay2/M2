@@ -5,6 +5,7 @@
 --                  renamed  Oct  7, 2014 to MinimalPrimes.m2
 --                  updated July 26, 2019 at the IMA M2/Sage workshop
 --                  updated  Nov 12, 2020 to use hooks
+--                  updated  Nov 18, 2020 moved radical and radicalContainment here
 --
 -- TODO : 1. move documentation to this package and complete
 --        2. move tests to this package
@@ -17,7 +18,7 @@ newPackage(
     "MinimalPrimes",
     Version => "0.10",
     Date => "November 12, 2020",
-    Headline => "minimal primes of an ideal",
+    Headline => "minimal primes and radical routines for ideals",
     Authors => {
 	{Name => "Frank Moore",    Email => "moorewf@wfu.edu",       HomePage => "https://users.wfu.edu/moorewf"},
 	{Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "https://www.math.cornell.edu/~mike"},
@@ -32,7 +33,7 @@ newPackage(
 
 -- TODO: The following functions are used in tests.m2
 -- They should be removed from the export list upon release
---  radicalContainment, factors, findNonMemberIndex,
+--  factors, findNonMemberIndex,
 
 -- MES notes 26 July 2019, flight back from IMA 2019 M2/Sage workshop
 -- Overall structure of the algorithm.
@@ -64,11 +65,11 @@ newPackage(
 -- .  Document minprimes, something about the strategies
 -- .  Export only the symbols we want
 
-exportFrom_Core { "decompose", "minimalPrimes" }
+exportFrom_Core { "decompose" }
 
-export { "minprimes" => "minimalPrimes" }
+export { "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment" }
 
-importFrom_Core { "printerr", "raw", "rawCharSeries", "rawGBContains" }
+importFrom_Core { "printerr", "raw", "rawCharSeries", "rawGBContains", "rawRadical", "newMonomialIdeal" }
 
 -*------------------------------------------------------------------
 -- Can we use these as keys to a ring's HashTable without exporting them?
@@ -101,14 +102,21 @@ protect symbol Squarefree  -- MES todo: this is never being set but is being tes
 protect symbol toAmbientField
 protect symbol fromAmbientField
 
+algorithms = new MutableHashTable from {}
+
 --------------------------------------------------------------------
 -- Support routines
 --------------------------------------------------------------------
+
+-- TODO: this declaration should be moved to PrimaryDecomposition,
+-- but a radical routine uses it. Methods are installed there.
+removeLowestDimension = method()
 
 load "./MinimalPrimes/AnnotatedIdeal.m2"
 load "./MinimalPrimes/PDState.m2"
 load "./MinimalPrimes/splitIdeals.m2"
 load "./MinimalPrimes/factorTower.m2"
+load "./MinimalPrimes/radical.m2"
 
 cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
 
@@ -162,22 +170,21 @@ isPrime Ideal := Boolean => isPrimeOptions >> opts -> I -> (
 -- decompose, minimalPrimes, and minprimes
 --------------------------------------------------------------------
 
--- TODO: simplify the options, preferably don't use Options => true
-minimalPrimesOptions := new OptionTable from {
-    Verbosity              => 0,
-    Strategy               => null,
-    CodimensionLimit       => infinity, -- only find minimal primes of codim <= this bound
-    MinimalGenerators      => true, -- whether to trim the output
-    "CheckPrimeOnly"       => false,
-    "SquarefreeFactorSize" => 1
-    }
+minimalPrimes = method(
+    Options => {
+	Verbosity              => 0,
+	Strategy               => null,
+	CodimensionLimit       => infinity, -- only find minimal primes of codim <= this bound
+	MinimalGenerators      => true,     -- whether to trim the output
+	"CheckPrimeOnly"       => false,
+	"SquarefreeFactorSize" => 1
+	}
+    )
 
--- methods declared in m2/factor.m2, to be moved here eventually
--- decompose = method(Options => true)
--- minimalPrimes = method(Options => true)
 -- returns a list of ideals, the minimal primes of I
-decompose     Ideal :=
-minimalPrimes Ideal := List => minimalPrimesOptions >> opts -> I -> minprimesHelper(I, opts)
+minimalPrimes Ideal := List => opts -> I -> minprimesHelper(I, (minimalPrimes, Ideal), opts)
+-- TODO: decompose is declared in m2/factor.m2 as method(Options => true), move it here eventually
+decompose     Ideal := List => options minimalPrimes >> opts -> I -> minprimesHelper(I, (minimalPrimes, Ideal), opts)
 
 -- keys: none so far
 MinimalPrimesOptions = new SelfInitializingType of BasicList
@@ -187,13 +194,23 @@ MinimalPrimesOptions.synonym = "minimal primes options"
 MinimalPrimesComputation = new Type of MutableHashTable
 MinimalPrimesComputation.synonym = "minimal primes computation"
 
+-- if there is a compatible computation stored in I.cache,
+-- returns the computation object, otherwise creates the entry:
+--   MinimalPrimesOptions{} => MinimalPrimesComputation{ CodimensionLimit, Result }
+new MinimalPrimesComputation from Ideal  := (C, I) -> (
+    -- TODO: currently there are no options that could go in MinimalPrimesOptions,
+    -- but can we give options to this function? This is needed for saturate, etc.
+    cacheKey := MinimalPrimesOptions{};
+    try I.cache#cacheKey else I.cache#cacheKey = new MinimalPrimesComputation from {
+	Result => null, CodimensionLimit => -1 })
+
 isComputationDone = method(TypicalValue => Boolean, Options => true)
-isComputationDone MinimalPrimesComputation := Boolean => minimalPrimesOptions >> opts -> container -> (
+isComputationDone MinimalPrimesComputation := Boolean => options minimalPrimes >> opts -> container -> (
     -- this function determines whether we can use the cached result, or further computation is necessary
     try instance(container.Result, List) and opts.CodimensionLimit <= container.CodimensionLimit else false)
 
 cacheComputation = method(TypicalValue => CacheFunction, Options => true)
-cacheComputation MinimalPrimesComputation := CacheFunction => minimalPrimesOptions >> opts -> container -> new CacheFunction from (
+cacheComputation MinimalPrimesComputation := CacheFunction => options minimalPrimes >> opts -> container -> new CacheFunction from (
     -- this function takes advantage of FunctionClosures by modifying the container
     computation -> (
 	if isComputationDone(opts, container) then ( cacheHit class container; container.Result ) else
@@ -202,7 +219,7 @@ cacheComputation MinimalPrimesComputation := CacheFunction => minimalPrimesOptio
 	    container.Result = result)))
 
 -- Helper for minimalPrimes and decompose
-minprimesHelper = (I, opts) -> (
+minprimesHelper = (I, key, opts) -> (
     if I == 1 then return {};
     J := first flattenRing I;
     if J == 0 then return {I};
@@ -210,7 +227,6 @@ minprimesHelper = (I, opts) -> (
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
-    key := (minimalPrimes, Ideal);
 
     codimLimit := min(opts.CodimensionLimit, dim S, numgens J);
     doLimit := L -> select(L, P -> codim(P, Generic => true) <= codimLimit);
@@ -229,10 +245,7 @@ minprimesHelper = (I, opts) -> (
 
     -- this is the logic for caching partial minimal primes computations. I.cache contains an option:
     --   MinimalPrimesOptions{} => MinimalPrimesComputation{ CodimensionLimit, Result }
-    -- currently there are no options that could go in MinimalPrimesOptions, but this pattern is useful for saturate, etc.
-    cacheKey := MinimalPrimesOptions{};
-    container := try I.cache#cacheKey else I.cache#cacheKey = (
-	new MinimalPrimesComputation from { CodimensionLimit => -1, Result => null });
+    container := new MinimalPrimesComputation from I;
 
     -- the actual computation of minimal primes occurs here
     L := (cacheComputation(opts, container)) computation;
@@ -250,8 +263,6 @@ strat1 = ({Linear, DecomposeMonomials, (Factorization, 3)}, infinity)
 BirationalStrat = ({strat1, (Birational, infinity)}, infinity)
 NoBirationalStrat = strat1
 stratEnd = {(IndependentSet, infinity), SplitTower, CharacteristicSets}
-
-algorithms = new MutableHashTable from {}
 
 algorithms#(minimalPrimes, Ideal) = new MutableHashTable from {
     "Legacy" => (opts, I) -> (
@@ -376,30 +387,6 @@ legacyMinimalPrimes = J -> (
 ----- Development section
 --------------------------------------------------------------------
 -- TODO: where should these go? Reduce redundancy
-
-------------------------------
--- Radical containment -------
-------------------------------
-
--- helper function for 'radicalContainment'
-radFcn = (cacheValue "RadicalContainmentFunction") (I -> (
-    R := ring I;
-    n := numgens R;
-    S := (coefficientRing R) (monoid[Variables => n + 1, MonomialSize => 16]);
-    mapto := map(S, R, submatrix(vars S, {0..n-1}));
-    I = mapto I;
-    -- here is a GB of I!
-    A := S/I;
-    g -> (g1 := promote(mapto g, A); g1 == 0 or ideal(g1 * A_n - 1) == 1)))
-
-radicalContainment = method()
--- Returns true if g is in the radical of I.
--- Assumption: I is in a monomial order for which you are happy to compute GB's.
-radicalContainment(RingElement, Ideal) := (g, I) -> (radFcn I) g
--- Returns the first index i such that I_i is not in the radical of J,
--- and null, if none
--- another way to do something almost identical: select(1, I_*, radFcn J)
-radicalContainment(Ideal, Ideal)       := (I, J) -> (rad := radFcn J; position(I_*, g -> not rad g))
 
 ----------------------------------------------
 -- Factorization and fraction field helper routines

@@ -69,10 +69,10 @@ document {
      "Primary decomposition and components of an ideal",
      UL {
 	  TO "MinimalPrimes::minimalPrimes",
-	  TO radical,
+	  TO "MinimalPrimes::radical",
 	  TO "PrimaryDecomposition::associatedPrimes",
 	  TO "PrimaryDecomposition::primaryDecomposition",
-	  TO topComponents,
+	  TO "PrimaryDecomposition::topComponents",
 	  TO "Colon :: saturate(Ideal,Ideal)",
 	  TO "Colon :: Ideal : Ideal",
 	  TO intersect

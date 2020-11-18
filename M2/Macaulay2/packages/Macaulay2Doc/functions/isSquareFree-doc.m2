@@ -38,5 +38,5 @@ document {
 	  },
      PARA{},
      "Implemented by Greg Smith.",	       
-     SeeAlso => {radical, "PrimaryDecomposition::associatedPrimes", "SimplicialComplexes::SimplicialComplexes"}
+     SeeAlso => {"MinimalPrimes::radical", "PrimaryDecomposition::associatedPrimes", "SimplicialComplexes::SimplicialComplexes"}
      }

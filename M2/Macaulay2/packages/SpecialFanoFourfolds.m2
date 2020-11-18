@@ -5,6 +5,7 @@ newPackage(
     Date => "October 27, 2020",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
+    PackageImports => {"PrimaryDecomposition"},
     PackageExports => {"Resultants","Cremona"},
     DebuggingMode => false,
     Reload => false

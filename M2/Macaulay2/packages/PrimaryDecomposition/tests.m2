@@ -343,3 +343,30 @@ TEST /// -- testing Shimoyama-Yokoyama
   --donode C1
   --peek C1
 ///
+
+TEST ///
+  R = ZZ/101[symbol a..symbol d]
+  I = monomialCurveIdeal(R,{1,2,3})
+  I^2
+  removeLowestDimension(I^2)
+  assert(I == radical(I^2))
+  assert(I == radical(I^2, Unmixed => true))
+  assert(topComponents (I^2) == I^2)
+  S = R/(a^3, b^3)
+  I = ideal(0_S)
+  J = I^2
+  J1 = topComponents J
+  J1 == J
+  time (radical I)
+
+  -- 3 by 3 nilpotent matrices
+  R = ZZ/101[vars(0..8)]
+  M = genericMatrix(R,a,3,3)
+  I = ideal (M^3)
+  I1 = ideal(I_0,I_1,I_2)
+  codim I1
+  radical(I, CompleteIntersection=>I1)
+  -- radical(I,Unmixed=>true)
+  -- I1 = removeLowestDimension I
+  -- I2 = removeLowestDimension I1
+///

@@ -5,30 +5,86 @@ Node
   Key
     PrimaryDecomposition
   Headline
-    functions for primary decomposition
+    primary decomposition and associated primes routines for ideals and modules
   Description
     Text
-      This package provides computations with components of ideals and modules,
-      including associated primes, radicals, and primary decompositions.
+      This package provides routines for computation involving components of ideals and modules,
+      including associated primes and primary decompositions.
+
+      The following simple example illustrates the use of @TO removeLowestDimension@, @TO topComponents@,
+      @TO "MinimalPrimes :: radical"@, and @TO "MinimalPrimes :: minimalPrimes"@.
+    Example
+      R = ZZ/32003[a..d];
+      I = monomialCurveIdeal(R,{1,3,4})
+      J = ideal(a^3,b^3,c^3-d^3)
+      I = intersect(I,J)
+      removeLowestDimension I
+      topComponents I
+      radical I
+      minimalPrimes I
   References
-    @UL {
-	"Eisenbud-Huneke-Vasconcelos, Invent. Math. 110 207-235 (1992)",
-	"Shimoyama-Yokoyama, J. Symbolic computation, 22(3) 247-277 (1996)"
-	}@
+    Tree
+      :Eisenbud-Huneke-Vasconcelos, Invent. Math. 110 207-235 (1992)
+      :Shimoyama-Yokoyama, J. Symbolic computation, 22(3) 247-277 (1996)
 --  Acknowledgement
   Subnodes
     associatedPrimes
-    localize
-    primaryComponent
+    "associated primes"
     primaryDecomposition
+    "primary decomposition"
+    primaryComponent
+    localize
   SeeAlso
     "MinimalPrimes :: MinimalPrimes"
     "Colon :: Colon"
 
 Node
   Key
+    "associated primes"
+  Description
+    Text
+      The function @TO associatedPrimes@ returns a list of the associated prime ideals for a given ideal @TT "I"@.
+      The associated prime ideals correspond to the irreducible components of the variety associated to @TT "I"@.
+      They are useful in many applications in commutative algebra, algebraic geometry and combinatorics.
+      -- For a tutorial about associated prime ideals and primary decomposition, see @TO "commutative algebra"@.
+    Example
+      R = ZZ/101[a..d];
+      I = ideal(a*b-c*d, (a*c-b*d)^2);
+      associatedPrimes I
+    Text
+      See @TO "primary decomposition"@ for more information about finding primary decompositions.
+      To find just the minimal prime ideals see @TO "MinimalPrimes :: minimal primes of an ideal"@.
+
+Node
+  Key
+    "primary decomposition"
+  Description
+    Text
+      @SUBSECTION "Introduction"@
+
+      The function @TO primaryDecomposition@ applied to an ideal @TT "I"@ returns a list of ideals.
+      These ideals have two key features, first, their intersection is equal to the ideal @TT "I"@ and
+      second the ideals are primary. Therefore these ideals form a primary decomposition of the ideal.
+      Since the ideals are primary their corresponding varieties are irreducible. The decomposition
+      returned is irredundant, which means that the radicals of the ideals returned are distinct prime
+      ideals which are the associated prime ideals for @TT "I"@ (see @TO "associated primes"@).
+
+      @SUBSECTION "An example"@
+    Example
+      R = ZZ/101[a..d];
+      I = ideal(a*b-c*d, (a*c-b*d)^2);
+      primaryDecomposition I
+    Text
+      To obtain the associated prime ideals corresponding to the primary components returned by
+      @TT "primaryDecomposition"@ use the function @TO associatedPrimes@.
+      Each entry in the list given by @TT "associatedPrimes"@ is the radical of the respective entry
+      in the list given by @TT "primary decomposition"@.
+
+Node
+  Key
     primaryDecomposition
    (primaryDecomposition, Ideal)
+   [primaryDecomposition, MinimalGenerators]
   Headline
     irredundant primary decomposition of an ideal
   Usage
@@ -36,6 +92,8 @@ Node
   Inputs
     I:Ideal
       in a (quotient of a) polynomial ring @TT "R"@
+    MinimalGenerators=>Boolean
+      if false, the components will not be minimalized
   Outputs
     :List
       containing a minimal list of primary ideals whose intersection is @TT "I"@
@@ -56,7 +114,7 @@ Node
       I == intersect C
       #C
     Text
-      Recall that @TO (symbol/, List, Function)@ applies a function to each element of a
+      Recall that @TO "Macaulay2Doc :: List / Function"@ applies a function to each element of a
       list, returning the results as a list. This is often useful with lists of ideals,
       such as the list @TT "C"@ of primary components.
     Example
@@ -90,6 +148,8 @@ Node
   Inputs
     M:Module
       in a (quotient of a) polynomial ring @TT "R"@
+    MinimalGenerators=>Boolean
+      if false, the components will not be minimalized
   Outputs
     :List
       containing a minimal list of primary submodules of @TT "M"@ whose intersection is @TT "0"@
@@ -183,6 +243,8 @@ Node
    (associatedPrimes, Ideal)
    (associatedPrimes, Module)
    [associatedPrimes, Strategy]
+   [associatedPrimes, CodimensionLimit]
+   [associatedPrimes, MinimalGenerators]
   Headline
     find associated primes
   Usage
@@ -191,6 +253,10 @@ Node
   Inputs
     I:{Ring,Ideal,Module}
       a quotient ring, ideal, or module over a (quotient of a) polynomial ring @TT "R"@
+    CodimensionLimit => ZZ
+      stop after finding primes of codimension less than or equal to this value
+    MinimalGenerators=>Boolean
+      if false, the associated primes will not be minimalized
   Outputs
     :List
       a list of the prime ideals in @TT "R"@ that are associated to @TT "I"@
@@ -273,13 +339,14 @@ Node
     (primaryDecomposition, Module)
     "radical"
     "MinimalPrimes :: minimalPrimes"
-    "topComponents"
-    "removeLowestDimension"
+    topComponents
+    removeLowestDimension
 
 Node
   Key
     localize
    (localize, Ideal, Ideal)
+   [localize, Strategy]
   Headline
     localize an ideal at a prime ideal
   Usage
@@ -311,23 +378,6 @@ Node
       P2 = ideal(x,z);
       localize(I,P2)
     Text
-      Authored by @HREF {"http://faculty.mercer.edu/yackel_ca", "C. Yackel"}@. Last modified June, 2000.
-  Caveat
-    The ideal {\tt P} is not checked to be prime.
-  Subnodes
-    [localize, Strategy]
-  SeeAlso
-    (primaryDecomposition, Ideal)
-    radical
-    "MinimalPrimes :: minimalPrimes"
-    topComponents
-    removeLowestDimension
-
-Node
-  Key
-    [localize, Strategy]
-  Description
-    Text
       The strategy option value should be one of the following, with default value 1.
 
       @UL{
@@ -347,6 +397,16 @@ Node
 		  is computed using ", TO2 {[associatedPrimes, Strategy], TT "Strategy => 2"}, "."}),
 	  LI (TT "Strategy => 2", " -- Uses a separator to find the localization")
 	  }@
+
+      Authored by @HREF {"http://faculty.mercer.edu/yackel_ca", "C. Yackel"}@. Last modified June, 2000.
+  Caveat
+    The ideal {\tt P} is not checked to be prime.
+  SeeAlso
+    (primaryDecomposition, Ideal)
+    radical
+    "MinimalPrimes :: minimalPrimes"
+    topComponents
+    removeLowestDimension
 
 Node
   Key
@@ -398,9 +458,10 @@ Node
 Node
   Key
     isPrimary
-   (isPrimary, Module, Module)
    (isPrimary, Ideal)
    (isPrimary, Ideal, Ideal)
+   (isPrimary, Module, Module)
+   [isPrimary, Strategy]
   Headline
     determine whether a submodule is primary
   Usage
@@ -411,9 +472,11 @@ Node
     Q:{Ideal,Module}
       the submodule or ideal to be checked for being primary
     P:Ideal
-      the @TO "radical"@ of @TT "Q"@
+      the @TO "MinimalPrimes :: radical"@ of @TT "Q"@
     M:Module
       the ambient module
+    Strategy=>Thing
+      See @TO [associatedPrimes, Strategy]@ and @TO "MinimalPrimes :: isPrime(Ideal, Strategy => ...)"@
   Outputs
     :Boolean
       true if @TT "Q"@ is primary, false otherwise
@@ -436,8 +499,32 @@ Node
 ///
 
 -- FIXME
+-*
+      @SUBSECTION "Strategies"@
+      The algorithms available for computing primary decompositions are @TO2 {"ShimoyamaYokoyama", "Shimoyama-Yokoyama"}@,
+      @TO2 {"EisenbudHunekeVasconcelos", "Eisenbud-Huneke-Vasconcelos"}@, a hybrid of these two algorithms,
+      and @TO2 {"GTZ", "Gianni-Trager-Zacharias"}@. The default algorithm in Macaulay2 is Shimoyama-Yokoyama.
+      Two other arguments for the strategy option are available. These arguments are @TT "Monomial"@ which computes
+      the unique irreducible decomposition of a monomial ideal and @TT "Binomial"@ which computes a cellular decomposition
+      of a binomial ideal. For more information on the strategy options see @TO [primaryDecomposition, Strategy]@.
+    Example
+      primaryDecomposition(I, Strategy => EisenbudHunekeVasconcelos)
+    Text
+     An example of a monomial ideal using both monomial and binomial.
+    Example
+      I = ideal(a^2*b,a*c^2,b*d,c*d^2);
+	primaryDecomposition(I, Strategy => Monomial)
+	primaryDecomposition(I, Strategy => Binomial)
+*-
+
 document {
-     Key => {[primaryDecomposition,Strategy],EisenbudHunekeVasconcelos,ShimoyamaYokoyama,HybridStrategy,GTZ},
+     Key => {
+	 [primaryDecomposition,Strategy],
+	 [primaryDecomposition,HybridStrategy],
+	 EisenbudHunekeVasconcelos,
+	 ShimoyamaYokoyama,
+	 HybridStrategy,
+	 GTZ},
      "The strategy option value should be one of the following.",
      UL {
           ("Monomial", " -- uses Alexander duality of a monomial ideal"),
@@ -535,42 +622,6 @@ document {
      }
 
 document {
-     Key => {radicalContainment,(radicalContainment,RingElement,Ideal),[radicalContainment,Strategy]},
-     Headline => "whether an element is contained in the radical of an ideal",
-     Usage => "radicalContainment(g, I)",
-     Inputs => {
-	  "g" => RingElement,
-	  "I" => Ideal
-	  },
-     Outputs => {
-	  Boolean => {TO "true", " if ", TT "g", " is in the radical of ", TT "I", ", and ",
-	       TO "false", " otherwise"}
-	  },
-     "This method determines if a given element ", TT "g", " is contained in the radical of a given ",
-     "ideal ", TT "I", ". There are 2 algorithms implemented for doing so: the first (default) uses the
-     Rabinowitsch trick in the proof of the Nullstellensatz, and is called with ",
-     TT ///Strategy => "Rabinowitsch"///, ". The second algorithm, for homogeneous ideals,
-     uses a theorem of Kollar to obtain an effective upper bound on the required power to
-     check containment, together with repeated squaring, and is called with ",
-     TT ///Strategy => "Kollar"///, ". The latter algorithm is generally quite fast if a Grobner basis
-     of ", TT "I", " has already been computed. A recommended way to do so is to check
-     ordinary containment, i.e. ", TT "g % I == 0", ", before calling this function.",
-     PARA{},
-     EXAMPLE lines ///
-     	  d = (4,5,6,7)
-          n = #d
-          R = QQ[x_0..x_n]
-          I = ideal homogenize(matrix{{x_1^(d#0)} | apply(toList(1..n-2), i -> x_i - x_(i+1)^(d#i)) | {x_(n-1) - x_0^(d#-1)}}, x_n)
-          D = product(I_*/degree/sum)
-          x_0^(D-1) % I != 0 and x_0^D % I == 0
-          elapsedTime radicalContainment(x_0, I)
-          elapsedTime radicalContainment(x_0, I, Strategy => "Kollar")
-          elapsedTime radicalContainment(x_n, I, Strategy => "Kollar")
-     ///,
-     SeeAlso => {radical}
-     }
-
-document {
      Key => {regSeqInIdeal,(regSeqInIdeal,Ideal),(regSeqInIdeal,Ideal,ZZ),(regSeqInIdeal,Ideal,ZZ,ZZ,ZZ),[regSeqInIdeal,Strategy]},
      Headline => "a regular sequence contained in an ideal",
      Usage => concatenate("regSeqInIdeal I\n", "regSeqInIdeal(I, n)\n", "regSeqInIdeal(I, n, c, t)"),
@@ -613,3 +664,123 @@ document {
      ///
      -- SeeAlso => {radical}
      }
+
+--- author(s): Giulio
+document {
+     Key => {
+	 topComponents,
+	 (topComponents, Module, ZZ) -- TODO
+	 },
+     Headline => "compute top dimensional component",
+     "The method used is that of Eisenbud-Huneke-Vasconcelos, in their 1993 Inventiones Mathematicae paper.",
+     PARA{},
+     "If M is a module in a polynomial ring R, then the implementations of
+     ", TO "topComponents", " and ", TO removeLowestDimension, " are based on
+     the following observations:",
+     UL {
+	  TEX ///$codim Ext^d(M,R) \ge d$ for all d///,
+	  TEX ///If $P$ is an associated prime of $M$ of codimension $d := codim P > codim M$,
+	  then $codim Ext^d(M,R) = d$ and the annihilator of $Ext^d(M,R)$ is contained
+	  in $P$///,
+	  TEX ///If $codim Ext^d(M,R) = d$, then there really is an associated prime
+	  of codimension $d$.///,
+	  TEX ///If $M$ is $R/I$, then $topComponents(I) = ann Ext^c(R/I,R)$, where $c = codim I$///
+	  },
+    SeeAlso => {removeLowestDimension, "Colon :: saturate", "Colon :: Ideal : Ideal", "MinimalPrimes :: radical"},
+    }
+
+document {
+     Key => (topComponents,Ideal),
+     Usage => "topComponents I",
+     Inputs => {"I"
+	  },
+     Outputs => {
+	  "I" => Ideal => {"which is the intersection of the primary components of "
+	       ,TT "I", " having the greatest Krull dimension" }
+	  },
+    "The method used is that of Eisenbud-Huneke-Vasconcelos. ",
+    "For a brief description see: ",TO "topComponents",".",
+
+     EXAMPLE {
+	  "R=ZZ/32003[a..c];",
+	  "I=intersect(ideal(a,b),ideal(b,c),ideal(c,a),ideal(a^2,b^3,c^4));",
+	  "topComponents I"
+	  },
+     SeeAlso => {(topComponents, Module), removeLowestDimension, "Colon :: saturate", "Colon :: Ideal : Ideal", "MinimalPrimes :: radical"}
+     },
+
+document {
+     Key => (topComponents,Module),
+     Usage => "topComponents M",
+     Inputs => {
+	  "M"
+	  },
+     Outputs => {
+	  "N" => Module => {" which is the intersection of the
+	       primary components of ", TT "M",
+	       " having gretest Krull dimension"}
+	  },
+    "The method used is that of Eisenbud-Huneke-Vasconcelos. ",
+    "For a brief description see: ",TO "topComponents",".",
+
+     SeeAlso => {(topComponents,Ideal), removeLowestDimension, "Colon :: saturate", "Colon :: Ideal : Ideal", "MinimalPrimes :: radical"}
+     }
+
+--- author(s): Giulio
+document {
+     Key => {removeLowestDimension,(removeLowestDimension,Ideal),(removeLowestDimension, Module)},
+     Headline => "remove components of lowest dimension",
+     Usage => "removeLowestDimension M",
+     Inputs => {
+	  "M" =>{"an ", TO Ideal, " or a ", TO Module}
+	  },
+     Outputs => {
+	  "N" => {"an ", TO Ideal, ", respectively a ", TO Module, "."}
+	       },
+       "This function yields the intersection of the primary components of ", TT "M", ",
+       except those of lowest dimension (and thus returns the
+       ambient free module of ", TT "M", " (or unit ideal), if ", TT "M", "
+       is pure dimensional).", PARA{},
+       "For a very brief description of the method used, see ", TO "topComponents", ".",PARA{},
+       "As an example we remove the lowest dimensional component of an ideal I",
+
+     EXAMPLE {
+	  "R=ZZ/32003[a..d];",
+	  "I=intersect(ideal(a*b+a^2,b^2),ideal(a^2,b^2,c^2),ideal(b^3,c^3,d^3))",
+	  "removeLowestDimension I"
+	  },
+     SeeAlso => {topComponents, "Colon :: saturate", "Colon :: Ideal : Ideal", "MinimalPrimes :: radical", "MinimalPrimes :: minimalPrimes"}
+     }
+
+-- either convert to test or example
+/// -- test of removeLowestDimension
+  R = ZZ/32003[a,b,c]
+  I = ideal(a^2,b^2)
+  J = ideal(a^3,b^3,c^3)
+  I = intersect(I,J)
+  time (I1 = removeLowestDimension I)
+  time topComponents I
+  time radical I
+
+  R = ZZ/101[a..d]
+  I = intersect(ideal(a^2,b^2,c), ideal(a,d^4), ideal(b^2,c^2,d^2))
+  time (Itop = topComponents I)
+  time (I1 = removeLowestDimension I)
+  time (Irad = radical I)
+///
+
+--document {
+--     Key => removeLowestDimension,
+--     Headline => "remove components of lower dimension",
+--     TT "removeLowestDimension I", " -- removes the components of ", TT "I", " of lower dimension",
+--     PARA{},
+--     "Yields the intersection of the primary components of ", TT "I", ",
+--     excepting those of lowest dimension (and thus returns the
+--     ambient free module of ", TT "I", " (or unit ideal), if ", TT "I", "
+--     is pure dimensional).",
+--     PARA{},
+--     "Computes one free resolution, and some homology groups, but no
+--     projections or determinants are used.  For a very brief description
+--     of the method used, see ", TO "topComponents", ".",
+--     SeeAlso => {"topComponents", "saturate", "quotient", "radical", "minimalPrimes"}
+--     }

@@ -23,18 +23,18 @@ newPackage(
 	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"}},
     Keywords => {"Commutative Algebra"},
-    PackageExports => { "Colon" },
+    PackageExports => { "Colon", "MinimalPrimes" },
     PackageImports => { "Elimination" },
     AuxiliaryFiles => true,
     DebuggingMode => true
     )
 
 export {
-    "radicalContainment", -- TODO: move to MinimalPrimes
     -- methods
     "isPrimary", "localize", "primaryComponent",
     "primaryDecomposition", "associatedPrimes",
     "irreducibleDecomposition",
+    "topComponents",
     -- strategy symbols
     "ShimoyamaYokoyama", "EisenbudHunekeVasconcelos",
     -- option symbols
@@ -47,8 +47,12 @@ export {
     --  primdecComputation, flattener
     --  sortByDegree, extract, findNonMember
     -- synonyms:
-    "ass" => "associatedPrimes"
+    "ass" => "associatedPrimes",
+    "top" => "topComponents"
     }
+
+-- TODO: this is only declared there for technical reasons
+exportFrom_MinimalPrimes { "removeLowestDimension" }
 
 importFrom_Core { "printerr", "raw", "rawIndices", "rawGBContains", "rawRemoveScalarMultiples" }
 
@@ -101,7 +105,6 @@ flattenRingMap Module := M -> (
 	(M', fback)))
 
 -- TODO: move exported methods out of the files below
-load "./PrimaryDecomposition/radical.m2"
 load "./PrimaryDecomposition/GTZ.m2"
 load "./PrimaryDecomposition/Shimoyama-Yokoyama.m2"
 load "./PrimaryDecomposition/Eisenbud-Huneke-Vasconcelos.m2"
@@ -110,11 +113,10 @@ load "./PrimaryDecomposition/Eisenbud-Huneke-Vasconcelos.m2"
 -- isPrimary
 --------------------------------------------------------------------
 
-isPrimary = method()
-isPrimary Ideal           :=  Q     -> isPrimary(Q, radical Q)
--- TODO: the documentation says primality of P isn't checked
-isPrimary(Ideal,  Ideal)  := (Q, P) -> ( if isPrime P then Q == top Q else false )
-isPrimary(Module, Module) := (M, Q) -> #associatedPrimes(M / Q) == 1
+isPrimary = method(Options => { Strategy => null })
+isPrimary Ideal           := opts ->  Q     -> isPrimary(Q, radical Q, opts)
+isPrimary(Ideal,  Ideal)  := opts -> (Q, P) -> isPrime(P, Strategy => opts.Strategy) and Q == topComponents Q
+isPrimary(Module, Module) := opts -> (M, Q) -> #associatedPrimes(M / Q, Strategy => opts.Strategy) == 1
 
 --------------------------------------------------------------------
 -- localize
@@ -483,9 +485,9 @@ algorithms#(primaryDecomposition, Ideal) = new MutableHashTable from {
 scan({"Comodule", EisenbudHunekeVasconcelos, ShimoyamaYokoyama, HybridStrategy, Monomial}, strategy ->
     addHook(key := (primaryDecomposition, Ideal), algorithms#key#strategy, Strategy => strategy))
 
---------------------------------------------------------------------
------ Irreducible Decomposition
---------------------------------------------------------------------
+-------------------------------
+-- Irreducible Decomposition --
+-------------------------------
 
 irreducibleDecomposition = method();
 irreducibleDecomposition MonomialIdeal := List => I -> (
@@ -499,8 +501,104 @@ irreducibleDecomposition MonomialIdeal := List => I -> (
 	    monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v))))
     )
 
+--------------------------------
+-- top dimensional component ---
+--------------------------------
+-- Based on the Macaulay (classic) scripts written by
+-- D. Eisenbud.  Translated to Macaulay2 by M. Stillman
+
+-- translated: remove_low_dim --> topComponents
+--             remove_low_dim_id --> topComponents
+--             remove_lowest_dim --> removeLowestDimension
+
+-- it is documented in packages/Macaulay2Doc/functions/top-doc.m2
+topComponents = method()
+topComponents Ideal       := Ideal  =>  I     -> (
+    R := ring I;
+    c := codim I;
+    annihilator Ext^c(cokernel generators I, R))
+topComponents Module      := Module =>  M     -> (
+    R := ring M;
+    if not isPolynomialRing R or not isAffineRing R then error "expected a polynomial ring";
+    c := codim M;
+    p := pdim M;  -- will compute a resolution if needed...
+    while p > c do (
+	E := minimalPresentation Ext^p(M,R);
+	if E != 0 and codim E === p then (
+	    -- improve M
+	    J := annihilator E;
+	    I := saturate(M, J);
+	    -- alternate strategy: modify M as well:
+	    -- this next line could be commented out
+	    M = (ambient I)/I);
+	p = if pdim M < p then pdim M else p-1);
+    M)
+topComponents(Module, ZZ) := Module => (M, e) -> (
+    S := ring M;
+    N := 0 * M;
+    f := pdim M;  -- calls minimalPresentation, will compute a resolution if needed...
+    while f > e do (
+	E := Ext^f(M, S);
+	if codim E == f then (
+	    if debugLevel > 0 then printerr("Getting annihilator of Ext...");
+	    I := annihilator E;
+	    if debugLevel > 0 then printerr("Removing components of codim " | toString(f));
+	    N = N : I);
+	f = f-1);
+    N)
+
+-- This used to be commented out in modules2.m2
+-- if it isn't useful anymore, delete it
+--topComponents Module := M -> (
+--     R := ring M;
+--     c := codim M;
+--     annihilator minimalPresentation Ext^c(M, R))
+--document { topComponents,
+--     TT "topComponents M", "produce the annihilator of Ext^c(M, R), where c
+--     is the codimension of the support of the module M."
+--     }
+
+---------------------------
+-- removeLowestDimension --
+---------------------------
+-- TODO: can these two be combined?
+
+-- TODO: defined in MinimalPrimes because it is used there, but exported here
+--removeLowestDimension = method()
+removeLowestDimension Module := Module => M -> (
+    -- only works for polynomial rings...
+    local E;
+    R := ring M;
+    c := codim M;
+    p := pdim M;
+    -- now loop (starting at p) trying to find the largest
+    -- d such that codim Ext^d(M,R) == d
+    while p > c and codim (E = Ext^p(M, R)) > p do p = p-1;
+    if p == c then ambient M -- M is C.M. and unmixed, so return (1)
+    else ( -- use the annihilator of Ext to improve M
+        J := annihilator E;
+        cokernel generators saturate(image presentation M, J))
+    )
+removeLowestDimension Ideal  := Ideal  => I -> (
+    -- only works for polynomial rings...
+    local E;
+    M := cokernel generators I;
+    R := ring M;
+    c := codim M;
+    p := pdim M;
+    -- now loop (starting at p) trying to find the largest
+    -- d such that codim Ext^d(M,R) == d
+    while p > c and codim (E = Ext^p(M, R)) > p do p = p-1;
+    if p == c then ideal 1_R -- M is C.M. and unmixed, so return (1)
+    else ( -- use the annihilator of Ext to improve M
+        J := annihilator E;
+        saturate(I, J))
+    )
+
+--------------------------------------------------------------------
 
 -- Moved here from m2/monideals.m2 because it depends on associatedPrimes
+-- probably written by Greg Smith
 Delta := I -> (
     X := generators ring I;
     d := #X - pdim cokernel generators I;

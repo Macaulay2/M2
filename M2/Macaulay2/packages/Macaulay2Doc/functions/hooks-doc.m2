@@ -147,6 +147,7 @@ Node
      hooks
     (hooks, Sequence)
     (hooks, Symbol)
+    [hooks, Strategy]
   Headline
     list hooks attached to a key
   Usage
