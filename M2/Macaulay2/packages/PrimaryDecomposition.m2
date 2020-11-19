@@ -35,10 +35,10 @@ export {
     "primaryDecomposition", "associatedPrimes",
     "irreducibleDecomposition",
     "topComponents",
-    -- strategy symbols
-    "ShimoyamaYokoyama", "EisenbudHunekeVasconcelos",
+    -- strategies
+    "Hybrid", "ShimoyamaYokoyama", "EisenbudHunekeVasconcelos",
     -- option symbols
-    "HybridStrategy", "Increment", "GTZ",
+    "Increment", "GTZ",
     -- defined in Eisenbud-Huneke-Vasconcelos.m2
     --  EHVprimaryDecomposition, HprimaryDecomposition
     "kernelOfLocalization", "regSeqInIdeal",
@@ -200,7 +200,7 @@ assassinsHelper = (A, key, opts) -> (
 
     -- this logic determines what strategies will be used
     computation := (opts, container) -> runHooks(key,
-	(opts ++ { Strategy => null, cache => container }, A), Strategy => opts.Strategy);
+	(opts ++ { cache => container }, A), Strategy => opts.Strategy);
 
     -- this is the logic for caching partial associated primes computations. A.cache contains an option:
     --   AssociatedPrimesOptions{} => AssociatedPrimesComputation{ CodimensionLimit, Result }
@@ -314,11 +314,16 @@ scan({"Default"}, strategy ->
 -- Primary Decomposition
 --------------------------------------------------------------------
 
+-- for (primaryDecomposition, Ideal), strategy can also be a list
+--   Hybrid{associated prime strategy, localize strategy}
+-- for (primaryDecomposition, Module), strategy can also be a list
+--   Hybrid{ one of "Hom", "Res", or "Sat" (default) }
+Hybrid = new SelfInitializingType of BasicList
+
 primaryDecomposition = method(
     TypicalValue => List,
     Options => {
-	Strategy          => null, -- try "keys strategies(primaryDecomposition, Ideal)"
-	HybridStrategy    => null, -- {associated prime strategy, localize strategy}
+	Strategy          => null, -- try "keys strategies(primaryDecomposition, Ideal)",
 	MinimalGenerators => true  -- whether to trim the output
 	}
     )
@@ -367,7 +372,7 @@ primarydecompHelper = (A, key, opts) -> (
 
     -- this logic determines what strategies will be used
     computation := (opts, container) -> runHooks(key,
-	(opts ++ { Strategy => null, cache => container }, A), Strategy => opts.Strategy);
+	(opts ++ { cache => container }, A), Strategy => opts.Strategy);
 
     -- this is the logic for caching partial primary decomposition computations. A.cache contains an option:
     --   PrimaryDecompositionOptions{} => PrimaryDecompositionComputation{ CodimensionLimit, Result }
@@ -388,8 +393,15 @@ primarydecompHelper = (A, key, opts) -> (
 
 algorithms#(primaryDecomposition, Module) = new MutableHashTable from {
     -- TODO: add assumptions
-    1 => (opts, M) -> (
+    -- Note: when the strategy key for a hook is a type, strategy
+    -- values matching that type will be dispatched to that hook
+    Hybrid => (opts, M) -> (
 	-- Returns a primary decomposition of 0 in M.
+	-- the Hybrid strategy for modules requires 1 argument passed as a list
+	--   Hybrid{getEmbeddedComponent strategy}
+	strategy := if opts.Strategy === null then "Sat"
+	else if instance(opts.Strategy, Hybrid) and #opts.Strategy == 1 then opts.Strategy#0
+	else return null;
 	-- Assumes all embedded primes appear after all primes they contain, i.e. isSubset(AP#i, AP#j) => i \le j
 	-- (equivalently, the ordering of associated primes is a linear extension of the partial order by inclusion).
 	-- This is the case for associatedPrimes(Module), which returns associated primes ordered by codimension
@@ -412,14 +424,14 @@ algorithms#(primaryDecomposition, Module) = new MutableHashTable from {
 		isolComp := if f == 1 then 0*M else saturate(0*M, f);
 		comp.Result#p = if #(H#p) > 1 then (
 		    B := intersect apply(H#p - set{i}, k -> comp.Result#(AP#k));
-		    getEmbeddedComponent(M, p, C -> isSubset(intersect(B, C), isolComp), Strategy => opts.Strategy)
+		    getEmbeddedComponent(M, p, C -> isSubset(intersect(B, C), isolComp), Strategy => strategy)
 		    ) else isolComp);
 	    );
 	comp.Result),
     }
 
 -- Installing hooks for (primaryDecomposition, Module)
-scan({1}, strategy ->
+scan({Hybrid}, strategy ->
     addHook(key := (primaryDecomposition, Module), algorithms#key#strategy, Strategy => strategy))
 
 --------------------------------------------------------------------
@@ -428,9 +440,7 @@ scan({1}, strategy ->
 algorithms#(primaryDecomposition, Ideal) = new MutableHashTable from {
     "Comodule" => (opts, I) -> (
 	-- TODO: can this be simplified?
-	L := primaryDecomposition(comodule I,
-	    HybridStrategy    => opts.HybridStrategy,
-	    MinimalGenerators => opts.MinimalGenerators);
+	L := primaryDecomposition(comodule I, MinimalGenerators => opts.MinimalGenerators);
 	apply(L, Q -> I + ideal generators Q)),
 
     -- TODO: what order should these go in?
@@ -448,14 +458,17 @@ algorithms#(primaryDecomposition, Ideal) = new MutableHashTable from {
 	(I', fback) := flattenRingMap I;
 	fback \ SYprimaryDecomposition I'),
 
-    HybridStrategy => (opts, I) -> (
-	-- the Hybrid strategy requires 2 arguments passed as a list to HybridStrategy
-	if not instance(opts.HybridStrategy, BasicList)
-	or not #opts.HybridStrategy === 2
+    -- Note: when the strategy key for a hook is a type, strategy
+    -- values matching that type will be dispatched to that hook
+    Hybrid => (opts, I) -> (
+	-- the Hybrid strategy for ideals requires 2 arguments passed as a list
+	--   Hybrid{associated prime strategy, localize strategy}
+	if not instance(opts.Strategy, Hybrid)
+	or not #opts.Strategy === 2
 	then return null;
 	HprimaryDecomposition(I, -- defined in EHV
-	    opts.HybridStrategy#0, -- associated primes strategy
-	    opts.HybridStrategy#1  -- localize strategy
+	    opts.Strategy#0, -- associated primes strategy
+	    opts.Strategy#1  -- localize strategy
 	    )),
 
     Monomial => (opts, I) -> (
@@ -482,7 +495,7 @@ algorithms#(primaryDecomposition, Ideal) = new MutableHashTable from {
     }
 
 -- Installing hooks for (primaryDecomposition, Ideal)
-scan({"Comodule", EisenbudHunekeVasconcelos, ShimoyamaYokoyama, HybridStrategy, Monomial}, strategy ->
+scan({"Comodule", EisenbudHunekeVasconcelos, ShimoyamaYokoyama, Hybrid, Monomial}, strategy ->
     addHook(key := (primaryDecomposition, Ideal), algorithms#key#strategy, Strategy => strategy))
 
 -------------------------------

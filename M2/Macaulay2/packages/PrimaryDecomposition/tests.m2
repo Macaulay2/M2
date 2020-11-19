@@ -72,8 +72,7 @@ TEST /// -- testing strategies
 		  if isMonomialIdeal I then sl = {Monomial} | sl;
 		  scan(sl, s -> testResult(I, primaryDecomposition(ideal I_*, Strategy => s)))));
 	  scan({  {1,1}, {1,2}, {2,1}, {2,2}},
-	      s -> testResult(ideal(x^4*y^5),
-		  primaryDecomposition(ideal(x^4*y^5), Strategy => HybridStrategy, HybridStrategy => s)));
+	      s -> testResult(ideal(x^4*y^5), primaryDecomposition(ideal(x^4*y^5), Strategy => Hybrid s)));
 	  )
       )
 ///
