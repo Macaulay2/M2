@@ -46,7 +46,7 @@ getMinimalPoly(Ideal, RingElement, RingElement) := (I, u, x) -> (
 -- used in radical00
 getSeparablePart = method()
 getSeparablePart(RingElement, RingElement, RingElement) := (f, u, x) -> (
-    product select(factors f, g1 -> degree(x, g1) > 0))
+    product select(last \ factors f, g1 -> degree(x, g1) > 0))
 
 -- used in rad
 radical00 = method()
@@ -196,7 +196,7 @@ rad Ideal := (Iorig) -> (
 	if u === 1 then break;
 	h = flatt2(I,u);
 	h = (intersect values h)_0;
-	if h != 1 then h = product factors h;
+	if h != 1 then h = product \\ last \ factors h;
 	I = I + ideal(h));
     if ring I =!= ring Iorig then radI = G radI;
     trim radI)
@@ -222,7 +222,7 @@ rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
 	if u === 1 then break;
 	h = flatt2(I, u);
 	h = (intersect values h)_0;
-	if h != 1 then h = product factors h;
+	if h != 1 then h = product \\ last \ factors h;
 	I = I + ideal h);
     if ring I =!= ring Iorig then radI = G radI;
     trim radI)

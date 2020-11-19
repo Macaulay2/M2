@@ -150,6 +150,7 @@ flattener(I,F1)
 ///
 
 -- Return a list of the prime factors of F
+-- TODO: replace with factors from MinimalPrimes?
 factors = (F) -> (
      facs := factor F;
      facs = apply(#facs, i -> facs#i#0);
