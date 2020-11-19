@@ -984,7 +984,7 @@ SIMPLETEST ///
    time C = minprimes(I, Verbosity=>2)
    --time C = minprimes(I, Strategy=>null, Verbosity=>2)
 
-   --time C = splitIdeal(I, Strategy=> {defaultStrat,stratEnd}, Verbosity=>2);
+   --time C = splitIdeal(I, Strategy=>Hybrid{defaultStrat,stratEnd}, Verbosity=>2);
    --select(C, c -> (gens I) % (ideal c) != 0)
 
   debug MinimalPrimes
@@ -1167,7 +1167,7 @@ TOODAMNSLOW ///
   debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose) -- DECOMPOSE TOO SLOW HERE??  but it does work eventually
 
-  C = time minprimes(I,Strategy=>{Linear,Birational,Factorization,DecomposeMonomials,Linear,Factorization});    -- 1.25 sec
+  C = time minprimes(I,Strategy=>Hybrid{Linear,Birational,Factorization,DecomposeMonomials,Linear,Factorization});    -- 1.25 sec
 ///
 
 
@@ -1323,8 +1323,8 @@ TEST ///
   c2 + 2bd + 2ae + 2fg + e,
   2cd + 2be + 2af + g2 + f,
   d2 + 2ce + 2bf + 2ag + g"
-  time C = minprimes(I,Strategy=>NoBirationalStrat, Verbosity=>2);
-  --time C = splitIdeal(I,Strategy=>{defaultStrat,stratEnd}, Verbosity=>2);
+  time C = minprimes(I,Strategy=>Hybrid NoBirationalStrat, Verbosity=>2);
+  --time C = splitIdeal(I,Strategy=>Hybrid{defaultStrat,stratEnd}, Verbosity=>2);
   --time C = minprimes(I, Verbosity=>2);   -- the extra time is in the conversion
                                           -- from annotated ideal to ideal caused by
                                           -- the 'Linears' added in calls to Birational
@@ -1430,10 +1430,10 @@ TEST ///
        2*e_1*e_2*e_3-3*e_2*g_1*g_3+3*e_1*g_2*g_3)
   time minprimes(J,Verbosity=>2);
   -*
-  C = splitIdeal(J,Strategy=>{defaultStrat,(IndependentSet,infinity)}, Verbosity=>2)
+  C = splitIdeal(J,Strategy=>Hybrid{defaultStrat,(IndependentSet,infinity)}, Verbosity=>2)
   C / isPrime
   J2 = C#2
-  splitIdeal(J2,Strategy=>SplitTower, Verbosity=>2)
+  splitIdeal(J2,Strategy=>Hybrid SplitTower, Verbosity=>2)
   use ring (J2.LexGBOverBase)_0
   use coefficientRing ring (J2.LexGBOverBase)_0
   factorOverTower({(J2.LexGBOverBase)_0},g_1^2-3*g_4^2)
@@ -1444,9 +1444,9 @@ TEST ///
   lexGBOverBase = J2.LexGBOverBase
   factorOverTower({lexGBOverBase#0}, lexGBOverBase#1)
   factorOverTower(drop(lexGBOverBase,-1), lexGBOverBase#2, Verbosity=>2)
-  splitIdeal(J2,Strategy=>SplitTower, Verbosity=>2)
+  splitIdeal(J2,Strategy=>Hybrid SplitTower, Verbosity=>2)
   *-
-  --C = time minprimes(J,Strategy=>{Linear,Birational,Factorization,Linear,Birational,Minprimes});
+  --C = time minprimes(J,Strategy=>Hybrid{Linear,Birational,Factorization,Linear,Birational,Minprimes});
 ///
 
 TEST ///
@@ -1518,9 +1518,9 @@ TOODAMNSLOW ///
   time p1 = factorizationSplit(I1, "UseColon"=>false)
   -- TODO: Play with factorization depth in this example?
 
-  C = time minprimes(I1,Strategy=>{Linear,Factorization,Linear,Factorization,Linear,Factorization});
+  C = time minprimes(I1,Strategy=>Hybrid{Linear,Factorization,Linear,Factorization,Linear,Factorization});
 
-  C = time minprimes(I1,Strategy=>{Linear,Factorization,DecomposeMonomials,Linear,Factorization,DecomposeMonomials,Linear,Factorization,DecomposeMonomials}, Verbosity=>1);
+  C = time minprimes(I1,Strategy=>Hybrid{Linear,Factorization,DecomposeMonomials,Linear,Factorization,DecomposeMonomials,Linear,Factorization,DecomposeMonomials}, Verbosity=>1);
     -- 190 sec
   time D = for c in C list (t := timing ideal c; if t#0 > 5. then << "ideal: " << c << endl; t#1);
   time Dmin = selectMinimalIdeals D;
@@ -1543,11 +1543,11 @@ TOODAMNSLOW ///
   R = QQ[x3283, x3096, x2909, x1952, x319, x1683, x2321, x2921, x2855, x1370, x622, x331, x1904, x2933, x2867, x1382, x2273, x634, x343, x1916, x3319, x1647, x1394, x2285, x646, x421, x1928, x3331, x3188, x1659, x2297, x295, x433, x3271, x1940, x2309, x1671, x2254, x307];
 
   I = ideal(x1940*x1671-x1671^2,-x622*x343+x1671,-x1940*x2254+x2309,x2867*x2309*x1671-x2309^2,x3331*x3271*x2254-x3271^2,-x2855*x3331+x3271,x634*x433-x433^2,-x331*x295+x433,-x1928*x2254+x2297,x2867*x1659*x2297-x2297^2,x1928*x1659-x1659 ^2,-x1647*x295+x1659,-x634*x343+x1659,x3096*x3188*x2254-x3188^2,-x3096*x2855+x3188,x622*x421-x421^2,-x319*x295+x421,-x1916*x2254+x2285,x2855*x1370*x2285-x2285^2,x1904*x1394-x1394^2,-x622*x307+x1394,-x343*x646+x1647,-x1370^2+ x1370*x1916,-x646*x295+x634,-x2855*x622+x634,-x1904*x2254+x2273,x2855*x2273*x1394-x2273^2,-x646*x307+x1382,-x319*x2855+x331,-x634*x307+x1370,-x1382*x295+x1370,x2921*x2855*x2933-x2921^2,-x2909*x2855+x2921,-x1952*x2254+x2321,x1683 *x2321*x2867-x2321^2,x1952*x1683-x1683^2,-x343*x295+x1683,-x3331*x2254+x3096,x3283*x3319*x2254-x3283^2,-x2867*x3319+x3283)
-  C = time minprimes(I,Strategy=>{Linear,Factorization,Linear,Factorization});
+  C = time minprimes(I,Strategy=>Hybrid{Linear,Factorization,Linear,Factorization});
 
-  C = time minprimes(I,Strategy=>{Linear,Factorization,Linear,Factorization});
-  C = time minprimes(I,Strategy=>{Linear,Factorization,DecomposeMonomials,Linear,Factorization});
-  C = time minprimes(I,Strategy=>{Linear,Factorization,DecomposeMonomials,Linear,Factorization});
+  C = time minprimes(I,Strategy=>Hybrid{Linear,Factorization,Linear,Factorization});
+  C = time minprimes(I,Strategy=>Hybrid{Linear,Factorization,DecomposeMonomials,Linear,Factorization});
+  C = time minprimes(I,Strategy=>Hybrid{Linear,Factorization,DecomposeMonomials,Linear,Factorization});
 ///
 
 TEST ///

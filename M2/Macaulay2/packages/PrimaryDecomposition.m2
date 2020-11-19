@@ -36,7 +36,7 @@ export {
     "irreducibleDecomposition",
     "topComponents",
     -- strategies
-    "Hybrid", "ShimoyamaYokoyama", "EisenbudHunekeVasconcelos",
+    "ShimoyamaYokoyama", "EisenbudHunekeVasconcelos",
     -- option symbols
     "Increment", "GTZ",
     -- defined in Eisenbud-Huneke-Vasconcelos.m2
@@ -318,8 +318,6 @@ scan({"Default"}, strategy ->
 --   Hybrid{associated prime strategy, localize strategy}
 -- for (primaryDecomposition, Module), strategy can also be a list
 --   Hybrid{ one of "Hom", "Res", or "Sat" (default) }
-Hybrid = new SelfInitializingType of BasicList
-
 primaryDecomposition = method(
     TypicalValue => List,
     Options => {

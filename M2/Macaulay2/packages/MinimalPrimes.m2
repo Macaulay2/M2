@@ -67,7 +67,7 @@ newPackage(
 
 exportFrom_Core { "decompose" }
 
-export { "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment" }
+export { "Hybrid", "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment" }
 
 importFrom_Core { "printerr", "raw", "rawCharSeries", "rawGBContains", "rawRadical", "newMonomialIdeal" }
 
@@ -103,6 +103,9 @@ protect symbol toAmbientField
 protect symbol fromAmbientField
 
 algorithms = new MutableHashTable from {}
+
+-- used for dynamic strategies here and in PrimaryDecomposition
+Hybrid = new SelfInitializingType of List
 
 --------------------------------------------------------------------
 -- Support routines
@@ -233,15 +236,7 @@ minprimesHelper = (I, key, opts) -> (
     opts = opts ++ { CodimensionLimit => codimLimit };
 
     -- this logic determines what strategies will be used
-    computation := (opts, container) -> (
-	if not instance(opts.Strategy, VisibleList)
-	then runHooks(key, (opts, I), Strategy => opts.Strategy)
-	-- advanced strategies can still be used:
-	else minprimesWithStrategy(I,
-	    Verbosity              => opts.Verbosity,
-	    Strategy               => opts.Strategy,
-	    CodimensionLimit       => opts.CodimensionLimit,
-	    "SquarefreeFactorSize" => opts#"SquarefreeFactorSize"));
+    computation := (opts, container) -> runHooks(key, (opts, I), Strategy => opts.Strategy);
 
     -- this is the logic for caching partial minimal primes computations. I.cache contains an option:
     --   MinimalPrimesOptions{} => MinimalPrimesComputation{ CodimensionLimit, Result }
@@ -298,6 +293,17 @@ algorithms#(minimalPrimes, Ideal) = new MutableHashTable from {
     	    CodimensionLimit       => opts.CodimensionLimit,
     	    "SquarefreeFactorSize" => opts#"SquarefreeFactorSize")),
 
+    Hybrid => (opts, I) -> (
+	-- advanced strategies can still be used by passing
+	--  Strategy => Hybrid{...}
+	if not instance(opts.Strategy, Hybrid)
+	then return null;
+	minprimesWithStrategy(I,
+	    Verbosity              => opts.Verbosity,
+	    Strategy               => opts.Strategy,
+	    CodimensionLimit       => opts.CodimensionLimit,
+	    "SquarefreeFactorSize" => opts#"SquarefreeFactorSize")),
+
     Monomial => (opts, I) -> (
 	R := ring I;
 	if not isMonomialIdeal I
@@ -311,7 +317,7 @@ algorithms#(minimalPrimes, Ideal) = new MutableHashTable from {
     }
 
 -- Installing hooks for (minimalPrimes, Ideal)
-scan({"Legacy", "NoBirational", "Birational", Monomial}, strategy ->
+scan({"Legacy", "NoBirational", "Birational", Hybrid, Monomial}, strategy ->
     addHook(key := (minimalPrimes, Ideal), algorithms#key#strategy, Strategy => strategy))
 
 --------------------------------------------------------------------
@@ -323,7 +329,7 @@ minprimesWithStrategy = method(Options => options splitIdeals)
 minprimesWithStrategy Ideal := opts -> J -> (
     (I, fback) := flattenRingMap J;
     --
-    newstrat := {opts.Strategy, stratEnd};
+    newstrat := {toSequence opts.Strategy, stratEnd};
     --
     pdState := createPDState(I);
     opts = opts ++ {"PDState" => pdState};
