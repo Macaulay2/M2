@@ -32,6 +32,22 @@ TOODAMNSLOW = (str) -> null
 -------------------------------
 
 TEST ///
+  -- used to be in tests/normal/decompose3.m2
+  R = QQ [a, b, c, d, e]
+  S = R [w_0, w_1, w_2, Join=>false]
+  J = ideal(b*w_0-c*w_1+d*w_2,a*w_0-b*w_1+c*w_2)
+  assert( intersect decompose J == J )
+///
+
+TEST get(currentFileDirectory | "decompose-test.m2") -- FIXME: one test here may be wrong
+TEST get(currentFileDirectory | "decompose2-test.m2") -- FIXME: not testing anything
+TEST get(currentFileDirectory | "decompose4-test.m2")
+TEST get(currentFileDirectory | "decompose5-test.m2")
+TEST get(currentFileDirectory | "minprimes-test.m2")
+TEST get(currentFileDirectory | "minprimes2-test.m2") -- TODO: add Binomial strategy
+TEST get(currentFileDirectory | "radical-test.m2") -- FIXME: not testing anything
+
+TEST ///
   R = ZZ/101[a..d]
   assert(minprimes ideal(0_R) == {ideal(0_R)})
   assert(minprimes ideal(1_R) == {})
@@ -1778,6 +1794,17 @@ TEST /// -- radical test
   G = I_0
   radicalContainment(G,J)
   radicalContainment(G-a^2,J)
+///
+
+TEST ///
+  -- used to be in tests/normal/radical2.m2
+  kk = ZZ/101
+  S = kk[vars(0..11)]
+  I = ideal"-be+af,-de+cf,-dg+ch,-bi+aj"
+  time assert(radical I == ideal {b*i-a*j, d*g-c*h, d*e-c*f, b*e-a*f}) -- fast now
+
+  J = ideal"-de+cf,-bg+ah,-fg+eh,-bi+aj,-di+cj"
+  time assert(radical J == ideal {d*i-c*j, b*i-a*j, f*g-e*h, b*g-a*h, d*e-c*f}) -- was a problem, switched algorithm to intersect decompose
 ///
 
 TEST /// -- radicalContainment test: sharp bound example

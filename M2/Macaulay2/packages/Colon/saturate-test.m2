@@ -1,5 +1,5 @@
--- used to be in tests/normal/saturate.m2
 TEST ///
+  -- used to be in tests/normal/saturate.m2
   S = QQ[x, y, z]
   d = 3
   f = ideal x^d
@@ -13,9 +13,9 @@ TEST ///
   assert(saturate(ideal P, z, Strategy => strategy) == ideal y)
 ///
 
--- example by Leslie Roberts <robertsl@mast.queensu.ca>
--- used to be in tests/normal/saturate2.m2
 TEST ///
+  -- example by Leslie Roberts <robertsl@mast.queensu.ca>
+  -- used to be in tests/normal/saturate2.m2
   K = QQ;
   S = K[u, v, a, c, Degrees => {2, 3, 1, 2}];
   P = ideal(v^3-u^3*a^3, u*v^2-c^2*a^4);
@@ -27,8 +27,17 @@ TEST get(currentFileDirectory | "saturate3.m2")
 TEST get(currentFileDirectory | "saturate4.m2")
 TEST get(currentFileDirectory | "saturate5.m2")
 
--- Tests for isSupportedInZeroLocus
 TEST ///
+  -- used to be in tests/quarantine/saturate.m2
+  -- TODO: add assertions
+  -- a problem with matrices formed from lists of vectors in a subquotient module
+  R = QQ[x..z]
+  m = ideal vars R
+  M = m/m^2
+  N = saturate 0_M
+///
+
+TEST /// -- Tests for isSupportedInZeroLocus
   S = ZZ/11[x_0..x_4];
   B = intersect(ideal(x_0, x_1), ideal(x_2, x_3, x_4));
   I = saturate(ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3)), B);
@@ -55,9 +64,8 @@ TEST ///
   time assert(isSupportedInZeroLocus(M, B) == (saturate(ann M, B) == ideal 1_S)) -- 0.001s woohoo caching!
 ///
 
--- previously in packages/Macaulay2Doc/doc9.m2
-
 TEST ///
+  -- previously in packages/Macaulay2Doc/doc9.m2
   -- The ideal case
   R = ZZ/101[a..d]
   I = monomialCurveIdeal(R,{1,3,4})

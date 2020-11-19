@@ -13,6 +13,7 @@
 --           funny gradings, quotient rings, etc.
 --        3. turn strategies into hooks
 --        4. which symbols need to be exported
+--        5. Binomials package should add binomialMinimalPrimes as a strategy to minimalPrimes
 ---------------------------------------------------------------------------
 newPackage(
     "MinimalPrimes",
