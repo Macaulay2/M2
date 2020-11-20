@@ -22,7 +22,7 @@ newPackage("ThreadedGB",
     Headline => "Compute a Groebner basis using the classical Buchberger with multiple threads"
   )
 
--- The factory library code is not thread-safe, and 'gcd' calls.  Here we insert some simple routines to avoid it.
+-- The factory library code is not thread-safe, and 'gcd' calls it.  Here we insert some simple routines to avoid it.
 -- This code assumes we are over a field, so we don't have to take gcd's of the coefficients, and that f and g are monomials, which is the case in the code.
 manualGCD = (f,g) -> (
      R := ring f;
@@ -102,6 +102,7 @@ tgb (List,ZZ) := HashTable => o -> (basisList, nThreads) -> (
         if not isReady(tasksValues_i) then allReady = false;
     	);
       if allReady then allowableThreads=1;
+      sleep 1;
     );
     -- final clean up:
     if # keys trivial > 0 then (
