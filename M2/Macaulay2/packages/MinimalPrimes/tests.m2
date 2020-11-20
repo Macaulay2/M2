@@ -1339,7 +1339,7 @@ TEST ///
   c2 + 2bd + 2ae + 2fg + e,
   2cd + 2be + 2af + g2 + f,
   d2 + 2ce + 2bf + 2ag + g"
-  time C = minprimes(I,Strategy=>Hybrid NoBirationalStrat, Verbosity=>2);
+  time C = minprimes(I,Strategy=>Hybrid{NoBirationalStrat}, Verbosity=>2);
   --time C = splitIdeal(I,Strategy=>Hybrid{defaultStrat,stratEnd}, Verbosity=>2);
   --time C = minprimes(I, Verbosity=>2);   -- the extra time is in the conversion
                                           -- from annotated ideal to ideal caused by
@@ -1449,7 +1449,7 @@ TEST ///
   C = splitIdeal(J,Strategy=>Hybrid{defaultStrat,(IndependentSet,infinity)}, Verbosity=>2)
   C / isPrime
   J2 = C#2
-  splitIdeal(J2,Strategy=>Hybrid SplitTower, Verbosity=>2)
+  splitIdeal(J2,Strategy=>Hybrid{SplitTower}, Verbosity=>2)
   use ring (J2.LexGBOverBase)_0
   use coefficientRing ring (J2.LexGBOverBase)_0
   factorOverTower({(J2.LexGBOverBase)_0},g_1^2-3*g_4^2)
@@ -1460,7 +1460,7 @@ TEST ///
   lexGBOverBase = J2.LexGBOverBase
   factorOverTower({lexGBOverBase#0}, lexGBOverBase#1)
   factorOverTower(drop(lexGBOverBase,-1), lexGBOverBase#2, Verbosity=>2)
-  splitIdeal(J2,Strategy=>Hybrid SplitTower, Verbosity=>2)
+  splitIdeal(J2,Strategy=>Hybrid{SplitTower}, Verbosity=>2)
   *-
   --C = time minprimes(J,Strategy=>Hybrid{Linear,Birational,Factorization,Linear,Birational,Minprimes});
 ///

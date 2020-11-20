@@ -229,6 +229,7 @@ trimHelper = ((opts, M) -> (
 		    	 subquotient(F, if not epi raw tot then mingens tot, ))
 		    else error "trim: unrecognized Strategy option"));
 	  if N.?generators and epi raw mingb N.generators then N = subquotient(ambient N,,if N.?relations then N.relations);
+	  -- TODO: make into a separate hook
 	  if ring M === ZZ then (
 	       LLLBases := needsPackage "LLLBases";
 	       LLL := value LLLBases.Dictionary#"LLL";

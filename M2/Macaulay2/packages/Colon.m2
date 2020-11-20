@@ -9,6 +9,7 @@
 --           or greedySat in GTZ.m2 or getSaturation in newGTZ.m2
 --        3. which algorithms for Ideals can be adapted to submodules?
 --        4. move radical here, perhaps intersect as well
+--        5. employ storefun! Maybe call it declare
 ---------------------------------------------------------------------------
 newPackage(
     "Colon",
@@ -22,7 +23,7 @@ newPackage(
     Keywords => {"Commutative Algebra"},
     PackageExports => { "Elimination" },
     AuxiliaryFiles => true,
-    DebuggingMode => true
+    DebuggingMode => false
     )
 
 export { "isSupportedInZeroLocus" }

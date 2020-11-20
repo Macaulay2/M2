@@ -14,6 +14,7 @@
 --        3. turn strategies into hooks
 --        4. which symbols need to be exported
 --        5. Binomials package should add binomialMinimalPrimes as a strategy to minimalPrimes
+--        6. add installMinprimes that gives a warning
 ---------------------------------------------------------------------------
 newPackage(
     "MinimalPrimes",
@@ -29,7 +30,7 @@ newPackage(
     Keywords => {"Commutative Algebra"},
     PackageImports => { "Elimination" },
     AuxiliaryFiles => true,
-    DebuggingMode => true
+    DebuggingMode => false
     )
 
 -- TODO: The following functions are used in tests.m2
@@ -68,7 +69,7 @@ newPackage(
 
 exportFrom_Core { "decompose" }
 
-export { "Hybrid", "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment" }
+export { "Hybrid", "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment", "installMinprimes" }
 
 importFrom_Core { "printerr", "raw", "rawCharSeries", "rawGBContains", "rawRadical", "newMonomialIdeal" }
 
@@ -107,6 +108,9 @@ algorithms = new MutableHashTable from {}
 
 -- used for dynamic strategies here and in PrimaryDecomposition
 Hybrid = new SelfInitializingType of List
+
+-- deprecate this soon
+installMinprimes = () -> printerr "warning: the installMinprimes routine is now deprecated and should be removed"
 
 --------------------------------------------------------------------
 -- Support routines
@@ -301,7 +305,7 @@ algorithms#(minimalPrimes, Ideal) = new MutableHashTable from {
 	then return null;
 	minprimesWithStrategy(I,
 	    Verbosity              => opts.Verbosity,
-	    Strategy               => opts.Strategy,
+	    Strategy               => toList opts.Strategy,
 	    CodimensionLimit       => opts.CodimensionLimit,
 	    "SquarefreeFactorSize" => opts#"SquarefreeFactorSize")),
 
@@ -330,7 +334,7 @@ minprimesWithStrategy = method(Options => options splitIdeals)
 minprimesWithStrategy Ideal := opts -> J -> (
     (I, fback) := flattenRingMap J;
     --
-    newstrat := {toSequence opts.Strategy, stratEnd};
+    newstrat := {opts.Strategy, stratEnd};
     --
     pdState := createPDState(I);
     opts = opts ++ {"PDState" => pdState};
