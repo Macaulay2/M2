@@ -72,7 +72,8 @@ TEST /// -- testing strategies
 		  if isMonomialIdeal I then sl = {Monomial} | sl;
 		  scan(sl, s -> testResult(I, primaryDecomposition(ideal I_*, Strategy => s)))));
 	  scan({  {1,1}, {1,2}, {2,1}, {2,2}},
-	      s -> testResult(ideal(x^4*y^5), primaryDecomposition(ideal(x^4*y^5), Strategy => Hybrid s)));
+	      s -> testResult(ideal(x^4*y^5),
+		  primaryDecomposition(ideal(x^4*y^5), Strategy => HybridStrategy, HybridStrategy => s)));
 	  )
       )
 ///
@@ -294,7 +295,6 @@ TEST /// -- Optimizing cases for associatedPrimes without computing res
   M.cache#(AssociatedPrimesOptions{}).CodimensionLimit = infinity
   elapsedTime comps = primaryDecomposition M; -- ~ 3 seconds
   assert(intersect comps == 0 and all(comps, isPrimary_M))
-  -- note: primaryDecomposition I is very slow
 ///
 
 TEST /// -- testing monomial ideal inputs

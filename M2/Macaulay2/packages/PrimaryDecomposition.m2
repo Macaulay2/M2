@@ -277,6 +277,7 @@ algorithms#(associatedPrimes, Module) = new MutableHashTable from {
 	-- returns a MutableList
 	(M, fback) := flattenRingMap M0;
 	S := ring M;
+        m := ideal gens S;
 	A := trim ann M;
 	c := codim M;
 	d := dim S;
@@ -288,11 +289,9 @@ algorithms#(associatedPrimes, Module) = new MutableHashTable from {
 	for i from max(p + 1, c) to min(d, k) do (
 	    if debugLevel > 0 then printerr("Extracting associated primes of codim " | toString i);
 	    newPrimes :=
-	    if i == d and (
+	    if i == d and (isHomogeneous M or (c == d and all(gens S, v -> radicalContainment(v, A))))
 		-- TODO: make these conditions into named functions?
-		(isHomogeneous M and (c == d or pdim M == d))
-		or (c == d and all(gens S, v -> radicalContainment(v, A))))
-	    then {ideal gens S}
+	    then ( if c == d or pdim M == d then {m} else {} )
 	    else (
 		if c < i then (
 		    -- computes ann Ext^i(M, S)
