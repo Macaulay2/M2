@@ -178,20 +178,20 @@ Inputs => {
 "phi" => RationalMap => {"a birational map"}}, 
 Outputs => { 
 RationalMap => {"the inverse map of ",TT"phi"}},
-PARA{"If the source variety is a projective space and if a further technical condition is satisfied, then the algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. For the general case, the algorithm used is the same as for ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.11/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html","invertBirationalMap"}, " in the package ", HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.11/share/doc/Macaulay2/Parametrization/html","Parametrization"}, ". Note that in this case, the analogous method ",HREF{"http://www2.macaulay2.com/Macaulay2/share/doc/Macaulay2/RationalMaps/html/_inverse__Of__Map.html","inverseOfMap"}," in the package ",HREF{"http://www2.macaulay2.com/Macaulay2/share/doc/Macaulay2/RationalMaps/html/index.html","RationalMaps"}," generally turns out to be faster."},
+PARA{"If the source variety is a projective space and if a further technical condition is satisfied, then the algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. For the general case, the algorithm used is the same as for ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.16/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html","invertBirationalMap"}, " in the package ", HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.16/share/doc/Macaulay2/Parametrization/html","Parametrization"}, ". Note that in this case, the analogous method ",HREF{"http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.16/share/doc/Macaulay2/RationalMaps/html/_inverse__Of__Map.html","inverseOfMap"}," in the package ",HREF{"http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.16/share/doc/Macaulay2/RationalMaps/html/index.html","RationalMaps"}," generally turns out to be faster."},
 EXAMPLE { 
 "-- A Cremona transformation of P^20 
 phi = rationalMap map quadroQuadricCremonaTransformation(20,1)", 
 "time psi = inverseMap phi",
-"phi * psi == 1"},
+"assert(phi * psi == 1)"},
 PARA{"The method also accepts as input a ",TO RingMap," representing a rational map ",TEX///$\Phi$///, " between projective varieties. In this case, the ",TO RingMap," defining ",TEX///$\Phi^{-1}$///," is returned."},
 EXAMPLE { 
 "-- A Cremona transformation of P^26 
 phi = map quadroQuadricCremonaTransformation(26,1)",
 "time psi = inverseMap phi", 
-"isInverseMap(phi,psi)"},
+"assert isInverseMap(phi,psi)"},
 Caveat => {"If the map passed is not birational and the option ", TO MathMode, " is set to ", TT "false", ", you might not get any error message."},
-SeeAlso => {approximateInverseMap,(inverse,RationalMap),inverse'}}
+SeeAlso => {approximateInverseMap,(inverse,RationalMap)}}
 
 document { 
 Key => {approximateInverseMap,(approximateInverseMap,RationalMap,ZZ),(approximateInverseMap,RationalMap),(approximateInverseMap,RingMap),(approximateInverseMap,RingMap,ZZ)}, 
@@ -208,9 +208,9 @@ EXAMPLE {
 "P8 = ZZ/97[t_0..t_8];", 
 "phi = inverseMap rationalMap(trim(minors(2,genericMatrix(P8,3,3))+random(2,P8)),Dominant=>true)",
 "time psi = approximateInverseMap phi",
-"phi * psi == 1 and psi * phi == 1",
+"assert(phi * psi == 1 and psi * phi == 1)",
 "time psi' = approximateInverseMap(phi,CodimBsInv=>5);",
-"psi == psi'"}, 
+"assert(psi == psi')"}, 
 PARA{"A more complicated example is the following (here ", TO inverseMap," takes a lot of time!)."},
 EXAMPLE { 
 "phi = rationalMap map(P8,ZZ/97[x_0..x_11]/ideal(x_1*x_3-8*x_2*x_3+25*x_3^2-25*x_2*x_4-22*x_3*x_4+x_0*x_5+13*x_2*x_5+41*x_3*x_5-x_0*x_6+12*x_2*x_6+25*x_1*x_7+25*x_3*x_7+23*x_5*x_7-3*x_6*x_7+2*x_0*x_8+11*x_1*x_8-37*x_3*x_8-23*x_4*x_8-33*x_6*x_8+8*x_0*x_9+10*x_1*x_9-25*x_2*x_9-9*x_3*x_9+3*x_4*x_9+24*x_5*x_9-27*x_6*x_9-5*x_0*x_10+28*x_1*x_10+37*x_2*x_10+9*x_4*x_10+27*x_6*x_10-25*x_0*x_11+9*x_2*x_11+27*x_4*x_11-27*x_5*x_11,x_2^2+17*x_2*x_3-14*x_3^2-13*x_2*x_4+34*x_3*x_4+44*x_0*x_5-30*x_2*x_5+27*x_3*x_5+31*x_2*x_6-36*x_3*x_6-x_0*x_7+13*x_1*x_7+8*x_3*x_7+9*x_5*x_7+46*x_6*x_7+41*x_0*x_8-7*x_1*x_8-34*x_3*x_8-9*x_4*x_8-46*x_6*x_8-17*x_0*x_9+32*x_1*x_9-8*x_2*x_9-35*x_3*x_9-46*x_4*x_9+26*x_5*x_9+17*x_6*x_9+15*x_0*x_10+35*x_1*x_10+34*x_2*x_10+20*x_4*x_10+14*x_0*x_11+36*x_1*x_11+35*x_2*x_11-17*x_4*x_11,x_1*x_2-40*x_2*x_3+28*x_3^2-x_0*x_4+5*x_2*x_4-16*x_3*x_4+5*x_0*x_5-36*x_2*x_5+37*x_3*x_5+48*x_2*x_6-5*x_1*x_7-5*x_3*x_7+x_5*x_7+20*x_6*x_7+10*x_0*x_8+34*x_1*x_8+41*x_3*x_8-x_4*x_8+x_6*x_8+40*x_0*x_9-32*x_1*x_9+5*x_2*x_9-11*x_3*x_9-20*x_4*x_9+45*x_5*x_9-14*x_6*x_9-25*x_0*x_10+45*x_1*x_10-41*x_2*x_10-46*x_4*x_10+8*x_6*x_10-28*x_0*x_11+11*x_2*x_11+14*x_4*x_11-8*x_5*x_11),{t_4^2+t_0*t_5+t_1*t_5+35*t_2*t_5+10*t_3*t_5+25*t_4*t_5-5*t_5^2-14*t_0*t_6-14*t_1*t_6-5*t_2*t_6-13*t_4*t_6+37*t_5*t_6+22*t_6^2-31*t_3*t_7+26*t_4*t_7+12*t_5*t_7-45*t_6*t_7-46*t_3*t_8+37*t_4*t_8+28*t_5*t_8+33*t_6*t_8,t_3*t_4+4*t_0*t_5+39*t_1*t_5-40*t_2*t_5+40*t_3*t_5+26*t_4*t_5-20*t_5^2+41*t_0*t_6+36*t_1*t_6-22*t_2*t_6+36*t_4*t_6-30*t_5*t_6-13*t_6^2-25*t_3*t_7+5*t_4*t_7-35*t_5*t_7+10*t_6*t_7+11*t_3*t_8+46*t_4*t_8+29*t_5*t_8+28*t_6*t_8,t_2*t_4-5*t_0*t_5-40*t_1*t_5+12*t_2*t_5+47*t_3*t_5+37*t_4*t_5+25*t_5^2-27*t_0*t_6-22*t_1*t_6+27*t_2*t_6-23*t_4*t_6+5*t_5*t_6-13*t_6^2-39*t_3*t_7-29*t_4*t_7+9*t_5*t_7+39*t_6*t_7+36*t_3*t_8+13*t_4*t_8+26*t_5*t_8+37*t_6*t_8,t_0*t_4-t_0*t_5-8*t_1*t_5-35*t_2*t_5-10*t_3*t_5-33*t_4*t_5+5*t_5^2+15*t_0*t_6+15*t_1*t_6+5*t_2*t_6+15*t_4*t_6-38*t_5*t_6-22*t_6^2+31*t_3*t_7-25*t_4*t_7-19*t_5*t_7+47*t_6*t_7+46*t_3*t_8-36*t_4*t_8-35*t_5*t_8-31*t_6*t_8,t_2*t_3-t_0*t_5-t_1*t_5-35*t_2*t_5-10*t_3*t_5-33*t_4*t_5+5*t_5^2+14*t_0*t_6+14*t_1*t_6+5*t_2*t_6+14*t_4*t_6-31*t_5*t_6-24*t_6^2+32*t_3*t_7-25*t_4*t_7-19*t_5*t_7+47*t_6*t_7+46*t_3*t_8-36*t_4*t_8-35*t_5*t_8-31*t_6*t_8,t_1*t_3-7*t_1*t_5+t_1*t_6+t_4*t_6-7*t_5*t_6+2*t_6^2-t_3*t_7,t_0*t_3-46*t_0*t_5-39*t_1*t_5-43*t_2*t_5-41*t_3*t_5-26*t_4*t_5-28*t_5^2-35*t_0*t_6-36*t_1*t_6+20*t_2*t_6-36*t_4*t_6+9*t_5*t_6+15*t_6^2+26*t_3*t_7-5*t_4*t_7+35*t_5*t_7-10*t_6*t_7-10*t_3*t_8-46*t_4*t_8+47*t_5*t_8-25*t_6*t_8,t_2^2-46*t_1*t_4-33*t_0*t_5-45*t_1*t_5-39*t_2*t_5-39*t_3*t_5-46*t_4*t_5-29*t_5^2-48*t_0*t_6-38*t_1*t_6-30*t_2*t_6+19*t_4*t_6-44*t_5*t_6-47*t_6^2-36*t_0*t_7-46*t_1*t_7+t_2*t_7-44*t_3*t_7+48*t_4*t_7-14*t_5*t_7+4*t_6*t_7-36*t_0*t_8-46*t_1*t_8+47*t_2*t_8-34*t_3*t_8-24*t_4*t_8-12*t_5*t_8-47*t_6*t_8+47*t_7*t_8,t_1*t_2+6*t_1*t_5+5*t_0*t_6-2*t_1*t_6-t_4*t_6-t_5*t_6+5*t_0*t_7+t_1*t_7-2*t_2*t_7-7*t_5*t_7+2*t_6*t_7-2*t_1*t_8+3*t_7*t_8,t_0*t_2+t_1*t_4+5*t_0*t_5+32*t_1*t_5-20*t_2*t_5-47*t_3*t_5-37*t_4*t_5-25*t_5^2+19*t_0*t_6+22*t_1*t_6-25*t_2*t_6+25*t_4*t_6-5*t_5*t_6+13*t_6^2+5*t_0*t_7+t_1*t_7+39*t_3*t_7+28*t_4*t_7-9*t_5*t_7-39*t_6*t_7+4*t_0*t_8+t_1*t_8-36*t_3*t_8-14*t_4*t_8-26*t_5*t_8-37*t_6*t_8,t_0*t_1-39*t_1*t_4+40*t_1*t_5-37*t_0*t_6-39*t_1*t_6+19*t_4*t_6-39*t_5*t_6-38*t_0*t_7+39*t_1*t_7+19*t_2*t_7+18*t_5*t_7-19*t_6*t_7+19*t_1*t_8+20*t_7*t_8,t_0^2+12*t_1*t_4+20*t_0*t_5+27*t_1*t_5-8*t_2*t_5+37*t_3*t_5+28*t_4*t_5+30*t_5^2-46*t_0*t_6+24*t_1*t_6-40*t_2*t_6+25*t_4*t_6+16*t_5*t_6-35*t_6^2+29*t_0*t_7+12*t_1*t_7-35*t_2*t_7-8*t_3*t_7-18*t_4*t_7+42*t_5*t_7-12*t_6*t_7-6*t_0*t_8+12*t_1*t_8-15*t_3*t_8+9*t_4*t_8+20*t_5*t_8-30*t_6*t_8+4*t_7*t_8})", 
@@ -220,10 +220,10 @@ time psi=approximateInverseMap(phi,CodimBsInv=>4)",
 phi * psi == 1",
 "-- in this case we can remedy enabling the option MathMode
 time psi = approximateInverseMap(phi,CodimBsInv=>4,MathMode=>true)",
-"phi * psi == 1"},
+"assert(phi * psi == 1)"},
 PARA{"The method also accepts as input a ",TO RingMap," representing a rational map between projective varieties. In this case, a ",TO RingMap," is returned as well."},
 Caveat => {"For the purpose of this method, the option ", TO MathMode, TT"=>true"," is too rigid, especially when the source of the passed map is not a projective space."},
-SeeAlso => {inverseMap}}
+SeeAlso => {inverseMap,(inverse,RationalMap)}}
 
 document { 
 Key => {graph,(graph,RationalMap)}, 
@@ -388,34 +388,25 @@ RationalMap => "phi",
 ZZ => "n"}, 
 Outputs => { 
 RationalMap => {TT"phi^n"}},
-PARA{"If the map is birational, then negative values may be used and the inverse will be computed using ",TT"inverseMap(phi,MathMode=>true,Verbose=>false)"," (see ",TO inverseMap,")."}}
+PARA{"If the map is birational, then negative values may be used and the inverse will be computed using ",TO2{(inverse,RationalMap),"inverse"},TT"(phi)","."}}
 
 document { 
-Key => {(inverse,RationalMap)}, 
+Key => {(inverse,RationalMap),(inverse,RationalMap,Option)}, 
 Headline => "inverse of a birational map", 
-Usage => "inverse phi", 
+Usage => "inverse phi
+inverse(phi,MathMode=>b)", 
 Inputs => { 
-RationalMap => "phi" => {"a birational map"}}, 
+RationalMap => "phi" => {"which has to be birational, and ",TT"b"," is a ",TO2{Boolean,"boolean value"},", that is, ",TT"true"," or ",TT"false"," (the default value is ",TT"false",")"}}, 
 Outputs => { 
 RationalMap => {"the inverse map of ",TT"phi"}},
-PARA{"This is equivalent both to ",TT"inverseMap(phi,MathMode=>true,Verbose=>false)"," and to ",TT"phi^(-1)",", see ",TO "inverseMap","."},
-SeeAlso => {inverseMap,(symbol ^,RationalMap,ZZ),inverse'}}
-
-document { 
-Key => {inverse',(inverse',RationalMap)}, 
-Headline => "inverse of a birational map using a middle ground approach between MathMode=>true and MathMode=>false", 
-Usage => "inverse' phi", 
-Inputs => { 
-RationalMap => "phi" => {"a birational map"}}, 
-Outputs => { 
-RationalMap => {"the inverse map of ",TT"phi"}},
-PARA{"This computes the inverse map of ",TT "phi"," using ",TT "psi = ",TO "inverseMap",TT" phi",". Then it is checked that ",
-TO2{(symbol SPACE,RationalMap,Ideal),"psi phi p"},TT" == p"," and ",TO2{(symbol SPACE,RationalMap,Ideal),"phi psi q"},TT" == q",", where ",TT"p,q"," are, respectively, a ",TO2{point,"random point"}," on the ",TO2{(source,RationalMap),"source"}," and the ",TO2{(target,RationalMap),"target"}," of ",TT"phi",". Finally, if the tests pass, the command ",TO forceInverseMap,TT"(phi,psi)"," is invoked and ",TT"psi"," is returned."},
+PARA{TT"inverse(phi,MathMode=>true)"," is the same as ",TO inverseMap,TT"(phi,MathMode=>true,Verbose=>false)",", while ",
+TT"inverse(phi,MathMode=>false)"," applies a middle ground approach between ",TO inverseMap,TT"(phi,MathMode=>true)"," and ",TO inverseMap,TT"(phi,MathMode=>false)",
+". The procedure for the latter is as follows: It first computes the inverse map of ",TT "phi"," using ",TT "psi = ",TO "inverseMap",TT" phi",". Then it is checked that ",TO2{(symbol SPACE,RationalMap,Ideal),"psi phi p"},TT" == p"," and ",TO2{(symbol SPACE,RationalMap,Ideal),"phi psi q"},TT" == q",", where ",TT"p,q"," are, respectively, a ",TO2{point,"random point"}," on the ",TO2{(source,RationalMap),"source"}," and the ",TO2{(target,RationalMap),"target"}," of ",TT"phi",". Finally, if the tests pass, the command ",TO forceInverseMap,TT"(phi,psi)"," is invoked and ",TT"psi"," is returned."},
 EXAMPLE {
 "R = QQ[x_0..x_4]; phi = rationalMap minors(4,random(R^{4:1},R^5)) -- special Cremona transformation of P^4 of type (4,4)",
-"time inverse' phi"
+"time inverse phi"
 },
-SeeAlso => {(inverse,RationalMap),inverseMap,(isInverseMap,RationalMap,RationalMap)}}
+SeeAlso => {inverseMap,(symbol ^,RationalMap,ZZ),(isInverseMap,RationalMap,RationalMap)}}
 
 document { 
 Key => {(ideal,RationalMap)}, 
@@ -444,7 +435,7 @@ Inputs => {
 RationalMap => "phi" => {"a birational map ",TEX///$X--->Y$///}}, 
 Outputs => { 
 Ideal => {"an ideal defining the closure in ",TT"X"," of the locus where ",TT "phi"," is not a local isomorphism"}},
-PARA{"This method simply calculates the ",TO2{(symbol ^**,RationalMap,Ideal),"inverse image"}," of the ",TO2{(ideal,RationalMap),"base locus"}," of the inverse map, which in turn is determined through the method ",TO inverse',"."},
+PARA{"This method simply calculates the ",TO2{(symbol ^**,RationalMap,Ideal),"inverse image"}," of the ",TO2{(ideal,RationalMap),"base locus"}," of the inverse map, which in turn is determined through the method ",TO2{(inverse,RationalMap),"inverse"},"."},
 PARA{"Below, we compute the exceptional locus of the map defined by the linear system of quadrics through the quintic rational normal curve in ",TEX///$\mathbb{P}^5$///,"."},
 EXAMPLE { 
 "P5 := ZZ/100003[x_0..x_5];",
@@ -815,7 +806,9 @@ Ideal => "I" => {"a homogeneous ideal in the coordinate ring of a projective var
 ZZ => "d" => {"a positive integer (or a ",TO2{List,"list"}," of integers in the case ",TEX///$X$///," is embedded in a product of projective spaces)"},
 ZZ => "e" => {"a positive integer (if omitted, it is taken to be 1)"}}, 
 Outputs => { RationalMap => {"the rational map ",TEX///$X--->\mathbb{P}^m$///," defined by the linear system of hypersurfaces of degree ",TEX///$d$///, " having points of multiplicity ",TEX///$e$///," along the projective subscheme of ",TEX///$X$///," defined by ",TEX///$I$///,"."}}, 
-PARA{"The code ",TT"rationalMap I"," is basically equivalent to ", TT"rationalMap(I,max degrees I)",". In the following example, we calculate the rational map defined by the linear system of cubic hypersurfaces in ",TEX///$\mathbb{P}^6$///," having double points along a Veronese surface ",TEX///$V\subset\mathbb{P}^5\subset\mathbb{P}^6$///,"."},
+PARA {"In most cases, the command ",TT"rationalMap(I,d,e)"," yields the same output as ",TT"rationalMap(saturate(I^e),d)",", but the former is implemented using pure linear algebra."},
+PARA{"The command ",TT"rationalMap I"," is basically equivalent to ", TT"rationalMap(I,max degrees I)","."},
+PARA{"In the following example, we calculate the rational map defined by the linear system of cubic hypersurfaces in ",TEX///$\mathbb{P}^6$///," having double points along a Veronese surface ",TEX///$V\subset\mathbb{P}^5\subset\mathbb{P}^6$///,"."},
 EXAMPLE {
 "ZZ/33331[x_0..x_6]; V = ideal(x_4^2-x_3*x_5,x_2*x_4-x_1*x_5,x_2*x_3-x_1*x_4,x_2^2-x_0*x_5,x_1*x_2-x_0*x_4,x_1^2-x_0*x_3,x_6);", 
 "time phi = rationalMap(V,3,2)",
@@ -1135,7 +1128,7 @@ Headline => "whether a birational map is an isomorphism",
 Usage => "isIsomorphism phi", 
 Inputs => {"phi" => RationalMap}, 
 Outputs => {Boolean => {"whether ",TT"phi"," is an isomorphism"}},
-PARA{"This method computes the inverse rational map using ",TO inverse',"."},
+PARA{"This method computes the inverse rational map using ",TO2{(inverse,RationalMap),"inverse"},"."},
 EXAMPLE { 
 "P1 := QQ[a,b]; P4 := QQ[x,y,z,w];",
 "phi = rationalMap({a^4,a^3*b,a^2*b^2,a*b^3,b^4},Dominant=>true)",
@@ -1159,5 +1152,6 @@ EXAMPLE {
 "D = new Tally from {H => 2,C => 1};",
 "time phi = rationalMap D",
 "time ? image(phi,\"F4\")"},
+PARA{"See also the package ",HREF{"http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.16/share/doc/Macaulay2/Divisor/html/index.html","Divisor"},", which provides general tools for working with divisors."},
 SeeAlso => {rationalMap,(rationalMap,Ideal,ZZ),(image,RationalMap,String)}}
 
