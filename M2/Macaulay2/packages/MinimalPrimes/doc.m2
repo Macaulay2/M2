@@ -1,3 +1,5 @@
+undocumented { installMinprimes }
+
 doc ///
 Node
   Key
@@ -156,8 +158,8 @@ Node
 Node
   Key
     (isPrime, Ideal)
-    [(isPrime, Ideal), Strategy]
-    [(isPrime, Ideal), Verbosity]
+   [(isPrime, Ideal), Strategy]
+   [(isPrime, Ideal), Verbosity]
   Headline
     whether an ideal is prime
   Usage
@@ -287,4 +289,22 @@ Node
       elapsedTime radicalContainment(x_n, I, Strategy => "Kollar")
   SeeAlso
     radical
+
+Node
+  Key
+    Hybrid
+  Headline
+    the class of lists encapsulating hybrid strategies
+  Description
+    Text
+      This class is used to encapsulate hybrid strategies for certain method functions.
+
+      This example demonstrates an example of what is meant by a hybrid strategy.
+    Example
+      debug MinimalPrimes
+      R = ZZ/101[w..z];
+      I = ideal(w*x^2-42*y*z, x^6+12*w*y+x^3*z, w^2-47*x^4*z-47*x*z^2);
+      elapsedTime minimalPrimes(ideal I_*, Strategy => Hybrid{Linear,Birational,Factorization,DecomposeMonomials}, Verbosity => 2);
+  SeeAlso
+    "PrimaryDecomposition :: primaryDecomposition(..., Strategy => ...)"
 ///

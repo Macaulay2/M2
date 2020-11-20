@@ -26,7 +26,7 @@ newPackage(
     PackageExports => { "Colon", "MinimalPrimes" },
     PackageImports => { "Elimination" },
     AuxiliaryFiles => true,
-    DebuggingMode => true
+    DebuggingMode => false
     )
 
 export {

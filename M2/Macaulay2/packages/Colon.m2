@@ -9,6 +9,7 @@
 --           or greedySat in GTZ.m2 or getSaturation in newGTZ.m2
 --        3. which algorithms for Ideals can be adapted to submodules?
 --        4. move radical here, perhaps intersect as well
+--        5. employ storefun! Maybe call it declare
 ---------------------------------------------------------------------------
 newPackage(
     "Colon",
@@ -22,7 +23,7 @@ newPackage(
     Keywords => {"Commutative Algebra"},
     PackageExports => { "Elimination" },
     AuxiliaryFiles => true,
-    DebuggingMode => true
+    DebuggingMode => false
     )
 
 export { "isSupportedInZeroLocus" }
@@ -191,9 +192,9 @@ quotientHelper = (A, B, key, opts) -> (
 	runHooks(key, (opts, A, B), Strategy => strategy));
 
     -- this is the logic for caching partial quotient computations. A.cache contains an option:
-    --   QuotientOptions{ B } => QuotientComputation{ Result }
+    --   QuotientOptions{ mingens B } => QuotientComputation{ Result }
     -- TODO: find an existing cacheKey that can be extended, and use it in the computation
-    cacheKey := QuotientOptions{ B };
+    cacheKey := QuotientOptions{ mingens B };
     container := try A.cache#cacheKey else A.cache#cacheKey = new QuotientComputation from { Result => null };
 
     -- the actual computation of quotient occurs here
@@ -369,13 +370,15 @@ saturate(Thing, Number) := opts -> (t, n) -> saturate(t, n_(ring t), opts)
 
 -- Helper for saturation methods
 saturateHelper = (A, B, key, opts) -> (
+    -- this is only here because some methods are not implemented for RingElement
+    B' := if instance(B, RingElement) then ideal B else B;
+
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
 
     -- this logic runs the strategies in order, or the specified strategy
     computation := (opts, container) -> (
 	if (R := ring A) =!= ring B then error "expected objects in the same ring";
-	B' := if instance(B, RingElement) then ideal B else B;
 	-- note: if B \subset A then A:B^infty should be "everything", but computing a gb for A can be slow
 	-- TODO: if radical A is cached and B \subset radical A then A : B^infty = ambient A
 	-- alternatively, can radical containment be efficiently checked?
@@ -389,9 +392,9 @@ saturateHelper = (A, B, key, opts) -> (
 	runHooks(key, (opts, A, B), Strategy => strategy));
 
     -- this is the logic for caching partial saturation computations. A.cache contains an option:
-    --   SaturateOptions{ B } => SaturateComputation{ Result }
+    --   SaturateOptions{ mingens B } => SaturateComputation{ Result }
     -- TODO: find an existing cacheKey that can be extended, perhaps of type QuotientOptions, and use it in the computation
-    cacheKey := SaturateOptions{ B };
+    cacheKey := SaturateOptions{ mingens B' };
     container := try A.cache#cacheKey else A.cache#cacheKey = new SaturateComputation from { Result => null };
 
     -- the actual computation of saturation occurs here
@@ -577,12 +580,12 @@ isSupportedInZeroLocus(Module, Ideal) := (M, B) -> (
     -- annihilator is known, it's faster to check whether saturate(annihilator M, B) == ideal 1
     if M.cache.?annihilator then (
 	N := annihilator M;
-	cacheKey := SaturateOptions{ B };
+	cacheKey := SaturateOptions{ mingens B };
 	container := N.cache#cacheKey;
 	try isComputationDone container then ( cacheHit class container; return saturate(N, B) == ideal 1_S ) else true);
     -- 2. check that a high enough power of elements of B annihilates M
     n := numgens S;
-    all(B_*, g -> (
+    all(first entries mingens B, g -> (
 	supp := index \ support g;
 	perm := toList(set(0..n-1) - set supp) | supp;
 	R := (coefficientRing S)[(S_*)_perm,

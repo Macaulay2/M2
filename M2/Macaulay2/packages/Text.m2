@@ -870,6 +870,5 @@ scan({peek', show, validate, html, net, info, tex, texMath, mathML, NewFromMetho
 
 undocumented {
     (examples, Hypertext),
-    (htmlWithTex, Hypertext),
     (hypertext, Hypertext)
     }

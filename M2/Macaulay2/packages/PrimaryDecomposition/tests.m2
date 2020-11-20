@@ -33,6 +33,10 @@ TEST ///
   assert(all(minimalPrimes I, f -> class f === MonomialIdeal))
 ///
 
+TEST get(currentFileDirectory | "associatedPrimes-test.m2")
+TEST get(currentFileDirectory | "associatedPrimes2-test.m2")
+TEST get(currentFileDirectory | "primaryDecomposition-test.m2")
+
 testResult = method()
 testResult(Ideal,List) := (I,L) -> (
     assert(#L > 0);

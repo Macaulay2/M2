@@ -136,8 +136,8 @@ mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
         c := runHooks((mingens, Module), (opts, M));
         if c =!= null then c else error "mingens: no method implemented for this type of module"))
 
-addHook((mingens, Module), Strategy => Complement,
-    (opts, M) -> (
+-- FIXME: This is kind of a hack. The strategies should be separated in mingensHelper
+mingensHelper = ((opts, M) -> (
  	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
 	  zr := f -> if f === null or f == 0 then null else f;
 	  F := ambient M;
@@ -158,6 +158,9 @@ addHook((mingens, Module), Strategy => Complement,
 			 complement M.relations)
 		    else mingens mingb (id_F % mingb(M.relations)))
 	       else id_F)))
+
+addHook((mingens, Module), Strategy => Inhomogeneous, (opts, M) -> mingensHelper(opts ++ {Strategy => Inhomogeneous}, M))
+addHook((mingens, Module), Strategy => Complement,    (opts, M) -> mingensHelper(opts ++ {Strategy => Complement},    M))
 
 trim = method (Options => { Strategy => null -* TODO: add DegreeLimit => {} *-})
 trim Ring := Ring => opts -> (R) -> R
@@ -226,6 +229,7 @@ trimHelper = ((opts, M) -> (
 		    	 subquotient(F, if not epi raw tot then mingens tot, ))
 		    else error "trim: unrecognized Strategy option"));
 	  if N.?generators and epi raw mingb N.generators then N = subquotient(ambient N,,if N.?relations then N.relations);
+	  -- TODO: make into a separate hook
 	  if ring M === ZZ then (
 	       LLLBases := needsPackage "LLLBases";
 	       LLL := value LLLBases.Dictionary#"LLL";
