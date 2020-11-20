@@ -1,8 +1,16 @@
 
+-*
+   Copyright 2020, Giovanni Staglianò.
+
+   You may redistribute this file under the terms of the GNU General Public
+   License as published by the Free Software Foundation, either version 2 of
+   the License, or any later version.
+*-
+
 newPackage(
        "Cremona",
-	Version => "4.3.1", 
-        Date => "November 15, 2020",
+	Version => "5.0", 
+        Date => "November 20, 2020",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "rational maps between projective varieties",
 	Keywords => {"Algebraic geometry"},
@@ -54,8 +62,7 @@ export{
    "abstractRationalMap",
    "specialCubicTransformation",
    "isMorphism",
-   "exceptionalLocus",
-   "inverse'"
+   "exceptionalLocus"
 };
 
 certificate := "MathMode: output certified!"|newline;
@@ -88,7 +95,6 @@ segre = method(TypicalValue => RationalMap);
 abstractRationalMap = method();
 isMorphism = method(TypicalValue => Boolean);
 exceptionalLocus = method(TypicalValue => Ideal);
-inverse' = method(TypicalValue => RationalMap);
 
 rationalMap (RingMap) := o -> (phi) -> ( 
    checkMultihomogeneousRationalMap phi;
@@ -644,26 +650,30 @@ RationalMap ^ ZZ := (Phi,j) -> (
          if (target Phi#"map" === source Phi#"map") then return rationalMap(target Phi#"map") else error "expected non-zero integer";
    );
    if j < 0 then (
-         Psi:=inverseMap(Phi,MathMode=>true,Verbose=>false);
+         Psi:=inverse Phi;
          return(Psi^(-j))
    );
    Psi2:=Phi; for i from 1 to j-1 do Psi2 = Psi2 * Phi; 
    return Psi2;
 );
 
-inverse (RationalMap) := (Phi) -> Phi^(-1);
-
-inverse' (RationalMap) := (Phi) -> (
+inverse (RationalMap,Option) := (Phi,opt) -> (
+   o := toList opt;
+   if not(#o == 2 and first o === MathMode) then error "MathMode is the only available option for inverse(RationalMap)";
+   if not instance(last o,Boolean) then error "option MathMode accepts true or false";
    if Phi#"inverseRationalMap" =!= null then return Phi#"inverseRationalMap";
+   if last o then return inverseMap(Phi,MathMode=>true,Verbose=>false);
    Psi := inverseMap Phi;
-   if not isInverseMap'(Phi,Psi) then error "failed to get inverse map; make sure the input map is birational";
-   forceInverseMap(Phi,Psi);
+   if not isInverseMapFast(Phi,Psi) then error "failed to get inverse map; make sure the input map is birational";
+   if Phi#"inverseRationalMap" === null and Psi#"inverseRationalMap" === null then forceInverseMap(Phi,Psi); 
    Psi
 );
 
+inverse (RationalMap) := (Phi) -> inverse(Phi,MathMode=>false);
+
 RationalMap ! := (Phi) -> (
      toMap Phi;
-     try inverse' Phi;
+     try inverse Phi;
      degrees Phi;
      degree Phi;
      isDominant(Phi,MathMode=>true,Verbose=>false);
@@ -1077,10 +1087,10 @@ approximateInverseMap (RingMap,ZZ) := o -> (phi,d) -> (
    if o.MathMode then (
           if isPolynomialRing target phi then (
                  try psi=compose(psi,toMap((vars target phi)*(last coefficients matrix compose(phi,psi))^(-1)));
-                 if isInverseMap(phi,psi) then (if o.Verbose then <<certificate; return psi) else error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this is not the inverse map");
+                 if isInverseMapFast(phi,psi) then (if o.Verbose then <<certificate; return psi) else error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this is not the inverse map");
           ) else (
                  if source psi =!= target phi then error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this map has an incorrect target variety")
-                 else if isInverseMap(phi,psi) then (if o.Verbose then <<certificate; return psi) else error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this is not the inverse map");
+                 else if isInverseMapFast(phi,psi) then (if o.Verbose then <<certificate; return psi) else error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this is not the inverse map");
           );
    );
    return psi;
@@ -1108,7 +1118,7 @@ approximateInverseMap (RationalMap,ZZ) := o -> (Phi,d) -> (
 approximateInverseMap (RationalMap) := o -> (Phi) -> approximateInverseMap(Phi,-1,CodimBsInv=>o.CodimBsInv,MathMode=>o.MathMode,Verbose=>o.Verbose);
 
 isInverseMap (RationalMap,RationalMap) := (Phi,Psi) -> (
-   if Phi#"inverseRationalMap" =!= null and Psi#"inverseRationalMap" =!= null then if Phi^(-1) === Psi and Psi^(-1) === Phi then return true;
+   if Phi#"inverseRationalMap" =!= null and Psi#"inverseRationalMap" =!= null then if Phi#"inverseRationalMap" === Psi and Psi#"inverseRationalMap" === Phi then return true;
    if Phi#"dimTarget" != Psi#"dimTarget" then return false;
    T := if Phi#"dimAmbientTarget" - Phi#"dimTarget" <= Psi#"dimAmbientTarget" - Psi#"dimTarget" then isInverseMap(map Phi,map Psi) else isInverseMap(map Psi,map Phi);
    if not T then return false;
@@ -1130,23 +1140,42 @@ isInverseMap (RingMap,RingMap) := (phi,psi) -> (
    phipsi - q*(vars target phi) == 0
 );
 
-isInverseMap' = method(TypicalValue => Boolean);
-isInverseMap' (RationalMap,RationalMap) := (Phi,Psi) -> (
+isInverseMapFast = method(TypicalValue => Boolean);
+isInverseMapFast (RationalMap,RationalMap) := (Phi,Psi) -> (
+   if Phi#"inverseRationalMap" =!= null and Psi#"inverseRationalMap" =!= null then if Phi#"inverseRationalMap" === Psi and Psi#"inverseRationalMap" === Phi then return true;
+   if Phi#"dimTarget" != Psi#"dimTarget" then return false;
    if (source Phi =!= target Psi or target Phi =!= source Psi) then return false; 
-   if coefficientRing Phi === QQ then (
-       K := ZZ/(nextPrime random(1000,11000000));
-       Phi = Phi ** K;
-       Psi = Psi ** K;
-       Psi = rationalMap(target Phi,source Psi) * Psi * rationalMap(target Psi,source Phi);
+   K := coefficientRing Phi;
+   if K === QQ then (
+       K = ZZ/(nextPrime random(1000,11000000));
+       x := local x; y := local y;
+       Pn := K[x_0..x_(numgens ambient source Phi -1)];
+       Pm := K[y_0..y_(numgens ambient target Phi -1)];
+       I := sub(ideal source Phi,vars Pn);
+       J := sub(ideal target Phi,vars Pm);
+       F := sub(lift(matrix Phi,ambient source Phi),vars Pn);
+       G := sub(lift(matrix Psi,ambient target Phi),vars Pm);
+       R := Pn/I; S := Pm/J;
+       Phi = rationalMapWithoutChecking map(R,S,F);
+       Psi = rationalMapWithoutChecking map(S,R,G);
    ); 
-   p := point source Phi;
-   q := point target Phi;
-   Psi Phi p == p and Phi Psi q == q
+   c := if K === ZZ/(char K) then char K else if instance(K,GaloisField) then K#order else 0;
+   if c < 50 then return isInverseMap(Phi,Psi);
+   if Phi#"dimAmbientTarget" - Phi#"dimTarget" <= Psi#"dimAmbientTarget" - Psi#"dimTarget" then (
+       p := point source Phi;
+       return (Psi Phi p == p);
+   ) else (
+       q := point target Phi;
+       return (Phi Psi q == q);
+   );
 );
+isInverseMapFast (RingMap,RingMap) := (phi,psi) -> isInverseMapFast(rationalMapWithoutChecking phi,rationalMapWithoutChecking psi);
 
 forceInverseMap (RationalMap,RationalMap) := (Phi,Psi) -> (
      if Phi#"inverseRationalMap" =!= null or Psi#"inverseRationalMap" =!= null then error "not permitted to reassign inverse rational map";
      if source Phi =!= target Psi or target Phi =!= source Psi then error "incompatible target and source";
+     if Phi#"dimTarget" != Phi#"dimSource" then setKeyValue(Phi,"isBirational",false);
+     if Psi#"dimTarget" != Psi#"dimSource" then setKeyValue(Psi,"isBirational",false);
      if Phi#"isBirational" === false or Psi#"isBirational" === false or Phi#"isDominant" === false or Psi#"isDominant" === false then error "expected two birational maps";
      if Phi#"projectiveDegrees" =!= reverse Psi#"projectiveDegrees" then (
           if Phi#"projectiveDegrees" =!= {} and Psi#"projectiveDegrees" =!= {} then error "incompatible multidegrees";
@@ -1543,8 +1572,8 @@ graph (RingMap) := o -> (phi) -> (
 );
 
 exceptionalLocus (RationalMap) := (Phi) -> (
-   B := ideal inverse' Phi;
-   Phi^** B
+   B := ideal inverse Phi;
+   Phi^* B
 );
 
 changeCoefficientRing = method()
@@ -2436,7 +2465,7 @@ isMorphism (MultihomogeneousRationalMap) := (Phi) -> (
 isIsomorphism (RationalMap) := (Phi) -> (
    if Phi#"dimTarget" != Phi#"dimSource" or Phi#"isBirational" === false or Phi#"isDominant" === false then return false;
    if not isMorphism Phi then return false;
-   isMorphism inverse' Phi
+   isMorphism inverse Phi
 );
 
 load "./Cremona/documentation.m2"
