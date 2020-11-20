@@ -97,6 +97,7 @@ if CoincidentRootLoci.Options.OptionalComponentsPresent then assert(realrank(F,R
 ///
 
 TEST /// -- randomBinaryForm
+setRandomSeed 123456789
 for i from 1 to 6 do assert(complexrank randomBinaryForm(6,,i) == i)
 for i from 1 to 7 do assert(complexrank randomBinaryForm(7,,i) == i)
 if CoincidentRootLoci.Options.OptionalComponentsPresent then for i from 1 to 4 do assert(realrank randomBinaryForm(6,i,) == i)
