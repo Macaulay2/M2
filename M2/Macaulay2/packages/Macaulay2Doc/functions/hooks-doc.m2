@@ -1,6 +1,6 @@
 undocumented { -- old syntax
     (addHook,    HashTable, Thing, Function),
-    (removeHook, HashTable, Thing, Function),
+    (removeHook, HashTable, Thing, Thing),
     (runHooks,   HashTable, Thing, Thing)
     }
 
@@ -41,19 +41,19 @@ Node
       The function @TO hooks@ lists all hooks attached to a method key or symbol,
       in the {\it opposite} order in which they are run.
     Example
-      hooks(foo, ZZ)
+      L = hooks(foo, ZZ)
     Text
       Hooks are automatically assigned an integer which can be used as the value
       of the @TT "Strategy"@ option to specify only one strategy to run.
     Example
-      L = strategies(foo, ZZ)
+      toList strategies(foo, ZZ)
       assert( foo(2, Strategy => "G") == 6 )
       assert( foo(3, Strategy => 2) == 24 )
     Text
       Lastly, hooks can be removed with the @TO removeHook@ function.
     Example
-      removeHook((foo, ZZ), L#"G")
-      strategies(foo, ZZ)
+      removeHook((foo, ZZ), "G")
+      toList strategies(foo, ZZ)
   Subnodes
     addHook
     runHooks
@@ -93,20 +93,20 @@ Node
 Node
   Key
      removeHook
-    (removeHook, Sequence, Function)
-    (removeHook, Symbol,   Function)
+    (removeHook, Sequence, Thing)
+    (removeHook, Symbol,   Thing)
   Headline
     remove a hook function from an object
   Usage
-    removeHook(key, hook)
+    removeHook(key, name)
   Inputs
     key:{Sequence,Symbol}
-    hook:Function
+    name:Thing
   Consequences
     Item
-      the function @TT "hook"@ is removed from the hash table of hooks
+      the hook whose key in the hash table of hooks is @TT "name"@ is removed
   SourceCode
-    (removeHook, Sequence, Function)
+    (removeHook, Sequence, Thing)
   SeeAlso
     hooks
     addHook

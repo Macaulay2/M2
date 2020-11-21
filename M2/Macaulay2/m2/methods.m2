@@ -138,10 +138,7 @@ MultipleArgsNoOptions := (methopts,outputs) -> (
      )
 MultipleArgsNoOptionsGetMethodOptions := meth -> (frames (frames meth)#0#1)#0#0
 
-all' := (x,f) -> (
-     r := true;
-     scan(x, i -> if not f i then (r = false; break));
-     r)
+all' := (L, f) -> scan(L, x -> if not f(x) then break false) === null
 
 method = methodDefaults >> opts -> args -> (
      if args =!= () then error "expected only optional arguments";
@@ -507,6 +504,7 @@ dispatcherFunctions = join (dispatcherFunctions, {
 -- hooks
 -- also see hooks in code.m2
 -- TODO: get this to also work with methods like ((_, =), Y, Z) or ((SPACE, =), Function, Thing)
+-- TODO: get this to work with lookup and flagLookup
 
 protect symbol Hooks
 protect symbol HookAlgorithms
@@ -544,15 +542,13 @@ addHook(Sequence,         Function) := opts -> (key,      hook) -> (
 
 -- FIXME: removing and adding without strategy is buggy
 removeHook = method()
-removeHook(HashTable, Thing, Function) := (obj, key, hook) -> removeHook((key, obj), hook)
-removeHook(Symbol,           Function) := (sym,      hook) -> removeHook(1:sym,      hook)
-removeHook(Sequence,         Function) := (key,      hook) -> (
+removeHook(HashTable, Thing, Thing) := (obj, key, alg) -> removeHook((key, obj), alg)
+removeHook(Symbol,           Thing) := (sym,      alg) -> removeHook(1:sym,      alg)
+removeHook(Sequence,         Thing) := (key,      alg) -> (
     store := getHookStore(key, false);
     store  = if store =!= null and store#?key then store#key else return;
-    alg := scan(store.HookPriority, alg -> if store.HookAlgorithms#alg === hook then break alg);
-    if alg =!= null then (
-	store.HookPriority = delete(alg, store.HookPriority);
-	remove(store.HookAlgorithms, alg)))
+    store.HookPriority = delete(alg, store.HookPriority);
+    remove(store.HookAlgorithms, alg))
 
 -- tracking debugInfo
 infoLevel    := -1
