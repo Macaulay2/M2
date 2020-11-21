@@ -127,6 +127,12 @@ QuotientOptions.synonym = "quotient options"
 QuotientComputation = new Type of MutableHashTable
 QuotientComputation.synonym = "quotient computation"
 
+new QuotientComputation from Sequence := (C, S) -> (
+    (A, B) := S;
+    cacheKey := QuotientOptions{ mingens B };
+    -- TODO: try to find other compatible cacheKeys that can be used in the computation
+    try A.cache#cacheKey else A.cache#cacheKey = new QuotientComputation from { Result => null })
+
 isComputationDone = method(TypicalValue => Boolean, Options => true)
 isComputationDone QuotientComputation := Boolean => options quotient >> opts -> container -> (
     -- this function determines whether we can use the cached result, or further computation is necessary
@@ -193,9 +199,7 @@ quotientHelper = (A, B, key, opts) -> (
 
     -- this is the logic for caching partial quotient computations. A.cache contains an option:
     --   QuotientOptions{ mingens B } => QuotientComputation{ Result }
-    -- TODO: find an existing cacheKey that can be extended, and use it in the computation
-    cacheKey := QuotientOptions{ mingens B };
-    container := try A.cache#cacheKey else A.cache#cacheKey = new QuotientComputation from { Result => null };
+    container := new QuotientComputation from (A, B);
 
     -- the actual computation of quotient occurs here
     C := (cacheComputation(opts, container)) computation;
@@ -342,6 +346,12 @@ SaturateOptions.synonym = "saturate options"
 SaturateComputation = new Type of QuotientComputation
 SaturateComputation.synonym = "saturate computation"
 
+new SaturateComputation from Sequence := (C, S) -> (
+    (A, B) := S;
+    cacheKey := SaturateOptions{ mingens B };
+    -- TODO: try to find other compatible cacheKeys, perhaps of type QuotientOptions, that can be used in the computation
+    try A.cache#cacheKey else A.cache#cacheKey = new SaturateComputation from { Result => null })
+
 -- TODO: isComputationDone and cacheComputation now can inherit from QuotientComputation,
 -- but perhaps there is something smarter that can be done in this specific case
 
@@ -393,9 +403,7 @@ saturateHelper = (A, B, key, opts) -> (
 
     -- this is the logic for caching partial saturation computations. A.cache contains an option:
     --   SaturateOptions{ mingens B } => SaturateComputation{ Result }
-    -- TODO: find an existing cacheKey that can be extended, perhaps of type QuotientOptions, and use it in the computation
-    cacheKey := SaturateOptions{ mingens B' };
-    container := try A.cache#cacheKey else A.cache#cacheKey = new SaturateComputation from { Result => null };
+    container := new SaturateComputation from (A, B');
 
     -- the actual computation of saturation occurs here
     C := (cacheComputation(opts, container)) computation;
@@ -580,8 +588,7 @@ isSupportedInZeroLocus(Module, Ideal) := (M, B) -> (
     -- annihilator is known, it's faster to check whether saturate(annihilator M, B) == ideal 1
     if M.cache.?annihilator then (
 	N := annihilator M;
-	cacheKey := SaturateOptions{ mingens B };
-	container := N.cache#cacheKey;
+	container := new SaturateComputation from (N, B);
 	try isComputationDone container then ( cacheHit class container; return saturate(N, B) == ideal 1_S ) else true);
     -- 2. check that a high enough power of elements of B annihilates M
     n := numgens S;
