@@ -49,8 +49,8 @@ export {
 
     "noetherianOperators",
     "numericalNoetherianOperators",
-    -- "noethOpsFromComponents", --TODO should be rewritten or removed
-    -- "coordinateChangeOps", --TODO should be rewritten or removed
+    "noethOpsFromComponents",
+    "coordinateChangeOps",
     "rationalInterpolation",
     "InterpolationTolerance",
     "InterpolationDegreeLimit",
@@ -694,6 +694,8 @@ ring DiffOp := D -> ring first keys D
 substitute (DiffOp, Ring) := (D,R) -> applyPairs(D, (k,v) -> sub(k, R) => sub(v,R))
 normalize = method();
 normalize DiffOp := D -> 1/(sub( leadCoefficient D#(first rsort keys D), coefficientRing ring D)) * D
+DiffOp == ZZ := (D, z) -> if z == 0 then false else error"cannot compare DiffOp to nonzero integer"
+ZZ == DiffOp := (z, D) -> D == z
 --right R action TODO
 
 -- instances of ZeroDiffOp are differential operators that
@@ -701,6 +703,8 @@ normalize DiffOp := D -> 1/(sub( leadCoefficient D#(first rsort keys D), coeffic
 ZeroDiffOp = new Type of DiffOp
 new ZeroDiffOp from Ring := (DD, R) -> hashTable{1_R => 0_R}
 toExternalString ZeroDiffOp := D -> "new ZeroDiffOp from " | toExternalString(ring D)
+ZeroDiffOp == ZZ := (D, z) -> if z == 0 then true else error"cannot compare DiffOp to nonzero integer"
+ZZ == ZeroDiffOp := (z, D) -> (D == z)
 
 -- Type used for interpolated differential operators
 -- As in DiffOp, each key corresponds to a monomial,
@@ -733,6 +737,8 @@ assert(foo2 > foo)
 assert(instance(foo3, ZeroDiffOp))
 assert(try diffOp{x+y => x} then false else true)
 assert(try diffOp{2*y*x^2 => x+z} then false else true)
+assert(foo2 - foo2 == 0)
+assert(not foo == 0)
 needsPackage "Dmodules"
 R' = makeWA(R)
 wa = diffOp(x^2*dx - dx^2 + dy^3 + (x-3)*dx)
@@ -1206,38 +1212,76 @@ conjugate(Matrix) := Matrix => M -> (
     matrix table(numrows M, numcols M, (i,j) -> conjugate(M_(i,j)))
 )
 
-coordinateChangeOps = method() -----TODO: fix this, or remove
-coordinateChangeOps(RingElement, RingMap) := RingElement => (D, f) -> (
-    R := f.target;
-    WA := ring D;
-    A := f.matrix // vars R;
-    A' := inverse A;
-    (a,b) := coefficients D;
-    b = sub(f sub(b,R), WA);
-    
 
-    psi := transpose (sub(transpose A',WA) * (transpose vars WA));
-    a = (map(WA,WA,psi)) a;
-    (a*b)_(0,0)
+
+coordinateChangeOps = method() -----TODO: fix this, or remove
+coordinateChangeOps(Matrix, DiffOp) := DiffOp => (A, D) -> (
+    R := ring D;
+    A' := inverse A;
+    b := pairs D / ((m,c) -> (sub(m, vars R * A'), sub(c, vars R * transpose A)));
+    b / (p -> last p * (first matrixToDiffOps reverse coefficients first p)) // sum
 )
+
+coordinateChangeOps(RingMap, DiffOp) := DiffOp => (phi, D) -> coordinateChangeOps(transpose(matrix phi // vars ring D), D)
+
+
+TEST ///
+R = QQ[x,y,t]
+n = numgens R
+I = ideal(x^2, y^2 - x*t)
+A = random(R^n, R^n)
+B = random(R^n, R^n)
+nops = noetherianOperators I
+comp = nops / (op -> coordinateChangeOps_A op) / (op -> coordinateChangeOps_B op)
+prod = nops / (op -> coordinateChangeOps_(A*B) op)
+assert(all(comp - prod, D -> D == 0))
+phi = map(R,R, vars R * transpose (A*B))
+assert(coordinateChangeOps_phi last nops - last comp == 0)
+///
+
+
 
 
 noethOpsFromComponents = method() ------- TODO: fix this, or remove
-noethOpsFromComponents(HashTable) := List => H -> (
-    nops := flatten values H;
-    R := ring first nops;
-    nops = unique (nops / (f -> sub(f, R)));
-    Ps := apply(nops, D -> select(keys H, P -> any(H#P, D' -> D == sub(D',ring D))));
-    
-    mults := Ps / (Lp -> 
-        if set Lp === set keys H then 1_R else (
-            J := intersect(keys H - set Lp);
-            (sub(gens J,R) * random(R^(#J_*), R^1))_(0,0)
+-- List of ordered pairs (P, N), where P is a minimal prime of I, N a list of nops for the P-primary component.
+-- Output is a list of operators, which satisfy the Noetherian operator condition for I and radical I 
+noethOpsFromComponents(List) := List => L -> (
+    -- nops := flatten values H;
+    -- nops = unique (nops / (f -> sub(f, R)));
+    nops := unique flatten (L / last);
+    primes := L / first;
+    R := ring first primes;
+    primesContainingNops := apply(nops, D -> select(L, p -> member(D, p#1)) / first);
+    -- Ps := apply(nops, D -> select(keys H, P -> any(H#P, D' -> D == sub(D',ring D))));
+    mults := primesContainingNops / (primeList -> (
+        if #primeList == #primes then 1_R else (
+            J := intersect(primes - set primeList);
+            primeList / (P -> J_(position(J_*, f -> f%P != 0))) // lcm
         )
-    );
-
+    ));
     apply(mults, nops, (i,j) -> i*j)
+--  TODO remove this old code    
+--    mults := L / (P -> 
+
+--        if set Lp === set keys H then 1_R else (
+--            J := intersect(keys H - set Lp);
+--            (sub(gens J,R) * random(R^(#J_*), R^1))_(0,0)
+--        )
+--    );
 )
+
+TEST ///
+R = QQ[x,y,t]
+I = ideal(x^2, y^2 - t*x)
+J = ideal((y+t)^2)
+K = intersect(I, J)
+primes = associatedPrimes K
+L = primes / (P -> (P, noetherianOperators(K, P)))
+ops = noethOpsFromComponents L
+radK = radical K
+
+assert(all(flatten table(ops, K_*, (D, f) -> (D f) % radK == 0), identity))
+///
 
 -- Inputs
 -- pts: list of points (each point as a row matrix)
@@ -1267,7 +1311,7 @@ rationalInterpolation(List, List, Matrix, Matrix) := Sequence => opts -> (pts, v
     idx := positions(0..<numColumns K, i -> 
             (norm(evaluate(matrix (numBasis * K^numIdx_i), testPt)) > opts.Tolerance) and 
 	    (norm(evaluate(matrix (denBasis * K^denIdx_i), testPt)) > opts.Tolerance)
-        ); --TODO: double check this
+        );
     if idx === {} then error "No fitting rational function found";
     norms := apply(idx, i -> entries K_i / abs // sum);
     -- minNorm := min(norms);
@@ -2350,7 +2394,6 @@ Description
         isPrimary Q
         noetherianOperators(Q, Strategy => "PunctualHilbert")
 
-    --TODO: this example takes a bit too long
     Example
         R = QQ[x_1,x_2,x_3,x_4]
         k=3
@@ -2489,24 +2532,16 @@ assert(#(set nopsJ - ({1_R, R_0, R_1, R_1^2} / (x -> diffOp{x=>1}))) == 0)
 
 
 -- TODO linear coordinate change should be rewritten or removed
--- TEST /// -- Linear coordinate change test
--- debug NoetherianOperators
--- R = QQ[x,y]
--- I = ideal(x^2,(y-x))
--- f = map(R,R,{2*x+y,x+y})
--- J = f I
--- NI = noetherianOperatorsViaMacaulayMatrix I
--- NJ = noetherianOperatorsViaMacaulayMatrix J
--- WI = ring first NI
--- WJ = ring first NJ
--- convertedNI = NI / (i-> sub(coordinateChangeOps(i,f), WJ))
--- assert sanityCheck(convertedNI,J)
--- assert sanityCheck(NJ,J)
--- assert sanityCheck(NI,I)
--- assert(set NI === set{1_WI, WI_0*WI_2 - WI_1*WI_2})
--- assert(set NJ === set{1_WJ, WJ_0*WJ_2})
--- assert(set convertedNI === set{1_WJ, WJ_0*WJ_2 - WJ_0*WJ_3})
--- ///
+TEST /// -- Linear coordinate change test
+R = QQ[x,y]
+I = ideal(x^2,(y-x))
+f = map(R,R,{2*x+y,x+y})
+J = f I
+NI = noetherianOperators I
+NJ = noetherianOperators J
+fNI = NI / coordinateChangeOps_f
+assert(all(fNI - NJ, D -> D == 0))
+///
 
 TEST /// -- numNoethOpsAtPoint test
 debug NoetherianOperators
