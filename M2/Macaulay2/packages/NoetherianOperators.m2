@@ -1240,21 +1240,6 @@ assert(coordinateChangeOps_phi last nops - last comp == 0)
 ///
 
 
-coordinateChangeOps(RingElement, RingMap) := RingElement => (D, f) -> (
-    R := f.target;
-    WA := ring D;
-    A := f.matrix // vars R;
-    A' := inverse A;
-    (a,b) := coefficients D;
-    b = sub(f sub(b,R), WA);
-    
-
-    psi := transpose (sub(transpose A',WA) * (transpose vars WA));
-    a = (map(WA,WA,psi)) a;
-    (a*b)_(0,0)
-)
-
-
 noethOpsFromComponents = method() ------- TODO: fix this, or remove
 noethOpsFromComponents(HashTable) := List => H -> (
     nops := flatten values H;
