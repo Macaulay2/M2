@@ -50,7 +50,7 @@ export {
     "noetherianOperators",
     "numericalNoetherianOperators",
     -- "noethOpsFromComponents", --TODO should be rewritten or removed
-    -- "coordinateChangeOps", --TODO should be rewritten or removed
+    "coordinateChangeOps", --TODO should be rewritten or removed
     "rationalInterpolation",
     "InterpolationTolerance",
     "InterpolationDegreeLimit",
@@ -694,6 +694,8 @@ ring DiffOp := D -> ring first keys D
 substitute (DiffOp, Ring) := (D,R) -> applyPairs(D, (k,v) -> sub(k, R) => sub(v,R))
 normalize = method();
 normalize DiffOp := D -> 1/(sub( leadCoefficient D#(first rsort keys D), coefficientRing ring D)) * D
+DiffOp == ZZ := (D, z) -> if z == 0 then false else error"cannot compare DiffOp to nonzero integer"
+ZZ == DiffOp := (z, D) -> D == z
 --right R action TODO
 
 -- instances of ZeroDiffOp are differential operators that
@@ -701,6 +703,8 @@ normalize DiffOp := D -> 1/(sub( leadCoefficient D#(first rsort keys D), coeffic
 ZeroDiffOp = new Type of DiffOp
 new ZeroDiffOp from Ring := (DD, R) -> hashTable{1_R => 0_R}
 toExternalString ZeroDiffOp := D -> "new ZeroDiffOp from " | toExternalString(ring D)
+ZeroDiffOp == ZZ := (D, z) -> if z == 0 then true else error"cannot compare DiffOp to nonzero integer"
+ZZ == ZeroDiffOp := (z, D) -> (D == z)
 
 -- Type used for interpolated differential operators
 -- As in DiffOp, each key corresponds to a monomial,
@@ -733,6 +737,8 @@ assert(foo2 > foo)
 assert(instance(foo3, ZeroDiffOp))
 assert(try diffOp{x+y => x} then false else true)
 assert(try diffOp{2*y*x^2 => x+z} then false else true)
+assert(foo2 - foo2 == 0)
+assert(not foo == 0)
 needsPackage "Dmodules"
 R' = makeWA(R)
 wa = diffOp(x^2*dx - dx^2 + dy^3 + (x-3)*dx)
@@ -1206,7 +1212,34 @@ conjugate(Matrix) := Matrix => M -> (
     matrix table(numrows M, numcols M, (i,j) -> conjugate(M_(i,j)))
 )
 
+
+
 coordinateChangeOps = method() -----TODO: fix this, or remove
+coordinateChangeOps(Matrix, DiffOp) := DiffOp => (A, D) -> (
+    R := ring D;
+    A' := inverse A;
+    b := pairs D / ((m,c) -> (sub(m, vars R * A'), sub(c, vars R * transpose A)));
+    b / (p -> last p * (first matrixToDiffOps reverse coefficients first p)) // sum
+)
+
+coordinateChangeOps(RingMap, DiffOp) := DiffOp => (phi, D) -> coordinateChangeOps(transpose(matrix phi // vars ring D), D)
+
+
+TEST ///
+R = QQ[x,y,t]
+n = numgens R
+I = ideal(x^2, y^2 - x*t)
+A = random(R^n, R^n)
+B = random(R^n, R^n)
+nops = noetherianOperators I
+comp = nops / (op -> coordinateChangeOps_A op) / (op -> coordinateChangeOps_B op)
+prod = nops / (op -> coordinateChangeOps_(A*B) op)
+assert(all(comp - prod, D -> D == 0))
+phi = map(R,R, vars R * transpose (A*B))
+assert(coordinateChangeOps_phi last nops - last comp == 0)
+///
+
+
 coordinateChangeOps(RingElement, RingMap) := RingElement => (D, f) -> (
     R := f.target;
     WA := ring D;
@@ -1267,7 +1300,7 @@ rationalInterpolation(List, List, Matrix, Matrix) := Sequence => opts -> (pts, v
     idx := positions(0..<numColumns K, i -> 
             (norm(evaluate(matrix (numBasis * K^numIdx_i), testPt)) > opts.Tolerance) and 
 	    (norm(evaluate(matrix (denBasis * K^denIdx_i), testPt)) > opts.Tolerance)
-        ); --TODO: double check this
+        );
     if idx === {} then error "No fitting rational function found";
     norms := apply(idx, i -> entries K_i / abs // sum);
     -- minNorm := min(norms);
@@ -2255,7 +2288,6 @@ Description
         isPrimary Q
         noetherianOperators(Q, Strategy => "PunctualHilbert")
 
-    --TODO: this example takes a bit too long
     Example
         R = QQ[x_1,x_2,x_3,x_4]
         k=3
