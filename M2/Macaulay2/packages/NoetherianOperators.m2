@@ -49,8 +49,8 @@ export {
 
     "noetherianOperators",
     "numericalNoetherianOperators",
-    -- "noethOpsFromComponents", --TODO should be rewritten or removed
-    "coordinateChangeOps", --TODO should be rewritten or removed
+    "noethOpsFromComponents",
+    "coordinateChangeOps",
     "rationalInterpolation",
     "InterpolationTolerance",
     "InterpolationDegreeLimit",
@@ -1240,22 +1240,48 @@ assert(coordinateChangeOps_phi last nops - last comp == 0)
 ///
 
 
-noethOpsFromComponents = method() ------- TODO: fix this, or remove
-noethOpsFromComponents(HashTable) := List => H -> (
-    nops := flatten values H;
-    R := ring first nops;
-    nops = unique (nops / (f -> sub(f, R)));
-    Ps := apply(nops, D -> select(keys H, P -> any(H#P, D' -> D == sub(D',ring D))));
-    
-    mults := Ps / (Lp -> 
-        if set Lp === set keys H then 1_R else (
-            J := intersect(keys H - set Lp);
-            (sub(gens J,R) * random(R^(#J_*), R^1))_(0,0)
-        )
-    );
 
+
+noethOpsFromComponents = method() ------- TODO: fix this, or remove
+-- List of ordered pairs (P, N), where P is a minimal prime of I, N a list of nops for the P-primary component.
+-- Output is a list of operators, which satisfy the Noetherian operator condition for I and radical I 
+noethOpsFromComponents(List) := List => L -> (
+    -- nops := flatten values H;
+    -- nops = unique (nops / (f -> sub(f, R)));
+    nops := unique flatten (L / last);
+    primes := L / first;
+    R := ring first primes;
+    primesContainingNops := apply(nops, D -> select(L, p -> member(D, p#1)) / first);
+    -- Ps := apply(nops, D -> select(keys H, P -> any(H#P, D' -> D == sub(D',ring D))));
+    mults := primesContainingNops / (primeList -> (
+        if #primeList == #primes then 1_R else (
+            J := intersect(primes - set primeList);
+            primeList / (P -> J_(position(J_*, f -> f%P != 0))) // lcm
+        )
+    ));
     apply(mults, nops, (i,j) -> i*j)
+--  TODO remove this old code    
+--    mults := L / (P -> 
+
+--        if set Lp === set keys H then 1_R else (
+--            J := intersect(keys H - set Lp);
+--            (sub(gens J,R) * random(R^(#J_*), R^1))_(0,0)
+--        )
+--    );
 )
+
+TEST ///
+R = QQ[x,y,t]
+I = ideal(x^2, y^2 - t*x)
+J = ideal((y+t)^2)
+K = intersect(I, J)
+primes = associatedPrimes K
+L = primes / (P -> (P, noetherianOperators(K, P)))
+ops = noethOpsFromComponents L
+radK = radical K
+
+assert(all(flatten table(ops, K_*, (D, f) -> (D f) % radK == 0), identity))
+///
 
 -- Inputs
 -- pts: list of points (each point as a row matrix)
@@ -2411,24 +2437,16 @@ assert(#(set nopsJ - ({1_R, R_0, R_1, R_1^2} / (x -> diffOp{x=>1}))) == 0)
 
 
 -- TODO linear coordinate change should be rewritten or removed
--- TEST /// -- Linear coordinate change test
--- debug NoetherianOperators
--- R = QQ[x,y]
--- I = ideal(x^2,(y-x))
--- f = map(R,R,{2*x+y,x+y})
--- J = f I
--- NI = noetherianOperatorsViaMacaulayMatrix I
--- NJ = noetherianOperatorsViaMacaulayMatrix J
--- WI = ring first NI
--- WJ = ring first NJ
--- convertedNI = NI / (i-> sub(coordinateChangeOps(i,f), WJ))
--- assert sanityCheck(convertedNI,J)
--- assert sanityCheck(NJ,J)
--- assert sanityCheck(NI,I)
--- assert(set NI === set{1_WI, WI_0*WI_2 - WI_1*WI_2})
--- assert(set NJ === set{1_WJ, WJ_0*WJ_2})
--- assert(set convertedNI === set{1_WJ, WJ_0*WJ_2 - WJ_0*WJ_3})
--- ///
+TEST /// -- Linear coordinate change test
+R = QQ[x,y]
+I = ideal(x^2,(y-x))
+f = map(R,R,{2*x+y,x+y})
+J = f I
+NI = noetherianOperators I
+NJ = noetherianOperators J
+fNI = NI / coordinateChangeOps_f
+assert(all(fNI - NJ, D -> D == 0))
+///
 
 TEST /// -- numNoethOpsAtPoint test
 debug NoetherianOperators
