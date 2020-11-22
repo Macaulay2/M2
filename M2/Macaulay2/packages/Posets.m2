@@ -6075,7 +6075,7 @@ doc ///
         isUpperSemimodular
         (isUpperSemimodular,Poset)
     Headline
-        determines if a lattice is upper semimoudlar
+        determines if a lattice is upper semimodular
     Usage
         i = isUpperSemimodular P
     Inputs
