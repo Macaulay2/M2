@@ -664,7 +664,7 @@ inverse (RationalMap,Option) := (Phi,opt) -> (
    if Phi#"inverseRationalMap" =!= null then return Phi#"inverseRationalMap";
    if last o then return inverseMap(Phi,MathMode=>true,Verbose=>false);
    Psi := inverseMap Phi;
-   if not isInverseMapFast(Phi,Psi) then error "failed to get inverse map; make sure the input map is birational";
+   if not isInverseMapFast(Phi,Psi) then error "failed to get the inverse map; the map may not be birational";
    if Phi#"inverseRationalMap" === null and Psi#"inverseRationalMap" === null then forceInverseMap(Phi,Psi); 
    Psi
 );
@@ -963,13 +963,13 @@ inverseMapInt (RationalMap,Nothing) := o -> (Phi,nothing) -> (
    n := Phi#"dimAmbientTarget"; 
    Sub := map(target Phi,ring Bl,matrix{{(n+1):0_(ambient target Phi)}}|(vars ambient target Phi));
    T := transpose mingens kernel transpose Sub submatrix(jacobian Bl,{0..n},);
-   psi := try map rationalMap(target Phi,source Phi,submatrix(T,{0},)) else error "not able to obtain an inverse rational map; make sure the input map is birational";
+   psi := try map rationalMap(target Phi,source Phi,submatrix(T,{0},)) else error "not able to obtain an inverse rational map; the map may not be birational";
    psiAll := apply(numRows T,i -> map(target Phi,source Phi,submatrix(T,{i},)));
    if not o.MathMode then return (psi,psiAll);
    if (if n - Phi#"dimTarget" <= Phi#"dimAmbientSource" - Phi#"dimSource" then isInverseMap(map Phi,psi) else isInverseMap(psi,map Phi)) then (
         if o.Verbose then <<certificate; return (psi,psiAll);
    ) else (
-        error "not able to obtain an inverse rational map; make sure the input map is birational";
+        error "not able to obtain an inverse rational map; the map may not be birational";
    );
 );
 
