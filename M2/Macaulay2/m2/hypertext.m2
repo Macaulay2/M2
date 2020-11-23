@@ -131,10 +131,10 @@ SUB        = new MarkUpType of Hypertext
 SUP        = new MarkUpType of Hypertext
 TT         = new MarkUpType of Hypertext
 
--- Lists
+-- Lists (TODO: OL)
 OL         = new MarkUpType of HypertextContainer
 UL         = new MarkUpType of HypertextContainer
-LI         = new MarkUpType of HypertextParagraph
+LI         = new MarkUpType of HypertextContainer
 DL         = new MarkUpType of HypertextContainer
 DT         = new MarkUpType of HypertextParagraph
 DD         = new MarkUpType of HypertextParagraph
