@@ -1577,7 +1577,7 @@ coxeterPolynomial Poset := RingElement => opts -> P -> (
     R := ZZ(monoid [opts.VariableName]);
     M := P.RelationMatrix;
     n := numrows M;
-    C = -M * inverse transpose M;
+    C := -M * inverse transpose M;
     det (R_0 * id_(R^n) - C)
     )
 
