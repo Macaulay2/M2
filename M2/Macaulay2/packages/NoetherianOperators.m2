@@ -2298,6 +2298,29 @@ Key
     noetherianOperators
 Headline
     Noetherian operators
+Description
+    Text
+        Let $R$ be a polynomial ring $R = K[x_1,\ldots,x_n]$ over a field $K$ of characteristic zero. 
+        Consider the Weyl algebra $D = R<dx_1,\ldots,dx_n>$, 
+        a prime ideal $P \subset R$ and a $P$-primary ideal.
+        When this method is applied we obtain a finite list of 
+        differential operators $L_1,\ldots,L_m \in D$ such that 
+        $$
+        Q = \{ f \,\in\, R\, \mid\, L_i\, \bullet\, f\, \in P \, \forall  1 \le i \le m \}.
+        $$
+        We say that $\{L_1,\ldots,L_m\}$ is a set Noetherian operators for the primary ideal $Q$.
+        In the output of the algorithm we always have that $m$ (the number of Noetherian operators) is equal to the 
+        multiplicity of $Q$ over the prime ideal $P$.
+
+        We now provide a couple of examples where we compute Noetherian operators.
+        The last example deals with a rather non-trivial primary ideal to show the capabilities
+        of this method.
+
+    Example
+        R=QQ[x_1,x_2,x_3,x_4]
+        Q = ideal(x_1^2,x_1*x_2,x_1*x_3,x_1*x_4-x_3^2+x_1,x_3^2*x_4-x_2^2,x_3^2*x_4-x_3^2-x_2*x_3+2*x_1)
+        isPrimary Q
+        noetherianOperators(Q, Strategy => "PunctualHilbert")
 ///
 
 doc ///
@@ -2370,29 +2393,7 @@ Headline
     strategy for computing Noetherian operators
 Description
     Text
-        This strategy implements Algorithm 3.8 in @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@. 
-
-        Let $R$ be a polynomial ring $R = K[x_1,\ldots,x_n]$ over a field $K$ of characteristic zero. 
-        Consider the Weyl algebra $D = R<dx_1,\ldots,dx_n>$, 
-        a prime ideal $P \subset R$ and a $P$-primary ideal.
-        When this method is applied we obtain a finite list of 
-        differential operators $L_1,\ldots,L_m \in D$ such that 
-        $$
-        Q = \{ f \,\in\, R\, \mid\, L_i\, \bullet\, f\, \in P \, \forall  1 \le i \le m \}.
-        $$
-        We say that $\{L_1,\ldots,L_m\}$ is a set Noetherian operators for the primary ideal $Q$.
-        In the output of the algorithm we always have that $m$ (the number of Noetherian operators) is equal to the 
-        multiplicity of $Q$ over the prime ideal $P$.
-
-        We now provide a couple of examples where we compute Noetherian operators.
-        The last example deals with a rather non-trivial primary ideal to show the capabilities
-        of this method.
-
-    Example
-        R=QQ[x_1,x_2,x_3,x_4]
-        Q = ideal(x_1^2,x_1*x_2,x_1*x_3,x_1*x_4-x_3^2+x_1,x_3^2*x_4-x_2^2,x_3^2*x_4-x_3^2-x_2*x_3+2*x_1)
-        isPrimary Q
-        noetherianOperators(Q, Strategy => "PunctualHilbert")
+        This strategy implements Algorithm 3.8 in @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
 
     Example
         R = QQ[x_1,x_2,x_3,x_4]
