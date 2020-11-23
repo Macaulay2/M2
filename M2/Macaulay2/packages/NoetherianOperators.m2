@@ -2195,11 +2195,125 @@ Description
 
 
 -------------- Noetherian operators documentation
+
+
+------- DiffOp documentation
 doc ///
 Key
     DiffOp
+Headline
+    differential operator
+Description
+    Text
+        A differential operator of the ring $R = \mathbb{Q}[x_1,\dots,x_n]$ can be thought of as a polynomial
+        with coefficients in $R$, and monomials in variables $dx_1, \dots, dx_n$, where $dx_i$ corresponds to the
+        partial derivative with respect to $x_i$. These operators form an $R$-vector space, and act naturally on elements of $R$.
+
+    Example
+        R = QQ[x,y]
+        D = diffOp {x => x+y, x*y^2 => 3+x}
+        (x^2+3) * D
+        D(x^5*y^2)
+    Text
+        Instances of {\tt DiffOp} are @TO2 {HashTable, "hash tables"}@, where keys are differential monomials
+        (represented as monomials in $R$), and values are the corresponding coefficients. A useful shortcut for
+        creating instances of {\tt DiffOp} is to use a @TO WeylAlgebra@.
+
+    Example
+        needsPackage "Dmodules"
+        S = makeWA R
+        E = diffOp(y*dx - x*dy^2)
 ///
 
+doc ///
+Key
+    (symbol +, DiffOp, DiffOp)
+Headline
+    DiffOp addition
+Usage
+    D + E
+Inputs
+    D:DiffOp
+    E:DiffOp
+Outputs
+    :DiffOp
+Description
+    Text
+        Adds two differential operators. The ring of both operators must match
+    Example
+        R = QQ[x,y];
+        D = diffOp{x => x^2+ y}
+        E = diffOp{x => -y, x^2*y^2 => 2}
+        D + E
+///
+
+doc ///
+Key
+    (symbol -, DiffOp, DiffOp)
+Headline
+    DiffOp subtraction
+Usage
+    D - E
+Inputs
+    D:DiffOp
+    E:DiffOp
+Outputs
+    :DiffOp
+Description
+    Text
+        Subtracts two differential operators. The ring of both operators must match
+    Example
+        R = QQ[x,y];
+        D = diffOp{x => x^2+ y}
+        E = diffOp{x => -y, x^2*y^2 => 2}
+        D - E
+///
+
+
+doc ///
+Key
+    (symbol -, DiffOp)
+Headline
+    DiffOp negation
+Usage
+    - D
+Inputs
+    D:DiffOp
+Outputs
+    :DiffOp
+Description
+    Text
+        Corresponds to $(-1)*D$
+    Example
+        R = QQ[x,y];
+        D = diffOp{x => x^2+ y}
+        - D
+///
+
+doc ///
+Key
+    (symbol *, RingElement, DiffOp)
+    (symbol *, Number, DiffOp)
+Headline
+    DiffOp scaling
+Usage
+    c*D
+Inputs
+    c:RingElement
+        in the same ring as {\tt D}, or a @TO Number@
+
+    D:DiffOp
+Outputs
+    :DiffOp
+Description
+    Text
+        Multiplies every coefficient of {\tt D} by {\tt c}
+    Example
+        R = QQ[x,y];
+        D = diffOp{x => x^2+ y, y^2 => 1}
+        y*D
+        2*D
+///
 
 doc ///
 Key
