@@ -540,16 +540,17 @@ addHook(MutableHashTable, Thing, Function) := opts -> (store, key, hook) -> (
     store.HookAlgorithms#alg = hook)
 
 -- tracking debugInfo
-infoLevel    := -1
-pushInfoLevel =  n     -> (infoLevel = infoLevel + n; n)
-popInfoLevel  = (n, s) -> (infoLevel = infoLevel - n; s)
+infoLevel     := -1
+pushInfoLevel :=  n     -> (infoLevel = infoLevel + n; n)
+popInfoLevel  := (n, s) -> (infoLevel = infoLevel - n; s)
 
 -- run a single hook
 runHook := (hook, key, alg, args, opts) -> (
+    pushInfoLevel 1;
     debugInfo(hook, key, alg, infoLevel);
-    if options hook === null then hook(args) else (
-	hookOpts := select(keys options hook, k -> opts#?k) / (k -> k => opts#k);
-	hook(args, new OptionTable from hookOpts)))
+    popInfoLevel(1, if options hook === null then hook(args) else (
+	    hookOpts := select(keys options hook, k -> opts#?k) / (k -> k => opts#k);
+	    hook(args, new OptionTable from hookOpts))))
 
 runHooks = method(Options => true)
 runHooks(Symbol,                  Thing) := true >> opts -> (key,        args) -> runHooks(1:key,                         args, opts)
@@ -557,12 +558,11 @@ runHooks(Sequence,                Thing) := true >> opts -> (key,        args) -
 runHooks(MutableHashTable, Thing, Thing) := true >> opts -> (store, key, args) -> (
     store = if store#?key then store#key else (
 	if debugLevel > 1 then printerr("runHooks: no hooks installed for ", toString key); return );
-    pushInfoLevel 1;
     alg := if opts.?Strategy then opts.Strategy;
     type := class alg;
     -- if Strategy is not given, run through all available hooks
-    result := if alg === null then scan(reverse store.HookPriority, alg -> (
-	    result = runHook(store.HookAlgorithms#alg, key, alg, args, opts ++ { Strategy => alg });
+    if alg === null then scan(reverse store.HookPriority, alg -> (
+	    result := runHook(store.HookAlgorithms#alg, key, alg, args, opts ++ { Strategy => alg });
 	    if not instance(result, Nothing) then break result)) else
     -- if Strategy is given, and it is among the known strategies, run only that hook
     if store.HookAlgorithms#?alg  then runHook(store.HookAlgorithms#alg,  key, alg,  args, opts) else
@@ -570,8 +570,7 @@ runHooks(MutableHashTable, Thing, Thing) := true >> opts -> (store, key, args) -
     if store.HookAlgorithms#?type then runHook(store.HookAlgorithms#type, key, type, args, opts) else
     -- otherwise, give an error with the list of possible strategies
     error("unrecognized Strategy => '", toString alg, "' for ", toString key, newline,
-	"  available strategies are: ", demark_", " \\ toExternalString \ new List from store.HookPriority);
-    popInfoLevel(1, result))
+	"  available strategies are: ", demark_", " \\ toExternalString \ new List from store.HookPriority))
 
 -- and keys
 protect QuotientRingHook

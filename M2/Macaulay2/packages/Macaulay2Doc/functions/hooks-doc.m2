@@ -79,13 +79,13 @@ Node
     hook:Function
     store:MutableHashTable
     Strategy=>Thing
-      specifies the strategy name for the hook
+      specifies the name for the hook
   Consequences
     Item
       the function @TT "hook"@ is added to the (possibly absent) hash table of hooks, which is
       either stored in the mutable hash table @TT "store"@ or under the @TO youngest@ @TO Type@
-      listed in the @TO method@ key @TT "key"@. In the latter case, the hash table is either
-      stored in @TT "obj.Hooks#key"@ if @TT "obj"@ is mutable, or in @TT "obj.cache.Hooks#key"@
+      @TT "T"@ listed in the @TO method@ key @TT "key"@. In the latter case, the hash table is
+      either stored in @TT "T.Hooks#key"@ if @TT "T"@ is mutable, or in @TT "T.cache.Hooks#key"@
       otherwise. If no appropriate object is found, or if @TT "key"@ is a @TO Symbol@, then the
       hook is stored under the hash table @TT "GlobalHookStore"@
   Description
