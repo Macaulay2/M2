@@ -163,29 +163,39 @@ methods Thing  := F -> (
     previousMethodsFound = new NumberedVerticalList from sortByName keys found)
 
 -----------------------------------------------------------------------------
--- hooks and strategies
+-- hooks
 -----------------------------------------------------------------------------
 
-hooks = method(Dispatch => Thing, Options => {Strategy => null})
-hooks Symbol   := opts -> sym -> hooks(1:sym, opts)
-hooks Sequence := opts -> key -> (
-    store := getHookStore(key, false);
-    previousMethodsFound = new NumberedVerticalList from (
+listHooks := (key, opts) -> (
+    -- list global hooks
+    if key === () then return hooks(GlobalHookStore, opts);
+    if instance(key#0, MutableHashTable)
+    -- get the store from the first argument
+    then (store := key#0; key = if key#?1 then key#1 else null)
+    -- get the store from the key
+    else  store  = getHookStore(key, false);
+    new NumberedVerticalList from (
 	alg := if opts.?Strategy then opts.Strategy;
 	type := class alg;
-	-- if no hooks have been installed, give a warning
-	if store === null or not store#?key then {} else
+	store = if store#?key then store#key;
+	-- if no hooks have been installed, return empty list
+	if store === null then {} else
 	-- if Strategy is not given, list all available hooks
-	if alg === null then apply(store#key.HookPriority, alg -> append(key, Strategy => alg)) else
+	if alg === null then apply(store.HookPriority, alg -> splice(key, Strategy => alg)) else
 	-- if Strategy is given, and it is among the known strategies, list only that hook
-	if store#key.HookAlgorithms#?alg  then { append(key, Strategy => alg)  } else
+	if store.HookAlgorithms#?alg  then { splice(key, Strategy => alg)  } else
 	-- otherwise, if the class of alg is a known strategy, list only that hook
-	if store#key.HookAlgorithms#?type then { append(key, Strategy => type) } else { }))
+	if store.HookAlgorithms#?type then { splice(key, Strategy => type) } else {}))
 
-strategies = method(Dispatch => Thing)
-strategies Symbol   := sym -> strategies(1:sym)
-strategies Sequence := key -> (
-    if (store := getHookStore(key, false)) =!= null and store#?key then store#key.HookPriority)
+hooks = method(Dispatch => Thing, Options => {Strategy => null})
+hooks ZZ        := opts -> i   -> hooks previousMethodsFound#i
+hooks List      := opts -> L   -> previousMethodsFound = join apply(toSequence L, key -> listHooks(key, opts))
+hooks Thing     := opts -> key -> previousMethodsFound = hooks(methods key, opts)
+hooks Sequence  := opts -> key -> previousMethodsFound = listHooks(key, opts)
+hooks HashTable := opts -> store -> previousMethodsFound = join(
+    if store.?cache then store = store.cache;
+    if store.?Hooks then store = store.Hooks;
+    apply(toSequence keys store, key -> listHooks((store, key), opts)))
 
 -----------------------------------------------------------------------------
 -- debugger
@@ -222,6 +232,7 @@ debuggerUsageMessage = ///--debugger activation depth control:
 
 inDebugger = false
 addStartFunction(() -> inDebugger = false)
+-- This is called from interp.dd
 debuggerHook = entering -> (
      if entering then (
 	  pushvar(symbol inDebugger, true);

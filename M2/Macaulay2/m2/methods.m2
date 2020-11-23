@@ -503,22 +503,22 @@ dispatcherFunctions = join (dispatcherFunctions, {
 -----------------------------------------------------------------------------
 -- hooks
 -- also see hooks in code.m2
--- TODO: get this to also work with methods like ((_, =), Y, Z) or ((SPACE, =), Function, Thing)
 -- TODO: get this to work with lookup and flagLookup
 
 protect symbol Hooks
 protect symbol HookAlgorithms
 protect symbol HookPriority
 
+-- hooks not bound to a type or hash table are stored here
+GlobalHookStore = new MutableHashTable
+
 getHookStore = (key, create) -> (
-    -- retrieve (or create) the mutable hashtable of Hooks installed on a symbol or hashtable
-    sym := if key#?0 then key#0 else error "createHookStore: encountered empty method key";
-    sym  = if instance(sym, Symbol) then sym else getGlobalSymbol toString sym; -- TODO: is toString the right function?
-    -- this branch depends on whether hooks are installed on a symbol or a hash table
-    if #key == 1 then ( key = sym; if value sym =!= sym then value sym else if create then sym <- new MutableHashTable from {} ) else (
-	obj := youngest drop(key, 1);
-	if instance(obj, MutableHashTable) then ( if       obj.?Hooks then       obj.Hooks else if create then       obj.Hooks = new MutableHashTable from {} ) else
-	if instance(obj, HashTable)        then ( if obj.cache.?Hooks then obj.cache.Hooks else if create then obj.cache.Hooks = new MutableHashTable from {} )))
+    -- retrieve (or create) the mutable hash table of Hooks based on a method key
+    obj := youngest drop(key, 1);
+    store :=
+    if instance(obj, MutableHashTable) then ( if       obj.?Hooks then       obj.Hooks else if create then       obj.Hooks = new MutableHashTable ) else
+    if instance(obj, HashTable)        then ( if obj.cache.?Hooks then obj.cache.Hooks else if create then obj.cache.Hooks = new MutableHashTable );
+    if store === null then GlobalHookStore else store)
 
 addHook = method(
     Options => {
@@ -526,29 +526,18 @@ addHook = method(
 	-- Priority, Description, ...?
 	}
     )
-addHook(HashTable, Thing, Function) := opts -> (obj, key, hook) -> addHook((key, obj), hook, opts)
-addHook(Symbol,           Function) := opts -> (sym,      hook) -> addHook(1:sym,      hook, opts)
-addHook(Sequence,         Function) := opts -> (key,      hook) -> (
-    store := getHookStore(key, true);
+addHook(Symbol,                  Function) := opts -> (key,        hook) -> addHook(1:key,                        hook, opts)
+addHook(Sequence,                Function) := opts -> (key,        hook) -> addHook(getHookStore(key, true), key, hook, opts)
+addHook(MutableHashTable, Thing, Function) := opts -> (store, key, hook) -> (
     -- this is the hashtable of Hooks for a specific key, which stores HookAlgorithms and HookPriority
     if not store#?key then store#key = new MutableHashTable from {
-	HookAlgorithms => new MutableHashTable from {},  -- a mutable hash table "strategy key" => "strategy code"
-	HookPriority   => new MutableList      from {}}, -- a mutable list of strategy keys, in order
+	HookAlgorithms => new MutableHashTable, -- a mutable hash table "strategy key" => "strategy code"
+	HookPriority   => new MutableList},     -- a mutable list of strategy keys, in order
     store = store#key;
     ind := #store.HookPriority; -- index to add the hook in the list; TODO: use Priority to insert in the middle?
     alg := if opts.Strategy =!= null then opts.Strategy else ind;
     store.HookPriority#ind = alg;
     store.HookAlgorithms#alg = hook)
-
--- FIXME: removing and adding without strategy is buggy
-removeHook = method()
-removeHook(HashTable, Thing, Thing) := (obj, key, alg) -> removeHook((key, obj), alg)
-removeHook(Symbol,           Thing) := (sym,      alg) -> removeHook(1:sym,      alg)
-removeHook(Sequence,         Thing) := (key,      alg) -> (
-    store := getHookStore(key, false);
-    store  = if store =!= null and store#?key then store#key else return;
-    store.HookPriority = delete(alg, store.HookPriority);
-    remove(store.HookAlgorithms, alg))
 
 -- tracking debugInfo
 infoLevel    := -1
@@ -563,11 +552,10 @@ runHook := (hook, key, alg, args, opts) -> (
 	hook(args, new OptionTable from hookOpts)))
 
 runHooks = method(Options => true)
-runHooks(HashTable, Thing, Thing) := true >> opts -> (obj, key, args) -> runHooks((key, obj), args, opts)
-runHooks(Symbol,           Thing) := true >> opts -> (sym,      args) -> runHooks(1:sym,      args, opts)
-runHooks(Sequence,         Thing) := true >> opts -> (key,      args) -> (
-    store := getHookStore(key, false);
-    store  = if store =!= null and store#?key then store#key else (
+runHooks(Symbol,                  Thing) := true >> opts -> (key,        args) -> runHooks(1:key,                         args, opts)
+runHooks(Sequence,                Thing) := true >> opts -> (key,        args) -> runHooks(getHookStore(key, false), key, args, opts)
+runHooks(MutableHashTable, Thing, Thing) := true >> opts -> (store, key, args) -> (
+    store = if store#?key then store#key else (
 	if debugLevel > 1 then printerr("runHooks: no hooks installed for ", toString key); return );
     pushInfoLevel 1;
     alg := if opts.?Strategy then opts.Strategy;
