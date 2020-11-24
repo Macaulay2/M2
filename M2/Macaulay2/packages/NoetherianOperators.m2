@@ -1530,9 +1530,6 @@ assert(Q == I)
 ///
 ----------------------------------------------------------
 
-
-
-
 beginDocumentation()
 
 doc ///
@@ -2196,7 +2193,6 @@ Description
 
 -------------- Noetherian operators documentation
 
-
 ------- DiffOp documentation
 doc ///
 Key
@@ -2229,7 +2225,7 @@ doc ///
 Key
     (symbol +, DiffOp, DiffOp)
 Headline
-    DiffOp addition
+    addition of differential operators
 Usage
     D + E
 Inputs
@@ -2251,7 +2247,7 @@ doc ///
 Key
     (symbol -, DiffOp, DiffOp)
 Headline
-    DiffOp subtraction
+    subtraction of differential operators
 Usage
     D - E
 Inputs
@@ -2274,7 +2270,7 @@ doc ///
 Key
     (symbol -, DiffOp)
 Headline
-    DiffOp negation
+    negation of differential operators
 Usage
     - D
 Inputs
@@ -2295,7 +2291,7 @@ Key
     (symbol *, RingElement, DiffOp)
     (symbol *, Number, DiffOp)
 Headline
-    DiffOp scaling
+    scaling of differential operators
 Usage
     c*D
 Inputs
@@ -2314,6 +2310,114 @@ Description
         y*D
         2*D
 ///
+
+doc ///
+Key
+    (symbol ?, DiffOp, DiffOp)
+    (symbol ==, DiffOp, DiffOp)
+    (symbol ==, DiffOp, ZZ)
+    (symbol ==, ZZ, DiffOp)
+Headline
+    comparison of differential operators
+Usage
+    D ? E
+    D == E
+    D == 0
+Inputs
+    D:DiffOp
+    E:DiffOp
+Description
+    Text
+        The ordering of DiffOps a product ordering of the undelying ring, where the $dx$ monomoial are compared
+        first, and ties are broken with coefficients.
+    Example
+        R = QQ[x,y, MonomialOrder => Lex]
+        D1 = diffOp{x^2 => y, y => x^2}
+        D2 = diffOp{y => y^2}
+        D3 = diffOp{x^2 => y, y => x^2 + y^2}
+        D1 ? D1
+        D1 ? D2
+        D1 ? D3
+        D1 + D2 == D3
+        D1 + D2 - D3 == 0
+///
+
+doc ///
+Key
+    (ring, DiffOp)
+Headline
+    get the ring associated to a differential operator
+Usage
+    ring D
+Inputs
+    D:DiffOp
+Outputs
+    :Ring
+Description
+    Text
+        Returns the ring in which the coefficients lie
+    Example
+        R = QQ[x]
+        D = diffOp{x => 2*x^2}
+        ring D
+Caveat
+    If the @TO DiffOp@ was created using @TO (diffOp, RingElement)@ (e.g. after running @TO makeWA@),
+    the ring
+///
+
+doc ///
+Key
+    (symbol SPACE, DiffOp, RingElement)
+Headline
+    apply a differential operator
+Usage
+    D f
+Inputs
+    D:DiffOp
+    f:RingElement
+        in the same ring as {\tt D}
+Outputs
+    :RingElement
+        in the same ring as {\tt f}
+Description
+    Text
+        The differential operators of the ring $R = \mathbb{F}[x_1,\dots,x_n]$ act naturally on elements of $R$.
+        The operator $dx_i$ acts as a partial derivarive with respect to $x_i$, and a polynomial acts by multiplication.
+    Example
+        R = QQ[x,y]
+        dx = diffOp{x^2 => 1}
+        D = diffOp{1_R => x^2 + y^2}
+        dx(x^4 + x^3 + y)
+        D(x^2 - y^2)
+///
+
+doc ///
+Key
+    (substitute, DiffOp, Ring)
+Headline
+    change the ring of a differential operator
+Usage
+    substitute(D, R)
+    sub(D, R)
+Inputs
+    D: DiffOp
+    R: Ring
+Outputs
+    :DiffOp
+Description
+    Text
+        --TODO ...(missing documentation)
+        Attempts to change the underlying ring of the differential operator by calling @TO (substitute,RingElement, Ring)@
+        for each monomial and coefficient of {\tt D}
+    Example
+        R = QQ[x,y]
+        D = diffOp{1_R => x^2, x^2 => y^2}
+        S = QQ[x,y,z]
+        DS = sub(D,S)
+        ring DS === S
+///
+
+
 
 doc ///
 Key
