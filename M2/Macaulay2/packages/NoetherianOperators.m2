@@ -699,6 +699,9 @@ normalize DiffOp := D -> 1/(sub( leadCoefficient D#(first rsort keys D), coeffic
 DiffOp == ZZ := (D, z) -> if z == 0 then false else error"cannot compare DiffOp to nonzero integer"
 ZZ == DiffOp := (z, D) -> D == z
 --right R action TODO
+evaluate (DiffOp, Matrix) := (D,p) -> applyValues(D, v -> promote((evaluate(matrix{{v}}, p))_(0,0), ring D))
+evaluate (DiffOp, Point) := (D,p) -> evaluate(D, matrix p)
+
 
 -- instances of ZeroDiffOp are differential operators that
 -- act as the zero operator. They have exactly one key with value zero
@@ -1089,16 +1092,25 @@ numericalNoetherianOperators(Ideal) := List => true >> opts -> (I) -> (
 specializedNoetherianOperators = method(Options => true)
 specializedNoetherianOperators(Ideal, Matrix) := List => true >> opts -> (I,pt) -> (
     S := ring I;
-    if precision ring pt == infinity and precision S == infinity then numNoethOpsAtPoint(I, pt, opts)
+    if precision ring pt == infinity and precision S == infinity then (
+        depVars := if opts.?DependentSet then opts.DependentSet 
+            else if isPrime radical I then getDepIndVars(I, opts)
+            else error"expected option DependentSet";
+        numNoethOpsAtPoint(I, pt, opts, DependentSet => depVars)
+    )
     else if coefficientRing S === QQ then (
         T := (ultimate(coefficientRing, ring pt)) monoid S;
-        if not opts.?DependentSet then error "expected option DependentSet";
-        numNoethOpsAtPoint(sub(I,T), pt, opts, DependentSet => opts.DependentSet / (x -> sub(x, T)))
+        depVars = if opts.?DependentSet then opts.DependentSet 
+            else if isPrime radical I then getDepIndVars(I, opts)
+            else error"expected option DependentSet";
+        numNoethOpsAtPoint(sub(I,T), pt, opts, DependentSet => depVars / (x -> sub(x, T)))
     )
     else (
-        if not liftable(pt, S) then error"point is not liftable to ring of ideal";
-        if not opts.?DependentSet then error "expected option DependentSet";
-        numNoethOpsAtPoint(I, pt, opts)
+        try promote(pt, coefficientRing S) then numNoethOpsAtPoint(I,pt,opts) else (
+                if not liftable(pt, S) then error"point is not liftable/promotable to ring of ideal";
+                if not opts.?DependentSet then error "expected option DependentSet";
+                numNoethOpsAtPoint(I, pt, opts)
+        )
     )
 )
 specializedNoetherianOperators(Ideal, Point) := List => true >> opts -> (I,pt) -> specializedNoetherianOperators(I, matrix pt, opts)
