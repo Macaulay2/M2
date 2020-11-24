@@ -1312,7 +1312,8 @@ assert(all(flatten table(ops, K_*, (D, f) -> (D f) % radK == 0), identity))
 -- Outputs a sequence (numerator, denominator)
 rationalInterpolation = method(Options => {Tolerance => 1e-6})
 rationalInterpolation(List, List, Matrix, Matrix) := Sequence => opts -> (pts, vals, numBasis, denBasis) -> (
-    if numColumns numBasis + numColumns denBasis > #pts + 1 then error "Rational interpolation needs more points";
+    if numColumns numBasis + numColumns denBasis > #pts - 1 then error "Rational interpolation needs more points";
+    if numColumns numBasis < numColumns denBasis then error"expected numerator monomial support to be at least as large as the denominator monomial support";
     R := ring numBasis_(0,0);
     nn := numColumns numBasis;
     nd := numColumns denBasis;
