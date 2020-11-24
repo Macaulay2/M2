@@ -173,7 +173,7 @@ Node
       intersect C == 0 and all(C, isPrimary_M)
       C / degree
     Text
-      Recall that in Macaulay2, a module is commonly represented as a @TO "subquotient"@, which is
+      Recall that in Macaulay2, a module is commonly represented as a @TO2 {"subquotient", "subquotient"}@, which is
       an ordered pair consisting of @TO generators@ and @TO relations@ represented as column matrices.
       As submodules of @TT "M"@, each module in the output list has the same relations as @TT "M"@,
       and has generators which are @TT "R"@-linear combinations of generators of @TT "M"@,
@@ -214,8 +214,8 @@ Node
 
 -- FIXME
       @UL {
-	  {TT "Hom", PARA {"This strategy is closest to the original Eisenbud-Huneke-Vasconcelos method."}},
-	  {TT "Res"},
+	  {TT "Res", PARA {"This strategy is closest to the original Eisenbud-Huneke-Vasconcelos method."}},
+	  {TT "Hom"},
 	  {TT "Sat"},
 	  }@
 

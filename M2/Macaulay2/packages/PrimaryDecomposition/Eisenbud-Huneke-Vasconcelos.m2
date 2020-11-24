@@ -202,8 +202,7 @@ getEmbeddedComponent (Module, Ideal, Function) := o -> (M, p, checkFunction) -> 
           if debugLevel > 0 then printerr("Trying bracket power " | toString(j) | " for candidate embedded component...");
           N := bracketPower(p, j)*M;
           Q := M/N;
-	  -- used later in kernelOfLocalization
-	  storeAssociatedPrimesComputation(Q, {p}, codim p);
+	  storeAssociatedPrimesComputation(Q, {p}, codim p); -- used later in kernelOfLocalization
           strat := toString o.Strategy;
           C := if codim p == dim ring Q then (
                if debugLevel > 0 then printerr("Embedded prime is maximal!");
@@ -212,12 +211,11 @@ getEmbeddedComponent (Module, Ideal, Function) := o -> (M, p, checkFunction) -> 
                if debugLevel > 0 then printerr("Using strategy " | if strat == "null" then "Sat" else strat);
                if strat == "Res" then topComponents(Q, codim p)
                else if strat == "Hom" then equidimHull(Q, codim p)
-	       -- this function uses the cached associated primes computation
-               else kernelOfLocalization(Q, p)
+               else kernelOfLocalization(Q, p) -- this uses the cached associated primes computation
           );
           C = trim subquotient(generators C | generators N, relations M);
           foundValidComponent = checkFunction C;
-          j = 2*j;
+          j = ceiling(3/2*j); -- 2*j;
      );
      C
 )
@@ -254,7 +252,7 @@ equidimHull Module := Module => M -> equidimHull(M, codim M)
 
 regSeqInIdeal = method(Options => {Strategy => "Quick"})
 regSeqInIdeal (Ideal, ZZ, ZZ, ZZ) := Ideal => opts -> (I, n, c, initialTime) -> ( -- attempts to find sparse maximal regular sequence contained in an ideal (in a CM ring)
-     if debugLevel > 1 then printerr(toString I, n, c, initialTime);
+     -- if debugLevel > 1 then printerr(toString I, n, c, initialTime);
      G := sort(flatten entries mingens I, f -> (sum degree f, #terms f));
      if c == #G then return ideal G;
      k := coefficientRing ring I;
