@@ -17,9 +17,9 @@ newPackage(
     },
     Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
     PackageExports => {"Truncations", "Bertini", "NAGtypes"},
-    PackageImports => {"Dmodules"},
+    PackageImports => {"Dmodules", "PrimaryDecomposition"},
     AuxiliaryFiles => true,
-    DebuggingMode => true
+    DebuggingMode => false
 )
 
 export {
