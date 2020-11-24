@@ -62,7 +62,7 @@ algorithms = new MutableHashTable from {}
 associatedPrimes = method(
     TypicalValue => List,
     Options => {
-	Strategy          => null,     -- try "keys strategies(associatedPrimes, Ideal)"
+	Strategy          => null,     -- try hooks(associatedPrimes, Ideal)
 	CodimensionLimit  => infinity, -- maximum codimension to look for
 	MinimalGenerators => true      -- whether to trim the output
 	}
@@ -320,7 +320,7 @@ scan({"Default"}, strategy ->
 primaryDecomposition = method(
     TypicalValue => List,
     Options => {
-	Strategy          => null, -- try "keys strategies(primaryDecomposition, Ideal)",
+	Strategy          => null, -- try hooks(primaryDecomposition, Ideal)
 	MinimalGenerators => true  -- whether to trim the output
 	}
     )
