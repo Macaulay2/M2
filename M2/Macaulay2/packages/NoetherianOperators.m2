@@ -26,8 +26,8 @@ export {
     "truncatedDual",
     "zeroDimensionalDual",
     "gCorners",
-    "socles",
-    "sCorners",
+    -- "socles", TODO remove
+    -- "sCorners", TODO remove
     "localHilbertRegularity",
     "eliminatingDual",
     "innerProduct",
@@ -39,7 +39,7 @@ export {
     "numericalKernel",
     "numericalImage",
     "colReduce",
-    "newGCorners",
+    -- "newGCorners", --TODO remove
 
     "DiffOp",
     "ZeroDiffOp",
@@ -85,7 +85,9 @@ protect \ {
 }
 
 -----------------------------------------------------------------------------------------
-load "NoetherianOperators/pointSampling.m2"
+-- TODO remove
+-- load "NoetherianOperators/pointSampling.m2"
+
 -- Create a dual space from a list of Noetherian operators
 -- Caveat: if Noetherian operators have non-constant coefficients,
 --          behavior is undefined.
@@ -2559,6 +2561,61 @@ Description
         I = ideal(x^2,y^2 - x*t);
         nops = noetherianOperators(I, Strategy => "MacaulayMatrix");
         nops // sort / normalize == {diffOp{1_R => 1}, diffOp{y => 1}, diffOp{y^2 => t, x => 2}, diffOp{y^3 => t, x*y => 6}}
+///
+
+
+doc ///
+Key
+    ZeroDiffOp
+    (NewFromMethod, ZeroDiffOp, Ring)
+    (symbol ==, ZZ, ZeroDiffOp)
+    (symbol ==, ZeroDiffOp, ZZ)
+Headline
+    the zero differential operator of a ring
+Description
+    Text
+        For internal use. A type of @TO DiffOp@ with a single key {\tt 1} and value 0.
+        Users are not expected to create instances of {\tt ZeroDiffOp}, they are created automatically by @TO diffOp@ when necessary.
+    Example
+        R = QQ[x,y]
+        D = diffOp{x => 0};
+        instance(D, ZeroDiffOp)
+        peek D
+    Text
+        Comparison to the integer 0 works as expected
+    Example
+        E = diffOp{1_R => 0}
+        E == 0
+SeeAlso
+    diffOp
+
+///
+
+doc ///
+Key
+    InterpolatedDiffOp
+    (NewFromMethod, InterpolatedDiffOp, HashTable)
+    (NewFromMethod, InterpolatedDiffOp, List)
+Headline
+    differential operator with interpolated coefficients
+Description
+    Text
+        A type of @TO DiffOp@ returned by interpolation based methods, such as @TO numericalNoetherianOperators@.
+        Because of this, users are not expected to create instances of this type.
+
+        If the interpolation of any coefficient fails, the numerator and denominator will be replaced by the @TO2 {String, "string"}@ {\tt "?"}.
+
+        Assuming the interpolation was successful, the method @TO (evaluate, InterpolatedDiffOp, Point)@ will convert
+        an @TO InterpolatedDiffOp@ to a specialized differential operators of type @TO DiffOp@ by evaluating each numerator and denominator at a point.
+
+        -- TODO remove 1.3_R
+    Example
+        R = CC[x,y]
+        D = new InterpolatedDiffOp from {x => (x+y, pi*ii*x^2*y), y => (x, 1.3_R)}
+        D' = evaluate(D, point{{1.2, 2+ii}})
+SeeAlso
+    (evaluate, InterpolatedDiffOp, Point)
+
 ///
 
 
