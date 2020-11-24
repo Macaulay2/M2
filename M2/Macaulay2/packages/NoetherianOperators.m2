@@ -2223,6 +2223,122 @@ Description
 
 doc ///
 Key
+    diffOp
+Headline
+    create a differential operator
+///
+
+doc ///
+Key
+    (diffOp, HashTable)
+    (diffOp, List)
+    (NewFromMethod, DiffOp, HashTable)
+    (NewFromMethod, DiffOp, List)
+Headline
+    create a differential operator
+Usage
+    diffOp H
+Inputs
+    H:HashTable
+        or a @TO2 {List, "list"}@ of pairs {\tt mon => coef}
+Outputs
+    :DiffOp
+Description
+    Text
+        The @TO HashTable@ {\tt H} should contain monomials as keys and polynomials as values, all
+        of which should lie in the same ring. The keys represent monomials of each term (in $dx$ variables),
+        and the value represent the coefficient.
+    Example
+        R = QQ[x,y]
+        H = new HashTable from {x^2 => x+y+3, y^2*x^5 => 2*x}
+        D1 = diffOp H
+    Text
+        Alternatively, {\tt diffOp} can also create differential operators from lists of {\tt key => value} pairs
+    Example
+        D2 = diffOp {x^2 => x+y+3, y^2*x^5 => 2*x}
+        D1 == D2
+    Text
+        For a simpler way of creating differential operators, see @TO (diffOp, RingElement)@.
+Caveat
+    The constructors @TO (NewFromMethod, DiffOp, HashTable)@ and @TO (NewFromMethod, DiffOp, List)@ are for internal use only. Use @TO (diffOp, HashTable)@ and @TO (diffOp, List)@ instead.
+
+SeeAlso
+    (diffOp, RingElement)
+///
+
+doc ///
+Key
+    (diffOp, Ring, RingElement)
+    (diffOp, RingElement, Ring)
+    (diffOp, RingElement)
+Headline
+    create a differential operator from a Weyl algebra element
+Usage
+    diffOp_R f
+    diffOp(f, R)
+    diffOp f
+Inputs
+    R:Ring
+    f:RingElement
+        of a @TO WeylAlgebra@ of {\tt R}
+Outputs
+    :DiffOp
+Consequences
+    Item
+        if called without a specified ring (i.e. {\tt diffOp f}), creates a new ring by discarding the $dx$-variables and caches it in the Weyl algebra
+    Item
+        if such a ring had been previously cached, the cached ring will be used.
+Description
+    Text
+        Creates a differential operator of the ring {\tt R} from an element {\tt f} of a Weyl algebra of {\tt R}
+    Example
+        needsPackage "Dmodules"
+        R = QQ[x,y]
+        S = makeWA R
+        D = diffOp_R(x^2 * dx + y^2 * dy^2*dx)
+        ring D === R
+    Text
+        The ring does not have to be specified. Note that in this case, the resulting operator will not be a differential
+        operator of {\tt R}, but that of a new ring. This ring is cached, so subsequent calls will result in operators of the same ring.
+    Example
+        E = diffOp(x^2* dx)
+        ring E === R
+        F = diffOp(dy^2)
+        ring E === ring F
+
+///
+
+-- TODO remove this
+-- doc ///
+-- Key
+--     (NewFromMethod, DiffOp, HashTable)
+--     (NewFromMethod, DiffOp, List)
+-- Headline
+--     construct a differential operator
+-- Usage
+--     new DiffOp from H
+-- Inputs
+--     :
+--     H:HashTable
+--         or a @TO2 {List, "list"}@ of pairs {\tt monomial => coefficient}
+-- Outputs
+--     :DiffOp
+-- Description
+--     Text
+--         For internal use only.
+--         Equivalent to @TO (diffOp, HashTable)@ and @TO (diffOp, List)@, but without sanity-checking of inputs
+-- Caveat
+--     Behavior is undefined on improper input (e.g. non-monomial keys, keys and values in different rings)
+-- SeeAlso
+--     (diffOp, HashTable)
+--     (diffOp, List)
+--     (diffOp, RingElement)
+--     (diffOp, Ring, RingElement)
+-- ///
+
+
+doc ///
+Key
     (symbol +, DiffOp, DiffOp)
 Headline
     addition of differential operators
