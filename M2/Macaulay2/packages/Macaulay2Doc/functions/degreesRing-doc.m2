@@ -25,7 +25,7 @@ document {
 	  variable."
 	  },
      EXAMPLE lines ///
-     degreesRing 3
+     degreesRing 3 -* no-capture-flag *-
      describe oo
      T_0
      use degreesRing 3

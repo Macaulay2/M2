@@ -374,7 +374,7 @@ document { Key => currentTime,
      PARA { "We can also compute how many months account for the fractional part of that number." },
      EXAMPLE "12 * (oo - floor oo)",
      PARA { "Compare that to the current date, available from a standard Unix command." },
-     EXAMPLE ///run "date"///
+     EXAMPLE ///run "date" -* no-capture-flag *-///
      }
 document { Key => Partition,
      Headline => "a type of list representing a partition of a natural number",
@@ -606,7 +606,7 @@ document { Key => disassemble,
 	  "It may be useful to disassemble code during debugging, as in the following demonstration."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2" -- no-capture-flag
+     load "Macaulay2Doc/demo1.m2" -* no-capture-flag *-
      code g
      g 2
      code current
@@ -619,7 +619,7 @@ document { Key => "current",
      Outputs => { Pseudocode => { "the pseudocode that produced an error, or ", TO "null", ", if none" } },
      "Use ", TO "value", " to evaluate the code again, for debugging purposes.",
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2" -- no-capture-flag
+     load "Macaulay2Doc/demo1.m2" -* no-capture-flag *-
      code g
      g 2
      code current
@@ -640,7 +640,7 @@ document { Key => (value, Pseudocode),
 	  variable fixed the problem in the code, by executing just the offending line."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2" -- no-capture-flag
+     load "Macaulay2Doc/demo1.m2" -* no-capture-flag *-
      g 2
      value current
      x = 11

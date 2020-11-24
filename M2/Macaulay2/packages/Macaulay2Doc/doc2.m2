@@ -143,7 +143,7 @@ document {
 	  "Here is an example of the use of ", TO "return", " as a debugger command."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2" -- no-capture-flag
+     load "Macaulay2Doc/demo1.m2" -* no-capture-flag *-
      code g
      g 2
      code f
@@ -534,7 +534,7 @@ document {
 	  "Parsing of ", TO "<<", " associates leftward, so that several objects  may be displayed with an expression such as ", TT "f<<x<<y<<z", "."
 	  },
      EXAMPLE lines ///
-     	  stderr << "-- hi there --" << endl
+     	  stderr << "-- hi there --" << endl -* no-capture-flag *-
      	  << "-- ho there --" << endl
 	  fn = temporaryFileName()
 	  fn << "hi there" << endl << close
@@ -876,7 +876,7 @@ a+a"///,
 	  and the value of the variable ", TO "currentString", " is set to the string, to aid in debugging."
 	  },
      EXAMPLE lines ///
-     debuggingMode = stopIfError = false;
+     debuggingMode = stopIfError = false; -* no-capture-flag *-
      value "1/0"
      debuggingMode = true;
      value "1/0"

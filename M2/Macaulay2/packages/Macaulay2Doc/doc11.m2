@@ -95,7 +95,7 @@ document {
 	  "(f = Command ( () -> 2^30 );)",
 	  "f",
 	  "(c = Command \"date\";)",
-	  "c"
+	  "c -* no-capture-flag *-"
 	  },
      SeeAlso => {"run", "AfterEval"}
      }

@@ -646,7 +646,7 @@ document {
 	  "Your first input prompt will be ", TT "i1 : ", ".  In response to the prompt,
 	  type ", TT "2+2", " and press return.  The expression you entered will be
 	  evaluated - no punctuation is required at the end of the line."},
-     EXAMPLE "2+2",
+     EXAMPLE "2+2 -* no-capture-flag *-",
      "The answer is displayed to the right of the output label ", TT "o1 =", ".",
      PARA{},
      "Here is some arithmetic with fractions.",
@@ -886,7 +886,7 @@ document {
      executing the specified files.",
      PARA{},
      "The options that can be provided on the command line may be displayed by running ", TT "M2 --help", ", as follows.",
-     EXAMPLE ///run "M2 --help";///,
+     EXAMPLE ///run "M2 --help"; -* no-capture-flag *-///,
      PARA{},
      "To terminate the program, one may type ", TO "exit", ", ", TO "quit", ",
      ", TO "end", ", or the end of file character.",

@@ -90,7 +90,7 @@ document {
 	       },
 	  PARA { "This assignment method is pre-installed." },
 	  EXAMPLE lines ///
-	       u = s_4
+	       u = s_4 -* no-capture-flag *-
 	       s = 3
 	       u <- 555
 	       s

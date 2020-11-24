@@ -89,5 +89,5 @@ Node
     Text
       This function can be used to export specific symbols from another packages private dictionary.
     Example
-      exportFrom(Core, {"HTML"})
+      exportFrom(Core, {"HTML"}) -* no-capture-flag *-
 ///

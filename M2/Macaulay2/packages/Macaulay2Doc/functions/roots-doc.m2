@@ -18,7 +18,7 @@ document {
       "ZZ[x]",
       "p = x^13 + 5*x^9 + 7*x^4 + x +1",
       "roots(p^2, Precision=>150, Unique=>true)",
-      "o7#0",
+      "o7#0 -* no-capture-flag *-",
     },
     PARA {
       "The roots are computed using ", TO "MPSolve", ".",
