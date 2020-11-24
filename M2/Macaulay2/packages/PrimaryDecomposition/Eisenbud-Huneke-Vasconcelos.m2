@@ -336,6 +336,214 @@ J1 = J1 + ideal(R_3^5)
 trim substitute(J1,T)
 ///
 
+
+-- Primary decomposition code for modules
+
+associatedPrimes Module := List => opts -> M -> ( -- modified code in ass1 for modules
+     previousPrimes := {};
+     if M.cache#?"AssociatedPrimes" then (
+          previousPrimes = M.cache#"AssociatedPrimes";
+          if not M.cache#?"associatedPrimesCodimLimit" then return previousPrimes;
+     );
+     M.cache#"AssociatedPrimes" = (
+     ringRel := presentation ring M;
+     polyRing := ring ringRel;
+     M1 := lift(M, polyRing);
+     -- M1 := subquotient(lift(gens M, polyRing), lift(relations M, polyRing) | ringRel);
+     c := codim M1;
+     if c == dim polyRing and isHomogeneous M then return {sub(ideal gens polyRing, ring M)};
+     d := pdim M;
+     n := if opts.CodimensionLimit >= 0 then min(d, opts.CodimensionLimit) else d;
+     if M.cache#?"associatedPrimesCodimLimit" then (
+          if n < d and n <= M.cache#"associatedPrimesCodimLimit" then return select(previousPrimes, P -> codim P <= n);
+          c = 1 + M.cache#"associatedPrimesCodimLimit";
+     );
+     if n < d then M.cache#"associatedPrimesCodimLimit" = n
+     else remove(M.cache, "associatedPrimesCodimLimit");
+     previousPrimes | (flatten apply(toList(c..n), i -> (
+          if debugLevel > 0 then print("Computing associated primes of codim " | toString i);
+          if i == dim polyRing and isHomogeneous M then sub(ideal gens polyRing, ring M) else (
+               A := ann(if i == c then M1 else Ext^i(M1, polyRing));
+               select(minimalPrimes A, P -> codim P == i)
+          )
+     )))/(P -> trim sub(P, ring M))
+     )
+)
+associatedPrimes Ring := List => opts -> R -> associatedPrimes comodule ideal R
+
+primaryDecomposition Module := List => o -> M -> ( 
+     -- Returns a primary decomposition of 0 in M. Assumes all embedded primes appear after all primes they contain, i.e. isSubset(AP#i, AP#j) => i \le j (equivalently, the ordering of associated primes is a linear extension of the partial order by inclusion). This is the case for associatedPrimes(Module), which returns associated primes ordered by codimension
+     if not M.cache#?"primaryComponents" then M.cache#"primaryComponents" = new MutableHashTable;
+     AP := associatedPrimes M;
+     if #values(M.cache#"primaryComponents") != #AP then (
+          H := hashTable apply(AP, p -> p => select(#AP, i -> isSubset(AP#i, p)));
+          for i to #AP - 1 do (
+               if debugLevel > 0 then print("Prime: " | toString(i+1) | "/" | toString(#AP));
+               p := AP#i;
+               if M.cache#"primaryComponents"#?p then continue;
+               f := product(AP - set AP_(H#p), q -> q_(position(q_*, g -> g % p != 0)));
+               isolComp := if f == 1 then 0*M else saturate(0*M, f);
+               if #(H#p) > 1 then (
+                    j0 := max(2, ceiling(max((ann M)_*/degree/sum) / min(p_*/degree/sum)));
+                    B := intersect apply(delete(i, H#p), k -> M.cache#"primaryComponents"#(AP#k));
+                    (j, Q) := (2*j0, getEmbeddedComponent(M, bracketPower(p,j0)*M, p, o));
+                    while not isSubset(intersect(B, Q), isolComp)
+                    do (j, Q) = (2*j, getEmbeddedComponent(M, bracketPower(p,j)*M, p, o));
+               ) else Q = isolComp;
+               M.cache#"primaryComponents"#p = Q;
+          );
+     );
+     apply(AP, p -> M.cache#"primaryComponents"#p)
+)
+primaryDecomposition Ring := List => opts -> R -> primaryDecomposition comodule ideal R
+
+-- Additional functions useful for primary decomposition
+
+bracketPower = (I, n) -> ideal apply(I_*, f -> f^n)
+
+getEmbeddedComponent = method(Options => options primaryDecomposition)
+getEmbeddedComponent (Module, Module, Ideal) := o -> (M, N, P) -> ( -- N is candidate for P-primary component of M
+     Q := M/N;
+     strat := o.Strategy;
+     if strat === null then (
+          if debugLevel > 0 then print("Determining strategy for top components...");
+          strat = "Hom";
+          try ( alarm 30; if sum values betti resolution Q < 1000 then strat = "Sat" );
+     );
+     if debugLevel > 0 then print("Using strategy " | strat);
+     C := if strat == "Hom" then equidimHull Q 
+          else if strat == "Sat" then kernelOfLocalization(Q, P)
+          else if strat == "Res" then topComponents(Q, codim P);
+     trim subquotient(generators C | generators N, relations M)
+)
+
+kernelOfLocalization = method()
+kernelOfLocalization (Module, Ideal) := Module => (M, P) -> ( -- returns kernel of localization map M -> M_P
+     -- if not isPrime P then error "Expected second argument to be a prime ideal";
+     AP := associatedPrimes M;
+     f := product(AP, p -> ( i := position(p_*, g -> g % P != 0); if i === null then 1 else p_i ));
+     if debugLevel > 0 then print("Computing saturation...");
+     if f == 1 then 0*M else saturate(0*M, f)
+)
+
+topComponents (Module, ZZ) := Module => (M, e) -> (
+     S := ring M;
+     if not isPolynomialRing S or not isAffineRing S then error "expected a polynomial ring";
+     N := 0*M;
+     f := pdim M;  -- will compute a resolution if needed...
+     while f > e do (
+	E := Ext^f(M,S);
+	if codim E == f then (
+		if debugLevel > 0 then print("Getting annihilator of Ext...");
+		I := annihilator E;
+		if debugLevel > 0 then print("Removing components of codim " | toString(f));
+		N = N : I;
+		-- M = M/N;
+	);
+	f = f-1;
+     );
+     N
+)
+
+equidimHull = method()
+equidimHull Module := Module => M -> ( -- equidimensional hull of 0 in a module M
+     R := ring M;
+     if debugLevel > 0 then print("Finding maximal regular sequence...");
+     S := comodule maxRegSeq annihilator M;
+     if debugLevel > 0 then print("Computing Ext ...");
+     if numColumns mingens M == 1 then (
+          if debugLevel > 0 then print("Using case for cyclic module...");
+          E := Hom(M, S); -- = Ext^c(M, R)
+          if debugLevel > 0 then print("Getting annihilator ...");
+          return subquotient(generators annihilator E, relations M);
+     );
+     -- the following uses code from doubleDualMap in AnalyzeSheafOnP1
+     h := coverMap M;
+     ddh := Hom(Hom(h, S), S); -- = Ext^c(Ext^c(h, R), R)
+     if debugLevel > 0 then print("Getting hull as kernel of " | toString(numRows matrix ddh) | " by " | toString(numColumns matrix ddh) | " matrix...");
+     kernel map(target ddh, M, matrix ddh)
+)
+
+maxRegSeq = method(Options => {Strategy => "Quick"})
+maxRegSeq Ideal := Ideal => opts -> I -> (
+     -- attempts to find sparse maximal regular sequence contained in an ideal (in a CM ring)
+     G := sort flatten entries mingens I;
+     t := timing codim I;
+     c := last t;
+     t0 := 1 + ceiling first t;
+     if c == #G then return ideal G;
+     k := coefficientRing ring I;
+     J := ideal(G#0);
+     for i from 1 to #G-1 do (
+          (j, foundNextNZD) := (#G-1, false); -- starts searching from end
+          while not foundNextNZD and j >= c do (
+               coeffList := {0_k, 1_k};
+               if debugLevel > 0 then print("Trying generators " | toString(i, j));
+               for a in coeffList do (
+                    cand := G#i + a*G#j;
+                    K := J + ideal cand;
+                    if debugLevel > 0 then print("Testing regular sequence...");
+                    n := if opts.Strategy == "Quick" then ( 
+                         try ( alarm t0; codim K ) else -1
+                    ) else codim K;
+                    if n == 1 + #J_* then (
+                         J = K;
+                         foundNextNZD = true;
+                         break;
+                    );
+               );
+               j = j-1;
+          );
+          if #J_* == c then ( if debugLevel > 0 then print("Found regular sequence!"); return J );
+     );
+     m := c - #J_*;
+     n := #G - c;
+     ind := entries id_(k^n);
+     if debugLevel > 0 then print "Could not find sparse regular sequence. Trying denser elements...";
+     for count to (#G)^2//2 do (
+          A := transpose matrix apply(m, i -> sum ind_(apply(n//2, j -> random n)));
+          J1 := J + ideal(matrix{G} * (map(k^(#J_*),k^m,0) || id_(k^m) || A));
+          try ( alarm t0; if codim J1 == #J1_* then return J1 )
+     );
+     print "Could not find regular sequence. Try again with Strategy => 'Full'"
+)
+
+TEST /// -- non-cyclic modules
+R = QQ[x_0..x_3]
+I = monomialCurveIdeal(R,{1,2,3})
+J = monomialCurveIdeal(R,{1,3,4})
+K = monomialCurveIdeal(R,{1,4,5})
+M = comodule I ++ comodule J ++ comodule K -- direct sum
+AP = associatedPrimes M
+assert(set associatedPrimes M === set{I,J,K})
+comps = primaryDecomposition M
+assert(intersect comps == 0 and all(comps, isPrimary_M))
+N = coker map(M, R^1, transpose matrix{{1_R,1,1}}) -- coker of diagonal map
+assert(numcols mingens N == 2 and #associatedPrimes N == 5)
+comps = primaryDecomposition N
+assert(intersect comps == 0 and all(comps, isPrimary_N))
+///
+
+TEST /// -- multiply embedded prime
+R = QQ[x_0..x_3]
+I = intersect((ideal(x_0..x_3))^5, (ideal(x_0..x_2))^4, (ideal(x_0..x_1))^3)
+M = comodule I
+AP = associatedPrimes M
+comps = primaryDecomposition M
+assert(intersect comps == 0 and all(comps, isPrimary_M))
+///
+
+TEST /// -- tough example for old primaryDecomposition, good on new code for modules
+-- Example 4.4 in https://arxiv.org/pdf/2006.13881.pdf
+R = QQ[x_0..x_5]
+P = minors(2, matrix{{x_0,x_1,x_3,x_4},{x_1,x_2,x_4,x_5}}) -- surface scroll S(2,2) in P^5
+L = P^2_*; I = ideal (L_0 + L_9, L_0 + L_12, L_13 + L_20)
+M = comodule I
+assert(#associatedPrimes M == 5)
+comps = primaryDecomposition M
+assert(sum(comps, Q -> degree(I + ideal gens Q)) == degree I)
+///
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PrimaryDecomposition.installed "
 -- End:
