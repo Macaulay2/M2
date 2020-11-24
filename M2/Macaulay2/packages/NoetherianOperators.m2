@@ -2887,6 +2887,53 @@ Caveat
     It is assumed that the point lies on the variety of {\tt I}
 ///
 
+
+doc ///
+Key
+    rationalInterpolation
+    (rationalInterpolation, List, List, Matrix, Matrix)
+    (rationalInterpolation, List, List, Matrix)
+    [rationalInterpolation, Tolerance]
+Headline
+    numerically interpolate rational functions
+Usage
+    (n,d) = rationalInterpolation(pts, vals, numBasis, denBasis)
+    (n,d) = rationalInterpolation(pts, vals, numDenBasis)
+Inputs
+    pts:List
+        of row matrices corresponding to points at which the rational function was evaluated
+    vals:List
+        of @TO2 {Number, "numbers"}@ corresponding to evaluations of the rational function
+    numBasis:Matrix
+        a row of monomials, the monomial support of the numerator
+    denBasis:Matrix
+        a row of monomials, the monomial support of the numerator
+    numDenBasis:Matrix
+        a row of monomials, the monomial support of both the numerator and denominator
+    Tolerance => RR
+        default value {\tt 1e-6}
+Outputs
+    n:RingElement
+        the numerator of the rational function
+    d:RingElement
+        the denominator of the rational function
+Description
+    Text
+        Given a set of points $pts = \{p_1,\dots,p_k\}$ and values $vals = \{v_1,\dots,v_k\}$, attempts to find a rational function
+        $f = g/h$, such that $f(p_i) = v_i$. The polynomials $g$ and $h$ have monomial support {\tt numBasis} and {\tt denBasis} respectively.
+    Example
+        R = CC[x,y]
+
+        pts = {point{{1,0}}, point{{0,1}}, point{{1,1}}, point{{-1,-1}}, point{{-1,0}}}
+        vals = {1, 0, 1/2, -1/2, -1}
+        numBasis = matrix{{x,y}}
+        denBasis = matrix{{x^2,y^2}}
+        rationalInterpolation(pts, vals, numBasis, denBasis)
+    Text
+        The output corresponds to the function $x / (x^2 + y^2)$. If no fitting rational function is found, the method returns an error.
+Caveat
+    The method uses the first point to remove $0/0$ rational functions. Because of this, the first entry of {\tt val} should be non-zero.
+///
 -- doc ///
 -- Key
 --     getNoetherianOperatorsHilb
