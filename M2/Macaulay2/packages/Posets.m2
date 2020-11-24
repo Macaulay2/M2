@@ -19,6 +19,7 @@ newPackage select((
             {Name => "Gwyn Whieldon", Email => "whieldon@hood.edu", HomePage => "http://www.hood.edu/Academics/Departments/Mathematics/Faculty/Gwyneth-Whieldon.html"}
         },
         Headline => "partially ordered sets (posets)",
+	Keywords => {"Combinatorics"},
         Configuration => {
             "DefaultPDFViewer" => "open", -- "open" for Macs and "evince" for Linux
             "DefaultPrecompute" => true,
@@ -4071,11 +4072,11 @@ doc ///
         A:Array
             representing a poset in GAP-format
         S:String
-            representing a poste in GAP-format
+            representing a poset in GAP-format
         P:Poset
     Outputs
         S:String
-            representing a poste in GAP-format
+            representing a poset in GAP-format
         P:Poset
     Description
         Text
@@ -6074,7 +6075,7 @@ doc ///
         isUpperSemimodular
         (isUpperSemimodular,Poset)
     Headline
-        determines if a lattice is upper semimoudlar
+        determines if a lattice is upper semimodular
     Usage
         i = isUpperSemimodular P
     Inputs

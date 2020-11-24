@@ -14,6 +14,7 @@ newPackage(
 	     },
 --    	HomePage => "http://www.math.uiuc.edu/~doe/", --page not working
         Headline => "reaction networks",
+	Keywords => {"Applied Algebraic Geometry"},
 	PackageImports => {"Graphs", "Polyhedra"},
         DebuggingMode => false,
 --  	DebuggingMode => true,		 -- set to true only during development

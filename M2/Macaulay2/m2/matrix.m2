@@ -228,7 +228,7 @@ expression Matrix := m -> (
 net Matrix := m -> net expression m
 toString Matrix := m -> toString expression m
 texMath Matrix := m -> texMath expression m
-html Matrix := m -> html expression m
+--html Matrix := m -> html expression m
 
 describe Matrix := m -> (
     args:=(describe target m,describe source m);
@@ -286,6 +286,9 @@ isDirectSum Module := (M) -> M.cache.?components
 components Module := M -> if M.cache.?components then M.cache.components else {M}
 components Matrix := f -> if f.cache.?components then f.cache.components else {f}
 
+formation = method()
+formation Module := M -> if M.cache.?formation then M.cache.formation
+
 directSum Module := M -> Module.directSum (1 : M)
 Module.directSum = args -> (
 	  R := ring args#0;
@@ -305,6 +308,7 @@ Module.directSum = args -> (
 		    directSum apply(args,generators), 
 		    directSum apply(args,relations)));
 	  N.cache.components = toList args;
+	  N.cache.formation = FunctionApplication (directSum, args);
 	  N)
 
 single := v -> (
@@ -321,15 +325,11 @@ indices HashTable := X -> (
 directSum List := args -> directSum toSequence args
 directSum Sequence := args -> (
      if #args === 0 then error "expected more than 0 arguments";
-     y := youngest args;
-     key := (directSum, args);
-     if y =!= null and y#?key then y#key else (
-	  type := single apply(args, class);
-	  meth := lookup(symbol directSum, type);
-	  if meth === null then error "no method for direct sum";
-	  S := meth args;
-	  if y =!= null then y#key = S;
-	  S))
+     type := single apply(args, class);
+     meth := lookup(symbol directSum, type);
+     if meth === null then error "no method for direct sum";
+     S := meth args;
+     S)
 
 -- Number.directSum = v -> directSum apply(v, a -> matrix{{a}})
 
@@ -338,18 +338,18 @@ directSum Option := o -> directSum(1 : o)
 Option.directSum = args -> (
      if #args === 0 then error "expected more than 0 arguments";
      objects := apply(args,last);
-     y := youngest objects;
-     key := (directSum, args);
-     if y =!= null and y#?key then y#key else (
-	  type := single apply(objects, class);
-	  if not type.?directSum then error "no method for direct sum";
-	  X := type.directSum objects;
-	  if y =!= null then y#key = X;
-     	  keys := X.cache.indices = toList args/first;
-     	  ic := X.cache.indexComponents = new HashTable from apply(#keys, i -> keys#i => i);
-	  if X.?source then X.source.cache.indexComponents = ic;
-	  if X.?target then X.target.cache.indexComponents = ic;
-	  X))
+     labels  := toList args/first;
+     type := single apply(objects, class);
+     if not type.?directSum then error "no method for direct sum";
+     M := type.directSum objects;
+     M.cache.indices = labels;
+     ic := M.cache.indexComponents = new HashTable from apply(#labels, i -> labels#i => i);
+     -- now, in case M is a map (i.e., has a source and target), then label the source and target objects of the sum
+     if M.?source and M.?target then (
+	  M.source.cache.indexComponents = M.target.cache.indexComponents = ic; 
+	  M.source.cache.indices = M.target.cache.indices = labels;
+	  );
+     M)
 Matrix ++ Matrix := Matrix => directSum
 Module ++ Module := Module => directSum
 

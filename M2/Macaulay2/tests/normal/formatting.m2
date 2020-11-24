@@ -8,3 +8,9 @@ assert (
 QQ[a][x]
 assert( toString (x-a) == "x-a" )
 assert( class expression (-a) === Minus )
+
+-- html formatting
+debug Core
+str = ///A{\it {\bf B}{\tt C\url{D}{\em E}}F}G///
+assert(///A<i><b>B</b><tt>C<a href="D">D</a><em>E</em></tt>F</i>G/// === html new TEX from str)
+assert(///<tt>A<em>B</em>C</tt>/// === html TEX{"{\\tt A", EM{"B"}, "C}"})

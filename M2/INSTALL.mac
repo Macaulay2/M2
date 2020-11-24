@@ -8,18 +8,9 @@
 
 set -e
 xcode-select -p >/dev/null 2>&1 || xcode-select --install
-sleep 1
-brew update
-stty -onlcr -echo
-sleep 1
-brew upgrade
-stty -onlcr -echo
-sleep 1
-brew install pkg-config autoconf automake gnu-tar libtool wget yasm make ctags ntl
-stty -onlcr -echo
-sleep 1
-brew install bdw-gc libatomic_ops gdbm glpk boost libmpc libomp xz
-stty -onlcr -echo
+brew update | cat
+brew upgrade | cat
+brew install autoconf automake bdw-gc boost ccache cddlib ctags eigen flint gdbm glpk gmp gnu-tar libatomic_ops libmpc libomp libtool make mpfr mpir ncurses ninja ntl pkg-config tbb wget xz yasm | cat
 git describe --dirty --long --always --abbrev=40 --all
 gmake get-libtool
 gmake -f Makefile

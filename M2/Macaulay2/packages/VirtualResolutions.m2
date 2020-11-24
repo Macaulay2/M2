@@ -22,6 +22,7 @@ newPackage ("VirtualResolutions",
         {Name => "Michael Loper",      Email => "loper012@umn.edu",    HomePage => "http://math.umn.edu/~loper012/"},
         {Name => "Mahrud Sayrafi",     Email => "mahrud@umn.edu",      HomePage => "http://math.umn.edu/~mahrud/"}
         },
+    Keywords => {"Commutative Algebra", "Homological Algebra"},
     PackageExports => {
         "SpaceCurves",
         "TateOnProducts",

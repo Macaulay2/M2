@@ -60,7 +60,6 @@ macro(_flint_check_version)
 endmacro(_flint_check_version)
 
 if(NOT FLINT_FOUND)
-  set(FLINT_ROOT NOTFOUND)
   set(FLINT_INCLUDE_DIR NOTFOUND)
   set(FLINT_LIBRARIES NOTFOUND)
 
@@ -88,7 +87,7 @@ if(NOT FLINT_FOUND)
       )
   endif()
 
-  string(REGEX REPLACE "/include(/${CMAKE_LIBRARY_ARCHITECTURE}$)?" "" FLINT_ROOT "${FLINT_INCLUDE_DIR}")
+  string(REGEX REPLACE "/include.*" "" FLINT_ROOT "${FLINT_INCLUDE_DIR}")
 
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(Flint DEFAULT_MSG FLINT_ROOT FLINT_INCLUDE_DIR FLINT_LIBRARIES FLINT_VERSION_OK)

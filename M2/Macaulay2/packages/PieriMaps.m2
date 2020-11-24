@@ -19,8 +19,8 @@ newPackage(
 	       "acceptance date" => "2009-06-27",
 	       "published article URI" => "http://j-sag.org/Volume1/jsag-2-2009.pdf",
 	       "published code URI" => "http://j-sag.org/Volume1/PieriMaps.m2",
-	       "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/PieriMaps.m2",
-	       "release at publication" => 9343,
+	       "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/PieriMaps.m2",
+	       "release at publication" => "38e96fec660168d488ad0449f8632e6608cc9ede",
 	       "version at publication" => "1.0",
 	       "volume number" => "1",
 	       "volume URI" => "http://j-sag.org/Volume1/"
@@ -31,6 +31,7 @@ newPackage(
 		    HomePage => "http://math.mit.edu/~ssam/"
 		    }},
 	  Headline => "maps between representations of the general linear group based on the Pieri formulas",
+	  Keywords => {"Representation Theory"},
 	  DebuggingMode => false
 	  )
 

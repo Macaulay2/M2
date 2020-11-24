@@ -9,6 +9,7 @@ newPackage(
 	  {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}
 	  },
      Headline => "find the generic initial ideal of a given ideal",
+     Keywords => {"Commutative Algebra"},
      DebuggingMode => false
      )
 --=========================================================================--

@@ -56,6 +56,10 @@ assert(
      t === ((raw 1_R, raw (x^2+a), raw (x^2-a)), (1, 1, 1)) 
      or
      t === ((raw 1_R, raw (x^2-a), raw (x^2+a)), (1, 1, 1)) 
+     or
+     t === ((raw (x^2+a), raw (x^2-a)), (1, 1))
+     or
+     t === ((raw (x^2-a), raw (x^2+a)), (1, 1))
      )
 
 -- factoring a Laurent polynomial
