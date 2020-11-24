@@ -622,7 +622,6 @@ new DiffOp from HashTable := (DD,H) -> (
 )
 new DiffOp from List := (DD,L) -> new DiffOp from hashTable L
 diffOp = method()
-diffOp DiffOp := D -> diffOp new HashTable from D
 diffOp HashTable := H -> (
     if #keys H == 0 then error "expected non-empty hash table";
     H' := select(H, f -> f!= 0);
@@ -2531,6 +2530,35 @@ Description
         S = QQ[x,y,z]
         DS = sub(D,S)
         ring DS === S
+///
+
+
+doc ///
+Key
+    normalize
+    (normalize, DiffOp)
+Headline
+    rescale a differential operator to a canonical form
+Usage
+    normalize D
+Inputs
+    D:DiffOp
+Outputs
+    :DiffOp
+Description
+    Text
+        Rescales a differential operator so that the leading term of the leading coefficient is 1.
+    Example
+        R = QQ[x,y,t];
+        D = diffOp{x^2*t => 3*x^3 + 2*y, t^2 => x+y}
+        normalize D
+    Text
+        This can be useful when computing "canonical" sets of Noetherian operators,
+        as a valid set of Noetherian operators stays valid even after rescaling.
+    Example
+        I = ideal(x^2,y^2 - x*t);
+        nops = noetherianOperators(I, Strategy => "MacaulayMatrix");
+        nops // sort / normalize == {diffOp{1_R => 1}, diffOp{y => 1}, diffOp{y^2 => t, x => 2}, diffOp{y^3 => t, x*y => 6}}
 ///
 
 
