@@ -1746,36 +1746,37 @@ LBM = reduceSpace truncatedDual(p,M,5)
 assert(dim LDZ == dim LBM)
 ///
 
-doc ///
-     Key
-          socles
-          (socles,MonomialIdeal)
-	  (socles,Matrix)
-     Headline
-          socle corners of a monomial ideal
-     Usage
-          S = socles I
-	  S = socles G
-     Inputs
-          I:MonomialIdeal
-	  G:Matrix
-	       one row of g-corners
-     Outputs
-          S:Matrix
-	       socle corners in a one-row matrix
-     Description
-          Text
-	       Computes the maximal monomials which are not in the monomial ideal, i.e. the "socle-corners".
-	  Example
-	       R = CC[x,y,z];
-	       I = monomialIdeal{x^2,y^2,z^2}
-	       socles I
-	       socles I^2
-	       G = vars R
-	       socles G
-///
+-- doc ///
+--      Key
+--           socles
+--           (socles,MonomialIdeal)
+-- 	  (socles,Matrix)
+--      Headline
+--           socle corners of a monomial ideal
+--      Usage
+--           S = socles I
+-- 	  S = socles G
+--      Inputs
+--           I:MonomialIdeal
+-- 	  G:Matrix
+-- 	       one row of g-corners
+--      Outputs
+--           S:Matrix
+-- 	       socle corners in a one-row matrix
+--      Description
+--           Text
+-- 	       Computes the maximal monomials which are not in the monomial ideal, i.e. the "socle-corners".
+-- 	  Example
+-- 	       R = CC[x,y,z];
+-- 	       I = monomialIdeal{x^2,y^2,z^2}
+-- 	       socles I
+-- 	       socles I^2
+-- 	       G = vars R
+-- 	       socles G
+-- ///
 
 TEST ///
+debug NoetherianOperators
 R = CC[x,y]
 G1 = matrix{{x^2,x*y^2,y^4}}
 assert(socles G1 == matrix {{x*y, y^3}})
