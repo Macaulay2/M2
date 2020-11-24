@@ -98,12 +98,12 @@ Node
 Node
   Key
      isSupportedInZeroLocus
-    (isSupportedInZeroLocus, Ideal,  Ideal)
-    (isSupportedInZeroLocus, Module, Ideal)
+    (isSupportedInZeroLocus, Ideal, Ideal)
+    (isSupportedInZeroLocus, Ideal, Module)
   Headline
     whether support of a module is contained in the zero locus of the (irrelevant) ideal
   Usage
-    isSupportedInZeroLocus(M, B)
+    isSupportedInZeroLocus_B M
   Inputs
     M:Module
     B:Ideal
@@ -120,7 +120,7 @@ Node
       S = ZZ/32003[x_0..x_4, Degrees=>{2:{1,0}, 3:{0,1}}];
       irr = intersect(ideal(x_0,x_1), ideal(x_2,x_3,x_4));
       M = S^1/(irr^2);
-      isSupportedInZeroLocus(M, irr)
+      isSupportedInZeroLocus_irr M
     Text
       This is done without computing saturation of $M$. Instead, we check whether for each generator of $B$ some power
       of it annihilates the module $M$.

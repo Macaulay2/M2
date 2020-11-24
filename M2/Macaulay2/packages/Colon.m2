@@ -582,8 +582,8 @@ scan({"Unused", Iterate, Eliminate, GRevLex, Bayer, Linear}, strategy ->
 -- Note: this function isn't cached because the usecase in VirtualResolutions doesn't
 -- require it but it does take advantage of precomputed saturation of the annihilator
 isSupportedInZeroLocus = method()
-isSupportedInZeroLocus(Ideal,  Ideal) := (I, B) -> isSupportedInZeroLocus(comodule I, B)
-isSupportedInZeroLocus(Module, Ideal) := (M, B) -> (
+isSupportedInZeroLocus(Ideal, Ideal)  := (B, I) -> isSupportedInZeroLocus(B, comodule I)
+isSupportedInZeroLocus(Ideal, Module) := (B, M) -> (
     -- Returns true if M is supported only on the zero locus of B
     S := ring B;
     -- There are two ways to check this:

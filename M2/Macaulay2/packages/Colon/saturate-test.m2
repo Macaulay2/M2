@@ -43,8 +43,8 @@ TEST /// -- Tests for isSupportedInZeroLocus
   I = saturate(ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3)), B);
   M = comodule I;
   -- t = (saturate(ann M, B) == ideal 1_S); -- this is commented out to make sure cache isn't used
-  time assert(isSupportedInZeroLocus(M, B) == false)
-  time assert(isSupportedInZeroLocus(I, B) == false)
+  time assert(isSupportedInZeroLocus_B M == false)
+  time assert(isSupportedInZeroLocus_B I == false)
 ///
 
 TEST ///
@@ -60,8 +60,8 @@ TEST ///
   -- terminate called after throwing an instance of 'std::logic_error'
   -- what():  ERROR: Inserted duplicate entry into a KD tree.
   debugLevel = 1
-  time assert(isSupportedInZeroLocus(M, B) == (saturate(ann M, B) == ideal 1_S)) -- 0.126s
-  time assert(isSupportedInZeroLocus(M, B) == (saturate(ann M, B) == ideal 1_S)) -- 0.001s woohoo caching!
+  time assert(isSupportedInZeroLocus_B M == (saturate(ann M, B) == 1)) -- 0.126s
+  time assert(isSupportedInZeroLocus_B M == (saturate(ann M, B) == 1)) -- 0.001s woohoo caching!
 ///
 
 TEST ///
