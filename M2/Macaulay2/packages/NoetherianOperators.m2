@@ -11,7 +11,7 @@ newPackage(
         {Name => "Marc Harkonen", 
         Email => "harkonen@gatech.edu"},
         {Name => "Yairon Cid-Ruiz",
-        Email => "ycidruiz@gmail.com"},
+        Email => "Yairon.CidRuiz@UGent.be"},
         {Name => "Anton Leykin",
         Email => "anton.leykin@gmail.com"}
     },
@@ -66,7 +66,7 @@ export {
     --functions from punctual Hilb approach
     "getIdealFromNoetherianOperators",
     "joinIdeals",
-    "mapToPunctualHilbertScheme" -- TODO does this have to be exported?
+    "mapToPunctualHilbertScheme" 
 
 }
 
@@ -1408,7 +1408,8 @@ getHilb = (P, depVars) -> (
     S
 )
 
-mapToPunctualHilbertScheme = (Q) -> (
+mapToPunctualHilbertScheme = method()
+mapToPunctualHilbertScheme(Ideal) := (Q) -> (
     R := ring Q;
     P := radical Q;
     indVars := support first independentSets P;
@@ -1566,7 +1567,14 @@ doc ///
 	       techniques are numerically stable, and can be used with floating point arithmetic over the complex numbers.  
 	       They provide a viable alternative in this setting to purely symbolic methods such as standard bases.  
 	       In particular, these methods can be used to compute initial ideals, local Hilbert functions and Hilbert regularity.
-
+    	    	
+	       The problem of characterizing ideal membership with differential conditions was first addressed by Gr\"obner ("Uber eine neue idealtheoretische Grundlegung der algebraischen Geometrie", Math. Ann. 115 (1938), no. 1, 333–358).
+	       Despite this early algebraic interest by Gr\"obner, a complete description of primary ideals in terms of differential operators was first obtained by analysts in the Fundamental Principle of Ehrenpreis and Palamodov.
+	       At the core of the Fundamental Principle, one has the notion of Noetherian operators to describe a primary ideal. 
+	       In this package, we implement several algorithms for the computation of a set of Noetherian operators describing a primary ideal. 
+    	    	
+	       For the task of compunting Noetherian operators, here we implement the algorithms developed in the papers @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@ and  @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
+    	    		       
 	       Methods for computing and manipulating local dual spaces:
 
 	       @UL {
@@ -2845,6 +2853,49 @@ Description
         elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
 ///
 
+
+
+doc ///
+Key
+    mapToPunctualHilbertScheme
+    (mapToPunctualHilbertScheme, Ideal)
+Headline
+    maps an ideal into a point in a certain punctual Hilbert scheme
+Usage
+    I = mapToPunctualHilbertScheme(Q)
+Inputs
+    Q : Ideal
+        a primary ideal
+Outputs
+    I : Ideal
+        an ideal that parametrizes Q in a punctual Hilbert scheme
+Description
+    Text
+        This method maps a P-primary ideal Q into a point in a punctual Hilbert scheme.
+	Let $\mathbb{K}$ be a characteristic zero and a prime ideal $P$ of codimension $c$ in the polynomial ring $R = \mathbb{K}[x_1,\ldots,x_n]$.
+	We write $\mathbb{F}$ for the field of fractions of the integral domain $R/P$. 
+	To simplify our notation, perhaps after a linear change of coordinates, we assume that $\{ x_{c+1}, \ldots, x_n \}$ is a maximal independent set of variables module $P$.
+    	
+	The main purpose of this method is to reduce the study of arbitrary $P$-primary ideals in $R = \mathbb{K}[x_1,\ldots,x_n]$ to a zero-dimensional setting over the function field $\mathbb{F}$.
+	This reduction is made by parametrizing $P$-primary ideals with the punctual Hilbert scheme 
+	$
+ 	{\rm Hilb}^m ( \,\mathbb{F}[[y_1,\ldots,y_c]] \,). 
+	$
+	This is a quasiprojective scheme over the function field $\mathbb{F}$.
+	Its classical points are   ideals of colength $m$ in the local ring $\mathbb{F}[[y_1,\ldots,y_c]]$.
+	
+    	
+	This method maps a P-primary ideal Q into a unique point in ${\rm Hilb}^m ( \,\mathbb{F}[[y_1,\ldots,y_c]] \,)$ that corresponds with Q.
+	This method can be seen as an implementation of the map $\gamma$ described in Section 2 of @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@. 
+
+    Example
+    	R = QQ[x_1, x_2, x_3]
+        Q = ideal(x_1^2, x_2^2, x_1-x_2*x_3)
+	mapToPunctualHilbertScheme Q
+///
+
+
+
 doc ///
 Key
     specializedNoetherianOperators
@@ -3176,6 +3227,9 @@ DHhat = sub(matrix{select(DH, Q->first first last listForm Q >= 1)}, {t=>1})
 ----------------------------------------------------
 restart
 needsPackage "NoetherianOperators"
+installPackage "NoetherianOperators"
+viewHelp "NoetherianOperators"
+
 
 ----------------------------------------------------
 ----------------------------------------------------
