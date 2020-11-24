@@ -555,7 +555,7 @@ installPackage = method(
 	RunExamples            => true,
 	SeparateExec           => false,
 	UserMode               => null,
-	Verbose                => true
+	Verbose                => false
 	})
 
 installPackage String := opts -> pkg -> (
