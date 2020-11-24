@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
     "NoetherianOperators",
-    Version => "0.85",
-    Date => "Nov 7, 2020",
+    Version => "0.90",
+    Date => "Nov 24, 2020",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},
@@ -1348,7 +1348,7 @@ rationalInterpolation(List, List, Matrix) := (RingElement, RingElement) => opts 
 rationalInterpolation(List,List,Ring) := opts -> (pts, vals,R) -> (
     d := 0;
     local i; local b;
-    while (try (print d; b = rsort basis(0,d,R); i = rationalInterpolation(pts, vals, b, opts)) then false else true) do (
+    while (try (b = rsort basis(0,d,R); i = rationalInterpolation(pts, vals, b, opts)) then false else true) do (
         if #pts < 2*numColumns b + 1 then (print ("At least " | toString(2*numColumns b + 1) | " points needed"); error"No fitting rational function found; more points needed");
         d = d+1;
     );
@@ -1553,6 +1553,16 @@ assert(Q == I)
 ///
 ----------------------------------------------------------
 
+-- TODO double check if these need doc
+undocumented {
+    (expression, DiffOp),
+    (expression, InterpolatedDiffOp),
+    (net, DiffOp),
+    (net, InterpolatedDiffOp),
+    (toExternalString, ZeroDiffOp),
+    (toString, DiffOp)
+}
+
 beginDocumentation()
 
 doc ///
@@ -1573,7 +1583,7 @@ doc ///
 	       At the core of the Fundamental Principle, one has the notion of Noetherian operators to describe a primary ideal. 
 	       In this package, we implement several algorithms for the computation of a set of Noetherian operators describing a primary ideal. 
     	    	
-	       For the task of compunting Noetherian operators, here we implement the algorithms developed in the papers @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@ and  @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
+	       For the task of computing Noetherian operators, here we implement the algorithms developed in the papers @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@ and  @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
     	    		       
 	       Methods for computing and manipulating local dual spaces:
 
@@ -1604,50 +1614,56 @@ doc ///
 
 
 doc ///
-     Key
-          truncatedDual
-	  (truncatedDual,Point,Ideal,ZZ)
-     Headline
-          truncated dual space of a polynomial ideal
-     Usage
-          S = truncatedDual(p, I, d)
-     Inputs
-     	  p:Point
-	  I:Ideal
-	  d:ZZ
-     Outputs
-          S:DualSpace
-     Description
-          Text
-	       Computes a basis for the local dual space of a polynomial ideal localized at point p, truncated at degree d.
-	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
-	       They are really elements of the dual ring.
-	  Example
-	       R = CC[x,y];
-	       I = ideal{x^2, y*x}
-	       truncatedDual(origin(R),I,3)
-	  Text
-	       The functionals in the dual at a point p are expressed in coordinates centered at p.
-	  Example
-	       p = point matrix{{0_CC, 1_CC}}
-	       truncatedDual(p,I,3)
-	  Text
-	       Over inexact fields, the computation accounts for the possibility of small numerical error in the point p.
-	       The optional argument @TO "Tolerance (NumericalHilbert)"@ can be set to adjust the tolerance of the numerical computations.
-	       Higher degree dual computations generally require higher accuracy in the input and larger tolerance value to complete correctly.
-	       
-	       In this example, the point q is slightly away from the variety of I, but an appropriate @TT "Tolerance"@ value can overcome the error. 
-	  Example
-	       q = point matrix{{0_CC + 1e-10, 1_CC}}
-	       tol = 1e-6;
-	       S = truncatedDual(q,I,3, Tolerance => tol)
-	       (m,c) = coefficients gens S;
-	       m*clean(tol, c)
-	  Text
-	       See also @TO zeroDimensionalDual@.
+Key
+    truncatedDual
+    (truncatedDual, Point, Ideal, ZZ)
+    (truncatedDual, Point, Matrix, ZZ)
+    (truncatedDual, Matrix, Ideal, ZZ)
+    (truncatedDual, Matrix, Matrix, ZZ)
+Headline
+    truncated dual space of a polynomial ideal
+Usage
+    S = truncatedDual(p, I, d)
+Inputs
+    p:Point
+        or a row @TO Matrix@
+    I:Ideal
+        or a row @TO Matrix@ of generators
+    d:ZZ
+Outputs
+    S:DualSpace
+Description
+    Text
+        Computes a basis for the local dual space of a polynomial ideal localized at point p, truncated at degree d.
+        Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
+        They are really elements of the dual ring.
+    Example
+        R = CC[x,y];
+        I = ideal{x^2, y*x}
+        truncatedDual(origin(R),I,3)
+    Text
+        The functionals in the dual at a point p are expressed in coordinates centered at p.
+    Example
+        p = point matrix{{0_CC, 1_CC}}
+        truncatedDual(p,I,3)
+    Text
+        Over inexact fields, the computation accounts for the possibility of small numerical error in the point p.
+        The optional argument @TO "Tolerance (NumericalHilbert)"@ can be set to adjust the tolerance of the numerical computations.
+        Higher degree dual computations generally require higher accuracy in the input and larger tolerance value to complete correctly.
+
+        In this example, the point q is slightly away from the variety of I, but an appropriate @TT "Tolerance"@ value can overcome the error. 
+    Example
+        q = point matrix{{0_CC + 1e-10, 1_CC}}
+        tol = 1e-6;
+        S = truncatedDual(q,I,3, Tolerance => tol)
+        (m,c) = coefficients gens S;
+        m*clean(tol, c)
+SeeAlso
+    zeroDimensionalDual
 ///
 
-///
+
+TEST ///
 R = CC[x,y]
 I1 = ideal{x^2,x*y}
 D1 = truncatedDual(origin R, I1, 4)
@@ -1655,41 +1671,41 @@ assert(hilbertFunction({0,1,2,3,4}, D1) == {1,2,1,1,1})
 ///
 
 doc ///
-     Key
-          zeroDimensionalDual
-	  (zeroDimensionalDual,Point,Ideal)
-     Headline
-          dual space of a zero-dimensional polynomial ideal
-     Usage
-          S = zeroDimensionalDual(p, I)
-     Inputs
-     	  p:Point
-	  I:Ideal
-     Outputs
-          S:DualSpace
-     Description
-          Text
-	       Computes a reduced basis of the dual space of a zero-dimensional ideal.  It does not check if the ideal is
-	       zero-dimensional and if not then termination will fail.
-	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
-	       They are really elements of the dual ring.
-	  Example
-	       R = QQ[a,b];
-	       I = ideal{a^3,b^3}
-	       D = zeroDimensionalDual(origin(R), I)
-	       dim D
-	  Text
-	       The dimension of the dual space at p is the multiplicity of the solution at p.
-	  Example
-	       S = CC[x,y];
-	       J = ideal{(y-2)^2,y-x^2}
-	       p = point matrix{{1.4142136_CC,2_CC}};
-	       D = zeroDimensionalDual(p, J)
-	       dim D
-	  Text
-	       See also @TO truncatedDual@.
-     Caveat
-	  The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
+Key
+    zeroDimensionalDual
+    (zeroDimensionalDual,Point,Ideal)
+Headline
+    dual space of a zero-dimensional polynomial ideal
+Usage
+    S = zeroDimensionalDual(p, I)
+Inputs
+    p:Point
+    I:Ideal
+Outputs
+    S:DualSpace
+Description
+    Text
+        Computes a reduced basis of the dual space of a zero-dimensional ideal.  It does not check if the ideal is
+        zero-dimensional and if not then termination will fail.
+        Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
+        They are really elements of the dual ring.
+    Example
+        R = QQ[a,b];
+        I = ideal{a^3,b^3}
+        D = zeroDimensionalDual(origin(R), I)
+        dim D
+    Text
+        The dimension of the dual space at p is the multiplicity of the solution at p.
+    Example
+        S = CC[x,y];
+        J = ideal{(y-2)^2,y-x^2}
+        p = point matrix{{1.4142136_CC,2_CC}};
+        D = zeroDimensionalDual(p, J)
+        dim D
+    Text
+        See also @TO truncatedDual@.
+Caveat
+    The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
 ///
 
 TEST ///
@@ -2892,6 +2908,8 @@ Description
     	R = QQ[x_1, x_2, x_3]
         Q = ideal(x_1^2, x_2^2, x_1-x_2*x_3)
 	mapToPunctualHilbertScheme Q
+SeeAlso
+    "Strategy => \"PunctualHilbert\""
 ///
 
 
@@ -2942,6 +2960,58 @@ Caveat
 
 doc ///
 Key
+    numericalNoetherianOperators
+    InterpolationDegreeLimit
+Headline
+    Noetherian operators via numerical interpolation
+Usage
+    numericalNoetherianOperators(I)
+Inputs
+    I:Ideal
+        unmixed
+Outputs
+    :List
+        of @TO2 {InterpolatedDiffOp, "interpolated differential operators"}@
+Description
+    Text
+        The method computes specialized Noetherian operators from many sampled points, and attempts to find fitting rational functions
+        using rational function interpolation.
+    CannedExample
+        i1 : R = CC[x,y,t];
+
+        i2 : I = ideal(x^2, y^2 - x*t);
+
+        o2 : Ideal of R
+
+        i3 : numericalNoetherianOperators(I, DependentSet => {x,y})
+
+                         2    1      t   3
+        o3 = {1, 1*dy, dy  + ---*dx, -*dy  + 1*dx*dy}
+                             .5t     6
+
+        o3 : List
+
+
+    Text
+        The function does not compute specialized Noetherian operators from scratch for each point.
+
+
+        NoetherianDegreeLimit
+        InterpolationDegreeLimit
+        InterpolationTolerance
+        DependentSet
+        Sampler
+        TrustedPoint
+Caveat
+    By default, the function will keep sampling more and more points until all rational function coefficients are found.
+    If the function doesn't seem to terminate, use the option @TO InterpolationDegreeLimit@ to end the function early.
+SeeAlso
+    rationalInterpolation
+///
+
+
+doc ///
+Key
     rationalInterpolation
     (rationalInterpolation, List, List, Matrix, Matrix)
     (rationalInterpolation, List, List, Matrix)
@@ -2983,9 +3053,79 @@ Description
         rationalInterpolation(pts, vals, numBasis, denBasis)
     Text
         The output corresponds to the function $x / (x^2 + y^2)$. If no fitting rational function is found, the method returns an error.
+
+        The method @TO (rationalInterpolation, List, List, Ring)@ can be used to choose monomial supports automatically.
 Caveat
     The method uses the first point to remove $0/0$ rational functions. Because of this, the first entry of {\tt val} should be non-zero.
+SeeAlso
+    (rationalInterpolation, List, List, Ring)
 ///
+
+doc ///
+Key
+    (rationalInterpolation, List, List, Ring)
+Headline
+    numerically interpolate rational functions
+Usage
+    (n,d) = rationalInterpolation(pts, vals, R)
+Inputs
+    pts:List
+        of row matrices corresponding to points at which the rational function was evaluated
+    vals:List
+        of @TO2 {Number, "numbers"}@ corresponding to evaluations of the rational function
+    R:Ring
+        the polynomial ring in which the numerator and denominator are sought
+Outputs
+    n:RingElement
+        the numerator of the rational function
+    d:RingElement
+        the denominator of the rational function
+Description
+    Text
+        Given a set of points $pts = \{p_1,\dots,p_k\}$ and values $vals = \{v_1,\dots,v_k\}$, attempts to find a rational function
+        $f = g/h$, such that $f(p_i) = v_i$. The method first tries to find polynomials $g,h$ of degree 0;
+        if this fails, it tries to find $g,h$ of degree 1 and so on. This procedure stops when there are not
+        enough points to compute the next degree, in which case an error will be thrown.
+    Example
+        R = CC[x]
+        pts = {point{{0}},point{{1}},point{{2}}, point{{3}}, point{{4}}}
+        vals = {-1, 1/2, 1, 5/4, 7/5}
+        rationalInterpolation(pts, vals, R)
+SeeAlso
+    (rationalInterpolation, List, List, Matrix, Matrix)
+///
+
+doc ///
+Key
+    (evaluate, DiffOp, Point)
+    (evaluate, DiffOp, Matrix)
+    (evaluate, InterpolatedDiffOp, Point)
+    (evaluate, InterpolatedDiffOp, Matrix)
+Headline
+    evaluate coefficients of a differential operator
+Usage
+    evaluate(D, p)
+Inputs
+    D:DiffOp
+    p:Point
+        or a row @TO2 {Matrix, "matrix"}@
+Outputs
+    :DiffOp
+Description
+    Text
+        Evaluates a @TO2 {DiffOp, "differential operator"}@ at a point. This can be used to obtain a set of specialized Noetherian operators.
+    Example
+        R = QQ[x,y];
+        D = diffOp{x => x, y => y}
+        evaluate(D, point{{1,2}})
+    Text
+        The method supports @TO2 {InterpolatedDiffOp, "interpolated differential operators"}@ as well, assuming that the denominator does not vanish.
+        The resulting operator is a @TO DiffOp@, not an @TO InterpolatedDiffOp@.
+    Example
+        E = new InterpolatedDiffOp from {x => (x, x^2 + y^2)}
+        evaluate(E, point{{1,2}})
+///
+
 -- doc ///
 -- Key
 --     getNoetherianOperatorsHilb
