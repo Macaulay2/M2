@@ -48,6 +48,7 @@ export {
     "normalize",
 
     "noetherianOperators",
+    "specializedNoetherianOperators",
     "numericalNoetherianOperators",
     "noethOpsFromComponents",
     "coordinateChangeOps",
@@ -2829,6 +2830,49 @@ Description
         Q = saturate(J,ideal(x_1*x_2*x_3*x_4))
         isPrimary Q
         elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
+///
+
+doc ///
+Key
+    specializedNoetherianOperators
+    (specializedNoetherianOperators, Ideal, Point)
+    (specializedNoetherianOperators, Ideal, Matrix)
+Headline
+    Noetherian operators evaluated at a point
+Usage
+    specializedNoetherianOperators(I, pt)
+Inputs
+    I:Ideal
+        unmixed
+    pt:Point
+        or a row @TO2 {Matrix, "matrix"}@
+Outputs
+    :List
+        of @TO2 {DiffOp, "differential operators"}@
+Description
+    Text
+        Numerically computes evaluations of Noetherian operators. If the point {\tt p} lies on the variety of the
+        minimal prime $P$, the function returns a set of specialized Noetherian operators of the $P$-primary component.
+        The option @TO DependentSet@ is required when dealing with ideals over numerical fields, or when dealing with non-primary ideals
+    Example
+        R = QQ[x,y,t];
+        Q1 = ideal(x^2, y^2 + x*t);
+        Q2 = ideal((x+t)^2);
+        I = intersect(Q1, Q2);
+        P = radical Q1;
+        pt = point{{0,0,2}};
+        A = specializedNoetherianOperators(I, pt, DependentSet => {x,y}) / normalize
+        B = noetherianOperators(I, P) / (D -> evaluate(D, pt)) / normalize
+        A == B
+    Text
+        Over a non-exact field, the output will be non-exact
+    Example
+        S = CC[x,y,t]
+        pt = point{{0,0,2.1}}
+        specializedNoetherianOperators(sub(I, S), pt, DependentSet => {x,y})
+
+Caveat
+    It is assumed that the point lies on the variety of {\tt I}
 ///
 
 -- doc ///
