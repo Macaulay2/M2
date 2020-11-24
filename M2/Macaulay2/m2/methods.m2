@@ -504,6 +504,7 @@ dispatcherFunctions = join (dispatcherFunctions, {
 -- hooks
 -- also see hooks in code.m2
 -- TODO: get this to work with lookup and flagLookup
+-- TODO: get this to work on HashTables
 
 protect symbol Hooks
 protect symbol HookAlgorithms
@@ -514,10 +515,14 @@ GlobalHookStore = new MutableHashTable
 
 getHookStore = (key, create) -> (
     -- retrieve (or create) the mutable hash table of Hooks based on a method key
+    -- TODO: drop is needed because of a bug in youngest; see https://github.com/Macaulay2/M2/issues/1610
     obj := youngest drop(key, 1);
     store :=
     if instance(obj, MutableHashTable) then ( if       obj.?Hooks then       obj.Hooks else if create then       obj.Hooks = new MutableHashTable ) else
     if instance(obj, HashTable)        then ( if obj.cache.?Hooks then obj.cache.Hooks else if create then obj.cache.Hooks = new MutableHashTable );
+    -- TODO: currently youngest only returns mutable hash tables, so the line above never occurs,
+    -- but we keep it because eventually youngest should work for hash tables M as well, probably
+    -- by looking at M.cache.timestamp. In particular, this would allow putting hooks on modules.
     if store === null then GlobalHookStore else store)
 
 addHook = method(

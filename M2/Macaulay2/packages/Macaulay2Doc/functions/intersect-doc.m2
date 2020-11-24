@@ -24,10 +24,10 @@ Node
   Inputs
     :{List,Sequence}
       containing modules that are submodules of the same module or ideals in the same ring
-    Strategy =>
+    Strategy=>Thing
       specifies the algorithm
     MinimalGenerators=>Boolean
-      if false, the output will not be minimalized
+      indicates whether the output should be @TO2 {trim, "trimmed"}@
   Outputs
     :{Ideal,Module}
       the intersection of the objects given
