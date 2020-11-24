@@ -23,19 +23,13 @@ newPackage ("VirtualResolutions",
         {Name => "Mahrud Sayrafi",     Email => "mahrud@umn.edu",      HomePage => "http://math.umn.edu/~mahrud/"}
         },
     Keywords => {"Commutative Algebra", "Homological Algebra"},
-    PackageExports => {
-	"Saturation",
-        "SpaceCurves",
-        "TateOnProducts",
-        "NormalToricVarieties",
-        "Elimination",
-        "Depth"
-        },
+    PackageImports => {"Elimination", "Depth", "Saturation", "SpaceCurves"},
+    PackageExports => {"NormalToricVarieties", "TateOnProducts"},
     AuxiliaryFiles => true,
     DebuggingMode => false
     )
 
-importFrom_Core { "raw", "rawKernelOfGB" }
+importFrom_Core { "printerr", "raw", "rawKernelOfGB" }
 
 export{
     "curveFromP3toP1P2",
@@ -59,19 +53,21 @@ export{
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 
---------------------------------------------------------------------
---------------------------------------------------------------------
------ Input: (I,irr) = (ideal, ideal)
------ Output: saturation of I with respect to irr.
------ Description: This is the fast saturation from Saturation.m2. Since
------ Saturation.m2 might change at some point we have created this wrap
------ function to easily implement other saturations that might be
------ created. We hope this is eventually removed.
---------------------------------------------------------------------
---------------------------------------------------------------------
+-- Helper for saturation with respect to irrelevant ideal
 ourSaturation = (I,irr) -> saturate(I, decompose irr, Strategy => Eliminate);
 
+-- Helper for isVirtual, checks whether a module sheafifies to the zero sheaf
+-- TODO: export this, either here or in NormalToricVarieties. Could be renamed to isFiniteLength
+-- TODO: the "Support" strategy sometimes causes engine error:
+-- terminate called after throwing an instance of 'std::logic_error'
+--   what():  ERROR: Inserted duplicate entry into a KD tree.
+isZeroSheaf = method(TypicalValue => Boolean, Options => { Strategy => null })
+isZeroSheaf(NormalToricVariety, Module) := opts -> (X, M) -> isZeroSheaf(ideal X, M, opts)
+isZeroSheaf(Ideal,              Module) := opts -> (B, M) -> (
+    if opts.Strategy === "Support" then isSupportedInZeroLocus(B, M)
+    else (J := ann M) == 1 or J != 0 and ourSaturation(J, B) == 1)
 
+-- Helper for virtualOfPair
 -- TODO: complete this into the dual of submatrixByDegrees
 submatrixWinnow = (m, alphas) -> (
     col := positions(degrees source m, deg -> any(alphas, alpha -> all(alpha - deg, x -> x >= 0)));
@@ -139,46 +135,30 @@ resolveViaFatPoint(Ideal, Ideal, List) := ChainComplex => (J, irr, A) -> (
 -- Note: the Determinatal strategy is based on Theorem 1.3 of [Loper2019].
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-isVirtual = method(Options => {Strategy => null})
-isVirtual (Ideal, ChainComplex) := Boolean => opts -> (irr, C) -> (
+isVirtual = method(TypicalValue => Boolean, Options => {Strategy => null})
+isVirtual(NormalToricVariety, ChainComplex) := opts -> (X,   C) -> isVirtual(ideal X, C)
+isVirtual(Ideal,              ChainComplex) := opts -> (irr, C) -> (
+    S := ring irr;
+    if S =!= ring C then error "isVirtual: expected objects in the same ring";
 -- if strategy "determinantal is selected, the method checks virtuality
 -- via the depth criterion on the saturated ideals of minors
+    debugInfo := if debugLevel < 1 then identity else i -> printerr("isVirtual failed at homological degree ", toString i);
     if opts.Strategy === "Determinantal" then (
         for i from 1 to length(C) do (
             if rank(source(C.dd_i)) != (rank(C.dd_i) + rank(C.dd_(i+1))) then (
-                if debugLevel >= 1 then print "isVirtual failed at homological degree " | toString i;
-                return false;
-                );
-            );
+		debugInfo i; return false));
         for i from 1 to length(C) do (
             minor := minors(rank(C.dd_i),C.dd_i);
             minorSat := ourSaturation(minor,irr);
-            if depth(minorSat,ring(minorSat)) < i then (
-                if debugLevel >= 1 then print "isVirtual failed at homological degree " | toString i;
-                return false;
-            );
-        );
-    true
-    );
+            if depth(minorSat, S) < i then (
+		debugInfo i; return false));
+    return true);
 -- default strategy is calculating homology and checking homology is
 -- supported on irrelevant ideal
     for i from 1 to length(C) do (
-        annHHi := ann HH_i(C);
-        if annHHi != ideal(sub(1,ring C)) then (
-            if annHHi == 0 or ourSaturation(annHHi,irr) != ideal(sub(1,ring C)) then (
-                if debugLevel >= 1 then print "isVirtual failed at homological degree " | toString i;
-                return false;
-                );
-            );
-        );
-    true
-    )
-
-
-isVirtual (NormalToricVariety, ChainComplex) := Boolean => opts -> (X, C) -> (
-    if ring C != ring X then error "chain complex is not in Cox ring of normal toric variety";
-    isVirtual(ideal X, C)
-    )
+	if not isZeroSheaf(irr, HH_i C) then (
+	    debugInfo i; return false));
+    true)
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
