@@ -77,7 +77,7 @@ TEST /// -- testing strategies
 		  scan(sl, s -> testResult(I, primaryDecomposition(ideal I_*, Strategy => s)))));
 	  scan({  {1,1}, {1,2}, {2,1}, {2,2}},
 	      s -> testResult(ideal(x^4*y^5),
-		  primaryDecomposition(ideal(x^4*y^5), Strategy => HybridStrategy, HybridStrategy => s)));
+		  primaryDecomposition(ideal(x^4*y^5), Strategy => Hybrid s)));
 	  )
       )
 ///

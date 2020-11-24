@@ -277,7 +277,7 @@ algorithms#(associatedPrimes, Module) = new MutableHashTable from {
 	-- returns a MutableList
 	(M, fback) := flattenRingMap M0;
 	S := ring M;
-        m := ideal gens S;
+	m := ideal gens S;
 	A := trim ann M;
 	c := codim M;
 	d := dim S;
@@ -286,7 +286,7 @@ algorithms#(associatedPrimes, Module) = new MutableHashTable from {
 	comp := opts.cache;
 	p := comp.CodimensionLimit;
 	L := comp.Result;
-	for i from max(p + 1, c) to min(d, k) do (
+	for i in max(p + 1, c) .. min(d, k) do (
 	    if debugLevel > 0 then printerr("Extracting associated primes of codim " | toString i);
 	    newPrimes :=
 	    if i == d and (isHomogeneous M or (c == d and all(gens S, v -> radicalContainment(v, A))))
