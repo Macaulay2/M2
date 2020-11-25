@@ -1675,7 +1675,7 @@ Description
         truncatedDual(p,I,3)
     Text
         Over inexact fields, the computation accounts for the possibility of small numerical error in the point p.
-        The optional argument @TO "Tolerance (NumericalHilbert)"@ can be set to adjust the tolerance of the numerical computations.
+        The optional argument @TO "Tolerance (NoetherianOperators)"@ can be set to adjust the tolerance of the numerical computations.
         Higher degree dual computations generally require higher accuracy in the input and larger tolerance value to complete correctly.
 
         In this example, the point q is slightly away from the variety of I, but an appropriate @TT "Tolerance"@ value can overcome the error. 
@@ -2407,35 +2407,6 @@ SeeAlso
 
 ///
 
--- TODO remove this
--- doc ///
--- Key
---     (NewFromMethod, DiffOp, HashTable)
---     (NewFromMethod, DiffOp, List)
--- Headline
---     construct a differential operator
--- Usage
---     new DiffOp from H
--- Inputs
---     :
---     H:HashTable
---         or a @TO2 {List, "list"}@ of pairs {\tt monomial => coefficient}
--- Outputs
---     :DiffOp
--- Description
---     Text
---         For internal use only.
---         Equivalent to @TO (diffOp, HashTable)@ and @TO (diffOp, List)@, but without sanity-checking of inputs
--- Caveat
---     Behavior is undefined on improper input (e.g. non-monomial keys, keys and values in different rings)
--- SeeAlso
---     (diffOp, HashTable)
---     (diffOp, List)
---     (diffOp, RingElement)
---     (diffOp, Ring, RingElement)
--- ///
-
-
 doc ///
 Key
     (symbol +, DiffOp, DiffOp)
@@ -2621,8 +2592,7 @@ Outputs
     :DiffOp
 Description
     Text
-        --TODO ...(missing documentation)
-        Attempts to change the underlying ring of the differential operator by calling @TO (substitute,RingElement, Ring)@
+        Attempts to change the underlying ring of the differential operator by calling @TO substitute@
         for each monomial and coefficient of {\tt D}
     Example
         R = QQ[x,y]
@@ -2705,8 +2675,6 @@ Description
 
         Assuming the interpolation was successful, the method @TO (evaluate, InterpolatedDiffOp, Point)@ will convert
         an @TO InterpolatedDiffOp@ to a specialized differential operators of type @TO DiffOp@ by evaluating each numerator and denominator at a point.
-
-        -- TODO remove 1.3_R
     Example
         R = CC[x,y]
         D = new InterpolatedDiffOp from {x => (x+y, pi*ii*x^2*y), y => (x, 1.3_R)}
