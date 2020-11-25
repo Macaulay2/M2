@@ -4,8 +4,6 @@
 
 recursionLimit = 300
 
-protect Example
-
 degreesRing 0;
 
 setIOUnSynchronized()					    -- try to avoid deadlocks when running examples
@@ -35,7 +33,10 @@ addStartFunction(
      () -> (
 	  if class value getGlobalSymbol "User" =!= Package then (
      	       dismiss "User";
-	       newPackage("User", DebuggingMode => true, PackageImports => if member("--no-preload",commandLine) then {} else Core#"pre-installed packages");
+	       newPackage("User",
+		   Headline       => "default package for interpreter interactions",
+		   DebuggingMode  => true,
+		   PackageImports => if member("--no-preload", commandLine) then {} else Core#"pre-installed packages");
 	       path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
 	       path = unique apply( path, minimizeFilename);	    -- beautify
 	       allowLocalCreation User#"private dictionary";
@@ -81,7 +82,7 @@ unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s)
 noinitfile' := noinitfile
 Function.GlobalReleaseHook = (X,x) -> (
      if dictionary X =!= User#"private dictionary" then warningMessage(X," redefined");
-     if hasAttribute(x,ReverseDictionary) then removeAttribute(x,ReverseDictionary);
+     if hasAttribute(x,ReverseDictionary) and getAttribute(x,ReverseDictionary) === X then removeAttribute(x,ReverseDictionary);
      )
 waterMark = serialNumber symbol waterMark      -- used by Serialization package
 endPackage "Core" -- after this point, private global symbols, such as noinitfile, are no longer visible, and public symbols have been exported

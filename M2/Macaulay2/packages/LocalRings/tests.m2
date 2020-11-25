@@ -118,7 +118,8 @@ TEST ///
   assert(mingens M == id_M)
   f = N.cache.pruningMap
   assert(isIsomorphism f)
-  assert(isHomogeneous f)
+  -- local rings aren't graded, so it doesn't make sense to ask whether f is homogeneous:
+  -- assert(isHomogeneous f)
   assert(target f === M and source f === N)
   -- image module
   M = image F

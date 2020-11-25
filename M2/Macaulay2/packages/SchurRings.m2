@@ -25,6 +25,7 @@ newPackage(
 	     {Name => "Hal Schenck"},
 	     {Name => "Claudiu Raicu", Email => "claudiu@math.berkeley.edu", HomePage => "http://math.berkeley.edu/~claudiu/"}
 	     },
+	Keywords => {"Representation Theory"},
     	Headline => "representation rings of general linear groups and of symmetric groups"
 --	AuxiliaryFiles => true
     	)

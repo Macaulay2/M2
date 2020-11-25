@@ -138,7 +138,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  then error( "expected ", toString numgens M, " by ", toString rankN, " table");
 	  p = toSequence makeRawTable(R,p);
 	  h := (
-	       if class N === Module
+	       if instance(N,Module)
 	       then rawMatrix2(raw cover M, raw cover N, deg, flatten p,0)
 	       else rawMatrix1(raw cover M, rankN, flatten p, 0)
 	       );

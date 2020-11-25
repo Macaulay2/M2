@@ -146,6 +146,7 @@ set(M2_INSTALL_PROGRAMSDIR ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LI
 set(CMAKE_PROGRAM_PATH     ${M2_INSTALL_PROGRAMSDIR})
 
 message("\n## Staging area prefixes
+     usr-host          = ${M2_HOST_PREFIX}
      common            = ${M2_DIST_PREFIX}/${M2_DATA_INFIX}
      exec              = ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}")
 
@@ -298,7 +299,6 @@ check_include_files(sys/wait.h	HAVE_SYS_WAIT_H)
 check_include_files(termios.h	HAVE_TERMIOS_H)
 check_include_files(time.h	HAVE_TIME_H)
 check_include_files(unistd.h	HAVE_UNISTD_H)
-check_include_files(regex.h	HAVE_REGEX_H)
 # TODO: clear out d/types.h
 
 include(CheckFunctionExists)

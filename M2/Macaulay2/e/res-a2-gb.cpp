@@ -54,11 +54,11 @@ void gb2_comp::setup(FreeModule *FFsyz,
   // We index into this using gbvector components (which are one greater than
   // the
   // FreeModule components
-  monideals.append(0);
+  monideals.push_back(0);
   for (i = 0; i < F->rank(); i++)
     {
       monideal_pair *p = new monideal_pair(originalR, mi_stash);
-      monideals.append(p);
+      monideals.push_back(p);
     }
 
   use_hilb = 0;
@@ -102,7 +102,7 @@ void gb2_comp::remove_pair(s_pair *&p)
 gb2_comp::~gb2_comp()
 {
   // remove all of the gbvector's in the gb_elems's and spairs.
-  for (int i = 0; i < gb.length(); i++)
+  for (int i = 0; i < gb.size(); i++)
     {
       gb_elem *g = gb[i];
       GR->gbvector_remove(g->f);
@@ -511,7 +511,7 @@ void gb2_comp::gb_insert(gbvector *f, gbvector *fsyz, int ismin)
   intarray vp;
   M->to_varpower(f_m, vp);
   monideals[p->f->comp]->mi_search->insert(new Bag(p, vp));
-  gb.append(p);
+  gb.push_back(p);
 
   M->remove(f_m);
 
@@ -618,10 +618,10 @@ bool gb2_comp::receive_generator(gbvector *f, int n, const ring_elem denom)
   bool isgen = false;
   // It is our duty to free 'f'...
 
-  for (int i = monideals.length(); i <= F->rank(); i++)
+  for (int i = monideals.size(); i <= F->rank(); i++)
     {
       monideal_pair *p = new monideal_pair(originalR, mi_stash);
-      monideals.append(p);
+      monideals.push_back(p);
     }
 
   gbvector *fsyz = NULL;
@@ -829,8 +829,8 @@ bool gb2_comp::is_done()
 
 Matrix *gb2_comp::make_lead_term_matrix()
 {
-  MatrixConstructor result(F, gb.length());
-  for (int i = 0; i < gb.length(); i++)
+  MatrixConstructor result(F, gb.size());
+  for (int i = 0; i < gb.size(); i++)
     {
       gb_elem *g = gb[i];
       gbvector *f = g->f;
@@ -869,7 +869,7 @@ Matrix *gb2_comp::min_gens_matrix()
 {
   MatrixConstructor mat(F, Fsyz, 0);
   int j = 0;
-  for (int i = 0; i < gb.length(); i++)
+  for (int i = 0; i < gb.size(); i++)
     if (gb[i]->is_min)
       mat.set_column(j++, originalR->translate_gbvector_to_vec(F, gb[i]->f));
   return mat.to_matrix();
@@ -885,7 +885,7 @@ Matrix *gb2_comp::get_matrix()
 Matrix *gb2_comp::initial_matrix(int n)
 {
   MatrixConstructor mat(F, 0);
-  for (int i = 0; i < gb.length(); i++)
+  for (int i = 0; i < gb.size(); i++)
     {
       gbvector *tmp = GR->gbvector_lead_term(n, F, gb[i]->f);
       mat.append(originalR->translate_gbvector_to_vec(F, tmp));
@@ -897,7 +897,7 @@ Matrix *gb2_comp::initial_matrix(int n)
 Matrix *gb2_comp::gb_matrix()
 {
   MatrixConstructor mat(F, 0);
-  for (int i = 0; i < gb.length(); i++)
+  for (int i = 0; i < gb.size(); i++)
     mat.append(originalR->translate_gbvector_to_vec(F, gb[i]->f));
   return mat.to_matrix();
 }
@@ -905,7 +905,7 @@ Matrix *gb2_comp::gb_matrix()
 Matrix *gb2_comp::change_matrix()
 {
   MatrixConstructor mat(Fsyz, 0);
-  for (int i = 0; i < gb.length(); i++)
+  for (int i = 0; i < gb.size(); i++)
     mat.append(originalR->translate_gbvector_to_vec(Fsyz, gb[i]->fsyz));
   return mat.to_matrix();
 }
@@ -942,7 +942,7 @@ void gb2_comp::text_out(buffer &o) const
     {
       int nmonoms = 0;
       int nchange = 0;
-      for (int i = 0; i < gb.length(); i++)
+      for (int i = 0; i < gb.size(); i++)
         {
           nmonoms += GR->gbvector_n_terms(gb[i]->f);
           nchange += GR->gbvector_n_terms(gb[i]->fsyz);
@@ -973,7 +973,7 @@ void gb2_comp::text_out(buffer &o) const
 
   spairs->text_out(o);
   if (M2_gbTrace >= 5 && M2_gbTrace % 2 == 1)
-    for (int i = 0; i < gb.length(); i++)
+    for (int i = 0; i < gb.size(); i++)
       {
         o << i << '\t';
         GR->gbvector_text_out(o, F, gb[i]->f);
@@ -988,7 +988,7 @@ void gb2_comp::stats() const
     {
       int nmonoms = 0;
       int nchange = 0;
-      for (int i = 0; i < gb.length(); i++)
+      for (int i = 0; i < gb.size(); i++)
         {
           nmonoms += GR->gbvector_n_terms(gb[i]->f);
           nchange += GR->gbvector_n_terms(gb[i]->fsyz);
@@ -1025,7 +1025,7 @@ void gb2_comp::stats() const
       o << "free module is ";
       F->text_out(o);
       o << newline;
-      for (int i = 0; i < gb.length(); i++)
+      for (int i = 0; i < gb.size(); i++)
         {
           o.reset();
           o << i << '\t';

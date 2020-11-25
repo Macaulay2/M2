@@ -1,12 +1,13 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "0.9",
+        Version => "0.91",
         Date => "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
+	Keywords => {"Miscellaneous"},
         DebuggingMode => false,
 	AuxiliaryFiles => true,
 	PackageImports => {"Text"},
@@ -43,7 +44,9 @@ GraphicsObject = new Type of HashTable -- ancestor type
 new GraphicsObject from List := (T,l) -> hashTable append(l,symbol cache => new CacheTable); -- every Graphics object should have a cache
 new GraphicsObject := T -> new T from {};
 new GraphicsObject from OptionTable := (T,o) -> o ++ {symbol cache => new CacheTable};
-GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opts2,last) -- cf similar method for OptionTable
+GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opts2,
+    (x,y) -> if instance(x,Matrix) and instance(y,Matrix) then y*x else y -- for TransformMatrix and AnimMatrix
+    ) -- cf similar method for OptionTable
 
 -- a bunch of options are scattered throughout the code:
 -- * all dimensions are redefined as dimensionless quantities: Radius, FontSize, etc
@@ -83,18 +86,19 @@ gParse Vector := x -> (
     if rank class x === 2 then x || vector {0,1.} else (
 	 gParseFlag=true; if rank class x === 3 then x || vector {1.} else if rank class x === 4 then x)
      )
+gParse GraphicsObject := identity
 
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
     -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
     gParseFlag = false;
     temp := gParse(opts0 | apply(#opts, i -> if i < #opts0 and class opts#i =!= Option then opts0#i#0 => opts#i else opts#i));
-    new T from append(temp,symbol Is3d => gParseFlag)
+    new T from (if gParseFlag then append(temp,symbol Is3d => true) else temp)
 )
 
 perspective = g -> (
     persp := if g.?Perspective then g.Perspective else 1000.; -- some arbitrary number
-    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,persp},{0,0,-1/persp,1}} -- useful to have output {x,y,z+p,1+z/p}
+    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,-1/persp,1}} -- useful to have output {x,-y,-z,1-z/p}
 )
 
 viewPort = g -> (
@@ -108,7 +112,7 @@ viewPort1 GraphicsObject := x -> null
 -- * the data-* stuff is lightened (can be recreated from the normal parameters)
 -- * the event listeners for 3d rotating the object with the mouse are deactivated
 -- * lighting is deactivated
-is3d = x -> if x.?Is3d then x.Is3d else true; -- the else clause should never happen
+is3d = x -> if x.?Is3d then x.Is3d else false;
 
 distance = g -> (
     if not g.cache.?Distance then svg g; -- need to be rendered
@@ -194,7 +198,12 @@ viewPort1 GraphicsText := g -> (
     p := g.cache.CurrentMatrix * g.Point;
     f=f/p_3;
     p=project2d p;
-    { p - vector {0,f}, p + vector{f*0.6*length g.TextContent,0} } -- very approximate TODO properly
+    r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
+    pp := p + vector {
+	if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
+	if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then 0.5*r_1 else if g#"dominant-baseline" == "hanging" then 0 else -r_1) else -r_1
+	};
+    {pp,pp+r}
     )
 
 Line = new GraphicsType of GraphicsObject from ( "line",
@@ -226,11 +235,12 @@ viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw 
 
 -- to make lists of them
 GraphicsList = new GraphicsType of GraphicsObject from ( "g", { symbol Contents => {} } )
--- slightly simpler syntax: gList (a,b,c, opt=>xxx) rather than GraphicsList { {a,b,c}, opt=>xxx }
+-- slightly simpler syntax: gList (a,b,c, opt=>xxx) rather than GraphicsList { {a,b,c}, opt=>xxx }, plus updates Is3d correctly
 gList = x -> (
     x=flatten toList sequence x;
     x1 := select(x, y -> instance(y,GraphicsObject));
     x2 := select(x, y -> instance(y,Option));
+    if any(x1,is3d) then x2 = append(x2, Is3d => true);
     GraphicsList append(x2,symbol Contents => x1)
     )
 viewPort1 GraphicsList := x -> (
@@ -350,11 +360,11 @@ svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current mat
     if g.?Contents then scan(g.Contents, x -> svg(x,g.cache.CurrentMatrix,p,l));
     updateGraphicsCache g;
     filter(g,l);
-    prs := pairs g | pairs g.cache; -- TODO restructure
-    opts := deepSplice apply(select(prs,(key,val)-> svgLookup#?key), (key,val) -> svgLookup#key(val,g.cache.CurrentMatrix));
-    if is3d g then opts = opts | deepSplice apply(select(prs,(key,val)-> svg3dLookup#?key), (key,val) -> svg3dLookup#key val);
-    if hasAttribute(g,ReverseDictionary) then opts = append(opts, TITLE toString getAttribute(g,ReverseDictionary));
-    g.cache.SVGElement = style((class g).SVGElement opts,prs)
+    full := new OptionTable from merge(g,g.cache,last);
+    args := deepSplice apply(select(keys full,key->svgLookup#?key), key -> svgLookup#key(full#key,g.cache.CurrentMatrix));
+    if is3d g then args = args | deepSplice apply(select(keys full,key -> svg3dLookup#?key), key -> svg3dLookup#key full#key);
+    if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
+    g.cache.SVGElement = style((class g).SVGElement args,full)
     )
 
 svg (GraphicsObject,Matrix,Matrix) := (g,m,p) -> svg(g,m,p,{})
@@ -424,24 +434,30 @@ new SVG from GraphicsObject := (S,g) -> (
 	);
     -- axes
     axes:=null; axeslabels:=null; defsList:={};
-    if g.?Axes and g.Axes =!= false then ( -- TEMP: coordinates wrong
+    if g.?Axes and g.Axes =!= false then (
 	arr := arrow();
+	-- determine intersection of viewport with axes
+	xmin := (r#0_0-p_(0,3))/p_(0,0);
+	xmax := (r#1_0-p_(0,3))/p_(0,0);
+	if xmax < xmin then ( temp:=xmin; xmin=xmax; xmax=temp; );
+	ymin := (r#0_1-p_(1,3))/p_(1,1);
+	ymax := (r#1_1-p_(1,3))/p_(1,1);
+	if ymax < ymin then ( temp2:=ymin; ymin=ymax; ymax=temp2; );
+	if is3d g then (
+	    zmax := 0.25*(xmax-xmin+ymax-ymin);
+	    zmin := -zmax;
+	    );
 	axes = gList(
-	    Line { Point1 => vector if is3d g then {r#0_0,0,0} else {r#0_0,0}, Point2 => vector if is3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
-	    Line { Point1 => vector if is3d g then {0,r#0_1,0} else {0,r#0_1}, Point2 => vector if is3d g then {0,r#1_1,0} else {0,r#1_1}, "marker-end" => arr },
-	    if is3d g then Line { Point1 => vector{0,0,min(r#0_0,r#0_1)}, Point2 => vector {0,0,max(r#1_0,r#1_1)}, "marker-end" => arr },
+	    Line { Point1 => vector {xmin,0,0,1}, Point2 => vector {xmax,0,0,1}, "marker-end" => arr },
+	    Line { Point1 => vector {0,ymin,0,1}, Point2 => vector {0,ymax,0,1}, "marker-end" => arr },
+	    if is3d g then Line { Point1 => vector{0,0,zmin,1}, Point2 => vector {0,0,zmax,1}, "marker-end" => arr },
 	    "stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
 	    );
 	axeslabels = gList(
-	    GraphicsHtml { Point => 1.06*vector if is3d g then {r#1_0,0,0} else {r#1_0,0}, HtmlContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x , FontSize => 0.08*min(rr_0,rr_1)},
-	    GraphicsHtml { Point => 1.06*vector if is3d g then {0,r#1_1,0} else {0,r#1_1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
-	    if is3d g then GraphicsHtml { Point => 1.06*vector{0,0,max(r#1_0,r#1_1)}, HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)}
-	    -*
-	    GraphicsText { Point => 1.06*vector if is3d g then {r#1_0,0,0} else {r#1_0,0}, HtmlContent => if instance(g.Axes,List) then toString g.Axes#0 else "x", FontSize => 0.08*min(rr_0,rr_1)},
-	    GraphicsText { Point => 1.06*vector if is3d g then {0,r#1_1,0} else {0,r#1_1}, HtmlContent => if instance(g.Axes,List) then toString g.Axes#1 else "y", FontSize => 0.08*min(rr_0,rr_1)},
-	    if is3d g then GraphicsText { Point => 1.06*vector{0,0,max(r#1_0,r#1_1)}, HtmlContent => if instance(g.Axes,List) then toString g.Axes#2 else "z", FontSize => 0.08*min(rr_0,rr_1)},
-	    "stroke" => "none", "fill"=>"black"
-	    *-
+	    -- we use GraphicsHtml here despite limitations of ForeignObject. could use GraphicsText instead
+	    GraphicsHtml { Point => vector {xmax*1.06,0,0,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x, FontSize => 0.08*min(rr_0,rr_1)},
+	    GraphicsHtml { Point => vector {0,ymax*1.06,0,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
+	    if is3d g then GraphicsHtml { Point => vector {0,0,zmax*1.06,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)}
 	    );
 	defsList = scanDefs axes | scanDefs axeslabels;
 	axes=svg(axes,p,p);
@@ -519,6 +535,7 @@ translation = vec -> (
     vec = gParse vec;
     matrix {{1,0,0,vec_0},{0,1,0,vec_1},{0,0,1,vec_2},{0,0,0,1}}
 )
+-- scaling = x -> matrix{{x,0,0,0},{0,x,0,0},{0,0,x,0},{0,0,0,1}}; -- sadly atm strokeWidth *does not* scale with scaling
 
 determineSide = method()
 determineSide GraphicsObject := x -> ()
@@ -682,11 +699,13 @@ gfxLabel = true >> o -> label -> (
     )
 *-
 
-needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
-
 -- note that the range is only where the curve actually lies, not the original range "r" provided.
 -- the reason is that it's not clear how to force that original range (there are possible coordinate transformations etc)
 plot = true >> o -> (P,r) -> (
+    pkg := needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
+    sS := value pkg.Dictionary#"solveSystem";
+    pkg2 := needsPackage "NAGtypes";
+    Crd := pkg2.Dictionary#"Coordinates";
     R := ring P; -- R should have one or two variables
     if not instance(r,List) then error("incorrect ranges");
     if not instance(r#0,List) then r = { r };
@@ -697,7 +716,7 @@ plot = true >> o -> (P,r) -> (
 	val := transpose apply(n+1, i -> (
 		x := i*(r#1-r#0)/n+r#0;
 		f := map(R2,R, matrix { if numgens R === 1 then { x } else { x, R2_0 } });
-		y := if numgens R === 1 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
+		y := if numgens R === 1 then { f P } else sort apply(sS { f P }, p -> first p#Crd); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(y, yy -> if abs imaginaryPart yy < 1e-6 then vector { x, realPart yy })));
 	new GraphicsList from (
 	    (new OptionTable from { "fill"=>"none", Axes=>gens R, Is3d=>false,
@@ -710,7 +729,7 @@ plot = true >> o -> (P,r) -> (
 		x := i*(r#0#1-r#0#0)/n+r#0#0;
 		y := j*(r#1#1-r#1#0)/n+r#1#0;
 		f := map(R2,R, matrix { if numgens R === 2 then { x,y } else { x, y, R2_0 } });
-		z := if numgens R === 2 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
+		z := if numgens R === 2 then { f P } else sort apply(sS { f P }, p -> first p#Crd); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(z, zz -> if abs imaginaryPart zz < 1e-6 then vector { x, y, realPart zz })));
 	new GraphicsList from (
 	    (new OptionTable from { Axes=>gens R, Is3d=>true,
@@ -856,10 +875,13 @@ multidoc ///
    SVG text
   Description
    Text
-    Some SVG text. The text itself is the option TextContent (a string). Text can be "stroke"d or "fill"ed.
+    Some SVG text. The location of the start of the text is given by the option Point.
+    The text itself is the option TextContent (a string).
+    The text can be "stroke"d or "fill"ed.
     Font size should be specified with FontSize.
    Example
-    GraphicsText{(0,0),"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
+    GraphicsText{TextContent=>"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
+    gList(GraphicsText{(0,0),"P",FontSize=>14},GraphicsText{(7,0),"AUL",FontSize=>10})
   Caveat
    Currently, cannot be rotated. (coming soon)
  Node
@@ -931,10 +953,11 @@ multidoc ///
     Produces a translation encoded as a 4x4 matrix that can be used as an argument to @TO{TransformMatrix}@ or @TO{AnimMatrix}@.
     The vector can be 2d or 3d.
    Example
-    v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
+    v={vector{7.456, 5.201, -4.166}, vector{2.7263, -2.992, 9.144},
+       vector{-8.130, 5.783, 0.671}, vector {-2.052, -7.993, -5.649}};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     tetra=gList(apply(4,i->Polygon{f#i,"fill"=>"white"}))
-    g = memoize(n -> if n==0 then tetra else gList apply(4,i->g(n-1)++{TransformMatrix=>translation v#i}))
+    g = memoize(n -> if n==0 then tetra else gList apply(4,i->g(n-1)++{TransformMatrix=>translation(2^(n-1)*v#i)}))
     apply(4,g)
   Usage
    translation ( vector )
@@ -994,9 +1017,9 @@ multidoc ///
    Text
     An option to create a rotation animation for the @ TO {VectorGraphics} @ 3d object.
     The value can be a single 4x4 matrix, or a list which is cycled.
-    The syntax n => ... can be used to repeat a sequence n times (where 0 means infinity).
+    The syntax {\tt n => ...} can be used to repeat a sequence n times (where {\tt 0} means infinity).
     The animation automatically loops (use {\tt 0 => \{ \}} to stop!)
-    In order for the animation to work, VectorGraphics.css and VectorGraphics.js must be included in the web page.
+    In order for the animation to work, {\tt VectorGraphics.css} and {\tt VectorGraphics.js} must be included in the web page.
    Example
     (anim1=rotation(0.1,(0,0,1),(0,0,0)); anim2=rotation(-0.1,(0,0,1),(0,0,0)); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 });
     gList(Polygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red",AnimMatrix=>anim1},Circle{(1,0),0.1},Circle{(0,0),1})
@@ -1118,11 +1141,10 @@ multidoc ///
   Key
    GraphicsType
   Headline
-   A particular type of type used by VectorGraphics, similar to SelfInitializingType.
+   A particular type of type used by VectorGraphics, similar to @ TO{SelfInitializingType}.
 ///
-
 undocumented { -- there's an annoying conflict with NAG for Point, Points
-    Contents, TextContent, HtmlContent, SVGElement, VectorGraphics$Point, VectorGraphics$Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
+    Contents, TextContent, HtmlContent, SVGElement, Point, Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
     (expression, GraphicsObject), (html,GraphicsObject), (htmlWithTex,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
     (NewFromMethod,GraphicsObject,List), (NewFromMethod,GraphicsObject,OptionTable), (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),

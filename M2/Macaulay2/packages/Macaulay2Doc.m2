@@ -11,6 +11,7 @@ newPackage ("Macaulay2Doc",
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
+     Keywords => {"Miscellaneous"},
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION")
 

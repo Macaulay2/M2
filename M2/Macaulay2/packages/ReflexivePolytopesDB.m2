@@ -15,6 +15,7 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
         Headline => "simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4",
+	Keywords => {"Convex Geometry"},
         AuxiliaryFiles => true
         )
 
@@ -521,7 +522,7 @@ Description
     elements.
     
     The actual format allowed for matrices is described in @TO "matrixFromString"@.  
-    After calling @TO "kreuzerSkarke"@ to get a list of @TO "KSEntry"@'s, one uses @TO "(matrix, KSEntry)"@
+    After calling @TO "kreuzerSkarke"@ to get a list of @TO "KSEntry"@'s, one uses @TO (matrix, KSEntry)@
     to obtain a matrix .  Then
     use this function to obtain the matrix.
   Example

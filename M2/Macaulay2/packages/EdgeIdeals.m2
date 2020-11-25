@@ -21,8 +21,8 @@ newPackage(
 		"acceptance date" => "2009-06-27",
 		"published article URI" => "http://j-sag.org/Volume1/jsag-1-2009.pdf",
 		"published code URI" => "http://j-sag.org/Volume1/EdgeIdeals.m2",
-		"repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/EdgeIdeals.m2",
-		"release at publication" => 9342,
+		"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/EdgeIdeals.m2",
+		"release at publication" => "38e96fec660168d488ad0449f8632e6608cc9ede",
 		"version at publication" => "1.0.0",
 		"volume number" => "1",
 		"volume URI" => "http://j-sag.org/Volume1/"
@@ -45,6 +45,7 @@ newPackage(
 		}
 	},
 	Headline => "edge ideals",
+	Keywords => {"Edge Ideals"},
 	DebuggingMode => false
 )
 

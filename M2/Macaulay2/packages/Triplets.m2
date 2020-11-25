@@ -8,6 +8,7 @@ newPackage(
 	      },
      	PackageImports => {"BoijSoederberg"},
    	Headline => "triplets of degree sequences and associated Betti diagrams and cohomology tables",
+	Keywords => {"Commutative Algebra"},
    	DebuggingMode => false
    	)
 export {

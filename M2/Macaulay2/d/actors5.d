@@ -1498,75 +1498,6 @@ setupfun("isGlobalSymbol",isGlobalSymbol);
 --      else WrongNumArgs(0));
 -- setupfun("history",history);
 
-toPairs(r:array(int)):Expr := Expr( 
-     list (
-	  new Sequence len length(r)/2 at i do 
-	  provide new Sequence len 2 at j do 
-	  provide toExpr(r.(2*i+j))
-	  )
-     );
-
-regexmatch(e:Expr):Expr := (
-     ignorecase := false;
-     when e is a:Sequence do
-     if length(a) == 2 then
-     when a.0 is regexp:stringCell do
-     when a.1 is text:stringCell do (
-	  r := regexmatch(regexp.v,0,length(text.v),text.v,ignorecase);
-	  if regexmatchErrorMessage != noErrorMessage then buildErrorPacket("regex: "+regexmatchErrorMessage)
-     	  else if length(r) != 0 then toPairs(r) 
-	  else nullE)
-     else WrongArgString(2)
-     else WrongArgString(1)
-     else if length(a) == 3 then
-     when a.0 is regexp:stringCell do
-     when a.1 is start:ZZcell do if !isInt(start) then WrongArgSmallInteger(2) else
-     when a.2 is text:stringCell do (
-	  istart := toInt(start);
-	  r := regexmatch(regexp.v,istart,length(text.v)-istart,text.v,ignorecase);
-	  if length(r) != 0 then toPairs(r) 
-	  else if regexmatchErrorMessage == noErrorMessage
-	  then nullE
-	  else buildErrorPacket("regex: "+regexmatchErrorMessage))
-     else WrongArgString(3)
-     else WrongArgZZ(2)
-     else WrongArgString(1)
-     else if length(a) == 4 then
-     when a.0 is regexp:stringCell do
-     when a.1 is start:ZZcell do if !isInt(start) then WrongArgSmallInteger(2) else
-     when a.2 is range:ZZcell do if !isInt(range) then WrongArgSmallInteger(3) else
-     when a.3 is text:stringCell do (
-	  r := regexmatch(regexp.v,toInt(start),toInt(range),text.v,ignorecase);
-	  if length(r) != 0 then toPairs(r) 
-	  else if regexmatchErrorMessage == noErrorMessage
-	  then nullE
-	  else buildErrorPacket("regex: "+regexmatchErrorMessage))
-     else WrongArgString(4)
-     else WrongArgZZ(3)
-     else WrongArgZZ(2)
-     else WrongArgString(1)
-     else WrongNumArgs(2,3)
-     else WrongNumArgs(2,3));
-setupfun("regex",regexmatch);
-
-foo := "foo";
-replace(e:Expr):Expr := (
-     ignorecase := false;
-     when e is a:Sequence do
-     if length(a) == 3 then
-     when a.0 is regexp:stringCell do
-     when a.1 is replacement:stringCell do
-     when a.2 is text:stringCell do (
-	  r := regexreplace(regexp.v,replacement.v,text.v,foo,ignorecase);
-	  if r == foo then buildErrorPacket("replace: "+regexmatchErrorMessage)
-	  else toExpr(r))
-     else WrongArgString(3)
-     else WrongArgString(2)
-     else WrongArgString(1)
-     else WrongNumArgs(3)
-     else WrongNumArgs(3));
-setupfun("replaceStrings",replace);
-     
 listFrame(s:Sequence):Expr := Expr(List(mutableListClass, s, nextHash(), true));	  
 listFrame(f:Frame):Expr := if f.frameID == 0 then listFrame(emptySequence) else listFrame(f.values); -- refuse to defeat the protection of global variables
 frame(e:Expr):Expr := (
@@ -1957,7 +1888,11 @@ fileLength(e:Expr):Expr := (
 	       if ret == ERROR
 	       then Expr(buildErrorPacket(syscallErrorMessage("getting the length of a file")))
 	       else toExpr(ret))
-	  else if f.output then toExpr(getFileFOSS(f).bytesWritten + getFileFOSS(f).outindex)
+	  else if f.output then (
+	       foss := getFileFOSS(f);
+	       r := toExpr(foss.bytesWritten + foss.outindex);
+	       releaseFileFOSS(f);
+	       r)
      	  else buildErrorPacket("file not open"))
      is f:stringCell do (
 	  filename := f.v;

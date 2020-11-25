@@ -82,7 +82,7 @@ jobs:
           brew config
           # autoconf, libtool are already in the virtual env
           brew install automake ccache gnu-tar make ninja pkg-config yasm
-          brew install bdw-gc boost cddlib eigen flint glpk libatomic_ops libomp mpfr mpir ncurses ntl tbb
+          brew install bdw-gc boost cddlib eigen flint glpk libatomic_ops libomp mpfr mpfi mpir ncurses ntl tbb
 
 # ----------------------
 #   Install missing tools and libraries for Linux
@@ -95,8 +95,8 @@ jobs:
           sudo apt-get install -y -q --no-install-recommends clang-10 gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
-                  libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
-                  libcdd-dev libgivaro-dev fflas-ffpack w3c-markup-validator
+                  libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libmpfi-dev libntl-dev gfan \
+                  libcdd-dev libgivaro-dev libboost-regex-dev fflas-ffpack w3c-markup-validator
           # TODO: help autotools detect flint from brew
           brew install flint
 
@@ -106,22 +106,14 @@ jobs:
 
       - name: Prepare build environment
         run: |
-          echo "::set-env name=CC::${{ matrix.cc }}"
-          echo "::set-env name=CXX::${{ matrix.cxx }}"
-          echo "::set-env name=LD_LIBRARY_PATH::`brew --prefix`/lib:$LD_LIBRARY_PATH"
-
-          if [[ "${{ runner.os }}" == "Linux" ]]; then
-            PATH=/usr/lib/ccache:$PATH
-            # Necessary for clang-10 on Linux
-            # echo "::set-env name=LIBRARY_PATH::`llvm-config-10 --libdir`"
-          else
-            # PATH=`brew --prefix llvm`/bin:$PATH
-            PATH=`brew --prefix ccache`/libexec:$PATH
-            PATH=`brew --prefix make`/libexec/gnubin:$PATH
-            # Necessary for clang on macOS
-            # echo "::set-env name=LIBRARY_PATH::`llvm-config --libdir`"
+          echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
+          echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=`brew --prefix`/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+          if [[ "${{ runner.os }}" == "Linux" ]]
+          then echo "/usr/lib/ccache" >> $GITHUB_PATH
+          else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
+               echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
           fi
-          echo "::set-env name=PATH::$PATH"
 
       - uses: actions/cache@v2
         if: matrix.build-system == 'cmake' # TODO: remove when autotools is more efficient with space

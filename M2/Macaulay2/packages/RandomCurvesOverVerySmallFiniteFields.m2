@@ -9,6 +9,7 @@ newPackage(
 			   Email =>"schreyer@math.uni-sb.de",
 			   HomePage =>"https://www.math.uni-sb.de/ag/schreyer"}},
 	Headline=> "general canonical curves of genus <= 15 over fields with small characteristic",
+	Keywords => {"Examples and Random Objects"},
 	PackageImports => {"Elimination","Truncations"}
 	)
     

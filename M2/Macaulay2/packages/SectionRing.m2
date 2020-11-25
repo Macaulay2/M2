@@ -8,6 +8,7 @@ newPackage( "SectionRing",
      	       }
 	  },
      PackageImports => {"Divisor"},
+     Keywords => {"Commutative Algebra"},
      Headline => "the section ring of a Weil Divisor"
      )
 
