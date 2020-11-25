@@ -20,7 +20,14 @@ Module + Module := Module => (M,N) -> (
 	  )
      )
 
-tensor(Module, Module) := Module => options -> (M,N) -> M**N
+tensor Sequence := opts -> args -> (
+     -- note: 'tensor (a => ZZ^2, b => ZZ^3, c => ZZ^4)' will not work to label the factors, as "tensor" takes options
+     --       maybe we need another syntax to present the labels
+     f := lookup prepend( tensor, apply(args,class));
+     if f =!= null then (f opts) args 
+     else fold((M,N) -> M**N, args)	  -- tensor product is left-associative
+     )
+
 Module ** Module := Module => (M,N) -> (
      (oM,oN) := (M,N);
      Y := youngest(M.cache.cache,N.cache.cache);
@@ -46,10 +53,25 @@ Module ** Module := Module => (M,N) -> (
 			 if M.?relations then M.relations ** N))
 	       else cokernel map(R, rawModuleTensor( raw M.relations, raw N.relations )));
      Y#(symbol **,oM,oN) = T;
+     -- we do not set T.cache.components, as "components" is for sums, not tensor products
+     T.cache.formation = FunctionApplication (tensor, (M,N));
      T)
 
 Matrix ** Module := Matrix => (f,M) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else  f ** id_M
 Module ** Matrix := Matrix => (M,f) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else id_M ** f
+
+Option ** Option := (x,y) -> (
+     (a,b) := (x#0,y#0);			 -- the labels
+     (M,N) := (x#1,y#1);			 -- the objects (modules, etc.)
+     T := M ** N;
+     labels := T.cache.indices = {a,b};
+     ic := T.cache.indexComponents = new HashTable from {a => 0, b => 1};
+     -- now, in case T is a map (i.e., has a source and target), then label the source and target objects of the tensor product
+     if T.?source and T.?target then (
+	  T.source.cache.indexComponents = T.target.cache.indexComponents = ic; 
+	  T.source.cache.indices = T.target.cache.indices = labels;
+	  );
+     T)
 
 -----------------------------------------------------------------------------
 -- base change
@@ -511,6 +533,7 @@ Hom(Module, Module) := Module => (M,N) -> (
      H := trim kernel (transpose presentation M ** N);
      H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f);
      Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
+     H.cache.formation = FunctionApplication { Hom, (M,N) };
      H)
 
 adjoint' = method()

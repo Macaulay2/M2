@@ -2,12 +2,9 @@
 #ifndef _style_hh_
 #define _style_hh_
 
-#include <vector>
 #include "newdelete.hpp"
-
 #include "engine-includes.hpp"
 
-#define VECTOR(T) std::vector<T, gc_allocator<T> >
 #define INTSIZE(a) static_cast<int>((a).size())
 
 const int LT = -1;

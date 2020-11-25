@@ -9,6 +9,7 @@ newPackage(
 		     Email => "boij@kth.se"}
 			},
     	Headline => "equivariant Macaulay inverse systems",
+	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false
     	)
 

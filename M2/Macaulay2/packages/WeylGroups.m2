@@ -11,6 +11,7 @@ newPackage(
                 {Name => "Viktor Petrov"}
 		},
 	Headline => "root systems and Weyl groups",
+	Keywords => {"Lie Groups and Lie Algebras"},
 	AuxiliaryFiles => true,
 	PackageExports => {"Graphics"},
 	DebuggingMode => false)

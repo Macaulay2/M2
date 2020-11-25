@@ -39,7 +39,7 @@ find_program(ETAGS NAMES etags)
 
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
-find_package(Boost	REQUIRED QUIET COMPONENTS ${Boost_stacktrace})
+find_package(Boost	REQUIRED QUIET COMPONENTS regex ${Boost_stacktrace})
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
 # TODO: replace gdbm with capnproto.org or msgpack.org
 # Alternatively protobuf: https://developers.google.com/protocol-buffers/docs/proto#maps
@@ -124,10 +124,10 @@ find_package(MPFR	4.0.1)
 find_package(NTL       10.5.0)
 find_package(Flint	2.6.0)
 find_package(Factory	4.1.0)
+find_package(MPSolve	3.2.0)
 # TODO: add minimum version checks
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 094h?
-find_package(MPSolve	3.2.0)
 find_package(GTest	1.10)
 find_package(Memtailor	1.0.0)
 find_package(Mathic	1.0.0)
@@ -196,7 +196,8 @@ find_program(TOPCOM	NAMES	checkregularity)
 # we provide targets build-polymake, build-bertini, build-phcpack for building them.
 find_program(POLYMAKE	NAMES	polymake)
 find_program(BERTINI	NAMES	bertini)
-find_program(PHC	NAMES	phc)
+find_program(PHCPACK	NAMES	phc)
+find_program(HOM4PS2	NAMES	hom4ps2) # TODO: http://www.math.nsysu.edu.tw/~leetsung/works/HOM4PS_soft.htm
 # TODO: Maple and package convex
 
 set(PROGRAM_OPTIONS 4ti2 cohomCalg Gfan lrslib CSDP Nauty Normaliz TOPCOM)
@@ -244,7 +245,7 @@ endforeach()
 foreach(_program IN LISTS PROGRAM_OPTIONS)
   string(TOUPPER "${BUILD_PROGRAMS}" BUILD_PROGRAMS)
   string(TOUPPER "${_program}" _name)
-  if(${_name})
+  if(EXISTS ${${_name}})
     if(${_name} MATCHES ${M2_INSTALL_PROGRAMSDIR})
       # we built it
       list(APPEND INSTALLED_PROGRAMS ${_program})
@@ -262,6 +263,7 @@ foreach(_program IN LISTS PROGRAM_OPTIONS)
     endif()
   else()
     # was not found
+    unset(${_name} CACHE)
   endif()
 endforeach()
 

@@ -15,6 +15,7 @@ newPackage ( "ResidualIntersections",
 	},
     PackageExports => {"RandomIdeals", "Depth"},
     Headline => "conditions associated to residual intersection theory",
+    Keywords => {"Commutative Algebra"},
     DebuggingMode => false
     )
 

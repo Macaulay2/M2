@@ -18,8 +18,26 @@ newPackage("ThreadedGB",
 	    HomePage => "https://www.linkedin.com/in/tannerzielinski/"
 	}
     },
+    Keywords => {"Groebner Basis Algorithms"},
     Headline => "Compute a Groebner basis using the classical Buchberger with multiple threads"
   )
+
+-- The factory library code is not thread-safe, and 'gcd' calls it.  Here we insert some simple routines to avoid it.
+-- This code assumes we are over a field, so we don't have to take gcd's of the coefficients, and that f and g are monomials, which is the case in the code.
+manualGCD = (f,g) -> (
+     R := ring f;
+     a := first exponents f;
+     b := first exponents g;
+     c := apply(a,b,min);
+     R_c)
+manualLCM = (f,g) -> (
+     R := ring f;
+     a := first exponents f;
+     b := first exponents g;
+     c := apply(a,b,max);
+     R_c)
+
+
 export {
     "tgb",
     "minimalize",
@@ -84,6 +102,7 @@ tgb (List,ZZ) := HashTable => o -> (basisList, nThreads) -> (
         if not isReady(tasksValues_i) then allReady = false;
     	);
       if allReady then allowableThreads=1;
+      sleep 1;
     );
     -- final clean up:
     if # keys trivial > 0 then (
@@ -202,7 +221,7 @@ initializeBasis(List) := MutableHashTable => (basisList)->(
 ---------------------------------------------------------------------------------------------
 spoly = method()
 spoly(RingElement, RingElement) := RingElement => (f, g) -> (
-    gamma := lcm(leadMonomial f, leadMonomial g);
+    gamma := manualLCM(leadMonomial f, leadMonomial g);
     (gamma // leadTerm f) * f - (gamma // leadTerm g) * g
     )
 ---------------------------------------------------------------------------------------------
@@ -217,8 +236,9 @@ spoly(RingElement, RingElement) := RingElement => (f, g) -> (
 -- computed so far are saved).
 -- Polynomials whose initial terms are relatively prime are not considered.
 ---------------------------------------------------------------------------------------------
+
 taskFn = {Verbose=>false} >> o-> (f1,f2,currentPairKey) -> () -> (
-    if gcd(leadTerm f1, leadTerm f2)==1 then r := 0 else r = remainderFn(spoly(f1,f2),values endGB);
+    if manualGCD(leadTerm f1, leadTerm f2)==1 then r := 0 else r = remainderFn(spoly(f1,f2),values endGB);
     if r!=0 and r!=1 and r!=-1 then (
       scan(keys endGB,i-> (
         currentPairKeyChild := concatenate("(",currentPairKey,"-",toString(i),")");

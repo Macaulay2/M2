@@ -4,7 +4,6 @@
 #define _res_hh_
 
 #include "style.hpp"
-#include "array.hpp"
 #include "intarray.hpp"
 #include "matrix.hpp"
 #include "monideal.hpp"
@@ -55,10 +54,10 @@ class res_level : public our_new_delete
 {
   friend class res_comp;
 
-  array<res_degree *> bin;  // Bins for pairs sorted by (slanted)
+  VECTOR(res_degree *) bin;  // Bins for pairs sorted by (slanted)
                             // degree. So bin[d] refers to elements
                             // of degree low_degree + level + d
-  array<res_pair *> elems;
+  VECTOR(res_pair *) elems;
 
   res_pair *compare_num_list;
   int npairs;
@@ -90,11 +89,11 @@ class res_comp : public ResolutionComputation
   int n_level;   // Current level
   int n_degree;  // Current (slanted) degree
 
-  array<res_level *> resn;  // The resolution itself
+  VECTOR(res_level *) resn;  // The resolution itself
 
   // Degree and length limits, monomial size limit
-  array<res_pair *> base_components;
-  array<MonomialIdeal *> search_mi;  // Used for new generators only...
+  VECTOR(res_pair *) base_components;
+  VECTOR(MonomialIdeal *) search_mi;  // Used for new generators only...
 
   int lodegree;      // Base degree
   int hidegree;      // Highest (slanted) degree appearing
@@ -181,10 +180,10 @@ class res_comp : public ResolutionComputation
   //  Performing the calculation ///////////////
   //////////////////////////////////////////////
 
-  void skeleton_init(array<res_pair *> &reslevel);
+  void skeleton_init(VECTOR(res_pair *)& reslevel);
   void skeleton_pairs(res_pair *&result, res_pair *p);
-  int skeleton_maxdegree(const array<res_pair *> &reslevel);
-  void skeleton_stats(const array<res_pair *> &reslevel);
+  int skeleton_maxdegree(const VECTOR(res_pair *)& reslevel);
+  void skeleton_stats(const VECTOR(res_pair *)& reslevel);
 
   void skeleton(int strategy);
 
@@ -196,7 +195,7 @@ class res_comp : public ResolutionComputation
   //  Result matrices of the resolution ////////
   //////////////////////////////////////////////
  private:
-  void reduce_minimal(int x, resterm *&f, array<res_pair *> &elems) const;
+  void reduce_minimal(int x, resterm *&f, VECTOR(res_pair *)& elems) const;
 
  public:
   const FreeModule *free_of(int i) const;

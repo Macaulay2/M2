@@ -18,7 +18,7 @@ newPackage(
 	    {Name => "Claudiu Raicu", 
 		  Email => "craicu@nd.edu", 
 		  HomePage => "https://www3.nd.edu/~craicu/"}, 
-	    {Name => "Steven V. Sam", 
+	    {Name => "Steven V Sam",
 		  Email => "ssam@sd.edu", 
 		  HomePage => "http://math.ucsd.edu/~ssam/"}, 
 	    {Name => "Joao Pedro Santos", 
@@ -26,6 +26,7 @@ newPackage(
 		  HomePage => "http://math.nd.edu/people/graduate-students/graduate-directory-with-photos/"} 
 	    },
     	Headline => "Schur functors of complexes",
+	Keywords => {"Representation Theory", "Homological Algebra"},
 	Certification => {
 	     "journal name" => "Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",

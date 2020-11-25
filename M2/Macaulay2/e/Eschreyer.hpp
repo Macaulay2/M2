@@ -36,9 +36,9 @@ class GBKernelComputation : public Computation
   const FreeModule *G;      // This is where the resulting syzygies live.
   // This MUST be a Schreyer free module compatible with the input!
 
-  array<MonomialIdeal *> mi;   // Used in reduction.
-  array<gbvector *> gb;        // This is the "stripped" GB.
-  array<gbvector *> syzygies;  // This is basically the result.
+  VECTOR(MonomialIdeal *) mi;   // Used in reduction.
+  VECTOR(gbvector *) gb;        // This is the "stripped" GB.
+  VECTOR(gbvector *) syzygies;  // This is basically the result.
 
   // byte sizes for allocating temp exp vectors and monomials on the stack
   size_t exp_size;

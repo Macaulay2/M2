@@ -282,7 +282,6 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
      toExternalString FractionField := F -> toString describe F
 
 -- freduce := (f) -> (numerator f)/(denominator f)
-isHomogeneous EngineRing := R -> isHomogeneous 0_R
 
 factoryAlmostGood = R -> (
      k := coefficientRing R;
@@ -411,7 +410,7 @@ EngineRing _ ZZ := (R,i) -> (
 
 size RingElement := f -> rawTermCount(numgens ring f, raw f)
 
-isHomogeneous RingElement := f -> rawIsHomogeneous raw f
+isHomogeneous RingElement := f -> isHomogeneous ring f and rawIsHomogeneous raw f
 
 + RingElement := identity
 - RingElement := RingElement => x -> new ring x from -raw x

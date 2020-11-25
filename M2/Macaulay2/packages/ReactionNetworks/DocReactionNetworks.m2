@@ -57,7 +57,7 @@ doc ///
 
 		$\bullet$ @TO "twoLayerCascadeL"@
 
-		$\bullet$ @TO "crosslinkingModelCellDeath"@
+		$\bullet$ @TO "crossLinkingModelCelldeath"@
 
 		$\bullet$ @TO "clusterModelCellDeath"@
 

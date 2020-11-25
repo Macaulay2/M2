@@ -6,6 +6,7 @@ newPackage(
 		  Email => "rbarrera@math.tamu.edu", 
 		  HomePage => "http://www.math.tamu.edu/~rbarrera/"}},
     	Headline => "quasidegrees and graded local cohomology",
+	Keywords => {"Commutative Algebra"},
 	PackageImports => {"FourTiTwo", "Depth", "Polyhedra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",

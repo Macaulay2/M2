@@ -33,6 +33,7 @@ newPackage(
      HomePage => "https://math.berkeley.edu/~seigal/"}
   },
   Headline => "interface to PHCpack",
+  Keywords => {"Numerical Algebraic Geometry", "Interfaces"},
   Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry",
 	"journal URI" => "http://j-sag.org/",
