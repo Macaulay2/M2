@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
     "NoetherianOperators",
-    Version => "0.95",
+    Version => "0.99",
     Date => "Nov 25, 2020",
     Authors => {
         {Name => "Robert Krone", 
@@ -19,7 +19,8 @@ newPackage(
     PackageExports => {"Truncations", "Bertini", "NAGtypes"},
     PackageImports => {"Dmodules", "PrimaryDecomposition"},
     AuxiliaryFiles => true,
-    DebuggingMode => true
+    DebuggingMode => true,
+    Keywords => {"Numerical Algebraic Geometry", "Commutative Algebra"}
 )
 
 export {
