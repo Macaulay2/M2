@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
     "NoetherianOperators",
-    Version => "0.90",
-    Date => "Nov 24, 2020",
+    Version => "0.95",
+    Date => "Nov 25, 2020",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},
@@ -19,7 +19,7 @@ newPackage(
     PackageExports => {"Truncations", "Bertini", "NAGtypes"},
     PackageImports => {"Dmodules", "PrimaryDecomposition"},
     AuxiliaryFiles => true,
-    DebuggingMode => false
+    DebuggingMode => true
 )
 
 export {
@@ -1595,7 +1595,11 @@ doc ///
            Methods and types for computing and manipulating Noetherian operators:
 
            @UL {
-               {TO noetherianOperators},
+               {TO noetherianOperators, UL {
+                 {TO "Strategy => \"PunctualHilbert\""},
+                 {TO "Strategy => \"MacaulayMatrix\""},
+                 {TO "Strategy => \"Hybrid\""}
+                }},
                {TO specializedNoetherianOperators},
                {TO numericalNoetherianOperators},
                {TO getIdealFromNoetherianOperators},
@@ -2120,6 +2124,7 @@ doc ///
       [zeroDimensionalDual, Tolerance]
       [numericalImage,Tolerance]
       [numericalKernel,Tolerance]
+      [colReduce, Tolerance]
      Headline
           optional argument for numerical tolernace
      Description
@@ -2884,7 +2889,7 @@ Description
 
     Text
         {\tt Tolerance =>} a positive real number. This specifies the numerical precision when computing the
-        specialized Noetherian operators. The default value is {\tt 1e-6}.
+        specialized Noetherian operators. The default value is {\tt 1e-6}. See See @TO "Tolerance (NoetherianOperators)"@.
 
         {\tt DependentSet =>} a list of variables. For details, see @TO DependentSet@.
 SeeAlso
@@ -3059,7 +3064,7 @@ Description
             is known in advance.
 
         {\tt Tolerance =>} a positive real number. This specifies the numerical precision when computing the
-        specialized Noetherian operators. The default value is {\tt 1e-6}.
+        specialized Noetherian operators. The default value is {\tt 1e-6}. See @TO "Tolerance (NoetherianOperators)"@.
         
         {\tt Sampler =>} a function, taking inputs \{tt (I,n)}, where {\tt I} is an @TO2{Ideal, "ideal"}@, and {\tt n} is an integer.
         The sampler function returns a list of {\tt n} @TO2 {Point, "points"}@ on the component of interest of {\tt I}. If unset, the default sampler
@@ -3068,7 +3073,7 @@ Description
         {\tt DependentSet =>} a @TO2 {List, "list"}@ of variables that are algebraically dependent. See @TO DependentSet@ for details.
         
         {\tt InterpolationTolerance =>} a positive real number. This specifies the numerical precision for the interpolation routines.
-        The default value is {\tt 1e-6}.
+        The default value is {\tt 1e-6}. See @TO "Tolerance (NoetherianOperators)"@.
 
         {\tt InterpolationDegreeLimit =>} a non-negative @TO2 {ZZ, "integer"}@. Limits the degree of the interpolated rational function coefficients.
         If no rational functions are found within the degree limit, outputs an incomplete differential operator
