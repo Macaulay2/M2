@@ -11,8 +11,8 @@
 --                  updated 16 April 2020 for JSAG
 ---------------------------------------------------------------------------
 newPackage ("VirtualResolutions",
-    Version => "1.2",
-    Date => "April 16, 2020",
+    Version => "1.3",
+    Date => "November 24, 2020",
     Headline => "Methods for virtual resolutions on products of projective spaces",
     Authors =>{
         {Name => "Ayah Almousa",       Email => "aka66@cornell.edu",   HomePage => "http://pi.math.cornell.edu/~aalmousa "},
@@ -42,6 +42,8 @@ export{
     "randomCurveP1P2",
     "multigradedRegularity",
     -- Options
+    "LowerLimit",
+    "UpperLimit",
     "Attempt",
     "PreserveDegree",
     "GeneralElements"
@@ -146,18 +148,18 @@ isVirtual(Ideal,              ChainComplex) := opts -> (irr, C) -> (
     if opts.Strategy === "Determinantal" then (
         for i from 1 to length(C) do (
             if rank(source(C.dd_i)) != (rank(C.dd_i) + rank(C.dd_(i+1))) then (
-		debugInfo i; return false));
+                debugInfo i; return false));
         for i from 1 to length(C) do (
             minor := minors(rank(C.dd_i),C.dd_i);
             minorSat := ourSaturation(minor,irr);
             if depth(minorSat, S) < i then (
-		debugInfo i; return false));
+                debugInfo i; return false));
     return true);
 -- default strategy is calculating homology and checking homology is
 -- supported on irrelevant ideal
     for i from 1 to length(C) do (
-	if not isZeroSheaf(irr, HH_i C) then (
-	    debugInfo i; return false));
+        if not isZeroSheaf(irr, HH_i C) then (
+            debugInfo i; return false));
     true)
 
 --------------------------------------------------------------------
@@ -417,12 +419,7 @@ dimVector(Ring) := (S) -> (
     degTally := tally deg;
     apply(rsort unique deg, i->(degTally_i - 1))
     )
-dimVector(Thing) := (X) -> (
-    S := ring X;
-    deg := degrees S;
-    degTally := tally deg;
-    apply(rsort unique deg, i->(degTally_i - 1))
-    )
+dimVector NormalToricVariety := X -> dimVector ring X
 
 
 -- Helper function for multigradedRegularity
@@ -441,6 +438,68 @@ gradedPolynomialRing = n -> (
     ZZ/32003[yy])
 
 --------------------------------------------------------------------
+-- Multigraded Regularity
+--------------------------------------------------------------------
+
+multigradedRegularity = method(
+    TypicalValue => List,
+    Options => {
+        LowerLimit => null,
+        UpperLimit => null
+        }
+    )
+
+-- keys: NormalToricVariety, Ring
+MultigradedRegularityOptions = new SelfInitializingType of BasicList
+MultigradedRegularityOptions.synonym = "multigraded regularity options"
+
+-- keys: LowerLimit, UpperLimit, "HilbertPolynomial", "CohomologyTable"
+MultigradedRegularityComputation = new Type of MutableHashTable
+MultigradedRegularityComputation.synonym = "multigraded regularity computation"
+
+-- preprocessing step
+new MultigradedRegularityComputation from Sequence := (C, L) -> (
+    (X, S, M) := L;
+    container := scan(pairs M.cache, (k, v) -> if instance(k, MultigradedRegularityOptions) then break v);
+    if container =!= null then return container;
+    -- making local assignments so that productOfProjectiveSpaces does
+    -- not mess with the global ring by grabbing their global symbols.
+    E := local E;
+    x := local x; e := local e;
+    h := local h; k := local k;
+    -- TODO: to simplify this, two things need to happen:
+    --   1. add TateData to the ring of a NormalToricVariety
+    --   2. implement computation of Hilbert polynomial from TateData
+    if instance(X, NormalToricVariety) then (
+        -- go from module over NormalToricVariety to module over productOfProjectiveSpaces
+        -- note: assumes that the NormalToricVariety is a product of toricProjectiveSpaces
+        (S, E) = productOfProjectiveSpaces(dimVector X, CoefficientField => coefficientRing ring X, Variables => {symbol x, symbol e}))
+    else (
+        -- first check whether S is compatible with TateOnProducts
+        (S, E) = if S.?TateData then S.TateData.Rings
+        -- if not, reconstruct the ring to endow it with TateData
+        else productOfProjectiveSpaces(dimVector S, CoefficientField => coefficientRing S, Variables => {symbol x, symbol e});
+        -- go from module over productOfProjectiveSpaces to module over tensor product of toricProjectiveSpaces
+        X = fold(apply(dimVector S, i -> toricProjectiveSpace(i, CoefficientRing => coefficientRing S)), (A,B) -> A**B));
+    S' := ring X;
+    r := degreeLength M;
+    phi := map(S,  ring M, gens S);
+    psi := map(S', ring M, gens S');
+    cacheKey := MultigradedRegularityOptions{ X, S, phi };
+    M.cache#cacheKey = new MultigradedRegularityComputation from {
+        LowerLimit => toList(r :  infinity), -- lower bound of the region checked
+        UpperLimit => toList(r : -infinity), -- upper bound of the region checked
+        "HilbertPolynomial" => hilbertPolynomial(X, psi ** M),
+        Result => null })
+
+isComputationDone = method(TypicalValue => Boolean, Options => true)
+isComputationDone MultigradedRegularityComputation := Boolean => options multigradedRegularity >> opts -> container -> (
+    -- this function determines whether we can use the cached result, or further computation is necessary
+    instance(container.Result, List)
+    and (opts.LowerLimit === null or container.LowerLimit <= opts.LowerLimit)
+    and (opts.UpperLimit === null or container.UpperLimit >= opts.UpperLimit))
+
+--------------------------------------------------------------------
 --------------------------------------------------------------------
 ----- Input: (S,M) = (Ring, Module)
 -- OR
@@ -453,74 +512,71 @@ gradedPolynomialRing = n -> (
 ----- Caveat: This assumes M is B-saturated already i.e. H^0_B(M)=0
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-multigradedRegularity = method()
-multigradedRegularity(Thing,              Ideal)  := List => (T, I)  -> multigradedRegularity(T, comodule I)
-multigradedRegularity(Ring,               Module) := List => (S, M') -> multigradedRegularity(null, S, M')
-multigradedRegularity(NormalToricVariety, Module) := List => (X, M)  -> multigradedRegularity(X, null, M)
--- Note: some hacking is involved to deal with the differences between productOfProjectiveSpaces and toricProjectiveSpaces
-multigradedRegularity(Thing, Thing, Module) := List => (X, S, M) -> (
-    -- making local assignments so that productOfProjectiveSpaces does
-    -- not mess with the global ring by grabbing their global symbols.
-    x := local x; e := local e;
-    h := local h; k := local k;
-    if class X === NormalToricVariety then (
-        -- go from module over NormalToricVariety to module over productOfProjectiveSpaces
-        -- assuming that the NormalToricVariety is a tensor product of toricProjectiveSpaces
-        S = ring X;
-        (S', E') := productOfProjectiveSpaces(dimVector X, CoefficientField => coefficientRing S, Variables => {symbol x, symbol e});
-        M' := coker (map(S', S, gens S'))(presentation M);
-        ) else (
-        -- go from module over productOfProjectiveSpaces to module over tensor product of toricProjectiveSpaces
-        (S', E') = productOfProjectiveSpaces(dimVector S, CoefficientField => coefficientRing S, Variables => {symbol x, symbol e});
-        M' = coker (map(S', S, gens S'))(presentation M);
-        X = fold((A,B) -> A**B, dimVector(S)/(i->toricProjectiveSpace(i, CoefficientRing => coefficientRing S)));
-        M = coker (map(ring X, S, gens ring X))(presentation M);
-        S = ring X;
-        );
-    n := #(degrees S)_0;
-    -- for products of projective space, the dimension is the
+multigradedRegularity(Ring,               Ideal)  := o -> (S, I) -> multigradedRegularityHelper( , S, comodule I, o)
+multigradedRegularity(NormalToricVariety, Ideal)  := o -> (X, I) -> multigradedRegularityHelper(X,  , comodule I, o)
+multigradedRegularity(Ring,               Module) := o -> (S, M) -> multigradedRegularityHelper( , S, M, o)
+multigradedRegularity(NormalToricVariety, Module) := o -> (X, M) -> multigradedRegularityHelper(X,  , M, o)
+
+multigradedRegularityHelper = (X, S, M, opts) -> (
+    debugInfo := if debugLevel < 1 then identity else printerr;
+    -- outsourcing the preprocessing of the input
+    container := new MultigradedRegularityComputation from (X, S, M);
+    if isComputationDone(opts, container) then (
+        debugInfo("Cache hit on a ", synonym class container, "! 🎉"); return container.Result );
+    -- get the cache key associated to the container, which encapsulates the base variety
+    cacheKey := scan(pairs M.cache, (k, v) -> if instance(k, MultigradedRegularityOptions) then break k);
+    (X, S, M) = (cacheKey#0, cacheKey#1, cacheKey#2 ** M);
+    -- Henceforth, X is a normal toric variety, S is a ring with Tate data, and M is an S-module
+    --
+    -- For products of projective space, the dimension is the
     -- number of variables minus the rank of the Picard group
-    -- TODO: why is (n:degs-d) the right lower bound?
     d := dim X;
-    degs := apply(n, i -> min(degrees M / (deg -> deg_i)));
-    -- TODO: why is (n:r) the right upper bound?
     r := regularity M;
-    if debugLevel > 0 then stderr << "-- Regularity: " << r << endl;
-    H := hilbertPolynomial(X, M);
-    if debugLevel > 0 then stderr << "-- Hilbert polynomial: " << H << endl;
-    -- TODO: fix this comment
-    -- We only search in the positive cone and up to the regularity of M
-    -- TODO: as we twist the module, the window should move also
-    -- maybe lower corner is bounded by the minimum degree of the generators?
-    low := degs-toList(n:d);
-    high := apply(n, i -> max({r} | degrees M / (deg -> deg_i)));
-    if debugLevel > 0 then stderr << "-- Computing cohomologyHashTable from " << low << " to " << high << endl;
-    L := pairs cohomologyHashTable(M', low, high);
+    H := container#"HilbertPolynomial";
+    debugInfo demark_", " {
+        "dim X = " | toString d,
+        "reg M = " | toString r,
+        "HP(M) = " | toString H};
+    --
+    n := #(degrees S)_0;
+    degs := apply(n, i -> min(degrees M / (deg -> deg_i)));
+    -- TODO: why is this the right upper bound?
+    high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degrees M / (deg -> deg_i)));
+    -- TODO: why is degs - toList(n:d) the right lower bound?
+    -- {0,..,0} is not always the right lower bound, but works for ideals!
+    low  := if opts.LowerLimit =!= null then opts.LowerLimit else toList(n:0); -- degs - toList(n:d);
+    -- kind of a hack to decrease the lower bound when needed
+    if any(n, i -> high#i <= low#i) then low = degs - toList(n:d);
+    --
+    debugInfo("Computing cohomologyHashTable from ", toString low, " to ", toString high);
+    L := pairs cohomologyHashTable(M, low, high);
+    --
     -- Based on findHashTableCorner from TateOnProducts
     P := multigradedPolynomialRing toList(n:0);
     -- We use this trick 
     Q := gradedPolynomialRing toList(n:0);
     phi := map(P, Q, gens P);
     gt := new MutableHashTable;
-    if debugLevel > 0 then stderr << "-- Beginning search in Picard group" << endl;
+    debugInfo("Beginning search in Picard group");
     apply(L, ell -> (
             -- Check that Hilbert function and Hilbert polynomial match
             -- (this imposes a condition on the alternating sum of local cohomology dimensions)
             if hilbertFunction(ell_0_0, M) != (map(QQ, ring H, ell_0_0))(H) then (
                 gt#(ell_0_0) = true);
             -- Check that higher local cohomology vanishes (i.e., H^i_B(M) = 0 for i > 1)
-	    -- TODO: do I really need to check ell_0_1 > 0?
+            -- TODO: do I really need to check ell_0_1 > 0?
             if ell_1 != 0 and ell_0_1 > 0 then
-	        scan(flatten entries phi basis(0, ell_0_1, Q),
-		    j -> gt#(ell_0_0 + degree j) = true);
+                scan(flatten entries phi basis(0, ell_0_1, Q),
+                    j -> gt#(ell_0_0 + degree j) = true);
             )
         );
-    if debugLevel > 0 then stderr << "-- Calculating minimal generators" << endl;
+    debugInfo("Calculating minimal generators");
     I := ideal apply(L, ell ->
-	if all(n, j -> ell_0_0_j >= degs_j)
-	and not gt#?(ell_0_0) then product(n, j -> P_j^(ell_0_0_j - degs_j)) else 0);
-    sort apply(flatten entries mingens I, g -> (flatten exponents g) + degs)
-    )
+        if all(n, j -> ell_0_0_j >= degs_j)
+        and not gt#?(ell_0_0) then product(n, j -> P_j^(ell_0_0_j - degs_j)) else 0);
+    container.LowerLimit = low;
+    container.UpperLimit = high;
+    container.Result = sort apply(flatten entries mingens I, g -> (flatten exponents g) + degs))
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------

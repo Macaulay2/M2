@@ -1,7 +1,4 @@
-undocumented {
-    (multigradedRegularity, Thing, Ideal),
-    (multigradedRegularity, Thing, Thing, Module)
-    }
+undocumented { "LowerLimit", "UpperLimit" }
 
 doc ///
   Key
@@ -507,8 +504,12 @@ doc ///
 doc ///
     Key
         multigradedRegularity
-        (multigradedRegularity, Ring, Module)
-        (multigradedRegularity, NormalToricVariety, Module)
+       (multigradedRegularity, Ring,               Ideal)
+       (multigradedRegularity, Ring,               Module)
+       (multigradedRegularity, NormalToricVariety, Ideal)
+       (multigradedRegularity, NormalToricVariety, Module)
+       [multigradedRegularity, LowerLimit]
+       [multigradedRegularity, UpperLimit]
     Headline
         computes the minimal elements of the multigraded regularity of a module over a multigraded ring
     Usage
@@ -525,6 +526,10 @@ doc ///
           an ideal over a multigraded ring
         M:Module
           a module over a multigraded ring
+        UpperLimit=>List
+          largest twist to compute cohomology for
+        LowerLimit=>List
+          smallest twist to compute cohomology for
     Outputs
         :List
           a list of multidegrees
@@ -550,10 +555,16 @@ doc ///
           After saturating the defining ideal by the irrelevant ideal we may compute its multigraded regularity.
         Example
           J = saturate(I,B);
+          debugLevel = 1
           L = multigradedRegularity(X, J)
-
         Text
           This method also accepts the ring provided by @TO productOfProjectiveSpaces@ from the @TO TateOnProducts@ package.
     Caveat
         The input is assumed to be saturated.
+        Moreover, if the input is a module generated in non-positive degrees, then the output may be incorrect.
+        In that case, adding the optional argument
+
+        @PRE "LowerLimit => apply(n, i -> min(degrees M / (deg -> deg_i))) - dim X"@
+
+        where {\tt M} is the module and {\tt X} is the toric variety, may be a sufficient solution.
 ///
