@@ -1585,32 +1585,41 @@ doc ///
 	       In this package, we implement several algorithms for the computation of a set of Noetherian operators describing a primary ideal. 
     	    	
 	       For the task of computing Noetherian operators, here we implement the algorithms developed in the papers @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@ and  @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
-    	    		       
+           To compute the initial ideal and Hilbert regularity of positive dimensional
+           ideals we use the algorithm of R. Krone ("Numerical algorithms for dual bases of positive-dimensional ideals." Journal of
+               Algebra and Its Applications, 12(06):1350018, 2013.).
+    	   
+           Methods for computing and manipulating Noetherian operators:
+
+           @UL {
+               {TO noetherianOperators},
+               {TO specializedNoetherianOperators},
+               {TO numericalNoetherianOperators},
+               {TO getIdealFromNoetherianOperators},
+               {TO coordinateChangeOps},
+               {TO noethOpsFromComponents}
+           }@
+
 	       Methods for computing and manipulating local dual spaces:
 
 	       @UL {
-		   {TO "truncatedDual"},
-		   {TO "zeroDimensionalDual"},
-		   {TO "eliminatingDual"},
-		   {TO "localHilbertRegularity"},
-		   {TO "gCorners"},
-		   {TO "socles"},
-		   {TO "innerProduct"},
-                   {TO "reduceSpace"}
+    		   {TO truncatedDual},
+    		   {TO zeroDimensionalDual},
+    		   {TO eliminatingDual},
+    		   {TO localHilbertRegularity},
+    		   {TO gCorners},
+    		   {TO innerProduct},
+               {TO reduceSpace}
 		   }@
 
 	       Auxiliary numerical linear algebra methods:
 
 	       @UL {
-		   {TO "numericalKernel"},
-		   {TO "numericalImage"},
-		   {TO "colReduce"},
+    		   {TO numericalKernel},
+    		   {TO numericalImage},
+    		   {TO colReduce},
+               {TO rationalInterpolation}
 		   }@
-
-	       The algorithm used for computing truncated dual spaces is that of B. Mourrain ("Isolated points, duality and residues." 
-	       J. Pure Appl. Algebra, 117/118:469–493, 1997).  To compute the initial ideal and Hilbert regularity of positive dimensional
-	       ideals we use the algorithm of R. Krone ("Numerical algorithms for dual bases of positive-dimensional ideals." Journal of
-               Algebra and Its Applications, 12(06):1350018, 2013.).  This package depends on the package @TO NAGtypes@.
 ///
 
 
@@ -1621,6 +1630,7 @@ Key
     (truncatedDual, Point, Matrix, ZZ)
     (truncatedDual, Matrix, Ideal, ZZ)
     (truncatedDual, Matrix, Matrix, ZZ)
+    [truncatedDual, Tolerance]
 Headline
     truncated dual space of a polynomial ideal
 Usage
@@ -3226,7 +3236,28 @@ SeeAlso
     noetherianOperators
     specializedNoetherianOperators
     numericalNoetherianOperators
+///
 
+doc ///
+Key
+    Sampler
+Headline
+    optional sampler function
+Description
+    Text
+        There are currently two methods that accept a user-specified sampler function
+
+        @UL {
+            {TO "Strategy => \"Hybrid\"", " used with ", TO noetherianOperators},
+            {TO numericalNoetherianOperators}
+        }@
+
+        See the respective documentation nodes for details. If the option {\tt Sampler} is unset,
+        the default sampler will use @TO Bertini@.
+SeeAlso
+    "Strategy => \"Hybrid\""
+    numericalNoetherianOperators
+///
 
 -- doc ///
 -- Key
