@@ -1675,13 +1675,19 @@ doc ///
 Key
     zeroDimensionalDual
     (zeroDimensionalDual,Point,Ideal)
+    (zeroDimensionalDual, Point, Matrix)
+    (zeroDimensionalDual, Matrix, Ideal)
+    (zeroDimensionalDual, Matrix, Matrix)
+    [zeroDimensionalDual, Tolerance]
 Headline
     dual space of a zero-dimensional polynomial ideal
 Usage
     S = zeroDimensionalDual(p, I)
 Inputs
     p:Point
+        or a row @TO Matrix@
     I:Ideal
+        or a row @TO Matrix@ of generators
 Outputs
     S:DualSpace
 Description
@@ -1703,10 +1709,11 @@ Description
         p = point matrix{{1.4142136_CC,2_CC}};
         D = zeroDimensionalDual(p, J)
         dim D
-    Text
-        See also @TO truncatedDual@.
+
 Caveat
     The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
+SeeAlso
+    truncatedDual
 ///
 
 TEST ///
@@ -2778,10 +2785,6 @@ Description
         In the output of the algorithm we always have that $m$ (the number of Noetherian operators) is equal to the 
         multiplicity of $Q$ over the prime ideal $P$.
 
-        We now provide a couple of examples where we compute Noetherian operators.
-        The last example deals with a rather non-trivial primary ideal to show the capabilities
-        of this method.
-
     Example
         R=QQ[x_1,x_2,x_3,x_4]
         Q = ideal(x_1^2,x_1*x_2,x_1*x_3,x_1*x_4-x_3^2+x_1,x_3^2*x_4-x_2^2,x_3^2*x_4-x_3^2-x_2*x_3+2*x_1)
@@ -2792,6 +2795,8 @@ Description
 doc ///
 Key
     "Strategy => \"MacaulayMatrix\""
+    BM
+    KernelStrategy
 Headline
     strategy for computing Noetherian operators
 Description
@@ -2818,6 +2823,13 @@ Description
         {\tt BM => ...}: takes a boolean value. If {\tt true}, uses the Mourrain algorithm to compute the kernel of the MacaulayMatrix. If {\tt false}, uses the method outlined in Algorithm 1 in @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@.
         If unset, will choose automatically. See: B. Mourrain. Isolated points, duality and residues. @EM "J. Pure Appl. Algebra"@, 117/118:469-493, 1997. 
            Algorithms for algebra (Eindhoven, 1996).
+
+        {\tt DependentSet => ...}: takes a list of variables. For details, see @TO DependentSet@.
+
+SeeAlso
+    "Strategy => \"Hybrid\""
+    "Strategy => \"PunctualHilbert\""
+    DependentSet
 ///
 
 doc ///
@@ -2848,8 +2860,13 @@ Description
         noetherianOperators(I, Strategy => "Hybrid", Sampler => I -> p)
 
     Text
-        {\tt Tolerance => t}, where {\tt t} is a positive real number. This specifies the numerical precision when computing the
+        {\tt Tolerance =>} a positive real number. This specifies the numerical precision when computing the
         specialized Noetherian operators. The default value is {\tt 1e-6}.
+
+        {\tt DependentSet =>} a list of variables. For details, see @TO DependentSet@.
+SeeAlso
+    "Strategy => \"PunctualHilbert\""
+    "Strategy => \"MacaulayMatrix\""
 ///
 
 doc ///
@@ -2861,13 +2878,20 @@ Description
     Text
         This strategy implements Algorithm 3.8 in @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
 
+        The following example deals with a rather non-trivial primary ideal to show the capabilities
+        of this strategy.
+
     Example
         R = QQ[x_1,x_2,x_3,x_4]
-        k=3
+        k = 3
         J = ideal((x_1^2-x_2*x_3)^k,(x_1*x_2-x_3*x_4)^k,(x_2^2-x_1*x_4)^k)
         Q = saturate(J,ideal(x_1*x_2*x_3*x_4))
         isPrimary Q
         elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
+SeeAlso
+    mapToPunctualHilbertScheme
+    "Strategy => \"MacaulayMatrix\""
+    "Strategy => \"Hybrid\""
 ///
 
 
@@ -3160,6 +3184,49 @@ Description
         E = new InterpolatedDiffOp from {x => (x, x^2 + y^2)}
         evaluate(E, point{{1,2}})
 ///
+
+doc ///
+Key
+    DependentSet
+Headline
+    option for computing Noetherian operators
+Description
+    Text
+        Let $Q \subseteq R := \mathbb{K}[x_1,\dots,x_n]$ be an $d$-dimensional primary ideal.
+        Then there exists a set of $d$ variables in $R$ which is algebraically independent in $R/I$.
+        We refer to these as the independent variables, and the remaining variables are the dependent variables.
+        The function @TO independentSets@ can compute sets of independent variables for symbolic ideals.
+
+        The functions computing Noetherian operators, namely
+
+        @UL { TO noetherianOperators, TO specializedNoetherianOperators, TO numericalNoetherianOperators} @
+
+        pass to a polynomial ring in the dependent variables, with the coefficient field being the fraction field
+        of a polynomial ring in the independent varaibles. Because of this, computing Noetherian operators requires
+        a knowledge of a dependent set of variables, which can be set using the option {\tt DependentSet}. Note that
+        the $dx$-monomials will only involve dependent variables.
+    Example
+        R = QQ[x,y];
+        I = ideal((x+y)^2);
+        P = radical I;
+        A = noetherianOperators(I, P, DependentSet => {x})
+        B = noetherianOperators(I, P, DependentSet => {y})
+        getIdealFromNoetherianOperators(A, P) == getIdealFromNoetherianOperators(B, P)
+
+    Text
+        The symbolic method @TO noetherianOperators@ will usually be able to figure out a dependent set of variables
+        automatically. On the other hand, numerical computations using @TO specializedNoetherianOperators@ and 
+        @TO numericalNoetherianOperators@ will usually require the user to set the option {\tt DependentSet}.
+
+Caveat
+    The option {\tt DependentSet} is ignored when calling @TO noetherianOperators@ with @TO "Strategy => \"PunctualHilbert\""@.
+    Note that this is the default strategy for @TO (noetherianOperators, Ideal)@.
+
+SeeAlso
+    noetherianOperators
+    specializedNoetherianOperators
+    numericalNoetherianOperators
+
 
 -- doc ///
 -- Key
