@@ -46,6 +46,10 @@ document {
 	      },
          LI { "functionality improved:",
               UL {
+                   LI { "The functions ", TO addHook, " and ", TO runHooks, " have been modified to accept a new syntax,
+		       allow giving names to hooks, and run specific hooks using the option ", TT "Strategy", ".
+		       For more information on ", TO "using hooks", ", see that documentation node." },
+                   LI { "The functions ", TO code, " is modified to also show the code for hooks listed by the function ", TO hooks, "." },
 		   LI {
 		       "$\\LaTeX$ typesetting for the web documentation is now rendered using ",
 		       HREF{"https://katex.org/","$\\KaTeX$"}, ", a JavaScript math typesetting library for browsers.
@@ -70,6 +74,17 @@ document {
 		       Internally, the new implementation incorporates the ", TO2{"Boost", "Boost.Regex"}, " library." }
                    }
               },
+	 LI { "new packages:",
+	      UL {
+		   LI {
+		       "The ", TO "Colon :: Colon", " package has been added for computations involving quotients,
+		       saturations, and annihilators of modules and ideals. The package is preloaded, so the routines
+		       from this package will be used automatically. In particular, the new implementation supports
+		       caching of computations as well as new strategies, which can be listed using the ", TO hooks,
+		       " function."
+		       }
+		   }
+	       },
 	 LI { "improved packages:",
 	      UL {
 		   LI {
@@ -78,6 +93,18 @@ document {
 		       TT "Node", ", ", TT "Synopsis", ", ", TT "Tree", ", ", TT "Acknowledgement", ", ", TT "Contributors", ", ",
 		       TT "References", ", and ", TT "SourceCode", ". Moreover, two new functions, ", TO "SimpleDoc :: arXiv",
 		       " and ", TO "SimpleDoc :: stacksProject", " were added to help with referencing external documents."
+		       },
+		   LI {
+		       "The ", TO "PrimaryDecomposition :: PrimaryDecomposition", " packages has been improved to support
+		       computation of associated primes and primary decomposition of modules.
+		       In addition, partial computations in this package are now cached."
+		       },
+		   LI {
+		       "The ", TO "MinimalPrimes :: MinimalPrimes", " packages has been improved and the ", TO "MinimalPrimes :: minimalPrimes",
+		       " and ", TO "MinimalPrimes :: isPrime", " routines from that package are now used by default, deprecating the ",
+		       TT "installMinprimes", " routine. A new routine ", TO "MinimalPrimes :: radicalContainment", " has been added, and
+		       the function ", TO "MinimalPrimes :: radical", " is moved to this package.
+		       In addition, partial computations in this package are now cached."
 		       }
 		   }
 	       },
@@ -111,6 +138,7 @@ document {
 	      },
 	 LI { "functionality removed",
 	       UL {
+		    LI { "The function ", TT "removeHook", " has been removed." },
 		    LI { "The ", TT "ForestNode", " and ", TT "TreeNode", " types have been made internal." },
 		    }
 	      }
