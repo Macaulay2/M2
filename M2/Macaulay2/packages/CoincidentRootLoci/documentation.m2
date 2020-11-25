@@ -7,7 +7,7 @@ PARA{"This package requires the following packages: ",TO Cremona," (version 4.3 
 document { 
 Key => {CoincidentRootLocus}, 
 Headline => "the class of all coincident root loci",
-PARA{"The coincident root locus associated with a partition ",TEX///$\lambda=(\lambda_1,\ldots,\lambda_d)$///," of a number ",TEX///$n$///," is the closed subvariety of the projective space ",TEX///\mathbb{P}^n = \mathbb{P}(Sym^n(K^2))///," given by binary forms that factor as ",TEX///${L_1}^{\lambda_1}\cdots{L_d}^{\lambda_d}$///, " for some linear forms ",TEX///$L_1,\ldots,L_d$///," over ",TEX///$\bar{K}$///,". For instance, if ",TEX///$\lambda=(2,1,\ldots,1)$///,", then we have the classical discriminant hypersurface; in the opposite case, if ",TEX///$\lambda=(n)$///," we have the rational normal curve of degree ",TEX///$n$///,"."}, 
+PARA{"The coincident root locus associated with a partition ",TEX///$\lambda=(\lambda_1,\ldots,\lambda_d)$///," of a number ",TEX///$n$///," is the closed subvariety of the projective space ",TEX///$\mathbb{P}^n = \mathbb{P}(Sym^n(K^2))$///," given by binary forms that factor as ",TEX///${L_1}^{\lambda_1}\cdots{L_d}^{\lambda_d}$///, " for some linear forms ",TEX///$L_1,\ldots,L_d$///," over ",TEX///$\bar{K}$///,". For instance, if ",TEX///$\lambda=(2,1,\ldots,1)$///,", then we have the classical discriminant hypersurface; in the opposite case, if ",TEX///$\lambda=(n)$///," we have the rational normal curve of degree ",TEX///$n$///,"."}, 
 SeeAlso => {coincidentRootLocus}}
 document { 
 Key => {coincidentRootLocus,(coincidentRootLocus,VisibleList,Ring),(coincidentRootLocus,List)},
@@ -15,7 +15,7 @@ Headline => "makes a coincident root locus",
 Usage => "coincidentRootLocus(l,K) 
 coincidentRootLocus l", 
 Inputs => {"l" => VisibleList => {"a partition of a number ",TEX///$n$///,", i.e., a list of ",TEX///$d$///," positive integers ",TEX///$l_1,\ldots,l_d$///," satisfying ",TEX///${\sum}_{i} l_i = n$///}, "K" => Ring => {"the coefficient ring (optional with default value ",TO QQ,")"}}, 
-Outputs => {CoincidentRootLocus => {"the coincident root locus associated with the partition ",TEX///$l$///," over ",TEX///$K$///,", i.e., the subvariety of the projective ",TEX///$n$///,"-space ",TEX///\mathbb{P}(Sym^n(K^2))///," of all binary forms whose linear factors are distribuited according to ",TEX///$l$///}}, 
+Outputs => {CoincidentRootLocus => {"the coincident root locus associated with the partition ",TEX///$l$///," over ",TEX///$K$///,", i.e., the subvariety of the projective ",TEX///$n$///,"-space ",TEX///$\mathbb{P}(Sym^n(K^2))$///," of all binary forms whose linear factors are distribuited according to ",TEX///$l$///}}, 
 EXAMPLE {"time X = coincidentRootLocus {6,4,3,3,2}","time describe X","time describe dual X"}}
 undocumented {(coincidentRootLocus,Thing)}
 document { 
