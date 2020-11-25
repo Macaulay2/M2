@@ -15,7 +15,7 @@ doc ///
      studying toric subvarieties when compared to minimal graded free resolutions.
 
      Introduced by Berkesch, Erman, and Smith in {\em Virtual resolutions for a product of projective spaces}
-     (see @{HREF("http://arxiv.org/abs/1703.07631","arXiv:1703.07631")}@) if $X$ is a smooth toric variety, $S$ is the Cox ring of $X$
+     (see [BES20, @arXiv "1703.07631"@]) if $X$ is a smooth toric variety, $S$ is the Cox ring of $X$
      graded by the Picard group of $X$, and $B\subset S$ is the irrelevant ideal of $X$, then
      a virtual resolution of a graded $S$-module $M$ is a complex of graded free $S$-modules, which
      sheafifies to a resolution of the associated sheaf of $M$.
@@ -42,7 +42,7 @@ doc ///
      As described in Algorithm 3.4 of Berkesch, Erman, and Smith's
      paper, one may construct a virtual resolution of a module from its graded minimal free resolution and
      an element of the multigraded Castelnuovo-Mumford regularity of the module. (See Maclagan and Smith's paper
-     {\em Multigraded Castelnuovo-Mumford Regularity} (@{HREF("http://arxiv.org/abs/math/0305214","arXiv:math/0305214")}@) for the definition of multigraded regularity.)
+     {\em Multigraded Castelnuovo-Mumford Regularity} (see [MS04, @arXiv "math/0305214"@]) for the definition of multigraded regularity.)
      Building on the TateOnProducts package, this package contains a function allowing one
      to compute the minimal elements of the multigraded Castelnuovo-Mumford regularity of a $B$-saturated module.
 
@@ -62,11 +62,14 @@ doc ///
      a number of other tools for constructing and studying virtual resolutions. In particular,
      there are functions to construct virtual resolutions for zero dimensionsal subschemes, to
      check whether a complex is a virtual resolution, and to construct curves in $\mathbb{P}^1\times\mathbb{P}^2$.
-    Text
-       @SUBSECTION "Contributors"@
-    Text
-       The following people have generously contributed code or worked on this package.
-    Text
+  References
+    @UL {
+	{"[BES20]: Berkesch, Erman, and Smith, Virtual resolutions for a product of projective spaces (see ", arXiv "1703.07631", ")."},
+	{"[MS04]: Maclagan and Smith, Multigraded Castelnuovo-Mumford Regularity (see ", arXiv "math/0305214", ")."}
+	}@
+  Contributors
+    The following people have generously contributed code or worked on this package.
+
        @UL {
            {HREF("http://www.math.wisc.edu/~derman/","Daniel Erman")},
            {HREF("https://mast.queensu.ca/~ggsmith/","Gregory G. Smith")},
@@ -121,8 +124,7 @@ doc ///
           vres = virtualOfPair(J,{{3,1}});
           isVirtual(B,vres)
         Text
-          Finally, we can also use the Determinantal strategy, which implements Theorem 1.3 of
-          @{HREF("http://arxiv.org/abs/1904.05994","arXiv:1904.05994")}@.
+          Finally, we can also use the Determinantal strategy, which implements Theorem 1.3 of [Loper, @arXiv "1904.05994"@].
         Example
           isVirtual(B,vres,Strategy=>Determinantal)
 ///
@@ -136,7 +138,7 @@ doc ///
         Text
             If Strategy is set to "Determinantal", isVirtual will check whether the given chain complex
             is a virtual resolution by checking the depth of the saturation of the ideals of maximal rank
-            from the boundary maps. See Theorem 1.3 of @{HREF("http://arxiv.org/abs/1904.05994","arXiv:1904.05994")}@.
+            from the boundary maps. See Theorem 1.3 of [Loper, @arXiv "1904.05994"@].
     SeeAlso
         isVirtual
 ///
@@ -400,9 +402,9 @@ doc ///
         Text
             Given a saturated ideal J of a zero-dimensional subscheme, irrelevant ideal irr, and a tuple A,
             resolveViaFatPoint computes a free resolution of J intersected with A-th power of the irrelevant ideal.
-            See Theorem 4.1 of [BES, @{HREF("http://arxiv.org/abs/1703.07631","arXiv:1703.07631")}@].
+            See Theorem 4.1 of [BES20, @arXiv "1703.07631"@].
 
-            Below we follow example 4.7 of [BES,@{HREF("http://arxiv.org/abs/1703.07631","arXiv:1703.07631")}@] and
+            Below we follow example 4.7 of [BES20,@arXiv "1703.07631"@] and
             compute the virtual resolution of 6 points in $\mathbb{P}^1\times\mathbb{P}^1\times\mathbb{P}^2$.
         Example
             N = {1,1,2}
@@ -450,8 +452,7 @@ doc ///
           Given an ideal I or module M and a list of multidegrees L, this function produces a chain complex by iteratively
           computing syzygies in degrees in L. In particular, if the list L contains only one element which is in the
           multigraded regularity of M plus the dimension vector, the output will be the virtual resolution of a pair as
-          defined in Section 1 of [BES].
-          See Algorithm 3.4 of [BES,@{HREF("http://arxiv.org/abs/1703.07631","arXiv:1703.07631")}@] for further details.
+          defined in Section 1 of [BES20]. See Algorithm 3.4 of [BES20, @arXiv "1703.07631"@] for further details.
 
           If a resolution for the object exists in the cache or when the input is a chain complex C, virtualOfPair uses
           this information by simply removing the summands in degrees not in L. This option is useful when a minimal free
@@ -537,7 +538,7 @@ doc ///
         Text
           Given a module M over a multigraded ring S or a product of toric varieties X, this method finds the
           minimal elements of the multigraded Castelnuovo-Mumford regularity of M as defined in Definition 1.1
-          of [MS04] (see @{HREF("http://arxiv.org/abs/math/0305214","arXiv:math/0305214")}@). If the input is an ideal, multigraded regularity of S^1/I is computed.
+          of [MS04] (see @arXiv "math/0305214"@). If the input is an ideal, multigraded regularity of S^1/I is computed.
 
           This is done by calling the @TO cohomologyHashTable@ method from @TO TateOnProducts@ and checking for the
           multidegrees where Hilbert polynomial and Hilbert function match and where the higher sheaf cohomology
@@ -546,7 +547,7 @@ doc ///
           Note that the module or ideal is assumed to be saturated by the irrelevant ideal of the Cox ring.
 
           As an example, here we compute the minimal elements of the multigraded regularity for Example 1.4
-          of [BES](see @{HREF("http://arxiv.org/abs/1703.07631","arXiv:1703.07631")}@). We consider the example of a hyperelliptic curve of genus 4 in $\mathbb{P}^1\times\mathbb{P}^2$.
+          of [BES20] (see @arXiv "1703.07631"@). We consider the example of a hyperelliptic curve of genus 4 in $\mathbb{P}^1\times\mathbb{P}^2$.
         Example
           X = toricProjectiveSpace(1)**toricProjectiveSpace(2)
           S = ring X; B = ideal X;
