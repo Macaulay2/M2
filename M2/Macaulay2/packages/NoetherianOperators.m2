@@ -2281,12 +2281,6 @@ Headline
     strategy for computing Noetherian operators
 ///
 
-doc ///
-Key
-    "Hybrid"
-Headline
-    strategy for computing Noetherian operators
-///
 
 doc ///
 Key
