@@ -1,46 +1,36 @@
 document {
-     Key => {(associatedPrimes,Ideal),(associatedPrimes,MonomialIdeal),(associatedPrimes,Module),(associatedPrimes,Ring)},
-     Headline => "find associated primes",
+     Key => {(associatedPrimes, Ideal),(associatedPrimes, MonomialIdeal)},
+     Headline => "find the associated primes of an ideal",
      Usage => "associatedPrimes I\nass I",
      Inputs => {
-	  "I" => Nothing => {"an ideal or module over a (quotient of a) polynomial ring ", TT "R"}
+	  "I" => Nothing => {ofClass Ideal, " in a (quotient of a) polynomial ring ", TT "R"}
 	  },
      Outputs => {
 	  {"a list of the prime ideals in ", TT "R", " that are associated to ", TT "I"}
 	  },
      TT "ass", " is an abbreviation for ", TT "associatedPrimes", ".",
      PARA{},
-     "Computes the list of associated primes for a module ", TT "M", " using Ext modules: the 
-     codimension ", TT "i", " associated primes of ", TT "M", " and ",
-     TT "Ext^i(M,R)", " are identical, as shown in 
+     "Computes the set of associated primes for the ideal ", TT "I", ".",
+     EXAMPLE {
+	  "R = ZZ/101[a..d];",
+	  "I = intersect(ideal(a^2,b),ideal(a,b,c^5),ideal(b^4,c^4))",
+	  "associatedPrimes I"
+	  },
+     EXAMPLE {
+	  "R = ZZ/7[x,y,z]/(x^2,x*y);",
+	  "I=ideal(0_R);",
+	  "associatedPrimes I"
+	  },
+     PARA{},
+     "In general, the associated primes are found using Ext modules: the 
+     associated primes of codimension ", TT "i", " of ", TT "I", " and ",
+     TT "Ext^i(R^1/I,R)", " are identical, as shown in 
      Eisenbud-Huneke-Vasconcelos, Invent. Math. 110 (1992) 207-235.",
      PARA{},
      TO primaryDecomposition, " also computes the associated primes.  After doing 
-     a primaryDecomposition, calling ", TO associatedPrimes, " requires no new computation,
+     a primaryDecomposition, calling ", TO "associatedPrimes", " requires no new computation,
      and the list of associated primes is in the same order as 
-     the list of primary components returned by ", TO primaryDecomposition, ". Conversely,
-     calling ", TO associatedPrimes, " beforehand will speed up the process of ", 
-     TO primaryDecomposition, ".",
-     EXAMPLE {
-	  "R = QQ[a..d]",
-	  "M = coker(transpose matrix{{1_R,1,1,1}} | diagonalMatrix vars R)",
-	  "associatedPrimes M"
-	  },
-     PARA{},
-     "For an ideal ", TT "I", ", ", TT "associatedPrimes I", " is mathematically equivalent to ",
-     TT "associatedPrimes comodule I", ".",
-     EXAMPLE {
-	  "I = intersect(ideal(a^2,b),ideal(a,b,c^5),ideal(b^4,c^4))",
-	  "associatedPrimes I",
-	  "associatedPrimes comodule I"
-	  },
-     PARA{},
-     "For a ring ", TT "R", ", ", TT "associatedPrimes R", " is equivalent to ",
-     TT "associatedPrimes ideal R", ", the associated primes of the defining ideal of ", TT "R", ".",
-     EXAMPLE {
-	  "R = QQ[x,y,z]/(x^2,x*y)",
-	  "associatedPrimes R"
-	  },
+     the list of primary components returned by ", TO "primaryDecomposition", ".",
      PARA{},
      "If the ideal is ", ofClass MonomialIdeal, ", then a more efficient 
      method is used.  This monomial ideal
@@ -52,21 +42,12 @@ document {
 	  ass I
 	  primaryDecomposition I
      ///,
-     PARA{},
-     "If the option ", TO CodimensionLimit, " is provided (with module input), then only 
-     associated primes of codimension at most this value are found (unless all associated 
-     primes have already been found). Calling ",
-     TT "associatedPrimes M", " with a different value of ", TO CodimensionLimit, 
-     " will remember the primes already found. The default value is -1, meaning all associated 
-     primes are found.",
-     PARA{},
      "The list of associated primes corresponds to the list of primary components of ", TT "I", ": the
      ", TT "i", "-th associated prime is the radical of the ", TT "i", "-th primary component.",
      PARA {
-	 "Original author (for ideals): ", "C. Yackel, http://faculty.mercer.edu/yackel_ca/", 
-	 ". Updated for modules by J. Chen.",
+	 BOLD "Original author: ", "C. Yackel, http://faculty.mercer.edu/yackel_ca/", ".",
 	 },
-     SeeAlso => {(primaryDecomposition,Ideal),(primaryDecomposition, Module),
+     SeeAlso => {(primaryDecomposition,Ideal), 
      	       "radical", "minimalPrimes", "topComponents", 
 	       "removeLowestDimension"}
      }
@@ -157,24 +138,17 @@ document {
      }
 
 document {
-     Key => {isPrimary, (isPrimary, Module, Module), (isPrimary, Ideal), (isPrimary, Ideal, Ideal)},
-     Headline => "determine whether a submodule is primary",
-     Usage => concatenate("isPrimary Q\n", "isPrimary(Q, P)\n", "isPrimary(M, Q)"),
+     Key => {isPrimary, (isPrimary, Ideal), (isPrimary, Ideal, Ideal)},
+     Headline => "determine whether an ideal is primary",
+     Usage => concatenate("isPrimary Q\n", "isPrimary(Q,P)\n"),
      Inputs => {
-	  "Q" => "a submodule or ideal to be checked for being primary",
-	  "P" => Ideal => {"the ", TO "radical", " of ", TT "Q"},
-	  "M" => "the ambient module"
+	  "Q" => Ideal => "an ideal to be checked for being primary",
+	  "P" => Ideal => {"the ", TO "radical", " of ", TT "Q"}
 	  },
      Outputs => {
 	  Boolean => {TO "true", " if ", TT "Q", " is primary, ",
 	       TO "false", " otherwise"}
 	  },
-     "Checks to see if a given submodule ", TT "Q", " of a module ", TT "M", " is primary, 
-     i.e. whether or not ", TT "M/Q", " has exactly one associated prime (which is equivalent 
-     for finitely generated modules over Noetherian rings). If the input is a single ideal, then 
-     the ambient module is taken to be the ring (i.e. the free module of rank 1), and does 
-     not need to be specified.",
-     PARA{},
      EXAMPLE lines ///
      	  Q = ZZ/101[x,y,z]
 	  isPrimary ideal(y^6)
@@ -182,7 +156,7 @@ document {
 	  isPrimary ideal(x^4, y^7)
 	  isPrimary ideal(x*y, y^2)
      ///,
-     SeeAlso => {(primaryDecomposition, Ideal), (primaryDecomposition, Module), associatedPrimes}
+     SeeAlso => {primaryDecomposition}
      }
 
 document {
@@ -339,8 +313,8 @@ document { Key => {(irreducibleDecomposition,MonomialIdeal),irreducibleDecomposi
      ///,
      Outputs => {{ "a list of irreducible monomial ideals whose intersection is ", TT "I" }}}
 
-document {
-     Key => {primaryDecomposition,(primaryDecomposition, Ideal),(primaryDecomposition,MonomialIdeal)},
+document { 
+     Key => {primaryDecomposition, (primaryDecomposition, Ideal),(primaryDecomposition,MonomialIdeal)},
      Headline => "irredundant primary decomposition of an ideal",
      Usage => "primaryDecomposition I",
      Inputs => {
@@ -383,86 +357,7 @@ document {
 	  "associatedPrimes I / print;"
 	  },
      Caveat => {"The ground ring must be a prime field."},
-     SeeAlso => {PrimaryDecomposition,(primaryDecomposition, Module),(associatedPrimes,Ideal), radical, minimalPrimes, topComponents, removeLowestDimension}
-     }
-     
-document {
-     Key => {(primaryDecomposition, Module),(primaryDecomposition, Ring)},
-     Headline => "irredundant primary decomposition of a module",
-     Usage => "primaryDecomposition M",
-     Inputs => {
-	  "M" => Module
-	  },
-     Outputs => {
-	  List => {"of ", TO2(Module,"submodules"), ", a minimal list of primary submodules whose intersection is ", TT "0"}
-	  },
-     "This routine returns an irredundant primary decomposition for the zero submodule of ", 
-     TT "M", ", i.e. a list of submodules ", TT "Q_i", " of ", TT "M", 
-     " such that the intersection of all the ", TT "Q_i", " is ", TT "0", " and ", TT "Ass(M/Q_i) = {p_i}",
-     " for some unique associated prime ", TT "p_i", " of ", TT "M", ", which is minimal (both
-     inclusion-wise and cardinality-wise). The ",
-     TT "i", "-th element of this output is primary to the ", TT "i", "-th element of the output of ",
-     TT "associatedPrimes M", ". The algorithm used is inspired by the
-     Eisenbud-Huneke-Vasconcelos algorithm, modified to work for modules.",
-     PARA{},
-     EXAMPLE {
-	  "R = QQ[x_0..x_3]",
-	  "(I1,I2,I3) = ({1,2,3},{1,3,4},{1,4,5})/monomialCurveIdeal_R",
-          "M = comodule I1 ++ comodule I2 ++ comodule I3",
-	  "associatedPrimes M",
-	  "C = primaryDecomposition M;",
-	  "netList C",
-	  "intersect C == 0 and all(C, isPrimary_M)",
-	  "C/degree"
-	  },
-     PARA{},
-     "Recall that in Macaulay2, a module is commonly represented as a ",
-     TO subquotient, ", which is an ordered pair consisting of (generators, relations) 
-     represented as column matrices. As submodules of ", TT "M", ", each module in the 
-     output list has the same relations as ", TT "M", ", and has generators which are ", 
-     TT "R", "-linear combinations of generators of ", TT "M", ".",
-     PARA{},
-     "To obtain a primary decomposition of a submodule ", TT "N", ", run this function on
-     the quotient ", TT "M/N", ". Note that in general ", TT "/", " does not check
-     whether the second input is actually a submodule of the first, and a non-sensible 
-     result may be returned if this is not the case.",
-     -- EXAMPLE {
-	  -- "N = coker map(M, R^1, transpose matrix{{1_R,1,1}}) -- coker of diagonal map",
-	  -- "primaryDecomposition N",
-	  -- "netList(oo/gens)"
-	  -- },
-     PARA{},
-     "This method generalizes primary decomposition of ideals (more precisely, cyclic modules)
-     as can be seen by calling ", TT "primaryDecomposition comodule I", " for an ideal ",
-     TT "I", ". For convenience, one can also call ", TT "primaryDecomposition R", " for a
-     ring ", TT "R", " (which is most useful when ", TT "R", " is a ", TO "QuotientRing",
-     "). The corresponding list of associated prime ideals is cached in ", 
-     TT ///M.cache#"AssociatedPrimes"///, ", and can be obtained with ", TT "associatedPrimes M", 
-     ". When computing primary decompositions of ideals with this method, remember to add 
-     back the original ideal, to obtain the corresponding primary ideals, as in the following example.",
-     EXAMPLE {
-	  "I = intersect((ideal(x_0..x_3))^5, (ideal(x_0..x_2))^4, (ideal(x_0..x_1))^3)",
-	  "S = R/I",
-	  "associatedPrimes S",
-	  "comps = primaryDecomposition S",
-	  "apply(comps, Q -> ideal mingens(I + ideal gens Q))",
-	  "I == intersect oo"
-	  },
-     PARA{},
-     "The results of the computation are stored in ", TT ///M.cache#"primaryComponents"///, 
-     ", which is a ", TO "HashTable", " whose keys are associated primes and values are      
-     the corresponding primary components. The computation may be interrupted at any point,
-     and can be resumed later without recomputing already-known primary components. To
-     display detailed information throughout the computation, set the global variable ",
-     TO "debugLevel", " to a value greater than 0, e.g. ", TT "debugLevel = 1", ".",
-     Caveat => {"Note that although isolated components (i.e. those corresponding to minimal
-     primes) are uniquely determined by the module, embedded components are never unique,
-     and thus specifying generators of an embedded component requires non-canonical choices.
-     For speed purposes, this algorithm searches for embedded components obtained by adding 
-     a bracket power of the embedded prime, with exponent determined by the degrees of
-     generators of the embedded prime and ", TT "ann M", ". In particular, the generators 
-     of an embedded component may not be of minimal possible degree."},
-     SeeAlso => {(primaryDecomposition,Ideal),(associatedPrimes,Module),isPrimary,topComponents}
+     SeeAlso => {PrimaryDecomposition,(associatedPrimes,Ideal), radical, minimalPrimes, topComponents, removeLowestDimension}
      }
 
 -- Local Variables:

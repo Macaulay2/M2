@@ -1,17 +1,12 @@
 -- -*- coding: utf-8 -*-
 newPackage(
      "PrimaryDecomposition",
-     Headline => "functions for primary decomposition",
-     Version => "2.0",
-     Date => "July 4, 2020",
+     Version => "1.0",
+     Date => "July 1, 2008",
      AuxiliaryFiles => true,
+     Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},
      Keywords => {"Commutative Algebra"},
-     Authors => {
-	{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"},
-	{Name => "Carolyn Yackel", Email => "cyackel@math.indiana.edu"},
-	{Name => "Justin Chen", Email => "justin.chen@math.gatech.edu"}
-     },
-     PackageExports => {}
+     Headline => "functions for primary decomposition"
      )
 
 export {
@@ -142,7 +137,6 @@ isPrimary(Ideal,Ideal) := (Q,P) -> (
      if isPrime P then Q == top Q
      else false
      )
-isPrimary (Module, Module) := (M, Q) -> #associatedPrimes(M/Q) == 1
 
 minimalPrimes MonomialIdeal := decompose MonomialIdeal := (cacheValue symbol minimalPrimes) (
      (I) -> (
@@ -206,8 +200,8 @@ document {
      Key => PrimaryDecomposition,
      Headline => "functions for primary decomposition",
      "This package provides computations with components
-     of ideals and modules, including minimal and associated primes, radicals, and
-     primary decompositions.",
+     of ideals, including minimal and associated primes, radicals, and
+     primary decompositions of ideals.",
      Subnodes => {
 	  TO (associatedPrimes, Ideal),
 	  TO (localize,Ideal,Ideal),
@@ -216,10 +210,9 @@ document {
 	  TO [primaryComponent,Strategy],
 	  TO [primaryComponent,Increment],
 	  TO (primaryDecomposition, Ideal),
-	  TO (primaryDecomposition, Module),
 	  TO [primaryDecomposition,Strategy]
 	  },
-     SeeAlso => { (primaryDecomposition, Ideal), (primaryDecomposition, Module) }
+     SeeAlso => { (primaryDecomposition, Ideal) }
      }
 
 load "./PrimaryDecomposition/doc.m2"
