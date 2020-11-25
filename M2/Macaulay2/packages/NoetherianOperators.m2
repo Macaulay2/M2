@@ -3383,11 +3383,13 @@ TEST /// -- rationalInterpolation test
 R = CC[x,y]
 num = (x^2 - 2*y*x) 
 den = (y*x + y^2)
-pts = {matrix {{.922548+.569867*ii, .668231+.918485*ii}}, matrix {{.413667+.0631326*ii,.210225+.688382*ii}}, matrix {{.129853+.649565*ii, .526889+.519065*ii}}, matrix{{.460057+.733113*ii, .642288+.571532*ii}}, matrix {{.268148+.34963*ii, .47612+.77208*ii}},matrix {{.237741+.937067*ii, .902133+.97911*ii}}, matrix {{.58456+.563844*ii,.877568+.129457*ii}}, matrix {{.323687+.586776*ii, .161867+.591524*ii}}, matrix{{.91034+.171779*ii, .913587+.517224*ii}}, matrix {{.963887+.704832*ii,.642633+.397505*ii}}, matrix {{.196713+.843673*ii, .0568273+.621807*ii}}, matrix{{.263865+.9356*ii, .3981+.858609*ii}}}
+pts = {matrix {{.922548+.569867*ii, .668231+.918485*ii}}, matrix {{.413667+.0631326*ii,.210225+.688382*ii}}, matrix {{.129853+.649565*ii, .526889+.519065*ii}}, matrix{{.460057+.733113*ii, .642288+.571532*ii}}, matrix {{.268148+.34963*ii, .47612+.77208*ii}},matrix {{.237741+.937067*ii, .902133+.97911*ii}}, matrix {{.58456+.563844*ii,.877568+.129457*ii}}, matrix {{.323687+.586776*ii, .161867+.591524*ii}}, matrix{{.91034+.171779*ii, .913587+.517224*ii}}, matrix {{.963887+.704832*ii,.642633+.397505*ii}}, matrix {{.196713+.843673*ii, .0568273+.621807*ii}}, matrix{{.263865+.9356*ii, .3981+.858609*ii}}, matrix {{.0425473+.770241*ii, .706036+.370498*ii}}}
 vals = pts / (p -> (evaluate(matrix num, p))_(0,0) / (evaluate(matrix den, p))_(0,0))
 numBasis = sub(basis(0,2,R), R)
 denBasis = sub(basis(0,2,R), R)
-rationalInterpolation(pts, vals, numBasis, denBasis, Tolerance => 0.0001)
+(n, d) = rationalInterpolation(pts, vals, numBasis, denBasis, Tolerance => 0.0001)
+assert(norm(n - num) < 1e-6)
+assert(norm(d - den) < 1e-6)
 ///
 
 
