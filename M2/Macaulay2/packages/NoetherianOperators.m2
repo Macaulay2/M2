@@ -1573,11 +1573,8 @@ doc ///
      	  numerically compute local dual space and Hilbert functions
      Description
      	  Text
-	       The @EM "NoetherianOperators"@ package includes algorithms for computing local dual 
-	       spaces of polynomial ideals, and related local combinatorial data about its scheme structure.  These 
-	       techniques are numerically stable, and can be used with floating point arithmetic over the complex numbers.  
-	       They provide a viable alternative in this setting to purely symbolic methods such as standard bases.  
-	       In particular, these methods can be used to compute initial ideals, local Hilbert functions and Hilbert regularity.
+	       The @EM "NoetherianOperators"@ package includes algorithms for computing Noetherian operators and local dual 
+	       spaces of polynomial ideals, and related local combinatorial data about its scheme structure.
     	    	
 	       The problem of characterizing ideal membership with differential conditions was first addressed by Gr\"obner ("Uber eine neue idealtheoretische Grundlegung der algebraischen Geometrie", Math. Ann. 115 (1938), no. 1, 333–358).
 	       Despite this early algebraic interest by Gr\"obner, a complete description of primary ideals in terms of differential operators was first obtained by analysts in the Fundamental Principle of Ehrenpreis and Palamodov.
@@ -1585,17 +1582,24 @@ doc ///
 	       In this package, we implement several algorithms for the computation of a set of Noetherian operators describing a primary ideal. 
     	    	
 	       For the task of computing Noetherian operators, here we implement the algorithms developed in the papers @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@ and  @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
+           These include both symbolic and numerical algorithms, and a hybrid algorithm, where numerical data is used to
+           speed up the symbolic algorithm.
+           
            To compute the initial ideal and Hilbert regularity of positive dimensional
            ideals we use the algorithm of R. Krone ("Numerical algorithms for dual bases of positive-dimensional ideals." Journal of
-               Algebra and Its Applications, 12(06):1350018, 2013.).
+           Algebra and Its Applications, 12(06):1350018, 2013.). 
+           These techniques are numerically stable, and can be used with floating point arithmetic over the complex numbers.  
+           They provide a viable alternative in this setting to purely symbolic methods such as standard bases.  
+           In particular, these methods can be used to compute initial ideals, local Hilbert functions and Hilbert regularity.
     	   
-           Methods for computing and manipulating Noetherian operators:
+           Methods and types for computing and manipulating Noetherian operators:
 
            @UL {
                {TO noetherianOperators},
                {TO specializedNoetherianOperators},
                {TO numericalNoetherianOperators},
                {TO getIdealFromNoetherianOperators},
+               {TO DiffOp},
                {TO coordinateChangeOps},
                {TO noethOpsFromComponents}
            }@
@@ -1630,7 +1634,6 @@ Key
     (truncatedDual, Point, Matrix, ZZ)
     (truncatedDual, Matrix, Ideal, ZZ)
     (truncatedDual, Matrix, Matrix, ZZ)
-    [truncatedDual, Tolerance]
 Headline
     truncated dual space of a polynomial ideal
 Usage
@@ -1688,7 +1691,6 @@ Key
     (zeroDimensionalDual, Point, Matrix)
     (zeroDimensionalDual, Matrix, Ideal)
     (zeroDimensionalDual, Matrix, Matrix)
-    [zeroDimensionalDual, Tolerance]
 Headline
     dual space of a zero-dimensional polynomial ideal
 Usage
@@ -2113,6 +2115,11 @@ doc ///
 	  [eliminatingDual,Tolerance]
 	  [gCorners,Tolerance]
 	  [reduceSpace,Tolerance]
+      [rationalInterpolation, Tolerance]
+      [truncatedDual, Tolerance]
+      [zeroDimensionalDual, Tolerance]
+      [numericalImage,Tolerance]
+      [numericalKernel,Tolerance]
      Headline
           optional argument for numerical tolernace
      Description
@@ -2132,7 +2139,6 @@ doc ///
           numericalImage
 	  (numericalImage,Matrix,Number)
 	  (numericalImage,Matrix)
-	  [numericalImage,Tolerance]
      Headline
           Image of a matrix
      Usage
@@ -2166,7 +2172,6 @@ doc ///
      Key
           numericalKernel
 	  (numericalKernel,Matrix)
-	  [numericalKernel,Tolerance]
      Headline
           Kernel of a matrix
      Usage
@@ -2266,7 +2271,7 @@ Headline
     differential operator
 Description
     Text
-        A differential operator of the ring $R = \mathbb{Q}[x_1,\dots,x_n]$ can be thought of as a polynomial
+        A differential operator of the ring $R = \mathbb{K}[x_1,\dots,x_n]$ can be thought of as a polynomial
         with coefficients in $R$, and monomials in variables $dx_1, \dots, dx_n$, where $dx_i$ corresponds to the
         partial derivative with respect to $x_i$. These operators form an $R$-vector space, and act naturally on elements of $R$.
 
@@ -2274,6 +2279,7 @@ Description
         R = QQ[x,y]
         D = diffOp {x => x+y, x*y^2 => 3+x}
         (x^2+3) * D
+        D + D
         D(x^5*y^2)
     Text
         Instances of {\tt DiffOp} are @TO2 {HashTable, "hash tables"}@, where keys are differential monomials
@@ -2284,6 +2290,9 @@ Description
         needsPackage "Dmodules"
         S = makeWA R
         E = diffOp(y*dx - x*dy^2)
+SeeAlso
+    (diffOp, HashTable)
+    (diffOp, RingElement)
 ///
 
 doc ///
@@ -2328,6 +2337,7 @@ Caveat
     The constructors @TO (NewFromMethod, DiffOp, HashTable)@ and @TO (NewFromMethod, DiffOp, List)@ are for internal use only. Use @TO (diffOp, HashTable)@ and @TO (diffOp, List)@ instead.
 
 SeeAlso
+    DiffOp
     (diffOp, RingElement)
 ///
 
@@ -2370,6 +2380,9 @@ Description
         ring E === R
         F = diffOp(dy^2)
         ring E === ring F
+SeeAlso
+    DiffOp
+    (diffOp, HashTable)
 
 ///
 
@@ -3084,7 +3097,6 @@ Key
     rationalInterpolation
     (rationalInterpolation, List, List, Matrix, Matrix)
     (rationalInterpolation, List, List, Matrix)
-    [rationalInterpolation, Tolerance]
 Headline
     numerically interpolate rational functions
 Usage
