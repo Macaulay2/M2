@@ -1502,7 +1502,7 @@ sameinterval(e:Expr):Expr := (
          else WrongArg(1,"a pair of integral, rational, real numbers or intervals"));
 setupfun("sameinterval",sameinterval);
                                                      
-intersects(e:Expr):Expr := (
+Intersects(e:Expr):Expr := (
      when e is s:Sequence do (
 	    if length(s) > 3 then WrongNumArgs(1,3) else
 	    if length(s) == 2 then (
@@ -1535,9 +1535,9 @@ intersects(e:Expr):Expr := (
                 else WrongArg(1,"a pair of integral, rational, real numbers or intervals")) else
             WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
          else WrongArg(1,"a pair of integral, rational, real numbers or intervals"));
-setupfun("intersects",intersects);
+setupfun("Intersects",Intersects);
                                                      
-intersection(e:Expr):Expr := (
+Intersect(e:Expr):Expr := (
     when e
         is s:Sequence do (
 	    if length(s) > 3 then WrongNumArgs(1,3) else
@@ -1639,7 +1639,7 @@ intersection(e:Expr):Expr := (
             else WrongArg("not implemented yet"))
 	    else WrongArg(1,"a pair or triple  of integral, rational, or real numbers"))
    	 else WrongArg("not implemented yet"));
-setupfun("intersection",intersection);
+setupfun("Intersect",Intersect);
 
 toCC(e:Expr):Expr := (
      when e
