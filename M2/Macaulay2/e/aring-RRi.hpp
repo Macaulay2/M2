@@ -18,23 +18,15 @@ namespace M2 {
 */
 class ARingRRi : public RingInterface
 {
-  // Higher precision real numbers
+  // Higher precision real intervals
 
  public:
   static const RingID ringID = ring_RRi;
 
-  typedef __mpfr_struct elem;
+  typedef __mpfi_struct elem;
   typedef elem ElementType;
 
-  ARingRRi(unsigned long precision) : mPrecision(precision) {
-    // !!!this is just SOME code to test that mpfi library links fine 
-       mpfi_t x, y;
-       mpfi_init (x);			/* use default precision */
-       mpfi_init2 (y, 256);		/* precision _exactly_ 256 bits */
-       /* Unless the program is about to exit, do ... */
-       mpfi_clear (x);
-       mpfi_clear (y);
-  }
+  ARingRRi(unsigned long precision) : mPrecision(precision) {}
   // ring informational
   size_t characteristic() const { return 0; }
   unsigned long get_precision() const { return mPrecision; }
@@ -42,7 +34,7 @@ class ARingRRi : public RingInterface
 
   unsigned int computeHashValue(const elem &a) const
   {
-    double d = mpfr_get_d(&a, GMP_RNDN);
+    double d = 12347. * mpfr_get_d(&(a.left), GMP_RNDN) + 865800. * mpfr_get_d(&(a.right), GMP_RNDN);
     return static_cast<unsigned int>(d);
   }
 
@@ -51,15 +43,15 @@ class ARingRRi : public RingInterface
   /////////////////////////////////
 
   bool is_unit(const ElementType &f) const { return !is_zero(f); }
-  bool is_zero(const ElementType &f) const { return mpfr_cmp_si(&f, 0) == 0; }
+  bool is_zero(const ElementType &f) const { return mpfr_cmp_si(&(f.left), 0) == 0 and mpfr_cmp_si(&(f.right), 0) == 0; }
   bool is_equal(const ElementType &f, const ElementType &g) const
   {
-    return mpfr_cmp(&f, &g) == 0;
+    return mpfr_cmp(&(f.left), &(f.right)) == 0 and mpfr_cmp(&(f.left), &(g.left)) == 0 and mpfr_cmp(&(g.left), &(g.right)) == 0;
   }
 
   int compare_elems(const ElementType &f, const ElementType &g) const
   {
-    int cmp = mpfr_cmp(&f, &g);
+    int cmp = mpfi_cmp(&f, &g);
     if (cmp < 0) return -1;
     if (cmp > 0) return 1;
     return 0;
@@ -74,105 +66,112 @@ class ARingRRi : public RingInterface
   // Do not take the same element and store it as two different ring_elem's!!
   void to_ring_elem(ring_elem &result, const ElementType &a) const
   {
-    mpfr_ptr res = getmemstructtype(mpfr_ptr);
+      throw 20;
+    /*mpfr_ptr res = getmemstructtype(mpfr_ptr);
     mpfr_init2(res, mPrecision);
     mpfr_set(res, &a, GMP_RNDN);
-    result = ring_elem(moveTo_gmpRR(res));
+    result = ring_elem(moveTo_gmpRR(res));*/
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-    mpfr_set(&result, a.get_mpfr(), GMP_RNDN);
+      throw 20;
+    //mpfr_set(&result, a.get_mpfr(), GMP_RNDN);
   }
 
   // 'init', 'init_set' functions
 
-  void init(ElementType &result) const { mpfr_init2(&result, mPrecision); }
+  void init(ElementType &result) const { mpfi_init2(&result, mPrecision); }
   void init_set(ElementType &result, const ElementType &a) const
   {
     init(result);
-    mpfr_set(&result, &a, GMP_RNDN);
+    mpfi_set(&result, &a);
   }
 
   void set(ElementType &result, const ElementType &a) const
   {
-    mpfr_set(&result, &a, GMP_RNDN);
+    mpfi_set(&result, &a);
   }
 
   void set_zero(ElementType &result) const
   {
-    mpfr_set_si(&result, 0, GMP_RNDN);
+    mpfi_set_si(&result, 0);
   }
 
-  void clear(ElementType &result) const { mpfr_clear(&result); }
+  void clear(ElementType &result) const { mpfi_clear(&result); }
   void copy(ElementType &result, const ElementType &a) const
   {
-    mpfr_set(&result, &a, GMP_RNDN);
+    mpfi_set(&result, &a);
   }
 
   void set_from_long(ElementType &result, long a) const
   {
-    mpfr_set_si(&result, a, GMP_RNDN);
+    mpfi_set_si(&result, a);
   }
 
   void set_var(ElementType &result, int v) const
   {
-    mpfr_set_si(&result, 1, GMP_RNDN);
+    mpfi_set_si(&result, 1);
   }
 
   void set_from_mpz(ElementType &result, mpz_srcptr a) const
   {
-    mpfr_set_z(&result, a, GMP_RNDN);
+    mpfi_set_z(&result, a);
   }
 
   bool set_from_mpq(ElementType &result, mpq_srcptr a) const
   {
-    mpfr_set_q(&result, a, GMP_RNDN);
+    mpfi_set_q(&result, a);
     return true;
   }
 
   bool set_from_double(ElementType &result, double a) const
   {
-    mpfr_set_d(&result, a, GMP_RNDN);
+    mpfi_set_d(&result, a);
     return true;
   }
   bool set_from_BigReal(ElementType &result, gmp_RR a) const
   {
-    mpfr_set(&result, a, GMP_RNDN);
+    mpfi_set_fr(&result, a);
     return true;
   }
 
   // arithmetic
   void negate(ElementType &result, const ElementType &a) const
   {
-    mpfr_neg(&result, &a, GMP_RNDN);
+    mpfi_mul_si(&result, &a, -1);
   }
 
   void invert(ElementType &result, const ElementType &a) const
   // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
   {
-    mpfr_si_div(&result, 1, &a, GMP_RNDN);
+    mpfi_si_div(&result, 1, &a);
   }
 
   void add(ElementType &result,
            const ElementType &a,
            const ElementType &b) const
   {
-    mpfr_add(&result, &a, &b, GMP_RNDN);
+    mpfi_add(&result, &a, &b);
   }
 
-  void addMultipleTo(ElementType &result,
+  
+   void addMultipleTo(ElementType &result,
                      const ElementType &a,
                      const ElementType &b) const
   {
-    mpfr_fma(&result, &a, &b, &result, GMP_RNDN);
+      ElementType ab;
+      init(ab);
+      mult(ab,a,b);
+      add(result,result,ab);
   }
+
 
   void subtract(ElementType &result,
                 const ElementType &a,
                 const ElementType &b) const
   {
-    mpfr_sub(&result, &a, &b, GMP_RNDN);
+    mpfi_sub(&result, &a, &b);
   }
 
   void subtract_multiple(ElementType &result,
@@ -191,27 +190,49 @@ class ARingRRi : public RingInterface
             const ElementType &a,
             const ElementType &b) const
   {
-    mpfr_mul(&result, &a, &b, GMP_RNDN);
+    mpfi_mul(&result, &a, &b);
   }
 
   void divide(ElementType &result,
               const ElementType &a,
               const ElementType &b) const
   {
-    mpfr_div(&result, &a, &b, GMP_RNDN);
+    mpfi_div(&result, &a, &b);
   }
 
   void power(ElementType &result, const ElementType &a, int n) const
   {
-    mpfr_pow_si(&result, &a, n, GMP_RNDN);
+    if (n >= 2)
+      {
+          if (n%2 == 0)
+          {
+              ElementType b;
+              init(b);
+              power(b,a,n/2);
+              mult(result,b,b);
+          }
+          else
+          {
+              ElementType b;
+              init(b);
+              power(b,a,n-1);
+              mult(result,result,b);
+          }
+      }
+    else if (n == 0)
+      mpfi_set_si(&result,0);
+    else if (n<0)
+      throw 20;
   }
 
-  void power_mpz(ElementType &result, const ElementType &a, mpz_srcptr n) const
+  /* Not entirely sure how to deal with this one. */
+   void power_mpz(ElementType &result, const ElementType &a, mpz_srcptr n) const
   {
-    mpfr_pow_z(&result, &a, n, GMP_RNDN);
+      throw 20;
+    //mpfr_pow_z(&result, &a, n, GMP_RNDN);
   }
 
-  void swap(ElementType &a, ElementType &b) const { mpfr_swap(&a, &b); }
+  void swap(ElementType &a, ElementType &b) const { mpfi_swap(&a, &b); }
   void elem_text_out(buffer &o,
                      const ElementType &a,
                      bool p_one,
@@ -235,52 +256,57 @@ class ARingRRi : public RingInterface
       }
   }
 
+    /* rewrite this (in rand.cpp or just copy over?) */
   void random(ElementType &result) const  // redo?
   {
-    randomMpfr(&result);
+      throw 20;
   }
 
+    /* Needs to be redone. */
   void eval(const RingMap *map,
             ElementType &f,
             int first_var,
             ring_elem &result) const
   {
-    if (!map->get_ring()->from_BigReal(&f, result))
+      throw 20;
+   /* if (!map->get_ring()->from_BigReal(&f, result))
       {
         result = map->get_ring()->from_long(0);
         ERROR("cannot coerce RRi value to ring type");
-      }
+      }*/
   }
 
+/* Not ready */
   void zeroize_tiny(gmp_RR epsilon, ElementType &a) const
   {
-    if (mpfr_cmpabs(&a, epsilon) < 0) set_zero(a);
+      throw 20;
+    //if (mpfr_cmpabs(&a, epsilon) < 0) set_zero(a);
   }
+    /* Not ready */
   void increase_norm(gmp_RRmutable norm, const ElementType &a) const
   {
-    if (mpfr_cmpabs(&a, norm) > 0)
+      throw 20;
+   /* if (mpfr_cmpabs(&a, norm) > 0)
       {
         set(*norm, a);
         abs(*norm, *norm);
-      }
+      }*/
+  }
+    
+  void abs(ElementType &result, const ElementType &a) const
+  {
+      mpfi_abs(&result,&a);
   }
 
   void abs_squared(ElementType &result, const ElementType &a) const
   {
-    mult(result, a, a);
-  }
-
-  void abs(ElementType &result, const ElementType &a) const
-  {
-    if (mpfr_cmp_si(&a, 0) < 0)
-      negate(result, a);
-    else
-      set(result, a);
+      abs(result,a);
+      mult(result, result, result);
   }
 
   double coerceToDouble(const ElementType &a) const
   {
-    return mpfr_get_d(&a, GMP_RNDN);
+    return mpfi_get_d(&a);
   }
 
  private:
