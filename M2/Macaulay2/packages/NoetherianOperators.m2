@@ -33,7 +33,7 @@ export {
     "innerProduct",
     "reduceSpace",
     "orthogonalInSubspace",
-    -- "Normalize",
+    "Normalize",
     "Rational",
     "ProduceSB",
     "numericalKernel",
@@ -560,7 +560,7 @@ numericalKernel (Matrix) := Matrix => o -> M -> (
     )
 
 --performs Gaussian reduction on M
-colReduce = method(Options => {Tolerance => null, Reverse => false})
+colReduce = method(Options => {Tolerance => null, Normalize => true, Reverse => false})
 colReduce Matrix := o -> M -> (
     if o.Reverse then M = matrix reverse(entries M);
     tol := getTolerance(ring M,o);
@@ -576,7 +576,7 @@ colReduce Matrix := o -> M -> (
 	    c := M_(i,a);
 	    if abs c <= tol then (for k from j to n-1 do M_(i,k) = 0; continue);
 	    columnSwap(M,a,j);
-	    --if o.Normalize then (columnMult(M,j,1/c); c = 1);
+	    if o.Normalize then (columnMult(M,j,1/c); c = 1);
 	    for k from 0 to n-1 do if k != j then columnAdd(M,k,-M_(i,k)/c,j);
 	    j = j+1;
 	    );
@@ -2203,6 +2203,8 @@ doc ///
           colReduce
 	  (colReduce,Matrix)
 	  [colReduce,Reverse]
+      [colReduce,Normalize]
+      Normalize
      Headline
           Column reduces a matrix
      Usage
