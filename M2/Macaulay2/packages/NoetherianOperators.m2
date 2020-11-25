@@ -2962,7 +2962,11 @@ Caveat
 doc ///
 Key
     numericalNoetherianOperators
+    (numericalNoetherianOperators, Ideal)
     InterpolationDegreeLimit
+    InterpolationTolerance
+    NoetherianDegreeLimit
+    TrustedPoint
 Headline
     Noetherian operators via numerical interpolation
 Usage
@@ -2994,18 +2998,48 @@ Description
 
 
     Text
-        The function does not compute specialized Noetherian operators from scratch for each point.
+        The behavior of the function can be adjusted using options. Currently only the option
+        @TO DependentSet@ is required. The following are supported:
+        
 
+        {\tt TrustedPoint =>} a @TO Point@. The function does not compute specialized Noetherian operators from scratch for each point.
+        Instead, it computes it for a "trusted" point on the variety, and uses the obtained Noetherian operators
+        as a template for the rest of the computation. If {\tt TrustedPoint} is unset, the first point returned by the sampler
+        will be used as the trusted point.
 
-        NoetherianDegreeLimit
-        InterpolationDegreeLimit
-        InterpolationTolerance
-        DependentSet
-        Sampler
-        TrustedPoint
-Caveat
-    By default, the function will keep sampling more and more points until all rational function coefficients are found.
-    If the function doesn't seem to terminate, use the option @TO InterpolationDegreeLimit@ to end the function early.
+        {\tt NoetherianDegreeLimit =>} a non-negative @TO2 {ZZ, "integer"}@. Limits the degrees of the Noetherian operators (with respect to the $dx$ variables).
+            If unset, will compute the full Noetherian operators of the "trusted" point. Can introduce speedups when the maxmial degree of the Noetherian operators
+            is known in advance.
+
+        {\tt Tolerance =>} a positive real number. This specifies the numerical precision when computing the
+        specialized Noetherian operators. The default value is {\tt 1e-6}.
+        
+        {\tt Sampler =>} a function, taking inputs \{tt (I,n)}, where {\tt I} is an @TO2{Ideal, "ideal"}@, and {\tt n} is an integer.
+        The sampler function returns a list of {\tt n} @TO2 {Point, "points"}@ on the component of interest of {\tt I}. If unset, the default sampler
+        uses @TO Bertini@, and assumes that {\tt I} is primary.
+
+        {\tt DependentSet =>} a @TO2 {List, "list"}@ of variables that are algebraically dependent. See @TO DependentSet@ for details.
+        
+        {\tt InterpolationTolerance =>} a positive real number. This specifies the numerical precision for the interpolation routines.
+        The default value is {\tt 1e-6}.
+
+        {\tt InterpolationDegreeLimit =>} a non-negative @TO2 {ZZ, "integer"}@. Limits the degree of the interpolated rational function coefficients.
+        If no rational functions are found within the degree limit, outputs an incomplete differential operator
+    CannedExample
+        i1 : R = CC[x,y,t];
+
+        i2 : I = ideal(x^2, y^2 - x*t);
+
+        o2 : Ideal of R
+
+        i3 : numericalNoetherianOperators(I, DependentSet => {x,y}, InterpolationDegreeLimit => 0)
+        
+                           2   ?     ?   3
+        o3 = {1, 1*dy, 1*dy  + -*dx, -*dy  + 1*dx*dy}
+                               ?     ?
+
+        o3 : List
+
 SeeAlso
     rationalInterpolation
 ///
