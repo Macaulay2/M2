@@ -1577,7 +1577,7 @@ doc ///
 	   spaces of polynomial ideals, and related local combinatorial data about its scheme structure.
     	    	
 	   The problem of characterizing ideal membership with differential conditions was first addressed by 
-	   Groebner ("Uber eine neue idealtheoretische Grundlegung der algebraischen Geometrie", Math. Ann. 115 (1938), no. 1, 333–358).
+	   Gr\"obner ("Uber eine neue idealtheoretische Grundlegung der algebraischen Geometrie", Math. Ann. 115 (1938), no. 1, 333–358).
 	   Despite this early algebraic interest by Gr\"obner, a complete description of primary ideals in terms of differential operators was first obtained by analysts in the Fundamental Principle of Ehrenpreis and Palamodov.
 	   At the core of the Fundamental Principle, one has the notion of Noetherian operators to describe a primary ideal. 
 	   
