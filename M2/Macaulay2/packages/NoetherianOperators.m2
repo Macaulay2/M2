@@ -3455,7 +3455,7 @@ Description
         decomposition $I = Q_1 \cap ... \cap Q_s$, where $Q_i$ is $P_i$-primary. 
         If $N_i$ is a set of Noetherian operators for $Q_i$, then one can construct a 
         set of differential operators $N$ for $I$ which satisfies the Noetherian operator 
-        condition: given $f \in R$, one has $f \in I$ iff $D(f) \in\sqrt{I}$ for all $D in N$.
+        condition: given $f \in R$, one has $f \in I$ iff $D(f) \in\sqrt{I}$ for all $D \in N$.
     Example
         R = QQ[x,y,t]
         I = intersect(ideal((y+t)^2), ideal(x^2, y^2 - t*x))
