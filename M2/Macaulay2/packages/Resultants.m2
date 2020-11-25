@@ -1,4 +1,12 @@
 
+-*
+   Copyright 2020, Giovanni Staglianò.
+
+   You may redistribute this file under the terms of the GNU General Public
+   License as published by the Free Software Foundation, either version 2 of
+   the License, or any later version.
+*-
+
 newPackage(
        "Resultants",
 	Version => "1.2.2", 
@@ -867,7 +875,7 @@ document {
     Headline => "multipolynomial resultant", 
     Usage => "resultant F", 
     Inputs => { "F" => Matrix => {"a row matrix whose entries are ", TEX///$n+1$///," homogeneous polynomials ", TEX///$F_0,\ldots,F_n$///," in ", TEX///$n+1$///," variables (or a ", TO List," to be interpreted as such a matrix)"}}, 
-    Outputs => {{"the resultant of ",TEX///$F_0,\ldots,F_n$///}}, 
+    Outputs => {RingElement => {"the resultant of ",TEX///$F_0,\ldots,F_n$///}}, 
     PARA{"Let ",TEX///$F_0,\ldots,F_n$///," be ",TEX///$n+1$///," homogeneous polynomials in ",TEX///$n+1$///," variables ",TEX///$x_0,\ldots,x_n$///," over a commutative ring ",TEX///$K$///,". The resultant ",TEX///$R(F_0,\ldots,F_n)$///," is a certain polynomial in the coefficients of ",TEX///$F_0,\ldots,F_n$///,"; when ",TEX///$K$///," is an algebraically closed field, ",TEX///$R(F_0,\ldots,F_n)$///," vanishes if and only if ",TEX///$F_0,\ldots,F_n$///," have a common nontrivial root.  For the general theory, see one of the following: ",HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea; ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky."},
     EXAMPLE { 
     "ZZ[t,u][x,y,z]",
@@ -891,7 +899,7 @@ document {
     Headline => "resultant of the partial derivatives", 
     Usage => "discriminant F", 
     Inputs => { "F" => RingElement => {"a homogeneous polynomial"}}, 
-    Outputs => {{"the discriminant of ",TT "F"}}, 
+    Outputs => {RingElement => {"the discriminant of ",TT "F"}}, 
     PARA{"The discriminant of a homogeneous polynomial is defined, up to a scalar factor, as the ",TO resultant," of its partial derivatives. For the general theory, see one of the following: ",HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea; ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky."},
     EXAMPLE { 
     "ZZ[a,b,c][x,y]; F = a*x^2+b*x*y+c*y^2",
@@ -916,7 +924,7 @@ document {
     Headline => "affine resultant", 
     Usage => "affineResultant f", 
     Inputs => { "f" => Matrix => {"a row matrix whose entries are ", TEX///$n+1$///," polynomials ", TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables (or a ", TO List," to be interpreted as such a matrix)"}}, 
-    Outputs => {{"the resultant of the polynomials obtained by homogenizing ",TEX///$f_0,\ldots,f_n$///," with respect to a new variable"}}, 
+    Outputs => {RingElement => {"the resultant of the polynomials obtained by homogenizing ",TEX///$f_0,\ldots,f_n$///," with respect to a new variable"}}, 
     EXAMPLE { 
     "ZZ[t,u][y,z]",
     "f = {3*t*y*z-u*z^2+1, -y+t+3*u-1, u*z^4-t*y^3+t*y*z}",
@@ -929,7 +937,7 @@ document {
     Headline => "affine discriminant", 
     Usage => "affineDiscriminant f", 
     Inputs => { "f" => RingElement => {"a polynomial"}}, 
-    Outputs => {{"the discriminant of the polynomial obtained by homogenizing ",TT "f"," with respect to a new variable"}}, 
+    Outputs => {RingElement => {"the discriminant of the polynomial obtained by homogenizing ",TT "f"," with respect to a new variable"}}, 
     EXAMPLE { 
     "ZZ[a,b,c][x]; f = a*x^2+b*x+c",
     "affineDiscriminant f",
@@ -945,7 +953,7 @@ document {
               genericPolynomials d",
     Inputs => { "d" => List => {TT"n+1"," integers ",TT"d_0,...,d_n"},
                 "K" => Ring => {"optional, with default value ",TO QQ}}, 
-    Outputs => { {TT"n+1"," generic homogeneous polynomials of degrees ",TT "d_0,...,d_n", " in the ring ",TT "K[a_0,a_1,...,b_0,b_1,...][x_0,...,x_n]"}},
+    Outputs => {List => {TT"n+1"," generic homogeneous polynomials of degrees ",TT "d_0,...,d_n", " in the ring ",TT "K[a_0,a_1,...,b_0,b_1,...][x_0,...,x_n]"}},
     PARA{"This is an auxiliary method to build tests and examples. For instance, the two following codes have to produce the same polynomial up to a renaming of variables: 1) ",TT "resultant genericPolynomials((n+1):d,K)"," and 2) ",TT "fromPluckerToStiefel dualize chowForm veronese(n,d,K)","."},
     EXAMPLE {
          "genericPolynomials {1,2,3}",
@@ -978,7 +986,7 @@ document {
     Inputs => { "n" => ZZ,
                 "d" => ZZ,
                 "K" => Ring => {"optional, with default value ",TO QQ}}, 
-    Outputs => { {"representing the ",TEX///$d$///,"-th Veronese embedding of ",TEX///$\mathbb{P}^n$///}},
+    Outputs => {RingMap => {"representing the ",TEX///$d$///,"-th Veronese embedding of ",TEX///$\mathbb{P}^n$///}},
     PARA{"This is an auxiliary method to build tests and examples. For instance, the two following codes have to produce the same polynomial up to a renaming of variables: 1) ",TT "resultant genericPolynomials((n+1):d,K)"," and 2) ",TT "fromPluckerToStiefel dualize chowForm veronese(n,d,K)","."},
     EXAMPLE {
          "veronese(1,4)",
@@ -994,8 +1002,8 @@ document {
     Usage => "tangentialChowForm(I,s)",
     Inputs => { "I" => Ideal => {"a homogeneous ideal defining a projective variety ",TEX///$X=V(I)\subset\mathbb{P}^n$///,", say of dimension ", TEX///$k$///},
                 "s" => ZZ }, 
-    Outputs => {{"or an ", TO "Ideal", " (if there is more than one generator) in the coordinate ring of the Grassmannian ",TEX///$\mathbb{G}(n-k-1+s,\mathbb{P}^n)$///," in the Plucker embedding, representing the higher associated subvariety ",TEX///$Z_s(X)$///}}, 
-    PARA{"For a projective variety ",TEX///$X\subset\mathbb{P}^n$///," of dimension ",TEX///$k$///, ", the ",TEX///$s$///,"-th associated subvariety ",TEX///$Z_s(X)\subset\mathbb{G}(n-k-1+s,\mathbb{P}^n)$///, " (also called tangential Chow form) is defined to be the closure of the set of ", TEX///$(n-k-1+s)$///, "-dimensional subspaces ",TEX///$L\subset \mathbb{P}^n$///, " such that ", TEX///$L\cap X\neq\emptyset$///, " and ",TEX///$dim(L\cap T_x(X))\geq s$///, " for some smooth point ",TEX///$x\in L\cap X$///, ", where ",TEX///$T_x(X)$///, " denotes the embedded tangent space to ", TEX///$X$///, " at ",TEX///$x$///,". In particular, ", TEX///$Z_0(X)\subset\mathbb{G}(n-k-1,\mathbb{P}^n)$///, " is defined by the Chow form of ", TEX///$X$///, ", while ",TEX///$Z_k(X)\subset\mathbb{G}(n-1,\mathbb{P}^n)$///, " is identified to the dual variety ", TEX///$X^{*}\subset\mathbb{P}^n^{*}=\mathbb{G}(0,\mathbb{P}^n^{*})$///, " via the duality of Grassmannians ", TEX///$\mathbb{G}(0,\mathbb{P}^n^{*})=\mathbb{G}(n-1,\mathbb{P}^n)$///,". For details we refer to the third chapter of ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky. "},
+    Outputs => {RingElement => {"or an ", TO2{Ideal,"ideal"}, " (if there is more than one generator) in the coordinate ring of the Grassmannian ",TEX///$\mathbb{G}(n-k-1+s,\mathbb{P}^n)$///," in the Plucker embedding, representing the higher associated subvariety ",TEX///$Z_s(X)$///}}, 
+    PARA{"For a projective variety ",TEX///$X\subset\mathbb{P}^n$///," of dimension ",TEX///$k$///, ", the ",TEX///$s$///,"-th associated subvariety ",TEX///$Z_s(X)\subset\mathbb{G}(n-k-1+s,\mathbb{P}^n)$///, " (also called tangential Chow form) is defined to be the closure of the set of ", TEX///$(n-k-1+s)$///, "-dimensional subspaces ",TEX///$L\subset \mathbb{P}^n$///, " such that ", TEX///$L\cap X\neq\emptyset$///, " and ",TEX///$dim(L\cap T_x(X))\geq s$///, " for some smooth point ",TEX///$x\in L\cap X$///, ", where ",TEX///$T_x(X)$///, " denotes the embedded tangent space to ", TEX///$X$///, " at ",TEX///$x$///,". In particular, ", TEX///$Z_0(X)\subset\mathbb{G}(n-k-1,\mathbb{P}^n)$///, " is defined by the Chow form of ", TEX///$X$///, ", while ",TEX///$Z_k(X)\subset\mathbb{G}(n-1,\mathbb{P}^n)$///, " is identified to the dual variety ", TEX///$X^{*}\subset{\mathbb{P}^n}^{*}=\mathbb{G}(0,{\mathbb{P}^n}^{*})$///, " via the duality of Grassmannians ", TEX///$\mathbb{G}(0,{\mathbb{P}^n}^{*})=\mathbb{G}(n-1,\mathbb{P}^n)$///,". For details we refer to the third chapter of ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky. "},
     PARA{"The algorithm used are standard, based on projections of suitable incidence varieties. Here are some of the options available that could speed up the computation."},    
     PARA{TT "Duality"," Taking into account the duality of Grassmannians, one can perform the computation in ", TEX///$\mathbb{G}(k-s,n)$///, " and then passing to ", TEX///$\mathbb{G}(n-k-1+s,n)$///, ". This is done by default when it seems advantageous."},   
     PARA{TT "AffineChartGrass", " If one of the standard coordinate charts on the Grassmannian is specified, then the internal computation is done on that chart. By default, a random chart is used. Set this to ",TT"false"," to not use any chart."},   
@@ -1023,7 +1031,7 @@ document {
     Headline => "Chow form of a projective variety", 
     Usage => "chowForm I", 
     Inputs => { "I" => Ideal => {"a homogeneous ideal defining a projective variety ",TEX///$X=V(I)\subset\mathbb{P}^n$///}}, 
-    Outputs => {{"the Chow form of ",TEX///$X$///," in the coordinate ring of the Grassmannian ",TEX///$\mathbb{G}(n-dim(X)-1,\mathbb{P}^n)$///," in the Plucker embedding"}},
+    Outputs => {RingElement => {"the Chow form of ",TEX///$X$///," in the coordinate ring of the Grassmannian ",TEX///$\mathbb{G}(n-dim(X)-1,\mathbb{P}^n)$///," in the Plucker embedding"}},
     PARA{"This is the same as ",TT "tangentialChowForm(I,0)", ", see ",TO "tangentialChowForm",". Below, we compute the Chow form of the Veronese surface and then we compare it with the resultant of three ternary quadrics."},
     EXAMPLE {
          "-- Veronese surface in P^5
@@ -1047,7 +1055,7 @@ document {
     Headline => "Hurwitz form of a projective variety", 
     Usage => "hurwitzForm I", 
     Inputs => { "I" => Ideal => {"a homogeneous ideal defining a non-linear projective variety ",TEX///$X=V(I)\subset\mathbb{P}^n$///}}, 
-    Outputs => {{"the Hurwitz form of ",TEX///$X$///," in the coordinate ring of the Grassmannian ",TEX///$\mathbb{G}(n-dim(X),\mathbb{P}^n)$///," in the Plucker embedding"}},
+    Outputs => {RingElement => {"the Hurwitz form of ",TEX///$X$///," in the coordinate ring of the Grassmannian ",TEX///$\mathbb{G}(n-dim(X),\mathbb{P}^n)$///," in the Plucker embedding"}},
     PARA{"This is the same as ",TT "tangentialChowForm(I,1)", ", see ",TO "tangentialChowForm","."},
     EXAMPLE {
          "Q = ideal random(2,Grass(0,4))",
@@ -1061,10 +1069,10 @@ document {
     Headline => "Chow equations of a projective variety", 
     Usage => "chowEquations W", 
     Inputs => { "W" => RingElement => {"the Chow form of an irreducible projective variety ",TEX///$X\subset\mathbb{P}^n$///,}}, 
-    Outputs => { {"generated by the Chow equations of ",TEX///$X$///}},
+    Outputs => { {"the ",TO2{Ideal,"ideal"}," generated by the Chow equations of ",TEX///$X$///}},
     PARA{"Given the Chow form ",TEX///$Z_0(X)\subset\mathbb{G}(n-k-1,n)$///," of an irreducible projective ",TEX///$k$///,"-dimensional variety ", TEX///$X\subset\mathbb{P}^n$///, ", one can recover a canonical system of equations, called Chow equations, that always define ",TEX///$X$///, " set-theoretically, and also scheme-theoretically whenever ",TEX///$X$///, " is smooth. For details, see chapter 3, section 2C of ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky."},
     EXAMPLE { 
-          "P3 = Grass(0,3,ZZ/11,Variable=>x)",
+          "P3 = Grass(0,3,ZZ/11,Variable=>x);",
           "-- an elliptic quartic curve
 C = ideal(x_0^2+x_1^2+x_2^2+x_3^2,x_0*x_1+x_1*x_2+x_2*x_3)",
           "-- Chow equations of C
@@ -1094,7 +1102,7 @@ document {
     Inputs => { "I" => Ideal => {"a homogeneous ideal defining a projective variety ",TEX///$X=V(I)\subset\mathbb{P}^n$///},
                 "k" => ZZ => {"the dimension of ",TEX///$X$///,", or more generally an integer ",TEX///$k$///," not exceeding the dimension of ",TEX///$X$///," and not smaller than the dual defect of ",TEX///$X$///}}, 
     Outputs => {{"a pair ",TEX///$(J,J')$///, ", where ",TEX///$J$///, " is the defining ideal of the Segre product ", TEX///$X\times\mathbb{P}^k\subset\mathbb{P}^{(k+1)(n+1)-1}$///, ", while ", TEX///$J'$///, " is the principal ideal defining the dual hypersurface ", TEX///$(X\times\mathbb{P}^k)^{*}\subset{\mathbb{P^{(k+1)(n+1)-1}}}^{*}$///}},
-    PARA{"Let ",TEX///$X\subset\mathbb{P}^n$///," be a ",TEX///$k$///,"-dimensional projective variety. Consider the product ", TEX///$W = X\times\mathbb{P}^k$///," as a subvariety of ",TEX///$\mathbb{P}(Mat(k+1,n+1))$///,", the projectivization of the space of ",TEX///$(k+1)\times (n+1)$///, "-matrices, and consider the projection ",TEX///$p:\mathbb{P}(Mat(k+1,n+1))--->\mathbb{G}(k,n)=\mathbb{G}(n-k-1,n)$///,". Then the \"Cayley trick\" states that the dual variety ",TEX///$W^*$///," of ", TEX///$W$///," equals the closure of ",TEX///$p^{-1}(Z_0(X))$///, ", where ", TEX///$Z_0(X)\subset\mathbb{G}(n-k-1,n)$///," is the Chow hypersurface of ",TEX///$X$///,". The defining form of ", TEX///$W^*$///," is also called the ", TEX///$X$///,"-resultant. For details and proof, see ",HREF{"http://link.springer.com/article/10.1007/BF02567693","Multiplicative properties of projectively dual varieties"},", by J. Weyman and A. Zelevinsky; see also the preprint ", HREF{"https://arxiv.org/abs/1607.05932","Coisotropic Hypersurfaces in the Grassmannian"}, ", by K. Kohn."},
+    PARA{"Let ",TEX///$X\subset\mathbb{P}^n$///," be a ",TEX///$k$///,"-dimensional projective variety. Consider the product ", TEX///$W = X\times\mathbb{P}^k$///," as a subvariety of ",TEX///$\mathbb{P}(Mat(k+1,n+1))$///,", the projectivization of the space of ",TEX///$(k+1)\times (n+1)$///, "-matrices, and consider the projection ",TEX///$p:\mathbb{P}(Mat(k+1,n+1))\dashrightarrow\mathbb{G}(k,n)=\mathbb{G}(n-k-1,n)$///,". Then the \"Cayley trick\" states that the dual variety ",TEX///$W^*$///," of ", TEX///$W$///," equals the closure of ",TEX///$p^{-1}(Z_0(X))$///, ", where ", TEX///$Z_0(X)\subset\mathbb{G}(n-k-1,n)$///," is the Chow hypersurface of ",TEX///$X$///,". The defining form of ", TEX///$W^*$///," is also called the ", TEX///$X$///,"-resultant. For details and proof, see ",HREF{"http://link.springer.com/article/10.1007/BF02567693","Multiplicative properties of projectively dual varieties"},", by J. Weyman and A. Zelevinsky; see also the preprint ", HREF{"https://arxiv.org/abs/1607.05932","Coisotropic Hypersurfaces in the Grassmannian"}, ", by K. Kohn."},
     PARA{"In the example below, we apply the method to the quadric ",TEX///$\mathbb{P}^1\times\mathbb{P}^1\subset\mathbb{P}^3$///,"."},
     EXAMPLE { 
           "QQ[x_0..x_3]; P1xP1 = ideal(x_0*x_1-x_2*x_3)",
@@ -1117,11 +1125,11 @@ document {
     Key => {dualize,(dualize,RingElement),(dualize,Matrix),(dualize,Ideal),(dualize,RingMap),(dualize,VisibleList),(dualize,Ring)}, 
     Headline => "apply duality of Grassmannians", 
     Usage => "dualize f", 
-    Inputs => { "f" => RingElement => {" or a ",TO "Matrix", ", or an ",TO "Ideal",", in the coordinate ring (resp. ambient ring) of a Grassmannian ",TEX///$\mathbb{G}(k,n)$///}}, 
+    Inputs => { "f" => RingElement => {" or a ",TO2{Matrix,"matrix"}, ", or an ",TO2{Ideal,"ideal"},", in the coordinate ring (resp. ambient ring) of a Grassmannian ",TEX///$\mathbb{G}(k,n)$///}}, 
     Outputs => {{"the image of ", TT "f", " in the coordinate ring (resp. ambient ring) of ", TEX///$\mathbb{G}(n-k-1,n)$///," via the duality of Grassmannians"}},
     PARA{"This method implements the natural identification ", TEX///$\mathbb{G}(k,\mathbb{P}^n)\to\mathbb{G}(n-k-1,{\mathbb{P}^n}^{*})$///,", which takes a subspace ", TEX///$L\in\mathbb{G}(k,\mathbb{P}^n)$///, " to its orthogonal complement ",TEX///$L^*\in\mathbb{G}(n-k-1,{\mathbb{P}^n}^*)$///,"."},
     EXAMPLE { 
-          "P9 = ambient Grass(2,4,ZZ/13,Variable=>x)",
+          "P9 = ambient Grass(2,4,ZZ/13,Variable=>x);",
           "vars P9",
           "dualize vars P9",
           "F  = random(2,P9)",
@@ -1133,7 +1141,7 @@ document {
     Key => {fromPluckerToStiefel,(fromPluckerToStiefel,RingElement),(fromPluckerToStiefel,Matrix),(fromPluckerToStiefel,Ideal)}, 
     Headline => "convert from Plucker coordinates to Stiefel coordinates", 
     Usage => "fromPluckerToStiefel f", 
-    Inputs => { "f" => RingElement => {" or a ",TO "Matrix", ", or an ",TO "Ideal",", in the coordinate ring of a Grassmannian ",TEX///$\mathbb{G}(k,n)$///}}, 
+    Inputs => { "f" => RingElement => {" or a ",TO2{Matrix,"matrix"}, ", or an ",TO2{Ideal,"ideal"},", in the coordinate ring of a Grassmannian ",TEX///$\mathbb{G}(k,n)$///}}, 
     Outputs => {{"the representation of ",TT"f"," in the Stiefel coordinates of ",TEX///$\mathbb{G}(k,n)$///," (or in the affine coordinates if an affine chart is given with ",TO"AffineChartGrass",")"}},
     PARA{"This method can be used to compute the ",TEX///$X$///,"-resultant of a projective variety. Here, we compute the ",TEX///$X$///,"-resultant of the twisted cubic curve."},
     EXAMPLE { 
@@ -1158,7 +1166,7 @@ document {
     Inputs => {"k" => ZZ ,
                "n" => ZZ ,
                "K" => Ring => {"optional with default value ",TO "QQ",", the coefficient ring to be used"}}, 
-    Outputs => {{"the coordinate ring of the Grassmannian variety of all projective ",TEX///$k$///,"-planes in ",TEX///$\mathbb{P}^n$///}},
+    Outputs => {QuotientRing => {"the coordinate ring of the Grassmannian variety of all projective ",TEX///$k$///,"-planes in ",TEX///$\mathbb{P}^n$///}},
     PARA{"This method calls the method ", TO "Grassmannian", ", and ", TT "Grass(k,n,K,Variable=>p)", " can be considered equivalent to ", TT "quotient Grassmannian(k,n,Variable=>p,CoefficientRing=>K)", ". However, the method ",TT "Grass", " creates no more than an instance of ring for a given tuple ", TT "(k,n,K,p)","."}, 
     EXAMPLE { 
           "R = Grass(2,4,ZZ/11)",
@@ -1186,7 +1194,7 @@ document {
     Key => {AssumeOrdinary, [tangentialChowForm,AssumeOrdinary],[dualVariety,AssumeOrdinary]},
     Headline => "whether the expected codimension is 1", 
     Usage => "AssumeOrdinary => true/false",
-    "This is an option for ", TO "dual"," and ",TO "tangentialChowForm"," that controls the option ", TO "SubringLimit",", used internally with ", TO "kernel", " and ", TO "gb",". You can set this to ",TT"true"," when the expected output should represent a hypersurface.",
+    "This is an option for ", TO "dualVariety"," and ",TO "tangentialChowForm"," that controls the option ", TO "SubringLimit",", used internally with ", TO "kernel", " and ", TO "gb",". You can set this to ",TT"true"," when the expected output should represent a hypersurface.",
     SeeAlso => {dualVariety,tangentialChowForm}
 } 
 document {
@@ -1215,7 +1223,7 @@ document {
     Headline => "projective dual variety", 
     Usage => "dualVariety I", 
     Inputs => { "I" => Ideal => {"a homogeneous ideal defining a projective variety ",TEX///$X=V(I)\subset\mathbb{P}^n$///}}, 
-    Outputs => {{"the ideal of the projective dual variety ",TEX///$X^{*}\subset{\mathbb{P}^n}^{*}$///}},
+    Outputs => {{"the ",TO2{Ideal,"ideal"}," of the projective dual variety ",TEX///$X^{*}\subset{\mathbb{P}^n}^{*}$///}},
     PARA{"This can be considered a shortcut for ",TT "dualize tangentialChowForm(I,dim I -1)","."}, 
     PARA{"Note that in characteristic 0 (or sufficiently large characteristic), the reflexivity theorem implies that if ",TT"I' == dualVariety I"," then ", TT"dualVariety I' == I",". Below, we verify the reflexivity theorem for the Veronese surface."},
     EXAMPLE { 
@@ -1242,7 +1250,7 @@ document {
     Headline => "conormal variety", 
     Usage => "conormalVariety I", 
     Inputs => { "I" => Ideal => {"a homogeneous ideal defining a projective variety ",TEX///$X=V(I)\subset\mathbb{P}^n$///}}, 
-    Outputs => {{"the bihomogeneous ideal of the conormal variety ",TEX///$Con(X)\subset\mathbb{P}^n\times{\mathbb{P}^n}^{*}$///," of ",TEX///$X$///}},
+    Outputs => {Ideal => {"the bihomogeneous ideal of the conormal variety ",TEX///$Con(X)\subset\mathbb{P}^n\times{\mathbb{P}^n}^{*}$///," of ",TEX///$X$///}},
     PARA{"The conormal variety ",TEX///$Con(X)$///," of a projective variety ",TEX///$X\subset\mathbb{P}^n$///," is the Zariski closure in ",TEX///$\mathbb{P}^n\times{\mathbb{P}^n}^{*}$///," of the set of tuples ",TEX///$(x,H)$///," where ",TEX///$x$///," is a regular point of ",TEX///$X$///," and ",TEX///$H$///," is a hyperplane in ",TEX///$\mathbb{P}^n$///," containing the embedded tangent space to ",TEX///$X$///," at ",TEX///$x$///,". The dual variety of ",TEX///$X$///," is the image of ",TEX///$Con(X)\subset\mathbb{P}^n\times{\mathbb{P}^n}^{*}$///," under projection onto the second factor ",TEX///${\mathbb{P}^n}^{*}$///,"."}, 
     EXAMPLE { 
       "X = kernel veronese(1,3)",
@@ -1255,7 +1263,7 @@ document {
     Headline => "whether a hypersurface of a Grassmannian is a tangential Chow form", 
     Usage => "isCoisotropic w",
     Inputs => { "w" => RingElement => {" representing a hypersurface of a Grassmannian"}}, 
-    Outputs => { {"whether ",TT"w", " is a tangential Chow form of some projective variety"}},
+    Outputs => {Boolean => {"whether ",TT"w", " is a tangential Chow form of some projective variety"}},
     PARA{"The algorithm implemented is based on Proposition 3.12 in Chapter 4 of ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky."},
     EXAMPLE { 
           "-- first tangential Chow form of a random quadric in P^3
@@ -1289,7 +1297,7 @@ document {
               plucker p", 
     Inputs => {"L" => Ideal => {"the ideal of a ",TEX///$k$///,"-dimensional linear subspace ",TEX///$V(L)\subset\mathbb{P}^n$///},
                "p" => Ideal => {"the ideal of the corresponding point of ",TEX///V(L)///," in the Grassmannian ",TEX///$\mathbb{G}(k,\mathbb{P}^n)$///," (embedded via the Plucker embedding)"}}, 
-    Outputs => {{TT"p"," if the input is ",TT"L",", and ",TT"L"," if the input is ",TT"p"}},
+    Outputs => {Ideal => {TT"p"," if the input is ",TT"L",", and ",TT"L"," if the input is ",TT"p"}},
     EXAMPLE {
          "P4 = Grass(0,4,ZZ/33331,Variable=>x); G'1'4 = Grass(1,4,ZZ/33331,Variable=>x);",
          "L = trim ideal apply(3,i->random(1,P4))  -- a line in P^4",
