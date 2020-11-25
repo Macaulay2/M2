@@ -849,6 +849,7 @@ GradedModule.directSum = args -> (
 	  );
      N.cache = new CacheTable;
      N.cache.components = toList args;
+     N.cache.formation = FunctionApplication { directSum, args };
      N
      );
 
@@ -891,6 +892,7 @@ GradedModuleMap.directSum = args -> (
 	  j -> directSum apply(args, f -> f_j), Degree => d);
      g.cache = new CacheTable;
      g.cache.components = toList args;
+     g.cache.formation = FunctionApplication { directSum, args };
      g
      );
 

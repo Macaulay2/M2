@@ -83,11 +83,15 @@ various modern operating systems:
 
   Ubuntu and Debian:
     Install packages as root with:
-      apt-get install -y -q sudo autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-regex-dev libboost-stacktrace-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan libeigen3-dev libtool-bin frobby libfrobby-dev libnauty2-dev libnauty2 nauty nauty-doc coinor-csdp coinor-csdp-doc
+      apt-get install -y -q sudo 4ti2 autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-regex-dev libboost-stacktrace-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmathic-dev libmathicgb-dev libmemtailor-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libreadline-dev libsingular-dev libtool libxml2-dev libz-dev lrslib lsb-release make normaliz openssh-server patch pinentry-curses pkg-config singular-data time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan libeigen3-dev libtool-bin frobby libfrobby-dev libnauty2-dev libnauty2 nauty nauty-doc coinor-csdp coinor-csdp-doc
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
-	# note: cohomcalg is available only starting with Ubuntu 19; it's okay to skip it
+	# note: cohomcalg is available only starting with Ubuntu 19.04 and Debian 10; it's okay to skip it
+        # note: libflint-dev will work starting with Ubuntu 20.10 and Debian 11 (version >= 2.6.0 is required)
+        # note: libmathicgb-dev is missing from Ubuntu 20.04 and Debian 10
+        # note: libmps-dev is available only starting with Ubuntu 21.04 and Debian 11
+        # note: topcom is available only starting with Ubuntu 20.10 and Debian 11
     On some systems, you may have to add
         FC=gfortran
       to the environment or to the "configure" command line below, if the "make" default fortran

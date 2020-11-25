@@ -4072,11 +4072,11 @@ doc ///
         A:Array
             representing a poset in GAP-format
         S:String
-            representing a poste in GAP-format
+            representing a poset in GAP-format
         P:Poset
     Outputs
         S:String
-            representing a poste in GAP-format
+            representing a poset in GAP-format
         P:Poset
     Description
         Text
@@ -6075,7 +6075,7 @@ doc ///
         isUpperSemimodular
         (isUpperSemimodular,Poset)
     Headline
-        determines if a lattice is upper semimoudlar
+        determines if a lattice is upper semimodular
     Usage
         i = isUpperSemimodular P
     Inputs

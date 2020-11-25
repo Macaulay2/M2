@@ -1,14 +1,14 @@
 DEBIAN_REVISION=
 
 overnight:
-	git status
+	echo " --- git-description:" ; git describe --long --always --abbrev=40 --tags HEAD development master
+	git status --untracked-files=no
 	git checkout -- ../../Macaulay2/packages
 	git pull
 	git submodule sync
 	git submodule update
 	git submodule foreach git clean -xdfq
 	git branch --contains HEAD
-	echo -n "git-description: " ; git describe --dirty --long --always --abbrev=40 --tags
 	: "make get-m4 doesn't work under Ubuntu 20.04"
 	: $(MAKE) -C ../.. get-tools
 	$(MAKE) clean-rm-rf

@@ -101,13 +101,119 @@ M2_DFILES += interp.dd
 
 # should automate these dependencies
 actors5.o : @srcdir@/startup-header.h
-actors5.o basic.o : \
-	@srcdir@/../e/engine.h \
-	@srcdir@/../e/rand.h \
-	@srcdir@/../e/newdelete.hpp \
-	@srcdir@/../d/M2mem.h \
-	@srcdir@/../d/debug.h \
+actors5.o basic.o :				\
+	@srcdir@/../e/engine.h			\
+	@srcdir@/../e/rand.h			\
+	@srcdir@/../e/newdelete.hpp		\
+	@srcdir@/../d/M2mem.h			\
+	@srcdir@/../d/debug.h			\
 	../../include/M2/config.h
+
+interface2.o :						\
+	../../include/M2/config.h			\
+	@srcdir@/../../include/M2/math-include.h	\
+	@srcdir@/../../include/M2/gc-include.h		\
+	@srcdir@/../system/mutex.h			\
+	@srcdir@/../c/scc-core.h			\
+	@srcdir@/../system/supervisorinterface.h	\
+	@srcdir@/../e/engine.h				\
+	@srcdir@/../e/engine-includes.hpp		\
+	@srcdir@/../d/M2mem.h				\
+	@srcdir@/../d/debug.h				\
+	@srcdir@/../e/rand.h
+
+interface.o :						\
+	../../include/M2/config.h			\
+	@srcdir@/../system/mutex.h			\
+	@srcdir@/../e/newdelete.hpp			\
+	@srcdir@/../d/M2mem.h				\
+	@srcdir@/../c/scc-core.h			\
+	@srcdir@/../d/debug.h				\
+	@srcdir@/../system/supervisorinterface.h	\
+	@srcdir@/../e/engine.h				\
+	@srcdir@/../e/engine-includes.hpp		\
+	@srcdir@/../e/rand.h				\
+	@srcdir@/../e/ZZp.hpp				\
+	@srcdir@/../e/ring.hpp				\
+	@srcdir@/../e/hash.hpp				\
+	@srcdir@/../e/newdelete.hpp			\
+	@srcdir@/../e/error.h				\
+	@srcdir@/../e/ringelem.hpp			\
+	@srcdir@/../e/gmp-util.h			\
+	@srcdir@/../e/monoid.hpp			\
+	@srcdir@/../e/monordering.h			\
+	@srcdir@/../e/intarray.hpp			\
+	@srcdir@/../e/style.hpp				\
+	@srcdir@/../e/buffer.hpp			\
+	@srcdir@/../e/mem.hpp				\
+	@srcdir@/../e/../system/mutex.h			\
+	@srcdir@/../e/imonorder.hpp			\
+	@srcdir@/../e/aring.hpp				\
+	@srcdir@/../e/exceptions.hpp			\
+	@srcdir@/../e/ZZ.hpp				\
+	@srcdir@/../e/coeffrings.hpp			\
+	@srcdir@/../e/monomial.hpp			\
+	@srcdir@/../e/varpower.hpp			\
+	@srcdir@/../e/exceptions.hpp			\
+	@srcdir@/../e/relem.hpp				\
+	@srcdir@/../e/engine.h				\
+	@srcdir@/../e/aring-glue.hpp			\
+	@srcdir@/../e/aring-translate.hpp		\
+	@srcdir@/../e/aring-RR.hpp			\
+	@srcdir@/../e/ringmap.hpp			\
+	@srcdir@/../e/aring-CC.hpp			\
+	@srcdir@/../e/aring-RRR.hpp			\
+	@srcdir@/../e/aring-CCC.hpp			\
+	@srcdir@/../e/aring-zz-gmp.hpp			\
+	@srcdir@/../e/aring-zz-flint.hpp		\
+	@srcdir@/../e/aring-zzp.hpp			\
+	@srcdir@/../e/aring-zzp-flint.hpp		\
+	@srcdir@/../e/aring-zzp-ffpack.hpp		\
+	@srcdir@/../e/aring-qq.hpp			\
+	@srcdir@/../e/aring-qq-flint.hpp		\
+	@srcdir@/../e/aring-qq-gmp.hpp			\
+	@srcdir@/../e/aring-m2-gf.hpp			\
+	@srcdir@/../e/rand.h				\
+	@srcdir@/../e/aring-gf-givaro.hpp		\
+	@srcdir@/../e/polyring.hpp			\
+	@srcdir@/../e/skew.hpp				\
+	@srcdir@/../e/qring.hpp				\
+	@srcdir@/../e/aring-gf-flint-big.hpp		\
+	@srcdir@/../e/aring-gf-flint.hpp		\
+	@srcdir@/../e/aring-tower.hpp			\
+	@srcdir@/../e/mutablemat.hpp			\
+	@srcdir@/../e/mutablemat-defs.hpp		\
+	@srcdir@/../e/mat.hpp				\
+	@srcdir@/../e/relem.hpp				\
+	@srcdir@/../e/matrix-con.hpp			\
+	@srcdir@/../e/dmat.hpp				\
+	@srcdir@/../e/mat-util.hpp			\
+	@srcdir@/../e/text-io.hpp			\
+	@srcdir@/../e/dmat-zz-flint.hpp			\
+	@srcdir@/../e/dmat-qq-flint.hpp			\
+	@srcdir@/../e/dmat-zzp-flint.hpp		\
+	@srcdir@/../e/dmat-gf-flint-big.hpp		\
+	@srcdir@/../e/dmat-gf-flint.hpp			\
+	@srcdir@/../e/smat.hpp				\
+	@srcdir@/../e/ZZp.hpp				\
+	@srcdir@/../e/mat-elem-ops.hpp			\
+	@srcdir@/../e/mat-arith.hpp			\
+	@srcdir@/../e/mat-linalg.hpp			\
+	@srcdir@/../e/util.hpp				\
+	@srcdir@/../e/lapack.hpp			\
+	@srcdir@/../e/dmat-lu.hpp			\
+	@srcdir@/../e/dmat-lu-inplace.hpp		\
+	@srcdir@/../e/dmat-lu-zzp-ffpack.hpp		\
+	@srcdir@/../e/dmat-lu-zzp-flint.hpp		\
+	@srcdir@/../e/dmat-lu-qq.hpp			\
+	@srcdir@/../e/dmat-qq-interface-flint.hpp	\
+	@srcdir@/../e/eigen.hpp				\
+	@srcdir@/../e/SLP-defs.hpp			\
+	@srcdir@/../e/mutablemat-imp.hpp		\
+	@srcdir@/../e/SLP-imp.hpp			\
+	@srcdir@/../e/timing.hpp			\
+	@srcdir@/../e/aring-zzp.hpp			\
+	@srcdir@/../e/memory-status.hpp
 
 # now assemble the files into various categories:
 M2_DNAMES := $(patsubst %.d, %, $(patsubst %.dd, %, $(M2_DFILES)))

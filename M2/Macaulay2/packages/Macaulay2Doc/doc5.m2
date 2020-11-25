@@ -16,7 +16,7 @@ document {
 	  An error is signalled if the key ", TT "x", " does not occur in ", TT "defaults", "."
 	  },
      PARA {
-	  "A second possibility is for the argument ", TT "defaults", " to be ", TO "true", ",
+	  "A second possibility is for the argument ", TT "defaults", " to be ", TO "null", ",
 	  in which case the keys x are not checked for validity, and no default values
 	  are provided.  The main use of this is to separate the optional arguments from
 	  the other arguments, which can then be used for dispatching to the correct method."
