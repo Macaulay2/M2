@@ -15,6 +15,7 @@ newPackage(
 			Email => "bapike@gmail.com",
 			HomePage => "http://www.brianpike.info/"}},
 		Headline => "run Macaulay2 functions outside the current Macaulay2 process",
+		Keywords => {"Miscellaneous"},
 		DebuggingMode => false,
 		Configuration => {"isChild"=>false} 
 	)

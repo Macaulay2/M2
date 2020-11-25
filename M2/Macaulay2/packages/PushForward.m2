@@ -6,6 +6,7 @@ newPackage(
                   Email => "craicu@nd.edu", 
                   HomePage => "http://www3.nd.edu/~craicu"}},
         Headline => "push forwards of finite ring maps",
+	Keywords => {"Commutative Algebra"},
         DebuggingMode => false
         )
         

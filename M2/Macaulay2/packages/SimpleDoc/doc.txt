@@ -13,6 +13,7 @@ Node
       The new format is accepted by the @TO (doc, String)@ function for writing either a
       single or multiple documentation nodes from a string or file and adheres to the
       @wikipedia "off-side rule"@, i.e., using indentation to separate blocks.
+
     Tree
       :Getting started with SimpleDoc
         @TO2 {"Macaulay2Doc :: writing documentation", "Writing documentation in Macaulay2"}@
@@ -284,7 +285,6 @@ Node
 
     See @HREF {currentLayout#"packages" | "SimpleDoc/doc.txt", "SimpleDoc/doc.txt"}@
     for an example of how the @TT "Node"@ keyword is used in documenting this package.
-
   SeeAlso
     document
     "testExample"

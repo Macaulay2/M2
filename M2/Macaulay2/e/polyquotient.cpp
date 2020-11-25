@@ -168,6 +168,7 @@ ring_elem PolyRingQuotient::invert(const ring_elem f) const
           // we can't return NULL
           INTERNAL_ERROR("ring element gcd computation failed");
         }
+      if (!getAmbientRing()->is_unit(ret->get_value())) return from_long(0);
       return u1->get_value();
     }
   else if (M_->getNonTermOrderVariables()->len == 0)

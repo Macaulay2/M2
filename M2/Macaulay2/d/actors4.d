@@ -1056,7 +1056,7 @@ format(e:Expr):Expr := (
 	  else WrongArgRR(n)
 	  )
      else WrongArg("string, or real number, integer, integer, integer, string"));
-setupfun("format",format);
+setupfun("format", format).Protected = false; -- will be overloaded in m2/methods.m2
 
 numfun(e:Expr):Expr := (
      when e
@@ -1458,7 +1458,7 @@ locate(e:Expr):Expr := (
 	  locate(f.model.body);
 	  locate2(f.model.body))
      else WrongArg("a function, symbol, sequence, or null"));
-setupfun("locate",locate);
+setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
 
 
 powermod(e:Expr):Expr := (

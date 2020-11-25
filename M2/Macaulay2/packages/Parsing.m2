@@ -1,11 +1,12 @@
 -- -*- coding: utf-8 -*-
 newPackage ( "Parsing",
      Authors => {
-	  { Name => "Daniel R. Grayson (高单)", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/" }
+	  { Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/" }
 	  },
      Date => "June, 2006",
      Version => "1.0",
      Headline => "a framework for creating recursive descent parsers",
+     Keywords => {"Miscellaneous"},
      DebuggingMode => false
      )
 

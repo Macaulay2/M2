@@ -128,14 +128,14 @@ void FreeModule::append(const int *d)
 {
   assert(schreyer == 0);
   int *p = degree_monoid()->make_new(d);
-  components.append(p);
+  components.push_back(p);
 }
 
 void FreeModule::append_schreyer(const int *d, const int *base, int compare_num)
 {
   assert(schreyer != 0);
   int *p = degree_monoid()->make_new(d);
-  components.append(p);
+  components.push_back(p);
   schreyer->append(compare_num, base);
 }
 

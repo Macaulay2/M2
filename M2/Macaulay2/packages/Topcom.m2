@@ -20,6 +20,7 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
         Headline => "interface to a small part of topcom",
+	Keywords => {"Interfaces"},
         Configuration => {
             "path" => ""
             },
@@ -86,7 +87,7 @@ callTopcom(String, List) := (command, inputs) -> (
     -- now create the output file
     F := openOut(infile);
     for f in inputs do (
-        F << f << endl;
+        F << toString f << endl;
     );
     F << close;
 

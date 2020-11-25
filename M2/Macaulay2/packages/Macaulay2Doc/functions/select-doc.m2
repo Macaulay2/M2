@@ -2,6 +2,7 @@
 --- author(s): Mahrud
 --- notes:
 
+-- TODO: bring all uses as synopses under this node
 doc ///
   Key
     select
@@ -70,6 +71,31 @@ doc ///
     regex
     separate
     (replace, String, String, String)
+///
+
+doc ///
+Node
+  Key
+    (select, BasicList, Type)
+  Headline
+    select elements of a given type in a list
+  Usage
+    select(L, T)
+  Inputs
+    L:BasicList
+    T:Type
+  Outputs
+    :BasicList
+      containing elements of @TT "L"@ whose class inherits from type @TT "T"@
+  Description
+    Text
+      The order of the elements in the result will be the same as in the original list @TT "L"@,
+      and the class of the result will be the same as the class of @TT "L"@.
+    Example
+      select({1,"2",3.14,4+5*ii}, ZZ)
+      select([1,"2",3.14,4+5*ii], RR)
+  SeeAlso
+    (select, BasicList, Function)
 ///
 
 document { 

@@ -13,6 +13,7 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"}
             },
         Headline => "truncation of a module",
+	Keywords => {"Commutative Algebra"},
         PackageImports => {"Polyhedra"}
         )
 

@@ -56,7 +56,7 @@ string(REPLACE " " ";" PACKAGES "${PACKAGES}")
 #################################################################################
 ## M2 arguments and commands that will be passed to M2 -e ${STR}
 set(M2 ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
-set(M2_ARGS -q --stop --silent --no-threads -e errorDepth=${errorDepth} -e debugLevel=${debugLevel})
+set(M2_ARGS -q --stop --silent --no-preload --no-threads -e errorDepth=${errorDepth} -e debugLevel=${debugLevel})
 set(M2_INSTALL_TEMPLATE [[installPackage("@package@",
   Verbose                => $<IF:$<BOOL:${VERBOSE}>,true,false>,
   RerunExamples          => ${RerunExamples},
@@ -70,7 +70,7 @@ set(M2_INSTALL_TEMPLATE [[installPackage("@package@",
 set(M2_NEED_TEMPLATE    [[needsPackage("@package@", LoadDocumentation=>true, DebuggingMode=>true)]])
 set(M2_TEST_TEMPLATE    [[debug Core \; argumentMode = @ArgumentMode@ \; check(@_i@, "@package@")]])
 set(M2_INFO_TEMPLATE    [["info-"|"@package@" << @package@#"test number" << close]]) # ignore the color
-set(M2_CHECK_TEMPLATE   [[check("@package@", UserMode=>false)]])
+set(M2_CHECK_TEMPLATE   [[check("@package@", UserMode=>false, Verbose=>$<IF:$<BOOL:${VERBOSE}>,true,false>)]])
 
 #################################################################################
 ## Declare all targets: {install,check,all,uninstall}-{packages,PACKAGE}

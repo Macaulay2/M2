@@ -20,6 +20,9 @@ char Ring := R -> (
      if R.?char then R.char 
      else error("characteristic of ", toString R, " unknown"))
 
+baseRing = method()
+baseRing Ring := R -> if R.?baseRings then last R.baseRings
+
 errorGenCoeff = () -> error "unable to provide generators for ring over specified coefficient ring"
 generators Ring := opts -> R -> (
      if opts.CoefficientRing === null or opts.CoefficientRing === R then {}

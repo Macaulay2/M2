@@ -45,7 +45,6 @@ set(HPPONLYFILES
   aring-glue.hpp
   aring-qq.hpp
   aring-translate.hpp
-  array.hpp
   dmat-gf-flint-big.hpp
   dmat-gf-flint.hpp
   dmat-lu-inplace.hpp

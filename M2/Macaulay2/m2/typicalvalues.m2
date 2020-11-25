@@ -124,7 +124,6 @@ Function Thing := Thing => x -> (dummy x;)
 scan(BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan
 scanPairs(HashTable,Function) := Nothing => scanPairs
-locate Symbol := locate Pseudocode := locate Function := locate Sequence := locate Nothing := Sequence => locate
 lines(String,String) := List => lines
 lines String := List => lines
 linkFile(String,String) := Nothing => linkFile

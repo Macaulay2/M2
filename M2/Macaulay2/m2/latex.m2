@@ -120,7 +120,7 @@ tex     STYLE := x -> ""
 -- 	  )
 --      )
 
-tex TO   := x -> tex TT DocumentTag.FormattedKey x#0
+tex TO   := x -> tex TT format x#0
 tex TO2  := x -> ( tag := x#0; text := x#1; tex TT text )
 tex HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
 

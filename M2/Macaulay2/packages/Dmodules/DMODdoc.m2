@@ -1839,7 +1839,7 @@ document {
 	  },
      PARA {
 	  "Computes the jumping coefficients and their multiplier ideals in an open interval (a,b). By default a = 0, b = ", TO "analyticSpread", " I. ",
-	  "The options are passed to ", TO "multiplierIDeal",".",
+	  "The options are passed to ", TO "multiplierIdeal",".",
 	  },
      "See ", EM "Berkesch and Leykin", " ``Algorithms for Bernstein-Sato polynomials and multiplier ideals'' for details.",
      EXAMPLE lines ///

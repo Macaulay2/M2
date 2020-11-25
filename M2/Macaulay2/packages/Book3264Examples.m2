@@ -11,6 +11,7 @@ newPackage(
 	       Email => "charleyc@math.berkeley.edu",
 	       HomePage => "http://math.berkeley.edu/~charleyc/"}},
      PackageExports => {"Schubert2", "SchurRings"},
+     Keywords => {"Intersection Theory"},
      Headline => "examples to accompany the eponymous book by Eisenbud and Harris"
      )
 
