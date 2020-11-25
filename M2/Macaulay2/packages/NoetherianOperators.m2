@@ -33,7 +33,7 @@ export {
     "innerProduct",
     "reduceSpace",
     "orthogonalInSubspace",
-    "Normalize",
+    -- "Normalize",
     "Rational",
     "ProduceSB",
     "numericalKernel",
@@ -560,7 +560,7 @@ numericalKernel (Matrix) := Matrix => o -> M -> (
     )
 
 --performs Gaussian reduction on M
-colReduce = method(Options => {Tolerance => null, Normalize => true, Reverse => false})
+colReduce = method(Options => {Tolerance => null, Reverse => false})
 colReduce Matrix := o -> M -> (
     if o.Reverse then M = matrix reverse(entries M);
     tol := getTolerance(ring M,o);
@@ -576,7 +576,7 @@ colReduce Matrix := o -> M -> (
 	    c := M_(i,a);
 	    if abs c <= tol then (for k from j to n-1 do M_(i,k) = 0; continue);
 	    columnSwap(M,a,j);
-	    if o.Normalize then (columnMult(M,j,1/c); c = 1);
+	    --if o.Normalize then (columnMult(M,j,1/c); c = 1);
 	    for k from 0 to n-1 do if k != j then columnAdd(M,k,-M_(i,k)/c,j);
 	    j = j+1;
 	    );
@@ -2202,6 +2202,7 @@ doc ///
      Key
           colReduce
 	  (colReduce,Matrix)
+	  [colReduce,Reverse]
      Headline
           Column reduces a matrix
      Usage
@@ -2215,13 +2216,17 @@ doc ///
           Text
 	       Performs Gaussian column reduction on a matrix M, retaining only the linearly independent columns.
 	  Example
-	       M = matrix {{1., 2, 3}, {2, 4, 0}}
+	       M = matrix {{1., 2, 3}, {2, 4, 0}, {-1, -2, 3}}
 	       colReduce(M, Tolerance=>0.01) 
 	  Text
 	       Entries with absolute value below the tolerance are treated as zero and not used as pivots.
 	  Example
 	       N = matrix {{0.001, 0, 0}, {1, 1, 3}, {2, 2, 5.999}}
 	       colReduce(N, Tolerance=>0.01)
+          Text
+	       The lower rows are treated as the lead terms unless the optional argument {\tt Reverse} is set to true.
+	  Example
+	       colReduce(M, Reverse => true) 
 ///
 
 TEST ///
@@ -2749,11 +2754,13 @@ Caveat
 doc ///
 Key
     (noetherianOperators, Ideal, Ideal)
+    Rational
 Headline
     Noetherian operators of a primary component
 Usage
     noetherianOperators (I, P)
-    noetherianOperators (I, Strategy => "MacaulayMatrix")
+    noetherianOperators (I, P, Strategy => "MacaulayMatrix")
+    noetherianOperators (I, P, Rational => false)
 Inputs
     I:Ideal
         assumed to be unmixed
@@ -2781,6 +2788,9 @@ Description
             TO2 {"Strategy => \"MacaulayMatrix\"", "\"MacaulayMatrix\" (default)"},
             TO2 {"Strategy => \"Hybrid\"", "\"Hybrid\""},
         }@
+    Text
+        If the prime $P$ is known to be a ration point, the optional argument {\tt Rational} can be set to true.  This may offer a speed up in the computation.
+
 
 --    CannedExample
 --    Code
@@ -2793,6 +2803,7 @@ SeeAlso
     noetherianOperators
     (noetherianOperators, Ideal)
 ///
+
 
 doc ///
 Key
