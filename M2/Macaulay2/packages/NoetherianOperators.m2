@@ -17,9 +17,9 @@ newPackage(
     },
     Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
     PackageExports => {"Truncations", "Bertini", "NAGtypes"},
-    PackageImports => {"Dmodules"},
+    PackageImports => {"Dmodules", "PrimaryDecomposition"},
     AuxiliaryFiles => true,
-    DebuggingMode => true
+    DebuggingMode => false
 )
 
 export {
@@ -1537,10 +1537,11 @@ getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     Lmap := apply(numgens R, i -> R_i => promote(R_i, R') + R'_i);
     mapRtoX := map(X, R, Lmap);
     Q := ker mapRtoX;
-    for v in indVars do 
+    for v in indVars do -- heuristic for faster computation 
       Q = saturate(Q, ideal(v));
-    Q
+    first select(primaryDecomposition(Q), K -> radical(K) == P)    
 )
+
 TEST ///
 debug NoetherianOperators
 R = QQ[x,y,t]
