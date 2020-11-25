@@ -1568,30 +1568,25 @@ beginDocumentation()
 
 doc ///
      Key
-     	  NoetherianOperators
+       NoetherianOperators
      Headline
-     	  numerically compute local dual space and Hilbert functions
+       numerically compute local dual space and Hilbert functions
      Description
-     	  Text
-	       The @EM "NoetherianOperators"@ package includes algorithms for computing Noetherian operators and local dual 
-	       spaces of polynomial ideals, and related local combinatorial data about its scheme structure.
+       Text
+	   The @EM "NoetherianOperators"@ package includes algorithms for computing Noetherian operators and local dual 
+	   spaces of polynomial ideals, and related local combinatorial data about its scheme structure.
     	    	
-	       The problem of characterizing ideal membership with differential conditions was first addressed by Gr\"obner ("Uber eine neue idealtheoretische Grundlegung der algebraischen Geometrie", Math. Ann. 115 (1938), no. 1, 333–358).
-	       Despite this early algebraic interest by Gr\"obner, a complete description of primary ideals in terms of differential operators was first obtained by analysts in the Fundamental Principle of Ehrenpreis and Palamodov.
-	       At the core of the Fundamental Principle, one has the notion of Noetherian operators to describe a primary ideal. 
-	       In this package, we implement several algorithms for the computation of a set of Noetherian operators describing a primary ideal. 
-    	    	
-	       For the task of computing Noetherian operators, here we implement the algorithms developed in the papers @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@ and  @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
-           These include both symbolic and numerical algorithms, and a hybrid algorithm, where numerical data is used to
-           speed up the symbolic algorithm.
-           
-           To compute the initial ideal and Hilbert regularity of positive dimensional
-           ideals we use the algorithm of R. Krone ("Numerical algorithms for dual bases of positive-dimensional ideals." Journal of
-           Algebra and Its Applications, 12(06):1350018, 2013.). 
-           These techniques are numerically stable, and can be used with floating point arithmetic over the complex numbers.  
-           They provide a viable alternative in this setting to purely symbolic methods such as standard bases.  
-           In particular, these methods can be used to compute initial ideals, local Hilbert functions and Hilbert regularity.
-    	   
+	   The problem of characterizing ideal membership with differential conditions was first addressed by 
+	   Groebner ("Uber eine neue idealtheoretische Grundlegung der algebraischen Geometrie", Math. Ann. 115 (1938), no. 1, 333–358).
+	   Despite this early algebraic interest by Gr\"obner, a complete description of primary ideals in terms of differential operators was first obtained by analysts in the Fundamental Principle of Ehrenpreis and Palamodov.
+	   At the core of the Fundamental Principle, one has the notion of Noetherian operators to describe a primary ideal. 
+	   
+	   In case of an ideal supported at one point a set of Noetherian operators forms a Macaulay inverse system that spans the dual space of the ideal. 
+	   These notions relate to the work of 
+	   Macaulay ("The algebraic theory of modular systems", Cambridge Press, (1916)). 
+	    
+	   In this package, we implement several (exact symbolic and approximate numerical) algorithms for the computation of a set of Noetherian operators describing a primary ideal. 
+    	           	   
            Methods and types for computing and manipulating Noetherian operators:
 
            @UL {
@@ -1608,9 +1603,9 @@ doc ///
                {TO noethOpsFromComponents}
            }@
 
-	       Methods for computing and manipulating local dual spaces:
+	   Methods for computing and manipulating local dual spaces:
 
-	       @UL {
+	   @UL {
     		   {TO truncatedDual},
     		   {TO zeroDimensionalDual},
     		   {TO eliminatingDual},
@@ -1618,16 +1613,30 @@ doc ///
     		   {TO gCorners},
     		   {TO innerProduct},
                {TO reduceSpace}
-		   }@
+	   }@
 
-	       Auxiliary numerical linear algebra methods:
+	   Auxiliary numerical linear algebra methods:
 
-	       @UL {
+	   @UL {
     		   {TO numericalKernel},
     		   {TO numericalImage},
     		   {TO colReduce},
                {TO rationalInterpolation}
-		   }@
+	   }@
+
+	   For the task of computing Noetherian operators, here we implement the algorithms developed in the papers 
+	   @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@ and  
+	   @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
+           These include both symbolic and numerical algorithms, and a hybrid algorithm, where numerical data is used to
+           speed up the symbolic algorithm.
+           
+           To compute the initial ideal and Hilbert regularity of positive dimensional
+           ideals we use the algorithm of R. Krone ("Numerical algorithms for dual bases of positive-dimensional ideals." Journal of
+           Algebra and Its Applications, 12(06):1350018, 2013.). 
+           These techniques are numerically stable, and can be used with floating point arithmetic over the complex numbers.  
+           They provide a viable alternative in this setting to purely symbolic methods such as standard bases.  
+	   
+
 ///
 
 
