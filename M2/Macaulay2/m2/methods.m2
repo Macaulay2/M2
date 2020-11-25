@@ -277,7 +277,7 @@ length = method(TypicalValue => ZZ, Dispatch => Thing)
 codim = method( Options => true )
 radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null, Strategy => Decompose } )
 regularity = method( TypicalValue => ZZ, Options => { Weights => null } )
-associatedPrimes = method( TypicalValue => List, Options =>{ Strategy => 1, CodimensionLimit => -1 } )
+associatedPrimes = method( TypicalValue => List, Options =>{ Strategy => 1 } )
 
 -- defined in d/actors4.d
 format' := format

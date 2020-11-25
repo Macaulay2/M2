@@ -331,7 +331,7 @@ doc ///
             the bigraded ring Gr_m(Gr_I(R))
     Description
         Text
-	    Given a (graded)-ideal I in a (graded)-local ring (R,m), 
+	    Given a (graded) ideal I in a (graded-)local ring (R,m), 
             this function computes the bi-graded ring Gr_m(Gr_I(R)), presented as a 
             quotient of a bigraded polynomial ring with variables names u and v.
 	    After being computed once, this ring is stored in the cache of I.
@@ -369,7 +369,7 @@ doc ///
 	    the multiplicity sequence of I
     Description
         Text 
-            Given a (graded)-ideal I, this function computes 
+            Given a (graded) ideal I, this function computes 
 	    the multiplicity sequence as defined in [0].
 	    Specifying {\tt Strategy => "genElts"} will use the general element method 
 	    as in [4]: one can specify the "complexity" of the general elements
