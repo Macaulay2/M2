@@ -1235,14 +1235,14 @@ conjugate(Matrix) := Matrix => M -> (
 
 
 
-coordinateChangeOps = method() -----TODO: fix this, or remove
+coordinateChangeOps = method()
 coordinateChangeOps(Matrix, DiffOp) := DiffOp => (A, D) -> (
     R := ring D;
     A' := inverse A;
     b := pairs D / ((m,c) -> (sub(m, vars R * A'), sub(c, vars R * transpose A)));
     b / (p -> last p * (first matrixToDiffOps reverse coefficients first p)) // sum
 )
-
+coordinateChangeOps(Matrix, List) := coordinateChangeOps(RingMap, List) := List => (A, L) -> L/(D -> coordinateChangeOps(A, D))
 coordinateChangeOps(RingMap, DiffOp) := DiffOp => (phi, D) -> coordinateChangeOps(transpose(matrix phi // vars ring D), D)
 
 
@@ -1263,7 +1263,7 @@ assert(coordinateChangeOps_phi last nops - last comp == 0)
 
 
 
-noethOpsFromComponents = method() ------- TODO: fix this, or remove
+noethOpsFromComponents = method()
 -- List of ordered pairs (P, N), where P is a minimal prime of I, N a list of nops for the P-primary component.
 -- Output is a list of operators, which satisfy the Noetherian operator condition for I and radical I 
 noethOpsFromComponents(List) := List => L -> (
@@ -3389,6 +3389,90 @@ Description
         Q' = getIdealFromNoetherianOperators(L, radical Q) 
         Q == Q'
 ///
+
+doc ///
+Key
+    coordinateChangeOps
+    (coordinateChangeOps, Matrix, DiffOp)
+    (coordinateChangeOps, Matrix, List)
+    (coordinateChangeOps, RingMap, DiffOp)
+    (coordinateChangeOps, RingMap, List)
+Headline
+    induced Noetherian operators under coordinate change
+Usage
+    coordinateChangeOps(phi, D)
+    coordinateChangeOps(phi, L)
+Inputs
+    phi:Matrix
+        or @TO RingMap@
+    D:DiffOp
+    L:List
+        of @TO DiffOp@s
+Outputs
+    :DiffOp
+        (resp. a list of differential operators)
+Description
+    Text
+        Let $I$ be an ideal in a polynomial ring $K[x_1, ..., x_n]$, and $\phi \in GL_n(K)$ a 
+        matrix representing a $K$-linear automorphism of $R$. Then there is an automorphism 
+        $\psi$ of the Weyl algebra $K[x_i, dx_i]$ such that if $D_1, ..., D_r$ is a set of Noetherian
+        operators for $I$ then $\psi(D_1), ..., \psi(D_r)$ is a set of Noetherian operators for 
+        $\phi(I)$. This function computes the induced operators for a given $\phi$. The action 
+        of $\psi$ on polynomial variables $x_i$ is given by $\phi$, while the action of $\psi$ on
+        differential variables $dx_i$ is given by the inverse transpose of $\phi$.
+    Example
+        R = QQ[x,y,t]
+        I = ideal(x^2, y^2 - x*t)
+        P = radical I
+        N = noetherianOperators I
+        phi = map(R, R, diagonalMatrix apply(numgens R, i -> random QQ))
+        N' = coordinateChangeOps_phi N
+        I' = phi I
+        P' = phi P
+        I' == getIdealFromNoetherianOperators(N', P')
+SeeAlso
+    noetherianOperators
+///
+
+doc ///
+Key
+    noethOpsFromComponents
+    (noethOpsFromComponents, List)
+Headline
+    merge Noetherian operators for non-primary ideals
+Usage
+    noethOpsFromComponents L
+Inputs
+    L:List
+        of ordered pairs (P, N) where P is a minimal prime of I, and
+        N is a set of Noetherian operators for the P-primary component of I
+Outputs
+    :List
+        of @TO DiffOp@s
+Description
+    Text
+        Let $I$ be an unmixed ideal in a polynomial ring $R = K[x_1, ..., x_n]$, with primary 
+        decomposition $I = Q_1 \cap ... \cap Q_s$, where $Q_i$ is $P_i$-primary. 
+        If $N_i$ is a set of Noetherian operators for $Q_i$, then one can construct a 
+        set of differential operators $N$ for $I$ which satisfies the Noetherian operator 
+        condition: given $f \in R$, one has $f \in I$ iff $D(f) \in\sqrt{I}$ for all $D \in N$.
+    Example
+        R = QQ[x,y,t]
+        I = intersect(ideal((y+t)^2), ideal(x^2, y^2 - t*x))
+        radI = radical I
+        primes = associatedPrimes I
+        L = primes / (P -> (P, noetherianOperators(I, P)))
+        N = noethOpsFromComponents L
+        all(flatten table(N, I_*, (D, f) -> (D f) % radI == 0), identity)
+    Text
+        Note that this construction justifies the focus of Noetherian operators on the case
+        that the ideal I is primary: in order to get a useful membership test for a non-primary
+        (but still unmixed) ideal, it suffices to compute Noetherian operators on each primary 
+        component, and then combine them in the way given above.
+SeeAlso
+    (noetherianOperators, Ideal, Ideal)
+///
+
 -------------- Noetherian operators tests
 
 
@@ -3471,7 +3555,7 @@ debugLevel = 1
 debug loadPackage("NoetherianOperators", Reload => true)
 needsPackage "NumericalAlgebraicGeometry"
 needsPackage "Bertini"
---installPackage("NoetherianOperators", RemakeAllDocumentation => true)
+installPackage("NoetherianOperators", RemakeAllDocumentation => true)
 --loadPackage "NoetherianOperators"
 R = QQ[x_0..x_5]
 P = minors(2,matrix{{x_0,x_1,x_3,x_4},{x_1,x_2,x_4,x_5}});
