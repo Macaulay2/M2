@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1413194878
+-- -*- M2-comint -*- hash: -912769131
 
 i1 : R := QQ[x,y];
 
@@ -42,8 +42,7 @@ o2 = 325699392019820093805938500473136959995883x   -
 
 o2 : QQ[x, y]
 
-i3 : time complexrank F
-     -- used 0.118314 seconds
+i3 : complexrank F
 
 o3 = 8
 

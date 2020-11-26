@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 1143288321
+-- -*- M2-comint -*- hash: 94985615
 
 i1 : F = randomBinaryForm 7
 
@@ -9,8 +9,7 @@ o1 = 18t  + 2t t  + 9t t  + 2t t  + 4t t  + 3t t  + 6t t  + 3t
 o1 : QQ[t , t ]
          0   1
 
-i2 : time apolar(F,4)
-     -- used 0.00462378 seconds
+i2 : apolar(F,4)
 
                  4          3             2 2             3          4
 o2 = ideal(75621t  + 740842t t  - 3587636t t  - 2099787t t  + 741116t )
@@ -19,8 +18,7 @@ o2 = ideal(75621t  + 740842t t  - 3587636t t  - 2099787t t  + 741116t )
 o2 : Ideal of QQ[t , t ]
                   0   1
 
-i3 : time apolar(F,5)
-     -- used 0.00475951 seconds
+i3 : apolar(F,5)
 
                  3 2        2 3          4        5       4          2 3  
 o3 = ideal (1355t t  - 5785t t  - 3840t t  + 1321t , 1355t t  - 7610t t  -

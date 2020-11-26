@@ -1,14 +1,12 @@
--- -*- M2-comint -*- hash: 11533842
+-- -*- M2-comint -*- hash: 1371438490
 
-i1 : time X = coincidentRootLocus {5,3,2,2,1,1}
-     -- used 0.357457 seconds
+i1 : X = coincidentRootLocus {5,3,2,2,1,1}
 
 o1 = CRL(5,3,2,2,1,1)
 
 o1 : CoincidentRootLocus
 
-i2 : time dual X
-     -- used 0.162933 seconds
+i2 : dual X
 
 o2 = CRL(11,1,1,1) * CRL(13,1) * CRL(14) * CRL(14) (dual of CRL(5,3,2,2,1,1))
 

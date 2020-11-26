@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -891682273
+-- -*- M2-comint -*- hash: -2121444062
 
 i1 : (n,s) = (6,4)
 
@@ -15,8 +15,7 @@ o2 = 18t  + 2t t  + 9t t  + 2t t  + 4t t  + 3t t  + 6t
 o2 : QQ[t , t ]
          0   1
 
-i3 : time phi = apolar(n,s)
-     -- used 0.0787015 seconds
+i3 : phi = apolar(n,s)
 
 o3 = -- rational map --
      source: Proj(QQ[t , t , t , t , t , t , t ])
@@ -83,8 +82,7 @@ o3 = -- rational map --
 
 o3 : RationalMap (cubic rational map from PP^6 to 6-dimensional subvariety of PP^9)
 
-i4 : time P = switch plucker phi switch switch F
-     -- used 0.0488923 seconds
+i4 : P = switch plucker phi switch switch F
 
                   3          2 2           3        4        4          2 2  
 o4 = ideal (20458t t  - 4533t t  - 52230t t  + 4213t , 10229t  - 325779t t  +
@@ -101,8 +99,7 @@ i5 : diff(gens P,F) == 0
 
 o5 = true
 
-i6 : time switch phi^* plucker switch P
-     -- used 0.021578 seconds
+i6 : switch phi^* plucker switch P
 
         6     5       4 2     3 3     2 4       5     6
 o6 = 18t  + 2t t  + 9t t  + 2t t  + 4t t  + 3t t  + 6t

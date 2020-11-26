@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 891993148
+-- -*- M2-comint -*- hash: 764798863
 
 i1 : X = coincidentRootLocus {3,2,2,1,1,1,1}
 
@@ -6,8 +6,7 @@ o1 = CRL(3,2,2,1,1,1,1)
 
 o1 : CoincidentRootLocus
 
-i2 : time singularLocus X
-     -- used 1.26918 seconds
+i2 : singularLocus X
 
 o2 = {CRL(4,4,3), CRL(3,3,2,2,1), CRL(3,2,2,2,1,1), CRL(5,2,1,1,1,1),
      ------------------------------------------------------------------------
