@@ -132,12 +132,12 @@ doc ///
 	[realPoint, Tolerance]
 	[realPoint, Iterations]
 	[realPoint, Initial]
-	nelderMead
-	(nelderMead, FunctionClosure, List)
-	(nelderMead, Ideal)
-	[nelderMead, Tolerance]
-	[nelderMead, Iterations]
-	[nelderMead, Initial]
+	optimizeNelderMead
+	(optimizeNelderMead, FunctionClosure, List)
+	(optimizeNelderMead, Ideal)
+	[optimizeNelderMead, Tolerance]
+	[optimizeNelderMead, Iterations]
+	[optimizeNelderMead, Initial]
 	lineSearch
 	(lineSearch, Ideal, Matrix)
 	[lineSearch, Tolerance]
@@ -155,7 +155,7 @@ doc ///
 	    a sample real point on $V(I)$
     Description
 	Text
-	    This method computes a real sample point on a variety numerically, 
+	    This method samples a real point on a variety numerically, 
 	    using a combination of the 
 	    @HREF{"https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method", "Nelder-Mead simplex method"}@
 	    and @HREF{"https://en.wikipedia.org/wiki/Line_search", "line search"}@
@@ -178,7 +178,7 @@ doc ///
             I1 = ideal(A*transpose A - (r/n)*id_(R^n));
             I2 = ideal apply(entries transpose A, row -> sum(row, v -> v^2) - 1);
             I = I1 + I2;
-            p = realPoint(I, Iterations => 100)
+            elapsedTime p = realPoint(I, Iterations => 100)
 	    matrix pack(5, p#Coordinates)
             norm evaluate(gens I, p)
     SeeAlso

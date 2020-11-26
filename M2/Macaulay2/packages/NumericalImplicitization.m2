@@ -67,7 +67,7 @@ newPackage("NumericalImplicitization",
         "witnessPointPairs",
 	"isOnImage",
         "realPoint",
-        "nelderMead",
+        "optimizeNelderMead",
         "lineSearch",
         "Initial"
     }

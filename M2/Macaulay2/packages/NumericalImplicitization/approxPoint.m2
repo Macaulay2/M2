@@ -3,7 +3,7 @@
 
 realPoint = method(Options => {Tolerance => 1e-10, Iterations => 1000, Initial => "random"})
 realPoint Ideal := Matrix => opts -> I -> (
-	p := nelderMead(I, opts);
+	p := optimizeNelderMead(I, opts);
 	if norm sub(gens I, p) > opts.Tolerance then (
 		if debugLevel > 0 then print "Starting gradient descent";
 		p = lineSearch(I, p, opts);
@@ -13,8 +13,8 @@ realPoint Ideal := Matrix => opts -> I -> (
 
 -- Nelder-Mead(/downhill simplex/amoeba) method
 
-nelderMead = method(Options => {Tolerance => 1e-6, Iterations => 200, Initial => "standard"})
-nelderMead (FunctionClosure, List) := List => opts -> (F, V) -> (
+optimizeNelderMead = method(Options => {Tolerance => 1e-6, Iterations => 200, Initial => "standard"})
+optimizeNelderMead (FunctionClosure, List) := List => opts -> (F, V) -> (
 	-- Inputs: F = nonnegative real-valued function, V = full-dim simplex given as (vertices, values)
 	-- Output: (real) zero of F (approximate up to opts.Tolerance)
 	n := #V - 1;
@@ -59,7 +59,7 @@ nelderMead (FunctionClosure, List) := List => opts -> (F, V) -> (
 	);
 	V
 )
-nelderMead Ideal := Matrix => opts -> I -> (
+optimizeNelderMead Ideal := Matrix => opts -> I -> (
 	n := dim ring I;
 	k := if instance(coefficientRing ring I, ComplexField) then CC else RR;
 	V := if instance(opts.Initial, List) then opts.Initial
@@ -68,7 +68,7 @@ nelderMead Ideal := Matrix => opts -> I -> (
 		else entries(random(k^(n+1), k^n));
 	F := x -> norm sub(gens I, x); -- x -> sub(sos, x);
 	if not opts.Initial === "continue" then V = apply(V, v -> {matrix{v}, F(matrix{v})});
-	V = nelderMead(F, V, opts);
+	V = optimizeNelderMead(F, V, opts);
 	if debugLevel > 0 and V#0#1 > opts.Tolerance then print "Solution not found within tolerance. Try running this function again with Initial => \"continue\", or alternatively use lineSearch";
 	I.cache#"nelderMeadSimplex" = V;
 	V#0#0
