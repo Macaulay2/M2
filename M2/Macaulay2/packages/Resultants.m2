@@ -849,7 +849,7 @@ beginDocumentation()
 document { 
     Key => Resultants, 
     Headline => "resultants, discriminants, and Chow forms", 
-    PARA{"This package provides methods to deal with resultants and discriminants of multivariate polynomials, and with higher associated subvarieties of irreducible projective varieties. The main methods are: ", TO "resultant",", ",TO "discriminant",", ", TO "chowForm",", ",TO "dualVariety",", and ",TO "tangentialChowForm",". For the mathematical theory, we refer to the following two books: ", HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea; ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky. Other references for the theory of Chow forms are: ", HREF{"https://projecteuclid.org/euclid.dmj/1077305197","The equations defining Chow varieties"}, ", by M. L. Green and I. Morrison; ", HREF{"http://link.springer.com/article/10.1007/BF02567693","Multiplicative properties of projectively dual varieties"},", by J. Weyman and A. Zelevinsky; and the preprint ",HREF{"https://arxiv.org/abs/1607.05932","Coisotropic Hypersurfaces in the Grassmannian"}, ", by K. Kohn."},
+    PARA{"This package provides methods to deal with resultants and discriminants of multivariate polynomials, and with higher associated subvarieties of irreducible projective varieties. The main methods are: ", TO "resultant",", ",TO "discriminant",", ", TO "chowForm",", ",TO "dualVariety",", and ",TO "tangentialChowForm",". For the mathematical theory, we refer to the following two books: ", HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea; ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky. Other references for the theory of Chow forms are: ", HREF{"https://projecteuclid.org/euclid.dmj/1077305197","The equations defining Chow varieties"}, ", by M. L. Green and I. Morrison; ", HREF{"http://link.springer.com/article/10.1007/BF02567693","Multiplicative properties of projectively dual varieties"},", by J. Weyman and A. Zelevinsky; and ",HREF{"https://www.sciencedirect.com/science/article/abs/pii/S0747717119301506","Coisotropic hypersurfaces in Grassmannians"}, ", by K. Kohn."},
 }
 document { 
     Key => {[resultant,Algorithm],[discriminant,Algorithm],[affineResultant,Algorithm],[affineDiscriminant,Algorithm]}, 
@@ -874,7 +874,7 @@ document {
     Key => {resultant,(resultant,Matrix),(resultant,List)}, 
     Headline => "multipolynomial resultant", 
     Usage => "resultant F", 
-    Inputs => { "F" => Matrix => {"a row matrix whose entries are ", TEX///$n+1$///," homogeneous polynomials ", TEX///$F_0,\ldots,F_n$///," in ", TEX///$n+1$///," variables (or a ", TO List," to be interpreted as such a matrix)"}}, 
+    Inputs => { "F" => Matrix => {"a row matrix whose entries are ", TEX///$n+1$///," homogeneous polynomials ", TEX///$F_0,\ldots,F_n$///," in ", TEX///$n+1$///," variables (or a ", TO2{List,"list"}," to be interpreted as such a matrix)"}}, 
     Outputs => {RingElement => {"the resultant of ",TEX///$F_0,\ldots,F_n$///}}, 
     PARA{"Let ",TEX///$F_0,\ldots,F_n$///," be ",TEX///$n+1$///," homogeneous polynomials in ",TEX///$n+1$///," variables ",TEX///$x_0,\ldots,x_n$///," over a commutative ring ",TEX///$K$///,". The resultant ",TEX///$R(F_0,\ldots,F_n)$///," is a certain polynomial in the coefficients of ",TEX///$F_0,\ldots,F_n$///,"; when ",TEX///$K$///," is an algebraically closed field, ",TEX///$R(F_0,\ldots,F_n)$///," vanishes if and only if ",TEX///$F_0,\ldots,F_n$///," have a common nontrivial root.  For the general theory, see one of the following: ",HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea; ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky."},
     EXAMPLE { 
@@ -923,7 +923,7 @@ document {
     Key => {affineResultant,(affineResultant,Matrix),(affineResultant,List)}, 
     Headline => "affine resultant", 
     Usage => "affineResultant f", 
-    Inputs => { "f" => Matrix => {"a row matrix whose entries are ", TEX///$n+1$///," polynomials ", TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables (or a ", TO List," to be interpreted as such a matrix)"}}, 
+    Inputs => { "f" => Matrix => {"a row matrix whose entries are ", TEX///$n+1$///," polynomials ", TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables (or a ", TO2{List,"list"}," to be interpreted as such a matrix)"}}, 
     Outputs => {RingElement => {"the resultant of the polynomials obtained by homogenizing ",TEX///$f_0,\ldots,f_n$///," with respect to a new variable"}}, 
     EXAMPLE { 
     "ZZ[t,u][y,z]",
@@ -966,7 +966,7 @@ document {
     Key => {macaulayFormula,(macaulayFormula,Matrix),(macaulayFormula,List)}, 
     Headline => "Macaulay formula for the resultant", 
     Usage => "macaulayFormula F", 
-    Inputs => { "F" => Matrix => {"a row matrix whose entries are ", TEX///$n+1$///," homogeneous polynomials ", TEX///$F_0,\ldots,F_n$///," in ", TEX///$n+1$///," variables (or a ", TO List," to be interpreted as such a matrix)"}}, 
+    Inputs => { "F" => Matrix => {"a row matrix whose entries are ", TEX///$n+1$///," homogeneous polynomials ", TEX///$F_0,\ldots,F_n$///," in ", TEX///$n+1$///," variables (or a ", TO2{List,"list"}," to be interpreted as such a matrix)"}}, 
     Outputs => {{"a pair of two square matrices ",TEX///$(D,D')$///, " such that the ratio of their determinants ",TEX///$det(D)/det(D')$///," is the resultant of ",TEX///$F_0,\ldots,F_n$///}},
     PARA{"This formula is stated in Theorem 4.9 of ",HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea."},
     EXAMPLE {
@@ -1085,7 +1085,7 @@ time eqsD = chowEquations chowForm D",
           "D == saturate eqsD",
           "D == radical eqsD"
     },
-    PARA{"Actually, one can use ", TT "chowEquations", " to recover a variety ",TEX///$X$///," from some other of its tangential Chow forms as well. This is based on generalizations of the \"Cayley trick\", see ",HREF{"http://link.springer.com/article/10.1007/BF02567693","Multiplicative properties of projectively dual varieties"},", by J. Weyman and A. Zelevinsky; see also the preprint ", HREF{"https://arxiv.org/abs/1607.05932","Coisotropic Hypersurfaces in the Grassmannian"}, ", by K. Kohn. For instance, "},
+    PARA{"Actually, one can use ", TT "chowEquations", " to recover a variety ",TEX///$X$///," from some other of its tangential Chow forms as well. This is based on generalizations of the \"Cayley trick\", see ",HREF{"http://link.springer.com/article/10.1007/BF02567693","Multiplicative properties of projectively dual varieties"},", by J. Weyman and A. Zelevinsky; see also ", HREF{"https://www.sciencedirect.com/science/article/abs/pii/S0747717119301506","Coisotropic hypersurfaces in Grassmannians"}, ", by K. Kohn. For instance, "},
     EXAMPLE { 
           " Q = ideal(x_0*x_1+x_2*x_3)",
           "-- tangential Chow forms of Q
@@ -1102,7 +1102,7 @@ document {
     Inputs => { "I" => Ideal => {"a homogeneous ideal defining a projective variety ",TEX///$X=V(I)\subset\mathbb{P}^n$///},
                 "k" => ZZ => {"the dimension of ",TEX///$X$///,", or more generally an integer ",TEX///$k$///," not exceeding the dimension of ",TEX///$X$///," and not smaller than the dual defect of ",TEX///$X$///}}, 
     Outputs => {{"a pair ",TEX///$(J,J')$///, ", where ",TEX///$J$///, " is the defining ideal of the Segre product ", TEX///$X\times\mathbb{P}^k\subset\mathbb{P}^{(k+1)(n+1)-1}$///, ", while ", TEX///$J'$///, " is the principal ideal defining the dual hypersurface ", TEX///$(X\times\mathbb{P}^k)^{*}\subset{\mathbb{P^{(k+1)(n+1)-1}}}^{*}$///}},
-    PARA{"Let ",TEX///$X\subset\mathbb{P}^n$///," be a ",TEX///$k$///,"-dimensional projective variety. Consider the product ", TEX///$W = X\times\mathbb{P}^k$///," as a subvariety of ",TEX///$\mathbb{P}(Mat(k+1,n+1))$///,", the projectivization of the space of ",TEX///$(k+1)\times (n+1)$///, "-matrices, and consider the projection ",TEX///$p:\mathbb{P}(Mat(k+1,n+1))\dashrightarrow\mathbb{G}(k,n)=\mathbb{G}(n-k-1,n)$///,". Then the \"Cayley trick\" states that the dual variety ",TEX///$W^*$///," of ", TEX///$W$///," equals the closure of ",TEX///$p^{-1}(Z_0(X))$///, ", where ", TEX///$Z_0(X)\subset\mathbb{G}(n-k-1,n)$///," is the Chow hypersurface of ",TEX///$X$///,". The defining form of ", TEX///$W^*$///," is also called the ", TEX///$X$///,"-resultant. For details and proof, see ",HREF{"http://link.springer.com/article/10.1007/BF02567693","Multiplicative properties of projectively dual varieties"},", by J. Weyman and A. Zelevinsky; see also the preprint ", HREF{"https://arxiv.org/abs/1607.05932","Coisotropic Hypersurfaces in the Grassmannian"}, ", by K. Kohn."},
+    PARA{"Let ",TEX///$X\subset\mathbb{P}^n$///," be a ",TEX///$k$///,"-dimensional projective variety. Consider the product ", TEX///$W = X\times\mathbb{P}^k$///," as a subvariety of ",TEX///$\mathbb{P}(Mat(k+1,n+1))$///,", the projectivization of the space of ",TEX///$(k+1)\times (n+1)$///, "-matrices, and consider the projection ",TEX///$p:\mathbb{P}(Mat(k+1,n+1))\dashrightarrow\mathbb{G}(k,n)=\mathbb{G}(n-k-1,n)$///,". Then the \"Cayley trick\" states that the dual variety ",TEX///$W^*$///," of ", TEX///$W$///," equals the closure of ",TEX///$p^{-1}(Z_0(X))$///, ", where ", TEX///$Z_0(X)\subset\mathbb{G}(n-k-1,n)$///," is the Chow hypersurface of ",TEX///$X$///,". The defining form of ", TEX///$W^*$///," is also called the ", TEX///$X$///,"-resultant. For details and proof, see ",HREF{"http://link.springer.com/article/10.1007/BF02567693","Multiplicative properties of projectively dual varieties"},", by J. Weyman and A. Zelevinsky; see also ", HREF{"https://www.sciencedirect.com/science/article/abs/pii/S0747717119301506","Coisotropic hypersurfaces in Grassmannians"}, ", by K. Kohn."},
     PARA{"In the example below, we apply the method to the quadric ",TEX///$\mathbb{P}^1\times\mathbb{P}^1\subset\mathbb{P}^3$///,"."},
     EXAMPLE { 
           "QQ[x_0..x_3]; P1xP1 = ideal(x_0*x_1-x_2*x_3)",
