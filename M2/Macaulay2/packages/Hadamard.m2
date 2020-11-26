@@ -1,11 +1,11 @@
 newPackage(
     "Hadamard",
     Version => "1.0",
-    Date => "September 2019",
+    Date => "November 2020",
     Authors => {
 
 	{Name => "Iman Bahmani Jafarloo",
-	    Email => "iman.bahmanijafarloo@polito.it",
+	    Email => "ibahmani89@gmail.com",
 	    HomePage => "http://calvino.polito.it/~imanbj"
 	    }
 	}, -- TODO
@@ -13,22 +13,17 @@ newPackage(
     AuxiliaryFiles => false,
     DebuggingMode => true,
     Reload => true,
-    PackageExports => {"Points"}
+    PackageExports => {"Points"},
+    Keywords => {"Commutative Algebra"}
     )
 export {
     -- types
     "Point",
     -- methods
     "point",
-    --"makeListOfPoints",
     "hadamardProduct",
     "hadamardPower",
-    --"pointsToMatrix",
-    --"minkSum",
-    --"minkSumPowers",
-    --"minkMult",
     "idealOfProjectivePoints"
-    --"inversion"
     }
 
 --defining a new type of objects: points
@@ -340,8 +335,8 @@ doc ///
 	    of @TO Point@
     Description
     	Text
-	    Given two sets of points $X$ and $Y$ returns the list of (well-defined) entrywise
-	    multiplication of pairs of points in the cartesian product $X \times Y$.
+	    Given two sets of points $L$ and $M$ returns the list of (well-defined) entrywise
+	    multiplication of pairs of points in the cartesian product $L\times M$.
 	Example
 	    L = {point{0,1}, point{1,2}};
 	    M = {point{1,0}, point{2,2}};
