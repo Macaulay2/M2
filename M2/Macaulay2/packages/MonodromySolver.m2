@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"MonodromySolver",
-    	Version => "1.13", 
-    	Date => "June 2020",
+    	Version => "1.14", 
+    	Date => "Nov 2020",
     	Authors => {
 	     {Name => "Timothy Duff", Email => "tduff3@gatech.edu"},
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
@@ -19,7 +19,8 @@ newPackage(
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
   	DebuggingMode => false,		
   	--DebuggingMode => true,		 -- set to true only during development
-  	CacheExampleOutput => true
+  	CacheExampleOutput => true,
+        OptionalComponentsPresent => true --  set to true only during development
     	)
 
 
@@ -43,6 +44,9 @@ needs "./MonodromySolver/Tests.m2"
 beginDocumentation()
 needs "./MonodromySolver/Documentation.m2"
 end
+
+restart
+check "MonodromySolver"
 
 uninstallPackage "MonodromySolver"
 restart
