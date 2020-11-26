@@ -69,16 +69,14 @@ TEST ///
   -- The ideal case
   R = ZZ/101[a..d]
   I = monomialCurveIdeal(R,{1,3,4})
-  F = I_0
-  J = ideal(F*I_1, I_2, F^2*I_3)
-  saturate(J,F)
+  J = truncate(4, ideal(I_0 * I_1, I_2, I_0^2 * I_3))
 
-  J = truncate(4,I)
   time saturate(ideal J_*,a)
   time saturate(ideal J_*,a,Strategy=>Bayer)
   time saturate(ideal J_*,a,Strategy=>Linear)
   time saturate(ideal J_*,a,Strategy=>Iterate)
   time saturate(ideal J_*,a,Strategy=>Eliminate)
+  time assert(saturate(module J, a, Strategy => Iterate) == module saturate(J, a))
 
   time saturate(ideal J_*)
   time saturate(ideal J_*,Strategy=>Iterate)
@@ -92,14 +90,15 @@ TEST ///
   -- The module case
   R = ZZ/101[a..d]
   M = subquotient(matrix{{a^2,b^2},{a*d,c^2}}, matrix{{c},{d}})
+  clear = M -> subquotient(generators M, relations M)
 
   -- TODO: how to clear cache for modules?
-  time saturate(M,a)
+  elapsedTime saturate(clear M,a)
   -- FIXME: how did these work? Seems to be missing now
   -- time saturate(M,a,Strategy=>Bayer)
   -- time saturate(M,a,Strategy=>Linear)
   -- time saturate(M,a,Strategy=>Eliminate)
-  time saturate(M,a,Strategy=>Iterate)
+  elapsedTime saturate(clear M, a, Strategy => Iterate)
 ///
 
 TEST ///

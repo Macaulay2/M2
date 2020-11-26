@@ -2,7 +2,9 @@ undocumented {
     (saturate, Ideal,  Number),
     (saturate, Vector, Number),
     (saturate, Module, Number),
-    (saturate, Ideal, List),
+    (saturate, Ideal,  List),
+    (saturate, Module, List),
+    (saturate, Vector, List),
     (saturate, Vector),
     (saturate, Vector, Ideal),
     (saturate, Vector, RingElement)

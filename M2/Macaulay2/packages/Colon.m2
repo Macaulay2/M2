@@ -210,6 +210,7 @@ quotientHelper = (A, B, key, opts) -> (
     then error("no applicable strategy for ", toString key)
     else error("assumptions for quotient strategy ", toString strategy, " are not met"))
 
+--------------------------------------------------------------------
 -- Algorithms for Ideal : Ideal
 algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
     Iterate => (opts, I, J) -> (
@@ -253,6 +254,7 @@ algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
 scan({Quotient, Iterate-*, Linear*-, Monomial}, strategy ->
     addHook(key := (quotient, Ideal, Ideal), algorithms#key#strategy, Strategy => strategy))
 
+--------------------------------------------------------------------
 -- Algorithms for Module : Ideal
 algorithms#(quotient, Module, Ideal) = new MutableHashTable from {
     Iterate => (opts, M, J) -> (
@@ -284,6 +286,7 @@ algorithms#(quotient, Module, Ideal) = new MutableHashTable from {
 	if M.?relations then subquotient(h % M.relations, M.relations) else image h
 	),
 
+    -- TODO:
     Linear => (opts, M, J) -> (
 	-- assumptions: J is a single linear element, and everything is homogeneous
 	if not isHomogeneous M
@@ -296,6 +299,7 @@ algorithms#(quotient, Module, Ideal) = new MutableHashTable from {
 scan({Quotient, Iterate-*, Linear*-}, strategy ->
     addHook(key := (quotient, Module, Ideal), algorithms#key#strategy, Strategy => strategy))
 
+--------------------------------------------------------------------
 -- Algorithms for Module : Module
 algorithms#(quotient, Module, Module) = new MutableHashTable from {
     Iterate => (opts, I, J) -> (
@@ -358,9 +362,6 @@ new SaturateComputation from Sequence := (C, S) -> (
 -- but perhaps there is something smarter that can be done in this specific case
 
 -- saturate = method(Options => options saturate) -- defined in m2/quotient.m2
--- used when P = decompose irr
-saturate(Ideal,  List)        := Ideal  => opts -> (I, L) -> fold(L, I, (J, I) -> saturate(I, J, opts))
-
 saturate(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> saturateHelper(I, J, (saturate, Ideal, Ideal), opts)
 saturate(Ideal,  RingElement) := Ideal  => opts -> (I, f) -> saturateHelper(I, f, (saturate, Ideal, RingElement), opts)
 saturate Ideal                := Ideal  => opts ->  I     -> saturate(I, ideal vars ring I, opts)
@@ -369,13 +370,18 @@ saturate(MonomialIdeal, RingElement) := MonomialIdeal => opts -> (I, f) -> (
     saturate(I, if size f === 1 and leadCoefficient f == 1 then monomialIdeal f else ideal f, opts))
 
 saturate(Module, Ideal)       := Module => opts -> (M, J) -> saturateHelper(M, J, (saturate, Module, Ideal), opts)
-saturate(Module, RingElement) := Module => opts -> (M, f) -> saturate(M, ideal f, opts)
+saturate(Module, RingElement) := Module => opts -> (M, f) -> saturateHelper(M, f, (saturate, Module, RingElement), opts)
 saturate Module               := Module => opts ->  M     -> saturate(M, ideal vars ring M, opts)
 
 -- TODO: is M / saturate 0_M a correct computation of saturation of M?
 saturate(Vector, Ideal)       := Module => opts -> (v, J) -> saturate(image matrix {v}, J, opts)
 saturate(Vector, RingElement) := Module => opts -> (v, f) -> saturate(image matrix {v}, f, opts)
 saturate Vector               := Module => opts ->  v     -> saturate(image matrix {v}, opts)
+
+-- used when P = decompose irr
+saturate(Ideal,  List)        := Ideal  => opts -> (I, L) -> fold(L, I, (J, I) -> saturate(I, J, opts))
+saturate(Module, List)        := Module => opts -> (M, L) -> fold(L, M, (J, M) -> saturate(M, J, opts))
+saturate(Vector, List)        := Module => opts -> (v, L) -> saturate(image matrix {v}, L, opts)
 
 -- TODO: this should be unnecessary via https://github.com/Macaulay2/M2/issues/1519
 saturate(Ideal,  Number) :=
@@ -424,16 +430,31 @@ saturationByGRevLexHelper := (I, v, opts) -> (
     (g1', maxpower) := divideByVariable(g1, R1_(numgens R1 - 1));
     if maxpower == 0 then (I, 0) else (ideal fback g1', maxpower))
 
+--------------------------------------------------------------------
 -- Algorithms for Module : Ideal^infinity
 algorithms#(saturate, Module, Ideal) = new MutableHashTable from {
     Iterate => (opts, M, I) -> (
-	M' := quotient(M, I, opts); while M' != M do ( M = M'; M' = quotient(M, I, opts)); M ),
+	M' := quotient(M, I, opts); while M' != M do ( M = M'; M' = quotient(M, I, opts) ); M ),
+
+    Decompose => (opts, M, I) -> saturate(M, decompose I, Strategy => Iterate),
     }
 
 -- Installing hooks for Module : Ideal^infinity
-scan({Iterate}, strategy ->
+scan({Iterate, Decompose}, strategy ->
     addHook(key := (saturate, Module, Ideal), algorithms#key#strategy, Strategy => strategy))
 
+--------------------------------------------------------------------
+-- Algorithms for Module : RingElement^infinity
+algorithms#(saturate, Module, RingElement) = new MutableHashTable from {
+    Iterate => (opts, M, f) -> (
+	M' := quotient(M, f, opts); while M' != M do ( M = M'; M' = quotient(M, f, opts) ); M ),
+    }
+
+-- Installing hooks for Module : RingElement^infinity
+scan({Iterate}, strategy ->
+    addHook(key := (saturate, Module, RingElement), algorithms#key#strategy, Strategy => strategy))
+
+--------------------------------------------------------------------
 -- Algorithms for Ideal : Ideal^infinity
 algorithms#(saturate, Ideal, Ideal) = new MutableHashTable from {
     -- TODO: this is sometimes faster than Eliminate
@@ -482,6 +503,7 @@ algorithms#(saturate, Ideal, Ideal) = new MutableHashTable from {
 scan({Iterate, Eliminate, GRevLex, Monomial}, strategy ->
     addHook(key := (saturate, Ideal, Ideal), algorithms#key#strategy, Strategy => strategy))
 
+--------------------------------------------------------------------
 -- Algorithms for Ideal : RingElement^infinity
 algorithms#(saturate, Ideal, RingElement) = new MutableHashTable from {
     Iterate => (opts, I, f) -> saturate(I, ideal f, opts ++ {Strategy => Iterate}), -- backwards compatibility
@@ -652,6 +674,14 @@ scan({Quotient, Intersection}, strategy ->
     addHook(key := (annihilator, Module), algorithms#key#strategy, Strategy => strategy))
 
 --------------------------------------------------------------------
+----- Development section
+--------------------------------------------------------------------
+
+saturationByGRevLex     = (I,J) -> saturate(I, J, Strategy => GRevLex)
+saturationByElimination = (I,J) -> saturate(I, J, Strategy => Eliminate)
+intersectionByElimination =  L  -> intersect(L,   Strategy => Eliminate)
+
+--------------------------------------------------------------------
 ----- Tests section
 --------------------------------------------------------------------
 
@@ -670,14 +700,6 @@ load "./Colon/doc.m2"
 load "./Colon/quotient-doc.m2"
 load "./Colon/saturate-doc.m2"
 load "./Colon/annihilator-doc.m2"
-
---------------------------------------------------------------------
------ Development section
---------------------------------------------------------------------
-
-saturationByGRevLex     = (I,J) -> saturate(I, J, Strategy => GRevLex)
-saturationByElimination = (I,J) -> saturate(I, J, Strategy => Eliminate)
-intersectionByElimination =  L  -> intersect(L,   Strategy => Eliminate)
 
 end--
 

@@ -1,6 +1,5 @@
-restart
 debugLevel = 1
-debug needsPackage "Colon"
+debug Colon
 
 kk = ZZ/32003
 S = kk[x_0,x_1,x_2,x_3,x_4, Degrees => {{1,0},{1,0},{0,1},{0,1},{0,1}}]
@@ -16,13 +15,13 @@ twoGen = J -> (
 -- Output: first set of two generators that when saturated
 --         give the same ideal as J
     for i from 0 to numgens(J)-2 do (
-    	for j from i+1 to numgens(J)-1 do (
+	for j from i+1 to numgens(J)-1 do (
 	    --print (i,j);
 	    if saturate(ideal(J_i,J_j),irr) == J then (
-	    	return (true,i,j);
-	    	);
+		return (true,i,j);
+		);
 	    );
-    	);
+	);
     return (false,0,0);
     )
 
@@ -32,20 +31,20 @@ threeGen = J -> (
 -- Output: first set of three generators that when saturated
 --         give the same ideal as J
     for i from 0 to numgens(J)-3 do (
-    	for j from i+1 to numgens(J)-2 do (
+	for j from i+1 to numgens(J)-2 do (
 	    for k from j+1 to numgens(J)-1 do (
 	         --print (i,j,k);
 	       if saturate(ideal(J_i,J_j,J_k),irr) == J then (
 		   if length(res(ideal(J_i,J_j,J_k))) == (dim(ring(J)) - length(degree(J_0))) then
-	    	    return (true,i,j,k);
-	    	);
+		    return (true,i,j,k);
+		);
 	    );
-    	);
+	);
     );
     return (false,0,0,0);
     )
 
-genSat = (J,n) -> (
+genSat = (J,n,strat) -> (
 -- Input: saturated ideal J and ZZ n
 -- Output: all subsets of size n of the generators of J that
 --         give the same saturated ideal as J
@@ -55,49 +54,13 @@ genSat = (J,n) -> (
     apply(lists, l -> (
 	<< "doing " << l << endl;
 	I := ideal(J_*_l);
-	if elapsedTime saturate(I,irr) == J then (
-	    output = append(output,l);
-	         );
-	     )
-	 );
-     output
-	    )
-
-genSat2 = (J,n) -> (
--- Input: saturated ideal J and ZZ n
--- Output: all subsets of size n of the generators of J that
---         give the same saturated ideal as J
-    use ring(J);
-    lists := subsets(numgens(J),n);
-    output = {};
-    apply(lists, l -> (
-	<< "doing " << l << endl;
-	I := ideal(J_*_l);
-	if elapsedTime saturationByElimination(saturationByElimination(I,B0),B1) == J then (
-	    output = append(output,l);
-	         );
-	     )
-	 );
-     output
-	    )
-
-genSat3 = (J,n) -> (
--- Input: saturated ideal J and ZZ n
--- Output: all subsets of size n of the generators of J that
---         give the same saturated ideal as J
-    use ring(J);
-    lists := subsets(numgens(J),n);
-    output = {};
-    apply(lists, l -> (
-	<< "doing " << l << endl;
-	I := ideal(J_*_l);
-	if elapsedTime saturationByElimination(saturationByElimination(I,B1),B0) == J then (
-	    output = append(output,l);
-	         );
-	     )
-	 );
-     output
-	    )
+	elapsedTime
+	if strat == 0 and saturate(I, irr, Strategy => Iterate) == J
+	or strat == 1 and saturationByElimination(saturationByElimination(I, B0), B1) == J
+	or strat == 2 and saturationByElimination(saturationByElimination(I, B1), B0) == J
+	then output = append(output,l);
+	));
+    output)
 
 paramCurve = method(Options => {PrintPolys => false})
 paramCurve(ZZ,ZZ,ZZ) := paramCurve => opts -> (a,b,c) -> (
@@ -165,46 +128,14 @@ restart
 load(Colon#"auxiliary files"|"badsaturations.m2")
 
 Jsat = paramCurve(2,4,4);
-genSat(Jsat,3); --takes a long time
+elapsedTime genSat(Jsat,3,0); -- ~25s
+elapsedTime genSat(Jsat,3,1); -- ~13s
+elapsedTime genSat(Jsat,3,2); -- ~23s
 
-netList (Jsat_*)
-
-
-J = paramCurve(2,3,4);
-genSat(Jsat,3) -- also takes a long time
-
-
+Jsat = paramCurve(2,3,4);
+elapsedTime genSat(Jsat,3,0); -- ~23s
+elapsedTime genSat(Jsat,3,1); -- ~13s
+elapsedTime genSat(Jsat,3,2); -- ~12s
 
 J = paramRatCurve({2,2},{3,3},{5,4});
-genSat(J,2) -- also takes a long time
-
-
--- different possible ideas for saturating
-sat1 = J -> saturate(saturate(J,B0),B1)
-sat2 = J -> (
-    J1 := intersect(saturate(J,x_0),saturate(J,x_1));
-    intersect(for i from 2 to 4 list(saturate(J1,x_i)))
-    )
-
---faster saturation of a module over a general toric variety
--- Input : M-module irr-irrelevant
--- Output: N- a irr-saturated module
--*moduleSat = (M,irr) -> (
-    compts = decompose irr;
-    for i from 0 to length(compts)-1 do (
-	N = intersect(apply(numgens(compts_i), j-> saturate(M,compts_i_j)));
-	M = N
-	);
-    N
-    )
-*-
-
-isVirtual = (C, M, irr) -> (
-    if not(genSat(image((presentation M).dd_1),irr) == genSat(image(C.dd_1),irr)) then return (false,0);
--- check pres M
-    for i from 1 to length(C) do (
-	if not(genSat(ann(HH_i(C)),irr) == 0) then return (false,i);
-	);
-    return true
-    )
-
+elapsedTime genSat(J,2); -- takes a long time
