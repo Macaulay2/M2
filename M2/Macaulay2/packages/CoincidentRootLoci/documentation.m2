@@ -88,7 +88,7 @@ EXAMPLE {"X = coincidentRootLocus {3,2,2}","partition X"}}
 document { 
 Key => {(singularLocus, CoincidentRootLocus)},
 Headline => "the singular locus of a coincident root locus", 
-Usage => " X", 
+Usage => "singularLocus X", 
 Inputs => {"X" => CoincidentRootLocus},
 Outputs => {List => {"a list of coincident root loci such that their union coincides with the singular locus of ",TT "X"}},
 PARA{"The singular locus of a coincident root locus is the union of certain subloci, as described in the paper by J. Chipalkatti - On equations defining coincident root loci - J. Algebra 267, 246-271, 2003; see also the paper by S. Kurmann - Some remarks on equations defining coincident root loci - J. Algebra 352, 223-231, 2012."},
@@ -97,7 +97,7 @@ SeeAlso => {(subsets,CoincidentRootLocus)}}
 document { 
 Key => {(subsets, CoincidentRootLocus)},
 Headline => "produce all the subloci", 
-Usage => " X", 
+Usage => "subsets X", 
 Inputs => {"X" => CoincidentRootLocus},
 Outputs => {List => {"the list of the coincident root loci that are contained in ",TT "X"}},
 EXAMPLE {"X = coincidentRootLocus {5,2,2,1}","time subsets X"},
@@ -114,7 +114,7 @@ undocumented {(symbol ?,CoincidentRootLocus,CoincidentRootLocus)}
 document { 
 Key => {(supsets, CoincidentRootLocus),supsets},
 Headline => "produce all the suploci", 
-Usage => " X", 
+Usage => "supsets X", 
 Inputs => {"X" => CoincidentRootLocus},
 Outputs => {List => {"the list of the coincident root loci that contain ",TT "X"}},
 EXAMPLE {"X = coincidentRootLocus {4,2}","time supsets X"},
