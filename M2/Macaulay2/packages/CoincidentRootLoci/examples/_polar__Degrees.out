@@ -1,7 +1,4 @@
--- -*- M2-comint -*- hash: 1114966739
-****************************************************************************
-CoincidentRootLoci v.0.1.2 loaded successfully (last updated: June 22, 2020)
-****************************************************************************
+-- -*- M2-comint -*- hash: 1595779360
 
 i1 : X = coincidentRootLocus(3,2,2)
 
@@ -9,8 +6,7 @@ o1 = CRL(3,2,2)
 
 o1 : CoincidentRootLocus
 
-i2 : time polarDegrees X
-     -- used 0.885757 seconds
+i2 : polarDegrees X
 
 o2 = {36, 80, 66, 24}
 

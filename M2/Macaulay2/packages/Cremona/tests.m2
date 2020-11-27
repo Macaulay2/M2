@@ -9,7 +9,7 @@ TEST ///  --- quadro-quadric Cremona transformations
     time psi3=inverseMap(phi3,MathMode=>false)
     time psi4=inverseMap phi4
     time assert (isInverseMap(phi1,psi1) and isInverseMap(phi2,psi2) and isInverseMap(phi3,psi3) and isInverseMap(phi4,psi4))
-    time assert (degreeOfRationalMap(phi1,MathMode=>true) == 1 and degreeOfRationalMap phi2 == 1 and degreeOfRationalMap phi3 == 1 and degreeOfRationalMap phi4 == 1)
+    time assert (degreeMap(phi1,MathMode=>true) == 1 and degreeMap phi2 == 1 and degreeMap phi3 == 1 and degreeMap phi4 == 1)
 ///
 
 TEST ///
@@ -28,15 +28,15 @@ TEST /// -- Hankel matrices
     assert(projectiveDegrees(psi'(2,ZZ/331),MathMode=>true) == {1, 2, 4, 4, 2})   
     assert(projectiveDegrees psi0(2,ZZ/331) ==    {2, 4, 4, 2})
     assert(projectiveDegrees(psi0(2,ZZ/331),MathMode=>true) ==    {2, 4, 4, 2})
-    assert(degreeOfRationalMap phi(2,QQ) == 2)
+    assert(degreeMap phi(2,QQ) == 2)
     assert(projectiveDegrees inverseMap psi'(2,ZZ/101) == reverse {1, 2, 4, 4, 2})
     assert(projectiveDegrees(inverseMap psi'(2,ZZ/5),MathMode=>true) == reverse {1, 2, 4, 4, 2})
     assert(projectiveDegrees phi(3,ZZ/3331)  == {1, 3, 9, 17, 21, 15, 5})   
     assert(projectiveDegrees psi'(3,ZZ/3331) == {1, 3, 9, 17, 21, 15, 5})   
     assert(projectiveDegrees psi0(3,ZZ/3331) ==    {3, 9, 17, 21, 15, 5})
-    assert(degreeOfRationalMap phi(3,ZZ/3331) == 5)
+    assert(degreeMap phi(3,ZZ/3331) == 5)
     assert(projectiveDegrees inverseMap psi'(3,ZZ/3331) == reverse {1, 3, 9, 17, 21, 15, 5})
-    assert(degreeOfRationalMap phi(4,ZZ/431) == 14)
+    assert(degreeMap phi(4,ZZ/431) == 14)
 ///    
 
 TEST ///  -- special map P^8 ---> P^11
@@ -45,7 +45,7 @@ TEST ///  -- special map P^8 ---> P^11
     Z = ideal target Phi;
     time assert(kernel(phi,2) == Z)
     time assert(projectiveDegrees phi == {1, 2, 4, 8, 16, 23, 23, 16, 8})
-    time assert(degreeOfRationalMap phi == 1)
+    time assert(degreeMap phi == 1)
     H=ideal random(1,source phi)
     phi'=map((target phi)/phi(H),target phi) * phi;
     time assert ( kernel(phi',1) == H )
@@ -171,7 +171,7 @@ TEST /// -- bug fixed in inverseMap (25/01/2019)
    T = image rationalMap(P2,target f,transpose(J*(transpose vars P2)));
    h = (rationalMap T)|S;
    assert isDominant(h,MathMode=>true)
-   assert(degreeOfRationalMap h == 2)
+   assert(degreeMap h == 2)
    assert(try inverseMap h else true)
    assert(try inverseMap(h,MathMode=>true) else true)
    assert(degree h == 2)

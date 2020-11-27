@@ -209,3 +209,5 @@ ThreadedGB
 VectorGraphics
 GKMVarieties
 NoetherianOperators
+EigenSolver
+MultiplicitySequence
