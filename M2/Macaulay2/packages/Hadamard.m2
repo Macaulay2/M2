@@ -11,8 +11,8 @@ newPackage(
 	}, -- TODO
     Headline => "A package for the Hadamard products of varieties",
     AuxiliaryFiles => false,
-    DebuggingMode => true,
-    Reload => true,
+    DebuggingMode => false,
+    Reload => false,
     PackageExports => {"Points"},
     Keywords => {"Commutative Algebra"}
     )
