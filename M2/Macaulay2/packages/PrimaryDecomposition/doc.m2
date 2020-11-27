@@ -23,9 +23,10 @@ Node
       radical I
       minimalPrimes I
   References
-    Tree
-      :Eisenbud-Huneke-Vasconcelos, Invent. Math. 110 207-235 (1992)
-      :Shimoyama-Yokoyama, J. Symbolic computation, 22(3) 247-277 (1996)
+    @UL {
+      TEX "Eisenbud-Huneke-Vasconcelos, {\\it Inventiones mathematicae}, 110 207--235 (1992)",
+      TEX "Shimoyama-Yokoyama, {\\it Journal of Symbolic Computation}, 22(3) 247--277 (1996)"
+      }@
 --  Acknowledgement
   Subnodes
     associatedPrimes
@@ -264,8 +265,8 @@ Node
     Text
       {\tt ass} is an abbreviation for @TT "associatedPrimes"@.
 
-      Computes the list of associated primes for a module @TT "M"@ using Ext modules:
-      the codimension @TT "i"@ associated primes of @TT "M"@ and @TT "Ext^i(M,R)"@ are identical,
+      This function computes the list of associated primes for a module @TT "M"@ using Ext modules:
+      the codimension {\tt i} associated primes of @TT "M"@ and $\mathrm{Ext}^i(M,R)$ are identical,
       as shown in Eisenbud-Huneke-Vasconcelos, Invent. Math. 110 (1992) 207-235.
 
       In some cases, @TO primaryDecomposition@ also computes the associated primes, in which case
@@ -299,25 +300,17 @@ Node
     Text
       The list of associated primes corresponds to the list of primary components of @TT "I"@:
       the {\tt i}-th associated prime is the radical of the {\tt i}-th primary component.
-    Text
+
       If a value to the option @TT "CodimensionLimit"@ is provided, then only associated primes
       of codimension at most this value are returned. This can save time if the big height
-      (= maximal codimension of an associated prime) is less than the projective dimension. ",
-      "Calling ", TT "associatedPrimes M", " with a different value of ", TO CodimensionLimit, "
-      will remember the primes already found, only performing further computation if necessary.
-      The default value (which is the same as not specifying the value) is -1, which is
-      equivalent to ", TT "CodimensionLimit => infinity", " the first time ",
-      TT "associatedPrimes M", " is called, but will not do any further computation on subsequent
-      runs, only returning the previously found primes. To force computation of all associated
-      primes after some have been already found, use ", TT "CodimensionLimit => infinity", ".
+      (that is, the maximal codimension of an associated prime) is less than the projective dimension.
+      This method stores the primes already found in a cache, and calling it with a different value
+      of @TT "CodimensionLimit"@ will only perform further computation if it is necessary.
 
-      The @TT "Strategy"@ option value is currently not considered while computing associated primes.
       There are three methods for computing associated primes in Macaulay2: If the ideal is a monomial
       ideal, use code that Greg Smith and Serkan Hosten wrote. If a primary decomposition has already
       been found, use the stashed associated primes found. If neither of these is the case, then use Ext
       modules to find the associated primes (this is @TT "Strategy => 1"@).
-
-      In order to use the monomial ideal algorithm, it is necessary to make @TT "I"@ into a monomial ideal.
     Example
       S = QQ[a,b,c,d,e];
       I1 = ideal(a,b,c);
