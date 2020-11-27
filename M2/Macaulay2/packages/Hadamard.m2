@@ -1,6 +1,6 @@
 newPackage(
     "Hadamard",
-    Version => "1.0",
+    Version => "0.1",
     Date => "November 2020",
     Authors => {
 
@@ -33,18 +33,14 @@ Point = new Type of BasicList
 point=method()
 point(VisibleList):=(P)->(
     if all(P, i->i==0) then return "error: all entries are zero" else
-    if #delete(null, P) =!= #P then return "error: nuul entries are not allowed"
+    if any(P,i->i===null) then return "error: nuul entries are not allowed"
     else new Point from P)
 
-makeListOfPoints=method()
-makeListOfPoints(VisibleList):=(L)->(
-             apply(L,P-> point P)
-	     )
 
 Point * Point:=(p,q)->(
-    if #p =!= #q then error("the points should be in a same projective space") else
+    if #p =!= #q then error("points should be in a same projective space") else
     pp:=apply(p,q,times);
-    if all(pp, i->i==0) then error("this operation is not well-defined in projective space")
+    if all(pp, i->i==0) then error("product of points has no nonzero coordinate")
     else return pp
     )
 
@@ -129,7 +125,7 @@ hadamardMult(List):=(L)->(
     if instance(first L,Ideal)==true then fold(hadProdOfVariety,L)
     else
     if instance(first L,List)==true or instance(first L,Point)==true then fold(hadProdPoints,L)
-    else return ("error: check the inputs")
+    else return ("error: inputs should be a list of ideals or points")
     )
 
 -------general product------
@@ -265,7 +261,7 @@ doc ///
          :Ideal
     Description
         Text
-            Given two projective varieties $X$ and $Y$, their Hadamard product is defined as the
+            Given two projective subvarieties $X$ and $Y$, their Hadamard product is defined as the
 	    Zariski closure of the set of (well-defined) entrywise products of pairs of points in the cartesian 
 	    product $X \times Y$. This can also be regarded as the image of the Segre product of $X \times Y$
 	    via the linear projection on the $z_{ii}$ coordinates. The latter is the way the function is implemented.
@@ -314,7 +310,7 @@ doc ///
             J = ideal(random(1,S),random(1,S));
 	    L = {I,J};
 	    hadamardProduct(L)
-	    P = {point{1,2,3},point{-1,1,1},point{1,1/2,-1/3}};
+	    P = point\{{1,2,3},{-1,1,1},{1,1/2,-1/3}}
 	    hadamardProduct(P)
 ///
 
@@ -437,5 +433,5 @@ end
 restart
 uninstallPackage "Hadamard"
 installPackage "Hadamard"
-loadPackage "Hadamard"
+loadPackage ("Hadamard",Reload=>true)
 viewHelp "Hadamard"
