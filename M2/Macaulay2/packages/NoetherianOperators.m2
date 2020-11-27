@@ -459,7 +459,7 @@ reduceSpace = method(Options => {Monomials => null,Tolerance=>1e-6})
 reduceSpace PolySpace := o -> S -> (
     if dim S == 0 then return polySpace(gens S,Reduced=>true);
     (mons,coefs) := coefficients(gens S, Monomials => o.Monomials);
-    M := mons*(colReduce(coefs,Tolerance=>o.Tolerance));
+    M := mons*(colReduce(coefs,Reverse=>true,Tolerance=>o.Tolerance));
     polySpace(M,Reduced=>true)
     )
 reduceSpace DualSpace := o -> L -> dualSpace(reduceSpace L.Space,L.BasePoint)
@@ -1593,7 +1593,6 @@ SeeAlso
     zeroDimensionalDual
 ///
 
-
 TEST ///
 R = CC[x,y]
 I1 = ideal{x^2,x*y}
@@ -1658,7 +1657,7 @@ assert(dim D2' == 0)
 ///
 
 
-///
+TEST ///
 R = CC[x,y]
 I2 = ideal{x^2,y^2}
 D2 = zeroDimensionalDual(origin R, I2)
@@ -1694,15 +1693,18 @@ doc ///
 	       R = CC[x,y];
 	       I = ideal{x^2-y^2}
 	       p = point matrix{{1,1}};
-	       --gCorners(p, I)
+	       gCorners(p, I)
 	  Text
 	       If the optional argument @TT "ProduceSB"@ is set to true, the output is instead a matrix of elements of the ideal
 	       with the p translated to the origin such that the lead terms generate the inital ideal, i.e. a standard basis.
 	       Note that the coordinates of the standard basis elements are translated to be centered at the point p.
 	  Example
+	       S = gCorners(p, I, ProduceSB=>true)
 	       R = CC[x,y,z];
 	       J = ideal{z*(x*y-4), x-y}
 	       q = point matrix{{1.4142136, 1.4142136, 0}};
+	       gCorners(q, J, Tolerance=>1e-5)
+	       gCorners(q, J, ProduceSB=>true)
 ///
 
 TEST ///
@@ -1717,6 +1719,7 @@ LDZ = reduceSpace truncatedDual(p,M,5)
 LBM = reduceSpace truncatedDual(p,M,5)
 assert(dim LDZ == dim LBM)
 ///
+
 
 TEST ///
 debug NoetherianOperators
@@ -1753,12 +1756,19 @@ doc ///
 	  Example
 	       R = CC[x,y];
 	       I = ideal{x^2,x*y}
+	       d = localHilbertRegularity(origin R, I)
 	       D = truncatedDual(origin R, I, 3)
 	       L = hilbertFunction({0,1,2,3}, D)
 	  Text
 	       See also @TO gCorners@.
 ///
 
+TEST ///
+R = QQ[x,y,z]
+I = ideal {x*y*z}
+assert(localHilbertRegularity(origin R, I) == 1)
+assert(localHilbertRegularity(point matrix {{0,0,1}}, I) == 0)
+///
 
 doc ///
      Key
@@ -2107,7 +2117,11 @@ doc ///
           Text
 	       The lower rows are treated as the lead terms unless the optional argument {\tt Reverse} is set to true.
 	  Example
-	       colReduce(M, Reverse => true) 
+	       colReduce(M, Reverse=>true)
+	  Text
+	       If the optional argument {\tt Normalize} is set to true (default) each vector is normalized so that the lead entry is 1.  Otherwise this step is skipped.
+	  Example
+	       colReduce(M, Normalize=>false)
 ///
 
 TEST ///
@@ -3385,7 +3399,7 @@ q = point matrix{{1_CC,0_CC}}
 L = reduceSpace truncatedDual(M,p,6)
 --shiftDual(L,q,8)
 G = matrix{{x^2,x*y^2,y^4}}
-socles G
+--socles G
 
 hilbertFunction(toList(0..8),L)
 dualInfo(M,p,Truncate=>8)
