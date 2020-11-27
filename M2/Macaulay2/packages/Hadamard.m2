@@ -422,7 +422,7 @@ doc ///
 
 
      TEST ///
-     assert(hadamardProduct({point{1,2,3,4}},{point{1,2,3,4}}))==point{1,4,9,16})
+     assert(point{1,2,3,4} * point{1,2,3,4}==point{1,4,9,16})
  
      -- may have as many TEST sections as needed
      ///
