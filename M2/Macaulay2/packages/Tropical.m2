@@ -19,6 +19,7 @@ newPackage(
    		{Name => "Magdalena Zajaczkowska", Email => "Magdalena.A.Zajaczkowska@gmail.com", HomePage=>""}
 		},
 	Headline => "tropical geometry",
+	Keywords => {"Tropical Geometry"},
 	Configuration => {
 		"path" => "",
 		"fig2devpath" => "",

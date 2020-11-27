@@ -246,7 +246,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  );
      F.use = F -> var <- F_0;
      F.use F;
-     F / F := (x,y) -> x // y;
+     F / F := (x,y) -> if y == 0 then error "division by zero" else x // y;
      F % F := (x,y) -> if y == 0 then x else 0_F;
      -- if S' =!= null then (
      -- 	  -- what really want is to modify newRing so when it's called above,

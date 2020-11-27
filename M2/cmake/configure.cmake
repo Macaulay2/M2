@@ -146,6 +146,7 @@ set(M2_INSTALL_PROGRAMSDIR ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LI
 set(CMAKE_PROGRAM_PATH     ${M2_INSTALL_PROGRAMSDIR})
 
 message("\n## Staging area prefixes
+     usr-host          = ${M2_HOST_PREFIX}
      common            = ${M2_DIST_PREFIX}/${M2_DATA_INFIX}
      exec              = ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}")
 

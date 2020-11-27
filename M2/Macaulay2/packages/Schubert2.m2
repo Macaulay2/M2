@@ -13,6 +13,7 @@ newPackage(
 	     },
 	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
     	Headline => "characteristic classes for varieties without equations",
+	Keywords => {"Intersection Theory"},
         DebuggingMode => false,
 	PackageImports => {"SchurRings","PushForward"}
     	)

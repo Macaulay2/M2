@@ -998,9 +998,13 @@ document {
      PARA{},
      "Use ", TO trim, " or ", TO minimalPresentation, " if a more compact presentation
      is desired.",
-     PARA{},
-     "Use ", TO (flip,Module,Module), " to produce the isomorphism M ** N --> N ** M.",
-     SeeAlso => {flip, (symbol**,Module,Matrix),(symbol**,Matrix,Matrix)}
+     PARA{
+     	  "Use ", TO (flip,Module,Module), " to produce the isomorphism M ** N --> N ** M.",
+	  },
+     PARA {
+	  "To recover the factors from the tensor product, use the function ", TO "formation", "."
+	  },
+     SeeAlso => {flip, (symbol**,Module,Matrix),(symbol**,Matrix,Matrix),formation}
      }
 document {
      Key => (symbol**,Matrix,Matrix),
@@ -1441,7 +1445,7 @@ document {
 	  },
      "If the ring of ", TT "M", " is a base ring of ", TT "R", ", then the matrix presenting
      the module will be simply promoted (see ", TO "promote", ").  Otherwise, a ring map from the ring of ", TT "M", " 
-     to ", TT "R", " will be constructed by examining the names of the variables, as described in ", TO "(map,Ring,Ring)", ".",
+     to ", TT "R", " will be constructed by examining the names of the variables, as described in ", TO (map,Ring,Ring), ".",
      EXAMPLE lines ///
 	  R = ZZ/101[x,y];
       	  M = coker vars R

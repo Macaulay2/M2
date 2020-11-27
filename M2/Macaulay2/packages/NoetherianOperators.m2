@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
     "NoetherianOperators",
-    Version => "0.85",
-    Date => "Nov 7, 2020",
+    Version => "1.0",
+    Date => "Nov 25, 2020",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},
@@ -11,15 +11,16 @@ newPackage(
         {Name => "Marc Harkonen", 
         Email => "harkonen@gatech.edu"},
         {Name => "Yairon Cid-Ruiz",
-        Email => "ycidruiz@gmail.com"},
+        Email => "Yairon.CidRuiz@UGent.be"},
         {Name => "Anton Leykin",
         Email => "anton.leykin@gmail.com"}
     },
     Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
     PackageExports => {"Truncations", "Bertini", "NAGtypes"},
-    PackageImports => {"Dmodules"},
-    AuxiliaryFiles => true,
-    DebuggingMode => true
+    PackageImports => {"Dmodules", "PrimaryDecomposition"},
+    AuxiliaryFiles => false,
+    DebuggingMode => false,
+    Keywords => {"Numerical Algebraic Geometry", "Commutative Algebra"}
 )
 
 export {
@@ -45,6 +46,7 @@ export {
     "normalize",
 
     "noetherianOperators",
+    "specializedNoetherianOperators",
     "numericalNoetherianOperators",
     "noethOpsFromComponents",
     "coordinateChangeOps",
@@ -62,7 +64,7 @@ export {
     --functions from punctual Hilb approach
     "getIdealFromNoetherianOperators",
     "joinIdeals",
-    "mapToPunctualHilbertScheme" -- TODO does this have to be exported?
+    "mapToPunctualHilbertScheme" 
 
 }
 
@@ -82,7 +84,6 @@ protect \ {
 }
 
 -----------------------------------------------------------------------------------------
-load "NoetherianOperators/pointSampling.m2"
 -- Create a dual space from a list of Noetherian operators
 -- Caveat: if Noetherian operators have non-constant coefficients,
 --          behavior is undefined.
@@ -172,7 +173,6 @@ truncDualData = initializeDualData
 nextTDD = method(Options => {KernelStrategy => "Default"})
 nextTDD (TruncDualData,Number) := opts -> (H,t) -> nextTDD(H.deg + 1,H,t, opts)
 nextTDD (ZZ,TruncDualData,Number) := opts -> (d,H,t) -> (
-    --if d == 7 then error"dbg";
     R := ring H.Igens;
     S := ring H.hIgens;
     dehomog := map(R,S,{1_R} | gens R);
@@ -307,7 +307,6 @@ hilbertFunction(List,DualSpace) := (LL,L) -> (
     apply(LL, d->(if h#?d then h#d else 0))
     )
 hilbertFunction(ZZ,DualSpace) := (d,L) -> first hilbertFunction({d},L)
--- hilbertFunction(SetOfNoethOps) := N -> hilbertFunction(dualSpace N)
 
 localHilbertRegularity = method(TypicalValue => ZZ, Options=>{Tolerance => null})
 localHilbertRegularity(Point, Ideal) := o -> (p,I) -> localHilbertRegularity(p,gens I,o)
@@ -400,14 +399,8 @@ idealBasis = method(Options => true)
 idealBasis(Ideal, ZZ) := true >> opts -> (I,d) -> (
     R := ring I;
     if d < 1 then return map(R^1,R^0,0);
-    --B := set{};
     V := if opts.?DependentSet then opts.DependentSet else gens R;
     matrix{ unique flatten entries (gens I ** basis(0,d-1,R, Variables => V))}
-    --for g in flatten entries gens I do (
-    --    if g == 0 then continue else
-    --    B = B + set apply(flatten entries basis(0,d-1,R, Variables => V), m->m*g);
-    --);
-    --if #B == 0 then map(R^1,R^0,0) else matrix{toList B}
 )
 
 --lead monomial and lead monomial degree according to ordering associated with
@@ -520,12 +513,6 @@ numericalImage (Matrix, Number) := o -> (M, tol) -> (
 	)
     )
 
--- numSymKernel = method(Options => {Tolerance => null})
--- numSymKernel(Matrix) := Matrix => o -> M -> (
---     if precision M < infinity then colReduce(numericalKernel(M,o),o)
---     else myKernel(M)
--- )
-
 numericalKernel = method(Options => {Tolerance => null})
 numericalKernel (Matrix) := Matrix => o -> M -> (
     R := ring M;
@@ -607,7 +594,6 @@ new DiffOp from HashTable := (DD,H) -> (
 )
 new DiffOp from List := (DD,L) -> new DiffOp from hashTable L
 diffOp = method()
-diffOp DiffOp := D -> diffOp new HashTable from D
 diffOp HashTable := H -> (
     if #keys H == 0 then error "expected non-empty hash table";
     H' := select(H, f -> f!= 0);
@@ -630,7 +616,6 @@ diffOp (RingElement, Ring) := (f,R) -> (
 diffOp RingElement := f -> (
     R' := ring f;
     if not R'.?cache then R'.cache = new CacheTable;
-    -- TODO maybe makeWA should create this key?
     if not R'.cache#?"preWA" then (
         createDpairs R';
         R'.cache#"preWA" = (coefficientRing R')(monoid[(R'.dpairVars#0)]);
@@ -651,7 +636,6 @@ DiffOp - DiffOp := (D1, D2) -> D1 + (-1)*D2
 DiffOp RingElement := (D, f) -> keys D / (k -> (D)#k * diff(k, f)) // sum
 -- Comparison
 DiffOp ? DiffOp := (D1, D2) -> (
-    --error"dbg";
     if instance(D1 - D2, ZeroDiffOp) then return symbol ==;
     m := max keys(D1 - D2);
     if not D2#?m then symbol >
@@ -673,7 +657,6 @@ expression DiffOp := D ->
     sum
 net DiffOp := D -> net expression D
 toString DiffOp := D -> toString expression D
---tex TODO
 -- other useful functions
 ring DiffOp := D -> ring first keys D
 substitute (DiffOp, Ring) := (D,R) -> applyPairs(D, (k,v) -> sub(k, R) => sub(v,R))
@@ -681,7 +664,9 @@ normalize = method();
 normalize DiffOp := D -> 1/(sub( leadCoefficient D#(first rsort keys D), coefficientRing ring D)) * D
 DiffOp == ZZ := (D, z) -> if z == 0 then false else error"cannot compare DiffOp to nonzero integer"
 ZZ == DiffOp := (z, D) -> D == z
---right R action TODO
+evaluate (DiffOp, Matrix) := (D,p) -> applyValues(D, v -> promote((evaluate(matrix{{v}}, p))_(0,0), ring D))
+evaluate (DiffOp, Point) := (D,p) -> evaluate(D, matrix p)
+
 
 -- instances of ZeroDiffOp are differential operators that
 -- act as the zero operator. They have exactly one key with value zero
@@ -702,8 +687,10 @@ expression InterpolatedDiffOp := D ->
     (k -> ((expression D#k#0)/(expression D#k#1)) * if k == 1 then expression(1) else addDsymbol(k)) //
     sum
 net InterpolatedDiffOp := D -> net expression D
-evaluate (InterpolatedDiffOp, Matrix) := (D, p) -> diffOp(applyValues(D, (n,d) -> 
-    promote((evaluate(matrix{{n}},p))_(0,0)/(evaluate(matrix{{d}},p))_(0,0), ring D)))
+evaluate (InterpolatedDiffOp, Matrix) := (D, p) -> (
+    if any(splice values D, x -> x === "?") then error "cannot evaluate an incomplete interpolated differential operator"
+    else diffOp(applyValues(D, (n,d) -> 
+        promote((evaluate(matrix{{n}},p))_(0,0)/(evaluate(matrix{{d}},p))_(0,0), ring D))))
 evaluate (InterpolatedDiffOp, Point) := (D, p) -> evaluate(D, matrix p)
 
 
@@ -789,24 +776,9 @@ noetherianOperators (Ideal, Ideal) := List => true >> opts -> (I,P) -> (
     if strats#?strat then strats#strat(I, P, opts) 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
-
--- I'm not sure what this is supposed to do.
--- Strategy => "Numerical" should probably call numNoethOpsAtPoint
--- noetherianOperators (Ideal, Matrix) := SetOfNoethOps => true >> opts -> (I, pt) -> (
---     strats := new HashTable from {
---         "Numerical" => numNoethOpsAtPoint,
---     };
---     strat := if opts.?Strategy then opts.Strategy else "Numerical";
---     if strats#?strat then strats#strat(I, pt, opts) 
---     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
--- 
--- )
--- noetherianOperators (Ideal, Point) := SetOfNoethOps => true >> opts -> (I, pt) -> noetherianOperators(I, matrix pt)
-
 -- End dispatcher method
 
 
--- macaulayMatrixKernel := {Tolerance => null, DegreeLimit => -1, Rational => false, KernelStrategy => "Gaussian", Strategy => null} >> opts -> (I, kP) -> (
 macaulayMatrixKernel := true >> opts -> (I, kP) -> (
     S := ring I;
     -- option handling
@@ -818,7 +790,6 @@ macaulayMatrixKernel := true >> opts -> (I, kP) -> (
     useBM := if not opts.?BM then null else opts.BM;
 
     rat = rat or all(gens S, v -> isConstant sub(sub(v, kP), S));
-    --error "dbg";
     if not rat or useBM === false then (
         if debugLevel > 1 then <<"macaulayMatrixKernel: using DZ strategy"<<endl;
         L := (map(S^1,S^1,0), map(kP^1,kP^0,0));
@@ -870,20 +841,11 @@ matrixToDiffOps = (M, dBasis) -> (
 )
 
 
---noetherianOperatorsViaMacaulayMatrix = method(Options => {DegreeLimit => infinity, DependentSet => null}) 
 noetherianOperatorsViaMacaulayMatrix = method(Options => true) 
 noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (I, P) -> (
     R := ring I;
     m := if opts.?DegreeLimit then opts.DegreeLimit else -1;
     rat := if opts.?Rational then opts.Rational else false;
-    -- if m < 0 and precision R == infinity and P == radical I then (
-    --     if debugLevel > 0 then <<"Precomputing Noetherian operator degree limit: ";
-    --     m = 1;
-    --     while not isSubset(P^m, I) do m = m+1;
-    --     m=m-1;
-    --     if debugLevel > 0 then <<m<<endl;
-    -- );
-    -- TODO
 
     t := getTolerance(R,opts);
     (depVars,indVars) := getDepIndVars(P, opts);
@@ -946,7 +908,6 @@ liftColumns = (M,R') -> (
     sub(K, R')
 )
 
---numNoethOpsAtPoint = method(Options => options noetherianOperatorsViaMacaulayMatrix ++ options approxKer)
 numNoethOpsAtPoint = method(Options => true)
 numNoethOpsAtPoint (Ideal, Point) := List => true >> opts -> (I, p) -> numNoethOpsAtPoint(I, matrix p, opts)
 numNoethOpsAtPoint (Ideal, Matrix) := List => true >> opts -> (I, p) -> (
@@ -1009,7 +970,6 @@ hybridNoetherianOperators (Ideal, Ideal, Matrix) := List => true >> opts -> (I,P
         );
         -- Clear denominators and return a DiffOp
         first matrixToDiffOps(liftColumns(lift(K, S), R), sub(dBasis, R))
-        --diffOp apply(flatten entries dBasis, flatten entries KK, (m, f) -> sub(m,R) => f)
     )
 )
 hybridNoetherianOperators (Ideal, Ideal, Point) := List => true >> opts -> (I,P, pt) -> hybridNoetherianOperators(I,P, matrix pt, opts)
@@ -1033,12 +993,6 @@ assert(all(a,c, (a,b) -> a==b))
 ///
 
 
---numericalNoetherianOperators = method(Options => {
---    Tolerance => 1e-6,
---    InterpolationTolerance => 1e-6,
---    InterpolationDegreeLimit => infinity,
---    NoetherianDegreeLimit => 5,
---    DependentSet => null})
 numericalNoetherianOperators = method(Options => true)
 -- option TrustedPoint is a point with the "correct" dx-support
 -- option Sampler is a function f(n, I) which computes a list of n distinct points on the variety of I
@@ -1070,16 +1024,25 @@ numericalNoetherianOperators(Ideal) := List => true >> opts -> (I) -> (
 specializedNoetherianOperators = method(Options => true)
 specializedNoetherianOperators(Ideal, Matrix) := List => true >> opts -> (I,pt) -> (
     S := ring I;
-    if precision ring pt == infinity and precision S == infinity then numNoethOpsAtPoint(I, pt, opts)
+    if precision ring pt == infinity and precision S == infinity then (
+        depVars := if opts.?DependentSet then opts.DependentSet 
+            else if isPrimary I then getDepIndVars(I, opts)
+            else error"expected option DependentSet";
+        numNoethOpsAtPoint(I, pt, opts, DependentSet => depVars)
+    )
     else if coefficientRing S === QQ then (
         T := (ultimate(coefficientRing, ring pt)) monoid S;
-        if not opts.?DependentSet then error "expected option DependentSet";
-        numNoethOpsAtPoint(sub(I,T), pt, opts, DependentSet => opts.DependentSet / (x -> sub(x, T)))
+        depVars = if opts.?DependentSet then opts.DependentSet 
+            else if isPrimary I then getDepIndVars(I, opts)
+            else error"expected option DependentSet";
+        numNoethOpsAtPoint(sub(I,T), pt, opts, DependentSet => depVars / (x -> sub(x, T)))
     )
     else (
-        if not liftable(pt, S) then error"point is not liftable to ring of ideal";
-        if not opts.?DependentSet then error "expected option DependentSet";
-        numNoethOpsAtPoint(I, pt, opts)
+        try promote(pt, coefficientRing S) then numNoethOpsAtPoint(I,pt,opts) else (
+                if not liftable(pt, S) then error"point is not liftable/promotable to ring of ideal";
+                if not opts.?DependentSet then error "expected option DependentSet";
+                numNoethOpsAtPoint(I, pt, opts)
+        )
     )
 )
 specializedNoetherianOperators(Ideal, Point) := List => true >> opts -> (I,pt) -> specializedNoetherianOperators(I, matrix pt, opts)
@@ -1103,6 +1066,8 @@ enops = enops / (i -> sub(i, S))
 snops = snops / (op -> 1/lift(op#(first sort keys op), coefficientRing ring op) * op)
 
 assert(all(snops - enops, i -> all(values i, j -> abs(lift(j,coefficientRing ring first snops)) < 1e-6)))
+
+numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}}, Sampler => sampler, InterpolationDegreeLimit => 0)
 ///
 
 
@@ -1134,13 +1099,10 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
                     nop := specializedNopsFromTemplate(I, p, tmpl, opts, Tolerance => opts.Tolerance);
                     if nop === null then continue else {nop, p}
                 );
-                --newNops := specializedNopsFromTemplate(I, sampler, tmpl, neededPoints - #ptList, opts, Tolerance => opts.Tolerance);
                 opList = opList | first transpose nopList;
                 ptList = ptList | last transpose nopList;
             );
             
-            --liftedCoeffs := take(opList, neededPoints)  /
-            --    (op -> lift(op#m, ultimate(coefficientRing, ring op)));
             interpPoints := numColumns numBasis + numColumns denBasis + 1;
             liftedCoeffs := take(opList, interpPoints)  /
                 (op -> lift(op#m, ultimate(coefficientRing, ring op)));
@@ -1159,14 +1121,8 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
 -- Create new specialized Noeth op at a random point using tmpl as a template
 -- sampler(n,I) is a function that generates a list of n points on the variety of I
 specializedNopsFromTemplate = true >> opts -> (I, pt, tmpl) -> (
-    -- if n < 1 then return {{},{}};
-    --pts := bertiniSample(n,ws);
-    -- pts := sampler(n,I);
     R := ring I;
     R' := ring tmpl;
-
-    -- (mon,coef) := coefficients tmpl;
-    -- bd := (map(coefficientRing R', R', vars coefficientRing R'))(mon);
     bd := keys tmpl;
     maxdeg := bd / sum @@ degree // max;
     bx := basis(0, maxdeg-1, R');
@@ -1179,7 +1135,6 @@ specializedNopsFromTemplate = true >> opts -> (I, pt, tmpl) -> (
         if debugLevel > 0 then <<"specializedNopsFromTemplate: bad point, trying again"<<endl;
         return null;
     );
-    -- else {diffOp(matrix{bd}*colReduce(K, Tolerance => opts.Tolerance))_(0,0), pt}
     first matrixToDiffOps(promote(colReduce(K, Tolerance => opts.Tolerance), ring tmpl), matrix{bd})
 
 )
@@ -1188,6 +1143,7 @@ specializedNopsFromTemplate = true >> opts -> (I, pt, tmpl) -> (
 
 cleanComplex = (tol, x) -> clean(tol,realPart x) + ii*clean(tol, imaginaryPart x)
 cleanPoly = (tol, x) -> (
+    if x === "?" then return "?";
     (mon,coef) := coefficients x;
     coef = matrix applyTable(entries coef, f -> cleanComplex(tol,sub(f,CC)));
     (mon * coef)_(0,0)
@@ -1199,14 +1155,14 @@ conjugate(Matrix) := Matrix => M -> (
 
 
 
-coordinateChangeOps = method() -----TODO: fix this, or remove
+coordinateChangeOps = method()
 coordinateChangeOps(Matrix, DiffOp) := DiffOp => (A, D) -> (
     R := ring D;
     A' := inverse A;
     b := pairs D / ((m,c) -> (sub(m, vars R * A'), sub(c, vars R * transpose A)));
     b / (p -> last p * (first matrixToDiffOps reverse coefficients first p)) // sum
 )
-
+coordinateChangeOps(Matrix, List) := coordinateChangeOps(RingMap, List) := List => (A, L) -> L/(D -> coordinateChangeOps(A, D))
 coordinateChangeOps(RingMap, DiffOp) := DiffOp => (phi, D) -> coordinateChangeOps(transpose(matrix phi // vars ring D), D)
 
 
@@ -1227,17 +1183,14 @@ assert(coordinateChangeOps_phi last nops - last comp == 0)
 
 
 
-noethOpsFromComponents = method() ------- TODO: fix this, or remove
+noethOpsFromComponents = method()
 -- List of ordered pairs (P, N), where P is a minimal prime of I, N a list of nops for the P-primary component.
 -- Output is a list of operators, which satisfy the Noetherian operator condition for I and radical I 
 noethOpsFromComponents(List) := List => L -> (
-    -- nops := flatten values H;
-    -- nops = unique (nops / (f -> sub(f, R)));
     nops := unique flatten (L / last);
     primes := L / first;
     R := ring first primes;
     primesContainingNops := apply(nops, D -> select(L, p -> member(D, p#1)) / first);
-    -- Ps := apply(nops, D -> select(keys H, P -> any(H#P, D' -> D == sub(D',ring D))));
     mults := primesContainingNops / (primeList -> (
         if #primeList == #primes then 1_R else (
             J := intersect(primes - set primeList);
@@ -1245,14 +1198,6 @@ noethOpsFromComponents(List) := List => L -> (
         )
     ));
     apply(mults, nops, (i,j) -> i*j)
---  TODO remove this old code    
---    mults := L / (P -> 
-
---        if set Lp === set keys H then 1_R else (
---            J := intersect(keys H - set Lp);
---            (sub(gens J,R) * random(R^(#J_*), R^1))_(0,0)
---        )
---    );
 )
 
 TEST ///
@@ -1276,7 +1221,8 @@ assert(all(flatten table(ops, K_*, (D, f) -> (D f) % radK == 0), identity))
 -- Outputs a sequence (numerator, denominator)
 rationalInterpolation = method(Options => {Tolerance => 1e-6})
 rationalInterpolation(List, List, Matrix, Matrix) := Sequence => opts -> (pts, vals, numBasis, denBasis) -> (
-    if numColumns numBasis + numColumns denBasis > #pts + 1 then error "Rational interpolation needs more points";
+    if numColumns numBasis + numColumns denBasis > #pts - 1 then error "Rational interpolation needs more points";
+    if numColumns numBasis < numColumns denBasis then error"expected numerator monomial support to be at least as large as the denominator monomial support";
     R := ring numBasis_(0,0);
     nn := numColumns numBasis;
     nd := numColumns denBasis;
@@ -1299,8 +1245,6 @@ rationalInterpolation(List, List, Matrix, Matrix) := Sequence => opts -> (pts, v
         );
     if idx === {} then error "No fitting rational function found";
     norms := apply(idx, i -> entries K_i / abs // sum);
-    -- minNorm := min(norms);
-    -- minPos := position(norms, i -> abs(i - minNorm) < opts.Tolerance);
     K = unmingleVector(K_(idx#(minPosition(norms))), nn, nd);
 
     ((numBasis * K^{0..(nn - 1)})_(0,0), (denBasis * K^{nn .. (nn+nd-1)})_(0,0))
@@ -1311,7 +1255,7 @@ rationalInterpolation(List, List, Matrix) := (RingElement, RingElement) => opts 
 rationalInterpolation(List,List,Ring) := opts -> (pts, vals,R) -> (
     d := 0;
     local i; local b;
-    while (try (print d; b = rsort basis(0,d,R); i = rationalInterpolation(pts, vals, b, opts)) then false else true) do (
+    while (try (b = rsort basis(0,d,R); i = rationalInterpolation(pts, vals, b, opts)) then false else true) do (
         if #pts < 2*numColumns b + 1 then (print ("At least " | toString(2*numColumns b + 1) | " points needed"); error"No fitting rational function found; more points needed");
         d = d+1;
     );
@@ -1371,7 +1315,8 @@ getHilb = (P, depVars) -> (
     S
 )
 
-mapToPunctualHilbertScheme = (Q) -> (
+mapToPunctualHilbertScheme = method()
+mapToPunctualHilbertScheme(Ideal) := (Q) -> (
     R := ring Q;
     P := radical Q;
     indVars := support first independentSets P;
@@ -1449,7 +1394,6 @@ I = ideal(x^2, y^2 - t*x)
 hilb = getNoetherianOperatorsHilb(I) / normalize
 maca = noetherianOperatorsViaMacaulayMatrix(I) / normalize
 assert(all(hilb, maca, (i,j) -> i == j))
--- TODO add asserts
 ///
 
 -- computes the annihilator ideal of a polynomial F in a polynomial ring 
@@ -1499,10 +1443,11 @@ getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     Lmap := apply(numgens R, i -> R_i => promote(R_i, R') + R'_i);
     mapRtoX := map(X, R, Lmap);
     Q := ker mapRtoX;
-    for v in indVars do 
+    for v in indVars do -- heuristic for faster computation 
       Q = saturate(Q, ideal(v));
-    Q
+    first select(primaryDecomposition(Q), K -> radical(K) == P)    
 )
+
 TEST ///
 debug NoetherianOperators
 R = QQ[x,y,t]
@@ -1511,98 +1456,141 @@ L = getNoetherianOperatorsHilb(I)
 P = radical I
 Q = getIdealFromNoetherianOperators(L,P)
 assert(Q == I)
--- TODO add asserts
 ///
 ----------------------------------------------------------
 
-
-
+undocumented {
+    (expression, DiffOp),
+    (expression, InterpolatedDiffOp),
+    (net, DiffOp),
+    (net, InterpolatedDiffOp),
+    (toExternalString, ZeroDiffOp),
+    (toString, DiffOp)
+}
 
 beginDocumentation()
 
 doc ///
      Key
-     	  NoetherianOperators
+       NoetherianOperators
      Headline
-     	  numerically compute local dual space and Hilbert functions
+       numerically compute local dual space and Hilbert functions
      Description
-     	  Text
-	       The @EM "NoetherianOperators"@ package includes algorithms for computing local dual 
-	       spaces of polynomial ideals, and related local combinatorial data about its scheme structure.  These 
-	       techniques are numerically stable, and can be used with floating point arithmetic over the complex numbers.  
-	       They provide a viable alternative in this setting to purely symbolic methods such as standard bases.  
-	       In particular, these methods can be used to compute initial ideals, local Hilbert functions and Hilbert regularity.
+       Text
+	   The @EM "NoetherianOperators"@ package includes algorithms for computing Noetherian operators and local dual 
+	   spaces of polynomial ideals, and related local combinatorial data about its scheme structure.
+    	    	
+	   The problem of characterizing ideal membership with differential conditions was first addressed by 
+	   Gr\"obner ("Uber eine neue idealtheoretische Grundlegung der algebraischen Geometrie", Math. Ann. 115 (1938), no. 1, 333–358).
+	   Despite this early algebraic interest by Gr\"obner, a complete description of primary ideals in terms of differential operators was first obtained by analysts in the Fundamental Principle of Ehrenpreis and Palamodov.
+	   At the core of the Fundamental Principle, one has the notion of Noetherian operators to describe a primary ideal. 
+	   
+	   In case of an ideal supported at one point a set of Noetherian operators forms a Macaulay inverse system that spans the dual space of the ideal. 
+	   These notions relate to the work of 
+	   Macaulay ("The algebraic theory of modular systems", Cambridge Press, (1916)). 
+	    
+	   In this package, we implement several (exact symbolic and approximate numerical) algorithms for the computation of a set of Noetherian operators describing a primary ideal. 
+    	           	   
+           Methods and types for computing and manipulating Noetherian operators:
 
-	       Methods for computing and manipulating local dual spaces:
+           @UL {
+               {TO noetherianOperators, UL {
+                 {TO "Strategy => \"PunctualHilbert\""},
+                 {TO "Strategy => \"MacaulayMatrix\""},
+                 {TO "Strategy => \"Hybrid\""}
+                }},
+               {TO specializedNoetherianOperators},
+               {TO numericalNoetherianOperators},
+               {TO getIdealFromNoetherianOperators},
+               {TO DiffOp},
+               {TO coordinateChangeOps},
+               {TO noethOpsFromComponents}
+           }@
 
-	       @UL {
-		   {TO "truncatedDual"},
-		   {TO "zeroDimensionalDual"},
-		   {TO "eliminatingDual"},
-		   {TO "localHilbertRegularity"},
-		   {TO "gCorners"},
-		   {TO "socles"},
-		   {TO "innerProduct"},
-                   {TO "reduceSpace"}
-		   }@
+	   Methods for computing and manipulating local dual spaces:
 
-	       Auxiliary numerical linear algebra methods:
+	   @UL {
+    		   {TO truncatedDual},
+    		   {TO zeroDimensionalDual},
+    		   {TO eliminatingDual},
+    		   {TO localHilbertRegularity},
+    		   {TO gCorners},
+    		   {TO innerProduct},
+               {TO reduceSpace}
+	   }@
 
-	       @UL {
-		   {TO "numericalKernel"},
-		   {TO "numericalImage"},
-		   {TO "colReduce"},
-		   }@
+	   Auxiliary numerical linear algebra methods:
 
-	       The algorithm used for computing truncated dual spaces is that of B. Mourrain ("Isolated points, duality and residues." 
-	       J. Pure Appl. Algebra, 117/118:469–493, 1997).  To compute the initial ideal and Hilbert regularity of positive dimensional
-	       ideals we use the algorithm of R. Krone ("Numerical algorithms for dual bases of positive-dimensional ideals." Journal of
-               Algebra and Its Applications, 12(06):1350018, 2013.).  This package depends on the package @TO NAGtypes@.
+	   @UL {
+    		   {TO numericalKernel},
+    		   {TO numericalImage},
+    		   {TO colReduce},
+               {TO rationalInterpolation}
+	   }@
+
+	   For the task of computing Noetherian operators, here we implement the algorithms developed in the papers 
+	   @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@ and  
+	   @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
+           These include both symbolic and numerical algorithms, and a hybrid algorithm, where numerical data is used to
+           speed up the symbolic algorithm.
+           
+           To compute the initial ideal and Hilbert regularity of positive dimensional
+           ideals we use the algorithm of R. Krone ("Numerical algorithms for dual bases of positive-dimensional ideals." Journal of
+           Algebra and Its Applications, 12(06):1350018, 2013.). 
+           These techniques are numerically stable, and can be used with floating point arithmetic over the complex numbers.  
+           They provide a viable alternative in this setting to purely symbolic methods such as standard bases.  
+	   
+
 ///
 
 
 doc ///
-     Key
-          truncatedDual
-	  (truncatedDual,Point,Ideal,ZZ)
-     Headline
-          truncated dual space of a polynomial ideal
-     Usage
-          S = truncatedDual(p, I, d)
-     Inputs
-     	  p:Point
-	  I:Ideal
-	  d:ZZ
-     Outputs
-          S:DualSpace
-     Description
-          Text
-	       Computes a basis for the local dual space of a polynomial ideal localized at point p, truncated at degree d.
-	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
-	       They are really elements of the dual ring.
-	  Example
-	       R = CC[x,y];
-	       I = ideal{x^2, y*x}
-	       truncatedDual(origin(R),I,3)
-	  Text
-	       The functionals in the dual at a point p are expressed in coordinates centered at p.
-	  Example
-	       p = point matrix{{0_CC, 1_CC}}
-	       truncatedDual(p,I,3)
-	  Text
-	       Over inexact fields, the computation accounts for the possibility of small numerical error in the point p.
-	       The optional argument @TO "Tolerance (NumericalHilbert)"@ can be set to adjust the tolerance of the numerical computations.
-	       Higher degree dual computations generally require higher accuracy in the input and larger tolerance value to complete correctly.
-	       
-	       In this example, the point q is slightly away from the variety of I, but an appropriate @TT "Tolerance"@ value can overcome the error. 
-	  Example
-	       q = point matrix{{0_CC + 1e-10, 1_CC}}
-	       tol = 1e-6;
-	       S = truncatedDual(q,I,3, Tolerance => tol)
-	       (m,c) = coefficients gens S;
-	       m*clean(tol, c)
-	  Text
-	       See also @TO zeroDimensionalDual@.
+Key
+    truncatedDual
+    (truncatedDual, Point, Ideal, ZZ)
+    (truncatedDual, Point, Matrix, ZZ)
+    (truncatedDual, Matrix, Ideal, ZZ)
+    (truncatedDual, Matrix, Matrix, ZZ)
+Headline
+    truncated dual space of a polynomial ideal
+Usage
+    S = truncatedDual(p, I, d)
+Inputs
+    p:Point
+        or a row @TO Matrix@
+    I:Ideal
+        or a row @TO Matrix@ of generators
+    d:ZZ
+Outputs
+    S:DualSpace
+Description
+    Text
+        Computes a basis for the local dual space of a polynomial ideal localized at point p, truncated at degree d.
+        Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
+        They are really elements of the dual ring.
+    Example
+        R = CC[x,y];
+        I = ideal{x^2, y*x}
+        truncatedDual(origin(R),I,3)
+    Text
+        The functionals in the dual at a point p are expressed in coordinates centered at p.
+    Example
+        p = point matrix{{0_CC, 1_CC}}
+        truncatedDual(p,I,3)
+    Text
+        Over inexact fields, the computation accounts for the possibility of small numerical error in the point p.
+        The optional argument @TO "Tolerance (NoetherianOperators)"@ can be set to adjust the tolerance of the numerical computations.
+        Higher degree dual computations generally require higher accuracy in the input and larger tolerance value to complete correctly.
+
+        In this example, the point q is slightly away from the variety of I, but an appropriate @TT "Tolerance"@ value can overcome the error. 
+    Example
+        q = point matrix{{0_CC + 1e-10, 1_CC}}
+        tol = 1e-6;
+        S = truncatedDual(q,I,3, Tolerance => tol)
+        (m,c) = coefficients gens S;
+        m*clean(tol, c)
+SeeAlso
+    zeroDimensionalDual
 ///
 
 TEST ///
@@ -1613,41 +1601,47 @@ assert(hilbertFunction({0,1,2,3,4}, D1) == {1,2,1,1,1})
 ///
 
 doc ///
-     Key
-          zeroDimensionalDual
-	  (zeroDimensionalDual,Point,Ideal)
-     Headline
-          dual space of a zero-dimensional polynomial ideal
-     Usage
-          S = zeroDimensionalDual(p, I)
-     Inputs
-     	  p:Point
-	  I:Ideal
-     Outputs
-          S:DualSpace
-     Description
-          Text
-	       Computes a reduced basis of the dual space of a zero-dimensional ideal.  It does not check if the ideal is
-	       zero-dimensional and if not then termination will fail.
-	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
-	       They are really elements of the dual ring.
-	  Example
-	       R = QQ[a,b];
-	       I = ideal{a^3,b^3}
-	       D = zeroDimensionalDual(origin(R), I)
-	       dim D
-	  Text
-	       The dimension of the dual space at p is the multiplicity of the solution at p.
-	  Example
-	       S = CC[x,y];
-	       J = ideal{(y-2)^2,y-x^2}
-	       p = point matrix{{1.4142136_CC,2_CC}};
-	       D = zeroDimensionalDual(p, J)
-	       dim D
-	  Text
-	       See also @TO truncatedDual@.
-     Caveat
-	  The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
+Key
+    zeroDimensionalDual
+    (zeroDimensionalDual,Point,Ideal)
+    (zeroDimensionalDual, Point, Matrix)
+    (zeroDimensionalDual, Matrix, Ideal)
+    (zeroDimensionalDual, Matrix, Matrix)
+Headline
+    dual space of a zero-dimensional polynomial ideal
+Usage
+    S = zeroDimensionalDual(p, I)
+Inputs
+    p:Point
+        or a row @TO Matrix@
+    I:Ideal
+        or a row @TO Matrix@ of generators
+Outputs
+    S:DualSpace
+Description
+    Text
+        Computes a reduced basis of the dual space of a zero-dimensional ideal.  It does not check if the ideal is
+        zero-dimensional and if not then termination will fail.
+        Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
+        They are really elements of the dual ring.
+    Example
+        R = QQ[a,b];
+        I = ideal{a^3,b^3}
+        D = zeroDimensionalDual(origin(R), I)
+        dim D
+    Text
+        The dimension of the dual space at p is the multiplicity of the solution at p.
+    Example
+        S = CC[x,y];
+        J = ideal{(y-2)^2,y-x^2}
+        p = point matrix{{1.4142136_CC,2_CC}};
+        D = zeroDimensionalDual(p, J)
+        dim D
+
+Caveat
+    The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
+SeeAlso
+    truncatedDual
 ///
 
 TEST ///
@@ -1726,37 +1720,9 @@ LBM = reduceSpace truncatedDual(p,M,5)
 assert(dim LDZ == dim LBM)
 ///
 
--- This is not exported anymore
-///
-     Key
-          socles
-          (socles,MonomialIdeal)
-	  (socles,Matrix)
-     Headline
-          socle corners of a monomial ideal
-     Usage
-          S = socles I
-	  S = socles G
-     Inputs
-          I:MonomialIdeal
-	  G:Matrix
-	       one row of g-corners
-     Outputs
-          S:Matrix
-	       socle corners in a one-row matrix
-     Description
-          Text
-	       Computes the maximal monomials which are not in the monomial ideal, i.e. the "socle-corners".
-	  Example
-	       R = CC[x,y,z];
-	       I = monomialIdeal{x^2,y^2,z^2}
-	       socles I
-	       socles I^2
-	       G = vars R
-	       socles G
-///
--- This is not exported anymore
-///
+
+TEST ///
+debug NoetherianOperators
 R = CC[x,y]
 G1 = matrix{{x^2,x*y^2,y^4}}
 assert(socles G1 == matrix {{x*y, y^3}})
@@ -2042,6 +2008,12 @@ doc ///
 	  [eliminatingDual,Tolerance]
 	  [gCorners,Tolerance]
 	  [reduceSpace,Tolerance]
+      [rationalInterpolation, Tolerance]
+      [truncatedDual, Tolerance]
+      [zeroDimensionalDual, Tolerance]
+      [numericalImage,Tolerance]
+      [numericalKernel,Tolerance]
+      [colReduce, Tolerance]
      Headline
           optional argument for numerical tolernace
      Description
@@ -2061,7 +2033,6 @@ doc ///
           numericalImage
 	  (numericalImage,Matrix,Number)
 	  (numericalImage,Matrix)
-	  [numericalImage,Tolerance]
      Headline
           Image of a matrix
      Usage
@@ -2095,7 +2066,6 @@ doc ///
      Key
           numericalKernel
 	  (numericalKernel,Matrix)
-	  [numericalKernel,Tolerance]
      Headline
           Kernel of a matrix
      Usage
@@ -2121,6 +2091,9 @@ doc ///
      Key
           colReduce
 	  (colReduce,Matrix)
+	  [colReduce,Reverse]
+      [colReduce,Normalize]
+      Normalize
      Headline
           Column reduces a matrix
      Usage
@@ -2134,13 +2107,21 @@ doc ///
           Text
 	       Performs Gaussian column reduction on a matrix M, retaining only the linearly independent columns.
 	  Example
-	       M = matrix {{1., 2, 3}, {2, 4, 0}}
+	       M = matrix {{1., 2, 3}, {2, 4, 0}, {-1, -2, 3}}
 	       colReduce(M, Tolerance=>0.01) 
 	  Text
 	       Entries with absolute value below the tolerance are treated as zero and not used as pivots.
 	  Example
 	       N = matrix {{0.001, 0, 0}, {1, 1, 3}, {2, 2, 5.999}}
 	       colReduce(N, Tolerance=>0.01)
+          Text
+	       The lower rows are treated as the lead terms unless the optional argument {\tt Reverse} is set to true.
+	  Example
+	       colReduce(M, Reverse=>true)
+	  Text
+	       If the optional argument {\tt Normalize} is set to true (default) each vector is normalized so that the lead entry is 1.  Otherwise this step is skipped.
+	  Example
+	       colReduce(M, Normalize=>false)
 ///
 
 TEST ///
@@ -2186,10 +2167,407 @@ Description
 
 
 -------------- Noetherian operators documentation
+
+------- DiffOp documentation
 doc ///
 Key
     DiffOp
+Headline
+    differential operator
+Description
+    Text
+        A differential operator of the ring $R = \mathbb{K}[x_1,\dots,x_n]$ can be thought of as a polynomial
+        with coefficients in $R$, and monomials in variables $dx_1, \dots, dx_n$, where $dx_i$ corresponds to the
+        partial derivative with respect to $x_i$. These operators form an $R$-vector space, and act naturally on elements of $R$.
+
+    Example
+        R = QQ[x,y]
+        D = diffOp {x => x+y, x*y^2 => 3+x}
+        (x^2+3) * D
+        D + D
+        D(x^5*y^2)
+    Text
+        Instances of {\tt DiffOp} are @TO2 {HashTable, "hash tables"}@, where keys are differential monomials
+        (represented as monomials in $R$), and values are the corresponding coefficients. A useful shortcut for
+        creating instances of {\tt DiffOp} is to use a @TO WeylAlgebra@.
+
+    Example
+        needsPackage "Dmodules"
+        S = makeWA R
+        E = diffOp(y*dx - x*dy^2)
+SeeAlso
+    (diffOp, HashTable)
+    (diffOp, RingElement)
 ///
+
+doc ///
+Key
+    diffOp
+Headline
+    create a differential operator
+///
+
+doc ///
+Key
+    (diffOp, HashTable)
+    (diffOp, List)
+    (NewFromMethod, DiffOp, HashTable)
+    (NewFromMethod, DiffOp, List)
+Headline
+    create a differential operator
+Usage
+    diffOp H
+Inputs
+    H:HashTable
+        or a @TO2 {List, "list"}@ of pairs {\tt mon => coef}
+Outputs
+    :DiffOp
+Description
+    Text
+        The @TO HashTable@ {\tt H} should contain monomials as keys and polynomials as values, all
+        of which should lie in the same ring. The keys represent monomials of each term (in $dx$ variables),
+        and the value represent the coefficient.
+    Example
+        R = QQ[x,y]
+        H = new HashTable from {x^2 => x+y+3, y^2*x^5 => 2*x}
+        D1 = diffOp H
+    Text
+        Alternatively, {\tt diffOp} can also create differential operators from lists of {\tt key => value} pairs
+    Example
+        D2 = diffOp {x^2 => x+y+3, y^2*x^5 => 2*x}
+        D1 == D2
+    Text
+        For a simpler way of creating differential operators, see @TO (diffOp, RingElement)@.
+Caveat
+    The constructors @TO (NewFromMethod, DiffOp, HashTable)@ and @TO (NewFromMethod, DiffOp, List)@ are for internal use only. Use @TO (diffOp, HashTable)@ and @TO (diffOp, List)@ instead.
+
+SeeAlso
+    DiffOp
+    (diffOp, RingElement)
+///
+
+doc ///
+Key
+    (diffOp, Ring, RingElement)
+    (diffOp, RingElement, Ring)
+    (diffOp, RingElement)
+Headline
+    create a differential operator from a Weyl algebra element
+Usage
+    diffOp_R f
+    diffOp(f, R)
+    diffOp f
+Inputs
+    R:Ring
+    f:RingElement
+        of a @TO WeylAlgebra@ of {\tt R}
+Outputs
+    :DiffOp
+Consequences
+    Item
+        if called without a specified ring (i.e. {\tt diffOp f}), creates a new ring by discarding the $dx$-variables and caches it in the Weyl algebra
+    Item
+        if such a ring had been previously cached, the cached ring will be used.
+Description
+    Text
+        Creates a differential operator of the ring {\tt R} from an element {\tt f} of a Weyl algebra of {\tt R}
+    Example
+        needsPackage "Dmodules"
+        R = QQ[x,y]
+        S = makeWA R
+        D = diffOp_R(x^2 * dx + y^2 * dy^2*dx)
+        ring D === R
+    Text
+        The ring does not have to be specified. Note that in this case, the resulting operator will not be a differential
+        operator of {\tt R}, but that of a new ring. This ring is cached, so subsequent calls will result in operators of the same ring.
+    Example
+        E = diffOp(x^2* dx)
+        ring E === R
+        F = diffOp(dy^2)
+        ring E === ring F
+SeeAlso
+    DiffOp
+    (diffOp, HashTable)
+
+///
+
+doc ///
+Key
+    (symbol +, DiffOp, DiffOp)
+Headline
+    addition of differential operators
+Usage
+    D + E
+Inputs
+    D:DiffOp
+    E:DiffOp
+Outputs
+    :DiffOp
+Description
+    Text
+        Adds two differential operators. The ring of both operators must match
+    Example
+        R = QQ[x,y];
+        D = diffOp{x => x^2+ y}
+        E = diffOp{x => -y, x^2*y^2 => 2}
+        D + E
+///
+
+doc ///
+Key
+    (symbol -, DiffOp, DiffOp)
+Headline
+    subtraction of differential operators
+Usage
+    D - E
+Inputs
+    D:DiffOp
+    E:DiffOp
+Outputs
+    :DiffOp
+Description
+    Text
+        Subtracts two differential operators. The ring of both operators must match
+    Example
+        R = QQ[x,y];
+        D = diffOp{x => x^2+ y}
+        E = diffOp{x => -y, x^2*y^2 => 2}
+        D - E
+///
+
+
+doc ///
+Key
+    (symbol -, DiffOp)
+Headline
+    negation of differential operators
+Usage
+    - D
+Inputs
+    D:DiffOp
+Outputs
+    :DiffOp
+Description
+    Text
+        Corresponds to $(-1)*D$
+    Example
+        R = QQ[x,y];
+        D = diffOp{x => x^2+ y}
+        - D
+///
+
+doc ///
+Key
+    (symbol *, RingElement, DiffOp)
+    (symbol *, Number, DiffOp)
+Headline
+    scaling of differential operators
+Usage
+    c*D
+Inputs
+    c:RingElement
+        in the same ring as {\tt D}, or a @TO Number@
+
+    D:DiffOp
+Outputs
+    :DiffOp
+Description
+    Text
+        Multiplies every coefficient of {\tt D} by {\tt c}
+    Example
+        R = QQ[x,y];
+        D = diffOp{x => x^2+ y, y^2 => 1}
+        y*D
+        2*D
+///
+
+doc ///
+Key
+    (symbol ?, DiffOp, DiffOp)
+    (symbol ==, DiffOp, DiffOp)
+    (symbol ==, DiffOp, ZZ)
+    (symbol ==, ZZ, DiffOp)
+Headline
+    comparison of differential operators
+Usage
+    D ? E
+    D == E
+    D == 0
+Inputs
+    D:DiffOp
+    E:DiffOp
+Description
+    Text
+        The ordering of DiffOps a product ordering of the undelying ring, where the $dx$ monomoial are compared
+        first, and ties are broken with coefficients.
+    Example
+        R = QQ[x,y, MonomialOrder => Lex]
+        D1 = diffOp{x^2 => y, y => x^2}
+        D2 = diffOp{y => y^2}
+        D3 = diffOp{x^2 => y, y => x^2 + y^2}
+        D1 ? D1
+        D1 ? D2
+        D1 ? D3
+        D1 + D2 == D3
+        D1 + D2 - D3 == 0
+///
+
+doc ///
+Key
+    (ring, DiffOp)
+Headline
+    get the ring associated to a differential operator
+Usage
+    ring D
+Inputs
+    D:DiffOp
+Outputs
+    :Ring
+Description
+    Text
+        Returns the ring in which the coefficients lie
+    Example
+        R = QQ[x]
+        D = diffOp{x => 2*x^2}
+        ring D
+Caveat
+    If the @TO DiffOp@ was created using @TO (diffOp, RingElement)@ (e.g. after running @TO makeWA@),
+    the ring
+///
+
+doc ///
+Key
+    (symbol SPACE, DiffOp, RingElement)
+Headline
+    apply a differential operator
+Usage
+    D f
+Inputs
+    D:DiffOp
+    f:RingElement
+        in the same ring as {\tt D}
+Outputs
+    :RingElement
+        in the same ring as {\tt f}
+Description
+    Text
+        The differential operators of the ring $R = \mathbb{F}[x_1,\dots,x_n]$ act naturally on elements of $R$.
+        The operator $dx_i$ acts as a partial derivarive with respect to $x_i$, and a polynomial acts by multiplication.
+    Example
+        R = QQ[x,y]
+        dx = diffOp{x^2 => 1}
+        D = diffOp{1_R => x^2 + y^2}
+        dx(x^4 + x^3 + y)
+        D(x^2 - y^2)
+///
+
+doc ///
+Key
+    (substitute, DiffOp, Ring)
+Headline
+    change the ring of a differential operator
+Usage
+    substitute(D, R)
+    sub(D, R)
+Inputs
+    D: DiffOp
+    R: Ring
+Outputs
+    :DiffOp
+Description
+    Text
+        Attempts to change the underlying ring of the differential operator by calling @TO substitute@
+        for each monomial and coefficient of {\tt D}
+    Example
+        R = QQ[x,y]
+        D = diffOp{1_R => x^2, x^2 => y^2}
+        S = QQ[x,y,z]
+        DS = sub(D,S)
+        ring DS === S
+///
+
+
+doc ///
+Key
+    normalize
+    (normalize, DiffOp)
+Headline
+    rescale a differential operator to a canonical form
+Usage
+    normalize D
+Inputs
+    D:DiffOp
+Outputs
+    :DiffOp
+Description
+    Text
+        Rescales a differential operator so that the leading term of the leading coefficient is 1.
+    Example
+        R = QQ[x,y,t];
+        D = diffOp{x^2*t => 3*x^3 + 2*y, t^2 => x+y}
+        normalize D
+    Text
+        This can be useful when computing "canonical" sets of Noetherian operators,
+        as a valid set of Noetherian operators stays valid even after rescaling.
+    Example
+        I = ideal(x^2,y^2 - x*t);
+        nops = noetherianOperators(I, Strategy => "MacaulayMatrix");
+        nops // sort / normalize == {diffOp{1_R => 1}, diffOp{y => 1}, diffOp{y^2 => t, x => 2}, diffOp{y^3 => t, x*y => 6}}
+///
+
+
+doc ///
+Key
+    ZeroDiffOp
+    (NewFromMethod, ZeroDiffOp, Ring)
+    (symbol ==, ZZ, ZeroDiffOp)
+    (symbol ==, ZeroDiffOp, ZZ)
+Headline
+    the zero differential operator of a ring
+Description
+    Text
+        For internal use. A type of @TO DiffOp@ with a single key {\tt 1} and value 0.
+        Users are not expected to create instances of {\tt ZeroDiffOp}, they are created automatically by @TO diffOp@ when necessary.
+    Example
+        R = QQ[x,y]
+        D = diffOp{x => 0};
+        instance(D, ZeroDiffOp)
+        peek D
+    Text
+        Comparison to the integer 0 works as expected
+    Example
+        E = diffOp{1_R => 0}
+        E == 0
+SeeAlso
+    diffOp
+
+///
+
+doc ///
+Key
+    InterpolatedDiffOp
+    (NewFromMethod, InterpolatedDiffOp, HashTable)
+    (NewFromMethod, InterpolatedDiffOp, List)
+Headline
+    differential operator with interpolated coefficients
+Description
+    Text
+        A type of @TO DiffOp@ returned by interpolation based methods, such as @TO numericalNoetherianOperators@.
+        Because of this, users are not expected to create instances of this type.
+
+        If the interpolation of any coefficient fails, the numerator and denominator will be replaced by the @TO2 {String, "string"}@ {\tt "?"}.
+
+        Assuming the interpolation was successful, the method @TO (evaluate, InterpolatedDiffOp, Point)@ will convert
+        an @TO InterpolatedDiffOp@ to a specialized differential operators of type @TO DiffOp@ by evaluating each numerator and denominator at a point.
+    Example
+        R = CC[x,y]
+        D = new InterpolatedDiffOp from {x => (x+y, pi*ii*x^2*y), y => (x, 1.3_R)}
+        D' = evaluate(D, point{{1.2, 2+ii}})
+SeeAlso
+    (evaluate, InterpolatedDiffOp, Point)
+
+///
+
 
 
 doc ///
@@ -2206,68 +2584,76 @@ Inputs
 Outputs
     :List
         of @TO2{DiffOp, "differential operators"}@
---Consequences
---    Item
 Description
     Text
-        Compute a set of Noetherian operators
+        Compute a set of Noetherian operators for the primary ideal I.
     Example
         R = QQ[x,y,t];
         I = ideal(x^2, y^2-x*t);
         noetherianOperators I
     Text
-        The optional argument {\tt Strategy} can be used to choose different algorithms.
-        The following algorithms are supported:
-        {\tt "PunctualHilbert"} (default), {\tt "MacaulayMatrix"}, {\tt "Hybrid"}
+        The optional argument {\tt Strategy} can be used to choose different algorithms. Each strategy may accept additional optional arguments, see the documentation page for each strategy for details.
 
         @UL{
-            TO2 {"PunctualHilbert", "\"PunctualHilbert\""},
-            TO2 {"MacaulayMatrix", "\"MacaulayMatrix\""},
-            TO2 {"Hybrid", "\"Hybrid\""},
+            TO2 {"Strategy => \"PunctualHilbert\"", "\"PunctualHilbert\" (default)"},
+            TO2 {"Strategy => \"MacaulayMatrix\"", "\"MacaulayMatrix\""},
+            TO2 {"Strategy => \"Hybrid\"", "\"Hybrid\""},
         }@
-
---    CannedExample
---    Code
---    Pre
---ExampleFiles
---Contributors
---References
 Caveat
     The behavior is undefined if {\tt Q} is not primary.
     For non-primary ideals, use @TO (noetherianOperators, Ideal, Ideal)@
---SeeAlso
 ///
+
+doc ///
+Key
+    (noetherianOperators, Ideal, Ideal)
+    Rational
+Headline
+    Noetherian operators of a primary component
+Usage
+    noetherianOperators (I, P)
+    noetherianOperators (I, P, Strategy => "MacaulayMatrix")
+    noetherianOperators (I, P, Rational => false)
+Inputs
+    I:Ideal
+        assumed to be unmixed
+    P:Ideal
+        a minimal prime of $I$
+Outputs
+    :List
+        of @TO2{DiffOp, "differential operators"}@
+Description
+    Text
+        Compute a set of Noetherian operators for $P$-primary component of $I$.
+    Example
+        R = QQ[x,y,t];
+        I1 = ideal(x^2, y^2-x*t);
+        I2 = ideal((x-t)^2);
+        I = intersect(I1, I2);
+        noetherianOperators(I, radical I1)
+        noetherianOperators(I, radical I2) == noetherianOperators(I2)
+    Text
+        The optional argument {\tt Strategy} can be used to choose different algorithms. Each strategy may accept additional optional arguments, see the documentation page for each strategy for details.
+
+        @UL{
+            TO2 {"Strategy => \"MacaulayMatrix\"", "\"MacaulayMatrix\" (default)"},
+            TO2 {"Strategy => \"Hybrid\"", "\"Hybrid\""},
+        }@
+    Text
+        If the prime $P$ is known to be a ration point, the optional argument {\tt Rational} can be set to true.  This may offer a speed up in the computation.
+SeeAlso
+    noetherianOperators
+    (noetherianOperators, Ideal)
+///
+
 
 doc ///
 Key
     noetherianOperators
 Headline
     Noetherian operators
-///
-
-doc ///
-Key
-    "MacaulayMatrix"
-Headline
-    strategy for computing Noetherian operators
-///
-
-doc ///
-Key
-    "Hybrid"
-Headline
-    strategy for computing Noetherian operators
-///
-
-doc ///
-Key
-    "PunctualHilbert"
-Headline
-    strategy for computing Noetherian operators
 Description
     Text
-        This strategy implements Algorithm 3.8 in @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@. 
-
         Let $R$ be a polynomial ring $R = K[x_1,\ldots,x_n]$ over a field $K$ of characteristic zero. 
         Consider the Weyl algebra $D = R<dx_1,\ldots,dx_n>$, 
         a prime ideal $P \subset R$ and a $P$-primary ideal.
@@ -2280,41 +2666,468 @@ Description
         In the output of the algorithm we always have that $m$ (the number of Noetherian operators) is equal to the 
         multiplicity of $Q$ over the prime ideal $P$.
 
-        We now provide a couple of examples where we compute Noetherian operators.
-        The last example deals with a rather non-trivial primary ideal to show the capabilities
-        of this method.
-
     Example
         R=QQ[x_1,x_2,x_3,x_4]
         Q = ideal(x_1^2,x_1*x_2,x_1*x_3,x_1*x_4-x_3^2+x_1,x_3^2*x_4-x_2^2,x_3^2*x_4-x_3^2-x_2*x_3+2*x_1)
         isPrimary Q
         noetherianOperators(Q, Strategy => "PunctualHilbert")
+///
+
+doc ///
+Key
+    "Strategy => \"MacaulayMatrix\""
+    BM
+    KernelStrategy
+Headline
+    strategy for computing Noetherian operators
+Description
+    Text
+        This strategy implements Algorithm 2 in @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@,
+        and supports computing Noetherian operators of either primary ideals (@TO (noetherianOperators, Ideal)@), or primary components
+        of unmixed ideals (@TO (noetherianOperators, Ideal, Ideal)@).
+
+        The strategy relies on computing the kernel of successively larger Macaulay matrices. 
+        The behavior can be controlled with optional arguments:
+
+        {\tt DegreeLimit => ...}: takes an integer $d$, and stops computation at degree $d$. Note that if $d$ is set too low, this may lead to an incomplete answer. If unset, stops computation when the dimension of the kernel stabilizes.
+
+    Example
+        R = QQ[x,y,z];
+        I = (ideal(x,y,z))^3;
+        noetherianOperators(I, Strategy => "MacaulayMatrix")
+        noetherianOperators(I, Strategy => "MacaulayMatrix", DegreeLimit => 1)
+
+    Text
+        {\tt KernelStrategy => ...}: takes a string {\tt "Default"} or {\tt "Gaussian"}. The {\tt "Default"} strategy uses the Macaulay2 builtin function @TO kernel@
+        to compute kernels (via Grobner bases). The strategy {\tt "Gaussian"} computes kernels directly via a Gaussian reduction, and may offer performance improvements compared to {\tt "Default"}.
+
+        {\tt BM => ...}: takes a boolean value. If {\tt true}, uses the Mourrain algorithm to compute the kernel of the MacaulayMatrix. If {\tt false}, uses the method outlined in Algorithm 1 in @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@.
+        If unset, will choose automatically. See: B. Mourrain. Isolated points, duality and residues. @EM "J. Pure Appl. Algebra"@, 117/118:469-493, 1997. 
+           Algorithms for algebra (Eindhoven, 1996).
+
+        {\tt DependentSet => ...}: takes a list of variables. For details, see @TO DependentSet@.
+
+SeeAlso
+    "Strategy => \"Hybrid\""
+    "Strategy => \"PunctualHilbert\""
+    DependentSet
+///
+
+doc ///
+Key
+    "Strategy => \"Hybrid\""
+Headline
+    strategy for computing Noetherian operators
+Description
+    Text
+        This strategy implements a numerical-symbolic hybrid algorithm for computing Noetherian operators. The output is symbolic.
+        {\tt "Hybrid"} supports computing Noetherian operators of either primary ideals (@TO (noetherianOperators, Ideal)@), or primary components
+        of unmixed ideals (@TO (noetherianOperators, Ideal, Ideal)@).
+
+        The {\tt "Hybrid"} strategy finds a point on the variety of the component of interest, and computes a set of
+        specialized Noetherian operators (see @TO specializedNoetherianOperators@). Using this numerical data is then used
+        as a starting point for the symbolic computation of Noetherian operators, which in many cases lead to significant performance
+        improvements over the fully symbolic methods.
+
+        The strategy accepts the following optional arguments:
+
+        {\tt Sampler => f}, where {\tt f} is a function taking a primary ideal and returning a single point on the variety.
+        The default sampler uses a combination of @TO bertiniSample@ and @TO bertiniPosDimSolve@.
+        The user can supply a point to used by using a dummy sampler, as in the example below:
+    Example
+        R = QQ[x,y,t];
+        I = ideal(x^2, y^2-x*t);
+        p = point{{0_CC,0, 3}};
+        noetherianOperators(I, Strategy => "Hybrid", Sampler => I -> p)
+
+    Text
+        {\tt Tolerance =>} a positive real number. This specifies the numerical precision when computing the
+        specialized Noetherian operators. The default value is {\tt 1e-6}. See See @TO "Tolerance (NoetherianOperators)"@.
+
+        {\tt DependentSet =>} a list of variables. For details, see @TO DependentSet@.
+SeeAlso
+    "Strategy => \"PunctualHilbert\""
+    "Strategy => \"MacaulayMatrix\""
+///
+
+doc ///
+Key
+    "Strategy => \"PunctualHilbert\""
+Headline
+    strategy for computing Noetherian operators
+Description
+    Text
+        This strategy implements Algorithm 3.8 in @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
+
+        The following example deals with a rather non-trivial primary ideal to show the capabilities
+        of this strategy.
 
     Example
         R = QQ[x_1,x_2,x_3,x_4]
-        k=3
+        k = 3
         J = ideal((x_1^2-x_2*x_3)^k,(x_1*x_2-x_3*x_4)^k,(x_2^2-x_1*x_4)^k)
         Q = saturate(J,ideal(x_1*x_2*x_3*x_4))
         isPrimary Q
         elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
+SeeAlso
+    mapToPunctualHilbertScheme
+    "Strategy => \"MacaulayMatrix\""
+    "Strategy => \"Hybrid\""
 ///
 
--- doc ///
--- Key
---     getNoetherianOperatorsHilb
---     (getNoetherianOperatorsHilb, Ideal)
--- Headline
---     Computes a set of Noetherian operators describing a primary ideal
--- Usage
---     L = getNoetherianOperatorsHilb(Q)
--- Inputs
---     Q : Ideal
---         a primary ideal
--- Outputs
---     L : List
---         a set of Noetherian operators describing the primary ideal Q
--- ///
 
+
+doc ///
+Key
+    mapToPunctualHilbertScheme
+    (mapToPunctualHilbertScheme, Ideal)
+Headline
+    maps an ideal into a point in a certain punctual Hilbert scheme
+Usage
+    I = mapToPunctualHilbertScheme(Q)
+Inputs
+    Q : Ideal
+        a primary ideal
+Outputs
+    I : Ideal
+        an ideal that parametrizes Q in a punctual Hilbert scheme
+Description
+    Text
+        This method maps a P-primary ideal Q into a point in a punctual Hilbert scheme.
+	Let $\mathbb{K}$ be a characteristic zero and a prime ideal $P$ of codimension $c$ in the polynomial ring $R = \mathbb{K}[x_1,\ldots,x_n]$.
+	We write $\mathbb{F}$ for the field of fractions of the integral domain $R/P$. 
+	To simplify our notation, perhaps after a linear change of coordinates, we assume that $\{ x_{c+1}, \ldots, x_n \}$ is a maximal independent set of variables module $P$.
+    	
+	The main purpose of this method is to reduce the study of arbitrary $P$-primary ideals in $R = \mathbb{K}[x_1,\ldots,x_n]$ to a zero-dimensional setting over the function field $\mathbb{F}$.
+	This reduction is made by parametrizing $P$-primary ideals with the punctual Hilbert scheme 
+	$
+ 	{\rm Hilb}^m ( \,\mathbb{F}[[y_1,\ldots,y_c]] \,). 
+	$
+	This is a quasiprojective scheme over the function field $\mathbb{F}$.
+	Its classical points are   ideals of colength $m$ in the local ring $\mathbb{F}[[y_1,\ldots,y_c]]$.
+	
+    	
+	This method maps a P-primary ideal Q into a unique point in ${\rm Hilb}^m ( \,\mathbb{F}[[y_1,\ldots,y_c]] \,)$ that corresponds with Q.
+	This method can be seen as an implementation of the map $\gamma$ described in Section 2 of @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@. 
+
+    Example
+    	R = QQ[x_1, x_2, x_3]
+        Q = ideal(x_1^2, x_2^2, x_1-x_2*x_3)
+	mapToPunctualHilbertScheme Q
+SeeAlso
+    "Strategy => \"PunctualHilbert\""
+///
+
+
+
+doc ///
+Key
+    specializedNoetherianOperators
+    (specializedNoetherianOperators, Ideal, Point)
+    (specializedNoetherianOperators, Ideal, Matrix)
+Headline
+    Noetherian operators evaluated at a point
+Usage
+    specializedNoetherianOperators(I, pt)
+Inputs
+    I:Ideal
+        unmixed
+    pt:Point
+        or a row @TO2 {Matrix, "matrix"}@
+Outputs
+    :List
+        of @TO2 {DiffOp, "differential operators"}@
+Description
+    Text
+        Numerically computes evaluations of Noetherian operators. If the point {\tt p} lies on the variety of the
+        minimal prime $P$, the function returns a set of specialized Noetherian operators of the $P$-primary component.
+        The option @TO DependentSet@ is required when dealing with ideals over numerical fields, or when dealing with non-primary ideals
+    Example
+        R = QQ[x,y,t];
+        Q1 = ideal(x^2, y^2 + x*t);
+        Q2 = ideal((x+t)^2);
+        I = intersect(Q1, Q2);
+        P = radical Q1;
+        pt = point{{0,0,2}};
+        A = specializedNoetherianOperators(I, pt, DependentSet => {x,y}) / normalize
+        B = noetherianOperators(I, P) / (D -> evaluate(D, pt)) / normalize
+        A == B
+    Text
+        Over a non-exact field, the output will be non-exact
+    Example
+        S = CC[x,y,t]
+        pt = point{{0,0,2.1}}
+        specializedNoetherianOperators(sub(I, S), pt, DependentSet => {x,y})
+
+Caveat
+    It is assumed that the point lies on the variety of {\tt I}
+///
+
+
+doc ///
+Key
+    numericalNoetherianOperators
+    (numericalNoetherianOperators, Ideal)
+    InterpolationDegreeLimit
+    InterpolationTolerance
+    NoetherianDegreeLimit
+    TrustedPoint
+Headline
+    Noetherian operators via numerical interpolation
+Usage
+    numericalNoetherianOperators(I)
+Inputs
+    I:Ideal
+        unmixed
+Outputs
+    :List
+        of @TO2 {InterpolatedDiffOp, "interpolated differential operators"}@
+Description
+    Text
+        The method computes specialized Noetherian operators from many sampled points, and attempts to find fitting rational functions
+        using rational function interpolation.
+    CannedExample
+        i1 : R = CC[x,y,t];
+
+        i2 : I = ideal(x^2, y^2 - x*t);
+
+        o2 : Ideal of R
+
+        i3 : numericalNoetherianOperators(I, DependentSet => {x,y})
+
+                         2    1      t   3
+        o3 = {1, 1*dy, dy  + ---*dx, -*dy  + 1*dx*dy}
+                             .5t     6
+
+        o3 : List
+
+
+    Text
+        The behavior of the function can be adjusted using options. Currently only the option
+        @TO DependentSet@ is required. The following are supported:
+        
+
+        {\tt TrustedPoint =>} a @TO Point@. The function does not compute specialized Noetherian operators from scratch for each point.
+        Instead, it computes it for a "trusted" point on the variety, and uses the obtained Noetherian operators
+        as a template for the rest of the computation. If {\tt TrustedPoint} is unset, the first point returned by the sampler
+        will be used as the trusted point.
+
+        {\tt NoetherianDegreeLimit =>} a non-negative @TO2 {ZZ, "integer"}@. Limits the degrees of the Noetherian operators (with respect to the $dx$ variables).
+            If unset, will compute the full Noetherian operators of the "trusted" point. Can introduce speedups when the maxmial degree of the Noetherian operators
+            is known in advance.
+
+        {\tt Tolerance =>} a positive real number. This specifies the numerical precision when computing the
+        specialized Noetherian operators. The default value is {\tt 1e-6}. See @TO "Tolerance (NoetherianOperators)"@.
+        
+        {\tt Sampler =>} a function, taking inputs \{tt (I,n)}, where {\tt I} is an @TO2{Ideal, "ideal"}@, and {\tt n} is an integer.
+        The sampler function returns a list of {\tt n} @TO2 {Point, "points"}@ on the component of interest of {\tt I}. If unset, the default sampler
+        uses @TO Bertini@, and assumes that {\tt I} is primary.
+
+        {\tt DependentSet =>} a @TO2 {List, "list"}@ of variables that are algebraically dependent. See @TO DependentSet@ for details.
+        
+        {\tt InterpolationTolerance =>} a positive real number. This specifies the numerical precision for the interpolation routines.
+        The default value is {\tt 1e-6}. See @TO "Tolerance (NoetherianOperators)"@.
+
+        {\tt InterpolationDegreeLimit =>} a non-negative @TO2 {ZZ, "integer"}@. Limits the degree of the interpolated rational function coefficients.
+        If no rational functions are found within the degree limit, outputs an incomplete differential operator
+    CannedExample
+        i1 : R = CC[x,y,t];
+
+        i2 : I = ideal(x^2, y^2 - x*t);
+
+        o2 : Ideal of R
+
+        i3 : numericalNoetherianOperators(I, DependentSet => {x,y}, InterpolationDegreeLimit => 0)
+        
+                           2   ?     ?   3
+        o3 = {1, 1*dy, 1*dy  + -*dx, -*dy  + 1*dx*dy}
+                               ?     ?
+
+        o3 : List
+
+SeeAlso
+    rationalInterpolation
+///
+
+
+doc ///
+Key
+    rationalInterpolation
+    (rationalInterpolation, List, List, Matrix, Matrix)
+    (rationalInterpolation, List, List, Matrix)
+Headline
+    numerically interpolate rational functions
+Usage
+    (n,d) = rationalInterpolation(pts, vals, numBasis, denBasis)
+    (n,d) = rationalInterpolation(pts, vals, numDenBasis)
+Inputs
+    pts:List
+        of row matrices corresponding to points at which the rational function was evaluated
+    vals:List
+        of @TO2 {Number, "numbers"}@ corresponding to evaluations of the rational function
+    numBasis:Matrix
+        a row of monomials, the monomial support of the numerator
+    denBasis:Matrix
+        a row of monomials, the monomial support of the numerator
+    numDenBasis:Matrix
+        a row of monomials, the monomial support of both the numerator and denominator
+    Tolerance => RR
+        default value {\tt 1e-6}
+Outputs
+    n:RingElement
+        the numerator of the rational function
+    d:RingElement
+        the denominator of the rational function
+Description
+    Text
+        Given a set of points $pts = \{p_1,\dots,p_k\}$ and values $vals = \{v_1,\dots,v_k\}$, attempts to find a rational function
+        $f = g/h$, such that $f(p_i) = v_i$. The polynomials $g$ and $h$ have monomial support {\tt numBasis} and {\tt denBasis} respectively.
+    Example
+        R = CC[x,y]
+
+        pts = {point{{1,0}}, point{{0,1}}, point{{1,1}}, point{{-1,-1}}, point{{-1,0}}}
+        vals = {1, 0, 1/2, -1/2, -1}
+        numBasis = matrix{{x,y}}
+        denBasis = matrix{{x^2,y^2}}
+        rationalInterpolation(pts, vals, numBasis, denBasis)
+    Text
+        The output corresponds to the function $x / (x^2 + y^2)$. If no fitting rational function is found, the method returns an error.
+
+        The method @TO (rationalInterpolation, List, List, Ring)@ can be used to choose monomial supports automatically.
+Caveat
+    The method uses the first point to remove $0/0$ rational functions. Because of this, the first entry of {\tt val} should be non-zero.
+SeeAlso
+    (rationalInterpolation, List, List, Ring)
+///
+
+doc ///
+Key
+    (rationalInterpolation, List, List, Ring)
+Headline
+    numerically interpolate rational functions
+Usage
+    (n,d) = rationalInterpolation(pts, vals, R)
+Inputs
+    pts:List
+        of row matrices corresponding to points at which the rational function was evaluated
+    vals:List
+        of @TO2 {Number, "numbers"}@ corresponding to evaluations of the rational function
+    R:Ring
+        the polynomial ring in which the numerator and denominator are sought
+Outputs
+    n:RingElement
+        the numerator of the rational function
+    d:RingElement
+        the denominator of the rational function
+Description
+    Text
+        Given a set of points $pts = \{p_1,\dots,p_k\}$ and values $vals = \{v_1,\dots,v_k\}$, attempts to find a rational function
+        $f = g/h$, such that $f(p_i) = v_i$. The method first tries to find polynomials $g,h$ of degree 0;
+        if this fails, it tries to find $g,h$ of degree 1 and so on. This procedure stops when there are not
+        enough points to compute the next degree, in which case an error will be thrown.
+    Example
+        R = CC[x]
+        pts = {point{{0}},point{{1}},point{{2}}, point{{3}}, point{{4}}}
+        vals = {-1, 1/2, 1, 5/4, 7/5}
+        rationalInterpolation(pts, vals, R)
+SeeAlso
+    (rationalInterpolation, List, List, Matrix, Matrix)
+///
+
+doc ///
+Key
+    (evaluate, DiffOp, Point)
+    (evaluate, DiffOp, Matrix)
+    (evaluate, InterpolatedDiffOp, Point)
+    (evaluate, InterpolatedDiffOp, Matrix)
+Headline
+    evaluate coefficients of a differential operator
+Usage
+    evaluate(D, p)
+Inputs
+    D:DiffOp
+    p:Point
+        or a row @TO2 {Matrix, "matrix"}@
+Outputs
+    :DiffOp
+Description
+    Text
+        Evaluates a @TO2 {DiffOp, "differential operator"}@ at a point. This can be used to obtain a set of specialized Noetherian operators.
+    Example
+        R = QQ[x,y];
+        D = diffOp{x => x, y => y}
+        evaluate(D, point{{1,2}})
+    Text
+        The method supports @TO2 {InterpolatedDiffOp, "interpolated differential operators"}@ as well, assuming that the denominator does not vanish.
+        The resulting operator is a @TO DiffOp@, not an @TO InterpolatedDiffOp@.
+    Example
+        E = new InterpolatedDiffOp from {x => (x, x^2 + y^2)}
+        evaluate(E, point{{1,2}})
+///
+
+doc ///
+Key
+    DependentSet
+Headline
+    option for computing Noetherian operators
+Description
+    Text
+        Let $Q \subseteq R := \mathbb{K}[x_1,\dots,x_n]$ be an $d$-dimensional primary ideal.
+        Then there exists a set of $d$ variables in $R$ which is algebraically independent in $R/I$.
+        We refer to these as the independent variables, and the remaining variables are the dependent variables.
+        The function @TO independentSets@ can compute sets of independent variables for symbolic ideals.
+
+        The functions computing Noetherian operators, namely
+
+        @UL { TO noetherianOperators, TO specializedNoetherianOperators, TO numericalNoetherianOperators} @
+
+        pass to a polynomial ring in the dependent variables, with the coefficient field being the fraction field
+        of a polynomial ring in the independent varaibles. Because of this, computing Noetherian operators requires
+        a knowledge of a dependent set of variables, which can be set using the option {\tt DependentSet}. Note that
+        the $dx$-monomials will only involve dependent variables.
+    Example
+        R = QQ[x,y];
+        I = ideal((x+y)^2);
+        P = radical I;
+        A = noetherianOperators(I, P, DependentSet => {x})
+        B = noetherianOperators(I, P, DependentSet => {y})
+        getIdealFromNoetherianOperators(A, P) == getIdealFromNoetherianOperators(B, P)
+
+    Text
+        The symbolic method @TO noetherianOperators@ will usually be able to figure out a dependent set of variables
+        automatically. On the other hand, numerical computations using @TO specializedNoetherianOperators@ and 
+        @TO numericalNoetherianOperators@ will usually require the user to set the option {\tt DependentSet}.
+
+Caveat
+    The option {\tt DependentSet} is ignored when calling @TO noetherianOperators@ with @TO "Strategy => \"PunctualHilbert\""@.
+    Note that this is the default strategy for @TO (noetherianOperators, Ideal)@.
+
+SeeAlso
+    noetherianOperators
+    specializedNoetherianOperators
+    numericalNoetherianOperators
+///
+
+doc ///
+Key
+    Sampler
+Headline
+    optional sampler function
+Description
+    Text
+        There are currently two methods that accept a user-specified sampler function
+
+        @UL {
+            {TO "Strategy => \"Hybrid\"", " used with ", TO noetherianOperators},
+            {TO numericalNoetherianOperators}
+        }@
+
+        See the respective documentation nodes for details. If the option {\tt Sampler} is unset,
+        the default sampler will use @TO Bertini@.
+SeeAlso
+    "Strategy => \"Hybrid\""
+    numericalNoetherianOperators
+///
 
 
 doc ///
@@ -2390,6 +3203,90 @@ Description
         Q' = getIdealFromNoetherianOperators(L, radical Q) 
         Q == Q'
 ///
+
+doc ///
+Key
+    coordinateChangeOps
+    (coordinateChangeOps, Matrix, DiffOp)
+    (coordinateChangeOps, Matrix, List)
+    (coordinateChangeOps, RingMap, DiffOp)
+    (coordinateChangeOps, RingMap, List)
+Headline
+    induced Noetherian operators under coordinate change
+Usage
+    coordinateChangeOps(phi, D)
+    coordinateChangeOps(phi, L)
+Inputs
+    phi:Matrix
+        or @TO RingMap@
+    D:DiffOp
+    L:List
+        of @TO DiffOp@s
+Outputs
+    :DiffOp
+        (resp. a list of differential operators)
+Description
+    Text
+        Let $I$ be an ideal in a polynomial ring $K[x_1, ..., x_n]$, and $\phi \in GL_n(K)$ a 
+        matrix representing a $K$-linear automorphism of $R$. Then there is an automorphism 
+        $\psi$ of the Weyl algebra $K[x_i, dx_i]$ such that if $D_1, ..., D_r$ is a set of Noetherian
+        operators for $I$ then $\psi(D_1), ..., \psi(D_r)$ is a set of Noetherian operators for 
+        $\phi(I)$. This function computes the induced operators for a given $\phi$. The action 
+        of $\psi$ on polynomial variables $x_i$ is given by $\phi$, while the action of $\psi$ on
+        differential variables $dx_i$ is given by the inverse transpose of $\phi$.
+    Example
+        R = QQ[x,y,t]
+        I = ideal(x^2, y^2 - x*t)
+        P = radical I
+        N = noetherianOperators I
+        phi = map(R, R, diagonalMatrix apply(numgens R, i -> random QQ))
+        N' = coordinateChangeOps_phi N
+        I' = phi I
+        P' = phi P
+        I' == getIdealFromNoetherianOperators(N', P')
+SeeAlso
+    noetherianOperators
+///
+
+doc ///
+Key
+    noethOpsFromComponents
+    (noethOpsFromComponents, List)
+Headline
+    merge Noetherian operators for non-primary ideals
+Usage
+    noethOpsFromComponents L
+Inputs
+    L:List
+        of ordered pairs (P, N) where P is a minimal prime of I, and
+        N is a set of Noetherian operators for the P-primary component of I
+Outputs
+    :List
+        of @TO DiffOp@s
+Description
+    Text
+        Let $I$ be an unmixed ideal in a polynomial ring $R = K[x_1, ..., x_n]$, with primary 
+        decomposition $I = Q_1 \cap ... \cap Q_s$, where $Q_i$ is $P_i$-primary. 
+        If $N_i$ is a set of Noetherian operators for $Q_i$, then one can construct a 
+        set of differential operators $N$ for $I$ which satisfies the Noetherian operator 
+        condition: given $f \in R$, one has $f \in I$ iff $D(f) \in\sqrt{I}$ for all $D \in N$.
+    Example
+        R = QQ[x,y,t]
+        I = intersect(ideal((y+t)^2), ideal(x^2, y^2 - t*x))
+        radI = radical I
+        primes = associatedPrimes I
+        L = primes / (P -> (P, noetherianOperators(I, P)))
+        N = noethOpsFromComponents L
+        all(flatten table(N, I_*, (D, f) -> (D f) % radI == 0), identity)
+    Text
+        Note that this construction justifies the focus of Noetherian operators on the case
+        that the ideal I is primary: in order to get a useful membership test for a non-primary
+        (but still unmixed) ideal, it suffices to compute Noetherian operators on each primary 
+        component, and then combine them in the way given above.
+SeeAlso
+    (noetherianOperators, Ideal, Ideal)
+///
+
 -------------- Noetherian operators tests
 
 
@@ -2427,7 +3324,6 @@ assert(#(set nopsJ - ({1_R, R_0, R_1, R_1^2} / (x -> diffOp{x=>1}))) == 0)
 ///
 
 
--- TODO linear coordinate change should be rewritten or removed
 TEST /// -- Linear coordinate change test
 R = QQ[x,y]
 I = ideal(x^2,(y-x))
@@ -2454,11 +3350,13 @@ TEST /// -- rationalInterpolation test
 R = CC[x,y]
 num = (x^2 - 2*y*x) 
 den = (y*x + y^2)
-pts = {matrix {{.922548+.569867*ii, .668231+.918485*ii}}, matrix {{.413667+.0631326*ii,.210225+.688382*ii}}, matrix {{.129853+.649565*ii, .526889+.519065*ii}}, matrix{{.460057+.733113*ii, .642288+.571532*ii}}, matrix {{.268148+.34963*ii, .47612+.77208*ii}},matrix {{.237741+.937067*ii, .902133+.97911*ii}}, matrix {{.58456+.563844*ii,.877568+.129457*ii}}, matrix {{.323687+.586776*ii, .161867+.591524*ii}}, matrix{{.91034+.171779*ii, .913587+.517224*ii}}, matrix {{.963887+.704832*ii,.642633+.397505*ii}}, matrix {{.196713+.843673*ii, .0568273+.621807*ii}}, matrix{{.263865+.9356*ii, .3981+.858609*ii}}}
+pts = {matrix {{.922548+.569867*ii, .668231+.918485*ii}}, matrix {{.413667+.0631326*ii,.210225+.688382*ii}}, matrix {{.129853+.649565*ii, .526889+.519065*ii}}, matrix{{.460057+.733113*ii, .642288+.571532*ii}}, matrix {{.268148+.34963*ii, .47612+.77208*ii}},matrix {{.237741+.937067*ii, .902133+.97911*ii}}, matrix {{.58456+.563844*ii,.877568+.129457*ii}}, matrix {{.323687+.586776*ii, .161867+.591524*ii}}, matrix{{.91034+.171779*ii, .913587+.517224*ii}}, matrix {{.963887+.704832*ii,.642633+.397505*ii}}, matrix {{.196713+.843673*ii, .0568273+.621807*ii}}, matrix{{.263865+.9356*ii, .3981+.858609*ii}}, matrix {{.0425473+.770241*ii, .706036+.370498*ii}}}
 vals = pts / (p -> (evaluate(matrix num, p))_(0,0) / (evaluate(matrix den, p))_(0,0))
 numBasis = sub(basis(0,2,R), R)
 denBasis = sub(basis(0,2,R), R)
-rationalInterpolation(pts, vals, numBasis, denBasis, Tolerance => 0.0001)
+(n, d) = rationalInterpolation(pts, vals, numBasis, denBasis, Tolerance => 0.0001)
+assert(norm(n - num) < 1e-6)
+assert(norm(d - den) < 1e-6)
 ///
 
 
@@ -2470,7 +3368,7 @@ debugLevel = 1
 debug loadPackage("NoetherianOperators", Reload => true)
 needsPackage "NumericalAlgebraicGeometry"
 needsPackage "Bertini"
---installPackage("NoetherianOperators", RemakeAllDocumentation => true)
+installPackage("NoetherianOperators", RemakeAllDocumentation => true)
 --loadPackage "NoetherianOperators"
 R = QQ[x_0..x_5]
 P = minors(2,matrix{{x_0,x_1,x_3,x_4},{x_1,x_2,x_4,x_5}});
@@ -2540,6 +3438,9 @@ DHhat = sub(matrix{select(DH, Q->first first last listForm Q >= 1)}, {t=>1})
 ----------------------------------------------------
 restart
 needsPackage "NoetherianOperators"
+installPackage "NoetherianOperators"
+viewHelp "NoetherianOperators"
+
 
 ----------------------------------------------------
 ----------------------------------------------------

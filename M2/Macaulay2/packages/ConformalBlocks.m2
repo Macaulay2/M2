@@ -7,6 +7,7 @@ newPackage(
 	},
     PackageExports => { "LieTypes" },
     Headline => "for conformal block divisors",
+    Keywords => {"Commutative Algebra"},
     Certification => {
 	 -- same article as for package LieTypes
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -1563,5 +1564,4 @@ TEST ///
 ///	
 	
        	
-	
 	

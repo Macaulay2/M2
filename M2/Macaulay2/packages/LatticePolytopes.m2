@@ -21,6 +21,7 @@ newPackage("LatticePolytopes",
 	    HomePage => "http://www.math.kth.se/~gss",
 	    Email => "gss@math.kth.se"}
       	},
+    Keywords => {"Convex Geometry"},
     PackageExports => {"Polyhedra","NormalToricVarieties"}
     )
 
