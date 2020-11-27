@@ -210,4 +210,5 @@ VectorGraphics
 GKMVarieties
 StatGraphs
 GraphicalModelsMLE
-
+EigenSolver
+MultiplicitySequence

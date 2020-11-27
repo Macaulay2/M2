@@ -52,14 +52,17 @@ TEST ///
 
 document {
      Key => html,
-     Headline => "convert hypertext to html format",
+     Headline => "convert to html format",
 	Usage => "html x",
 	Inputs => {"x" => {}},
 	Outputs => {String => {}},
      TT "html x", " converts ", TT "x", " from ", TO "hypertext", " to html format",
      PARA{},
      "The return value is a string that is suitable for use in an
-     html file, readable by a world wide web client such as Netscape.",
+     html file, readable by a world wide web client.
+     When no html conversion is available,", TO "tex", "is called.
+     (La)TeX can be rendered in the browser using MathJax or Katex.
+     ",
      SeeAlso => "mathML"
      }
 

@@ -289,7 +289,7 @@ document {
      Headline => "global Ext",
      Inputs => { "i", "M", "N(>=d)"},
      Outputs => {
-	  Module => {"The R-module ", TEX ///$\oplus_{j \geq d}{Ext^i_X(M,N(j))$///}
+	  Module => {"The R-module ", TEX ///$\oplus_{j \geq d} Ext^i_X(M,N(j))$///}
 	  },
      "If ", TT "M", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
      PARA{},

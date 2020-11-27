@@ -592,7 +592,6 @@ html = method(Dispatch => Thing, TypicalValue => String)
 markdown = method(Dispatch => Thing, TypicalValue => String)
 tex = method(Dispatch => Thing, TypicalValue => String)
 texMath = method(Dispatch => Thing, TypicalValue => String)
-htmlWithTex = method(Dispatch => Thing, TypicalValue => String)
 info = method(Dispatch => Thing, TypicalValue => String)
 -- TODO: move this here: net = method(Dispatch => Thing, TypicalValue => String)
 

@@ -171,11 +171,13 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest'
+        if: matrix.build-system == 'cmake' && matrix.compiler == 'default'
         run: |
           # cmake --build . --target M2-unit-tests
           # ctest -R "unit-tests"
+          # TODO: remove the excluded normal tests
           ctest -R "normal/" -E "command|program|schenck|threads|doc-links" -j4 --output-on-failure
+          # TODO: add engine tests
 
       - name: Run Tests using Autotools
         if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest'
