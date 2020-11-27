@@ -171,7 +171,8 @@ trim QuotientRing := opts -> (R) -> (
 
 -- TODO: why is the caching key an Option?
 trim Ideal  := Ideal  => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
-trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
+trim Module := Module => opts -> (cacheValue symbol trim) (M -> (
+	if isFreeModule M then return M;
 	c := runHooks((trim, Module), (opts, M));
 	if c =!= null then c else error "trim: no method implemented for this type of module"))
 

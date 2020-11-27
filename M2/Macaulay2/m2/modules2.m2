@@ -392,7 +392,7 @@ multidegree Module := M -> (
 multidegree Ring := R -> multidegree R^1
 multidegree Ideal := I -> multidegree cokernel generators I
 
-length Module := ZZ => (cacheValue symbol trim) (M -> (
+length Module := ZZ => (cacheValue symbol length) (M -> (
     c := runHooks((length, Module), M);
     if c =!= null then c else error "length: no method implemented for this type of module"))
 

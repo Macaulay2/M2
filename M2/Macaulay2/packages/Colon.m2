@@ -77,15 +77,17 @@ isGRevLexRing = (R) -> (
      mo := (options monoid R).MonomialOrder;
      mo = select(mo, x -> x#0 =!= MonomialSize and x#0 =!= Position);
      isgrevlex := mo#0#0 === GRevLex and mo#0#1 === apply(degrees R, first);
-#mo === 1 and isgrevlex and all(mo, x -> x#0 =!= Weights and x#0 =!= Lex))
+     #mo === 1 and isgrevlex and all(mo, x -> x#0 =!= Weights and x#0 =!= Lex))
 
 -- Helper for Linear strategies
+-- FIXME: this doesn't behave well with multigradings
 isLinearForm := f -> (
     degreeLength ring f > 0 and
     first degree f === 1 and
     all(first \ degrees ring f, x -> x === 1))
 
 -- Return (R1, R1<-R, R<-R1), where generators i and n are switched
+-- TODO: can this be simplified using newRing?
 grevLexRing = method()
 grevLexRing(ZZ, Ring) := (i, R) -> (
     X := local X;

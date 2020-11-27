@@ -4,10 +4,7 @@ undocumented {
     (saturate, Module, Number),
     (saturate, Ideal,  List),
     (saturate, Module, List),
-    (saturate, Vector, List),
-    (saturate, Vector),
-    (saturate, Vector, Ideal),
-    (saturate, Vector, RingElement)
+    (saturate, Vector, List)
     }
 
 doc ///
@@ -21,6 +18,9 @@ Node
    (saturate, Module)
    (saturate, Module, Ideal)
    (saturate, Module, RingElement)
+   (saturate, Vector)
+   (saturate, Vector, Ideal)
+   (saturate, Vector, RingElement)
    [saturate, MinimalGenerators]
   Headline
     saturation of ideal or submodule

@@ -95,12 +95,12 @@ document {
 		       " and ", TO "SimpleDoc :: stacksProject", " were added to help with referencing external documents."
 		       },
 		   LI {
-		       "The ", TO "PrimaryDecomposition :: PrimaryDecomposition", " packages has been improved to support
+		       "The ", TO "PrimaryDecomposition :: PrimaryDecomposition", " package has been improved to support
 		       computation of associated primes and primary decomposition of modules.
 		       In addition, partial computations in this package are now cached."
 		       },
 		   LI {
-		       "The ", TO "MinimalPrimes :: MinimalPrimes", " packages has been improved and the ", TO "MinimalPrimes :: minimalPrimes",
+		       "The ", TO "MinimalPrimes :: MinimalPrimes", " package has been improved and the ", TO "MinimalPrimes :: minimalPrimes",
 		       " and ", TO "MinimalPrimes :: isPrime", " routines from that package are now used by default, deprecating the ",
 		       TT "installMinprimes", " routine. A new routine ", TO "MinimalPrimes :: radicalContainment", " has been added, and
 		       the function ", TO "MinimalPrimes :: radical", " is moved to this package.

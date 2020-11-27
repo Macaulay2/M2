@@ -248,7 +248,6 @@ export {
 	"MatrixDegreeExpression",
 	"MatrixExpression",
 	"MaxReductionCount",
-	"MaximalIdeal",
 	"MaximalRank",
 	"MethodFunction",
 	"MethodFunctionBinary",

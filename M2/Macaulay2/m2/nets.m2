@@ -259,21 +259,15 @@ netList VisibleList := o -> (x) -> (
 
 -- TODO: move to debugging, except for Net?
 commentize = method(Dispatch => Thing)
-commentize Nothing := s -> ""
-commentize String  := s -> concatenate(" -- ", between("\n -- ", separate s))
-commentize Thing   := s -> commentize horizontalJoin s
-commentize Net     := S -> stack(commentize \ unstack S)
+commentize Nothing   := s -> ""
+commentize BasicList := s -> commentize horizontalJoin s
+commentize String    := s -> concatenate(" -- ", between("\n -- ", separate s))
+commentize Net       := S -> stack(commentize \ unstack S)
 
 printerr = msg -> (stderr << commentize msg << endl;) -- always return null
 warning  = msg -> if debugLevel > 0 then (
     if msg =!= () then printerr("warning: " | msg);
     error "warning issued, debugLevel > 0");
-
--- This function is mainly used by runHooks, printing a line like this:
- -- (quotient,Ideal,Ideal) with Strategy => Monomial from -*Function[../../Macaulay2/packages/Colon.m2:196:30-205:82]*-
--- TODO: the filenames are not emacs clickable, perhaps M2-mode should be improved
-debugInfo = (func, key, strategy, infoLevel) -> if debugLevel > infoLevel then printerr(
-    toString key, if strategy =!= null then (" with Strategy => ", toString strategy), " from ", toString func)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

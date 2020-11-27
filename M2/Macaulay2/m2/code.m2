@@ -191,6 +191,7 @@ hooks = method(Dispatch => Thing, Options => {Strategy => null})
 hooks ZZ        := opts -> i   -> hooks previousMethodsFound#i
 hooks List      := opts -> L   -> previousMethodsFound = join apply(toSequence L, key -> listHooks(key, opts))
 hooks Thing     := opts -> key -> previousMethodsFound = hooks(methods key, opts)
+hooks Symbol    := opts -> sym -> previousMethodsFound = hooks(1:sym, opts)
 hooks Sequence  := opts -> key -> previousMethodsFound = listHooks(key, opts)
 hooks HashTable := opts -> store -> previousMethodsFound = join(
     if store.?cache then store = store.cache;

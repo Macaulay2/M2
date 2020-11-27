@@ -67,7 +67,7 @@ Node
       I = ideal(F,diff(a,F),diff(b,F),diff(c,F))
       I : (ideal(a,b,c))^3
     Text
-      If both arguments are submodules of the same module, the annihilator of @TT "J/I"@ (or @TT "(J+I)/I"@) is returned.
+      If the arguments are submodules of the same module, the annihilator of @TT "J/I"@ (or @TT "(J+I)/I"@) is returned.
     Example
       S = QQ[x,y,z];
       J = image vars S

@@ -27,7 +27,7 @@ codim Ideal := codimopts >> opts -> I -> codim( cokernel generators I, opts)
 codim PolynomialRing := codimopts >> opts -> R -> 0
 codim QuotientRing := codimopts >> opts -> (R) -> codim( cokernel presentation R, opts)
 
-addHook((codim, Module), Strategy => Default, (opts, M) -> break (
+addHook((codim, Module), Strategy => Default, (opts, M) -> (
      R := ring M;
      if M == 0 then infinity
      else if isField R then 0

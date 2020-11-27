@@ -86,13 +86,13 @@ addHook((resolution, Module), Strategy => WeylAlgebra,
 	  R := ring M;
 	  op := options R;
 	  o' := applyPairs(options Dresolution, (key,val) -> (key, o#key));
-	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then break Dresolution(o',M)))
+	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then Dresolution(o',M)))
 
 addHook((codim, Module), Strategy => WeylAlgebra,
     (opts,M) -> (
 	  R := ring M;
 	  op := options R;
-	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then break (dim R - Ddim M)))
+	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then (dim R - Ddim M)))
 
 beginDocumentation()
 load "./Dmodules/DMODdoc.m2"

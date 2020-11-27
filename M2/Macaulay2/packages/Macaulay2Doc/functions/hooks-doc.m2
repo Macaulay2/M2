@@ -139,6 +139,7 @@ Node
     (hooks, ZZ)
     (hooks, List)
     (hooks, Thing)
+    (hooks, Symbol)
     (hooks, Sequence)
     (hooks, HashTable)
     [hooks, Strategy]
@@ -146,13 +147,17 @@ Node
     list hooks attached to a key
   Usage
     hooks key
+    hooks store
+    hooks(store, key)
   Inputs
-    key:Sequence
+    key:{Sequence,Symbol}
+    store:HashTable
+      the hash table where the hooks are stored
     Strategy=>Thing
       only list hooks with the given strategy
   Outputs
     :NumberedVerticalList
-      of those hooks associated with @TT "key"@
+      of those hooks associated with @TT "key"@ or stored in @TT "store"@
   Description
     Example
       hooks(intersect, Ideal, Ideal)

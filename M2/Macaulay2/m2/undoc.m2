@@ -4,8 +4,6 @@ undocumented {
     -- documented in Colon
     annihilator,
     saturate,
-    -- documented in LocalRings
-    symbol MaximalIdeal,
     -- etc.
     (net, LITERAL),
     (net, LATER),

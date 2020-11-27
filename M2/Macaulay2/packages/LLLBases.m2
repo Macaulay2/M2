@@ -756,7 +756,7 @@ gcdLLL List := options -> (s) -> (
      else agcdLLL(s,options.Threshold))
 
 addHook((resolution, Module), Strategy => symbol LLL,
-    (o,M) -> if ring M === ZZ then break chainComplex compress LLL presentation M)
+    (o,M) -> if ring M === ZZ then chainComplex compress LLL presentation M)
 
 addHook((minimalPresentation, Module), Strategy => symbol LLL,
     (o, M) -> (

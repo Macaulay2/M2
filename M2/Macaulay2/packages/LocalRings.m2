@@ -19,6 +19,8 @@
 -- along with generators of C_(x_0),...,C_(x_n)
 -- and gluing maps from C_(x_i) <-- C_(x_j)
 --        4. make remainder and % work with local rings
+--        5. remove LocalRing from modules2.m2, matrix.m2,
+--           and move the contents of m2/localring.m2 here
 ---------------------------------------------------------------------------
 newPackage(
     "LocalRings",
@@ -35,8 +37,10 @@ newPackage(
     AuxiliaryFiles => true
     )
 
+export { "MaximalIdeal" }
+
 -- These two are defined in m2/localring.m2
-exportFrom_Core { "LocalRing", "localRing", "MaximalIdeal" }
+exportFrom_Core { "LocalRing", "localRing" }
 
 importFrom_Core { "printerr", "raw", "rawLiftLocalMatrix" }
 
@@ -306,34 +310,31 @@ addHook((resolution, Module), Strategy => Local, (opts, M) -> (
             CP = if isHomogeneous M'
               then pruneComplex(CP, UnitTest => isScalar, PruningMap => false)
               else pruneComplex(CP, PruningMap => false);
-            break CP)
+            CP)
         ))
 
 -- syz
 addHook((syz, Matrix), Strategy => Local, (opts, m) ->
-    if instance(ring m, LocalRing) then break localSyzHook(opts, m))
+    if instance(ring m, LocalRing) then localSyzHook(opts, m))
 
 -- mingens
 addHook((mingens, Module), Strategy => Local, (opts, M) ->
-    if instance(ring M, LocalRing) then break localMingensHook(opts, M))
+    if instance(ring M, LocalRing) then localMingensHook(opts, M))
 
 -- minimalPresentation
 addHook((minimalPresentation, Module), Strategy => Local, (opts, M) ->
-    if instance(ring M, LocalRing) then break localMinimalPresentationHook(opts,M))
+    if instance(ring M, LocalRing) then localMinimalPresentationHook(opts,M))
 
 -- length
 -- this method doesn't have hooks so we redefine it to allow runHooks
 addHook((length, Module), Strategy => Local, M ->
-    if instance(ring M, LocalRing) then break localLengthHook M)
+    if instance(ring M, LocalRing) then localLengthHook M)
 
 -- trim
-addHook((trim, Module), Strategy => Local, (opts, M) -> (
-        if instance(ring M, LocalRing) then (
-            if isFreeModule M then break M;
-            N := subquotient(mingens M, if M.?relations then mingens image relations M);
-            N.cache.trim = N;
-            break N)
-        ))
+addHook((trim, Module), Strategy => Local, (opts, M) ->
+    if instance(ring M, LocalRing) then subquotient(ambient M,
+	if M.?generators then localMingensHook(opts, image generators M),
+	if M.?relations  then localMingensHook(opts, image relations M)))
 
 -- (symbol//, Matrix, Matrix)
 -- Caution: this method is only correct when f = g * (f//g),

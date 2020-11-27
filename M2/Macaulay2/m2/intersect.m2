@@ -12,6 +12,7 @@ algorithms := new MutableHashTable from {}
 -----------------------------------------------------------------------------
 -- both are also used in Colon.m2
 
+-- TODO: can this be simplified using newRing?
 eliminationInfo = method()
 eliminationInfo Ring := (cacheValue symbol eliminationInfo) (R -> (
 	X := local X;
@@ -65,7 +66,7 @@ intersectHelper := (L, key, opts) -> (
 Module.intersect = opts -> L -> intersectHelper(L, (intersect, Module, Module), opts)
 
 algorithms#(intersect, Module, Module) = new MutableHashTable from {
-    "Default" => (opts, L) -> (
+    Default => (opts, L) -> (
 	M := L#0;
 	R := ring M;
 	-- check that the modules are compatible
@@ -83,7 +84,7 @@ algorithms#(intersect, Module, Module) = new MutableHashTable from {
     }
 
 -- Installing hooks for intersect(Module, Module)
-scan({"Default"}, strategy ->
+scan({Default}, strategy ->
     addHook(key := (intersect, Module, Module), algorithms#key#strategy, Strategy => strategy))
 
 -----------------------------------------------------------------------------
@@ -91,7 +92,7 @@ scan({"Default"}, strategy ->
 Ideal.intersect = opts -> L -> intersectHelper(L, (intersect, Ideal, Ideal), opts)
 
 algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
-    "Default" => (opts, L) -> ideal intersect(opts, apply(L, module)),
+    Default => (opts, L) -> ideal intersect(opts, apply(L, module)),
 
     -- TODO: can this be extended to do more than 2 at once?
     "Elimination" => (opts, L) -> (
@@ -124,5 +125,5 @@ algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
     }
 
 -- Installing hooks for intersect(Ideal, Ideal)
-scan({"Default", "Elimination", Monomial}, strategy ->
+scan({Default, "Elimination", Monomial}, strategy ->
     addHook(key := (intersect, Ideal, Ideal), algorithms#key#strategy, Strategy => strategy))
