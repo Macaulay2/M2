@@ -16,7 +16,7 @@ Usage => "coincidentRootLocus(l,K)
 coincidentRootLocus l", 
 Inputs => {"l" => VisibleList => {"a partition of a number ",TEX///$n$///,", i.e., a list of ",TEX///$d$///," positive integers ",TEX///$l_1,\ldots,l_d$///," satisfying ",TEX///${\sum}_{i} l_i = n$///}, "K" => Ring => {"the coefficient ring (optional with default value ",TO QQ,")"}}, 
 Outputs => {CoincidentRootLocus => {"the coincident root locus associated with the partition ",TEX///$l$///," over ",TEX///$K$///,", i.e., the subvariety of the projective ",TEX///$n$///,"-space ",TEX///$\mathbb{P}(Sym^n(K^2))$///," of all binary forms whose linear factors are distribuited according to ",TEX///$l$///}}, 
-EXAMPLE {"time X = coincidentRootLocus {6,4,3,3,2}","time describe X","time describe dual X"}}
+EXAMPLE {"X = coincidentRootLocus {6,4,3,3,2}","describe X","describe dual X"}}
 undocumented {(coincidentRootLocus,Thing)}
 document { 
 Key => {(dim, CoincidentRootLocus)},
@@ -88,19 +88,19 @@ EXAMPLE {"X = coincidentRootLocus {3,2,2}","partition X"}}
 document { 
 Key => {(singularLocus, CoincidentRootLocus)},
 Headline => "the singular locus of a coincident root locus", 
-Usage => " X", 
+Usage => "singularLocus X", 
 Inputs => {"X" => CoincidentRootLocus},
 Outputs => {List => {"a list of coincident root loci such that their union coincides with the singular locus of ",TT "X"}},
 PARA{"The singular locus of a coincident root locus is the union of certain subloci, as described in the paper by J. Chipalkatti - On equations defining coincident root loci - J. Algebra 267, 246-271, 2003; see also the paper by S. Kurmann - Some remarks on equations defining coincident root loci - J. Algebra 352, 223-231, 2012."},
-EXAMPLE {"X = coincidentRootLocus {3,2,2,1,1,1,1}","time singularLocus X"},
+EXAMPLE {"X = coincidentRootLocus {3,2,2,1,1,1,1}","singularLocus X"},
 SeeAlso => {(subsets,CoincidentRootLocus)}}
 document { 
 Key => {(subsets, CoincidentRootLocus)},
 Headline => "produce all the subloci", 
-Usage => " X", 
+Usage => "subsets X", 
 Inputs => {"X" => CoincidentRootLocus},
 Outputs => {List => {"the list of the coincident root loci that are contained in ",TT "X"}},
-EXAMPLE {"X = coincidentRootLocus {5,2,2,1}","time subsets X"},
+EXAMPLE {"X = coincidentRootLocus {5,2,2,1}","subsets X"},
 SeeAlso => {(isSubset,CoincidentRootLocus,CoincidentRootLocus),(supsets,CoincidentRootLocus)}}
 document { 
 Key => {(isSubset, CoincidentRootLocus, CoincidentRootLocus)},
@@ -108,16 +108,16 @@ Headline => "whether one object is a subset of another",
 Usage => "isSubset(X,Y)", 
 Inputs => {"X" => CoincidentRootLocus => {"associated with a partition ",TEX///$\lambda$///},"Y" => CoincidentRootLocus => {"associated with a partition ",TEX///$\mu$///}},
 Outputs => {Boolean => {"whether ",TEX///$X$///," is contained in ",TEX///$Y$///,", i.e., whether the partition ",TEX///$\mu$///," is a refinement of the partition ",TEX///$\lambda$///}},
-EXAMPLE {"X = coincidentRootLocus {6,4}","Y = coincidentRootLocus {5,2,2,1}","time isSubset(X,Y)","X' = coincidentRootLocus {6,3,1}","time isSubset(X',Y)"},
+EXAMPLE {"X = coincidentRootLocus {6,4}","Y = coincidentRootLocus {5,2,2,1}","isSubset(X,Y)","X' = coincidentRootLocus {6,3,1}","isSubset(X',Y)"},
 SeeAlso => {(subsets,CoincidentRootLocus),(supsets,CoincidentRootLocus)}}
 undocumented {(symbol ?,CoincidentRootLocus,CoincidentRootLocus)}
 document { 
 Key => {(supsets, CoincidentRootLocus),supsets},
 Headline => "produce all the suploci", 
-Usage => " X", 
+Usage => "supsets X", 
 Inputs => {"X" => CoincidentRootLocus},
 Outputs => {List => {"the list of the coincident root loci that contain ",TT "X"}},
-EXAMPLE {"X = coincidentRootLocus {4,2}","time supsets X"},
+EXAMPLE {"X = coincidentRootLocus {4,2}","supsets X"},
 SeeAlso => {(isSubset,CoincidentRootLocus,CoincidentRootLocus),(subsets,CoincidentRootLocus)}}
 document { 
 Key => {(generic, CoincidentRootLocus),generic},
@@ -174,7 +174,7 @@ Usage => "dual X",
 Inputs => {"X" => CoincidentRootLocus},
 Outputs => {{"the dual variety to ",TEX///$X$///}},
 PARA{"The dual variety to a coincident root locus is the join of certain coincident root loci, as described in the paper by H. Lee and B. Sturmfels - Duality of multiple root loci - J. Algebra 446, 499-526, 2016."},
-EXAMPLE {"time X = coincidentRootLocus {5,3,2,2,1,1}","time dual X"},
+EXAMPLE {"X = coincidentRootLocus {5,3,2,2,1,1}","dual X"},
 PARA{"In the example below, we apply some of the methods that are available for the objects returned by the method."},
 EXAMPLE {"Y = dual coincidentRootLocus {4,2}","ring Y","coefficientRing Y","dim Y","codim Y","degree Y","dual Y","G = random Y","member(G,Y)","ideal Y;","describe Y"},
 SeeAlso => {(symbol *,CoincidentRootLocus,CoincidentRootLocus),dualVariety}}
@@ -188,9 +188,9 @@ Inputs => {"n" => ZZ,"s" => ZZ,"K" => Ring => {"the coefficient ring (optional w
 Outputs => {RationalMap => {"the map from ",TEX///$\mathbb{P}^n$///," to ",TEX///$Grass(2s-n-1,s)$///," that sends a generic binary form ",TEX///$F\in K[x,y]$///," of degree ",TEX///$n$///," to the set of binary forms of degree ",TEX///$s$///," that annihilate ",TEX///$F$///,", which can be identified with a ",TEX///$(2s-n-1)$///,"-dimensional linear subspace of ",TEX///$\mathbb{P}^s$///,"."}},
 PARA{"We illustrate two ways of using this method."},
 PARA{"1. Given a binary form ",TEX///$F$///," of degree ",TEX///$n$///," we can obtain a basis for the space of forms of degree ",TEX///$s$///," that annihilate ",TEX///$F$///,", say for example ",TEX///$(n,s)=(6,4)$///,"."},
-EXAMPLE {"(n,s) = (6,4)","F = randomBinaryForm n","time phi = apolar(n,s)","time P = switch plucker phi switch switch F","diff(gens P,F) == 0"},
+EXAMPLE {"(n,s) = (6,4)","F = randomBinaryForm n","phi = apolar(n,s)","P = switch plucker phi switch switch F","diff(gens P,F) == 0"},
 PARA{"2. We can recover the form ",TEX///$F$///," from the above output."},
-EXAMPLE {"time switch phi^* plucker switch P","oo == F"},
+EXAMPLE {"switch phi^* plucker switch P","oo == F"},
 SeeAlso => {(apolar,RingElement),(apolar,RingElement,ZZ),(recover,Ideal),(switch,RingElement),plucker}}
 document { 
 Key => {(apolar,RingElement,ZZ)},
@@ -198,7 +198,7 @@ Headline => "homogeneous components of the apolar ideal",
 Usage => "apolar(F,s)", 
 Inputs => {"F" => RingElement => {"a binary form"},"s" => ZZ},
 Outputs => {Ideal => {"the ideal generated by the binary forms of degree ",TEX///$s$///," that annihilate ",TEX///$F$///}},
-EXAMPLE {"F = randomBinaryForm 7","time apolar(F,4)","time apolar(F,5)"},
+EXAMPLE {"F = randomBinaryForm 7","apolar(F,4)","apolar(F,5)"},
 SeeAlso => {(apolar,RingElement),(apolar,ZZ,ZZ)}}
 document { 
 Key => {(apolar,RingElement)},
@@ -206,7 +206,7 @@ Headline => "the apolar ideal",
 Usage => "apolar F", 
 Inputs => {"F" => RingElement => {"a binary form"}},
 Outputs => {Ideal => {"the ideal generated by all binary forms that annihilate ",TEX///$F$///}},
-EXAMPLE {"F = randomBinaryForm 7","time apolar F"},
+EXAMPLE {"F = randomBinaryForm 7","apolar F"},
 SeeAlso => {(apolar,RingElement,ZZ),(apolar,ZZ,ZZ)}}
 document { 
 Key => {recover,(recover,Ideal),(recover,RingElement,RingElement)},
@@ -214,7 +214,7 @@ Headline => "recover the binary form from its apolar ideal",
 Usage => "recover I", 
 Inputs => {"I" => Ideal => {"the apolar ideal of a binary form ",TEX///$F\in K[x,y]$///,", or one of its homogeneous components of sufficiently large degree"}},
 Outputs => {RingElement => {"the binary form ",TEX///$F$///," (up to a multiplicative constant)"}},
-EXAMPLE {"F = randomBinaryForm 7","I = apolar F","I5 = apolar(F,5)","time recover I","time recover I5"},
+EXAMPLE {"F = randomBinaryForm 7","I = apolar F","I5 = apolar(F,5)","recover I","recover I5"},
 SeeAlso => {(apolar,ZZ,ZZ),(apolar,RingElement),(apolar,RingElement,ZZ)}}
 document {
 Key => {(switch,RingElement),(switch,List),(switch,Ideal)},
@@ -239,7 +239,7 @@ Usage => "complexrank F",
 Inputs => {"F" => RingElement => {"a binary form ",TEX///$F\in K[x,y]$///," of degree ",TEX///$d$///,", where ",TEX///$K$///," is either ",TEX///$\mathbb{Q}$///,", or more generally a field"}},
 Outputs => {ZZ => {"the rank of ",TEX///$F$///,", i.e., the minimum integer ",TEX///$r$///," such that there is a decomposition ",TEX///$F = c_1\,(l_1)^d+\cdots+c_r\,(l_r)^d$///," where ",TEX///$l_1,\ldots,l_r\in\bar{K}[x,y]$///," are linear forms and ",TEX///$c_1,\ldots,c_r\in\bar{K}$///}},
 PARA{"This method provides a quick way to calculate the complex rank of a binary form as an application of the methods ",TO (apolar,RingElement,ZZ)," and ",TO (discriminant,RingElement),". But note that there is a very small, but non-zero, probability of obtaining a greater value."},
-EXAMPLE {"R := QQ[x,y];","F = 325699392019820093805938500473136959995883*x^11-5810907570924644857232186920803498012892938*x^10*y+65819917752061707843768328400359649501719860*x^9*y^2-519457154316395169830396776661486079064173600*x^8*y^3+1705429425321816258526777767700378341505324800*x^7*y^4-3810190868583760635545828188931628645390528000*x^6*y^5+9250941324308079844692884039573393626015320480*x^5*y^6-9323164714263069666482962682446368124512793200*x^4*y^7+1072684515031339121680779290598231336889158000*x^3*y^8-66208958025372412656331871291180685863962950*x^2*y^9-3357470237827984950448384820635661305324565*x*y^10+2036327846200712576945384935680953020530520*y^11","time complexrank F"},
+EXAMPLE {"R := QQ[x,y];","F = 325699392019820093805938500473136959995883*x^11-5810907570924644857232186920803498012892938*x^10*y+65819917752061707843768328400359649501719860*x^9*y^2-519457154316395169830396776661486079064173600*x^8*y^3+1705429425321816258526777767700378341505324800*x^7*y^4-3810190868583760635545828188931628645390528000*x^6*y^5+9250941324308079844692884039573393626015320480*x^5*y^6-9323164714263069666482962682446368124512793200*x^4*y^7+1072684515031339121680779290598231336889158000*x^3*y^8-66208958025372412656331871291180685863962950*x^2*y^9-3357470237827984950448384820635661305324565*x*y^10+2036327846200712576945384935680953020530520*y^11","complexrank F"},
 SeeAlso => {realrank}}
 document { 
 Key => {[realrank,Range]}, 
@@ -312,11 +312,11 @@ Inputs => {"n" => ZZ, "i" => ZZ => {"a typical rank"}},
 Outputs => {{"the irreducible components of the real algebraic boundary that separates real rank ",TEX///$i$///," from the other typical ranks in the real projective space ",TEX///$\mathbb{P}^n=\mathbb{P}(Sym^n(\mathbb{R}^2))$///," of binary forms of degree ",TEX///$n$///}},
 PARA{"Define ",TEX///${\mathcal{R}}_{n,i}$///," as the interior of the set ",TEX///$\{F\in Sym^n(\mathbb{R}^2) : realrank(F) = i\}$///,". Then ",TEX///${\mathcal{R}}_{n,i}$///," is a semi-algebraic set which is non-empty exactly when ",TEX///$(n+1)/2 \leq i\leq n$///," (in this case we say that ",TEX///$i$///," is a typical rank); see the paper by G. Blekherman - Typical real ranks of binary forms - Found. Comput. Math. 15, 793-798, 2015. The topological boundary ",TEX///$\partial({\mathcal{R}}_{n,i})$///," is the set-theoretic difference of the closure of ",TEX///${\mathcal{R}}_{n,i}$///," minus the interior of the closure of ",TEX///${\mathcal{R}}_{n,i}$///,". In the range ",TEX///$(n+1)/2 \leq i\leq n-1$///,", it is a semi-algebraic set of pure codimension one. The (real) algebraic boundary ",TEX///$\partial_{alg}({\mathcal{R}}_{n,i})$///," is defined as the Zariski closure of the topological boundary ",TEX///$\partial({\mathcal{R}}_{n,i})$///,". This is viewed as a hypersurface in ",TEX///$\mathbb{P}(Sym^n(\mathbb{R}^2))$///," and the method returns its irreducible components over ",TEX///$\mathbb{C}$///,"."},
 PARA{"In the case ",TEX///$i = n$///,", the algebraic boundary ",TEX///$\partial_{alg}({\mathcal{R}}_{n,n})$///," is the discriminant hypersurface; see the paper by A. Causa and R. Re - On the maximum rank of a real binary form - Ann. Mat. Pura Appl. 190, 55-59, 2011; see also the paper by P. Comon, G. Ottaviani - On the typical rank of real binary forms - Linear Multilinear Algebra 60, 657-667, 2012."},
-EXAMPLE {"time D77 = realRankBoundary(7,7)","describe D77"},
+EXAMPLE {"D77 = realRankBoundary(7,7)","describe D77"},
 PARA{"In the opposite extreme case, ",TEX///$i = ceiling((n+1)/2)$///,", the algebraic boundary ",TEX///$\partial_{alg}({\mathcal{R}}_{n,i})$///," has been described in the paper by H. Lee and B. Sturmfels - Duality of multiple root loci - J. Algebra 446, 499-526, 2016. It is irreducible if ",TEX///$n$///," is odd, and has two irreducible components if ",TEX///$n$///," is even."},  
-EXAMPLE {"time D64 = realRankBoundary(6,4)","describe first D64","describe last D64","time D74 = realRankBoundary(7,4)","describe D74"},
+EXAMPLE {"D64 = realRankBoundary(6,4)","describe first D64","describe last D64","D74 = realRankBoundary(7,4)","describe D74"},
 PARA{"In the next example, we compute the irreducible components of the algebraic boundaries ",TEX///$\partial_{alg}({\mathcal{R}}_{7,5})$///," and ",TEX///$\partial_{alg}({\mathcal{R}}_{7,6})$///,"."},
-EXAMPLE {"time D75 = realRankBoundary(7,5)","describe D75_0","describe D75_1","describe D75_2","time D76 = realRankBoundary(7,6)","describe D76_0","describe D76_1","describe D76_2"},
+EXAMPLE {"D75 = realRankBoundary(7,5)","describe D75_0","describe D75_1","describe D75_2","D76 = realRankBoundary(7,6)","describe D76_0","describe D76_1","describe D76_2"},
 SeeAlso => {CoincidentRootLocus,(dual,CoincidentRootLocus),realrank}}
 document { 
 Key => {(symbol *,CoincidentRootLocus, CoincidentRootLocus),projectiveJoin},
@@ -326,9 +326,9 @@ projectiveJoin(X,Y)",
 Inputs => {"X" => CoincidentRootLocus,"Y" => CoincidentRootLocus},
 Outputs => {JoinOfCoincidentRootLoci => {"the projective join of ",TEX///$X$///," and ",TEX///$Y$///}},
 PARA{"A partition of a number ",TEX///$n$///," is a hook if at most one part is not 1. The inputs of this method are required to be coincident root loci associated with hook partitions of ",TEX///$n$///,". In this case, the returned object is the dual of a certain coincident root locus; see the paper by H. Lee and B. Sturmfels - Duality of multiple root loci - J. Algebra 446, 499-526, 2016."},
-EXAMPLE {"X = coincidentRootLocus {11,1,1,1,1}","Y = coincidentRootLocus {13,1,1}","time X * Y","time X * Y * Y"},
+EXAMPLE {"X = coincidentRootLocus {11,1,1,1,1}","Y = coincidentRootLocus {13,1,1}","X * Y","X * Y * Y"},
 PARA{"More generally, if ",TEX///$I_1,I_2,\ldots$///," is a sequence of homogeneous ideals (resp. parameterizations) of projective varieties ",TEX///$X_1,X_2,\ldots \subset \mathbb{P}^n$///,", then ",TT "projectiveJoin(I_1,I_2,...)"," is the ideal of the projective join ",TEX///$X_1\,*\,X_2\,*\,\cdots \subset \mathbb{P}^n$///,"."},
-EXAMPLE {"I = ideal coincidentRootLocus {4}", "time projectiveJoin(I,I)"},
+EXAMPLE {"I = ideal coincidentRootLocus {4}", "projectiveJoin(I,I)"},
 SeeAlso => {(dual,CoincidentRootLocus)}}
 undocumented {(projectiveJoin,Thing)}
 undocumented {(symbol +,CoincidentRootLocus, CoincidentRootLocus)}
@@ -348,6 +348,6 @@ Usage => "polarDegrees X",
 Inputs => {"X" => CoincidentRootLocus},
 Outputs => {List => {"the polar degrees of ",TT"X"}},
 PARA{"This method is based on a conjecture given in ",HREF{"https://arxiv.org/abs/1911.01958","Algebraic boundaries among typical ranks for real binary forms of arbitrary degree"},", which has been verified for all the coincident root loci ",TEX///$X\subset\mathbb{P}^r$///," with ",TEX///$r\leq 7$///,"."}, 
-EXAMPLE {"X = coincidentRootLocus(3,2,2)","time polarDegrees X"},
+EXAMPLE {"X = coincidentRootLocus(3,2,2)","polarDegrees X"},
 SeeAlso => {conormalVariety, multidegree}}
 
