@@ -184,6 +184,7 @@ export {
     "realRegions",
     "tuttePolynomial",
     "zetaPolynomial",
+    "coxeterPolynomial",
     --
     -- Properties
     "dilworthNumber",
@@ -1569,6 +1570,15 @@ zetaPolynomial Poset := RingElement => opts -> P -> (
     X := toList(2..dim oP+2);
     Y := apply(X, n -> sum(2..n, i -> fV#(i-2) * binomial(n-2, i-2)));
     sum(#X, i -> Y_i * product(drop(X, {i,i}), xj -> (R_0 - xj)/(X_i-xj)))
+    )
+
+coxeterPolynomial = method(Options => {symbol VariableName => getSymbol "t"})
+coxeterPolynomial Poset := RingElement => opts -> P -> (
+    R := ZZ(monoid [opts.VariableName]);
+    M := P.RelationMatrix;
+    n := numrows M;
+    C := -M * inverse transpose M;
+    det (R_0 * id_(R^n) - C)
     )
 
 ------------------------------------------
@@ -5372,7 +5382,35 @@ doc ///
     SeeAlso
         chains
 ///
-
+-- coxeterPolynomial
+doc ///
+    Key
+        coxeterPolynomial
+        (coxeterPolynomial,Poset)
+        [coxeterPolynomial,VariableName]
+    Headline
+        computes the Coxeter polynomial of a poset
+    Usage
+        z = coxeterPolynomial P
+        z = coxeterPolynomial(P, VariableName => symbol)
+    Inputs
+        P:Poset
+        VariableName=>Symbol
+    Outputs
+        z:RingElement
+            the Coxeter polynomial of $P$
+    Description
+        Text
+            The Coxeter polynomial of $P$ is the
+            characteristic polynomial of the Coxeter
+            transformation matrix $ -M M^{-t}$, where $M$
+            is the relation matrix. This depends only on
+            the derived category of modules over
+            the incidence algebra.
+        Example
+            B = booleanLattice 3;
+            z = coxeterPolynomial B
+///
 ------------------------------------------
 -- Properties
 ------------------------------------------
@@ -6372,6 +6410,7 @@ assert(moebiusFunction B === new HashTable from {("010","010") => 1, ("010","011
       ("100","111") => 1, ("111","100") => 0, ("011","101") => 0, ("101","011") => 0, ("111","101") => 0})
 assert(toString rankGeneratingFunction B === "q^3+3*q^2+3*q+1")
 assert(toString zetaPolynomial B == "q^3")
+assert(toString coxeterPolynomial B == "t^8+t^7+t^6-2*t^5-2*t^4-2*t^3+t^2+t+1")
 assert(dilworthNumber B === 3)
 assert(isAtomic B == true)
 assert(isBounded B == true)
@@ -6472,6 +6511,7 @@ assert(moebiusFunction B === new HashTable from {(5,2) => 0, (4,3) => 0, (2,5) =
        (3,3) => 1})
 assert(toString rankGeneratingFunction B === "q^4+q^3+q^2+q+1")
 assert(toString zetaPolynomial B == "(1/24)*q^4+(1/4)*q^3+(11/24)*q^2+(1/4)*q")
+assert(toString coxeterPolynomial B == "t^5+t^4+t^3+t^2+t+1")
 assert(dilworthNumber B === 1)
 assert(isAtomic B == false)
 assert(isBounded B == true)
