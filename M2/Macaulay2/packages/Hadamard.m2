@@ -9,7 +9,7 @@ newPackage(
 	    HomePage => "http://calvino.polito.it/~imanbj"
 	    }
 	}, -- TODO
-    Headline => "A package for the Hadamard products of varieties",
+    Headline => "A package for the Hadamard products of projective subvarieties",
     AuxiliaryFiles => false,
     DebuggingMode => false,
     Reload => false,
