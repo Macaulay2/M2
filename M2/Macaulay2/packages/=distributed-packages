@@ -209,5 +209,7 @@ ThreadedGB
 VectorGraphics
 GKMVarieties
 NoetherianOperators
+StatGraphs
+GraphicalModelsMLE
 EigenSolver
 MultiplicitySequence
