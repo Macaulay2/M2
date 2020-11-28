@@ -56,7 +56,7 @@ export {
     "NoetherianDegreeLimit",
     "DependentSet",
     "KernelStrategy",
-    "BM",
+    "IntegralStrategy",
 
     "Sampler",
     "TrustedPoint",
@@ -787,7 +787,7 @@ macaulayMatrixKernel := true >> opts -> (I, kP) -> (
     degLim := if not opts.?DegreeLimit then -1 else opts.DegreeLimit;
     rat := if not opts.?Rational then false else opts.Rational;
     kerStrat := if not opts.?KernelStrategy then "Default" else opts.KernelStrategy;
-    useBM := if not opts.?BM then null else opts.BM;
+    useBM := if not opts.?IntegralStrategy then null else opts.IntegralStrategy;
 
     rat = rat or all(gens S, v -> isConstant sub(sub(v, kP), S));
     if not rat or useBM === false then (
@@ -808,7 +808,7 @@ macaulayMatrixKernel := true >> opts -> (I, kP) -> (
         );
         L
     ) 
-    else if not rat and useBM === true then error"expected rational point when Strategy => \"BM\""
+    else if not rat and useBM === true then error"expected rational point when IntegralStrategy => true"
     else (
         if debugLevel > 1 then <<"macaulayMatrixKernel: using BM strategy"<<endl;
         pt := sub(sub(vars S, kP), S);
@@ -2676,7 +2676,7 @@ Description
 doc ///
 Key
     "Strategy => \"MacaulayMatrix\""
-    BM
+    IntegralStrategy
     KernelStrategy
 Headline
     strategy for computing Noetherian operators
@@ -2701,7 +2701,8 @@ Description
         {\tt KernelStrategy => ...}: takes a string {\tt "Default"} or {\tt "Gaussian"}. The {\tt "Default"} strategy uses the Macaulay2 builtin function @TO kernel@
         to compute kernels (via Grobner bases). The strategy {\tt "Gaussian"} computes kernels directly via a Gaussian reduction, and may offer performance improvements compared to {\tt "Default"}.
 
-        {\tt BM => ...}: takes a boolean value. If {\tt true}, uses the Mourrain algorithm to compute the kernel of the MacaulayMatrix. If {\tt false}, uses the method outlined in Algorithm 1 in @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@.
+        {\tt IntegralStrategy => ...}: takes a boolean value. If {\tt true}, uses the Mourrain algorithm to compute the kernel of the MacaulayMatrix, which constructs columns
+        of the Macaulay matrix by taking integrals of the columns in the previous step. If {\tt false}, uses the method outlined in Algorithm 1 in @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@.
         If unset, will choose automatically. See: B. Mourrain. Isolated points, duality and residues. @EM "J. Pure Appl. Algebra"@, 117/118:469-493, 1997. 
            Algorithms for algebra (Eindhoven, 1996).
 
@@ -3651,13 +3652,13 @@ k=6
 J = ideal((x_1^2-x_2*x_3)^k,(x_1*x_2-x_3*x_4)^k,(x_2^2-x_1*x_4)^k)
 Q = saturate(J,ideal(x_1*x_2*x_3*x_4))
 isPrimary Q
-elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Default", BM => true)
-elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Gaussian", BM => true)
-elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Default", BM => false)
-elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Gaussian", BM => false)
-elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Default", BM => true)
-elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Gaussian", BM => true)
-elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Default", BM => false)
-elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Gaussian", BM => false)
+elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Default", IntegralStrategy => true)
+elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Gaussian", IntegralStrategy => true)
+elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Default", IntegralStrategy => false)
+elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert", KernelStrategy => "Gaussian", IntegralStrategy => false)
+elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Default", IntegralStrategy => true)
+elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Gaussian", IntegralStrategy => true)
+elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Default", IntegralStrategy => false)
+elapsedTime noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Gaussian", IntegralStrategy => false)
 elapsedTime noetherianOperators(Q, Strategy => "Hybrid", KernelStrategy => "Default")
 elapsedTime noetherianOperators(Q, Strategy => "Hybrid", KernelStrategy => "Gaussian")
