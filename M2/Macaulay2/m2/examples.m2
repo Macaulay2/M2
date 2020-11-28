@@ -39,8 +39,8 @@ capture String := s -> (
     User#"private dictionary" = new Dictionary;
     OutputDictionary = new GlobalDictionary;
     dictionaryPath = {
-	currentPackage.Dictionary,
 	User#"private dictionary",
+	currentPackage.Dictionary,
 	Core.Dictionary,
 	OutputDictionary,
 	PackageDictionary};
