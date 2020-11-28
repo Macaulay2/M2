@@ -46,6 +46,7 @@ capture String := s -> (
 	PackageDictionary};
     scan(Core#"pre-installed packages", needsPackage);
     scan(currentPackage.Options.PackageExports, needsPackage);
+    interpreterDepth = 1;
 
     ret := capture' s;
 

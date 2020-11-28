@@ -60,7 +60,7 @@ SetOutputFile  := 1 << 31 -* add >>tmpf *-
 SetCaptureErr  := 1 << 32 -* add 2>&1 *-
 
 -* by default, the following commandline fixtures are used *-
-defaultMode := (SetUlimit + GCMAXHEAP + ArgQ + ArgInt
+defaultMode := (SetUlimit + GCMAXHEAP + ArgQ + ArgInt -- + ArgNoPreload
     + ArgNoRandomize + ArgNoReadline + ArgSilent + ArgStop
     + ArgPrintWidth + SetInputFile + SetOutputFile + SetCaptureErr)
 -* making this global, so it can be edited after entering debug Core *-
@@ -100,6 +100,7 @@ runFile = (inf, inputhash, outf, tmpf, desc, pkg, announcechange, usermode, exam
      cmd = cmd | readmode(ArgInt,         "--int");
      cmd = cmd | readmode(ArgNoBacktrace, "--no-backtrace");
      cmd = cmd | readmode(ArgNoDebug,     "--no-debug");
+     if pkgname != "Macaulay2Doc" then -- TODO: eventually remove this line
      cmd = cmd | readmode(ArgNoPreload,   "--no-preload");
      cmd = cmd | readmode(ArgNoRandomize, "--no-randomize");
      cmd = cmd | readmode(ArgNoReadline,  "--no-readline");
@@ -112,6 +113,7 @@ runFile = (inf, inputhash, outf, tmpf, desc, pkg, announcechange, usermode, exam
      cmd = cmd | readmode(ArgStop,        "--stop");
      cmd = cmd | readmode(ArgPrintWidth,  "--print-width 77");
      cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir ", format d));
+     -- TODO: fix capture, add preloaded packages to Macaulay2Doc, then delete the following two lines
      needsline := concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'");
      cmd = cmd | if pkgname != "Macaulay2Doc" then needsline else "";
      cmd = cmd | readmode(SetInputFile,   "<" | format inf);
