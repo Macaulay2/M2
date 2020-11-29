@@ -34,26 +34,27 @@ capture String := s -> (
     oldPrivateDictionary := User#"private dictionary";
     oldDictionaryPath := dictionaryPath;
     oldLoadedPackages := loadedPackages;
+    oldCurrentPackage := currentPackage;
     pushvar(symbol OutputDictionary, new GlobalDictionary);
 
     User#"private dictionary" = new Dictionary;
     OutputDictionary = new GlobalDictionary;
     dictionaryPath = {
-	User#"private dictionary",
-	currentPackage.Dictionary,
+	User#"private dictionary", -- this is necessary mainly due to indeterminates.m2
 	oldPrivateDictionary,
 	Core.Dictionary,
 	OutputDictionary,
 	PackageDictionary};
     scan(Core#"pre-installed packages", needsPackage);
-    scan(currentPackage.Options.PackageExports, needsPackage);
-    interpreterDepth = 1;
+    needsPackage toString currentPackage;
+    currentPackage = User;
 
     ret := capture' s;
 
     User#"private dictionary" = oldPrivateDictionary;
     dictionaryPath = oldDictionaryPath;
     loadedPackages = oldLoadedPackages;
+    currentPackage = oldCurrentPackage;
     popvar symbol OutputDictionary;
 
     (gbTrace, debugLevel, errorDepth, interpreterDepth, debuggingMode, stopIfError, notify) = oldThreadLocalVars;
@@ -120,15 +121,18 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 
 -- used in installPackage.m2
 captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash, changeFunc, usermode, verboseLog) -> (
+    stdio << flush; -- just in case previous timing information hasn't been flushed yet
     desc := "example results for " | format fkey;
+    desc  = concatenate(desc, 58 - #desc);
     -- try capturing in the same process
     -- TODO: eventually make this flag unnecessary
     if not match("no-capture-flag", inputs) and not match({"ThreadedGB", "RunExternalM2"}, pkg#"pkgname") then (
-	printerr("capturing ", desc);
+	stderr << commentize ("capturing ", desc) << flush; -- the timing info will appear at the end
 	inputs = replace("-\\* no-capture-flag \\*-", "", inputs);
 	(err, output) := evaluateWithPackage(pkg, inputs, capture);
 	if not err then return outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close);
     -- fallback to using an external process
+    desc  = concatenate(desc, 61 - #desc);
     data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
     inf << inputs << endl << close;
     if runFile(inf, inputhash, outf, errf, desc, pkg, changeFunc fkey, usermode, data)

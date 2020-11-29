@@ -78,7 +78,7 @@ argumentMode = defaultMode
 -- returns false if error
 runFile = (inf, inputhash, outf, tmpf, desc, pkg, announcechange, usermode, examplefiles) -> (
      announcechange();
-     stderr << " -- making " << desc << ( if debugLevel > 0 then " in file " | outf else "" ) << endl;
+     stderr << commentize ("making ", desc, if debugLevel > 0 then " in file " | outf) << flush; -- skipping endl on purpose
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
@@ -119,27 +119,15 @@ runFile = (inf, inputhash, outf, tmpf, desc, pkg, announcechange, usermode, exam
      cmd = cmd | readmode(SetInputFile,   "<" | format inf);
      cmd = cmd | readmode(SetOutputFile,  ">>" | format toAbsolutePath tmpf);
      cmd = cmd | readmode(SetCaptureErr,  "2>&1");
-     if debugLevel > 0 then stderr << cmd << endl;
+     if debugLevel > 0 then stderr << endl << cmd << endl;
      for fn in examplefiles do copyFile(fn,rundir | baseFilename fn);
      r := run cmd;
      if r == 0 then (
-	  scan(reverse findFiles rundir, f -> if isDirectory f then (
-		    -- under cygwin, it seems to take a random amount of time before the system knows the directory is no longer in use:
-		    try removeDirectory f
-		    else (
-			 stderr << "--warning: *** removing a directory failed, waiting..." << endl;
-			 sleep 1;
-			 try removeDirectory f
-			 else (
-			      stderr << "--warning: *** removing a directory failed again, waiting..." << endl;
-			      sleep 4;
-			      removeDirectory f
-			      )
-			 )
-		    ) else removeFile f);
+	  scan(reverse findFiles rundir, f -> if isDirectory f then removeDirectory f else removeFile f);
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
+     if debugLevel == 0 then stderr << endl;
      stderr << cmd << endl;
      stderr << tmpf << ":0:1: (output file) error: Macaulay2 " << describeReturnCode r << endl;
      stderr << aftermatch(M2errorRegexp,get tmpf);
