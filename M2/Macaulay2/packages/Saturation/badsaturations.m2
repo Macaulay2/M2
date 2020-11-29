@@ -1,5 +1,5 @@
 debugLevel = 1
-debug Colon
+debug Saturation
 
 kk = ZZ/32003
 S = kk[x_0,x_1,x_2,x_3,x_4, Degrees => {{1,0},{1,0},{0,1},{0,1},{0,1}}]
@@ -125,7 +125,7 @@ paramRatCurve(List, List, List) := paramRatCurve => opts -> (a,b,c) -> (
 
 end--
 restart
-load(Colon#"auxiliary files"|"badsaturations.m2")
+load(Saturation#"auxiliary files"|"badsaturations.m2")
 
 Jsat = paramCurve(2,4,4);
 elapsedTime genSat(Jsat,3,0); -- ~25s

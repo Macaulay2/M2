@@ -77,7 +77,7 @@ document {
 	 LI { "new packages:",
 	      UL {
 		   LI {
-		       "The ", TO "Colon :: Colon", " package has been added for computations involving quotients,
+		       "The ", TO "Saturation :: Saturation", " package has been added for computations involving quotients,
 		       saturations, and annihilators of modules and ideals. The package is preloaded, so the routines
 		       from this package will be used automatically. In particular, the new implementation supports
 		       caching of computations as well as new strategies, which can be listed using the ", TO hooks,
@@ -1616,7 +1616,7 @@ document {
 			 with ", TT "map(E,F)", ".  (This was advertised as a change to 1.2, when the package was introduced,
 			      but the package was not pre-loaded, whereas now it is.)." },
 		    LI {
-			 "Fixed a long-standing bug in ", TO "Colon :: saturate", " that caused it to give incorrect answers (too small)
+			 "Fixed a long-standing bug in ", TO "Saturation :: saturate", " that caused it to give incorrect answers (too small)
 			 in the case that the following three conditions all held:
 			 the ring has a non-standard monomial ordering, such as a weight vector; all variables had degree 1;
 			 and the degree of the element being used to saturate was equal to 1."

@@ -23,7 +23,7 @@ document {
      "Common ways to make an ideal:",
      UL {
 	  TO "ideal",
-	  TO "Colon :: annihilator",
+	  TO "Saturation :: annihilator",
 	  TO "content",
 	  TO "fittingIdeal",
 	  TO (kernel, RingMap),
@@ -73,8 +73,8 @@ document {
 	  TO "PrimaryDecomposition::associatedPrimes",
 	  TO "PrimaryDecomposition::primaryDecomposition",
 	  TO "PrimaryDecomposition::topComponents",
-	  TO "Colon :: saturate(Ideal,Ideal)",
-	  TO "Colon :: Ideal : Ideal",
+	  TO "Saturation :: saturate(Ideal,Ideal)",
+	  TO "Saturation :: Ideal : Ideal",
 	  TO intersect
 	  },
      "Ideals from geometry",

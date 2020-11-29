@@ -18,7 +18,7 @@ document {
 	  TO "dimension, codimension, and degree",
 	  "components of ideals",
 	  TO "intersection of ideals",
-	  TO "Colon :: ideal quotients and saturation",
+	  TO "Saturation :: ideal quotients and saturation",
 	  TO "MinimalPrimes :: radical of an ideal",
 	  TO "MinimalPrimes :: minimal primes of an ideal",
 	  TO "PrimaryDecomposition :: associated primes",

@@ -1,7 +1,7 @@
 undocumented {
     -- documented in MinimalPrimes
     decompose,
-    -- documented in Colon
+    -- documented in Saturation
     annihilator,
     saturate,
     -- etc.

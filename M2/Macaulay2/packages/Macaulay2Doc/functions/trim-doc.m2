@@ -33,8 +33,8 @@ Node
       numgens J
       numgens J1
   SeeAlso
-    "Colon :: quotient(Ideal,Ideal)"
-    "Colon :: saturate(Ideal,Ideal)"
+    "Saturation :: quotient(Ideal,Ideal)"
+    "Saturation :: saturate(Ideal,Ideal)"
     monomialCurveIdeal
     "Truncations::truncate"
 

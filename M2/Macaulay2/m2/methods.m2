@@ -550,7 +550,7 @@ pushInfoLevel :=  n     -> (infoLevel = infoLevel + n; n)
 popInfoLevel  := (n, s) -> (infoLevel = infoLevel - n; s)
 
 -- This function is mainly used by runHooks, printing a line like this:
- -- (quotient,Ideal,Ideal) with Strategy => Monomial from -*Function[../../Macaulay2/packages/Colon.m2:196:30-205:82]*-
+ -- (quotient,Ideal,Ideal) with Strategy => Monomial from -*Function[../../Macaulay2/packages/Saturation.m2:196:30-205:82]*-
 -- TODO: the filenames are not emacs clickable, perhaps M2-mode should be improved
 debugInfo = (func, key, strategy, infoLevel) -> if debugLevel > infoLevel then printerr(
     toString key, if strategy =!= null then (" with Strategy => ", toString strategy), " from ", toString func)

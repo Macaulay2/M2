@@ -40,7 +40,7 @@ Node
     localize
   SeeAlso
     "MinimalPrimes :: MinimalPrimes"
-    "Colon :: Colon"
+    "Saturation :: Saturation"
 
 Node
   Key
@@ -711,8 +711,8 @@ Node
 	  }@
   SeeAlso
     removeLowestDimension
-    "Colon :: saturate"
-    "Colon :: Ideal : Ideal"
+    "Saturation :: saturate"
+    "Saturation :: Ideal : Ideal"
     "MinimalPrimes :: radical"
 
 Node
@@ -741,8 +741,8 @@ Node
       removeLowestDimension I
   SeeAlso
     topComponents
-    "Colon :: saturate"
-    "Colon :: Ideal : Ideal"
+    "Saturation :: saturate"
+    "Saturation :: Ideal : Ideal"
     "MinimalPrimes :: radical"
     "MinimalPrimes :: minimalPrimes"
 ///

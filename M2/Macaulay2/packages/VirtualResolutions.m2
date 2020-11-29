@@ -24,7 +24,7 @@ newPackage ("VirtualResolutions",
         },
     Keywords => {"Commutative Algebra", "Homological Algebra"},
     PackageExports => {
-	"Colon",
+	"Saturation",
         "SpaceCurves",
         "TateOnProducts",
         "NormalToricVarieties",
@@ -63,8 +63,8 @@ export{
 --------------------------------------------------------------------
 ----- Input: (I,irr) = (ideal, ideal)
 ----- Output: saturation of I with respect to irr.
------ Description: This is the fast saturation from Colon.m2. Since
------ Colon.m2 might change at some point we have created this wrap
+----- Description: This is the fast saturation from Saturation.m2. Since
+----- Saturation.m2 might change at some point we have created this wrap
 ----- function to easily implement other saturations that might be
 ----- created. We hope this is eventually removed.
 --------------------------------------------------------------------

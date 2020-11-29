@@ -1,7 +1,7 @@
 doc ///
 Node
   Key
-    Colon
+    Saturation
   Headline
     ideal and submodule quotient, saturation, and annihilator routines
   Description
@@ -21,7 +21,7 @@ Node
     "ideal quotients and saturation"
   Description
     Text
-      @SUBSECTION "Colon and Ideal Quotients"@
+      @SUBSECTION "Ideal Quotients"@
 
       The @TO2 {(quotient, Ideal, Ideal), "quotient"}@ of two ideals $I, J\subset R$ is ideal $I:J$ of
       elements $f\in R$ such that $f J \subset I$.
@@ -55,7 +55,7 @@ Node
     "module quotients, saturation, and annihilator"
   Description
     Text
-      @SUBSECTION "Colon and Module Quotients"@
+      @SUBSECTION "Module Quotients"@
 
       There are two notions associated to the colon construction for modules.
 

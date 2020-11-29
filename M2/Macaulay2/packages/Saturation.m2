@@ -12,7 +12,7 @@
 --        5. employ storefun! Maybe call it declare
 ---------------------------------------------------------------------------
 newPackage(
-    "Colon",
+    "Saturation",
     Version => "0.2",
     Date => "November 8, 2020",
     Headline => "quotient, saturation, and annihilator routines for ideals and modules",
@@ -687,9 +687,9 @@ intersectionByElimination =  L  -> intersect(L,   Strategy => Eliminate)
 ----- Tests section
 --------------------------------------------------------------------
 
-load "./Colon/quotient-test.m2"
-load "./Colon/saturate-test.m2"
-load "./Colon/annihilator-test.m2"
+load "./Saturation/quotient-test.m2"
+load "./Saturation/saturate-test.m2"
+load "./Saturation/annihilator-test.m2"
 
 --------------------------------------------------------------------
 ----- Documentation section
@@ -698,16 +698,16 @@ load "./Colon/annihilator-test.m2"
 beginDocumentation()
 
 -- TODO: review
-load "./Colon/doc.m2"
-load "./Colon/quotient-doc.m2"
-load "./Colon/saturate-doc.m2"
-load "./Colon/annihilator-doc.m2"
+load "./Saturation/doc.m2"
+load "./Saturation/quotient-doc.m2"
+load "./Saturation/saturate-doc.m2"
+load "./Saturation/annihilator-doc.m2"
 
 end--
 
 restart
 debugLevel = 1
-debug needsPackage "Colon"
+debug needsPackage "Saturation"
 
 kk = ZZ/32003
 R = kk(monoid[x_0, x_1, x_2, x_3, x_4, Degrees => {2:{1, 0}, 3:{0, 1}}, Heft => {1,1}])
@@ -776,7 +776,7 @@ betti J2
 betti J1
 
 restart
-load "./Colon/badsaturations.m2"
+load "./Saturation/badsaturations.m2"
 
 -- TODO: how was this so fast before??
 J = paramRatCurve({2,2},{3,3},{4,2});
@@ -853,7 +853,7 @@ fto
 ----------------------------
 -- Benchmarking example:
 restart
-needsPackage "Colon"
+needsPackage "Saturation"
 
 R = ZZ/101[vars(0..14)]
 M = genericMatrix(R, a, 3, 5)

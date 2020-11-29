@@ -246,8 +246,8 @@ Node
     minimalPrimes
     "PrimaryDecomposition :: topComponents"
     "PrimaryDecomposition :: removeLowestDimension"
-    "Colon :: saturate"
-    "Colon :: Ideal : Ideal"
+    "Saturation :: saturate"
+    "Saturation :: Ideal : Ideal"
   Subnodes
     radicalContainment
 

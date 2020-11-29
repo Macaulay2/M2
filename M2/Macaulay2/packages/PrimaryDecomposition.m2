@@ -23,7 +23,7 @@ newPackage(
 	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"}},
     Keywords => {"Commutative Algebra"},
-    PackageExports => { "Colon", "MinimalPrimes" },
+    PackageExports => { "Saturation", "MinimalPrimes" },
     PackageImports => { "Elimination" },
     AuxiliaryFiles => true,
     DebuggingMode => false

@@ -7,7 +7,7 @@
 
 assert( class infinity === InfiniteNumber )
 
--- ideal quotient methods moved to packages/Colon.m2 in July 2020
+-- ideal quotient methods moved to packages/Saturation.m2 in July 2020
 quotient = method(
      Options => {
 	  DegreeLimit       => {},
@@ -18,10 +18,10 @@ quotient = method(
 	  }
      )
 
--- moved to packages/Colon.m2 in July 2020
+-- moved to packages/Saturation.m2 in July 2020
 saturate = method(Options => options quotient)
 
--- moved to packages/Colon.m2 in October 2020
+-- moved to packages/Saturation.m2 in October 2020
 annihilator = method(Options => {Strategy => null}) -- Intersection or Quotient
 
 gcdCoefficients(ZZ,ZZ) := (a,b) -> (

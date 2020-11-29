@@ -103,7 +103,7 @@ processStrategy := strategies -> sum(flatten {strategies}, strategy ->
 
 -- TODO:
 --   move the codes below into a hashtable above
---   implement condition checking mechanism similar to Colon.m2
+--   implement condition checking mechanism similar to Saturation.m2
 --   F4 is still used by groebnerBasis, is it the same as LinearAlgebra?
 --   integrate FGLM, GroebnerWalk, ThreadedGB, Hilbert driven Buchberger, etc.
 processAlgorithm := (alg, m) -> (

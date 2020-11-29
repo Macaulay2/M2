@@ -10,7 +10,7 @@ algorithms := new MutableHashTable from {}
 -----------------------------------------------------------------------------
 -- utilities
 -----------------------------------------------------------------------------
--- both are also used in Colon.m2
+-- both are also used in Saturation.m2
 
 -- TODO: can this be simplified using newRing?
 eliminationInfo = method()

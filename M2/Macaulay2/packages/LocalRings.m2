@@ -33,7 +33,7 @@ newPackage(
         },
     Headline => "operations over a local ring (R, P)",
     Keywords => {"Commutative Algebra"},
-    PackageExports => {"PruneComplex", "Colon"},
+    PackageExports => {"PruneComplex", "Saturation"},
     AuxiliaryFiles => true
     )
 
@@ -420,7 +420,7 @@ localAnnihilator := (opts, A) -> (
         B' := annihilator(A', opts);
         B' ** RP))
 
---=============================== addHooks Section for Colons ===============================--
+--============================= addHooks Section for Saturation =============================--
 
 -- Installing local hooks for quotient and saturate
 scan({	(quotient, Ideal,  Ideal),

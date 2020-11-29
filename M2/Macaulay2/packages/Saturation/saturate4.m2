@@ -42,7 +42,7 @@ assert try saturate(ideal(0_R),a_R,Strategy => Bayer) == ideal(x^3-y^3,a-b) else
 
 assert(saturate(ideal(0_R),a_R,Strategy => Iterate) == ideal(x^3-y^3,a_R-b_R)) -- ok
 
-debug Colon
+debug Saturation
 R = QQ[a..d, MonomialOrder=>{2,2}]; assert not isGRevLexRing R
 R = QQ[a..d, MonomialOrder=>Eliminate 1]; assert not isGRevLexRing R
 R = QQ[a..d, MonomialOrder=>{Weights=>{1,2,3,4},4}]; assert not isGRevLexRing R

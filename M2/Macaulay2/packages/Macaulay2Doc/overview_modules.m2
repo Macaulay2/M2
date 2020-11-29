@@ -74,9 +74,9 @@ document {
      "Annihilators, quotients and Gröbner bases:",
      UL {
 	  TO (gb, Module),
-	  TO "Colon::Ideal : Ideal",
-	  TO "Colon::annihilator(Module)",
-	  TO "Colon::saturate(Module,Ideal)",
+	  TO "Saturation::Ideal : Ideal",
+	  TO "Saturation::annihilator(Module)",
+	  TO "Saturation::saturate(Module,Ideal)",
 	  },
      "Common homological computations:",
      UL {
@@ -118,7 +118,7 @@ document {
 	  -- Mike wanted this: TO "tensor products of modules",
 	  -- Mike wanted this: TO "Hom modules and homomorphisms",
 	  -- Mike wanted this: TO "annihilators and submodule quotients",
-	  TO "Colon :: module quotients, saturation, and annihilator",
+	  TO "Saturation :: module quotients, saturation, and annihilator",
 
 	  "graded modules",
 	  TO "Hilbert functions and free resolutions",
