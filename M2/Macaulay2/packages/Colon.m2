@@ -184,8 +184,10 @@ quotientHelper = (A, B, key, opts) -> (
 	-- note: ideal(..A..) : ideal(..B..) = A <==>
 	-- note: module(.A.)  : ideal(..B..) = A <==> B is not contained in any associated primes of A
 	-- TODO: can either of the above be efficiently checked?
-	if instance(B, Ideal) and isSubset(ambient' A, B) then return A;
-	-- TODO: module(.A.)  : module(.B.)  = ???
+	-- TODO: module(.A.)  : module(.B.)  = ? <==> A \subset B
+	if instance(B, Ideal) then -- see the above TODO item
+	if isSubset'(ambient' A, B) then return A;
+	-- TODO: add speedup for when isSubset'(A, B), being cautious of (a3):(a3,bc) in kk[abc]/ac
 
 	-- TODO: what would adding {SyzygyLimit => opts.BasisElementLimit, BasisElementLimit => null} do?
 	opts = new OptionTable from override'(options gb, opts ++ {Strategy => null});
@@ -403,7 +405,8 @@ saturateHelper = (A, B, key, opts) -> (
 	-- note: ideal(..A..) :            f^infty = A <==> f is nzd /A
 	-- note: ideal(..A..) : ideal(..B..)^infty = A <==> B is not contained in any associated primes of A
 	-- TODO: can either of the above be efficiently checked?
-	if isSubset(ambient' A, B') then return A;
+	if isSubset'(ambient' A, B') then return A;
+	-- TODO: add speedup for when isSubset'(A, B'), being cautious of (a3):(a3,bc) in kk[abc]/ac
 
 	opts = new OptionTable from override'(options gb, opts ++ {Strategy => null});
 	runHooks(key, (opts, A, B), Strategy => strategy));
@@ -433,11 +436,12 @@ algorithms#(saturate, Module, Ideal) = new MutableHashTable from {
     Iterate => (opts, M, I) -> (
 	M' := quotient(M, I, opts); while M' != M do ( M = M'; M' = quotient(M, I, opts) ); M ),
 
+    -- TODO: if decompose is already cached, do this strategy instead
     Decompose => (opts, M, I) -> saturate(M, decompose I, Strategy => Iterate),
     }
 
 -- Installing hooks for Module : Ideal^infinity
-scan({Iterate, Decompose}, strategy ->
+scan({Decompose, Iterate}, strategy ->
     addHook(key := (saturate, Module, Ideal), algorithms#key#strategy, Strategy => strategy))
 
 --------------------------------------------------------------------

@@ -95,12 +95,13 @@ Node
   Key
      importFrom
     (importFrom, Package, List)
+    (importFrom, String,  List)
   Headline
     import symbols to the current private dictionary
   Usage
     importFrom(pkg, {"symbol1", "symbol2"})
   Inputs
-    :Package
+    :{Package,String}
       the package containing the symbols
     :List
       of strings, corresponding to the symbols to export

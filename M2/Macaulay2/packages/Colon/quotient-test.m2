@@ -158,12 +158,20 @@ TEST ///
 ///
 
 TEST /// -- unnecessary groebner bases should not be computed
-  debug needsPackage "FGLM"
+  importFrom_"FGLM" {"katsura"}
   I = katsura(8, MonomialOrder=>Lex)
-  elapsedTime ideal I_* : I_0
-  elapsedTime ideal I_* : ideal(I_0, I_1)
-  elapsedTime module ideal I_* : ideal(I_0, I_1)
-  elapsedTime module ideal I_* : module ideal(I_0, I_1)
-  elapsedTime saturate(ideal I_*, ideal(I_0, I_1))
-  elapsedTime saturate(module ideal I_*, ideal(I_0, I_1))
+  R = ring I
+  J = ideal(I_0, I_1)
+  elapsedTime assert(quotient(J, I) == J)
+  elapsedTime assert(quotient(J, I) == J)
+  elapsedTime assert(quotient(ideal J_*, I) == J)
+  elapsedTime assert(quotient(module ideal J_*, I) == module J)
+  elapsedTime assert(quotient(ideal I_*, I_0) == 1)
+  elapsedTime assert(quotient(ideal I_*, J) == 1)
+  elapsedTime assert(quotient(module ideal I_*, J) == R^1)
+  elapsedTime assert(quotient(module ideal I_*, module J) == 1)
+  elapsedTime assert(saturate(ideal J_*, I) == J)
+  elapsedTime assert(saturate(ideal I_*, J) == 1)
+  elapsedTime assert(saturate(module ideal J_*, I) == module J)
+  elapsedTime assert(saturate(module ideal I_*, J) == R^1)
 ///
