@@ -21,6 +21,10 @@ TEST ///
   P = ideal(v^3-u^3*a^3, u*v^2-c^2*a^4);
   Q = saturate(P, a)
   assert(Q == quotient(Q, a))
+  -- added in 2020
+  R = newRing(S, Degrees => entries id_(ZZ^4))
+  Q = saturate(sub(P, R), a)
+  assert(Q == quotient(Q, a))
 ///
 
 TEST get(currentFileDirectory | "saturate3.m2")

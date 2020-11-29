@@ -81,11 +81,8 @@ isGRevLexRing = (R) -> (
      #mo === 1 and isgrevlex and all(mo, x -> x#0 =!= Weights and x#0 =!= Lex))
 
 -- Helper for Linear strategies
--- FIXME: this doesn't behave well with multigradings
-isLinearForm := f -> (
-    degreeLength ring f > 0 and
-    first degree f === 1 and
-    all(first \ degrees ring f, x -> x === 1))
+-- currently this is false for x+1, but in all use cases homogeneity is required anyway
+isLinearForm := f -> degreeLength ring f > 0 and sum degree f === 1 and same(degree \ terms f)
 
 -- Return (R1, R1<-R, R<-R1), where generators i and n are switched
 -- TODO: can this be simplified using newRing?
@@ -100,14 +97,6 @@ grevLexRing(ZZ, Ring) := (i, R) -> (
     fto := map(R1, R, (generators R1)_perm);
     fback := map(R, R1, (generators R)_perm);
     (R1, fto, fback))
-
--- TODO: where can this be used?
-quotelem0 = (I, f) -> (
-    -- I is an ideal, f is an element
-    syz gb(matrix{{f}} | generators I,
-	Strategy   => LongPolynomial,
-	Syzygies   => true,
-	SyzygyRows => 1))
 
 --------------------------------------------------------------------
 -- Quotients
@@ -224,6 +213,8 @@ algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
     Quotient => (opts, I, J) -> (
 	R := (ring I)/I;
 	mR := transpose generators J ** R;
+	-- if J is a single element, this is the same as
+	-- computing syz gb(matrix{{f}} | generators I, ...)
 	g := syz gb(mR, opts,
 	    Strategy   => LongPolynomial,
 	    Syzygies   => true,
@@ -519,6 +510,7 @@ algorithms#(saturate, Ideal, RingElement) = new MutableHashTable from {
 	R := ring I;
 	if not isFlatPolynomialRing R
 	or not isGRevLexRing R
+	or not all(gens R, g -> sum degree g == 1)
 	or not isHomogeneous I
 	or not isHomogeneous f or not isLinearForm f
 	then return null;
