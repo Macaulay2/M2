@@ -41,6 +41,7 @@ capture String := s -> (
     dictionaryPath = {
 	User#"private dictionary",
 	currentPackage.Dictionary,
+	oldPrivateDictionary,
 	Core.Dictionary,
 	OutputDictionary,
 	PackageDictionary};
@@ -119,7 +120,7 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 
 -- used in installPackage.m2
 captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash, changeFunc, usermode, verboseLog) -> (
-    desc := "example results for " | fkey;
+    desc := "example results for " | format fkey;
     -- try capturing in the same process
     -- TODO: eventually make this flag unnecessary
     if not match("no-capture-flag", inputs) and not match({"ThreadedGB", "RunExternalM2"}, pkg#"pkgname") then (

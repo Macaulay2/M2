@@ -514,7 +514,7 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	    and not opts.RerunExamples and fileExists outf' and gethash outf' === inputhash then (
 		if fileExists errf then removeFile errf; copyFile(outf', outf))
 	    -- run and capture example results
-	    else elapsedTime captureExampleOutput(
+	    else captureExampleOutput(
 		pkg, fkey, demark_newline inputs,
 		possiblyCache(outf, outf'),
 		inpf, outf, errf,
