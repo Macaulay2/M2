@@ -41,8 +41,17 @@ trim MonomialIdeal := MonomialIdeal => opts -> (cacheValue (symbol trim => opts)
 --   keys in opts that don't exist in def don't produce an error
 override' := (def, opts) -> nonnull apply(keys def, key -> if opts#?key and opts#key =!= null then key => opts#key)
 
--- TODO: is this the right function?
-ambient Ideal := Ideal => I -> ideal 1_(ring I)
+-- TODO: is this the right name for this function?
+ambient' = method()
+ambient' Module := Module => ambient
+ambient' Ideal  := Ideal  => I -> (if instance(I, MonomialIdeal) then monomialIdeal else ideal) 1_(ring I)
+
+-- TODO: remove this once the Ideal vs. MonomialIdeal dichotomy is resolved
+uniform' := L -> all(L, l -> instance(l, Ideal)) or uniform L
+
+-- this is a light version of isSubset for modules and ideals, which doesn't compute a gb
+-- TODO: move these improvements to isSubset, for instance isSubset(0, A) should not compute gb of A
+isSubset' := (A, B) -> A == 0 or isSubset(entries transpose gens A, entries transpose gens B)
 
 --Ideal % Matrix            :=
 --remainder(Ideal,  Matrix) := Matrix => (I, m) -> remainder(gens I, m)
@@ -170,22 +179,22 @@ Module : Number := (t, n) -> t : n_(ring t)
 quotientHelper = (A, B, key, opts) -> (
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
+    cast := if instance(A, MonomialIdeal) then monomialIdeal else ideal;
 
     -- this logic runs the strategies in order, or the specified strategy
     computation := (opts, container) -> (
 	if (R := ring A) =!= ring B then error "expected objects in the same ring";
 	if instance(B, RingElement) then B = ideal B;
-	-- TODO: implement bette class equality check; e.g. Ideal vs MonomialIdeal
-	if class A === class B and ambient A != ambient B
+	if uniform' {A, B} and ambient' A != ambient' B
 	then error "expected objects to be contained in the same ambient object";
-	-- note: if B \subsub A then A:B should be "everything", but computing a gb for A can be slow
-	-- TODO: isSubset(0, A) should not compute gb of A
-	if B == 0 or isSubset(B, A) then return if class A === class B then ideal 1_R else ambient A;
+	-- note: if B \subset A then A:B should be "everything", but computing
+	-- a gb for A can be slow, so isSubset' doesn't compute a gb
+	if isSubset'(B, A) then return if uniform' {A, B} then cast 1_R else ambient' A;
 	-- note: ideal(..A..) :         f    = A <==> f is nzd / A
 	-- note: ideal(..A..) : ideal(..B..) = A <==>
 	-- note: module(.A.)  : ideal(..B..) = A <==> B is not contained in any associated primes of A
 	-- TODO: can either of the above be efficiently checked?
-	if class B =!= Module and isSubset(ambient A, B) then return A;
+	if instance(B, Ideal) and isSubset(ambient' A, B) then return A;
 	-- TODO: module(.A.)  : module(.B.)  = ???
 
 	-- TODO: what would adding {SyzygyLimit => opts.BasisElementLimit, BasisElementLimit => null} do?
@@ -392,14 +401,15 @@ saturateHelper = (A, B, key, opts) -> (
     -- this logic runs the strategies in order, or the specified strategy
     computation := (opts, container) -> (
 	if (R := ring A) =!= ring B then error "expected objects in the same ring";
-	-- note: if B \subset A then A:B^infty should be "everything", but computing a gb for A can be slow
+	-- note: if B \subset A then A:B^infty should be "everything", but computing
+	-- a gb for A can be slow, so isSubset' doesn't compute a gb
 	-- TODO: if radical A is cached and B \subset radical A then A : B^infty = ambient A
 	-- alternatively, can radical containment be efficiently checked?
-	if B' == 0 or isSubset(B', A) then return ambient A;
+	if isSubset'(B', A) then return ambient' A;
 	-- note: ideal(..A..) :            f^infty = A <==> f is nzd /A
 	-- note: ideal(..A..) : ideal(..B..)^infty = A <==> B is not contained in any associated primes of A
 	-- TODO: can either of the above be efficiently checked?
-	if isSubset(ambient A, B') then return A;
+	if isSubset(ambient' A, B') then return A;
 
 	opts = new OptionTable from override'(options gb, opts ++ {Strategy => null});
 	runHooks(key, (opts, A, B), Strategy => strategy));

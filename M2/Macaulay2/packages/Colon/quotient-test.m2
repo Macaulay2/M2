@@ -152,3 +152,14 @@ TEST ///
   assert(monomialIdeal(I:J) == I':J')
   -- TODO: test MonomialIdeal : RingElement
 ///
+
+TEST /// -- unnecessary groebner bases should not be computed
+  debug needsPackage "FGLM"
+  I = katsura(8, MonomialOrder=>Lex)
+  elapsedTime ideal I_* : I_0
+  elapsedTime ideal I_* : ideal(I_0, I_1)
+  elapsedTime module ideal I_* : ideal(I_0, I_1)
+  elapsedTime module ideal I_* : module ideal(I_0, I_1)
+  elapsedTime saturate(ideal I_*, ideal(I_0, I_1))
+  elapsedTime saturate(module ideal I_*, ideal(I_0, I_1))
+///
