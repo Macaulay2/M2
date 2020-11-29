@@ -521,7 +521,6 @@ irreducibleDecomposition MonomialIdeal := List => I -> (
 --             remove_low_dim_id --> topComponents
 --             remove_lowest_dim --> removeLowestDimension
 
--- it is documented in packages/Macaulay2Doc/functions/top-doc.m2
 topComponents = method()
 topComponents Ideal       := Ideal  =>  I     -> (
     R := ring I;

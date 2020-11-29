@@ -1,4 +1,4 @@
-undocumented { "Increment" }
+-- TODO: (topComponents, Module, ZZ)
 
 doc ///
 Node
@@ -12,7 +12,8 @@ Node
       including associated primes and primary decompositions.
 
       The following simple example illustrates the use of @TO removeLowestDimension@, @TO topComponents@,
-      @TO "MinimalPrimes :: radical"@, and @TO "MinimalPrimes :: minimalPrimes"@.
+      @TO "MinimalPrimes :: radical"@, @TO "MinimalPrimes :: minimalPrimes"@, @TO associatedPrimes@, and
+      @TO primaryDecomposition@.
     Example
       R = ZZ/32003[a..d];
       I = monomialCurveIdeal(R,{1,3,4})
@@ -22,6 +23,8 @@ Node
       topComponents I
       radical I
       minimalPrimes I
+      associatedPrimes I
+      primaryDecomposition I
   References
     @UL {
       TEX "Eisenbud-Huneke-Vasconcelos, {\\it Inventiones mathematicae}, 110 207--235 (1992)",
@@ -407,6 +410,7 @@ Node
    (primaryComponent, Ideal, Ideal)
    [primaryComponent, Strategy]
    [primaryComponent, Increment]
+   Increment
   Headline
     find a primary component corresponding to an associated prime
   Usage
@@ -489,290 +493,256 @@ Node
    (primaryDecomposition, Ideal)
    (primaryDecomposition, Module)
     associatedPrimes
-///
 
--- FIXME
--*
-      @SUBSECTION "Strategies"@
-      The algorithms available for computing primary decompositions are @TO2 {"ShimoyamaYokoyama", "Shimoyama-Yokoyama"}@,
-      @TO2 {"EisenbudHunekeVasconcelos", "Eisenbud-Huneke-Vasconcelos"}@, a hybrid of these two algorithms,
-      and @TO2 {"GTZ", "Gianni-Trager-Zacharias"}@. The default algorithm in Macaulay2 is Shimoyama-Yokoyama.
-      Two other arguments for the strategy option are available. These arguments are @TT "Monomial"@ which computes
-      the unique irreducible decomposition of a monomial ideal and @TT "Binomial"@ which computes a cellular decomposition
-      of a binomial ideal. For more information on the strategy options see @TO [primaryDecomposition, Strategy]@.
+Node
+  Key
+    "strategies for computing primary decomposition"
+    [primaryDecomposition, Strategy]
+    EisenbudHunekeVasconcelos
+    ShimoyamaYokoyama
+    Hybrid
+    GTZ
+  Description
+    Text
+      @HEADER2 "Primary Decomposition of Modules"@
+
+      In this case, the only available strategy is similar to the Eisenbud-Huneke-Vasconcelos strategy
+      and is implemented by Justin Chen. Optionally, it is possible to specify the strategy for finding
+      the embedded components by passing
+    Pre
+      Strategy => Hybrid{strategy for getEmbeddedComponents}
+    Text
+      where the strategy is one of @TT format "Hom"@, @TT format "Sat"@, or @TT format "Res"@.
+      See @TO (primaryDecomposition, Module)@ for more information.
+
+    Text
+      @HEADER2 "Primary Decomposition of Ideals"@
+
+      In this case, the strategy option value should be one of the following:
+
+      @UL {
+          ("Monomial", " -- uses Alexander duality of a monomial ideal"),
+	  ("Binomial", " -- finds a cellular resolution of a binomial ideal", BOLD " (NOT YET IMPLEMENTED)"),
+	  ("Hybrid"," -- uses parts of the above two algorithms"),
+	  ("ShimoyamaYokoyama", " -- uses the algorithm of Shimoyama-Yokoyama"),
+	  ("EisenbudHunekeVasconcelos", " -- uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
+	  ("GTZ", " -- uses the algorithm of Gianni-Trager-Zacharias", BOLD " (NOT YES IMPLEMENTED)"),
+          }@
+
+      The strategies are implemented as @TO2 {"Macaulay2Doc :: using hooks", "hooks"}@, meaning that
+      each strategy is attempted in the reverse order in which it was added until one is successful.
+    Example
+      hooks(primaryDecomposition, Ideal)
+    Text
+      @SUBSECTION "Strategy => Monomial"@
+
+      This strategy only works for monomial ideals, and is automatically used for such ideals.
+      See the chapter on "Monomial Ideals" in the Macaulay2 book.
+    Example
+      Q = QQ[a..d]
+      I = ideal(a^2*b,a*c^2,b*d,c*d^2);
+      primaryDecomposition(I, Strategy => Monomial)
+    Text
+      @SUBSECTION "Strategy => EisenbudHunekeVasconcelos"@
+
+      See {\it Direct methods for primary decomposition} by Eisenbud, Huneke, and Vasconcelos, Invent. Math. 110, 207-235 (1992).
     Example
       primaryDecomposition(I, Strategy => EisenbudHunekeVasconcelos)
     Text
-     An example of a monomial ideal using both monomial and binomial.
+      @SUBSECTION "Strategy => ShimoyamaYokoyama"@
+
+      This strategy is the default for non-monomial ideals.
+      See {\it Localization and Primary Decomposition of Polynomial ideals} by Shimoyama and Yokoyama, J. Symb. Comp. 22, 247-277 (1996).
     Example
-      I = ideal(a^2*b,a*c^2,b*d,c*d^2);
-	primaryDecomposition(I, Strategy => Monomial)
-	primaryDecomposition(I, Strategy => Binomial)
-*-
+      primaryDecomposition(I, Strategy => ShimoyamaYokoyama)
+    Text
+      @SUBSECTION "Strategy => Hybrid{associated primes strategy, localize strategy}"@
 
-document {
-     Key => {
-	 [primaryDecomposition,Strategy],
-	 EisenbudHunekeVasconcelos,
-	 ShimoyamaYokoyama,
-	 Hybrid,
-	 GTZ},
-     "The strategy option value should be one of the following.",
-     UL {
-          ("Monomial", " -- uses Alexander duality of a monomial ideal"),
-	  ("Binomial", " -- finds a cellular resolution of a
-	                     binomial ideal.  NOT IMPLEMENTED YET."),
-	  ("EisenbudHunekeVasconcelos", " -- uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
-	  ("ShimoyamaYokoyama", " -- uses the algorithm of Shimoyama-Yokoyama"),
-	  ("Hybrid"," -- uses parts of the above two algorithms"),
-	  ("GTZ", " -- uses the algorithm of Gianni-Trager-Zacharias.
-	           NOT IMPLEMENTED YET."),
-          (///"Hom"///, " -- only used in embedded component selection for modules"),
-          (///"Sat"///, " -- only used in embedded component selection for modules"),
-          (///"Res"///, " -- only used in embedded component selection for modules"),
-          },
-     "The default strategy depends on the ideal.  If the ideal is generated
-     by monomials, then ", TT "Strategy => Monomial", " is implied.
-     In all other cases (for ideals), the default is ", TT "Strategy => ShimoyamaYokoyama", ".",
-     HEADER3 "Strategy => Monomial",
-     "This strategy only works for monomial ideals, and is the default strategy for such ideals.  See the chapter
-     \"Monomial Ideals\" in the Macaulay2 book.",
-     EXAMPLE lines ///
-     	  Q = QQ[x,y]
-	  I = ideal(x^2,x*y)
-	  primaryDecomposition(I, Strategy => Monomial)
-     ///,
-     HEADER3 "Strategy => EisenbudHunekeVasconcelos",
-     "See \"Direct methods for primary decomposition\" by Eisenbud, Huneke, and Vasconcelos, Invent. Math. 110, 207-235 (1992).",
-     EXAMPLE lines ///
-     	  Q = QQ[x,y]
-	  I = ideal(x^2,x*y)
-	  primaryDecomposition(I, Strategy => EisenbudHunekeVasconcelos)
-     ///,
-     HEADER3 "Strategy => ShimoyamaYokoyama",
-     "This strategy is the default for non-monomial ideals.  See \"Localization and Primary Decomposition of Polynomial ideals\" by Shimoyama and Yokoyama, J. Symb. Comp. 22, 247-277 (1996).",
-     EXAMPLE lines ///
-     	  Q = QQ[x,y]
-	  I = ideal(x^2,x*y)
-	  primaryDecomposition(I, Strategy => ShimoyamaYokoyama)
-     ///,
-     HEADER3 "Strategy => Hybrid{associated primes strategy, localize strategy}",
-     "Use a hybrid of the Eisenbud-Huneke-Vasconcelos and Shimoyama-Yokoyama strategies.  The field ",
-     TT "Strategy", " is a list of two integers, indicating the strategy to use for finding associated primes and localizing, respectively. ",
-     "WARNING: Setting the second paramter to 1 works only if the ideal is homogeneous and equidimensional.",
-     EXAMPLE lines ///
-     	  Q = QQ[x,y]
-	  I = intersect(ideal(x^2), ideal(y^2))
-	  primaryDecomposition(I, Strategy => Hybrid{1,1})
-	  primaryDecomposition(I, Strategy => Hybrid{1,2})
-	  primaryDecomposition(I, Strategy => Hybrid{2,1})
-	  primaryDecomposition(I, Strategy => Hybrid{2,2})
-     ///,
-     HEADER3 concatenate("Strategy => ", ///"Hom"///, ", Strategy => ", ///"Sat"///, ", Strategy => ", ///"Res"///),
-     "These strategies are only valid for the case of primary decomposition of modules ",
-     "(and only relevant for embedded components) - see ",
-     TO (primaryDecomposition, Module), " for more information.",
-     }
+      Uses a hybrid of the Eisenbud-Huneke-Vasconcelos and Shimoyama-Yokoyama strategies.
+      To use this strategy, the field @TT "Strategy"@ should be a list of two integers, indicating the
+      strategy to use for finding associated primes and localizing, respectively.
 
-document { Key => {(irreducibleDecomposition,MonomialIdeal),irreducibleDecomposition},
-     Headline => "express a monomial ideal as an intersection of irreducible monomial ideals",
-     Usage => "irreducibleDecomposition I",
-     Inputs => { "I" },
-     EXAMPLE lines ///
-        QQ[x..z];
-        I = monomialIdeal (x*y^3, x*y^2*z)
-	w = irreducibleDecomposition I
-	assert( I == intersect w )
-     ///,
-     Outputs => {{ "a list of irreducible monomial ideals whose intersection is ", TT "I" }}}
+      {\bf Warning:} Setting the second paramter to 1 works only if the ideal is homogeneous and equidimensional.
+    Example
+      Q = QQ[x,y];
+      I = intersect(ideal(x^2), ideal(y^2))
+      primaryDecomposition(I, Strategy => Hybrid{1,1})
+      primaryDecomposition(I, Strategy => Hybrid{1,2})
+      primaryDecomposition(I, Strategy => Hybrid{2,1})
+      primaryDecomposition(I, Strategy => Hybrid{2,2})
 
-document {
-     Key => {kernelOfLocalization,(kernelOfLocalization,Module,Ideal)},
-     Headline => "the kernel of the localization map",
-     Usage => "kernelOfLocalization(M, P)",
-     Inputs => {
-	  "M" => Module,
-	  "P" => Ideal => "the prime ideal to localize at"
-	  },
-     Outputs => {
-	  Module => {"the kernel of the localization map ", TT "M -> M_P"}
-	  },
-     "This method computes the kernel of the natural map from a module to its localization at a
-     given prime ideal. The efficiency of this method is intimately tied to the efficiency of
-     computation of associated primes for the module - if the associated primes of ", TT "M",
-     " have previously been computed, then this method should finish quickly.",
-     PARA{},
-     EXAMPLE lines ///
-          R = QQ[x_0..x_3]
-	  (I1,I2,I3) = ({1,2,3},{2,3},{4,5})/monomialCurveIdeal_R
-          M = comodule I1 ++ comodule I2 ++ comodule I3
-          elapsedTime kernelOfLocalization(M, I1)
-          elapsedTime kernelOfLocalization(M, I2)
-          elapsedTime kernelOfLocalization(M, I3)
-     ///,
-     SeeAlso => {(associatedPrimes, Module), (primaryDecomposition, Module)}
-     }
+Node
+  Key
+    irreducibleDecomposition
+   (irreducibleDecomposition, MonomialIdeal)
+  Headline
+    express a monomial ideal as an intersection of irreducible monomial ideals
+  Usage
+    irreducibleDecomposition I
+  Inputs
+    I:Ideal
+  Outputs
+    :List
+      containing the irreducible monomial ideals whose intersection is @TT "I"@
+  Description
+    Example
+      R = QQ[x..z];
+      I = monomialIdeal (x*y^3, x*y^2*z)
+      w = irreducibleDecomposition I
+      assert( I == intersect w )
 
-document {
-     Key => {regSeqInIdeal,(regSeqInIdeal,Ideal),(regSeqInIdeal,Ideal,ZZ),(regSeqInIdeal,Ideal,ZZ,ZZ,ZZ),[regSeqInIdeal,Strategy]},
-     Headline => "a regular sequence contained in an ideal",
-     Usage => concatenate("regSeqInIdeal I\n", "regSeqInIdeal(I, n)\n", "regSeqInIdeal(I, n, c, t)"),
-     Inputs => {
-	  "I" => Ideal,
-	  "n" => ZZ => "the length of the regular sequence returned",
-          "c" => ZZ => {"the codimension of ", TT "I", ", if known"},
-          "t" => ZZ => "a limit on the time spent (in seconds) for each trial"
-	  },
-     Outputs => {
-	  Ideal => {"generated by a regular sequence of length ", TT "n", " contained in ", TT "I"}
-	  },
-     "This method computes a regular sequence of length ", TT "n", " contained in a given ideal ",
-     TT "I", ". It attempts to do so by first trying ", ///"sparse"///, " combinations of the generators, ",
-     " i.e. elements which are either generators or sums of two generators. If a sparse ",
-     "regular sequence is not found, then dense combinations of generators will be tried.",
-     PARA{},
-     "If the length ", TT "n", " is either unspecified or greater than the codimension of ", TT "I",
-     " then it is silently replaced with the codimension of ", TT "I", ". The ideal ", TT "I", " should be ",
-     "in a polynomial (or at least Cohen-Macaulay) ring, so that ", TT "codim I = grade I", ".",
-     PARA{},
-     EXAMPLE lines ///
-          R = QQ[x_0..x_7]
-          I = intersect(ideal(x_0,x_1,x_2,x_3), ideal(x_4,x_5,x_6,x_7), ideal(x_0,x_2,x_4,x_6), ideal(x_1,x_3,x_5,7))
-          elapsedTime regSeqInIdeal I
-     ///,
-     PARA{},
-     "If ", TT "I", " is the unit ideal, then an ideal of variables of the ring is returned.",
-     PARA{},
-     "If the codimension of ", TT "I", " is already known, then one can specify this, along with a ",
-     "time limit for each trial (normally this is taken from the length of time for computing codim I). ",
-     "This can result in a significant speedup: in the following example, ", TT "codim I",
-     " takes > 1 minute to complete.",
-     PARA{},
-     EXAMPLE lines ///
-     	  R = QQ[h,l,s,x,y,z]
-          I = ideal(h*l-l^2-4*l*s+h*y,h^2*s-6*l*s^3+h^2*z,x*h^2-l^2*s-h^3,h^8,l^8,s^8)
-          isSubset(I, ideal(s,l,h)) -- implies codim I == 3
-          elapsedTime regSeqInIdeal(I, 3, 3, 1)
-     ///
-     -- SeeAlso => {radical}
-     }
+Node
+  Key
+    kernelOfLocalization
+   (kernelOfLocalization, Module, Ideal)
+  Headline
+    the kernel of the localization map
+  Usage
+    kernelOfLocalization(M, P)
+  Inputs
+    M:Module
+    P:Ideal
+      the prime ideal to localize at
+  Outputs
+    :Module
+      the kernel of the localization map @TT "M -> M_P"@
+  Description
+    Text
+      This method computes the kernel of the natural map from a module to its localization at a given prime ideal.
+      The efficiency of this method is intimately tied to the efficiency of computation of associated primes for
+      the module - if the associated primes of @TT "M"@ have previously been computed, then this method should
+      finish quickly.
+    Example
+      R = QQ[x_0..x_3]
+      (I1,I2,I3) = monomialCurveIdeal_R \ ({1,2,3},{2,3},{4,5})
+      M = comodule I1 ++ comodule I2 ++ comodule I3
+      elapsedTime kernelOfLocalization(M, I1)
+      elapsedTime kernelOfLocalization(M, I2)
+      elapsedTime kernelOfLocalization(M, I3)
+  SeeAlso
+    (associatedPrimes, Module)
+    (primaryDecomposition, Module)
+
+Node
+  Key
+    regSeqInIdeal
+   (regSeqInIdeal, Ideal)
+   (regSeqInIdeal, Ideal, ZZ)
+   (regSeqInIdeal, Ideal, ZZ, ZZ, ZZ)
+   [regSeqInIdeal,Strategy]
+  Headline
+    a regular sequence contained in an ideal
+  Usage
+    regSeqInIdeal I
+    regSeqInIdeal(I, n)
+    regSeqInIdeal(I, n, c, t)
+  Inputs
+    I:Ideal
+    n:ZZ
+      the length of the regular sequence returned
+    c:ZZ
+      the codimension of @TT "I"@ if known
+    t:ZZ
+      a limit on the time spent (in seconds) for each trial
+  Outputs
+    :Ideal
+      generated by a regular sequence of length @TT "n"@ contained in @TT "I"@
+  Description
+    Text
+      This method computes a regular sequence of length @TT "n"@ contained in a given ideal @TT "I"@.
+      It attempts to do so by first trying "sparse" combinations of the generators, i.e. elements which
+      are either generators or sums of two generators. If a sparse regular sequence is not found, then
+      dense combinations of generators will be tried.
+
+      If the length @TT "n"@ is either unspecified or greater than the codimension of @TT "I"@ then it
+      is silently replaced with the codimension of @TT "I"@. The ideal @TT "I"@ should be in a polynomial
+      (or at least Cohen-Macaulay) ring, so that @TT "codim I = grade I"@.
+    Example
+      R = QQ[x_0..x_7]
+      I = intersect(ideal(x_0,x_1,x_2,x_3), ideal(x_4,x_5,x_6,x_7), ideal(x_0,x_2,x_4,x_6), ideal(x_1,x_3,x_5,7))
+      elapsedTime regSeqInIdeal I
+    Text
+      If @TT "I"@ is the unit ideal, then an ideal of variables of the ring is returned.
+
+      If the codimension of @TT "I"@ is already known, then one can specify this, along with a time limit
+      for each trial (normally this is taken from the length of time for computing codim I).
+      This can result in a significant speedup:
+      in the following example, @TT "codim I"@ takes more than a minute to complete.
+    Example
+      R = QQ[h,l,s,x,y,z]
+      I = ideal(h*l-l^2-4*l*s+h*y,h^2*s-6*l*s^3+h^2*z,x*h^2-l^2*s-h^3,h^8,l^8,s^8)
+      isSubset(I, ideal(s,l,h)) -- implies codim I == 3
+      elapsedTime regSeqInIdeal(I, 3, 3, 1)
+  SeeAlso
+    "MinimalPrimes :: radical"
 
 --- author(s): Giulio
-document {
-     Key => {
-	 topComponents,
-	 (topComponents, Module, ZZ) -- TODO
-	 },
-     Headline => "compute top dimensional component",
-     "The method used is that of Eisenbud-Huneke-Vasconcelos, in their 1993 Inventiones Mathematicae paper.",
-     PARA{},
-     "If M is a module in a polynomial ring R, then the implementations of
-     ", TO "topComponents", " and ", TO removeLowestDimension, " are based on
-     the following observations:",
-     UL {
-	  TEX ///$codim Ext^d(M,R) \ge d$ for all d///,
-	  TEX ///If $P$ is an associated prime of $M$ of codimension $d := codim P > codim M$,
-	  then $codim Ext^d(M,R) = d$ and the annihilator of $Ext^d(M,R)$ is contained
-	  in $P$///,
-	  TEX ///If $codim Ext^d(M,R) = d$, then there really is an associated prime
-	  of codimension $d$.///,
-	  TEX ///If $M$ is $R/I$, then $topComponents(I) = ann Ext^c(R/I,R)$, where $c = codim I$///
-	  },
-    SeeAlso => {removeLowestDimension, "Colon :: saturate", "Colon :: Ideal : Ideal", "MinimalPrimes :: radical"},
-    }
+Node
+  Key
+    topComponents
+   (topComponents, Ideal)
+   (topComponents, Module)
+  Headline
+    compute top dimensional component of an ideal or module
+  Usage
+    topComponents M
+  Inputs
+    M:{Ideal,Module}
+  Outputs
+    :{Ideal,Module}
+      the intersection of the primary components of the input with the greatest Krull dimension
+  Description
+    Text
+      The method used is that of Eisenbud-Huneke-Vasconcelos, in their 1993 Inventiones Mathematicae paper.
+    Example
+      R = ZZ/32003[a..c];
+      I = intersect(ideal(a,b), ideal(b,c), ideal(c,a), ideal(a^2,b^3,c^4));
+      topComponents I
+    Text
+      If $M$ is a module in a polynomial ring $R$, then the implementations of @TT "topComponents"@ and
+      @TO removeLowestDimension@ are based on the following observations:
 
-document {
-     Key => (topComponents,Ideal),
-     Usage => "topComponents I",
-     Inputs => {"I"
-	  },
-     Outputs => {
-	  "I" => Ideal => {"which is the intersection of the primary components of "
-	       ,TT "I", " having the greatest Krull dimension" }
-	  },
-    "The method used is that of Eisenbud-Huneke-Vasconcelos. ",
-    "For a brief description see: ",TO "topComponents",".",
+      @UL {
+	  TEX "$codim Ext^d(M,R) \\ge d$ for all $d$",
+	  TEX "If $P$ is an associated prime of $M$ of codimension $d := codim P > codim M$,
+	       then $codim Ext^d(M,R) = d$ and the annihilator of $Ext^d(M,R)$ is contained in $P$",
+	  TEX "If $codim Ext^d(M,R) = d$, then there really is an associated prime of codimension $d$.",
+	  TEX "If $M$ is $R/I$, then $topComponents(I) = ann Ext^c(R/I,R)$, where $c = codim I$"
+	  }@
+  SeeAlso
+    removeLowestDimension
+    "Colon :: saturate"
+    "Colon :: Ideal : Ideal"
+    "MinimalPrimes :: radical"
 
-     EXAMPLE {
-	  "R=ZZ/32003[a..c];",
-	  "I=intersect(ideal(a,b),ideal(b,c),ideal(c,a),ideal(a^2,b^3,c^4));",
-	  "topComponents I"
-	  },
-     SeeAlso => {(topComponents, Module), removeLowestDimension, "Colon :: saturate", "Colon :: Ideal : Ideal", "MinimalPrimes :: radical"}
-     },
+Node
+  Key
+    removeLowestDimension
+   (removeLowestDimension, Ideal)
+   (removeLowestDimension, Module)
+  Headline
+    remove components of lowest dimension
+  Usage
+    removeLowestDimension M
+  Inputs
+    M:{Ideal,Module}
+  Outputs
+    :{Ideal,Module}
+  Description
+    Text
+      This function yields the intersection of the primary components of @TT "M"@ except those of
+      lowest dimension, and thus returns the ambient free module of @TT "M"@ (or unit ideal) if @TT "M"@
+      is pure dimensional. For a very brief description of the method used, see @TO "topComponents"@.
 
-document {
-     Key => (topComponents,Module),
-     Usage => "topComponents M",
-     Inputs => {
-	  "M"
-	  },
-     Outputs => {
-	  "N" => Module => {" which is the intersection of the
-	       primary components of ", TT "M",
-	       " having gretest Krull dimension"}
-	  },
-    "The method used is that of Eisenbud-Huneke-Vasconcelos. ",
-    "For a brief description see: ",TO "topComponents",".",
-
-     SeeAlso => {(topComponents,Ideal), removeLowestDimension, "Colon :: saturate", "Colon :: Ideal : Ideal", "MinimalPrimes :: radical"}
-     }
-
---- author(s): Giulio
-document {
-     Key => {removeLowestDimension,(removeLowestDimension,Ideal),(removeLowestDimension, Module)},
-     Headline => "remove components of lowest dimension",
-     Usage => "removeLowestDimension M",
-     Inputs => {
-	  "M" =>{"an ", TO Ideal, " or a ", TO Module}
-	  },
-     Outputs => {
-	  "N" => {"an ", TO Ideal, ", respectively a ", TO Module, "."}
-	       },
-       "This function yields the intersection of the primary components of ", TT "M", ",
-       except those of lowest dimension (and thus returns the
-       ambient free module of ", TT "M", " (or unit ideal), if ", TT "M", "
-       is pure dimensional).", PARA{},
-       "For a very brief description of the method used, see ", TO "topComponents", ".",PARA{},
-       "As an example we remove the lowest dimensional component of an ideal I",
-
-     EXAMPLE {
-	  "R=ZZ/32003[a..d];",
-	  "I=intersect(ideal(a*b+a^2,b^2),ideal(a^2,b^2,c^2),ideal(b^3,c^3,d^3))",
-	  "removeLowestDimension I"
-	  },
-     SeeAlso => {topComponents, "Colon :: saturate", "Colon :: Ideal : Ideal", "MinimalPrimes :: radical", "MinimalPrimes :: minimalPrimes"}
-     }
-
--- either convert to test or example
-/// -- test of removeLowestDimension
-  R = ZZ/32003[a,b,c]
-  I = ideal(a^2,b^2)
-  J = ideal(a^3,b^3,c^3)
-  I = intersect(I,J)
-  time (I1 = removeLowestDimension I)
-  time topComponents I
-  time radical I
-
-  R = ZZ/101[a..d]
-  I = intersect(ideal(a^2,b^2,c), ideal(a,d^4), ideal(b^2,c^2,d^2))
-  time (Itop = topComponents I)
-  time (I1 = removeLowestDimension I)
-  time (Irad = radical I)
+      As an example we remove the lowest dimensional component of an ideal {\tt I}:
+    Example
+      R = ZZ/32003[a..d];
+      I = intersect(ideal(a*b+a^2,b^2), ideal(a^2,b^2,c^2), ideal(b^3,c^3,d^3))
+      removeLowestDimension I
+  SeeAlso
+    topComponents
+    "Colon :: saturate"
+    "Colon :: Ideal : Ideal"
+    "MinimalPrimes :: radical"
+    "MinimalPrimes :: minimalPrimes"
 ///
-
---document {
---     Key => removeLowestDimension,
---     Headline => "remove components of lower dimension",
---     TT "removeLowestDimension I", " -- removes the components of ", TT "I", " of lower dimension",
---     PARA{},
---     "Yields the intersection of the primary components of ", TT "I", ",
---     excepting those of lowest dimension (and thus returns the
---     ambient free module of ", TT "I", " (or unit ideal), if ", TT "I", "
---     is pure dimensional).",
---     PARA{},
---     "Computes one free resolution, and some homology groups, but no
---     projections or determinants are used.  For a very brief description
---     of the method used, see ", TO "topComponents", ".",
---     SeeAlso => {"topComponents", "saturate", "quotient", "radical", "minimalPrimes"}
---     }

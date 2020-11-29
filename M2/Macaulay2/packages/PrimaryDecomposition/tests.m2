@@ -373,3 +373,17 @@ TEST ///
   -- I1 = removeLowestDimension I
   -- I2 = removeLowestDimension I1
 ///
+
+TEST /// -- test of removeLowestDimension
+  R = ZZ/32003[a,b,c]
+  I = ideal(a^2,b^2)
+  J = ideal(a^3,b^3,c^3)
+  I = intersect(I,J)
+  assert same(removeLowestDimension I, topComponents I, ideal"b2,a2")
+  assert(radical I == ideal(a,b))
+
+  R = ZZ/101[a..d]
+  I = intersect(ideal(a^2,b^2,c), ideal(a,d^4), ideal(b^2,c^2,d^2))
+  assert same(topComponents I, removeLowestDimension I, ideal"a,d4")
+  assert(radical I == ideal(a*b, a*c, a*d, b*d, c*d))
+///
