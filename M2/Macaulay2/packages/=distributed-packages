@@ -209,3 +209,7 @@ ThreadedGB
 VectorGraphics
 GKMVarieties
 Hadamard
+StatGraphs
+GraphicalModelsMLE
+EigenSolver
+MultiplicitySequence

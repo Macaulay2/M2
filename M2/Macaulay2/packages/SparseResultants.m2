@@ -1,4 +1,12 @@
 
+-*
+   Copyright 2020, Giovanni Staglianò.
+
+   You may redistribute this file under the terms of the GNU General Public
+   License as published by the Free Software Foundation, either version 2 of
+   the License, or any later version.
+*-
+
 newPackage(
        "SparseResultants",
         Version => "1.0.1", 
@@ -1004,7 +1012,7 @@ document {
 document { 
     Key => {"SparseResultant"}, 
     Headline => "the class of all sparse resultants", 
-    PARA {"An object of this class is created by the method ",TO sparseResultant,", when the input is given by ",TEX///$n+1$///," integral matrices ",TEX///$A_0,\ldots,A_n$///," with ",TEX///$n$///," rows. Such an object behaves like a function that to ", TEX///$n+1$///," Laurent polynomials ", TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,", with ",TEX///$f_i = \sum_{\omega\in \{columns of A_i\}} a_{i,\omega} x^{\omega}$///,", associates their sparse resultant ",TEX///$Res_{A_0,\ldots,A_n}(f_0,\ldots,f_n)$///,", which is a polynomial in the coefficients ",TEX///$a_{i,\omega}$///,". An error is thrown if the polynomials ",TEX///$f_i$///," do not have the correct form."}
+    PARA {"An object of this class is created by the method ",TO sparseResultant,", when the input is given by ",TEX///$n+1$///," integral matrices ",TEX///$A_0,\ldots,A_n$///," with ",TEX///$n$///," rows. Such an object behaves like a function that to ", TEX///$n+1$///," Laurent polynomials ", TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,", with ",TEX///$f_i = \sum_{\omega\in \{columns\ of\ A_i\}} a_{i,\omega} x^{\omega}$///,", associates their sparse resultant ",TEX///$Res_{A_0,\ldots,A_n}(f_0,\ldots,f_n)$///,", which is a polynomial in the coefficients ",TEX///$a_{i,\omega}$///,". An error is thrown if the polynomials ",TEX///$f_i$///," do not have the correct form."}
 }
 
 document { 
@@ -1039,7 +1047,7 @@ document {
     Headline => "evaluate a sparse resultant", 
     Usage => "R(f)", 
     Inputs => {"R" => SparseResultant => {"associated to ",TEX///$n+1$///," integral matrices ",TEX///$A_0,\ldots,A_n$///," with ",TEX///$n$///," rows."},
-              {TEX///$n+1$///," Laurent polynomials ",TEX///$f = (f_0,\ldots,f_n)$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,", with ",TEX///$f_i = \sum_{\omega\in \{columns of A_i\}} a_{i,\omega} x^{\omega}$///,"."}},
+              {TEX///$n+1$///," Laurent polynomials ",TEX///$f = (f_0,\ldots,f_n)$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,", with ",TEX///$f_i = \sum_{\omega\in \{columns\ of\ A_i\}} a_{i,\omega} x^{\omega}$///,"."}},
     Outputs => {RingElement => {"the ",TEX///$(A_0,\ldots,A_n)$///,"-resultant of ",TEX///$f_0,\ldots,f_n$///,"."}},
     EXAMPLE {
         "R = denseResultant(2,3);",
@@ -1072,7 +1080,7 @@ document {
 document { 
     Key => {"SparseDiscriminant"}, 
     Headline => "the class of all sparse discriminants", 
-    PARA {"An object of this class is created by the method ",TO sparseDiscriminant,", when the input is an integral matrix ",TEX///$A$///," with ",TEX///$n$///," rows. Such an object behaves like a function that to a Laurent polynomial ", TEX///$f$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,", with ",TEX///$f = \sum_{\omega\in \{columns of A\}} a_{\omega} x^{\omega}$///,", associates its sparse discriminant ",TEX///$Disc_{A}(f)$///,", which is a polynomial in the coefficients ",TEX///$a_{\omega}$///,". An error is thrown if the polynomial ",TEX///$f$///," does not have the correct form."}
+    PARA {"An object of this class is created by the method ",TO sparseDiscriminant,", when the input is an integral matrix ",TEX///$A$///," with ",TEX///$n$///," rows. Such an object behaves like a function that to a Laurent polynomial ", TEX///$f$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,", with ",TEX///$f = \sum_{\omega\in \{columns\ of\ A\}} a_{\omega} x^{\omega}$///,", associates its sparse discriminant ",TEX///$Disc_{A}(f)$///,", which is a polynomial in the coefficients ",TEX///$a_{\omega}$///,". An error is thrown if the polynomial ",TEX///$f$///," does not have the correct form."}
 }
 
 document { 
@@ -1107,7 +1115,7 @@ document {
     Headline => "evaluate a sparse discriminant", 
     Usage => "D(F)", 
     Inputs => {"D" => SparseDiscriminant => {"associated to an integral matrix ",TEX///$A$///," with ",TEX///$n$///," rows."},
-              {"a Laurent polynomial ",TEX///$F = \sum_{\omega\in \{columns of A\}} a_{\omega} x^{\omega}$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,"."}},
+              {"a Laurent polynomial ",TEX///$F = \sum_{\omega\in \{columns\ of\ A\}} a_{\omega} x^{\omega}$///," in ", TEX///$n$///," variables ",TEX///$x=(x_1,\ldots,x_n)$///,"."}},
     Outputs => {RingElement => {"the ",TEX///$A$///,"-discriminant of ",TEX///$F$///,"."}},
     EXAMPLE {
         "D = denseDiscriminant(2,2);",
@@ -1158,9 +1166,9 @@ document {
     Key => {genericMultihomogeneousPolynomial,(genericMultihomogeneousPolynomial,VisibleList,VisibleList),[genericMultihomogeneousPolynomial,CoefficientRing],[genericMultihomogeneousPolynomial,Variable]}, 
     Headline => "generic multi-homogeneous polynomial", 
     Usage => "genericMultihomogeneousPolynomial((k_1,...,k_n),(d_1,...,d_n))", 
-    Inputs => {{TT"(k_1,...,k_n)",", a sequence of positive integers to indicate ",TEX///$n$///," sets of variables ",TEX///$X_1,\ldots,X_n$///," with ",TEX///$#(X_i) = k_i$///,"."},
+    Inputs => {{TT"(k_1,...,k_n)",", a sequence of positive integers to indicate ",TEX///$n$///," sets of variables ",TEX///$X_1,\ldots,X_n$///," with ",TEX///$\#(X_i) = k_i$///,"."},
                {TT"(d_1,...,d_n)",", a sequence of nonnegative integers."}},
-    Outputs => {{"the generic multi-homogeneous polynomial of multi-degree ",TEX///$(d_1,\ldots,d_n)$///," in the above sets of variables."}},
+    Outputs => {RingElement => {"the generic multi-homogeneous polynomial of multi-degree ",TEX///$(d_1,\ldots,d_n)$///," in the above sets of variables."}},
     PARA{"This method helps to construct special types of sparse discriminants. For instance, the hyperdeterminant of a generic ",TEX///$(k_1\times\cdots\times k_n)$///,"-matrix can be obtained with the code: ", TT "sparseDiscriminant genericMultihomogeneousPolynomial((k_1,...,k_n),(1,...,1))","."},
     EXAMPLE {
         "genericMultihomogeneousPolynomial((2,2,3),(1,1,1))",
@@ -1425,7 +1433,7 @@ document {
     Headline => "make a generic multidimensional matrix of variables", 
     Usage => "genericMultidimensionalMatrix(d_1,...,d_n)", 
     Inputs => {{TT"(d_1,...,d_n)",", a sequence of positive integers."}},
-    Outputs => {{"the generic multidimensional matrix of shape ",TEX///$d_1\times\ldots\times d_n$///,"."}},
+    Outputs => {{"the generic ",TO2{MultidimensionalMatrix,"multidimensional matrix"}," of shape ",TEX///$d_1\times\ldots\times d_n$///,"."}},
     EXAMPLE {
         "genericMultidimensionalMatrix(2,4,3)",
         "genericMultidimensionalMatrix((2,2,3),CoefficientRing=>ZZ/101)",
@@ -1439,7 +1447,7 @@ document {
     Headline => "random multidimensional matrix", 
     Usage => "randomMultidimensionalMatrix(d_1,...,d_n)", 
     Inputs => {{TT"(d_1,...,d_n)",", a sequence of positive integers."}},
-    Outputs => {{"a random multidimensional matrix of shape ",TEX///$d_1\times\ldots\times d_n$///," over the ring specified by the option ",TO2 {[randomMultidimensionalMatrix,CoefficientRing],"CoefficientRing"}," (the default ring is ",TO ZZ,")."}},
+    Outputs => {{"a random ",TO2{MultidimensionalMatrix,"multidimensional matrix"}," of shape ",TEX///$d_1\times\ldots\times d_n$///," over the ring specified by the option ",TO2 {[randomMultidimensionalMatrix,CoefficientRing],"CoefficientRing"}," (the default ring is ",TO ZZ,")."}},
     EXAMPLE {
         "randomMultidimensionalMatrix(2,4,3)",
         "randomMultidimensionalMatrix((2,2,3),CoefficientRing=>ZZ/101)"
@@ -1507,7 +1515,7 @@ document {
     Headline => "make a generic symmetric multidimensional matrix of variables", 
     Usage => "genericSymmetricMultidimensionalMatrix(n,d)", 
     Inputs => {{TT"(n,d)",", two positive integers."}},
-    Outputs => {{"the generic symmetric multidimensional matrix of shape ",TEX///$d\times\ldots\times d$///," (",TEX///$n$///," times)."}},
+    Outputs => {{"the generic symmetric ",TO2{MultidimensionalMatrix,"multidimensional matrix"}," of shape ",TEX///$d\times\ldots\times d$///," (",TEX///$n$///," times)."}},
     PARA {"An ",TEX///$n$///,"-dimensional matrix ",TEX///$M$///," is symmetric if for every permutation ",TEX///$s$///," of the set ",TEX///$\{0,\ldots,n-1\}$///," we have ",TO permute,TT"(M,s) == M","."},
     EXAMPLE {
         "genericSymmetricMultidimensionalMatrix(3,2)",
@@ -1522,7 +1530,7 @@ document {
     Headline => "make a generic skew symmetric multidimensional matrix of variables", 
     Usage => "genericSkewMultidimensionalMatrix(n,d)", 
     Inputs => {{TT"(n,d)",", two positive integers."}},
-    Outputs => {{"the generic skew symmetric multidimensional matrix of shape ",TEX///$d\times\ldots\times d$///," (",TEX///$n$///," times)."}},
+    Outputs => {{"the generic skew symmetric ",TO2{MultidimensionalMatrix,"multidimensional matrix"}," of shape ",TEX///$d\times\ldots\times d$///," (",TEX///$n$///," times)."}},
     PARA {"An ",TEX///$n$///,"-dimensional matrix ",TEX///$M$///," is skew symmetric if for every permutation ",TEX///$s$///," of the set ",TEX///$\{0,\ldots,n-1\}$///," we have ",TO permute,TT"(M,s) == sign(s)*M","."},
     EXAMPLE {
         "genericSkewMultidimensionalMatrix(3,4)",
