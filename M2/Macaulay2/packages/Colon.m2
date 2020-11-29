@@ -30,10 +30,16 @@ export { "isSupportedInZeroLocus" }
 
 exportFrom_Core { "saturate", "annihilator" }
 
-importFrom_Core { "printerr", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo" }
+importFrom_Core { "nonnull", "printerr", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo" }
 
 -- TODO: where should these be placed?
 trim MonomialIdeal := MonomialIdeal => opts -> (cacheValue (symbol trim => opts)) ((I) -> monomialIdeal trim(module I, opts))
+
+-- TODO: pick a better name and move to interpreter for speed?
+-- this is similar to override, except:
+--   keys in opts with value null are ignored (TODO: is this an okay way to remove options?)
+--   keys in opts that don't exist in def don't produce an error
+override' := (def, opts) -> nonnull apply(keys def, key -> if opts#?key and opts#key =!= null then key => opts#key)
 
 -- TODO: is this the right function?
 ambient Ideal := Ideal => I -> ideal 1_(ring I)
@@ -51,20 +57,6 @@ algorithms := new MutableHashTable from {}
 --------------------------------------------------------------------
 
 cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
-
-removeOptions := (opts, badopts) -> (
-    opts = new MutableHashTable from opts;
-    scan(badopts, k -> remove(opts, k));
-    new OptionTable from opts)
-
-removeQuotientOptions := opts -> (
-    opts = new MutableHashTable from opts;
-    remove(opts, Strategy);
-    remove(opts, MinimalGenerators);
-    -- TODO: what would this do?
-    --opts.SyzygyLimit = opts.BasisElementLimit;
-    --remove(opts,BasisElementLimit);
-    new OptionTable from opts)
 
 -- given a ring R, determines if R is a poly ring over ZZ or a field
 isFlatPolynomialRing = R -> isPolynomialRing R and (isField(kk := coefficientRing R) or kk === ZZ)
@@ -196,9 +188,8 @@ quotientHelper = (A, B, key, opts) -> (
 	if class B =!= Module and isSubset(ambient A, B) then return A;
 	-- TODO: module(.A.)  : module(.B.)  = ???
 
-	-- See TODO in removeQuotientOptions
-	--opts = removeOptions(opts, {Strategy, MinimalGenerators});
-	opts = removeQuotientOptions opts;
+	-- TODO: what would adding {SyzygyLimit => opts.BasisElementLimit, BasisElementLimit => null} do?
+	opts = new OptionTable from override'(options gb, opts ++ {Strategy => null});
 	runHooks(key, (opts, A, B), Strategy => strategy));
 
     -- this is the logic for caching partial quotient computations. A.cache contains an option:
@@ -410,7 +401,7 @@ saturateHelper = (A, B, key, opts) -> (
 	-- TODO: can either of the above be efficiently checked?
 	if isSubset(ambient A, B') then return A;
 
-	opts = removeOptions(opts, {Strategy, MinimalGenerators});
+	opts = new OptionTable from override'(options gb, opts ++ {Strategy => null});
 	runHooks(key, (opts, A, B), Strategy => strategy));
 
     -- this is the logic for caching partial saturation computations. A.cache contains an option:
