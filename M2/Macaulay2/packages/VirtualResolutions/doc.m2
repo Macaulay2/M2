@@ -1,5 +1,3 @@
-undocumented { "LowerLimit", "UpperLimit" }
-
 doc ///
   Key
     VirtualResolutions
@@ -511,6 +509,8 @@ doc ///
        (multigradedRegularity, NormalToricVariety, Module)
        [multigradedRegularity, LowerLimit]
        [multigradedRegularity, UpperLimit]
+        LowerLimit
+        UpperLimit
     Headline
         computes the minimal elements of the multigraded regularity of a module over a multigraded ring
     Usage

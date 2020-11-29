@@ -144,7 +144,7 @@ isVirtual(Ideal,              ChainComplex) := opts -> (irr, C) -> (
     if S =!= ring C then error "isVirtual: expected objects in the same ring";
 -- if strategy "determinantal is selected, the method checks virtuality
 -- via the depth criterion on the saturated ideals of minors
-    debugInfo := if debugLevel < 1 then identity else i -> printerr("isVirtual failed at homological degree ", toString i);
+    debugInfo := if debugLevel < 1 then identity else i -> printerr("isVirtual: the complex is not virtual at homological degree ", toString i);
     if opts.Strategy === "Determinantal" then (
         for i from 1 to length(C) do (
             if rank(source(C.dd_i)) != (rank(C.dd_i) + rank(C.dd_(i+1))) then (
