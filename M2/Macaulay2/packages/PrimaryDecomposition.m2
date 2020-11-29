@@ -640,3 +640,8 @@ end--
 restart
 debugLevel = 1
 debug PrimaryDecomposition
+
+-- something like this might work for primary decomposition over any PID
+-- TODO: how to extend it to modules?
+A = ideal(60, 40)
+if ring A === ZZ then ideal \ power \ toSequence \ toList factor (trim A)_0

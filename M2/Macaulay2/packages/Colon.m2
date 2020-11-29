@@ -76,6 +76,7 @@ isGRevLexRing = (R) -> (
      -- is graded reverse lexicographic order, w.r.t. the first degree
      -- vector in the ring.
      mo := (options monoid R).MonomialOrder;
+     if #mo === 0 then return false;
      mo = select(mo, x -> x#0 =!= MonomialSize and x#0 =!= Position);
      isgrevlex := mo#0#0 === GRevLex and mo#0#1 === apply(degrees R, first);
      #mo === 1 and isgrevlex and all(mo, x -> x#0 =!= Weights and x#0 =!= Lex))
@@ -139,9 +140,11 @@ cacheComputation QuotientComputation := CacheFunction => options quotient >> opt
 
 --quotient = method(...) -- defined in m2/quotient.m2
 quotient(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> quotientHelper(I, J, (quotient, Ideal, Ideal), opts)
+quotient(Ideal,  Number)      :=
 quotient(Ideal,  RingElement) := Ideal  => opts -> (I, f) -> quotient(I, ideal f, opts)
-Ideal  : RingElement          := Ideal  =>         (I, f) -> quotient(I, f)
 Ideal  : Ideal                := Ideal  =>         (I, J) -> quotient(I, J)
+Ideal  : Number               :=
+Ideal  : RingElement          := Ideal  =>         (I, f) -> quotient(I, f)
 
 -- TODO: why is this the right thing to do?
 quotient(MonomialIdeal, RingElement) := MonomialIdeal => opts -> (I, f) -> (
@@ -149,20 +152,18 @@ quotient(MonomialIdeal, RingElement) := MonomialIdeal => opts -> (I, f) -> (
 MonomialIdeal : RingElement          := MonomialIdeal => opts -> (I, f) -> quotient(I, f)
 
 quotient(Module, Ideal)       := Module => opts -> (M, I) -> quotientHelper(M, I, (quotient, Module, Ideal), opts)
+quotient(Module, Number)      :=
 quotient(Module, RingElement) := Module => opts -> (M, f) -> quotient(M, ideal f, opts)
-Module : RingElement          := Module =>         (M, f) -> quotient(M, f)
 Module : Ideal                := Module =>         (M, I) -> quotient(M, I)
+Module : Number               :=
+Module : RingElement          := Module =>         (M, f) -> quotient(M, f)
 
 -- annihilator of (B+A)/A, where A and B have a common ambient module
 -- note: if A is an ideal and B=f, then this is isomorphic to R/(A:f)
 quotient(Module, Module)      := Ideal  => opts -> (M, N) -> quotientHelper(M, N, (quotient, Module, Module), opts)
 Module : Module               := Ideal  =>         (M, N) -> quotient(M, N)
 
--- TODO: this should be unnecessary via https://github.com/Macaulay2/M2/issues/1519
-quotient(Ideal,  Number) :=
-quotient(Module, Number) := opts -> (t, n) -> quotient(t, n_(ring t), opts)
-Ideal  : Number :=
-Module : Number := (t, n) -> t : n_(ring t)
+-- TODO: the methods with "Number" should be made unnecessary via https://github.com/Macaulay2/M2/issues/1519
 
 -- Helper for quotient methods
 quotientHelper = (A, B, key, opts) -> (
@@ -206,13 +207,15 @@ quotientHelper = (A, B, key, opts) -> (
 algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
     Iterate => (opts, I, J) -> (
 	R := ring I;
-	fold(J_*, ideal 1_R, (f, M1) ->
+	-- TODO: extend this into a strategy for any PID
+	if R === ZZ then return ideal sub(gcd I_* / gcd flatten(I_*, J_*), ZZ);
+	fold(first entries mingens J, ideal 1_R, (f, M1) ->
 	    if generators(f * M1) % generators I == 0 then M1
-	    else intersect(M1, quotient(I, f, opts, Strategy => Quotient)))),
+	    else intersect(M1, quotient(I, ideal f, opts, Strategy => Quotient)))),
 
     Quotient => (opts, I, J) -> (
-	R := (ring I)/I;
-	mR := transpose generators J ** R;
+	R := ring I;
+	mR := transpose generators J ** (R / I);
 	-- if J is a single element, this is the same as
 	-- computing syz gb(matrix{{f}} | generators I, ...)
 	g := syz gb(mR, opts,
@@ -221,7 +224,7 @@ algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
 	    SyzygyRows => 1);
 	-- The degrees of g are not correct, so we fix that here:
 	-- g = map(R^1, null, g);
-	lift(ideal g, ring I)),
+	lift(ideal g, R)),
 
     -- TODO
     Linear => (opts, I, J) -> (
@@ -356,6 +359,7 @@ new SaturateComputation from Sequence := (C, S) -> (
 
 -- saturate = method(Options => options saturate) -- defined in m2/quotient.m2
 saturate(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> saturateHelper(I, J, (saturate, Ideal, Ideal), opts)
+saturate(Ideal,  Number)      :=
 saturate(Ideal,  RingElement) := Ideal  => opts -> (I, f) -> saturateHelper(I, f, (saturate, Ideal, RingElement), opts)
 saturate Ideal                := Ideal  => opts ->  I     -> saturate(I, ideal vars ring I, opts)
 
@@ -363,11 +367,13 @@ saturate(MonomialIdeal, RingElement) := MonomialIdeal => opts -> (I, f) -> (
     saturate(I, if size f === 1 and leadCoefficient f == 1 then monomialIdeal f else ideal f, opts))
 
 saturate(Module, Ideal)       := Module => opts -> (M, J) -> saturateHelper(M, J, (saturate, Module, Ideal), opts)
+saturate(Module, Number)      :=
 saturate(Module, RingElement) := Module => opts -> (M, f) -> saturateHelper(M, f, (saturate, Module, RingElement), opts)
 saturate Module               := Module => opts ->  M     -> saturate(M, ideal vars ring M, opts)
 
 -- TODO: is M / saturate 0_M a correct computation of saturation of M?
 saturate(Vector, Ideal)       := Module => opts -> (v, J) -> saturate(image matrix {v}, J, opts)
+saturate(Vector, Number)      :=
 saturate(Vector, RingElement) := Module => opts -> (v, f) -> saturate(image matrix {v}, f, opts)
 saturate Vector               := Module => opts ->  v     -> saturate(image matrix {v}, opts)
 
@@ -376,15 +382,12 @@ saturate(Ideal,  List)        := Ideal  => opts -> (I, L) -> fold(L, I, (J, I) -
 saturate(Module, List)        := Module => opts -> (M, L) -> fold(L, M, (J, M) -> saturate(M, J, opts))
 saturate(Vector, List)        := Module => opts -> (v, L) -> saturate(image matrix {v}, L, opts)
 
--- TODO: this should be unnecessary via https://github.com/Macaulay2/M2/issues/1519
-saturate(Ideal,  Number) :=
-saturate(Vector, Number) :=
-saturate(Module, Number) := opts -> (t, n) -> saturate(t, n_(ring t), opts)
+-- TODO: the methods with "Number" should be unnecessary via https://github.com/Macaulay2/M2/issues/1519
 
 -- Helper for saturation methods
 saturateHelper = (A, B, key, opts) -> (
     -- this is only here because some methods are not implemented for RingElement
-    B' := if instance(B, RingElement) then ideal B else B;
+    B' := if instance(B, RingElement) or instance(B, Number) then ideal B else B;
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;

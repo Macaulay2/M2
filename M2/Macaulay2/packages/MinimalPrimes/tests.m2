@@ -1473,7 +1473,8 @@ TEST ///
   assert(minprimes monomialIdeal(a*d) == monomialIdeal \ {{a}, {d}})
   R3 = ZZ
   assert(minprimes ideal 0_ZZ == {ideal 0_ZZ})
-  assert try minprimes (ideal(5_ZZ)) else true
+  assert(minprimes ideal 5_ZZ == {ideal 5_ZZ})
+  assert(minprimes ideal 20_ZZ == {ideal 2_ZZ, ideal 5_ZZ})
   R4 = (frac R2)[x,y,z]
   assert try minprimes(ideal(a*x)) else true
 

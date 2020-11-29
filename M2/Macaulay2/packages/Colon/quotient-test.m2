@@ -137,10 +137,14 @@ TEST ///
   quotient(I, a+b+c+d, BasisElementLimit=>5, MinimalGenerators=>false)
 ///
 
--- FIXME
-///
+TEST ///
   -- Tests for ZZ
-  ideal 4 : ideal 6
+  assert same( ideal 4 : 6,  ideal 4 : ideal 6, ideal 2)
+  assert same(4 * ZZ^2 : 6, 4 * ZZ^2 : ideal 6, 2 * ZZ^2)
+  assert(4 * ZZ^2 : 6 * ZZ^2 == ideal 2)
+  assert same(saturate( ideal 2, 3), saturate( ideal 2, ideal 3), ideal 2)
+  assert same(saturate(2 * ZZ^2, 3), saturate(2 * ZZ^2, ideal 3), 2 * ZZ^2)
+  assert(annihilator ideal 2 == ideal 0)
 ///
 
 TEST ///
