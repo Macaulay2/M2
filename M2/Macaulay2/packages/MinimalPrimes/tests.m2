@@ -1820,7 +1820,14 @@ TEST /// -- radicalContainment test: sharp bound example
   f = random(1,R)
   elapsedTime assert(not radicalContainment(f, I, Strategy => "Kollar")) -- ~3s
   elapsedTime assert(not radicalContainment(f, I)) -- ~1s
+///
 
+TOODAMNSLOW ///
+  d = (4,5,6,7)
+  n = #d
+  k = ZZ/101
+  R = k[x_0..x_n]
+  I = ideal homogenize(matrix{{x_1^(d#0)} | apply(toList(1..n-2), i -> x_i - x_(i+1)^(d#i)) | {x_(n-1) - x_0^(d#-1)}}, x_n)
   A = random(R^(n+1), R^(n+1))
   J = sub(I, vars R * A);
   f = ((vars R)*A)_{0} _(0,0)
