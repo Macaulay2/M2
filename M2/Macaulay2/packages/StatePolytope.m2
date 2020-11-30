@@ -1,4 +1,6 @@
 -- -*- coding: utf-8 -*-
+polymake := findProgram("polymake", "polymake --version", RaiseError => false)
+
 newPackage(
 	"StatePolytope",
     	Version => "1.2", 
@@ -13,66 +15,32 @@ newPackage(
 	Configuration => {"gfan command" => "gfan"},
     	DebuggingMode => false,
 	AuxiliaryFiles => true,
-	CacheExampleOutput => true
+	CacheExampleOutput => true,
+	PackageImports => {"gfanInterface"},
+	OptionalComponentsPresent => polymake =!= null
     	)
 
 export { 
-     --"gfanRingInput", 
-     --"gfanIdealInput", 
      "initialIdeals", --documented
      --"hilbertPt", 
      --"statePolytopePoints", 
      --"statePolytopePoints", 
-     --"printHilbPt", 
-     --"createPolymakeInputFile",
-     "statePolytope", --documented
+     "polymakeStatePolytope", --documented
      --"maxUGBDegree", 
      "isStable" --documented
      }
 
-
-gfanCommand = (options StatePolytope)#Configuration#"gfan command"
-if gfanCommand === "gfan" then gfanCommand = prefixDirectory | currentLayout#"programs" | gfanCommand
-gfanCommand = "!" | gfanCommand
-
---The next two functions print out the ring and the ideal in the format required by gfan
-
-gfanRingInput = (I) -> (R:= ring(I);
-     str:="";
-     if char(R) == 0 then str = "Q[" else str = concatenate(concatenate("Z/",toString(char(R))) ,"Z[");
-for i from 0 to (numgens(R)-2) do str = concatenate(str,concatenate(toString R_i, "," ));
-return concatenate(str,concatenate(toString R_(numgens(R)-1), "]" ));
-)
-
-
-gfanIdealInput = (I) -> (toString apply((numgens(I)), k -> I_k)
-    )
-
---The following test is to check whether gfan is working
-
-
+if (options StatePolytope)#Configuration#"gfan command" != "gfan" then stderr <<
+    "warning: The \"gfan command\" configuration option has been deprecated." <<
+    endl <<
+    "If gfan is installed in a non-standard location, then specify it by" <<
+    endl <<
+    "setting programPaths#\"gfan\"." << endl
 
 initialIdeals = method(
      TypicalValue => List
      )
-initialIdeals(Ideal) := (I) -> (
-gfanoutputfile := openInOut gfanCommand;
-gfanoutputfile << gfanRingInput(I) << gfanIdealInput(I);
-gfanoutputfile << closeOut;
-gfanoutputstring := get gfanoutputfile;
-if gfanoutputstring == "" then (
-gfanoutputfile = openInOut gfanCommand;
-gfanoutputfile << gfanIdealInput(I);
-gfanoutputfile << closeOut;
-gfanoutputstring = get gfanoutputfile;);
-if gfanoutputstring == "" then error "gfan output is null; check the command you are using";
-markedInitialIdealsString:=replace("[Q,Z].*]","",gfanoutputstring);
-use(ring(I));
-initialIdealsList := value replace("[+-][^,{}]*}","}",replace("[+-][^,{}]*,",",",markedInitialIdealsString));
-return initialIdealsList
-)
-
-
+initialIdeals(Ideal) := (I) -> apply(gfan I, first)
 
 hilbertPt = (n,m,L,monomialsList) -> (
      totalDegree := binomial( n-1 + m, n-1) * m / n ;
@@ -96,80 +64,56 @@ fullStatePolytopePoints(ZZ,Ideal,List) := (m,I,initialIdealsList) -> (
      sum apply(m+1,k-> statePolytopePoints(k,I,initialIdealsList))
      )
 
-printHilbPt = (L,I) -> ( str:= "1";
-for j from 0 to (numgens ring(I)-1) do str = concatenate(str,concatenate(" ",toString lift(L_j,ZZ)));
-return str
+runPolymake = args -> (
+    if polymake === null then
+	polymake = findProgram("polymake", "polymake --version");
+    polymakeRun := runProgram(polymake, "--no-config " | args);
+    polymakeRun#"output"
 )
 
-createPolymakeInputFile = (statePolytopePointsList,I) -> (
-openOut "temporarypolymakefile.txt";
-polymakeinput :=  concatenate("_application polytope\nPOINTS",newline);
-for i from 0 to (#statePolytopePointsList - 1) do polymakeinput = concatenate(polymakeinput,concatenate(printHilbPt(statePolytopePointsList_i,I),newline));
-"temporarypolymakefile.txt" << polymakeinput << closeOut
-)
+M2toPolymake = points ->
+    "'my $p = new Polytope(POINTS=>[" |
+	demark(", ", apply(points, point ->
+	    "[" | demark(", ", toString \ prepend(1, point)) | "]")) |
+	"]); print $p->VERTICES;'"
 
-polymakeToM2 = (st) -> (
-p := concatenate("VERTICES",concatenate(newline,"1 "));
-st = replace(p,"{{",st);
-p = concatenate(newline,"1 ");
-st = replace(p,"},{",st);
-st = replace(" ",", ",st);
-st = concatenate(st,"}}");
-return value st
-)
-
+polymakeToM2 = (st) ->
+    apply(lines st, line -> value \ drop(separate(" ", line), 1))
 
 maxUGBDegree = (L) -> (
      (max apply(#L, i -> max apply(#(L_i), j -> degree L_i_j)))_0
 	  )
 
-statePolytope = method(
+polymakeStatePolytope = method(
      TypicalValue => List
      )
-statePolytope(ZZ,Ideal) := (m,I) -> ( initialIdealsList := initialIdeals(I);
-createPolymakeInputFile(statePolytopePoints(m,I,initialIdealsList),I);
-polymakesession := "!polymake temporarypolymakefile.txt VERTICES";
-polymakesession << closeOut;
-st := get polymakesession;
-polymakeToM2(st)
+polymakeStatePolytope(ZZ,Ideal) := (m,I) -> (
+    initialIdealsList := initialIdeals(I);
+    st := runPolymake M2toPolymake statePolytopePoints(m,I,initialIdealsList);
+    polymakeToM2(st)
 )
 
-statePolytope(Ideal) := (I) -> ( initialIdealsList := initialIdeals(I);
-createPolymakeInputFile(fullStatePolytopePoints(maxUGBDegree(initialIdealsList),I,initialIdealsList),I);
-polymakesession := "!polymake temporarypolymakefile.txt VERTICES";
-polymakesession << closeOut;
-st :=  get polymakesession;
-polymakeToM2(st)
+polymakeStatePolytope(Ideal) := (I) -> (
+    initialIdealsList := initialIdeals(I);
+    st := runPolymake M2toPolymake fullStatePolytopePoints(
+	maxUGBDegree(initialIdealsList),I,initialIdealsList);
+    polymakeToM2(st)
 )
-
-
-
-
 
 isStable = method(
      TypicalValue => Boolean
      )
-isStable(ZZ,Ideal) := (m,I) -> (   
+isStable(ZZ,Ideal) := (m,I) -> (
      initialIdealsList := initialIdeals(I);
-createPolymakeInputFile(statePolytopePoints(m,I,initialIdealsList),I);
-polymakesession := "!polymake temporarypolymakefile.txt VERTICES";
-polymakesession << closeOut;
-st := get polymakesession;
-    str:= st;
-     barycenter := toString ((sum(statePolytopePoints(m,I,initialIdeals(I)))_0) / (numgens ring(I) ));
-     barycenterstring:= concatenate("POINTS",concatenate(newline,"1 "));
-     for i from 0 to (numgens(ring(I))-1) do barycenterstring = concatenate(barycenterstring, concatenate(barycenter," "));
-     str = replace("VERTICES",barycenterstring,str);
-     openOut "augmentedtemporarypolymakefile.txt";
-     "augmentedtemporarypolymakefile.txt" << "_application polytope\n" << str << closeOut;
-     polymakesession2 := "!polymake augmentedtemporarypolymakefile.txt VERTICES";
-     polymakesession2 << closeOut;
-     augmentedstatepolytope := get polymakesession2;
-     if set polymakeToM2(st) === set polymakeToM2(augmentedstatepolytope)   then true else false
-          )
-     
-
-
+     points := statePolytopePoints(m,I,initialIdealsList);
+     st := runPolymake M2toPolymake points;
+     n := numgens ring I;
+     barycenter := apply(n, i -> sum points_0 / n);
+     augmentedpoints := prepend(barycenter, points);
+     augmentedstatepolytope :=  runPolymake M2toPolymake augmentedpoints;
+     if set polymakeToM2(st) === set polymakeToM2(augmentedstatepolytope)
+	then true else false
+)
 
 beginDocumentation()
 document {    
@@ -205,14 +149,14 @@ document {
 TEST ///
 R=QQ[a..d];
 I=ideal(a*c-b^2,a*d-b*c,b*d-c^2);
-L= {{b*d, a*d, a*c}, {c^2, a*d, a*c}, {c^2, b*c, a*c, a^2*d}, {c^2, b*c, b^3,
-     a*c}, {c^2, b*c, b^2}, {b*d, b^2, a*d}, {b*d, b*c, b^2, a*d^2}, {c^3, b*d,
+L= {{b*d, a*d, a*c}, {a*d, b*d, b^2}, {a*d^2, b*d, b*c, b^2}, {b*d, b^2, b*c,
+     c^3}, {a*d, a*c, c^2}, {a^2*d, a*c, c^2, b*c}, {a*c, c^2, b*c, b^3}, {c^2,
      b*c, b^2}};
 assert(set initialIdeals(I) === set L)
 ///
      
 document {
-	Key => "statePolytope",
+	Key => "polymakeStatePolytope",
 	Headline => "computes state polytopes of ideals",
 	"Computes ",  ITALIC "State", SUB "m", "(I) or ", ITALIC "State", "(I), as defined in Sturmfels's book ", ITALIC "Groebner bases and convex polytopes", ", page 14."
 	}
@@ -222,7 +166,7 @@ document {
 
 
  document {
-	Key => (statePolytope,Ideal),
+	Key => (polymakeStatePolytope,Ideal),
 	Headline => "computes the state polytope of an ideal",
 	Usage => "statePolytope(I)",
 	Inputs => {
@@ -237,7 +181,7 @@ Outputs => {
 EXAMPLE lines ///
 	        R = QQ[a..d];
 		I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);  
-		statePolytope(I) 
+		polymakeStatePolytope(I)
 		///,
 		
 }  
@@ -247,7 +191,7 @@ EXAMPLE lines ///
    
        
    document {
-	Key => (statePolytope,ZZ,Ideal),
+	Key => (polymakeStatePolytope,ZZ,Ideal),
 	Headline => "computes the mth state polytope of an ideal",
 	Usage => "statePolytope(m,I)",
 	Inputs => {
@@ -264,7 +208,7 @@ EXAMPLE lines ///
 	EXAMPLE lines ///
 	        R = QQ[a..d];
 		I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);
-		statePolytope(3,I)   
+		polymakeStatePolytope(3,I)
 		///,
 		}
 
@@ -273,9 +217,9 @@ TEST ///
 R=QQ[a..d];
 I=ideal(a*c-b^2,a*d-b*c,b*d-c^2);
 L = {{9, 6, 6, 9}, {9, 3, 12, 6}, {7, 5, 14, 4}, {5, 8, 14, 3}, {3, 12, 12,3}, {6, 12, 3, 9}, {4, 14, 5, 7}, {3, 14, 8, 5}};
-assert(set statePolytope(3,I) === set L)
+assert(set polymakeStatePolytope(3,I) === set L)
 M ={{11, 7, 7, 11}, {11, 3, 15, 7}, {8, 6, 18, 4}, {6, 9, 18, 3}, {3, 15, 15, 3}, {7, 15, 3, 11}, {4, 18, 6, 8}, {3, 18, 9, 6}};
-assert(set statePolytope(I) === set M)
+assert(set polymakeStatePolytope(I) === set M)
 ///
 
 

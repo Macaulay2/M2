@@ -913,14 +913,14 @@ doc ///
      F = directImageComplex M
    Inputs 
      M: Module
-       graded over a ring of the form S = A[y_0..y_n], representing a sheaf on ${\bf P}^n_A$,
+       graded over a ring of the form S = A[y_0..y_n], representing a sheaf on $\PP^n_A$,
        where A is a polynomial ring.
      Regularity=>ZZ
        the Castelnuovo-Mumford regularity of {\tt M}.  If not provided, this value will be computed
    Outputs
      F: ChainComplex
        complex of free modules over A. Homology in homological degree -i is 
-       $R^i \pi_* {\mathcal M}$, where ${\mathcal M}$ is the sheaf on ${\bf P}^n_A$ represented by M.
+       $R^i \pi_* {\mathcal M}$, where ${\mathcal M}$ is the sheaf on $\PP^n_A$ represented by M.
    Description
     Text
       The computation is done using the exterior algebra method described by Eisenbud and Schreyer,
@@ -937,25 +937,25 @@ doc ///
       for the variables of A as well as for the variables of S (bihomogeneous).
       
       It is proven in loc. cit. that every complex of free modules can be realized
-      as the direct image of a vector bundle on ${\bf P}^n_A$.
+      as the direct image of a vector bundle on $\PP^n_A$.
       
       The following example can be used to study the loci in the family of extensions
-      of a pair of vector bundles on $\bf P^1$ where the extension bundle has a given 
+      of a pair of vector bundles on $\PP^1$ where the extension bundle has a given
       splitting type: this type is calculated by the Fitting ideals of the
       matrices defining the direct image complexes of various twists of the bundle.
       See Section 5 in loc. cite. It is conjectured there that all the sums of
       these Fitting ideals for the universal extension of 
-      $\mathcal O_{P^1}^{r-1}$ by $\mathcal O_{P^1}(d)$ are radical, 
+      $\mathcal O_{\PP^1}^{r-1}$ by $\mathcal O_{\PP^1}(d)$ are radical,
       as in the example below.
       
-      First we examine the extensions of ${\mathcal O}_{P^1}(1)$ by ${\mathcal O}_{P^1}(-3)$.
+      First we examine the extensions of ${\mathcal O}_{\PP^1}(1)$ by ${\mathcal O}_{\PP^1}(-3)$.
       There is a 3-dimensional vector space 
       $$
-      Ext^1({\mathcal O}_{P^1}(1),{\mathcal O}_{P^1}(-3))
+      Ext^1({\mathcal O}_{\PP^1}(1),{\mathcal O}_{\PP^1}(-3))
       $$
       of extensions. The ``universal extension'' is thus a bundle on
-      ${\bf P^1}\times Ext$. The locus where the extension
-      bundle splits as ${\mathcal O}_{P^1}(-2) \oplus {\mathcal O}_{P^1}$ is the
+      $\PP^1\times Ext$. The locus where the extension
+      bundle splits as ${\mathcal O}_{\PP^1}(-2) \oplus {\mathcal O}_{\PP^1}$ is the
       locus where the map in the direct image complex drops rank, and this is
       the (cone over a) conic, defined by the determinant of this matrix.
     Example
@@ -967,7 +967,7 @@ doc ///
       det (F.dd_0)
     Text
       Here is a larger example, the extension of 
-      ${\mathcal O}_{P^1}^2$ by ${\mathcal O}_{P^1}(6)$
+      ${\mathcal O}_{\PP^1}^2$ by ${\mathcal O}_{\PP^1}(6)$
     Example
       r=3;
       d=6;
@@ -992,7 +992,7 @@ doc ///
    Inputs
      F:Matrix
        a homomorphism $F : M \rightarrow N$ of graded $S = A[y_0..y_n]$ modules, graded of degree 0,
-       where we think of $M$ and $N$ as representing sheaves on ${\bf P}^n_A$
+       where we think of $M$ and $N$ as representing sheaves on $\PP^n_A$
    Outputs
      piF:ChainComplexMap
        the induced map on chain complexes {\tt piF : directImageComplex M --> directImageComplex N}
@@ -1107,12 +1107,12 @@ doc ///
        representing the extension
    Description
     Text
-     Every vector bundle E on ${\mathbb P}^1$ splits as a sum of line bundles 
+     Every vector bundle E on $\PP^1$ splits as a sum of line bundles
      OO(a_i). If La is a list of integers, we write E(La) for the direct sum of the
      line bundle OO(La_i).  Given two such bundles specified by the lists
      La and Lb this script constructs a module representing the universal
      extension of E(Lb) by E(La). It is defined on the product variety
-     Ext^1(E(La), E(Lb)) x ${\mathbb P}^1$, and represented here by
+     Ext^1(E(La), E(Lb)) x $\PP^1$, and represented here by
      a graded module over the coordinate ring S = A[y_0,y_1] of this variety;
      here A is the coordinate ring of Ext^1(E(La), E(Lb)), which is a polynomial
      ring.

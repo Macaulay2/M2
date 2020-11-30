@@ -43,6 +43,13 @@ assert(demark_" " separate("[ \t]*\r?\n[ \t]*", " A\n\t  B  \r\n  \tC ", POSIX =
 assert(separate(".", "ABC.DEF") === {"ABC", "DEF"})
 assert(separate("-", "a-cd-xxx-yyy-") == {"a", "cd", "xxx", "yyy", ""})
 assert(separate(".?", "ABCD") === toList(5:""))
+-- zero-length separations
+assert(separate(    "a",  "ahoaaabba") == {"", "ho", "", "", "bb", ""})
+assert(separate( "(?=a)", "ahoaaabba") == {"aho", "a", "a", "abb", "a"}) -- positive lookahead
+assert(separate( "(?!a)", "ahoaaabba") == {"a", "h", "oaaa", "b", "ba"}) -- negative lookahead
+assert(separate("(?<=a)", "ahoaaabba") == {"a", "hoa", "a", "a", "bba"}) -- positive lookbehind
+-- FIXME: this one doesn't seem to work, are negative lookbehinds different in boost regex?
+--assert(separate("(?<!a)", "ahoaaabba") == {"ah", "o", "aaab", "b", "a"}) -- negative lookbehind
 
 -- tests for select
 assert(select("a+","aaa aaaa") === {"aaa","aaaa"})
