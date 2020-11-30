@@ -51,6 +51,7 @@ document {
 	      TO "making functions with a variable number of arguments",
 	      TO "making functions with multiple return values",
 	      TO "making new functions with optional arguments",
+	      TO "using hooks",
 	  "classes and types",
 	      TO "what a class is",
 	      TO "installing methods",
@@ -72,7 +73,8 @@ document {
 	      TO "using sockets",
      	  "packages",
 	      TO "packages",
-	      -- Mike wanted this: TO "a sample package: Quaternions",
+	      TO "creating a package",
+	      TO "writing documentation",
 	  "parallel programming ",
 	      TO "parallel programming with threads and tasks",
      	  "system facilities",
@@ -551,6 +553,36 @@ document {
 	  "f(5,11,a=>10^20)",
 	  },
      }
+
+document { Key => "using hooks", 
+     PARA {"Hooks are a way to provide different implementations of functions and methods.
+     The user can attach multiple hooks to a function via ", TO "addHook", "."},
+     
+     PARA {"Hooks can be functions or methods, and they can accept optional arguments." },
+     EXAMPLE lines ///
+     f = {a=>3, c=>12} >> opts -> val -> if val == 1 then opts.a + opts.c
+     g = method(Options => {b => 5})
+     g ZZ := opts -> val -> if val == 2 then opts.b + 1
+     h = val -> if val == 3 then 24
+     addHook(ZZ, symbol foo, f)
+     addHook(ZZ, symbol foo, g)
+     addHook(ZZ, symbol foo, h)
+     ///,
+     PARA {"The command ", TO "hooks", " lists all hooks attached to a symbol."},
+     EXAMPLE {"hooks(ZZ, symbol foo)"},
+     PARA {"The method ", TO "runHooks", " runs all the hooks until one of them returns a non-null value.
+     Hooks are run in order starting from the most recently added hook. Because of this, 
+     hooks should be able to decide quickly if they should be used or not."},
+     PARA {"Any optional argument passed to ", TT "runHooks", " that matches a key in the ", TO "OptionTable", 
+     " of a hook will be passed on to it. Otherwise it will be ignored." },
+     EXAMPLE lines ///
+     foo = true >> opts -> args -> runHooks(ZZ, symbol foo, args, opts)
+     assert( foo 1 == 15 )
+     assert( foo(2, b => 9) == 10 )
+     assert( foo 3 == 24 )
+     ///,
+     SeeAlso => {addHook, removeHook, runHooks, hooks}
+}
 
 document {
      Key => "conditional execution",

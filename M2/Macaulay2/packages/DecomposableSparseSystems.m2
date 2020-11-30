@@ -17,9 +17,11 @@ newPackage(
 	 HomePage=>"https://math.tamu.edu/~thomasjyahl"}
         },
     Headline=>"Solving decomposable sparse systems",
+    Keywords => {"Numerical Algebraic Geometry"},
     PackageImports=>{"PHCpack","Polyhedra","DeterminantalRepresentations"},
     PackageExports=>{"NumericalAlgebraicGeometry"},
     AuxiliaryFiles=>true,
+    OptionalComponentsPresent => (readPackage "PHCpack").OptionalComponentsPresent,
     CacheExampleOutput => true,
     DebuggingMode=>false
     )
@@ -746,14 +748,6 @@ doc///
 			F = {x^4+3*y^6-1,17*x^2-2*y^2+2};
 			solveDecomposableSystem (F,Verify=>1,Tolerance=>0.1,Verbose=>3)
 ///		
-
--- The program phcpack isn't installed on every user's system.
--- TO DO: detect its presence and enable re-running the examples and running the tests conditionally
-
-stderr << "--warning: *** tests disabled for package DecomposableSparseSystems" << endl
-
-end
-
 
 TEST ///
     assert(isLacunary({matrix{{0,2,4},{0,2,4}},matrix{{0,2,0,2},{0,0,2,2}}}));

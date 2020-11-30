@@ -277,8 +277,8 @@ document {
      PRE replace(regexQuote homeDirectory, "/home/m2user/",
 	   concatenate between_"\n" apply(value Core#"private dictionary"#"userpath",s -> (5,s))),
      EXAMPLE {
-	  "path",
-	  ///path = append(path, "~/resolutions/")///
+	  "stack path",
+	  ///path = append(path, "~/resolutions/"); stack path///
 	  }
      }
 

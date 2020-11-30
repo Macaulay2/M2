@@ -1,8 +1,4 @@
 -- -*- M2-comint -*- hash: 704393788
---loading configuration for package "FourTiTwo" from file /home/aleykin3/.Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /home/aleykin3/.Macaulay2/init-Topcom.m2
--- COMPILE TIME: Oct 31 2019, 08:32:16
---loading configuration for package "Bertini" from file /home/aleykin3/.Macaulay2/init-Bertini.m2
 
 i1 : R = QQ[x,y,z]
 
@@ -25,7 +21,7 @@ o3 : NumericalVariety
 
 i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-o4 = {{5.40085e-72+9.7017e-72*ii, 2.17445e-72+1.0447e-71*ii, .0100757+.375105*ii}}
+o4 = {{9.83944e-68-8.625e-70*ii, 9.79349e-68+1.82104e-68*ii, .352544-.003583*ii}}
 
 o4 : VerticalList
 
@@ -37,11 +33,11 @@ o5 : List
 
 i6 : peek oo_0 --then list position
 
-o6 = WitnessSet{ComponentNumber => 0                                                                   }
+o6 = WitnessSet{ComponentNumber => 0                                                                             }
                 IsIrreducible => true
-                Points => {{5.40085e-72+9.7017e-72*ii, 2.17445e-72+1.0447e-71*ii, .0100757+.375105*ii}}
-                Slice => | .160219-.172429ii .661607-2.7306ii 1.02903-3.75384ii .809161+.713024ii |
-                WitnessDataFileName => /tmp/M2-25838-0/1/witness_data
+                Points => {{9.83944e-68-8.625e-70*ii, 9.79349e-68+1.82104e-68*ii, .352544-.003583*ii}}
+                Slice => | .676227+.312984ii -.430765+.527252ii .795595-.72831ii -.277873+.259612ii |
+                WitnessDataFileName => /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-38830-0/1/witness_data
                                      3      2      2       2     3      2
                 Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)
 

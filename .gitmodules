@@ -31,3 +31,6 @@
 [submodule "M2/submodules/googletest"]
 	path = M2/submodules/googletest
 	url = https://github.com/google/googletest.git
+[submodule "M2/Macaulay2/editors/emacs"]
+	path = M2/Macaulay2/editors/emacs
+	url = https://github.com/Macaulay2/M2-emacs.git

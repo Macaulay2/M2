@@ -37,6 +37,6 @@ run-emacs:;	docker run $(VOLUME) --net=host --env="DISPLAY" $(TAG)
 ###############################################################################
 # Terminal targets
 
-root:;	docker run $(VOLUME) -it --user root --entrypoint bash $(TAG)
+root:;	docker run $(VOLUME) -it -w $(M2_HOME)/$(BUILD_DIR) --user root --entrypoint bash $(TAG)
 
-shell:;	docker run $(VOLUME) -it --entrypoint bash $(TAG)
+shell:;	docker run $(VOLUME) -it -w $(M2_HOME)/$(BUILD_DIR) --entrypoint bash $(TAG)

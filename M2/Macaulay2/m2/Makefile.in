@@ -14,8 +14,8 @@ Makefile: Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 .SUFFIXES: .m2
 .PHONY: html initialize prep tags install-tmp
 # there is a parallel list of tutorials in overview3.m2
-DUMPEDM2FILES := setup.m2
-DUMPEDM2SRCFILES := setup.m2
+DUMPEDM2FILES := setup.m2 startup.m2
+DUMPEDM2SRCFILES := setup.m2 startup.m2.in
 DUMPEDM2DOCFILES := \
 		@srcdir@/../packages/Macaulay2Doc/*.m2 \
 		@srcdir@/../packages/Macaulay2Doc/functions/*.m2 \
@@ -54,14 +54,12 @@ all: tags
 tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: \
-		startup.m2.in \
 		$(DUMPEDM2SRCFILES) \
 		installedpackages \
 		$(OTHERM2FILES) \
 		$(shell @FIND@ @srcdir@/../packages -name "*.m2" -a -not -name .\#\* | sort) \
-		../emacs/makehlp.m2 \
-		../emacs/makem2.m2 \
-		../emacs/makesyms.m2 \
+		../editors/emacs/make-M2-emacs-help.m2 \
+		../editors/make-M2-symbols.m2 \
 		@srcdir@/../*/COPYRIGHT \
 		@srcdir@/basictests/*.m2 \
 		@srcdir@/../book/*.m2 \
@@ -72,15 +70,14 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		loadsequence \
 		Makefile.in \
 		Makefile.tests \
-		../emacs/Makefile.in \
+		../editors/Makefile.in \
 		../tests/Makefile.in \
 		../tests/Makefile.test.in \
 		../tests/slow/Makefile.in \
 		../tests/engine/Makefile.in \
 		../packages/Makefile.in \
 		../../Makefile ../../GNUmakefile.in \
-		@srcdir@/../packages/*/Makefile.in \
-		@srcdir@/README.DOC
+		@srcdir@/../packages/*/Makefile.in
 	: making $@
 	@ set -e ; \
 	  cd @srcdir@ && \

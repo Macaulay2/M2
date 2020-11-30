@@ -12,6 +12,7 @@ newPackage("PositivityToricBundles",
            Authors => { 
             {Name => "Andreas Hochenegger",
              Email => "andreas.hochenegger@sns.it"}},
+           Keywords => {"Toric Geometry"},
            Configuration =>{},
            PackageExports => {"ToricVectorBundles"}
           )
@@ -1061,7 +1062,7 @@ document {
   }
 
 document {
-  Key => {separatesJets, isGloballyGenerated, "PositivityToricBundles::isVeryAmple", (separatesJets, ToricVectorBundleKlyachko), (isGloballyGenerated, ToricVectorBundleKlyachko), (isVeryAmple, ToricVectorBundleKlyachko) },
+  Key => {separatesJets, isGloballyGenerated, isVeryAmple, (separatesJets, ToricVectorBundleKlyachko), (isGloballyGenerated, ToricVectorBundleKlyachko), (isVeryAmple, ToricVectorBundleKlyachko) },
   Headline => "computes up to which order a toric vector bundle separates jets",
   Usage => "l = separateJets E \nb = isGloballyGenerated E \nb = isVeryAmple E",
   Inputs => { 

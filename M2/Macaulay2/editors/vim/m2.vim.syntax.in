@@ -1,0 +1,42 @@
+" Vim syntax file
+" Language: Macaulay2
+
+"if exists("b:current_syntax")
+"  finish
+"endif
+
+"syn region m2String  start=/"/ skip=/\\"/ end=/"/
+"syn match  m2String  /"[^"]*"/
+"syn region m2String  start=/"/ end=/"/
+
+syn match  m2Comment /--.*$/
+
+syn case match
+
+syn keyword m2Boolean true false
+
+syn keyword m2Keyword contained
+            \ @M2KEYWORDS@
+
+syn keyword m2Datatype contained
+            \ @M2DATATYPES@
+
+syn keyword m2Function container
+            \ @M2FUNCTIONS@
+
+syn keyword m2Constant container
+            \ @M2CONSTANTS@
+
+syn keyword m2Symbol contained
+            \ @M2SYMBOLS@
+
+let b:current_syntax = "m2"
+
+hi def link m2String   String
+hi def link m2Comment  Comment
+hi def link m2Boolean  Boolean
+hi def link m2Symbol   Identifier
+hi def link m2Keyword  Keyword
+hi def link m2Datatype Type
+hi def link m2Function Function
+hi def link m2Constant Constant

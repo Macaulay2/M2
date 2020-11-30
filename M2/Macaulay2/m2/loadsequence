@@ -4,6 +4,7 @@ option.m2
 methods.m2
 autoload.m2
 system.m2
+regex.m2
 run.m2
 
 profile.m2
@@ -19,7 +20,6 @@ lists.m2
 nets.m2
 robust.m2
 content.m2
-string.m2
 hypertext.m2
 validate.m2
 expressions.m2
@@ -75,16 +75,16 @@ dotdot.m2
 local.m2
 
 packages.m2
+examples.m2
 document.m2
+installPackage.m2
 testing.m2
 help.m2
 
 format.m2
 html.m2
-texhtml.m2
 markdown.m2
 latex.m2
-installPackage.m2
 
 varieties.m2
 webapp.m2
@@ -92,6 +92,7 @@ jupyter.m2
 mathml.m2
 texmacs.m2
 pretty.m2
+programs.m2
 undoc.m2
 obsolete.m2
 exports.m2

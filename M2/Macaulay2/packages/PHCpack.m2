@@ -33,6 +33,7 @@ newPackage(
      HomePage => "https://math.berkeley.edu/~seigal/"}
   },
   Headline => "interface to PHCpack",
+  Keywords => {"Numerical Algebraic Geometry", "Interfaces"},
   Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry",
 	"journal URI" => "http://j-sag.org/",
@@ -115,7 +116,7 @@ PHCDBG = 0; -- debug level (10=keep temp files)
 -- We used to allow the user to set this in the "Configuration" of the package, but we need
 -- to know whether the program is present before "newPackage" runs, and thus there is no
 -- good way to get the option early enough.
-PHCexe = "phc"
+PHCexe = "phc "|(if member("--no-randomize",commandLine) then "-0123456 " else "")  
 
 -- this is the executable string that make sures that calls to PHCpack run:
 -- NOTE: the absolute path should be put into the init-PHCpack.m2 file 
@@ -965,6 +966,7 @@ mixedVolume  List := Sequence => opt -> system -> (
   ) else (
   -- launching mixed volume calculator :
   execstr := PHCexe|" -m "|(if opt.numThreads > 1 then ("-t"|opt.numThreads|" ") else "")|infile|" "|outfile|" < "|cmdfile|" > "|sesfile;
+  checkIsRunnable(); 
   ret := run(execstr);
   if ret =!= 0 then 
     error "error occurred while executing PHCpack command: phc -m";
@@ -997,6 +999,7 @@ mixedVolume  List := Sequence => opt -> system -> (
     solsfile := startfile | ".sols";
     p := startSystemFromFile(startfile);
     execstr = PHCexe|" -z "|startfile|" "|solsfile;
+    checkIsRunnable(); 
     ret = run(execstr);
     if ret =!= 0 then
       error "error occurred while executing PHCpack command: phc -z";
@@ -1134,7 +1137,7 @@ solveSystem List := List =>  o->system -> (
   local newR;
   R := ring ideal system;
 
-  stdio << "*** variables in the ring : " << gens R << " ***" << endl;
+  -- stdio << "*** variables in the ring : " << gens R << " ***" << endl;
 
   n := #system;
   if n < numgens R then
@@ -1161,12 +1164,14 @@ solveSystem List := List =>  o->system -> (
     |(if o.numThreads > 1 then ("-t"|o.numThreads|" ") else "")
     |(if o.randomSeed > -1 then ("-0"|o.randomSeed|" ") else "")
     |infile|" "|outfile;
+  checkIsRunnable(); 
   ret := run(execstr);
   if ret =!= 0 then 
     error "error occurred while executing PHCpack command: phc -b";
   if o.Verbose then
     stdio << "solutions are in the file " << solnsfile << endl;
   execstr = PHCexe|" -z "|infile|" " |solnsfile;
+  checkIsRunnable(); 
   ret = run(execstr);
   if ret =!= 0 then 
     error "error occurred while executing PHCpack command: phc -z";
@@ -1238,10 +1243,12 @@ solveRationalSystem  List :=  o-> system -> (
   
   -- launching blackbox solver:
   execstr := PHCexe|" -b " |infile|" "|outfile;
+  checkIsRunnable(); 
   ret := run(execstr);
   if ret =!= 0 then 
     error "error occurred while executing PHCpack command: phc -b";
   execstr = PHCexe|" -z "|infile|" " |solnsfile;
+  checkIsRunnable(); 
   ret = run(execstr);
   if ret =!= 0 then 
     error "error occurred while executing PHCpack command: phc -z";

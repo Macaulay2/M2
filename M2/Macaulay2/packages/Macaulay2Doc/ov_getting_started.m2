@@ -184,7 +184,7 @@ document { Key => "finding the Macaulay2 files",
      ", TT "share", ", so now we know, from the output above, that the Macaulay
      2 files have been installed with a prefix ", TT "/foo/bar", " as the name
      of its root directory.  It will follow, for example, that the M2 emacs
-     init file is located at ", TT "/foo/bar/share/emacs/site-lisp/M2-init.el", ".",
+     init file is located at ", TT "/foo/bar/share/emacs/site-lisp/Macaulay2/M2-init.el", ".",
      PARA {},
      "Another way to locate the files of Macaulay2 is to ask M2, assuming you
      can run it.  Start M2 and type the following expression.",
@@ -296,7 +296,7 @@ document { Key => "teaching emacs how to find M2-init.el",
      "If you are lucky, then the Macaulay2 directory tree has been installed
      with the same root as the emacs directory tree.  For example, if emacs
      and Macaulay2 are both installed in /usr, then ", TT "M2-init.el", " is located at
-     ", TT "/usr/share/emacs/site-lisp/M2-init.el", ", and emacs already knows
+     ", TT "/usr/share/emacs/site-lisp/Macaulay2/M2-init.el", ", and emacs already knows
      to look in that directory for source files.",
      PARA {},
      "The simplest way to teach emacs how to find ", TT "M2-init.el", " is to let M2 do it for you.  Run M2,
@@ -310,13 +310,10 @@ document { Key => "teaching emacs how to find M2-init.el",
      ", and ask for the description of the variable ", TT "load-path", ".",
      PARA {},
      "Let's assume that you have located the Macaulay2 source code, and that
-     ", TT "M2-init.el", " is located at ", TT "/foo/bar/share/emacs/site-lisp/M2-init.el", ",
+     ", TT "M2-init.el", " is located at ", TT "/foo/bar/share/emacs/site-lisp/Macaulay2/M2-init.el", ",
      and that you want to tell emacs to search that directory, too.  
      Insert the following command into the file .emacs in your home directory.",
-     PRE ///    (setq load-path 
-          (append
-           '( "/foo/bar/share/emacs/site-lisp" )
-           load-path))///,
+     PRE ///(add-to-list 'load-path "/foo/bar/share/emacs/site-lisp/Macaulay2")///,
      "The next time you start emacs, emacs will look also in that directory for 
      files, and it should find ", TT "M2-init.el", "."
      }
@@ -421,9 +418,7 @@ document {
           to examine the online emacs manual that can be read with ", TT "info", "
           mode; you may enter or re-enter that mode with the keystrokes ", TT "C-h i", ".  "
           },
-     PARA {"The Macaulay2 emacs interface consists of several files
-	  in the directory ", 
-	  TT "share/emacs/site-lisp/",
+     PARA {"The Macaulay2 emacs interface consists of several files in the directory ", TT "share/emacs/site-lisp/Macaulay2/",
 	  " in the Macaulay2 distribution tree.  If you're lucky, then your system administrator has installed Macaulay2 so
 	  that directory ends up in the same place where emacs looks for its files, as listed by the emacs variable ", TT "loadpath", ".
 	  If not, then in order for emacs to be able to find these files, place the following lines
@@ -571,61 +566,62 @@ PARA{},
 toggle whether long lines are truncated or wrapped; initially they are truncated."
      }
 
-document {
-     Key => "reading the documentation",
-     PARA {"The documentation for Macaulay2 is available in several
-     	  formats: text format while in Macaulay2, 
-     	  in info format, and the most important, html format.
-     	  "},
-     "The following functions for available for accessing the documentation.",
-     UL {
-	  TOH "examples",
-	  TOH "help", 
-	  TOH "about",
-	  TOH "apropos",
-	  TOH "viewHelp",
-	  TOH "infoHelp"
-	  },
-     PARA {"While in Macaulay2, type ", 
-	  TT "help", 
-	  " to get a summary of the most useful ways of obtaining
-	  help on a topic or function.
-	  Type",
-	  TT "viewHelp",
-	  " to start the web browser (if necessary) and to point it at
-	  the page index.html in your .Macaulay2 directory.
-	  For help on a specific topic, e.g., the jacobian function, use ",
-	  TT "viewHelp jacobian",
-          " or ",
-	  TT ///viewHelp "jacobian"///,
-	  " or if you want the documentation for jacobian of an Ideal, use ",
-	  TT ///viewHelp (jacobian,Ideal)///
-     	  },
-     PARA {"Using 'help' instead of 'viewHelp' results in the help text appearing 
-	  in your Macaulay2 session.  A useful tip: in emacs, if you place your cursor on one of the resulting 
-	  output lines that starts with a '*', and press return, then you will get help on that topic."
-	  },
-     PARA {
-	  "Reading the info form of the documentation in emacs is perhaps better than using ", TO "infoHelp", ",
-	  because the preferred way of running Macaulay2 is also in emacs. If you do so, we
-	  recommend configuring the emacs variable ", TT "Info-hide-note-references", " so
-	  its value is ", TT "hide", ".  The reason is that the Macaulay2 documentation sets up
-	  hyperlinks with all the required text already in them, but if ", TT "Info-hide-note-references", "
-	  is set to ", TT "t", ", then it will insert ", TT "See", " or ", TT "see", " in front of
-	  the hyperlink unless it sees that word (or ", TT "in", ") already present in the text."
-	  },
-     PARA {"The function ", TO apropos, " is useful to find functions and other defined symbols 
-	  which match a search string.  For example, to find all symbols
-	  in Macaulay2 which contain the string 'deal', use"
-     	  },
-     EXAMPLE ///apropos "deal"///,
-     PARA {
-	  "To find all documentation nodes whose contain a given string, use ", TO "about", "."
-	  },
-     PARA {"The documentation for most functions comes with example code.  You can 
-	  obtain the text of this example code using ", TO examples, "."
-	  }
-     }
+doc ///
+  Key
+    "reading the documentation"
+  Description
+    Text
+      The documentation for Macaulay2 is available in several formats and can
+      be searched and viewed using the following functions:
+
+    Tree
+      :Finding documentation nodes
+        about
+	apropos
+      :Accessing documentation nodes
+        help
+	viewHelp
+	infoHelp
+	(symbol?, Symbol)
+      :Getting other information from documentaiton
+        examples
+
+    Text
+      To begin, the @TO "about"@ method allows for searching all documentation nodes
+      whose title or content contains a given string:
+    Example
+      about "Horrocks-Mumford"
+    Text
+      The @TO "apropos"@ method is useful for finding all exported objects whose symbol
+      matches the given regular expression:
+    Example
+      apropos "(H|h)ilbert"
+    Text
+      While in Macaulay2, type @TO "help"@ to get the documentation on a topic or function,
+      or type @TO "viewHelp"@ to open @TT "~/.Macaulay2/index.html"@, which contains a list
+      of all installed packages, in your default web browser.
+
+      For help on a specific topic, e.g., the Jacobian function, use @TT "viewHelp jacobian"@
+      or @TT "viewHelp \"jacobian\""@, or if you want the documentation for Jacobian of an
+      Ideal, use @TT "viewHelp (jacobian, Ideal)"@ or @TT "viewHelp \"jacobian(Ideal)\""@.
+      Using @TO "help"@ instead of @TO "viewHelp"@ results in the help text appearing
+      in your Macaulay2 session.
+
+      @BOLD "A useful tip:"@ within Emacs, if you place your cursor on one of the resulting
+      output lines that starts with a @TT "*"@, and press the return key, Macaulay2 will
+      display that documentation node.
+
+      The documentation for most functions comes with example code.
+      You can obtain the text of this example code using @TO "examples"@.
+  Subnodes
+    about
+    apropos
+    help
+    viewHelp
+    infoHelp
+    (symbol?, Symbol)
+    examples
+///
 
 document {
      Key => "getting help or reporting bugs",
@@ -929,7 +925,7 @@ document {
      It also provides for dynamic completion of symbols in the language.",
      PARA{},
      "There is an ASCII version of this section of the documentation distributed
-     in the file ", TT (Layout#1#"emacs" | "M2-emacs-hlp.txt"), ". It might be useful for you to visit
+     in the file ", TT (Layout#1#"emacs" | "M2-emacs-help.txt"), ". It might be useful for you to visit
      that file with emacs now, thereby avoiding having to cut and paste bits of
      text into emacs buffers for the deomonstrations below.",
      PARA{},

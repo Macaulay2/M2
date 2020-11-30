@@ -48,6 +48,7 @@ newPackage(
 	    }
 	},
     	Headline => "Erdos-Renyi-type random monomial ideals",
+	Keywords => {"Examples and Random Objects"},
      	PackageImports => { "Depth", "BoijSoederberg", "Serialization" },
     	DebuggingMode => false,
 	Certification => {
@@ -1803,7 +1804,6 @@ doc ///
       The key Generate points to the function that is used to generate random elements according to the given model. 
     Example
       myModel = ER(2,2,0.5)
-      peek myModel
   SeeAlso
     Model
 ///

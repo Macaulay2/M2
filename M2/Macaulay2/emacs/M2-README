@@ -1,5 +1,0 @@
-To get started with running Macaulay 2 with emacs, look at the file
-"M2-emacs-hlp.txt", which is a text version of the documentation node named
-"running Macaulay 2 in emacs".  To learn how to edit a file with Macaulay 2
-code in it using emacs, see the file "M2-emacs.m2", which is a text version of
-the documentation node named "editing Macaulay 2 code with emacs".

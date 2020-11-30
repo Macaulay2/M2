@@ -81,8 +81,7 @@ Macaulay2/bin/M2
 Macaulay2/e/Makefile
 Macaulay2/e/Makefile.common
 Macaulay2/e/unit-tests/Makefile
-Macaulay2/emacs/M2-init.el
-Macaulay2/emacs/Makefile
+Macaulay2/editors/Makefile
 Macaulay2/html-check-links/Makefile
 Macaulay2/packages/Style/Makefile
 Macaulay2/m2/Makefile
@@ -104,7 +103,6 @@ Macaulay2/tests/ComputationsBook/schemes/Makefile
 Macaulay2/tests/ComputationsBook/solving/Makefile
 Macaulay2/tests/ComputationsBook/toricHilbertScheme/Makefile
 Macaulay2/tests/ComputationsBook/varieties/Makefile
-Macaulay2/regex/Makefile
 Macaulay2/srcdir
 Macaulay2/system/Makefile
 Macaulay2/tests/Makefile

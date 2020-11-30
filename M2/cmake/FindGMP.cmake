@@ -8,7 +8,9 @@
 # Once done this will define
 #
 #  GMP_FOUND             - system has GMP lib
+#  GMP_ROOT              - the GMP install prefix
 #  GMP_INCLUDE_DIRS      - the GMP include directory
+#  GMP_LIBRARY_DIRS      - the GMP library directory
 #  GMP_LIBRARIES         - Libraries needed to use GMP
 #  GMP_VERSION           - GMP version
 
@@ -71,6 +73,7 @@ endmacro(_gmp_check_version)
 
 if(NOT GMP_VERSION_OK)
   set(GMP_INCLUDE_DIRS NOTFOUND)
+  set(GMP_LIBRARY_DIRS NOTFOUND)
   set(GMP_LIBRARIES NOTFOUND)
   set(GMPXX_LIBRARIES NOTFOUND)
 
@@ -99,9 +102,15 @@ if(NOT GMP_VERSION_OK)
     set(GMP_LIBRARIES ${GMPXX_LIBRARIES} ${GMP_LIBRARIES})
   endif()
 
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(GMP DEFAULT_MSG GMP_INCLUDE_DIRS GMP_LIBRARIES GMP_VERSION_OK)
+  if(GMPXX_LIBRARIES)
+    get_filename_component(GMP_LIBRARY_DIRS "${GMPXX_LIBRARIES}" DIRECTORY)
+  endif()
 
-  mark_as_advanced(GMP_INCLUDE_DIRS GMP_LIBRARIES)
+  string(REGEX REPLACE "/include.*" "" GMP_ROOT "${GMP_INCLUDE_DIRS}")
+
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(GMP DEFAULT_MSG GMP_ROOT GMP_INCLUDE_DIRS GMP_LIBRARIES GMP_LIBRARY_DIRS GMP_VERSION_OK)
+
+  mark_as_advanced(GMP_ROOT GMP_INCLUDE_DIRS GMP_LIBRARIES GMP_LIBRARY_DIRS)
 
 endif()

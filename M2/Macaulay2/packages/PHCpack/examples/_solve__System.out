@@ -14,7 +14,6 @@ o2 = {x + y + z - 1, x  + y , x + y - z - 3}
 o2 : List
 
 i3 : L = solveSystem(S)
-*** variables in the ring : {x, y, z} ***
 
 o3 = {{1-ii, 1+ii, -1}, {1+ii, 1-ii, -1}}
 
@@ -45,7 +44,6 @@ i7 : #system > numcols vars R --overdetermined system
 o7 = true
 
 i8 : solns = solveSystem(system);
-*** variables in the ring : {x, y, z} ***
 *** after parseSolutions, ring has {x, y, z} ***
 
 i9 : numSolns = #solns

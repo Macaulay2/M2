@@ -76,7 +76,7 @@ doc ///
    Text
      replaceFirstLine replaces the first line of a file with a string. This function is used in the trace test functions.
    Example
-     writeStartFile(storeBM2Files,{{2,3},{4,5}})
+     writeStartFile(storeBM2Files,{{2,3},{4,5}});
      replaceFirstLine(storeBM2Files,"start","1")
 
 ///;
@@ -102,13 +102,13 @@ doc ///
    Example
      makeB'InputFile(storeBM2Files,
      	 AffVariableGroup=>{x,y},
-	 B'Polynomials=>{"x^2-1","y^2-4"})
+	 B'Polynomials=>{"x^2-1","y^2-4"});
      runBertini(storeBM2Files)
      readFile(storeBM2Files)
    Example
      makeB'InputFile(storeBM2Files,
      	 AffVariableGroup=>{x,y},
-	 B'Polynomials=>{"x^2-1","y^2-4"})
+	 B'Polynomials=>{"x^2-1","y^2-4"});
      runBertini(storeBM2Files,StorageFolder=>"StoreMyFiles")
      readFile(storeBM2Files|"/StoreMyFiles")
 ///;
@@ -140,7 +140,7 @@ doc ///
    Text
      Read the first characters of a file. When fileName is omitted "bertini_session.log" is read.
    Example
-     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y},B'Polynomials=>{"x^2+2","y^2+3"})
+     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y},B'Polynomials=>{"x^2+2","y^2+3"});
      runBertini(storeBM2Files)
      readFile(storeBM2Files,"nonsingular_solutions",1)
      readFile(storeBM2Files,10000)
@@ -172,7 +172,7 @@ doc ///
      The option TestSolutions can be set to a list of coordinates of points which will be written to a file.
    Example
     makeB'InputFile(storeBM2Files,
-    	BertiniInputConfiguration=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
+    	BertiniInputConfiguration=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    );
     runBertini(storeBM2Files)
     makeSampleSolutionsFile(storeBM2Files,2,SpecifyComponent=>{1,0})
     makeMembershipFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file")
@@ -205,7 +205,7 @@ doc ///
      makeB'InputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},
        BertiniInputConfiguration=>{{TrackType,1}},
-       B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
+       B'Polynomials=>{"(x^2+y^2+z^2-1)*y"});
      runBertini(storeBM2Files)
      makeSampleSolutionsFile(storeBM2Files,4,SpecifyComponent=>{2,0})--creates a witness point file with 4 sample points for the 0th component in dimension 2.
      theSols=importSolutionsFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file")
@@ -234,14 +234,14 @@ doc ///
      makeB'InputFile(storeBM2Files,
      	 BertiniInputConfiguration=>{{"PARAMETERHOMOTOPY",1}},
 	 ParameterGroup=>{t},    AffVariableGroup=>{{x,y}},
-	 B'Polynomials=>{x^2-1,y^2-t})
+	 B'Polynomials=>{x^2-1,y^2-t});
      runBertini(storeBM2Files)
      copyFile(storeBM2Files|"/nonsingular_solutions",storeBM2Files|"/start")
      makeB'InputFile(storeBM2Files,
      	 BertiniInputConfiguration=>{{"PARAMETERHOMOTOPY",2}},
 	 ParameterGroup=>{t},    AffVariableGroup=>{{x,y}},
-	 B'Polynomials=>{x^2-1,y^2-t})
-     writeParameterFile(storeBM2Files,{1})
+	 B'Polynomials=>{x^2-1,y^2-t});
+     writeParameterFile(storeBM2Files,{1});
      runBertini(storeBM2Files)
 
 ///;
@@ -263,7 +263,7 @@ doc ///
      After importing a main_data file we have a list of points. This function organizes the components by irreducible component.
    Example
      F={"x*(x+2*y+3*z^2)","(y^3-x+z)*(z)*(x+2*y+3*z^2)"}
-     makeB'InputFile(storeBM2Files,BertiniInputConfiguration=>{{TrackType,1}},AffVariableGroup=>{x,y,z},B'Polynomials=>F)
+     makeB'InputFile(storeBM2Files,BertiniInputConfiguration=>{{TrackType,1}},AffVariableGroup=>{x,y,z},B'Polynomials=>F);
      runBertini(storeBM2Files)
      listPoints=importMainDataFile(storeBM2Files)
      #listPoints
@@ -403,7 +403,7 @@ doc///
 	 BertiniInputConfiguration=>{{"PARAMETERHOMOTOPY",1}},
 	 AffVariableGroup=>{{x,y}},
 	 ParameterGroup=>{u},
-	 B'Polynomials=>{y-(x^2-1),y-u})
+	 B'Polynomials=>{y-(x^2-1),y-u});
 
 ///;
 
@@ -423,7 +423,7 @@ doc///
 	 BertiniInputConfiguration=>{"MPTYPE"=>2},
      	 HomVariableGroup=>{{x0,x1},{y0,y1}},
 	 AffVariableGroup=>{{z}},
-	 B'Polynomials=>{z*x1^2+x0^2,y0*z+y1,y0-2*z^2*y1})
+	 B'Polynomials=>{z*x1^2+x0^2,y0*z+y1,y0-2*z^2*y1});
 
 ///;
 
@@ -451,7 +451,7 @@ doc///
      makeB'InputFile(storeBM2Files,
 	 BertiniInputConfiguration=>{{"MPTYPE",2}},
 	 AffVariableGroup=>{{x,y}},
-	 B'Polynomials=>{x+y-1,x^2-2})
+	 B'Polynomials=>{x+y-1,x^2-2});
    Text
      B'Polynomials can be in combination with B'Functions. B'Functions allows the user to define subfunctions.
    Example
@@ -459,7 +459,7 @@ doc///
      makeB'InputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 B'Functions=>{{A,x^2-1}},
-	 B'Polynomials=>{A+y,x+y-2})
+	 B'Polynomials=>{A+y,x+y-2});
 
 ///;
 
@@ -481,7 +481,7 @@ doc///
      makeB'InputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 NamePolynomials=>{f1,f2},
-	 B'Functions=>{{f1,x+y-1},f2=>x^2-2})--f1=x+y+1,f2=x^2-2 is written to the input file
+	 B'Functions=>{{f1,x+y-1},f2=>x^2-2});  --f1=x+y+1,f2=x^2-2 is written to the input file
    Text
      B'Polynomials can be in combination with B'Functions. B'Functions allows the user to define subfunctions.
    Example
@@ -489,7 +489,7 @@ doc///
      makeB'InputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 B'Functions=>{{A,x^2-1}},--A=x^2-1 is written to the input file
-	 B'Polynomials=>{A+y,x+y-2})
+	 B'Polynomials=>{A+y,x+y-2});
 
 ///;
 
@@ -509,7 +509,7 @@ doc///
      makeB'InputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 NamePolynomials=>{f1,f2},
-	 B'Functions=>{{f1,x+y-1},{f2,x^2-2}})--f1=x+y+1,f2=x^2-2 is written to the input file
+	 B'Functions=>{{f1,x+y-1},{f2,x^2-2}}); --f1=x+y+1,f2=x^2-2 is written to the input file
 
 ///;
 
@@ -528,7 +528,7 @@ doc///
      makeB'InputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 B'Polynomials=>{x+y-1,x^2-2},
-	 NameB'InputFile=>"testInput")--the input file will be named "testInput" rather than the default "input".
+	 NameB'InputFile=>"testInput"); --the input file will be named "testInput" rather than the default "input".
 
 ///;
 
@@ -543,7 +543,7 @@ doc///
    Text
      Set this option to a string to name the parameter file.
    Example
-     writeParameterFile(storeBM2Files,{.1,.2,.5},NameParameterFile=>"testParameters")  --this function writes a parameter file named testParameters
+     writeParameterFile(storeBM2Files,{.1,.2,.5},NameParameterFile=>"testParameters");  --this function writes a parameter file named testParameters
 
 ///;
 
@@ -1137,7 +1137,7 @@ doc///
      makeB'InputFile(storeBM2Files,
 	 BertiniInputConfiguration=>{{"MPTYPE",2}},
      	 AffVariableGroup=>{{x1,x2},{y}},
-	 B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
+	 B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2});
 
 ///;
 
@@ -1371,7 +1371,7 @@ doc ///
      makeB'InputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},
        BertiniInputConfiguration=>{{TrackType,1}},
-       B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
+       B'Polynomials=>{"(x^2+y^2+z^2-1)*y"});
      runBertini(storeBM2Files)
      makeWitnessSetFiles(storeBM2Files,2)--creats a witness point file for all dimension 2 components and a linear slice file for dimension 2 components.
      L=importSliceFile(storeBM2Files)

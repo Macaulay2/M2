@@ -226,7 +226,7 @@ document {
      PARA{
 	  "Use this file to get input from the terminal, or to display information
 	  on the user's screen.  This is the file always used by ", TO "print", "
-	  and used ", TO "<<", " if it is not explicitly given a file."
+	  and ", TO "<<", " if it is not explicitly given a file."
 	  },
      EXAMPLE lines ///
      << "hi" << endl
@@ -618,7 +618,6 @@ undocumented {
      (symbol ?, Thing, InfiniteNumber),
      (symbol ?, TOH, TOH),
      (symbol ?, InfiniteNumber, Thing),
-     (symbol ?, Function),
      (symbol ?, ZZ, MonoidElement),
      (symbol ?, MonoidElement, ZZ),
      (symbol ?, RingElement, ZZ),

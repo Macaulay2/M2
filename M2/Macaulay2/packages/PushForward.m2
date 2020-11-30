@@ -6,6 +6,7 @@ newPackage(
                   Email => "craicu@nd.edu", 
                   HomePage => "http://www3.nd.edu/~craicu"}},
         Headline => "push forwards of finite ring maps",
+	Keywords => {"Commutative Algebra"},
         DebuggingMode => false
         )
         
@@ -184,7 +185,10 @@ document{
   A = kk[a,d]
   use R
   F = map(R,A)
-  pushFwd F
+  (M,g,pf) = pushFwd F;
+  M
+  g
+  pf(a*b - c^2)
   ///,
   TEX "In a previous version of this package, the third output was a function which assigned to each element of the target of ", TT "f", " its representation as an element of a free module which surjected onto the pushed forward module."
   }

@@ -28,7 +28,7 @@ configure builds.tmp/$(DIRECTORY)/include/configuration:
 	@ D=`cd ../.. ; /bin/pwd` ;\
 	  E=`pwd` ;\
 	  echo "make: Entering directory \`$$E/builds.tmp/$(DIRECTORY)'" &&\
-	  cd "builds.tmp/$(DIRECTORY)" && $$D/configure $(CONFIGOPTIONS) &&\
+	  cd "builds.tmp/$(DIRECTORY)" && ( set -x ; $$D/configure $(CONFIGOPTIONS)) &&\
 	  echo "make: Leaving directory \`$$E/builds.tmp/$(DIRECTORY)'"
 default: arch-chk all check check-links
 distclean: distclean1 distclean1-check

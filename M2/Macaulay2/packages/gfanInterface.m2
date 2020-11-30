@@ -12,6 +12,7 @@ newPackage(
 		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"},
 	    {Name => "Diane Maclagan (current maintainer)", Email => "D.Maclagan@warwick.ac.uk", HomePage=>"http://homepages.warwick.ac.uk/staff/D.Maclagan/"}},
 	Headline => "interface to Anders Jensen's Gfan software",
+	Keywords => {"Interfaces"},
 	Configuration => {
 		"path" => "",
 		"fig2devpath" => "",
@@ -85,53 +86,13 @@ export {
 	"multiplicitiesReorder"
 }
 
-noGfan = raiseError -> if raiseError then error "could not find gfan"
-
-tryGfanPath = gfanPath -> run(gfanPath | "gfan --help 2> /dev/null")
-
--- we expect a trailing slash in the path, but the paths given in the
--- PATH environment variable likely will not have one, so we add one
--- if needed
-addSlash = gfanPath -> (
-	if last gfanPath != "/" then return gfanPath | "/"
-	else return gfanPath
-)
-
-checkGfanPath = gfanPath -> (
-	if gfanVerbose == true then
-		print("checking for gfan in " | gfanPath | "...");
-	if tryGfanPath(gfanPath) == 0 then (
-		if gfanVerbose == true then print("  found");
-		return true
-	) else (
-		if gfanVerbose == true then print("  not found");
-		return false
-	)
-)
-
-findGfanPath = {"RaiseError" => true} >> opts -> () -> (
-	-- try user-configured path first
-	gfanPath := gfanInterface#Options#Configuration#"path";
-	if gfanPath != "" then (
-		gfanPath = addSlash(gfanPath);
-		if checkGfanPath(gfanPath) then return gfanPath;
-	);
-	-- now try M2-installed gfan
-	gfanPath = addSlash(prefixDirectory | currentLayout#"programs");
-	if checkGfanPath(gfanPath) then return gfanPath;
-	-- finally, try PATH
-	if getenv "PATH" == "" then return noGfan(opts#"RaiseError");
-	paths := apply(separate(":", getenv "PATH"), addSlash);
-	gfanPath = scan(paths, gfanPath ->
-		if checkGfanPath(gfanPath) then break gfanPath
-	);
-	if class(gfanPath) === String then return gfanPath
-	else noGfan(opts#"RaiseError");
-)
-
 fig2devPath = gfanInterface#Options#Configuration#"fig2devpath"
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
-gfanPath = null
+-- for backward compatibility
+if not programPaths#?"gfan" and gfanInterface#Options#Configuration#"path" != ""
+    then programPaths#"gfan" = gfanInterface#Options#Configuration#"path"
+
+gfanProgram = null
 
 gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
 gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
@@ -380,28 +341,28 @@ gfanParseIdeals String := (s) -> (
 
 gfanParseIdeal = method()
 gfanParseIdeal String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	value concatenate G
 )
 
 gfanParseMarkedIdeal = method()
 gfanParseMarkedIdeal String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	markedPolynomialList transpose apply(gfanParseList(concatenate G), p -> gfanParseMarkedPoly(p))
 )
 
 gfanParseMarkedIdeals = method()
 gfanParseMarkedIdeals String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	apply(gfanParseList(concatenate G), L -> markedPolynomialList transpose apply(L, p -> gfanParseMarkedPoly(p)))
 )
 
 gfanParseMPL = method()
 gfanParseMPL String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	new MarkedPolynomialList from
 		transpose apply(gfanParseList(concatenate G), p -> gfanParseMarkedPoly(p))
@@ -409,7 +370,7 @@ gfanParseMPL String := (s) -> (
 
 gfanParseLMPL = method()
 gfanParseLMPL String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	apply(gfanParseList(concatenate G), L ->
 		new MarkedPolynomialList from transpose apply(L, p -> gfanParseMarkedPoly(p)))
@@ -1052,34 +1013,29 @@ runGfanCommand = (cmd, opts, data) -> (
 )
 
 runGfanCommandCaptureBoth = (cmd, opts, data) -> (
-	if gfanPath === null then gfanPath = findGfanPath();
+	if gfanProgram === null then
+	    gfanProgram = findProgram("gfan", "gfan --help",
+		Verbose => gfanVerbose);
 	tmpFile := gfanMakeTemporaryFile data;
-	
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
 
-	if gfanVerbose then << ex << endl;
-	returnvalue := run ex;
-	errorMsg := "";
-     	if(not returnvalue == 0) then
-	(
-	    errorMsg = "Gfan returned an error message.\n";
-	    errorMsg = errorMsg | "COMMAND:" | ex | "\n";
-	    errorMsg = errorMsg | "INPUT:\n";
-	    errorMsg = errorMsg | get(tmpFile);
-	    errorMsg = errorMsg | "ERROR:\n";
-	    errorMsg = errorMsg | get(tmpFile |".err");
-	     );
-	out := get(tmpFile | ".out");
-	err := get(tmpFile | ".err");
+	args := replace("^gfan ", "", cmd) | concatenate apply(keys opts, key ->
+	    gfanArgumentToString(cmd, key, opts#key));
+	gfanRun := runProgram(gfanProgram, args | " < " | tmpFile,
+	    RaiseError => false, KeepFiles => gfanKeepFiles,
+	    Verbose => gfanVerbose);
 	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
-	if length(errorMsg) > 0 then error errorMsg;
+
+	-- we display our own error message instead of using the runProgram
+	-- default so we can display data
+	if gfanRun#"return value" != 0 then error(
+	    "Gfan returned an error message.\n" |
+	    "COMMAND: " | gfanRun#"command" | "\n" |
+	    "INPUT:\n" | data |
+	    "ERROR:\n" | gfanRun#"error");
+
 	outputFileName := null;
-	if gfanKeepFiles then outputFileName = tmpFile|".out";
-	(out,err, "GfanFileName"=>outputFileName)
+	if gfanKeepFiles then outputFileName = gfanRun#"output file";
+	(gfanRun#"output", gfanRun#"error", "GfanFileName"=>outputFileName)
 )
 
 runGfanCommandCaptureError = (cmd, opts, data) -> (
@@ -2588,8 +2544,9 @@ gfanFunctions = hashTable {
 --)
 --WARNING - the word PARA was deleted from the next function (it used to read "l -> PARA {l})
 gfanHelp = (functionStr) -> (
-	if gfanPath === null then gfanPath = findGfanPath("RaiseError" => false);
-	if gfanPath === null then {}
+	if gfanProgram === null then gfanProgram = findProgram("gfan",
+	    "gfan --help", RaiseError => false);
+	if gfanProgram === null then {}
 	else apply( lines runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") , l-> {l})
 )
 
@@ -2632,14 +2589,17 @@ doc ///
 			with @EM "Macaulay2"@ (since version 1.3) and so, it is not necessary to install {\tt gfan}
 			separately.
 
-			The {\tt gfanInterface} package contains the configuration option {\tt "path"} which
-			allows the user to specify which {\tt gfan} executables are used. When the path unspecified,
-			it defaults to an empty string and the binaries provided by Macaulay 2 are used.
+			The user can specify which {\tt gfan} executables are used by setting the appropriate key
+			in the @TO "programPaths"@ hash table.	When the path is unspecified, then the binaries
+			provided by Macaulay2 are used, if present.  If they are not present, then the directories
+			specified in the user's {\tt PATH} environment variable are searched.
 
-			You can change the path, if needed, while loading the package:
+			You can change the path, if needed, by setting the appropriate key in @TO "programPaths"@
+			and loading the package:
 
 		Example
-			loadPackage("gfanInterface", Configuration => { "path" => "/directory/to/gfan/"}, Reload => true)
+			programPaths#"gfan" = "/directory/to/gfan/"
+			loadPackage("gfanInterface", Reload => true)
 
 		Text
 			The path to the executables should end in a slash.

@@ -9,7 +9,12 @@ LICENSEFILES = COPYING README
 PROGRAMS = src-reg/checkregularity src/points2finetriang src/points2chiro src/chiro2circuits src/chiro2cocircuits \
 	src/points2allfinetriangs src/points2alltriangs src/points2ntriangs src/points2nfinetriangs \
 	src/points2finetriangs src/points2flips src/points2nallfinetriangs src/points2nalltriangs src/points2nflips \
-	src/points2triangs src/points2volume
+	src/points2triangs src/points2volume src/B_A src/B_A_center src/B_D \
+	src/chiro2allfinetriangs src/chiro2alltriangs src/chiro2dual src/chiro2finetriang src/chiro2finetriangs \
+	src/chiro2mintriang src/chiro2nallfinetriangs src/chiro2nalltriangs src/chiro2nfinetriangs \
+	src/chiro2ntriangs src/chiro2placingtriang src/chiro2triangs src/cocircuits2facets src/cross \
+	src/cube src/cyclic src/hypersimplex src/lattice src/points2facets src/points2placingtriang \
+	src/santos_22_triang src/santos_dim4_triang src/santos_triang
 STRIPFILES = $(PROGRAMS)
 INSTALLCMD = :
 include ../Makefile.library

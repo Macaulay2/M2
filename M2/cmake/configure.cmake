@@ -14,7 +14,7 @@
 # use CMAKE_BUILD_TYPE=RelMinSize            for minimized release
 # use BUILD_TESTING=ON                       to build the testing tree
 
-option(USING_MPIR	"Use MPIR instead of GMP"		ON)
+option(USING_MPIR	"Use MPIR instead of GMP"		OFF)
 option(DEVELOPMENT	"Set the DEVELOPMENT macro in config.h"	OFF)
 option(EXPERIMENT	"Set the EXPERIMENT macro in config.h"	OFF)
 option(LINTING		"Enable linting source files"		OFF)
@@ -146,6 +146,7 @@ set(M2_INSTALL_PROGRAMSDIR ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LI
 set(CMAKE_PROGRAM_PATH     ${M2_INSTALL_PROGRAMSDIR})
 
 message("\n## Staging area prefixes
+     usr-host          = ${M2_HOST_PREFIX}
      common            = ${M2_DIST_PREFIX}/${M2_DATA_INFIX}
      exec              = ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}")
 
@@ -206,6 +207,15 @@ endif()
 # TODO: look into compiler features:
 # https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
 
+# Flags based on OS
+if(ISSUE MATCHES Ubuntu)
+  # Apparently libboost_stacktrace_backtrace is not reliably available on all platforms.
+  set(Boost_stacktrace stacktrace_backtrace)
+else()
+  # addr2line is more readily available, but does not work well with -fPIE
+  set(Boost_stacktrace stacktrace_addr2line)
+endif()
+
 # Common flags
 # TODO: reduce these if possible
 add_link_options(-L${M2_HOST_PREFIX}/lib)
@@ -227,6 +237,11 @@ if(VERBOSE)
   message("## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)
      Compiler flags    = ${COMPILE_OPTIONS}
      Linker flags      = ${LINK_OPTIONS}\n")
+  message("## CMake path variables
+     CMAKE_SYSTEM_PREFIX_PATH
+       ${CMAKE_SYSTEM_PREFIX_PATH}
+     CMAKE_C_IMPLICIT_LINK_DIRECTORIES
+       ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES}\n")
 endif()
 
 ###############################################################################
@@ -284,7 +299,6 @@ check_include_files(sys/wait.h	HAVE_SYS_WAIT_H)
 check_include_files(termios.h	HAVE_TERMIOS_H)
 check_include_files(time.h	HAVE_TIME_H)
 check_include_files(unistd.h	HAVE_UNISTD_H)
-check_include_files(regex.h	HAVE_REGEX_H)
 # TODO: clear out d/types.h
 
 include(CheckFunctionExists)

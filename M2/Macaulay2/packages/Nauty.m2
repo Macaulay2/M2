@@ -14,6 +14,7 @@ newPackage select((
                  Email => "dwcook@eiu.edu",
                  HomePage => "http://ux1.eiu.edu/~dwcook/"}},
     Headline => "interface to nauty",
+    Keywords => {"Graph Theory", "Interfaces"},
     Configuration => {"path" => ""},
     PackageExports => {"EdgeIdeals"},
     DebuggingMode => false,
@@ -24,8 +25,8 @@ newPackage select((
 	 "acceptance date" => "2011-04-20",
 	 "published article URI" => "http://j-sag.org/Volume3/jsag-1-2011.pdf",
 	 "published code URI" => "http://j-sag.org/Volume3/Nauty.m2",
-	 "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Nauty.m2",
-	 "release at publication" => 13224,
+	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Nauty.m2",
+	 "release at publication" => "ea719b4fd3b65bb35ebd0f10f356c7d53ba73b7d",
 	 "version at publication" => "1.4.1",
 	 "volume number" => "3",
 	 "volume URI" => "http://j-sag.org/Volume3/"
@@ -36,10 +37,9 @@ newPackage select((
 -- Configuration
 -------------------
 
--- Check the ~/.Macaulay2/init-Nauty.m2 file for the absolute path.
--- If it's not there, then use the M2-Programs directory.
-nauty'path = (options Nauty).Configuration#"path";
-if nauty'path == "" then nauty'path = prefixDirectory | currentLayout#"programs";
+-- for backward compatibility
+if not programPaths#?"nauty" and Nauty#Options#Configuration#"path" != ""
+    then programPaths#"nauty" = Nauty#Options#Configuration#"path"
 
 -------------------
 -- Exports
@@ -458,6 +458,8 @@ stringToGraph (String, PolynomialRing) := Graph => (str, R) -> graph stringToEdg
 -- Local-Only Code
 -------------------
 
+nauty = null
+
 -- Sends a command and retrieves the results into a list of lines.
 -- If ReadError is set to true and the command is successfully executed,
 -- then the data from stderr is returned (filterGraphs and removeIsomorphs
@@ -465,34 +467,20 @@ stringToGraph (String, PolynomialRing) := Graph => (str, R) -> graph stringToEdg
 protect ReadError;
 callNauty = method(Options => {ReadError => false})
 callNauty (String, List) := List => opts -> (cmdStr, dataList) -> (
+    if nauty === null then
+	nauty = findProgram("nauty", "complg --help",
+	    Prefix => {(".*", "nauty-")}); -- debian/fedora
     infn := temporaryFileName();
     erfn := temporaryFileName();
     -- output the data to a file
     o := openOut infn;
     scan(graphToString \ dataList, d -> o << d << endl);
     close o;
-    -- try to harvest the lines
-    r := lines try get openIn ("!" | nauty'path | cmdStr | " <" | infn | " 2>" | erfn)
-    else (
-        -- nauty errored, harvest the error
-        e := last separate(":", first lines get openIn erfn);
-        removeFile infn;
-        removeFile erfn;
-        -- special cases 
-        if e == " not found" then error("callNauty: nauty could not be found on the path [" | nauty'path | "].");
-        if e == "#q -V] [--keys] [-constraints -v] [ifile [ofile]]" then e = "invalid filter";
-	    error("callNauty: nauty terminated with the error [", e, "].");
-    );
+    exe := first separate(" ", cmdStr);
+    args := replace(exe | " ", "", cmdStr);
+    r := runProgram(nauty, exe, args | " < " | infn);
     removeFile infn;
-    -- If the method wants it, then read the stderr data instead.
-    if opts.ReadError then (
-        r = lines try get openIn erfn else (
-            removeFile erfn;
-            error("callNauty: nauty ran successfully, but no data was written to stderr as expected.  Report this to the package maintainer.");
-        );
-    );
-    removeFile erfn;
-    r
+    if opts.ReadError then lines r#"error" else lines r#"output"
 )
 
 -- Processes an option which should be a Boolean.

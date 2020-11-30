@@ -162,6 +162,12 @@ methods Thing := F -> (
      -- sort -- too slow
      previousMethodsFound = new NumberedVerticalList from sortByName keys found)
 
+hooks = method()
+hooks   (MutableHashTable,Thing) := (obj,key) -> previousMethodsFound = new NumberedVerticalList from obj#key
+hooks   (HashTable,Thing) := (obj,key) -> previousMethodsFound = new NumberedVerticalList from (obj.cache)#key
+hooks   (Symbol) := (sym) -> previousMethodsFound = new NumberedVerticalList from (value sym)
+
+
 debuggerUsageMessage = ///--debugger activation depth control:
     errorDepth=3   	-- activate at positions in user code (default)
     errorDepth=2   	-- activate also at positions in packages

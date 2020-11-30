@@ -75,7 +75,7 @@ document {
 	       stored in ", TT "obj#key", " if ", TT "obj", " is mutable, or in ", TT "obj.cache#key", " if not" }
 	  },
      SourceCode => {(addHook,HashTable,Thing,Function), (addHook,MutableHashTable,Thing,Function)},
-     SeeAlso => { (runHooks,HashTable,Thing,Thing), (removeHook,HashTable,Thing,Function) }
+     SeeAlso => { "using hooks", (runHooks,HashTable,Thing,Thing), (removeHook,HashTable,Thing,Function) }
      }
 document {
      Key => { (addHook,Symbol,Function) },
@@ -86,7 +86,7 @@ document {
 	       stored as the value of ", TT "sym" }
 	  },
      SourceCode => {(addHook,HashTable,Thing,Function), (addHook,MutableHashTable,Thing,Function)},
-     SeeAlso => { (runHooks,Symbol,Thing), (removeHook,Symbol,Function) }
+     SeeAlso => { "using hooks", (runHooks,Symbol,Thing), (removeHook,Symbol,Function) }
      }
 undocumented {(removeHook,MutableHashTable,Thing,Function)}
 document {
@@ -101,7 +101,7 @@ document {
 	  { "the function ", TT "hook", " is removed from the list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key" }
 	  },
      SourceCode => {(removeHook,HashTable,Thing,Function), (removeHook,MutableHashTable,Thing,Function)},
-     SeeAlso => { (runHooks,HashTable,Thing,Thing), (removeHook,HashTable,Thing,Function) }
+     SeeAlso => { "using hooks", (runHooks,HashTable,Thing,Thing), (removeHook,HashTable,Thing,Function) }
      }
 document {
      Key => { (removeHook,Symbol,Function)},
@@ -110,7 +110,7 @@ document {
      Consequences => {
 	  { "the function ", TT "hook", " is removed from the list of hooks stored in the value of ", TT "sym" }
 	  },
-     SeeAlso => { (runHooks,Symbol,Thing), (addHook,Symbol,Function) }
+     SeeAlso => { "using hooks", (runHooks,Symbol,Thing), (addHook,Symbol,Function) }
      }
 undocumented {(runHooks,MutableHashTable,Thing,Thing)}
 document {
@@ -122,28 +122,79 @@ document {
      Usage => "runHooks(obj,key,arg)",
      Inputs => { "obj", "key", "arg" },
      Outputs => {{
-	       "If one of the functions uses ", TO "break", " to return a value, that value will be returned.  Otherwise ", TO "null", " will be returned."
+	       "If one of the hook functions returns a non-", TO "null", " value, that value will be returned.  Otherwise ", TO "null", " will be returned."
 	       }},
-     Consequences => {
-	  { "each function ", TT "hook", " in list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key", " is
-	       called with ", TT "arg", " as its argument or sequence of arguments." }
-	  },
-     SourceCode => { (runHooks,HashTable,Thing,Thing), (runHooks,MutableHashTable,Thing,Thing) },
-     SeeAlso => { addHook, removeHook }
+     PARA { "Each function ", TT "hook", " in the list of hooks stored in ", TT "obj#key", " or ", TT "obj.cache#key", " is
+            called with ", TT "arg", " as its argument or sequence of arguments. Any optional argument for ", TT "runHooks",
+            " that matches any key in ", TT "options hook", " will be passed on to ", TT "hook", ". Otherwise it will be ignored." 
+       },
+     SeeAlso => { "using hooks", addHook, removeHook }
      }
 document {
      Key => { (runHooks,Symbol,Thing) },
      Usage => "runHooks(sym,arg)",
      Inputs => { "sym", "arg" },
      Outputs => {{
-	       "If one of the functions uses ", TO "break", " to return a value, that value will be returned.  Otherwise ", TO "null", " will be returned."
-	       }},
-     Consequences => {
-	  { "each function ", TT "hook", " in list of hooks stored in value of ", TT "sym", " is
-	       called with ", TT "arg", " as its argument or sequence of arguments." }
-	  },
-     SeeAlso => { (addHook,Symbol,Function), (removeHook,Symbol,Function) }
+	       "If one of the hook functions returns a non-", TO "null", " value, that value will be returned.  Otherwise ", TO "null", " will be returned."
+            }},
+     PARA {
+	"Each function ", TT "hook", " in the list of hooks stored in the value of ", TT "sym", " is
+     called with ", TT "arg", " as its argument or sequence of arguments. Any optional argument for ", TT "runHooks",
+     " that matches any key in ", TT "options hook", " will be passed on to ", TT "hook", ". Otherwise it will be ignored." 
+	},
+     SeeAlso => { "using hooks", (addHook,Symbol,Function), (removeHook,Symbol,Function) }
      }
+
+
+document {
+     Key => {hooks,(hooks, MutableHashTable, Thing),(hooks, HashTable, Thing),(hooks, Symbol)},
+     Headline => "list hooks",
+     SYNOPSIS (
+       Usage => "methods(X, f)",
+       Inputs => {
+            "x" => { ofClass{MutableHashTable} }
+            },
+       Outputs => {{
+              ofClass VerticalList, " of those hooks associated with ", TT "X#f"
+              }},
+       EXAMPLE lines ///
+            instance(Ideal, MutableHashTable)
+            addHook(Ideal, symbol foo, I -> gens I);
+            addHook(Ideal, symbol foo, I -> if dim I == 0 then vars ring I);
+            Ideal#?(symbol foo)
+            hooks(Ideal, symbol foo)
+       ///
+       ),
+     SYNOPSIS (
+       Usage => "methods(X, f)",
+       Inputs => {
+            "x" => { ofClass{HashTable} }
+            },
+       Outputs => {{
+              ofClass VerticalList, " of those hooks associated with ", TT "X.cache#f"
+              }},
+       EXAMPLE lines ///
+            ht = new HashTable from {cache => new MutableHashTable};
+            addHook(ht, symbol foo, i -> i + 1);
+            hooks(ht, symbol foo)
+       ///
+       ),
+     SYNOPSIS (
+       Usage => "hooks(sym)",
+       Inputs => {
+            "sym" => Symbol
+            },
+       Outputs => {{
+              ofClass VerticalList, " of those hooks stored in the value of ", TT "sym"
+              }},
+       EXAMPLE lines ///
+            addHook(symbol bar, i-> i + 1)
+            hooks(symbol bar)
+       ///
+       ),
+     SeeAlso => { "using hooks" }
+     }
+
 undocumented {(generateAssertions, List)}
 document { Key => {generateAssertions,(generateAssertions, String)},
      Headline => "generate assert statements from experimental input",
@@ -233,24 +284,6 @@ document { Key => {applicationDirectory, "application directory"},
      PARA { "The function ", TO "applicationDirectorySuffix", " determines the value of ", TT "applicationDirectory", ", and can be modified by the user." },
      EXAMPLE "applicationDirectory()",
      SeeAlso => "applicationDirectorySuffix"}
-
-document {
-     Key => installedPackages,
-     Usage => "installedPackages()",
-     Outputs => { 
-	  List => {{"a list of strings containing the names of the packages that have been installed in the user's ", TO "application directory", "."}},
-	  },
-     SeeAlso => { installPackage }
-     }
-
-document {
-     Key => uninstallAllPackages,
-     Usage => "uninstallAllPackages()",
-     Consequences => {
-	  { "the packages that have been installed in the user's ", TO "application directory", " are uninstalled." }
-	  },
-     SeeAlso => { installPackage, uninstallPackage }
-     }
 
 document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ),(round,CC)},
      Headline => "round a number",
@@ -355,15 +388,8 @@ document { Key => (conjugate,Partition),
      ///}
 document { Key => UpdateOnly,
      Headline => "only copies of newer files should replace files" }
-document { Key => [copyDirectory, UpdateOnly],
-     Usage => "copyDirectory(..., UpdateOnly => true)",
-     Consequences => {{ "during the indicated copy operation, newer files will not be replaced by copies of older ones" }}}
 document { Key => Verbose,
      Headline => "request verbose feedback" }
-document { Key => PrimaryTag,
-     Headline => "for internal use only: a symbol used in storing documentation" }
-document { Key => LoadDocumentation,
-     Headline => "when loading a package, load the documentation, too" }
 document { Key => {ofClass,(ofClass, Type),(ofClass, ImmutableType),(ofClass, List)}, 
      Headline => "English phrases for types",
      Usage => "ofClass T",
@@ -471,17 +497,6 @@ document { Key => NumberedVerticalList,
      SeeAlso => { VerticalList }
      }
 
-document { Key => ForestNode,
-     Headline => "a type of basic list used to represent a forest, i.e., a list of rooted trees",
-     "This type is sort of experimental, and is used mainly internally in assembling the table of contents for the documentation of a package.",
-     SeeAlso => {TreeNode}
-     }
-document { Key => TreeNode,
-     Headline => "a type of basic list used to represent a rooted tree",
-     "This type is sort of experimental, and is used mainly internally in assembling the table of contents for the documentation of a package.",
-     SeeAlso => {ForestNode}
-     }
-
 document { Key => FunctionClosure,
      Headline => "the class of all function closures",
      "Functions created by the operator ", TO "->", " are function closures.",
@@ -557,15 +572,6 @@ document { Key => OutputDictionary,
 	  peek OutputDictionary
      ///,
      SeeAlso => { "dictionaryPath" }
-     }
-document { Key => PackageDictionary,
-     Headline => "the dictionary for names of packages",
-     SeeAlso => { "dictionaryPath" },
-     "This dictionary is used just for names of packages.",
-     EXAMPLE lines ///
-         dictionaryPath
-	 values PackageDictionary
-     ///
      }
 document { Key => Pseudocode,
      Headline => "the class of pseudocodes",
@@ -687,13 +693,6 @@ document { Key => "backtrace",
      Usage => "backtrace = false",
      Consequences => { "a backtrace will not displayed following an error message" }
      }
-document { Key => "backupFileRegexp",
-     Headline => "a regular expression for recognizing names of backup files",
-     "This regular expression is used by ", TO "copyDirectory", " and ", TO "symlinkDirectory", ": they will ignore backup files when copying all the files in
-     a directory, and just copy the other ones.",
-     Caveat => "Perhaps, instead of this being a global variable, there should be a way
-     to change the default values for optional arguments to functions.  We may change this."
-     }
 document { Key => "prefixDirectory",
      Headline => "the prefix directory",
      PARA {
@@ -754,89 +753,6 @@ document { Key => {(unbag, Bag), unbag},
 	  y = Bag {x}
 	  unbag y
      ///
-     }
-document { Key => {undocumented,(undocumented, Thing), (undocumented, List)},
-     Headline => "declare that something need not be documented",
-     Usage => "undocumented key",
-     Inputs => { "key" => { "a documentation key, or a list of keys" }},
-     Consequences => { { "the documentation key(s) are designated as keys not needing documentation, thus avoiding warning messages when a package is installed" }},
-     SeeAlso => { installPackage, "documentation keys" },
-     EXAMPLE lines ///
-     	  f = method()
-	  f List := x -> 1
-	  f VisibleList := x -> 2
-	  f BasicList := x -> 3
-	  undocumented { f, (f,List) }
-     ///,
-     }
-document { Key => "documentation keys",
-     PARA {"The Macaulay2 documentation is linked together by cross-references from one documentation node to another.  Each node is identified by a
-     	  string, which is the title of the node.  Some nodes, such as this one, have titles that are simply invented by the author.  Others have titles
-     	  that are manufactured in a certain way from the aspect of the program being documented, for the sake of uniformity."
-	  },
-     PARA {"For example, the title of the node describing resolutions of modules is ", TT format "resolution Module", ".  The corresponding key is
-     	  ", TT "(resolution, Module)", ", and it is the job of the function ", TO "makeDocumentTag", " to convert keys to titles."
-	  },
-     PARA "Here is a list of the various types of documentation keys.",
-     UL {
-	  LI { TT format "a string" },
-	  LI { TT "s", "a symbol" },
-	  LI { TT "(f,X)", "a method function or unary operator ", TT "f", " that accepts an argument of type ", TT "X" },
-	  LI { TT "(f,X,Y)", "a method function or binary operator ", TT "f", " that accepts 2 arguments, of types ", TT "X", " and ", TT "Y" },
-	  LI { TT "(f,X,Y,Z)", "a method function ", TT "f", " that accepts 3 arguments, of types ", TT "X", ", ", TT "Y", " and ", TT "Z" },
-	  LI { TT "(f,X,Y,Z,T)", "a method function ", TT "f", " that accepts 4 arguments, of types ", TT "X", ", ", TT "Y", ", ", TT "Z", " and ", TT "T" },
-	  LI { TT "[f,A]", "a function ", TT "f", " with an optional named ", TT "A" },
-     	  LI { TT "(NewOfFromMethod,X,Y,Z)", "the method for ", TT "new X of Y from Z" },
-     	  LI { TT "(NewOfMethod,X,Y)", "the method for ", TT "new X of Y" },
-     	  LI { TT "(NewFromMethod,X,Z)", "the method for ", TT "new X from Z" },
-     	  LI { TT "(NewMethod,X)", "the method for ", TT "new X" },
-     	  LI { TT "((symbol ++, symbol =), X,Y)", "the method for assignment ", TT "X ++ Y = ..." },
-	  LI { TT "(homology,X)", "the method for ", TT "HH X" },
-	  LI { TT "(homology,ZZ,X)", "the method for ", TT "HH_ZZ X" },
-	  LI { TT "(cohomology,ZZ,X)", "the method for ", TT "HH^ZZ X" },
-	  LI { TT "(homology,ZZ,X,Y)", "the method for ", TT "HH_ZZ (X,Y)" },
-	  LI { TT "(cohomology,ZZ,X,Y)", "the method for ", TT "HH^ZZ (X,Y)" },
-	  LI { TT "(E,ZZ,X)", "the method for ", TT "E_ZZ X", " or ", TT "E^ZZ X", ", where ", TT "E", " is a scripted functor" },
-	  LI { TT "(E,ZZ,X,Y)", "the method for ", TT "E_ZZ (X,Y)", " or ", TT "E^ZZ (X,Y)", ", where ", TT "E", " is a scripted functor" }
-	  },
-     EXAMPLE lines ///
-     	  makeDocumentTag "some title"
-	  makeDocumentTag (symbol ++, Module, Module)
-	  makeDocumentTag ((symbol _, symbol =), Symbol, Thing)
-     	  makeDocumentTag (Tor,ZZ,Module,Module)
-     ///
-     }
-
-document { Key => {about, [about, Body], Body, (help,ZZ), (about,Function), (about,String), (about,Symbol), (about,Type)},
-     Headline => "search the documentation",
-     Usage => "about s",
-     Inputs => { 
-	  "s" => { ofClass { String, Function, Symbol, Type } },
-	  Body => Boolean => { "whether also to search the bodies of the documentation nodes.  By default, just their keys are searched." }
-	  },
-     Outputs => {
-	  NumberedVerticalList => { "a list of documentation node keys matching the regular expression in the string ", TT "s", ", if ", TT "s", " is a string.
-	       Otherwise the search matches against the name of ", TT "s", " as a complete word." 
-	       }
-	  },
-     PARA {
-	  "The documentation corresponding to the keys in the list returned can be displayed by applying the function ", TO "help", " to it.
-	  To see the documentation corresponding to just one or some of the keys, give ", TO "help", " an integer or a list of integers
-	  to be used as indices in the list returned by the most recent application of ", TO "about", "."
-	  },
-     PARA {
-	  "The packages searched are the loaded packages and the packages installed under one of the prefixes listed in ", TO "prefixPath", ".
-	  The first search will take a few seconds while it reads all the documentation keys into memory."
-	  },
-     ---- this example won't work until after Macaulay2Doc is installed.
-     -- EXAMPLE lines ///
-     -- about resolution
-     -- help 5
-     -- ///,
-     Caveat => { "Since ", TT "s", " is taken as a regular expression, parentheses
-	  serve for grouping subexpressions, rather than matching themselves."
-	  },
-     SeeAlso => { help, apropos }
      }
 
 -- Local Variables:

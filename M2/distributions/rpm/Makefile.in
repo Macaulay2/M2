@@ -98,22 +98,23 @@ Macaulay2-common.spec: Macaulay2-common-body.spec Makefile .prepared-common
 	rpmbuild --buildroot @abs_builddir@/files-common -bb Macaulay2-common.spec
 	rpm -qlvp ../../$(PKG_COM_RPM) | head
 
-libraries-used: .prepared always
-	for i in files@bindir@/M2@EXE@ files@programsdir@/* ;\
-	do if [ -f $$i ] ; then ( set -x ; ldd $$i ) ; fi ; \
-	done \
-	| sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' \
-	| egrep '^/' \
-	| sort | uniq \
-	> $@ || true
+file-prereqs: .prepared always
+	for i in files@bindir@/M2@EXE@ files@programsdir@/* ;		\
+	do if [ -f $$i ] ; then ( set -x ; ldd $$i ) ; fi ;		\
+	done								\
+	    | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//'	\
+	    | egrep -v '^$(BUILTLIBPATH)'					\
+	    | sort | uniq						\
+	    > $@ || true
+	for i in @FILE_PREREQS@ ; do echo $$i ; done >>$@
 
 # Typical results returned by "rmp --query -f":
 #     gmp-devel-4.3.1-7.el6_2.2.x86_64
 #     cddlib-094g-9.fc20.x86_64
-packages-used: libraries-used
-	cat libraries-used \
-	| while read x ; \
-	do rpm --query -f "$$x" | sed 's/\([^.]*\)-\(.*\)\(-.*$$\)/\1 \2/' ;\
+packages-used: file-prereqs
+	cat file-prereqs											\
+	| while read x ;											\
+	do rpm --query -f "$$x" | sed 's/\([^.]*\)-\(.*\)\(-.*$$\)/\1 \2/' ;					\
 	done | fgrep -v 'is not owned by any package' | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
 
 ifneq (@RPMLINT@,)
@@ -121,7 +122,7 @@ check:; @RPMLINT@ -i ../../$(PKG_COM_RPM) ../../$(PKG_RPM)
 endif
 
 tidy:; rm -rf files files-common Macaulay2.spec Macaulay2-common.spec
-clean:: tidy; rm -f ../../$(PKG_RPM) ../../$(PKG_COM_RPM) libraries-used libraries-used.tmp packages-used
+clean:: tidy; rm -f ../../$(PKG_RPM) ../../$(PKG_COM_RPM) file-prereqs file-prereqs.tmp packages-used
 distclean: clean; rm -f Makefile Macaulay2-body.spec Macaulay2-common-body.spec
 Makefile: Makefile.in; cd ../..; ./config.status distributions/rpm/Makefile
 Macaulay2-body.spec: Macaulay2-body.spec.in; cd ../..; ./config.status distributions/rpm/Macaulay2-body.spec

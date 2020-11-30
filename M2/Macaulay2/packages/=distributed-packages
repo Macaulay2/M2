@@ -98,6 +98,7 @@ EliminationMatrices
 EllipticIntegrals
 Triplets
 CompleteIntersectionResolutions
+EagonResolution
 MCMApproximations
 MultiplierIdeals
 InvariantRing
@@ -136,6 +137,8 @@ EquivariantGB
 ExampleSystems
 RationalMaps
 FastLinAlg
+RandomRationalPoints
+SwitchingFields
 SpectralSequences
 SectionRing
 OldPolyhedra
@@ -201,4 +204,13 @@ PositivityToricBundles
 SparseResultants
 DecomposableSparseSystems
 MixedMultiplicity
+PencilsOfQuadrics
 ThreadedGB
+VectorGraphics
+GKMVarieties
+NoetherianOperators
+Hadamard
+StatGraphs
+GraphicalModelsMLE
+EigenSolver
+MultiplicitySequence

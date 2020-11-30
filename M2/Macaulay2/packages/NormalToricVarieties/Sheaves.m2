@@ -30,8 +30,8 @@ ideal NormalToricVariety := Ideal => (
 	    )
 	)
     );
-monomialIdeal NormalToricVariety := MonomialIdeal => X -> monomialIdeal ideal X
-
+monomialIdeal NormalToricVariety := MonomialIdeal => X ->
+    monomialIdeal ideal X
 
 ------------------------------------------------------------------------------
 -- sheaves

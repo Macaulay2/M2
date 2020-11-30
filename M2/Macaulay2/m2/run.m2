@@ -53,7 +53,7 @@ ArgNoTValues   := 1 << 10 -* add --no-tvalues *-
 ArgNotify      := 1 << 11 -* add --notify *-
 ArgSilent      := 1 << 12 -* add --silent *-
 ArgStop        := 1 << 13 -* add --stop *-
-ArgPrintWidth  := 1 << 14 -* add --print-width 0 *-
+ArgPrintWidth  := 1 << 14 -* add --print-width 77 *-
 -- suffixes
 SetInputFile   := 1 << 30 -* add <inf *-
 SetOutputFile  := 1 << 31 -* add >>tmpf *-
@@ -78,7 +78,7 @@ argumentMode = defaultMode
 -- returns false if error
 runFile = (inf, inputhash, outf, tmpf, desc, pkg, announcechange, usermode, examplefiles) -> (
      announcechange();
-     stderr << "--making " << desc << ( if debugLevel > 0 then " in file " | outf else "" ) << endl;
+     stderr << " -- making " << desc << ( if debugLevel > 0 then " in file " | outf else "" ) << endl;
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
@@ -110,8 +110,8 @@ runFile = (inf, inputhash, outf, tmpf, desc, pkg, announcechange, usermode, exam
      cmd = cmd | readmode(ArgNotify,      "--notify");
      cmd = cmd | readmode(ArgSilent,      "--silent");
      cmd = cmd | readmode(ArgStop,        "--stop");
-     cmd = cmd | readmode(ArgPrintWidth,  "--print-width 0");
-     cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir",format d));
+     cmd = cmd | readmode(ArgPrintWidth,  "--print-width 77");
+     cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir ", format d));
      needsline := concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'");
      cmd = cmd | if pkgname != "Macaulay2Doc" then needsline else "";
      cmd = cmd | readmode(SetInputFile,   "<" | format inf);

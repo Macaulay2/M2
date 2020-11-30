@@ -1,8 +1,4 @@
 -- -*- M2-comint -*- hash: 438712966
---loading configuration for package "FourTiTwo" from file /home/aleykin3/.Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /home/aleykin3/.Macaulay2/init-Topcom.m2
--- COMPILE TIME: Oct 31 2019, 08:32:16
---loading configuration for package "Bertini" from file /home/aleykin3/.Macaulay2/init-Bertini.m2
 
 i1 : valueBM2("1.22e-2 4e-5")
 
@@ -46,7 +42,6 @@ o7 = .11099999999999999p52e1
 
 i8 : toExternalString n2
 
-o8 = .11100000000000000000000000000000000000000000000000000000000000000000000
-     000000000000000000003p300e1
+o8 = .11100000000000000000000000000000000000000000000000000000000000000000000000000000000000000003p300e1
 
 i9 : 

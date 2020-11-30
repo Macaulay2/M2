@@ -39,6 +39,7 @@ DIRECTORY := $(DIRECTORY)-$(BRANCH)
 ifeq ($(DEV),yes)
 CONFIGOPTIONS += --enable-development
 endif
+
 ifeq ($(DEBUG),yes)
 CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
 DIRECTORY := $(DIRECTORY).debug
@@ -51,7 +52,8 @@ ifeq ($(RPM),yes)
 CONFIGOPTIONS += --enable-rpm
 else
 ifeq ($(MACOSX),yes)
-# CONFIGOPTIONS += --enable-dmg
+# if we make a *.dmg file, we don't want to include any shared libraries in it (so we can pass the gatekeeper, eventually)
+CONFIGOPTIONS += --enable-dmg --disable-shared
 else
 CONFIGOPTIONS += --enable-tarfile
 endif
@@ -84,6 +86,7 @@ include Makefile.include
 
 test :
 	: $(FC) $(CC) $(CXX) $(AR)
+	: $(MACOSX) $(CONFIGOPTIONS) $(RPM) $(DEBIAn)
 
 # Local Variables:
 # mode: makefile-gmake

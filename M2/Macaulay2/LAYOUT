@@ -50,7 +50,7 @@ the package "D-modules".
 		     *.1
 		man3/
 		     M2::*.3				( man pages for Macaulay 2 subroutines )
-	    emacs/site-lisp/
+	    emacs/site-lisp/Macaulay2/
 			    M2.el
 			    M2-*.el
 	    Macaulay2/
@@ -103,7 +103,7 @@ in the hash table LAYOUT at run time.  Here is how to look at the layout inside 
 		   docm2 => share/doc/Macaulay2/
 		   docm2rel => share/doc/Macaulay2/Core/
 		   docpackages => share/doc/Macaulay2/
-		   emacs => share/emacs/site-lisp/
+		   emacs => share/emacs/site-lisp/Macaulay2/
 		   emacsdoc => share/doc/Macaulay2/Core/emacs/
 		   images => share/doc/Macaulay2/Core/images/
 		   info => share/info/
@@ -139,7 +139,7 @@ To apply those functions to a sample package name, do this:
 		   docm2 => share/doc/Macaulay2/
 		   docm2rel => share/doc/Macaulay2/Core/
 		   docpackages => share/doc/Macaulay2/
-		   emacs => share/emacs/site-lisp/
+		   emacs => share/emacs/site-lisp/Macaulay2/
 		   emacsdoc => share/doc/Macaulay2/Core/emacs/
 		   images => share/doc/Macaulay2/Core/images/
 		   info => share/info/

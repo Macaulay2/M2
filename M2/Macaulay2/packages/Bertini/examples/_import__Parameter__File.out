@@ -1,14 +1,6 @@
--- -*- M2-comint -*- hash: -245051623
---loading configuration for package "FourTiTwo" from file /home/aleykin3/.Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /home/aleykin3/.Macaulay2/init-Topcom.m2
--- COMPILE TIME: Oct 31 2019, 08:32:16
---loading configuration for package "Bertini" from file /home/aleykin3/.Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- hash: 2116881562
 
-i1 : writeParameterFile(storeBM2Files,{1,2},NameParameterFile=>"final_parameters")
-
-o1 = /tmp/M2-26250-0/0/final_parameters
-
-o1 : File
+i1 : writeParameterFile(storeBM2Files,{1,2},NameParameterFile=>"final_parameters");
 
 i2 : importParameterFile(storeBM2Files)
 

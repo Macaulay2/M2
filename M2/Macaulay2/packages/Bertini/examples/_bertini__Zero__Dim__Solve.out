@@ -1,8 +1,4 @@
 -- -*- M2-comint -*- hash: 1488243299
---loading configuration for package "FourTiTwo" from file /home/aleykin3/.Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /home/aleykin3/.Macaulay2/init-Topcom.m2
--- COMPILE TIME: Oct 31 2019, 08:32:16
---loading configuration for package "Bertini" from file /home/aleykin3/.Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,y];
 
@@ -16,20 +12,20 @@ o3 : List
 
 i4 : peek S_0
 
-o4 = Point{AccuracyEst => 9.13511e-15       }
-           AccuracyEstInternal => 2.0381e-14
-           ConditionNumber => 284.817
+o4 = Point{AccuracyEst => 5.55221e-14        }
+           AccuracyEstInternal => 1.09532e-14
+           ConditionNumber => 3.19545
            Coordinates => {1, 1.41421}
            CycleNumber => 1
            FinalTValue => .000390625
-           FunctionResidual => 7.94411e-15
+           FunctionResidual => 1.11886e-16
            MaxPrecisionUtilized => 52
            Multiplicity => 1
-           NewtonResidual => 5.00946e-15
+           NewtonResidual => 8.23628e-17
            PathNumber => 0
            PathsWithSameEndpoint => {}
            PrecisionIncreased => 0
-           SolutionNumber => 3
+           SolutionNumber => 1
 
 i5 : R = CC[x];
 
@@ -37,7 +33,7 @@ i6 : F = {x^2*(x-1)};
 
 i7 : S = bertiniZeroDimSolve F
 
-o7 = {{1}, {3.96424e-14+3.73513e-14*ii}}
+o7 = {{1}, {3.51449e-14+6.41131e-14*ii}}
 
 o7 : List
 
