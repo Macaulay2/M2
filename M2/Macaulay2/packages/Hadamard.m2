@@ -33,7 +33,7 @@ Point = new Type of BasicList
 point=method()
 point(VisibleList):=(P)->(
     if all(P, i->i==0) then error("all entries are zero") else
-    if any(P,i->i===null) then error("nuul entries are not allowed")
+    if any(P,i->i===null) then error("null entries are not allowed")
     else new Point from P)
 
 
