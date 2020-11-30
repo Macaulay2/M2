@@ -117,7 +117,7 @@ virtualOfPair (ChainComplex, List) := ChainComplex => opts -> (F, alphas) -> (
 resolveViaFatPoint = method()
 resolveViaFatPoint(Ideal, Ideal, List) := ChainComplex => (J, irr, A) -> (
     L := decompose irr;
-    if #A != #L then error "intersectionRes: expected exponent vector of the right length.";
+    if #A != #L then error("resolveViaFatPoint: expected exponent vector of length " | toString degreeLength irr);
     -- note: decompose doesn't necessarily return in the right order
     Q := intersect for X in L list (
         D := degree X_0;

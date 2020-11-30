@@ -145,6 +145,14 @@ TEST ///
   assert same(saturate( ideal 2, 3), saturate( ideal 2, ideal 3), ideal 2)
   assert same(saturate(2 * ZZ^2, 3), saturate(2 * ZZ^2, ideal 3), 2 * ZZ^2)
   assert(annihilator ideal 2 == ideal 0)
+  -- Tests for Number
+  R = QQ[x]
+  ideal x : -1
+  ideal x : ideal(-1_R)
+  module ideal x : -1
+  ideal x : ideal(-1_R)
+  saturate(ideal x, -1)
+  saturate(module ideal x, -1)
 ///
 
 TEST ///
