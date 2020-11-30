@@ -51,6 +51,7 @@ uniform' := L -> all(L, l -> instance(l, Ideal)) or uniform L
 
 -- this is a light version of isSubset for modules and ideals, which doesn't compute a gb
 -- TODO: move these improvements to isSubset, for instance isSubset(0, A) should not compute gb of A
+-- TODO: add heuristics to decide when is it okay to compute a gb of B, e.g. 2 vars?
 isSubset' := (A, B) -> A == 0 or isSubset(entries transpose gens A, entries transpose gens B)
 
 --Ideal % Matrix            :=
@@ -167,6 +168,8 @@ Module : Module               := Ideal  =>         (M, N) -> quotient(M, N)
 
 -- Helper for quotient methods
 quotientHelper = (A, B, key, opts) -> (
+    if ring B === ZZ then B = sub(B, ring A);
+
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
     cast := if instance(A, MonomialIdeal) then monomialIdeal else ideal;
@@ -388,6 +391,8 @@ saturate(Vector, List)        := Module => opts -> (v, L) -> saturate(image matr
 
 -- Helper for saturation methods
 saturateHelper = (A, B, key, opts) -> (
+    if ring B === ZZ then B = sub(B, ring A);
+
     -- this is only here because some methods are not implemented for RingElement
     B' := if instance(B, RingElement) or instance(B, Number) then ideal B else B;
 
@@ -539,7 +544,7 @@ algorithms#(saturate, Ideal, RingElement) = new MutableHashTable from {
 	R := ring I;
 	if not isFlatPolynomialRing R
 	or not isHomogeneous I
-	or not isHomogeneous f
+	or not isHomogeneous f or sum degree f === 0
 	then return null;
 	n := numgens R;
 	degs := append(degrees R, degree f);
