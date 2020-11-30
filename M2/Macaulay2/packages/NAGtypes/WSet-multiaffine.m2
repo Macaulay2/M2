@@ -109,7 +109,6 @@ toChart(WCollection,Point,List) := (W,p,H) -> (
     
 TEST ///
 debug needsPackage "NAGtypes"
-debug needsPackage "NumericalAlgebraicGeometry"
 errorDepth = 2
 A = multiProjectiveSpace(CC_53,{1,1},x)
 use ring A 

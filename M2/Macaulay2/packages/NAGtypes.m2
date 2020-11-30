@@ -11,7 +11,8 @@ newPackage(
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
      Keywords => {"Numerical Algebraic Geometry"},
-     PackageExports => {"ReesAlgebra"}, -- avoids collision with "Jacobian" 
+     PackageExports => {"ReesAlgebra", -- avoids collision with "Jacobian" 
+	 "NumericalLinearAlgebra"}, 
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => false 
@@ -37,7 +38,7 @@ export {
      "isRealPoint", "realPoints", "residual", "origin",
      "Norm", 
      "toAffineChart",
-     "Tolerance", "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
+     "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",

@@ -149,7 +149,7 @@ sortSolutions s
 	SeeAlso => {"NumericalAlgebraicGeometry::solveSystem", "NumericalAlgebraicGeometry::track", "areEqual"}
 	}
 
-document { Key => {Tolerance, 
+document { Key => {
 	[sortSolutions,Tolerance], 
 	[areEqual,Tolerance], 
 	[isGEQ,Tolerance], 

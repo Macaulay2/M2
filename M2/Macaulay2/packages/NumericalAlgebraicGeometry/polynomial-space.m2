@@ -2,7 +2,7 @@
 -- operations for PolySpace and DualSpace
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
-export { "addition", "intersection", "colon", "isContained" }
+export { "addition", "intersection", "isContained" }
 
 ------------------------------------------------
 
@@ -38,32 +38,9 @@ addition (PolySpace,PolySpace) := o -> (S,T) -> (
     polySpace(mons*sub(numericalImage(C,o.Tolerance),ring S))
     )
 
-colon = method(TypicalValue => DualSpace, Options => {Tolerance=>1e-6})
-colon (DualSpace, RingElement) := o-> (L,g) -> (
-    (gmons,gcoefs) := coefficients g;
-    (Lmons,Lcoefs) := coefficients gens L;
-    M := matrix apply(flatten entries gmons, gm->(
-	    apply(flatten entries Lmons, Lm->(
-		    d := diff(gm,Lm);
-		    if d == 0 then d else leadMonomial d
-		    ))
-	    ));
-    if numcols M == 0 then M = map((ring L)^1,(ring L)^0,0);
-    M = (transpose gcoefs)*M*Lcoefs;
-    (Mmons,Mcoefs) := coefficients M;
-    M = Mmons*sub(numericalImage(Mcoefs,o.Tolerance),ring Mmons);
-    dualSpace(polySpace M, L.BasePoint)
-    )
-colon (DualSpace, Ideal) := (L,J) -> error "not implemented"
-
 random PolySpace := o -> S -> (
     F := ultimate(coefficientRing, ring S);
     ((gens S)*sub(random(F^(dim S),F^1), ring S))_(0,0)
-    )
-random (ZZ,PolySpace) := o -> (d,S) -> (
-    if not S.Reduced then S = reduceSpace S;
-    Sd := polySpace sub(matrix{select(flatten entries gens S, q -> first degree q <= d)}, ring S);
-    random Sd
     )
 random DualSpace := o -> D -> random D.Space
 random (ZZ,DualSpace) := o -> (d,D) -> random(d,D.Space)

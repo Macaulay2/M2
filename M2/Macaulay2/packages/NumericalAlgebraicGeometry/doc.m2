@@ -1,4 +1,3 @@
-
 refKroneLeykin := "R. Krone and A. Leykin, \"Numerical algorithms for detecting embedded components.\", arXiv:1405.7871"
 refBeltranLeykin := "C. Beltran and A. Leykin, \"Certified numerical homotopy tracking\", Experimental Mathematics 21(1): 69-83 (2012)" 
 refBeltranLeykinRobust := "C. Beltran and A. Leykin, \"Robust certified numerical homotopy tracking\", Foundations of Computational Mathematics 13(2): 253-295 (2013)" 
@@ -63,13 +62,6 @@ numericalIrreducibleDecomposition I
      TO removeRedundantComponents,
 --     TO ("==",NumericalVariety,NumericalVariety)
      },
-
-     HEADER3 {"Functions related to scheme analysis:"},
-     UL{
-	 TO isPointEmbedded,
-	 TO isPointEmbeddedInCurve,
-	 TO colon,
-	 },
 
      HEADER3 {"Functions related to ", TO "Certified", " tracking:"},
      certifiedTrackingFunctions,
@@ -166,7 +158,7 @@ document { Key => {"numerical homotopy tracking options",
 	CorrectorTolerance, [track,CorrectorTolerance], [setDefault,CorrectorTolerance],
 	[track,NoOutput], [setDefault,NoOutput], 
 	[track,Normalize], [setDefault,Normalize],
-	NoOutput, Normalize,
+	NoOutput, 
 	[refine, Iterations], [setDefault,Iterations], [refine, Bits], [setDefault,Bits], 
 	[refine,ErrorTolerance], [setDefault,ErrorTolerance], 
 	[refine, ResidualTolerance], [setDefault,ResidualTolerance],
@@ -832,51 +824,6 @@ document {
     "Checks containment of one variety represented numerically in the other.", 
     Caveat => {"Does not work for singular components."},
     SeeAlso=>{WitnessSet,isOn}
-    }
-
-document {
-    Key => {
-	(isPointEmbedded,Point,Ideal,List), isPointEmbedded,
-	AllVisible, [isPointEmbedded,AllVisible],
-	},
-    Headline => "determine if the point is an embedded component of the scheme",
-    Usage => "B = isPointEmbedded(P,I,C)",
-    Inputs => { 
-	"P", 
-	"I",
-	"C"=>{" witness sets representing components of ", TT "Spec(I)", " containing ", TT "P"} 
-	},
-    Outputs => { "B"=>Boolean },
-    PARA {"Runs an embedded component test described in "},
-    refKroneLeykin,
-    SeeAlso=>{isPointEmbeddedInCurve}
-    }
-
-document {
-    Key => {
-	(isPointEmbeddedInCurve,Point,Ideal), isPointEmbeddedInCurve
-	},
-    Headline => "determine if the point is an embedded component of a 1-dimensional scheme",
-    Usage => "B = isPointEmbeddedInCurve(P,I)",
-    Inputs => { 
-	"P", 
-	"I"
-	},
-    Outputs => { "B"=>Boolean },
-    PARA {"Runs an embedded component test described in "},
-    refKroneLeykin,
-    SeeAlso=>{isPointEmbeddedInCurve}
-    }
-
-document {
-    Key => {colon, (colon,DualSpace,RingElement), (colon,DualSpace,Ideal), [colon,Tolerance]},
-    Headline => "colon of a (truncated) dual space",
-    Usage => "Dg = colon(D,g)\nDJ = colon(D,J)",
-    Inputs => { "D"=>DualSpace, "g"=>RingElement, "J"=>Ideal },
-    Outputs => { "Dg, DJ"=>DualSpace },
-    "Computes (a part of) the dual space of the dual. See",
-    PARA { refKroneLeykin },
-    "for a description."
     }
 
 document {
