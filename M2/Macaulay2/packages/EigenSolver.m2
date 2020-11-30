@@ -134,7 +134,7 @@ R = QQ[a_1..a_(n-1),b_1..b_(n-1)]
 S = R[x,y]/ideal(x*y-1)
 f = sum(n-1, i -> R_i*x^(i+1) + R_(n-1+i)*y^(i+1)) + x^n + y^n
 I = sub(ideal apply(toList(2..2*n-1), i -> last coefficients(f^i, Monomials => {1_S})), R)
-sols = zeroDimSolve I
+sols = zeroDimSolve(I, Multiplier => (3/8)*a_1+(3/7)*a_2+(1/3)*b_1+(5/8)*b_2)
 realPts = realPoints sols
 assert(#sols == 66 and #realPts == 6)
 sort apply(sols, p -> norm evaluate(gens I, p))
