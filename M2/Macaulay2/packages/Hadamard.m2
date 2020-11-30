@@ -32,8 +32,8 @@ Point = new Type of BasicList
 
 point=method()
 point(VisibleList):=(P)->(
-    if all(P, i->i==0) then return "error: all entries are zero" else
-    if any(P,i->i===null) then return "error: nuul entries are not allowed"
+    if all(P, i->i==0) then error("all entries are zero") else
+    if any(P,i->i===null) then error("nuul entries are not allowed")
     else new Point from P)
 
 
@@ -102,7 +102,7 @@ pointsToMatrix(List):= (PTM) ->( matrix apply(PTM, toList))
 
 hadamardPower = method()
 hadamardPower(Ideal,ZZ):=(I,r)->(
-    if r<1 then return error("the second argument should be positve integre >=1 ");
+    if r<1 then error("the second argument should be positve integre >=1");
    NewI := I;
    for i from 1 to r-1 do NewI = hadProdOfVariety(NewI,I);
    return NewI)
@@ -110,7 +110,7 @@ hadamardPower(Ideal,ZZ):=(I,r)->(
 ---Hadamard powers of sets of points ------------
 
 hadamardPower(List,ZZ):=(L,r)->(
-    if r<1 then return error("the second argument should be a positve integre >=1");
+    if r<1 then error("the second argument should be a positve integre >=1");
    NewL := L;
    for i from 1 to r-1 do NewL = hadProdListsOfPoints(NewL,L);
    return toList set NewL)
@@ -121,11 +121,11 @@ hadamardPower(List,ZZ):=(L,r)->(
 hadamardMult=method()
 hadamardMult(List):=(L)->(
     if not uniform L then
-     (return "error: entries should be in the same class");
-    if instance(first L,Ideal)==true then fold(hadProdOfVariety,L)
+     error("entries should be in the same class");
+    if instance(first L,Ideal) then fold(hadProdOfVariety,L)
     else
-    if instance(first L,List)==true or instance(first L,Point)==true then fold(hadProdPoints,L)
-    else return ("error: inputs should be a list of ideals or points")
+    if instance(first L,List) or instance(first L,Point) then fold(hadProdPoints,L)
+    else error("input should be a list of ideals or points")
     )
 
 -------general product------
@@ -145,7 +145,7 @@ hadamardProduct(List):=(L)->(hadamardMult(L));
 idealOfProjectivePoints=method()
 idealOfProjectivePoints(List,Ring):=(L,R)->(
     if not uniform L then 
-     (return "error: entries should be in the same class");
+     error("entries should be in the same class");
     MP:=transpose pointsToMatrix L; 
     return ideal projectivePointsByIntersection(MP,R)
     )
@@ -435,3 +435,4 @@ uninstallPackage "Hadamard"
 installPackage "Hadamard"
 loadPackage ("Hadamard",Reload=>true)
 viewHelp "Hadamard"
+check "Hadamard"
