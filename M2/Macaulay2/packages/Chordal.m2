@@ -7,11 +7,12 @@ newPackage(
       {Name => "Diego Cifuentes",
        Email => "diegcif@mit.edu",
        HomePage => "http://www.mit.edu/~diegcif"},
-      {Name => "Pablo Parrilo", 
+      {Name => "Pablo A. Parrilo", 
        Email => "parrilo@mit.edu",
        HomePage => "http://www.mit.edu/~parrilo/"}
     },
     Headline => "routines that exploit chordal structure",
+    Keywords => {"Commutative Algebra", "Graph Theory"},
     AuxiliaryFiles => true,
     PackageExports => {"Graphs","TriangularSets"}
 )

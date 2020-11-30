@@ -7,8 +7,9 @@ newPackage(
     Authors => {{Name => "Amy Wiebe", Email => "w.amy.math@gmail.com"},
 	{Name => "Antonio Macchia", Email => "macchia.antonello@gmail.com"}},
     Headline => "Slack ideals of polytopes and matroids",
-    PackageImports => {"Polyhedra", "Matroids", "EdgeIdeals", "LLLBases", "Elimination", "SimpleDoc"},
-    PackageExports => {"Polyhedra", "Matroids", "EdgeIdeals", "LLLBases", "Elimination", "SimpleDoc"},
+    Keywords => {"Commutative Algebra", "Matroids"},
+    PackageImports => {"Polyhedra", "Matroids", "EdgeIdeals", "LLLBases", "Elimination"},
+    PackageExports => {"Polyhedra", "Matroids", "EdgeIdeals", "LLLBases", "Elimination"},
     DebuggingMode => true
     )
 
@@ -1561,7 +1562,7 @@ doc ///
 	(getFacetBases, Matroid)
 	(getFacetBases, List)
     Headline
-    	given a slack matrix or a list of vertices of d-polytope or a rank d+1 matroid, or (d+1)-cone generators, creates a sorted list of vertices (empty if a matrix is given as input) in the order corresponding to B, and B the list of d spanning elements for each facet
+        get a list of d-spanning elements for each facet
     Usage
     	(newV, B) = getFacetBases S
 	(newV, B) = getFacetBases P
@@ -1583,9 +1584,9 @@ doc ///
 		list of d spanning elements for each facet
     Description
         Text
-	    This function produces a list B of d spanning elements for each facet a given d-polytope or 
-	    rank d+1 matroid, or (d+1)-cone generators. If a list of vertices is given as input, it also 
-	    creates a sorted list of vertices from which B is computed
+	    This function produces a list B of d spanning elements for each facet in a given d-polytope,
+	    rank d+1 matroid, or (d+1)-cone generators. If a slack matrix or a list of vertices is given as input, it also
+	    creates a sorted list of vertices (empty if a matrix is given as input) from which B is computed in the order corresponding to B.
 	Example
 	    V = {{0, 0}, {1, 0}, {2, 1}, {1, 2}, {0, 1}};
 	    (newV, B) = getFacetBases V
@@ -1607,7 +1608,7 @@ doc ///
 	(slackFromPlucker, Polyhedron)
 	(slackFromPlucker, Matroid)
     Headline
-    	given a slack matrix or a list of vertices of d-polytope or a rank d+1 matroid, or (d+1)-cone generators, it fills the corresponding slack matrix with Plucker coordinates
+        fill the slack matrix of a given polytope, cone or matroid with Plucker coordinates
     Usage
     	fillPl = slackFromPlucker(V, B)
 	fillPl = slackFromPlucker V
@@ -1627,7 +1628,8 @@ doc ///
 		slack matrix filled with Plucker coordinates
     Description
     	Text
-	    It fills the slack matrix of a given polytope, cone or matroid with Plucker coordinates
+	    Given a slack matrix or a list of vertices of d-polytope or a rank d+1 matroid, or (d+1)-cone generators,
+	    it fills the corresponding slack matrix with Plucker coordinates.
 	Example
 	    V = {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {1, 0, 1}, {1, 1, 0}};
 	    B = {{1, 2, 4}, {0, 2, 3}, {0, 1, 4}, {3, 4, 5}, {0, 1, 2}};
@@ -1647,7 +1649,7 @@ doc ///
 	(slackFromGalePlucker, List, List)
 	(slackFromGalePlucker, List, Matrix)
     Headline
-    	given a set of vectors of a Gale transform or a matrix whose columns form a Gale transform of a polytope, it fills the slack matrix of the polytope with Plucker coordinates of the Gale transform
+	fill the slack matrix with Plucker coordinates of the Gale transform
     Usage
     	fillPl = slackFromGalePlucker(B, G)
 	fillPl = slackFromGalePlucker(B, MG)
@@ -1663,7 +1665,8 @@ doc ///
 		slack matrix filled with Plucker coordinates
     Description
         Text
-	    It fills the slack matrix of a given polytope with Plucker coordinates of the Gale transform
+	    Given a set of vectors of a Gale transform or a matrix whose columns form a Gale transform of a polytope,
+	    it fills the slack matrix of the polytope with Plucker coordinates of the Gale transform.
 	Example
 	    G = {{0, 1}, {1, 0}, {-1, -1}, {0, -1}, {-1, 0}, {1, 1}};
 	    B = {{1, 2, 4}, {0, 2, 3}, {0, 1, 4}, {3, 4, 5}, {0, 1, 2}};
@@ -1813,7 +1816,7 @@ doc ///
 	(symbolicSlackOfPlucker, Polyhedron)
 	(symbolicSlackOfPlucker, Matroid)
     Headline
-    	given the number of polytope vertices, cone generators, or matroid vectors, or a set of polytope vertices, cone generators, or matroid vectors, or a slack matrix and a set of set of hyperplane spanning set indices, it fills the slack matrix with Plucker variables
+        fill the slack matrix with Plucker variables
     Usage
     	fillPl = symbolicSlackOfPlucker(v, B)
 	fillPl = symbolicSlackOfPlucker(V, B)
@@ -1840,7 +1843,9 @@ doc ///
 		slack matrix filled with Plucker variables
     Description
     	Text
-	    It fills the slack matrix of a given polytope, cone or matroid with Plucker variables
+	    Given the number of polytope vertices, cone generators, or matroid vectors, or a set of polytope vertices,
+	    cone generators, or matroid vectors, or a slack matrix and a set of set of hyperplane spanning set indices,
+	    it fills the slack matrix with Plucker variables.
 	Example
 	    v = 6;
 	    B = {{1, 2, 4}, {0, 2, 3}, {0, 1, 4}, {3, 4, 5}, {0, 1, 2}};
@@ -1932,7 +1937,7 @@ doc ///
 	(grassmannSectionIdeal, Cone)
 	(grassmannSectionIdeal, Matroid)
     Headline
-    	given a slack matrix of a polytope, a cone or a matroid, or a set of polytope vertices, cone generators, or matroid vectors, and a set of set of hyperplane spanning set indices, it computes the Grassmannian section ideal corresponding to choice B of the object with slack matrix S
+        compute the Grassmannian section ideal corresponding to a slack matrix
     Usage
     	I = grassmannSectionIdeal(S, B)
 	I = grassmannSectionIdeal S
@@ -1959,7 +1964,9 @@ doc ///
 		the Grassmannian section ideal corresponding to choice B of the object with slack matrix S
     Description
     	Text
-	    It computes the Grassmannian section ideal corresponding to choice B of the object with slack matrix S
+	    Given a slack matrix of a polytope, a cone or a matroid, or a set of polytope vertices, cone generators,
+	    or matroid vectors, and a set of set of hyperplane spanning set indices, it computes the Grassmannian section
+	    ideal corresponding to choice B of the object with slack matrix S.
 	Example
 	    V = {{0, 0}, {1, 0}, {2, 1}, {1, 2}, {0, 1}};
 	    (VV, B) = getFacetBases V;

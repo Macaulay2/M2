@@ -12,6 +12,7 @@ newPackage("PositivityToricBundles",
            Authors => { 
             {Name => "Andreas Hochenegger",
              Email => "andreas.hochenegger@sns.it"}},
+           Keywords => {"Toric Geometry"},
            Configuration =>{},
            PackageExports => {"ToricVectorBundles"}
           )

@@ -29,6 +29,7 @@ newPackage select((
                 }
 	  },
      Configuration =>  {},	
+     Keywords => {"Numerical Algebraic Geometry"},
      PackageExports => {"NAGtypes"},
      PackageImports => {},
      -- DebuggingMode should be true while developing a package, 
@@ -164,6 +165,7 @@ Gate - RingElement  := (a,b) -> a - inputGate b
 DetGate = new Type of Gate
 net DetGate := g -> concatenateNets {"det", MatrixExpression applyTable(g.Inputs,net)}
 detGate = method()
+detGate GateMatrix := M -> detGate entries M 
 detGate List := L -*doubly nested list*- -> add2GC(
     n := #L;
     if not all(L, a->instance(a,List) and #a==n and all(a,b->instance(b,Gate)))

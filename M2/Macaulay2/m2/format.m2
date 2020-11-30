@@ -118,7 +118,7 @@ scan({net, info},
 	-- object or a sequence of such objects and BKs or SKs for later splicing.
 	parser' := value (toString parser | "'") <- method(Dispatch => Thing);
 	-- setup default rendering methods
-	parser' Hypertext := parser;
+	parser' Thing := parser;
 	-- { } indicates wrapping is already done or is not desired
 	parser' HypertextParagraph := x -> (SP, {parser x}, SP);
 	parser' HypertextContainer := x -> (BK, apply(toSequence x, parser'), BK);
@@ -140,7 +140,7 @@ scan({net, info},
 	    -- Drop the leading and trailing SPs or BKs
 	    l := position(x, e -> e =!= SP and e =!= BK);
 	    t := position(x, e -> e =!= SP and e =!= BK, Reverse => true);
-	    x = take(x, {l, t});
+	    if l =!= null and t =!= null then x = take(x, {l, t});
 	    -- ??
 	    x = splice sublists(x, i -> i === BK or i === SP,
 		SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
@@ -253,43 +253,26 @@ tagConvert      := str -> infoLiteral if match("(^ | $)", str) then concatenate(
 infoTagConvert = method()
 infoTagConvert String      := tagConvert
 infoTagConvert DocumentTag := tag -> (
-     pkgname := package tag;
-     fkey := format tag;
-     if pkgname === fkey then fkey = "Top";
-     fkey = tagConvert fkey;
-     if pkgname =!= currentPackage#"pkgname" then concatenate("(",pkgname,")", fkey) else fkey)
+    tag = getPrimaryTag tag;
+    (pkgname, fkey) := (package tag, format tag);
+    fkey  = tagConvert if pkgname === fkey then "Top" else fkey;
+    if pkgname =!= currentPackage#"pkgname" then concatenate("(",pkgname,")", fkey) else fkey)
 
 -- TODO: can this be simplified?
 -- checking if doc is missing can be very slow if node is from another package
-info TO  := x -> (
-     tag := x#0;
-     f := format tag;
-     if x#?1 then f = f|x#1;
-     tag = getPrimaryTag tag;
-     concatenate(
-	  if fetchRawDocumentation tag === null
-	  then (f, " (missing documentation)")
-	  else ("*note ", infoLinkConvert f, ": ", infoTagConvert tag, ",")))
+info TO  := x -> info TO2{x#0, format x#0 | if x#?1 then x#1 else ""}
 info TO2 := x -> (
-     tag := getPrimaryTag x#0;
-     concatenate(
-	  if fetchRawDocumentation tag === null
-	  then (x#1, " (missing documentation)")
-	  else ("*note ", infoLinkConvert x#1, ": ", infoTagConvert tag, ",")
-	  )
-     )
+     tag := x#0;
+     if isMissingDoc tag or isUndocumented tag then concatenate(x#1, " (missing documentation)")
+     else concatenate("*note ", infoLinkConvert x#1, ": ", infoTagConvert tag, ","))
 info TOH := x -> (
      tag := x#0;
      f := format tag;
      if x#?1 then f = f|x#1;
-     tag = getPrimaryTag tag;
      concatenate(
-	  if fetchRawDocumentation tag === null
-	  then (f," (missing documentation)")
+	  if isMissingDoc tag or isUndocumented tag then (f, " (missing documentation)")
 	  else ("*note ", infoLinkConvert f, ": ", infoTagConvert tag, ","),
-	  commentize headline tag
-	  )
-     )
+	  commentize headline tag))
 
 net TO  := x -> (
      if class x#0 === DocumentTag
@@ -309,7 +292,7 @@ info MENU := x -> (
 	    line    -> isLink line,
 	    section -> stack apply(section, line -> "* " | wrap(
 		    fkey := format line#0;
-		    icon := infoTagConvert getPrimaryTag line#0;
+		    icon := infoTagConvert line#0;
 		    cfkey := infoLinkConvert fkey;
 		    text := cfkey | if cfkey === icon then "::" else ": " | icon | ".";
 		    title := headline line#0;

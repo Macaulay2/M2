@@ -36,24 +36,27 @@ operator := binary + prefix + postfix
 -----------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------
--- these menus have to get sorted, so optTO and optTOCLASS return pairs:
---   the first member of the pair is the string to use for sorting
---   the second member is the corresponding hypertext entry in the UL list
+-- these menus have to get sorted, so optTO and optTOCLASS return sequence:
+--   the first three members of the pair are used for sorting
+--   the last member is the corresponding hypertext entry in the UL list
 -----------------------------------------------------------------------------
 
+-- TODO: something like
+--    * validate, see validate(Hypertext) -- blah blah
+-- does not work with (symbol *, String), and the issue is here
 counter := 0
 next := () -> counter = counter + 1
-optTO := i -> (
-    i = makeDocumentTag(i, Package => null);
-    fkey := format i;
-    if not isUndocumented i then
-    if isSecondaryTag i then (
-	primary := getPrimaryTag i;
-	(format primary, fkey, next(), fixup if currentHelpTag === primary then fkey else SPAN {fkey, ", see ", TOH{primary}}))
+optTO := key -> (
+    tag := makeDocumentTag(key, Package => package key);
+    fkey := format tag;
+    if isUndocumented tag then return;
+    if isSecondaryTag tag then (
+	ptag := getPrimaryTag tag;
+	(format ptag, fkey, next(), fixup if currentHelpTag === ptag then fkey else SPAN {TT format fkey, " -- see ", TOH{ptag}}))
     -- need an alternative here for secondary tags such as (export,Symbol)
-    else (fkey, fkey, next(), fixup TOH{i}))
+    else (fkey, fkey, next(), TOH{tag}))
 -- this isn't different yet, work on it!
-optTOCLASS := i -> (format first (r := fixup TOH{i}), next(), r)
+optTOCLASS := key -> (format first (r := TOH{key}), next(), r)
 
 -- TODO: duplicate of ul in hypertext.m2
 ul := t -> if #t =!= 0 then UL t else t
@@ -110,7 +113,7 @@ initializeReverseOptionTable := () -> (
 -----------------------------------------------------------------------------
 
 -- we're not looking for documentable methods here, just documentable objects
-isDocumentableThing  = method(Dispatch => Thing)
+isDocumentableThing := method(Dispatch => Thing)
 isDocumentableThing    String :=
 isDocumentableThing  Sequence := key -> false
 isDocumentableThing   Nothing :=
@@ -128,8 +131,7 @@ isDocumentableMethod     Type := key -> isDocumentableThing key
 isDocumentableMethod Function        := fn -> hasAttribute(fn, ReverseDictionary) and dictionary getAttribute(fn,ReverseDictionary) =!= null
 isDocumentableMethod ScriptedFunctor := fn -> hasAttribute(fn, ReverseDictionary)
 
--- TODO: only used in help.m2
-documentableMethods = key -> select(methods key, isDocumentableMethod)
+documentableMethods := key -> select(methods key, isDocumentableMethod)
 
 -----------------------------------------------------------------------------
 -- documentationValue
@@ -219,22 +221,19 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    cert  = new HashTable from cert;
 	    -- TODO: compare with the one in installPackage.m2
 	    star := IMG { "src" => replace("PKG", "Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
+	    commit := replace("(?<=/blob/)master", toString cert#"release at publication", cert#"repository code URI");
 	    DIV {
 		SUBSECTION {"Certification ", star},
 		PARA {
-		    "Version ",       BOLD cert#"version at publication", " of this package was accepted for
-		    publication in ", HREF{cert#"volume URI", "volume " | cert#"volume number"}, " of
-		    the journal ",    HREF{cert#"journal URI",            cert#"journal name"},
-		    " on ",                cert#"acceptance date", ", in the
-		    article ",        HREF{cert#"published article URI",  cert#"article title"}, ". That version can
-		    be obtained ",    HREF{cert#"published code URI", "from the journal"},
-		    " or from the ", EM "Macaulay2", " source code repository, ",
-		    -- make a hot link if it's github, but not if it's svn
-		    -- github calls it a commit number, svn calls it a release number:
-		    if match("github.com", cert#"repository code URI")
-		    then             (HREF{cert#"repository code URI", cert#"repository code URI"}, "commit")
-		    else               (TT cert#"repository code URI", "release"), ", ",
-		    " number ", toString cert#"release at publication", "."}}
+		    "Version ", BOLD cert#"version at publication", " of this package was accepted for publication",
+		    " in ",     HREF{cert#"volume URI", "volume " | cert#"volume number"},
+		    " of ",     HREF{cert#"journal URI",            cert#"journal name"},
+		    " on ",          cert#"acceptance date", ", in the article ",
+		                HREF{cert#"published article URI",  cert#"article title"}, ".",
+		    " That version can be obtained",
+		    " from ",   HREF{cert#"published code URI", "the journal"}, " or",
+		    " from ",   HREF{commit, ("the ", EM "Macaulay2", " source code repository")},
+		    "."}}
 	    ),
 	DIV {
 	    SUBSECTION "Version",
@@ -526,5 +525,6 @@ about String   := o -> re -> lastabout = (
             if o.Body then close db;
             apply(keyList, key -> pkgname | "::" | key))))
 
+-- TODO: should this go to system?
 pager = x -> if height stdio > 0
     then "!" | (if getenv "PAGER" == "" then "more" else getenv "PAGER") << x << close else << x << endl

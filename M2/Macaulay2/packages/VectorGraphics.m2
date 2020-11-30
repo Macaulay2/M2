@@ -1,12 +1,13 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "0.9",
+        Version => "0.91",
         Date => "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
+	Keywords => {"Miscellaneous"},
         DebuggingMode => false,
 	AuxiliaryFiles => true,
 	PackageImports => {"Text"},
@@ -43,7 +44,9 @@ GraphicsObject = new Type of HashTable -- ancestor type
 new GraphicsObject from List := (T,l) -> hashTable append(l,symbol cache => new CacheTable); -- every Graphics object should have a cache
 new GraphicsObject := T -> new T from {};
 new GraphicsObject from OptionTable := (T,o) -> o ++ {symbol cache => new CacheTable};
-GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opts2,last) -- cf similar method for OptionTable
+GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opts2,
+    (x,y) -> if instance(x,Matrix) and instance(y,Matrix) then y*x else y -- for TransformMatrix and AnimMatrix
+    ) -- cf similar method for OptionTable
 
 -- a bunch of options are scattered throughout the code:
 -- * all dimensions are redefined as dimensionless quantities: Radius, FontSize, etc
@@ -195,7 +198,12 @@ viewPort1 GraphicsText := g -> (
     p := g.cache.CurrentMatrix * g.Point;
     f=f/p_3;
     p=project2d p;
-    { p - vector {0,f}, p + vector{f*0.6*length g.TextContent,0} } -- very approximate TODO properly
+    r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
+    pp := p + vector {
+	if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
+	if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then 0.5*r_1 else if g#"dominant-baseline" == "hanging" then 0 else -r_1) else -r_1
+	};
+    {pp,pp+r}
     )
 
 Line = new GraphicsType of GraphicsObject from ( "line",
@@ -286,11 +294,6 @@ updateTransformMatrix := (g,m,p) -> ( -- (object,matrix,persepective matrix)
     if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*g.TransformMatrix;
     )
 
--*
-LiteralString := new WrapperType of Holder -- to make sure the text inside GraphicsText doesn't get html'ified
-htmlWithTex LiteralString := x -> htmlLiteral x#0
-*-
-
 svgLookup := hashTable { -- should be more systematic
     symbol TransformMatrix => (x,m) -> "data-matrix" => jsString x,
     symbol AnimMatrix => (x,m) -> "data-dmatrix" => jsString x,
@@ -327,7 +330,7 @@ svgLookup := hashTable { -- should be more systematic
 	apply(x, y -> y.cache.SVGElement)
 	),
     symbol TextContent => (x,m) -> x,
-    symbol HtmlContent => (x,m) -> htmlWithTex x
+    symbol HtmlContent => (x,m) -> html x
     }
 
 svg3dLookup := hashTable { -- should be more systematic
@@ -352,11 +355,11 @@ svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current mat
     if g.?Contents then scan(g.Contents, x -> svg(x,g.cache.CurrentMatrix,p,l));
     updateGraphicsCache g;
     filter(g,l);
-    prs := pairs g | pairs g.cache; -- TODO restructure
-    opts := deepSplice apply(select(prs,(key,val)-> svgLookup#?key), (key,val) -> svgLookup#key(val,g.cache.CurrentMatrix));
-    if is3d g then opts = opts | deepSplice apply(select(prs,(key,val)-> svg3dLookup#?key), (key,val) -> svg3dLookup#key val);
-    if hasAttribute(g,ReverseDictionary) then opts = append(opts, TITLE toString getAttribute(g,ReverseDictionary));
-    g.cache.SVGElement = style((class g).SVGElement opts,prs)
+    full := new OptionTable from merge(g,g.cache,last);
+    args := deepSplice apply(select(keys full,key->svgLookup#?key), key -> svgLookup#key(full#key,g.cache.CurrentMatrix));
+    if is3d g then args = args | deepSplice apply(select(keys full,key -> svg3dLookup#?key), key -> svg3dLookup#key full#key);
+    if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
+    g.cache.SVGElement = style((class g).SVGElement args,full)
     )
 
 svg (GraphicsObject,Matrix,Matrix) := (g,m,p) -> svg(g,m,p,{})
@@ -368,7 +371,7 @@ svg (GraphicsObject,List) := (g,l) -> (
 
 svg GraphicsObject := g -> svg(g,{})
 
-htmlWithTex GraphicsObject := html
+--htmlWithTex GraphicsObject := html
 
 globalAssignment GraphicsObject
 toString GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
@@ -434,7 +437,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	if xmax < xmin then ( temp:=xmin; xmin=xmax; xmax=temp; );
 	ymin := (r#0_1-p_(1,3))/p_(1,1);
 	ymax := (r#1_1-p_(1,3))/p_(1,1);
-	if ymax < ymin then ( temp:=ymin; ymin=ymax; ymax=temp; );
+	if ymax < ymin then ( temp2:=ymin; ymin=ymax; ymax=temp2; );
 	if is3d g then (
 	    zmax := 0.25*(xmax-xmin+ymax-ymin);
 	    zmin := -zmax;
@@ -527,6 +530,7 @@ translation = vec -> (
     vec = gParse vec;
     matrix {{1,0,0,vec_0},{0,1,0,vec_1},{0,0,1,vec_2},{0,0,0,1}}
 )
+-- scaling = x -> matrix{{x,0,0,0},{0,x,0,0},{0,0,x,0},{0,0,0,1}}; -- sadly atm strokeWidth *does not* scale with scaling
 
 determineSide = method()
 determineSide GraphicsObject := x -> ()
@@ -567,7 +571,7 @@ toString HypertextInternalLink := net HypertextInternalLink := x -> (
 )
 
 noid := x -> select(x,e -> class e =!= Option or e#0 =!= "id")
-htmlWithTex HypertextInternalLink := html @@ noid -- bit of a hack: to prevent id from being printed directly in WebApp mode
+--htmlWithTex HypertextInternalLink := html @@ noid -- bit of a hack: to prevent id from being printed directly in WebApp mode TODO: fix
 
 svgFilter := new MarkUpType of HypertextInternalLink
 addAttribute(svgFilter,svgAttr | {"x","y","width","height"})
@@ -690,11 +694,13 @@ gfxLabel = true >> o -> label -> (
     )
 *-
 
-needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
-
 -- note that the range is only where the curve actually lies, not the original range "r" provided.
 -- the reason is that it's not clear how to force that original range (there are possible coordinate transformations etc)
 plot = true >> o -> (P,r) -> (
+    pkg := needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
+    sS := value pkg.Dictionary#"solveSystem";
+    pkg2 := needsPackage "NAGtypes";
+    Crd := pkg2.Dictionary#"Coordinates";
     R := ring P; -- R should have one or two variables
     if not instance(r,List) then error("incorrect ranges");
     if not instance(r#0,List) then r = { r };
@@ -705,7 +711,7 @@ plot = true >> o -> (P,r) -> (
 	val := transpose apply(n+1, i -> (
 		x := i*(r#1-r#0)/n+r#0;
 		f := map(R2,R, matrix { if numgens R === 1 then { x } else { x, R2_0 } });
-		y := if numgens R === 1 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
+		y := if numgens R === 1 then { f P } else sort apply(sS { f P }, p -> first p#Crd); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(y, yy -> if abs imaginaryPart yy < 1e-6 then vector { x, realPart yy })));
 	new GraphicsList from (
 	    (new OptionTable from { "fill"=>"none", Axes=>gens R, Is3d=>false,
@@ -718,7 +724,7 @@ plot = true >> o -> (P,r) -> (
 		x := i*(r#0#1-r#0#0)/n+r#0#0;
 		y := j*(r#1#1-r#1#0)/n+r#1#0;
 		f := map(R2,R, matrix { if numgens R === 2 then { x,y } else { x, y, R2_0 } });
-		z := if numgens R === 2 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
+		z := if numgens R === 2 then { f P } else sort apply(sS { f P }, p -> first p#Crd); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(z, zz -> if abs imaginaryPart zz < 1e-6 then vector { x, y, realPart zz })));
 	new GraphicsList from (
 	    (new OptionTable from { Axes=>gens R, Is3d=>true,
@@ -741,8 +747,9 @@ multidoc ///
    Text
     {\bf VectorGraphics} is a package to produce SVG 2d and 3d graphics.
     All usable types are descendents of the type GraphicsObject, and are self-initializing.
-    Coordinates can be entered as vectors in \mathbb{RR}^2, \mathbb{RR}^3 or \mathbb{RR}^4 (\mathbb{RR}^4 is projective
-    coordinates); alternatively, one can enter them as sequences. With the default perspective matrix,
+    Coordinates can be entered as vectors in $\mathbb{R}^2$, $\mathbb{R}^3$ or $\mathbb{R}^4$
+    ($\mathbb{R}^4$ is projective coordinates); alternatively, one can enter them as sequences.
+    With the default perspective matrix,
     the x axis points to the right, the y axis points up, and the z axis points towards the viewer.
     All types are option tables, i.e., their arguments are options. There are two types of options:
     VectorGraphics options, that are symbols (e.g., {\tt Radius} for circles);
@@ -1130,13 +1137,12 @@ multidoc ///
   Key
    GraphicsType
   Headline
-   A particular type of type used by VectorGraphics, similar to SelfInitializingType.
+   A particular type of type used by VectorGraphics, similar to @ TO{SelfInitializingType}.
 ///
-
 undocumented { -- there's an annoying conflict with NAG for Point, Points
-    Contents, TextContent, HtmlContent, SVGElement, VectorGraphics$Point, VectorGraphics$Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
+    Contents, TextContent, HtmlContent, SVGElement, Point, Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
-    (expression, GraphicsObject), (html,GraphicsObject), (htmlWithTex,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
+    (expression, GraphicsObject), (html,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
     (NewFromMethod,GraphicsObject,List), (NewFromMethod,GraphicsObject,OptionTable), (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
 }
 

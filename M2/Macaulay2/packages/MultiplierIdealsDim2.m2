@@ -8,6 +8,7 @@ newPackage(
                      Email  =>  "ferran.dachscadefau@wis.kuleuven.be",
                      HomePage  =>  "http://perswww.kuleuven.be/ferran_dachs_cadefau"}},
         Headline  =>  "multiplier ideals in 2-dimensional rings",
+	Keywords => {"D-modules"},
         DebuggingMode  =>  false
         )
 

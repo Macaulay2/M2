@@ -14,6 +14,7 @@ newPackage(
                 },
             {Name => "Franziska Hinkelmann"}
             },
+	Keywords => {"Commutative Algebra"},
         AuxiliaryFiles=>true,
         PackageImports => {"Elimination"}
         )

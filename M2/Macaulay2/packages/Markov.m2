@@ -1,10 +1,11 @@
 -- -*- coding: utf-8 -*-
 newPackage("Markov",
      Authors => {
-	  {Name => "Luis Garcia"},
+	  {Name => "Luis Garcia-Puente"},
 	  {Name => "Mike Stillman"}
 	  },
      DebuggingMode => false,
+     Keywords => {"Statistics"},
      Headline => "Markov ideals arising from Bayesian networks in statistics",
      Version => "1.2",
      PackageImports => {"Elimination"}

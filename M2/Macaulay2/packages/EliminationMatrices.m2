@@ -13,6 +13,7 @@ newPackage("EliminationMatrices",
 	     {Name => "Manuel Dubinsky", Email => "manudubinsky@gmail.com" }
 	     },
    Headline => "resultants",
+   Keywords => {"Commutative Algebra"},
    PackageImports => { "Elimination" },
    DebuggingMode => false
    )
@@ -848,7 +849,7 @@ document {
 ------------------------ \ degHomPolMap / ------------------------
 document {
      	Key => {degHomPolMap, (degHomPolMap, Matrix, List, List, ZZ), (degHomPolMap, Matrix, List, ZZ)},
-	Headline => "given a subset of variables 'var' of the polynomial ring R, it returns the base of monomials on these variables, and the matrix of coefficients of a morphism of free modules f:R(d1)+...+R(dn)->R_d with respect to these variables",
+	Headline => "return the base of monomials in a subset of variables, and the matrix of coefficients of a morphism of free modules f:R(d1)+...+R(dn)->R_d with respect to these variables",
 	Usage => " coefAndMonomials = degHomPolMap(r, l, v, d)",
 
 	Inputs => {
@@ -937,7 +938,7 @@ document {
 
 document {
      	Key => {minorsComplex, (minorsComplex, ZZ, List, ChainComplex)},
-	Headline => "This function calculates some minors of the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree. The choice of the minors is according to the construction of the determinant of a complex",
+	Headline => "calculate some minors of the maps of a graded ChainComplex in a subset of variables and fixed degree",
 	Usage => " minorsOfTheComplex = minorsComplex(d,v,C)",
 
 	Inputs => {
@@ -949,7 +950,7 @@ document {
 		List => {"a list of square (full-rank) matrices"}
 	},
 
-	PARA {}, "This function calculates some minors of the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree.",
+	PARA {}, "This function calculates some minors of the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree. The choice of the minors is according to the construction of the determinant of a complex",
 	PARA {}, "The input ChainComplex needs to be an exact complex of free modules over a polynomial ring. The polynomial ring must contain the list ", TT "v", " as variables.",
 	PARA {}, "It is recommended not to defines rings as R=QQ[x,y][a,b,c] when the variables to eliminate are '{x,y}'. In this case, see ", TO "flattenRing", " for passing from ", TEX "$R=QQ[x,y][a,b,c]$", " to ", TEX "QQ[x,y,a,b,c].",
 	

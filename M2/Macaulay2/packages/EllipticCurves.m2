@@ -7,6 +7,7 @@ newPackage(
 		  Email => "oneto@math.su.se"},
 	    {Name => "Stefano Marseglia", 
 		  Email => "stefanom@math.su.se"}},
+	Keywords => {"Algebraic Number Theory"},
     	Headline => "group law on elliptic curves (and counting points with brute force methods)"
     	)
 

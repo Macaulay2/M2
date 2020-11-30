@@ -41,7 +41,7 @@ $(foreach i,\
 	$(eval check::check-$i)\
 	$(eval check-$i:; \
 		if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 >/dev/null ;\
-		then @pre_bindir@/M2 -q --no-preload $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false); exit 0" ;\
+		then @pre_bindir@/M2 -q --no-preload $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false,Verbose=>$(Verbose)); exit 0" ;\
 		fi ))
 info-dir: @pre_infodir@/dir
 @pre_infodir@/dir:|@pre_infodir@

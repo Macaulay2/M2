@@ -14,71 +14,71 @@ haderror := false
 -- Local utilities
 -----------------------------------------------------------------------------
 
-warning   := x -> stderr << "-- warning: " << concatenate x << endl
-flagError := x -> (haderror = true; warning x)
+flagError := x -> (haderror = true; printerr("warning: ", x))
 
-noqname := (x, tag) -> (
+noqname := (tag, x) -> (
     if instance(tag, IntermediateMarkUpType)
     then warning(format toString x, " is an instance of an intermediate markup type ", format toString tag, " with no qname, appearing in hypertext during validation")
-    else error(format toString x, " is of an unrecognized type ", format toString tag, " with no qname, appearing in hypertext during validation"))
+    else   error(format toString x, " is of an unrecognized type ", format toString tag, " with no qname, appearing in hypertext during validation"))
+
+-- see content.m2
+chk := (p, x) -> (
+    c := class x;
+    if c === Option or c === LITERAL then return;
+    if not c.?qname then return noqname(c, x);
+    if not validContent#(p.qname)#?(c.qname) and c.qname =!= "comment"
+    then flagError("element of type ", toString p, " may not contain an element of type ", toString c))
 
 -----------------------------------------------------------------------------
 -- validate
 -----------------------------------------------------------------------------
 
 validate = method()
-validate String := x -> (
-    utf8check x;
-    -- activate this later, after we convert the strings with htmlLiteral
-    -- if match("<", x) then flagError("string contains tag start character '<' : ", format x);
-    )
-validate Hypertext := x -> (
-    tag := class x;
-    if not tag.?qname then noqname(x, tag) else (
-	n := tag.qname;
-	-- see content.m2
-	if validContent#?n then validate(tag, validContent#n, x)
-	else error("--internal error: valid content for qname ", format n, " not recorded yet"));
-    scan(splice x, validate))
+validate(Type, BasicList) := (T, x) -> (
+    haderror = false;
+    if not T.?qname then return noqname(T, x);
+    if not validContent#?(T.qname) then error("internal error: valid content for qname ", toString T, " not recorded yet");
+    scan(x, e -> chk(T, e));
+    if haderror then error("validation failed: ", x))
+
+validate LATER      := x -> validate x#0()
+validate LITERAL    :=
+validate TEX        :=
+validate Thing      := identity
+validate Option     := x -> apply(splice x, validate)
+
+-- TODO: should this check for unescaped "<"?
+validate String     := x -> (utf8check x; x)
+validate Hypertext  := x -> (
+    validate(class x, x);
+    apply(splice x, validate))
 
 validate HTML       := x -> (
     if #x != 2 then flagError "HTML should have 2 elements";
     if not instance(x#0, HEAD) then flagError "first element of HTML must be HEAD";
-    if not instance(x#1, BODY) then flagError "second element of HTML must be BODY";)
+    if not instance(x#1, BODY) then flagError "second element of HTML must be BODY";
+    -- TODO: make every part return the content, then use apply
+    apply(splice x, validate))
 validate HEAD       := x -> (
+    validate(class x, x);
     c := length select(toList x, y -> instance(y, TITLE));
-    if c == 0 then flagError "HEAD should have a TITLE element";
-    if c > 1  then flagError "HEAD should have at most one TITLE element";)
-validate DL         :=
-validate TR         :=
-validate UL         :=
-validate OL         :=
-validate Option     :=
+    if c != 1 then flagError "HEAD should have exactly one TITLE element";
+    apply(splice x, validate))
+
+validate HREF       := identity -- TODO
 validate TO         :=
 validate TOH        :=
-validate TO2        := x -> scan(drop(x, 1), validate)
+validate TO2        := x -> (
+    tag := x#0;
+    if isUndocumented tag and signalDocumentationWarning tag then printerr("warning: undocumented node " | format tag | " cited by " | format currentDocumentTag) else
+    if isMissingDoc   tag and signalDocumentationWarning tag then printerr("warning: missing node: "     | format tag | " cited by " | format currentDocumentTag);
+    apply(splice x, validate))
+
 validate CDATA      := x -> (
-     if match("]]>",concatenate x) then flagError "encountered \"]]>\" within CDATA";)
+     if match("]]>",concatenate x) then flagError "encountered \"]]>\" within CDATA"; x)
 validate COMMENT    := x -> (
      if match("--", concatenate x) then flagError "encountered \"--\" within COMMENT";
-     if match("-$", concatenate x) then flagError "COMMENT ends with \"-\"";)
-validate BLOCKQUOTE := x -> if #x === 0 then flagError(toString class x, " should contain at least one element")
-validate LITERAL    :=
-validate LATER      := x -> validate x#0()
-validate TEX        := x -> ( -* don't know what to do here yet... *- )
-
-chk := (valid, tag, c, x) -> (
-    if not c.?qname then noqname(x, c)
-    else if not valid#?(c.qname) and c.qname =!= "comment"
-    then flagError("element of type ", format toString tag, " can't contain an element of type ", format toString c))
-validate(Type,       Set, BasicList) := (tag, valid, x) -> (
-    haderror = false;
-    scan(x, e -> chk(valid, tag, class e, e));
-    if haderror then error("validation failed: ", x))
-validate(MarkUpType, Set, BasicList) := (tag, valid, x) -> (
-    haderror = false;
-    scan(x, e -> if class e =!= Option then chk(valid, tag, class e, e));
-    if haderror then error("validation failed: ", x))
+     if match("-$", concatenate x) then flagError "COMMENT ends with \"-\""; x)
 
 -----------------------------------------------------------------------------
 -- Fixing hypertext issues

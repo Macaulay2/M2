@@ -7,6 +7,7 @@ newPackage("DGAlgebras",
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
 	   Email => "moorewf@wfu.edu"}},
+     Keywords => {"Commutative Algebra"},
      DebuggingMode => false,
      PackageExports => {"IntegralClosure"}
      )
@@ -3476,6 +3477,18 @@ TEST ///
 Q = ZZ/101[x_1,x_2,y_1,y_2,z,w]
 I = ideal {x_1*x_2^2,z^2*w,y_1*y_2^2,x_2^2*z*w,y_2^2*z^2,x_1*x_2*y_1*y_2,x_2^2*y_2^2*z,x_1*y_1*z}
 R = Q/I
+assert(isHomologyAlgebraTrivial koszulComplexDGA R == true)
+assert(isGolod R == false)
+///
+
+TEST ///
+--- test 12: isGolod and isHomologyAlgebraTrivial example again
+--- This example is due to Roos
+S = QQ[x,y,z,u]
+I = ideal(u^3, x*y^2, (x+y)*z^2, x^2*u+z*u^2, y^2*u+x*z*u, y^2*z+y*z^2)
+ -- you can see that the mult on the koszul homology will be trivial
+betti (A = res I)
+R = S/I
 assert(isHomologyAlgebraTrivial koszulComplexDGA R == true)
 assert(isGolod R == false)
 ///

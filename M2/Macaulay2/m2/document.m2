@@ -103,7 +103,7 @@ net      DocumentTag := tag -> concatenate (package tag, " :: ", format tag)
 -- FIXME: this is kind of a hack
 toExternalString DocumentTag := tag -> (
     "new DocumentTag from " | toExternalString {
-	toString tag.Key, tag.Format, tag.Package})
+	if instance(tag.Key, Symbol) then toString tag.Key else tag.Key, tag.Format, tag.Package})
 
 new DocumentTag from BasicList := (T, t) -> (
     new DocumentTag from new HashTable from {
@@ -139,17 +139,17 @@ makeDocumentTag' := opts -> key -> (
     -- Try to detect the package
     pkg = if pkg =!= null then pkg
     else  if opts#Package =!= null then opts#Package
+    else  if member(fkey, allPackages()) then fkey
     else  if instance(nkey, String) then currentPackage -- FIXME
     else  if instance(nkey, Sequence) then currentPackage -- this is a kludge, which allows Schubert2 to document (symbol SPACE,OO,RingElement)
     else  if (pkg' := package nkey) =!= null then pkg'
-    else  if member(fkey, allPackages()) then fkey
     else  if (rawdoc := fetchAnyRawDocumentation fkey) =!= null then package rawdoc.DocumentTag;
     -- If not detected, signal an error and failover to currentPackage
     if pkg === null then (
 	if currentDocumentTag === null   then error("makeDocumentTag: package cannot be determined: ", nkey) else
 	if signalDocumentationError fkey then (
 	    loc := locate currentDocumentTag;
-	    printerr("warning: reference ", format fkey, " was not found in any package. ",
+	    printerr("error: reference ", format fkey, " was not found in any package. ",
 		"First mentioned near:\n  ", loc#0, ":", toString loc#1));
 	pkg = currentPackage);
     new DocumentTag from new HashTable from {
@@ -287,7 +287,7 @@ storeRawDocumentation := (tag, rawdoc) -> (
     fkey := format tag;
     if currentPackage#rawKey#?fkey and signalDocumentationError tag then (
 	rawdoc = currentPackage#rawKey#fkey;
-	error("error: documentation already provided for ", format tag, newline,
+	printerr("error: documentation already provided for ", format tag, newline,
 	    rawdoc#"filename", ":", toString rawdoc#"linenum", ": ... here is the (end of the) previous documentation"));
     currentPackage#rawKey#fkey = rawdoc)
 
@@ -351,7 +351,7 @@ fetchProcessedDocumentation = (pkg, fkey) -> (
 -----------------------------------------------------------------------------
 -- inquiring the status of a key or DocumentTag
 -----------------------------------------------------------------------------
-isMissingDoc    := tag -> fetchRawDocumentation getPrimaryTag tag === null
+isMissingDoc     = tag -> ( d := fetchRawDocumentation tag; d === null )
 isSecondaryTag   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?PrimaryTag )
 isUndocumented   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?"undocumented" and d#"undocumented" === true )
 hasDocumentation = key -> (
@@ -521,7 +521,11 @@ getUsage := val -> (
     if #val === 0 then error "Usage: expected content";
     DL flatten { "class" => "element", DT "Usage: ", DD \ TT \ val } )
 
-getHeadline   := (val, key)   -> if instance(val, String) then fixup val else error("expected ", toString key, " option to be a string")
+getHeadline   := (val, key)   -> (
+    title := if instance(val, String) then fixup val else error("expected ", toString key, " option to be a string");
+    if #title > 200 then   error("document: documentation headlines must be less than 100 characters long:\n  " | format title);
+    if #title > 100 then warning("document: documentation headlines must be less than 100 characters long:\n  " | format title);
+    title)
 getSubsection := (val, title) -> fixup DIV { SUBSECTION title, val }
 getSourceCode :=  val         -> DIV {"class" => "waystouse",
     fixup DIV {SUBSECTION "Code", PRE demark_newline unstack stack apply(enlist val, m -> (
@@ -645,19 +649,11 @@ document List := opts -> args -> (
     if #inp > 0 then o.Inputs  = inp else remove(o, Inputs);
     if #out > 0 then o.Outputs = out else remove(o, Outputs);
     if #ino > 0 then o.Options = ino else remove(o, Options);
-    -- Generate Hypertext containers
-    scan(keys KeywordFunctions, sym -> if o#?sym then (
-	    if sym === Consequences then scan(o#sym, x -> validate LI x)
-	    else if sym === Key then null
-	    else if sym === BaseFunction then null
-	    else if sym === symbol DocumentTag then null
-	    else validate DIV o#sym));
     -- Set the location of the documentation
     o#"filename" = currentFileName;
     o#"linenum"  = currentLineNumber();
-    o = new HashTable from o;
     currentDocumentTag = null;
-    storeRawDocumentation(tag, o))
+    storeRawDocumentation(tag, new HashTable from o))
 
 -----------------------------------------------------------------------------
 -- undocumented

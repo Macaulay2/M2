@@ -10,6 +10,7 @@ newPackage( "SegreClasses",
          HomePage => "http://coreyharris.name"}
     },
     Headline => "test containment of varieties and computes algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products, via a very general Segre class computation",
+    Keywords => {"Intersection Theory"},
     DebuggingMode => false
 );
 
@@ -572,7 +573,7 @@ Node
      Key
      	  SegreClasses
      Headline
-     	  Tests containment of varieties and computes algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products - via a very general Segre class computation. The package works for subschemes of products of projective spaces.
+	  Tests containment of varieties and computes algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products - via a very general Segre class computation
      Description
      	  Text
 	      This package tests containment of (irreducible) varieties and computes Segre classes, algebraic multiplicity, and Fulton-MacPherson intersection products. More generally, for subschemes of  \PP^{n_1}x...x\PP^{n_m}, this package tests if a top-dimensional irreducible component of the scheme associated to an ideal is contained in the scheme associated to another ideal. Specialized methods to test the containment of a variety in the singular locus of another are provided, these methods work without computing the ideal of the singular locus and can provide significant speed-ups relative to the standard methods when the singular locus has a complicated structure. The package works for subschemes of products of projective spaces.
@@ -827,7 +828,7 @@ Node
     	isComponentContained
 	(isComponentContained, Ideal,Ideal)
     Headline
-    	This method tests containment of (irreducible) varieties; more generally it tests if a top-dimensional irreducible component of the scheme associated an ideal is contained in the scheme associated to another ideal
+	Tests containment of (irreducible) varieties
     Usage
     	isComponentContained(IX,IY)
     Inputs

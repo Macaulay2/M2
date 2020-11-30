@@ -18,6 +18,7 @@ newPackage(
                     {Name=> "Christof Soeger",
                     Email=>"csoeger@uni-osnabrueck.de"}},
            Headline=>"interface to Normaliz in Macaulay2",
+           Keywords => {"Interfaces"},
            DebuggingMode => false,
 	   Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
@@ -26,8 +27,8 @@ newPackage(
 		"acceptance date" => "2010-08-08",
 		"published article URI" => "http://www.j-sag.org/Volume2/jsag-4-2010.pdf",
 		"published code URI" => "http://www.j-sag.org/Volume2/Normaliz.m2",
-		"repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Normaliz.m2",
-		"release at publication" => 11859,	    -- as an integer
+		"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Normaliz.m2",
+		"release at publication" => "d814bd64858da074bc73c626d27ff5494dfb7d4f",
 		"version at publication" => "2.0",
 		"volume number" => "2",
 		"volume URI" => "http://www.j-sag.org/volume2.html"
@@ -104,7 +105,6 @@ nmzNumberThreads=1;
 --nmzUserCalled=true;  -- whether the user calls a method
 nmzFile="";        -- Internal name of the data files
 nmzVersion="";     -- normaliz
-nmzExecVersion=""; -- needs to be at least nmzMinExecVersion
 nmzMinExecVersion="2.11"; -- minimal normaliz version
 nmzGen=true;      -- indicates whether ".gen" is generated
 
@@ -167,8 +167,7 @@ getNmzExec=()->
     (
         nmzExec="normaliz";
     );
---    return nmzExec;
-    return prefixDirectory | currentLayout#"programs" | nmzExec;
+    return nmzExec;
 );
 
 
@@ -323,33 +322,9 @@ readNmzData(String):=(nmzSuffix)->
     if member(nmzSuffix, {"inv", "in", "out", "cst"}) then
         error("readNmzData: To read .inv use getNumInvs(), to read .cst use readMultipleNmzData, to read .out or .in there is no function provided");
 
-    if(nmzSuffix=="sup") then ( -- for backward compatibility, should only appear if nmzUserCalled
-          L:=readMultipleNmzData "cst";
-          return L#0;
-    );
-
-    checkNmzFile("readNmzData");
-
-    if not fileExists(nmzFile|"."|nmzSuffix) then
-        error("readNmzData: No file "|nmzFile|"."|nmzSuffix|" found. Perhaps you need to activate another option.");
-
-
-    if debugLevel > 0 then << "--reading " << nmzFile << "." << nmzSuffix << endl;
-    inf:=get(nmzFile|"."|nmzSuffix);
-    s:=lines(inf);
-    nmzGen:={};
-    numRows:=value s#0;
-    numCols:=value s#1;
-    t:="";
-    for i from 2 to numRows+1
-    do(
-       t = select("[0-9-]+",s#i);
-       gen:=apply(t,value);
-       nmzGen=append(nmzGen,gen);
-    );
-    if(nmzGen!={})
-    then  return(matrix(nmzGen))
-    else return;   -- should not appear unless the user calls it
+    L := readMultipleNmzData if nmzSuffix=="sup" then "cst" -- for backward compatibility, should only appear if nmzUserCalled
+        else nmzSuffix;
+    return L#0;
 );
 
 -- reads several matrices from one output file and returns them as list
@@ -370,29 +345,20 @@ readMultipleNmzData String:=nmzSuffix->
     s:=lines(inf);
 
     L:={};
-    t:="";
-    b:=0;
-
-    while(b<#s)
-    do(
-      nmzGen:={};
-      numRows:=value s#b;
-      numCols:=value s#(b+1);
-      if(numRows==0)
-        then L=append(L,matrix(for j from 0 to numCols-1 list {}))
-      else(
-        for i from b+2 to b+1+numRows
-        do(
-          t = select("[0-9-]+",s#i);
-          gen:=apply(t,value);
-          nmzGen=append(nmzGen,gen);
-        );
-        -- function matrix expects nonempty list
-        if(nmzGen!={})
-        then  L=append(L,matrix(nmzGen));
-        --else  L=append(L,{{}});  -- better {{},{},...,{}};
-      );
-      b=b+numRows+3;
+    i := 0;
+    j := 0;
+    while i < #s do (
+        while j < #s and match("[0-9-]+", s#j) do j = j + 1;
+        nmzGen := if i == j then {{}}
+            else apply(take(s, {i, j - 1}), t -> value \ select("[0-9-]+", t));
+        -- versions between 3.4.0 and 3.5.1 did not print row/column data
+        -- we remove it if present
+        if #nmzGen > 2 and
+            nmzGen#0#0 == #nmzGen - 2 and -- number of rows
+            nmzGen#1#0 == #nmzGen#2 -- number of columns
+        then nmzGen = drop(nmzGen, 2);
+        L = append(L, matrix nmzGen);
+        i = j = j + 1;
     );
     return L;
 );
@@ -503,20 +469,6 @@ showNmzOptions=()->
   << collectNmzOptions();
 )
 
-checkNmzExecVersion=()->
-(
-  if (nmzExecVersion=="") then (
-    cmd := "! " | getNmzExec() | " --version 2>&1 </dev/null || true";
-    result := get cmd;
-    if not match("Normaliz ([0-9.]*)",result) then error("normaliz executable not found: " | getNmzExec());
-    nmzExecVersion = replace("(.|\n)*Normaliz ([0-9.]+)(.|\n)*", "\\2", result);
-    if not match("\\`[0-9.]+\\'$",nmzExecVersion) then error ("failed to recognize version number of program normaliz");
-  );
-  if (nmzExecVersion < nmzMinExecVersion) then
-    error("normaliz: Normaliz executable ("|getNmzExec()|") too old (" | nmzExecVersion | "), at least version " | nmzMinExecVersion | " needed!");
-)
-
-
 normaliz=method(Options=>true)
 opts={allComputations=>false, grading=>{}}
 normaliz(Matrix,String):=opts>>o->(sgr,nmzMode)->
@@ -540,6 +492,8 @@ normaliz(List):=opts>>o->(s)->
 
 
 -- sequence should contain pairs (sgr,nmzMode)
+normalizProgram = null
+
 runNormaliz=method(Options=>true)
 opts={allComputations=>false, grading=>{}}
 runNormaliz(Matrix,String):=opts>>o->(sgr,nmzMode)->
@@ -551,8 +505,10 @@ runNormaliz(Matrix,String):=opts>>o->(sgr,nmzMode)->
 runNormaliz(List):=opts>>o->(s)->
 (
     setNmzFile();
-
-    checkNmzExecVersion();
+    if normalizProgram === null then normalizProgram =
+	findProgram("normaliz", "normaliz --help",
+	    Verbose => debugLevel > 0, MinimumVersion => (nmzMinExecVersion,
+		"normaliz --version | head -1 | cut -d' ' -f 2 | tr -d '\n'"));
 
     if (#o.grading > 0) then (
         s = append(s, (matrix{o.grading}, "grading"));
@@ -560,14 +516,10 @@ runNormaliz(List):=opts>>o->(s)->
     doWriteNmzData(s);
     options:=collectNmzOptions();
 
-    cmd:="";
     dir:=select(".*/",nmzFile);
-    if(dir!={}) then cmd="cd "|dir#0|"; ";
-
-    cmd = (cmd|getNmzExec()|options|baseFilename(nmzFile));
-    if debugLevel > 0 then << "--running command: " << cmd << endl;
-    if 0 != run cmd then error ("command failed : ", cmd);
-    if debugLevel > 0 then << "--command succeeded" << endl;
+    runDir := if dir != {} then dir#0 else null;
+    runProgram(normalizProgram, getNmzExec(), options | baseFilename(nmzFile),
+	RunDirectory => runDir, Verbose => debugLevel > 0);
 
     if(not nmzGen)  -- return nothing if .gen is not
     then(            -- generated
@@ -1317,7 +1269,7 @@ document {
 PARA{},"Depending on the options enabled (see ", TO setNmzOption, "), ", TT "Normaliz", " writes additional output files. To obtain the content of these files within Macaulay2, use ", TO readNmzData, " or ", TO allComputations,". The following files may be written, provided certain conditions are satisfied and the information that should go into them has been computed. We denote the files simply by their types.
 For the most types of inputs the ambient lattice is ", TEX "\\ZZ^n", " if the input of Normaliz is a matrix of n columns. In types polytope and rees_algebra the ambient lattice is ", TEX "\\ZZ^{n+1}", " since the input vectors are extended by 1 component. For congruences and inhomogeneous input it is ", TEX "\\ZZ^{n-1}", " and for inhomogenouse congruences ", TEX "\\ZZ^{n-2}", ".
 For input of type lattice_ideal the lattice is ", TEX "\\ZZ^{r}", " where n-r is the rank of the input matrix. The essential lattice is gp(M) where M is the monoid computed by Normaliz internally, i.e. after a linear transformation such that the cone is full-dimensional and the integral closure has to be computed.
-See the documentation of Normaliz at ", HREF "http://www.math.uos.de/normaliz/Normaliz2.12.2/Normaliz.pdf", " for more details.",
+See the documentation of Normaliz at ", HREF "https://github.com/Normaliz/Normaliz/blob/master/doc/Normaliz.pdf", " for more details.",
 UL{
    {TT "gen      ", "   The Hilbert basis"},
    {TT "ext      ", "   The extreme rays"},

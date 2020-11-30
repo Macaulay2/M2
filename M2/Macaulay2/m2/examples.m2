@@ -12,15 +12,8 @@ processExamplesStrict = true
 -- local utilities
 -----------------------------------------------------------------------------
 
-M2outputRE      := "(\n+)i+[1-9][0-9]* : "
-M2outputREindex := 1
-
-separateM2output = str -> (
-    m := regex("^i1 : ", str);
-    if m#?0 then str = substring(m#0#0, str);
-    -- TODO: do this with regex instead
-    while str#?-1 and str#-1 == "\n" do str = substring(0, #str - 1, str);
-    separate(M2outputRE, M2outputREindex, str))
+M2outputRE      = "\n+(?=i+[1-9][0-9]* : )"
+separateM2output = str -> drop(drop(separate(M2outputRE, str),1),-1)
 
 -----------------------------------------------------------------------------
 -- capture
@@ -82,13 +75,13 @@ getExampleOutputFilename := (pkg, fkey) -> (
 getExampleOutput := (pkg, fkey) -> (
     -- TODO: only get from cache if the hash hasn't changed
     if pkg#"example results"#?fkey then return pkg#"example results"#fkey;
-    verboseLog := if debugLevel > 1 or true then printerr else identity;
+    verboseLog := if debugLevel > 1 then printerr else identity;
     filename := getExampleOutputFilename(pkg, fkey);
     output := if fileExists filename
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
     else if width (ex := examples fkey) =!= 0
     then ( verboseLog("info: capturing example results on-demand"); last capture ex );
-    pkg#"example results"#fkey = if output === null then {} else drop(separateM2output output, -1))
+    pkg#"example results"#fkey = if output === null then {} else separateM2output output)
 
 -- used in installPackage.m2
 -- TODO: store in a database instead
@@ -96,7 +89,7 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
     if fileExists outf then (
 	outstr := reproduciblePaths get outf;
 	outf << outstr << close;
-	pkg#"example results"#fkey = drop(separateM2output outstr, -1))
+	pkg#"example results"#fkey = separateM2output outstr)
     else verboseLog("warning: missing file ", outf));
 
 -- used in installPackage.m2

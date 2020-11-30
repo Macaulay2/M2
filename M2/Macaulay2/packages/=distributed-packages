@@ -99,6 +99,7 @@ EliminationMatrices
 EllipticIntegrals
 Triplets
 CompleteIntersectionResolutions
+EagonResolution
 MCMApproximations
 MultiplierIdeals
 InvariantRing
@@ -208,3 +209,8 @@ PencilsOfQuadrics
 ThreadedGB
 VectorGraphics
 ResolutionsOfStanleyReisnerRings
+GKMVarieties
+StatGraphs
+GraphicalModelsMLE
+EigenSolver
+MultiplicitySequence

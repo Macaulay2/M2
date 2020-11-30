@@ -1,5 +1,5 @@
 fn = temporaryFileName()
-fn << "echo -n Hello $1!" << close
+fn << ///printf "Hello %s!" "$1"/// << close
 name = baseFilename fn
 dir = replace(name | "$", "", fn)
 programPaths#name = dir
@@ -35,3 +35,10 @@ assert(fileExists(dir | "/foo/bar/baz"))
 
 program = findProgram("foo", name, AdditionalPaths => {dir})
 assert(program#"path" == dir)
+
+fn << "echo -n 1.0" << close
+program = findProgram(name, name, MinimumVersion => ("0.9", name))
+assert(program#"version" == "1.0")
+program = findProgram(name, name, MinimumVersion => ("1.1", name),
+    RaiseError => false)
+assert(program === null)
