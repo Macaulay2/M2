@@ -1091,7 +1091,6 @@ yonedaMap' ComplexMap := Matrix => opts -> f -> (
 
 yonedaProduct = method()
 yonedaProduct(Matrix, Matrix) := Matrix => (a,b) -> (
-    -- CCC
     -- Ext(B,C) ** Ext(A,B) --> Ext(A,C)
     -- a: R^1 --> Ext^d(A,B)
     -- b: R^1 --> Ext^e(B,C)

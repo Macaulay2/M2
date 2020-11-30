@@ -2366,7 +2366,7 @@ doc ///
         C = yonedaExtension f
     Inputs
         f:Matrix
-            over a ring {\tt R}, from {\tt R^1} to {\tt Ext^d(M,N)},
+            over a ring $R$, from $R^1$ to $\operatorname{Ext}^d(M,N)$,
             which represents an element in the Ext module
     Outputs
         C:Complex
@@ -2375,7 +2375,7 @@ doc ///
     Description
         Text
             The module $\operatorname{Ext}^d(M,N)$ corresponds to equivalence classes
-            of extensions of $M$ by $N$.  In particular, an element 
+            of extensions of $N$ by $M$.  In particular, an element 
             of this module is represented by an exact sequence of the form
             \[
               0 \leftarrow M \leftarrow F_0 \leftarrow F_1 \leftarrow \dots
@@ -2383,7 +2383,7 @@ doc ///
             \]
             where $F_0 \leftarrow F_1 \leftarrow \dots$
             is a free resolution of $M$, and $P$ is the pushout of the maps
-            $g : F_d \rightarrow N$ and $F_d \rightarrow F_(d-1)$.
+            $g : F_d \rightarrow N$ and $F_d \rightarrow F_{d-1}$.
             The element corresponding to $f$ in $\operatorname{Ext}^d(M,N)$ lifts to 
             the map $g$.
         Text
@@ -2395,7 +2395,7 @@ doc ///
             on the elliptic curve, which can be verified by computing
             Fitting ideals.
         Example
-            R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z))
+            R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
             M = truncate(1,R^1)
             f = basis(0, Ext^1(M, R^1))
             C = yonedaExtension f
@@ -2409,8 +2409,8 @@ doc ///
             When the map $f$ has degree 0, the corresponding exact sequence
             is homogeneous.
         Example
-            x = symbol x
-            S = ZZ/101[x_0..x_5]
+            x = symbol x;
+            S = ZZ/101[x_0..x_5];
             I = borel monomialIdeal(x_2*x_3)
             E = Ext^4(S^1/I, S^{-5})
             f = E_{0}
@@ -2419,51 +2419,130 @@ doc ///
             assert isWellDefined C
             assert isHomogeneous C
             assert(HH C == 0)
+        Text
+            The inverse operation is given by @TO yonedaExtension'@.
+        Example
+            f' = yonedaExtension' C
+            assert(f' == f)
     SeeAlso
         "Working with Ext"
         (yonedaMap, Matrix)
         (yonedaMap', ComplexMap)
         (yonedaExtension', Complex)
-        (yonedaProduct, Matrix, Matrix)
         (yonedaProduct, Module, Module)
         (homomorphism, ComplexMap)
         (homomorphism', ComplexMap)
         fittingIdeal
 ///
 
-///
+doc ///
     Key
         (yonedaExtension', Complex)
         yonedaExtension'
     Headline
+        identifies the element of Ext corresponding to an extension
     Usage
+        f = yonedaExtension' C
     Inputs
+        C:Complex
+          exact, of length $d$ over a ring $R$
     Outputs
+        f:Matrix
+          a map from $R^1$ to $\operatorname{Ext}^d(C_0, C_d)$
     Description
         Text
+            The module $\operatorname{Ext}^d(M,N)$ corresponds to equivalence classes
+            of extensions of $N$ by $M$.  In particular, an element 
+            of this module is represented by an exact sequence of the form
+            \[
+              0 \leftarrow M \leftarrow C_1 \leftarrow C_2 \leftarrow \dots
+              \leftarrow C_{d-1} \leftarrow N \leftarrow 0
+            \]
+            In particular, we have $M = C_0$ and $N = C_d$.
+            For any such exact sequence, this method returns the map $f
+            \colon R^1 \to \operatorname{Ext}^d(M,N)$
+            corresponding to the element in the Ext module.
+        Text
+            In our first example, the module 
+            $\operatorname{Ext}^1(M,R^1)$
+            has one generator, in degree 0.
+            The middle term in the corresponding short exact sequence
+            determines an irreducible rank 2 vector bundle 
+            on the elliptic curve.
         Example
-    Caveat
+            R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
+            M = truncate(1,R^1)
+            N = R^1;
+            E = coker map(R^{3:-1} ++ R^1,,{
+                    {y, x, 0, 0}, 
+                    {-z, 0, x, -y*z}, 
+                    {0, -z, -y, x^2-3*x*z+2*z^2}, 
+                    {x^2-3*x*z+2*z^2, y*z, 0, 0}
+                    })
+            d1 = map(M, E, (cover E)^[0])
+            d2 = map(E, N, (cover E)_[1])
+            C = complex{d1,d2}
+            assert isWellDefined C
+            assert isHomogeneous C
+            assert(HH C == 0)
+            f = yonedaExtension' C
+        Text
+            Although the complex representing $f$ is only defined up
+            to equivalence of extensions, this method returns the same 
+            complex in this example.
+        Example
+            assert(C == yonedaExtension f)
+            assert(basis(0, Ext^1(M,N)) == f)
+        Text
+            The trivial extension corresponds to the zero element
+            in the Ext module.
+        Example
+            R = ZZ/101[a,b,c,d,e];
+            M = coker matrix"a,b,d,e"
+            N = coker matrix"c,d,e"
+            Ext^3(M,N)
+            C = complex{id_M, map(M, R^0, 0), map(R^0, N, 0), id_N}
+            assert isWellDefined C
+            assert(HH C == 0)
+            f = yonedaExtension' C
+            assert(target f === Ext^3(M,N))
+            assert(f == 0)
+            D = yonedaExtension f
+            assert(C != D)
     SeeAlso
         "Working with Ext"
         (yonedaMap, Matrix)
         (yonedaMap', ComplexMap)
         (yonedaExtension, Matrix)
-        (yonedaProduct, Matrix, Matrix)
         (yonedaProduct, Module, Module)
 ///
 
-///
+-- TODO: this doc node needs more text, another example.
+doc ///
     Key
         (yonedaMap, Matrix)
         yonedaMap
     Headline
+        creates a chain complex map representing an extension of modules
     Usage
+        g = yonedaMap f
     Inputs
+        f:Matrix
+            over a ring $R$, from $R^1$ to $\operatorname{Ext}^d(M,N)$,
+            which represents an element in the Ext module
     Outputs
+        g:ComplexMap
+            of degree $-d$ from the free resolution of $M$ to the free
+            resolution of $N$ corresponding to the given element in the
+            Ext module
     Description
-        Text
         Example
-    Caveat
+            R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
+            M = truncate(1,R^1)
+            f = basis(0, Ext^1(M, M))
+            g = yonedaMap(f, LengthLimit => 8)
+            isWellDefined g
+            assert(yonedaMap' g == f)
     SeeAlso
         "Working with Ext"
         (yonedaMap', ComplexMap)

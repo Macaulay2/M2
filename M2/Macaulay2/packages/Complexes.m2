@@ -1,7 +1,7 @@
 newPackage(
     "Complexes",
     Version => "0.99", 
-    Date => "23 Nov 2020",
+    Date => "30 Nov 2020",
     Authors => {
         {   Name => "Gregory G. Smith", 
             Email => "ggsmith@mast.queensu.ca", 
