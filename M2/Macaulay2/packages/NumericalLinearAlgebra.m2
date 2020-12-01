@@ -1,15 +1,20 @@
 newPackage(
-     "NumericalLinearAlgebra",
-     -- PackageExports => {"NAGtypes"},
-     Version => "0.2", 
-     Date => "Dec 2020",
-     Authors => {{Name => "Robert Krone", 
-    	       Email => "krone@math.gatech.edu"}},
-     Headline => "numerically compute local dual space and Hilbert functions",
-     Keywords => {"Numerical Linear Algebra"},
-     --PackageImports => {"Truncations"},
-     AuxiliaryFiles => false
-     --AuxiliaryFiles => true
+    "NumericalLinearAlgebra",
+    -- PackageExports => {"NAGtypes"},
+    Version => "1.16", 
+    Date => "Dec 2020",
+    Authors => {
+        {Name => "Robert Krone", 
+            Email => "krone@math.gatech.edu"},
+	{Name => "Marc Harkonen", 
+            Email => "harkonen@gatech.edu"},
+    	{Name => "Anton Leykin",
+            Email => "anton.leykin@gmail.com"}
+    	},
+    Headline => "numerically compute local dual space and Hilbert functions",
+    Keywords => {"Numerical Linear Algebra"},
+    AuxiliaryFiles => false
+    --AuxiliaryFiles => true
 )
 
 export{
@@ -17,13 +22,16 @@ export{
     "Normalize",
     "numericalKernel",
     "numericalImage",
-    "colReduce",
-    "basisIndices"
+    "colReduce"
     }
 
 -- Default tolerance value respectively for exact fields and inexact fields
 defaultT = R -> if precision 1_R == infinity then 0 else 1e-6;
 getTolerance = true >> opts -> R -> if not opts.?Tolerance or opts.Tolerance === null then defaultT(R) else opts.Tolerance;
+
+-- conjugate all entries of the matrix (should be a part of M2!!!)
+conjugate Matrix := Matrix =>M -> matrix(entries M / (row->row/conjugate))
+-- installPackage doesn't complain about the absence of conjugate
 
 numericalKernel = method(Options => {Tolerance => null})
 numericalKernel (Matrix) := Matrix => o -> M -> (
@@ -37,6 +45,13 @@ numericalKernel (Matrix) := Matrix => o -> M -> (
     K := submatrix'(transpose Vh,,cols);
     if K == 0 then K else conjugate K
     )
+
+TEST ///
+N = matrix {{0.001, 0, 0}, {1, 1, 3}, {2, 2, 5.999}}
+K = numericalKernel(N, Tolerance=>0.001)
+assert(numcols K == 2)
+assert(norm(N*K) < 0.001)
+///
 
 --performs Gaussian reduction on M
 colReduce = method(Options => {Tolerance => null, Normalize => true, Reverse => false})
@@ -130,11 +145,12 @@ Headline
 Description
   Text
     This package collects implementations of numerical linear algebra algorithms.
+    
     @UL {
 	{TO numericalKernel},
 	{TO numericalImage},
 	{TO colReduce}
-	}@
+	}@    
 ///
 
 

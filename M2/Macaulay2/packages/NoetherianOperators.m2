@@ -16,7 +16,8 @@ newPackage(
         Email => "anton.leykin@gmail.com"}
     },
     Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
-    PackageExports => {"Truncations", "Bertini", "NumericalLinearAlgebra", "NAGtypes"},
+    PackageExports => {"Truncations", -- using "truncate" as a method name 
+        "Bertini", "NumericalLinearAlgebra", "NAGtypes"},
     PackageImports => {"Dmodules", "PrimaryDecomposition"},
     AuxiliaryFiles => false,
     DebuggingMode => false,
@@ -32,7 +33,6 @@ export {
     "localHilbertRegularity",
     "eliminatingDual",
     "innerProduct",
-    "reduceSpace",
     "orthogonalInSubspace",
     "Rational",
     "ProduceSB",
@@ -450,21 +450,6 @@ innerProduct (PolySpace, RingElement) := (S, l) -> innerProduct(S, polySpace mat
 innerProduct (RingElement, RingElement) := (f, l) -> (
     M := last coefficients(matrix{{f,l}});
     ((transpose M_{0})*M_{1})_(0,0)
-    )
-
-reduceSpace = method(Options => {Monomials => null,Tolerance=>1e-6})
-reduceSpace PolySpace := o -> S -> (
-    if dim S == 0 then return polySpace(gens S,Reduced=>true);
-    (mons,coefs) := coefficients(gens S, Monomials => o.Monomials);
-    M := mons*(colReduce(coefs,Reverse=>true,Tolerance=>o.Tolerance));
-    polySpace(M,Reduced=>true)
-    )
-reduceSpace DualSpace := o -> L -> dualSpace(reduceSpace L.Space,L.BasePoint)
-
-random (ZZ,PolySpace) := o -> (d,S) -> (
-    if not S.Reduced then S = reduceSpace S;
-    Sd := polySpace sub(matrix{select(flatten entries gens S, q -> first degree q <= d)}, ring S);
-    random Sd
     )
 
 orthogonalInSubspace = method()
@@ -1255,12 +1240,6 @@ cleanPoly = (tol, x) -> (
     (mon * coef)_(0,0)
 )
 
-conjugate(Matrix) := Matrix => M -> (
-    matrix table(numrows M, numcols M, (i,j) -> conjugate(M_(i,j)))
-)
-
-
-
 coordinateChangeOps = method()
 coordinateChangeOps(Matrix, DiffOp) := DiffOp => (A, D) -> (
     R := ring D;
@@ -1285,8 +1264,6 @@ assert(all(comp - prod, D -> D == 0))
 phi = map(R,R, vars R * transpose (A*B))
 assert(coordinateChangeOps_phi last nops - last comp == 0)
 ///
-
-
 
 
 noethOpsFromComponents = method()
@@ -1967,6 +1944,7 @@ P = innerProduct(S,S)
 assert(all((0,0)..(3,3), i->(P_i == if i#0 == i#1 then 1 else 0)))
 ///
 
+undocumented {  (orthogonalInSubspace,Ideal,List,ZZ,PolySpace) } 
 doc ///
      Key
           orthogonalInSubspace
@@ -1994,34 +1972,6 @@ doc ///
 	       D = dualSpace(matrix{{x-y}}, origin R);
 	       S = orthogonalInSubspace(D, T, 1e-6)
 ///
-
-doc ///
-     Key
-          reduceSpace
-	  (reduceSpace,DualSpace)
-	  (reduceSpace,PolySpace)
-	  [reduceSpace,Monomials]
-     Headline
-          reduce the generators of a space
-     Usage
-          S = reduceSpace T
-     Inputs
-     	  T:DualSpace
-	       or @ofClass PolySpace@
-     Outputs
-          S:DualSpace
-	       or @ofClass PolySpace@
-     Description
-          Text
-	       Reduces the generators of a DualSpace or PolySpace so that the new generators are linearly independent, and each has
-	       a distinct lead monomial.  This is achieved by Gaussian reduction.
-	  Example
-	       R = CC[x,y];
-	       T = polySpace matrix{{x,y,x-y+1e-10}}
-	       S = reduceSpace T
-	       S = reduceSpace(T, Tolerance=>1e-12)
-///
-
 doc ///
      Key
           (truncate,DualSpace,ZZ)
@@ -2114,7 +2064,6 @@ doc ///
 	  [localHilbertRegularity,Tolerance]
 	  [eliminatingDual,Tolerance]
 	  [gCorners,Tolerance]
-	  [reduceSpace,Tolerance]
       [rationalInterpolation, Tolerance]
       [truncatedDual, Tolerance]
       [zeroDimensionalDual, Tolerance]
