@@ -1047,24 +1047,28 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 dnl debian/fedora: nauty-
-AC_MSG_CHECKING(whether the package nauty (>= 2.7) is installed)
+AC_MSG_CHECKING(whether the package nauty is installed)
 FOUND_nauty=no
 for nauty_prefix in "" "nauty-"
 do
     if test "`type -t ${nauty_prefix}complg`" = file
-    then nauty_version=`${nauty_prefix}complg --version | cut -d " " -f 3`
-	AX_COMPARE_VERSION([$nauty_version], [ge], [2.7000],
-	    [AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
-	     FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
-	     FOUND_nauty=yes
-	     break],
-	    [FOUND_nauty=old])
+    then
+dnl check if #1408 is a problem
+	if ${nauty_prefix}biplabg < /dev/null 2>/dev/null
+	then
+	    AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
+	    FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
+	    FOUND_nauty=yes
+	    break
+	else
+	    FOUND_nauty=bad
+	fi
     fi
 done
 if test $FOUND_nauty != yes
 then
-    if test $FOUND_nauty = old
-    then AC_MSG_RESULT([yes, but < 2.7, will build])
+    if test $FOUND_nauty = bad
+    then AC_MSG_RESULT([yes, but ${nauty_prefix}biplabg raises an error, will build])
     else AC_MSG_RESULT([no, will build])
     fi
     BUILD_nauty=yes
