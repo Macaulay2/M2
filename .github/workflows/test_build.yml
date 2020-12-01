@@ -182,7 +182,7 @@ jobs:
       - name: Run Tests using Autotools
         if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest'
         run: |
-          make check
+          make check -o check-in-libraries
           make -C Macaulay2/html-check-links check
           make validate-html
 
