@@ -40,7 +40,6 @@ InvolutiveBases
 ConwayPolynomials
 EdgeIdeals
 FourTiTwo
-ResolutionsOfStanleyReisnerRings
 StatePolytope
 Polyhedra
 Truncations
@@ -208,7 +207,6 @@ MixedMultiplicity
 PencilsOfQuadrics
 ThreadedGB
 VectorGraphics
-ResolutionsOfStanleyReisnerRings
 GKMVarieties
 NoetherianOperators
 Hadamard
@@ -216,3 +214,4 @@ StatGraphs
 GraphicalModelsMLE
 EigenSolver
 MultiplicitySequence
+ResolutionsOfStanleyReisnerRings
