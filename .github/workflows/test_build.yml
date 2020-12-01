@@ -9,14 +9,8 @@
 name: Build and Test Macaulay2
 
 on:
-  # trigger a test quick build at both PR (on dev)
-  # and pushing to master (after merging or by Dan or Mike)
   push:
     branches:
-      - master
-      - development
-      - global
-      - release-1.16
   pull_request:
     branches:
       - master
@@ -32,42 +26,33 @@ defaults:
 jobs:
   build:
     if: github.repository == 'Macaulay2/M2' || contains(github.ref, 'global')
-    name: ${{ matrix.os }}-${{ matrix.build-system }}-${{ matrix.compiler }}
+    name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false  # eventually make this true
       matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
         build-system:
           - cmake
           - autotools
+        os:
+          - ubuntu-latest
+          - macos-latest
         compiler:
-#          - clang10
           - gcc9
           - default
-#          - xcode11
-        # fine-tuning some configurations and excluding a few
         include:
-          - compiler: gcc9
+          - build-system: cmake
+            compiler: gcc9
             cxx: g++-9
             cc: gcc-9
-          - os: macos-latest
-            build-system: cmake
-            compiler: clang10
-            cxx: clang++
-            cc: clang
-          - os: ubuntu-latest
-            build-system: cmake
+          - build-system: cmake
+            os: ubuntu-latest
             compiler: clang10
             cxx: clang++-10
             cc: clang-10
         exclude:
           - os: macos-latest
             compiler: gcc9
-#          - os: ubuntu-latest
-#            compiler: xcode11
 
     steps:
       - uses: actions/checkout@v2
@@ -194,7 +179,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-           name: ${{ matrix.os }}-${{ matrix.build-system }}-${{ matrix.compiler }}-logs
+           name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}-logs
            path: |
              # Autotools
              M2/BUILD/build/config.log
