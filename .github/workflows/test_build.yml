@@ -53,6 +53,9 @@ jobs:
         exclude:
           - build-system: autotools
             compiler: gcc9
+          - build-system: cmake
+            os: macos-latest
+            compiler: gcc9
 
     steps:
       - uses: actions/checkout@v2
