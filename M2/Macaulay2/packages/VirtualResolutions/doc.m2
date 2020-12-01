@@ -507,6 +507,7 @@ doc ///
        (multigradedRegularity, Ring,               Module)
        (multigradedRegularity, NormalToricVariety, Ideal)
        (multigradedRegularity, NormalToricVariety, Module)
+       [multigradedRegularity, Strategy]
        [multigradedRegularity, LowerLimit]
        [multigradedRegularity, UpperLimit]
         LowerLimit

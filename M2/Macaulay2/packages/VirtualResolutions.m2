@@ -444,6 +444,7 @@ gradedPolynomialRing = n -> (
 multigradedRegularity = method(
     TypicalValue => List,
     Options => {
+        Strategy   => null,
         LowerLimit => null,
         UpperLimit => null
         }
@@ -461,6 +462,7 @@ MultigradedRegularityComputation.synonym = "multigraded regularity computation"
 new MultigradedRegularityComputation from Sequence := (C, L) -> (
     (X, S, M) := L;
     container := scan(pairs M.cache, (k, v) -> if instance(k, MultigradedRegularityOptions) then break v);
+    -- TODO: eventually also need to check that X and S are appropriate
     if container =!= null then return container;
     -- making local assignments so that productOfProjectiveSpaces does
     -- not mess with the global ring by grabbing their global symbols.
@@ -499,6 +501,15 @@ isComputationDone MultigradedRegularityComputation := Boolean => options multigr
     and (opts.LowerLimit === null or container.LowerLimit <= opts.LowerLimit)
     and (opts.UpperLimit === null or container.UpperLimit >= opts.UpperLimit))
 
+cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
+
+cacheComputation = method(TypicalValue => CacheFunction, Options => true)
+cacheComputation MultigradedRegularityComputation := CacheFunction => options multigradedRegularity >> opts -> container -> new CacheFunction from (
+    -- this function takes advantage of FunctionClosures by modifying the container
+    computation -> (
+        if isComputationDone(opts, container) then ( cacheHit class container; container.Result ) else
+        if (result := computation(opts, container)) =!= null then ( container.Result = result )))
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 ----- Input: (S,M) = (Ring, Module)
@@ -518,27 +529,41 @@ multigradedRegularity(Ring,               Module) := o -> (S, M) -> multigradedR
 multigradedRegularity(NormalToricVariety, Module) := o -> (X, M) -> multigradedRegularityHelper(X,  , M, o)
 
 multigradedRegularityHelper = (X, S, M, opts) -> (
-    debugInfo := if debugLevel < 1 then identity else printerr;
+    strategy := opts.Strategy;
     -- outsourcing the preprocessing of the input
     container := new MultigradedRegularityComputation from (X, S, M);
-    if isComputationDone(opts, container) then (
-        debugInfo("Cache hit on a ", synonym class container, "! 🎉"); return container.Result );
     -- get the cache key associated to the container, which encapsulates the base variety
     cacheKey := scan(pairs M.cache, (k, v) -> if instance(k, MultigradedRegularityOptions) then break k);
-    (X, S, M) = (cacheKey#0, cacheKey#1, cacheKey#2 ** M);
     -- Henceforth, X is a normal toric variety, S is a ring with Tate data, and M is an S-module
-    --
+    (X, S, M) = (cacheKey#0, cacheKey#1, cacheKey#2 ** M);
+    -- the strategies are stored as hooks under this key
+    key := (multigradedRegularity, NormalToricVariety, Module);
+    -- this function attempts the strategies in reverse order, or only the specified strategy
+    computation := (opts, container) -> runHooks(key, (X, S, M, opts ++ {cache => container}), Strategy => strategy);
+    -- the actual computation of the strategies occurs here
+    C := (cacheComputation(opts, container)) computation;
+    if C =!= null then C else if strategy === null
+    then error("no applicable strategy for ", toString key)
+    else error("assumptions for computing multigraded regularity with strategy ", toString strategy, " are not met"))
+
+multigradedRegularityDefaultStrategy = (X, S, M, opts) -> (
+    -- This is the default strategy, outlined in https://msp.org/jsag/2020/10-1/p06.xhtml
+    -- TODO: check that X and S are indeed a product of projective spaces and its Cox ring, otherwise return null
+    debugInfo := if debugLevel < 1 then identity else printerr;
+    -- retrieve the container, which includes some cached information
+    container := opts.cache;
     -- For products of projective space, the dimension is the
     -- number of variables minus the rank of the Picard group
     d := dim X;
     r := regularity M;
+    n := degreeLength S; -- rank of the Picard group
     H := container#"HilbertPolynomial";
     debugInfo demark_", " {
+        "Pic X = ZZ^" | toString n,
         "dim X = " | toString d,
         "reg M = " | toString r,
         "HP(M) = " | toString H};
-    --
-    n := #(degrees S)_0;
+    -- element-wise minimum of the multi-degrees of generators of M
     degs := apply(n, i -> min(degrees M / (deg -> deg_i)));
     -- TODO: why is this the right upper bound?
     high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degrees M / (deg -> deg_i)));
@@ -577,6 +602,10 @@ multigradedRegularityHelper = (X, S, M, opts) -> (
     container.LowerLimit = low;
     container.UpperLimit = high;
     container.Result = sort apply(flatten entries mingens I, g -> (flatten exponents g) + degs))
+
+-- The default strategy applies to both modules and ideals in a product of projective spaces,
+-- but by using hooks we allow better strategies to be added later
+addHook((multigradedRegularity, NormalToricVariety, Module), Strategy => Default, multigradedRegularityDefaultStrategy)
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
