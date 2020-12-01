@@ -51,7 +51,7 @@ jobs:
             cxx: clang++-10
             cc: clang-10
         exclude:
-          - os: macos-latest
+          - build-system: autotools
             compiler: gcc9
 
     steps:
