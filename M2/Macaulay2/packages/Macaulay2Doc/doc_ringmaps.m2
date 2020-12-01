@@ -157,7 +157,7 @@ document {
 	       }
 	  },
      EXAMPLE lines ///
-          A = QQ[a..f]; B = QQ[a..d]; C = ZZ/101[x,y]; -* no-capture-flag *-
+          A = QQ[a..f]; B = QQ[a..d]; C = ZZ/101[x,y];
 	  F = 3*a^2-b-d+101*c
 	  ///,
      "The following line substitutes values for a and b, and the result is in the same ring ", 

@@ -25,7 +25,7 @@ document {
 	  variable."
 	  },
      EXAMPLE lines ///
-     degreesRing 3 -* no-capture-flag *-
+     degreesRing 3
      describe oo
      T_0
      use degreesRing 3
@@ -47,7 +47,7 @@ document {
      W = degreesRing {1,2,5}
      describe W
      use W
-     (1+T_1+T_2^2)^3
+     (1+T_1+T_2^2)^3 -* no-capture-flag *-
      degreesRing 3
      describe oo
      R = QQ[x,y,Degrees => {{1,-2},{2,-1}}];

@@ -32,7 +32,7 @@ document {
 	  I = ideal random(R^1, R^{3:-3});
 	  hf = poincare ideal(a^3,b^3,c^3)
 	  installHilbertFunction(I, hf)
-	  gbTrace=3 -* no-capture-flag *-
+	  gbTrace=3
 	  time poincare I
 	  time gens gb I;
           ///,

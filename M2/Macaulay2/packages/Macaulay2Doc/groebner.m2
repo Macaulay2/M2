@@ -344,7 +344,7 @@ document {
      "Sometimes a Groebner basis computation can seem to last forever.  An ongoing     
      visual display of its progress can be obtained with ", TO "gbTrace", ".",
      EXAMPLE {
-	  "gbTrace = 3 -* no-capture-flag *-",
+	  "gbTrace = 3",
       	  "I = ideal(x*y-z^2,y^2-w^2)",
      	  "gb I",
 	  },

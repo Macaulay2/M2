@@ -606,7 +606,7 @@ document { Key => {(symlinkDirectory, String, String),symlinkDirectory,[symlinkD
 	       }
 	  },
      EXAMPLE lines ///
-     	  src = temporaryFileName() | "/" -* no-capture-flag *-
+     	  src = temporaryFileName() | "/"
 	  dst = temporaryFileName() | "/"
 	  makeDirectory (src|"a/")
 	  makeDirectory (src|"b/")
@@ -663,7 +663,7 @@ document { Key => {(copyDirectory, String, String),copyDirectory,[copyDirectory,
 	  {"a copy of the directory tree rooted at ", TT "src", " is created, rooted at ", TT "dst"}
 	  },
      EXAMPLE lines ///
-     	  src = temporaryFileName() | "/" -* no-capture-flag *-
+     	  src = temporaryFileName() | "/"
 	  dst = temporaryFileName() | "/"
 	  makeDirectory (src|"a/")
 	  makeDirectory (src|"b/")
@@ -697,7 +697,7 @@ document { Key => {(copyFile, String, String),copyFile,[copyFile, UpdateOnly],[c
 	  "the file may be copied"
 	  },     
      EXAMPLE lines ///
-     	  src = temporaryFileName() -* no-capture-flag *-
+     	  src = temporaryFileName()
 	  dst = temporaryFileName()
 	  src << "hi there" << close
 	  copyFile(src,dst,Verbose=>true)
@@ -726,7 +726,7 @@ document { Key => {(moveFile, String, String),(moveFile, String),moveFile,[moveF
 	  "the file will be moved by creating a new link to the file and removing the old one"
 	  },     
      EXAMPLE lines ///
-     	  src = temporaryFileName() -* no-capture-flag *-
+     	  src = temporaryFileName()
 	  dst = temporaryFileName()
 	  src << "hi there" << close
 	  moveFile(src,dst,Verbose=>true)
@@ -1119,7 +1119,7 @@ document { Key => commandInterpreter,
      "One more ", TT "i", " will be added to prompt each time the command interpreter is entered.  To leave it, type ", TT "end", " or the end of file character.",
      EXAMPLE lines ///
      	  f = (x -> y -> 11) 13
-	  commandInterpreter f -* no-capture-flag *-
+     	  commandInterpreter f
 	  x
 	  end
 	  x
@@ -1150,7 +1150,7 @@ document { Key => "continue",
 	  error to recur."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2" -* no-capture-flag *-
+     load "Macaulay2Doc/demo1.m2"
      code g
      g 2
      code f
@@ -1190,7 +1190,7 @@ document { Key => listLocalSymbols,
 	       "This usage works only in the debugger, where ", TO "current", " has a non-null value."
 	       },
 	  EXAMPLE lines ///
-	  load "Macaulay2Doc/demo1.m2" -* no-capture-flag *-
+	  load "Macaulay2Doc/demo1.m2"
 	  g 2
 	  listLocalSymbols
 	  ///,
@@ -1654,7 +1654,7 @@ document { Key => "notify",
 	  {"If ", TO "notify", " is set to ", TO "true", ", then each time a file or a package is loaded, a message will be displayed."}
 	  },
      EXAMPLE lines ///
-     notify = true -* no-capture-flag *-
+     notify = true
      loadPackage "FirstPackage"
      ///,
      SeeAlso => {load, needs, loadPackage, needsPackage}
@@ -1835,7 +1835,7 @@ document { Key => "synonym",
      Outputs => { String => {"a synonym for members of the class ", TT "X" }},
      "A synonym can be installed with the assignment statement ", TT "X.synonym=t", ".  The synonym is used by ", TO "ofClass", ".",
      EXAMPLE lines ///
-     	  synonym ZZ -* no-capture-flag *-
+     	  synonym ZZ
 	  Stack = new Type of HashTable
 	  synonym Stack
 	  Stack.synonym = "Deligne-Mumford stack"

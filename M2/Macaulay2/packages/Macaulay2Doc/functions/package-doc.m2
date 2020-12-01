@@ -213,7 +213,7 @@ Node
 
       If the variable @TO "notify"@ is set to true, then an informational message is displayed after the file is loaded.
     Example
-      notify = true -* no-capture-flag *-
+      notify = true
       loadPackage "FirstPackage"
     Text
       If the input is a loaded package, then this command will reload the package instead:
@@ -273,7 +273,7 @@ Node
     Text
       For example, to load the sample package @TT "FirstPackage"@:
     Example
-      notify = true -* no-capture-flag *-
+      notify = true
       needsPackage "FirstPackage"
       needsPackage "FirstPackage"
     Text
@@ -382,7 +382,7 @@ Node
       If functions from additional packages are needed by the user who will load the new package, then @TO needsPackage@
       can be used (before the use of @TT "newPackage"@) to provide them.
     Example
-      newPackage("Foo", -* no-capture-flag *-
+      newPackage("Foo",
           Version => "1.1",
           Headline => "making Foo",
           Configuration => { "foo" => 42, "bar" => "x" }
@@ -438,7 +438,7 @@ Node
       A package writer need not call this function explicitly, since the end of file hook for the file
       containing the @TO "newPackage"@ command that opened the package will call @TO "endPackage"@.
     Example
-      newPackage "Foo" -* no-capture-flag *-
+      newPackage "Foo"
       export "abc"
       abc = 3
       dictionaryPath

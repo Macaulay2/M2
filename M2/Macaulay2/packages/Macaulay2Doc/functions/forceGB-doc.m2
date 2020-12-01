@@ -19,7 +19,7 @@ document {
      form a Gröbner basis, but ", EM "Macaulay2", " doesn't.  This is the
      way to inform the system of this fact.",
      EXAMPLE {
-	  "gbTrace = 3; -* no-capture-flag *-",
+	  "gbTrace = 3;",
 	  "R = ZZ[x,y,z];",
 	  "f = matrix{{x^2-3, y^3-1, z^4-2}};",
 	  "g = forceGB f"},
@@ -51,7 +51,7 @@ document {
      number of columns of the original matrix, and b is the number
      of columns of f.",
      EXAMPLE {
-	  "gbTrace = 3 -* no-capture-flag *-",
+	  "gbTrace = 3",
 	  "R = ZZ[x,y,z];",
 	  "f = matrix{{x^2-3, y^3-1, z^4-2}};",
 	  "g = forceGB(f, ChangeMatrix=>id_(source f));",
@@ -77,7 +77,7 @@ document {
      when asked to compute the ", TO kernel, " or ", TO syz, " of ", 
      TT "f", " is the minimal generator matrix of ", TT "z", ".",
      EXAMPLE {
-	  "gbTrace = 3 -* no-capture-flag *-",
+	  "gbTrace = 3",
 	  "R = ZZ[x,y,z];",
 	  "f = matrix{{x^2-3, y^3-1, z^4-2}};",
 	  "z = koszul(2,f)",

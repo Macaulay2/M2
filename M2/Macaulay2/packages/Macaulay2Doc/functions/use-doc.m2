@@ -23,7 +23,7 @@ document {
 	  },     
      "This function is only necessary after dismissing a package.",
      EXAMPLE lines ///
-	  loadPackage "FirstPackage" -* no-capture-flag *-
+	  loadPackage "FirstPackage"
 	  firstFunction
 	  dismiss FirstPackage
   	  firstFunction	

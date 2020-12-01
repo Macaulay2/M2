@@ -303,7 +303,7 @@ document {
 	  ", TO "globalAssignFunction", " and ", TO "globalReleaseFunction", " may installed
 	  as methods for this purpose."},
      EXAMPLE {
-	  ///RR.GlobalAssignHook = (sym,val) -> << "--about to assign " << val << " to " << sym << endl; -* no-capture-flag *-///,
+	  ///RR.GlobalAssignHook = (sym,val) -> << "--about to assign " << val << " to " << sym << endl;///,
           "a = 4.5",
 	  },
      SeeAlso => {"GlobalReleaseHook"}
@@ -322,7 +322,7 @@ document {
      EXAMPLE {
 	  ///RR.GlobalReleaseHook = (sym,val) -> << concatenate (
      "assigning ", toString val, " to ", toString sym
-     ) << endl -* no-capture-flag *-///,
+     ) << endl///,
           "a=4.5",
       	  "a=5.4",
 	  },
@@ -463,7 +463,7 @@ document {
 	       instances of the new type to nets for display."
 	       },
 	  EXAMPLE lines ///
-	       new Type of BasicList from Function := (A,B,f) -> hashTable { net => f };
+	       new Type of BasicList from Function := (A,B,f) -> hashTable { net => f }; -* no-capture-flag *-
 	  ///,
 	  PARA {
 	       "The hash tables ", TT "AA", ", ", TT "BB", ", and ", TT "C", " will normally be instances of ", TO "Type", "."
@@ -527,7 +527,7 @@ document {
  	  PARA {
 	       "This operation turns out to be needed infrequently, because there is no ", TT "from", "-clause to provide data for initializing the instance of ", TT "A", "."
  	       },
- 	  EXAMPLE ///new Type of BasicList := (type,array) -> ( -* no-capture-flag *-
+ 	  EXAMPLE ///new Type of BasicList := (type,array) -> (
 		    stderr << "--new " << type << " of " 
 		           << array << " being made" << endl;
 		    new MutableHashTable)///

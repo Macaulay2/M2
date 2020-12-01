@@ -22,14 +22,16 @@ separateM2output = str -> drop(drop(separate(M2outputRE, str),1),-1)
 -- TODO: the output format is provisional
 -- TODO: does't capture stderr
 capture' := capture
-capture = method()
-capture Net    := s -> capture toString s
-capture List   := s -> capture demark_newline s
---capture String := s -> capture' s -- output is (Boolean, String) => (Err?, Output)
+capture = method(Options => { UserMode => true })
+capture Net    := opts -> s -> capture(toString s,       opts)
+capture List   := opts -> s -> capture(demark_newline s, opts)
 -- TODO: do this in interp.dd instead
-capture String := s -> (
+-- TODO: alternatively, change the setup to do this in a clean thread
+capture String := opts -> s -> if opts.UserMode then capture' s else (
+    -- output is (Boolean, String) => (Err?, Output)
     -- TODO: this should eventually be unnecessary
     oldThreadLocalVars := (gbTrace, debugLevel, errorDepth, interpreterDepth, debuggingMode, stopIfError, notify);
+    interpreterDepth = 1;
 
     oldPrivateDictionary := User#"private dictionary";
     oldDictionaryPath := dictionaryPath;
@@ -107,7 +109,7 @@ getExampleOutput := (pkg, fkey) -> (
     output := if fileExists filename
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
     else if width (ex := examples fkey) =!= 0
-    then ( verboseLog("info: capturing example results on-demand"); last capture ex );
+    then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false) );
     pkg#"example results"#fkey = if output === null then {} else separateM2output output)
 
 -- used in installPackage.m2
@@ -125,16 +127,23 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
     desc := "example results for " | format fkey;
     desc  = concatenate(desc, 58 - #desc);
     -- try capturing in the same process
-    -- TODO: eventually make this flag unnecessary
-    if not match("no-capture-flag", inputs) and not match({"ThreadedGB", "RunExternalM2"}, pkg#"pkgname") then (
+    if  not match("no-capture-flag", inputs) -- this flag is really necessary, but only sometimes
+    -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
+    and not match("(gbTrace|read|run|stderr|stdio|print|<<)", inputs) -- stderr and prints are not handled correctly
+    and not match("(notify|stopIfError|debuggingMode)", inputs) -- stopIfError and debuggingMode may be fixable
+    and not match("([Cc]ommand|schedule|thread|Task)", inputs) -- remove when threads work more predictably
+    and not match("(temporaryFileName)", inputs) -- this is sometimes bug prone
+    and not match("(installMethod|load|export|newPackage)", inputs) -- exports may land in the package User
+    and not match("(GlobalAssignHook|GlobalReleaseHook)", inputs) -- same as above
+    and not match({"ThreadedGB", "RunExternalM2"}, pkg#"pkgname") -- TODO: eventually remove
+    then (
 	stderr << commentize ("capturing ", desc) << flush; -- the timing info will appear at the end
-	inputs = replace("-\\* no-capture-flag \\*-", "", inputs);
-	(err, output) := evaluateWithPackage(pkg, inputs, capture);
+	(err, output) := evaluateWithPackage(pkg, inputs, capture_(UserMode => false));
 	if not err then return outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close);
     -- fallback to using an external process
     desc  = concatenate(desc, 61 - #desc);
     data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
-    inf << inputs << endl << close;
+    inf << replace("-\\* no-capture-flag \\*-", "", inputs) << endl << close;
     if runFile(inf, inputhash, outf, errf, desc, pkg, changeFunc fkey, usermode, data)
     then ( removeFile inf; cacheFunc fkey ))
 

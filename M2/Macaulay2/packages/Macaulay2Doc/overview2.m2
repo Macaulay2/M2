@@ -580,7 +580,7 @@ document {
      PARA{},
      "First we create the file by writing the desired text to it.",
      EXAMPLE {
-	  "fn = temporaryFileName() -* no-capture-flag *-",
+	  "fn = temporaryFileName()",
 	  "fn << \"z^6+3*x*z^4+6*y*z^4+3*x^2*z^2+12*x*y*z^2+12*y^2*z^2+x^3+6*x^2*y+12*x*y^2+8*y^3\" << endl << close"
 	  },
      "Now we get the contents of the file, as a single string.",
@@ -637,7 +637,7 @@ document {
      a line of input as a string.  In response to the prompt, the user enters
      ", TT "sample", " and press return.",
      EXAMPLE {
-	  ///filename = read "file name : " -* no-capture-flag *-
+	  ///filename = read "file name : "
 sample///,
      	  },
      "Let's use ", TO "peek", " to verify that this string contains no newline
@@ -780,7 +780,7 @@ document {
      "The most naive way to interact with another program is simply to run
      it, let it communicate directly with the user, and wait for it to
      finish.  This is done with the ", TO "run", " command.",
-     EXAMPLE ///run "uname -a" -* no-capture-flag *-///,
+     EXAMPLE ///run "uname -a"///,
      "To run a program and provide it with input, one way is use the operator ", TO "<<", ",
      with a file name whose first character is an
      exclamation point; the rest of the file name will be taken as the
@@ -1107,7 +1107,7 @@ document {
      happens, no method for this has been installed for basic lists,
      so trying to negate ", TT "x", " results in an error.",
      EXAMPLE {
-	 "stopIfError = false; -* no-capture-flag *-",
+	 "stopIfError = false;",
 	 "- x",
 	 },
      "We install and test a new method as described in ", TO "installing methods", ".",
