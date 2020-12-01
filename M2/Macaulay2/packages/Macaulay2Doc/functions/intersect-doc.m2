@@ -35,19 +35,10 @@ Node
     Text
       This function calculates the intersection of submodules of the same free module, or of ideals in the same ring.
 
-      Multiple strategies are implemented via @TO2 {"Macaulay2Doc :: using hooks", "hooks"}@ and
-      can be listed using the function @TO hooks@. More strategies may be added using @TO addHook@.
-    Example
-      hooks(intersect, Ideal, Ideal)
-      hooks(intersect, Module, Module)
-    Text
-      By default, the strategies are attempted in the reverse order in which the were added, until one is successful.
-      To run a specific strategy instead, use the optional argument @TT "Strategy"@.
-
       The following example computes the intersection of a sequence of ideals.
     Example
       R = ZZ/101[a..d];
-      I = intersect(ideal(a, b), ideal(b, c), ideal(c, d), ideal(d, a), Strategy => Monomial)
+      I = intersect(ideal(a, b), ideal(b, c), ideal(c, d), ideal(d, a))
     Text
       The following example computes the intersection of a list of modules.
     Example
@@ -59,6 +50,17 @@ Node
     Text
       The command @TO "intersect"@ does not accept subrings. To intersect an ideal with a subring,
       use @TO "selectInSubring"@ along with the elimination ordering, see @TO "Eliminate"@.
+
+      Multiple strategies are implemented via @TO2 {"Macaulay2Doc :: using hooks", "hooks"}@ and
+      can be listed using the function @TO hooks@. More strategies may be added using @TO addHook@.
+    Example
+      hooks(intersect, Ideal, Ideal)
+      hooks(intersect, Module, Module)
+    Text
+      By default, the strategies are attempted in the reverse order in which the were added, until one is successful.
+      To run a specific strategy instead, use the optional argument @TT "Strategy"@.
+    Example
+      intersect(ideal(x, y), (ideal(x, y, z))^2, Strategy => Monomial)
   SeeAlso
     selectInSubring
 ///
