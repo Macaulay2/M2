@@ -168,7 +168,7 @@ jobs:
           # TODO: add engine tests
 
       - name: Run Tests using Autotools
-        if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest'
+        if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'default'
         run: |
           make check -o check-in-libraries
           make -C Macaulay2/html-check-links check
