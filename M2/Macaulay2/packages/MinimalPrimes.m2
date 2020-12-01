@@ -146,6 +146,7 @@ selectMinimalIdeals = L -> (
             if findNonMemberIndex(ML#i, ML#j) === -1 then ML#j = null);
         ML#i))
 
+-- also see a similar method in PrimaryDecomposition
 isSupportedRing := I -> (
     A := ring first flattenRing I;
     -- ring should be a commutative polynomial ring or a quotient of one
@@ -153,6 +154,8 @@ isSupportedRing := I -> (
     -- base field should be QQ or ZZ/p or GF(q)
     and (QQ === (kk := coefficientRing A) or instance(kk, QuotientRing) or instance(kk, GaloisField)))
 
+-- TODO: can this functionality be simplified and put into flattenRing?
+-- also see a similar method in PrimaryDecomposition
 flattenRingMap := I -> (
     -- R is the ring of I, and A is a polynomial ring over a prime field
     R := ring I;

@@ -58,12 +58,13 @@ Node
       M / saturate 0_M
     Text
       If $I$ and $J$ are both monomial ideals, then a faster algorithm is used.
-      -- FIXME
-      Otherwise, when needed, Gröbner bases will be computed and cached, though the result of the saturation is
-      currently not stored anywhere: this means that the computation cannot be continued after an interrupt.
-      This will be changed in a later version.
+      Otherwise, when needed, Gröbner bases will be computed, and if the computation succeeds the result
+      is cached inside the first argument. Partial computations are not yet cached, but this may change in a future version.
   SeeAlso
     (quotient, Ideal, Ideal)
+    annihilator
+    isSupportedInZeroLocus
+    "MinimalPrimes::MinimalPrimes"
     "PrimaryDecomposition::PrimaryDecomposition"
 
 Node

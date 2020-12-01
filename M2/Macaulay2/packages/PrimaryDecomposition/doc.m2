@@ -522,11 +522,11 @@ Node
 
       @UL {
           ("Monomial", " -- uses Alexander duality of a monomial ideal"),
-	  ("Binomial", " -- finds a cellular resolution of a binomial ideal", BOLD " (NOT YET IMPLEMENTED)"),
+	  ("Binomial", " -- finds a cellular resolution of a binomial ideal (see ", TO "Binomials :: binomialPrimaryDecomposition",")"),
 	  ("Hybrid"," -- uses parts of the above two algorithms"),
 	  ("ShimoyamaYokoyama", " -- uses the algorithm of Shimoyama-Yokoyama"),
 	  ("EisenbudHunekeVasconcelos", " -- uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
-	  ("GTZ", " -- uses the algorithm of Gianni-Trager-Zacharias", BOLD " (NOT YES IMPLEMENTED)"),
+	  ("GTZ", " -- uses the algorithm of Gianni-Trager-Zacharias", BOLD " (NOT YET IMPLEMENTED)"),
           }@
 
       The strategies are implemented as @TO2 {"Macaulay2Doc :: using hooks", "hooks"}@, meaning that

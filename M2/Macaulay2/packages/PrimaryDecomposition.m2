@@ -75,6 +75,8 @@ associatedPrimes = method(
 cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
 
 -- TODO: is there a better name for these two?
+-- TODO: also support GF(q)
+-- also see a similar function in MinimalPrimes
 isSupportedRing = method()
 isSupportedRing Module := M -> isSupportedRing ring presentation first flattenRing ring M
 isSupportedRing Ideal  := I -> isSupportedRing ring first flattenRing I
@@ -84,6 +86,8 @@ isSupportedRing Ring   := A -> (
     -- base field should be QQ or ZZ/p
     and (QQ === (kk := coefficientRing A) or instance(kk, QuotientRing) -*or instance(kk, GaloisField)*-))
 
+-- TODO: can this functionality be simplified and put into flattenRing?
+-- also see a similar function in MinimalPrimes
 flattenRingMap = method()
 flattenRingMap Ideal := I -> (
     -- R is the ring of I, and A is a polynomial ring over a prime field
