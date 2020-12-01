@@ -125,7 +125,7 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash, changeFunc, usermode, verboseLog) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
     desc := "example results for " | format fkey;
-    desc  = concatenate(desc, 58 - #desc);
+    desc  = concatenate(desc, 62 - #desc);
     -- try capturing in the same process
     if  not match("no-capture-flag", inputs) -- this flag is really necessary, but only sometimes
     -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
@@ -141,7 +141,7 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
 	(err, output) := evaluateWithPackage(pkg, inputs, capture_(UserMode => false));
 	if not err then return outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close);
     -- fallback to using an external process
-    desc  = concatenate(desc, 61 - #desc);
+    desc  = concatenate(desc, 65 - #desc);
     data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
     inf << replace("-\\* no-capture-flag \\*-", "", inputs) << endl << close;
     if runFile(inf, inputhash, outf, errf, desc, pkg, changeFunc fkey, usermode, data)
