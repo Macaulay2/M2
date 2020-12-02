@@ -79,14 +79,16 @@ jobs:
       - name: Install requirements for Linux
         if: runner.os == 'Linux'
         run: |
+          sudo add-apt-repository -y ppa:profzoom/macaulay2
           sudo apt-get update
           sudo apt-get install -y -q --no-install-recommends clang-10 gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
-                  libcdd-dev libgivaro-dev libboost-regex-dev fflas-ffpack w3c-markup-validator
-          # TODO: help autotools detect flint from brew
-          brew install flint
+                  libcdd-dev libgivaro-dev libboost-regex-dev fflas-ffpack w3c-markup-validator \
+                  cohomcalg libflint-dev libmps-dev topcom \
+                  libsingular-dev libfrobby-dev libgtest-dev libmemtailor-dev libmathic-dev \
+                  libmathicgb-dev 4ti2 normaliz coinor-csdp nauty lrslib singular-data
 
 # ----------------------
 #   Steps common to all build variants
