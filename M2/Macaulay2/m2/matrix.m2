@@ -261,7 +261,7 @@ ggConcatBlocks = (tar,src,mats) -> (
      f)
 
 sameringMatrices = mats -> (
-     if sameresult(m -> (if m.?RingMap then m.RingMap,ring target m, ring source m), mats)
+     if same apply(mats, m -> (if m.?RingMap then m.RingMap,ring target m, ring source m))
      then mats
      else (
 	  R := try ring sum apply(toList mats, m -> 0_(ring target m)) else error "expected matrices over compatible rings";
@@ -624,11 +624,8 @@ inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
      	  if ambient N' =!= ambient N then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
      	  if ambient M' =!= ambient M then error "inducedMap: expected new source and source of map provided to be subquotients of same free module";
 	  );
-     gbM  := gb(M,ChangeMatrix => true);
-     gbN' := gb(N',ChangeMatrix => true);
-     g := generators N * cover f * (generators M' // gbM);
-     f' := g // gbN';
-     f' = map(N',M',f',Degree => if opts.Degree === null then degree f else opts.Degree);
+     c := runHooks((inducedMap, Module, Module, Matrix), (opts, N', M', f));
+     (f', g, gbN', gbM) := if c =!= null then c else error "inducedMap: no method implemented for this type of input";
      if opts.Verify then (
 	  if relations M % relations M' != 0 then error "inducedMap: expected new source not to have fewer relations";
 	  if relations N % relations N' != 0 then error "inducedMap: expected new target not to have fewer relations";
@@ -640,6 +637,16 @@ inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
 inducedMap(Module,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(M,source f, f,o)
 inducedMap(Nothing,Module,Matrix) := o -> (M,N,f) -> inducedMap(target f,N, f,o)
 inducedMap(Nothing,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(target f,source f, f,o)
+
+addHook((inducedMap, Module, Module, Matrix), Strategy => Default, (opts, N', M', f) -> (
+     N := target f;
+     M := source f;
+     gbM  := gb(M,  ChangeMatrix => true);
+     gbN' := gb(N', ChangeMatrix => true);
+     g := generators N * cover f * (generators M' // gbM);
+     f' := g // gbN';
+     f' = map(N',M',f',Degree => if opts.Degree === null then degree f else opts.Degree);
+     (f', g, gbN', gbM)))
 
 inducedMap(Module,Module) := Matrix => o -> (M,N) -> (
      if ambient M != ambient N 

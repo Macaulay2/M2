@@ -24,6 +24,7 @@ newPackage ("VirtualResolutions",
         },
     Keywords => {"Commutative Algebra", "Homological Algebra"},
     PackageExports => {
+	"Saturation",
         "SpaceCurves",
         "TateOnProducts",
         "NormalToricVarieties",
@@ -33,6 +34,8 @@ newPackage ("VirtualResolutions",
     AuxiliaryFiles => true,
     DebuggingMode => false
     )
+
+importFrom_Core { "raw", "rawKernelOfGB" }
 
 export{
     "curveFromP3toP1P2",
@@ -56,20 +59,17 @@ export{
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 
-debug Core;
-
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 ----- Input: (I,irr) = (ideal, ideal)
 ----- Output: saturation of I with respect to irr.
------ Description: This is the fast saturation from Colon.m2. Since
------ Colon.m2 might change at some point we have created this wrap
+----- Description: This is the fast saturation from Saturation.m2. Since
+----- Saturation.m2 might change at some point we have created this wrap
 ----- function to easily implement other saturations that might be
 ----- created. We hope this is eventually removed.
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-load("./VirtualResolutions/Colon.m2")
-ourSaturation = (I,irr) -> saturationByElimination(I, decompose irr);
+ourSaturation = (I,irr) -> saturate(I, decompose irr, Strategy => Eliminate);
 
 
 --------------------------------------------------------------------

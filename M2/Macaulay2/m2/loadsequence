@@ -10,13 +10,15 @@ run.m2
 profile.m2
 debugging.m2
 remember.m2
-set.m2
 files.m2
+
+set.m2
 fold.m2
 max.m2
 structure.m2
 combinatorics.m2
 lists.m2
+
 nets.m2
 robust.m2
 content.m2
@@ -25,6 +27,7 @@ validate.m2
 expressions.m2
 peek.m2
 printing.m2
+
 gateway.m2
 rings.m2
 integers.m2
@@ -51,7 +54,6 @@ genmat.m2
 modules2.m2
 gb.m2
 matrix2.m2
-colon.m2
 galois.m2
 ringmap.m2
 newring.m2
@@ -62,7 +64,7 @@ gradedmodules.m2
 chaincomplexes.m2
 res.m2
 monideal.m2
-radical.m2
+intersect.m2
 factor.m2
 integrate.m2
 http.m2
