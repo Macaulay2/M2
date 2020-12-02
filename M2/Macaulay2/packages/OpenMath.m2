@@ -25,6 +25,7 @@ newPackage(
 		},
     	Headline => "OpenMath for Macaulay2",
 	Keywords => {"Miscellaneous"},
+	PackageImports => {"MinimalPrimes"},
 	PackageExports => {"XML","ConwayPolynomials"},
     	DebuggingMode => false,
 		AuxiliaryFiles => true

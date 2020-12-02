@@ -1,148 +1,292 @@
 -- Computing the radical of an ideal
 -- Will be part of the PrimaryDecomposition package (most likely)
 
+-- used in rad
 flatt2 = (I, m) -> (
-     -- First create a new ring with correct order
-     local ones;
-     local mm;
-     local F;
-     R := ring I;
-     n := numgens R;
-     vars1 := support m;
-     d := #vars1;
-     vars2 := support ((product gens R)//m);
-     RU := (coefficientRing R) monoid([vars2,vars1,
-	  MonomialOrder=>ProductOrder{n-d,d},
-	  MonomialSize=>16]);
-     J := substitute(I,RU);
-     -- Collect lead coefficients of GB
-     JG := J;
-     leads := leadTerm(1,gens gb J);
-     --(mons,cs) = coefficients(toList(0..n-d-1),leads);
-     (mons,cs) := coefficients(leads, Variables => toList(0..n-d-1));
-     monsid := trim ideal select(flatten entries mons, f -> f != 1);
-     monsid = substitute(monsid,R);
-     --monset = set flatten entries gens monsid;
-     monset := new MutableHashTable;
-     scan(flatten entries gens monsid, m -> monset#m = {});
-     monslist := flatten entries substitute(mons,R);
-     p := positions(monslist, f -> monset#?f);
-     cs = transpose cs;
-     scan(p, i -> monset#(monslist#i) = substitute(ideal(compress transpose (cs_{i})),R));
-     monset)
+    -- First create a new ring with correct order
+    local ones;
+    local mm;
+    local F;
+    R := ring I;
+    n := numgens R;
+    vars1 := support m;
+    d := #vars1;
+    vars2 := support ((product gens R)//m);
+    RU := (coefficientRing R) monoid([vars2, vars1,
+	    MonomialOrder => ProductOrder{n - d, d},
+	    MonomialSize  => 16]);
+    J := substitute(I, RU);
+    -- Collect lead coefficients of GB
+    JG := J;
+    leads := leadTerm(1, gens gb J);
+    --(mons,cs) = coefficients(toList(0..n-d-1),leads);
+    (mons, cs) := coefficients(leads, Variables => toList(0..n-d-1));
+    monsid := trim ideal select(flatten entries mons, f -> f != 1);
+    monsid = substitute(monsid, R);
+    --monset = set flatten entries gens monsid;
+    monset := new MutableHashTable;
+    scan(flatten entries gens monsid, m -> monset#m = {});
+    monslist := flatten entries substitute(mons, R);
+    p := positions(monslist, f -> monset#?f);
+    cs = transpose cs;
+    scan(p, i -> monset#(monslist#i) = substitute(ideal(compress transpose (cs_{i})),R));
+    monset)
 
-
-needsPackage "Elimination"
+-- used in radical00
 getMinimalPoly = method()
-getMinimalPoly(Ideal,RingElement,RingElement) := (I,u,x) -> (
-     ux := u*x;
-     elimvars := select(gens ring I, y -> ux % y != 0);
-     J := eliminate(I,elimvars);
-     d := min apply(numgens J, i -> degree(x, J_i));
-     --error "getminpoly";
-     fs := select(1, flatten entries gens J, f -> degree(x,f) === d);
-     fs#0
-     )
+getMinimalPoly(Ideal, RingElement, RingElement) := (I, u, x) -> (
+    ux := u * x;
+    elimvars := select(gens ring I, y -> ux % y != 0);
+    J := eliminate(I, elimvars);
+    d := min apply(numgens J, i -> degree(x, J_i));
+    --error "getminpoly";
+    fs := select(1, flatten entries gens J, f -> degree(x,f) === d);
+    fs#0)
 
+-- used in radical00
 getSeparablePart = method()
-getSeparablePart(RingElement,RingElement,RingElement) := (f,u,x) -> (
-     g := factors f;
-     product select(g, g1 -> degree(x,g1) > 0))
+getSeparablePart(RingElement, RingElement, RingElement) := (f, u, x) -> (
+    product select(last \ factors f, g1 -> degree(x, g1) > 0))
 
+-- used in rad
+radical00 = method()
+radical00(Ideal, RingElement) := (I, u) -> (
+    -- For each variable not in u, compute the
+    -- squarefree part (separable part)
+    v := select(gens ring I, x -> u % x != 0);
+    newelems := {};
+    scan(v, x -> (
+	    -- there are THREE problems here!
+	    -- (a) use linear algebra
+	    -- (b) char p
+	    -- (c) f might not be the smallest eqn in var v_i.
+	    --<< "about to get minpoly " << toString I << " u = " << toString u << " x = " << toString x << endl;
+	    f := getMinimalPoly(I, u, x);
+	    g := getSeparablePart(f, u, x);
+	    if f != g then newelems = append(newelems, g)));
+    --error "in radical00";
+    if #newelems > 0 then I = I + ideal newelems;
+    I)
+
+-----------------------------------------------------------------------------
+-- Radical of ideals
+-----------------------------------------------------------------------------
+-- Based on the Macaulay (classic) scripts written by D. Eisenbud.
+-- Translated from Macaulay to Macaulay2 by M. Stillman:
+--   radical --> radical
+--   unmixed_radical --> radical(I,Unmixed=>true)
+
+radical = method(
+    Options => {
+	CompleteIntersection => null,
+	Strategy             => null,
+	Unmixed              => false
+	}
+    )
+
+-- Helper for radical
+radical Ideal := Ideal => opts -> I -> (
+    -- TODO: what does the Unmixed boolean add to strategy?
+    strategy := if opts.Unmixed then Unmixed else opts.Strategy;
+    key := (radical, Ideal);
+
+    computation := (cacheValue symbol radical) (I -> runHooks(key, (opts, I), Strategy => strategy));
+    C := computation I;
+
+    if C =!= null then C else if strategy === null
+    then error("no applicable method for ", toString key)
+    else error("assumptions for radical strategy ", toString strategy, " are not met"))
+
+--------------------------------------------------------------------
+-- strategies for radical
+--------------------------------------------------------------------
+
+algorithms#(radical, Ideal) = new MutableHashTable from {
+    Unmixed => (opts, I) -> if opts.Unmixed then unmixedradical I else radical1 I,
+
+    Decompose => (opts, I) -> (
+	C := minimalPrimes I;
+	if #C === 0 then ideal 1_(ring I) else intersect C),
+
+    CompleteIntersection => (opts, I) -> (
+	-- unmixed radical, another Eisenbud-Huneke-Vasconcelos method
+	-- to compute radical(m), given a max regular sequence n contained in m.
+	if not instance(CI := opts.CompleteIntersection, Ideal)
+	or not ring I === ring CI
+	then return null;
+	c := numgens CI;  -- we assume that this is a complete intersection...
+	K := CI : minors(c, jacobian CI);  -- maybe work mod CI?
+	K : (K : I)), -- do these mod K?
+
+    Monomial => (opts, I) -> (
+	if not isMonomialIdeal I
+	then return null;
+	cast := if instance(I, MonomialIdeal) then monomialIdeal else ideal;
+	cast newMonomialIdeal(ring I, rawRadical raw monomialIdeal I)),
+    }
+
+-- Installing hooks for radical(Ideal)
+scan({Unmixed, Decompose, CompleteIntersection, Monomial}, strategy ->
+    addHook(key := (radical, Ideal), algorithms#key#strategy, Strategy => strategy))
+
+--------------------------------------------------------------------
+-- helper routines for radical algorithms
+--------------------------------------------------------------------
+
+unmixedradical = I -> (
+    -- First lift I to a polynomial ring...
+    A := ring I;
+    f := presentation A;
+    B := ring f;
+    I = lift(I, B);
+    if I != ideal 1_B and I.generators =!= 0 then (
+	c := codim I;
+	size := 1;
+	R := A;
+	while size <= c do (
+	    R = B/I;
+	    dR := jacobian R;
+	    J := minors(size,dR);
+	    --
+	    g1 := leadTerm generators gb presentation R;
+	    g1 = g1 | lift(leadTerm J, B);
+	    --
+	    if c < codim ideal g1 then size = size + 1 else (
+		-- we would like the next line to read:
+		-- I = annihilator J;
+		I = ideal syz(transpose mingens J, SyzygyRows=>1);
+		I = lift(I, B));
+	    );
+	);
+    trim(I * A))
+
+radical1 = I0 -> (
+    -- possibly massage input, by removing obvious extraneous powers?
+    -- at least of the monomials in the ideal?
+    R := ring I0;
+    I := removeLowestDimension I0;
+    J := unmixedradical saturate(I0, I);
+    if I == ideal 1_R then J else intersect(J, radical1 I))
+
+-- TODO: add this one
 -- MES: I grabbed this code from another file
-zerodimRadical = (I) -> (
-     -- assumption: dim I is 0
-     if dim I != 0 then error "expected zero dimensional ideal";
-     X := gens ring I;
-     trim ideal gens gb(I + sum apply(#X, i -> eliminate(drop(X,{i,i}), I)))
-     )
+zerodimRadical = I -> (
+    -- assumption: dim I is 0
+    if dim I != 0 then error "expected zero dimensional ideal";
+    X := gens ring I;
+    trim ideal gens gb(I + sum apply(#X, i -> eliminate(drop(X, {i, i}), I))))
 
-radical00 = method()     
-radical00(Ideal,RingElement) := (I,u) -> (
-     -- For each variable not in u, compute the 
-     -- squarefree part (separable part)
-     v := select(gens ring I, x -> u % x != 0);
-     newelems := {};
-     scan(v, x -> (
-	       -- there are THREE problems here!
-	       -- (a) use linear algebra
-	       -- (b) char p
-	       -- (c) f might not be the smallest eqn in var v_i.
-	       --<< "about to get minpoly " << toString I << " u = " << toString u << " x = " << toString x << endl;
-	       f := getMinimalPoly(I,u,x);
-	       g := getSeparablePart(f,u,x);
-	       if f != g then newelems = append(newelems,g)));
-     --error "in radical00";
-     if #newelems > 0 then I = I + ideal newelems;
-     I
-     )
-
+-- TODO: add this one
 rad = method()
 rad Ideal := (Iorig) -> (
-     -- returns the radical of Iorig
-     (I,F,G) := flattenRing(Iorig,Result=>(,,));
-     R := ring I;
-     n := numgens I;
-     radI := ideal(1_R);
-     while codim I <= n do (
-	  u := independentSets(I,Limit=>1);
-	  u = if #u === 0 then 1_R else first u;
-	  --<< " size(u) = " << # support u << endl;
-	  J := radical00(I,u);
-	  h := flatt2(J,u);
-	  h = (intersect values h)_0;
-	  radJ := saturate(J,h);
-	  radI = intersect(radI,radJ);
-	  if u === 1 then break;
-	  h = flatt2(I,u);
-	  h = (intersect values h)_0;
-	  if h != 1 then 
-	    h = product factors h;
-          I = I + ideal(h);
-	  );
-     if ring I =!= ring Iorig then radI = G radI;
-     trim radI
-     )
+    -- returns the radical of Iorig
+    (I,F,G) := flattenRing(Iorig,Result=>(,,));
+    R := ring I;
+    n := numgens I;
+    radI := ideal(1_R);
+    while codim I <= n do (
+	u := independentSets(I,Limit=>1);
+	u = if #u === 0 then 1_R else first u;
+	--<< " size(u) = " << # support u << endl;
+	J := radical00(I,u);
+	h := flatt2(J,u);
+	h = (intersect values h)_0;
+	radJ := saturate(J,h);
+	radI = intersect(radI,radJ);
+	if u === 1 then break;
+	h = flatt2(I,u);
+	h = (intersect values h)_0;
+	if h != 1 then h = product \\ last \ factors h;
+	I = I + ideal(h));
+    if ring I =!= ring Iorig then radI = G radI;
+    trim radI)
 
 rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
-     -- returns the radical of Iorig
-     (I,F,G) := flattenRing(Iorig,Result=>(,,));
+    -- returns the radical of Iorig
+    (I,F,G) := flattenRing(Iorig,Result=>(,,));
+    R := ring I;
+    n := numgens I;
+    radI := ideal(1_R);
+    c := codim I;
+    --<< "R0 = " << toExternalString ring I << endl << flush;
+    --<< "J0 = " << toString I << endl << flush;
+    while codim I <= c + codimlimit do (
+	u := independentSets(I, Limit => 1);
+	u = if #u === 0 then 1_R else first u;
+	--<< " size(u) = " << # support u << endl;
+	J := radical00(I, u);
+	h := flatt2(J, u);
+	h = (intersect values h)_0;
+	radJ := saturate(J, h);
+	radI = intersect(radI, radJ);
+	if u === 1 then break;
+	h = flatt2(I, u);
+	h = (intersect values h)_0;
+	if h != 1 then h = product \\ last \ factors h;
+	I = I + ideal h);
+    if ring I =!= ring Iorig then radI = G radI;
+    trim radI)
+
+------------------------------
+-- Radical containment -------
+------------------------------
+
+-- Determine whether g is in radical I
+radicalContainment = method(TypicalValue => Boolean, Options => { Strategy => "Rabinowitsch" })
+-- Returns the first index i such that I_i is not in the radical of J,
+-- and null, if none
+-- another way to do something almost identical: select(1, I_*, radFcn J)
+radicalContainment(Ideal, Ideal)       := Boolean => opts -> (I, J) -> (rad := radFcn J; position(I_*, g -> not rad g))
+-- Returns true if g is in the radical of I.
+-- Assumption: I is in a monomial order for which you are happy to compute GB's.
+--radicalContainment(RingElement, Ideal) := (g, I) -> opts -> (radFcn I) g
+radicalContainment(RingElement, Ideal) := Boolean => opts -> (g, I) -> (
      R := ring I;
-     n := numgens I;
-     radI := ideal(1_R);
-     c := codim I;
-
-     --<< "R0 = " << toExternalString ring I << endl << flush;
-     --<< "J0 = " << toString I << endl << flush;
-
-     while codim I <= c + codimlimit do (
-	  u := independentSets(I,Limit=>1);
-	  u = if #u === 0 then 1_R else first u;
-	  --<< " size(u) = " << # support u << endl;
-	  J := radical00(I,u);
-	  h := flatt2(J,u);
-	  h = (intersect values h)_0;
-	  radJ := saturate(J,h);
-	  radI = intersect(radI,radJ);
-	  if u === 1 then break;
-	  h = flatt2(I,u);
-	  h = (intersect values h)_0;
-	  if h != 1 then 
-	    h = product factors h;
-          I = I + ideal(h);
+     if ring g =!= R then error "Expected same ring";
+     if isHomogeneous I and opts.Strategy == "Kollar" then (
+	  -- Radical membership test for homogeneous ideals
+	  -- Based on Theorem 1.5 in https://www.jstor.org/stable/pdf/1990996.pdf
+	  -- should assume degrees are > 2
+	  degs := reverse sort((flatten entries mingens I)/degree/sum);
+	  n := min(#support I, #degs);
+	  degs = drop(degs_{0..<n}, -1) | {last degs};
+	  if debugLevel > 0 then print("Upper bound of " | toString(product degs) | " for radical");
+	  for i to floor(log_2 product degs) do (
+	       if debugLevel > 0 then print("Testing power " | toString(2^(i+1)));
+	       g = g^2 % I;
+	       if g == 0 then return true;
 	  );
-     if ring I =!= ring Iorig then radI = G radI;
-     trim radI
+	  false
+     ) else (
+	  n = numgens R;
+	  S := (coefficientRing R) (monoid[Variables=>n+1,MonomialSize=>16]);
+	  mapto := map(S,R,submatrix(vars S,{0..n-1}));
+	  I = mapto I;
+	  g = mapto g;
+	  J := I + ideal(g*S_n-1);
+	  1_S % J == 0_S
      )
+)
 
-end
+-- helper function for 'radicalContainment'
+radFcn = (cacheValue "RadicalContainmentFunction") (I -> (
+    R := ring I;
+    n := numgens R;
+    S := (coefficientRing R) (monoid[Variables => n + 1, MonomialSize => 16]);
+    mapto := map(S, R, submatrix(vars S, {0..n-1}));
+    I = mapto I;
+    -- here is a GB of I!
+    A := S/I;
+    g -> (g1 := promote(mapto g, A); g1 == 0 or ideal(g1 * A_n - 1) == 1)))
 
+--------------------------------------------------------------------
+----- Development section
+--------------------------------------------------------------------
 
-
+end--
 
 restart
-loadPackage "PrimaryDecomposition"
-debug PrimaryDecomposition
+debug MinimalPrimes
 
 R = QQ[x,y,z]/(x^2+y^2+z^2)
 I = ideal"x,y"

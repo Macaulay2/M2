@@ -31,7 +31,7 @@ newPackage(
 		  HomePage => "http://www.thomas-kahle.de"}},
     	Headline => "specialized routines for binomial ideals",
 	Keywords => {"Commutative Algebra"},
-	PackageImports => {"FourTiTwo", "Cyclotomic", "LLLBases", "Elimination"},
+	PackageImports => {"FourTiTwo", "Cyclotomic", "LLLBases", "MinimalPrimes", "Elimination"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	     "journal URI" => "http://j-sag.org/",

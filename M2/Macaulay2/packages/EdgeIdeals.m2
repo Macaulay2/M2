@@ -13,7 +13,7 @@ newPackage(
 	Version => "1.0.2",
 	Date => "March 30, 2011",
 	PackageExports => {"SimplicialComplexes"},
-	PackageImports => {"GenericInitialIdeal"},
+	PackageImports => {"GenericInitialIdeal","PrimaryDecomposition"},
 	Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 		"journal URI" => "http://j-sag.org/",

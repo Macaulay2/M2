@@ -1,4 +1,3 @@
-debugLevel = 1 -- I installed some error detection in minimalPrimes.  This turns it on.
 R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4)
 time S = integralClosure R
 assert isHomogeneous S

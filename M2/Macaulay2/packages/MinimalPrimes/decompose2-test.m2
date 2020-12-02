@@ -37,7 +37,7 @@ decompose Ideal := (I) -> if I.cache.?decompose then I.cache.decompose else I.ca
 
 end
 restart
-load "decompose2.m2"
+load "decompose2-test.m2"
      kk = QQ
      kk = ZZ/32003
      R = kk[x,y_1,y_2,z_1,z_2,a,b,c];     

@@ -432,9 +432,12 @@ exportMutable = method(Dispatch => Thing)
 exportMutable String := x -> exportMutable {x}
 exportMutable List   := v -> currentPackage#"exported mutable symbols" = join_(currentPackage#"exported mutable symbols") (export v)
 
+importFrom = method()
+importFrom(String,  List) := (P, x) -> importFrom(getpkg P, x)
+importFrom(Package, List) := (P, x) -> apply(nonnull x, s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s)
+
 exportFrom = method()
-exportFrom(Package, List) := (P, x) -> (
-    export \\ toString \ (s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s) \ x)
+exportFrom(Package, List) := (P, x) -> export \\ toString \ importFrom(P, x)
 
 ---------------------------------------------------------------------
 -- Here is where Core officially becomes a package
