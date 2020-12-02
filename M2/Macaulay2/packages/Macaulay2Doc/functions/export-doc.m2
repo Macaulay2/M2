@@ -35,10 +35,11 @@ Node
 
       Use @TO exportMutable@ to export symbols whose values the user is permitted to modify.
 
-      Use @TO (debug, Package)@ to import private symbols of a package.
+      Use @TO importFrom@ to import private symbols of a package.
   SeeAlso
+    exportFrom
     exportMutable
-    (debug, Package)
+    importFrom
 
 Node
   Key
@@ -64,10 +65,9 @@ Node
 
       No single-letter symbol should be exported, as such symbols are reserved as variables for the user.
 
-      Use @TO (debug, Package)@ to import private symbols of a package.
+      Use @TO importFrom@ to import private symbols of a package.
   SeeAlso
     export
-    (debug, Package)
 
 Node
   Key
@@ -78,18 +78,23 @@ Node
   Usage
     exportFrom(pkg, {"symbol1", "symbol2"})
   Inputs
-    :Package
+    pkg:Package
       the package containing the symbols
     :List
       of strings, corresponding to the symbols to export
   Consequences
     Item
-      package symbols provided in the list will be made available for use
+      package symbols provided in the list will be added to the @TO2 {Dictionary, "dictionary"}@
+      of the @TO2 {"currentPackage", "current package"}@, and will be exported
   Description
     Text
-      This function can be used to export specific symbols from another packages private dictionary.
+      This function can be used to export specific symbols from the private dictionary of another package.
     Example
       exportFrom_Core {"HTML"}
+  SeeAlso
+    export
+    importFrom
+    Dictionary
 
 Node
   Key
@@ -101,18 +106,29 @@ Node
   Usage
     importFrom(pkg, {"symbol1", "symbol2"})
   Inputs
-    :{Package,String}
-      the package containing the symbols
+    pkg:{Package,String}
+      the package containing the private symbols
     :List
-      of strings, corresponding to the symbols to export
+      of strings, corresponding to the private @TO2 {Symbol, "symbols"}@ to export from the package
+  Outputs
+    :List
+      of @TO2 {Symbol, "symbols"}@
   Consequences
     Item
-      package symbols provided in the list will be made available for use, but will not be exported
+      package symbols provided in the list will be added to the private @TO2 {Dictionary, "dictionary"}@
+      of the @TO2 {"currentPackage", "current package"}@, but will not be exported
   Description
     Text
-      This function can be used to import specific symbols from another packages private dictionary.
+      This function can be used to import specific symbols from the private dictionary of another package
+      into the private dictionary of the @TO2 {"currentPackage", "current package"}@.
     Example
       importFrom_Core {"raw"}
-  Caveat
-    This function may be replaced in the future.
+      raw random(ZZ^2, ZZ^2)
+    Text
+      To import all private symbols of a package, use @TO (debug, Package)@ instead.
+      The symbols imported with this function can then be exported using @TO export@ or @TO exportMutable@.
+  SeeAlso
+    (debug, Package)
+    exportFrom
+    Dictionary
 ///

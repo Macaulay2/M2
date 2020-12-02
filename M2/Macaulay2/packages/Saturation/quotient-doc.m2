@@ -57,10 +57,8 @@ Node
       I = ideal(J_1-a^2*J_0,J_2-d*c*J_0)
       I : J
     Text
-      -- FIXME
-      When needed, Gröbner bases will be computed and cached, though the result of the quotient computation is
-      currently not stored anywhere: this means that the computation cannot be continued after an interrupt.
-      This will be changed in a later version.
+      When needed, Gröbner bases will be computed, and if the computation succeeds the result
+      is cached inside the first argument. Partial computations are not yet cached, but this may change in a future version.
     Example
       R = ZZ[a,b,c];
       F = a^3-b^2*c-11*c^2
@@ -85,6 +83,7 @@ Node
       L : z^2
       L : I == J
   SeeAlso
+    annihilator
     saturate
     symbol:
 

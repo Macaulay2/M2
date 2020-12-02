@@ -476,9 +476,6 @@ euler ProjectiveVariety := X -> (
 -- Code donated by Frank Schreyer --
 ------------------------------------
 
--- TODO: move decompose to MinimalPrimes. Only the function below uses it
-decompose = method(Options => true)
-
 randomKRationalPoint = method()
 randomKRationalPoint Ideal := I -> (
      R:=ring I;

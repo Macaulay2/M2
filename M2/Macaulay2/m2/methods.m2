@@ -175,7 +175,6 @@ setupMethods := (args, symbols) -> (
 	  )))
 
 setupMethods((), { 
-      localRing,
 	  entries, borel, gcdCoefficients, singularLocus,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, trace, target, source,
@@ -195,6 +194,7 @@ setupMethods((), {
 use = method(Dispatch => Thing)
 use Thing := identity
 
+decompose = method(Options => true)
 dual = method(Options => true)
 
 default = method()

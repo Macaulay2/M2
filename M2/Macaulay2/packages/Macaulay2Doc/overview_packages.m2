@@ -103,6 +103,7 @@ Node
         loadPackage
         needsPackage
         dismiss
+        importFrom
         "loadedPackages"
       :Creating a new package
         "creating a package"
@@ -139,6 +140,7 @@ Node
     uninstallPackage
     uninstallAllPackages
     :Interacting with packages
+    importFrom
     (use, Package)
     (check, Package)
     (debug, Package)
@@ -197,6 +199,7 @@ Node
     :Components of a package
     newPackage
     export
+    exportFrom
     exportMutable
     beginDocumentation
     TEST
