@@ -1,5 +1,4 @@
--- -*- M2-comint -*- {* hash: 1566708855 *}
---loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- hash: 1566708855
 
 i1 : R = CC[x,y,z];
 

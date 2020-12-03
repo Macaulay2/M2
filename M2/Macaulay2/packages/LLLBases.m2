@@ -3,7 +3,8 @@ newPackage("LLLBases",
      Version => "1.1", 
      Date => "July 7, 2005",
      Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}},
-     Headline => "a package for computing Lenstra-Lenstra-Lovasz bases",
+     Headline => "Lenstra-Lenstra-Lovasz bases",
+     Keywords => {"Algebraic Number Theory", "Linear Algebra"},
      DebuggingMode => false
      )
 

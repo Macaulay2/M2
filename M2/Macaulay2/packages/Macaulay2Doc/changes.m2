@@ -6,6 +6,9 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.16",
+	  TO "changes, 1.15",
+	  TO "changes, 1.14",
 	  TO "changes, 1.13",
 	  TO "changes, 1.12",
 	  TO "changes, 1.11",
@@ -31,6 +34,223 @@ document {
 document {
      Key => "changes made for the next release",
      UL {
+	 LI { "functionality added:",
+	      UL {
+		   LI { "The function ", TO readPackage, " has been added for retrieving the options in the preamble of a package quickly." },
+		   LI { "The function ", TO hooks, " has been added for retrieving the list of functions installed as hooks for handling computations of a specific type." },
+		   LI { "The function ", TO baseRing, " has been added for retrieving the ring from which a ring was formed." },
+		   LI { "The functions ", TO findProgram, " and ", TO runProgram, " have been added, to provide a uniform way for packages to locate external programs.
+			(The names and locations of such programs may vary from system to system." },
+		   LI { "The function ", TO formation, " has been added for retrieving the way a module was formed, whether as a direct sum, tensor product, or Hom-module." }
+		   }
+	      },
+         LI { "functionality improved:",
+              UL {
+		   LI {
+		       "$\\LaTeX$ typesetting for the web documentation is now rendered using ",
+		       HREF{"https://katex.org/","$\\KaTeX$"}, ", a JavaScript math typesetting library for browsers.
+		       As a result, $\\LaTeX$ equations and matrices are rendered correctly.
+		       One notable change is that mathematical characters and equations now must be enclosed in ",
+		       CODE "\\(...\\)", ", ", CODE "\\[...\\]", ", ", CODE "$...$", ", or ", CODE "$$...$$",
+		       " in order to be rendered. See ", TO "Text :: html(TEX)", " for more details and examples" },
+		   LI { "The option ", TO Boxes, " of ", TO netList,
+		       " has been made more flexible to allow customization of the box;",
+		       " it now accepts as input a pair of lists of rows and columns." },
+                   LI { "A brief documentation of various types of objects can be viewed usin ", TO (symbol?, Symbol), "." },
+                   LI { "The ", TO document, " function now accepts three new options: ", TO "Acknowledgement", ", ",
+		       TO "Contributors", ", and ", TO "References", ". The content of each will appear under a subsection
+		       of the same name in the documentation. Moreover, ", TO "SimpleDoc :: document(String)", " is now a synonym for ",
+		       TO "SimpleDoc :: doc(String)", "." },
+                   LI { "The ", TO regex, " function, as well as other functions that accept ", TO "regular expressions",
+                       ", have been rewritten to use the Perl regular expression syntax by default, which allows more
+		       fine-grained control of the matches. The POSIX Extended flavor is still available as an option.
+		       The functionality is unchanged in almost all cases, except for regular expressions containing
+		       escaped special characters, where another backslash may be needed, and, in rare cases, where
+		       there are multiple options to match the regular expression.
+		       Internally, the new implementation incorporates the ", TO2{"Boost", "Boost.Regex"}, " library." }
+                   }
+              },
+	 LI { "improved packages:",
+	      UL {
+		   LI {
+		       "The ", TO "SimpleDoc :: doc(String)", " method from the ", TO "SimpleDoc :: SimpleDoc", " package
+		       has been rewritten to support documenting multiple nodes at once. The following keywords were added: ",
+		       TT "Node", ", ", TT "Synopsis", ", ", TT "Tree", ", ", TT "Acknowledgement", ", ", TT "Contributors", ", ",
+		       TT "References", ", and ", TT "SourceCode", ". Moreover, two new functions, ", TO "SimpleDoc :: arXiv",
+		       " and ", TO "SimpleDoc :: stacksProject", " were added to help with referencing external documents."
+		       }
+		   }
+	       },
+	 LI { "functionality changed:",
+	      UL {
+		   LI { 
+			"The destinations of the links at the tops of the web pages portraying documentation nodes in a package have been
+			altered.  The links labeled ", TT "next", " and ", TT "previous", " have been interchanged with the links labelled ",
+			TT "forward", " and ", TT "backward", ".  This was done to bring the terminology into agreement with that used in the
+			info nodes portraying documentation nodes.  The result can be described as follows.  By virtue of the ",
+			TO "Subnodes", " option, each node is provided with a certain number of subnodes, so the documentation as a whole may be
+			regarded as an ordered union of rooted trees, with the top node of the package serving as the root of the first one.
+			(Ideally it would be the only one.)  The ", TT "next", " and ", TT "previous", " links can be used to traverse the
+			(sibling) subnodes of a given node, in sequence.  (The various roots are also regarded as siblings.)  The ",
+			TT "forward", " and ", TT "backward", " links can be used to traverse all the nodes, in depth-first sequence.  Ideally,
+			the documentation would be structured so such a traversal results in a readable document with topics presented in a
+			logical sequence."
+			}
+		   }
+	      },
+	 LI { "functionality changed in a way that could break code:",
+	      UL {
+		   LI { "The variable ", TT "backupFileRegexp", " has been replaced by the ", TO "Exclude", "
+			option to ", TO "copyDirectory", "."
+			},
+		   LI { "The option ", TO [installPackage, InstallPrefix], " no longer accepts a function as input.
+		        only strings containing a path to the installation prefix are accepted."
+			},
+		   LI { "The function ", TT "localRing", " has been moved to the package ", TO "LocalRings::LocalRings", "." }
+		   }
+	      },
+	 LI { "functionality removed",
+	       UL {
+		    LI { "The ", TT "ForestNode", " and ", TT "TreeNode", " types have been made internal." },
+		    }
+	      }
+          }
+     }
+
+
+document {
+     Key => "changes, 1.16",
+     UL {
+	 LI { "functionality added:",
+	      UL {
+		   LI { "The location of Macaulay2's emacs files has changed from ", TT "site-lisp", " to ", TT "site-lisp/Macaulay2", ", so
+			users, after installing this version of Macaulay2, may once again need to run ", TO "setupEmacs", " (or ", TO "setup", ")."
+			}
+		   }
+	      },
+     	  LI { "new packages:",
+     	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "SimplicialPosets::SimplicialPosets", ", a package by Nathan Nichols for constructing Stanley simplicial poset rings, has been added." },
+		    LI { TO "SlackIdeals::SlackIdeals", ", a package by Amy Wiebe and Antonio Macchia for slack ideals of polytopes and matroids, has been added." },
+		    LI { TO "PositivityToricBundles::PositivityToricBundles", ", a package by Andreas Hochenegger for checking positivity of toric vector bundles, has been added." },
+		    LI { TO "SparseResultants::SparseResultants", ", a package by Giovanni Staglianò for computations with sparse resultants, has been added." },
+		    LI { TO "DecomposableSparseSystems::DecomposableSparseSystems", ", a package by Taylor Brysiewicz, Jose Israel Rodriguez, Frank Sottile, and Thomas Yahl for solving decomposable sparse systems, has been added." },
+		    LI { TO "MixedMultiplicity::MixedMultiplicity", ", a package by Kriti Goel, Sudeshna Roy, and J. K. Verma for mixed multiplicities of ideals, has  been added." },
+		    LI { TO "ThreadedGB::ThreadedGB", ", a package by Sonja Petrovic, Sara Jamshidi Zelenberg, and Tanner Zielinski for computing a Groebner basis using the classical Buchberger algorithm with multiple threads, has been added." },
+		    LI { TO "PencilsOfQuadrics::PencilsOfQuadrics", ", a package by Frank-Olaf Schreyer, David Eisenbud, and Yeongrak Kim for Clifford algebras of pencils of quadratic forms, has been added." },
+		    LI { TO "VectorGraphics::VectorGraphics", ", a package by Paul Zinn-Justin for producing scalable vector graphics, has been added." }
+		    }
+	       },
+     	  LI { "packages that have been published and certified:",
+     	       UL {
+     	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "DeterminantalRepresentations::DeterminantalRepresentations", ", a package by Justin Chen and Papri Dey for computing determinantal representations, has been published." },
+		    LI { star, " ", TO "Seminormalization::Seminormalization", ", a package by Karl Schwede and Bernard Serbinowski for computing seminormalization of rings, has been published." },
+		    LI { star, " ", TO "SumsOfSquares::SumsOfSquares", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. Parrilo, and Helfried Peyrl for sums of squares, has been published." }
+		    }
+	       },
+	 LI { "functionality added:",
+	      UL {
+		   LI {
+			"The function ", TO "installPackage", " now returns, as its value, the package that was installed.
+			This makes it more convenient to both install and check a package, because one can type ", TT "check installPackage \"FOO\"", "."
+			},
+	           LI { "The ", TO "roots", " command is now handled by the ", TO "MPSolve", " library, and is more robust, 
+                     	but no longer takes an optional argument ", TT "Unique", "."
+                     	},
+	           LI { "The ", TO "Complexes::Complexes", " package has new data types and routines for homological algebra.
+            		Eventually, it will replace the current facilities for homological algebra. We are making this available in order to get feedback from users before
+            		making this change.  Please email the authors with any and all comments or suggestions."
+            		}
+		   }
+	      },
+         LI { "functionality improved",
+	       UL {
+		    LI { "The PARI library has been removed.  Its functionality has been subsumed by the ", TO "MPSolve",
+			" library (for the ", TO "roots", " function for finding roots of a univariate polynomial), and the ",
+			TO "FLINT", " library, for integer factorization and primality testing." },
+		    LI { "The ", TO2{"Boost", "Boost.Stacktrace"}, " library has been added for printing stack traces in case of a crash." },
+		    LI { "Primality testing, provided by ", TO "isPrime", ", is now handled by the ", TO "FLINT", " library." },
+		    LI { "Probable prime testing, provided by ", TO "isPseudoprime", ", is now handled by the ", TO "FLINT", " library." },
+                    LI { "Factorization of integers, provided by ", TO (factor,ZZ), ", is now handled by the ", TO "FLINT", " library." },
+                    LI { "The ", TO "FLINT", " library, and several others, no longer need to be patched while building Macaulay2.
+			 This involved a reorganization of the way memory management is done in the engine and the interpreter.
+		      	 As a result, we can use versions of several basic libraries as provided by the operating system, including ", 
+		      	 TO "GNU MP", ",", TO "MPIR", ",", TO "MPFR", ", and the ", TO "NTL library", "." 
+			 },
+		    LI {
+			 TEX {
+			      "The ", TO "CompleteIntersectionResolutions::CompleteIntersectionResolutions", " package now has an implementation of
+			      the dual of the (infinite) Tate resolution of any module over a complete intersection $R$ as a finitely generated 
+			      module over $R[t_1..t_c]$, the ring of Eisenbud operators.  As a byproduct, this gives another method for computing the 
+			      global $Ext_R(M,N)$.  Also implemented {\\em layered} resolutions (in the sense of Eisenbud-Peeva) of Cohen-Macaulay modules over $R$."
+			      }
+			 },
+		    LI { "The ", TO "ReesAlgebra::ReesAlgebra", " has new functionality, with the defaults changed to make the computation faster." }
+		    }
+	       }
+          }
+     }
+
+document {
+     Key => "changes, 1.15",
+     UL {
+     	  LI { "new packages:",
+     	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "VirtualResolutions::VirtualResolutions", ", a package by Ayah Almousa, Christine Berkesch, Juliette Bruce, David Eisenbud, Michael Loper, and Mahrud Sayrafi, for virtual resolutions on products of projective spaces, has been added.
+			 (Actually, it was added in 1.14, but we forgot to say that in ", TO "changes, 1.14", "." },
+		    LI { TO "FastLinAlg::FastLinAlg", ", a package by Boyana Martinova, Marcus Robinson, Karl Schwede, and Yuhui (Wei) Yao, for faster linear algebra operations, has been added." },
+		    LI { TO "FrobeniusThresholds::FrobeniusThresholds", ", a package by Juliette Bruce, Daniel Hernández, Karl Schwede, Dan Smolkin, Pedro Teixeira, and Emily Witt, for calculations of F-thresholds, has been added." },
+		    LI { "The package ", TT "SOS", " has been renamed to ", TO "SumsOfSquares::SumsOfSquares", "." },
+		    LI { TO "SpechtModule::SpechtModule", ", a package by Jonathan Niño for efficient computation of invariants for permutation groups, has been added." },
+		    LI { TO "SpecialFanoFourfolds::SpecialFanoFourfolds", ", a package by Giovanni Staglianò for special cubic fourfolds and special prime Fano fourfolds of degree 10 and index 2, has been added." },
+		    }
+	       },
+     	  LI { "packages that have been published and certified:",
+     	       UL {
+     	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "NumericalImplicitization::NumericalImplicitization", ", a package by Justin Chen
+			 and Joe Kileel for computing invariants of images of polynomial maps, has been published." },
+		    LI { star, " ", TO "RandomMonomialIdeals::RandomMonomialIdeals", ", a package by Sonja Petrovic, Despina Stasi, Dane Wilburne, Tanner Zielinski,
+			  Daniel Kosmas, Parker Joncus, Richard Osborn, Monica Yun, and Genevieve Hummel, for generating 
+			  Erdos-Renyi-type random monomial ideals, has been published." },
+	       	    LI { star, " ", TO "SymbolicPowers::SymbolicPowers", ", a package by Eloisa Grifo for calculations involving symbolic powers, has been published." },
+	       	    LI { star, " ", TO "TestIdeals::TestIdeals", ", a package by Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez, 
+			 Zhibek Kadyrsizova, Mordechai Katzman, Sara Malec, Matthew Mastroeni, Maral Mostafazadehfard, Marcus Robinson, Karl Schwede, Dan Smolkin, Pedro Teixeira, 
+			 and Emily Witt for calculations of singularities in positive characteristic, has been published." },
+		    LI { star, " ", TO "SchurComplexes::SchurComplexes", ", a new package by Michael K. Brown, Amy Huang, Robert Laudone,
+			 Michael Perlman, Claudiu Raicu, Steven V. Sam, and Joao Pedro Santos, for Schur functors of chain complexes, has been added and published." }
+		    }
+	       },
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { "The function ", TO "nanosleep", " has been added by Boyana Martinova and Karl Schwede.  It allows the Macaulay2 process to sleep for short periods." },
+		    LI { "The sagbi engine command ", TT "rawSubduction", " has been fixed.  A new engine function ", TT "rawMonoidNumberOfBlocks", "  has been
+		       	 created, which returns the number of blocks of the monomial order of the monoid (each Weight function, Lex, or GRevLex group counts as a block)"
+		       	 }
+		   }
+	       },
+	  LI {
+	       "commits, issues, and pull requests on github",
+	       UL {
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/issues?q=milestone%3A%22version+1.15%22+is%3Aclosed","closed 1.15 issues"}, ",
+			 for the issues and pull requests incorporated into 1.15."
+			 },
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/commits/release-1.15","1.15 commits"}, " for complete information
+			 about all changes to the code incorporated into 1.15."
+			 }
+		    }
+	       }	  
+	  }
+     }
+ 
+document {
+     Key => "changes, 1.14",
+     UL {
 	  LI { "functionality added or improved:",
 	       UL {
 		    LI { "A bug related to determining the correct layout of a source directory prevented the function ", TO "help", " from
@@ -40,7 +260,61 @@ document {
 			 to global variables from being printed out as the name of the variable."
 			 }
 		    }
-	       }
+	       },
+     	  LI { "new packages:",
+     	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "DiffAlg::DiffAlg", ", a package by Manuel Dubinsky, Cesar Massri, Ariel Molinuevo, and Federico Quallbrunn, for computations with differential forms, has been added." },
+	       	    LI { TO "Quasidegrees::Quasidegrees", ", a package by Roberto Barrera for computing quasidegrees and graded local cohomology, has been added." },
+		    LI { TO "DeterminantalRepresentations::DeterminantalRepresentations", ", a package by Justin Chen and Papri Dey for computing determinantal representations, has been added." },
+		    LI { TO "FGLM::FGLM", ", a package by Dylan Peifer and Mahrud Sayrafi for computing Groebner bases via the algorithm of Faugère, Gianni, Lazard, and Mora, has been added." }
+		    }
+	       },
+     	  LI { "packages that have been published and certified:",
+     	       UL {
+     	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "LieTypes::LieTypes", " and ", TO "ConformalBlocks::ConformalBlocks", ", two packages by Dave Swinarski for computing ranks and first Chern classes of conformal block bundles
+			 on the moduli space of n-pointed curves of genus 0, have been published." },
+		    LI { star, " ", TO "Divisor::Divisor", ", a package by Karl Schwede and Zhaoning Yang for working with Weil divisors, has been published." },
+		    LI { star, " ", TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been published." },
+		    LI { star, " ", TO "DiffAlg::DiffAlg", ", a package by Manuel Dubinsky, Cesar Massri, Ariel Molinuevo, and Federico Quallbrunn, for computations with differential forms, has been published." },
+		    LI { star, " ", TO "Matroids::Matroids", ", a package by Justin Chen for computations with matroids, has been published." },
+		    LI { star, " ", TO "Quasidegrees::Quasidegrees", ", a package by Roberto Barrera for computing quasidegrees and graded local cohomology, has been published." }
+		    }
+	       },
+	  LI { "improved packages:",
+	       UL {
+		    LI { 
+		       	 TO "ReflexivePolytopesDB::ReflexivePolytopesDB", " now has a simplified interface and also 
+                         does not access the web during installation.  However, these changes will likely break previous code."
+			 },
+		    LI { 
+		       	 TO "CohomCalg::CohomCalg", " also has a simplified interface and also 
+                         does not access the web during installation.  However, these changes will likely break previous code
+                         using this package."
+			 }
+		    }
+	       },
+	  LI { "new constants and operators:",		    -- get this with : git diff version-1.13 ../../m2/exports.m2
+	       UL {
+		    LI { "The symbol ", TO "Jupyter", " has been added." },
+		    LI { "The type ", TO "MultigradedBettiTally", " has been added." },
+		    LI { "The function ", TO "multigraded", " has been added." }
+		    }
+	       },
+	  LI {
+	       "commits, issues, and pull requests on github",
+	       UL {
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/issues?q=milestone%3A%22version+1.14%22+is%3Aclosed","closed 1.14 issues"}, ",
+			 for the issues and pull requests incorporated into 1.14."
+			 },
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/commits/release-1.14","1.14 commits"}, " for complete information
+			 about all changes to the code incorporated into 1.14."
+			 }
+		    }
+	       }	  
 	  }
      }
 
@@ -62,16 +336,16 @@ document {
 	       	    LI { TO "Truncations::Truncations", ", a package by David Eisenbud and Mike Stillman for truncating modules, has been added.
 			 It implements a better notion of truncation of a multigraded module.  Some bugs in the old function have been fixed.  
 			 The function ", TO "Truncations::truncate", " has been made functorial, but it no longer allows partial degrees to be given." },
-	       	    LI { TO "FThresholds::FThresholds", ", a package by Erin Bela, Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez,
+	       	    LI { TO "FrobeniusThresholds::FrobeniusThresholds", ", a package by Erin Bela, Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez,
 			 Zhibek Kadyrsizova, Moty Katzman, Sara Malec, Matthew Mastroeni, Maral Mostafazadehfard, Marcus Robinson, Karl Schwede, Dan 
-			 Smolkin, Pedro Teixeira and Emily Witt for calculation of F-thresholds, has been added." },
+			 Smolkin, Pedro Teixeira and Emily Witt for calculation of Frobenious thresholds, has been added." },
 	       	    LI { TO "ToricInvariants::ToricInvariants", ", a package by Martin Helmer for computing Euclidean distance degrees, polar degrees,
 			 degree and codimension of the dual, and Chern-Mather classes of toric varieties, has been added." },
 	       	    LI { TO "SegreClasses::SegreClasses", ", a package by Martin Helmer and Corey Harris for testing containment of varieties and 
 			 computing algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products, has been added." },
 	       	    LI { TO "SemidefiniteProgramming::SemidefiniteProgramming", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. 
 			 Parrilo, and Helfried Peyrl for semidefinite programming, has been added." },
-	       	    LI { TO "SOS::SOS", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. Parrilo,
+	       	    LI { TO "SumsOfSquares::SumsOfSquares", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. Parrilo,
 			 and Helfried Peyrl for sums of squares, has been added." },
 	       	    LI { TO "MultiGradedRationalMap::MultiGradedRationalMap", ", a package by Yairon Cid Ruiz for computing the degree
 			 and birationality of multigraded rational maps, has been added." 
@@ -237,10 +511,10 @@ document {
 		    LI { TO "NonminimalComplexes::NonminimalComplexes", ", a package by Frank Schreyer and Mike Stillman for obtaining the non-minimal strands of a non-minimal resolution of a homogeneous module, has been added." },
 	       	    LI { TO "NumericalImplicitization::NumericalImplicitization", ", a package by Justin Chen and Joe Kileel for computing invariants of images of polynomial maps, has been added." },
 	       	    LI { TO "PruneComplex::PruneComplex", ", a package by Mahrud Sayrafi and Mike Stillman for pruning chain complexes over polynomial and local rings, has been added." },
-	       	    LI { TO "RandomMonomialIdeals::RandomMonomialIdeals", ", a package by Despina Stasi, Dane Wilburne, Tanner Zielinski, Daniel Kosmas, Parker Joncus, Richard Osborn, Monica Yun, Genevieve Hummel, and Genevieve Hummel for generating Erdos-Renyi-type random monomial ideals, has been added." },
+	       	    LI { TO "RandomMonomialIdeals::RandomMonomialIdeals", ", a package by Despina Stasi, Dane Wilburne, Tanner Zielinski, Daniel Kosmas, Parker Joncus, Richard Osborn, Monica Yun, and Genevieve Hummel for generating Erdos-Renyi-type random monomial ideals, has been added." },
 	       	    LI { TO "ReflexivePolytopesDB::ReflexivePolytopesDB", ", a package by Mike Stillman for simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4, has been added." },
 	       	    LI { TO "SymbolicPowers::SymbolicPowers", ", a package by Eloisa Grifo for calculations involving symbolic powers, has been added." },
-	       	    LI { TO "TestIdeals::TestIdeals", ", a package by Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez, Zhibek Kadyrsizova, Mordechai Katzman, Sara Malec, Matthew Mastroeni, Maral Mostafazadehfard, Marcus Robinson, Karl Schwede, Dan Smolkin, Pedro Teixeira, Emily Witt, and Emily Witt for calculations of singularities in positive characteristic, has been added." },
+	       	    LI { TO "TestIdeals::TestIdeals", ", a package by Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez, Zhibek Kadyrsizova, Mordechai Katzman, Sara Malec, Matthew Mastroeni, Maral Mostafazadehfard, Marcus Robinson, Karl Schwede, Dan Smolkin, Pedro Teixeira, and Emily Witt for calculations of singularities in positive characteristic, has been added." },
 	       	    LI { TO "Topcom::Topcom", ", a package by Mike Stillman that provides an interface to a small part of topcom, has been added." },
 	       	    LI { TO "TriangularSets::TriangularSets", ", a package by Diego Cifuentes for triangular decomposition of ideals, has been added." },
 	       	    LI { TO "Tropical::Tropical", ", a package by Kathlen Kohn, Sara Lamboglia, Diane Maclagan, Benjamin Smith, Jeff Sommars, Paolo Tripoli, Magdalena Zajaczkowska, and Magdalena Zajaczkowska for computations in tropical geometry, has been added." },
@@ -312,8 +586,8 @@ document {
      	       }},     
      	  LI { "functionality added or improved:",
      	       UL {
-		    LI { "The function ", TO "localRing", ", for localizing a polynomial ring at a prime ideal, has been added." },
-		    LI { "The function ", TO "length", " now can compute length of Artinian modules over local rings." },
+		    LI { "The function ", TO "LocalRings :: localRing", ", for localizing a polynomial ring at a prime ideal, has been added." },
+		    LI { "The function ", TO (length, Module), " now can compute length of Artinian modules over local rings." },
 		    LI {
 			 "The function ", TO "newPackage", " now takes two new options: 
 			 ", TT "OptionalComponentsPresent", " tells whether all optional external components of the package are present on the system,
@@ -387,7 +661,7 @@ document {
 			     		" for polyhedra and polyhedral complexes." }
 			   	   },
 		       	      "An important difference is that objects of these classes can no longer be used as keys into hash tables, since these objects
-		       	      are implemented as mutable hash tables. In particular ", TO "symbol===", " no longer works on cones.  Instead, use 
+		       	      are implemented as mutable hash tables. In particular ", TO symbol===, " no longer works on cones.  Instead, use
 		       	      a sorted list of e.g. vertices and lineality space.",
 		       	      PARA{"If you need the old behavior, load the package ", TO "OldPolyhedra::OldPolyhedra", ". 
 		       		   However, if possible, change your code to run with the new package."}
@@ -396,7 +670,7 @@ document {
          		 },     
 	  LI { "functionality added or improved:",
 	       UL {
-		    LI { "The functions ", TO "toDual", " and ", TO "fromDual", " have been improved and moved to the new package ", TO "InverseSystems::InverseSystems",
+		    LI { "The functions ", TO "InverseSystems::toDual", " and ", TO "InverseSystems::fromDual", " have been improved and moved to the new package ", TO "InverseSystems::InverseSystems",
 			 ": they are now compatible with linear changes of coordinates." }
 	  	   }
 	       },
@@ -611,6 +885,7 @@ document {
 	  LI {
 	       "obsolete methods",
 	       UL {
+		    LI { TT "Wikipedia(String)", " has been replaced: use ", TO "SimpleDoc :: wikipedia", " instead" },
 		    LI { "'map(Ideal)' has been removed: use 'map(module I,module I, 1)' instead" },
 		    LI { "'map(Ideal,Ideal)' has been removed: use 'map(module I,module J)' instead" },
 		    LI { "'map(Module,Matrix)' has been replaced: use 'map(M,,f)' instead" },
@@ -728,7 +1003,7 @@ document {
 		    LI { "The new function ", TO "homomorphism'", " complements ", TO "homomorphism", ".  From a map between modules it
 			 produces the element of Hom." },
 		    LI { "The new function ", TO "compose", " expresses composition of maps between modules as a bilinear map between Hom-modules." },
-		    LI { "Bracket powers of ideals (", TO "(symbol ^,Ideal,Array)", ") have been added, thanks to Frank Moore." },
+		    LI { "Bracket powers of ideals (", TO (symbol ^,Ideal,Array), ") have been added, thanks to Frank Moore." },
             LI { "Several bugs related to computing Groebner bases in polynomial rings over ZZ have been fixed.  ", TT "trim I", " in this case
                 now returns an ideal or module with a Groebner basis as generating set, as a minimal generating set isn't well-defined.  In a future release, we hope to 
                 provide a function to determine a smaller set of generators.  ", TT "mingens I", " also returns the Groebner basis matrix.  In a future release this
@@ -790,7 +1065,7 @@ document {
 	  LI { "improved packages:",
 	        UL {
 		    LI { TO "SchurRings::SchurRings", ", has been updated, with support for several groups of variables,  documentation, working plethysm, and more.
-                	 The old version is being kept as ", TO "OldSchurRings", " as there are incompatible changes.  Specifically, symmRing is now called
+                	 The old version is being kept as ", TT "SchurRingsOld", " as there are incompatible changes.  Specifically, symmRing is now called
                 	 symmetricRing, and has more variables (three sets, h, e, p) than the old version.  Please use the new version, and if there is a problem
                 	 that requires you to use the old version, please email Mike Stillman."
 			 },
@@ -1341,14 +1616,14 @@ document {
 			 },
 		    LI {
 			 "A bug in Gröbner bases over the integers was fixed, which, under certain situations, led to
-			 in incomplete Gröbner basis."},
+			 an incomplete Gröbner basis."},
 		    LI {
 			 "A bug in Gröbner bases over fields and the integers was fixed, which caused, under some situations,
 			 the list of \"trimmed\" generators to be incomplete (but the Gröbner basis itself was correct).
 			 This impacted functions which use ", TO "trim", ", especially ", TO "decompose", "."
 			 },
 		    LI {
-			 "The function ", TO "eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring,
+			 "The function ", TO "Elimination::eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring,
 			 with no quotient elements, and also quietly assumed that the ring was commutative.  Now error
 			 messages are given when it would have produced incorrect answers, and it handles Weyl and skew 
 			 commutative poly rings correctly.  Addtionally, this function now uses an elimination order 
@@ -1487,7 +1762,7 @@ document {
 		    	 TO (map,Module,RingMap), "."
 			 },
 		    LI { "The total Ext functor now accepts multigraded modules, see ", TO (Ext,Module,Module), "." },
-		    LI { "Macaulay2 now incorporates ", TO "pari", ", a free library for computing in number theory.
+		    LI { "Macaulay2 now incorporates ", HREF {"http://pari.math.u-bordeaux.fr/", "PARI"}, ", a free library for computing in number theory.
 			 It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), "."
 			 },
 		    LI { "new packages, included:",
@@ -1993,7 +2268,7 @@ document {
 	  TO "toCC", ", ",
 	  TO "toRR", ", ",
 	  TO "utf8", ", ",
-	  TO "Wikipedia", ", and ",
+	  TO "wikipedia", ", and ",
 	  TO "zeta", "."
 	  },
      PARA ///

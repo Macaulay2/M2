@@ -3,13 +3,13 @@ Copyright 2010 Amelia Taylor and Augustine O'Keefe.
 You may redistribute this file under the terms of the GNU General Public
 License as published by the Free Software Foundation, either version 2 of
 the License, or any later version.
+
+
+Copyright 2014: Jack Burkart, David Cook II, Caroline Jansen
+You may redistribute this file under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 2
+of the License, or any later version.
 *-
-
--- Copyright 2014: Jack Burkart, David Cook II, Caroline Jansen
--- You may redistribute this file under the terms of the GNU General Public
--- License as published by the Free Software Foundation, either version 2
--- of the License, or any later version.
-
 ------------------------------------------
 ------------------------------------------
 -- To Do List
@@ -26,17 +26,18 @@ the License, or any later version.
 
 newPackage select((
     "Graphs",
-        Version => "0.3.2",
-        Date => "18. October 2018",
+        Version => "0.3.3",
+        Date => "21. August 2020",
         Authors => {
             {Name => "Jack Burkart", Email => "jburkar1@nd.edu"},
             {Name => "David Cook II", Email => "dwcook@eiu.edu", HomePage => "http://ux1.eiu.edu/~dwcook/"},
             {Name => "Caroline Jansen", Email => "cjansen@nd.edu"},
             	{Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"},
             {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"},
-            {Name => "Contributers of note: Alex Diaz, Luis Garcia, Shaowei Lin, Sonja Mapes, Mike Stillman, Doug Torrance"}
+            {Name => "Contributers of note: Carlos Amendola, Alex Diaz, Luis David Garcia Puente, Roser Homs Pons, Olga Kuznetsova,  Shaowei Lin, Sonja Mapes, Harshit J Motwani, Mike Stillman, Doug Torrance"}
         },
-        Headline => "Package for processing graphs and directed graphs (digraphs)",
+        Headline => "graphs and directed graphs (digraphs)",
+	Keywords => {"Graph Theory"},
         Configuration => {
             "DotBinary" => "dot",
             "JpgViewer" => "display"
@@ -168,7 +169,6 @@ export {
     "sinks",
     "sources",
     "spectrum",
-    "topologicalSort",
     "vertexCoverNumber",
     "vertexCovers",
     --
@@ -219,18 +219,13 @@ export {
     "removeNodes",
     "spanningForest",
     "vertexMultiplication",
-    -- 
-    -- Things that probably should not be in this package.
+    
+      -- "LabeledGraph",
+    --"labeledGraph",
+     "topologicalSort",
     "topSort",
-        "newDigraph",
-        "SortedDigraph",
-    "Bigraph",
-    "bigraph",
-    "LabeledGraph",
-    "labeledGraph",
-    "MixedGraph",
-    "mixedGraph",
-    "collateVertices"
+    "SortedDigraph",
+    "newDigraph"
     }
 
 ------------------------------------------
@@ -343,7 +338,8 @@ net Digraph := Net => G -> (
     ))
 
 toString Digraph := String => D -> (
-    horizontalJoin(
+       concatenate( -- issue #1473 in github
+ --   horizontalJoin(
         toLower toString class D, 
         " (",
         toString vertexSet D,
@@ -1140,7 +1136,9 @@ spec = spectrum
 spectrum = method()
 spectrum Graph := List => G -> sort toList eigenvalues (adjacencyMatrix G, Hermitian => true)
 
-topologicalSort = method()
+
+
+topologicalSort = method(TypicalValue =>List)
 topologicalSort Digraph := List => D -> topologicalSort(D, "")
 topologicalSort (Digraph, String) := List => (D,s) -> (
     if instance(D, Graph) or isCyclic D then error "Topological sorting is only defined for acyclic directed graphs.";
@@ -1155,11 +1153,34 @@ topologicalSort (Digraph, String) := List => (D,s) -> (
     v := null;
     while S != {} do (
         v = S_0;
-        L = append(L, v);
+        L = L|{v};
         S = processor join(drop(S, 1), select(toList children (D, v), c -> isSubset(parents(D, c), L)));
         );
     L
     )
+
+
+
+
+SortedDigraph = new Type of HashTable;
+
+-- Keys:
+--      digraph: the original digraph
+--      NewDigraph: the digraph with vertices labeled as integers obtained from sorting
+--      map: the map giving the sorted order
+
+topSort = method(TypicalValue =>HashTable)
+topSort Digraph := SortedDigraph => D ->  topSort(D,"") 
+topSort (Digraph, String) := SortedDigraph => (D,s) -> ( 
+L := topologicalSort (D,s);
+g := graph D;
+new SortedDigraph from {
+digraph => D,
+newDigraph => digraph hashTable apply(#L, i -> i + 1 => apply(toList g#(L_i), j -> position(L, k -> k == j) + 1)),
+map => hashTable apply(#L, i -> L_i => i + 1)
+}
+)
+
 
 vertexCoverNumber = method()
 vertexCoverNumber Graph := ZZ => G -> min apply(vertexCovers G, i -> #i)
@@ -1639,44 +1660,20 @@ vertexMultiplication (Graph, Thing, Thing) := Graph => (G,v,u) -> (
     if member(v, vertexSet G) == false then error "2nd argument must be in the input graph's vertex set";
     graph(append(vertexSet G, u), edges G | apply(toList neighbors (G,v), i -> {i,u}), EntryMode => "edges")
     )
-------------------------------------------
-------------------------------------------
--- Things that probably should not be in this package.
-------------------------------------------
-------------------------------------------
--- All of these things are used exclusively by GraphicalModels.
--- They probably should be there, not here.  Otherwise they should
--- probably be in their own package as they are highly specialized.
 
-SortedDigraph = new Type of HashTable;
 
--- Keys:
---      digraph: the original digraph
---      NewDigraph: the digraph with vertices labeld as integers obtained from sorting
---      map: the map giving the sorted order
-topSort = method()
-topSort Digraph := SortedDigraph => D -> (
-    L := topologicalSort D;
-    g := graph D;
-    new SortedDigraph from {
-	    digraph => D,
-	    newDigraph => digraph hashTable apply(#L, i -> i + 1 => apply(toList g#(L_i), j -> position(L, k -> k == j) + 1)),
-        map => hashTable apply(#L, i -> L_i => i + 1)
-	    }
-    )
 
-Bigraph = new Type of Graph
 
-bigraph = method(Options => {Singletons => null})
-bigraph HashTable := opts -> g -> new Bigraph from graph(g, opts)
-bigraph List := opts -> g -> new Bigraph from graph(g, opts)
+-* 
+
+--This code is written for an older version of Graphs and is not functional with current version of the packages.
 
 graphData = "graphData"
 labels = "labels"
 
 LabeledGraph = new Type of HashTable
 
-labeledGraph = method()
+labeledGraph = method(TypicalValue =>LabeledGraph)
 labeledGraph (Digraph,List) := (g,L) -> (
     C := new MutableHashTable;
     C#cache = new CacheTable from {};
@@ -1717,70 +1714,11 @@ toString LabeledGraph := g -> concatenate(
     "}"
     )
 
-graph LabeledGraph := opts -> g -> g#graph
+graph LabeledGraph := opts -> g -> g#graph  --used to transform the LabeledGraph into a hashtable
 
-MixedGraph = new Type of HashTable
+*- 
 
-mixedGraph = method()
-mixedGraph (Graph, Digraph, Bigraph) := (g,d,b) -> (
-    C := new MutableHashTable;
-    C#cache = new CacheTable from {};
-    h := new MutableHashTable;
-    h#Graph = g;
-    h#Digraph = d;
-    h#Bigraph = b;
-    C#graph = new HashTable from h;
-    new MixedGraph from C)
-mixedGraph (Digraph, Bigraph) := (d,b) -> mixedGraph(graph {},d,b)
-mixedGraph (Graph, Digraph) := (g,d) -> mixedGraph(g,d,bigraph {})
-mixedGraph Digraph := d -> mixedGraph(graph {},d, bigraph {})
 
-net MixedGraph := g -> horizontalJoin flatten (
-     net class g,
-    "{",
-    stack (horizontalJoin \ sort apply(pairs (g#graph),(k,v) -> (net k, " => ", net v))),
-    "}"
-    )
-
-toString MixedGraph := g -> concatenate(
-    "new ", toString class g#graph,
-    if parent g#graph =!= Nothing then (" of ", toString parent g),
-    " from {",
-    if #g#graph > 0 then demark(", ", apply(pairs g#graph, (k,v) -> toString k | " => " | toString v)) else "",
-    "}"
-    )
-
-graph MixedGraph := opts -> g -> g#graph
-digraph MixedGraph := opts -> g -> g#graph#Digraph
-bigraph MixedGraph := opts -> g -> g#graph#Bigraph
-vertices MixedGraph := G -> toList sum(apply(keys(G#graph),i->set keys(graph (G#graph)#i)))
-
-descendents (MixedGraph, Thing) := (G,v) -> descendents(digraph G, v)
-nondescendents (MixedGraph, Thing) := (G,v) -> nondescendents(digraph G, v)
-parents (MixedGraph, Thing) := (G,v) -> parents(digraph G, v)
-foreFathers (MixedGraph, Thing) := (G,v) -> foreFathers(digraph G, v)
-children (MixedGraph, Thing) := (G,v) -> children(digraph G, v)
-neighbors (MixedGraph, Thing) := (G,v) -> neighbors(G#graph#Graph, v)
-nonneighbors (MixedGraph, Thing) := (G,v) -> nonneighbors(G#graph#Graph, v)
-
-collateVertices = method()
-collateVertices MixedGraph := g -> (
-    v := vertices g;
-    hh := new MutableHashTable;
-    G := graph g;
-    -- Graph
-    x := graph G#Graph;
-    scan(v,j->if x#?j then hh#j=x#j else hh#j={});
-    gg := graph(new HashTable from hh);
-    -- Digraph
-    x = graph G#Digraph;
-    scan(v,j->if x#?j then hh#j=x#j else hh#j={});
-    dd := digraph(new HashTable from hh);
-    -- Bigraph
-    x = graph G#Bigraph;
-    scan(v,j->if x#?j then hh#j=x#j else hh#j={});
-    bb := bigraph(new HashTable from hh);
-    mixedGraph(gg,dd,bb))
 
 
 ------------------------------------------
@@ -1799,12 +1737,6 @@ doc ///
 
 -------------------------------
 --Data Types
--------------------------------
-doc ///
-    Key
-    	Bigraph
-///
-
 doc ///
     Key
     	Digraph
@@ -1815,20 +1747,7 @@ doc ///
     	Graph
 ///
 
-doc ///
-    Key
-    	LabeledGraph
-///
 
-doc ///
-    Key
-    	MixedGraph
-///
-
-doc ///
-    Key
-    	SortedDigraph
-///
 
 
 
@@ -5225,6 +5144,143 @@ doc ///
 ///
 
 
+doc /// 
+    Key
+        topologicalSort
+        (topologicalSort, Digraph) 
+	(topologicalSort, Digraph, String) 
+    Headline
+        outputs a list of vertices in a topologically sorted order of a DAG.
+    Usage
+        topologicalSort(D,S)
+	topologicalSort(D)
+    Inputs
+        D:Digraph
+	S:String
+    Outputs
+         :List 
+    Description 
+        Text
+	    This function outputs a list of vertices in a topologically sorted order of a directed acyclic graph (DAG). 
+	    S provides the preference given to the vertices in order to break ties and provide unique topological sorting to the DAG.
+	    
+	    Permissible values of S are: "random", "max", "min", "degree".
+	    
+	    S = "random" randomly sort the vertices of graph which have same precedence at any instance of the algorithm to break the ties.
+	    
+	    S = "min" sort the vertices according to their indices (from low to high) to break the ties.
+	    
+	    S = "max" sort the vertices according to their indices (from high to low) to break the ties.
+	    
+	    S = "degree" sort the vertices according to their degree (from low to high) to break the ties.
+        Example
+	   G = digraph{{5,2},{5,0},{4,0},{4,1},{2,3},{3,1}}
+	   topologicalSort G
+	   topologicalSort(G,"min")
+	   topologicalSort(G,"max")
+	   topologicalSort(G,"random")
+	   topologicalSort(G,"degree")
+	  
+    SeeAlso
+        topSort
+   ///
+
+--------------------------------------------
+-- Documentation topSort
+--------------------------------------------
+doc /// 
+    Key
+        topSort
+        (topSort, Digraph) 
+	(topSort, Digraph, String)
+    Headline
+        outputs a hashtable containing orginal digraph, new digraph with vertices topologically sorted and a map from vertices of original digraph to new digraph.
+    Usage
+        topSort(D)
+	topSort(D,S)
+    Inputs
+        D:Digraph
+	S: String 
+    Outputs
+         :HashTable 
+    Description 
+        Text
+	    This method outputs a HashTable with keys digraph, map and newDigraph, where digraph is the original digraph,
+	    map is the relation between old ordering and the new ordering of vertices and newDigraph is the Digraph with 
+	    topologically sorted vertices. This method needs the input to be directed adyclic graph (DAG).
+	    S provides the preference given to the vertices in order to break ties and provide unique topological sorting to the DAG.
+	    
+	    Permissible values of S are: "random", "max", "min", "degree".
+	    
+	    S = "random" randomly sort the vertices of graph which have same precedence at any instance of the algorithm to break the ties.
+	    
+	    S = "min" sort the vertices according to their indices (from low to high) to break the ties.
+	    
+	    S = "max" sort the vertices according to their indices (from high to low) to break the ties.
+	    
+	    S = "degree" sort the vertices according to their degree (from low to high) to break the ties.
+
+        Example
+	   G = digraph{{5,2},{5,0},{4,0},{4,1},{2,3},{3,1}}
+	   H = topSort G
+	   H#digraph
+	   H#map
+	   topSort(G,"min")
+	   topSort(G,"max")
+	   topSort(G,"random")
+	   topSort(G,"degree")
+    
+    SeeAlso
+          topologicalSort
+	  SortedDigraph
+	  newDigraph
+   ///
+
+
+doc /// 
+    Key
+        SortedDigraph
+    Headline
+        hashtable used in topSort
+    Description 
+        Text
+	    This is a type of hashtable.The output of @TO topSort@ has class {\tt SortedDigraph}. In the current version of 
+	    Graphs (version 0.3.3) the only use of SortedDigraph is in @TO topSort@.
+        Example
+	   G = digraph{{5,2},{5,0},{4,0},{4,1},{2,3},{3,1}}
+	   H = topSort G
+	   class H
+    SeeAlso
+          topSort
+	  newDigraph
+	  topologicalSort
+   ///
+
+
+doc /// 
+    Key
+        newDigraph
+    Headline
+        key used in the output of topSort
+    Description 
+        Text
+	    This is a key of the hashtable output @TO SortedDigraph@  of @TO topSort@. 
+        Example
+	   G = digraph{{5,2},{5,0},{4,0},{4,1},{2,3},{3,1}}
+	   H = topSort G
+	   keys H
+    SeeAlso
+          topSort
+	  SortedDigraph
+	  topologicalSort
+   ///
+
+
+
+
+
+
+
 TEST ///
 --test expansion of graphs
 G=pathGraph(7);
@@ -5319,6 +5375,22 @@ assert( isRigid ( graph({{0,4},{0,5},{0,6},{1,4},{1,5},{1,6},{2,4},{2,5},{2,6}})
 assert( isRigid(graph{{0,1}}) === true )
 assert( isRigid(graph{{0,1},{1,2}}) === false )
 ///
+
+TEST ///
+
+   D = digraph{{2,1},{3,1}}
+   assert(topologicalSort D==={2,3,1})
+///
+
+
+TEST ///
+
+   D = digraph{{2,1},{3,1}}
+   assert(topSort D ===  new SortedDigraph from {map => new HashTable from {1 => 3, 2 => 1, 3
+  => 2}, newDigraph => digraph ({1, 2, 3}, {{1, 3}, {2, 3}}), digraph =>
+  digraph ({2, 1, 3}, {{2, 1}, {3, 1}})})
+///
+
 
 end;
 

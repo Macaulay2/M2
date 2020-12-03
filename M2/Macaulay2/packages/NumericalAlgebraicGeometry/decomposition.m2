@@ -149,8 +149,6 @@ for i to 5 do (
 
 
 numericalIrreducibleDecompositionM2 = (I,o) -> numericalVariety flatten (components regeneration (I_*,Software=>M2engine) / decompose)
-toBertiniOptions'numericalIrreducibleDecomposition = o -> new OptionTable from {Verbose=>false}
-numericalIrreducibleDecompositionBertini = (I,o) -> bertiniPosDimSolve(I_*, toBertiniOptions'numericalIrreducibleDecomposition o)
 numericalIrreducibleDecomposition = method(Options=>{Software=>null})
 numericalIrreducibleDecomposition Ideal := o -> I -> (
     o = fillInDefaultOptions o;   

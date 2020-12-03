@@ -4,55 +4,37 @@ use M2;
 use hashtables;
 
 declarations "
-   #ifdef HAVE_WINSOCK2_H
-    #include <winsock2.h>
-      /* under mingw64 winsock2.h should be included before including windows.h
-	  pthread.h includes windows.h
-	   therefore winsock2.h should be included before pthread */
-    #undef ERROR
-   #endif
-   #if USE_MYSQL
+   #ifdef WITH_MYSQL
      #include <mysql/mysql.h>
    #endif
-   #ifdef HAVE_PYTHON
-     #include <python2.7/Python.h>
-   #else
-     #define PyObject_Str(o) 0
-     #define PyString_AS_STRING(o) 0
-     #define Py_DECREF(o) 0
+   #ifdef WITH_PYTHON
+     #include <Python.h>
    #endif
    ";
 
 header "
-   #include <M2/config.h>
    #include <atomic_ops.h>
+   #include <boost/version.hpp>
    #include <mpfr.h>
    #include <memtailor.h>
    #include <mathic.h>
    #include <gdbm.h>
    #include <mathicgb.h>
+   #include <mps/version.h>
+       #ifndef MPS_MAJOR_VERSION
+       #error \"MPS_MAJOR_VERSION undefined\"
+       #endif
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
+   namespace constants { extern const char* const version; } /* we have to copy this from frobby until they make it more accessible */
    extern char timestamp[];
    #undef ASSERT
-   #ifdef HAVE_FROBBY
-     #if HAVE_FROBBY_VERSION_NUMBER
-       #include <stdinc.h>		// to get version number of frobby
-       #define FROBBY_VERSION constants::version
-     #else
-       #define FROBBY_VERSION \"unknown\"
-     #endif
-   #else
-     #define FROBBY_VERSION \"not present\"
-   #endif
-   #include <pari-c.h>
    #ifdef HAVE_SCSCP
      #include <scscp.h>
      void scscp_dummy() { SCSCP_sc_init(NULL,NULL); /* just to force linking with the library */ }
    #endif
    #include <stdio.h>
    extern unsigned int GC_version; /* in libgc.a */
-   #include <gmp.h>
    #include <NTL/version.h>
    #undef ASSERT
    static int32_t endianness_string[2] = {0x61626364,0};
@@ -167,17 +149,10 @@ setupconst("version", Expr(toHashTable(Sequence(
    "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),
    "compile time" => Ccode(constcharstar,"timestamp"),
    "compile node name" => Ccode(constcharstar,"NODENAME"),
-   "dumpdata" => Ccode(bool,"
-	  #if DUMPDATA
-	       haveDumpdata()
-	  #else
-	       0
-	  #endif
-	  "),
    "atomic_ops version" => atomicopsversion(),
    "gc version" => gcversion(),
    "mysql version" => Ccode(constcharstar,"
-	  #if USE_MYSQL
+	  #if WITH_MYSQL
 		   mysql_get_client_info()
 	  #else
 		   \"not present\"
@@ -192,8 +167,9 @@ setupconst("version", Expr(toHashTable(Sequence(
 	       \"not present\"
 	  #endif
 	  "),
+   "mpsolve version" => Ccode(constcharstar, "stringize(MPS_MAJOR_VERSION) \".\" stringize(MPS_MINOR_VERSION) \".\" stringize(MPS_PATCH_VERSION)" ),
    "python version" => Ccode(constcharstar,"
-	#ifdef HAVE_PYTHON
+	#ifdef WITH_PYTHON
 		 PY_VERSION				      
 	#else
 		 \"not present\"
@@ -201,31 +177,24 @@ setupconst("version", Expr(toHashTable(Sequence(
 	"),
    "gdbm version" => gdbmversion(),
    "gmp version" => Ccode(constcharstar,"
-	  #ifdef __MPIR_VERSION
+	  #if USING_MPIR
 	       \"not present\"
 	  #else
 	       __gmp_version
 	  #endif
 	  "),
    "mpir version" => Ccode(constcharstar,"
-	#ifdef __MPIR_VERSION
+	#if USING_MPIR
 	     __mpir_version
 	#else
 	     \"not present\"
 	#endif
 	"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
-   "frobby version" => Ccode(constcharstar,"FROBBY_VERSION"),
-   "pari version" => Ccode(constcharstar,"
-	 #ifdef HAVE_PARI
-	   get_pari_version()
-	 #else
-	   \"not present\"
-	 #endif
-	 "),
+   "frobby version" => Ccode(constcharstar,"constants::version"),
    "flint version" => Ccode(constcharstar,"
 	 #if HAVE_FLINT
-	   FLINT_VERSION
+	   flint_version
 	 #else
 	   \"not present\"
 	 #endif
@@ -237,6 +206,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	   \"not present\"
 	 #endif
 	 "),
+   "boost version" => Ccode(constcharstar,"BOOST_LIB_VERSION"),
    "memtailor version" => Ccode(constcharstar,"MEMTAILOR_VERSION_STRING"),
    "mathic version" => Ccode(constcharstar,"MATHIC_VERSION_STRING"),
    "mathicgb version" => Ccode(constcharstar,"MATHICGB_VERSION_STRING"),

@@ -33,7 +33,7 @@ GaloisFieldTable::GaloisFieldTable(const PolynomialRing &R,
   mMinusOne = (mCharac == 2 ? mOne : mOne / 2);
 
   // Get ready to create mOneTable.
-  std::vector<ring_elem> polys;
+  VECTOR(ring_elem) polys;
   polys.push_back(mOriginalRing.from_long(0));
   polys.push_back(mOriginalRing.copy(mPrimitiveElement));
 

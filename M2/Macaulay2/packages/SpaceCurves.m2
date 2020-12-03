@@ -2,7 +2,7 @@ newPackage(
         "SpaceCurves",
         Version => "1.0", 
         Date => "May 26th 2018",
-        Authors => {{Name => "Frank Schreyer", 
+        Authors => {{Name => "Frank-Olaf Schreyer", 
                   Email => "schreyer@math.uni-sb.de", 
                   HomePage => "https://www.math.uni-sb.de/ag/schreyer/"},
 	      {Name => "Mike Stillman", 
@@ -12,7 +12,8 @@ newPackage(
                   Email => "myzhang@berkeley.edu", 
                   HomePage => "https://math.berkeley.edu/~myzhang/"}
 	      },
-        Headline => "Generation of space curves",
+        Headline => "space curves",
+	Keywords => {"Examples and Random Objects"},
         DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -105,6 +106,8 @@ cubicSurface Ring := R -> (
         points := apply(6,i-> ideal (vars S * syz transpose M_{i}));
         I := intersect points;
         fI := res I;
+        if numgens R =!= numColumns fI.dd_1 then
+          error "randomization produced an error: try again, and/or increase the size of your base field";
         phi := map(S,R,fI.dd_1);
         matS := sub(diff(transpose sub(vars S,RS),sub(vars R,RS) * sub(fI.dd_2,RS)),R);
         f := ideal det matS;
@@ -1191,9 +1194,9 @@ document {
     Headline => "prints the table of (degree,genus) pairs",
     {
     TT "dgTable", " prints the table of (degree,genus) pairs, where the horizontal
-    axis is the degree and the vertical is the genus. The input can be a ", TT "List",
-    " of ", TO "Divisor", ", ", TO "Curve", ", ", TO "PostulationChar", " or ",
-    TT "Ideal", "."	
+    axis is the degree and the vertical is the genus. The input can be a ", TO "List",
+    " of ", TO "Divisor", ", ", TO "Curve", ", ", TT "PostulationChar", " or ",
+    TO "Ideal", "."
     } 
 }
 document {

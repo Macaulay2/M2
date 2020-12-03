@@ -5,7 +5,8 @@ newPackage(
     	Authors => {{Name => "Martin Helmer", 
 		  Email => "m.helmer@math.ku.dk", 
 		  HomePage => "http://martin-helmer.com/"}},
-    	Headline => "computes Euclidean distance degrees, polar degrees, degree and codimension of the dual, and Chern-Mather classes of toric varieties X_A from the polytope conv(A) or from its Gale dual",
+    	Headline => "Euclidean distance degrees, polar degrees, degree and codimension of the dual, and Chern-Mather classes of toric varieties X_A from the polytope conv(A) or from its Gale dual",
+	Keywords => {"Toric Geometry"},
     	DebuggingMode => false,
 	PackageImports => {"LLLBases", "Polyhedra" }
     	);

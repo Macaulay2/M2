@@ -1,0 +1,69 @@
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/einsteinium-development/libraries/mpsolve/tmp/mpsolve-3.2.1/configure.ac mpsolve-3.2.1/configure.ac
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/einsteinium-development/libraries/mpsolve/tmp/mpsolve-3.2.1/configure.ac	2020-06-12 01:58:39.000000000 -0400
++++ mpsolve-3.2.1/configure.ac	2020-06-27 07:55:10.000000000 -0400
+@@ -574,7 +574,7 @@
+ 
+ 
+ # == PYTHON MODULE ==
+-have_python=yes
++have_python=no
+ AM_PATH_PYTHON([2.3],,[:])
+ AC_ARG_VAR([PYTHON_INCLUDE], [Include flags for python, bypassing python-config])
+ AC_ARG_VAR([PYTHON_CONFIG], [Path to python-config])
+
+
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/einsteinium-gcc9-development/libraries/mpsolve/tmp/mpsolve-3.2.1/src/mpsolve/Makefile.am mpsolve-3.2.1/src/mpsolve/Makefile.am
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/einsteinium-gcc9-development/libraries/mpsolve/tmp/mpsolve-3.2.1/src/mpsolve/Makefile.am	2019-12-02 13:34:28.000000000 -0500
++++ mpsolve-3.2.1/src/mpsolve/Makefile.am	2020-06-27 08:19:56.000000000 -0400
+@@ -1,31 +1,5 @@
+ NULL = 
+ 
+-bin_PROGRAMS = mpsolve
+-
+ man_MANS = ${builddir}/mpsolve.1
+ 
+ EXTRA_DIST = mpsolve.1
+-
+-mpsolve_CFLAGS = \
+-        -I${top_srcdir}/include \
+-	-I. \
+-	-I${top_builddir}/include \
+-	$(GMP_CFLAGS) \
+-	$(GTK_CFLAGS) \
+-	$(PTHREAD_CFLAGS) \
+-	$(NULL)
+-
+-mpsolve_SOURCES = \
+-	iteration-logger.h \
+-	iteration-logger.c \
+-	mpsolve.c \
+-	$(NULL)
+-
+-mpsolve_LDFLAGS = 
+-
+-mpsolve_LDADD = \
+-	${top_builddir}/src/libmps/libmps.la \
+-	$(GMP_LIBS) \
+-	$(GTK_LIBS)
+-
+-nodist_EXTRA_mpsolve_SOURCES = dummy.cxx
+
+--- mpsolve-3.2.1/configure.ac-orig	2020-07-09 02:28:06.018935996 -0500
++++ mpsolve-3.2.1/configure.ac	2020-07-09 02:28:20.903885679 -0500
+@@ -311,13 +311,13 @@
+     # Add GMP_CFLAGS and GMP_LIBS to CFLAGS and LDFLAGS in case they are set.
+     # This is an easy way for the user to override system libgmp or to provide
+     # its location if it's not installed system-wide. 
+-    AS_IF([test -z $GMP_CFLAGS], [], [
++    AS_IF([test -z "$GMP_CFLAGS"], [], [
+       CFLAGS="$GMP_CFLAGS $CFLAGS"
+     ])
+-    AS_IF([test -z $GMP_LDFLAGS], [], [
++    AS_IF([test -z "$GMP_LDFLAGS"], [], [
+       LDFLAGS="$GMP_LDFLAGS $LDFLAGS"
+     ])
+-    AS_IF([test -z $GMP_LIBS], [], [
++    AS_IF([test -z "$GMP_LIBS"], [], [
+       LDFLAGS="$GMP_LIBS $LDFLAGS"
+     ])
+ 

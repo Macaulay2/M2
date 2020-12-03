@@ -19,10 +19,21 @@ degreeLength OrderedMonoid := M -> M.degreeLength
 terms := symbol terms
 PolynomialRing = new Type of EngineRing
 PolynomialRing.synonym = "polynomial ring"
+PolynomialRing#{Standard,AfterPrint} = R -> (
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
+    << "PolynomialRing";
+    if #R.monoid.Options.WeylAlgebra > 0
+    then << ", " << #R.monoid.Options.WeylAlgebra << " differential variables";
+    if #R.monoid.Options.SkewCommutative > 0
+    then << ", " << #R.monoid.Options.SkewCommutative << " skew commutative variables";
+    << endl;
+    )
 
 isPolynomialRing = method(TypicalValue => Boolean)
 isPolynomialRing Thing := x -> false
 isPolynomialRing PolynomialRing := (R) -> true
+
+isHomogeneous PolynomialRing := R -> true
 
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 

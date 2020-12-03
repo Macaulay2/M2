@@ -39,7 +39,7 @@ I = ideal(tx*(tx+ty)-x*(tx+ty+3)*(tx-1),
 RatSols(I, y, {10,1})
 RatSols(I, y-1, {10,1})
 
-Drank I
+holonomicRank I
 (mingens singLocus I)_(0,0) == x*y*(x-1)*(y-1)*(x-y)
 RatSols(I, {x,y,x-1,y-1,x-y}, {10,1})
 

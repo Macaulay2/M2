@@ -41,7 +41,7 @@ $(foreach i,\
 	$(eval check::check-$i)\
 	$(eval check-$i:; \
 		if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 >/dev/null ;\
-		then @pre_bindir@/M2 -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false); exit 0" ;\
+		then @pre_bindir@/M2 -q --no-preload $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false,Verbose=>$(Verbose)); exit 0" ;\
 		fi ))
 info-dir: @pre_infodir@/dir
 @pre_infodir@/dir:|@pre_infodir@
@@ -70,6 +70,7 @@ unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
 	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
 	cd $1-temporary && @pre_bindir@/M2 $(M2DIRS) \
 	    -q $(STOP) \
+	    --no-preload \
 	    -e errorDepth=$(errorDepth) \
 	    -e debugLevel=$(debugLevel) \
 	    $(EARGS) \
@@ -91,20 +92,19 @@ $(foreach i, $(PACKAGES), $(eval all: unmark-$i))
 endif
 $(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i))
 
-# make packages Style and Macaulay2Doc get installed before the others:
+# make packages Style, FirstPackage, and Macaulay2Doc get installed
+# before the others:
 $(foreach i, $(patsubst Style,,$(ALL_PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Style/.installed))
-$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Macaulay2Doc/.installed))
+$(foreach i, $(patsubst FirstPackage,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/FirstPackage/.installed))
+$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst FirstPackage,,$(patsubst Style,,$(ALL_PACKAGES)))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Macaulay2Doc/.installed))
 
 # the Info-validate function doesn't work well enough to be useful:
 # check::check-info
 
 clean::; rm -rf tmp
-clean::; $(MAKE) -C ComputationsBook $@
 big-check:
-check::; $(MAKE) -C ComputationsBook check
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
 distclean:clean
-	$(MAKE) -C ComputationsBook $@
 	rm -f Makefile
 
 ## here is the list of other files to install along with Macaulay2

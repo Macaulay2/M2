@@ -8,7 +8,7 @@ o1 : NCPolynomialRing
 
 i2 : M = ncMatrix {{x, y, z}}
 
-o2 = | x  y  z |
+o2 = | x y z |
 
 o2 : NCMatrix
 
@@ -20,31 +20,25 @@ o3 : NCRingMap
 
 i4 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
 
-o4 = | x  y  z |
-     |         |
-     | y  z  x |
-     |         |
-     | z  x  y |
+o4 = | x y z |
+     | y z x |
+     | z x y |
 
 o4 : NCMatrix
 
 i5 : N' = ncMatrix {{sigma sigma M}, {sigma M}, {M}}
 
-o5 = | z  x  y |
-     |         |
-     | y  z  x |
-     |         |
-     | x  y  z |
+o5 = | z x y |
+     | y z x |
+     | x y z |
 
 o5 : NCMatrix
 
 i6 : N + N'
 
-o6 = | z+x  y+x  z+y |
-     |               |
-     |  2y   2z   2x |
-     |               |
-     | z+x  y+x  z+y |
+o6 = | z+x y+x z+y |
+     | 2*y 2*z 2*x |
+     | z+x y+x z+y |
 
 o6 : NCMatrix
 

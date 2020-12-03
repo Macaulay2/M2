@@ -20,13 +20,14 @@ fromRingXbertini (List,Ring) := (F,R) -> (
 toBertiniOptions = method()
 toBertiniOptions OptionTable := OptionTable => o -> (
     o = fillInDefaultOptions o;
-    opt := {
+    bertiniConf := {
 	TrackTolBeforeEG=>o.CorrectorTolerance,
 	TrackTolDuringEG=>o.CorrectorTolerance*o.EndZoneFactor,
 	FinalTol=>o.CorrectorTolerance*o.EndZoneFactor,
-	Verbose=>(DBG>0)
+	MaxNorm=>o.InfinityThreshold
 	};
-    new OptionTable from opt -- TODO: write all options
+    new OptionTable from {Verbose=>(DBG>0),BertiniInputConfiguration=>bertiniConf}
+    -- TODO: write all options
     )
 
 solveBertini = method(TypicalValue => List)
@@ -39,7 +40,7 @@ solveBertini (List,OptionTable) := List => (F,o) -> (
 	or coeffR===QQ or coeffR ===ZZ
 	) then error "expected coefficients that can be converted to complex numbers";  
     sols := bertiniZeroDimSolve(F,toBertiniOptions o); 
-    sols    
+    select(sols,x->norm matrix x < o.InfinityThreshold)    
     )
 
 trackHomotopyBertini = method(TypicalValue => List)
@@ -59,3 +60,13 @@ trackBertini (List,List,List,OptionTable) := List => (S,T,solS,o) -> (
     trackHomotopyBertini(H,t,solS,o)
     )
 trackBertini (PolySystem,PolySystem,List,OptionTable) := List => (S,T,solS,o) -> trackBertini (equations S, equations T, solS, o)
+
+refineBertini = method()
+refineBertini (PolySystem,Point,OptionTable) := List => (F,x,o) -> (              
+    -- bits to decimals 
+    decimals := if o.Bits =!= infinity then ceiling(o.Bits * log 2 / log 10) else log_10 o.ErrorTolerance;
+    first bertiniRefineSols(decimals, equations F, {x}) -*toBertiniOptions o*-
+    -- bertiniRefineSols may reorder points!!!
+    )
+toBertiniOptions'numericalIrreducibleDecomposition = o -> new OptionTable from {Verbose=>false,BertiniInputConfiguration=>{Bertini$RandomSeed=>0}}
+numericalIrreducibleDecompositionBertini = (I,o) -> bertiniPosDimSolve(I_*, toBertiniOptions'numericalIrreducibleDecomposition o)

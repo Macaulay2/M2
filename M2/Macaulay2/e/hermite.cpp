@@ -7,6 +7,10 @@
 
 extern RingZZ *globalZZ;
 
+static long nallocs_hm_elem = 0;
+// static long highwater_hm_elem = 0;
+static long nfree_hm_elem = 0;
+
 int HermiteComputation::complete_thru_degree() const
 // The computation is complete up through this degree.
 {
@@ -17,6 +21,7 @@ int HermiteComputation::complete_thru_degree() const
 hm_elem *HermiteComputation::new_gen(int i)
 {
   hm_elem *result = new hm_elem;
+  nallocs_hm_elem++;
   mpz_init(result->lead);
   if ((*gens)[i] == NULL)
     {
@@ -40,7 +45,8 @@ void HermiteComputation::insert(hm_elem *p)
     {
       if (p->fsyz != NULL && collect_syz) syz_list.push_back(p->fsyz);
       mpz_clear(p->lead);
-      deleteitem(p);
+      delete p;
+      nfree_hm_elem++;
     }
   else
     {
@@ -77,25 +83,27 @@ void HermiteComputation::remove_hm_elem(hm_elem *&p)
   mpz_clear(p->lead);
   globalZZ->remove_vec(p->f);
   globalZZ->remove_vec(p->fsyz);
-  deleteitem(p);
+  delete p;
   p = NULL;
 }
 
 HermiteComputation::~HermiteComputation()
 {
-  for (int i = 0; i < initial.size(); i++)
-    {
-      // remove the hm_elem list
-      hm_elem *p = initial[i];
-      while (p != NULL)
-        {
-          hm_elem *tmp = p;
-          p = p->next;
-          remove_hm_elem(tmp);
-        }
-    }
+  // I am pretty sure the logic is as follows here (MES):
+  // the GB_list contains all of the remaining hm_elems's
+  // the 'next' field for these is the GB_list list.
+  // the initial[i] list first contains all elements input that
+  //   have i as their lead term.
+  // but after computing this component, initial[i] is first set to nullptr,
+  //   then to the lone GB element with this component.
+  //   AND this element is on the GB_list.
+  // Upshot: to remove all of the hn_elem's: 2 choices:
+  //   (1) just delete elems on GB_list, and not on initials lists.
+  //   (2) just delete the first element on each element list.
+  //   
+  //   
 
-  // Now remove the Groebner basis
+  // Remove the Groebner basis:
 
   while (GB_list != NULL)
     {

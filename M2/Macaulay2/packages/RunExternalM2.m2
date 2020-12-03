@@ -15,6 +15,7 @@ newPackage(
 			Email => "bapike@gmail.com",
 			HomePage => "http://www.brianpike.info/"}},
 		Headline => "run Macaulay2 functions outside the current Macaulay2 process",
+		Keywords => {"Miscellaneous"},
 		DebuggingMode => false,
 		Configuration => {"isChild"=>false} 
 	)
@@ -85,7 +86,6 @@ export {
 	"runExternalM2ReturnAnswer",
 	-- Various Options:
 	"M2Location",
-	"KeepFiles",
 	"KeepStatistics",
 	"KeepStatisticsCommand",
 	"PreRunScript"
@@ -334,10 +334,12 @@ Node
 -*
   These are the options to automatically provide when calling the M2 executable.
   We would use --script (=--stop --no-debug --silent -q ), but we do NOT want
-  -q so that our child processes can find installed packages, namely, this package.
+  -q so that our child processes can find installed packages, namely, this package,
+  unless the parent M2 was also called with -q.
 *-
 M2Options:=" --stop --no-debug --silent ";
-
+debug Core
+if noinitfile then M2Options = M2Options | " -q ";
 
 mydoc=concatenate(mydoc,///
 Node
@@ -477,7 +479,6 @@ safelyRemoveFile := (s,f) -> (
 mydoc=concatenate(mydoc,///
 Node
 	Key
-		KeepFiles
 		[runExternalM2,KeepFiles]
 	Headline
 		indicate whether or not temporary files should be saved
@@ -566,7 +567,7 @@ Node
 			fn=temporaryFileName()|".m2"
 			fn<<//// square = (x) -> (stderr<<"Running"<<endl; sleep(1); x^2); ////<<endl;
 			fn<<//// justexit = () -> ( exit(27); ); ////<<endl;
-			fn<<//// spin = (x) -> (stderr<<"Spinning!!"<<endl; startTime:=cpuTime(); while(cpuTime()-startTime<x) do (); return(x);); ////<<endl;
+			fn<<//// spin = (x) -> (stderr<<"Spinning!!"<<endl; startTime:=cpuTime(); while(cpuTime()-startTime<x) do for i to 10000000 do i; return(x);); ////<<endl;
 			fn<<flush;
 -- TODO: there seems to be a bug where the line count is wrong if I use a multi-line string with ////
 		Text
@@ -591,13 +592,12 @@ Node
 		Text
 			Here, we use @TO "resource limits"@ to limit the
 			routine to 2 seconds of computational time,
-			while the system is asked to use 3 seconds of computational time:
+			while the system is asked to use 10 seconds of computational time:
 		Example
-			h=runExternalM2(fn,"spin",5,PreRunScript=>"ulimit -t 2");
+			h=runExternalM2(fn,"spin",10,PreRunScript=>"ulimit -t 2");
 			h
-			fileExists(h#"output file")
-			if fileExists(h#"output file") then get(h#"output file")
-			fileExists(h#"answer file")
+			if h#"output file" =!= null and fileExists(h#"output file") then get(h#"output file")
+			if h#"answer file" =!= null and fileExists(h#"answer file") then get(h#"answer file")
 		Text
 
 			We can get quite a lot of detail on the resources used
@@ -1059,11 +1059,11 @@ spin = (x,t) -> (
 ////<<endl<<close;
 
 r=runExternalM2(fn,"spin",(5,6),PreRunScript=>"ulimit -t 2");
-assert(not(r#"exit code"===0));
+assert(not(r#"return code"===0));
 assert(r#value===null);
 
 r=runExternalM2(fn,"spin",(5,2),KeepStatistics=>true);
-assert(r#"exit code"===0);
+assert(r#"return code"===0);
 assert(r#value===5);
 assert(instance(r#"statistics",String));
 assert(length(r#"statistics")>0);

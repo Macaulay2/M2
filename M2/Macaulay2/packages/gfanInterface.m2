@@ -1,8 +1,7 @@
+-- -*- coding: utf-8 -*-
+
 --TODO: gfan errors printed on screen in:
 -- QQ[x,y,z,w]; I=ideal(x-y,w+y-x); gfanTropicalStartingCone I; tropicalVariety I; tropicalVariety ideal(x);
-
-
--- -*- coding: utf-8 -*-
 
 newPackage(
 	"gfanInterface",
@@ -10,16 +9,16 @@ newPackage(
 	Date => "Aug 2012 (updated by Josephine Yu)",
 	Authors => {
 		{Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""},
-		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"}
-		},
-	Headline => "Interface to Anders Jensen's Gfan software",
+		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"},
+	    {Name => "Diane Maclagan (current maintainer)", Email => "D.Maclagan@warwick.ac.uk", HomePage=>"http://homepages.warwick.ac.uk/staff/D.Maclagan/"}},
+	Headline => "interface to Anders Jensen's Gfan software",
+	Keywords => {"Interfaces"},
 	Configuration => {
 		"path" => "",
 		"fig2devpath" => "",
-		"keepfiles" => false,
+		"keepfiles" => true,
 		"verbose" => false,
-		"cachePolyhedralOutput" => true,
-		"tropicalMax" => false
+		"cachePolyhedralOutput" => true
 	},
 	PackageExports => {"Polyhedra"}
 )
@@ -87,11 +86,14 @@ export {
 	"multiplicitiesReorder"
 }
 
-gfanPath = gfanInterface#Options#Configuration#"path"
-if gfanPath == "" then gfanPath = prefixDirectory | currentLayout#"programs"
-
 fig2devPath = gfanInterface#Options#Configuration#"fig2devpath"
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
+-- for backward compatibility
+if not programPaths#?"gfan" and gfanInterface#Options#Configuration#"path" != ""
+    then programPaths#"gfan" = gfanInterface#Options#Configuration#"path"
+
+gfanProgram = null
+
 gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
 gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
 --minmax switch disabled
@@ -281,7 +283,6 @@ gfanParseList String := (S) -> (
 	S = replace("\n", "", S);
 	stack := {};
 	r := regex(///[\{,\}]///, S);
-	if r === null then error "expected gfan to return a list";
 	popstate := false;
 	while #r === 1 do (
 		startpos := first first r;
@@ -340,28 +341,28 @@ gfanParseIdeals String := (s) -> (
 
 gfanParseIdeal = method()
 gfanParseIdeal String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	value concatenate G
 )
 
 gfanParseMarkedIdeal = method()
 gfanParseMarkedIdeal String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	markedPolynomialList transpose apply(gfanParseList(concatenate G), p -> gfanParseMarkedPoly(p))
 )
 
 gfanParseMarkedIdeals = method()
 gfanParseMarkedIdeals String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	apply(gfanParseList(concatenate G), L -> markedPolynomialList transpose apply(L, p -> gfanParseMarkedPoly(p)))
 )
 
 gfanParseMPL = method()
 gfanParseMPL String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	new MarkedPolynomialList from
 		transpose apply(gfanParseList(concatenate G), p -> gfanParseMarkedPoly(p))
@@ -369,7 +370,7 @@ gfanParseMPL String := (s) -> (
 
 gfanParseLMPL = method()
 gfanParseLMPL String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	apply(gfanParseList(concatenate G), L ->
 		new MarkedPolynomialList from transpose apply(L, p -> gfanParseMarkedPoly(p)))
@@ -452,7 +453,6 @@ multiplicitiesReorder (List):=(L)->(
 gfanParsePolyhedralFan = method(TypicalValue => PolyhedralObject, Options => {"GfanFileName" => null})
 gfanParsePolyhedralFan String := o -> s -> (
     	if debugLevel>0 then (print s);
-	
 	B := select(sublists(lines s, l -> #l =!= 0, toList, l -> null), l -> l =!= null);
 	header := first B; --first list of lines
 	if #B < 2 and #header < 2 then error(concatenate header);
@@ -571,35 +571,35 @@ gfanParseGfanType (String, List) := (T, L) -> (
 	)
 )
 
--*
-polymakeFanToFan = method()
+-- {*
+-- polymakeFanToFan = method()
 
-polymakeFanToFan PolymakeFan := (F) -> (
-	linealitySpace := posHull transpose matrix(F#"LINEALITY_SPACE" | - F#"LINEALITY_SPACE");
-	fan apply(F#"MAXIMAL_CONES", L -> posHull(posHull transpose matrix apply(L, i -> F#"RAYS"#i), linealitySpace))
-)
+-- polymakeFanToFan PolymakeFan := (F) -> (
+-- 	linealitySpace := posHull transpose matrix(F#"LINEALITY_SPACE" | - F#"LINEALITY_SPACE");
+-- 	fan apply(F#"MAXIMAL_CONES", L -> posHull(posHull transpose matrix apply(L, i -> F#"RAYS"#i), linealitySpace))
+-- )
 
-polymakeConeToCone = method()
+-- polymakeConeToCone = method()
 
-polymakeConeToCone PolymakeCone := (C) -> (
-	linealitySpace := posHull transpose matrix(C#"LINEALITY_SPACE" | - C#"LINEALITY_SPACE");
-	posHull(posHull transpose matrix C#"FACETS", linealitySpace)
-)
+-- polymakeConeToCone PolymakeCone := (C) -> (
+-- 	linealitySpace := posHull transpose matrix(C#"LINEALITY_SPACE" | - C#"LINEALITY_SPACE");
+-- 	posHull(posHull transpose matrix C#"FACETS", linealitySpace)
+-- )
 
-polymakeFan = method()
-polymakeFan (Matrix,Matrix,List) := (rays, lineality, maxcones) ->  (
-	ambientdim := numRows(rays);
-	lindim := numColumns(lineality);
-	dim := numColumns(lineality) + max apply(maxcones, c-> #c);
-	orthlin := entries transpose gens kernel lineality;
-	lin := entries transpose lineality;
-	r := entries transpose rays;
-	numr := numColumns(rays);
-	pure := all(maxcones, c -> #c == dim);
-	--rawstr := blah;
-	--Not done yet!
-)
-*-
+-- polymakeFan = method()
+-- polymakeFan (Matrix,Matrix,List) := (rays, lineality, maxcones) ->  (
+-- 	ambientdim := numRows(rays);
+-- 	lindim := numColumns(lineality);
+-- 	dim := numColumns(lineality) + max apply(maxcones, c-> #c);
+-- 	orthlin := entries transpose gens kernel lineality;
+-- 	lin := entries transpose lineality;
+-- 	r := entries transpose rays;
+-- 	numr := numColumns(rays);
+-- 	pure := all(maxcones, c -> #c == dim);
+-- 	--rawstr := blah;
+-- 	--Not done yet!
+-- )
+-- *}
 
 
 ------------------------------------------
@@ -922,7 +922,8 @@ toPolymakeFormat(String, Matrix) := (propertyName, M) -> (
      else(
      	  S := propertyName|"\n";
      	  if numRows M > 0 then
-	     S = S|replace("\\|", "", toString net M)|"\n\n";
+	     S = S|replace("\\|", "", toString net M)|"\n\n"
+	  else S = S|"\n";
      	  S
      	  )
      )
@@ -931,7 +932,8 @@ toPolymakeFormat(String,Vector) := (propertyName,V) -> (
      else(
      	  S := propertyName|"\n";
      	  if length V > 0 then
-              S = S|replace("\\|", "", toString net matrix{V});
+              S = S|replace("\\|", "", toString net matrix{V})|"\n\n"
+	  else S = S|"\n";
      	  S
      	  )
      )
@@ -940,8 +942,9 @@ toPolymakeFormat(String,Vector) := (propertyName,V) -> (
      else(
      	  S := propertyName|"\n";
      	  if length V > 0 then
-	        scan(V,l -> S = S|replace(","," ",gfanToExternalString l)|"\n");
-    	  S=S|"\n";		
+	        scan(V,l -> S = S|replace(","," ",gfanToExternalString l)|"\n")
+    	  else S=S|"\n\n";		
+	  S = S | "\n";
      	  S
      	  )
      )
@@ -951,7 +954,7 @@ toPolymakeFormat(String,ZZ) := (propertyName,x) -> (
      )
 toPolymakeFormat(String,Boolean) := (propertyName,x) -> (
      if x === null then ""
-     else propertyName|"\n"|(if x then "1" else "0")|"\n"
+     else propertyName|"\n"|(if x then "1" else "0")|"\n\n"
      )
 --toPolymakeFormat(PolyhedralObject) := (P) -> (
 --     goodkeys := select(keys P, k -> not match("Gfan", k));
@@ -965,39 +968,39 @@ toPolymakeFormat(Fan) := (F) ->(
      str=concatenate(str,toPolymakeFormat("N_RAYS",rank source raysF));
      L:=linealitySpace(F);
      str=concatenate(str,toPolymakeFormat("LINEALITY_DIM",rank L));
-     str=concatenate(str,toPolymakeFormat("LINEALITY_SPACE",L));	 
+     str=concatenate(str,toPolymakeFormat("LINEALITY_SPACE",transpose L));	 
      conesF:=flatten apply(dim(F)+1-rank L,i->(cones(i+rank L,F)));	 
      str=concatenate(str,toPolymakeFormat("CONES", conesF));
      str=concatenate(str,toPolymakeFormat("MAXIMAL_CONES", maxCones F));
      return(str);	     
 )
 
--*
-makeGfanFile = method(TypicalValue => String)
-makeGfanFile(PolyhedralObject,String) := (P, fileName) ->(
-     if P#"GfanFileHeader" then fileName << P#"GfanFileHeader" << endl;
-     if P#"GfanFileRawString" then
-     	 file << P#"GfanFileRawString" << endl << close
-     else
-         fileName << toPolymakeFormat(P) << endl << close;
-     P#"GfanFileName" = fileName;
-     fileName
-     )
+-- {*
+-- makeGfanFile = method(TypicalValue => String)
+-- makeGfanFile(PolyhedralObject,String) := (P, fileName) ->(
+--      if P#"GfanFileHeader" then fileName << P#"GfanFileHeader" << endl;
+--      if P#"GfanFileRawString" then
+--      	 file << P#"GfanFileRawString" << endl << close
+--      else
+--          fileName << toPolymakeFormat(P) << endl << close;
+--      P#"GfanFileName" = fileName;
+--      fileName
+--      )
 
-makePolymakeFormat(PolyhedralObject) := (P) ->(
-     fileName := "";
-     if P#?"GfanFileName" and fileExists P#"GfanFileName" then
-     (	  fileName = P#"GfanFileName";
-	  << "using existing file " << filename << endl;
-     )
-     else (
-	  fileName = temporaryFileName()|currentTime()|."gfan";
-     	  << "using temporary file " << fileName << endl;
-	  writeGfanFile(P,fileName);
-     )
-     fileName
-     )
-*-
+-- makePolymakeFormat(PolyhedralObject) := (P) ->(
+--      fileName := "";
+--      if P#?"GfanFileName" and fileExists P#"GfanFileName" then
+--      (	  fileName = P#"GfanFileName";
+-- 	  << "using existing file " << filename << endl;
+--      )
+--      else (
+-- 	  fileName = temporaryFileName()|currentTime()|."gfan";
+--      	  << "using temporary file " << fileName << endl;
+-- 	  writeGfanFile(P,fileName);
+--      )
+--      fileName
+--      )
+-- *}
 
 
 --------------------------------------------------------
@@ -1005,63 +1008,38 @@ makePolymakeFormat(PolyhedralObject) := (P) ->(
 --------------------------------------------------------
 
 runGfanCommand = (cmd, opts, data) -> (
-	
-	tmpFile := gfanMakeTemporaryFile data;
-	
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
-
-	if gfanVerbose then << ex << endl;
-	returnvalue := run ex;
-     	if(not returnvalue == 0) then
-	(
-	     << "GFAN returned an error message.\n";
-	     << "COMMAND:" << ex << endl;
-	     << "INPUT:\n";
-	     << get(tmpFile);
-	     << "ERROR:\n";
-	     << get(tmpFile |".err");
-     	     error "terminating";
-	     );
-		out := get(tmpFile | ".out");
-	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
-	outputFileName := null;
-	
-	if gfanKeepFiles then outputFileName = tmpFile|".out";
-	
-	(out, "GfanFileName" => outputFileName)
-	
+	(out, err, fileName) := runGfanCommandCaptureBoth(cmd, opts, data);
+	(out, fileName)
 )
 
 runGfanCommandCaptureBoth = (cmd, opts, data) -> (
+	if gfanProgram === null then
+	    gfanProgram = findProgram("gfan", "gfan --help",
+		Verbose => gfanVerbose);
 	tmpFile := gfanMakeTemporaryFile data;
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
-	if gfanVerbose then << ex << endl;
-	run ex;
-	out := get(tmpFile | ".out");
-	err := get(tmpFile | ".err");
+
+	args := replace("^gfan ", "", cmd) | concatenate apply(keys opts, key ->
+	    gfanArgumentToString(cmd, key, opts#key));
+	gfanRun := runProgram(gfanProgram, args | " < " | tmpFile,
+	    RaiseError => false, KeepFiles => gfanKeepFiles,
+	    Verbose => gfanVerbose);
 	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
+
+	-- we display our own error message instead of using the runProgram
+	-- default so we can display data
+	if gfanRun#"return value" != 0 then error(
+	    "Gfan returned an error message.\n" |
+	    "COMMAND: " | gfanRun#"command" | "\n" |
+	    "INPUT:\n" | data |
+	    "ERROR:\n" | gfanRun#"error");
+
 	outputFileName := null;
-	if gfanKeepFiles then outputFileName = tmpFile|".out";
-	(out,err, "GfanFileName"=>outputFileName)
+	if gfanKeepFiles then outputFileName = gfanRun#"output file";
+	(gfanRun#"output", gfanRun#"error", "GfanFileName"=>outputFileName)
 )
 
 runGfanCommandCaptureError = (cmd, opts, data) -> (
-	tmpFile := gfanMakeTemporaryFile data;
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
-	if gfanVerbose then << ex << endl;
-	run ex;
-	err := get(tmpFile | ".err");
-	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
+	(out, err, fileName) := runGfanCommandCaptureBoth(cmd, opts, data);
 	err
 )
 
@@ -1318,7 +1296,7 @@ gfanDoesIdealContain (List, List) := opts -> (I,J) -> (
 
 gfanFanCommonRefinement = method( Options => {
 	"i1" => null, -- these are set inside the method
-	"i2" => null  -- these are set inside the method
+	"i2" => null -- these are set inside the method
 	}
 )
 
@@ -1363,15 +1341,15 @@ gfanFanCommonRefinement (Fan, Fan) := opts -> (F,G) -> (
 
 gfanStableIntersection = method( Options=> {
 	"i1" => null, -- these are set inside the method
-	"i2" => null  -- these are set inside the method
+	"i2" => null -- these are set inside the method
 	}
 )
     
 gfanStableIntersection (Fan,List,Fan,List) := opts -> (F,m1,G,m2) -> (
      fileF := "";
      fileG := "";
-     fileFisTemp := true;
-     fileGisTemp := true;
+--     fileFisTemp := false;
+--     fileGisTemp := false;
      fileF = gfanMakeTemporaryFile( (toPolymakeFormat(F))| toPolymakeFormat("MULTIPLICITIES",m1));
      fileG = gfanMakeTemporaryFile( (toPolymakeFormat(G))| toPolymakeFormat("MULTIPLICITIES",m2));
      opts = opts ++ { "i1" => fileF , "i2" => fileG };
@@ -1384,8 +1362,10 @@ gfanStableIntersection (Fan,List,Fan,List) := opts -> (F,m1,G,m2) -> (
 	  G#"GfanFileName" = fileG;
 	   )
      else (
-    	 if fileFisTemp then gfanRemoveTemporaryFile fileF;
-	 if fileGisTemp then gfanRemoveTemporaryFile fileG;
+--    	 if fileFisTemp then 
+	 gfanRemoveTemporaryFile fileF;
+--	 if fileGisTemp then 
+         gfanRemoveTemporaryFile fileG;
 	 );
 	out
 )    
@@ -1427,18 +1407,16 @@ gfanFanLink (Fan, List) := opts -> (F,V) -> (
 --------------------------------------------------------
 
 gfanFanProduct = method( Options => {
-	"i1" => null, -- these are set inside the method
-	"i2" => null  -- these are set inside the method
+	"i1" => null, 
+	"i2" => null
 	}
 )
+-- Set to null because they are set inside the method
 
 	-- version 0.4
 gfanFanProduct (Fan, Fan) := opts -> (F,G) -> (
      fileF := "";
      fileG := "";
-     fileFisTemp := true;
-     fileGisTemp := true;
-
 --     if F#?"GfanFileName" and fileExists F#"GfanFileName" then
 --        (fileF = F#"GfanFileName"; fileFisTemp = false;)
 --     else if F#?"GfanFileRawString" then
@@ -1461,8 +1439,8 @@ gfanFanProduct (Fan, Fan) := opts -> (F,G) -> (
 	  G#"GfanFileName" = fileG;
 	   )
      else (
-    	 if fileFisTemp then gfanRemoveTemporaryFile fileF;
-	 if fileGisTemp then gfanRemoveTemporaryFile fileG;
+    	 gfanRemoveTemporaryFile fileF;
+	 gfanRemoveTemporaryFile fileG;
 	 );
 	out
 )
@@ -2283,11 +2261,35 @@ gfanTropicalIntersection = method( Options => {
 )
 
 gfanTropicalIntersection (List) := opts -> (L) -> (
+
 	(ringMap, newL) := gfanConvertToNewRing(L);
 	L = newL;
 	input := gfanRingToString(ring first L) | gfanPolynomialListToString(L);
-
+	
 	s:=runGfanCommand("gfan _tropicalintersection", opts, input);
+
+	tropicalBasisOutput:=s_0;--this is 0 if not tropical basis and 1 otherwise.
+	if ((opts#"tropicalbasistest")==false) then (return gfanParsePolyhedralFan s)
+	else 
+	
+	 if ((tropicalBasisOutput_0)=="0") then false
+	    else (
+		if (tropicalBasisOutput_0=="1") then true
+--In case something has changed in 'gfan' or 'gfanInterface'
+	        else error "Algorithm fail"
+		)
+	    
+
+)
+
+gfanTropicalIntersection (List,List) := opts -> (L, symmetryList) -> (
+
+	(ringMap, newL) := gfanConvertToNewRing(L);
+	L = newL;
+	input := gfanRingToString(ring first L) | gfanPolynomialListToString(L) | gfanVectorListToString(symmetryList);
+	
+	s:=runGfanCommand("gfan _tropicalintersection", opts, input);
+
 	tropicalBasisOutput:=s_0;--this is 0 if not tropical basis and 1 otherwise.
 	if ((opts#"tropicalbasistest")==false) then (return gfanParsePolyhedralFan s)
 	else 
@@ -2408,7 +2410,6 @@ gfanTropicalTraverse (List) := opts -> (L) -> (
 		| gfanMPLToString(first L)
 		| gfanMPLToString(last L)
 		| gfanVectorListToString(opts#"symmetry");
-
 	output := runGfanCommand("gfan _tropicaltraverse", opts, input);
 	--check if the returned fan is empty
 	if(length(output#0)==0) then return "error: this fan is empty";
@@ -2483,6 +2484,15 @@ gfanVersion  = () -> (
 -- documentation
 beginDocumentation()
 
+--Still to document:
+--gfanParsePolyhedralFan
+--gfanStableIntersection
+--gfanTropicalHyperSurfaceReconstruction 
+--gfanVersion
+--multiplicitiesReorder  (does this need to be exported?)
+--toPolymakeFormat  (does this need to be exported?)
+
+
 gfanFunctions = hashTable {
 	gfan => "gfan",
 	gfanBuchberger => "gfan _buchberger",
@@ -2533,9 +2543,12 @@ gfanFunctions = hashTable {
 --	gfanFunctions#fn => apply( lines runGfanCommandCaptureError(gfanFunctions#fn, {"--help"}, {true}, ") , l->PARA {l})
 --)
 --WARNING - the word PARA was deleted from the next function (it used to read "l -> PARA {l})
-gfanHelp = (functionStr) ->
-	apply( lines runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") , l-> {l})
-
+gfanHelp = (functionStr) -> (
+	if gfanProgram === null then gfanProgram = findProgram("gfan",
+	    "gfan --help", RaiseError => false);
+	if gfanProgram === null then {}
+	else apply( lines runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") , l-> {l})
+)
 
 
 doc ///
@@ -2576,14 +2589,17 @@ doc ///
 			with @EM "Macaulay2"@ (since version 1.3) and so, it is not necessary to install {\tt gfan}
 			separately.
 
-			The {\tt gfanInterface} package contains the configuration option {\tt "path"} which
-			allows the user to specify which {\tt gfan} executables are used. When the path unspecified,
-			it defaults to an empty string and the binaries provided by Macaulay 2 are used.
+			The user can specify which {\tt gfan} executables are used by setting the appropriate key
+			in the @TO "programPaths"@ hash table.	When the path is unspecified, then the binaries
+			provided by Macaulay2 are used, if present.  If they are not present, then the directories
+			specified in the user's {\tt PATH} environment variable are searched.
 
-			You can change the path, if needed, while loading the package:
+			You can change the path, if needed, by setting the appropriate key in @TO "programPaths"@
+			and loading the package:
 
 		Example
-			loadPackage("gfanInterface", Configuration => { "path" => "/directory/to/gfan/"}, Reload => true)
+			programPaths#"gfan" = "/directory/to/gfan/"
+			loadPackage("gfanInterface", Reload => true)
 
 		Text
 			The path to the executables should end in a slash.
@@ -3638,7 +3654,7 @@ doc ///
 		(gfanRender, List)
 		(gfanRender, String, List)
 	Headline
-		render an image of a Grobener fan
+		render an image of a Groebner fan
 	Usage
 		gfanRender(L)
 	Inputs
@@ -4307,120 +4323,195 @@ doc ///
 ///
 
 
+doc ///
+	Key
+                gfanOverIntegers
+		(gfanOverIntegers,Ideal)
+		(gfanOverIntegers,Ideal,List)
+	Headline
+		all reduced Groebner bases of a poynomial ideal with coefficients in ZZ
+	Usage
+		G = gfanOverIntegers(I)
+	Inputs
+		I:Ideal
+			contained in a polynomial ring with coefficients in ZZ.  The optional second list 
+		   
+	Outputs
+	    	F:Fan 
+		G:List
+		        all @TO2 {"Marked Groebner Basis Example", "marked reduced Groebner bases"}@ of {\tt I}.
+		L:List
+	Description
+		Text
+		   This method produces all reduced Groebner basis of
+		   a polynomial ideal with coefficients in ZZ.  The
+		   input is given as an {\tt Ideal}.  If just the
+		   ideal is given then the option "groebnerFan" =>
+		   true" should also be added.  For the second
+		   version, the list w is a weight vector for which
+		   the initial ideal or Groebner basis will be
+		   computed (depending on whether "initialIdeal=>true"
+		   or "groebnerBasis"=>true is set).  Only one of
+		   these two can be set.  Note that the Groebner fan
+		   over ZZ is more refined than the Groebner fan of
+		   the corresponding ideal with coefficients in QQ.
+		Example
+    		    R=ZZ[x,y]
+    		    I=ideal(x^2-y^2,2*x)
+    		    F=gfanOverIntegers(I,"groebnerFan"=>true)
+		    rays F
+		    linealitySpace F
+		    maxCones F
+		    G=gfanOverIntegers(I,{1,0},"groebnerBasis"=>true)
+		    H=gfanOverIntegers(I,{1,0},"initialIdeal"=>true)
+		Text
+		    @STRONG "gfan Documentation"@
+		    @gfanHelp "gfan _overintegers"@
+///
+
+
+doc///
+    Key
+	gfanStableIntersection
+    Headline
+	computes the stable intersection of two balanced fans
+    Usage
+    	gfanStableIntersection(Fan,List,Fan,List)
+    Inputs
+	F:Fan
+	m1:List
+	G:Fan
+	m2:List
+    Outputs
+	H:Fan
+    Description
+	Text
+	    This function computes the stable intersection of two
+	    balanced fans.  The input is two fans, and two lists of
+	    multiplicities that makes the fan balanced.  The function
+	    does not check whether this fan is in fact balanced.
+	
+///	    
+
+
+
 ---------------------------------------
 -- Tests
 ---------------------------------------
 
--- # garbage
-	-- -- TEST gfan
-	-- TEST ///
-	-- R = QQ[x,y,z];
-	-- L = gfan(ideal(x^2*y -y^2, y^2*x - x^2));
-	-- assert(#L == 4)
-	-- assert(any(L, l -> set first l === set {y^5,x*y^2,x^2}))
-	--
-	-- S = gfan({x^2*y -y^2, y^2*x - x^2}, "symmetry" => {{0,1,2}, {1,0,2}})
-	-- assert(#S == 2)
-	--
-	-- G = gfan(markedPolynomialList {{y^5, x*y^2, x^2},{y^5-y^2,x*y^2 - y^4, x^2 -y^4}}, "g" => true)
-	-- Gprime = {
-	-- 	markedPolynomialList {{y^5,x*y^2,x^2},{y^5-y^2,-y^4+x*y^2,-y^4+x^2}},
-	-- 	markedPolynomialList {{y^4,x*y^2,x^2*y,x^3},{y^4-x^2,x*y^2-x^2,x^2*y-y^2,x^3-y^3}},
-	-- 	markedPolynomialList {{y^3,x*y^2,x^2*y,x^4},{-x^3+y^3,x*y^2-x^2,x^2*y-y^2,x^4-y^2}},
-	-- 	markedPolynomialList {{y^2,x^2*y,x^5},{-x^4+y^2,-x^4+x^2*y,x^5-x^2}}
-	-- }
-	-- assert(G == Gprime)  -- may fail if the order of output changes
-	-- ///
-	--
-	-- -- TEST MPLConverter
-	-- TEST ///
-	-- equalMPL = (A,B) -> set transpose A === set transpose B
-	-- QQ[x,y];
-	-- I = ideal(x*2 + y^2, x*y + y^2 + y^3);
-	-- B = MPLConverter(I)
-	-- Bprime = markedPolynomialList {{x^2, y^3},{x^2 + y^2, y^3 + x*y + y^2}}
-	-- assert equalMPL(B,Bprime)
-	-- ///
-	--
-	-- -- TEST gfanBuchberger
-	-- TEST ///
-	-- equalMPL = (A,B) -> set transpose A === set transpose B
-	-- QQ[x,y,z];
-	-- I = ideal(x*y + z, x*z + y);
-	-- B = gfanBuchberger(I)
-	-- Bprime = markedPolynomialList {{y^2,x*z,x*y},{y^2-z^2,x*z+y,x*y+z}}
-	-- assert equalMPL(B,Bprime)
-	--
-	-- A = gfanBuchberger(I, "w" => {1,2,3})
-	-- Aprime = markedPolynomialList {{z^2,x*z,x*y},{-y^2+z^2,x*z+y,x*y+z}}
-	-- assert equalMPL(A,Aprime)
-	-- assert not equalMPL(A, B)
-	-- ///
-	--
-	-- -- TEST gfanDoesIdealContain
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- assert gfanDoesIdealContain(gfanBuchberger({x*y - y, x*z + z}), {y*z})
-	-- assert not gfanDoesIdealContain(gfanBuchberger({x*y - y, x*z + z}), {y*z+1})
-	-- ///
-	--
-	-- -- TEST gfanCommonRefinement
-	-- TEST ///
-	-- QQ[x,y];
-	-- F = gfanToPolyhedralFan gfan {x+y};
-	-- G = gfanToPolyhedralFan gfan {x+y^2};
-	-- C = gfanFanCommonRefinement(F,G);
-	-- assert(C#"AMBIENT_DIM" === 2)
-	-- assert(C#"DIM" === 2)
-	-- assert C#"SIMPLICIAL"
-	-- assert(C#"LINEALITY_DIM" === 0)
-	-- assert(C#"N_RAYS" === 4)
-	-- assert(set C#"RAYS" === set {{-2, -1}, {-1, -1}, {1, 1}, {2, 1}})
-	-- assert(set C#"CONES" === set {{}, {0}, {1}, {2}, {3}, {0, 1}, {0, 2}, {1, 3}, {2, 3}})
-	-- ///
-	--
-	-- -- TEST gfanFanLink
-	-- TEST ///
-	-- QQ[x,y];
-	-- F = gfanToPolyhedralFan {markedPolynomialList{{x}, {x+y}}};
-	-- G = gfanToPolyhedralFan {markedPolynomialList{{y^2}, {x+y^2}}};
-	-- Q = gfanFanCommonRefinement(F,G);
-	-- C = gfanFanLink(Q, {2,1}, "star" => true)
-	-- assert(C#"AMBIENT_DIM" === 2)
-	-- assert(C#"DIM" === 2)
-	-- assert C#"SIMPLICIAL"
-	-- assert(C#"LINEALITY_DIM" === 0)
-	-- assert(C#"N_RAYS" === 2)
-	-- assert(set C#"RAYS" === set {{1, 1}, {2, 1}})
-	-- assert(set C#"CONES" === set {{}, {0}, {1}, {0, 1}})
-	-- ///
-	--
-	-- -- TEST gfanFanProduct
-	-- TEST ///
-	-- QQ[x,y];
-	-- F = gfanToPolyhedralFan {markedPolynomialList{{x}, {x+y}}};
-	-- G = gfanToPolyhedralFan {markedPolynomialList{{y^2}, {x+y^2}}};
-	-- C = gfanFanProduct(F,G);
-	-- assert(C#"AMBIENT_DIM" === 4)
-	-- assert(C#"DIM" === 4)
-	-- assert C#"SIMPLICIAL"
-	-- assert(C#"LINEALITY_DIM" === 2)
-	-- assert(C#"N_RAYS" === 2)
-	-- assert(set C#"RAYS" === set {{0, 0, -1, 2}, {1, -1, 0, 0}})
-	-- assert(set C#"CONES" === set {{}, {0}, {1}, {0, 1}})
-	-- assert(set C#"LINEALITY_SPACE" === set {{1, 1, 0, 0}, {0, 0, 2, 1}})
-	-- ///
-	--
-	-- -- TEST gfanGroebnerCone
-	-- TEST ///
-	-- QQ[x,y];
-	-- C = gfanGroebnerCone( markedPolynomialList {{x}, {x+y}} )
-	-- assert(set C#"IMPLIED_EQUATIONS" === set {})
-	-- assert(C#"AMBIENT_DIM" === 2)
+--status: need to fix comments in gfan, all of gfanFanProduct, in the
+--middle of gfanGroebnerCone
+
+
+--        TEST gfan
+	TEST ///
+	  R = QQ[x,y,z];
+	  L = gfan(ideal(x^2*y -y^2, y^2*x - x^2));
+	  assert(#L == 4)
+	  assert(any(L, l -> set first l === set {y^5,x*y^2,x^2}))
+
+	  S = gfan({x^2*y -y^2, y^2*x - x^2}, "symmetry" => {{0,1,2}, {1,0,2}})
+	  assert(#S == 2)
+
+--	  G = gfan(markedPolynomialList {{y^5, x*y^2, x^2},{y^5-y^2,x*y^2 - y^4, x^2 -y^4}}, "g" => true)
+--	  Gprime = {
+--	  	markedPolynomialList {{y^5,x*y^2,x^2},{y^5-y^2,-y^4+x*y^2,-y^4+x^2}},
+--	  	markedPolynomialList {{y^4,x*y^2,x^2*y,x^3},{y^4-x^2,x*y^2-x^2,x^2*y-y^2,x^3-y^3}},
+--	 	markedPolynomialList {{y^3,x*y^2,x^2*y,x^4},{-x^3+y^3,x*y^2-x^2,x^2*y-y^2,x^4-y^2}},
+--	 	markedPolynomialList {{y^2,x^2*y,x^5},{-x^4+y^2,-x^4+x^2*y,x^5-x^2}}
+--	 }
+--	 assert(G == Gprime)  -- may fail if the order of output changes
+	 ///
+-- 	TEST MPLConverter
+	 TEST ///
+	 equalMPL = (A,B) -> set transpose A === set transpose B
+	 QQ[x,y];
+	 I = ideal(x^2 + y^2, x*y + y^2 + y^3);
+	 B = MPLConverter(I)
+	 Bprime = markedPolynomialList {{x^2, y^3},{x^2 + y^2, y^3 + x*y + y^2}}
+	 assert equalMPL(B,Bprime)
+	 ///
+
+	-- TEST gfanBuchberger
+	TEST ///
+	 equalMPL = (A,B) -> set transpose A === set transpose B
+	 QQ[x,y,z];
+	 I = ideal(x*y + z, x*z + y);
+	 B = gfanBuchberger(I)
+	 Bprime = markedPolynomialList {{y^2,x*z,x*y},{y^2-z^2,x*z+y,x*y+z}}
+	 assert equalMPL(B,Bprime)
+	
+	 A = gfanBuchberger(I, "w" => {1,2,3})
+	 Aprime = markedPolynomialList {{z^2,x*z,x*y},{-y^2+z^2,x*z+y,x*y+z}}
+	 assert equalMPL(A,Aprime)
+	 assert not equalMPL(A, B)
+	 ///
+	
+	-- TEST gfanDoesIdealContain
+	TEST ///
+	 QQ[x,y,z];
+	 assert gfanDoesIdealContain(gfanBuchberger({x*y - y, x*z + z}), {y*z})
+	 assert not gfanDoesIdealContain(gfanBuchberger({x*y - y, x*z + z}), {y*z+1})
+	 ///
+
+	-- TEST gfanCommonRefinement
+	 TEST ///
+	 QQ[x,y];
+	 F = gfanToPolyhedralFan gfan {x+y};
+	 G = gfanToPolyhedralFan gfan {x+y^2};
+	 C = gfanFanCommonRefinement(F,G);
+	 assert(rank target rays(C) === 2)
+	 assert(dim(C) === 2)
+	 assert (isSimplicial(C))
+	 assert(rank(linealitySpace(C)) === 0)
+	 assert(rank source rays(C) === 4)
+	 assert(rays(C) === transpose matrix {{-2, -1}, {-1, -1}, {1, 1}, {2, 1}})
+	 assert(maxCones(C) === {{0, 1}, {0, 2}, {1, 3}, {2, 3}})
+	 ///
+
+	-- TEST gfanFanLink
+	 TEST ///
+	 QQ[x,y];
+	 F = gfanToPolyhedralFan {markedPolynomialList{{x}, {x+y}}};
+	 G = gfanToPolyhedralFan {markedPolynomialList{{y^2}, {x+y^2}}};
+	 Q = gfanFanCommonRefinement(F,G);
+	 C = gfanFanLink(Q, {2,1}, "star" => true)
+	 assert(rank target rays(C) === 2)
+	 assert(dim(C) === 2)
+	 assert isSimplicial(C)
+	 assert(rank(linealitySpace(C)) === 0)
+	 assert(rank source rays(C) === 2)
+	 assert(rays(C) === transpose matrix {{1, 1}, {2, 1}})
+	 assert(maxCones(C) === {{0,1}})
+	 ///
+
+	-- TEST gfanFanProduct
+-- 	TEST ///
+-- 	 QQ[x,y];
+-- 	 F = gfanToPolyhedralFan {markedPolynomialList{{x}, {x+y}}};
+-- 	 G = gfanToPolyhedralFan {markedPolynomialList{{y^2}, {x+y^2}}};
+-- 	 C = gfanFanProduct(F,G);
+--Problem is that gfanFanProduct returns two lists.	 
+-- 	 assert(rank(target(rays(C))) === 4)
+-- 	 assert(dim(C) === 4)
+-- 	 assert isSimplicial(C)
+-- 	 assert(rank(linealitySpace(C)) === 2)
+-- 	 assert(rank(source(rays(C)) === 2)
+--  	 assert(rays(C) === transpose matrix {{0, 0, -1, 2}, {1, -1, 0, 0}})
+-- 	 assert(maxCones(C) === {{0, 1}})
+-- 	 assert(linealitySpace(C) === {{1, 1, 0, 0}, {0, 0, 2, 1}})
+--	 ///
+	
+	-- TEST gfanGroebnerCone
+	TEST ///
+	  QQ[x,y];
+	  C = gfanGroebnerCone( markedPolynomialList {{x}, {x+y}} )
+--	  assert(set C#"IMPLIED_EQUATIONS" === set {})
+	  assert(rank target rays C  === 2)
 	-- assert(C#"RELATIVE_INTERIOR_POINT" === {1, 0})
-	-- assert(set C#"LINEALITY_SPACE" === set {{1, 1}})
-	-- assert(C#"LINEALITY_DIM" === 1)
-	-- assert(C#"DIM" === 2)
+	  assert(linealitySpace(C) === transpose matrix {{1, 1}})
+	  assert(rank(linealitySpace(C)) === 1)
+	  assert(dim(C) === 2)
 	-- assert(set C#"FACETS" === set {{1,-1}})
 	-- C = gfanGroebnerCone( markedPolynomialList {{x}, {x+y}},  markedPolynomialList {{x}, {x+y}} )
 	-- assert(set C#"IMPLIED_EQUATIONS" === set {{1, -1}})
@@ -4430,8 +4521,8 @@ doc ///
 	-- assert(C#"LINEALITY_DIM" === 1)
 	-- assert(C#"DIM" === 1)
 	-- assert(set C#"FACETS" === set {})
-	-- ///
-	--
+	///
+	
 	-- -- TEST gfanHomogeneitySpace
 	-- TEST ///
 	-- QQ[x,y,z];
@@ -4582,19 +4673,19 @@ doc ///
 -- mytest
 -- TEST tropical min/max convention
 --this test is obsolete as minmax switch is now disabled
-TEST /// -- by default the convention should be TROPICAL-MIN
+--TEST /// -- by default the convention should be TROPICAL-MIN
 --  QQ[x,y,z];
 -- loadPackage("gfanInterface", Reload=>true, Configuration=>{ "tropicalMax"=> false });  
 --  fan1 = gfanTropicalTraverse gfanTropicalStartingCone ideal(x+y+z);
 --  assert( member({2,-1,-1}, fan1#"Rays"));
-///
+--///
 
-TEST /// -- alternatively TROPICAL-MAX can be specified on loading the package
+--TEST /// -- alternatively TROPICAL-MAX can be specified on loading the package
 --  QQ[x,y,z];
 --  loadPackage("gfanInterface", Reload=>true, Configuration=>{ "tropicalMax"=> true });
 --  fan1 = gfanTropicalTraverse gfanTropicalStartingCone ideal(x+y+z);
 -- assert( member({-2,1,1}, fan1#"Rays"));
-///
+--///
 
 end--
 

@@ -262,7 +262,7 @@ export dbmclose(f:Database):Expr := (
      if !f.isopen then return buildErrorPacket("database already closed");
      dbmclose(f.handle);
      f.isopen = false;
-     Expr(ZZcell(toInteger(0))));
+     zeroE);
 export dbmstore(f:Database,key:string,content:string):Expr := (
      if !f.isopen then return buildErrorPacket("database closed");
      if !f.Mutable then return buildErrorPacket("database not mutable");

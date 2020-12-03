@@ -18,7 +18,8 @@ newPackage(
         {Name => "Mahrud Sayrafi", Email => "mahrud@berkeley.edu",   HomePage => "http://ocf.berkeley.edu/~mahrud/"},
         {Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}
         },
-    Headline => "Prunes a given complex over R, R_m, and R_p",
+    Headline => "pruning chain complexes over polynomial and local rings",
+    Keywords => {"Commutative Algebra", "Homological Algebra"},
     AuxiliaryFiles => true
     )
 

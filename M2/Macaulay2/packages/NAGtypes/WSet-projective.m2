@@ -73,7 +73,6 @@ moveSlicingVariety(PWSet,SlicingVariety) := (PW,S) -> (
     ) 
     
 TEST ///
-    restart
     errorDepth = 0;
     debug needsPackage "NumericalAlgebraicGeometry"
     debug NAGtypes

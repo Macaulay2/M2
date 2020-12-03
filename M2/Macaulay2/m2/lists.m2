@@ -225,7 +225,7 @@ switch(ZZ,ZZ,VisibleList) := VisibleList => (i,j,s) -> (
      new class s from t)
 --
 
-replace(ZZ,Thing,VisibleList) := VisibleList => (i,x,s) -> (
+replace(ZZ,Thing,VisibleList) := VisibleList => {} >> o -> (i,x,s) -> (
      j := i;
      if j < 0 then j = j + #s;
      if j < 0 or j >= #s then error("replace: index ", toString i, " out of bounds: 0..", toString (length s - 1));
@@ -233,6 +233,10 @@ replace(ZZ,Thing,VisibleList) := VisibleList => (i,x,s) -> (
 
 isSorted = method(Dispatch => Thing)
 isSorted VisibleList := s -> all(#s-1, i -> s#i <= s#(i+1))
+
+deepApply' = (L, f, g) -> flatten if g L then toList apply(L, e -> deepApply'(e, f, g)) else toList{f L}
+deepApply  = (L, f) ->  deepApply'(L, f, e -> instance(e, BasicList))
+deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not memory efficient
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

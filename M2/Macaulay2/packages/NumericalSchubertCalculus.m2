@@ -1,7 +1,7 @@
 newPackage(
     "NumericalSchubertCalculus",
-    Version => "1.11", 
-    Date => "Nov 2017",
+    Version => "1.16", 
+    Date => "Sep 2020",
     Authors => {
 	{Name => "Anton Leykin", 
 	    Email => "leykin@math.gatech.edu", 
@@ -16,7 +16,8 @@ newPackage(
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
-    Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
+    Headline => "numerical methods in Schubert Calculus",
+    Keywords => {"Numerical Algebraic Geometry"},
     PackageImports => {
 	"PHCpack",
 	"NumericalAlgebraicGeometry",

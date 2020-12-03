@@ -139,7 +139,7 @@ bool PolyRingQuotient::promote(const Ring *Rf,
   return numerR_->PolyRing::promote(Rf, f, result);
 }
 
-ring_elem PolyRingQuotient::power(const ring_elem f, mpz_t n) const
+ring_elem PolyRingQuotient::power(const ring_elem f, mpz_srcptr n) const
 {
   return Ring::power(f, n);
 }
@@ -151,7 +151,7 @@ ring_elem PolyRingQuotient::power(const ring_elem f, int n) const
 
 ring_elem PolyRingQuotient::invert(const ring_elem f) const
 {
-  if (nvars_ == 1 && n_quotients() == 1 && K_->is_field())
+  if (nvars_ == 1 && n_quotients() == 1 && K_->is_field() && ! K_->is_fraction_field())
     {
       ring_elem g = quotient_element(0);
 
@@ -168,6 +168,7 @@ ring_elem PolyRingQuotient::invert(const ring_elem f) const
           // we can't return NULL
           INTERNAL_ERROR("ring element gcd computation failed");
         }
+      if (!getAmbientRing()->is_unit(ret->get_value())) return from_long(0);
       return u1->get_value();
     }
   else if (M_->getNonTermOrderVariables()->len == 0)

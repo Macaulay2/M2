@@ -75,7 +75,6 @@ function initializeBuilder() {
 
   // Set up initial nodes and links
   //  - nodes are known by 'id', not by index in array.
-  //  - reflexive edges are indicated on the node (as a bold black circle).
   //  - links are always source < target; edge directions are set by 'left' and 'right'.
   
   lastNodeId = labelData.length;
@@ -86,7 +85,7 @@ function initializeBuilder() {
     
   // Create the nodes, links, and faces with their appropriate names and id's.
   for (var i = 0; i < labelData.length; i++) {
-      nodes.push( {name: labelData[i], id: i, highlighted:false } );
+      nodes.push( {name: labelData[i], id: i, highlighted:false, x: 0, y: 0 } );
   }
 
   for (var i = 0; i < edgeData.length; i++) {
@@ -182,8 +181,14 @@ function resetMouseVars() {
 // Update force layout (called automatically by the force layout simulation each iteration).
 function tick() {
   // Update the 2-dimensional faces.
-  polygon.attr("points", function(d) { return (d.v1.x > width-15 ? width-15 : ((d.v1.x < 15 ? 15 : d.v1.x))) + "," + (d.v1.y > height-15 ? height-15 : ((d.v1.y < 15 ? 15 : d.v1.y))) + " " + (d.v2.x > width-15 ? width-15 : ((d.v2.x < 15 ? 15 : d.v2.x))) + "," + (d.v2.y > height-15 ? height-15 : ((d.v2.y < 15 ? 15 : d.v2.y))) + " " + (d.v3.x > width-15 ? width-15 : ((d.v3.x < 15 ? 15 : d.v3.x))) + "," + (d.v3.y > height-15 ? height-15 : ((d.v3.y < 15 ? 15 : d.v3.y))); });
-    
+  polygon.attr("points",function(d) {
+    return (d.v1.x > width-15 ? width-15 : ((d.v1.x < 15 ? 15 : d.v1.x))) +
+      "," + (d.v1.y > height-15 ? height-15 : ((d.v1.y < 15 ? 15 : d.v1.y))) +
+      " " + (d.v2.x > width-15 ? width-15 : ((d.v2.x < 15 ? 15 : d.v2.x))) +
+      "," + (d.v2.y > height-15 ? height-15 : ((d.v2.y < 15 ? 15 : d.v2.y))) +
+      " " + (d.v3.x > width-15 ? width-15 : ((d.v3.x < 15 ? 15 : d.v3.x))) +
+      "," + (d.v3.y > height-15 ? height-15 : ((d.v3.y < 15 ? 15 : d.v3.y)));
+  });
 
   // Draw directed edges with proper padding from node centers.
   path.attr('d', function(d) {
@@ -191,7 +196,13 @@ function tick() {
     // For each edge, set the attribute 'd' to have the form "MsourcexCoord,sourceyCoord LtargetxCoord,targetyCoord".
     // Then the appropriate coordinates to use for padding the directed edges away from the nodes can be obtained by
     // the 'd' attribute.
-    return 'M' + (d.source.x > width-15 ? width-15 : ((d.source.x < 15 ? 15 : d.source.x))) + ',' + (d.source.y > height-15 ? height-15 : ((d.source.y < 15 ? 15 : d.source.y))) + 'L' + (d.target.x > width-15 ? width-15 : ((d.target.x < 15 ? 15 : d.target.x))) + ',' + (d.target.y > height-15 ? height-15 : ((d.target.y < 15 ? 15 : d.target.y)));
+    return 'M' + (d.source.x > width-15 ?
+                  width-15 :((d.source.x < 15 ? 15 :d.source.x))) + ',' +
+      (d.source.y > height-15 ? height-15 : ((d.source.y < 15 ? 15 :
+                                              d.source.y))) + 'L' +
+      (d.target.x > width-15 ? width-15 : ((d.target.x < 15 ? 15 : d.target.x)))
+      + ',' + (d.target.y > height-15 ? height-15 :
+               ((d.target.y < 15 ? 15 : d.target.y)));
   });
 
   // Restrict the nodes to be contained within a 15 pixel margin around the svg.
@@ -316,10 +327,10 @@ function restart() {
   // Note: the function argument is crucial here!  Nodes are known by id, not by index!
   circle = circle.data(nodes, function(d) { return d.id; });
 
-  // Update existing nodes (reflexive & selected visual states).
+  // Update existing nodes (highlighted & selected visual states).
   circle.selectAll('circle')
     // If a node is currently selected, then make it brighter.
-    .style('fill', function(d) { return (d === selected_node || d === selected_face_node_1 || d === selected_face_node_2) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
+    .style('fill', function(d) { return (d === selected_node || d === selected_face_node_1 || d === selected_face_node_2) ? d3.rgb(colors(d.id)).brighter().toString() : (d.highlighted ? '#FF0000' : colors(d.id)); })
     .classed('highlighted', function(d) { return d.highlighted; });
 
   // Add new nodes.
@@ -328,8 +339,8 @@ function restart() {
   g.append('svg:circle')
     .attr('class', 'node')
     .attr('r', 12)
-    .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
-    .style('stroke', function(d) { return d3.rgb(colors(d.id)).darker().toString(); })
+    .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : (d.highlighted ? '#FF0000' : colors(d.id)); })
+    //.style('stroke', function(d) { return d3.rgb(colors(d.id)).darker().toString(); })
     .classed('highlighted',function(d) {return d.highlighted;})
     .on('mouseover', function(d) {
       // If no node has been previously clicked on or if the user has not dragged the cursor to a different node after clicking,
@@ -367,8 +378,13 @@ function restart() {
                 selected_face_node_2 = null;
             } else {
                 var face = faces.filter(function(f) {
-                return ((f.v1 === selected_face_node_1 || f.v2 === selected_face_node_1 || f.v3 === selected_face_node_1) && (f.v1 === selected_face_node_2 || f.v2 === selected_face_node_2 || f.v3 === selected_face_node_2) && (f.v1 === d || f.v2 === d || f.v3 === d));})[0];
-                
+                  return ((f.v1 === selected_face_node_1 ||
+                           f.v2 === selected_face_node_1 ||
+                           f.v3 === selected_face_node_1) &&
+                          (f.v1 === selected_face_node_2 ||
+                           f.v2 === selected_face_node_2 ||
+                           f.v3 === selected_face_node_2) &&
+                          (f.v1 === d || f.v2 === d || f.v3 === d));})[0];
                 if(!face){
                   // If there was not already a face on the three chosen vertices, create one.
                   face = {v1: selected_face_node_1, v2: selected_face_node_2, v3: d, highlighted:false};
@@ -393,7 +409,9 @@ function restart() {
                   var link3 = links.filter(function(l) {return l.source.id === midNodeId && l.target.id === maxNodeId;})[0];
                   if(!link3){
                       links.push( {source: midNode, target: maxNode, highlighted: false} );
-                  }                    
+                  }
+                  // Reset menu options to defaults.
+                  menuDefaults();
                 }
                 selected_face_node_1 = null;
                 selected_face_node_2 = null;
@@ -481,7 +499,7 @@ function restart() {
 
   .on('dblclick', function(d) {
       name = "";
-      var letters = /^[0-9a-zA-Z]+$/;
+      var letters = /^[0-9a-zA-Z_]+$/;
       while (name=="") {
         name = prompt('Enter new label name.', d.name);
         // Check whether the user has entered any illegal characters (including spaces).
@@ -576,9 +594,12 @@ function mousedown() {
   */
 
   // Graph Changed :: adding nodes
-  node = {id: lastNodeId++, name: curName, reflexive: false, highlighted: false};
+  node = {id: lastNodeId++, name: curName, highlighted: false};
   node.x = point[0];
   node.y = point[1];
+  if (!forceOn) {
+    node.fixed = true;
+  }
   nodes.push(node);
   changedNodes = true;
   // Graph is updated here so we change some items to default 
@@ -701,19 +722,7 @@ function keydown() {
       document.getElementById("adjString").innerHTML = "Adjacency Matrix: " + arraytoM2Matrix(getAdjacencyMatrix(nodes,links));*/
 
       restart();
-      break;
-          
-    case 82: // R
-      if(selected_node && curEdit) {
-        // toggle node reflexivity
-        selected_node.reflexive = !selected_node.reflexive;
-      } else if(selected_link && curEdit) {
-        // set link direction to right only
-        selected_link.left = false;
-        selected_link.right = true;
-      }
-    restart();
-      break;      
+      break;    
   }
   restart();
 }
@@ -784,9 +793,9 @@ function unHighlightAll() {
 
 function highlightAllNeighbors(n) {
     // Highlight all nodes that are neighbors with the given node n.
-    //for (var i = 0; i<nodes.length; i++) {
-    //   nodes[i].highlighted = areNeighbors(nodes[i],n);
-    //}
+    for (var i = 0; i<nodes.length; i++) {
+       nodes[i].highlighted = areNeighbors(nodes[i],n);
+    }
     
     // Highlight all links that have the given node n as a source or target.
     for (var i = 0; i<links.length; i++) {
@@ -851,7 +860,11 @@ function updateWindowSize2d() {
     force.size([width, height]).resume();
 }
 
-// Function to construct the M2 constructor for the simplicial complex.  Note: If the user has modified the nodes in the simplicial complex, this will need to pass the new base ring back to Macaulay2 which will cause issues if we want to add in boolean tests/numerical invariants at any point.
+// Function to construct the M2 constructor for the simplicial
+// complex.  Note: If the user has modified the nodes in the
+// simplicial complex, this will need to pass the new base ring back
+// to Macaulay2 which will cause issues if we want to add in boolean
+// tests/numerical invariants at any point.
 
 function simplicialComplex2M2Constructor( nodeSet, edgeSet , faceSet ){
     if(nodeSet.length==0){
@@ -910,20 +923,34 @@ function singletons(nodeSet, edgeSet){
   return singSet;
 }
 
+function positionByID(nodeSet,n){
+    for(var i=0; i < nodeSet.length; i++){
+        if(nodeSet[i].id == n){return i};
+    }
+}
+
 function simplicialComplexFacets(nodeSet,edgeSet,faceSet){
     var results = [];
     // If a vertex is not involved in any 1-dimensional face, then it is a facet.
     for(var i=0; i < nodeSet.length; i++){
-        if(edgeSet.every(function(d){return ((d.source != nodeSet[i]) && (d.target != nodeSet[i]));})){results.push([nodeSet[i].id]);}
+        if(edgeSet.every(function(d){return ((d.source != nodeSet[i]) && (d.target != nodeSet[i]));})){results.push([i]);}
     }
     
     // If a 1-dimensional face is not a subset of any 2-dimensional face, then it is a facet.
     for(var i=0; i < edgeSet.length; i++){
-        if(faceSet.every(function(d){return (((d.v1 != edgeSet[i].source) && (d.v2 != edgeSet[i].source) && (d.v3 != edgeSet[i].source)) || ((d.v1 != edgeSet[i].target) && (d.v2 != edgeSet[i].target) && (d.v3 != edgeSet[i].target)));})){results.push([edgeSet[i].source.id,edgeSet[i].target.id]);}
+      if(faceSet.every(
+        function(d){return (((d.v1 != edgeSet[i].source) &&
+                             (d.v2 != edgeSet[i].source) &&
+                             (d.v3 != edgeSet[i].source)) ||
+                            ((d.v1 != edgeSet[i].target) &&
+                             (d.v2 != edgeSet[i].target) &&
+                             (d.v3 != edgeSet[i].target)));})){
+        results.push([positionByID(nodeSet,edgeSet[i].source.id),positionByID(
+          nodeSet,edgeSet[i].target.id)]);}
     }
-    
+
     // All 2-dimensional faces are facets since the simplicial complex is 2-dimensional.
-    faceSet.forEach(function(d){results.push([d.v1.id,d.v2.id,d.v3.id]);});
+    faceSet.forEach(function(d){results.push([positionByID(nodeSet,d.v1.id),positionByID(nodeSet,d.v2.id),positionByID(nodeSet,d.v3.id)]);});
     
     return results;
     
@@ -1084,7 +1111,26 @@ function exportTikz (event){
 
   // Branden: Actual tikz code; displayed in black and white. We could do colors, but I am afriad of shading issues when printing.
   var tikzTex = "";
-  tikzTex =  "\\begin{tikzpicture}\n         \\newcommand*\\points"+timestamp+"{"+points+"}\n          \\newcommand*\\edges"+timestamp+"{"+edges+"}\n          \\newcommand*\\faces"+timestamp+"{"+tikzFaces+"}\n          \\newcommand*\\scale"+timestamp+"{0.02}\n          \\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+" {\n          \\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+timestamp+"*\\y) [circle,draw,fill=white] {$\\w$};\n          }\n          \\foreach \\x/\\y/\\z/\\w in \\faces"+timestamp+" {\n    \\fill[black!\\w]\n    (\\x.center) -- (\\y.center) -- (\\z.center) -- cycle;\n         }\n       \\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+" {\n          \\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+timestamp+"*\\y) [circle,draw,fill=white] {$\\w$};\n          }\n             \\foreach \\x/\\y in \\edges"+timestamp+" {\n          \\draw (\\x) -- (\\y);\n          }\n                       \\end{tikzpicture}\n      % \\points"+timestamp+" is point set in the form x-coord/y-coord/node ID/node label\n     % \\edges"+timestamp+" is edge set in the form Source ID/Target ID\n      % \\scale"+timestamp+" makes the picture able to be viewed on the page\n      % \\faces"+timestamp+" is a set in the form (node 1)/(node 2)/(node 3)/fill percent\n";  
+  tikzTex =  "\\begin{tikzpicture}\n         \\newcommand*\\points"+timestamp+
+    "{"+points+"}\n          \\newcommand*\\edges"+timestamp+"{"+edges+
+    "}\n          \\newcommand*\\faces"+timestamp+"{"+tikzFaces+
+    "}\n          \\newcommand*\\scale"+timestamp+"{0.02}\n          "+
+    "\\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+" {\n          "+
+    "\\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+timestamp+
+    "*\\y) [circle,draw,fill=white,inner sep=1pt] {$\\w$};\n          }\n"+
+        "\\foreach \\x/\\y/\\z/\\w in \\faces"+timestamp+
+    " {\n    \\fill[black!\\w]\n    (\\x.center) -- (\\y.center) -- "+
+    "(\\z.center) -- cycle;\n         }\n       \\foreach \\x/\\y/\\z/\\w"+
+    "in \\points"+timestamp+" {\n          \\node (\\z) at (\\scale"+
+    timestamp+"*\\x,-\\scale"+timestamp+"*\\y) [circle,draw,"+
+    "fill=white,inner sep=1pt] {$\\w$};\n          }\n             "+
+    "\\foreach \\x/\\y in \\edges"+timestamp+" {\n          \\draw (\\x)"+
+    "-- (\\y);\n          }\n                       \\end{tikzpicture}\n"+
+    "% \\points"+timestamp+" is point set in the form x-coord/y-coord/node"+
+    "ID/node label\n     % \\edges"+timestamp+" is edge set in the form "+
+    "Source ID/Target ID\n      % \\scale"+timestamp+" makes the picture"+
+    "able to be viewed on the page\n      % \\faces"+timestamp+
+    " is a set in the form (node 1)/(node 2)/(node 3)/fill percent\n";
     
   if(!tikzGenerated){
     var tikzDiv = document.createElement("div");
@@ -1111,7 +1157,7 @@ function exportTikz (event){
     var listGroup = document.getElementById("menuList");
     listGroup.insertBefore(tikzDiv,listGroup.childNodes[14]);
     document.getElementById("copyButton").setAttribute("data-clipboard-target","#tikzTextBox");
-    clipboard = new Clipboard('#copyButton');
+    clipboard = new ClipboardJS('#copyButton');
     clipboard.on('error', function(e) {
         window.alert("Press enter, then CTRL-C or CMD-C to copy")
     });  
@@ -1139,6 +1185,10 @@ function onclickResults(m2Response) {
 // It changes the menu items to default.
 function menuDefaults() {
   d3.select("#isPure").html("&nbsp;&nbsp; isPure");
+  if (tikzGenerated) {
+      d3.select("#tikzHolder").node().remove();
+      tikzGenerated = false;
+  }
 }
 
 

@@ -2,9 +2,10 @@ HOMEPAGE = http://www.hboehm.info/gc/
 URL = http://www.hboehm.info/gc/gc_source/
 GITURL = https://github.com/ivmai/bdwgc/
 URL = http://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 7.6.2
+VERSION = 8.0.4
+#VERSION = 7.6.2
 LICENSEFILES = README.QUICK
-#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 # We can also get the sources from the home page above or from
 #   https://github.com/ivmai/bdwgc/
@@ -54,11 +55,11 @@ VPATH = @srcdir@
 CONFIGOPTIONS += --enable-threads=posix
 
 ifeq (@SHARED@,no)
-CONFIGOPTIONS += --disable-shared
+CONFIGOPTIONS += --disable-shared --enable-static
 endif
 
 ifeq (@DEBUG@,yes)
-CONFIGOPTIONS += --enable-gc-debug
+CONFIGOPTIONS += --enable-gc-debug  --enable-static
 CPPFLAGS += -DDBG_HDRS_ALL=1 -DGC_ABORT_ON_LEAK=1
 
 #   "--enable-gc-assertions" causes all the tests to fail on 64 bit mac os x

@@ -7,6 +7,7 @@ newPackage(
 	     },
     	HomePage => "http://people.math.gatech.edu/~klee669",
     	Headline => "numerical certification",
+	Keywords => {"Numerical Algebraic Geometry"},
 	PackageExports => {"NumericalAlgebraicGeometry"},
     	--DebuggingMode => true		 -- set to true only during development
     	DebuggingMode => false,

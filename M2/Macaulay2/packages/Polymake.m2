@@ -5,7 +5,8 @@ newPackage(
     	Authors => {{Name => "Josephine Yu", 
 		  Email => "jyu@math.mit.edu", 
 		  HomePage => "http://www.math.mit.edu/~jyu/"}},
-    	Headline => "a package for interfacing with polymake",
+    	Headline => "interfacing with polymake",
+	Keywords => {"Interfaces"},
     	DebuggingMode => false
     	)
 

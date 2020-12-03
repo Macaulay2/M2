@@ -1,4 +1,4 @@
-#include <python2.7/Python.h>
+#include <Python.h>
 #include "python-exports.h"
 
 int python_RunSimpleString(M2_string s) {

@@ -14,9 +14,6 @@
 vec Ring::new_vec() const { return new vecterm; }
 void Ring::remove_vec_node(vec n) const
 {
-  // Should we just let them go, or free them?
-  // fprintf(stdout,"free vec term %x\n", n);
-
   deleteitem(n);
 }
 
@@ -355,7 +352,7 @@ vec Ring::vec_zeroize_tiny(gmp_RR epsilon, const vec v) const
   return head.next;
 }
 
-void Ring::vec_increase_maxnorm(gmp_RR norm, const vec v) const
+void Ring::vec_increase_maxnorm(gmp_RRmutable norm, const vec v) const
 // If any real number appearing in f has larger absolute value than norm,
 // replace norm.
 // Default for rings not over RRR or CCC is to do nothing.

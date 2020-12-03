@@ -215,6 +215,10 @@ M2_arrayint rawMonomialOrderingToMatrix(const struct MonomialOrdering* mo)
   return result;
 }
 
+int rawMonoidNumberOfBlocks(const Monoid* M)
+{
+  return M->num_parts();
+}
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

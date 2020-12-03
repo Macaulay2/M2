@@ -1,11 +1,11 @@
 --		Copyright 1994 by Daniel R. Grayson
-use expr;
 
+use expr;
 
 header "
   #include \"../e/engine.h\"
-  #ifdef HAVE_PYTHON
-    #include <python2.7/Python.h>
+  #ifdef WITH_PYTHON
+    #include <Python.h>
   #else
     #define PyObject_Hash(o) 0
   #endif

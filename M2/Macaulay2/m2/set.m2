@@ -6,7 +6,7 @@ Set.synonym = "set"
 
 elements = method()
 elements Set := x -> keys x
-elements VirtualTally := x -> splice apply(pairs x, (k,v) -> v:k)
+elements Tally := x -> splice apply(pairs x, (k,v) -> v:k)
 
 toString VirtualTally := x -> concatenate( "new ", toString class x, " from {", demark(", ", sort apply(pairs x, (v,i) -> (toString v, " => ", toString i))), "}" )
 
@@ -42,15 +42,22 @@ VirtualTally ? VirtualTally := (x,y) -> (
      else if all(w,i -> i<0) then symbol <
      else incomparable)
 
-zeroTally = tally{}
+zeroVirtualTally := new VirtualTally from {}
+toVirtualTally := i -> if i === 0 then zeroVirtualTally else error "comparison of a virtual tally with a nonzero integer"
+VirtualTally == ZZ := (x,i) -> x === toVirtualTally i
+ZZ == VirtualTally := (i,x) -> toVirtualTally i === x
+VirtualTally ? ZZ := (x,i) -> x ? toVirtualTally i
+ZZ ? VirtualTally := (i,x) -> toVirtualTally i ? x
+
+zeroTally := new Tally from {}
 toTally := i -> if i === 0 then zeroTally else error "comparison of a tally with a nonzero integer"
-VirtualTally == ZZ := (x,i) -> x === toTally i
-ZZ == VirtualTally := (i,x) -> toTally i === x
-VirtualTally ? ZZ := (x,i) -> x ? toTally i
-ZZ ? VirtualTally := (i,x) -> toTally i ? x
+Tally == ZZ := (x,i) -> x === toTally i
+ZZ == Tally := (i,x) -> toTally i === x
+Tally ? ZZ := (x,i) -> x ? toTally i
+ZZ ? Tally := (i,x) -> toTally i ? x
      
-sum(VirtualTally) := (w) -> sum(pairs w, (k,v) -> v * k)
-product(VirtualTally) := (w) -> product(pairs w, (k,v) -> k^v)
+sum VirtualTally := (w) -> sum(pairs w, (k,v) -> v * k)
+product VirtualTally := (w) -> product(pairs w, (k,v) -> k^v)
 
 new Set from List := Set => (X,x) -> set x
 

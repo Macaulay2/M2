@@ -241,7 +241,7 @@ lcm MonomialIdeal := (I) -> (if I.cache.?lcm
  -- We use E. Miller's definition for nonsquare 
  -- free monomial -- ideals.
 
-alexanderDual = local alexanderDual
+protect alexanderDual
 alexopts = {Strategy=>0}
 
 dual(MonomialIdeal, List) := alexopts >> o -> (I,a) -> (
@@ -253,7 +253,7 @@ dual(MonomialIdeal, List) := alexopts >> o -> (I,a) -> (
      newMonomialIdeal(ring I, rawAlexanderDual(raw I, a, o.Strategy)) -- 0 is the default algorithm
      )
 
-dual(MonomialIdeal,RingElement) := alexopts >> o -> (I,r) -> alexanderDual(I,first exponents r,o)
+dual(MonomialIdeal,RingElement) := alexopts >> o -> (I,r) -> dual(I,first exponents r,o)
 
 dual MonomialIdeal := alexopts >> o -> (I) -> (
   if I.cache#?alexanderDual

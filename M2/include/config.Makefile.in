@@ -36,7 +36,6 @@ CPPFLAGS += @CPPFLAGS@
 CXXFLAGS = @CXXFLAGS@
 FCFLAGS = @FCFLAGS@
 LDFLAGS = @LDFLAGS@
-LDFLAGS_FOR_BUILD = @LDFLAGS_FOR_BUILD@
 OPENMP_CXXFLAGS = @OPENMP_CXXFLAGS@
 
 # here we set the variables that "configure" uses
@@ -75,24 +74,19 @@ CPPFLAGS :=									\
 	-I$(BUILTLIBPATH)/include/cdd						\
 	$(foreach S, @BUILDSUBLIST@, -I@abs_top_srcdir@/submodules/$S/src)	\
 	$(CPPFLAGS)
-ifeq "@ENABLE_MPACK@" "yes"
-CPPFLAGS := -I$(BUILTLIBPATH)/include/mpack $(CPPFLAGS)
-endif
 
 vpath %.h $(BUILTLIBPATH)/include
+
+BUILTSUBS := $(filter @BUILDSUBLIST@, memtailor mathic mathicgb)
 
 # /// @dan move the info about libraries and submodules nearer to the submodules, perhaps in new included makefiles
 LDFLAGS :=						\
 	-L$(BUILTLIBPATH)/lib				\
-	$(foreach S, memtailor mathic mathicgb, -L@abs_top_builddir@/submodules/$S/.libs) \
+	$(foreach S, $(BUILTSUBS), -L@abs_top_builddir@/submodules/$S/.libs) \
 	$(LDFLAGS)
-LDFLAGS_FOR_BUILD :=					\
-	-L$(BUILTLIBPATH)/lib				\
-	$(foreach S, memtailor mathic mathicgb, -L@abs_top_builddir@/submodules/$S/.libs) \
-	$(LDFLAGS_FOR_BUILD)
 
-LIBDEPS_FOR_BUILD := $(foreach S, memtailor mathic mathicgb, @abs_top_builddir@/submodules/$S/.libs/lib$S.a)
-LDLIBS_FOR_BUILD := $(foreach S, memtailor mathic mathicgb, -l$S)
+LIBDEPS_FOR_BUILD := $(foreach S, $(BUILTSUBS), @abs_top_builddir@/submodules/$S/.libs/lib$S.a)
+LDLIBS_FOR_BUILD := $(foreach S, $(BUILTSUBS), -l$S)
 
 vpath %.a $(BUILTLIBPATH)/lib
 vpath %.o $(BUILTLIBPATH)/lib
@@ -127,7 +121,6 @@ ifeq "@DEBUG@" "yes"
 CFLAGS += -debug
 CXXFLAGS += -debug
 LDFLAGS += -debug
-LDFLAGS_FOR_BUILD += -debug
 endif
 else
 M2_BOTH += -Wno-parentheses
@@ -141,18 +134,6 @@ ifeq "@OPTIMIZE@" "yes"
 # M2_BOTH += -Werror=uninitialized
 M2_BOTH += -Wuninitialized
 endif
-
-GIVARO_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags givaro)
-GIVARO_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   givaro)
-
-# FFLAS_FFPACK_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags fflas-ffpack)
-# FFLAS_FFPACK_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   fflas-ffpack)
-
-M2_LIBRARIES += $(GIVARO_LIBS)
-M2_LIBRARIES += $(FFLAS_FFPACK_LIBS)
-
-M2_CXXFLAGS += $(GIVARO_CXXFLAGS)
-M2_CXXFLAGS += $(FFLAS_FFPACK_CXXFLAGS)
 
 M2_CFLAGS   += $(M2_BOTH)
 M2_CXXFLAGS += $(M2_BOTH)
@@ -178,7 +159,6 @@ always:
 export DISPLAY=
 
 # Safe C language:
-SCCFLAGS =
 ifeq "@DEBUG@" "no"
 SCCFLAGS += -O
 endif
@@ -216,7 +196,7 @@ ifeq "$(NORULES)" ""
 	$(HIDE)$(COMPILE.c) $(DCFLAGS) $< $(OUTPUT_OPTION)
 %.o: %-tmp.cc %-exports.h
 	$(SHOW)CXX $*-tmp.cc
-	$(HIDE)$(COMPILE.cc) $(DCFLAGS) $< $(OUTPUT_OPTION)
+	$(HIDE)$(COMPILE.cc) $(DCXXFLAGS) $< $(OUTPUT_OPTION)
 
 # various compiler output files
 .SUFFIXES : .ss .ii .s
@@ -244,13 +224,9 @@ test:
 	: "PKG_CONFIG_PATH    = $(PKG_CONFIG_PATH)"
 	: "M2_PKG_CONFIG_PATH = $(M2_PKG_CONFIG_PATH)"
 	:
-	: "GIVARO_CXXFLAGS       = $(GIVARO_CXXFLAGS)"
-	: "FFLAS_FFPACK_CXXFLAGS = $(FFLAS_FFPACK_CXXFLAGS)"
 	: "M2_CXXFLAGS           = $(M2_CXXFLAGS)"
 	: "M2_BOTH               = $(M2_BOTH)"
 	:
-	: "GIVARO_LIBS           = $(GIVARO_LIBS)"
-	: "FFLAS_FFPACK_LIBS     = $(FFLAS_FFPACK_LIBS)"
 	: "M2_LIBRARIES          = $(M2_LIBRARIES)"
 
 SHOW := $(if $(VERBOSE),@true "",@echo "")

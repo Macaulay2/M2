@@ -2,13 +2,29 @@
 -- licensed under GPL v2 or any later version
 newPackage(
     "LieTypes",
-    Version => "0.2",
-    Date => "August 4, 2014",
-    Headline => "Common types for Lie groups and Lie algebras",
+    Version => "0.5",
+    Date => "June 22, 2018",
+    Headline => "common types for Lie groups and Lie algebras",
     Authors => {
 	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"}
 	  },
-    PackageImports => {"ReesAlgebra"}
+    Keywords => {"Lie Groups and Lie Algebras"},
+    PackageImports => {"ReesAlgebra"},
+    Certification => {
+	 -- same article as for package ConformalBlocks
+	  "journal name" => "The Journal of Software for Algebra and Geometry",
+	  "journal URI" => "http://j-sag.org/",
+	  "article title" => "Software for computing conformal block divisors on bar M_0,n",
+	  "acceptance date" => "2 August 2018",
+	  "published article URI" => "https://msp.org/jsag/2018/8-1/p08.xhtml",
+	  "published article DOI" => "10.2140/jsag.2018.8.81",
+	  "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x08-LieTypes.m2",
+	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/LieTypes.m2",
+	  "release at publication" => "923fbcc7c77b23f510bb0d740e00fc1722a2f397",	    -- git commit number in hex
+	  "version at publication" => "0.5",
+	  "volume number" => "8",
+	  "volume URI" => "https://msp.org/jsag/2018/8-1/"
+	  }
     )
 
 export {
@@ -29,10 +45,13 @@ export {
     "tensorCoefficient",
     "fusionProduct",
     "fusionCoefficient",
-    "MaxWordLength"
+    "MaxWordLength",
+    "positiveRoots"
     }
 
 
+-- Access hasAttribute, getAttribute
+debug Core
 -*
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
@@ -71,12 +90,13 @@ Many of these functions are copied over from early versions of Swinarski's Confo
 
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
--- Summary, Version 0.2, August 2014
+-- Summary, Version 0.5, June 2018
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
 
-Changes from version 0.1 to 0.2 inncorporate minor revisions requested by the JSAG referee.  
-Also, Bourbaki allows types B_2, C_2, D_3, so these have been added in version 0.2 as well.
+Fixed a minor bug in multiplicity function (needed to allow for options, since multiplicity is 
+a method with options.)  Changed the LieAlgebra and LieAlgebraModule classes to print out the
+global variable names instead of the hash table contents. 
 *-
 
 
@@ -89,6 +109,20 @@ Also, Bourbaki allows types B_2, C_2, D_3, so these have been added in version 0
 --   }
 
 LieAlgebra = new Type of HashTable  
+LieAlgebra.GlobalAssignHook = globalAssignFunction
+LieAlgebra.GlobalReleaseHook = globalReleaseFunction
+expression LieAlgebra := g -> (
+    if hasAttribute(g,ReverseDictionary) then return expression toString getAttribute(g,ReverseDictionary);
+    if not hasAttribute(g,ReverseDictionary) then (
+        if g#"isSimple" then return concatenate("Simple Lie algebra, type ",toString(g#"RootSystemType"),", rank ",toString(g#"LieAlgebraRank"));
+	if not g#"isSimple" then return concatenate("Nonsimple Lie algebra, type ",toString(g#"RootSystemType"),", rank ",toString(g#"LieAlgebraRank"))
+    );
+)	
+net LieAlgebra := X -> net expression X;
+
+
+
+
 
 LieAlgebra == LieAlgebra := (V,W)-> (V===W)
 
@@ -194,6 +228,36 @@ starInvolution(List,LieAlgebra) := memoize((v,g) -> (
 --Functions: weights, dimension, **
 
 LieAlgebraModule = new Type of HashTable 
+LieAlgebraModule.GlobalAssignHook = globalAssignFunction
+LieAlgebraModule.GlobalReleaseHook = globalReleaseFunction
+expression LieAlgebraModule := V -> (
+    if hasAttribute(V,ReverseDictionary) then expression toString getAttribute(V,ReverseDictionary) else toString(pairs V)
+);
+net LieAlgebraModule := V -> (
+    if hasAttribute(V,ReverseDictionary) then return net expression V; 
+    if not hasAttribute(V,ReverseDictionary) then return (
+	orderedPairs:=delete(null,{("LieAlgebra",V#"LieAlgebra"),("isIrreducible",V#"isIrreducible"),if V#?"highestWeight" then ("highestWeight",V#"highestWeight"),("DecompositionIntoIrreducibles",V#"DecompositionIntoIrreducibles")});
+	horizontalJoin flatten (
+          "{",
+          -- the first line prints the parts vertically, second: horizontally    
+          stack (horizontalJoin \ apply(orderedPairs,(k,v) -> (net k, " => ", net v))),                                        
+          "}"
+          )
+      )
+);
+LieAlgebraModule#{Standard,AfterPrint} = V -> ( s:="";
+    if not hasAttribute(V#"LieAlgebra",ReverseDictionary) then s = " : LieAlgebraModule";
+    if hasAttribute(V#"LieAlgebra",ReverseDictionary) then (
+	s = concatenate(" : ",expression(V#"LieAlgebra")," module")	
+    );	
+    << endl;				  -- double space
+    << concatenate(interpreterDepth:"o") << lineNumber << s;
+    << endl;
+ );
+
+
+
+
 
 isIsomorphic = method(
     TypicalValue => Boolean
@@ -373,8 +437,13 @@ simpleRoots = (type,m) -> (
     entries lift(C,ZZ)    
 )
 
+
+positiveRoots = method(
+    TypicalValue => List
+)     
+
 --In Freudenthal's formula, we need to sum over the positive roots
-positiveRoots = memoize((type,m) -> (
+positiveRoots(String,ZZ):= memoize((type,m) -> (
     simpleroots:=simpleRoots(type,m);
     answer:={};
     answer1:={};
@@ -424,7 +493,9 @@ positiveRoots = memoize((type,m) -> (
     if type=="G" and m==2 then return {{-3, 2}, {-1, 1}, {0, 1}, {2, -1}, {3, -1}, {1, 0}};
 ))
 
-
+positiveRoots(LieAlgebra):=(g) -> (
+    positiveRoots(g#"RootSystemType",g#"LieAlgebraRank")  
+);
 
 --In the next four functions we implement Freudenthal's recursive algorithm for computing the weights in a Lie algebra module and their multiplicities
 --The function Freud computes the set of weights in a Lie algebra module without their multiplicities
@@ -491,12 +562,12 @@ multiplicityOfWeightInLieAlgebraModule = memoize((type,m,v,w) -> (
     lift(2*rhs/lhs,ZZ)
 ))
 
+
+
+
 multiplicity(List,LieAlgebraModule) := o -> (w,M) -> (
-    g:=M#"LieAlgebra";
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    v:=M#"highestWeight";
-    multiplicityOfWeightInLieAlgebraModule(type,m,v,w)	  
+    W:=weightDiagram(M);
+    W#w 
 )
 
 
@@ -816,11 +887,10 @@ doc ///
     Key
         simpleLieAlgebra
 	(simpleLieAlgebra,String,ZZ)
-	--(simpleLieAlgebra,IndexedVariable)
     Headline
         construct a simple Lie algebra
     Usage
-        simpleLieAlgebra("A",1)--, simpleLieAlgebra(sl_2)
+        simpleLieAlgebra("A",1)
     Inputs
         t:String
             the type of the root system of the desired Lie algebra
@@ -831,7 +901,7 @@ doc ///
             the simple Lie algebra with the given rank and type	        
     Description
         Text
-            The classification of simple Lie algebras over the complex numbers is well known.  There are four infinite families (types A, B, C, D) corresponding to the Lie algebras $sl(n+1,\mathbb{C})$, $so(2n+1,\mathbb{C})$, $sp(2n,\mathbb{C})$, $so(2n,\mathbb{C})$ respectively, and five exceptional types, E6, E7, E8, F4, G2.  
+            The classification of simple Lie algebras over the complex numbers is well known.  There are four infinite families (types A, B, C, D) corresponding to the Lie algebras $sl(n+1,\mathbb{C})$, $so(2n+1,\mathbb{C})$, $sp(2n,\mathbb{C})$, $so(2n,\mathbb{C})$ respectively, and five exceptional simple Lie algebras, E6, E7, E8, F4, G2.  
 	    	   
         Example
             --simpleLieAlgebra(sl_2)
@@ -927,6 +997,36 @@ doc ///
 TEST ///
     assert(highestRoot("A",2) === {1,1})
 ///	
+
+doc ///
+    Key
+        positiveRoots
+	(positiveRoots,String,ZZ)
+	(positiveRoots,LieAlgebra)
+    Headline
+        returns the positive roots of a simple Lie algebra
+    Usage
+        positiveRoots(g), positiveRoots("A",2)
+    Inputs
+        g:LieAlgebra
+    Outputs
+        t:List
+    Description
+        Text  
+            Let R be an irreducible root system of rank m, and choose a base of simple roots $\Delta = \{\alpha_1,...,\alpha_m\}$.  This function returns all the roots that are nonnegative linear combinations of the simple roots.    The formulas implemented here are taken from the tables following Bourbaki's {\it Lie Groups and Lie Algebras} Chapter 6.
+	    
+	Text       
+	    In the example below, we see that for $sl_3$, the positive roots are $\alpha_1$, $\alpha_2$, and $\alpha_1+\alpha_2$.
+	    
+	Example
+	    sl3=simpleLieAlgebra("A",2)
+	    positiveRoots(sl3)
+///
+
+TEST ///
+    assert(set positiveRoots(simpleLieAlgebra("A",2)) === set {{2, -1}, {1, 1}, {-1, 2}})
+///	
+
 
 
 doc ///

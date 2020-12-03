@@ -5,6 +5,7 @@
 
 #include "engine-includes.hpp"
 
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -35,9 +36,11 @@ extern "C" {
   gmp_RR rawRandomRR(unsigned long prec);
   /* returns a uniformly distributed random real with the given precision, in range [0.0,1.0] */
 
-  void rawRandomMpfr(mpfr_t result, unsigned long precision);
-
   gmp_CC rawRandomCC(unsigned long prec);
+
+  void randomMpfr(mpfr_t result);
+
+  double randomDouble();
 
 #if defined(__cplusplus)
 }

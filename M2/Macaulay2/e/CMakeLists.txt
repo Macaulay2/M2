@@ -1,104 +1,50 @@
-add_library(engine STATIC
-#  CMakeLists.txt
-  Eschreyer.cpp
-  Eschreyer.hpp
-  GF.cpp
-  GF.hpp
-  LLL.cpp
-  LLL.hpp
-#  Makefile.common.in
-#  Makefile.files
-#  Makefile.in
-  NAG.cpp
-  NAG.hpp
-#  README
+###############################################################################
+## This directory contains the rules for building M2-engine and M2-unit-tests
+## - run unit tests:  ctest -R unit-tests
+
+# TODO: determine the fate of these files
+set(UNDETERMINED
+  dmat-ffpack.cpp
+  franzi-brp-test.cpp
+  gb-trace.hpp
+  overflow-test.cpp
+  test.dd
+  aring-wrap # both cpp and hpp
+  points # both cpp and hpp
+  )
+
+# c files
+# TODO: convert to cpp or simplify if not needed
+set(CFILES
+  complex.c
+  error.c
+  exptable.c
+  monordering.c
+  table.c
+  )
+# h files
+set(HFILES
+  complex.h
+  error.h
+  exptable.h
+  monordering.h
+  rand.h
+  table.h
+  gmp-util.h
+  engine.h
+  defgroups.h
+  mpreal.h
+  )
+
+# these files are include only.
+set(HPPONLYFILES
+  newdelete.hpp
+  timing.hpp
   SLP-defs.hpp
   SLP-imp.hpp
-  SLP.cpp
-  SLP.hpp
-#  STYLE.txt
-#  TAGS
-#  TODO
-#  TODO-SLPs
-#  TODO-numerics
-#  TODO-rings-matrices
-#  TODO-sparsepolyring
-  ZZ.cpp
-  ZZ.hpp
-  ZZp.cpp
-  ZZp.hpp
-  aring-CC.cpp
-  aring-CC.hpp
-  aring-CCC.cpp
-  aring-CCC.hpp
-  aring-RR.cpp
-  aring-RR.hpp
-  aring-RRR.cpp
-  aring-RRR.hpp
-  aring-example.hpp
-  aring-gf-flint-big.cpp
-  aring-gf-flint-big.hpp
-  aring-gf-flint.cpp
-  aring-gf-flint.hpp
-  aring-gf-givaro.cpp
-  aring-gf-givaro.hpp
   aring-glue.hpp
-  aring-m2-gf.cpp
-  aring-m2-gf.hpp
-  aring-poly-zz-flint.hpp
-  aring-qq-flint.cpp
-  aring-qq-flint.hpp
-  aring-qq-gmp.cpp
-  aring-qq-gmp.hpp
   aring-qq.hpp
-  aring-tower.cpp
-  aring-tower.hpp
   aring-translate.hpp
-#  aring-wrap.cpp
-#  aring-wrap.hpp
-  aring-zz-flint.cpp
-  aring-zz-flint.hpp
-  aring-zz-gmp.cpp
-  aring-zz-gmp.hpp
-  aring-zzp-ffpack.cpp
-  aring-zzp-ffpack.hpp
-  aring-zzp-flint.cpp
-  aring-zzp-flint.hpp
-  aring-zzp.cpp
-  aring-zzp.hpp
-  aring.cpp
-  aring.hpp
-  array.hpp
-  assprime.cpp
-  assprime.hpp
-  betti.cpp
-  betti.hpp
-  buffer.cpp
-  buffer.hpp
-  coeffrings.cpp
-  coeffrings.hpp
-  comb.cpp
-  comb.hpp
-  comp-gb-declared.cpp
-  comp-gb-declared.hpp
-  comp-gb-proxy.cpp
-  comp-gb-proxy.hpp
-  comp-gb.cpp
-  comp-gb.hpp
-  comp-res.cpp
-  comp-res.hpp
-  comp.cpp
-  comp.hpp
-  complex.c
-  complex.h
-  cra.cpp
-  cra.hpp
-  debug.cpp
-  debug.hpp
-  defgroups.h
-  det.cpp
-  det.hpp
-  dmat-ffpack.cpp
   dmat-gf-flint-big.hpp
   dmat-gf-flint.hpp
   dmat-lu-inplace.hpp
@@ -110,223 +56,49 @@ add_library(engine STATIC
   dmat-qq-interface-flint.hpp
   dmat-zz-flint.hpp
   dmat-zzp-flint.hpp
-  dmat.cpp
-  dmat.hpp
-#  doxygen-settings
-  dpoly.cpp
-  dpoly.hpp
   engine-includes.hpp
-  engine.cpp
-  engine.h
-  error.c
-  error.h
   exceptions.hpp
-  exptable.c
-  exptable.h
-  factor.cpp
-  finalize.cpp
-  finalize.hpp
-#  fixspace
-  fplll-interface.cpp
-  fplll-interface.hpp
-  frac.cpp
-  frac.hpp
-  fractionfreeLU.cpp
-  fractionfreeLU.hpp
-#  franzi-brp-test.cpp
-  franzi-brp.cpp
-  franzi-brp.hpp
-  franzi-gb.cpp
-  franzi-interface.cpp
-  free-resolutions
-  freemod.cpp
-  freemod.hpp
-  gauss.cpp
-  gauss.hpp
-  gb-default.cpp
-  gb-default.hpp
-  gb-homog2.cpp
-  gb-homog2.hpp
-  gb-mora.hpp
-  gb-sugarless.cpp
-  gb-sugarless.hpp
-  gb-test1.cpp
-  gb-test1.hpp
-  gb-toric.cpp
-  gb-toric.hpp
-  gb-trace.hpp
-  gb-walk.cpp
-  gb-walk.hpp
-  gbring.cpp
-  gbring.hpp
-  gbweight.cpp
-  gbweight.hpp
+  geobucket.hpp
   geopoly.hpp
   geovec.hpp
   hash.hpp
-  hermite.cpp
-  hermite.hpp
-  hilb.cpp
-  hilb.hpp
-  imonorder.cpp
-  imonorder.hpp
   index.hpp
-  int-bag.cpp
-  int-bag.hpp
-  intarray.cpp
-  intarray.hpp
-  interreduce.cpp
-  interreduce.hpp
-  interrupted.cpp
-  interrupted.hpp
-  lapack.cpp
-  lapack.hpp
   mat-arith.hpp
   mat-elem-ops.hpp
   mat-linalg.hpp
   mat-util.hpp
-  mat.cpp
-  mat.hpp
-  matrix-con.cpp
-  matrix-con.hpp
-  matrix-kbasis.cpp
-  matrix-sort.cpp
-  matrix-stream.cpp
-  matrix-stream.hpp
-  matrix-symm.cpp
-  matrix.cpp
-  matrix.hpp
-  mem.cpp
-  mem.hpp
-  memory-status.cpp
-  memory-status.hpp
-  monideal-minprimes.cpp
-  monideal-minprimes.hpp
-  monideal.cpp
-  monideal.hpp
-  monoid.cpp
-  monoid.hpp
-  monomial.cpp
-  monomial.hpp
-#  monorder.cpp
-#  monorder.hpp
-  monordering.c
-  monordering.h
-  montable.cpp
-  montable.hpp
-  montableZZ.cpp
-  montableZZ.hpp
   mutablemat-defs.hpp
   mutablemat-imp.hpp
-  mutablemat.cpp
   mutablemat.hpp
-  newdelete.cpp
   newdelete.hpp
-  ntl-debugio.cpp
-  ntl-interface.cpp
-  ntl-interface.hpp
-  ntl-internal.cpp
-  ntuple.cpp
-  ntuple.hpp
-#  overflow-test.cpp
-  overflow.cpp
-  overflow.hpp
-  pfaff.cpp
-  pfaff.hpp
-#  pi-genmask.cc
-#  pi-readme.txt
-#  pi-test.cc
-#  pi.cc
-#  pi.h
-#  pm-test.cpp
-#  pm.cpp
-#  pm.hpp
-#  points.cpp
-#  points.hpp
-  poly.cpp
-  poly.hpp
-  polyquotient.cpp
-  polyquotient.hpp
-  polyring.cpp
-  polyring.hpp
-  polyroots.cpp
-  polyroots.hpp
-  qring.cpp
-  qring.hpp
   queue.hpp
-  rand.c
-  rand.h
-  reader.cpp
-  reader.hpp
-  reducedgb-ZZ.cpp
-  reducedgb-ZZ.hpp
-  reducedgb-field-local.cpp
-  reducedgb-field-local.hpp
-  reducedgb-field.cpp
-  reducedgb-field.hpp
-  reducedgb-marked.cpp
-  reducedgb-marked.hpp
-  reducedgb.cpp
-  reducedgb.hpp
-  relem.cpp
-  relem.hpp
   res-a0-pair.hpp
-  res-a0-poly.cpp
-  res-a0-poly.hpp
-  res-a0.cpp
-  res-a0.hpp
-  res-a1-poly.cpp
-  res-a1-poly.hpp
-  res-a1.cpp
-  res-a1.hpp
-  res-a2-gb.cpp
-  res-a2.cpp
-  res-a2.hpp
-  ring-vecs.cpp
-  ring.cpp
-  ring.hpp
   ringelem.hpp
-  ringmap.cpp
-  ringmap.hpp
-  sagbi.cpp
-  sagbi.hpp
-  schorder.cpp
-  schorder.hpp
   schur-poly-heap.hpp
-  schur.cpp
-  schur.hpp
-  schur2.cpp
-  schur2.hpp
-  schurSn.cpp
-  schurSn.hpp
-  skew.cpp
-  skew.hpp
-  skewpoly.cpp
-  skewpoly.hpp
   smat.hpp
-  solvable.cpp
-  solvable.hpp
-  spair-heap.cpp
-  spair-heap.hpp
-  spair.cpp
-  spair.hpp
   stdinc-m2.hpp
   stop.hpp
   style.hpp
-  table.c
-  table.h
-  test.dd
-  text-io.cpp
-  text-io.hpp
-  timing.hpp
-  tower.cpp
-  tower.hpp
-  util.cpp
-  util.hpp
-  varpower.cpp
-  varpower.hpp
-  weylalg.cpp
-  weylalg.hpp
+  f4/moninfo2.hpp
+  f4/res-memblock.hpp
+  f4/res-monomial-types.hpp
+  f4/res-schreyer-order.hpp
+  )
+
+# these files have .cpp file, but NOT .hpp file
+set(CPPONLYFILES
+  engine.cpp
+  flint.cpp
+  franzi-gb.cpp
+  franzi-interface.cpp
+  matrix-kbasis.cpp
+  matrix-sort.cpp
+  matrix-symm.cpp
+  ntl-debugio.cpp
+  ntl-internal.cpp
+  rand.cpp
+  res-a2-gb.cpp
+  ring-vecs.cpp
   x-aring.cpp
   x-factor.cpp
   x-factor.hpp
@@ -335,125 +107,325 @@ add_library(engine STATIC
   x-mat.cpp
   x-monideal.cpp
   x-monoid.cpp
-  x-monom.cpp
   x-mutablemat.cpp
   x-relem.cpp
   x-ringmap.cpp
-#  f4/Makefile.files
-#  f4/Makefile.in
-#  f4/README-RES-F4
-  f4/f4-computation.cpp
-  f4/f4-computation.hpp
-  f4/f4-m2-interface.cpp
-  f4/f4-m2-interface.hpp
-  f4/f4-mem.cpp
-  f4/f4-mem.hpp
-  f4/f4-monlookup.cpp
-  f4/f4-monlookup.hpp
-  f4/f4-spairs.cpp
-  f4/f4-spairs.hpp
-  f4/f4-syz.cpp
-  f4/f4-types.cpp
-  f4/f4-types.hpp
-  f4/f4.cpp
-  f4/f4.hpp
-  f4/gausser.cpp
-  f4/gausser.hpp
-  f4/hilb-fcn.cpp
-  f4/hilb-fcn.hpp
-  f4/memblock.cpp
-  f4/memblock.hpp
-  f4/monhashtable.cpp
-  f4/monhashtable.hpp
-  f4/moninfo.cpp
-  f4/moninfo.hpp
-  f4/moninfo2.hpp
-  f4/monsort.cpp
-  f4/monsort.hpp
-  f4/ntuple-monomial.cpp
-  f4/ntuple-monomial.hpp
-  f4/res-f4-computation.cpp
-  f4/res-f4-computation.hpp
-  f4/res-f4-m2-interface.cpp
-  f4/res-f4-m2-interface.hpp
-  f4/res-f4-monlookup.cpp
-  f4/res-f4-monlookup.hpp
-  f4/res-f4.cpp
-  f4/res-f4.hpp
-  f4/res-gausser-QQ-hybrid.cpp
-  f4/res-gausser-QQ-hybrid.hpp
-  f4/res-gausser-QQ.cpp
-  f4/res-gausser-QQ.hpp
-  f4/res-gausser-ZZp.cpp
-  f4/res-gausser-ZZp.hpp
-  f4/res-gausser.cpp
-  f4/res-gausser.hpp
-  f4/res-memblock.hpp
-  f4/res-moninfo-dense.cpp
-  f4/res-moninfo-dense.hpp
-  f4/res-moninfo-sparse.cpp
-  f4/res-moninfo-sparse.hpp
-  f4/res-moninfo.cpp
-  f4/res-moninfo.hpp
-  f4/res-monomial-types.hpp
-  f4/res-poly-ring.cpp
-  f4/res-poly-ring.hpp
-  f4/res-schreyer-frame.cpp
-  f4/res-schreyer-frame.hpp
-  f4/res-schreyer-order.hpp
-  f4/res-varpower-monomial.cpp
-  f4/res-varpower-monomial.hpp
-  f4/varpower-monomial.cpp
-  f4/varpower-monomial.hpp
-  unit-tests/ARingCCCTest.cpp
-  unit-tests/ARingCCTest.cpp
-  unit-tests/ARingGFTest.cpp
-  unit-tests/ARingQQFlintTest.cpp
-  unit-tests/ARingQQGmpTest.cpp
-  unit-tests/ARingRRRTest.cpp
-  unit-tests/ARingRRTest.cpp
-  unit-tests/ARingTest.hpp
-  unit-tests/ARingZZTest.cpp
-  unit-tests/ARingZZpTest.cpp
-  unit-tests/DMatTest.hpp
-  unit-tests/DMatZZpTest.cpp
-  unit-tests/GivaroTest.cpp
-  unit-tests/M2-cpp-replacement.cpp
-  unit-tests/M2-replacement.c
-  unit-tests/M2mem-replacement.c
-  unit-tests/M2mem-replacement.h
-  unit-tests/Makefile.files
-  unit-tests/Makefile.in
-  unit-tests/PointArray.cpp
-  unit-tests/README
-  unit-tests/ResTest.cpp
-  unit-tests/RingCCCTest.cpp
-  unit-tests/RingQQTest.cpp
-  unit-tests/RingRRRTest.cpp
-  unit-tests/RingTest.hpp
-  unit-tests/RingTowerTest.cpp
-  unit-tests/RingZZTest.cpp
-  unit-tests/RingZZpTest.cpp
-  unit-tests/SubsetTest.cpp
-  unit-tests/basics-test.cpp
-  unit-tests/fromStream.cpp
-  unit-tests/gtest-include.cpp
-  unit-tests/testMain.cpp
   )
 
-set(BOOTSTRAP "/Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-clang")
+# these files all have .hpp and .cpp files
+set(SRCLIST
+  Eschreyer
+  GF
+  LLL
+  NAG
+  SLP
+  ZZ
+  ZZp
+  aring-CC
+  aring-CCC
+  aring-RR
+  aring-RRR
+  aring-gf-flint-big
+  aring-gf-flint
+  aring-gf-givaro
+  aring-m2-gf
+  aring-qq-flint
+  aring-qq-gmp
+  aring-tower
+  aring-zz-flint
+  aring-zz-gmp
+  aring-zzp-ffpack
+  aring-zzp-flint
+  aring-zzp
+  aring
+  assprime
+  betti
+  buffer
+  coeffrings
+  comb
+  comp-gb-declared
+  comp-gb-proxy
+  comp-gb
+  comp-res
+  comp
+  cra
+  debug
+  det
+  dmat
+  dpoly
+  eigen
+  finalize
+  fplll-interface
+  frac
+  fractionfreeLU
+  franzi-brp
+  freemod
+  gauss
+  gb-default
+  gb-homog2
+  gb-sugarless
+  gb-test1
+  gb-toric
+  gb-walk
+  gbring
+  gbweight
+  hermite
+  hilb
+  imonorder
+  int-bag
+  intarray
+  interreduce
+  interrupted
+  lapack
+  localring
+  mat
+  matrix-con
+  matrix-stream
+  matrix
+  mem
+  memory-status
+  monideal-minprimes
+  monideal
+  monoid
+  monomial-sets
+  monomial
+  montable
+  montableZZ
+  mutablecomplex
+  ntl-interface
+  ntuple
+  overflow
+  pfaff
+  poly
+  polyquotient
+  polyring
+  polyroots
+  qring
+  reader
+  reducedgb-ZZ
+  reducedgb-field-local
+  reducedgb-field
+  reducedgb-marked
+  reducedgb
+  relem
+  res-a0-poly
+  res-a0
+  res-a1-poly
+  res-a1
+  res-a2
+  ring
+  ringmap
+  sagbi
+  schorder
+  schur
+  schur2
+  schurSn
+  skew
+  skewpoly
+  solvable
+  spair
+  text-io
+  tower
+  util
+  varpower
+  weylalg
+  # Faugère's F4 Algorithm
+  f4/f4-computation
+  f4/f4-m2-interface
+  f4/f4-mem
+  f4/f4-monlookup
+  f4/f4-spairs
+  f4/f4-syz
+  f4/f4-types
+  f4/f4
+  f4/gausser
+  f4/hilb-fcn
+  f4/memblock
+  f4/monhashtable
+  f4/moninfo
+  f4/monsort
+  f4/ntuple-monomial
+  f4/res-f4-computation
+  f4/res-f4-m2-interface
+  f4/res-f4-monlookup
+  f4/res-f4
+  f4/res-gausser-QQ-hybrid
+  f4/res-gausser-QQ
+  f4/res-gausser-ZZp
+  f4/res-gausser
+  f4/res-moninfo-dense
+  f4/res-moninfo-sparse
+  f4/res-moninfo
+  f4/res-monomial-sorter
+  f4/res-poly-ring
+  f4/res-schreyer-frame
+  f4/res-varpower-monomial
+  f4/varpower-monomial
+  # Boolean Involutive Gröbner Bases
+  bibasis/bibasis
+  bibasis/allocator
+  bibasis/launcher
+  bibasis/monom
+  bibasis/monomDL
+  bibasis/monomDRL
+  bibasis/monomLex
+  bibasis/settings-manager
+  )
 
-target_include_directories(engine PUBLIC
-  ${BOOTSTRAP}/include
-  ${BOOTSTRAP}/Macaulay2/d
-  ${BOOTSTRAP}/Macaulay2/e-includes
-  ${BOOTSTRAP}/usr-host/include
-  ../../submodules/memtailor/src
-  ../../submodules/mathic/src
-  ../../submodules/mathicgb/src
-  ../../include
-  .
-  ../c
-  )                            
+list(TRANSFORM SRCLIST APPEND .cpp OUTPUT_VARIABLE CPPFILES)
+list(TRANSFORM SRCLIST APPEND .hpp OUTPUT_VARIABLE HPPFILES)
 
-#target_link_libraries(engine STATIC )
+set(SOURCES ${CPPONLYFILES} ${CPPFILES} ${CFILES})
+set(HEADERS ${HPPONLYFILES} ${HPPFILES} ${HFILES})
+list(APPEND HEADERS ${CMAKE_BINARY_DIR}/include/M2/config.h)
+
+###############################################################################
+## Generate TAGS file
+# TODO: the order is somewhat different, is it a problem?
+
+if(ETAGS)
+  set(TAGS TAGS)
+  set_source_files_properties(TAGS PROPERTIES GENERATED true)
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/TAGS
+    COMMENT "Generating e/TAGS file"
+    COMMAND ${ETAGS} -o TAGS ${HEADERS} ${SOURCES}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+endif()
+
+###############################################################################
+## Compile the engine
+# TODO: enable INTERPROCEDURAL_OPTIMIZATION?
+
+# TODO: remove STATIC once M2-engine can be used independently, then we can
+# set -DBUILD_SHARED_LIBS=ON to generate a shared library
+add_library(M2-engine STATIC ${SOURCES} ${HEADERS} ${TAGS})
+
+# TODO: Which headers should be included in the development build?
+set_target_properties(M2-engine PROPERTIES PUBLIC_HEADER "${HEADERS}")
+
+target_include_directories(M2-engine PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:include/Macaulay2>)
+
+# TODO: make engine independent of interpreter headers
+target_link_libraries(M2-engine PUBLIC M2-interpreter)
+
+if(EIGEN3_FOUND)
+  target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
+endif()
+
+if(OpenMP_FOUND)
+  target_link_libraries(M2-engine PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
+# Compiler warning flags
+target_compile_options(M2-engine PRIVATE
+  -Wno-cast-qual # FIXME
+  -Wno-sign-compare
+  -Wno-unused-local-typedefs # FIXME: caused by mathic/Geobucket.h:510:49
+
+  $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:
+  -Wno-deprecated-register # caused by mps/mpc.h:114:37
+  -Wno-mismatched-tags # FIXME: caused by scc1
+  -Wno-unused-variable # FIXME: caused by schur2.cpp:597:31
+  >
+
+  $<$<COMPILE_LANG_AND_ID:CXX,GNU>:
+  -Wno-deprecated-copy -Wno-unknown-pragmas # caused by Givaro and fflas_ffpack
+  -Wno-ignored-qualifiers # FIXME: caused by bibasis/tset.hpp:44:9
+  -Wno-implicit-fallthrough # FIXME: caused by gb-default.cpp, gb-test1.cpp, gb-walk.cpp, hermite.cpp, etc.
+  >
+
+  # Intel TODO: -diag-disable 981,869,383,2259,444 -debug -Wimplicit-function-declaration
+  )
+
+###############################################################################
+## Export the target
+
+# TODO: change ARCHIVE to LIBRARY once M2-engine can be used independently
+install(TARGETS M2-engine EXPORT Macaulay2
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
+  COMPONENT devel EXCLUDE_FROM_ALL
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2
+  COMPONENT devel EXCLUDE_FROM_ALL)
+
+###############################################################################
+## Add source linting and formatting checks for this target, see cmake/prechecks.cmake
+
+if(LINTING)
+  _ADD_PRECHECKS(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
+endif()
+
+_ADD_CLANG_FORMAT(M2-engine "${CFILES}" "${HPPONLYFILES} ${CPPONLYFILES} ${HPPFILES} ${CPPFILES}")
+
+###############################################################################
+## To try, run ctest or ./M2-unit-tests in Macaulay2/e
+
+if(BUILD_TESTING)
+  include(GoogleTest)
+
+  # TODO: overflow tests
+  # TODO: break up into multiple branches
+  add_executable(M2-unit-tests
+    unit-tests/M2-cpp-replacement.cpp
+    unit-tests/M2-replacement.c
+    unit-tests/M2mem-replacement.c
+    unit-tests/M2mem-replacement.h
+
+    unit-tests/ARingTest.hpp
+    unit-tests/ARingZZTest.cpp
+    unit-tests/ARingZZpTest.cpp
+    unit-tests/ARingGFTest.cpp # FIXME: see aring-gf-givaro.cpp:199
+    unit-tests/ARingQQFlintTest.cpp
+    unit-tests/ARingQQGmpTest.cpp
+    unit-tests/ARingRRTest.cpp
+    unit-tests/ARingCCTest.cpp
+    unit-tests/ARingRRRTest.cpp
+    unit-tests/ARingCCCTest.cpp
+
+    unit-tests/RingTest.hpp
+    unit-tests/RingZZTest.cpp
+    unit-tests/RingZZpTest.cpp
+    unit-tests/RingQQTest.cpp
+    unit-tests/RingCCCTest.cpp
+    unit-tests/RingRRRTest.cpp
+    unit-tests/RingTowerTest.cpp
+
+    unit-tests/DMatTest.hpp
+    unit-tests/DMatZZpTest.cpp
+
+    unit-tests/ResTest.cpp
+    unit-tests/PointArray.cpp
+    unit-tests/SubsetTest.cpp
+    unit-tests/basics-test.cpp
+
+    unit-tests/fromStream.cpp
+    unit-tests/testMain.cpp # not needed, except for GC_INIT
+    )
+
+  if(BDWGC_FOUND)
+  target_link_libraries(M2-unit-tests M2-engine ${BDWGC_LIBRARIES} ${CMAKE_DL_LIB})
+  endif()
+
+  ## Add the tests
+  # TODO: valgrind --track-origins=yes ...
+  gtest_discover_tests(M2-unit-tests TEST_PREFIX unit-tests:)
+
+  ## Link with Googletest
+  if(GTEST_FOUND)
+  target_link_libraries(M2-unit-tests GTest::GTest GTest::Main)
+  target_include_directories(M2-unit-tests PRIVATE ${GTEST_INCLUDE_DIR})
+  endif()
+
+  target_compile_options(M2-unit-tests PRIVATE
+    -Wno-cast-qual # FIXME: caused by NAG.hpp:559:37 and NAG.hpp:603:37
+    -Wno-sign-compare
+    $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags> # FIXME
+    )
+
+  ###############################################################################
+  ## GivaroTest.cpp has a main function and does not use gtest
+  #add_executable(M2-unit-tests-givaro unit-tests/GivaroTest.cpp) # FIXME: line 155
+  #target_link_libraries(M2-unit-tests-givaro M2-engine)
+  #add_test(NAME unit-tests:GivaroTest WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND M2-unit-tests-givaro)
+endif()

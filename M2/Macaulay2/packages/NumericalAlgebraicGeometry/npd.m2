@@ -2,7 +2,7 @@
 -- functions related to numerical primary decomposition
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 -------------------------------------------------------
-export { "isPointEmbedded", "isPointEmbeddedInCurve", "AllVisible", "Regularity" }
+export { "isPointEmbedded", "isPointEmbeddedInCurve", "AllVisible" }
 
 debug NumericalHilbert
 
@@ -52,8 +52,7 @@ interpolate = method()
 interpolate (Point,Ideal,List,ZZ) := (p,I,C,d) -> error "not implemented"
 
 TEST ///
-restart
-needs "npd.m2"
+setRandomSeed 0
 needsPackage "NumericalAlgebraicGeometry"
 -- NPD2.8: pseudo-component at the origin
 RQQ = QQ[x_1..x_3]
@@ -67,7 +66,7 @@ I = ideal M
 RCC = CC[x_1..x_3]
 C = drop(flatten flatten (ass I / values@@numericalIrreducibleDecomposition),-1)
 O = origin RCC
-isPointEmbedded(O,sub(I,RCC),C)
+assert isPointEmbedded(O,sub(I,RCC),C)
 ///
 
 doubleTruncation = method()
@@ -137,8 +136,7 @@ isWitnessPolynomial (Point, Ideal, RingElement, ZZ) := (p,I,g,dStop) -> (
     )
 
 TEST ///
-restart
-needs "npd.m2"
+debug needsPackage "NumericalAlgebraicGeometry"
 R = CC[x,y]
 p = point {{0,0}}
 I = ideal {x^2,y*x}
@@ -146,14 +144,6 @@ g = x^2
 assert(not isWitnessPolynomial(p,I,g,10))
 h = x
 assert(isWitnessPolynomial(p,I,h,10))
-
--- NPD2.8: pseudo-component at the origin
-RQQ = QQ[x_1..x_3]
-M = matrix{{x_1^2,x_1*x_2*x_3}}
-
--- NPD3.10: all components are embedded
-RQQ = QQ[x_1..x_3]
-M = matrix{{x_1^2,x_1*x_2^2*x_3,x_1*x_2*x_3^3}}
 ///
 
 

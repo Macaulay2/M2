@@ -1,11 +1,14 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <M2/config.h>
+
 #include "M2mem.h"
-#define TRUE 1
-#define FALSE 0
 #include "xml-exports.h"
-#include <xml-c.h>
+#include "xml-c.h"
+
+#ifdef WITH_XML
 
 static char *copystring(const char *s) {
   char *p = (char *)getmem(strlen(s)+1);
@@ -65,7 +68,7 @@ xmlNode *xml_AddText(xmlNode *parent, M2_string content){
 M2_string xml_toString(xmlNode *n) {
   M2_string s;
   xmlBuffer *buf = xmlBufferCreate();
-  int len = xmlNodeDump(buf,NULL,n,2,TRUE);
+  int len = xmlNodeDump(buf,NULL,n,2,1);
   s = M2_tostringn((char*)buf->content,len);
   xmlBufferFree(buf);
   return s;
@@ -74,12 +77,14 @@ M2_string xml_toString(xmlNode *n) {
 M2_string xml_DocDump(xmlNode *n) {
   xmlChar *mem = 0;
   int size = 0;
-  /* xmlDocDumpFormatMemory(n->doc,&mem,&size,TRUE); */
+  /* xmlDocDumpFormatMemory(n->doc,&mem,&size,1); */
   xmlDocDumpMemoryEnc(n->doc,&mem,&size,"UTF-8");
   M2_string s = M2_tostringn((char*)mem,size);
   xmlFree(mem);
   return s;
 }
+
+#endif /* WITH_XML */
 
 /*
  Local Variables:

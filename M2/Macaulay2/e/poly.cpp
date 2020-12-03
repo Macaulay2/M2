@@ -142,7 +142,7 @@ void PolyRing::text_out(buffer &o) const
 Nterm *PolyRing::new_term() const
 {
   Nterm *result = GETMEM(Nterm *, poly_size_);
-  result->next = NULL;
+  result->next = nullptr;
   result->coeff = 0;  // This value is never used, one hopes...
   // In fact, it gets used in the line below:       K->remove(tmp->coeff);
   // which is called from the line below:           remove(idiotic);
@@ -150,7 +150,7 @@ Nterm *PolyRing::new_term() const
   // part of the union, so on a machine with 4 byte ints and 8 byte pointers,
   // the
   // pointer part is not NULL!
-  result->coeff.poly_val = NULL;  // so I added this line
+  result->coeff.poly_val = nullptr;  // so I added this line
   return result;
 }
 
@@ -187,7 +187,7 @@ ring_elem PolyRing::from_int(mpz_srcptr n) const
   return result;
 }
 
-bool PolyRing::from_rational(mpq_ptr q, ring_elem &result) const
+bool PolyRing::from_rational(mpq_srcptr q, ring_elem &result) const
 {
   ring_elem a;
   bool ok = K_->from_rational(q, a);
@@ -805,35 +805,33 @@ ring_elem PolyRing::mult(const ring_elem f, const ring_elem g) const
   return H.value();
 }
 
-ring_elem PolyRing::power(const ring_elem f0, mpz_t n) const
+ring_elem PolyRing::power(const ring_elem f0, mpz_srcptr n) const
 {
   ring_elem ff, result;
-  bool isinverted = false;
 
   if (mpz_sgn(n) == 0) return from_long(1);
   if (is_zero(f0)) return ZERO_RINGELEM;
 
+  mpz_t abs_n;
+  mpz_init(abs_n);
+  mpz_abs(abs_n, n);
   if (mpz_sgn(n) > 0)
     ff = f0;
   else
-    {
-      isinverted = true;
-      ff = invert(f0);
-      mpz_neg(n, n);
-    }
+    ff = invert(f0);
 
   Nterm *f = ff;
 
   // In this case, the computation may only be formed in two
   // cases: (1) f is a constant, or (2) n is small enough
-  std::pair<bool, int> n1 = RingZZ::get_si(n);
+  std::pair<bool, int> n1 = RingZZ::get_si(abs_n);
   if (n1.first)
     {
       result = power(f, n1.second);
     }
   else if (is_unit(f))  // really want a routine 'is_scalar'...
     {
-      ring_elem a = K_->power(f->coeff, n);
+      ring_elem a = K_->power(f->coeff, abs_n);
       result = make_flat_term(a, f->monom);
     }
   else
@@ -842,8 +840,57 @@ ring_elem PolyRing::power(const ring_elem f0, mpz_t n) const
       result = ZERO_RINGELEM;
     }
 
-  if (isinverted) mpz_neg(n, n);
+  mpz_clear(abs_n);
   return result;
+}
+
+ring_elem PolyRing::power_direct(const ring_elem ff, int n) const
+{
+    ring_elem result, g, rest, h, tmp;
+    ring_elem coef1, coef2, coef3;
+
+    Nterm *lead = ff;
+    if (lead == NULL) return ZERO_RINGELEM;
+
+    rest = lead->next;
+    g = from_long(1);
+
+    // Start the result with the n th power of the lead term
+    Nterm *t = new_term();
+    t->coeff = K_->power(lead->coeff, n);
+    M_->power(lead->monom, n, t->monom);
+    t->next = NULL;
+    //  if (_base_ring != NULL) normal_form(t);  NOT NEEDED
+    result = t;
+
+    if (POLY(rest) == 0) return result;
+    int *m = M_->make_one();
+
+    mpz_t bin_c;
+
+    mpz_init_set_ui(bin_c, 1);
+
+    for (int i = 1; i <= n; i++)
+    {
+        tmp = mult(g, rest);
+        g = tmp;
+
+        mpz_mul_ui(bin_c, bin_c, n - i + 1);
+        mpz_fdiv_q_ui(bin_c, bin_c, i);
+
+        coef1 = K_->from_int(bin_c);
+
+        if (!K_->is_zero(coef1))
+        {
+            coef2 = K_->power(lead->coeff, n - i);
+            coef3 = K_->mult(coef1, coef2);
+            M_->power(lead->monom, n - i, m);
+
+            h = mult_by_term(g, coef3, m);
+            add_to(result, h);
+        }
+    }
+    return result;
 }
 
 ring_elem PolyRing::power(const ring_elem f0, int n) const
@@ -853,58 +900,40 @@ ring_elem PolyRing::power(const ring_elem f0, int n) const
   if (n > 0)
     ff = f0;
   else if (n < 0)
-    {
-      ff = invert(f0);
-      n = -n;
-    }
+  {
+    ff = invert(f0);
+    n = -n;
+  }
   else
     return from_long(1);
 
-  ring_elem result, g, rest, h, tmp;
-  ring_elem coef1, coef2, coef3;
+  if(!characteristic())
+  {
+    return power_direct(ff, n);
+  }
+  else
+  {
+    long p=characteristic(), pk=1;
+    ring_elem result = from_long(1);
+    ring_elem gg = copy(ff), temp; // no need to copy, just the correct number of terms
 
-  Nterm *lead = ff;
-  if (lead == NULL) return ZERO_RINGELEM;
-
-  rest = lead->next;
-  g = from_long(1);
-
-  // Start the result with the n th power of the lead term
-  Nterm *t = new_term();
-  t->coeff = K_->power(lead->coeff, n);
-  M_->power(lead->monom, n, t->monom);
-  t->next = NULL;
-  //  if (_base_ring != NULL) normal_form(t);  NOT NEEDED
-  result = t;
-
-  if (POLY(rest) == 0) return result;
-  int *m = M_->make_one();
-
-  mpz_t bin_c;
-
-  mpz_init_set_ui(bin_c, 1);
-
-  for (int i = 1; i <= n; i++)
+    while(n)
     {
-      tmp = mult(g, rest);
-      g = tmp;
+      for(Nterm *it=ff, *jt=gg; it!=NULL; it=it->next, jt=jt->next)
+      {
+        jt->coeff = K_->power(it->coeff, pk);
+        M_->power(it->monom, pk, jt->monom);
+      }
 
-      mpz_mul_ui(bin_c, bin_c, n - i + 1);
-      mpz_fdiv_q_ui(bin_c, bin_c, i);
+      temp = power_direct(gg, n%p);
+      result = mult(result, temp);
 
-      coef1 = K_->from_int(bin_c);
-
-      if (!K_->is_zero(coef1))
-        {
-          coef2 = K_->power(lead->coeff, n - i);
-          coef3 = K_->mult(coef1, coef2);
-          M_->power(lead->monom, n - i, m);
-
-          h = mult_by_term(g, coef3, m);
-          add_to(result, h);
-        }
+      pk *= p;
+      n /= p;
     }
-  return result;
+
+    return result;
+  }
 }
 
 ring_elem PolyRing::invert(const ring_elem f) const
@@ -1314,7 +1343,7 @@ ring_elem PolyRing::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
   result->next = NULL;
   return head.next;
 }
-void PolyRing::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+void PolyRing::increase_maxnorm(gmp_RRmutable norm, const ring_elem f) const
 {
   for (Nterm *a = f; a != NULL; a = a->next)
     K_->increase_maxnorm(norm, a->coeff);
@@ -2292,7 +2321,7 @@ void PolyRing::determine_common_denominator_QQ(ring_elem f,
 
   for (Nterm *t = f; t != 0; t = t->next)
     {
-      mpq_ptr a = MPQ_VAL(t->coeff);
+      mpq_srcptr a = MPQ_VAL(t->coeff);
       mpz_lcm(denom_so_far, denom_so_far, mpq_denref(a));
     }
 }
@@ -2394,7 +2423,7 @@ gbvector *PolyRing::translate_gbvector_from_vec_QQ(
       for (Nterm *t = w->coeff; t != 0; t = t->next)
         {
           // make a gbvector node.
-          mpq_ptr b = MPQ_VAL(t->coeff);
+          mpq_srcptr b = MPQ_VAL(t->coeff);
           mpz_mul(a, result_denominator.get_mpz(), mpq_numref(b));
           mpz_divexact(a, a, mpq_denref(b));
           gbvector *g = GR->gbvector_term(

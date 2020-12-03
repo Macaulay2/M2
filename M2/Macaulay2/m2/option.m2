@@ -1,5 +1,6 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+Option.synonym = "option"
 OptionTable.synonym = "option table"
 
 new OptionTable from List := (OptionTable,opts) -> (

@@ -5,12 +5,13 @@ newPackage(
     	Authors => { -- This Package was originally written by D. Eisenbud, F. Schreyer, and M. Stillman. 
 	             -- Various revisions and updates were made by C. Gibbons and B. Stone.
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-	     {Name => "Frank Schreyer", Email => "schreyer@math.uni-sb.de"},
+	     {Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"},
 	     {Name => "Courtney Gibbons", Email => "crgibbon@hamilton.edu", HomePage => "http://people.hamilton.edu/cgibbons/"},
 	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
 	     }, 
     	Headline => "betti diagram operations useful for investigating the Boij-Soederberg conjectures",
+	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false
     	)
 
@@ -2154,7 +2155,7 @@ document {
      another weakly decreasing sequence of integers corresponding to a partition M, a number i such that
      H^i(E)=S_M(V) and the rank of this module.",
      PARA{},
-     "The function bott(L,u,v) on a list of weaking decreasing integers L and integers u,v will compute 
+     "The function bott(L,u,v) on a list of weakly decreasing integers L and integers u,v will compute 
      our entire cohomology table for our Schur Functor between degrees u and v.",
      }
 

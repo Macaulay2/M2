@@ -11,4 +11,6 @@ Matrices:
   MutableMat<Mat> : MutableMat<Mat> -- a wrapper 
   Matrix   -- front end matrix with entries in Ring (very DIFFERENT from MutableMatrix)
 
-Ctrl-U F11
+Shortcuts:
+  Ctrl-u F11 -- send .m2 lines to a different from *M2* buffer 
+  Ctrl-u F12 -- start M2 with a specified command

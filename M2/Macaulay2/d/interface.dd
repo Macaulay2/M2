@@ -405,7 +405,7 @@ fun2 := {+f:function(int):RawMonomialOrdering};
 fun3 := {+f:function(arrayint):RawMonomialOrdering};
 fun4 := {+f:function(bool):RawMonomialOrdering};
 fun5 := {+f:function(arrayint):RawMonomialOrderingOrNull};
-toFun(f:function():RawMonomialOrdering):fun1 := fun1(f);
+-- toFun(f:function():RawMonomialOrdering):fun1 := fun1(f);
 toFun(f:function(int):RawMonomialOrdering):fun2 := fun2(f);
 toFun(f:function(arrayint):RawMonomialOrdering):fun3 := fun3(f);
 toFun(f:function(bool):RawMonomialOrdering):fun4 := fun4(f);
@@ -541,6 +541,14 @@ export rawMonomialOrderingToMatrix(e:Expr):Expr := (
 	      toExpr(Ccode(RawArrayIntOrNull, "rawMonomialOrderingToMatrix(", m.p, ")"))
      else WrongArg("a monomial ordering"));
 setupfun("rawMonomialOrderingToMatrix",rawMonomialOrderingToMatrix);
+
+export rawMonoidNumberOfBlocks(e:Expr):Expr := (
+     when e
+     is m:RawMonoidCell do toExpr(Ccode( int, "rawMonoidNumberOfBlocks(", m.p, ")" ))
+     else WrongArg("a monoid"));
+setupfun("rawMonoidNumberOfBlocks",rawMonoidNumberOfBlocks);
+
+
 -----------------------------------------------------------------------------
 -- monoids
 
@@ -573,8 +581,8 @@ export rawMonoid(e:Expr):Expr := (
 	  else WrongArg(3,"the degrees ring"))
      else WrongArg(2,"a sequence of strings to be used as names")
      else WrongArg(1,"a monomial ordering")
-     else buildErrorPacket("expected 0 or 4 arguments")
-     else buildErrorPacket("expected 0 or 4 arguments")
+     else buildErrorPacket("expected 0 or 5 arguments")
+     else buildErrorPacket("expected 0 or 5 arguments")
      );
 setupfun("rawMonoid",rawMonoid);
 
@@ -3906,6 +3914,54 @@ export rawLU(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawLU", rawLU);
 
+export rawLUincremental(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 4 then (
+  if isSequenceOfSmallIntegers(s.0) then (P := getSequenceOfSmallIntegers(s.0);
+  when s.1 is wLU:RawMutableMatrixCell do (LU := wLU.p;
+  when s.2 is wv:RawMutableMatrixCell do (v := wv.p;
+  when s.3 is wm:ZZcell do (
+  if isInt(wm) then (m := toInt(wm);
+    toExpr(Ccode(RawArrayIntOrNull,
+      "rawLUincremental(",
+        P, ",", LU, ",", v, ",", m,
+      ")"
+    ))
+  ) else WrongArgSmallInteger(3)
+  ) else WrongArgZZ(3)
+  ) else WrongArg(2,"a raw mutable matrix")
+  ) else WrongArg(1,"a raw mutable matrix")
+  ) else WrongArg(0,"a sequence of small integers")
+  ) else WrongNumArgs(4)
+  ) else WrongNumArgs(4)
+  );
+setupfun("rawLUincremental",rawLUincremental);
+
+export rawTriangularSolve(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 4 then (
+  when s.0 is wLv:RawMutableMatrixCell do (Lv := wLv.p;
+  when s.1 is wx:RawMutableMatrixCell do (x := wx.p;
+  when s.2 is wm:ZZcell do (
+  if isInt(wm) then (m := toInt(wm);
+  when s.3 is wstrategy:ZZcell do (
+  if isInt(wstrategy) then (strategy := toInt(wstrategy);
+    Ccode(void,
+      "rawTriangularSolve(",
+        Lv, ",", x, ",", m, ",", strategy,
+      ")"
+    );
+    toExpr(x)
+  ) else WrongArgSmallInteger(3)
+  ) else WrongArgZZ(3)
+  ) else WrongArgSmallInteger(2)
+  ) else WrongArgZZ(2)
+  ) else WrongArg(1,"a raw mutable matrix")
+  ) else WrongArg(0,"a raw mutable matrix")
+  ) else WrongNumArgs(4)
+  ) else WrongNumArgs(4)
+  );
+setupfun("rawTriangularSolve",rawTriangularSolve);
 
 -- export rawLQUPFactorization(e:Expr):Expr := (
 --      -- rawLQUPFactorization(A) returns a pair of list of integers (P, Qt permutations),
@@ -4030,15 +4086,19 @@ export rawHermiteNormalForm(e:Expr):Expr := (
 setupfun("rawHermiteNormalForm",rawHermiteNormalForm);
 
 export rawSubduction(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
-     when s.0 is M:RawMatrixCell do
-     when s.1 is F:RawRingMapCell do 
-     when s.2 is G:RawComputationCell do toExpr(
-	  Ccode(RawMatrixOrNull, "rawSubduction(", M.p, ", ", F.p, ", ", G.p, ")" ))
-     else WrongArg(3,"a raw computation")
-     else WrongArgMatrix(2)
-     else WrongArgMutableMatrix(1)
-     else WrongNumArgs(3));
+     when e is s:Sequence do if length(s) != 4 then WrongNumArgs(4) else
+     when s.0 is numparts:ZZcell do
+     if isInt(numparts) then 
+     when s.1 is M:RawMatrixCell do
+     when s.2 is F:RawRingMapCell do 
+     when s.3 is G:RawComputationCell do toExpr(
+	  Ccode(RawMatrixOrNull, "rawSubduction(", toInt(numparts), ",", M.p, ", ", F.p, ", ", G.p, ")" ))
+     else WrongArg(4,"a raw computation")
+     else WrongArgMatrix(3)
+     else WrongArgMutableMatrix(2)
+     else WrongArgSmallInteger(1)
+     else WrongArgSmallInteger(1)
+     else WrongNumArgs(4));
 setupfun("rawSubduction",rawSubduction);
 
 -----------------------------------------------------------------------------
@@ -4227,9 +4287,9 @@ setupfun("pi0",pi0);
 
 mpfrConstantEuler(e:Expr):Expr := (
      when e is prec:ZZcell do if !isULong(prec) then WrongArgSmallUInteger(1) else (
-	  z := newRR(toULong(prec));
+	  z := newRRmutable(toULong(prec));
 	  Ccode( void, "mpfr_const_euler(", z, ", GMP_RNDN)" );
-	  toExpr(z))
+	  toExpr(moveToRRandclear(z)))
      else WrongArgZZ(1));
 setupfun("mpfrConstantEuler",mpfrConstantEuler);
 
@@ -4320,7 +4380,7 @@ export rawPruningMorphism(e:Expr):Expr := (			    -- returns the pruning maps
   );
 setupfun("rawPruningMorphism",rawPruningMorphism);
 
-export rawLiftLocalMatrix(e:Expr):Expr := (                         -- clears denominators
+export rawLiftLocalMatrix(e:Expr):Expr := ( -- clears denominators
   when e is s:Sequence do (
   if length(s) == 2 then (
   when s.0 is R:RawRingCell do (
@@ -4337,7 +4397,7 @@ export rawLiftLocalMatrix(e:Expr):Expr := (                         -- clears de
   );
 setupfun("rawLiftLocalMatrix", rawLiftLocalMatrix);
 
-export rawIsLocalUnit(e:Expr):Expr := (                             -- true for units in local rings
+export rawIsLocalUnit(e:Expr):Expr := ( -- true for units in local rings
   when e is f:RawRingElementCell do (
     toExpr(Ccode(bool,
       "rawIsLocalUnit(",
@@ -4347,6 +4407,39 @@ export rawIsLocalUnit(e:Expr):Expr := (                             -- true for 
   ) else WrongArg(1,"a raw ring element")
   );
 setupfun("rawIsLocalUnit",rawIsLocalUnit);
+
+export rawZZisPrime(e:Expr):Expr := (                             
+  when e is f:ZZcell do 
+    toExpr(Ccode(bool,
+      "rawZZisPrime(",
+        f.v,
+      ")"
+    ))
+  else WrongArgZZ()
+  );
+setupfun("rawZZisPrime",rawZZisPrime);
+
+export rawZZisProbablePrime(e:Expr):Expr := (                             
+  when e is f:ZZcell do 
+    toExpr(Ccode(bool,
+      "rawZZisProbablePrime(",
+        f.v,
+      ")"
+    ))
+  else WrongArgZZ()
+  );
+setupfun("rawZZisProbablePrime",rawZZisProbablePrime);
+
+export rawZZfactor(e:Expr):Expr := (                             
+  when e is f:ZZcell do 
+    toExpr(Ccode(arrayZZ,
+      "rawZZfactor(",
+        f.v,
+      ")"
+    ))
+  else WrongArgZZ()
+  );
+setupfun("rawZZfactor",rawZZfactor);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interface.o "

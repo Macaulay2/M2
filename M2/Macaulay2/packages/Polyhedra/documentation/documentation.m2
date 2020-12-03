@@ -21,6 +21,10 @@ doc ///
 			For a polyhedron the affine inequalities are returned as a 
 			pair of two matrices, where the second matrix consists of a
 			single row.
+         
+         Please see @TO "V- and H-representation"@ on the conventions we use for
+         cones and polyhedra.
+
 
       Example
 			fC = facets posOrthant 2
@@ -314,8 +318,12 @@ doc ///
       C:Cone
    Description
       Text
-         Basic constructor for a cone that takes one or two matrices. The cone consists of all points that
-         evaluate positive with the rows of the first matrix and zero with the rows of the second matrix.
+         Basic constructor for a cone that takes one or two matrices. The cone
+         consists of all points that evaluate positive with the rows of the
+         first matrix and zero with the rows of the second matrix.
+         
+         Please see @TO "V- and H-representation"@ on the conventions we use for
+         cones and polyhedra.
 ///
 
 
@@ -439,8 +447,10 @@ doc ///
          negative halfspace defined by the equations, the normal vectors of
          every inequality point outside the polyhedron.
 
-         The polyhedron is defined by
-            $$\{x\in\mathbb{R}\ |\ I * x\le v,\ E * x=w\}$$
+         The polyhedron is defined by $\{x\in\mathbb{R}\ |\ I * x\le v,\ E * x=w\}$.
+
+         Please see @TO "V- and H-representation"@ on the conventions we use for
+         cones and polyhedra.
 
       Example
          S = simplex 2

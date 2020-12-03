@@ -1,12 +1,12 @@
-needsPackage "Bertini"
-
+loadPackage("Bertini",Reload=>true)
+check"Bertini"
 
 ---After doing a postive dimensional run we can sample points from components. 
 
 --First we do a postive dimensional run.
 makeB'InputFile(storeBM2Files,
      AffVariableGroup=>{x,y,z},
-     B'Configs=>{{TrackType,1}},
+     BertiniInputConfiguration=>{TrackType=>1},
      B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})  
 runBertini(storeBM2Files)
 assert(#importMainDataFile(storeBM2Files)==3)

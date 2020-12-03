@@ -10,16 +10,19 @@ check "TateOnProducts"
 *-
 newPackage(
     "TateOnProducts",
-    Version => "1.0",
-    Date => "June 24, 2018",
+    Version => "1.2",
+    Date => "January 30, 2020",
     Headline => "Tate resolutions on products of projective spaces",
     Authors => {
 	{ Name => "Daniel Erman",        Email => "derman@math.wisc.edu",    HomePage => "http://www.math.wisc.edu/~derman/" },
 	{ Name => "David Eisenbud",      Email => "de@msri.org",             HomePage => "http://www.msri.org/~de/" },
 	{ Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/schreyer/" },
-	{ Name => "Michael E. Stillman", Email => "mike@math.cornell.edu",   HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html" }
+	{ Name => "Michael E. Stillman", Email => "mike@math.cornell.edu",   HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html" },
+	{ Name => "Yeongrak Kim",     	 Email => "kim@math.uni-sb.de",      HomePage => "http://sites.google.com/view/yeongrak/"}
 	},
-    PackageImports => {"Truncations"},
+    Keywords => {"Commutative Algebra"},
+    PackageImports => {"Truncations", "SVDComplexes"},
+    PackageExports => {"SVDComplexes"},
     DebuggingMode => false
     )
 
@@ -44,6 +47,7 @@ export {
     "beilinsonContraction",
     "beilinsonBundle",
     "beilinson",
+--    "quotientPresentationComplex",
     "ContractionData",
     "tateData",
     "productOfProjectiveSpaces",
@@ -52,6 +56,9 @@ export {
     "PrunedQuotient",
     "QuotientBundle",
     "SubBundle",
+    "FreeBundle",
+    "MapsBetweenFreeBundles",
+    "DummyQuotientBundle",
     --
 --    "cornerCohomologyTablesOfUa",
     "coarseMultigradedRegularity",
@@ -63,6 +70,7 @@ export {
     "TateData",
     "bgg",
     "directImageComplex",
+    "actionOnDirectImage",
     --the following could all be part of ChainComplexExtras
     "isIsomorphic",
 --    "prependZeroMap",
@@ -77,7 +85,8 @@ export {
 --    "resolutionOfChainComplex",
 --    "chainComplexMap",
     "InitialDegree",
-    "isQuism"
+    "isQuism",
+    "isAction"
     --    Check
     }
 
@@ -672,12 +681,89 @@ tateResolution(Module, List, List) := (M,low, high) ->(
     hi := apply(#regs, i->max(regs_i, high_i+1)); --hi
     N := presentation truncate(hi, M)**S^{hi};-- betti N
     Q := symExt(N,E); --betti Q
-    (res (coker Q,LengthLimit=>(sum hi-sum low)))**E^{hi}[sum hi]
+        
+    (res (coker Q,LengthLimit=>(sum hi-sum low)))**E^{hi}[sum hi-#regs+2]
     )
 
+tateResolution(Matrix, List, List) := (A, low, high) -> (
+    -- if we have a map A : M -> N between two modules, 
+    -- then compute the induced map T(A) : T(M) -> T(N)
+    M := source A;
+    N := target A;
+    (S,E) := (tateData ring M)#Rings;
+    regM := coarseMultigradedRegularity M;
+    regN := coarseMultigradedRegularity N;
 
+    hi := apply (#high, i->max(regM_i, regN_i, high_i+1));
+    linearPresentationM := presentation truncate(hi, M)**S^{hi};
+    linearPresentationN := presentation truncate(hi, N)**S^{hi};
+    truncatedMapMtoN := (truncate(hi, A)**S^{hi});
 
+    QM := symExt(linearPresentationM,E);
+    QN := symExt(linearPresentationN,E);
+    CM := (res (coker QM,LengthLimit=>(sum hi-sum low)));
+    CN := (res (coker QN,LengthLimit=>(sum hi-sum low)));
+   
+    extPos := extend(CN[1], CM[1], sub(matrix truncatedMapMtoN, E));
+    extNeg := dual extend(dual CM[-1], dual CN[-1], transpose sub(matrix truncatedMapMtoN,E));
+    -- shift does not change the sign of map of complexes
+    extAll := map(CN, CM, i->(if i<1 then extNeg#(i-1) else extPos#(i-1)));
 
+    extAll**E^{hi}[sum hi-#regM+2]
+    )
+
+///
+---------------------------------
+restart
+debug needsPackage "TateOnProducts"
+needsPackage "ChainComplexExtras"
+kk=ZZ/101
+n={3}
+(S,E)=productOfProjectiveSpaces n
+A=random(S^{1:-1, 2:1}, S^{3:-2})
+
+M=source A
+N=target A
+TA = tateResolution(A, -n, n);
+TM = tateResolution(M, -n, n);
+betti TM
+TN = tateResolution(N, -n, n);
+betti TN
+
+source TA == TM
+target TA == TN
+isChainComplexMap TA
+
+isIsomorphic (truncate(regularity M, HH^0 (beilinson TM)), truncate(regularity M, M))
+isIsomorphic (truncate(regularity N, HH^0 (beilinson TN)), truncate(regularity N, N))
+
+------------------------------
+restart
+debug needsPackage "TateOnProducts"
+needsPackage "ChainComplexExtras"
+kk=ZZ/101
+n={2,1}
+(S,E)=productOfProjectiveSpaces n
+A=map(S^1, S^{1:{-1,0}}, {{S_0}})
+
+M=source A
+N=target A
+regM=coarseMultigradedRegularity M
+regN=coarseMultigradedRegularity N
+TA = tateResolution(A, -n, n);
+TM = tateResolution(M, -n, n);
+betti TM
+TN = tateResolution(N, -n, n);
+betti TN
+
+source TA == TM
+target TA == TN
+isChainComplexMap TA
+
+isIsomorphic (truncate(regM, HH^0 (beilinson TM)), truncate(regM, M))
+isIsomorphic (truncate(regN, HH^0 (beilinson TN)), truncate(regN, N))    
+------------------------
+///
 
 
 numFactors=method(TypicalValue=>List)
@@ -1367,7 +1453,7 @@ assert((C1.dd)^2 == 0)
 ---------------------------------------
 -- Construction of Beilinson functor --
 ---------------------------------------
-beilinson = method(Options=>{BundleType=>PrunedQuotient}) -- other options: QuotientBundle, SubBundle.
+beilinson = method(Options=>{BundleType=>PrunedQuotient}) -- other options: QuotientBundle, SubBundle, FreeBundle.
 -- beilinson(free E-Module, BundleType=>PrunedQuotient) returns an S-module
 -- beilinson(free E-Matrix, BundleType=>PrunedQuotient) returns a matrix over S
 -- beilinson(free E-ChainComplex, BundleType=>PrunedQuotient) returns a chain complex over S.
@@ -1428,6 +1514,17 @@ koszulmap = (i,sortedB,S) -> (
     else (
         d := first degrees source sortedB#1;
         (sub(diff(transpose sortedB#(i-1), sortedB#i), vars S)) ** S^{(i-2)*d}
+--sub(transpose diff(sortedB#(i-1), transpose sortedB#i), vars S) ** S^{(i-2)*d}
+        )
+    )
+
+koszulmapShiftedByOne = (i,sortedB,S) -> (
+    --cokernel(koszul(i+2,sortedB#1)) ** S^{i}
+    if i == 0 then map(S^0, S^1, 0)
+    else (
+        d := first degrees source sortedB#1;
+        (sub(diff(transpose sortedB#(i-1), sortedB#i), vars S)) ** S^{(i-1)*d}
+--sub(transpose diff(sortedB#(i-1), transpose sortedB#i), vars S) ** S^{(i-1)*d}
         )
     )
 
@@ -1457,14 +1554,31 @@ beilinsonBundle(ZZ, ZZ, Ring) := opts -> (a, whichblock, R) -> (
         (S,E) := tD.Rings;
         (t,v,n,varsList,irrList) := ringData E;
         sortedB := (sortedBases E)#whichblock;
-        if a < 0 or a > n#whichblock then S^0
+	
+	if opts.BundleType === MapsBetweenFreeBundles then (
+	    if a === -1 then (
+		    deg := for i from 0 to t-1 list if i === whichblock then -1 else 0;
+		    map (S^0, S^{deg}, 0)
+		    )	     	 
+		else if a === (n#whichblock)+1 then map (S^1, S^0, 0)
+	--if a === (n#whichblock)+1 then map (S^1, S^0, 0)
+		else if a < -1 or a > (n#whichblock) + 1 then map (S^0, S^0, 0)
+	--else if a < 0 or a > (n#whichblock) + 1 then map (S^0, S^0, 0)
+		else (
+		    koszulmapShiftedByOne (a+1, sortedB, S)
+		    )
+	    )
+    else (
+        if a < -1 or a > (n#whichblock) + 1 then S^0 -- need to fix when opts=SubBundle or FreeBundle
         else (
             if opts.BundleType === PrunedQuotient then (
                 if a === 0 then S^1
                 else if a === n#whichblock then (
-                    deg := for i from 0 to t-1 list if i === whichblock then -1 else 0;
+                    deg = for i from 0 to t-1 list if i === whichblock then -1 else 0;
                     S^{deg}
                     )
+		else if a === (n#whichblock)+1 then S^0
+		else if a === (-1) then S^0
                 else coker koszulmap(a+2, sortedB, S)
                 )
             else if opts.BundleType === QuotientBundle then (
@@ -1472,14 +1586,42 @@ beilinsonBundle(ZZ, ZZ, Ring) := opts -> (a, whichblock, R) -> (
                     deg = for i from 0 to t-1 list if i === whichblock then -1 else 0;
                     S^{deg}
                     )
+		else if a === (n#whichblock)+1 then S^0
+		else if a === (-1) then S^0
+                else coker koszulmap(a+2, sortedB, S)
+                )
+	    else if opts.BundleType === DummyQuotientBundle then (
+		-- contain a dummy presentation data, in particular, when a=-1.
+                if a === n#whichblock then (
+                    deg = for i from 0 to t-1 list if i === whichblock then -1 else 0;
+                    S^{deg}
+                    )
+		else if a === (n#whichblock)+1 then S^0
                 else coker koszulmap(a+2, sortedB, S)
                 )
             else if opts.BundleType === SubBundle then (
-                error "SubBundle not yet implemented";
+--		if a === n#whichblock then (
+--                    deg = for i from 0 to t-1 list if i === whichblock then -1 else 0;
+--                    S^{deg}
+--                    )
+		if a === (n#whichblock)+1 then S^0
+      		else if a === (-1) then S^0
+		else ( 
+                maptemp:=koszulmapShiftedByOne(a+1,sortedB, S);
+--		print tally degrees target maptemp, print tally degrees S^(binomial((n#whichblock)+1, a))
+--		assert (target maptemp == S^(binomial((n#whichblock) +1, a)));
+		image koszulmapShiftedByOne(a+1, sortedB, S)
+		)
+		
                 )
-            else error "expected BundleType to be one of PrunedQuotient (default) or QuotientBundle"
+	    else if opts.BundleType === FreeBundle then (
+		if a === (-1) then S^0
+		else S^(binomial((n#whichblock) + 1, a))
+		)
+            else error "expected BundleType to be one of PrunedQuotient (default) or QuotientBundle or FreeBundle"
             -- note: once SubBundle is implemented, change this error message.
             )
+	)
         );
     tD.BeilinsonBundles#(a,whichblock,opts.BundleType)
     )
@@ -1490,13 +1632,32 @@ beilinsonBundle(List, Ring) := opts -> (a, R) -> (
     if not tD.BeilinsonBundles#?(a, opts.BundleType) then tD.BeilinsonBundles#(a, opts.BundleType) = (
         (S,E) := tD.Rings;
         (t,v,n,varsList,irrList) := ringData E;
-        result := beilinsonBundle(a#0, 0, S, opts);
+
+    	if opts.BundleType === MapsBetweenFreeBundles then (
+	    b := for i from 0 to t-1 list sum (0..i-1, j->a#j);
+	    result := beilinsonBundle(a#0, 0, S, opts);
+            for i from 1 to t-1 do result = result ** beilinsonBundle(a#i, i, S, opts) * (-1)^(b#i);
+	    result
+        )
+    	else if opts.BundleType === SubBundle then (
+	       productOfKoszulMaps := id_(S^1);
+	       for i from 0 to t-1 do (
+	       if beilinsonBundle(a#i,i,S,opts) == S^0 then return S^0
+	       else (
+		   b = sum (0..i-1, j->a#j);
+		   productOfKoszulMaps = productOfKoszulMaps ** koszulmapShiftedByOne((a#i)+1,(sortedBases E)#i, S) * (-1)^b;
+		   )
+	   );
+	   image productOfKoszulMaps
+	)
+    	else (
+	result = beilinsonBundle(a#0, 0, S, opts);
         for i from 1 to t-1 do result = result ** beilinsonBundle(a#i, i, S, opts);
         result
+	)
         );
     tD.BeilinsonBundles#(a, opts.BundleType)
     )
-
 ---Used in some examples in the test section. Probably does
 --not need to be exported.
 contractionData = method(Options => options beilinson)
@@ -1529,7 +1690,7 @@ contractionData(List, List, Ring) := opts -> (rowdeg, coldeg, E1) -> (
                     );
                 (tensor mc, tensor mr, tensor changemat)
                 )
-            else if opts.BundleType === QuotientBundle then (
+            else if opts.BundleType === QuotientBundle or opts.BundleType === DummyQuotientBundle then (
                 mc = for i from 0 to #rowdeg-1 list
                     (sortedBases E)#i#(coldeg#i+1);
                 mr = for i from 0 to #rowdeg-1 list (
@@ -1539,22 +1700,45 @@ contractionData(List, List, Ring) := opts -> (rowdeg, coldeg, E1) -> (
                     );
                 (tensor mc, tensor mr)
                 )
+	    else if opts.BundleType === FreeBundle then (
+		mc = for i from 0 to #rowdeg-1 list
+                    (sortedBases E)#i#(coldeg#i);
+                mr = for i from 0 to #rowdeg-1 list (
+                    -- The following is created in this funny way, because transpose of a matrix over
+                    -- the exterior power introduces signs that we don't want here.
+                    matrix transpose entries (sortedBases E)#i#(rowdeg#i)
+                    );
+                (tensor mc, tensor mr)
+		)
             else if opts.BundleType === SubBundle then (
-                error "not done yet";
+		-- CHECK later; maybe we do not need any information at degree a_i+1 
+                mc = for i from 0 to #rowdeg-1 list
+                    (sortedBases E)#i#(coldeg#i);
+                mr = for i from 0 to #rowdeg-1 list (
+                    -- The following is created in this funny way, because transpose of a matrix over
+                    -- the exterior power introduces signs that we don't want here.
+                    matrix transpose entries (sortedBases E)#i#(rowdeg#i)
+                    );
+                (tensor mc, tensor mr)
                 )
             else error "..."
             );
     tD.ContractionData#(rowdeg, coldeg, opts.BundleType)
     )
 
+
+
 numgensU = method(Options => options beilinson)
 numgensU(List, Ring) := opts -> (deg, E) -> (
     (t,v,n,varsList,irrList) := ringData E;
     if opts.BundleType === PrunedQuotient then (
       product for i from 0 to #deg-1 list if deg#i == 0 or deg#i == n#i then 1 else binomial(n#i + 1, deg#i+1)
-    ) else if opts.BundleType === QuotientBundle then (
+    ) else if opts.BundleType === QuotientBundle or opts.BundleType === DummyQuotientBundle then (
       product for i from 0 to #deg-1 list if deg#i == n#i then 1 else binomial(n#i + 1, deg#i+1)
+    ) else if opts.BundleType === FreeBundle then (
+      product for i from 0 to #deg-1 list binomial((n#i) + 1, deg#i)  
     ) else if opts.BundleType === SubBundle then (
+      product for i from 0 to #deg-1 list binomial((n#i) + 1, deg#i)
     ) else
       error("BundleType "|toString opts.BundleType|" unknown")
     )
@@ -1586,60 +1770,120 @@ beilinsonContraction(RingElement, List, List) := opts -> (e, rowdeg, coldeg) -> 
         else
             changemat * signchange * substitute(contract(diff(e, mc), mr), S)
         )
-    else if opts.BundleType === QuotientBundle then (
+    else if opts.BundleType === QuotientBundle or opts.BundleType === DummyQuotientBundle then (
         (mc, mr) = contractionData(rowdeg, coldeg, ring e, opts);
         if e == 0 then
             map(S^(numgensU(rowdeg,E,opts)), S^(numgensU(coldeg,E,opts)), 0)
         else
             substitute(contract(diff(e, mc), mr), S)
         )
+    else if opts.BundleType === FreeBundle then (
+       	(mc, mr) = contractionData(rowdeg, coldeg, ring e, opts);
+        if e == 0 then
+            map(S^(numgensU(rowdeg,E,opts)), S^(numgensU(coldeg,E,opts)), 0)
+        else
+	 --(
+	      --print substitute(contract(diff(e, mc), mr), S);
+--	   print endl;   
+--	   print substitute(contract(mc,e*mr),S));
+	  substitute(contract(diff(e, mc), mr), S) 
+        )
     else if opts.BundleType === SubBundle then (
-        error "not done yet"
+        -- implemented exactly same as Free bundle; CHECK later on extreme degrees
+	(mc, mr) = contractionData(rowdeg, coldeg, ring e, opts);
+        if e == 0 then
+            map(S^(numgensU(rowdeg,E,opts)), S^(numgensU(coldeg,E,opts)), 0)
+        else
+            substitute(contract(diff(e, mc), mr), S)
         )
     else error "what?"
     )
 
-inBeilinsonWindow = method()
+inBeilinsonWindow = method(Options => options beilinson)
 -- inBeilinsonWindow(deg, E)
 --   returns a boolean value.
 --   returns (beilinson(E^{-deg}) != 0),
 --    i.e. whether the 'deg' values are 'in range'.
-inBeilinsonWindow(List, Ring) := (deg, E) -> (
+inBeilinsonWindow(List, Ring) := opts -> (deg, E) -> (
     (t,v,n,varsList,irrList) := ringData E;
+    if opts.BundleType === PrunedQuotient or opts.BundleType === QuotientBundle then (
     for i from 0 to #deg-1 do (
         if deg#i < 0 or deg#i > n#i
         then return false;
         );
     true
     )
+    else if opts.BundleType === FreeBundle then (
+	for i from 0 to #deg-1 do (
+            if deg#i < 0 or deg#i > (n#i)+1
+            then return false;
+        );
+    	true
+    )
+    else if opts.BundleType === SubBundle  then (
+	for i from 0 to #deg-1 do (
+            if deg#i < 0 or deg#i > (n#i)
+            then return false;
+        );
+    	true
+    )    
+    else if opts.BundleType === MapsBetweenFreeBundles then (
+	for i from 0 to #deg-1 do (
+	    if deg#i < (-1) or deg#i > (n#i)+1
+	    then return false;
+	    );
+	true
+	)
+    else if opts.BundleType === DummyQuotientBundle then(
+	for i from 0 to #deg-1 do (
+        if deg#i < (-1) or deg#i > n#i
+        then return false;
+        );
+    true
+	)
+)
 
 beilinson Module := Module => opts -> F -> (
     -- F is a free E-module, and the result is the direct sum of
     --  the beilinson bundles of each rank 1 summand.
     if not isFreeModule F then error "expected a free module";
-    if not member(opts#BundleType, set{PrunedQuotient, QuotientBundle, SubBundle})
-    then error "expected BundleType to be one of PrunedQuotient, QuotientBundle, SubBundle";
+    if not member(opts#BundleType, set{PrunedQuotient, QuotientBundle, SubBundle, FreeBundle, MapsBetweenFreeBundles, DummyQuotientBundle})
+    then error "expected BundleType to be one of PrunedQuotient, QuotientBundle, SubBundle, FreeBundle, MapsBetweenFreeBundles";
     E1 := ring F;
     tD := tateData E1;
     (S,E) := tD.Rings;
     degs := degrees F;
-    pos := positions(degs, a -> inBeilinsonWindow(a,E));
-    if #pos == 0 then S^0 else directSum for a in pos list beilinsonBundle(degs#a,S,opts)
+    pos := positions(degs, a -> inBeilinsonWindow(a,E,opts));
+    if #pos == 0 then (
+	if opts.BundleType === MapsBetweenFreeBundles then map(S^0,S^0,0)
+	else S^0
     )
+    else (
+    directSum for a in pos list beilinsonBundle(degs#a,S,opts)
+    )
+)
 
 beilinson Matrix := Matrix => opts -> o -> (
-    if not member(opts#BundleType, set{PrunedQuotient, QuotientBundle, SubBundle})
-    then error "expected BundleType to be one of PrunedQuotient, QuotientBundle, SubBundle";
+    if not member(opts#BundleType, set{PrunedQuotient, QuotientBundle, SubBundle, FreeBundle,MapsBetweenFreeBundles, DummyQuotientBundle})
+    then error "expected BundleType to be one of PrunedQuotient, QuotientBundle, SubBundle, FreeBundle, MapsBetweenFreeBundles";
     E1 := ring o;
     tD := tateData E1;
     (S,E) := tD.Rings;
     coldegs := degrees source o;
     rowdegs := degrees target o;
-    colpos := positions(coldegs, a -> inBeilinsonWindow(a,E));
-    rowpos := positions(rowdegs, a -> inBeilinsonWindow(a,E));
-    src := if #colpos == 0 then S^0 else directSum for a in colpos list beilinsonBundle(coldegs#a,S,opts);
-    tar := if #rowpos == 0 then S^0 else directSum for a in rowpos list beilinsonBundle(rowdegs#a,S,opts);
+    colpos := positions(coldegs, a -> inBeilinsonWindow(a,E,opts));
+    rowpos := positions(rowdegs, a -> inBeilinsonWindow(a,E,opts));
+    -- Only for the 'MapsBetweenFreeBundles' option
+    if opts.BundleType === MapsBetweenFreeBundles then (
+    	src := if #colpos == 0 then map(S^0,S^0,0) else directSum for a in colpos list beilinsonBundle(coldegs#a,S,opts);
+	tar := if #rowpos == 0 then map(S^0,S^0,0) else directSum for a in rowpos list beilinsonBundle(rowdegs#a,S,opts);
+	return (src, tar)
+    );
+    
+    src = if #colpos == 0 then S^0 else directSum for a in colpos list beilinsonBundle(coldegs#a,S,opts);
+    tar = if #rowpos == 0 then S^0 else directSum for a in rowpos list beilinsonBundle(rowdegs#a,S,opts);
     if #colpos == 0 or #rowpos == 0 then return map(tar, src, 0);
+
     rowdegs = rowdegs_rowpos;
     coldegs = coldegs_colpos;
     elems := entries submatrix(o, rowpos, colpos);
@@ -1649,14 +1893,72 @@ beilinson Matrix := Matrix => opts -> o -> (
             cdeg := coldegs#c;
             beilinsonContraction(elems#r#c, rdeg, cdeg,opts)
           );
-    map(tar,src,mats)
+    if opts.BundleType === SubBundle then(
+	-- the method 'map' does not work in general; 
+	-- the number of generators of 'tar', 'src' need not to fit with the size of 'mats'.
+	-- 'inducedMap' method works in the case.
+	-- however, seems to be it returns a matrix on their minimal presentations.
+	-- to observe the original data 'mats', use the option 'FreeBundle'
+	inducedMap(tar, src, mats) 
+	)
+    else(
+    map(tar,src,mats) -- it only works when the size of matrix fits with the number of generators of src, tar
     )
+)
 
 beilinson ChainComplex := opts -> (BT) -> (
     -- BT should be a complex over E = exterior algebra
     data := chainComplexData BT;
+    if opts.BundleType === MapsBetweenFreeBundles then (
+	-- Do we also need a sign convention for them?
+	tD := tateData ring BT;
+    	(S,E) := tD.Rings;
+	ones := toList((numgens degreesRing S):1);
+	Csrc:=(beilinson(BT**E^{-ones}, BundleType=>FreeBundle))**S^{-ones};
+	--Csrc:=quotientPresentationComplex(BT);
+	Ctar:=beilinson(BT, BundleType=>FreeBundle);
+	
+	mapList:=data#2/(m->(beilinson(m,opts)));
+	tempList:={};
+	apply(mapList,i->(tempList=tempList|{i_1}));
+	tempList=tempList|{(mapList_(#mapList-1))_0};
+	
+	f:= m->tempList_(m-data#0);
+	
+	map(Ctar,Csrc,f)
+	-- Sometimes Ctar, Csrc may have different lengths (at boundary multidegrees).
+	-- However, in any cases, we do not have to care since such maps are always 0;
+	-- and the default map is 0 unless we assign.
+	)
+    else (
     removeZeroTrailingTerms chainComplexFromData{data#0, data#1,data#2/(m -> (beilinson(m, opts)))}
     )
+    )
+
+-- quotientPresentationComplex = method()
+-- This method extracts the maps on twisted free modules of multidegree {-1,...,-1}.
+-- The beilinson complex in 'QuotientBundle' option is a quotient of this free complex.
+-- maybe it is not a natural answer; take 'contractionSequence' might be better.
+-* quotientPresentationComplex ChainComplex := (BT) -> (
+    BTQuot := beilinson (BT, BundleType=>QuotientBundle); -- already zero trailing terms are removed
+    tmin:=(min BTQuot);
+    tmax:=(max BTQuot);
+    BTshifted:=BTQuot[tmin];
+    C:=chainComplex(apply(1..tmax-tmin, i->map(target presentation target BTshifted.dd_(i), target presentation source BTshifted.dd_(i),BTshifted.dd_(i))));
+    C[-tmin]
+    )
+*-
+
+-*embeddingToFree ChainComplex := (BT) -> (
+    -- return a list of embedding maps from a BT complex to a free complex
+    data := chainComplexData BT;
+    BTquotient := chainComplexFromData{data#0, data#1,data#2/(m -> (beilinson(m, BundleType=>QuotientBundle)))};
+    BTfree := removeZeroTrailingTerms chainComplexFromData{data#0, data#1,data#2/(m -> (beilinson(m, BundleType=>FreeBundle)))};
+    
+    FreeComplexdata := chainComplexData BTfree;
+    apply(toList(data#0, data#1), i-> 
+    )
+*-
 
 inContractionWindow = method()
 inContractionWindow(List, Ring) := (deg, E) -> (
@@ -1758,12 +2060,23 @@ contractionSequence ChainComplex := (T) -> (
     D := contractionFunctor T1;
     (hashTable Cdegrees, hashTable Ddegrees, C, D)
     )
+
+
 ///
 -- end
 restart
 debug needsPackage "TateOnProducts"
-  n = {2,1}
+n={1}
+n = {2,1}
 (S,E) = productOfProjectiveSpaces n
+
+needsPackage "ChainComplexExtras"
+C=chainComplex (matrix {{E_0}})
+beilinson(C)
+(beilinson(C, BundleType=>DummyQuotientBundle)).dd_1
+(beilinson(C, BundleType=>FreeBundle)).dd_1
+(beilinson(C, BundleType=>MapsBetweenFreeBundles))
+
   contractionFunctor(E^{{-1,-1}})
   contractionFunctor(E^{{1,1}})
   contractionFunctor(E^{{3,1}})
@@ -1774,7 +2087,8 @@ debug needsPackage "TateOnProducts"
   cohomologyMatrix(T1,-3*n,3*n)
   T2 = res(coker lowerCorner(T1, {2,2}), LengthLimit=>14)[4]
   cohomologyMatrix(T2,-3*n,3*n)
-  contractionWindow T2
+  betti contractionWindow (T2**E^{{0,0}})
+  betti beilinsonWindow (T2**E^{{-1,-1}})
   cT = contractionFunctor T2
   cT.dd^2
   prune HH cT
@@ -1788,11 +2102,12 @@ debug needsPackage "TateOnProducts"
   prune HH cT4
   cT4.dd^2 == 0
 
-  -- now we compute the chain complex map beilinson T2 --> contractionFunctor T2
-  BT2 = beilinson(T2, BundleType=>QuotientBundle)
+
+
+  
   tallyDegrees beilinsonWindow T2
   for i from min BT2 to max BT2 list i => numgens BT2_i
-  contractionFunctor (T2 ** E^{{-1,-1}})
+tallyDegrees  contractionFunctor (T2 ** E^{{-1,-1}})
   tallyDegrees contractionWindow (T2 ** E^{{-1,-1}})
   --TODO: want the map of block Koszul matrices.
 
@@ -2139,7 +2454,8 @@ projectionMapOnEs(Module,List) := (M,I)->(
     if not all(I,i->0 <= i and i <= t-1) then error "expected a sublist of {0,..,t-1}";
 --    J := select(toList(0..t-1),j-> not member(j,I));
     nI := apply(I,i-> v_i-1);
-    (SI,EI) := productOfProjectiveSpaces nI;
+    kk := coefficientRing S;
+    (SI,EI) := productOfProjectiveSpaces (nI,CoefficientField=>kk);
     a:= null;
     phi1:= matrix {flatten apply(t,i->
 	if member(i,I) then ( 
@@ -2163,8 +2479,8 @@ projectionMapOnEs(M,I)
 
 ///    
 
-directImageComplex=method()
-directImageComplex(Module,List) := (M,I) -> (
+directImageComplex=method(Options => options beilinson)
+directImageComplex(Module,List) := opts -> (M,I) -> (
     -- Input: M module representing a sheaf sF on a product of t projective space
     --        I subset of {0,..,t-1}
     -- Output: the complex Rpi_* sF in D^b(PP^I)
@@ -2188,7 +2504,7 @@ directImageComplex(Module,List) := (M,I) -> (
     W1.ring = E1;
     apply(toList(mi..ma),i-> W1_i = E1^(-apply(degrees sTW_i,d->d_I))); 
     apply(toList(mi+1..ma),i->W1.dd_i = map(W1_(i-1),W1_i,phi(sTW.dd_i)));
-    beilinson W1   
+    beilinson (W1, opts)
     )
 
 
@@ -2196,7 +2512,7 @@ directImageComplex(Module,List) := (M,I) -> (
 restart
 loadPackage("TateOnProducts",Reload=>true)
 debug TateOnProducts
-(S,E)=productOfProjectiveSpaces{1,2}
+(S,E)=productOfProjectiveSpaces({1,2},CoefficientField=>kk)
 M=(beilinson E^{{-1,-1}})**S^{{-1,-1}}
 I={1}
 RpiM=directImageComplex(M,I)
@@ -2207,7 +2523,7 @@ prune HH^2 RpiM
 ///
 
 
-directImageComplex(Ideal,Module,Matrix) := (I,M,phi) -> (
+directImageComplex(Ideal,Module,Matrix) := opts-> (I,M,phi) -> (
     -- Input: I, the ideal of a projective scheme X in P^n,
     --        M, a module representing a coherent sheaf on X
     --        phi, a kxm matrix representing a rational map or morphism
@@ -2235,30 +2551,1012 @@ directImageComplex(Ideal,Module,Matrix) := (I,M,phi) -> (
     y := (vars S)_{n+1..n+m+1};    
     graph := trim(minors(2,y||phi1)+I1);
     Mgraph := coker(gens graph**id_(target gM1)|gM1);
-    RphiM := directImageComplex(Mgraph,{1});
-    RphiM)
+    RphiM := directImageComplex(Mgraph,{1},opts);
+    RphiM
+    )
+
+-*
+-- uses product of projective spaces, so contains a choice of basis issue
+-- so we will take an easier way
+
+directImageAction=method()
+directImageAction(Ideal, Module) :=  (I,M)->(
+    -- Input : I, the ideal of a projective variety Y in P^n,
+    --	       M, a module on Y
+    -- Y does not intersect with the linear space (x_0=...=x_c=0).
     
+    -- Output : a list of maps between chain complex RpM -> RpM (1) induced by the multiplication by x_0, ..., x_n
+    -- Hope that they define right actions to give an O_Y-module structure.
+        
+    R := ring I;
+    if I != saturate I then error "expected a saturated ideal I for Proj(R/I)";
+    J := annihilator M;
+    if J+I != J then error "expected a module representing a sheaf on Y=Proj(R/I)";
+
+    n := numgens R-1; -- the dimension of the ambient space    
+    d := dim I-1; -- the dimension of Y
+    kk := coefficientRing R;
+    (S,E) := productOfProjectiveSpaces({n,d}, CoefficientField=>kk); 
+  
+    -- Need to define Y -> P^d the linear projection, consist of copies of rational maps
+    -- projCenter := random(R^{(codim I + 1):1}, R^1); -- pick a general linear subspace of dim = codim Y - 1
+    -- assert (dim saturate (I+(ideal projCenter)) == -1); -- check so that Y and the proj. center do not intersect
+    
+    --time directImageComplex(I,M,transpose projCenter)
+
+    -- or equivalently; use "NoetherNormalization" package;
+
+
+--    time directImageComplex(I,M,((noetherNormalization I)_0).matrix)
+        
+    -- Both ideas are too stupid; mostly it takes too much time in practice.
+    -- Moreover, it gets harder to observe an action;
+    -- Take a linear projection by elimination so that a number of actions become diagonal.
+
+    -- Linear projection induced by (x_0, ..., x_n) |-> (x_0, ..., x_d)
+    projCenter := transpose matrix apply(dim I, i->{R_i});
+    if dim saturate (I + ideal projCenter) != -1 then error "expected Y=Proj(R/I) should not intersect with the linear space x_0=...=x_(codim Y)=0";
+    -- shuffling I by a linear automorphism, and take a projection seems to be much faster.
+
+    -- computing the direct image complex onto P^d
+    -- maybe we can make it simpler since there is a similar code in the method "directImageComplex" 
+    p1 := map(S,R,(vars S)_{0..n});
+    gI := gens I; 
+    dgI := apply(degrees source gI,d->{-d_0,0});   
+    I1 := ideal map(S^1,S^dgI,p1(gI));    
+    gM := presentation M;    
+    dtgM := apply(degrees target gM,d->{-d_0,0});   
+    dsgM := apply(degrees source gM,d->{-d_0,0});   
+    gM1 := map(S^dtgM,S^dsgM,p1(gM));    
+    dtproj :=  apply(degrees target projCenter,d->{-d_0,0});   
+    dsproj :=  apply(degrees source projCenter,d->{-d_0,0});    
+    proj1 := map(S^dtproj,S^dsproj,p1(projCenter));    
+    y := (vars S)_{n+1..n+d+1};    
+    graph := trim(minors(2,y||proj1)+I1);
+    Mgraph := coker(gens graph**id_(target gM1)|gM1);
+
+    projOnEs:=projectionMapOnEs(Mgraph,{1});
+    E1:=target projOnEs; 
+        
+    -- method to deal a sign issue
+    signChange:= unsignedMap -> (
+	 r := rank source unsignedMap;
+	 signedMap := matrix apply(entries unsignedMap, ent->(
+		 for j from 0 to r-1 list(
+		     	 sign:=if ent_j==0 then 1 else (-1)^((degree ent_j)_0);
+			 sign*ent_j
+		     )
+		 )
+	 );
+     signedMap);
+
+
+    -- if we take a range from -{n+1,d+1} to {n+1,d+1}, then sometimes it makes an error
+    -- take a bigger range to assure that both T(M) and T(M(1,0)) behaves nicely
+    T:=tateResolution(Mgraph,-{n+2,d+2},{n+2,d+2});
+    sT:=removeZeroTrailingTerms strand(T,toList(2:0),{0});
+    mi := min sT; ma:=max sT;
+    W := new ChainComplex;
+    W.ring = E1;
+    apply(toList(mi..ma),i-> W_i = E1^(-apply(degrees sT_i,d->d_{1})));
+    apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,signChange projOnEs sT.dd_i));
+
+    -- original direct image complex, as a quotient of sums of S(-1)
+    -- presented by 'DummyQuotient', which assigns U^(-1) as a quotient of \wedge^0 S(-1)
+    RpM:=beilinson(W,BundleType=>DummyQuotientBundle);
+    RpMfree:=beilinson(W,BundleType=>FreeBundle);
+    RpMbetweenFree:=beilinson(W,BundleType=>MapsBetweenFreeBundles);
+
+    -- reading off all the multiplication maps by coordinate functions on E-sides    
+    -- collect the maps in T which are linear in 1st variables
+    multMapOnEs:=i->(
+    	srcDegs := positions(degrees T_i, j->member(j, degrees sT_i));
+	tarDegs := positions(degrees T_(i-1), j->member(j+{1,-1}, degrees sT_(i-1)));
+    	(T.dd_i)_srcDegs^tarDegs
+    );
+
+    -- compute the action on the projected S-side
+    multMap:=(k,i)->(
+	tar:= E1^(apply(degrees target multMapOnEs(i),degs->-degs_1));
+	src:= E1^(apply(degrees source multMapOnEs(i),degs->-degs_1));
+	beilinson(map(tar,src,projOnEs contract(E_k,multMapOnEs(i))),BundleType=>FreeBundle)
+	); 
+     
+     T10 := (T**E^{{-1,0}})[-1]; -- shift and twist formula
+     sT10 := removeZeroTrailingTerms strand(T10,toList(2:0),{0});
+      
+     mi = min sT10; ma=max sT10;
+     W10 := new ChainComplex;
+     W10.ring = E1;
+     apply(toList(mi..ma),i-> W10_i = E1^(-apply(degrees sT10_i,d->d_{1})));
+     apply(toList(mi+1..ma),i->W10.dd_i = map(W10_(i-1),W10_i,projOnEs(sT10.dd_i)));
+     
+     -- compute a quasi-isomorphism from the universal exact sequence
+     (RpM10, B, B'', mapFromB, qIs) := inverseQIsoFromTate(W10);
+          
+     firstMap := t-> (
+	functionDefiningFirstMap := i-> multMap(t,i);
+	map(B,RpMfree, functionDefiningFirstMap)
+	);
+    
+    retVal := for t from 0 to (# gens R - 1) list (
+	actionList := i-> (
+    	    mapFromB_i * (firstMap(t))_i * (map(RpMfree,RpM,RpMbetweenFree))_i
+	);
+    	   map(B''[1],RpM,actionList)
+	);
+    
+    retVal
+)
+*-
+
+inverseQIsoFromTate=method()
+inverseQIsoFromTate(ChainComplex) :=  (W)->(
+    -- Input: W, a Tate resolution on a single projective space
+    -- W should be big enough so that the corresponding S-complex is exact
+    
+    -- Output: (B',B,B'',mapFromB,qIs)
+    -- B', the beilinson complex U(W), implemented as 'DummyQuotientBundle' option
+    -- B, the split exact free complex, together with a natural inclusion from B'
+    -- B'', the cokernel
+
+    -- Note that the connecting homomorphism induces a quasi-isomorphism B''->B'[1].
+    -- Since B is split exact, we may compute its inverse explicitly.
+    
+    -- mapFromB, the natural map from a pseudoinverse of B to B''[-1]
+    -- qIs, the inverse quasi-isomorphism B'->B''[-1], as a map of chain complexes
+
+    -- maybe it is better to exclude exceptions    
+    -- can we plug in the option on BundleType?
+    
+    B':= beilinson(W,BundleType=>DummyQuotientBundle);
+    B := beilinson(W,BundleType=>FreeBundle); -- this must be exact
+    assert(isExact B);
+    -- embedding of B' into B
+    phi := beilinson(W,BundleType=>MapsBetweenFreeBundles);
+    
+    -- quotient of B
+    E := ring W;
+    R := ring B';
+    kk := coefficientRing R;
+    B'' := beilinson (W**E^{1}, BundleType=>DummyQuotientBundle) ** R^{1};
+--    assert(B'' == coker phi);
+    psi := map(B'', B, id_B);
+    
+    -- computing pseudoinverse
+    mapsB := for i from (min B)+1 to max B list sub(B.dd_i,kk); -- reduction to the vector space maps
+    tempB := chainComplexFromData{min B, max B, mapsB};
+    Binv:= (pseudoInverse tempB)**R; -- takes too much time in several cases
+--    assert(arePseudoInverses(tempB, Binv));
+
+--    splittingMapsFromB:= for i from min B to max B list psi_(i+1)*Binv.dd_(-i);
+--    mapFromB:=map(B''[1],B,i->splittingMapsFromB_(i-min B));
+    
+    splittingMapsFromB':= for i from min B to max B list psi_(i+1)*Binv.dd_(-i)*phi_i;
+    qIs:= map(B''[1],B',i->splittingMapsFromB'_(i-min B));
+    
+--    (B',B,B'',mapFromB,qIs)
+    qIs
+)
+
+
+--
+tateOfDirectImage=method()
+tateOfDirectImage(Ideal, Module) := (I,M)->(
+    -- Input: I, the ideal of a projective variety Y in P^n of dimension d
+    -- 	      M, a finitely generated module on Y    
+    -- Output: T, a part of Tate resolution of M on Y \subseteq P^n.
+    --         I, the ideal of Y
+    
+    R := ring I;
+    if I != saturate I then error "expected a saturated ideal I for Proj(R/I)";
+    J := annihilator M;
+    if J+I != J then error "expected a module corresponding to a sheaf on Y=Proj(R/I)";
+
+    n := numgens R-1; -- the dimension of the ambient space    
+    kk := coefficientRing R;
+    -- provide TateData on R
+    (S,E) := productOfProjectiveSpaces({n}, CoefficientField=>kk);
+    mapRtoS := map(S,R,vars S);
+    MS := mapRtoS**M;
+
+    -- I am not sure at the moment that the following range is too wide (e.g. -d-1..d+1 makes sense?)
+    T := tateResolution(MS, -{n+1},{n+1});
+    
+    (I,T)
+)
+tateOfDirectImage(Ideal,Module,Matrix) := (I,M,phi) -> (
+    -- Input: I, the ideal of a projective scheme X in P^n,
+    --        M, a module representing a coherent sheaf on X
+    --        phi, a kxm matrix representing a rational map or morphism
+    --             f: X -> P^m
+    -- Output: T, a part of Tate resolution of the direct image of M on Y \subseteq P^m
+    -- 	       IY, ideal of Y of the image of X under f.
+    R := ring I;
+    if I != saturate I then error "expected a saturated ideal I for Proj(R/I)";
+    J := annihilator M;  
+    if J+I != J then error "expected a module representing a sheaf on X=Proj(R/I)";
+    if minors(2,phi)+I != I then error" expected phi to define a rational map on X=Proj(R/I)";
+    m := rank source phi-1;
+    n := numgens R-1;
+    kk :=coefficientRing R;
+    (S,E) := productOfProjectiveSpaces({n,m},CoefficientField=>kk);    
+    p1 := map(S,R,(vars S)_{0..n});
+    gI := gens I; 
+    dgI := apply(degrees source gI,d->{-d_0,0});   
+    I1 := ideal map(S^1,S^dgI,p1(gI));    
+    gM := presentation M;    
+    dtgM := apply(degrees target gM,d->{-d_0,0});   
+    dsgM := apply(degrees source gM,d->{-d_0,0});   
+    gM1 := map(S^dtgM,S^dsgM,p1(gM));    
+    dtphi :=  apply(degrees target phi,d->{-d_0,0});   
+    dsphi :=  apply(degrees source phi,d->{-d_0,0});    
+    phi1 := map(S^dtphi,S^dsphi,p1(phi));    
+    y := (vars S)_{n+1..n+m+1};    
+    graph := trim(minors(2,y||phi1)+I1);
+    Mgraph := coker(gens graph**id_(target gM1)|gM1);
+
+    psi := projectionMapOnEs(Mgraph,{1});
+    E1 :=target psi;
+    S1 :=((tateData E1).Rings)#0;
+    v := apply(unique degrees source vars S, d->
+	#select(degrees source vars S,e->e==d));
+    high:= v;low:=-high;
+    T:=tateResolution(Mgraph,low,high);
+    sT:=removeZeroTrailingTerms strand(T,toList(2:0),{0}); 
+--    sTW := removeZeroTrailingTerms beilinsonWindow sT;
+    --print betti sTW;
+    mi := min sT; ma:=max sT;
+    W1 := new ChainComplex;
+    W1.ring = E1;
+    apply(toList(mi..ma),i-> W1_i = E1^(-apply(degrees sT_i,d->d_1))); 
+    apply(toList(mi+1..ma),i->W1.dd_i = map(W1_(i-1),W1_i,psi(sT.dd_i)));
+
+    IY:=saturate intersect apply(rank target phi, i->ker map(R, S1, phi^{i}));
+    
+    (IY,W1)
+)
 ///
+restart
+debug needsPackage "TateOnProducts"
+kk=ZZ/101
+R=kk[x_0..x_4]
+m=matrix{{x_0,x_1,x_3},{x_1,x_2,x_4}}
+J=minors(2,m)
+dim J, degree J
+s=2, d=-2
+N=symmetricPower(s, coker m)**R^{d}
+betti res N
+ann N == J
+phi=transpose m
+RphiN=time directImageComplex(J,N,phi);
+ARphiN=time actionOnDirectImage(J,N,phi);
+keys ARphiN
+
+S=kk[y_0..y_1];
+pphi=map(R,S,phi^{0})
+I=ker pphi
+isAction(I, apply(dim S, i->prune HH^1 ARphiN#1#i))
+
+R1=prune HH^1 source ARphiN#1#0
+isIsomorphic(truncate(2,R1),truncate(2,dual dual R1))
+dual dual R1
+----------------------
+s=3,d=1
+N=symmetricPower(s, coker m)**R^{d}
+
+RphiN=time directImageComplex(J,N,phi);
+
+netList apply(toList(min RphiN.. max RphiN),i->
+          {-i, saturate annihilator HH^(-i) RphiN,betti res HH^(-i) RphiN})
+
+R0=prune HH^0 RphiN
+dim R0, degree R0
+betti (sR0Dual = syz transpose presentation R0)
+saturate annihilator coker transpose sR0Dual
+dual source sR0Dual 
+
+ARphiN=time actionOnDirectImage(J,N,phi);
+keys ARphiN
+
+isAction(I, apply(dim S, i->prune HH^0 ARphiN#0#i))
+
+R0= prune HH^0 source ARphiN#0#0
+isIsomorphic(truncate(2,R0),truncate(2,dual dual R0))
+dual dual R0
+///
+
+actionOnDirectImage=method()
+actionOnDirectImage(Ideal,ChainComplex) := (I,T) -> (
+    -- Input : T, the Tate resolution of a sheaf, or a complex on a projective variety Y in P^n of dim. d
+    --         I, the ideal of Y (annihilating the sheaves appear in HH beilinson T)
+    -- Output : retTable, a Hashtable whose keys are the cohomology indices i where R^i survives;
+    -- 	       	    	  and the list of induced maps of the multiplication by coordinates y_0, ..., y_n
+    --	      	      	  on each strand representing R^i on P^d (after taking a linear projection from Y to P^d).
+    
+    -- WANT : to check whether T is a part of a Tate resolution or not
+    
+    (S,E):=(tateData ring T).Rings;
+    R:=ring I;
+    n:=numgens S-1;
+    kk:=coefficientRing S;
+    d:=dim I-1;
+    
+    -- Noether normalization by a linear projection from some coordinates
+    listOfProjIndices := rsort subsets(toList(0..n),dim I);
+
+     projErrorCounter:=0; projIndex:=listOfProjIndices_0;
+     apply(listOfProjIndices, i->(
+	     monIdeal:=ideal flatten apply(i, j->{R_j});
+	     if dim saturate (I + monIdeal) == -1 then (projIndex=i; projErrorCounter=1; break;)
+	     )
+	 );
+     if projErrorCounter==0 then error "expected Y=Proj(R/I) should not intersect with some coordinate plane of codimension (dim Y + 1)";
+
+     projIdeal := flatten apply(projIndex, j->{S_j});
+     << "We take a finite projection from P^n to P^d as " << projIdeal;
+     
+     (S1,E1) := productOfProjectiveSpaces ({d}, CoefficientField=>kk);
+     
+     tempCounter:=0;
+     tempList:={};
+     for i from 0 to n do(
+	 if member(i, projIndex) then (tempList=tempList|{E1_tempCounter}; tempCounter=tempCounter+1;) else tempList=tempList|{0};
+	 );
+     projOnE := map(E1, E, tempList); -- quotient map E -> E1 induced by a linear projection
+     ---------
+    
+     -- construct a complex representing R(pi \circ f)
+     mi := min T; ma:=max T;
+     W := new ChainComplex;
+     W.ring = E1;
+     apply(toList(mi..ma),i-> W_i = E1^(-apply(degrees T_i,d->d_{0})));
+     apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,projOnE T.dd_i));
+
+     BW := beilinson (W, BundleType=>DummyQuotientBundle);
+     regW:=max apply(min HH BW..max HH BW, i->regularity HH_i BW);
+
+     -- Not clear that T is long enough; strands of T should be linear and separated each other.
+     -- Need to extract linear submatrices of T (w.r.t. its degree)
+     r:=max(n+1, regW);
+          
+     Tlin := (dual res (coker transpose (T[ma]).dd_0, LengthLimit=>ma+r+1))[-ma];
+     -- need : separate every strand of Tlin; by reading off the linear submatrices
+     -- CAUTION : Tlin might be slightly different from T (choice of bases issue)
+
+     cohIndex:=sort apply(unique flatten degrees source Tlin.dd_(-r), i->i+r); -- index set for cohomology groups R^i
+     linSubmatrix:=i->submatrixByDegrees(Tlin.dd_(-r), -r-1+i,-r+i); -- linear submatrix corresponding to R^i
+
+     actionOnEachStrand:=linSub->(
+	sT := res (coker ((-1)^(r+1)*linSub), LengthLimit=>ma+r+1)[r+1];
+	sT' := (sT**E^{-1})[-1];
+		
+	sW:= new ChainComplex;
+	sW.ring = E1;
+	apply(toList(min sT..max sT),i->sW_i=E1^(-apply(degrees sT_i,d->d_{0})));
+	apply(toList(min sT+1..max sT),i->sW.dd_i=map(sW_(i-1),sW_i,projOnE sT.dd_i));
+	
+	sW' := new ChainComplex;
+	sW'.ring = E1;
+	apply(toList(min sT'..max sT'),i->sW'_i=E1^(-apply(degrees sT'_i,d->d_{0})));
+	apply(toList(min sT'+1..max sT'),i->sW'.dd_i=map(sW'_(i-1),sW'_i,projOnE sT'.dd_i));
+	
+	multMapOnW := j->(
+	    contrMap:=map((sT'[-r])_0, (sT[-r])_0, contract(E_j,sT.dd_(-r)));
+	    shiftedMap := extend(sT'[-r],sT[-r], contrMap);
+	    map(sW', sW, i-> projOnE shiftedMap_(i+r))	
+	    );
+
+	-- computing the induced map on Beilinson complexes     
+	-- at the moment, it is implemented only for "DummyQuotientBundle" option,
+	-- i.e., U^(-1) is not precisely zero but a quotient of S(-1)
+	BsW := beilinson (sW, BundleType=>DummyQuotientBundle);
+	BsW1 := BsW**(S1)^{1};
+	BsW' := beilinson (sW', BundleType=>DummyQuotientBundle);
+
+	-- computing the inverse quasi-isomorphism
+	qIs:=inverseQIsoFromTate sW';
+	--     assert(isQuism qIs);
+
+	multMap := j->(
+    	    firstMap := map(BsW', BsW, i->beilinson((multMapOnW(j))_i, BundleType=>DummyQuotientBundle));
+	    map(BsW1,BsW,i->qIs_i*firstMap_i)
+	);
+	actionList := for j from 0 to n list multMap(j);
+	
+	actionList
+	);
+    
+    retTable := hashTable apply(cohIndex, i->(i,actionOnEachStrand linSubmatrix i));
+
+    retTable
+    )
+
+actionOnDirectImage(Ideal, Module) := (I,M)->(
+    -- Input: I, the ideal of a projective variety Y in P^n of dimension d
+    -- 	      M, a finitely generated module on Y
+    -- Output : retTable, a Hashtable whose keys are the cohomology indices i where R^i survives;
+    -- 	       	    	  and the list of induced maps of the multiplication by coordinates y_0, ..., y_n
+    --	      	      	  on each strand representing R^i on P^d (after taking a linear projection from Y to P^d).
+
+    actionOnDirectImage tateOfDirectImage(I,M)
+    )
+actionOnDirectImage(Ideal,Module,Matrix) := (J,N,phi) -> (
+    -- Input: J, the ideal of a projective scheme X in P^n,
+    --        N, a module representing a coherent sheaf on X
+    --        phi, a kxm matrix representing a rational map or morphism
+    --             f: X -> P^m
+    -- Output : retTable, a Hashtable whose keys are the cohomology indices i where R^i survives;
+    -- 	       	    	  and the list of induced maps of the multiplication by coordinates y_0, ..., y_n
+    --	      	      	  on each strand representing R^i on P^d (after taking a linear projection from Y to P^d).
+
+    actionOnDirectImage tateOfDirectImage(J,N,phi)
+    )
+-*
+------------------------
+actionOnDirectImage(Ideal, Module) := (I,M)->(
+    -- Input: I, the ideal of a projective variety Y in P^n of dimension d
+    -- 	      M, a finitely generated module on Y    
+    -- Output: actionList, a list of (n+1) map of chain complexes C->C(1)
+    --	      	      	   which correspond to the multiplication map by (n+1) coordinates.
+    -- C is a Beilinson complex representing \pi_{*} M where \pi : P^n -> P^d is a finite linear projection.
+    
+    -- should put an exception : I, M should be defined over a single projective space
+    R := ring I;
+    if I != saturate I then error "expected a saturated ideal I for Proj(R/I)";
+    J := annihilator M;
+    if J+I != J then error "expected a module corresponding to a sheaf on Y=Proj(R/I)";
+
+    n := numgens R-1; -- the dimension of the ambient space    
+    d := dim I-1; -- the dimension of Y
+    r := regularity M; -- the Castelnuovo-Mumford regularity of M
+    kk := coefficientRing R;
+    -- provide TateData on R
+    (S,E) := productOfProjectiveSpaces({n}, CoefficientField=>kk);
+    mapRtoS := map(S,R,vars S);
+--    MS := coker (mapRtoS**(presentation M));
+    MS := mapRtoS**M;
+    
+     --------------------------
+     -- should be generalized; by taking a certain Noether normalization 
+     listOfProjIndices := rsort subsets(toList(0..n),dim I);
+
+     projErrorCounter:=0; projIndex:=listOfProjIndices_0;
+     apply(listOfProjIndices, i->(
+	     monIdeal:=ideal flatten apply(i, j->{R_j});
+	     if dim saturate (I + monIdeal) == -1 then (projIndex=i; projErrorCounter=1; break;)
+	     )
+	 );
+     if projErrorCounter==0 then error "expected Y=Proj(R/I) should not intersect with some coordinate plane of codimension (dim Y + 1)";
+
+     projIdeal := flatten apply(projIndex, j->{R_j});
+     << "We take a finite projection from P^n to P^d as " << projIdeal;
+     
+     (S1,E1) := productOfProjectiveSpaces ({d}, CoefficientField=>kk);
+     
+     tempCounter:=0;
+     tempList:={};
+     for i from 0 to n do(
+	 if member(i, projIndex) then (tempList=tempList|{E1_tempCounter}; tempCounter=tempCounter+1;) else tempList=tempList|{0};
+	 );
+     projOnE := map(E1, E, tempList); -- quotient map E -> E1 induced by a linear projection
+
+     --------------------------    
+    C:=tateResolution(MS, -{n+1},{n+1});
+    -- C becomes linear on (-r) and lower homological degrees
+    
+    C':=(C**E^{-1})[-1]; -- Tate for M(1) by the shift and twist formula
+    
+    -- map from C to C', induced by contracting i-th coordinate
+    -- ``extend'' method only extends in further positive degrees
+    -- we need to dualize to fill out the opposite ray  
+     multMapOnT:=i->(
+    	 contrMap:=map((C'[-r])_0, (C[-r])_0, contract(E_i,C.dd_(-r)));
+	 posExtension := extend(C'[-r],C[-r], contrMap);
+	 negExtension := dual extend(dual(C[-r]), dual(C'[-r]), transpose contrMap);
+	 shiftedMap := map(C'[-r],C[-r], i->if i >= -r then posExtension_i else negExtension_i);
+	 
+	 shiftedMap[r]
+	 );     
+
+     -- construct a projected complex of E1-modules
+     mi := min C; ma:=max C;
+     W := new ChainComplex;
+     W.ring = E1;
+     apply(toList(mi..ma),i-> W_i = E1^(-apply(degrees C_i,d->d_{0})));
+     apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,projOnE C.dd_i));
+
+     mi = min C'; ma=max C';
+     W' := new ChainComplex;
+     W'.ring = E1;
+     apply(toList(mi..ma),i-> W'_i = E1^(-apply(degrees C'_i,d->d_{0})));
+     apply(toList(mi+1..ma),i->W'.dd_i = map(W'_(i-1),W'_i,projOnE C'.dd_i));
+     
+     multMapOnW := i->(map(W', W, j->projOnE (multMapOnT(i))_j));
+
+     -- computing the induced map on Beilinson complexes
+     -- at the moment, it is implemented only for "DummyQuotientBundle" option,
+     -- i.e., U^(-1) is not precisely zero but a quotient of S(-1)
+     BW := beilinson (W, BundleType=>DummyQuotientBundle);
+     BW' := beilinson (W', BundleType=>DummyQuotientBundle);
+     firstMap := i->(map(BW', BW, j->beilinson((multMapOnW(i))_j, BundleType=>DummyQuotientBundle)));
+    
+     -- computing the inverse quasi-isomorphism
+     pseudoInvData := inverseQIsoFromTate (W'); -- should return necessary data only
+--     qIs := pseudoInvData#4;
+     qIs:=pseudoInvData;
+--     assert(isQuism qIs);
+     
+     multMap := i->(map(BW**(S1)^{1},BW,j-> qIs_j * (firstMap(i))_j));
+     actionList := for i from 0 to n list multMap(i);
+     
+     actionList
+    )
+---------------------------------------
+*-
+--Test functions checking whether we found a right action or not
+substituteMatrices=method()
+substituteMatrices(RingElement, List) := (f, ListOfMatrices)->(
+    R := ring f;
+    T := ring ListOfMatrices_0;
+    d := degree f;
+    assert (isHomogeneous f);
+
+    monomialData := coefficients f;
+    monomialList := flatten entries monomialData#0;
+    coefficientList := flatten entries monomialData#1;
+
+    productOfMatrices := apply(monomialList, j->(
+	    m:=# factor j;
+	    monomialInducedMap:= k->(
+		varIndex:= index ((factor j)#(m-1-k))#0;
+		varPower:= ((factor j)#(m-1-k))#1;
+		(matrix ListOfMatrices_varIndex)^(varPower)
+		);
+	    
+	    temp:=matrix id_(source ListOfMatrices_0);
+	    
+	    for l from 0 to m-1 do(
+		temp=temp*monomialInducedMap(l);
+		);
+	    
+    	    map((source ListOfMatrices_0)**T^{d}, (source ListOfMatrices_0), temp)
+	       )
+	   );
+       
+       sum (for i from 0 to # monomialList-1 list (sub(coefficientList_i,T) * productOfMatrices_i))
+)
+
+isAction=method()
+isAction(Ideal, List) := (I,ActionList)->(
+    -- Input: I, an ideal of a projective variety in P^n
+    -- 	      ActionList, a list of (n+1) square matrices whose entries are linear
+   
+    -- Assumed to be: ActionList should correspond to induced maps of multiplication maps
+    --	      	      given by (n+1) coordinates of P^n.
+
+    n:=# ActionList - 1;
+    retVal:=true;
+    if n<0 then error "List of matrices is empty";
+    if # gens ring I != n+1 then error "The number of matrices does not coincide with the number of variables";
+
+    R:= ring ActionList_0;
+    t:= numgens source ActionList_0;
+    -- exceptions
+    for i from 0 to n do(
+	    if numgens source ActionList_i != t then error "All the matrices must have the same size";
+	    if numgens target ActionList_i != t then error "All the matrices must be square matrices";
+	    if target ActionList_i != (source ActionList_i)**R^{1} or isHomogeneous ActionList_i != true then error "Every matrix must present a map M->M(1) for some graded module M";
+	);
+        
+    testCommutative := apply(subsets(toList(0..n),2),i->(ActionList_(i#0)**R^{1})*ActionList_(i#1)==(ActionList_(i#1)**R^{1})*ActionList_(i#0));
+    if (unique testCommutative)!={true} then (print "not commutative"; retVal=false;);
+
+    listOfGenerators:=flatten entries gens I;
+    if listOfGenerators!={} and (unique apply(listOfGenerators, i->substituteMatrices(i,ActionList)==0))!={true} then (print "Matrices do not give the right action on Y"; retVal=false;);
+    
+    retVal
+    )
+
+-*
+linearizeMatrix=method()
+linearizeMatrix(Matrix):= M->(
+    -- Input : M, a matrix presenting a graded module homomorphism
+    -- Output : linM, a matrix which is composed of linear entries of M only.
+    if (isHomogeneous M===false) then error "the matrix should present a graded module homomorphism";
+    
+    R:=ring M;
+    src:=source M;
+    tar:=target M;
+    t:=symbol t;
+    Rt:=R[t];
+    weightedMap:=map(Rt,R,t*sub(vars R, Rt));
+    quotMap:=map(R,Rt,{0});
+    
+    map(target M, source M, quotMap diff(t,weightedMap(M)))
+    )
+
+isLinearizable=method()
+isLinearizable(Matrix):=M->(
+    -- Input : M, a matrix presenting a graded module homomorphism
+    -- If the original matrix and its linearized matrix induces the same Hilbert series
+    -- then this method retunrs true.
+    
+    R:=ring M;
+    n:=(# gens R)-1;
+    
+    hilbertSeries (n,betti syz gens gb image M) === hilbertSeries (n,betti syz gens gb image linearizeMatrix M)
+    )
+
+*-
+---------------------------------------
+
+---------------------------------------
+///
+restart
+debug needsPackage "TateOnProducts"
+kk=ZZ/101
+R=kk[x_0..x_2]
+I=ideal(x_0*x_1-x_2^2)
+M=(coker matrix{{x_0, x_2},{x_2,x_1}})**R^{0} -- Ulrich module
+-- M=(R^1/I)**R^{0}
+betti M
+
+T=time tateOfDirectImage(I,M);
+RM=time directImageComplex(I,M,matrix id_R);
+time prune HH RM
+degree prune HH^0 RM, dim prune HH^0 RM, ann prune HH^0 RM
+AA=time actionOnDirectImage(I,M);
+keys AA
+isAction(I, apply(dim R,i->(AA#0#i)_0))
+isAction(I, apply(dim R,i->(prune HH^0 AA#0#i)))
+
+needsPackage "ChainComplexExtras"
+tally apply(0..2, i->isHomogeneous (AA#0#i))
+tally apply(0..2, i->isChainComplexMap (AA#0#i))
+------------
+restart
+debug needsPackage "TateOnProducts"
+kk=ZZ/101
+R=kk[x_0..x_3]
+m=matrix{{x_0,x_3,x_2},{x_3,x_2,x_1}}
+I=minors(2,m)
+-- M=symmetricPower(2,coker m) ** R^{1}
+M=(R^1/I)**R^{2} -- O(2) of a twisted cubic
+betti res M
+
+RM=time directImageComplex(I,M,matrix id_R);
+time prune HH RM
+degree prune HH^0 RM, dim prune HH^0 RM, ann prune HH^0 RM
+
+AA=time actionOnDirectImage(I,M);
+needsPackage "ChainComplexExtras"
+tally apply(dim R, i->isHomogeneous (AA#0#i))
+tally apply(dim R, i->isChainComplexMap (AA#0#i))
+isAction(I, apply(dim R, i-> (AA#0#i)_0))
+isAction(I, apply(dim R, i->(prune HH AA#0#i)_0))
+
+-------------------
+restart
+debug needsPackage "TateOnProducts"
+kk=ZZ/101
+R=kk[x_0..x_3]
+m=matrix{{x_0,x_3,x_2},{x_3,x_2,x_1}}
+I=minors(2,m)
+M=directSum((R^1/I)**R^{1},(R^1/I)**R^{-3})
+betti res M
+
+time betti (RM=directImageComplex(I,M,matrix id_R)); -- 11.94 seconds
+time prune HH RM
+degree prune HH^0 RM, dim prune HH^0 RM, ann prune HH^0 RM
+
+AA=time actionOnDirectImage(I,M); -- 3.44 seconds
+keys AA
+needsPackage "ChainComplexExtras"
+tally apply(dim R, i->isHomogeneous (AA#0#i))
+tally apply(dim R, i->isChainComplexMap (AA#0#i))
+isAction(I, apply(dim R, i-> (AA#0#i)_0))
+isAction(I, apply(dim R, i->(prune HH AA#0#i)_0))
+---------------------
+restart
+debug needsPackage "TateOnProducts"
+kk=ZZ/101;
+n=7
+R=kk[x_0..x_n];
+m=matrix{{x_0..x_(n-1)},{x_1..x_n}}
+I=minors(2,m);
+dim I,degree I,genus I
+M=(R^1/I);
+phi=vars R
+
+T=time tateOfDirectImage(I,M); -- 0.169 seconds
+BT=time beilinson T#1; -- 2.559 seconds
+betti BT -- too big!
+betti prune HH BT
+--BT=time directImageComplex(I,M,phi);
+AA=time actionOnDirectImage(I,M); -- 1.377 seconds
+
+keys AA
+betti source AA#0#0
+
+needsPackage "ChainComplexExtras"
+tally apply(dim R, i->isHomogeneous (AA#0#i))
+tally apply(dim R, i->isChainComplexMap (AA#0#i))
+isAction(I, apply(dim R, i-> (AA#0#i)_0))
+isAction(I, apply(dim R, i->(prune HH AA#0#i)_0))
+----------
+restart
+debug needsPackage "TateOnProducts"
+kk=ZZ/101
+d=2
+needsPackage "Resultants"
+vd=veronese(2,d,kk)
+R=target vd;
+S=source vd;
+f=R_0^3+R_1^3+R_2^3
+I=ker map(R/ideal f, S, vd)
+
+M=(ideal (R_0, R_1+R_2))/(ideal f)
+--M=R^1/(ideal f)
+
+RM=time directImageComplex(ideal f,M,matrix vd); -- 22.106 seconds
+AA=time actionOnDirectImage(ideal f,M,matrix vd); -- 24.756 seconds
+
+betti RM
+time betti prune HH RM
+keys AA
+betti source AA#0#0
+
+needsPackage "ChainComplexExtras"
+tally apply(dim S, i->isHomogeneous (AA#0#i))
+tally apply(dim S, i->isChainComplexMap (AA#0#i))
+isAction(I, apply(dim S, i-> (AA#0#i)_0))
+isAction(I, apply(dim S, i->(prune HH AA#0#i)_0))
+
+------------
+restart
+debug needsPackage "TateOnProducts"
+kk=ZZ/101
+d=6
+needsPackage "Resultants"
+vd=veronese(1,d,kk)
+R=target vd;
+S=source vd;
+
+M=R^{1:-1}
+I=ann M -- zero ideal
+J=ker vd
+
+RM=time directImageComplex(I,M,matrix vd); -- 54.488 seconds
+AA=time actionOnDirectImage(I,M,matrix vd); -- 44.913 seconds
+
+betti RM
+time betti prune HH RM
+keys AA
+betti source AA#0#0
+
+needsPackage "ChainComplexExtras"
+tally apply(dim S, i->isHomogeneous (AA#0#i))
+tally apply(dim S, i->isChainComplexMap (AA#0#i))
+isAction(J, apply(dim S, i-> (AA#0#i)_0))
+isAction(J, apply(dim S, i->(prune HH AA#0#i)_0))
+------------
+restart
+debug needsPackage "TateOnProducts"
+kk=ZZ/101
+R=kk[x_0..x_2]
+I=ideal (x_2^3-x_2*x_0^2-x_0*x_1^2)
+dim I,degree I,genus I
+M=(R^1/I)**R^{2} 
+
+RM=time directImageComplex(I,M,matrix id_R);
+AA=time actionOnDirectImage(I,M,matrix id_R);
+needsPackage "ChainComplexExtras"
+tally apply(dim R, i->isHomogeneous (AA#0#i))
+tally apply(dim R, i->isChainComplexMap (AA#0#i))
+isAction(I, apply(dim R, i-> (AA#0#i)_0))
+isAction(I, apply(dim R, i->(prune HH AA#0#i)_0))
+---------------------
+restart
+debug needsPackage "TateOnProducts"
 kk=ZZ/101    
 R=kk[x_0..x_4]
-m=matrix {{ x_0,x_1,x_3},{x_1,x_2,x_4}}
+m=matrix {{ x_0+x_4,x_1,x_3+2*x_2},{x_1-3*x_3,x_2+x_4,x_4}}
 I=minors(2,m)
 dim I, degree I, genera I
-M=symmetricPower(4,coker m)**R^{0} 
+--M=symmetricPower(2,coker m) -- Ulrich
+M=(R^1/I)**R^{1}
+--M=(R^1/I)**R^{2} -- too high computational cost
 betti res M
-phi= transpose m
-RphiM = directImageComplex(I,M,phi)
-betti RphiM
-T= ring RphiM
-netList apply(toList(min RphiM.. max RphiM),i-> {-i, saturate annihilator HH^(-i) RphiM,betti res HH^(-i) RphiM})
-R0=prune HH^0 RphiM
-dim R0, degree R0
-betti syz transpose presentation HH^0 RphiM
-HH^(-1) RphiM == 0
-dim R0
+
+AA=time actionOnDirectImage(I,M);
+keys AA
+needsPackage "ChainComplexExtras"
+tally apply(dim R, i->isHomogeneous (AA#0#i))
+tally apply(dim R, i->isChainComplexMap (AA#0#i))
+isAction(I, apply(dim R, i-> (AA#0#i)_0))
+isAction(I, apply(dim R, i->(prune HH^0 AA#0#i)))
+
+-------------
+-- EXAMPLE : toward the direct image of complexes
+-- Pushforward of L=O(P \times C+Q \times C+D) on C \times C via the second projection
+restart
+debug needsPackage "TateOnProducts"
+--kk=ZZ/41
+kk=ZZ/1009
+--R=kk[x_0..x_2,y_0..y_2, Degrees=>{3:{1,0},3:{0,1}}]
+(S,E)=productOfProjectiveSpaces({2,2},CoefficientField=>kk)
+
+-- 192^4 = -1 in kk
+sub(1^4 + 192^4 + 0^4, kk)
+sub(1^4+3^4+0^4,kk)
+
+fx=S_0^4+S_1^4+S_2^4
+fy=S_3^4+S_4^4+S_5^4
+ICC=ideal (fx,fy)
+
+-- 2 points on C. Note that the line passing through P and Q is V(x_2).
+P=matrix{{1,192,0}}
+Q=matrix{{192,1,0}}
+
+--P=matrix{{1,3,0}}
+--Q=matrix{{3,1,0}}
+varX=matrix{{S_0,S_1,S_2}}
+varY=matrix{{S_3,S_4,S_5}}
+PX=P||varX
+QX=Q||varX
+
+I1=ideal(fy, minors(2,PX)) -- ideal for P*C
+I2=ideal(fy, minors(2,QX)) -- ideal for Q*C
+I3=ideal(fx,fy, minors(2, varX||varY)) -- ideal for the diagonal D
+I=intersect(I1,I2,I3) -- ideal for P*C+Q*C+D
+
+SC=S/ICC;
+Ldual=I/ICC;
+
+betti (LCC=Hom(Ldual, SC^1))
+-- Betti table does not change, M is already saturated
+betti saturate (LCC, ideal (vars SC)_{0..2})
+betti saturate (LCC, ideal (vars SC)_{3..5}) 
+
+phi = map(SC,S,vars SC);
+betti (L=prune pushForward(phi,LCC))
+
+-- Take a truncation so that the resolution becomes linear
+Ltr = (truncate ({2,2},L))**S^{{2,2}};
+betti res Ltr
+
+Q=symExt(presentation Ltr, E);
+T=time (res (coker Q,LengthLimit=>12))**E^{{2,2}}[4];
+cohomologyMatrix (T, -{5,5},{3,3})
+sT=strand(T,{0,0},{0}); -- strand associated to Rpi_{*}L, where pi:C \times C \to C is the 2nd projection
+cohomologyMatrix (sT, -{5,5},{3,3})
+betti sT
+
+sTFull=new ChainComplex;
+sTFull.ring = ring sT
+ma=7;
+sTFull=(dual res (coker transpose (sT[ma]).dd_0, LengthLimit=>2*ma))[-ma];
+betti sTFull -- a Tate resolution for Rpi_{*}L, consisted of two strands
+-- note that the boundary maps of sTFull are not exactly same as the maps of sT (basis choice issue)
+
+(S',E')=productOfProjectiveSpaces({2},CoefficientField=>kk);
+projOnE=map(E', E, toList(3:0)|(gens E'));
+mi=min sTFull; ma=max sTFull;
+W=new ChainComplex;
+W.ring = E';
+apply(toList(mi..ma),i-> W_i = E'^(-apply(degrees sTFull_i,d->d_{1})));
+apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,projOnE sTFull.dd_i));
+
+
+betti W
+IC=ideal (S'_0^4+S'_1^4+S'_2^4)
+AA=time actionOnDirectImage(W, IC);
+keys AA
+
+needsPackage "ChainComplexExtras"
+tally apply(dim S', i->isHomogeneous (AA#0#i))
+tally apply(dim S', i->isHomogeneous (AA#1#i))
+tally apply(dim S', i->isChainComplexMap (AA#0#i))
+tally apply(dim S', i->isChainComplexMap (AA#1#i))
+isAction(IC, apply(dim S', i-> (AA#0#i)_0))
+isAction(IC, apply(dim S', i-> (AA#1#i)_(-1)))
+isAction(IC, apply(dim S', i->prune HH^0 AA#0#i))
+isAction(IC, apply(dim S', i->prune HH^1 AA#1#i))
+
+RpiL = prune HH beilinson W
+R0piL = prune HH^0 beilinson W
+R1piL = prune HH^1 beilinson W
+
+degree R0piL
+betti res R0piL
+primaryDecomposition ann R0piL
+
+degree R1piL
+betti res R1piL
+primaryDecomposition ann R1piL
+
+R0=prune HH^0 source AA#0#0
+degree R0, rank R0, ann R0
+dual dual R0
+isIsomorphic(truncate(3, R0), truncate(3,dual dual R0))
+-- R0 is isomorphic to O+O(-1)+O(-2)+O(-3), which is the pushforward of O_C.
+
+R1=prune HH^1 source AA#1#0
+degree R1, rank R1, ann R1
+-- R1 is a skyscrapper sheaf at the the images of P and Q (indeed, P and Q map to the same point of P^1)
+--------------------------------
+
+
+------------------------------------
+-- Example : product of elliptic curves
+restart
+debug needsPackage "TateOnProducts"
+kk=ZZ/101
+--R=kk[x_0..x_2,y_0..y_2, Degrees=>{3:{1,0},3:{0,1}}]
+(S,E)=productOfProjectiveSpaces({2,2},CoefficientField=>kk)
+
+fx=S_0^3+S_1^3+S_2^3
+fy=S_3^3+S_4^3+S_5^3
+ICC=ideal (fx,fy)
+
+-- a point on C
+P=matrix{{1,-1,0}}
+
+varX=matrix{{S_0,S_1,S_2}}
+varY=matrix{{S_3,S_4,S_5}}
+PX=P||varX
+
+I1=ideal(fy, minors(2,PX)) -- ideal for P*C
+I2=ideal(fx,fy, minors(2, varX||varY)) -- ideal for the diagonal D
+
+SCC=S/ICC;
+temp=Hom(I2/ICC, SCC^1)
+betti temp
+betti saturate (temp, ideal (vars SCC)_{0..2})
+betti saturate (temp, ideal (vars SCC)_{3..5}) 
+
+phi = map(SCC,S,vars SCC);
+betti (prune pushForward(phi,temp))
+betti (L=prune (I1*(prune pushForward(phi,temp)))) -- O(D-P*C)
+--coarseMultigradedRegularity L
+--betti (L=prune pushForward(phi,temp))
+
+Ltr = (truncate ({2,2},L))**S^{{2,2}};
+betti res Ltr
+
+Q=symExt(presentation Ltr, E);
+T=(res (coker Q,LengthLimit=>14))**E^{{2,2}}[4];
+cohomologyMatrix (T, -{5,5},{5,5})
+sT=strand(T,{0,0},{0}); -- strand associated to Rpi_{*}L, where pi:C \times C \to C is the 2nd projection
+cohomologyMatrix (sT, -{5,5},{5,5})
+betti sT
+
+sTFull=new ChainComplex;
+sTFull.ring = ring sT
+ma=7;
+sTFull=(dual res (coker transpose (sT[ma]).dd_0, LengthLimit=>2*ma))[-ma];
+betti sTFull -- a Tate resolution for Rpi_{*}L, consisted of two strands
+-- note that the boundary maps of sTFull are not exactly same as the maps of sT (basis choice issue)
+
+(S',E')=productOfProjectiveSpaces({2},CoefficientField=>kk);
+projOnE=map(E', E, toList(3:0)|(gens E'));
+mi=min sTFull; ma=max sTFull;
+W=new ChainComplex;
+W.ring = E';
+apply(toList(mi..ma),i-> W_i = E'^(-apply(degrees sTFull_i,d->d_{1})));
+apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,projOnE sTFull.dd_i));
+betti W
+
+IC=ideal(S'_0^3+S'_1^3+S'_2^3);
+AA=actionOnDirectImage(W,IC);
+keys AA -- Only R^1 survives
+
+R1=prune HH^1 source AA#1#0
+degree R1, rank R1, ann R1 -- skyscrapper sheaf at the image of P.
+-------------------
+
 ///
-
-
 
 --composedFunctions = method()
 composedFunctions = () -> (
@@ -2571,6 +3869,7 @@ document {
 	TO beilinson,
 	TO bgg,
 	TO directImageComplex,
+	TO actionOnDirectImage,
 	TO composedFunctions
         },
    SUBSECTION "Numerical Information",
@@ -2593,7 +3892,9 @@ document {
        TO strand,
        TO firstQuadrantComplex,
        TO lastQuadrantComplex
-      }
+      },
+    PARA{}, "Acknowledgement: The work of Yeongrak Kim and Frank-Olaf Schreyer was supported by Project I.6 
+    of the SFB-TRR 195 ''Symbolic Tools in Mathematics and their Application'' of the German Research Foundation (DFG)."
    }
 doc ///
    Key
@@ -2921,14 +4222,6 @@ doc ///
     name of a cached datum
 ///
 
-doc ///
-   Key
-    QuotientBundle
-   Headline
-    symbol used in beilinson
-   SeeAlso
-    beilinson
-///
 
 doc ///
    Key
@@ -2989,7 +4282,6 @@ doc///
         mE=symExt(m,E)
 
 ///
-
 
 
 -*
@@ -3840,10 +5132,12 @@ doc ///
   Key
     tateResolution    
     (tateResolution,Module,List,List)
+    (tateResolution,Matrix,List,List)
   Headline
     compute the Tate resolution 
   Usage
     T = tateResolution(M,low,high)
+    phi = tateResolution(A,low,high)
   Inputs
     M: Module
        multi-graded module representing a sheaf F
@@ -3851,16 +5145,20 @@ doc ///
        a multidegree
     high:List
        a multidegree
+    A: Matrix
+    	a homomorphism of multi-graded modules from M to N
   Outputs
     T : ChainComplex
        a bounded free complex over the exterior algebra
+    phi : ChainComplexMap
+       an induced map from T(M) to T(N) over the exterior algebra
   Description
      Text
        The call
 
        tateResolution(M,low,high)
 
-       forms the a free subquotient complex the Tate resolution of the sheaf F represented by M 
+       forms a free subquotient complex the Tate resolution of the sheaf F represented by M 
        in a range that covers all generators corresponding to 
        cohomology groups of
        twists F(a) of F  in the range low <= a <= high,
@@ -3880,6 +5178,23 @@ doc ///
 	T'=trivialHomologicalTruncation(T, -sum high,-sum low)
 	betti T'
 	cohomologyMatrix(T',2*low,2*high)
+     Text
+     	 The call
+	 
+	 tateResolution(A,low,high)
+	 
+	 where A is a matrix representing the multi-graded module homomorphism from M to N
+	 computes the induced map between two free subquotients of Tate resolutions of M and N
+	 in the given range.
+     Example
+	 (S,E)=productOfProjectiveSpaces {2,1}
+	 low=-{2,1}; high={2,1};
+	 A=map(S^1, S^{1:{-1,0}}, {{S_0}})
+	 M=source A; N=target A;
+	 TA = tateResolution(A, low, high);
+	 TM = tateResolution(M, low, high);
+	 TN = tateResolution(N, low, high);
+	 (source TA == TM, target TA == TN)
   SeeAlso
     upperCorner
     lowerCorner
@@ -4177,7 +5492,7 @@ doc ///
     T: ChainComplex
        a complex of free modules over E
     BundleType => Symbol
-       the possible values are SubBundle or PrunedQuotient
+       the possible values are described in BundleType
   Outputs
     M: Module
        a module over the symmetric algebra S
@@ -4209,7 +5524,7 @@ doc ///
 	beilinson(E^{{-1,0}})
 	T = chainComplex(psi)
 	C = beilinson T
-	betti T, betti C
+	betti T
   SeeAlso
     BundleType
     SubBundle
@@ -4324,7 +5639,7 @@ doc ///
   Key
     BundleType
   Headline
-    Option in beilinson with values PrunedQuotient or SubBundle
+    Option in beilinson with values PrunedQuotient, QuotientBundle, DummyQuotientBundle, SubBundle, FreeBundle, or MapsBetweenFreeBundles
   Description
      Text
       The Beilinson bundle U^a can be represented either by quotient or sub-bundles
@@ -4339,11 +5654,15 @@ doc ///
     value for the option BundleType in beilinson
   Description
      Text
-      The Beilinson bundlse U^a will be represented  by subbundles.
+      The Beilinson bundlse U^a will be represented by subbundles.
   SeeAlso
     beilinson
     BundleType
     PrunedQuotient
+    QuotientBundle
+    DummyQuotientBundle
+    FreeBundle
+    MapsBetweenFreeBundles
 ///
 
 doc ///
@@ -4353,11 +5672,92 @@ doc ///
     value for the option BundleType in beilinson
   Description
      Text
-      The Beilinson bundles U^a will be represented by quotient bundles.
+      The Beilinson bundles U^a will be represented by quotient bundles. On a single component P^n, 
+      U^0 is represented as S^1 (S is the homogeneous coordinate ring for P^n).
   SeeAlso
     beilinson
     BundleType
+    QuotientBundle
+    DummyQuotientBundle
     SubBundle
+    FreeBundle
+    MapsBetweenFreeBundles
+///
+
+doc ///
+   Key
+    QuotientBundle
+   Headline
+    value for the option BundleType in beilinson
+   Description
+      Text
+       The Beilinson bundles U^a will be represented by quotient bundles.
+   SeeAlso
+    beilinson
+    BundleType
+    PrunedQuotient
+    DummyQuotientBundle
+    SubBundle
+    FreeBundle
+    MapsBetweenFreeBundles
+///
+
+doc ///
+   Key
+    DummyQuotientBundle
+   Headline
+    value for the option BundleType in beilinson
+   Description
+      Text
+       The Beilinson bundles U^a will be represented by quotient bundles. On a single component P^n,
+       U^{-1} (indeed, it is the zero sheaf) is represented as the cokernel of the Koszul map \oplus^{n+1} S(-2)->S(-1). 
+   SeeAlso
+    beilinson
+    BundleType
+    PrunedQuotient
+    QuotientBundle
+    SubBundle
+    FreeBundle
+    MapsBetweenFreeBundles
+///
+
+doc ///
+   Key
+    FreeBundle
+   Headline
+    value for the option BundleType in beilinson
+   Description
+      Text
+       This option computes the natural free bundles which contains the Beilinson bundles U^a as subbundles.
+   SeeAlso
+    beilinson
+    BundleType
+    PrunedQuotient
+    QuotientBundle
+    DummyQuotientBundle
+    SubBundle
+    MapsBetweenFreeBundles
+///
+
+doc ///
+   Key
+    MapsBetweenFreeBundles
+   Headline
+    value for the option BundleType in beilinson
+   Description
+      Text
+       This option computes the maps from natural free bundles which generates the Beilinson bundles U^a 
+       to natural free bundles which contains the Beilinson bundles U^a as subbundles. 
+       In other words, this option provides a map between free modules \wedge^{a+1}W\otimes S(-1)\to \wedge^{a}W\otimes S which
+       factors through U^a where W=S_1. In particular, it represents a natural embedding of U^a into the corresponding free bundle.  
+   SeeAlso
+    beilinson
+    BundleType
+    PrunedQuotient
+    QuotientBundle
+    DummyQuotientBundle
+    SubBundle
+    FreeBundle
 ///
 
 ---------------------------
@@ -4387,6 +5787,8 @@ doc ///
       a kx(m+1) matrix of homogeneous polynomials on P^n
       which define a morphism or rational map phi:X -> P^m,
       i.e. the 2x2 minors of phi vanish on X.      
+    BundleType => Symbol
+       the possible values are described in BundleType
   Outputs
     RpiM: ChainComplex
        a chain complex of modules over a symmetric algebra
@@ -4493,7 +5895,222 @@ doc ///
      beilinson
 ///
 
+doc ///
+ Key
+  actionOnDirectImage
+  (actionOnDirectImage,Ideal,Module)
+  (actionOnDirectImage,Ideal,Module,Matrix)
+  (actionOnDirectImage,Ideal,ChainComplex)
+ Headline
+  recover the module structure via a Noether normalization
+ Usage
+  retTable = actionOnDirectImage(I,M)
+  retTable = actionOnDirectImage(J,N,phi)
+  retTable = actionOnDirectImage(I,T)
+ Inputs
+  I: Ideal
+      the saturated ideal of a projective variety Y (of dimension r) in some P^m
+  M: Module
+      representing a sheaf G on Y
+  J: Ideal
+      the saturated ideal of a projective variety X in some P^n
+  N: Module
+      representing a sheaf F on X
+  phi: Matrix
+      a k\times (m+1) matrix of homogeneous polynomials on P^n which define a morphism or rational map 
+      phi:X\to P^m, i.e., the 2\times 2 minors of phi vanish on X
+  T: ChainComplex
+      a (long enough) part of the Tate resolution of some complex of sheaves on Y
+ Outputs
+  retTable: HashTable
+      whose keys are indices of cohomology groups R^i which survive,
+      and the entry for each key is the list of (m+1) maps of chain complexes
+ Description
+  Text
+      This method provides another representation of the direct image complex. 
+      
+      Let M represent a coherent sheaf G on Y, and let \pi:Y\to P^r be a Noether normalization of Y.
+      Note that \pi is chosen among finite linear projections P^m\to P^r from certain coordinate planes.
+      Each coordinate y_i of P^m gives a multiplication map G\to G(1), and its induced map
+      \pi_{*}G\to (\pi_{*}G)(1). Note that these induced maps provide an O_Y-module structure 
+      on \pi_{*}G, in other words, we may recover the O_Y-module F from \pi_{*}G and this action.
+      
+      If no map is specified, it computes the complex C on P^r and a list of induced maps 
+      between chain complexes C\to C(1) on P^r associated to the multiplication by y_0,...,y_m,
+      where C represents the Beilinson monad of \pi_{*}G (or R\pi_{*}U(T)).
+      
+      If a map is specified by a matrix phi, then it computes the complex C on P^r and a list of induced maps 
+      between chain complexes C\to C(1) on P^r associated to the multiplication by y_0,...,y_m,
+      where C represents the Beilinson monad of R(\pi \cdot phi)_{*}F.
+      
+      When n is quite big compared to r, it is not very efficient to deal with Beilinson bundles on P^n since they have 
+      huge rank and presentation matrices. In particular, the method directImageComplex becomes slow down.
+      
+      The following is an example of direct images of the structure sheaf on a twisted cubic.
+  Example
+      kk=ZZ/101; d=6;
+      needsPackage "Resultants";
+      vd=veronese(1,d,kk);
+      R=target vd; S=source vd;
+      
+      M=R^{1:-1}; I=ann M; J=ker vd;
+      
+      RM=time directImageComplex(I,M,matrix vd);
+      
+      for i from min RM to max RM list (rank RM_i)
+  Text
+      RM looks complicated since it is consisted of universal bundles on P^6, which are of high rank.
+  Example
+      retTable=time actionOnDirectImage(I,M,matrix vd);
+      keys retTable
+  Text
+      We see that 0 is the only key, in other words, there is no other R^i vd_{*} except i=0.
+      To see whether it gives an action on S/J, we can use the test function isAction.
 
+      Note that list retTable#i is consisted of maps of chain complexes R^i(\pi \cdot phi)_{*}(y_j) : C\to C(1) where 
+      C represents the direct image R^i(\pi \cdot phi)_{*}F. In general, it does not give a right action on C itself. 
+      The induced maps on cohomology groups provide a right action.
+  Example
+      isAction(J, apply(dim S, i->prune HH^0 retTable#0#i))
+  Text
+      The following is a little more complicated example with nontrivial higher direct images. 
+      Let X be the product of two quartic curves C, and f : X \to C be the second projection. 
+      Let P, Q be two distinct points of C, and let L = O(P\times C + Q\times C + D) be a line bundle 
+      on X where D is the diagonal. We want to compute the higher direct images R^i f_{*}L. 
+      We choose C as the Fermat quartic, and choose P, Q as points on the intersection of C and the line V(x_2).
+  Example
+      kk=ZZ/1009;
+      (S,E)=productOfProjectiveSpaces({2,2},CoefficientField=>kk);
+      f1=S_0^4+S_1^4+S_2^4; f2=S_3^4+S_4^4+S_5^4;
+      IX=ideal (f1,f2);
+      -- 2 points on C. Note that the line passing through P and Q is V(x_2).
+      P=matrix{{1,192,0}}; Q=matrix{{192,1,0}};
+      varX=matrix{{S_0,S_1,S_2}}; varY=matrix{{S_3,S_4,S_5}};
+      PX=P||varX; QX=Q||varX;
+      
+      I1=ideal(f2, minors(2,PX)); -- ideal for P*C
+      I2=ideal(f2, minors(2,QX)); -- ideal for Q*C
+      I3=ideal(f1,f2, minors(2, varX||varY)); -- ideal for the diagonal D
+      I=intersect(I1,I2,I3); -- ideal for P*C+Q*C+D
+      SX=S/IX; Ldual=I/IX;
+      
+      betti (LX=Hom(Ldual, SX^1))
+  Text
+      To compute its Tate resolution on the ambient space P^2 \times P^2, we first consider it as a sheaf on P^2 \times P^2,
+      and then take a linear presentation matrix via a truncation.
+  Example
+      phi = map(SX,S,vars SX);
+      betti (L=prune pushForward(phi,LX))
+      Ltr = (truncate ({2,2},L))**S^{{2,2}};
+      betti res Ltr
+  Text
+      We read off (a finite subquotient of) the Tate resolution of Rf_{*}L as follows.
+  Example
+      Q=symExt(presentation Ltr, E);
+      T=(res (coker Q,LengthLimit=>12))**E^{{2,2}}[4];
+      cohomologyMatrix (T, -{5,5},{3,3})
+      sT=strand(T,{0,0},{0});
+
+      sTFull=new ChainComplex;
+      sTFull.ring = ring sT;
+      ma=6;
+      sTFull=(dual res (coker transpose (sT[ma]).dd_0, LengthLimit=>2*ma))[-ma];
+      (S',E')=productOfProjectiveSpaces({2},CoefficientField=>kk);
+      projOnE=map(E', E, toList(3:0)|(gens E'));
+      mi=min sTFull; ma=max sTFull;
+      W=new ChainComplex; W.ring = E';
+      apply(toList(mi..ma),i-> W_i = E'^(-apply(degrees sTFull_i,d->d_{1})));
+      apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,projOnE sTFull.dd_i));
+      betti W
+  Text
+      One can check that W has two strands (corresponding to R^0f_{*}L and R^1f_{*}L, respectively).
+      By taking the Beilinson functor, one can check that R^0f_{*}L is the structure sheaf on C,
+      and R^1f_{*}L is a torsion sheaf supported on two points lying on the intersection of C and
+      the line V(x_2) other than P, Q.
+  Example
+    R0fL = prune HH^0 beilinson W
+    R1fL = prune HH^1 beilinson W
+    
+    degree R0fL
+    primaryDecomposition ann R0fL
+    
+    degree R1fL
+    primaryDecomposition ann R1fL
+  Text
+      These module also can be seen as in the following way via a finite linear projection. 
+      We take a further projection \pi:C\to  P^1, and check whether these modules induce an action
+      on the direct image under \pi, in other words, provide {O_C}-module structures. As results,
+      these actions make (the sheafification of) M0 and M1 into {O_C}-modules which are identical to 
+      R^0f_{*}L and R^1f_{*}L. 
+  Example
+      J=ideal (S'_0^4+S'_1^4+S'_2^4);
+      retTable=actionOnDirectImage(J,W);
+      keys retTable
+  Text
+      We see that 0, 1 appear as keys, in other words, both R^0f_{*}L and R^1f_{*}L survives.
+  Example
+      prunedActionList = i->apply(dim S',j->prune HH^i retTable#i#j);
+      apply(keys retTable, i->isAction(J,prunedActionList(i)))
+	        
+      M0=source (prunedActionList(0))_0
+      (rank M0, degree M0, betti res M0)
+      isIsomorphic(truncate(regularity M0, M0), truncate(regularity M0, dual dual M0))
+      dual dual M0
+
+      M1=source (prunedActionList(1))_0
+      (rank M1, degree M1, betti res M1)
+  Text
+      Note that the sheafification of M0 (=R^0(\pi \cdot f)_{*}L) is a rank 4 vector bundle O \oplus O(-1) \oplus O(-2) \oplus O(-3) on P^1,
+      and the sheafification of M1 (= R^1(\pi \cdot f)_{*} L) is a torsion sheaf on P^1 supported on the double point at [1:0].
+      Together with the induced action on S', they have an O_C-module structure as desired.  
+      
+ Caveat
+     Note that the resulting complex is a chain complex instead of a cochain complex,
+     so that for example HH^i RpiM = HH_{-i} RpiM. Also note that this requires a pseudo-inverse computation
+     of a split exact sequence, which might fail over finite fields (see SVDComplexes.m2 and its documentations).
+ SeeAlso
+      directImageComplex
+///
+
+doc ///
+    Key
+    	isAction
+	(isAction,Ideal,List)
+    Headline
+    	test whether a list of square matrices induces an action
+    Usage
+    	isAction(I,actionList)
+    Inputs
+    	I: Ideal
+	    the saturated ideal of a projective variety X in P^N
+	actionList: List
+	    the list \{X_0,...,X_N\} \, of maps M\to M(1) for some module M
+    Outputs
+    	v: Boolean
+    Description
+    	Text	    
+	    Let S be the homogeneous coordinate ring of P^N, and x_0,...,x_N be the coordinates. 
+	    Let \pi:X\to P^n be a Noether normalization. Note that giving a coherent sheaf F on X is 
+	    equivalent to giving a sheaf G (=\pi_{*}F) on P^n together with multiplication maps 
+	    X_i (=\pi_{*} (\cdot x_i)) : G\to G(1) such that X_i X_j = X_j X_i for every i, j, and 
+	    f(X_0, ..., X_n)=0 for every f \in I. In other words, \{X_0,...,X_N\} \, gives an action which makes 
+	    G into an O_X-module. 
+	    
+	    This method checks first that actionList is composed of commuting matrices, and then
+	    checks whether f(X_0,...,X_n)=0 for each generator f of I.
+	    
+	    The following is an example when C is a conic, F=O_C, and \pi\, is a linear projection 
+	    at the coordinate point [0:0:1]. In the case, the pushforward \pi_{*}F = O_{P^1} \oplus O_{P^1}(-1).
+	Example
+	    S=QQ[x_0..x_2]; R=QQ[y_0,y_1];
+	    I=ideal(x_0*x_1-x_2^2);
+	    M=R^{{1:0},{1:-1}};
+	    X0=map(M**R^{1},M,{{y_0,0},{0,y_0}})
+	    X1=map(M**R^{1},M,{{y_1,0},{0,y_1}})
+	    X2=map(M**R^{1},M,{{0,y_0*y_1},{1,0}})
+	    isAction(I,{X0,X1,X2})
+	    
+///
 
 -*
 --------------------------------------------------------------

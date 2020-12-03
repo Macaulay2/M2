@@ -60,7 +60,7 @@ class PolyRing : public PolyRingFlat
 
   virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_srcptr n) const;
-  virtual bool from_rational(mpq_ptr q, ring_elem &result) const;
+  virtual bool from_rational(mpq_srcptr q, ring_elem &result) const;
 
   virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
   virtual bool from_BigReal(gmp_RR z, ring_elem &result) const;
@@ -119,7 +119,7 @@ class PolyRing : public PolyRingFlat
   virtual ring_elem add(const ring_elem f, const ring_elem g) const;
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const;
   virtual ring_elem mult(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
   virtual ring_elem invert(const ring_elem f) const;
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
@@ -219,7 +219,7 @@ class PolyRing : public PolyRingFlat
   // RRR and CCC support //
   /////////////////////////
   virtual ring_elem zeroize_tiny(gmp_RR epsilon, const ring_elem f) const;
-  virtual void increase_maxnorm(gmp_RR norm, const ring_elem f) const;
+  virtual void increase_maxnorm(gmp_RRmutable norm, const ring_elem f) const;
   // If any real number appearing in f has larger absolute value than norm,
   // replace norm.
 
@@ -239,6 +239,7 @@ class PolyRing : public PolyRingFlat
                       const int *n,
                       int *resultmon,
                       int use_coeff) const;
+  ring_elem power_direct(const ring_elem f, int n) const;
 
   ring_elem get_logical_coeff(const Ring *coeffR, const Nterm *&f) const;
   // Given an Nterm f, return the coeff of its logical monomial, in the

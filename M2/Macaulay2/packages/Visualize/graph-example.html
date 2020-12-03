@@ -1,180 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8"/>
     <title>Macaulay2: Graph Visualization</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/BootSideMenu.css" rel="stylesheet">
-    <link href="css/nouislider.min.css" rel="stylesheet">
-    <style>
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/BootSideMenu.css" rel="stylesheet"/>
+    <link href="css/nouislider.min.css" rel="stylesheet"/>
+    <link href="css/common.css" rel="stylesheet"/>
 
-      .noselect {
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
-
-      a { cursor: pointer; cursor: hand; }
-
-      #canvasElement2d {
-        background-color: #FFF;
-        cursor: default;
-        display:inline;
-        z-index:2;
-        padding-bottom: 10px;
-      }
-
-      #canvasElement2d:not(.active):not(.shift) {
-        cursor: crosshair;
-      }
-
-      /* CSS for sliders */
-      #charge-slider{
-	     margin: 10px;
-	     display: inline-block;
-	     height: 10px;
-         width: 120px;
-      }
-    
-      #linkdist-slider{
-	     margin: 10px;
-	     display: inline-block;
-	     height: 10px;
-         width: 120px;
-      }
-    
-      .noUi-horizontal .noUi-handle {
-	     width: 24px;
-	     height: 18px;
-	     left: -17px;
-	     top: -6px;
-      }
-    
-      .noUi-horizontal {
-	     height: 14px;
-      }
-
-      /* Vertical lines on the handles */
-      .noUi-handle:before,
-      .noUi-handle:after {
-	     content: "";
-	     display: block;
-	     position: absolute;
-	     height: 10px;
-	     width: 1px;
-	     background: #E8E7E6;
-	     left: 10px;
-	     top: 3px;
-      }
-      .noUi-handle:after {
-	     left: 12px;
-      }
-        
-      .noUi-horizontal.noUi-extended {
-	     padding-right: 20px;
-      }
-      .noUi-horizontal.noUi-extended .noUi-handle {
-	     left: -2px;
-      }
-      .noUi-horizontal.noUi-extended .noUi-origin  {
-	     right: -32px;
-      }
-        
-      path.link {
-        fill: none;
-        stroke: #B6B6B6;
-        stroke-width: 2px;
-        cursor: default;
-      }
-
-      #canvasElement2d:not(.active):not(.shift) path.link {
-        cursor: pointer;
-      }
-
-      path.link.selected {
-        stroke-dasharray: 10,2;
-      }
-        
-      path.link.highlighted {
-        fill: none;
-        /* stroke: #B6B6B6; */
-        stroke: #FF0000;
-        stroke-width: 4px;
-        cursor: default;
-      }
-
-      path.link.dragline {
-        pointer-events: none;
-      }
-
-      path.link.hidden {
-        stroke-width: 0;
-      }
-
-      circle.node {
-        stroke-width: 0px;
-        cursor: pointer;
-      }
-
-      circle.node.reflexive {
-        stroke: #000 !important;
-        stroke-width: 2.5px;
-      }
-     
-      circle.node.highlighted {
-        stroke: #000 !important;    
-        stroke-width: 2.5px;
-      }
-
-      text {
-        font: 12px sans-serif;
-        pointer-events: none;
-      }
-
-      text.id {
-        text-anchor: middle;
-        font-weight: bold;
-      }
-
-      #canvasElement3d {
-        background-color: #FFF;
-        cursor: default;
-        display:none;
-        z-index: 0;
-        padding-bottom: 10px;
-      }
-
-      #constructorString {
-        -o-user-select: text;
-        -moz-user-select: text;
-        -webkit-user-select: text;
-        user-select: text;
-        z-index: 100;
-        padding-bottom: 5px;
-      }
-
-      #incString {
-        -o-user-select: text;
-        -moz-user-select: text;
-        -webkit-user-select: text;
-        user-select: text;
-        z-index: 100;
-        padding-bottom: 5px;
-      }
-      #adjString {
-        -o-user-select: text;
-        -moz-user-select: text;
-        -webkit-user-select: text;
-        user-select: text;
-        z-index: 100;
-        padding-bottom: 5px;
-      }
-        
-    </style>
-    <script type="text/javascript">
+    <script>
       //global variables
       activeSession = true;
       tikzGenerated = false;
@@ -197,7 +31,7 @@
         <div id="side">
           <h2>&#8202;&#8202;Menu</h2>
           <div class="list-group" id="menuList">
-            <div class="list-group-item" href="#" id="sliderDiv"><div style="height:25px;">Force variables</div>
+            <div class="list-group-item" id="sliderDiv"><div style="height:25px;">Force variables</div>
             <span style="display:inline-block; width:60px;">&#8202; Charge:</span><div class="noUi-extended" id="charge-slider" style="vertical-align:middle;"></div><br>
             <span style="display:inline-block; width:60px;">&#8202; Links:</span><div class="noUi-extended" id="linkdist-slider" style="vertical-align:middle;"></div>
             </div>
@@ -258,12 +92,12 @@
   <script src="js/clipboard.min.js"></script>
   <script src="js/nouislider.min.js"></script>
       
-  <script type="text/javascript">
+  <script>
     // Initialize clipboard.js.
     var clipboard = null;
       
 //    $('#side').BootSideMenu({side:"right"});
-    $('#side').BootSideMenu({side:"right", autoClose: false});
+    $('#side').BootSideMenu({side:"right", closeOnClick: false, width: "230px"});
     // When the side menu bar is opened or closed (i.e, when the "toggler" div is clicked), resize the svg appropriately so that nodes do not go behind the side menu.
     document.getElementsByClassName("toggler")[0].addEventListener("mousedown", function() {
             menuOpen = !menuOpen;

@@ -112,6 +112,7 @@ beginDocumentation()
 load "./documentation/intro.m2"
 load "./documentation/working_with_polyhedra.m2"
 load "./documentation/working_with_cones.m2"
+load "./documentation/v_h_representation.m2"
 load "./documentation/deprecated_documentation.m2"
 load "./documentation/old_documentation.m2"
 load "./documentation/documentation.m2"

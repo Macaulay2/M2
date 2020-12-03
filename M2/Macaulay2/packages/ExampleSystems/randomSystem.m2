@@ -18,23 +18,29 @@ doc ///
         F = randomSystem(n,d,K)
     Inputs
         n:ZZ
-	  positive
+	  positive value representing the number of polynomials
         d:ZZ
-	  positive
+	  positive value representing the degree of the polynomials
 	K:Ring
-	  usually a field, e.g., QQ or CC_53
+	  usually a field, e.g., QQ or CC_{53}
     Outputs
         F:List
 	  a system of $n$ polynomials random polynomials of degree $d$ in $n$ variables.
     Description
+    	Text
+	    This system was solved in May 2020, using @TO track@ in Macaulay2 v1.15
+	     with an Intel(R) Core(TM) i5-5250U CPU at 1.60GHz.
+	   
+	    For a system with 2 polynomials of degree 3 over rationals there were 9 solutions found in 0.06 seconds.
+	    
+	    For a system with 5 polynomials of degree 2 over complex numbers there were 32 solutions found in 0.297 seconds.
 	Example
-	    F = randomSystem(2,3,QQ)
-	    sols = solveSystem F;
-	    #sols
+	    randomSystem(2,3,QQ)
+	    randomSystem(5, 2, CC_53)
     ///
 
-TEST ///
+-* TEST ///
 F = randomSystem(5,2,CC_53)
-sols = solveSystem F
+time sols = solveSystem F
 assert(#sols==32)
-///
+/// *-

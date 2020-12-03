@@ -48,11 +48,11 @@
     // Just get the current directory that contains the html file.
     scriptSource = scriptSource.substring(0, scriptSource.length - 18);
       
-    console.log(scriptSource);
+    //console.log(scriptSource);
 
 function initializeBuilder() {
     
-  console.log("building graph");
+  //console.log("building graph");
     
   // Set up SVG for D3.
   width  = window.innerWidth-document.getElementById("side").clientWidth;
@@ -115,8 +115,8 @@ function initializeBuilder() {
   }
   */
 
-  console.log(nodes);
-  console.log(links);
+  //console.log(nodes);
+  //console.log(links);
     
   //constrString = digraph2M2Constructor(nodes,links);
     
@@ -379,10 +379,9 @@ function restart() {
   // Update existing nodes (reflexive & selected visual states).
   circle.selectAll('circle')
     // If a node is currently selected, then make it brighter.
-    .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
+    .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : (d.highlighted ? '#FF0000' : colors(d.id)); })
     // Set the 'reflexive' attribute to true for all reflexive nodes.
-    .classed('reflexive', function(d) { return d.reflexive; })
-    .classed('highlighted', function(d) { return d.highlighted; });
+    .classed('reflexive', function(d) { return d.reflexive; });
 
   // Add new nodes.
   var g = circle.enter().append('svg:g');
@@ -393,7 +392,7 @@ function restart() {
     .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : colors(d.id); })
     .style('stroke', function(d) { return d3.rgb(colors(d.id)).darker().toString(); })
     .classed('reflexive', function(d) { return d.reflexive; })
-    .classed('highlighted',function(d) {return d.highlighted;})
+    .classed('digraph-highlighted',function(d) {return d.highlighted;})
     .on('mouseover', function(d) {
       // If no node has been previously clicked on or if the user has not dragged the cursor to a different node after clicking,
       // then do nothing.
@@ -499,7 +498,7 @@ function restart() {
 
   .on('dblclick', function(d) {
       name = "";
-      var letters = /^[0-9a-zA-Z]+$/;
+      var letters = /^[0-9a-zA-Z_]+$/;
       while (name=="") {
         name = prompt('Enter new label name.', d.name);
         // Check whether the user has entered any illegal characters (including spaces).
@@ -596,6 +595,9 @@ function mousedown() {
   node = {id: ++lastNodeId, name: curName, reflexive: false, highlighted: false};
   node.x = point[0];
   node.y = point[1];
+  if (!forceOn) {
+    node.fixed = true;
+  }
   nodes.push(node);
   // Graph is updated here so we change some items to default 
   // d3.select("#isCM").html("isCM");
@@ -753,7 +755,7 @@ function enableHighlight() {
   // If there is no currently selected node, then just return (negating the value of curHighlight).
   if(selected_node == null) return;
   highlightAllNeighbors(selected_node);
-  console.log("curHighlight: "+curHighlight);
+  //console.log("curHighlight: "+curHighlight);
 }
 
 function unHighlightAll() {
@@ -774,7 +776,7 @@ function unHighlightAll() {
 function highlightAllNeighbors(n) {
     // Highlight all nodes that are neighbors with the given node n.
     for (var i = 0; i<nodes.length; i++) {
-       console.log(areNeighbors(nodes[i],n));
+       //console.log(areNeighbors(nodes[i],n));
        nodes[i].highlighted = areNeighbors(nodes[i],n);
     }
     
@@ -817,7 +819,7 @@ function showLabels() {
 }
 
 function updateWindowSize2d() {
-    console.log("resizing window");
+    //console.log("resizing window");
     //var svg = document.getElementById("canvasElement2d");
     
     // get width/height with container selector (body also works)
@@ -839,21 +841,25 @@ function updateWindowSize2d() {
 // Functions to construct M2 constructors for graph, incidence matrix, and adjacency matrix.
 
 function digraph2M2Constructor( nodeSet, edgeSet ){
+  var d = nodeSet.length;
+  // Handle the empty digraph first.
+  if (d==0) {
+      return "digraph({})";
+  }
   var strEdges = "{";
   var e = edgeSet.length;
   var strNodes = "{";
-  var d = nodeSet.length;
   var foundReflexive = false;
   for( var i = 0; i < d; i++ ){
     if(i != (d-1)){
-      strNodes = strNodes + (nodeSet[i].name).toString() + ", ";
+      strNodes = strNodes + "\"" + (nodeSet[i].name).toString() + "\", ";
     }
     else {
-      strNodes = strNodes + (nodeSet[i].name).toString() + "}";
+      strNodes = strNodes + "\"" + (nodeSet[i].name).toString() + "\"}";
     }
     // Add any reflexive nodes as an edge from the vertex to itself.
     if(nodeSet[i].reflexive){
-        strEdges = strEdges + "{" + nodeSet[i].name.toString() + ", " + nodeSet[i].name.toString() + "}, ";
+        strEdges = strEdges + "{\"" + nodeSet[i].name.toString() + "\", \"" + nodeSet[i].name.toString() + "\"}, ";
         foundReflexive = true;
     }
   }
@@ -862,13 +868,13 @@ function digraph2M2Constructor( nodeSet, edgeSet ){
     var leftEdge = edgeSet[i].left;
     var rightEdge = edgeSet[i].right;
     if(i != (e-1)){
-      if(leftEdge){ strEdges = strEdges + "{" + (edgeSet[i].target.name).toString() + "," + (edgeSet[i].source.name).toString() + "}, ";}
-      if(rightEdge){ strEdges = strEdges + "{" + (edgeSet[i].source.name).toString() + "," + (edgeSet[i].target.name).toString() + "}, ";}
+      if(leftEdge){ strEdges = strEdges + "{\"" + (edgeSet[i].target.name).toString() + "\",\"" + (edgeSet[i].source.name).toString() + "\"}, ";}
+      if(rightEdge){ strEdges = strEdges + "{\"" + (edgeSet[i].source.name).toString() + "\",\"" + (edgeSet[i].target.name).toString() + "\"}, ";}
     }
     else{
-      if(leftEdge && rightEdge){ strEdges = strEdges + "{" + (edgeSet[i].target.name).toString() + "," + (edgeSet[i].source.name).toString() + "}, " + "{" + (edgeSet[i].source.name).toString() + "," + (edgeSet[i].target.name).toString() + "}}";}
-      else if(leftEdge){ strEdges = strEdges + "{" + (edgeSet[i].target.name).toString() + "," + (edgeSet[i].source.name).toString() + "}}";}
-      else if(rightEdge){ strEdges = strEdges + "{" + (edgeSet[i].source.name).toString() + "," + (edgeSet[i].target.name).toString() + "}}";}
+      if(leftEdge && rightEdge){ strEdges = strEdges + "{\"" + (edgeSet[i].target.name).toString() + "\",\"" + (edgeSet[i].source.name).toString() + "\"}, " + "{\"" + (edgeSet[i].source.name).toString() + "\",\"" + (edgeSet[i].target.name).toString() + "\"}}";}
+      else if(leftEdge){ strEdges = strEdges + "{\"" + (edgeSet[i].target.name).toString() + "\",\"" + (edgeSet[i].source.name).toString() + "\"}}";}
+      else if(rightEdge){ strEdges = strEdges + "{\"" + (edgeSet[i].source.name).toString() + "\",\"" + (edgeSet[i].target.name).toString() + "\"}}";}
     }
   }
     
@@ -878,9 +884,6 @@ function digraph2M2Constructor( nodeSet, edgeSet ){
   }
   if((!foundReflexive) && (edgeSet.length == 0)){
       strEdges = "{}";
-  }
-  if(nodeSet.length == 0){
-      strNodes = "{}";
   }
     
   return "digraph(" + strNodes + "," + strEdges + ")";
@@ -1023,8 +1026,12 @@ function makeid()
 
 function exportTikz (event){
   var points = [];
+  var loops = [];
   for(var i = 0; i < nodes.length; i++){
     points[i] = [nodes[i].x.toString()+"/"+nodes[i].y.toString()+"/"+nodes[i].id+"/"+nodes[i].name];
+    if (nodes[i].reflexive) {
+        loops.push(nodes[i].id);
+    }
   }
 
   // arrow direction for TikZ
@@ -1048,7 +1055,7 @@ function exportTikz (event){
   var timestamp = makeid();
 
   var tikzTex = "";
-  tikzTex =  "\\begin{tikzpicture}\n         \\newcommand*\\points"+timestamp+"{"+points+"}\n          \\newcommand*\\edges"+timestamp+"{"+edges+"}\n          \\newcommand*\\scale"+timestamp+"{0.02}\n          \\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+" {\n          \\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+timestamp+"*\\y) [circle,draw] {$\\w$};\n          }\n          \\foreach \\x/\\y/\\z in \\edges"+timestamp+" {\n          \\draw[\\z] (\\x) -- (\\y);\n          }\n      \\end{tikzpicture}\n      % \\points"+timestamp+" is point set in the form x-coord/y-coord/node ID/node label\n     % \\edges"+timestamp+" is edge set in the form Source ID/Target ID/arrow direction\n      % \\scale"+timestamp+" makes the picture able to be viewed on the page\n";  
+  tikzTex =  "\\begin{tikzpicture}\n         \\newcommand*\\points"+timestamp+"{"+points+"}\n          \\newcommand*\\edges"+timestamp+"{"+edges+"}\n          \\newcommand*\\loops"+timestamp+"{"+loops+"}\n    \\newcommand*\\scale"+timestamp+"{0.02}\n          \\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+" {\n          \\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+timestamp+"*\\y) [circle,draw,inner sep=0pt] {$\\w$};\n          }\n          \\foreach \\x/\\y/\\z in \\edges"+timestamp+" {\n          \\draw[\\z] (\\x) -- (\\y);\n          }\n         \\foreach \\x in \\loops"+timestamp+" {\n      \\path (\\x) edge [->,in=120,out=60,loop,looseness=6] node {} (\\x);\n         }\n      \\end{tikzpicture}\n      % \\points"+timestamp+" is point set in the form x-coord/y-coord/node ID/node label\n     % \\edges"+timestamp+" is edge set in the form Source ID/Target ID/arrow direction\n      % \\scale"+timestamp+" makes the picture able to be viewed on the page\n";  
 //  tikzTex =  "\\begin{tikzpicture}\n          % Point set in the form x-coord/y-coord/node ID/node label\n          \\newcommand*\\points{"+points+"}\n          % Edge set in the form Source ID/Target ID\n          \\newcommand*\\edges{"+edges+"}\n          % Scale to make the picture able to be viewed on the page\n          \\newcommand*\\scale{0.02}\n          % Creates nodes\n          \\foreach \\x/\\y/\\z/\\w in \\points {\n          \\node (\\z) at (\\scale*\\x,-\\scale*\\y) [circle,draw] {$\\w$};\n          }\n          % Creates edges\n          \\foreach \\x/\\y in \\edges {\n          \\draw (\\x) -- (\\y);\n          }\n      \\end{tikzpicture}";
     
   if(!tikzGenerated){
@@ -1076,7 +1083,7 @@ function exportTikz (event){
     var listGroup = document.getElementById("menuList");
     listGroup.insertBefore(tikzDiv,listGroup.childNodes[14]);
     document.getElementById("copyButton").setAttribute("data-clipboard-target","#tikzTextBox");
-    clipboard = new Clipboard('#copyButton');
+    clipboard = new ClipboardJS('#copyButton');
     clipboard.on('error', function(e) {
         window.alert("Press enter, then CTRL-C or CMD-C to copy")
     });  
@@ -1119,6 +1126,11 @@ function menuDefaults() {
   d3.select("#isEulerian").html("&nbsp;&nbsp; isEulerian");  
   d3.select("#isStronglyConnected").html("&nbsp;&nbsp; isStronglyConnected");  
   d3.select("#isWeaklyConnected").html("&nbsp;&nbsp; isWeaklyConnected");
+    
+  if (tikzGenerated) {
+      d3.select("#tikzHolder").node().remove();
+      tikzGenerated = false;
+  }
 }
 
 

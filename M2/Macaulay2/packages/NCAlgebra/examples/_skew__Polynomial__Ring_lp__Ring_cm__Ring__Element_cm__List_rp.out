@@ -38,7 +38,7 @@ o7 = true
 
 i8 : C = skewPolynomialRing(QQ,2_QQ, {x,y,z,w})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12281-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12281-0/3.ter ... Complete!
+Complete!
 
 o8 = C
 
@@ -50,7 +50,7 @@ o9 = true
 
 i10 : D = skewPolynomialRing(QQ,1_QQ, {x,y,z,w})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12281-0/5.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12281-0/8.ter ... Complete!
+Complete!
 
 o10 = D
 
@@ -66,7 +66,7 @@ o12 = true
 
 i13 : Cop = oppositeRing C
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12281-0/10.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12281-0/13.ter ... Complete!
+Complete!
 
 o13 = Cop
 

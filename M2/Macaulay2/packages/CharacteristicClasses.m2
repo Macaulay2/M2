@@ -9,7 +9,8 @@ newPackage(
 		  HomePage => "https://math.berkeley.edu/~mhelmer/"},
 	      {Name => "Christine Jost", 
 		  Email => "christine.e.jost@gmail.com"}},
-    	Headline => "Computes CSM classes, Segre classes and the Euler Char. for some Subschemes of Smooth Complete Toric Varieties",
+    	Headline => "CSM classes, Segre classes and the Euler characteristic for some subschemes of smooth complete toric varieties",
+	Keywords => {"Intersection Theory"},
     	DebuggingMode => false,
 	PackageImports => { "Elimination", "PrimaryDecomposition", "NormalToricVarieties"},
 	Configuration => { "pathToBertini" => ""},
@@ -1883,7 +1884,7 @@ doc ///
          ToricChowRing
 	 (ToricChowRing,NormalToricVariety)
      Headline
-         Computes the Chow ring Ch=R/(SR+LR) of a normal toric variety with coordinate ring R, here SR is the Stanley-Reisner ideal of the corresponding fan and LR is the ideal of linear relations amount the rays
+         Computes the Chow ring of a normal toric variety
      Usage 
          ToricChowRing X
      Inputs

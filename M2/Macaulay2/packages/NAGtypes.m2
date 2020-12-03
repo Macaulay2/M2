@@ -2,14 +2,16 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.11",
-     Date => "Nov 2017",
-     Headline => "Common types used in Numerical Algebraic Geometry",
+     Version => "1.14",
+     Date => "Aug 2019",
+     Headline => "types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
+     Keywords => {"Numerical Algebraic Geometry"},
+     PackageExports => {"ReesAlgebra"}, -- avoids collision with "Jacobian" 
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => false 
@@ -45,12 +47,13 @@ export {
      "Origin", "IncreasePrecision", "DecreasePrecision", 
      -- point sets 
      "PointSet", "pointSet", "unionPointSet", "differencePointSet",
-     -- polynomial systems
-     "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", -- "JacobianAndPolySystem", 
+     -- systems
+     "System", "numVariables", "numFunctions", "numParameters", 
+     "evaluate", "evaluateJacobian",
+     "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", 
      "ContinuationParameter", "SpecializationRing",
-     "polySystem", 
-     -- "segmentHomotopy", "substituteContinuationParameter", "specializeContinuationParameter",
-     "evaluate",
+     "polySystem", "parameters",
+     -- "segmentHomotopy"(defined in extraNAGtypes), "substituteContinuationParameter"(delete???), "specializeContinuationParameter"(delete???),
      -- dual space
      "DualSpace", "BasePoint", "dualSpace", "PolySpace", "polySpace", "Reduced", "Gens", "Space"
      }
@@ -60,7 +63,8 @@ debug Core -- to enable engine routines
 
 Point = new Type of MutableHashTable 
 load "./NAGtypes/WSet-abstract.m2"
-PolySystem = new Type of MutableHashTable
+System = new Type of MutableHashTable -- TODO: make it a HashTable
+PolySystem = new Type of System
 WitnessSet = new Type of WSet 
 ProjectiveWitnessSet = new Type of WitnessSet
 NumericalVariety = new Type of MutableHashTable 
@@ -108,7 +112,6 @@ differencePointSet (PointSet,PointSet) := o -> (A,B) -> (
     )
 
 TEST /// 
-    restart
     needsPackage "NAGtypes"
     A = set {{{1,3}},{{2,5}},{{0,3}},{{1+ii,3}}} /point // pointSet
     B = {{{1,3.1}},{{0,3}}}/point//pointSet
@@ -360,8 +363,6 @@ load "./NAGtypes/doc-NAGtypes.m2"
 
 undocumented {BasePoint,origin,(origin,Ring),Gens,Space} --Robert???
 undocumented {
-    ParameterHomotopy, 
-    Parameters, SpecializedParameterHomotopy, Homotopy,
     evaluateHt, (evaluateHt,Homotopy,Matrix,Number), (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopy,Matrix,Number), 
     evaluateHx, (evaluateHx,Homotopy,Matrix,Number), (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopy,Matrix,Number),
     evaluateH, (evaluateH,Homotopy,Matrix,Number), (evaluateH,ParameterHomotopy,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopy,Matrix,Number)

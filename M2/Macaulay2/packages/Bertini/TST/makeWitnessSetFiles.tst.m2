@@ -7,7 +7,7 @@ needsPackage "Bertini"
 ---The witness set file varies by dimension. Our input is a directory along with a dimension. 
 makeB'InputFile(storeBM2Files,
      AffVariableGroup=>{x,y,z},
-     B'Configs=>{{TrackType,1}},
+     BertiniInputConfiguration=>{TrackType=>1},
      B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})  
 runBertini(storeBM2Files)
 makeWitnessSetFiles(storeBM2Files,2)--creats a witness point file for all dimension 2 components and a linear slice file for dimension 2 components. 
@@ -37,7 +37,7 @@ assert(#s==1 or #s==2)
      makeDirectory storeBM2Files2
 makeB'InputFile(storeBM2Files2,
      AffVariableGroup=>{x,y,z},
-     B'Configs=>{{TrackType,1}},
+     BertiniInputConfiguration=>{TrackType=>1},
      B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})  
  runBertini(storeBM2Files2)
      makeWitnessSetFiles(storeBM2Files2,2,

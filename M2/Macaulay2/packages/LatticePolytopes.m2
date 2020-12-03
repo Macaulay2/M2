@@ -10,7 +10,7 @@
 -- UPDATE HISTORY : March 2014, May 2015
 ---------------------------------------------------------------------------
 newPackage("LatticePolytopes",
-    Headline => "A package for computations with lattice polytopes",
+    Headline => "lattice polytopes",
     Version => "1.0",
     Date => "May 4, 2015",
     Authors => {
@@ -21,6 +21,7 @@ newPackage("LatticePolytopes",
 	    HomePage => "http://www.math.kth.se/~gss",
 	    Email => "gss@math.kth.se"}
       	},
+    Keywords => {"Convex Geometry"},
     PackageExports => {"Polyhedra","NormalToricVarieties"}
     )
 

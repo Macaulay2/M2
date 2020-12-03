@@ -5,7 +5,8 @@ Date => "April 3, 2013, revised August 21, 2017",
 Authors => {{Name => "David Eisenbud",
 Email => "de@msri.org",
 HomePage => "http://www.msri.org/~de"}},
-Headline => "MCM Approximations and Complete Intersections",
+Headline => "MCM approximations and complete intersections",
+Keywords => {"Commutative Algebra"},
 DebuggingMode => false
 )
 

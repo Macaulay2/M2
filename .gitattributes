@@ -1,0 +1,3 @@
+*.m2 linguist-language=Macaulay2
+*.d  linguist-language=Macaulay2
+*.dd linguist-language=Macaulay2

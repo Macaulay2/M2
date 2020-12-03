@@ -15,7 +15,8 @@ newPackage(
 		 Email => "schreyer@math.uni-sb.de",
 		 HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}
                    },
-    	Headline => "Construction of random smooth space curves",
+    	Headline => "random smooth space curves",
+	Keywords => {"Examples and Random Objects"},
      	PackageExports => {"RandomObjects"},
     	DebuggingMode => false
         )

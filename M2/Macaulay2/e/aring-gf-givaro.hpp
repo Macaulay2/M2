@@ -83,7 +83,7 @@ class ARingGFGivaro : public RingInterface
   // We hope that if the polynomial is F(t), that t is a generator of the
   // multiplicative group.  We need to check this.
   // TODO: check whether Givaro can handle F(t) with t not primitive.
-  static const M2_arrayint findMinimalPolynomial(UTT charac, UTT dim);
+  static M2_arrayint findMinimalPolynomial(UTT charac, UTT dim);
 
   ARingGFGivaro(UTT charac_,
                 const M2_arrayint &modPolynomial,
@@ -165,12 +165,12 @@ class ARingGFGivaro : public RingInterface
   @{ */
   void to_ring_elem(ring_elem &result, const ElementType &a) const
   {
-    result.int_val = static_cast<int>(a);
+    result = ring_elem(static_cast<int>(a));
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-    result = a.int_val;
+    result = a.get_int();
   }
   /** @} */
 
@@ -207,7 +207,7 @@ class ARingGFGivaro : public RingInterface
 
   void set_from_mpz(elem &result, mpz_srcptr a) const;
 
-  bool set_from_mpq(elem &result, const mpq_ptr a) const;
+  bool set_from_mpq(elem &result, mpq_srcptr a) const;
 
   bool set_from_BigReal(elem &result, gmp_RR a) const { return false; }
   void set_var(elem &result, int v) const { result = 1; }
@@ -234,7 +234,7 @@ class ARingGFGivaro : public RingInterface
 
   void power(elem &result, const elem a, const STT n) const;
 
-  void power_mpz(elem &result, const elem a, const mpz_ptr n) const;
+  void power_mpz(elem &result, const elem a, mpz_srcptr n) const;
 
   void syzygy(const ElementType a,
               const ElementType b,

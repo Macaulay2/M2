@@ -226,7 +226,7 @@ document {
      PARA{
 	  "Use this file to get input from the terminal, or to display information
 	  on the user's screen.  This is the file always used by ", TO "print", "
-	  and used ", TO "<<", " if it is not explicitly given a file."
+	  and ", TO "<<", " if it is not explicitly given a file."
 	  },
      EXAMPLE lines ///
      << "hi" << endl
@@ -618,7 +618,6 @@ undocumented {
      (symbol ?, Thing, InfiniteNumber),
      (symbol ?, TOH, TOH),
      (symbol ?, InfiniteNumber, Thing),
-     (symbol ?, Function),
      (symbol ?, ZZ, MonoidElement),
      (symbol ?, MonoidElement, ZZ),
      (symbol ?, RingElement, ZZ),
@@ -687,15 +686,22 @@ document {
 
 
 document {
-     Key => ";",
-     Headline => "statement separator",
-     TT "(e;f;...;g;h)", " the semicolon can be used for evaluating a sequence of 
-     expressions.  The value of the sequence is the value of its
-     last expression, unless it is omitted, in which case the value
-     is ", TO "null", ".",
+     Key => {";"},
+     Headline => "expression separator",
+     Usage => "(e;f;...;g;h)",
+     PARA {
+     	  "The semicolon can be used for evaluating a sequence of 
+     	  expressions.  The value of the sequence is the value of its
+     	  last expression, unless it is omitted, in which case the value
+     	  is ", TO "null", "."
+	  },
      EXAMPLE {
 	  "(3;4;5)",
       	  "(3;4;5;)"
+	  },
+     PARA {
+	  "Putting expressions on separate lines is not a substitute for 
+	  the semicolons."
 	  }
      }
 

@@ -1,0 +1,29 @@
+M2symbols=[@M2SYMBOLS@].sort();
+
+Prism.languages.macaulay2 = {
+    'comment': [
+	{
+	    pattern: /(^|[^\\])\-\*[\s\S]*?(?:\*\-|$)/,
+	    lookbehind: true
+	},
+	{
+	    pattern: /(^|[^\\:])\-\-.*/,
+	    lookbehind: true,
+	    greedy: true
+	}
+    ],
+    'string': [
+	{
+	    pattern: /"(?:\\[\s\S]|(?!")[^\\])*"/,
+	    greedy: true
+	},
+	{
+	    pattern: /\/\/\/(\/(?!\/)|(?:\/\/)+(?!\/)|[^\/])*(?:\/\/)+\/(?!\/)/,
+	    greedy: true
+	}
+    ],
+    'keyword':    /\b(?:@M2KEYWORDS@)\b/,
+    'class-name': /\b(?:@M2DATATYPES@)\b/,
+    'function':   /\b(?:@M2FUNCTIONS@)\b/,
+    'constant':   /\b(?:@M2CONSTANTS@)\b/,
+};

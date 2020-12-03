@@ -56,7 +56,7 @@ findF = (p) -> (
 	  );
      -- check if s has only one nonzero component
      ind := select(toList(0..m-1),i->s_(i,0)!=0);
-     if ind>1 then error "ind is not unique"
+     if #ind>1 then error "index is not unique"
      else ind = first ind;
      pInfo(99, "ind = "|toString ind|" s = "|toString s|" M = "|toString M);
      -- e_ind is in M

@@ -10,7 +10,8 @@ newPackage(
 		HomePage => "http://www.math.uni-bielefeld.de/~bcalmes/"},
                 {Name => "Viktor Petrov"}
 		},
-	Headline => "Root systems and Weyl groups",
+	Headline => "root systems and Weyl groups",
+	Keywords => {"Lie Groups and Lie Algebras"},
 	AuxiliaryFiles => true,
 	PackageExports => {"Graphics"},
 	DebuggingMode => false)

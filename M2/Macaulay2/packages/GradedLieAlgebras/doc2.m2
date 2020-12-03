@@ -1,678 +1,1369 @@
 doc ///
-Key
-  annLie
-     (annLie, ZZ,ZZ, List)    
+Key     
+       (annihilator,FGLieSubAlgebra)    
 Headline
-  computes a basis for the annihilator in a given degree
+  make the annihilator Lie subalgebra  
 Usage
-  l=annLie(d,s,p)  
+  A=annihilator(S)  
 Inputs
-  d: ZZ
-     the degree of output 
-  s: ZZ 
-     the degree of the elements in p 
-  p: List 
-     of elements of degree s that we want to annihilate
+  S: FGLieSubAlgebra   
 Outputs
-  l: List
-     a basis for the set X of elements x of degree d such that 
-     multLie(x,y)=0 for all y in p.
+  A: LieSubAlgebra
+     the Lie subalgebra of {\tt L=S#lieAlgebra} consisting of 
+     the set $A$ of elements $x$ in $L$  
+     such that $x y=0$ for all $y$ in $S$.
 SeeAlso
-  divisorLie
+    "quotient(LieIdeal,FGLieSubAlgebra)"
 Description
+  Text
+    The optional input given above is not relevant for Lie algebras.
   Example
     L = lieAlgebra{a,b,c}/{a a c+b a c,c c a}
-    basisLie 3
-    annLie(3,2,{a c})
-    
-///
-doc ///
-Key
-  axiomsLie
-     
-Headline
-  the axioms for Lie algebras 
-Description
- Text
-   The axioms depend on the signs of the generators, which are specified by @TO [lieAlgebra,genSigns]@. 
-   The sign of an element can be obtained by the function @TO signLie@, in the axioms
-   below the sign of an element a is written sign(a).
-   
-   Anticommutativity:
-      [a,b] =  -(-1)^{sign(a) * sign(b)} [b,a]
-    
-   Jacobi identity:
-      [a,[b,c]] = [[a,b],c] + (-1)^{sign(a) * sign(b)} [b,[a,c]]
-      
-   Also, in characteristic 2 and 3, there are in addition the following axioms:
-    
-   Characteristic 2:
-      [a,a] = 0
-      
-   Characteristic 3:
-      [a,[a,a]] = 0  
+    S=lieSubAlgebra({a c})
+    A=annihilator(S)
+    dims(1,4,A)
+    basis(3,A)
     
    
-///
-
+/// 
 doc ///
-Key
-  basisLie
-     (basisLie, ZZ)
-     (basisLie, ZZ, ZZ)
-     (basisLie, List) 
+Key     
+       (basis,ZZ,LieAlgebra)    
 Headline
-   a basis of Lie monomials in a given (multi-)degree
-SeeAlso
-  dimsLie
-  indexFormLie
-  
+  compute a basis  
 Usage
-  b = basisLie(d)
-  b = basisLie(d1, d2)
-  b = basisLie(dl)
+  b=basis(m,L)  
 Inputs
-  d:  ZZ
-      the (first) degree
-  d1: ZZ
-      the first degree
-  d2: ZZ
-      the last degree = the homological degree
-  dl: List
-      the multi-degree
+  m: ZZ
+  L: LieAlgebra   
 Outputs
-  b:  List
-     the basis, a list of Lie monomials 
-Description
-  Example
-    L = lieAlgebra({a,b},genSigns=>{1,0},genWeights=>{{2,0},{2,1}},
-	diffl=>true,field=>ZZ/3)
-    L = diffLieAlgebra{L.zz,a}
-    basisLie 6
-    basisLie({6,1})
-    basisLie(6,2)
-///
-doc ///
-Key
-  boundariesBasisLie
-     (boundariesBasisLie, ZZ, ZZ) 
-     (boundariesBasisLie, List)
-Headline
-  computes a basis for the boundaries of a Lie algebra
-Usage
-  l = boundariesBasisLie(n,d)
-  l = boundariesBasisLie(x) 
-Inputs
-  n: ZZ
-     the  degree
-  d: ZZ
-     the homological degree
-  x: List
-     the multi-degree
-Outputs
-  l: List
-     a basis for the boundaries in  degree n and homological degree d or multi-degree x
+  b: List
+     a basis for the part of $L$ of first degree $m$.
 SeeAlso
-  boundariesTableLie
-  homologyTableLie
-  homologyBasisLie
-  "Differential LieAlgebra Tutorial"
-Description
-  Example
-    L=lieAlgebra({a,b},genSigns=>{1,0},genWeights=>{{2,0},{2,1}},
-	diffl=>true,field=>ZZ/7)
-    L=diffLieAlgebra{L.zz,a}
-    boundariesBasisLie({10,1})
-    boundariesBasisLie(10,2)
-   
-///
-doc ///
-Key
-  boundariesTableLie
-    
-   
-      
-Headline
-  a table of dimensions of the boundaries of a Lie algebra
-SeeAlso
-  boundariesBasisLie
-  homologyTableLie
-  cyclesTableLie
-  dimTableLie
-  idealTableLie
-  subalgTableLie
-  imageTableLie
-  kernelTableLie
-  extTableLie
-   
-Usage
-  b = boundariesTableLie n
-  
-Inputs
-  n: ZZ
-      the maximal degree
-  
-Outputs
-  b: Matrix
-
+    dims
+    "basis(ZZ,ZZ,LieAlgebra)"
+    "basis(List,LieAlgebra)"
+    "basis(ZZ,ExtAlgebra)"
+    "basis(ZZ,ZZ,ExtAlgebra)"
+    "basis(List,ExtAlgebra)"
+    "basis(ZZ,VectorSpace)"
+    "basis(ZZ,ZZ,VectorSpace)"
+    "basis(List,VectorSpace)"
     
 Description
   Text
-     The columns are referring 
-     to the degree, indexed from 1, 
-     and the rows are referring to 
-     the homological degree, indexed from 0.
-     
+    The optional inputs given above are not relevant for Lie algebras.
   Example
-     L=lieAlgebra({a,b,c,r3,r4},genWeights => 
-          {{1,0},{1,0},{2,0},{3,1},{4,1}},
-          diffl=>true,
-          genSigns=>{1,1,0,0,1})
-     L=diffLieAlgebra{L.zz,L.zz,L.zz,b c - a c,a a c - 2 b b b a}
-     boundariesTableLie 7
-     
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    basis(7,Q)
     
-///
-
-doc ///
-
-Key
-  centerAllLie
-     
-Headline
-  computes all central elements
-Usage
-  cAll=centerAllLie n
-  
-Inputs
-   n: ZZ  
-  
-Outputs
-  cAll: List
-     a basis for the central elements of degree less than or equal to n
-     
-SeeAlso
-  centerLie
-  annLie
-  divisorLie   
-Description
- Example
-  L = lieAlgebra{a,b,c}/{a b,a c,c b c,b b c b}
-  centerAllLie(3)
-  centerLie(3) 
-///
-doc ///
-
-Key
-  centerLie
-     (centerLie, ZZ)
-     
-Headline
-  computes the central elements
-Usage
-  c=centerLie(d)  
    
+/// 
+doc ///
+Key     
+       (basis,ZZ,ExtAlgebra)    
+Headline
+  compute a basis  
+Usage
+  b=basis(m,E)  
 Inputs
-  d: ZZ 
-     the degree
-  
+  m: ZZ
+  E: ExtAlgebra   
 Outputs
-  c: List
-     a basis for the central elements of degree d
-  
+  b: List
+     a basis for the part of $E$ of first degree $m$.
 SeeAlso
-  centerAllLie
-  annLie
-  divisorLie   
+    dims
+    "basis(ZZ,LieAlgebra)"
+    "basis(ZZ,ZZ,LieAlgebra)"
+    "basis(List,LieAlgebra)"
+    "basis(ZZ,ZZ,ExtAlgebra)"
+    "basis(List,ExtAlgebra)"
+    "basis(ZZ,VectorSpace)"
+    "basis(ZZ,ZZ,VectorSpace)"
+    "basis(List,VectorSpace)"
+Description
+  Text
+    The optional inputs given above are not relevant for Lie algebras.
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    E=extAlgebra(5,Q)
+    basis(4,E)
+    
+   
+/// 
+doc ///
+Key     
+       (basis,ZZ,VectorSpace)    
+Headline
+  compute a basis  
+Usage
+  b=basis(m,V)  
+Inputs
+  m: ZZ
+  V: VectorSpace
+     an instance of type {\tt VectorSpace}  
+Outputs
+  b: List
+     a basis for the part of $V$ of first degree $m$.
+SeeAlso
+    dims
+    "basis(ZZ,LieAlgebra)"
+    "basis(ZZ,ZZ,LieAlgebra)"
+    "basis(List,LieAlgebra)"
+    "basis(ZZ,ExtAlgebra)"
+    "basis(ZZ,ZZ,ExtAlgebra)"
+    "basis(List,ExtAlgebra)"
+    "basis(ZZ,ZZ,VectorSpace)"
+    "basis(List,VectorSpace)"
+Description
+  Text
+    The optional inputs given above are not relevant for Lie algebras.
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    H=lieHomology Q
+    basis(5,H)
+    Z=cycles Q
+    basis(3,Z)
+    
+   
+/// 
+doc ///
+Key     
+       (basis,ZZ,ZZ,LieAlgebra)    
+Headline
+  compute a basis  
+Usage
+  b=basis(m,n,L)  
+Inputs
+  m: ZZ
+  n: ZZ
+  L: LieAlgebra   
+Outputs
+  b: List
+     a basis for the part of $L$ of first degree $m$ and homological degree $n$.
+SeeAlso
+    dims
+    "basis(ZZ,LieAlgebra)"
+    "basis(List,LieAlgebra)"
+    "basis(ZZ,ExtAlgebra)"
+    "basis(ZZ,ZZ,ExtAlgebra)"
+    "basis(List,ExtAlgebra)"
+    "basis(ZZ,VectorSpace)"
+    "basis(ZZ,ZZ,VectorSpace)"
+    "basis(List,VectorSpace)"
+Description
+  Text
+    The optional inputs given above are not relevant for Lie algebras.
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    basis(7,4,Q)
+    
+   
+/// 
+doc ///
+Key     
+       (basis,ZZ,ZZ,ExtAlgebra)    
+Headline
+  compute a basis  
+Usage
+  b=basis(m,n,E)  
+Inputs
+  m: ZZ
+  n: ZZ
+  E: ExtAlgebra   
+Outputs
+  b: List
+     a basis for the part of $E$ of first degree $m$ and homological degree $n$.
+SeeAlso
+    dims
+    "basis(ZZ,LieAlgebra)"
+    "basis(ZZ,ZZ,LieAlgebra)"
+    "basis(List,LieAlgebra)"
+    "basis(ZZ,ExtAlgebra)"
+    "basis(List,ExtAlgebra)"
+    "basis(ZZ,VectorSpace)"
+    "basis(ZZ,ZZ,VectorSpace)"
+    "basis(List,VectorSpace)"
+Description
+  Text
+    The optional inputs given above are not relevant for Lie algebras.
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    E=extAlgebra(5,Q)
+    basis(4,4,E)
+    
+   
+/// 
+doc ///
+Key     
+       (basis,ZZ,ZZ,VectorSpace)    
+Headline
+  compute a basis  
+Usage
+  b=basis(m,n,V)  
+Inputs
+  m: ZZ
+  n: ZZ
+  V: VectorSpace
+     an instance of type {\tt VectorSpace}   
+Outputs
+  b: List
+     a basis for the part of $V$ of first degree $m$ and homological degree $n$.
+SeeAlso
+    dims
+    "basis(ZZ,LieAlgebra)"
+    "basis(ZZ,ZZ,LieAlgebra)"
+    "basis(List,LieAlgebra)"
+    "basis(ZZ,ExtAlgebra)"
+    "basis(ZZ,ZZ,ExtAlgebra)"
+    "basis(List,ExtAlgebra)"
+    "basis(ZZ,VectorSpace)"
+    "basis(List,VectorSpace)"
+Description
+  Text
+    The optional inputs given above are not relevant for Lie algebras.
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    H=lieHomology Q
+    basis(5,3,H)
+    Z=cycles Q
+    basis(5,3,Z)
+    
+   
+/// 
+doc ///
+Key     
+       (basis,List,LieAlgebra)    
+Headline
+  compute a basis  
+Usage
+  b=basis(s,L)  
+Inputs
+  s: List
+     the weight
+  L: LieAlgebra   
+Outputs
+  b: List
+     a basis for the part of $L$ of multi-degree $s$.
+SeeAlso
+    dims
+    "basis(ZZ,LieAlgebra)"
+    "basis(ZZ,ZZ,LieAlgebra)"
+    "basis(ZZ,ExtAlgebra)"
+    "basis(ZZ,ZZ,ExtAlgebra)"
+    "basis(List,ExtAlgebra)"
+    "basis(ZZ,VectorSpace)"
+    "basis(ZZ,ZZ,VectorSpace)"
+    "basis(List,VectorSpace)"
+Description
+  Text
+    The optional inputs given above are not relevant for Lie algebras.
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    basis({7,4},Q)
+    
+   
+/// 
+doc ///
+Key     
+       (basis,List,ExtAlgebra)    
+Headline
+  compute a basis  
+Usage
+  b=basis(s,E)  
+Inputs
+  s: List
+     the weight
+  E: ExtAlgebra   
+Outputs
+  b: List
+     a basis for the part of $E$ of multi-degree $s$.
+SeeAlso
+    dims
+    "basis(ZZ,LieAlgebra)"
+    "basis(ZZ,ZZ,LieAlgebra)"
+    "basis(List,LieAlgebra)"
+    "basis(ZZ,ExtAlgebra)"
+    "basis(ZZ,ZZ,ExtAlgebra)"
+    "basis(ZZ,VectorSpace)"
+    "basis(ZZ,ZZ,VectorSpace)"
+    "basis(List,VectorSpace)"
+Description
+  Text
+    The optional inputs given above are not relevant for Lie algebras.
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    E=extAlgebra(5,Q)
+    basis({4,4},E)
+    
+   
+/// 
+doc ///
+Key     
+       (basis,List,VectorSpace)    
+Headline
+  compute a basis  
+Usage
+  b=basis(s,V)  
+Inputs
+  s: List
+     the weight
+  V: VectorSpace
+     an instance of type {\tt VectorSpace}      
+Outputs
+  b: List
+     a basis for the part of $V$ of multi-degree $s$.
+SeeAlso
+    dims
+    "basis(ZZ,LieAlgebra)"
+    "basis(ZZ,ZZ,LieAlgebra)"
+    "basis(List,LieAlgebra)"
+    "basis(ZZ,ExtAlgebra)"
+    "basis(ZZ,ZZ,ExtAlgebra)"
+    "basis(List,ExtAlgebra)"
+    "basis(ZZ,VectorSpace)"
+    "basis(ZZ,ZZ,VectorSpace)"
+    
+Description
+  Text
+    The optional inputs given above are not relevant for Lie algebras.
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    H=lieHomology Q
+    basis({5,3},H)
+    Z=cycles Q
+    basis({5,3},Z)
+    
+   
+///
+document {
+Key => {
+         weight,
+	   (weight,LieElement),
+	   (weight,ExtElement),
+	   (weight,LieDerivation)
+       },
+     
+Headline => 
+  "get the weight of a homogeneous element",
+  TEX "The weight of a homogeneous Lie (or Ext) element $x$ 
+     is obtained as ", TT "weight(x).",TEX " The 
+     zero element of a Lie algebra 
+     has weight equal to a list of zeroes of length
+     equal to the degree length of the Lie algebra; however, 
+     its weight should
+     be thought of as arbitrary.
+     The weight of a derivation $d$ is the weight of $d$ as a graded map
+     and may also be obtained as ", TT "d#weight.", 
+SeeAlso => {"firstDegree(LieElement)","sign","degreeLength"},
+SYNOPSIS {  
+    Usage =>
+      "w=weight(x)",   
+    Inputs => {
+      "x" => LieElement
+       }, 
+    Outputs => {
+      "w" => List
+       }
+   },
+EXAMPLE {
+     "L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+	 LastWeightHomological=>true, Signs => 1)",
+     "D=differentialLieAlgebra{0_L,a a,a b}/{a a b, a a c, b a b}",
+     "x=a b c+2 c b a",
+     "weight x",
+     "weight 0_D"    
+          },
+SYNOPSIS {  
+    Usage =>
+      "w=weight(x)",   
+    Inputs => {
+      "x" => ExtElement
+       }, 
+    Outputs => {
+      "w" => List
+       }
+   },
+EXAMPLE {
+     "E=extAlgebra(5,D)",
+     "b=basis(5,E)",
+     "apply(b,weight)"
+    },
+SYNOPSIS {  
+    Usage =>
+      "w=weight(d)",   
+    Inputs => {
+      "d" => LieDerivation
+       }, 
+    Outputs => {
+      "w" => List
+       }
+   },
+EXAMPLE {
+      "weight differential D"
+    },    
+}
+document {
+     Key => {
+	   computedDegree,
+	     (computedDegree,LieAlgebra),
+	     (computedDegree,ExtAlgebra)
+	  },
+     Headline => "get the degree to which the computations 
+                  have been performed",
+   TEX " The computed degree of a Lie algebra (or Ext-algebra) $L$ is $d$ when the 
+    computation 
+    of $L$ has been performed up to degree $d$.",   
+     
+     SYNOPSIS {
+	  Usage => "n=computedDegree(L)",	            	            ,
+     	  Inputs => {
+	       "L" => LieAlgebra
+	       },
+	  Outputs => {
+	       "n" => ZZ => "the degree of computation of L"
+	      }
+	  },
+      SYNOPSIS {
+	  Usage => "n=computedDegree(E)",	            	            ,
+     	  Inputs => {
+	       "E" => ExtAlgebra
+	       },
+	  Outputs => {
+	       "n" => ZZ => "the degree of computation of E"
+	      }
+	  },
+     
+     EXAMPLE{
+	 "L = lieAlgebra({a,b,c},Weights=>{1,2,3})",
+	 "dims(1,3,L)",
+	 "computedDegree L",
+	 "firstDegree(c a b+a b c)",
+	 "computedDegree L"},       
+     }
+document {
+     Key => {
+	   firstDegree,
+	     (firstDegree,LieElement),
+	     (firstDegree,ExtElement),
+	     (firstDegree,LieDerivation)
+	  },
+     Headline => "get the degree of an element",
+    TEX " The degree of an element $x$ in a Lie algebra or
+    an Ext-algebra is 
+    the first degree
+    of the homogeneous element $x$. 
+    The zero element has degree 0; however, its degree should
+     be thought of as arbitrary. 
+    The degree of a Lie derivation $d$ is the first degree of $d$ 
+    considered as 
+    a graded map.", 
+      
+     SeeAlso => {"weight"},
+     
+     SYNOPSIS {
+	  Usage => "n=firstDegree(x)",	  
+     	  Inputs => {
+	       "x" => LieElement
+	       },
+	  Outputs => {
+	       "n" => ZZ => TEX " the first degree of $x$"	       
+	       }
+	   },
+     SYNOPSIS {
+	  Usage => "n=firstDegree(x)",	  
+     	  Inputs => {
+	       "x" => ExtElement
+	       },
+	  Outputs => {
+	       "n" => ZZ => TEX " the first degree of $x$"	       
+	       }
+	   },
+     SYNOPSIS {
+	  Usage => "n=firstDegree(d)",	  
+     	  Inputs => {
+	       "d" => LieDerivation
+	       },
+	  Outputs => {
+	       "n" => ZZ => TEX " the first degree of $d$"	       
+	       }
+	   },
+     EXAMPLE{
+	 "L = lieAlgebra({a,b,c},Weights=>{1,2,3})",
+	 "firstDegree(c a b+a b c)",
+	 "E = extAlgebra(5,L)",
+	 "apply(gens E,firstDegree)",
+	 "d=lieDerivation({a c b,b b c,c c b})",
+	 "firstDegree d"
+	 },       
+     }
+doc ///
+Key     
+       (dim,ZZ,LieAlgebra)    
+Headline
+  compute the dimension  
+Usage
+  d=dim(m,L)  
+Inputs
+  m: ZZ
+  L: LieAlgebra   
+Outputs
+  d: ZZ
+     the dimaension of $L$ in first degree $m$.
+SeeAlso
+    dims
+    "basis(ZZ,LieAlgebra)"
+    "dim(ZZ,ZZ,LieAlgebra)"
+    "dim(List,LieAlgebra)"
+    "dim(ZZ,ExtAlgebra)"
+    "dim(ZZ,ZZ,ExtAlgebra)"
+    "dim(List,ExtAlgebra)"
+    "dim(ZZ,VectorSpace)"
+    "dim(ZZ,ZZ,VectorSpace)"
+    "dim(List,VectorSpace)"
+Description
+  
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    dim(7,Q)
+    
+   
+///
+doc ///
+Key     
+       (dim,ZZ,ExtAlgebra)    
+Headline
+  compute the dimension  
+Usage
+  d=dim(m,E)  
+Inputs
+  m: ZZ
+  E: ExtAlgebra   
+Outputs
+  d: ZZ
+     the dimaension of $E$ in first degree $m$.
+SeeAlso
+    dims
+    "basis(ZZ,ExtAlgebra)"
+    "dim(ZZ,LieAlgebra)"
+    "dim(ZZ,ZZ,LieAlgebra)"
+    "dim(List,LieAlgebra)"
+    "dim(ZZ,ZZ,ExtAlgebra)"
+    "dim(List,ExtAlgebra)"
+    "dim(ZZ,VectorSpace)"
+    "dim(ZZ,ZZ,VectorSpace)"
+    "dim(List,VectorSpace)"
+Description
+  
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    E=extAlgebra(5,Q)
+    dim(4,E)
+    
+   
+///
+doc ///
+Key     
+       (dim,ZZ,VectorSpace)    
+Headline
+  compute the dimension  
+Usage
+  d=dim(m,V)  
+Inputs
+  m: ZZ
+  V: VectorSpace 
+     an instance of type {\tt VectorSpace} 
+Outputs
+  d: ZZ
+     the dimaension of $V$ in first degree $m$.
+SeeAlso
+    dims
+    "basis(ZZ,VectorSpace)"
+    "dim(ZZ,LieAlgebra)"
+    "dim(ZZ,ZZ,LieAlgebra)"
+    "dim(List,LieAlgebra)"
+    "dim(ZZ,ExtAlgebra)"
+    "dim(ZZ,ZZ,ExtAlgebra)"
+    "dim(List,ExtAlgebra)"
+    "dim(ZZ,ZZ,VectorSpace)"
+    "dim(List,VectorSpace)"
+Description
+ 
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    H=lieHomology Q
+    dim(5,H)
+    Z=cycles Q
+    dim(5,Z)
+    
+    
+   
+///
+doc ///
+Key     
+       (dim,ZZ,ZZ,LieAlgebra)    
+Headline
+  compute the dimension  
+Usage
+  d=dim(m,n,L)  
+Inputs
+  m: ZZ
+  n: ZZ
+  L: LieAlgebra   
+Outputs
+  d: ZZ
+     the dimaension of $L$ in first degree $m$ and homological degree $n$.
+SeeAlso
+    dims
+    "basis(ZZ,ZZ,LieAlgebra)"
+    "dim(ZZ,LieAlgebra)"
+    "dim(List,LieAlgebra)"
+    "dim(ZZ,ExtAlgebra)"
+    "dim(ZZ,ZZ,ExtAlgebra)"
+    "dim(List,ExtAlgebra)"
+    "dim(ZZ,VectorSpace)"
+    "dim(ZZ,ZZ,VectorSpace)"
+    "dim(List,VectorSpace)"
+Description
+  
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    dim(7,4,Q)
+    
+    
+   
+///
+doc ///
+Key     
+       (dim,ZZ,ZZ,ExtAlgebra)    
+Headline
+  compute the dimension  
+Usage
+  d=dim(m,n,E)  
+Inputs
+  m: ZZ
+  n: ZZ
+  E: ExtAlgebra   
+Outputs
+  d: ZZ
+     the dimaension of $E$ in first degree $m$ and homological degree $n$.
+SeeAlso
+    dims
+    "basis(ZZ,ZZ,ExtAlgebra)"
+    "dim(ZZ,LieAlgebra)"
+    "dim(ZZ,ZZ,LieAlgebra)"
+    "dim(List,LieAlgebra)"
+    "dim(ZZ,ExtAlgebra)"
+    "dim(List,ExtAlgebra)"
+    "dim(ZZ,VectorSpace)"
+    "dim(ZZ,ZZ,VectorSpace)"
+    "dim(List,VectorSpace)"
+Description
+  
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    E=extAlgebra(5,Q)
+    dim(4,4,E)
+    
+    
+   
+///
+doc ///
+Key     
+       (dim,ZZ,ZZ,VectorSpace)    
+Headline
+  compute the dimension  
+Usage
+  d=dim(m,n,V)  
+Inputs
+  m: ZZ
+  n: ZZ
+  V: VectorSpace
+     an instance of type {\tt VectorSpace}   
+Outputs
+  d: ZZ
+     the dimension of $V$ in first degree $m$ and homological degree $n$.
+SeeAlso
+    dims
+    "basis(ZZ,ZZ,VectorSpace)"
+    "dim(ZZ,LieAlgebra)"
+    "dim(ZZ,ZZ,LieAlgebra)"
+    "dim(List,LieAlgebra)"
+    "dim(ZZ,ExtAlgebra)"
+    "dim(ZZ,ZZ,ExtAlgebra)"
+    "dim(List,ExtAlgebra)"
+    "dim(ZZ,VectorSpace)"
+    "dim(List,VectorSpace)"
+Description
+ 
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    H=lieHomology Q
+    dim(5,3,H)
+    Z=cycles Q
+    dim(5,3,Z)
+      
+///
+doc ///
+Key     
+       (dim,List,LieAlgebra)    
+Headline
+  compute the dimension  
+Usage
+  d=dim(s,L)  
+Inputs
+  s: List
+     the weight
+  L: LieAlgebra   
+Outputs
+  d: ZZ
+     the dimaension of $L$ in multi-degree $s$.
+SeeAlso
+    dims
+    "basis(List,LieAlgebra)"
+    "dim(ZZ,LieAlgebra)"
+    "dim(ZZ,ZZ,LieAlgebra)"
+    "dim(ZZ,ExtAlgebra)"
+    "dim(ZZ,ZZ,ExtAlgebra)"
+    "dim(List,ExtAlgebra)"
+    "dim(ZZ,VectorSpace)"
+    "dim(ZZ,ZZ,VectorSpace)"
+    "dim(List,VectorSpace)"
+Description
+ 
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    dim({7,4},Q)
+      
+///
+doc ///
+Key     
+       (dim,List,ExtAlgebra)    
+Headline
+  compute the dimension  
+Usage
+  d=dim(s,E)  
+Inputs
+  s: List
+     the weight
+  E: ExtAlgebra   
+Outputs
+  d: ZZ
+     the dimension of $E$ in multi-degree $s$.
+SeeAlso
+    dims
+    "basis(List,ExtAlgebra)"
+    "dim(ZZ,LieAlgebra)"
+    "dim(ZZ,ZZ,LieAlgebra)"
+    "dim(List,LieAlgebra)"
+    "dim(ZZ,ExtAlgebra)"
+    "dim(ZZ,ZZ,ExtAlgebra)"
+    "dim(ZZ,VectorSpace)"
+    "dim(ZZ,ZZ,VectorSpace)"
+    "dim(List,VectorSpace)"
+Description
+ 
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    E=extAlgebra(5,Q)
+    dim({4,4},E)
+      
+///
+doc ///
+Key     
+       (dim,List,VectorSpace)    
+Headline
+  compute the dimension  
+Usage
+  d=dim(s,V)  
+Inputs
+  s: List
+     the weight
+  E: VectorSpace 
+     an instance of type {\tt VectorSpace}     
+Outputs
+  d: ZZ
+     the dimension of $V$ in multi-degree $s$.
+SeeAlso
+    dims
+    "basis(List,VectorSpace)"
+    "dim(ZZ,LieAlgebra)"
+    "dim(ZZ,ZZ,LieAlgebra)"
+    "dim(List,LieAlgebra)"
+    "dim(ZZ,ExtAlgebra)"
+    "dim(ZZ,ZZ,ExtAlgebra)"
+    "dim(List,ExtAlgebra)"
+    "dim(ZZ,VectorSpace)"
+    "dim(ZZ,ZZ,VectorSpace)"
+
+Description
+
+  Example
+    L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+    D= differentialLieAlgebra({0_L,a a,a b})     
+    J=lieIdeal({b b + 4 a c})
+    Q=D/J
+    H=lieHomology Q
+    dim({5,3},H)
+    Z=cycles Q
+    dim({5,3},Z)
+      
+///
+document {
+     Key => {
+	   dims,
+       (dims,ZZ,LieAlgebra),
+       (dims,ZZ,ExtAlgebra),
+       (dims,ZZ,VectorSpace),
+       (dims,ZZ,ZZ,LieAlgebra),
+       (dims,ZZ,ZZ,ExtAlgebra),
+       (dims,ZZ,ZZ,VectorSpace)
+	  },
+     Headline => "compute the dimensions of a Lie algebra, Ext-algebra or 
+     vector space",
+      
+     SeeAlso => {"dim(ZZ,LieAlgebra)","basis(ZZ,LieAlgebra)"},
+     
+     SYNOPSIS {
+	  Usage => "dm=dims(n,L)",	  
+     	  Inputs => {
+	       "n" => ZZ => "the maximal degree",
+	       "L" => LieAlgebra 
+	       },
+	  Outputs => {
+	       "dm" => Matrix => TEX " the matrix of dimensions of $L$ 
+	                         in first degree $i$ and homological degree
+	                         $j$, where $i$ ranges from $1$ to $n$ and $j$ from 0 to $n-1$ "	       
+	       }
+	   },
+     SYNOPSIS {
+	  Usage => "dm=dims(n,E)",	  
+     	  Inputs => {
+	       "n" => ZZ => "the maximal degree",
+	       "E" => ExtAlgebra 
+	       },
+	  Outputs => {
+	       "dm" => Matrix => TEX " the matrix of dimensions of $E$ 
+	                         in first degree $i$ and homological degree
+	                         $j$, where $i$ ranges from $1$ to $n$ and $j$ from 0 to $n-1$ "	       
+	       }
+	   },
+     SYNOPSIS {
+	  Usage => "dm=dims(n,V)",	  
+     	  Inputs => {
+	       "n" => ZZ => "the maximal degree",
+	       "V" => VectorSpace => {"an instance of type ",TT " VectorSpace"}
+	       },
+	  Outputs => {
+	       "dm" => Matrix => TEX " the matrix of dimensions of $V$ 
+	                         in first degree $i$ and homological degree
+	                         $j$, where $i$ ranges from $1$ to $n$ and $j$ from 0 to $n-1$ "	       
+	       }
+	   },
+     SYNOPSIS {
+	  Usage => "dl=dims(n,m,L)",	  
+     	  Inputs => {
+	       "n" => ZZ => "the starting degree",
+	       "m" => ZZ => "the ending degree",
+	       "L" => LieAlgebra 
+	       },
+	  Outputs => {
+	       "dl" => List => TEX " the dimensions of $L$ in first 
+	                         degree $i$, where $i$ ranges from $n$ to $m$ "	       
+	       }
+	   },
+     SYNOPSIS {
+	  Usage => "dl=dims(n,m,E)",	  
+     	  Inputs => {
+	       "n" => ZZ => "the starting degree",
+	       "m" => ZZ => "the ending degree",
+	       "E" => ExtAlgebra 
+	       },
+	  Outputs => {
+	       "dl" => List => TEX " the dimensions of $E$ in first 
+	                         degree $i$, where $i$ ranges from $n$ to $m$ "	       
+	       }
+	   },
+     SYNOPSIS {
+	  Usage => "dl=dims(n,m,V)",	  
+     	  Inputs => {
+	       "n" => ZZ => "the starting degree",
+	       "m" => ZZ => "the ending degree",
+	       "V" => VectorSpace => {"an instance of type ",TT " VectorSpace"}
+	       },
+	  Outputs => {
+	       "dl" => List => TEX " the dimensions of $V$ in first 
+	                         degree $i$, where $i$ ranges from $n$ to $m$ "	       
+	       }
+	   },
+     EXAMPLE{
+	"L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+             Signs=>{1,1,1},LastWeightHomological=>true)",
+        "D= differentialLieAlgebra({0_L,a a,a b})",      
+        "J=lieIdeal({b b + 4 a c})",
+	"Q=D/J",
+	"dims(7,Q)",
+	"Z=cycles Q",
+	"dims(5,Z)",
+	"H=lieHomology Q",
+	"dims(1,5,H)",
+	"E=extAlgebra(5,Q)",
+	"dims(4,E)"
+	 },       
+     }
+document {
+Key => {
+         sign,
+       (sign,LieElement),
+       (sign,ExtElement),
+       (sign,LieDerivation)
+       },
+     
+Headline => 
+  "get the sign of a homogeneous element  ",
+  TEX "The sign of a homogeneous Lie (or Ext) element $x$ 
+     is obtained as ", TT "sign(x).", TEX " The 
+     zero element has sign equal to 0; however, its sign should 
+     be thought of as arbitrary. 
+     The sign of a derivation $d$ is the sign of $d$ as a graded map
+     and may also be obtained as ", TT "d#sign.", 
+SeeAlso => {"firstDegree(LieElement)", "weight"},
+SYNOPSIS {  
+    Usage =>
+      "s=sign(x)",   
+    Inputs => {
+      "x" => LieElement => {TEX "an element of type $L$ where $L$ is of type ",
+	  TT "LieAlgebra"}
+       }, 
+    Outputs => {
+      "s" => ZZ => "the sign; 0 or 1"
+       }
+   },
+EXAMPLE {
+     "L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+	 LastWeightHomological=>true, Signs => 1)",
+     "D=differentialLieAlgebra{0_L,a a,a b}/{a a b, a a c, b a b}",
+     "x=a b c+2 c b a",
+     "sign x"    
+          },
+SYNOPSIS {  
+    Usage =>
+      "s=sign(x)",   
+    Inputs => {
+      "x" => ExtElement => {TEX "an element of type $E$ where $E$ is of type ",
+	  TT "ExtAlgebra"}
+       }, 
+    Outputs => {
+      "s" => ZZ => "the sign; 0 or 1"
+       }
+   },
+EXAMPLE {
+     "E=extAlgebra(5,D)",
+     "b=basis(5,E)",
+     "apply(b,sign)"
+    },
+SYNOPSIS {  
+    Usage =>
+      "s=sign(d)",   
+    Inputs => {
+      "d" => LieDerivation
+       }, 
+    Outputs => {
+      "s" => ZZ => "the sign; 0 or 1"
+       }
+   },
+EXAMPLE {
+      "sign differential D"
+    },    
+}
+
+document {
+     Key => {
+	     (describe,LieAlgebra),
+	     (describe,ExtAlgebra),
+	     (describe,LieAlgebraMap),
+	     (describe,LieDerivation),
+	     (describe,VectorSpace)
+	  },
+     Headline => "real description",
+     "The function displays a list of relevant information about the object in 
+     question.",  
+     
+     SYNOPSIS {
+	  Usage => "describe(L)",
+	  
+     	  Inputs => {
+	       "L" => LieAlgebra
+	       }
+	   },
+     SYNOPSIS {
+	  Usage => "describe(E)",
+	  
+     	  Inputs => {
+	       "E" => ExtAlgebra
+	       }
+	   },
+     SYNOPSIS {
+	  Usage => "describe(f)",
+	  
+     	  Inputs => {
+	       "f" => LieAlgebraMap
+	       }
+	   },
+     SYNOPSIS {
+	  Usage => "describe(d)",
+	  
+     	  Inputs => {
+	       "d" => LieDerivation
+	       }
+	   },
+     SYNOPSIS {
+	  Usage => "describe(V)",
+	  
+     	  Inputs => {
+	       "V" => VectorSpace => {"an instance of type ",TT " VectorSpace"}
+	       }
+	   },
+	 EXAMPLE{
+	  "L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+	         Signs=>{1,1,1},LastWeightHomological=>true)",
+          "D= differentialLieAlgebra({0_L,a a,a b})", 
+	  "I=lieIdeal{b b+4 a c}",
+	  "Q=D/I",               
+	  "describe Q",
+	  "describe I",
+	  "describe map(Q,D)",
+	  "describe differential D",
+	  "describe extAlgebra(5,Q)"
+         }       
+     }
+
+doc ///
+Key
+  boundaries
+     (boundaries,LieAlgebra)
+    
+     
+Headline
+  make the subalgebra of boundaries
+Usage
+  B=boundaries(L)
+     
+Inputs  
+  L: LieAlgebra
+Outputs
+  B: LieSubAlgebra 
+        the image of the differential
+SeeAlso
+  "cycles"
+  "lieHomology" 
+Description
+ Example
+    L=lieAlgebra({a,b},Signs=>{1,0},Weights=>{{2,0},{2,1}},
+	LastWeightHomological=>true,Field=>ZZ/3)
+    L=differentialLieAlgebra{0_L,a}
+    B=boundaries L
+    dims(10,B)
+    
+  
+///
+document {
+Key => {
+         lieHomology,
+	   (lieHomology,LieAlgebra)
+       },
+     
+Headline => 
+  "make the homology as a vector space",
+  "The basis elements for the homology of
+     a Lie algebra (which is of type ", TT "VectorSpace", ")
+     are represented as cycles
+     in the Lie algebra.", 
+SeeAlso => {"boundaries","cycles"},
+SYNOPSIS {  
+    Usage =>
+      "H=lieHomology(L)",   
+    Inputs => {
+      "L" => LieAlgebra
+       }, 
+    Outputs => {
+      "H" => VectorSpace => "the homology of the Lie algebra"
+       },
+EXAMPLE {
+     "L=lieAlgebra({a,b},Signs=>{1,0},Weights=>{{2,0},{2,1}},
+        Field=>ZZ/3,LastWeightHomological=>true)",
+     "D=differentialLieAlgebra({0_L,a})",
+     "H=lieHomology D",
+     "dims(10,H)",
+     "basis(6,H)"
+          },
+    }  
+ }
+
+doc ///
+
+Key
+  cycles
+     (cycles,LieAlgebra)
+    
+     
+Headline
+  make the subalgebra of cycles
+Usage
+  C=cycles(L)
+     
+Inputs
+  L: LieAlgebra
+Outputs
+  C: LieSubAlgebra
+       the kernel of the differential
+SeeAlso
+  "boundaries"
+  "lieHomology" 
+Description
+ Example
+     L=lieAlgebra({a,b},Signs=>{1,0},Weights=>{{2,0},{2,1}},
+        Field=>ZZ/3,LastWeightHomological=>true)
+     D=differentialLieAlgebra({0_L,a})
+     C=cycles D
+     dims(10,C)
+     
+ 
+  
+///
+
+
+doc ///
+
+Key
+  center
+     (center,LieAlgebra)
+    
+     
+Headline
+  make the ideal of central elements
+Usage
+  c=center(L)
+     
+Inputs  
+  L: LieAlgebra
+Outputs
+  c: LieIdeal
+       the ideal of central elements
+SeeAlso
+  "annihilator(FGLieSubAlgebra)"
+  "quotient(LieIdeal,FGLieSubAlgebra)"   
 Description
  Example
   L = lieAlgebra{a,b,c}/{a b,a c,c b c,b b c b}
-  centerLie 1
-  centerLie 2
-  centerLie 3
+  C = center L
+  dims(1,5,C)
+  basis(3,C)
   
 ///
+
+
 doc ///
 Key
-  characterLie
-     (characterLie, List, List)  
+     (trace, ZZ, LieSubSpace, LieAlgebraMap)  
 Headline
-  computes the trace of a Lie representation
+  compute the trace of a Lie algebra map acting on a Lie subspace
 Usage
-  r = characterLie(x,y)  
+  r = trace(n,S,f)  
 Inputs
-  x: List
-     a permutation (a list of cycles) which operates on y
-  y: List
-     of LieElement 
-     of degree d generating a subspace in degree d
+  n: ZZ
+     the degree
+  S: LieSubSpace
+       
+  f: LieAlgebraMap
+       
 SeeAlso
-     permopLie
-     symmetryLie
+     "isIsomorphism(LieAlgebraMap)"
+     "isWellDefined(ZZ,LieAlgebraMap)"
      
 Outputs
   r: RingElement
-     the trace for the representation defined by 
-     permuting the generators by x   
+     the trace of the map $f$ acting on $S$ in degree $n$
+      
 Description
-  Text
-    The permutation x of the generators is given as a list of cycles, 
-    the identity
-    is written \{\{\}\}. The permutation should define an automorphism on L. 
-    The subspace of L in degree d, 
-    generated by the elements in y, 
+  Text  
+    The subspace $S$ in degree $n$ 
     should be invariant 
-    under x and the output
-    characterLie(x,y) gives the trace of x, which is an element in L.field.
+    under $f$ (which is tested by the program), and the output
+    gives the trace of $f$ acting on $S$ in degree $n$, 
+    which is an element in {\tt L#Field}.
     
     
   Example
-    L = lieAlgebra({a,b,c}, field=>ZZ/31)
-    basisLie 3    
-    characterLie({{a,b,c}}, basisLie(3))
-    permopLie({{a,b,c}},c b a)
-    permopLie({{a,b,c}},b c a)
+    L = lieAlgebra({a,b,c}, Field=>ZZ/31) 
+    S=lieSubAlgebra{a,b,c} 
+    f=map(L,L,{b,c,a})
+    trace(3,S,f)
+    f c b a
+    f b c a
+    
 ///
 doc ///
 Key
-  coeffsLie
-     (coeffsLie, LieElement)  
+  (coefficients,LieElement)
+     
 Headline
-  computes the coefficients of a LieElement
+  get the coefficients and monomials of a Lie element
 Usage
-  c = coeffsLie(x)  
+  c = coefficients(x)  
 Inputs
   x: LieElement
-      x is of type L, where L is of type LieAlgebra
+      $x$ is of type $L$, where $L$ is of type {\tt LieAlgebra}
 SeeAlso
-     monomialsLie
-     indexFormLie
+     "monomials(LieElement)"
+     indexForm
      (symbol @,LieElement,LieElement)
      
 Outputs
   c: List
-     the list of coefficients in x  
+     the lists of coefficients and monomials in $x$  
 Description
   Text
-    A LieElement has a normal form, which is a linear combination of basis elements in a Lie algebra L in 
-    a certain order, coeffsLie gives the list of coefficients in this
-    representation. If the LieElement has been obtained using the "formal" operators, then coeffsLie
-    gives the coefficients for all the iterated Lie products used in the expression. 
+    The optional inputs given above are not relevant for Lie algebras.
+    A Lie element $x$ has a normal form in a Lie algebra $L$, which is a 
+    linear combination of basis elements in 
+    a certain order; {\tt coefficients(x)} gives the 
+    lists of coefficients and monomials in this
+    representation. If the Lie element has been 
+    obtained using the "formal" operators, 
+    then {\tt coefficients(x)}
+    gives the coefficients and monomials for all the iterated 
+    Lie products used in the expression. 
     
   Example
-    L = lieAlgebra({a,b,c})
+    L = lieAlgebra{a,b,c}
     x = a b c - 3 c b a +(1/3) b a c
-    coeffsLie x
+    coefficients x
     y = a@b@c/3@c@b@a++(1/3)@b@a@c
-    coeffsLie y
-    monomialsLie y
+    coefficients y
+    
     
 ///
 doc ///
 Key
-  compdeg
-   
+  (monomials,LieElement)
+     
 Headline
-  the maximal computed  degree of the Lie algebra
+  get the monomials of a Lie element
 Usage
- d=L.compdeg
+  c = monomials(x)  
 Inputs
-  L: LieAlgebra
-  
-Outputs
-  d: ZZ
-
+  x: LieElement
+      $x$ is of type $L$, where $L$ is of type LieAlgebra
 SeeAlso
-  peekLie
-  
-  
-Description
-   Text
-     This is a key for a LieAlgebra L, which can be seen by applying
-    @TO peekLie@ to L. 
-    
-  Example
-    L=lieAlgebra{a,b,c}/{a b, a a b - a a c}
-    L.compdeg
-    dimsLie 3
-    L.compdeg
-   
-///
-
-doc ///
-Key
-  cyclesBasisLie
-    (cyclesBasisLie,ZZ,ZZ)
-    (cyclesBasisLie,List)
-          
-Headline
-  a basis for the cycles of a Lie algebra
-SeeAlso
-  cyclesTableLie
-  boundariesBasisLie
-  homologyBasisLie
-  basisLie
-  
-   
-Usage
-  c = cyclesBasisLie(n,d)
-  c = cyclesBasisLie(x)
-  
-Inputs
-  n: ZZ
-      the first degree
-  d: ZZ
-      the homological degree
-  x: List
-      the multi-degree
-  
+     "coefficients(LieElement)"
+     indexForm
+     (symbol @,LieElement,LieElement)
+     
 Outputs
   c: List
-      a basis for the cycles
-
-    
-Description
-     
-  Example
-     L=lieAlgebra({a,b,c,r3,r4},genWeights => 
-          {{1,0},{1,0},{2,0},{3,1},{4,1}},
-          diffl=>true,
-          genSigns=>{1,1,0,0,1})
-     L=diffLieAlgebra{L.zz,L.zz,L.zz,b c - a c,a a c - 2 b b b a}
-     cyclesTableLie 7
-     ba = cyclesBasisLie(7,1)
-     indexFormLie ba
-     
-    
-///
-
-
-
-doc ///
-Key
-  cyclesTableLie
-   
-          
-Headline
-  a table of dimensions of the cycles of a Lie algebra
-SeeAlso
-  cyclesBasisLie
-  boundariesTableLie
-  homologyTableLie
-  dimTableLie
-  idealTableLie
-  subalgTableLie
-  imageTableLie
-  kernelTableLie
-  extTableLie
-   
-Usage
-  c = cyclesTableLie n
-  
-Inputs
-  n: ZZ
-      the maximal degree
-  
-Outputs
-  c: Matrix
-
-    
+     the list of monomials in $x$  
 Description
   Text
-     The columns are referring 
-     to the degree, indexed from 1, 
-     and the rows are referring to 
-     the homological degree, indexed from 0.
-     
+    The optional input given above is not relevant for Lie algebras.
+    This is equal to the second part of @TO "coefficients(LieElement)"@.
+    
+    
   Example
-     L=lieAlgebra({a,b,c,r3,r4},genWeights => 
-          {{1,0},{1,0},{2,0},{3,1},{4,1}},
-          diffl=>true,
-          genSigns=>{1,1,0,0,1})
-     L=diffLieAlgebra{L.zz,L.zz,L.zz,b c - a c,a a c - 2 b b b a}
-     cyclesTableLie 7
-     
+    L = lieAlgebra{a,b,c}
+    x = a b c - 3 c b a +(1/3) b a c
+    monomials x
+    y = a@b@c/3@c@b@a++(1/3)@b@a@c
+    monomials y
+    
     
 ///
 doc ///
 Key
-  decompidealLie
-     (decompidealLie, ZZ)  
-Headline
-    computes in the specified degree an ideal associated to an arrangement or matroid
-Usage
-  l = decompidealLie(d) 
-Inputs
-  d: ZZ
-     the degree
-Outputs
-  l: List
-     a basis for the ideal in the specified degree
-SeeAlso
-  holonomyLie
-  localLie
-  "Holonomy Lie algebras and Symmetries"     
-Description
-  Text
-  
-   Computes the kernel in the specified degree of the Lie homomorphism from 
-   [L,L] to the direct sum of [L_i,L_i], where 
-   L_i is the Lie subalgebra generated by the ith subset in
-   the input for the holonomy Lie algebra L, 
-   see @TO localLie@. The ideal is generated by the basis elements in degree 3
-   of the form (x y z), where not all x,y,z
-   belong to the same L_i.
-  
-  Example
-    L=holonomyLie({{a0,a1,a2},{a0,a3,a4},{a1,a3,a5},{a2,a4,a5}})
-    decompidealLie 3
-    
-///
-doc ///
-Key
-  defLie
-     (defLie, RingElement)
-     (defLie, List)
-Headline
-  returns a LieElement corresponding to input
-Usage
-  a=defLie(r)  
-  ll=defLie(rl)
-SeeAlso
-  indexFormLie
-  mbRing
-
-Inputs
-  r: RingElement
-     an element in L.cache.mbRing
-  rl: List
-     of elements in L.cache.mbRing
-Outputs
-  a: LieElement
-   
-  ll: List
-     the list of all values of defLie on the elements in rl is returned   
-Description
-  Text
-    The set of linear polynomials in L.cache.mbRing, see @TO mbRing@, gives a
-    representation of the elements in the Lie algebra L. The function defLie gives 
-    back the standard output and @TO indexFormLie@ goes in the other direction.
-  Example
-    L = lieAlgebra{a,b}
-    b3 = basisLie 3
-    Q = L.cache.mbRing
-    gens Q
-    c3 = indexFormLie b3
-    defLie indexFormLie a a b
-    defLie mb_{3,0}
-    defLie (mb_{3,0}+2*mb_{3,1}) 
-    indexFormLie oo  
-    
-///
-
-doc ///
-Key
-  degLie
-     (degLie,ZZ)
-     (degLie, LieElement)
-     (degLie, DerLie)
-     (degLie, List)
-Headline
-  the first degree of a graded element in the LieAlgebra 
-SeeAlso
-  weightLie
-  [lieAlgebra,genWeights] 
-  weight
-  (symbol @,LieElement,LieElement) 
-Usage
-  dd = degLie(n) 
-  dd = degLie(g)
-  dd = degLie(d)
-  dl = degLie(l)  
-Inputs
-  n: ZZ
-      the n:th generator 
-  g: LieElement 
-  d: DerLie
-  l: List
-      a  list of LieElement or a list of derivations
-Outputs
-  dd: ZZ
-       the first degree of the LieElement or the derivation  
-  dl: List
-       a list of first degrees
-Description
-  Text
-    The degLie of L.zz, the zero element in L, is defined
-    to be 0. 
-    
-     
-  Example
-    L = lieAlgebra({a,b,c},genWeights => {{1,1},{1,1},{2,2}})
-    degLie(a)
-    degLie 0
-    degLie L.zz
-    degLie(a a c)
-    g = a c - b c
-    degLie g
-    m=indexFormLie g
-    (degree m)_0
-    degLie {L.zz,b b,c - 2 a b}
-    d = derLie{a b,c,L.zz}
-    degLie d
-   
-    
-/// 
-doc ///
-Key
-  derLie
-     (derLie, MapLie, List)
-     (derLie, List)
-Headline
-  constructing a graded derivation
-Usage
-  d=derLie(f,defs)
-  d=derLie(defs)
-
-Inputs
-  f: MapLie
-  defs: List
-Outputs
-  d: DerLie
-SeeAlso
-  maplie
-  sign
-  weight
-  sourceLie
-  targetLie
-  diffLie
-   
-Description
-  Text
-  
-     The generators of M=f.sourceLie are mapped to the elements in L=f.targetLie
-     given in the last argument defs. It is checked by the program that d maps
-     the relations in d.sourceLie to zero.
-     If no f of class MapLie is given,
-     then the current Lie algebra L is used and the 
-     derivation d maps L to L (and f is the
-     identity map). In this latter case, the set of elements of class DerLie is a Lie algebra with 
-     Lie multiplication @TO (symbol SPACE,DerLie,DerLie)@. If L has a differential \delta, 
-     then DerLie is a differential Lie algebra with differential d->[\delta,d].
-     However DerLie does not belong to @TO LieAlgebra@ unless a
-     positively graded finite 
-     presentation can be given.  
-     
-  Example
-      L=lieAlgebra({x,y},genSigns=>1)	
-      M=lieAlgebra({a,b},genSigns=>0,genWeights=>{2,2})/{b a b}
-      f = mapLie(L,M,{x x,L.zz})
-      d1 = derLie(f,{x,y})
-      peekLie d1
-      d1 a b
-      useLie L
-      d2 = derLie({x,y})
-      peekLie d2
-      d2 y y x
-       
-///
-doc ///
-Key
-  diffLieAlgebra
+  differential
      
 Headline
-  A differential Lie algebra
+   make the derivation defined by the differential
 Usage
-  L=diffLieAlgebra(defs)
+  d=differential(L)
 Inputs
-  defs: List
-Outputs
   L: LieAlgebra
-SeeAlso
-  lieAlgebra
-  diffLie
-  genDiffs
-   
-Description
-  Text
-    The input should be a list of LieElement in the current Lie
-    algebra F and this list consists of the differentials of 
-    the generators, F.zz is used for the zero element. The option @TO diffl@ for F
-    must have the value true. The current Lie algebra F must be free 
-    when @TO diffLieAlgebra@ is used. The program adds relations 
-    to the Lie algebra to get
-    the square of the differential to be zero and a warning is 
-    printed if this is done. See L2 below. 
-    It is also possible to use the key F.genDiffs, but then there is no checking done. 
-
-
-     
-     
-  Example
-      F1=lieAlgebra({a,b,c,r3,r4,r42},
-         genWeights => {{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},
-         genSigns=>{0,0,0,1,1,0},diffl=>true)
-      L1=diffLieAlgebra{F1.zz,F1.zz,F1.zz,a c,a a c,r4 - a r3}/{b c - a c,a b,b r4 - a r4}
-      peekLie L1   
-      F2=lieAlgebra({a,b,c2,c3,c5},genSigns=>{0,0,1,0,1},
-         genWeights=>{{1,0},{1,0},{2,1},{3,2},{5,3}},diffl=>true)
-      L2=diffLieAlgebra{F2.zz,F2.zz,a b,a c2,a b c3}
-      peekLie L2
-         
-///  
-doc ///
-Key
-  diffLie
-     
-Headline
-  the derivation defined by the differential
-Usage
-  d=diffLie()
 Outputs
-  d: DerLie
+  d: LieDerivation
+       the derivation defined by the differential 
 SeeAlso
   lieAlgebra
-  derLie
+  lieDerivation
   
    
 Description
@@ -682,502 +1373,150 @@ Description
      
      
   Example    
-     L=lieAlgebra({a,b},genSigns=>{1,0},genWeights=>{{2,0},{2,1}},diffl=>true)
-     L.genDiffs={L.zz,a}
-     d=diffLie()
+     L=lieAlgebra({a,b},Signs=>{1,0},Weights=>{{2,0},{2,1}},
+	 LastWeightHomological=>true)
+     L=differentialLieAlgebra{0_L,a}
+     d=differential(L)
      d b b a 
           
-///                      
-
+/// 
 doc ///
 Key
-  dimsLie
-     (dimsLie, ZZ)
-     
+     (eulers, ZZ, LieAlgebra)
 Headline
-  the dimensions of the Lie algebra up to a specified degree
+  compute the list of Euler characteristics
 Usage
-  d=dimsLie(n)
- 
-Inputs
-  n: ZZ
-     the first degree
-Outputs
-  d: List
-     the dimensions for first degree 1 up to n
+  l = eulers(n,L)
 SeeAlso
-  dimTableLie
-  dimtotLie
-   
-Description
-       
-  Example
-    L=lieAlgebra({a},genSigns=>1)/{a a}
-    M=minmodelLie 4
-    dimsLie 4
-    useLie M
-    dimsLie 4 
-    peekLie M
-   
-     
-///
- 
-doc ///
-Key
-  dimTableLie
-    (dimTableLie,ZZ)
-    (dimTableLie,ZZ,ZZ)     
-Headline
-  a table of dimensions of a Lie algebra
-SeeAlso
-  dimsLie
-  dimtotLie
-  boundariesTableLie
-  homologyTableLie
-  cyclesTableLie
-  idealTableLie
-  subalgTableLie
-  imageTableLie
-  kernelTableLie
-  extTableLie
-   
-Usage
-  d = dimTableLie n
-  d = dimTableLie(n,s)
-Inputs
-  n: ZZ
-      the maximal degree
-  s: ZZ
-      the sign, 0 or 1
-Outputs
-  d: Matrix
-
-    
-Description
-  Text
-     The columns are referring 
-     to the degree, indexed from 1, 
-     and the rows are referring to 
-     the homological degree, indexed from 0.
-     If the second argument s is zero (one), 
-     the dimensions of the even (odd) elements are displayed.
-     
-  Example
-     L=lieAlgebra({a,b,c,r3,r4},genWeights => 
-          {{1,0},{1,0},{2,0},{3,1},{4,1}},
-          diffl=>true,
-          genSigns=>{1,1,0,0,1})
-     L=diffLieAlgebra{L.zz,L.zz,L.zz,b c - a c,a a c - 2 b b b a}
-     dimsLie 6
-     dimTableLie 6
-     dimTableLie(6,1)
-        
-///
-doc ///
-Key
-  dimtotLie
-     (dimtotLie, ZZ)
-     
-Headline
-  the sum of the dimensions up to a specified degree
-Usage
-  d=dimtotLie(n)
- 
-Inputs
-  n: ZZ
-     the first degree
-Outputs
-  d: ZZ
-     the total dimension up to first degree n
-SeeAlso
-  dimTableLie
-  dimsLie
-   
-Description
-       
-  Example
-    L=lieAlgebra({a,b},genSigns=>1)/{a a a b, b b b a}
-    dimsLie 8    
-    dimtotLie 8
-   
-     
-///
-doc ///
-Key
-  divisorLie
-     (divisorLie,ZZ,ZZ,List,List)    
-Headline
-  computes a basis for the divisor subspace
-Usage
-  b=divisorLie(t,s,m,p)  
-Inputs
-  t: ZZ
-  s: ZZ
-  m: List 
-     of elements of degree t
-  p: List 
-     of elements of degree s
-Outputs
-  b: List
-     a basis for the subspace of elements of degree t-s, which multiply all 
-     elements in the set p to the space generated
-     by the elements in m.
-SeeAlso
-  annLie
-  centerLie
-Description
- Example
-   L = lieAlgebra{a,b,c}
-   g=a b a + 2 b b a 
-   divisorLie(3,2,{g,c a b, a a c},{a b})
-   
-///
-doc ///
-Key
-  eulerLie
-     (eulerLie, ZZ)
-Headline
-  computes the Euler characteristics
-Usage
-  l = eulerLie(n)
-SeeAlso
-  homologyTableLie
-  dimTableLie
+  lieHomology
 Inputs
   n: ZZ
      the  maximal degree
+  L: LieAlgebra
 Outputs
   l: List
-     the list of Euler characteristics from degree 1 to  n
+     the list of Euler characteristics from degree $1$ to $n$
 Description
   Text
-    For each first degree d, where d goes from 1 to n, the alternating sum of the dimensions 
-    of the Lie algebra in homological degree 0 to d-1 is computed. As we know, the same numbers
+    For each first degree $d$, where $d$ goes from $1$ to $n$, 
+    the alternating sum of the dimensions 
+    of the Lie algebra in homological degree 0 to $d-1$ is computed. 
+    As we know, the same numbers
     are obtained using the homology of the Lie algebra instead.
    
   Example
-    L=lieAlgebra({a,b,c,r3,r4,r42},
-         genWeights => {{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},
-         genSigns=>{0,0,0,1,1,0},diffl=>true)
-    L.genDiffs={L.zz,L.zz,L.zz,a c,a a c,r4 - a r3}
+    F=lieAlgebra({a,b,c,r3,r4,r42},
+         Weights => {{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},
+         Signs=>{0,0,0,1,1,0},LastWeightHomological=>true)
+    L=differentialLieAlgebra{0_F,0_F,0_F,a c,a a c,r4 - a r3}
     Q=L/{b c - a c,a b,b r4 - a r4}
-    dimTableLie 5
-    eulerLie 5
-    homologyTableLie 5
+    dims(5,Q)
+    eulers(5,Q)
+    H=lieHomology Q
+    dims(5,H)
     
-///
+/// 
 doc ///
-
 Key
-  extBasisLie
-     (extBasisLie, ZZ)
-     (extBasisLie, ZZ, ZZ)
-     (extBasisLie, List)
-     
+     (euler, LieAlgebra)
 Headline
-  a basis up to a given degree of the Ext-algebra
+  compute the Euler derivation
+Usage
+  d = euler(L)
 SeeAlso
-  signExtLie
-  weightExtLie
-  extMultLie
-  extTableLie
-  extRepRing
-Usage
-  b = extBasisLie d
-  b = extBasisLie(d1, d2)
-  b = extBasisLie(x)
- 
-Inputs
-  d: ZZ
-      the first degree
-  d1: ZZ
-      the first degree
-  d2: ZZ
-      the last degree, the homological degree
-  x:  List
-      the multi-degree
-  
-Outputs
-  b: List
-     the list of basis elements
-Description
-   Text
-     This gives a basis (in positive degrees) up to the specified degree of Ext_{UL}(k,k) 
-     where k=L.field or the basis in a specified first and last degree or multi-degree. The 
-     basis elements are the generators in the polynomial ring L.cache.extRepRing, 
-     see @TO extRepRing@. 
-     
-   Example
-     L=lieAlgebra{a,b}/{a a b,b b a}
-     extBasisLie 4
-     extTableLie 4
-     extBasisLie(3,2)
-     weightExtLie(ext_2-3*ext_3)
-     ext_2
-     signExtLie ext_2    
-   
-///
-doc ///
-Key
-  extMultLie
-    (extMultLie, RingElement, RingElement)
-
-Headline
- the (skew commutative) product in the Ext-algebra
-SeeAlso
-  extTableLie
-  extRepRing
-  minmodelLie
-  extBasisLie
-Usage
-  h = extMultLie(f,g)
-Inputs
-  f: RingElement
-      a linear polynomial in L.cache.extRepRing
-  g: RingElement
-      a linear polynomial in L.cache.extRepRing
-Outputs
-  h: RingElement
-      a linear polynomial in L.cache.extRepRing
-Description
-  Text
-   In the example below, Ext_{UL}(QQ,QQ) is equal to R and a basis as a vector space
-   up to the given degree 
-   is given by @TO extBasisLie@. Observe that the multiplication in Ext_{UL}(QQ,QQ)
-   has nothing to do with the polynomial multiplication in L.cache.extRepRing. 
-   The elements in Ext_{UL}(QQ,QQ) are represented as 
-   linear polynomials in L.cache.extRepRing and multiplication in Ext_{UL}(QQ,QQ)
-   is determined by the differential in the minimal model of L, see @TO minmodelLie@.
-   Instead of the prefix notation extMultLie for the multiplication one may use
-   the infix notation SPACE, see @TO (symbol SPACE,RingElement,RingElement)@ and the example below. 
-   
-  Example
-    R=QQ[x,y,z, SkewCommutative=>{x,y,z}]
-    L=koszulDualLie(R)
-    extTableLie 3
-    extBasisLie 3
-    m=extMultLie(ext_1,ext_2)
-    ext_1 ext_2
-    ext_0 m
-    peekLie minmodelLie 3
-     
-    
-///
-doc ///
-Key
-  extRepRing
-   
-Headline
-  the ring representation of the Ext-algebra 
-Usage
- R=L.cache.extRepRing
- 
+  lieDerivation
+  innerDerivation
 Inputs
   L: LieAlgebra
-  
 Outputs
-  R: PolynomialRing
-SeeAlso
-  minmodelLie
-  extBasisLie
-  extTableLie
-  extMultLie
+  d: LieDerivation     
 Description
   Text
-     If @TO minmodelLie@ (or @TO extBasisLie@ or @TO extTableLie@) of a 
-     Lie algebra L is computed up 
-     to a certain degree, then 
-     the representation of Ext_{UL}(k,k), where k is L.field,
-      as linear polynomials 
-     may be obtained as L.cache.extRepRing. 
-     
+    The Euler derivation is defined as {\tt x -> firstDegree(x) x}
+   
   Example
-     L=lieAlgebra{a,b}/{a b}
-     extBasisLie 3
-     E=L.cache.extRepRing
-     (ext_0+2*ext_1) ext_1
-   
-///
-
-
-
-doc ///
-Key
-  extTableLie
-    (extTableLie,ZZ)
-          
-Headline
-  a table of dimensions of the Ext-algebra of a Lie algebra
-SeeAlso
-  extBasisLie
-  extMultLie
-  boundariesTableLie
-  homologyTableLie
-  cyclesTableLie
-  idealTableLie
-  subalgTableLie
-  imageTableLie
-  kernelTableLie
-  dimTableLie
-   
-Usage
-  e = extTableLie n
-  
-Inputs
-  n: ZZ
-      the maximal degree
-  
-Outputs
-  e: Matrix
-
+     L = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>1,LastWeightHomological=>true)
+     D= differentialLieAlgebra({0_L,a a,a b})
+     d=euler D
+     d a b c
+     describe d
+     ic=innerDerivation c 
+     e=d ic
+     describe e
+     e===(firstDegree ic) ic
     
-Description
-  Text
-     This gives a table of dimensions of Ext_{UL}(k,k) 
-     where k=L.field.
-     The columns are referring 
-     to the degree, indexed from 1, 
-     and the rows are referring to 
-     the homological degree, also indexed from 1.
-     
-  Example
-     L=lieAlgebra({a,b,c,r3,r4},genWeights => 
-          {{1,0},{1,0},{2,0},{3,1},{4,1}},
-          diffl=>true,
-          genSigns=>{1,1,0,0,1})
-     L=diffLieAlgebra{L.zz,L.zz,L.zz,b c - a c,a a c - 2 b b b a}
-     extTableLie 6
-        
-///
-doc ///
-Key
-  genDiffs
-   
-Headline
-  the value of the differential on the generators of a Lie algebra
-Usage
- z=L.genDiffs
- 
-Inputs
-  L: LieAlgebra
-  
-Outputs
-  z: List
-SeeAlso
-  diffLieAlgebra
-  peekLie
-   
-Description
-  Text
-    This is a key for a LieAlgebra L, giving the differential of the generators. It can be seen by applying
-    @TO peekLie@ to L. 
-    The value is also the input for @TO diffLieAlgebra@. Observe that 
-    if the value is defined by L.genDiffs = \{...\}, then no checking of correctness
-    of input is made. For that reason, use diffLieAlgebra instead.  
-    
-  Example
-    L=lieAlgebra({a,b,c},genWeights=>{{2,0},{2,1},{4,2}},genSigns=>{0,1,0},diffl=>true)
-    L=diffLieAlgebra{L.zz,a,a b}/{c b,a c-b a b}
-    L.genDiffs
-    
-///
-doc ///
-Key
-  gensLie
-   
-Headline
-  the list of generators of the Lie algebra
-Usage
- d=L.gensLie
-Inputs
-  L: LieAlgebra 
-Outputs
-  d: List
-SeeAlso
-  peekLie
-   
-Description
-  Text
-    This is a key for a LieAlgebra L, giving the list of generators. It can be seen by applying
-    @TO peekLie@ to L. 
-    
-  Example
-    L=lieAlgebra{a,b,c}/{a b,a a b - a b c}
-    L.gensLie
-    
-   
-///
-doc ///
-Key
-  holonomyLie
-     (holonomyLie, List)
-     (holonomyLie, List,List)       
-Headline
-  gives the holonomy Lie algebra associated to an arrangement or matroid
-Usage
-  L=holonomyLie(y)
-  L=holonomyLie(x,y)
-  L=holonomyLie(x,field=>F)
-  L=holonomyLie(x,y,field=>F)
-Inputs
-  x: List
-     a list of subsets of the finite set X
-  y: List
-     a list of subsets of the finite set X
-  F: Ring
-     a field
-Outputs
-  L: LieAlgebra     
-     the holonomy Lie algebra with generators X and field F
-SeeAlso
-  localLie
-  decompidealLie
-  "Holonomy Lie algebras and Symmetries"
-Description
-  Text
-    Two lists in the union of x and y have at most one element in common 
-    and the sets in x are disjoint. All sets in x have length at least two
-    and all sets in y have length at least three. In the case of one argument y,
-    there is a unique simple matroid of rank at most three such that y is 
-    the set of all 2-flats of size at least three. In some cases this matroid 
+/// 
+document {
+     Key => {
+	   holonomy,
+             (holonomy, List),
+             (holonomy, List,List) 
+	  },
+     Headline => "compute the holonomy Lie algebra associated 
+     to an arrangement or matroid",
+   TEX " Two lists in the union of $x$ and $y$ have at most one element in common 
+    and the sets in $x$ are disjoint. All sets in $x$ have length at least 2
+    and all sets in $y$ have length at least 3. In the case of a single argument $y$,
+    there is a unique simple matroid of rank at most 3 such that $y$ is 
+    the set of all 2-flats of size at least 3. In some cases this matroid 
     may be realized as the matroid of a central arrangement of hyperplanes. 
     
-    The output holonomy(y)
-    is the holonomy Lie algebra of the matroid (or arrangement).
+    The output ", TT "holonomy(y)",
+    TEX " is the holonomy Lie algebra of this matroid (or arrangement).
     
        
-    In the geometric language the case with two arguments x and y,
+    In the geometric language, the case with two arguments $x$ and $y$
     corresponds to the deconing process of a central hyperplane 
-    arrangement, see @TO "Holonomy Lie algebras and Symmetries"@, 
-    yielding an affine hyperplane arrangement. The set x consists of the 
-    maximal sets of parallel hyperplanes of size at least two, and
-    y is the set of all maximal sets of hyperplanes of size at least three, 
-    which intersect in an affine space of codimension 2. 
+    arrangement, see ", TO "Holonomy Lie algebras and symmetries",  
+    TEX ", yielding an affine hyperplane arrangement. The set $x$ consists of the 
+    maximal sets of parallel hyperplanes of size at least 2, and
+    $y$ is the set of all maximal sets of hyperplanes of size at least 3 that 
+    intersect in an affine space of codimension 2. 
     
-    The output holonomyx(x,y)
-    is the holonomy Lie algebra of the affine arrangement, which is
-    the same in degrees at least two as holonomy(z), where z is 
-    obtained by choosing a new variable and add it two all sets in x and 
-    then take the union with y.
-    
-  
-    
-  Example
-    L=holonomyLie({{a0,a1,a2,a3},{a0,a4,a5},{a1,a4,a6}})
-    peekLie L
-    dimsLie 4
-    M=holonomyLie({{a1,a2,a3},{a4,a5}},{{a1,a4,a6}})
-    peekLie M
-    dimsLie 4
-///
+    The output ", TT "holonomy(x,y)" , 
+    TEX "is the holonomy Lie algebra of the affine arrangement, which is
+    the same in degrees at least 2 as ", TT "holonomy(z)" , TEX " where $z$ is 
+    obtained by choosing a new variable and adding it to all sets in $x$ and 
+    then taking the union with $y$.",  
+     SeeAlso => {"holonomyLocal","decompose(LieAlgebra)","Holonomy Lie algebras and symmetries"},
+     SYNOPSIS {
+	  Usage => "L=holonomy(y)",	            	            ,
+     	  Inputs => {
+	       "y" => List => TEX "a list of subsets of the finite set $X$"
+	       },
+	  Outputs => {
+	       "L" => LieAlgebra => TEX "the holonomy Lie algebra with generators $X$"
+	      }
+	  },
+      SYNOPSIS {
+	  Usage => "L=holonomy(x,y)",	            	            ,
+     	  Inputs => {
+	      "x" => List => TEX "a list of subsets of the finite set $X$",
+	      "y" => List => TEX "a list of subsets of the finite set $X$"
+	       },
+	  Outputs => {
+	      "L" => LieAlgebra => TEX "the holonomy Lie algebra with generators $X$"
+	      }
+	  },
+     
+     EXAMPLE{
+    "L=holonomy({{a0,a1,a2,a3},{a0,a4,a5},{a1,a4,a6}})",
+    "describe L",
+    "dims(1,4,L)",
+    "M=holonomy({{a1,a2,a3},{a4,a5}},{{a1,a4,a6}})",
+    "describe M",
+    "dims(1,4,M)" },       
+     }                         
+
 doc ///
 Key
-  [holonomyLie,field]
+  [holonomy,Field]
 Headline
-  optional argument for holonomyLie
+  optional argument for holonomy
 Usage
-  L = holonomyLie(A,field => F)
-  L = holonomyLie(A,B,field => F)   
+  L = holonomy(A,Field => F)
+  L = holonomy(A,B,Field => F)   
 Inputs     
     F:   Ring
         the field of coefficients
@@ -1187,1319 +1526,703 @@ Outputs
   L: LieAlgebra
 SeeAlso
   lieAlgebra
-  holonomyLie
-  "Second LieAlgebra Tutorial"
-  "Holonomy Lie algebras and Symmetries"
+  holonomy
+  "Second Lie algebra tutorial"
+  "Holonomy Lie algebras and symmetries"
 Description
   Text
-    This is an option for @TO holonomyLie@ to define the coefficient field 
-    which is QQ by default. You may use any "exact" field (not the real numbers or the
+    This is an option for @TO holonomy@ to define the coefficient field, 
+    which is {\tt QQ} by default. You may use any "exact" field (not the real numbers or the
 	  complex numbers), such as a prime field or an algebraic extension, e.g.,
-      toField(ZZ/7[x]/ideal\{x^2+1\}) or a fraction field, e.g., frac(QQ[x]). Observe that it 
-      is necessary to use the function toField when F is defined 
+      {\tt toField(ZZ/7[x]/ideal\{x^2+1\})} or a fraction field, e.g., {\tt frac(QQ[x])}. 
+      Observe that it 
+      is necessary to use the function {\tt toField} when $F$ is defined 
       as an algebraic extension of a prime field.
   Example
       F = toField(ZZ/7[x]/ideal{x^2+1})
-      L = holonomyLie({{a,d}},{{a,b,c}},field=>F)
+      L = holonomy({{a,d}},{{a,b,c}},Field=>F)
       (3*x+2) a b + (2*x+3) b a
 ///
 doc ///
 Key
-  homologyBasisLie
-     (homologyBasisLie, ZZ, ZZ)
-     (homologyBasisLie, List)
-Headline
-  computes a basis for the homology of a given degree
-Usage
-  l = homologyBasisLie(n,d)
-  l = homologyBasisLie(x)
-Inputs
-  n: ZZ
-     the  degree
-  d: ZZ
-     the homological degree
-  x: List
-     the multi-degree
-Outputs
-  l: List
-     a basis for the homology in  degree n and homological degree d or multi-degree x
-SeeAlso
-  homologyTableLie
-  boundariesBasisLie
-  cyclesBasisLie
-  "Differential LieAlgebra Tutorial"
-Description
-  Example
-    L=lieAlgebra({a,b,c,r3,r4,r42},
-         genWeights => {{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},
-         genSigns=>{0,0,0,1,1,0},diffl=>true)
-    L.genDiffs={L.zz,L.zz,L.zz,a c,a a c,r4 - a r3}
-    Q=L/{b c - a c,a b,b r4 - a r4}
-    homologyTableLie 6
-    homologyBasisLie(6,1)    
-///
-doc ///
-Key
-  homologyTableLie
-    (homologyTableLie,ZZ)
-          
-Headline
-  a table of dimensions of the homology of a Lie algebra
-SeeAlso
-  homologyBasisLie
-  boundariesTableLie
-  cyclesTableLie
-  dimTableLie
-  idealTableLie
-  subalgTableLie
-  imageTableLie
-  kernelTableLie
-  extTableLie
-   
-Usage
-  h = homologyTableLie n
-  
-Inputs
-  n: ZZ
-      the maximal degree
-  
-Outputs
-  h: Matrix
-
-    
-Description
-  Text
-     The columns are referring 
-     to the degree, indexed from 1, 
-     and the rows are referring to 
-     the homological degree, indexed from 0.
-     
-  Example
-     M=lieAlgebra({a,b,c},genWeights => 
-          {{1,0},{1,0},{2,0}},diffl=>true,
-          genSigns=>{1,1,0})/{a c-b c, a a c-2 b b b a}
-     dimTableLie 7
-     L=lieAlgebra({a,b,c,r3,r4},genWeights => 
-          {{1,0},{1,0},{2,0},{3,1},{4,1}},
-          diffl=>true,
-          genSigns=>{1,1,0,0,1})
-     L=diffLieAlgebra{L.zz,L.zz,L.zz,b c - a c,a a c - 2 b b b a}
-     homologyTableLie 7
-     Q=L/{b c-a c,a b,b r4-a r4}
-     homologyTableLie 6
-        
-///
-
-doc ///
-
-Key
-  idealBasisLie
-     (idealBasisLie, ZZ, List)
-     (idealBasisLie, ZZ, ZZ, List)
-     (idealBasisLie, List, List)    
-Headline
-  computes a basis of a Lie ideal in a given degree or multi-degree
-SeeAlso
-  idealTableLie
-  subalgBasisLie
-Usage
-  l=idealBasisLie(n,genlist) 
-  l=idealBasisLie(n,d,genlist)  
-  l=idealBasisLie(md,genlist)
-Inputs
-  n: ZZ
-     the degree 
-  d: ZZ
-     the homological degree 
-  md: List 
-     the multi-degree 
-  genlist: List 
-     the set of generators of the ideal, which may
-     be of different degrees     
-Outputs
-  l: List
-     a list of basis elements in the given (multi-)degree 
-Description
-  Text
-    The ideal is the least subspace containing the generators
-    of the ideal and which is closed under Lie multiplication
-    by the Lie generators and closed under application of the 
-    differential.
-    A basis is given in the specified degree or multi-degree. 
-   
-  Example
-   L = lieAlgebra({a,b,c},genSigns=>{1,0,1},genWeights=>{{1,0},{1,0},{1,2}})/{c a}
-   dimsLie 5
-   d4=defLie (mb_{4,5}+2*mb_{4,6})
-   ib=idealBasisLie(5,{a a,d4})       
-   length oo
-   indexFormLie ib 
-   idealBasisLie({5,4,0},{a a,d4}) 
-   indexFormLie oo   
-   F = lieAlgebra({a,b},genWeights=>{{1,0},{2,1}},genSigns=>{1,1},diffl=>true)
-   Q = diffLieAlgebra{F.zz,a a}
-   idealBasisLie(4,{b b})
-   
-   
-///
-
-doc ///
-Key
-  idealTableLie
-    (idealTableLie,ZZ,List)
-    (idealTableLie,ZZ,ZZ,List)
-          
-Headline
-  a table of dimensions of an ideal of a Lie algebra
-SeeAlso
-  boundariesTableLie
-  homologyTableLie
-  cyclesTableLie
-  extTableLie
-  subalgTableLie
-  imageTableLie
-  kernelTableLie
-  dimTableLie
-  idealBasisLie
-   
-Usage
-  i = idealTableLie(n,x)
-  i = idealTableLie(n,s,x)
-  
-Inputs
-  n: ZZ
-      the maximal degree
-  s: ZZ
-      the sign, 0 or 1
-  x: List
-      the generators of the ideal
-Outputs
-  i: Matrix
-
-    
-Description
-  Text
-     The ideal is the least subspace containing the generators
-     of the ideal and which is closed under Lie multiplication
-     by the Lie generators and closed under application of the 
-     differential.     
-     The columns are referring 
-     to the degree, indexed from 1, 
-     and the rows are referring to 
-     the homological degree, indexed from 0.
-     In the case of three arguments, 
-     if the second argument s is zero (one), 
-     the dimensions of the even (odd) elements are displayed.
-  Example
-    L = lieAlgebra({a,b,c,r3,r4,r42},
-         genWeights => {{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},
-         genSigns=>{1,1,1,1,0,1},diffl=>true)
-    L = diffLieAlgebra{L.zz,L.zz,L.zz,a c,a a c,r4 + a r3}
-    idealTableLie(5,{a b,b r4 - a r4})
-    idealTableLie(5,{a b})
-  Text
-    The ideal generated by (a b) and (b r4 - a r4) in degree (5,0)
-    contains the differential of (b r4 - a r4), which is not in
-    the ideal generated by (a b).
-  Example
-    d = diffLie()
-    d(b r4 - a r4)
-    
-///
-doc ///
-Key
-  idMapLie
-Headline
-  the identity map
-SeeAlso
-  mapLie
-  MapLie
-Usage
-  f = idMapLie()
-Outputs
-  f: MapLie
-Description
-  Text
-    The identity map is named id when peekLie is applied. Also, when
-    peekLie is applied to an ordinary derivation L -> L, the identity map
-    in the definition of the derivation is named id. The identity map on L
-    may also be obtained as mapLie(L,L) or imapLie(L,L).
-  Example
-    L = lieAlgebra{a,b}
-    f = idMapLie()
-    peekLie f
-    peek f
-    peekLie derLie{a b,L.zz}
-///
-doc ///
-Key
-  imageBasisLie
-    (imageBasisLie, ZZ, MapLie)
-    (imageBasisLie, ZZ, ZZ, MapLie)
-    (imageBasisLie, List, MapLie)
-    (imageBasisLie, ZZ, DerLie)
-    (imageBasisLie, ZZ, ZZ, DerLie)
-    (imageBasisLie, List, DerLie)
+  holonomyLocal
+    (holonomyLocal, ZZ, LieAlgebra)
 
 Headline
- a basis of the image of a Lie homomorphism or derivation in a specified degree 
+ compute the Lie algebra for a local subalgebra of the holonomy Lie algebra 
 SeeAlso
-  DerLie
-  MapLie
-  kernelBasisLie
-  imageTableLie
-  "Differential LieAlgebra Tutorial"
+  holonomy
+  "decompose(LieAlgebra)"
+  "Holonomy Lie algebras and symmetries"
 Usage
-  b = imageBasisLie(n,f)
-  b = imageBasisLie(n,d,f) 
-  b = imageBasisLie(x,f)
-Inputs
-  n: ZZ
-     the degree
-  d: ZZ
-     the homological degree
-  x: List
-     the multi-degree  
-  f: MapLie
-  f: DerLie
-   
-Outputs
-  b: List
-  
-Description
-  Example
-     L = lieAlgebra({a,b,c,r3,r4,r42},
-         genWeights => {{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},
-         genSigns=>{0,0,0,1,1,0},diffl=>true)/{b c - a c,a b,b r4 - a r4}
-     L.genDiffs = {L.zz,L.zz,L.zz,a c,a a c,r4 - a r3}
-     M = minmodelLie 5
-     f = M.modelmap
-     peekLie f
-     imageTableLie(5,f)
-     imageBasisLie(5,f)
-     imageBasisLie(5,1,f)
-     d = diffLie()
-     imageBasisLie(5,1,d)
-     boundariesBasisLie(5,1)
-   
-/// 
-doc ///
-Key
-  imageTableLie
-          
-Headline
-  a table of dimensions of the image of a map or derivation
-SeeAlso
-  imageBasisLie
-  boundariesTableLie
-  cyclesTableLie
-  dimTableLie
-  idealTableLie
-  subalgTableLie
-  homologyTableLie
-  kernelTableLie
-  extTableLie
-   
-Usage
-  im = imageTableLie(n,f)
-  
-Inputs
-  n: ZZ
-      the maximal degree
-  f: MapLie
-  f: DerLie
-  
-Outputs
-  im: Matrix
-
-    
-Description
-  Text
-     The columns are referring 
-     to the degree, indexed from 1, 
-     and the rows are referring to 
-     the homological degree, indexed from 0.
-     
-  Example
-     L = lieAlgebra({a,b,c,r3,r4,r42},
-         genWeights => {{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},
-         genSigns=>{0,0,0,1,1,0},diffl=>true)/{b c - a c,a b,b r4 - a r4}
-     L.genDiffs = {L.zz,L.zz,L.zz,a c,a a c,r4 - a r3}
-     M = minmodelLie 5
-     f = M.modelmap
-     imageTableLie(5,f)
-        
-///
-doc ///
-Key
-  imapLie
-    (imapLie,LieAlgebra,LieAlgebra,List)
-    (imapLie,LieAlgebra,LieAlgebra)
-Headline
-   construction of a Lie map without checking correctness
-SeeAlso
-   mapLie
-Usage
-  f = imapLie(L,M,x)
-  f = imapLie(L,M)
-Inputs
-  L: LieAlgebra
-     the target
-  M: LieAlgebra
-     the source
-  x: List
-     the value in L of the generators in M
-Outputs
-  f: MapLie 
-Description
-   Text
-     The construction is the same as for @TO mapLie@ except that it is not checked
-     that the relations are preserved and that the map commutes with the differential
-      (and that the values of the generators preserve weight and sign). It is similar to
-      the use of map for rings. E.g., it can be used to define a linear section of a map L->L/I. 
-      However, one has to be careful, since the map is declared to be an element in MapLie, which is wrong. 
-      The effect of imapLie(L,M) is the same as for mapLie(L,M), the "common" generators are mapped to 
-      themselves and the other generators are mapped to zero. Two generators are "common" if they have 
-      the same name and the same weight and sign.
-   
-   Example 
-      L=lieAlgebra{a,b,c}/{a b,a c}
-      M=lieAlgebra{a,b,c}
-      f = imapLie(L,M)
-      s = imapLie(M,L)
-      peekLie(f*s)
-///
-doc ///
-Key
-  indexFormLie
-     (indexFormLie, LieElement)
-     (indexFormLie, List)
-Headline
-  returns an element in the ring representation corresponding to the input
-Usage
-  r=indexFormLie(a)
-Inputs
-  a: LieElement
-     
-  a: List
-     a list of LieElement 
-Outputs
-  r: RingElement
-     the element in L.cache.mbRing corresponding to the input or a list of ring elements.  
-SeeAlso
-   defLie
-   mbRing
-   monomialsLie
-   coeffsLie 
-Description
- Text
-     The ring L.cache.mbRing, see @TO mbRing@, is used to get an output of 
-     LieElements with indexed basis elements, 
-     which sometimes is better to use than the 
-     iterated Lie products of generators, especially in 
-     high degrees. Use indexFormLie to get the 
-     output in  L.cache.mbRing and @TO defLie@ to get back the standard output. 
-     The ring L.cache.mbRing is very large, it has as many generators as the total 
-     dimension of the computed Lie algebra, so to avoid 
-     a large output you should give the ring a name. The composition
-     indexFormLie(defLie x) gives back x, when x is a linear polynomial in L.cache.mbRing. When x
-     is a LieElement in L, the composition defLie(indexFormLie x) is equal to x modulo the relations
-     in L. 
-     
- Example
-    L = lieAlgebra{a,b,c}
-    x = (basisLie 2)_0 (basisLie 3)_4
-    R = L.cache.mbRing
-    length gens R
-    indexFormLie x 
-    defLie oo 
-    indexFormLie{c,b c,a b c,a a b c}
-    defLie oo
-    {c,b c,a b c,a a b c}
-
-
-///
-doc ///
-Key
-  innerDerLie
-     (innerDerLie, LieElement)
-    
-Headline
-  the derivation defined by left Lie multiplication by a LieElement 
-Usage
-  d=innerDerLie(u)
-Inputs
-  u: LieElement
-     
-Outputs
-  d: DerLie
-     the inner derivation defined by x->[u,x].
-SeeAlso
-   derLie
-   DerLie
-Description
-   
- Example
-    L = lieAlgebra{a,b}
-    d=innerDerLie a a b
-    peekLie d
-    (a a b) a
-    (a a b) b
-    
-///
-doc ///
-Key
-  intersectionLie
-     (intersectionLie, ZZ, List)    
-Headline
-  computes a basis for the intersection of subspaces of a given degree
-Usage
-  l=intersectionLie(d,m)  
-Inputs
-  d: ZZ 
-     the degree
-  m: List 
-     a list of lists of LieElement of degree d  
-Outputs
-  l: List
-     a basis for the intersection of the subspaces generated by the lists in m
-Description
- Text
-   This is just linear algebra in the specified degree
- Example
-  L = lieAlgebra{a,b,c}
-  intersectionLie(2,{{2 a b + a c + 2 b c, a b + b c},{- a b + a c + b c, a c + b c},{a b + a c - b c, a b + a c}}) 
- 
-///
-doc ///
-Key
-  invImageBasisLie
-     (invImageBasisLie,MapLie,List)
-     (invImageBasisLie,DerLie,List)
-Headline
-     computes a basis for the inverse image of a map or derivation
-Usage 
-     bb=invImageBasisLie(f,b) 
-     bb=invImageBasisLie(f,b) 
-     
-Inputs
-     b: List
-         a list of homogeneous LieElement             
-     f: MapLie
-         a map
-     f: DerLie  
-         a derivation
-	 
-Outputs
-     bb: List
-     
-SeeAlso
-     mapLie
-     derLie
-     divisorLie
-     invImageLie
-     
-Description
-  Text
-     The list b should contain LieElement of the same degree. 
-     The output bb is a list of LieElement,
-     which is a basis for the 
-     inverse image under f of the space generated by b. 
-  Example
-      L=lieAlgebra({x,y},genSigns=>1)
-      M=lieAlgebra({a,b},genSigns=>1)
-      f = mapLie(L,M,{x+y,x-y})
-      d = derLie(f,{x x,x y}) 
-      invImageBasisLie(f,{x y x})
-      invImageBasisLie(d,{x y x})
-///
-doc ///
-Key
-  invImageLie
-     (invImageLie,MapLie,List)
-     (invImageLie,DerLie,List)
-Headline
-     computes the dimension for the inverse image of a map or derivation
-Usage 
-     bb=invImageLie(f,b) 
-     bb=invImageLie(f,b) 
-     
-Inputs
-     b: List
-        of LieElement of the same weight
-     f: MapLie
-         a map
-     f: DerLie  
-         a derivation
-	 
-Outputs
-     dim: ZZ
-     
-SeeAlso
-     mapLie
-     derLie
-     divisorLie
-     invImageBasisLie
-     
-Description
-  Text
-     The list b should contain LieElement of the same weight. The output is the dimension for the 
-     inverse image under f of the space generated by b. This dimension for a @TO MapLie@ f and a list
-     b of elements of degree n 
-     may also be computed
-     as the dimension of the intersection of @TO imageBasisLie@(n,f) and b plus the  dimension
-     of the kernel of f in degree n (or n - degLie(f) if f is a derivation).
-     
-  Example
-      L=lieAlgebra({x,y},genSigns=>1)
-      M=lieAlgebra({a,b},genSigns=>1)
-      f = mapLie(L,M,{x+y,x-y})
-      d = derLie(f,{x x,x y}) 
-      invImageLie(f,{x y x})
-      invImageLie(d,{x y x})
-      useLie L
-      length intersectionLie(3,{imageBasisLie(3,f),{x y x}})+length kernelBasisLie(3,f)
-      length intersectionLie(3,{imageBasisLie(3,d),{x y x}})+length kernelBasisLie(2,d)
-///
-
-
-doc ///
-Key
-  kernelBasisLie
-    (kernelBasisLie, ZZ, MapLie)
-    (kernelBasisLie, ZZ, ZZ, MapLie)
-    (kernelBasisLie, List, MapLie)
-    (kernelBasisLie, ZZ, DerLie)
-    (kernelBasisLie, ZZ, ZZ, DerLie)
-    (kernelBasisLie, List, DerLie)
-
-Headline
- a basis of the kernel of a Lie homomorphism or derivation in a specified degree 
-SeeAlso
-  DerLie
-  MapLie
-  kernelTableLie
-  imageBasisLie
-  "Differential LieAlgebra Tutorial"
-Usage
-  b = kernelBasisLie(n,f)
-  b = kernelBasisLie(n,d,f) 
-  b = kernelBasisLie(x,f)
-Inputs
-  n: ZZ
-     the degree
-  d: ZZ
-     the homological degree
-  x: List
-     the multi-degree  
-  f: MapLie
-  f: DerLie
-   
-Outputs
-  b: List
-  
-Description
-  Example
-     L = lieAlgebra({a,b,c,r3,r4,r42},
-         genWeights => {{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},
-         genSigns=>{0,0,0,1,1,0},diffl=>true)/{b c - a c,a b,b r4 - a r4}
-     L.genDiffs = {L.zz,L.zz,L.zz,a c,a a c,r4 - a r3}
-     M = minmodelLie 3
-     f = M.modelmap
-     peekLie f
-     kernelTableLie(3,f)
-     kernelBasisLie(3,f)
-     kernelBasisLie(3,1,f)
-     d = diffLie()
-     kernelBasisLie(5,1,d)
-     cyclesBasisLie(5,1)
-   
-/// 
-doc ///
-Key
-  kernelTableLie
-          
-Headline
-  a table of dimensions of the kernel of a map or derivation
-SeeAlso
-  kernelBasisLie
-  boundariesTableLie
-  cyclesTableLie
-  dimTableLie
-  idealTableLie
-  subalgTableLie
-  homologyTableLie
-  imageTableLie
-  extTableLie
-   
-Usage
-  k = kernelTableLie(n,f)
-  
-Inputs
-  n: ZZ
-      the maximal degree
-  f: MapLie
-  f: DerLie
-  
-Outputs
-  k: Matrix
-
-    
-Description
-  Text
-     The columns are referring 
-     to the degree, indexed from 1, 
-     and the rows are referring to 
-     the homological degree, indexed from 0.
-     
-  Example
-     L = lieAlgebra({a,b,c,r3,r4,r42},
-         genWeights => {{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},
-         genSigns=>{0,0,0,1,1,0},diffl=>true)/{b c - a c,a b,b r4 - a r4}
-     L.genDiffs = {L.zz,L.zz,L.zz,a c,a a c,r4 - a r3}
-     M = minmodelLie 5
-     f = M.modelmap
-     kernelTableLie(5,f)
-        
-///
-doc ///
-Key
-  koszulDualLie
-     (koszulDualLie, QuotientRing)
-     (koszulDualLie, PolynomialRing)
-
-Headline
-  gives the Lie algebra whose enveloping algebra is the Koszul dual of a quadratic algebra
-Usage
-  L = koszulDualLie(Q)
-Inputs
-  Q: QuotientRing 
-  Q: PolynomialRing   
-Outputs
-  L: LieAlgebra
-SeeAlso
- minmodelLie
- extTableLie
-Description
-  Text
-    The input Q is a quotient of a polynomial algebra 
-    by a quadratic ideal (which might be zero). 
-    Some of the variables 
-    may be declared as SkewCommutative and the variables may have multi-degrees where the 
-    first degree is equal to one. The quadratic ideal must be homogeneous
-    with respect to the multi-degree and the "skew-degree". The output is the Lie algebra 
-    whose enveloping algebra is the Koszul dual of Q. 
-    
-  Example
-    R1=QQ[x,y,z, SkewCommutative=>{y,z}]
-    I1={x^2,y*z}
-    L1=koszulDualLie(R1/ideal I1)
-    peekLie L1
-    extTableLie 3
-  
-  Text
-    Here is an example of a non-Koszul algebra. The table for 
-    the Ext-algebra has a non-zero occurence off the diagonal.
-      
-  Example
-    R2=QQ[x,y,z, SkewCommutative=>{},Degrees=>{{1,1},{1,2},{1,3}}]
-    I2=ideal{y^2+x*z,x*y,z^2}
-    L2=koszulDualLie(R2/I2)
-    peekLie L2
-    extTableLie 4
-     
-///
-doc ///
-Key
-  lieAlgebra
-     (lieAlgebra, List)
-Headline
-  constructing a free Lie algebra 
-Usage
-  L=lieAlgebra(liegens)
-
-Inputs
-  liegens: List
-            of elements of class  Symbol or IndexedVariable
-  
-Outputs
-  L: LieAlgebra
-SeeAlso
-   LieElement
-  "First LieAlgebra Tutorial"
-  "Second LieAlgebra Tutorial"
-  "Differential LieAlgebra Tutorial"
-  (symbol /,LieAlgebra,List)
-  (symbol SPACE,LieElement,LieElement)
-  diffLieAlgebra
-  useLie
-Description
-  Text
-    A generator may be of class Symbol or IndexedVariable. The same name for
-    a generator can be used in several Lie algebras and also as name for a variable
-    in a polynomial ring. Relations are introduced by the operator /, see @TO (symbol /,LieAlgebra,List)@. 
-    A differential Lie algebra is defined by giving the value of the differential on the generators, see @TO diffLieAlgebra@.
-    Lie multiplication is given by @TO (symbol SPACE,LieElement,LieElement)@. The zero Lie algebra is defined as
-    lieAlgebra\{\}.
-    
-  Example
-    L1 = lieAlgebra{a,b}/{a a b - b b a, a a a a b}
-    dimsLie 6
-    peekLie L1
-    F2 = lieAlgebra({a,b,c},genWeights=>{{1,0},{1,0},{2,1}},
-		   genSigns=>{1,1,1},diffl=>true)
-    L2 = diffLieAlgebra{F2.zz,F2.zz,a a + b b}/{a b,a c}
-    peekLie L2
-    dimTableLie 5
-    peekLie lieAlgebra{}
-    
-/// 
-doc ///
-Key
-  [lieAlgebra, genWeights]
- 
-Headline
-  optional argument for lieAlgebra 
-Usage
-  L = lieAlgebra(gen,genWeights => w)
-  
-Inputs
-    gen: List
-    w: List
-        of list of weights or of positive integers
-    
-Outputs
-  L: LieAlgebra
- 
-SeeAlso
-   lieAlgebra
-   weightLie
-   degLie
-   "Second LieAlgebra Tutorial"
-Description
-  Text
-      This is an option to tell @TO lieAlgebra@ to assign 
-      the given weights to the generators.
-      A weight
-      is a list of integers of a length, which is the same for all generators. 
-      The first degree (also just called the degree), see @TO degLie@, is positive and, 
-      if the Lie algebra has a 
-      differential (i.e., the option diffl is true), the last degree is the homological degree, 
-      which is non-negative
-      and less than the first degree. If the
-      Lie algebra has no differential (i.e., the option diffl is false), the program defines a 
-      differential to be 0 and adds a last 
-      degree 0 to the existing degrees. When the option 
-      is given as a list of integers n1,n2,...,
-      which is not possible when the option diffl is true,
-      then the program
-      defines the weights for the generators to be \{n1,0\}, \{n2,0\},... . 
-      The default value is 1, which has the effect that all generators have degree \{1,0\}. 
-  Example
-    peekLie lieAlgebra({a,b},genWeights=>{{1,2},{2,3}})
-    peekLie lieAlgebra({a,b},genWeights=>{{2,1},{3,2}},diffl=>true)
-    peekLie lieAlgebra({a,b})
-    peekLie lieAlgebra({a,b},genWeights=>{{1,0},{1,0}})
-    peekLie lieAlgebra({a,b},genWeights=>{{1,0},{1,0}},diffl=>true)
-    peekLie lieAlgebra({a,b},genWeights=>{1,2})    
-///
-doc ///
-Key
-  genWeights
- 
-Headline
-  optional argument for lieAlgebra 
-SeeAlso
-   lieAlgebra
-   weightLie
-   degLie
-   "Second LieAlgebra Tutorial"
-Description
- Text
-      This is an option to tell @TO lieAlgebra@ to assign 
-      the given weights to the generators.
-///
-doc ///
-Key
-  [lieAlgebra, genSigns]
- 
-Headline
-  optional argument for lieAlgebra 
-Usage
-  L = lieAlgebra(gen,genSigns => w)
-  
-Inputs
-   gen: List
-       the list of generators
-   w: List
-       of signs (0 or 1) w has the same length as gen
-   w: ZZ
-      0 or 1, the same sign is assigned to each generator
-Outputs
-  L: LieAlgebra
- 
-SeeAlso
-   lieAlgebra
-   signLie
-   "Second LieAlgebra Tutorial"
-Description
-  Text
-    This is an option to tell @TO lieAlgebra@ to assign 
-    the given "signs" to the generators, which are either
-    zero (even) or one (odd). If the option is given the value 1,
-    then all generators will be odd, the default value is that
-    all generators are even. The signs affect the axioms of a Lie 
-    superalgebra, see @TO axiomsLie@. Use @TO signLie@ to 
-    compute the sign of an arbitrary homogeneous Lie expression. 
-    
-  Example
-    peekLie lieAlgebra({a,b})
-    peekLie lieAlgebra({a,b},genSigns=>{1,0})
-    peekLie lieAlgebra({a,b},genSigns=>1) 
-      
-///
-doc ///
-Key
-  genSigns
-Headline
-  optional argument for lieAlgebra
-SeeAlso
-  lieAlgebra
-  signLie
-   "Second LieAlgebra Tutorial"
-Description
-  Text
-    This is an option to tell @TO lieAlgebra@ to assign 
-    the given "signs" to the generators, which are either
-    zero (even) or one (odd).
-///
-doc ///
-Key
-  [lieAlgebra,diffl]
-Headline
-  optional argument for lieAlgebra
-Usage
-  L = lieAlgebra(gen,diffl => true)
-Inputs
-  gen: List
-Outputs
-  L: LieAlgebra 
-SeeAlso
-  lieAlgebra
-  diffLieAlgebra
-  weightLie
-  genDiffs
-  "Differential LieAlgebra Tutorial"
-Description
-  Text
-    This is an option, which tells @TO lieAlgebra@ to consider the 
-    last weight of a generator as the homological degree, if the 
-    option is given the value true. Default value is false.
-  Example
-    peekLie lieAlgebra({a,b},genWeights=>{{2,1},{3,2}})
-    peekLie lieAlgebra({a,b},genWeights=>{{2,1},{3,2}},diffl=>true)
-///
-doc ///
-Key
-  diffl
-Headline
-  optional argument for lieAlgebra
-SeeAlso
-  lieAlgebra
-  diffLieAlgebra
-  weightLie
-  genDiffs
-  "Differential LieAlgebra Tutorial"
-Description
-  Text
-    This is an option to tell @TO lieAlgebra@ to consider the 
-    last weight of a generator as the homological degree.
-    
-///
-doc ///
-Key
-  [lieAlgebra,field]
- 
-Headline
-  optional argument for lieAlgebra 
-Usage
-  L = lieAlgebra(gen,field => F)
-   
-Inputs
-    gen: List        
-    F:   Ring
-        the field of coefficients
-    
-Outputs
-  L: LieAlgebra
-SeeAlso
-  lieAlgebra
-  holonomyLie
-  "Second LieAlgebra Tutorial"
-  
-Description
-  Text
-    This is an option for @TO lieAlgebra@ to define the coefficient field 
-    which is QQ by default. You may use any "exact" field (not the real numbers or the
-	  complex numbers), such as a prime field or an algebraic extension, e.g.,
-      toField(ZZ/7[x]/ideal\{x^2+1\}) or a fraction field, e.g., frac(QQ[x]). Observe that it 
-      is necessary to use the function toField when F is defined 
-      as an algebraic extension of a prime field.
-  Example
-      F = toField(ZZ/7[x]/ideal{x^2+1})
-      L = lieAlgebra({a,b},field=>F)
-      (3*x+2) a b + (2*x+3) b a
-///
-doc ///
-Key
-  field
-Headline
-  optional argument for lieAlgebra and holonomyLie
-SeeAlso
-  lieAlgebra
-  holonomyLie
-  "Second LieAlgebra Tutorial"
-  
-Description
-  Text
-    This is an option for @TO lieAlgebra@ and @TO holonomyLie@ to define the coefficient field 
-    which is QQ by default.
-///
-doc ///
-Key
-  lieRing
-   
-Headline
-  the internal ring for representation of Lie elements
-SeeAlso
-   "Second LieAlgebra Tutorial"
-    mbRing
-Usage
-   R = L.cache.lieRing 
-Inputs
-  L: LieAlgebra
-Outputs
-  R: PolynomialRing
-Description
-  Text
-    @TO lieRing@ is the internal polynomial ring representation of 
-    Lie elements, which cannot be used
-    by the user but can be looked upon
-    by writing "L.cache.lieRing". The Lie monomials are represented as
-    commutative monomials in this ring. The number of generators in lieRing
-    is the number of generators in the Lie algebra times the internal counter
-    "maxdeg" which initially is set to 5 and is changed to n+5 if dimsLie n
-    is performed with n>maxdeg.  
-      
-  Example
-    L=lieAlgebra{a,b}/{a a a b,b b b a}
-    dimsLie 4
-    peek L.cache		      
-    dimsLie 6
-    L.cache.lieRing
-    dimsLie 10
-    L.cache.lieRing
-    
-
-    
-///
-      
-doc ///
-Key
-  localLie
-    (localLie, ZZ)
-
-Headline
- gives the Lie algebra for a local subalgebra of the holonomy Lie algebra 
-SeeAlso
-  holonomyLie
-  subalgTableLie
-  decompidealLie
-  "Holonomy Lie algebras and Symmetries"
-Usage
-  L = localLie(i)
+  L = holonomyLocal(i,H)
 Inputs
   i: ZZ
-    the ith set, where the sets in the first input of holonomyLie 
-    are counted before the sets in the second input.
-   
+    referring to the $i$th set, where the sets in the first input of holonomy 
+    are counted before the sets in the second input
+  H: LieAlgebra
+    the holonomy Lie algebra   
 Outputs
  L : LieAlgebra
       the Lie subalgebra
 Description
   Text
-    The generators in the ith set (beginning with i=0) in the inputs of 
-    @TO holonomyLie@ generate a subalgebra
-    of the holonomy Lie algebra and the output of localLie(i) 
-    is this Lie subalgebra. If the set is of size k, then the local Lie
-    algebra is free on k generators if the set belongs to the first input
-    set and it is free on k-1 generators in degree >=2 if it belongs
+    The generators in the $i$th set (beginning with $i=0$) in the inputs of 
+    @TO holonomy@ generate a subalgebra
+    of the holonomy Lie algebra $H$, and the output of {\tt holonomyLocal(i,H)} 
+    is this Lie subalgebra. If the set is of size $k$, then the local Lie
+    algebra is free on $k$ generators if the set belongs to the first input
+    set, and it is free on $k-1$ generators in degrees $\ge 2$ if it belongs
     to the second input set. 
 		  
     
   Example
-    L=holonomyLie({{a1,a2},{a3,a4}},{{a1,a3,a5},{a2,a4,a5}})
-    peekLie localLie(1) 
-    peekLie localLie(2) 
+    H=holonomy({{a1,a2},{a3,a4}},{{a1,a3,a5},{a2,a4,a5}})
+    describe holonomyLocal(1,H) 
+    describe holonomyLocal(2,H) 
    
 ///
 doc ///
 Key
-  maplie
-   
+     (decompose, LieAlgebra)  
 Headline
-  the Lie homomorphism f in the definition of a derivation
-SeeAlso
-   DerLie
-   MapLie
-   peekLie
+    compute the ideal associated to an arrangement or matroid
 Usage
-   f=d.maplie
-Inputs
-  d: DerLie
-Outputs
-   f: MapLie
-Description
-  Text
-    A derivation d:M->L depends on a Lie homomorphism f:M->L, which may
-    be obtained as d.maplie and seen using peekLie d.
-  Example
-    L=lieAlgebra{a,b}/{a a a b,b b b a}
-    M=lieAlgebra{a,b}
-    f=mapLie(L,M)
-    useLie L
-    d=derLie(f,{a a b,L.zz})
-    d.maplie
-    peekLie d
-       
-///
-doc ///
-Key
-  mapLie
-     (mapLie, LieAlgebra, LieAlgebra, List)
-     (mapLie, LieAlgebra, LieAlgebra)
-Headline
-  constructing a Lie algebra homomorphism 
-Usage
-  f=mapLie(L,M,homdefs)
-  f=mapLie(L,M)
-
+  I = decompose(L) 
 Inputs
   L: LieAlgebra
-  M: LieAlgebra
-  homdefs: List
-            of elements in L
+     the holonomy Lie algebra
 Outputs
-  f: MapLie
+  I: LieIdeal     
 SeeAlso
-  sourceLie
-  targetLie
-  (symbol SPACE,MapLie,LieElement)
-  imapLie
-  
-  
+  holonomy
+  holonomyLocal
+  "Holonomy Lie algebras and symmetries"     
 Description
   Text
-   The generators of M are mapped to the Lie elements in the last argument homdefs. 
-   It is checked by the program that f maps
-   the relations in M to zero and commutes with the 
-   differential and that f preserves
-   the weight and sign. The effect of mapLie(L,M) is that the "common" generators are mapped to 
-   themselves and the other generators are mapped to zero (cf map for rings). 
-   Two generators are "common" if they have the same name and the same weight and sign.
-   
+  
+   This gives the kernel of the Lie homomorphism from 
+   [$L,L$] to the direct sum of [$L_i,L_i$], where 
+   $L_i$ is the Lie subalgebra generated by the $i$th subset in
+   the input for the holonomy Lie algebra $L$; 
+   see @TO holonomyLocal@. The ideal is generated by the basis elements in degree 3
+   of the form {\tt (x y z)}, where not all {\tt x,y,z}
+   belong to the same $L_i$. The ideal is zero if and only if $L$ decomposes into the direct
+   sum of the local Lie subalgebras $L_i$ in degrees $\ge \ 2$.
+  
   Example
-      L1=lieAlgebra({a,b},genSigns=>1,diffl=>true,
-	  genWeights=>{{1,0},{2,1}})/{a a}
-      L2=lieAlgebra({a,b,c},
-	  genWeights=>{{1,0},{2,1},{5,2}},genSigns=>1,diffl=>true)
-      L2=diffLieAlgebra{L2.zz,a a,a a a b}/{a a a a b,a b a b + a c}
-      useLie L1
-      f=mapLie(L1,L2,{a,L1.zz,a b b})
-      peekLie f
-      useLie L2
-      f c c
-      peekLie mapLie(L1,L2)
+    L=holonomy({{a0,a1,a2},{a0,a3,a4},{a1,a3,a5},{a2,a4,a5}})
+    I=decompose L
+    dims(1,4,I)
+    basis(3,I)
+    
+///
+doc ///
+Key
+  indexForm
+     (indexForm, LieElement)
      
-/// 
+Headline
+  get a Lie element in the polynomial ring representation
+Usage
+  r=indexForm(a)
+Inputs
+  a: LieElement     
+Outputs
+  r: RingElement
+     the element in {\tt L#cache.mbRing} corresponding to the input.  
+SeeAlso
+   mbRing
+   "coefficients(LieElement)" 
+Description
+ Text
+     The ring {\tt L#cache.mbRing}, see @TO mbRing@, is used to get an output of 
+     Lie elements with indexed basis elements, 
+     which sometimes is better to use than the 
+     iterated Lie products of generators, especially in 
+     high degrees. Use @TO indexForm@ to get the 
+     output in  {\tt L#cache.mbRing} and @TO "standardForm(RingElement,LieAlgebra)"@ 
+     to get back the standard output. 
+     The ring @TO mbRing@ is very
+     large: it has as many generators as the total 
+     dimension of the computed Lie algebra. 
+     For this reason, you should give the ring a name
+     to avoid
+     a large output. When $x$ is a linear polynomial in 
+     {\tt L#cache.mbRing}, the composition
+     {\tt indexForm(standardForm(x)} gives back $x$ . 
+     When $x$ is a Lie element in $L$, the composition {\tt standardForm(indexForm x)} 
+     is equal to $x$ modulo the relations
+     in $L$. 
+     
+ Example
+    L = lieAlgebra{a,b,c}
+    x = (basis(2,L))_0 (basis(3,L))_4
+    R = L#cache.mbRing
+    numgens R
+    indexForm x 
+    standardForm(oo,L) 
+    indexForm a a b c
+    standardForm(oo,L)
+    a a b c===oo
+
+
+///
 doc ///
 Key
   mbRing
    
 Headline
-  the ring representation of the Lie algebra used as an outputform
+  a polynomial ring representation of the Lie algebra used for output
 Usage
- R=L.cache.mbRing
+ R=L#cache.mbRing
   
 Outputs
   R: PolynomialRing
 SeeAlso
-  indexFormLie
-  defLie
+  indexForm
+  "standardForm(RingElement,LieAlgebra)"
   lieRing
   
   
 Description
   Text
-     The ring representation of the Lie algebra L may be obtained as 
-     L.cache.mbRing. Its generators constitute a basis for L up to the computed degree. In order to transform
-     a LieElement to a linear polynomial
-     in L.cache.mbRing, use @TO indexFormLie@. For the other direction, use @TO defLie@.
+     The ring is used as a representation of the Lie algebra $L$ and 
+     may be obtained as 
+     {\tt L#cache.mbRing}. The ring @TO mbRing@ is very
+     large: it has as many generators as the total 
+     dimension of the computed Lie algebra. 
+     For this reason, you should give the ring a name
+     to avoid
+     a large output.
+     In order to transform
+     a Lie element to a linear polynomial
+     in {\tt L#cache.mbRing}, use @TO indexForm@. For the other direction, 
+     use @TO "standardForm(RingElement,LieAlgebra)"@.
      
      
   Example
      L=lieAlgebra{a,b,c}/{a b-a c}
-     dimsLie 3
-     R=L.cache.mbRing
+     dims(1,5,L)
+     R=L#cache.mbRing
      numgens R
-     indexFormLie(a a b+a a c)
-     defLie oo
-     
-     
-     
-   
+     indexForm(a a a a b+a a a b c)
+     standardForm(oo,L)
+     a a a a b+a a a b c
 ///
 doc ///
 Key
-  minmodel
+  lieRing
    
 Headline
-  the minimal model of L obtained, if computed, as L.minmodel
+  get the internal ring for representation of Lie elements
 SeeAlso
-   minmodelLie
+   "Second Lie algebra tutorial"
+    mbRing
 Usage
-   M=L.minmodel
+   R = L#cache.lieRing 
 Inputs
   L: LieAlgebra
 Outputs
-   M: LieAlgebra
+  R: PolynomialRing
 Description
   Text
-    If @TO minmodelLie@ is computed for L, then the minimal model may be 
-    obtained as L.minmodel.
+    The ring $R$ is the internal polynomial ring representation of 
+    Lie elements, which can be obtained
+    by writing {\tt L#cache.lieRing}. The Lie monomials are represented as
+    commutative monomials in this ring. The number of generators in {\tt lieRing}
+    is the number of generators in the Lie algebra times the internal counter
+    {\tt L#cache.max}, which initially is set to $5$, and is changed to $n+5$ if a computation
+    is performed up to degree $n$ with $n\ > $ {\tt L#cache.max}.  
+      
   Example
     L=lieAlgebra{a,b}/{a a a b,b b b a}
-    M=minmodelLie 4
-    L.minmodel
-    peekLie L
-       
+    dims(1,4,L)
+    L#cache.max	
+    L#cache.lieRing	      
+    dims(1,6,L)
+    L#cache.max
+    numgens L#cache.lieRing
+    dims(1,10,L)
+    L#cache.max
+    numgens L#cache.lieRing
+    
+
+    
+///
+document {
+     Key => {
+	     (standardForm, RingElement, LieAlgebra),
+     	     (standardForm, List, LieAlgebra),
+	  },
+     Headline => "get a Lie element in standard form",
+     "The set of linear polynomials in " , TT "L#cache.mbRing", " gives a
+    representation of Lie elements. The function " , TT "standardForm", " gives 
+    back the standard output and " , TT "indexForm",  " goes in the other direction.",
+     SeeAlso => {"indexForm","mbRing","normalForm"},
+     SYNOPSIS {
+	  Usage => "standardForm(r,L)",
+     	  Inputs => {
+	       "r" => RingElement =>  {"an element in ", TT "L#cache.mbRing"},
+	       "L" => LieAlgebra
+	       },
+	  Outputs => {
+	       LieElement => "the corresponding Lie element"
+	       }
+	  },
+     SYNOPSIS {
+	  Usage => "standardForm(x,L)",
+     	  Inputs => {
+	       "x" => List => {"a list of elements in ", TT "L#cache.mbRing"},
+	       "L" => LieAlgebra
+	       },
+	  Outputs => {
+	       List => "the list of the corresponding Lie elements"
+	       }
+	  },
+      EXAMPLE{
+        "L = lieAlgebra{a,b}",
+    	"b3 = basis(3,L)",
+    	"Q = L#cache.mbRing",
+    	"gens Q",
+    	"c3 = {indexForm a a b,indexForm b a b}",
+        "standardForm(c3,L)", 
+    	"standardForm(mb_{3,0}+2*mb_{3,1},L)", 
+    	"indexForm oo"  
+	},
+     
+     }
+
+
+doc ///
+Key
+  normalForm
+     (normalForm, LieElement)  
+Headline
+  compute the normal form of a LieElement
+Usage
+  c = normalForm(x)  
+Inputs
+  x: LieElement
+     $x$ is of type $L$, where $L$ is of type LieAlgebra
+SeeAlso
+     "standardForm(RingElement,LieAlgebra)"
+     indexForm
+     (symbol @,LieElement,LieElement)
+     
+Outputs
+  c: LieElement
+     the normal form of $x$  
+Description
+  Text
+    A Lie element obtained as a linear combination of iterated Lie products
+    of generators has an output that is of 
+    normal form. If the Lie element is defined by the "formal" operators,
+    then the output may be of non-normal form, and in this case, the 
+    normal form is obtained using {\tt normalForm}. 
+    
+  Example
+    L = lieAlgebra{a,b,c}
+    x = a b c - 3 c b a +(1/3) b a c
+    y = a@b@c/3@c@b@a++(1/3)@b@a@c
+    normalForm y
 ///
 doc ///
 Key
-  minmodelLie
-     (minmodelLie, ZZ)
+  innerDerivation
+     (innerDerivation, LieElement)
+    
 Headline
-  gives the minimal model 
+  make the derivation defined by right Lie multiplication by a Lie element 
 Usage
-  M = minmodelLie(d)
+  d=innerDerivation(u)
+Inputs
+  u: LieElement     
+Outputs
+  d: LieDerivation
+     the inner derivation defined by $x$ \ \to\  [$x$,$u$]
+SeeAlso
+   lieDerivation
+   LieDerivation
+Description
+   
+ Example
+    L = lieAlgebra{a,b}
+    d=innerDerivation a a b
+    describe d
+    a (a a b) 
+    b (a a b)
+    
+///
+doc ///
+Key
+  (isIsomorphism,LieAlgebraMap)
+         
+Headline
+  whether a Lie map is an isomorphism
+SeeAlso
+  "trace(ZZ,LieSubSpace,LieAlgebraMap)"
+  "isWellDefined(ZZ,LieAlgebraMap)"
+  "Holonomy Lie algebras and symmetries"
+    
+Usage
+  b=isIsomorphism(f)
+  
+Inputs
+  f: LieAlgebraMap
+      {\tt source f == target f}       
+Outputs  
+  b: Boolean
+     {\tt true} if $f$ is an isomorphism, {\tt false} otherwise            
+Description
+  Text
+    It is checked that $f$ is surjective and well defined 
+    (and commutes with the differential).
+    It follows from this that $f$ is also injective, 
+    since the dimensions of {\tt source f} and {\tt target f} are equal in 
+    each degree.
+        
+  Example
+     L=holonomy{{a0,a1,a2},{a0,a3,a4},{a1,a3,a5},{a2,a4,a5}}
+     f=map(L,L,{a5,a2,a4,a1,a3,a0})
+     isIsomorphism f
+     g=map(L,L,{a5,a0,a1,a2,a3,a4})
+     isIsomorphism g 
+     
+     
+///
+doc ///
+Key
+  (isSurjective,LieAlgebraMap)
+         
+Headline
+  whether a Lie map is surjective 
+SeeAlso
+  "isIsomorphism(LieAlgebraMap)"
+  "isWellDefined(ZZ,LieAlgebraMap)"
+  "image(LieAlgebraMap,LieSubSpace)"
+ 
+  
+   
+Usage
+  f=isSurjective(f)  
+  
+Inputs
+  f: LieAlgebraMap       
+Outputs  
+  b: Boolean
+     {\tt true} if $f$ is surjective, {\tt false} otherwise      
+Description
+  Text
+    The map may not be well defined. 
+    Use @TO "isWellDefined(ZZ,LieAlgebraMap)"@ to test 
+    if the map is well defined.
+    
+    
+  Example
+     F=lieAlgebra{a,b,c}
+     L=F/{a b,a b c}
+     M=minimalModel(3,L)
+     isSurjective map M
+     f=map(F,L)
+     isSurjective f
+     isWellDefined(3,f)
+     g=map(L,F)
+     isSurjective g
+     
+     
+///
+doc ///
+Key
+  (isWellDefined,ZZ,LieAlgebraMap)
+         
+Headline
+  whether a Lie map is well defined
+SeeAlso
+    "isWellDefined(ZZ,LieDerivation)"
+    "isIsomorphism(LieAlgebraMap)"
+    "map(LieAlgebra,LieAlgebra,List)"
+    "Homomorphisms and derivations"
+        
+Usage
+  b=isWellDefined(n,f)
+  
+Inputs
+  n: ZZ
+      the degree
+  f: LieAlgebraMap       
+Outputs  
+  b: Boolean
+     {\tt true} if $f$ is well defined and commutes with 
+     the differentials up to degree $n$, 
+     {\tt false} otherwise      
+Description
+  Text
+    It is checked that the map $f: M \ \to\  L$ maps the relations in $M$ to 0 up 
+    to degree $n$ and
+    that $f$ commutes with the differentials in $M$ and $L$. 
+    If $n$ is big enough and
+    {\tt ideal(M)} is of type {\tt List}, then it is possible to get that $f$ 
+    maps all relations
+    to 0, which is noted as the message "the map is well defined for all degrees".
+    This may happen even if the map does not commute with the differential 
+    (see {\tt g} in the example below).   
+    
+    
+  Example
+      L=lieAlgebra({a,b},Signs=>1,LastWeightHomological=>true,
+	  Weights=>{{1,0},{2,1}})
+      F=lieAlgebra({a,b,c},
+	  Weights=>{{1,0},{2,1},{5,2}},Signs=>1,LastWeightHomological=>true)
+      D=differentialLieAlgebra{0_F,a a,a a a b}
+      Q1=D/{a a a a b,a b a b + a c}
+      use F
+      Q2=F/{a a a a b,a b a b + a c}
+      f=map(D,Q1)
+      isWellDefined(6,f)
+      g=map(Q1,Q2)
+      isWellDefined(6,g)
+      h=map(Q1,D)
+      isWellDefined(6,h)
+      
+     
+///
+doc ///
+Key
+  (isWellDefined,ZZ,LieDerivation)
+         
+Headline
+  whether a Lie derivation is well defined
+SeeAlso
+    "isIsomorphism(LieAlgebraMap)"
+    "isWellDefined(ZZ,LieAlgebraMap)"
+     lieDerivation
+     "Homomorphisms and derivations"
+        
+Usage
+  b=isWellDefined(n,d)
+  
+Inputs
+  n: ZZ
+      the degree
+  d: LieDerivation       
+Outputs  
+  b: Boolean
+     {\tt true} if $d$ is well defined up to degree $n$, 
+     {\tt false} otherwise            
+Description
+  Text
+    It is checked that the derivation $(d,f): M \ \to\  L$ maps the ideal of 
+    relations 
+    in $M$ to 0 up 
+    to degree $n$. More precisely, if $M=F/I$ where $F$ is free, and $p$ 
+    is the projection $F$ \ \to\  $M$,
+    then the derivation $(d*p,f*p): F \ \to\  L$ maps 
+    $I$ to 0 in degrees $\le\ n$. If $n$ is big enough and $I$ is a list, then
+    it is possible to get the information "the derivation is 
+    well defined for all degrees".
+      
+    
+    
+  Example
+      F=lieAlgebra{a,b}
+      L=F/{a a a b,b b b a}
+      e=euler L
+      isWellDefined(4,e)
+      d4=lieDerivation{0_L,a b a b a}
+      isWellDefined(4,d4)
+      d5=lieDerivation{0_L,b a b a b a}
+      isWellDefined(4,d5)
+      di=innerDerivation(a b a b a)
+      isWellDefined(4,di)
+      di===d5
+           
+///
+doc ///
+Key
+  koszulDual
+     (koszulDual, QuotientRing)
+     (koszulDual, PolynomialRing)
+
+Headline
+  compute the Lie algebra whose enveloping algebra is the Koszul dual of a quadratic algebra
+Usage
+  L = koszulDual(Q)
+Inputs
+  Q: QuotientRing
+       the input type may also be @TO PolynomialRing@ 
+    
+Outputs
+  L: LieAlgebra
+SeeAlso
+ minimalModel
+ extAlgebra
+Description
+  Text
+    The input $Q$ is a quotient of a polynomial algebra 
+    by a quadratic ideal (which might be 0). 
+    Some of the variables 
+    may be declared as {\tt SkewCommutative}. Moreover, the variables may have multi-degrees where the 
+    first degree is equal to $1$. The quadratic ideal must be homogeneous
+    with respect to the multi-degree and the "skew-degree". The output is the Lie algebra 
+    whose enveloping algebra is the Koszul dual of $Q$. 
+    
+  Example
+    R1=QQ[x,y,z, SkewCommutative=>{y,z}]
+    I1={x^2,y*z}
+    L1=koszulDual(R1/ideal I1)
+    describe L1
+    E1=extAlgebra(3,L1)
+    dims(3,E1)
+  
+  Text
+    Here is an example of a non-Koszul algebra. The table for 
+    the Ext-algebra has a non-zero occurrence off the diagonal.
+      
+  Example
+    R2=QQ[x,y,z, SkewCommutative=>{},Degrees=>{{1,1},{1,2},{1,3}}]
+    I2=ideal{y^2+x*z,x*y,z^2}
+    L2=koszulDual(R2/I2)
+    describe L2
+    E2=extAlgebra(4,L2)
+    dims(4,E2)
+     
+///
+
+doc ///
+Key
+  listMultiply
+Headline 
+  multiplication of lists    
+SeeAlso
+  (symbol SPACE, LieElement, LieElement)
+  (symbol SPACE, ExtElement, ExtElement)
+Usage
+  m=listMultiply(x,y)
+Inputs
+  x: List
+  y: List
+      $x$ and $y$ are lists of Lie elements from the same Lie algebra
+      or lists of Ext-elements from the same Ext-algebra
+Outputs
+  m: List
+      of lists       
+Description
+  Text
+    The first list in the output consists of the first element in $x$ multiplied 
+    by all elements in $y$. 
+  Example
+    K=lieAlgebra({a,b,c},Signs=>1)/{a a,b b- 2 c a}
+    E=extAlgebra(3,K)
+    dims(3,E)
+    listMultiply(basis(1,E),basis(2,E))
+    basis(2,K)
+    listMultiply(basis(1,K),oo)    
+///
+
+doc ///
+Key
+  minimalModel
+     (minimalModel, ZZ, LieAlgebra)
+Headline
+  compute the minimal model 
+Usage
+  M = minimalModel(d,L)
 Inputs
   d: ZZ
      the maximal degree
+  L: LieAlgebra
 Outputs
   M: LieAlgebra
 SeeAlso
- minPresLie
- extBasisLie
- extTableLie
- modelmap
- minmodel
- "Differential LieAlgebra Tutorial"
- "Constructing Lie algebras"
+ "minimalPresentation(ZZ,LieAlgebra)"
+ extAlgebra
+ "map(LieAlgebra)"
+ (symbol SPACE,ExtElement,ExtElement)
+ "Differential Lie algebra tutorial"
+ "Minimal models, Ext-algebras and Koszul duals"
 
 Description
   Text
-    M is a minimal model of the currently used Lie algebra L up to degree d, that is, 
-    f: M -> L is a
-    differential homomorphism such that H(f) is an isomorphism and M is free as a Lie algebra
-    and the differential 
-    on M has no linear part. The homomophism f is available as M.modelmap, and M is available
-    as L.minmodel and L is obtained as M.modelmap.targetLie.
-    
-    
-    The generators of M yield a basis for 
-    the cohomology of L, i.e., Ext_{UL}(k,k), where k is L.field. 
-    The dimensions of this cohomology
-    algebra is obtained by @TO extTableLie@. Also,
-    the polynomial ring with generators equal to the basis elements of the cohomology
-    algebra is obtained by @TO extRepRing@ as L.cache.extRepRing. The linear polynomials
-    in this ring gives a representation of Ext_{UL}(k,k) (similar to the representation
-    of L by linear polynomials in L.cache.mbRing, see @TO mbRing@). Multiplication of elements
-    in Ext_{UL}(k,k) is obtained using SPACE, see @TO (symbol SPACE,RingElement,RingElement)@
-    
-
+    That $M$ is a minimal model of a Lie algebra $L$ up to degree $d$ means 
+    that there exists a differential Lie algebra 
+    homomorphism $f: M \ \to\  L$ such that $H(f)$ is an isomorphism up to degree $d$, 
+    $M$ is free as a Lie algebra, and the linear part of the differential 
+    on $M$ is zero. The homomorphism $f$ may be obtained using @TO "map(LieAlgebra)"@ 
+    applied to $M$.
+        
+    The generators of $M$ yield a basis for 
+    the cohomology of $L$, i.e., $Ext_{UL}(k,k)$, where $k$ is the coefficient 
+    field of $L$. 
+    This skewcommutative algebra may be obtained using @TO extAlgebra@.  
+    Multiplication of elements
+    in $Ext_{UL}(k,k)$ is obtained using @TO (symbol SPACE,ExtElement,ExtElement)@.
     
     Observe that the homological weight in the cohomology algebra 
     is one higher than the homological weight in the minimal model.
     
   Text
-    Since R in the following example is a Koszul algebra, the cohomology algebra of L is equal to R,
-    which means that the minimal model of L has generators in each degree (d,d-1).
+    Since $R$ in the following example is a Koszul algebra it follows that 
+    the cohomology algebra of $L$ is equal to $R$. This means that 
+    the minimal model of $L$ has generators in each degree $(d,d-1)$.
      
     
   Example 
     R=QQ[x]
-    L=koszulDualLie R
-    peekLie L
-    extTableLie 5
-    peekLie minmodelLie 5
+    L=koszulDual R
+    describe L
+    E=extAlgebra(5,L)
+    dims(5,E)
+    describe minimalModel(5,L)
     
   Text
-    In the  following example the enveloping algebra of L1 has global dimension two, which means that the computed
-    minimal model is in fact the full minimal model of L1.
+    In the following example the enveloping algebra of $L1$ has global dimension $2$, 
+    which means that the computed
+    minimal model is in fact the full minimal model of $L1$.
       
  
   Example
     L1=lieAlgebra{a,b,c}/{a b,a b c}
-    peekLie minmodelLie 4
+    M1= minimalModel(3,L1)
+    describe M1
+    H=lieHomology M1
+    dims(6,L1)===dims(6,H)
     
  
-  Text
-    Below is a differential Lie algebra which is non-free and where the 
-		  differential has a linear part. 
-    
-  Example
-    L2=lieAlgebra({a,b,c,r3,r4,r42},genWeights=>{{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},
-	genSigns=>{0,0,0,1,1,0},diffl=>true)
-    L2=diffLieAlgebra{L2.zz,L2.zz,L2.zz,a c,a a c,r4-a r3}/{b c-a c,a b,b r4-a r4}
-    peekLie minmodelLie 5
+  
     
 		  
     
 /// 
 doc ///
 Key
-  minPresLie
-    (minPresLie,ZZ)
+  (minimalPresentation,ZZ,LieAlgebra)
 
 Headline
- gives a minimal presentation up to a specified  degree 
+ compute a minimal presentation  
 SeeAlso
-  minmodelLie
-  "Differential LieAlgebra Tutorial"
-  
-  
-  
+  minimalModel
+  "Minimal models, Ext-algebras and Koszul duals"
+   
 Usage
-  M = minPresLie n
+  M = minimalPresentation(n,L)
   
 Inputs
   n: ZZ
     the maximal  degree
-    
- 
-   
+  L: LieAlgebra       
 Outputs
-  M: LieAlgebra
-  
+  M: LieAlgebra  
 Description
   Text
-    A minimal set of generators and relations for the current Lie algebra L (without
-    differential) is given. In general the presentation applies to H_0(L). The example L
-    below is the Lie algebra of strictly upper triangular 4x4-matrices given by
+    The optional input given above is not relevant for Lie algebras.
+    A minimal set of generators and relations for the Lie algebra $L$ (without
+    differential) is given. In general the presentation applies to $H_0(L)$. The example $L$
+    below is the Lie algebra of strictly upper triangular $4\times 4$-matrices given by
     its multiplication table on the natural basis.
   
   Example
-   L=lieAlgebra({e12,e23,e34,e13,e24,e14},genWeights=>{1,1,1,2,2,3})/
+   L=lieAlgebra({e12,e23,e34,e13,e24,e14},Weights=>{1,1,1,2,2,3})/
     {e12 e34,e12 e13,e12 e14,
      e23 e13,e23 e24,e23 e14,
      e34 e24,e34 e14,e13 e24,
@@ -2508,871 +2231,447 @@ Description
      e12 e24 - e14,
      e13 e34 - e14,
      e23 e34 - e24}    
-   M=minPresLie 3
-   peekLie M
-   dimsLie 4
+   M=minimalPresentation(3,L)
+   describe M
+   dims(1,4,M)
        
-///
-doc ///
-Key
-  modelmap
-   
-Headline
-  the Lie homomorphism from a minimal model of L to the Lie algebra L
-SeeAlso
-  MapLie
-  minmodelLie
-Usage
-   f=M.modelmap
-Inputs
-  M: LieAlgebra
-Outputs
-   f: MapLie
-Description
-  Text
-    If M=@TO minmodelLie@ of L, then the map from M to L is obtained as M.modelmap.
-  Example
-    L=lieAlgebra{a,b}/{a a a b,b b b a}
-    M=minmodelLie 4
-    f=M.modelmap
-    peekLie f
-       
-///
-doc ///
-Key
-  monomialsLie
-     (monomialsLie, LieElement)  
-Headline
-  computes the monomials of a LieElement
-Usage
-  c = monomialsLie(x)  
-Inputs
-  x: LieElement
-     x is of type L, where L is of type LieAlgebra
-SeeAlso
-     coeffsLie
-     normalFormLie
-     (symbol @,LieElement,LieElement)
+/// 
+
+document {
+     Key => {
+	    (random, ZZ, LieAlgebra), 
+     	    (random, List, LieAlgebra),  
+     	    (random, ZZ, ZZ, LieAlgebra)  
+	  },
+     Headline => "get a random element of a Lie algebra", 
+     TEX "The optional inputs given 
+     above are not relevant for Lie algebras. 
+     Below is an example of a periodic Lie algebra (a periodization of $sl_3$) with
+     five generators and seven random quadratic relations.",
+     SYNOPSIS {
+	  Usage => "random(d,L)",
+     	  Inputs => {
+	       "d" => ZZ => "the degree",
+	       "L" => LieAlgebra
+	       },
+	  Outputs => {
+	       LieElement => TEX "a random Lie element of degree $d$"
+	       }
+	  },
+    SYNOPSIS {
+	  Usage => "random(m,L)",
+     	  Inputs => {
+	       "m" => List => "the multi-degree",
+	       "L" => LieAlgebra
+	       },
+	  Outputs => {
+	       LieElement => TEX "a random Lie element of multi-degree $m$"
+	       }
+	  },
+     SYNOPSIS {
+	  Usage => "random(m,n,L)",
+     	  Inputs => {
+	       "m" => ZZ => "the degree",
+	       "n" => ZZ => "the homological degree",
+	       "L" => LieAlgebra
+	       },
+	  Outputs => {
+	       LieElement => TEX "a random Lie element of degree $m$ and 
+	                     homological degree $n$"
+	       }
+	  },
+      EXAMPLE{
+       "L = lieAlgebra({a,b,c,d,e}, Field=>ZZ/7)",
+       "Q = L/apply(7,i->random(2,L))",
+       "dims(1,8,Q)",
+       "random({4,0},Q)"  
+	},
      
+     }
+doc ///
+Key
+     (source,LieAlgebraMap)
+Headline
+  get the source of a map
+Usage
+  S=source(f)
+Inputs
+  f: LieAlgebraMap        
 Outputs
-  c: List
-     the list of monomials in x  
-Description
-  Text
-    A LieElement has a normal form, which is a linear combination of basis elements in a Lie algebra L in 
-    a certain order, monomialsLie gives the list of basis elements in this
-    representation. If the LieElement has been obtained using the "formal" operators, then monomialsLie
-    gives all the iterated Lie products used in the expression. 
-    
-  Example
-    L = lieAlgebra({a,b,c})
-    x = a b c - 3 c b a +(1/3) b a c
-    monomialsLie x
-    coeffsLie x
-    y = a@b@c/3@c@b@a++(1/3)@b@a@c
-    monomialsLie y
-    coeffsLie y
-    
-///
-
-doc///
-Key
-   multLie
-    (multLie,LieElement,LieElement)
-Headline
-    The Lie multiplication as a prefix operator 
-Usage
-   u = multLie(x,y)
-Inputs
-   x: LieElement
-      x is of type L, where L is of type LieAlgebra
-   y: LieElement
-      y is of type L 
-Outputs 
-   u: LieElement
-      is of type L, the Lie multiplication of x and y 
-Description
-  Text
-      It is also possible to use
-      the  infix notation SPACE instead of 
-      the prefix notation multLie, SPACE is 
-      easier to use, it is right associative and 
-      hence b b b a is the 
-      same as multLie(b,multLie(b,multLie(b,a)))
-  Example 
-      L = lieAlgebra{a,b,c}
-      b b b a
-      multLie(b,multLie(b,multLie(b,a))) 
+  S: LieAlgebra 
+     the source of $f$     
 SeeAlso
-      (symbol SPACE,LieElement,LieElement)
+  "source(LieDerivation)"
+  "target(LieAlgebraMap)"
       
-///
-
+ ///
 doc ///
 Key
-  multListLie   
-     (multListLie, List, List)
+     (source,LieDerivation)
 Headline
-  Lie multiplication of lists of LieElement
+  get the source of a map
 Usage
-  l=multListLie(l1,l2)
-  l=multListLie(l1,l2,multOnly=>f)
-SeeAlso
-  multLie
+  S=source(d)
 Inputs
-  l1: List
-      of @TO LieElement@
-  l2: List
-      of @TO LieElement@
-  f: Function
-     a boolean function on l1 x l2     
+  d: LieDerivation        
 Outputs
-  l: List
-
-Description
-  Text
-    It is also possible to use the infix operator SPACE to multiply
-    two lists in the case there is no option defined.
-  Example
-    L = lieAlgebra({a,b},
-      genWeights => {{1,1},{1,2}},genSigns=>{1,0})/{a a a b}
-    b2 = basisLie 2
-    b3 = basisLie 3
-    b2 b3
-    indexFormLie oo
-   
-  Text
-      There is an option multOnly which
-      only multiplies those pairs
-      (x,y) for which multOnly(x,y) is true.
-      
-  Example
-    apply(b2,weightLie)
-    apply(b3,weightLie)
-    multListLie(b2,b3,multOnly=>(x,y)-> 
-      ((weightLie x)_1 === 3 and (weightLie y)_1 === 5)) 
-    indexFormLie oo
-      
-
-///  
-doc ///
-Key
-  multOnly
-Headline
-  optional argument for multListLie
+  S: LieAlgebra 
+     the source of $d$     
 SeeAlso
-  multListLie
-Description
- Text
-      This is an option to tell @TO multListLie@ to only 
-      consider certain pairs (x,y)
-      when performing outer multiplication of two lists. 
-///
-
+  "source(LieAlgebraMap)"
+  "target(LieDerivation)"
+      
+ ///
 doc ///
 Key
-  [multListLie, multOnly]
+     (target,LieAlgebraMap)
 Headline
-  optional argument for  multListLie
+  get the target of a map
 Usage
-  l = multListLie(l1,l2,multOnly=>f)
+  T=target(f)
 Inputs
-  l1: List
-      of @TO LieElement@
-  l2: List
-      of @TO LieElement@
-  f: Function
-     a boolean function on l1 x l2     
+  f: LieAlgebraMap        
 Outputs
-  l: List
-Description
- Text
-      This is an option to tell @TO multListLie@ to only 
-      consider certain pairs (x,y)
-      when performing outer multiplication of two lists; 
-      here f is a boolean function on l1 x l2. 
-///
+  T: LieAlgebra 
+     the target of $f$     
+SeeAlso
+  "target(LieDerivation)"
+  "source(LieAlgebraMap)"
+      
+ ///
 doc ///
 Key
-  normalFormLie
-     (normalFormLie, LieElement)  
+     (target,LieDerivation)
 Headline
-  computes the normal form of a LieElement
+  get the target of a map
 Usage
-  c = normalFormLie(x)  
+  T=target(d)
 Inputs
-  x: LieElement
-     x is of type L, where L is of type LieAlgebra
+  d: LieDerivation        
+Outputs
+  T: LieAlgebra 
+     the target of $d$     
 SeeAlso
-     defLie
-     indexFormLie
-     (symbol @,LieElement,LieElement)
+  "target(LieAlgebraMap)"
+  "source(LieDerivation)"
+      
+ ///
+
+doc ///
+Key
+     (generators,LieAlgebra)
+Headline
+  get the generators
+Usage
+  g=generators(L)
+Inputs
+  L: LieAlgebra        
+Outputs
+  g: List 
+     a list of generators for $L$ as a Lie algebra      
+SeeAlso
+  "generators(LieSubSpace)"
+  "generators(ExtAlgebra)"
+Description
+  Text
+    The optional input given 
+     above is not relevant for Lie algebras. Instead of {\tt generators}
+     one may use the abbreviation {\tt gens}. 
+  
+  Example
+      F=lieAlgebra{a,b,c}
+      I=lieIdeal{a a b,a a c}
+      L=F/I
+      gens L
+      
+ ///
+doc ///
+Key
+     (generators,ExtAlgebra)
+Headline
+  get the generators
+Usage
+  g=generators(E)
+Inputs
+  E: ExtAlgebra        
+Outputs
+  g: List 
+     a basis for $E$ as a vector space      
+SeeAlso
+  "generators(LieAlgebra)"
+  "generators(LieSubSpace)"
+Description
+  Text
+    The optional input given 
+     above is not relevant for Lie algebras. Instead of {\tt generators}
+     one may use {\tt gens}. Observe that the output 
+     is a basis for the Ext-algebra as a vector space, and not as an algebra.
      
-Outputs
-  c: LieElement
-     the normal form of x  
-Description
-  Text
-    A LieElement written in the usual way has output of 
-    normal form. If the element is defined by the "formal" operators,
-    then the output may be of non-normal form and in this case the 
-    normal form is obtained using normalFormLie. 
-    
+  
   Example
-    L = lieAlgebra({a,b,c})
-    x = a b c - 3 c b a +(1/3) b a c
-    y = a@b@c/3@c@b@a++(1/3)@b@a@c
-    normalFormLie y
-///
-
+      F=lieAlgebra{a,b,c}
+      I=lieIdeal{a a b,a a c}
+      L=F/I
+      E=extAlgebra(3,L)
+      gens E
+      
+ ///
 doc ///
 Key
-  peekLie
-     (peekLie, LieAlgebra)
-     (peekLie, MapLie)
-     (peekLie, DerLie) 
+     (generators,LieSubSpace)
 Headline
-  gives information of a Lie algebra or map
+  get the generators
 Usage
-  c = peekLie x  
+  g=generators(S)
 Inputs
-  x: LieAlgebra
-  x: MapLie
-  x: DerLie
-          
+  S: LieSubSpace
+     an instance of type {\tt LieSubSpace}        
 Outputs
-  c: Net
-      
-Description
-  Text
-    The information given by peekLie of a LieAlgebra is somewhat less, but more relevant, 
-    than what peek gives. If a map or derivation is zero then 0 is displayed. If a map is the 
-    identity, then id is displayed.
-    
-  Example
-    L = lieAlgebra({a,b,c},genWeights=>{1,2,3},genSigns=>1)/{a b c}
-    dimsLie 4
-    peekLie L
-    M=ambient L
-    f = mapLie(L,M)
-    peekLie f
-    peekLie derLie{a,b,c}
-    useLie L
-    peekLie derLie(f,{a b c,a b c,a b c})
-///
-doc ///
-Key
-  permopLie
-      
-Headline
-  the result of a permutation operating on a LieElement 
+  g: List 
+     a list of generators for $S$ as a Lie ideal, or as a Lie subalgebra,
+     or as a Lie subspace, or $g$ is undefined   
 SeeAlso
-  characterLie
-  symmetryLie
-  
-   
-Usage
-  y=permopLie(p,x)
-  
-Inputs
-  p: List
-      a permutation of the generators as a reordered list or a list of cycles 
-  x: LieElement
-      
-Outputs
-  y: LieElement
-      
-Description
-  Text
-    A permutation is given as a list of cycles (or a reordered list) of the generators and is operating on
-    a LieElement by operating on each Lie monomial. 
-    
-  Example
-     L=holonomyLie{{a0,a1,a2},{a0,a3,a4},{a1,a3,a5},{a2,a4,a5}}
-     permopLie({{a5,a0},{a1,a2,a4,a3}},a1 a2 a4 + a0 a5 a3)
-     a2 a4 a3 + a5 a0 a1
-///
-doc ///
-Key
-  randomLie
-     (randomLie, ZZ)  
-     (randomLie, List)  
-Headline
-  gives a random element of a lie algebra
-Usage
-  r=randomLie(d)  
-  r=randomLie(md)  
-Inputs
-  d: ZZ 
-     the degree  
-  md: List
-     the multi-degree    
-Outputs
-  r: LieElement
-     a random LieElement of the specified (multi-)degree in the current Lie algebra. 
+  "generators(LieAlgebra)"
+  "generators(ExtAlgebra)"
      
-Description
- Text
-  Below is an example of a periodic Lie algebra (a periodization of sl_3) with
-  five generators and seven random quadratic relations.
- Example
-  L = lieAlgebra({a,b,c,d,e}, field=>ZZ/7)
-  Q = L/apply(7,i->randomLie(2))
-  dimsLie 8
-  randomLie({4,0})  
-///
-doc ///
-Key
-  relsLie
-   
-Headline
-  the list of relations of the Lie algebra
-Usage
- d=L.relsLie
-Inputs
-  L: LieAlgebra
-Outputs
-  d: List
-SeeAlso
-  peekLie 
-Description
-  Text
-    This is a key for a LieAlgebra L, which can be seen by applying
-    @TO peekLie@ to L. 
-    
-  Example
-    L=lieAlgebra{a,b,c}/{a b, a a b - b b c}
-    L.relsLie
-    
-   
-///
-doc ///
-Key
-  sign
-   
-Headline
-  the sign of a derivation
-SeeAlso
-   weight
-   DerLie
-   peekLie
-Usage
-   w=d.sign
-Inputs
-   d: DerLie
-Outputs
-   w: ZZ
-Description
-  Text
-    A derivation d:M->L has a sign which is the difference modulo 2
-    between the sign of any non-zero output and a non-zero input.
-    The sign of the zero derivation is defined as 0.
-    The sign is obtained as d.sign and may be seen using peekLie d.
-  Example
-    L=lieAlgebra({a,b},genSigns=>1)/{a a a b,b b b a}
-    M=lieAlgebra({a1,b1},genWeights=>{3,3},genSigns=>1)
-    useLie L
-    f=mapLie(L,M,{a a b,b b a})
-    d=derLie(f,{a b,b b})
-    peekLie d
-    d.sign
-    
-       
-///
 
-doc ///
-Key
-  signExtLie
-     (signExtLie, RingElement)
-     (signExtLie, List)
-Headline
-  returns the sign of a basis element in the Ext-algebra
-SeeAlso
-  extBasisLie
-  extTableLie
-  extMultLie
-  extRepRing
-  weightExtLie
-Usage
-  s=signExtLie(r) 
-   
-Inputs
-  r: RingElement
-     a generator in @TO extRepRing@
-  r: List
-     a list of generators in @TO extRepRing@        
-Outputs
-  s: ZZ
-     the sign of the input element  
-  s: List
-     the list of signs of the input elements
 Description
-     
-   Example
-      L=lieAlgebra({a,b,c},genSigns=>{0,0,1},genWeights=>{{1,0},{1,0},{2,1}},diffl=>true)
-      L=diffLieAlgebra{L.zz,L.zz,a b}/{a a b, b b a}
-      extBasisLie 3
-      L.cache.extRepRing
-      signExtLie ext_3
-      weightExtLie ext_3
-      extTableLie 3
-///
-doc ///
-Key
-  signLie
-     (signLie, LieElement)
-     (signLie, List)
-     
-Headline
-  returns the sign of a homogeneous LieElement.
-Usage
-  s=signLie(g) 
-  s=signLie(l) 
+  Text
+    The optional input given 
+     above is not relevant for Lie algebras. Instead of {\tt generators}
+     one may use the abbreviation {\tt gens}. If $S$ is of 
+     type {\tt FGLieIdeal}, then the generators of $S$ are
+     the generators of $S$ as an ideal. If $S$ is of 
+     type {\tt FGLieSubAlgebra}, then the generators of $S$ are
+     the generators of $S$ as a Lie subalgebra. If $S$ is of 
+     type {\tt LieSubSpace} given by a finite set of generators,
+     then the generators of $S$ are
+     the generators of $S$ as a Lie subspace. In all other cases, if
+      $S$ is of 
+     type {\tt LieSubSpace}, then the function {\tt generators} 
+     applied to  $S$ is
+     not defined.
   
-Inputs
-  g: LieElement
-  l: List  
-Outputs
-  s: ZZ
-     0 or 1, the sign of the input element  
-  s: List
-     the list of signs of input elements 
-SeeAlso
-   signExtLie
-   [lieAlgebra,genSigns]
-   weightLie
-   weightExtLie 
-Description
- Text
-    The signs of the generators, see @TO [lieAlgebra,genSigns]@ define the sign of an 
-    arbitrary expression. The sign of the zero element, L.zz, is defined
-    to be 0. However,
-    the sign of zero should be thought of as arbitrary. 
-    
-    
- Example
-    L = lieAlgebra({a1,a2},genSigns => {1,0})
-    signLie (a1 a1) a2
-    signLie{a2,a1 a1 a1,a2 a1 a2 + 2 a2 a2 a1}
-    
-    
-///
-doc ///
-Key
-  sourceLie
-   
-Headline
-  the source of a derivation or map 
-SeeAlso
-   targetLie
-   DerLie
-   MapLie
-   peekLie
-Usage
-   L=d.sourceLie
-Inputs
-   d: DerLie
-   d: MapLie
-Outputs
-   L: LieAlgebra
-Description
-  Text
-    A derivation or map d:M->L has M as source, which
-    is obtained as d.sourceLie and may be seen using peekLie d.
   Example
-    L=lieAlgebra({a,b},genSigns=>1)/{a a a b,b b b a}
-    M=lieAlgebra({a1,b1},genWeights=>{3,3},genSigns=>1)
-    useLie L
-    f=mapLie(L,M,{a a b,b b a})
-    d=derLie(f,{a b,b b})
-    peekLie d
-    d.sourceLie
-
-       
-///
-
-
-doc ///
-
-Key
-  subalgBasisLie
-     (subalgBasisLie, ZZ, List)
-     (subalgBasisLie, ZZ, ZZ, List)
-     (subalgBasisLie, List, List)    
-Headline
-  computes a basis of a Lie subalgebra in a given degree or multi-degree
-SeeAlso
-  subalgTableLie
-  idealBasisLie
-Usage
-  l=subalgBasisLie(n,genlist) 
-  l=subalgBasisLie(n,d,genlist)  
-  l=subalgBasisLie(md,genlist)
-Inputs
-  n: ZZ
-     the degree 
-  d: ZZ
-     the homological degree 
-  md: List 
-     the multi-degree 
-  genlist: List 
-     the set of generators of the Lie subalgebra, which may
-     be of different degrees     
-Outputs
-  l: List
-     a list of basis elements in the given (multi-)degree 
-Description
-  Text
-   A basis is given in the specified degree or multi-degree. 
-   The subalgebra is the least subspace containing the generators
-   in genlist and which is closed under Lie multiplication
-   and the differential. If the 
-   degree n is the same as the degree of the elements in the list genlist,
-   one obtains a method to compute a basis for the subspace in degree n generated 
-   by genlist (and the differential).  
-    
- Example
-   L = lieAlgebra({a,b,c},genSigns=>{1,0,1},genWeights=>{{1,0},{1,2},{1,0}})
-   subalgBasisLie(4,{a,b c})
-   indexFormLie oo 
-   subalgBasisLie({4,4,0},{a,b c}) 
-   subalgBasisLie(3,{a b c,a c b,b a c,b c a,c b a,c a b}) 
-   F = lieAlgebra({a,b},genWeights=>{{2,0},{2,1}},genSigns=>{1,0},diffl=>true)
-   Q = diffLieAlgebra{F.zz,a}
-   subalgBasisLie(2,{b})
+      F=lieAlgebra{a,b,c}
+      I=lieIdeal{a a b,a a c}
+      L=F/I
+      gens I
+      J=kernel map(L,F)
+      gens J
       
-   
-   
-///
-doc ///
-Key
-  subalgTableLie
-    (subalgTableLie,ZZ,List)
-    
-          
-Headline
-  a table of dimensions of a Lie subalgebra of a Lie algebra
-SeeAlso
-  boundariesTableLie
-  homologyTableLie
-  cyclesTableLie
-  extTableLie
-  imageTableLie
-  kernelTableLie
-  dimTableLie
-  subalgBasisLie
-  idealBasisLie
-   
-Usage
-  M = subalgTableLie(n,x)
-  
-  
-Inputs
-  n: ZZ
-           the maximal degree
-  genlist: List
-            the generators of the Lie subalgebra, which may
-            be of different degrees     
-Outputs
-  M: Matrix
+ ///
 
-    
-Description
-  Text
-     The subalgebra is the least subspace containing the generators
-     in genlist and which is closed under Lie multiplication
-     and the differential. The columns are referring 
-     to the degree, indexed from 1, 
-     and the rows are referring to 
-     the homological degree, indexed from 0.
-     
-  Example
-    holonomyLie{{a1,a2,a3},{a1,a4,a5},{a2,a4,a6},{a3,a5,a6}}
-    subalgTableLie(5,{a1,a2,a4})
-    subalgTableLie(5,{a3,a5})
-    dimTableLie 5
-        
-///
+document {
+     Key => {
+	    (use,LieAlgebra)
+  	    	  },
+     Headline => "set the generators", 
+     "The generator names of the Lie algebra (and Ext-algebra) will get the value
+     of the true generators. This is needed when several Lie algebras are used.",
+     SYNOPSIS {
+	  Usage => "use(L)",
+     	  Inputs => {
+	       "L" => LieAlgebra
+	       }
+	  }
+     }
 doc ///
 Key
-  symmetryLie
-      
+     (degreeLength,LieAlgebra)
 Headline
-  checking if a permutation of the generators defines a map 
-SeeAlso
-  characterLie
-  permopLie
-  
-   
+  get the length of the weight of a generator
 Usage
-  y=symmetryLie(x)
-  
-Inputs
-  x: List
-      a permutation of the generators as a reordered list or a list of cycles 
-       
-Outputs
-  y: Net
-      an error message
-  y: MapLie
-     the isomorphism induced by x
-      
-Description
-  Text
-    A permutation is given as a list of cycles (or a reordered list) of the generators and 
-    it is checked that it induces a map from L to L. If it is true then the map is given
-    as output, otherwise an error message is displayed.
-    
-  Example
-     L=holonomyLie{{a0,a1,a2},{a0,a3,a4},{a1,a3,a5},{a2,a4,a5}}
-     symmetryLie{{a5,a0},{a1,a2,a4,a3}}
-     peekLie oo
-     symmetryLie{a5,a4,a3,a2,a1,a0}
-     
-///
-doc ///
-Key
-  targetLie
-   
-Headline
-  the target of a derivation or map 
-SeeAlso
-   sourceLie
-   DerLie
-   MapLie
-   peekLie
-Usage
-   L=d.targetLie
-Inputs
-   d: DerLie
-   d: MapLie
-Outputs
-   L: LieAlgebra
-Description
-  Text
-    A derivation or map d:M->L has L as target, which
-    is obtained as d.targetLie and may be seen using peekLie d.
-  Example
-    L=lieAlgebra({a,b},genSigns=>1)/{a a a b,b b b a}
-    M=lieAlgebra({a1,b1},genWeights=>{3,3},genSigns=>1)
-    useLie L
-    f=mapLie(L,M,{a a b,b b a})
-    d=derLie(f,{a b,b b})
-    peekLie d
-    d.targetLie
+  n=degreeLength(L)
 
-       
-///
-doc ///
-Key
-  useLie
-     (useLie, LieAlgebra)
-        
-Headline
-  changes the current Lie Algebra
-Usage
-  L=useLie(L) 
-  
 Inputs
-  L: LieAlgebra
-      
+  L: LieAlgebra        
 Outputs
-  L: LieAlgebra
-     
+  n: ZZ 
+     the length of an arbitrary weight     
 SeeAlso
-   whichLie
-   minmodelLie
-Description
-   Text
-     Usually the current Lie algebra changes when a construction of a new Lie algebra is performed.
-     However, this is not so for @TO minmodelLie@. 
-   Example
-      L=lieAlgebra({a,b,c},genSigns=>{0,0,1},genWeights=>{{1,0},{1,0},{2,1}},diffl=>true)
-      L=diffLieAlgebra{L.zz,L.zz,a b}/{a a b, b b a}
-      M=minmodelLie 3
-      whichLie()
-      R=L.cache.extRepRing
-      L2=lieAlgebra{a,b}
-      M2=minmodelLie 3
-      S=L2.cache.extRepRing
-      useLie L
-      ext_0 ext_1
-      useLie L2
-      ext_0 ext_1
-    
-///
-
-doc ///
-Key
+  "firstDegree(LieElement)"
   weight
-   
-Headline
-  the weight of a derivation
-SeeAlso
-   sign
-   degLie
-   DerLie
-   peekLie
-Usage
-   w=d.weight
-Inputs
-   d: DerLie
-Outputs
-   w: List
+  
 Description
   Text
-    A derivation d:M->L has a weight which is the difference
-    between the weight of any non-zero output and a non-zero input.
-    The weight of the zero derivation is defined as \{0,...,0\}\ with
-    as many zeroes as the length of weightLie(x) for any x in M or L.
-    The weight is obtained as d.weight and may be seen using peekLie d.
+    Observe that the weights of the generators in a Lie algebra will
+    have an extra component 0 if the option {\tt LastWeightHomological} is {\tt false}. 
+  
   Example
-    L=lieAlgebra{a,b}/{a a a b,b b b a}
-    M=lieAlgebra({a1,b1},genWeights=>{3,3})
-    useLie L
-    f=mapLie(L,M,{a a b,b b a})
-    d=derLie(f,{a,b})
-    peekLie d
-    d.weight
-    
-       
-///
-
-doc ///
-Key
-  weightExtLie
-     (weightExtLie, RingElement)
-     (weightExtLie, List)
-        
-Headline
-  returns the weight of a homogeneous element in the Ext-algebra
-Usage
-  w=weightExtLie(g) 
- 
-  
-Inputs
-  g: RingElement
-      a homogeneous linear polynomial in L.cache.extRepRing 
-  g: List
-      a list of homogeneous linear polynomials in L.cache.extRepRing
-Outputs
-  w: List
-     the weight of the input element or  the list of weights of input elements 
-     
-SeeAlso
-   extBasisLie
-   extTableLie
-   signExtLie
-   weightLie  
-Description
-   
- Example
-      L=lieAlgebra({a,b,c},genSigns=>{0,0,1},genWeights=>{{1,0},{1,0},{2,1}},diffl=>true)
-      L=diffLieAlgebra{L.zz,L.zz,a b}/{a a b, b b a}
-      extBasisLie 3
-      L.cache.extRepRing
-      weightExtLie(2*ext_3+3*ext_4)
-      extTableLie 3
-    
-///
-
-doc ///
-Key
-  weightLie
-     (weightLie, LieElement)
-     (weightLie, List)    
-Headline
-  returns the weight of a homogeneous LieElement
-Usage
-  w=weightLie(g) 
-  w=weightLie(l) 
-  
-Inputs
-  g: LieElement
-  l: List  
-Outputs
-  w: List
-     the weight of the input element or the list of weights of input elements 
-SeeAlso
-   signLie
-   signExtLie
-   [lieAlgebra,genWeights]
-   weightExtLie  
-Description
- Text
-    The weight of the zero element, L.zz,  is defined
-    to be a list of zeroes of the same length as the weight of the generators. However,
-    the weight of zero should be thought of as arbitrary. 
-    
-    
- Example
-    L = lieAlgebra({a1,a2},genWeights => {{1,2},{1,3}},genSigns => {1,0})
-    weightLie (a1 a1) a2
-    weightLie{a2,a1 a1 a1,a2 a1 a2 + 2 a2 a2 a1}
-    
-    
-///
-doc ///
-Key
-  whichLie
-     
-        
-Headline
-  prints the current Lie Algebra
-Usage
-  L = whichLie() 
-  
-Outputs
-  L: LieAlgebra
-     
-SeeAlso
-   useLie
-   
-Description
-   
-     
-   Example
-      L=lieAlgebra({a,b,c},genSigns=>{0,0,1},genWeights=>{{1,0},{1,0},{2,1}},diffl=>true)
-      L=diffLieAlgebra{L.zz,L.zz,a b}/{a a b, b b a}
-      M=minmodelLie 3
-      dimTableLie 3
-      whichLie()
-      useLie M
-      dimTableLie 3
+      L=lieAlgebra{a,b}
+      M=lieAlgebra({a,b},Weights=>{{1,0},{2,1}},LastWeightHomological=>true)
+      degreeLength L
+      weight\gens L
+      degreeLength M
       
+ ///
+ doc ///
+Key
+     (diff,LieAlgebra)
+Headline
+  get the differential of the generators
+Usage
+  x=diff(L)
+  
+Inputs
+  L: LieAlgebra        
+Outputs 
+  x: List 
+    the list of the differential of the generators     
+SeeAlso
+  differentialLieAlgebra
+  "describe(LieAlgebra)"
+ 
+Description
+  
+ 
+  Example     
+      L=lieAlgebra({a,b},Signs=>1,Weights=>{{1,0},{2,1}},LastWeightHomological=>true)
+      D=differentialLieAlgebra{0_L,a a}
+      diff D
+      describe D     
+ /// 
+doc ///
+Key
+     (ideal,LieAlgebra)
+Headline
+  get the relations in a Lie algebra 
+Usage
+  x=ideal(L)
+
+Inputs
+  L: LieAlgebra       
+Outputs
+  x: List
+      $x$ may also be of type {\tt LieIdeal} 
+SeeAlso
+  lieIdeal
+  "describe(LieAlgebra)"
+
+Description
+  Text
+    The output is either
+    the list of generators of the ideal or the ideal itself of type
+    {\tt LieIdeal}.
+  
+  Example     
+      L=lieAlgebra{a,b}/{a a a b,b b b a}      
+      ideal L
+      describe L
+      F=lieAlgebra{a,b} 
+      f=map(L,F)
+      J=kernel f
+      N=F/J
+      ideal N   
+ ///
+  doc ///
+Key
+     (numgens,LieAlgebra)
+Headline
+  get the number of generators
+Usage
+  x=numgens(L)
+  
+Inputs
+  L: LieAlgebra        
+Outputs
+  x: ZZ 
+     the number of generators of $L$     
+SeeAlso
+  "describe(LieAlgebra)"
+ 
+Description
+  
+ 
+  Example     
+      L=lieAlgebra{a,b,c}
+      numgens L   
+ /// 
+doc ///
+Key
+  zeroDerivation
+     (zeroDerivation, LieAlgebra)
+  
+Headline
+  make a derivation from the zero map
+Usage
+  d=zeroDerivation(L)  
+ 
+SeeAlso
+  lieDerivation
+  
+Inputs
+  L: LieAlgebra          
+Outputs
+   d: LieDerivation   
+Description
+  Text
+    The zero map from $L$ to $L$ is a derivation.
+  Example
+    L = lieAlgebra{a,b}
+    dL=differential L
+    d=zeroDerivation L
+    dL===d
     
 ///
 doc ///
 Key
-  zz
-   
+  zeroMap
+     (zeroMap, LieAlgebra,LieAlgebra)
+  
 Headline
-  the zero element of a Lie algebra
+  make the zero map
 Usage
- z=L.zz
-Inputs
-  L: LieAlgebra  
-Outputs
-  z: LieElement
-   of type L
+  f=zeroMap(M,L)  
+ 
 SeeAlso
-  diffLieAlgebra
-  mapLie
-  derLie 
+  zeroDerivation
+  
+Inputs
+  M: LieAlgebra 
+  L: LieAlgebra         
+Outputs
+   f: LieAlgebraMap   
 Description
   Text
-    This is a key for a LieAlgebra L, which gives the zero element. 
-    
+    The zero map from $L$ to $M$ is a Lie homomorphism
   Example
-    L=lieAlgebra{a,b,c}/{a b, a a b - b b c}
-    L.zz
+    L = lieAlgebra{a,b}
+    M = lieAlgebra{a,b}
+    f=zeroMap(M,L)
+    describe f
+    
+///
+doc ///
+Key 
+  zeroIdeal
+     (zeroIdeal, LieAlgebra)
+   
+Headline
+  make the zero ideal
+Usage
+  I=zeroIdeal(L)  
+ 
+SeeAlso
+  lieIdeal
+  
+Inputs
+  L: LieAlgebra           
+Outputs
+   I: LieIdeal   
+Description
+  Text
+    The set \{$0_L$\}\  is an ideal in $L$.
+  Example
+    L = lieAlgebra{a,b}
+    I=zeroIdeal L
+    J=lieIdeal{0_L,a a}
+    I===J
     
 ///
 
 
 
+end  
 
-end		
-
-
-    

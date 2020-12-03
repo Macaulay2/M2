@@ -14,6 +14,7 @@ newPackage(
 	     },
 --    	HomePage => "http://www.math.uiuc.edu/~doe/", --page not working
         Headline => "reaction networks",
+	Keywords => {"Applied Algebraic Geometry"},
 	PackageImports => {"Graphs", "Polyhedra"},
         DebuggingMode => false,
 --  	DebuggingMode => true,		 -- set to true only during development
@@ -311,7 +312,7 @@ addComplex(String, ReactionNetwork) := (c,Rn) -> (
 addReaction = method()
 addReaction(String, ReactionNetwork) := (r,Rn) -> (
     r = repairReaction(removeWhitespace r, Rn.NullSymbol);
-    complexes := apply(separateRegexp("(-->)|(<--)|(<-->)|,", r), removeWhitespace);
+    complexes := apply(separateRegexp("(<-->)|(<--)|(-->)|,", r), removeWhitespace);
     if #complexes != 2 then error "Expected two complexes.";
     i := addComplex(first complexes, Rn);
     j := addComplex(last complexes, Rn);

@@ -1,22 +1,11 @@
+#include <mps/mps.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <gmp.h>
+#include <mpfr.h>
+#include <string.h>
 
 #include "polyroots.hpp"
-
-#define timer timer1
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#undef ulong
-#define register
-#undef GCC_VERSION
-#include <pari/pari.h>
-#pragma GCC diagnostic pop
-
-#undef timer
-
-extern "C" {
-#include "../d/pari-gnump.h"
-};
-
 #define abs(x) (((x) < 0) ? -(x) : (x))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
@@ -26,204 +15,142 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
 {
   const Ring *R = p->get_ring();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected a polynomial ring");
-      return NULL;
-    }
-  const int n = P->n_vars();
-  if (n != 1)
-    {
-      ERROR("expected a univariate polynomial ring");
-      return NULL;
-    }
+  const Monoid *M = P->getMonoid();
+  if (P == 0) {
+    ERROR("expected a polynomial ring");
+    return nullptr;
+  }
+  if (P->n_vars() != 1) {
+    ERROR("expected a univariate polynomial ring");
+    return nullptr;
+  }
+  if (p->is_zero()) {
+    ERROR("expected a nonzero polynomial");
+    return nullptr;    
+  }
   const Ring *K = P->getCoefficients();
-  int degree = 0;
-  for (Nterm *t = p->get_value(); t != NULL; t = t->next)
-    {
-      degree = max(degree, abs(*(t->monom)));
-    }
+  int lodeg,hideg; // lowest,highest degree
+  P->degree_of_var(0,p->get_value(),lodeg,hideg);
   if (prec == -1)
-    {
-      prec = (K->get_precision() == 0 ? 53 : K->get_precision());
+    prec = (K->get_precision() == 0 ? 53 : K->get_precision());
+
+  
+  
+  ///////////// TODO: implement roots of a polynomial, via e.g. arb or mpsolve.
+  mps_context *s = mps_context_new ();
+  mps_monomial_poly *mps_p = mps_monomial_poly_new (s, hideg);
+  mps_context_select_algorithm(s, MPS_ALGORITHM_SECULAR_GA);
+
+  const auto ID = K->ringID();
+  for (Nterm *t = p->get_value(); t != nullptr; t = t->next) {
+    int deg;
+    M->to_expvector(t->monom, &deg); // number of vars = 1
+    if (ID==M2::ring_RR or ID==M2::ring_CC) {
+      cc_doubles_struct cc;
+      if (ID==M2::ring_RR) {
+        cc.re = t->coeff.get_double();
+        cc.im = 0;
+      } else cc = *t->coeff.get_cc_doubles();
+      mps_monomial_poly_set_coefficient_d (s, mps_p, deg, cc.re, cc.im); 
+    } else if (ID==M2::ring_RRR or ID==M2::ring_CCC) {
+      mpc_t mpc_cc;
+      mpc_init2(mpc_cc,K->get_precision());
+      if (ID==M2::ring_RRR) {
+          mpfr_get_f(mpc_cc->r,t->coeff.get_mpfr(),GMP_RNDN);
+      } else {
+        mpfr_get_f(mpc_cc->r,&t->coeff.get_cc()->re,GMP_RNDN);
+        mpfr_get_f(mpc_cc->i,&t->coeff.get_cc()->im,GMP_RNDN);
+      }
+      mps_monomial_poly_set_coefficient_f (s, mps_p, deg, mpc_cc); 
+      mpc_clear(mpc_cc);
+    } else if ((ID==M2::ring_old and K->is_ZZ()) or ID==M2::ring_QQ) {
+      mpq_t q, zero;
+      mpq_init(zero);
+      mpq_init(q);
+      if (ID==M2::ring_QQ)
+        mpq_set(q, t->coeff.get_mpq());
+      else mpq_set_z(q, t->coeff.get_mpz());
+      mps_monomial_poly_set_coefficient_q(s, mps_p, deg, q, zero); 
+      mpq_clear(q);
+      mpq_clear(zero);
+    } else {
+      ERROR("'roots' expects coefficients in ZZ, QQ, RR or CC");
+      return nullptr;
     }
+  }
 
+  /* Set the input polynomial */
+  mps_context_set_input_poly (s, MPS_POLYNOMIAL (mps_p));
+  mps_context_set_output_prec (s, prec);
+  mps_context_set_output_goal (s, MPS_OUTPUT_GOAL_APPROXIMATE);
+
+  /* Actually solve the polynomial */
+  mps_mpsolve (s);
+
+  // result to be returned
   engine_RawRingElementArrayOrNull result = nullptr;
+  result = getmemarraytype(engine_RawRingElementArray, hideg);
+  result->len = static_cast<int>(hideg);
 
-  /* Start PARI computations. */
-  pari_CATCH(e_STACK)
-  {
-#ifdef NDEBUG
-    /*
-     * Every time the stack is changed PARI writes a message to the file
-     * pari_errfile
-     * which by default is /dev/stderr. To avoid showing this message to the
-     * user we
-     * redirect to /dev/null before the PARI's stack is modified.
-     */
-    FILE *tmp, *dev_null = fopen("/dev/null", "w");
-    if (dev_null != NULL)
-      {
-        tmp = pari_errfile;
-        pari_errfile = dev_null;
-      }
-#endif
-    gp_allocatemem(0);  // passing 0 will double the current stack size.
-#ifdef NDEBUG
-    /*
-     * We set pari_errfile back to the default value just in case PARI crashes.
-     */
-    if (dev_null != NULL)
-      {
-        pari_errfile = tmp;
-        fclose(dev_null);
-      }
-#endif
+  ////////////////
+  if (prec <= 53) {
+    /* Allocate space to hold the results. We check only floating point results in here */
+    cplx_t *result_mps = cplx_valloc (hideg);
+
+    /* Save roots computed in the vector results */
+    mps_context_get_roots_d (s, &result_mps, nullptr);
+
+    /* Print out roots */
+    // for (int i = 0; i < hideg; i++) {
+    //   cplx_out_str (stdout, result_mps[i]);
+    //   printf ("\n");
+    // }
+
+    ///////////////////////////////
+    // copy to mps_result to result
+
+    const Ring *C = IM2_Ring_CCC(prec);
+    for (int i = 0; i < hideg; i++) {
+      auto& mps_root = result_mps[i];
+      ring_elem m2_root;
+      C->from_complex_double(cplx_Re(mps_root), cplx_Im(mps_root),
+                             m2_root);
+      result->array[i] = RingElement::make_raw(C, m2_root);
+    }
+ 
+    free (result_mps);
+  } else { // prec > 53
+    mpc_t *roots = nullptr;
+    rdpe_t *radii = nullptr;
+
+    mps_context_get_roots_m (s, &roots, &radii);
+    /* Sort roots in the order of increasing real part */
+    //sort_roots(hideg, roots, radii);
+    // for (int i = 0; i < hideg; i++) {
+    //   mpc_out_str (stdout, 10, prec/4, roots[i]);
+    //   printf ("\n");
+    // }
+    
+    const Ring *C = IM2_Ring_CCC(prec);
+    const M2::ARingCCC C0(prec);
+
+    M2::ARingCCC::ElementType cc;
+    C0.init(cc);
+    for (int i = 0; i < hideg; i++) {
+      auto& mps_root = roots[i];
+      mpfr_set_f(&cc.re,mpc_Re(mps_root),GMP_RNDN);
+      mpfr_set_f(&cc.im,mpc_Im(mps_root),GMP_RNDN);
+      ring_elem m2_root;
+      C0.to_ring_elem(m2_root, cc);
+      result->array[i] = RingElement::make_raw(C, m2_root);
+    }
+    C0.clear(cc);
+        
+    free(roots);
+    free(radii);
   }
-  pari_RETRY
-  {
-    const pari_sp av = avma;
 
-    GEN q = cgetg(2 + degree + 1, t_POL);
-    setsigne(q, 1);
-    setvarn(q, 0);
-    for (int i = 0; i < degree + 1; ++i)
-      {
-        gel(q, 2 + i) = gen_0;
-      }
-
-    switch (K->ringID())
-      {
-        case M2::ring_ZZ:
-        ZZ_GMP:
-          for (Nterm *t = p->get_value(); t != NULL; t = t->next)
-            {
-              gel(q, 2 + abs(*(t->monom))) = mpz_get_GEN(
-                  reinterpret_cast<const mpz_ptr>(t->coeff.poly_val));
-            }
-          break;
-        case M2::ring_QQ:
-          for (Nterm *t = p->get_value(); t != NULL; t = t->next)
-            {
-              gel(q, 2 + abs(*(t->monom))) = mpq_get_GEN(
-                  reinterpret_cast<const mpq_ptr>(t->coeff.poly_val));
-            }
-          break;
-        case M2::ring_RR:
-          pari_CATCH(e_OVERFLOW)
-          {
-            ERROR("coefficient is NaN or Infinity");
-            avma = av;
-            return NULL;
-          }
-          pari_TRY
-          {
-            for (Nterm *t = p->get_value(); t != NULL; t = t->next)
-              {
-                gel(q, 2 + abs(*(t->monom))) =
-                    dbltor(*reinterpret_cast<double *>(t->coeff.poly_val));
-              }
-          }
-          pari_ENDCATCH break;
-        case M2::ring_CC:
-          pari_CATCH(e_OVERFLOW)
-          {
-            ERROR("coefficient is NaN or Infinity");
-            avma = av;
-            return NULL;
-          }
-          pari_TRY
-          {
-            for (Nterm *t = p->get_value(); t != NULL; t = t->next)
-              {
-                GEN z = cgetg(3, t_COMPLEX);
-                gel(z, 1) =
-                    dbltor(reinterpret_cast<complex *>(t->coeff.poly_val)->re);
-                gel(z, 2) =
-                    dbltor(reinterpret_cast<complex *>(t->coeff.poly_val)->im);
-                gel(q, 2 + abs(*(t->monom))) = z;
-              }
-          }
-          pari_ENDCATCH break;
-        case M2::ring_RRR:
-          for (Nterm *t = p->get_value(); t != NULL; t = t->next)
-            {
-              gel(q, 2 + abs(*(t->monom))) = mpfr_get_GEN(
-                  reinterpret_cast<const mpfr_ptr>(t->coeff.poly_val));
-            }
-          break;
-        case M2::ring_CCC:
-          for (Nterm *t = p->get_value(); t != NULL; t = t->next)
-            {
-              gel(q, 2 + abs(*(t->monom))) = mpc_get_GEN(
-                  reinterpret_cast<const mpc_ptr>(t->coeff.poly_val));
-            }
-          break;
-        case M2::ring_old:
-          if (K->is_ZZ())
-            {
-              goto ZZ_GMP;
-            }
-        default:
-          ERROR("expected coefficient ring of the form ZZ, QQ, RR or CC");
-          return NULL;
-      }
-
-    if (unique)
-      {
-        q = RgX_div(q, RgX_gcd_simple(q, RgX_deriv(q)));
-      }
-
-    GEN roots = cleanroots(q, nbits2prec(prec));
-
-    const size_t num_roots = lg(roots) - 1;
-    result = getmemarraytype(engine_RawRingElementArray, num_roots);
-    result->len = static_cast<int>(num_roots);
-
-    ring_elem m2_root;
-    if (prec <= 53)
-      {
-        const RingCC *CC = dynamic_cast<const RingCC *>(IM2_Ring_CCC(prec));
-
-        for (int i = 0; i < num_roots; ++i)
-          {
-            const pari_sp av2 = avma;
-
-            GEN pari_root = gel(roots, 1 + i);
-            const complex root = {rtodbl(greal(pari_root)),
-                                  rtodbl(gimag(pari_root))};
-            CC->ring().to_ring_elem(m2_root, root);
-            result->array[i] = RingElement::make_raw(CC, m2_root);
-
-            avma = av2;
-          }
-      }
-    else
-      {
-        const RingCCC *CCC = dynamic_cast<const RingCCC *>(IM2_Ring_CCC(prec));
-
-        for (int i = 0; i < num_roots; ++i)
-          {
-            const pari_sp av2 = avma;
-
-            mpc_t root;
-            auto root1 = reinterpret_cast<mpfc_t *>(&root);
-            pari_mpc_init_set_GEN(root, gel(roots, 1 + i), GMP_RNDN);
-            //        CCC->ring().to_ring_elem(m2_root,
-            //        **reinterpret_cast<mpfc_t*>(&root));
-            CCC->ring().to_ring_elem(m2_root, **root1);
-            result->array[i] = RingElement::make_raw(CCC, m2_root);
-
-            avma = av2;
-          }
-      }
-
-    /* End PARI computations. */
-    avma = av;
-  }
-  pari_ENDCATCH
-
-      return result;
+  return result;
 }
 
 // Local Variables:

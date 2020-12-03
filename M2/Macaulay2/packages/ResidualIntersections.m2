@@ -14,7 +14,8 @@ newPackage ( "ResidualIntersections",
 	    Email => "jkelleyy@gmail.com"}
 	},
     PackageExports => {"RandomIdeals", "Depth"},
-    Headline => "Package for studying conditions associated to Residual Intersection theory",
+    Headline => "conditions associated to residual intersection theory",
+    Keywords => {"Commutative Algebra"},
     DebuggingMode => false
     )
 

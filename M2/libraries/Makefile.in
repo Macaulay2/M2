@@ -41,7 +41,9 @@ install-dynamic-libraries:
 	      fi ;							\
 	   done
 ifeq (@SHARED@,yes)
+ifneq (@BUILDLIBLIST@,)
 all: install-dynamic-libraries
+endif
 endif
 
 $(foreach f,Makefile Makefile.library,					\

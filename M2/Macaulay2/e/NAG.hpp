@@ -13,9 +13,22 @@
 #include "aring-glue.hpp"
 #include "SLP.hpp"
 
+#include <memory>
 #include <map>
+
+class PointArray;
+
+class M2PointArray : public MutableEngineObject
+{
+  std::unique_ptr<PointArray> mPointArray;
+public:
+  M2PointArray(PointArray* pa) : mPointArray(pa) {}
+
+  PointArray& value() { return *mPointArray; }
+};
+
 // PointArray
-class PointArray : public MutableEngineObject
+class PointArray
 {
  public:
   using RealVector = std::vector<double>;
@@ -36,7 +49,7 @@ class PointArray : public MutableEngineObject
     for (int i = 0; i < n; i++) mWeights[i] /= s;
   }
   virtual ~PointArray() {
-    std::cerr << "entering ~PointArray()" << std::endl;
+    // std::cerr << "entering ~PointArray()" << std::endl;
   }
   int lookup_or_append(const RealVector& a)
   {

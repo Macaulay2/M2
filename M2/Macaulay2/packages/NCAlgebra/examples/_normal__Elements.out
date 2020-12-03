@@ -2,7 +2,7 @@
 
 i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12712-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12712-0/3.ter ... Complete!
+Complete!
 
 o1 = B
 
@@ -10,8 +10,7 @@ o1 : NCQuotientRing
 
 i2 : basis(2,B)
 
-     |  2           2         |
-o2 = | x   yx  xy  y   xz  yz |
+o2 = | x^2 y*x x*y y^2 x*z y*z |
 
 o2 : NCMatrix
 
@@ -32,9 +31,7 @@ Normal monomials of degree 3:
 none
 Components of the normal variety, excluding normal monomials:
 
-o4 = {| t_(y^2*z) t_(y*x*z)+t_(x*y*z) t_(x^2*z) t_(y^3)-t_(x*y*z) t_(x*y^2)
-     ------------------------------------------------------------------------
-     t_(y*x*y) t_(x^2*y) t_(x*y*x) t_(x^3)+t_(x*y*z) |}
+o4 = {| t_(y^2*z) t_(y*x*z)+t_(x*y*z) t_(x^2*z) t_(y^3)-t_(x*y*z) t_(x*y^2) t_(y*x*y) t_(x^2*y) t_(x*y*x) t_(x^3)+t_(x*y*z) |}
 
 o4 : List
 

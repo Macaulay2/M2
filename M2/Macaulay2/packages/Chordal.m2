@@ -7,11 +7,12 @@ newPackage(
       {Name => "Diego Cifuentes",
        Email => "diegcif@mit.edu",
        HomePage => "http://www.mit.edu/~diegcif"},
-      {Name => "Pablo Parrilo", 
+      {Name => "Pablo A. Parrilo", 
        Email => "parrilo@mit.edu",
        HomePage => "http://www.mit.edu/~parrilo/"}
     },
-    Headline => "A package that exploits chordal structure",
+    Headline => "routines that exploit chordal structure",
+    Keywords => {"Commutative Algebra", "Graph Theory"},
     AuxiliaryFiles => true,
     PackageExports => {"Graphs","TriangularSets"}
 )
@@ -1116,6 +1117,7 @@ relabelNet = N -> (
 -- simple polynomial reduction
 reduceEqs = F -> (
     (M,C) := coefficients matrix {F};
+    C = lift(C, coefficientRing ring C);
     C = transpose rowReduce transpose C;
     return first entries (M*C);
 )

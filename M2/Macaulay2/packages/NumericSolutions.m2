@@ -24,6 +24,7 @@ newPackage (
  Version => "1.0",
  Date => "Apr 3, 2017",
  Headline => "solving systems of polynomial equalities",
+ Keywords => {"Numerical Algebraic Geometry"},
  Authors => {
   {Name => "Laura Menini", Email => "menini@disp.uniroma2.it"},
   {Name => "Corrado Possieri", Email => "possieri@ing.uniroma2.it"},
@@ -715,7 +716,7 @@ beginDocumentation()
 
 document { 
  Key => NumericSolutions,
- Headline => "A package to solve systems of polynomial equalities",
+ Headline => "solving systems of polynomial equalities",
  EM "NumericSolutions", " is a package for solving systems of polynomial equalities.
   It is used to compute the points in the affine variety V(I) of a zero 
   dimensional ideal I. Note that this package can be used only to compute the

@@ -9,8 +9,6 @@
 
 unsigned int MutableEngineObject::mNextMutableHashValue = 13;
 
-extern void factory_setup_1();  // M2-factory.cpp
-
 // unsigned long mutable_object::next_hash_sequence_number = 1000;
 // long object::next_hash_sequence_number = -7;
 
@@ -49,7 +47,6 @@ void IM2_initialize()
   initializeRationalRing();
 
   rawRandomInitialize();
-  factory_setup_1();
 }
 
 /** Engine error handling mechanism.

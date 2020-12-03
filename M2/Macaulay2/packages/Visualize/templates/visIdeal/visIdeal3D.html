@@ -77,7 +77,7 @@
     
   <script src="js/jquery-1.11.3.min.js"></script>
   <script src="js/BootSideMenu.js"></script>
-  <script src="js/d3.v3.js"></script>
+  <script src="js/d3.v3.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <script src="js/three.min.js"></script> 
   <script src="js/underscore.js"></script> 
@@ -85,7 +85,7 @@
 
 <script type="text/javascript">
 
-    $('#side').BootSideMenu({side:"right", autoClose: false});
+    $('#side').BootSideMenu({side:"right", closeOnClick: false, width: "230px"});
 
     $(document).ready(function(){
 
@@ -214,7 +214,12 @@
 	var maxExponent = _.max([maxX,maxY,maxZ]);
 
     function newMesh(point, geometry, materials) {
-      var mesh = new THREE.Mesh( geometry, materials );
+      var mesh;
+      if (geometry.type == "BoxGeometry") {
+        mesh = new THREE.Mesh(geometry, materials);
+      } else {
+        mesh = new THREE.LineSegments(geometry, materials);
+      }
       mesh.position.x = point[0] - 1/2;
       mesh.position.y = point[1] - 1/2;
       mesh.position.z = point[2] - 1/2;
@@ -269,28 +274,26 @@
 
     function init() {
       scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xffffff);
       camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
       // camera.position.set(7,10,15);
 	  camera.position.set(maxExponent*2,10,15);
       camera.lookAt(new THREE.Vector3(0,2,0));
 
-      renderer = new THREE.WebGLRenderer();
+      renderer = new THREE.WebGLRenderer({antialias : true});
       // renderer = new THREE.CanvasRenderer();
       renderer.setSize(window.innerWidth, window.innerHeight);
 
       document.body.appendChild(renderer.domElement);
 
-      line_material = new THREE.LineBasicMaterial({color: 0x0000ff});
-      material = new THREE.MeshBasicMaterial({ vertexColors: THREE.FaceColors, color: 0x00ff00, wireframeLinewidth: 1, shading: THREE.FlatShading, wireframe:false });
+      line_material = new THREE.LineBasicMaterial({linewidth: 3});
+      material = new THREE.MeshBasicMaterial({color: 0x333333});
       group = new THREE.Object3D();
       geometry = new THREE.Geometry();
       geometry.vertices.push(new THREE.Vector3(0,0,0));
       var s = 1
       var cube = new THREE.CubeGeometry( s, s, s );
-      // var cube = initCube(s);
-
-      // var mats = new THREE.MeshFaceMaterial([material]);
-
+      var edges = new THREE.EdgesGeometry(cube);
       var vertexShader = document.getElementById( 'vertexShader' ).textContent;
       var fragmentShader = document.getElementById( 'fragmentShader' ).textContent;
 
@@ -300,21 +303,12 @@
       var valuesQuads = attributesQuads.center.value;
 
       setupAttributes( cube, valuesQuads );
-
-      var materialQuads = new THREE.ShaderMaterial( { uniforms: {}, attributes: attributesQuads, vertexShader: vertexShader, fragmentShader: fragmentShader } );
-
-      // meshQuads = new THREE.Mesh( cube, materialQuads );
-
-      /* data.forEach(function (d,i) { */
-      /*   var vec = new THREE.Vector3(d[0],d[1],d[2]); */
-      /*   geometry.vertices.push(vec); */
-      /* }); */
-      /* geometry.vertices.push(new THREE.Vector3(0,0,0)); */
-
       cubes_data = processCubes(data);
 
       cubes_data.forEach(function(cube_data) {
-        var mesh = newMesh(cube_data, cube, materialQuads);
+        var mesh = newMesh(cube_data, cube, material);
+        group.add(mesh);
+        mesh = newMesh(cube_data, edges, line_material);
         group.add(mesh);
       });
 

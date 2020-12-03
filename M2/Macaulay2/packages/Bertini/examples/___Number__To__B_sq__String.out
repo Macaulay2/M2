@@ -1,5 +1,4 @@
--- -*- M2-comint -*- {* hash: 1570067667 *}
---loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- hash: 1570067667
 
 i1 : NumberToB'String(2+5*ii)
 

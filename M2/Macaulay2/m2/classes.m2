@@ -1,6 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-Option.synonym = "option"
 Net.synonym = "net"
 Time.synonym = "timing result"
 Boolean.synonym = "Boolean value"

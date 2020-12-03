@@ -6,6 +6,7 @@
 // Functions for all mutable matrices, or that don't fit in
 // mat-elem-ops, mat-arith, or mat-linalg
 
+#include <assert.h>
 #include "buffer.hpp"
 #include "text-io.hpp"
 

@@ -64,6 +64,7 @@ absoluteFilename(filename:string):string := (
      shorten(filename)
      );
 relativize(cwd:string,filename:string):string := (	    -- purely textual
+     if filename === "stdio" then return filename;
      if length(cwd) == 0 || cwd.(length(cwd)-1) != '/' then cwd = cwd + '/';
      i := 0;
      while i < length(cwd) && i < length(filename) && cwd.i == filename.i do i = i+1;

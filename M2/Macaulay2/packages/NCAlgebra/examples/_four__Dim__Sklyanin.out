@@ -2,7 +2,7 @@
 
 i1 : C = fourDimSklyanin(QQ,{a,b,c,d})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-81218-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-81218-0/3.ter ... Complete!
+Complete!
 
 o1 = C
 
@@ -57,15 +57,13 @@ o2 : NCGroebnerBasis
 
 i3 : centralElements(C,2)
 
-     |  2  11 2 13 2   2 20 2  22 2 |
-o3 = | c - --b +--a   d +--b - --a  |
-     |      9    9        9     9   |
+o3 = | c^2-11/9*b^2+13/9*a^2 d^2+20/9*b^2-22/9*a^2 |
 
 o3 : NCMatrix
 
 i4 : hilbertBergman(C, DegreeLimit => 6)
 --Calling bergman for HS computation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-81218-0/5.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-81218-0/10.ter ... Complete!
+Complete!
 
                  2      3      4      5      6
 o4 = 1 + 4T + 10T  + 20T  + 35T  + 56T  + 84T

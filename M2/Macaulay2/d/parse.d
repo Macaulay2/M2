@@ -28,7 +28,6 @@ use varnets;
 use strings1;
 use stdio0;
 use stdiop0;
-use atomic;
 use pthread0;
 
 
@@ -425,6 +424,10 @@ export False := Expr(Boolean(false));	  -- use toExpr instead
 --Conversion from C boolean value to Expression
 export toExpr(v:bool):Expr := if v then True else False;
 
+export zeroE := Expr(zeroZZcell);
+export  oneE := Expr( oneZZcell);
+export  minusoneE := Expr( minusoneZZcell);
+
 --Internal "null" expressions that should never be visible to user
 export nullE := Expr(Nothing());
 export notfoundE := Expr(Nothing());
@@ -462,6 +465,9 @@ export HashTable := {+
 --This unfortunately needs to be here as it references Hash Tabe which needs expr.  
 
 export m2cfile := Pointer "struct M2File*";	
+
+-- TODO: note: Excessive padding in 'struct parse_file_struct' (34 padding bytes, where 2 is optimal).
+-- Optimal fields order: filename, errorMessage, inbuffer, prompt, reward, unsyncOutputState, cfile, threadSyncMutex, hash, pid, listenerfd, connection, numconns, infd, inindex, insize, echoindex, outfd, type_, error, listener, input, inisatty, eof, promptq, fulllines, bol, echo, readline, output, outisatty, consider reordering the fields or adding explicit padding members
 
 export file := {+
         -- general stuff

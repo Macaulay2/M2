@@ -177,14 +177,12 @@ document { Key => {"numerical homotopy tracking options",
 	[solveSystem,Predictor], [solveSystem,Projectivize], [solveSystem,SingularConditionNumber],
 	[solveSystem,stepIncreaseFactor], [solveSystem,tDegree], [solveSystem,tStep], [solveSystem,tStepMin],
 	[solveSystem,Precision],[solveSystem,ResidualTolerance],
-	-*
-	-- trackSegment
-	[trackSegment,CorrectorTolerance], [trackSegment,EndZoneFactor], [trackSegment,gamma], [trackSegment,InfinityThreshold], 
-	[trackSegment,maxCorrSteps], [trackSegment,Normalize], [trackSegment,numberSuccessesBeforeIncrease],
-	[trackSegment,Predictor], [trackSegment,Projectivize], [trackSegment,SingularConditionNumber],
-	[trackSegment,stepIncreaseFactor], [trackSegment,tDegree], [trackSegment,tStep], [trackSegment,tStepMin],
-	[trackSegment,MultistepDegree], [trackSegment,NoOutput]
-	*-
+    	-- endGameCauchy
+	[endGameCauchy,InfinityThreshold], [endGameCauchy,EndZoneFactor], [endGameCauchy,maxCorrSteps], [endGameCauchy,numberSuccessesBeforeIncrease], [endGameCauchy,stepIncreaseFactor], [endGameCauchy,CorrectorTolerance], [endGameCauchy,tStep], [endGameCauchy,tStepMin],
+    	-- trackHomotopy
+	[trackHomotopy,EndZoneFactor], [trackHomotopy,maxCorrSteps], [trackHomotopy,Predictor], [trackHomotopy,stepIncreaseFactor], [trackHomotopy,Precision], [trackHomotopy,tStep], [trackHomotopy,CorrectorTolerance], [trackHomotopy,NoOutput], [trackHomotopy,InfinityThreshold], [trackHomotopy,Software], [trackHomotopy,numberSuccessesBeforeIncrease], [trackHomotopy, tStepMin],
+	-- segmentHomotopy
+	[segmentHomotopy,gamma]
 	},
     Headline => "options for core functions of Numerical Algebraic Geometry",
     UL apply({
@@ -216,14 +214,14 @@ document { Key => {"numerical homotopy tracking options",
 	ErrorTolerance => {" (default ErrorTolerance = ", toString DEFAULT.ErrorTolerance, "). A bound on the desired estimated error."},
 	ResidualTolerance => {" (default ResidualTolerance = ", toString DEFAULT.ResidualTolerance, "). A bound on desired residual."},
 	Precision => {" (default Precision = ", toString DEFAULT.Precision, "). Precision of the floating-point numbers used in computation. If set to ", 
-	    TO "infinity", " the precision in homotopy continuation adapts according to numerical conditioning. ", 
-	    "The other popular setting, ", TT "DoublePrecision", ", forces fast arithmetic and linear algebra in standard precision. "}
+	    TO "infinity", "(EXPERIMENTAL!) the precision in homotopy continuation adapts according to numerical conditioning. ", 
+	    "The default setting, ", TT "DoublePrecision", ", forces fast arithmetic and linear algebra in standard precision. (Other settings invoke MPFR library.)"}
     	}, 
         item -> {TT "[", TT toString item#0, TT "]: "} | item#1 
 	)
     }
 document {Key => { (track, List, List, List), track, (track,PolySystem,PolySystem,List) },
-	Headline => "track a user homotopy",
+	Headline => "track a linear segment homotopy given start and target system",
 	Usage => "solsT = track(S,T,solsS)",
 	Inputs => { 
 	     "S" => {" contains the polynomials in the start system"},
@@ -882,14 +880,15 @@ document {
     }
 
 document {
-    Key => {squareUp, (squareUp,PolySystem), (squareUp,PolySystem, Matrix), 
+    Key => {squareUp, (squareUp,PolySystem), (squareUp,PolySystem,ZZ), (squareUp,PolySystem, Matrix), 
 	SquaredUpSystem, SquareUpMatrix
 	},
     Headline => "square up a polynomial system",
-    Usage => "G = squareUp F\nG = squareUp(F,M)",
+    Usage => "G = squareUp F\\nG = squareUp(F,M)\\nsquareUp(F,n)",
     Inputs => { 
 	"F"=>PolySystem,
-	"M"=>Matrix=>{" the matrix used to square up the system (by default a random matrix is picked)"}  
+	"M"=>Matrix=>{" the matrix used to square up the system (by default a random matrix is picked)"},
+	"n"=>ZZ=>{" the number of polynomials to be formed (by default, this equals the number of variables)"}  
 	},
     Outputs => { "G"=>PolySystem },
     "Squares up an overdetermined polynomial system. Attaches keys ", 
@@ -982,18 +981,20 @@ document {
 
 document {
     Key => {(gateHomotopy, GateMatrix, GateMatrix, InputGate),
-	gateHomotopy, 
+	gateHomotopy,
+	GateHomotopy,
+	(numVariables,GateHomotopy) 
 	},
-    Headline => "homotopy system via SLPexpressions",
+    Headline => "homotopy implemented via straight line programs",
     Usage => "HS = gateHomotopy(H,X,T)",
     Inputs => { 
 	"H"=>"a family of systems (given by a column vector)",
 	"X"=>"(a row vector of) variables",
 	"T"=>"homotopy (continuation) parameter" 
 	 },
-    Outputs => { "HS", 
-	-- ofClass {GateHomotopyof, GateParameterHomotopy}, 
-	", a homotopy that can be used with some routines of ", TO "NumericalAG" },    
+    Outputs => { "HS", {
+	    ofClass {GateHomotopy, GateParameterHomotopy},
+	    ", a homotopy that can be used with some routines of ", TO "NumericalAlgebraicGeometry" }},
     "Optional arguments:",
     UL{
 	{TO "Software", "-- specifies how the homotopy is evaluated: ", TT "(M2,M2engine)"}
@@ -1034,3 +1035,233 @@ document {
     Key => "DoublePrecision",
     Headline => "a constant equal to 53 (the number of bits of precision)"
     }
+
+doc ///
+    Key
+	gateSystem
+	(gateSystem,GateMatrix,GateMatrix)
+	(gateSystem,GateMatrix,GateMatrix,GateMatrix)
+	(gateSystem,Matrix)
+	(gateSystem,PolySystem)
+	(gateSystem,PolySystem,List)
+    Headline
+        a constructor for GateSystem
+    Usage
+    	gateSystem(params,variables,M)
+	gateSystem(variables,M)
+    Inputs
+    	M:GateMatrix
+	parameters:GateMatrix
+	variables:GateMatrix	  
+    Description
+    	Text 
+            @TO GateMatrix@ {\tt M} is expected to have 1 column.
+    	    Matrices {\tt params} and {\tt variables} are expected to have 1 row.
+        Example
+            variables = declareVariable \ {x,y}
+    	    F = gateSystem(matrix{variables}, matrix{{x*y-1},{x^3+y^2-2}})
+	    evaluate(F,point{{0.1,0.2+ii}}) 
+	    evaluate(F,point{{1/2,1/3}})
+	    evaluate(F,point{{2_(ZZ/101),3}})
+	Text
+	    Systems with parameters are allowed. 
+	Example    
+	    params = declareVariable \ {a,b}  
+	    Fab = gateSystem(matrix{params}, matrix{variables}, matrix{{a*x*y-1},{x^3+y^2-b}})
+	    evaluate(Fab,point{{1,2}},point{{0.1,0.2+ii}})
+    Caveat
+        Note for developers: there is a version of the constructor that builds @TO GateSystem@ from @TO PolySystem@. 
+	Its variant that takes the list of variables to treat as parameters is likely to disappear. 
+    SeeAlso
+    	System
+        PolySystem
+        GateSystem	
+///
+
+doc ///
+    Key
+    	endGameCauchy
+	(endGameCauchy,GateHomotopy,Number,Point)
+	(endGameCauchy,GateHomotopy,Number,MutableMatrix)
+    Headline
+        Cauchy end game for getting a better approximation of a singular solution 
+    Usage
+    	endGameCauchy(H,t'end,p0)
+    	endGameCauchy(H,t'end,points)
+    Inputs
+	H:GateHomotopy
+	t'end:Number
+	p0:Point
+	points:MutableMatrix
+    Description
+    	Text 
+            Refines an approximation of a (singular) solution to a polynomial system which was obtained via homotopy contiuation.
+	    This method is used for posprocessing in the blackbox solver implmented in @TO solveSystem@.  
+        Example
+            CC[x,y]
+	    T = {(x-2)^3,y-x+x^2-x^3}
+	    sols = solveSystem(T,PostProcess=>false);
+	    p0 = first sols;
+	    peek p0
+	    t'end = 1
+    	    p = endGameCauchy(p0#"H",t'end,p0)
+    SeeAlso
+    	refine
+///
+
+doc ///
+    Key
+	(trackHomotopy,Homotopy,List)
+    	trackHomotopy
+	(trackHomotopy,Matrix,List)
+	(trackHomotopy,Sequence,List)
+	Field
+	[trackHomotopy, Field]
+    Usage
+    	trackHomotopy(H,S)
+    Inputs
+    	H:Homotopy
+	S:List
+	    start solutions
+    Headline
+        follow points along a homotopy
+    Description
+        Text
+    	    This method implements homotopy continuation: it follows a given list {\tt S} of start solutions along a @TO Homotopy@ {\tt H}.
+	  
+            Option @TO Field@ is unique to this method (the default is @TO CC@, but one can imagine using @TO RR@). 
+	    It specifies which @TO InexactFieldFamily@ to use when adaptive precision is requested via {\tt Precision=>infinity}.
+	    The rest are a subset of @TO "numerical homotopy tracking options"@. 
+    Caveat	
+            Note for developers: the old implementation @TO track@ eventually will be replaced by a call to @TO trackHomotopy@.
+	    Alternative ways for calling ({\tt H} could be a Sequence (a preSLP), Matrix, etc.) are deprecated and are for debugging purposes only.	
+    SeeAlso
+    	GateHomotopy
+	segmentHomotopy
+    	Point	    
+///
+
+doc ///
+  Key
+    GateSystem
+    (net, GateSystem)
+    (numVariables,GateSystem)
+    (numFunctions,GateSystem)
+    (numParameters,GateSystem)
+    (evaluate,GateSystem,Matrix,Matrix)
+  Headline
+    a system of functions evaluated via a straightline program
+  Description
+    Text
+      An object of this type is a system of functions evaluated via an SLP 
+      that is constructed using the tools of package @TO SLPexpressions@.
+      
+      An object of this type (constructed with @TO gateSystem@) 
+      is a @TO System@ of functions represented via a @TO GateMatrix@.
+      In particular, polynomial systems and systems of rational functions can be represented this way.
+	        
+      Unlike @TO PolySystem@, the functions of a @TO GateSystem@ do not belong to a ring and can be evaluated on @TO Number@s and @TO RingElement@s 
+      as long as the constants in the evaluation circuits can be promoted to the corresponding @TO Ring@s. 
+  SeeAlso
+    gateSystem
+    (gateMatrix,GateSystem)
+    (vars,GateSystem)
+    (parameters,GateSystem)
+    System
+    PolySystem
+///
+
+doc ///
+    Key
+        (gateMatrix,GateSystem)
+    Headline
+        evaluation circuit used for the system 
+    Description
+    	Text 
+    	   This method returns the @TO GateMatrix@ used to evaluate the system. 
+///	 
+
+doc ///
+    Key
+        (vars,GateSystem)
+    Headline
+        the variable gates in the evaluation circuit used for the system 
+    Description
+        Text 
+	  This method returns the 1-row @TO GateMatrix@ that contains @TO InputGate@s 
+	  that are considered variables for the evaluation circuit.  
+///	 
+
+doc ///
+    Key
+        (parameters,GateSystem)    		
+    Headline
+        the parameter gates in the evaluation circuit used for the system 
+    Description
+        Text 
+	  This method returns the 1-row @TO GateMatrix@ that contains @TO InputGate@s 
+	  that are considered parameters for the evaluation circuit.  
+///	 
+
+doc ///
+    Key 
+      GateParameterHomotopy
+    Headline 
+      a homotopy that involves parameters and is implemented via straight line programs
+    Description
+      Text
+    	An object of this type specialized to a @TO Homotopy@ given values of the parameters. 
+	It is related to @TO GateHomotopy@. 
+///
+
+doc ///
+    Key
+        segmentHomotopy
+	(segmentHomotopy,GateSystem,GateSystem)
+	(segmentHomotopy,PolySystem,PolySystem)
+	(segmentHomotopy,List,List)    		
+    Headline
+        a segment homotopy
+    Usage 
+    	H = segmentHomotopy(S,T)
+    Inputs
+        S:System
+	  start system (could be GateSystem, PolySystem, or list of polynomials)
+	T:System
+	  target system  (could be GateSystem, PolySystem, or list of polynomials)
+    Outputs 
+    	H:GateHomotopy
+    Description
+        Text 
+	  This method produces a @TO Homotopy@ @TEX "(1-t) S+ t \\gamma T, t\\in[0,1]"@.
+	Example
+	  R = QQ[x,y]
+	  T = {random(3,R)-1, random(2,R)-2}
+	  (S,solsS) = totalDegreeStartSystem T
+	  H = segmentHomotopy(S,T,gamma=>1+ii)
+	  evaluateH(H,transpose matrix first solsS,0)
+///	 
+
+doc ///
+    Key
+        parametricSegmentHomotopy
+	(parametricSegmentHomotopy,GateSystem)
+	(parametricSegmentHomotopy,PolySystem)    		
+    Headline
+        creates an ansatz for a segment homotopy
+    Usage 
+    	PH = parametricSegmentHomotopy F
+    Inputs
+        F:System
+	  either a @TO GateSystem@ or a @TO PolySystem@
+    Outputs 
+    	PH:GateParameterHomotopy	
+    Description
+        Text 
+	  This method returns a homotopy that after specialization of parameters is akin 
+	  to the output of @TO segmentHomotopy@. There are {\bf 2 m} parameters in{\tt PH} 
+	  where {\bf m} is the number of parameters in {\tt F}. 
+	  The first {\bf m} parameters correspond to the starting point A in the parameter space.
+	  The last {\bf m} parameters correspond to the end point B in the parameter space.        
+///	 
+

@@ -358,6 +358,9 @@ document {
 	  "P" => Polyhedron
 	  },
      
+     PARA{},"Please see ",TO "V- and H-representation"," on the conventions we
+     use for cones and polyhedra.",
+     
      PARA{}, TT "convexHull", " computes the convex hull of the input. 
      In the first two cases it considers the columns of ", TT "M", " 
      as a set of points and the columns of ", TT "N", " (if given) as 
@@ -442,6 +445,9 @@ document {
      Outputs => {
 	  "C" => Cone
 	  },
+     
+     PARA{},"Please see ",TO "V- and H-representation"," on the conventions we
+     use for cones and polyhedra.",
      
      PARA{}, TT "coneFromVData", " computes the positive hull of the input. In the 
      first two cases it considers the columns of ", TT "M", " as a set of rays 
@@ -885,6 +891,9 @@ document {
      so ", TT "C = {c in H | M*c => 0}", " and ", TT "H", " is the intersection 
      of the defining linear hyperplanes.",
      
+     PARA{},"Please see ",TO "V- and H-representation"," on the conventions we
+     use for cones and polyhedra.",
+     
      EXAMPLE {
 	  " R = matrix {{1,1,2,2},{2,3,1,3},{3,2,3,1}};",
 	  " V = matrix {{1,-1},{0,0},{0,0}};",
@@ -926,6 +935,9 @@ document {
      so ", TT "C = {c in H | N*c = 0}", " and ", TT "H", " is the intersection 
      of the defining linear half-spaces.",
      
+     PARA{},"Please see ",TO "V- and H-representation"," on the conventions we
+     use for cones and polyhedra.",
+     
      EXAMPLE {
 	  " P = stdSimplex 2",
 	  " hyperplanes P",
@@ -950,6 +962,9 @@ document {
      input as the columns of the matrix ", TT "LS", ". The lineality space of a 
      Fan is the lineality space of any Cone of the Fan, since they all have the 
      same lineality space.",
+     
+     PARA{},"Please see ",TO "V- and H-representation"," on the conventions we
+     use for cones and polyhedra.",
      
      EXAMPLE {
 	  " M = matrix {{1,1,1},{0,1,0},{-1,1,-1},{-1,-1,-1},{0,-1,0},{1,-1,1}};",
@@ -976,6 +991,9 @@ document {
      PARA{}, TT "rays", " returns the rays of the input as the columns of the 
      matrix ", TT "R", ".",
      
+     PARA{},"Please see ",TO "V- and H-representation"," on the conventions we
+     use for cones and polyhedra.",
+     
      EXAMPLE {
 	  " P = convexHull(matrix {{1,-1,2,-2},{1,1,2,2}}, matrix {{0},{1}})",
 	  " rays P",
@@ -1000,6 +1018,9 @@ document {
      
      PARA{}, TT "vertices", " returns the vertices of the Polyhedron or PolyhedralComplex ", TT "P", " 
      as the columns of the Matrix ", TT "V",".",
+     
+     PARA{},"Please see ",TO "V- and H-representation"," on the conventions we
+     use for cones and polyhedra.",
      
      EXAMPLE {
 	  " P = polyhedronFromHData(matrix{{1,-1},{0,-1},{-1,-1},{0,1}}, matrix{{0},{-1},{0},{1}})",

@@ -8,7 +8,8 @@ newPackage(
 		    {Name => "Frank-Olaf Schreyer",
 			   Email =>"schreyer@math.uni-sb.de",
 			   HomePage =>"https://www.math.uni-sb.de/ag/schreyer"}},
-	Headline=> "computation of general canonical curves of genus <= 15 over fields with small characteristic",
+	Headline=> "general canonical curves of genus <= 15 over fields with small characteristic",
+	Keywords => {"Examples and Random Objects"},
 	PackageImports => {"Elimination","Truncations"}
 	)
     
@@ -1016,7 +1017,7 @@ beginDocumentation()
 
 document { 
   Key => RandomCurvesOverVerySmallFiniteFields,
-  Headline => "Construct a randomly choosen smooth canonical curves over small finite fields",
+  Headline => "randomly chosen smooth canonical curves over small finite fields",
   "This package can be seen as a refined version of the ",
   HREF("https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.11/share/doc/Macaulay2/RandomCanonicalCurves/html/","RandomCanonicalCurves"),  
   " package, which catches all possible missteps in the constructions. 

@@ -4,7 +4,8 @@
 #include "sagbi.hpp"
 #include "matrix-con.hpp"
 
-ring_elem sagbi::subduct(const PolyRing *R,
+ring_elem sagbi::subduct(int numslots,
+                         const PolyRing *R,
                          ring_elem a,
                          const RingMap *phi,
                          GBComputation *J)
@@ -28,7 +29,7 @@ ring_elem sagbi::subduct(const PolyRing *R,
       delete n;
 
       // Is g1 a monomial in the new variables?
-      if (R->in_subring(1, g1))
+      if (R->in_subring(numslots, g1))
         {
           g->next = f;
           f = g;
@@ -48,7 +49,7 @@ ring_elem sagbi::subduct(const PolyRing *R,
   return head.next;
 }
 
-Matrix *sagbi::subduct(const Matrix *m, const RingMap *phi, GBComputation *J)
+Matrix *sagbi::subduct(int numparts, const Matrix *m, const RingMap *phi, GBComputation *J)
 {
   MatrixConstructor result(m->rows(), m->cols());
   const PolyRing *R = m->get_ring()->cast_to_PolyRing();
@@ -57,10 +58,11 @@ Matrix *sagbi::subduct(const Matrix *m, const RingMap *phi, GBComputation *J)
       ERROR("expected polynomial ring");
       return 0;
     }
+  int nslots = R->getMonoid()->n_slots(numparts);
   for (int i = 0; i < m->n_cols(); i++)
     {
       ring_elem a = m->elem(0, i);
-      ring_elem b = subduct(R, R->copy(a), phi, J);
+      ring_elem b = subduct(nslots, R, R->copy(a), phi, J);
       result.set_entry(0, i, b);
     }
   return result.to_matrix();

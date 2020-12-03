@@ -3,6 +3,7 @@
 #ifndef _buffer_hpp_
 #define _buffer_hpp_
 
+#include "../d/M2mem.h"
 #include "newdelete.hpp"
 #include "engine-includes.hpp"
 #include <string>
@@ -54,6 +55,7 @@ class buffer : public our_new_delete
   void put(int n);              // Format the integer, place into buffer
   void put(int n, int width);   // Format the integer, with given width field.
   void put(long n);             // Format the integer, place into buffer
+  void put(double n);             // Format the double, place into buffer
   void put(long n, int width);  // Format the integer, with given width field.
   void put(unsigned int n);     // Format the integer, place into buffer
   void put(unsigned int n,
@@ -89,6 +91,11 @@ class buffer : public our_new_delete
     return *this;
   }
   buffer &operator<<(long n)
+  {
+    put(n);
+    return *this;
+  }
+  buffer &operator<<(double n)
   {
     put(n);
     return *this;

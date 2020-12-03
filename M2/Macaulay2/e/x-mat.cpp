@@ -703,20 +703,21 @@ const Matrix /* or null */ *IM2_Matrix_lift(int *success_return,
 
 gmp_ZZ to_gmp_ZZ(int a)  // helper fn!!!
 {
-  gmp_ZZ result = getmemstructtype(gmp_ZZ);
+  mpz_ptr result = getmemstructtype(mpz_ptr);
   mpz_init(result);
   mpz_set_si(result, a);
+  mpz_reallocate_limbs(result);
   return result;
 }
 
-Homotopy /* or null */ *rawHomotopy(SLEvaluator *Hx,
-                                    SLEvaluator *Hxt,
-                                    SLEvaluator *HxH)
+M2Homotopy /* or null */ *rawHomotopy(M2SLEvaluator *Hx,
+                                    M2SLEvaluator *Hxt,
+                                    M2SLEvaluator *HxH)
 {
-  return Hx->createHomotopy(Hxt, HxH);
+  return new M2Homotopy(Hx->value().createHomotopy(&(Hxt->value()), &(HxH->value())));
 }
 
-M2_bool rawHomotopyTrack(Homotopy *H,
+M2_bool rawHomotopyTrack(M2Homotopy *H,
                          const MutableMatrix *inputs,
                          MutableMatrix *outputs,
                          MutableMatrix *output_extras,
@@ -727,22 +728,7 @@ M2_bool rawHomotopyTrack(Homotopy *H,
                          gmp_RR infinity_threshold,
                          M2_bool checkPrecision)
 {
-  /*
-  auto inp = dynamic_cast<const MutableMat<DMat<M2::ARingCCC>>*> (inputs);
-  if (inp!=nullptr) { // check precision!!!
-    std::cout << "-- precisions:" << std::endl;
-    auto& m = inp->getMat();
-    for(int i=0; i<m.numRows(); i++)
-      for(int j=0; j<m.numColumns(); j++) {
-        auto& e = m.entry(i,j);
-        auto p_re = mpfr_get_prec(&m.ring().realPartReference(e));
-        auto p_im = mpfr_get_prec(&m.ring().imaginaryPartReference(e));
-        std::cout << "(" << p_re << "," << p_im << ") ";
-      }
-    std::cout << std::endl;
-  }
-  */
-  return H->track(inputs,
+  return H->value().track(inputs,
                   outputs,
                   output_extras,
                   init_dt,
@@ -753,14 +739,14 @@ M2_bool rawHomotopyTrack(Homotopy *H,
                   checkPrecision);
 }
 
-M2_string rawHomotopyToString(Homotopy *H)
+M2_string rawHomotopyToString(M2Homotopy *H)
 {
   buffer o;
-  H->text_out(o);
+  H->value().text_out(o);
   return o.to_string();
 }
-unsigned int rawHomotopyHash(Homotopy *) { return 0; }
-SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP,
+unsigned int rawHomotopyHash(M2Homotopy *) { return 0; }
+M2SLEvaluator /* or null */ *rawSLEvaluator(M2SLProgram *SLP,
                                           M2_arrayint constsPos,
                                           M2_arrayint varsPos,
                                           const MutableMatrix *consts)
@@ -768,60 +754,59 @@ SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP,
   return consts->createSLEvaluator(SLP, constsPos, varsPos);
 }
 
-SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(
-    SLEvaluator *H,
+M2SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(
+    M2SLEvaluator *H,
     const MutableMatrix *parameters)
 {
-  return H->specialize(parameters);
+  return new M2SLEvaluator(H->value().specialize(parameters));
 }
 
-M2_bool rawSLEvaluatorEvaluate(SLEvaluator *sle,
+M2_bool rawSLEvaluatorEvaluate(M2SLEvaluator *sle,
                                const MutableMatrix *inputs,
                                MutableMatrix *outputs)
 {
-  return sle->evaluate(inputs, outputs);
+  return sle->value().evaluate(inputs, outputs);
 }
 
-M2_string rawSLEvaluatorToString(SLEvaluator *sle)
+M2_string rawSLEvaluatorToString(M2SLEvaluator *sle)
 {
   buffer o;
-  sle->text_out(o);
+  sle->value().text_out(o);
   return o.to_string();
 }
-unsigned int rawSLEvaluatorHash(SLEvaluator *) { return 0; }
-SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs)
+unsigned int rawSLEvaluatorHash(M2SLEvaluator *) { return 0; }
+M2SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs)
 {
-  return new SLProgram;
-  // return nullptr;
+  return new M2SLProgram(new SLProgram);
 }
-M2_string rawSLProgramToString(SLProgram *slp)
+M2_string rawSLProgramToString(M2SLProgram *slp)
 {
   buffer o;
-  slp->text_out(o);
+  slp->value().text_out(o);
   return o.to_string();
 }
-unsigned int rawSLProgramHash(SLProgram *) { return 0; }
-gmp_ZZ rawSLPInputGate(SLProgram *S) { return to_gmp_ZZ(S->addInput()); }
-gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a)
+unsigned int rawSLProgramHash(M2SLProgram *) { return 0; }
+gmp_ZZ rawSLPInputGate(M2SLProgram *S) { return to_gmp_ZZ(S->value().addInput()); }
+gmp_ZZ rawSLPSumGate(M2SLProgram *S, M2_arrayint a)
 {
-  return to_gmp_ZZ(S->addMSum(a));
+  return to_gmp_ZZ(S->value().addMSum(a));
 }
-gmp_ZZ rawSLPProductGate(SLProgram *S, M2_arrayint a)
+gmp_ZZ rawSLPProductGate(M2SLProgram *S, M2_arrayint a)
 {
-  return to_gmp_ZZ(S->addMProduct(a));
+  return to_gmp_ZZ(S->value().addMProduct(a));
 }
-gmp_ZZ rawSLPDetGate(SLProgram *S, M2_arrayint a)
+gmp_ZZ rawSLPDetGate(M2SLProgram *S, M2_arrayint a)
 {
-  return to_gmp_ZZ(S->addDet(a));
+  return to_gmp_ZZ(S->value().addDet(a));
 }
-gmp_ZZ rawSLPsetOutputPositions(SLProgram *S, M2_arrayint a)
+gmp_ZZ rawSLPsetOutputPositions(M2SLProgram *S, M2_arrayint a)
 {
-  S->setOutputPositions(a);
+  S->value().setOutputPositions(a);
   return to_gmp_ZZ(0);  // this function should have returned "void"
 }
-gmp_ZZ rawSLPDivideGate(SLProgram *S, M2_arrayint a)
+gmp_ZZ rawSLPDivideGate(M2SLProgram *S, M2_arrayint a)
 {
-  return to_gmp_ZZ(S->addDivide(a));
+  return to_gmp_ZZ(S->value().addDivide(a));
 }
 
 StraightLineProgram /* or null */ *rawSLP(const Matrix *consts,
@@ -879,16 +864,21 @@ M2_string rawPathTrackerToString(PathTracker *p)
 unsigned int rawPathTrackerHash(PathTracker *p) { return p->hash(); }
 // PointArray
 
-M2_string rawPointArrayToString(PointArray *pa)
+M2_string rawPointArrayToString(M2PointArray *pa)
 {
   buffer o;
-  pa->text_out(o);
+  pa->value().text_out(o);
   return o.to_string();
 }
-unsigned int rawPointArrayHash(PointArray *) { return 0; }
-PointArray /* or null */ *rawPointArray(double epsilon, int n)
+
+unsigned int rawPointArrayHash(M2PointArray *pa)
 {
-  return new PointArray(epsilon, n);
+  return pa->hash();
+}
+
+M2PointArray /* or null */ *rawPointArray(double epsilon, int n)
+{
+  return new M2PointArray(new PointArray(epsilon, n));
 }
 
 PointArray::RealVector getRealVector(const MutableMatrix *M, int col)
@@ -906,14 +896,14 @@ PointArray::RealVector getRealVector(const MutableMatrix *M, int col)
   return result;
 }
 
-int rawPointArrayLookup(PointArray *pa, const MutableMatrix *M, int col)
+int rawPointArrayLookup(M2PointArray *pa, const MutableMatrix *M, int col)
 {
-  return pa->lookup(getRealVector(M, col));
+  return pa->value().lookup(getRealVector(M, col));
 }
 
-int rawPointArrayLookupOrAppend(PointArray *pa, const MutableMatrix *M, int col)
+int rawPointArrayLookupOrAppend(M2PointArray *pa, const MutableMatrix *M, int col)
 {
-  return pa->lookup_or_append(getRealVector(M, col));
+  return pa->value().lookup_or_append(getRealVector(M, col));
 }
 
 // Local Variables:

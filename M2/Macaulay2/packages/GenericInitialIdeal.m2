@@ -9,6 +9,7 @@ newPackage(
 	  {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}
 	  },
      Headline => "find the generic initial ideal of a given ideal",
+     Keywords => {"Commutative Algebra"},
      DebuggingMode => false
      )
 --=========================================================================--
@@ -162,8 +163,8 @@ document {
      EXAMPLE lines ///
      R = QQ[x_1..x_3,y_1..y_3, Degrees=>{{1,0},{1,0},{1,0},{0,1},{0,1},{0,1}}];
      I = ideal(x_1*y_1,x_2*y_2,x_3*y_2,x_2*y_3,x_3*y_3);
-     standard = gin(I)
-     multigraded = gin(I, Multigraded => true)
+     gin(I)
+     gin(I, Multigraded => true)
      ///,
      PARA {"This symbol is provided by the package ", TO GenericInitialIdeal, "." }
      }
@@ -221,8 +222,8 @@ R = QQ[x_1..x_3,y_1..y_3, Degrees=>{{1,0},{1,0},{1,0},{0,1},{0,1},{0,1}}]
 I = ideal(x_1*y_1,x_2*y_2,x_3*y_2,x_2*y_3,x_3*y_3)
 standard = gin(I)
 assert(standard == ideal(x_1^2,x_1*x_2,x_2^2,x_1*x_3,x_2*x_3,x_3^3,x_3^2*y_1))
-multigraded = gin(I, Multigraded => true)
-assert(multigraded == ideal(x_1*y_1,x_2*y_1,x_3*y_1,x_1*y_2,x_2*y_2,x_1^2*y_3,x_1*x_2*y_3))
+J = gin(I, Multigraded => true)
+assert(J == ideal(x_1*y_1,x_2*y_1,x_3*y_1,x_1*y_2,x_2*y_2,x_1^2*y_3,x_1*x_2*y_3))
 ///
 
 

@@ -108,7 +108,6 @@ toChart(WCollection,Point,List) := (W,p,H) -> (
 
     
 TEST ///
-restart
 debug needsPackage "NAGtypes"
 debug needsPackage "NumericalAlgebraicGeometry"
 errorDepth = 2

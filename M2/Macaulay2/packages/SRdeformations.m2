@@ -7,7 +7,8 @@ newPackage(
 		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
-    	Headline => "Deformations of Stanley-Reisner rings and related computations",
+    	Headline => "deformations of Stanley-Reisner rings and related computations",
+	Keywords => {"Combinatorial Commutative Algebra"},
     	DebuggingMode => false,
      	PackageImports => { "ConvexInterface", "OldPolyhedra" },
         Configuration => {"UseConvex"=>false}
@@ -3793,7 +3794,6 @@ value get(F))
 loadComplex("testc")
 
 
-F = dumpdata("daten.txt");
 
 *-
 

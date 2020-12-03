@@ -9,6 +9,7 @@ isQuotientRing Ring := R -> false
 isQuotientRing QuotientRing := R -> true
 coefficientRing QuotientRing := (cacheValue coefficientRing) (R -> coefficientRing ambient R)
 options QuotientRing := R -> options ambient R
+isHomogeneous QuotientRing := R -> isHomogeneous ideal R
 isQuotientOf = method(TypicalValue => Boolean)
 isQuotientOf(Ring,Ring) := (R,S) -> false
 isQuotientOf(Ring,QuotientRing) := (R,S) -> R === ambient S or isQuotientOf(R,ambient S)
@@ -25,7 +26,7 @@ toExternalString QuotientRing := S -> toString describe S
 random QuotientRing := opts -> S -> (
      if S.baseRings === {ZZ} then (random char S)_S
      else notImplemented())
-expression QuotientRing := S -> if hasAttribute(S,ReverseDictionary) then expression getAttribute(S,ReverseDictionary) else Divide { expression ambient S, expression pretty S.relations }
+expression QuotientRing := S -> if hasAttribute(S,ReverseDictionary) then expression getAttribute(S,ReverseDictionary) else new Divide from { unhold expression ambient S, unhold expression pretty S.relations }
 describe QuotientRing := S -> Describe Divide { expression ambient S, expression pretty S.relations }
 ambient PolynomialRing := R -> R
 ambient QuotientRing := Ring => (cacheValue ambient) (R -> last R.baseRings)
@@ -38,7 +39,7 @@ Ring / Module := QuotientRing => (R,I) -> (
      then error ("expected ", toString I, " to be an ideal of ", toString R);
      R / ideal I)
 
-savedQuotients := new MutableHashTable
+savedQuotients = new MutableHashTable
 
 liftZZmodQQ := (r,S) -> (
      needsPackage "LLLBases";
@@ -61,7 +62,7 @@ ZZp Ideal := opts -> (I) -> (
          savedQuotients#(typ, n)
      else (
 	  if not isPrime n
-	  then error "ZZ/n not implemented yet for composite n";
+	  then error ("ZZ/n not implemented yet for composite n = ", toString n);
 	  S := new QuotientRing from 
 	    if typ === "Ffpack" then rawARingGaloisField(n,1)  
         else if typ === "Flint" then rawARingZZpFlint n

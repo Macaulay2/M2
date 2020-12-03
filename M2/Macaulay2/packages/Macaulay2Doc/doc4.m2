@@ -45,11 +45,20 @@ document {
          }
      }
 
-document {
-     Key => sleep,
-     Headline => "sleep for a while",
-     TT "sleep n", " -- sleeps for ", TT "n", " seconds."
-     }
+   document {
+        Key => sleep,
+        Headline => "sleep for a while",
+        TT "sleep n", " -- sleeps for ", TT "n", " seconds.",
+        SeeAlso => {nanosleep}
+        }
+
+   document {
+           Key => nanosleep,
+           Headline => "sleep for a given number of nanoseconds",
+           TT "nanosleep n", " -- sleeps for ", TT "n", " nanoseconds.",
+           EXAMPLE "elapsedTime nanosleep 500000000",
+           SeeAlso => {sleep}
+   }
 
 document {
      Key => processID,
@@ -93,37 +102,6 @@ document {
      }
 
 document {
-     Key => dumpdata,
-     Headline => "dump state of the system to a file",
-     TT "dumpdata s", " -- dump all data segments for the current process to 
-     the file whose name is stored in the string ", TT "s", ".",
-     PARA{},
-     "This effectively saves the entire state of the system, except that the
-     input buffer for the file ", TO "stdio", " appears to have been emptied,
-     and care is taken so that the environment and the command line arguments
-     maintain their new values when the data is reloaded later with 
-     ", TO "loaddata", "."
-     }
-
-document {
-     Key => loaddata,
-     Headline => "load state of the system from a file",
-     TT "loaddata s", " -- load all data segments for the current process from 
-     the file whose name is stored in the string ", TT "s", ".  The file must have been
-     created with ", TO "dumpdata", " and the same version of Macaulay2.",
-     PARA{},
-     "The file should have been created with ", TO "dumpdata", ".  Everything will
-     be returned to its former state except:",
-     UL {
-	  TO "environment",
-	  TO "commandLine",
-	  "whether the standard input is echoed and prompts to the 
-	  standard output are properly flushed, which depends on whether 
-	  the standard input is a terminal."
-	  }
-     }
-
-document {
      Key => identity,
      Headline => "the identity function",
      TT "identity x", " -- returns x.",
@@ -156,7 +134,7 @@ document {
      Headline => "logical exclusive-or",
      Usage => "xor(m,n)",
      Inputs => { "m", "n"},
-     Outputs => { 
+     Outputs => {
 	  ZZ => {"the bitwise logical exclusive-or of
      	       the integers ", TT "m", " and ", TT "n"}
 	  },
@@ -302,7 +280,7 @@ document {
      Headline => "the new line character sequence",
      TT "newline", " -- a string containing the character or sequence of
      characters that represents the end of a line.  To end an output line,
-     you should use ", TO "endl", " instead, because there is more to 
+     you should use ", TO "endl", " instead, because there is more to
      ending an output line than emitting the characters in ", TT "newline", ",
      especially when nets are being used.",
      PARA{},
@@ -323,7 +301,7 @@ document {
 --     Headline => "the status of the memory allocator",
 --     TT "gcDump()", " -- produces a dump of the status of the garbage collector.",
 --     PARA{},
---     "Users will normally not want to use this function.  It calls the 
+--     "Users will normally not want to use this function.  It calls the
 --     function ", TT "GC_dump", " in the garbage collector, and the output can
 --     be used to debug problems with memory allocation.",
 --     PARA{},
@@ -355,7 +333,7 @@ document {
      Headline => "the class of all database files",
      "A database file is just like a hash table, except both the keys and
      values have to be strings.  In this example we create a database file, store
-     a few entries, remove an entry with ", TO "remove", ", close the file, 
+     a few entries, remove an entry with ", TO "remove", ", close the file,
      and then remove the file.",
      EXAMPLE {
 	  ///filename = temporaryFileName () | ".dbm"///,
@@ -473,12 +451,12 @@ document {
 document {
      Key => {locate,(locate, Pseudocode), (locate, Function), (locate, Sequence), (locate, Symbol), (locate, Nothing)},
      Headline => "locate source code",
-     TT "locate f", " -- for a symbol interpreted function ", TT "f", " 
+     TT "locate f", " -- for a symbol interpreted function ", TT "f", "
      returns a sequence ", TT "(n,i,c,j,d,k,e)", " describing the location of
-     the definition in the source code.  The name of the source file 
-     is ", TT "n", " and the code is occupies line ", TT "i", " column ", TT "c", " 
+     the definition in the source code.  The name of the source file
+     is ", TT "n", " and the code is occupies line ", TT "i", " column ", TT "c", "
      through line ", TT "j", " column ", TT "d", ", with the central point of interest
-     located at line ", TT "k", " column ", TT "e", ".  If the function ", TT "f", " is compiled, 
+     located at line ", TT "k", " column ", TT "e", ".  If the function ", TT "f", " is compiled,
      then the location is not available, and ", TO "null", " is returned.",
      PARA{},
      "If ", TT "f", " is a sequence, then ", TO "lookup", " is applied
@@ -494,7 +472,7 @@ document {
      "A mutable hash table is a type of hash table whose entries can be changed.",
      PARA{},
      "Normally the entries in a mutable hash table are not printed, to prevent
-     infinite loops in the printing routines.  To print them out, use 
+     infinite loops in the printing routines.  To print them out, use
      ", TO "peek", ".",
      EXAMPLE {
 	  "x = new MutableHashTable",
@@ -564,8 +542,8 @@ document {
      characters in one row of the ", TT "Net", " ", TT "x", ".",
      PARA{},
      "The orginal net, adjusted so its height is 1, may be recovered
-     with ", TO "stack", ". The individual strings will have 
-     all trailing spaces removed, unless this would make all of them 
+     with ", TO "stack", ". The individual strings will have
+     all trailing spaces removed, unless this would make all of them
      narrower than the original net, in which case the first string
      retains its trailing spaces."
      }
@@ -587,7 +565,7 @@ document {
      }
 
 document {
-     Key => {(smithNormalForm,Matrix), 
+     Key => {(smithNormalForm,Matrix),
 	  smithNormalForm,
 	  [smithNormalForm,ChangeMatrix],
 	  [smithNormalForm,KeepZeroes]
@@ -616,12 +594,12 @@ document {
 	 D = smithNormalForm(M, ChangeMatrix=>{false,false}, KeepZeroes=>true)
      ///,
      PARA{
-	  "This function is the underlying routine used by ", TO minimalPresentation, 
+	  "This function is the underlying routine used by ", TO minimalPresentation,
 	  " in the case when the ring is ", TO ZZ, ", or a polynomial ring in one variable over a field."},
      EXAMPLE lines ///
          prune coker M
      ///,
-     "In the following example, we test the result be checking that the entries of ", TT "D1, P1 M Q1", " are the same. 
+     "In the following example, we test the result be checking that the entries of ", TT "D1, P1 M Q1", " are the same.
      The degrees associated to these matrices do not match up, so a simple test of equality would return false.",
      EXAMPLE lines ///
 	  S = ZZ/101[t]
@@ -635,7 +613,7 @@ document {
      ///,
      "This routine is under development.  The main idea is to compute a Gröbner basis, transpose the generators, and repeat, until
      we encounter a matrix whose transpose is already a Gröbner basis.  This may depend heavily on the monomial order.",
-     Caveat => "The Smith normal form itself is NOT returned! This function is under development, 
+     Caveat => "The Smith normal form itself is NOT returned! This function is under development,
      and its performance might need to be improved.  Also, this function
        doesn't warn the user if the ring is not a PID.",
      SeeAlso => {(minimalPresentation,Module)}
@@ -648,17 +626,16 @@ document {
      Outputs => { Boolean => { "the value of ", TT "b" }},
      Consequences => {
 	  {
-	       "If ", TT "b", " is ", TO "false", ", then the default operating system actions for the signals ", TT "SIGINT", ", and ", TT "SIGALRM", " are restored, 
+	       "If ", TT "b", " is ", TO "false", ", then the default operating system actions for the signals ", TT "SIGINT", ", and ", TT "SIGALRM", " are restored,
 	       and thus typing CTRL-C or the triggering of an ", TO "alarm", " will result in the Macaulay2 process terminating immediately.
 	       If ", TT "b", " is ", TO "true", ", then the default Macaulay2 signal handlers are installed,
 	       and thus control will be returned to top level after the code currently executing notices that the interrupt flag has been set."
 	       }
 	  },
      PARA {
-	  "The command line option ", TT "--int", " has the same effect as ", TT "handleInterrupts=false", ", and overrides
-	  and subsequent setting of ", TT "handleInterrupts", " to ", TT "true", "."
+	  "The command line option ", TT "--int", " has the same effect as ", TT "handleInterrupts=false", "."
 	  }
-     }     
+     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

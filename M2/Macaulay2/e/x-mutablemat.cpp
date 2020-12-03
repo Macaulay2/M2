@@ -1,5 +1,7 @@
 // Copyright 2004 Michael E. Stillman
 
+#include <iostream>
+
 #include "engine.h"
 #include "relem.hpp"
 #include "ring.hpp"
@@ -598,6 +600,37 @@ M2_arrayintOrNull rawLU(const MutableMatrix *A,
   }
 }
 
+M2_arrayintOrNull rawLUincremental(M2_arrayintOrNull P,
+                                   MutableMatrix *LU,
+                                   const MutableMatrix* v,
+                                   int i)
+{
+  try
+    {
+      // FIXME: can we not allocate new permutation array?
+      std::vector<size_t> perm = M2_arrayint_to_stdvector<size_t>(P);
+      return LU->LUincremental(perm, v, i);
+  } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return NULL;
+  }
+}
+
+void rawTriangularSolve(MutableMatrix *Lv, /* modified in routine */
+                        MutableMatrix *x, /* modified in routine */
+                        int m,
+                        int strategy)
+{
+  try
+    {
+      Lv->triangularSolve(x, m, strategy);
+  } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+  }
+}
+
 ////////////////////////////////////////////////
 
 #if 0
@@ -771,14 +804,14 @@ MutableMatrix /* or null */ *rawMutableMatrixClean(gmp_RR epsilon,
   }
 }
 
-static gmp_RRorNull get_norm_start(gmp_RR p, const Ring *R)
+static gmp_RRmutable get_norm_start(gmp_RR p, const Ring *R)
 {
   if (R->get_precision() == 0)
     {
       ERROR("expected ring over an RR or CC");
       return 0;
     }
-  gmp_RR norm = getmemstructtype(gmp_RR);
+  gmp_RRmutable norm = getmemstructtype(gmp_RRmutable);
   mpfr_init2(norm, mpfr_get_prec(p));
   mpfr_ui_div(norm, 1, p, GMP_RNDN);
   if (!mpfr_zero_p(norm))
@@ -793,32 +826,15 @@ static gmp_RRorNull get_norm_start(gmp_RR p, const Ring *R)
 gmp_RRorNull rawMatrixNorm(gmp_RR p, const Matrix *M) { return M->norm(p); }
 gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f)
 {
-  gmp_RR norm = get_norm_start(p, f->get_ring());
+  gmp_RRmutable norm = get_norm_start(p, f->get_ring());
   if (!norm) return 0;  // error already given.
   f->get_ring()->increase_maxnorm(norm, f->get_value());
-  return norm;
+  return moveTo_gmpRR(norm);
 }
 
 gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 {
   return M->norm();
-#if 0
-  gmp_RR nm = get_norm_start(p, M->get_ring());
-  iterator *i = M->begin();
-  for (int c=0; c<n_cols(); c++)
-    {
-      for (i->set(c); i->valid(); i->next())
-        {
-          ring_elem a;
-          i->copy_ring_elem(a);
-          R->increase_maxnorm(nm, a);
-        }
-    }
-  delete i;
-  return nm;
-#else
-  return NULL;
-#endif
 }
 
 //////////////////////////////////

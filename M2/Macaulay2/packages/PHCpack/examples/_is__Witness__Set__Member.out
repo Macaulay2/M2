@@ -1,13 +1,11 @@
--- -*- M2-comint -*- {* hash: 1951696658 *}
--- COMPILE TIME: Oct  7 2016, 07:56:28
---loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- hash: 1951696658
 
 i1 : R = CC[x11,x22,x21,x12,x23,x13];
 
 i2 : system = {x11*x22-x21*x12,x12*x23-x22*x13};
 
 i3 : V = numericalIrreducibleDecomposition (system);
-found 2 irreducible factors 
+found 4 irreducible factors 
 
 i4 : W = first V#4;
 

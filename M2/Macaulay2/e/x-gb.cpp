@@ -976,7 +976,7 @@ M2_string IM2_GB_to_string(Computation *C)
 }
 
 unsigned int rawComputationHash(const Computation *C) { return C->hash(); }
-Matrix /* or null */ *rawSubduction(const Matrix *M,
+Matrix /* or null */ *rawSubduction(int numparts, const Matrix *M,
                                     const RingMap *F,
                                     Computation *C)
 {
@@ -988,7 +988,7 @@ Matrix /* or null */ *rawSubduction(const Matrix *M,
           ERROR("expected a Groebner basis computation");
           return 0;
         }
-      return sagbi::subduct(M, F, G);
+      return sagbi::subduct(numparts, M, F, G);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

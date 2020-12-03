@@ -145,7 +145,6 @@ makeKeyword(w:Word):SymbolClosure := (
      globalFrame.values.(entry.frameindex) = Expr(sc);
      sc);
 export makeProtectedSymbolClosure(s:string):SymbolClosure := makeProtectedSymbolClosure(makeUniqueWord(s,parseWORD));
-makeKeyword(s:string):SymbolClosure := makeKeyword(makeUniqueWord(s,parseWORD));
 -----------------------------------------------------------------------------
 --Counter used for initializing precedence of different things in the parser
 prec := 0;
@@ -154,15 +153,11 @@ bumpPrecedence():void := prec = prec + 2;
 
 -- helper functions for setting up words with various methods for parsing them
 parseWORD.funs                 = parsefuns(defaultunary, defaultbinary);
-unary(s:string)         :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary))));
 unaryword(s:string)     :Word :=           makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary)));
-biunary(s:string)       :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,postfixop))));
 postfix(s:string)       :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,nopr,parsefuns(errorunary,postfixop))));
 unarybinaryleft(s:string)     :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,prec,parsefuns(unaryop   ,binaryop))));
 unarybinaryright(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,prec,parsefuns(unaryop   ,binaryop))));
 binaryleft(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop))));
-binaryleftword(s:string):Word :=           makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop)));
-nleft (s:string)        :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop))));
 nright(s:string)        :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,nopr,parsefuns(errorunary,nbinaryop))));
 nleftword(s:string)     :Word :=           makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop)));
 nunarybinaryleft(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,prec,parsefuns(nnunaryop ,nbinaryop))));
@@ -666,10 +661,6 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	       "left hand side of assignment inappropriate"))
      else makeErrorTree(assn.Operator, 
 	  "left hand side of assignment inappropriate"));
-bindnewdictionary(e:ParseTree,dictionary:Dictionary):ParseTree := (
-     n := newLocalDictionary(dictionary);
-     bind(e,n);
-     ParseTree(StartDictionary(n,e)));
 export bind(e:ParseTree,dictionary:Dictionary):void := (
      when e
      is s:StartDictionary do bind(s.body,dictionary)

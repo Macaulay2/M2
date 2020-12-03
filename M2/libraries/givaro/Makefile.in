@@ -5,12 +5,14 @@
 URL = http://macaulay2.com/Downloads/OtherSourceCode
 
 # compilation of givaro needs a little extra memory
-VLIMIT = 800000
-MLIMIT = 800000
+VLIMIT = 900000
+MLIMIT = 900000
 
-VERSION = 4.0.2
-# disable the test because it fails to find <bits/stl_pair.h>
-# CHECKTARGET = .
+VERSION = 4.1.1
+#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# the patch modifies test/Makefile.am, so we must remake test/Makefile.in
+PRECONFIGURE = autoreconf -vif
+
 LICENSEFILES = COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt
 
 # linking givaro as a shared library is bad, because then under Mac OS X its static constructors

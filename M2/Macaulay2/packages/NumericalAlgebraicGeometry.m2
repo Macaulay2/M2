@@ -3,15 +3,16 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.11",
-     Date => "Nov 2017",
-     Headline => "Numerical Algebraic Geometry",
+     Version => "1.14",
+     Date => "Aug 2019",
+     Headline => "numerical algebraic geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {
-	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
+	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu", HomePage => "https://people.math.gatech.edu/~aleykin3"},
 	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"}
 	  },
+     Keywords => {"Numerical Algebraic Geometry"},
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
      PackageExports => {"NAGtypes","NumericalHilbert","SLPexpressions","LLLBases"},
      PackageImports => {"PHCpack","Bertini","Truncations"},
@@ -26,8 +27,8 @@ newPackage select((
 	  "acceptance date" => "2011-05-20",
 	  "published article URI" => "http://j-sag.org/Volume3/jsag-2-2011.pdf",
 	  "published code URI" => "http://j-sag.org/Volume3/NumericalAlgebraicGeometry.tar",
-	  "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/NumericalAlgebraicGeometry.m2",
-	  "release at publication" => 13254,	    -- as an integer
+	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NumericalAlgebraicGeometry.m2",
+	  "release at publication" => "c3a7ec33ee30195c2a8a15eef3456b2f27d73bf3",
 	  "version at publication" => "1.4",
 	  "volume number" => "3",
 	  "volume URI" => "http://j-sag.org/Volume3/"
@@ -70,10 +71,21 @@ protect Tracker -- an internal key in Point
 protect LastIncrement;
 
 -- possible solution statuses returned by engine
-solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, Origin, IncreasePrecision, DecreasePrecision, RefinementFailure}
+solutionStatusLIST = {
+    Undetermined, 
+    Processing, 
+    Regular, 
+    Singular, 
+    Infinity, 
+    MinStepFailure, 
+    Origin, 
+    IncreasePrecision, 
+    DecreasePrecision, 
+    RefinementFailure
+    }
 
 -- experimental:
-protect LanguageCPP, protect MacOsX, protect System, 
+protect LanguageCPP, protect MacOsX, -- protect System, 
 protect LanguageC, protect Linux, protect Language
 protect maxNumberOfVariables
 protect maxPrecision
@@ -361,7 +373,7 @@ randomDiagonalUnitaryMatrix ZZ := n -> diagonalMatrix apply(n, i->exp(ii*random(
 randomUnitaryMatrix = method()
 randomUnitaryMatrix ZZ := n -> (
      Ml := flatten entries randomInComplexUnitBall(n^2);
-     M := map(CC^n, n, (i,j)->Ml#(n*i+j)); -- n+1 by n+1 matrix                         
+     M := map(CC^n, n, (i,j)->Ml#(n*i+j)); -- n by n matrix                         
      randomDiagonalUnitaryMatrix n * (last SVD M) 
      )
 
@@ -374,8 +386,8 @@ randomOrthonormalCols(ZZ,ZZ) := (m,n) ->
 if m<n or n<1 then error "wrong input" else (randomUnitaryMatrix m)_(toList(0..n-1))
 
 squareUp = method() -- squares up a polynomial system (presented as a one-column matrix)
-squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else(
-    n := P.NumberOfVariables;
+squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else squareUp(P, P.NumberOfVariables)
+squareUp (PolySystem,ZZ) := (P,n) -> (
     m := P.NumberOfPolys;
     if m<=n then "overdetermined system expected";
     C := coefficientRing ring P;
@@ -508,9 +520,10 @@ beginDocumentation()
 
 load "./NumericalAlgebraicGeometry/doc.m2";
 
+-*
 undocumented {
     Field, 
-    GateParameterHomotopy, parametricSegmentHomotopy, (parametricSegmentHomotopy,GateMatrix,List,List), (parametricSegmentHomotopy,PolySystem), 
+    GateParameterHomotopy, 
     GateHomotopy, trackHomotopy, (trackHomotopy,Thing,List), endGameCauchy, (endGameCauchy,GateHomotopy,Number,MutableMatrix), 
     (endGameCauchy,GateHomotopy,Number,Point),
     (evaluateH,GateHomotopy,Matrix,Number),
@@ -522,6 +535,7 @@ undocumented {
 (specialize,GateParameterHomotopy,MutableMatrix),
 [trackHomotopy,Software],
     }
+*-
 
 TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2.tst.m2")
@@ -535,6 +549,17 @@ load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgeb
 
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/simple-tests.tst.m2")
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/border-case-errors.m2")
+
+
+TEST ///
+if Bertini.Options.OptionalComponentsPresent then
+load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/Bertini/Bertini.test.m2")
+///
+
+TEST ///
+if PHCpack.Options.OptionalComponentsPresent then
+load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/PHCpack/PHCpack.test.m2")
+///
 end
 
 -- Here place M2 code that you find useful while developing this

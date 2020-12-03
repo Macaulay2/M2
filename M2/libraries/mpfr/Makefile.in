@@ -1,6 +1,6 @@
 #############################################################################
 
-VERSION = 3.1.6
+VERSION = 4.0.2
 LICENSEFILES = README COPYING.LESSER
 TARFILE = $(LIBNAME)-$(VERSION).tar.xz
 TAROPTIONS = --xz

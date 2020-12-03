@@ -28,7 +28,7 @@ F4CoefficientArray Gausser::from_ringelem_array(int len, ring_elem *elems) const
     {
       case ZZp:
         int *result = Mem->coefficients.allocate(len);
-        for (i = 0; i < len; i++) result[i] = elems[i].int_val;
+        for (i = 0; i < len; i++) result[i] = elems[i].get_int();
         return result;
     };
   return 0;
@@ -43,7 +43,7 @@ void Gausser::to_ringelem_array(int len,
   switch (typ)
     {
       case ZZp:
-        for (i = 0; i < len; i++) result[i].int_val = elems[i];
+        for (i = 0; i < len; i++) result[i] = ring_elem(elems[i]);
     };
 }
 

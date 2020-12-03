@@ -4,10 +4,24 @@ include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
 .PHONY:unconfigure-libs reconfigure configure-help report-M2-location help scripts
-all install: \
-	check-make config.status configured check-for-undefined-configure-variables\
-	srcdir protect-configs configured-files check-machine \
+all install:										\
+	check-make config.status configured check-for-undefined-configure-variables	\
+	optional-git-submodule-update							\
+	srcdir protect-configs configured-files check-machine				\
 	M2 all-in-subdirs report-M2-location
+ifeq "@DEVELOPMENT@" "yes"
+optional-git-submodule-update:
+	: skipping automatic updating of submodules, because --enable-development was specified
+else ifeq "@BUILDSUBLIST@" ""
+optional-git-submodule-update:
+	: skipping automatic updating of submodules, because no submodules are being built
+else ifeq "@DOWNLOAD@" "yes"
+optional-git-submodule-update:
+	cd @srcdir@/.. && git submodule update
+else
+optional-git-submodule-update:
+	: skipping automatic updating of submodules, because --enable-download not provided to configure script
+endif
 configured-files: @CONFIGURED_FILES@
 $(foreach f,@CONFIGURED_FILES@,$(eval $f: @srcdir@/$f.in; ./config.status $f))
 M2: GNUmakefile
@@ -38,15 +52,29 @@ set +x && cd "$1" && echo make: Entering directory \'`pwd`\' && set -x
 endef
 
 # terminology:
-#   usr-build  -- install tools needed for compilation here
-#   usr-host   -- install the results of compilation here, for the target machine
-#   usr-dist   -- install everything needed in the final Macaulay2 distribution here, for the target machine
+#   subdirectories of the source tree
+#     usr-build  -- install tools needed for rebuilding the configure script here, if needed
+#   subdirectories of the build tree
+#     usr-host   -- install the results of compilation of libraries, programs, and submodules, here, for the target machine
+#     usr-dist   -- place copies of everything needed in the final Macaulay2 distribution here, for the target machine
 
 check-stripped:
 	@ echo "-- checking for unstripped binaries"
 	file @pre_programsdir@/* $(BUILTLIBPATH)/bin/* @pre_bindir@/M2-binary usr-dist/bin/M2-binary usr-host/bin/* | (! grep "not stripped")
 
 ## submodules
+
+ifeq (@SHARED@,no)
+SUBMODULE_CONFIGOPTIONS += --disable-shared
+else
+# Our current strategy with submodules is to use them in place, so they don't have to be
+# installed.  We like avoiding the installation step, because running "make install" a second time
+# causes files to be copied again.  With shared libraries, though, the libraries have to be installed
+# for use at run-time and then distributed as part of binary distributions.  So we disable the building of
+# shared libraries here.
+SUBMODULE_CONFIGOPTIONS += --disable-shared
+endif
+
 ifneq (@build_alias@,)
 # it was ../configure --build=@build_alias@
 SUBMODULE_CONFIGOPTIONS += --build=@build_alias@
@@ -71,7 +99,7 @@ submodules/fflas_ffpack/Makefile: LIBS += @LINALGLIBS@
 # don't even come with "uninstall" targets, typically.
 # include/config.Makefile.in for lines that add the locations of the the
 # include files and libraries to CPPFLAGS and LDFLAGS.
-BUILDSUBTARGETS = check all run-configure check
+BUILDSUBTARGETS = check all run-configure check install
 
 # Even for submodules not scheduled to be built, we might as well arrange
 # for these targets to fire also for them when doing them for all submodules:
@@ -104,14 +132,14 @@ $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
 all-in-$1: run-configure-in-$1 build-in-$1 copy-license-files-from-$1
 copy-license-files-from-submodules: copy-license-files-from-$1
 copy-license-files-from-$1:; $(MKDIR_P) $(BUILTLIBPATH)/licenses/$1 && for i in $$(LICENSE_FILES); do cp -v @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1 ; done
-build-in-$1:; + $(MAKE) -C submodules/$1 all
-
+build-in-$1: submodules/$1/Makefile
+	$(MAKE) -C submodules/$1 all
 check-in-$1: run-configure-in-$1
 ifeq ($(no-check-$1),)
-	+ ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
+	ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
 endif
 
-install-in-$1:; + $(MAKE) -C submodules/$1 install
+install-in-$1: build-in-$1; + $(MAKE) -C submodules/$1 install
 
 # it may look odd to make submodules/$1/Makefile, but this allows recovery if the submodule
 # has been updated or cleaned, and needing scripts (such as "missing") installed by libtool 
@@ -175,6 +203,13 @@ $(foreach s,@BUILDSUBLIST@,$(eval $(call build-submodule-rules,$s)))
 # installation into usr-dist
 ## It's annoying that fflas_ffpack will copy the files during installation every time.
 all-in-fflas_ffpack: install-in-fflas_ffpack
+
+ifeq (@BUILD_givaro@,yes)
+# fflas_ffpack depends on givaro, so if they both get built, then build givaro first.
+# This is a counterintuitive way to specify a dependence of one submodule on another.
+submodules/fflas_ffpack/Makefile: install-in-givaro
+endif
+
 all-in-Macaulay2:install-licenses
 
 install-licenses:all-in-submodules
@@ -248,7 +283,9 @@ protect-configs:
 	 @ chmod a-w $(shell cat @srcdir@/config/files)
 check-for-undefined-configure-variables:
 	: "checking for strings that look like undefined configure variables in all *.in files..."
-	@ egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep . ; [ "$?" != 0 ]
+	@ if egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:=' | egrep . ;	\
+	  then exit 1;														\
+	  fi
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
 relink:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
 relink-nostrip:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d ENABLE_STRIP=no @pre_exec_prefix@/bin/M2@EXE@
@@ -288,7 +325,7 @@ announce:
 	@ echo "================================================================="
 	@ echo "    Macaulay2 version @PACKAGE_VERSION@"
 	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
-	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@ STATIC=@STATIC@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
 	@ echo "================================================================="
 
 help:
@@ -296,7 +333,7 @@ help:
 	@ echo ""
 	@ echo "make files configured with:"
 	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
-	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@ STATIC=@STATIC@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
 	@ echo ""
 	@ echo "Macaulay2 executable location:"
 	@ echo "   @pre_bindir@/M2@EXE@"
@@ -314,12 +351,18 @@ help:
 	@ echo "  distclean         remove all generated files"
 	@ echo "  help              show this help"
 	@ echo ""
+	@ echo "targets for all libraries:"
+	@ echo "  all-in-libraries"
+	@ echo "  check-in-libraries"
+	@ echo "  install-in-libraries"
+	@ echo "  clean-in-libraries"
+	@ echo ""
 	@ echo "targets for all submodules:"
 	@ echo "  all-in-submodules"
 	@ echo "  build-in-submodules"
 	@ echo "  check-in-submodules"
-	@ echo "  clean-in-submodules"
 	@ echo "  install-in-submodules"
+	@ echo "  clean-in-submodules"
 	@ echo ""
 	@ echo "targets for a submodule FOO:"
 	@ echo "  all-in-FOO"

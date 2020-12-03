@@ -1,6 +1,8 @@
 /*		Copyright 1993 by Daniel R. Grayson		*/
 
+#ifndef __cplusplus
 typedef char bool;
+#endif
 
 extern char posfmt[];
 extern char errfmt[];

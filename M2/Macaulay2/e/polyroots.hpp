@@ -15,9 +15,8 @@ typedef M2::ConcreteRing<M2::ARingRRR> RingRRR;
 typedef M2::ConcreteRing<M2::ARingCC> RingCC;
 typedef M2::ConcreteRing<M2::ARingCCC> RingCCC;
 
-typedef M2::ARingCC::complex complex;
-typedef M2::ARingCCC::mpfc_struct mpfc_t[1];
-typedef M2::ARingCCC::mpfc_ptr mpfc_ptr;
+typedef cc_struct mpfc_t[1];
+typedef cc_ptr mpfc_ptr;
 
 engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
                                           long prec,

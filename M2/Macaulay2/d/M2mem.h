@@ -2,7 +2,7 @@
 #define M2mem_included
 
 #include <stdlib.h>
-#include <scc-core.h>
+#include "scc-core.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -24,6 +24,7 @@ extern char *getmoremem_atomic(char *, size_t oldsize, size_t newsize);
 #define sizeofarraytype(S,len) sizeofarray((S)0,len)
 #define sizeofstruct(s) sizeof(*(s))
 #define sizeofstructtype(S) sizeofstruct((S)0)
+
 #if defined(__cplusplus)
 #define getmemarraytype(S,len) reinterpret_cast<S>(getmem(sizeofarraytype(S,len)))
 #define getmemstructtype(S) reinterpret_cast<S>(getmem(sizeofstructtype(S)))

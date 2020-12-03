@@ -6,11 +6,6 @@
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
 #include "dmat.hpp"
-#ifdef HAVE_MPACK
-#include <mpack/mblas_mpfr.h>
-#include <mpack/mlapack_mpfr.h>
-#endif
-#include <mpfr.h>
 
 /* Lapack routines */
 /* Compute solutions x to Ax = b for square matrix A and a matrix b */
@@ -416,6 +411,8 @@ class Lapack
                               LMatrixRRR *L,
                               LMatrixRRR *U);
 
+  static bool solve_triangular(const LMatrixRRR *U, const LMatrixRRR *b, LMatrixRRR *x);
+
   static bool solve(const LMatrixRRR *A, const LMatrixRRR *b, LMatrixRRR *x);
   // A and b are not modifed.  The result is placed into x.
   // Returns x s.t. Ax = b
@@ -607,18 +604,6 @@ class Lapack
                  LMatrixCC *R,
                  bool return_QR);
 
-// should we dump the following.... ?
-#ifdef HAVE_MPACK
-  static void delete_mpack_array(__mpfr_struct *a, int len);
-  static void fill_from_mpack_array(CCelem *elemarray,
-                                    mpreal *mparray,
-                                    int cols,
-                                    int rows);
-// can't link... it looks like mpcomplex can't be supported by the current
-// version of MPACK
-//  static void fill_from_mpack_array2(CCelem *elemarray, mpcomplex *mparray,
-//  int cols, int rows);
-#endif
   static void freeRaw(__mpfr_struct *start, int size);
 };
 

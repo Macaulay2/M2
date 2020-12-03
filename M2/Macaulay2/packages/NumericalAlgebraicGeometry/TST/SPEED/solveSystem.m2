@@ -9,22 +9,6 @@ F = {x^2+y^2-1, x*y};
 F = {x^10*y-1,y^10*x-1};
 solveSystem F
 
-///
-depth H#"H", depth H#"Ht", depth H#"Hx"
-expr = flattenGates H#"H";
-expr = flattenGates H#"Hx";
-expr = flattenGates compress H#"H";
-expr = flattenGates compress H#"Hx";
-c = 0;
-while #expr > 0 do (
-    expr = flattenGates expr;
-    print(c=>#expr);
-    c = c+1;
-    )
-printAsSLP H#"Hx"
-printAsSLP compress H#"Hx"
-///
-
 recursionLimit = 1000
 n = 5; d = 4; setRandomSeed 0; -- #sols=1024, M2:4, H:11, B:51, P:63
 T = (randomSystem(n,d,CC))_*; (S,solsS) = totalDegreeStartSystem T; 
