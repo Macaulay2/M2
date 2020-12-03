@@ -9,8 +9,8 @@
 name: Build and Test Macaulay2
 
 on:
-  push:
-    branches:
+  # push:
+  #   branches:
   pull_request:
     branches:
       - master
