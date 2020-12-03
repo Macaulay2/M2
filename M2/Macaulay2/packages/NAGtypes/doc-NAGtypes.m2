@@ -1097,6 +1097,28 @@ doc ///
 ///
 
 doc ///
+    Key
+    	(random,PolySpace)
+    	(random,DualSpace)
+    	(random,ZZ,PolySpace)
+    	(random,ZZ,DualSpace)
+    Headline
+        random element of a subspace
+    Usage
+        f = random S
+	f = random(d,S)
+    Inputs
+        S:{PolySpace,DualSpace}
+    Outputs
+    	f:RingElement
+    Description
+    	Text
+	    Provides a random element of a (finite dimensional) @TO PolySpace@ or @TO DualSpace@ 
+	    (of the given degree/order {\tt d}).  	
+///
+
+--- HOMOTOPY ---------------------------------
+doc ///
   Key
     Homotopy
   Headline
