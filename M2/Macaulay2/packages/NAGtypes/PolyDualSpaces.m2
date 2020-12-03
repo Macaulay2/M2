@@ -42,6 +42,9 @@ gens DualSpace := o -> L -> gens L.Space
 net PolySpace := S -> net gens S
 net DualSpace := L -> net gens L
 
+texMath PolySpace := S -> texMath gens S
+texMath DualSpace := L -> texMath gens L
+
 dim PolySpace := S -> numcols gens S
 dim DualSpace := L -> numcols gens L
 
