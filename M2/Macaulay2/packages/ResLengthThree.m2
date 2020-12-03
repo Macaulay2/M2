@@ -1,6 +1,15 @@
+-* 
+Copyright 2020 Lars Winther Christensen, Luigi Ferraro, Francesca
+Gandini, Frank Moore, and Oana Veliche.
+
+You may redistribute this file under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 2 of
+the License, or any later version.
+*-
+
 newPackage ( "ResLengthThree",
-    Version => "1.01",
-    Date => "19 November 2020",
+    Version => "1.0",
+    Date => "3 December 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
