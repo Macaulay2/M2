@@ -19,11 +19,17 @@ checkProgramPath = (name, cmds, pathToTry, prefix, opts) -> (
 	else (
 	    thisVersion := replace("(^\\s+)|(\\s+$)", "", get("!" | pathToTry |
 		addPrefix(opts.MinimumVersion_1, prefix)));
-	    found = found and thisVersion >= opts.MinimumVersion_0;
-	    if found then msg = "    found version " | thisVersion | " >= " |
-		opts.MinimumVersion_0
-	    else msg = "   found, but version " | thisVersion | " < " |
-		opts.MinimumVersion_0;
+	    if not match(///^\d[\-+\.:\~\da-zA-Z]*$///, thisVersion) then (
+		msg = "    found version \"" | thisVersion |
+		    "\", but this does not appear to be a valid version number";
+		found = false
+	    ) else (
+		found = found and thisVersion >= opts.MinimumVersion_0;
+		if found then msg = "    found version " | thisVersion |
+		    " >= " | opts.MinimumVersion_0
+		else msg = "   found, but version " | thisVersion | " < " |
+		    opts.MinimumVersion_0;
+	    )
 	)
     ) else msg = "    not found";
     if opts.Verbose == true then print(msg);
