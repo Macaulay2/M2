@@ -11,8 +11,7 @@ newPackage(
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
      Keywords => {"Numerical Algebraic Geometry"},
-     PackageExports => {"ReesAlgebra", -- avoids collision with "Jacobian" 
-	 "NumericalLinearAlgebra"}, 
+     PackageExports => {"NumericalLinearAlgebra"}, 
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => false 

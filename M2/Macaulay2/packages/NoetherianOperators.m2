@@ -16,8 +16,7 @@ newPackage(
         Email => "anton.leykin@gmail.com"}
     },
     Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
-    PackageExports => {"Truncations", -- using "truncate" as a method name 
-        "Bertini", "NumericalLinearAlgebra", "NAGtypes"},
+    PackageExports => {"Bertini", "NumericalLinearAlgebra", "NAGtypes"},
     PackageImports => {"Dmodules", "PrimaryDecomposition"},
     AuxiliaryFiles => false,
     DebuggingMode => false,
