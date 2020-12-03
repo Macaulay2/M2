@@ -957,7 +957,7 @@ HS = gateHomotopy(transpose matrix {H},matrix{{X,Y}},T)
     ///,
     Caveat => {"The order of inputs for unexported internal evaluation functions (evaluateH, etc.) is fixed as follows: ",
 	TT "Parameters, X, T", "."},
-    -- SeeAlso=>{GateHomotopy,GateParameterHomotopy,specialize}
+    SeeAlso=>{GateHomotopy,GateParameterHomotopy,specialize}
     }
 doc ///
     Key 
@@ -982,6 +982,15 @@ document {
     Key => "DoublePrecision",
     Headline => "a constant equal to 53 (the number of bits of precision)"
     }
+
+doc ///
+Key
+  (evaluateH,GateHomotopy,Matrix,Number)
+  (evaluateHt,GateHomotopy,Matrix,Number)
+  (evaluateHx,GateHomotopy,Matrix,Number)
+Headline
+  evaluate gate homotopy and its derivatives 
+///  
 
 doc ///
     Key
@@ -1023,6 +1032,22 @@ doc ///
     	System
         PolySystem
         GateSystem	
+///
+
+undocumented {
+    (toExternalString,GateSystem),
+    (evaluateJacobian,GateSystem,Matrix),
+    (evaluateJacobian,GateSystem,Matrix,Matrix),    
+    (evaluateJacobian,GateSystem,Point),
+    (evaluateJacobian,GateSystem,Point,Point)
+    }
+
+doc ///
+Key
+  (jacobian,GateSystem)
+  (jacobian,List,GateSystem)
+Headline
+  jacobian of a (gate) system
 ///
 
 doc ///
@@ -1157,9 +1182,25 @@ doc ///
       a homotopy that involves parameters and is implemented via straight line programs
     Description
       Text
-    	An object of this type specialized to a @TO Homotopy@ given values of the parameters. 
+    	An object of this type specializes to a @TO Homotopy@ given values of the parameters. 
 	It is related to @TO GateHomotopy@. 
 ///
+
+doc ///
+Key 
+  (specialize,GateParameterHomotopy,MutableMatrix)
+Headline
+  specialize parameters in a (gate) parameter homotopy 
+///
+
+doc ///
+Key
+  (evaluateH,GateParameterHomotopy,Matrix,Matrix,Number)
+  (evaluateHt,GateParameterHomotopy,Matrix,Matrix,Number)
+  (evaluateHx,GateParameterHomotopy,Matrix,Matrix,Number)
+Headline
+  evaluate (gate) parameter homotopy and its derivatives 
+///  
 
 doc ///
     Key
