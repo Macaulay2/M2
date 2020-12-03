@@ -17,13 +17,9 @@ newPackage(
         PackageImports => {"Polyhedra"}
         )
 
-export {
-    "truncate"
-    }
+-- we install methods on "truncate", from the Core
 
 protect Exterior
-
-truncate = method()
 
 truncationPolyhedron = method(Options=>{Exterior => {}})
   -- Exterior should be a list of variable indices which are skew commutative.

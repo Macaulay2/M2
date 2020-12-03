@@ -74,9 +74,9 @@ document {
      "Annihilators, quotients and Gröbner bases:",
      UL {
 	  TO (gb, Module),
-	  TO (symbol :, Module, Ideal),
-	  TO (annihilator, Module),
-	  TO (saturate, Module, Ideal),
+	  TO "Saturation::Ideal : Ideal",
+	  TO "Saturation::annihilator(Module)",
+	  TO "Saturation::saturate(Module,Ideal)",
 	  },
      "Common homological computations:",
      UL {
@@ -118,6 +118,7 @@ document {
 	  -- Mike wanted this: TO "tensor products of modules",
 	  -- Mike wanted this: TO "Hom modules and homomorphisms",
 	  -- Mike wanted this: TO "annihilators and submodule quotients",
+	  TO "Saturation :: module quotients, saturation, and annihilator",
 
 	  "graded modules",
 	  TO "Hilbert functions and free resolutions",
@@ -594,14 +595,6 @@ target f
 *-
 
 
--*
--- Mike wanted this: 
-document {
-     Key => "annihilators and submodule quotients",
-     Headline => "empty",
-     }
-*-
-
 document {
      Key => "Hilbert functions and free resolutions",
      Headline => "including degree and betti numbers",
@@ -820,22 +813,6 @@ document {
 
 -- no links to this node
 document {
-     Key => "annihilator of a module",
-     "The annihilator of a module M over a ring R, ann(M) = { f in R | fM = 0 }, is computed
-     using the ", TO "annihilator", " function.",
-     EXAMPLE {
-	  "R = QQ[a..i];",
-	  "M = cokernel genericMatrix(R,a,3,3)",
-	  "annihilator M"
-	  },
-     "You may also use the abbreviation ", TO "ann",
-     EXAMPLE {
-	  "ann (M/(a*M))"
-	  }
-     }
-
--- no links to this node
-document {
      Key => "information about a map of modules",
      "usual information: source, target, ring.",
      }
@@ -846,20 +823,6 @@ document {
      Key => "kernel, cokernel and image of a map of modules",
      }
 *-
-
--- no links to this node
-document {
-     Key => "what is a subquotient module?",
-     "There are two basic types of modules over a ring R: submodules of R^n
-     and quotients of R^n.  Macaulay2's notion of a module includes both
-     of these.  Macaulay2 represents every module as a quotient image(f)/image(g),
-     where f and g are both homomorphisms from free modules to F: f : F --> G and g : H --> G.
-     The columns of f represent the generators of ", TT "M", ", and the columns of g represent the relations of the module M.",
-     EXAMPLE {
-	  "R = ZZ/32003[a,b,c,d,e];",
-	  },
-     "Include here: generators, relations."
-     }
 
 -* -- Mike wanted this: 
 
@@ -884,4 +847,3 @@ document {
      Key => "Hom module",
      }
 *-
-

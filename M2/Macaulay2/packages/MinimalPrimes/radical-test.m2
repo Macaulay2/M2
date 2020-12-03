@@ -59,7 +59,7 @@ exampleC = (kk) -> (
 
 end
 restart
-load "radical.m2"
+load "radical-test.m2"
 I = exampleE2(ZZ/32003)
 time Irad = intersect decompose I
 

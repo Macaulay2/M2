@@ -138,10 +138,7 @@ MultipleArgsNoOptions := (methopts,outputs) -> (
      )
 MultipleArgsNoOptionsGetMethodOptions := meth -> (frames (frames meth)#0#1)#0#0
 
-all' := (x,f) -> (
-     r := true;
-     scan(x, i -> if not f i then (r = false; break));
-     r)
+all' := (L, f) -> scan(L, x -> if not f(x) then break false) === null
 
 method = methodDefaults >> opts -> args -> (
      if args =!= () then error "expected only optional arguments";
@@ -178,19 +175,18 @@ setupMethods := (args, symbols) -> (
 	  )))
 
 setupMethods((), { 
-      localRing,
 	  entries, borel, gcdCoefficients, singularLocus,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, trace, target, source,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
-	  substitute, rank, complete, ambient, topComponents, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
+	  substitute, rank, complete, ambient, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
 	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw, exp,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, realPart, imaginaryPart, conjugate,
 	  autoload, relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
 	  presentation, dismiss, precision, 
-	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes, decompose,
+	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage,
 	  chi, hasEngineLinearAlgebra, nullSpace,
       isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
 	  })
@@ -198,6 +194,7 @@ setupMethods((), {
 use = method(Dispatch => Thing)
 use Thing := identity
 
+decompose = method(Options => true)
 dual = method(Options => true)
 
 default = method()
@@ -266,7 +263,7 @@ map = method(
 setupMethods(Dispatch => Thing, {transpose} )
 setupMethods(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
-	  isSubset,isHomogeneous, isIsomorphism, isPrime, isPseudoprime, isField, isConstant
+	  isSubset,isHomogeneous, isIsomorphism, isField, isConstant
 	  })
 setupMethods(TypicalValue => ZZ,
      {binomial,degreeLength,height,char,pdim,dim,depth,width,euler,genus})
@@ -275,9 +272,7 @@ setupMethods(TypicalValue => List,
 
 length = method(TypicalValue => ZZ, Dispatch => Thing)
 codim = method( Options => true )
-radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null, Strategy => Decompose } )
 regularity = method( TypicalValue => ZZ, Options => { Weights => null } )
-associatedPrimes = method( TypicalValue => List, Options =>{ Strategy => 1 } )
 
 -- defined in d/actors4.d
 format' := format
@@ -312,7 +307,7 @@ toExternalString Thing := x -> (
      error("can't convert anonymous object of class ",toString class x," to external string"))
 
 options = method(Dispatch => Thing, TypicalValue => OptionTable)
-setupMethods(Dispatch => Thing, {max,min,directSum,intersect,vars})
+setupMethods(Dispatch => Thing, {max,min,directSum,vars})
 net = method(Dispatch => Thing, TypicalValue => Net)
 factor = method( Options => { } )
 
@@ -320,15 +315,6 @@ cohomology = method( Options => {
 	  Degree => 0		  -- for local cohomology and sheaf cohomology
 	  } )
 homology = method( Options => { } )
-
-trim    = method ( Options => {
-	  Strategy => Complement				    -- or null
-	  -- DegreeLimit => {}
-	  } )
-mingens = method ( Options => { 
-	  Strategy => Complement				    -- or null
-	  -- DegreeLimit => {}
-	  } )
 
 mathML = method(Dispatch => Thing, TypicalValue => String)
 
@@ -516,38 +502,86 @@ dispatcherFunctions = join (dispatcherFunctions, {
 
 -----------------------------------------------------------------------------
 -- hooks
+-- also see hooks in code.m2
+-- TODO: get this to work with lookup and flagLookup
+-- TODO: get this to work on HashTables
 
-addHook = method()
-removeHook = method()
+protect symbol Hooks
+protect symbol HookAlgorithms
+protect symbol HookPriority
+
+-- hooks not bound to a type or hash table are stored here
+GlobalHookStore = new MutableHashTable
+
+getHookStore = (key, create) -> (
+    -- retrieve (or create) the mutable hash table of Hooks based on a method key
+    -- TODO: drop is needed because of a bug in youngest; see https://github.com/Macaulay2/M2/issues/1610
+    obj := youngest drop(key, 1);
+    store :=
+    if instance(obj, MutableHashTable) then ( if       obj.?Hooks then       obj.Hooks else if create then       obj.Hooks = new MutableHashTable ) else
+    if instance(obj, HashTable)        then ( if obj.cache.?Hooks then obj.cache.Hooks else if create then obj.cache.Hooks = new MutableHashTable );
+    -- TODO: currently youngest only returns mutable hash tables, so the line above never occurs,
+    -- but we keep it because eventually youngest should work for hash tables M as well, probably
+    -- by looking at M.cache.timestamp. In particular, this would allow putting hooks on modules.
+    if store === null then GlobalHookStore else store)
+
+addHook = method(
+    Options => {
+	Strategy => null
+	-- Priority, Description, ...?
+	}
+    )
+addHook(Symbol,                  Function) := opts -> (key,        hook) -> addHook(1:key,                        hook, opts)
+addHook(Sequence,                Function) := opts -> (key,        hook) -> addHook(getHookStore(key, true), key, hook, opts)
+addHook(MutableHashTable, Thing, Function) := opts -> (store, key, hook) -> (
+    -- this is the hashtable of Hooks for a specific key, which stores HookAlgorithms and HookPriority
+    if not store#?key then store#key = new MutableHashTable from {
+	HookAlgorithms => new MutableHashTable, -- a mutable hash table "strategy key" => "strategy code"
+	HookPriority   => new MutableList},     -- a mutable list of strategy keys, in order
+    store = store#key;
+    ind := #store.HookPriority; -- index to add the hook in the list; TODO: use Priority to insert in the middle?
+    alg := if opts.Strategy =!= null then opts.Strategy else ind;
+    store.HookPriority#ind = alg;
+    store.HookAlgorithms#alg = hook)
+
+-- tracking debugInfo
+infoLevel     := -1
+pushInfoLevel :=  n     -> (infoLevel = infoLevel + n; n)
+popInfoLevel  := (n, s) -> (infoLevel = infoLevel - n; s)
+
+-- This function is mainly used by runHooks, printing a line like this:
+ -- (quotient,Ideal,Ideal) with Strategy => Monomial from -*Function[../../Macaulay2/packages/Saturation.m2:196:30-205:82]*-
+-- TODO: the filenames are not emacs clickable, perhaps M2-mode should be improved
+debugInfo = (func, key, strategy, infoLevel) -> if debugLevel > infoLevel then printerr(
+    toString key, if strategy =!= null then (" with Strategy => ", toString strategy), " from ", toString func)
+
+-- run a single hook
+runHook := (hook, key, alg, args, opts) -> (
+    pushInfoLevel 1;
+    debugInfo(hook, key, alg, infoLevel);
+    popInfoLevel(1, if options hook === null then hook(args) else (
+	    hookOpts := select(keys options hook, k -> opts#?k) / (k -> k => opts#k);
+	    hook(args, new OptionTable from hookOpts))))
+
 runHooks = method(Options => true)
-
-addHook   (MutableHashTable,Thing,Function) := (obj,key,hook) -> obj#key = if obj#?key then prepend(hook,obj#key) else {hook}
-removeHook(MutableHashTable,Thing,Function) := (obj,key,hook) -> if obj#?key then obj#key = delete(obj#key,hook)
-runHooks  (MutableHashTable,Thing,Thing   ) := true >> opts -> (obj,key,arg ) -> (if obj#?key then scan(obj#key, hook -> (
-          result := (if options hook =!= null then (
-               hookOpts := select(keys options hook, k -> opts#?k) / (k -> k => opts#k);
-               hook(arg, new OptionTable from hookOpts)
-               ) else hook arg 
-          );
-          if not instance(result, Nothing) then break result)))
-
-addHook   (HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; c#key = if c#?key then prepend(hook,c#key) else {hook})
-removeHook(HashTable,Thing,Function) := (obj,key,hook) -> (c := obj.cache; if c#?key then c#key = delete(c#key,hook))
-runHooks  (HashTable,Thing,Thing   ) := true >> opts -> (obj,key,arg ) -> (c := obj.cache; if c#?key then scan(c#key, hook -> (
-          result := (if options hook =!= null then ( 
-               hookOpts := select(keys options hook, k -> opts#?k) / (k -> k => opts#k);
-               hook(arg, new OptionTable from hookOpts)
-               ) else hook arg);
-          if not instance(result, Nothing) then break result)))
-
-addHook   (Symbol,Function) := (sym,hook) -> sym <- if value sym =!= sym then prepend(hook,value sym) else {hook}
-removeHook(Symbol,Function) := (sym,hook) -> if value sym =!= sym then sym <- delete(value sym,hook)
-runHooks  (Symbol,Thing   ) := true >> opts -> (sym,arg ) -> if value sym =!= sym then scan(value sym, hook -> (
-          result := (if options hook =!= null then ( 
-               hookOpts := select(keys options hook, k -> opts#?k) / (k -> k => opts#k);
-               hook(arg, new OptionTable from hookOpts)
-               ) else hook arg);
-          if not instance(result, Nothing) then break result))
+runHooks(Symbol,                  Thing) := true >> opts -> (key,        args) -> runHooks(1:key,                         args, opts)
+runHooks(Sequence,                Thing) := true >> opts -> (key,        args) -> runHooks(getHookStore(key, false), key, args, opts)
+runHooks(MutableHashTable, Thing, Thing) := true >> opts -> (store, key, args) -> (
+    store = if store#?key then store#key else (
+	if debugLevel > 1 then printerr("runHooks: no hooks installed for ", toString key); return );
+    alg := if opts.?Strategy then opts.Strategy;
+    type := class alg;
+    -- if Strategy is not given, run through all available hooks
+    if alg === null then scan(reverse store.HookPriority, alg -> (
+	    result := runHook(store.HookAlgorithms#alg, key, alg, args, opts ++ { Strategy => alg });
+	    if not instance(result, Nothing) then break result)) else
+    -- if Strategy is given, and it is among the known strategies, run only that hook
+    if store.HookAlgorithms#?alg  then runHook(store.HookAlgorithms#alg,  key, alg,  args, opts) else
+    -- otherwise, if the class of alg is a known strategy, run only that hook
+    if store.HookAlgorithms#?type then runHook(store.HookAlgorithms#type, key, type, args, opts) else
+    -- otherwise, give an error with the list of possible strategies
+    error("unrecognized Strategy => '", toString alg, "' for ", toString key, newline,
+	"  available strategies are: ", demark_", " \\ toExternalString \ new List from store.HookPriority))
 
 -- and keys
 protect QuotientRingHook

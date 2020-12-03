@@ -27,7 +27,7 @@ showElapsedTimefun(a:Code):Expr := (
      time4 := Ccode(Chrono, "std::chrono::steady_clock::now()");
      d := Ccode(long, "(time4-time3).count()");
      x := double(d)/1000000000.;
-     stdIO << "     -- " << x << " seconds elapsed" << endl;
+     stdError << " -- " << x << " seconds elapsed" << endl;
      ret);
 setupop(elapsedTimeS,showElapsedTimefun);
 

@@ -5,10 +5,6 @@
 -- authors: W. Decker, G. Smith, M. Stillman, C. Yackel
 --
 
--- this next file loads before this:
-
-debug Core
-
 quotMin = (I, facs, F) -> (
      J := quotient(I,F);
      if #facs > 1 then (
@@ -154,6 +150,7 @@ flattener(I,F1)
 ///
 
 -- Return a list of the prime factors of F
+-- TODO: replace with factors from MinimalPrimes?
 factors = (F) -> (
      facs := factor F;
      facs = apply(#facs, i -> facs#i#0);
@@ -174,29 +171,6 @@ debug PrimaryDecomposition
 findNonMember(I,J)
 findNonMember(J,I)
 
-///
-
--- Determine whether g is in rad(I)
-radicalContainment = (g,I) -> (
-     R := ring I;
-     n := numgens R;
-     S := (coefficientRing R) (monoid[Variables=>n+1,MonomialSize=>16]);
-     mapto := map(S,R,submatrix(vars S,{0..n-1}));
-     I = mapto I;
-     g = mapto g;
-     J := I + ideal(g*S_n-1);
-     1_S % J == 0_S
-     )
-
-TEST ///
-R = ZZ/32003[a..f]
-F = map(R,R,symmetricPower(2,matrix{{a,b,c}}))
-I = ker F
-J = I^2
-G = I_0
-debug PrimaryDecomposition
-radicalContainment(G,J)
-radicalContainment(G-a^2,J)
 ///
 
 ---------------------------------------------
@@ -397,7 +371,8 @@ REMAIN := symbol REMAIN
 if primdecComputation === symbol primdecComputation then
 primdecComputation = new Type of MutableHashTable
 
-protect thisNode
+-- private symbols used as keys:
+protect thisNode, protect H, protect U, protect W
 
 PDinitialize = (I) -> (
      if I.cache#?"PDC" then I.cache#"PDC"
@@ -512,39 +487,8 @@ SYprimaryDecomposition = (I) -> (		    -- called by a later file
 	  PDdonode C
 	  );
      if C.H != I then error "algorithm missed components!";
-     I.cache#"AssociatedPrimes" =  apply(C.U, i -> trim(i#1));
+     storeAssociatedPrimesComputation(comodule I, apply(C.U, i -> trim(i#1)), infinity);
      apply(C.U, i -> trim(i#0)))
-
-TEST ///
--- Simple examples
--- Example 1.
-
-R = ZZ/32003[a..d]
-I = ideal(a*b, c*d, a*c+b*d)
-time primaryDecomposition I
-  -- 3 components
-  -- (a,d), (b,c), ((c,d)^2,(a,b)^2,ac+bd)
-  
--- Example 2.
-R = ZZ/32003[a,b,c]
-I = ideal(a^2, a*b)
-time primaryDecomposition I
-  -- two components: (a), (a2, b)
-
--- Example 3.  
-R = ZZ/32003[a..d]
-I = ideal(a,b,c-1)
-J = ideal(c,d,a-1)
-L = intersect(I^2, J)
-time primaryDecomposition L
-
--- By hand: 
---C1 = PD ideal flatten entries generators L
---next C1
---donode C1
---peek C1
-
-///
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PrimaryDecomposition.installed "

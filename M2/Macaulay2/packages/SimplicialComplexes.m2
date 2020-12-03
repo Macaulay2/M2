@@ -154,7 +154,7 @@ lcmMonomials = (L) -> (
 
 lcmM = (L) -> (
 -- lcmM finds the lcm of a list of monomials; the quickest method Sorin knows
-    m := intersect toSequence (L/(i -> monomialIdeal(i)));
+    m := intersect \\ monomialIdeal \ L;
     m_0)
 
 
@@ -446,7 +446,7 @@ isPure SimplicialComplex := Boolean => (D) -> (
 lcmMRed = method()
 lcmMRed (List) := (L) -> (
 -- lcmMRed finds the reduced lcm of a list of monomials
-    m := intersect toSequence (L/(i -> monomialIdeal(i)));
+    m := intersect \\ monomialIdeal \ L;
     m_0//(product support m_0))
 
 faceBuchberger = (m, L) -> (

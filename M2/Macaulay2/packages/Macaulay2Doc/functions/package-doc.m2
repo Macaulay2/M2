@@ -64,6 +64,7 @@ Node
         installPackage
         check
         debug
+        importFrom
 
       :Functions useful when @TO "creating a package"@:
         newPackage
@@ -81,6 +82,7 @@ Node
       :Functions that are only rarely used:
         use
         dismiss
+        exportFrom
         endPackage
         readPackage
         uninstallPackage

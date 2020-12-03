@@ -3,7 +3,7 @@ DEBIAN_REVISION=
 overnight:
 	git status --untracked-files=no
 	git checkout -- ../../Macaulay2/packages
-	git pull
+	git pull --quiet
 	echo " --- git-description:" ; git describe --long --always --abbrev=40 --tags HEAD development master
 	git submodule sync
 	git submodule update

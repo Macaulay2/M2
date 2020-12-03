@@ -75,7 +75,6 @@ export{
   "whichGm",
   "Tries",
   "jacobianDual",
-  "Jacobian",
   "symmetricAlgebraIdeal",
   "expectedReesIdeal",
   "PlaneCurveSingularities",
@@ -2638,7 +2637,7 @@ TEST///
 kk = ZZ/101
 S = kk[x,y]
 I = ideal"x2y";J=ideal"xy2"
-assert(intersectInP(I,J) == {{2, ideal x}, {5, ideal (y, x)}, {2, ideal y}})
+assert(intersectInP(I,J) == {{5, ideal (y, x)}, {2, ideal y}, {2, ideal x}})
 I = ideal"y-x2";J=ideal y
 assert(intersectInP(I,J) == {{2, ideal (y, x)}})
 ///
