@@ -529,6 +529,9 @@ capture(e:Expr):Expr := (
      when e
      is s:stringCell do (
      	  flush(stdIO);
+	  flush(stdError);
+	  oldStdError := stdError; -- doesn't quite work, see stderrS in actors2.dd
+	  stdError = stdIO;
 	  oldDebuggingMode := debuggingMode;
 	  setDebuggingMode(false);
           foss := getFileFOSS(stdIO);
@@ -552,6 +555,7 @@ capture(e:Expr):Expr := (
 	  foss.outindex = oldindex;
 	  setLineNumber(oldLineNumber);
 	  setDebuggingMode(oldDebuggingMode);
+	  stdError = oldStdError;
 	  previousLineNumber = -1;
 	  Expr(Sequence( when r is err:Error do True else False, toExpr(out) )))
      else WrongArg(1,"a string"));

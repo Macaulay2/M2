@@ -292,7 +292,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    exps = append(exps,1);
 		    );
 	       new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
-	  isPrime RM := f -> (
+	  isPrime RM := {} >> o -> f -> (
 	      v := factor f;
 	      cnt := 0; -- counts number of factors
 	      scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1 ));

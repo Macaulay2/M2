@@ -24,8 +24,8 @@ newPackage(
 -- but it does fix a bad bug involving integral closure of ideals.
 -- 
 
-generatorSymbols = value Core#"private dictionary"#"generatorSymbols" -- use as R#generatorSymbols.
-rad = value PrimaryDecomposition#"private dictionary"#"rad" -- a function we seem to be using in integralClosure.
+importFrom_Core { "generatorSymbols" } -- use as R#generatorSymbols.
+importFrom_MinimalPrimes { "rad" } -- a function we seem to be using in integralClosure.
 
 export{
     -- methods

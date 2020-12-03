@@ -1198,7 +1198,7 @@ isEffective(BasicDivisor) :=  Boolean => (D) -> (
 
 --Given a divisor D, we want to know is this divisor is prime or not.
 
-isPrime(BasicDivisor) := (D1) -> (
+isPrime(BasicDivisor) := {} >> o -> (D1) -> (
 	(coefficients (cleanSupport D1) ) == {1} 
 );
 

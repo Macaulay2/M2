@@ -35,6 +35,12 @@ operator := binary + prefix + postfix
 -- Local utilities
 -----------------------------------------------------------------------------
 
+-- used by help and viewHelp
+seeAbout := (f, i) -> (
+    if     lastabout === null then error "no previous 'about' response";
+    if not lastabout#?i       then error("previous 'about' response contains no entry numbered ", i);
+    f lastabout#i)
+
 -----------------------------------------------------------------------------
 -- these menus have to get sorted, so optTO and optTOCLASS return sequence:
 --   the first three members of the pair are used for sorting
@@ -142,7 +148,7 @@ documentationValue := method(TypicalValue => Hypertext)
 documentationValue(Symbol, Thing) := (S, X) -> ()
 -- e.g. Macaulay2Doc :: MethodFunction
 documentationValue(Symbol, Type)  := (S, T) -> (
-    syms := unique flatten(values \ dictionaryPath);
+    syms := unique flatten apply(dictionaryPath, dict -> if mutable dict then {} else values dict);
     -- constructors of T
     a := smenu apply(select(pairs typicalValues, (key, Y) -> Y === T and isDocumentableMethod key), (key, Y) -> key);
     -- types that inherit from T
@@ -410,10 +416,7 @@ help Symbol := key -> (
 help DocumentTag := tag -> help tag.Key
 help Thing := x -> if hasAttribute(x, ReverseDictionary) then help getAttribute(x, ReverseDictionary) else error "no documentation found"
 help List  := l -> DIV between(HR{}, help \ l)
-help ZZ    := i -> (
-    if     lastabout === null then error "no previous 'about' response";
-    if not lastabout#?i       then error("previous 'about' response contains no entry numbered ", i);
-    help lastabout#i)
+help ZZ    := i -> seeAbout(help, i)
 
 -- so the user can cut paste the menu line "* sum" to get help!
 * String := x -> help x
@@ -443,6 +446,7 @@ viewHelp DocumentTag := tag -> (
     tag = getOption(fetchAnyRawDocumentation tag, symbol DocumentTag);
     docpage := concatenate htmlFilename tag;
     if fileExists docpage then show URL { docpage } else show help tag)
+viewHelp ZZ := i -> seeAbout(viewHelp, i)
 
 viewHelp = new Command from viewHelp
 -- This ensures that "methods viewHelp" and "?viewHelp" work as expected

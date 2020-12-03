@@ -259,10 +259,10 @@ netList VisibleList := o -> (x) -> (
 
 -- TODO: move to debugging, except for Net?
 commentize = method(Dispatch => Thing)
-commentize Nothing := s -> ""
-commentize String  :=
-commentize Thing   := s -> concatenate(" -- ", between("\n -- ", separate concatenate s))
-commentize Net     := S -> stack(commentize \ unstack S)
+commentize Nothing   := s -> ""
+commentize BasicList := s -> commentize horizontalJoin s
+commentize String    := s -> concatenate(" -- ", between("\n -- ", separate s))
+commentize Net       := S -> stack(commentize \ unstack S)
 
 printerr = msg -> (stderr << commentize msg << endl;) -- always return null
 warning  = msg -> if debugLevel > 0 then (

@@ -1,4 +1,10 @@
 undocumented {
+    -- documented in MinimalPrimes
+    decompose,
+    -- documented in Saturation
+    annihilator,
+    saturate,
+    -- etc.
     (net, LITERAL),
     (net, LATER),
     (expression, Constant),

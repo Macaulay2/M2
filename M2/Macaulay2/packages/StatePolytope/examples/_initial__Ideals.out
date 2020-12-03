@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: -1549979493 *}
+-- -*- M2-comint -*- hash: -1549979493
 
 i1 : R = QQ[a,b];
 
@@ -7,14 +7,9 @@ i2 : I = ideal(a^2+b^2,a*b);
 o2 : Ideal of R
 
 i3 : initialIdeals(I)  
-This is the Gfan program for computing Groebner fans and tropical varieties.
-Use the command "gfan list" to view all subcommands.
-The command "gfan" is deprecate for computing all Groebner bases of an ideal.
-Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
-LP algorithm being used: "cddgmp".
 
-        3        2     2        3
-o3 = {{b , a*b, a }, {b , a*b, a }}
+             2   3     3        2
+o3 = {{a*b, a , b }, {a , a*b, b }}
 
 o3 : List
 

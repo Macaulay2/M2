@@ -46,6 +46,10 @@ document {
 	      },
          LI { "functionality improved:",
               UL {
+                   LI { "The functions ", TO addHook, " and ", TO runHooks, " have been modified to accept a new syntax,
+		       allow giving names to hooks, and run specific hooks using the option ", TT "Strategy", ".
+		       For more information on ", TO "using hooks", ", see that documentation node." },
+                   LI { "The functions ", TO code, " is modified to also show the code for hooks listed by the function ", TO hooks, "." },
 		   LI {
 		       "$\\LaTeX$ typesetting for the web documentation is now rendered using ",
 		       HREF{"https://katex.org/","$\\KaTeX$"}, ", a JavaScript math typesetting library for browsers.
@@ -70,6 +74,17 @@ document {
 		       Internally, the new implementation incorporates the ", TO2{"Boost", "Boost.Regex"}, " library." }
                    }
               },
+	 LI { "new packages:",
+	      UL {
+		   LI {
+		       "The ", TO "Saturation :: Saturation", " package has been added for computations involving quotients,
+		       saturations, and annihilators of modules and ideals. The package is preloaded, so the routines
+		       from this package will be used automatically. In particular, the new implementation supports
+		       caching of computations as well as new strategies, which can be listed using the ", TO hooks,
+		       " function."
+		       }
+		   }
+	       },
 	 LI { "improved packages:",
 	      UL {
 		   LI {
@@ -78,6 +93,18 @@ document {
 		       TT "Node", ", ", TT "Synopsis", ", ", TT "Tree", ", ", TT "Acknowledgement", ", ", TT "Contributors", ", ",
 		       TT "References", ", and ", TT "SourceCode", ". Moreover, two new functions, ", TO "SimpleDoc :: arXiv",
 		       " and ", TO "SimpleDoc :: stacksProject", " were added to help with referencing external documents."
+		       },
+		   LI {
+		       "The ", TO "PrimaryDecomposition :: PrimaryDecomposition", " package has been improved to support
+		       computation of associated primes and primary decomposition of modules.
+		       In addition, partial computations in this package are now cached."
+		       },
+		   LI {
+		       "The ", TO "MinimalPrimes :: MinimalPrimes", " package has been improved and the ", TO "MinimalPrimes :: minimalPrimes",
+		       " and ", TO "MinimalPrimes :: isPrime", " routines from that package are now used by default, deprecating the ",
+		       TT "installMinprimes", " routine. A new routine ", TO "MinimalPrimes :: radicalContainment", " has been added, and
+		       the function ", TO "MinimalPrimes :: radical", " is moved to this package.
+		       In addition, partial computations in this package are now cached."
 		       }
 		   }
 	       },
@@ -111,6 +138,7 @@ document {
 	      },
 	 LI { "functionality removed",
 	       UL {
+		    LI { "The function ", TT "removeHook", " has been removed." },
 		    LI { "The ", TT "ForestNode", " and ", TT "TreeNode", " types have been made internal." },
 		    }
 	      }
@@ -1588,7 +1616,7 @@ document {
 			 with ", TT "map(E,F)", ".  (This was advertised as a change to 1.2, when the package was introduced,
 			      but the package was not pre-loaded, whereas now it is.)." },
 		    LI {
-			 "Fixed a long-standing bug in ", TO "saturate", " that caused it to give incorrect answers (too small)
+			 "Fixed a long-standing bug in ", TO "Saturation :: saturate", " that caused it to give incorrect answers (too small)
 			 in the case that the following three conditions all held:
 			 the ring has a non-standard monomial ordering, such as a weight vector; all variables had degree 1;
 			 and the degree of the element being used to saturate was equal to 1."
@@ -1620,7 +1648,7 @@ document {
 		    LI {
 			 "A bug in Gröbner bases over fields and the integers was fixed, which caused, under some situations,
 			 the list of \"trimmed\" generators to be incomplete (but the Gröbner basis itself was correct).
-			 This impacted functions which use ", TO "trim", ", especially ", TO "decompose", "."
+			 This impacted functions which use ", TO "trim", ", especially ", TO "MinimalPrimes :: decompose", "."
 			 },
 		    LI {
 			 "The function ", TO "Elimination::eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring,
@@ -1964,7 +1992,7 @@ document {
 			 e.g., where the monomials can involve negative exponents, and hence do not form a well-ordered set.
 			 See ", TO "division in polynomial rings with monomials less than 1", "."
 			 },
-		    LI {"A bug in ", TO "irreducibleCharacteristicSeries", ", upon with ", TO "minimalPrimes", "
+		    LI {"A bug in ", TO "irreducibleCharacteristicSeries", ", upon with ", TO "MinimalPrimes :: minimalPrimes", "
 			 depends, was fixed.  Now the new ring supporting the characteristic series will
 			 have variables with the same names and degrees, but the ordering of the variables
 			 and the monomial ordering will be different.  This ensures that homogeneity will
@@ -1984,7 +2012,7 @@ document {
 			 so they don't die when Macaulay2 terminates."
 			 },
 		    LI {"The function ", TO "prune", " and ", TO "decompose", " are no longer exact
-			 synonyms of ", TO "minimalPresentation", " and ", TO "minimalPrimes", ", respectively."
+			 synonyms of ", TO "minimalPresentation", " and ", TO "MinimalPrimes :: minimalPrimes", ", respectively."
 			 },
 		    LI {"The function ", TO "get", " has been fixed so it returns an error message if the process associated with the pipe has died."},
 		    LI {"The function ", TO "searchPath", " now does what the documentation said it would do."},

@@ -615,8 +615,8 @@ decomposeBetti BettiTally := o -> B -> (
 --if the decomposition fails. Returns a list of the components as a list of pairs,
 --each a rational coefficient followed by a hash table representing a pure betti diagram,
 --if it succeeds.
-decompose BettiTally := B-> (
-    	decomposeBetti B
+decompose BettiTally := options decomposeBetti >> opts -> B -> (
+    	decomposeBetti(B, opts)
      )
  
 

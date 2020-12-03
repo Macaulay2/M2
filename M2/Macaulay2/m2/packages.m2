@@ -385,7 +385,6 @@ newPackage String := opts -> pkgname -> (
     setAttribute(newpkg.Dictionary,           PrintNames, pkgname | ".Dictionary");
     setAttribute(newpkg#"private dictionary", PrintNames, pkgname | "#\"private dictionary\"");
     debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
-    -- if pkgname =!= "SimpleDoc" and pkgname =!= "Core" and pkgname =!= "Text" then needsPackage "SimpleDoc";
     scan(opts.PackageImports, needsPackage);
     scan(opts.PackageExports, needsPackage);
     newpkg.loadDepth = loadDepth;
@@ -432,9 +431,12 @@ exportMutable = method(Dispatch => Thing)
 exportMutable String := x -> exportMutable {x}
 exportMutable List   := v -> currentPackage#"exported mutable symbols" = join_(currentPackage#"exported mutable symbols") (export v)
 
+importFrom = method()
+importFrom(String,  List) := (P, x) -> importFrom(getpkg P, x)
+importFrom(Package, List) := (P, x) -> apply(nonnull x, s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s)
+
 exportFrom = method()
-exportFrom(Package, List) := (P, x) -> (
-    export \\ toString \ (s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s) \ x)
+exportFrom(Package, List) := (P, x) -> export \\ toString \ importFrom(P, x)
 
 ---------------------------------------------------------------------
 -- Here is where Core officially becomes a package
@@ -496,17 +498,14 @@ endPackage String := title -> (
 
 
 beginDocumentation = () -> (
-    if loadPackageOptions#?(currentPackage#"pkgname") and not loadPackageOptions#(currentPackage#"pkgname").LoadDocumentation
+    pkgname := currentPackage#"pkgname";
+    if loadPackageOptions#?pkgname and not loadPackageOptions#pkgname.LoadDocumentation
     and currentPackage#?rawKeyDB and isOpen currentPackage#rawKeyDB then (
-	if notify then stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
+	if notify then printerr("beginDocumentation: using documentation database, skipping the rest of ", currentFileName);
 	currentPackage#"documentation not loaded" = true;
 	return end);
-     if notify then stderr << "--beginDocumentation: reading the rest of " << currentFileName << endl;
-     if currentPackage#"pkgname" != "Text" and  currentPackage#"pkgname" != "SimpleDoc" then (
-	 needsPackage "Text";
-	 needsPackage "SimpleDoc";
-	  );
-     )
+    if notify then printerr("beginDocumentation: reading the rest of ", currentFileName);
+    if not member(pkgname, {"Text", "SimpleDoc"}) then (needsPackage "SimpleDoc"; needsPackage "Text";))
 
 ---------------------------------------------------------------------
 
@@ -532,18 +531,12 @@ package Sequence  := s -> youngest (package \ s)
 package Array     := s -> package toSequence s
 
 use Package := pkg -> (
-     a := member(pkg, loadedPackages);
-     b := member(pkg.Dictionary, dictionaryPath);
-     if a and not b then error("use: package ", toString pkg, " appears in loadedPackages, but its dictionary is missing from dictionaryPath");
-     if b and not a then error("use: package ", toString pkg, " does not appear in loadedPackages, but its dictionary appears in dictionaryPath");
-     if not a and not b then (
-     	  scan(pkg.Options.PackageExports, needsPackage);
-     	  loadedPackages = prepend(pkg, loadedPackages);
-	  --- if mutable pkg.Dictionary then error("package ", toString pkg, " not completely loaded yet");
-	  dictionaryPath = prepend(pkg.Dictionary, dictionaryPath);
-	  checkShadow();
-	  );
-     if pkg.?use then pkg.use pkg else pkg)
+    -- TODO: where is this ever used? make sure these simplifications are okay
+    scan(pkg.Options.PackageExports, needsPackage);
+    if not member(pkg,            loadedPackages) then loadedPackages = prepend(pkg,            loadedPackages);
+    if not member(pkg.Dictionary, dictionaryPath) then dictionaryPath = prepend(pkg.Dictionary, dictionaryPath);
+    checkShadow();
+    if pkg.?use then pkg.use pkg else pkg)
 
 debug = method()
 debug ZZ      := i   -> debugWarningHashcode = i

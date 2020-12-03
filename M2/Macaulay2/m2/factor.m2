@@ -104,60 +104,6 @@ topCoefficients RingElement := f -> (
      	  (monoms,coeffs) := topCoefficients matrix{{f}};
      	  (monoms_(0,0), coeffs_(0,0))))
 
-minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
-     (I) -> (
-	  R := ring I;
-	  (I',F) := flattenRing I; -- F is not needed
-	  A := ring I';
-	  G := map(R, A, generators(R, CoefficientRing => coefficientRing A));
-     	  --I = trim I';
-	  I = I';
-	  if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
-	  if not isCommutative A then
-	    error "expected commutative polynomial ring";
-	  kk := coefficientRing A;
-	  if kk =!= QQ and not instance(kk,QuotientRing) then
-	    error "expected base field to be QQ or ZZ/p";
-	  if I == 0 then return {if A === R then I else ideal map(R^1,R^0,0)};
-	  if debugLevel > 0 then homog := isHomogeneous I;
-	  ics := irreducibleCharacteristicSeries I;
-	  if debugLevel > 0 and homog then (
-	       if not all(ics#0, isHomogeneous) then error "minimalPrimes: irreducibleCharacteristicSeries destroyed homogeneity";
-	       );
-	  -- remove any elements which have numgens > numgens I (Krull's Hauptidealsatz)
-	  ngens := numgens I;
-	  ics0 := select(ics#0, CS -> numgens source CS <= ngens);
-	  Psi := apply(ics0, CS -> (
-		    chk := topCoefficients CS;
-		    chk = chk#1;  -- just keep the coefficients
-		    chk = first entries chk;
-		    iniCS := select(chk, i -> # support i > 0); -- this is bad if degrees are 0: degree i =!= {0});
-		    if gbTrace >= 1 then << "saturating with " << iniCS << endl;
-		    CS = ideal CS;
-		    --<< "saturating " << CS << " with respect to " << iniCS << endl;
-		    -- warning: over ZZ saturate does unexpected things.
-		    scan(iniCS, a -> CS = saturate(CS, a, Strategy=>Eliminate));
-     --	       scan(iniCS, a -> CS = saturate(CS, a));
-		    --<< "result is " << CS << endl;
-		    CS));
-	  Psi = select(Psi, I -> I != 1);
-	  Psi = new MutableList from Psi;
-	  p := #Psi;
-	  scan(0 .. p-1, i -> if Psi#i =!= null then
-	       scan(i+1 .. p-1, j ->
-		    if Psi#i =!= null and Psi#j =!= null then
-		    if isSubset(Psi#i, Psi#j) then Psi#j = null else
-		    if isSubset(Psi#j, Psi#i) then Psi#i = null));
-	  Psi = toList select(Psi,i -> i =!= null);
-	  components := apply(Psi, p -> ics#1 p);
-	  if A =!= R then (
-	       components = apply(components, P -> trim(G P));
-	       );
-	  components
-	  ))
-
-isPrime Ideal := J -> (C := minimalPrimes J; #C === 1 and C#0 == J)
-
 roots = method(Options => true);
 roots RingElement := {Precision => -1, Unique => false} >> o -> p ->
   toList apply(rawRoots(raw p, o.Precision, o.Unique), r -> new CC from r)
