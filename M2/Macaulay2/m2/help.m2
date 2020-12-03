@@ -148,7 +148,7 @@ documentationValue := method(TypicalValue => Hypertext)
 documentationValue(Symbol, Thing) := (S, X) -> ()
 -- e.g. Macaulay2Doc :: MethodFunction
 documentationValue(Symbol, Type)  := (S, T) -> (
-    syms := unique flatten(values \ dictionaryPath);
+    syms := unique flatten apply(dictionaryPath, dict -> if mutable dict then {} else values dict);
     -- constructors of T
     a := smenu apply(select(pairs typicalValues, (key, Y) -> Y === T and isDocumentableMethod key), (key, Y) -> key);
     -- types that inherit from T

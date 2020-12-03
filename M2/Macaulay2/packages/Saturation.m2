@@ -606,8 +606,6 @@ scan({"Unused", Iterate, Eliminate, GRevLex, Bayer, Linear}, strategy ->
 -- isSupportedInZeroLocus
 --------------------------------------------------------------------
 
--- TODO: either in NormalToricVarieties or VirtualResolutions,
--- implement isZeroSheaf(X, M), isFiniteLength(X, M) based on this
 -- Note: this function isn't cached because the usecase in VirtualResolutions doesn't
 -- require it but it does take advantage of precomputed saturation of the annihilator
 isSupportedInZeroLocus = method()

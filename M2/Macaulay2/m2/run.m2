@@ -60,7 +60,7 @@ SetOutputFile  := 1 << 31 -* add >>tmpf *-
 SetCaptureErr  := 1 << 32 -* add 2>&1 *-
 
 -* by default, the following commandline fixtures are used *-
-defaultMode := (SetUlimit + GCMAXHEAP + ArgQ + ArgInt
+defaultMode := (SetUlimit + GCMAXHEAP + ArgQ + ArgInt -- + ArgNoPreload
     + ArgNoRandomize + ArgNoReadline + ArgSilent + ArgStop
     + ArgPrintWidth + SetInputFile + SetOutputFile + SetCaptureErr)
 -* making this global, so it can be edited after entering debug Core *-
@@ -78,7 +78,7 @@ argumentMode = defaultMode
 -- returns false if error
 runFile = (inf, inputhash, outf, tmpf, desc, pkg, announcechange, usermode, examplefiles) -> (
      announcechange();
-     stderr << " -- making " << desc << ( if debugLevel > 0 then " in file " | outf else "" ) << endl;
+     stderr << commentize ("making ", desc, if debugLevel > 0 then " in file " | outf) << flush; -- skipping endl on purpose
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
@@ -100,6 +100,7 @@ runFile = (inf, inputhash, outf, tmpf, desc, pkg, announcechange, usermode, exam
      cmd = cmd | readmode(ArgInt,         "--int");
      cmd = cmd | readmode(ArgNoBacktrace, "--no-backtrace");
      cmd = cmd | readmode(ArgNoDebug,     "--no-debug");
+     if pkgname != "Macaulay2Doc" then -- TODO: eventually remove this line
      cmd = cmd | readmode(ArgNoPreload,   "--no-preload");
      cmd = cmd | readmode(ArgNoRandomize, "--no-randomize");
      cmd = cmd | readmode(ArgNoReadline,  "--no-readline");
@@ -112,32 +113,21 @@ runFile = (inf, inputhash, outf, tmpf, desc, pkg, announcechange, usermode, exam
      cmd = cmd | readmode(ArgStop,        "--stop");
      cmd = cmd | readmode(ArgPrintWidth,  "--print-width 77");
      cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir ", format d));
+     -- TODO: fix capture, add preloaded packages to Macaulay2Doc, then delete the following two lines
      needsline := concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'");
      cmd = cmd | if pkgname != "Macaulay2Doc" then needsline else "";
      cmd = cmd | readmode(SetInputFile,   "<" | format inf);
      cmd = cmd | readmode(SetOutputFile,  ">>" | format toAbsolutePath tmpf);
      cmd = cmd | readmode(SetCaptureErr,  "2>&1");
-     if debugLevel > 0 then stderr << cmd << endl;
+     if debugLevel > 0 then stderr << endl << cmd << endl;
      for fn in examplefiles do copyFile(fn,rundir | baseFilename fn);
      r := run cmd;
      if r == 0 then (
-	  scan(reverse findFiles rundir, f -> if isDirectory f then (
-		    -- under cygwin, it seems to take a random amount of time before the system knows the directory is no longer in use:
-		    try removeDirectory f
-		    else (
-			 stderr << "--warning: *** removing a directory failed, waiting..." << endl;
-			 sleep 1;
-			 try removeDirectory f
-			 else (
-			      stderr << "--warning: *** removing a directory failed again, waiting..." << endl;
-			      sleep 4;
-			      removeDirectory f
-			      )
-			 )
-		    ) else removeFile f);
+	  scan(reverse findFiles rundir, f -> if isDirectory f then removeDirectory f else removeFile f);
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
+     if debugLevel == 0 then stderr << endl;
      stderr << cmd << endl;
      stderr << tmpf << ":0:1: (output file) error: Macaulay2 " << describeReturnCode r << endl;
      stderr << aftermatch(M2errorRegexp,get tmpf);

@@ -38,6 +38,7 @@ newPackage(
 		 HomePage => "https://math.berkeley.edu/~xlni/"}
              },
         Headline => "invariants of group actions",
+	Keywords => {"Representation Theory", "Group Theory"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",
