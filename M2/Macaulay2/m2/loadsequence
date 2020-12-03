@@ -98,5 +98,6 @@ programs.m2
 undoc.m2
 obsolete.m2
 exports.m2
+shared.m2
 typicalvalues.m2
 last.m2

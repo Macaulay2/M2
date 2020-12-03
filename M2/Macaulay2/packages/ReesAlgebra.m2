@@ -75,7 +75,6 @@ export{
   "whichGm",
   "Tries",
   "jacobianDual",
-  "Jacobian",
   "symmetricAlgebraIdeal",
   "expectedReesIdeal",
   "PlaneCurveSingularities",
