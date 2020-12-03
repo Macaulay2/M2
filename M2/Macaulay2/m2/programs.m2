@@ -17,8 +17,8 @@ checkProgramPath = (name, cmds, pathToTry, prefix, opts) -> (
     if found then (
 	if opts.MinimumVersion === null then msg = "    found"
 	else (
-	    thisVersion := get("!" | pathToTry |
-		addPrefix(opts.MinimumVersion_1, prefix));
+	    thisVersion := replace("(^\\s+)|(\\s+$)", "", get("!" | pathToTry |
+		addPrefix(opts.MinimumVersion_1, prefix)));
 	    found = found and thisVersion >= opts.MinimumVersion_0;
 	    if found then msg = "    found version " | thisVersion | " >= " |
 		opts.MinimumVersion_0
@@ -79,8 +79,10 @@ findProgram(String, List) := opts -> (name, cmds) -> (
     new Program from {"name" => name, "path" => programPathAndPrefix_0,
 	"prefix" => programPathAndPrefix_1} |
 	if opts.MinimumVersion =!= null then
-	    {"version" => get("!" | programPathAndPrefix_0 |
-		addPrefix(opts.MinimumVersion_1, programPathAndPrefix_1))}
+	    {"version" => replace("(^\\s+)|(\\s+$)", "",
+		    get("!" | programPathAndPrefix_0 |
+			addPrefix(opts.MinimumVersion_1,
+			    programPathAndPrefix_1)))}
 	else {}
 )
 
