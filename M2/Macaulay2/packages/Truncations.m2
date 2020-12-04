@@ -553,7 +553,6 @@ TEST ///
 
 doc ///
   Key
-    truncate
     (truncate,ZZ,Module)
     (truncate,List,Module)
     (truncate,ZZ,Ideal)

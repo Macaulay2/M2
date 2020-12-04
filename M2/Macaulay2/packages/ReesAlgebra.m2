@@ -836,21 +836,6 @@ doc ///
 
 doc ///
   Key
-    Jacobian  
-  Headline
-    Choose whether to use the Jacobian dual in the computation
-  Usage
-    reesIdeal(..., Jacobian => true)
-  SeeAlso
-   reesIdeal
-   reesAlgebra
-   specialFiberIdeal
-   specialFiber
-   expectedReesIdeal
-///
-
-doc ///
-  Key
     Trim  
   Headline
     Choose whether to trim (or find minimal generators) for the ideal or module.

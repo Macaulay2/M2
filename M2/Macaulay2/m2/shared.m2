@@ -6,3 +6,8 @@ export "truncate"
 protect Jacobian
 export "Jacobian"
 
+chi = method()
+export "chi"
+
+protect Iterate
+export "Iterate"
