@@ -15,7 +15,6 @@ newPackage select((
      Keywords => {"Numerical Algebraic Geometry"},
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
      PackageExports => {"NAGtypes",
-	 --"NumericalHilbert",
 	 "NumericalLinearAlgebra",
 	 "SLPexpressions","LLLBases"},
      PackageImports => {"PHCpack","Bertini","Truncations"},

@@ -1,4 +1,5 @@
-needsPackage "NumericalHilbert"
+restart
+needsPackage "NoetherianOperators"
 RQQ = QQ[x,y,z]
 I = intersect(ideal(x,z),ideal(x^2-y^2,y+z),ideal(x^2-z^2,x+2*y)) -- line arrangement
 I = intersect(ideal ((x-1)*y), I) -- add a plane
