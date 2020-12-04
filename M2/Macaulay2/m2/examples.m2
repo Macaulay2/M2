@@ -115,6 +115,7 @@ getExampleOutput := (pkg, fkey) -> (
 -- used in installPackage.m2
 -- TODO: store in a database instead
 storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
+    verboseLog("storing example results from output file", minimizeFilename outf);
     if fileExists outf then (
 	outstr := reproduciblePaths get outf;
 	outf << outstr << close;
@@ -125,7 +126,6 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash, changeFunc, usermode, verboseLog) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
     desc := "example results for " | format fkey;
-    desc  = concatenate(desc, 62 - #desc);
     -- try capturing in the same process
     if  not match("no-capture-flag", inputs) -- this flag is really necessary, but only sometimes
     -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
@@ -138,14 +138,15 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
     and not match({"ThreadedGB", "RunExternalM2"}, pkg#"pkgname") -- TODO: eventually remove
     and false -- TODO: this is temporarily here, to be removed after v1.17 is released
     then (
-	stderr << commentize ("capturing ", desc) << flush; -- the timing info will appear at the end
+	desc = concatenate(desc, 62 - #desc);
+	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
 	(err, output) := evaluateWithPackage(pkg, inputs, capture_(UserMode => false));
 	if not err then return outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close);
     -- fallback to using an external process
-    desc  = concatenate(desc, 65 - #desc);
+    stderr << commentize pad("making " | desc, 72) << flush;
     data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
     inf << replace("-\\* no-capture-flag \\*-", "", inputs) << endl << close;
-    if runFile(inf, inputhash, outf, errf, desc, pkg, changeFunc fkey, usermode, data)
+    if runFile(inf, inputhash, outf, errf, pkg, changeFunc fkey, usermode, data)
     then ( removeFile inf; cacheFunc fkey ))
 
 -----------------------------------------------------------------------------
