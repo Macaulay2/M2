@@ -30,7 +30,7 @@ newPackage (
   PackageImports => {"LexIdeals"},
   AuxiliaryFiles => true,
   CacheExampleOutput => true,
-  DebuggingMode => true
+  DebuggingMode => false
 )
 
 -------------
