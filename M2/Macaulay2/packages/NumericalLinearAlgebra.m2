@@ -1,6 +1,5 @@
 newPackage(
     "NumericalLinearAlgebra",
-    -- PackageExports => {"NAGtypes"},
     Version => "1.16", 
     Date => "Dec 2020",
     Authors => {
@@ -13,14 +12,15 @@ newPackage(
     	},
     Headline => "numerically compute local dual space and Hilbert functions",
     Keywords => {"Numerical Linear Algebra"},
+    PackageExports => {"LLLBases"},
     AuxiliaryFiles => false
-    --AuxiliaryFiles => true
 )
 
 export{
     "Tolerance", 
     "Normalize",
     "numericalKernel",
+    "numericalRank", "isFullNumericalRank",
     "numericalImage",
     "colReduce"
     }
@@ -45,6 +45,45 @@ numericalKernel (Matrix) := Matrix => o -> M -> (
     K := submatrix'(transpose Vh,,cols);
     if K == 0 then K else conjugate K
     )
+
+numericalRank = method(Options=>{Threshold=>1e-4})
+numericalRank Matrix := o -> M -> (
+     if not member(class ring M, {RealField,ComplexField}) 
+     then error "matrix with real or complex entries expected";
+     t := o.Threshold; 
+     N := if t<=1 then M -- use t as an absolute cutoff for singular values, otherwise look for a "gap"  
+          else matrix apply(entries M, row->(      -- nomalize "large" rows (a hack!!!)
+	     	  m := max(row/abs);
+	     	  if m<1 then row else apply(row,e->e/m)
+	     	  ));
+     S := first SVD N;
+     r := 0; last's := 1;
+     for i to #S-1 do (
+	 if t>1 then (if t*S#i < last's 
+	     then break
+	     else (r = r + 1; last's = S#i)
+	     )
+	 else (
+	     if S#i>t then r = r + 1
+	     else break 
+	     )
+	 );
+     r 
+     )  
+
+isFullNumericalRank = method(Options=>{Threshold=>1e-4}) 
+isFullNumericalRank Matrix := o -> M -> (
+    r := numericalRank(M,o);
+    r == min(numColumns M, numRows M) 
+    )
+
+TEST ///
+N = matrix {{0.001, 0, 0}, {1, 1, 3}, {2, 2, 5.999}}
+assert(numericalRank(N,Threshold=>0.01) == 1)
+assert not isFullNumericalRank(N,Threshold=>0.001)
+assert isFullNumericalRank(N,Threshold=>0.00001)
+///
+
 
 TEST ///
 N = matrix {{0.001, 0, 0}, {1, 1, 3}, {2, 2, 5.999}}
@@ -147,6 +186,7 @@ Description
     This package collects implementations of numerical linear algebra algorithms.
     
     @UL {
+     	{TO numericalRank},
 	{TO numericalKernel},
 	{TO numericalImage},
 	{TO colReduce}
@@ -197,6 +237,47 @@ doc ///
 	       M = matrix {{1., 1}, {1.001, 1}}
 	       numericalKernel(M, Tolerance=>0.01)
 ///
+
+document {
+	Key => {numericalRank, (numericalRank, Matrix), [numericalRank, Threshold],
+	    isFullNumericalRank, (isFullNumericalRank,Matrix)},
+	Headline => "numerical rank of a matrix",
+	Usage => "r = numericalRank M\nB = isFullNumericalRank M",
+	Inputs => { 
+	    "M"=>Matrix=>"a matrix with real or complex entries"
+	     },
+	Outputs => {
+	    "r"=>ZZ, 
+	    "B"=>Boolean
+	    },
+	PARA {
+	    TO numericalRank, " finds an approximate rank of the matrix ", TT "M", "."
+	    },
+	PARA {
+	    TO isFullNumericalRank, " = ", TT "M", " is _not_ rank-deficient."
+	    },
+	PARA {
+	    "Let ", TEX "\\sigma_1,...,\\sigma_n", " be the singular values of ", TT "M", ". "
+	    },
+	PARA {
+	    "If ", TO "Threshold", " is >1, then to establish numerical rank we look 
+	    for the first large gap between two consecutive singular values. ",
+	    "The gap between ", TEX "\\sigma_i", " and ", TEX "\\sigma_{i+1}", 
+	    " is large if ", TEX "\\sigma_i/\\sigma_{i+1} > ", TO "Threshold",
+	    "."
+	    },
+	PARA {
+	    "If ", TO "Threshold", " is <=1, then the rank equals 
+	    the number of singular values larger then ", TO "Threshold", "." 
+	    },
+	Caveat => {"We assume ", TEX "\\sigma_0=1", " above."},
+        EXAMPLE lines ///
+options numericalRank
+numericalRank matrix {{2,1},{0,0.001}}
+numericalRank matrix {{2,1},{0,0.0001}}
+     	///,
+     	SeeAlso => {SVD}
+	}
 
 doc ///
 Key

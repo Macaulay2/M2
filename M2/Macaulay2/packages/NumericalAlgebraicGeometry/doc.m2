@@ -56,7 +56,6 @@ numericalIrreducibleDecomposition I
      TO NAGtrace,
      --     TO toAffineChart,     
      TO newton,
-     TO numericalRank,
      TO isOn,
      TO union,
      TO removeRedundantComponents,
@@ -552,47 +551,6 @@ M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
 	SeeAlso => {Certified}
 	}
 								
-document {
-	Key => {numericalRank, (numericalRank, Matrix), [numericalRank, Threshold],
-	    isFullNumericalRank, (isFullNumericalRank,Matrix)},
-	Headline => "numerical rank of a matrix",
-	Usage => "r = numericalRank M\nB = isFullNumericalRank M",
-	Inputs => { 
-	    "M"=>Matrix=>"a matrix with real or complex entries"
-	     },
-	Outputs => {
-	    "r"=>ZZ, 
-	    "B"=>Boolean
-	    },
-	PARA {
-	    TO numericalRank, " finds an approximate rank of the matrix ", TT "M", "."
-	    },
-	PARA {
-	    TO isFullNumericalRank, " = ", TT "M", " is _not_ rank-deficient."
-	    },
-	PARA {
-	    "Let ", TEX "\\sigma_1,...,\\sigma_n", " be the singular values of ", TT "M", ". "
-	    },
-	PARA {
-	    "If ", TO "LLLBases::Threshold", " is >1, then to establish numerical rank we look 
-	    for the first large gap between two consecutive singular values. ",
-	    "The gap between ", TEX "\\sigma_i", " and ", TEX "\\sigma_{i+1}", 
-	    " is large if ", TEX "\\sigma_i/\\sigma_{i+1} > ", TO "LLLBases::Threshold",
-	    "."
-	    },
-	PARA {
-	    "If ", TO "LLLBases::Threshold", " is <=1, then the rank equals 
-	    the number of singular values larger then ", TO "LLLBases::Threshold", "." 
-	    },
-	Caveat => {"We assume ", TEX "\\sigma_0=1", " above."},
-        EXAMPLE lines ///
-options numericalRank
-numericalRank matrix {{2,1},{0,0.001}}
-numericalRank matrix {{2,1},{0,0.0001}}
-     	///,
-     	SeeAlso => {SVD}
-	}
-
 document {
 	Key => {Certified},
 	Headline => "a value for the option Predictor that triggers certified tracking",
