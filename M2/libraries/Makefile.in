@@ -32,10 +32,10 @@ install-programs:
 	fi
 install-dynamic-libraries:
 	: installing sharable library files in @pre_librariesdir@
-	rm -rf @pre_librariesdir@
-	@INSTALL@ -d @pre_librariesdir@
 	if test -d $(BUILTLIBPATH)/lib ;				     \
-	then cd $(BUILTLIBPATH)/lib &&					     \
+	then rm -rf @pre_librariesdir@ ;				     \
+		@INSTALL@ -d @pre_librariesdir@ ;			     \
+		cd $(BUILTLIBPATH)/lib &&				     \
 		for i in *.dll *.so.* *[0-9].dylib ;			     \
 		do if [ -e $$i ] ;					     \
 		   then @TAR@ cf - $$i | @TAR@ xfv - -C @pre_librariesdir@ ; \
