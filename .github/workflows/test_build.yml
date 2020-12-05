@@ -9,15 +9,18 @@
 name: Build and Test Macaulay2
 
 on:
-  # push:
-  #   branches:
+  push:
+    branches:
+      - release-1.17
+      - pre-master # when we're ready to merge 'development' into 'master', we merge it first into 'pre-master', so it can be tested
   pull_request:
     branches:
       - master
       - development
   schedule:
-    # cron time in UTC; set to 6a EDT
-    - cron: '0 10 * * *'
+    # cron time in UTC
+    # a scheduled job runs on the default branch: 'master'
+    - cron: '0 6 * * *'
 
 defaults:
   run:
