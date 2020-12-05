@@ -2,6 +2,7 @@
 -- Methods for processing and accessing examples from the documentation
 -----------------------------------------------------------------------------
 -* Exported:
+ * EXAMPLE
  * capture
  * examples
  *-
@@ -13,7 +14,10 @@ processExamplesStrict = true
 -----------------------------------------------------------------------------
 
 M2outputRE       = "\n+(?=i+[1-9][0-9]* : )"
-separateM2output = str -> separate(M2outputRE, replace("(\\A\n+|\n+\\Z)", "", str))
+M2outputHash     = "-- -*- M2-comint -*- hash: "
+separateM2output = str -> (
+    L := separate(M2outputRE, replace("(\\A\n+|\n+\\Z)", "", str));
+    if match(regexQuote M2outputHash, str) then drop(drop(L, -1), 1) else L)
 
 trimlines := L -> apply(L, x ->
     if instance(x, String) then (
@@ -31,7 +35,7 @@ makeExampleItem = method()
 makeExampleItem PRE    := p -> flatten apply(toList p, s -> PRE \ separateM2output s)
 makeExampleItem String := s -> ExampleItem s
 
--- allows canned examples with EXAMPLE { PRE "..." }
+-- allows canned examples with EXAMPLE PRE "..."
 EXAMPLE = method(Dispatch => Thing)
 EXAMPLE PRE         :=
 EXAMPLE String      := x -> EXAMPLE {x}
@@ -135,7 +139,7 @@ getExampleOutput := (pkg, fkey) -> (
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
     else if width (ex := examples fkey) =!= 0
     then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false) );
-    pkg#"example results"#fkey = if output === null then {} else drop(drop(separateM2output output, -1), 1))
+    pkg#"example results"#fkey = if output === null then {} else separateM2output output)
 
 -- used in installPackage.m2
 -- TODO: store in a database instead
@@ -144,7 +148,7 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
     if fileExists outf then (
 	outstr := reproduciblePaths get outf;
 	outf << outstr << close;
-	pkg#"example results"#fkey = drop(drop(separateM2output outstr, -1), 1))
+	pkg#"example results"#fkey = separateM2output outstr)
     else verboseLog("warning: missing file ", outf));
 
 -- used in installPackage.m2
@@ -166,7 +170,7 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
 	(err, output) := evaluateWithPackage(pkg, inputs, capture_(UserMode => false));
-	if not err then return outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close);
+	if not err then return outf << M2outputHash << inputhash << endl << output << close);
     -- fallback to using an external process
     stderr << commentize pad("making " | desc, 72) << flush;
     data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
@@ -178,6 +182,9 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
 -- process examples
 -----------------------------------------------------------------------------
 -- TODO: make this reentrant
+-- TODO: avoid the issue of extra indented lines being skipped in SimpleDoc
+-- a hacky fix is dumping any remaining example results along with the last example
+-- a better fix probably requires rethinking the ExampleItem mechanism
 
 local currentExampleKey
 local currentExampleCounter
