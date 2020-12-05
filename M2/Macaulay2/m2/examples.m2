@@ -12,8 +12,33 @@ processExamplesStrict = true
 -- local utilities
 -----------------------------------------------------------------------------
 
-M2outputRE      = "\n+(?=i+[1-9][0-9]* : )"
-separateM2output = str -> drop(drop(separate(M2outputRE, str),1),-1)
+M2outputRE       = "\n+(?=i+[1-9][0-9]* : )"
+separateM2output = str -> separate(M2outputRE, replace("(\\A\n+|\n+\\Z)", "", str))
+
+trimlines := L -> apply(L, x ->
+    if instance(x, String) then (
+	s := lines x;
+	r := if s#?0 then demark_newline prepend(replace("^[[:space:]]+", "", s#0), drop(s, 1)) else x;
+	if #r > 0 then r)
+    else x)
+
+-----------------------------------------------------------------------------
+-- EXAMPLE
+-----------------------------------------------------------------------------
+
+makeExampleItem = method()
+-- TODO: can this be handled with a NewFromMethod?
+makeExampleItem PRE    := p -> flatten apply(toList p, s -> PRE \ separateM2output s)
+makeExampleItem String := s -> ExampleItem s
+
+-- allows canned examples with EXAMPLE { PRE "..." }
+EXAMPLE = method(Dispatch => Thing)
+EXAMPLE PRE         :=
+EXAMPLE String      := x -> EXAMPLE {x}
+EXAMPLE VisibleList := x -> (
+    L := flatten \\ makeExampleItem \ nonnull trimlines toList x;
+    if #L == 0 then error "EXAMPLE: empty list of examples encountered";
+    TABLE flatten {"class" => "examples", apply(L, item -> TR TD item)})
 
 -----------------------------------------------------------------------------
 -- capture
@@ -110,7 +135,7 @@ getExampleOutput := (pkg, fkey) -> (
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
     else if width (ex := examples fkey) =!= 0
     then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false) );
-    pkg#"example results"#fkey = if output === null then {} else separateM2output output)
+    pkg#"example results"#fkey = if output === null then {} else drop(drop(separateM2output output, -1), 1))
 
 -- used in installPackage.m2
 -- TODO: store in a database instead
@@ -119,7 +144,7 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
     if fileExists outf then (
 	outstr := reproduciblePaths get outf;
 	outf << outstr << close;
-	pkg#"example results"#fkey = separateM2output outstr)
+	pkg#"example results"#fkey = drop(drop(separateM2output outstr, -1), 1))
     else verboseLog("warning: missing file ", outf));
 
 -- used in installPackage.m2
