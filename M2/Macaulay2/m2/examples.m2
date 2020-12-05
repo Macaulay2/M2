@@ -2,6 +2,7 @@
 -- Methods for processing and accessing examples from the documentation
 -----------------------------------------------------------------------------
 -* Exported:
+ * EXAMPLE
  * capture
  * examples
  *-
@@ -12,8 +13,36 @@ processExamplesStrict = true
 -- local utilities
 -----------------------------------------------------------------------------
 
-M2outputRE      = "\n+(?=i+[1-9][0-9]* : )"
-separateM2output = str -> drop(drop(separate(M2outputRE, str),1),-1)
+M2outputRE       = "\n+(?=i+[1-9][0-9]* : )"
+M2outputHash     = "-- -*- M2-comint -*- hash: "
+separateM2output = str -> (
+    L := separate(M2outputRE, replace("(\\A\n+|\n+\\Z)", "", str));
+    if match(regexQuote M2outputHash, str) then drop(drop(L, -1), 1) else L)
+
+trimlines := L -> apply(L, x ->
+    if instance(x, String) then (
+	s := lines x;
+	r := if s#?0 then demark_newline prepend(replace("^[[:space:]]+", "", s#0), drop(s, 1)) else x;
+	if #r > 0 then r)
+    else x)
+
+-----------------------------------------------------------------------------
+-- EXAMPLE
+-----------------------------------------------------------------------------
+
+makeExampleItem = method()
+-- TODO: can this be handled with a NewFromMethod?
+makeExampleItem PRE    := p -> flatten apply(toList p, s -> PRE \ separateM2output s)
+makeExampleItem String := s -> ExampleItem s
+
+-- allows canned examples with EXAMPLE PRE "..."
+EXAMPLE = method(Dispatch => Thing)
+EXAMPLE PRE         :=
+EXAMPLE String      := x -> EXAMPLE {x}
+EXAMPLE VisibleList := x -> (
+    L := flatten \\ makeExampleItem \ nonnull trimlines toList x;
+    if #L == 0 then error "EXAMPLE: empty list of examples encountered";
+    TABLE flatten {"class" => "examples", apply(L, item -> TR TD item)})
 
 -----------------------------------------------------------------------------
 -- capture
@@ -141,7 +170,7 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
 	(err, output) := evaluateWithPackage(pkg, inputs, capture_(UserMode => false));
-	if not err then return outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close);
+	if not err then return outf << M2outputHash << inputhash << endl << output << close);
     -- fallback to using an external process
     stderr << commentize pad("making " | desc, 72) << flush;
     data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
@@ -153,6 +182,9 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
 -- process examples
 -----------------------------------------------------------------------------
 -- TODO: make this reentrant
+-- TODO: avoid the issue of extra indented lines being skipped in SimpleDoc
+-- a hacky fix is dumping any remaining example results along with the last example
+-- a better fix probably requires rethinking the ExampleItem mechanism
 
 local currentExampleKey
 local currentExampleCounter

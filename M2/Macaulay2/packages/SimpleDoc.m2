@@ -1,6 +1,5 @@
 -- -*- coding: utf-8 -*-
 -- TODO: add linter
--- TODO: small bug: if indentation of examples increases, the further indented lines are ignored
 newPackage(
     "SimpleDoc",
     Version => "1.2",

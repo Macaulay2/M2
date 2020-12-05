@@ -177,28 +177,6 @@ TOH        = new IntermediateMarkUpType of Hypertext
 toExternalString LATER := x -> toExternalString x#0()
 
 -----------------------------------------------------------------------------
--- EXAMPLE
------------------------------------------------------------------------------
--- TODO: Move this
-
-makeExampleItem = method()
-makeExampleItem PRE    := identity -- this will allow precomputed example text
-makeExampleItem String := s -> ExampleItem s
-makeExampleItem Thing  := s -> error ("EXAMPLE expected a string or a PRE item, but encountered ", toString s)
-
-trimfront := x -> apply(x, line -> if not instance(line, String) then line else (
-	  s := lines line;
-	  r := if not s#?0 then line else concatenate between(newline, prepend(replace("^[[:space:]]+", "", s#0), drop(s, 1)));
-	  if #r =!= 0 then r))
-
-EXAMPLE = method(Dispatch => Thing)
-EXAMPLE String      := x -> EXAMPLE {x}
-EXAMPLE VisibleList := x -> (
-    x = nonnull trimfront toSequence x;
-    if #x == 0 then error "empty list of examples encountered";
-    TABLE splice {"class" => "examples", apply(x, item -> TR TD makeExampleItem item)})
-
------------------------------------------------------------------------------
 -- MarkUpType constructors
 -----------------------------------------------------------------------------
 
