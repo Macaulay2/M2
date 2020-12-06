@@ -510,6 +510,7 @@ beginDocumentation = () -> (
 
 package = method (Dispatch => Thing, TypicalValue => Package)
 package Package  := identity
+package Nothing  := x -> null
 package Option   := o -> youngest(package \ toSequence o)
 package Array    :=
 package Sequence := s -> if (d := fetchAnyRawDocumentation makeDocumentTag s) =!= null then package d.DocumentTag

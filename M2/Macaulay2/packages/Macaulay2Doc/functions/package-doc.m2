@@ -115,6 +115,7 @@ Node
     (package, DocumentTag)
     (package, Function)
     (package, HashTable)
+    (package, Nothing)
     (package, Option)
     (package, Package)
     (package, Sequence)
@@ -457,7 +458,7 @@ Node
 
 Node
   Key
-    installPackage
+     installPackage
     (installPackage, String)
     (installPackage, Package)
     [installPackage, CacheExampleOutput]

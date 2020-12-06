@@ -254,7 +254,7 @@ infoTagConvert = method()
 infoTagConvert String      := tagConvert
 infoTagConvert DocumentTag := tag -> (
     tag = getPrimaryTag tag;
-    (pkgname, fkey) := (package tag, format tag);
+    (pkgname, fkey) := (tag.Package, format tag);
     fkey  = tagConvert if pkgname === fkey then "Top" else fkey;
     if pkgname =!= currentPackage#"pkgname" then concatenate("(",pkgname,")", fkey) else fkey)
 

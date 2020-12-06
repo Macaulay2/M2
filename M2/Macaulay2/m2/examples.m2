@@ -172,8 +172,7 @@ processExamplesLoop ExampleItem := x -> (
     currentExampleCounter = currentExampleCounter + 1;
     result)
 
-processExamples = (pkgname, fkey, docBody) -> (
-    pkg := getpkg pkgname;
+processExamples = (pkg, fkey, docBody) -> (
     currentExampleKey = fkey;
     currentExampleCounter = 0;
     currentExampleResults = getExampleOutput(pkg, fkey);

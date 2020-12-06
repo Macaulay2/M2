@@ -306,5 +306,5 @@ Node
       I = ideal(w*x^2-42*y*z, x^6+12*w*y+x^3*z, w^2-47*x^4*z-47*x*z^2);
       elapsedTime minimalPrimes(ideal I_*, Strategy => Hybrid{Linear,Birational,Factorization,DecomposeMonomials}, Verbosity => 2);
   SeeAlso
-    "PrimaryDecomposition :: primaryDecomposition(..., Strategy => ...)"
+    "PrimaryDecomposition :: primaryDecomposition(...,Strategy=>...)"
 ///

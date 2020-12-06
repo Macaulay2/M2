@@ -29,7 +29,7 @@ enlist := x -> if instance(x, List) then x else {x}
 -- verifying the document Key
 -----------------------------------------------------------------------------
 -- here we check that the method a putative document tag documents is actually installed
-verifyKey := method(Dispatch => Thing)
+verifyKey = method(Dispatch => Thing)
 verifyKey Thing    := key -> key
 verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Module)
     if      #key == 0 then error "documentation key () encountered"
@@ -49,10 +49,15 @@ verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Mod
     else if #key > 1 and instance(key#0, Command) then verifyKey prepend(key#0#0, drop(key, 1))
     else error("documentation key for ", format formatDocumentTag key, " encountered, but no method installed"))
 verifyKey Array    := key -> (
-    (fn, opt) := (key#0, key#1); -- e.g., [res, Strategy]
-    if not instance(fn, Function) and not instance(fn, Sequence)
-    then error("expected first element of document key for optional argument to be a function or sequence: ", silentRobustString(40, 1, key));
-    if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
+    (nkey, opt) := (key#0, key#1);                    -- e.g., [(res, Module), Strategy]
+    if instance(opt,  Option)   then opt = first opt; -- e.g., [(res, Module), Strategy => FastNonminimal]
+    if instance(nkey, Sequence)
+    and #methods nkey > 0       then fn := first nkey else
+    if instance(nkey, Function) then fn  =       nkey
+    else error("expected ", format toString nkey, " to be a function or existing method key in document tag for optional argument: ", silentRobustString(40, 1, key));
+    if  not (options nkey)#?opt
+    and not (options   fn)#?opt
+    then error("expected ", format toString  opt, " to be an optional argument for ", nkey, " in document tag for optional argument: ", silentRobustString(40, 1, key)))
 
 -----------------------------------------------------------------------------
 -- normalizeDocumentKey
@@ -96,9 +101,9 @@ DocumentTag = new Type of HashTable
 DocumentTag.synonym = "document tag"
 
 format   DocumentTag := tag -> tag.Format
-package  DocumentTag := tag -> tag.Package
+package  DocumentTag := tag -> getpkg tag.Package
 toString DocumentTag :=
-net      DocumentTag := tag -> concatenate (package tag, " :: ", format tag)
+net      DocumentTag := tag -> concatenate (tag.Package, " :: ", format tag)
 
 -- FIXME: this is kind of a hack
 toExternalString DocumentTag := tag -> (
@@ -271,9 +276,11 @@ formatDocumentTag = method(Dispatch => Thing)
 formatDocumentTag Thing    := toString
 formatDocumentTag String   := identity
 formatDocumentTag Array    := s -> (
-    if instance(s#0, Sequence) and 0 < #s#0
-    then concatenate(toString s#0#0, "(", between(",", apply(drop(s#0, 1), toString)), ", ", toString s#1, " => ...)")
-    else concatenate(toString s#0,   "(..., ", toString s#1, " => ...)"))
+    (fn, opt, val) := (s#0, s#1, "..."); -- TODO: eventually support [(func, X, Y), A => 1, B => 2, C => 3]
+    if instance(opt, Option)  then (opt, val) = toSequence opt;
+    if instance(fn, Sequence) and 0 < #fn
+    then concatenate(toString fn#0, "(", between(",", apply(drop(fn, 1), toString)), ",", toString opt, "=>", toString val, ")")
+    else concatenate(toString fn,   "(...,", toString opt, "=>", toString val, ")"))
 formatDocumentTag Sequence := s -> concatenate (
     if #s == 0                                           then toString
     else if            fSeq#?(#s, s#0)                   then fSeq#(#s, s#0)
@@ -299,7 +306,7 @@ storeRawDocumentation := (tag, rawdoc) -> (
 -- fetchRawDocumentation, fetchRawDocumentationNoLoad
 -----------------------------------------------------------------------------
 fetchRawDocumentation = method()
-fetchRawDocumentation DocumentTag      :=  tag            -> fetchRawDocumentation(getpkg package tag, format tag)
+fetchRawDocumentation DocumentTag      :=  tag            -> fetchRawDocumentation(getpkg tag.Package, format tag)
 fetchRawDocumentation(String,  String) := (pkgname, fkey) -> fetchRawDocumentation(getpkg pkgname, fkey)
 fetchRawDocumentation(Package, String) := (pkg,     fkey) -> ( -- returns null if none
     rawdoc := pkg#rawKey;
@@ -309,7 +316,7 @@ fetchRawDocumentation(Package, String) := (pkg,     fkey) -> ( -- returns null i
 
 fetchRawDocumentationNoLoad = method()
 fetchRawDocumentationNoLoad(Nothing, Thing)  := (pkg,     fkey) -> null
-fetchRawDocumentationNoLoad DocumentTag      :=  tag            -> fetchRawDocumentationNoLoad(getpkgNoLoad package tag, format tag)
+fetchRawDocumentationNoLoad DocumentTag      :=  tag            -> fetchRawDocumentationNoLoad(getpkgNoLoad tag.Package, format tag)
 fetchRawDocumentationNoLoad(String,  String) := (pkgname, fkey) -> fetchRawDocumentationNoLoad(getpkgNoLoad pkgname, fkey)
 fetchRawDocumentationNoLoad(Package, String) := (pkg,     fkey) -> ( -- returns null if none
     rawdoc := pkg#rawKey;
@@ -361,7 +368,7 @@ isUndocumented   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?"u
 hasDocumentation = key -> (
     tag := makeDocumentTag(key, Package => null);
     -- TODO: does this error belong here?
-    if package tag === "" then error("key to be documented is exported by no package: ", format tag);
+    if tag.Package === "" then error("key to be documented is exported by no package: ", format tag);
     null =!= fetchRawDocumentation tag)
 
 locate DocumentTag := tag -> (
@@ -626,7 +633,7 @@ document List := opts -> args -> (
     -- Check that all tags belong to this package and
     -- point the secondary keys to the primary one
     verfy := (key, tag) -> (
-	if package tag =!= currentPackage#"pkgname"
+	if tag.Package =!= currentPackage#"pkgname"
 	then error("item to be documented comes from another package: ", toString tag));
     verfy(key, tag);
     scan(rest, secondary -> (

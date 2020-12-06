@@ -68,7 +68,7 @@ htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing       := key -> htmlFilename makeDocumentTag key
 htmlFilename DocumentTag := tag -> (
     fkey := format tag;
-    pkgname := package tag;
+    pkgname := tag.Package;
     basefilename := if fkey === pkgname then topFileName else toFilename fkey | ".html";
     if currentPackage#"pkgname" === pkgname then (layout, prefix) := (installLayout, installPrefix)
     else (
@@ -186,7 +186,7 @@ buildLinks ForestNode := x -> (
 -- constructs the tree-structure for the Subnodes of each node
 -----------------------------------------------------------------------------
 
-assembleTree := (pkg,nodes) -> (
+assembleTree := (pkg, nodes) -> (
     resetCounters();
     -- keep track of various possible issues with the nodes
     visits := new HashTable from {
@@ -202,7 +202,7 @@ assembleTree := (pkg,nodes) -> (
 	    and pkg#"raw documentation"#fkey.?Subnodes then (
 		subnodes := pkg#"raw documentation"#fkey.Subnodes;
 		subnodes  = select(deepApply(subnodes, identity), DocumentTag);
-		subnodes  = select(subnodes, node -> package node === toString pkg);
+		subnodes  = select(subnodes, node -> package node === pkg);
 		tag => getPrimaryTag \ subnodes)
 	    else tag => {}));
     -- build the forest
@@ -320,7 +320,7 @@ installInfo := (pkg, installPrefix, installLayout, verboseLog) -> (
 
     infoTagConvert' := n -> if topNodeName === n     then "Top" else infoTagConvert n;
     chkInfoKey      := n -> if topNodeName === "Top" then n else if n === "Top" then error "installPackage: encountered a documentation node named 'Top'";
-    chkInfoTag      := t -> if package t =!= pkg#"pkgname" then error("installPackage: alien entry in table of contents: ", toString t);
+    chkInfoTag      := t -> if package t =!= pkg     then error("installPackage: alien entry in table of contents: ", toString t);
 
     pushvar(symbol printWidth, 79);
 
