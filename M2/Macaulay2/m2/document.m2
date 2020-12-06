@@ -137,13 +137,17 @@ makeDocumentTag' := opts -> key -> (
     local pkg;
     (pkg, fkey) = parseDocumentTag fkey;
     -- Try to detect the package
-    pkg = if pkg =!= null then pkg
-    else  if opts#Package =!= null then opts#Package
-    else  if member(fkey, allPackages()) then fkey
-    else  if instance(nkey, String) then currentPackage -- FIXME
-    else  if instance(nkey, Sequence) then currentPackage -- this is a kludge, which allows Schubert2 to document (symbol SPACE,OO,RingElement)
+    pkg = if pkg =!= null                    then pkg
+    else  if opts#Package =!= null           then opts#Package
+    else  if member(fkey, allPackages())     then fkey
+    -- for these three types, the method package actually calls
+    -- makeDocumentTag, so we can't use it, and need workarounds:
+    else  if instance(nkey, Array)           then youngest toSequence(package \ splice nkey)
+    else  if instance(nkey, String)          then currentPackage -- FIXME
+    -- Note: make sure Schubert2 can document (symbol SPACE, OO, RingElement)
+    else  if instance(nkey, Sequence)        then youngest (package \ splice nkey)
     else  if (pkg' := package nkey) =!= null then pkg'
-    else  if (rawdoc := fetchAnyRawDocumentation fkey) =!= null then package rawdoc.DocumentTag;
+    else  if (pkg'  = package fkey) =!= null then pkg';
     -- If not detected, signal an error and failover to currentPackage
     if pkg === null then (
 	if currentDocumentTag === null   then error("makeDocumentTag: package cannot be determined: ", nkey) else
@@ -361,9 +365,9 @@ hasDocumentation = key -> (
     null =!= fetchRawDocumentation tag)
 
 locate DocumentTag := tag -> (
-    raw := fetchAnyRawDocumentation tag;
-    if raw =!= null
-    then (raw#"filename", raw#"linenum",,,,,) -- TODO: (filename, start,startcol, stop,stopcol, pos,poscol)
+    rawdoc := fetchAnyRawDocumentation tag;
+    if rawdoc =!= null
+    then (rawdoc#"filename", rawdoc#"linenum",,,,,) -- TODO: (filename, start,startcol, stop,stopcol, pos,poscol)
     else (currentFileName, currentLineNumber(),,,,,))
 
 -----------------------------------------------------------------------------

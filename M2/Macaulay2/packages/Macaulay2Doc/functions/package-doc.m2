@@ -112,8 +112,11 @@ Node
      package
     (package, Array)
     (package, Dictionary)
+    (package, DocumentTag)
     (package, Function)
     (package, HashTable)
+    (package, Option)
+    (package, Package)
     (package, Sequence)
     (package, Symbol)
     (package, Thing)
