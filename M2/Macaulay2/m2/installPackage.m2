@@ -695,6 +695,7 @@ installPackage Package := opts -> pkg -> (
 
 	-- process documentation
 	verboseLog "processing documentation nodes...";
+	-- ~50s -> ~100s for Macaulay2Doc
 	scan(nodes, tag ->
 	    if      isUndocumented tag              then verboseLog("undocumented ", toString tag)
 	    else if isSecondaryTag tag              then verboseLog("is secondary ", toString tag)
@@ -720,6 +721,7 @@ installPackage Package := opts -> pkg -> (
 	pkg#"links prev" = PREV;
 
 	-- check that everything is documented
+	-- ~22s for Macaulay2Doc
 	if chkdoc then (
 	    resetCounters();
 	    scan((if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg)#"exported symbols", s -> (
@@ -746,10 +748,12 @@ installPackage Package := opts -> pkg -> (
 	    toString numDocumentationErrors, " errors(s) occurred in documentation for package ", toString pkg);
 
 	-- make info documentation
+	-- ~60 -> ~70s for Macaulay2Doc
 	if opts.MakeInfo then installInfo(pkg, installPrefix, installLayout, verboseLog)
 	else verboseLog("not making documentation in info format");
 
 	-- make html documentation
+	-- ~50 -> ~80s for Macaulay2Doc
 	if opts.MakeHTML then installHTML(pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts)
 	else verboseLog("not making documentation in HTML format");
 

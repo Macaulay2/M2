@@ -13,6 +13,7 @@ currentDocumentTag = null
 
 reservedNodeNames := {"Top", "Table of Contents"}
 
+-- TODO: handle this in methods from code.m2
 methodNames := set {NewFromMethod, NewMethod, NewOfFromMethod, NewOfMethod, id, Ext, Tor}
 
 -----------------------------------------------------------------------------
@@ -29,6 +30,7 @@ enlist := x -> if instance(x, List) then x else {x}
 -- verifying the document Key
 -----------------------------------------------------------------------------
 -- here we check that the method a putative document tag documents is actually installed
+-- TODO: simplify this using methods from code.m2
 verifyKey = method(Dispatch => Thing)
 verifyKey Thing    := key -> key
 verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Module)
@@ -40,7 +42,9 @@ verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Mod
     and not (instance(key#0, Sequence) and 2 == #key#0 and key#0#1 === symbol= and instance(key#0#0, Keyword))
     then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function, command, scripted functor, or keyword");
     --
-    if (
+    if  isUnaryAssignmentOperator key           -- e.g., ((?, =), Type), or (?, =)
+    or isBinaryAssignmentOperator key then true -- e.g., ((?, =), Type, Type)
+    else if (
 	-- this will all get screwed up with immutable types present
 	if      #key  > 2 then ( t := youngest drop(key, 1); t#?key            and instance(t#key,         Function) )
 	else if #key == 2 then ( instance(key#1, HashTable) and key#1#?(key#0) and instance(key#1#(key#0), Function) )

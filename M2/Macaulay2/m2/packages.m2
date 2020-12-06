@@ -87,6 +87,9 @@ isPackageLoaded := pkgname -> PackageDictionary#?pkgname and instance(value Pack
 checkPackageName = title -> (
     if not match("^[[:alnum:]]+$", title) then error("package title not alphanumeric: ", format title))
 
+-- put x in front of L
+pullahead := (x, L) -> prepend(x, delete(x, L))
+
 -----------------------------------------------------------------------------
 -- gdbm functions
 -----------------------------------------------------------------------------
@@ -117,7 +120,7 @@ toString Package := pkg -> if pkg#?"pkgname" then pkg#"pkgname" else "-*package*
 texMath  Package := pkg -> texMath toString pkg
 options  Package := pkg -> pkg.Options
 
--- TODO: what is this for?
+-- TODO: should this go elsewhere?
 toString Dictionary := dict -> (
     if hasAnAttribute dict then (
 	if hasAttribute(dict, PrintNames)        then getAttribute(dict, PrintNames) else
@@ -193,8 +196,8 @@ needsPackage String  := opts -> pkgname -> (
 -- used as the default loadOptions in newPackage
 loadPackageOptions#"default" = new MutableHashTable from options loadPackage
 
-getpkg       = pkgname -> if PackageDictionary#?pkgname then value PackageDictionary#pkgname else dismiss needsPackage pkgname
-getpkgNoLoad = pkgname -> if PackageDictionary#?pkgname then value PackageDictionary#pkgname
+getpkg       = pkgname -> if isPackageLoaded pkgname then value PackageDictionary#pkgname else dismiss needsPackage pkgname
+getpkgNoLoad = pkgname -> if isPackageLoaded pkgname then value PackageDictionary#pkgname
 
 -----------------------------------------------------------------------------
 -- newPackage
@@ -504,7 +507,7 @@ beginDocumentation = () -> (
 	currentPackage#"documentation not loaded" = true;
 	return end);
     if notify then printerr("beginDocumentation: reading the rest of ", currentFileName);
-    if not member(pkgname, {"Text", "SimpleDoc"}) then (needsPackage "SimpleDoc"; needsPackage "Text";))
+    if not member(pkgname, {"Text", "SimpleDoc"}) then needsPackage \ {"Text", "SimpleDoc"};)
 
 ---------------------------------------------------------------------
 
@@ -535,10 +538,9 @@ package Dictionary := d -> (
 	if (pkg = value pkg).?Dictionary and pkg.Dictionary === d then break pkg))
 
 use Package := pkg -> (
-    -- TODO: where is this ever used? make sure these simplifications are okay
     scan(pkg.Options.PackageExports, needsPackage);
-    if not member(pkg,            loadedPackages) then loadedPackages = prepend(pkg,            loadedPackages);
-    if not member(pkg.Dictionary, dictionaryPath) then dictionaryPath = prepend(pkg.Dictionary, dictionaryPath);
+    if not member(pkg,            loadedPackages) then loadedPackages = pullahead(pkg,            loadedPackages);
+    if not member(pkg.Dictionary, dictionaryPath) then dictionaryPath = pullahead(pkg.Dictionary, dictionaryPath);
     checkShadow();
     if pkg.?use then pkg.use pkg else pkg)
 
@@ -552,13 +554,17 @@ debug Package := pkg -> (
 -----------------------------------------------------------------------------
 -- evaluateWithPackage
 -----------------------------------------------------------------------------
+-- this trick allows us to advantage of tail-call optimization
+-- in order to reduce the stack size in recursive calls
+pushDictionary :=  d     -> (dictionaryPath = prepend(d, dictionaryPath); d)
+popDictionary  := (d, s) -> (dictionaryPath =    drop(dictionaryPath, 1); s)
+
 -- This is only used to inquire about a symbol from the Text package.
 -- Probably only necessary because Text documents Hypertext objects.
 -- Is there an alternative way? Is is used by document.m2 and installPackage.m2
 evaluateWithPackage = (pkg, object, func) -> (
     if member(pkg.Dictionary, dictionaryPath) then return func object;
-    dictionaryPath = prepend(pkg.Dictionary, dictionaryPath);
-    first (func object, dictionaryPath = drop(dictionaryPath, 1)))
+    popDictionary(pushDictionary pkg.Dictionary, func object))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
