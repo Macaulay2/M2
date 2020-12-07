@@ -685,7 +685,7 @@ setupfun("rawConwayPolynomial",rawConwayPolynomial);
 
 export rawRRi(e:Expr):Expr := (
      when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
-     else toExpr(Ccode(RawRingOrNull, "rawRingRRi(",toInt(prec),")" ))
+     else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRi(",toInt(prec),")" ))
      else WrongArgZZ(1));
 setupfun("rawRRi",rawRRi);
 
@@ -1181,10 +1181,10 @@ export rawToRR(e:Expr):Expr := (
      else WrongArg("a raw ring element"));
 setupfun("rawToRR",rawToRR);
 
-export rawToRRi(e:Expr):Expr := ( -- Need interval implemented
-   --  when e
-   --  is x:RawRingElementCell do toExpr(Ccode(RRiorNull, "IM2_RingElement_to_BigReal(",x.p, ")" ))
-   --  else
+export rawToRRi(e:Expr):Expr := (
+     --when e
+     --is x:RawRingElementCell do toExpr(Ccode(RRiorNull, "IM2_RingElement_to_Interval(",x.p, ")" ))
+     --else
     WrongArg("a raw ring element"));
 setupfun("rawToRRi",rawToRRi);
 
