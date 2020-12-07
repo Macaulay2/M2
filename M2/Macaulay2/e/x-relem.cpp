@@ -83,7 +83,7 @@ const Ring /* or null */ *rawGaloisField(const RingElement *f)
   }
 }
 
-const Ring /* or null */ *rawRingRRi(unsigned long prec)
+const Ring /* or null */ *IM2_Ring_RRi(unsigned long prec)
 {
   return M2::ConcreteRing<M2::ARingRRi>::create(new M2::ARingRRi(prec));
 }
@@ -616,6 +616,32 @@ gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
         ERROR("expected an element of RRR");
         return nullptr;
     }
+}
+
+gmp_RRorNull IM2_RingElement_to_Interval(const RingElement *a)
+{
+    /*const Ring *R = a->get_ring();
+    gmp_RRmutable result;
+    const M2::ConcreteRing<M2::ARingRRR> *R1;
+    
+    switch (R->ringID())
+    {
+        case M2::ring_RR:
+            result = getmemstructtype(gmp_RRmutable);
+            mpfr_init2(result, 53);
+            mpfr_set_d(result, a->get_value().get_double(), GMP_RNDN);
+            return moveTo_gmpRR(result);
+        case M2::ring_RRR:
+            R1 =
+            dynamic_cast<const M2::ConcreteRing<M2::ARingRRR> *>(a->get_ring());
+            result = getmemstructtype(gmp_RRmutable);
+            mpfr_init2(result, R1->get_precision());
+            mpfr_set(result, a->get_value().get_mpfr(), GMP_RNDN);
+            return moveTo_gmpRR(result);
+        default:
+            ERROR("expected an element of RRR");*/
+            return nullptr;
+    //}
 }
 
 gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a)

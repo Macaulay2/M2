@@ -66,17 +66,15 @@ class ARingRRi : public RingInterface
   // Do not take the same element and store it as two different ring_elem's!!
   void to_ring_elem(ring_elem &result, const ElementType &a) const
   {
-      throw 20;
-    /*mpfr_ptr res = getmemstructtype(mpfr_ptr);
-    mpfr_init2(res, mPrecision);
-    mpfr_set(res, &a, GMP_RNDN);
-    result = ring_elem(moveTo_gmpRR(res));*/
+      mpfi_ptr res = getmemstructtype(mpfi_ptr);
+      mpfi_init2(res,mPrecision);
+      mpfi_set(res, &a);
+      result = ring_elem(moveTo_gmpRRi(res));
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-      throw 20;
-    //mpfr_set(&result, a.get_mpfr(), GMP_RNDN);
+      mpfi_set(&result, a.get_mpfi());
   }
 
   // 'init', 'init_set' functions
@@ -222,12 +220,16 @@ class ARingRRi : public RingInterface
     else if (n == 0)
       mpfi_set_si(&result,0);
     else if (n<0)
-      throw 20;
+    {
+       // std::cout << "power\n";
+        throw 20;
+    }
   }
 
   /* Not entirely sure how to deal with this one. */
    void power_mpz(ElementType &result, const ElementType &a, mpz_srcptr n) const
   {
+    //  std::cout << "power_mpz\n";
       throw 20;
     //mpfr_pow_z(&result, &a, n, GMP_RNDN);
   }
@@ -268,6 +270,7 @@ class ARingRRi : public RingInterface
             int first_var,
             ring_elem &result) const
   {
+     // std::cout << "eval\n";
       throw 20;
    /* if (!map->get_ring()->from_BigReal(&f, result))
       {
@@ -279,12 +282,14 @@ class ARingRRi : public RingInterface
 /* Not ready */
   void zeroize_tiny(gmp_RR epsilon, ElementType &a) const
   {
+    //  std::cout << "zeroize_tiny\n";
       throw 20;
     //if (mpfr_cmpabs(&a, epsilon) < 0) set_zero(a);
   }
     /* Not ready */
   void increase_norm(gmp_RRmutable norm, const ElementType &a) const
   {
+     // std::cout << "increase_norm\n";
       throw 20;
    /* if (mpfr_cmpabs(&a, norm) > 0)
       {
