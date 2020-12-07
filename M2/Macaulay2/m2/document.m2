@@ -55,9 +55,8 @@ verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Mod
 verifyKey Array    := key -> (
     (nkey, opt) := (key#0, key#1);                    -- e.g., [(res, Module), Strategy]
     if instance(opt,  Option)   then opt = first opt; -- e.g., [(res, Module), Strategy => FastNonminimal]
-    if instance(nkey, Sequence)
-    and #methods nkey > 0       then fn := first nkey else
-    if instance(nkey, Function) then fn  =       nkey
+    fn := if instance(nkey, Function) then nkey
+    else  if instance(nkey, Sequence) then ( verifyKey nkey; first nkey )
     else error("expected ", format toString nkey, " to be a function or existing method key in document tag for optional argument: ", silentRobustString(40, 1, key));
     if  not (options nkey)#?opt
     and not (options   fn)#?opt
