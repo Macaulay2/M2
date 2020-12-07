@@ -1,6 +1,11 @@
 // Copyright 2002 Michael E. Stillman
 
-#include "engine.h"
+#include "interface/groebner.h"
+
+#include <iostream>
+#include <limits>
+#include <sstream>
+
 #include "hilb.hpp"
 #include "comp-gb.hpp"
 #include "comp-res.hpp"
@@ -12,12 +17,14 @@
 #include "relem.hpp"
 
 #include "poly.hpp"
-#include <sstream>
-#include <iostream>
 #include "interrupted.hpp"
 #include "f4/res-f4-computation.hpp"
 
-#include <limits>
+class FreeModule;
+struct MonomialOrdering;
+struct MutableMatrix;
+struct RingMap;
+
 bool warning_given_for_gb_or_res_over_RR_or_CC = false;
 
 void test_over_RR_or_CC(const Ring *R)
@@ -1054,7 +1061,7 @@ class MGBCallback : public mgb::GroebnerConfiguration::Callback
   bool mInterrupted;
 };
 
-// The following (in x-monoid.cpp) needs to be put into a header file.
+// TODO: The following (in x-monoid.cpp) needs to be put into a header file.
 extern bool monomialOrderingToMatrix(
     const struct MonomialOrdering &mo,
     std::vector<int> &mat,

@@ -2,10 +2,13 @@
 use util;
 use tokens;
 
-header "
-  #include <engine.h>
-  #include <monomial.hpp>
-";
+header "// required for equality checks
+#include <interface/freemodule.h>           // for IM2_FreeModule_is_equal
+#include <interface/matrix.h>               // for IM2_Matrix_is_equal
+#include <interface/monomial-ideal.h>       // for IM2_MonomialIdeal_is_equal
+#include <interface/ringelement.h>          // for IM2_RingElement_is_equal
+#include <interface/ringmap.h>              // for IM2_RingMap_is_equal
+#include <monomial.hpp>                     // for Monomial"; -- TODO: remove this one
 
 equal(lhs:Expr,rhs:Expr):Expr;
 

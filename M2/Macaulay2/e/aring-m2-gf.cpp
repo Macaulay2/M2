@@ -3,11 +3,12 @@
 #include <vector>
 #include <iostream>
 
+#include "interface/random.h"
 #include "relem.hpp"
 #include "polyring.hpp"
 #include "aring-m2-gf.hpp"
 #include "ringmap.hpp"
-
+#include "monoid.hpp"
 #include "interrupted.hpp"
 
 extern "C" void dringelem(const Ring *R, const ring_elem f);

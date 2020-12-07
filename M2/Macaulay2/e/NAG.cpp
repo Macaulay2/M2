@@ -3,7 +3,11 @@
 // Anton Leykin's code in this file is in the public domain.
 
 #include "NAG.hpp"
-#include "matrix-con.hpp"
+
+#include "engine-includes.hpp" // need HAVE_DLFCN_H
+#include <M2/math-include.h>
+
+#include <time.h>
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #else
@@ -11,11 +15,15 @@
 #define dlsym(x, y) NULL
 #define dlclose(x) (-1)
 #endif
-#include <time.h>
-#include <exception>
+
+#include "interface/NAG.h"
 #include "lapack.hpp"
+#include "matrix-con.hpp"
+#include "matrix.hpp"
 #include "poly.hpp"
 #include "relem.hpp"
+
+class FreeModule;
 
 // Straight Line Program classes
 

@@ -9,6 +9,13 @@
 #include "mat.hpp"
 #include "monideal.hpp"
 
+void showint(mpz_srcptr a)
+{
+  char s[1000];
+  mpz_get_str(s, 10, a);
+  fprintf(stderr, " %s ", s);
+}
+
 void dintarray(M2_arrayint a)
 {
   buffer o;

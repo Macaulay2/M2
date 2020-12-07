@@ -4,9 +4,11 @@
 #define _polyring_hpp_
 
 #include "ringelem.hpp"
-#include "engine.h"
-#include "skew.hpp"
+
 #include <vector>
+
+#include "interface/computation.h"
+#include "skew.hpp"
 
 class buffer;
 class Monoid;

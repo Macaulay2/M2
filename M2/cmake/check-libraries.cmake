@@ -326,9 +326,6 @@ if(FACTORY_FOUND)
   # whether factory was built with --enable-streamio
   check_cxx_source_compiles([[#include <factory/factory.h>
     int main(){Variable x; x = Variable(); std::cout << x;return 0;}]] FACTORY_STREAMIO)
-  # whether Prem() from factory is public
-  check_cxx_source_compiles([[#include <factory/factory.h>
-    int main(){CanonicalForm p,q; Prem(p,q);return 0;}]] HAVE_FACTORY_PREM)
 else()
   unset(FACTORY_STREAMIO CACHE)
 endif()

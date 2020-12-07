@@ -182,6 +182,7 @@ MutableMatrix *internMutableMatrix(MutableMatrix *G)
 extern long nres;
 extern long nres_destruct;
 
+extern "C" // TODO: remove when this function is in e/interface
 M2_string engineMemory()
 {
   buffer o;

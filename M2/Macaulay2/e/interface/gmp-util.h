@@ -1,8 +1,15 @@
-#include "../d/M2mem.h"
+#ifndef _gmp_util_h_
+#  define _gmp_util_h_
 
-#if defined(__cplusplus)
+#  include "../d/M2mem.h"
+
+/**
+   Multiprecision arithmetic allocation utility routines
+ */
+
+#  if defined(__cplusplus)
 extern "C" {
-#endif
+#  endif
 
 inline void mpz_reallocate_limbs (mpz_ptr _z)
 { 
@@ -92,8 +99,13 @@ inline void mpfr_reallocate_limbs (mpfr_ptr _z)
     mpfr_reallocate_limbs(a->im);
     return (gmp_CC) a;
   }
-  
-#if defined(__cplusplus)
-}
-#endif
-  
+
+#  if defined(__cplusplus)
+  }
+#  endif
+
+#endif /* _gmp_util_h_ */
+
+// Local Variables:
+// indent-tabs-mode: nil
+// End:

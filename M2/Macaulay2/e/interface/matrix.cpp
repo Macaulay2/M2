@@ -1,13 +1,28 @@
 // Copyright 1995 Michael E. Stillman
 
-#include "relem.hpp"
-#include "matrix.hpp"
-#include "matrix-con.hpp"
-#include "LLL.hpp"
-#include "text-io.hpp"
+#include "interface/matrix.h"
+
+#include <M2/math-include.h>
+
+#include "NAG.hpp" // TODO: can this be removed?
+#include "SLP-defs.hpp"
+#include "buffer.hpp"
+#include "dmat.hpp"
+#include "error.h"
 #include "exceptions.hpp"
-#include "NAG.hpp"
-#include "engine.h"
+#include "freemod.hpp"
+#include "interface/NAG.h"
+#include "interface/gmp-util.h"
+#include "mat.hpp"
+#include "matrix-con.hpp"
+#include "matrix.hpp"
+#include "monoid.hpp"
+#include "mutablemat-defs.hpp"
+#include "relem.hpp"
+#include "ring.hpp"
+#include "ringelem.hpp"
+
+namespace M2 { class ARingCC; }
 
 const FreeModule *IM2_Matrix_get_target(const Matrix *M) { return M->rows(); }
 const FreeModule *IM2_Matrix_get_source(const Matrix *M) { return M->cols(); }

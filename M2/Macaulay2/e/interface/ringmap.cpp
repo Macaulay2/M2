@@ -1,8 +1,15 @@
-#include "engine.h"
-#include "ringmap.hpp"
+#include "interface/ringmap.h"
+
+#include "buffer.hpp"
+#include "error.h"
 #include "exceptions.hpp"
+#include "freemod.hpp"
+#include "mat.hpp"
 #include "matrix.hpp"
-#include "mutablemat.hpp"
+#include "ringmap.hpp"
+
+class Ring;
+class RingElement;
 
 const Ring *IM2_RingMap_target(const RingMap *F) { return F->get_ring(); }
 M2_string IM2_RingMap_to_string(const RingMap *F)
