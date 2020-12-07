@@ -515,7 +515,8 @@ doc ///
     ring had variables of nonzero degree, sometimes incorrect answers
     resulted.
   SeeAlso
-    truncate
+    (truncate,List,Matrix)
+    (truncate,List,Module)
     basis
 ///
 
