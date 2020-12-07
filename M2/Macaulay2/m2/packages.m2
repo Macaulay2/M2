@@ -554,7 +554,7 @@ debug Package := pkg -> (
 -----------------------------------------------------------------------------
 -- evaluateWithPackage
 -----------------------------------------------------------------------------
--- this trick allows us to advantage of tail-call optimization
+-- this trick allows us to take advantage of tail-call optimization
 -- in order to reduce the stack size in recursive calls
 pushDictionary :=  d     -> (dictionaryPath = prepend(d, dictionaryPath); d)
 popDictionary  := (d, s) -> (dictionaryPath =    drop(dictionaryPath, 1); s)

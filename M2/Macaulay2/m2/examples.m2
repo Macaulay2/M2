@@ -136,7 +136,8 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
     and not match("(installMethod|load|export|newPackage)", inputs) -- exports may land in the package User
     and not match("(GlobalAssignHook|GlobalReleaseHook)", inputs) -- same as above
     and not match({"ThreadedGB", "RunExternalM2"}, pkg#"pkgname") -- TODO: eventually remove
-    and false -- TODO: this is temporarily here, to be removed after v1.17 is released
+    -- TODO: this is temporarily here, to be removed after v1.17 is released
+    and match({"Macaulay2Doc"}, pkg#"pkgname")
     then (
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
