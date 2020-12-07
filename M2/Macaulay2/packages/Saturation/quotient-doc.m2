@@ -7,6 +7,9 @@ doc ///
 Node
   Key
 -- return an ideal
+    (quotient, Module, Module)
+    (symbol:, Module, Module)
+-- return an ideal
     (quotient, Ideal, Ideal)
     (quotient, Ideal, RingElement)
     (quotient, MonomialIdeal, RingElement)
@@ -17,9 +20,6 @@ Node
     (quotient, Module, RingElement)
     (symbol:, Module, Ideal)
     (symbol:, Module, RingElement)
--- return an ideal
-    (quotient, Module, Module)
-    (symbol:, Module, Module)
     [quotient, MinimalGenerators]
   Headline
     ideal or submodule quotient
