@@ -71,13 +71,13 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     User#"private dictionary" = new Dictionary;
     OutputDictionary = new GlobalDictionary;
     dictionaryPath = {
-	User#"private dictionary", -- this is necessary mainly due to indeterminates.m2
-	oldPrivateDictionary,
 	Core.Dictionary,
 	OutputDictionary,
 	PackageDictionary};
     scan(Core#"pre-installed packages", needsPackage);
     needsPackage toString currentPackage;
+    dictionaryPath = prepend(oldPrivateDictionary,      dictionaryPath); -- this is necessary mainly due to T from degreesMonoid
+    dictionaryPath = prepend(User#"private dictionary", dictionaryPath); -- this is necessary mainly due to indeterminates.m2
     currentPackage = User;
 
     ret := capture' s;

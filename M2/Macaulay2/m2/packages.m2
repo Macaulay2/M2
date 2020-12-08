@@ -87,9 +87,6 @@ isPackageLoaded := pkgname -> PackageDictionary#?pkgname and instance(value Pack
 checkPackageName = title -> (
     if not match("^[[:alnum:]]+$", title) then error("package title not alphanumeric: ", format title))
 
--- put x in front of L
-pullahead := (x, L) -> prepend(x, delete(x, L))
-
 -----------------------------------------------------------------------------
 -- gdbm functions
 -----------------------------------------------------------------------------
@@ -539,8 +536,8 @@ package Dictionary := d -> (
 
 use Package := pkg -> (
     scan(pkg.Options.PackageExports, needsPackage);
-    if not member(pkg,            loadedPackages) then loadedPackages = pullahead(pkg,            loadedPackages);
-    if not member(pkg.Dictionary, dictionaryPath) then dictionaryPath = pullahead(pkg.Dictionary, dictionaryPath);
+    loadedPackages = prepend(pkg,            delete(pkg,            loadedPackages));
+    dictionaryPath = prepend(pkg.Dictionary, delete(pkg.Dictionary, dictionaryPath));
     checkShadow();
     if pkg.?use then pkg.use pkg else pkg)
 
