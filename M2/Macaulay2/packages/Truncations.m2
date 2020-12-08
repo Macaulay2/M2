@@ -515,7 +515,8 @@ doc ///
     ring had variables of nonzero degree, sometimes incorrect answers
     resulted.
   SeeAlso
-    truncate
+    (truncate,List,Matrix)
+    (truncate,List,Module)
     basis
 ///
 
@@ -553,7 +554,6 @@ TEST ///
 
 doc ///
   Key
-    truncate
     (truncate,ZZ,Module)
     (truncate,List,Module)
     (truncate,ZZ,Ideal)

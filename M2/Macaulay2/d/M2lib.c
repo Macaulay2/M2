@@ -80,20 +80,6 @@ int system_hasException(int fd) {
   return ret;
 }
 
-#include "../e/rand.h"
-
-int system_randomint(void) {
-#if 0
-     extern long random();
-     return random();
-#elif 0
-     extern long random00();
-     return random00();
-#else
-     return rawRandomInt((int32_t)~0>>1);
-#endif
-     }
-
 extern void M2_stack_trace();
 
 extern void fatal(const char *s, ...);

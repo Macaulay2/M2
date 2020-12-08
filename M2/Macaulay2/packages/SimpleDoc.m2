@@ -1,6 +1,5 @@
 -- -*- coding: utf-8 -*-
 -- TODO: add linter
--- TODO: small bug: if indentation of examples increases, the further indented lines are ignored
 newPackage(
     "SimpleDoc",
     Version => "1.2",
@@ -172,7 +171,7 @@ markup = (textlines, keylinenum) -> (
 singleString = (key, textlines, keylinenum) -> (
      if #textlines == 0 then
        error("line ", toString keylinenum, " of string: expected single indented line after ", toString key)
-     else if #textlines > 1 then
+     else if #textlines > 1 and 0 < #getNonempty drop(textlines, 1) then
        error("line ", toString getLinenum textlines#1, " of string: expected single indented line after ", toString key);
      getText textlines#0)
 

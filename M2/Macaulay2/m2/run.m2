@@ -29,7 +29,7 @@ runString = (teststring, pkg, usermode) -> (
     rm := fn -> if fileExists fn then removeFile fn;
     rmall := () -> rm \ {inf, tmpf, outf};
     inf << teststring << endl << close;
-    ret := runFile(inf, hash teststring, outf, tmpf, "test results", pkg, t->t, usermode, {});
+    ret := runFile(inf, hash teststring, outf, tmpf, pkg, identity, usermode, {});
     if ret then (rm inf; rm outf;);
     ret)
 
@@ -70,15 +70,13 @@ argumentMode = defaultMode
 -- inputhash has of input file
 -- outf      output file
 -- tmpf      temp file
--- desc      description to print
 -- pkg
 -- announcechange
 -- usermode
 -- examplefiles
 -- returns false if error
-runFile = (inf, inputhash, outf, tmpf, desc, pkg, announcechange, usermode, examplefiles) -> (
+runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefiles) -> (
      announcechange();
-     stderr << commentize ("making ", desc, if debugLevel > 0 then " in file " | outf) << flush; -- skipping endl on purpose
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below

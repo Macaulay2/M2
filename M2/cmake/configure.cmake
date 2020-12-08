@@ -180,7 +180,7 @@ endif()
 # Note: certain flags are initialized by CMake based on the compiler and build type.
 if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
   # INIT: -g
-  add_compile_options(-O0 -DGC_DEBUG)
+  add_compile_options(-O0 -DGC_DEBUG -DMEMT_DEBUG -DMATHIC_DEBUG -DMATHICGB_DEBUG)
 else()
   add_compile_options(-DNDEBUG -DOM_NDEBUG -DSING_NDEBUG -Wuninitialized)
 endif()

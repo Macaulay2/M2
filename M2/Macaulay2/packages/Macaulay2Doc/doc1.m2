@@ -403,6 +403,7 @@ TEST ///
 
 -- Example 4.1: the bounds can be sharp.
 TEST ///
+     needsPackage "Truncations"
      S = QQ[w,x,y,z];
      X = Proj S;
      I = monomialCurveIdeal(S,{1,3,4})

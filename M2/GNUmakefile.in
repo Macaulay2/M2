@@ -304,6 +304,7 @@ report-M2-location:
 
 VALIDATOR_PATH = /usr/lib/cgi-bin/w3c-markup-validator/check
 w3c-markup-validator-is-installed: $(VALIDATOR_PATH)
+HIDE := $(if $(VERBOSE),,true )
 validate-html: w3c-markup-validator-is-installed
 	@ echo "-- validating all html and xhtml files in @pre_prefix@/@tail_htmldir@"
 	@ TMP="/tmp/validate-$$$$"				;		\
@@ -311,7 +312,9 @@ validate-html: w3c-markup-validator-is-installed
 	    ( i=0						;		\
 	      n=0						;		\
 	      while read x					;		\
-	      do @srcdir@/util/validator-runner.py "$$x" > $$TMP		;		\
+	      do $(HIDE)echo "validating: $$x" | \
+		     sed 's|@pre_prefix@/@tail_htmldir@/||'	;		\
+		 @srcdir@/util/validator-runner.py "$$x" > $$TMP		;		\
 		 i=$$(($$i + 1))				;		\
 		 if [ -s $$TMP ]				;		\
 		 then n=$$(($$n + 1))				;		\

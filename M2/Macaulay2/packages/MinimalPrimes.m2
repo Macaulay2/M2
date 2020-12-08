@@ -67,8 +67,6 @@ newPackage(
 -- .  Document minprimes, something about the strategies
 -- .  Export only the symbols we want
 
-exportFrom_Core { "decompose" }
-
 export { "Hybrid", "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment", "installMinprimes" }
 
 importFrom_Core { "printerr", "raw", "rawCharSeries", "rawGBContains", "rawRadical", "newMonomialIdeal" }
@@ -194,7 +192,7 @@ minimalPrimes = method(
 
 -- returns a list of ideals, the minimal primes of I
 minimalPrimes Ideal := List => opts -> I -> minprimesHelper(I, (minimalPrimes, Ideal), opts)
--- TODO: decompose is declared in m2/factor.m2 as method(Options => true), move it here eventually
+-- decompose is declared in m2/shared.m2 as method(Options => true)
 decompose     Ideal := List => options minimalPrimes >> opts -> I -> minprimesHelper(I, (minimalPrimes, Ideal), opts)
 
 -- keys: none so far

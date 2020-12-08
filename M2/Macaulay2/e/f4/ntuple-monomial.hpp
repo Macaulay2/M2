@@ -3,8 +3,9 @@
 #ifndef _ntuple_monomial_hpp_
 #define _ntuple_monomial_hpp_
 
-#include "../style.hpp"
-#include "../engine.h"
+#include <string.h>
+
+#include "style.hpp"
 
 class buffer;
 

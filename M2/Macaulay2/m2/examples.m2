@@ -2,6 +2,7 @@
 -- Methods for processing and accessing examples from the documentation
 -----------------------------------------------------------------------------
 -* Exported:
+ * EXAMPLE
  * capture
  * examples
  *-
@@ -12,8 +13,36 @@ processExamplesStrict = true
 -- local utilities
 -----------------------------------------------------------------------------
 
-M2outputRE      = "\n+(?=i+[1-9][0-9]* : )"
-separateM2output = str -> drop(drop(separate(M2outputRE, str),1),-1)
+M2outputRE       = "\n+(?=i+[1-9][0-9]* : )"
+M2outputHash     = "-- -*- M2-comint -*- hash: "
+separateM2output = str -> (
+    L := separate(M2outputRE, replace("(\\A\n+|\n+\\Z)", "", str));
+    if match(regexQuote M2outputHash, str) then drop(drop(L, -1), 1) else L)
+
+trimlines := L -> apply(L, x ->
+    if instance(x, String) then (
+	s := lines x;
+	r := if s#?0 then demark_newline prepend(replace("^[[:space:]]+", "", s#0), drop(s, 1)) else x;
+	if #r > 0 then r)
+    else x)
+
+-----------------------------------------------------------------------------
+-- EXAMPLE
+-----------------------------------------------------------------------------
+
+makeExampleItem = method()
+-- TODO: can this be handled with a NewFromMethod?
+makeExampleItem PRE    := p -> flatten apply(toList p, s -> PRE \ separateM2output s)
+makeExampleItem String := s -> ExampleItem s
+
+-- allows canned examples with EXAMPLE PRE "..."
+EXAMPLE = method(Dispatch => Thing)
+EXAMPLE PRE         :=
+EXAMPLE String      := x -> EXAMPLE {x}
+EXAMPLE VisibleList := x -> (
+    L := flatten \\ makeExampleItem \ nonnull trimlines toList x;
+    if #L == 0 then error "EXAMPLE: empty list of examples encountered";
+    TABLE flatten {"class" => "examples", apply(L, item -> TR TD item)})
 
 -----------------------------------------------------------------------------
 -- capture
@@ -42,13 +71,13 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     User#"private dictionary" = new Dictionary;
     OutputDictionary = new GlobalDictionary;
     dictionaryPath = {
-	User#"private dictionary", -- this is necessary mainly due to indeterminates.m2
-	oldPrivateDictionary,
 	Core.Dictionary,
 	OutputDictionary,
 	PackageDictionary};
     scan(Core#"pre-installed packages", needsPackage);
     needsPackage toString currentPackage;
+    dictionaryPath = prepend(oldPrivateDictionary,      dictionaryPath); -- this is necessary mainly due to T from degreesMonoid
+    dictionaryPath = prepend(User#"private dictionary", dictionaryPath); -- this is necessary mainly due to indeterminates.m2
     currentPackage = User;
 
     ret := capture' s;
@@ -115,6 +144,7 @@ getExampleOutput := (pkg, fkey) -> (
 -- used in installPackage.m2
 -- TODO: store in a database instead
 storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
+    verboseLog("storing example results from output file", minimizeFilename outf);
     if fileExists outf then (
 	outstr := reproduciblePaths get outf;
 	outf << outstr << close;
@@ -125,7 +155,6 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash, changeFunc, usermode, verboseLog) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
     desc := "example results for " | format fkey;
-    desc  = concatenate(desc, 62 - #desc);
     -- try capturing in the same process
     if  not match("no-capture-flag", inputs) -- this flag is really necessary, but only sometimes
     -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
@@ -136,22 +165,27 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
     and not match("(installMethod|load|export|newPackage)", inputs) -- exports may land in the package User
     and not match("(GlobalAssignHook|GlobalReleaseHook)", inputs) -- same as above
     and not match({"ThreadedGB", "RunExternalM2"}, pkg#"pkgname") -- TODO: eventually remove
-    and false -- TODO: this is temporarily here, to be removed after v1.17 is released
+    -- TODO: this is temporarily here, to be removed after v1.17 is released
+    and match({"Macaulay2Doc"}, pkg#"pkgname")
     then (
-	stderr << commentize ("capturing ", desc) << flush; -- the timing info will appear at the end
+	desc = concatenate(desc, 62 - #desc);
+	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
 	(err, output) := evaluateWithPackage(pkg, inputs, capture_(UserMode => false));
-	if not err then return outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close);
+	if not err then return outf << M2outputHash << inputhash << endl << output << close);
     -- fallback to using an external process
-    desc  = concatenate(desc, 65 - #desc);
+    stderr << commentize pad("making " | desc, 72) << flush;
     data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
     inf << replace("-\\* no-capture-flag \\*-", "", inputs) << endl << close;
-    if runFile(inf, inputhash, outf, errf, desc, pkg, changeFunc fkey, usermode, data)
+    if runFile(inf, inputhash, outf, errf, pkg, changeFunc fkey, usermode, data)
     then ( removeFile inf; cacheFunc fkey ))
 
 -----------------------------------------------------------------------------
 -- process examples
 -----------------------------------------------------------------------------
 -- TODO: make this reentrant
+-- TODO: avoid the issue of extra indented lines being skipped in SimpleDoc
+-- a hacky fix is dumping any remaining example results along with the last example
+-- a better fix probably requires rethinking the ExampleItem mechanism
 
 local currentExampleKey
 local currentExampleCounter
@@ -171,8 +205,7 @@ processExamplesLoop ExampleItem := x -> (
     currentExampleCounter = currentExampleCounter + 1;
     result)
 
-processExamples = (pkgname, fkey, docBody) -> (
-    pkg := getpkg pkgname;
+processExamples = (pkg, fkey, docBody) -> (
     currentExampleKey = fkey;
     currentExampleCounter = 0;
     currentExampleResults = getExampleOutput(pkg, fkey);

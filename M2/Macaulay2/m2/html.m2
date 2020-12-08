@@ -148,7 +148,7 @@ html MENU := x -> html redoMENU x
 
 html TO   := x -> html TO2{tag := x#0, format tag | if x#?1 then x#1 else ""}
 html TO2  := x -> (
-    tag := getPrimaryTag x#0;
+    tag := getPrimaryTag fixup x#0;
     fkey := format tag;
     -- TODO: add this to htmlLiteral?
     name := if match("^ +$", x#1) then #x#1 : "&nbsp;&nbsp;" else x#1;

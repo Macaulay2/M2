@@ -68,7 +68,7 @@ htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing       := key -> htmlFilename makeDocumentTag key
 htmlFilename DocumentTag := tag -> (
     fkey := format tag;
-    pkgname := package tag;
+    pkgname := tag.Package;
     basefilename := if fkey === pkgname then topFileName else toFilename fkey | ".html";
     if currentPackage#"pkgname" === pkgname then (layout, prefix) := (installLayout, installPrefix)
     else (
@@ -97,17 +97,11 @@ makeAnchors := n -> (
 anchorsUpTo := entry -> if alpha#?numAnchorsMade and entry >= alpha#numAnchorsMade then makeAnchors length select(alpha, c -> entry >= c)
 remainingAnchors := () -> makeAnchors (#alpha)
 
-packageTagList := (pkg, topDocumentTag) -> checkIsTag \ unique join(
-     apply(
-	  select(pairs pkg.Dictionary,(nam,sym) -> not match ( "\\$" , nam )),
-	  (nam,sym) -> makeDocumentTag(sym, Package => pkg)),
-     select(
-	  apply(
-	       values pkg#"raw documentation",
-	       doc -> doc.DocumentTag),
-	  x -> x =!= null),
-     { topDocumentTag }
-     )
+packageTagList := (pkg, topDocumentTag) -> checkIsTag \ unique nonnull join(
+    apply(pairs pkg.Dictionary, (name, sym) ->
+	if not match("\\$", name) then makeDocumentTag(sym, Package => pkg)),
+    apply(values pkg#"raw documentation", rawdoc -> rawdoc.DocumentTag),
+    { topDocumentTag })
 
 -----------------------------------------------------------------------------
 -- helper functions for assembleTree
@@ -186,7 +180,7 @@ buildLinks ForestNode := x -> (
 -- constructs the tree-structure for the Subnodes of each node
 -----------------------------------------------------------------------------
 
-assembleTree := (pkg,nodes) -> (
+assembleTree := (pkg, nodes) -> (
     resetCounters();
     -- keep track of various possible issues with the nodes
     visits := new HashTable from {
@@ -202,7 +196,7 @@ assembleTree := (pkg,nodes) -> (
 	    and pkg#"raw documentation"#fkey.?Subnodes then (
 		subnodes := pkg#"raw documentation"#fkey.Subnodes;
 		subnodes  = select(deepApply(subnodes, identity), DocumentTag);
-		subnodes  = select(subnodes, node -> package node === toString pkg);
+		subnodes  = select(subnodes, node -> package node === pkg);
 		tag => getPrimaryTag \ subnodes)
 	    else tag => {}));
     -- build the forest
@@ -210,11 +204,13 @@ assembleTree := (pkg,nodes) -> (
     -- signal errors
     if chkdoc and hadDocumentationError then (
 	scan(keys visits#"missing",
-	    node -> printerr("error: missing reference(s) to subnode documentation: ", format node, newline,
-		"  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node)));
+	    node -> (
+		printerr("error: missing reference(s) to subnode documentation: ", format node);
+		printerr("  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node))));
 	scan(keys visits#"repeated",
-	    node -> printerr("error: repeated references to subnode documentation: ", format node, newline,
-		"  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node)));
+	    node -> (
+		printerr("error: repeated references to subnode documentation: ", format node);
+		printerr("  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node))));
 	error("installPackage: error in assembling the documentation tree"));
     -- build the navigation links
     buildLinks tableOfContents;
@@ -320,7 +316,7 @@ installInfo := (pkg, installPrefix, installLayout, verboseLog) -> (
 
     infoTagConvert' := n -> if topNodeName === n     then "Top" else infoTagConvert n;
     chkInfoKey      := n -> if topNodeName === "Top" then n else if n === "Top" then error "installPackage: encountered a documentation node named 'Top'";
-    chkInfoTag      := t -> if package t =!= pkg#"pkgname" then error("installPackage: alien entry in table of contents: ", toString t);
+    chkInfoTag      := t -> if package t =!= pkg     then error("installPackage: alien entry in table of contents: ", toString t);
 
     pushvar(symbol printWidth, 79);
 
@@ -695,6 +691,7 @@ installPackage Package := opts -> pkg -> (
 
 	-- process documentation
 	verboseLog "processing documentation nodes...";
+	-- ~50s -> ~100s for Macaulay2Doc
 	scan(nodes, tag ->
 	    if      isUndocumented tag              then verboseLog("undocumented ", toString tag)
 	    else if isSecondaryTag tag              then verboseLog("is secondary ", toString tag)
@@ -702,6 +699,10 @@ installPackage Package := opts -> pkg -> (
 	    and     not opts.MakeInfo -- when making the info file, we need to process all the documentation
 	    and rawDocumentationCache#?(format tag) then verboseLog("skipping     ", toString tag)
 	    else storeProcessedDocumentation(pkg, tag, opts, verboseLog));
+
+	-- should this be here, or farther up? Note: assembleTree resets the counters, so stay above that.
+	if chkdoc and hadDocumentationError then error(
+	    toString numDocumentationErrors, " errors(s) occurred in processing documentation for package ", toString pkg);
 
 	if pkg#?rawKeyDB and isOpen pkg#rawKeyDB then close pkg#rawKeyDB;
 
@@ -720,6 +721,7 @@ installPackage Package := opts -> pkg -> (
 	pkg#"links prev" = PREV;
 
 	-- check that everything is documented
+	-- ~22s for Macaulay2Doc
 	if chkdoc then (
 	    resetCounters();
 	    scan((if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg)#"exported symbols", s -> (
@@ -746,10 +748,12 @@ installPackage Package := opts -> pkg -> (
 	    toString numDocumentationErrors, " errors(s) occurred in documentation for package ", toString pkg);
 
 	-- make info documentation
+	-- ~60 -> ~70s for Macaulay2Doc
 	if opts.MakeInfo then installInfo(pkg, installPrefix, installLayout, verboseLog)
 	else verboseLog("not making documentation in info format");
 
 	-- make html documentation
+	-- ~50 -> ~80s for Macaulay2Doc
 	if opts.MakeHTML then installHTML(pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts)
 	else verboseLog("not making documentation in HTML format");
 

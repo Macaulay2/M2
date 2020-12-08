@@ -30,7 +30,7 @@ extern char *getmoremem_atomic(char *, size_t oldsize, size_t newsize);
 #define getmemstructtype(S) reinterpret_cast<S>(getmem(sizeofstructtype(S)))
 #define getmematomicarraytype(S,len) reinterpret_cast<S>(getmem_atomic(sizeofarraytype(S,len)))
 #define getmematomicstructtype(S) reinterpret_cast<S>(getmem_atomic(sizeofstructtype(S)))
-#define getmemvectortype(S,len) reinterpret_cast<S*>(getmem(sizeof(S)*len)))
+#define getmemvectortype(S,len) reinterpret_cast<S*>(getmem(sizeof(S)*len))
 #define getmematomicvectortype(S,len) reinterpret_cast<S*>(getmem_atomic(sizeof(S)*(len)))
 #else
 #define getmemarraytype(S,len) (S)(getmem(sizeofarraytype(S,len)))

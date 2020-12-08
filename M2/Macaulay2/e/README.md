@@ -1,3 +1,67 @@
+## Engine Notes
+
+### Fall 2020 Work in Progress
+
+1. Parallel directory structure in e, d, m2
+
+- Main header: `e/engine.h`
+  - should be short, mostly include other headers
+  - organize interface functions in `e/interface`; eg:
+
+        e/interface/matrix.h   // defining types currently in engine.h
+        e/interface/matrix.cpp // previously x-mat.cpp
+
+  - each should be self contained, include minimal dependencies (specifically, not `engine.h`)
+  - associated interpreter and top level code should be placed in appropriate files; eg:
+
+        d/matrix.dd
+        m2/matrix.m2
+
+- unit tests should be provided for all interface routines; eg:
+
+        e/unit-test/matrix.cpp
+
+- Internal routines
+  - should be in respective directories, filename based on the classes; eg:
+
+        e/matrix/matrix.hpp
+        e/matrix/dense.hpp
+
+2. GC barrier between engine and front end
+
+- issue: ringelem, our_new_delete vs our_new_gc
+- goal: ability to hotswap the GC backend by editing only one file
+- benefit: allow easy comparison and benchmarking
+
+3. Computations to be written or rewritten
+
+- e.g. gb, smith normal form, etc.
+
+
+### Engine
+- engine.h and x-*
+- newdelete hash
+- Arithmetic
+ - Flint
+ - GMP
+ - MPFR
+ - Arb, etc.
+- Monoids
+- Rings
+- RingElements
+- RingMaps
+- Matrices
+- FreeModules
+- Computations
+ - LLL
+ - GB
+ - Resolution
+ - Hilbert*
+- NAG
+- Util
+- Interface
+
+
 --------------------------------------------------------
 -- 12/26/2011 MES
 Cleaning up code todo:

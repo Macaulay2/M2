@@ -3,6 +3,14 @@
 truncate = method()
 export "truncate"
 
+decompose = method(Options => true)
+export "decompose"
+
 protect Jacobian
 export "Jacobian"
 
+chi = method()
+export "chi"
+
+protect Iterate
+export "Iterate"
