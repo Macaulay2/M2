@@ -588,7 +588,8 @@ janetResolution(Ideal) := I -> janetResolution janetBasis I
 
 janetResolution(Module) := M -> janetResolution janetBasis presentation M
 
-addHook(Module, symbol resolution, (opts,M) -> if opts.Strategy === Involutive then break janetResolution M)
+addHook((resolution, Module), Strategy => Involutive, (opts, M) ->
+    if opts.Strategy === Involutive then janetResolution M)
 
 
 -- enumeration of a (monomial) vector space basis of R/I

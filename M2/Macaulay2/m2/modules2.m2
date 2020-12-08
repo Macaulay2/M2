@@ -392,10 +392,14 @@ multidegree Module := M -> (
 multidegree Ring := R -> multidegree R^1
 multidegree Ideal := I -> multidegree cokernel generators I
 
-length Module := M -> (
+length Module := ZZ => (cacheValue symbol length) (M -> (
+    c := runHooks((length, Module), M);
+    if c =!= null then c else error "length: no method implemented for this type of module"))
+
+addHook((length, Module), Strategy => Default, M -> (
      if not isHomogeneous M then notImplemented();
      if dim M > 0 then return infinity;
-     degree M)
+     degree M))
 
 -----------------------------------------------------------------------------
 
@@ -413,13 +417,13 @@ minimalPresentation(Module) := prune(Module) := Module => opts -> (cacheValue (s
 	       return M);
 	  homog := isHomogeneous M;
 	  if debugLevel > 0 and homog then pushvar(symbol flagInhomogeneity,true);
-	  C := runHooks(Module,symbol minimalPresentation,(opts,M));
+	  C := runHooks((minimalPresentation, Module), (opts, M));
 	  if debugLevel > 0 and homog then popvar symbol flagInhomogeneity;
 	  if C =!= null then return C;
 	  error "minimalPresentation: internal error: no method for this type of module"
 	  ))
 
-addHook(Module, symbol minimalPresentation, (opts,M) -> (
+addHook((minimalPresentation, Module), Strategy => Default, (opts, M) -> (
 	  -- we try to handle any module here, without any information about the ring
           g := mingens gb presentation M;
 	  f := mutableMatrix g;
@@ -443,7 +447,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	  N.cache.pruningMap = map(M,N,submatrix'(id_(cover M),rows));
 	  break N))
 
-addHook(Module, symbol minimalPresentation, (opts,M) -> (
+addHook((minimalPresentation, Module), (opts, M) -> (
      	  R := ring M;
 	  if (isAffineRing R and isHomogeneous M) or (R.?SkewCommutative and isAffineRing coefficientRing R and isHomogeneous M) then (
 	       f := presentation M;
@@ -452,7 +456,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	       N.cache.pruningMap = map(M,N,g);
 	       break N)))
 
-addHook(Module, symbol minimalPresentation, (opts,M) -> (
+addHook((minimalPresentation, Module), (opts, M) -> (
      	  R := ring M;
 	  if R === ZZ then (
 	       f := presentation M;
@@ -465,7 +469,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	       N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
 	       break N)))
 
-addHook(Module, symbol minimalPresentation, (opts,M) -> (
+addHook((minimalPresentation, Module), (opts, M) -> (
      	  R := ring M;
 	  if instance(R,PolynomialRing) and numgens R === 1 and isField coefficientRing R and not isHomogeneous M then (
 	       f := presentation M;
@@ -631,35 +635,6 @@ Module / Vector := Module => (M,v) -> (
      if class v =!= M 
      then error("expected ", toString v, " to be an element of ", toString M);
      M / image matrix {v})
------------------------------------------------------------------------------
---topComponents Module := M -> (
---     R := ring M;
---     c := codim M; 
---     annihilator minimalPresentation Ext^c(M, R))
---document { topComponents,
---     TT "topComponents M", "produce the annihilator of Ext^c(M, R), where c
---     is the codimension of the support of the module M."
---     }
------------------------------------------------------------------------------
-
-annihilator = method(
-     Options => {
-	  Strategy => Intersection			    -- or Quotient
-	  }
-     )
-
-annihilator Module := Ideal => o -> (M) -> (
-     if isWeylAlgebra ring M then error "no meaning for modules over a Weyl algebra"; 
-     f := presentation M;
-     if o.Strategy === Intersection then (
-	  F := target f;
-	  if numgens F === 0 then ideal 1_(ring F)
-	  else intersect apply(numgens F, i -> ideal modulo(F_{i},f)))
-     else if o.Strategy === Quotient then image f : target f
-     else error "annihilator: expected Strategy option to be Intersection or Quotient")
-
-annihilator Ideal := Ideal => o -> I -> annihilator(module I, o)
-annihilator RingElement := Ideal => o -> f -> annihilator(ideal f, o)
 
 -----------------------------------------------------------------------------
 ZZ _ Module := Vector => (i,M) -> (

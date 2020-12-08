@@ -3,12 +3,10 @@
 #ifndef _aring_gf_m2_hpp_
 #define _aring_gf_m2_hpp_
 
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include <rand.h>
-
-//#include "aring-glue.hpp"
 
 class GF;
 class PolynomialRing;

@@ -514,7 +514,7 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	    and not opts.RerunExamples and fileExists outf' and gethash outf' === inputhash then (
 		if fileExists errf then removeFile errf; copyFile(outf', outf))
 	    -- run and capture example results
-	    else captureExampleOutput(
+	    else elapsedTime captureExampleOutput(
 		pkg, fkey, demark_newline inputs,
 		possiblyCache(outf, outf'),
 		inpf, outf, errf,
@@ -555,7 +555,7 @@ installPackage = method(
 	RunExamples            => true,
 	SeparateExec           => false,
 	UserMode               => null,
-	Verbose                => true
+	Verbose                => false
 	})
 
 installPackage String := opts -> pkg -> (

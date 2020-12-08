@@ -1,14 +1,17 @@
 /* Copyright 2014, Michael E. Stillman */
 
+#include <iostream>
+
+#include "interface/monomial-ordering.h"
 #include "res-f4-m2-interface.hpp"
 #include "res-f4-computation.hpp"
-#include "res-f4.hpp"
 #include "res-schreyer-frame.hpp"
 
 #include "matrix.hpp"
-#include "../exceptions.hpp"
+#include "exceptions.hpp"
 
-#include <iostream>
+class ResolutionComputation;
+class MutableMatrix;
 
 long nres = 0;
 long nres_destruct = 0;

@@ -37,6 +37,7 @@ newPackage(
 	     "volume number" => "5",
 	     "volume URI" => "http://j-sag.org/Volume5/"
 	     },
+	PackageImports => {"MinimalPrimes"},
     	DebuggingMode => false
     	)
 

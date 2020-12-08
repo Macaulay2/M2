@@ -1050,24 +1050,28 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 dnl debian/fedora: nauty-
-AC_MSG_CHECKING(whether the package nauty (>= 2.7) is installed)
+AC_MSG_CHECKING(whether the package nauty is installed)
 FOUND_nauty=no
 for nauty_prefix in "" "nauty-"
 do
     if test "`type -t ${nauty_prefix}complg`" = file
-    then nauty_version=`${nauty_prefix}complg --version | cut -d " " -f 3`
-	AX_COMPARE_VERSION([$nauty_version], [ge], [2.7000],
-	    [AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
-	     FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
-	     FOUND_nauty=yes
-	     break],
-	    [FOUND_nauty=old])
+    then
+dnl check if #1408 is a problem
+	if ${nauty_prefix}biplabg < /dev/null 2>/dev/null
+	then
+	    AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
+	    FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
+	    FOUND_nauty=yes
+	    break
+	else
+	    FOUND_nauty=bad
+	fi
     fi
 done
 if test $FOUND_nauty != yes
 then
-    if test $FOUND_nauty = old
-    then AC_MSG_RESULT([yes, but < 2.7, will build])
+    if test $FOUND_nauty = bad
+    then AC_MSG_RESULT([yes, but ${nauty_prefix}biplabg raises an error, will build])
     else AC_MSG_RESULT([no, will build])
     fi
     BUILD_nauty=yes
@@ -1139,24 +1143,6 @@ AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby $LIBS",BUILD_frobby=yes)
 if test $BUILD_frobby = yes
 then BUILTLIBS="-lfrobby $BUILTLIBS"
 fi
-
-if test $BUILD_gtest = no
-then
-    CHECK_GTEST
-    if test $have_gtest = yes
-    then
-        CPPFLAGS="$GTEST_CPPFLAGS $CPPFLAGS"
-        GTEST_PATH=$GTEST_SOURCE
-	AC_MSG_NOTICE(we have found gtest)
-    else
-        BUILD_gtest=yes
-        GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
-	AC_MSG_NOTICE(we will build gtest)
-    fi
-else
-    GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
-fi
-AC_SUBST(GTEST_PATH)
 
 #############################################################################
 
@@ -1252,6 +1238,23 @@ then AC_LANG(C++)
 fi
 test $BUILD_mathicgb = yes && BUILTLIBS="-lmathicgb $BUILTLIBS"
 
+if test $BUILD_gtest = no
+then
+    CHECK_GTEST
+    if test $have_gtest = yes
+    then
+        CPPFLAGS="$GTEST_CPPFLAGS $CPPFLAGS"
+        GTEST_PATH=$GTEST_SOURCE
+	AC_MSG_NOTICE(we have found gtest)
+    else
+        BUILD_gtest=yes
+        GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
+	AC_MSG_NOTICE(we will build gtest)
+    fi
+else
+    GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
+fi
+AC_SUBST(GTEST_PATH)
 
 if test "$PYTHON" = yes
 then AC_LANG(C)
@@ -1374,21 +1377,6 @@ then
      CPPFLAGS="`$PKG_CONFIG --cflags $FACTORY_NAME` $CPPFLAGS"
 else
      BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
-fi
-
-AC_DEFINE([HAVE_FACTORY_PREM], [1],
-    [whether Prem() from factory is public])
-if test $BUILD_factory = no
-then
-    AC_MSG_CHECKING([whether Prem() from factory is public])
-    AC_LANG([C++])
-    AC_COMPILE_IFELSE(
-	[AC_LANG_PROGRAM(
-	    [#include <factory/factory.h>],
-	    [CanonicalForm p,q; Prem(p,q)])],
-	[AC_MSG_RESULT([yes])],
-	[AC_MSG_RESULT([no])
-	 AC_DEFINE([HAVE_FACTORY_PREM], [0])])
 fi
 
 AC_ARG_VAR([GFTABLESDIR],

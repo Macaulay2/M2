@@ -8,6 +8,7 @@ Benchmark
 Text
 SimpleDoc
 PackageTemplate
+Saturation
 PrimaryDecomposition
 FourierMotzkin
 Dmodules
@@ -214,4 +215,5 @@ StatGraphs
 GraphicalModelsMLE
 EigenSolver
 MultiplicitySequence
+ResLengthThree
 ResolutionsOfStanleyReisnerRings

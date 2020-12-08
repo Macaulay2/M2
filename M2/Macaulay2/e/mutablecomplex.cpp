@@ -238,6 +238,8 @@ void MutableComplex::text_out(buffer &o) const
 /*                               Global functions */
 /********************************************************************************/
 
+extern "C" { // TODO: remove when this function is in e/interface
+
 engine_RawMutableMatrixArray rawPruningMorphism(MutableComplex *C, int n, int f)
 {
   size_t nsteps = static_cast<size_t>(n), flags = static_cast<size_t>(f);
@@ -290,6 +292,8 @@ unsigned int rawMutableComplexHash(const MutableComplex *M)
 {
   return M->hash();
 }
+
+} // TODO: remove when this function is in e/interface
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

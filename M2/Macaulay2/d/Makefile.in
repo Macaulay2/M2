@@ -78,9 +78,6 @@ M2lib.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o
 
 pthread-tmp.c : SCCFLAGS += -noline
 
-## the problem with this is that it can make "make" think the targets were made:
-# actors4-tmp.c actors5-tmp.c basic-tmp.c interface-tmp.c interface2-tmp.c objects-tmp.c : ../e/engine.h ../e/rand.h
-
 version.o : ../../include/M2/config.h distributed-packages.h
 distributed-packages.h: @srcdir@/../packages/?distributed-packages Makefile
 	echo '#define DISTRIBUTED_PACKAGES "'`cat $<`'"' >$@

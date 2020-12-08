@@ -13,7 +13,8 @@ newPackage(
     Date => "November 20, 2020",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
-    Keywords => {"Algebraic geometry"},
+    Keywords => {"Algebraic Geometry"},
+    PackageImports => {"PrimaryDecomposition"},
     PackageExports => {"Resultants","Cremona"},
     DebuggingMode => false,
     Reload => false

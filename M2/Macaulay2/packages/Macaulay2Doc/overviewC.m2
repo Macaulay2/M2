@@ -149,7 +149,7 @@ document {
 	  },
      "If you have a quotient ring that you know is a finite field, then you can
      convert it to ring that is known by the system to be a finite field.",
-     EXAMPLE "GF (ZZ/2[T]/(T^9+T+1), Variable => T)",
+     EXAMPLE "GF (ZZ/2[T]/(T^9+T+1), Variable => T) -* no-capture-flag *-",
      "You may also provide your own choice of primitive element.  Internally,
      elements of the finite field are stored as powers of the primitive element.
      First we assign our quotient ring to a global variable to ensure that

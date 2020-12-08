@@ -21,13 +21,13 @@ newMonomialIdeal = (R,rawI) -> new MonomialIdeal from {
 monomialIdealOfRow := (i,m) -> newMonomialIdeal(ring m,rawMonomialIdeal(raw m, i))
 
 codimopts := { Generic => false }
-codim MonomialIdeal := {  } >> opts -> m -> rawCodimension raw m
-codim Module := codimopts >> opts -> (cacheValue (symbol codim => opts)) (M -> runHooks(Module, symbol codim, (opts,M)))
+codim MonomialIdeal := codimopts >> opts -> m -> rawCodimension raw m
+codim Module := codimopts >> opts -> (cacheValue (symbol codim => opts)) (M -> runHooks((codim, Module), (opts, M)))
 codim Ideal := codimopts >> opts -> I -> codim( cokernel generators I, opts)
 codim PolynomialRing := codimopts >> opts -> R -> 0
 codim QuotientRing := codimopts >> opts -> (R) -> codim( cokernel presentation R, opts)
 
-addHook(Module, symbol codim, (opts,M) -> break (
+addHook((codim, Module), Strategy => Default, (opts, M) -> (
      R := ring M;
      if M == 0 then infinity
      else if isField R then 0
@@ -84,71 +84,6 @@ MonomialIdeal * MonomialIdeal := MonomialIdeal => (I,J) -> (
 MonomialIdeal - MonomialIdeal := MonomialIdeal => (I,J) -> (
      if ring I =!= ring J then error "expected monomial ideals in the same ring";
      newMonomialIdeal(ring I, raw I - raw J))
-
-radical MonomialIdeal := MonomialIdeal => options -> (I) -> newMonomialIdeal(ring I, rawRadical raw I)
-
-quotient(MonomialIdeal, MonomialIdeal) := MonomialIdeal => opts -> (I,J) -> newMonomialIdeal(ring I, rawColon(raw I, raw J))
-MonomialIdeal : MonomialIdeal := MonomialIdeal => (I,J) -> quotient(I,J)
-
-quotient(MonomialIdeal, RingElement) := opts -> (I,f) -> I : monomialIdeal terms f
-MonomialIdeal : RingElement := MonomialIdeal => (I,r) -> quotient(I,r)
-
-saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => o -> (I,J) -> newMonomialIdeal(ring I, rawSaturate(raw I, raw J))
-
-saturate(MonomialIdeal, RingElement) := Ideal => o -> (I,f) -> (
-     if size f === 1 and leadCoefficient f == 1 then saturate (I,monomialIdeal f)
-     else saturate(ideal I, ideal f)
-     )
-
-int := (I,J) -> (
-     if ring I =!= ring J then error "expected monomial ideals in the same ring";
-     newMonomialIdeal(ring I, rawIntersect(raw I, raw J)))
-
-intersect(List) := x -> intersect toSequence x
-
-intersect(Sequence) := args -> (
-    -- first check that all modules have the same target
-    -- and the same base ring
-    if #args === 0 then error "expected at least one argument";
-    M := args#0;
-    R := ring M;
-    if class M === MonomialIdeal then (
-	 if not all(args, M -> class M === MonomialIdeal and R === ring M)
-	 then error "expected monomial ideals over the same ring";
-	 i := 1;
-	 while i < #args do (
-	      M = int(M,args#i);
-	      i = i+1;
-	      );
-	 M)
-    else if class M === Module then (
-    	 F := ambient args#0;
-	 if not all(args, N -> ambient N == F)
-	 or M.?relations 
-	 and not all(args, N -> 
-	      N.?relations 
-	      and (N.relations == M.relations
-		   or
-		   image N.relations == image M.relations
-		   )
-	      )
-    	 then error "all modules must be submodules of the same module";
-    	 relns := directSum apply(args, N -> (
-		   if N.?relations 
-		   then generators N | N.relations
-		   else generators N
-		   )
-	      );
-    	 g := map(R^(#args),R^1, table(#args,1,x->1)) ** id_F;
-	 h := modulo(g, relns);
-	 if M.?relations then h = compress( h % M.relations );
-    	 subquotient( h, if M.?relations then M.relations )
-	 )
-    else if class M === Ideal then (
-	 ideal intersect apply(args,module)
-	 )
-    else error "expected modules, ideals, or monomial ideals"
-    )
 
 borel MonomialIdeal := MonomialIdeal => (I) -> newMonomialIdeal(ring I, rawStronglyStableClosure raw I)
 isBorel MonomialIdeal := Boolean => m -> rawIsStronglyStable raw m
@@ -270,6 +205,8 @@ isSquareFree MonomialIdeal := (I) -> all(first entries generators I, m -> all(fi
 --  STANDARD PAIR DECOMPOSITION  ---------------------------
 -- algorithm 3.2.5 in Saito-Sturmfels-Takayama
 standardPairs = method()
+-- Note: (standardPairs, MonomialIdeal) is redefined in PrimaryDecomposition.m2, because it depends on associatedPrimes
+standardPairs MonomialIdeal        :=  I    -> error "standardPairs(MonomialIdeal) will be redefined in the PrimaryDecomposition package"
 standardPairs(MonomialIdeal, List) := (I,D) -> (
      R := ring I;
      X := generators R;
@@ -294,13 +231,6 @@ standardPairs(MonomialIdeal, List) := (I,D) -> (
 		    S = join(S, apply(B, b -> {psi(b), L}));
 	       	    )));
      S)
-Delta := (I) -> (
-     X := generators ring I;
-     d := #X - pdim cokernel generators I;
-     select( apply(associatedPrimes I, J -> set X - set first entries generators J), Y -> #Y >= d ) / toList
-     )
-
-standardPairs MonomialIdeal := (I) -> standardPairs(I,Delta I)
 
 --  LARGEST MONOMIAL IDEAL CONTAINED IN A GIVEN IDEAL  -----
 monomialSubideal = method();				    -- needs a new name?

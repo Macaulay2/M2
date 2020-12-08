@@ -1,11 +1,13 @@
 // Copyright 2010 Michael E. Stillman
 
 #include "tower.hpp"
+
 #include "dpoly.hpp"
 #include "ring.hpp"
 #include "varpower.hpp"
 #include "ringmap.hpp"
 #include "polyring.hpp"
+#include "monoid.hpp"
 
 Tower::~Tower() {}
 bool Tower::initialize(long charac0,
@@ -500,6 +502,7 @@ ring_elem Tower::translateFromTower(const PolynomialRing *P, ring_elem fT) const
 }
 #endif
 
+extern "C" // TODO: remove when this function is in e/interface
 const RingElement *rawTowerTranslatePoly(const Ring *newRing,
                                          const RingElement *F)
 {

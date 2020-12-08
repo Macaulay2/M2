@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "text-io.hpp"
 #include "ZZ.hpp"
+#include "monoid.hpp"
 
 void tableau::initialize(int nvars)
 {

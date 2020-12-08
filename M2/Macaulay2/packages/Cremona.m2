@@ -13,7 +13,7 @@ newPackage(
         Date => "November 20, 2020",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "rational maps between projective varieties",
-	Keywords => {"Algebraic geometry"},
+	Keywords => {"Algebraic Geometry"},
         AuxiliaryFiles => true,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
