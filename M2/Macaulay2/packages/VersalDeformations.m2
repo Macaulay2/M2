@@ -1366,6 +1366,7 @@ assert (checkComparisonTheorem gens J == true)
 ///
 
 TEST ///
+needsPackage "Truncations"
 S = ZZ/32003[a..d]
 I = monomialIdeal(a^2,a*b,b^4,a*c^3)
 J = truncate(3, I)

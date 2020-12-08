@@ -71,13 +71,13 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     User#"private dictionary" = new Dictionary;
     OutputDictionary = new GlobalDictionary;
     dictionaryPath = {
-	User#"private dictionary", -- this is necessary mainly due to indeterminates.m2
-	oldPrivateDictionary,
 	Core.Dictionary,
 	OutputDictionary,
 	PackageDictionary};
     scan(Core#"pre-installed packages", needsPackage);
     needsPackage toString currentPackage;
+    dictionaryPath = prepend(oldPrivateDictionary,      dictionaryPath); -- this is necessary mainly due to T from degreesMonoid
+    dictionaryPath = prepend(User#"private dictionary", dictionaryPath); -- this is necessary mainly due to indeterminates.m2
     currentPackage = User;
 
     ret := capture' s;
@@ -165,7 +165,8 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
     and not match("(installMethod|load|export|newPackage)", inputs) -- exports may land in the package User
     and not match("(GlobalAssignHook|GlobalReleaseHook)", inputs) -- same as above
     and not match({"ThreadedGB", "RunExternalM2"}, pkg#"pkgname") -- TODO: eventually remove
-    and false -- TODO: this is temporarily here, to be removed after v1.17 is released
+    -- TODO: this is temporarily here, to be removed after v1.17 is released
+    and match({"Macaulay2Doc"}, pkg#"pkgname")
     then (
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
@@ -204,8 +205,7 @@ processExamplesLoop ExampleItem := x -> (
     currentExampleCounter = currentExampleCounter + 1;
     result)
 
-processExamples = (pkgname, fkey, docBody) -> (
-    pkg := getpkg pkgname;
+processExamples = (pkg, fkey, docBody) -> (
     currentExampleKey = fkey;
     currentExampleCounter = 0;
     currentExampleResults = getExampleOutput(pkg, fkey);

@@ -171,7 +171,7 @@ markup = (textlines, keylinenum) -> (
 singleString = (key, textlines, keylinenum) -> (
      if #textlines == 0 then
        error("line ", toString keylinenum, " of string: expected single indented line after ", toString key)
-     else if #textlines > 1 then
+     else if #textlines > 1 and 0 < #getNonempty drop(textlines, 1) then
        error("line ", toString getLinenum textlines#1, " of string: expected single indented line after ", toString key);
      getText textlines#0)
 
