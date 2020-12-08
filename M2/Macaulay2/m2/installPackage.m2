@@ -204,11 +204,13 @@ assembleTree := (pkg, nodes) -> (
     -- signal errors
     if chkdoc and hadDocumentationError then (
 	scan(keys visits#"missing",
-	    node -> printerr("error: missing reference(s) to subnode documentation: ", format node, newline,
-		"  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node)));
+	    node -> (
+		printerr("error: missing reference(s) to subnode documentation: ", format node);
+		printerr("  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node))));
 	scan(keys visits#"repeated",
-	    node -> printerr("error: repeated references to subnode documentation: ", format node, newline,
-		"  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node)));
+	    node -> (
+		printerr("error: repeated references to subnode documentation: ", format node);
+		printerr("  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node))));
 	error("installPackage: error in assembling the documentation tree"));
     -- build the navigation links
     buildLinks tableOfContents;
@@ -697,6 +699,10 @@ installPackage Package := opts -> pkg -> (
 	    and     not opts.MakeInfo -- when making the info file, we need to process all the documentation
 	    and rawDocumentationCache#?(format tag) then verboseLog("skipping     ", toString tag)
 	    else storeProcessedDocumentation(pkg, tag, opts, verboseLog));
+
+	-- should this be here, or farther up? Note: assembleTree resets the counters, so stay above that.
+	if chkdoc and hadDocumentationError then error(
+	    toString numDocumentationErrors, " errors(s) occurred in processing documentation for package ", toString pkg);
 
 	if pkg#?rawKeyDB and isOpen pkg#rawKeyDB then close pkg#rawKeyDB;
 
