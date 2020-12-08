@@ -56,7 +56,6 @@ undocumented {
 	(texMath, IndeterminateNumber),
 	(texMath, IndexedVariable),
 	(texMath, IndexedVariableTable),
-	(texMath, Keyword),
 	(texMath, MapExpression),
 	(texMath, Matrix),
 	(texMath, MatrixDegreeExpression),
