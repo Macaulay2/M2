@@ -262,7 +262,7 @@ infoTagConvert DocumentTag := tag -> (
 -- checking if doc is missing can be very slow if node is from another package
 info TO  := x -> info TO2{x#0, format x#0 | if x#?1 then x#1 else ""}
 info TO2 := x -> (
-     tag := x#0;
+     tag := fixup x#0;
      if isMissingDoc tag or isUndocumented tag then concatenate(x#1, " (missing documentation)")
      else concatenate("*note ", infoLinkConvert x#1, ": ", infoTagConvert tag, ","))
 info TOH := x -> (

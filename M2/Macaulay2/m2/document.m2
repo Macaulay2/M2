@@ -185,6 +185,13 @@ makeDocumentTag String      := opts -> key -> (
     if pkg === null then pkg = opts#Package;
     (makeDocumentTag' new OptionTable from {Package => pkg}) key)
 
+-- before creating links, we recreate the document tag as a hack to
+-- correct its package, if it is incorrect (e.g. truncate, quotient)
+-- TODO: can this be modified to fix the tag in-place? then we would only need to
+-- fix the tag in (validate, TO), rather than also in (info, TO) and (html, TO).
+fixup DocumentTag := DocumentTag => tag -> makeDocumentTag(
+    if instance(key := tag.Key, String) then return tag else key, Package => package key)
+
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------
@@ -342,7 +349,7 @@ fetchAnyRawDocumentation DocumentTag := tag  -> (
     rawdoc := fetchRawDocumentation getPrimaryTag tag;
     if rawdoc =!= null then rawdoc else fetchAnyRawDocumentation format tag)
 -- TODO: if Package$Core was the same as Macaulay2Doc, this would not be necessary
-fetchAnyRawDocumentation String      := fkey -> scan(prepend("Macaulay2Doc", keys PackageDictionary), pkg -> (
+fetchAnyRawDocumentation String      := fkey -> scan(prepend("Macaulay2Doc", loadedPackages), pkg -> (
 	rawdoc := fetchRawDocumentation getPrimaryTag makeDocumentTag(fkey, Package => pkg);
 	if rawdoc =!= null then break rawdoc))
 
@@ -368,11 +375,7 @@ fetchProcessedDocumentation = (pkg, fkey) -> (
 isMissingDoc     = tag -> ( d := fetchRawDocumentation tag; d === null )
 isSecondaryTag   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?PrimaryTag )
 isUndocumented   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?"undocumented" and d#"undocumented" === true )
-hasDocumentation = key -> (
-    tag := makeDocumentTag(key, Package => null);
-    -- TODO: does this error belong here?
-    if tag.Package === "" then error("key to be documented is exported by no package: ", format tag);
-    null =!= fetchRawDocumentation tag)
+hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key, Package => null)
 
 locate DocumentTag := tag -> (
     rawdoc := fetchAnyRawDocumentation tag;

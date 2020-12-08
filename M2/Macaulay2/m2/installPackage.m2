@@ -97,17 +97,11 @@ makeAnchors := n -> (
 anchorsUpTo := entry -> if alpha#?numAnchorsMade and entry >= alpha#numAnchorsMade then makeAnchors length select(alpha, c -> entry >= c)
 remainingAnchors := () -> makeAnchors (#alpha)
 
-packageTagList := (pkg, topDocumentTag) -> checkIsTag \ unique join(
-     apply(
-	  select(pairs pkg.Dictionary,(nam,sym) -> not match ( "\\$" , nam )),
-	  (nam,sym) -> makeDocumentTag(sym, Package => pkg)),
-     select(
-	  apply(
-	       values pkg#"raw documentation",
-	       doc -> doc.DocumentTag),
-	  x -> x =!= null),
-     { topDocumentTag }
-     )
+packageTagList := (pkg, topDocumentTag) -> checkIsTag \ unique nonnull join(
+    apply(pairs pkg.Dictionary, (name, sym) ->
+	if not match("\\$", name) then makeDocumentTag(sym, Package => pkg)),
+    apply(values pkg#"raw documentation", rawdoc -> rawdoc.DocumentTag),
+    { topDocumentTag })
 
 -----------------------------------------------------------------------------
 -- helper functions for assembleTree

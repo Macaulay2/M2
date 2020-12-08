@@ -1,19 +1,10 @@
 -- here we document the stub definitions in m2/shared.m2
 
-document {
-     Key => truncate,
-     PARA {
-	  "This function is a method function, defined in the core so multiple packages can add methods to it."
-	  },
-     SeeAlso => { "Truncations::Truncations" }
-     }
+methodstr := PARA { "This function is a method function, defined in the core so multiple packages can add methods to it." }
 
-document {
-     Key => chi,
-     PARA {
-	  "This function is a method function, defined in the core so multiple packages can add methods to it."
-	  }
-     }
+document { Key => decompose,    methodstr, SeeAlso => { "MinimalPrimes::MinimalPrimes" } }
+document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncations" } }
+document { Key => chi,          methodstr }
 
 document {
      Key => Jacobian,

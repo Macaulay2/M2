@@ -574,7 +574,6 @@ export {
 	"currentTime",
 	"dd",
 	"debug",
-	"decompose",
 	"deepSplice",
 	"default",
 	"degree",

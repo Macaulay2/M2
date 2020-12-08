@@ -81,7 +81,6 @@ Node
    [minimalPrimes, Strategy]
    [minimalPrimes, CodimensionLimit]
    [minimalPrimes, MinimalGenerators]
-     decompose
     (decompose,     Ideal)
    [(decompose,    Ideal), Verbosity]
    [(decompose,    Ideal), Strategy]

@@ -194,7 +194,6 @@ setupMethods((), {
 use = method(Dispatch => Thing)
 use Thing := identity
 
-decompose = method(Options => true)
 dual = method(Options => true)
 
 default = method()
