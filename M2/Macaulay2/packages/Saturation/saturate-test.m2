@@ -71,6 +71,7 @@ TEST ///
 TEST ///
   -- previously in packages/Macaulay2Doc/doc9.m2
   -- The ideal case
+  needsPackage "Truncations"
   R = ZZ/101[a..d]
   I = monomialCurveIdeal(R,{1,3,4})
   J = truncate(4, ideal(I_0 * I_1, I_2, I_0^2 * I_3))

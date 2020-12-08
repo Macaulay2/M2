@@ -1,4 +1,3 @@
-
 refKroneLeykin := "R. Krone and A. Leykin, \"Numerical algorithms for detecting embedded components.\", arXiv:1405.7871"
 refBeltranLeykin := "C. Beltran and A. Leykin, \"Certified numerical homotopy tracking\", Experimental Mathematics 21(1): 69-83 (2012)" 
 refBeltranLeykinRobust := "C. Beltran and A. Leykin, \"Robust certified numerical homotopy tracking\", Foundations of Computational Mathematics 13(2): 253-295 (2013)" 
@@ -57,19 +56,11 @@ numericalIrreducibleDecomposition I
      TO NAGtrace,
      --     TO toAffineChart,     
      TO newton,
-     TO numericalRank,
      TO isOn,
      TO union,
      TO removeRedundantComponents,
 --     TO ("==",NumericalVariety,NumericalVariety)
      },
-
-     HEADER3 {"Functions related to scheme analysis:"},
-     UL{
-	 TO isPointEmbedded,
-	 TO isPointEmbeddedInCurve,
-	 TO colon,
-	 },
 
      HEADER3 {"Functions related to ", TO "Certified", " tracking:"},
      certifiedTrackingFunctions,
@@ -166,7 +157,7 @@ document { Key => {"numerical homotopy tracking options",
 	CorrectorTolerance, [track,CorrectorTolerance], [setDefault,CorrectorTolerance],
 	[track,NoOutput], [setDefault,NoOutput], 
 	[track,Normalize], [setDefault,Normalize],
-	NoOutput, Normalize,
+	NoOutput, 
 	[refine, Iterations], [setDefault,Iterations], [refine, Bits], [setDefault,Bits], 
 	[refine,ErrorTolerance], [setDefault,ErrorTolerance], 
 	[refine, ResidualTolerance], [setDefault,ResidualTolerance],
@@ -561,47 +552,6 @@ M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
 	}
 								
 document {
-	Key => {numericalRank, (numericalRank, Matrix), [numericalRank, Threshold],
-	    isFullNumericalRank, (isFullNumericalRank,Matrix)},
-	Headline => "numerical rank of a matrix",
-	Usage => "r = numericalRank M\nB = isFullNumericalRank M",
-	Inputs => { 
-	    "M"=>Matrix=>"a matrix with real or complex entries"
-	     },
-	Outputs => {
-	    "r"=>ZZ, 
-	    "B"=>Boolean
-	    },
-	PARA {
-	    TO numericalRank, " finds an approximate rank of the matrix ", TT "M", "."
-	    },
-	PARA {
-	    TO isFullNumericalRank, " = ", TT "M", " is _not_ rank-deficient."
-	    },
-	PARA {
-	    "Let ", TEX "\\sigma_1,...,\\sigma_n", " be the singular values of ", TT "M", ". "
-	    },
-	PARA {
-	    "If ", TO "LLLBases::Threshold", " is >1, then to establish numerical rank we look 
-	    for the first large gap between two consecutive singular values. ",
-	    "The gap between ", TEX "\\sigma_i", " and ", TEX "\\sigma_{i+1}", 
-	    " is large if ", TEX "\\sigma_i/\\sigma_{i+1} > ", TO "LLLBases::Threshold",
-	    "."
-	    },
-	PARA {
-	    "If ", TO "LLLBases::Threshold", " is <=1, then the rank equals 
-	    the number of singular values larger then ", TO "LLLBases::Threshold", "." 
-	    },
-	Caveat => {"We assume ", TEX "\\sigma_0=1", " above."},
-        EXAMPLE lines ///
-options numericalRank
-numericalRank matrix {{2,1},{0,0.001}}
-numericalRank matrix {{2,1},{0,0.0001}}
-     	///,
-     	SeeAlso => {SVD}
-	}
-
-document {
 	Key => {Certified},
 	Headline => "a value for the option Predictor that triggers certified tracking",
 	PARA {
@@ -835,51 +785,6 @@ document {
     }
 
 document {
-    Key => {
-	(isPointEmbedded,Point,Ideal,List), isPointEmbedded,
-	AllVisible, [isPointEmbedded,AllVisible],
-	},
-    Headline => "determine if the point is an embedded component of the scheme",
-    Usage => "B = isPointEmbedded(P,I,C)",
-    Inputs => { 
-	"P", 
-	"I",
-	"C"=>{" witness sets representing components of ", TT "Spec(I)", " containing ", TT "P"} 
-	},
-    Outputs => { "B"=>Boolean },
-    PARA {"Runs an embedded component test described in "},
-    refKroneLeykin,
-    SeeAlso=>{isPointEmbeddedInCurve}
-    }
-
-document {
-    Key => {
-	(isPointEmbeddedInCurve,Point,Ideal), isPointEmbeddedInCurve
-	},
-    Headline => "determine if the point is an embedded component of a 1-dimensional scheme",
-    Usage => "B = isPointEmbeddedInCurve(P,I)",
-    Inputs => { 
-	"P", 
-	"I"
-	},
-    Outputs => { "B"=>Boolean },
-    PARA {"Runs an embedded component test described in "},
-    refKroneLeykin,
-    SeeAlso=>{isPointEmbeddedInCurve}
-    }
-
-document {
-    Key => {colon, (colon,DualSpace,RingElement), (colon,DualSpace,Ideal), [colon,Tolerance]},
-    Headline => "colon of a (truncated) dual space",
-    Usage => "Dg = colon(D,g)\nDJ = colon(D,J)",
-    Inputs => { "D"=>DualSpace, "g"=>RingElement, "J"=>Ideal },
-    Outputs => { "Dg, DJ"=>DualSpace },
-    "Computes (a part of) the dual space of the dual. See",
-    PARA { refKroneLeykin },
-    "for a description."
-    }
-
-document {
     Key => {squareUp, (squareUp,PolySystem), (squareUp,PolySystem,ZZ), (squareUp,PolySystem, Matrix), 
 	SquaredUpSystem, SquareUpMatrix
 	},
@@ -1010,7 +915,7 @@ HS = gateHomotopy(transpose matrix {H},matrix{{X,Y}},T)
     ///,
     Caveat => {"The order of inputs for unexported internal evaluation functions (evaluateH, etc.) is fixed as follows: ",
 	TT "Parameters, X, T", "."},
-    -- SeeAlso=>{GateHomotopy,GateParameterHomotopy,specialize}
+    SeeAlso=>{GateHomotopy,GateParameterHomotopy,specialize}
     }
 doc ///
     Key 
@@ -1035,6 +940,15 @@ document {
     Key => "DoublePrecision",
     Headline => "a constant equal to 53 (the number of bits of precision)"
     }
+
+doc ///
+Key
+  (evaluateH,GateHomotopy,Matrix,Number)
+  (evaluateHt,GateHomotopy,Matrix,Number)
+  (evaluateHx,GateHomotopy,Matrix,Number)
+Headline
+  evaluate gate homotopy and its derivatives 
+///  
 
 doc ///
     Key
@@ -1076,6 +990,22 @@ doc ///
     	System
         PolySystem
         GateSystem	
+///
+
+undocumented {
+    (toExternalString,GateSystem),
+    (evaluateJacobian,GateSystem,Matrix),
+    (evaluateJacobian,GateSystem,Matrix,Matrix),    
+    (evaluateJacobian,GateSystem,Point),
+    (evaluateJacobian,GateSystem,Point,Point)
+    }
+
+doc ///
+Key
+  (jacobian,GateSystem)
+  (jacobian,List,GateSystem)
+Headline
+  jacobian of a (gate) system
 ///
 
 doc ///
@@ -1210,9 +1140,25 @@ doc ///
       a homotopy that involves parameters and is implemented via straight line programs
     Description
       Text
-    	An object of this type specialized to a @TO Homotopy@ given values of the parameters. 
+    	An object of this type specializes to a @TO Homotopy@ given values of the parameters. 
 	It is related to @TO GateHomotopy@. 
 ///
+
+doc ///
+Key 
+  (specialize,GateParameterHomotopy,MutableMatrix)
+Headline
+  specialize parameters in a (gate) parameter homotopy 
+///
+
+doc ///
+Key
+  (evaluateH,GateParameterHomotopy,Matrix,Matrix,Number)
+  (evaluateHt,GateParameterHomotopy,Matrix,Matrix,Number)
+  (evaluateHx,GateParameterHomotopy,Matrix,Matrix,Number)
+Headline
+  evaluate (gate) parameter homotopy and its derivatives 
+///  
 
 doc ///
     Key

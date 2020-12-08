@@ -112,8 +112,12 @@ Node
      package
     (package, Array)
     (package, Dictionary)
+    (package, DocumentTag)
     (package, Function)
     (package, HashTable)
+    (package, Nothing)
+    (package, Option)
+    (package, Package)
     (package, Sequence)
     (package, Symbol)
     (package, Thing)
@@ -454,7 +458,7 @@ Node
 
 Node
   Key
-    installPackage
+     installPackage
     (installPackage, String)
     (installPackage, Package)
     [installPackage, CacheExampleOutput]

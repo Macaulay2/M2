@@ -1083,7 +1083,7 @@ document {
 		    LI { TO "Divisor::Divisor", ", a package by Karl Schwede and Zhaoning Yang for working with Weil divisors, has been added." },
 		    LI { TO "EllipticCurves::EllipticCurves", ", a package by Alessandro Oneto and Stefano Marseglia for addition on elliptic curves and point counting, has been added." },		
 		    LI { TO "HighestWeights::HighestWeights", ", a package by Federico Galetto for decomposing free resolutions and graded modules with a semisimple Lie group action, has been added." },		
-		    LI { TO "NumericalHilbert::NumericalHilbert", ", a package by Robert Krone for numerically computing local dual spaces and Hilbert functions, has been added." },		
+		    LI { "NumericalHilbert (absorbed by ", TO "NoetherianOperators::NoetherianOperators", "), a package by Robert Krone for numerically computing local dual spaces and Hilbert functions, has been added." },		
 		    LI { TO "MinimalPrimes::MinimalPrimes", ", an experimental package by Frank Moore, Mike Stillman and Franziska Hinkelmann for finding the minimal primes of an ideal, has been added." },
 		    LI { TO "Bertini::Bertini", ", a package by Elizabeth Gross, Jose Israel Rodriguez, Dan Bates and Anton Leykin for providing an interface to Bertini, has been added." },
 		    LI { TO "TorAlgebra::TorAlgebra", ", a package by Lars Winther Christensen and Oana Veliche for classification of codepth 3 local rings based on multiplication in homology, has been added, under its old name, ", TT "CodepthThree", "." },
@@ -1648,7 +1648,7 @@ document {
 		    LI {
 			 "A bug in Gröbner bases over fields and the integers was fixed, which caused, under some situations,
 			 the list of \"trimmed\" generators to be incomplete (but the Gröbner basis itself was correct).
-			 This impacted functions which use ", TO "trim", ", especially ", TO "MinimalPrimes :: decompose", "."
+			 This impacted functions which use ", TO "trim", ", especially ", TO "MinimalPrimes :: minimalPrimes", "."
 			 },
 		    LI {
 			 "The function ", TO "Elimination::eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring,
@@ -1663,7 +1663,7 @@ document {
 			 reporting the bug and suggesting the fix."
 			 },
 		    LI {
-			 "A bug in ", TO "decompose", " was unearthed that could produce incorrect answers.  The problem
+			 "A bug in ", TO "MinimalPrimes::minimialPrimes", " was unearthed that could produce incorrect answers.  The problem
 			 was that ", TO "trim", " sometimes could produce incorrect answers (fixed)."
 			 },
 		    LI {

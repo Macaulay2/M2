@@ -18,7 +18,7 @@ newPackage(
     },
     Headline => "polynomial system solver via eigen-computations",
     Keywords => {"Numerical Algebraic Geometry"},
-    PackageExports => {"NumericalAlgebraicGeometry"},
+    PackageExports => {"NAGtypes"},
     AuxiliaryFiles => false,
     DebuggingMode => false
     )
@@ -29,10 +29,12 @@ export {
     "Multiplier"
 }
 
-zeroDimSolve = method(Options => {
+zeroDimSolve = method(Options => {     	
     symbol Basis => null,
     symbol Multiplier => 0,
-    Strategy => "Stickelberger"})
+    Strategy => "Stickelberger",
+    Tolerance => 0.000001
+    })
 zeroDimSolve Ideal := List => opts -> I -> ( -- Assume I is radical
     if opts.Strategy == "Stickelberger" then return eigSolve1(I, opts)
     else if opts.Strategy == "elimMatrixP1P1" then return eigSolveP1P1(I, opts)
@@ -71,7 +73,7 @@ eigSolveP1P1 Ideal := List => opts -> J -> ( -- currently assumes dim R = 2 et 2
     elimMat := matrix basis(satind,psi);
     elimMatTr := transpose sub(elimMat,CC);
     numrk := numericalRank elimMatTr;
-    K := numericalKernel(elimMatTr,getDefault(Tolerance));
+    K := numericalKernel(elimMatTr,Tolerance=>opts.Tolerance);
     numroots := rank source K; -- expected number of roots
     D0 := K^{0..numroots-1}; -- indexed by the basis 1,y_1,..
     D1 := K^{satind_1+1..satind_1+numroots}; -- indexed by the basis x_1*1,x_1*y_1,... 
@@ -95,7 +97,7 @@ eigSolveP2 Ideal := List => opts -> J -> ( -- currently assumes dim R = 2 et 2 (
     psi := map(nR^{0}, nR^(-(JnR_*/degree)), gens JnR);
     elimMat := matrix basis(satind,psi);
     elimMatTr := transpose sub(elimMat,CC);
-    K := numericalKernel(elimMatTr,getDefault(Tolerance));
+    K := numericalKernel(elimMatTr,Tolerance=>opts.Tolerance);
     numroots := rank source K; -- expected number of roots
     B := flatten entries basis(satind, nR);
     H := hashTable apply(#B, i -> B#i => i);
@@ -270,7 +272,7 @@ doc ///
             sols = zeroDimSolve I
             #sols == 4 and all(sols, p -> clean(1e-16, matrix p) == 0)
     SeeAlso
-    	solveSystem
+    	"solveSystem"
 ///
 
 end--

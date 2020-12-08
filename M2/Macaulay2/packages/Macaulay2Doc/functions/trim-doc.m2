@@ -25,6 +25,7 @@ Node
       Sometimes the extra time to find the minimal generators is too large.
       This allows one to bypass this part of the computation.
     Example
+      needsPackage "Truncations"
       R = ZZ/101[x_0..x_4]
       I = truncate(8, monomialCurveIdeal(R,{1,4,5,9}));
       time gens gb I;

@@ -41,6 +41,7 @@ evaluate (System, Point) := Matrix =>
 --   Jacobian => Matrix, the jacobian of PolyMap
 --   }
 PolySystem.synonym = "polynomial system"
+texMath PolySystem := x -> texMath net x
 net PolySystem := p -> (
     if hasAnAttribute p then (
 	if hasAttribute(p,PrintNet) then return getAttribute(p,PrintNet);
