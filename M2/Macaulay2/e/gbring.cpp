@@ -1,18 +1,19 @@
 #include "gbring.hpp"
-#include "text-io.hpp"
+
+#include <assert.h>
+#include <stdio.h>
+
 #include "ZZ.hpp"
 #include "ZZp.hpp"
-#include "freemod.hpp"
-#include "geovec.hpp"
-#include "frac.hpp"
-#include "polyring.hpp"
-#include "weylalg.hpp"
-#include "skewpoly.hpp"
-#include "solvable.hpp"
-#include "overflow.hpp"
-#include "ntuple.hpp"
-
 #include "aring-glue.hpp"
+#include "coeffrings.hpp"
+#include "freemod.hpp"
+#include "mem.hpp"
+#include "ntuple.hpp"
+#include "ring.hpp"
+#include "schorder.hpp"
+#include "text-io.hpp"
+#include "weylalg.hpp"
 
 #define sizeofgbvector(s, len) \
   (sizeof(*s) - sizeof(s->monom) + (len) * sizeof(s->monom[0]))

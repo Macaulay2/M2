@@ -1,10 +1,16 @@
 // Copyright 1995 Michael E. Stillman
 
-#include "engine.h"
+#include "interface/freemodule.h"
 
-#include "freemod.hpp"
-#include "matrix.hpp"
+#include "buffer.hpp"
+#include "error.h"
 #include "exceptions.hpp"
+#include "freemod.hpp"
+#include "monoid.hpp"
+#include "newdelete.hpp"
+#include "ring.hpp"
+
+class Matrix;
 
 const Ring *IM2_FreeModule_ring(const FreeModule *F) { return F->get_ring(); }
 int IM2_FreeModule_rank(const FreeModule *F) { return F->rank(); }

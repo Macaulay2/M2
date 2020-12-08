@@ -1,17 +1,17 @@
 // copyright Daniel R. Grayson, 1995
 
-#include "exceptions.hpp"
-#include <M2/config.h>
+#include "interface/factory.h"
+#include "interface/matrix.h"
+#include "interface/ringelement.h"
+
 #include <assert.h>
-#include <iostream>
 #include <cstdio>
+#include <iostream>
+#include <utility>
+#include <vector>
 
 #define Matrix FactoryMatrix
 #include <factory/factory.h>  // from Messollen's libfac
-#if !HAVE_FACTORY_PREM
-CanonicalForm Prem(const CanonicalForm &F, const CanonicalForm &G);
-#endif
-#undef INT64
 #undef Matrix
 
 #pragma GCC diagnostic push
@@ -19,17 +19,17 @@ CanonicalForm Prem(const CanonicalForm &F, const CanonicalForm &G);
 #include <NTL/ZZ.h>
 #pragma GCC diagnostic pop
 
-#include "matrix.hpp"
-#include "ZZp.hpp"
-#include "ZZ.hpp"
-#include "frac.hpp"
-#include "poly.hpp"
-
-#include "relem.hpp"
-//#include "GF.hpp"
-#include "text-io.hpp"
 #include "buffer.hpp"
-
+#include "error.h"
+#include "exceptions.hpp"
+#include "matrix.hpp"
+#include "monoid.hpp"
+#include "poly.hpp"
+#include "polyring.hpp"
+#include "relem.hpp"
+#include "ring.hpp"
+#include "ringelem.hpp"
+#include "text-io.hpp"
 #include "tower.hpp"
 
 const bool notInExtension = false;
@@ -473,6 +473,7 @@ void displayCF(const PolynomialRing *R, const CanonicalForm &h)  // for debuggin
   emit(o.str());
 }
 
+// TODO: figure out where this should be used
 bool factoryGoodRing(const PolynomialRing *P)
 {
   struct enter_factory foo(P);
@@ -889,6 +890,5 @@ CFList convertToCFList(const Matrix &M, bool inExtension)
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e x-factor.o "
 // indent-tabs-mode: nil
 // End:

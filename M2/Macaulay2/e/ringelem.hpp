@@ -7,8 +7,8 @@
 #if !defined(SAFEC_EXPORTS)
 #include <engine-exports.h>
 #endif
+#include "interface/gmp-util.h"
 #include "newdelete.hpp"
-#include "gmp-util.h"
 
 using ZZ = mpz_srcptr;
 using ZZmutable = mpz_ptr;

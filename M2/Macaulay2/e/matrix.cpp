@@ -1,5 +1,6 @@
 // Copyright 1995-2004 Michael E. Stillman
 
+#include "interface/random.h"
 #include "style.hpp"
 #include "text-io.hpp"
 #include "ring.hpp"

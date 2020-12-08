@@ -138,9 +138,6 @@
 /* Define to 1 if you have the <execinfo.h> header file. */
 #cmakedefine HAVE_EXECINFO_H 1
 
-/* whether Prem() from factory is public */
-#cmakedefine HAVE_FACTORY_PREM 1
-
 /* Define to 1 if you have the `fchmod' function. */
 #cmakedefine HAVE_FCHMOD 1
 
