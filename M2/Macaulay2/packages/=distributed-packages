@@ -109,7 +109,6 @@ Book3264Examples
 Divisor
 EllipticCurves
 HighestWeights
-NumericalHilbert
 MinimalPrimes
 Bertini
 TorAlgebra
@@ -215,4 +214,5 @@ StatGraphs
 GraphicalModelsMLE
 EigenSolver
 MultiplicitySequence
+NumericalLinearAlgebra
 ResLengthThree
