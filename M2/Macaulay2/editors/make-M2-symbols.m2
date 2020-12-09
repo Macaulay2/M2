@@ -57,10 +57,10 @@ DATATYPES = first \ select(symbols, isType)
 FUNCTIONS = first \ select(symbols, isFunction)
 CONSTANTS = first \ select(symbols, isConst)
 CONSTANTS = CONSTANTS | {"Node", "Item", "Example", "CannedExample", "Pre", "Code"} -- SimpleDoc words
+CONSTANTS = sort CONSTANTS
 -- TODO: get this to work
 --DOCWORDS  = format "doc ///\\\\(/?/?[^/]\\\\|\\\\(//\\\\)*////[^/]\\\\)*\\\\(//\\\\)*///"
 STRINGS   = format "///\\\\(/?/?[^/]\\\\|\\\\(//\\\\)*////[^/]\\\\)*\\\\(//\\\\)*///"
-
 
 -------------------------------------------------------------------------------
 -- Substitute symbols, keywords, types, functions, and constants
