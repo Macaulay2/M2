@@ -769,7 +769,7 @@ export toRR(x:RR,prec:ulong):RR := (
 
 export toRR(s:string,prec:ulong):RR := (
      z := newRRmutable(prec);
-     Ccode( void,  "mpfr_set_str(",  z,",",  s, "->array,", "0,", "GMP_RNDN", ")" ); 
+     Ccode( void,  "mpfr_set_str(",  z,", (char *)",  s, "->array,", "0,", "GMP_RNDN", ")" ); 
      moveToRRandclear(z));
 
 export toRR(x:QQ,prec:ulong):RR := (
