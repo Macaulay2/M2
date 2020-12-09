@@ -10,7 +10,7 @@ void M2_ArrayString_to_stdvector(M2_ArrayString strs,
   for (size_t i = 0; i < strs->len; i++)
     {
       M2_string a = strs->array[i];
-      std::string b(a->array, a->len);
+      std::string b((char *)a->array, a->len);
       result.push_back(b);
     }
 }
@@ -21,7 +21,7 @@ std::vector<std::string> M2_ArrayString_to_stdvector(M2_ArrayString strs)
   for (size_t i = 0; i < strs->len; i++)
     {
       M2_string a = strs->array[i];
-      result.emplace_back(a->array, a->len);
+      result.emplace_back((char *)a->array, a->len);
     }
   return result;
 }

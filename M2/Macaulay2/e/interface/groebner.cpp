@@ -1121,7 +1121,7 @@ const Matrix *rawMGB(
       configuration.setReducer(reducerType);
       configuration.setMaxSPairGroupSize(spairGroupSize);
       configuration.setMaxThreadCount(nthreads);
-      std::string log(logging->array, logging->len);
+      std::string log((char *)logging->array, logging->len);
       configuration.setLogging(log.c_str());
       configuration.setCallback(&callback);
 
