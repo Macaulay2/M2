@@ -1,10 +1,21 @@
 #ifndef _free_algebra_quotient_hpp_
 #define _free_algebra_quotient_hpp_
 
+#include <vector>
+
 #include "FreeAlgebra.hpp"
+
+#include "NCAlgebras/FreeMonoid.hpp"
 #include "NCGroebner.hpp"
-#include "SuffixTree.hpp"
-#include <memory>
+#include "Polynomial.hpp"
+#include "newdelete.hpp"
+#include "ringelem.hpp"
+
+class Ring;
+class SumCollector;
+class buffer;
+struct Monoid;
+struct RingMap;
 
 class FreeAlgebraQuotient : public our_new_delete
 {

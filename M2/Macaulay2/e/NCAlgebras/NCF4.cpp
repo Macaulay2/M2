@@ -1,5 +1,18 @@
-#include "../text-io.hpp"
 #include "NCAlgebras/NCF4.hpp"
+
+#include <assert.h>
+#include <stdlib.h>
+#include <algorithm>
+#include <iostream>
+#include <memory>
+
+#include "../text-io.hpp"
+#include "NCAlgebras/FreeAlgebra.hpp"
+#include "NCAlgebras/OverlapTable.hpp"
+#include "NCAlgebras/VectorArithmetic.hpp"
+#include "NCAlgebras/WordTable.hpp"
+#include "ring.hpp"
+#include "ringelem.hpp"
 
 NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,

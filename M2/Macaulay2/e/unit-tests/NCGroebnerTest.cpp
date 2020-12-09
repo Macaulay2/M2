@@ -1,7 +1,9 @@
+#include <iostream>
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "engine.h"
+#include "interface/ring.h"
+
 #include "poly.hpp"
 #include "aring-glue.hpp"
 #include "NCAlgebras/MemoryBlock.hpp"
@@ -12,7 +14,8 @@
 #include "NCAlgebras/OverlapTable.hpp"
 #include "NCAlgebras/SuffixTree.hpp"
 #include "NCAlgebras/NCReduction.hpp"
-#include <iostream>
+#include "monordering.hpp"
+#include "monoid.hpp"
 
 /** MemoryBlock tests
  */

@@ -1,10 +1,24 @@
 #ifndef _free_algebra_hpp_
 #define _free_algebra_hpp_
 
-#include "../polyring.hpp"
+#include <M2/math-include.h>
+#include "engine-includes.hpp"
+
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "../Polynomial.hpp"
 #include "FreeMonoid.hpp"
 #include "Word.hpp"
+#include "ring.hpp"
+#include "ringelem.hpp"
+#include "style.hpp"
+
+class Monoid;
+class PolynomialRing;
+class RingMap;
+class buffer;
 
 class FreeAlgebra : public our_new_delete
 {

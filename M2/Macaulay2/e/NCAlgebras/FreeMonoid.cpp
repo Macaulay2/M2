@@ -1,5 +1,14 @@
 #include "FreeMonoid.hpp"
 
+#include <assert.h>
+#include <algorithm>
+#include <ostream>
+#include <utility>
+
+#include "NCAlgebras/MemoryBlock.hpp"
+#include "NCAlgebras/Word.hpp"
+#include "monoid.hpp"
+
 size_t FreeMonoidLogger::mCompares = 0;
 
 std::ostream& operator<<(std::ostream& o, FreeMonoidLogger a)

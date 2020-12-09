@@ -1,5 +1,8 @@
-#include "FreeAlgebra.hpp"
 #include "WordTable.hpp"
+
+#include <memory>
+
+#include "NCAlgebras/Word.hpp"
 
 std::ostream& operator<<(std::ostream& o, const WordTable& wordTable)
 {

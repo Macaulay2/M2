@@ -208,7 +208,8 @@ extern "C" {
 
   int IM2_GB_contains(Computation *G,
                       const Matrix *m); /* drg: connected rawGBContains */
-  
+
+
   /*******************************************
    * Computation routines for Resolutions ****
    *******************************************/

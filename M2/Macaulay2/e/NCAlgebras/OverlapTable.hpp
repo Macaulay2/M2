@@ -1,10 +1,15 @@
 #ifndef _OverlapTable_hpp_
 #define _OverlapTable_hpp_
 
-#include <map>
+#include "engine-includes.hpp"
+
 #include <deque>
+#include <map>
 #include <ostream>
-#include "FreeAlgebra.hpp"
+#include <tuple>
+#include <utility>
+
+#include "Polynomial.hpp"
 
 // tuple is (i,j,k) where i is index of first word,
 // j is position of overlap in first word and k is

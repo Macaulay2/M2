@@ -1,5 +1,17 @@
 #include "FreeAlgebra.hpp"
+
+#include <assert.h>
+#include <ostream>
+#include <utility>
+
+#include "NCAlgebras/FreeMonoid.hpp"
+#include "NCAlgebras/Word.hpp"
+#include "Polynomial.hpp"
+#include "ZZ.hpp"
+#include "monoid.hpp"
 #include "ringmap.hpp"
+
+class PolynomialRing;
 
 using ExponentVector = int*;
 
