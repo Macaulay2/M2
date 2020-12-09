@@ -24,6 +24,7 @@ scan(pairs Core#"raw documentation", (k,v) -> (
 beginDocumentation()
 
 load "./Macaulay2Doc/loads.m2"				    -- the ./ makes it load from the current directory
+load "./Macaulay2Doc/tests.m2"
 
 if keys Macaulay2Doc#"private dictionary" =!= {} 
 then error splice (

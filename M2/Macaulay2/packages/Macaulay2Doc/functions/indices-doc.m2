@@ -11,22 +11,7 @@ document {
      to index the components of the direct sum.",
      SeeAlso => {"directSum", "components", "indexComponents",index,support}
      }
--- document { 
---      Key => (indices,HashTable),
---      Headline => "preferred indices of a direct sum",
---      Usage => "",
---      Inputs => {
--- 	  },
---      Outputs => {
--- 	  },
---      Consequences => {
--- 	  },     
---      "description",
---      EXAMPLE {
--- 	  },
---      Caveat => {},
---      SeeAlso => {"directSum", "components", "indexComponents"}
---      }
+
 document { 
      Key => {(indices,RingElement),(indices,Matrix)},
      Headline => "indices of variables occurring in a polynomial",

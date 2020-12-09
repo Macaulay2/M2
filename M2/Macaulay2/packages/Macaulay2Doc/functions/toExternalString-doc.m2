@@ -5,6 +5,7 @@
 undocumented {
     (toExternalString, Nothing),
     (toExternalString, Ideal),
+    (toExternalString, MonomialIdeal),
     (toExternalString, Boolean),
     (toExternalString, LATER),
     (toExternalString, Number),

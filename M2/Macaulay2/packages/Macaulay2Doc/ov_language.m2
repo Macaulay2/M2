@@ -584,6 +584,172 @@ document {
      in an ", TT "if", " expression.  For a list, see ", TO "Boolean", ".  Boolean
      results may be combined with ", TO "not", ", ", TO "and", ", and ", TO "or", "."
      }
+document {
+     Key => "then",
+     Headline => "condition testing",
+     TT "then", " a keyword used with ", TO "if", ".",
+	EXAMPLE {
+		"if 5 > 4 then 8 else 7"
+		},
+	SeeAlso => {"if", "else"}
+     }
+
+document {
+     Key => "else",
+     Headline => "condition testing",
+     TT "else", " a keyword used with ", TO "if", ".",
+	EXAMPLE {
+		"if 4 > 5 then 8 else 7"
+		},
+	SeeAlso => {"if", "then"}
+     }
+document { Key => "catch",
+     Headline => "catch a thrown exception", SeeAlso => {"throw"},
+     Usage => "catch c",
+     Outputs => {{"the value obtained by evaluating the code ", TT "c", ", or, if a ", TO "throw", " was executed during the evaluation of ", TT "c", ",
+	       the argument given to ", TO "throw", "."}},
+     EXAMPLE lines ///
+          catch scan(0..10, i -> if i == 5 then throw 18 else print i)
+     ///}
+document { Key => "throw",
+     Headline => "throw an exception", SeeAlso => {"catch"},
+     Usage => "throw x", 
+     Consequences => {{"the flow of control is passed to the surrounding ", TO "catch", ", and ", TT "x", " is returned as its value"}},
+     EXAMPLE lines ///
+          catch scan(0..10, i -> if i == 5 then throw 18 else print i)
+     ///}
+document { Key => "continue",
+     Headline => "continue with the next iteration of a loop",
+     Usage => "continue x",
+     Inputs => {"x"},
+     Consequences => {
+	  {"the currently executing ", TT "list", "-clause of a ", TO "for", "-loop or ", TO "while", "-loop is 
+	       finished, and iteration continues with the ", TO "do", "-clause or the next iteration of
+	       the loop, if any.  The value ", TT "x", " is added to the list being accumulated.
+	       If ", TT "x", " is omitted, then no value is added to the list, and the statement may be used in a ", TT "do", "-clause."
+	       },
+	  {"Alternatively, as a debugger command, causes execution to be resumed, starting with the current expression."}
+	  },
+     EXAMPLE lines ///
+          for i from 1 to 4 list (continue 4; print ho) do print hi
+          for i from 1 to 4 list (continue ; 14) do print hi
+          for i from 1 to 4 list 14 do print hi
+	  i = 0 ; while i < 10 do ( i = i+1; if i == 5 then continue ; print i )
+     ///,
+     PARA {
+	  "Here is an example of the use of ", TO "continue", " in the debugger after altering a value so continuation will not cause the
+	  error to recur."
+	  },
+     EXAMPLE lines ///
+     load "Macaulay2Doc/demo1.m2"
+     code g
+     g 2
+     code f
+     x
+     x = 11
+     continue
+     ///
+     }
+document { Key => "when",
+     Headline => "a keyword",
+     "A keyword used in ", TO "for", " loops."
+     }
+document {
+     Key => "if",
+     Headline => "condition testing",
+     TT "if p then x else y", " computes ", TT "p", ", which must yield the value ", TO "true", " 
+     or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
+     else the value of ", TT "y", " is provided.",
+     PARA{},
+     TT "if p then x", " computes ", TT "p", ", which must yield the value ", TO "true", " 
+     or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
+     else ", TO "null", " is provided."
+     }
+
+document {
+     Key => "return",
+     Headline => "return from a function",
+     Usage => "return x",
+     Inputs => {
+	  "x" => {"If ", TT "x", " is omitted, then ", TO "null", " is used."} 
+	  },
+     Consequences => {
+	  {"Returns ", TT "x", " as the value of the function currently being evaluated."},
+	  {"Alternatively, as a debugger command, returns ", TT "x", " as the value of the
+	       current expression and stops execution at the next possible point, entering
+	       the debugger again."}
+	  },
+     EXAMPLE {
+	  "f = x -> (
+     if x == 3 then return;
+     if x > 3 then return x^2;
+     5);",
+	  "f 2",
+	  "f 3",
+	  "f 4"
+	  },
+     PARA {
+	  "Here is an example of the use of ", TO "return", " as a debugger command."
+	  },
+     EXAMPLE lines ///
+     load "Macaulay2Doc/demo1.m2"
+     code g
+     g 2
+     code f
+     return 1/11
+     continue
+     ///,
+     SeeAlso => { "break" }
+     }
+
+document {
+     Key => "list",
+     Headline => "loop control",
+     TT "list", " a keyword used with ", TO "while", ", and ", TO "for", "."
+     }
+
+document {
+     Key => "from",
+     Headline => "loop control",
+     TT "from", " a keyword used with ", TO "for", " and ", TO "new", "."
+     }
+
+document {
+     Key => "to",
+     Headline => "loop control",
+     TT "to", " a keyword used with ", TO "for", "."
+     }
+
+document {
+     Key => "do",
+     Headline => "loop control",
+     TT "do", " a keyword used with ", TO "while", ", and ", TO "for", "."
+     }
+
+document {
+     Key => "try",
+     Headline => "catch an error",
+     Usage => "try x then y else z",
+     Inputs => {
+	  "x" => "code",
+	  "y" => "code",
+	  "z" => "code"
+	  },
+     Consequences => {
+	  {"the code ", TT "x", " is run; if no error or ", TO "alarm", " occurs, then the code ", TT "y", " is run; otherwise, the code ", TT "z", " is run"}
+	  },
+     "The return value is the value returned by ", TT "y", " or ", TT "z", ", as the case may be.",
+     PARA{},
+     "The clause '", TT "then y", "' may be omitted, in which case the return value is the value returned by ", TT "x", ", if there is no error or alarm.",
+     PARA{},
+     "The clauses '", TT "then y else z", "' may both be omitted, in which case the return value is the value returned by ", TT "x", ", unless an error or
+     alarm occurs, in which case ", TO "null", " is returned.",
+     PARA{},
+     "The behavior of interrupts (other than alarms) is unaffected.",
+     EXAMPLE "apply(-3..3,i->try 1/i else infinity)",
+     Caveat => "We will change the behavior of this function soon so that it will be possible to catch errors of a particular type.  Meanwhile, users are
+     recommended to use this function sparingly, if at all."
+     }
 
 document {
      Key => "break",
