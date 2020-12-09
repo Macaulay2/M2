@@ -15,6 +15,13 @@
 #include "exceptions.hpp"
 #include "gb-walk.hpp"
 #include "relem.hpp"
+#include "util.hpp"
+#include "matrix-ncbasis.hpp"
+
+#include "M2FreeAlgebra.hpp"
+#include "NCAlgebras/FreeAlgebra.hpp"
+#include "NCAlgebras/NCGroebner.hpp"
+#include "NCAlgebras/NCF4.hpp"
 
 #include "poly.hpp"
 #include "interrupted.hpp"
@@ -1193,6 +1200,131 @@ const Matrix *rawMGB(
       return NULL;
   }
 }
+
+/////////////////////////////////////////////
+// Noncommutative Groebner bases (2-sided) //
+/////////////////////////////////////////////
+
+ConstPolyList matrixToVector(const M2FreeAlgebraOrQuotient* A,
+                                         const Matrix* input)
+{
+  ConstPolyList result;
+  result.reserve(input->n_cols());
+  for (int i=0; i<input->n_cols(); i++)
+    {
+      ring_elem a = input->elem(0,i);
+      auto f = reinterpret_cast<const Poly*>(a.get_Poly());
+      result.push_back(f);
+    }
+  return result;
+}
+
+// vectorToMatrix consumes 'elems': the same pointers are used for the resulting Matrix.
+template<typename PolyL>
+const Matrix* vectorToMatrix(const M2FreeAlgebraOrQuotient* A,
+                             const PolyL& elems)
+{
+  MatrixConstructor mat(A->make_FreeModule(1), elems.size());
+  for (auto i = 0; i < elems.size(); ++i)
+    {
+      ring_elem a = const_cast<Nterm*>(reinterpret_cast<const Nterm*>(elems[i]));
+      mat.set_entry(0, i, a);
+    }
+  mat.compute_column_degrees();
+  return mat.to_matrix();
+}
+
+const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg, int strategy)
+{
+  const Ring* R = input->get_ring();
+  const M2FreeAlgebra* A = R->cast_to_M2FreeAlgebra();
+  if (A != nullptr and input->n_rows() == 1)
+    {
+      auto elems = matrixToVector(A, input);
+      bool isF4 = strategy & 16;
+      if (isF4)
+        {
+          NCF4 G(A->freeAlgebra(), elems, maxdeg, strategy);
+          G.compute(maxdeg); // this argument is actually the soft degree limit
+          auto result = copyPolyVector(A, G.currentValue());
+          return vectorToMatrix(A, result); // consumes the Poly's in result
+        }
+      else
+        {
+          NCGroebner G(A->freeAlgebra(), elems, maxdeg, strategy);
+          G.compute(maxdeg); // this argument is actually the soft degree limit
+          auto result = copyPolyVector(A, G.currentValue());
+          return vectorToMatrix(A, result); // consumes the Poly's in result
+        }
+
+    }
+  ERROR("expected a one row matrix over a noncommutative algebra");
+  return nullptr;
+}
+
+const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* reducerMatrix)
+{
+  const Ring* R = toBeReduced->get_ring();
+  if (R != reducerMatrix->get_ring())
+    {
+      ERROR("expected matrices to be over the same ring");
+      return nullptr;
+    }
+  const M2FreeAlgebra* A = R->cast_to_M2FreeAlgebra();
+  if (A != nullptr and toBeReduced->n_rows() == 1 and reducerMatrix->n_rows() == 1)
+    {
+      auto reducees = matrixToVector(A, toBeReduced);
+      auto reducers = matrixToVector(A, reducerMatrix);
+      NCGroebner G(A->freeAlgebra(),reducers, 0, 0);
+      G.initReductionOnly();
+      auto result = G.twoSidedReduction(reducees);
+      return vectorToMatrix(A, result); // consumes the Poly's in result.
+    }
+  ERROR("expected one row matriices over a noncommutative algebra");
+  return nullptr;
+}
+
+const Matrix* rawNCBasis(const Matrix* gb2SidedIdeal,
+                         M2_arrayint lo_degree,
+                         M2_arrayint hi_degree,
+                         int limit
+                         )
+{
+  const Ring* R = gb2SidedIdeal->get_ring();
+  if (R == nullptr)
+    {
+      ERROR("internal error: expected non-null Ring!");
+      return nullptr;
+    }
+  try {
+    const M2FreeAlgebra* A = R->cast_to_M2FreeAlgebra();
+    if (A != nullptr)
+      {
+        ConstPolyList G = matrixToVector(A, gb2SidedIdeal);
+
+        // WARNING: The following line creates new polynomials
+        // which are used directly in vectorToMatrix (without copying)
+        // but when result goes out of scope, the list is deleted,
+        // but not the polynomials themselves, as they are pointers.
+        PolyList result;
+        bool worked = ncBasis(A->freeAlgebra(),
+                              G,
+                              M2_arrayint_to_stdvector<int>(lo_degree),
+                              M2_arrayint_to_stdvector<int>(hi_degree),
+                              limit,
+                              result);
+        if (not worked) return nullptr;
+        return vectorToMatrix(A, result); // consumes entries of result
+      }
+    ERROR("expected a free algebra");
+    return nullptr;
+  }
+  catch (exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
+}
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
