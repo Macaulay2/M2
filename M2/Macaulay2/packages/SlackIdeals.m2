@@ -8,9 +8,7 @@ newPackage(
 	{Name => "Antonio Macchia", Email => "macchia.antonello@gmail.com"}},
     Headline => "Slack ideals of polytopes and matroids",
     Keywords => {"Commutative Algebra", "Matroids"},
-    PackageImports => {"Polyhedra", "Matroids", "EdgeIdeals", "LLLBases", "Elimination"},
-    PackageExports => {"Polyhedra", "Matroids", "EdgeIdeals", "LLLBases", "Elimination"},
-    DebuggingMode => true
+    PackageExports => {"Polyhedra", "Matroids", "EdgeIdeals", "LLLBases", "Elimination"}
     )
 
 export {"slackMatrix",
