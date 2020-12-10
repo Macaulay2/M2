@@ -25,10 +25,9 @@ peek loadedFiles
 			   Email => "kim@math.uni-sb.de",
 			   HomePage => "https://sites.google.com/view/yeongrak"}
 		   },
-	               PackageExports => {"CompleteIntersectionResolutions"},
+	     PackageExports => {"CompleteIntersectionResolutions"},
              Headline => "Clifford Algebra of a pencil of quadratic forms",
-	     Keywords => {"Commutative Algebra"},
-             DebuggingMode => true
+	     Keywords => {"Commutative Algebra"}
              )
 
      export {
