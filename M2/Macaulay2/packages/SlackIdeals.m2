@@ -1,5 +1,3 @@
-restart
-
 newPackage(   
     "SlackIdeals",
     Version => "1.0",
