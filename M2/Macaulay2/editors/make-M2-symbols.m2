@@ -56,10 +56,8 @@ KEYWORDS  = first \ select(symbols, isKeyword)
 DATATYPES = first \ select(symbols, isType)
 FUNCTIONS = first \ select(symbols, isFunction)
 CONSTANTS = first \ select(symbols, isConst)
-CONSTANTS = CONSTANTS | {"Node", "Item", "Example", "CannedExample", "Pre", "Code"} -- SimpleDoc words
+CONSTANTS = CONSTANTS | {"Node", "Item", "Example", "CannedExample", "Pre", "Code", "Tree"} -- SimpleDoc words
 CONSTANTS = sort CONSTANTS
--- TODO: get this to work
---DOCWORDS  = format "doc ///\\\\(/?/?[^/]\\\\|\\\\(//\\\\)*////[^/]\\\\)*\\\\(//\\\\)*///"
 STRINGS   = format "///\\\\(/?/?[^/]\\\\|\\\\(//\\\\)*////[^/]\\\\)*\\\\(//\\\\)*///"
 
 -------------------------------------------------------------------------------
@@ -87,7 +85,6 @@ symbolsForEmacs = template -> (
     output = replace("@M2DATATYPES@", demark(" ", format \ DATATYPES), output);
     output = replace("@M2FUNCTIONS@", demark(" ", format \ FUNCTIONS), output);
     output = replace("@M2CONSTANTS@", demark(" ", format \ CONSTANTS), output);
---    output = replace("@M2DOCWORDS@",  demark(" ", format \ DOCWORDS),  output);
     output = replace("@M2STRINGS@",                        STRINGS,    output);
     output)
 
