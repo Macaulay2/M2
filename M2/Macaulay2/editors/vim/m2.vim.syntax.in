@@ -1,15 +1,15 @@
 " Vim syntax file
 " Language: Macaulay2
 
-"if exists("b:current_syntax")
-"  finish
-"endif
+if exists("b:current_syntax")
+  finish
+endif
 
-"syn region m2String  start=/"/ skip=/\\"/ end=/"/
-"syn match  m2String  /"[^"]*"/
-"syn region m2String  start=/"/ end=/"/
+syn region m2String  start=/\/\/\// skip=/\(\/\/\)*\/\/[^\/]/ end=/\/\/\//
+syn region m2String  start=/"/ skip=/[^\\]\(\\\\\)*\\"/ end=/"/
 
 syn match  m2Comment /--.*$/
+syn region m2Comment start=/-\*/ end=/\*-/
 
 syn case match
 
