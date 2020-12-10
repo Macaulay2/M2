@@ -16,7 +16,7 @@ Version => "0.3", Date => "August 11th, 2019", Authors => {
      Email => "cjamesbott@gmail.com"}
 }, --this file is in the public domain
 Keywords => {"Commutative Algebra"},
-Headline => "rational maps between varieties", DebuggingMode => true, Reload=>true, PackageImports => {"FastLinAlg"})
+Headline => "rational maps between varieties", PackageImports => {"FastLinAlg"})
 export{
 	"isBirationalMap",
 	"idealOfImageOfMap",
