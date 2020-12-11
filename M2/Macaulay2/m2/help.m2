@@ -123,15 +123,15 @@ isDocumentableThing := method(Dispatch => Thing)
 isDocumentableThing    String :=
 isDocumentableThing  Sequence := key -> false
 isDocumentableThing   Nothing :=
-isDocumentableThing    Symbol := key -> true
+isDocumentableThing    Symbol := key -> not mutable dictionary key
 isDocumentableThing     Thing :=
-isDocumentableThing      Type := key -> hasAttribute(key, ReverseDictionary) and isDocumentableMethod getAttribute(key, ReverseDictionary)
+isDocumentableThing      Type := key -> hasAttribute(key, ReverseDictionary) and isDocumentableThing getAttribute(key, ReverseDictionary)
 
 -- assignment methods look like ((symbol *, symbol =), X, Y, Z)
 isDocumentableMethod = method(Dispatch => Thing)
 isDocumentableMethod    Thing := key -> false
 isDocumentableMethod Sequence := key -> all(key, s -> isDocumentableMethod s)
-isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
+isDocumentableMethod   Symbol := key -> isDocumentableThing key and isGlobalSymbol toString key and getGlobalSymbol toString key === key
 isDocumentableMethod     Type := key -> isDocumentableThing key
 
 isDocumentableMethod Function        := fn -> hasAttribute(fn, ReverseDictionary) and dictionary getAttribute(fn,ReverseDictionary) =!= null
