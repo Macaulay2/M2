@@ -2,7 +2,7 @@
 --		Copyright 1993-2008 by Daniel R. Grayson
 
 newPackage("Text",
-     Keywords => {"Miscellaneous"},
+     Keywords => {"Documentation"},
      Headline => "documentation and hypertext"
      )
 

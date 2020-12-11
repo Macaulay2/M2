@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.17",
 	  TO "changes, 1.16",
 	  TO "changes, 1.15",
 	  TO "changes, 1.14",
@@ -32,22 +33,33 @@ document {
      }
 
 document {
-     Key => "changes made for the next release",
+     Key => "changes made for the next release"
+     }
+
+document {
+     Key => "changes, 1.17",
      UL {
 	 LI { "functionality added:",
 	      UL {
-		   LI { "The function ", TO readPackage, " has been added for retrieving the options in the preamble of a package quickly." },
-		   LI { "The function ", TO hooks, " has been added for retrieving the list of functions installed as hooks for handling computations of a specific type." },
-		   LI { "The function ", TO baseRing, " has been added for retrieving the ring from which a ring was formed." },
+		   LI { "The function ", TO "importFrom", " has been added, for importing individual symbols from another package." },
+		   LI { "The function ", TO readPackage, " has been added, for retrieving the options in the preamble of a package quickly." },
+		   LI { "The function ", TO hooks, " has been added, for retrieving the list of functions installed as hooks for handling computations of a specific type." },
+		   LI { "The function ", TO baseRing, " has been added, for retrieving the ring from which a ring was formed." },
 		   LI { "The functions ", TO findProgram, " and ", TO runProgram, " have been added, to provide a uniform way for packages to locate external programs.
 			(The names and locations of such programs may vary from system to system." },
-		   LI { "The function ", TO formation, " has been added for retrieving the way a module was formed, whether as a direct sum, tensor product, or Hom-module." }
+		   LI { "The function ", TO formation, " has been added, for retrieving the way a module was formed, whether as a direct sum, tensor product, or Hom-module." }
 		   }
 	      },
          LI { "functionality improved:",
               UL {
+		   LI { "The function ", TO "installPackage", " accepts a new argument, ", TO "MakeHTML", "." },
+		   LI { "The new optional argument name ", TO "Keywords", " can now be used with packages to specify a list of key words (or phrases),
+			useful for searching and organizing the packages by topic, as seen here: ", TO "packages provided with Macaulay2", "."			
+			},
                    LI { "The functions ", TO addHook, " and ", TO runHooks, " have been modified to accept a new syntax,
 		       allow giving names to hooks, and run specific hooks using the option ", TT "Strategy", ".
+		       The symbol ", TO "Default", " has been added for use as the name of hooks.
+		       The mutable hash table ", TO "GlobalHookStore", " has been added as a storage location for some hooks.
 		       For more information on ", TO "using hooks", ", see that documentation node." },
                    LI { "The functions ", TO code, " is modified to also show the code for hooks listed by the function ", TO hooks, "." },
 		   LI {
@@ -67,7 +79,7 @@ document {
 		       TO "SimpleDoc :: doc(String)", "." },
                    LI { "The ", TO regex, " function, as well as other functions that accept ", TO "regular expressions",
                        ", have been rewritten to use the Perl regular expression syntax by default, which allows more
-		       fine-grained control of the matches. The POSIX Extended flavor is still available as an option.
+		       fine-grained control of the matches. The ", TO "POSIX", " extended flavor is still available as an option.
 		       The functionality is unchanged in almost all cases, except for regular expressions containing
 		       escaped special characters, where another backslash may be needed, and, in rare cases, where
 		       there are multiple options to match the regular expression.
@@ -110,8 +122,9 @@ document {
 	       },
 	 LI { "functionality changed:",
 	      UL {
-		   LI { 
-			"The destinations of the links at the tops of the web pages portraying documentation nodes in a package have been
+		   LI { "The functions ", TO "associatedPrimes", ", ", TO "topComponents", ", and ", TO "removeLowestDimension", " have been moved to the
+			 package ", TO "PrimaryDecomposition::PrimaryDecomposition", "." },
+		   LI { "The destinations of the links at the tops of the web pages portraying documentation nodes in a package have been
 			altered.  The links labeled ", TT "next", " and ", TT "previous", " have been interchanged with the links labelled ",
 			TT "forward", " and ", TT "backward", ".  This was done to bring the terminology into agreement with that used in the
 			info nodes portraying documentation nodes.  The result can be described as follows.  By virtue of the ",
