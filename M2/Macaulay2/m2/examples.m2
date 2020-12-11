@@ -51,7 +51,7 @@ EXAMPLE VisibleList := x -> (
 -- TODO: the output format is provisional
 -- TODO: does't capture stderr
 capture' := capture
-capture = method(Options => { UserMode => true })
+capture = method(Options => { UserMode => true, Package => null })
 capture Net    := opts -> s -> capture(toString s,       opts)
 capture List   := opts -> s -> capture(demark_newline s, opts)
 -- TODO: do this in interp.dd instead
@@ -60,8 +60,7 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     -- output is (Boolean, String) => (Err?, Output)
     -- TODO: this should eventually be unnecessary
     oldMutableVars := new MutableHashTable;
-    scan(currentPackage#"exported mutable symbols", symb -> oldMutableVars#symb = value symb);
-    scan(          Core#"exported mutable symbols", symb -> oldMutableVars#symb = value symb);
+    scan(flatten apply(loadedPackages, pkg -> pkg#"exported mutable symbols"), symb -> oldMutableVars#symb = value symb);
     interpreterDepth = 1;
 
     oldPrivateDictionary := User#"private dictionary";
@@ -76,7 +75,7 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
 	OutputDictionary,
 	PackageDictionary};
     scan(Core#"pre-installed packages", needsPackage);
-    needsPackage toString currentPackage;
+    needsPackage toString if opts#Package === null then currentPackage else opts#Package;
     dictionaryPath = prepend(oldPrivateDictionary,      dictionaryPath); -- this is necessary mainly due to T from degreesMonoid
     dictionaryPath = prepend(User#"private dictionary", dictionaryPath); -- this is necessary mainly due to indeterminates.m2
     currentPackage = User;
@@ -90,8 +89,7 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     popvar symbol OutputDictionary;
 
     -- TODO: this should eventually be unnecessary
-    scan(currentPackage#"exported mutable symbols", symb -> symb <- oldMutableVars#symb);
-    scan(          Core#"exported mutable symbols", symb -> symb <- oldMutableVars#symb);
+    scan(keys oldMutableVars, symb -> symb <- oldMutableVars#symb);
     ret)
 protect symbol capture
 
@@ -141,7 +139,7 @@ getExampleOutput := (pkg, fkey) -> (
     output := if fileExists filename
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
     else if width (ex := examples fkey) =!= 0
-    then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false) );
+    then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false, Package => pkg) );
     pkg#"example results"#fkey = if output === null then {} else separateM2output output)
 
 -- used in installPackage.m2
@@ -173,7 +171,7 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
     then (
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
-	(err, output) := evaluateWithPackage(pkg, inputs, capture_(UserMode => false));
+	(err, output) := capture(inputs, UserMode => false, Package => pkg);
 	if not err then return outf << M2outputHash << inputhash << endl << output << close);
     -- fallback to using an external process
     stderr << commentize pad("making " | desc, 72) << flush;
