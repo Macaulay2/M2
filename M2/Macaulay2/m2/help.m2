@@ -119,23 +119,22 @@ initializeReverseOptionTable := () -> (
 -----------------------------------------------------------------------------
 
 -- we're not looking for documentable methods here, just documentable objects
-isDocumentableThing := method(Dispatch => Thing)
+isDocumentableThing = method(Dispatch => Thing)
 isDocumentableThing    String :=
 isDocumentableThing  Sequence := key -> false
 isDocumentableThing   Nothing :=
-isDocumentableThing    Symbol := key -> not mutable dictionary key
-isDocumentableThing     Thing :=
-isDocumentableThing      Type := key -> hasAttribute(key, ReverseDictionary) and isDocumentableThing getAttribute(key, ReverseDictionary)
+isDocumentableThing    Symbol := key -> (d := dictionary key) =!= null and not mutable d and isGlobalSymbol toString key and getGlobalSymbol toString key === key
+isDocumentableThing     Thing := key -> hasAttribute(key, ReverseDictionary) and isDocumentableMethod getAttribute(key, ReverseDictionary)
 
 -- assignment methods look like ((symbol *, symbol =), X, Y, Z)
 isDocumentableMethod = method(Dispatch => Thing)
-isDocumentableMethod    Thing := key -> false
 isDocumentableMethod Sequence := key -> all(key, s -> isDocumentableMethod s)
-isDocumentableMethod   Symbol := key -> isDocumentableThing key and isGlobalSymbol toString key and getGlobalSymbol toString key === key
-isDocumentableMethod     Type := key -> isDocumentableThing key
-
-isDocumentableMethod Function        := fn -> hasAttribute(fn, ReverseDictionary) and dictionary getAttribute(fn,ReverseDictionary) =!= null
-isDocumentableMethod ScriptedFunctor := fn -> hasAttribute(fn, ReverseDictionary)
+isDocumentableMethod    Thing := key -> false
+isDocumentableMethod     Type :=
+isDocumentableMethod   Symbol :=
+isDocumentableMethod  Command :=
+isDocumentableMethod Function :=
+isDocumentableMethod ScriptedFunctor := isDocumentableThing
 
 documentableMethods := key -> select(methods key, isDocumentableMethod)
 
