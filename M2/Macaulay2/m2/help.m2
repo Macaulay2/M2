@@ -47,9 +47,6 @@ seeAbout := (f, i) -> (
 --   the last member is the corresponding hypertext entry in the UL list
 -----------------------------------------------------------------------------
 
--- TODO: something like
---    * validate, see validate(Hypertext) -- blah blah
--- does not work with (symbol *, String), and the issue is here
 counter := 0
 next := () -> counter = counter + 1
 optTO := key -> (
@@ -58,7 +55,11 @@ optTO := key -> (
     if isUndocumented tag then return;
     if isSecondaryTag tag then (
 	ptag := getPrimaryTag tag;
-	(format ptag, fkey, next(), fixup if currentHelpTag === ptag then fkey else SPAN {TT format fkey, " -- see ", TOH{ptag}}))
+	-- this is to avoid doubling "\" in documentation for symbol \ and symbol \\
+	ref := if match("\\\\", fkey) then concatenate("/// ", fkey, " ///") else format fkey;
+	-- TODO: figure out how to align the lists using padding
+	-- ref = pad(ref, printWidth // 4);
+	(format ptag, fkey, next(), fixup if currentHelpTag === ptag then ref else SPAN {TT ref, " -- see ", TOH{ptag}}))
     -- need an alternative here for secondary tags such as (export,Symbol)
     else (fkey, fkey, next(), TOH{tag}))
 -- this isn't different yet, work on it!
@@ -188,7 +189,7 @@ documentationValue(Symbol, Keyword)         := (S, f) -> (
     -- methods of f
     a := smenu documentableMethods f;
     if #a > 0 then DIV nonnull splice ( "class" => "waystouse",
-	SUBSECTION {"Ways to use ", TT toString f, ":"}, a))
+	SUBSECTION {"Ways to use ", TT toExternalString f, " :"}, a))
 
 -- TODO: simplify this process
 -- e.g. Macaulay2Doc :: Macaulay2Doc
