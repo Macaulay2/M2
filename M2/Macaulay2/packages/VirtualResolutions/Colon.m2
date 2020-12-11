@@ -163,11 +163,11 @@ saturationZero (Module,Ideal) := (M,B) ->(
     for i from 0 to #bGens-1 do (
           b := bGens#i;
           bVars := support b;
-	  rVars := delete(bVars#1,delete(bVars#0,Vars))|bVars;
-	  R := coefficientRing ring B [rVars,MonomialOrder=>{Position=>Up,#Vars-2,2}];
-	  P := sub(presentation M,R);
-	  G := gb P;
-	  if (ann coker selectInSubring(1,leadTerm G)) == 0 then return false;
+              rVars := delete(bVars#1,delete(bVars#0,Vars))|bVars;
+              R := coefficientRing ring B [rVars,MonomialOrder=>{Position=>Up,#Vars-2,2}];
+              P := sub(presentation M,R);
+              G := gb P;
+              if (ann coker selectInSubring(1,leadTerm G)) == 0 then return false;
     );
     true
 )
