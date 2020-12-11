@@ -148,7 +148,7 @@ document {
 			 TT "cokernel M ** cokernel N"),
 		    LI ("trace -- ", TO "trace"),
 		    LI ("transpose -- ", TO "transpose"),
-		    LI ("truncate -- ", TO "Truncations::truncate"),
+		    LI ("truncate -- ", TO "Truncations::truncate(ZZ,Module)"),
 		    LI ("type -- ", TO "not documented yet"),
 		    LI ("version -- ", TO "version"),
 		    LI ("wedge -- ", TO "minors", ",", TO "exteriorPower")
