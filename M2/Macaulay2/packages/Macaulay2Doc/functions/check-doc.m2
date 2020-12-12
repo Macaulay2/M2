@@ -46,6 +46,7 @@ Node
     (check, ZZ, Package)
     (check, ZZ, String)
     [check, UserMode]
+    [check, Verbose]
   Headline
     perform tests of a package
   Usage
