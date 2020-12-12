@@ -1,9 +1,10 @@
 ###############################################################################
-# TODO: Currently failing due to many errors in booktex.m2
-# also roman.m2 doesn't exit. Remove?
 
-find_package(LATEX)
-set(BOOKNAME Macaulay2-${PACKAGE_VERSION}-book)
+find_package(LATEX COMPONENTS BIBTEX PDFLATEX)
+set(BOOKNAME Macaulay2-${PACKAGE_VERSION}-documentation)
+
+set(M2 ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
+set(M2_ARGS --script)
 
 ## for M2book.pdf put these lines in texmf.cnf
 # main_memory = 1263000
@@ -11,45 +12,45 @@ set(BOOKNAME Macaulay2-${PACKAGE_VERSION}-book)
 # pool_size = 300000
 # max_strings = 30000
 
-configure_file(book.m2 book.m2 COPYONLY)
-configure_file(booktex.m2 booktex.m2 COPYONLY)
-configure_file(papers.bib papers.bib COPYONLY)
-
 add_custom_command(
   OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}.tex
-  COMMAND   M2-binary -q book.m2 --silent --stop -e 'exit 0' # ${M2_ARGS}
-  COMMAND   mv M2book.tmp ${BOOKNAME}.tex
   COMMENT   "Generating ${BOOKNAME}.tex"
+  COMMAND   ${M2} ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/book.m2
+  COMMAND   mv M2book.tex ${BOOKNAME}.tex
+  DEPENDS   book.m2 booktex.m2 M2book.tex.in
+  USES_TERMINAL
   )
 
 add_custom_command(
   OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}.aux
   DEPENDS   ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}.tex
-  COMMAND   ${LATEX_COMPILER} -interaction=batchmode ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}
-  COMMENT   "Latex (first pass)"
+  COMMAND   ${LATEX_COMPILER} -interaction=batchmode ${BOOKNAME}
+  COMMENT   "Running LaTeX ..."
   )
 
 add_custom_command(
   OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}.bbl
   DEPENDS   ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}.aux
-  COMMAND   ${BIBTEX_COMPILER} -terse ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}
-  COMMENT   "Bibtex"
+            ${CMAKE_CURRENT_SOURCE_DIR}/papers.bib
+  COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/papers.bib papers.bib
+  COMMAND   ${BIBTEX_COMPILER} -terse ${BOOKNAME}
+  COMMENT   "Running BibTeX ..."
   )
 
 add_custom_command(
   OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}.dvi
   DEPENDS   ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}.bbl
-  COMMAND   ${LATEX_COMPILER} -interaction=batchmode ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}
-  COMMENT   "Latex (second pass)"
+  COMMAND   ${LATEX_COMPILER} -interaction=batchmode ${BOOKNAME}
+  COMMENT   "Rerunning LaTeX ..."
   )
 
 add_custom_command(
-  OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}.log
+  OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}.pdf
   DEPENDS   ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}.bbl
             ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}.dvi
-  COMMAND   ${LATEX_COMPILER} -interaction=batchmode ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}
-  COMMENT   "Latex (third pass)"
+  COMMAND   ${PDFLATEX_COMPILER} -interaction=batchmode ${BOOKNAME}
+  COMMENT   "Running pdfTeX ..."
   )
 
 # Eventually trigger the whole process
-add_custom_target(M2-book DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}.log)
+add_custom_target(M2-book DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BOOKNAME}.pdf)

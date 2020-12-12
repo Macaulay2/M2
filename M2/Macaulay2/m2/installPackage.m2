@@ -2,6 +2,8 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 -- TODO: add regex option to readDirectory
 -- TODO: add relative directory to minimizeFilename
+-- TODO: generate parent nodes for orphan nodes based on their type
+-- TODO: make orphan overview nodes subnodes of the top node
 
 -----------------------------------------------------------------------------
 -- Generate the html documentation
@@ -21,7 +23,7 @@ numDocumentationWarnings := 0
 
 -- The default values are set so "(html, Hypertext)" works before Macaulay2Doc is installed.
 -- TODO: They should be functions rather than global values
-topDocumentTag := null
+topDocumentTag  = null -- FIXME: make private again
 installPrefix   = applicationDirectory() | "local/"  -- default the installation prefix
 installLayout   = Layout#2			     -- the layout of the installPrefix, global for communication to document.m2
 htmlDirectory   = ""	      -- relative path to the html directory, depends on the package
@@ -97,7 +99,8 @@ makeAnchors := n -> (
 anchorsUpTo := entry -> if alpha#?numAnchorsMade and entry >= alpha#numAnchorsMade then makeAnchors length select(alpha, c -> entry >= c)
 remainingAnchors := () -> makeAnchors (#alpha)
 
-packageTagList := (pkg, topDocumentTag) -> checkIsTag \ unique nonnull join(
+-- FIXME: make private again
+packageTagList = (pkg, topDocumentTag) -> checkIsTag \ unique nonnull join(
     apply(pairs pkg.Dictionary, (name, sym) ->
 	if not match("\\$", name) then makeDocumentTag(sym, Package => pkg)),
     apply(values pkg#"raw documentation", rawdoc -> rawdoc.DocumentTag),
@@ -180,7 +183,8 @@ buildLinks ForestNode := x -> (
 -- constructs the tree-structure for the Subnodes of each node
 -----------------------------------------------------------------------------
 
-assembleTree := (pkg, nodes) -> (
+-- FIXME: make private again
+assembleTree = (pkg, nodes) -> (
     resetCounters();
     -- keep track of various possible issues with the nodes
     visits := new HashTable from {
@@ -304,6 +308,19 @@ makePackageIndex List := path -> (
 			    }))
 		}}} << endl << close;
     htmlDirectory = null;)
+
+-----------------------------------------------------------------------------
+-- install PDF documentation for package
+-----------------------------------------------------------------------------
+
+-- TODO: some of these options may not be necessary
+installPDF := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts) -> (
+    topDocumentTag := makeDocumentTag(pkg#"pkgname", Package => pkg);
+    nodes := packageTagList(pkg, topDocumentTag);
+    tree := assembleTree(pkg, getPrimaryTag \ select(nodes, tag -> not isUndocumented tag));
+    -- TODO: move here from book/booktex.m2
+    -- crawl first nodeTree -- only subnodes of the top node
+    )
 
 -----------------------------------------------------------------------------
 -- install info documentation for package
@@ -543,6 +560,7 @@ installPackage = method(
 	MakeDocumentation      => true,
 	MakeHTML               => true,
 	MakeInfo               => true,
+	MakePDF                => false,
 	MakeLinks              => true,
 	-- until we get better dependency graphs between documentation
 	-- nodes, "false" here will confuse users
@@ -756,6 +774,10 @@ installPackage Package := opts -> pkg -> (
 	-- ~50 -> ~80s for Macaulay2Doc
 	if opts.MakeHTML then installHTML(pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts)
 	else verboseLog("not making documentation in HTML format");
+
+	-- make pdf documentation
+	if opts.MakePDF then installPDF(pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts)
+	else verboseLog("not making documentation in PDF format");
 
 	if chkdoc and hadDocumentationWarning then printerr("warning: ",
 	    toString numDocumentationWarnings, " warning(s) occurred in documentation for package ", toString pkg);

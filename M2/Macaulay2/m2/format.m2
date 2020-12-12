@@ -46,11 +46,6 @@ scan({net, html, markdown, tex}, parser ->
 scan({net, info, html, markdown, tex}, parser ->
     parser LATER := node -> parser node#0() )
 
--- TODO: move somewhere else
--- Rendering by concatenation of inputs
-scan({mathML, tex, texMath},
-    parser -> setupRenderer(parser, concatenate, Hypertext))
-
 -- Rendering by horizontal join of inputs
 scan({net, info},
     parser -> setupRenderer(parser, horizontalJoin, Hypertext))

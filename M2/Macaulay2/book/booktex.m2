@@ -1,15 +1,21 @@
---		Copyright 1997 by Daniel R. Grayson
+-* Copyright 1997 by Daniel R. Grayson *-
+-* Copyright 2020 by Mahrud Sayrafi    *-
 
-errorDepth = 0
+beginDocumentation()
+importFrom_Core {"ForestNode", "TreeNode", "isMissingDoc", "isSecondaryTag", "isUndocumented", "packageTagList", "assembleTree", "getPrimaryTag", "topDocumentTag"}
+documentationMemo = memoize help#0
 
-documentationMemo = memoize documentation
+-----------------------------------------------------------------------------
+T := {("M", 1000), ("CM", 900), ("D", 500), ("CD", 400), ("C", 100),
+                   ("XC", 90),  ("L", 50),  ("XL", 40),  ("X", 10),
+                   ("IX", 9),   ("V", 5),   ("IV", 4),   ("I", 1)}
+ROMAN = n -> ( s := ""; scan(T, (a, i) -> while n >= i do (n = n - i; s = s | a)); s )
 
-maximumCodeWidth = 60
+t := {("m", 1000), ("cm", 900), ("d", 500), ("cd", 400), ("c", 100),
+                   ("xc", 90),  ("l", 50),  ("xl", 40),  ("x", 10),
+		   ("ix", 9),   ("v", 5),   ("iv", 4),   ("i", 1)}
+roman = n -> ( s := ""; scan(t, (a, i) -> while n >= i do (n = n - i; s = s | a)); s )
 
-getNameFromNumber = new MutableHashTable
-otherNodes = new MutableHashTable
-getNumberFromName = new MutableHashTable
-sectionNumberTable = new MutableHashTable
 -----------------------------------------------------------------------------
 -- we have to keep track of the part and chapter numbers, and *not* reset the
 -- chapter number to zero when starting a new part, so:
@@ -18,207 +24,154 @@ sectionNumberTable = new MutableHashTable
 --     3,8,8,5    part 3, chapter 8, section 5
 --     3,8,8,5,2  part 3, chapter 8, section 5, subsection 2
 
+-- TODO: make this functional
 sectionNumber = {0,0}
-descend := () -> sectionNumber = (
-     if #sectionNumber === 2
-     then ( sectionNumber#0, sectionNumber#1, sectionNumber#1 )
-     else append(sectionNumber,0)
-     )
-ascend := () -> (
-     if # sectionNumber === 1 then error "oops: ascending too high, producing empty section number";
-     if # sectionNumber === 0 then error "oops: empty section number";
-     sectionNumber = drop(sectionNumber,-1)
-     )
+
+getNameFromNumber  = new MutableHashTable
+getNumberFromName  = new MutableHashTable
+sectionNumberTable = new MutableHashTable
+miscNodes          = new MutableHashTable
+
 next := sectionNumber -> (
-     if #sectionNumber === 0 then sectionNumber
-     else if #sectionNumber === 2 then ( sectionNumber#0 + 1, sectionNumber#1 )
-     else if #sectionNumber === 3 
-     then ( sectionNumber#0, sectionNumber#1 + 1, sectionNumber#2 + 1 )
-     else append( drop(sectionNumber, -1), sectionNumber#-1 + 1 )
-     )
-fmt := sectionNumber -> (
-     demark(".",
-	  prepend(
-	       ROMAN sectionNumber#0,
-	       apply(drop(sectionNumber,2),toString)
-	       )
-	  )
-     )
------------------------------------------------------------------------------
-String + ZZ := (s,i) -> s
+    if #sectionNumber === 0 then   sectionNumber else
+    if #sectionNumber === 2 then ( sectionNumber#0 + 1, sectionNumber#1 ) else
+    if #sectionNumber === 3 then ( sectionNumber#0,     sectionNumber#1 + 1, sectionNumber#2 + 1 ) else
+    append( drop(sectionNumber, -1), sectionNumber#-1 + 1 ))
 
-needs "roman.m2"
+fmt := sectionNumber -> demark(".", prepend(ROMAN sectionNumber#0, apply( drop(sectionNumber, 2), toString) ))
 
-record = (
-     counter := 0;
-     node -> (
-	  counter = counter + 1;
-	  getNumberFromName#node = counter;
-	  getNameFromNumber#counter = node;
-	  sectionNumber = next sectionNumber;
-	  n := sectionNumberTable#counter = fmt sectionNumber;
-	  stderr << "node : " << node << " [" << n << "]" << endl;
-	  )
-     )
+counter := 0;
+record = node -> (
+    counter = counter + 1;
+    getNumberFromName#node = counter;
+    getNameFromNumber#counter = node;
+    sectionNumber = next sectionNumber;
+    n := sectionNumberTable#counter = fmt sectionNumber;
+    stderr << concatenate("node :", 2 * #sectionNumber, n, ". ", node) << endl;)
 
-reach1 = method(Dispatch => Thing) 
-reach2 = method(Dispatch => Thing)
-reach3 = method(Dispatch => Thing)
+descend := (n) -> (sectionNumber = (
+    if #sectionNumber === 2 then ( sectionNumber#0, sectionNumber#1, sectionNumber#1 )
+    else join(sectionNumber, toList(n:0))); n)
 
-reach1 Thing := identity
-reach1 Sequence := reach1 BasicList := x -> scan(x,reach1)
--- reach1 NOCONTENTS := x -> scan(x,reach3)
-reach1 UL := x -> scan(x,reach2)
-reach1 TO := reach1 TOH := (x) -> (
-     node := formatDocumentTag x#0;
-     if not getNumberFromName#?node and not otherNodes#?node 
-     then otherNodes#node = documentationMemo x#0;
-     )
-reach2 Thing := reach1
-goOver := node -> (
-     record node;
-     descend();
-     reach1 documentationMemo node;
-     ascend();
-     )
-reach2 TO := reach2 TOH := (x) -> (
-     node := formatDocumentTag x#0;
-     if not getNumberFromName#?node
-     then (
-	  if otherNodes#?node then remove(otherNodes,node);
-     	  goOver node;
-	  ))
-reach3 Thing := reach1
-reach3 UL := x -> scan(x,reach1)
+ascend := (n, s) -> (
+    if # sectionNumber === 1 then error "oops: ascending too high, producing empty section number";
+    if # sectionNumber === 0 then error "oops: empty section number";
+    sectionNumber = drop(sectionNumber, -n); s)
+
+crawl := method()
+-- Taking advantage of tail-call optimization is crucial here,
+-- otherwise we easily run into recursion limits
+crawl TreeNode   := x -> ( record format x#0; ascend(descend(1), crawl x#1) )
+crawl ForestNode := x -> if #x>0 then scan(toList x, y -> ( -* zero out the section; *- crawl y))
+
 --------------- body of book
-reach1 documentationMemo "Macaulay2"
+topDocumentTag = makeDocumentTag(pkg#"pkgname", Package => pkg);
+nodeList := packageTagList(pkg, topDocumentTag);
+nodeTree := assembleTree(pkg, getPrimaryTag \ select(nodeList, tag -> not isUndocumented tag));
+
+-- only subnodes of the top node
+crawl first nodeTree
+
 --------------- appendix
--- sectionNumber = {"A"}
--- document { "Appendix",
---      "We present various footnotes in this appendix.",
---      }
--- reach2 TO "Appendix";
---------------- cover everything else
-oldreach2 = reach2
-reach2 = reach1
-more := true
-while more do (
-     more = false;
-     scan(keys otherNodes, node -> (
-	       doc = otherNodes#node;
-	       if doc =!= true then ( 
-		    reach1 doc;
-		    more = true;
-		    otherNodes#node = true;
-		    )
-	       )
-	  )
-     )
-reach2 = oldreach2
---------------- fill in Appendix
--- docDatabase = openDatabase "../cache/Macaulay2-doc"
+rawdocs = pkg#"raw documentation"
+record "Appendix"; descend(1)
 document {
-     Key => "Miscellaneous documentation",
-     "We present various additional documentation in this chapter.",
-     UL apply(sort unique join(
-	       formatDocumentTag \ value \ keys docDatabase,
-	       keys otherNodes
-	       ),
-	  node -> if not getNumberFromName#?node then TO node )
-     }
+    Key => "Appendix",
+    "This appendix contains additional information about the following topics.",
+    UL { TO "Miscellaneous documentation" } }
+
+--sectionNumber = {"A"}
+record "Miscellaneous documentation";
 document {
-     Key => "Appendix",
-     "This appendix contains additional information about the following topics.",
-     UL {
-	  TO "Miscellaneous documentation"
-	  }
-     }
-reach2 TO "Appendix"
- ------------- index
- -- sectionNumber = {"B"}
- -- document { "Symbol Index",
- -- --     TEX ///\begintwocolumn
- -- --///,
- --      apply(
- -- 	  sort join(keys docDatabase, {"Appendix"}), 
- -- 	  node -> ( TO node, PARA{})),
- -- --     TEX ///
- -- --\endtwocolumn
- -- --///,
- --      }
- -- reach2 TO "Symbol Index"
----------------
-close docDatabase
+    Key => "Miscellaneous documentation",
+    "We present various additional documentation in this chapter.",
+    ascend(descend(1), UL apply(sort keys rawdocs, fkey -> (
+		tag := getPrimaryTag makeDocumentTag(fkey, Package => pkg);
+		fkey = format tag;
+		if  not getNumberFromName#?fkey
+		and not miscNodes#?fkey
+		and not isMissingDoc tag
+		and not isUndocumented tag then (
+		    miscNodes#fkey = documentationMemo tag;
+		    record fkey; TO2 {tag, TT format tag} ))))}
+
+--sectionNumber = {"B"}
+record "Symbol Index";
+document {
+    Key => "Symbol Index",
+    TEX "\\begin{multicols}{2}",
+    apply(
+	sort join(pkg#"exported symbols", pkg#"exported mutable symbols"),
+	symb -> ( TT toString symb, PARA{})),
+    TEX "\\end{multicols}\n",
+    TEX "\\vfill"
+    }
+ascend(1, -* "Appendix" *-)
+
 ---------------
 UnknownReference := "???"
 
-crossReference := (key,text,optional) -> (
-     sectionNumber := (
-	  if getNumberFromName#?key
-	  then sectionNumberTable#(getNumberFromName#key)
-	  else (
-	       -- error("warning: documentation for key '", key, "' not found");
-	       -- stderr << "warning: documentation for key '" << key << "' not found" << endl;
-	       UnknownReference
-	       )
-	  );
-     if sectionNumber === UnknownReference
-     then if optional 
-     then (                                  "{\\bf ", tex text,  "}" )
-     else (                                  "{\\bf ", tex text,  "} [", sectionNumber, "]" )
-     else ( "\\hyperlink{", sectionNumber, "}{{\\bf ", tex text, "}} [", sectionNumber, "]" )
-     )
+crossReference := (key, text, optional) -> (
+    sectionNumber := (
+	if getNumberFromName#?key
+	then sectionNumberTable#(getNumberFromName#key)
+	else (
+	    -- error("warning: documentation for key '", key, "' not found");
+	    -- stderr << "warning: documentation for key '" << key << "' not found" << endl;
+	    UnknownReference));
+    if sectionNumber === UnknownReference
+    then if optional
+    then (                                  "{\\bf ", tex text,  "}" )
+    else (                                  "{\\bf ", tex text,  "} [", sectionNumber, "]" )
+    else ( "\\hyperlink{", sectionNumber, "}{{\\bf ", tex text, "}} [", sectionNumber, "]" ))
 
-booktex = method(Dispatch => Thing)
-booktex TO := booktex TOH := x -> crossReference(formatDocumentTag x#0, formatDocumentTag x#0,false) 
+-----------------------------------------------------------------------------
 
 menuLevel := 2
 
-booktex UL := x -> concatenate(
-     ///
-\begingroup
-\parskip=0pt
-///,
-     apply(x, x -> if x =!= null then (
-	       (menuLevel = menuLevel + 1;),
-	       ///%
-\par
-///,
-	       apply(menuLevel-1, i -> ///\indent///),
-	       ///\hangindent///, toString menuLevel, ///\parindent
-///,
-	       -- ///\textindent{$\bullet$}///,
-	       booktex if instance(x,TO) then SPAN{ x, headline x#0 } else x,
-	       (menuLevel = menuLevel - 1;),
-	       ///%
-\par
-///	       
-	       )
-	  ),
-     ///%
-\endgroup
-///
-     )
-
-booktex HREF := s -> concatenate( "\\href{", tex s#0, "}{", booktex s#-1, "}" )
-booktex TEX := identity
-///
-
-booktex HR := (x) -> ///\par
-\hbox to\hsize{\leaders\hrule\hfill}
-///
-
-booktex PARA := (x) -> concatenate(newline,newline)
-booktex BR := (x) -> ///\hfil\break
-///
-booktex IMG := x -> ""
+booktex = method(Dispatch => Thing)
+booktex Thing := tex
+-- TODO: uncomment these lines to actually use booktex and crossreferences
+--booktex Sequence  :=
+--booktex BasicList := x -> apply(x, booktex)
+booktex TO      :=
+booktex TO2     :=
+booktex TOH     := x -> crossReference(format x#0, format x#0, false)
+booktex IMG     :=
 booktex Nothing := x -> ""
-booktex Boolean := booktex Symbol := toString
-booktex BasicList := booktex Sequence := x -> concatenate apply(x,booktex)
-booktex String := tex
-booktex ITALIC := x -> concatenate("{\\sl ",booktex toList x,"}")
-shorten := s -> (
-     while #s > 0 and s#-1 == "" do s = drop(s,-1);
-     while #s > 0 and s#0 == "" do s = drop(s,1);
-     s)
 
+booktex OL :=
+booktex UL := x -> concatenate(
+    "\\begingroup", newline,
+    "\\parskip=0pt", newline,
+    apply(x, x -> if x =!= null then (
+	    (menuLevel = menuLevel + 1;),
+	    "%", newline, "\\par", newline,
+	    apply(menuLevel - 1, i -> "\\indent"),
+	    "\\hangindent", toString menuLevel, "\\parindent", newline,
+	    -- "\\textindent{$\\bullet$}",
+	    booktex if instance(x, TO) then SPAN{ x, headline x#0 } else x,
+	    (menuLevel = menuLevel - 1;),
+	    "%", newline, "\\par", newline)),
+    "%", newline, "\\endgroup", newline)
+
+--------------------------------------------
+-- this loop depends on the feature of hash tables that when the keys
+-- are consecutive integers starting at 0, the keys are scanned
+-- in the natural order, which in turn depends on the hash number of
+-- a small integer being the integer itself
+levelLimit := 10;
+sectionType = sectionNumber -> (
+    level := # select(characters sectionNumber, i -> i === ".");
+    if level > levelLimit then level = levelLimit;
+    if level === 0 then "\\part" else
+    if level === 1 then "\\chapter" else
+    if level === 2 then "\\section" else
+    if level === 3 then "\\subsection" else
+    if level === 4 then "\\subsubsection" else
+    if level === 5 then "\\paragraph" else
+    if level === 6 then "\\subparagraph" else
+    if level === 7 then "\\subsubparagraph" else
+    if level === 8 then "\\subsubsubparagraph" else
+    if level === 9 then "\\subsubsubsubparagraph" else
+    "\\subsubsubsubsubparagraph");

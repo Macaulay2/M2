@@ -315,8 +315,6 @@ cohomology = method( Options => {
 	  } )
 homology = method( Options => { } )
 
-mathML = method(Dispatch => Thing, TypicalValue => String)
-
 width File := fileWidth
 height File := fileHeight
 
@@ -623,6 +621,7 @@ codeHelper#(functionBody (stashValue null) null) = g -> {
 
 html = method(Dispatch => Thing, TypicalValue => String)
 markdown = method(Dispatch => Thing, TypicalValue => String)
+mathML = method(Dispatch => Thing, TypicalValue => String)
 tex = method(Dispatch => Thing, TypicalValue => String)
 texMath = method(Dispatch => Thing, TypicalValue => String)
 info = method(Dispatch => Thing, TypicalValue => String)

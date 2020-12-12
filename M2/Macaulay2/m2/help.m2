@@ -59,7 +59,7 @@ optTO := key -> (
 	ref := if match("\\\\", fkey) then concatenate("/// ", fkey, " ///") else format fkey;
 	-- TODO: figure out how to align the lists using padding
 	-- ref = pad(ref, printWidth // 4);
-	(format ptag, fkey, next(), fixup if currentHelpTag === ptag then ref else SPAN {TT ref, " -- see ", TOH{ptag}}))
+	(format ptag, fkey, next(), fixup if currentHelpTag === ptag then TT ref else SPAN {TT ref, " -- see ", TOH{ptag}}))
     -- need an alternative here for secondary tags such as (export,Symbol)
     else (fkey, fkey, next(), TOH{tag}))
 -- this isn't different yet, work on it!
