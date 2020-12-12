@@ -637,6 +637,12 @@ Preparing new releases
     we'd eventually like to pass its scrutiny.  All the programs will continue
     to work and "brew doctor" won't even complain.)
 
+  - Under Mac OS X, do not install "singular" with "brew" -- otherwise the
+    configure script will detect the presence of the Galois field tables
+    ("gftables") and expect to find them in the same location on the user's
+    machine, and they won't be there.  It should also work to add
+    "--enable-build-libraries=gftables" to the "configure" command line.
+
 ----------------------
 Checking new releases and distributions
 ----------------------
