@@ -67,7 +67,7 @@ document {
 		       HREF{"https://katex.org/","$\\KaTeX$"}, ", a JavaScript math typesetting library for browsers.
 		       As a result, $\\LaTeX$ equations and matrices are rendered correctly.
 		       One notable change is that mathematical characters and equations now must be enclosed in ",
-		       CODE "\\(...\\)", ", ", CODE "\\[...\\]", ", ", CODE "$...$", ", or ", CODE "$$...$$",
+		       TT "\\(...\\)", ", ", TT "\\[...\\]", ", ", TT "$...$", ", or ", TT "$$...$$",
 		       " in order to be rendered. See ", TO "Text :: html(TEX)", " for more details and examples" },
 		   LI { "The option ", TO Boxes, " of ", TO netList,
 		       " has been made more flexible to allow customization of the box;",
