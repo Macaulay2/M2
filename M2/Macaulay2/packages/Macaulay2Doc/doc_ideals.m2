@@ -202,3 +202,43 @@ document {
      },
      SeeAlso => {"ideals"}
      }
+
+doc ///
+Node
+  Key
+    monomialCurveIdeal
+  Headline
+    make the ideal of a monomial curve
+  Usage
+    I = monomialCurveIdeal(R, a)
+  Inputs
+    R:PolynomialRing
+      over a field
+    a:List
+      containing integers to be used as exponents in the parametrization of a rational curve
+  Outputs
+    I:Ideal
+      corresponding to the projective curve given parametrically on
+      an affine piece by $t \mapsto (t^{a_0}, \dots, t^{a_n})$
+  Description
+    Text
+      The ideal is defined in the polynomial ring $R$, which must have at least $n+1$ variables,
+      preferably all of equal degree. The first $n+1$ variables in the ring are used.
+
+      @SUBSECTION "A plane quintic curve of genus 6"@
+    Example
+      R = ZZ/101[a..f]
+      monomialCurveIdeal(R, {3, 5})
+    Text
+      @SUBSECTION "A genus 2 curve with one singular point"@
+    Example
+      monomialCurveIdeal(R, {3, 4, 5})
+    Text
+      @SUBSECTION "A genus 7 curve with two singular points"@
+    Example
+      monomialCurveIdeal(R, {6, 7, 8, 9, 11})
+    Text
+      @SUBSECTION "The smooth rational quartic in $\\PP^3$"@
+    Example
+      monomialCurveIdeal(R, {1, 3, 4})
+///

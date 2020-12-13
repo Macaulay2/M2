@@ -1,6 +1,7 @@
 doc ///
 Key
   LocalRings
+   localRing
   (localRing, Ring, Ideal)
 Headline
   Localizing polynomial rings at a prime ideal

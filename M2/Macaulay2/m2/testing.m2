@@ -62,7 +62,7 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
         if opts.Verbose then (
             numTests := if n == -1 then pkg#"test number" else 1;
             ":" | newline |
-            concatenate(apply(errorList, k ->
+            concatenate(apply(if n == -1 then errorList else {0}, k ->
                 newline | get("!tail " | temporaryDirectory() |
                 toString(temporaryFilenameCounter + 2 * (k - numTests)) |
                 ".tmp")))
