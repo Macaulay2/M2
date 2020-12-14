@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.17",
 	  TO "changes, 1.16",
 	  TO "changes, 1.15",
 	  TO "changes, 1.14",
@@ -32,22 +33,33 @@ document {
      }
 
 document {
-     Key => "changes made for the next release",
+     Key => "changes made for the next release"
+     }
+
+document {
+     Key => "changes, 1.17",
      UL {
 	 LI { "functionality added:",
 	      UL {
-		   LI { "The function ", TO readPackage, " has been added for retrieving the options in the preamble of a package quickly." },
-		   LI { "The function ", TO hooks, " has been added for retrieving the list of functions installed as hooks for handling computations of a specific type." },
-		   LI { "The function ", TO baseRing, " has been added for retrieving the ring from which a ring was formed." },
+		   LI { "The function ", TO "importFrom", " has been added, for importing individual symbols from another package." },
+		   LI { "The function ", TO readPackage, " has been added, for retrieving the options in the preamble of a package quickly." },
+		   LI { "The function ", TO hooks, " has been added, for retrieving the list of functions installed as hooks for handling computations of a specific type." },
+		   LI { "The function ", TO baseRing, " has been added, for retrieving the ring from which a ring was formed." },
 		   LI { "The functions ", TO findProgram, " and ", TO runProgram, " have been added, to provide a uniform way for packages to locate external programs.
 			(The names and locations of such programs may vary from system to system." },
-		   LI { "The function ", TO formation, " has been added for retrieving the way a module was formed, whether as a direct sum, tensor product, or Hom-module." }
+		   LI { "The function ", TO formation, " has been added, for retrieving the way a module was formed, whether as a direct sum, tensor product, or Hom-module." }
 		   }
 	      },
          LI { "functionality improved:",
               UL {
+		   LI { "The function ", TO "installPackage", " accepts a new argument, ", TO "MakeHTML", "." },
+		   LI { "The new optional argument name ", TO "Keywords", " can now be used with packages to specify a list of key words (or phrases),
+			useful for searching and organizing the packages by topic, as seen here: ", TO "packages provided with Macaulay2", "."			
+			},
                    LI { "The functions ", TO addHook, " and ", TO runHooks, " have been modified to accept a new syntax,
 		       allow giving names to hooks, and run specific hooks using the option ", TT "Strategy", ".
+		       The symbol ", TO "Default", " has been added for use as the name of hooks.
+		       The mutable hash table ", TO "GlobalHookStore", " has been added as a storage location for some hooks.
 		       For more information on ", TO "using hooks", ", see that documentation node." },
                    LI { "The functions ", TO code, " is modified to also show the code for hooks listed by the function ", TO hooks, "." },
 		   LI {
@@ -67,7 +79,7 @@ document {
 		       TO "SimpleDoc :: doc(String)", "." },
                    LI { "The ", TO regex, " function, as well as other functions that accept ", TO "regular expressions",
                        ", have been rewritten to use the Perl regular expression syntax by default, which allows more
-		       fine-grained control of the matches. The POSIX Extended flavor is still available as an option.
+		       fine-grained control of the matches. The ", TO "POSIX", " extended flavor is still available as an option.
 		       The functionality is unchanged in almost all cases, except for regular expressions containing
 		       escaped special characters, where another backslash may be needed, and, in rare cases, where
 		       there are multiple options to match the regular expression.
@@ -76,14 +88,33 @@ document {
               },
 	 LI { "new packages:",
 	      UL {
-		   LI {
-		       "The ", TO "Saturation :: Saturation", " package has been added for computations involving quotients,
-		       saturations, and annihilators of modules and ideals. The package is preloaded, so the routines
-		       from this package will be used automatically. In particular, the new implementation supports
-		       caching of computations as well as new strategies, which can be listed using the ", TO hooks,
-		       " function."
-		       }
+	 	   LI { TO "EagonResolution::EagonResolution", ", a package by David Eisenbud and Mike Stillman for Eagon resolutions of residue fields, has been added." },
+	 	   LI { TO "EigenSolver::EigenSolver", ", a package by Laurent Busé, Justin Chen, Kisun Lee, Anton Leykin, Tomas Pajdla, and Erika Pirnes for solving polynomial systems using eigen-computations, has been added." },
+	 	   LI { TO "GKMVarieties::GKMVarieties", ", a package by Chris Eur and Ritvik Ramkumar for computations with GKM manifolds and moment graphs, has been added." },
+	 	   LI { TO "GraphicalModelsMLE::GraphicalModelsMLE", ", a package by Carlos Amendola, Luis David Garcia Puente, Roser Homs Pons, Olga Kuznetsova, Harshit J Motwani, Elina Robeva, and David Swinarski, for maximum likelihood estimates for graphical statistical models, has been added." },
+	 	   LI { TO "Hadamard::Hadamard", ", a package by Iman Bahmani Jafarloo for Hadamard products of projective subvarieties, has been added." },
+	 	   LI { TO "MultiplicitySequence::MultiplicitySequence", ", a package by Justin Chen, Youngsu Kim, and Jonathan Montaño, for computing the multiplicity sequence of an ideal, has been added." },
+	 	   LI { TO "NoetherianOperators::NoetherianOperators", ", a package by Robert Krone, Justin Chen, Marc Harkonen, Yairon Cid-Ruiz, and Anton Leykin, for numerically computing local dual spaces, Hilbert functions, and Noetherian operators, has been added.
+			(The package ", TT "NumericalHilbert", " has been absorbed into this new package." },
+	 	   LI { TO "NumericalLinearAlgebra::NumericalLinearAlgebra", ", a package by Robert Krone, Marc Harkonen, and Anton Leykin for numerically compute local dual spaces and Hilbert functions, has been added." },
+	 	   LI { TO "RandomRationalPoints::RandomRationalPoints", ", a package by Sankhaneel Bisui, Thai Nguyen, Karl Schwede, Sarasij Maitra, and Zhan Jiang, for computing a random point in a given variety over a finite field, has been added." },
+	 	   LI { TO "ResLengthThree::ResLengthThree", ", a package by Lars Winther Christensen, Luigi Ferraro, Francesca Gandini, Frank Moore, and Oana Veliche, for multiplication in free resolutions of length three, has been added." },
+	 	   LI { TO "ResolutionsOfStanleyReisnerRings::ResolutionsOfStanleyReisnerRings", ", a package by  for , has been added." },
+		   LI { TO "Saturation :: Saturation", ", a package by Justin Chen, Mahrud Sayrafi, and Mike Stillman for computations involving quotients,
+		       	saturations, and annihilators of modules and ideals, has been added. The package is preloaded, so the routines
+		       	from this package will be used automatically. In particular, the new implementation supports
+		       	caching of computations as well as new strategies, which can be listed using the ", TO hooks,
+		       	" function." },
+	 	   LI { TO "StatGraphs::StatGraphs", ", a package by Carlos Amendola, Luis David Garcia Puente, Roser Homs Pons, Olga Kuznetsova, and Harshit J Motwani, for graphs used in algebraic statistics, has been added." },
+	 	   LI { TO "SwitchingFields::SwitchingFields", ", a package by Zhan Jiang and Sarasij Maitra for switching base fields and obtaining natural maps, has been added." }
 		   }
+	       },
+     	  LI { "packages that have been published and certified:",
+     	       UL {
+     	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "VirtualResolutions::VirtualResolutions", ", a package by Ayah Almousa, Christine Berkesch,
+			 Juliette Bruce, David Eisenbud, Michael Loper, and Mahrud Sayrafi for virtual resolutions on products of projective spaces, has been published." },
+		    }
 	       },
 	 LI { "improved packages:",
 	      UL {
@@ -101,7 +132,7 @@ document {
 		       },
 		   LI {
 		       "The ", TO "MinimalPrimes :: MinimalPrimes", " package has been improved and the ", TO "MinimalPrimes :: minimalPrimes",
-		       " and ", TO "MinimalPrimes :: isPrime", " routines from that package are now used by default, deprecating the ",
+		       " and ", TO "MinimalPrimes :: isPrime(Ideal)", " routines from that package are now used by default, deprecating the ",
 		       TT "installMinprimes", " routine. A new routine ", TO "MinimalPrimes :: radicalContainment", " has been added, and
 		       the function ", TO "MinimalPrimes :: radical", " is moved to this package.
 		       In addition, partial computations in this package are now cached."
@@ -110,8 +141,9 @@ document {
 	       },
 	 LI { "functionality changed:",
 	      UL {
-		   LI { 
-			"The destinations of the links at the tops of the web pages portraying documentation nodes in a package have been
+		   LI { "The functions ", TO "associatedPrimes", ", ", TO "topComponents", ", and ", TO "removeLowestDimension", " have been moved to the
+			 package ", TO "PrimaryDecomposition::PrimaryDecomposition", "." },
+		   LI { "The destinations of the links at the tops of the web pages portraying documentation nodes in a package have been
 			altered.  The links labeled ", TT "next", " and ", TT "previous", " have been interchanged with the links labelled ",
 			TT "forward", " and ", TT "backward", ".  This was done to bring the terminology into agreement with that used in the
 			info nodes portraying documentation nodes.  The result can be described as follows.  By virtue of the ",
@@ -680,7 +712,7 @@ document {
 		       	 UL {
 			      LI { TO "Polyhedra::Fan", ", is no longer a collection of Cone objects, but contains a matrix of rays (over ZZ),
 			     	   and a list of lists of integer indices, indicating the maximal cones.  Well-defined-ness is no longer 
-			     	   automatically checked.  Use ", TO "Polyhedra::(isWellDefined,Fan)"},
+				   automatically checked.  Use ", TO "Polyhedra::isWellDefined(Fan)"},
 			 	   LI { TO "Polyhedra::Polyhedron", ", is now a wrapper for the homogenized cone."},
 			 	   LI { TO "Polyhedra::PolyhedralComplex", ", is now a wrapper for the homogenized fan."},
 			 	   LI { TO "Polyhedra::Cone", ", has basically the same functionality, except that not everything is computed ahead of time."},
@@ -1083,7 +1115,7 @@ document {
 		    LI { TO "Divisor::Divisor", ", a package by Karl Schwede and Zhaoning Yang for working with Weil divisors, has been added." },
 		    LI { TO "EllipticCurves::EllipticCurves", ", a package by Alessandro Oneto and Stefano Marseglia for addition on elliptic curves and point counting, has been added." },		
 		    LI { TO "HighestWeights::HighestWeights", ", a package by Federico Galetto for decomposing free resolutions and graded modules with a semisimple Lie group action, has been added." },		
-		    LI { "NumericalHilbert (absorbed by ", TO "NoetherianOperators::NoetherianOperators", "), a package by Robert Krone for numerically computing local dual spaces and Hilbert functions, has been added." },		
+		    LI { "NumericalHilbert (absorbed by ", TO "NoetherianOperators::NoetherianOperators", "), a package by Robert Krone for numerically computing local dual spaces and Hilbert functions, has been added." },
 		    LI { TO "MinimalPrimes::MinimalPrimes", ", an experimental package by Frank Moore, Mike Stillman and Franziska Hinkelmann for finding the minimal primes of an ideal, has been added." },
 		    LI { TO "Bertini::Bertini", ", a package by Elizabeth Gross, Jose Israel Rodriguez, Dan Bates and Anton Leykin for providing an interface to Bertini, has been added." },
 		    LI { TO "TorAlgebra::TorAlgebra", ", a package by Lars Winther Christensen and Oana Veliche for classification of codepth 3 local rings based on multiplication in homology, has been added, under its old name, ", TT "CodepthThree", "." },

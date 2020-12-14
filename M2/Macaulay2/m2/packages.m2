@@ -534,6 +534,7 @@ package Dictionary := d -> (
     else scan(values PackageDictionary, pkg ->
 	if (pkg = value pkg).?Dictionary and pkg.Dictionary === d then break pkg))
 
+-- TODO: should this reset the values of exported mutable symbols?
 use Package := pkg -> (
     scan(pkg.Options.PackageExports, needsPackage);
     loadedPackages = prepend(pkg,            delete(pkg,            loadedPackages));

@@ -352,7 +352,7 @@ document {
 	  "During the backtrace after an error message, a position in interpreted
 	  code is displayed only if the load depth at the
 	  time the code was parsed is at least as large as the error depth is now.  The load depth
-	  is set to 0 initially, is set to 1 when the files of the ", TO "Core::Core", "
+	  is set to 0 initially, is set to 1 when the files of the ", TO "Core", "
 	  package are being loaded, is set to 2 while loading a package with the ", TO "debuggingMode", " option
 	  set to ", TO "false", ", and is set to 3 while loading a package with the ", TO "debuggingMode", " option
 	  set to ", TO "true", " and for user input."

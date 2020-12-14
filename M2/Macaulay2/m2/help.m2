@@ -47,9 +47,6 @@ seeAbout := (f, i) -> (
 --   the last member is the corresponding hypertext entry in the UL list
 -----------------------------------------------------------------------------
 
--- TODO: something like
---    * validate, see validate(Hypertext) -- blah blah
--- does not work with (symbol *, String), and the issue is here
 counter := 0
 next := () -> counter = counter + 1
 optTO := key -> (
@@ -58,7 +55,11 @@ optTO := key -> (
     if isUndocumented tag then return;
     if isSecondaryTag tag then (
 	ptag := getPrimaryTag tag;
-	(format ptag, fkey, next(), fixup if currentHelpTag === ptag then fkey else SPAN {TT format fkey, " -- see ", TOH{ptag}}))
+	-- this is to avoid doubling "\" in documentation for symbol \ and symbol \\
+	ref := if match("\\\\", fkey) then concatenate("/// ", fkey, " ///") else format fkey;
+	-- TODO: figure out how to align the lists using padding
+	-- ref = pad(ref, printWidth // 4);
+	(format ptag, fkey, next(), fixup if currentHelpTag === ptag then ref else SPAN {TT ref, " -- see ", TOH{ptag}}))
     -- need an alternative here for secondary tags such as (export,Symbol)
     else (fkey, fkey, next(), TOH{tag}))
 -- this isn't different yet, work on it!
@@ -119,23 +120,22 @@ initializeReverseOptionTable := () -> (
 -----------------------------------------------------------------------------
 
 -- we're not looking for documentable methods here, just documentable objects
-isDocumentableThing := method(Dispatch => Thing)
+isDocumentableThing = method(Dispatch => Thing)
 isDocumentableThing    String :=
 isDocumentableThing  Sequence := key -> false
 isDocumentableThing   Nothing :=
-isDocumentableThing    Symbol := key -> true
-isDocumentableThing     Thing :=
-isDocumentableThing      Type := key -> hasAttribute(key, ReverseDictionary) and isDocumentableMethod getAttribute(key, ReverseDictionary)
+isDocumentableThing    Symbol := key -> (d := dictionary key) =!= null and not mutable d and isGlobalSymbol toString key and getGlobalSymbol toString key === key
+isDocumentableThing     Thing := key -> hasAttribute(key, ReverseDictionary) and isDocumentableMethod getAttribute(key, ReverseDictionary)
 
 -- assignment methods look like ((symbol *, symbol =), X, Y, Z)
 isDocumentableMethod = method(Dispatch => Thing)
-isDocumentableMethod    Thing := key -> false
 isDocumentableMethod Sequence := key -> all(key, s -> isDocumentableMethod s)
-isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
-isDocumentableMethod     Type := key -> isDocumentableThing key
-
-isDocumentableMethod Function        := fn -> hasAttribute(fn, ReverseDictionary) and dictionary getAttribute(fn,ReverseDictionary) =!= null
-isDocumentableMethod ScriptedFunctor := fn -> hasAttribute(fn, ReverseDictionary)
+isDocumentableMethod    Thing := key -> false
+isDocumentableMethod     Type :=
+isDocumentableMethod   Symbol :=
+isDocumentableMethod  Command :=
+isDocumentableMethod Function :=
+isDocumentableMethod ScriptedFunctor := isDocumentableThing
 
 documentableMethods := key -> select(methods key, isDocumentableMethod)
 
@@ -189,7 +189,7 @@ documentationValue(Symbol, Keyword)         := (S, f) -> (
     -- methods of f
     a := smenu documentableMethods f;
     if #a > 0 then DIV nonnull splice ( "class" => "waystouse",
-	SUBSECTION {"Ways to use ", TT toString f, ":"}, a))
+	SUBSECTION {"Ways to use ", TT toExternalString f, " :"}, a))
 
 -- TODO: simplify this process
 -- e.g. Macaulay2Doc :: Macaulay2Doc

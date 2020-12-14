@@ -7,7 +7,7 @@ newPackage(
 		  Email => "dan@math.uiuc.edu", 
 		  HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "uniformization of elliptic curves",
-	Keywords => {"Algebraic Number Theory"},
+	Keywords => {"Complex Analytic Geometry", "Numerical Algebraic Geometry"},
     	DebuggingMode => false
     	)
 
@@ -467,6 +467,6 @@ Node
   Text
    This package provides some functions for computing elliptic integrals and elliptic functions.
    The basis for the computations is the arithmetic geometric mean, and the notation we use
-   comes from the paper @ HREF { "http://www.math.uiuc.edu/~dan/cv.html#agm", "The arithogeometric mean"} @,
+   comes from the paper @ HREF { "http://dangrayson.com/cv.xhtml#agm", "The arithogeometric mean"} @,
    Archiv der Mathematik, volume 52, 1989, pages 507-512.
 ///

@@ -10,7 +10,7 @@ newPackage(
 	{ Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "https://pi.math.cornell.edu/~mike/" },
 	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu", HomePage => "https://math.umn.edu/~mahrud/" }
 	},
-    Keywords => {"Miscellaneous"},
+    Keywords => {"Documentation"},
     PackageImports => { "Text" },
     DebuggingMode => false,
     AuxiliaryFiles => true
