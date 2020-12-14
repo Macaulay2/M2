@@ -21,10 +21,10 @@ doc ///
      This package provides tools for constructing and studying virtual resolutions for products of projective spaces.
      In particular, it implements a number of the methods for constructing virtual resolutions for products of projective
      spaces as introduced by Berkesch, Erman, and Smith. This package also contains methods for constructing curves in
-     $\mathbb{P}^1\times\mathbb{P}^2$, as these are a natural source for interesting virtual resolutions.
+     $\PP^1\times\PP^2$, as these are a natural source for interesting virtual resolutions.
 
      As a running example, consider three points $([1:1],[1:4])$, $([1:2],[1:5])$, and $([1:3],[1:6])$
-     in $\mathbb{P}^1 \times \mathbb{P}^1$.
+     in $\PP^1 \times \PP^1$.
 
     Example
      X = toricProjectiveSpace(1)**toricProjectiveSpace(1);
@@ -41,7 +41,7 @@ doc ///
      paper, one may construct a virtual resolution of a module from its graded minimal free resolution and
      an element of the multigraded Castelnuovo-Mumford regularity of the module. (See Maclagan and Smith's paper
      {\em Multigraded Castelnuovo-Mumford Regularity} (see [MS04, @arXiv "math/0305214"@]) for the definition of multigraded regularity.)
-     Building on the TateOnProducts package, this package contains a function allowing one
+     Building on the @TO TateOnProducts@ package, this package contains a function allowing one
      to compute the minimal elements of the multigraded Castelnuovo-Mumford regularity of a $B$-saturated module.
 
      Continuing the example from above, we see that $(2,0)$ is an element of the multigraded
@@ -56,10 +56,10 @@ doc ///
      shorter and less wide than graded minimal free resolutions over the Cox ring, but they still
      preserve geometric information about $S/J$.
 
-     In addition to the functions highlighted above, the VirtualResolutions package contains
+     In addition to the functions highlighted above, the @TT "VirtualResolutions"@ package contains
      a number of other tools for constructing and studying virtual resolutions. In particular,
      there are functions to construct virtual resolutions for zero dimensionsal subschemes, to
-     check whether a complex is a virtual resolution, and to construct curves in $\mathbb{P}^1\times\mathbb{P}^2$.
+     check whether a complex is a virtual resolution, and to construct curves in $\PP^1\times\PP^2$.
   References
     @UL {
 	{"[BES20]: Berkesch, Erman, and Smith, Virtual resolutions for a product of projective spaces (see ", arXiv "1703.07631", ")."},
@@ -94,13 +94,13 @@ doc ///
             chain complex we want to check if is a virtual resolution
     Outputs
         :Boolean
-            true if C is a virtual resolution of I
+            true if {\tt C}is a virtual resolution of I
             false if not
     Description
         Text
             Given the irrelevant ideal irr of a NormalToricVariety and a chain complex C, isVirtual returns true if
-            C is a virtual resolution of some module. If not, it returns false. This is done by checking that the 
-	    higher homology groups of C are supported on the irrelevant ideal.
+            {\tt C}is a virtual resolution of some module. If not, it returns false. This is done by checking that the
+	    higher homology groups of {\tt C}are supported on the irrelevant ideal.
 
             If debugLevel is larger than zero, the homological degree where isVirtual fails is printed.
         Example
@@ -108,7 +108,7 @@ doc ///
           isVirtual(ideal(s,t),res ideal(t))
         Text
           Continuing our running example of three points $([1:1],[1:4])$, $([1:2],[1:5])$, and $([1:3],[1:6])$
-          in $\mathbb{P}^1 \times \mathbb{P}^1$, we can check whether the virtual complex we compute below and
+          in $\PP^1 \times \PP^1$, we can check whether the virtual complex we compute below and
           in other places is in fact virtual.
         Example
           Y = toricProjectiveSpace(1)**toricProjectiveSpace(1);
@@ -122,7 +122,7 @@ doc ///
           vres = virtualOfPair(J,{{3,1}});
           isVirtual(B,vres)
         Text
-          Finally, we can also use the Determinantal strategy, which implements Theorem 1.3 of [Loper, @arXiv "1904.05994"@].
+          Finally, we can also use the @TT "Determinantal"@ strategy, which implements Theorem 1.3 of [Loper, @arXiv "1904.05994"@].
         Example
           isVirtual(B,vres,Strategy=>Determinantal)
 ///
@@ -134,7 +134,7 @@ doc ///
         changes strategy from computing homology to computing minors of boundary maps
     Description
         Text
-            If Strategy is set to "Determinantal", isVirtual will check whether the given chain complex
+            If Strategy is set to @TT "Determinantal"@, isVirtual will check whether the given chain complex
             is a virtual resolution by checking the depth of the saturation of the ideals of maximal rank
             from the boundary maps. See Theorem 1.3 of [Loper, @arXiv "1904.05994"@].
     SeeAlso
@@ -154,19 +154,19 @@ doc ///
     Inputs
         I:Ideal
         n:ZZ
-            size of subset of minimal generators of I that may generate I up to saturation with irr
+            size of subset of minimal generators of {\tt I} that may generate {\tt I} up to saturation with {\tt irr}
         irr:Ideal
             irrelevant ideal
         X:NormalToricVariety
-            normal toric variety whose Cox ring contains I
+            normal toric variety whose Cox ring contains {\tt I}
     Outputs
         :List
-            all ideals generated by subsets of size n of generators of I that generate I up to saturation with irr
+            all ideals generated by subsets of size {\tt n} of generators of {\tt I} that generate {\tt I} up to saturation with {\tt irr}
     Description
         Text
-            Given an ideal I, integer n, and irrelevant ideal irr, idealSheafGens searches through
-            all n-subsets of the generators of I. If a subset generates the same irr-saturated ideal as the
-            irr-saturation of I, then the ideal generated by that subset is added to a list.
+            Given an ideal {\tt I}, integer {\tt n}, and irrelevant ideal {\tt irr}, @TT "idealSheafGens"@ searches through
+            all {\tt n}-subsets of the generators of {\tt I}. If a subset generates the same {\tt irr}-saturated ideal as the
+            {\tt irr}-saturation of {\tt I}, then the ideal generated by that subset is added to a list.
             After running through all subsets, the list is returned.
         Example
             R = ZZ/101[x_0,x_1,x_2,x_3,x_4,Degrees=>{2:{1,0},3:{0,1}}];
@@ -183,9 +183,8 @@ doc ///
         combines generators of same degree into a general linear combination
     Description
         Text
-            If GeneralElements is set to true, idealSheafGens will replace all generators of I of the same degree with
-            a new generator of the that degree which is a general linear combination of those generators, then run
-	     idealSheafGens on the new ideal.
+            If @TT "GeneralElements"@ is set to true, @TO "idealSheafGens"@ will replace all generators of {\tt I} of the same degree with
+            a new generator of the that degree which is a general linear combination of those generators, then run @TT "idealSheafGens"@ on the new ideal.
     SeeAlso
         idealSheafGens
 ///
@@ -202,26 +201,26 @@ doc ///
         randomRationalCurve(d,e)
     Inputs
         d:ZZ
-            degree of curve on the $\mathbb{P}^1$ factor of $\mathbb{P}^1\times\mathbb{P}^2$
+            degree of curve on the $\PP^1$ factor of $\PP^1\times\PP^2$
         e:ZZ
-            degree of curve on the $\mathbb{P}^2$ factor of $\mathbb{P}^1\times\mathbb{P}^2$
+            degree of curve on the $\PP^2$ factor of $\PP^1\times\PP^2$
         F:Ring
             base ring
     Outputs
         :Ideal
-            defining random rational curve in $\mathbb{P}^1\times\mathbb{P}^2$ of degree (d,e) over F.
+            defining random rational curve in $\PP^1\times\PP^2$ of degree {\tt (d,e)} over {\tt F}.
     Description
         Text
-            Given two positive integers d,e and a ring F, randomRationalCurve returns the ideal
-            of a random curve in $\mathbb{P}^1\times\mathbb{P}^2$ of degree (d,e) defined over the base ring F.
+            Given two positive integers {\tt d,e} and a ring {\tt F}, @TT "randomRationalCurve"@ returns the ideal of a
+	    random curve in $\PP^1\times\PP^2$ of degree {\tt (d,e)} defined over the base ring {\tt F}.
 
-            This is done by randomly generating two homogenous polynomials of degree d and three homogenous
-            polynomials of degree three in F[s,t] defining maps $\mathbb{P}^1\to\mathbb{P}^1$ and $\mathbb{P}^1\to\mathbb{P}^2$,
-            respectively. The graph of the product of these two maps in $\mathbb{P}^1\times(\mathbb{P}^1\times\mathbb{P}^2)$ is computed,
-            from which a curve of bi-degree (d,e) in $\mathbb{P}^1\times\mathbb{P}^2$ over F is obtained by
+            This is done by randomly generating two homogenous polynomials of degree {\tt d} and three homogenous
+            polynomials of degree three in $F[s,t]$ defining maps $\PP^1\to\PP^1$ and $\PP^1\to\PP^2$,
+            respectively. The graph of the product of these two maps in $\PP^1\times(\PP^1\times\PP^2)$ is computed,
+            from which a curve of bi-degree {\tt (d,e)} in $\PP^1\times\PP^2$ over {\tt F} is obtained by
             saturating and then eliminating.
 
-            If no base ring is specified, the computations are performed over ZZ/101.
+            If no base ring is specified, the computations are performed over {\tt ZZ/101}.
         Example
             randomRationalCurve(2,3,QQ);
             randomRationalCurve(2,3);
@@ -241,26 +240,26 @@ doc ///
         randomMonomialCurve(d,e)
     Inputs
         d:ZZ
-            degree of curve on the $\mathbb{P}^1$ factor of $\mathbb{P}^1\times\mathbb{P}^2$
+            degree of curve on the $\PP^1$ factor of $\PP^1\times\PP^2$
         e:ZZ
-            degree of curve on the $\mathbb{P}^2$ factor of $\mathbb{P}^1\times\mathbb{P}^2$
+            degree of curve on the $\PP^2$ factor of $\PP^1\times\PP^2$
         F:Ring
             base ring
     Outputs
         :Ideal
-            defining random monomial curve in $\mathbb{P}^1\times\mathbb{P}^2$ of degree (d,e) over F.
+            defining random monomial curve in $\PP^1\times\PP^2$ of degree (d,e) over F.
     Description
         Text
-            Given two positive integers d,e and a ring F, randomMonomialCurve returns the ideal of a random curve
-            in $\mathbb{P}^1\times\mathbb{P}^2$ of degree (d,e) defined over the base ring F.
+            Given two positive integers {\tt d,e} and a ring {\tt F}, randomMonomialCurve returns the ideal of a
+            random curve in $\PP^1\times\PP^2$ of degree {\tt (d,e)} defined over the base ring {\tt F}.
 
-            This is done by randomly generating a monomial m of degree e in F[s,t], which is not s^e or t^e.
-            This allows one to define two maps $\mathbb{P}^1\to\mathbb{P}^1$ and $\mathbb{P}^1\to\mathbb{P}^2$
-            given by {s^d,t^d} and {s^e,m,t^e}, respectively. The graph of the product of these two maps
-            in $\mathbb{P}^1\times(\mathbb{P}^1\times\mathbb{P}^2)$ is computed, from which a curve
-            of bi-degree (d,e) in $\mathbb{P}^1\times\mathbb{P}^2$ over F is obtained by saturating and then eliminating.
+            This is done by randomly generating a monomial $m$ of degree $e$ in $F[s,t]$, which is not $s^e$ or $t^e$.
+            This allows one to define two maps $\PP^1\to\PP^1$ and $\PP^1\to\PP^2$
+            given by @TT"{s^d,t^d}"@ and @TT"{s^e,m,t^e}"@, respectively. The graph of the product of these two maps
+            in $\PP^1\times(\PP^1\times\PP^2)$ is computed, from which a curve of bi-degree {\tt (d,e)}
+	    in $\PP^1\times\PP^2$ over {\tt F} is obtained by saturating and then eliminating.
 
-            If no base ring is specified, the computations are performed over ZZ/101.
+            If no base ring is specified, the computations are performed over {\tt ZZ/101}.
         Example
             randomMonomialCurve(2,3,QQ);
     Caveat
@@ -277,27 +276,28 @@ doc ///
         I = curveFromP3toP1P2(J)
     Inputs
         J:Ideal
-            defining a curve in $\mathbb{P}^3$.
+            defining a curve in $\PP^3$.
     Outputs
         I:Ideal
-            defining a curve in $\mathbb{P}^1\times\mathbb{P}^2$.
+            defining a curve in $\PP^1\times\PP^2$.
     Description
         Text
-            Given an ideal J defining a curve C in $\mathbb{P}^3$, curveFromP3toP1P2 produces the ideal of the curve
-            in $\mathbb{P}^1\times\mathbb{P}^2$ defined as follows:
-            consider the projections $\mathbb{P}^3\to\mathbb{P}^2$ and $\mathbb{P}^3\to\mathbb{P}^1$ from the point [0:0:0:1]
-            and the line [0:0:s:t], respectively. The product of these defines a map from $\mathbb{P}^3$ to $\mathbb{P}^1\times\mathbb{P}^2$.
-            The curve produced by curveFromP3toP1P2 is the image of the input curve under this map.
+            Given an ideal {\tt J} defining a curve $C$ in $\PP^3$, @TT "curveFromP3toP1P2"@ produces the ideal of the curve
+            in $\PP^1\times\PP^2$ defined as follows:
+            consider the projections $\PP^3\to\PP^2$ and $\PP^3\to\PP^1$ from the point [0:0:0:1]
+            and the line [0:0:s:t], respectively. The product of these defines a map from $\PP^3$ to $\PP^1\times\PP^2$.
+            The curve produced by @TT "curveFromP3toP1P2"@ is the image of the input curve under this map.
 
-            This computation is done by first constructing the graph in $\mathbb{P}^3\times(\mathbb{P}^1x\mathbb{P}^2)$ of the product
-            of the two projections $\mathbb{P}^3\to\mathbb{P}^2$ and $\mathbb{P}^3\to\mathbb{P}^1$ defined above.
-            This graph is then intersected with $C\times(\mathbb{P}^1\times\mathbb{P}^2)$. A curve in $\mathbb{P}^1\times\mathbb{P}^2$ is then
+            This computation is done by first constructing the graph in $\PP^3\times(\PP^1\times\PP^2)$ of the product
+            of the two projections $\PP^3\to\PP^2$ and $\PP^3\to\PP^1$ defined above.
+            This graph is then intersected with $C\times(\PP^1\times\PP^2)$. A curve in $\PP^1\times\PP^2$ is then
             obtained from this by saturating and then eliminating.
 
-            Note the curve in $\mathbb{P}^1\times\mathbb{P}^2$ will have degree and genus equal to the degree and genus of C as long as C
-            does not intersect the base locus of the projection. If the option PreserveDegree is set to true, curveFromP3toP1P2 will check whether C
-            intersects the base locus. If it does, the function will return an error. If PreserveDegree is set to false, this check is not
-            performed and the output curve in $\mathbb{P}^1\times\mathbb{P}^2$ may have degree and genus different from C.
+            Note the curve in $\PP^1\times\PP^2$ will have degree and genus equal to the degree and genus of $C$ as long as $C$
+            does not intersect the base locus of the projection. If the option @TO [curveFromP3toP1P2, PreserveDegree]@
+	    is set to true, @TT "curveFromP3toP1P2"@ will check whether $C$ intersects the base locus.
+	    If it does, the function will return an error. If PreserveDegree is set to false, this check is not
+            performed and the output curve in $\PP^1\times\PP^2$ may have degree and genus different from $C$.
         Example
             R = ZZ/101[z_0,z_1,z_2,z_3];
             J = ideal(z_0*z_2-z_1^2, z_1*z_3-z_2^2, z_0*z_3-z_1*z_2);
@@ -314,8 +314,8 @@ doc ///
         Determines if curve is disjoint from base loci
     Description
       Text
-            When set to true, curveFromP3toP1P2 will check whether or not the given curve
-            in $\mathbb{P}^3$ intersects the base locus of the projections maps used in this function.
+            When set to true, @TO "curveFromP3toP1P2"@ will check whether or not the given curve
+            in $\PP^3$ intersects the base locus of the projections maps used in this function.
             If this option is set to true and the given curve does intersect the base locus,
             an error is returned.
     SeeAlso
@@ -341,18 +341,18 @@ doc ///
             base ring.
     Outputs
         :Ideal
-            defining random curve $\mathbb{P}^1\times\mathbb{P}^2$ from a curve of degree d and genus g in $\mathbb{P}^3$ over F.
+            defining random curve $\PP^1\times\PP^2$ from a curve of degree {\tt d} and genus {\tt g} in $\PP^3$ over {\tt F}.
     Description
         Text
-            Given a positive integer d, a non-negative integer g, and a ring F randomCurveP1P2 produces a random curve
-            of bi-degree (d,d) and genus g in $\mathbb{P}^1\times\mathbb{P}^2$.
-            This is done by using the curve function from the SpaceCurves package to first generate a random curve
-            of degree d and genus g in $\mathbb{P}^1\times\mathbb{P}^2$, and then applying curveFromP3toP1P2 to produce a curve in $\mathbb{P}^1\times\mathbb{P}^2$.
+            Given a positive integer {\tt d}, a non-negative integer {\tt g}, and a ring {\tt F}, @TT "randomCurveP1P2"@
+	    produces a random curve of bi-degree {\tt (d,d)} and genus {\tt g} in $\PP^1\times\PP^2$.
+            This is done by using the @TO "SpaceCurves::curve"@ function from the @TO SpaceCurves@ package to first generate a random curve
+            of degree {\tt d} and genus {\tt g} in $\PP^1\times\PP^2$, and then applying @TO "curveFromP3toP1P2"@ to produce a curve in $\PP^1\times\PP^2$.
 
-            Since curveFromP3toP1P2 relies on projecting from the point [0:0:0:1] and the line [0:0:s:t], randomCurveP1P2
-            attempts to find a curve in $\mathbb{P}^3$, which does not intersect the base locus of these projections.
-            If the curve did intersect the base locus the resulting curve in $\mathbb{P}^1\times\mathbb{P}^2$ would not have degree (d,d).
-            The number of attempts used to try to find such curves is controlled by the Attempt option, which by default is set to 1000.
+            Since @TO "curveFromP3toP1P2"@ relies on projecting from the point $[0:0:0:1]$ and the line $[0:0:s:t]$, @TT "randomCurveP1P2"@
+            attempts to find a curve in $\PP^3$, which does not intersect the base locus of these projections.
+            If the curve did intersect the base locus the resulting curve in $\PP^1\times\PP^2$ would not have degree {\tt (d,d)}.
+            The number of attempts used to try to find such curves is controlled by the @TO [randomCurveP1P2, Attempt]@ option, which by default is set to 1000.
         Example
             randomCurveP1P2(3,0);
             randomCurveP1P2(3,0,QQ);
@@ -369,9 +369,9 @@ doc ///
         limit number of attempts for randomCurveP1P2
     Description
       Text
-           When randomCurveP1P2 generates a random curve in $\mathbb{P}^3$ using the SpaceCurves package, it is possible the resulting
-           curve will intersect the base loci of the projections used to construct the curve in $\mathbb{P}^1\times\mathbb{P}^2$. If the curve
-           does intersect the base locusi it will generate a new random curve in $\mathbb{P}^3$. The option Attempt limits the number
+           When @TO "randomCurveP1P2"@ generates a random curve in $\PP^3$ using the @TO SpaceCurves@ package, it is possible the resulting
+           curve will intersect the base loci of the projections used to construct the curve in $\PP^1\times\PP^2$. If the curve
+           does intersect the base locusi it will generate a new random curve in $\PP^3$. The option @TT "Attempt"@ limits the number
            of attempts to find a curve disjoint from the base loci before quitting. By default, Attempt is set to 1000.
     SeeAlso
         randomCurveP1P2
@@ -403,7 +403,7 @@ doc ///
             See Theorem 4.1 of [BES20, @arXiv "1703.07631"@].
 
             Below we follow example 4.7 of [BES20,@arXiv "1703.07631"@] and
-            compute the virtual resolution of 6 points in $\mathbb{P}^1\times\mathbb{P}^1\times\mathbb{P}^2$.
+            compute the virtual resolution of 6 points in $\PP^1\times\PP^1\times\PP^2$.
         Example
             N = {1,1,2}
             pts = 6
@@ -459,7 +459,7 @@ doc ///
 
           When L contains more than one multidegree, summands with degrees in at least one member of L are kept.
 
-          For example, consider the ideal of three points in $\mathbb{P}^1\times\mathbb{P}^1$.
+          For example, consider the ideal of three points in $\PP^1\times\PP^1$.
         Example
           X = toricProjectiveSpace(1) ** toricProjectiveSpace(1);
           S = ring X; B = ideal X;
@@ -471,7 +471,7 @@ doc ///
         Text
           We can now compute its minimal free resolution and a virtual resolution. One can show that $(2,0)$ is in the multigraded
           regularity of this example. Thus, since we want to compute a virtual resolution we apply virtualOfPair to the element
-          $(3,1)$ since $(3,1)=(2,0)+(1,1)$ and $(1,1)$ is the dimension vector for $\mathbb{P}^1\times\mathbb{P}^1$.
+          $(3,1)$ since $(3,1)=(2,0)+(1,1)$ and $(1,1)$ is the dimension vector for $\PP^1\times\PP^1$.
         Example
           minres = res J
           vres = virtualOfPair(J, {{3,1}}) --(3,1) = (2,0) + (1,1)
@@ -494,7 +494,7 @@ doc ///
         stop when the virtual resolution reaches this length
     Description
         Text
-          When the optional argument LengthLimit is specified virtualOfPair will stop computing syzygies after the given
+          When the optional argument @TT "LengthLimit"@ is specified virtualOfPair will stop computing syzygies after the given
           length is reached, otherwise computation continues until the resolution terminates.
     SeeAlso
         virtualOfPair
@@ -539,7 +539,7 @@ doc ///
         Text
           Given a module M over a multigraded ring S or a product of toric varieties X, this method finds the
           minimal elements of the multigraded Castelnuovo-Mumford regularity of M as defined in Definition 1.1
-          of [MS04] (see @arXiv "math/0305214"@). If the input is an ideal, multigraded regularity of S^1/I is computed.
+          of [MS04] (see @arXiv "math/0305214"@). If the input is an ideal, multigraded regularity of $S^1/I$ is computed.
 
           This is done by calling the @TO cohomologyHashTable@ method from @TO TateOnProducts@ and checking for the
           multidegrees where Hilbert polynomial and Hilbert function match and where the higher sheaf cohomology
@@ -548,7 +548,7 @@ doc ///
           Note that the module or ideal is assumed to be saturated by the irrelevant ideal of the Cox ring.
 
           As an example, here we compute the minimal elements of the multigraded regularity for Example 1.4
-          of [BES20] (see @arXiv "1703.07631"@). We consider the example of a hyperelliptic curve of genus 4 in $\mathbb{P}^1\times\mathbb{P}^2$.
+          of [BES20] (see @arXiv "1703.07631"@). We consider the example of a hyperelliptic curve of genus 4 in $\PP^1\times\PP^2$.
         Example
           X = toricProjectiveSpace(1)**toricProjectiveSpace(2)
           S = ring X; B = ideal X;
