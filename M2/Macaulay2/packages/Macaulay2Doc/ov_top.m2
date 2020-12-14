@@ -57,3 +57,11 @@ Node
       "Type"
       "Function"
 ///
+
+document { Key => Core,
+     Headline => "the core part of Macaulay2",
+     PARA {
+     	  "This package contains the core functionality of Macaulay2, without the documentation,
+     	  which is in the package ", TO "Macaulay2Doc", "."
+	  }
+     }

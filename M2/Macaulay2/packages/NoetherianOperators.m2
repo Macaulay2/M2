@@ -16,12 +16,14 @@ newPackage(
         Email => "anton.leykin@gmail.com"}
     },
     Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
-    PackageExports => {"Truncations", "Bertini", "NAGtypes"},
+    PackageExports => {"Bertini", "NumericalLinearAlgebra", "NAGtypes"},
     PackageImports => {"Dmodules", "PrimaryDecomposition"},
     AuxiliaryFiles => false,
     DebuggingMode => false,
     Keywords => {"Numerical Algebraic Geometry", "Commutative Algebra"}
 )
+
+debug NumericalLinearAlgebra
 
 export {
     "truncatedDual",
@@ -30,14 +32,9 @@ export {
     "localHilbertRegularity",
     "eliminatingDual",
     "innerProduct",
-    "reduceSpace",
     "orthogonalInSubspace",
-    "Normalize",
     "Rational",
     "ProduceSB",
-    "numericalKernel",
-    "numericalImage",
-    "colReduce",
 
     "DiffOp",
     "ZeroDiffOp",
@@ -67,6 +64,8 @@ export {
     "mapToPunctualHilbertScheme" 
 
 }
+
+export { "isPointEmbedded", "isPointEmbeddedInCurve", "AllVisible" }
 
 --TruncDualData private keys
 protect \ {
@@ -105,9 +104,6 @@ assert(gens a.Space == gens b.Space)
 assert(point a == point b)
 ///
 
--- Default tolerance value respectively for exact fields and inexact fields
-defaultT = R -> if precision 1_R == infinity then 0 else 1e-6;
-getTolerance = true >> opts -> R -> if not opts.?Tolerance or opts.Tolerance === null then defaultT(R) else opts.Tolerance;
 
 shiftGens := (p,Igens) -> (
     R := ring Igens;
@@ -455,15 +451,6 @@ innerProduct (RingElement, RingElement) := (f, l) -> (
     ((transpose M_{0})*M_{1})_(0,0)
     )
 
-reduceSpace = method(Options => {Monomials => null,Tolerance=>1e-6})
-reduceSpace PolySpace := o -> S -> (
-    if dim S == 0 then return polySpace(gens S,Reduced=>true);
-    (mons,coefs) := coefficients(gens S, Monomials => o.Monomials);
-    M := mons*(colReduce(coefs,Reverse=>true,Tolerance=>o.Tolerance));
-    polySpace(M,Reduced=>true)
-    )
-reduceSpace DualSpace := o -> L -> dualSpace(reduceSpace L.Space,L.BasePoint)
-
 orthogonalInSubspace = method()
 orthogonalInSubspace (DualSpace, PolySpace, Number) := (D,S,t) -> (
     R := ring S;
@@ -489,91 +476,194 @@ check PolySpace := S -> (
     )
 check DualSpace := D -> check polySpace gens D
 
----------------------------------------------
--- Numerical Linear Algebra
----------------------------------------------
 
-numericalImage = method(Options => {Tolerance => null})
-numericalImage Matrix := o -> M -> (
-    R := ultimate(coefficientRing, ring M);
-    tol := getTolerance(R,o);
-    numericalImage(M,tol)
-    )
-numericalImage (Matrix, Number) := o -> (M, tol) -> (
-    R := ultimate(coefficientRing, ring M);
-    M = sub(M, R);
-    if numcols M == 0 then return M;
-    if numrows M == 0 then return map(R^0,R^0,0);
-    if precision 1_(ring M) < infinity then (
-	(svs, U, Vt) := SVD M;
-	cols := positions(svs, sv->(sv > tol));
-	submatrix(U,,cols)
-	) else (
-	gens image M
+-------------------------------------------------------
+-- functions related to numerical primary decomposition
+-- (previously residing in NumericalAlgebraicGeometry)
+-------------------------------------------------------
+
+isPointEmbedded = method(Options=>{AllVisible=>false})
+isPointEmbedded(Point, Ideal, List) := o -> (p,I,C) -> ( -- C is a list of witness sets for irreducible components
+    R := ring I;
+    time gCs := gCorners(p,I); -- assume Robert's
+	       	              -- algorithm a DualSpace D,
+			      -- and g-corners
+    d := 0;
+    l := random(1,ring I); -- a generic linear form 
+    while true do (
+	-- FIRST PART: returns true if embeddedness is certified
+	if o.AllVisible then (
+    	    Jd := interpolate(p,I,C,d);  -- a function that returns 
+	    -- a list of polynomials forming a basis of J_d (vector
+	    -- space), where J is the "part" of the decomposition of I
+	    -- corresponding to the components given in C.
+	    if dim R_d - dim Jd != hilbertFunction(d, monomialIdeal gCs) then return true; -- is there a better way?
+	    )
+	else (
+	    if debugLevel>0 then print "-- double truncation...";
+	    time Jdd := doubleTruncation(I,C,d,d);
+	    if debugLevel>0 then print (d,dim Jdd);
+	    for d' from 1 to d do (
+		g := random(d', Jdd);
+		if debugLevel>0 then << "-- witness poly: (d',d) = " << (d',d) << endl;
+		time if isWitnessPolynomial(p,I,g,d)     
+		then (
+		    if debugLevel>0 then print toString g;
+		    return true;
+		    )
+		)
+	    );
+        --SECOND PART: returns false if deemed not embedded
+	if debugLevel>0 then print "-- colon(truncated dual)...";
+	time Sd := colon(truncatedDual(p,I,d), l);
+	sCs := flatten entries sCorners gCs;
+	colonLMs := leadMonomial \ flatten entries gens reduceSpace Sd;
+    	if debugLevel>0 then << "-- s-corners: " << sCs << endl << "-- LM(dual of colon ideal): " << colonLMs << endl;	
+	if isSubset(sCs, colonLMs) then return false; 
+    	d = d+1;
 	)
     )
 
-numericalKernel = method(Options => {Tolerance => null})
-numericalKernel (Matrix) := Matrix => o -> M -> (
-    R := ring M;
-    tol := getTolerance(R,o);
-    (m,n) := (numrows M, numcols M);
-    if m == 0 then return id_(source M);
-    if n == 0 then return map(R^0,R^0,0);
-    (S,U,Vh) := SVD M;
-    cols := positions(S, sv->(sv > tol));
-    K := submatrix'(transpose Vh,,cols);
-    if K == 0 then K else conjugate K
+colon = method(TypicalValue => DualSpace, Options => {Tolerance=>1e-6})
+colon (DualSpace, RingElement) := o-> (L,g) -> (
+    (gmons,gcoefs) := coefficients g;
+    (Lmons,Lcoefs) := coefficients gens L;
+    M := matrix apply(flatten entries gmons, gm->(
+	    apply(flatten entries Lmons, Lm->(
+		    d := diff(gm,Lm);
+		    if d == 0 then d else leadMonomial d
+		    ))
+	    ));
+    if numcols M == 0 then M = map((ring L)^1,(ring L)^0,0);
+    M = (transpose gcoefs)*M*Lcoefs;
+    (Mmons,Mcoefs) := coefficients M;
+    M = Mmons*sub(numericalImage(Mcoefs,o.Tolerance),ring Mmons);
+    dualSpace(polySpace M, L.BasePoint)
+    )
+colon (DualSpace, Ideal) := (L,J) -> error "not implemented"
+
+
+
+interpolate = method()
+interpolate (Point,Ideal,List,ZZ) := (p,I,C,d) -> error "not implemented"
+
+TEST ///
+setRandomSeed 0
+needsPackage "NumericalAlgebraicGeometry"
+-- NPD2.8: pseudo-component at the origin
+RQQ = QQ[x_1..x_3]
+M = matrix{{x_1^2,x_1*x_2*x_3}}
+
+-- NPD3.10: all components are embedded
+RQQ = QQ[x_1..x_3]
+M = matrix{{x_1^2,x_1*x_2^2*x_3,x_1*x_2*x_3^3}}
+
+I = ideal M
+RCC = CC[x_1..x_3]
+C = drop(flatten flatten (ass I / values@@numericalIrreducibleDecomposition),-1)
+O = origin RCC
+assert isPointEmbedded(O,sub(I,RCC),C)
+///
+
+doubleTruncation = method()
+doubleTruncation (Ideal,List,ZZ,ZZ) := (I,C,d,e) -> (
+    R := ring I;
+    S := polySpace basis(0,d,R);
+    orthogonalInSubspace(I,C,e,S)
+    ) 
+
+orthogonalInSubspace (Ideal,List,ZZ,PolySpace) := (I,C,e,S) -> (
+    t := 1e-6;
+    done := false;
+    while not done do done = all(C, V->(
+	    p := random V; 
+	    D := truncatedDual(p,I,e); -- D_p^e[I]
+	    S' := orthogonalInSubspace(D,S,t);
+	    nothing'new := (dim S' == dim S);
+	    S = S';
+	    nothing'new
+	    ));
+    S
     )
 
---performs Gaussian reduction on M
-colReduce = method(Options => {Tolerance => null, Normalize => true, Reverse => false})
-colReduce Matrix := o -> M -> (
-    if o.Reverse then M = matrix reverse(entries M);
-    tol := getTolerance(ring M,o);
-    if tol == 0 then M = gens gb M
-    else (
-    	M = mutableMatrix sub(M, ultimate(coefficientRing, ring M));
-    	(m,n) := (numrows M, numcols M);
-    	j := 0; --column of pivot
-    	for i in reverse(0..m-1) do (
-	    if debugLevel >= 1 then <<i<<"/"<<m-1<<endl;
-	    if j >= n then break;
-	    a := j + maxPosition apply(j..n-1, l->(abs M_(i,l)));
-	    c := M_(i,a);
-	    if abs c <= tol then (for k from j to n-1 do M_(i,k) = 0; continue);
-	    columnSwap(M,a,j);
-	    if o.Normalize then (columnMult(M,j,1/c); c = 1);
-	    for k from 0 to n-1 do if k != j then columnAdd(M,k,-M_(i,k)/c,j);
-	    j = j+1;
-	    );
-    	M = (new Matrix from M)_{0..j-1};
-    	if precision M < infinity then M = clean(tol,M);
+isWitnessPolynomial = method()
+isWitnessPolynomial (Point, Ideal, RingElement, ZZ) := (p,I,g,dStop) -> (
+    t := 1e-6;
+    R := ring g;
+    n := numgens R;
+    if g == 0 then return false;
+    Igens := sub(gens I, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
+    g = sub(g, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
+    e := first degree g;
+    
+    Iplusg := Igens|matrix{{g}};
+    IP := truncDualData(Igens,false,t);
+    IplusgP := truncDualData(Iplusg,false,t);
+    IhP := truncDualData(Igens,true,t);
+    ID := IhD := IplusgD := polySpace map(R^1,R^0,0);
+    S := ring homogPolySpace IhP;
+    dehomog := map(R,S,{1_R} | gens R);
+    gh := homogenize(sub(g,S),S_0);
+    d := 0;
+    GCs := {};
+    varList := new MutableList from n:false;
+    ginI := true;
+    ginJ := false;
+    while d <= dStop do (
+	IP = nextTDD(d,IP,t);
+	IplusgP = nextTDD(d,IplusgP,t);
+	if dim polySpace IP != dim polySpace IplusgP then ginI = false;
+	IhP = nextTDD(d+e,IhP,t);
+	IhD = dualSpace(homogPolySpace IhP, point {toList (numgens S:0)});
+	IhcolonghD := reduceSpace polySpace dehomog gens colon(IhD,gh);
+	newGCs := newGCorners(IhcolonghD,GCs,d,d);
+	if any(newGCs, g->(g#0 == 1_R)) then return false;
+	for g in newGCs do (
+	    l := (listForm(g#0))#0#0;
+	    ls := select(n, i->(l#i != 0));
+	    if #ls == 1 then varList#(first ls) = true;
 	);
-    if o.Reverse then M = matrix reverse(entries M);
-    M
+	if all(varList, v->v) then ginJ = true;
+      	GCs = GCs|newGCs;
+	d = d+1;
+	if ginJ and not ginI then return true;
+	);
+    false
     )
 
---a list of column indices for a basis of the column space of M
-basisIndices = (M, tol) -> (
-    M = new MutableMatrix from sub(M, coefficientRing ring M);--sub(M, ultimate(coefficientRing, ring M));
-    (m,n) := (numrows M, numcols M);
-    i := 0; --row of pivot
-    I := new MutableList;
-    for j from 0 to n-1 do (
-	if i == m then break;
-	a := if tol > 0 then i + maxPosition apply(i..m-1, l->(abs M_(l,j)))
-	else i + position(i..m-1, l -> M_(l,j) != 0);
-	c := M_(a,j);
-	if tol > 0 and abs c <= tol then continue;
-	I#(#I) = j;
-	rowSwap(M,a,i);
-	for l from 0 to n-1 do M_(i,l) = M_(i,l)/c; --rowMult(M,i,1/c); is bugged
-	for k from 0 to m-1 do rowAdd(M,k,-M_(k,j),i);
-	i = i+1;
+TEST ///
+debug needsPackage "NoetherianOperators"
+R = CC[x,y]
+p = point {{0,0}}
+I = ideal {x^2,y*x}
+g = x^2
+assert(not isWitnessPolynomial(p,I,g,10))
+h = x
+assert(isWitnessPolynomial(p,I,h,10))
+///
+
+
+isPointEmbeddedInCurve = method(Options=>{"regularity"=>-1})
+isPointEmbeddedInCurve (Point,Ideal) := o-> (p,I) -> (
+    R := ring I;
+    I' := ideal sub(gens I, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
+    p' := origin(R);
+    m := matrix{apply(gens R, v->random(1,R))}; -- matrix for random linear change of coordinates
+    I' = (map(R,R,m)) I'; -- I with new coordinates
+    r := o#"regularity";
+    if r == -1 then (
+	r1 := localHilbertRegularity(p',I');
+	r2 := dim truncatedDual(p',I',r);
+	r = max{r1,r2-1};
 	);
-    new List from I
+    E := eliminatingDual(p',I',{0},r); -- assume I is in general position w.r.t. x = R_0
+    E1 := truncate(E,{0},r-1);
+    E2 := colon(E,R_0);
+    print (dim E1, dim E2, areEqual(E1,E2));
+    dim E1 != dim E2 -- "truncate" extracts a lesser truncated eliminating dual from E
+    -- can we make a less expensive test than above? look at the leading terms of the dual basis (and the quotient)?
     )
+
 
 
 --
@@ -1149,12 +1239,6 @@ cleanPoly = (tol, x) -> (
     (mon * coef)_(0,0)
 )
 
-conjugate(Matrix) := Matrix => M -> (
-    matrix table(numrows M, numcols M, (i,j) -> conjugate(M_(i,j)))
-)
-
-
-
 coordinateChangeOps = method()
 coordinateChangeOps(Matrix, DiffOp) := DiffOp => (A, D) -> (
     R := ring D;
@@ -1179,8 +1263,6 @@ assert(all(comp - prod, D -> D == 0))
 phi = map(R,R, vars R * transpose (A*B))
 assert(coordinateChangeOps_phi last nops - last comp == 0)
 ///
-
-
 
 
 noethOpsFromComponents = method()
@@ -1469,12 +1551,13 @@ undocumented {
 }
 
 beginDocumentation()
+refKroneLeykin := "R. Krone and A. Leykin, \"Numerical algorithms for detecting embedded components.\", arXiv:1405.7871"
 
 doc ///
      Key
        NoetherianOperators
      Headline
-       numerically compute local dual space and Hilbert functions
+       algorithms for computing local dual spaces and sets of Noetherian operators 
      Description
        Text
 	   The @EM "NoetherianOperators"@ package includes algorithms for computing Noetherian operators and local dual 
@@ -1512,19 +1595,19 @@ doc ///
 	   @UL {
     		   {TO truncatedDual},
     		   {TO zeroDimensionalDual},
-    		   {TO eliminatingDual},
+       		   {TO eliminatingDual},
     		   {TO localHilbertRegularity},
     		   {TO gCorners},
     		   {TO innerProduct},
+	 	   	   {TO isPointEmbedded},
+	 	   	   {TO isPointEmbeddedInCurve},
+	 		   {TO colon},
                {TO reduceSpace}
 	   }@
 
 	   Auxiliary numerical linear algebra methods:
 
 	   @UL {
-    		   {TO numericalKernel},
-    		   {TO numericalImage},
-    		   {TO colReduce},
                {TO rationalInterpolation}
 	   }@
 
@@ -1860,6 +1943,7 @@ P = innerProduct(S,S)
 assert(all((0,0)..(3,3), i->(P_i == if i#0 == i#1 then 1 else 0)))
 ///
 
+undocumented {  (orthogonalInSubspace,Ideal,List,ZZ,PolySpace) } 
 doc ///
      Key
           orthogonalInSubspace
@@ -1887,34 +1971,6 @@ doc ///
 	       D = dualSpace(matrix{{x-y}}, origin R);
 	       S = orthogonalInSubspace(D, T, 1e-6)
 ///
-
-doc ///
-     Key
-          reduceSpace
-	  (reduceSpace,DualSpace)
-	  (reduceSpace,PolySpace)
-	  [reduceSpace,Monomials]
-     Headline
-          reduce the generators of a space
-     Usage
-          S = reduceSpace T
-     Inputs
-     	  T:DualSpace
-	       or @ofClass PolySpace@
-     Outputs
-          S:DualSpace
-	       or @ofClass PolySpace@
-     Description
-          Text
-	       Reduces the generators of a DualSpace or PolySpace so that the new generators are linearly independent, and each has
-	       a distinct lead monomial.  This is achieved by Gaussian reduction.
-	  Example
-	       R = CC[x,y];
-	       T = polySpace matrix{{x,y,x-y+1e-10}}
-	       S = reduceSpace T
-	       S = reduceSpace(T, Tolerance=>1e-12)
-///
-
 doc ///
      Key
           (truncate,DualSpace,ZZ)
@@ -2007,13 +2063,9 @@ doc ///
 	  [localHilbertRegularity,Tolerance]
 	  [eliminatingDual,Tolerance]
 	  [gCorners,Tolerance]
-	  [reduceSpace,Tolerance]
       [rationalInterpolation, Tolerance]
       [truncatedDual, Tolerance]
       [zeroDimensionalDual, Tolerance]
-      [numericalImage,Tolerance]
-      [numericalKernel,Tolerance]
-      [colReduce, Tolerance]
      Headline
           optional argument for numerical tolernace
      Description
@@ -2027,111 +2079,52 @@ doc ///
 	       See also @TO Tolerance@.
 ///
 
+document {
+    Key => {
+	(isPointEmbedded,Point,Ideal,List), isPointEmbedded,
+	AllVisible, [isPointEmbedded,AllVisible],
+	},
+    Headline => "determine if the point is an embedded component of the scheme",
+    Usage => "B = isPointEmbedded(P,I,C)",
+    Inputs => { 
+	"P", 
+	"I",
+	"C"=>{" witness sets representing components of ", TT "Spec(I)", " containing ", TT "P"} 
+	},
+    Outputs => { "B"=>Boolean },
+    PARA {"Runs an embedded component test described in "},
+    refKroneLeykin,
+    SeeAlso=>{isPointEmbeddedInCurve}
+    }
 
-doc ///
-     Key
-          numericalImage
-	  (numericalImage,Matrix,Number)
-	  (numericalImage,Matrix)
-     Headline
-          Image of a matrix
-     Usage
-          V = numericalImage(M, tol)
-     Inputs
-	  M:Matrix
-	  tol:Number
-	       a positive number, the numerical tolerance
-     Outputs
-          V:Matrix
-     Description
-          Text
-	       Computes the image of a matrix M numerically using singular value decomposition.
-	  Example
-	       M = matrix {{1., 0, 1}, {0, 1, 1}, {1, 0, 1}}
-	       numericalImage(M, 0.01)
-	  Text
-	       Singular values less than the tolerance are treated as zero.
-	  Example
-	       M = matrix {{0.999, 2}, {1, 2}}
-	       numericalImage(M, 0.01)
-///
+document {
+    Key => {
+	(isPointEmbeddedInCurve,Point,Ideal), isPointEmbeddedInCurve
+	},
+    Headline => "determine if the point is an embedded component of a 1-dimensional scheme",
+    Usage => "B = isPointEmbeddedInCurve(P,I)",
+    Inputs => { 
+	"P", 
+	"I"
+	},
+    Outputs => { "B"=>Boolean },
+    PARA {"Runs an embedded component test described in "},
+    refKroneLeykin,
+    SeeAlso=>{isPointEmbeddedInCurve}
+    }
 
-TEST ///
-M = matrix {{0.999, 2}, {1, 2}}
-Mimage = numericalImage(M, 0.01)
-assert(numcols Mimage == 1)
-///
+document {
+    Key => {colon, (colon,DualSpace,RingElement), (colon,DualSpace,Ideal), [colon,Tolerance]},
+    Headline => "colon of a (truncated) dual space",
+    Usage => "Dg = colon(D,g)\nDJ = colon(D,J)",
+    Inputs => { "D"=>DualSpace, "g"=>RingElement, "J"=>Ideal },
+    Outputs => { "Dg, DJ"=>DualSpace },
+    "Computes (a part of) the dual space of the dual. See",
+    PARA { refKroneLeykin },
+    "for a description."
+    }
 
-doc ///
-     Key
-          numericalKernel
-	  (numericalKernel,Matrix)
-     Headline
-          Kernel of a matrix
-     Usage
-          V = numericalKernel(M)
-     Inputs
-	  M:Matrix
-     Outputs
-          V:Matrix
-     Description
-          Text
-	       Computes the kernel of a matrix M numerically using singular value decomposition.
-	  Example
-	       M = matrix {{1., 1, 1}}
-	       numericalKernel(M, Tolerance=>0.01)
-	  Text
-	       Singular values less than the tolerance are treated as zero.
-	  Example
-	       M = matrix {{1., 1}, {1.001, 1}}
-	       numericalKernel(M, Tolerance=>0.01)
-///
-
-doc ///
-     Key
-          colReduce
-	  (colReduce,Matrix)
-	  [colReduce,Reverse]
-      [colReduce,Normalize]
-      Normalize
-     Headline
-          Column reduces a matrix
-     Usage
-          N = colReduce M
-     Inputs
-	  M:Matrix
-     Outputs
-          N:Matrix
-	       in reduced column echelon form
-     Description
-          Text
-	       Performs Gaussian column reduction on a matrix M, retaining only the linearly independent columns.
-	  Example
-	       M = matrix {{1., 2, 3}, {2, 4, 0}, {-1, -2, 3}}
-	       colReduce(M, Tolerance=>0.01) 
-	  Text
-	       Entries with absolute value below the tolerance are treated as zero and not used as pivots.
-	  Example
-	       N = matrix {{0.001, 0, 0}, {1, 1, 3}, {2, 2, 5.999}}
-	       colReduce(N, Tolerance=>0.01)
-          Text
-	       The lower rows are treated as the lead terms unless the optional argument {\tt Reverse} is set to true.
-	  Example
-	       colReduce(M, Reverse=>true)
-	  Text
-	       If the optional argument {\tt Normalize} is set to true (default) each vector is normalized so that the lead entry is 1.  Otherwise this step is skipped.
-	  Example
-	       colReduce(M, Normalize=>false)
-///
-
-TEST ///
-N = matrix {{0.001, 0, 0}, {1, 1, 3}, {2, 2, 5.999}}
-N = colReduce(N, Tolerance=>0.01)
-assert(numcols N == 1)
-///
-
-
-
+-- Numerical LA
 doc ///
 Key
     joinIdeals

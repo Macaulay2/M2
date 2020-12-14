@@ -73,7 +73,7 @@ doc ///
      Degree=>List
        or @ofClass ZZ@.  Sets the degree of the resulting matrix.  Default is 0.  Seldom Used
      Truncate=>Boolean
-       internal use only.  Used to implement @TO "Truncations::truncate"@
+       internal use only.  Used to implement @TO "Truncations::truncate(ZZ,Module)"@
    Outputs
      f:Matrix
        a map from a free module over the ring of {\tt M} (or by the ring specified with the {\tt SourceRing} option, if given),
@@ -192,7 +192,7 @@ doc ///
      If the base ring is not a field, then the result is only a generating set.  If the optional argument
      Variables is provided, then even this might not be correct.
    SeeAlso
-     "Truncations::truncate"
+     "Truncations::truncate(ZZ,Module)"
      (sort, Matrix)
      comodule
      super

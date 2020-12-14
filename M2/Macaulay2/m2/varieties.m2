@@ -398,8 +398,8 @@ sheafExt(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> sheafExt^n(O^1,R^
 -----------------------------------------------------------------------------
 
 Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => opts -> (m,F,G') -> (
+     -- depends on truncate methods
      needsPackage "Truncations";
-     truncate := value getGlobalSymbol "truncate";
      G := G'#0;
      e := G'#1#0;
      if variety G =!= variety F

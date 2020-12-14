@@ -55,13 +55,11 @@ header "
        #include <linbox/linbox-config.h>
    #endif
    // HAVE_FROBBY is in factory/factoryconf.h
-   #ifdef HAVE_FLINT
-       #include <M2/gc-include.h>
-       #pragma GCC diagnostic push
-       #pragma GCC diagnostic ignored \"-Wconversion\"
-       #include <flint/flint.h>
-       #pragma GCC diagnostic pop
-   #endif
+   #include <M2/gc-include.h>
+   #pragma GCC diagnostic push
+   #pragma GCC diagnostic ignored \"-Wconversion\"
+   #include <flint/flint.h>
+   #pragma GCC diagnostic pop
    ";
 gcversion():constcharstar := Ccode(returns,"
      static char buf[40];
@@ -192,13 +190,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
    "frobby version" => Ccode(constcharstar,"constants::version"),
-   "flint version" => Ccode(constcharstar,"
-	 #if HAVE_FLINT
-	   flint_version
-	 #else
-	   \"not present\"
-	 #endif
-	 "),
+   "flint version" => Ccode(constcharstar,"flint_version"),
    "scscp version" => Ccode(constcharstar,"
 	 #ifdef HAVE_SCSCP
 	   stringize(SCSCP_VERSION_MAJOR) \".\" stringize(SCSCP_VERSION_MINOR) \".\" stringize(SCSCP_VERSION_PATCH)

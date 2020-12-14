@@ -3,6 +3,7 @@
 
 #include "../engine-includes.hpp"
 
+#include "interface/groebner.h"
 #include "res-schreyer-frame.hpp"
 #include "res-gausser.hpp"
 #include "res-poly-ring.hpp"

@@ -163,7 +163,7 @@ document {
 
 --^
 document {
-     Key => symbol Grassmannian2, 
+    Key => Grassmannian2,
     TT "Grassmannian2(k,r,R) or 
         Grassmannian2(k,r)",
        "-- Given natural numbers k <= r,

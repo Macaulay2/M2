@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {det,(det,Matrix)},
+     Key => {det,(det,Matrix),(determinant,MutableMatrix)},
      Headline => "determinant of a matrix",     
      Usage => "det M",
      Inputs => {

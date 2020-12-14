@@ -2,6 +2,13 @@
 --- author(s): M. Stillman
 --- notes: 
 
+-*
+-- TODO
+degree(ChainComplexMap)
+degree(GradedModuleMap)
+degree(Matrix)
+*-
+
 document {
      Key => Parenthesize,
      "This class is used internally to implement the parentheses inserted by ", TO "parts", "."

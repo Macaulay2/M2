@@ -2,7 +2,6 @@
 #define matrixcon_hpp_
 
 #include <vector>
-#include "engine.h"
 #include "ring.hpp"
 #include <utility>
 

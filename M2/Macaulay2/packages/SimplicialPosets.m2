@@ -489,6 +489,7 @@ assert(getFVector(B) == {1,4,6,4,1})
 
 -- stanleyPosetIdeal test
 TEST ///
+needsPackage "EdgeIdeals"
 -- Number of tests
 N = 50;
 -- Erdős–Rényi graph parameters 

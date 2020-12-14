@@ -1,3 +1,5 @@
+-- TODO: [solve, Invertible]
+
 doc ///
    Key
      solve

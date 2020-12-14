@@ -80,20 +80,6 @@ int system_hasException(int fd) {
   return ret;
 }
 
-#include "../e/rand.h"
-
-int system_randomint(void) {
-#if 0
-     extern long random();
-     return random();
-#elif 0
-     extern long random00();
-     return random00();
-#else
-     return rawRandomInt((int32_t)~0>>1);
-#endif
-     }
-
 extern void M2_stack_trace();
 
 extern void fatal(const char *s, ...);
@@ -177,7 +163,7 @@ int system_readline(M2_string buffer, int len, int offset, M2_string prompt) {
   char *p = M2_tocharstar(prompt);
   int r;
   if (offset < 0 || (int)buffer->len - offset < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
-  r = read_via_readline(buffer->array + offset,len,p);
+  r = read_via_readline((char *)buffer->array + offset,len,p);
   GC_FREE(p);
   return r;
 }

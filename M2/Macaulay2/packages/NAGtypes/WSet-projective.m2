@@ -10,6 +10,7 @@
 
 PWSet = new Type of WSet
 PWSet.synonym = "projective witness set"
+texMath PWSet := x -> texMath net x
 net PWSet := PW -> "[dim="| dim PW | " deg="| degree PW |" in " | net ambient PW | "]"
 
 makePWSet = method(TypicalValue=>PWSet, 

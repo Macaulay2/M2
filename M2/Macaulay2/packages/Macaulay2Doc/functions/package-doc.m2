@@ -2,47 +2,6 @@
 --- author(s): Mahrud
 --- notes: functions below are all defined in packages.m2
 
--- TODO: assign these symbols to a generic Options node
--- options for newPackage
-undocumented {
-    Authors,
-    AuxiliaryFiles,
-    Configuration,
-    Date,
-    Email,
-    HomePage,
-    InfoDirSection,
-    Name,
-    PackageExports,
-    PackageImports,
-    Version,
-    }
-
--- options for loadPackage and needsPackage
-undocumented {
-    DebuggingMode,
-    FileName,
-    LoadDocumentation,
-    Reload,
-    }
-
--- options for installPackage
-undocumented {
-    CacheExampleOutput,
-    CheckDocumentation,
-    IgnoreExampleErrors,
-    InstallPrefix,
-    MakeDocumentation,
-    MakeHTML,
-    MakeInfo,
-    MakeLinks,
-    RemakeAllDocumentation,
-    RerunExamples,
-    RunExamples,
-    SeparateExec,
-    UserMode,
-    }
-
 doc ///
 Node
   Key
@@ -112,9 +71,14 @@ Node
      package
     (package, Array)
     (package, Dictionary)
+    (package, DocumentTag)
     (package, Function)
     (package, HashTable)
+    (package, Nothing)
+    (package, Option)
+    (package, Package)
     (package, Sequence)
+    (package, String)
     (package, Symbol)
     (package, Thing)
   Headline
@@ -307,6 +271,9 @@ Node
     [newPackage, Reload]
     [newPackage, UseCachedExampleOutput]
     [newPackage, Version]
+    Name
+    Email
+    HomePage
   Headline
     the preamble of a package
   Usage
@@ -454,7 +421,7 @@ Node
 
 Node
   Key
-    installPackage
+     installPackage
     (installPackage, String)
     (installPackage, Package)
     [installPackage, CacheExampleOutput]
@@ -549,7 +516,7 @@ Node
       @UL {
           {"load the package, if not already loaded (see ", TO loadPackage, ")"},
           {"determine which help pages have changed since last install"},
-          {"run any new or previously failed examples, or all examples, as specified by the ", TO "RerunExamples", " option"},
+          {"run any new or previously failed examples, or all examples, as specified by the ", TT "RerunExamples", " option"},
           {"generate the html pages, or not, as specified by the ", TT "MakeHTML", " option, for the modified help pages,
 	      or all html pages if ", TT "RemakeAllDocumentation", " is set to true"},
           {"generate the info pages, or not, as specified by the ", TT "MakeInfo", " option"},
@@ -716,3 +683,8 @@ Node
   SeeAlso
     "packages"
 ///
+
+document { Key => (options, Package),
+    EXAMPLE lines ///
+    options Core
+    ///}

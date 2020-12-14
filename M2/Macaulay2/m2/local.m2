@@ -4,8 +4,8 @@
 
 truncatedDual := (M,e) -> (
      -- find (k-dual M), truncated in degrees >= e.
+     -- depends on truncate methods
      needsPackage "Truncations";
-     truncate := value getGlobalSymbol "truncate";
      R := ring M;
      n := numgens R;
      ww := R^{-n};

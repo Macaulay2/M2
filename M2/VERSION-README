@@ -9,9 +9,7 @@ The convention for version numbers of Macaulay2 is this:
 
 It is best to increment version numbers on the "master" branch, so they are all
 incremented on the same branch, hence in a well-defined order, despite possible
-merging.  Alternatively, since now the "development" branch feeds into the
-"master" branch, and is the only source of additions to the "master" branch,
-the version numbers may be incremented there.
+merging.
 
 Here is the procedure:
 
