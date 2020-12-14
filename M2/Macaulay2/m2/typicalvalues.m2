@@ -76,6 +76,7 @@ localDictionaries Dictionary := List => localDictionaries
 values HashTable := List => values
 merge(HashTable,HashTable,Function) := HashTable => merge
 mergePairs(BasicList,BasicList,Function) := BasicList => mergePairs
+fusePairs(BasicList,BasicList,Function) := BasicList => fusePairs
 mingle BasicList := List => mingle
 openDatabase String := Database => openDatabase
 openDatabaseOut String := Database => openDatabaseOut

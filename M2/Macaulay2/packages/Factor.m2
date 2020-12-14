@@ -15,10 +15,10 @@ export {"FactorPolynomialRing"}
 
 debug Core
 
-commonPairs := (a,b,f) -> combinePairs(a,b, (x,y) -> if x === null or y === null then continue else f(x,y));
-subPairs := (a,b) -> combinePairs(a,b, (x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
+commonPairs := (a,b,f) -> fusePairs(a,b, (x,y) -> if x === null or y === null then continue else f(x,y));
+subPairs := (a,b) -> fusePairs(a,b, (x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
 -- mergePairs could be defined similarly as
--- mergePairs := (a,b,f) -> combinePairs(a,b, (x,y) -> if x === null then y else if y === null then x else f(x,y));
+-- mergePairs := (a,b,f) -> fusePairs(a,b, (x,y) -> if x === null then y else if y === null then x else f(x,y));
 
 FactorPolynomialRing = new Type of PolynomialRing;
 FactorPolynomialRing.synonym = "factorized polynomial ring";
