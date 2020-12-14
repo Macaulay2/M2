@@ -370,33 +370,6 @@ document {
      SeeAlso => { "defaultPrecision" }
      }
 
-document {
-     Headline => "fill a mutable matrix with random numbers",
-     Key => {fillMatrix,(fillMatrix, MutableMatrix),(fillMatrix, MutableMatrix, ZZ),
-	  [fillMatrix, Height],[fillMatrix,Density],[fillMatrix,UpperTriangular]},
-     Usage => "fillMatrix M\nfillMatrix(M,n)",
-     BaseFunction => fillMatrix,
-     Inputs => {
-	  "M"=>MutableMatrix,
-	  "n" => ZZ => {"if specified, the maximum number of entries to replace"},
-	  Density => RR => {"the fraction of entries of ", TT "M", " to be replaced, if ", TT "n", " is
-	       not specified"},
-	  UpperTriangular => Boolean => "whether to fill entries only above the diagonal",
-	  Height => ZZ => "a bound on the absolute values of the generated random numbers"
-	  },
-     Outputs => {"M"},
-     Consequences => {{ "some entries of M are replaced with randomly generated numbers, whose
-	       size depends on the value of the option ", TT "Height" }},
-     EXAMPLE lines ///
-	  printingPrecision = 2
-	  fillMatrix(mutableMatrix(RR,5,10))
-	  fillMatrix(mutableMatrix(ZZ,5,10),UpperTriangular=>true)
-	  fillMatrix(mutableMatrix(QQ,5,10),Density=>.2,Height=>1000)
-	  fillMatrix(mutableMatrix(ZZ,5,10),25,Height=>1000)
-	  ///,
-     SeeAlso => {setRandomSeed, random, mutableMatrix}
-     }
-
 document { 
      Key => {norm,
 	  (norm, InfiniteNumber, Matrix),(norm, Matrix),(norm, RR, Matrix),(norm, InfiniteNumber, RingElement),(norm, MutableMatrix),
@@ -687,48 +660,6 @@ document { Key => (symbol ||,GradedModuleMap,GradedModuleMap),
      f = gradedModuleMap( matrix "1;2", matrix "2,3" )
      f||f
      ///
-     }
-
-document {
-     Key => "rootPath",
-     Usage => "rootPath",
-     Outputs => {
-	  String => "the path, as seen by external programs, to the root of the file system seen by Macaulay2"
-	  },
-     PARA {
-	  "This string may be concatenated with an absolute path to get one understandable by external programs.
-	  Currently, this makes a difference only under Microsoft Windows with Cygwin, but there it's crucial
-	  for those external programs that are not part of Cygwin.  Fortunately, programs compiled under Cygwin
-	  know were to look for files whose paths start with something like ", TT "C:/", ", so it is safe
-	  always to concatenate with the value of ", TO "rootPath", ", even when it is unknown whether the
-	  external program has been compiled under Cygwin."
-	  },
-     EXAMPLE lines ///
-     fn = temporaryFileName()
-     rootPath | fn
-     ///,
-     SeeAlso => {"rootURI"}
-     }
-
-document {
-     Key => "rootURI",
-     Usage => "rootURI",
-     Outputs => {
-	  String => "the path, as seen by an external browser, to the root of the file system seen by Macaulay2"
-	  },
-     PARA {
-	  "This string may be concatenated with an absolute path to get one understandable by an external browser.
-	  Currently, this makes a difference only under Microsoft Windows with Cygwin, but there it's crucial
-	  for those external programs that are not part of Cygwin.  Fortunately, programs compiled under Cygwin
-	  know were to look for files whose paths start with something like ", TT "C:/", ", so it is safe
-	  always to concatenate with the value of ", TO "rootPath", ", even when it is unknown whether the
-	  external program has been compiled under Cygwin."
-	  },
-     EXAMPLE lines ///
-     fn = temporaryFileName()
-     rootURI | fn
-     ///,
-     SeeAlso => {"rootPath"}
      }
 
 doc ///

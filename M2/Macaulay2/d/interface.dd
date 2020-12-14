@@ -7,29 +7,39 @@ use common;
 use hashtables;
 use struct;
 
-header "
-  #include <engine.h>
-  #include <ZZp.hpp>
-  #include <monomial.hpp>
-  #include <exceptions.hpp>
-  #include <relem.hpp>
-  #include <aring-glue.hpp>
-  #include <aring-zzp.hpp>
+header "// TODO: break apart this file so each piece includes only one:
+#include <interface/aring.h>
+#include <interface/cra.h>
+#include <interface/factory.h>
+#include <interface/flint.h>
+#include <interface/freemodule.h>
+#include <interface/groebner.h>
+#include <interface/matrix.h>
+#include <interface/monoid.h>
+#include <interface/monomial-ideal.h>
+#include <interface/monomial-ordering.h>
+#include <interface/mutable-matrix.h>
+#include <interface/random.h>
+#include <interface/ring.h>
+#include <interface/ringelement.h>
+#include <interface/ringmap.h>";
 
-  #include <stdexcept>
-  void test_catch0() { 
-       throw (std::runtime_error(\"test\")); 
-       }
-  int test_catch() {
-       try { test_catch0(); } catch (const std::runtime_error& x) { return 1; }
-       return 0;
-       }
-  
-  ";
+header "// TODO: remove the following headers
+#include <engine.h>                         // for IM2_Computation_set_stop
+#include <error.h>                          // for ERROR
+#include <ZZp.hpp>                          // for Z_mod
+#include <exceptions.hpp>                   // for engine_error, CATCH, TRY
+#include <monomial.hpp>                     // for Monomial
+#include <relem.hpp>                        // for RingElement";
 
 -- debugging:
 export engineMemory(e:Expr):Expr := toExpr(Ccode(string, "engineMemory()"));
 setupfun("engineMemory", engineMemory);
+
+-- testing C++ exceptions
+header "#include <stdexcept>
+void test_catch0() { throw (std::runtime_error(\"test\")); }
+int test_catch() { try { test_catch0(); } catch (const std::runtime_error& x) { return 1; } return 0; }";
 
 export testCatch(e:Expr):Expr := toExpr(Ccode(bool,"0 != test_catch()"));
 setupfun("testCatch",testCatch);

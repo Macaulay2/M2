@@ -27,7 +27,7 @@ void xml_examine(xmlNode *n) {
 }
 
 xmlNode *xml_Parse(M2_string p) {
-  xmlDoc *d = xmlReadMemory(p->array,p->len,"a string", NULL, 0);
+     xmlDoc *d = xmlReadMemory((char *)p->array,p->len,"a string", NULL, 0);
   if (d == NULL) return NULL;
   return xmlDocGetRootElement(d);
 }

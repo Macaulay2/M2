@@ -2,6 +2,8 @@
 --- author(s): Gregory G. Smith
 --- notes: 
 
+-- in PrimaryDecomposition: (isPrime, Ideal)
+
 doc /// 
     Key
 	(isPseudoprime,ZZ)

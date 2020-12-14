@@ -10,8 +10,7 @@ Authors => {{Name => "Christian Bopp",
 		   HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/74-michael-hahn"}
 						},
 Headline=> "the relative canonical resolution for g-nodal canonical curves with a fixed g^1_k",
-Keywords => {"Commutative Algebra"},
-DebuggingMode=>true
+Keywords => {"Commutative Algebra"}
 	)
    
 export{"getFactors", 

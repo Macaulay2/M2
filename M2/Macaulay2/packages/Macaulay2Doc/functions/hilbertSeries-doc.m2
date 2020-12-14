@@ -93,7 +93,9 @@ document {
 --      }
 
 document { 
-     Key => (hilbertSeries,Ideal),
+     Key => {
+	 (hilbertSeries, Ideal),
+	 (hilbertSeries, MonomialIdeal)},
      Headline => "compute the Hilbert series of the quotient of the ambient ring by the ideal",
      Usage => "hilbertSeries I",
      Inputs => {

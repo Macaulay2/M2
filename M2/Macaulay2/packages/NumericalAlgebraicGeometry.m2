@@ -14,7 +14,9 @@ newPackage select((
 	  },
      Keywords => {"Numerical Algebraic Geometry"},
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
-     PackageExports => {"NAGtypes","NumericalHilbert","SLPexpressions","LLLBases"},
+     PackageExports => {"NAGtypes",
+	 "NumericalLinearAlgebra",
+	 "SLPexpressions"},
      PackageImports => {"PHCpack","Bertini","Truncations"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
@@ -49,7 +51,8 @@ export {
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
      "EndZoneFactor", "maxCorrSteps", "InfinityThreshold", 
-     "Normalize", "Projectivize",
+     -- "Normalize", -- exported by NumericalLA 
+     "Projectivize",
      "AffinePatches", "DynamicPatch",
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
@@ -415,8 +418,6 @@ load "./NumericalAlgebraicGeometry/decomposition.m2"
 load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
 load "./NumericalAlgebraicGeometry/deflation.m2"
 load "./NumericalAlgebraicGeometry/SLP.m2"
-load "./NumericalAlgebraicGeometry/npd.m2"
-load "./NumericalAlgebraicGeometry/polynomial-space.m2"
 
 load "./NumericalAlgebraicGeometry/WSet-deflation.m2"
 
@@ -493,9 +494,6 @@ selectUnique List := o -> sols ->(
 NAGtrace = method()
 NAGtrace ZZ := l -> (numericalAlgebraicGeometryTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 
--- conjugate all entries of the matrix (should be a part of M2!!!)
-conjugate Matrix := M -> matrix(entries M / (row->row/conjugate))
- 
 -- normalized condition number of F at x
 conditionNumber = method()
 conditionNumber Matrix := M -> (s := first SVD M; if min s == 0 then infinity else max s / min s)

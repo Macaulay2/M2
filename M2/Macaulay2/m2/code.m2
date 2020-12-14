@@ -124,8 +124,9 @@ searchAllDictionaries := (T, f) -> (
     scan(flatten \\ pairs \ dictionaryPath, (name, sym) -> (
 	    if instance(v := value sym, T) and not seen#?v then ( seen#v = true; f(v)))))
 
-isUnaryAssignmentOperator  := key ->  instance(key, Sequence) and #key === 2 and key#1 === symbol=
-isBinaryAssignmentOperator := key -> (instance(key, Sequence) and #key === 3
+isUnaryAssignmentOperator  = key -> (instance(key, Sequence) and #key === 2
+    and(false and isUnaryAssignmentOperator key#0 and instance(key#1, Type) or key#1 === symbol=))
+isBinaryAssignmentOperator = key -> (instance(key, Sequence) and #key === 3
     and isUnaryAssignmentOperator key#0 and instance(key#1, Type) and instance(key#2, Type))
 
 thingMethods := (T, F) -> nonnull apply(pairs T, (key, func) -> if instance(func, Function) then

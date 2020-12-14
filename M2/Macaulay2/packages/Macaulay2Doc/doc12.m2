@@ -30,19 +30,6 @@ fib = stream( (i,j) -> (j,i+j), (0,1))
 scan(1 .. 22, i -> fib = fib())
 "
 
-document {
-     Key => {ultimate,(ultimate, Function, Thing)},
-     Headline => "ultimate value for an iteration",
-     TT "ultimate(f,x)", " -- yields the value ultimately obtained by
-     applying the function ", TT "f", " to ", TT "x", ".",
-     PARA{},
-     "Iteration ceases when an error occurs during application of the
-     function, or the result is the same.  Errors are not reported.",
-     PARA{},
-     "It's a bad idea to use this function, because unexpected errors will
-     produce unexpected results silently."
-     }
-
 TEST "
 assert( partitions 4 === {{4},{3,1},{2,2},{2,1,1},{1,1,1,1}} / (x -> new Partition from x) )
 assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} / (x -> new Partition from x) )

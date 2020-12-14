@@ -109,26 +109,14 @@ ZZ#{WebApp,AfterPrint} = identity
 
 if topLevelMode === WebApp then (
     -- the help hack: if started in WebApp mode, help is compiled in it as well
-    webAppPRE := new MarkUpType of PRE; webAppPRE.qname="pre";
-    html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so no need to htmlLiteral it
-	"<pre>",
-	webAppTextTag,
-	apply(x,y->replace("\\$\\{prefix\\}","usr",y)),
-	"\n",
-	webAppEndTag,
-	"</pre>\n"
-	);
-    pELBackup:=lookup(processExamplesLoop,ExampleItem);
-    processExamplesLoop ExampleItem := x -> (
-	res := pELBackup x;
-	new webAppPRE from res#0 );
-    -- the help hack 2 (incidentally, this regex is safer)
-    M2outputRE      = "\n+(?="|webAppEndTag|webAppCellTag|")"; -- TODO: improve so cleanly separates at Cells once #1553 resolved
+    processExamplesLoop ExampleItem := (x->new LITERAL from replace("\\$\\{prefix\\}","usr",x#0)) @@ (lookup(processExamplesLoop,ExampleItem));
+    -- the help hack 2 (incidentally, this regex is safer than in standard mode)
+    M2outputRE      = "(?="|webAppCellTag|")";
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	y := html x; -- we compute the html now (in case it produces an error)
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
     -- redefine htmlLiteral to exclude codes
-    htmlLiteral1 = s -> replace("\\$","&dollar;",replace(webAppTagsRegex,"",htmlLiteral s));
+    htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex,"",s)) @@ htmlLiteral;
     )

@@ -19,7 +19,6 @@ set(CFILES
   complex.c
   error.c
   exptable.c
-  monordering.c
   table.c
   )
 # h files
@@ -27,10 +26,7 @@ set(HFILES
   complex.h
   error.h
   exptable.h
-  monordering.h
-  rand.h
   table.h
-  gmp-util.h
   engine.h
   defgroups.h
   mpreal.h
@@ -77,7 +73,6 @@ set(HPPONLYFILES
   schur-poly-heap.hpp
   smat.hpp
   stdinc-m2.hpp
-  stop.hpp
   style.hpp
   f4/moninfo2.hpp
   f4/res-memblock.hpp
@@ -87,8 +82,7 @@ set(HPPONLYFILES
 
 # these files have .cpp file, but NOT .hpp file
 set(CPPONLYFILES
-  engine.cpp
-  flint.cpp
+  engine.cpp # TODO: find a new home for the contents
   franzi-gb.cpp
   franzi-interface.cpp
   matrix-kbasis.cpp
@@ -96,20 +90,41 @@ set(CPPONLYFILES
   matrix-symm.cpp
   ntl-debugio.cpp
   ntl-internal.cpp
-  rand.cpp
   res-a2-gb.cpp
   ring-vecs.cpp
-  x-aring.cpp
-  x-factor.cpp
-  x-factor.hpp
-  x-free.cpp
-  x-gb.cpp
-  x-mat.cpp
-  x-monideal.cpp
-  x-monoid.cpp
-  x-mutablemat.cpp
-  x-relem.cpp
-  x-ringmap.cpp
+
+  interface/aring.cpp
+  interface/aring.h
+  interface/computation.h # no .cpp yet
+  interface/cra.cpp
+  interface/cra.h
+  interface/factory.cpp
+  interface/factory.h
+  interface/flint.cpp
+  interface/flint.h
+  interface/freemodule.cpp # TODO: .h
+  interface/gmp-util.h # only has inline definitions
+  interface/groebner.cpp
+  interface/groebner.h
+  interface/matrix.cpp
+  interface/matrix.h
+  interface/monoid.cpp
+  interface/monoid.h
+  interface/monomial-ideal.cpp
+  interface/monomial-ideal.h
+  interface/monomial-ordering.cpp
+  interface/monomial-ordering.h
+  interface/mutable-matrix.cpp
+  interface/mutable-matrix.h
+  interface/polyroots.cpp # the declarations are in factory.h
+  interface/random.cpp
+  interface/random.h
+  interface/ring.cpp
+  interface/ring.h
+  interface/ringelement.cpp
+  interface/ringelement.h
+  interface/ringmap.cpp
+  interface/ringmap.h
   )
 
 # these files all have .hpp and .cpp files
@@ -117,7 +132,7 @@ set(SRCLIST
   Eschreyer
   GF
   LLL
-  NAG
+  NAG # TODO: move raw* functions to e/interface
   SLP
   ZZ
   ZZp
@@ -199,7 +214,6 @@ set(SRCLIST
   poly
   polyquotient
   polyring
-  polyroots
   qring
   reader
   reducedgb-ZZ
@@ -225,7 +239,7 @@ set(SRCLIST
   solvable
   spair
   text-io
-  tower
+  tower # TODO: move rawTowerTranslatePoly to e/interface
   util
   varpower
   weylalg

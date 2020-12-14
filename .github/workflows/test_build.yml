@@ -9,21 +9,19 @@
 name: Build and Test Macaulay2
 
 on:
-  # trigger a test quick build at both PR (on dev)
-  # and pushing to master (after merging or by Dan or Mike)
   push:
     branches:
-      - master
-      - development
-      - global
-      - release-1.16
+      - release-1.17
+      - pre-master # when we're ready to merge 'development' into 'master', we merge it first into 'pre-master', so it can be tested
   pull_request:
     branches:
       - master
       - development
+      - release-1.17
   schedule:
-    # cron time in UTC; set to 6a EDT
-    - cron: '0 10 * * *'
+    # cron time in UTC
+    # a scheduled job runs on the default branch: 'master'
+    - cron: '0 6 * * *'
 
 defaults:
   run:
@@ -32,42 +30,36 @@ defaults:
 jobs:
   build:
     if: github.repository == 'Macaulay2/M2' || contains(github.ref, 'global')
-    name: ${{ matrix.os }}-${{ matrix.build-system }}-${{ matrix.compiler }}
+    name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false  # eventually make this true
       matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
         build-system:
           - cmake
           - autotools
+        os:
+          - ubuntu-latest
+          - macos-latest
         compiler:
-#          - clang10
           - gcc9
           - default
-#          - xcode11
-        # fine-tuning some configurations and excluding a few
         include:
-          - compiler: gcc9
+          - build-system: cmake
+            compiler: gcc9
             cxx: g++-9
             cc: gcc-9
-          - os: macos-latest
-            build-system: cmake
-            compiler: clang10
-            cxx: clang++
-            cc: clang
-          - os: ubuntu-latest
-            build-system: cmake
+          - build-system: cmake
+            os: ubuntu-latest
             compiler: clang10
             cxx: clang++-10
             cc: clang-10
         exclude:
-          - os: macos-latest
+          - build-system: autotools
             compiler: gcc9
-#          - os: ubuntu-latest
-#            compiler: xcode11
+          - build-system: cmake
+            os: macos-latest
+            compiler: gcc9
 
     steps:
       - uses: actions/checkout@v2
@@ -91,14 +83,16 @@ jobs:
       - name: Install requirements for Linux
         if: runner.os == 'Linux'
         run: |
+          sudo add-apt-repository -y ppa:profzoom/macaulay2
           sudo apt-get update
           sudo apt-get install -y -q --no-install-recommends clang-10 gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
-                  libcdd-dev libgivaro-dev libboost-regex-dev fflas-ffpack w3c-markup-validator
-          # TODO: help autotools detect flint from brew
-          brew install flint
+                  libcdd-dev libgivaro-dev libboost-regex-dev fflas-ffpack w3c-markup-validator \
+                  cohomcalg libflint-dev libmps-dev topcom \
+                  libsingular-dev libfrobby-dev libgtest-dev libmemtailor-dev libmathic-dev \
+                  libmathicgb-dev 4ti2 normaliz coinor-csdp nauty lrslib singular-data
 
 # ----------------------
 #   Steps common to all build variants
@@ -171,16 +165,18 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest'
+        if: matrix.build-system == 'cmake' && matrix.compiler == 'default'
         run: |
           # cmake --build . --target M2-unit-tests
           # ctest -R "unit-tests"
+          # TODO: remove the excluded normal tests
           ctest -R "normal/" -E "command|program|schenck|threads|doc-links" -j4 --output-on-failure
+          # TODO: add engine tests
 
       - name: Run Tests using Autotools
-        if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest'
+        if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'default'
         run: |
-          make check
+          make check -o check-in-libraries
           make -C Macaulay2/html-check-links check
           make validate-html
 
@@ -192,7 +188,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-           name: ${{ matrix.os }}-${{ matrix.build-system }}-${{ matrix.compiler }}-logs
+           name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}-logs
            path: |
              # Autotools
              M2/BUILD/build/config.log

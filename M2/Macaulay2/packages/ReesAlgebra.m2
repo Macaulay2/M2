@@ -75,7 +75,6 @@ export{
   "whichGm",
   "Tries",
   "jacobianDual",
-  "Jacobian",
   "symmetricAlgebraIdeal",
   "expectedReesIdeal",
   "PlaneCurveSingularities",
@@ -834,21 +833,6 @@ doc ///
      versalEmbedding
 ///
 
-
-doc ///
-  Key
-    Jacobian  
-  Headline
-    Choose whether to use the Jacobian dual in the computation
-  Usage
-    reesIdeal(..., Jacobian => true)
-  SeeAlso
-   reesIdeal
-   reesAlgebra
-   specialFiberIdeal
-   specialFiber
-   expectedReesIdeal
-///
 
 doc ///
   Key

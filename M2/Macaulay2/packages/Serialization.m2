@@ -5,7 +5,7 @@ newPackage (
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}
 	  },
      Version => "0.1",
-     Keywords => {"Miscellaneous"},
+     Keywords => {"System"},
      Headline => "reversible conversion of all Macaulay2 objects to strings")
 
 -- this code is re-entrant

@@ -1,9 +1,5 @@
 -- -*- coding: utf-8 -*-
 
-i := getSymbol "i"
-QQi := QQ(monoid [i])
-F := toField (QQi / (QQi_0^2+1))
-
 newPackage (
 	"DiffAlg",
 	Version => "1.5",
@@ -25,7 +21,7 @@ newPackage (
 	Headline => "specialized routines for differential forms",
 	Keywords => {"Commutative Algebra"},
 	Configuration => { 
-		"BaseRing" => F,
+		"BaseRing" => null,
 		"VariableName" => "x",
 		"DiffName" => "d",
 		"FieldName" => "a"
@@ -75,6 +71,9 @@ LL := (options DiffAlg).Configuration#"BaseRing";
 VAR := (options DiffAlg).Configuration#"VariableName";
 VARD := (options DiffAlg).Configuration#"DiffName";
 VARA := (options DiffAlg).Configuration#"FieldName";
+
+QQi := QQ["i"];
+if LL === null then LL = toField (QQi / (QQi_0^2+1))
 
 net DiffAlgElement := Net =>  w -> pretty w#"f"
 toString DiffAlgElement := String => w -> toString w#"f"

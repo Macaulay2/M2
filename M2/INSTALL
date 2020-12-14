@@ -590,34 +590,83 @@ in the top level.  This command will install versions of those tools known to
 work with Macaulay2.
 
 ----------------------
-For distributors
+Preparing new releases
 ----------------------
 
-There are some things about a new distribution of Macaulay2 that should be
-checked manually.  Install the distribution on your system as the ultimate user
-will and then try:
+  - starting on the master branch, update the version number to X.Y as explained
+    by the instructions in the file VERSION-README.
 
-  - emacs M2 interaction
+  - switch to the new branch (created in the step above) whose name is of the
+    form "release-X.Y"
 
-    Press f12 and verify that Macaulay2 starts.
+  - in the file Macaulay2/packages/Macaulay2Doc/changes.m2 change the key
+    for the documentation node "changes made for the next release" to
+    "changes, X.Y", and make a new empty node for the key
+    "changes made for the next release"
 
-  - emacs M2 mode
+  - find out how the file Macaulay2/m2/exports.m2 has changed since the
+    previous release (using "git diff"), and make appropriate entries in the
+    file Macaulay2/packages/Macaulay2Doc/changes.m2 to document the new symbols
+    and the deleted symbols.
 
-    Visit the file /tmp/foo.m2 and verify that the buffer is in Macaulay2 mode.
+  - find out how the file Macaulay2/packages/=distributed-packages has changed
+    since the previous release, and make appropriate entries in the file
+    Macaulay2/packages/Macaulay2Doc/changes.m2 to document the new packages.
 
-  - emacs Macaulay2 info documentation
+  - find out which packages have been featured in articles published by the
+    Journal of Software for Algebra and Geometry at https://msp.org/jsag/ since
+    the previous release, and add certification blocks to those packages, using
+    the template in the file Macaulay2/packages/CertificationTemplate .  The
+    git commit number in the certification should point to a version of the
+    package that is identical with the version provided by the journal.  (If
+    necessary, add commits and merge them in to provide one.)  Also, make
+    appropriate entries in the file Macaulay2/packages/Macaulay2Doc/changes.m2
+    to document the newly published and certified packages.
 
-    Start the emacs Info documentation reader with C-h i and verify that menu
-    items are present in the node "(dir)Top" for the various Macaulay2 packages
-    in a section entitled "Macaulay2 and its packages".
+  - refer to https://github.com/Macaulay2/M2/wiki/Internals:-Release-Checklist
+    for other things to do.
 
-  - readline
+  - bring your system up to date before building the release.
 
-    Start M2 in a terminal window and then type the following characters:
-    	  r e s o TAB
-    The partial word should be completed to "resolution".  Then press:
-          C-a
-    Verify that the cursor is now at the beginning of the line.
+  - Under Mac OS X, bring brew and its packages up to date with
+       brew update
+       brew upgrade
+       brew doctor
+    Then hide or delete all the dynamic libraries /usr/local/lib/*.dylib , so
+    we don't link with any of them.  (The "gatekeeper" doesn't like it, and
+    we'd eventually like to pass its scrutiny.  All the programs will continue
+    to work and "brew doctor" won't even complain.)
+
+  - Under Mac OS X, do not install "singular" with "brew" -- otherwise the
+    configure script will detect the presence of the Galois field tables
+    ("gftables") and expect to find them in the same location on the user's
+    machine, and they won't be there.  It should also work to add
+    "--enable-build-libraries=gftables" to the "configure" command line.
+
+----------------------
+Checking new releases and distributions
+----------------------
+
+    There are some things about a new distribution of Macaulay2 that should be
+    checked manually.  Install the distribution on your system as the ultimate
+    user will and then try:
+
+      - emacs M2 interaction: Press f12 and verify that Macaulay2 starts.
+
+      - emacs M2 mode: Visit the file /tmp/foo.m2 and verify that the buffer is
+        in Macaulay2 mode.
+
+      - emacs Macaulay2 info documentation: Start the emacs Info documentation
+	reader with C-h i and verify that menu items are present in the node
+	"(dir)Top" for the various Macaulay2 packages in a section entitled
+	"Macaulay2 and its packages".
+
+      - readline:
+	Start M2 in a terminal window and then type the following characters:
+	      r e s o TAB
+	The partial word should be completed to "resolution".  Then press:
+	      C-a
+	Verify that the cursor is now at the beginning of the line.
 
 ----------------------
 Unexpected problems

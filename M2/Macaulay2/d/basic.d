@@ -2,14 +2,13 @@
 
 use expr;
 
+header "#include <engine.h>"; -- required for raw hash functions
 header "
-  #include \"../e/engine.h\"
-  #ifdef WITH_PYTHON
-    #include <Python.h>
-  #else
-    #define PyObject_Hash(o) 0
-  #endif
-";
+#ifdef WITH_PYTHON
+#  include <Python.h>
+#else
+#  define PyObject_Hash(o) 0
+#endif";
 
 export hash(e:Expr):int := (
      when e

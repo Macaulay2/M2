@@ -653,6 +653,7 @@ inducedMap(Module,Module) := Matrix => o -> (M,N) -> (
      then error "'inducedMap' expected modules with same ambient free module";
      inducedMap(M,N,id_(ambient N),o))
 
+-- TODO: deprecate this in favor of isWellDefined
 inducesWellDefinedMap = method(TypicalValue => Boolean)
 inducesWellDefinedMap(Module,Module,Matrix) := (M,N,f) -> (
      sM := target f;

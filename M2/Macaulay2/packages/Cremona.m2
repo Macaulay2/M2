@@ -13,7 +13,7 @@ newPackage(
         Date => "November 20, 2020",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "rational maps between projective varieties",
-	Keywords => {"Algebraic geometry"},
+	Keywords => {"Algebraic Geometry"},
         AuxiliaryFiles => true,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -36,7 +36,7 @@ export{
    "SegreClass",
    "EulerCharacteristic",
    "graph",
-   "degreeOfRationalMap",   
+   "degreeMap",   
    "inverseMap",
    "isBirational",
    "isDominant",
@@ -70,11 +70,13 @@ certificate := "MathMode: output certified!"|newline;
 MultihomogeneousRationalMap = new Type of MutableHashTable;
 RationalMap = new Type of MutableHashTable;
 
+RationalMap.synonym = "rational map";
+
 ChernSchwartzMacPherson = method(TypicalValue => RingElement, Options => {MathMode => false, BlowUpStrategy => "Eliminate", Verbose => true});
 SegreClass = method(TypicalValue => RingElement, Options => {MathMode => false, BlowUpStrategy => "Eliminate", Verbose => true});
 EulerCharacteristic = method(TypicalValue => ZZ, Options => {MathMode => false, BlowUpStrategy => "Eliminate", Verbose => true});
 graph = method(Options => {BlowUpStrategy => "Eliminate"});
-degreeOfRationalMap = method(TypicalValue => ZZ, Options => {MathMode => false, BlowUpStrategy => "Eliminate", Verbose => true});
+degreeMap = method(TypicalValue => ZZ, Options => {MathMode => false, BlowUpStrategy => "Eliminate", Verbose => true});
 inverseMap = method(Options => {MathMode => false, BlowUpStrategy => "Eliminate", Verbose => true});
 isBirational = method(TypicalValue => Boolean, Options => {MathMode => false, BlowUpStrategy => "Eliminate", Verbose => true});
 isDominant = method(TypicalValue => Boolean, Options => {MathMode => false, Verbose => true});
@@ -694,7 +696,7 @@ MultihomogeneousRationalMap ! := (Phi) -> (
 
 RationalMap (*) := (Phi) -> (
      if Phi#"projectiveDegrees" === {} then setKeyValue(Phi,"projectiveDegrees",projectiveDegrees Phi);
-     if Phi#"degree" === null then setKeyValue(Phi,"degree",degreeOfRationalMap Phi);
+     if Phi#"degree" === null then setKeyValue(Phi,"degree",degreeMap Phi);
      if Phi#"isDominant" === null then setKeyValue(Phi,"isDominant",isDominant Phi);
      if Phi#"isBirational" === null then setKeyValue(Phi,"isBirational",isBirational Phi);
      if Phi#"idealImage" === null and isPolynomialRing target Phi and degree Phi != 0 then forceImage(Phi,approximateImage(Phi,Verbose=>false));
@@ -708,7 +710,7 @@ approximateImage (RationalMap) := o -> (Phi) -> (
     if Phi#"idealImage" =!= null then return Phi#"idealImage";
     if not isPolynomialRing target Phi then error "not implemented yet: approximateImage of a rational map with target different from a projective space";
     n := Phi#"dimTarget";
-    d0 := degreeOfRationalMap Phi;
+    d0 := degreeMap Phi;
     if d0 == 0 then error "not implemented yet: approximateImage of a rational map of degree 0";
     pr0 := first projectiveDegrees(Phi,NumDegrees=>0);
     d := lift(pr0/d0,ZZ);
@@ -1353,9 +1355,9 @@ projDegree (RingMap,ZZ,ZZ,List) := (phi,i,k,n) -> (
    );
 );
 
-degreeOfRationalMapInt = method(Options => {MathMode => false, BlowUpStrategy => "Eliminate", Verbose => true});
+degreeMapInt = method(Options => {MathMode => false, BlowUpStrategy => "Eliminate", Verbose => true});
 
-degreeOfRationalMapInt (MutableHashTable) := o -> (Phi) -> (
+degreeMapInt (MutableHashTable) := o -> (Phi) -> (
    if Phi#"degree" =!= null then return (if o.MathMode and o.Verbose then <<certificate; Phi#"degree");
    if (class Phi === RationalMap and (not o.MathMode) and isPolynomialRing source Phi) then (
         p := Phi randomLinearSubspace(source Phi,0);   
@@ -1364,7 +1366,7 @@ degreeOfRationalMapInt (MutableHashTable) := o -> (Phi) -> (
    );
    if (class Phi === MultihomogeneousRationalMap and (not o.MathMode) and isPolynomialRing source Phi) then (
         z := local z; 
-        return degreeOfRationalMapInt(parametrize(Phi,z),MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+        return degreeMapInt(parametrize(Phi,z),MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
    );
    if (class Phi === RationalMap and (not o.MathMode) and Phi#"dimTarget" >= 1 and char coefficientRing Phi > 0 and coefficientRing Phi === ZZ/(char coefficientRing Phi)) then (
         q := Phi (point source Phi);   
@@ -1392,18 +1394,18 @@ degreeOfRationalMapInt (MutableHashTable) := o -> (Phi) -> (
    return val1;
 );
 
-degreeOfRationalMap (RationalMap) := o -> (Phi) -> degreeOfRationalMapInt(Phi,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+degreeMap (RationalMap) := o -> (Phi) -> degreeMapInt(Phi,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
 
-degreeOfRationalMap (MultihomogeneousRationalMap) := o -> (Phi) -> degreeOfRationalMapInt(Phi,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+degreeMap (MultihomogeneousRationalMap) := o -> (Phi) -> degreeMapInt(Phi,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
 
-degreeOfRationalMap (RingMap) := o -> (phi) -> (
+degreeMap (RingMap) := o -> (phi) -> (
    checkRationalMap phi;
-   degreeOfRationalMap(rationalMapWithoutChecking phi,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose)
+   degreeMap(rationalMapWithoutChecking phi,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose)
 );
 
-degree (RationalMap) := (Phi) -> degreeOfRationalMap(Phi,MathMode=>true,Verbose=>false);
+degree (RationalMap) := (Phi) -> degreeMap(Phi,MathMode=>true,Verbose=>false);
 
-degree (MultihomogeneousRationalMap) := (Phi) -> degreeOfRationalMap(Phi,MathMode=>true,Verbose=>false);
+degree (MultihomogeneousRationalMap) := (Phi) -> degreeMap(Phi,MathMode=>true,Verbose=>false);
 
 parametrize (Ideal) := (L) -> (
    K:=coefficientRing ring L; t:=local t; local T;
