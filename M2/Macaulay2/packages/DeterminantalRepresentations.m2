@@ -1352,7 +1352,7 @@ fCC=sub(f, SCC)
 reps = detRep fCC
 assert(all(reps, L -> clean(1e-9, fCC - det L) == 0))
 reps = detRep(fCC, HyperbolicPt => matrix{{3_RR},{2},{-7}}) -- representations are not monic
-assert(all(reps, L -> clean(1e-6, fCC - det L) == 0))
+assert(all(reps, L -> clean(1e-5, fCC - det L) == 0))
 ///
 
 TEST /// -- Cubic case: homogeneous, 3 variables

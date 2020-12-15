@@ -1,8 +1,9 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2008 by Daniel R. Grayson
+-- TODO: document (EXAMPLE, PRE)
 
 newPackage("Text",
-     Keywords => {"Miscellaneous"},
+     Keywords => {"Documentation"},
      Headline => "documentation and hypertext"
      )
 

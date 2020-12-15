@@ -26,7 +26,21 @@ newPackage ("VirtualResolutions",
     PackageImports => {"Elimination", "Depth", "Saturation", "SpaceCurves"},
     PackageExports => {"NormalToricVarieties", "TateOnProducts"},
     AuxiliaryFiles => true,
-    DebuggingMode => false
+    DebuggingMode => false,
+    Certification => {
+	 "journal name" => "The Journal of Software for Algebra and Geometry",
+	 "journal URI" => "http://j-sag.org/",
+	 "article title" => "The virtual resolutions package for Macaulay2",
+	 "acceptance date" => "19 May 2020",
+	 "published article URI" => "https://msp.org/jsag/2020/10-1/p06.xhtml",
+	 "published article DOI" => "10.2140/jsag.2020.10.51",
+	 "published code URI" => "https://msp.org/jsag/2020/10-1/jsag-v10-n1-x06-VirtualResolutions.zip",
+	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/VirtualResolutions.m2",
+	 "release at publication" => "28038a52dcc3b0ad7adfd2562a9cd6b6414a6636",
+	 "version at publication" => "1.2",
+	 "volume number" => "10",
+	 "volume URI" => "https://msp.org/jsag/2020/10-1/"
+	 }
     )
 
 importFrom_Core { "printerr", "raw", "rawKernelOfGB" }

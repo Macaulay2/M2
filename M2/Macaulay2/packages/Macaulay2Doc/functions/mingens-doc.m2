@@ -57,6 +57,7 @@ document {
 
 document {
      Key => {Complement, [mingens, Strategy], [trim, Strategy]},
+     Headline => "a Strategy option value",
      "The standard (default) strategy for ", TO "mingens", " or ", TO "trim", " is ", TO "Complement", ", at least in the case where the module (or
      ideal) is homogeneous, and the ring is (quotient ring of) a polynomial ring over a field.  The other strategy, ", TO "Inhomogeneous", ", is experimental."
      }

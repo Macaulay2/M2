@@ -17,6 +17,7 @@ on:
     branches:
       - master
       - development
+      - release-1.17
   schedule:
     # cron time in UTC
     # a scheduled job runs on the default branch: 'master'

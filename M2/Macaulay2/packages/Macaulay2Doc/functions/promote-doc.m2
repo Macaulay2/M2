@@ -2,6 +2,22 @@
 --- author(s): MES
 --- notes: 
 
+-*
+-- TODO
+promote(Module,type of InexactNumber')
+promote(Module,type of InexactNumber)
+promote(Module,type of Number)
+promote(Module,type of RingElement)
+promote(MutableMatrix,type of InexactNumber')
+promote(MutableMatrix,type of InexactNumber)
+promote(MutableMatrix,type of Number)
+promote(MutableMatrix,type of RingElement)
+promote(Vector,type of InexactNumber')
+promote(Vector,type of InexactNumber)
+promote(Vector,type of Number)
+promote(Vector,type of RingElement)
+*-
+
 undocumented {(promote,CC,CC_*),
      (promote, Matrix, InexactNumber),(promote, Number, InexactNumber),
      (promote, Ideal, Number),

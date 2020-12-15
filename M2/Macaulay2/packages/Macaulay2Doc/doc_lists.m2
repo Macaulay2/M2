@@ -594,6 +594,24 @@ document {
      }
 
 document {
+     Key => sequence,
+     Headline => "make a sequence",
+     Usage => "sequence v",
+     Inputs => { "v" => Thing },
+     Outputs => { Sequence => {TT "v", " if ", TT "v", " is a sequence, otherwise a sequence of length 1 containing ", TT "v"}},
+     PARA { "Such a function is needed occasionally to restore uniformity, because a nonempty parenthesized expression with no commas is not parsed as a sequence." },
+     EXAMPLE {
+	  "sequence()",
+	  "sequence(4)",
+      	  "sequence(4,5)",
+	  "identity()",
+	  "identity(4)",
+      	  "identity(4,5)",
+	  },
+     SeeAlso => { unsequence }
+     }
+
+document {
      Key => MutableList,
      Headline => "the class of all mutable lists",
      PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},

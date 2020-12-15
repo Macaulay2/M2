@@ -1,3 +1,7 @@
+undocumented {
+     (symbol SPACE, RingMap, Number)
+     }
+
 document {
      Key => (symbol **, RingMap, Module),
      Headline => "tensor product of a module via a ring map",
@@ -350,8 +354,3 @@ TEST "
     f = map(S,R)
     assert( R^{0,-1,-2} == pushForward(f,M) )
 "
-
-document {
-     Key => UseHilbertFunction,
-     TT "UseHilbertFunction", " -- an option for ", TO "pushForward", "."
-     }

@@ -8,7 +8,7 @@ newPackage(
 	     },
     	HomePage => "http://www.math.uiuc.edu/~doe/",
     	Headline => "an example Macaulay2 package",
-	Keywords => {"Miscellaneous"},
+	Keywords => {"Documentation"},
 	AuxiliaryFiles => false -- set to true if package comes with auxiliary files
     	)
 

@@ -4,9 +4,9 @@
 #include <utility>
 #include <vector>
 
+#include "aring-gf-givaro.hpp"
 #include "aring-gf-flint-big.hpp"
 #include "aring-gf-flint.hpp"
-#include "aring-gf-givaro.hpp"
 #include "aring-glue.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-qq.hpp"

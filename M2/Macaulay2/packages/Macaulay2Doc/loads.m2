@@ -1,6 +1,14 @@
-
 -- should rewrite this to load all the m2 files there
 -- perhaps write a "pathFind" routine so we can find files such as Macaulay2 on the path.
+
+-*
+-- TODO
+(isWeylAlgebra,Ring)
+(binomial,RingElement,ZZ)
+(rowRankProfile,MutableMatrix)
+(columnRankProfile,MutableMatrix)
+(nullSpace,MutableMatrix)
+*-
 
 load "./doc.m2"
 load "./doc1.m2"
@@ -11,8 +19,8 @@ load "./doc5.m2"
 load "./doc6.m2"
 load "./doc7.m2"
 load "./doc8.m2"
-load "./doc9.m2"
-load "./doc10.m2"
+load "./doc9.m2" -- has a ton of tests
+load "./doc10.m2" -- has a ton of tests
 load "./doc11.m2"
 load "./doc12.m2"
 load "./doc13.m2"
@@ -31,6 +39,7 @@ load "./overview_packages.m2"
 load "./overview_doc.m2"
 load "./doc_ideals.m2"
 load "./overview_modules.m2"
+load "./doc_module.m2"
 load "./doc_mutablematrices.m2"
 load "./doc_ringmaps.m2"
 load "./doc_assignment.m2"
@@ -43,14 +52,23 @@ load "./ov_matrices.m2"
 load "./ov_language.m2"
 load "./ov_files.m2"
 load "./threads.m2"
+load "./system.m2"
+load "./repl.m2"
+load "./debugging.m2"
 
+load "./doc_arithmetic.m2"
+load "./doc_fano.m2"
+load "./doc_rings.m2"
+load "./doc_ringelement.m2"
 load "./doc_lists.m2"
 load "./doc_strings.m2"
 load "./doc_tables.m2"
-load "./operators/dotdot.m2"
+load "./operators.m2"
 load "./functions.m2"
-load "./variables.m2"
 load "./shared.m2"
+load "./types.m2"
+load "./methods.m2"
+load "./options.m2" -- this must come last
 
 load "./M2-Singular-Book.m2"
 

@@ -37,7 +37,7 @@ Node
     "Saturation :: quotient(Ideal,Ideal)"
     "Saturation :: saturate(Ideal,Ideal)"
     monomialCurveIdeal
-    "Truncations::truncate"
+    "Truncations::truncate(ZZ,Ideal)"
 
 -- this is the old version
 Node
@@ -46,6 +46,7 @@ Node
    (trim, Ideal)
    (trim, Ring)
    (trim, Module)
+   (trim, MonomialIdeal)
    (trim, QuotientRing)
   Headline
     minimize generators and relations
