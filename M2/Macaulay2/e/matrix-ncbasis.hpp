@@ -1,10 +1,14 @@
+// TODO: should this be in the interface?
+
 #ifndef matrix_ncbasis_hpp_
 #define matrix_ncbasis_hpp_
 
-#include "NCAlgebras/FreeAlgebra.hpp"
-
 #include <vector>
-#include <memory>
+
+#include "Polynomial.hpp"
+
+class FreeAlgebra;
+
 /**
  * \ingroup matrices
  */

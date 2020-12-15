@@ -376,7 +376,6 @@ cmake -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix libomp` .
 ```
 
 If problems persist for either compiler, open an issue.
->>>>>>> origin/development
 </details>
 
 <details>

@@ -1,6 +1,12 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+-- also see packages/Saturation/quotient-doc.m2
+document {
+     Key => quotient,
+     Headline => "quotient or division"
+     }
+
 document {
      Key => "length",
      Headline => "length"

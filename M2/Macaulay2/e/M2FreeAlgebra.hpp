@@ -1,11 +1,23 @@
 #ifndef _m2_free_algebra_hpp_
 #define _m2_free_algebra_hpp_
 
-#include "polyring.hpp"
-#include "Polynomial.hpp"
-#include "NCAlgebras/FreeMonoid.hpp"
-#include "NCAlgebras/FreeAlgebra.hpp"
+#include <M2/math-include.h>
+#include "engine-includes.hpp"
+
 #include <memory>
+#include <string>
+#include <vector>
+
+#include "NCAlgebras/FreeAlgebra.hpp"
+#include "NCAlgebras/FreeMonoid.hpp"
+#include "Polynomial.hpp"
+#include "ring.hpp"
+#include "ringelem.hpp"
+
+class PolynomialRing;
+class RingMap;
+class buffer;
+struct Monoid;
 
 using ExponentVector = int*;
 

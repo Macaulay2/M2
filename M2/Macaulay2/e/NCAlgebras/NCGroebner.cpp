@@ -1,5 +1,16 @@
 #include "NCGroebner.hpp"
+
+#include <stddef.h>
+#include <deque>
+
 #include "../myalloc.hpp"
+#include "NCAlgebras/FreeMonoid.hpp"
+#include "NCAlgebras/NCReduction.hpp"
+#include "NCAlgebras/OverlapTable.hpp"
+#include "NCAlgebras/Word.hpp"
+#include "NCAlgebras/WordTable.hpp"
+#include "ring.hpp"
+#include "ringelem.hpp"
 
 void NCGroebner::compute(int softDegreeLimit)
 {

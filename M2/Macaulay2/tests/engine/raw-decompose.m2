@@ -19,7 +19,7 @@ irreducibleCharacteristicSeries ideal(a, a^2, a^3)
 topCoefficients C_0_0
 assert(compress gens ideal(0_S,0_S,a,a+d,0_S,d) == matrix{{a,a+d,d}})
 time decompose J
-saturate(ideal(C_0_0), i, Strategy => Eliminate)
+saturate(ideal(C_1 C_0_0), i, Strategy => Eliminate)
 
 
 needs "raw-util.m2"

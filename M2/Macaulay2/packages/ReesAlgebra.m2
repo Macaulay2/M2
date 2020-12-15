@@ -75,7 +75,6 @@ export{
   "whichGm",
   "Tries",
   "jacobianDual",
-  "Jacobian",
   "symmetricAlgebraIdeal",
   "expectedReesIdeal",
   "PlaneCurveSingularities",
@@ -834,21 +833,6 @@ doc ///
      versalEmbedding
 ///
 
-
-doc ///
-  Key
-    Jacobian  
-  Headline
-    Choose whether to use the Jacobian dual in the computation
-  Usage
-    reesIdeal(..., Jacobian => true)
-  SeeAlso
-   reesIdeal
-   reesAlgebra
-   specialFiberIdeal
-   specialFiber
-   expectedReesIdeal
-///
 
 doc ///
   Key
@@ -2638,7 +2622,7 @@ TEST///
 kk = ZZ/101
 S = kk[x,y]
 I = ideal"x2y";J=ideal"xy2"
-assert(intersectInP(I,J) == {{2, ideal x}, {5, ideal (y, x)}, {2, ideal y}})
+assert(intersectInP(I,J) == {{5, ideal (y, x)}, {2, ideal y}, {2, ideal x}})
 I = ideal"y-x2";J=ideal y
 assert(intersectInP(I,J) == {{2, ideal (y, x)}})
 ///

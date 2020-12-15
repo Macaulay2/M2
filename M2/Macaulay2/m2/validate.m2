@@ -69,7 +69,7 @@ validate HREF       := identity -- TODO
 validate TO         :=
 validate TOH        :=
 validate TO2        := x -> (
-    tag := x#0;
+    tag := fixup x#0;
     if isUndocumented tag and signalDocumentationWarning tag then printerr("warning: undocumented node " | format tag | " cited by " | format currentDocumentTag) else
     if isMissingDoc   tag and signalDocumentationWarning tag then printerr("warning: missing node: "     | format tag | " cited by " | format currentDocumentTag);
     apply(splice x, validate))

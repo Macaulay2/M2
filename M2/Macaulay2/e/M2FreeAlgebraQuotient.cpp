@@ -1,14 +1,14 @@
 #include "M2FreeAlgebraQuotient.hpp"
-#include "monomial.hpp"
-#include "relem.hpp"
-#include "ringmap.hpp"
-#include "matrix.hpp"
 
-#include "stdinc-m2.hpp"
-#include <vector>
-#include <string>
 #include <iostream>
 #include <memory>
+#include <utility>
+#include <vector>
+
+#include "NCAlgebras/FreeAlgebra.hpp"
+#include "matrix.hpp"
+#include "ring.hpp"
+#include "stdinc-m2.hpp"
 
 std::unique_ptr<ConstPolyList> copyMatrixToVector(const M2FreeAlgebra& F,
                              const Matrix* input)

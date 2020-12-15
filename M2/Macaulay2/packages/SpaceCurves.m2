@@ -279,7 +279,7 @@ isSmooth Ideal := I -> (
     dim(I + minors(c, jacobian I)) == 0
     )
 isSmooth Curve := C -> isSmooth ideal C
-isPrime Curve := C -> isPrime ideal C
+isPrime Curve := {} >> o -> C -> isPrime ideal C
 
 --V.Minimal Curves
 

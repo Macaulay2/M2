@@ -1,12 +1,23 @@
 #ifndef _m2_free_algebra_quotient_hpp_
 #define _m2_free_algebra_quotient_hpp_
 
-#include "polyring.hpp"
-#include "Polynomial.hpp"
-#include "NCAlgebras/FreeMonoid.hpp"
-#include "NCAlgebras/FreeAlgebra.hpp"
-#include "NCAlgebras/FreeAlgebraQuotient.hpp"
+#include "engine-includes.hpp"
+
+#include <memory>
+
 #include "M2FreeAlgebra.hpp"
+#include "NCAlgebras/FreeAlgebraQuotient.hpp"
+#include "NCAlgebras/FreeMonoid.hpp"
+#include "Polynomial.hpp"
+#include "ringelem.hpp"
+
+class FreeAlgebra;
+class Matrix;
+class Monoid;
+class Ring;
+class RingMap;
+class SumCollector;
+class buffer;
 
 using ExponentVector = int*;
 

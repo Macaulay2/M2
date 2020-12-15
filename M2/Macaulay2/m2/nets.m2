@@ -11,7 +11,7 @@ toString Type := X -> (
 	  if hasAttribute(X,PrintNames) then return getAttribute(X,PrintNames);
 	  if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
 	  );
-     concatenate(toString class X, " of ", toString parent X, "{...", toString(#X), "...}"))
+     concatenate(toString class X, " of ", toString parent X))
 toString HashTable := s -> (
      concatenate (
 	  "new ", toString class s,
@@ -198,7 +198,7 @@ net Type := X -> (
 	  if hasAttribute(X,PrintNames) then return net getAttribute(X,PrintNames);
 	  if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
 	  );
-     horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
+     horizontalJoin ( net class X, " of ", net parent X))
 
 -----------------------------------------------------------------------------
 
@@ -259,10 +259,10 @@ netList VisibleList := o -> (x) -> (
 
 -- TODO: move to debugging, except for Net?
 commentize = method(Dispatch => Thing)
-commentize Nothing := s -> ""
-commentize String  :=
-commentize Thing   := s -> concatenate(" -- ", between("\n -- ", separate concatenate s))
-commentize Net     := S -> stack(commentize \ unstack S)
+commentize Nothing   := s -> ""
+commentize BasicList := s -> commentize horizontalJoin s
+commentize String    := s -> concatenate(" -- ", between("\n -- ", separate s))
+commentize Net       := S -> stack(commentize \ unstack S)
 
 printerr = msg -> (stderr << commentize msg << endl;) -- always return null
 warning  = msg -> if debugLevel > 0 then (

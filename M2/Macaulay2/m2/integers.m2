@@ -46,9 +46,10 @@ odd  = x -> 1 === x%2
 even = x -> 0 === x%2
 zero = x -> x == 0					    -- we use == so this can apply to all types of things
 
-isPseudoprime ZZ := Boolean => n -> rawZZisProbablePrime n -- calls flint
-
-isPrime ZZ := Boolean => n -> rawZZisPrime n -- calls flint
+isPrime       = method(TypicalValue => Boolean, Options => true)
+isPseudoprime = method(TypicalValue => Boolean, Options => true)
+isPrime       ZZ := Boolean => {} >> o -> n -> rawZZisPrime n -- calls flint
+isPseudoprime ZZ := Boolean => {} >> o -> n -> rawZZisProbablePrime n -- calls flint
 
 random ZZ := ZZ => opts -> n -> if n > 0 then rawRandomZZ n else error "random: expected a positive integer"
 random(ZZ,ZZ) := ZZ => opts -> (min,max) -> (

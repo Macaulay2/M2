@@ -23,6 +23,17 @@ newPackage(
     AuxiliaryFiles => true
     )
 
+importFrom_Core {
+    "LocalRing", "localRing",
+    "raw", "printerr",
+    "rawDeleteColumns",
+    "rawDeleteRows",
+    "rawMutableComplex",
+    "rawPruneBetti",
+    "rawPruneComplex",
+    "rawPruningMorphism",
+    }
+
 export {
     "toMutableComplex",
     "toChainComplex",
@@ -48,8 +59,6 @@ export {
 -- << "-- The PruneComplex package is experimental.                                        --" << endl;
 -- << "-- See the documentation and comments in the package to learn more.                 --" << endl;
 -- << "--------------------------------------------------------------------------------------" << endl;
-
-debug Core;
 
 --=================================== Chain Complex Operations ===================================--
 -- TODO see if the new Chain Complexes package can be incorporated
@@ -138,7 +147,7 @@ findSparseUnit = method(Options => {UnitTest => isUnit, Strategy => "NoSort"})
 findSparseUnit Matrix :=
 findSparseUnit MutableMatrix := opts -> M -> (
     if opts.Strategy =!= "NoSort" then (
-      c := runHooks(MutableMatrix, symbol findSparseUnit, (opts, M));
+      c := runHooks((findSparseUnit, MutableMatrix), (opts, M));
       if c =!= null then return c;
       );
     unit := findUnit (M, UnitTest => opts.UnitTest);
@@ -160,7 +169,7 @@ complexity := (elt, row, col) -> (
     )
 
 -- TODO this could be made more efficient.
-addHook(MutableMatrix, symbol findSparseUnit, (opts, M) -> (
+addHook((findSparseUnit, MutableMatrix), (opts, M) -> (
         units := for unit in findAllUnits (M, UnitTest => opts.UnitTest) list (
             (r, c) := unit;
             elt := M_unit;

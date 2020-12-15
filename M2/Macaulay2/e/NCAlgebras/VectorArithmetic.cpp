@@ -1,5 +1,9 @@
 #include "VectorArithmetic.hpp"
 
+#include "NCAlgebras/Range.hpp"
+#include "ring.hpp"
+#include "ringelem.hpp"
+
 void VectorArithmetic::sparseRowToDenseRow(Range<ring_elem> dense,
                                            const Range<ring_elem>& coeffs,
                                            const Range<int>& comps) const

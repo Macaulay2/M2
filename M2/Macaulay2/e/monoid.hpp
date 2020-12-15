@@ -3,17 +3,19 @@
 #ifndef _monoid_hpp_
 #define _monoid_hpp_
 
-#include "hash.hpp"
-#include "engine-includes.hpp"
-#include "monordering.h"
-#include "newdelete.hpp"
-
-#include "intarray.hpp"
-#include "imonorder.hpp"
-
 #include <vector>
 
+#include "engine-includes.hpp"
+
+#include "hash.hpp"
+#include "imonorder.hpp"
+#include "newdelete.hpp"
+#include "style.hpp"
+
 class PolynomialRing;
+class buffer;
+class intarray;
+struct MonomialOrdering;
 
 typedef int *exponents;
 typedef int *graded_exponents;

@@ -24,6 +24,12 @@
 #ifndef _res_schreyer_frame_hpp_
 #define _res_schreyer_frame_hpp_
 
+#include "res-schreyer-frame.hpp"
+
+#include <vector>
+
+#include "interface/computation.h"
+
 #include "res-moninfo.hpp"
 #include "res-memblock.hpp"
 #include "res-varpower-monomial.hpp"
@@ -33,8 +39,6 @@
 #include "monhashtable.hpp"
 
 #include "../betti.hpp"
-#include "../stop.hpp"
-#include <vector>
 
 class F4Res;
 

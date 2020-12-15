@@ -298,7 +298,7 @@ document {
 document {
      Key => "Singular Book 1.3.15",
      Headline => "computing with radicals",
-     "Compute the radical of an ideal with ", TO radical, ".",
+     "Compute the radical of an ideal with ", TO "MinimalPrimes::radical", ".",
      EXAMPLE {
 	  "R = QQ[x,y,z];",
 	  "radical ideal(z^4+2*z^2+1)",

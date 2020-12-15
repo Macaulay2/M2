@@ -1,12 +1,12 @@
 #ifndef _word_table_hpp_
 #define _word_table_hpp_
 
-#include <vector>
+#include <stddef.h>
 #include <ostream>
-#include <memory>
+#include <tuple>
+#include <utility>
+#include <vector>
 
-#include "FreeMonoid.hpp"
-#include "../Polynomial.hpp"
 #include "Word.hpp"
 
 // TODO
@@ -18,8 +18,6 @@
 //     each should continue from any element with -1, ignoring it.
 //   retire(index): set index to -1, set word to null's.
 // move Word code to Word.hpp DONE
-
-class FreeAlgebra;
 
 using Overlap = std::tuple<int,int,int>;
 

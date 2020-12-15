@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 //#include <mpfr.h>
 
+#include "interface/random.h"
 #include "ZZ.hpp"
 
 const int ntrials = 100;  // 5000

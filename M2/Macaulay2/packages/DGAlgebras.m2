@@ -3481,6 +3481,18 @@ assert(isHomologyAlgebraTrivial koszulComplexDGA R == true)
 assert(isGolod R == false)
 ///
 
+TEST ///
+--- test 12: isGolod and isHomologyAlgebraTrivial example again
+--- This example is due to Roos
+S = QQ[x,y,z,u]
+I = ideal(u^3, x*y^2, (x+y)*z^2, x^2*u+z*u^2, y^2*u+x*z*u, y^2*z+y*z^2)
+ -- you can see that the mult on the koszul homology will be trivial
+betti (A = res I)
+R = S/I
+assert(isHomologyAlgebraTrivial koszulComplexDGA R == true)
+assert(isGolod R == false)
+///
+
 end
 
 -- How to install the package

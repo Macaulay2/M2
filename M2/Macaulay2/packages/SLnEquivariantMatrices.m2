@@ -513,11 +513,11 @@ doc ///
     Description
     	Text
 	    In the paper "A construction of equivariant bundles on the space of symmetric forms" (@HREF "https://arxiv.org"@),
-	    the authors construct stable vector bundles on the space $\mathbb{P}(S^d{\bf C}^{n+1})$ of symmetric forms of degree $d$
-	    in $n + 1$ variables which are equivariant for the action of $SL_{n+1}({\bf C})$ ,and admit an equivariant free 
+	    the authors construct stable vector bundles on the space $\PP(S^d\CC^{n+1})$ of symmetric forms of degree $d$
+	    in $n + 1$ variables which are equivariant for the action of $SL_{n+1}(\CC)$ ,and admit an equivariant free
 	    resolution of length 2.
 	    
-	    Take two integers $d \ge 1$ and $m \ge 2$ and a vector spave $V = {\bf C}^{n+1}$. For $n=2$, we have
+	    Take two integers $d \ge 1$ and $m \ge 2$ and a vector spave $V = \CC^{n+1}$. For $n=2$, we have
 	    
 	    $S^dV \otimes S^{(m-1)d}V = S^{md}V \oplus S^{md-2}V \oplus S^{md-4}V \oplus \dots$,
 	     
@@ -527,24 +527,24 @@ doc ///
 		
 	    where $\lambda_1$ and $\lambda_2$ are the two greatest fundamental weights of the Lie group $SL_{n+1}(\bf C)$ and $V_{i\lambda_1+j\lambda_2}$ is the irreducible representation of highest weight $i\lambda_1+j\lambda_2$.
 	    
-	    The projection of the tensor product onto the second summand induces a $SL_{2}({\bf C})$-equivariant morphism
+	    The projection of the tensor product onto the second summand induces a $SL_{2}(\CC)$-equivariant morphism
 	    
-	    $\Phi: S^{md-2}V \otimes O_{\mathbb{P}(S^dV)} \to S^{(m-1)d}V \otimes O_{\mathbb{P}(S^dV)}(1)$
+	    $\Phi: S^{md-2}V \otimes O_{\PP(S^dV)} \to S^{(m-1)d}V \otimes O_{\PP(S^dV)}(1)$
 	    
-	    or a $SL_{n+1}({\bf C})$-equivariant morphism
+	    or a $SL_{n+1}(\CC)$-equivariant morphism
 	    
-	    $\Phi: V_{(md-2)\lambda_1 + \lambda_2} \otimes O_{\mathbb{P}(S^dV)} \to S^{(m-1)d}V \otimes O_{\mathbb{P}(S^dV)}(1)$
+	    $\Phi: V_{(md-2)\lambda_1 + \lambda_2} \otimes O_{\PP(S^dV)} \to S^{(m-1)d}V \otimes O_{\PP(S^dV)}(1)$
 	    
-	    with constant co-rank 1, and thus gives an exact sequence of vector bundles on $\mathbb{P}(S^dV)$:
+	    with constant co-rank 1, and thus gives an exact sequence of vector bundles on $\PP(S^dV)$:
 	    	    
-	    $0 \to W_{2,d,m} \to S^{md-2}V \otimes \mathcal{O}_{\mathbb{P}(S^dV)} \to S^{(m-1)d}V \otimes \mathcal{O}_{\mathbb{P}(S^dV)}(1) \to \mathcal{O}_{\mathbb{P}(S^dV)}(m) \to 0$,
+	    $0 \to W_{2,d,m} \to S^{md-2}V \otimes \mathcal{O}_{\PP(S^dV)} \to S^{(m-1)d}V \otimes \mathcal{O}_{\PP(S^dV)}(1) \to \mathcal{O}_{\PP(S^dV)}(m) \to 0$,
 	    
-	    $0 \to W_{n,d,m} \to V_{(md-2)\lambda_1 + \lambda_2} \otimes \mathcal{O}_{\mathbb{P}(S^dV)} \to S^{(m-1)d}V \otimes \mathcal{O}_{\mathbb{P}(S^dV)}(1) \to \mathcal{O}_{\mathbb{P}(S^dV)}(m) \to 0$.	     
+	    $0 \to W_{n,d,m} \to V_{(md-2)\lambda_1 + \lambda_2} \otimes \mathcal{O}_{\PP(S^dV)} \to S^{(m-1)d}V \otimes \mathcal{O}_{\PP(S^dV)}(1) \to \mathcal{O}_{\PP(S^dV)}(m) \to 0$.
 	    
 	    The package allows to compute 
 	    
 	    (1) the decomposition into irreducible $SL_{n+1}(\bf C)$-representations of the
-	    tensor product of two symmetric powers $S^a{\bf C}^{n+1}$ and $S^b{\bf C}^{n+1}$;
+	    tensor product of two symmetric powers $S^a\CC^{n+1}$ and $S^b\CC^{n+1}$;
 	    
 	    (2) the matrix representing the morphism $\Phi$;	    
 	    
@@ -637,24 +637,24 @@ doc ///
         Text 
 	    This function returns a constant rank matrix of linear forms. For $n=1$, the matrix describes the morphism
 	    
-	    $\Phi: S^{md-2}V \otimes O_{\mathbb{P}^d} \to S^{(m-1)d}V \otimes O_{\mathbb{P}^d)}(1)$
+	    $\Phi: S^{md-2}V \otimes O_{\PP^d} \to S^{(m-1)d}V \otimes O_{\PP^d)}(1)$
 	    
 	    given by the projection
 	    
 	    $S^dV \otimes S^{(m-1)d}V \to S^{md-2}V$
 	    
-	    of the irreducible $SL(2)$-subrepresentation of highest weight $md-2$, where $\mathbb{P}^d = \mathbb{P}(S^dV)$ as $V=<v_0,v_1>$.
+	    of the irreducible $SL(2)$-subrepresentation of highest weight $md-2$, where $\PP^d = \PP(S^dV)$ as $V=<v_0,v_1>$.
 	
 	    For $n>1$, the matrix describes the morphism	    
 	    
-	    $\Phi: V_{(md-2)\lambda_1 + \lambda_2} \otimes O_{\mathbb{P}(S^dV)} \to S^{(m-1)d}V \otimes O_{\mathbb{P}(S^dV)}(1)$
+	    $\Phi: V_{(md-2)\lambda_1 + \lambda_2} \otimes O_{\PP(S^dV)} \to S^{(m-1)d}V \otimes O_{\PP(S^dV)}(1)$
 	    
 	    given by the projection
 	    
 	    $S^dV \otimes S^{(m-1)d}V \to V_{(md-2)\lambda_1 + \lambda_2}$
 	    
 	    of the irreducible $SL(n+1)$-subrepresentation $V_{(md-2)\lambda_1 + \lambda_2}$ of highest weight 
-	    $(md-2)\lambda_1 + \lambda_2 = (md-1)L_1 + L_2$ in the tensor product $S^dV \otimes S^{(m-1)d}V$, where $V = {\bf C}^{n+1}$ and
+	    $(md-2)\lambda_1 + \lambda_2 = (md-1)L_1 + L_2$ in the tensor product $S^dV \otimes S^{(m-1)d}V$, where $V = \CC^{n+1}$ and
 	    $\lambda_1$ and $\lambda_2$ are the two greatest fundamental weights of the Lie group $SL(n+1)$.
 	Example
 	    n = 1, d = 3, m = 3 
@@ -672,7 +672,7 @@ doc ///
 	    d = 2, m = 3 
 	    M = slEquivariantConstantRankMatrix(R,d,m)
 	Text
-	    If the last argument is polynomial ring {\tt X} (and {\tt X} has the same number of variables of the coordinate ring of $\mathbb{P}(S^d{\bf C}^{n+1})$),
+	    If the last argument is polynomial ring {\tt X} (and {\tt X} has the same number of variables of the coordinate ring of $\PP(S^d\CC^{n+1})$),
 	    then the matrix is defined over the polynomial ring {\tt X}.
 	Example
 	    n = 1, d = 3, m = 3 
@@ -717,23 +717,23 @@ doc ///
         Text 
     	    For $n=1$, this function returns the kernel of the matrix describing the morphism
 	    
-	    $\Phi: S^{md-2}V \otimes O_{\mathbb{P}^d} \to S^{(m-1)d}V \otimes O_{\mathbb{P}^d)}(1)$
+	    $\Phi: S^{md-2}V \otimes O_{\PP^d} \to S^{(m-1)d}V \otimes O_{\PP^d)}(1)$
 	    
 	    given by the projection
 	    
 	    $S^dV \otimes S^{(m-1)d}V \to S^{md-2}V$
 	    
-	    of the irreducible $SL(2)$-subrepresentation of highest weight $md-2$, where $\mathbb{P}^d = \mathbb{P}(S^dV)$ as $V=<v_0,v_1>$,
+	    of the irreducible $SL(2)$-subrepresentation of highest weight $md-2$, where $\PP^d = \PP(S^dV)$ as $V=<v_0,v_1>$,
 	    while for $n>1$, the function returns the kernel of the matrix describing the morphism   
 	    
-	    $\Phi: V_{(md-2)\lambda_1 + \lambda_2} \otimes O_{\mathbb{P}(S^dV)} \to S^{(m-1)d}V \otimes O_{\mathbb{P}(S^dV)}(1)$
+	    $\Phi: V_{(md-2)\lambda_1 + \lambda_2} \otimes O_{\PP(S^dV)} \to S^{(m-1)d}V \otimes O_{\PP(S^dV)}(1)$
 	    
 	    given by the projection
 	    
 	    $S^dV \otimes S^{(m-1)d}V \to V_{(md-2)\lambda_1 + \lambda_2}$
 	    
 	    of the irreducible $SL(n+1)$-subrepresentation $V_{(md-2)\lambda_1 + \lambda_2}$ of highest weight 
-	    $(md-2)\lambda_1 + \lambda_2 = (md-1)L_1 + L_2$ in the tensor product $S^dV \otimes S^{(m-1)d}V$, where $V = {\bf C}^{n+1}$ and
+	    $(md-2)\lambda_1 + \lambda_2 = (md-1)L_1 + L_2$ in the tensor product $S^dV \otimes S^{(m-1)d}V$, where $V = \CC^{n+1}$ and
 	    $\lambda_1$ and $\lambda_2$ are the two greatest fundamental weights of the Lie group $SL(n+1)$. 
 	    
 	    In the paper {\em A construction of equivariant bundles on the space of symmetric forms}, it is proved that the matrix $\Phi$ has constant co-rank 1, 
@@ -754,7 +754,7 @@ doc ///
 	    d = 2, m = 3 
 	    W = slEquivariantVectorBundle(R,d,m)
 	Text
-	    If the last argument is polynomial ring {\tt X} (and {\tt X} has the same number of variables of the coordinate ring of $\mathbb{P}(S^d{\bf C}^{n+1})$),
+	    If the last argument is polynomial ring {\tt X} (and {\tt X} has the same number of variables of the coordinate ring of $\PP(S^d\CC^{n+1})$),
 	    then the vector bundle is defined over the projective space {\tt Proj(X)}.
 	Example
 	    n = 1, d = 3, m = 3 
@@ -790,13 +790,13 @@ doc ///
         Text 
 	    This function returns a constant rank matrix of linear forms. The matrix describes the morphism
 	    
-	    $\Phi: S^{md-2}V \otimes O_{\mathbb{P}^d} \to S^{(m-1)d}V \otimes O_{\mathbb{P}^d)}(1)$
+	    $\Phi: S^{md-2}V \otimes O_{\PP^d} \to S^{(m-1)d}V \otimes O_{\PP^d)}(1)$
 	    
 	    given by the projection
 	    
 	    $S^dV \otimes S^{(m-1)d}V \to S^{md-2}V$
 	    
-	    of the irreducible $SL(2)$-subrepresentation of highest weight $md-2$, where $\mathbb{P}^d = \mathbb{P}(S^dV)$ as $V=<v_0,v_1>$.
+	    of the irreducible $SL(2)$-subrepresentation of highest weight $md-2$, where $\PP^d = \PP(S^dV)$ as $V=<v_0,v_1>$.
     	    In the paper {\em A construction of equivariant bundles on the space of symmetric forms}, the entries of the matrix $\Phi$ 
 	    are explicitely described.
 	Example
@@ -842,13 +842,13 @@ doc ///
         Text 
     	    This function returns the kernel of the matrix describing the morphism
 	    
-	    $\Phi: S^{md-2}V \otimes O_{\mathbb{P}^d} \to S^{(m-1)d}V \otimes O_{\mathbb{P}^d)}(1)$
+	    $\Phi: S^{md-2}V \otimes O_{\PP^d} \to S^{(m-1)d}V \otimes O_{\PP^d)}(1)$
 	    
 	    given by the projection
 	    
 	    $S^dV \otimes S^{(m-1)d}V \to S^{md-2}V$
 	    
-	    of the irreducible $SL(2)$-subrepresentation of highest weight $md-2$, where $\mathbb{P}^d = \mathbb{P}(S^dV)$ as $V=<v_0,v_1>$.
+	    of the irreducible $SL(2)$-subrepresentation of highest weight $md-2$, where $\PP^d = \PP(S^dV)$ as $V=<v_0,v_1>$.
 	    
 	    In the paper {\em A construction of equivariant bundles on the space of symmetric forms}, it is proved that the matrix $\Phi$ has constant co-rank 1, 
 	    so that the kernel $W = ker \Phi$ turns out to be a vector bundle, and the entries of the matrix $\Phi$ are explicitely describred.	

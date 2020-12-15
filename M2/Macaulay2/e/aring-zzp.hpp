@@ -3,10 +3,10 @@
 #ifndef _aring_zzp_hpp_
 #define _aring_zzp_hpp_
 
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include "rand.h"
 
 class Z_mod;
 class RingMap;

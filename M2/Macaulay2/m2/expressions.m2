@@ -938,7 +938,7 @@ net MatrixExpression := x -> (
 	x=applyTable(toList x,if compactMatrixForm then toCompactString else net);
 	netList(x,Boxes=>{false,{0,#x#0}},matrixDisplayOptions#compactMatrixForm)
      ))
-html MatrixExpression := x -> html TABLE toList x
+--html MatrixExpression := x -> html TABLE toList x
 
 net MatrixDegreeExpression := x -> (
     if all(x#0,r->all(r,i->class i===ZeroExpression)) then "0"
@@ -953,7 +953,7 @@ net VectorExpression := x -> (
 	 x=apply(toList x,y->{(if compactMatrixForm then toCompactString else net)y});
 	netList(x,Boxes=>{false,{0,1}},HorizontalSpace=>1,VerticalSpace=>if compactMatrixForm then 0 else 1,BaseRow=>0,Alignment=>Center)
      ))
-html VectorExpression := x -> html TABLE apply(toList x,y->{y})
+--html VectorExpression := x -> html TABLE apply(toList x,y->{y})
 
 -----------------------------------------------------------------------------
 -- tex stuff
@@ -975,8 +975,8 @@ texMath Expression := v -> (
 	  )
      )
 
-html Thing := toString
-
+--html Thing := toString
+-*
 html Expression := v -> (
      op := class v;
      p := precedence v;
@@ -994,7 +994,7 @@ html Expression := v -> (
 	  else error("no method for html ", op)
 	  )
      )
-
+*-
 texMath Minus := v -> (
      term := v#0;
      if precedence term <= precedence v
@@ -1002,15 +1002,18 @@ texMath Minus := v -> (
      else "-" | texMath term
      )
 
+-*
 html Minus := v -> (
      term := v#0;
      if precedence term < precedence v
      then "-(" | html term | ")"
      else "-" | html term
      )
+*-
 
 texMath Divide := x -> "\\frac{" | texMath x#0 | "}{" | texMath x#1 | "}"
 
+-*
 html Divide := x -> (
      p := precedence x;
      a := html x#0;
@@ -1018,6 +1021,7 @@ html Divide := x -> (
      if precedence x#0 <= p then a = "(" | a | ")";
      if precedence x#1 <= p then b = "(" | b | ")";
      a | " / " | b)
+*-
 
 texMath Sum := v -> (
      n := # v;
@@ -1031,6 +1035,7 @@ texMath Sum := v -> (
 		    else texMath v#i ));
 	  concatenate mingle ( names, seps )))
 
+-*
 html Sum := v -> (
      n := # v;
      if n === 0 then "0"
@@ -1049,6 +1054,7 @@ html Sum := v -> (
 	  concatenate (
 	       mingle(seps, names)
 	       )))
+*-
 
 texMath Product := v -> (
      n := # v;
@@ -1067,7 +1073,7 @@ texMath Product := v -> (
 	  concatenate splice mingle (boxes,seps)
 	  )
       )
-
+-*
 html Product := v -> (
      n := # v;
      if n === 0 then "1"
@@ -1084,6 +1090,7 @@ html Product := v -> (
 	       )
 	  )
      )
+*-
 
 texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else (
     p := precedence v;
@@ -1109,6 +1116,7 @@ texMath Subscript := v -> (
      concatenate("{",x,"}_{",y,"}")
      )
 
+-*
 html Superscript := v -> (
      p := precedence v;
      x := html v#0;
@@ -1131,6 +1139,7 @@ html Subscript := v -> (
      y := html v#1;
      if precedence v#0 <  p then x = "(" | x | ")";
      concatenate(x,"<sub>",y,"</sub>"))
+*-
 
 texMath SparseVectorExpression := v -> (
      n := v#0;
@@ -1221,7 +1230,7 @@ suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","bre
 suffixesRegExp := "("|demark("|",suffixes)|")\\'";
 texVariable := x -> (
     if x === "" then return "";
-    xx := separate("\\$",x); if #xx > 1 then return concatenate between("\\$",texVariable\xx);
+    xx := separate("\\$",x); if #xx > 1 then return concatenate between("{\\char36}",texVariable\xx); -- avoid the use of "$" in tex output
     if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb "|x#0|"}";
     if last x === "'" then return texVariable substring(x,0,#x-1) | "'";
     r := regex(suffixesRegExp,x); if r =!= null then (
@@ -1344,12 +1353,8 @@ texMath MutableList := x -> concatenate (
     ,"\\right\\}"
     )
 
--- strings -- compare with hypertext.m2
-texAltLiteralTable = hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",
-    "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
--- not \^{} for KaTeX compatibility because of https://github.com/Khan/KaTeX/issues/1366
-texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
-texMath String := s -> "\\texttt{" | texAltLiteral s | "}"
+-- strings -- uses texLiteral from latex.m2
+texMath String := s -> "\\texttt{" | texLiteral s | "}"
 -- this truncates very big nets
 maxlen := 3000; -- randomly chosen
 texMath Net := n -> (

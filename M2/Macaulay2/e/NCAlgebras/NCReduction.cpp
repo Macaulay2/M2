@@ -1,15 +1,27 @@
-#include <memory>
+#include "NCAlgebras/NCReduction.hpp"
+
+#include <assert.h>
+#include <algorithm>
 #include <iostream>
+#include <map>
+#include <memory>
 #include <queue>
-#include "../stdinc-m2.hpp"
-#include "NCGroebner.hpp"
-#include "NCReduction.hpp"
-#include "NCAlgebras/MemoryBlock.hpp"
+#include <vector>
+
 #include <mathic/TourTree.h>
 #include <mathic/Geobucket.h>
 #include <mathic/Heap.h>
 
 #include "../myalloc.hpp"
+#include "../stdinc-m2.hpp"
+
+#include "NCAlgebras/FreeAlgebra.hpp"
+#include "NCAlgebras/FreeMonoid.hpp"
+#include "NCAlgebras/MemoryBlock.hpp"
+#include "NCAlgebras/NCGroebner.hpp"
+#include "NCAlgebras/Word.hpp"
+#include "ring.hpp"
+#include "style.hpp"
 
 #if 0
 Reasoning about using these structures in noncomm reduction.

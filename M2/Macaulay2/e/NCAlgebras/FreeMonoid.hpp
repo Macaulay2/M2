@@ -1,10 +1,20 @@
 #ifndef _free_monoid_hpp_
 #define _free_monoid_hpp_
 
-#include "polyring.hpp" // For the degrees ring
+#include <M2/math-include.h>
+#include "engine-includes.hpp"
+
+#include <string>
+#include <vector>
+
 #include "Polynomial.hpp"
-#include "NCAlgebras/MemoryBlock.hpp"
-#include "Word.hpp"
+#include "polyring.hpp" // For the degrees ring
+#include "style.hpp"
+
+class MemoryBlock;
+class Monoid;
+class Word;
+class buffer;
 
 // TODO for weights in orders
 //  1. make sure it is input correctly from front end.

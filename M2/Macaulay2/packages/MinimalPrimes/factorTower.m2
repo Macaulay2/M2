@@ -37,6 +37,14 @@ idealToFactorList Ideal := I -> flatten (I_* / factors / (l -> l / toList))
 ----exportMutable globalTowerList
 ----globalTowerList = {}
 
+-- This function determines whether or not the lead term of the input polynomial is linear
+--- Doesn't seem to be used here.  Maybe in gbRatRecon?
+hasLinearLeadTerm = method()
+hasLinearLeadTerm RingElement := f -> (
+    t := leadTerm f;
+    s := support t;
+    #s === 1 and s#0 == t)
+
 factorTower = method(Options => {Verbosity => 0})
 factorTower List := opts -> polyList -> (
     ----<< "factorTower: " << netList polyList << endl;
@@ -188,11 +196,11 @@ makeMonicOverTower (List,RingElement) := (tower,f) -> (
    psi (fTemp*(lcfTemp)^(-1))
 )
 
-end
+end--
 
 --- a very baby example for factorTower
 restart
-debug needsPackage "PD"
+debug needsPackage "MinimalPrimes"
 R = QQ[r,s]
 (S,SF) = makeFiberRings({},R)
 use S
@@ -203,7 +211,7 @@ factorTower({f,g})
 
 --- a very baby example for factorTower
 restart
-debug needsPackage "PD"
+debug needsPackage "MinimalPrimes"
 R = QQ[r,s]
 (S,SF) = makeFiberRings({},R)
 use S
@@ -220,7 +228,7 @@ primaryDecomposition ideal {f^2,g^2}
 
 --- another
 restart
-debug needsPackage "PD"
+debug needsPackage "MinimalPrimes"
 R = QQ[z,y]
 (S,SF) = makeFiberRings({},R)
 use S
@@ -229,3 +237,21 @@ g = y^3+3*y^2*z-3*y-z
 -- we have a problem!
 factorTower2 {f,g}
 splitTower ideal {f,g}
+
+-- OK, lets try this again:
+restart
+debug needsPackage "MinimalPrimes"
+R = QQ[a,b]
+L = {a^2-3}
+F = a*b-1
+makeMonicOverTower(L, F)
+(S,SF) = makeFiberRings({},R)
+
+-- Tower rings (and/or fields), what operations:
+--   these are implemented as finite over a set of base vars?
+--   and as a triangular set.
+-- a. invert an element
+-- b. make a polynomial monic
+-- c. factor a polynomial
+-- (handle char p, inseparable?)
+-- d. is a tower ring a field?  If not, why not?

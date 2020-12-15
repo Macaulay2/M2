@@ -57,7 +57,7 @@ doc ///
   SeeAlso
    isSquareFree
    monomialIdeal
-   radical
+   "MinimalPrimes::radical"
    "substitution and maps between rings"
    "working with multiple rings"
 ///

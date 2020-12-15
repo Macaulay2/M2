@@ -1,5 +1,11 @@
 #include "FreeAlgebraQuotient.hpp"
+
+#include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCGroebner.hpp"
+#include "ring.hpp"
+
+class buffer;
+struct RingMap;
 
 using ExponentVector = int*;
 

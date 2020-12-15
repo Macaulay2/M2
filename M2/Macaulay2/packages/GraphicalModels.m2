@@ -1,13 +1,46 @@
+-*
+Copyright 2013 Luis David Garcia Puente, Sonja Petrovic,
+Mike Stillman, Seth Sullivant.
+
+You may redistribute this file under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 2 of
+the License, or any later version.
+
+
+Copyright 2020 Carlos Amendola, Luis David Garcia Puente, Roser Homs Pons, 
+Olga Kuznetsova, Harshit J Motwani.
+
+You may redistribute this file under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 2 of
+the License, or any later version.
+*-
+
 -- -*- coding: utf-8-unix -*-
 
 newPackage(
      "GraphicalModels",
-     Version => "1.0",
-     Date => "April, 2013",
+     Version => "2.0",
+     Date => "November, 2020",
      Authors => {
-	  {Name => "Luis Garcia-Puente",
+          {Name=> "Carlos Amendola", 
+	   Email=> "carlos.amendola@tum.de",
+	   HomePage=>"http://www.carlos-amendola.com/"},
+       
+	  {Name => "Luis David Garcia Puente",
 	   Email => "lgarcia@shsu.edu",
 	   HomePage => "http://www.shsu.edu/~ldg005"},
+       
+          {Name=> "Roser Homs Pons", 
+	   Email=> "roser.homs@tum.de",
+	   HomePage=>"https://personal-homepages.mis.mpg.de/homspons/index.html"},
+       
+          {Name=> "Olga Kuznetsova", 
+	   Email=> "kuznetsova.olga@gmail.com",
+	   HomePage=>"https://okuznetsova.com"},
+       
+          {Name=> "Harshit J Motwani", 
+	   Email=> "harshitmotwani2015@gmail.com",
+	   HomePage=>"https://sites.google.com/view/harshitjmotwani/home"},
           {Name=> "Sonja Petrovic", 
 	   Email=> "sonja@psu.edu",
 	   HomePage=>"http://www.personal.psu.edu/sxp61"}, 
@@ -22,8 +55,8 @@ newPackage(
 	  -- HomePage=>""}      
 	  },
      Headline => "discrete and Gaussian graphical models",
-     Keywords => {"Statistics", "Graph Theory"},
-     PackageExports => { "Graphs" },
+     Keywords => {"Algebraic Statistics", "Graph Theory"},
+     PackageExports => { "Graphs","StatGraphs" },
      PackageImports => { "IntegralClosure", "Elimination" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -37,8 +70,8 @@ newPackage(
 	  "version at publication" => "1.0",
 	  "volume number" => "5",
 	  "volume URI" => "http://j-sag.org/Volume5/"
-	  }
-     --DebuggingMode => true
+	  },
+     DebuggingMode => false
      )
 export {"bidirectedEdgesMatrix",
        "Coefficients",
@@ -56,7 +89,7 @@ export {"bidirectedEdgesMatrix",
        "inverseMarginMap",
        "localMarkov",
        "markovMatrices", 
-       "markovRing",        
+       "markovRing",     
        "marginMap", 
        "pairMarkov", 
        "trekIdeal", 
@@ -67,15 +100,23 @@ export {"bidirectedEdgesMatrix",
        "sVariableName",
        "kVariableName",
        "lVariableName",
-       "pVariableName"
-       	} 
+       "pVariableName",
+       "graphType",
+       "gaussianRingData",
+       "sVar",
+       "kVar",
+       "pVar",
+       "lVar",
+       "nn",
+       "compU",
+       "compW",
+       "OldVersion" --optional argument in gaussianVanishingIdeal to use old method for gaussianRings coming from directed graphs
+	} 
 
 markovRingData = local markovRingData
 markovVariables = local markovVariables
-gaussianRingData = local gaussianRingData
 gaussianVariables = local gaussianVariables
 numberOfEliminationVariables = local numberOfEliminationVariables  
-
 
 
 --**************************--
@@ -343,6 +384,7 @@ removeRedundants = (Ds) -> (
 -- pairMarkov Graph does the following:
 -- given a graph G, returns a list of triples {A,B,C}
 -- where A,B,C are disjoint sets of the form:
+
 -- for all non-edges {i,j}:  {i,j, all other vertices} 
 -- pairMarkov Digraph does the following:
 -- given a digraph G, returns a list of triples {A,B,C}
@@ -425,6 +467,7 @@ globalMarkov Graph := List => (G) ->(
     ) 
  
 globalMarkov Digraph := List => (G) -> (
+     if isCyclic G then error("digraph must be acyclic");
      V := vertices G;  -- removed sort
      result := {};
      AX := subsets V;
@@ -490,9 +533,7 @@ markovRing Sequence := Ring => opts -> d -> (
 	  R.markovVariables = H;
 	  markovRingList#(d,kk,p) = R;
 	  );
-     markovRingList#(d,kk,p))
-
-
+    markovRingList#(d,kk,p))
 
 ------------------------------------------------------------------------------------------------------------------------------------
 -- gaussianRing ZZ
@@ -508,6 +549,52 @@ markovRing Sequence := Ring => opts -> d -> (
 --     (coefficient field, variable name s, variable name l, variable name p, vertices of the mixed graph) -- in case of MixedGraph input.
 ------------------------------------------------------------------------------------------------------------------------------------
 
+--------------------------------------------------------------------------------
+-----AUXILIAR FUNCTIONS FOR GAUSSIANRING MIXED GRAPHS---------------------------
+--------------------------------------------------------------------------------
+
+-- neighbors of a vertex of a mixed graph considering the underlying graph
+-- of its graph, digraph and bigraph
+-- INPUT:
+-- g=mixedGraph (collateVertices requires mixedGraph)
+-- v=element in vertices g
+-- OUTPUT:
+-- V=set that contains all neighboring vertices of v in the underlying graph of g
+neighborsMG := (g,v) -> (
+    i := position(vertices g, u -> u === v);
+    if i === null then error "v is not a vertex of g.";
+    G:= collateVertices g;
+    V:=set {};
+    for h in keys G#graph do V=V+neighbors(underlyingGraph G#graph#h,v);
+    V
+ )
+
+
+-- neighbors of a vertex of a mixed graph considering the underlying graph
+-- of its graph, digraph and bigraph
+-- INPUT:
+-- g=mixedGraph (neighborsMG requires mixedGraph)
+-- OUTPUT:
+-- C=list of 
+connectedComponentsMG := (g) -> (
+    V := vertices g;
+    while #V != 0 list (
+        C := {first V};
+        i := 0;
+        while i!= #C do (
+            N := toList neighborsMG(g, C_i);
+            C = unique(C | N);
+            V = V - set C;
+            i = i + 1;
+            if #V == 0 then break;
+            );
+        C
+        )
+    )
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
 gaussianRingList := new MutableHashTable;
 
 gaussianRing = method(Dispatch=>Thing, Options=>{Coefficients=>QQ, sVariableName=>"s", lVariableName=>"l", 
@@ -522,14 +609,19 @@ gaussianRing ZZ :=  Ring => opts -> (n) -> (
      w := flatten toList apply(1..n, i -> toList apply(i..n, j -> (i,j)));
      v := apply (w, ij -> s_ij);
      R := kk(monoid [v, MonomialSize=>16]);
-     R.gaussianRingData = n; 
+     -- create gaussianRingData HashTable
+     D := new MutableHashTable;
+     D#nn = n;
+     R.gaussianRingData = new HashTable from D; 
+     -- create gaussianVariables HashTable
      H := new HashTable from apply(#w, i -> w#i => R_i); 
      R.gaussianVariables = H;
+     -- fill into internal gaussianRingList
      gaussianRingList#((kk,s,n)) = R;); 
-     gaussianRingList#((kk,s,n))
+     gaussianRingList#((kk,s,n))    
      )
 
-gaussianRing Graph := Ring => opts -> (g) -> (
+gaussianRing Graph := Ring => opts -> (g) -> (    
     bb := graph g;
     vv := sort vertices g;
     s := toSymbol opts.sVariableName;
@@ -541,66 +633,90 @@ gaussianRing Graph := Ring => opts -> (g) -> (
     kL := join(apply(vv, i->k_(i,i)),delete(null, flatten apply(vv, x-> apply(toList bb#x, y->if pos(vv,x)>pos(vv,y) then null else k_(x,y)))));
     m := #kL; --eliminate the k's 
     R := kk(monoid [kL,sL,MonomialOrder => Eliminate m, MonomialSize=>16]); 
+    -- create gaussianVariables hash table: (symbol s)_(i,j) => ring var with the same name, same for l, p.
     H := new MutableHashTable;
     nextvar := 0;
-    for v in kL do (H#v = R_nextvar; nextvar = nextvar+1);
+    for v in kL do (H#v = R_nextvar; nextvar = nextvar+1); 
     for v in sL do (H#v = R_nextvar; nextvar = nextvar+1);
     R.gaussianVariables = new HashTable from H;
     R#numberOfEliminationVariables = m;
-    R.gaussianRingData = {#vv,s,k};
-    R.graph = g;
+   -- create gaussianRingData hashTable
+    D := new MutableHashTable;
+    D#nn=#vv;
+    D#sVar=s;
+    D#kVar=k;
+    R.gaussianRingData=new HashTable from D;
+    -- create attributes of the ring containing class and graph
+    R.graphType=class g;
+    R.graph= g;
+    -- fill into internal gaussianRingList
     gaussianRingList#((kk,s,k,bb)) = R;); 
     gaussianRingList#((kk,s,k,bb))
     )
 
 gaussianRing Digraph :=  Ring => opts -> (G) -> (
-     s := toSymbol opts.sVariableName;
-     kk := opts.Coefficients;
-     vv := sort vertices G; 
-     if (not gaussianRingList#?(kk,s,vv)) then ( 
-	  --(kk,s,vv) uniquely identifies gaussianRing in case of Digraph input.
-     w := delete(null, flatten apply(vv, i -> apply(vv, j -> if pos(vv,i)>pos(vv,j) then null else (i,j))));
-     v := apply (w, ij -> s_ij);
-     R := kk(monoid [v, MonomialSize=>16]);
-     R.gaussianRingData = #vv;
-     H := new HashTable from apply(#w, i -> w#i => R_i); 
-     R.gaussianVariables = H;
-     R.digraph = G;
-     gaussianRingList#((kk,s,vv)) = R;); 
-     gaussianRingList#((kk,s,vv))
+    return gaussianRing (mixedGraph G, opts);
      )
 
+gaussianRing Bigraph :=  Ring => opts -> (G) -> (
+    return gaussianRing (mixedGraph G, opts);
+     )
 
 gaussianRing MixedGraph := Ring => opts -> (g) -> (
+     -- convert mixedGraph to hash table
+     gg:= graph g;
+     -- sort vertices (only according to vertex number)
+     vv := sort vertices g;
+     --vv := join(sort U,sort W);
+     -- add all vertices to all graphs and convert them to hash tables
      G := graph collateVertices g;
      dd := graph G#Digraph;
      bb := graph G#Bigraph;
-     uu := G#Graph;
-     if #(edges uu) > 0 then error "mixedgraph must have no undirected part ";
-     vv := sort vertices g;
+     uu := graph G#Graph;
+     -- compute partition V=U\cup W
+     if g#graph#Graph===graph{} then (U:={}; W:=vv) else (
+     -- compute partition V=U\cup W
+     (U,W)=partitionLMG g; 
+     );
+     -- set ring variables
      s := toSymbol opts.sVariableName;
      l := toSymbol opts.lVariableName;
      p := toSymbol opts.pVariableName;
-     kk := opts.Coefficients;          
-     if (not gaussianRingList#?(kk,s,l,p,vv)) then ( 
-	  --(kk,s,l,p,vv) uniquely identifies gaussianRing in case of MixedGraph input.
+     k := toSymbol opts.kVariableName; 
+     kk := opts.Coefficients;        
+     if (not gaussianRingList#?(kk,s,k,l,p,vv)) then ( 
+	  --(kk,s,k,l,p,vv) uniquely identifies gaussianRing in case of MixedGraph input.
      sL := delete(null, flatten apply(vv, x-> apply(vv, y->if pos(vv,x)>pos(vv,y) then null else s_(x,y))));
+     kL := join(apply(U, i->k_(i,i)),delete(null, flatten apply(U, x-> apply(toList uu#x, y->if pos(vv,x)>pos(vv,y) then null else k_(x,y)))));
      lL := delete(null, flatten apply(vv, x-> apply(toList dd#x, y->l_(x,y))));	 
-     pL := join(apply(vv, i->p_(i,i)),delete(null, flatten apply(vv, x-> apply(toList bb#x, y->if pos(vv,x)>pos(vv,y) then null else p_(x,y)))));
-     m := #lL+#pL;
-     R := kk(monoid [lL,pL,sL,MonomialOrder => Eliminate m, MonomialSize=>16]);
+     pL := join(apply(W, i->p_(i,i)),delete(null, flatten apply(W, x-> apply(toList bb#x, y->if pos(vv,x)>pos(vv,y) then null else p_(x,y)))));
+     m := #kL+#lL+#pL; 
+     R := kk(monoid [kL,lL,pL,sL,MonomialOrder => Eliminate m, MonomialSize=>16]); 
      -- create gaussianVariables hash table: (symbol s)_(i,j) => ring var with the same name, same for l, p.
      H := new MutableHashTable;
      nextvar := 0;
+     for v in kL do (H#v = R_nextvar; nextvar = nextvar+1); 
      for v in lL do (H#v = R_nextvar; nextvar = nextvar+1);
      for v in pL do (H#v = R_nextvar; nextvar = nextvar+1);
      for v in sL do (H#v = R_nextvar; nextvar = nextvar+1);
      R.gaussianVariables = new HashTable from H;
      R#numberOfEliminationVariables = m;
-     R.gaussianRingData = {#vv,s,l,p};
-     R.mixedGraph = g;
-     gaussianRingList#((kk,s,l,p,vv)) = R;); 
-     gaussianRingList#((kk,s,l,p,vv))
+     -- create gaussianRingData hashTable
+     D := new MutableHashTable;
+     D#nn=#vv;
+     D#sVar=s;
+     D#kVar=k;
+     D#compU=U;
+     D#compW=W;
+     D#lVar=l;
+     D#pVar=p;
+     R.gaussianRingData=new HashTable from D;
+     -- create attributes of the ring containing class and graph
+     R.graphType=class g;
+     R.graph= g;
+     -- fill into internal gaussianRingList
+     gaussianRingList#((kk,s,k,l,p,vv)) = R;); 
+     gaussianRingList#((kk,s,k,l,p,vv))
      )
 
 
@@ -617,19 +733,27 @@ gaussianRing MixedGraph := Ring => opts -> (g) -> (
 
 undirectedEdgesMatrix = method()
 undirectedEdgesMatrix Ring := Matrix =>  R -> (
-     if not (R.?graph and R.?gaussianRingData) then error "expected a ring created with gaussianRing of a Graph";
-     g := R.graph;
-     bb:= graph g;
-     vv := sort vertices g;
-     n := R.gaussianRingData#0; --number of vertices
-     k := R.gaussianRingData#2; 
-     H := R.gaussianVariables;
+     if not (R.graphType === MixedGraph or R.graphType === Graph) 
+     then error "Expected ring created with gaussianRing of a Graph or MixedGraph.";
+     -- retrieve graph (of the right type)
+     g:=R.graph;
+     -- For graphs, turn g into a hashtable and sort vertices.
+     if (instance(g,Graph)) 
+     then (uu:=graph g; vv:= sort vertices g)
+     -- For mixedGraphs, turn undirected edges into a hashtable 
+     -- (considering all the vertices of the mixedGraph)
+     -- and sort vertices in component U of the partition.
+     else (G:= graph collateVertices g; uu=graph G#Graph; vv= sort R.gaussianRingData#compU);
+     n := #vv; --appropriate number of vertices to take into account
+     k := R.gaussianRingData#kVar; -- k variables 
+     H := R.gaussianVariables; -- variables in the gaussianRing
+     -- Build matrix
      PM := mutableMatrix(R,n,n);
      scan(vv,i->PM_(pos(vv,i),pos(vv,i))=H#(k_(i,i)));
-     scan(vv,i->scan(toList bb#i, j->PM_(pos(vv,i),pos(vv,j))=if pos(vv,i)<pos(vv,j) then H#(k_(i,j)) else H#(k_(j,i))));
-     matrix PM) 
-
-
+     scan(vv,i->scan(toList uu#i, j->PM_(pos(vv,i),pos(vv,j))=if pos(vv,i)<pos(vv,j) then H#(k_(i,j)) else H#(k_(j,i))));
+     matrix PM
+     ) 
+     
 
 ------------------------------------------------------------------
 -- directedEdgesMatrix Ring 
@@ -637,13 +761,13 @@ undirectedEdgesMatrix Ring := Matrix =>  R -> (
 
 directedEdgesMatrix = method()
 directedEdgesMatrix Ring := Matrix => R -> (
-     if not (R.?mixedGraph and R.?gaussianRingData) then error "expected a ring created with gaussianRing of a MixedGraph";     
-     g := R.mixedGraph;
+     if not (R.graphType === MixedGraph) then error "expected a ring created with gaussianRing of a MixedGraph";     
+     g := R.graph;
      G := graph collateVertices g;
      dd := graph G#Digraph;
      vv := sort vertices g;
-     n := R.gaussianRingData#0;
-     l := R.gaussianRingData#2;
+     n := R.gaussianRingData#nn;
+     l := R.gaussianRingData#lVar; -- l variables
      H := R.gaussianVariables;
      LM := mutableMatrix(R,n,n);
      scan(vv,i->scan(toList dd#i, j->LM_(pos(vv,i),pos(vv,j))=H#(l_(i,j))));
@@ -656,13 +780,15 @@ directedEdgesMatrix Ring := Matrix => R -> (
 
 bidirectedEdgesMatrix = method()
 bidirectedEdgesMatrix Ring := Matrix => R -> (
-     if not (R.?mixedGraph and R.?gaussianRingData) then error "expected a ring created with gaussianRing of a MixedGraph";     
-     g := R.mixedGraph;     
+     if not (R.graphType === MixedGraph) then error "expected a ring created with gaussianRing of a MixedGraph. 
+     Bigraphs alone are not accepted. If you need to work with one, please reformulate it as a Graph. ";     
+     g := R.graph;     
      G := graph collateVertices g;
      bb := graph G#Bigraph;
-     vv := sort vertices g;
-     n := R.gaussianRingData#0;
-     p := R.gaussianRingData#3;
+     -- take only component W of mixedGraph
+     vv := sort R.gaussianRingData#compW;
+     n := #vv;
+     p := R.gaussianRingData#pVar; -- p variables
      H := R.gaussianVariables;
      PM := mutableMatrix(R,n,n);
      scan(vv,i->PM_(pos(vv,i),pos(vv,i))=H#(p_(i,i)));
@@ -678,7 +804,7 @@ bidirectedEdgesMatrix Ring := Matrix => R -> (
 
 markovMatrices = method()
 markovMatrices(Ring,List,List) := (R,Stmts,VarNames) -> (
-     -- R should be a markovRing, G a digraph, and Stmts a list of independence statements.
+     -- R should be a markovRing and Stmts a list of independence statements.
      if not R.?markovRingData then error "expected a ring created with markovRing";
      d := R.markovRingData;
      if not isSubset ( set unique flatten flatten Stmts,  set VarNames)  then error "variables names in statements do not match list of random variable names";
@@ -694,7 +820,7 @@ markovMatrices(Ring,List,List) := (R,Stmts,VarNames) -> (
     )
 
 markovMatrices(Ring,List) := (R,Stmts) -> (
-     -- R should be a markovRing, G a digraph, and Stmts a list of independence statements.
+     -- R should be a markovRin and Stmts a list of independence statements.
      if not R.?markovRingData then error "expected a ring created with markovRing";
      d := R.markovRingData;
      if not isSubset ( set unique flatten flatten Stmts,  set( 1..#d) )  then error "variables names in statements do not match list of random variable names";
@@ -711,7 +837,6 @@ markovMatrices(Ring,List) := (R,Stmts) -> (
     )
 
 
-
 ------------------------------------------------------------------
 -- covarianceMatrix(Ring)
 ------------------------------------------------------------------
@@ -719,28 +844,18 @@ markovMatrices(Ring,List) := (R,Stmts) -> (
 covarianceMatrix = method()
 covarianceMatrix(Ring) := Matrix => (R) -> (
        if not R.?gaussianRingData then error "expected a ring created with gaussianRing";    
-       if R.?graph then (  
-     	    g:=R.graph;
+       if R.?graphType then (
+	    g := R.graph;
 	    vv := sort vertices g;
-     	    n := R.gaussianRingData#0;
-     	    s := R.gaussianRingData#1;
-            H := R.gaussianVariables;
-     	    SM := mutableMatrix(R,n,n);
-     	    scan(vv,i->scan(vv, j->SM_(pos(vv,i),pos(vv,j))=if pos(vv,i)<pos(vv,j) then H#(s_(i,j)) else H#(s_(j,i))));
-     	    matrix SM	    
-	    ) 
-       else if R.?mixedGraph then (  
-     	    g = R.mixedGraph;
-	    vv = sort vertices g;
-     	    n = R.gaussianRingData#0;
-     	    s = R.gaussianRingData#1;
-            H = R.gaussianVariables;
-     	    SM = mutableMatrix(R,n,n);
-     	    scan(vv,i->scan(vv, j->SM_(pos(vv,i),pos(vv,j))=if pos(vv,i)<pos(vv,j) then H#(s_(i,j)) else H#(s_(j,i))));
-     	    matrix SM	    
-	    ) 
+	    n := R.gaussianRingData#nn;
+	    s := R.gaussianRingData#sVar;
+	    H := R.gaussianVariables;
+	    SM := mutableMatrix(R,n,n);
+	    scan(vv,i->scan(vv, j-> SM_(pos(vv,i),pos(vv,j))=if pos(vv,i)<pos(vv,j) then H#(s_(i,j)) else H#(s_(j,i)))); 
+	    matrix SM
+	    )   
        else (
-	    n =R.gaussianRingData; 
+	    n =R.gaussianRingData#nn; 
 	    genericSymmetricMatrix(R,n)
 	    )
   )
@@ -753,37 +868,17 @@ covarianceMatrix(Ring) := Matrix => (R) -> (
 
 gaussianMatrices = method()
 gaussianMatrices(Ring,List) := List =>  (R,Stmts) -> (
-        if not (R.?gaussianRingData) then error "expected a ring created with gaussianRing";
-        if R.?graph then (
-	   g := R.graph;
-           vv := sort vertices g;
-	   if not isSubset ( set unique flatten flatten Stmts,  set vv)  then error "variables names in statements do not match list of random variable names";
-           SM := covarianceMatrix(R);
-           apply(Stmts, s -> 
-	       submatrix(SM, apply(s#0,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) , 
-		    apply(s#1,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) ) ) 
-          )
-        else if R.?digraph then (
-	   g= R.digraph;
-           vv = sort vertices g;
-	   if not isSubset ( set unique flatten flatten Stmts,  set vv)  then error "variables names in statements do not match list of random variable names";
-           SM = covarianceMatrix(R);
-           apply(Stmts, s ->  
-	       submatrix(SM, apply(s#0,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) , 
-		    apply(s#1,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) ) ) 
-          )
-        else (
-           vv = toList (1..R.gaussianRingData);
-	   if not isSubset ( set unique flatten flatten Stmts,  set vv)  then error "variables names in statements do not match list of random variable names";
-	   SM = covarianceMatrix(R);
-           apply(Stmts, s->  
-	       submatrix(SM, apply(s#0,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) , 
-		    apply(s#1,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) ) )
-	  )
-     
-     )
-
-
+        if not R.?gaussianRingData then error "expected a ring created with gaussianRing";
+	if R.?graph then (g := R.graph; vv := sort vertices g)
+	else (n:=R.gaussianRingData#nn; vv=toList(1..n));
+	if not isSubset ( set unique flatten flatten Stmts,  set vv)  then error "variables names in statements do not match list of random variable names";
+        SM := covarianceMatrix(R);
+        apply(Stmts, s -> 
+	    submatrix(SM, apply(s#0,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) , 
+	        apply(s#1,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) )) 
+	) 
+ 
+ 
 --******************************************************************--
 --  Methods for creating ideals that vanish for a graphical model   --
 --******************************************************************--
@@ -799,41 +894,22 @@ conditionalIndependenceIdeal (Ring,List) := Ideal => (R,Stmts) ->(
      if #Stmts === 0 then (ideal(0_R))
      else ( 
      	  if R.?gaussianRingData then (      
-               if R.?graph then (
+               -- Choose appropriate vertices vv for gaussianRings coming from graphs, digraphs or mixedGraphs
+	       if R.?graph then (
      		    if not isSubset ( set unique flatten flatten Stmts,  set vertices(R.graph))  then error "variables names in statements do not match variable names in the Gaussian ring";
 	   	    g := R.graph;
-           	    vv := sort vertices g;
-           	    SM := covarianceMatrix(R);
-           	    sum apply(Stmts, s -> minors(#s#2+1, 
-	       		      submatrix(SM, apply(s#0,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) , 
-		    		   apply(s#1,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) ) )) 
-          	    )
-               else if R.?digraph then (
-     		    if not isSubset ( set unique flatten flatten Stmts,  set vertices(R.digraph))  then error "variables names in statements do not match variable names in the Gaussian ring";
-	   	    g= R.digraph;
-           	    vv = sort vertices g;
-           	    SM = covarianceMatrix(R);
-           	    sum apply(Stmts, s -> minors(#s#2+1, 
-	       		      submatrix(SM, apply(s#0,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) , 
-		    		   apply(s#1,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) ) )) 
-          	    )
-	       else if R.?mixedGraph then (
-     		    if not isSubset ( set unique flatten flatten Stmts,  set vertices(R.mixedGraph))  then error "variables names in statements do not match variable names in the Gaussian ring";
-	   	    g= R.mixedGraph;
-           	    vv = sort vertices g;
-           	    SM = covarianceMatrix(R);
-           	    sum apply(Stmts, s -> minors(#s#2+1, 
-	       		      submatrix(SM, apply(s#0,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) , 
-		    		   apply(s#1,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) ) )) 
-          	    )
-               else (
-	   	    vv = toList (1..R.gaussianRingData);
+           	    vv := sort vertices g
+               )    
+	       -- Choose appropriate vertices vv for gaussianRings coming from an integer
+	       else (
+		    vv = toList (1..R.gaussianRingData#nn);
      		    if not isSubset ( set unique flatten flatten Stmts,  set vv)  then error "variables names in statements do not match variable names in the Gaussian ring";
-	   	    SM = covarianceMatrix(R);
-           	    sum apply(Stmts, s -> minors(#s#2+1, 
-	       		      submatrix(SM, apply(s#0,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) , 
-		    		   apply(s#1,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) ) ))
-	  	    )
+	       );	    	    	    
+	       -- compute covarianceMatrix and suitable minors given by vv
+	       SM := covarianceMatrix(R);
+               sum apply(Stmts, s -> minors(#s#2+1, 
+	       	    submatrix(SM, apply(s#0,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) , 
+		    	 apply(s#1,x->pos(vv,x)) | apply(s#2,x->pos(vv,x)) ) )) 
                )
      	  else (
                if not isSubset ( set unique flatten flatten Stmts,  set toList (1..#R.markovRingData))  then error "variables names in statements do not match variable names in the markov ring.";
@@ -861,16 +937,17 @@ conditionalIndependenceIdeal (Ring,List,List) := Ideal => (R,Stmts,VarNames) ->(
 
 gaussianParametrization = method(Options=>{SimpleTreks=>false})
 gaussianParametrization Ring := Matrix => opts -> R -> (
-     if not R.?gaussianRingData then error "expected a ring created with gaussianRing";     
-     if not R.?mixedGraph then error "must be a gaussianRing created with a mixed graph";
-     g := R.mixedGraph;
+     if not R.graphType === MixedGraph then error "Must be a gaussianRing created with a mixed graph, a digraph or a bigraph";
+     g := R.graph;
+     -- Not yet implemented for mixedGraphs with undirected edges
+     if not undirectedEdgesMatrix R == 0 then error "Function not implemented for mixed graphs with undirected edges"; 
      S := covarianceMatrix R;    
      W := bidirectedEdgesMatrix R;     
      L := directedEdgesMatrix R;
      Li := inverse(1-matrix(L));
      M := transpose(Li)*matrix(W)*Li;
      if opts.SimpleTreks then (
-       n := R.gaussianRingData#0;
+       n := R.gaussianRingData#nn;
        P := matrix {apply(n,i->W_(i,i)-M_(i,i)+1)};
        Q := apply(n,i->W_(i,i)=>P_(0,i));
        scan(n,i->P=sub(P,Q));
@@ -885,41 +962,45 @@ gaussianParametrization Ring := Matrix => opts -> R -> (
 -- Note: this method currently works on really small examples,
 -- because it computes the vanishing ideal as an elimination ideal.
 -- More clever ways to compute it would be of interest.
+-- Currently this method is only implemented for mixedGraphs 
+-- without undirected edges
 ------------------------------------------------------------------
 
-gaussianVanishingIdeal=method()
-gaussianVanishingIdeal Ring := Ideal => R -> (
-    if not (R.?gaussianRingData) then error "expected a ring created with gaussianRing";
-    if R.?graph then (    
+gaussianVanishingIdeal=method(TypicalValue => Ideal, Options=>{OldVersion => false})
+gaussianVanishingIdeal Ring := opts -> R -> (
+    if not R.?graph then error "expected a ring created with gaussianRing of a Graph, Digraph, Bigraph or MixedGraph";
+    if R.graphType === Graph then (    
        K:= undirectedEdgesMatrix R;
        adjK := sub(det(K)*inverse(sub(K,frac R)), R);
        Itemp:=saturate(ideal (det(K)*covarianceMatrix(R) - adjK), det(K));
        ideal selectInSubring(1, gens gb Itemp))
-    else if R.?digraph then (
-       G := R.digraph;
+    --check if gaussianRing comes only from Digraph and user asked for optional method of previous versions
+    else if (opts.OldVersion and R.graphType === MixedGraph and R.graph#graph#Graph===graph{} and R.graph#graph#Bigraph===bigraph{}) then (
+       G := R.graph#graph#Digraph; --retrieve digraph from mixedGraph
        vv := sort vertices G;
        n := #vv;
        v := (topSort G)#map;
        v = hashTable apply(keys v, i->v#i=>i);
        v = apply(n,i->v#(i+1));
        P := toList apply(v, i -> toList parents(G,i));
-       nx := # gens R;
+       s := R.gaussianRingData#sVar; --retrieve name of variable used for sVar as symbol
+       L := select(keys R.gaussianVariables, v -> first baseName v==s); --select sVar from variables in R as indexed variables
+       nx :=#L; -- number of sVar
        ny := max(P/(p->#p));
        x := local x;
        y := local y;
        S := (coefficientRing R)[x_0 .. x_(nx-1),y_0 .. y_(ny-1)];
        newvars := apply(ny, i -> y_i);
-       L := keys R.gaussianVariables;
-       s := hashTable apply(nx,i->L#i=>x_i);
-       sp := (i,j) -> if pos(vv,i) > pos(vv,j) then s#(j,i) else s#(i,j);
+       H := hashTable apply(nx,i->L#i=>x_i); --convert sVar to x_i
+       sp := (i,j) -> if pos(vv,i) > pos(vv,j) then H#(s_(j,i)) else H#(s_(i,j));
        I := trim ideal(0_S);
        for i from 1 to n-1 do (
      	   J := ideal apply(i, j -> sp(v#j,v#i) - sum apply(#P#i, k ->y_k * sp(v#j,P#i#k)));
      	   I = eliminate(newvars, I + J););
        F := map(R,S,apply(nx,i->x_i=>R.gaussianVariables#(L_i))|apply(newvars,i->i=>0));
        F(I))
-     else if R.?mixedGraph then (
-       G = R.mixedGraph;
+     else if R.graphType === MixedGraph then (
+       G = R.graph;
        if (#edges(G#graph#Graph) > 0) then error "This function is currently only implemented for mixed graphs without undirected part"; 
        if (isCyclic G#graph#Digraph == true) then error "Directed part of mixed graph must be acyclic";
        S = covarianceMatrix R;    
@@ -931,9 +1012,8 @@ gaussianVanishingIdeal Ring := Ideal => R -> (
        m:= (R#numberOfEliminationVariables)-1;
        elimvarlist := flatten entries (vars(R))_{0..m};
        I = trim ideal(0_R);
-       I = eliminate(elimvarlist,tempideal)
-     )
- else error " gaussianVanishingIdeal expected a ring created with gaussianRing of a Graph or Digraph or MixedGraph"    
+       I = eliminate(elimvarlist,tempideal)     
+     )   
 )
 
 ------------------------------------------------------------------
@@ -943,6 +1023,7 @@ gaussianVanishingIdeal Ring := Ideal => R -> (
 discreteVanishingIdeal=method()
 discreteVanishingIdeal (Ring, Digraph)  := Ideal => (R, G) -> (
      if not (R.?markovRingData) then error "expected a ring created with markovRing";
+     if not instance(G,Digraph) then error "expected a Digraph";
      d := R.markovRingData;
      n := #d; 
      if not (#vertices(G) == n) then error "Number of vertices of graph does not match size of ring";
@@ -987,12 +1068,13 @@ discreteVanishingIdeal (Ring, Digraph)  := Ideal => (R, G) -> (
 ------------------------------------------------------------------
 -- trekSeparation MixedGraph
 -- NOTE: currently, trekSeparation only works with directed and 
--- bidirected edges. We don't work with MixedGraphs in full
--- generality (undirected, directed, bidirected). See gaussianRing.
+-- bidirected edges. 
 ------------------------------------------------------------------
 
 trekSeparation = method()
 trekSeparation MixedGraph := List => (g) -> (
+    -- Not yet implemented for mixedGraphs with undirected edges
+    if not g#graph#Graph === graph{} then error "Function not implemented for mixed graphs with undirected edges"; 
     G := graph collateVertices g;
     dd := graph G#Digraph;
     bb := graph G#Bigraph; 
@@ -1062,21 +1144,20 @@ trekSeparation MixedGraph := List => (g) -> (
 trekIdeal = method()
 trekIdeal (Ring,MixedGraph) := Ideal => (R,g) -> (
      if not R.?gaussianRingData  then error "expected a ring created with gaussianRing";
-     if R.?mixedGraph then (
-         if not sort (vertices (R.mixedGraph))  === sort (vertices (g)) then 
-	     error "vertex labels of graph do not match labels in ring")
-     else if R.?graph then (
-         if not sort (vertices (R.graph))  === sort (vertices (g)) then 
-	     error "vertex labels of graph do not match labels in ring")
-     else if R.?digraph then (
-         if not sort (vertices (R.digraph))  === sort (vertices (g)) then 
-	     error "vertex labels of graph do not match labels in ring")
-     else if not ( 1..R.gaussianRingData === sort vertices(g))  then 
-         error "variables names in mixedGraph do not match variable names in the Gaussian ring";
+     if R.?graphType then (
+	  if not sort (vertices (R.graph))  === sort (vertices (g)) 
+	  then error "vertex labels of graph do not match labels in ring";
+	  if (R.graph#graph#Digraph===digraph{} and R.graph#graph#Bigraph===bigraph{}) 
+	  then return trekIdeal(R,R.graph#graph#Graph))
+     else if not ( 1..R.gaussianRingData#nn === sort vertices(g))  then 
+         error "variables names do not match variable names in the Gaussian ring";
      Stmts:= trekSeparation g;
      vv := sort vertices g;
      SM := covarianceMatrix R ;	
-     sum apply(Stmts,s->minors(#s#2+#s#3+1, submatrix(SM,apply(s#0,x->pos(vv,x)),apply(s#1,x->pos(vv,x)))))
+     if Stmts == {} then (
+         ideal(0_R))
+     else 
+        sum apply(Stmts,s->minors(#s#2+#s#3+1, submatrix(SM,apply(s#0,x->pos(vv,x)),apply(s#1,x->pos(vv,x)))))
      )
 
 trekIdeal (Ring,Graph) := Ideal => (R,g) -> (
@@ -1153,7 +1234,9 @@ hiddenMap(ZZ,Ring) := RingMap => (v,A) -> (
      if not A.?markovRingData then error "expected a ring created with markovRing";
      d := A.markovRingData;
      e := drop(d, {v,v});
-     S := markovRing (e);
+      -- issue #1362 in github
+     S := markovRing (e, Coefficients=>coefficientRing(A)); 
+     -- S := markovRing (e);
      dv := d#v;
      F := toList apply(((#e):1) .. e, i -> (
 	       sum(apply(toList(1..dv), j -> (
@@ -1168,9 +1251,10 @@ hiddenMap(ZZ,Ring) := RingMap => (v,A) -> (
 
 identifyParameters = method()
 identifyParameters Ring := HashTable => R -> (
-     if not R.?gaussianRingData then error "expected a ring created with gaussianRing";     
-     if not R.?mixedGraph then error "must be a gaussianRing created with a mixed graph";     
-     g := R.mixedGraph;
+     if not R.graphType === MixedGraph then error "must be a gaussianRing created with a mixed graph, a digraph or a bigraph";     
+     g := R.graph;
+     -- Not yet implemented for mixedGraphs with undirected edges
+     if not g#graph#Graph === graph{} then error "Function not implemented for mixed graphs with undirected edges";  
      J := ideal unique flatten entries (covarianceMatrix(R)-gaussianParametrization(R));
      G := graph g;
      m := #edges(G#Digraph)+#edges(G#Bigraph)+#vertices(g);
@@ -1217,6 +1301,11 @@ doc ///
       Luis D. Garcia-Puente, Sarah Spielvogel and Seth Sullivant, {\em Identifying causal effects with computer algebra}, 
       Proceedings of the $26^{th}$ Conference of Uncertainty in Artificial Intelligence.
           
+      Furthermore, this package allows to construct the Gaussian rings of 
+      loopless mixed graphs (LMG) and the corresponding matrices of indeterminates
+      as introduced in Kayvan Sadeghi and Steffen Lauritzen, {\em Markov properties for mixed graphs}, 
+      Bernoulli 20.2 (2014): 676-696.
+      
       Here is a typical use of this package.  We create the ideal in 16 variables whose zero set 
       represents the probability distributions on four binary random variables  satisfying the
       conditional independence statements coming from the "diamond" graph $4 \to 3, 4 \to 2, 3 \to 1, 2 \to 1$.
@@ -1276,9 +1365,29 @@ doc ///
       David Murrugarra<@HREF"http://people.math.gatech.edu/~davidmur/Home.html"@>.
       
   Caveat
-     GraphicalModels requires Graphs.m2. This package allows the user to create graphs whose vertices are labeled arbitrarily. 
-     However, several functions in GraphicalModels sort the vertices of the graph. Hence, graphs used as input to methods 
-     in GraphicalModels must have sortable vertex labels, e.g., all numbers or all letters. 
+     GraphicalModels requires Graphs.m2 and StatGraphs.m2. These packages allow the user to 
+     create graphs whose vertices are labeled arbitrarily. 
+     However, several functions in GraphicalModels sort the vertices of the graph. 
+     Hence, graphs used as input to methods 
+     in GraphicalModels must have sortable vertex labels, e.g., 
+     all numbers or all letters. 
+     
+     The methods in GraphicalModels differ in the classes of acceptable graphs for input:
+     
+     - functions used in package GraphicalModelsMLE (@TO gaussianRing@, 
+	 @TO covarianceMatrix@,  @TO bidirectedEdgesMatrix@, @TO directedEdgesMatrix@, 
+	 @TO directedEdgesMatrix@, @TO undirectedEdgesMatrix@) and 
+         @TO conditionalIndependenceIdeal@ accept @TO Graph@,  
+         @TO Digraph@, @TO Bigraph@ and @TO MixedGraph@.  
+     
+     - conditional independence statement generators (@TO pairMarkov@, 
+	 @TO localMarkov@ and @TO globalMarkov@) accept only @TO Graph@ or  
+         @TO Digraph@;
+    	
+     - the remaining functions that accepts graphs, only accept @TO Graph@,  
+         @TO Digraph@ or @TO MixedGraph@ without undirected edges. 	 
+	 
+	   	
 ///;
 
 --------------------------------
@@ -1317,7 +1426,7 @@ doc ///
       pairMarkov G
       
     Text
-      Given a directed graph $G$, pairwise Markov statements are statements of the form \{$v$, $w$, nondescendents($G,v$)-$w$\}\ 
+      Given a directed acyclic graph $G$, pairwise Markov statements are statements of the form \{$v$, $w$, nondescendents($G,v$)-$w$\}\ 
       for each vertex $v$ of $G$ and each non-descendent vertex $w$ of $v$. In other words, for every vertex $v$ of $G$ and each nondescendent $w$ of $v$, 
       this method returns the statement: $v$ is independent of $w$ given all other nondescendents. 
       
@@ -1378,7 +1487,7 @@ doc ///
       localMarkov G
       
     Text
-      Given a directed graph $G$, local Markov statements are of the form
+      Given a directed acyclic graph $G$, local Markov statements are of the form
       \{$v$, nondescendents($v$) - parents($v$), parents($v$)\} .
       In other words, 
       every vertex $v$ of $G$ is independent of its nondescendents (excluding parents) given its parents. 
@@ -1437,7 +1546,7 @@ doc ///
       globalMarkov G
       
     Text
-      Given a directed graph $G$, global Markov states that      
+      Given a directed acyclic graph $G$, global Markov states that      
       $A$ is independent of $B$ given $C$ for every triple of sets of vertices $A$, $B$, and $C$, 
       such that $A$ and $B$ are $d$-separated by $C$ (in the graph $G$).\break
        
@@ -1477,7 +1586,7 @@ doc ///
     marginMap
     (marginMap,ZZ,Ring)
   Headline
-    generates a linear map on joint distributions for discrete random variables replacing marginals for indeterminates
+    linear map on joint distributions for discrete random variables replacing marginals for indeterminates
   Usage
     marginMap(i,R)
   Inputs
@@ -1489,7 +1598,7 @@ doc ///
     :RingMap
   Description
     Text
-      The ring $R$ must be a ring of probability distributions on $n$ random variables created using {\tt markovRing}. The integer $i$
+      The ring $R$ must be a ring of probability distributions on $n$ random variables created using @TO markovRing@. The integer $i$
       must be in the range from 1 to $n$.  
        
       Let $p_{u_1,u_2,\dots, +,\dots,u_n}$ denote the linear form $p_{u_1,u_2,\dots, 1,\dots,u_n} + \dots + p_{u_1,u_2,\dots, d_i,\dots,u_n}$, where $d_i$ is the number of
@@ -1539,7 +1648,7 @@ doc ///
     inverseMarginMap
     (inverseMarginMap,ZZ,Ring)
   Headline
-    computes the inverse of the marginMap
+    inverse of the marginMap
   Usage
     inverseMarginMap(i,R)
   Inputs
@@ -1652,7 +1761,7 @@ doc ///
     n:ZZ
       number of random variables
     G:Graph
-      @ofClass Graph@, or a directed acyclic graph @ofClass Digraph@, 
+      @ofClass Graph@, or @ofClass Digraph@, 
       or @ofClass MixedGraph@ with directed and bidirected edges
   Outputs
     :Ring       
@@ -1692,7 +1801,7 @@ doc ///
     d:Sequence
       with positive integer entries $(d_1,\dots ,d_r)$
   Outputs
-    :Ring
+    :Ring  
       a polynomial ring with $d_1*d_2*\dots   *d_r$ variables $p_{i_1,\dots ,i_r}$,
       with each $i_j$ satisfying $1\leq i_j \leq d_j$.
   Consequences
@@ -1810,7 +1919,7 @@ doc ///
     (markovMatrices,Ring,List)
     (markovMatrices,Ring,List,List) 
   Headline
-    the matrices whose minors form the ideal of a list of independence statements
+    matrices whose minors form the ideal of a list of independence statements
   Usage
     markovMatrices(R,S)
     markovMatrices(R,S,VarNames)
@@ -1867,12 +1976,8 @@ doc ///
 doc ///
   Key 
     gaussianRing
-    (gaussianRing,ZZ)
-    (gaussianRing, Graph)
-    (gaussianRing, Digraph)
-    (gaussianRing, MixedGraph)
   Headline
-    ring of Gaussian correlations on n random variables
+    ring of Gaussian correlations on n random variables or a graphical model
   Usage
     gaussianRing n 
     gaussianRing G 
@@ -1880,77 +1985,33 @@ doc ///
     n:ZZ
       the number of random variables
     G:Graph
-      @ofClass Graph@, or a directed acyclic graph @ofClass Digraph@, 
-      or @ofClass MixedGraph@ with directed and bidirected edges
+      or @ofClass Digraph@, or @ofClass Bigraph@, or @ofClass MixedGraph@ 
   Outputs
     :Ring
-      a ring with indeterminates $s_{(i,j)}$ for $1 \leq i \leq j \leq n$, and
-      additionally $l_{(i,j)}, p_{(i,j)}$ for mixed graphs or $k_{(i,j)}$ for graphs
-      with $1 \leq i \leq j \leq n$ where $n$ is the number of vertices in $G$.      
+      a polynomial ring with indeterminates associated to the graphical model      
   Description
     Text
       This function creates a ring whose indeterminates are the covariances of an 
       n dimensional Gaussian random vector.  Using a graph, digraph, or mixed graph $G$
       as input gives a {\tt gaussianRing} with extra indeterminates related to the parametrization
-      of the graphical model associated to that graph. If a graph is used, 
-      the indeterminates in the {\tt gaussianRing} are indexed by the vertices in the graph $G$.  
+      of the graphical model associated to that graph. 
+      Check the details of the {\tt gaussianRing} for each type of input:
+     
+      * @TO (gaussianRing,ZZ)@
       
-      The $s_(i,j)$ indeterminates in the {\tt gaussianRing} are the entries in the
-      covariance matrix of the jointly normal random variables.  The $k_{(i,j)}$
-      indeterminates  in the {\tt gaussianRing} are the nonzero entries in the concentration
-      matrix in the graphical model associatd to an undirected graph.
-      The $l_{(i,j)}$
-      indeterminates consist of regression coefficients associated to the directed
-      edges in the graph.
-      The $p_{(i,j)}$
-      indeterminates  in the {\tt gaussianRing} are the nonzero entries in the covariance matrix of the error terms
-      in the graphical model associatd to a mixed graph with bidirected edges. 
-      Those entries can be placed into an appropriate matrix format using the
+      * @TO (gaussianRing,Graph)@
+      
+      * @TO (gaussianRing,Digraph)@
+      
+      * @TO (gaussianRing,Bigraph)@
+      
+      * @TO (gaussianRing,MixedGraph)@
+      
+      The indeterminates of the ring - $s_{(i,j)},k_{(i,j)},l_{(i,j)},p_{(i,j)}$ - can be placed into an appropriate matrix format using the
       functions @TO covarianceMatrix@, 
       @TO undirectedEdgesMatrix@, @TO directedEdgesMatrix@, and  
       @TO bidirectedEdgesMatrix@ respectively.
       
-    Example
-      R = gaussianRing 5;
-      gens R
-      compactMatrixForm =false;
-      covarianceMatrix R
-      
-    Text
-      The function works with an undirected graph as follows.
-
-    Example
-      G = graph({{a,b},{b,c},{c,d},{a,d}})
-      R = gaussianRing G
-      gens R
-      covarianceMatrix R
-      undirectedEdgesMatrix R
-
-    Text
-      The function works with a directed graph as follows.
-
-    Example
-      G = digraph {{a,{b,c}}, {b,{c,d}}, {c,{}}, {d,{}}};
-      R = gaussianRing G;
-
-    Text
-      This function also accepts as input a mixed graph. In this case, the ring contains the usual indeterminates associated to the 
-      covariance matrix of the model. But it is also generated by two new lists of indeterminates. For each  directed edge $i \to j$ 
-      in the mixed graph there is an indeterminate, denoted by default $l_{(i,j)}$, corresponding to the associated direct causal effect parameter in the model. 
-      For each  bidirected edge $i$<->$j$ there is an indeterminate, denoted by default $p_{(i,j)}$, corresponding to the associated noise parameter. Finally,
-      for each node $i$, there is an indeterminate $p_{(i,i)}$. 
-      The {\tt gaussianRing} of a mixed graph assumes that the
-      undirected part of the graph is empty.
-
-    Example
-      G = mixedGraph(digraph {{b,{c,d}},{c,{d}}},bigraph {{a,d}})
-      R = gaussianRing G
-      gens R
-      covarianceMatrix R
-      directedEdgesMatrix R
-      bidirectedEdgesMatrix R
-
-    Text
       The variable names that appear can be changed using the options sVariableName, lVariableName,
       pVariableName, and kVariableName
 
@@ -1959,7 +2020,7 @@ doc ///
       R = gaussianRing (G,pVariableName => psi)
       gens R      
             
-    Text        
+    Text
       The routines  @TO conditionalIndependenceIdeal@, @TO trekIdeal@, @TO covarianceMatrix@, 
       @TO undirectedEdgesMatrix@, @TO directedEdgesMatrix@, @TO bidirectedEdgesMatrix@, 
       @TO gaussianVanishingIdeal@ and @TO gaussianParametrization@ require that the 
@@ -1975,8 +2036,201 @@ doc ///
     undirectedEdgesMatrix
 ///
 
+doc ///
+  Key 
+    (gaussianRing,ZZ)
+  Headline
+    ring of Gaussian correlations on n random variables
+  Usage
+    gaussianRing n  
+  Inputs
+    n:ZZ
+      the number of random variables
+  Outputs
+    :Ring
+      a ring with indeterminates $s_{(i,j)}$ for $1 \leq i \leq j \leq n$      
+  Description
+    Text
+     This function creates a polynomial ring with indeterminates $s_{(i,j)}$ for $1 \leq i \leq j \leq n$.
+     The $s_{(i,j)}$ indeterminates in the {\tt gaussianRing} are the entries in the
+     covariance matrix of the jointly normal random variables.  
+      
+    Example
+      R = gaussianRing 5;
+      gens R
+      compactMatrixForm =false;
+      covarianceMatrix R
 
+  SeeAlso
+    gaussianRing   
+///
 
+doc ///
+  Key 
+    (gaussianRing, Graph)
+  Headline
+    ring of Gaussian correlations of a graphical model coming from an undirected graph
+  Usage
+    gaussianRing G 
+  Inputs
+    G:Graph
+  Outputs
+    :Ring
+      a polynomial ring with indeterminates $s_{(i,j)}$ and $k_{(i,j)}$      
+  Description
+    Text
+     This function creates a polynomial ring with indeterminates $s_{(i,j)}$ for $1 \leq i \leq j \leq n$,
+     where $n$ is the number of vertices in $G$, and  $k_{(i,j)}$.
+     
+     The $s_{(i,j)}$ indeterminates in the {\tt gaussianRing} are the entries in the
+     covariance matrix of the jointly normal random variables.  
+       
+     The $k_{(i,j)}$ indeterminates in the {\tt gaussianRing} are the nonzero entries in the concentration
+     matrix in the graphical model associated to the undirected graph.
+    
+    Example
+      G = graph({{a,b},{b,c},{c,d},{a,d}})
+      R = gaussianRing G
+      gens R
+      covarianceMatrix R
+      undirectedEdgesMatrix R
+  SeeAlso
+     gaussianRing 
+///
+
+doc ///
+  Key 
+    (gaussianRing, Bigraph)
+  Headline
+    ring of Gaussian correlations of a graphical model coming from a bigraph
+  Usage
+    gaussianRing G 
+  Inputs
+    G:Bigraph
+  Outputs
+    :Ring
+      a ring with indeterminates $s_{(i,j)}, p_{(i,j)}$       
+  Description
+    Text
+      A {\tt gaussianRing} of a bidirected graph is built 
+      as a {\tt gaussianRing} of a mixed graph with only bidirected edges, see @TO (gaussianRing,MixedGraph)@.
+
+    Example
+      G = bigraph {{a,{b,c}}, {b,{c,d}}, {c,{}}, {d,{}}};
+      R = gaussianRing G;
+      gens R
+      covarianceMatrix R
+      directedEdgesMatrix R
+      bidirectedEdgesMatrix R
+  
+  SeeAlso
+     gaussianRing   
+///
+
+doc ///
+  Key 
+    (gaussianRing, Digraph)
+  Headline
+    ring of Gaussian correlations of a graphical model coming from a digraph
+  Usage
+    gaussianRing G 
+  Inputs
+    G:Digraph
+  Outputs
+    :Ring
+      a polynomial ring with indeterminates $s_{(i,j)},l_{(i,j)}, p_{(i,j)}$ .      
+  
+  Description
+    Text
+      This function creates a polynomial ring in the indeterminates $s_{(i,j)}$ associated to the 
+      covariance matrix of the model plus two new lists of indeterminates:
+      
+      - The $l_{(i,j)}$ indeterminates consist of regression coefficients associated to the directed
+      edges in the graph.
+      
+      - The $p_{(i,j)}$ indeterminates  in the {\tt gaussianRing} are the nonzero entries in the covariance matrix of the error terms
+      in the graphical model associatd to a mixed graph with bidirected edges. 
+      
+      Note that since version 2.0 of the package, 
+      {\tt gaussianRing} of a directed graph is built as a {\tt gaussianRing} of a mixed graph with only directed edges, see @TO (gaussianRing,MixedGraph)@.
+
+    Example
+      G = digraph {{a,{b,c}}, {b,{c,d}}, {c,{}}, {d,{}}};
+      R = gaussianRing G;
+      gens R
+      covarianceMatrix R
+      directedEdgesMatrix R
+      bidirectedEdgesMatrix R
+
+///
+
+doc ///
+  Key 
+    (gaussianRing, MixedGraph)
+  Headline
+    ring of Gaussian correlations of a graphical model coming from a mixed graph
+  Usage 
+    gaussianRing G 
+  Inputs
+    G:MixedGraph
+  Outputs
+    :Ring
+      a polynomial ring with indeterminates $s_{(i,j)},k_{(i,j)},l_{(i,j)},p_{(i,j)}$ 
+  Description
+    Text
+      This function accepts a mixed graph as input. The outputed ring contains the indeterminates $s_{(i,j)}$ associated to the 
+      covariance matrix of the model plus two or three new lists of indeterminates depending on the type of edges of the graph:
+      
+      - The $k_{(i,j)}$ indeterminates in the {\tt gaussianRing} are the nonzero entries in the concentration
+      matrix in the graphical model associated to the undirected graph.
+    
+      - The $l_{(i,j)}$ indeterminates consist of regression coefficients associated to the directed
+      edges in the graph.
+      
+      - The $p_{(i,j)}$ indeterminates  in the {\tt gaussianRing} are the nonzero entries in the covariance matrix of the error terms
+      in the graphical model associatd to a mixed graph with bidirected edges. 
+      
+      Mixed graphs in this package can be of two different types depending on their edges:
+      
+      {\bf Directed and bidirected edges}: two new lists of indeterminates. For each  directed edge $i \to j$ 
+      in the mixed graph there is an indeterminate, denoted by default $l_{(i,j)}$, corresponding to the associated direct causal effect parameter in the model. 
+      For each  bidirected edge $i$<->$j$ there is an indeterminate, denoted by default $p_{(i,j)}$, corresponding to the associated noise parameter. Finally,
+      for each node $i$, there is an indeterminate $p_{(i,i)}$. 
+     
+    Example
+      G = mixedGraph(digraph {{b,{c,d}},{c,{d}}},bigraph {{a,d}})
+      R = gaussianRing G
+      gens R
+      covarianceMatrix R
+      directedEdgesMatrix R
+      bidirectedEdgesMatrix R
+    
+    Text
+      {\bf Undirected, directed and bidirected edges}: three new lists of indeterminates. Besides the two already described above, 
+      undirected edges are dealt with in the same way as in {\tt gaussianRing} applied to @ofClass Graph@, 
+      with the corresponding indeterminates being $k_{(i,j)}$ by default.
+      
+      Only loopless mixed graphs are accepted and they must have a vertex ordering compatible with @TO partitionLMG@.
+      For more details about loopless mixed graphs, see the paper: 
+      Kayvan Sadeghi and Steffen Lauritzen, {\em Markov properties for mixed graphs}, Bernoulli, 20 (2014), no 2, 676-696.
+      
+      Be aware that several functions in this package that accept mixed graphs are still not implemented for mixed graphs with undirected edges: @TO gaussianParametrization@,
+      @TO gaussianVanishingIdeal@, @TO trekIdeal@, @TO trekSeparation@, @TO identifyParameters@.
+      
+    Example
+      G = mixedGraph(digraph {{1,3},{2,4}},bigraph {{3,4}},graph {{1,2}});
+      R = gaussianRing G
+      gens R
+      covarianceMatrix R
+      undirectedEdgesMatrix R
+      directedEdgesMatrix R
+      bidirectedEdgesMatrix R
+
+  SeeAlso
+     gaussianRing 
+
+  
+///
 ---------------------------------------
 -- Documentation gaussianMatrices    --
 ---------------------------------------
@@ -2024,7 +2278,7 @@ doc///
      covarianceMatrix
      (covarianceMatrix,Ring)
    Headline
-     the covariance matrix of a Gaussian graphical model
+     covariance matrix of a Gaussian graphical model
    Usage
      covarianceMatrix R
    Inputs
@@ -2076,12 +2330,12 @@ doc///
      bidirectedEdgesMatrix
      (bidirectedEdgesMatrix,Ring)
    Headline
-     the matrix corresponding to the bidirected edges of a mixed graph
+     matrix corresponding to the bidirected edges of a bigraph or a mixed graph
    Usage
      bidirectedEdgesMatrix R
    Inputs
      R:Ring
-       which should be a gaussianRing created with a mixed graph
+       which should be a gaussianRing created with @ofClass Bigraph@ or @ofClass MixedGraph@
    Outputs
      :Matrix
        the $n \times{} n$ covariance matrix of the noise variables in the Gaussian graphical model of a mixed graph.
@@ -2098,6 +2352,22 @@ doc///
        G = mixedGraph(digraph {{b,{c,d}},{c,{d}}},bigraph {{a,d}})
        R = gaussianRing G
        compactMatrixForm =false;
+       bidirectedEdgesMatrix R
+     
+     Text
+       For mixed graphs that also have undirected edges, 
+       the size of the matrix coincides with the number of elements in @TO compW@,
+       which depends on the vertex partition built in @TO partitionLMG@.
+     Example
+      G = mixedGraph(digraph {{1,3},{2,4}},bigraph {{3,4}},graph {{1,2}});
+      R = gaussianRing G
+      bidirectedEdgesMatrix R
+
+     Text
+       Bidirected graphs can also be considered:   
+     Example
+       G = bigraph {{a,d},{b},{c}}
+       R = gaussianRing G
        bidirectedEdgesMatrix R
 
    SeeAlso
@@ -2116,12 +2386,12 @@ doc///
      directedEdgesMatrix
      (directedEdgesMatrix,Ring)
    Headline
-     the matrix corresponding to the directed edges of a mixed graph
+     matrix corresponding to the directed edges of a digraph or a mixed graph
    Usage
      directedEdgesMatrix R
    Inputs
      R:Ring
-       which should be a gaussianRing created with a mixed graph
+       which should be a gaussianRing created with @ofClass Digraph@ or @ofClass MixedGraph@
    Outputs
      :Matrix
        the $n \times{} n$ matrix of direct causal effect indeterminates. 
@@ -2140,13 +2410,9 @@ doc///
        compactMatrixForm =false;
        directedEdgesMatrix R
 
-     Text
-       To obtain the directed edges matrix of a {\tt digraph}, it should first be embedded into a mixed graph as follows.
-
      Example
        D = digraph{{a,b},{c,d}}
-       Dembedded = mixedGraph(D, bigraph{})
-       directedEdgesMatrix gaussianRing Dembedded
+       directedEdgesMatrix gaussianRing D
 
    SeeAlso
      gaussianRing
@@ -2164,12 +2430,12 @@ doc///
      gaussianParametrization
      (gaussianParametrization,Ring)
    Headline
-     the parametrization of the covariance matrix in terms of treks
+     parametrization of the covariance matrix in terms of treks
    Usage
      M = gaussianParametrization(R)
    Inputs
      R:Ring
-       which should be a gaussianRing
+       which should be a gaussianRing of a mixed graph without undirected edges
    Outputs
      M:Matrix
        the parametrization of the covariance matrix in terms of treks
@@ -2278,7 +2544,7 @@ doc///
      H = identifyParameters(R)
    Inputs
      R:Ring
-       which should be a gaussianRing created with a mixed graph
+       which should be a gaussianRing created with a mixed graph without undirected edges
    Outputs
      H:HashTable
        where H#p is the ideal of equations involving only the parameter $p$ and the covariances $s_{(i,j)}$
@@ -2322,14 +2588,14 @@ doc///
      (trekIdeal,Ring,Digraph)
      (trekIdeal,Ring,Graph)
    Headline
-     the trek separation ideal of a mixed graph 
+     trek separation ideal of a mixed graph 
    Usage
      I = trekIdeal(R,G) 
    Inputs
      R:Ring
        which should be a gaussianRing
      G:Graph
-      @ofClass Graph@, or a directed acyclic graph @ofClass Digraph@, 
+      @ofClass Graph@, or @ofClass Digraph@ with no cycles, 
       or @ofClass MixedGraph@ with directed and bidirected edges
    Outputs
      I:Ideal
@@ -2339,6 +2605,8 @@ doc///
        For mixed graphs, the ideal corresponding to all trek separation statements {A,B,CA,CB} (where A,B,CA,CB
        are disjoint lists of vertices of G) is generated by the r+1 x r+1 minors of the submatrix of the covariance matrix M = (s_{(i,j)}), whose
        rows are in A, and whose columns are in B, and where r = #CA+#CB.
+       
+       This function is not yet implemented for mixed graphs with undirected edges.
        
        These ideals are described in more detail by Sullivant, Talaska and Draisma in "Trek Separation for Gaussian Graphical Models"
        Annals of Statistics 38 no.3 (2010) 1665--1685
@@ -2382,7 +2650,7 @@ doc///
      trekSeparation
      (trekSeparation,MixedGraph)
    Headline
-     the trek separation statements of a mixed graph 
+     trek separation statements of a mixed graph 
    Usage
      trekSeparation(G)
    Inputs
@@ -2424,7 +2692,7 @@ doc ///
   Key
     sVariableName
   Headline
-    optional input to choose the variable for the covariance matrix
+    optional input to choose the variable names for the covariance matrix
   Description
     Text
       Put {\tt sVariableName =>  Symbol} for a choice of a symbol s as an argument in the function @TO gaussianRing@
@@ -2457,7 +2725,7 @@ doc ///
   Key
     lVariableName
   Headline
-    optional input to choose the variable name for the regression matrix
+    optional input to choose the variable names for the regression matrix
   Description
     Text
       Put {\tt lVariableName => Symbol} for a choice of a symbol l as an argument in 
@@ -2489,7 +2757,7 @@ doc ///
   Key
     pVariableName
   Headline
-    optional input to choose the variable name for the error covariance matrix
+    optional input to choose the variable names for the covariance matrix of the error terms
   Description
     Text
       Put {\tt pVariableName => Symbol} for a choice of a symbol p as an argument in 
@@ -2509,7 +2777,7 @@ doc ///
       a @TO Symbol@ or a @TO String@ 
   Description
     Text
-      The option {\tt gaussianRing(G,pVariableName=>q)} changes the symbol used for intedeterminates in the error covariance matrix 
+      The option {\tt gaussianRing(G,pVariableName=>q)} changes the symbol used for intedeterminates in the covariance matrix of the error terms 
       in a polynomial ring created with @TO gaussianRing@.
     
     Example
@@ -2524,7 +2792,7 @@ doc ///
   Key
     kVariableName
   Headline
-    optional input to choose variable name for concentration matrix in gaussianRing
+    optional input to choose the variable names for concentration matrix in gaussianRing
   Description
     Text
       The option {\tt kVariableName => Symbol} changes the symbol used for intedeterminates in a polynomial ring created with @TO gaussianRing@.
@@ -2556,6 +2824,354 @@ doc ///
       gens Rnew
 ///
 
+----------------------------------------------------------------------------------
+-- Documentation of hash table gaussianRingData and its keys     --
+----------------------------------------------------------------------------------
+doc ///
+  Key
+    gaussianRingData
+  Headline
+    hash table with main parameters of a gaussian ring
+  Description
+    Text
+     The contents of gaussianRingData depend on the type of gaussian ring.
+     
+     First, we show an example of a gaussian ring with 5 variables
+    
+    Example
+     R = gaussianRing 5
+     gaussianRingData
+     
+    Text
+     In case of the gaussian ring of a graph, there are two options. First one, is when the graph is
+     of class @TO Graph@ .
+     
+    Example 		 	    
+     R=gaussianRing graph {{1,2},{2,3}}
+     R.gaussianRingData
+     
+    Text
+     If the graph is of any other class -i.e.,  @TO Bigraph@,  @TO Digraph@,  
+     @TO MixedGraph@ - then it is internally converted to a @TO MixedGraph@ and
+     the gaussianRingData has the same structure.
+     
+    Example 
+     U = graph {{1,2},{2,3}}
+     B = bigraph{{4,5}}
+     D = digraph {{1,4}}
+
+     R1 = gaussianRing B
+     R2 = gaussianRing D
+     R3 = gaussianRing mixedGraph(U,B,D)
+     
+     R1.gaussianRingData
+     R2.gaussianRingData
+     R3.gaussianRingData	 	 
+  SeeAlso
+    gaussianRing
+    kVar
+    pVar
+    lVar
+    sVar
+    compU
+    compW
+    nn    
+///
+
+doc ///
+  Key
+    nn
+  Headline
+     key in hash table gaussianRingData: total number of variables 
+  Description
+    Text
+     This key is present in every gaussianRingData hash table
+    
+    Example
+     R = gaussianRing 5
+     R.gaussianRingData
+     
+     U = graph {{1,2},{2,3}}
+     B = bigraph{{4,5}}
+     D = digraph {{1,4}}
+
+     R1 = gaussianRing B
+     R2 = gaussianRing D
+     R3 = gaussianRing U
+     R4 = gaussianRing mixedGraph(U,B,D)
+     
+     R1.gaussianRingData
+     R2.gaussianRingData
+     R3.gaussianRingData
+     R4.gaussianRingData
+     	 	 
+  SeeAlso
+    gaussianRingData
+    kVar
+    pVar
+    lVar
+    sVar
+    compU
+    compW   
+///
+
+doc ///
+  Key
+    kVar
+  Headline
+     key in hash table gaussianRingData: labels of k variables
+  Description
+    Text
+     This key is present in every gaussianRingData that comes from a graph. 
+     It is equal to the value of the optional input  @TO [gaussianRing, kVariableName]@.
+    
+    Example
+     U = graph {{1,2},{2,3}}
+     B = bigraph{{4,5}}
+     D = digraph {{1,4}}
+
+     R1 = gaussianRing B
+     R2 = gaussianRing D
+     R3 = gaussianRing U
+     R4 = gaussianRing mixedGraph(U,B,D)
+     
+     R1.gaussianRingData
+     R2.gaussianRingData
+     R3.gaussianRingData
+     R4.gaussianRingData
+     	 	 
+  SeeAlso
+    kVariableName 
+    gaussianRingData
+    pVar
+    lVar
+    sVar
+    compU
+    compW
+    nn   
+///
+
+doc ///
+  Key
+    sVar
+  Headline
+     key in hash table gaussianRingData: labels of s variables
+  Description
+    Text
+     This key is present in every gaussianRingData that comes from a graph. 
+     It is equal to the value of the optional input  @TO [gaussianRing, sVariableName]@.
+    
+    Example
+     U = graph {{1,2},{2,3}}
+     B = bigraph{{4,5}}
+     D = digraph {{1,4}}
+
+     R1 = gaussianRing B
+     R2 = gaussianRing D
+     R3 = gaussianRing U
+     R4 = gaussianRing mixedGraph(U,B,D)
+     
+     R1.gaussianRingData
+     R2.gaussianRingData
+     R3.gaussianRingData
+     R4.gaussianRingData
+     	 	 
+  SeeAlso
+    sVariableName 
+    gaussianRingData
+    pVar
+    lVar
+    kVar
+    compU
+    compW
+    nn   
+///
+
+doc ///
+  Key
+    pVar
+  Headline
+     key in hash table gaussianRingData: labels of p variables
+  Description
+    Text
+     This key is present in every gaussianRingData that comes from a graph. 
+     It is equal to the value of the optional input  @TO [gaussianRing, pVariableName]@.
+    
+    Example
+     U = graph {{1,2},{2,3}}
+     B = bigraph{{4,5}}
+     D = digraph {{1,4}}
+
+     R1 = gaussianRing B
+     R2 = gaussianRing D
+     R3 = gaussianRing U
+     R4 = gaussianRing mixedGraph(U,B,D)
+     
+     R1.gaussianRingData
+     R2.gaussianRingData
+     R3.gaussianRingData
+     R4.gaussianRingData
+     	 	 
+  SeeAlso
+    pVariableName 
+    gaussianRingData
+    kVar
+    lVar
+    sVar
+    compU
+    compW
+    nn   
+///
+
+doc ///
+  Key
+    lVar
+  Headline
+     key in hash table gaussianRingData: labels of l variables
+  Description
+    Text
+     This key is present in every gaussianRingData that comes from a graph. 
+     It is equal to the value of the optional input  @TO [gaussianRing, lVariableName]@.
+    
+    Example
+     U = graph {{1,2},{2,3}}
+     B = bigraph{{4,5}}
+     D = digraph {{1,4}}
+
+     R1 = gaussianRing B
+     R2 = gaussianRing D
+     R3 = gaussianRing U
+     R4 = gaussianRing mixedGraph(U,B,D)
+     
+     R1.gaussianRingData
+     R2.gaussianRingData
+     R3.gaussianRingData
+     R4.gaussianRingData
+     	 	 
+  SeeAlso
+    lVariableName 
+    gaussianRingData
+    kVar
+    pVar
+    sVar
+    compU
+    compW
+    nn   
+///
+
+doc ///
+  Key
+    compU
+  Headline
+     key in hash table gaussianRingData: component of undirected edges in vertex set of a mixed graph
+  Description
+    Text
+     This key is present in every gaussianRingData that comes from a graph of class @TO MixedGraph@. 
+     It is equal to the set of vertices that are incident to undirected edges. For more details,
+     check component U in @TO partitionLMG@.
+    
+    Example 
+     U = graph {{1,2},{2,3}}
+     B = bigraph{{4,5}}
+     D = digraph {{1,4}}
+     R = gaussianRing mixedGraph(U,B,D)	
+     R.gaussianRingData
+     
+    Text 
+     Since the gaussian rings of graphs of classes @TO Digraph@ and @TO Bigraph@ are
+     created by first changing the class to  @TO MixedGraph@, the key compU is also
+     present in the gaussianRingData hashtables of these two classes of graphs and
+     the corresponding value is computed according to the rules described in 
+     @TO partitionLMG@.
+    
+    Example
+     U = graph {{1,2},{2,3}}
+     B = bigraph{{4,5}}
+     D = digraph {{1,4}}
+
+     R1 = gaussianRing B
+     R2 = gaussianRing D
+         
+     R1.gaussianRingData
+     R2.gaussianRingData
+
+     	 	 
+  SeeAlso
+    partitionLMG
+    gaussianRingData
+    kVar
+    pVar
+    sVar
+    lVar
+    compW
+    nn   
+///
+
+doc ///
+  Key
+    compW
+  Headline
+     key in hash table gaussianRingData: component of bidirected edges in vertex set of a mixed graph
+  Description
+    Text
+     This key is present in every gaussianRingData that comes from a graph of class @TO MixedGraph@. 
+     It is equal to the set of vertices that are incident to bidirected edges. For more details,
+     check component W in @TO partitionLMG@.
+    
+    Example 
+     U = graph {{1,2},{2,3}}
+     B = bigraph{{4,5}}
+     D = digraph {{1,4}}
+     R = gaussianRing mixedGraph(U,B,D)	
+     R.gaussianRingData
+     
+    Text 
+     Since the gaussian rings of graphs of classes @TO Digraph@ and @TO Bigraph@ are
+     created by first changing the class to  @TO MixedGraph@, the key compW is also
+     present in the gaussianRingData hashtables of these two classes of graphs and
+     the corresponding value is computed according to the rules described in 
+     @TO partitionLMG@.
+    
+    Example
+     U = graph {{1,2},{2,3}}
+     B = bigraph{{4,5}}
+     D = digraph {{1,4}}
+
+     R1 = gaussianRing B
+     R2 = gaussianRing D
+         
+     R1.gaussianRingData
+     R2.gaussianRingData
+
+     	 	 
+  SeeAlso
+    partitionLMG
+    gaussianRingData
+    kVar
+    pVar
+    sVar
+    lVar
+    compU
+    nn   
+///
+--------------------------------------------
+-- Documentation graphType
+--------------------------------------------
+doc ///
+  Key
+     graphType
+  Headline
+     class of graph used to generate a gaussian ring   	 	 
+  Description
+    Text 
+     For a {\tt gaussianRing} R generated with @ofClass Digraph@ and @ofClass Bigraph@
+     the class we retrieve when typing R.graph is MixedGraph. This is consistent with the treatment
+     of such objects. Therefore, this variable is essentially used to differentiate graphs
+     from @ofClass Graph@ and @ofClass MixedGraph@.  
+  SeeAlso
+     gaussianRing
+     gaussianRingData
+///
 --------------------------------------------
 -- Documentation conditionalIndependenceIdeal
 --------------------------------------------
@@ -2565,7 +3181,7 @@ doc///
     (conditionalIndependenceIdeal, Ring, List)
     (conditionalIndependenceIdeal, Ring, List, List)
   Headline
-    the ideal of a list of conditional independent statements
+    ideal of a list of conditional independent statements
   Usage
     conditionalIndependenceIdeal(R,Stmts)
     conditionalIndependenceIdeal(R,Stmts,VarNames)
@@ -2575,9 +3191,11 @@ doc///
     Stmts:List
       list of conditional independence statements
     VarNames:List
-       list of names of random variables in conditional independence statements in $S$.  If this is omited
-       it is assumed that these are integers 1 to $n$ where $n$ is the number of variables in the
-       declaration of {\tt markovRing} or {\tt gaussianRing}
+       list of names of random variables in conditional independence statements in Stmts. This argument
+       allows to choose a subset of random variables and is only available for markov rings. By default, 
+       this is a list of integers 1 to $n$ where $n$ is the number of variables in the
+       declaration of {\tt markovRing} or {\tt gaussianRing}. If R is a gaussian ring, then only the
+       default input is accepted.
   Outputs
     :Ideal
       ideal of conditional independence relations
@@ -2684,12 +3302,13 @@ doc///
      undirectedEdgesMatrix
      (undirectedEdgesMatrix,Ring)
    Headline
-     the matrix corresponding to the edges of an undirected graph
+     matrix corresponding to the edges of an undirected graph
    Usage
      undirectedEdgesMatrix(R)
    Inputs
      R:Ring
-       which should be created with @TO gaussianRing@ created with a Graph
+       which should be created with @TO gaussianRing@ created with @ofClass Graph@ or
+       @ofClass MixedGraph@
    Outputs
      :Matrix
        the n x n symmetric concentration matrix of an undirected gaussian
@@ -2705,6 +3324,16 @@ doc///
        G = graph({{a,b},{b,c},{c,d},{a,d}})
        R = gaussianRing G
        compactMatrixForm =false;
+       K = undirectedEdgesMatrix(R)
+       
+     Text
+       For mixed graphs with other types of edges, 
+       the size of the matrix coincides with the number of elements in @TO compU@,
+       which depends on the vertex partition built in @TO partitionLMG@.
+       
+     Example
+       G = mixedGraph(digraph {{1,3},{2,4}},bigraph {{3,4}},graph {{1,2}});
+       R = gaussianRing G;
        K = undirectedEdgesMatrix(R)
    SeeAlso
      gaussianRing
@@ -2722,12 +3351,12 @@ doc ///
      gaussianVanishingIdeal
      (gaussianVanishingIdeal,Ring)
    Headline
-     the vanishing ideal of a Gaussian graphical model 
+     vanishing ideal of a Gaussian graphical model 
    Usage
      gaussianVanishingIdeal(R)
    Inputs
      R:Ring
-       created with @TO gaussianRing@  using a Graph, Digraph or Mixedgraph as input
+       created with @TO gaussianRing@  using a graphs of classes @TO Graph@,  @TO Digraph@ or  @TO MixedGraph@ without undirected edges as input. 
    Outputs
      :Ideal
         ideal in R
@@ -2735,7 +3364,7 @@ doc ///
      Text
        {\tt gaussianVanishingIdeal} computes the ideal in $R$ of homogeneous polynomial relations 
        on the variance-covariance parameters of a graphical model on $G$ as explained in 
-       ``Lectures on Algebraic Statistics'' by Drton, Sturmfels, and Sullivant.
+       Chapter 3.3 of ``Lectures on Algebraic Statistics'' by Drton, Sturmfels, and Sullivant.
        
      Example
        G = graph({{a,b},{b,c},{c,d},{a,d}})
@@ -2744,7 +3373,7 @@ doc ///
        ideal mingens J / print;
 
      Text
-       This method works for graphs, digraphs and mixedgraphs
+       This method works for graphs, digraphs and mixed graphs without undirected edges.
 
      Example
        G = digraph {{a,{b,c}}, {b,{c,d}}, {c,{}}, {d,{}}}
@@ -2753,13 +3382,56 @@ doc ///
        H = mixedGraph(digraph {{a,{c}},{b,{c}}, {c,{d}}},bigraph {{c,d}})
        S = gaussianRing H
        gaussianVanishingIdeal(S) 
-       
+     
+   Caveat
+     This method currently works on really small examples because it computes 
+     the vanishing ideal as an elimination ideal.  
    SeeAlso
      gaussianRing
      trekIdeal
+     OldVersion
 ///
 
+-----------------------------------------
+-- Documentation OldVersion--
+-----------------------------------------
+doc ///
+  Key
+     OldVersion
+  Headline
+     optional argument in gaussianVanishingIdeal to use old method for gaussianRings coming from directed graphs    	 	 
+  Description
+    Text
+     Alternative computation of the vanishing ideal of a Gaussian directed graphical
+     model using (2) from Seth Sullivant, Kelli Talaska, and Jan Draisma, 
+     {\em Trek separation for Gaussian graphical models}, The Annals of Statistics 
+     38.3 (2010): 1665-1685.
+       
+  SeeAlso
+     gaussianVanishingIdeal
+///
 
+doc ///
+  Key
+    [gaussianVanishingIdeal, OldVersion]
+  Headline
+     optional argument in gaussianVanishingIdeal to use old method for gaussianRings coming from directed graphs    	 	 
+  Usage
+    gaussianVanishingIdeal(R,G,OldVersion=>false)
+  Inputs
+    b:Boolean
+       false by default
+  Description
+    Text
+     By default, @TO gaussianVanishingIdeal@ uses the code of the current version. However, if the graph
+     only has directed edges, the user can choose to use the code from the previous version which is based on
+     (2) from Seth Sullivant, Kelli Talaska, and Jan Draisma, 
+     {\em Trek separation for Gaussian graphical models}, The Annals of Statistics 
+     38.3 (2010): 1665-1685.
+     
+  SeeAlso
+     gaussianVanishingIdeal	
+///
 -----------------------------------------
 -- Documentation discreteVanishingIdeal--
 -----------------------------------------
@@ -2768,7 +3440,7 @@ doc///
      discreteVanishingIdeal
      (discreteVanishingIdeal,Ring,Digraph) 
    Headline
-     the vanishing ideal of a discrete graphical model 
+     vanishing ideal of a discrete graphical model 
    Usage
      discreteVanishingIdeal(R,G)
    Inputs
@@ -2908,7 +3580,8 @@ assert(ideal gens R == ideal flatten correctOutput )
 TEST /// 
 G = digraph {{a,{b,c}}, {b,{c,d}}, {c,{}}, {d,{}}}
 R = gaussianRing G
-assert(sort gens R === sort {s_(a,a), s_(a,b), s_(a,c), s_(a,d), s_(b,b), s_(b,c), s_(b,d), s_(c,c), s_(c,d), s_(d,d)})
+assert(sort gens R === sort {l_(a,c),l_(a,b),l_(b,c),l_(b,d),p_(a,a),p_(b,b),p_(c,c),p_(d,d),s_(a,a),s_(a,b),
+     s_(a,c),s_(a,d),s_(b,b),s_(b,c),s_(b,d),s_(c,c),s_(c,d),s_(d,d)})
 ///
 
 TEST ///

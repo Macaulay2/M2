@@ -1,11 +1,13 @@
 #include "M2FreeAlgebra.hpp"
+
+#include <assert.h>
+#include <iostream>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "monomial.hpp"
 #include "relem.hpp"
-#include "ringmap.hpp"
-
-#include <vector>
-#include <string>
-#include <iostream>
 
 PolyList copyPolyVector(const M2FreeAlgebraOrQuotient* A,
                         const ConstPolyList& polys)

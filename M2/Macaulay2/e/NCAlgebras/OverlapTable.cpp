@@ -1,5 +1,8 @@
 #include "OverlapTable.hpp"
 
+#include <iostream>
+#include <type_traits>
+
 // will call find to see if degree exists, and if not will call
 // insert.  If degree exists, append overlap to value of degree
 auto OverlapTable::insert(int deg, bool isGenerator, Overlap o) -> void

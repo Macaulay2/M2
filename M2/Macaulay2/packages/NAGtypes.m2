@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.14",
-     Date => "Aug 2019",
+     Version => "1.16",
+     Date => "Dec 2020",
      Headline => "types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -11,7 +11,7 @@ newPackage(
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
      Keywords => {"Numerical Algebraic Geometry"},
-     PackageExports => {"ReesAlgebra"}, -- avoids collision with "Jacobian" 
+     PackageExports => {"NumericalLinearAlgebra"}, 
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => false 
@@ -37,7 +37,7 @@ export {
      "isRealPoint", "realPoints", "residual", "origin",
      "Norm", 
      "toAffineChart",
-     "Tolerance", "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
+     "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",
@@ -52,10 +52,8 @@ export {
      "evaluate", "evaluateJacobian",
      "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", 
      "ContinuationParameter", "SpecializationRing",
-     "polySystem", "parameters",
+     "polySystem", "parameters"
      -- "segmentHomotopy"(defined in extraNAGtypes), "substituteContinuationParameter"(delete???), "specializeContinuationParameter"(delete???),
-     -- dual space
-     "DualSpace", "BasePoint", "dualSpace", "PolySpace", "polySpace", "Reduced", "Gens", "Space"
      }
 
 -- DEBUG Core ----------------------------------------
@@ -265,49 +263,6 @@ generalEquations WitnessSet := (W) -> (
 	  witnessSet(ideal neweqns, slice W, points W))
      )
 
--------------------------------------------
--- PolySpace
---   Basis: a row matrix of polynomials representing dual functionals
--- (Basis is expected to be linearly independent and reduced w.r.t. the monomial order)
-PolySpace = new Type of MutableHashTable
-globalAssignment PolySpace
-polySpace = method(Options => {Reduced => false})
-polySpace PolySpace := S -> new PolySpace from S
-polySpace Matrix := o -> M -> (
-    assert(numrows M == 1);
-    new PolySpace from {Gens=>M,Reduced=>o.Reduced}
-    )
-
--------------------------------------------
--- DualSpace 
---   Space: a PolySpace (closed under derivation) 
---   BasePoint: a point of localization
---   Tolerance: tolerance used to compute the DualSpace or associated to it; 0 in the exact setting
-DualSpace = new Type of MutableHashTable
-globalAssignment DualSpace
-dualSpace = method()
-dualSpace DualSpace := L -> new DualSpace from L
-dualSpace (PolySpace, Point) := (S,p)-> (
-    assert(numgens ring S.Gens == #coordinates p);
-    new DualSpace from {Space=>S,BasePoint=>p}
-    )
-dualSpace (Matrix, Point) := (M,p)-> dualSpace(polySpace M,p)
--- what other constructors would we have?
-
-gens PolySpace := o -> S -> S.Gens
-gens DualSpace := o -> L -> gens L.Space
-
-net PolySpace := S -> net gens S
-net DualSpace := L -> net gens L
-
-dim PolySpace := S -> numcols gens S
-dim DualSpace := L -> numcols gens L
-
-ring PolySpace := S -> ring gens S
-ring DualSpace := L -> ring gens L
-
-point DualSpace := L -> L.BasePoint
-
 
 -- extra types used (at this point) only by NumericalAlgebraicGeometry 
 export { "Homotopy", "ParameterHomotopy", "SpecializedParameterHomotopy", 
@@ -350,7 +305,7 @@ p3 =  point {{.999,2.3+ii}}
 assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
 ///
 
-
+load "./NAGtypes/PolyDualSpaces.m2"
 load "./NAGtypes/WSet-ambient.m2"
 load "./NAGtypes/WSet-proxy.m2"
 load "./NAGtypes/WSet-projective.m2"

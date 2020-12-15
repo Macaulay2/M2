@@ -4,11 +4,18 @@
 #include "util.hpp"
 #include "text-io.hpp"
 #include "monoid.hpp"
-#include "varpower.hpp"
-#include "ntuple.hpp"
-#include "polyring.hpp"
+
+#include <assert.h>
+#include <string.h>
+
+#include "buffer.hpp"
+#include "error.h"
 #include "exceptions.hpp"
+#include "interface/monomial-ordering.h"
+#include "ntuple.hpp"
 #include "overflow.hpp"
+#include "polyring.hpp"
+#include "varpower.hpp"
 
 Monoid *Monoid::trivial_monoid = 0;
 

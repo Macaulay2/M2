@@ -2,6 +2,10 @@
 uninstallAllPackages()
 
 restart
+check "NumericalLinearAlgebra"
+installPackage("NumericalLinearAlgebra", RerunExamples=>true)
+
+restart
 check "NAGtypes"
 installPackage("NAGtypes", RerunExamples=>true)
 
@@ -14,8 +18,8 @@ check "NumericalAlgebraicGeometry"
 installPackage("NumericalAlgebraicGeometry", RerunExamples=>true)
 
 restart
-check "NAGtools"
-installPackage("NAGtools", RerunExamples=>true)
+check "NoetherianOperators"
+installPackage("NoetherianOperators", RerunExamples=>true)
 
 restart
 check "MonodromySolver"

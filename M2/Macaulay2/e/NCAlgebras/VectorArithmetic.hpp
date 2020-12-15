@@ -1,9 +1,12 @@
 #ifndef __vector_arithmetic__
 #define __vector_arithmetic__
 
-#include "../ring.hpp"
+#include "engine-includes.hpp"
+
 #include "Range.hpp"
-#include "MemoryBlock.hpp"
+
+class Ring;
+union ring_elem;
 
 class VectorArithmetic
 {

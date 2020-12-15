@@ -460,14 +460,7 @@ const Matrix *Matrix::basis(M2_arrayint lo_degree,
                             int limit) const
 {
   return KBasis::k_basis(
-                         this,
-                         lo_degree,
-                         hi_degree,
-                         heft,
-                         vars,
-                         do_truncation,
-                         limit
-                         );
+      this, lo_degree, hi_degree, heft, vars, do_truncation, limit);
 }
 
 // Local Variables:

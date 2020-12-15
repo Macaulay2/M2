@@ -26,6 +26,7 @@ cmake-appleclang:
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
 		../../../..
+#		-DLINTING=on
 
 cmake-debug-appleclang:
 	mkdir -p builds.tmp/cmake-debug-appleclang

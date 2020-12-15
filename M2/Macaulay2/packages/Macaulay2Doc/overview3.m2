@@ -350,7 +350,7 @@ document {
      UL {
 	  TOH "factor",
 	  TOH "gcd",
-	  TOH "minimalPrimes",
+	  TOH "MinimalPrimes :: minimalPrimes",
 	  TOH "irreducibleCharacteristicSeries"
 	  }
      }

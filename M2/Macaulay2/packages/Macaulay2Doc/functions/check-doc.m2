@@ -50,7 +50,7 @@ Node
     pkg:Package
       or String, the package to test
     i:ZZ
-      the index of the test to run
+      the index of the test to run or -1 to run all tests
     UserMode=>Boolean
       if true, do not use the @TT "-q"@ in arguments to the Macaulay2 executable when running tests,
       thereby allowing it to load the user's @TO "initialization file"@, allowing it to load packages
@@ -58,6 +58,8 @@ Node
       and allowing packages it loads to read their configuration files from the user's
       @TO2 {"applicationDirectory", "application directory"}@. If false, the @TT "-q"@ argument is added.
       If @TO "null"@, then add @TT "-q"@ if it appears as an option in @TO "commandLine"@.
+    Verbose=>Boolean
+      if true, then print the output of all failing tests
   Consequences
     Item
       the tests in the package @TT "pkg"@ are run (in separate Macaulay2 processes, with the random number

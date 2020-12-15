@@ -1,15 +1,21 @@
 #ifndef _polynomial_hpp_
 #define _polynomial_hpp_
 
-#include "ringelem.hpp"
-#include "engine.h"
+#include <M2/math-include.h>
+#include "engine-includes.hpp"
 
-class buffer;
-class Ring;
+#include <assert.h>
 
-#include "ring.hpp"
+#include <algorithm>
 #include <iostream>
-class M2FreeAlgebra;
+#include <iterator>
+#include <utility>
+#include <vector>
+
+#include "newdelete.hpp"
+#include "ringelem.hpp"
+#include "style.hpp"
+
 using IntVector = VECTOR(int);
 // using IntVector = std::vector<int>;
 

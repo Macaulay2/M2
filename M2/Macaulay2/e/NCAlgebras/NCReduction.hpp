@@ -1,8 +1,16 @@
 #ifndef __ncreduction_hpp__
 #define __ncreduction_hpp__
 
-#include "NCGroebner.hpp"
+#include <stddef.h>
+#include <memory>
 #include <string>
+#include <utility>
+
+#include "Polynomial.hpp"
+#include "ringelem.hpp"
+
+class FreeAlgebra;
+class Word;
 
 class PolynomialHeap
 {

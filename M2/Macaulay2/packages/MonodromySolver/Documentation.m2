@@ -30,13 +30,12 @@ doc ///
         Text
             @TO solveFamily@ is blackbox solver that can work with @TO SLPexpressions@ or the @TO PolySystem@ type. Here is an example illustrating how to solve a parametric family for specific parameter values.
         Example
-    	    setRandomSeed 0
-	    declareVariable \ {A,B,C,D,X,Y}
-	    PS = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B}, {C*(Y+2)^2+D}})
-	    solveFamily(point{{1,1,1,1}}, PS)
-	    R=CC[a,b,c,d][x,y]
-	    F=polySystem {a*(x-1)^2-b, c*(y+2)^2+d}
-	    solveFamily(point{{1,1,1,1}}, F)
+            setRandomSeed 0;
+            declareVariable \ {A,B,C,D,X,Y};
+            F = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B}, {C*(Y+2)^2+D}});
+            p0 = point{{1,1,1,1}};
+            sols = solveFamily(p0, F, NumberOfNodes=>3);
+            for i from 0 to 3 list norm(evaluate(F, p0, sols#i))
 	Text
 	    @TO monodromySolve@ is the core function called by @TO solveFamily@. Its default setting are less conservative and may be faster at the expense of reliability: see @TO MonodromySolverOptions@. For non-parametric systems, the solver @TO sparseMonodromySolve@ essentially calls @TO solveFamily @ assuming the genericity conditions of the Bernstein-Kurhnirenko theorem are satisfied.
         Text
@@ -66,16 +65,18 @@ doc ///
     Description
         Text
             Blackbox monodromy solver for a square polynomial system without parameters.
-            The example below finds all six intersection of a generic cubic with its quadratic polar curve.
+            The example below finds all six intersection of a generic cubic F with its quadratic polar curve P.
 	    Note: this method requires PHCpack.
         Text
     
         Example
-            setRandomSeed 0;
+            setRandomSeed 2020;
             R=CC[x,y,z];
             F=random(3,R);
             P=sum apply(gens R,g->diff(g,F)*random CC);
-            sparseMonodromySolve polySystem {F,P,random(1,R)-1}
+            PS = polySystem {F,P,random(1,R)-1};
+            sols = sparseMonodromySolve PS;
+            for i from 0 to 5 list norm evaluate(PS, sols#i)
         Text
             For systems with dense support such as the above, the total number of paths tracked is generally not optimal, though timings may 
             be comparable.
@@ -104,12 +105,13 @@ doc ///
     Description
         Text
             The output of @TO monodromySolve @ is opaque. This method is intended for users uninterested in the underlying
-            @TO HomotopyGraph @ and its satellite data. If 
+            @TO HomotopyGraph @ and its satellite data. When the number of solutions is small, it can help to increase options like @TO NumberOfNodes@ or @TO NumberOfEdges@ above their default value, as shown here:
         Example
+            setRandomSeed 0
             R = CC[a,b,c,d,e,f][x,y];
             q  = a*x^2+b*y+c;
             l = d*x+e*y+f;
-            (sys, sols) = solveFamily polySystem {q,l}
+            (sys, sols) = solveFamily(polySystem{q,l}, NumberOfNodes=>3)
     ///
 
 doc ///
@@ -739,6 +741,53 @@ doc ///
     SeeAlso
         "member"
     ///
+
+
+doc ///
+    Key
+        monodromyGroup
+        (monodromyGroup, System)
+        (monodromyGroup, System, Point, List)
+    Headline
+        compute the group of permutations implicitly defined by a homotopy graph
+    Usage
+        monodromyGroup S
+        monodromyGroup(S, p0, x0s)
+    Inputs
+        S:System
+        p0:Point
+            a basepoint for the monodromy group in the parameter space for S
+        x0s:List
+            points in the fiber over S        
+        FileName=>String
+            a name for an output file suitable for reading by GAP. Default value is null.
+    Description
+        Text
+            If the monodromy group is full symmetric and the degree is large, then the default settings have a good chance of generating the whole group. However, you will need to use a bigger graph than the default settings to fully generate imprimitive groups, as in the following example of a Euclidean distance degree calculation.
+        Example
+            setRandomSeed 100;
+            declareVariable \ {t_1,t_2,u_0,u_1,u_2,u_3};
+            paramMatrix = gateMatrix{{u_0,u_1,u_2,u_3}};
+            varMatrix = gateMatrix{{t_1,t_2}};
+            phi = transpose gateMatrix{{t_1^3, t_1^2*t_2, t_1*t_2^2, t_2^3}};
+            loss = sum for i from 0 to 3 list (u_i - phi_(i,0))^2;
+            dLoss = diff(varMatrix, gateMatrix{{loss}});
+            G = gateSystem(paramMatrix,varMatrix,transpose dLoss);
+            monodromyGroup(G,"msOptions" => {NumberOfEdges=>10})
+    Caveat
+        This is still somewhat experimental.
+    ///
+    
+end
+restart
+needs "ed-gal.m2"
+monodromyGroup(G,FileName=>"eddGG","msOptions" => {Verbose=>true,NumberOfEdges=>10})
+
+    SeeAlso
+        "member"
+    ///
+
+
 
 -*
 doc ///

@@ -1,17 +1,25 @@
 #ifndef __nc_f4_hpp__
 #define __nc_f4_hpp__
 
-#include "../newdelete.hpp"
-#include "NCAlgebras/MemoryBlock.hpp"
-#include "FreeAlgebra.hpp"
-#include "WordTable.hpp"
-#include "OverlapTable.hpp"
-#include "VectorArithmetic.hpp"
-#include <vector>
+#include "engine-includes.hpp"
+
+#include <deque>
+#include <iosfwd>
+#include <map>
+#include <tuple>
 #include <utility>
-#include <unordered_map>
+#include <vector>
 
+#include "NCAlgebras/FreeMonoid.hpp"
+#include "NCAlgebras/MemoryBlock.hpp"
+#include "NCAlgebras/Range.hpp"
+#include "NCAlgebras/Word.hpp"
+#include "OverlapTable.hpp"
+#include "Polynomial.hpp"
+#include "WordTable.hpp"
 
+class FreeAlgebra;
+union ring_elem;
 
 class NCF4 : public our_new_delete
 {

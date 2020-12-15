@@ -1,15 +1,22 @@
 #ifndef _NCGroebner_hpp_
 #define _NCGroebner_hpp_
 
-#include "../buffer.hpp"
-#include "../text-io.hpp"
-#include "../M2FreeAlgebra.hpp"
+#include "engine-includes.hpp"
+
+#include <algorithm>
+#include <iostream>
+#include <memory>
+#include <tuple>
+#include <utility>
+#include <vector>
+
+#include "NCAlgebras/FreeAlgebra.hpp"
+#include "NCAlgebras/NCReduction.hpp" // for getHeapType
+#include "OverlapTable.hpp"
+#include "Polynomial.hpp"
 #include "Word.hpp"
 #include "WordTable.hpp"
-//#include "SuffixTree.hpp"
-#include "OverlapTable.hpp"
-#include "NCReduction.hpp"
-#include <iostream>
+#include "text-io.hpp"
 
 extern void tryOutMathicCode();
 

@@ -1,9 +1,16 @@
 // Copyright 2018  Michael E. Stillman
 
-#include "NCAlgebras/FreeAlgebra.hpp"
-#include "NCAlgebras/WordTable.hpp"
-#include "interrupted.hpp"
+#include "matrix-ncbasis.hpp"
+
 #include <memory>
+
+#include "NCAlgebras/FreeAlgebra.hpp"
+#include "NCAlgebras/FreeMonoid.hpp"
+#include "NCAlgebras/Word.hpp"
+#include "NCAlgebras/WordTable.hpp"
+
+#include "interrupted.hpp"
+#include "monoid.hpp"
 
 std::unique_ptr<WordTable> constructWordTable(const FreeAlgebra& A, const ConstPolyList& gb)
 {

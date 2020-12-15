@@ -118,7 +118,7 @@ scan({net, info},
 	-- object or a sequence of such objects and BKs or SKs for later splicing.
 	parser' := value (toString parser | "'") <- method(Dispatch => Thing);
 	-- setup default rendering methods
-	parser' Hypertext := parser;
+	parser' Thing := parser;
 	-- { } indicates wrapping is already done or is not desired
 	parser' HypertextParagraph := x -> (SP, {parser x}, SP);
 	parser' HypertextContainer := x -> (BK, apply(toSequence x, parser'), BK);
@@ -140,7 +140,7 @@ scan({net, info},
 	    -- Drop the leading and trailing SPs or BKs
 	    l := position(x, e -> e =!= SP and e =!= BK);
 	    t := position(x, e -> e =!= SP and e =!= BK, Reverse => true);
-	    x = take(x, {l, t});
+	    if l =!= null and t =!= null then x = take(x, {l, t});
 	    -- ??
 	    x = splice sublists(x, i -> i === BK or i === SP,
 		SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
@@ -254,7 +254,7 @@ infoTagConvert = method()
 infoTagConvert String      := tagConvert
 infoTagConvert DocumentTag := tag -> (
     tag = getPrimaryTag tag;
-    (pkgname, fkey) := (package tag, format tag);
+    (pkgname, fkey) := (tag.Package, format tag);
     fkey  = tagConvert if pkgname === fkey then "Top" else fkey;
     if pkgname =!= currentPackage#"pkgname" then concatenate("(",pkgname,")", fkey) else fkey)
 
@@ -262,7 +262,7 @@ infoTagConvert DocumentTag := tag -> (
 -- checking if doc is missing can be very slow if node is from another package
 info TO  := x -> info TO2{x#0, format x#0 | if x#?1 then x#1 else ""}
 info TO2 := x -> (
-     tag := x#0;
+     tag := fixup x#0;
      if isMissingDoc tag or isUndocumented tag then concatenate(x#1, " (missing documentation)")
      else concatenate("*note ", infoLinkConvert x#1, ": ", infoTagConvert tag, ","))
 info TOH := x -> (
