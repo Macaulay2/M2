@@ -1,0 +1,34 @@
+From 6ed33f7cfb1c9c75df49da3de43fcd67b7b7b664 Mon Sep 17 00:00:00 2001
+From: Mahrud Sayrafi <mahrud@berkeley.edu>
+Date: Thu, 28 May 2020 20:09:46 -0500
+Subject: [PATCH] fix typo in flint-check.m4
+
+---
+ m4/flint-check.m4 | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git foobar/m4/flint-check.m4 factory-4.1.3/m4/flint-check.m4
+index f739a2201..1c1c7ede4 100644
+--- foobar/m4/flint-check.m4
++++ factory-4.1.3/m4/flint-check.m4
+@@ -44,7 +44,7 @@ if test "$FLINT_HOME_PATH" = "$DEFAULT_CHECKING_PATH" ; then
+ 
+ 	# we suppose that mpfr and mpir to be in the same place or available by default
+ 	CFLAGS="${BACKUP_CFLAGS} ${GMP_CPPFLAGS}"
+-	LIBS="${FLINT_LIBS} ${GMP_LIBS} ${BACKUPLIBS}"
++	LIBS="${FLINT_LIBS} ${GMP_LIBS} ${BACKUP_LIBS}"
+ 
+ 	AC_CHECK_HEADER([flint/fmpz.h],
+ 		[AC_CHECK_LIB(flint,fmpz_init,
+@@ -66,7 +66,7 @@ if test "x$flint_found" = "xno" ; then
+ 
+ 	# we suppose that mpfr and mpir to be in the same place or available by default
+ 		CFLAGS="${BACKUP_CFLAGS} ${FLINT_CFLAGS} ${GMP_CPPFLAGS}"
+-		LIBS="${FLINT_LIBS} ${GMP_LIBS} ${BACKUPLIBS}"
++		LIBS="${FLINT_LIBS} ${GMP_LIBS} ${BACKUP_LIBS}"
+ 
+ 		AC_CHECK_LIB(flint,fmpz_init,
+ 		[flint_found="yes"],
+-- 
+2.25.4
+

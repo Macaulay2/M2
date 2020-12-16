@@ -10,7 +10,7 @@ newPackage ( "TorAlgebra",
 	  HomePage => "https://web.northeastern.edu/oveliche/index.html" }
 	},
     Headline => "classification of local rings based on multiplication in homology",
-    Keywords => {"Commutative Algebra"},
+    Keywords => {"Homological Algebra"},
     PackageImports => {"LocalRings"},
     Certification => { -- this package was certified under its old name, "CodepthThree"
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
