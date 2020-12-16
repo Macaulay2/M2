@@ -15,7 +15,7 @@ doc ///
    Inputs
      A:Matrix
        or @ofClass MutableMatrix@, of size m by n over a field R, which can be
-       one of: ZZ/p, GF(p^n), QQ, RR, or CC
+       one of: @demark_", " \\ TT \ {"ZZ/p", "GF(p^n)", "QQ", "RR", "CC"}@
      B:
        of the same type of matrix as {\tt A}, over the same ring, of size m by r
      ClosestFit => Boolean 

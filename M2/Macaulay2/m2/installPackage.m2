@@ -732,7 +732,8 @@ installPackage Package := opts -> pkg -> (
 	-- ~22s for Macaulay2Doc
 	if chkdoc then (
 	    resetCounters();
-	    scan((if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg)#"exported symbols", s -> (
+	    srcpkg := if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg;
+	    scan(join (srcpkg#"exported symbols", srcpkg#"exported mutable symbols"), s -> (
 		    tag := makeDocumentTag s;
 		    if  not isUndocumented tag
 		    and not hasDocumentation tag

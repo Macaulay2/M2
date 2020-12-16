@@ -199,6 +199,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
     -- authors
     au := pkg.Options.Authors;
     -- exported symbols
+    -- TODO: this misses exported symbols from Macaulay2Doc; is this intentional?
     e := toSequence pkg#"exported symbols";
     -- functions and commands
     a := select(e, x -> instance(value x, Function) or instance(value x, Command));

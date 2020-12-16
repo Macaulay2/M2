@@ -47,7 +47,7 @@ record := node -> (
     getNameFromNumber#counter = node;
     sectionNumber = next sectionNumber;
     n := sectionNumberTable#counter = fmt sectionNumber;
-    printerr("node :", (2 * #sectionNumber):" ", n, ". ", node))
+    printerr((2 * #sectionNumber):" ", n, ". ", node))
 
 descend := (n) -> (sectionNumber = (
     if #sectionNumber === 2 then ( sectionNumber#0, sectionNumber#1, sectionNumber#1 )
@@ -115,8 +115,10 @@ booktex UL := x -> concatenate(
 installPDF = (pkg, installPrefix, installLayout, verboseLog) -> (
     tableOfContents := unbag pkg#"table of contents";
     -- body of book consists only of subnodes of the top node
+    verboseLog "making a list of sections";
     crawl first tableOfContents;
     -- the appendix contains everything else
+    verboseLog "making a list of orphan sections";
     record "Appendix"; descend(1);
     -- look for orphaned nodes
     -- TODO: implement crawler for drop(tableOfContents, 1)
@@ -146,11 +148,12 @@ installPDF = (pkg, installPrefix, installLayout, verboseLog) -> (
 		(fkey, rawdoc) -> ( record fkey; TO2 {fkey, TT fkey} )))};
     --sectionNumber = {"B"}
     record "Symbol Index";
+    srcpkg := if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg;
     document {
 	Key => "Symbol Index",
 	TEX "\\begin{multicols}{2}",
 	apply(
-	    sort join(pkg#"exported symbols", pkg#"exported mutable symbols"),
+	    sort join(srcpkg#"exported symbols", srcpkg#"exported mutable symbols"),
 	    symb -> ( TT toString symb, PARA{})),
 	TEX "\\end{multicols}\n",
 	TEX "\\vfill"
@@ -170,8 +173,9 @@ installPDF = (pkg, installPrefix, installLayout, verboseLog) -> (
     --
     -- TODO: include pkg.Options.Version
     -- NOTE: has to remain in sync with packages/CMakeLists.txt
-    bookdir  := installPrefix | replace("PKG", pkg#"pkgname", installLayout#"packagedoc") | "/";
-    bookname := bookdir | "manual.tex";
+    bookdir  := replace("PKG", pkg#"pkgname", installLayout#"packagedoc");
+    verboseLog("making PDF manual in ", installPrefix | bookdir);
+    bookname := installPrefix | bookdir | "manual.tex";
     bookname << preamble;
     scan(pairs getNameFromNumber, (i, node) -> (
 	    bookname                                                            << endl << endl
@@ -181,4 +185,4 @@ installPDF = (pkg, installPrefix, installLayout, verboseLog) -> (
     bookname << biblio << close;
     --
     currentPackage := oldCurrentPackage;
-    )
+    verboseLog("created ", replace("\\.tex$", ".pdf", bookname)))

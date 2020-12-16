@@ -118,8 +118,8 @@ document {
      	       the free modules whose basis elements correspond to the generators
      	       of the modules.",
 	  },
-     TEX "Each homomorphism of modules f : M \\rightarrow{} N 
-     in Macaulay2 is induced from a matrix f0 : (cover M) \\rightarrow{}(cover N).
+     TEX "Each homomorphism of modules $f : M \\rightarrow N$
+     in Macaulay2 is induced from a matrix $f0 : \\mathtt{cover} M \\rightarrow \\mathtt{cover} N$.
      This function returns this matrix.",
      EXAMPLE {
 	  "R = QQ[a..d];",
