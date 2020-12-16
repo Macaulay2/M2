@@ -23,7 +23,7 @@ numDocumentationWarnings := 0
 
 -- The default values are set so "(html, Hypertext)" works before Macaulay2Doc is installed.
 -- TODO: They should be functions rather than global values
-topDocumentTag  = null -- FIXME: make private again
+topDocumentTag := null
 installPrefix   = applicationDirectory() | "local/"  -- default the installation prefix
 installLayout   = Layout#2			     -- the layout of the installPrefix, global for communication to document.m2
 htmlDirectory   = ""	      -- relative path to the html directory, depends on the package
@@ -99,8 +99,7 @@ makeAnchors := n -> (
 anchorsUpTo := entry -> if alpha#?numAnchorsMade and entry >= alpha#numAnchorsMade then makeAnchors length select(alpha, c -> entry >= c)
 remainingAnchors := () -> makeAnchors (#alpha)
 
--- FIXME: make private again
-packageTagList = (pkg, topDocumentTag) -> checkIsTag \ unique nonnull join(
+packageTagList := (pkg, topDocumentTag) -> checkIsTag \ unique nonnull join(
     apply(pairs pkg.Dictionary, (name, sym) ->
 	if not match("\\$", name) then makeDocumentTag(sym, Package => pkg)),
     apply(values pkg#"raw documentation", rawdoc -> rawdoc.DocumentTag),
@@ -183,8 +182,7 @@ buildLinks ForestNode := x -> (
 -- constructs the tree-structure for the Subnodes of each node
 -----------------------------------------------------------------------------
 
--- FIXME: make private again
-assembleTree = (pkg, nodes) -> (
+assembleTree := (pkg, nodes) -> (
     resetCounters();
     -- keep track of various possible issues with the nodes
     visits := new HashTable from {
@@ -312,15 +310,7 @@ makePackageIndex List := path -> (
 -----------------------------------------------------------------------------
 -- install PDF documentation for package
 -----------------------------------------------------------------------------
-
--- TODO: some of these options may not be necessary
-installPDF := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts) -> (
-    topDocumentTag := makeDocumentTag(pkg#"pkgname", Package => pkg);
-    nodes := packageTagList(pkg, topDocumentTag);
-    tree := assembleTree(pkg, getPrimaryTag \ select(nodes, tag -> not isUndocumented tag));
-    -- TODO: move here from book/booktex.m2
-    -- crawl first nodeTree -- only subnodes of the top node
-    )
+-- see book.m2
 
 -----------------------------------------------------------------------------
 -- install info documentation for package
@@ -776,7 +766,7 @@ installPackage Package := opts -> pkg -> (
 	else verboseLog("not making documentation in HTML format");
 
 	-- make pdf documentation
-	if opts.MakePDF then installPDF(pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts)
+	if opts.MakePDF then installPDF(pkg, installPrefix, installLayout, verboseLog)
 	else verboseLog("not making documentation in PDF format");
 
 	if chkdoc and hadDocumentationWarning then printerr("warning: ",

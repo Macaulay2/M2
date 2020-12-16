@@ -46,6 +46,27 @@ texExtraLiteralTable := copy texLiteralTable
 texExtraLiteralTable#" " = "\\ "
 texExtraLiteral := s -> demark(ENDLINE, apply(lines s, l -> apply(characters l, c -> texExtraLiteralTable#c)))
 
+--------------------------------------------
+-- this loop depends on the feature of hash tables that when the keys
+-- are consecutive integers starting at 0, the keys are scanned
+-- in the natural order, which in turn depends on the hash number of
+-- a small integer being the integer itself
+levelLimit := 10;
+sectionType = sectionNumber -> (
+    level := # select(characters sectionNumber, i -> i === ".");
+    if level > levelLimit then level = levelLimit;
+    if level === 0 then "\\part" else
+    if level === 1 then "\\chapter" else
+    if level === 2 then "\\section" else
+    if level === 3 then "\\subsection" else
+    if level === 4 then "\\subsubsection" else
+    if level === 5 then "\\paragraph" else
+    if level === 6 then "\\subparagraph" else
+    if level === 7 then "\\subsubparagraph" else
+    if level === 8 then "\\subsubsubparagraph" else
+    if level === 9 then "\\subsubsubsubparagraph" else
+    "\\subsubsubsubsubparagraph");
+
 -----------------------------------------------------------------------------
 --     \rm     Roman
 --     \sf     sans-serif
