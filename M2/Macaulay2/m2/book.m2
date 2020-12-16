@@ -1,11 +1,38 @@
 -* Copyright 1997 by Daniel R. Grayson *-
 -* Copyright 2020 by Mahrud Sayrafi    *-
 
--- TODO: not reentrant yet
+-- TODO: not reentrant yet, see resetCounters
+-- TODO: cross references aren't working yet
+-- TODO: exclude ways to use sections for options if possible
+
+-----------------------------------------------------------------------------
+-- Local variables
+-----------------------------------------------------------------------------
+
+counter   :=  0
+menuLevel :=  2
+secNumber := {0,0}
+getNameFromNumber := new MutableHashTable
+getNumberFromName := new MutableHashTable
+secNumberTable    := new MutableHashTable
+miscNodes         := new MutableHashTable
 
 -----------------------------------------------------------------------------
 -- Local utilities
 -----------------------------------------------------------------------------
+
+resetCounters := () -> (
+    counter   :=  0;
+    menuLevel :=  2;
+    secNumber := {0,0};
+    getNameFromNumber := new MutableHashTable;
+    getNumberFromName := new MutableHashTable;
+    secNumberTable    := new MutableHashTable;
+    miscNodes         := new MutableHashTable;
+    -- FIXME: this is a hack so the three nodes "Appendix", etc. get deleted
+    User#"raw documentation" = new MutableHashTable;
+    )
+
 T := {("M", 1000), ("CM", 900), ("D", 500), ("CD", 400), ("C", 100),
                    ("XC", 90),  ("L", 50),  ("XL", 40),  ("X", 10),
                    ("IX", 9),   ("V", 5),   ("IV", 4),   ("I", 1)}
@@ -24,39 +51,30 @@ roman := n -> ( s := ""; scan(t, (a, i) -> while n >= i do (n = n - i; s = s | a
 --     3,8,8,5    part 3, chapter 8, section 5
 --     3,8,8,5,2  part 3, chapter 8, section 5, subsection 2
 
--- TODO: make this functional
-sectionNumber = {0,0}
+next := secNumber -> (
+    if #secNumber === 0 then   secNumber else
+    if #secNumber === 2 then ( secNumber#0 + 1, secNumber#1 ) else
+    if #secNumber === 3 then ( secNumber#0,     secNumber#1 + 1, secNumber#2 + 1 ) else
+    append( drop(secNumber, -1), secNumber#-1 + 1 ))
 
-getNameFromNumber  = new MutableHashTable
-getNumberFromName  = new MutableHashTable
-sectionNumberTable = new MutableHashTable
-miscNodes          = new MutableHashTable
+fmt := secNumber -> demark(".", prepend(ROMAN secNumber#0, apply( drop(secNumber, 2), toString) ))
 
-next := sectionNumber -> (
-    if #sectionNumber === 0 then   sectionNumber else
-    if #sectionNumber === 2 then ( sectionNumber#0 + 1, sectionNumber#1 ) else
-    if #sectionNumber === 3 then ( sectionNumber#0,     sectionNumber#1 + 1, sectionNumber#2 + 1 ) else
-    append( drop(sectionNumber, -1), sectionNumber#-1 + 1 ))
-
-fmt := sectionNumber -> demark(".", prepend(ROMAN sectionNumber#0, apply( drop(sectionNumber, 2), toString) ))
-
-counter := 0;
 record := node -> (
     counter = counter + 1;
     getNumberFromName#node = counter;
     getNameFromNumber#counter = node;
-    sectionNumber = next sectionNumber;
-    n := sectionNumberTable#counter = fmt sectionNumber;
-    printerr((2 * #sectionNumber):" ", n, ". ", node))
+    secNumber = next secNumber;
+    n := secNumberTable#counter = fmt secNumber;
+    printerr((2 * #secNumber):" ", n, ". ", node))
 
-descend := (n) -> (sectionNumber = (
-    if #sectionNumber === 2 then ( sectionNumber#0, sectionNumber#1, sectionNumber#1 )
-    else join(sectionNumber, toList(n:0))); n)
+descend := (n) -> (secNumber = (
+    if #secNumber === 2 then ( secNumber#0, secNumber#1, secNumber#1 )
+    else join(secNumber, toList(n:0))); n)
 
 ascend := (n, s) -> (
-    if # sectionNumber === 1 then error "oops: ascending too high, producing empty section number";
-    if # sectionNumber === 0 then error "oops: empty section number";
-    sectionNumber = drop(sectionNumber, -n); s)
+    if # secNumber === 1 then error "oops: ascending too high, producing empty section number";
+    if # secNumber === 0 then error "oops: empty section number";
+    secNumber = drop(secNumber, -n); s)
 
 crawl := method()
 -- Taking advantage of tail-call optimization is crucial here,
@@ -64,26 +82,21 @@ crawl := method()
 crawl TreeNode   := x -> ( record format x#0; ascend(descend(1), crawl x#1) )
 crawl ForestNode := x -> if #x>0 then scan(toList x, y -> ( -* zero out the section; *- crawl y))
 
----------------
+-----------------------------------------------------------------------------
 UnknownReference := "???"
 
 crossReference := (key, text, optional) -> (
-    sectionNumber := (
+    secNumber := (
 	if getNumberFromName#?key
-	then sectionNumberTable#(getNumberFromName#key)
-	else (
-	    -- error("warning: documentation for key '", key, "' not found");
-	    -- stderr << "warning: documentation for key '" << key << "' not found" << endl;
-	    UnknownReference));
-    if sectionNumber === UnknownReference
+	then secNumberTable#(getNumberFromName#key)
+	else ( printerr("warning: missing node: " | format key); UnknownReference) );
+    if secNumber === UnknownReference
     then if optional
-    then (                                  "{\\bf ", tex text,  "}" )
-    else (                                  "{\\bf ", tex text,  "} [", sectionNumber, "]" )
-    else ( "\\hyperlink{", sectionNumber, "}{{\\bf ", tex text, "}} [", sectionNumber, "]" ))
+    then (                              "{\\bf ", tex text,  "}" )
+    else (                              "{\\bf ", tex text,  "} [", secNumber, "]" )
+    else ( "\\hyperlink{", secNumber, "}{{\\bf ", tex text, "}} [", secNumber, "]" ))
 
 -----------------------------------------------------------------------------
-
-menuLevel := 2
 
 booktex = method(Dispatch => Thing)
 booktex Thing := tex
@@ -111,8 +124,10 @@ booktex UL := x -> concatenate(
 	    "%", newline, "\\par", newline)),
     "%", newline, "\\endgroup", newline)
 
+-----------------------------------------------------------------------------
 
 installPDF = (pkg, installPrefix, installLayout, verboseLog) -> (
+    resetCounters();
     tableOfContents := unbag pkg#"table of contents";
     -- body of book consists only of subnodes of the top node
     verboseLog "making a list of sections";
@@ -137,7 +152,7 @@ installPDF = (pkg, installPrefix, installLayout, verboseLog) -> (
 	Key => "Appendix",
 	"This appendix contains additional information about the following topics.",
 	UL nonnull { if #keys miscNodes > 0 then TO "Miscellaneous documentation", TO "Symbol Index" } };
-    --sectionNumber = {"A"}
+    --secNumber = {"A"}
     if #keys miscNodes > 0 then
     record "Miscellaneous documentation";
     if #keys miscNodes > 0 then
@@ -146,7 +161,7 @@ installPDF = (pkg, installPrefix, installLayout, verboseLog) -> (
 	"We present various additional documentation in this chapter.",
 	UL ascend(descend(1), apply(pairs miscNodes,
 		(fkey, rawdoc) -> ( record fkey; TO2 {fkey, TT fkey} )))};
-    --sectionNumber = {"B"}
+    --secNumber = {"B"}
     record "Symbol Index";
     srcpkg := if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg;
     document {
@@ -179,7 +194,7 @@ installPDF = (pkg, installPrefix, installLayout, verboseLog) -> (
     bookname << preamble;
     scan(pairs getNameFromNumber, (i, node) -> (
 	    bookname                                                            << endl << endl
-	    << "\\hypertarget{" << (n := sectionNumberTable#i) << "}{}"                 << endl
+	    << "\\hypertarget{" << (n := secNumberTable#i) << "}{}"                     << endl
 	    << sectionType n << "{" << tex format node << "}" << "\\label{" << n << "}" << endl
 	    << concatenate booktex help node                                            << endl));
     bookname << biblio << close;
