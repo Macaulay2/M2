@@ -65,17 +65,31 @@ set(PACKAGE_VERSION ${Macaulay2_VERSION})
 ## Summary of git status
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
-  # previous describe code: git describe --dirty --long --always --abbrev=40 --tags --match "version-*"
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+    COMMAND ${GIT_EXECUTABLE} describe --dirty --always --match HEAD
     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE   GIT_COMMIT)
+  # TODO: currently finds the last commit that changed the VERSION file
+  # but ideally it should get the last release commit instead
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-list -1 HEAD VERSION
+    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE   _release_commit)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-list ${_release_commit}..HEAD --count
+    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE   COMMIT_COUNT)
+  set(GIT_DESCRIPTION version-${PROJECT_VERSION}-${COMMIT_COUNT}-${GIT_COMMIT})
+else()
+  set(GIT_DESCRIPTION version-${PROJECT_VERSION}-unknown)
 endif()
 
 message("## Configure Macaulay2
      M2 version        = ${PROJECT_VERSION}
-     Git commit        = ${GIT_COMMIT}
+     Git description   = ${GIT_DESCRIPTION}
      Install prefix    = ${CMAKE_INSTALL_PREFIX}\n
      CMAKE_BUILD_TYPE  = ${CMAKE_BUILD_TYPE}
      BUILD_NATIVE      = ${BUILD_NATIVE}

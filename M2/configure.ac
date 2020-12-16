@@ -567,7 +567,14 @@ then if test "$OPTIMIZE" = no
 fi
 
 AC_SUBST(GIT_DESCRIPTION)
-GIT_DESCRIPTION=`git describe --dirty --long --always --abbrev=40 --tags --match 'version-*' || echo unknown`
+# TODO: currently finds the last commit that changed the VERSION file
+# but ideally it should get the last release commit instead
+NEW_COMMITS=`git rev-list $(git rev-list -1 HEAD $srcdir/VERSION)..HEAD --count`
+GIT_COMMIT=`git describe --dirty --always --match HEAD`
+if test "$NEW_COMMITS-$GIT_COMMIT" = "-"
+then GIT_DESCRIPTION=version-$PACKAGE_VERSION-unknown
+else GIT_DESCRIPTION=version-$PACKAGE_VERSION-$NEW_COMMITS-$GIT_COMMIT
+fi
 AC_DEFINE_UNQUOTED(GIT_DESCRIPTION,"$GIT_DESCRIPTION",[summary of git status])
 
 AC_SUBST(DEB,no)
