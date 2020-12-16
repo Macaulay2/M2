@@ -60,9 +60,6 @@
 /* whether getaddrinfo can handle numeric service (port) numbers */
 #cmakedefine GETADDRINFO_WORKS 1
 
-/* summary of git status */
-#define GIT_DESCRIPTION "${GIT_DESCRIPTION}"
-
 // TODO: only used in Macaulay2/d/scclib.c. Still needed?
 /* Define to 1 if you have the `accept' function. */
 #cmakedefine HAVE_ACCEPT 1
