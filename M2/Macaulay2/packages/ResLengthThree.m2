@@ -29,7 +29,8 @@ newPackage ( "ResLengthThree",
 	},
     Headline => "Multiplication in free resolutions of length three",
     Reload => false,
-    DebuggingMode => false
+    DebuggingMode => false,
+    Keywords => { "Homological Algebra" }
     )
 
 export { "resLengthThreeAlg", "resLengthThreeTorAlg", "multTableOneOne", "multTableOneTwo", 

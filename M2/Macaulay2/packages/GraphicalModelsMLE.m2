@@ -1790,7 +1790,7 @@ U=matrix{{1, 2, 5, 1}, {5, 3, 2, 1}, {4, 3, 5, 10}, {2, 5,1, 3}}
 (mx,MLE,ML)= solverMLE (G,U,ChooseSolver=>"NAG4M2")
 assert(round(5,mx)==-8.4691)
 assert(ML==1)
-assert(MLE_(2,0)==0)
+assert(round(6,MLE_(2,0))==0)
 assert(round(6,MLE_(1,1))== 1.1875)
 assert(round(6,MLE_(3,2))==   3.264929)
 ///

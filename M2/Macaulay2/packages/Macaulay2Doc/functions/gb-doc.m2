@@ -3,6 +3,8 @@
 --- author(s): 
 --- notes: 
 
+undocumented (NewFromMethod, GroebnerBasis, Sequence)
+
 document { 
      Key => {gb,
 	  (gb,Ideal),

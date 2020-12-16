@@ -132,7 +132,7 @@ document {
 		       },
 		   LI {
 		       "The ", TO "MinimalPrimes :: MinimalPrimes", " package has been improved and the ", TO "MinimalPrimes :: minimalPrimes",
-		       " and ", TO "MinimalPrimes :: isPrime", " routines from that package are now used by default, deprecating the ",
+		       " and ", TO "MinimalPrimes :: isPrime(Ideal)", " routines from that package are now used by default, deprecating the ",
 		       TT "installMinprimes", " routine. A new routine ", TO "MinimalPrimes :: radicalContainment", " has been added, and
 		       the function ", TO "MinimalPrimes :: radical", " is moved to this package.
 		       In addition, partial computations in this package are now cached."
@@ -712,7 +712,7 @@ document {
 		       	 UL {
 			      LI { TO "Polyhedra::Fan", ", is no longer a collection of Cone objects, but contains a matrix of rays (over ZZ),
 			     	   and a list of lists of integer indices, indicating the maximal cones.  Well-defined-ness is no longer 
-			     	   automatically checked.  Use ", TO "Polyhedra::(isWellDefined,Fan)"},
+				   automatically checked.  Use ", TO "Polyhedra::isWellDefined(Fan)"},
 			 	   LI { TO "Polyhedra::Polyhedron", ", is now a wrapper for the homogenized cone."},
 			 	   LI { TO "Polyhedra::PolyhedralComplex", ", is now a wrapper for the homogenized fan."},
 			 	   LI { TO "Polyhedra::Cone", ", has basically the same functionality, except that not everything is computed ahead of time."},
