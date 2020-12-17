@@ -105,7 +105,7 @@ document {
       the", TT "i", "-th cohomology group of ", TT "F(n)", ".",
      PARA{},
      "To discard the part of the module M of degree less than d, 
-     use ", TT "truncate(d,M)", ".",
+     use the ", TO "Truncations::truncate(ZZ,Module)", " command as ", TT "truncate(d,M)", ".",
      PARA{},
      "Use ", TT "HH^i(F(>d))", " to request the twists strictly greater than n.",
      PARA{},

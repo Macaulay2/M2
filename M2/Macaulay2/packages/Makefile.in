@@ -15,10 +15,10 @@ DEVEL = EngineTests
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
 CheckDocumentation ?= true
-Verbose ?= false
+Verbose := $(if $(VERBOSE),true,false)
 RerunExamples ?= false
 debugLevel ?= 0
-errorDepth ?= 3
+errorDepth ?= 0
 
 ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation),	\
 	IgnoreExampleErrors => $(IgnoreExampleErrors),		\

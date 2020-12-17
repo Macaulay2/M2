@@ -31,6 +31,13 @@ DEBIAN := $(shell if [ -d /var/lib/dpkg ] ; then echo yes ; else echo no; fi)
 RPM := $(shell if [ -d /var/lib/yum -o -d /var/lib/dnf ] ; then echo yes ; else echo no; fi)
 MACOSX := $(shell if [ `uname -s` = Darwin ] ; then echo yes ; else echo no; fi)
 
+ifeq ($(MACOSX),yes)
+# if we don't do this, we may get an absolute path in currentLayout:
+#    i8 : currentLayout#"factory gftables"
+#    o8 = /usr/local/Cellar/singular/4.1.3p2_2/share/factory/
+BUILDLIBS += gftables
+endif
+
 DIRECTORY ?= $(shell hostname)$(DIRSUFF)
 
 BRANCH := $(shell git branch --contains | grep '^\* ' | sed -e s=^..== -e s=/=.=g )

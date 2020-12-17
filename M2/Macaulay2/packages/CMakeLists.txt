@@ -158,6 +158,11 @@ foreach(package IN LISTS PACKAGES)
     endforeach()
   endif()
 
+  ## TODO: remove this; see https://github.com/Macaulay2/M2/pull/1483
+  if(package MATCHES "(ThreadedGB)")
+    set(USES_TERMINAL USES_TERMINAL)
+  endif()
+
   ## Custom command for getting package information
   # TODO: currently only number of tests is stored, but we can do more
   add_custom_command(OUTPUT info-${package}

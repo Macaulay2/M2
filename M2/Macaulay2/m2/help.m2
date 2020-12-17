@@ -35,15 +35,18 @@ operator := binary + prefix + postfix
 -- Local utilities
 -----------------------------------------------------------------------------
 
+-- used by help and viewHelp
+seeAbout := (f, i) -> (
+    if     lastabout === null then error "no previous 'about' response";
+    if not lastabout#?i       then error("previous 'about' response contains no entry numbered ", i);
+    f lastabout#i)
+
 -----------------------------------------------------------------------------
 -- these menus have to get sorted, so optTO and optTOCLASS return sequence:
 --   the first three members of the pair are used for sorting
 --   the last member is the corresponding hypertext entry in the UL list
 -----------------------------------------------------------------------------
 
--- TODO: something like
---    * validate, see validate(Hypertext) -- blah blah
--- does not work with (symbol *, String), and the issue is here
 counter := 0
 next := () -> counter = counter + 1
 optTO := key -> (
@@ -52,7 +55,11 @@ optTO := key -> (
     if isUndocumented tag then return;
     if isSecondaryTag tag then (
 	ptag := getPrimaryTag tag;
-	(format ptag, fkey, next(), fixup if currentHelpTag === ptag then fkey else SPAN {TT format fkey, " -- see ", TOH{ptag}}))
+	-- this is to avoid doubling "\" in documentation for symbol \ and symbol \\
+	ref := if match("\\\\", fkey) then concatenate("/// ", fkey, " ///") else format fkey;
+	-- TODO: figure out how to align the lists using padding
+	-- ref = pad(ref, printWidth // 4);
+	(format ptag, fkey, next(), fixup if currentHelpTag === ptag then ref else SPAN {TT ref, " -- see ", TOH{ptag}}))
     -- need an alternative here for secondary tags such as (export,Symbol)
     else (fkey, fkey, next(), TOH{tag}))
 -- this isn't different yet, work on it!
@@ -113,23 +120,22 @@ initializeReverseOptionTable := () -> (
 -----------------------------------------------------------------------------
 
 -- we're not looking for documentable methods here, just documentable objects
-isDocumentableThing := method(Dispatch => Thing)
+isDocumentableThing = method(Dispatch => Thing)
 isDocumentableThing    String :=
 isDocumentableThing  Sequence := key -> false
 isDocumentableThing   Nothing :=
-isDocumentableThing    Symbol := key -> true
-isDocumentableThing     Thing :=
-isDocumentableThing      Type := key -> hasAttribute(key, ReverseDictionary) and isDocumentableMethod getAttribute(key, ReverseDictionary)
+isDocumentableThing    Symbol := key -> (d := dictionary key) =!= null and not mutable d and isGlobalSymbol toString key and getGlobalSymbol toString key === key
+isDocumentableThing     Thing := key -> hasAttribute(key, ReverseDictionary) and isDocumentableMethod getAttribute(key, ReverseDictionary)
 
 -- assignment methods look like ((symbol *, symbol =), X, Y, Z)
 isDocumentableMethod = method(Dispatch => Thing)
-isDocumentableMethod    Thing := key -> false
 isDocumentableMethod Sequence := key -> all(key, s -> isDocumentableMethod s)
-isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
-isDocumentableMethod     Type := key -> isDocumentableThing key
-
-isDocumentableMethod Function        := fn -> hasAttribute(fn, ReverseDictionary) and dictionary getAttribute(fn,ReverseDictionary) =!= null
-isDocumentableMethod ScriptedFunctor := fn -> hasAttribute(fn, ReverseDictionary)
+isDocumentableMethod    Thing := key -> false
+isDocumentableMethod     Type :=
+isDocumentableMethod   Symbol :=
+isDocumentableMethod  Command :=
+isDocumentableMethod Function :=
+isDocumentableMethod ScriptedFunctor := isDocumentableThing
 
 documentableMethods := key -> select(methods key, isDocumentableMethod)
 
@@ -142,7 +148,7 @@ documentationValue := method(TypicalValue => Hypertext)
 documentationValue(Symbol, Thing) := (S, X) -> ()
 -- e.g. Macaulay2Doc :: MethodFunction
 documentationValue(Symbol, Type)  := (S, T) -> (
-    syms := unique flatten(values \ dictionaryPath);
+    syms := unique flatten apply(dictionaryPath, dict -> if mutable dict then {} else values dict);
     -- constructors of T
     a := smenu apply(select(pairs typicalValues, (key, Y) -> Y === T and isDocumentableMethod key), (key, Y) -> key);
     -- types that inherit from T
@@ -158,13 +164,22 @@ documentationValue(Symbol, Type)  := (S, T) -> (
 	if #e > 0 then ( SUBSECTION {"Fixed objects of class ",                     TT toString T, " :"}, e)))
 -- e.g. Macaulay2Doc :: Strategy
 documentationValue(Symbol, Symbol) := (S, S') -> (
+    -- return links to all other methods with option name Strategy
     initializeReverseOptionTable();
     -- functions that take S as option
     opts := if reverseOptionTable#?S then keys reverseOptionTable#S else {};
     reverseOptionTable = null;
+    -- TODO: should we only list methods with the same option name in
+    -- the same package? select for package f === package currentHelpTag
     a := smenu apply(select(opts, f -> isDocumentableMethod f), f -> [f, S]);
     if #a > 0 then DIV { -- "class" => "waystouse", -- we want this one to be larger
 	 SUBSECTION {"Functions with optional argument named ", TT toString S, " :"}, a})
+-- e.g. Macaulay2Doc :: Strategy => Default
+documentationValue(Symbol, Option) := (S, o) -> (
+    -- return links to all other methods with option name Strategy
+    -- TODO: also add links to  methods with option value Default?
+    -- cf: https://github.com/Macaulay2/M2/issues/1649#issuecomment-738618652
+    documentationValue(S, value o#0))
 -- e.g. Macaulay2Doc :: help
 documentationValue(Symbol, Command)         := (S, c) -> documentationValue(S, c#0)
 -- e.g. Macaulay2Doc :: sum
@@ -174,7 +189,7 @@ documentationValue(Symbol, Keyword)         := (S, f) -> (
     -- methods of f
     a := smenu documentableMethods f;
     if #a > 0 then DIV nonnull splice ( "class" => "waystouse",
-	SUBSECTION {"Ways to use ", TT toString f, ":"}, a))
+	SUBSECTION {"Ways to use ", TT toExternalString f, " :"}, a))
 
 -- TODO: simplify this process
 -- e.g. Macaulay2Doc :: Macaulay2Doc
@@ -322,16 +337,20 @@ getSynopsis := (key, tag, rawdoc) -> (
 	if rawdoc.?Consequences then DIV { "Consequences:", UL rawdoc.Consequences }};
     if #result > 0 then fixup UL result)
 
-getDefaultOptions := (fn, opt) -> DIV (
+getDefaultOptions := (nkey, opt) -> DIV ( -- e.g., [(res, Module), Strategy => FastNonminimal]
+    if instance(nkey, Sequence)
+    and #methods nkey > 0       then fn := first nkey else
+    if instance(nkey, Function) then fn  =       nkey;
+    def := if (options nkey)#?opt then (options nkey)#opt
+    else   if (options   fn)#?opt then (options   fn)#opt;
+    if instance(opt, Option) then (opt, def) = toSequence opt;
     SUBSECTION "Further information", UL {
 	SPAN{ "Default value: ",
-	    if   isDocumentableThing default
-	    and hasDocumentation     default
-	    then TO {default} else TT toString default },
-	SPAN{
-	    if class fn === Sequence then "Method: " else "Function: ",
-	    TOH {fn}},
-	SPAN{ "Option name: ", TOH {opt} }
+	    if   isDocumentableThing def
+	    and hasDocumentation     def
+	    then TO {def} else TT toString def },
+	SPAN{ if instance(nkey, Sequence) then "Method: " else "Function: ", TOH {nkey} },
+	SPAN{ "Option key: ", TOH {opt} }
 	})
 
 getDescription := (key, tag, rawdoc) -> (
@@ -364,7 +383,9 @@ getBody := (key, tag, rawdoc) -> (
 	    documentationValue(key, value key),
 	    getTechnical(key, value key))
 	else if instance(key, Array) then (
-	    documentationValue(key#1, value key#1)),
+	    if instance(opt := key#1, Option)
+	    then documentationValue(opt#0, opt)
+	    else documentationValue(opt, value opt)),
 	getOption(rawdoc, Subnodes));
     currentHelpTag = null;
     result)
@@ -393,10 +414,7 @@ help Sequence := key -> (
 
 -- Options
 help Array := key -> (
-    (fn, opt) := (key#0, key#1);
-    assert ( fn =!= null );
-    default := if (options fn)#?opt then (options fn)#opt
-    else error("function ", fn, " does not accept option key ", opt);
+    verifyKey key;
     rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
     tag := getOption(rawdoc, symbol DocumentTag);
     getBody(key, tag, rawdoc))
@@ -410,10 +428,7 @@ help Symbol := key -> (
 help DocumentTag := tag -> help tag.Key
 help Thing := x -> if hasAttribute(x, ReverseDictionary) then help getAttribute(x, ReverseDictionary) else error "no documentation found"
 help List  := l -> DIV between(HR{}, help \ l)
-help ZZ    := i -> (
-    if     lastabout === null then error "no previous 'about' response";
-    if not lastabout#?i       then error("previous 'about' response contains no entry numbered ", i);
-    help lastabout#i)
+help ZZ    := i -> seeAbout(help, i)
 
 -- so the user can cut paste the menu line "* sum" to get help!
 * String := x -> help x
@@ -443,6 +458,7 @@ viewHelp DocumentTag := tag -> (
     tag = getOption(fetchAnyRawDocumentation tag, symbol DocumentTag);
     docpage := concatenate htmlFilename tag;
     if fileExists docpage then show URL { docpage } else show help tag)
+viewHelp ZZ := i -> seeAbout(viewHelp, i)
 
 viewHelp = new Command from viewHelp
 -- This ensures that "methods viewHelp" and "?viewHelp" work as expected

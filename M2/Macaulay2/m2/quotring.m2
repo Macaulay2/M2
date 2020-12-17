@@ -240,7 +240,8 @@ Ring / RingElement := QuotientRing => (R,f) -> (
 
 Ring / List := Ring / Sequence := QuotientRing => (R,f) -> R / promote(ideal f, R)
 
-presentation QuotientRing := Matrix => R -> (
+presentation PolynomialRing := Matrix => R -> map(R^1, R^0, 0)
+presentation QuotientRing   := Matrix => R -> (
      if R.?presentation then R.presentation else R.presentation = (
 	  S := ambient R;
 	  f := generators ideal R;
@@ -252,12 +253,10 @@ presentation QuotientRing := Matrix => R -> (
 	  )
      )
 
-presentation PolynomialRing := R -> map(R^1,R^0,0)
-
-presentation(QuotientRing,QuotientRing) := 
-presentation(PolynomialRing,QuotientRing) := 
-presentation(QuotientRing,PolynomialRing) := 
-presentation(PolynomialRing,PolynomialRing) := (R,S) -> (
+presentation(QuotientRing,   QuotientRing)   :=
+presentation(QuotientRing,   PolynomialRing) :=
+presentation(PolynomialRing, QuotientRing)   :=
+presentation(PolynomialRing, PolynomialRing) := (R,S) -> (
      if not (R === S or isQuotientOf(R,S)) then error "expected ring and a quotient ring of it";
      v := map(R^1,R^0,0);
      while S =!= R do (

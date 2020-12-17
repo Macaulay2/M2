@@ -1321,10 +1321,11 @@ rankFunction Poset := List => P -> (
     if not P.cache.?coveringRelations then coveringRelations P;
     for r in P.cache.coveringRelations do (
         tmp := last rk#(r#1) - last rk#(r#0) - 1;
-        if tmp == 0 then continue;
         u := first rk#(r#0);
         v := first rk#(r#1);
-        if u == v then return P.cache.rankFunction = null;
+        if u == v then (
+	    if tmp == 0 then continue else return P.cache.rankFunction = null;
+	);
         rk = if tmp > 0 then apply(rk, g -> if first g == u then {v, last g + tmp} else g) else
                               apply(rk, g -> if first g == v then {u, last g - tmp} else g);
         );
@@ -6532,10 +6533,6 @@ assert(isUpperSemimodular B == true)
 
 ///
 
-
-
-
-
 --Tests for divisorPoset(ZZ)
 
 TEST ///
@@ -6690,6 +6687,14 @@ assert(r == toList(0..#r-1))
 assert(adjoinMin(flagPoset(B,{1,2,3,4})) == B)
 assert(adjoinMax(flagPoset(B,{0,1,2,3})) == B)
 assert(augmentPoset(flagPoset(B,{1,2,3})) == B)
+///
+
+
+--Tests for isRanked
+
+TEST ///
+P = poset({0,1,2,3,4},{{0,2},{2,3},{1,4},{0,4},{1,3}})
+assert(isRanked P == false)
 ///
 
 end;

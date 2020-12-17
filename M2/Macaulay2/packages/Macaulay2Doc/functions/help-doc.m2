@@ -3,8 +3,6 @@
 --- notes: functions below are all defined in help.m2
 --- FIXME: help "Macaulay2" doesn't do what this page ways
 
-undocumented {"Body"} -- about
-
 doc ///
   Key
      help
@@ -68,6 +66,7 @@ doc ///
      viewHelp
     (viewHelp, Thing)
     (viewHelp, String)
+    (viewHelp, DocumentTag)
   Headline
     view online documentation in a web browser
   Usage
@@ -209,6 +208,7 @@ Node
      about
     [about, Body]
     (help, ZZ)
+    (viewHelp, ZZ)
     (about, Function)
     (about, String)
     (about, Symbol)
@@ -230,7 +230,7 @@ Node
       The documentation corresponding to the keys in the list returned can be displayed by applying the function
       @TO "help"@ to it. To see the documentation corresponding to just one or some of the keys, give @TO "help"@
       an integer or a list of integers to be used as indices in the list returned by the most recent application
-      of @TO "about"@.
+      of @TO "about"@. The function @TO "viewHelp"@ can also be given an integer for viewing the documentation.
 
       The packages searched are the loaded packages and the packages installed under one of the prefixes listed
       in @TO "prefixPath"@. The first search will take a few seconds while it reads all the documentation keys
@@ -244,9 +244,41 @@ Node
     Since @TT "s"@ is taken as a regular expression, parentheses serve
     for grouping subexpressions, rather than matching themselves.
   SeeAlso
-    help
+    (help, ZZ)
     (symbol?, Symbol)
     apropos
+    findSynonyms
+    "regular expressions"
+
+Node
+  Key
+     apropos
+    (apropos, String)
+  Headline
+    symbols matching a pattern
+  Usage
+    apropos pattern
+  Inputs
+    pattern:String
+      a regular expression pattern to match
+  Outputs
+    :List
+      of global symbols matching the given pattern
+  Description
+    Text
+      In the simplest case, the list of symbols containing the given string is returned.
+    Example
+      apropos "atrix"
+    Text
+      @TO2 {"regular expressions", "Regular expressions"}@ allow for more complicated requests.
+      For example, to find all functions that start with @TT "mat"@ or @TT "Mat"@:
+    Example
+      apropos "^[mM]at"
+  SeeAlso
+    help
+    about
+    findSynonyms
+    "regular expressions"
 ///
 
 -- the node displayed by the help command by default

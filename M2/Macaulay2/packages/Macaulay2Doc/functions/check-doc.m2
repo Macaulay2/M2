@@ -2,6 +2,11 @@
 --- author(s): Mike, Mahrud
 --- notes: functions below are all defined in testing.m2
 
+-- in development
+undocumented {
+    (TEST, String, String)
+    }
+
 doc ///
 Node
   Key
@@ -41,6 +46,7 @@ Node
     (check, ZZ, Package)
     (check, ZZ, String)
     [check, UserMode]
+    [check, Verbose]
   Headline
     perform tests of a package
   Usage

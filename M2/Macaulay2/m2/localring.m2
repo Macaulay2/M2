@@ -21,8 +21,11 @@
 --        Legacy code from 2008 is stored in packages/LocalRings/legacy.m2 and is still loaded.
 ---------------------------------------------------------------------------
 
+-- exported in LocalRings.m2
+protect MaximalIdeal
+
 LocalRing = new Type of EngineRing
-LocalRing.synonym = "Local ring"
+LocalRing.synonym = "local ring"
 LocalRing#{Standard,AfterPrint} = RP -> (
      << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
      << "LocalRing, maximal " << RP.MaximalIdeal << endl;

@@ -1,8 +1,9 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2008 by Daniel R. Grayson
+-- TODO: document (EXAMPLE, PRE)
 
 newPackage("Text",
-     Keywords => {"Miscellaneous"},
+     Keywords => {"Documentation"},
      Headline => "documentation and hypertext"
      )
 
@@ -866,7 +867,7 @@ isMissingDoc := value Core#"private dictionary"#"isMissingDoc";
 isUndocumented := value Core#"private dictionary"#"isUndocumented";
 scan({peek', show, validate, html, net, info, tex, texMath, mathML, NewFromMethod, toString, toExternalString, symbol?}, m ->
     undocumented select(toList \\ makeDocumentTag \ methods m, x ->
-	    any(x.Key, s -> toString package s === "Text") and (isMissingDoc x or isUndocumented x)))
+	    x.Package === "Text" and (isMissingDoc x or isUndocumented x)))
 
 undocumented {
     (examples, Hypertext),

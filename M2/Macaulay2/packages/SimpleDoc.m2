@@ -10,7 +10,7 @@ newPackage(
 	{ Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "https://pi.math.cornell.edu/~mike/" },
 	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu", HomePage => "https://math.umn.edu/~mahrud/" }
 	},
-    Keywords => {"Miscellaneous"},
+    Keywords => {"Documentation"},
     PackageImports => { "Text" },
     DebuggingMode => false,
     AuxiliaryFiles => true
@@ -171,7 +171,7 @@ markup = (textlines, keylinenum) -> (
 singleString = (key, textlines, keylinenum) -> (
      if #textlines == 0 then
        error("line ", toString keylinenum, " of string: expected single indented line after ", toString key)
-     else if #textlines > 1 then
+     else if #textlines > 1 and 0 < #getNonempty drop(textlines, 1) then
        error("line ", toString getLinenum textlines#1, " of string: expected single indented line after ", toString key);
      getText textlines#0)
 

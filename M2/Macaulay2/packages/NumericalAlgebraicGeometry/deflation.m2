@@ -6,54 +6,8 @@
 export { "deflate", 
     "SolutionSystem", "Deflation", "DeflationRandomMatrix", "liftPointToDeflation", 
     "deflateInPlace", "DeflationSequence", "DeflationSequenceMatrices",
-    "LiftedPoint", "LiftedSystem", "SquareUp",
-    "numericalRank", "isFullNumericalRank"
+    "LiftedPoint", "LiftedSystem", "SquareUp"
     }
-
-numericalRank = method(Options=>{Threshold=>1e-4})
-numericalRank Matrix := o -> M -> (
-     o = fillInDefaultOptions o;
-     if not member(class ring M, {RealField,ComplexField}) 
-     then error "matrix with real or complex entries expected";
-     t := o.Threshold; 
-     N := if t<=1 then M -- use t as an absolute cutoff for singular values, otherwise look for a "gap"  
-          else matrix apply(entries M, row->(      -- nomalize "large" rows (a hack!!!)
-	     	  m := max(row/abs);
-	     	  if m<1 then row else apply(row,e->e/m)
-	     	  ));
-     S := first SVD N;
-     r := 0; last's := 1;
-     for i to #S-1 do (
-	 if t>1 then (if t*S#i < last's 
-	     then break
-	     else (r = r + 1; last's = S#i)
-	     )
-	 else (
-	     if S#i>t then r = r + 1
-	     else break 
-	     )
-	 );
-     r 
-     )  
-
-isFullNumericalRank = method(Options=>{Threshold=>1e-4}) 
-isFullNumericalRank Matrix := o -> M -> (
-    r := numericalRank(M,o);
-    r == min(numColumns M, numRows M) 
-    )
-
-TEST ///
-C=CC_200
-C[x,y,z]
-F = polySystem {x^3,y^3,x^2*y,z*(z^2-1)^2}
-e = 0.00001
-P0 = point{{e,e,ii*e}}
-P1 = point{{e,e,e+ii*e}}
-P2 = point{{0.1,0.1,0.1_CC}}
-assert not isFullNumericalRank evaluate(F,P0)
-assert not isFullNumericalRank evaluate(F,P1)
-assert isFullNumericalRank evaluate(F,P2)
-///
 
 deflate = method(Options=>{Variable=>null})
 

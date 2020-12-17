@@ -4,8 +4,8 @@ newPackage( "BeginningMacaulay2", Version => "1.0", Date => "November 3, 2009",
 	  {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de"},
 	  {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	  },
-     Headline => "Mathematicians' Introduction to  Macaulay2",
-     Keywords => {"Miscellaneous"},
+     Headline => "Mathematicians' Introduction to Macaulay2",
+     Keywords => {"Documentation"},
      AuxiliaryFiles => true
      )
 beginDocumentation()

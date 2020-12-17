@@ -3,6 +3,8 @@
 --- author(s): 
 --- notes: 
 
+undocumented (NewFromMethod, GroebnerBasis, Sequence)
+
 document { 
      Key => {gb,
 	  (gb,Ideal),
@@ -107,9 +109,110 @@ document {
      }
 
 document {
+     Key => symbol gbTrace,
+     Headline => "provide tracing output during various computations in the 	 engine.",
+     TT "gbTrace = n", " -- set the tracing level for the ", TO "engine", " to
+     level ", TT "n", ".  Meaningful values for the user ", TT "n", " are
+     0, 1, 2, and 3.  Meaningful values for the developers are 4, 5, 8, 10, 11, and 100; the
+     parity also has an effect when the value is at least 5.",
+     PARA{},
+     "The notations used in tracing are :",
+     UL {
+	  "g       - a generator reduced to something nonzero and has been added to the basis.",
+	  "m       - an S-pair reduced to something nonzero and has been added to the basis.",
+	  "z       - an S-pair reduced to zero, and a syzygy has been recorded.",
+	  "u       - an S-pair reduced to zero, but the syzygy need not be recorded.",
+	  "o       - an S-pair or generator reduced to zero, but no new syzygy occurred.",
+	  "r       - an S-pair has been removed.",
+	  "{2}     - beginning to reduce the S-pairs of degree 2.",
+	  "(7)     - 7 more S-pairs need to be reduced.",
+	  LI {"(8,9)   - 9 S-pairs, 8 predicted basis elements (", TO [gb,Hilbert], ")"},
+	  ".       - a minor has been computed, or something has happened while computing a resolution.",
+	  }
+     }
+
+document {
+     Key => GroebnerBasis,
+     Headline => "the class of all Gröbner bases",
+     "A Gröbner basis in Macaulay2 consists of a Gröbner basis
+     computation, and several associated matrices. Normally you don't
+     need to refer to these objects directly, as many operations on
+     matrices and modules create them, and refer to them.  For more
+     information, see ", TO "Gröbner bases", "."
+     }
+
+document {
      Key => GroebnerBasisOptions,
      "This class is used internally to record the options used with ", TO "gb", " when the resulting Gröbner basis is
      cached inside a matrix."
+     }
+
+document {
+     Key => returnCode,
+     TT "returnCode", " --  a key for a ", TO "GroebnerBasis", " under which is
+     stored the return code from the engine for the computation."
+     }
+
+document {
+     Key => {(markedGB, Matrix, Matrix), markedGB,
+	  [markedGB,SyzygyMatrix],[markedGB,MinimalMatrix],[markedGB,ChangeMatrix]},
+     Usage => "markedGB(lt,m)",
+     Headline => "make a marked Gröbner basis",
+     Inputs => {
+	  "lt" => {"the matrix of monomials in (the columns of) ", TT "m", " to mark as lead terms, with respect to an
+	       unspecified monomial ordering"},
+	  "m" => {"the matrix whose columns are to form the generators of a Gröbner basis"},
+	  SyzygyMatrix => Matrix => {"the matrix of syzygies"},
+	  MinimalMatrix => Matrix => {"the matrix of minimal generators" },
+	  ChangeMatrix => Matrix => {"the change-of-basis matrix" }
+	  },
+     Outputs => {
+	  GroebnerBasis => {"the resulting Gröbner basis"}
+	  }
+     }
+
+document {
+     Key => Sort,
+     Headline => "a Strategy option value",
+     TT "Sort", " -- a strategy used with the keyword ", TO "Strategy", ".",
+     PARA{},
+     "Indicates that the Gröbner basis should be sorted by lead term; usually
+     this is a bad idea.  Normally the basis is sorted only by degree. The
+     running time can change either for the good or bad.",
+     SeeAlso => {[gb,Strategy]}
+     }
+
+document {
+     Key => Homogeneous,
+     Headline => "a Strategy option value",
+     TT "Homogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
+     PARA{},
+     "This is an alternate Gröbner basis algorithm that can be used if the submodule
+     is homogeneous, and the ring is a (quotient of) a polynomial ring over a field.",
+     SeeAlso => {[gb,Strategy]}
+     }
+
+document {
+     Key => Inhomogeneous,
+     Headline => "a Strategy option value",
+     TT "Inhomogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
+     PARA{},
+     "This is the default Gröbner basis algorithm used if the submodule is
+     inhomogeneous, and the ring is a (quotient of) a polynomial ring over a field.",
+     SeeAlso => {[gb,Strategy]}
+     }
+
+document {
+     Key => LongPolynomial,
+     Headline => "a Strategy option value",
+     TT "LongPolynomial", " -- a strategy used with the keyword ", TO "Strategy", ".",
+     PARA{},
+     "Indicates that during computation of a Gröbner basis, the reduction
+     routine will be replaced by one that will handle long polynomials more
+     efficiently using \"geobuckets\", which accomodate the terms in buckets
+     of geometrically increasing length.  This method was first used
+     successfully by Thomas Yan, graduate student in CS at Cornell.",
+     SeeAlso => {[gb,Strategy]}
      }
 
 -- document {

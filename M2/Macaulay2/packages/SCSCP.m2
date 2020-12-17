@@ -22,7 +22,7 @@ newPackage(
 		{Name => "Dan Roozemond", Email => "dan.roozemond@gmail.com", HomePage => "http://magma.maths.usyd.edu.au/~danr"}
 	},
 	Headline => "SCSCP for Macaulay2",
-	Keywords => {"Miscellaneous"},
+	Keywords => {"System"},
 	DebuggingMode => false,
 	AuxiliaryFiles => true,
 	PackageExports => {"OpenMath"},

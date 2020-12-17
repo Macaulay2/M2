@@ -15,7 +15,7 @@ undocumented {
      }
 
 document { 
-     Key => tensor,
+     Key => {tensor,(tensor,Sequence)},
      Headline => "tensor product",
      PARA{
 	  "For two arguments, this is the same as ", TT "A ** B", " except that options are allowed.

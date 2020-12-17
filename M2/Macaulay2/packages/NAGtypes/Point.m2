@@ -15,6 +15,7 @@
 --   [LiftedPoint]           -- the corresponding solution of the LiftedSystem
 --   }
 Point.synonym = "point"
+texMath Point := x -> texMath coordinates x
 net Point := p -> (
     if hasAnAttribute p then (
 	if hasAttribute(p,PrintNet) then return getAttribute(p,PrintNet);
