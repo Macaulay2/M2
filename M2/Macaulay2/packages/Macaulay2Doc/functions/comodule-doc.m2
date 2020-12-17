@@ -15,7 +15,7 @@ document {
 	  "M" => Module => {"or an ", TO2(Ideal,"ideal")}
 	  },
      Outputs => {
-	  Module => {"the quotient module ", TT "N/M", ", if ", TT "M", " is given as a submodule ", TEX "M \\subset N", 
+	  Module => {"the quotient module ", TT "N/M", ", if ", TT "M", " is given as a submodule $M \\subset N$",
 	       ", where ", TT "N", " is either a free module or a quotient of a free module."},
 	  },
      EXAMPLE {

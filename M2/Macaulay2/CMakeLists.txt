@@ -44,7 +44,6 @@ add_subdirectory(bin) # combine with engine or interpreter?
 add_subdirectory(m2) # rename to Core?
 add_subdirectory(packages)
 add_subdirectory(editors)
-#add_subdirectory(book) # separate repository?
 
 if(BUILD_TESTING)
   add_subdirectory(tests)

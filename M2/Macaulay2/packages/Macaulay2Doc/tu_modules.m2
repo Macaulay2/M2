@@ -29,11 +29,11 @@ a*N + b*N
 -- elements of N, one way is the following.
 N0 = image (a**N_{1}|N_{2}-N_{3})
 -- To understand what Macaulay2 is doing here, let's break
--- this down.  N_{i} defines a matrix R^1 --> N, which maps 1 to
+-- this down.  {\tt N_{i}} defines a matrix $R^1 \to N$, which maps 1 to
 -- the i th generator of N. (See Section XX below for more
 -- information about module homomorphisms).
 N_{1}
--- One could use a*N_{1}, but it turns out that a ** N_{1}
+-- One could use {\tt a*N_{1}}, but it turns out that {\tt a ** N_{1}}
 -- works better:
 a ** N_{1}
 -- Next, remember that the vertical bar concatenates matrices.
@@ -100,8 +100,8 @@ betti res J
 -- of free modules.  A useful generalization, which covers both of these
 -- types, are subquotients: submodules of quotients of free modules.
 --P
--- A subquotient module is determined by two matrices f : R^m --> R^n
--- and g : R^p --> R^n.  The subquotient module with generators f, relations
+-- A subquotient module is determined by two matrices $f : R^m \to R^n$
+-- and $g : R^p \to R^n$.  The subquotient module with generators f, relations
 -- g is by definition the module M = (image f) + (image g) / (image g).
 -- Thus, if f is the identity map, M = coker g, and if g = 0, then M = image f.
 use ring M
@@ -135,7 +135,7 @@ ambient N
 ambient N == target generators N
 ambient N == target relations N
 
--- N is a submodule of a quotient module R^n/image(g).  The routine super
+-- N is a submodule of a quotient module $R^n/image(g)$.  The routine super
 -- returns this quotient module
 super N
 -- This is the same as 
@@ -148,12 +148,12 @@ cover N == source generators N
 -----------------------------------
 -- E. Homomorphisms between modules
 -----------------------------------
--- A homomorphism f : M --> N is represented as a matrix from the 
+-- A homomorphism $f : M \to N$ is represented as a matrix from the 
 -- generators of M to the generators of N.
 A = QQ[x,y]/(y^2-x^3)
 M = module ideal(x,y)
 
--- One homomorphism F : M --> A is x-->y, y-->x^2 (multiplication by y/x)
+-- One homomorphism $F : M \to A$ is $x \mapsto y, y \mapsto x^2$ (multiplication by y/x)
 -- We write this as:
 F = map(A^1,M,matrix{{y,x^2}})
 -- Notice that as is usual in Macaulay2, the target comes before the source.
@@ -161,16 +161,16 @@ source F == M
 target F == A^1
 matrix F
 
--- The image of F lies in the submodule M of A^1.  To obtain the map
--- M --> M, we use //.  But first we need the inclusion map
--- of M into A^1:
+-- The image of F lies in the submodule M of $A^1$.  To obtain the map
+-- $M \to M$, we use //.  But first we need the inclusion map
+-- of M into $A^1$:
 -- Later we explain this, but for now, we just write down this map:
 inducedMap(A^1,M)
--- Now we use // to lift F : M --> A along M --> A^1, to get M --> M:
+-- Now we use // to lift $F : M \to A$ along $M \to A^1$, to get $M \to M$:
 G = F // inducedMap(A^1,M)
 source G
 target G
--- G is now a map from M --> M.
+-- G is now a map from $M \to M$.
 isWellDefined G
 
 ---------------------------------------------
@@ -193,16 +193,16 @@ super M
 super N
 image generators M
 --
--- If two modules M and N have the same ambient module R^n, then inducedMap(M,N)
--- makes the canonical map N --> M between them, if one exists.  If a map
+-- If two modules M and N have the same ambient module $R^n$, then inducedMap(M,N)
+-- makes the canonical map $N \to M$ between them, if one exists.  If a map
 -- doesn't exist, the returned map might not be a homomorphism.
 inducedMap(M,M) == id_M
-inducedMap(super M,M) == map(super id_M) -- the map (P+Q)/Q --> R^n/Q, where M=(P+Q)/Q.
-inducedMap(super M,ambient M) -- the quotient map R^n --> R^n/Q
+inducedMap(super M,M) == map(super id_M) -- the map $(P+Q)/Q \to R^n/Q$, where $M=(P+Q)/Q$.
+inducedMap(super M,ambient M) -- the quotient map $R^n \to R^n/Q$
 inducedMap(M,N) -- the inclusion map
--- The projection map M --> M/N
+-- The projection map $M \to M/N$
 inducedMap(M/N,M) -- the projection map
--- The projection map N --> M/N, which is the zero map
+-- The projection map $N \to M/N$, which is the zero map
 inducedMap(M/N,N) -- the zero map
 -- Not all such maps can be defined.  The functions 'inducedMap' normally checks that the
 -- result is a well-defined homomorphism.  The option 'Verify' controls that behavior.
@@ -218,13 +218,13 @@ inducedMap(M/N,M) * inducedMap(M,x*M) == inducedMap(M/N,x*M)
 
 -- exercises:
 -- 1. isomorphism theorems.  Given submodules M and N of a module P,
---    (a) find (M+N)/M
---    (b) find N/(M \cap N)
+--    (a) find $(M+N)/M$
+--    (b) find $N/(M \cap N)$
 --    (c) find in Macaulay2, an isomorphism between them.
 --
--- 2. Given a homomorphism M --> A.  Suppose that
---    the image lies in M (M is a submodule of A^1).
---    Find the map M --> M.
+-- 2. Given a homomorphism $M \to A$.  Suppose that
+--    the image lies in M (M is a submodule of $A^1$).
+--    Find the map $M \to M$.
 
 
 ---------------------------
@@ -233,7 +233,7 @@ inducedMap(M/N,M) * inducedMap(M,x*M) == inducedMap(M/N,x*M)
 A = QQ[x,y,Degrees=>{2,3}]/(y^2-x^3)
 M = module ideal(x,y)
 H = Hom(M,M)
--- The elements of H correspond to homomorphisms M --> A.
+-- The elements of H correspond to homomorphisms $M \to A$.
 -- The homomorphism associated to elements of H may be obtained
 -- using the routine homomorphism.
 F = homomorphism(H_{0})

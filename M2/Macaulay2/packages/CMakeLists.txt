@@ -7,6 +7,8 @@
 ## - running tests in parallel:
 ##     ctest -R check-PACKAGE -j4
 
+include(latex) ## CMake script for creating PDF documentation
+
 ## Macro for configuring M2 commands so they can be run as M2 -e ${STR}
 # _template_var:  variable holding the string template
 # _string_var:    return variable (optional, default: _template_var)
@@ -72,6 +74,21 @@ set(M2_TEST_TEMPLATE    [[debug Core \; argumentMode = @ArgumentMode@ \; check(@
 set(M2_INFO_TEMPLATE    [["info-"|"@package@" << @package@#"test number" << close]]) # ignore the color
 set(M2_CHECK_TEMPLATE   [[check("@package@", UserMode=>false, Verbose=>$<IF:$<BOOL:${VERBOSE}>,true,false>)]])
 
+# TODO: simplify
+set(M2_DOC_TEMPLATE [[installPackage("@package@",
+  Verbose                => $<IF:$<BOOL:${VERBOSE}>,true,false>,
+  RerunExamples          => ${RerunExamples},
+  CheckDocumentation     => ${CheckDocumentation},
+  IgnoreExampleErrors    => ${IgnoreExampleErrors},
+  RemakeAllDocumentation => ${RemakeAllDocumentation},
+  InstallPrefix          => "${M2_DIST_PREFIX}/",
+  UserMode               => false,
+  SeparateExec           => true,
+  DebuggingMode          => true,
+  MakeHTML               => false,
+  MakeInfo               => false,
+  MakePDF                => true)]])
+
 #################################################################################
 ## Declare all targets: {install,check,all,uninstall}-{packages,PACKAGE}
 
@@ -80,13 +97,15 @@ add_custom_target(list-packages
   COMMAND ${CMAKE_COMMAND} -E echo ${DISTRIBUTED_PACKAGES})
 
 # Prefixes for package targets
-set(_target_prefixes "install;check;all;uninstall")
+set(_target_prefixes "install;info;doc;check;all;uninstall")
 # Package targets that should be included in ALL
-# TODO: add install-packages once it is fast enough
 set(_all_target_list "")
 
+if(BUILD_DOCS)
+  list(APPEND _all_target_list "install-packages")
+endif()
+
 if(BUILD_TESTING)
-  list(APPEND _target_prefixes "info")
   list(APPEND _all_target_list "info-packages")
 endif()
 
@@ -141,6 +160,7 @@ foreach(package IN LISTS PACKAGES)
   _M2_STRING_CONFIGURE(M2_CHECK_TEMPLATE   M2_CHECK_STRING)
   _M2_STRING_CONFIGURE(M2_NEED_TEMPLATE    M2_NEED_STRING)
   _M2_STRING_CONFIGURE(M2_INFO_TEMPLATE    M2_INFO_STRING)
+  _M2_STRING_CONFIGURE(M2_DOC_TEMPLATE     M2_DOC_STRING TRUE)
 
   ###############################################################################
   ## Enable USES_TERMINAL only for Macaulay2Doc and EngineTests
@@ -182,6 +202,14 @@ foreach(package IN LISTS PACKAGES)
     DEPENDS M2-core ${${package}_dependencies}
     BYPRODUCTS ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${package}/.installed
     )
+
+  ## Custom target for generating PDF documentation for the package
+  # TODO: put the individual package's version in the name
+  # NOTE: has to remain in sync with installPDF in m2/book.m2
+  set(_bookname manual)
+  set(_bookdir  ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/${package})
+  _ADD_LATEX_TARGET(${package} ${_bookdir} ${_bookname})
+  add_custom_target(doc-${package} DEPENDS ${_bookdir}/${_bookname}.pdf)
 
   ## Custom target for uninstalling the package
   add_custom_target(uninstall-${package}

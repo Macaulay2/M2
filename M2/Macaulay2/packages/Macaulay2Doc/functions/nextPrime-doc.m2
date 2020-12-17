@@ -39,13 +39,13 @@ doc ///
       of integers (a,b)
   Outputs
      p: ZZ
-          a prime in the specified range. The default range is (10^4,3*10^4)
+          a prime in the specified range. The default range is $(10^4,3*10^4)$
      r: ZZ
           a primitive n-th root of unity mod p
   Description
      Text
-       We compute the prime p as a larger prime factor of r1^n-1.
-       If the largest p in the desired range does not work, we pass to r1+1 and repeat.
+       We compute the prime p as a larger prime factor of $r1^n-1$.
+       If the largest p in the desired range does not work, we pass to $r1+1$ and repeat.
      Example
        n = 12
        (p,r) = getPrimeWithRootOfUnity(n,5)
@@ -72,7 +72,7 @@ doc ///
   Description
     Text
        Specifies an integral interval in which we search for a prime number with desired properties.
-       If $b< a+2*log a$ an error message will be returned. The default value is (10^4,3*10^4)
+       If $b< a+2*log a$ an error message will be returned. The default value is $(10^4,3*10^4)$
   SeeAlso
     nextPrime
     getPrimeWithRootOfUnity
@@ -114,7 +114,7 @@ doc ///
        codim I, degree I
        time randomKRationalPoint(I)
      Text
-       The claim that 63 % of the intersections contain a K-rational point can be experimentally tested:
+       The claim that $63 \%$ of the intersections contain a K-rational point can be experimentally tested:
      Example
        p=10007,kk=ZZ/p,R=kk[x_0..x_2]
        n=5; sum(1..n,j->(-1)^(j-1)*binomial(n,j)*(n-j)!/n!)+0.0
