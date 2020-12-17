@@ -218,6 +218,7 @@ algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
 	    if generators(f * M1) % generators I == 0 then M1
 	    else intersect(M1, quotient(I, ideal f, opts, Strategy => Quotient)))),
 
+    -- FIXME: potential bug with nonstandard fields, see the last test in quotient-test.m2
     Quotient => (opts, I, J) -> (
 	R := ring I;
 	mR := transpose generators J ** (R / I);

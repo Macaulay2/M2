@@ -63,9 +63,10 @@ Node
   SeeAlso
     (quotient, Ideal, Ideal)
     annihilator
-    isSupportedInZeroLocus
     "MinimalPrimes::MinimalPrimes"
     "PrimaryDecomposition::PrimaryDecomposition"
+  Subnodes
+    isSupportedInZeroLocus
 
 Node
   Key
