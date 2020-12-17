@@ -2,7 +2,6 @@
 
 #include "stdinc-m2.hpp"
 #include "util.hpp"
-#include <string>
 
 M2_string string_std_to_M2(const std::string& s)
 {
@@ -12,7 +11,7 @@ M2_string string_std_to_M2(const std::string& s)
 
 std::string string_M2_to_std(const M2_string s)
 {
-  return std::string { s->array, static_cast<unsigned>(s->len) };
+  return std::string((char*)(s->array), s->len);
 }
 
 void M2_ArrayString_to_stdvector(M2_ArrayString strs,
