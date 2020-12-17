@@ -1,9 +1,0 @@
-srcversion := "@PACKAGE_VERSION@"
-binversion := version#"VERSION"
-if srcversion =!= binversion
-then stderr << "--warning: mismatch: source code version: " << srcversion << " != executable version " << binversion << endl
-
--- Local Variables:
--- compile-command: "cd $M2BUILDDIR && ./config.status Macaulay2/m2/version.m2"
--- End:
-

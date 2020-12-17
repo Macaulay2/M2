@@ -25,7 +25,7 @@ OTHERM2FILES := sagbi.m2
 ############################## loadsequence
 LOADSEQUENCE := $(shell cat @srcdir@/loadsequence)
 DUMPEDM2FILES += $(LOADSEQUENCE)
-DUMPEDM2SRCFILES += $(patsubst version.m2, version.m2.in, $(LOADSEQUENCE))
+DUMPEDM2SRCFILES += $(LOADSEQUENCE)
 ############################## mpcodes.m2
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
@@ -68,7 +68,6 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		@srcdir@/../packages/SimpleDoc/doc.txt \
 		loadsequence \
 		Makefile.in \
-		Makefile.tests \
 		../editors/Makefile.in \
 		../tests/Makefile.in \
 		../tests/Makefile.test.in \
@@ -134,7 +133,7 @@ clean::; rm -f profile
 FILES_TO_COPY := $(DUMPEDM2FILES) loadsequence installedpackages
 all:@pre_packagesdir@ @pre_packagesdir@/Core $(addprefix @pre_packagesdir@/Core/, $(FILES_TO_COPY))
 clean::; rm -rf cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 core gmon.out
-distclean: clean; rm -f Makefile version.m2
+distclean: clean; rm -f Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 # End:
