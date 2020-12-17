@@ -13,8 +13,7 @@
 
 URL = http://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 4.1.3
-# we made a second patch file, as the first seems adapted to the cmake build
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)-b
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif
 
 BUILDTARGET = all ftmpl_inst.o
