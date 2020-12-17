@@ -346,7 +346,7 @@ prefixDirectory = null					    -- prefix directory, after installation, e.g., "/
 fullCopyright := false
 matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
-nosetup := false
+nocore := false
 noinitfile = false
 interpreter := commandInterpreter
 
@@ -366,16 +366,7 @@ pathsearch := e -> (
 	  );
      e)
 
-phase := 1
-
-silence := arg -> null
-notyeterr := arg -> error("command line option ", arg, " not re-implemented yet")
-notyet := arg -> if phase == 1 then (
-     << "warning: command line option " << arg << " not re-implemented yet" << newline << flush;
-     )
-obsolete := arg -> error ("warning: command line option ", arg, " is obsolete")
 progname := notdir commandLine#0
-
 usage := arg -> (
      << "usage:"             << newline
      << "    " << progname << " [option ...] [file ...]" << newline
@@ -400,12 +391,12 @@ usage := arg -> (
      << "    --texmacs          TeXmacs session mode" << newline
      << "    --version          print version number and exit" << newline
      << "    --webapp           WebApp session mode" << newline
-     << "    --no-threads       don't start any additional threads (or tasks)" << newline
+     << "    --no-core          don't load the Core" << newline
      << "    --no-preload       don't load the preloaded packages" << newline;
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-randomize     don't set the random number seed based on the date" << newline
      << "    --no-readline      don't use readline" << newline;
-     << "    --no-setup         don't try to load setup.m2" << newline
+     << "    --no-threads       don't start any additional threads (or tasks)" << newline
      << "    --no-time          arrange for the current time to be always 0" << newline;
      << "    --no-tty           do not treat stdin and stdout as tty's" << newline
      << "    --no-tvalues       do not load tvalues.m2" << newline
@@ -443,8 +434,12 @@ showMaps := () -> (
      else "memory maps not available"
      )
 
+phase := 1
 
-argno := 1
+obsolete :=  arg     -> (stderr << "error: command line option " << arg << " is obsolete."                        << endl << endl; usage(); exit 1)
+replaced := (arg, x) -> (stderr << "error: command line option " << arg << " has been replaced with " << x << "." << endl << endl; usage(); exit 1)
+notyeterr := arg     -> (stderr << "error: command line option " << arg << " has not been re-implemented yet.";   << endl << endl; usage(); exit 1)
+notyet := arg -> if phase == 1 then (stderr << "warning: command line option " << arg << " has not been re-implemented yet." << endl << flush)
 
 action := hashTable {
      "-h" => arg -> (usage(); exit 0),
@@ -465,7 +460,8 @@ action := hashTable {
      "--no-preload" => arg -> arg,
      "--no-prompts" => arg -> if phase == 3 then noPrompts(),
      "--no-readline" => arg -> arg,			    -- handled in d/stdio.d
-     "--no-setup" => arg -> if phase == 1 then nosetup = true,
+     "--no-setup"        => arg -> replaced(arg, "--no-core"),
+     "--no-core"         => arg -> if phase == 1 then nocore = true,
      "--notify" => arg -> if phase <= 2 then notify = true,
      "--no-tty" => arg -> arg,			    -- handled in d/stdio.d
      "--no-tvalues" => arg -> arg,		    -- handled in m2/typicalvalues.m2
@@ -497,6 +493,8 @@ action := hashTable {
      "--version" => arg -> ( << version#"VERSION" << newline; exit 0; ),
      "--webapp" => arg -> ( printWidth=0; topLevelMode = global WebApp; )
      };
+
+argno := 1
 
 valueNotify := arg -> (
      if notify then stderr << "--evaluating command line argument " << argno << ": " << format arg << endl;
@@ -591,26 +589,6 @@ if not isAbsolutePath exe then exe = currentDirectory() | exe ;
 exe = concatenate(realpath dir exe, base exe)
 if notify then stderr << "--executable = " << exe << endl
 
-describePath := () -> (
-     if #path == 0 then stderr << "--file search path empty" << endl
-     else (
-	  stderr << "--file search path directories:" << endl;
-	  for d in path do (
-	       stderr << "--    " << d << endl;
-	       );
-	  );
-     )
-
-loadSetup := () -> (
-     if notify then describePath();
-     for d in path do (
-	  fn := minimizeFilename(d|"setup.m2");
-	  if tryLoad("setup.m2", fn) then return;
-	  );
-     if not notify then describePath();
-     error "can't load setup.m2"
-     )
-
 if firstTime and not nobanner then (
      if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
      stderr << (if fullCopyright then copyright else first separate copyright) << newline << flush;
@@ -647,12 +625,24 @@ processCommandLineOptions 2				    -- just for path to core files and packages
 
 path = join(initialPath, path)
 
-(loadDepth = 1; if firstTime and not nosetup then loadSetup(); loadDepth = 0)
+describePath = path -> (
+    if #path == 0 then printerr "file search path empty" else (
+	printerr "file search path directories:";
+	for d in path do printerr("   ", d)));
+
+loadCore = path -> (
+    if notify then describePath path;
+    if not any(path, prefix -> tryLoad("Core.m2", minimizeFilename(prefix | "Core.m2"))) then (
+	if not notify then describePath path;
+	error "Core.m2 was not found on path"));
+
+-- Here the Core is loaded
+(loadDepth = 1; if firstTime and not nocore then loadCore path; loadDepth = 0)
 
 -- remove the Core private dictionary -- it was added by "debug" above
 -- and install a local way to use private global symbols
 local core
-if not nosetup then (
+if not nocore then (
      dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary");
      core = nm -> value Core#"private dictionary"#nm;
      ) else (
