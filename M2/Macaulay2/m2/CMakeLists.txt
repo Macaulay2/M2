@@ -24,7 +24,7 @@ add_custom_command(OUTPUT ${CORE_DIR}/tvalues.m2
   VERBATIM)
 
 foreach(filename IN LISTS M2LIST ITEMS
-    ${CMAKE_CURRENT_BINARY_DIR}/startup.m2 setup.m2 loadsequence installedpackages)
+    ${CMAKE_CURRENT_BINARY_DIR}/startup.m2 Core.m2 loadsequence installedpackages)
   file(COPY ${filename} DESTINATION ${CORE_DIR})
 endforeach()
 

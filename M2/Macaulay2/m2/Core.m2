@@ -1,4 +1,9 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
+-- The source code of Macaulay2 is contained in multiple files, contained
+-- in the subdirectory "Macaulay2/".
+
+if class Core =!= Symbol then error "Core cannot be reloaded"
+
 
 nonnull = x -> select(x, i -> i =!= null)
 nonempty = x -> select(x, i -> i =!= "")
