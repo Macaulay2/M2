@@ -29,6 +29,18 @@
 --   2. GB over commutative rings (not just fields)
 --   3. Anick resolution
 
+-- M2 project/draft pull request for ncEngine
+-- get examples all running
+-- have nCAlgebra functionality brought over to ncEngine:
+--  normalElements
+--  modules (bi-modules)
+-- major computations to be written yet:
+--  Hilbert function (is needed)
+--  inhomog GB's.
+--  one-sides GB's in modules.
+-- get unit tests working again.  Also tests in the package.
+-- connect unit tests to autotools build
+
 export {
     "freeAlgebra",
     "ncBasis",
@@ -203,6 +215,7 @@ freeAlgebra(Ring, List) := FreeAlgebra => (A, args)  -> (
        (symbol Heft) => heftvec,
        (symbol Weights) => wtvecs,
        (symbol isCommutative) => false,
+       (symbol isHomogeneous) => true,
        (symbol CoefficientRing) => A,
        (symbol cache) => new CacheTable from {},
        (symbol baseRings) => append(A.baseRings,A)
@@ -326,6 +339,7 @@ FreeAlgebra / Ideal := FreeAlgebraQuotient => (R,I) -> (
      commonEngineRingInitializations S;
      S.relations = gensI;
      S.isCommutative = false;
+     S.isHomogeneous = isHomogeneous I;
      S.generators = apply(generators S, m -> promote(m,S));
      if R#?generatorSymbols then S#generatorSymbols = R#generatorSymbols;
      if R#?generatorExpressions then S#generatorExpressions = (
@@ -2072,7 +2086,7 @@ freeMonoid FreeAlgebra := R -> (
     M
 )
 
-end--
+end----------------------------------------------------------
 
 -- making a new type of monoid for noncommutative algebras.
 restart
