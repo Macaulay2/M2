@@ -2528,21 +2528,62 @@ doc ///
         g = yonedaMap f
     Inputs
         f:Matrix
-            over a ring $R$, from $R^1$ to $\operatorname{Ext}^d(M,N)$,
+            over a ring $R$, from $R^1$ to $\operatorname{Ext}^d_R(M,N)$,
             which represents an element in the Ext module
+        LengthLimit => ZZ
+            determines the maximum length of the free resolutions used
     Outputs
         g:ComplexMap
             of degree $-d$ from the free resolution of $M$ to the free
             resolution of $N$ corresponding to the given element in the
             Ext module
     Description
+        Text
+            The module $\operatorname{Ext}^d_R(M,N)$ is constructed from
+            a free resolution $F$ of $M$,
+            \[
+              0 \leftarrow M \leftarrow F_0 \leftarrow F_1 \leftarrow \dots
+              \leftarrow F_d \leftarrow \ldots,
+            \]
+            by taking the homology of the complex $\operatorname{Hom}_R(F, N)$.
+            An element of $\operatorname{Ext}^d_R(M,N)$ is represented by
+            an element of $\operatorname{Hom}_R(F_d, N)$.  This map extends to a map
+            of degree $-d$ from $F$ to the free resolution of $N$.
+        Text
+            We illustrate this method by choosing a random element
+            in an Ext module.  This particular Ext module may be regarded
+            as a possible obstruction space for deformations of the ideal $I$.
+        Example
+            S = ZZ/101[a..d]
+            I = ideal"a2,ab,ac,b3"
+            E = Ext^1(I, S^1/I)
+            B = basis(0, E)
+            f = B * random(S^16, S^1)
+            g = yonedaMap f
+            assert isWellDefined g
+            assert(degree g === -1)
+            assert isCommutative g            
+            assert isHomogeneous g
+            source g -- free resolution of I
+            target g -- free resolution of S/I
+            assert(yonedaMap' g == f)
+        Text
+            If the free resolutions are not finite in length,
+            one needs to choose a truncation via the optional
+            argument {\tt LengthLimit}.
         Example
             R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
             M = truncate(1,R^1)
-            f = basis(0, Ext^1(M, M))
+            prune Ext^3(M, M)
+            B = basis(-4, Ext^3(M, M))
+            f = B_{2}
             g = yonedaMap(f, LengthLimit => 8)
-            isWellDefined g
-            assert(yonedaMap' g == f)
+            assert isHomogeneous g
+            assert isWellDefined g
+            assert isCommutative g
+            assert(degree g === -3)
+            assert(yonedaMap' g == map(target f, R^1, f, Degree => -4))
+            assert(isHomogeneous yonedaMap' g)
     SeeAlso
         "Working with Ext"
         (yonedaMap', ComplexMap)
@@ -2557,13 +2598,63 @@ doc ///
         (yonedaMap', ComplexMap)
         yonedaMap'
     Headline
+        identifies the element of Ext corresponding to a map of free resolutions
     Usage
+        f = yonedaMap' g
     Inputs
+        g:ComplexMap
+            of degree $-d$ from the free resolution of $M$ to the free
+            resolution of $N$
     Outputs
+        f:Matrix
+            over a ring $R$, from $R^1$ to $\operatorname{Ext}^d_R(M,N)$,
+            which represents the corresponding element in the Ext module
     Description
         Text
+            The module $\operatorname{Ext}^d_R(M,N)$ is constructed from
+            a free resolution $F$ of $M$,
+            \[
+              0 \leftarrow M \leftarrow F_0 \leftarrow F_1 \leftarrow \dots
+              \leftarrow F_d \leftarrow \ldots,
+            \]
+            by taking the homology of the complex $\operatorname{Hom}_R(F, N)$.
+            An element of $\operatorname{Ext}^d_R(M,N)$ is represented by
+            an element of $\operatorname{Hom}_R(F_d, N)$.  Given a map $g$ extending
+            a map of degree $-d$ from $F$ to the free resolution of $N$,
+            this method returns the corresponding element in the Ext module.
+        Text
+            We illustrate this method by choosing a random element
+            in an Ext module, constructing the corresponding map  $g$ between free resolutions.
         Example
-    Caveat
+            S = ZZ/101[a..d]
+            I = ideal"a2,ab,ac,b3"
+            E = Ext^1(I, S^1/I)
+            B = basis(0, E)
+            f0 = B * random(S^16, S^1)
+            g = yonedaMap f0
+            assert(degree g === -1)
+            f = yonedaMap' g
+            assert isWellDefined f
+            assert(degree f == {0})
+            assert isHomogeneous f
+            source f === S^1
+            target f === E
+            assert(f == f0)
+        Text
+            The method @TO yonedaMap'@ is only a one-sided inverse
+            to @TO yonedaMap@.
+        Example
+            R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
+            M = truncate(1,R^1)
+            B = basis(-4, Ext^3(M, M))
+            f0 = B_{2}
+            g = yonedaMap(f0, LengthLimit => 8)
+            f = yonedaMap' g
+            assert isWellDefined f
+            assert isHomogeneous f
+            assert(degree f === {-4})
+            assert(f != f0)
+            assert(yonedaMap(f, LengthLimit => 8) == g)
     SeeAlso
         "Working with Ext"
         (yonedaMap, Matrix)

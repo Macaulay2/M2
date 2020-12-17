@@ -984,7 +984,7 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
             -- using "H = homology(g1, g0)" does not provide us with ker g1.
             liftmap = (f) -> (
                 h := ((generators H) * (matrix f)) // generators source g1;
-                map(source g1, source f, h)
+                map(source g1, source f, h, Degree => degree f)
                 );
             invmap = (g) -> (
                 -- given g : R^1 --> Hom(FM_i, N)
@@ -993,7 +993,7 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
                 -- output: R^1 --> H = ker g1 / image g0
                 h := inducedMap(target g0, kerg1);
                 f1 := g // h;
-                map(H, source f1, f1)
+                map(H, source f1, f1, Degree => degree g)
                 );
             );
         H.cache.yonedaExtension = liftmap;
@@ -1068,7 +1068,9 @@ yonedaMap Matrix := ComplexMap => opts -> f -> (
     FM := freeResolution(M, LengthLimit => opts.LengthLimit); -- WARNING: need it to match computation from Ext^d(M,N)...
     FN := freeResolution(N, LengthLimit => opts.LengthLimit - d);
     g := homomorphism E.cache.yonedaExtension f; -- g: FM_d --> N
-    g0 := map(FN_0, FM_d, g);
+    -- the " + degree f" is needed because of the behavior of homomorphism:
+    -- that function appears to ignore the degree of the incoming map.
+    g0 := map(FN_0, FM_d, g, Degree => degree f + degree g);
     extend(FN, FM, g0, -d)
     )
 
@@ -1085,7 +1087,7 @@ yonedaMap' ComplexMap := Matrix => opts -> f -> (
     M := if FM.cache.?Module then FM.cache.Module else error "expected a free resolution of a module";
     N := if FN.cache.?Module then FN.cache.Module else error "expected a free resolution of a module";
     extd := Ext^d(M, N);
-    g := map(N, FM_d, f_d);
+    g := map(N, FM_d, f_d, Degree => degree f_d);
     extd.cache.yonedaExtension' homomorphism' g
     )
 
