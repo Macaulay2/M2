@@ -68,7 +68,6 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		@srcdir@/../packages/SimpleDoc/doc.txt \
 		loadsequence \
 		Makefile.in \
-		Makefile.tests \
 		../editors/Makefile.in \
 		../tests/Makefile.in \
 		../tests/Makefile.test.in \
