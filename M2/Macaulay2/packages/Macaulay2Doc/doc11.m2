@@ -41,14 +41,6 @@ document {
 	  ///,
      SeeAlso => { directSum, (symbol ++, Module, Module), (symbol **, Module, Module), (Hom,Module,Module), Expression, FunctionApplication}
      }
-TEST ///
-     assert( (     M = ZZ^2 ++ ZZ^3) === ZZ^5 );
-     assert( (     formation M) === new FunctionApplication from {directSum,(ZZ^2,ZZ^3)} );
-     assert( (     M = directSum(ZZ^2, ZZ^3, ZZ^4)) === ZZ^9 );
-     assert( (     formation M) === new FunctionApplication from {directSum,(ZZ^2,ZZ^3,ZZ^4)} );
-     assert( (     M = ZZ^2 ** ZZ^3) === ZZ^6 );
-     assert( (     formation M) === new FunctionApplication from {tensor,(ZZ^2,ZZ^3)} );
-///
 
 document {
      Key => html,

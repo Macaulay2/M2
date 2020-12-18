@@ -38,7 +38,3 @@ Node
     capture
     help
 ///
-
-TEST ///
-     assert( class examples MutableList === Net )
-///

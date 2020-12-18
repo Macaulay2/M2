@@ -103,23 +103,6 @@ document {
 	       }
 	  },
      "The arguments ", TT "m", " and ", TT "n", " may also be vectors or ring elements.",
-     TEST ///
-	  R = ZZ[x]
-	  m = random(R^2,R^{-1,-2,-3,-4,-5})
-	  F = target m
-	  f = rank F
-	  P = source m
-	  p = rank P
-	  n = random(R^3,R^{-6,-7,-8,-9})
-	  G = target n
-	  g = rank G
-	  Q = source n
-	  q = rank Q
-	  h = diff(m,n)
-	  assert( source h === dual P ** Q )
-	  assert( target h === dual F ** G )
-	  scan(f, i -> scan(g, j -> scan(p, k -> scan(q, l -> assert( h_(g*i+j,q*k+l) === diff(m_(i,k),n_(j,l)))))))
-	  ///,
      EXAMPLE {
 	  "R = QQ[a,b,c][x,y,z]",
 	  "m = transpose vars R",

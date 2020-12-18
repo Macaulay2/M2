@@ -46,15 +46,3 @@ scan({det,minors,exteriorPower}, fn -> document {
      SeeAlso => select({det, exteriorPower, minors}, g -> g =!= fn)
      })
 
-end
-
-
-TEST "
--- For more determinant tests, see Macaulay2/test/testdet.m2
-R = ZZ/103[a,b,c,d]
-h = matrix {{a,b},{c,d}}
-assert( det h == a * d - b * c )
-assert( minors(1,h) == image matrix {{a,b,c,d}} )
-assert( minors(2,h) == image matrix {{a * d - b * c}} )
-"
-

@@ -122,36 +122,3 @@ doc ///
        time (#select(apply(100,i->(degs=apply(decompose(I+ideal random(1,R)),c->degree c); 
 		      #select(degs,d->d==1))),f->f>0))
 ///
-	 
-
--- tests for nextprime
-TEST ///
-  assert( nextPrime(-10) == 2)
-  assert( nextPrime 100 == 101)
-  assert( nextPrime 1000 == 1009)
-///
-
-TEST ///
-     setRandomSeed("getPrimeOfUnity")
-     (p,r)=getPrimeWithRootOfUnity(2,3,Range=>(10^3,10^4))
-     assert( (p,r)==(3511,-1)) -- works if the random number generator is not unchanged 
-     (p,r)=getPrimeWithRootOfUnity(15,20)
-     assert((p,r)==(18181,21))
-     (p,r)=getPrimeWithRootOfUnity(12,2,Range=>(100,200))     	  
-     assert(r^12%p==1 and r^6%p !=1 and r^4%p != 1)
-/// 
-
-TEST ///
-     setRandomSeed 0
-     p=10007,kk=ZZ/p 
-     R=kk[x_0..x_2]
-     I=ideal(random(4,R)); 
-     time randomKRationalPoint(I)
-     R=kk[x_0..x_4]
-     I=minors(3,random(R^5,R^{3:-1}));
-     codim I
-     time pt = randomKRationalPoint(I)
-     -- The following is the answer given the above random seed.
-     ans = ideal(x_3+74*x_4,x_2+2336*x_4,x_1-4536*x_4,x_0-4976*x_4)
-     assert(pt == ans)
-///
