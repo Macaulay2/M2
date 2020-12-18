@@ -430,7 +430,7 @@ document {
 document {
      Key => RevLex,
      Headline => "reverse lexicographic ordering",
-     "The reverse lexicographic order is defined by: ", TEX /// x^A > x^B ///, " if
+     "The reverse lexicographic order is defined by: $x^A > x^B$ if
      the FIRST non-zero entry of the vector of integers ", TT "A-B", " is NEGATIVE.
      This is a local order, not a global order.  Therefore Gröbner bases over this
      ring only give generators over the local ring whose fractions are all elements 
@@ -480,8 +480,8 @@ document {
 document {
      Key => Lex,
      Headline => "lexicographical monomial order.",
-     "The lexicographic order is defined by: ", TEX "x^A > x^B", " if the FIRST
-     non-zero entry of the vector of integers ", TEX "A-B", " is POSITIVE.",
+     "The lexicographic order is defined by: $x^A > x^B$ if the FIRST
+     non-zero entry of the vector of integers ", TT "A-B", " is POSITIVE.",
      EXAMPLE {
 	  "R = QQ[a..d, MonomialOrder => Lex];",
 	  "a^3 + a^2*b^2 + b*c"

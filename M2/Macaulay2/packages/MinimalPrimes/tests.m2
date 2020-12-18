@@ -1643,6 +1643,8 @@ TEST ///
 ///
 
 TEST ///
+  -- Example by Justin Chen
+  -- see https://github.com/Macaulay2/M2/issues/1025
   d = 4;
   for k in {QQ, ZZ/101, GF(81)} do (
       S = k[x_0..x_d] ** k[y_0..y_d];

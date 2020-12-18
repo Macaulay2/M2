@@ -83,7 +83,7 @@ jobs:
       - name: Install requirements for Linux
         if: runner.os == 'Linux'
         run: |
-          sudo add-apt-repository -y ppa:profzoom/macaulay2
+          sudo add-apt-repository -y ppa:macaulay2/macaulay2
           sudo apt-get update
           sudo apt-get install -y -q --no-install-recommends clang-10 gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \

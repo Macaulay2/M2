@@ -93,7 +93,7 @@ document {
 	  TO2 {"integers modulo a prime", "ZZ/p"},
 	  TT "GF(p^n)"
 	  },
-     "Create a finite field with q = p^n elements using",
+     "Create a finite field with $q = p^n$ elements using",
      EXAMPLE "F = GF(81,Variable=>a)",
      "This creates the ring of characteristic 3, having 3^4 = 81 elements.  The elements
      of this ring are 0, a, a^2, a^3, ..., a^80.",
