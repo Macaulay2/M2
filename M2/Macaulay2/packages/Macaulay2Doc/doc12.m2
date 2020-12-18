@@ -24,17 +24,6 @@ document {
      such as might result from multiplying 0 by infinity.",
      }
 
-TEST "
-stream = (action,state) -> () -> stream(action, action state)
-fib = stream( (i,j) -> (j,i+j), (0,1))
-scan(1 .. 22, i -> fib = fib())
-"
-
-TEST "
-assert( partitions 4 === {{4},{3,1},{2,2},{2,1,1},{1,1,1,1}} / (x -> new Partition from x) )
-assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} / (x -> new Partition from x) )
-"
-
 document {
      Key => (symbol -, List),
      Headline => "negation of a vector",
@@ -620,17 +609,6 @@ document {
      returns a scripted functor that accepts the arguments.",
      SeeAlso => "ScriptedFunctor"
      }
-
-TEST ("
-     R=ZZ/101[a..d]
-     C=resolution cokernel vars R
-     D = C ++ C[1] ++ C[2]
-     betti D
-     assert( degree HH_1 D === 0 )
-     assert( degree HH_0 D === 1 )
-     assert( degree HH_-1 D === 1 )
-     assert( degree HH_-2 D === 1 )
-     ")
 
 document {
      Key => {(sheafExt,ZZ,CoherentSheaf,CoherentSheaf),

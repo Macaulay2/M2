@@ -51,11 +51,3 @@ doc///
   substring
   "lists and sequences"
 ///
-
-TEST ///
-     assert( subsets(4,2) === {{0,1},{0,2},{1,2},{0,3},{1,3},{2,3}} )
-     assert( subsets({a,b,c,d},2) === {{a,b},{a,c},{b,c},{a,d},{b,d},{c,d}} )
-     assert( 
-      set subsets(set {a,b,c,d},2) === 
-      set apply({{a,b},{a,c},{b,c},{a,d},{b,d},{c,d}},set) )
-///

@@ -411,13 +411,6 @@ document {
      EXAMPLE "f ? g",
      }
 
-TEST ///
-A = ZZ[a..d]
-B = A[r,s,t]
-C = B[x,y,z]
-
-///
-
 document {
      Key => "factoring polynomials",
      "Polynomials can be factored with ", TO "factor", ".  Factorization
@@ -722,7 +715,7 @@ Plan for the next node:
 --   computing up to a given degree
 ///
 
-TEST ///
+///
 -- document these routines DO THIS
 -- schreyerMatrix F -- DO THIS
 

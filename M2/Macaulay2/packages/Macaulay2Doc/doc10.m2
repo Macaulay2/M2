@@ -1,17 +1,6 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2002 by Daniel R. Grayson
 
-
-TEST ///
-     R = QQ[x,y,z]
-     C = res coker vars R
-     D = C ++ C
-     E = ker D_[0]
-     E = coker D_[0]
-     E = image D_[0]
-     E = coimage D_[0]
-///
-
 document {
      Key => Resolution,
      Headline => "the class of all resolution computations",
@@ -164,18 +153,6 @@ document {
      "Not implemented yet."
      }
 
-TEST "
-R = ZZ/101[x,y]
-M = cokernel matrix {{x^2+y^4, y^2 + x*y^3 + 11, 1 + x*y^2}}
-C = res M
-assert (HH_-1 C == 0)
-assert (HH_0 C == M)
-assert (HH_1 C == 0)
-assert (HH_2 C == 0)
-assert (HH_3 C == 0)
-assert (HH_4 C == 0)
-"
-
 document {   -- This node is used as an example for the documentation node: Key, Usage
      Key => (resolution,Module),
      Headline => "compute a free resolution of a module",
@@ -276,75 +253,6 @@ document { -- This node is used as an example in the documentation nodes: Inputs
 	  },
      SeeAlso => { (symbol _, ChainComplex, ZZ), dd, res, ideal }
      }
-
-TEST ///
-S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
-m = matrix pack (3,toList (t_1 .. t_9))			  -- 3 by 3
-n = matrix pack (3,toList (u_1 .. u_9))			  -- 3 by 3
-
--- Try the following with various resolution algorithms
-
-alg = 0
-j = flatten (m * n - n * m)
-M = cokernel j
-C = res(M, LengthLimit => 4, DegreeLimit => 1, Strategy => alg)
-assert( rank C_2 == 2 )
-C = res(M, LengthLimit => 4, DegreeLimit => 2, Strategy => alg)
-assert( rank C_2 == 33 )
-assert( rank C_3 == 32 )
-assert( rank C_4 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 3, Strategy => alg)
-assert( rank C_3 == 60 )
-assert( rank C_4 == 61 )
-C = res(M, LengthLimit => 4, DegreeLimit => 4, Strategy => alg)
-assert( rank C_5 == 0 )
-
-alg = 1
-j = flatten (m * n - n * m)
-M = cokernel j
-C = res(M, LengthLimit => 4, DegreeLimit => 1, Strategy => alg)
-assert( rank C_2 == 2 )
-C = res(M, LengthLimit => 4, DegreeLimit => 2, Strategy => alg)
-assert( rank C_2 == 33 )
-assert( rank C_3 == 32 )
-assert( rank C_4 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 3, Strategy => alg)
-assert( rank C_3 == 60 )
-assert( rank C_4 == 61 )
-C = res(M, LengthLimit => 4, DegreeLimit => 4, Strategy => alg)
-assert( rank C_5 == 0 )
-
-alg = 2
-j = flatten (m * n - n * m)
-M = cokernel j
-C = res(M, LengthLimit => 4, DegreeLimit => 1+2, Strategy => alg)
-assert( rank C_2 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 2+2, Strategy => alg)
-assert( rank C_2 == 34 )
-assert( rank C_3 == 32 )
-assert( rank C_4 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 3+2, Strategy => alg)
-assert( rank C_3 == 60 )
-assert( rank C_4 == 61 )
-C = res(M, LengthLimit => 4, DegreeLimit => 4+2, Strategy => alg)
-assert( rank C_5 == 0 )
-
--- This one fails
-alg = 3
-j = flatten (m * n - n * m)
-M = cokernel j
-C = res(M, LengthLimit => 4, DegreeLimit => 1+2, Strategy => alg)
-assert( rank C_2 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 2+2, Strategy => alg)
-assert( rank C_2 == 34 )
-assert( rank C_3 == 32 )
-assert( rank C_4 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 3+2, Strategy => alg)
-assert( rank C_3 == 60 )
-assert( rank C_4 == 61 )
-C = res(M, LengthLimit => 4, DegreeLimit => 4+2, Strategy => alg)
-assert( rank C_5 == 0 )
-///
 
 document {
      Key => {status,(status, GroebnerBasis),(status, Resolution),(status, ChainComplex),

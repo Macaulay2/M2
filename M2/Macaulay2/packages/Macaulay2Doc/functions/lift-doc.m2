@@ -122,12 +122,3 @@ document {
      ///,
      SeeAlso => {baseRings,liftable,promote}
      }
-
-TEST ///
-A = QQ[a..d]
-f = (a+1)^2-a^2-2*a
-lift(f,ZZ)
-lift(lift(f,QQ),ZZ)
-
-lift(0.0 * ii + 3.0, RR)
-///

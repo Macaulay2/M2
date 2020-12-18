@@ -62,10 +62,3 @@ doc///
   accumulate
   "lists and sequences"
 ///
-
-TEST ///
-     assert( fold(toList, a, {b,c,d}) === {{{a, b}, c}, d} )
-     assert( fold({a,b,c}, d, toList) === {a, {b, {c, d}}} )
-     assert( fold(toList, {a,b,c,d}) === {{{a, b}, c}, d} )
-     assert( fold({a,b,c,d}, toList) === {a, {b, {c, d}}} )
-///
