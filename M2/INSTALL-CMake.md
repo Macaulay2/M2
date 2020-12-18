@@ -421,6 +421,28 @@ cmake -U*BDWGC* .
 
 
 <details>
+<summary><code>error: Runtime CPU support is only available with GCC 4.6 or later.</code></summary>
+
+When compiling using Clang, the following error might occur if NTL was built with GCC instead:
+<pre>
+[ 25%] Building CXX object Macaulay2/e/CMakeFiles/M2-engine.dir/ntl-internal.cpp.o
+In file included from M2/Macaulay2/e/ntl-debugio.cpp:4:
+In file included from M2/Macaulay2/e/./ntl-interface.hpp:16:
+In file included from /usr/include/NTL/ZZ.h:18:
+In file included from /usr/include/NTL/lip.h:5:
+/usr/include/NTL/ctools.h:510:2: fatal error: Runtime CPU support is only available with GCC 4.6 or later.
+#error Runtime CPU support is only available with GCC 4.6 or later.
+ ^
+</pre>
+Solution:
+<pre>
+cmake --build . --target build-ntl-install
+cmake -U*NTL_* .
+</pre>
+</details>
+
+
+<details>
 <summary>How to compile with Intel(R) Math Kernel Library</summary>
 
 [MKL](https://software.intel.com/en-us/mkl) is a linear algebra routines library specifically optimized for Intel(R) processors. To enable linking with MKL, adjust the path and architecture appropriately and run the following before calling `cmake`:
