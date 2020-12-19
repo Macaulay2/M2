@@ -61,19 +61,26 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     -- TODO: this should eventually be unnecessary
     oldMutableVars := new MutableHashTable;
     scan(flatten apply(loadedPackages, pkg -> pkg#"exported mutable symbols"), symb -> oldMutableVars#symb = value symb);
+    -* see run.m2 for details of defaultMode, argumentMode, etc. *-
+    -- TODO: somehow use SetUlimit, GCMAXHEAP, GCSTATS, GCVERBOSE,
+    --       ArgInt, ArgNoReadline, ArgNoSetup, and ArgNoThreads
+    argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
+    hasmode := m -> argmode & m == m;
+    pushvar(symbol randomSeed, if hasmode ArgNoRandomize then 0 else randomSeed);
+    if hasmode ArgStop        then (stopIfError, debuggingMode) = (true, false);
+    if hasmode ArgNoDebug     then debuggingMode = false;
+    if hasmode ArgNoBacktrace then backtrace = false;
+    if hasmode ArgNotify      then notify = true;
     interpreterDepth = 1;
 
     oldPrivateDictionary := User#"private dictionary";
-    oldDictionaryPath := dictionaryPath;
-    oldLoadedPackages := loadedPackages;
-    oldCurrentPackage := currentPackage;
-    pushvar(symbol OutputDictionary, new GlobalDictionary);
-
     User#"private dictionary" = new Dictionary;
+    OutputDictionary = new GlobalDictionary;
     dictionaryPath = {
 	Core.Dictionary,
 	OutputDictionary,
 	PackageDictionary};
+    if not hasmode ArgNoPreload then
     scan(Core#"pre-installed packages", needsPackage);
     needsPackage toString if opts#Package === null then currentPackage else opts#Package;
     dictionaryPath = prepend(oldPrivateDictionary,      dictionaryPath); -- this is necessary mainly due to T from degreesMonoid
@@ -83,13 +90,9 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     ret := capture' s;
 
     User#"private dictionary" = oldPrivateDictionary;
-    dictionaryPath = oldDictionaryPath;
-    loadedPackages = oldLoadedPackages;
-    currentPackage = oldCurrentPackage;
-    popvar symbol OutputDictionary;
-
     -- TODO: this should eventually be unnecessary
     scan(keys oldMutableVars, symb -> symb <- oldMutableVars#symb);
+    popvar symbol randomSeed;
     ret)
 protect symbol capture
 

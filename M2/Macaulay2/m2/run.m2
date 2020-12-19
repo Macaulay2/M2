@@ -64,7 +64,7 @@ NoCapture      = 1 << 63 -* don't use capture *-
 InvertArgs     = 1 << 64 -* negate the effect of argumentMode *-
 
 -* by default, the following commandline fixtures are used *-
-defaultMode := (SetUlimit + GCMAXHEAP + ArgQ + ArgInt -- + ArgNoPreload
+defaultMode  = (SetUlimit + GCMAXHEAP + ArgQ + ArgInt -- + ArgNoPreload
     + ArgNoRandomize + ArgNoReadline + ArgSilent + ArgStop
     + ArgPrintWidth + SetInputFile + SetOutputFile + SetCaptureErr)
 -* making this global, so it can be edited after entering debug Core *-
@@ -116,7 +116,7 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      cmd = cmd | readmode(ArgPrintWidth,  "--print-width 77");
      cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir ", format d));
      -- TODO: fix capture, add preloaded packages to Macaulay2Doc, then delete the following two lines
-     needsline := concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'");
+     needsline := concatenate(" -e 'needsPackage(",format pkgname,",Reload=>true,FileName=>",format pkg#"source file",")'");
      cmd = cmd | if pkgname != "Macaulay2Doc" then needsline else "";
      cmd = cmd | readmode(SetInputFile,   "<" | format inf);
      cmd = cmd | readmode(SetOutputFile,  ">>" | format toAbsolutePath tmpf);
