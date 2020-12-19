@@ -43,7 +43,7 @@ newPackage(
 	  },
      Headline => "maximum likelihood estimates for graphical statistical models",
      --Keywords => {"Algebraic Statistics"},
-     DebuggingMode => true,
+     DebuggingMode => false,
      PackageExports => {"GraphicalModels","Graphs","EigenSolver","NumericalAlgebraicGeometry","StatGraphs"}
      )
 export {
