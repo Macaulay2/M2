@@ -94,19 +94,25 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
 protect symbol capture
 
 -- returns false if the inputs or the package are not known to behave well with capture
--- also see the one in testing.m2
-isCapturableExample := (inputs, pkg) -> (
-    not match("no-capture-flag", inputs) -- this flag is really necessary, but only sometimes
+-- this is also used in testing.m2, where isTest is set to true.
+isCapturable = (inputs, pkg, isTest) -> (
+    -- strip commented segments first
+    inputs = replace("--.*$", "",       inputs);
+    inputs = replace("-\\*.*?\\*-", "", inputs);
+    -- this flag is sometimes unavoidable, but hopefully rarely
+    not match("no-capture-flag",        inputs)
     -- TODO: remove this when the effects of capture on other packages is reviewed
-    and match({"FirstPackage", "Macaulay2Doc"}, pkg#"pkgname")
+    and (isTest or match({"FirstPackage", "Macaulay2Doc"}, pkg#"pkgname"))
     -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
-    and not match("(end|exit|restart)",                       inputs) -- these commands interrupt the interpreter
-    and not match("(gbTrace|read|run|stderr|stdio|print|<<)", inputs) -- stderr and prints are not handled correctly
+    and not match("(gbTrace|stderr|stdio|(P|p)rint|<<)",      inputs) -- stderr and prints are not handled correctly
     and not match("(notify|stopIfError|debuggingMode)",       inputs) -- stopIfError and debuggingMode may be fixable
-    and not match("([Cc]ommand|schedule|thread|Task)",        inputs) -- remove when threads work more predictably
+    and not match("(alarm|exec|exit|quit|restart|run)\\b",    inputs) -- these commands interrupt the interpreter
+    and not match("(read|input|load|needs)\\b",               inputs) -- these commands hide undesirable functions
+    and not match("([Cc]ommand|fork|schedule|thread|Task)",   inputs) -- remove when threads work more predictably
     and not match("(temporaryFileName)",                      inputs) -- this is sometimes bug prone
-    and not match("(installMethod|load|export|newPackage)",   inputs) -- exports may land in the package User
-    and not match("(GlobalAssignHook|GlobalReleaseHook)",     inputs) -- same as above
+    and not match("(addHook|export|newPackage)",              inputs) -- these commands have permanent effects
+    and not match("(installMethod|installAssignmentMethod)",  inputs) -- same as above
+    and not match("(Global.{6,7}Hook|StartFunction|Echo)",    inputs) -- same as above
     and not match({"ThreadedGB", "RunExternalM2"},     pkg#"pkgname") -- TODO: eventually remove
     )
 
@@ -174,7 +180,7 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
     desc := "example results for " | format fkey;
     -- try capturing in the same process
-    if isCapturableExample(inputs, pkg) then (
+    if isCapturable(inputs, pkg, false) then (
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
 	(err, output) := capture(inputs, UserMode => false, Package => pkg);

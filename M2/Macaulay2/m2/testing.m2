@@ -25,19 +25,6 @@ TEST(String, String) := (title, teststring) -> (
 -- check
 -----------------------------------------------------------------------------
 
--- returns false if the inputs or the package are not known to behave well with capture
--- also see the one in examples.m2
-isCapturableTest := (inputs, pkg) -> (
-    not match("no-capture-flag", inputs) -- this flag is really necessary, but only sometimes
-    -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
-    and not match("(end|exit|restart)",                       inputs) -- these commands interrupt the interpreter
-    and not match("(gbTrace|read|run|stderr|stdio|print|<<)", inputs) -- stderr and prints are not handled correctly
-    and not match("([Cc]ommand|schedule|thread|Task)",        inputs) -- remove when threads work more predictably
-    and not match("(installMethod|load|export|newPackage)",   inputs) -- exports may land in the package User
-    and not match("(GlobalAssignHook|GlobalReleaseHook)",     inputs) -- same as above
-    and not match({"ThreadedGB", "RunExternalM2"},     pkg#"pkgname") -- TODO: eventually remove
-    )
-
 checkMessage := (verb, n, pkgname, filename, lineno) -> (
     stderr
     << commentize(verb, " check(", toString n, ", ", format pkgname, ") from source:") << endl
@@ -47,7 +34,7 @@ captureTestResult := (n, pkg, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
     (filename, lineno, teststring) := pkg#"test inputs"#n;
     -- try capturing in the same process
-    if isCapturableTest(teststring, pkg) then (
+    if isCapturable(teststring, pkg, true) then (
 	checkMessage("capturing", n, pkg#"pkgname", filename, lineno);
 	(err, output) := capture(teststring, UserMode => false, Package => pkg);
 	if err then printerr "capture failed; trying again in an external process ..." else return true);
