@@ -910,7 +910,7 @@ document { Key => FunctionBody,
      Headline => "the class of function bodies",
      SeeAlso => functionBody }
 
-document { Key => OutputDictionary,
+document { Key => symbol OutputDictionary,
      Headline => "the dictionary for output values",
      "The symbols ", TT "o1", ", ", TT "o2", ", ", TT "o3", ", etc., are used to store the output values arising from interaction with the user,
      one line at a time.  The dictionary ", TT "OutputDictionary", " is the dictionary in which those symbols reside.",
