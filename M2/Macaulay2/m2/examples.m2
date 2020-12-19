@@ -96,6 +96,9 @@ protect symbol capture
 -- returns false if the inputs or the package are not known to behave well with capture
 -- this is also used in testing.m2, where isTest is set to true.
 isCapturable = (inputs, pkg, isTest) -> (
+    -- argumentMode is mainly used by ctest to select M2 subprocess arguments,
+    -- or whether capture should be avoided; see packages/CMakeLists.txt
+    if argumentMode & NoCapture =!= 0 then return false;
     -- strip commented segments first
     inputs = replace("--.*$", "",       inputs);
     inputs = replace("-\\*.*?\\*-", "", inputs);

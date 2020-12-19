@@ -36,7 +36,7 @@ captureTestResult := (n, pkg, usermode) -> (
     -- try capturing in the same process
     if isCapturable(teststring, pkg, true) then (
 	checkMessage("capturing", n, pkg#"pkgname", filename, lineno);
-	(err, output) := capture(teststring, UserMode => false, Package => pkg);
+	(err, output) := capture(teststring, UserMode => usermode, Package => pkg);
 	if err then printerr "capture failed; trying again in an external process ..." else return true);
     -- fallback to using an external process
     checkMessage("running", n, pkg#"pkgname", filename, lineno);
