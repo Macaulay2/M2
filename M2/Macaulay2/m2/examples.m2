@@ -63,11 +63,12 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     scan(flatten apply(loadedPackages, pkg -> pkg#"exported mutable symbols"), symb -> oldMutableVars#symb = value symb);
     -* see run.m2 for details of defaultMode, argumentMode, etc. *-
     -- TODO: somehow use SetUlimit, GCMAXHEAP, GCSTATS, GCVERBOSE,
-    --       ArgInt, ArgNoReadline, ArgNoSetup, and ArgNoThreads
+    --       ArgInt, ArgQ, ArgNoReadline, ArgNoSetup, and ArgNoThreads
     argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
     hasmode := m -> argmode & m == m;
     pushvar(symbol randomSeed, if hasmode ArgNoRandomize then 0 else randomSeed);
-    if hasmode ArgStop        then (stopIfError, debuggingMode) = (true, false);
+    -- FIXME: https://github.com/Macaulay2/M2/issues/1536#issuecomment-721826413
+    -- if hasmode ArgStop        then (stopIfError, debuggingMode) = (true, false);
     if hasmode ArgNoDebug     then debuggingMode = false;
     if hasmode ArgNoBacktrace then backtrace = false;
     if hasmode ArgNotify      then notify = true;
@@ -88,6 +89,7 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     currentPackage = User;
 
     ret := capture' s;
+    collectGarbage();
 
     User#"private dictionary" = oldPrivateDictionary;
     -- TODO: this should eventually be unnecessary
