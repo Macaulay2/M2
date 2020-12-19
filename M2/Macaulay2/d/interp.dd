@@ -532,6 +532,7 @@ capture(e:Expr):Expr := (
 	  flush(stdError);
 	  oldStdError := stdError; -- doesn't quite work, see stderrS in actors2.dd
 	  stdError = stdIO;
+	  setGlobalVariable(stderrS, Expr(stdIO));
 	  oldDebuggingMode := debuggingMode;
 	  setDebuggingMode(false);
           foss := getFileFOSS(stdIO);
