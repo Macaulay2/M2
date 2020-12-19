@@ -120,7 +120,9 @@
  -- warning: missing node: toExternalString(FreeAlgebra) cited by FreeAlgebra
  -- warning: missing node: toString(FreeAlgebra) cited by FreeAlgebra
 
-undocumented {sequenceToVariableSymbols}
+undocumented {sequenceToVariableSymbols,
+              freeAlgebra,
+	      NCReductionTwoSided}
 
 doc ///
 Key
@@ -761,4 +763,164 @@ doc ///
 	 C = oreIdeal(B,sigma,a)
    SeeAlso
       oreExtension
+///
+
+doc ///
+   Key
+      threeDimSklyanin
+      (threeDimSklyanin,Ring,List)
+      (threeDimSklyanin,Ring,List,List)
+   Headline
+      Defines a three-dimensional Sklyanin with given parameters
+   Usage
+      threeDimSklyanin(R,params,varList)
+   Inputs
+      R       : Ring
+      params  : List
+      varList : List
+      DegreeLimit => ZZ
+   Outputs
+      : Ring
+   Description
+      Text
+         This method constructs a three dimensional Sklyanin algebra with parameters from
+	 the params list, and variables from varList
+	 (see @ HREF{"http:////arxiv.org//abs//1107.2953","here"} @).
+	 If either list is not length three, then an error is thrown.  The generic 
+	 such algebra does not have a finite Groebner basis, so the optional parameter
+	 DegreeLimit has been defaulted to 6.  If only one list is provided, it is used
+	 for the variable names, and a random choice for each parameter is chosen.
+      
+         The following example is a PI algebra, and has a finite Groebner basis.
+      Example
+         B = threeDimSklyanin(ZZ/101,{1,1,-1},{x,y,z})
+         NCGB(ideal B,5)
+      Text
+         This is not generically true, however:
+      Example
+         C = threeDimSklyanin(ZZ/101,{2,3,5},{a,b,c})
+	 NCGB(ideal C,5)
+      Text
+         In all cases, there is a degree three central regular element (a formula
+	 for which is given in the paper referenced above).
+      Example
+         centralElements(B,3)
+	 centralElements(C,3)
+      Text
+         These algebras also all AS-regular and as such have the same Hilbert
+	 series as a commutative polynomial algebra in three variables, as we can see here:
+      Example
+         apply(8, i -> numgens source ncBasis(i,C))
+	 apply(8, i -> binomial(i+2,2))
+///
+
+doc ///
+   Key
+      fourDimSklyanin
+      (fourDimSklyanin,Ring,List)
+      (fourDimSklyanin,Ring,List,List)
+   Headline
+      Defines a four-dimensional Sklyanin with given parameters
+   Usage
+      fourDimSklyanin(R,params,varList)
+   Inputs
+      R       : Ring
+      params  : List
+      varList : List
+      DegreeLimit => ZZ
+   Outputs
+      : FreeAlgebraQuotient
+   Description
+      Text
+         This method constructs a four dimensional Sklyanin algebra with parameters from
+	 the params list, and variables from varList
+	 (see @ HREF{"https://www.math.washington.edu/~smith/Research/Skly-survey.pdf","here"} @).
+	 If either list is not the appropriate length, then an error is thrown.  The generic 
+	 such algebra has a fairly complicated Groebner basis, so the optional parameter
+	 DegreeLimit may be provided to limit the maximum of a generator of a Groebner basis
+	 found.  This value has been defaulted to 6.  If only one list is provided, it is used
+	 for the variable names, and a random choice for each parameter (satisfying the nondegeneracy
+	 condition given below) is chosen.
+      
+      	 In order to not get a degenerate example, one should ensure that the
+	 parameters provided satisfy \alpha + \beta + \gamma + \alpha\beta\gamma = 0.
+	 This method does not check this condition, since the degenerate examples are
+	 of interest as well.  If no parameters are provided, however a generic choice
+	 of \alpha,\beta and \gamma satisfying the equation above are selected.
+      Example
+         C = fourDimSklyanin(ZZ/32003,{a,b,c,d})
+      Text
+         In all nondegenerate cases, there is are two central elements of degree two which form
+	 a regular sequence on the four dimensional Sklyanin (this was proven by Paul
+	 Smith and Toby Stafford in a paper in Compositio).
+      Example
+         centralElements(C,2)
+      Text
+         These algebras also all AS-regular and as such have the same Hilbert
+	 series as a commutative polynomial algebra in four variables, as we can see here:
+      Example
+         apply(8, i -> numgens source ncBasis(i,C))
+	 apply(8, i -> binomial(i+3,3))
+///
+
+doc ///
+   Key
+      toCommRing
+      (toCommRing,FreeAlgebra)
+      (toCommRing,FreeAlgebraQuotient)
+      [toCommRing,SkewCommutative]
+   Headline
+     Compute the abelianization of an NCRing and returns a Ring.
+   Usage
+     S = toCommRing R 
+   Inputs
+      R : FreeAlgebraQuotient
+          or @ TO FreeAlgebra @
+      SkewCommutative => Boolean
+   Outputs
+     S : Ring
+   Description
+      Text
+         This method takes a noncommutative ring and returns the quotient of a commutative polynomial
+	 ring (or an exterior algebra, if SkewCommutative=>true) on the same generators 
+	 by the defining relations of the input ring. 
+      Example
+         A = skewPolynomialRing(QQ,(-1)_QQ,{w,x,y,z})
+	 x*y-y*x
+	 w^2
+         B = toCommRing(A)
+	 x*y
+	 w^2
+	 C = toCommRing(A,SkewCommutative=>true)
+	 x*y-y*x
+	 w^2
+   SeeAlso
+      toFreeAlgebraQuotient
+///
+
+doc ///
+   Key
+      toFreeAlgebraQuotient
+      (toFreeAlgebraQuotient,Ring)
+   Headline
+      Converts a Ring to an NCRing
+   Usage
+     S = toFreeAlgebraQuotient R
+   Inputs
+      R : Ring
+   Outputs
+     S : FreeAlgebraQuotient
+   Description
+      Text
+         This function converts commutative rings and quotients of 
+	 exterior algebras (i.e. quotients of @ TO PolynomialRing @) to a ring of
+	 type FreeAlgebraQuotient.  
+      Example
+         R = QQ[a,b,c,d, SkewCommutative=>{2,3}]
+	 I = ideal(a*d-b*c)
+         S = R/I
+	 S' = toFreeAlgebraQuotient(S)
+	 ideal S'
+   SeeAlso
+      toCommRing
 ///

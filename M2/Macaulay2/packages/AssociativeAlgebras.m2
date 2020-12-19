@@ -51,7 +51,7 @@ export {
     "freeAlgebra",
     "ncBasis",
     "NCGB", -- uugh: change name!
-    "NCReduction2Sided",
+    "NCReductionTwoSided",
     "FreeAlgebra", -- change this name too! FM (?)
     "FreeAlgebraQuotient", 
     "sequenceToVariableSymbols",
@@ -67,6 +67,7 @@ export {
     "freeProduct",
     "qTensorProduct",
     "toFreeAlgebraQuotient",
+    "toCommRing",
     "isFreeAlgebraOrQuotient",
     "homogDual",
     "quadraticClosure",
@@ -174,6 +175,7 @@ checkHeft = (degs, heftvec) -> (
     all(degs, d -> #d === #heftvec) and
     all(degs, d -> sum apply(d,heftvec,times) > 0)
     )
+
 -- TODO (11 Jan 2017 MS+FM), now (19 Dec 2017 MS+FM), and again Dec 2018...!
 --   1. handle multigradings
 --   2. handle different monomial orders
@@ -193,6 +195,7 @@ checkHeft = (degs, heftvec) -> (
 --   - figure out backInserter, i.e. conform to the standard c++ lib
 --   - add in degree support
 --   - add in e.g. leadMonomial, support.  
+
 freeAlgebra = method()
 freeAlgebra(Ring, List) := FreeAlgebra => (A, args)  -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
@@ -326,14 +329,14 @@ NCGB Ideal := opts -> (I) -> (
     )
     
 
-NCReduction2Sided = method()
-NCReduction2Sided(Matrix, Matrix) := (M, I) -> (
+NCReductionTwoSided = method()
+NCReductionTwoSided(Matrix, Matrix) := (M, I) -> (
     R := ring M;
     if R =!= ring I then error "expected same ring";
     map(R, rawNCReductionTwoSided(raw M, raw I))
     )
-NCReduction2Sided(Matrix, Ideal) := (M, I) -> NCReduction2Sided(M, gens I)
-NCReduction2Sided(RingElement, Ideal) := (F, I) -> (NCReduction2Sided(matrix{{F}}, gens I))_(0,0)
+NCReductionTwoSided(Matrix, Ideal) := (M, I) -> NCReductionTwoSided(M, gens I)
+NCReductionTwoSided(RingElement, Ideal) := (F, I) -> (NCReductionTwoSided(matrix{{F}}, gens I))_(0,0)
 
 FreeAlgebra / Ideal := FreeAlgebraQuotient => (R,I) -> (
      if ring I =!= R then error "expected ideal of the same ring";
@@ -629,17 +632,17 @@ isExterior Ring := A -> (
    all(sc|sq, x-> x==0)
 )
 
+
 toFreeAlgebraQuotient = method()
 toFreeAlgebraQuotient Ring := FreeAlgebraQuotient => R -> (
-   isComm := isCommutative R;
-   isExter := isExterior R;
-   if not isComm and not isExter then error "Input ring must be either strictly (-1)-skew commutative or commutative.";
    --- generate the (skew)commutivity relations
    Q := coefficientRing R;
    A := Q ((gens R) / baseName | {Degrees=> degrees R});
    phi := map(A,ambient R,gens A);
-   commRelations := apply(subsets(gens A,2), s-> s_0*s_1+(-1)^(if isComm then -1 else 0)*s_1*s_0);
-   extRelations := if isExter then apply(gens A, s -> s^2) else {};
+   skewCommIndices := if R.?SkewCommutative then R.SkewCommutative else {};
+   bothExter := (i,j) -> member(i,skewCommIndices) and member(j,skewCommIndices);
+   commRelations := apply(subsets(numgens A,2), s -> A_(s_0)*A_(s_1)+(-1)^(if bothExter(s_0,s_1) then 0 else 1)*A_(s_1)*A_(s_0));
+   extRelations := apply(skewCommIndices, i -> A_i^2);
    --- here is the defining ideal of the commutative algebra, inside the tensor algebra
    I := ideal (commRelations | extRelations | ((flatten entries gens ideal R) / phi));
    commIgb := gb ideal R;
@@ -647,6 +650,33 @@ toFreeAlgebraQuotient Ring := FreeAlgebraQuotient => R -> (
    maxDeg = max(2,maxDeg);
    Igb := NCGB(I, 2*maxDeg);
    A/I
+)
+
+ambientMap = method()
+ambientMap RingMap := f -> (
+   C := source f;
+   ambC := ambient C;
+   genCSymbols := (gens C) / baseName;
+   map(target f, ambC, flatten entries matrix f)
+)
+
+toCommRing = method(Options => {SkewCommutative => false})
+toCommRing FreeAlgebra := 
+toCommRing FreeAlgebraQuotient := opts -> B -> (
+   gensB := gens B;
+   R := coefficientRing B;
+   gensI := flatten entries gens ideal B;
+   abB := R [ gens B , SkewCommutative => opts#SkewCommutative];
+   if gensI == {} then
+      abB
+   else (
+      phi := ambientMap map(abB,B,gens abB);
+      abI := ideal flatten entries mingens ideal ((gensI) / phi);
+      if abI == 0 then
+         abB
+      else
+         abB/abI
+   )
 )
 
 validSkewMatrix = method()
@@ -684,7 +714,7 @@ skewPolynomialRing (Ring,RingElement,List) := (R,skewElt,varList) -> (
    B
 )
 
-threeDimSklyanin = method(Options => {DegreeLimit => 10})
+threeDimSklyanin = method(Options => {DegreeLimit => 6})
 threeDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    if #params != 3 or #varList != 3 then error "Expected lists of length 3.";
    if instance(varList#0, R) or instance(varList#0,ZZ) or instance(varList#0,QQ) then
@@ -703,7 +733,7 @@ threeDimSklyanin (Ring, List) := opts -> (R, varList) -> (
    threeDimSklyanin(R,{random(QQ),random(QQ), random(QQ)}, varList, opts)
 )
 
-fourDimSklyanin = method(Options => {DegreeLimit => 10})
+fourDimSklyanin = method(Options => {DegreeLimit => 6})
 fourDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    if #params != 3 or #varList != 4 then error "Expected three parameters and four variables.";
    if instance(varList#0, R) or instance(varList#0,ZZ) or instance(varList#0,QQ) then
