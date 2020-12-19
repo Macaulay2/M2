@@ -10,8 +10,14 @@
                   HomePage => ""}
               },
         Headline => "Non-commutative algebra",
-        DebuggingMode => true
+        DebuggingMode => true,
+	AuxiliaryFiles => true
         )
+
+--- FM: Functionality to still bring over from NCAlgebra:
+---    1. basis of an ideal (this should be in the engine)
+---       Also do this for left/right ideals when those arrive
+---    2. Derivation option for maps (used in Ore extensions)
 
 -- MES + FM TODO 2020.07.29
 --   1. Interreduction in GB code, as well as ensuring inhomogeneous
@@ -60,7 +66,7 @@ export {
     "oreExtension",
     "freeProduct",
     "qTensorProduct",
-    "toNCRing",
+    "toFreeAlgebraQuotient",
     "isFreeAlgebraOrQuotient",
     "homogDual",
     "quadraticClosure",
@@ -623,8 +629,8 @@ isExterior Ring := A -> (
    all(sc|sq, x-> x==0)
 )
 
-toNCRing = method()
-toNCRing Ring := FreeAlgebraQuotient => R -> (
+toFreeAlgebraQuotient = method()
+toFreeAlgebraQuotient Ring := FreeAlgebraQuotient => R -> (
    isComm := isCommutative R;
    isExter := isExterior R;
    if not isComm and not isExter then error "Input ring must be either strictly (-1)-skew commutative or commutative.";
@@ -728,12 +734,11 @@ fourDimSklyanin (Ring, List) := opts -> (R, varList) -> (
    fourDimSklyanin(R,{alpha,beta,gamma}, varList, opts)
 )
 
+-- This code will be useful once we can handle derivations properly.
+-- as it stands, it will still run but not evaluate the derivation properly.
 oreIdeal = method(Options => {Degree => 1})
 oreIdeal (Ring,RingMap,RingMap,RingElement) := 
 oreIdeal (Ring,RingMap,RingMap,Symbol) := opts -> (B,sigma,delta,X) -> (
-   -- This version assumes that the derivation is zero on B
-   -- Don't yet have multiple rings with the same variables names working yet.  Not sure how to
-   -- get the symbol with the same name as the variable.
    X = baseName X;
    kk := coefficientRing B;
    varsList := ((gens B) / baseName) | {X};
@@ -821,7 +826,8 @@ qTensorProduct (Ring, Ring, RingElement) := (A,B,q) -> (
 )
 
 quadraticClosure = method()
-quadraticClosure Ring := B -> quadraticClosure toNCRing B
+-- TODO: do we want to return the commutative version of this?
+--quadraticClosure Ring := B -> quadraticClosure toFreeAlgebraQuotient B
 
 quadraticClosure FreeAlgebra :=
 quadraticClosure FreeAlgebraQuotient := B -> (
@@ -832,12 +838,15 @@ quadraticClosure FreeAlgebraQuotient := B -> (
 )
 
 quadraticClosure Ideal := I -> (
+   if not isHomogeneous I then error "Expected a homogeneous ideal.";
+   -- TODO: is the sum below really what we want to do in the multigraded setting?
    J := select(flatten entries gens I, g -> (sum degree g)<=2);
    ideal J
 )
 
 homogDual = method()
-homogDual Ring := B -> homogDual toNCRing B
+-- TODO: do we want to return the commutative version of this?
+-- homogDual Ring := B -> homogDual toFreeAlgebraQuotient B
 
 homogDual FreeAlgebra :=
 homogDual FreeAlgebraQuotient := B -> (
@@ -849,8 +858,9 @@ homogDual FreeAlgebraQuotient := B -> (
 
 homogDual Ideal := I -> (
    if class ring I =!= FreeAlgebra then
-      error "Expected an ideal in the tensor algebra.";
+      error "Expected an ideal in a free algebra.";
    d:=degree first flatten entries gens I;
+   if not isHomogeneous I then error "Expected a homogeneous ideal.";
    if not all(flatten entries gens I, g->(degree g)==d)
       then error "Expected a pure ideal.";
    A := I.ring;
