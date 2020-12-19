@@ -122,7 +122,8 @@
 
 undocumented {sequenceToVariableSymbols,
               freeAlgebra,
-	      NCReductionTwoSided}
+	      NCReductionTwoSided,
+	      isFreeAlgebraOrQuotient}
 
 doc ///
 Key
@@ -203,6 +204,45 @@ doc ///
    SeeAlso
       "Basic operations on noncommutative algebras"
 ///
+
+doc ///
+   Key
+      normalAutomorphism
+      (normalAutomorphism,RingElement)
+   Headline
+      Computes the automorphism determined by a normal homogeneous element
+   Usage
+      normalAutomorphism x
+   Inputs
+      x : RingElement
+          a homogeneous normal element
+   Outputs
+      : RingMap
+   Description
+      Text
+         Let x be a homogeneous element in a noncommutative ring R. If x is normal then x determines
+	 a graded ring automorphism f of R by x*a = f(x)*a.  This method returns this 
+	 automorphism as a RingMap. 
+      Example
+         A = QQ{a,b,c}
+	 I = ideal {a*b+b*a,a*c+c*a,b*c+c*b}
+	 B = A/I
+	 sigma = map(B,B,{b,c,a})
+	 C = oreExtension(B,sigma,w)
+      Text
+         By construction, w is normal, and the normalizing automorphism is sigma
+	 extended to C sending w to itself.  It follows that therefore w^2 is also
+	 normal whose automorphism is the square of sigma extended to C in a similar
+	 way.  We verify these facts with the following commands:
+      Example
+	 isNormal w^2        
+	 phi = normalAutomorphism w^2
+	 matrix phi
+	 matrix (sigma * sigma)
+   SeeAlso
+      normalElements	 
+///
+--- TODO: isWellDefined sigma was included above, but doesn't work at the moment.
 
 doc ///
    Key
@@ -770,6 +810,7 @@ doc ///
       threeDimSklyanin
       (threeDimSklyanin,Ring,List)
       (threeDimSklyanin,Ring,List,List)
+      [threeDimSklyanin,DegreeLimit]
    Headline
       Defines a three-dimensional Sklyanin with given parameters
    Usage
@@ -787,7 +828,7 @@ doc ///
 	 the params list, and variables from varList
 	 (see @ HREF{"http:////arxiv.org//abs//1107.2953","here"} @).
 	 If either list is not length three, then an error is thrown.  The generic 
-	 such algebra does not have a finite Groebner basis, so the optional parameter
+	 such algebra does not have a  finite Groebner basis, so the optional parameter
 	 DegreeLimit has been defaulted to 6.  If only one list is provided, it is used
 	 for the variable names, and a random choice for each parameter is chosen.
       
@@ -819,6 +860,7 @@ doc ///
       fourDimSklyanin
       (fourDimSklyanin,Ring,List)
       (fourDimSklyanin,Ring,List,List)
+      [fourDimSklyanin,DegreeLimit]
    Headline
       Defines a four-dimensional Sklyanin with given parameters
    Usage
@@ -907,7 +949,7 @@ doc ///
    Usage
      S = toFreeAlgebraQuotient R
    Inputs
-      R : Ring
+     R : Ring
    Outputs
      S : FreeAlgebraQuotient
    Description
@@ -923,4 +965,115 @@ doc ///
 	 ideal S'
    SeeAlso
       toCommRing
+///
+
+doc ///
+   Key
+      skewPolynomialRing
+      (skewPolynomialRing,Ring,Matrix,List)
+   Headline
+      Defines a skew polynomial ring via a skewing matrix
+   Usage
+      B = skewPolynomialRing(R,M,L)
+   Inputs
+      R : Ring
+      M : Matrix
+      L : List
+   Outputs
+      B : FreeAlgebraQuotient
+   Description
+      Text
+         This method constructs a skew polynomial ring with
+	 coefficients in the ring R and generators from the list L. A
+	 valid input matrix is a square matrix over R with at least #L
+	 rows such that M_{ij} = M_{ji}^{(-1)} and M_{ii}=1. The
+	 relations of the resulting ring have the form g_i*g_j -
+	 M_{ij}*g_j*g_i.
+      Example
+         R = QQ[q]/ideal{q^4+q^3+q^2+q+1}
+	 M = matrix{{1,q,q},{q^4,1,1},{q^4,1,1}}
+         B = skewPolynomialRing(R,M,{x,y,z})
+         x*y == q^4*y*x
+	 N = matrix{{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}}
+	 C = skewPolynomialRing(QQ,promote(N,QQ), {a,b,c,d})
+         isCommutative C
+         isCommutative B
+         Bop = oppositeRing B
+         y*x == q^4*x*y
+   SeeAlso
+     oppositeRing
+///
+
+doc ///
+   Key
+      (skewPolynomialRing,Ring,RingElement,List)
+      (skewPolynomialRing,Ring,QQ,List)
+      (skewPolynomialRing,Ring,ZZ,List)
+   Headline
+      Defines a skew polynomial ring via a scaling factor
+   Usage
+      skewPolynomialRing(R,f,L)
+   Inputs
+      R : Ring
+      f : RingElement
+          or an integer or a rational number
+      L : List
+   Outputs
+      : FreeAlgebraQuotient
+   Description
+      Text
+         This method constructs a skew polynomial ring with coefficient ring R
+	 and generators elements of L. The relations all have the form a*b - f*b*a
+	 where a and b are in L. If R is a Bergman coefficient ring, an NCGroebnerBasis
+	 is computed for B.      
+      Example
+         R = QQ[q]/ideal{q^4+q^3+q^2+q+1}
+         A = skewPolynomialRing(R,promote(2,R),{x,y,z,w})
+         x*y == 2*y*x
+         B = skewPolynomialRing(R,q,{x,y,z,w})
+         x*y == q*y*x
+         Bop = oppositeRing B
+         y*x == q*x*y
+
+         C = skewPolynomialRing(QQ,2_QQ, {x,y,z,w})         
+         x*y == 2*y*x
+	 D = skewPolynomialRing(QQ,1_QQ, {x,y,z,w})
+         isCommutative C
+         isCommutative D
+         Cop = oppositeRing C
+         y*x == 2*x*y
+   SeeAlso
+       oppositeRing
+       skewPolynomialRing      
+///
+
+doc ///
+   Key
+      oppositeRing
+      (oppositeRing,FreeAlgebra)
+      (oppositeRing,FreeAlgebraQuotient)
+   Headline
+      Creates the opposite ring of a noncommutative ring
+   Usage                    
+      Aop = oppositeRing A  
+   Inputs
+      A : FreeAlgebraQuotient
+          or @ TO FreeAlgebra @
+   Outputs        
+      Aop : FreeAlgebraQuotient
+            or @ TO FreeAlgebra @
+   Description
+      Text 
+         Given a noncommutative ring A, this creates a noncommutative
+	 ring whose defining ideal is generated by the "opposites" -
+	 elements whose noncommutative monomial terms have been
+	 reversed - of the generators of the defining ideal of A.
+      Example
+          R = QQ[q]/ideal{q^4+q^3+q^2+q+1}
+          A = skewPolynomialRing(R,q,{x,y,z,w}) 
+	  x*y == q*y*x
+          Aop = oppositeRing A
+	  y*x == q*x*y 
+   SeeAlso
+      skewPolynomialRing		
 ///

@@ -18,6 +18,9 @@
 ---    1. basis of an ideal (this should be in the engine)
 ---       Also do this for left/right ideals when those arrive
 ---    2. Derivation option for maps (used in Ore extensions)
+---    3. 'Force' a GB as valid on the front end.
+---    4. 'support' of a monomial doesn't work right
+---    5. Bug: promoting a RawRingElement that is 1 \in ZZ to A gives an error.
 
 -- MES + FM TODO 2020.07.29
 --   1. Interreduction in GB code, as well as ensuring inhomogeneous
@@ -71,7 +74,7 @@ export {
     "isFreeAlgebraOrQuotient",
     "homogDual",
     "quadraticClosure",
-    "oppositeRing",
+    "oppositeRing",  
     "isLeftRegular",
     "isRightRegular",
     "isCentral",
@@ -901,31 +904,35 @@ homogDual Ideal := I -> (
    if dualGens == 0 then ideal {0_A} else ideal flatten entries dualGens
 )
 
--*  Move this to the engine, or leave at top level?
+--  Move this to the engine, or leave at top level?
 oppositeElement = method()
-oppositeElement NCRingElement := f -> (
-   new (ring f) from hashTable {
-          (symbol ring, f.ring),
-          (symbol cache, new CacheTable from {}),
-          (symbol terms, hashTable apply(pairs f.terms, p -> (
-               newMon := new NCMonomial from {(symbol monList) => reverse p#0#monList,
-                                              (symbol ring) => ring f};
-               (newMon,p#1))))}
+oppositeElement RingElement := f -> (
+   -- this is an internal routine that should be only called on elements
+   -- in a free algebra
+   if f == 0 then return f;
+   A := ring f;
+   (rawCoeff, rawMons) := rawPairs(raw coefficientRing ring f, raw f);
+   sum for i from 0 to (#rawMons - 1) list (
+      newMon := product(apply(reverse rawSparseListFormMonomial rawMons#i, p -> A_(p#0)^(p#1)));
+      promote(rawCoeff#i,coefficientRing A) * newMon
+   )
 )
 
 oppositeRing = method()
-oppositeRing NCRing := B -> (
+oppositeRing FreeAlgebra := 
+oppositeRing FreeAlgebraQuotient := B -> (
    gensB := gens B;
    R := coefficientRing B;
    oppA := R gensB;
-   if class B === NCPolynomialRing then return oppA;
-   idealB := gens ideal B;
-   phi := ncMap(oppA,ambient B, gens oppA);
-   oppIdealB := idealB / oppositeElement / phi // ncIdeal;
-   oppIdealBGB := ncGroebnerBasis(oppIdealB, InstallGB=>not B#BergmanRing);
+   if class B === FreeAlgebra then return oppA;
+   idealB := flatten entries gens ideal B;
+   phi := map(oppA,ambient B, gens oppA);
+   oppIdealB := idealB / oppositeElement / phi // ideal;
+   -- TODO: Check that the opposite of a NCGB again an NCGB
+   --   also, enable forcing of a GB on the front end
+   -- oppIdealBGB = matrix {apply(flatten entries NCGB ideal B, oppositeElement)};
    oppA / oppIdealB
 )
-*-
 
 -*
 -- Make this work eventually
