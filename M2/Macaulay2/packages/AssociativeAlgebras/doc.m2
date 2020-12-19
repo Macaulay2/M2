@@ -1,114 +1,9 @@
- -- warning: there is no documentation for sequenceToVariableSymbols
- -- warning: there is no documentation for FreeAlgebraQuotient
- -- warning: there is no documentation for ncBasis
- -- warning: there is no documentation for isLeftRegular
- -- warning: there is no documentation for centralElements
- -- warning: there is no documentation for oreIdeal
- -- warning: there is no documentation for fourDimSklyanin
- -- warning: there is no documentation for NCReduction2Sided
- -- warning: there is no documentation for freeAlgebra
- -- warning: there is no documentation for isFreeAlgebraOrQuotient
- -- warning: there is no documentation for threeDimSklyanin
- -- warning: there is no documentation for isRightRegular
- -- warning: there is no documentation for toFreeAlgebraQuotient
- -- warning: there is no documentation for leftMultiplicationMap
- -- warning: there is no documentation for normalAutomorphism
- -- warning: there is no documentation for oppositeRing
- -- warning: there is no documentation for rightMultiplicationMap
- -- warning: there is no documentation for skewPolynomialRing
+-- warnings still to fix:
+
  -- warning: there is no documentation for NCGB
- -- warning: there is no documentation for freeProduct
- -- warning: there is no documentation for qTensorProduct
- -- warning: there is no documentation for isCentral
- -- warning: there is no documentation for FreeAlgebra
- -- warning: there is no documentation for oreExtension
- -- warning: found 31 documentation node(s) not listed as a subnode
- -- warning: symbol has no documentation: AssociativeAlgebras :: oreIdeal, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: oreIdeal(Ring,RingMap,RingElement), key (oreIdeal,Ring,RingMap,RingElement), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: oreIdeal(Ring,RingMap,RingMap,RingElement), key (oreIdeal,Ring,RingMap,RingMap,RingElement), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: oreIdeal(Ring,RingMap,RingMap,Symbol), key (oreIdeal,Ring,RingMap,RingMap,Symbol), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: oreIdeal(Ring,RingMap,Symbol), key (oreIdeal,Ring,RingMap,Symbol), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: NCReduction2Sided, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: NCReduction2Sided(Matrix,Ideal), key (NCReduction2Sided,Matrix,Ideal), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: NCReduction2Sided(Matrix,Matrix), key (NCReduction2Sided,Matrix,Matrix), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: NCReduction2Sided(RingElement,Ideal), key (NCReduction2Sided,RingElement,Ideal), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: fourDimSklyanin, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: fourDimSklyanin(Ring,List), key (fourDimSklyanin,Ring,List), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: fourDimSklyanin(Ring,List,List), key (fourDimSklyanin,Ring,List,List), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: freeAlgebra, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: freeAlgebra(Ring,List), key (freeAlgebra,Ring,List), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: isFreeAlgebraOrQuotient, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: isFreeAlgebraOrQuotient(Ring), key (isFreeAlgebraOrQuotient,Ring), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: threeDimSklyanin, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: threeDimSklyanin(Ring,List), key (threeDimSklyanin,Ring,List), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: threeDimSklyanin(Ring,List,List), key (threeDimSklyanin,Ring,List,List), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: freeProduct, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: freeProduct(Ring,Ring), key (freeProduct,Ring,Ring), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: qTensorProduct, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: qTensorProduct(Ring,Ring,QQ), key (qTensorProduct,Ring,Ring,QQ), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: qTensorProduct(Ring,Ring,RingElement), key (qTensorProduct,Ring,Ring,RingElement), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: qTensorProduct(Ring,Ring,ZZ), key (qTensorProduct,Ring,Ring,ZZ), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: isRightRegular, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: isRightRegular(RingElement,ZZ), key (isRightRegular,RingElement,ZZ), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: isCentral, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: isCentral(RingElement), key (isCentral,RingElement), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: toFreeAlgebraQuotient, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: toFreeAlgebraQuotient(Ring), key (toFreeAlgebraQuotient,Ring), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: leftMultiplicationMap, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: leftMultiplicationMap(RingElement,List,List), key (leftMultiplicationMap,RingElement,List,List), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: leftMultiplicationMap(RingElement,ZZ), key (leftMultiplicationMap,RingElement,ZZ), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: leftMultiplicationMap(RingElement,ZZ,ZZ), key (leftMultiplicationMap,RingElement,ZZ,ZZ), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: normalAutomorphism, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: normalAutomorphism(RingElement), key (normalAutomorphism,RingElement), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: oppositeRing, package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: rightMultiplicationMap, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: rightMultiplicationMap(RingElement,List,List), key (rightMultiplicationMap,RingElement,List,List), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: rightMultiplicationMap(RingElement,ZZ), key (rightMultiplicationMap,RingElement,ZZ), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: rightMultiplicationMap(RingElement,ZZ,ZZ), key (rightMultiplicationMap,RingElement,ZZ,ZZ), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: homogDual, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: homogDual(FreeAlgebra), key (homogDual,FreeAlgebra), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: homogDual(FreeAlgebraQuotient), key (homogDual,FreeAlgebraQuotient), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: homogDual(Ideal), key (homogDual,Ideal), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: homogDual(Ring), key (homogDual,Ring), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: FreeAlgebra, package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: oreExtension, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: oreExtension(Ring,RingMap,RingElement), key (oreExtension,Ring,RingMap,RingElement), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: oreExtension(Ring,RingMap,RingMap,RingElement), key (oreExtension,Ring,RingMap,RingMap,RingElement), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: oreExtension(Ring,RingMap,RingMap,Symbol), key (oreExtension,Ring,RingMap,RingMap,Symbol), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: oreExtension(Ring,RingMap,Symbol), key (oreExtension,Ring,RingMap,Symbol), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: sequenceToVariableSymbols, package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: quadraticClosure, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: quadraticClosure(FreeAlgebra), key (quadraticClosure,FreeAlgebra), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: quadraticClosure(FreeAlgebraQuotient), key (quadraticClosure,FreeAlgebraQuotient), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: quadraticClosure(Ideal), key (quadraticClosure,Ideal), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: quadraticClosure(Ring), key (quadraticClosure,Ring), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: FreeAlgebraQuotient, package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: ncBasis, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: ncBasis(InfiniteNumber,InfiniteNumber,Ring), key (ncBasis,InfiniteNumber,InfiniteNumber,Ring), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: ncBasis(InfiniteNumber,List,Ring), key (ncBasis,InfiniteNumber,List,Ring), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: ncBasis(InfiniteNumber,ZZ,Ring), key (ncBasis,InfiniteNumber,ZZ,Ring), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: ncBasis(List,InfiniteNumber,Ring), key (ncBasis,List,InfiniteNumber,Ring), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: ncBasis(List,List,Ring), key (ncBasis,List,List,Ring), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: ncBasis(List,Ring), key (ncBasis,List,Ring), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: ncBasis(Ring), key (ncBasis,Ring), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: ncBasis(ZZ,InfiniteNumber,Ring), key (ncBasis,ZZ,InfiniteNumber,Ring), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: ncBasis(ZZ,Ring), key (ncBasis,ZZ,Ring), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: ncBasis(ZZ,ZZ,Ring), key (ncBasis,ZZ,ZZ,Ring), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: isLeftRegular, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: isLeftRegular(RingElement,ZZ), key (isLeftRegular,RingElement,ZZ), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: centralElements, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: centralElements(Ring,ZZ), key (centralElements,Ring,ZZ), package AssociativeAlgebras
- -- warning: symbol has no documentation: AssociativeAlgebras :: skewPolynomialRing, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: skewPolynomialRing(Ring,Matrix,List), key (skewPolynomialRing,Ring,Matrix,List), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: skewPolynomialRing(Ring,QQ,List), key (skewPolynomialRing,Ring,QQ,List), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: skewPolynomialRing(Ring,RingElement,List), key (skewPolynomialRing,Ring,RingElement,List), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: skewPolynomialRing(Ring,ZZ,List), key (skewPolynomialRing,Ring,ZZ,List), package AssociativeAlgebras
  -- warning: symbol has no documentation: AssociativeAlgebras :: NCGB, package AssociativeAlgebras
  -- warning: method has no documentation: AssociativeAlgebras :: NCGB(Ideal), key (NCGB,Ideal), package AssociativeAlgebras
  -- warning: method has no documentation: AssociativeAlgebras :: NCGB(Ideal,ZZ), key (NCGB,Ideal,ZZ), package AssociativeAlgebras
- -- warning: missing node: FreeAlgebra / Ideal cited by FreeAlgebraQuotient
- -- warning: missing node: isNormal cited by isNormal
- -- warning: missing node: ambient(FreeAlgebra) cited by FreeAlgebra
  -- warning: missing node: coefficientRing(FreeAlgebra) cited by FreeAlgebra
  -- warning: missing node: degreesRing(FreeAlgebra) cited by FreeAlgebra
  -- warning: missing node: describe(FreeAlgebra) cited by FreeAlgebra
@@ -122,8 +17,21 @@
 
 undocumented {sequenceToVariableSymbols,
               freeAlgebra,
-	      NCReductionTwoSided,
-	      isFreeAlgebraOrQuotient}
+	      (freeAlgebra,Ring,List),
+	      isFreeAlgebraOrQuotient,
+	      (isFreeAlgebraOrQuotient, Ring),
+	      (ambient, FreeAlgebra),
+	      (net, FreeAlgebra),
+	      (symbol _, FreeAlgebra, ZZ),
+	      (coefficientRing, FreeAlgebra)}
+
+-- not sure if we want to export:
+-*
+NCReductionTwoSided,
+(NCReductionTwoSided,Matrix,Ideal),
+(NCReductionTwoSided,Matrix,Matrix),
+(NCReductionTwoSided,RingElement,Ideal),
+*-    
 
 doc ///
 Key
@@ -243,6 +151,36 @@ doc ///
       normalElements	 
 ///
 --- TODO: isWellDefined sigma was included above, but doesn't work at the moment.
+
+doc ///
+   Key
+      (isNormal, RingElement)
+   Headline
+      Determines if an element of a noncommutatie ring is normal
+   Usage
+      isNormal x
+   Inputs
+      x : RingElement
+   Outputs
+      : Boolean
+   Description
+      Text
+         Given an element x in a noncommutative ring R, this method returns
+	 true if Rx=xR.
+      Example
+         A = QQ{a,b,c}
+	 I = ideal {a*b+b*a,a*c+c*a,b*c+c*b}
+	 B = A/I
+	 sigma = map(B,B,{b,c,a})
+	 C = oreExtension(B,sigma,w)
+	 isCentral w
+	 isNormal w      
+   SeeAlso
+      isCentral
+      normalElements
+///
+-- TODO: removed until isWellDefined is fixed
+-- isWellDefined sigma
 
 doc ///
    Key
@@ -490,6 +428,7 @@ doc ///
    Key
       homogDual
       (homogDual,Ideal)
+      (homogDual,FreeAlgebra)
       (homogDual,FreeAlgebraQuotient)
    Headline
       Computes the dual of a pure homogeneous ideal
@@ -527,6 +466,7 @@ doc ///
 
 doc ///
    Key
+      (symbol /, FreeAlgebra, Ideal)
       FreeAlgebraQuotient
    Headline
       Type of a noncommutative ring
@@ -565,6 +505,7 @@ doc ///
       (ncBasis, ZZ, InfiniteNumber, Ring)
       (ncBasis, Ring)
       (ncBasis, List, List, Ring)
+      [ncBasis, Limit]
    Headline
       Returns a basis of an noncommutative ring in specified degrees.
    Usage
@@ -746,6 +687,7 @@ doc ///
       (oreExtension,Ring,RingMap,RingMap,Symbol)
       (oreExtension,Ring,RingMap,RingElement)
       (oreExtension,Ring,RingMap,Symbol)
+      [oreExtension, Degree]
    Headline
       Creates an Ore extension of a noncommutative ring
    Usage
@@ -777,6 +719,7 @@ doc ///
       (oreIdeal,Ring,RingMap,RingMap,Symbol)
       (oreIdeal,Ring,RingMap,RingElement)
       (oreIdeal,Ring,RingMap,Symbol)
+      [oreIdeal, Degree]
    Headline
       Creates the defining ideal of an Ore extension of a noncommutative ring
    Usage
@@ -1077,3 +1020,59 @@ doc ///
    SeeAlso
       skewPolynomialRing		
 ///
+
+-*
+doc ///
+  Key
+    freeProduct
+    (freeProduct, Ring, Ring)
+  Headline
+    Define the free product of two algebras
+  Usage
+    C = freeProduct(A,B)
+  Inputs
+    A : Ring
+    B : Ring
+  Outputs
+    C : FreeAlgebraQuotient
+        or @ TO FreeAlgebra @
+  Description
+    Text
+       This function returns the free product of the algebras A and B.
+    Example
+       A = QQ{x,y,z}
+       B = skewPolynomialRing(QQ,(-1)_QQ, {a,b,c})
+       C = freeProduct(A,B)
+///
+
+doc ///
+  Key
+    qTensorProduct
+    (qTensorProduct,Ring,Ring,ZZ)
+    (qTensorProduct,Ring,Ring,QQ)
+    (qTensorProduct,Ring,Ring,RingElement)
+  Headline
+    Define the (q-)commuting tensor product
+  Usage
+    C = qTensorProduct(A,B,q)
+  Inputs
+    A : Ring
+    B : Ring
+    q : RingElement
+  Outputs
+    C : FreeAlgebraQuotient
+  Description
+    Text
+       This function returns the algebra that contains A and
+       B as a subalgebra, with the commutation law on the 
+       images of A and B given by a*b = q*b*a for all a in A and b in B.
+       In the case of A ** B, q = 1.
+    Example
+       A = QQ{x,y}
+       B = skewPolynomialRing(QQ,(-1)_QQ, {a,b})
+       C = qTensorProduct(A,B,-1_QQ)
+       ideal C
+       D = A ** B
+       ideal D
+///
+*-

@@ -11,6 +11,7 @@
               },
         Headline => "Non-commutative algebra",
         DebuggingMode => true,
+     	PackageExports =>{"IntegralClosure"},
 	AuxiliaryFiles => true
         )
 
@@ -20,7 +21,8 @@
 ---    2. Derivation option for maps (used in Ore extensions)
 ---    3. 'Force' a GB as valid on the front end.
 ---    4. 'support' of a monomial doesn't work right
----    5. Bug: promoting a RawRingElement that is 1 \in ZZ to A gives an error.
+---    5. Bug: promoting a RawRingElement that is 1 \in ZZ to A gives an error?
+---    6. FreeProduct and Tensor Products not yet functional (flatten rings need work)
 
 -- MES + FM TODO 2020.07.29
 --   1. Interreduction in GB code, as well as ensuring inhomogeneous
@@ -54,7 +56,7 @@ export {
     "freeAlgebra",
     "ncBasis",
     "NCGB", -- uugh: change name!
-    "NCReductionTwoSided",
+    -- "NCReductionTwoSided", -- unsure if we want to export this
     "FreeAlgebra", -- change this name too! FM (?)
     "FreeAlgebraQuotient", 
     "sequenceToVariableSymbols",
@@ -67,8 +69,8 @@ export {
     "fourDimSklyanin",
     "oreIdeal",
     "oreExtension",
-    "freeProduct",
-    "qTensorProduct",
+    -- "freeProduct", -- not added yet
+    -- "qTensorProduct", -- not added yet
     "toFreeAlgebraQuotient",
     "toCommRing",
     "isFreeAlgebraOrQuotient",
@@ -78,7 +80,7 @@ export {
     "isLeftRegular",
     "isRightRegular",
     "isCentral",
-    "isNormal",
+    -- "isNormal", -- now bringing this in from IntegralClosure
     "normalAutomorphism"
     }
 
@@ -158,7 +160,6 @@ toString FreeAlgebra := R -> (
     -- if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
     -- else toString expression R
     )
-
 ambient FreeAlgebra := R -> R
 
 combineWeightsAndDegree = (nvars, wtvecs, degvector) -> (
@@ -551,9 +552,9 @@ isCentral (RingElement, Ideal) := (f,I) -> (
 )
 *-
 
--- FM: TODO This steps on isNormal in IntegralClosure, I think.
--- needs to be fixed
-isNormal = method()
+-- FM: Brought this method in from IntegralClosure.  Is this the correct method?
+--     All we need is the symbol, not the functionality.
+-- isNormal = method()
 isNormal RingElement := f -> (
    if not isFreeAlgebraOrQuotient(ring f) then error "Expected an element in a noncommutative ring.";
    if not isHomogeneous f then error "Expected a homogeneous element.";
@@ -948,6 +949,8 @@ load "./AssociativeAlgebras/tests.m2"
 beginDocumentation()
 load "./AssociativeAlgebras/doc.m2"
 
+end----------------------------------------------------------
+
 -- Toying with adding FreeMonoids
 
 FreeMonoid = new Type of Monoid
@@ -964,8 +967,6 @@ freeMonoid FreeAlgebra := R -> (
     M * M := (x,y) -> new M from x.RawRingElement * y.RawRingElement;
     M
 )
-
-end----------------------------------------------------------
 
 -- making a new type of monoid for noncommutative algebras.
 restart
