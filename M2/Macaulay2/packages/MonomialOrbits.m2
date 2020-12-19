@@ -1,7 +1,7 @@
 newPackage(
     "MonomialOrbits",
     Version => "0.9", 
-    Date => "15 December 2020",
+    Date => "18 December 2020",
     Authors => {{Name => "David Eisenbud", 
             Email => "de@msri.org", 
             HomePage => "http://www.msri.org/~de"},
@@ -187,6 +187,13 @@ doc ///
             hilbertRepresentatives@.  If the option {\tt MonomialType
             => "SquareFree"} is given, then only square-free monomial
             ideals are considered.
+    Subnodes                                         
+        :Enumerating monomial ideals with given generator degrees
+            @TO orbitRepresentatives@
+        :Enumerating monomial ideals with given Hilbert function
+            @TO hilbertRepresentatives@
+        :Options limiting the type of ideals generated
+            @TO MonomialType@
 ///
 
 doc ///
@@ -229,7 +236,7 @@ doc ///
             generators, the program adds all possible generators of
             the (k+1)-st degree to each of ideals in L in a certain
             order, and then removes those in the list that can be
-            obtained by a transformation in G from one that is earlier
+            obtained by a permutation of variables from one that is earlier
             in the list.
 	    
             Because the generators are constrained to be minimal generators,
@@ -306,20 +313,16 @@ doc ///
             @TO VisibleList@, which could be either a list or a sequence.
         Example
             S = ZZ/101[a..d];
-            L = hilbertRepresentatives(S,{4,4,1}) 
+            netList(L = hilbertRepresentatives(S,{4,7,10}))
             #L
-            L' = hilbertRepresentatives(S,{4,4,1,1}) 
-            #L'
-            L'' = hilbertRepresentatives(S,{4,4,1,1,1})	    
-            L' == L''
-            L = hilbertRepresentatives(S,(4,7,10,13,16))
-            Lsqf = hilbertRepresentatives(S,(4,7,10,13,16), MonomialType => "SquareFree"); 	    
-            #L
-            #Lsqf
-            LP = unique apply(L, m-> hilbertPolynomial m)
-            tally apply(L, m->betti res m)
-            tally apply(Lsqf, m->betti res m)	    
-            #unique apply(L, m->primaryDecomposition m)
+            tally apply(L, m-> hilbertPolynomial(m,Projective => false))
+            tally apply(L, m->betti res m)	    
+	    tally apply(L, m->primaryDecomposition m)	    
+	Text
+            If the option @TO MonomialType@ is set to "SquareFree",
+            then only ideals of square-free monomials are considered.
+        Example
+    	    netList hilbertRepresentatives(S,{4,7,10,13}, MonomialType => "SquareFree")
         Text
             It is possible to specify data which results in no ideals:
         Example
