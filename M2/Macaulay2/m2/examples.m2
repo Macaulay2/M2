@@ -119,7 +119,7 @@ isCapturable = (inputs, pkg, isTest) -> (
     and not match("(addHook|export|newPackage)",              inputs) -- these commands have permanent effects
     and not match("(installMethod|installAssignmentMethod)",  inputs) -- same as above
     and not match("(Global.{6,7}Hook|StartFunction|Echo)",    inputs) -- same as above
-    and not match({"ThreadedGB", "RunExternalM2"},     pkg#"pkgname") -- TODO: eventually remove
+    and not match({"EngineTests", "ThreadedGB", "RunExternalM2"}, pkg#"pkgname") -- TODO: eventually remove
     )
 
 -----------------------------------------------------------------------------
