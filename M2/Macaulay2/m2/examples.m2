@@ -101,14 +101,14 @@ protect symbol capture
 isCapturable = (inputs, pkg, isTest) -> (
     -- argumentMode is mainly used by ctest to select M2 subprocess arguments,
     -- or whether capture should be avoided; see packages/CMakeLists.txt
-    if argumentMode & NoCapture =!= 0 then return false;
+    -- alternatively, no-capture-flag can be used with an example or test
+    if argumentMode & NoCapture =!= 0 or match("no-capture-flag", inputs) then return false;
     -- strip commented segments first
     inputs = replace("--.*$", "",       inputs);
     inputs = replace("-\\*.*?\\*-", "", inputs);
-    -- this flag is sometimes unavoidable, but hopefully rarely
-    not match("no-capture-flag",        inputs)
     -- TODO: remove this when the effects of capture on other packages is reviewed
-    and (isTest or match({"FirstPackage", "Macaulay2Doc"}, pkg#"pkgname"))
+    (isTest or match({"FirstPackage", "Macaulay2Doc"},            pkg#"pkgname"))
+    and not match({"EngineTests", "ThreadedGB", "RunExternalM2"}, pkg#"pkgname")
     -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
     and not match("(gbTrace|stderr|stdio|(P|p)rint|<<)",      inputs) -- stderr and prints are not handled correctly
     and not match("(notify|stopIfError|debuggingMode)",       inputs) -- stopIfError and debuggingMode may be fixable
@@ -119,7 +119,6 @@ isCapturable = (inputs, pkg, isTest) -> (
     and not match("(addHook|export|newPackage)",              inputs) -- these commands have permanent effects
     and not match("(installMethod|installAssignmentMethod)",  inputs) -- same as above
     and not match("(Global.{6,7}Hook|StartFunction|Echo)",    inputs) -- same as above
-    and not match({"EngineTests", "ThreadedGB", "RunExternalM2"}, pkg#"pkgname") -- TODO: eventually remove
     )
 
 -----------------------------------------------------------------------------
