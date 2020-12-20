@@ -31,7 +31,7 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
     if isCapturable(teststring, pkg, true) then (
 	stderr << commentize pad("capturing " | desc, 72) << flush;
 	(err, output) := capture(teststring, Package => pkg, UserMode => usermode);
-	if err then printerr "capture failed; retrying in a subprocess ..." else return true);
+	if err then printerr "capture failed; retrying ..." else return true);
     -- fallback to using an external process
     stderr << commentize pad("running " | desc, 72) << flush;
     runString(teststring, pkg, usermode))
