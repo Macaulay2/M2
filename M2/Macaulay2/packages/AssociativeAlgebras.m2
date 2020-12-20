@@ -81,7 +81,10 @@ export {
     "isRightRegular",
     "isCentral",
     -- "isNormal", -- now bringing this in from IntegralClosure
-    "normalAutomorphism"
+    "normalAutomorphism",
+    "ncHilbertSeries",
+    "toRationalFunction",
+    "PowerSeriesRing"
     }
 
 -- FM: better way to do this?
@@ -942,6 +945,74 @@ NCRing ** NCRing := (A,B) -> (
 )
 *-
 
+findRecurrence = method()
+findRecurrence List := as -> (
+   revas := reverse as;
+   deg := 1;
+   foundRecurrence := false;
+   while (not foundRecurrence and 2*deg < #revas) do (
+      eqns := matrix apply(deg, i -> revas_(toList((1+i)..(deg+i))));
+      out := transpose matrix{revas_(toList(0..deg-1))};
+      soln := out // eqns;
+      if eqns*soln != out then
+         deg = deg + 1
+      else
+         foundRecurrence = true;
+   );
+   if foundRecurrence then soln else null
+)
+
+toRationalFunction = method(Options => {PowerSeriesRing => null, Symbol => getSymbol "T"})
+toRationalFunction List := opts -> as -> (
+   S := opts#Symbol;
+   soln := findRecurrence(as);
+   revas := reverse as;
+   if (soln === null) then return null;
+   deg := numgens target soln;
+   A := ZZ(monoid[S]);
+   fixLow := g -> g*(leadCoefficient last terms g)^(-1);
+   B := frac A;
+   C := if opts#PowerSeriesRing === null then
+           ZZ(monoid[S,Weights=>{-1},Global=>false])
+	else
+	   opts#PowerSeriesRing;   
+   phi := map(C,A,gens C);
+   Q := 1 - first flatten entries ((matrix {apply(deg, i -> (B_0)^(i+1))})*soln);
+   totalDeg := #as - 1;
+   numDeg := totalDeg - deg;
+   f := sum apply(numDeg + 1, i -> revas#(totalDeg - i)*(B_0)^i);
+
+   guess1 := f + (B_0)^(numDeg + 1)*revas#(totalDeg - numDeg - 1)/Q;
+   numGuess := sum select(terms numerator guess1, t -> sum degree t <= numDeg);
+   guess2elt := numGuess / Q;
+   num := phi fixLow numerator guess2elt;
+   den := phi fixLow denominator guess2elt;
+   guess2expr := expression num / expression factor den;
+   (num, den, guess2expr)
+)
+
+ncHilbertSeries = method(Options => {DegreeLimit => 10})
+ncHilbertSeries FreeAlgebra := opts -> A -> (
+   -- degreelimit is ignored here, since the formula for the tensor algebra
+   -- is straightforward.
+   S := degreesRing A;
+   T := S_0;
+   den := (expression 1_S) - expression (sum apply(gens A, x -> S_(degree x)));
+   (expression 1_S) / den
+)
+
+--- working only for singly graded things at the moment.
+ncHilbertSeries FreeAlgebraQuotient := opts -> B -> (
+   degLim := opts#DegreeLimit;
+   hsB := apply(degLim + 1, i -> numgens source ncBasis(i,B));
+   ratlReturn := toRationalFunction (hsB, Symbol => getSymbol "SxS", PowerSeriesRing => degreesRing B);
+   if ratlReturn === null then return sum apply(#hsB, i -> hsB#i*((degreesRing B)_0)^i);
+   (num, den, expr) := ratlReturn;
+   tempRing := ring num;
+   phi := map(degreesRing B, tempRing, gens degreesRing B);
+   expression phi num / expression factor phi den
+)
+
 --- load the tests
 load "./AssociativeAlgebras/tests.m2"
 
@@ -1109,3 +1180,59 @@ TEST ///
 -- Still to do by Frank:
 -- 1. Port over bergman interface for testing purposes
 -- 2. Documentation nodes!
+
+--- some toy examples for ncHilbertSeries code.
+restart
+needsPackage "AssociativeAlgebras"
+R = QQ{x,y,Degrees=>{1,1}}
+S = R/ideal{x^2*y - y*x^2,x*y^2 - y^2*x}
+ncHilbertSeries(S, DegreeLimit => 6)
+ncHilbertSeries S
+
+restart
+needsPackage "AssociativeAlgebras"
+R = QQ{x,y,Degrees=>{2,3}}
+S = R/ideal{x^2*y - y*x^2,x*y^2 - y^2*x}
+ncHilbertSeries(S,DegreeLimit => 40)
+ncHilbertSeries(S,DegreeLimit => 41)
+-- seems that the algorithm has trouble finding the right
+-- expression if the DegreeLimit is not a multiple of 5
+-- don't undertand the reasoning.
+
+restart
+needsPackage "AssociativeAlgebras"
+R = skewPolynomialRing(QQ,(-1)_QQ,{x,y,z,w})
+ncHilbertSeries R
+
+restart
+needsPackage "AssociativeAlgebras"
+R = threeDimSklyanin(ZZ/32003,{2,3,5},{x,y,z})
+ncHilbertSeries R
+
+restart
+needsPackage "AssociativeAlgebras"
+R = fourDimSklyanin(ZZ/32003,{x,y,z,w})
+ncHilbertSeries(R, DegreeLimit => 8)
+
+restart
+needsPackage "AssociativeAlgebras"
+R = QQ[x,y]/ideal(x^2,x*y)
+kRes = res(coker vars R, LengthLimit => 10)
+last toRationalFunction apply(11, i -> numgens source kRes.dd_i)
+
+restart
+needsPackage "AssociativeAlgebras"
+R = QQ[x,y,Degrees=>{2,3}]
+-- I don't understand which degrees are allowed in the non-standard graded case...
+last toRationalFunction(apply(9, i -> numgens source basis(i, R)))
+last toRationalFunction(apply(10, i -> numgens source basis(i, R)))
+last toRationalFunction(apply(11, i -> numgens source basis(i, R)))
+last toRationalFunction(apply(12, i -> numgens source basis(i, R)))
+last toRationalFunction(apply(13, i -> numgens source basis(i, R)))
+last toRationalFunction(apply(14, i -> numgens source basis(i, R)))
+last toRationalFunction(apply(15, i -> numgens source basis(i, R)))
+last toRationalFunction(apply(16, i -> numgens source basis(i, R)))
+last toRationalFunction(apply(17, i -> numgens source basis(i, R)))
+last toRationalFunction(apply(18, i -> numgens source basis(i, R)))
+last toRationalFunction(apply(19, i -> numgens source basis(i, R)))
+last toRationalFunction(apply(20, i -> numgens source basis(i, R)))
