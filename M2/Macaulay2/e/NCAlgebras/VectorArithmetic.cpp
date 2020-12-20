@@ -4,6 +4,8 @@
 #include "ring.hpp"
 #include "ringelem.hpp"
 
+#include <iostream>
+
 void VectorArithmetic::sparseRowToDenseRow(Range<ring_elem> dense,
                                            const Range<ring_elem>& coeffs,
                                            const Range<int>& comps) const
@@ -39,6 +41,33 @@ void VectorArithmetic::denseRowToSparseRow(Range<ring_elem> dense,
                                            int last) const
 {
   int len = 0;
+
+#ifndef NDEBUG
+  bool any = false;
+  for (int i=0; i < first; ++i)
+    if (!mRing->is_zero(dense[i]))
+      {
+        if (!any)
+          {
+            std::cout << "--*** VectorArithmetic: [first,last] = [" << first << ", " << last << "]" << std::endl;
+            std::cout << "  dense array is non-zero, indices: ";
+            any = true;
+          }
+        std::cout << i << " ";
+      }
+  for (int i=last+1; i < dense.size(); ++i)
+    if (!mRing->is_zero(dense[i]))
+      {
+        if (!any)
+          {
+            std::cout << "--*** VectorArithmetic: [first,last] = [" << first << ", " << last << "]" << std::endl;
+            std::cout << "  dense array is non-zero, indices: ";
+            any = true;
+          }
+        std::cout << i << " ";
+      }
+  if (any) std::cout << std::endl;
+#endif
   
   // first can be -1 if the row is zero.  in this case, we should
   // not be accessing dense[i] for i negative.
@@ -60,6 +89,21 @@ void VectorArithmetic::denseRowToSparseRow(Range<ring_elem> dense,
         ++next;
         dense[i] = mRing->zero();
       }
+
+#ifndef NDEBUG
+  any = false;
+  for (int i=0; i < dense.size(); ++i)
+    if (!mRing->is_zero(dense[i]))
+      {
+        if (!any)
+          {
+            std::cout << "error ***: dense array is non-zero, indices: ";
+            any = true;
+          }
+        std::cout << i << " ";
+      }
+  if (any) std::cout << std::endl;
+#endif
 }
 
 void VectorArithmetic::sparseRowMakeMonic(Range<ring_elem>& coeffs)

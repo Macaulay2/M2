@@ -1109,3 +1109,13 @@ TEST ///
 -- Still to do by Frank:
 -- 1. Port over bergman interface for testing purposes
 -- 2. Documentation nodes!
+
+/// -- working code for MES
+  restart
+  needsPackage "AssociativeAlgebras"
+  A = QQ {x, y, z}
+  gbTrace=50
+  I = ideal(-x^2+y*z+z*y,x*z-y^2+z*x,x*y+y*x-z^2)  
+  J = NCGB(I, 10, Strategy => 16)
+  J = NCGB(I, 22, Strategy => 16)
+///

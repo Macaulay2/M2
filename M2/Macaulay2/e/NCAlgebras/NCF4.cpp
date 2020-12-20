@@ -72,13 +72,31 @@ void NCF4::compute(int softDegreeLimit)
 
 void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
 {
+#if 0  
+  if (M2_gbTrace >= 2)
+    {
+      buffer o;
+      o << newline << "F4 processing: # overlaps (spairs): " << overlapsToProcess.size() << newline;
+      emit(o.str());
+    }
+#endif
+  
   buildF4Matrix(overlapsToProcess);
+
+  if (M2_gbTrace >= 2)
+    {
+      std::cout << "NC F4 GB: matrix size: ";
+      displayF4MatrixSize(std::cout);
+    }
   if (M2_gbTrace >= 200) displayFullF4Matrix(std::cout);
+
   sortF4Matrix();
+
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
-  else if (M2_gbTrace >= 2) displayF4MatrixSize(std::cout);
+
   reduceF4Matrix();
+
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
 
@@ -86,11 +104,23 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   
   // convert back to GB elements...
   ConstPolyList newElems = newGBelements();
+
   for (auto& f : newElems)
     {
       addToGroebnerBasis(f);
       updateOverlaps(f);
     }
+
+#if 0
+  if (M2_gbTrace >= 2)
+    {
+      buffer o;
+      o << "F4 processing: # GB added: " << newElems.size() << newline;
+      o << "F4 processing: # GB total: " << mGroebner.size() << newline;
+      emit(o.str());
+    }
+#endif
+  
   matrixReset();
 }
 
@@ -423,7 +453,7 @@ void NCF4::reduceF4Matrix()
 
   // Create the dense array.
   ring_elem zero = freeAlgebra().coefficientRing()->zero();
-  std::vector<ring_elem> denseVector(mColumnMonomials.size(), zero);
+  VECTOR(ring_elem) denseVector(mColumnMonomials.size(), zero);
   Range<ring_elem> dense(denseVector);
 
   // reduce each overlap row by mRows.

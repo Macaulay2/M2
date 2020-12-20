@@ -806,6 +806,11 @@ I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
 gbTrace=2
+deg = 17
+I = ideal I_*; time J1 = ideal NCGB(I, deg, Strategy=>16); -- this gives wrong answer every n times, for n = ??
+numgens J1 == 78 -- this fails here and there... (run this and the the line before it over and over).
+
+gbTrace=2
 I = ideal I_*; time NCGB(I, 23, Strategy=>16); 
 
 I = ideal I_*; time NCGB(I, 20, Strategy=>16); 
