@@ -67,12 +67,11 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
     hasmode := m -> argmode & m == m;
     pushvar(symbol randomSeed, if hasmode ArgNoRandomize then 0 else randomSeed);
-    -- FIXME: https://github.com/Macaulay2/M2/issues/1536#issuecomment-721826413
-    -- if hasmode ArgStop        then (stopIfError, debuggingMode) = (true, false);
-    if hasmode ArgNoDebug     then debuggingMode = false;
+    -- TODO: these two are overriden in interp.dd at the moment
+    --if hasmode ArgStop        then (stopIfError, debuggingMode) = (true, false);
+    --if hasmode ArgNoDebug     then debuggingMode = false;
     if hasmode ArgNoBacktrace then backtrace = false;
     if hasmode ArgNotify      then notify = true;
-    interpreterDepth = 1;
 
     oldPrivateDictionary := User#"private dictionary";
     User#"private dictionary" = new Dictionary;
@@ -183,9 +182,9 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
     else verboseLog("warning: missing file ", outf));
 
 -- used in installPackage.m2
-captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash, changeFunc, usermode, verboseLog) -> (
+-- TODO: reduce the inputs to this function
+captureExampleOutput = (desc, inputs, pkg, cacheFunc, inf, outf, errf, data, inputhash, changeFunc, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
-    desc := "example results for " | format fkey;
     -- try capturing in the same process
     if isCapturable(inputs, pkg, false) then (
 	desc = concatenate(desc, 62 - #desc);
@@ -194,10 +193,9 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
 	if not err then return outf << M2outputHash << inputhash << endl << output << close);
     -- fallback to using an external process
     stderr << commentize pad("making " | desc, 72) << flush;
-    data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
     inf << replace("-\\* no-capture-flag \\*-", "", inputs) << endl << close;
-    if runFile(inf, inputhash, outf, errf, pkg, changeFunc fkey, usermode, data)
-    then ( removeFile inf; cacheFunc fkey ))
+    if runFile(inf, inputhash, outf, errf, pkg, changeFunc, usermode, data)
+    then ( removeFile inf; cacheFunc() ))
 
 -----------------------------------------------------------------------------
 -- process examples
