@@ -51,8 +51,8 @@ private:
   std::vector<PreRow> mReducersTodo;
   std::vector<PreRow> mOverlapsTodo;
   std::vector<Column> mColumns; // mColumns[c].second is the row which will reduce the c'th monomial (unless it is -1).
-  std::vector<Row> mRows;
-  std::vector<Row> mOverlaps;
+  VECTOR(Row) mRows;
+  VECTOR(Row) mOverlaps;
   int mFirstOverlap; // First non pivot row row (and all later ones are also non-pivot rows).
 
 public:

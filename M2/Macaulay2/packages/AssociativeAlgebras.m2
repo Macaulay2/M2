@@ -1181,7 +1181,7 @@ TEST ///
 -- 1. Port over bergman interface for testing purposes
 -- 2. Documentation nodes!
 
---- some toy examples for ncHilbertSeries code.
+/// --- FM: some toy examples for ncHilbertSeries code.
 restart
 needsPackage "AssociativeAlgebras"
 R = QQ{x,y,Degrees=>{1,1}}
@@ -1236,3 +1236,14 @@ last toRationalFunction(apply(17, i -> numgens source basis(i, R)))
 last toRationalFunction(apply(18, i -> numgens source basis(i, R)))
 last toRationalFunction(apply(19, i -> numgens source basis(i, R)))
 last toRationalFunction(apply(20, i -> numgens source basis(i, R)))
+///
+
+/// -- working code for MES
+  restart
+  needsPackage "AssociativeAlgebras"
+  A = QQ {x, y, z}
+  gbTrace=50
+  I = ideal(-x^2+y*z+z*y,x*z-y^2+z*x,x*y+y*x-z^2)  
+  J = NCGB(I, 10, Strategy => 16)
+  J = NCGB(I, 22, Strategy => 16)
+///

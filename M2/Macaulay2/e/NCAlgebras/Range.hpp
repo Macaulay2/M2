@@ -15,6 +15,7 @@ public:
   Range(std::pair<T*, T*> a) : mFirst(a.first), mLast(a.second) {}
   
   explicit Range(std::vector<T>& vec) : mFirst(vec.data()), mLast(vec.data() + vec.size()) {}
+  explicit Range(VECTOR(T)& vec) : mFirst(vec.data()), mLast(vec.data() + vec.size()) {}
 
   int size() const { return mLast - mFirst; }
   T* begin() { return mFirst; }
