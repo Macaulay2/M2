@@ -59,7 +59,6 @@ capture List   := opts -> s -> capture(demark_newline s, opts)
 capture String := opts -> s -> if opts.UserMode then capture' s else (
     -- output is (Boolean, String) => (Err?, Output)
     -- TODO: this should eventually be unnecessary
-    oldAttributes  := copy(Attributes);
     oldMutableVars := new MutableHashTable;
     scan(flatten apply(loadedPackages, pkg -> pkg#"exported mutable symbols"), symb -> oldMutableVars#symb = value symb);
     -* see run.m2 for details of defaultMode, argumentMode, etc. *-
@@ -93,11 +92,12 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     ret := capture' s;
     collectGarbage();
 
+    scan(value \ values User#"private dictionary", v ->
+	if hasAttribute(v, ReverseDictionary) then removeAttribute(v, ReverseDictionary));
     User#"private dictionary" = oldPrivateDictionary;
     popvar symbol OutputDictionary;
     -- TODO: this should eventually be unnecessary
     scan(keys oldMutableVars, symb -> symb <- oldMutableVars#symb);
-    Attributes = oldAttributes;
     popvar symbol randomSeed;
     ret)
 protect symbol capture
@@ -195,7 +195,8 @@ captureExampleOutput = (desc, inputs, pkg, cacheFunc, inf, outf, errf, data, inp
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
 	(err, output) := capture(inputs, UserMode => false, Package => pkg);
-	if not err then return outf << M2outputHash << inputhash << endl << output << close);
+	if err then printerr "capture failed; retrying ..."
+	else return outf << M2outputHash << inputhash << endl << output << close);
     -- fallback to using an external process
     stderr << commentize pad("making " | desc, 72) << flush;
     inf << replace("-\\* no-capture-flag \\*-", "", inputs) << endl << close;
