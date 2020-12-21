@@ -11,7 +11,7 @@ i2 : \n")
 
 -- printing errors
 (err, out) = capture "1/0"
-assert(err and out == "\ni1 : 1/0\ncurrentString:1:2:(3):[3]: error: division by zero\n")
+assert(err and match("\\A\ni1 : 1/0\ncurrentString:1:2:\\(3\\):\\[.\\]: error: division by zero\n\\Z", out))
 
 -- FIXME:
 assert(instance(K, Symbol))
