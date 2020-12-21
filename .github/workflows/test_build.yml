@@ -42,10 +42,10 @@ jobs:
           - ubuntu-latest
           - macos-latest
         compiler:
-          - gcc9
           - default
         include:
           - build-system: cmake
+            os: ubuntu-latest
             compiler: gcc9
             cxx: g++-9
             cc: gcc-9
@@ -54,12 +54,12 @@ jobs:
             compiler: clang10
             cxx: clang++-10
             cc: clang-10
-        exclude:
-          - build-system: autotools
-            compiler: gcc9
-          - build-system: cmake
-            os: macos-latest
-            compiler: gcc9
+          # This build tests Clang rather than AppleClang (keep)
+          #- build-system: cmake
+          #  os: macos-latest
+          #  compiler: clang10
+          #  cxx: clang++
+          #  cc: clang
 
     steps:
       - uses: actions/checkout@v2
@@ -142,7 +142,10 @@ jobs:
       - name: Build Macaulay2 using Ninja
         if: matrix.build-system == 'cmake'
         run: |
-          cmake --build . --target M2-core install-packages
+          cmake --build . --target M2-core M2-emacs install-packages
+          if [[ "${{ matrix.compiler }}" == clang10 ]]; then
+              cpack -G TGZ
+          fi
 
 # ----------------------
 #   Configure and build M2 using Autotools
@@ -165,12 +168,14 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && matrix.compiler == 'default'
+        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'default'
         run: |
+          cmake --build . --target M2-tests
           # cmake --build . --target M2-unit-tests
           # ctest -R "unit-tests"
           # TODO: remove the excluded normal tests
-          ctest -R "normal/" -E "command|program|schenck|threads|doc-links" -j4 --output-on-failure
+          ctest -j4 --output-on-failure -R "normal/" -E "command|program|threads"
+          ctest -j4 --output-on-failure -R "ComputationsBook"
           # TODO: add engine tests
 
       - name: Run Tests using Autotools
@@ -181,7 +186,7 @@ jobs:
           make validate-html
 
 # ----------------------
-#   Upload build logs
+#   Upload build artifacts
 # ----------------------
 
       - name: Upload build logs
@@ -199,3 +204,10 @@ jobs:
              M2/BUILD/build/libraries/*/build/config.log
              # Example errors
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
+
+      - name: Upload tarfile package (ubuntu-amd86)
+        if: matrix.build-system == 'cmake' && matrix.compiler == 'clang10' && success()
+        uses: actions/upload-artifact@v2
+        with:
+          path: |
+            M2/BUILD/build/Macaulay2-*.tar.gz
