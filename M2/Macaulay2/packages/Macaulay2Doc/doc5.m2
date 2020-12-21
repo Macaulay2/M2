@@ -135,11 +135,6 @@ document {
      SeeAlso => "Tally"
      }
 
-TEST ///
-assert( toString tally {1,1,1,2,1,3,2} === "new Tally from {1 => 4, 2 => 2, 3 => 1}" )
-assert( tally {1,1,1,2,1,3,2} === new Tally from {(1,4),(2,2),(3,1)} )
-///
-
 document {
 	Key => (tally, VisibleList),
 	Headline => "tally the elements of a list, sequence, or array",

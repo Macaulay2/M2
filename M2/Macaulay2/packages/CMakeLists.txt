@@ -258,7 +258,7 @@ foreach(package IN LISTS PACKAGES)
   ## Everything bagel
   add_custom_target(all-${package}
     COMMENT "Installing and checking package ${package}"
-    COMMAND ${M2} ${M2_ARGS} -e ${M2_INSTALL_STRING} -e ${M2_COUNT_STRING} -e ${M2_CHECK_STRING} -e "exit 0"
+    COMMAND ${M2} ${M2_ARGS} -e ${M2_INSTALL_STRING} -e ${M2_INFO_STRING} -e ${M2_CHECK_STRING} -e "exit 0"
     VERBATIM
     ${USES_TERMINAL}
     DEPENDS M2-core

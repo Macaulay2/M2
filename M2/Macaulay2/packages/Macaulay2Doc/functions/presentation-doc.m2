@@ -77,14 +77,3 @@ document {
 	  ///,
      SeeAlso => {minimalPresentation, trim, generators, relations, cover}
      }
-TEST ///
-    R = ZZ[x,y,z]
-    modules = {
-	 image matrix {{x^2,x,y}},
-	 coker matrix {{x^2,y^2,0},{0,y,z}},
-	 R^{-1,-2,-3},
-	 image matrix {{x,y}} ++ coker matrix {{y,z}}
-	 }
-    scan(modules, M -> assert( cover M == target presentation M ) )
-///
-

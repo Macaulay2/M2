@@ -1,7 +1,7 @@
 newPackage(
     "Complexes",
     Version => "0.99", 
-    Date => "30 Nov 2020",
+    Date => "14 Dec 2020",
     Authors => {
         {   Name => "Gregory G. Smith", 
             Email => "ggsmith@mast.queensu.ca", 
@@ -12,7 +12,6 @@ newPackage(
             HomePage => "http://www.math.cornell.edu/~mike"
             }},
     Headline => "development package for beta testing new version of chain complexes",
-    Keywords => {"Homological Algebra"},
     PackageExports => {"Truncations"},
     AuxiliaryFiles => true,
     DebuggingMode => false
@@ -381,7 +380,7 @@ restart
 uninstallPackage "Complexes"
 
 restart
-installPackage("Complexes", Verbose => false)
+installPackage "Complexes"
 check "Complexes"
 
 restart
@@ -401,3 +400,7 @@ doc ///
 ///
 
 
+S = ZZ/101[a..d]
+K = res coker vars S
+L = K ** K
+elapsedTime L**L;

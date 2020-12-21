@@ -92,15 +92,4 @@ document {
      SeeAlso => {euler,genus}
      }
 
-TEST ///
-R = ZZ/101[a,b,c]/c^4
-assert ( genera R == {3,3} )
-assert ( genus R == 3 )
-assert ( eulers R == {-2,4} )
-assert ( euler R == -2 )
-R = ZZ/101[a,b,c]/c^3
-assert ( genera R == {1,2} )
-assert ( eulers R == {0,3} )
-///
-
  

@@ -24,20 +24,36 @@ TEST(String, String) := (title, teststring) -> (
 -----------------------------------------------------------------------------
 -- check
 -----------------------------------------------------------------------------
--- TODO: Why LoadDocumentation => true?
 
-prep := pkg -> (
-    use pkg;
-    if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
-    (hadError, numErrors) = (false, 0); pkg)
+-- returns false if the inputs or the package are not known to behave well with capture
+-- also see the one in examples.m2
+isCapturableTest := (inputs, pkg) -> (
+    not match("no-capture-flag", inputs) -- this flag is really necessary, but only sometimes
+    -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
+    and not match("(end|exit|restart)",                       inputs) -- these commands interrupt the interpreter
+    and not match("(gbTrace|read|run|stderr|stdio|print|<<)", inputs) -- stderr and prints are not handled correctly
+    and not match("([Cc]ommand|schedule|thread|Task)",        inputs) -- remove when threads work more predictably
+    and not match("(installMethod|load|export|newPackage)",   inputs) -- exports may land in the package User
+    and not match("(GlobalAssignHook|GlobalReleaseHook)",     inputs) -- same as above
+    and not match({"ThreadedGB", "RunExternalM2"},     pkg#"pkgname") -- TODO: eventually remove
+    )
 
-onecheck = (n, pkg, usermode) -> (
-     (filename, lineno, teststring) := pkg#"test inputs"#n;
-     stderr << "-* running test " << n << " of package " << pkg << " in file:" << endl;
-     stderr << "   " << filename << ":" << lineno << ":1:" << endl;
-     stderr << "   rerun with: check_" << n << " \"" << pkg << "\" *-" << endl;
-     runString(teststring, pkg, usermode);
-     )
+checkMessage := (verb, n, pkgname, filename, lineno) -> (
+    stderr
+    << commentize(verb, " check(", toString n, ", ", format pkgname, ") from source:") << endl
+    << pad("   " | filename | ":" | lineno - 1 | ":1:", 76)                            << flush)
+
+captureTestResult := (n, pkg, usermode) -> (
+    stdio << flush; -- just in case previous timing information hasn't been flushed yet
+    (filename, lineno, teststring) := pkg#"test inputs"#n;
+    -- try capturing in the same process
+    if isCapturableTest(teststring, pkg) then (
+	checkMessage("capturing", n, pkg#"pkgname", filename, lineno);
+	(err, output) := capture(teststring, UserMode => false, Package => pkg);
+	if err then printerr "capture failed; trying again in an external process ..." else return true);
+    -- fallback to using an external process
+    checkMessage("running", n, pkg#"pkgname", filename, lineno);
+    runString(teststring, pkg, usermode))
 
 check = method(Options => {UserMode => null, Verbose => false})
 check String  := opts -> pkg -> check(-1, pkg, opts)
@@ -49,13 +65,15 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
         stderr << "--warning: optional components required for " <<
             toString pkg << " tests are not present; skipping" << endl;
         return);
-    pkg = prep pkg;
+    --
+    use pkg;
+    if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
+    --
     errorList := {};
+    (hadError, numErrors) = (false, 0);
     scan(if n == -1 then keys pkg#"test inputs" else {n}, k -> (
-            previousNumErrors := numErrors;
-            onecheck(k, pkg, if opts.UserMode === null then not noinitfile else opts.UserMode);
-            if numErrors > previousNumErrors then
-                errorList = append(errorList, k)));
+            ret := elapsedTime captureTestResult(k, pkg, if opts.UserMode === null then not noinitfile else opts.UserMode);
+            if ret then errorList = append(errorList, k)));
     if hadError then error("test", if numErrors > 1 then "s" else "",
         " #", demark(", ", toString \ errorList),
         " of package ", toString pkg, " failed",

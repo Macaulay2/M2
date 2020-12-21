@@ -64,12 +64,6 @@ doc ///
         (nextPrime,Number)
 ///
 
-TEST ///
-assert not isPseudoprime(101*1617839547365369353)
-assert not isPseudoprime(18158848484363*1617839547365369353)
-assert isPseudoprime 1617839547365369353
-///
-
 document { 
      Key => {isPrime, (isPrime, ZZ)},
      Headline => "whether a integer or polynomial is prime",
@@ -104,20 +98,3 @@ document {
 	  },
      SeeAlso => {factor, isPseudoprime, "MinimalPrimes :: isPrime(Ideal)"}
      }
-
-TEST "
-assert (not isPrime 1333333)
-assert (not isPrime 3133333)
-assert (not isPrime 3313333)
-assert ( isPrime 3331333)
-assert ( isPrime 3333133)
-assert ( isPrime 3333313)
-assert ( isPrime 3333331)
-"
-
-TEST "
-R=ZZ/2[t]
-assert isPrime (t^2+t+1)
-assert (not isPrime (t^2+1))
-"
-
