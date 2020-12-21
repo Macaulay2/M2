@@ -143,7 +143,7 @@ jobs:
         if: matrix.build-system == 'cmake'
         run: |
           cmake --build . --target M2-core M2-emacs install-packages
-          if [[ "${{ matrix.compiler }}" == clang10 ]]; then
+          if [[ "${{ matrix.os }}" == ubuntu-latest ]] && [[ "${{ matrix.compiler }}" == clang10 ]]; then
               cpack -G TGZ
           fi
 
@@ -171,8 +171,8 @@ jobs:
         if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'default'
         run: |
           cmake --build . --target M2-tests
-          # cmake --build . --target M2-unit-tests
-          # ctest -R "unit-tests"
+          cmake --build . --target M2-unit-tests
+          ctest -j1 --output-on-failure -R "unit-tests"
           # TODO: remove the excluded normal tests
           ctest -j4 --output-on-failure -R "normal/" -E "command|program|threads"
           ctest -j4 --output-on-failure -R "ComputationsBook"
@@ -205,9 +205,11 @@ jobs:
              # Example errors
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
 
-      - name: Upload tarfile package (ubuntu-amd86)
-        if: matrix.build-system == 'cmake' && matrix.compiler == 'clang10' && success()
+      - name: Upload tarfile package (ubuntu-amd64)
+        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang10' && success()
         uses: actions/upload-artifact@v2
         with:
+          name: Macaulay2-${GITHUB_SHA::7}-ubuntu-x86_64
           path: |
             M2/BUILD/build/Macaulay2-*.tar.gz
+          retention-days: 1
