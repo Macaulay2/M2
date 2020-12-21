@@ -526,7 +526,7 @@ setupfun("value'",value);
 capture(e:Expr):Expr := (
      when e
      is s:stringCell do (
-     	  flush(stdIO);
+	  flush(stdIO);
 	  flush(stdError);
 	  oldStdError := stdError;
 	  setStdError(stdIO);
@@ -540,9 +540,8 @@ capture(e:Expr):Expr := (
 	  setLineNumber(0);
 	  previousLineNumber = -1;
 	  --
-          foss := getFileFOSS(stdIO);
+	  foss := getFileFOSS(stdIO);
 	  foss.capturing = true;
-	  releaseFileFOSS(stdIO);
 	  oldbuf := foss.outbuffer;
 	  oldbol := foss.outbol;
 	  oldindex := foss.outindex;
@@ -554,10 +553,11 @@ capture(e:Expr):Expr := (
 	  r := readeval3(stringFile,true,newStaticLocalDictionaryClosure(),false,false,true);
 	  --
 	  out := substrAlwaysCopy(foss.outbuffer,0,foss.outindex);
-     	  foss.capturing = false;
+	  foss.capturing = false;
 	  foss.outbuffer = oldbuf;
 	  foss.outbol = oldbol;
 	  foss.outindex = oldindex;
+	  releaseFileFOSS(stdIO);
 	  --
 	  setStdError(oldStdError);
 	  setstopIfError(oldStopIfError);

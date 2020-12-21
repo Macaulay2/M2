@@ -54,6 +54,7 @@ ArgNotify      = 1 << 11 -* add --notify *-
 ArgSilent      = 1 << 12 -* add --silent *-
 ArgStop        = 1 << 13 -* add --stop *-
 ArgPrintWidth  = 1 << 14 -* add --print-width 77 *-
+ArgPrintWidthN = 77
 -- suffixes
 SetInputFile   = 1 << 30 -* add <inf *-
 SetOutputFile  = 1 << 31 -* add >>tmpf *-
@@ -113,7 +114,7 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      cmd = cmd | readmode(ArgNotify,      "--notify");
      cmd = cmd | readmode(ArgSilent,      "--silent");
      cmd = cmd | readmode(ArgStop,        "--stop");
-     cmd = cmd | readmode(ArgPrintWidth,  "--print-width 77");
+     cmd = cmd | readmode(ArgPrintWidth,  "--print-width " | ArgPrintWidthN);
      cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir ", format d));
      -- TODO: fix capture, add preloaded packages to Macaulay2Doc, then delete the following two lines
      needsline := concatenate(" -e 'needsPackage(",format pkgname,",Reload=>true,FileName=>",format pkg#"source file",")'");

@@ -59,6 +59,7 @@ capture List   := opts -> s -> capture(demark_newline s, opts)
 capture String := opts -> s -> if opts.UserMode then capture' s else (
     -- output is (Boolean, String) => (Err?, Output)
     -- TODO: this should eventually be unnecessary
+    oldAttributes  := copy(Attributes);
     oldMutableVars := new MutableHashTable;
     scan(flatten apply(loadedPackages, pkg -> pkg#"exported mutable symbols"), symb -> oldMutableVars#symb = value symb);
     -* see run.m2 for details of defaultMode, argumentMode, etc. *-
@@ -70,12 +71,14 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     -- TODO: these two are overriden in interp.dd at the moment
     --if hasmode ArgStop        then (stopIfError, debuggingMode) = (true, false);
     --if hasmode ArgNoDebug     then debuggingMode = false;
+    if hasmode ArgPrintWidth  then printWidth = ArgPrintWidthN;
     if hasmode ArgNoBacktrace then backtrace = false;
     if hasmode ArgNotify      then notify = true;
 
     oldPrivateDictionary := User#"private dictionary";
     User#"private dictionary" = new Dictionary;
-    OutputDictionary = new GlobalDictionary;
+    -- FIXME: why does OutputDictionary lose its Attribute if it isn't saved this way?
+    pushvar(symbol OutputDictionary, new Dictionary);
     dictionaryPath = {
 	Core.Dictionary,
 	OutputDictionary,
@@ -91,8 +94,10 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     collectGarbage();
 
     User#"private dictionary" = oldPrivateDictionary;
+    popvar symbol OutputDictionary;
     -- TODO: this should eventually be unnecessary
     scan(keys oldMutableVars, symb -> symb <- oldMutableVars#symb);
+    Attributes = oldAttributes;
     popvar symbol randomSeed;
     ret)
 protect symbol capture
@@ -111,7 +116,7 @@ isCapturable = (inputs, pkg, isTest) -> (
     (isTest or match({"FirstPackage", "Macaulay2Doc"},            pkg#"pkgname"))
     and not match({"EngineTests", "ThreadedGB", "RunExternalM2"}, pkg#"pkgname")
     -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
-    and not match("(gbTrace|stderr|stdio|(P|p)rint|<<)",      inputs) -- stderr and prints are not handled correctly
+    and not match("(gbTrace|NAGtrace)",                       inputs) -- cerr/cout directly from engine isn't captured
     and not match("(notify|stopIfError|debuggingMode)",       inputs) -- stopIfError and debuggingMode may be fixable
     and not match("(alarm|exec|exit|quit|restart|run)\\b",    inputs) -- these commands interrupt the interpreter
     and not match("(read|input|load|needs)\\b",               inputs) -- these commands hide undesirable functions
@@ -119,7 +124,7 @@ isCapturable = (inputs, pkg, isTest) -> (
     and not match("(temporaryFileName)",                      inputs) -- this is sometimes bug prone
     and not match("(addHook|export|newPackage)",              inputs) -- these commands have permanent effects
     and not match("(installMethod|installAssignmentMethod)",  inputs) -- same as above
-    and not match("(Global.{6,7}Hook|StartFunction|Echo)",    inputs) -- same as above
+    and not match("(Global.*Hook|add.*Function|Echo|Print)",  inputs) -- same as above
     )
 
 -----------------------------------------------------------------------------
