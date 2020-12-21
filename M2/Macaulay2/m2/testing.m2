@@ -56,11 +56,12 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
 	    (filename, lineno, teststring) := pkg#"test inputs"#k;
 	    desc := "check(" | toString k | ", " | format pkg#"pkgname" | ")";
 	    ret := elapsedTime captureTestResult(desc, teststring, pkg, usermode);
-	    if not ret then errorList = append(errorList, k)));
-    outfile := k -> temporaryDirectory() | toString(temporaryFilenameCounter + 2 * (k - #tests - min tests)) | ".tmp";
+	    if not ret then errorList = append(errorList,
+		 (k, temporaryFilenameCounter - 2))));
+    outfile := k -> temporaryDirectory() | toString k | ".tmp";
     if hadError then (
-	if opts.Verbose then apply(errorList, k -> (
+	if opts.Verbose then apply(last \ errorList, k -> (
 		(filename, lineno, teststring) := pkg#"test inputs"#k;
 		stderr << filename << ":" << lineno - 1 << ":1: error:" << endl;
 		printerr get("!tail " | outfile k)));
-	error("test(s) #", demark(", ", toString \ errorList), " of package ", toString pkg, " failed.")))
+	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
