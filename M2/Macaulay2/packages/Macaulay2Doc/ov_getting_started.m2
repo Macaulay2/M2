@@ -885,8 +885,9 @@ document {
      TT "M2 file1 file2 ... ", " -- starts the program, reading and 
      executing the specified files.",
      PARA{},
-     "The options that can be provided on the command line may be displayed by running ", TT "M2 --help", ", as follows.",
-     EXAMPLE ///run "M2 --help";///,
+     "The options that can be provided on the command line may be displayed by running ", TT "M2 --help", ".",
+     EXAMPLE ///assert(0 == run (commandLine#0 | " --help"));///,
+     -- In the long run, it would be better if we added the directory containing our M2 to PATH.
      PARA{},
      "To terminate the program, one may type ", TO "exit", ", ", TO "quit", ",
      ", TO "end", ", or the end of file character.",
