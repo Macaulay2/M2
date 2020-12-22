@@ -2,20 +2,24 @@
 -- Local utilities
 -----------------------------------------------------------------------------
 
-sourceFileStamp = () -> concatenate(
-    "--", toAbsolutePath currentFileName, ":", toString currentLineNumber(), ": location of test code")
+sourceFileStamp = (filename, linenum) -> concatenate(
+    "--", toAbsolutePath filename, ":", toString linenum, ": location of test code")
 
 -----------------------------------------------------------------------------
 -- TEST
 -----------------------------------------------------------------------------
 
-TEST = method()
-TEST List   := testlist   -> TEST \ testlist
-TEST String := teststring -> (
+TEST = method(Options => {FileName => false})
+TEST List   := opts -> testlist   -> apply(testlist, test -> TEST(test, opts))
+TEST String := opts -> teststring -> (
     n := currentPackage#"test number";
-    currentPackage#"test inputs"#n = (
+    currentPackage#"test inputs"#n = if opts.FileName then (
+        minimizeFilename teststring, 1,
+        concatenate(sourceFileStamp(teststring, 1), newline, get teststring)
+        ) else (
         minimizeFilename currentFileName, currentLineNumber(),
-        concatenate(sourceFileStamp(), newline, teststring));
+        concatenate(sourceFileStamp(currentFileName, currentLineNumber()),
+            newline, teststring));
     currentPackage#"test number" = n + 1;)
 -- TODO: support test titles
 TEST(String, String) := (title, teststring) -> (
