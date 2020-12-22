@@ -8,9 +8,8 @@ i1 :  << id_(ZZ^0) << id_(ZZ^3) << id_(ZZ^2) << id_(ZZ^1);
  | 0 1 0 || 0 1 |
  | 0 0 1 |
 i2 : \n")
+
 (err, out) = capture("K = ZZ/101\nA = matrix\"1,2,3,4;1,3,6,10;19,7,11,13\" ** oo", UserMode => false);
--*
--- FIXME:
 assert(not err and match(regexQuote "
 i1 : K = ZZ/101\n\no1 = K\n\no1 : QuotientRing\n
 i2 : A = matrix\"1,2,3,4;1,3,6,10;19,7,11,13\" ** oo\n
@@ -19,7 +18,6 @@ o2 = | 1  2 3  4  |
      | 19 7 11 13 |\n
              3       4
 o2 : Matrix K  <--- K\n" | ".*", out))
-*-
 
 -- printing errors
 (err, out) = capture "1/0"

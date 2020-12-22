@@ -545,7 +545,6 @@ capture(e:Expr):Expr := (
 	  oldbuf := foss.outbuffer;
 	  oldbol := foss.outbol;
 	  oldindex := foss.outindex;
-	  foss.outbuffer = new string len 100 do provide ' ';
 	  stringFile := stringTokenFile("currentString", s.v+newline);
 	  stringFile.posFile.file.echo = true;
 	  setprompt(stringFile,topLevelPrompt);
