@@ -100,8 +100,8 @@ jobs:
 
       - name: Prepare build environment
         run: |
-          echo "PROJECT_VERSION=`cat ~/M2/VERSION`"                      >> $GITHUB_ENV
-          echo "REL_COMMIT=`git rev-list -1 HEAD ~/M2/VERSION`"          >> $GITHUB_ENV
+          echo "PROJECT_VERSION=`cat ../../VERSION`"                     >> $GITHUB_ENV
+          echo "REL_COMMIT=`git rev-list -1 HEAD ../../VERSION`"         >> $GITHUB_ENV
           echo "NEW_COMMITS=`git rev-list $REL_COMMIT..HEAD --count`"    >> $GITHUB_ENV
           echo "GIT_COMMIT=`git describe --dirty --always --match HEAD`" >> $GITHUB_ENV
           echo "WEEKDAY=`date +%a`"    >> $GITHUB_ENV
@@ -110,6 +110,9 @@ jobs:
           echo "LD_LIBRARY_PATH=`brew --prefix`/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
           then echo "/usr/lib/ccache" >> $GITHUB_PATH
+               # ccache doesn't seem to create the right symlink for clang-10 on ubuntu
+               sudo ln -s `which clang-10`   /usr/lib/ccache
+               sudo ln -s `which clang++-10` /usr/lib/ccache
           else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
           fi
@@ -120,7 +123,7 @@ jobs:
         with:
           path: |
             ~/.ccache
-            ~/M2/BUILD/build/usr-host
+            ~/work/M2/M2/M2/BUILD/build/usr-host
           key: build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-${{ hashFiles('**/cmake/*-libraries.cmake') }}
           restore-keys: |
             build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-
