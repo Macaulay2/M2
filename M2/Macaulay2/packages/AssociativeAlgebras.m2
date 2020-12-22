@@ -1263,3 +1263,16 @@ last toRationalFunction(apply(20, i -> numgens source basis(i, R)))
 -- 4. Inhomogeneous GBs!
 -- 5. Intelligently use if S/I is finite dimensional for operation (also allow for truncation of an algebra)
 
+-- Would like to try altering our current version of F4 to the following.
+-- ** Indicates new additions to the code.
+-- ** 1. Suppose that f_1,...,f_r are the GB so far.  These are assumed to be
+--    interreduced.  If the f_1,...,f_r are the inputs, then interreduce them all before processing the first degree.
+--    This way, they are all of the form LM(f_i) + sum of reduced words.
+--    2. Build the necessary s-pairs from the list f_1,...,f_r.
+--    3. Track down all the necessary reducers required for reducing these s-pairs.  Note that since the f_i
+--    are interreduced, this should be far less than we currently are creating for the F4 matrix.
+-- ** 4. Add the reducers in to the matrix by multiplying the reduced row corresponding to the f_i used.
+--    These won't be reduced fully, but at least they will not be 'too far' from something reduced.
+--    It is possible we would want to reduce these before adding them in.
+-- ** 5. Reduce the overlaps using the above reducers.  When a collection of new GB elements are found,
+--    They should be interreduced to ensure (1) holds for the next iteration.
