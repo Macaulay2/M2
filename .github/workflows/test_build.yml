@@ -100,7 +100,12 @@ jobs:
 
       - name: Prepare build environment
         run: |
-          echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
+          echo "PROJECT_VERSION=`cat ~/M2/VERSION`"                      >> $GITHUB_ENV
+          echo "REL_COMMIT=`git rev-list -1 HEAD ~/M2/VERSION`"          >> $GITHUB_ENV
+          echo "NEW_COMMITS=`git rev-list $REL_COMMIT..HEAD --count`"    >> $GITHUB_ENV
+          echo "GIT_COMMIT=`git describe --dirty --always --match HEAD`" >> $GITHUB_ENV
+          echo "WEEKDAY=`date +%a`"    >> $GITHUB_ENV
+          echo "CC=${{ matrix.cc }}"   >> $GITHUB_ENV
           echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
           echo "LD_LIBRARY_PATH=`brew --prefix`/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
@@ -144,6 +149,7 @@ jobs:
         run: |
           cmake --build . --target M2-core M2-emacs install-packages
           if [[ "${{ matrix.os }}" == ubuntu-latest ]] && [[ "${{ matrix.compiler }}" == clang10 ]]; then
+              echo "PACKAGE_LABEL=$PROJECT_VERSION-$NEW_COMMITS-$GIT_COMMIT-ubuntu-x86_64" >> $GITHUB_ENV
               cpack -G TGZ
           fi
 
@@ -181,6 +187,7 @@ jobs:
       - name: Run Tests using Autotools
         if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'default'
         run: |
+          # TODO: skip or perform the library and run-html-check-links based on $WEEKDAY
           make check -o check-in-libraries
           make -C Macaulay2/html-check-links check
           make validate-html
@@ -205,11 +212,11 @@ jobs:
              # Example errors
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
 
-      - name: Upload tarfile package (ubuntu-amd64)
+      - name: Upload tarfile package (ubuntu-x86_64)
         if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang10' && success()
         uses: actions/upload-artifact@v2
         with:
-          name: Macaulay2-${GITHUB_SHA::7}-ubuntu-x86_64
+          name: Macaulay2-${{ env.PACKAGE_LABEL }}
           path: |
             M2/BUILD/build/Macaulay2-*.tar.gz
           retention-days: 1
