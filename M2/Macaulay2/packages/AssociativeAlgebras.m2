@@ -962,9 +962,9 @@ findRecurrence List := as -> (
    if foundRecurrence then soln else null
 )
 
-toRationalFunction = method(Options => {PowerSeriesRing => null, Symbol => getSymbol "T"})
-toRationalFunction List := opts -> as -> (
-   S := opts#Symbol;
+toRationalFunction = method()
+toRationalFunction List := as -> (
+   S := getSymbol "S";
    soln := findRecurrence(as);
    revas := reverse as;
    if (soln === null) then return null;
@@ -972,10 +972,11 @@ toRationalFunction List := opts -> as -> (
    A := ZZ(monoid[S]);
    fixLow := g -> g*(leadCoefficient last terms g)^(-1);
    B := frac A;
-   C := if opts#PowerSeriesRing === null then
-           ZZ(monoid[S,Weights=>{-1},Global=>false])
-	else
-	   opts#PowerSeriesRing;   
+   C := degreesRing 1;
+   --C := if opts#PowerSeriesRing === null then
+   --        ZZ(monoid[S,Weights=>{-1},Global=>false])
+   --	else
+   --	   opts#PowerSeriesRing;   
    phi := map(C,A,gens C);
    Q := 1 - first flatten entries ((matrix {apply(deg, i -> (B_0)^(i+1))})*soln);
    totalDeg := #as - 1;
@@ -1010,6 +1011,7 @@ ncHilbertSeries FreeAlgebraQuotient := opts -> B -> (
    (num, den, expr) := ratlReturn;
    tempRing := ring num;
    phi := map(degreesRing B, tempRing, gens degreesRing B);
+   error "err";
    expression phi num / expression factor phi den
 )
 
@@ -1182,6 +1184,7 @@ TEST ///
 -- 2. Documentation nodes!
 
 /// --- FM: some toy examples for ncHilbertSeries code.
+
 restart
 needsPackage "AssociativeAlgebras"
 R = QQ{x,y,Degrees=>{1,1}}
@@ -1223,6 +1226,8 @@ last toRationalFunction apply(11, i -> numgens source kRes.dd_i)
 restart
 needsPackage "AssociativeAlgebras"
 R = QQ[x,y,Degrees=>{2,3}]
+hilbertSeries R
+ring value denominator hilbertSeries R === degreesRing R
 -- I don't understand which degrees are allowed in the non-standard graded case...
 last toRationalFunction(apply(9, i -> numgens source basis(i, R)))
 last toRationalFunction(apply(10, i -> numgens source basis(i, R)))
@@ -1242,8 +1247,19 @@ last toRationalFunction(apply(20, i -> numgens source basis(i, R)))
   restart
   needsPackage "AssociativeAlgebras"
   A = QQ {x, y, z}
-  gbTrace=50
+  gbTrace=2
   I = ideal(-x^2+y*z+z*y,x*z-y^2+z*x,x*y+y*x-z^2)  
   J = NCGB(I, 10, Strategy => 16)
   J = NCGB(I, 22, Strategy => 16)
 ///
+
+/// -- notes from 12/21 meeting
+
+-- 1. fix flattenring for towers
+-- 2. teach f4 how to intelligently use previous reductions when building 
+--    reducer rows.
+-- 3. One option is to have the F4 matrix be only left and right multiplied by variables
+--    from basis in one lower degree.  Should shrink matrices tremendously.
+-- 4. Inhomogeneous GBs!
+-- 5. Intelligently use if S/I is finite dimensional for operation (also allow for truncation of an algebra)
+

@@ -848,6 +848,7 @@ doc ///
 	 apply(8, i -> binomial(i+3,3))
 ///
 
+-- change name...
 doc ///
    Key
       toCommRing
@@ -855,7 +856,7 @@ doc ///
       (toCommRing,FreeAlgebraQuotient)
       [toCommRing,SkewCommutative]
    Headline
-     Compute the abelianization of an NCRing and returns a Ring.
+     Compute the abelianization of a Ring and returns a Ring.
    Usage
      S = toCommRing R 
    Inputs
@@ -888,7 +889,7 @@ doc ///
       toFreeAlgebraQuotient
       (toFreeAlgebraQuotient,Ring)
    Headline
-      Converts a Ring to an NCRing
+      Converts a Ring to a noncommutative ring
    Usage
      S = toFreeAlgebraQuotient R
    Inputs
