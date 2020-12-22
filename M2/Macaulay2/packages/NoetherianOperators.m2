@@ -2913,7 +2913,7 @@ Description
         {\tt Tolerance =>} a positive real number. This specifies the numerical precision when computing the
         specialized Noetherian operators. The default value is {\tt 1e-6}. See @TO "Tolerance (NoetherianOperators)"@.
         
-        {\tt Sampler =>} a function, taking inputs \{tt (I,n)}, where {\tt I} is an @TO2{Ideal, "ideal"}@, and {\tt n} is an integer.
+        {\tt Sampler =>} a function, taking inputs {\tt (n,I)}, where {\tt I} is an @TO2{Ideal, "ideal"}@, and {\tt n} is an integer.
         The sampler function returns a list of {\tt n} @TO2 {Point, "points"}@ on the component of interest of {\tt I}. If unset, the default sampler
         uses @TO Bertini@, and assumes that {\tt I} is primary.
 
