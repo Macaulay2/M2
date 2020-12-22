@@ -67,7 +67,7 @@ document {
 		       HREF{"https://katex.org/","$\\KaTeX$"}, ", a JavaScript math typesetting library for browsers.
 		       As a result, $\\LaTeX$ equations and matrices are rendered correctly.
 		       One notable change is that mathematical characters and equations now must be enclosed in ",
-		       CODE "\\(...\\)", ", ", CODE "\\[...\\]", ", ", CODE "$...$", ", or ", CODE "$$...$$",
+		       TT "\\(...\\)", ", ", TT "\\[...\\]", ", ", TT "$...$", ", or ", TT "$$...$$",
 		       " in order to be rendered. See ", TO "Text :: html(TEX)", " for more details and examples" },
 		   LI { "The option ", TO Boxes, " of ", TO netList,
 		       " has been made more flexible to allow customization of the box;",
@@ -88,11 +88,13 @@ document {
               },
 	 LI { "new packages:",
 	      UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
 	 	   LI { TO "EagonResolution::EagonResolution", ", a package by David Eisenbud and Mike Stillman for Eagon resolutions of residue fields, has been added." },
 	 	   LI { TO "EigenSolver::EigenSolver", ", a package by Laurent Busé, Justin Chen, Kisun Lee, Anton Leykin, Tomas Pajdla, and Erika Pirnes for solving polynomial systems using eigen-computations, has been added." },
 	 	   LI { TO "GKMVarieties::GKMVarieties", ", a package by Chris Eur and Ritvik Ramkumar for computations with GKM manifolds and moment graphs, has been added." },
 	 	   LI { TO "GraphicalModelsMLE::GraphicalModelsMLE", ", a package by Carlos Amendola, Luis David Garcia Puente, Roser Homs Pons, Olga Kuznetsova, Harshit J Motwani, Elina Robeva, and David Swinarski, for maximum likelihood estimates for graphical statistical models, has been added." },
 	 	   LI { TO "Hadamard::Hadamard", ", a package by Iman Bahmani Jafarloo for Hadamard products of projective subvarieties, has been added." },
+     		   LI { TO "MonomialOrbits::MonomialOrbits", ", a package by David Eisenbud and Mike Stillman for orbit representatives of monomial ideals, has been added." },
 	 	   LI { TO "MultiplicitySequence::MultiplicitySequence", ", a package by Justin Chen, Youngsu Kim, and Jonathan Montaño, for computing the multiplicity sequence of an ideal, has been added." },
 	 	   LI { TO "NoetherianOperators::NoetherianOperators", ", a package by Robert Krone, Justin Chen, Marc Harkonen, Yairon Cid-Ruiz, and Anton Leykin, for numerically computing local dual spaces, Hilbert functions, and Noetherian operators, has been added.
 			(The package ", TT "NumericalHilbert", " has been absorbed into this new package." },
@@ -440,7 +442,7 @@ document {
 	       	    LI { TO "Seminormalization::Seminormalization", ", a package by Bernard Serbinowski and Karl Schwede for computing seminormalization of rings, has been added." },
 	       	    LI { TO "CoincidentRootLoci::CoincidentRootLoci", ", a package by M. C. Brambilla and G. Staglianò for computations with coincident root loci, has been added." },
 	       	    LI { TO "RelativeCanonicalResolution::RelativeCanonicalResolution", TEX ", a package by Christian Bopp and Michael Hoff for computation of the relative canonical resolution for g-nodal canonical curves with a fixed $g^1_k$, has been added." },
-	       	    LI { TO "RandomCurvesOverVerySmallFiniteFields::RandomCurvesOverVerySmallFiniteFields", TEX ", a package by Christian Bopp and Frank-Olaf Schreyer for computation of general canonical curves of genus \\le 15 over fields with small characteristic, has been added." },
+		    LI { TO "RandomCurvesOverVerySmallFiniteFields::RandomCurvesOverVerySmallFiniteFields", TEX ", a package by Christian Bopp and Frank-Olaf Schreyer for computation of general canonical curves of genus $\\le 15$ over fields with small characteristic, has been added." },
 	       	    LI { TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been added." },
 	       	    LI { TO "SLnEquivariantMatrices::SLnEquivariantMatrices", ", a package by Ada Boralevi, Daniele Faenzi and Paolo Lella for computations related to the paper \"A construction of equivariant bundles on the space of symmetric forms\", has been added." },
 		    LI { TO "CorrespondenceScrolls::CorrespondenceScrolls", ", a package by David Eisenbud, Frank-Olaf Schreyer, and Alessio Sammartano, to compute and analyze examples of correspondence scrolls, has been added." },

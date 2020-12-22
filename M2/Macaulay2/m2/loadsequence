@@ -87,6 +87,7 @@ format.m2
 html.m2
 markdown.m2
 latex.m2
+book.m2
 
 varieties.m2
 webapp.m2

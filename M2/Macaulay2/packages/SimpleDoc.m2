@@ -1,5 +1,6 @@
 -- -*- coding: utf-8 -*-
 -- TODO: add linter
+-- TODO: make Tree entries automatically join the Subnodes
 newPackage(
     "SimpleDoc",
     Version => "1.2",

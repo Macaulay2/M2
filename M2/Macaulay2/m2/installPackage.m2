@@ -2,6 +2,9 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 -- TODO: add regex option to readDirectory
 -- TODO: add relative directory to minimizeFilename
+-- TODO: generate parent nodes for orphan nodes based on their type
+-- TODO: make orphan overview nodes subnodes of the top node
+-- TODO: not reentrant yet, see resetCounters
 
 -----------------------------------------------------------------------------
 -- Generate the html documentation
@@ -306,6 +309,11 @@ makePackageIndex List := path -> (
     htmlDirectory = null;)
 
 -----------------------------------------------------------------------------
+-- install PDF documentation for package
+-----------------------------------------------------------------------------
+-- see book.m2
+
+-----------------------------------------------------------------------------
 -- install info documentation for package
 -----------------------------------------------------------------------------
 
@@ -543,6 +551,7 @@ installPackage = method(
 	MakeDocumentation      => true,
 	MakeHTML               => true,
 	MakeInfo               => true,
+	MakePDF                => false,
 	MakeLinks              => true,
 	-- until we get better dependency graphs between documentation
 	-- nodes, "false" here will confuse users
@@ -724,7 +733,8 @@ installPackage Package := opts -> pkg -> (
 	-- ~22s for Macaulay2Doc
 	if chkdoc then (
 	    resetCounters();
-	    scan((if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg)#"exported symbols", s -> (
+	    srcpkg := if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg;
+	    scan(join (srcpkg#"exported symbols", srcpkg#"exported mutable symbols"), s -> (
 		    tag := makeDocumentTag s;
 		    if  not isUndocumented tag
 		    and not hasDocumentation tag
@@ -756,6 +766,10 @@ installPackage Package := opts -> pkg -> (
 	-- ~50 -> ~80s for Macaulay2Doc
 	if opts.MakeHTML then installHTML(pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts)
 	else verboseLog("not making documentation in HTML format");
+
+	-- make pdf documentation
+	if opts.MakePDF then installPDF(pkg, installPrefix, installLayout, verboseLog)
+	else verboseLog("not making documentation in PDF format");
 
 	if chkdoc and hadDocumentationWarning then printerr("warning: ",
 	    toString numDocumentationWarnings, " warning(s) occurred in documentation for package ", toString pkg);

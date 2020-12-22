@@ -88,7 +88,8 @@ SYlocalize = (assroutine) -> (I,P) ->(
      then ret = I
      else (
       if debugLevel >= 1 then (<< endl << "Finding a separator polynomial" << endl);
-      f := lift((flatten entries generators gb IOPrp)#0, polyRing);
+      -- f := lift((flatten entries generators gb IOPrp)#0, polyRing);
+      f := first select(flatten entries generators gb IntersectionOfPrimes, g -> g % P1 != 0);
       if debugLevel >= 2 then (<< endl << "It equals " << f << endl);
       f = substitute (f,RI);
       if debugLevel >= 1 then (<< endl << "Saturating with respect to the separator polynomial" << endl);

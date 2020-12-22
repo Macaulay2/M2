@@ -62,7 +62,6 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		../editors/make-M2-symbols.m2 \
 		@srcdir@/../*/COPYRIGHT \
 		@srcdir@/basictests/*.m2 \
-		@srcdir@/../book/*.m2 \
 		@srcdir@/../packages/*.m2 \
 		@srcdir@/../packages/*/*.m2 \
 		@srcdir@/../tests/*/*.m2 \
