@@ -121,6 +121,7 @@ RawRingElement = value Core#"private dictionary"#"RawRingElement"
 
 --- debugging/benchmark tools
 BUG = str -> ()
+DEVELOPMENT = str -> ()
 BENCHMARK = method()
 BENCHMARK String := (s) -> null
 

@@ -453,7 +453,7 @@ TEST ///
   -- noncommutative reduction test
 -*
   restart
-  needsPackage "AssociativeAlgebras"
+  debug needsPackage "AssociativeAlgebras"
 *-
   R = QQ{a..d}
   I = ideal(a*b*a-a*c*b)
@@ -469,11 +469,11 @@ TEST ///
   map(R, rawNCReductionTwoSided(raw gens I2, raw gens K))
 
 f = a*a-b*c-a
-g = NCReduction2Sided(a*f-f*a, ideal(f))
+g = NCReductionTwoSided(a*f-f*a, ideal(f))
 g = -a*b*c+b*c*a
 h = a*g + f*b*c
 -- TODO: Fix this!
-NCReduction2Sided(h, ideal(f,g)) -- never never land
+NCReductionTwoSided(h, ideal(f,g)) -- never never land
 ///
 
 TEST ///
@@ -721,6 +721,7 @@ TEST ///
   restart
   debug needsPackage "AssociativeAlgebras"
 *-
+--- test of an "elimination" order for kernels
 R = QQ{a,b,c,x,y, Degrees => {3,3,2,1,1}, Weights => {{0,0,0,1,1}} }
 I = ideal{x*y - c, x*y*x-a, y*x*y-b}
 isHomogeneous I
@@ -728,6 +729,7 @@ assert(degrees source gens I === {{2},{3},{3}})
 M1 = gens I
 J = NCGB(I,3) 
 J = NCGB(I,20)
+J = NCGB(I,20,Strategy=>16)
 M2 = I.cache.NCGB#1
 J1 = ideal (ideal M1)_*
 J2 = ideal (ideal M2)_*
@@ -735,7 +737,7 @@ assert(NCGB(J1, 20) == NCGB(J2, 20)) -- note: NCGB J2 seems correct.
 
 J = NCGB(I, 6)
 assert isHomogeneous J
-assert(NCReduction2Sided(x*y*x*y*x, ideal J) == c*a)
+assert(NCReductionTwoSided(x*y*x*y*x, ideal J) == c*a)
 ///
 
 TEST /// 
@@ -942,3 +944,83 @@ BUG ///
   g = g1*w + lot  
 ///
 
+DEVELOPMENT ///
+-*
+  restart
+  debug needsPackage "AssociativeAlgebras"
+*-
+--- more robust test of an "elimination" order for kernels
+kk = frac(QQ[x]/(x^2+x+1))
+R = kk{y_1,y_2,y_3}
+S = skewPolynomialRing(kk,(-1)_kk,{z_1,z_2,z_3})
+f_1 = z_1 + z_2 + z_3
+f_2 = z_1 + x^2*z_2 + x*z_3
+f_3 = z_1 + x*z_2 + x^2*z_3
+phi = map(S,R,{f_1,f_2,f_3})
+phi(2*y_1^2 - y_2*y_3 - y_3*y_2)
+--- the below calculations compute a GB of the kernel of the above
+--- ring map, and should become automated.
+kk = frac(QQ[x]/(x^2+x+1))
+A = kk{y_1,y_2,y_3}
+B = kk{z_1,z_2,z_3}
+J = ideal apply(subsets(gens B, 2), p -> product p + product reverse p)
+C = kk{z_1,z_2,z_3,y_1,y_2,y_3,Weights=>{1,1,1,0,0,0}}
+-- BUG!!! sub(J,C) does not work!
+f1 = z_1 + z_2 + z_3
+f2 = z_1 + x^2*z_2 + x*z_3
+f3 = z_1 + x*z_2 + x^2*z_3
+K = ideal apply(subsets(take(gens C,3), 2), p -> product p + product reverse p) + 
+    ideal (y_1 - f1, y_2 - f2, y_3 - f3)
+isHomogeneous K
+Kgb = NCGB(K,20,Strategy=>16)
+netList flatten entries Kgb
+-- The elements of Kgb that are in y_i are a GB of the kernel.
+-- BUG!! support does not work currently.  Look at rawIndices...
+g1 = (flatten entries Kgb)#3
+g2 = (flatten entries Kgb)#4
+g3 = (flatten entries Kgb)#5
+-- the answer looks weird, but only because we are not interreducing the result
+-- Q: When M2 uses this trick to compute kernels, is the full GB returned as
+--    a generating set of the kernel or are the generators minimized in some way?
+
+--- a simpler example
+A = QQ{x,y}
+B = QQ{a,b,c,Degrees=>{3,3,2}}
+phi = map(A,B,{x*y*x,y*x*y,x*y})
+R = QQ{x,y,a,b,c, Degrees => {1,1,3,3,2}, Weights => {{1,1,0,0,0}} }
+I = ideal{x*y - c, x*y*x-a, y*x*y-b}
+isHomogeneous I
+assert(degrees source gens I === {{2},{3},{3}})
+M1 = gens I
+J = NCGB(I,3) 
+J = NCGB(I,20)
+J = NCGB(I,20,Strategy=>16)
+M2 = I.cache.NCGB#1
+J1 = ideal (ideal M1)_*
+J2 = ideal (ideal M2)_*
+assert(NCGB(J1, 20) == NCGB(J2, 20)) -- note: NCGB J2 seems correct.
+
+J = NCGB(I, 6)
+assert isHomogeneous J
+assert(NCReductionTwoSided(x*y*x*y*x, ideal J) == c*a)
+///
+
+BUG ///
+restart
+needsPackage "AssociativeAlgebras"
+kk = frac( ZZ/32003[a,b,c] )
+A = kk {x,y,z}
+I = ideal {c*x^2+a*y*z+b*z*y, b*x*z+c*y^2+a*z*x, a*x*y+b*y*x+c*z^2}
+Igb = elapsedTime NCGB(I, 3, Strategy=>16);
+Igb = elapsedTime NCGB(I, 4, Strategy=>16);
+Igb = elapsedTime NCGB(I, 5, Strategy=>16); -- .21s
+Igb = elapsedTime NCGB(I, 6, Strategy=>16); -- 5.5s
+Igb = elapsedTime NCGB(I, 7, Strategy=>16); -- 187s  (my suspicion is that the lack of interreduction is killing us here.)
+Igb = elapsedTime NCGB(I, 8, Strategy=>16); -- ??
+Igb = elapsedTime NCGB(I, 9, Strategy=>16); -- ??
+
+Igb = elapsedTime NCGB(I, 3);
+Igb = elapsedTime NCGB(I, 4);
+Igb = elapsedTime NCGB(I, 5);
+Igb = elapsedTime NCGB(I, 6); -- crashes often.
+///
