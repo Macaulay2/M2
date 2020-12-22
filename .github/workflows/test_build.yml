@@ -190,11 +190,9 @@ jobs:
       - name: Run Tests using Autotools
         if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'default'
         run: |
-          # TODO: skip or perform the library and run-html-check-links based on $WEEKDAY
           make check -o check-in-libraries
           make -C Macaulay2/html-check-links check
-          make validate-html
-
+x
 # ----------------------
 #   Upload build artifacts
 # ----------------------
