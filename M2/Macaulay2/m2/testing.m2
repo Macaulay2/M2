@@ -59,6 +59,21 @@ captureTestResult := (n, pkg, usermode) -> (
     checkMessage("running", n, pkg#"pkgname", filename, lineno);
     runString(teststring, pkg, usermode))
 
+loadTestDir := pkg -> (
+    if pkg#?"test directory loaded" then return;
+    testDir := pkg#"package prefix" |
+        replace("PKG", pkg#"pkgname", currentLayout#"packagetests");
+    if fileExists testDir then (
+        tmp := currentPackage;
+        currentPackage = pkg;
+        TEST(sort apply(select(readDirectory testDir, file ->
+            match("\\.m2$", file)), test -> testDir | "/" | test),
+            FileName => true);
+        currentPackage = tmp;
+        pkg#"test directory loaded" = true;
+    ) else pkg#"test directory loaded" = false;
+)
+
 check = method(Options => {UserMode => null, Verbose => false})
 check String  := opts -> pkg -> check(-1, pkg, opts)
 check Package := opts -> pkg -> check(-1, pkg, opts)
@@ -73,6 +88,9 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
     use pkg;
     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
     --
+
+    if pkg#"pkgname" == "Core" then loadTestDir(pkg);
+
     errorList := {};
     (hadError, numErrors) = (false, 0);
     scan(if n == -1 then keys pkg#"test inputs" else {n}, k -> (
