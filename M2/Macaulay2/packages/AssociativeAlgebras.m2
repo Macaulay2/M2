@@ -56,7 +56,7 @@ export {
     "freeAlgebra",
     "ncBasis",
     "NCGB", -- uugh: change name!
-    -- "NCReductionTwoSided", -- unsure if we want to export this
+    "NCReductionTwoSided",
     "FreeAlgebra", -- change this name too! FM (?)
     "FreeAlgebraQuotient", 
     "sequenceToVariableSymbols",
@@ -83,8 +83,7 @@ export {
     -- "isNormal", -- now bringing this in from IntegralClosure
     "normalAutomorphism",
     "ncHilbertSeries",
-    "toRationalFunction",
-    "PowerSeriesRing"
+    "toRationalFunction"
     }
 
 -- FM: better way to do this?
@@ -975,10 +974,6 @@ toRationalFunction List := as -> (
    fixLow := g -> g*(leadCoefficient last terms g)^(-1);
    B := frac A;
    C := degreesRing 1;
-   --C := if opts#PowerSeriesRing === null then
-   --        ZZ(monoid[S,Weights=>{-1},Global=>false])
-   --	else
-   --	   opts#PowerSeriesRing;   
    phi := map(C,A,gens C);
    Q := 1 - first flatten entries ((matrix {apply(deg, i -> (B_0)^(i+1))})*soln);
    totalDeg := #as - 1;
@@ -1008,7 +1003,7 @@ ncHilbertSeries FreeAlgebra := opts -> A -> (
 ncHilbertSeries FreeAlgebraQuotient := opts -> B -> (
    degLim := opts#DegreeLimit;
    hsB := apply(degLim + 1, i -> numgens source ncBasis(i,B));
-   ratlReturn := toRationalFunction (hsB, Symbol => getSymbol "SxS", PowerSeriesRing => degreesRing B);
+   ratlReturn := toRationalFunction (hsB, Symbol => getSymbol "SxS");
    if ratlReturn === null then return sum apply(#hsB, i -> hsB#i*((degreesRing B)_0)^i);
    (num, den, expr) := ratlReturn;
    tempRing := ring num;
@@ -1028,9 +1023,9 @@ ncSupport RingElement := f -> (
 ncKernel = method(Options=>{DegreeLimit => 10});
 ncKernel RingMap := opts -> phi -> (
    if not isFreeAlgebraOrQuotient source phi or not isFreeAlgebraOrQuotient target phi then
-      error "Expected both source and target to be noncommutative at the present time."
+      error "Expected both source and target to be noncommutative at the present time.";
    -- TODO: isHomogeneous needs to be fixed.
-   --if not isHomogeneous phi then
+   -- if not isHomogeneous phi then
    --   error "Expected a homogeneous ring map.";
    A := source phi;
    ambA := ambient A;
@@ -1040,8 +1035,8 @@ ncKernel RingMap := opts -> phi -> (
    J := ideal B;
    kk := coefficientRing A;
    if not kk === coefficientRing B then
-      error "Expected coefficient rings to be the same.";
-   -- I can't seem to prevent this algebra from leaking to the front end.
+      error "Expected coefficient rings to be the same at the present time.";
+   -- FM: I can't seem to prevent this algebra from leaking to the front end.
    C := freeAlgebra(kk,(gens B | gens A) |
             {Degrees => (degrees B | degrees A)} | 
 	    {Weights => toList(numgens B : 1) | (toList(numgens A : 0))});
@@ -1058,7 +1053,7 @@ ncKernel RingMap := opts -> phi -> (
    kerGens := select(flatten entries Kgb, f -> isSubset(ncSupport f, drop(gens C, numgens B)));
    backToA := map(A,C,toList((numgens B) : 0_A) | (gens A));
    -- the ring map 'backToA' is messing up the coefficients.  It seems the denominators are
-   -- disappearing if the coefficientRing is a field of fractions?
+   -- disappearing if the coefficientRing is a field of fractions.  See line 801 in tests.m2
    ideal (kerGens / backToA)
 )
 

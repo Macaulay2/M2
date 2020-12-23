@@ -796,7 +796,7 @@ kk = frac(QQ[x])
 A = kk {y}
 phi = map(A,A,{y^2})
 assert(phi (x*y) == x*y^2)
-assert(phi ((1/x)*y) == (1/x)*y^2)
+assert(phi ((1/x)*y) == (1/x)*y^2) -- fails
 ///
 
 BUG ///
@@ -865,12 +865,6 @@ I = ideal I_*; NCGB(I, 10, Strategy=>2); -- works
 I = ideal I_*; NCGB(I, 10, Strategy=>4); -- works
 I = ideal I_*; NCGB(I, 10, Strategy=>5); -- works
 I = ideal I_*; NCGB(I, 10, Strategy=>6); -- works -- hmm, doesn't seem to work well
-
-restart
-needsPackage "AssociativeAlgebras"
-R = QQ{a,b,c, Weights=>{{1,0,0},{0,1,0},{0,0,1}}}
-I = ideal {a^2 - 1, b^2 - 1, c^2 - 1, a*b*a - b*a*b, b*c*b - c*b*c, a*c - c*a}
-NCGB(I,10)
 
 restart
 needsPackage "AssociativeAlgebras"
@@ -985,7 +979,7 @@ apply(15, i -> binomial(i+2,2))
 
 --- the below calculations compute a GB of the kernel of the above
 --- ring map.  
-kk = frac(QQ[x]/(x^2+x+1))
+kk = toField(QQ[x]/(x^2+x+1))
 A = kk{y_1,y_2,y_3}
 B = kk{z_1,z_2,z_3}
 J = ideal apply(subsets(gens B, 2), p -> product p + product reverse p)
@@ -1051,4 +1045,55 @@ Igb = elapsedTime NCGB(I, 5);
 Igb = elapsedTime NCGB(I, 6); -- crashes often.
 ///
 
+TEST ///
+-- some inhomogeneous GB tests
+-*
+restart
+needsPackage "AssociativeAlgebras"
+*-
+-- S_4
+R = QQ{a,b,c}
+I = ideal {a^2 - 1, b^2 - 1, c^2 - 1, a*b*a - b*a*b, b*c*b - c*b*c, a*c - c*a}
+NCGB(I,20)
+S = R/I
+assert(sum apply(20, i -> numgens source ncBasis(i,S)) == 4!)
 
+-- S_5
+R = QQ{a,b,c,d}
+I = ideal {a^2 - 1, b^2 - 1, c^2 - 1, d^2 - 1, a*b*a - b*a*b, b*c*b - c*b*c, a*c - c*a, a*d - d*a, b*d - d*b, c*d*c - d*c*d}
+NCGB(I,20)
+S = R/I
+assert(sum apply(20, i -> numgens source ncBasis(i,S)) == 5!)
+
+-- S_6
+R = QQ{a,b,c,d,e}
+I = ideal {a^2 - 1, b^2 - 1, c^2 - 1, d^2 - 1, e^2 - 1, a*b*a - b*a*b, b*c*b - c*b*c, c*d*c - d*c*d, d*e*d - e*d*e, a*c - c*a, a*d - d*a, a*e - e*a, b*d - d*b, b*e - e*b, c*e - e*c}
+NCGB(I,20)
+S = R/I
+assert(sum apply(20, i -> numgens source ncBasis(i,S)) == 6!)
+
+-- S_7
+R = QQ{a,b,c,d,e,f}
+I = ideal {a^2 - 1, b^2 - 1, c^2 - 1, d^2 - 1, e^2 - 1, f^2 - 1, a*b*a - b*a*b, b*c*b - c*b*c, c*d*c - d*c*d, d*e*d - e*d*e, e*f*e - f*e*f, a*c - c*a, a*d - d*a, a*e - e*a, a*f - f*a, b*d - d*b, b*e - e*b, b*f - f*b, c*e - e*c, c*f - f*c, d*f - f*d}
+NCGB(I,30)
+S = R/I
+assert(sum apply(30, i -> numgens source ncBasis(i,S)) == 7!)
+
+-- S_8
+R = QQ{a,b,c,d,e,f,g}
+I = ideal {a^2 - 1, b^2 - 1, c^2 - 1, d^2 - 1, e^2 - 1, f^2 - 1, g^2 - 1, a*b*a - b*a*b, b*c*b - c*b*c, c*d*c - d*c*d, d*e*d - e*d*e, e*f*e - f*e*f, f*g*f - g*f*g,
+           a*c - c*a, a*d - d*a, a*e - e*a, a*f - f*a, a*g - g*a, b*d - d*b, b*e - e*b, b*f - f*b, b*g - g*b, c*e - e*c, c*f - f*c, c*g - g*c, d*f - f*d, d*g - g*d, e*g - g*e}
+NCGB(I,30)
+S = R/I
+assert(sum apply(30, i -> numgens source ncBasis(i,S)) == 8!)
+///
+
+--- (FM) List of bugs found when working on kernel code:
+--- 1. fraction field and ring maps, line 801
+--- 2. sub(ideal,Ring) doesn't seem to work right
+---    in the noncommutative case.
+--- 3. support is broken (but I wrote ncSupport for the time being)
+--- 4. both F4 and regular GB computation seemed to hang on
+---    the example on line 962ish (which was in turn created by another error)
+--- 5. The ring created for the computation in the kernel code
+---    is leaking to the front end.  Not sure how to avoid this.
