@@ -1028,7 +1028,7 @@ ncSupport RingElement := f -> (
 ncKernel = method(Options=>{DegreeLimit => 10});
 ncKernel RingMap := opts -> phi -> (
    if not isFreeAlgebraOrQuotient source phi or not isFreeAlgebraOrQuotient target phi then
-      error "If both source and target are commutative, then use kernel instead.";
+      error "Expected both source and target to be noncommutative at the present time."
    -- TODO: isHomogeneous needs to be fixed.
    --if not isHomogeneous phi then
    --   error "Expected a homogeneous ring map.";
