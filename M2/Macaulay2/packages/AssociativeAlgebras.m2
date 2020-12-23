@@ -352,6 +352,7 @@ FreeAlgebra / Ideal := FreeAlgebraQuotient => (R,I) -> (
      A := R;
      while class A === QuotientRing do A = last A.baseRings;
      gensI := generators I;
+     -- changed default strategy to F4
      S := new FreeAlgebraQuotient from rawQuotientRing(raw R, raw NCGB I);
      S.cache = new CacheTable;
      S.ideal = I;
@@ -1016,6 +1017,51 @@ ncHilbertSeries FreeAlgebraQuotient := opts -> B -> (
    expression phi num / expression factor phi den
 )
 
+-- support function for now
+ncSupport = method();
+ncSupport RingElement := f -> (
+   A := ring f;
+   (rawCoeff, rawMons) := rawPairs(raw coefficientRing ring f, raw f);
+   reverse sort unique flatten apply(rawMons, rm -> apply(rawSparseListFormMonomial rm, p -> A_(p#0)))
+)
+
+ncKernel = method(Options=>{DegreeLimit => 10});
+ncKernel RingMap := opts -> phi -> (
+   if not isFreeAlgebraOrQuotient source phi or not isFreeAlgebraOrQuotient target phi then
+      error "If both source and target are commutative, then use kernel instead.";
+   -- TODO: isHomogeneous needs to be fixed.
+   --if not isHomogeneous phi then
+   --   error "Expected a homogeneous ring map.";
+   A := source phi;
+   ambA := ambient A;
+   I := ideal A;
+   B := target phi;
+   ambB := ambient B;
+   J := ideal B;
+   kk := coefficientRing A;
+   if not kk === coefficientRing B then
+      error "Expected coefficient rings to be the same.";
+   -- I can't seem to prevent this algebra from leaking to the front end.
+   C := freeAlgebra(kk,(gens B | gens A) |
+            {Degrees => (degrees B | degrees A)} | 
+	    {Weights => toList(numgens B : 1) | (toList(numgens A : 0))});
+   psiA := map(C,ambA,drop(gens C, numgens B));
+   psiB := map(C,ambB,take(gens C, numgens B));
+   liftToAmbB := map(ambB,B,gens ambB);
+   Igb := flatten entries if I.cache.?NCGB then last I.cache.NCGB else gens I;
+   Jgb := flatten entries if J.cache.?NCGB then last J.cache.NCGB else gens J;
+   K := (ideal (Igb / psiA)) + (ideal (Jgb / psiB)) + 
+         ideal apply(numgens A, i -> (psiA ambA_i) - psiB liftToAmbB phi A_i);
+   Kgb := NCGB(K, opts#DegreeLimit,Strategy=>16);
+   --- now select those elements of the GB that are only in the variables from ambA and place
+   --- those elements in A.
+   kerGens := select(flatten entries Kgb, f -> isSubset(ncSupport f, drop(gens C, numgens B)));
+   backToA := map(A,C,toList((numgens B) : 0_A) | (gens A));
+   -- the ring map 'backToA' is messing up the coefficients.  It seems the denominators are
+   -- disappearing if the coefficientRing is a field of fractions?
+   ideal (kerGens / backToA)
+)
+
 --- load the tests
 load "./AssociativeAlgebras/tests.m2"
 
@@ -1264,6 +1310,7 @@ last toRationalFunction(apply(20, i -> numgens source basis(i, R)))
 -- 4. Inhomogeneous GBs!
 -- 5. Intelligently use if S/I is finite dimensional for operation (also allow for truncation of an algebra)
 
+--- Additional notes (FM)
 -- Would like to try altering our current version of F4 to the following.
 -- ** Indicates new additions to the code.
 -- ** 1. Suppose that f_1,...,f_r are the GB so far.  These are assumed to be

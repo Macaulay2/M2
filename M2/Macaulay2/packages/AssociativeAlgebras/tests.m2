@@ -784,6 +784,21 @@ assert(leadTerm g == 3*x*y*b^2*c*b)
 assert(leadMonomial 0_R == 0_R)
 ///
 
+TEST ///
+-*
+   restart
+   needsPackage "AssociativeAlgebras"
+*-
+-- BUG 12.22.2020
+-- ring homs defined on algebras over fraction fields were
+-- ignoring denominators of coefficients at some point
+kk = frac(QQ[x])
+A = kk {y}
+phi = map(A,A,{y^2})
+assert(phi (x*y) == x*y^2)
+assert(phi ((1/x)*y) == (1/x)*y^2)
+///
+
 BUG ///
 --- things to get fixed:
 1) basis rather than ncBasis
@@ -950,16 +965,26 @@ DEVELOPMENT ///
   debug needsPackage "AssociativeAlgebras"
 *-
 --- more robust test of an "elimination" order for kernels
-kk = frac(QQ[x]/(x^2+x+1))
+kk = toField(QQ[x]/(x^2+x+1))   -- these examples fail if you use frac instead of toField
 R = kk{y_1,y_2,y_3}
 S = skewPolynomialRing(kk,(-1)_kk,{z_1,z_2,z_3})
 f_1 = z_1 + z_2 + z_3
 f_2 = z_1 + x^2*z_2 + x*z_3
 f_3 = z_1 + x*z_2 + x^2*z_3
 phi = map(S,R,{f_1,f_2,f_3})
-phi(2*y_1^2 - y_2*y_3 - y_3*y_2)
+phi(
+K = ncKernel phi
+use R -- should not be necessary but a ring from ncKernel is leaking to front end.
+
+-- strictly speaking, this GB calculation is not necessary, as the return value of ncKernel is a GB of K
+Kgb = NCGB(K, Strategy=>16) -- this seems to be caught in some kind of infinite loop when over frac field instead of toField
+Kgb = NCGB(K, Strategy=>0) -- same.  
+T = R/K  -- crashing because the NCGB is not completing
+apply(15, i -> numgens source ncBasis(i,T))
+apply(15, i -> binomial(i+2,2))
+
 --- the below calculations compute a GB of the kernel of the above
---- ring map, and should become automated.
+--- ring map.  
 kk = frac(QQ[x]/(x^2+x+1))
 A = kk{y_1,y_2,y_3}
 B = kk{z_1,z_2,z_3}
@@ -975,18 +1000,14 @@ isHomogeneous K
 Kgb = NCGB(K,20,Strategy=>16)
 netList flatten entries Kgb
 -- The elements of Kgb that are in y_i are a GB of the kernel.
--- BUG!! support does not work currently.  Look at rawIndices...
-g1 = (flatten entries Kgb)#3
-g2 = (flatten entries Kgb)#4
-g3 = (flatten entries Kgb)#5
--- the answer looks weird, but only because we are not interreducing the result
--- Q: When M2 uses this trick to compute kernels, is the full GB returned as
---    a generating set of the kernel or are the generators minimized in some way?
 
 --- a simpler example
-A = QQ{x,y}
-B = QQ{a,b,c,Degrees=>{3,3,2}}
-phi = map(A,B,{x*y*x,y*x*y,x*y})
+A = QQ{a,b,c,Degrees=>{3,3,2}}
+B = QQ{x,y}
+phi = map(B,A,{x*y*x,y*x*y,x*y})
+K = ncKernel phi
+C = A/K
+
 R = QQ{x,y,a,b,c, Degrees => {1,1,3,3,2}, Weights => {{1,1,0,0,0}} }
 I = ideal{x*y - c, x*y*x-a, y*x*y-b}
 isHomogeneous I
@@ -1003,6 +1024,11 @@ assert(NCGB(J1, 20) == NCGB(J2, 20)) -- note: NCGB J2 seems correct.
 J = NCGB(I, 6)
 assert isHomogeneous J
 assert(NCReductionTwoSided(x*y*x*y*x, ideal J) == c*a)
+
+f = z_1^2 + z_1*z_2
+   A = ring f
+   (rawCoeff, rawMons) := rawPairs(raw coefficientRing ring f, raw f)
+   reverse sort unique flatten apply(rawMons, rm -> apply(rawSparseListFormMonomial rm, p -> A_(p#0)))
 ///
 
 BUG ///
@@ -1024,3 +1050,5 @@ Igb = elapsedTime NCGB(I, 4);
 Igb = elapsedTime NCGB(I, 5);
 Igb = elapsedTime NCGB(I, 6); -- crashes often.
 ///
+
+
