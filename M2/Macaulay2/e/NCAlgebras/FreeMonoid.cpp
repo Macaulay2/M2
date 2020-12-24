@@ -348,7 +348,27 @@ Monom FreeMonoid::wordProductAsMonom(const Word& left, const Word& mid, const Wo
   setWeights(newmon);
   return newmon;
 }
- 
+
+// we are just placing the answer in result.  it is up to the caller
+// to clean it up.
+void FreeMonoid::support(const Monom& m, std::vector<int> &result)
+{
+  int numVarsFound = 0;
+  int monomOffset = numWeights() + 1;
+  result.clear();
+  std::vector<int> varsFound;
+  for (auto i = 0; i < numVars(); i++)
+    varsFound.push_back(0);
+  for (auto i = m.begin() + monomOffset; i < m.end(); i++)
+  {
+    if (varsFound[*i] == 0) numVarsFound++;
+    varsFound[*i]++;
+    if (numVarsFound == numVars()) then break;
+  }
+  for (auto i = 0; i < numVars(); i++)
+    if (varsFound[i] > 0) result.push_back(i);
+  std::sort(result.begin(),result.end());
+} 
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

@@ -28,7 +28,9 @@ struct Monom
   // e.g. xyxy: 6 4 0 1 0 1
   //   xy23x: 27 25 0 1 1 ... 1 0
   // 2 monomials: xzx, xy (dot is only there for readability)
-  //   5 3 0 2 1 . 4 2 0 1
+  //   5 3 0 2 0 . 4 2 0 1
+  // TODO: There are now weights in the monomial (which only the monoid knows about),
+  //       so this needs to be updated.
 {
   Monom() : mValue(nullptr) {}
   Monom(const int* value) : mValue(value) {}

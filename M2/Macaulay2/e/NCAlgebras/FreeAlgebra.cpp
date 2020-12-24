@@ -186,6 +186,31 @@ void FreeAlgebra::var(Poly& result, int v) const
   monoid().var(v, result.getMonomInserter());
 }
 
+// the below was copied over from poly.cpp.  Working on adding
+// support to the freeAlgebra class.  WIP
+/*
+M2_arrayint FreeAlgebra::support(const ring_elem a) const
+{
+  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  for (int i = 0; i < n_vars(); i++) EXP1[i] = 0;
+  for (const Nterm *f = a; f != 0; f = f->next)
+    {
+      M_->to_expvector(f->monom, EXP2);
+      for (int j = 0; j < n_vars(); j++)
+        if (EXP2[j] != 0) EXP1[j] = 1;
+    }
+  int nelems = 0;
+  for (int i = 0; i < n_vars(); i++)
+    if (EXP1[i] > 0) nelems++;
+  M2_arrayint result = M2_makearrayint(nelems);
+  int next = 0;
+  for (int i = 0; i < n_vars(); i++)
+    if (EXP1[i] > 0) result->array[next++] = i;
+  return result;
+}
+*/
+
 void FreeAlgebra::from_word(Poly& result, ring_elem coeff, const std::vector<int>& word) const
 {
   Word tmpWord;
