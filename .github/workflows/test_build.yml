@@ -159,11 +159,15 @@ jobs:
         if: matrix.build-system == 'autotools'
         run: |
           # Use the libraries and programs built by CMake
-          export      CPPFLAGS=-I./usr-host/include
-          export       LDFLAGS=-L./usr-host/lib
-          export PKG_CONFIG_PATH=./usr-host/lib/pkgconfig:$PKG_CONFIG_PATH
+          # Compare with M2/BUILD/mahrud/Makefile
+          # Set the path to the CMake build directory here
+          export CMAKE_BUILD_DIR=`pwd`
+          export      CPPFLAGS=-I$CMAKE_BUILD_DIR/usr-host/include
+          export       LDFLAGS=-L$CMAKE_BUILD_DIR/usr-host/lib
+          export PKG_CONFIG_PATH=$CMAKE_BUILD_DIR/usr-host/lib/pkgconfig:$PKG_CONFIG_PATH
           # TODO: perhaps store the distribution architecture to a file
-          export            PATH=./usr-dist/`basename usr-dist/x*`/libexec/Macaulay2/bin:$PATH
+          export  ARCH=`basename $CMAKE_BUILD_DIR/usr-dist/x*`
+          export            PATH=$CMAKE_BUILD_DIR/usr-dist/$ARCH/libexec/Macaulay2/bin:$PATH
 
           make -C ../.. get-libtool get-automake get-autoconf
           make -C ../.. all
