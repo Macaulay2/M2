@@ -51,7 +51,7 @@ EXAMPLE VisibleList := x -> (
 -- TODO: the output format is provisional
 -- TODO: does't capture stderr
 capture' := capture
-capture = method(Options => { UserMode => true, Package => null })
+capture = method(Options => { UserMode => true, PackageExports => null })
 capture Net    := opts -> s -> capture(toString s,       opts)
 capture List   := opts -> s -> capture(demark_newline s, opts)
 -- TODO: do this in interp.dd instead
@@ -84,7 +84,7 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
 	PackageDictionary};
     if not hasmode ArgNoPreload then
     scan(Core#"pre-installed packages", needsPackage);
-    needsPackage toString if opts#Package === null then currentPackage else opts#Package;
+    needsPackage \ toString \ toList if opts#Package === null then currentPackage else opts.PackageExports;
     -- TODO: is this still necessary? If so, add a test in tests/normal/capture.m2
     -- dictionaryPath = prepend(oldPrivateDictionary,      dictionaryPath); -- this is necessary mainly due to T from degreesMonoid
     dictionaryPath = prepend(User#"private dictionary", dictionaryPath); -- this is necessary mainly due to indeterminates.m2
@@ -120,7 +120,7 @@ isCapturable = (inputs, pkg, isTest) -> (
     and not match("(gbTrace|NAGtrace)",                       inputs) -- cerr/cout directly from engine isn't captured
     and not match("(notify|stopIfError|debuggingMode)",       inputs) -- stopIfError and debuggingMode may be fixable
     and not match("(alarm|exec|exit|quit|restart|run)\\b",    inputs) -- these commands interrupt the interpreter
-    and not match("(read|input|load|needs)\\b",               inputs) -- these commands hide undesirable functions
+    and not match("(capture|read|input|load|needs)\\b",       inputs) -- these commands hide undesirable functions
     and not match("([Cc]ommand|fork|schedule|thread|Task)",   inputs) -- remove when threads work more predictably
     and not match("(temporaryFileName)",                      inputs) -- this is sometimes bug prone
     and not match("(addHook|export|newPackage)",              inputs) -- these commands have permanent effects
@@ -174,7 +174,7 @@ getExampleOutput := (pkg, fkey) -> (
     output := if fileExists filename
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
     else if width (ex := examples fkey) =!= 0
-    then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false, Package => pkg) );
+    then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false, PackageExports => pkg) );
     pkg#"example results"#fkey = if output === null then {} else separateM2output output)
 
 -- used in installPackage.m2
@@ -195,7 +195,7 @@ captureExampleOutput = (desc, inputs, pkg, cacheFunc, inf, outf, errf, data, inp
     if isCapturable(inputs, pkg, false) then (
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
-	(err, output) := capture(inputs, UserMode => false, Package => pkg);
+	(err, output) := capture(inputs, UserMode => false, PackageExports => pkg);
 	if err then printerr "capture failed; retrying ..."
 	else return outf << M2outputHash << inputhash << endl << output << close);
     -- fallback to using an external process

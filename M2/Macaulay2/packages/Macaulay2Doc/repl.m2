@@ -6,6 +6,7 @@ document {
      associated with the symbol ", TO "Print", " is applied to perform the printing,
      unless the printing is to be suppressed, as indicated by a semicolon at the end
      of the statement, in which case the ", TO "NoPrint", " method is applied.",
+     Subnodes => {TO "capture"},
      SeeAlso => {
 	  "Print",
 	  "NoPrint",
