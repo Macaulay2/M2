@@ -15,7 +15,7 @@ Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/tests/normal/Mak
 @pre_docdir@/Core/tests/%: % @pre_docdir@/Core/tests
 	@INSTALL_DATA@ $< $@
 
-all: $(subst $(SRCDIR), @pre_docdir@/Core/tests, $(wildcard $(SRCDIR)/*.m2))
+all: $(patsubst $(SRCDIR)/%.m2, @pre_docdir@/Core/tests/%.m2, $(wildcard $(SRCDIR)/*.m2))
 
 # Local Variables:
 # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/tests/normal check "
