@@ -1,7 +1,7 @@
-TEST String := teststr -> assert not first capture(teststr, UserMode => false)
+TEST' := teststr -> assert not first capture(teststr, UserMode => false)
 
 -- these tests should be rewritten to use coimage, eventually
-TEST ///
+TEST' ///
 -- Sheaves on P1 x P1
 R = ZZ/32003[a..d];
 S = ZZ/32003[z_(1,1)..z_(2,2)]
