@@ -112,7 +112,7 @@ jobs:
           fi
 
       - uses: actions/cache@v2
-        if: matrix.build-system == 'cmake' # TODO: remove when autotools is more efficient with space
+#        if: matrix.build-system == 'cmake' # TODO: remove when autotools is more efficient with space
         id: restore-cache
         with:
           path: |
@@ -130,14 +130,14 @@ jobs:
 # ----------------------
 
       - name: Configure Macaulay2 using CMake
-        if: matrix.build-system == 'cmake'
+#        if: matrix.build-system == 'cmake'
         run: |
           cmake -S../.. -B. -GNinja \
             -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` \
             -DBUILD_NATIVE=OFF -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK" # TODO: remove when the packages are updated
 
       - name: Build libraries using Ninja
-        if: matrix.build-system == 'cmake' # && steps.restore-cache.outputs.cache-hit != 'true'
+#        if: matrix.build-system == 'cmake' # && steps.restore-cache.outputs.cache-hit != 'true'
         run: |
           cmake --build . --target build-libraries build-programs
 
@@ -158,6 +158,13 @@ jobs:
       - name: Configure Macaulay2 using Autotools
         if: matrix.build-system == 'autotools'
         run: |
+          # Use the libraries and programs built by CMake
+          export      CPPFLAGS=-I./usr-host/include
+          export       LDFLAGS=-L./usr-host/lib
+          export PKG_CONFIG_PATH=./usr-host/lib/pkgconfig:$PKG_CONFIG_PATH
+          # TODO: perhaps store the distribution architecture to a file
+          export            PATH=./usr-dist/`basename usr-dist/x*`/libexec/Macaulay2/bin:$PATH
+
           make -C ../.. get-libtool get-automake get-autoconf
           make -C ../.. all
           ../../configure --enable-download
