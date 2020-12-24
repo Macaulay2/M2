@@ -670,6 +670,7 @@ export {
 	"frames",
 	"from",
 	"functionBody",
+	"fuse",
 	"fusePairs",
 	"gb",
 	"gbRemove",

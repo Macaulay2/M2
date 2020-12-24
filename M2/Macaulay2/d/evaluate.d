@@ -1751,6 +1751,55 @@ merge(e:Expr):Expr := (
 	  else WrongArg(1,"a hash table"))
      else WrongNumArgs(3));
 setupfun("merge",merge);		  -- see objects.d
+fuse(e:Expr):Expr := (
+    when e is v:Sequence do (
+	if length(v) != 3 then return WrongNumArgs(3);
+	g := v.2;
+	when v.0 is x:HashTable do
+	when v.1 is y:HashTable do (
+            mut := x.Mutable && y.Mutable;
+            class := hashTableClass;
+            parent := nothingClass;
+	    if x.parent == y.parent then (
+		    class = commonAncestor(x.Class,y.Class);
+		    parent = x.parent;
+	    )
+	    else if mut then class = mutableHashTableClass;
+            z := newHashTable(class,parent);
+	    z.Mutable = true;
+	    z.beingInitialized = true;
+	    foreach bucket in x.table do (
+	        q := bucket;
+	        while q != q.next do (
+		        val := lookup1(y,q.key,q.hash);
+		        if val == notfoundE then val = nullE;
+		        t := applyEEE(g,q.value,val);
+		        when t is err:Error do (
+			    if err.message != continueMessage then return t;
+		        )
+		        else (
+			        storeInHashTable(z,q.key,q.hash,t);
+		        );
+		        q = q.next));
+	    foreach bucket in y.table do (
+	        q := bucket;
+	        while q != q.next do (
+		        val := lookup1(x,q.key,q.hash);
+		        if val == notfoundE then (
+		                t := applyEEE(g,nullE,q.value);
+		                when t is err:Error do (
+			            if err.message != continueMessage then return t;
+		                )
+		                else (
+			                storeInHashTable(z,q.key,q.hash,t);
+                                )
+		        );
+		        q = q.next));
+	    Expr(sethash(z,mut)))
+        else WrongArg(2,"a hash table")
+        else WrongArg(1,"a hash table"))
+    else WrongNumArgs(3));
+setupfun("fuse",fuse);		  -- see objects.d
 combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
      z := newHashTable(x.Class,x.parent);
      z.beingInitialized = true;
