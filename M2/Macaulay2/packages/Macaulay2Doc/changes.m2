@@ -41,7 +41,7 @@ document {
      UL {
 	 LI { "functionality added:",
 	      UL {
-		   LI { "The function ", TO "importFrom", " has been added, for importing individual symbols from another package." },
+		   LI { "The function ", TO importFrom, " has been added, for importing individual symbols from another package." },
 		   LI { "The function ", TO readPackage, " has been added, for retrieving the options in the preamble of a package quickly." },
 		   LI { "The function ", TO hooks, " has been added, for retrieving the list of functions installed as hooks for handling computations of a specific type." },
 		   LI { "The function ", TO baseRing, " has been added, for retrieving the ring from which a ring was formed." },
@@ -52,7 +52,9 @@ document {
 	      },
          LI { "functionality improved:",
               UL {
-		   LI { "The function ", TO "installPackage", " accepts a new argument, ", TO "MakeHTML", "." },
+		   LI { "The function ", TO capture, " is now used for generating most examples and tests." },
+		   LI { "The function ", TO installPackage, " accepts two new argument: ",
+		       TO [installPackage, MakeHTML], " and ", TO [installPackage, MakePDF], ". The PDF output will be improved in a future release." },
 		   LI { "The new optional argument name ", TO "Keywords", " can now be used with packages to specify a list of key words (or phrases),
 			useful for searching and organizing the packages by topic, as seen here: ", TO "packages provided with Macaulay2", "."			
 			},
