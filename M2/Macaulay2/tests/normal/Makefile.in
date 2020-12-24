@@ -9,6 +9,14 @@ include ../Makefile.test
 
 Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/tests/normal/Makefile
 
+@pre_docdir@:; @INSTALL@ -d $@
+@pre_docdir@/Core: @pre_docdir@; @INSTALL@ -d $@
+@pre_docdir@/Core/tests: @pre_docdir@/Core; @INSTALL@ -d $@
+@pre_docdir@/Core/tests/%: % @pre_docdir@/Core/tests
+	@INSTALL_DATA@ $< $@
+
+all: $(subst $(SRCDIR), @pre_docdir@/Core/tests, $(wildcard $(SRCDIR)/*.m2))
+
 # Local Variables:
 # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/tests/normal check "
 # End:
