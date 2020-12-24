@@ -2,20 +2,24 @@
 -- Local utilities
 -----------------------------------------------------------------------------
 
-sourceFileStamp = () -> concatenate(
-    "--", toAbsolutePath currentFileName, ":", toString currentLineNumber(), ": location of test code")
+sourceFileStamp = (filename, linenum) -> concatenate(
+    "--", toAbsolutePath filename, ":", toString linenum, ": location of test code")
 
 -----------------------------------------------------------------------------
 -- TEST
 -----------------------------------------------------------------------------
 
-TEST = method()
-TEST List   := testlist   -> TEST \ testlist
-TEST String := teststring -> (
+TEST = method(Options => {FileName => false})
+TEST List   := opts -> testlist   -> apply(testlist, test -> TEST(test, opts))
+TEST String := opts -> teststring -> (
     n := currentPackage#"test number";
-    currentPackage#"test inputs"#n = (
+    currentPackage#"test inputs"#n = if opts.FileName then (
+        minimizeFilename teststring, 1,
+        concatenate(sourceFileStamp(teststring, 1), newline, get teststring)
+        ) else (
         minimizeFilename currentFileName, currentLineNumber(),
-        concatenate(sourceFileStamp(), newline, teststring));
+        concatenate(sourceFileStamp(currentFileName, currentLineNumber()),
+            newline, teststring));
     currentPackage#"test number" = n + 1;)
 -- TODO: support test titles
 TEST(String, String) := (title, teststring) -> (
@@ -36,6 +40,21 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
     stderr << commentize pad("running " | desc, 72) << flush;
     runString(teststring, pkg, usermode))
 
+loadTestDir := pkg -> (
+    if pkg#?"test directory loaded" then return;
+    testDir := pkg#"package prefix" |
+        replace("PKG", pkg#"pkgname", currentLayout#"packagetests");
+    if fileExists testDir then (
+        tmp := currentPackage;
+        currentPackage = pkg;
+        TEST(sort apply(select(readDirectory testDir, file ->
+            match("\\.m2$", file)), test -> testDir | "/" | test),
+            FileName => true);
+        currentPackage = tmp;
+        pkg#"test directory loaded" = true;
+    ) else pkg#"test directory loaded" = false;
+)
+
 check = method(Options => {UserMode => null, Verbose => false})
 check String  := opts -> pkg -> check(-1, pkg, opts)
 check Package := opts -> pkg -> check(-1, pkg, opts)
@@ -50,6 +69,9 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
     tests := if n == -1 then toList(0 .. pkg#"test number" - 1) else {n};
     --
+
+    if pkg#"pkgname" == "Core" then loadTestDir(pkg);
+
     errorList := {};
     (hadError, numErrors) = (false, 0);
     scan(tests, k -> (
