@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
     "NoetherianOperators",
-    Version => "1.0",
-    Date => "Nov 25, 2020",
+    Version => "1.1",
+    Date => "Dec 22, 2020",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},
@@ -1564,8 +1564,8 @@ doc ///
 	   spaces of polynomial ideals, and related local combinatorial data about its scheme structure.
     	    	
 	   The problem of characterizing ideal membership with differential conditions was first addressed by 
-	   Gr\"obner ("Uber eine neue idealtheoretische Grundlegung der algebraischen Geometrie", Math. Ann. 115 (1938), no. 1, 333–358).
-	   Despite this early algebraic interest by Gr\"obner, a complete description of primary ideals in terms of differential operators was first obtained by analysts in the Fundamental Principle of Ehrenpreis and Palamodov.
+	   Gröbner ("Uber eine neue idealtheoretische Grundlegung der algebraischen Geometrie", Math. Ann. 115 (1938), no. 1, 333–358).
+	   Despite this early algebraic interest by Gröbner, a complete description of primary ideals in terms of differential operators was first obtained by analysts in the Fundamental Principle of Ehrenpreis and Palamodov.
 	   At the core of the Fundamental Principle, one has the notion of Noetherian operators to describe a primary ideal. 
 	   
 	   In case of an ideal supported at one point a set of Noetherian operators forms a Macaulay inverse system that spans the dual space of the ideal. 
@@ -2913,7 +2913,7 @@ Description
         {\tt Tolerance =>} a positive real number. This specifies the numerical precision when computing the
         specialized Noetherian operators. The default value is {\tt 1e-6}. See @TO "Tolerance (NoetherianOperators)"@.
         
-        {\tt Sampler =>} a function, taking inputs \{tt (I,n)}, where {\tt I} is an @TO2{Ideal, "ideal"}@, and {\tt n} is an integer.
+        {\tt Sampler =>} a function, taking inputs {\tt (n,I)}, where {\tt I} is an @TO2{Ideal, "ideal"}@, and {\tt n} is an integer.
         The sampler function returns a list of {\tt n} @TO2 {Point, "points"}@ on the component of interest of {\tt I}. If unset, the default sampler
         uses @TO Bertini@, and assumes that {\tt I} is primary.
 

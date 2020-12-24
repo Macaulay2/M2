@@ -233,7 +233,7 @@ texMath Matrix := m -> texMath expression m
 describe Matrix := m -> (
     args:=(describe target m,describe source m);
     if m.?RingMap then args=append(args,describe m.RingMap);
-    args=append(args,expression if m == 0 then 0 else entries m);
+    args=append(args,expression if m == 0 then 0 else toExternalString \ entries m);
     if not all(degree m,zero) then args=append(args,expression(Degree=>degree m));
     Describe (expression map) args
     )
