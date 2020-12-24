@@ -54,11 +54,15 @@ jobs:
             cxx: clang++-10
             cc: clang-10
           # This build tests Clang rather than AppleClang (keep)
-          #- build-system: cmake
-          #  os: macos-latest
-          #  compiler: clang10
-          #  cxx: clang++
-          #  cc: clang
+          - build-system: cmake
+            os: macos-latest
+            compiler: clang10
+            cxx: clang++
+            cc: clang
+        exclude:
+          - build-system: cmake
+            os: macos-latest
+            compiler: default
 
     steps:
       - uses: actions/checkout@v2
@@ -133,8 +137,7 @@ jobs:
         if: matrix.build-system == 'cmake' || matrix.os == 'macos-latest'
         run: |
           cmake -S../.. -B. -GNinja \
-            -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` \
-            -DBUILD_NATIVE=OFF # -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK" # TODO: remove when the packages are updated
+            -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` -DBUILD_NATIVE=OFF
 
       - name: Build libraries using Ninja
         if: matrix.build-system == 'cmake' || matrix.os == 'macos-latest'
