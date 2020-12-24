@@ -201,26 +201,3 @@ document {
      "into a global variable.",
      SeeAlso => "ProjectiveHilbertPolynomial"
      }
-
-TEST "
-scan(3, n -> (
-     x := local x;
-     R := ZZ/101[x_0 .. x_n];
-     scan(-2 .. 2, d -> (
-	  M := R^{-d};
-	  h := hilbertPolynomial M;
-	  scan(d .. d + 4, e -> assert(numgens source basis(e,M) == h e))))))
-"
-TEST "
-scan(3, n -> (
-     x := local x;
-     R := ZZ/101[x_0 .. x_n];
-     scan(-2 .. 2, d -> (
-	  M := R^{-d};
-	  h := hilbertPolynomial (M, Projective => false);
-	  i := (ring h)_0;
-	  scan(d .. d + 4, e -> (
-		    r := numgens source basis(e,M);
-		    s := substitute(h, { i => e/1 });
-	       	    assert( r == s)))))))
-"

@@ -29,17 +29,16 @@
 /* machine hardware type */
 #define ARCH "${CMAKE_SYSTEM_PROCESSOR}"
 
-// TODO: what is this for? is it still relevant?
+// TODO: what are these two for? are they still relevant?
+// both are only used in Macaulay2/e/Makefile.common.in
 /* whether to instantiate templates automatically */
 #cmakedefine AUTOINST 1
 
-// TODO: used in Macaulay2/d/M2lib.c. What is it?
-/* Define if __builtin_return_address accepts a non-zero argument */
-#cmakedefine BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT 1
+/* whether to instantiate templates implicitly */
+#cmakedefine IMPLINST 1
 
-// TODO: not as applicable for CMAKE. Remove from Macaulay2/d/version.dd?
 /* arguments used for configure */
-#define CONFIG_ARGS "-D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -D BUILD_NATIVE=${BUILD_NATIVE} -G'${CMAKE_GENERATOR}'"
+#define CONFIG_ARGS "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} BUILD_NATIVE=${BUILD_NATIVE}"
 
 /* whether to build a development version */
 #cmakedefine DEVELOPMENT 1
@@ -59,9 +58,6 @@
 // TODO: only used in Macaulay2/d/scclib.c. Still needed?
 /* whether getaddrinfo can handle numeric service (port) numbers */
 #cmakedefine GETADDRINFO_WORKS 1
-
-/* summary of git status */
-#define GIT_DESCRIPTION "${GIT_DESCRIPTION}"
 
 // TODO: only used in Macaulay2/d/scclib.c. Still needed?
 /* Define to 1 if you have the `accept' function. */
@@ -87,20 +83,8 @@
 #cmakedefine HAVE_ASSERT_H 1
 
 // TODO: only used in Macaulay2/d/M2lib.c. Still needed?
-/* Define to 1 if you have the `backtrace' function. */
-#cmakedefine HAVE_BACKTRACE 1
-
-// TODO: only used in Macaulay2/d/M2lib.c. Still needed?
 /* Defined if you have the `clock_gettime' function. */
 #cmakedefine HAVE_CLOCK_GETTIME
-
-// TODO: only used in Macaulay2/d/M2lib.c. Still needed?
-/* Define to 1 if you have the declaration of `ADDR_NO_RANDOMIZE', and to 0 if you don't. */
-#cmakedefine HAVE_DECL_ADDR_NO_RANDOMIZE 1
-
-// TODO: remove?
-/* Define to 1 if you have the declaration of `herror', and to 0 if you don't. */
-#cmakedefine HAVE_DECL_HERROR 1
 
 /* Defined if you have the <dlfcn.h> header file. */
 #cmakedefine HAVE_DLFCN_H
@@ -108,28 +92,6 @@
 // TODO: remove?
 /* Define to 1 if you have the <elf.h> header file. */
 #cmakedefine HAVE_ELF_H 1
-
-// TODO: are HAVE_***_ENVIRON still relevant? Only used in M2lib.c
-/* Define to 1 if you have the declaration of `environ', and to 0 if you
-   don't. */
-#cmakedefine HAVE_DECL_ENVIRON 1
-
-/* Define to 1 if you have the declaration of `_environ', and to 0 if you
-   don't. */
-#cmakedefine HAVE_DECL__ENVIRON 1
-
-/* Define to 1 if you have the declaration of `__environ', and to 0 if you
-   don't. */
-#cmakedefine HAVE_DECL___ENVIRON 1
-
-/* Define to 1 if you have the `environ' function. */
-#cmakedefine HAVE_ENVIRON 1
-
-/* Define to 1 if you have the `_environ' function. */
-#cmakedefine HAVE__ENVIRON 1
-
-/* Define to 1 if you have the `__environ' function. */
-#cmakedefine HAVE___ENVIRON 1
 
 // TODO: remove?
 /* Define to 1 if you have the `error' function. */
@@ -314,14 +276,6 @@
 
 /* Define to 1 if you have the `waitpid' function. */
 #cmakedefine HAVE_WAITPID 1
-
-// TODO: used in Macaulay2/d/M2lib.c. Still needed?
-/* Define to 1 if you have the `_setmode' function. */
-#cmakedefine HAVE__SETMODE 1
-
-// TODO: what is this for? is it still relevant?
-/* whether to instantiate templates implicitly */
-#cmakedefine IMPLINST 1
 
 /* issue (flavor) of operating system, if any */
 #define ISSUE "${ISSUE}"

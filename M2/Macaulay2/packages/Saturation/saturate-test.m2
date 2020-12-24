@@ -161,3 +161,34 @@ TEST ///
   J = ideal (d,f)
   assert( saturate(I,J) == R )
 ///
+
+TEST ///
+  -- Example by Brian Harbourne, communicated by Alexandra Seceleanu
+  -- see https://github.com/Macaulay2/M2/issues/779
+  n = 2;
+  K = toField(QQ[t]/(t^2-5));
+  R = K[x_0..x_n];
+  Pts = {
+      {1,1,1},
+      {1,-1,1},
+      {-1,1,1},
+      {-1,-1,1},
+      {2+t,2+t,1},
+      {2+t,-(2+t),1},
+      {-(2+t),2+t,1},
+      {-(2+t),-(2+t),1},
+      {1,2+t,1},
+      {-1,-(2+t),1},
+      {2+t,1,1},
+      {-(2+t),-1,1},
+      {2,1+t,0},
+      {1+t,2,0},
+      {0,1,0},
+      {1,0,0}};
+  I = intersect apply(Pts, s -> (trim minors(2, vars(R) || matrix{s})))
+  assert(degree I == 16)
+  elapsedTime J = saturate((ideal I_*)^3, Strategy => GRevLex); -- ~10s
+  elapsedTime assert(degree J == 96)
+  elapsedTime J = saturate((ideal I_*)^3, Strategy => Eliminate); -- ~7s
+  elapsedTime assert(degree J == 96)
+///

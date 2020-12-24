@@ -239,6 +239,7 @@ export {
 	"MakeDocumentation",
 	"MakeHTML",
 	"MakeInfo",
+	"MakePDF",
 	"MakeLinks",
 	"Manipulator",
 	"MapExpression",

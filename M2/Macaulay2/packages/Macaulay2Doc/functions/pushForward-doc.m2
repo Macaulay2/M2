@@ -87,16 +87,56 @@ document {
 	  or ask them to write it!"}
      }
 
-TEST ///
-  P3 = ZZ/32003[a..i];
-  M = comodule monomialCurveIdeal(P3,{1,3,8,9,12,13,17,21})
-  P2 = ZZ/32003[a,b,c,d,e,f];
-  F = map(P3,P2,random(P3^1, P3^{-1,-1,-1,-1,-1,-1}))
-time   N = pushForward(F,M);
-  P2 = ZZ/32003[a,b,c,d,e,f];
-  F = map(P3,P2,random(P3^1, P3^{-1,-1,-1,-1,-1,-1}))
-time   N = pushForward(F,M);
-  hilbertPolynomial M
-  hilbertPolynomial N
-  ann N
-///
+-- document { 
+--      Key => {(pushForward1,RingMap,Module), pushForward1},
+--      Headline => "the main computational component of pushForward",
+--      Usage => "pushForward1(F,M)",
+--      Inputs => {
+-- 	  "F" => "a ring map F : R --> S",
+-- 	  "M" => "an S-module"
+-- 	  },
+--      Outputs => {
+-- 	  {"the presentation matrix of the R-submodule of M generated
+-- 	  by the given (S-module) generators of M."}
+-- 	  },
+--      PARA{},
+--      "Warning: this function may be removed, and its function incorporated into
+--      that of ", TO "image", " and ", TO "prune", ".",
+--      PARA{},
+--      "This is a very basic operation, and is used by several other functions.  See,
+--      for example, ", TO "pushForward", ".  Therefore we intend to eliminate it,
+--      and merge its function into ", TO "image", " after introducing
+--      generalized module homomorphisms which map an R-module to an S-module.",
+--      PARA{},
+--      "As an example, the following fragment computes the ideal of the
+--      rational normal curve. This could also be done using ", TO "monomialCurveIdeal", ".",
+--      EXAMPLE lines ///
+-- 	  R = ZZ/101[a..d];
+--       	  S = ZZ/101[s,t];
+--       	  F = map(S,R,matrix{{s^4, s^3*t, s*t^3, t^4}})
+--       	  pushForward1(F,S^1)
+-- 	  ///,
+--      PARA{},
+--      "The following code performs the Gröbner computation using a product order 
+--      rather than the default elimination order.",
+--      EXAMPLE lines ///
+--       	  F = map(S,R,matrix{{s^4, s^3*t, s*t^3, t^4}})     
+--           time pushForward1(F,S^1,MonomialOrder=>ProductOrder)
+-- 	  ///,
+--      PARA{},
+--      "The computation is stashed inside the ring map, until the computation has
+--      finished completely.  This means that you may interrupt this command, and 
+--      later restart it. You may alo obtain partial results, as follows.",
+--      EXAMPLE lines ///
+-- 	  F = map(S,R,matrix{{s^4, s^3*t, s*t^3, t^4}})
+--       	  pushForward1(F,S^1,DegreeLimit=>8)
+-- 	  ///,
+--      "After interrupting a computation (using control-C), you may view the
+--      equations so far obtained by using the ", TT "StopBeforeComputation", " option to prevent any
+--      further work from being done.",
+--      EXAMPLE "pushForward1(F,S^1,StopBeforeComputation => true)",
+--      "The type ", TO "PushforwardComputation", " is used internally by our current implementation.",
+--      SUBSECTION "Further examples",
+--      Caveat => {},
+--      SeeAlso => {pushForward, Elimination}
+--      }

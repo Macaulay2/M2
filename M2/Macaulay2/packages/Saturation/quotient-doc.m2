@@ -3,9 +3,13 @@ undocumented {
     (quotient, Module, Number), (symbol:, Module, Number)
     }
 
+-- TODO: why does this node show up as an orphan in the table of contents?
 doc ///
 Node
   Key
+-- return an ideal
+    (quotient, Module, Module)
+    (symbol:, Module, Module)
 -- return an ideal
     (quotient, Ideal, Ideal)
     (quotient, Ideal, RingElement)
@@ -17,9 +21,6 @@ Node
     (quotient, Module, RingElement)
     (symbol:, Module, Ideal)
     (symbol:, Module, RingElement)
--- return an ideal
-    (quotient, Module, Module)
-    (symbol:, Module, Module)
     [quotient, MinimalGenerators]
   Headline
     ideal or submodule quotient
@@ -87,6 +88,7 @@ Node
     saturate
     symbol:
 
+-- TODO: change to strategy node only for the relevant quotient method keys
 Node
   Key
     [quotient, Strategy]

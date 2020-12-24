@@ -144,7 +144,7 @@ TEST /// -- tests for localize
   outcome == P1
   P2 = ideal (x,y);
   outcome = localize(I,P2)
-  outcome == I
+  assert(outcome == I)
 
   R = ZZ/(31991)[x,y,z];
   I = ideal(x^2,x*z,y*z);
@@ -154,26 +154,38 @@ TEST /// -- tests for localize
   P2 = ideal(x,z);
   outcome = localize(I,P2)
   trueanswer = ideal(x^2,z);
-  outcome == trueanswer
+  assert(outcome == trueanswer)
+///
+
+TEST /// -- another test for localize, cf. https://github.com/Macaulay2/M2/issues/923
+  R = QQ[x]
+  P = ideal(x)
+  I = ideal(x^3+x^2)
+  IP = localize(I, P)
+  assert(IP == first select(primaryDecomposition I, Q -> radical Q == P))
 ///
 
 TEST /// -- tests for primaryComponent
   R = ZZ/(101)[x,y];
   I = ideal (x^2,x*y);
   P1 = ideal (x);
-  primaryComponent(I,P1)
+  Q1 = primaryComponent(I,P1)
+  assert(any(primaryDecomposition I, Q -> Q == Q1))
   P2 = ideal (x,y);
-  primaryComponent(I,P2)
+  Q2 = primaryComponent(I,P2)
+  assert(I == intersect(Q1, Q2)) -- embedded components are not unique!
 
   R = ZZ/(31991)[x,y,z];
   I = ideal(x^2,x*z,y*z);
   P1 = ideal(x,y);
-  primaryComponent(I,P1)
+  Q1 = primaryComponent(I,P1)
+  assert(any(primaryDecomposition I, Q -> Q == Q1))
   P2 = ideal(x,z);
-  primaryComponent(I,P2)
+  Q2 = primaryComponent(I,P2)
+  assert(any(primaryDecomposition I, Q -> Q == Q2))
 ///
 
-TEST /// -- tests for EisenbudHunekeVasconcelos
+TEST /// -- tests for EisenbudHunekeVasconcelos (no asserts?!)
   R = ZZ/(101)[x,y,z];
   I = ideal(x^2, x*y);
   associatedPrimes(ideal I_*, Strategy => 1)
@@ -253,6 +265,18 @@ TEST /// -- tough example for old primaryDecomposition, good on new code for mod
   assert(#associatedPrimes M == 5)
   comps = primaryDecomposition M
   assert(sum(comps, Q -> degree(I + ideal gens Q)) == degree I)
+///
+
+TEST /// -- testing Strategy => Hybrid
+-- Has 2 embedded primes
+-- One embedded prime will need to increase bracket power at least once
+-- On bracket power increase, minimalPresentation Q (quotient by candidate) is slow
+  R = QQ[h,l,s,z,y,x]
+  I = ideal(h*l-l^2-4*l*s+h*y,h^2*s-6*l*s^3+h^2*z,x*h^2-l^2*s-h^3)
+  M = comodule I
+  elapsedTime AP = associatedPrimes M
+  elapsedTime comps = primaryDecomposition(M, Strategy => Hybrid{"Hom"});
+  assert(intersect comps == 0 and all(comps, isPrimary_M))
 ///
 
 TEST /// -- cf. https://groups.google.com/g/macaulay2/c/dFPzfS3tR2E

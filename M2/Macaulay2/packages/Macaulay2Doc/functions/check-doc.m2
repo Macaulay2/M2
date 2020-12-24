@@ -13,6 +13,7 @@ Node
      TEST
     (TEST, String)
     (TEST, List)
+    [TEST, FileName]
   Headline
     add a test for a package
   Usage
@@ -20,6 +21,10 @@ Node
   Inputs
     s:String
       or list of strings, containing Macaulay2 code
+    FileName=>Boolean
+      if true, then @TT "s"@ (or each element of @TT "s"@, if it is a
+      list) is interpreted as the name of a file containing a test as
+      opposed to the test itself.
   Consequences
     Item
       registers the string @TT "s"@ as a test of the @TO2 {"currentPackage", "current package"}@.

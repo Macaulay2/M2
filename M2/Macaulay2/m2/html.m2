@@ -3,6 +3,7 @@
 -- html output
 -----------------------------------------------------------------------------
 
+-- TODO: unify the definition of the tex macros so book/M2book.tex can use them
 KaTeX := () -> (
     katexPath := locateCorePackageFileRelative("Style",
 	layout -> replace("PKG", "Style", layout#"package") | "katex", installPrefix, htmlDirectory);
@@ -13,8 +14,6 @@ KaTeX := () -> (
     <script defer="defer" type="text/javascript">
       var macros = {
           "\\break": "\\\\",
-          "\\R": "\\mathbb{R}",
-          "\\C": "\\mathbb{C}",
           "\\ZZ": "\\mathbb{Z}",
           "\\NN": "\\mathbb{N}",
           "\\QQ": "\\mathbb{Q}",

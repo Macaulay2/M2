@@ -433,6 +433,7 @@ Node
     [installPackage, MakeDocumentation]
     [installPackage, MakeHTML]
     [installPackage, MakeInfo]
+    [installPackage, MakePDF]
     [installPackage, MakeLinks]
     [installPackage, RemakeAllDocumentation]
     [installPackage, RerunExamples]
@@ -474,6 +475,8 @@ Node
     MakeInfo=>Boolean
       whether to make the info pages. This is a form of the documentation that can be viewed using the
       Unix command @TT "info"@ or using @TT "emacs"@
+    MakePDF=>Boolean
+      whether to make PDF documentation
     InstallPrefix=>String
       the installation prefix for installation of the files of the package, in case encapsulation is not enabled,
       or for installation of the links to the files, in case encapsulation is enabled. The default value is the
