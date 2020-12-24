@@ -84,7 +84,7 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
 	PackageDictionary};
     if not hasmode ArgNoPreload then
     scan(Core#"pre-installed packages", needsPackage);
-    needsPackage \ toString \ toList if opts#Package === null then currentPackage else opts.PackageExports;
+    needsPackage \ toString \ flatten { if opts.PackageExports === null then currentPackage else opts.PackageExports };
     -- TODO: is this still necessary? If so, add a test in tests/normal/capture.m2
     -- dictionaryPath = prepend(oldPrivateDictionary,      dictionaryPath); -- this is necessary mainly due to T from degreesMonoid
     dictionaryPath = prepend(User#"private dictionary", dictionaryPath); -- this is necessary mainly due to indeterminates.m2
