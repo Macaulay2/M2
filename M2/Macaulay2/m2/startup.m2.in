@@ -16,12 +16,12 @@ firstTime := class PackageDictionary === Symbol
 
 if firstTime then (
      -- we do this bit *before* "debug Core", so that Core (the symbol, not the package), which may not be there yet, ends up in the right dictionary
-     assert = x -> (
+     assert' = x -> (
 	  if class x =!= Boolean then error "assert: expected true or false";
 	  if not x then error "assertion failed");
      PackageDictionary = new Dictionary;
      dictionaryPath = append(dictionaryPath,PackageDictionary);
-     assert( not isGlobalSymbol "Core" );
+     assert'( not isGlobalSymbol "Core" );
      PackageDictionary#("Package$Core") = getGlobalSymbol(PackageDictionary,"Core");
      ) 
 -- we can't make this an else-clause, because then "Core" will be in the wrong dictionary
