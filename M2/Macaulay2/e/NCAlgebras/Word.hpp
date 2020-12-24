@@ -1,8 +1,8 @@
 #ifndef _word_hpp_
 #define _word_hpp_
 
-#include <vector>
-#include <iosfwd>
+#include <iosfwd>    // for ostream
+#include <vector>    // for vector, vector<>::value_type
 
 class Word
 {

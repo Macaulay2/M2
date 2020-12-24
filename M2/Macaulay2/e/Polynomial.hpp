@@ -1,20 +1,15 @@
 #ifndef _polynomial_hpp_
 #define _polynomial_hpp_
 
-#include <M2/math-include.h>
-#include "engine-includes.hpp"
+#include "newdelete.hpp"  // for VECTOR, our_new_delete
+#include "ringelem.hpp"   // for ring_elem
+#include "style.hpp"      // for GT, LT, EQ
 
-#include <assert.h>
-
-#include <algorithm>
-#include <iostream>
-#include <iterator>
-#include <utility>
-#include <vector>
-
-#include "newdelete.hpp"
-#include "ringelem.hpp"
-#include "style.hpp"
+#include <cassert>        // for assert
+#include <algorithm>      // for copy
+#include <iostream>       // for ostream
+#include <iterator>       // for forward_iterator_tag
+#include <utility>        // for pair, make_pair
 
 using IntVector = VECTOR(int);
 // using IntVector = std::vector<int>;

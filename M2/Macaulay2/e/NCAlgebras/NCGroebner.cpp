@@ -1,16 +1,62 @@
-#include "NCGroebner.hpp"
+#include "NCAlgebras/NCGroebner.hpp"
 
-#include <stddef.h>
-#include <deque>
+#include "NCAlgebras/FreeAlgebra.hpp"   // for FreeAlgebra
+#include "NCAlgebras/FreeMonoid.hpp"    // for FreeMonoid, operator<<, FreeM...
+#include "NCAlgebras/NCReduction.hpp"   // for PolynomialHeap, getHeapType
+#include "NCAlgebras/OverlapTable.hpp"  // for OverlapTable, operator<<
+#include "NCAlgebras/Word.hpp"          // for Word
+#include "NCAlgebras/WordTable.hpp"     // for Overlap, WordTable
+#include "buffer.hpp"                   // for buffer
+#include "engine-exports.h"             // for M2_gbTrace, newline
+#include "myalloc.hpp"                  // for operator<<, AllocLogger
+#include "ring.hpp"                     // for Ring
+#include "ringelem.hpp"                 // for ring_elem
+#include "text-io.hpp"                  // for emit_line, emit
 
-#include "../myalloc.hpp"
-#include "NCAlgebras/FreeMonoid.hpp"
-#include "NCAlgebras/NCReduction.hpp"
-#include "NCAlgebras/OverlapTable.hpp"
-#include "NCAlgebras/Word.hpp"
-#include "NCAlgebras/WordTable.hpp"
-#include "ring.hpp"
-#include "ringelem.hpp"
+#include <deque>                        // for deque
+#include <tuple>                        // for get, make_tuple
+#include <utility>                      // for pair
+
+NCGroebner::NCGroebner(const FreeAlgebra& A,
+                       const ConstPolyList& input,
+                       int hardDegreeLimit,
+                       int strategy
+                       )
+  : mFreeAlgebra(A),
+    mInput(input),
+    mHeap(makePolynomialHeap(getHeapType(strategy), A)),
+    mTopComputedDegree(-1),
+    mHardDegreeLimit(hardDegreeLimit)
+{
+  if (M2_gbTrace >= 1)
+    {
+      buffer o;
+      o << "[NCGB] reduction heap:  "
+        << getHeapName(getHeapType(strategy))
+        << newline;
+      emit_line(o.str());
+    }
+  Word tmpWord;
+  // process input polynomials
+  mIsGraded = true;
+  for (auto i = 0; i < mInput.size(); ++i)
+    {
+      auto d = freeAlgebra().heft_degree(*mInput[i]);
+      mGeneratorDegrees.push_back(d.first);
+      if (not d.second)
+        mIsGraded = false;
+      tmpWord = freeAlgebra().lead_word(*mInput[i]);
+      mOverlapTable.insert(d.first, // previously: freeAlgebra().monoid().wordHeft(tmpWord),
+                           true,
+                           std::make_tuple(i,-1,-1));
+    }
+  if (M2_gbTrace >= 1)
+    {
+      buffer o;
+      o << "[NCGB] input is " << (mIsGraded ? "homogeneous" : "inhomogeneous") << newline;
+      emit_line(o.str());
+    }
+}
 
 void NCGroebner::compute(int softDegreeLimit)
 {

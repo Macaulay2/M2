@@ -1,6 +1,7 @@
 #ifndef __range__
 #define __range__
 
+#include "newdelete.hpp"
 #include <utility>
 #include <vector>
 

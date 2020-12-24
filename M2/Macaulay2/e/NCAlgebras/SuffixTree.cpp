@@ -1,4 +1,7 @@
-#include "SuffixTree.hpp"
+#include "NCAlgebras/SuffixTree.hpp"
+#include <algorithm>            // for copy
+#include <iterator>             // for back_insert_iterator, back_inserter
+#include "NCAlgebras/Word.hpp"  // for Word, operator<<
 
 void outputLabel(std::ostream& o, const Label& vec)
 {

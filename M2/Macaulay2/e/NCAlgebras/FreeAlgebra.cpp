@@ -1,17 +1,20 @@
 #include "FreeAlgebra.hpp"
 
-#include <assert.h>
-#include <ostream>
-#include <utility>
+#include "NCAlgebras/FreeMonoid.hpp"  // for FreeMonoid
+#include "NCAlgebras/Word.hpp"        // for Word
+#include "Polynomial.hpp"             // for Poly, Polynomial<>::const_iterator
+#include "ZZ.hpp"                     // for RingZZ
+#include "buffer.hpp"                 // for buffer
+#include "error.h"                    // for ERROR
+#include "monoid.hpp"                 // for Monoid
+#include "ringmap.hpp"                // for RingMap
 
-#include "NCAlgebras/FreeMonoid.hpp"
-#include "NCAlgebras/Word.hpp"
-#include "Polynomial.hpp"
-#include "ZZ.hpp"
-#include "monoid.hpp"
-#include "ringmap.hpp"
+#include <cassert>                    // for assert
+#include <ostream>                    // for operator<<, ostream, string
+#include <type_traits>                // for swap
+#include <utility>                    // for make_pair, pair
 
-class PolynomialRing;
+class PolynomialRing;  // lines 14-14
 
 using ExponentVector = int*;
 

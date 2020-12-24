@@ -1,9 +1,9 @@
 #ifndef __memory_block_hpp__
 #define __memory_block_hpp__
 
-#include <memtailor.h>
-#include <utility>
-#include <iostream>
+#include <memtailor/Arena.h>  // for Arena
+#include <iostream>           // for operator<<, endl, basic_ostream, cout
+#include <utility>            // for pair
 
 class MemoryBlock
 {

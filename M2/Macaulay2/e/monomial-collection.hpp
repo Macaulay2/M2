@@ -19,14 +19,18 @@
 #ifndef _monomial_collection_hpp_
 #define _monomial_collection_hpp_
 
-#include "memtailor.h"
-#include "M2FreeAlgebra.hpp"
+#include "Polynomial.hpp"     // for ModuleMonom, monomToModuleMonom, Monom
+#include "style.hpp"          // for EQ
 
-#include <unordered_set>
-#include <iomanip>
-#include <iostream>
-#include <utility>
-#include <algorithm>
+#include <memtailor/Arena.h>  // for Arena
+#include <algorithm>          // for sort
+#include <iomanip>            // for operator<<, setw
+#include <iostream>           // for operator<<, ostream, endl, cout, basic_...
+#include <iterator>           // for bidirectional_iterator_tag, iterator_tr...
+#include <typeinfo>           // for type_info
+#include <unordered_set>      // for unordered_set
+#include <utility>            // for pair
+#include <vector>             // for vector
 
 template<typename T1, typename T2>
 std::ostream& operator << (std::ostream& o, const std::pair<T1,T2>& p)

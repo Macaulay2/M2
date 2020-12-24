@@ -1,15 +1,15 @@
 #ifndef _free_algebra_quotient_hpp_
 #define _free_algebra_quotient_hpp_
 
-#include <vector>
+#include "NCAlgebras/FreeAlgebra.hpp" // for FreeAlgebra
+#include "NCAlgebras/FreeMonoid.hpp"  // for FreeMonoid
+#include "NCAlgebras/NCGroebner.hpp"  // for NCGroebner
+#include "Polynomial.hpp"             // for Poly, ConstPolyList
+#include "newdelete.hpp"              // for our_new_delete
+#include "ringelem.hpp"               // for ring_elem
 
-#include "FreeAlgebra.hpp"
-
-#include "NCAlgebras/FreeMonoid.hpp"
-#include "NCGroebner.hpp"
-#include "Polynomial.hpp"
-#include "newdelete.hpp"
-#include "ringelem.hpp"
+#include <gmp.h>                      // for mpz_srcptr, mpq_srcptr
+#include <vector>                     // for vector
 
 class Ring;
 class SumCollector;

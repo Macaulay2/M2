@@ -1,22 +1,21 @@
 #ifndef __nc_f4_hpp__
 #define __nc_f4_hpp__
 
-#include "engine-includes.hpp"
+#include "NCAlgebras/FreeMonoid.hpp"   // for MonomEq
+#include "NCAlgebras/MemoryBlock.hpp"  // for MemoryBlock
+#include "NCAlgebras/Range.hpp"        // for Range
+#include "NCAlgebras/Word.hpp"         // for Word
+#include "NCAlgebras/OverlapTable.hpp" // for OverlapTable
+#include "NCAlgebras/WordTable.hpp"    // for Overlap, WordTable
+#include "Polynomial.hpp"              // for Monom, ConstPolyList, Poly
+#include "newdelete.hpp"               // for VECTOR, our_new_delete
 
-#include <deque>
-#include <iosfwd>
-#include <map>
-#include <tuple>
-#include <utility>
-#include <vector>
-
-#include "NCAlgebras/FreeMonoid.hpp"
-#include "NCAlgebras/MemoryBlock.hpp"
-#include "NCAlgebras/Range.hpp"
-#include "NCAlgebras/Word.hpp"
-#include "OverlapTable.hpp"
-#include "Polynomial.hpp"
-#include "WordTable.hpp"
+#include <deque>                       // for deque
+#include <iosfwd>                      // for ostream
+#include <map>                         // for map
+#include <tuple>                       // for tuple
+#include <utility>                     // for pair
+#include <vector>                      // for vector
 
 class FreeAlgebra;
 union ring_elem;

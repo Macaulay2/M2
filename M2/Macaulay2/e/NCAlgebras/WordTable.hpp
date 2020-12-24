@@ -1,13 +1,14 @@
 #ifndef _word_table_hpp_
 #define _word_table_hpp_
 
-#include <stddef.h>
+#include <cstddef>
 #include <ostream>
 #include <tuple>
 #include <utility>
 #include <vector>
 
-#include "Word.hpp"
+class Word;
+class WordWithData;
 
 // TODO
 // have a vector std::vector<int> of indices of each word.

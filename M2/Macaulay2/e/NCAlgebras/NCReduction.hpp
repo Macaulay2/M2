@@ -1,13 +1,12 @@
 #ifndef __ncreduction_hpp__
 #define __ncreduction_hpp__
 
-#include <stddef.h>
-#include <memory>
-#include <string>
-#include <utility>
+#include "Polynomial.hpp"  // for Poly, Monom (ptr only)
+#include "ringelem.hpp"    // for ring_elem
 
-#include "Polynomial.hpp"
-#include "ringelem.hpp"
+#include <iosfwd>          // for string
+#include <memory>          // for unique_ptr
+#include <utility>         // for pair
 
 class FreeAlgebra;
 class Word;

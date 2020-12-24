@@ -1,14 +1,13 @@
 #ifndef _suffix_tree_hpp_
 #define _suffix_tree_hpp_
 
-#include <iostream>
-#include <vector>
-#include <unordered_set>
-#include <tuple>
-#include <map>
-//#include <gtest/gtest.h>
+#include "NCAlgebras/Word.hpp"  // for Word
 
-#include "Word.hpp"
+#include <iostream>  // for ostream
+#include <map>       // for map, operator!=, __map_iterator, map<>::iterator
+#include <tuple>     // for tuple
+#include <utility>   // for pair, make_pair
+#include <vector>    // for vector, vector<>::iterator, operator<
 
 // used in return value for WordTable as well
 using Overlap = std::tuple<int,int,int>;

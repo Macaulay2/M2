@@ -1,18 +1,19 @@
 #include "NCAlgebras/NCF4.hpp"
 
-#include <assert.h>
-#include <stdlib.h>
-#include <algorithm>
-#include <iostream>
-#include <memory>
+#include "text-io.hpp"                   // for emit_wrapped
+#include "NCAlgebras/FreeAlgebra.hpp"       // for FreeAlgebra
+#include "NCAlgebras/OverlapTable.hpp"      // for OverlapTable
+#include "NCAlgebras/VectorArithmetic.hpp"  // for VectorArithmetic
+#include "NCAlgebras/WordTable.hpp"         // for Overlap, WordTable
+#include "buffer.hpp"                       // for buffer
+#include "engine-exports.h"                 // for M2_gbTrace
+#include "ring.hpp"                         // for Ring
+#include "ringelem.hpp"                     // for ring_elem
 
-#include "../text-io.hpp"
-#include "NCAlgebras/FreeAlgebra.hpp"
-#include "NCAlgebras/OverlapTable.hpp"
-#include "NCAlgebras/VectorArithmetic.hpp"
-#include "NCAlgebras/WordTable.hpp"
-#include "ring.hpp"
-#include "ringelem.hpp"
+#include <cassert>                         // for assert
+#include <cstdlib>                         // for exit, size_t
+#include <algorithm>                        // for copy
+#include <iostream>                         // for operator<<, basic_ostream
 
 NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,

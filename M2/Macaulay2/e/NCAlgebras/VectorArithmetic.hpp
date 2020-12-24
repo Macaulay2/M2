@@ -1,9 +1,7 @@
 #ifndef __vector_arithmetic__
 #define __vector_arithmetic__
 
-#include "engine-includes.hpp"
-
-#include "Range.hpp"
+#include "Range.hpp"  // for Range
 
 class Ring;
 union ring_elem;

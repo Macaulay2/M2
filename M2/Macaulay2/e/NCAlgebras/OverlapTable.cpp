@@ -1,7 +1,6 @@
-#include "OverlapTable.hpp"
-
-#include <iostream>
-#include <type_traits>
+#include "NCAlgebras/OverlapTable.hpp"
+#include "engine-exports.h"  // for M2_gbTrace
+#include <iostream>          // for cout
 
 // will call find to see if degree exists, and if not will call
 // insert.  If degree exists, append overlap to value of degree
@@ -103,7 +102,6 @@ std::ostream& operator<<(std::ostream& ostr, const OverlapTable& overlapTable)
 {
   return overlapTable.dump(ostr,false);
 }
-
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "

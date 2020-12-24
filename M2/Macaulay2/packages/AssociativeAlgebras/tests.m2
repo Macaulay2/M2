@@ -888,8 +888,13 @@ kk = QQ
 kk = ZZ/32003
 R = kk{x,y,z,w}
 I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
-time Igb = NCGB(I, 10, Strategy=>16); -- 12.0 seconds (with std::vector<int>)
-time Igb = NCGB(I, 10); -- 12.3 seconds (with std::vector<int>)
+
+I = ideal I_*; elapsedTime Igb = NCGB(I, 11, Strategy=>16); -- 12.0 seconds (with std::vector<int>)
+I = ideal I_*; elapsedTime Igb = NCGB(I, 10, Strategy=>16); -- 2.1 seconds
+I = ideal I_*; elapsedTime Igb = NCGB(I, 10); -- 12.3 seconds (with std::vector<int>)
+
+I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>16); -- 2220 seconds, I think?
+I = ideal I_*; elapsedTime Igb = NCGB(I, 14); -- 
 
 time Igb = NCGB(I, 20, Strategy=>16);
 time Igb = NCGB(I, 10);

@@ -1,22 +1,17 @@
 #ifndef _NCGroebner_hpp_
 #define _NCGroebner_hpp_
 
-#include "engine-includes.hpp"
+#include "NCAlgebras/NCReduction.hpp"   // for PolynomialHeap
+#include "NCAlgebras/OverlapTable.hpp"  // for OverlapTable
+#include "NCAlgebras/WordTable.hpp"     // for Overlap, WordTable
+#include "Polynomial.hpp"               // for Poly, ConstPolyList
+#include "newdelete.hpp"                // for our_new_delete
 
-#include <algorithm>
-#include <iostream>
-#include <memory>
-#include <tuple>
-#include <utility>
-#include <vector>
+#include <iostream>                     // for ostream
+#include <memory>                       // for unique_ptr
+#include <vector>                       // for vector
 
-#include "NCAlgebras/FreeAlgebra.hpp"
-#include "NCAlgebras/NCReduction.hpp" // for getHeapType
-#include "OverlapTable.hpp"
-#include "Polynomial.hpp"
-#include "Word.hpp"
-#include "WordTable.hpp"
-#include "text-io.hpp"
+class FreeAlgebra;
 
 extern void tryOutMathicCode();
 
@@ -42,47 +37,11 @@ private:
   int mHardDegreeLimit;
 
 public:
-
   NCGroebner(const FreeAlgebra& A,
              const ConstPolyList& input,
              int hardDegreeLimit,
              int strategy
-             )
-    : mFreeAlgebra(A),
-      mInput(input),
-      mHeap(makePolynomialHeap(getHeapType(strategy), A)),
-      mTopComputedDegree(-1),
-      mHardDegreeLimit(hardDegreeLimit)
-  {
-    if (M2_gbTrace >= 1)
-      {
-        buffer o;
-        o << "[NCGB] reduction heap:  "
-          << getHeapName(getHeapType(strategy))
-          << newline;
-        emit_line(o.str());
-      }
-    Word tmpWord;
-    // process input polynomials
-    mIsGraded = true;
-    for (auto i = 0; i < mInput.size(); ++i)
-      {
-        auto d = freeAlgebra().heft_degree(*mInput[i]);
-        mGeneratorDegrees.push_back(d.first);
-        if (not d.second)
-          mIsGraded = false;
-        tmpWord = freeAlgebra().lead_word(*mInput[i]);
-        mOverlapTable.insert(d.first, // previously: freeAlgebra().monoid().wordHeft(tmpWord),
-                             true,
-                             std::make_tuple(i,-1,-1));
-      }
-    if (M2_gbTrace >= 1)
-      {
-        buffer o;
-        o << "[NCGB] input is " << (mIsGraded ? "homogeneous" : "inhomogeneous") << newline;
-        emit_line(o.str());
-      }
-  }
+             );
 
   const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; }
   

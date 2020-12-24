@@ -1,13 +1,14 @@
-#include "FreeMonoid.hpp"
+#include "NCAlgebras/FreeMonoid.hpp"
 
-#include <assert.h>
-#include <algorithm>
-#include <ostream>
-#include <utility>
+#include "NCAlgebras/MemoryBlock.hpp"  // for MemoryBlock
+#include "NCAlgebras/Word.hpp"         // for Word
+#include "buffer.hpp"                  // for buffer
+#include "monoid.hpp"                  // for Monoid
 
-#include "NCAlgebras/MemoryBlock.hpp"
-#include "NCAlgebras/Word.hpp"
-#include "monoid.hpp"
+#include <cassert>                     // for assert
+#include <algorithm>                   // for copy
+#include <ostream>                     // for string, operator<<, ostream
+#include <utility>                     // for pair
 
 size_t FreeMonoidLogger::mCompares = 0;
 
@@ -363,7 +364,7 @@ void FreeMonoid::support(const Monom& m, std::vector<int> &result)
   {
     if (varsFound[*i] == 0) numVarsFound++;
     varsFound[*i]++;
-    if (numVarsFound == numVars()) then break;
+    if (numVarsFound == numVars()) break;
   }
   for (auto i = 0; i < numVars(); i++)
     if (varsFound[i] > 0) result.push_back(i);

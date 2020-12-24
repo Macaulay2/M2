@@ -1,8 +1,5 @@
-#include "WordTable.hpp"
-
-#include <memory>
-
-#include "NCAlgebras/Word.hpp"
+#include "NCAlgebras/WordTable.hpp"
+#include "NCAlgebras/Word.hpp"  // for Word, WordWithData, operator<<
 
 std::ostream& operator<<(std::ostream& o, const WordTable& wordTable)
 {

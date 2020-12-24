@@ -1,19 +1,18 @@
 #ifndef _free_algebra_hpp_
 #define _free_algebra_hpp_
 
-#include <M2/math-include.h>
-#include "engine-includes.hpp"
+#include "Polynomial.hpp"             // for Poly, Monom
+#include "NCAlgebras/FreeMonoid.hpp"  // for FreeMonoid
+#include "NCAlgebras/Word.hpp"        // for Word
+#include "newdelete.hpp"              // for our_new_delete
+#include "ring.hpp"                   // for Ring (ptr only), SumCollector
+#include "ringelem.hpp"               // for ring_elem
+#include "style.hpp"                  // for GEOHEAP_SIZE
 
-#include <string>
-#include <utility>
-#include <vector>
-
-#include "../Polynomial.hpp"
-#include "FreeMonoid.hpp"
-#include "Word.hpp"
-#include "ring.hpp"
-#include "ringelem.hpp"
-#include "style.hpp"
+#include <gmp.h>                      // for mpz_srcptr, mpq_srcptr
+#include <iosfwd>                     // for ostream, string
+#include <utility>                    // for pair
+#include <vector>                     // for vector
 
 class Monoid;
 class PolynomialRing;

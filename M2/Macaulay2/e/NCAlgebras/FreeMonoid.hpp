@@ -1,20 +1,18 @@
 #ifndef _free_monoid_hpp_
 #define _free_monoid_hpp_
 
-#include <M2/math-include.h>
-#include "engine-includes.hpp"
+#include "Polynomial.hpp"     // for Monom, IntVector
+#include "newdelete.hpp"      // for VECTOR, our_new_delete
+#include "polyring.hpp"       // for PolynomialRing
+#include "style.hpp"          // for GT
 
-#include <string>
-#include <vector>
+#include <iosfwd>             // for string, ostream
+#include <vector>             // for vector
 
-#include "Polynomial.hpp"
-#include "polyring.hpp" // For the degrees ring
-#include "style.hpp"
-
-class MemoryBlock;
-class Monoid;
-class Word;
-class buffer;
+class MemoryBlock;  // lines 14-14
+class Monoid;  // lines 15-15
+class Word;  // lines 16-16
+class buffer;  // lines 17-17
 
 // TODO for weights in orders
 //  1. make sure it is input correctly from front end.

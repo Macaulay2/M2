@@ -1,10 +1,8 @@
-#include "VectorArithmetic.hpp"
-
-#include "NCAlgebras/Range.hpp"
-#include "ring.hpp"
-#include "ringelem.hpp"
-
-#include <iostream>
+#include "NCAlgebras/VectorArithmetic.hpp"
+#include "NCAlgebras/Range.hpp"  // for Range
+#include "newdelete.hpp"         // for newarray, newarray_atomic
+#include "ring.hpp"              // for Ring
+#include "ringelem.hpp"          // for ring_elem
 
 void VectorArithmetic::sparseRowToDenseRow(Range<ring_elem> dense,
                                            const Range<ring_elem>& coeffs,

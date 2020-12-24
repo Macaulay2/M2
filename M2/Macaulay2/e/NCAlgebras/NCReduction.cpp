@@ -1,27 +1,26 @@
 #include "NCAlgebras/NCReduction.hpp"
 
-#include <assert.h>
-#include <algorithm>
-#include <iostream>
-#include <map>
-#include <memory>
-#include <queue>
-#include <vector>
+#include "NCAlgebras/FreeAlgebra.hpp"  // for FreeAlgebra
+#include "NCAlgebras/FreeMonoid.hpp"   // for MonomEq, FreeMonoid
+#include "NCAlgebras/MemoryBlock.hpp"  // for MemoryBlock
+#include "NCAlgebras/NCGroebner.hpp"   // for tryOutMathicCode
+#include "NCAlgebras/Word.hpp"         // for Word
+#include "myalloc.hpp"                 // for StatsAllocator
+#include "stdinc-m2.hpp"               // for make_unique
+#include "ring.hpp"                    // for Ring
+#include "style.hpp"                   // for EQ, LT, GT
 
-#include <mathic/TourTree.h>
-#include <mathic/Geobucket.h>
-#include <mathic/Heap.h>
-
-#include "../myalloc.hpp"
-#include "../stdinc-m2.hpp"
-
-#include "NCAlgebras/FreeAlgebra.hpp"
-#include "NCAlgebras/FreeMonoid.hpp"
-#include "NCAlgebras/MemoryBlock.hpp"
-#include "NCAlgebras/NCGroebner.hpp"
-#include "NCAlgebras/Word.hpp"
-#include "ring.hpp"
-#include "style.hpp"
+#include <cassert>                     // for assert
+#include <mathic/Geobucket.h>          // for Geobucket, GeoStoreSameSizeBuffer
+#include <mathic/Heap.h>               // for Heap
+#include <mathic/TourTree.h>           // for TourTree
+#include <algorithm>                   // for copy
+#include <iostream>                    // for string, operator<<, endl, basi...
+#include <map>                         // for map, __map_iterator, operator!=
+#include <memory>                      // for unique_ptr
+#include <queue>                       // for priority_queue
+#include <type_traits>                 // for swap
+#include <vector>                      // for vector
 
 #if 0
 Reasoning about using these structures in noncomm reduction.

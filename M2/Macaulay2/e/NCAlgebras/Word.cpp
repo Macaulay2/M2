@@ -1,4 +1,4 @@
-#include "Word.hpp"
+#include "NCAlgebras/Word.hpp"
 #include <iostream>
 
 std::ostream& operator<<(std::ostream& o, const Word& w)

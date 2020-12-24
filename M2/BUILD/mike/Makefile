@@ -37,6 +37,18 @@ cmake-debug-appleclang:
 		-DBUILD_DOCS=on \
 		../../../..
 
+cmake-profile-appleclang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-profile-appleclang
+	cd builds.tmp/cmake-profile-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DPROFILING=on \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+#		-DLINTING=on
+
 cmake-latestclang:
 	mkdir -p builds.tmp/cmake-latestclang
 	cd builds.tmp/cmake-latestclang; cmake \
