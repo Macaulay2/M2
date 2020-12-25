@@ -1,6 +1,7 @@
 ;; .emacs
 
 ;; Macaulay2 start
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/Macaulay2")
 (load "M2-init")
 
 (custom-set-variables

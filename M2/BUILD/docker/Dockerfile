@@ -14,7 +14,7 @@ RUN apt-get install -y macaulay2 && apt-get clean
 RUN apt-get install -y emacs bash-completion git mlocate && apt-get clean && updatedb
 
 # Add non-root user for running Macaulay2
-RUN useradd -G sudo -g root -u 1000 -m macaulay
+RUN useradd -G sudo -g root -u 1000 -m macaulay && echo "macaulay ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER 1000:0
 
 # Setting environment variables

@@ -7,6 +7,7 @@ The `Dockerfile` in this directory creates a container image based on Ubuntu 18.
 - `ubuntu`: Compiling Macaulay2 in a Container
 - `debian`: Packaging Macaulay2 for Debian (.deb)
 - `fedora`: Packaging Macaulay2 for Fedora (.rpm)
+- `actions`: Testing the Nightly Build of Macaulay2
 
 ## Getting Started
 0. Install Docker and start the daemon.
