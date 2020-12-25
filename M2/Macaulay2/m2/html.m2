@@ -25,9 +25,9 @@ KaTeX := () -> (
           { left: "\\[", right: "\\]", display: true},
           { left: "$",   right: "$",   display: false},
           { left: "\\(", right: "\\)", display: false}
-      ];
+      ], ignoredTags = ["tt", "script", "noscript", "style", "textarea", "pre", "code", "option"];
       document.addEventListener("DOMContentLoaded", function() {
-        renderMathInElement(document.body, { delimiters: delimiters, macros: macros, trust: true });
+        renderMathInElement(document.body, { delimiters: delimiters, macros: macros, ignoredTags: ignoredTags, trust: true });
       });
     </script>
     <style type="text/css">.katex { font-size: 1em; }</style>

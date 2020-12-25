@@ -252,13 +252,11 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					else buildErrorPacket("error occurred in parsing")))))))));
 
 interpreterDepthS := setupvar("interpreterDepth",zeroE);
-incrementInterpreterDepth():void := (
-     interpreterDepth = interpreterDepth + 1;
-     setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
-decrementInterpreterDepth():void := (
-     interpreterDepth = interpreterDepth - 1;
-     setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
-
+setInterpreterDepth(n:int):void := (
+     interpreterDepth = n;
+     setGlobalVariable(interpreterDepthS, toExpr(interpreterDepth)));
+incrementInterpreterDepth():void := setInterpreterDepth(interpreterDepth + 1);
+decrementInterpreterDepth():void := setInterpreterDepth(interpreterDepth - 1);
 
 readeval3(file:TokenFile,printout:bool,dc:DictionaryClosure,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      saveLocalFrame := localFrame;
@@ -528,35 +526,45 @@ setupfun("value'",value);
 capture(e:Expr):Expr := (
      when e
      is s:stringCell do (
-     	  flush(stdIO);
+	  flush(stdIO);
 	  flush(stdError);
-	  oldStdError := stdError; -- doesn't quite work, see stderrS in actors2.dd
-	  stdError = stdIO;
+	  oldStdError := stdError;
+	  setStdError(stdIO);
+	  oldStopIfError := stopIfError;
+	  setstopIfError(true);
 	  oldDebuggingMode := debuggingMode;
 	  setDebuggingMode(false);
-          foss := getFileFOSS(stdIO);
+	  oldInterpreterDepth := interpreterDepth;
+	  setInterpreterDepth(1);
+	  oldLineNumber := lineNumber;
+	  setLineNumber(0);
+	  previousLineNumber = -1;
+	  --
+	  foss := getFileFOSS(stdIO);
 	  foss.capturing = true;
-	  releaseFileFOSS(stdIO);
 	  oldbuf := foss.outbuffer;
 	  oldbol := foss.outbol;
 	  oldindex := foss.outindex;
-	  foss.outbuffer = new string len 100 do provide ' ';
 	  stringFile := stringTokenFile("currentString", s.v+newline);
 	  stringFile.posFile.file.echo = true;
-	  oldLineNumber := lineNumber;
-	  previousLineNumber = -1;
-	  setLineNumber(0);
 	  setprompt(stringFile,topLevelPrompt);
+	  --
 	  r := readeval3(stringFile,true,newStaticLocalDictionaryClosure(),false,false,true);
+	  --
 	  out := substrAlwaysCopy(foss.outbuffer,0,foss.outindex);
-     	  foss.capturing = false;
+	  foss.capturing = false;
 	  foss.outbuffer = oldbuf;
 	  foss.outbol = oldbol;
 	  foss.outindex = oldindex;
-	  setLineNumber(oldLineNumber);
+	  releaseFileFOSS(stdIO);
+	  --
+	  setStdError(oldStdError);
+	  setstopIfError(oldStopIfError);
 	  setDebuggingMode(oldDebuggingMode);
-	  stdError = oldStdError;
+	  setInterpreterDepth(oldInterpreterDepth);
+	  setLineNumber(oldLineNumber);
 	  previousLineNumber = -1;
+	  --
 	  Expr(Sequence( when r is err:Error do True else False, toExpr(out) )))
      else WrongArg(1,"a string"));
 setupfun("capture", capture).Protected = false; -- will be overloaded in m2/examples.m2

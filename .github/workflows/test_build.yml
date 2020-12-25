@@ -11,7 +11,6 @@ name: Build and Test Macaulay2
 on:
   push:
     branches:
-      - release-1.17
       - pre-master # when we're ready to merge 'development' into 'master', we merge it first into 'pre-master', so it can be tested
   pull_request:
     branches:
@@ -42,10 +41,10 @@ jobs:
           - ubuntu-latest
           - macos-latest
         compiler:
-          - gcc9
           - default
         include:
           - build-system: cmake
+            os: ubuntu-latest
             compiler: gcc9
             cxx: g++-9
             cc: gcc-9
@@ -54,12 +53,12 @@ jobs:
             compiler: clang10
             cxx: clang++-10
             cc: clang-10
-        exclude:
-          - build-system: autotools
-            compiler: gcc9
-          - build-system: cmake
-            os: macos-latest
-            compiler: gcc9
+          # This build tests Clang rather than AppleClang (keep)
+          #- build-system: cmake
+          #  os: macos-latest
+          #  compiler: clang10
+          #  cxx: clang++
+          #  cc: clang
 
     steps:
       - uses: actions/checkout@v2
@@ -105,6 +104,9 @@ jobs:
           echo "LD_LIBRARY_PATH=`brew --prefix`/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
           then echo "/usr/lib/ccache" >> $GITHUB_PATH
+               # ccache doesn't seem to create the right symlink for clang-10 on ubuntu
+               sudo ln -s `which clang-10`   /usr/lib/ccache
+               sudo ln -s `which clang++-10` /usr/lib/ccache
           else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
           fi
@@ -115,7 +117,7 @@ jobs:
         with:
           path: |
             ~/.ccache
-            ~/M2/BUILD/build/usr-host
+            ~/work/M2/M2/M2/BUILD/build/usr-host
           key: build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-${{ hashFiles('**/cmake/*-libraries.cmake') }}
           restore-keys: |
             build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-
@@ -142,7 +144,12 @@ jobs:
       - name: Build Macaulay2 using Ninja
         if: matrix.build-system == 'cmake'
         run: |
-          cmake --build . --target M2-core install-packages
+          cmake --build . --target M2-core M2-emacs install-packages
+          if [[ "${{ matrix.os }}" == ubuntu-latest ]] && [[ "${{ matrix.compiler }}" == clang10 ]]; then
+              sudo apt-get install -y -q --no-install-recommends dpkg-dev
+              echo "GIT_COMMIT=`git describe --dirty --always --match HEAD`" >> $GITHUB_ENV
+              cpack -G DEB
+          fi
 
 # ----------------------
 #   Configure and build M2 using Autotools
@@ -165,12 +172,14 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && matrix.compiler == 'default'
+        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'default'
         run: |
-          # cmake --build . --target M2-unit-tests
-          # ctest -R "unit-tests"
+          cmake --build . --target M2-tests
+          cmake --build . --target M2-unit-tests
+          ctest -j1 --output-on-failure -R "unit-tests"
           # TODO: remove the excluded normal tests
-          ctest -R "normal/" -E "command|program|schenck|threads|doc-links" -j4 --output-on-failure
+          ctest -j4 --output-on-failure -R "normal/" -E "command|program|threads"
+          ctest -j4 --output-on-failure -R "ComputationsBook"
           # TODO: add engine tests
 
       - name: Run Tests using Autotools
@@ -178,10 +187,9 @@ jobs:
         run: |
           make check -o check-in-libraries
           make -C Macaulay2/html-check-links check
-          make validate-html
 
 # ----------------------
-#   Upload build logs
+#   Upload build artifacts
 # ----------------------
 
       - name: Upload build logs
@@ -199,3 +207,12 @@ jobs:
              M2/BUILD/build/libraries/*/build/config.log
              # Example errors
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
+
+      - name: Upload Macaulay2 package for Ubuntu (x86_64)
+        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang10' && success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
+          path: |
+            M2/BUILD/build/Macaulay2-*
+          retention-days: 1

@@ -1316,6 +1316,7 @@ assert( (w^(diff (L_0)) + (L_0) ^ (diff w))#"f" == 0)
 ///
 
 TEST ///
+-* no-capture-flag *-
 w = random newForm(3,2,2,"a")
 h = newForm(3,1,1,"b")
 L = genKer(w^(diff h) + h ^ (diff w), h)

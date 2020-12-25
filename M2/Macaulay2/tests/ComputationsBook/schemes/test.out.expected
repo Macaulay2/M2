@@ -326,7 +326,7 @@ i70 : J = blowUpIdeal(I)
                            2         2
 o70 = ideal (y*b - x*c, x*b  - a*c, x b - y*a)
 
-o70 : Ideal of QQ[x, y, a, b, c]
+o70 : Ideal of QQ[x..y, a..c]
 
 i71 : saturate(J + minors(2, jacobian J)) == 1
 

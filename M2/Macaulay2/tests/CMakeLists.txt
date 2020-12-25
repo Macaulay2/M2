@@ -174,6 +174,13 @@ foreach(_chapter IN LISTS CHAPTERS)
 
 endforeach()
 
+# install normal tests for "check Core"
+file(MAKE_DIRECTORY ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/Core/tests)
+file(GLOB CORE_TESTS "${CMAKE_CURRENT_SOURCE_DIR}/normal/*.m2")
+foreach(CORE_TEST ${CORE_TESTS})
+  file(COPY ${CORE_TEST} DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/Core/tests/)
+endforeach()
+
 # TODO: add_subdirectory(rationality)
 
 ###############################################################################

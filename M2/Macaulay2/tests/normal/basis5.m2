@@ -1,11 +1,11 @@
-TEST String := teststr -> assert not first capture(teststr, UserMode => false)
+TEST' := teststr -> assert not first capture(teststr, UserMode => false)
 
-TEST ///
+TEST' ///
  basis (QQ^6)
  basis (ZZ^7)
 ///
 
-TEST ///
+TEST' ///
   R = ZZ/101[a..d]
   I = ideal(a*d, b^2, c*d)
   assert(
@@ -43,7 +43,7 @@ TEST ///
        == matrix {{a^10, a^9*b, a^9*c, a^9*d, a^8*b^2, a^8*b*c, a^8*b*d, a^8*c^2, a^8*c*d, a^8*d^2}})
 ///
 
-TEST ///
+TEST' ///
   -- skew commuting rings
   R = ZZ/101[a..f,SkewCommutative => {a,b,c}]
   b*a
@@ -59,7 +59,7 @@ TEST ///
     == matrix {{a*d^2*e^2, a*d^2*f^2, b*d^2*e^2, b*d^2*f^2}})
 ///
 
-TEST ///
+TEST' ///
   -- multigraded rings
   R = ZZ/101[a..d,Degrees=>{{1,2,3},{1,-1,0},{1,1,1},{2,1,-3}}]
   degree (a*b*c*d)
@@ -67,7 +67,7 @@ TEST ///
   assert(basis({1,2,3},R) == matrix"a")
 ///
 
-TEST ///
+TEST' ///
 -- over ZZ
   R = ZZ[a..c]
   M = coker matrix"3a,4b,5c,a3,b3,c3"
@@ -77,7 +77,7 @@ TEST ///
   assert(matrix F == matrix {{1, a, a^2, b, b^2, c, c^2}})
 ///
 
-TEST ///
+TEST' ///
       A = QQ[x];
       R = A/x^6;
       f = basis(R,SourceRing => ambient R)
@@ -96,7 +96,7 @@ TEST ///
 		    {{x,0,0,0,0,0},{-1,x,0,0,0,0},{0,-1,x,0,0,0},{0,0,-1,x,0,0},{0,0,0,-1,x,0},{0,0,0,0,-1,x}}))
  ///
 
- TEST ///
+ TEST' ///
       R = QQ[x]/x^6;
       B = QQ[];
       h = basis(R,SourceRing => B)
@@ -105,14 +105,14 @@ TEST ///
       assert( kernel h == image map(B^{{0},{-1},{-2},{-3},{-4},{-5}},0,0))
  ///
 
- TEST ///
+ TEST' ///
       R = QQ[x]/x^6;
       g = basis(R,SourceRing => QQ)
       assert( coimage g === QQ^6 )
       assert( kernel g === image map(QQ^6,0,0) )
  ///
 
- TEST ///
+ TEST' ///
  -- A simple use of basis: all elements of a given degree in a ring
  -- sometimes just ones involving a set of the variables
  R  = ZZ/101[a..d]
@@ -130,7 +130,7 @@ TEST ///
  assert(C2 == matrix {{a^4, a*c}})
  ///
 
- TEST ///
+ TEST' ///
  -- Similar, but considering variables of degree 0
  A = ZZ/101[a,b]
  B = A[x,y,DegreeMap=>i->0,Join=>false]
@@ -148,7 +148,7 @@ TEST ///
 
  ///
 
-TEST ///
+TEST' ///
 -- test of whether finiteness is checked correctly, if we only use some variables:
 R = ZZ/101[a..d]
 A = R/(a^3, b^4)
@@ -158,7 +158,7 @@ assert(
 assert try (basis(A, Variables=>{a,c});false) else true
 ///
 
- TEST ///
+ TEST' ///
  -- basis of {d,*,*,...,*}
  -- the case done first:
  R = ZZ/101[a..d, Degrees=>toList(4:{1,2})]
@@ -180,14 +180,14 @@ assert try (basis(A, Variables=>{a,c});false) else true
  assert isHomogeneous B
  ///
 
-TEST ///
+TEST' ///
   -- had been in bugs/mike/0-basis r12446
   T = QQ[x,Degrees => {-1}]
   assert(basis(-3,-2, T) == matrix"x2,x3")
   assert(basis(-2,-3, T) == 0)
 ///
 
- TEST ///
+ TEST' ///
  -- More partial bases:
 
  A = ZZ/101[a..d, Degrees=>{2:{1,2},2:{0,1}}]
@@ -236,7 +236,7 @@ rewriteRing(A,1)
 basis({3},oo)
 ///
 
-TEST ///
+TEST' ///
   -- basis as functor
   R = ZZ/101[a..d]
   M = matrix"a,b;c,d"
@@ -259,7 +259,7 @@ TEST ///
   basis(2,g)
 ///
 
-TEST ///
+TEST' ///
 R = QQ[x,y,z]/(x^3,y^2,z^5);                                                                           
 basis(-infinity,4,R)                                                                                   
 basis(5,infinity,R)                                                                                   
