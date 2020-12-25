@@ -41,7 +41,6 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
     runString(teststring, pkg, usermode))
 
 loadTestDir := pkg -> (
-    if pkg#?"test directory loaded" then return;
     testDir := pkg#"package prefix" |
         replace("PKG", pkg#"pkgname", currentLayout#"packagetests");
     if fileExists testDir then (
@@ -67,11 +66,9 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
     --
     use pkg;
     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
+    if not pkg#?"test directory loaded" then loadTestDir pkg;
     tests := if n == -1 then toList(0 .. pkg#"test number" - 1) else {n};
     --
-
-    if pkg#"pkgname" == "Core" then loadTestDir(pkg);
-
     errorList := {};
     (hadError, numErrors) = (false, 0);
     scan(tests, k -> (
