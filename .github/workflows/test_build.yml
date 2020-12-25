@@ -92,10 +92,9 @@ jobs:
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
-                  libcdd-dev libgivaro-dev libboost-regex-dev fflas-ffpack w3c-markup-validator \
-                  cohomcalg libflint-dev libmps-dev topcom \
-                  libsingular-dev libfrobby-dev libgtest-dev libmemtailor-dev libmathic-dev \
-                  libmathicgb-dev 4ti2 normaliz coinor-csdp nauty lrslib singular-data
+                  libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
+                  libsingular-dev singular-data libmemtailor-dev libmathic-dev libmathicgb-dev libcdd-dev \
+                  cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib w3c-markup-validator
 
 # ----------------------
 #   Steps common to all build variants
@@ -137,12 +136,17 @@ jobs:
         if: matrix.build-system == 'cmake' || matrix.os == 'macos-latest'
         run: |
           cmake -S../.. -B. -GNinja \
-            -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` -DBUILD_NATIVE=OFF
+            -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_NATIVE=OFF \
+            -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` \
+            -DCMAKE_INSTALL_PREFIX=/usr
 
       - name: Build libraries using Ninja
         if: matrix.build-system == 'cmake' || matrix.os == 'macos-latest'
         run: |
           cmake --build . --target build-libraries build-programs
+          # TODO: perhaps store the distribution architecture in a file
+          export ARCH=`basename usr-dist/x*`
+          echo "`pwd`/usr-dist/$ARCH/libexec/Macaulay2/bin" >> $GITHUB_PATH
 
       - name: Build Macaulay2 using Ninja
         if: matrix.build-system == 'cmake'
@@ -168,9 +172,6 @@ jobs:
           export      CPPFLAGS=-I$CMAKE_BUILD_DIR/usr-host/include
           export       LDFLAGS=-L$CMAKE_BUILD_DIR/usr-host/lib
           export PKG_CONFIG_PATH=$CMAKE_BUILD_DIR/usr-host/lib/pkgconfig:$PKG_CONFIG_PATH
-          # TODO: perhaps store the distribution architecture to a file
-          export  ARCH=`basename $CMAKE_BUILD_DIR/usr-dist/x*`
-          export            PATH=$CMAKE_BUILD_DIR/usr-dist/$ARCH/libexec/Macaulay2/bin:$PATH
 
           make -C ../.. get-libtool get-automake get-autoconf
           make -C ../.. all
