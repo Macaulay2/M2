@@ -439,14 +439,14 @@ i85 : R.ideal
              3
 o85 = ideal(x  - y)
 
-o85 : Ideal of QQ[x, y, z]
+o85 : Ideal of QQ[x..z]
 
 i86 : ideal R
 
              3
 o86 = ideal(x  - y)
 
-o86 : Ideal of QQ[x, y, z]
+o86 : Ideal of QQ[x..z]
 
 i87 : code demark
 

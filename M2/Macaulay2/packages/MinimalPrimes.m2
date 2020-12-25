@@ -423,10 +423,11 @@ setAmbientField(Ring, Ring) := (KR, RU) -> (
     )
 
 -- TODO: what does factors f do? is this always correct, or only for the purposes of MinimalPrimes
-mySat = (I, f) -> saturate(I, f, Strategy => Factorization)
+--mySat = (I, f) -> saturate(I, f, Strategy => Factorization)
+mySat = (I, f) -> saturate(I, last \ factors f)
 -- TODO: if this is always correct, move it to Saturation
 -- Note: if it is the default strategy, it can lead to infinite loops
-addHook((saturate, Ideal, RingElement), (opts, I, f) -> saturate(I, last \ factors f, opts), Strategy => Factorization)
+--addHook((saturate, Ideal, RingElement), (opts, I, f) -> saturate(I, last \ factors f, opts), Strategy => Factorization)
 
 -- needs documentation
 factors = method()

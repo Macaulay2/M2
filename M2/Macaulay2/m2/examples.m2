@@ -51,7 +51,7 @@ EXAMPLE VisibleList := x -> (
 -- TODO: the output format is provisional
 -- TODO: does't capture stderr
 capture' := capture
-capture = method(Options => { UserMode => true, Package => null })
+capture = method(Options => { UserMode => true, PackageExports => null })
 capture Net    := opts -> s -> capture(toString s,       opts)
 capture List   := opts -> s -> capture(demark_newline s, opts)
 -- TODO: do this in interp.dd instead
@@ -61,53 +61,71 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     -- TODO: this should eventually be unnecessary
     oldMutableVars := new MutableHashTable;
     scan(flatten apply(loadedPackages, pkg -> pkg#"exported mutable symbols"), symb -> oldMutableVars#symb = value symb);
-    interpreterDepth = 1;
+    -* see run.m2 for details of defaultMode, argumentMode, etc. *-
+    -- TODO: somehow use SetUlimit, GCMAXHEAP, GCSTATS, GCVERBOSE,
+    --       ArgInt, ArgQ, ArgNoReadline, ArgNoSetup, and ArgNoThreads
+    argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
+    hasmode := m -> argmode & m == m;
+    pushvar(symbol randomSeed, if hasmode ArgNoRandomize then 0 else randomSeed);
+    -- TODO: these two are overriden in interp.dd at the moment
+    --if hasmode ArgStop        then (stopIfError, debuggingMode) = (true, false);
+    --if hasmode ArgNoDebug     then debuggingMode = false;
+    if hasmode ArgPrintWidth  then printWidth = ArgPrintWidthN;
+    if hasmode ArgNoBacktrace then backtrace = false;
+    if hasmode ArgNotify      then notify = true;
 
     oldPrivateDictionary := User#"private dictionary";
-    oldDictionaryPath := dictionaryPath;
-    oldLoadedPackages := loadedPackages;
-    oldCurrentPackage := currentPackage;
-    pushvar(symbol OutputDictionary, new GlobalDictionary);
-
     User#"private dictionary" = new Dictionary;
+    -- FIXME: why does OutputDictionary lose its Attribute if it isn't saved this way?
+    pushvar(symbol OutputDictionary, new Dictionary);
     dictionaryPath = {
 	Core.Dictionary,
 	OutputDictionary,
 	PackageDictionary};
+    if not hasmode ArgNoPreload then
     scan(Core#"pre-installed packages", needsPackage);
-    needsPackage toString if opts#Package === null then currentPackage else opts#Package;
-    dictionaryPath = prepend(oldPrivateDictionary,      dictionaryPath); -- this is necessary mainly due to T from degreesMonoid
+    needsPackage \ toString \ flatten { if opts.PackageExports === null then currentPackage else opts.PackageExports };
+    -- TODO: is this still necessary? If so, add a test in tests/normal/capture.m2
+    -- dictionaryPath = prepend(oldPrivateDictionary,      dictionaryPath); -- this is necessary mainly due to T from degreesMonoid
     dictionaryPath = prepend(User#"private dictionary", dictionaryPath); -- this is necessary mainly due to indeterminates.m2
     currentPackage = User;
 
     ret := capture' s;
+    collectGarbage();
 
+    scan(value \ values User#"private dictionary", v ->
+	if hasAttribute(v, ReverseDictionary) then removeAttribute(v, ReverseDictionary));
     User#"private dictionary" = oldPrivateDictionary;
-    dictionaryPath = oldDictionaryPath;
-    loadedPackages = oldLoadedPackages;
-    currentPackage = oldCurrentPackage;
     popvar symbol OutputDictionary;
-
     -- TODO: this should eventually be unnecessary
     scan(keys oldMutableVars, symb -> symb <- oldMutableVars#symb);
+    popvar symbol randomSeed;
     ret)
 protect symbol capture
 
 -- returns false if the inputs or the package are not known to behave well with capture
--- also see the one in testing.m2
-isCapturableExample := (inputs, pkg) -> (
-    not match("no-capture-flag", inputs) -- this flag is really necessary, but only sometimes
+-- this is also used in testing.m2, where isTest is set to true.
+isCapturable = (inputs, pkg, isTest) -> (
+    -- argumentMode is mainly used by ctest to select M2 subprocess arguments,
+    -- or whether capture should be avoided; see packages/CMakeLists.txt
+    -- alternatively, no-capture-flag can be used with an example or test
+    if argumentMode & NoCapture =!= 0 or match("no-capture-flag", inputs) then return false;
+    -- strip commented segments first
+    inputs = replace("--.*$", "",       inputs);
+    inputs = replace("-\\*.*?\\*-", "", inputs);
     -- TODO: remove this when the effects of capture on other packages is reviewed
-    and match({"FirstPackage", "Macaulay2Doc"}, pkg#"pkgname")
+    (isTest or match({"FirstPackage", "Macaulay2Doc"},            pkg#"pkgname"))
+    and not match({"EngineTests", "ThreadedGB", "RunExternalM2"}, pkg#"pkgname")
     -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
-    and not match("(end|exit|restart)",                       inputs) -- these commands interrupt the interpreter
-    and not match("(gbTrace|read|run|stderr|stdio|print|<<)", inputs) -- stderr and prints are not handled correctly
+    and not match("(gbTrace|NAGtrace)",                       inputs) -- cerr/cout directly from engine isn't captured
     and not match("(notify|stopIfError|debuggingMode)",       inputs) -- stopIfError and debuggingMode may be fixable
-    and not match("([Cc]ommand|schedule|thread|Task)",        inputs) -- remove when threads work more predictably
+    and not match("(alarm|exec|exit|quit|restart|run)\\b",    inputs) -- these commands interrupt the interpreter
+    and not match("(capture|read|input|load|needs)\\b",       inputs) -- these commands hide undesirable functions
+    and not match("([Cc]ommand|fork|schedule|thread|Task)",   inputs) -- remove when threads work more predictably
     and not match("(temporaryFileName)",                      inputs) -- this is sometimes bug prone
-    and not match("(installMethod|load|export|newPackage)",   inputs) -- exports may land in the package User
-    and not match("(GlobalAssignHook|GlobalReleaseHook)",     inputs) -- same as above
-    and not match({"ThreadedGB", "RunExternalM2"},     pkg#"pkgname") -- TODO: eventually remove
+    and not match("(addHook|export|newPackage)",              inputs) -- these commands have permanent effects
+    and not match("(installMethod|installAssignmentMethod)",  inputs) -- same as above
+    and not match("(Global.*Hook|add.*Function|Echo|Print)",  inputs) -- same as above
     )
 
 -----------------------------------------------------------------------------
@@ -156,7 +174,7 @@ getExampleOutput := (pkg, fkey) -> (
     output := if fileExists filename
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
     else if width (ex := examples fkey) =!= 0
-    then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false, Package => pkg) );
+    then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false, PackageExports => pkg) );
     pkg#"example results"#fkey = if output === null then {} else separateM2output output)
 
 -- used in installPackage.m2
@@ -170,21 +188,21 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
     else verboseLog("warning: missing file ", outf));
 
 -- used in installPackage.m2
-captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash, changeFunc, usermode, verboseLog) -> (
+-- TODO: reduce the inputs to this function
+captureExampleOutput = (desc, inputs, pkg, cacheFunc, inf, outf, errf, data, inputhash, changeFunc, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
-    desc := "example results for " | format fkey;
     -- try capturing in the same process
-    if isCapturableExample(inputs, pkg) then (
+    if isCapturable(inputs, pkg, false) then (
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
-	(err, output) := capture(inputs, UserMode => false, Package => pkg);
-	if not err then return outf << M2outputHash << inputhash << endl << output << close);
+	(err, output) := capture(inputs, UserMode => false, PackageExports => pkg);
+	if err then printerr "capture failed; retrying ..."
+	else return outf << M2outputHash << inputhash << endl << output << close);
     -- fallback to using an external process
     stderr << commentize pad("making " | desc, 72) << flush;
-    data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
     inf << replace("-\\* no-capture-flag \\*-", "", inputs) << endl << close;
-    if runFile(inf, inputhash, outf, errf, pkg, changeFunc fkey, usermode, data)
-    then ( removeFile inf; cacheFunc fkey ))
+    if runFile(inf, inputhash, outf, errf, pkg, changeFunc, usermode, data)
+    then ( removeFile inf; cacheFunc() ))
 
 -----------------------------------------------------------------------------
 -- process examples
