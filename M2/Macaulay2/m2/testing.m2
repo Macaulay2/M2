@@ -68,6 +68,7 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
     use pkg;
     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
     tests := if n == -1 then toList(0 .. pkg#"test number" - 1) else {n};
+    if #tests == 0 then printerr("warning: ", toString pkg,  " has no tests");
     --
 
     if pkg#"pkgname" == "Core" then loadTestDir(pkg);
