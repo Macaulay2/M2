@@ -7,7 +7,8 @@ use expr;
 use stdio0;
 
 header "#include \"../system/m2fileinterface.h\"
-        #include <readline/history.h>";
+        #include <readline/history.h>
+	#include <assert.h>";
 
 --provide a constant representation of default buffer size for a file
 --this must be set the same as the bufsize in stdio0.d
@@ -371,45 +372,50 @@ export openListener(filename:string):(file or errmsg) := (
      if length(filename) > 0 && filename . 0 == '$'
      then opensocket(filename,false,false,true)
      else (file or errmsg)(errmsg("openListener: expected file name starting with '$'")));
-export flushinput(o:file):void := (
-     o.echoindex = o.echoindex - o.insize;
-     if o.echoindex < 0 then o.echoindex = 0;
-     o.inindex = 0;
-     o.insize = 0;
-     o.bol = true;
-     );
 
-simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarge the buffer
+-----------------------------------------------------------------------------
+-- Flushing routines
+-----------------------------------------------------------------------------
+
+-- write the entire buffer to file or enlarge the buffer
+simpleflush(o:file):int := (
      if o.outfd == NOFD then return ERROR;
+     -- TODO: lock mutex here?
      startFileOutput(o);
      foss := getFileFOSS(o);
+     --
      if foss.capturing then (
-     	  if foss.outindex == length(foss.outbuffer)
-     	  then foss.outbuffer = enlarge(length(foss.outbuffer),foss.outbuffer);
+	  if foss.outindex == length(foss.outbuffer)
+	  then foss.outbuffer = enlarge(length(foss.outbuffer),foss.outbuffer);
 	  )
      else (
-     	  foss.outbol = 0;
-	  off := 0;
-	  n := 0;
-	  while n >= 0 && off < foss.outindex && !test(interruptedFlag) do (
-	       n = write(o.outfd,foss.outbuffer,foss.outindex-off,off);
-	       if n > 0 then (
-		    off = off + n;
-		    foss.lastCharOut = int(foss.outbuffer.(off-1));
-		    foss.bytesWritten = foss.bytesWritten + n));
-	  if 0 < off then (
-	       for k from off to foss.outindex-1 do foss.outbuffer.(k-off) = foss.outbuffer.k;
-	       foss.outindex = foss.outindex - off);
-	  if n == -1 then (
-	       fileErrorMessage(o,"writing");
-	       releaseFileFOSS(o);
-	       endFileOutput(o);
-	       return -1);
-	  if test(interruptedFlag) then (
-	       foss.outindex = 0;				    -- erase the output buffer after an interrupt
-	       releaseFileFOSS(o);
-	       endFileOutput(o);
-	       return ERROR);
+	foss.outbol = 0;
+	offset := 0;
+	numWritten := 0;
+	while numWritten >= 0 && offset < foss.outindex && !test(interruptedFlag) do (
+	    oldoffset := offset;
+	    numToWrite := foss.outindex - offset;
+	    Ccode(void,"assert(", numToWrite + offset <= foss.outindex, ")");
+	    numWritten = write(o.outfd,foss.outbuffer,numToWrite,offset);
+	    oldindex := foss.outindex;
+	    --
+	    Ccode(void,"assert(", oldindex == foss.outindex, ")");
+	    if test(interruptedFlag) || numWritten == ERROR then (
+		fileErrorMessage(o,"writing");
+		-- erase the output buffer after an interrupt
+		foss.outindex = 0;
+		releaseFileFOSS(o);
+		endFileOutput(o);
+		return ERROR);
+	    --
+	    offset = offset + numWritten;
+	    Ccode(void,"assert(", 0 <= offset && 0 <= foss.outindex - offset, ")");
+	    foss.lastCharOut = int(foss.outbuffer.(offset-1));
+	    foss.bytesWritten = foss.bytesWritten + numWritten);
+	-- seekp
+	for k from offset to foss.outindex-1 do foss.outbuffer.(k-offset) = foss.outbuffer.k;
+	foss.outindex = foss.outindex - offset;
+	Ccode(void,"assert(", 0 <= foss.outindex, ")");
 	  );
      releaseFileFOSS(o);
      endFileOutput(o);
@@ -457,12 +463,21 @@ flushnets(o:file):int := (
      releaseFileFOSS(o);
      NOERROR);
 
-export flush(o:file):int := (
+export flushFile(o:file):int := (
      foss := getFileFOSS(o);
      if foss.hadNet then if ERROR == flushnets(o) then (releaseFileFOSS(o); return ERROR);
      foss.outbol = foss.outindex;
      releaseFileFOSS(o);
      simpleflush(o));
+
+export flushinput(o:file):void := (
+    o.echoindex = o.echoindex - o.insize;
+    if o.echoindex < 0 then o.echoindex = 0;
+    o.inindex = 0;
+    o.insize = 0;
+    o.bol = true; );
+
+-----------------------------------------------------------------------------
 
 cleanUp(o:file):void := (
      if !o.listener && !o.input && !o.output then (
@@ -503,7 +518,7 @@ export closeOut(o:file):(errmsg or null) := (
      stat := 0;
      if o.outfd == NOFD then return errmsg("close: file not open");
      haderror := false;
-     haderror = haderror || flush(o) == ERROR;
+     haderror = haderror || flushFile(o) == ERROR;
      haderror = haderror || o.infd != o.outfd && close(o.outfd) == ERROR;
      haderror = haderror || o.infd == NOFD && (
 	  o.pid != 0 && (stat = wait(o.pid); o.pid = 0; 0 != stat) ||
@@ -537,19 +552,23 @@ export close(o:file):(errmsg or null) := (
 closem():void := (
      f := openfiles;
      while true do when f is null do break is fileCell:FileCell do (
-	  flush(fileCell.file);
+	  flushFile(fileCell.file);
 	  f = fileCell.next;
 	  );
      );
 
 atend(closem);
 
+-----------------------------------------------------------------------------
+-- The three main output functions
+-----------------------------------------------------------------------------
+
 export (o:file) << (n:Net) : file := (
      foss := getFileFOSS(o);
      if o.output then (
 	  if !foss.hadNet then (
 	       m := foss.outindex - foss.outbol;
-	       if m < 0 then Ccode(returns,"puts(\"internal error: beginning of line marker not within buffer\"); abort();");
+	       Ccode(void,"assert(", m >= 0, ")"); -- internal error: beginning of line marker not within buffer
 	       if m > 0 then ( 
 		    -- remove the first part of the line from the buffer and add it, as a net, to the (currently empty) list of nets
 		    s := toNet(new string len m do for i from foss.outbol to foss.outindex - 1 do provide foss.outbuffer.i);
@@ -568,44 +587,45 @@ export (o:file) << (c:char) : file := (
      if test(interruptedFlag) then return o;
      foss := getFileFOSS(o);
      if o.output then (
+	  -- TODO: simplify this by always printing as nets
 	  if foss.hadNet then (
      	       foss.nets = NetList(foss.nets,toNet(c));
 	       )
 	  else (
-	       if foss.outindex == length(foss.outbuffer)
-	       && ERROR == flush(o) then (releaseFileFOSS(o); return o);
+	     if foss.outindex == length(foss.outbuffer) && ERROR == flushFile(o) then (releaseFileFOSS(o); return o);
 	       foss.outbuffer.(foss.outindex) = c;
 	       foss.outindex = foss.outindex + 1;
 	       );
 	  );
      releaseFileFOSS(o);
-     o
-     );
+    o);
 
 export (o:file) << (x:string) : file := (
-     foss := getFileFOSS(o);
-     if o.output then (
-	  if foss.hadNet then (
-	       o << toNet(x);
-	       )
-	  else (
-     	       foreach c in x do o << c;
-	       );
-	  );
-     releaseFileFOSS(o);
-     o );
+    foss := getFileFOSS(o);
+    if o.output then if foss.hadNet then (o << toNet(x);) else (foreach c in x do o << c;);
+    releaseFileFOSS(o);
+    o);
 
-endlfun(o:file):int := (
-     if o.output then (
-     	  foss := getFileFOSS(o);
-	  if foss.hadNet then if ERROR == flushnets(o) then (releaseFileFOSS(o); return ERROR);
-	  o << newline;
-	  foss.outbol = foss.outindex;
-     	  releaseFileFOSS(o);
-	  if o.outisatty || o == stdError then simpleflush(o) else NOERROR)
-     else (
-	  stderr << "not an output file" << newline;
-	  ERROR));
+-----------------------------------------------------------------------------
+
+endlFunction(o:file):int := if o.output then (
+    foss := getFileFOSS(o);
+    if foss.hadNet then if ERROR == flushnets(o) then (releaseFileFOSS(o); return ERROR);
+    o << newline;
+    foss.outbol = foss.outindex;
+    releaseFileFOSS(o);
+    if o.outisatty || o == stdError then simpleflush(o) else NOERROR) else return ERROR;
+
+export Manipulator := {fun:function(file):int};
+export endl  := Manipulator(endlFunction);
+export flush := Manipulator(flushFile);
+
+export (o:file)      << (m:Manipulator)   : file := ( m.fun(o); o ); -- ignoring errors here
+export (o:BasicFile) << (m:Manipulator)   : int  := (
+    if m == endl  then o << basicEndl  else
+    if m == flush then o << basicFlush else ERROR);
+
+-----------------------------------------------------------------------------
 
 maybeprompt(o:file):void := (
      o.bol = false;
@@ -679,7 +699,7 @@ export presentn(x:string):string := ( -- fix newlines and other special chars, a
 
 export filbuf(o:file):int := (
 --      if o.fulllines then (
--- 	  flush(stdIO);
+-- 	  stdIO << flush;
 -- 	  stderr << "--filbuf (fulllines, bol=" << (if o.bol then "true" else "false")
 -- 	  << ", promptq=" << (if o.promptq then "true" else "false")
 -- 	  << ", reward()=" << present(o.reward())
@@ -688,7 +708,7 @@ export filbuf(o:file):int := (
 -- 	       if o.inbuffer.i == '\n' then stderr << "\\n" else stderr << o.inbuffer.i;
 -- 	       );
 -- 	  stderr << '\n';
--- 	  flush(stderr);
+-- 	  stderr << flush;
 --      	  );
      -- returns number of bytes added to buffer, or ERROR if a system call had an error
      if ! o.input then return 0;
@@ -708,7 +728,7 @@ export filbuf(o:file):int := (
 	  n := length(o.inbuffer) - o.insize;
 	  if o.readline then (
 	       initReadlineVariables();
-	       flush(stdIO);
+	       stdIO << flush;
 	       if test(interruptedFlag) then return ERROR;
 	       startFileInput(o);
 	       r = readline(o.inbuffer,n,o.insize,o.prompt());
@@ -716,7 +736,7 @@ export filbuf(o:file):int := (
 	       )
 	  else (
 	       if o.bol then maybeprompt(o);
-	       flush(stdIO);
+	       stdIO << flush;
 	       if test(interruptedFlag) then return ERROR;
 	       r = (
 		    if o.infd == NOFD 
@@ -736,7 +756,7 @@ export filbuf(o:file):int := (
 	       o.bol = true;
 	       if o.promptq then (
 		    stdIO << newline;
-		    flush(stdIO);
+		    stdIO << flush;
 		    );
 	       return r;
 	       )
@@ -748,7 +768,7 @@ export filbuf(o:file):int := (
 		    for i from newsize-1 to oldsize by -1 do if o.inbuffer.i == '\n' then (
 			 if o.promptq then (
 			      o << o.reward();
-			      flush(o);
+			      o << flush;
 			      );
 			 return r;
 			 );
@@ -827,11 +847,11 @@ export getc(o:file):int := (
      	       e != '\n'
 	       )
 	  do nothing;
-	  flush(stdIO);
+	  stdIO << flush;
 	  );
      if c == nl then (
 	  o.bol = true;
-	  if o.echo then flush(stdIO);
+	  if o.echo then stdIO << flush;
 	  );
      x:=int(uchar(c));
      endFileInput(o);
@@ -851,7 +871,7 @@ export read(o:file):StringOrError := (
      o.inindex = 0;
      if o.echo then (
 	  stdIO << s;
-	  flush(stdIO);
+	  stdIO << flush;
 	  );
      sc:=stringCell(s);
      endFileInput(o);
@@ -909,7 +929,7 @@ export setprompt(o:file,prompt:function():string):void := ( o.promptq = true; o.
 
 export unsetprompt(o:file):void := ( o.promptq = false; o.prompt = noprompt; o.reward=noprompt; );
 
-export clean(o:file):void := flush(o);
+export clean(o:file):void := flushFile(o);
 
 export get(filename:string):StringOrError := (
      when openIn(filename)
@@ -924,22 +944,6 @@ export get(filename:string):StringOrError := (
 	       when r is m:errmsg
 	       do StringOrError(m)
 	       else StringOrError(stringCell(s)))));
-
-export Manipulator := {fun:function(file):int};
-
-export (o:file) << (m:Manipulator) : file := (
-     m.fun(o);				  -- ignoring error here
-     o
-     );
-
-export endl := Manipulator(endlfun);
-
-export Flush := Manipulator(flush);
-
-export (o:BasicFile) << (m:Manipulator) : int := (
-     if m == endl then o << basicEndl
-     else if m == Flush then o << basicFlush
-     else -1);
 
 export fchmod(o:file,mode:int):int := (
      if o.input && o.infd != -1 then if -1 == fchmod(o.infd,mode) then return -1;
