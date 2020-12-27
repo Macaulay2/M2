@@ -397,6 +397,12 @@ Poly* M2FreeAlgebra::get_terms(const Poly* f, int lo, int hi) const
   return result;
 }
 
+M2_arrayint M2FreeAlgebra::support(const ring_elem a) const
+{
+  const Poly* f = reinterpret_cast<const Poly*>(a.get_Poly());
+  return freeAlgebra().support(*f);
+}
+
 bool M2FreeAlgebra::is_homogeneous(const ring_elem f1) const
 {
   const Poly* f = reinterpret_cast<const Poly*>(f1.get_Poly());

@@ -151,6 +151,9 @@ public:
     return ring_elem(reinterpret_cast<const Poly*>(result));
   }
 
+  // support functions
+  virtual M2_arrayint support(const ring_elem a) const;
+
   // casting functions
   virtual const M2FreeAlgebra * cast_to_M2FreeAlgebra()  const { return this; }
   virtual       M2FreeAlgebra * cast_to_M2FreeAlgebra()        { return this; }

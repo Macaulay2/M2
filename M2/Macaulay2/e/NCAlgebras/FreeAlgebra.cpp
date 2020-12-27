@@ -191,20 +191,40 @@ void FreeAlgebra::var(Poly& result, int v) const
 
 // the below was copied over from poly.cpp.  Working on adding
 // support to the freeAlgebra class.  WIP
-/*
-// FM: still working here.  need to take the union of support of all the
-// monomials.
 M2_arrayint FreeAlgebra::support(const Poly& f) const
 {
-  std::vector<int> exp;
-  monoid().support(f,exp);
+  int numVarsFound = 0;
+  std::vector<int> exp, exp2;
+  auto fIt = f.cbegin();
+  auto fEnd = f.cend();
+  
+  for (auto i = 0; i < numVars(); i++)
+     exp2.push_back(0);
+
+  for ( ; fIt != fEnd; fIt++) 
+  {
+     monoid().support(fIt.monom(),exp);
+     for (auto i : exp)
+     {
+       if (exp2[i] == 0)
+       {
+         exp2[i]++;
+         numVarsFound++;
+       }
+     }
+     if (numVarsFound == numVars()) break;
+  }
+
+  exp.clear();
+  for (int i = 0; i < numVars(); i++)
+    if (exp2[i] > 0) exp.push_back(i);
+
   M2_arrayint result = M2_makearrayint(exp.size());
   int next = 0;
   for (auto i : exp)
     result->array[next++] = i;
   return result;
 }
-*/
 
 void FreeAlgebra::from_word(Poly& result, ring_elem coeff, const std::vector<int>& word) const
 {

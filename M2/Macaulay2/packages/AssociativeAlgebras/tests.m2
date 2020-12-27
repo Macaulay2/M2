@@ -1098,6 +1098,7 @@ assert(sum apply(30, i -> numgens source ncBasis(i,S)) == 8!)
 --- 2. sub(ideal,Ring) doesn't seem to work right
 ---    in the noncommutative case.
 --- 3. support is broken (but I wrote ncSupport for the time being)
+---      (support has been fixed, I think)
 --- 4. both F4 and regular GB computation seemed to hang on
 ---    the example on line 962ish (which was in turn created by another error)
 --- 5. The ring created for the computation in the kernel code

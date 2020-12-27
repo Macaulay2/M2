@@ -877,38 +877,70 @@ Matrix *Matrix::lead_term(int nparts) const
 M2_arrayintOrNull Matrix::support() const
 {
   const PolynomialRing *R = get_ring()->cast_to_PolynomialRing();
-  if (R == nullptr)
-    {
-      ERROR("expected a polynomial ring");
-      return nullptr;
-    }
-  int n = R->n_vars();
-  int nsupp = 0;
-  int *exp = newarray_atomic(int, R->n_vars());
-  int *exp2 = newarray_atomic(int, R->n_vars());
-  for (int i = 0; i < R->n_vars(); i++) exp[i] = exp2[i] = 0;
-  for (int j = 0; j < n_cols(); j++)
-    for (vec v = elem(j); v != nullptr; v = v->next)
-      {
+  if (R != nullptr)
+  {
+    int n = R->n_vars();
+    int nsupp = 0;
+    int *exp = newarray_atomic(int, R->n_vars());
+    int *exp2 = newarray_atomic(int, R->n_vars());
+    for (int i = 0; i < R->n_vars(); i++) exp[i] = exp2[i] = 0;
+    for (int j = 0; j < n_cols(); j++)
+      for (vec v = elem(j); v != nullptr; v = v->next)
         for (const Nterm *f = v->coeff; f != nullptr; f = f->next)
-          {
-            R->getMonoid()->to_expvector(f->monom, exp2);
-            for (int k = 0; k < n; k++)
-              if (exp2[k] != 0 && exp[k] == 0)
-                {
-                  exp[k] = 1;
-                  if (++nsupp == n) goto out;
-                }
-          }
-      }
+        {
+          R->getMonoid()->to_expvector(f->monom, exp2);
+          for (int k = 0; k < n; k++)
+            if (exp2[k] != 0 && exp[k] == 0)
+            {
+              exp[k] = 1;
+              if (++nsupp == n) goto out;
+            }
+        }
 out:
-  M2_arrayint result = M2_makearrayint(nsupp);
-  int next = 0;
-  for (int i = 0; i < n; i++)
-    if (exp[i] > 0) result->array[next++] = i;
-  deletearray(exp);
-  deletearray(exp2);
-  return result;
+    M2_arrayint result = M2_makearrayint(nsupp);
+    int next = 0;
+    for (int i = 0; i < n; i++)
+      if (exp[i] > 0) result->array[next++] = i;
+    deletearray(exp);
+    deletearray(exp2);
+    return result;
+  }
+
+  // FreeAlgebraOrQuotient matrix support
+  const M2FreeAlgebraOrQuotient* Q = dynamic_cast<const M2FreeAlgebraOrQuotient*>(get_ring());
+  if (Q != nullptr)
+  {
+    int n = Q->n_vars();
+    int nsupp = 0;
+    std::vector<int> exp,exp2;  // commutative code above uses newarray_atomic.  Is std::vector ok?
+    for (int i = 0; i < n; i++) 
+      exp.push_back(0);
+    for (int j = 0; j < n_cols() && nsupp < n; j++)
+      for (vec v = elem(j); v != nullptr && nsupp < n; v = v->next)
+      {
+        auto f = Q->toPoly(v->coeff);
+        for (auto t = f->cbegin(); t != f->cend(); ++t)
+        {
+          Q->freeAlgebra().monoid().support(t.monom(),exp2);
+          for (int k = 0; k < exp2.size(); k++)
+          {
+            exp[exp2[k]] = 1;
+            if (++nsupp == n) break;
+          }
+        }
+      }
+
+    M2_arrayint result = M2_makearrayint(nsupp);
+    int next = 0;
+    for (int i = 0; i < n; i++)
+      if (exp[i] > 0) result->array[next++] = i;
+    //deletearray(exp);
+    //deletearray(exp2);
+    return result;    
+  }
+
+  ERROR("expected a polynomial ring");
+  return nullptr;
 }
 
 Matrix *Matrix::top_coefficients(Matrix *&monoms) const

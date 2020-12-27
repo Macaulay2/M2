@@ -1013,12 +1013,12 @@ ncHilbertSeries FreeAlgebraQuotient := opts -> B -> (
 )
 
 -- support function for now
-ncSupport = method();
-ncSupport RingElement := f -> (
-   A := ring f;
-   (rawCoeff, rawMons) := rawPairs(raw coefficientRing ring f, raw f);
-   reverse sort unique flatten apply(rawMons, rm -> apply(rawSparseListFormMonomial rm, p -> A_(p#0)))
-)
+--ncSupport = method();
+--ncSupport RingElement := f -> (
+--   A := ring f;
+--   (rawCoeff, rawMons) := rawPairs(raw coefficientRing ring f, raw f);
+--   reverse sort unique flatten apply(rawMons, rm -> apply(rawSparseListFormMonomial rm, p -> A_(p#0)))
+--)
 
 ncKernel = method(Options=>{DegreeLimit => 10});
 ncKernel RingMap := opts -> phi -> (
@@ -1050,7 +1050,7 @@ ncKernel RingMap := opts -> phi -> (
    Kgb := NCGB(K, opts#DegreeLimit,Strategy=>16);
    --- now select those elements of the GB that are only in the variables from ambA and place
    --- those elements in A.
-   kerGens := select(flatten entries Kgb, f -> isSubset(ncSupport f, drop(gens C, numgens B)));
+   kerGens := select(flatten entries Kgb, f -> isSubset(support f, drop(gens C, numgens B)));
    backToA := map(A,C,toList((numgens B) : 0_A) | (gens A));
    -- the ring map 'backToA' is messing up the coefficients.  It seems the denominators are
    -- disappearing if the coefficientRing is a field of fractions.  See line 801 in tests.m2
