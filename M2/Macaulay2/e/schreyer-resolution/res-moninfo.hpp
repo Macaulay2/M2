@@ -3,8 +3,8 @@
 #ifndef _res_moninfo_hpp_
 #define _res_moninfo_hpp_
 
-#include "res-moninfo-dense.hpp"
-#include "res-moninfo-sparse.hpp"
+#include "schreyer-resolution/res-moninfo-dense.hpp"
+#include "schreyer-resolution/res-moninfo-sparse.hpp"
 
 using ResMonoid = ResMonoidDense;
 // using ResMonoid = ResMonoidSparse;

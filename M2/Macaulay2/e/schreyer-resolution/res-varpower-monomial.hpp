@@ -3,15 +3,14 @@
 #ifndef _res_varpower_monomial_hpp_
 #define _res_varpower_monomial_hpp_
 
-#include "res-monomial-types.hpp"
+#include "res-monomial-types.hpp"  // for res_const_varpower_monomial, res_v...
 
-//#include <cstdio>
+#include <stdio.h>                 // for FILE
+#include <vector>                  // for vector
 
 #if !defined(SAFEC_EXPORTS)
-#include <engine-exports.h>
+#include <engine-exports.h> // for M2_gbTrace
 #endif
-
-#include <vector>
 
 class res_varpower_monomials
 {

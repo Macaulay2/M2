@@ -1,7 +1,8 @@
-/* Copyright 2015, Michael E. Stillman */
+/* Copyright 2015-2021, Michael E. Stillman */
 
-#include "res-poly-ring.hpp"
-#include "res-monomial-sorter.hpp"
+#include "schreyer-resolution/res-poly-ring.hpp"
+#include "schreyer-resolution/res-monomial-sorter.hpp"  // for ResMonomialSorter
+struct ResSchreyerOrder;
 
 long poly::npoly_destructor = 0;
 long poly_constructor::ncalls = 0;
@@ -13,7 +14,7 @@ void ResPolyRing::memUsage(const poly& f,
                            long& bytes_alloc) const
 {
   long sz = 0;
-  sz = f.len * sizeof(FieldElement);
+  // sz = f.len * sizeof(FieldElement); // TODO MES: what to add here?
   sz += f.monoms.size() * sizeof(res_monomial_word);
   nterms += f.len;
   bytes_used += sz;

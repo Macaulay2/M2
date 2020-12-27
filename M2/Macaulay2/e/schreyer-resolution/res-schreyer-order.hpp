@@ -3,6 +3,9 @@
 #ifndef _res_schreyer_order_hpp_
 #define _res_schreyer_order_hpp_
 
+#include "schreyer-resolution/res-monomial-types.hpp"  // for component_index
+#include <vector>                                      // for vector
+
 struct ResSchreyerOrder
 {
   std::vector<res_packed_monomial> mTotalMonom;

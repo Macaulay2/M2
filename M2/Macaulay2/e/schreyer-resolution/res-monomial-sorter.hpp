@@ -3,15 +3,17 @@
 #ifndef _res_monomial_sorter_hpp_
 #define _res_monomial_sorter_hpp_
 
-#include "monoid.hpp"
-#include "ntuple.hpp"
-#include "res-moninfo.hpp"
-#include "res-schreyer-order.hpp"
+#include "monoid.hpp"                                  // for Monoid
+#include "ntuple.hpp"                                  // for ntuple
+#include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
+#include "schreyer-resolution/res-schreyer-order.hpp"  // for ResSchreyerOrder
+#include "schreyer-resolution/res-monomial-types.hpp"  // for res_packed_mon...
+#include "style.hpp"                                   // for GT, LT
 
-#include "memtailor.h"
-#include <vector>
-#include <utility>
-#include <algorithm>
+#include <memtailor/Arena.h>                           // for Arena
+#include <algorithm>                                   // for stable_sort
+#include <utility>                                     // for pair
+#include <vector>                                      // for vector
 
 class MonomialSorterObject
 {

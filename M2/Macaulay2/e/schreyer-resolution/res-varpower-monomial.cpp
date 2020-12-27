@@ -1,6 +1,7 @@
 /* Copyright 2006-2016 by Michael E. Stillman */
 
-#include "res-varpower-monomial.hpp"
+#include "schreyer-resolution/res-varpower-monomial.hpp"
+#include "schreyer-resolution/res-monomial-types.hpp"  // for res_varpower_word
 
 /* The following are also in ../style.hpp */
 #define LT (-1)

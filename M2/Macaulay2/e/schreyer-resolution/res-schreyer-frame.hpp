@@ -24,28 +24,26 @@
 #ifndef _res_schreyer_frame_hpp_
 #define _res_schreyer_frame_hpp_
 
-#include "schreyer-resolution/res-schreyer-frame.hpp"
+#include "betti.hpp"                                   // for BettiDisplay
+#include "engine-exports.h"                            // for M2_arrayint
+#include "schreyer-resolution/res-f4.hpp"              // for F4Res
+#include "schreyer-resolution/res-memblock.hpp"        // for MemoryBlock
+#include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
+#include "schreyer-resolution/res-monomial-types.hpp"  // for component_index
+#include "schreyer-resolution/res-poly-ring.hpp"       // for ResPolyRing, poly
+#include "schreyer-resolution/res-schreyer-frame.hpp"  // lines 27-27
+#include "schreyer-resolution/res-schreyer-order.hpp"  // for ResSchreyerOrder
 
-#include "interface/computation.h"
-#include "f4/monhashtable.hpp"
-#include "betti.hpp"
+#include <utility>                                     // for pair
+#include <vector>                                      // for vector
 
-#include "schreyer-resolution/res-moninfo.hpp"
-#include "schreyer-resolution/res-memblock.hpp"
-#include "schreyer-resolution/res-varpower-monomial.hpp"
-#include "schreyer-resolution/res-poly-ring.hpp"
-#include "schreyer-resolution/res-schreyer-order.hpp"
-#include "schreyer-resolution/res-f4.hpp"
-
-#include <vector>
-
+class ResGausser;
+struct StopConditions;
 class F4Res;
 
 typedef int ComponentIndex;  // index into f4 matrices over kk.  These tend to
                              // be larger, not sure if they
 // will ever be > 2billion, but probably...
-
-typedef int FieldElement;
 
 namespace SchreyerFrameTypes {
 struct FrameElement

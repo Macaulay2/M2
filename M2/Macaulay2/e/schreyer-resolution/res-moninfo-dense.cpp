@@ -1,8 +1,10 @@
 // Copyright 2016  Michael E. Stillman
 
-#include "res-moninfo-dense.hpp"
-#include <cstdio>
-#include <cstdlib>
+#include "schreyer-resolution/res-moninfo-dense.hpp"
+#include "schreyer-resolution/res-monomial-types.hpp"  // for res_monomial_word
+
+#include <cstdio>                                      // for fprintf, stderr
+#include <cstdlib>                                     // for rand
 
 ResMonoidDense::ResMonoidDense(int nvars0,
                                const std::vector<int>& var_degrees,

@@ -1,12 +1,22 @@
 // Copyright 2014-2016 Michael E. Stillman
 
-#include "res-f4-monlookup.hpp"
-#include "res-schreyer-frame.hpp"
-#include "../timing.hpp"
+#include "schreyer-resolution/res-schreyer-frame.hpp"
+#include "error.h"                                        // for ERROR
+#include "f4/moninfo.hpp"                                 // for monomial_word
+#include "interface/computation.h"                        // for StopConditions
+#include "schreyer-resolution/res-f4-monlookup.hpp"       // for ResF4Monomi...
+#include "schreyer-resolution/res-gausser.hpp"            // for Coefficient...
+#include "schreyer-resolution/res-varpower-monomial.hpp"  // for res_varpowe...
+#include "style.hpp"                                      // for LT, GT
+#include "timing.hpp"                                     // for timer, seconds
 
-#include <iostream>
-#include <iomanip>
-#include <algorithm>
+#include <cassert>                                        // for assert
+#include <cstdint>                                        // for int32_t
+#include <algorithm>                                      // for stable_sort
+#include <chrono>                                         // for common_type...
+#include <iomanip>                                        // for operator<<
+#include <iostream>                                       // for operator<<
+#include <type_traits>                                    // for swap
 
 namespace {
 class PreElementSorter

@@ -3,15 +3,13 @@
 #ifndef _res_moninfo_sparse_hpp_
 #define _res_moninfo_sparse_hpp_
 
-struct MonomialOrdering;
-#include "../skew.hpp"
+#include "skew.hpp"                   // for SkewMultiplication
+#include "schreyer-resolution/res-monomial-types.hpp"     // for res_monomial_word, res_const_pa...
+#include "schreyer-resolution/res-varpower-monomial.hpp"  // for index_res_varpower_monomial
 
-#include "res-monomial-types.hpp"
-#include "res-varpower-monomial.hpp"
-
-#include <vector>
-#include <memory>
-#include <iostream>
+#include <iostream>                   // for ostream
+#include <memory>                     // for unique_ptr
+#include <vector>                     // for vector
 
 // Format for monomials here:
 // a. length (in bytes) (int32)

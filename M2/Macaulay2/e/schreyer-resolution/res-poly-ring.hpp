@@ -3,17 +3,19 @@
 #ifndef _res_poly_ring_hpp_
 #define _res_poly_ring_hpp_
 
-#include "../monoid.hpp"
-#include "../skew.hpp"
-#include "res-varpower-monomial.hpp"
-#include "res-moninfo.hpp"
-#include "res-gausser.hpp"
-#include "res-schreyer-order.hpp"
+#include "newdelete.hpp"                               // for our_new_delete
+#include "schreyer-resolution/res-gausser.hpp"         // for CoefficientVector
+#include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
+#include "schreyer-resolution/res-monomial-types.hpp"  // for res_monomial_word
 
-#include <memory>  // For std::unique_ptr
-#include <iostream>
+#include <iostream>                                    // for ostream
+#include <memory>                                      // for unique_ptr
+#include <type_traits>                                 // for swap
+#include <vector>                                      // for vector, swap
 
-typedef int FieldElement;
+class Monoid;
+class SkewMultiplication;
+struct ResSchreyerOrder;
 
 class poly
 {
@@ -195,6 +197,7 @@ inline void display_poly(std::ostream& o, const ResPolyRing& R, const poly& f)
 
 bool check_poly(const ResPolyRing& R, const poly& f, const ResSchreyerOrder& O);
 #endif
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

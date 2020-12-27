@@ -1,9 +1,10 @@
 // Copyright 2016-2017  Michael E. Stillman
 
-// THe following is apparently only for moIsLex, and the like.
 #include "res-moninfo-sparse.hpp"
-#include <cstdio>
-#include <cstdlib>
+#include <cstdio>                                      // for fprintf, stderr
+#include <cstdlib>                                     // for rand
+#include "engine-exports.h"                            // for M2_gbTrace
+#include "schreyer-resolution/res-monomial-types.hpp"  // for res_monomial_word
 
 ResMonoidSparse::ResMonoidSparse(int nvars,
                                  const std::vector<int>& var_degrees,

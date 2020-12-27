@@ -7,10 +7,7 @@
 
 enum class MonomialOrderingType { Lex, GRevLex, Weights };
 
-// typedef long myword;
 typedef int32_t myword;
-
-// typedef long component_index;
 typedef myword component_index;
 
 typedef myword res_ntuple_word;
