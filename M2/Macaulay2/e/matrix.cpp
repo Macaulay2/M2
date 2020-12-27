@@ -924,8 +924,11 @@ out:
           Q->freeAlgebra().monoid().support(t.monom(),exp2);
           for (int k = 0; k < exp2.size(); k++)
           {
-            exp[exp2[k]] = 1;
-            if (++nsupp == n) break;
+            if (exp[exp2[k]] == 0)
+            {
+              exp[exp2[k]] = 1;
+              if (++nsupp == n) break;
+            }
           }
         }
       }

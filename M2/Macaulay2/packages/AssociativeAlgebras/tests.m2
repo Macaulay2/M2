@@ -1093,6 +1093,36 @@ S = R/I
 assert(sum apply(30, i -> numgens source ncBasis(i,S)) == 8!)
 ///
 
+TEST ///
+-- support tests
+-*
+restart
+needsPackage "AssociativeAlgebras"
+*-
+R = QQ{x,y,z}
+assert(support (0_R) == {})
+assert(support (x) == {x})
+assert(support (y) == {y})
+assert(support (z) == {z})
+assert(support (x*y) == {x,y})
+assert(support (x*y*z) == {x,y,z})
+assert(support (x + y + z) == {x,y,z})
+assert(support (x*y + z) == {x,y,z})
+assert(support (x^2 + z) == {x,z})
+assert(support (x^2 + x) == {x})
+
+M = matrix {{x,y,z},{x^2,0,y},{0,x^2,x},{0,0,0},{x + y,z,0},{0,0,z^2}}
+assert(support M == {x,y,z})
+assert(support M^{0} == {x,y,z})
+assert(support M^{2} == {x})
+assert(support M^{3} == {})
+assert(support M^{4} == {x,y,z})
+assert(support M^{5} == {z})
+assert(support M_{0} == {x,y})
+assert(support M_{0,1} == {x,y,z})
+assert(support M_{2} == {x,y,z})
+///
+
 --- (FM) List of bugs found when working on kernel code:
 --- 1. fraction field and ring maps, line 801
 --- 2. sub(ideal,Ring) doesn't seem to work right
