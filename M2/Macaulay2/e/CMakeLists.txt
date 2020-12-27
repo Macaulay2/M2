@@ -75,9 +75,9 @@ set(HPPONLYFILES
   stdinc-m2.hpp
   style.hpp
   f4/moninfo2.hpp
-  f4/res-memblock.hpp
-  f4/res-monomial-types.hpp
-  f4/res-schreyer-order.hpp
+  schreyer-resolution/res-memblock.hpp
+  schreyer-resolution/res-monomial-types.hpp
+  schreyer-resolution/res-schreyer-order.hpp
   )
 
 # these files have .cpp file, but NOT .hpp file
@@ -259,22 +259,23 @@ set(SRCLIST
   f4/moninfo
   f4/monsort
   f4/ntuple-monomial
-  f4/res-f4-computation
-  f4/res-f4-m2-interface
-  f4/res-f4-monlookup
-  f4/res-f4
-  f4/res-gausser-QQ-hybrid
-  f4/res-gausser-QQ
-  f4/res-gausser-ZZp
-  f4/res-gausser
-  f4/res-moninfo-dense
-  f4/res-moninfo-sparse
-  f4/res-moninfo
-  f4/res-monomial-sorter
-  f4/res-poly-ring
-  f4/res-schreyer-frame
-  f4/res-varpower-monomial
   f4/varpower-monomial
+  # Schreyer resolution a la Linear algebra (F4 Faugere style)
+  schreyer-resolution/res-f4-computation
+  schreyer-resolution/res-f4-m2-interface
+  schreyer-resolution/res-f4-monlookup
+  schreyer-resolution/res-f4
+  schreyer-resolution/res-gausser-QQ-hybrid
+  schreyer-resolution/res-gausser-QQ
+  schreyer-resolution/res-gausser-ZZp
+  schreyer-resolution/res-gausser
+  schreyer-resolution/res-moninfo-dense
+  schreyer-resolution/res-moninfo-sparse
+  schreyer-resolution/res-moninfo
+  schreyer-resolution/res-monomial-sorter
+  schreyer-resolution/res-poly-ring
+  schreyer-resolution/res-schreyer-frame
+  schreyer-resolution/res-varpower-monomial
   # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator

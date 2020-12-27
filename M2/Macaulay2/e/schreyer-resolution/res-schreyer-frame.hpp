@@ -24,21 +24,20 @@
 #ifndef _res_schreyer_frame_hpp_
 #define _res_schreyer_frame_hpp_
 
-#include "res-schreyer-frame.hpp"
-
-#include <vector>
+#include "schreyer-resolution/res-schreyer-frame.hpp"
 
 #include "interface/computation.h"
+#include "f4/monhashtable.hpp"
+#include "betti.hpp"
 
-#include "res-moninfo.hpp"
-#include "res-memblock.hpp"
-#include "res-varpower-monomial.hpp"
-#include "res-poly-ring.hpp"
-#include "res-schreyer-order.hpp"
-#include "res-f4.hpp"
-#include "monhashtable.hpp"
+#include "schreyer-resolution/res-moninfo.hpp"
+#include "schreyer-resolution/res-memblock.hpp"
+#include "schreyer-resolution/res-varpower-monomial.hpp"
+#include "schreyer-resolution/res-poly-ring.hpp"
+#include "schreyer-resolution/res-schreyer-order.hpp"
+#include "schreyer-resolution/res-f4.hpp"
 
-#include "../betti.hpp"
+#include <vector>
 
 class F4Res;
 

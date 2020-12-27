@@ -4,7 +4,7 @@
 #define _monhashtable_h_
 
 #include "moninfo.hpp"
-#include "res-moninfo.hpp"
+#include "schreyer-resolution/res-moninfo.hpp"
 
 class MonomialsWithComponent
 {

@@ -3,11 +3,12 @@
 #ifndef _res_f4_hpp_
 #define _res_f4_hpp_
 
-#include "res-memblock.hpp"
-#include "monhashtable.hpp"
-#include "res-poly-ring.hpp"
-#include "../monomial-sets.hpp"
-#include <assert.h>
+#include "f4/monhashtable.hpp"
+#include "schreyer-resolution/res-memblock.hpp"
+#include "schreyer-resolution/res-poly-ring.hpp"
+#include "monomial-sets.hpp"
+
+#include <cassert>
 
 class SchreyerFrame;
 
