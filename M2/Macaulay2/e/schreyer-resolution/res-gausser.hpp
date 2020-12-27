@@ -3,9 +3,14 @@
 #ifndef _res__gausser_hpp_
 #define _res__gausser_hpp_
 
-#include "../ring.hpp"
-#include "../ZZp.hpp"
-#include "../coeffrings.hpp"
+#include "newdelete.hpp"  // for our_new_delete
+#include "ringelem.hpp"   // for ring_elem
+
+#include <iosfwd>         // for ostream
+#include <type_traits>    // for swap
+#include <vector>         // for vector
+
+class Ring;
 
 typedef int ComponentIndex;
 

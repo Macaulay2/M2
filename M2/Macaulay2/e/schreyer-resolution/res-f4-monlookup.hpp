@@ -3,12 +3,11 @@
 #ifndef _f4monlookup_h_
 #define _f4monlookup_h_
 
-#include <vector>
-
-#include "style.hpp"
-#include <mem.hpp>
-#include "res-varpower-monomial.hpp"
-#include "res-moninfo.hpp"
+#include "newdelete.hpp"                               // for VECTOR, our_ne...
+#include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
+#include "schreyer-resolution/res-monomial-types.hpp"  // for res_varpower_m...
+class buffer;  // lines 13-13
+class stash;
 
 class buffer;
 

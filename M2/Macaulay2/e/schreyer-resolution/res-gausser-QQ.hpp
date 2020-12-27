@@ -3,14 +3,16 @@
 #ifndef _res_gausser_qq_hpp_
 #define _res_gausser_qq_hpp_
 
-#include "../ring.hpp"
-#include "../ZZp.hpp"
-#include "../coeffrings.hpp"
+#include "aring-qq-gmp.hpp"                     // for ARingQQGMP
+#include "aring-zzp-flint.hpp"                  // for ARingZZpFlint, ARingZ...
+#include "ringelem.hpp"                         // for ring_elem
+#include "schreyer-resolution/res-gausser.hpp"  // for ComponentIndex, Coeff...
 
-#include "res-gausser.hpp"
-#include "../aring-RR.hpp"
-#include "../aring-zzp-flint.hpp"
-#include "../aring-qq-gmp.hpp"
+#include <iosfwd>                               // for ostream
+#include <vector>                               // for vector
+
+class Ring;
+
 class ResGausserQQ : public ResGausser
 {
   struct FieldElement

@@ -3,15 +3,18 @@
 #ifndef _res_gausser_qq_hybrid_hpp_
 #define _res_gausser_qq_hybrid_hpp_
 
-#include "../ring.hpp"
-#include "../ZZp.hpp"
-#include "../coeffrings.hpp"
+#include "aring-RRR.hpp"                        // for ARingRRR
+#include "aring-qq-gmp.hpp"                     // for ARingQQGMP
+#include "aring-zzp-flint.hpp"                  // for ARingZZpFlint, ARingZ...
+#include "ringelem.hpp"                         // for ring_elem
+#include "schreyer-resolution/res-gausser.hpp"  // for ComponentIndex, Coeff...
 
-#include "res-gausser.hpp"
-#include "../aring-RR.hpp"
-#include "../aring-RRR.hpp"
-#include "../aring-zzp-flint.hpp"
-#include "../aring-qq-gmp.hpp"
+#include <gmp.h>                                // for mpq_t
+#include <iosfwd>                               // for ostream
+#include <vector>                               // for vector
+
+class Ring;
+
 class ResGausserQQHybrid : public ResGausser
 {
   using RRRType = M2::ARingRRR;

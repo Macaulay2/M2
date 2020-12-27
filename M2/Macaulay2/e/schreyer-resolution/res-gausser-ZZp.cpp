@@ -1,7 +1,11 @@
 // Copyright 2005-2017 Michael E. Stillman.
 
-#include "res-gausser-ZZp.hpp"
-#include <iostream>
+#include "schreyer-resolution/res-gausser-ZZp.hpp"
+#include <stdio.h>   // for fprintf, size_t, stdout
+#include <iostream>  // for ostream, operator<<, endl
+#include "ZZp.hpp"   // for Z_mod
+#include "ring.hpp"  // for Ring
+
 ResGausserZZp::ResGausserZZp(const Ring* K1) : ResGausser(K1)
 {
   int p = static_cast<int>(get_ring()->characteristic());

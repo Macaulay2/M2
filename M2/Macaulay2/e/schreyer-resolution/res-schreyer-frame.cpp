@@ -4,6 +4,7 @@
 #include "error.h"                                        // for ERROR
 #include "f4/moninfo.hpp"                                 // for monomial_word
 #include "interface/computation.h"                        // for StopConditions
+#include "schreyer-resolution/res-f4.hpp"                 // for F4Res
 #include "schreyer-resolution/res-f4-monlookup.hpp"       // for ResF4Monomi...
 #include "schreyer-resolution/res-gausser.hpp"            // for Coefficient...
 #include "schreyer-resolution/res-varpower-monomial.hpp"  // for res_varpowe...
@@ -60,7 +61,7 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
       mSlantedDegree(0),
       mLoSlantedDegree(0),
       mHiSlantedDegree(0),
-      mComputer(*this)
+      mComputer(new F4Res(*this))
 {
   mFrame.mLevels.resize(max_level + 1);
   mMaxVPSize = 2 * monoid().n_vars() + 1;
@@ -355,7 +356,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
           {
             std::cout << "construct(" << mSlantedDegree << ", " << mCurrentLevel << ")..." << std::flush;
           }
-        mComputer.construct(mCurrentLevel, mSlantedDegree+mCurrentLevel);
+        mComputer->construct(mCurrentLevel, mSlantedDegree+mCurrentLevel);
         if (M2_gbTrace >= 2)
           {
             std::cout << "done" << std::endl;
@@ -888,7 +889,7 @@ void SchreyerFrame::fillinSyzygies(int slanted_deg, int lev)
       std::cout << "construct(" << slanted_deg << ", " << lev << ")..."
                 << std::flush;
     }
-  mComputer.construct(lev, slanted_deg + lev);
+  mComputer->construct(lev, slanted_deg + lev);
   status = 2;
 
   if (M2_gbTrace >= 2)

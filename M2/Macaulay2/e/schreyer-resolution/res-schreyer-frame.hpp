@@ -26,12 +26,10 @@
 
 #include "betti.hpp"                                   // for BettiDisplay
 #include "engine-exports.h"                            // for M2_arrayint
-#include "schreyer-resolution/res-f4.hpp"              // for F4Res
 #include "schreyer-resolution/res-memblock.hpp"        // for MemoryBlock
 #include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
 #include "schreyer-resolution/res-monomial-types.hpp"  // for component_index
 #include "schreyer-resolution/res-poly-ring.hpp"       // for ResPolyRing, poly
-#include "schreyer-resolution/res-schreyer-frame.hpp"  // lines 27-27
 #include "schreyer-resolution/res-schreyer-order.hpp"  // for ResSchreyerOrder
 
 #include <utility>                                     // for pair
@@ -243,7 +241,7 @@ class SchreyerFrame
   int mMaxVPSize;
 
   // These are used during matrix computation
-  F4Res mComputer;  // used to construct (level,degree) part of the resolution
+  std::unique_ptr<F4Res> mComputer;  // used to construct (level,degree) part of the resolution
   // this is a separate class because there could be several of these, running
   // in parallel.
 

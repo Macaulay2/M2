@@ -1,9 +1,11 @@
 // Copyright 2005-2017 Michael E. Stillman.
 
-#include "res-gausser.hpp"
-#include "res-gausser-ZZp.hpp"
-#include "res-gausser-QQ.hpp"
-#include "res-gausser-QQ-hybrid.hpp"
+#include "schreyer-resolution/res-gausser.hpp"
+#include "error.h"                                        // for ERROR
+#include "ring.hpp"                                       // for Ring
+#include "schreyer-resolution/res-gausser-QQ-hybrid.hpp"  // for ResGausserQ...
+#include "schreyer-resolution/res-gausser-QQ.hpp"         // for ResGausserQQ
+#include "schreyer-resolution/res-gausser-ZZp.hpp"        // for ResGausserZZp
 
 ResGausser* ResGausser::newResGausser(const Ring* K1)
 {

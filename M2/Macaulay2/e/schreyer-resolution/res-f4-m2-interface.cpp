@@ -1,28 +1,47 @@
 // Copyright 2016 Michael E. Stillman
 
-#include "../polyring.hpp"
-#include "../freemod.hpp"
-#include "../matrix-con.hpp"
-#include "../matrix.hpp"
-#include "../mat.hpp"
-#include "../newdelete.hpp"
-#include "res-f4-computation.hpp"
-#include "res-f4-m2-interface.hpp"
-#include "../gbring.hpp"
-#include "../aring-zzp-flint.hpp"
-#include "../aring-zzp-ffpack.hpp"
-#include "../dmat.hpp"
-#include "../mat-linalg.hpp"
-#include "../gauss.hpp"
-
-#include "../timing.hpp"
-
-#include <vector>
-#include <iostream>
-
-#include "res-gausser-ZZp.hpp"
-#include "res-gausser-QQ.hpp"
-#include "res-gausser-QQ-hybrid.hpp"
+#include "schreyer-resolution/res-f4-m2-interface.hpp"
+#include "ZZ.hpp"                                         // for RingZZ
+#include "aring-RRR.hpp"                                  // for ARingRRR
+#include "aring-zz-gmp.hpp"                               // for ARingZZGMP
+#include "aring-zzp-ffpack.hpp"                           // for ARingZZpFFPACK
+#include "aring-zzp-flint.hpp"                            // for ARingZZpFlint
+#include "aring.hpp"                                      // for ring_RR
+#include "coeffrings.hpp"                                 // for Coefficient...
+#include "comp.hpp"                                       // for Computation
+#include "mat-linalg.hpp"                                 // for DMatLinAlg
+#include "dmat.hpp"                                       // for DMat
+#include "engine-exports.h"                               // for M2_arrayint
+#include "error.h"                                        // for ERROR
+#include "exceptions.hpp"                                 // for engine_error
+#include "freemod.hpp"                                    // for FreeModule
+#include "gauss.hpp"                                      // for GaussElimCo...
+#include "gbring.hpp"                                     // for gbvector
+#include "interface/groebner.h"                           // for rawMinimalB...
+#include "mat.hpp"                                        // for MutableMatrix
+#include "matrix-con.hpp"                                 // for MatrixConst...
+#include "matrix.hpp"                                     // for Matrix
+#include "monoid.hpp"                                     // for Monoid
+#include "newdelete.hpp"                                  // for newarray
+#include "polyring.hpp"                                   // for PolynomialRing
+#include "ring.hpp"                                       // for Ring, globalZZ
+#include "schreyer-resolution/res-f4-computation.hpp"     // for F4ResComput...
+#include "schreyer-resolution/res-gausser-QQ-hybrid.hpp"  // for ResGausserQ...
+#include "schreyer-resolution/res-gausser-QQ.hpp"         // for ResGausserQQ
+#include "schreyer-resolution/res-gausser-ZZp.hpp"        // for ResGausserZZp
+#include "schreyer-resolution/res-gausser.hpp"            // for ResGausser
+#include "schreyer-resolution/res-moninfo.hpp"            // for ResMonoid
+#include "schreyer-resolution/res-monomial-types.hpp"     // for res_monomia...
+#include "schreyer-resolution/res-poly-ring.hpp"          // for poly_iter
+#include "schreyer-resolution/res-schreyer-frame.hpp"     // for SchreyerFrame
+#include "schreyer-resolution/res-schreyer-order.hpp"     // for ResSchreyer...
+#include "timing.hpp"                                     // for timer, seconds
+#include <gmp.h>                                          // for mpz_clear
+#include <cstdlib>                                        // for exit, size_t
+#include <chrono>                                         // for common_type...
+#include <iostream>                                       // for operator<<
+#include <type_traits>                                    // for move
+#include <vector>                                         // for vector, vec...
 
 bool ResGausserZZp::isAllowedCoefficientRing(const Ring* K) const
 {
@@ -699,7 +718,6 @@ void setDMatFromSparseMatrixGenerator(Gen& G, DMat<RingType>& M)
     }
 }
 
-#include "../debug.hpp"
 
 template<typename Gen>
 int SchreyerFrame::rankUsingSparseMatrix(Gen& D)

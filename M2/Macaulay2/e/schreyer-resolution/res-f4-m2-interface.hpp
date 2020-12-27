@@ -1,17 +1,17 @@
 #ifndef __res_f4_to_m2_interface_hpp_
 #define __res_f4_to_m2_interface_hpp_
 
-#include "../engine-includes.hpp"
-
-#include "interface/groebner.h"
-#include "res-schreyer-frame.hpp"
-#include "res-gausser.hpp"
-#include "res-poly-ring.hpp"
-#include "../dmat.hpp"
-
-class MonomialInfo;
-class ResGausser;
-class Polynomial;  // vector in a free module
+#include "ringelem.hpp"  // for vec
+#include <utility>       // for pair
+class FreeModule;
+class Matrix;
+class MutableMatrix;
+class PolynomialRing;
+class ResPolyRing;
+class Ring;
+class SchreyerFrame;
+class poly;
+template <typename ACoeffRing> class DMat;
 
 class ResF4toM2Interface
 {

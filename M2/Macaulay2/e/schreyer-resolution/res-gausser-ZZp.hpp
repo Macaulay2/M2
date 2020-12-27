@@ -3,10 +3,12 @@
 #ifndef _res__gausser_zzp_hpp_
 #define _res__gausser_zzp_hpp_
 
-#include "../ring.hpp"
-#include "../ZZp.hpp"
-#include "../coeffrings.hpp"
-#include "res-gausser.hpp"
+#include <iosfwd>                               // for ostream
+#include <vector>                               // for vector
+#include "coeffrings.hpp"                       // for CoefficientRingZZp
+#include "ringelem.hpp"                         // for ring_elem
+#include "schreyer-resolution/res-gausser.hpp"  // for ComponentIndex, Coeff...
+class Ring;
 
 class ResGausserZZp : public ResGausser
 {

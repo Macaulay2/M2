@@ -1,10 +1,10 @@
 // Copyright 2014-2016 Michael E. Stillman
 
-#include "res-f4.hpp"
-#include "res-gausser.hpp"
-#include "res-schreyer-frame.hpp"
+#include "schreyer-resolution/res-f4.hpp"
+#include "schreyer-resolution/res-gausser.hpp"
+#include "schreyer-resolution/res-schreyer-frame.hpp"
 
-#include "res-monomial-sorter.hpp"
+#include "schreyer-resolution/res-monomial-sorter.hpp"
 
 #include "monoid.hpp"
 #include "ntuple.hpp"
@@ -14,7 +14,7 @@
 #include <iostream>
 #include <ctime>
 #include <algorithm>
-#include "../timing.hpp"
+#include "timing.hpp"
 
 #if 0
 // This is test code which should be removed, or placed elsewhere!

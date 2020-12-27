@@ -1,9 +1,17 @@
 // Copyright 1994-2016 Michael E. Stillman
 
-#include "../text-io.hpp"
+#include "schreyer-resolution/res-f4-monlookup.hpp"
+#include "buffer.hpp"                                     // for buffer
+#include "engine-exports.h"                               // for newline
+#include "mem.hpp"                                        // for stash
+#include "schreyer-resolution/res-varpower-monomial.hpp"  // for index_res_v...
+#include "style.hpp"                                      // for INTSIZE
+#include "text-io.hpp"                                    // for emit, emit_...
 
-#include "res-varpower-monomial.hpp"
-#include "res-f4-monlookup.hpp"
+#include <cassert>                                        // for assert
+#include <cstddef>                                        // for NULL
+#include <stdint.h>                                       // for int32_t
+#include <vector>                                         // for vector, vec...
 
 template <typename Key>
 typename ResF4MonomialLookupTableT<Key>::mi_node *

@@ -1,7 +1,10 @@
 // Copyright 2005-2017 Michael E. Stillman.
 
-#include "res-gausser-QQ.hpp"
-#include <iostream>
+#include "schreyer-resolution/res-gausser-QQ.hpp"
+#include <cstdio>    // fprintf, stdout
+#include <iostream>  // for operator<<, ostream, basic_ostream, endl, cout
+
+class Ring;
 
 ResGausserQQ::ResGausserQQ(const Ring* K1, size_t p1)
     : ResGausser(K1), Kp1(p1), mMaxDenominatorSize(1)

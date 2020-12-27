@@ -1,7 +1,11 @@
 // Copyright 2005-2017 Michael E. Stillman.
 
-#include "res-gausser-QQ-hybrid.hpp"
-#include <iostream>
+#include "schreyer-resolution/res-gausser-QQ-hybrid.hpp"
+#include <cstdio>            // fprintf, stdout
+#include <iostream>          // for operator<<, basic_ostream, endl, cout
+#include <type_traits>       // for move
+#include "buffer.hpp"        // for buffer
+#include "engine-exports.h"  // for M2_gbTrace
 
 long ResGausser::numAdditions = 0;
 
