@@ -138,7 +138,7 @@ public:
   int wordHeft(Word& word, int start_index) const { return wordWeight(word, mHeftDegrees, start_index); }
 
   // monomial support functions
-  void support(const Monom& m, std::vector<int>& result);
+  void support(const Monom& m, std::vector<int>& result) const;
 
 private:
   int wordLength(const Monom&m) const { return m[0] - mNumWeights - 1; }

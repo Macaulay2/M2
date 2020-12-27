@@ -58,7 +58,7 @@ public:
   void swap(Poly& f, Poly& g) const;
   void var(Poly& result, int v) const;
 
-  M2_arrayint support(Poly& f) const;
+  M2_arrayint support(const Poly& f) const;
   
   void from_word(Poly& result, const Word& word) const;
   void from_word(Poly& result, const std::vector<int>& word) const; 
