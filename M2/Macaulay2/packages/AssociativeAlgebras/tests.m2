@@ -958,6 +958,51 @@ BUG ///
   g = g1*w + lot  
 ///
 
+TEST ///
+-- testing kernels
+-*
+  restart
+  debug needsPackage "AssociativeAlgebras"
+*-
+--- more robust test of an "elimination" order for kernels
+kk = toField(QQ[x]/(x^2+x+1))   -- these examples fail if you use frac instead of toField
+R = kk{y_1,y_2,y_3}
+S = skewPolynomialRing(kk,(-1)_kk,{z_1,z_2,z_3})
+f_1 = z_1 + z_2 + z_3
+f_2 = z_1 + x^2*z_2 + x*z_3
+f_3 = z_1 + x*z_2 + x^2*z_3
+phi = map(S,R,{f_1,f_2,f_3})
+K = ncKernel phi
+assert(ring y_1 === R) -- ring from ncKernel leaking to front end
+use R -- remove this once the previous test passes
+assert(phi(y_1*y_3 - 2*y_2^2 + y_3*y_1) == 0)
+assert(phi(y_2*y_3 - 2*y_1^2 + y_3*y_2) == 0)
+assert(phi(y_1*y_2 - 2*y_3^2 + y_2*y_1) == 0)
+T = R/K
+hsT = apply(15, i -> numgens source ncBasis(i,T))
+binT = apply(15, i -> binomial(i+2,2))
+assert(hsT == binT)
+///
+
+TEST ///
+-- testing kernels
+-*
+  restart
+  debug needsPackage "AssociativeAlgebras"
+*-
+--- a simpler example
+A = QQ{a,b,c,Degrees=>{3,3,2}}
+A' = QQ{a,b,c,Degrees=>{2,2,2}}
+B = QQ{x,y}
+phi = map(B,A,{x*y*x,y*x*y,x*y})
+phi' = map(B,A',{x^2,x*y,y^2})
+assert(ncKernel phi' == 0)
+K = ncKernel phi
+C = A/K
+hsC = apply(15, i -> numgens source ncBasis(i,C))
+-- not sure what else to test here yet.
+///
+
 DEVELOPMENT ///
 -*
   restart
@@ -1134,3 +1179,5 @@ assert(support M_{2} == {x,y,z})
 ---    the example on line 962ish (which was in turn created by another error)
 --- 5. The ring created for the computation in the kernel code
 ---    is leaking to the front end.  Not sure how to avoid this.
+--- 6. Should implement ncGraphIdeal, as it is useful for preimages
+---    as well.

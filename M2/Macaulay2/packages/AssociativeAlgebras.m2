@@ -1053,7 +1053,9 @@ ncKernel RingMap := opts -> phi -> (
    kerGens := select(flatten entries Kgb, f -> isSubset(support f, drop(gens C, numgens B)));
    backToA := map(A,C,toList((numgens B) : 0_A) | (gens A));
    -- the ring map 'backToA' is messing up the coefficients.  It seems the denominators are
-   -- disappearing if the coefficientRing is a field of fractions.  See line 801 in tests.m2
+   -- disappearing if the coefficientRing is created via frac rather than toField.
+   -- See line 801 in tests.m2
+   if kerGens == {} then return ideal 0_A;
    ideal (kerGens / backToA)
 )
 
