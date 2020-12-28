@@ -88,7 +88,8 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
 
 checkAllPackages = () -> (
     tmp := argumentMode;
-    argumentMode = defaultMode - SetCaptureErr - if noinitfile then 0 else ArgQ;
+    argumentMode = defaultMode - SetCaptureErr - SetUlimit -
+	if noinitfile then 0 else ArgQ;
     fails := for pkg in sort separate(" ", version#"packages") list (
 	print HEADER1 pkg;
 	if runString("check(" | format pkg | ", Verbose => true)",

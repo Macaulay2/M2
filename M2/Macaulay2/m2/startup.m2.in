@@ -523,7 +523,7 @@ action2 := hashTable {
 	  else if phase == 1 and arg == "1" then
 	       runBasicTests()
 	  else if phase == 4 and arg == "2" then (
-	       argumentMode = defaultMode - SetCaptureErr -
+	       argumentMode = defaultMode - SetCaptureErr - SetUlimit -
 		    if noinitfile then 0 else ArgQ;
 	       if runString(///check("Core", Verbose => true)///, Core, false)
 		    then exit 0 else exit 1
