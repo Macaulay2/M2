@@ -47,7 +47,7 @@ loadTestDir := pkg -> (
         tmp := currentPackage;
         currentPackage = pkg;
         TEST(sort apply(select(readDirectory testDir, file ->
-            match("\\.m2$", file)), test -> testDir | "/" | test),
+            match("\\.m2$", file)), test -> testDir | test),
             FileName => true);
         currentPackage = tmp;
         pkg#"test directory loaded" = true;
