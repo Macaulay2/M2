@@ -80,8 +80,8 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
 		 (k, temporaryFilenameCounter - 2))));
     outfile := k -> temporaryDirectory() | toString k | ".tmp";
     if hadError then (
-	if opts.Verbose then apply(last \ errorList, k -> (
-		(filename, lineno, teststring) := pkg#"test inputs"#k;
+	if opts.Verbose then apply(errorList, (j, k) -> (
+		(filename, lineno, teststring) := pkg#"test inputs"#j;
 		stderr << filename << ":" << lineno - 1 << ":1: error:" << endl;
 		printerr get("!tail " | outfile k)));
 	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
