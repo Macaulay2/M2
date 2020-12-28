@@ -1,11 +1,6 @@
-TEST' := teststr -> assert not first capture(teststr, UserMode => false)
-
-TEST' ///
  basis (QQ^6)
  basis (ZZ^7)
-///
 
-TEST' ///
   R = ZZ/101[a..d]
   I = ideal(a*d, b^2, c*d)
   assert(
@@ -41,9 +36,7 @@ TEST' ///
   assert(
        basis(10,R,Limit=>10) 
        == matrix {{a^10, a^9*b, a^9*c, a^9*d, a^8*b^2, a^8*b*c, a^8*b*d, a^8*c^2, a^8*c*d, a^8*d^2}})
-///
 
-TEST' ///
   -- skew commuting rings
   R = ZZ/101[a..f,SkewCommutative => {a,b,c}]
   b*a
@@ -57,17 +50,13 @@ TEST' ///
   assert(
     basis(5,S)
     == matrix {{a*d^2*e^2, a*d^2*f^2, b*d^2*e^2, b*d^2*f^2}})
-///
 
-TEST' ///
   -- multigraded rings
   R = ZZ/101[a..d,Degrees=>{{1,2,3},{1,-1,0},{1,1,1},{2,1,-3}}]
   degree (a*b*c*d)
   assert(basis({5,3,1},R) == matrix"abcd")
   assert(basis({1,2,3},R) == matrix"a")
-///
 
-TEST' ///
 -- over ZZ
   R = ZZ[a..c]
   M = coker matrix"3a,4b,5c,a3,b3,c3"
@@ -75,9 +64,7 @@ TEST' ///
   assert(source F == R^{{0},{-1},{-2},{-1},{-2},{-1},{-2}})
   assert(target F == M)
   assert(matrix F == matrix {{1, a, a^2, b, b^2, c, c^2}})
-///
 
-TEST' ///
       A = QQ[x];
       R = A/x^6;
       f = basis(R,SourceRing => ambient R)
@@ -94,25 +81,19 @@ TEST' ///
 	   image map(A^{{0},{-1},{-2},{-3},{-4},{-5}},
 		    A^{{-1},{-2},{-3},{-4},{-5},{-6}},
 		    {{x,0,0,0,0,0},{-1,x,0,0,0,0},{0,-1,x,0,0,0},{0,0,-1,x,0,0},{0,0,0,-1,x,0},{0,0,0,0,-1,x}}))
- ///
 
- TEST' ///
       R = QQ[x]/x^6;
       B = QQ[];
       h = basis(R,SourceRing => B)
       assert( degrees source h == {{0}, {1}, {2}, {3}, {4}, {5}} )
       assert( coimage h == B^{{0}, {-1}, {-2}, {-3}, {-4}, {-5}} )
       assert( kernel h == image map(B^{{0},{-1},{-2},{-3},{-4},{-5}},0,0))
- ///
 
- TEST' ///
       R = QQ[x]/x^6;
       g = basis(R,SourceRing => QQ)
       assert( coimage g === QQ^6 )
       assert( kernel g === image map(QQ^6,0,0) )
- ///
 
- TEST' ///
  -- A simple use of basis: all elements of a given degree in a ring
  -- sometimes just ones involving a set of the variables
  R  = ZZ/101[a..d]
@@ -128,9 +109,7 @@ TEST' ///
 
  C2 = basis(4,R, Variables=>{a,c})
  assert(C2 == matrix {{a^4, a*c}})
- ///
 
- TEST' ///
  -- Similar, but considering variables of degree 0
  A = ZZ/101[a,b]
  B = A[x,y,DegreeMap=>i->0,Join=>false]
@@ -146,9 +125,6 @@ TEST' ///
       == matrix"x2,xy,y2")
    -- should only need the heft to be positive on all variables being used!
 
- ///
-
-TEST' ///
 -- test of whether finiteness is checked correctly, if we only use some variables:
 R = ZZ/101[a..d]
 A = R/(a^3, b^4)
@@ -156,9 +132,7 @@ assert(
   sort basis(A, Variables=>{a,b})
   == matrix {{1, b, a, b^2, a*b, a^2, b^3, a*b^2, a^2*b, a*b^3, a^2*b^2, a^2*b^3}})
 assert try (basis(A, Variables=>{a,c});false) else true
-///
 
- TEST' ///
  -- basis of {d,*,*,...,*}
  -- the case done first:
  R = ZZ/101[a..d, Degrees=>toList(4:{1,2})]
@@ -178,16 +152,12 @@ assert try (basis(A, Variables=>{a,c});false) else true
       == map(SM^1,R^3,map(SM,R,{a, b, c, d}),{{p_0^2, p_0*p_1, p_1^2}},Degree=>{2, 0, 0})
       )
  assert isHomogeneous B
- ///
 
-TEST' ///
   -- had been in bugs/mike/0-basis r12446
   T = QQ[x,Degrees => {-1}]
   assert(basis(-3,-2, T) == matrix"x2,x3")
   assert(basis(-2,-3, T) == 0)
-///
 
- TEST' ///
  -- More partial bases:
 
  A = ZZ/101[a..d, Degrees=>{2:{1,2},2:{0,1}}]
@@ -234,9 +204,7 @@ TEST' ///
 findHeftVars(A,1)
 rewriteRing(A,1)
 basis({3},oo)
-///
 
-TEST' ///
   -- basis as functor
   R = ZZ/101[a..d]
   M = matrix"a,b;c,d"
@@ -257,10 +225,7 @@ TEST' ///
   basis(3,f)
   g = C.dd_3
   basis(2,g)
-///
 
-TEST' ///
 R = QQ[x,y,z]/(x^3,y^2,z^5);                                                                           
 basis(-infinity,4,R)                                                                                   
 basis(5,infinity,R)                                                                                   
-///
