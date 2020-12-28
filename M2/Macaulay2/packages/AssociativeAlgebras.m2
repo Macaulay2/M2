@@ -82,7 +82,9 @@ export {
     -- "isNormal", -- now bringing this in from IntegralClosure
     "normalAutomorphism",
     "ncHilbertSeries",
-    "toRationalFunction"
+    "toRationalFunction",
+    "UseVariables",
+    "ncKernel"
     }
 
 -- FM: better way to do this?
@@ -205,7 +207,7 @@ checkHeft = (degs, heftvec) -> (
 freeAlgebra = method()
 freeAlgebra(Ring, List) := FreeAlgebra => (A, args)  -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
-   opts := new OptionTable from {Degrees=>null, DegreeRank=>null, Weights=>{}, Heft=>null};
+   opts := new OptionTable from {Degrees => null, DegreeRank => null, Weights => {}, Heft => null, UseVariables => true};
    (opts,args) = override(opts,toSequence args);
    --- for some reason, override returns the elt itself if there is only one variable
    varList := if class args === Sequence then args else {args};
@@ -238,10 +240,9 @@ freeAlgebra(Ring, List) := FreeAlgebra => (A, args)  -> (
        (symbol cache) => new CacheTable from {},
        (symbol baseRings) => append(A.baseRings,A)
        };
-   newGens := for i from 0 to #varSymbols-1 list varSymbols#i <- new R from R#RawRing_i;
+   R.generators = for i from 0 to #varSymbols-1 list new R from R#RawRing_i;
    R#promoteDegree = makepromoter degreeLength R;
    R#liftDegree = makepromoter degreeLength R;
-   R.generators = newGens;
    commonEngineRingInitializations R;
    --- need to fix net of an RingElement coming from a NCPolynomial ring.
    processFactor := (k,v) -> if v =!= 1 then Power{R#generatorExpressions#k, v} else R#generatorExpressions#k;
@@ -272,6 +273,7 @@ freeAlgebra(Ring, List) := FreeAlgebra => (A, args)  -> (
        rawP := first last rawPairs(raw coefficientRing R, rawLT);
        product(apply(rawSparseListFormMonomial rawP, p -> R_(p#0)^(p#1)))
        );
+   if opts#UseVariables then use R;
    R
    );
 
@@ -1038,7 +1040,8 @@ ncKernel RingMap := opts -> phi -> (
    -- FM: I can't seem to prevent this algebra from leaking to the front end.
    C := freeAlgebra(kk,(gens B | gens A) |
             {Degrees => (degrees B | degrees A)} | 
-	    {Weights => toList(numgens B : 1) | (toList(numgens A : 0))});
+	    {Weights => toList(numgens B : 1) | (toList(numgens A : 0))} | 
+	    {UseVariables=>false});
    psiA := map(C,ambA,drop(gens C, numgens B));
    psiB := map(C,ambB,take(gens C, numgens B));
    liftToAmbB := map(ambB,B,gens ambB);

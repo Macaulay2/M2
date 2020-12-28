@@ -104,11 +104,12 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   // auto-reduce the new elements
   
   // convert back to GB elements...
-  ConstPolyList newElems = newGBelements();
+  PolyList newElems = newGBelements();
 
   for (auto& f : newElems)
     {
       addToGroebnerBasis(f);
+      autoreduceByLastElement();
       updateOverlaps(f);
     }
 
@@ -125,7 +126,7 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   matrixReset();
 }
 
-void NCF4::addToGroebnerBasis(const Poly * toAdd)
+void NCF4::addToGroebnerBasis(Poly * toAdd)
 {
   mGroebner.push_back(toAdd);
 }
@@ -205,9 +206,9 @@ Word NCF4::createOverlapLeadWord(Overlap o)
   return Word(rg.first, rg.second);
 }
 
-ConstPolyList NCF4::newGBelements()  // From current F4 matrix.
+PolyList NCF4::newGBelements()  // From current F4 matrix.
 {
-  ConstPolyList result;
+  PolyList result;
   for (int i = mFirstOverlap; i < mRows.size(); i++)
     {
       if (mRows[i].second.size() == 0) continue;
@@ -217,6 +218,33 @@ ConstPolyList NCF4::newGBelements()  // From current F4 matrix.
       result.push_back(f);
     }
   return result;
+}
+
+ring_elem NCF4::getCoeffOfMonom(const Poly& f, const Monom& m)
+{
+  for (auto t = f.cbegin(); t != f.cend(); ++t)
+  {
+    if (freeAlgebra().monoid().isEqual(t.monom(),m))
+      return t.coeff();
+  }
+  return freeAlgebra().coefficientRing()->zero();
+}
+
+void NCF4::autoreduceByLastElement()
+{
+  if (mGroebner.size() <= 1) return;
+  const Poly& lastPoly = *(mGroebner[mGroebner.size()-1]);
+  const Monom& leadMon = lastPoly.cbegin().monom();
+  for (auto fPtr = mGroebner.begin(); fPtr != mGroebner.end() - 1; ++fPtr)
+  {
+    ring_elem foundCoeff = getCoeffOfMonom(**fPtr,leadMon);
+    if (!freeAlgebra().coefficientRing()->is_zero(foundCoeff))
+    {
+      Poly* result = new Poly;
+      freeAlgebra().subtractScalarMultipleOf(*result,**fPtr,lastPoly,foundCoeff);
+      freeAlgebra().swap(**fPtr,*result);
+    }
+  }
 }
 
 void NCF4::matrixReset()

@@ -7,6 +7,8 @@
 #include <utility>
 #include <vector>
 
+#include "NCAlgebras/MemoryBlock.hpp" // for MemoryBlock
+
 class Word;
 class WordWithData;
 
@@ -108,6 +110,8 @@ private:
 private:
   std::vector<Word> mMonomials;
   std::vector<int> mIndices; // -1 means word was retired, cannot be used in this class any longer.
+  
+  MemoryBlock mMonomialSpace;
 };
 
 class WordWithDataTable
@@ -206,6 +210,8 @@ private:
                        std::vector<int>& result_overlaps);
 
 private:
+  // WARNING TODO: If this is to be used, one must make copies of the word part
+  // in order to work with our approach to autoreduction.
   std::vector<WordWithData> mMonomials;
   std::vector<int> mIndices; // -1 means word was retired, cannot be used in this class any longer.
 };

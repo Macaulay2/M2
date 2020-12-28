@@ -27,7 +27,8 @@ private:
   const ConstPolyList mInput;
   std::vector<int> mGeneratorDegrees; // heft degree or sugar degree of corresponding mGroebner element.
 
-  ConstPolyList mGroebner;
+  //ConstPolyList mGroebner;
+  PolyList mGroebner;
   std::vector<int> mGroebnerDegrees; // sugar degree.  -1 means removed.
 
   mutable std::unique_ptr<PolynomialHeap> mHeap;
@@ -52,7 +53,7 @@ public:
   void computeInhomogeneous(int softDegreeLimit);
   void computeHomogeneous(int softDegreeLimit);
   
-  const ConstPolyList& currentValue();
+  const ConstPolyList& currentValue() const;
 
   // old version of reduction code
   auto twoSidedReductionOld(const FreeAlgebra& A,
@@ -74,12 +75,14 @@ public:
 
   void addToGroebnerBasis(Poly* toAdd);
 
+  void autoreduceByLastElement();
+
   void updateOverlaps(const Poly* toAdd);
 
   auto initReductionOnly() -> void;
   
   static auto createOverlapPoly(const FreeAlgebra& A,
-                                const ConstPolyList& polyList,
+                                const PolyList& polyList,
                                 int polyIndex1,
                                 int polyIndex2,
                                 int overlapIndex) -> Poly*;
@@ -95,6 +98,14 @@ public:
   auto insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void;
 
   auto isOverlapNecessary(Overlap o) const -> bool;
+
+  auto displayGroebnerBasis(std::ostream& o) const -> void;
+
+private:
+  // utility functions
+  // move to FreeAlgebra?
+  ring_elem getCoeffOfMonom(const Poly& f, const Monom& m);
+
 };
 
 #endif

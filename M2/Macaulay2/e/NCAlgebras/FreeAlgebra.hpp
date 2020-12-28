@@ -76,11 +76,21 @@ public:
            Poly::const_iterator fEnd,
            Poly::const_iterator gBegin,
            Poly::const_iterator gEnd) const;
+  void addScalarMultipleOf(Poly& result,
+                           Poly::const_iterator fBegin,
+                           Poly::const_iterator fEnd,
+                           Poly::const_iterator gBegin,
+                           Poly::const_iterator gEnd,
+                           ring_elem coeff) const;  
   
   void negate(Poly& result, const Poly& f) const; 
   void add(Poly& result, const Poly& f, const Poly& g) const;
   
   void subtract(Poly& result, const Poly& f, const Poly& g) const;
+  void subtractScalarMultipleOf(Poly& result, 
+                                const Poly& f,
+                                const Poly& g,
+                                ring_elem coeff) const;
   void mult(Poly& result, const Poly& f, const Poly& g) const;
   void power(Poly& result, const Poly& f, int n) const;
   void power(Poly& result, const Poly& f, mpz_srcptr n) const;

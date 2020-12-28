@@ -16,13 +16,21 @@ std::ostream& operator<<(std::ostream& o, const WordTable& wordTable)
 
 size_t WordTable::insert(Word w)
 {
-  mMonomials.push_back(w);
+  // we are making a copy of the word, since the pointers
+  // to the GB elements may change during autoreduction. 
+  auto newW = mMonomialSpace.allocateArray<int>(w.size());
+  std::copy(w.begin(),w.end(),newW.first);
+  mMonomials.push_back(Word(newW.first,newW.second));
   return mMonomials.size();
 }
 
 size_t WordTable::insert(Word w, std::vector<Overlap>& newRightOverlaps)
 {
-  mMonomials.push_back(w);
+  // we are making a copy of the word, since the pointers
+  // to the GB elements may change during autoreduction. 
+  auto newW = mMonomialSpace.allocateArray<int>(w.size());
+  std::copy(w.begin(),w.end(),newW.first);
+  mMonomials.push_back(Word(newW.first,newW.second));
   rightOverlaps(newRightOverlaps); // find (right) overlaps with most recent added word 'w'.
   return mMonomials.size();
 }

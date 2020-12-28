@@ -92,6 +92,8 @@ public:
 
   int compare(const Monom& m1, const Monom& m2) const;
 
+  bool isEqual(const Monom& m1, const Monom& m2) const;
+
   // index_of_variable: returns 0..numgens-1, if monomial is that, otherwise returns -1.  
   int index_of_variable(const Monom& m) const; 
 

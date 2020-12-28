@@ -45,7 +45,6 @@ private:
 
 std::ostream& operator<<(std::ostream& o, const Monom& m);
 
-
 class ModuleMonom
 // Format for such a monomial:
 // [len value hashval comp deg v1 v2 ... vr]

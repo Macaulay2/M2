@@ -889,9 +889,11 @@ kk = ZZ/32003
 R = kk{x,y,z,w}
 I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
 
-I = ideal I_*; elapsedTime Igb = NCGB(I, 11, Strategy=>16); -- 12.0 seconds (with std::vector<int>)
+I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy=>16);
+I = ideal I_*; elapsedTime Igb = NCGB(I, 11, Strategy=>16); -- 12.0 seconds (with std::vector<int>) (~5 sec now)
 I = ideal I_*; elapsedTime Igb = NCGB(I, 10, Strategy=>16); -- 2.1 seconds
 I = ideal I_*; elapsedTime Igb = NCGB(I, 10); -- 12.3 seconds (with std::vector<int>)
+I = ideal I_*; elapsedTime Igb = NCGB(I, 7, Strategy=>16);
 
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>16); -- 2220 seconds, I think?
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14); -- 
@@ -899,7 +901,7 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 14); --
 time Igb = NCGB(I, 20, Strategy=>16);
 time Igb = NCGB(I, 10);
 S = R/I
-#(flatten entries ncBasis(8,S)) == binomial(8+3,3)
+#(flatten entries ncBasis(10,S)) == binomial(10+3,3)
 flatten entries Igb / degree
 
 -- the following seems wrong
@@ -962,7 +964,7 @@ TEST ///
 -- testing kernels
 -*
   restart
-  debug needsPackage "AssociativeAlgebras"
+  needsPackage "AssociativeAlgebras"
 *-
 --- more robust test of an "elimination" order for kernels
 kk = toField(QQ[x]/(x^2+x+1))   -- these examples fail if you use frac instead of toField
@@ -988,7 +990,7 @@ TEST ///
 -- testing kernels
 -*
   restart
-  debug needsPackage "AssociativeAlgebras"
+  needsPackage "AssociativeAlgebras"
 *-
 --- a simpler example
 A = QQ{a,b,c,Degrees=>{3,3,2}}
@@ -1009,6 +1011,7 @@ DEVELOPMENT ///
   debug needsPackage "AssociativeAlgebras"
 *-
 --- more robust test of an "elimination" order for kernels
+---xxx---
 kk = toField(QQ[x]/(x^2+x+1))   -- these examples fail if you use frac instead of toField
 R = kk{y_1,y_2,y_3}
 S = skewPolynomialRing(kk,(-1)_kk,{z_1,z_2,z_3})
@@ -1172,12 +1175,20 @@ assert(support M_{2} == {x,y,z})
 --- 1. fraction field and ring maps, line 801.  I suspect the constructor for RingMap
 ---    is at fault.
 --- 2. sub(ideal,Ring) doesn't seem to work right
----    in the noncommutative case.
+---    in the noncommutative case. (zeroing out generators)
 --- 3. support is broken (but I wrote ncSupport for the time being)
 ---      (FM: support has been fixed, I think)  Q: do we need newarray_atomic or is std::vector ok?
 --- 4. both F4 and regular GB computation seemed to hang on
----    the example on line 962ish (which was in turn created by another error)
+---    the example marked by ---xxx---.  Change toField to frac to see the behavior.
 --- 5. The ring created for the computation in the kernel code
 ---    is leaking to the front end.  Not sure how to avoid this.
 --- 6. Should implement ncGraphIdeal, as it is useful for preimages
 ---    as well.
+
+DEVELOPMENT ///
+restart
+needsPackage "AssociativeAlgebras"
+A = QQ{x,y,z,w}
+I = ideal {z*w*z*w^2*z*w-303600/972977*z*w^2*z^4, z*w*z*w^2*z*w-303600/972977*z*w^2*z^4}
+NCGB(I,8)
+///

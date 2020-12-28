@@ -105,6 +105,10 @@ void NCGroebner::computeHomogeneous(int softDegreeLimit)
           if (!freeAlgebra().is_zero(*redOverlapPoly))
             {
               addToGroebnerBasis(redOverlapPoly);
+              //std::cout << "--------------------" << std::endl;
+              //displayGroebnerBasis(std::cout);
+              autoreduceByLastElement();
+              //displayGroebnerBasis(std::cout);
               updateOverlaps(redOverlapPoly);
             }
           else
@@ -168,6 +172,7 @@ void NCGroebner::computeInhomogeneous(int softDegreeLimit)
           if (!freeAlgebra().is_zero(*redOverlapPoly))
             {
               addToGroebnerBasis(redOverlapPoly);
+              //autoreduceByLastElement();
               updateOverlaps(redOverlapPoly);
             }
           else
@@ -194,30 +199,57 @@ void NCGroebner::computeInhomogeneous(int softDegreeLimit)
 
 void NCGroebner::addToGroebnerBasis(Poly * toAdd)
 {
-   // add in auto-reduction here?
-   freeAlgebra().makeMonicInPlace(*toAdd);
-   mGroebner.push_back(toAdd);
+  // add in auto-reduction here?
+  freeAlgebra().makeMonicInPlace(*toAdd);
+  mGroebner.push_back(toAdd);
+}
+
+void NCGroebner::autoreduceByLastElement()
+{
+  if (mGroebner.size() <= 1) return;
+  const Poly& lastPoly = *(mGroebner[mGroebner.size()-1]);
+  const Monom& leadMon = lastPoly.cbegin().monom();
+  for (auto fPtr = mGroebner.begin(); fPtr != mGroebner.end() - 1; ++fPtr)
+  {
+    ring_elem foundCoeff = getCoeffOfMonom(**fPtr,leadMon);
+    if (!freeAlgebra().coefficientRing()->is_zero(foundCoeff))
+    {
+      Poly* result = new Poly;
+      freeAlgebra().subtractScalarMultipleOf(*result,**fPtr,lastPoly,foundCoeff);
+      freeAlgebra().swap(**fPtr,*result);
+    }
+  }
+}
+
+ring_elem NCGroebner::getCoeffOfMonom(const Poly& f, const Monom& m)
+{
+  for (auto t = f.cbegin(); t != f.cend(); ++t)
+  {
+    if (freeAlgebra().monoid().isEqual(t.monom(),m))
+      return t.coeff();
+  }
+  return freeAlgebra().coefficientRing()->zero();
 }
 
 void NCGroebner::updateOverlaps(const Poly * toAdd)
 {
-   std::vector<Overlap> newOverlaps;
-   Word newLeadWord = freeAlgebra().lead_word(*toAdd);
+  std::vector<Overlap> newOverlaps;
+  Word newLeadWord = freeAlgebra().lead_word(*toAdd);
 
-   // the word table insert places the right overlaps into newOverlaps
-   mWordTable.insert(newLeadWord,newOverlaps);
-   insertNewOverlaps(newOverlaps);
+  // the word table insert places the right overlaps into newOverlaps
+  mWordTable.insert(newLeadWord,newOverlaps);
+  insertNewOverlaps(newOverlaps);
 
-   newOverlaps.clear();
-   // this function finds the left overlaps with the most recently
-   // inserted word.
-   mWordTable.leftOverlaps(newOverlaps);
-   insertNewOverlaps(newOverlaps);
+  newOverlaps.clear();
+  // this function finds the left overlaps with the most recently
+  // inserted word.
+  mWordTable.leftOverlaps(newOverlaps);
+  insertNewOverlaps(newOverlaps);
 }
 
-const ConstPolyList& NCGroebner::currentValue()
+const ConstPolyList& NCGroebner::currentValue() const
 {
-  return mGroebner;
+  return reinterpret_cast<const ConstPolyList&>(mGroebner);
 }
 
 // new version of reduction code which uses a heap structure
@@ -229,7 +261,7 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
 
   // easy access to variables in the class
   const FreeAlgebra& A{ freeAlgebra() };
-  const ConstPolyList& reducers{ mGroebner };
+  const ConstPolyList& reducers{ currentValue() };
   const WordTable& W{ mWordTable };
   // SuffixTree& W{ mWordTable };
   
@@ -308,7 +340,9 @@ auto NCGroebner::initReductionOnly() -> void
   mWordTable.clear();
   for (auto& f : mInput)
     {
-      mGroebner.push_back(f);
+      Poly *fCopy = new Poly;
+      freeAlgebra().copy(*fCopy,*f);
+      mGroebner.push_back(fCopy);
       auto i = f->cbegin();
       Word tmp;
       freeAlgebra().monoid().wordFromMonom(tmp,i.monom());
@@ -316,8 +350,8 @@ auto NCGroebner::initReductionOnly() -> void
     }  
 }
 
- auto NCGroebner::createOverlapPoly(const FreeAlgebra& A,
-                                   const ConstPolyList& polyList,
+auto NCGroebner::createOverlapPoly(const FreeAlgebra& A,
+                                   const PolyList& polyList,
                                    int polyIndex1,
                                    int overlapIndex,
                                    int polyIndex2) -> Poly*
@@ -390,7 +424,17 @@ auto NCGroebner::printOverlapData(std::ostream& o, Overlap overlap) const -> voi
   o << "Left Poly   : " << b1.str() << std::endl;
   o << "Overlap Pos : " << std::get<1>(overlap) << std::endl;
   o << "Right Poly  : " << b2.str() << std::endl;
-  return;
+}
+
+auto NCGroebner::displayGroebnerBasis(std::ostream& o) const -> void
+{
+  o << "Current GB:" << std::endl;
+  for (auto f : mGroebner)
+  {
+    buffer b1;
+    freeAlgebra().elem_text_out(b1,*f, true, true, true);
+    o << b1.str() << std::endl;
+  }
 }
 
 auto NCGroebner::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void

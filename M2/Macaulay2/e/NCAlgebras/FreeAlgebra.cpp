@@ -314,16 +314,12 @@ void FreeAlgebra::negate(Poly& result, const Poly& f) const
     outcoeff.push_back(coefficientRing()->negate(*i));
 }
 
-void FreeAlgebra::add(Poly& result, const Poly& f, const Poly& g) const
-{
-  add(result, f.cbegin(), f.cend(), g.cbegin(), g.cend());
-}
-
-void FreeAlgebra::add(Poly& result,
-                      Poly::const_iterator fBegin,
-                      Poly::const_iterator fEnd,
-                      Poly::const_iterator gBegin,
-                      Poly::const_iterator gEnd) const
+void FreeAlgebra::addScalarMultipleOf(Poly& result,
+                                      Poly::const_iterator fBegin,
+                                      Poly::const_iterator fEnd,
+                                      Poly::const_iterator gBegin,
+                                      Poly::const_iterator gEnd,
+                                      ring_elem coeff) const
 {
   auto& outcoeff = result.getCoeffInserter();
   auto& outmonom = result.getMonomInserter();
@@ -336,11 +332,16 @@ void FreeAlgebra::add(Poly& result,
       auto gMon = gBegin.monom();
       auto fCoeff = fBegin.coeff();
       auto gCoeff = gBegin.coeff();
+      ring_elem coeffResult;
       switch(monoid().compare(fMon,gMon))
         {
         case LT:
-          outcoeff.push_back(gCoeff);
-          monoid().copy(gMon, outmonom);
+          coeffResult = coefficientRing()->mult(coeff,gCoeff);
+          if (!coefficientRing()->is_zero(coeffResult))
+          {
+            outcoeff.push_back(coeffResult);
+            monoid().copy(gMon, outmonom);
+          }
           gBegin++;
           break;
         case GT:
@@ -349,7 +350,8 @@ void FreeAlgebra::add(Poly& result,
           fBegin++;
           break;
         case EQ:
-          ring_elem coeffResult = coefficientRing()->add(fCoeff,gCoeff);
+          ring_elem tempResult = coefficientRing()->mult(coeff,gCoeff);
+          coeffResult = coefficientRing()->add(fCoeff,tempResult);
           if (!coefficientRing()->is_zero(coeffResult))
             {
               outcoeff.push_back(coeffResult);
@@ -365,8 +367,12 @@ void FreeAlgebra::add(Poly& result,
         {
           auto gMon = gBegin.monom();
           auto gCoeff = gBegin.coeff();
-          outcoeff.push_back(gCoeff);
-          monoid().copy(gMon, outmonom);
+          ring_elem coeffResult = coefficientRing()->mult(coeff,gCoeff);
+          if (!coefficientRing()->is_zero(coeffResult))
+          {
+            outcoeff.push_back(coeffResult);
+            monoid().copy(gMon, outmonom);
+          }
         }
     }
   if (gBegin == gEnd)
@@ -381,8 +387,57 @@ void FreeAlgebra::add(Poly& result,
     }
 }
 
-void FreeAlgebra::subtract(Poly& result, const Poly& f, const Poly& g) const
+void FreeAlgebra::add(Poly& result, const Poly& f, const Poly& g) const
 {
+  addScalarMultipleOf(result,
+                      f.cbegin(),
+                      f.cend(),
+                      g.cbegin(),
+                      g.cend(),
+                      coefficientRing()->one());
+}
+
+void FreeAlgebra::add(Poly& result,
+                      Poly::const_iterator fBegin,
+                      Poly::const_iterator fEnd,
+                      Poly::const_iterator gBegin,
+                      Poly::const_iterator gEnd) const
+{
+  addScalarMultipleOf(result,
+                      fBegin,
+                      fEnd,
+                      gBegin,
+                      gEnd,
+                      coefficientRing()->one());
+}
+
+
+void FreeAlgebra::subtract(Poly& result,
+                           const Poly& f,
+                           const Poly& g) const
+{
+  addScalarMultipleOf(result,
+                      f.cbegin(),
+                      f.cend(),
+                      g.cbegin(),
+                      g.cend(),
+                      coefficientRing()->minus_one());
+}
+
+void FreeAlgebra::subtractScalarMultipleOf(Poly& result,
+                                           const Poly& f,
+                                           const Poly& g,
+                                           ring_elem coeff) const
+{
+  addScalarMultipleOf(result,
+                      f.cbegin(),
+                      f.cend(),
+                      g.cbegin(),
+                      g.cend(),
+                      coefficientRing()->negate(coeff));
+}
+
+/*
   auto fIt = f.cbegin();
   auto gIt = g.cbegin();
   auto fEnd = f.cend();
@@ -392,8 +447,9 @@ void FreeAlgebra::subtract(Poly& result, const Poly& f, const Poly& g) const
   auto& outmonom = result.getMonomInserter();
 
   // loop over the iterators for f and g, adding the bigger of the two to
-  // the back of the monomial and coefficient vectors of the result.  If a tie, subtract the coefficients.
-  // if the result is zero, do not insert the monomial
+  // the back of the monomial and coefficient vectors of the result.
+  // If a tie, subtract the coefficients.
+  // If the result is zero, do not insert the monomial
   while ((fIt != fEnd) && (gIt != gEnd))
     {
       auto fMon = fIt.monom();
@@ -444,6 +500,7 @@ void FreeAlgebra::subtract(Poly& result, const Poly& f, const Poly& g) const
         }
     }
 }
+*/
 
 void FreeAlgebra::mult(Poly& result, const Poly& f, const Poly& g) const
 {

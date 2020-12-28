@@ -132,6 +132,12 @@ int FreeMonoid::compare(const Monom& m1, const Monom& m2) const
   return EQ;
 }
 
+bool FreeMonoid::isEqual(const Monom& m1, const Monom&m2) const
+{
+  //if (wordLength(m1) != wordLength(m2)) return false;
+  return std::equal(m1.begin(),m1.end(),m2.begin(),m2.end());
+}
+
 void FreeMonoid::multi_degree(const Monom& m, int* already_allocated_degree_vector) const
 {
   int* result = already_allocated_degree_vector; // just to use a smaller name...
