@@ -85,3 +85,16 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
 		stderr << filename << ":" << lineno - 1 << ":1: error:" << endl;
 		printerr get("!tail " | outfile k)));
 	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
+
+checkAllPackages = () -> (
+    tmp := argumentMode;
+    argumentMode = defaultMode - SetCaptureErr - if noinitfile then 0 else ArgQ;
+    fails := for pkg in sort separate(" ", version#"packages") list (
+	print HEADER1 pkg;
+	if runString("check(" | format pkg | ", Verbose => true)",
+	    Core, false) then continue else pkg) do print "";
+    argumentMode = tmp;
+    if #fails > 0 then printerr("package(s) with failing tests: ",
+	demark(", ", fails));
+    return #fails;
+)
