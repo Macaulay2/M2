@@ -971,14 +971,14 @@ f_1 = z_1 + z_2 + z_3
 f_2 = z_1 + x^2*z_2 + x*z_3
 f_3 = z_1 + x*z_2 + x^2*z_3
 phi = map(S,R,{f_1,f_2,f_3})
-phi(
 K = ncKernel phi
 use R -- should not be necessary but a ring from ncKernel is leaking to front end.
 
 -- strictly speaking, this GB calculation is not necessary, as the return value of ncKernel is a GB of K
+-- not sure how to "force" that for the return value of ncKernel
 Kgb = NCGB(K, Strategy=>16) -- this seems to be caught in some kind of infinite loop when over frac field instead of toField
 Kgb = NCGB(K, Strategy=>0) -- same.  
-T = R/K  -- crashing because the NCGB is not completing
+T = R/K  -- crashing because the NCGB is not completing if frac above
 apply(15, i -> numgens source ncBasis(i,T))
 apply(15, i -> binomial(i+2,2))
 
@@ -989,7 +989,7 @@ A = kk{y_1,y_2,y_3}
 B = kk{z_1,z_2,z_3}
 J = ideal apply(subsets(gens B, 2), p -> product p + product reverse p)
 C = kk{z_1,z_2,z_3,y_1,y_2,y_3,Weights=>{1,1,1,0,0,0}}
--- BUG!!! sub(J,C) does not work!
+-- BUG!!! sub(J,C) does not work, so K's definition below is more complicated
 f1 = z_1 + z_2 + z_3
 f2 = z_1 + x^2*z_2 + x*z_3
 f3 = z_1 + x*z_2 + x^2*z_3
@@ -1124,11 +1124,12 @@ assert(support M_{2} == {x,y,z})
 ///
 
 --- (FM) List of bugs found when working on kernel code:
---- 1. fraction field and ring maps, line 801
+--- 1. fraction field and ring maps, line 801.  I suspect the constructor for RingMap
+---    is at fault.
 --- 2. sub(ideal,Ring) doesn't seem to work right
 ---    in the noncommutative case.
 --- 3. support is broken (but I wrote ncSupport for the time being)
----      (support has been fixed, I think)
+---      (FM: support has been fixed, I think)  Q: do we need newarray_atomic or is std::vector ok?
 --- 4. both F4 and regular GB computation seemed to hang on
 ---    the example on line 962ish (which was in turn created by another error)
 --- 5. The ring created for the computation in the kernel code
