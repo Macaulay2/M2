@@ -1022,6 +1022,40 @@ doc ///
       skewPolynomialRing		
 ///
 
+doc ///
+   Key
+      (ncHilbertSeries, FreeAlgebraQuotient)
+      (ncHilbertSeries, FreeAlgebra)
+   Headline
+      Computes the Hilbert series of a noncommutative ring
+   Usage
+     hseries = ncHilbertSeries(A)
+   Inputs
+     A : FreeAlgebraQuotient
+         or @ TO FreeAlgebra @
+   Outputs
+       : Expression
+         or @ TO RingElement @ 
+   Description
+      Text
+         This method computes the Hilbert series of a graded
+	 noncommutative ring.  If the ring is defined over a field
+	 (and potentially not standard graded), then a basis is
+	 computed and the generating function of the degrees of that
+	 basis is returned.  The degree to which one computes the
+	 Hilbert series is controlled with the Order option.  The
+	 output is returned as either an expression (if a rational
+	 representation can be found) or as an element of the degrees
+         ring of the input.
+      Example
+	 A = QQ{x,y,z}
+	 ncHilbertSeries(A,Order=>10)
+	 A = QQ{x,y,z,Degrees=>{1,2,3}}
+	 ncHilbertSeries(A,Order=>10)
+	 B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+	 ncHilbertSeries(B,Order=>10)
+///
+
 -*
 doc ///
   Key

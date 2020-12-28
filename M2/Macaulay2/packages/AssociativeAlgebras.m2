@@ -20,9 +20,8 @@
 ---       Also do this for left/right ideals when those arrive
 ---    2. Derivation option for maps (used in Ore extensions)
 ---    3. 'Force' a GB as valid on the front end.
----    4. 'support' of a monomial doesn't work right
----    5. Bug: promoting a RawRingElement that is 1 \in ZZ to A gives an error?
----    6. FreeProduct and Tensor Products not yet functional (flatten rings need work)
+---    4. FIXED 'support' of a monomial doesn't work right
+---    5. FreeProduct and Tensor Products not yet functional (flatten rings need work)
 
 -- MES + FM TODO 2020.07.29
 --   1. Interreduction in GB code, as well as ensuring inhomogeneous
@@ -44,11 +43,11 @@
 -- get examples all running
 -- have nCAlgebra functionality brought over to ncEngine:
 --  normalElements
---  modules (bi-modules)
 -- major computations to be written yet:
 --  Hilbert function (is needed)
 --  inhomog GB's.
 --  one-sides GB's in modules.
+--  modules (bi-modules)
 -- get unit tests working again.  Also tests in the package.
 -- connect unit tests to autotools build
 
@@ -950,10 +949,11 @@ findRecurrence = method()
 findRecurrence List := as -> (
    revas := reverse as;
    deg := 1;
+   extra := 0;  -- used to build an overdetermined system to help rule out false recurrences.
    foundRecurrence := false;
-   while (not foundRecurrence and 2*deg < #revas) do (
-      eqns := matrix apply(deg, i -> revas_(toList((1+i)..(deg+i))));
-      out := transpose matrix{revas_(toList(0..deg-1))};
+   while (not foundRecurrence and 2*(deg+extra) < #revas) do (
+      eqns := matrix apply(deg+extra, i -> revas_(toList((1+i)..(deg+i))));
+      out := transpose matrix{revas_(toList(0..(deg+extra-1)))};
       soln := out // eqns;
       if eqns*soln != out then
          deg = deg + 1
@@ -989,7 +989,7 @@ toRationalFunction List := as -> (
    (num, den, guess2expr)
 )
 
-ncHilbertSeries = method(Options => {DegreeLimit => 10})
+ncHilbertSeries = method(Options => {Order => 20})
 ncHilbertSeries FreeAlgebra := opts -> A -> (
    -- degreelimit is ignored here, since the formula for the tensor algebra
    -- is straightforward.
@@ -1001,14 +1001,13 @@ ncHilbertSeries FreeAlgebra := opts -> A -> (
 
 --- working only for singly graded things at the moment.
 ncHilbertSeries FreeAlgebraQuotient := opts -> B -> (
-   degLim := opts#DegreeLimit;
+   degLim := opts#Order;
    hsB := apply(degLim + 1, i -> numgens source ncBasis(i,B));
-   ratlReturn := toRationalFunction (hsB, Symbol => getSymbol "SxS");
+   ratlReturn := toRationalFunction hsB;
    if ratlReturn === null then return sum apply(#hsB, i -> hsB#i*((degreesRing B)_0)^i);
    (num, den, expr) := ratlReturn;
    tempRing := ring num;
    phi := map(degreesRing B, tempRing, gens degreesRing B);
-   error "err";
    expression phi num / expression factor phi den
 )
 
@@ -1020,7 +1019,7 @@ ncHilbertSeries FreeAlgebraQuotient := opts -> B -> (
 --   reverse sort unique flatten apply(rawMons, rm -> apply(rawSparseListFormMonomial rm, p -> A_(p#0)))
 --)
 
-ncKernel = method(Options=>{DegreeLimit => 10});
+ncKernel = method(Options=>{DegreeLimit => 10,Strategy=>0});
 ncKernel RingMap := opts -> phi -> (
    if not isFreeAlgebraOrQuotient source phi or not isFreeAlgebraOrQuotient target phi then
       error "Expected both source and target to be noncommutative at the present time.";
@@ -1047,7 +1046,7 @@ ncKernel RingMap := opts -> phi -> (
    Jgb := flatten entries if J.cache.?NCGB then last J.cache.NCGB else gens J;
    K := (ideal (Igb / psiA)) + (ideal (Jgb / psiB)) + 
          ideal apply(numgens A, i -> (psiA ambA_i) - psiB liftToAmbB phi A_i);
-   Kgb := NCGB(K, opts#DegreeLimit,Strategy=>16);
+   Kgb := NCGB(K, opts#DegreeLimit, Strategy => opts#Strategy);
    --- now select those elements of the GB that are only in the variables from ambA and place
    --- those elements in A.
    kerGens := select(flatten entries Kgb, f -> isSubset(support f, drop(gens C, numgens B)));
@@ -1233,18 +1232,14 @@ restart
 needsPackage "AssociativeAlgebras"
 R = QQ{x,y,Degrees=>{1,1}}
 S = R/ideal{x^2*y - y*x^2,x*y^2 - y^2*x}
-ncHilbertSeries(S, DegreeLimit => 6)
+ncHilbertSeries(S, Order => 6)
 ncHilbertSeries S
 
 restart
 needsPackage "AssociativeAlgebras"
 R = QQ{x,y,Degrees=>{2,3}}
 S = R/ideal{x^2*y - y*x^2,x*y^2 - y^2*x}
-ncHilbertSeries(S,DegreeLimit => 40)
-ncHilbertSeries(S,DegreeLimit => 41)
--- seems that the algorithm has trouble finding the right
--- expression if the DegreeLimit is not a multiple of 5
--- don't undertand the reasoning.
+ncHilbertSeries(S,Order => 40)
 
 restart
 needsPackage "AssociativeAlgebras"
@@ -1254,12 +1249,12 @@ ncHilbertSeries R
 restart
 needsPackage "AssociativeAlgebras"
 R = threeDimSklyanin(ZZ/32003,{2,3,5},{x,y,z})
-ncHilbertSeries R
+ncHilbertSeries(R, Order => 15)
 
 restart
 needsPackage "AssociativeAlgebras"
 R = fourDimSklyanin(ZZ/32003,{x,y,z,w})
-ncHilbertSeries(R, DegreeLimit => 8)
+ncHilbertSeries(R, Order => 10)
 
 restart
 needsPackage "AssociativeAlgebras"
@@ -1273,18 +1268,18 @@ R = QQ[x,y,Degrees=>{2,3}]
 hilbertSeries R
 ring value denominator hilbertSeries R === degreesRing R
 -- I don't understand which degrees are allowed in the non-standard graded case...
-last toRationalFunction(apply(9, i -> numgens source basis(i, R)))
-last toRationalFunction(apply(10, i -> numgens source basis(i, R)))
-last toRationalFunction(apply(11, i -> numgens source basis(i, R)))
-last toRationalFunction(apply(12, i -> numgens source basis(i, R)))
-last toRationalFunction(apply(13, i -> numgens source basis(i, R)))
-last toRationalFunction(apply(14, i -> numgens source basis(i, R)))
-last toRationalFunction(apply(15, i -> numgens source basis(i, R)))
-last toRationalFunction(apply(16, i -> numgens source basis(i, R)))
-last toRationalFunction(apply(17, i -> numgens source basis(i, R)))
-last toRationalFunction(apply(18, i -> numgens source basis(i, R)))
-last toRationalFunction(apply(19, i -> numgens source basis(i, R)))
-last toRationalFunction(apply(20, i -> numgens source basis(i, R)))
+toRationalFunction(apply(9, i -> numgens source basis(i, R)))
+toRationalFunction(apply(10, i -> numgens source basis(i, R)))
+toRationalFunction(apply(11, i -> numgens source basis(i, R)))
+toRationalFunction(apply(12, i -> numgens source basis(i, R)))
+toRationalFunction(apply(13, i -> numgens source basis(i, R)))
+toRationalFunction(apply(14, i -> numgens source basis(i, R)))
+toRationalFunction(apply(15, i -> numgens source basis(i, R)))
+toRationalFunction(apply(16, i -> numgens source basis(i, R)))
+toRationalFunction(apply(17, i -> numgens source basis(i, R)))
+toRationalFunction(apply(18, i -> numgens source basis(i, R)))
+toRationalFunction(apply(19, i -> numgens source basis(i, R)))
+toRationalFunction(apply(20, i -> numgens source basis(i, R)))
 ///
 
 /// -- working code for MES
