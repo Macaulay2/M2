@@ -550,16 +550,32 @@ document {
      	  }
      }
 
-document {
-     Key => {pad,(pad, String, ZZ),(pad, ZZ, String)},
-     Headline => "pad a string with spaces",
-     TT "pad(s,n)", " -- pads the string ", TT "s", " to length ", TT "n", " with
-     spaces on the right.",
-     BR{},
- 
-     TT "pad(n,s)", " -- pads the string ", TT "s", " to length ", TT "n", " with
-     spaces on the left."
-     }
+doc ///
+  Key
+    pad
+    (pad, String, ZZ)
+    (pad, ZZ, String)
+    (pad, Net, ZZ)
+    (pad, ZZ, Net)
+  Headline
+    pad a string or net with spaces
+  Usage
+    pad(s,n)
+    pad(n,s)
+  Inputs
+    s:Net
+    n:ZZ
+  Description
+    Text
+      @TT "pad(s,n)"@ pads the string or net @TT "s"@ to length @TT
+      "n"@ with spaces on the right.
+
+      @TT "pad(n,s)"@ pads the string or net @TT "s"@ to length @TT
+      "n"@ with spaces on the left.
+    Example
+      pad(6, "foo")
+      pad("foo", 6) | "bar"
+///
 
 document {
      Key => columnate,
