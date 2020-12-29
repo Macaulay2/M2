@@ -14,7 +14,7 @@ newPackage(
     	Authors => {{Name => "Ashleigh Adams", Email => "adams869@umn.edu", HomePage => "http://www.ashleigh-adams.com"}},
     Headline => "Comparing resolutions of Stanley-Reisner rings and computing various systems of parameters",
     PackageExports => {"SimplicialComplexes", "Posets", "SimplicialDecomposability"},
-    DebuggingMode => true  
+    DebuggingMode => false  
     )
 
 -------------------
