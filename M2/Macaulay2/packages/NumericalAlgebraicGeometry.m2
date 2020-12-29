@@ -12,8 +12,11 @@ newPackage select((
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu", HomePage => "https://people.math.gatech.edu/~aleykin3"},
 	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"}
 	  },
+     Keywords => {"Numerical Algebraic Geometry"},
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
-     PackageExports => {"NAGtypes","NumericalHilbert","SLPexpressions","LLLBases"},
+     PackageExports => {"NAGtypes",
+	 "NumericalLinearAlgebra",
+	 "SLPexpressions"},
      PackageImports => {"PHCpack","Bertini","Truncations"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
@@ -26,8 +29,8 @@ newPackage select((
 	  "acceptance date" => "2011-05-20",
 	  "published article URI" => "http://j-sag.org/Volume3/jsag-2-2011.pdf",
 	  "published code URI" => "http://j-sag.org/Volume3/NumericalAlgebraicGeometry.tar",
-	  "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/NumericalAlgebraicGeometry.m2",
-	  "release at publication" => 13254,	    -- as an integer
+	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NumericalAlgebraicGeometry.m2",
+	  "release at publication" => "c3a7ec33ee30195c2a8a15eef3456b2f27d73bf3",
 	  "version at publication" => "1.4",
 	  "volume number" => "3",
 	  "volume URI" => "http://j-sag.org/Volume3/"
@@ -48,7 +51,8 @@ export {
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
      "EndZoneFactor", "maxCorrSteps", "InfinityThreshold", 
-     "Normalize", "Projectivize",
+     -- "Normalize", -- exported by NumericalLA 
+     "Projectivize",
      "AffinePatches", "DynamicPatch",
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
@@ -414,8 +418,6 @@ load "./NumericalAlgebraicGeometry/decomposition.m2"
 load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
 load "./NumericalAlgebraicGeometry/deflation.m2"
 load "./NumericalAlgebraicGeometry/SLP.m2"
-load "./NumericalAlgebraicGeometry/npd.m2"
-load "./NumericalAlgebraicGeometry/polynomial-space.m2"
 
 load "./NumericalAlgebraicGeometry/WSet-deflation.m2"
 
@@ -492,9 +494,6 @@ selectUnique List := o -> sols ->(
 NAGtrace = method()
 NAGtrace ZZ := l -> (numericalAlgebraicGeometryTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 
--- conjugate all entries of the matrix (should be a part of M2!!!)
-conjugate Matrix := M -> matrix(entries M / (row->row/conjugate))
- 
 -- normalized condition number of F at x
 conditionNumber = method()
 conditionNumber Matrix := M -> (s := first SVD M; if min s == 0 then infinity else max s / min s)

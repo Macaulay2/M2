@@ -1,4 +1,3 @@
-
 newPackage(
         "RandomRationalPoints",
     	Version => "1.3",
@@ -11,7 +10,8 @@ newPackage(
 	     {Name => "Zhan Jiang", Email => "zoeng@umich.edu", HomePage => "http://www-personal.umich.edu/~zoeng/"}
 	     },
     	Headline => "compute a random point in a given variety over a finite field",
-        PackageImports => {"SwitchingFields", "MinimalPrimes"}, 
+	Keywords => {"Examples and Random Objects"},
+        PackageImports => {"SwitchingFields"},
 		DebuggingMode => false, 
 		Reload=>false,
 		AuxiliaryFiles => false -- set to true if package comes with auxiliary files
@@ -47,8 +47,6 @@ export {
     "NumThreadsToUse" -- used in the BruteForce strategy
     }
 exportMutable {}
-
-installMinprimes();
 
 optRandomPoints := {
     Strategy=>Default, 

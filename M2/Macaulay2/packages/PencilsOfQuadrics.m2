@@ -27,6 +27,7 @@ peek loadedFiles
 		   },
 	               PackageExports => {"CompleteIntersectionResolutions"},
              Headline => "Clifford Algebra of a pencil of quadratic forms",
+	     Keywords => {"Commutative Algebra"},
              DebuggingMode => true
              )
 

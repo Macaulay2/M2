@@ -7,6 +7,7 @@ newPackage( "Divisor",
 	  {Name => "Karl Schwede", Email=> "kschwede@gmail.com", HomePage=> "http://www.math.utah.edu/~schwede"},
      	  {Name=> "Zhaoning Yang", Email=> "zyy5054@gmail.com", HomePage => "http://sites.psu.edu/zhaoningyang"}},
      Headline => "Weil divisors",
+     Keywords => {"Commutative Algebra"},
      PackageImports => { "IntegralClosure", "RationalMaps" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -1197,7 +1198,7 @@ isEffective(BasicDivisor) :=  Boolean => (D) -> (
 
 --Given a divisor D, we want to know is this divisor is prime or not.
 
-isPrime(BasicDivisor) := (D1) -> (
+isPrime(BasicDivisor) := {} >> o -> (D1) -> (
 	(coefficients (cleanSupport D1) ) == {1} 
 );
 

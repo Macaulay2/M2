@@ -15,6 +15,7 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
         Headline => "simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4",
+	Keywords => {"Convex Geometry"},
         AuxiliaryFiles => true
         )
 
@@ -728,7 +729,7 @@ doc ///
       needsPackage "Polyhedra";
       P = convexHull A
     Text
-      $P$ is the convex hull of the columns in the $M = {\bf ZZ}^4$ lattice.
+      $P$ is the convex hull of the columns in the $M = \ZZ^4$ lattice.
       $P$ has 10 vertices and 25 lattice points, explaining the part of the line
       "M:25 10".
     Example
@@ -737,7 +738,7 @@ doc ///
       vertices P
       numColumns vertices P
     Text
-      $P_2$ is the polar dual of $P$ in the $N = {\bf ZZ}^4$ lattice.
+      $P_2$ is the polar dual of $P$ in the $N = \ZZ^4$ lattice.
       $P_2$ has 9 vertices and 10 lattice points, explaining the part of the line
       "N:10 9".
     Example

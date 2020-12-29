@@ -2,15 +2,67 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 document {
+     Key => { formation, (formation,Module), (formation, ChainComplex), (formation, ChainComplexMap), (formation, GradedModule), (formation, GradedModuleMap) },
+     Headline => "recover the methods used to make a module",
+     Usage => "formation M",
+     Inputs => { "M" => Module => "a module" },
+     Outputs => { Expression => { ofClass Expression, " whose value is the module itself" }},
+     PARA {
+	  "If the module was created as a direct sum, tensor product, of Hom-module, then the expression will reflect that.
+	  In each case, the result is a function application, and the sequence of arguments is easily obtained."
+	  },
+     EXAMPLE lines ///
+	 M = ZZ^2 ++ ZZ^3
+	 t = formation M
+	 peek t
+	 t#1
+	 value t
+	 M = directSum(ZZ^2, ZZ^3, ZZ^4)
+	 t = formation M
+	 t#1
+	 M = ZZ^2 ** ZZ^3
+	 t = formation M
+	 t#1
+     ///,
+     PARA {
+	  "If the module was not obtained that way, then ", TO "null", " is returned."
+	  },
+     EXAMPLE lines ///
+         formation ZZ^6
+     ///,
+     PARA {
+	  "The same remarks apply to certain other types of objects, such as chain complexes."
+	  },
+     EXAMPLE lines ///
+          R = QQ[x,y];
+	  C = res coker vars R;
+	  D = C ++ C
+	  formation D
+	  ///,
+     SeeAlso => { directSum, (symbol ++, Module, Module), (symbol **, Module, Module), (Hom,Module,Module), Expression, FunctionApplication}
+     }
+TEST ///
+     assert( (     M = ZZ^2 ++ ZZ^3) === ZZ^5 );
+     assert( (     formation M) === new FunctionApplication from {directSum,(ZZ^2,ZZ^3)} );
+     assert( (     M = directSum(ZZ^2, ZZ^3, ZZ^4)) === ZZ^9 );
+     assert( (     formation M) === new FunctionApplication from {directSum,(ZZ^2,ZZ^3,ZZ^4)} );
+     assert( (     M = ZZ^2 ** ZZ^3) === ZZ^6 );
+     assert( (     formation M) === new FunctionApplication from {tensor,(ZZ^2,ZZ^3)} );
+///
+
+document {
      Key => html,
-     Headline => "convert hypertext to html format",
+     Headline => "convert to html format",
 	Usage => "html x",
 	Inputs => {"x" => {}},
 	Outputs => {String => {}},
      TT "html x", " converts ", TT "x", " from ", TO "hypertext", " to html format",
      PARA{},
      "The return value is a string that is suitable for use in an
-     html file, readable by a world wide web client such as Netscape.",
+     html file, readable by a world wide web client.
+     When no html conversion is available,", TO "tex", "is called.
+     (La)TeX can be rendered in the browser using MathJax or Katex.
+     ",
      SeeAlso => "mathML"
      }
 

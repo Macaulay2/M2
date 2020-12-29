@@ -23,7 +23,7 @@ document {
      "Common ways to make an ideal:",
      UL {
 	  TO "ideal",
-	  TO "annihilator",
+	  TO "Saturation :: annihilator",
 	  TO "content",
 	  TO "fittingIdeal",
 	  TO (kernel, RingMap),
@@ -35,6 +35,7 @@ document {
 	  TO (generators, Ideal),
 	  TO (symbol _*,Ideal),
 	  TO (isSubset, Ideal, Ideal),
+	  TO "MinimalPrimes :: isPrime(Ideal)"
 	  },
      "Common operations on ideals:",
      UL {
@@ -67,14 +68,13 @@ document {
 	  },
      "Primary decomposition and components of an ideal",
      UL {
-	  TO minimalPrimes,
-	  TO radical,
-	  TO associatedPrimes,
+	  TO "MinimalPrimes::minimalPrimes",
+	  TO "MinimalPrimes::radical",
+	  TO "PrimaryDecomposition::associatedPrimes",
 	  TO "PrimaryDecomposition::primaryDecomposition",
-	  TO topComponents,
-	  TO saturate,
-	  TO quotient,
-	  TO (symbol :,Ideal,Ideal),
+	  TO "PrimaryDecomposition::topComponents",
+	  TO "Saturation :: saturate(Ideal,Ideal)",
+	  TO "Saturation :: Ideal : Ideal",
 	  TO intersect
 	  },
      "Ideals from geometry",
@@ -202,4 +202,3 @@ document {
      },
      SeeAlso => {"ideals"}
      }
- 

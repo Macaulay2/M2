@@ -68,7 +68,7 @@ htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing       := key -> htmlFilename makeDocumentTag key
 htmlFilename DocumentTag := tag -> (
     fkey := format tag;
-    pkgname := package tag;
+    pkgname := tag.Package;
     basefilename := if fkey === pkgname then topFileName else toFilename fkey | ".html";
     if currentPackage#"pkgname" === pkgname then (layout, prefix) := (installLayout, installPrefix)
     else (
@@ -97,17 +97,11 @@ makeAnchors := n -> (
 anchorsUpTo := entry -> if alpha#?numAnchorsMade and entry >= alpha#numAnchorsMade then makeAnchors length select(alpha, c -> entry >= c)
 remainingAnchors := () -> makeAnchors (#alpha)
 
-packageTagList := (pkg, topDocumentTag) -> checkIsTag \ unique join(
-     apply(
-	  select(pairs pkg.Dictionary,(nam,sym) -> not match ( "\\$" , nam )),
-	  (nam,sym) -> makeDocumentTag(sym, Package => pkg)),
-     select(
-	  apply(
-	       values pkg#"raw documentation",
-	       doc -> doc.DocumentTag),
-	  x -> x =!= null),
-     { topDocumentTag }
-     )
+packageTagList := (pkg, topDocumentTag) -> checkIsTag \ unique nonnull join(
+    apply(pairs pkg.Dictionary, (name, sym) ->
+	if not match("\\$", name) then makeDocumentTag(sym, Package => pkg)),
+    apply(values pkg#"raw documentation", rawdoc -> rawdoc.DocumentTag),
+    { topDocumentTag })
 
 -----------------------------------------------------------------------------
 -- helper functions for assembleTree
@@ -124,7 +118,7 @@ net TreeNode   := x -> (
 
 toDoc := method()
 toDoc ForestNode := x -> if #x>0 then UL apply(toList x, y -> toDoc y)
-toDoc TreeNode   := x -> DIV { TOH checkIsTag x#0, toDoc x#1 }
+toDoc TreeNode   := x -> DIV nonnull { TOH checkIsTag x#0, toDoc x#1 }
 
 traverse := method()
 traverse(ForestNode, Function) := (n, f) -> scan(n, t -> traverse(t, f))
@@ -151,7 +145,7 @@ makeTree := (parent, graph, visits, node) -> (
 orphanNodes := (parent, graph) -> (
     nonLeaves := set keys graph - set flatten values graph;
     if not nonLeaves#?parent and signalDocumentationWarning parent then printerr("warning: top node ", parent, " not a root");
-    if #nonLeaves > 1 then printerr("info: there are ", toString(#nonLeaves - 1), " documentation nodes that are not listed as a subnode");
+    if #nonLeaves > 1 then printerr("warning: found ", toString(#nonLeaves - 1), " documentation node(s) not listed as a subnode");
     unique prepend(parent, sort keys nonLeaves))
 
 makeForest := (graph, visits) -> (
@@ -186,7 +180,7 @@ buildLinks ForestNode := x -> (
 -- constructs the tree-structure for the Subnodes of each node
 -----------------------------------------------------------------------------
 
-assembleTree := (pkg,nodes) -> (
+assembleTree := (pkg, nodes) -> (
     resetCounters();
     -- keep track of various possible issues with the nodes
     visits := new HashTable from {
@@ -202,7 +196,7 @@ assembleTree := (pkg,nodes) -> (
 	    and pkg#"raw documentation"#fkey.?Subnodes then (
 		subnodes := pkg#"raw documentation"#fkey.Subnodes;
 		subnodes  = select(deepApply(subnodes, identity), DocumentTag);
-		subnodes  = select(subnodes, node -> package node === toString pkg);
+		subnodes  = select(subnodes, node -> package node === pkg);
 		tag => getPrimaryTag \ subnodes)
 	    else tag => {}));
     -- build the forest
@@ -210,11 +204,13 @@ assembleTree := (pkg,nodes) -> (
     -- signal errors
     if chkdoc and hadDocumentationError then (
 	scan(keys visits#"missing",
-	    node -> printerr("error: missing reference(s) to subnode documentation: ", format node, newline,
-		"  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node)));
+	    node -> (
+		printerr("error: missing reference(s) to subnode documentation: ", format node);
+		printerr("  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node))));
 	scan(keys visits#"repeated",
-	    node -> printerr("error: repeated references to subnode documentation: ", format node, newline,
-		"  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node)));
+	    node -> (
+		printerr("error: repeated references to subnode documentation: ", format node);
+		printerr("  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node))));
 	error("installPackage: error in assembling the documentation tree"));
     -- build the navigation links
     buildLinks tableOfContents;
@@ -233,7 +229,7 @@ BACKWARD  := tag -> if PREV#?tag then BACKWARD0 PREV#tag else if UP#?tag then UP
 topNodeButton  := (htmlDirectory, topFileName)   -> HREF {htmlDirectory | topFileName,   "top" };
 indexButton    := (htmlDirectory, indexFileName) -> HREF {htmlDirectory | indexFileName, "index"};
 tocButton      := (htmlDirectory, tocFileName)   -> HREF {htmlDirectory | tocFileName,   "toc"};
-homeButton     := HREF {"https://macaulay2.com/", "Macaulay2 website"};
+homeButton     := HREF {"http://macaulay2.com/", "Macaulay2 website"};
 
 nextButton     := tag -> if NEXT#?tag then HREF { htmlFilename NEXT#tag, "next" }     else "next"
 prevButton     := tag -> if PREV#?tag then HREF { htmlFilename PREV#tag, "previous" } else "previous"
@@ -273,22 +269,22 @@ makePackageIndex List := path -> (
     -- TO DO : rewrite this function to use the results of tallyInstalledPackages
     tallyInstalledPackages();
     initInstallDirectory options installPackage;
-    docdirs := findDocumentationPaths path;
+    docdirs := toSequence findDocumentationPaths path;
     htmlDirectory = applicationDirectory();
     indexFilename := htmlDirectory | topFileName;
     verboseLog("making index of installed packages in ", indexFilename);
-    indexFilename << html HTML {
+    indexFilename << html validate HTML {
 	defaultHEAD { "Macaulay2" },
 	BODY {
 	    PARA {"This is the directory for Macaulay2 and its packages. Bookmark this page for future reference,
 		or run the ", TT "viewHelp", " command in Macaulay2 to open up your browser on this page.
 		See the ", homeButton, " for the latest version."},
 	    HEADER3 "Documentation",
-	    ul nonnull splice {
+	    UL nonnull splice {
 		if prefixDirectory =!= null then (
 		    m2doc := prefixDirectory | replace("PKG", "Macaulay2Doc", currentLayout#"packagehtml") | topFileName;
-		    if fileExists m2doc then HREF { m2doc, "Macaulay2" }),
-		splice apply(docdirs, dirs -> (
+		    if fileExists m2doc then LI HREF { m2doc, "Macaulay2 documentation" }),
+		apply(docdirs, dirs -> (
 			prefixDirectory := first dirs;
 			layout := Layout#(last dirs);
 			docdir := prefixDirectory | layout#"docdir";
@@ -296,12 +292,11 @@ makePackageIndex List := path -> (
 			pkghtmldir := pkgname -> prefixDirectory | replace("PKG", pkgname, layout#"packagehtml");
 			contents := select(readDirectory docdir, fn -> fn != "." and fn != ".." );
 			contents  = select(contents, pkg -> fileExists(pkghtmldir pkg | topFileName));
-			DIV {
+			if #contents > 0 then LI {
 			    HEADER3 {"Packages in ", TT toAbsolutePath prefixDirectory},
-			    if #contents > 0
-			    then UL apply(contents, pkgname -> (
+			    UL apply(sort contents, pkgname -> (
 				    pkgopts := readPackage pkgname;
-				    LI splice {
+				    LI nonnull splice {
 					HREF { pkghtmldir pkgname | topFileName, pkgname }, -- TO (pkgname | "::" | pkgname),
 					if pkgopts.Certification =!= null then (" ", star),
 					if pkgopts.Headline      =!= null then commentize pkgopts.Headline}
@@ -321,7 +316,7 @@ installInfo := (pkg, installPrefix, installLayout, verboseLog) -> (
 
     infoTagConvert' := n -> if topNodeName === n     then "Top" else infoTagConvert n;
     chkInfoKey      := n -> if topNodeName === "Top" then n else if n === "Top" then error "installPackage: encountered a documentation node named 'Top'";
-    chkInfoTag      := t -> if package t =!= pkg#"pkgname" then error("installPackage: alien entry in table of contents: ", toString t);
+    chkInfoTag      := t -> if package t =!= pkg     then error("installPackage: alien entry in table of contents: ", toString t);
 
     pushvar(symbol printWidth, 79);
 
@@ -372,7 +367,7 @@ makeSortedIndex := (nodes, verboseLog) -> (
      fn := installPrefix | htmlDirectory | indexFileName;
      title := format topDocumentTag | " : Index";
      verboseLog("making ", format title, " in ", fn);
-     r := HTML {
+     fn << html validate HTML {
 	  defaultHEAD title,
 	  BODY nonnull {
 	       DIV { topNodeButton(htmlDirectory, topFileName), " | ", tocButton(htmlDirectory, tocFileName), -* " | ", directoryButton, *- " | ", homeButton },
@@ -384,16 +379,13 @@ makeSortedIndex := (nodes, verboseLog) -> (
 			 anch := anchorsUpTo tag;
 			 if anch === null then LI TOH tag else LI {anch, TOH tag})),
 	       DIV remainingAnchors()
-	       }};
-     validate r;
-     fn << html r << endl << close
-     )
+	       }} << endl << close)
 
 makeTableOfContents := (pkg, verboseLog) -> (
      fn := installPrefix | htmlDirectory | tocFileName;
      title := format topDocumentTag | " : Table of Contents";
      verboseLog("making  ", format title, " in ", fn);
-     fn << html HTML {
+     fn << html validate HTML {
 	  defaultHEAD title,
 	  BODY {
 	       DIV { topNodeButton(htmlDirectory, topFileName), " | ", indexButton(htmlDirectory, indexFileName), -* " | ", directoryButton, *- " | ", homeButton },
@@ -401,8 +393,7 @@ makeTableOfContents := (pkg, verboseLog) -> (
 	       HEADER1 title,
 	       toDoc unbag pkg#"table of contents"
 	       }
-	  } << endl << close
-     )
+	  } << endl << close)
 
 installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts) -> (
     topDocumentTag := makeDocumentTag(pkg#"pkgname", Package => pkg);
@@ -428,7 +419,7 @@ installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationC
 	    if isSecondaryTag tag
 	    or fileExists fn and fileLength fn > 0 and not opts.RemakeAllDocumentation and rawDocumentationCache#?fkey then return;
 	    verboseLog("making html page for ", toString tag);
-	    fn << html HTML {
+	    fn << html validate HTML {
 		defaultHEAD {fkey, commentize headline fkey},
 		BODY {
 		    buttonBar tag,
@@ -519,7 +510,7 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	    and not opts.RerunExamples and fileExists outf' and gethash outf' === inputhash then (
 		if fileExists errf then removeFile errf; copyFile(outf', outf))
 	    -- run and capture example results
-	    else captureExampleOutput(
+	    else elapsedTime captureExampleOutput(
 		pkg, fkey, demark_newline inputs,
 		possiblyCache(outf, outf'),
 		inpf, outf, errf,
@@ -560,7 +551,7 @@ installPackage = method(
 	RunExamples            => true,
 	SeparateExec           => false,
 	UserMode               => null,
-	Verbose                => true
+	Verbose                => false
 	})
 
 installPackage String := opts -> pkg -> (
@@ -700,6 +691,7 @@ installPackage Package := opts -> pkg -> (
 
 	-- process documentation
 	verboseLog "processing documentation nodes...";
+	-- ~50s -> ~100s for Macaulay2Doc
 	scan(nodes, tag ->
 	    if      isUndocumented tag              then verboseLog("undocumented ", toString tag)
 	    else if isSecondaryTag tag              then verboseLog("is secondary ", toString tag)
@@ -707,6 +699,10 @@ installPackage Package := opts -> pkg -> (
 	    and     not opts.MakeInfo -- when making the info file, we need to process all the documentation
 	    and rawDocumentationCache#?(format tag) then verboseLog("skipping     ", toString tag)
 	    else storeProcessedDocumentation(pkg, tag, opts, verboseLog));
+
+	-- should this be here, or farther up? Note: assembleTree resets the counters, so stay above that.
+	if chkdoc and hadDocumentationError then error(
+	    toString numDocumentationErrors, " errors(s) occurred in processing documentation for package ", toString pkg);
 
 	if pkg#?rawKeyDB and isOpen pkg#rawKeyDB then close pkg#rawKeyDB;
 
@@ -725,6 +721,7 @@ installPackage Package := opts -> pkg -> (
 	pkg#"links prev" = PREV;
 
 	-- check that everything is documented
+	-- ~22s for Macaulay2Doc
 	if chkdoc then (
 	    resetCounters();
 	    scan((if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg)#"exported symbols", s -> (
@@ -747,18 +744,20 @@ installPackage Package := opts -> pkg -> (
 				));
 			))));
 
-	if hadDocumentationError then error(
+	if chkdoc and hadDocumentationError then error(
 	    toString numDocumentationErrors, " errors(s) occurred in documentation for package ", toString pkg);
 
 	-- make info documentation
+	-- ~60 -> ~70s for Macaulay2Doc
 	if opts.MakeInfo then installInfo(pkg, installPrefix, installLayout, verboseLog)
 	else verboseLog("not making documentation in info format");
 
 	-- make html documentation
+	-- ~50 -> ~80s for Macaulay2Doc
 	if opts.MakeHTML then installHTML(pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts)
 	else verboseLog("not making documentation in HTML format");
 
-	if hadDocumentationWarning then printerr("warning: ",
+	if chkdoc and hadDocumentationWarning then printerr("warning: ",
 	    toString numDocumentationWarnings, " warning(s) occurred in documentation for package ", toString pkg);
 
 	); -- end of opts.MakeDocumentation

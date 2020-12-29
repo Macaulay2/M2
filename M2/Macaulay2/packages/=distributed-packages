@@ -8,6 +8,7 @@ Benchmark
 Text
 SimpleDoc
 PackageTemplate
+Saturation
 PrimaryDecomposition
 FourierMotzkin
 Dmodules
@@ -40,7 +41,6 @@ InvolutiveBases
 ConwayPolynomials
 EdgeIdeals
 FourTiTwo
-ResolutionsOfStanleyReisnerRings
 StatePolytope
 Polyhedra
 Truncations
@@ -99,6 +99,7 @@ EliminationMatrices
 EllipticIntegrals
 Triplets
 CompleteIntersectionResolutions
+EagonResolution
 MCMApproximations
 MultiplierIdeals
 InvariantRing
@@ -108,7 +109,6 @@ Book3264Examples
 Divisor
 EllipticCurves
 HighestWeights
-NumericalHilbert
 MinimalPrimes
 Bertini
 TorAlgebra
@@ -207,4 +207,13 @@ MixedMultiplicity
 PencilsOfQuadrics
 ThreadedGB
 VectorGraphics
+GKMVarieties
+NoetherianOperators
+Hadamard
+StatGraphs
+GraphicalModelsMLE
+EigenSolver
+MultiplicitySequence
 ResolutionsOfStanleyReisnerRings
+NumericalLinearAlgebra
+ResLengthThree

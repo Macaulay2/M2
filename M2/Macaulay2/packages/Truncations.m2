@@ -13,16 +13,13 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"}
             },
         Headline => "truncation of a module",
+	Keywords => {"Commutative Algebra"},
         PackageImports => {"Polyhedra"}
         )
 
-export {
-    "truncate"
-    }
+-- we install methods on "truncate", from the Core
 
 protect Exterior
-
-truncate = method()
 
 truncationPolyhedron = method(Options=>{Exterior => {}})
   -- Exterior should be a list of variable indices which are skew commutative.
@@ -518,7 +515,8 @@ doc ///
     ring had variables of nonzero degree, sometimes incorrect answers
     resulted.
   SeeAlso
-    truncate
+    (truncate,List,Matrix)
+    (truncate,List,Module)
     basis
 ///
 
@@ -556,7 +554,6 @@ TEST ///
 
 doc ///
   Key
-    truncate
     (truncate,ZZ,Module)
     (truncate,List,Module)
     (truncate,ZZ,Ideal)

@@ -8,6 +8,7 @@ newPackage(
     	Headline => "coincident root loci",
         Authors => {{Name => "Maria Chiara Brambilla", Email => "brambilla@dipmat.univpm.it"},
                     {Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
+	Keywords => {"Real Algebraic Geometry", "Interfaces"},
         PackageExports => {"Cremona","Resultants"},
         DebuggingMode => false,
         AuxiliaryFiles => true,
@@ -824,7 +825,7 @@ realroots (RingElement) := o -> (F) -> (
    F = sub(F,vars R);
    f := sub(sub(F,y => 1),K[x]);
    ro := toList(((first degree F) - (first degree f)) : [1.0,0.0]);
-   ro = ro | apply(select(roots f,a -> a == realPart a),r -> [realPart r,1.0]);
+   ro = ro | apply(select(roots f,a -> abs(imaginaryPart a) < 0.0000001),r -> [realPart r,1.0]);
    if o.Verbose then (
       <<"number real roots: "<<#ro<<endl;
       <<"number distinct real roots: "<<#unique ro<<endl;

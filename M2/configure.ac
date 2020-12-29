@@ -505,8 +505,11 @@ dnl fi
 test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" ENABLE_STRIP=no
 
-
-
+if <$srcdir/Macaulay2/packages/=distributed-packages sort|uniq -c|grep -v -q ' 1 '
+then echo "error: some packages are listed more than once in Macaulay2/packages/=distributed-packages:"
+     <$srcdir/Macaulay2/packages/=distributed-packages sort|uniq -c|grep -v ' 1 '
+     exit 1
+fi
 AC_SUBST(PACKAGES,`cat $srcdir/Macaulay2/packages/=distributed-packages`)
 [if [ $? != 0 ] ; then exit 1 ; fi]
 # convert the newlines to spaces
@@ -1034,37 +1037,41 @@ else AC_MSG_RESULT([no, will build])
      BUILD_csdp=yes
 fi
 
-dnl we can't use the test below for the presence of normaliz until the package Normaliz knows
-dnl how to find normaliz on the path, and until our *.dmg and
-dnl *.deb making procedures know how to include it or set the dependencies appropriately
-BUILD_normaliz=yes
-BUILD_ALWAYS="$BUILD_ALWAYS normaliz"
-dnl AC_MSG_CHECKING(whether the package normaliz is installed)
-dnl if test "`type -t normaliz`" = file
-dnl then AC_MSG_RESULT(yes)
-dnl else AC_MSG_RESULT([no, will build])
-dnl      BUILD_normaliz=yes
-dnl fi
+AC_MSG_CHECKING(whether the package normaliz is installed)
+if test "`type -t normaliz`" = file
+then normaliz_version=`normaliz --version | head -1 | cut -d " " -f 2`
+     AX_COMPARE_VERSION([$normaliz_version], [ge], [2.11],
+          [AC_MSG_RESULT([yes])
+           FILE_PREREQS="$FILE_PREREQS `type -p normaliz`"],
+          [AC_MSG_RESULT([yes, but < 2.11, will build])
+           BUILD_normaliz=yes])
+else AC_MSG_RESULT([no, will build])
+     BUILD_normaliz=yes
+fi
 
 dnl debian/fedora: nauty-
-AC_MSG_CHECKING(whether the package nauty (>= 2.7) is installed)
+AC_MSG_CHECKING(whether the package nauty is installed)
 FOUND_nauty=no
 for nauty_prefix in "" "nauty-"
 do
     if test "`type -t ${nauty_prefix}complg`" = file
-    then nauty_version=`${nauty_prefix}complg --version | cut -d " " -f 3`
-	AX_COMPARE_VERSION([$nauty_version], [ge], [2.7000],
-	    [AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
-	     FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
-	     FOUND_nauty=yes
-	     break],
-	    [FOUND_nauty=old])
+    then
+dnl check if #1408 is a problem
+	if ${nauty_prefix}biplabg < /dev/null 2>/dev/null
+	then
+	    AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
+	    FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
+	    FOUND_nauty=yes
+	    break
+	else
+	    FOUND_nauty=bad
+	fi
     fi
 done
 if test $FOUND_nauty != yes
 then
-    if test $FOUND_nauty = old
-    then AC_MSG_RESULT([yes, but < 2.7, will build])
+    if test $FOUND_nauty = bad
+    then AC_MSG_RESULT([yes, but ${nauty_prefix}biplabg raises an error, will build])
     else AC_MSG_RESULT([no, will build])
     fi
     BUILD_nauty=yes
@@ -1136,24 +1143,6 @@ AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby $LIBS",BUILD_frobby=yes)
 if test $BUILD_frobby = yes
 then BUILTLIBS="-lfrobby $BUILTLIBS"
 fi
-
-if test $BUILD_gtest = no
-then
-    CHECK_GTEST
-    if test $have_gtest = yes
-    then
-        CPPFLAGS="$GTEST_CPPFLAGS $CPPFLAGS"
-        GTEST_PATH=$GTEST_SOURCE
-	AC_MSG_NOTICE(we have found gtest)
-    else
-        BUILD_gtest=yes
-        GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
-	AC_MSG_NOTICE(we will build gtest)
-    fi
-else
-    GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
-fi
-AC_SUBST(GTEST_PATH)
 
 #############################################################################
 
@@ -1249,6 +1238,23 @@ then AC_LANG(C++)
 fi
 test $BUILD_mathicgb = yes && BUILTLIBS="-lmathicgb $BUILTLIBS"
 
+if test $BUILD_gtest = no
+then
+    CHECK_GTEST
+    if test $have_gtest = yes
+    then
+        CPPFLAGS="$GTEST_CPPFLAGS $CPPFLAGS"
+        GTEST_PATH=$GTEST_SOURCE
+	AC_MSG_NOTICE(we have found gtest)
+    else
+        BUILD_gtest=yes
+        GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
+	AC_MSG_NOTICE(we will build gtest)
+    fi
+else
+    GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
+fi
+AC_SUBST(GTEST_PATH)
 
 if test "$PYTHON" = yes
 then AC_LANG(C)

@@ -476,12 +476,6 @@ document { Key => {isInfinite, (isInfinite,Number)},
      }
 
 document {
-     Key => associatedPrimes,
-     Headline => "find the associated primes of an ideal",
-     SeeAlso => { "PrimaryDecomposition :: PrimaryDecomposition"}     
-     }
-
-document {
      Key => (symbol _*,RingFamily),
      Usage => "R_*",
      Inputs => {"R"},
@@ -566,6 +560,7 @@ document {
 
 document {
      Key => {(quotientRemainder,RingElement,RingElement),
+	  (quotientRemainder,InexactNumber,RingElement), (quotientRemainder,RingElement,InexactNumber),
 	  (quotientRemainder,Number,RingElement), (quotientRemainder,RingElement,Number)},
      Headline => "quotient and remainder",
      Usage => "(q,r) = quotientRemainder(f,g)",
@@ -692,52 +687,6 @@ document { Key => (symbol ||,GradedModuleMap,GradedModuleMap),
      f = gradedModuleMap( matrix "1;2", matrix "2,3" )
      f||f
      ///
-     }
-
-for n in {BasisElementLimit, PairLimit, DegreeLimit} do document {
-     Key => [quotient,n],
-     PARA {
-     	  "The value for this optional argument is passed through to ", TO gb, " when
-     	  one of the following methods is used: ", TO (quotient,Ideal,Ideal), ", ", TO (quotient,Ideal,RingElement), ",
-     	  ", TO (quotient,Module,Ideal), ", ", TO (quotient,Module,Module), ", and ", TO (quotient,Module,RingElement), "."
-	  }
-     }
-
-for n in {BasisElementLimit,PairLimit} do document {
-     Key => [saturate,n],
-     PARA {
-     	  "The value for this optional argument is passed through to ", TO gb, " when
-     	  one of the following methods is used: ", TO (saturate,Ideal), ", ", TO (saturate,Ideal,Ideal), ",
-     	  ", TO (saturate,Ideal,RingElement), "."
-	  }
-     }
-
-document {
-     Key => [associatedPrimes,Strategy],
-     "The strategy option value is currently not considered while computing associated primes",
-     PARA{},
-     "There are three methods for 
-     computing associated primes in Macaulay2: If the ideal is a monomial ideal, use code that 
-     Greg Smith and Serkan Hosten wrote.  If a primary decomposition has already been found, use the
-     stashed associated primes found.  If neither of these is the case, then use Ext 
-     modules to find the associated primes (this is ", TT "Strategy=>1", ")",
-     PARA{},
-     "In order to use the monomial ideal algorithm, it is necessary
-     to make ", TT "I", " into a monomial ideal.",
-     EXAMPLE lines ///
-         S = QQ[a,b,c,d,e];
-     	 I1 = ideal(a,b,c);
-	 I2 = ideal(a,b,d);
-	 I3 = ideal(a,e);
-	 P = I1*I2*I3
-	 L1 = associatedPrimes P
-	 L2 = apply(associatedPrimes monomialIdeal P, J -> ideal J)
-	 M1 = set apply(L1, I -> sort flatten entries gens I)
-	 M2 = set apply(L2, I -> sort flatten entries gens I)
-	 assert(M1 === M2)
-     ///,
-     "The method using Ext modules comes from     
-     Eisenbud-Huneke-Vasconcelos, Invent. Math 110 (1992) 207-235."
      }
 
 document {

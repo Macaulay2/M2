@@ -28,7 +28,9 @@ Authors => {
      }
 },
 Headline => "F-thresholds",
+Keywords => {"Commutative Algebra"},
 AuxiliaryFiles => true,
+PackageImports => {"MinimalPrimes"},
 PackageExports => {"TestIdeals"}
 )
 

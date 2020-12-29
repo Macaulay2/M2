@@ -5,12 +5,13 @@ newPackage(
     	Authors => { -- This Package was originally written by D. Eisenbud, F. Schreyer, and M. Stillman. 
 	             -- Various revisions and updates were made by C. Gibbons and B. Stone.
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-	     {Name => "Frank Schreyer", Email => "schreyer@math.uni-sb.de"},
+	     {Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"},
 	     {Name => "Courtney Gibbons", Email => "crgibbon@hamilton.edu", HomePage => "http://people.hamilton.edu/cgibbons/"},
 	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
 	     }, 
     	Headline => "betti diagram operations useful for investigating the Boij-Soederberg conjectures",
+	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false
     	)
 
@@ -614,8 +615,8 @@ decomposeBetti BettiTally := o -> B -> (
 --if the decomposition fails. Returns a list of the components as a list of pairs,
 --each a rational coefficient followed by a hash table representing a pure betti diagram,
 --if it succeeds.
-decompose BettiTally := B-> (
-    	decomposeBetti B
+decompose BettiTally := options decomposeBetti >> opts -> B -> (
+    	decomposeBetti(B, opts)
      )
  
 

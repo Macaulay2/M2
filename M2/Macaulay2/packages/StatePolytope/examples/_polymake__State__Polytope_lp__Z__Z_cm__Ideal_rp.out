@@ -1,0 +1,33 @@
+-- -*- M2-comint -*- hash: -834589528
+
+i1 : R = QQ[a..d];
+
+i2 : I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);
+
+o2 : Ideal of R
+
+i3 : polymakeStatePolytope(3,I)
+polymake: used package cdd
+  cddlib
+  Implementation of the double description method of Motzkin et al.
+  Copyright by Komei Fukuda.
+  http://www-oldurls.inf.ethz.ch/personal/fukudak/cdd_home/
+
+VERTICES
+1 9 6 6 9
+1 6 12 3 9
+1 4 14 5 7
+1 3 14 8 5
+1 9 3 12 6
+1 7 5 14 4
+1 5 8 14 3
+1 3 12 12 3
+
+
+o3 = {{9, 6, 6, 9}, {6, 12, 3, 9}, {4, 14, 5, 7}, {3, 14, 8, 5}, {9, 3, 12,
+     ------------------------------------------------------------------------
+     6}, {7, 5, 14, 4}, {5, 8, 14, 3}, {3, 12, 12, 3}}
+
+o3 : List
+
+i4 : 

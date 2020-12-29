@@ -257,7 +257,7 @@ solveFamily (Point, System) := o -> (p1, P) -> (
         );
     specMat := matrix p0 | matrix p1;
     H01 := specialize(parametricSegmentHomotopy GS, transpose specMat); -- this is annoying to have to do
-    (p1, pointArray trackHomotopy(H01, points sols0))
+    pointArray trackHomotopy(H01, points sols0)
     )
 
 monodromySolve = method(Options=>MonodromyOptions)

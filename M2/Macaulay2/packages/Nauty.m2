@@ -14,6 +14,7 @@ newPackage select((
                  Email => "dwcook@eiu.edu",
                  HomePage => "http://ux1.eiu.edu/~dwcook/"}},
     Headline => "interface to nauty",
+    Keywords => {"Graph Theory", "Interfaces"},
     Configuration => {"path" => ""},
     PackageExports => {"EdgeIdeals"},
     DebuggingMode => false,
@@ -24,8 +25,8 @@ newPackage select((
 	 "acceptance date" => "2011-04-20",
 	 "published article URI" => "http://j-sag.org/Volume3/jsag-1-2011.pdf",
 	 "published code URI" => "http://j-sag.org/Volume3/Nauty.m2",
-	 "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Nauty.m2",
-	 "release at publication" => 13224,
+	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Nauty.m2",
+	 "release at publication" => "ea719b4fd3b65bb35ebd0f10f356c7d53ba73b7d",
 	 "version at publication" => "1.4.1",
 	 "volume number" => "3",
 	 "volume URI" => "http://j-sag.org/Volume3/"

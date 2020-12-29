@@ -9,6 +9,7 @@ isQuotientRing Ring := R -> false
 isQuotientRing QuotientRing := R -> true
 coefficientRing QuotientRing := (cacheValue coefficientRing) (R -> coefficientRing ambient R)
 options QuotientRing := R -> options ambient R
+isHomogeneous QuotientRing := R -> isHomogeneous ideal R
 isQuotientOf = method(TypicalValue => Boolean)
 isQuotientOf(Ring,Ring) := (R,S) -> false
 isQuotientOf(Ring,QuotientRing) := (R,S) -> R === ambient S or isQuotientOf(R,ambient S)
@@ -61,7 +62,7 @@ ZZp Ideal := opts -> (I) -> (
          savedQuotients#(typ, n)
      else (
 	  if not isPrime n
-	  then error "ZZ/n not implemented yet for composite n";
+	  then error ("ZZ/n not implemented yet for composite n = ", toString n);
 	  S := new QuotientRing from 
 	    if typ === "Ffpack" then rawARingGaloisField(n,1)  
         else if typ === "Flint" then rawARingZZpFlint n
@@ -239,7 +240,8 @@ Ring / RingElement := QuotientRing => (R,f) -> (
 
 Ring / List := Ring / Sequence := QuotientRing => (R,f) -> R / promote(ideal f, R)
 
-presentation QuotientRing := Matrix => R -> (
+presentation PolynomialRing := Matrix => R -> map(R^1, R^0, 0)
+presentation QuotientRing   := Matrix => R -> (
      if R.?presentation then R.presentation else R.presentation = (
 	  S := ambient R;
 	  f := generators ideal R;
@@ -251,12 +253,10 @@ presentation QuotientRing := Matrix => R -> (
 	  )
      )
 
-presentation PolynomialRing := R -> map(R^1,R^0,0)
-
-presentation(QuotientRing,QuotientRing) := 
-presentation(PolynomialRing,QuotientRing) := 
-presentation(QuotientRing,PolynomialRing) := 
-presentation(PolynomialRing,PolynomialRing) := (R,S) -> (
+presentation(QuotientRing,   QuotientRing)   :=
+presentation(QuotientRing,   PolynomialRing) :=
+presentation(PolynomialRing, QuotientRing)   :=
+presentation(PolynomialRing, PolynomialRing) := (R,S) -> (
      if not (R === S or isQuotientOf(R,S)) then error "expected ring and a quotient ring of it";
      v := map(R^1,R^0,0);
      while S =!= R do (

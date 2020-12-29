@@ -6,6 +6,7 @@ newPackage ( "Classic",
      Date => "June, 2006",
      Version => "1.0",
      Headline => "a classic Macaulay parser",
+     Keywords => {"Miscellaneous"},
      PackageImports => {"Parsing"}
      )
 

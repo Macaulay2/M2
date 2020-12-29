@@ -60,7 +60,6 @@ macro(_NTL_check_version)
 endmacro(_NTL_check_version)
 
 if(NOT NTL_FOUND)
-  set(NTL_ROOT NOTFOUND)
   set(NTL_INCLUDE_DIR NOTFOUND)
   set(NTL_LIBRARIES NOTFOUND)
 
@@ -88,7 +87,7 @@ if(NOT NTL_FOUND)
       )
   endif()
 
-  string(REGEX REPLACE "/include(/${CMAKE_LIBRARY_ARCHITECTURE}$)?" "" NTL_ROOT "${NTL_INCLUDE_DIR}")
+  string(REGEX REPLACE "/include.*" "" NTL_ROOT "${NTL_INCLUDE_DIR}")
 
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(NTL DEFAULT_MSG NTL_ROOT NTL_INCLUDE_DIR NTL_LIBRARIES NTL_VERSION_OK)

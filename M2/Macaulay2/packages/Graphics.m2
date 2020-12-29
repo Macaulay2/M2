@@ -10,6 +10,7 @@ newPackage(
                 {Name => "Viktor Petrov"}
 		},
 	Headline => "create graphics",
+	Keywords => {"Miscellaneous"},
 	DebuggingMode => false)
 
 -- Put here the name of functions that should be visible to users

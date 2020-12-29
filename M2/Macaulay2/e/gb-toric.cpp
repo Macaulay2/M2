@@ -1018,12 +1018,12 @@ void binomialGB_comp::remove_gb()
   deleteitem(Gmin);
   deleteitem(Pairs);
   // remove each element of Gens
-  for (i = 0; i < Gens.length(); i++) deleteitem(Gens[i]);
+  for (i = 0; i < Gens.size(); i++) deleteitem(Gens[i]);
   // remove each element of G
-  for (i = 0; i < G.length(); i++) deleteitem(G[i]);
+  for (i = 0; i < G.size(); i++) deleteitem(G[i]);
   // The following is just to ease garbage collection
-  for (i = 0; i < mingens.length(); i++) mingens[i] = NULL;
-  for (i = 0; i < mingens_subring.length(); i++) mingens_subring[i] = NULL;
+  for (i = 0; i < mingens.size(); i++) mingens[i] = NULL;
+  for (i = 0; i < mingens_subring.size(); i++) mingens_subring[i] = NULL;
   deleteitem(R);
 }
 
@@ -1041,9 +1041,9 @@ void binomialGB_comp::enlarge(const PolynomialRing *newR, int *wts)
   Gmin->enlarge(R);
   Pairs->enlarge(R);
   int i;
-  for (i = 0; i < Gens.length(); i++)
+  for (i = 0; i < Gens.size(); i++)
     R->translate_binomial(old_ring, Gens[i]->f);
-  for (i = 0; i < G.length(); i++) R->translate_binomial(old_ring, G[i]->f);
+  for (i = 0; i < G.size(); i++) R->translate_binomial(old_ring, G[i]->f);
 
   deleteitem(old_ring);
 }
@@ -1060,7 +1060,7 @@ void binomialGB_comp::add_generators(const Matrix *m)
           f = R->make_binomial();
           R->intvector_to_binomial((*m)[i], f);
           p = new binomial_gb_elem(f);
-          Gens.append(p);
+          Gens.push_back(p);
           Pairs->insert(p);
         }
     }
@@ -1072,7 +1072,7 @@ void binomialGB_comp::add_generators(const Matrix *m)
           if (R->vector_to_binomial((*m)[i], f))
             {
               p = new binomial_gb_elem(f);
-              Gens.append(p);
+              Gens.push_back(p);
               Pairs->insert(p);
             }
           else
@@ -1143,9 +1143,9 @@ void binomialGB_comp::process_pair(binomial_s_pair s)
       binomial_gb_elem *p = new binomial_gb_elem(f);
       Gmin->make_new_pairs(Pairs, p);
       Gmin->minimalize_and_insert(p);
-      if (ismin) mingens.append(p);
-      if (subringmin) mingens_subring.append(p);
-      G.append(p);
+      if (ismin) mingens.push_back(p);
+      if (subringmin) mingens_subring.push_back(p);
+      G.push_back(p);
     }
   else
     R->remove_binomial(f);
@@ -1189,12 +1189,12 @@ Matrix *binomialGB_comp::subring()
   // Subsequent calls will not receive duplicate elements
 
   MatrixConstructor result(R->F, 0);
-  for (int i = 0; i < mingens_subring.length(); i++)
+  for (int i = 0; i < mingens_subring.size(); i++)
     {
       result.append(R->binomial_to_vector(mingens_subring[i]->f));
       mingens_subring[i] = NULL;
     }
-  mingens_subring.shrink(0);
+  mingens_subring.clear();
   return result.to_matrix();
 }
 
@@ -1222,7 +1222,7 @@ int binomialGB_comp::contains(const Matrix * /*m*/)
 const Matrix *binomialGB_comp::get_mingens()
 {
   MatrixConstructor result(R->F, 0);
-  for (int i = 0; i < mingens.length(); i++)
+  for (int i = 0; i < mingens.size(); i++)
     result.append(R->binomial_to_vector(mingens[i]->f));
   return result.to_matrix();
 }

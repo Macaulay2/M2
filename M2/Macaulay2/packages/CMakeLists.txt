@@ -70,7 +70,7 @@ set(M2_INSTALL_TEMPLATE [[installPackage("@package@",
 set(M2_NEED_TEMPLATE    [[needsPackage("@package@", LoadDocumentation=>true, DebuggingMode=>true)]])
 set(M2_TEST_TEMPLATE    [[debug Core \; argumentMode = @ArgumentMode@ \; check(@_i@, "@package@")]])
 set(M2_INFO_TEMPLATE    [["info-"|"@package@" << @package@#"test number" << close]]) # ignore the color
-set(M2_CHECK_TEMPLATE   [[check("@package@", UserMode=>false)]])
+set(M2_CHECK_TEMPLATE   [[check("@package@", UserMode=>false, Verbose=>$<IF:$<BOOL:${VERBOSE}>,true,false>)]])
 
 #################################################################################
 ## Declare all targets: {install,check,all,uninstall}-{packages,PACKAGE}
@@ -156,6 +156,11 @@ foreach(package IN LISTS PACKAGES)
 	list(APPEND ${package}_dependencies ${_dep})
       endif()
     endforeach()
+  endif()
+
+  ## TODO: remove this; see https://github.com/Macaulay2/M2/pull/1483
+  if(package MATCHES "(ThreadedGB)")
+    set(USES_TERMINAL USES_TERMINAL)
   endif()
 
   ## Custom command for getting package information

@@ -13,6 +13,7 @@ newPackage(
 	Authors => {
 	    {Name => "Clas Löfwall", Email => "clas.lofwall@gmail.com"},
 	    {Name => "Samuel Lundqvist", Email => "samuel@math.su.se"}},
+	Keywords => {"Lie Groups and Lie Algebras"},
 	AuxiliaryFiles => true,
         DebuggingMode => false,
 	Headline => "computations in graded Lie algebras"
@@ -3380,7 +3381,7 @@ holonomyLocal(ZZ,LieAlgebra) := (i,L)->(
 --   belong to the same L_i.
 
 
-decompose(LieAlgebra) := (L)->(
+decompose(LieAlgebra) := {} >> opts -> (L)->(
     if not L#cache.?localone then 
        error "the LieAlgebra must be a holonomy Lie algebra" else (
        loc:=join (apply(toSequence L#cache.localone,y->basis(3,lieSubAlgebra y))|

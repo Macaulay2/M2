@@ -35,7 +35,7 @@ Authors => {
      {Name => "Drew Ellingson",
      Email => "drewtell@umich.edu"
      },
-     {Name => "Daniel Hernandez",
+     {Name => "Daniel Hernández",
      Email => "hernandez@ku.edu",
      HomePage => "https://hernandez.faculty.ku.edu"
      },
@@ -77,8 +77,10 @@ Authors => {
      }
 },
 Headline => "singularities in positive characteristic",
+Keywords => {"Commutative Algebra"},
 AuxiliaryFiles=>true,
 PackageExports=>{"Depth"},
+PackageImports => {"MinimalPrimes"},
 Certification => {
      "journal name" => "The Journal of Software for Algebra and Geometry",
      "journal URI" => "http://j-sag.org/",

@@ -13,6 +13,7 @@ newPackage(
                   Email => "daniel@momo.math.rwth-aachen.de",
                   HomePage => "http://wwwb.math.rwth-aachen.de/~daniel/"}},
         Headline => "Methods for Janet bases and Pommaret bases in Macaulay 2",
+	Keywords => {"Groebner Basis Algorithms"},
         DebuggingMode => false
         )
 
@@ -587,7 +588,8 @@ janetResolution(Ideal) := I -> janetResolution janetBasis I
 
 janetResolution(Module) := M -> janetResolution janetBasis presentation M
 
-addHook(Module, symbol resolution, (opts,M) -> if opts.Strategy === Involutive then break janetResolution M)
+addHook((resolution, Module), Strategy => Involutive, (opts, M) ->
+    if opts.Strategy === Involutive then janetResolution M)
 
 
 -- enumeration of a (monomial) vector space basis of R/I

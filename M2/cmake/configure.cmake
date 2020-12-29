@@ -146,6 +146,7 @@ set(M2_INSTALL_PROGRAMSDIR ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LI
 set(CMAKE_PROGRAM_PATH     ${M2_INSTALL_PROGRAMSDIR})
 
 message("\n## Staging area prefixes
+     usr-host          = ${M2_HOST_PREFIX}
      common            = ${M2_DIST_PREFIX}/${M2_DATA_INFIX}
      exec              = ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}")
 
@@ -179,7 +180,7 @@ endif()
 # Note: certain flags are initialized by CMake based on the compiler and build type.
 if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
   # INIT: -g
-  add_compile_options(-O0 -DGC_DEBUG)
+  add_compile_options(-O0 -DGC_DEBUG -DMEMT_DEBUG -DMATHIC_DEBUG -DMATHICGB_DEBUG)
 else()
   add_compile_options(-DNDEBUG -DOM_NDEBUG -DSING_NDEBUG -Wuninitialized)
 endif()

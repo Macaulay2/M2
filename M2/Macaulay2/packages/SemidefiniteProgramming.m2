@@ -17,6 +17,7 @@ newPackage(
       HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"}
     },
     Headline => "semidefinite programming",
+    Keywords => {"Real Algebraic Geometry", "Interfaces"},
     Configuration => {"CSDPexec"=>"","MOSEKexec"=>"mosek","SDPAexec"=>"sdpa","DefaultSolver"=>null},
     AuxiliaryFiles => true,
     PackageExports => {"NumericalAlgebraicGeometry"}

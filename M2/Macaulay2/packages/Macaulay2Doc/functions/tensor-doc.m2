@@ -18,10 +18,12 @@ document {
      Key => tensor,
      Headline => "tensor product",
      PARA{
-	  "This is the same as ", TT "A ** B", " except that options are allowed.
-           These optional arguments are only valid in the ", TO (tensor,Ring,Ring), " or ",
-           TO (tensor,Monoid,Monoid), " cases."
-          }
+	  "For two arguments, this is the same as ", TT "A ** B", " except that options are allowed.
+	  These optional arguments are valid only in the cases ", TO (tensor,Ring,Ring), " or ",
+	  TO (tensor,Monoid,Monoid), ".  For multiple arguments, the tensor product is constructed
+	  iteratively from the binary tensor products, working from left to right."
+          },
+     EXAMPLE ///tensor (ZZ^2, ZZ^3, ZZ^4)///
      }
 
 document {
@@ -163,27 +165,6 @@ describe tensor(A,B,Weights=>{1,2,3,4,5}) -- ignored?
 describe tensor(A,B,Global=>false) -- ??
 describe(C = tensor(A,B,SkewCommutative=>true)) -- ignored
 ///
-
-document {
-     Key => {(tensor, Module, Module),
-	  (tensor, CoherentSheaf, CoherentSheaf)},
-     Usage => "tensor(M,N)",
-     Inputs => {
-	  "M" => {" or ", ofClass CoherentSheaf},
-	  "N" => {" or ", ofClass CoherentSheaf, ", the same class as ", TT "M"}
-	  },
-     Outputs => {
-	  {ofClass{Module,CoherentSheaf}, ", the same class as both ", TT "M", " and ", TT "N"}
-	  },
-     PARA {
-	  "This is a synonym of ", TT "M ** N", ".  None of the options are used 
-	  in this case."
-	  },
-     PARA {
-	  "For examples, see ", TO (symbol**,Module,Module), ", and ", 
-	  TO(symbol**,CoherentSheaf,CoherentSheaf), "."
-	  }
-     }
 
 document {
      Key => {

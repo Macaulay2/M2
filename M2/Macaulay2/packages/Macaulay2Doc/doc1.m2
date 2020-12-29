@@ -403,6 +403,7 @@ TEST ///
 
 -- Example 4.1: the bounds can be sharp.
 TEST ///
+     needsPackage "Truncations"
      S = QQ[w,x,y,z];
      X = Proj S;
      I = monomialCurveIdeal(S,{1,3,4})
@@ -463,7 +464,7 @@ document {
 	       instances of the new type to nets for display."
 	       },
 	  EXAMPLE lines ///
-	       new Type of BasicList from Function := (A,B,f) -> hashTable { net => f };
+	       new Type of BasicList from Function := (A,B,f) -> hashTable { net => f }; -* no-capture-flag *-
 	  ///,
 	  PARA {
 	       "The hash tables ", TT "AA", ", ", TT "BB", ", and ", TT "C", " will normally be instances of ", TO "Type", "."
@@ -707,7 +708,7 @@ document {
 	  "The difference between ", TT "new A of B from x", " and ", TT "newClass(A,B,x)", " is that the methods installed for ", TO "new", " are not used."
 	  },
      EXAMPLE {
-	  ///new Thing of Thing from Thing := (A,B,c) -> (
+	  ///new Thing of Thing from Thing := (A,B,c) -> ( -* no-capture-flag *-
        << "-- new " << A << " of " << B 
        << " from " << toString c << endl;
        c);///,
