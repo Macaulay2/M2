@@ -34,6 +34,10 @@ Node
       Use @TO check@ to run all of the tests associated to a package.
 
       For an example, see @TO "SimpleDoc :: docExample"@ and @TO "an example of a package"@.
+
+      If a test should be skipped when running @TO "check"@, e.g., it is
+      known to fail under certain circumstances, then the comment
+      @TT "-* no-check-flag *-"@ may be added to @TT "s"@.
   Caveat
     When creating tests, try to ensure that they run relatively quickly.
   SeeAlso
