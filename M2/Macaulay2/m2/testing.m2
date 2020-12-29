@@ -31,6 +31,9 @@ TEST(String, String) := (title, teststring) -> (
 
 captureTestResult := (desc, teststring, pkg, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
+    if match("no-check-flag", teststring) then (
+	stderr << commentize pad("skipping " | desc, 72) << flush;
+	return true);
     -- try capturing in the same process
     if isCapturable(teststring, pkg, true) then (
 	stderr << commentize pad("capturing " | desc, 72) << flush;
