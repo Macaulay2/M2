@@ -41,14 +41,13 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
     runString(teststring, pkg, usermode))
 
 loadTestDir := pkg -> (
-    if pkg#?"test directory loaded" then return;
     testDir := pkg#"package prefix" |
         replace("PKG", pkg#"pkgname", currentLayout#"packagetests");
     if fileExists testDir then (
         tmp := currentPackage;
         currentPackage = pkg;
         TEST(sort apply(select(readDirectory testDir, file ->
-            match("\\.m2$", file)), test -> testDir | "/" | test),
+            match("\\.m2$", file)), test -> testDir | test),
             FileName => true);
         currentPackage = tmp;
         pkg#"test directory loaded" = true;
@@ -62,16 +61,15 @@ check Package := opts -> pkg -> check(-1, pkg, opts)
 check(ZZ, String)  := opts -> (n, pkg) -> check(n, needsPackage (pkg, LoadDocumentation => true), opts)
 check(ZZ, Package) := opts -> (n, pkg) -> (
     if not pkg.Options.OptionalComponentsPresent then (
-	printerr("warning: optional components required for ", toString pkg, " tests are not present; skipping"); return);
+	printerr("warning: skipping tests; ", toString pkg, " requires optional components"); return);
     usermode := if opts.UserMode === null then not noinitfile else opts.UserMode;
     --
     use pkg;
     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
+    if not pkg#?"test directory loaded" then loadTestDir pkg;
     tests := if n == -1 then toList(0 .. pkg#"test number" - 1) else {n};
+    if #tests == 0 then printerr("warning: ", toString pkg,  " has no tests");
     --
-
-    if pkg#"pkgname" == "Core" then loadTestDir(pkg);
-
     errorList := {};
     (hadError, numErrors) = (false, 0);
     scan(tests, k -> (
@@ -82,8 +80,22 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
 		 (k, temporaryFilenameCounter - 2))));
     outfile := k -> temporaryDirectory() | toString k | ".tmp";
     if hadError then (
-	if opts.Verbose then apply(last \ errorList, k -> (
-		(filename, lineno, teststring) := pkg#"test inputs"#k;
+	if opts.Verbose then apply(errorList, (j, k) -> (
+		(filename, lineno, teststring) := pkg#"test inputs"#j;
 		stderr << filename << ":" << lineno - 1 << ":1: error:" << endl;
 		printerr get("!tail " | outfile k)));
 	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
+
+checkAllPackages = () -> (
+    tmp := argumentMode;
+    argumentMode = defaultMode - SetCaptureErr - SetUlimit -
+	if noinitfile then 0 else ArgQ;
+    fails := for pkg in sort separate(" ", version#"packages") list (
+	print HEADER1 pkg;
+	if runString("check(" | format pkg | ", Verbose => true)",
+	    Core, false) then continue else pkg) do print "";
+    argumentMode = tmp;
+    if #fails > 0 then printerr("package(s) with failing tests: ",
+	demark(", ", fails));
+    return #fails;
+)
