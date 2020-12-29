@@ -1311,15 +1311,6 @@ Exceeded limit of 5
 ")
 
 
-
-
--- example for use with splitWWW
-str = getWWW "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?h11=10&L=5";
-(head,body) = splitWWW str;
-head
-body
-
-
 --
 A = ZZ[a..d]
 B = A[r,s,t]
