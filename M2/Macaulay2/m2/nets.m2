@@ -262,7 +262,9 @@ commentize = method(Dispatch => Thing)
 commentize Nothing   := s -> ""
 commentize BasicList := s -> commentize horizontalJoin s
 commentize String    := s -> concatenate(" -- ", between("\n -- ", separate s))
-commentize Net       := S -> stack(commentize \ unstack S)
+commentize Net       := S -> (
+    baseline := height S - if height S == -depth S then 0 else 1;
+    (stack(commentize \ unstack S))^baseline)
 
 printerr = msg -> (stderr << commentize msg << endl;) -- always return null
 warning  = msg -> if debugLevel > 0 then (
