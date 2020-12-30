@@ -84,10 +84,10 @@ export {
     "ncHilbertSeries",
     "toRationalFunction",
     "UseVariables",
-    "ncKernel"
+    "ncKernel",
+    "ncGraphIdeal",
+    "endomorphismRingIdeal"
     }
-
--- FM: better way to do this?
 
 -- symbols into hash table for ring
 generatorSymbols = Core#"private dictionary"#"generatorSymbols"
@@ -319,11 +319,16 @@ isWellDefined FreeAlgebra := Boolean => R -> (
     )
 -- listForm
 
-NCGB = method(Options => {Strategy=>0})
+NCGB = method(Options => {Strategy=>16})
 NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
-        gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, opts.Strategy));
+        strat := opts.Strategy;
+	if (not isHomogeneous I and opts.Strategy == 16) then (
+	   -- need to change to non-F4 algorithm if I is not homogeneous at this point.
+	   strat = 0;
+	);   
+	gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, strat));
         I.cache.NCGB = {maxdeg, gbI};
         );
     I.cache.NCGB#1
@@ -1023,9 +1028,27 @@ ncHilbertSeries FreeAlgebraQuotient := opts -> B -> (
 
 ncKernel = method(Options=>{DegreeLimit => 10,Strategy=>0});
 ncKernel RingMap := opts -> phi -> (
+   A := source phi;
+   B := target phi;
+   K := ncGraphIdeal phi;
+   C := ring K;
+   Kgb := NCGB(K, opts#DegreeLimit, Strategy => opts#Strategy);
+   --- now select those elements of the GB that are only in the variables from ambA and place
+   --- those elements in A.
+   kerGens := select(flatten entries Kgb, f -> isSubset(support f, drop(gens C, numgens B)));
+   backToA := map(A,C,toList((numgens B) : 0_A) | (gens A));
+   kerGensA := select(kerGens / backToA, f -> f != 0_A);
+   -- the ring map 'backToA' is messing up the coefficients.  It seems the denominators are
+   -- disappearing if the coefficientRing is created via frac rather than toField.
+   -- See line 801 in tests.m2
+   if kerGensA == {} then ideal 0_A else ideal kerGensA
+)
+
+ncGraphIdeal = method()
+ncGraphIdeal RingMap := phi -> (
    if not isFreeAlgebraOrQuotient source phi or not isFreeAlgebraOrQuotient target phi then
       error "Expected both source and target to be noncommutative at the present time.";
-   -- TODO: isHomogeneous needs to be fixed.
+   -- TODO: isHomogeneous for ring maps needs to be fixed.
    -- if not isHomogeneous phi then
    --   error "Expected a homogeneous ring map.";
    A := source phi;
@@ -1037,7 +1060,6 @@ ncKernel RingMap := opts -> phi -> (
    kk := coefficientRing A;
    if not kk === coefficientRing B then
       error "Expected coefficient rings to be the same at the present time.";
-   -- FM: I can't seem to prevent this algebra from leaking to the front end.
    C := freeAlgebra(kk,(gens B | gens A) |
             {Degrees => (degrees B | degrees A)} | 
 	    {Weights => toList(numgens B : 1) | (toList(numgens A : 0))} | 
@@ -1049,16 +1071,40 @@ ncKernel RingMap := opts -> phi -> (
    Jgb := flatten entries if J.cache.?NCGB then last J.cache.NCGB else gens J;
    K := (ideal (Igb / psiA)) + (ideal (Jgb / psiB)) + 
          ideal apply(numgens A, i -> (psiA ambA_i) - psiB liftToAmbB phi A_i);
-   Kgb := NCGB(K, opts#DegreeLimit, Strategy => opts#Strategy);
-   --- now select those elements of the GB that are only in the variables from ambA and place
-   --- those elements in A.
-   kerGens := select(flatten entries Kgb, f -> isSubset(support f, drop(gens C, numgens B)));
-   backToA := map(A,C,toList((numgens B) : 0_A) | (gens A));
-   -- the ring map 'backToA' is messing up the coefficients.  It seems the denominators are
-   -- disappearing if the coefficientRing is created via frac rather than toField.
-   -- See line 801 in tests.m2
-   if kerGens == {} then return ideal 0_A;
-   ideal (kerGens / backToA)
+   K
+)
+
+-------------------------------------------------------
+--- Commands to compute endomorphism ring presentations
+-------------------------------------------------------
+
+endomorphismRingIdeal = method()
+endomorphismRingIdeal (Module,Symbol) := (M,X) -> (
+   R := ring M;
+   endM := End M;
+   N := numgens endM;
+   endGens := apply(N, i -> homomorphism endM_{i});
+   endMVars := apply(N, i -> X_i);
+   A := freeAlgebra(R,endMVars | {UseVariables=>false});
+   gensA := ncBasis(1,A);
+   deg2A := ncBasis(2,A);
+   composites := apply(flatten entries deg2A, m -> matrixEvaluate(endGens, m)) / homomorphism';
+   -- relations from multiplication table
+   I := ideal(deg2A - matrix {apply(composites, t -> first flatten entries (gensA*(matrix entries t)))});
+   -- now must identify the identity map.
+   identM := homomorphism' id_M;
+   ff := 1_A - first flatten entries (ncBasis(1,A)*(matrix entries identM));
+   I = I + ideal ff;
+   I
+)
+
+matrixEvaluate = method()
+matrixEvaluate (List,RingElement) := (mats,f) -> (
+   A := ring f;
+   R := coefficientRing A;
+   (rawCoeff, rawMons) := rawPairs(raw coefficientRing ring f, raw f);
+   varPowers := apply(toList rawMons, rm -> apply(rawSparseListFormMonomial rm, p -> (mats#(p#0),p#1)));
+   sum apply(#varPowers, i -> promote(rawCoeff#i,R)*(product apply(varPowers#i, p -> (p#0)^(p#1))))
 )
 
 --- load the tests
@@ -1196,6 +1242,7 @@ isWellDefined phi
 ///
 TEST ///
 -- 5. kernel broken for maps of nc rings (but we can make a product order which will compute it).
+-- FIXED with ncKernel
 restart
 needsPackage "AssociativeAlgebras"
 B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
@@ -1211,7 +1258,7 @@ C = B ** B
 ///
 TEST ///
 -- 7. "//" doesn't work for matrices over nc rings.  Need left/right ncgbs.
--- no test available just yet.
+--    no test available just yet.
 -- 8. Documentation!!! Continue to bring over working documentation nodes from NCAlgebra
 -- 9. Opposite Ring and element don't work yet.
 -- 10. Change toM2Ring to 'abelianization' or some such
@@ -1296,7 +1343,6 @@ toRationalFunction(apply(20, i -> numgens source basis(i, R)))
 ///
 
 /// -- notes from 12/21 meeting
-
 -- 1. fix flattenring for towers
 -- 2. teach f4 how to intelligently use previous reductions when building 
 --    reducer rows.
@@ -1319,3 +1365,43 @@ toRationalFunction(apply(20, i -> numgens source basis(i, R)))
 --    It is possible we would want to reduce these before adding them in.
 -- ** 5. Reduce the overlaps using the above reducers.  When a collection of new GB elements are found,
 --    They should be interreduced to ensure (1) holds for the next iteration.
+///
+
+--- FM: Working on endomorphismRing code.  Basically rewrote what used to be in NCAlgebras
+---     the GB for the resulting ideal is wrong since
+restart
+debug needsPackage "AssociativeAlgebras"
+R = QQ[x,y,z,w]/ideal(x*w - y*z)
+kRes = res coker vars R
+M = ker kRes.dd_5
+endM = End M
+endGens = apply(numgens endM, i -> homomorphism endM_{i});
+homomorphism' id_M
+I = endomorphismRingIdeal(M,X);
+-- would be nice to get the quotient working correctly.
+A = ring I
+B = A/I
+--- but...
+B_0  -- should not be zero...
+netList pack(10, select(I_*, f -> #(terms f) > 1))
+--- check that the relations are correct
+all(I_*, f -> matrixEvaluate(endGens,f) == 0)
+
+restart
+debug needsPackage "AssociativeAlgebras"
+R = QQ
+M = R^5
+endM = End M
+endGens = apply(numgens endM, i -> homomorphism endM_{i});
+homomorphism' id_M
+I = endomorphismRingIdeal(M,X);
+A = ring I
+B = A/I
+--- how could we minimize the generators and relations in a systematic way?
+--- I have something like this in NCAlgebra, but not sure if it is the best way.
+--- e.g. note that X_23*X_19 = X_18.  Therefore X_18 is not needed as a generator,
+--- so we should replace all occurences of X_18 with X_23*X_19. 
+--- other examples: X_23*X_14 = X_13, X_23*X_9 = X_8 etc.
+
+--- check that the relations are correct
+all(I_*, f -> matrixEvaluate(endGens,f) == 0)

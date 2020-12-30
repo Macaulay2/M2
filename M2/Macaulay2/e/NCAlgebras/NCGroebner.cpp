@@ -105,10 +105,7 @@ void NCGroebner::computeHomogeneous(int softDegreeLimit)
           if (!freeAlgebra().is_zero(*redOverlapPoly))
             {
               addToGroebnerBasis(redOverlapPoly);
-              //std::cout << "--------------------" << std::endl;
-              //displayGroebnerBasis(std::cout);
               autoreduceByLastElement();
-              //displayGroebnerBasis(std::cout);
               updateOverlaps(redOverlapPoly);
             }
           else
@@ -172,7 +169,7 @@ void NCGroebner::computeInhomogeneous(int softDegreeLimit)
           if (!freeAlgebra().is_zero(*redOverlapPoly))
             {
               addToGroebnerBasis(redOverlapPoly);
-              //autoreduceByLastElement();
+              autoreduceByLastElement();
               updateOverlaps(redOverlapPoly);
             }
           else

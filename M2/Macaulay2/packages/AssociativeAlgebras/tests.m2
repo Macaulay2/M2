@@ -901,7 +901,7 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 14); --
 time Igb = NCGB(I, 20, Strategy=>16);
 time Igb = NCGB(I, 10);
 S = R/I
-#(flatten entries ncBasis(10,S)) == binomial(10+3,3)
+#(flatten entries ncBasis(12,S)) == binomial(12+3,3)
 flatten entries Igb / degree
 
 -- the following seems wrong
@@ -975,8 +975,7 @@ f_2 = z_1 + x^2*z_2 + x*z_3
 f_3 = z_1 + x*z_2 + x^2*z_3
 phi = map(S,R,{f_1,f_2,f_3})
 K = ncKernel phi
-assert(ring y_1 === R) -- ring from ncKernel leaking to front end
-use R -- remove this once the previous test passes
+assert(ring y_1 === R)
 assert(phi(y_1*y_3 - 2*y_2^2 + y_3*y_1) == 0)
 assert(phi(y_2*y_3 - 2*y_1^2 + y_3*y_2) == 0)
 assert(phi(y_1*y_2 - 2*y_3^2 + y_2*y_1) == 0)
@@ -984,6 +983,18 @@ T = R/K
 hsT = apply(15, i -> numgens source ncBasis(i,T))
 binT = apply(15, i -> binomial(i+2,2))
 assert(hsT == binT)
+psi = map(S,T,{f_1,f_2,f_3})
+assert(ncKernel psi == ideal 0_T)
+
+graphPhi = ncGraphIdeal phi
+use ring graphPhi
+graphPhiGB = NCGB(graphPhi,10,Strategy=>16)
+-- note: if I make the power of z_3 in the next monomial much higher
+--       e.g. 5, then the reduction takes a long time.  can we speed up reduction
+--       algorithm a bit?
+preim = NCReductionTwoSided(z_1^2*z_2^3*z_3, ideal graphPhiGB)
+alpha = map(S,ring graphPhi,gens S | {f_1,f_2,f_3})
+assert(alpha(preim) == alpha(z_1^2*z_2^3*z_3))
 ///
 
 TEST ///
@@ -999,6 +1010,7 @@ B = QQ{x,y}
 phi = map(B,A,{x*y*x,y*x*y,x*y})
 phi' = map(B,A',{x^2,x*y,y^2})
 assert(ncKernel phi' == 0)
+graphK = ncGraphIdeal phi
 K = ncKernel phi
 C = A/K
 hsC = apply(15, i -> numgens source ncBasis(i,C))
