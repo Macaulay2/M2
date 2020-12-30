@@ -62,7 +62,7 @@ info TITLE :=
 net  COMMENT :=
 info COMMENT :=
 net  LITERAL :=
-info LITERAL := x -> ""
+info LITERAL := x -> ()
 
 info String  := identity
 info Nothing := net

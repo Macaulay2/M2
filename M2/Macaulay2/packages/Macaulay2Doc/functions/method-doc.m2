@@ -125,5 +125,11 @@ document {
 	  s()
 	  s(Slope => 4)
      ///,
-     SeeAlso => {"methods", "specifying typical values", method, MethodFunction, MethodFunctionSingle, MethodFunctionBinary, MethodFunctionWithOptions }
+     Subnodes => {
+	 TO "specifying typical values",
+	 ":Types of method funcions",
+	 TO MethodFunction,
+	 TO MethodFunctionSingle,
+	 TO MethodFunctionBinary,
+	 TO MethodFunctionWithOptions }
      }

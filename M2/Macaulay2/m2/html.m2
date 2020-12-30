@@ -131,8 +131,8 @@ html IMG := (lookup(html, IMG)) @@ treatImgSrc
 fixNewlines := x -> apply(x, y -> if class y === String then replace("\r\n","\n",y) else y)
 html PRE := (lookup(html, PRE)) @@ fixNewlines
 
-html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
-html COMMENT := x -> concatenate("<!--",x,"-->")
+html CDATA   := x -> concatenate("<![CDATA[", x ,"]]>", newline)
+html COMMENT := x -> concatenate("<!--", x, "-->", newline)
 
 html HREF := x -> (
      r := concatenate apply(splice if #x > 1 then drop(x, 1) else x, html1);
