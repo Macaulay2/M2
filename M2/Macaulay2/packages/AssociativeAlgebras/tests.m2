@@ -882,22 +882,27 @@ T = fourDimSklyanin(QQ,{x,y,z,w},DegreeLimit => 4)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w},DegreeLimit => 4)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w})
 
+-- XXX
 restart
 needsPackage "AssociativeAlgebras"
 gbTrace = 2
-kk = QQ
+--kk = QQ
 kk = ZZ/32003
 R = kk{x,y,z,w}
 I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
 
-I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy=>"F4");
-I = ideal I_*; elapsedTime Igb = NCGB(I, 11, Strategy=>"F4"); -- 12.0 seconds (with std::vector<int>) (~5 sec now)
-I = ideal I_*; elapsedTime Igb = NCGB(I, 10, Strategy=>"F4"); -- 2.1 seconds
-I = ideal I_*; elapsedTime Igb = NCGB(I, 10); -- 12.3 seconds (with std::vector<int>)
-I = ideal I_*; elapsedTime Igb = NCGB(I, 7, Strategy=>"F4");
+I = ideal I_*; elapsedTime Igb = NCGB(I, 10, Strategy => "Naive"); -- (with autoreduction) 5.2 sec
+I = ideal I_*; elapsedTime Igb = NCGB(I, 11, Strategy => "Naive"); -- (with autoreduction) 19.9 sec
+I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "Naive"); -- (with autoreduction) 101 sec
 
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"F4");    -- 2220 seconds, I think? (now 380 sec on FMs machine)
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"Naive"); -- 
+
+I = ideal I_*; elapsedTime Igb = NCGB(I, 10); -- (with autoreduction) .9 sec
+I = ideal I_*; elapsedTime Igb = NCGB(I, 11); -- (with autoreduction) 3.5 sec
+I = ideal I_*; elapsedTime Igb = NCGB(I, 12); -- (with autoreduction) 17.7 sec
+I = ideal I_*; elapsedTime Igb = NCGB(I, 13); -- (with autoreduction) 79 sec (153 gens in GB)
+I = ideal I_*; elapsedTime Igb = NCGB(I, 14); -- (with autoreduction) 352 sec (177 gens in GB)
 
 time Igb = NCGB(I, 20, Strategy=>"F4");
 time Igb = NCGB(I, 10, Strategy=>"Naive");
