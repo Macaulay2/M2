@@ -394,6 +394,7 @@ help String := key -> (
 -- Methods
 help Sequence := key -> (
     if key === () then return if inDebugger then debuggerUsageMessage else help "initial help";
+    -- TODO: make this work with hook strategies; e.g. (foo, ZZ, Strategy => Default)
     if lookup key === null then error("expected ", toString key, " to be a method");
     rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
     tag := getOption(rawdoc, symbol DocumentTag);
@@ -442,9 +443,7 @@ viewHelp Thing  := key -> (
         else error("missing documentation index: ", frontpage, ". Run makePackageIndex() or start M2 without -q"))
     else viewHelp makeDocumentTag key)
 viewHelp DocumentTag := tag -> (
-    tag = getOption(fetchAnyRawDocumentation tag, symbol DocumentTag);
-    if tag === null then error "no documentation found";
-    docpage := concatenate htmlFilename tag;
+    docpage := concatenate htmlFilename ( tag = getPrimaryTag tag );
     if fileExists docpage then show URL { docpage } else show help tag)
 viewHelp ZZ := i -> seeAbout(viewHelp, i)
 
