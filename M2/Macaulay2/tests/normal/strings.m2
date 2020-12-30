@@ -3,8 +3,7 @@
 assert(concatenate("ABC")=="ABC");
 assert(concatenate(2)=="  ");
 assert(concatenate(0)=="");
--- concatenate(-1) should give an error
-try concatenate(-1) then assert(false) else true;
+assert(concatenate(-1)=="");
 -- multiple args
 assert(concatenate("ABC","DEF")=="ABCDEF");
 assert(concatenate("ABC",2)=="ABC  ");
