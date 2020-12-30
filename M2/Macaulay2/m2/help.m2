@@ -206,19 +206,10 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
     -- types
     b := select(e, x -> instance(value x, Type));
     -- methods
-    m := unique flatten for T in b list (
-	for i in keys value T list (
-	    if (instance(i, Sequence)
-		and #i > 1 and (
-		    instance(i#0, Symbol) and i#1 =!= symbol= or
-		    instance(i#0, Function))
-		and isDocumentableMethod i)       then  i
-	    else
-	    if (instance(i, Keyword) or
-		instance(i, Function) or
-		instance(i, ScriptedFunctor))
-	    and isDocumentableMethod (i, value T) then (i, value T)
-	    else continue));
+    -- TODO: if a package introduces a methods where all components are from
+    -- another package, e.g. (res, List), this code will miss it.
+    -- TODO: should we limit to methods that have individual documentation? Probably not
+    m := unique select(flatten \\ documentableMethods \ value \ toList e, x -> package x === pkg);
     -- symbols
     c := select(e, x -> instance(value x, Symbol));
     -- other things
