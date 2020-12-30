@@ -25,14 +25,17 @@ uninstall:; rm -rf */.installed* $(BUILTLIBPATH)
 all:install-programs install-licenses
 install-programs:
 	: installing programs in @pre_programsdir@
+	$(MKDIR_P) $(BUILTLIBPATH)/bin ; \
 	@INSTALL@ -d @pre_programsdir@ ; \
 	@TAR@ cf - -C $(BUILTLIBPATH)/bin/. . | @TAR@ xf - -C @pre_programsdir@ ;
 install-licenses:
 	: installing library and submodule licenses in @pre_licensesdir@
+	$(MKDIR_P) $(BUILTLIBPATH)/licenses ; \
 	@INSTALL@ -d @pre_licensesdir@ ; \
 	@TAR@ cf - -C $(BUILTLIBPATH)/licenses/. . | @TAR@ xf - -C @pre_licensesdir@ ;
 install-dynamic-libraries:
 	: installing sharable library files in @pre_librariesdir@
+	$(MKDIR_P) $(BUILTLIBPATH)/lib ; \
 	@INSTALL@ -d @pre_librariesdir@ ;			     \
 	cd $(BUILTLIBPATH)/lib &&				     \
 	for i in *.dll *.so.* *[0-9].dylib ;			     \
