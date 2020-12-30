@@ -24,3 +24,12 @@ assert(pad(3,"ABC")=="ABC");
 -- ignore the numbers if it's too short
 assert(pad("ABC",2)=="ABC");
 assert(pad(2,"ABC")=="ABC");
+-- nets
+assert(pad(4,"ABC"^1)==" ABC"^1)
+assert(pad("ABC"^1,4)=="ABC "^1)
+assert(pad(4,"ABC\nDEF"^1)==" ABC\n DEF"^1)
+assert(pad("ABC\nDEF"^1,4)=="ABC\nDEF "^1)
+assert(pad(3,"ABC"^1)=="ABC"^1)
+assert(pad("ABC"^1,3)=="ABC"^1)
+assert(pad(2,"ABC"^1)=="ABC"^1)
+assert(pad("ABC"^1,2)=="ABC"^1)
