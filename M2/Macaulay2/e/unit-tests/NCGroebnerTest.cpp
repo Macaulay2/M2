@@ -445,7 +445,7 @@ TEST(FreeAlgebra, spairs)
   EXPECT_TRUE((*f).cbegin().monom().begin() + 2 == leadWordPrefix.begin() && (*f).cbegin().monom().begin() + 4 == leadWordPrefix.end());
   EXPECT_TRUE((*f).cbegin().monom().begin() + 3 == leadWordSuffix.begin() && (*f).cbegin().monom().begin() + 5 == leadWordSuffix.end());
 
-  ConstPolyList polyList {&*f};
+  PolyList polyList {&*f};
   *g = *(NCGroebner::createOverlapPoly(*A, polyList, 0, 2, 0));
   h = f*y*x - x*y*f;
   EXPECT_TRUE(g == h);
