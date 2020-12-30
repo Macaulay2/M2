@@ -86,7 +86,11 @@ export {
     "UseVariables",
     "ncKernel",
     "ncGraphIdeal",
-    "endomorphismRingIdeal"
+    "endomorphismRingIdeal",
+    "leftQuadraticMatrixFourDim",
+    "rightQuadraticMatrixFourDim",
+    "pointSchemeFourDim",
+    "lineSchemeFourDim"
     }
 
 -- symbols into hash table for ring
@@ -319,16 +323,22 @@ isWellDefined FreeAlgebra := Boolean => R -> (
     )
 -- listForm
 
-NCGB = method(Options => {Strategy=>16})
+setNCGBStrategy := stratStr -> (
+   if stratStr == "F4" then 16
+   else if stratStr == "Naive" then 0
+   else error "Unknown NCGB strategy provided."
+)
+
+NCGB = method(Options => {Strategy=>"F4"})
 NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
+    strat := opts#Strategy;
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
-        strat := opts.Strategy;
-	if (not isHomogeneous I and opts.Strategy == 16) then (
-	   -- need to change to non-F4 algorithm if I is not homogeneous at this point.
-	   strat = 0;
+	if (not isHomogeneous I and strat == "F4") then (
+	   -- need to change to Naive algorithm if I is not homogeneous at this point.
+	   strat = "Naive";
 	);   
-	gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, strat));
+	gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, setNCGBStrategy(strat)));
         I.cache.NCGB = {maxdeg, gbI};
         );
     I.cache.NCGB#1
@@ -738,7 +748,7 @@ threeDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    I := ideal {params#0*gensA#1*gensA#2+params#1*gensA#2*gensA#1+params#2*(gensA#0)^2,
        params#0*gensA#2*gensA#0+params#1*gensA#0*gensA#2+params#2*(gensA#1)^2,
        params#0*gensA#0*gensA#1+params#1*gensA#1*gensA#0+params#2*(gensA#2)^2};
-   Igb := NCGB(I, opts.DegreeLimit);
+   Igb := NCGB(I, opts.DegreeLimit, Strategy=>"F4");
    B := A/I;
    B
 )
@@ -763,7 +773,7 @@ fourDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    g3 := (varList#0*varList#3 + varList#3*varList#0) - (varList#1*varList#2 - varList#2*varList#1);
 
    I := ideal {f1,f2,f3,g1,g2,g3};
-   Igb := NCGB(I, opts.DegreeLimit);
+   Igb := NCGB(I, opts.DegreeLimit, Strategy=>"F4");
    B := A/I;
    B
 )
@@ -1026,7 +1036,7 @@ ncHilbertSeries FreeAlgebraQuotient := opts -> B -> (
 --   reverse sort unique flatten apply(rawMons, rm -> apply(rawSparseListFormMonomial rm, p -> A_(p#0)))
 --)
 
-ncKernel = method(Options=>{DegreeLimit => 10,Strategy=>0});
+ncKernel = method(Options=>{DegreeLimit => 10,Strategy=>"F4"});
 ncKernel RingMap := opts -> phi -> (
    A := source phi;
    B := target phi;
@@ -1088,7 +1098,7 @@ endomorphismRingIdeal (Module,Symbol) := (M,X) -> (
    A := freeAlgebra(R,endMVars | {UseVariables=>false});
    gensA := ncBasis(1,A);
    deg2A := ncBasis(2,A);
-   composites := apply(flatten entries deg2A, m -> matrixEvaluate(endGens, m)) / homomorphism';
+   composites := apply(flatten entries deg2A, m -> evaluateAt(endGens, m)) / homomorphism';
    -- relations from multiplication table
    I := ideal(deg2A - matrix {apply(composites, t -> first flatten entries (gensA*(matrix entries t)))});
    -- now must identify the identity map.
@@ -1098,13 +1108,119 @@ endomorphismRingIdeal (Module,Symbol) := (M,X) -> (
    I
 )
 
-matrixEvaluate = method()
-matrixEvaluate (List,RingElement) := (mats,f) -> (
+--- converts a RingElement into a list of pairs (one element for each term)
+--- and each pair has first coordinate the coefficient and the second a list
+--- of variables used in the monomial.  The empty list indicates the constants
+--- a substitution is also allowed.
+toVariableList = method()
+toVariableList RingElement := f -> (
    A := ring f;
    R := coefficientRing A;
    (rawCoeff, rawMons) := rawPairs(raw coefficientRing ring f, raw f);
-   varPowers := apply(toList rawMons, rm -> apply(rawSparseListFormMonomial rm, p -> (mats#(p#0),p#1)));
-   sum apply(#varPowers, i -> promote(rawCoeff#i,R)*(product apply(varPowers#i, p -> (p#0)^(p#1))))
+   varPowers := apply(#rawMons, i -> (promote(rawCoeff#i,R), flatten apply(rawSparseListFormMonomial rawMons#i, p -> toList(p#1:A_(p#0)))));
+   varPowers
+)
+
+-- function for evaluating a ring element at a list of other elements that may be multiplied
+--    This can be either other ring elements, matrices, etc.
+-- make this more robust?
+-- this is basically sub, but we allow matrices as well
+evaluateAt = method()
+evaluateAt (List,RingElement) := (mats,f) -> (
+   A := ring f;
+   if (#mats != numgens A) then
+      error "Expected the length of substitution list to match number of generators of ring.";
+   if all(mats, m -> class m === Matrix) then (
+      matMod := source first mats;
+      if any(#mats, i -> matMod =!= source mats#i or matMod =!= target mats#i) then
+         error "Expected a list of maps defined on the same module.";
+   );
+   varPowers := toVariableList f;
+   sum apply(varPowers, p -> p#0*(product p#1))
+)
+
+-------------------------------------------------------------------------
+---- Point and line scheme code (in the sense of Artin-Tate-Van den Bergh
+-------------------------------------------------------------------------
+leftQuadraticMatrixFourDim = method()
+leftQuadraticMatrixFourDim Ideal := I -> (
+   A := ring I;
+   if class A =!= FreeAlgebra then 
+      error "Expected an ideal in a free algebra.";
+   gensI := gens I;
+   splitRels := I_* / toVariableList;
+   if (not isHomogeneous I and any(splitRels, p -> any(p#1, l -> #l != 2))) then
+      error "Expected a homogeneous ideal with quadratic generators.";
+   gensA := gens A;
+   Id := id_(A^(numgens A));
+   eHash := hashTable apply(numgens A, i -> (A_i, Id^{i}));
+   myTable := apply(numgens I, i -> flatten entries sum apply(splitRels#i, t -> t#0*t#1#0*(eHash#(t#1#1))));
+   matrix myTable
+)
+leftQuadraticMatrixFourDim List := I -> leftQuadraticMatrixFourDim ideal I
+
+rightQuadraticMatrixFourDim = method()
+rightQuadraticMatrixFourDim Ideal := I -> (
+   -- almost the same as above, just the myTable is built differently at the end.
+   A := ring I;
+   if class A =!= FreeAlgebra then 
+      error "Expected an ideal in a free algebra.";
+   gensI := gens I;
+   splitRels := I_* / toVariableList;
+   if (not isHomogeneous I and any(splitRels, p -> any(p#1, l -> #l != 2))) then
+      error "Expected a homogeneous ideal with quadratic generators.";
+   gensA := gens A;
+   Id := id_(A^(numgens A));
+   eHash := hashTable apply(numgens A, i -> (A_i, Id^{i}));
+   myTable := apply(numgens I, i -> flatten entries sum apply(splitRels#i, t -> t#0*t#1#1*(eHash#(t#1#0))));
+   matrix myTable
+)
+rightQuadraticMatrixFourDim List := I -> rightQuadraticMatrixFourDim ideal I
+
+lineSchemeFourDim = method()
+lineSchemeFourDim (FreeAlgebra, Symbol) := 
+lineSchemeFourDim (FreeAlgebraQuotient, Symbol) := (B,M) -> (
+   if not isHomogeneous B or
+      numgens ideal B != 6 or
+      numgens B != 4 then error "Expected an algebra on four generators and six relations.";
+   Bd := homogDual B;
+   J := ideal Bd;
+   A := ring J;
+   lqJ := leftQuadraticMatrixFourDim J;
+   N := getSymbol "N";
+   u := getSymbol "u";
+   v := getSymbol "v";
+   monS := monoid [M_(1,2),M_(1,3),M_(1,4),M_(2,3),M_(2,4),M_(3,4)];
+   S := QQ monS;
+   monR := monoid [u_1..u_4,v_1..v_4,N_(1,2),N_(1,3),N_(1,4),N_(2,3),N_(2,4),N_(3,4),MonomialOrder=>{8,6}];
+   R := QQ monR;
+   matching := hashTable {{1,2} => 0, {1,3} => 1, {1,4} => 2, {2,3} => 3, {2,4} => 4, {3,4} => 5};
+   --- a bit of a hack, but oh well
+   K := ideal apply(subsets({1,2,3,4},2), p -> R_(matching#p + 8) - (R_(p#0-1)*R_(p#1+3) - R_(p#1-1)*R_(p#0+3)));
+   Kgb := gb K;
+   psi := map(S,R,{0,0,0,0,0,0,0,0,S_5,-S_4,S_3,S_2,-S_1,S_0});
+   alpha1 := map(R,A,{R_0,R_1,R_2,R_3});
+   alpha2 := map(R,A,{R_4,R_5,R_6,R_7});
+   bigMat := (matrix applyTable(entries lqJ, g -> alpha1 g)) | (matrix applyTable(entries lqJ, g -> alpha2 g));
+   I := minors(8,bigMat);
+   IN := (flatten entries gens I) / (f -> f % Kgb);
+   IM := ideal (IN / psi) + ideal {S_0*S_5 - S_1*S_4 + S_2*S_3};
+   IM
+)
+
+pointSchemeFourDim = method()
+pointSchemeFourDim (FreeAlgebra, Symbol) := 
+pointSchemeFourDim (FreeAlgebraQuotient, Symbol) := (B, y) -> (
+   if not isHomogeneous B or
+      numgens ideal B != 6 or
+      numgens B != 4 then error "Expected an algebra on four generators and six relations.";
+    A := ambient B;
+    monR := monoid [y_1..y_4];
+    R := QQ monR;
+    phi := map(R,A,gens R);
+    I := ideal B;
+    M1 := matrix applyTable(entries leftQuadraticMatrixFourDim I, g -> phi g);
+    minors(4,M1)
 )
 
 --- load the tests
@@ -1338,8 +1454,8 @@ toRationalFunction(apply(20, i -> numgens source basis(i, R)))
   A = QQ {x, y, z}
   gbTrace=2
   I = ideal(-x^2+y*z+z*y,x*z-y^2+z*x,x*y+y*x-z^2)  
-  J = NCGB(I, 10, Strategy => 16)
-  J = NCGB(I, 22, Strategy => 16)
+  J = NCGB(I, 10, Strategy => "F4")
+  J = NCGB(I, 22, Strategy => "F4")
 ///
 
 /// -- notes from 12/21 meeting
@@ -1385,7 +1501,7 @@ B = A/I
 B_0  -- should not be zero...
 netList pack(10, select(I_*, f -> #(terms f) > 1))
 --- check that the relations are correct
-all(I_*, f -> matrixEvaluate(endGens,f) == 0)
+all(I_*, f -> evaluateAt(endGens,f) == 0)
 
 restart
 debug needsPackage "AssociativeAlgebras"
@@ -1404,4 +1520,28 @@ B = A/I
 --- other examples: X_23*X_14 = X_13, X_23*X_9 = X_8 etc.
 
 --- check that the relations are correct
-all(I_*, f -> matrixEvaluate(endGens,f) == 0)
+all(I_*, f -> evaluateAt(endGens,f) == 0)
+
+---- point and line scheme calculations
+restart
+debug needsPackage "AssociativeAlgebras"
+kk = ZZ/32003
+R = kk{x,y,z,w}
+I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
+I = ideal I_*; elapsedTime Igb = NCGB(I, 7, Strategy=>"F4");
+S = R/I
+radical lineSchemeFourDim(S,M)
+
+restart
+debug needsPackage "AssociativeAlgebras"
+R = QQ toList(x_1..x_4)
+I = ideal {x_3^2 - x_1*x_2, x_4^2 - x_2*x_1, x_1*x_3 - x_2*x_4, x_3*x_1 - x_2*x_3, x_1*x_4 - x_4*x_2, x_4*x_1 - x_3*x_2}
+Igb = NCGB(I, 14);
+S = R/I
+all(15, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
+LL = lineSchemeFourDim(S,M)
+primaryDecomposition radical LL
+netList oo
+PP = pointSchemeFourDim(S,y)
+primaryDecomposition radical PP
+netList oo

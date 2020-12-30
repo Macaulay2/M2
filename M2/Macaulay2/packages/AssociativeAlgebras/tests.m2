@@ -729,7 +729,7 @@ assert(degrees source gens I === {{2},{3},{3}})
 M1 = gens I
 J = NCGB(I,3) 
 J = NCGB(I,20)
-J = NCGB(I,20,Strategy=>16)
+J = NCGB(I,20,Strategy=>"F4")
 M2 = I.cache.NCGB#1
 J1 = ideal (ideal M1)_*
 J2 = ideal (ideal M2)_*
@@ -824,14 +824,14 @@ I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*c*a + 3*a*c + 5*b^2)
 gbTrace=2
 deg = 17
-I = ideal I_*; time J1 = ideal NCGB(I, deg, Strategy=>16); -- this gives wrong answer every n times, for n = ??
+I = ideal I_*; time J1 = ideal NCGB(I, deg, Strategy=>"F4"); -- this gives wrong answer every n times, for n = ??
 numgens J1 == 78 -- this fails here and there... (run this and the the line before it over and over).
 
 gbTrace=2
-I = ideal I_*; time NCGB(I, 23, Strategy=>16); 
+I = ideal I_*; time NCGB(I, 23, Strategy=>"F4"); 
 
-I = ideal I_*; time NCGB(I, 20, Strategy=>16); 
-I = ideal I_*; time NCGB(I, 20, Strategy=>0);
+I = ideal I_*; time NCGB(I, 20, Strategy=>"F4"); 
+I = ideal I_*; time NCGB(I, 20, Strategy=>"Naive");
 
 --- this is the matrix in degree 3 for the above computation after column sort, if
 --- one would like to manipulate it for checking purposes.
@@ -858,13 +858,14 @@ M = map (kk^21, kk^27, { (0,1) => 1, (0,3) => 3/2, (0,8) => 5/2,
 			  (20,2) => 1, (20,17) => 2/5, (20,23) => 3/5})
 M = mutableMatrix M
 
-I = ideal I_*; NCGB(I, 10, Strategy=>0);
+I = ideal I_*; NCGB(I, 10, Strategy=>"Naive");
+-- Haven't named the below strategies yet
 --I = ideal I_*; NCGB(I, 10, Strategy=>1); -- crash
-I = ideal I_*; NCGB(I, 10, Strategy=>2); -- works
+--I = ideal I_*; NCGB(I, 10, Strategy=>2); -- works
 --I = ideal I_*; NCGB(I, 10, Strategy=>3); -- infinite loop
-I = ideal I_*; NCGB(I, 10, Strategy=>4); -- works
-I = ideal I_*; NCGB(I, 10, Strategy=>5); -- works
-I = ideal I_*; NCGB(I, 10, Strategy=>6); -- works -- hmm, doesn't seem to work well
+--I = ideal I_*; NCGB(I, 10, Strategy=>4); -- works
+--I = ideal I_*; NCGB(I, 10, Strategy=>5); -- works
+--I = ideal I_*; NCGB(I, 10, Strategy=>6); -- works -- hmm, doesn't seem to work well
 
 restart
 needsPackage "AssociativeAlgebras"
@@ -889,22 +890,23 @@ kk = ZZ/32003
 R = kk{x,y,z,w}
 I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
 
-I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy=>16);
-I = ideal I_*; elapsedTime Igb = NCGB(I, 11, Strategy=>16); -- 12.0 seconds (with std::vector<int>) (~5 sec now)
-I = ideal I_*; elapsedTime Igb = NCGB(I, 10, Strategy=>16); -- 2.1 seconds
+I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy=>"F4");
+I = ideal I_*; elapsedTime Igb = NCGB(I, 11, Strategy=>"F4"); -- 12.0 seconds (with std::vector<int>) (~5 sec now)
+I = ideal I_*; elapsedTime Igb = NCGB(I, 10, Strategy=>"F4"); -- 2.1 seconds
 I = ideal I_*; elapsedTime Igb = NCGB(I, 10); -- 12.3 seconds (with std::vector<int>)
-I = ideal I_*; elapsedTime Igb = NCGB(I, 7, Strategy=>16);
+I = ideal I_*; elapsedTime Igb = NCGB(I, 7, Strategy=>"F4");
 
-I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>16); -- 2220 seconds, I think?
-I = ideal I_*; elapsedTime Igb = NCGB(I, 14); -- 
+I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"F4");    -- 2220 seconds, I think? (now 380 sec on FMs machine)
+I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"Naive"); -- 
 
-time Igb = NCGB(I, 20, Strategy=>16);
-time Igb = NCGB(I, 10);
+time Igb = NCGB(I, 20, Strategy=>"F4");
+time Igb = NCGB(I, 10, Strategy=>"Naive");
 S = R/I
 #(flatten entries ncBasis(12,S)) == binomial(12+3,3)
 flatten entries Igb / degree
+all(15, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
 
--- the following seems wrong
+-- the following seems wrong (20 is too big)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w}, DegreeLimit => 20);
 ideal T
 --- playing with ore extensions
@@ -988,7 +990,7 @@ assert(ncKernel psi == ideal 0_T)
 
 graphPhi = ncGraphIdeal phi
 use ring graphPhi
-graphPhiGB = NCGB(graphPhi,10,Strategy=>16)
+graphPhiGB = NCGB(graphPhi,10,Strategy=>"F4")
 -- note: if I make the power of z_3 in the next monomial much higher
 --       e.g. 5, then the reduction takes a long time.  can we speed up reduction
 --       algorithm a bit?
@@ -1036,8 +1038,8 @@ use R -- should not be necessary but a ring from ncKernel is leaking to front en
 
 -- strictly speaking, this GB calculation is not necessary, as the return value of ncKernel is a GB of K
 -- not sure how to "force" that for the return value of ncKernel
-Kgb = NCGB(K, Strategy=>16) -- this seems to be caught in some kind of infinite loop when over frac field instead of toField
-Kgb = NCGB(K, Strategy=>0) -- same.  
+Kgb = NCGB(K, Strategy=>"F4") -- this seems to be caught in some kind of infinite loop when over frac field instead of toField
+Kgb = NCGB(K, Strategy=>"Naive") -- same.  
 T = R/K  -- crashing because the NCGB is not completing if frac above
 apply(15, i -> numgens source ncBasis(i,T))
 apply(15, i -> binomial(i+2,2))
@@ -1056,7 +1058,7 @@ f3 = z_1 + x*z_2 + x^2*z_3
 K = ideal apply(subsets(take(gens C,3), 2), p -> product p + product reverse p) + 
     ideal (y_1 - f1, y_2 - f2, y_3 - f3)
 isHomogeneous K
-Kgb = NCGB(K,20,Strategy=>16)
+Kgb = NCGB(K,20,Strategy=>"F4")
 netList flatten entries Kgb
 -- The elements of Kgb that are in y_i are a GB of the kernel.
 
@@ -1074,7 +1076,7 @@ assert(degrees source gens I === {{2},{3},{3}})
 M1 = gens I
 J = NCGB(I,3) 
 J = NCGB(I,20)
-J = NCGB(I,20,Strategy=>16)
+J = NCGB(I,20,Strategy=>"F4")
 M2 = I.cache.NCGB#1
 J1 = ideal (ideal M1)_*
 J2 = ideal (ideal M2)_*
@@ -1096,13 +1098,13 @@ needsPackage "AssociativeAlgebras"
 kk = frac( ZZ/32003[a,b,c] )
 A = kk {x,y,z}
 I = ideal {c*x^2+a*y*z+b*z*y, b*x*z+c*y^2+a*z*x, a*x*y+b*y*x+c*z^2}
-Igb = elapsedTime NCGB(I, 3, Strategy=>16);
-Igb = elapsedTime NCGB(I, 4, Strategy=>16);
-Igb = elapsedTime NCGB(I, 5, Strategy=>16); -- .21s
-Igb = elapsedTime NCGB(I, 6, Strategy=>16); -- 5.5s
-Igb = elapsedTime NCGB(I, 7, Strategy=>16); -- 187s  (my suspicion is that the lack of interreduction is killing us here.)
-Igb = elapsedTime NCGB(I, 8, Strategy=>16); -- ??
-Igb = elapsedTime NCGB(I, 9, Strategy=>16); -- ??
+Igb = elapsedTime NCGB(I, 3, Strategy=>"F4");
+Igb = elapsedTime NCGB(I, 4, Strategy=>"F4");
+Igb = elapsedTime NCGB(I, 5, Strategy=>"F4"); -- .21s
+Igb = elapsedTime NCGB(I, 6, Strategy=>"F4"); -- 5.5s
+Igb = elapsedTime NCGB(I, 7, Strategy=>"F4"); -- 187s  (my suspicion is that the lack of interreduction is killing us here.)
+Igb = elapsedTime NCGB(I, 8, Strategy=>"F4"); -- ??
+Igb = elapsedTime NCGB(I, 9, Strategy=>"F4"); -- ??
 
 Igb = elapsedTime NCGB(I, 3);
 Igb = elapsedTime NCGB(I, 4);
