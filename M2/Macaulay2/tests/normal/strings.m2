@@ -33,3 +33,13 @@ assert(pad(3,"ABC"^1)=="ABC"^1)
 assert(pad("ABC"^1,3)=="ABC"^1)
 assert(pad(2,"ABC"^1)=="ABC"^1)
 assert(pad("ABC"^1,2)=="ABC"^1)
+
+-- commentize
+debug Core
+assert(commentize null=="")
+assert(commentize()==horizontalJoin())
+assert(commentize("ABC")==" -- ABC")
+assert(commentize("ABC","DEF")==" -- ABCDEF")
+assert(commentize("ABC\nDEF")==" -- ABC\n -- DEF")
+assert(commentize("ABC"^1)==" -- ABC"^1)
+assert(commentize("ABC\nDEF"^1)==" -- ABC\n -- DEF"^1)
