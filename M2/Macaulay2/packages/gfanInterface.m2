@@ -1946,7 +1946,7 @@ gfanRender = method( Options => {
 
 gfanRender (List) := opts -> (L) -> (
 	fileName := temporaryFileName();
-	gfanRender(fileName, List, opts);
+	gfanRender(fileName, L, opts);
 )
 
 gfanRender (String, List) := opts -> (fileName, L) -> (
