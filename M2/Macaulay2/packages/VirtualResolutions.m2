@@ -55,6 +55,10 @@ export{
     "randomMonomialCurve",
     "randomCurveP1P2",
     "multigradedRegularity",
+    -- TODO: should we export these or fix NormalToricVarieties/TateOnProducts?
+    "normalToricVarietyFromTateData",
+    "normalToricVarietyWithTateData",
+    "imbueRingWithTateData",
     -- Options
     "LowerLimit",
     "UpperLimit",
@@ -100,8 +104,8 @@ submatrixWinnow = (m, alphas) -> (
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 virtualOfPair = method(Options => {LengthLimit => infinity})
-virtualOfPair (Ideal,  List) := ChainComplex => opts -> (I, alphas) -> virtualOfPair(comodule I, alphas, opts)
-virtualOfPair (Module, List) := ChainComplex => opts -> (M, alphas) -> (
+virtualOfPair(Ideal,  List) := ChainComplex => opts -> (I, alphas) -> virtualOfPair(comodule I, alphas, opts)
+virtualOfPair(Module, List) := ChainComplex => opts -> (M, alphas) -> (
     R := ring M;
     if M.cache.?resolution then return virtualOfPair(M.cache.resolution, alphas, opts);
     if any(alphas, alpha -> #alpha =!= degreeLength ring M) then error "degree has wrong length";
@@ -226,7 +230,7 @@ idealSheafGens(ZZ, Ideal, NormalToricVariety) := List => opts -> (n, J, X) -> (
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 randomRationalCurve = method()
-randomRationalCurve (ZZ,ZZ,Ring) := Ideal => (d,e,F) -> (
+randomRationalCurve(ZZ, ZZ, Ring) := Ideal => (d, e, F) -> (
     -- Defines P1
     s := getSymbol "s";
     t := getSymbol "t";
@@ -428,13 +432,12 @@ randomCurveP1P2 (ZZ,ZZ) := Ideal => opts -> (d,g) -> (
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 dimVector = method()
-dimVector(Ring) := (S) -> (
-    deg := degrees S;
+dimVector NormalToricVariety := X -> dimVector entries transpose fromWDivToCl X;
+dimVector Ring := S -> dimVector degrees S
+dimVector List := deg -> (
     degTally := tally deg;
-    apply(rsort unique deg, i->(degTally_i - 1))
+    apply(rsort unique deg, i -> degTally_i - 1)
     )
-dimVector NormalToricVariety := X -> dimVector ring X
-
 
 -- Helper function for multigradedRegularity
 -- borrowed from LinearTruncations:
@@ -451,6 +454,34 @@ gradedPolynomialRing = n -> (
     yy := flatten apply(#n, i -> apply(n_i+1, j -> y_(i,j)));
     ZZ/32003[yy])
 
+-- data for translating between NormalToricVarieties and TateOnProducts
+importFrom_TateOnProducts { "TateData", "TateRingData", "ringData" }
+
+-- input: NormalToricVariety (without the Cox ring cached)
+-- output: NormalToricVariety, whose cached Cox ring has Tate Data
+normalToricVarietyWithTateData = X -> (
+    if X.cache.?ring then if X.cache.ring.?TateData then return X
+    -- TODO: remove getSymbols from NormalToricVarieties, or use X.cache.Variable?
+    else error "use normalToricVarietyWithTateData before creating the Cox ring";
+    -- TODO: also check that X is a product of toricProjectiveSpaces
+    (S, E) := productOfProjectiveSpaces(dimVector X, CoefficientField => X.cache.CoefficientRing);
+    X.cache.ring = S; S.variety = X)
+
+-- input: multigraded polynomial ring with Tate Data
+-- output: NormalToricVariety, with the given ring cached in it
+normalToricVarietyFromTateData = S -> (
+    if S.?variety and S.?variety.?ring and S.?variety.cache.ring.?TateData then return S.variety;
+    if not S.?TateData then error "expected a ring with TateData";
+    X := tensor apply(dimVector S, n -> toricProjectiveSpace(n, CoefficientRing => coefficientRing S));
+    X.cache.ring = S; S.variety = X)
+
+-- input: multigraded polynomial ring without Tate Data
+-- output: a new multigraded polynomial ring with Tate Data (the generators will be different!)
+imbueRingWithTateData = S0 -> (
+    if S0.?TateData then return S0;
+    (S, E) := productOfProjectiveSpaces(dimVector S0, CoefficientField => coefficientRing S0);
+    S.variety = normalToricVarietyFromTateData S; S)
+
 --------------------------------------------------------------------
 -- Multigraded Regularity
 --------------------------------------------------------------------
@@ -464,7 +495,7 @@ multigradedRegularity = method(
         }
     )
 
--- keys: NormalToricVariety, Ring
+-- keys: none
 MultigradedRegularityOptions = new SelfInitializingType of BasicList
 MultigradedRegularityOptions.synonym = "multigraded regularity options"
 
@@ -472,40 +503,16 @@ MultigradedRegularityOptions.synonym = "multigraded regularity options"
 MultigradedRegularityComputation = new Type of MutableHashTable
 MultigradedRegularityComputation.synonym = "multigraded regularity computation"
 
--- preprocessing step
-new MultigradedRegularityComputation from Sequence := (C, L) -> (
-    (X, S, M) := L;
-    container := scan(pairs M.cache, (k, v) -> if instance(k, MultigradedRegularityOptions) then break v);
-    -- TODO: eventually also need to check that X and S are appropriate
-    if container =!= null then return container;
-    -- making local assignments so that productOfProjectiveSpaces does
-    -- not mess with the global ring by grabbing their global symbols.
-    E := local E;
-    x := local x; e := local e;
-    h := local h; k := local k;
-    -- TODO: to simplify this, two things need to happen:
-    --   1. add TateData to the ring of a NormalToricVariety
-    --   2. implement computation of Hilbert polynomial from TateData
-    if instance(X, NormalToricVariety) then (
-        -- go from module over NormalToricVariety to module over productOfProjectiveSpaces
-        -- note: assumes that the NormalToricVariety is a product of toricProjectiveSpaces
-        (S, E) = productOfProjectiveSpaces(dimVector X, CoefficientField => coefficientRing ring X, Variables => {symbol x, symbol e}))
-    else (
-        -- first check whether S is compatible with TateOnProducts
-        (S, E) = if S.?TateData then S.TateData.Rings
-        -- if not, reconstruct the ring to endow it with TateData
-        else productOfProjectiveSpaces(dimVector S, CoefficientField => coefficientRing S, Variables => {symbol x, symbol e});
-        -- go from module over productOfProjectiveSpaces to module over tensor product of toricProjectiveSpaces
-        X = fold(apply(dimVector S, i -> toricProjectiveSpace(i, CoefficientRing => coefficientRing S)), (A,B) -> A**B));
-    S' := ring X;
+-- if there is a compatible computation stored in M.cache,
+-- returns the computation object, otherwise creates the entry:
+--   MultigradedRegularityOptions{} => MultigradedRegularityComputation{ LowerLimit, UpperLimit, Result }
+new MultigradedRegularityComputation from Module := (C, M) -> (
     r := degreeLength M;
-    phi := map(S,  ring M, gens S);
-    psi := map(S', ring M, gens S');
-    cacheKey := MultigradedRegularityOptions{ X, S, phi };
-    M.cache#cacheKey = new MultigradedRegularityComputation from {
+    -- TODO: are there any options that could go in MultigradedRegularityOptions?
+    cacheKey := MultigradedRegularityOptions{};
+    try M.cache#cacheKey else M.cache#cacheKey = new MultigradedRegularityComputation from {
         LowerLimit => toList(r :  infinity), -- lower bound of the region checked
         UpperLimit => toList(r : -infinity), -- upper bound of the region checked
-        "HilbertPolynomial" => hilbertPolynomial(X, psi ** M),
         Result => null })
 
 isComputationDone = method(TypicalValue => Boolean, Options => true)
@@ -537,6 +544,7 @@ cacheComputation MultigradedRegularityComputation := CacheFunction => options mu
 ----- Caveat: This assumes M is B-saturated already i.e. H^0_B(M)=0
 --------------------------------------------------------------------
 --------------------------------------------------------------------
+-- TODO: instead of Ring, take the irrelevant ideal
 multigradedRegularity(Ring,               Ideal)  := o -> (S, I) -> multigradedRegularityHelper( , S, comodule I, o)
 multigradedRegularity(NormalToricVariety, Ideal)  := o -> (X, I) -> multigradedRegularityHelper(X,  , comodule I, o)
 multigradedRegularity(Ring,               Module) := o -> (S, M) -> multigradedRegularityHelper( , S, M, o)
@@ -544,34 +552,35 @@ multigradedRegularity(NormalToricVariety, Module) := o -> (X, M) -> multigradedR
 
 multigradedRegularityHelper = (X, S, M, opts) -> (
     strategy := opts.Strategy;
-    -- outsourcing the preprocessing of the input
-    container := new MultigradedRegularityComputation from (X, S, M);
-    -- get the cache key associated to the container, which encapsulates the base variety
-    cacheKey := scan(pairs M.cache, (k, v) -> if instance(k, MultigradedRegularityOptions) then break k);
-    -- Henceforth, X is a normal toric variety, S is a ring with Tate data, and M is an S-module
-    (X, S, M) = (cacheKey#0, cacheKey#1, cacheKey#2 ** M);
+    if instance(X, NormalToricVariety)
+    -- go from module over NormalToricVariety to module over productOfProjectiveSpaces
+    then X = normalToricVarietyWithTateData X
+    -- go from module over productOfProjectiveSpaces to module over tensor product of toricProjectiveSpaces
+    else X = normalToricVarietyFromTateData S;
+    -- this ring will have the appropriate Tate data
+    --   MultigradedRegularityOptions{} => MultigradedRegularityComputation{ LowerLimit, UpperLimit, Result }
+    container := new MultigradedRegularityComputation from M;
     -- the strategies are stored as hooks under this key
     key := (multigradedRegularity, NormalToricVariety, Module);
     -- this function attempts the strategies in reverse order, or only the specified strategy
-    computation := (opts, container) -> runHooks(key, (X, S, M, opts ++ {cache => container}), Strategy => strategy);
+    computation := (opts, container) -> runHooks(key, (X, M, opts ++ {cache => container}), Strategy => strategy);
     -- the actual computation of the strategies occurs here
     C := (cacheComputation(opts, container)) computation;
     if C =!= null then C else if strategy === null
     then error("no applicable strategy for ", toString key)
     else error("assumptions for computing multigraded regularity with strategy ", toString strategy, " are not met"))
 
-multigradedRegularityDefaultStrategy = (X, S, M, opts) -> (
+multigradedRegularityDefaultStrategy = (X, M, opts) -> (
     -- This is the default strategy, outlined in https://msp.org/jsag/2020/10-1/p06.xhtml
     -- TODO: check that X and S are indeed a product of projective spaces and its Cox ring, otherwise return null
     debugInfo := if debugLevel < 1 then identity else printerr;
-    -- retrieve the container, which includes some cached information
-    container := opts.cache;
     -- For products of projective space, the dimension is the
     -- number of variables minus the rank of the Picard group
     d := dim X;
+    S := ring X;
     r := regularity M;
     n := degreeLength S; -- rank of the Picard group
-    H := container#"HilbertPolynomial";
+    H := hilbertPolynomial(X, M);
     debugInfo demark_", " {
         "Pic X = ZZ^" | toString n,
         "dim X = " | toString d,
@@ -607,12 +616,13 @@ multigradedRegularityDefaultStrategy = (X, S, M, opts) -> (
             if ell_1 != 0 and ell_0_1 > 0 then
                 scan(flatten entries phi basis(0, ell_0_1, Q),
                     j -> gt#(ell_0_0 + degree j) = true);
-            )
-        );
+            ));
     debugInfo("Calculating minimal generators");
     I := ideal apply(L, ell ->
         if all(n, j -> ell_0_0_j >= degs_j)
-        and not gt#?(ell_0_0) then product(n, j -> P_j^(ell_0_0_j - degs_j)) else 0);
+        and not gt#?(ell_0_0) then P_(ell_0_0 - degs) else 0);
+    -- retrieve the container
+    container := opts.cache;
     container.LowerLimit = low;
     container.UpperLimit = high;
     container.Result = sort apply(flatten entries mingens I, g -> (flatten exponents g) + degs))

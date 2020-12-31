@@ -149,11 +149,12 @@ TEST ///
 -- Test for virtualOfPair
 TEST ///
     X = toricProjectiveSpace(1)**toricProjectiveSpace(1);
+    X = normalToricVarietyWithTateData X;
     S = ring X; B = ideal X;
     J = saturate(intersect(
-            ideal(x_1 - 1*x_0, x_3 - 4*x_2),
-            ideal(x_1 - 2*x_0, x_3 - 5*x_2),
-            ideal(x_1 - 3*x_0, x_3 - 6*x_2)),
+            ideal(x_(0,1) - 1*x_(0,0), x_(1,1) - 4*x_(1,0)),
+            ideal(x_(0,1) - 2*x_(0,0), x_(1,1) - 5*x_(1,0)),
+            ideal(x_(0,1) - 3*x_(0,0), x_(1,1) - 6*x_(1,0))),
             B);
     elapsedTime vres = virtualOfPair(res(J, LengthLimit => 2), {{3,1}}); -- 0.004
     elapsedTime vres' = virtualOfPair(J, {{3,1}}, LengthLimit => 2); -- 0.001
@@ -164,8 +165,9 @@ TEST ///
 -- Tests for multigradedRegularity
 TEST ///
     X = toricProjectiveSpace(1)**toricProjectiveSpace(2);
+    X = normalToricVarietyWithTateData X;
     S = ring X; B = ideal X;
-    I = saturate(ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3)), B);
+    I = saturate(ideal(x_(0,0)^2*x_(1,0)^2+x_(0,1)^2*x_(1,1)^2+x_(0,0)*x_(0,1)*x_(1,2)^2, x_(0,0)^3*x_(1,2)+x_(0,1)^3*(x_(1,0)+x_(1,1))), B);
     -- taking NormalToricVariety as input
     elapsedTime assert(multigradedRegularity(X, I) == {{1,5},{2,2},{4,1}}) -- 18
     -- taking the ring of NormalToricVariety as input
@@ -182,8 +184,9 @@ TEST ///
 ///
 
 TEST ///
-  S = QQ[x_(0,0),x_(1,0),x_(0,1),x_(1,1), Degrees => {{1,0},{1,0},{0,1},{0,1}}]
-  M = cokernel matrix{{x_(0,1)^2*x_(1,0), x_(0,0)^2*x_(0,1)*x_(1,0), x_(1,0)^3*x_(1,1)^2, x_(0,1)*x_(1,0)^3*x_(1,1), x_(0,0)^4*x_(0,1), x_(0,1)*x_(1,0)^5}}
+  S = QQ[x_(0,0),x_(0,1),x_(1,0),x_(1,1), Degrees => {{1,0},{1,0},{0,1},{0,1}}]
+  S = imbueRingWithTateData S
+  M = cokernel matrix{{x_(1,0)^2*x_(0,1), x_(0,0)^2*x_(1,0)*x_(0,1), x_(0,1)^3*x_(1,1)^2, x_(1,0)*x_(0,1)^3*x_(1,1), x_(0,0)^4*x_(1,0), x_(1,0)*x_(0,1)^5}}
   -- taking an arbitrary multigraded ring as input
   elapsedTime assert(multigradedRegularity(S, M) == {{0,2},{2,0}}) -- 1.13
 ///
@@ -191,18 +194,18 @@ TEST ///
 TEST /// -- testing picard rank 3
     (S, E) = productOfProjectiveSpaces {1, 1, 2};
     irr = intersect(ideal(x_(0,0), x_(0,1)), ideal(x_(1,0), x_(1,1)), ideal(x_(2,0), x_(2,1), x_(2,2)))
-    I = saturate(intersect apply(6,i-> ideal(random({1,0,0},S),random({0,1,0},S), random({0,0,1},S),random({0,0,1},S))), irr);
+    I = saturate(intersect apply(6,i-> ideal(random({1,0,0},S),random({0,1,0},S),random({0,0,1},S),random({0,0,1},S))), irr);
     elapsedTime assert(multigradedRegularity(S, I) == {{0,0,2},{0,1,1},{0,5,0},{1,0,1},{1,2,0},{2,1,0},{5,0,0}}) -- 9.7
 ///
 
 TEST /// -- testing twisted modules
-  (S,E)=productOfProjectiveSpaces {1,1}
+  (S, E) = productOfProjectiveSpaces {1, 1}
   for i from -1 to 1 list(
-      M=S^{{-i,-i}};
-      r=regularity M;
-      degs := apply(2, i -> min(degrees M / (deg -> deg_i)));
-      low := degs-toList(2:2);
-      high := apply(2, i -> max({r} | degrees M / (deg -> deg_i)));
+      M = S^{{-i,-i}};
+      r = regularity M;
+      degs = apply(2, i -> min(degrees M / (deg -> deg_i)));
+      low  = degs-toList(2:2);
+      high = apply(2, i -> max({r} | degrees M / (deg -> deg_i)));
       assert(multigradedRegularity(S, M) == {{i, i}});
 --      (cohomologyMatrix(M,low,high), multigradedRegularity(S, M))
       )
