@@ -1957,7 +1957,7 @@ gfanRender (String, List) := opts -> (fileName, L) -> (
 	figure << out << close;
 	<< "Figure rendered to " << fileName << ".fig" << endl;
 	if fig2devPath != "" then (
-		run fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png";
+		run(fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png");
 		<< "Figure converted to png: " << fileName << ".png" << endl;
 		show URL("file://" | fileName | ".png");
 	) else (
@@ -1994,7 +1994,7 @@ gfanRenderStaircase (String, List) := opts -> (fileName, L) -> (
 	<< "Figure rendered to " << fileName << ".fig" << endl;
 
 	if fig2devPath != "" then (
-		run fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png";
+		run(fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png");
 		<< "Figure converted to png: " << fileName << ".png" << endl;
 		show URL("file://" | fileName | ".png");
 	) else << "fig2dev path not set." << endl ;
