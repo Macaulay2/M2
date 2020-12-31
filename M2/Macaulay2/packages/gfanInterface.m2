@@ -1155,8 +1155,8 @@ argStrs = hashTable {
 -- Used by gfanArgumentToString
 ---------------------------------------------------------
 cmdLineArgs = hashTable {
-	"gfanRender" => { "shiftVariables" },
-	"gfanRenderStaircase" => { "d", "w" },
+	"gfan _render" => { "shiftVariables" },
+	"gfan _renderstaircase" => { "d", "w" },
 	"gfan _fancommonrefinement" => {"i1", "i2"},
 	"gfan _fancommonrefinement --stable" => {"i1", "i2"},
 	"gfan _fanlink" => {"i"},
