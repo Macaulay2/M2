@@ -12,7 +12,7 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "0.1", 
-    Date => "December 30, 2020",
+    Date => "January 1, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties",
     Keywords => {"Projective Algebraic Geometry"},
@@ -22,7 +22,7 @@ newPackage(
     Reload => false
 )
 
-export{"MultiprojectiveVariety", "projectiveVariety", "Saturate"}
+export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", "Probabilistic"}
 
 debug Cremona;
 
@@ -56,7 +56,8 @@ projectiveVariety Ideal := o -> I -> (
         "singularLocus" => null,
         "segreMap" => null,
         "flattenMap" => null,
-        "projections" => null
+        "projections" => null,
+        "euler" => null
     }
 );
 
@@ -109,7 +110,7 @@ dim MultiprojectiveVariety := X -> (
     X#"dimVariety" = max(dim I - (# heft R),-1)
 );
 
-codim MultiprojectiveVariety := {} >> o -> X -> sum(X#"dimAmbientSpaces") - X#"dimVariety";
+codim MultiprojectiveVariety := {} >> o -> X -> sum(X#"dimAmbientSpaces") - (dim X);
 
 multidegree MultiprojectiveVariety := X -> (
     if X#"multidegree" =!= null then return X#"multidegree";
@@ -198,6 +199,89 @@ point (MultiprojectiveVariety,Boolean) := (X,b) -> (
 );
 point MultiprojectiveVariety := X -> point(X,true);
 
+MultiprojectiveVariety ** MultiprojectiveVariety := (X,Y) -> (
+    K := coefficientRing X;
+    if K =!= coefficientRing Y then error "different coefficient rings encountered";
+    d := matrix degrees ring ideal X;
+    e := matrix degrees ring ideal Y;
+    de := (d | matrix pack(numColumns e,apply(numRows d * numColumns e,i->0))) || (matrix pack(numColumns d,apply(numRows e * numColumns d,j->0)) | e);
+    x := local x; y := local y;
+    n := X#"dimAmbientSpaces"; m := Y#"dimAmbientSpaces";
+    R := K[x_0..x_(#n + sum n - 1),y_0..y_(#m + sum m - 1),Degrees=>entries de]; 
+    sX := map(R,ring ideal X,submatrix(vars R,0 .. #n + sum n - 1));
+    sY := map(R,ring ideal Y,submatrix'(vars R,0 .. #n + sum n - 1));
+    XxY := projectiveVariety((sX ideal X) + (sY ideal Y),MinimalGenerators=>true,Saturate=>false);
+    XxY#"projections" = apply(projections XxY,apply((projections X)|(projections Y),target),(f,T) -> rationalMap((map f) * (map rationalMap(target f,T)),Dominant=>"notSimplify"));
+    XxY
+);
+
+MultiprojectiveVariety + MultiprojectiveVariety := (X,Y) -> (
+    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
+    projectiveVariety(intersect(ideal X,ideal Y),MinimalGenerators=>true,Saturate=>false)
+);
+
+MultiprojectiveVariety - MultiprojectiveVariety := (X,Y) -> (
+    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
+    projectiveVariety(quotient(ideal X,ideal Y,MinimalGenerators=>true),MinimalGenerators=>false,Saturate=>false)
+);
+
+MultiprojectiveVariety * MultiprojectiveVariety := (X,Y) -> (
+    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
+    projectiveVariety(ideal X + ideal Y,MinimalGenerators=>true,Saturate=>true)
+);
+
+isSubset (MultiprojectiveVariety,MultiprojectiveVariety) := (X,Y) -> (
+    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
+    isSubset(ideal Y,ideal X)
+);
+
+fiberProductInt = method();
+fiberProductInt (MutableHashTable,MutableHashTable) := (phi,psi) -> (
+    if target phi =!= target psi then error "expected two morphisms with the same target";
+    if not isMorphism phi then <<"--warning: the first map is not a morphism"<<endl;
+    if not isMorphism psi then <<"--warning: the second map is not a morphism"<<endl;
+    ambX := projectiveVariety ambient source phi;
+    ambY := projectiveVariety ambient source psi;
+    ambXxY := ambX ** ambY;
+    R := ring ambXxY;
+    n := numgens ring ambX -1;    
+    sx := map(R,ring ambX,submatrix(vars R,{0..n}));
+    sy := map(R,ring ambY,submatrix'(vars R,{0..n}));
+    I := sx ideal source phi;
+    J := sy ideal source psi;
+    F := apply(maps phi,f -> sx lift(toMatrix f,ring ambX));
+    G := apply(maps psi,g -> sy lift(toMatrix g,ring ambY));
+    Z := projectiveVariety(I + J + intersect flatten for f in F list for g in G list saturate(saturate(minors(2,f||g),ideal f),ideal g),MinimalGenerators=>true,Saturate=>true); 
+    Z#"projections" = apply(projections Z,projections ambXxY,(f,g) -> rationalMap((map f) * (map rationalMap(target f,target g)),Dominant=>"notSimplify"));
+    Z
+);
+
+fiberProduct = method(TypicalValue => MultiprojectiveVariety);
+fiberProduct (MultihomogeneousRationalMap,MultihomogeneousRationalMap) := (phi,psi) -> fiberProductInt(phi,psi);
+fiberProduct (MultihomogeneousRationalMap,RationalMap) := (phi,psi) -> fiberProductInt(phi,psi);
+fiberProduct (RationalMap,MultihomogeneousRationalMap) := (phi,psi) -> fiberProductInt(phi,psi);
+fiberProduct (RationalMap,RationalMap) := (phi,psi) -> fiberProductInt(phi,psi);
+
+euler (MultiprojectiveVariety,Option) := (X,opt) -> (
+    o := toList opt;
+    if not(#o == 2 and first o === Probabilistic) then error "Probabilistic is the only available option for euler(MultiprojectiveVariety)";
+    if not instance(last o,Boolean) then error "option Probabilistic accepts true or false";
+    if X#"euler" =!= null then return X#"euler";
+    local e;
+    if # X#"dimAmbientSpaces" == 1 then (
+        if codim X == 0 then return X#"euler" = numgens ring X;
+        e = EulerCharacteristic(ideal X,MathMode=>not last o,Verbose=>false);
+     ) else (
+        <<"--warning: code to be improved"<<endl;
+        e = EulerCharacteristic(image segre X,MathMode=>not last o,Verbose=>false);
+    );
+    if not last o then X#"euler" = e;
+    return e;
+);
+
+euler MultiprojectiveVariety := X -> euler(X,Probabilistic=>true);
+
+
 beginDocumentation() 
 
 document {Key => {MultiprojectiveVarieties}, 
@@ -283,6 +367,13 @@ Outputs => { ZZ => {"the degree of the image of ", TEX///$X$///," via the Segre 
 EXAMPLE {"X = projectiveVariety ideal random({2,1},ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}]);","degree X"}, 
 SeeAlso => {(multidegree,MultiprojectiveVariety),(segre,MultiprojectiveVariety)}} 
 
+document {Key => {projections,(projections,MultiprojectiveVariety)}, 
+Headline => "projections of a multi-projective variety", 
+Usage => "projections X", 
+Inputs => {"X" => MultiprojectiveVariety => {"a subvariety of ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}$///}}, 
+Outputs => {{"the list of the projections ", TEX///$X\to \mathbb{P}^{k_i}$///,", for ",TEX///$i=1,\ldots,n$///}}, 
+EXAMPLE {"X = projectiveVariety(ZZ/101[x_0..x_3]) ** projectiveVariety(ZZ/101[y_0..y_2]);","projections X"}} 
+
 document {Key => {(ambient,MultiprojectiveVariety)}, 
 Headline => "the ambient of the variety", 
 Usage => "ambient X", 
@@ -328,7 +419,7 @@ Inputs => {
 MultiprojectiveVariety => "X",
 MultiprojectiveVariety => "Y"}, 
 Outputs => { 
-Boolean => {" whether ",TT"X"," and ",TT"Y", " are the same variety"}},
+Boolean => {"whether ",TT"X"," and ",TT"Y", " are the same variety"}},
 EXAMPLE {
 "R = ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
 "(I,J) = (ideal(y_0-26*y_1,x_0*y_1+36*x_1*y_1-40*x_2*y_1),ideal(x_0*y_1+36*x_1*y_1-40*x_2*y_1,x_2*y_0-26*x_2*y_1,x_1*y_0-26*x_1*y_1,x_0*y_0+27*x_1*y_1-30*x_2*y_1));",
@@ -337,5 +428,110 @@ EXAMPLE {
 "Y = projectiveVariety J",
 "X == Y"}}
 
+document {Key => {(isSubset,MultiprojectiveVariety,MultiprojectiveVariety)}, 
+Headline => "whether one variety is a subvariety of another", 
+Usage => "isSubset(X,Y)", 
+Inputs => { 
+MultiprojectiveVariety => "X",
+MultiprojectiveVariety => "Y"}, 
+Outputs => { 
+Boolean => {"whether ",TT"X"," is contained in ",TT"Y"}}}
+
+document {Key => {(symbol **,MultiprojectiveVariety,MultiprojectiveVariety)}, 
+Headline => "product of projective varieties", 
+Usage => "X ** Y", 
+Inputs => { 
+MultiprojectiveVariety => "X",
+MultiprojectiveVariety => "Y"}, 
+Outputs => { 
+MultiprojectiveVariety => {"the product of ",TT"X"," and ",TT"Y"}},
+EXAMPLE {"R = ZZ/101[x_0..x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
+"S = ZZ/101[x_0,x_1,y_0..y_2,z_0,z_1,Degrees=>{2:{1,0,0},3:{0,1,0},2:{0,0,1}}];",
+"X = projectiveVariety ideal(random({2,1},R),random({1,1},R));", 
+"Y = projectiveVariety ideal random({1,1,1},S);",
+"XxY = X ** Y;",
+"describe X",
+"describe Y",
+"describe XxY"},
+SeeAlso => {fiberProduct}}
+
+document {Key => {(symbol *,MultiprojectiveVariety,MultiprojectiveVariety)}, 
+Headline => "intersection of projective varieties", 
+Usage => "X * Y", 
+Inputs => { 
+MultiprojectiveVariety => "X",
+MultiprojectiveVariety => "Y"}, 
+Outputs => { 
+MultiprojectiveVariety => {"the intersection of ",TT"X"," and ",TT"Y",", that is, the projective variety defined by the sum of the corresponding ideals"}},
+EXAMPLE {"R = ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
+"X = projectiveVariety ideal random({2,1},R);",
+"Y = projectiveVariety ideal random({1,1},R);", 
+"Z = X * Y;"},
+SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(symbol +,Ideal,Ideal)}}
+
+document {Key => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety)}, 
+Headline => "union of projective varieties", 
+Usage => "X + Y", 
+Inputs => { 
+MultiprojectiveVariety => "X",
+MultiprojectiveVariety => "Y"}, 
+Outputs => { 
+MultiprojectiveVariety => {"the union of ",TT"X"," and ",TT"Y",", that is, the projective variety defined by the intersection of the corresponding ideals"}},
+EXAMPLE {"R = ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
+"X = projectiveVariety ideal random({2,1},R);",
+"Y = projectiveVariety ideal random({1,1},R);", 
+"Z = X + Y;",
+"assert(Z - X == Y and Z - Y == X)"},
+SeeAlso => {(symbol -,MultiprojectiveVariety,MultiprojectiveVariety),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(intersect,List)}}
+
+document {Key => {(symbol -,MultiprojectiveVariety,MultiprojectiveVariety)}, 
+Headline => "difference of projective varieties", 
+Usage => "X - Y", 
+Inputs => { 
+MultiprojectiveVariety => "X",
+MultiprojectiveVariety => "Y"}, 
+Outputs => { 
+MultiprojectiveVariety => {"the difference of ",TT"X"," and ",TT"Y",", that is, the projective variety defined by the colon ideal ",TT"ideal X : ideal Y"}},
+EXAMPLE {"R = ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
+"X = projectiveVariety ideal(x_0^3*y_0+2*x_0^2*x_1*y_0+2*x_0*x_1^2*y_0+x_1^3*y_0+2*x_0^2*x_2*y_0+3*x_0*x_1*x_2*y_0+2*x_1^2*x_2*y_0+2*x_0*x_2^2*y_0+2*x_1*x_2^2*y_0+x_2^3*y_0+x_0^3*y_1+2*x_0^2*x_1*y_1+2*x_0*x_1^2*y_1+x_1^3*y_1+2*x_0^2*x_2*y_1+3*x_0*x_1*x_2*y_1+2*x_1^2*x_2*y_1+2*x_0*x_2^2*y_1+2*x_1*x_2^2*y_1+x_2^3*y_1);",
+"Y = projectiveVariety ideal(x_0*y_0+x_1*y_0+x_2*y_0+x_0*y_1+x_1*y_1+x_2*y_1);", 
+"Z = X - Y;",
+"assert(Z + Y == X and X - Z == Y)"},
+SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(quotient,Ideal,Ideal)}}
+
 undocumented {(expression,MultiprojectiveVariety), (net,MultiprojectiveVariety), (point,MultiprojectiveVariety,Boolean), (top,MultiprojectiveVariety), (describe,MultiprojectiveVariety),(degrees,MultiprojectiveVariety)}
+
+document {Key => {fiberProduct,(fiberProduct,RationalMap,RationalMap)}, 
+Headline => "fiber product of projective varieties", 
+Usage => "fiberProduct(phi,psi)", 
+Inputs => { 
+"phi" => {"a ",TO2{RationalMap,"morphism"}," ",TEX///$X\to Z$///," (that is, ",ofClass RationalMap," that is everywhere defined)"},
+"psi" => {"another ",TO2{RationalMap,"morphism"}," ",TEX///$Y\to Z$///,", with the same target ",TEX///$Z$///}}, 
+Outputs => { 
+MultiprojectiveVariety => {"the fiber product ",TEX///$X\times_{Z} Y$///}},
+PARA {"The natural morphisms ",TEX///$X\times_{Z} Y\to X$///," and ",TEX///$X\times_{Z} Y\to Y$///," can be obtained using ",TO projections,"."},
+PARA {"As an example, we calculate the fiber product of the blowing up ",TEX///$\phi:Bl_{C}(\mathbb{P}^3)\to\mathbb{P}^3$///," of ",TEX///$\mathbb{P}^3$///," along a twisted cubic curve ",TEX///$C\subset\mathbb{P}^3$///," and the inclusion ",TEX///$\psi:L\to \PP^3$///," of a secant line ",TEX///$L\subset\mathbb{P}^3$///," to ",TEX///$C$///,"."},
+EXAMPLE {
+"ringP3 = ZZ/33331[a..d]; C = ideal(c^2-b*d,b*c-a*d,b^2-a*c), L = ideal(b+c+d,a-d)", 
+"phi = first graph rationalMap C;",
+"psi = parametrize L;",
+"F = fiberProduct(phi,psi);",
+"describe F"},
+SeeAlso => {(symbol **,MultiprojectiveVariety,MultiprojectiveVariety)}}
+
+document { 
+Key => {(euler,MultiprojectiveVariety)}, 
+Headline => "topological Euler characteristic of a (smooth) projective variety", 
+Usage => "euler X
+euler(X,Probabilistic=>b)", 
+Inputs => { 
+MultiprojectiveVariety => "X" => {"which has to be smooth, and ",TT"b"," is a ",TO2{Boolean,"boolean value"},", that is, ",TT"true"," or ",TT"false"," (the default value is ",TT"true",")"}}, 
+Outputs => { 
+ZZ => {"the topological Euler characteristics of the variety ",TT"X",", calculated as ",TO EulerCharacteristic,TT"(ideal X,MathMode=>(not b))"}},
+EXAMPLE {
+"X = projectiveVariety minors(2,genericSymmetricMatrix(ZZ/33331[vars(0..5)],3));",
+"euler X"},
+SeeAlso => {EulerCharacteristic,(euler,ProjectiveVariety)}}
+
+undocumented {(euler,MultiprojectiveVariety,Option),Probabilistic}
 
