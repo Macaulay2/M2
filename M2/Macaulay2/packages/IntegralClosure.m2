@@ -1,7 +1,7 @@
 newPackage(
     "IntegralClosure",
-    Version => "1.09", 
-    Date => "29 May 2020",
+    Version => "1.10", 
+    Date => "31 Dec 2020",
     Authors => {
         {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
         {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"},
@@ -100,6 +100,22 @@ idealInSingLocus Ring := Ideal => opts -> S -> (
      J
      )
 
+integralClosure(Ring, Ring) := Ring => o -> (B,A) -> (
+    (fB,fromB) := flattenRing B;
+    fC := integralClosure(fB, o);
+    if fB === fC and coefficientRing B === A then return B;
+    gensA := generators(A, CoefficientRing => ZZ);
+    newvars := drop(gens ambient fC, - #gensA);
+    newdegs := drop(degrees ambient fC, - #gensA);
+    aC := A (monoid[newvars, Degrees => newdegs, Join => false]);
+    L := trim sub(ideal fC, aC);
+    C := aC/L;
+    B.icFractions = fB.icFractions;
+    fCtoC := map(C, fC, gens(C, CoefficientRing => coefficientRing fC));
+    B.icMap = fCtoC * fB.icMap * fromB;
+    C
+    )
+
 integralClosure Ring := Ring => o -> (R) -> (
      -- R: Ring, a reduced affine ring. TODO: can we handle integral closures over ZZ as well?
      --   answer: if we choose J in the non-normal ideal some other way?
@@ -113,6 +129,9 @@ integralClosure Ring := Ring => o -> (R) -> (
        error("expected Strategy option to be either an element of, or a list containing some of, "|toString strategyList);
      if #((set strategies) * set {AllCodimensions, RadicalCodim1, Radical}) >= 2 then
        error " expected Strategy option to include at most one of AllCodimensions, Radical, Radical";
+
+     if ultimate(coefficientRing, R) =!= coefficientRing R
+     then return integralClosure(R, coefficientRing R, o);
 
      (S,F) := flattenRing R;
 
@@ -806,7 +825,40 @@ icPIdeal (RingElement, RingElement, ZZ) := Ideal => (a, D, N) -> (
 -- Integral closure of ideal -----------
 ----------------------------------------
 
+-* version 2.  Not working yet, Dec 2020, perhaps use something like this in M2 1.18?
 integralClosure(Ideal, RingElement, ZZ) := opts -> (I,a,D) -> (
+    S := ring I;
+    if a % I != 0 then error "The ring element should be an element of the ideal.";
+    if ((ideal 0_S):a) != 0 then error "The given ring element must be a nonzerodivisor of the ring.";
+    z := local z;
+    w := local w;
+    I = trim I;
+    Reesi := reesAlgebra(I,a,Variable => z);
+    Rbar := integralClosure(Reesi, S,  Variable => w); --opts is missing
+    T := S[select(gens Rbar, x -> first degree x == 0)];
+    J := ideal select((ideal Rbar)_*, f -> first degree f == 0);
+    count := -1;
+    TRbar := map(T,ring J,for x in gens ring J list 
+        if first degree x == 0 
+        then (count = count+1; T_count) 
+        else 0);
+    S' := T/TRbar J;
+    S'S := map(S', S);
+    M'' := basis({D}, Rbar, SourceRing => S');
+    M := coimage M'';
+    IS'D := S'S (I^D);
+    -- the last generators of M correspond to IS'D, in order (checking on this).
+    rg := splice{(numgens M - numgens IS'D)..(numgens M - 1)};
+    phi := map(M, module IS'D, M_rg);
+    assert(isWellDefined phi);
+    I' := extendIdeal phi;
+--    error "debug me";
+    preimage(map(S', S), I')
+    )
+*-
+
+integralClosureOfIdeal = (I, a, D, opts) -> (
+    -- Assumption: ring I is integrally closed.
     S := ring I;
     if a % I != 0 then error "The ring element should be an element of the ideal.";
     if ((ideal 0_S):a) != 0 then error "The given ring element must be a nonzerodivisor of the ring.";
@@ -835,6 +887,20 @@ integralClosure(Ideal, RingElement, ZZ) := opts -> (I,a,D) -> (
     assert(isWellDefined phi);
     extendIdeal phi
     )
+
+integralClosure(Ideal, RingElement, ZZ) := opts -> (I,a,D) -> (
+    S := ring I;
+    if a % I != 0 then error "The ring element should be an element of the ideal.";
+    if ((ideal 0_S):a) != 0 then error "The given ring element must be a nonzerodivisor of the ring.";
+    Sbar := integralClosure S;
+    Ibar := if Sbar === S then I else S.icMap I;
+    abar := if Sbar === S then a else S.icMap a;
+    Ibar = trim Ibar;
+    J := integralClosureOfIdeal(Ibar, abar, D, opts); -- J is now an ideal in Sbar.
+    -- now we need to take preimage in S, if needed.
+    if Sbar === S then trim J else trim preimage(S.icMap, J)
+    )
+
 integralClosure(Ideal,ZZ) := Ideal => o -> (I,D) -> integralClosure(I, I_0, D, o)
 integralClosure(Ideal,RingElement) := Ideal => o -> (I,a) -> integralClosure(I, a, 1, o)
 integralClosure(Ideal) := Ideal => o -> I -> integralClosure(I, I_0, 1, o)
@@ -885,7 +951,7 @@ basisOfDegreeD (List,Ring) := Matrix => (L,R) ->(
     --change to a heft value sometime.
     PL := positions(L, d-> d=!=null);    
     PV := positions(degrees R, D->any(PL,i->D#i > 0));
-    PVars := (gens R)_PV;
+    PVars := (gens ambient R)_PV;
     PDegs := PVars/degree/(D->D_PL);
       kk := ultimate(coefficientRing, R);
     R1 := kk(monoid[PVars,Degrees =>PDegs]);
@@ -1040,6 +1106,8 @@ makeS2 (S/intersect(ideal"a,b", ideal"b,c",ideal"c,a"))
 -- This is used in some examples.  Move to the engine?
 content(RingElement, RingElement) := Ideal => (f,x) -> ideal last coefficients(f, Variables => {x})
 --------------------------------------------------------------------
+TOOSLOW = method()
+TOOSLOW String := (str) -> null
 
 beginDocumentation()
 --StartWithOneMinor, "vasconcelos",RadicalCodim1,AllCodimensions,SimplifyFractions
@@ -1059,6 +1127,7 @@ doc ///
     Example
       R = QQ[x,y,z]/(x^3-x^2*z^5-z^2*y^5)
       S = integralClosure R
+      describe S
     Text
       Use @TO icFractions@ to see what fractions have been added.
     Example
@@ -1069,6 +1138,19 @@ doc ///
     Example
       gens S
       trim ideal S
+    Text
+      The integral closure of an ideal can be computed as follows.
+    Example
+      use R
+      I = ideal(y,z)
+      integralClosure I
+    Text
+      Integral closures of powers of ideals can be computed in a more efficient manner than
+      using e.g. {\tt integralClosure(I^d)}, by using e.g. {\tt integralClosure(I,d)}.
+    Example
+      integralClosure(I^2)
+      integralClosure(I, 2)
+      integralClosure(I, 3) == integralClosure(I^3)
     Text
       If the characteristic is positive, yet small compared to the degree, but the
       fraction ring is still separable over a subring, then use
@@ -1197,6 +1279,77 @@ doc ///
     conductor
     icFracP
 ///
+
+doc ///
+  Key
+    (integralClosure, Ring, Ring)
+  Headline
+    compute the integral closure (normalization) of an affine reduced ring over a base ring
+  Usage
+    R' = integralClosure(R, A)
+  Inputs
+    R:Ring
+      a quotient of a polynomial ring ultimately over a field
+    A:Ring
+      a base ring of $R$ (one of its coefficient rings)
+    Keep => List
+      of variables of R
+    Limit => ZZ
+    Variable => Symbol
+    Verbosity => ZZ
+    Strategy => List
+      of some of the symbols: AllCodimensions, Radical, RadicalCodim1, 
+      Vasconcelos, StartWithOneminor, SimplifyFractions
+  Outputs
+    R':Ring
+      the integral closure of $R$, having coefficient ring $A$
+  Consequences
+   Item
+    The inclusion map $R \rightarrow R'$
+      can be obtained with @TO icMap@.  
+   Item
+    The fractions corresponding to the variables
+      of the ring {\tt R'} can be found with @TO icFractions@
+  Description
+   Text
+     This function packages the output integral closure in the desired way.
+     For more details about integral closure, see @TO (integralClosure, Ring)@.
+     
+     In the following example, there are three possible coefficient rings for $R$: $R$, $A$ and ${\mathbb Q}$.
+   Example
+     A = QQ[x,y]/(x^3-y^2)
+     R = reesAlgebra(ideal(x*y,y^2), Variable => z)
+     coefficientRing R
+     describe R
+   Example
+     R' = integralClosure(R, R)
+     describe R'
+     icMap R
+     fracs1 = icFractions R
+   Example
+     R'' = integralClosure(R, A)
+     describe R''
+     icMap R
+     fracs2 = icFractions R
+     assert(fracs1 == fracs2)
+   Example
+     R''' = integralClosure(R, QQ)
+     describe R'''
+     icMap R
+     fracs3 = icFractions R
+     assert(fracs1 == fracs3)
+   Text
+     Note that the second and third calls to {\tt integralClosure} changes the output of {\tt icMap}
+     but the fractions are the same.
+  Caveat
+    All the caveats of @TO (integralClosure, Ring)@ are in effect and the output of @TO icMap@
+    changes upon each call to this function.
+  SeeAlso
+    (integralClosure, Ring)
+    icMap
+    icFractions
+///
+
 --StartWithOneMinor, "vasconcelos",RadicalCodim1,AllCodimensions,SimplifyFractions
 doc ///
   Key
@@ -2368,7 +2521,7 @@ TEST ///
   assert(source f === R)
 ///     
 
-TEST ///
+TOOSLOW ///
 -*
   restart
   loadPackage("IntegralClosure", Reload => true)
@@ -2395,7 +2548,7 @@ TEST ///
 
 ///
 
-TEST ///
+TOOSLOW ///
 -*
   restart
   loadPackage("IntegralClosure", Reload => true)
@@ -2825,6 +2978,7 @@ TEST ///
   assert isSubset(F,K)
   assert isSubset(F^2,J^2)
   assert(K != J)
+  assert(K == J + F)
 ///
 
 TEST ///
@@ -2832,6 +2986,36 @@ TEST ///
   R = QQ[x,y]
   I = ideal(x^2,y^2)
   assert(integralClosure I == ideal(x^2, x*y, y^2))
+///
+
+TEST ///
+  -- bug mentioned on 22 Dec 2020 in googlegroup.
+  -- fixed later in Dec 2020.
+  R = QQ[x,y]/(x^3-y^2)
+  I = ideal(y)
+  integralClosure I
+  integralClosure(I,2)
+  assert(integralClosure I == ideal(y, x^2))
+///
+
+TEST ///
+  R = QQ[x,y]/(x^3-y^2)
+  I = ideal(y)
+  integralClosure I
+  integralClosure(I,2)
+  assert(integralClosure I == ideal(y, x^2))
+///
+
+TEST ///
+  R = QQ[x,y]
+  assert(integralClosure R === R)
+  assert(integralClosure ideal 1_R == ideal 1_R)
+  --integralClosure ideal 0_R -- so so error message, but at least there is one.
+
+  A = QQ[x,y,z]
+  assert(A === integralClosure A)
+  S = A/ker map(QQ[t],A,{t^3,t^5,t^7})
+  assert(integralClosure ideal(y,z) == ideal(x^2, y, z))
 ///
 
 end-------------------------------------------------------------------------
@@ -3230,12 +3414,17 @@ basisOfDegreeD({2,null}, S)
 --family of inhomogeneous examples suggested by craig:
 --integral dependence of a power series on its derivatives.
 restart
-needs "bug-integralClosure.m2"
-kk = QQ
+--needs "bug-integralClosure.m2"
+kk = ZZ/101
 S = kk[a,b]
 mm = ideal vars S
 T = kk[t]
 f = (ker map(T,S,{t^4,t^6+t^7}))_0
+R = S/f
+R' = integralClosure R
+vars R'
+see ideal R'
+netList (ideal R')_*
 --the simplest plane curve singularity with 2 characteristic pairs,
 --thus NOT quasi-homogeneous.
 --f could be any polynomial, preferably inhomogeneous, since then it's not obvious.
@@ -3244,6 +3433,9 @@ assert(f%(I+f*mm)!=0)--f is not even locally in I
 J = integralClosure I
 assert(f%J != 0)--f is not in the integral closure of I; but 
 assert(f % (J+f*mm) == 0) --f IS locally in the integral closure of I
+
+IR' = sub (I, R')
+elapsedTime integralClosure (IR', Verbosity => 4)
 ---------------------------
 --examples made with Dedekind-Mertens theorem
 --Dedekind-Mertens example
@@ -3313,7 +3505,7 @@ Ig = content(g',S_0)
 Ifg = content(f'*g',S_0)
 assert((gens(If*Ig) % Ifg)!=0)
 elapsedTime assert(gens(If*Ig) % integralClosure(Ifg, Verbosity => 4) == 0)
-
+elapsedTime integralClosure Ifg
 
 
 -- MES: this is me playing around tryiing to find better fractions, cvan be removed.
