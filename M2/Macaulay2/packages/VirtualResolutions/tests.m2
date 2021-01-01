@@ -169,7 +169,8 @@ TEST ///
     S = ring X; B = ideal X;
     I = saturate(ideal(x_(0,0)^2*x_(1,0)^2+x_(0,1)^2*x_(1,1)^2+x_(0,0)*x_(0,1)*x_(1,2)^2, x_(0,0)^3*x_(1,2)+x_(0,1)^3*(x_(1,0)+x_(1,1))), B);
     -- taking NormalToricVariety as input
-    elapsedTime assert(multigradedRegularity(X, I) == {{1,5},{2,2},{4,1}}) -- 18
+    -- SLOWED
+    elapsedTime assert(multigradedRegularity(X, I) == {{1,5},{2,2},{4,1}}) -- 30 with the corrected code (used to be 18)
     -- taking the ring of NormalToricVariety as input
     elapsedTime assert(multigradedRegularity(S, I) == {{1,5},{2,2},{4,1}}) -- woohoo cache hit!!
 ///
@@ -180,7 +181,8 @@ TEST ///
     I = saturate(ideal(x_(0,0)^2*x_(1,0)^2+x_(0,1)^2*x_(1,1)^2+x_(0,0)*x_(0,1)*x_(1,2)^2,
             x_(0,0)^3*x_(1,2)+x_(0,1)^3*(x_(1,0)+x_(1,1))), B);
     -- taking the ring of a productOfProjectiveSpaces as input
-    elapsedTime assert(multigradedRegularity(S, I) == {{1,5},{2,2},{4,1}}) -- 9
+    -- SLOWED
+    elapsedTime assert(multigradedRegularity(S, I) == {{1,5},{2,2},{4,1}}) -- 21 with the corrected code (used to be 9)
 ///
 
 TEST ///
@@ -195,7 +197,9 @@ TEST /// -- testing picard rank 3
     (S, E) = productOfProjectiveSpaces {1, 1, 2};
     irr = intersect(ideal(x_(0,0), x_(0,1)), ideal(x_(1,0), x_(1,1)), ideal(x_(2,0), x_(2,1), x_(2,2)))
     I = saturate(intersect apply(6,i-> ideal(random({1,0,0},S),random({0,1,0},S),random({0,0,1},S),random({0,0,1},S))), irr);
-    elapsedTime assert(multigradedRegularity(S, I) == {{0,0,2},{0,1,1},{0,5,0},{1,0,1},{1,2,0},{2,1,0},{5,0,0}}) -- 9.7
+    elapsedTime assert(multigradedRegularity(S, comodule I) == {{0,0,2},{0,1,1},{0,5,0},{1,0,1},{1,2,0},{2,1,0},{5,0,0}}) -- 9.7
+    -- VERY MUCH SLOWED
+    -- elapsedTime assert(multigradedRegularity(S, I) == {{0,0,2},{0,1,1},{0,5,0},{1,0,1},{1,2,0},{2,1,0},{5,0,0}}) -- 9.7
 ///
 
 TEST /// -- testing twisted modules

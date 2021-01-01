@@ -506,7 +506,9 @@ MultigradedRegularityComputation.synonym = "multigraded regularity computation"
 -- if there is a compatible computation stored in M.cache,
 -- returns the computation object, otherwise creates the entry:
 --   MultigradedRegularityOptions{} => MultigradedRegularityComputation{ LowerLimit, UpperLimit, Result }
+new MultigradedRegularityComputation from Ideal  :=
 new MultigradedRegularityComputation from Module := (C, M) -> (
+    if instance(M, Ideal) then M = comodule M;
     r := degreeLength M;
     -- TODO: are there any options that could go in MultigradedRegularityOptions?
     cacheKey := MultigradedRegularityOptions{};
@@ -545,8 +547,8 @@ cacheComputation MultigradedRegularityComputation := CacheFunction => options mu
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- TODO: instead of Ring, take the irrelevant ideal
-multigradedRegularity(Ring,               Ideal)  := o -> (S, I) -> multigradedRegularityHelper( , S, comodule I, o)
-multigradedRegularity(NormalToricVariety, Ideal)  := o -> (X, I) -> multigradedRegularityHelper(X,  , comodule I, o)
+multigradedRegularity(Ring,               Ideal)  := o -> (S, I) -> multigradedRegularityHelper( , S, I, o)
+multigradedRegularity(NormalToricVariety, Ideal)  := o -> (X, I) -> multigradedRegularityHelper(X,  , I, o)
 multigradedRegularity(Ring,               Module) := o -> (S, M) -> multigradedRegularityHelper( , S, M, o)
 multigradedRegularity(NormalToricVariety, Module) := o -> (X, M) -> multigradedRegularityHelper(X,  , M, o)
 
@@ -571,30 +573,36 @@ multigradedRegularityHelper = (X, S, M, opts) -> (
     else error("assumptions for computing multigraded regularity with strategy ", toString strategy, " are not met"))
 
 multigradedRegularityDefaultStrategy = (X, M, opts) -> (
+    -- TODO: also check that X and S are indeed a product of projective spaces and its Cox ring, otherwise return null
+    if instance(M, Ideal) then M = comodule M;
     -- This is the default strategy, outlined in https://msp.org/jsag/2020/10-1/p06.xhtml
-    -- TODO: check that X and S are indeed a product of projective spaces and its Cox ring, otherwise return null
     debugInfo := if debugLevel < 1 then identity else printerr;
     -- For products of projective space, the dimension is the
     -- number of variables minus the rank of the Picard group
     d := dim X;
     S := ring X;
+    B := ideal X;
     r := regularity M;
     n := degreeLength S; -- rank of the Picard group
-    H := hilbertPolynomial(X, M);
+    degs := degrees M;
+    -- element-wise minimum of the multi-degrees of generators of M
+    mindegs := apply(n, i -> min(degs / (deg -> deg_i)));
     debugInfo demark_", " {
         "Pic X = ZZ^" | toString n,
         "dim X = " | toString d,
         "reg M = " | toString r,
-        "HP(M) = " | toString H};
-    -- element-wise minimum of the multi-degrees of generators of M
-    degs := apply(n, i -> min(degrees M / (deg -> deg_i)));
+        "mindegs = " | toString mindegs};
+    H := hilbertPolynomial(X, M);
+    debugInfo \ {
+	"HP M = " | toString H,
+	"degs = " | toString degs);
     -- TODO: why is this the right upper bound?
-    high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degrees M / (deg -> deg_i)));
-    -- TODO: why is degs - toList(n:d) the right lower bound?
-    -- {0,..,0} is not always the right lower bound, but works for ideals!
-    low  := if opts.LowerLimit =!= null then opts.LowerLimit else toList(n:0); -- degs - toList(n:d);
+    high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degs / (deg -> deg_i)));
+    -- TODO: why is mindegs - toList(n:d) the right lower bound?
+    -- {0,..,0} is not always the right lower bound, even for ideals!
+    low  := if opts.LowerLimit =!= null then opts.LowerLimit else toList(n:0); -- mindegs - toList(n:d);
     -- kind of a hack to decrease the lower bound when needed
-    if any(n, i -> high#i <= low#i) then low = degs - toList(n:d);
+    if any(n, i -> high#i <= low#i) then low = mindegs - toList(n:d);
     --
     debugInfo("Computing cohomologyHashTable from ", toString low, " to ", toString high);
     L := pairs cohomologyHashTable(M, low, high);
@@ -619,13 +627,13 @@ multigradedRegularityDefaultStrategy = (X, M, opts) -> (
             ));
     debugInfo("Calculating minimal generators");
     I := ideal apply(L, ell ->
-        if all(n, j -> ell_0_0_j >= degs_j)
-        and not gt#?(ell_0_0) then P_(ell_0_0 - degs) else 0);
+        if all(n, j -> ell_0_0_j >= mindegs_j)
+        and not gt#?(ell_0_0) then P_(ell_0_0 - mindegs) else 0);
     -- retrieve the container
     container := opts.cache;
     container.LowerLimit = low;
     container.UpperLimit = high;
-    container.Result = sort apply(flatten entries mingens I, g -> (flatten exponents g) + degs))
+    container.Result = sort apply(flatten entries mingens I, g -> (flatten exponents g) + mindegs))
 
 -- The default strategy applies to both modules and ideals in a product of projective spaces,
 -- but by using hooks we allow better strategies to be added later
@@ -657,16 +665,18 @@ resolveTail(ChainComplex) := ChainComplex => C -> (
     chainComplex(L1 | L2)
     );
 
-
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 ----- Beginning of the tests and the documentation
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 
-load ("./VirtualResolutions/tests.m2")
+-- works only if LinearTruncations is found
+try load "./VirtualResolutions/development.m2" else null
+
+load "./VirtualResolutions/tests.m2"
 beginDocumentation()
-load ("./VirtualResolutions/doc.m2")
+load "./VirtualResolutions/doc.m2"
 
 end--
 
