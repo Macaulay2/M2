@@ -122,7 +122,7 @@ doc ///
       solveSchubertProblem
       (solveSchubertProblem,List,ZZ,ZZ)
    Headline
-      uses Littlewood-Richardson homotopy to solve Schubert problems on Grassmannians
+      uses Littlewood-Richardson homotopy to solve a Schubert problem 
    Usage
       S = solveSchubertProblem(P,k,n)
    Inputs
@@ -198,7 +198,7 @@ doc ///
       solveSimpleSchubert
       (solveSimpleSchubert,List,ZZ,ZZ)
    Headline
-      uses Pieri homotopy algorithm to solve simple Schubert problems on Grassmannians
+      uses Pieri homotopy algorithm to solve a simple Schubert problem
    Usage
       S = solveSimpleSchubert(P,k,n)
    Inputs
