@@ -615,10 +615,8 @@ stringcatfun(e:Expr):Expr := (
      is y:SymbolClosure do toExpr(y.symbol.word.name)
      is n:ZZcell do (
 	  if isInt(n) then (
-	       m := toInt(n);
-	       if m >= 0
-	       then toExpr(new string len m do provide ' ')
-	       else buildErrorPacket("encountered negative integer")
+	       m := max(toInt(n), 0);
+	       toExpr(new string len m do provide ' ')
 	       )
 	  else buildErrorPacket("encountered a large integer")
 	  )
