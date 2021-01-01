@@ -29,15 +29,21 @@ TEST(String, String) := (title, teststring) -> (
 -- check
 -----------------------------------------------------------------------------
 
+checkmsg := (verb, desc) ->
+    stderr << commentize pad(pad(verb, 10) | desc, 72) << flush;
+
 captureTestResult := (desc, teststring, pkg, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
+    if match("no-check-flag", teststring) then (
+	checkmsg("skipping", desc);
+	return true);
     -- try capturing in the same process
     if isCapturable(teststring, pkg, true) then (
-	stderr << commentize pad("capturing " | desc, 72) << flush;
+	checkmsg("capturing", desc);
 	(err, output) := capture(teststring, PackageExports => pkg, UserMode => usermode);
 	if err then printerr "capture failed; retrying ..." else return true);
     -- fallback to using an external process
-    stderr << commentize pad("running " | desc, 72) << flush;
+    checkmsg("running", desc);
     runString(teststring, pkg, usermode))
 
 loadTestDir := pkg -> (
@@ -91,9 +97,9 @@ checkAllPackages = () -> (
     argumentMode = defaultMode - SetCaptureErr - SetUlimit -
 	if noinitfile then 0 else ArgQ;
     fails := for pkg in sort separate(" ", version#"packages") list (
-	print HEADER1 pkg;
+	stderr << HEADER1 pkg << endl;
 	if runString("check(" | format pkg | ", Verbose => true)",
-	    Core, false) then continue else pkg) do print "";
+	    Core, false) then continue else pkg) do stderr << endl;
     argumentMode = tmp;
     if #fails > 0 then printerr("package(s) with failing tests: ",
 	demark(", ", fails));
