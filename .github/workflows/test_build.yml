@@ -51,8 +51,8 @@ jobs:
           - build-system: cmake
             os: ubuntu-latest
             compiler: clang10
-            cxx: clang++
-            cc: clang
+            cxx: clang++-10
+            cc: clang-10
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
             os: macos-latest
