@@ -595,7 +595,7 @@ multigradedRegularityDefaultStrategy = (X, M, opts) -> (
     H := hilbertPolynomial(X, M);
     debugInfo \ {
 	"HP M = " | toString H,
-	"degs = " | toString degs);
+	"degs = " | toString degs};
     -- TODO: why is this the right upper bound?
     high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degs / (deg -> deg_i)));
     -- TODO: why is mindegs - toList(n:d) the right lower bound?

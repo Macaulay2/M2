@@ -47,8 +47,8 @@ multigradedRegularityIdealStrategy = (X, I, opts) -> (
     -- TODO: why is mindegs - toList(n:d) the right lower bound?
     low  := mindegs - toList(n:d);
     -- the upperbound on regularity using LinearTruncations
-    --T := findRegion({sum mindegs, sum high}, M, satisfiesTheorem);
-    T := regularityBound M; -- took 84 seconds on check_16
+    T := findRegion({sum mindegs, sum high}, M, satisfiesTheorem);
+    --T := regularityBound M; -- took 84 seconds on check_16
     debugInfo("regularityBound: " | toString T);
     --
     debugInfo("Searching from ", toString low, " to ", toString high);
