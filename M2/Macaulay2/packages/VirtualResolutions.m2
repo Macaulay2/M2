@@ -672,7 +672,7 @@ resolveTail(ChainComplex) := ChainComplex => C -> (
 --------------------------------------------------------------------
 
 -- works only if LinearTruncations is found
-try load "./VirtualResolutions/development.m2" else null
+try load "./VirtualResolutions/development.m2" else printerr "LinearTruncations package was not found"
 
 load "./VirtualResolutions/tests.m2"
 beginDocumentation()

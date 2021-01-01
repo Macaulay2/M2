@@ -2,7 +2,7 @@
 -- Faster strategy for ideals using LinearTruncations
 --------------------------------------------------------------------
 
-needsPackage "LinearTruncations"
+debug needsPackage "LinearTruncations"
 
 isNotInRegularity = method();
 isNotInRegularity (List, Ideal, Ideal) := (d,I,irr) ->(
@@ -41,13 +41,13 @@ multigradedRegularityIdealStrategy = (X, I, opts) -> (
     H := hilbertPolynomial(X, M);
     debugInfo \ {
 	"HP M = " | toString H,
-    	"degs = " | toString degs);
+    	"degs = " | toString degs};
     -- TODO: why is this the right upper bound?
     high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degs / (deg -> deg_i)));
     -- TODO: why is mindegs - toList(n:d) the right lower bound?
     low  := mindegs - toList(n:d);
     -- the upperbound on regularity using LinearTruncations
-    T := findRegion({sum mindegs, sum high}, M, satisfiesTheorem);
+    T := findRegion({sum mindegs, sum high}, M, isQuasiLinear);
     --T := regularityBound M; -- took 84 seconds on check_16
     debugInfo("regularityBound: " | toString T);
     --
