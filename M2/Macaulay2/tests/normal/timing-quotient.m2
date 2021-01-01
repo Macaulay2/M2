@@ -213,11 +213,11 @@ tim = timing(jacW : comp1); -- recomputes the same GB 150 times in 1.8.  We want
 -- version 1.7: 0.15 seconds
 -- version 1.8: 17.5 seconds
 -- after fix: .166 seconds
-assert(numgens tim#1 == 33)
-assert(tim#0 < .5 * standardSecond)
+assert Equation(numgens tim#1, 33)
+assert BinaryOperation {symbol <, tim#0, .5 * standardSecond}
 
 P=QQ[x,y,z,MonomialOrder=>Lex];
 d=z^4+z^2*x*y^9+z*x^9*y+x^5*y^5;
 phi=map(P,P,matrix{{x^13*y^4,x^3*y,x^20*y^6*z}});
 tim = timing factor(phi(d));
-assert(tim#0 < .05 * standardSecond)
+assert BinaryOperation {symbol <, tim#0, .05 * standardSecond}
