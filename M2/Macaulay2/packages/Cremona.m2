@@ -1958,7 +1958,9 @@ point (Ideal,Boolean) := (I,b) -> (  -- see also: code(randomKRationalPoint,Idea
    local par;
    if c == 1 then (
        L := {}; 
-       while #L == 0 do (par = parametrize randomLinearSubspace(R,1); L = select(decompose par^* I,q -> dim q == 1 and degree q == 1));
+       maxAttempts := 20; attempt := 0;
+       while #L == 0 and attempt < maxAttempts do (attempt = attempt+1; par = parametrize randomLinearSubspace(R,1); L = select(decompose par^* I,q -> dim q == 1 and degree q == 1));
+       if #L == 0 and attempt >= maxAttempts then error("reached maximum number of "|toString(maxAttempts)|" attempts to find point");
        p = par first L;
    ); 
    if c > 1 and n - c >= 2 then (

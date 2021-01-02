@@ -160,6 +160,8 @@ describe MultiprojectiveVariety := X -> (
     return s;
 );
 
+? MultiprojectiveVariety := X -> ? ideal X;
+
 degrees MultiprojectiveVariety := X -> pairs tally degrees ideal X;
 
 singularLocus MultiprojectiveVariety := X -> ( -- assume equidimensionality: X == top X
@@ -174,6 +176,8 @@ top MultiprojectiveVariety := X -> (
     T := top ideal X;
     X#"top" = if T == ideal X then X else projectiveVariety(T,MinimalGenerators=>true,Saturate=>false)
 );
+
+decompose MultiprojectiveVariety := {} >> o -> X -> apply(decompose ideal X,D -> projectiveVariety(D,MinimalGenerators=>true,Saturate=>false));
 
 MultiprojectiveVariety == MultiprojectiveVariety := (X,Y) -> (
     if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
@@ -499,7 +503,7 @@ EXAMPLE {"R = ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
 "assert(Z + Y == X and X - Z == Y)"},
 SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(quotient,Ideal,Ideal)}}
 
-undocumented {(expression,MultiprojectiveVariety), (net,MultiprojectiveVariety), (point,MultiprojectiveVariety,Boolean), (top,MultiprojectiveVariety), (describe,MultiprojectiveVariety),(degrees,MultiprojectiveVariety)}
+undocumented {(expression,MultiprojectiveVariety), (net,MultiprojectiveVariety), (point,MultiprojectiveVariety,Boolean), (top,MultiprojectiveVariety), (decompose,MultiprojectiveVariety),(describe,MultiprojectiveVariety),(symbol ?,MultiprojectiveVariety),(degrees,MultiprojectiveVariety)}
 
 document {Key => {fiberProduct,(fiberProduct,RationalMap,RationalMap)}, 
 Headline => "fiber product of projective varieties", 
