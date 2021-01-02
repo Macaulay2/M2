@@ -4,19 +4,22 @@
 
 debug needsPackage "LinearTruncations"
 
-isNotInRegularity = method();
-isNotInRegularity (List, Ideal, Ideal) := (d,I,irr) ->(
-    --if saturate(I,irr) != I then error;
-    dVec := dimVector (ring I);
-    minRes := res I;
-    vRes := virtualOfPair(I,{d+dVec});
-    t0 := isVirtual(irr,vRes);
-    --
-    J := sub(ideal flatten entries vRes.dd_1,ring I);
-    t1 := (saturate(J,irr)==I);
-    --
-    not (t0 and t1)
-    )
+isVirtualOfPair = method(Options => {IrrelevantIdeal => null})
+isVirtualOfPair(List, Ideal) := opts -> (d, I) -> (
+    B := opts.IrrelevantIdeal;
+    l := d + dimVector ring I;
+    -- TODO: return false if l < all degrees of I
+    F := virtualOfPair(I, {l});
+    -- TODO: can caching help here?
+    isVirtual(B, F) and saturate(ann HH^0 F, B) == I)
+
+isChiH0 = method(Options => {IrrelevantIdeal => null})
+isChiH0(List, Module) := opts -> (d, M) -> (
+    -- Check that Hilbert function and Hilbert polynomial match,
+    -- this imposes a condition on the alternating sum of local cohomology dimensions
+    -- We need to invert the search space
+    H := hilbertPolynomial(variety ring opts.IrrelevantIdeal, M);
+    hilbertFunction(d, M) == sub(H, sub(matrix{d}, QQ)))
 
 multigradedRegularityIdealStrategy = (X, I, opts) -> (
     -- TODO: also check that X and S are indeed a product of projective spaces and its Cox ring, otherwise return null
@@ -47,9 +50,9 @@ multigradedRegularityIdealStrategy = (X, I, opts) -> (
     -- TODO: why is mindegs - toList(n:d) the right lower bound?
     low  := mindegs - toList(n:d);
     -- the upperbound on regularity using LinearTruncations
-    T := findRegion({sum mindegs, sum high}, M, isQuasiLinear);
+    T := findRegion({sum mindegs, sum high}, M, isQuasiLinear, IrrelevantIdeal => B);
     --T := regularityBound M; -- took 84 seconds on check_16
-    debugInfo("regularityBound: " | toString T);
+    debugInfo("Conjectural Upper Bound: " | toString T);
     --
     debugInfo("Searching from ", toString low, " to ", toString high);
     -- Based on findHashTableCorner from TateOnProducts, P is a multigraded
@@ -64,17 +67,18 @@ multigradedRegularityIdealStrategy = (X, I, opts) -> (
     L := trim ideal 0_P;
     -- a priori, U is contained in the regularity
     R := trim ideal 0_P;
-    -- FIXME: list of elements between the staircase and groebner basis generators
     -- Note: use a heap in the engine for this
     ht := new MutableHashTable from {1_P => P_(high - low)};
     while #ht > 0 do (
+	-- TODO: would randomly picking elements work better?
 	(elt, val) := min pairs ht;
 	remove(ht, elt);
 	-- the spot that we check regularity at
 	deg := first exponents val + low;
 	if elt % L == 0 then ( debugInfo("in L: " | toString deg); continue);
 	if val % U == 0 then ( debugInfo("in U: " | toString deg) ) else (
-	    if isNotInRegularity(deg, I, B)
+	    if not isChiH0(deg, M, IrrelevantIdeal => B)
+	    or not isVirtualOfPair(deg, I, IrrelevantIdeal => B)
 	    then ( debugInfo("NOT in regularity :  " | toString deg); L = L + ideal elt; continue )
 	    else ( debugInfo("maybe in regularity: " | toString deg); R = R + ideal val; )
 	    );
@@ -106,3 +110,5 @@ multigradedRegularityIdealStrategy = (X, I, opts) -> (
 -- The default strategy applies to both modules and ideals in a product of projective spaces,
 -- but by using hooks we allow better strategies to be added later
 addHook((multigradedRegularity, NormalToricVariety, Module), Strategy => symbol Ideal, multigradedRegularityIdealStrategy)
+
+end--

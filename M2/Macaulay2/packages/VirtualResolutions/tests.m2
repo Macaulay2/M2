@@ -195,7 +195,7 @@ TEST /// -- testing picard rank 3
     (S, E) = productOfProjectiveSpaces {1, 1, 2};
     irr = intersect(ideal(x_(0,0), x_(0,1)), ideal(x_(1,0), x_(1,1)), ideal(x_(2,0), x_(2,1), x_(2,2)))
     I = saturate(intersect apply(6,i-> ideal(random({1,0,0},S),random({0,1,0},S),random({0,0,1},S),random({0,0,1},S))), irr);
-    elapsedTime assert(multigradedRegularity(S, I) == {{0,0,2},{0,1,1},{0,5,0},{1,0,1},{1,2,0},{2,1,0},{5,0,0}}) -- 9.7 -> 4.7
+    elapsedTime assert(multigradedRegularity(S, I) == {{0,0,2},{0,1,1},{0,5,0},{1,0,1},{1,2,0},{2,1,0},{5,0,0}}) -- 5.4 -> 8.5 -> 2.7
 ///
 
 TEST /// -- testing twisted modules
