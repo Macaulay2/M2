@@ -399,10 +399,10 @@ SeeAlso => {segre}}
 
 document {Key => {(point,MultiprojectiveVariety)}, 
 Headline => "pick a random rational point on a projective variety", 
-Usage => "ideal point X", 
+Usage => "point X", 
 Inputs => {"X" => MultiprojectiveVariety => {"defined over a finite field"}}, 
-Outputs => {{ofClass MultiprojectiveVariety,", a random rational point on ", TEX///$X$///}}, 
-EXAMPLE {"X = projectiveVariety ideal random({2,1},ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}]);","ideal point X"},
+Outputs => {MultiprojectiveVariety => {"a random rational point on ", TEX///$X$///}}, 
+EXAMPLE {"X = projectiveVariety ideal random({2,1},ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}]);","p = point X;", "describe p"},
 SeeAlso => {point,randomKRationalPoint}} 
 
 document {Key => {(singularLocus,MultiprojectiveVariety)}, 
