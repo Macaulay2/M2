@@ -56,11 +56,11 @@ document {
      HR{},
      HEADER4{"References:"},
      UL{
-	 HREF{"https://arxiv.org/abs/math/0302294", "Vakil, \"A geometric Littlewood-Richardson rule\""},
-	 HREF{"https://arxiv.org/abs/alg-geom/9706004", "Huber, Sottile, Sturmfels, \"Pieri's rule for flag manifolds and Schubert polynomials\",  J. Symb. Comp., 26 (1998), 767-788."},
-	 HREF{"https://arxiv.org/abs/1001.4125", "Sottile, Vakil, Verschelde, \"Solving Schubert Problems with Littlewood-Richardson Homotopies\""},
-	 HREF{"https://arxiv.org/abs/0710.4607", "Leykin and Sottile, \"Galois groups of Schubert problems via homotopy computation\" "},
-	 HREF{"http:// ", "Leykin, Martin del Campo, Sottile, Vakil, Verschelde \"Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm\" "}
+	 HREF{"https://arxiv.org/abs/math/0302294", "Vakil, \"A geometric Littlewood-Richardson rule\",Vakil, Ravi. A geometric Littlewood-Richardson rule. Ann. of Math. (2) 164 (2006), 371-421"},
+	 HREF{"https://arxiv.org/abs/alg-geom/9706004", "Huber, Sottile, Sturmfels, \"Numerical Schubert calculus\",  J. Symb. Comp., 26 (1998), 767-788."},
+	 HREF{"https://arxiv.org/abs/1001.4125", "Sottile, Vakil, Verschelde, \"Solving Schubert Problems with Littlewood-Richardson Homotopies\", ISSAC 2010, 179-186, ACM, New York, 2010."},
+	 HREF{"https://arxiv.org/abs/0710.4607", "Leykin and Sottile, \"Galois groups of Schubert problems via homotopy computation\",  Math. Comp. 78 (2009), 1749-1765."},
+	 HREF{"https://arxiv.org/abs/1802.00984", "Leykin, Martin del Campo, Sottile, Vakil, Verschelde \"Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm\", Math. Comp., to appear. "}
 	 },
  }
 
@@ -79,7 +79,7 @@ doc ///
         which is a list of Schubert conditions that are either all partitions or all brackets (see @TO bracket2partition@ for details)
       k:ZZ
       n:ZZ
-         $k$ and $n$ define the Grassmannian $Gr(k,n)$
+         $k$ and $n$ define the Grassmannian $Gr(k,n)$ of $k$-planes in $n$-space
    Outputs
       :List
          random instance of the Schubert problem, which is a list of pairs of the form (condition,flag)
@@ -122,7 +122,7 @@ doc ///
       solveSchubertProblem
       (solveSchubertProblem,List,ZZ,ZZ)
    Headline
-      uses Littlewood-Richardson homotopy to solve a Schubert problem 
+      uses the Littlewood-Richardson homotopy to solve a Schubert problem
    Usage
       S = solveSchubertProblem(P,k,n)
    Inputs
@@ -132,7 +132,7 @@ doc ///
 	 decreasing integers) and $F$ is a flag ($n$ by $n$ matrix) 
       k:ZZ
       n:ZZ
-      	 $k$ and $n$ denote the Grassmannian $Gr(k,n)$
+      	 $k$ and $n$ define the Grassmannian $Gr(k,n)$ of $k$-planes in $n$-space
       --LinearAlgebra:Boolean
       --   when True, uses Linear Algebra to glue solutions from node to node, otherwise uses parameter homotopies.
    Outputs
@@ -142,20 +142,20 @@ doc ///
       Text
       	 Represent a Schubert variety in the Grassmannian $Gr(k,n)$ 
 	 by a condition $c$ either a partition or a bracket (see  @TO partition2bracket@ for details) and a flag $F$ 
-	 (given as an $n{\times} n$ matrix).
-	 The codimention of the Schubert variety is $|C|$.
+	 (given as an $n$ by $n$ matrix).
+	 The codimention of the Schubert variety is $|c|$.
 	 A Schubert problem is a list of Schubert varieties, whose codimention
 	 add up to $k(n-k)$, which is the dimension of the Grassmannian.
          -----
 	 
-	 The function solves the Schubert problem by the Littlewood-Richardson
+	 The function solveSchubertProblem solves the given instnace of the Schubert problem by the Littlewood-Richardson
 	 homotopy. This algorithm uses homotopy continuation to track 
 	 solutions of a simpler problem to a general problem according 
 	 to the specializations of the geometric Littlewood-Richardson.
 
 	 This algorithm is described in the paper:
- 	 Leykin, Martin del Campo, Sottile, Vakil, Verschelde "Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm".
-	 
+ 	 Leykin, Martin del Campo, Sottile, Vakil, Verschelde "Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm". https://arxiv.org/abs/1802.00984 
+
       Example
          -- Problem (2,1)^3 = 2 in Gr(3,6)
        	 -- a problem with 2 solutions
@@ -170,7 +170,7 @@ doc ///
 	 
 	 solveSchubertProblem(SchPblm, k,n)
    Caveat
-      The Schubert conditions are either all partitions or all brackets.
+      The Schubert conditions must be either all partitions or all brackets.
    SeeAlso
          solveSimpleSchubert
 	 partition2bracket
@@ -204,12 +204,12 @@ doc ///
    Inputs
       P:List
          Simple Schubert problem given as a list of sequences of the 
-	 form (l,F) where l is a partition (a list of weakly 
-	 decreasing integers) and F is a flag (n by n matrix).
-         Necessarily, all partitions except possible the first two are {1}
+	 form $(l,F)$ where $l$ is a partition (a list of weakly 
+	 decreasing integers) and $F$ is a flag ($n$ by $n$ matrix).
+         Necessarily, all partitions except possible the first two are \{1\}
       k:ZZ
       n:ZZ
-      	 k and n denote the Grassmannian Gr(k,n)
+         $k$ and $n$ define the Grassmannian $Gr(k,n)$ of $k$-planes in $n$-space
       --LinearAlgebra:Boolean
       --   when True, uses Linear Algebra to glue solutions from node to node, otherwise uses parameter homotopies.
    Outputs
@@ -220,7 +220,7 @@ doc ///
       	 Represent a Schubert variety in the Grassmannian $Gr(k,n)$ 
 	 by a partition $l$ (a weakly decreasing
 	 list of nonegative integers less than $n-k$) and a flag $F$ 
-	 (given as an $n{\times} n$ matrix).
+	 (given as an $n$ by $n$ matrix).
 	 A Schubert problem is a list of Schubert varieties 
 	 $(l^1, F^1), \ldots, (l^m, F^m)$ such that 
 	 $|l^1|+|l^2| + \cdots + |l^m| = k(n-k)$, where $|l^i|$ is the 
@@ -233,7 +233,7 @@ doc ///
 	 to the specializations of the geometric Pieri rule.
 
 	 This algorithm is described in the paper:
-	 Huber, Sottile, and Sturmfels, "Numerical Schubert Calculus".
+	 Huber, Sottile, and Sturmfels, "Numerical Schubert Calculus",  J. Symb. Comp., 26 (1998), 767-788.
 	 
       Example
          -- Problem (2,1)^2 1^3 = 6 in Gr(3,6)
@@ -408,22 +408,22 @@ doc ///
       changeFlags 
       (changeFlags,List,Sequence)
    Headline
-      Parameter homotopies to move solutions of a Schubert problem from one instance to another
+      Parameter homotopies to move solutions of a Schubert problem from one instance to a second instance
    Usage
       changeFlags(Solns,conds'F'G)
    Inputs
       Solns:List
-         solutions of a problem written as nxk matrices
+         solutions of a Schubert problem written as nxk matrices
       conds'F'G:Sequence
          a triplet (C,F,G) where C is a list of m Schubert conditions,
-	 F is a list of m flags defining an instance with solution set S,
+	 F is a list of m flags defining an instance with solution set Solns,
 	 G is a list of m flags defining the instance whose solutions we want.
    Outputs
       :List
          solutions of the problem with respect to flags G.
    Description
     Text
-       If $S$ is a set of solutions to a Schubert problem $l_1,\ldots,l_m$
+       If $Solns$ is a set of solutions to a Schubert problem $l_1,\ldots,l_m$
        with respect to a set of flags $F_1,\ldots, F_m$, uses parameter homotopies
        to move $S$ to a solution set $S'$ for the same Schubert problem, but with
        respect to another set of flags $G_1,\ldots, G_m$.
@@ -464,13 +464,13 @@ doc ///
    Key
       [changeFlags, oneHomotopy]
    Headline
-      Strategy for moving solutions to a Schubert problem from one instance to another.
+      Strategy for moving solutions to a Schubert problem from one instance to a second instance.
    Usage
       changeFlags(...,oneHomotopy=>T)
    Inputs
       T:Boolean
-        when true [default] it uses one line homotopies, 
-	otherwise it makes a gradual change in the flags.
+        when true [default] it uses a single straight line homotopy, 
+	otherwise it makes a gradual change in the flags, one column at a time.
    Description
     Text
       There are two strategies: when oneHomotopy is set to true (default) it uses straight
@@ -527,14 +527,14 @@ doc ///
       P:List
          A Schubert problem as a list {($l_1,F_1$),...,($l_m,F_m$)}
       s:Matrix
-         A matrix of size $k\times n$ representing a solution to the Schubert problem P
+         A matrix of size $k$ by $n$ representing a solution to the Schubert problem P
    Outputs
       :Boolean
          true if s satisfies all the incidence conditions
    Description
     Text
       For each pair $(l,F)$ in the Schubert problem $P$, where $l$ is a Schubert
-      condition given as a partition, and $F$ is a flag given as an $n\times n$ matrix,
+      condition given as a partition, and $F$ is a flag given as an $n$ by $n$ matrix,
       the function verifies if the matrix $s$ satisfies the incidence conditions imposed
       by $l$ with respect to the flag $F$, for each of the pairs in $P$, by computing
       the corresponding minor conditions.
