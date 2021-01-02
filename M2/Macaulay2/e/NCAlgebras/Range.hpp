@@ -29,6 +29,73 @@ public:
   const T* cend() const { return mLast; }
 };
 
+template<typename U, typename T>
+class ZipIterator
+{
+private:
+  U* mPtr1;
+  T* mPtr2;
+public:
+  ZipIterator(U* ptr1, T* ptr2) : mPtr1(ptr1), mPtr2(ptr2) {}
+
+  std::pair<U,T> operator* () { return std::make_pair(*mPtr1,*mPtr2); }
+
+  const ZipIterator& operator++ () { 
+    ++mPtr1;
+    ++mPtr2;
+    return *this;
+  }
+
+  bool operator== (ZipIterator& it) { return (mPtr1 == it.mPtr1) && (mPtr2 == it.mPtr2); }
+  bool operator!= (ZipIterator& it) { return (mPtr1 != it.mPtr1) && (mPtr2 != it.mPtr2); }
+};
+
+template<typename U, typename T>
+class ConstZipIterator
+{
+private:
+  const U* mPtr1;
+  const T* mPtr2;
+public:
+  ConstZipIterator(const U* ptr1, const T* ptr2) : mPtr1(ptr1), mPtr2(ptr2) {}
+
+  const std::pair<U,T> operator* () { return std::make_pair(*mPtr1,*mPtr2); }
+
+  const ConstZipIterator& operator++ () { 
+    ++mPtr1;
+    ++mPtr2;
+    return *this;
+  }
+
+  bool operator== (ConstZipIterator& it) { return (mPtr1 == it.mPtr1) && (mPtr2 == it.mPtr2); }
+  bool operator!= (ConstZipIterator& it) { return (mPtr1 != it.mPtr1) && (mPtr2 != it.mPtr2); }
+};
+
+// both ranges *must* be the same size.  No bounds checking is done!!
+template<typename U, typename T>
+class PairRange
+{
+private:
+  Range<U> mRange1;
+  Range<T> mRange2;
+public:
+  PairRange(Range<U> range1, Range<T> range2) : mRange1(range1), mRange2(range2) {}
+
+  int size() const { return mRange1.size(); }
+
+  ZipIterator<U,T> begin() { return ZipIterator<U,T>(mRange1.begin(),mRange2.begin()); }
+  ZipIterator<U,T> end() { return ZipIterator<U,T>(mRange1.end(),mRange2.end()); }
+
+  ConstZipIterator<U,T> begin() const { return ConstZipIterator<U,T>(mRange1.cbegin(),mRange2.cbegin()); }
+  ConstZipIterator<U,T> end() const { return ConstZipIterator<U,T>(mRange1.cend(),mRange2.cend()); }
+
+  //ConstZipIterator<U,T> cbegin() const { return ConstZipIterator<U,T>(mRange1.cbegin(),
+  //                                                                    mRange2.cbegin()); }
+  //ConstZipIterator<U,T> cend() const { return ConstZipIterator<U,T>(mRange1.cend(),
+  //                                                                  mRange2.cend()); }
+
+};
+
 #endif
 
 // Local Variables:

@@ -46,7 +46,7 @@
 -- major computations to be written yet:
 --  Hilbert function (is needed)
 --  inhomog GB's.
---  one-sides GB's in modules.
+--  one-sided GB's in modules.
 --  modules (bi-modules)
 -- get unit tests working again.  Also tests in the package.
 -- connect unit tests to autotools build
@@ -337,7 +337,7 @@ NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
 	if (not isHomogeneous I and strat == "F4") then (
 	   -- need to change to Naive algorithm if I is not homogeneous at this point.
 	   strat = "Naive";
-	);   
+	);
 	gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, setNCGBStrategy(strat)));
         I.cache.NCGB = {maxdeg, gbI};
         );
@@ -1070,7 +1070,8 @@ ncGraphIdeal RingMap := phi -> (
    kk := coefficientRing A;
    if not kk === coefficientRing B then
       error "Expected coefficient rings to be the same at the present time.";
-   C := freeAlgebra(kk,(gens B | gens A) |
+   gensC := B#generatorSymbols | A#generatorSymbols;
+   C := freeAlgebra(kk,gensC |
             {Degrees => (degrees B | degrees A)} | 
 	    {Weights => toList(numgens B : 1) | (toList(numgens A : 0))} | 
 	    {UseVariables=>false});
@@ -1100,7 +1101,7 @@ endomorphismRingIdeal (Module,Symbol) := (M,X) -> (
    deg2A := ncBasis(2,A);
    composites := apply(flatten entries deg2A, m -> evaluateAt(endGens, m)) / homomorphism';
    -- relations from multiplication table
-   I := ideal(deg2A - matrix {apply(composites, t -> first flatten entries (gensA*(matrix entries t)))});
+   I := ideal(deg2A - (gensA)*(matrix entries matrix {composites}));
    -- now must identify the identity map.
    identM := homomorphism' id_M;
    ff := 1_A - first flatten entries (ncBasis(1,A)*(matrix entries identM));
@@ -1136,7 +1137,8 @@ evaluateAt (List,RingElement) := (mats,f) -> (
          error "Expected a list of maps defined on the same module.";
    );
    varPowers := toVariableList f;
-   sum apply(varPowers, p -> p#0*(product p#1))
+   toSub := hashTable apply(numgens A, i -> (A_i,mats#i));
+   sum apply(varPowers, p -> p#0*(product apply(p#1, p -> toSub#p)))
 )
 
 -------------------------------------------------------------------------
@@ -1490,9 +1492,6 @@ debug needsPackage "AssociativeAlgebras"
 R = QQ[x,y,z,w]/ideal(x*w - y*z)
 kRes = res coker vars R
 M = ker kRes.dd_5
-endM = End M
-endGens = apply(numgens endM, i -> homomorphism endM_{i});
-homomorphism' id_M
 I = endomorphismRingIdeal(M,X);
 -- would be nice to get the quotient working correctly.
 A = ring I
@@ -1505,14 +1504,16 @@ all(I_*, f -> evaluateAt(endGens,f) == 0)
 
 restart
 debug needsPackage "AssociativeAlgebras"
+needsPackage "NCAlgebra"
 R = QQ
 M = R^5
-endM = End M
-endGens = apply(numgens endM, i -> homomorphism endM_{i});
-homomorphism' id_M
 I = endomorphismRingIdeal(M,X);
 A = ring I
 B = A/I
+C = R apply(numgens A, i -> Y_i)
+phi = map(B,C,{X_5*X_1} | apply(24, i -> B_(i+1)))
+ncKernel phi
+
 --- how could we minimize the generators and relations in a systematic way?
 --- I have something like this in NCAlgebra, but not sure if it is the best way.
 --- e.g. note that X_23*X_19 = X_18.  Therefore X_18 is not needed as a generator,

@@ -898,6 +898,7 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "Naive"); -- (with auto
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"F4");    -- 2220 seconds, I think? (now 380 sec on FMs machine)
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"Naive"); -- 
 
+I = ideal I_*; elapsedTime Igb = NCGB(I, 6);
 I = ideal I_*; elapsedTime Igb = NCGB(I, 10); -- (with autoreduction) .9 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 11); -- (with autoreduction) 3.5 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12); -- (with autoreduction) 17.7 sec
@@ -906,10 +907,27 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 14); -- (with autoreduction) 352 sec (1
 
 time Igb = NCGB(I, 20, Strategy=>"F4");
 time Igb = NCGB(I, 10, Strategy=>"Naive");
-S = R/I
+S = R/I;
 #(flatten entries ncBasis(12,S)) == binomial(12+3,3)
 flatten entries Igb / degree
-all(15, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
+all(11, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
+apply(11, i -> #(flatten entries ncBasis(i, S)))
+
+getMons = f -> terms f / leadMonomial
+leadTerms = M -> (flatten entries M) / leadMonomial // ideal
+leadTerms Igb
+gbI = ideal Igb;
+inI = leadTerms Igb;
+-- check that elements are interreduced.
+all(gbI_*,f -> f - NCReductionTwoSided(f, inI) == leadMonomial f)
+
+monsOneDegUp = f -> (flatten apply(gens R, x -> {x*(f - leadMonomial f), (f - leadMonomial f)*x})) / getMons // flatten
+stdMonsSoFar = mons -> partition(m -> NCReductionTwoSided(m,inI) != 0,mons)
+fPart = stdMonsSoFar monsOneDegUp(gbI_71);
+NCReductionTwoSided(matrix {fPart#false},gbI)
+
+J = ideal Igb;
+J10 = select(J_*, f -> sum degree f == 10)
 
 -- the following seems wrong (20 is too big)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w}, DegreeLimit => 20);

@@ -82,6 +82,7 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
     }
 #endif
   
+  // build the F4 matrix
   buildF4Matrix(overlapsToProcess);
 
   if (M2_gbTrace >= 2)
@@ -91,25 +92,31 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
     }
   if (M2_gbTrace >= 200) displayFullF4Matrix(std::cout);
 
+  // sort the columns so that the matrix is `upper triangular'
   sortF4Matrix();
 
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
 
+  // reduce the matrix
   reduceF4Matrix();
+
+  if (M2_gbTrace >= 2)
+    {
+      std::cout << "NC F4 GB: matrix size: ";
+      displayF4MatrixSize(std::cout);
+    }
 
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
 
-  // auto-reduce the new elements
-  
   // convert back to GB elements...
   PolyList newElems = newGBelements();
 
   for (auto& f : newElems)
     {
       addToGroebnerBasis(f);
-      autoreduceByLastElement();
+      //autoreduceByLastElement();
       updateOverlaps(f);
     }
 
@@ -395,16 +402,23 @@ NCF4::Row NCF4::processPreRow(PreRow r)
       auto it = mColumnMonomials.find(m);
       if (it == mColumnMonomials.end())
         { 
-          auto divresult = findDivisor(m);
-          int divisornum = -1; // -1 indicates no divisor was found
-          if (divresult.first)
-            {
-              divisornum = mReducersTodo.size();
-              mReducersTodo.push_back(divresult.second);
-            }
-          int newColumnIndex = mColumnMonomials.size();
-          mColumnMonomials.insert({m, {newColumnIndex, divisornum}});
-          *nextcolloc++ = newColumnIndex;
+          auto prevReducer = findPreviousReducer(m);
+          if (prevReducer) // look for previous reducers first....
+          {
+          }
+          else  // if previous reducer is not found:
+          {
+            auto divresult = findDivisor(m);
+            int divisornum = -1; // -1 indicates no divisor was found
+            if (divresult.first)
+              {
+                divisornum = mReducersTodo.size();
+                mReducersTodo.push_back(divresult.second);
+              }
+            int newColumnIndex = mColumnMonomials.size();
+            mColumnMonomials.insert({m, {newColumnIndex, divisornum}});
+            *nextcolloc++ = newColumnIndex;
+          }
         }
       else
         {
@@ -431,6 +445,11 @@ int NCF4::prerowInReducersTodo(PreRow pr) const
         }
     }
   return retval;
+}
+
+bool NCF4::findPreviousReducer(Monom mon)
+{
+  return false;
 }
 
 std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
@@ -478,12 +497,49 @@ void NCF4::sortF4Matrix()
 
 void NCF4::reduceF4Matrix()
 {
+  long numCancellations = 0;
   VectorArithmetic V(freeAlgebra().coefficientRing());
 
   // Create the dense array.
   ring_elem zero = freeAlgebra().coefficientRing()->zero();
   VECTOR(ring_elem) denseVector(mColumnMonomials.size(), zero);
   Range<ring_elem> dense(denseVector);
+
+  // do we want to backsolve?  This slows things down a lot, but
+  // we are not yet re-using this information for the next iteration at all.
+  // for (int i = mFirstOverlap - 1; i >= 0; --i)
+  // {
+  //   int sz = mRows[i].second.size();
+  //   assert(sz > 0);
+  //   if (sz == 1) continue;
+  //   int firstcol = mRows[i].second[0];  
+  //   int first = mRows[i].second[1];
+  //   int last = mRows[i].second[sz-1];
+
+  //   V.sparseRowToDenseRow(dense, mRows[i].first, mRows[i].second);
+  //   do {
+  //     int pivotrow = mColumns[first].second;
+  //     if (pivotrow >= 0)
+  //       {
+  //         numCancellations++;
+  //         V.denseRowCancelFromSparse(dense, mRows[pivotrow].first, mRows[pivotrow].second);
+  //         // last component in the row corresponding to pivotrow
+  //         int last1 = mRows[pivotrow].second.cend()[-1];
+  //         last = (last1 > last ? last1 : last);
+  //       }
+  //     first = V.denseRowNextNonzero(dense, first+1, last);
+  //   } while (first <= last);
+  //   V.denseRowToSparseRow(dense,
+  //                         mRows[i].first,
+  //                         mRows[i].second,
+  //                         firstcol,
+  //                         last);
+  //   if (mRows[i].first.size() > 0)
+  //     {
+  //       V.sparseRowMakeMonic(mRows[i].first);
+  //       mColumns[firstcol].second = i;
+  //     }
+  // }
 
   // reduce each overlap row by mRows.
   for (int i=mFirstOverlap; i < mRows.size(); ++i)
@@ -499,8 +555,10 @@ void NCF4::reduceF4Matrix()
         int pivotrow = mColumns[first].second;
         if (pivotrow >= 0)
           {
+            numCancellations++;
             V.denseRowCancelFromSparse(dense, mRows[pivotrow].first, mRows[pivotrow].second);
-            int last1 = mRows[pivotrow].second.cend()[-1]; // last component in the row corresponding to pivotrow
+            // last component in the row corresponding to pivotrow
+            int last1 = mRows[pivotrow].second.cend()[-1];
             last = (last1 > last ? last1 : last);
           }
         else if (firstcol == -1)
@@ -520,6 +578,39 @@ void NCF4::reduceF4Matrix()
           mColumns[firstcol].second = i;
         }
     }
+
+  // interreduce the overlaps
+  // #if 0
+  for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
+  {
+    int sz = mRows[i].second.size();
+    if (sz <= 1) continue;
+    int firstcol = mRows[i].second[0];  
+    int first = mRows[i].second[1];
+    int last = mRows[i].second[sz-1];
+
+    V.sparseRowToDenseRow(dense, mRows[i].first, mRows[i].second);
+    do {
+      int pivotrow = mColumns[first].second;
+      if (pivotrow >= 0)
+        {
+          numCancellations++;
+          V.denseRowCancelFromSparse(dense, mRows[pivotrow].first, mRows[pivotrow].second);
+          // last component in the row corresponding to pivotrow
+          int last1 = mRows[pivotrow].second.cend()[-1];
+          last = (last1 > last ? last1 : last);
+        }
+      first = V.denseRowNextNonzero(dense, first+1, last);
+    } while (first <= last);
+    V.denseRowToSparseRow(dense,
+                          mRows[i].first,
+                          mRows[i].second,
+                          firstcol,
+                          last);
+  }
+  // #endif
+
+  std::cout << "Number of cancellations: " << numCancellations << std::endl;
 }
 
 void NCF4::displayF4MatrixSize(std::ostream & o) const
@@ -529,8 +620,21 @@ void NCF4::displayF4MatrixSize(std::ostream & o) const
     << mColumnMonomials.size() << ", "
     << mFirstOverlap << ", "
     << mRows.size() - mFirstOverlap << ")"
-    << std::endl
     << "  ";
+  long numReducerEntries = 0;
+  long numSPairEntries = 0;
+ 
+  for (int i = 0; i < mRows.size(); ++i)
+  {
+    if (i < mFirstOverlap) 
+       numReducerEntries += mRows[i].first.size();
+    else
+       numSPairEntries += mRows[i].first.size();
+    if (mRows[i].first.size() != mRows[i].second.size())
+      o << "***ERROR*** ring_elem and component ranges do not match!" << std::endl;
+  }
+  o << "#entries: (" << numReducerEntries << "," << numSPairEntries << ")"
+    << std::endl;
 }
 
 

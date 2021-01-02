@@ -109,11 +109,14 @@ private:
 
   std::pair<bool, PreRow> findDivisor(Monom mon);
 
+  bool findPreviousReducer(Monom mon);
+
   void autoreduceByLastElement();
   ring_elem getCoeffOfMonom(const Poly& f, const Monom& m);
+
+  void performBackSolve(VECTOR(ring_elem) denseVector, int i);
+
 };
-
-
 
 #endif
 
