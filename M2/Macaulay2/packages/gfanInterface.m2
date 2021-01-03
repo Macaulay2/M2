@@ -1155,8 +1155,8 @@ argStrs = hashTable {
 -- Used by gfanArgumentToString
 ---------------------------------------------------------
 cmdLineArgs = hashTable {
-	"gfanRender" => { "shiftVariables" },
-	"gfanRenderStaircase" => { "d", "w" },
+	"gfan _render" => { "shiftVariables" },
+	"gfan _renderstaircase" => { "d", "w" },
 	"gfan _fancommonrefinement" => {"i1", "i2"},
 	"gfan _fancommonrefinement --stable" => {"i1", "i2"},
 	"gfan _fanlink" => {"i"},
@@ -1946,7 +1946,7 @@ gfanRender = method( Options => {
 
 gfanRender (List) := opts -> (L) -> (
 	fileName := temporaryFileName();
-	gfanRender(fileName, List, opts);
+	gfanRender(fileName, L, opts);
 )
 
 gfanRender (String, List) := opts -> (fileName, L) -> (
@@ -1957,7 +1957,7 @@ gfanRender (String, List) := opts -> (fileName, L) -> (
 	figure << out << close;
 	<< "Figure rendered to " << fileName << ".fig" << endl;
 	if fig2devPath != "" then (
-		run fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png";
+		run(fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png");
 		<< "Figure converted to png: " << fileName << ".png" << endl;
 		show URL("file://" | fileName | ".png");
 	) else (
@@ -1994,7 +1994,7 @@ gfanRenderStaircase (String, List) := opts -> (fileName, L) -> (
 	<< "Figure rendered to " << fileName << ".fig" << endl;
 
 	if fig2devPath != "" then (
-		run fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png";
+		run(fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png");
 		<< "Figure converted to png: " << fileName << ".png" << endl;
 		show URL("file://" | fileName | ".png");
 	) else << "fig2dev path not set." << endl ;

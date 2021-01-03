@@ -92,11 +92,11 @@ specialCubicTransformation = method(TypicalValue=>RationalMap);
 rationalMap = method(TypicalValue => RationalMap, Options => {Dominant => null});
 forceInverseMap = method(TypicalValue => Nothing);
 forceImage = method(TypicalValue => Nothing);
-point = method(TypicalValue => Ideal);
+point = method();
 segre = method(TypicalValue => RationalMap);
 abstractRationalMap = method();
 isMorphism = method(TypicalValue => Boolean);
-exceptionalLocus = method(TypicalValue => Ideal);
+exceptionalLocus = method(TypicalValue => Ideal, Options => {MathMode => false});
 
 rationalMap (RingMap) := o -> (phi) -> ( 
    checkMultihomogeneousRationalMap phi;
@@ -207,13 +207,14 @@ rationalMap (Ring) := o -> (R) -> rationalMap(R,R,Dominant=>o.Dominant);
 rationalMap (Ring,Tally) := o -> (R,E) -> ( 
     if not isField coefficientRing R then error "the coefficient ring needs to be a field";
     if not ((isPolynomialRing R or isQuotientRing R) and isPolynomialRing ambient R and isHomogeneous ideal R) then error "the base ring must be a quotient of a polynomial ring by a homogeneous ideal";
-    if # heft R =!= 1 then error "expected standard grading";
+    -- if # heft R =!= 1 then error "expected standard grading";
     for X in keys E do if not(instance(X,Ideal) and (ring X === R or ring X === ambient R)) then error "expected a tally whose elements represent pure codimension 1 subschemes of a projective variety";
     D := pairs E;
     if not isPolynomialRing R then D = apply(D,d -> if ring first d === ambient R then (trim sub(first d,R),last d) else d);
     I := trim intersect for d in D list (first d)^(last d); 
     J := quotient(ideal I_0,I);
-    d := first first degrees I;
+    d := first degrees I;
+    if # heft R == 1 then d = first d;
     rationalMap(J,d,Dominant=>o.Dominant)
 );
 
@@ -385,7 +386,23 @@ toMap (MultihomogeneousRationalMap) := o -> (Phi) -> (
 
 map (RationalMap) := o -> (Phi) -> Phi#"map";
 
+map (ZZ,RationalMap) := o -> (i,Phi) -> (
+    if i < 0 then error "expected a nonnegative integer";
+    if i == 0 then return map Phi;
+    n := # maps Phi;
+    if i > n-1 then error("the number of minimal representatives of the map is "|toString(n));
+    (Phi#"maps")_i
+);
+
 map (MultihomogeneousRationalMap) := o -> (Phi) -> Phi#"map";
+
+map (ZZ,MultihomogeneousRationalMap) := o -> (i,Phi) -> (
+    if i < 0 then error "expected a nonnegative integer";
+    if i == 0 then return map Phi;
+    n := # maps Phi;
+    if i > n-1 then error("the number of minimal representatives of the map is "|toString(n));
+    (Phi#"maps")_i
+);
 
 expression RationalMap := (Phi) -> (
     if Phi#"dimTarget" < 0 or Phi#"dimSource" < 0 then return expression("map from " | expressionVar(Phi#"dimTarget" , Phi#"dimAmbientTarget") | " to " | expressionVar(Phi#"dimSource" , Phi#"dimAmbientSource"));
@@ -555,9 +572,30 @@ image (RationalMap,String) := (phi,alg) -> (
    image phi
 );
 
+image (MultihomogeneousRationalMap,String) := (phi,alg) -> (
+   if alg =!= "F4" and alg =!= "MGB" then error "expected Strategy to be \"F4\" or \"MGB\"";
+   error "not implemented yet in the case the source is a multi-projective variety";
+);
+
 matrix (RationalMap) := o -> (Phi) -> toMatrix map Phi;
 
+matrix (ZZ,RationalMap) := o -> (i,Phi) -> (
+    if i < 0 then error "expected a nonnegative integer";
+    if i == 0 then return matrix Phi;
+    n := # maps Phi;
+    if i > n-1 then error("the number of minimal representatives of the map is "|toString(n));
+    toMatrix (Phi#"maps")_i
+);
+
 matrix (MultihomogeneousRationalMap) := o -> (Phi) -> toMatrix map Phi;
+
+matrix (ZZ,MultihomogeneousRationalMap) := o -> (i,Phi) -> (
+    if i < 0 then error "expected a nonnegative integer";
+    if i == 0 then return matrix Phi;
+    n := # maps Phi;
+    if i > n-1 then error("the number of minimal representatives of the map is "|toString(n));
+    toMatrix (Phi#"maps")_i
+);
 
 coefficients (RationalMap) := o -> (Phi) ->  ( -- matrix M s.t M * (transpose gens((ideal vars R)^d)) == transpose F
     if o.Variables =!= null then error "option not available";
@@ -672,6 +710,8 @@ inverse (RationalMap,Option) := (Phi,opt) -> (
 );
 
 inverse (RationalMap) := (Phi) -> inverse(Phi,MathMode=>false);
+
+inverse (MultihomogeneousRationalMap) := (Phi) -> error "not implemented yet: inverse map of a birational map from a multi-projective variety";
 
 RationalMap ! := (Phi) -> (
      toMap Phi;
@@ -1034,6 +1074,8 @@ inverseMap (RationalMap,Nothing) := o -> (Phi,nothing) -> ( -- code copied from 
          return Phi#"inverseRationalMap";
     ) else return Psi;
 );
+
+inverseMap (MultihomogeneousRationalMap) := o -> (Phi) -> error "not implemented yet: inverse map of a birational map from a multi-projective variety";
 
 inverseMap (RingMap) := o -> (phi) -> (
    checkRationalMap phi;
@@ -1573,10 +1615,12 @@ graph (RingMap) := o -> (phi) -> (
   apply(graphInt(rationalMapWithoutChecking phi,BlowUpStrategy=>o.BlowUpStrategy),map)
 );
 
-exceptionalLocus (RationalMap) := (Phi) -> (
-   B := ideal inverse Phi;
-   Phi^* B
+exceptionalLocus (RationalMap) := o -> (Phi) -> (
+   B := ideal inverse(Phi,MathMode=>o.MathMode);
+   if o.MathMode then Phi^** B else Phi^* B
 );
+
+exceptionalLocus (MultihomogeneousRationalMap) := o -> (Phi) -> error "not implemented yet: exceptional locus of a birational map from a multi-projective variety";
 
 changeCoefficientRing = method()
 changeCoefficientRing (MutableHashTable,Ring) := (Phi,KK) -> (
@@ -1914,7 +1958,9 @@ point (Ideal,Boolean) := (I,b) -> (  -- see also: code(randomKRationalPoint,Idea
    local par;
    if c == 1 then (
        L := {}; 
-       while #L == 0 do (par = parametrize randomLinearSubspace(R,1); L = select(decompose par^* I,q -> dim q == 1 and degree q == 1));
+       maxAttempts := 20; attempt := 0;
+       while #L == 0 and attempt < maxAttempts do (attempt = attempt+1; par = parametrize randomLinearSubspace(R,1); L = select(decompose par^* I,q -> dim q == 1 and degree q == 1));
+       if #L == 0 and attempt >= maxAttempts then error("reached maximum number of "|toString(maxAttempts)|" attempts to find point");
        p = par first L;
    ); 
    if c > 1 and n - c >= 2 then (
