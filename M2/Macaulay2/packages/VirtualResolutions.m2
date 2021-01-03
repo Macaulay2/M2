@@ -105,6 +105,8 @@ submatrixWinnow = (m, alphas) -> (
 --------------------------------------------------------------------
 virtualOfPair = method(Options => {LengthLimit => infinity})
 virtualOfPair(Ideal,  List) := ChainComplex => opts -> (I, alphas) -> virtualOfPair(comodule I, alphas, opts)
+-- TODO: return the map M --> HH_0 F, so isVirtualOfPair can use it
+-- by checking whether it is an isomorphism
 virtualOfPair(Module, List) := ChainComplex => opts -> (M, alphas) -> (
     R := ring M;
     if M.cache.?resolution then return virtualOfPair(M.cache.resolution, alphas, opts);
@@ -599,10 +601,7 @@ multigradedRegularityDefaultStrategy = (X, M, opts) -> (
     -- TODO: why is this the right upper bound?
     high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degs / (deg -> deg_i)));
     -- TODO: why is mindegs - toList(n:d) the right lower bound?
-    -- {0,..,0} is not always the right lower bound, even for ideals!
-    low  := if opts.LowerLimit =!= null then opts.LowerLimit else toList(n:0); -- mindegs - toList(n:d);
-    -- kind of a hack to decrease the lower bound when needed
-    if any(n, i -> high#i <= low#i) then low = mindegs - toList(n:d);
+    low  := if opts.LowerLimit =!= null then opts.LowerLimit else mindegs - toList(n:d);
     --
     debugInfo("Computing cohomologyHashTable from ", toString low, " to ", toString high);
     L := pairs cohomologyHashTable(M, low, high);
@@ -614,6 +613,7 @@ multigradedRegularityDefaultStrategy = (X, M, opts) -> (
     phi := map(P, Q, gens P);
     gt := new MutableHashTable;
     debugInfo("Beginning search in Picard group");
+    -- TODO: rewrite this loop
     apply(L, ell -> (
             -- Check that Hilbert function and Hilbert polynomial match
             -- (this imposes a condition on the alternating sum of local cohomology dimensions)
@@ -626,6 +626,10 @@ multigradedRegularityDefaultStrategy = (X, M, opts) -> (
                     j -> gt#(ell_0_0 + degree j) = true);
             ));
     debugInfo("Calculating minimal generators");
+    if debugLevel > 0 and n == 2 then (
+	printerr net matrix table(min(high - low) + 1, max(high - low) + 1,
+	    (i, j) -> if gt#?{first high - i, j + first low} then 0 else 1));
+    -- TODO: use findMins here when it is mature
     I := ideal apply(L, ell ->
         if all(n, j -> ell_0_0_j >= mindegs_j)
         and not gt#?(ell_0_0) then P_(ell_0_0 - mindegs) else 0);

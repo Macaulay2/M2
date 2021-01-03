@@ -169,7 +169,7 @@ TEST ///
     S = ring X; B = ideal X;
     I = saturate(ideal(x_(0,0)^2*x_(1,0)^2+x_(0,1)^2*x_(1,1)^2+x_(0,0)*x_(0,1)*x_(1,2)^2, x_(0,0)^3*x_(1,2)+x_(0,1)^3*(x_(1,0)+x_(1,1))), B);
     -- taking NormalToricVariety as input
-    elapsedTime assert(multigradedRegularity(X, I) == {{1,5},{2,2},{4,1}}) -- 18 -> 8
+    elapsedTime assert(multigradedRegularity(X, I) == {{1,5},{2,2},{4,1}}) -- 18 -> 8 -> 4
     -- taking the ring of NormalToricVariety as input
     elapsedTime assert(multigradedRegularity(S, I) == {{1,5},{2,2},{4,1}}) -- woohoo cache hit!!
 ///
@@ -181,14 +181,6 @@ TEST ///
             x_(0,0)^3*x_(1,2)+x_(0,1)^3*(x_(1,0)+x_(1,1))), B);
     -- taking the ring of a productOfProjectiveSpaces as input
     elapsedTime assert(multigradedRegularity(S, I) == {{1,5},{2,2},{4,1}}) -- 9 -> 2.43
-///
-
-TEST ///
-  S = QQ[x_(0,0),x_(0,1),x_(1,0),x_(1,1), Degrees => {{1,0},{1,0},{0,1},{0,1}}]
-  S = imbueRingWithTateData S
-  M = cokernel matrix{{x_(1,0)^2*x_(0,1), x_(0,0)^2*x_(1,0)*x_(0,1), x_(0,1)^3*x_(1,1)^2, x_(1,0)*x_(0,1)^3*x_(1,1), x_(0,0)^4*x_(1,0), x_(1,0)*x_(0,1)^5}}
-  -- taking an arbitrary multigraded ring as input
-  elapsedTime assert(multigradedRegularity(S, M) == {{0,2},{2,0}}) -- 1.13
 ///
 
 TEST /// -- testing picard rank 3
@@ -206,7 +198,7 @@ TEST /// -- testing twisted modules
       degs = apply(2, i -> min(degrees M / (deg -> deg_i)));
       low  = degs-toList(2:2);
       high = apply(2, i -> max({r} | degrees M / (deg -> deg_i)));
-      assert(multigradedRegularity(S, M) == {{i, i}});
+      assert(multigradedRegularity(S, M, Strategy => Default) == {{i, i}});
 --      (cohomologyMatrix(M,low,high), multigradedRegularity(S, M))
       )
 ///
