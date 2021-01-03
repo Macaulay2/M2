@@ -237,6 +237,7 @@ MultiprojectiveVariety * MultiprojectiveVariety := (X,Y) -> (
 
 isSubset (MultiprojectiveVariety,MultiprojectiveVariety) := (X,Y) -> (
     if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
+    if X === Y then return true;
     isSubset(ideal Y,ideal X)
 );
 
@@ -328,7 +329,8 @@ multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
         "image" => null,
         "inverse" => null,
         "isDominant" => if #L == 1 then (first L)#"isDominant" else null,
-        "isBirational" => if #L == 1 then (first L)#"isBirational" else null
+        "isBirational" => if #L == 1 then (first L)#"isBirational" else null,
+        "compositionWithSegreEmbedding" => null
     }
 );
 
@@ -347,14 +349,32 @@ coefficientRing MultirationalMap := Phi -> coefficientRing target Phi;
 
 factor MultirationalMap := o -> Phi -> Phi#"maps";
 
+segre MultirationalMap := Phi -> (
+    if Phi#"compositionWithSegreEmbedding" =!= null then return Phi#"compositionWithSegreEmbedding";
+    s := segre target Phi;
+    F := factor Phi;
+    M := matrix first F;
+    for i from 1 to #F-1 do M = M | (matrix F_i);
+    Phi#"compositionWithSegreEmbedding" = rationalMap(map(ring source Phi,ring target Phi,M) * (map s))
+);
+
+MultirationalMap MultiprojectiveVariety := (Phi,Z) -> (
+    if ring ideal source Phi =!= ring ideal Z then error "expected a multi-projective variety in the same ambient of the source of the map";
+    if not isSubset(Z,source Phi) then error "expected a subvariety of the source of the map";
+    F := apply(factor Phi,f -> lift(matrix f,ring ambient source Phi));
+    m := # F;
+    t := local t;
+    R := (coefficientRing Phi)[t_0 .. t_(m-1),gens ring ambient source Phi,gens ring ambient target Phi,MonomialOrder => Eliminate (m + numgens ring ambient source Phi)];
+    y := (target Phi)#"multigens";
+    I := sub(ideal Z,R) + sum(m,i -> ideal(sub(matrix{y_i},R) - t_i * sub(F_i,R)));
+    projectiveVariety(sub(ideal selectInSubring(1,gens gb I),ring ambient target Phi),MinimalGenerators=>true,Saturate=>true)
+);
+
 image MultirationalMap := Phi -> (
     if Phi#"image" =!= null then return Phi#"image";
-    f := Phi#"maps";
-    p := Phi#"projections";
-    if # f == 1 then (
-        return Phi#"image" = projectiveVariety(trim lift((first p)^* image first f,ring ambient target Phi),MinimalGenerators=>false,Saturate=>false);
-    );
-    error "not implemented yet: image of a rational map with target a multi-projective variety";
+    Phi#"image" = Phi (source Phi);
+    Phi#"isDominant" = Phi#"image" == target Phi;
+    return Phi#"image";
 );
 
 inverse (MultirationalMap,Option) := (Phi,opt) -> (
@@ -720,12 +740,53 @@ Headline => "image of a multi-rational map",
 Usage => "image Phi", 
 Inputs => {MultirationalMap => "Phi"}, 
 Outputs => {MultiprojectiveVariety => {"the image of ",TT"Phi"}},
-EXAMPLE {
-"ZZ/65521[x_0..x_4], f = last graph rationalMap {x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2};",
-"Phi = multirationalMap {f};",
-"Z = image Phi;",
-"describe Z"},
 PARA{"Note that, instead, the ",TO2{(image,RationalMap),"image"}," of a standard ",TO2{RationalMap,"rational map"}," is the defining ideal of the image (this is done mainly for efficiency reasons)."},
-Caveat => {"This is not implemented yet when the target is a multi-projective variety."},
-SeeAlso => {(image,RationalMap)}}
+EXAMPLE {
+"ZZ/65521[x_0..x_4];",
+"f = rationalMap {x_2^2-x_1*x_3, x_1*x_2-x_0*x_3, x_1^2-x_0*x_2, x_0*x_4, x_1*x_4, x_2*x_4, x_3*x_4, x_4^2};",
+"g = rationalMap {-x_3^2+x_2*x_4, 2*x_2*x_3-2*x_1*x_4, -3*x_2^2+2*x_1*x_3+x_0*x_4, 2*x_1*x_2-2*x_0*x_3, -x_1^2+x_0*x_2};",
+"Phi = multirationalMap {f,g};",
+"time Z = image Phi;",
+"dim Z, degree Z, degrees Z"},
+PARA {"Alternatively, the calculation can be performed using the Segre embedding as follows:"},
+EXAMPLE {
+"time Z' = projectiveVariety (map segre target Phi) image(segre Phi,\"F4\");",
+"assert(Z == Z')"},
+SeeAlso => {(symbol SPACE,MultirationalMap,MultiprojectiveVariety),(image,RationalMap),(segre,MultirationalMap)}}
+
+document { 
+Key => {(symbol SPACE,MultirationalMap,MultiprojectiveVariety)}, 
+Headline => "direct image via a multi-rational map", 
+Usage => "Phi X", 
+Inputs => {MultirationalMap => "Phi", MultiprojectiveVariety => "X" => {"a subvariety of the ",TO2{(source,MultirationalMap),"source"}," of ",TT "Phi"}}, 
+Outputs => {MultiprojectiveVariety => {"the direct image of ", TT"X", " via ",TT"Phi"}},
+EXAMPLE {
+"ZZ/65521[x_0..x_4];",
+"f = last graph rationalMap {x_2^2-x_1*x_3, x_1*x_2-x_0*x_3, x_1^2-x_0*x_2, x_0*x_4, x_1*x_4, x_2*x_4, x_3*x_4, x_4^2};",
+"Phi = multirationalMap {f,f};",
+"Z = source Phi;",
+"time Phi Z;",
+"dim oo, degree oo, degrees oo",
+"time Phi (point Z + point Z + point Z)",
+"dim oo, degree oo, degrees oo"},
+SeeAlso => {(image,MultirationalMap), (symbol SPACE,RationalMap,Ideal)}}
+
+document {Key => {(segre,MultirationalMap)}, 
+Headline => "the composition of a multi-rational map with the Segre embedding of the target", 
+Usage => "segre Phi", 
+Inputs => {"Phi" => MultirationalMap}, 
+Outputs => {RationalMap => {"the composition of the multi-rational map ",TT"Phi"," with the ",TO2{(segre,MultiprojectiveVariety),"Segre embedding"}," of the ",TO2{(target,MultirationalMap),"target"}," of ",TT"Phi"}}, 
+EXAMPLE {"ZZ/65521[x_0..x_4];",
+"f = rationalMap({x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2},Dominant=>true);",
+"g = rationalMap {x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3};",
+"h = rationalMap {-x_3^2+x_2*x_4,2*x_2*x_3-2*x_1*x_4,-3*x_2^2+2*x_1*x_3+x_0*x_4, 2*x_1*x_2-2*x_0*x_3,-x_1^2+x_0*x_2};",
+"Phi = multirationalMap {f,g,h};",
+"time segre Phi",
+"describe segre Phi",
+"degreeMap segre Phi",
+"Psi = multirationalMap {h,h};",
+"degreeMap segre Psi",
+"projectiveDegrees segre Psi"}, 
+SeeAlso => {(segre,MultiprojectiveVariety)}}
+
 
