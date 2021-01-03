@@ -26,6 +26,17 @@ INTERFACE = \
 	NCAlgebras/OverlapTable \
 	Polynomial \
 	monomial-collection \
+	mgb-f4/CFile \
+	mgb-f4/LogDomain \
+	mgb-f4/LogDomainSet \
+	mgb-f4/PolyRing \
+	mgb-f4/Basis \
+	mgb-f4/MonoLookup \
+	mgb-f4/PolyBasis \
+	mgb-f4/SparseMatrix \
+	mgb-f4/QuadMatrix \
+	mgb-f4/Scanner \
+	mgb-f4/ClassicGBAlg \
 	eigen \
 	monomial-sets \
 	mutablecomplex \
@@ -207,9 +218,11 @@ COMMANDS = \
 	franzi-interface
 
 NAMES_H = \
-	VectorArithmetic2 \
-	MemoryBlock \
-	NCAlgebras/Range \
+	mgb-f4/Atomic \
+	mgb-f4/PrimeField \
+	mgb-f4/MonoMonoid \
+	mgb-f4/Range \
+	mgb-f4/Poly \
 	ringelem \
 	style \
 	hash \
