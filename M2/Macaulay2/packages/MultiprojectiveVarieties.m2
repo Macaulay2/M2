@@ -11,8 +11,8 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 
 newPackage(
     "MultiprojectiveVarieties",
-    Version => "0.1", 
-    Date => "January 1, 2021",
+    Version => "0.9", 
+    Date => "January 3, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties",
     Keywords => {"Projective Algebraic Geometry"},
@@ -22,7 +22,8 @@ newPackage(
     Reload => false
 )
 
-export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", "Probabilistic"}
+export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", "Probabilistic",
+       "MultirationalMap", "multirationalMap"}
 
 debug Cremona;
 
@@ -286,16 +287,105 @@ euler (MultiprojectiveVariety,Option) := (X,opt) -> (
 euler MultiprojectiveVariety := X -> euler(X,Probabilistic=>true);
 
 
+MultirationalMap = new Type of MutableHashTable;
+
+globalAssignment MultirationalMap;
+
+MultirationalMap.synonym = "multi-rational map";
+
+expression MultirationalMap := Phi -> (
+    if dim source Phi == -1 or dim target Phi == -1 then return expression("map from " | (toString expression source Phi) | " to " | (toString expression target Phi));
+    return expression((if Phi#"isBirational" === true then "birational " else (if Phi#"isDominant" === true then "dominant rational " else "rational "))| "map from " | (toString expression source Phi) | " to " | (toString expression target Phi));
+);
+
+net MultirationalMap := Phi -> (
+   if hasAttribute(Phi,ReverseDictionary) then toString getAttribute(Phi,ReverseDictionary) else "a multi-rational map"
+);
+
+MultirationalMap#{Standard,AfterPrint} = MultirationalMap#{Standard,AfterNoPrint} = Phi -> (
+  << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class Phi << " (" << expression Phi << ")" << endl;
+);
+
+multirationalMap = method(TypicalValue => MultirationalMap);
+
+multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
+    if not (# L > 0 and all(L,f -> instance(f,RationalMap) or instance(f,MultihomogeneousRationalMap))) then error "expected a list of rational maps";
+    R := unique apply(L,source);
+    if #R != 1 then error "expected a list of rational maps from the same source variety";
+    R = first R;
+    K := coefficientRing ambient R;
+    if K =!= coefficientRing Y then error("expected a multi-projective variety defined over "|toString(K));
+    m := apply(L,f -> f#"dimAmbientSource");
+    if m =!= Y#"dimAmbientSpaces"
+    then if # m == 1 
+         then error("expected a subvariety of PP^"|toString(first m))
+         else error("expected a subvariety of a product of "|toString(# m)|" projective spaces of dimensions "|(toString toSequence m));
+    new MultirationalMap from {
+        "maps" => L,
+        "target" => Y,
+        "source" => projectiveVariety(R,Saturate=>false),
+        "projections" => apply(L,projections Y,(f,p) -> if target p === target f then p else rationalMap(source p,target f,matrix p)),
+        "image" => null,
+        "inverse" => null,
+        "isDominant" => if #L == 1 then (first L)#"isDominant" else null,
+        "isBirational" => if #L == 1 then (first L)#"isBirational" else null
+    }
+);
+
+multirationalMap List := L -> (
+    if not (# L > 0 and all(L,f -> instance(f,RationalMap) or instance(f,MultihomogeneousRationalMap))) then error "expected a list of rational maps";
+    Y := projectiveVariety(target first L,Saturate=>false);
+    for i from 1 to #L-1 do Y = Y ** (projectiveVariety(target L_i,Saturate=>false));
+    multirationalMap(L,Y)
+);
+
+source MultirationalMap := Phi -> Phi#"source";
+
+target MultirationalMap := Phi -> Phi#"target";
+
+coefficientRing MultirationalMap := Phi -> coefficientRing target Phi;
+
+factor MultirationalMap := o -> Phi -> Phi#"maps";
+
+image MultirationalMap := Phi -> (
+    if Phi#"image" =!= null then return Phi#"image";
+    f := Phi#"maps";
+    p := Phi#"projections";
+    if # f == 1 then (
+        return Phi#"image" = projectiveVariety(trim lift((first p)^* image first f,ring ambient target Phi),MinimalGenerators=>false,Saturate=>false);
+    );
+    error "not implemented yet: image of a rational map with target a multi-projective variety";
+);
+
+inverse (MultirationalMap,Option) := (Phi,opt) -> (
+    if Phi#"inverse" =!= null then return Phi#"inverse";
+    f := Phi#"maps";
+    if # f == 1 then (
+        g := multirationalMap({inverse(first f,opt)},source Phi);
+        g#"source" = target Phi;
+        g#"isDominant" = true;
+        g#"image" = target g;
+        g#"isBirational" = true;
+        g#"inverse" = Phi;
+        Phi#"isDominant" = true;
+        Phi#"image" = target Phi;
+        Phi#"isBirational" = true;
+        return Phi#"inverse" = g;
+    );
+    error "not implemented yet: inverse of a birational map with target a multi-projective variety";
+);
+inverse MultirationalMap := Phi -> inverse(Phi,MathMode=>false);
+
+
 beginDocumentation() 
 
 document {Key => {MultiprojectiveVarieties}, 
 Headline => "Multi-projective varieties",
-PARA{"This is a work in progress package to handling multi-projective varieties, that is, closed subvarieties of products of projective spaces. The aim is to provide a better support for the package ",TO Cremona,", which treats ",TO2{RationalMap,"rational maps"}," from multi-projective varieties to projective varieties. In the future, for instance, the source of a rational map ",TEX///$\Phi:X\subseteq \mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}\dashrightarrow Y\subseteq\mathbb{P}^N$///," will be the ",TO2{MultiprojectiveVariety,"multi-projective variety"}," ",TEX///$X$///," and not, as it currently is, the coordinate ring of ",TEX///$X$///,"; see ",TO (source,RationalMap),". Also ",TO2{(symbol ^**,RationalMap,Ideal),"inverse images"}," and ",TO2{(symbol _*,RationalMap),"direct images"}," of subvarieties via rational maps will look more intuitive."}
-}
+PARA{"This is a work in progress package to handling multi-projective varieties, that is, closed subvarieties of products of projective spaces. Most of the functions come from the package ",TO Cremona,", which treats ",TO2{RationalMap,"rational maps"}," from multi-projective varieties to ",EM"standard"," projective varieties, ",TEX///$X\subseteq \mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}\dashrightarrow Y\subseteq\mathbb{P}^N$///,"."}}
 
 document {Key => {MultiprojectiveVariety}, 
 Headline => "the class of all multi-projective varieties", 
-PARA {"A multi-projective variety is a closed subvariety of a product of projective spaces ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}$///,"."}}
+PARA {"A ",EM"multi-projective variety"," is a closed subvariety of a product of projective spaces ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}$///,"."}}
 
 document { 
 Key => {projectiveVariety, (projectiveVariety,Ideal), (projectiveVariety,Ring), [projectiveVariety,Saturate], [projectiveVariety,MinimalGenerators]}, 
@@ -538,4 +628,104 @@ EXAMPLE {
 SeeAlso => {EulerCharacteristic,(euler,ProjectiveVariety)}}
 
 undocumented {(euler,MultiprojectiveVariety,Option),Probabilistic}
+
+document {Key => {MultirationalMap}, 
+Headline => "the class of all multi-rational maps", 
+PARA {"A ",EM"multi-rational map"," is a rational map between ",TO2{MultiprojectiveVariety,"multi-projective varieties"},", ",TEX///$$\Phi:X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}\dashrightarrow Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m} .$$///,"Thus, it can be represented by an ",TO2{List,"ordered list"}," of ",TO2{RationalMap,"rational maps"},TEX///$$\Phi_i = (\Phi:X\dashrightarrow Y)\circ(pr_i:Y\to Y_i\subseteq\mathbb{P}^{s_i}) ,$$///,"for ",TEX///$i=1,\ldots,m$///,". The maps ",TEX///$\Phi_i:X\dashrightarrow Y_i\subseteq\mathbb{P}^{s_i}$///,", since the target ",TEX///$Y_i$///," is a standard projective variety, are implemented with the class ",TO RationalMap," (more properly, when ",TEX///$n>1$///," the class of such maps is called ",TT "MultihomogeneousRationalMap","). Recall that the main constructor for the class ",TO RationalMap," (as well as for the class ", TT"MultihomogeneousRationalMap",") is the method ",TO rationalMap,"."},
+PARA {"The constructor for the class of multi-rational maps is ",TO multirationalMap,", which takes as input the list of maps ",
+TEX///$\{\Phi_1:X\dashrightarrow Y_1,\ldots,\Phi_m:X\dashrightarrow Y_m\}$///,", together with the variety ",TEX///$Y$///,", and returns the map ",TEX///$\Phi:X\dashrightarrow Y$///,"."},
+Caveat => {"At the moment there are just a few functions implemented."}}
+
+document { 
+Key => {multirationalMap, (multirationalMap,List,MultiprojectiveVariety), (multirationalMap,List)}, 
+Headline => "the multi-rational map defined by a list of rational maps", 
+Usage => "multirationalMap(Phi,Y)
+multirationalMap Phi", 
+Inputs => { "Phi" => {ofClass List," of ",TO2{RationalMap,"rational maps"},", ",TEX///$\{\Phi_1:X\dashrightarrow Y_1\subseteq\mathbb{P}^{s_1},\ldots,\Phi_m:X\dashrightarrow Y_m\subseteq\mathbb{P}^{s_m}\}$///,", all having the same ",TO2{(source,RationalMap),"source"}," ",TEX///$X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}$///},
+"Y" => {ofClass MultiprojectiveVariety," ",TEX///$Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m}$///," (if omitted, then the ",TO2{(symbol **,MultiprojectiveVariety,MultiprojectiveVariety),"product"}," ",TEX///$Y_1\times\cdots \times Y_m$///," is taken)"}},
+Outputs => {MultirationalMap => {"the unique rational map ",TEX///$\Phi:X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}\dashrightarrow Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m}$///," such that ",TEX///$pr_i\circ\Phi = \Phi_i$///,", where ",TEX///$pr_i:Y\subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m} \to Y_i\subseteq \mathbb{P}^{s_i}$///," denotes the i-th projection (a check is performed on the consistency of ",TEX///$Y$///,")"}},
+EXAMPLE {
+"ZZ/65521[x_0..x_4];",
+"f = rationalMap {x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2};",
+"g = rationalMap(f,Dominant=>true);",
+"Y = (projectiveVariety target g) ** (projectiveVariety target g);",
+"multirationalMap {f,g};",
+"multirationalMap({f,g},Y);",
+"assert(factor oo === {f,g} and target oo === Y)",
+"multirationalMap {f,f,g};",
+"h = last graph f;",
+"multirationalMap {h};",
+"multirationalMap {h,h};",
+"multirationalMap({h,h,h},Y ** projectiveVariety(target h));"},
+SeeAlso => {rationalMap,(symbol **,MultiprojectiveVariety,MultiprojectiveVariety),(graph,RationalMap)}}
+
+undocumented {(expression,MultirationalMap),(net,MultirationalMap)};
+
+document { 
+Key => {(target,MultirationalMap)}, 
+Headline => "the target for a multi-rational map", 
+Usage => "target Phi", 
+Inputs => { 
+MultirationalMap => "Phi"}, 
+Outputs => { 
+MultiprojectiveVariety => {"the target of ",TT"Phi"}},
+PARA{"Note that, instead, the ",TO2{(target,RationalMap),"target"}," of a standard ",TO2{RationalMap,"rational map"}," is the coordinate ring of the target variety (this is done mainly for efficiency reasons)."},
+SeeAlso => {(source,MultirationalMap),(factor,MultirationalMap)}}
+
+document { 
+Key => {(source,MultirationalMap)}, 
+Headline => "the source for a multi-rational map", 
+Usage => "source Phi", 
+Inputs => { 
+MultirationalMap => "Phi"}, 
+Outputs => { 
+MultiprojectiveVariety => {"the source of ",TT"Phi"}},
+PARA{"Note that, instead, the ",TO2{(source,RationalMap),"source"}," of a standard ",TO2{RationalMap,"rational map"}," is the coordinate ring of the source variety (this is done mainly for efficiency reasons)."},
+SeeAlso => {(target,MultirationalMap),(factor,MultirationalMap)}}
+
+document { 
+Key => {(factor,MultirationalMap)}, 
+Headline => "the list of rational maps defining a multi-rational map", 
+Usage => "factor Phi", 
+Inputs => {MultirationalMap => "Phi"}, 
+Outputs => {{"the ",TO2{List,"list"}," of ",TO2{RationalMap,"rational maps"}," defining ",TT"Phi"}},
+SeeAlso => {(target,MultirationalMap),(source,MultirationalMap)}}
+
+document { 
+Key => {(coefficientRing,MultirationalMap)}, 
+Headline => "the coefficient ring of a multi-rational map", 
+Usage => "coefficientRing Phi", 
+Inputs => {MultirationalMap => "Phi"}, 
+Outputs => {Ring => {"the coefficient ring of ",TT"Phi"}},
+SeeAlso => {(coefficientRing,MultiprojectiveVariety)}}
+
+document { 
+Key => {(inverse,MultirationalMap)}, 
+Headline => "inverse of a birational map", 
+Usage => "inverse Phi", 
+Inputs => {MultirationalMap => "Phi" => {"a birational map"}}, 
+Outputs => {MultirationalMap => {"the inverse map of ",TT"Phi"}},
+EXAMPLE {
+"ZZ/65521[x_0..x_4], f = rationalMap({x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2},Dominant=>true);",
+"Phi = multirationalMap {f};",
+"inverse Phi;"},
+Caveat => {"This is not implemented yet for the general case."},
+SeeAlso => {(inverse,RationalMap)}}
+
+undocumented {(inverse,MultirationalMap,Option)}
+
+document { 
+Key => {(image,MultirationalMap)}, 
+Headline => "image of a multi-rational map", 
+Usage => "image Phi", 
+Inputs => {MultirationalMap => "Phi"}, 
+Outputs => {MultiprojectiveVariety => {"the image of ",TT"Phi"}},
+EXAMPLE {
+"ZZ/65521[x_0..x_4], f = last graph rationalMap {x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2};",
+"Phi = multirationalMap {f};",
+"Z = image Phi;",
+"describe Z"},
+PARA{"Note that, instead, the ",TO2{(image,RationalMap),"image"}," of a standard ",TO2{RationalMap,"rational map"}," is the defining ideal of the image (this is done mainly for efficiency reasons)."},
+Caveat => {"This is not implemented yet when the target is a multi-projective variety."},
+SeeAlso => {(image,RationalMap)}}
 
