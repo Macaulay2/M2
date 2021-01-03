@@ -191,6 +191,8 @@ Node
           (TT "? HH",       " -- displays brief information about ways to use the scripted functor ", TT "HH", ".")
           }@
 
+      If the object is defined by the user, brief information about the object and its class are printed.
+
       When using Macaulay2 in Emacs, moving the cursor to each line of the output beginning with
       @TT "*"@ and pressing Enter results in showing the full documentation node corresponding to that line.
 

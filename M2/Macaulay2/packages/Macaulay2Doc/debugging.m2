@@ -404,20 +404,18 @@ document {
      beforehand.",
      }
 
-
--- TODO
-undocumented {
-    (code, ZZ),
-	  (code, List),
-	  (code, Sequence),
-	  (code, Function),
-	  (code, Symbol),
-	  (code, Command),
-	  (code, Pseudocode),
-	  (code, Nothing)}
+undocumented {(code, Nothing)}
 
 document {
-     Key => code,
+  Key => {
+    code,
+   (code, Symbol),
+   (code, Command),
+   (code, Function),
+   (code, Sequence),
+   (code, Pseudocode),
+   (code, List),
+   (code, ZZ)},
      Headline => "display source code",
      SYNOPSIS (
 	  Usage => "code f",
@@ -484,7 +482,8 @@ document {
 		    Such a list can be obtained, for example, with ", TO "methods", "."
 		    }},
 	  EXAMPLE "code methods use"
-	  }
+	  },
+     SeeAlso => {"edit", "methods"}
      }
 
 document {
@@ -610,7 +609,8 @@ document {
      "This function operates by examining those types that are values of
      global symbols for keys that appear to be storing references to
      methods.  Types that don't appear as values of global variables will
-     not be examined, so perhaps not all methods will be found."
+     not be examined, so perhaps not all methods will be found.",
+     SeeAlso => {(code, List)}
      }
 
 document { Key => "backtrace",
