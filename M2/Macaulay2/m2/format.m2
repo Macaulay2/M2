@@ -214,7 +214,7 @@ info HREF := x -> (
      else if match ("^mailto:",x#0) then toString x#1
      -- x#0 is sometimes the relative path to the file, but not from the current directory
      else (
-	  r := horizontalJoin(net \ toList splice if #x > 1 then drop(x, 1) else x);
+	  r := horizontalJoin \\ net \ toList splice drop(x, 1);
 	  r | " (see " | x#0 | " )"
 	  )
      )
