@@ -11,10 +11,6 @@ set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
 set(LIBRARIES_LIST MPSOLVE MATHICGB MATHIC MEMTAILOR FROBBY FACTORY FLINT NTL MPFR MP BDWGC LAPACK)
 set(LIBRARY_LIST   READLINE HISTORY GDBM ATOMICOPS)
 
-if(WITH_TBB)
-  append(LIBRARIES_LIST TBB)
-endif()
-
 message(CHECK_START " Checking for existing libraries and programs")
 
 ###############################################################################
@@ -63,7 +59,12 @@ foreach(lang IN ITEMS C CXX)
     set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -l${_lib}")
   endforeach()
 endforeach()
-find_package(TBB) # See FindTBB.cmake
+
+if(WITH_TBB)
+  # See FindTBB.cmake
+  find_package(TBB REQUIRED)
+  list(APPEND LIBRARIES_LIST TBB)
+endif()
 
 ###############################################################################
 ## Platform dependent requirements:
