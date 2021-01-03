@@ -210,10 +210,8 @@ info IMG := x -> (
 
 net  HREF :=
 info HREF := x -> (
-     if #x === 1 then x#0
-     else if match ("^mailto:",x#0) then toString x#1
-     -- x#0 is sometimes the relative path to the file, but not from the current directory
-     else toString x#1 | " (see " | x#0 | " )")
+     r := horizontalJoin(net \ toList splice if #x > 1 then drop(x, 1) else x);
+     r | " (see " | x#0 | " )")
 
 net TABLE :=  x -> (
      (op,ag) := override(options TABLE, toSequence x);
