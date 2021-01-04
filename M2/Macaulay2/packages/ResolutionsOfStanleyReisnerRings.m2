@@ -84,7 +84,7 @@ colorfulSOP (SimplicialComplex,ZZ) := (B,n) -> (
       );
    );
    colors = apply(colors, c->sum(c));
-   return colors;
+   return toList(colors);
 );
 
 
