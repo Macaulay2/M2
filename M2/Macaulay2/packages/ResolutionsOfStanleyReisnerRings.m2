@@ -83,11 +83,8 @@ colorfulSOP (SimplicialComplex,ZZ) := (B,n) -> (
          NotColored     = delete(c,NotColored);
       );
    );
-   C := {};
-   for j from 0 to dim(B) do (
-       C = append(C,(sum for i in Colors#j list i));
-   );
-   return C;
+   colors = apply(colors, c->sum(c));
+   return toList(colors);
 );
 
 
