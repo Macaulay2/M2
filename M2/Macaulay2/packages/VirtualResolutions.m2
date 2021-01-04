@@ -119,7 +119,7 @@ virtualOfPair(Module, List) := ChainComplex => opts -> (M, alphas) -> (
     chainComplex L)
 virtualOfPair(ChainComplex, List) := ChainComplex => opts -> (F, alphas) -> (
     if any(alphas, alpha -> #alpha =!= degreeLength ring F) then error "degree has wrong length";
-    L := apply(length F, i -> submatrixWinnow(F.dd_(i+1), alphas));
+    L := apply(min F .. max F, i -> submatrixWinnow(F.dd_(i+1), alphas));
     chainComplex L)
 
 

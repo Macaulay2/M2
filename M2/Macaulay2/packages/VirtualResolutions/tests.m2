@@ -198,7 +198,7 @@ TEST /// -- testing twisted modules
       degs = apply(2, i -> min(degrees M / (deg -> deg_i)));
       low  = degs-toList(2:2);
       high = apply(2, i -> max({r} | degrees M / (deg -> deg_i)));
-      assert(multigradedRegularity(S, M, Strategy => Default) == {{i, i}});
+      assert(multigradedRegularity(S, M) == {{i, i}});
 --      (cohomologyMatrix(M,low,high), multigradedRegularity(S, M))
       )
 ///

@@ -45,8 +45,6 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
     degs := degrees M;
     -- element-wise minimum of the multi-degrees of generators of M
     mindegs := apply(n, i -> min(degs / (deg -> deg_i)));
-    -- FIXME: REMOVE THIS WHEN findRegion IS FIXED
-    if any(mindegs, deg -> deg < 0) then return null;
     debugInfo demark_", " {
         "Pic X = ZZ^" | toString n,
         "dim X = " | toString d,
@@ -67,9 +65,9 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
     -- the combinatorial upperbound on regularity from betti numbers
     U0 := regularityBound M;
     -- extend U0 to degrees where the truncation is quasi-linear (see Theorem 2.9 of BES)
-    U0  = findRegion({sum mindegs, sum high}, M, isQuasiLinear, Inner => U0, IrrelevantIdeal => B);
+    U0  = findRegion({mindegs, high}, M, isQuasiLinear, Inner => U0, IrrelevantIdeal => B);
     -- limit U0 to degrees where H_B^1 vanishes
-    U0  = findRegion({sum mindegs, sum high}, M, isChiH0,       Outer => U0, IrrelevantIdeal => B);
+    U0  = findRegion({mindegs, high}, M, isChiH0,       Outer => U0, IrrelevantIdeal => B);
     debugInfo("Upper bound from LinearTruncations: " | toString U0);
 
     debugInfo("Searching from ", toString low, " to ", toString high);
