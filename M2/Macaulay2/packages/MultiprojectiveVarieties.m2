@@ -16,8 +16,8 @@ newPackage(
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
-    PackageImports => {"PrimaryDecomposition", "Cremona"},
-    PackageExports => {"Cremona"},
+    PackageImports => {"PrimaryDecomposition", "Cremona","SparseResultants"},
+    PackageExports => {"Cremona","SparseResultants"},
     DebuggingMode => false,
     Reload => false
 )
@@ -76,6 +76,8 @@ projVarFromRing = memoize ((R,optMinGen,optSat) -> (
     X#"ringVariety" = R;
     X
 ));
+
+projectiveVariety MultidimensionalMatrix := o -> A -> projectiveVariety(ideal(A!),MinimalGenerators=>true,Saturate=>false);
 
 expression MultiprojectiveVariety := X -> expression expressionVar(dim X,X#"dimAmbientSpaces");
 
@@ -1146,6 +1148,25 @@ Outputs => {MultiprojectiveVariety => {"the base locus of ",TT"Phi",", that is, 
 SeeAlso => {(isMorphism,MultirationalMap),(ideal,RationalMap)}}
 
 undocumented {(baseLocus,RationalMap)}
+
+document { 
+Key => {(projectiveVariety,MultidimensionalMatrix)}, 
+Headline => "the multi-projective variety defined by a multi-dimensional matrix", 
+Usage => "projectiveVariety A", 
+Inputs => {MultidimensionalMatrix => "A" => {"an ",TEX///$n$///,"-dimensional matrix of shape ",TEX///$(k_1+1)\times\cdots\times (k_n+1)$///}}, 
+Outputs => {MultiprojectiveVariety => {"the corresponding hypersurface of multi-degree ",TEX///$(1,\ldots,1)$///," on the product of projective spaces ",TEX///$\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///}},
+PARA {"In particular, we have ",TO2{(determinant,MultidimensionalMatrix),"det"},TT" A == 0"," if and only if ",TO2{(dim,MultiprojectiveVariety),"dim"}," ",TO2{(singularLocus,MultiprojectiveVariety),"singularLocus"},TT"(projectiveVariety A) == -1","."},
+EXAMPLE {
+"K = ZZ/33331;",
+"A = randomMultidimensionalMatrix({2,2,3},CoefficientRing=>K)",
+"det A",
+"X = projectiveVariety A;",
+"dim singularLocus X",
+"B = multidimensionalMatrix {{{9492_K, 13628, -9292}, {9311, -5201, -16439}}, {{11828, -16301, 8162}, {15287, 8345, -2094}}}",
+"det B",
+"Y = projectiveVariety B;",
+"dim singularLocus Y"},
+SeeAlso => {(det,MultidimensionalMatrix),(singularLocus,MultiprojectiveVariety)}}
 
 TEST ///
 ZZ/300007[x_0..x_3], f = rationalMap {x_2^2-x_1*x_3, x_1*x_2-x_0*x_3, x_1^2-x_0*x_2}, g = rationalMap {x_1^2-x_0*x_2, x_0*x_3, x_1*x_3, x_2*x_3, x_3^2};
