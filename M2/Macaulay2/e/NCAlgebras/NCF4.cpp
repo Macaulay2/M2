@@ -435,20 +435,20 @@ NCF4::Row NCF4::processPreRow(PreRow r)
   int gbIndex = std::get<1>(r);
   Word right = std::get<2>(r);
 
-  if (M2_gbTrace >= 100) std::cout << "Processing PreRow: (" << left << "," << gbIndex << "," << right << ")" << std::endl;
+  if (M2_gbTrace >= 100) 
+    std::cout << "Processing PreRow: ("
+              << left << "," << gbIndex << "," << right << ")"
+              << std::endl;
 
   const Poly* elem;
   if (gbIndex < 0)
-    {
       elem = mInput[-gbIndex-1];
-    }
   else
-    {
       elem = mGroebner[gbIndex];
-    }
 
   // loop through all monomials of the product
   // for each monomial:
+  //  (the below steps are now in processMonomInPreRow)
   //  is its prefix or suffix the lead term of a row from the previous degree?
   //    if so: insert the information from this row in the appropriate places
   //    if not: is the monomial in the hash table?
@@ -457,53 +457,15 @@ NCF4::Row NCF4::processPreRow(PreRow r)
   //          and place this monomial into mColumns.
   //          and search for divisor for it.
   //        
+
   int nterms = elem->numTerms();
   auto componentRange = mMonomialSpace.allocateArray<int>(nterms);
   int* nextcolloc = componentRange.first;
   for (auto i = elem->cbegin(); i != elem->cend(); ++i)
     {
       Monom m = freeAlgebra().monoid().wordProductAsMonom(left,i.monom(),right,mMonomialSpace);
-      processMonomInPreRow(m,nextcolloc++);
-
-      // Monom m = freeAlgebra().monoid().wordProductAsMonom(left,i.monom(),right,mMonomialSpace);
-      // auto usePreviousPrefix = findPreviousReducerPrefix(m);
-      // if (usePreviousPrefix.first)
-      // {
-      //   // here, we use a multiple of a previously reduced row
-      //   continue;
-      // }
-      // auto usePreviousSuffix = findPreviousReducerSuffix(m);
-      // if (usePreviousSuffix.first)
-      // {
-      //   // here, we use a multiple of a previously reduced row
-      //   continue;
-      // }
-      // //if we are here, then we process the term as usual.
-      // auto it = mColumnMonomials.find(m);
-      // if (it == mColumnMonomials.end())
-      //   { 
-      //     // if we are here, this monomial is not yet accounted for in the matrix
-      //     // so, check if the monomial is a multiple of a lead term of a gb element
-      //     auto divresult = findDivisor(m);
-      //     int divisornum = -1; // -1 indicates no divisor was found
-      //     if (divresult.first)
-      //       {
-      //         // if it is a divisor of a gb element,
-      //         // add that multiple of the GB element to mReducersToDo for processing
-      //         divisornum = mReducersTodo.size();
-      //         mReducersTodo.push_back(divresult.second);
-      //       }
-      //     // insert column information into mColumnMonomials,
-      //     // which provides us search/indexing of columns
-      //     int newColumnIndex = mColumnMonomials.size();
-      //     mColumnMonomials.insert({m, {newColumnIndex, divisornum}});
-      //     *nextcolloc++ = newColumnIndex;
-      //   }
-      // else
-      //   {
-      //     // in this case, the monomial already has an associated column
-      //     *nextcolloc++ = (*it).second.first;
-      //   }
+      processMonomInPreRow(m,nextcolloc);
+      nextcolloc++;
     }
   ring_elem* ptr = newarray(ring_elem, elem->getCoeffVector().size());
   Range<ring_elem> coeffrange(ptr, ptr + elem->getCoeffVector().size());
