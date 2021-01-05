@@ -636,7 +636,7 @@ document {
      BR{},
      TT "exit", " -- terminates the program and returns 0 as return code.",
      PARA{},
-     "Files are flushed and closed.  Functions registered with ", TO "addStartFunction", "
+     "Files are flushed and closed.  Functions registered with ", TO "addEndFunction", "
      are called, unless a nonzero return value has been provided.  Another
      way to exit is to type the end of file character, which is typically
      set to Control-D in unix systems, and is Control-Z under Windows.",
