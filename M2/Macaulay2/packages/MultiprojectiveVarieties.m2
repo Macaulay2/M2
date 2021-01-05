@@ -11,10 +11,10 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 
 newPackage(
     "MultiprojectiveVarieties",
-    Version => "0.9", 
-    Date => "January 3, 2021",
+    Version => "1.0", 
+    Date => "January 5, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
-    Headline => "multi-projective varieties",
+    Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
     PackageImports => {"PrimaryDecomposition", "Cremona"},
     PackageExports => {"Cremona"},
@@ -23,7 +23,7 @@ newPackage(
 )
 
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", "Probabilistic",
-       "MultirationalMap", "multirationalMap"}
+       "MultirationalMap", "multirationalMap", "baseLocus"}
 
 debug Cremona;
 
@@ -344,6 +344,14 @@ multirationalMap List := L -> (
     multirationalMap(L,Y)
 );
 
+multirationalMap (MultirationalMap,MultiprojectiveVariety) := (Phi,Y) -> (
+    if Y === target Phi then return Phi;
+    if not isSubset(Y,target Phi) then error "expected a subvariety of the target";
+    Psi := multirationalMap(factor Phi,Y);
+    if Phi#"image" === Y then Psi#"isDominant" = true;
+    return Psi;
+);
+
 source MultirationalMap := Phi -> Phi#"source";
 
 target MultirationalMap := Phi -> Phi#"target";
@@ -493,11 +501,14 @@ degreeMap MultirationalMap := o -> Phi -> degreeMap(segre Phi,MathMode=>o.MathMo
 
 degree MultirationalMap := Phi -> degree segre Phi;
 
-baseLocus = method();
+baseLocus = method(TypicalValue => MultiprojectiveVariety);
 baseLocus MultirationalMap := Phi -> (
     if Phi#"baseLocus" =!= null then return Phi#"baseLocus";
     Phi#"baseLocus" = projectiveVariety trim lift(intersect apply(factor Phi,ideal),ring ambient source Phi)
 );
+
+baseLocus RationalMap := Phi -> baseLocus multirationalMap {Phi};
+baseLocus MultihomogeneousRationalMap := Phi -> baseLocus multirationalMap {Phi};
 
 isMorphism MultirationalMap := Phi -> dim baseLocus Phi == -1;
 
@@ -523,30 +534,38 @@ inverse (MultirationalMap,Option) := (Phi,opt) -> (
         phi = rationalMap first F;
         phi#"maps" = apply(F,f -> map(source phi,target phi,f));
         phi#"map" = first phi#"maps";
-        if last o then (for f in phi#"maps" do assert(rationalMap f == phi); <<"--test ("<<i+1<<" of "<<r<<") on the correctness of the representatives passed"<<endl);
+        if last o then (for f in phi#"maps" do try assert(rationalMap f == phi) else error "something went wrong in calculating the inverse map");
         phi
     );
     Psi := multirationalMap(L,source Phi);
-    if last o then (assert(source Psi == target Phi); <<"--test on source and target passed"<<endl);
+    try assert(ring source Psi === ring target Phi) else error "internal error encountered";  
     Psi#"source" = target Phi;
-    assert(source Psi === target Phi and target Psi === source Phi);
     Psi#"isBirational" = true;
     Psi#"isDominant" = true;
     Psi#"inverse" = Phi;
     Psi#"graph" = reverse graph Phi;
+    if last o then (try assert(Phi * Psi == 1 and Psi * Phi == 1) else error "something went wrong in calculating the inverse map");
     Phi#"isBirational" = true;
     Phi#"isDominant" = true;
     Phi#"inverse" = Psi;
-    if last o then (assert(Phi * Psi == 1 and Psi * Phi == 1); <<"--test Phi * Psi == 1 and Psi * Phi == 1 passed"<<endl);
+    (last graph Phi)#"isBirational" = true;
+    (last graph Phi)#"isDominant" = true;
     return Psi;
 );
 
 inverse MultirationalMap := Phi -> inverse(Phi,MathMode=>false);
 
+isIsomorphism MultirationalMap := Phi -> (
+    if dim source Phi != dim target Phi or Phi#"isBirational" === false or Phi#"isDominant" === false then return false;
+    if not isMorphism Phi then return false;
+    isMorphism inverse(Phi,MathMode=>true)
+);
+
+
 beginDocumentation() 
 
 document {Key => {MultiprojectiveVarieties}, 
-Headline => "Multi-projective varieties",
+Headline => "Multi-projective varieties and multi-rational maps",
 PARA{"This is a work in progress package to handling multi-projective varieties, that is, closed subvarieties of products of projective spaces. Most of the functions come from the package ",TO Cremona,", which treats ",TO2{RationalMap,"rational maps"}," from multi-projective varieties to ",EM"standard"," projective varieties, ",TEX///$X\subseteq \mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}\dashrightarrow Y\subseteq\mathbb{P}^N$///,"."}}
 
 document {Key => {MultiprojectiveVariety}, 
@@ -1048,7 +1067,7 @@ EXAMPLE {
 "time Psi = first graph Phi;",
 "time isMorphism Psi",
 "assert((not o3) and o5)"},
-SeeAlso => {(isMorphism,RationalMap)}}
+SeeAlso => {(isIsomorphism,MultirationalMap),(isMorphism,RationalMap)}}
 
 document { 
 Key => {(multirationalMap,MultiprojectiveVariety)}, 
@@ -1056,6 +1075,18 @@ Headline => "identity map",
 Usage => "multirationalMap X", 
 Inputs => {MultiprojectiveVariety => "X"}, 
 Outputs => {MultirationalMap => {"the identity map on ",TT"X"}}}
+
+document { 
+Key => {(multirationalMap,MultirationalMap,MultiprojectiveVariety)}, 
+Headline => "change the target of a rational map", 
+Usage => "multirationalMap(Phi,Y)", 
+Inputs => {MultirationalMap => "Phi",MultiprojectiveVariety => "Y" => {"a ",TO2{(isSubset,MultiprojectiveVariety,MultiprojectiveVariety),"subvariety"}," of the target of ",TT"Phi"}}, 
+Outputs => {MultirationalMap => {"which is defined in the same way but with ",TT"Y"," as target"}},
+EXAMPLE {
+"Phi = multirationalMap {super specialQuadraticTransformation 1}",
+"Y = image Phi",
+"Psi = multirationalMap(Phi,Y)",
+"target Psi"}}
 
 document { 
 Key => {(inverse,MultirationalMap)}, 
@@ -1066,40 +1097,55 @@ Inputs => {MultirationalMap => "Phi" => {"a birational map"}},
 Outputs => {MultirationalMap => {"the inverse map of ",TT"Phi"}},
 PARA{"This function applies a general algorithm to calculate the inverse map passing through the computation of the ",TO2{(graph,MultirationalMap),"graph"},"."},
 EXAMPLE {
-"ringP4 := ZZ/65521[a..e];",
 "-- map defined by the quadrics through a rational normal quartic curve
-f = rationalMap minors(2,matrix {{a,b,c,d},{b,c,d,e}});",
-"-- map defined by the quadrics through a twisted cubic curve
-g = rationalMap(minors(2,matrix{{a,b,c},{b,c,d}}) + ideal e);",
-"-- the product of f and g
-Phi = multirationalMap {f,g};",
+ZZ/65521[a..e], f = rationalMap minors(2,matrix {{a,b,c,d},{b,c,d,e}});",
+"Phi = multirationalMap {f};",
 "-- we see Phi as a dominant map
-Phi = multirationalMap(factor Phi,image Phi);",
-"time Psi = inverse Phi;",
-"describe first factor Psi",
-"time assert(Phi * Psi == 1 and Psi * Phi == 1)",
-"-- graph of Phi
-time (F,G) = graph Phi;",
-"F;",
-"G;",
-"-- inverse of the first projection
-time F' = inverse F;",
-"describe (factor F')_0",
-"describe (factor F')_1",
-"describe (factor F')_2",
-"time assert(F * F' == 1 and F' * F == 1 and F * Phi == G and G * Phi^-1 == F)",
-"-- inverse of the second projection
-time G' = inverse G;",
-"describe (factor G')_0",
-"describe (factor G')_1",
-"describe (factor G')_2",
-"time assert(G * G' == 1 and G' * G == 1 and G' * F == Phi^-1)"},
-SeeAlso => {(symbol *,MultirationalMap,MultirationalMap),(symbol ==,MultirationalMap,MultirationalMap),(degree,MultirationalMap),(image,MultirationalMap),(inverse,RationalMap)},
-Caveat => {"No test is done to check that the map is birational, and if not then often the error is not thrown at all and a nonsense answer is returned. You can do ",
+Phi = multirationalMap(Phi,image Phi);",
+"time inverse Phi;",
+"Psi = last graph Phi;",
+"time inverse Psi;",
+"Eta = first graph Psi;",
+"time inverse Eta;", 
+"for i to 2 do <<\"map n. \"<<i+1<<endl<<describe ((factor inverse Eta)_i)!<<endl<<endl;",
+"assert(Phi * Phi^-1 == 1 and Phi^-1 * Phi == 1)",
+"assert(Psi * Psi^-1 == 1 and Psi^-1 * Psi == 1)",
+"assert(Eta * Eta^-1 == 1 and Eta^-1 * Eta == 1)"},
+SeeAlso => {(graph,MultirationalMap),(symbol *,MultirationalMap,MultirationalMap),(symbol ==,MultirationalMap,MultirationalMap),(degree,MultirationalMap),(image,MultirationalMap),(inverse,RationalMap)},
+Caveat => {"No test is done to check that the map is birational, and if not then often the error is not thrown at all and a nonsense answer is returned. You can for instance do ",
 TO2{(degree,MultirationalMap),"degree"},TT" Phi == 1",
 " to check that the map is birational onto its image, and ",TO2{(image,MultirationalMap),"image"},TT" Phi == ",TO2{(target,MultirationalMap),"target"},TT" Phi"," to check the dominance."}}
 
 undocumented {(inverse,MultirationalMap,Option)} -- for tests only
+
+document { 
+Key => {(isIsomorphism,MultirationalMap)}, 
+Headline => "whether a birational map is an isomorphism", 
+Usage => "isIsomorphism Phi", 
+Inputs => {"phi" => MultirationalMap}, 
+Outputs => {Boolean => {"whether ",TT"Phi"," is an isomorphism"}},
+EXAMPLE { 
+"-- map defined by the quadrics through a twisted cubic curve
+ZZ/33331[a..d]; f = rationalMap {c^2-b*d,b*c-a*d,b^2-a*c};",
+"Phi = multirationalMap {f,f};",
+"time isIsomorphism Phi",
+"Psi = first graph Phi;",
+"time isIsomorphism Psi",
+"Eta = first graph Psi;",
+"time isIsomorphism Eta",
+"describe last factor Eta",
+"assert(o8 and (not o6) and (not o4))"},
+SeeAlso => {(inverse,MultirationalMap),(isMorphism,MultirationalMap)}}
+
+document { 
+Key => {baseLocus,(baseLocus,MultirationalMap)}, 
+Headline => "the base locus of a multi-rational map", 
+Usage => "baseLocus Phi", 
+Inputs => {MultirationalMap => "Phi"}, 
+Outputs => {MultiprojectiveVariety => {"the base locus of ",TT"Phi",", that is, the locus where it is not defined"}},
+SeeAlso => {(isMorphism,MultirationalMap),(ideal,RationalMap)}}
+
+undocumented {(baseLocus,RationalMap)}
 
 TEST ///
 ZZ/300007[x_0..x_3], f = rationalMap {x_2^2-x_1*x_3, x_1*x_2-x_0*x_3, x_1^2-x_0*x_2}, g = rationalMap {x_1^2-x_0*x_2, x_0*x_3, x_1*x_3, x_2*x_3, x_3^2};
@@ -1120,7 +1166,7 @@ ringP4 := ZZ/300007[a..e];
 f = rationalMap minors(2,matrix {{a,b,c,d},{b,c,d,e}});
 g = rationalMap(minors(2,matrix{{a,b,c},{b,c,d}}) + ideal e);
 Phi = multirationalMap {f,g};
-Phi = multirationalMap(factor Phi,image Phi);
+Phi = multirationalMap(Phi,image Phi);
 Psi = inverse(Phi,MathMode=>true);
 assert(Phi * Psi == 1 and Psi * Phi == 1)
 (F,G) = graph Phi;
