@@ -24,17 +24,6 @@ document {
      such as might result from multiplying 0 by infinity.",
      }
 
-TEST "
-stream = (action,state) -> () -> stream(action, action state)
-fib = stream( (i,j) -> (j,i+j), (0,1))
-scan(1 .. 22, i -> fib = fib())
-"
-
-TEST "
-assert( partitions 4 === {{4},{3,1},{2,2},{2,1,1},{1,1,1,1}} / (x -> new Partition from x) )
-assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} / (x -> new Partition from x) )
-"
-
 document {
      Key => (symbol -, List),
      Headline => "negation of a vector",
@@ -561,16 +550,32 @@ document {
      	  }
      }
 
-document {
-     Key => {pad,(pad, String, ZZ),(pad, ZZ, String)},
-     Headline => "pad a string with spaces",
-     TT "pad(s,n)", " -- pads the string ", TT "s", " to length ", TT "n", " with
-     spaces on the right.",
-     BR{},
- 
-     TT "pad(n,s)", " -- pads the string ", TT "s", " to length ", TT "n", " with
-     spaces on the left."
-     }
+doc ///
+  Key
+    pad
+    (pad, String, ZZ)
+    (pad, ZZ, String)
+    (pad, Net, ZZ)
+    (pad, ZZ, Net)
+  Headline
+    pad a string or net with spaces
+  Usage
+    pad(s,n)
+    pad(n,s)
+  Inputs
+    s:Net
+    n:ZZ
+  Description
+    Text
+      @TT "pad(s,n)"@ pads the string or net @TT "s"@ to length @TT
+      "n"@ with spaces on the right.
+
+      @TT "pad(n,s)"@ pads the string or net @TT "s"@ to length @TT
+      "n"@ with spaces on the left.
+    Example
+      pad(6, "foo")
+      pad("foo", 6) | "bar"
+///
 
 document {
      Key => columnate,
@@ -620,17 +625,6 @@ document {
      returns a scripted functor that accepts the arguments.",
      SeeAlso => "ScriptedFunctor"
      }
-
-TEST ("
-     R=ZZ/101[a..d]
-     C=resolution cokernel vars R
-     D = C ++ C[1] ++ C[2]
-     betti D
-     assert( degree HH_1 D === 0 )
-     assert( degree HH_0 D === 1 )
-     assert( degree HH_-1 D === 1 )
-     assert( degree HH_-2 D === 1 )
-     ")
 
 document {
      Key => {(sheafExt,ZZ,CoherentSheaf,CoherentSheaf),

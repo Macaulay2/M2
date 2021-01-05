@@ -445,6 +445,7 @@ flushnets(o:file):int := (
 export flush(o:file):int := (
      foss := getFileFOSS(o);
      if foss.hadNet then if ERROR == flushnets(o) then (releaseFileFOSS(o); return ERROR);
+     foss.outbol = foss.outindex;
      releaseFileFOSS(o);
      simpleflush(o));
 

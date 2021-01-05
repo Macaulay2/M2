@@ -41,14 +41,6 @@ document {
 	  ///,
      SeeAlso => { directSum, (symbol ++, Module, Module), (symbol **, Module, Module), (Hom,Module,Module), Expression, FunctionApplication}
      }
-TEST ///
-     assert( (     M = ZZ^2 ++ ZZ^3) === ZZ^5 );
-     assert( (     formation M) === new FunctionApplication from {directSum,(ZZ^2,ZZ^3)} );
-     assert( (     M = directSum(ZZ^2, ZZ^3, ZZ^4)) === ZZ^9 );
-     assert( (     formation M) === new FunctionApplication from {directSum,(ZZ^2,ZZ^3,ZZ^4)} );
-     assert( (     M = ZZ^2 ** ZZ^3) === ZZ^6 );
-     assert( (     formation M) === new FunctionApplication from {tensor,(ZZ^2,ZZ^3)} );
-///
 
 document {
      Key => html,
@@ -64,21 +56,6 @@ document {
      (La)TeX can be rendered in the browser using MathJax or Katex.
      ",
      SeeAlso => "mathML"
-     }
-
-document {
-     Key => {EXAMPLE,(EXAMPLE, VisibleList),(EXAMPLE, String)},
-     Headline => "hypertext EXAMPLE item",
-     Usage => "EXAMPLE x",
-     Inputs => {"x" => {"a string or list of strings or objects of class ", TO "PRE", "."}},
-     Outputs => {TABLE => {"a table containing the examples.  Each string
-	       will be interpreted by ", TO "installPackage", ", if the table is included in the input provided to ", TO "document", ",
-	       as example input to be evaluated so the result can be displayed
-	       in the documentation.  Each object of class ", TO "PRE", " will be inserted unchanged into the documentation
-	       as example output."}},
-     "For example, the code", PRE ///EXAMPLE { "1+1"}///, "produces a display that looks like this:",
-     EXAMPLE {"1+1"},
-     SeeAlso => "hypertext"
      }
 
 document {

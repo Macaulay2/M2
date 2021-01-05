@@ -2,6 +2,9 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 -- TODO: add regex option to readDirectory
 -- TODO: add relative directory to minimizeFilename
+-- TODO: generate parent nodes for orphan nodes based on their type
+-- TODO: make orphan overview nodes subnodes of the top node
+-- TODO: not reentrant yet, see resetCounters
 
 -----------------------------------------------------------------------------
 -- Generate the html documentation
@@ -306,6 +309,11 @@ makePackageIndex List := path -> (
     htmlDirectory = null;)
 
 -----------------------------------------------------------------------------
+-- install PDF documentation for package
+-----------------------------------------------------------------------------
+-- see book.m2
+
+-----------------------------------------------------------------------------
 -- install info documentation for package
 -----------------------------------------------------------------------------
 
@@ -488,34 +496,37 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	if m =!= null then value substring(m#1, f));
     changeFunc := fkey -> () -> remove(rawDocumentationCache, fkey);
 
-    possiblyCache := (outf, outf') -> fkey -> (
+    possiblyCache := (outf, outf', fkey) -> () -> (
 	if opts.CacheExampleOutput =!= false and pkgopts.CacheExampleOutput === true
 	and ( not fileExists outf' or fileExists outf' and fileTime outf > fileTime outf' ) then (
 	    verboseLog("caching example results for ", fkey, " in ", outf');
 	    if not isDirectory exampleDir then makeDirectory exampleDir;
 	    copyFile(outf, outf', Verbose => true)));
 
+    usermode := if opts.UserMode === null then not noinitfile else opts.UserMode;
     scan(pairs pkg#"example inputs", (fkey, inputs) -> (
 	    inpf  := inpfn  fkey; -- input file
 	    outf' := outfn' fkey; -- cached file
 	    outf  := outfn  fkey; -- output file
 	    errf  := errfn  fkey; -- error file
+	    desc  := "example results for " | format fkey;
+	    data  := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
 	    inputhash := hash inputs;
 	    -- use cached example results
 	    if  not opts.RunExamples
 	    or  not opts.RerunExamples and fileExists outf  and gethash outf  === inputhash then (
-		(possiblyCache(outf, outf'))(fkey))
+		(possiblyCache(outf, outf', fkey))())
 	    -- use distributed example results
 	    else if pkgopts.UseCachedExampleOutput
 	    and not opts.RerunExamples and fileExists outf' and gethash outf' === inputhash then (
 		if fileExists errf then removeFile errf; copyFile(outf', outf))
 	    -- run and capture example results
 	    else elapsedTime captureExampleOutput(
-		pkg, fkey, demark_newline inputs,
-		possiblyCache(outf, outf'),
-		inpf, outf, errf,
-		inputhash, changeFunc,
-		if opts.UserMode === null then not noinitfile else opts.UserMode, verboseLog);
+		desc, demark_newline inputs, pkg,
+		possiblyCache(outf, outf', fkey),
+		inpf, outf, errf, data,
+		inputhash, changeFunc fkey,
+		usermode);
 	    storeExampleOutput(pkg, fkey, outf, verboseLog)));
 
     -- check for obsolete example output files and remove them
@@ -543,6 +554,7 @@ installPackage = method(
 	MakeDocumentation      => true,
 	MakeHTML               => true,
 	MakeInfo               => true,
+	MakePDF                => false,
 	MakeLinks              => true,
 	-- until we get better dependency graphs between documentation
 	-- nodes, "false" here will confuse users
@@ -724,7 +736,8 @@ installPackage Package := opts -> pkg -> (
 	-- ~22s for Macaulay2Doc
 	if chkdoc then (
 	    resetCounters();
-	    scan((if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg)#"exported symbols", s -> (
+	    srcpkg := if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg;
+	    scan(join (srcpkg#"exported symbols", srcpkg#"exported mutable symbols"), s -> (
 		    tag := makeDocumentTag s;
 		    if  not isUndocumented tag
 		    and not hasDocumentation tag
@@ -756,6 +769,10 @@ installPackage Package := opts -> pkg -> (
 	-- ~50 -> ~80s for Macaulay2Doc
 	if opts.MakeHTML then installHTML(pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts)
 	else verboseLog("not making documentation in HTML format");
+
+	-- make pdf documentation
+	if opts.MakePDF then installPDF(pkg, installPrefix, installLayout, verboseLog)
+	else verboseLog("not making documentation in PDF format");
 
 	if chkdoc and hadDocumentationWarning then printerr("warning: ",
 	    toString numDocumentationWarnings, " warning(s) occurred in documentation for package ", toString pkg);

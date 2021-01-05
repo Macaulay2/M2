@@ -377,22 +377,12 @@ dnl    AC_LANG(C)
 # for linking M2-binary.  It is used in mathicgb.
 # LIBS=
 
-AC_CHECK_FUNCS([herror error backtrace clock_gettime __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality ioctl])
+AC_CHECK_FUNCS([herror error clock_gettime getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality ioctl])
 
 AC_SUBST(HAVE_PERSONALITY,$ac_cv_func_personality)
 
 AC_FUNC_ACCEPT_ARGTYPES()
 AC_DEFINE_UNQUOTED(SOCKLEN_T,[`echo "$ac_cv_func_accept_arg3" | sed 's/ \*$//'`],[socket length type used by accept()])
-
-AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
-AC_CHECK_DECLS([herror],,,[
-	#ifdef HAVE_STDLIB_H
-	 #include <stdlib.h>
-	#endif
-	#include <stdio.h>
-	#include <errno.h>
-	])
-AC_CHECK_DECLS([__environ,_environ,environ],,,[#include <unistd.h>])
 
 if test $host_os = mingw32
 then CPPFLAGS="$CPPFLAGS -D_POSIX" # arrange for SIGPIPE to get defined
@@ -567,7 +557,14 @@ then if test "$OPTIMIZE" = no
 fi
 
 AC_SUBST(GIT_DESCRIPTION)
-GIT_DESCRIPTION=`git describe --dirty --long --always --abbrev=40 --tags --match 'version-*' || echo unknown`
+# TODO: currently finds the last commit that changed the VERSION file
+# but ideally it should get the last release commit instead
+NEW_COMMITS=`git rev-list $(git rev-list -1 HEAD $srcdir/VERSION)..HEAD --count`
+GIT_COMMIT=`git describe --dirty --always --match HEAD`
+if test "$NEW_COMMITS-$GIT_COMMIT" = "-"
+then GIT_DESCRIPTION=version-$PACKAGE_VERSION-unknown
+else GIT_DESCRIPTION=version-$PACKAGE_VERSION-$NEW_COMMITS-$GIT_COMMIT
+fi
 AC_DEFINE_UNQUOTED(GIT_DESCRIPTION,"$GIT_DESCRIPTION",[summary of git status])
 
 AC_SUBST(DEB,no)
@@ -1414,6 +1411,7 @@ else
     adl_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
     AC_CHECK_FILE([${GFTABLESDIR}gftables/961],,
 	[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
+    FILE_PREREQS="$FILE_PREREQS ${GFTABLESDIR}gftables/961"
 fi
 
 if test $BUILD_factory = no
@@ -1647,17 +1645,6 @@ for i in $PROGLIST
 do eval t=\$BUILD_$i
    test "$t" = yes && BUILDPROGLIST="$BUILDPROGLIST $i"
 done
-
-AC_MSG_CHECKING([whether __builtin_return_address accepts a non-zero argument])
-AC_LANG(C)
-SAVE="$CFLAGS"
-CFLAGS="$CFLAGS -Werror"
-AC_LINK_IFELSE(
-	[AC_LANG_PROGRAM([], [[__builtin_return_address(1);]])],
-	[  AC_DEFINE(BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT,1,[Define if __builtin_return_address accepts a non-zero argument])
-	   AC_MSG_RESULT(yes)],
-	[  AC_MSG_RESULT(no) ])
-CFLAGS="$SAVE"
 
 TESTFLAG=-Wframe-address
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)

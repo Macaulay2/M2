@@ -4,7 +4,7 @@ document {
 Key => Cremona, 
 Headline => "package for some computations on rational maps between projective varieties", 
 EM "Cremona", " is a package to perform some basic computations on rational and birational maps between absolutely irreducible projective varieties over a field ",TEX///$K$///,". For instance, it provides general methods to compute degrees and projective degrees of rational maps (see ", TO"degreeMap", " and ", TO"projectiveDegrees",") and a general method to compute the push-forward to projective space of Segre classes (see ",TO"SegreClass","). Moreover, all the main methods are available both in version probabilistic and in version deterministic, and one can switch from one to the other with the boolean option ",TO "MathMode",".",
-PARA{"Let ",TEX///$\Phi:X \dashrightarrow Y$///," be a rational map from a subvariety ",TEX///$X=V(I)\subseteq\mathbb{P}^n=Proj(K[x_0,\ldots,x_n])$///," to a subvariety ",TEX///$Y=V(J)\subseteq\mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". We assume that the map ",TEX///$\Phi $///," can be represented, although not uniquely, by a homogeneous ring map ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///," of quotients of polynomial rings by homogeneous ideals. These kinds of ring maps, together with the objects of the ",TO RationalMap," class, are the typical inputs for the methods in this package. The method ", TO toMap," (resp. ",TO rationalMap,") constructs such a ring map (resp. rational map) from a list of ",TEX///$m+1$///," homogeneous elements of the same degree in ",TEX///$K[x_0,...,x_n]/I$///,"."}, 
+PARA{"Let ",TEX///$\Phi:X \dashrightarrow Y$///," be a rational map from a subvariety ",TEX///$X=V(I)\subseteq\mathbb{P}^n=Proj(K[x_0,\ldots,x_n])$///," to a subvariety ",TEX///$Y=V(J)\subseteq\mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". Then the map ",TEX///$\Phi $///," can be represented, although not uniquely, by a homogeneous ring map ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///," of quotients of polynomial rings by homogeneous ideals. These kinds of ring maps, together with the objects of the ",TO RationalMap," class, are the typical inputs for the methods in this package. The method ", TO toMap," (resp. ",TO rationalMap,") constructs such a ring map (resp. rational map) from a list of ",TEX///$m+1$///," homogeneous elements of the same degree in ",TEX///$K[x_0,...,x_n]/I$///,"."}, 
 PARA{"Below is an example using the methods provided by this package, dealing with a birational transformation ",TEX///$\Phi:\mathbb{P}^6 \dashrightarrow \mathbb{G}(2,4)\subset\mathbb{P}^9$///," of bidegree ",TEX///$(3,3)$///,"."},
 EXAMPLE { 
 "ZZ/300007[t_0..t_6];", 
@@ -76,7 +76,7 @@ PARA{"Another way to use this method is by passing an integer ",TT"i"," as secon
 SeeAlso => {(degrees,RationalMap),degreeMap, SegreClass}} 
 
 document { 
-Key => {MathMode, [inverseMap,MathMode], [projectiveDegrees,MathMode],[degreeMap,MathMode],[approximateInverseMap,MathMode],[isDominant,MathMode],[isBirational,MathMode],[SegreClass,MathMode],[ChernSchwartzMacPherson,MathMode],[EulerCharacteristic,MathMode]}, 
+Key => {MathMode, [inverseMap,MathMode], [projectiveDegrees,MathMode],[degreeMap,MathMode],[approximateInverseMap,MathMode],[isDominant,MathMode],[isBirational,MathMode],[SegreClass,MathMode],[ChernSchwartzMacPherson,MathMode],[EulerCharacteristic,MathMode],[exceptionalLocus,MathMode]}, 
 Headline => "whether to ensure correctness of output", 
 "This option accepts a ", TO Boolean, " value, default value ",TT "false",".",
 PARA{"If turned on in the methods ", TO inverseMap," and ", TO approximateInverseMap, ", then it will be checked whether the maps in input and output are one the inverse of the other, throwing an error if they are not. Actually, ", TO approximateInverseMap, " will first try to fix the error of the approximation. When turned on in the methods ", TO projectiveDegrees,", ", TO degreeMap, ", ", TO isBirational,", ", TO isDominant, ", ", TO SegreClass, ", ", TO EulerCharacteristic, " and ", TO ChernSchwartzMacPherson, ", it means whether to use a non-probabilistic algorithm."}} 
@@ -345,7 +345,7 @@ SeeAlso => {(euler,ProjectiveVariety),ChernSchwartzMacPherson,SegreClass}}
 document { 
 Key => {RationalMap}, 
 Headline => "the class of all rational maps between absolutely irreducible projective varieties over a field", 
-PARA{"An object of the class ",EM "RationalMap", " can be basically replaced by a homogeneous ring map of quotients of polynomial rings by homogeneous ideals. The main advantage to using this class is that things computed using non-probabilistic algorithms are stored internally (or partially stored)."},
+PARA{"An object of the class ",EM "RationalMap", " can be basically replaced by a homogeneous ring map of quotients of polynomial rings by homogeneous ideals. One main advantage to using this class is that things computed using non-probabilistic algorithms are stored internally (or partially stored)."},
 PARA{"The constructor for the class is ",TO "rationalMap",", which works quite similar to ",TO "toMap",". 
 See in particular the methods: ",TO (rationalMap,RingMap),", ",TO (rationalMap,Ideal,ZZ,ZZ),", ",TO (rationalMap,Tally),", and ",TO (rationalMap,PolynomialRing,List),"."}}
 
@@ -701,7 +701,7 @@ EXAMPLE {
 }}
 
 document { 
-Key => {(map,RationalMap)}, 
+Key => {(map,RationalMap),(map,ZZ,RationalMap)}, 
 Headline => "get the ring map defining a rational map", 
 Usage => "map Phi", 
 Inputs => { 
@@ -712,17 +712,18 @@ EXAMPLE {
 "QQ[t_0..t_3]",
 "Phi = rationalMap {t_1^2+t_2^2+t_3^2,t_0*t_1,t_0*t_2,t_0*t_3}",
 "map Phi"},
+PARA {"The command ",TT "map Phi"," is equivalent to ",TT "map(0,Phi)",". More generally, the command ",TT "map(i,Phi)"," returns the i-th representative of the map ",TT"Phi","."},
 SeeAlso => {(matrix,RationalMap)}}
 
 document { 
-Key => {(matrix,RationalMap)}, 
+Key => {(matrix,RationalMap),(matrix,ZZ,RationalMap)}, 
 Headline => "the matrix associated to a rational map", 
 Usage => "matrix Phi", 
 Inputs => { 
 RationalMap => "Phi"}, 
 Outputs => { 
 Matrix => {"the matrix associated to the ring map defining the rational map ",TT"Phi"}},
-PARA{"This is equivalent to ",TT "matrix map Phi","."},
+PARA{"This is equivalent to ",TT "matrix map Phi",". Moreover, the command ",TT "matrix Phi"," is equivalent to ",TT "matrix(0,Phi)",", and more generally the command ",TT "matrix(i,Phi)"," returns the matrix of the i-th representative of ",TT"Phi","."},
 SeeAlso => {(map,RationalMap),(matrix,RingMap)}}
 
 document { 

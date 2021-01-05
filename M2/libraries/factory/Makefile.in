@@ -12,7 +12,7 @@
 # it at one of the ftp sites above.  Version 4.1.3 is available.
 
 URL = http://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 4.1.1
+VERSION = 4.1.3
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif
 

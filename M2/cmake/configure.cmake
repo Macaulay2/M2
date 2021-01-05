@@ -65,17 +65,31 @@ set(PACKAGE_VERSION ${Macaulay2_VERSION})
 ## Summary of git status
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
-  # previous describe code: git describe --dirty --long --always --abbrev=40 --tags --match "version-*"
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+    COMMAND ${GIT_EXECUTABLE} describe --dirty --always --match HEAD
     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE   GIT_COMMIT)
+  # TODO: currently finds the last commit that changed the VERSION file
+  # but ideally it should get the last release commit instead
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-list -1 HEAD VERSION
+    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE   _release_commit)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-list ${_release_commit}..HEAD --count
+    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE   COMMIT_COUNT)
+  set(GIT_DESCRIPTION version-${PROJECT_VERSION}-${COMMIT_COUNT}-${GIT_COMMIT})
+else()
+  set(GIT_DESCRIPTION version-${PROJECT_VERSION}-unknown)
 endif()
 
 message("## Configure Macaulay2
      M2 version        = ${PROJECT_VERSION}
-     Git commit        = ${GIT_COMMIT}
+     Git description   = ${GIT_DESCRIPTION}
      Install prefix    = ${CMAKE_INSTALL_PREFIX}\n
      CMAKE_BUILD_TYPE  = ${CMAKE_BUILD_TYPE}
      BUILD_NATIVE      = ${BUILD_NATIVE}
@@ -255,13 +269,6 @@ include(CheckTypeSize)
 check_type_size("int *" SIZEOF_INT_P)
 check_type_size("long" SIZEOF_LONG)
 
-include(CheckSymbolExists)
-CHECK_SYMBOL_EXISTS(ADDR_NO_RANDOMIZE "linux/personality.h" HAVE_DECL_ADDR_NO_RANDOMIZE)
-CHECK_SYMBOL_EXISTS(herror       "stdlib.h;stdio.h;errno.h" HAVE_DECL_HERROR)
-CHECK_SYMBOL_EXISTS(environ                      "unistd.h" HAVE_DECL_ENVIRON)
-CHECK_SYMBOL_EXISTS(_environ                     "unistd.h" HAVE_DECL__ENVIRON)
-CHECK_SYMBOL_EXISTS(__environ                    "unistd.h" HAVE_DECL___ENVIRON)
-
 include(CheckLibraryExists)
 check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
 check_library_exists(resolv hstrerror "" HAVE_HSTRERROR)
@@ -305,12 +312,7 @@ include(CheckFunctionExists)
 # TODO: can't getaddrinfo
 check_function_exists(herror	HAVE_HERROR)
 check_function_exists(error	HAVE_ERROR)
-check_function_exists(backtrace	HAVE_BACKTRACE)
 check_function_exists(clock_gettime	HAVE_CLOCK_GETTIME)
-check_function_exists(__environ	HAVE___ENVIRON)
-check_function_exists(_environ	HAVE__ENVIRON)
-check_function_exists(environ	HAVE_ENVIRON)
-check_function_exists(_setmode	HAVE__SETMODE)
 check_function_exists(getaddrinfo	HAVE_GETADDRINFO)
 check_function_exists(hstrerror	HAVE_HSTRERROR)
 check_function_exists(sync	HAVE_SYNC)
@@ -340,9 +342,6 @@ check_function_exists(ioctl	HAVE_IOCTL)
 
 include(CheckCSourceCompiles)
 include(CheckCXXSourceCompiles)
-
-# TODO: what is this for?
-check_c_source_compiles("int main(){__builtin_return_address(1);return 0;}" BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT)
 
 # TODO: is this necessary?
 # whether getaddrinfo can handle numeric service (port) numbers

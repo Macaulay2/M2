@@ -725,7 +725,7 @@ doc ///
       gbI = ideal groebnerBasis(I, Strategy=>"F4");
       netList gbI_*
    Caveat
-     (1) The MGB and F4 options are experimental, work only over a finite field of char < 2^{32}, not over
+     (1) The MGB and F4 options are experimental, work only over a finite field of char $< 2^{32}$, not over
      quotient rings, and not over exterior or Weyl algebras.  However, these versions can be much
      faster when they apply. (2) The experimental versions do not stash their results into the ideal
      or module. (3) The experimental version only works for ideals currently.

@@ -536,7 +536,7 @@ splitFunction#IndependentSet = (I,opts) -> (
         return splitLexGB I;
     );
     -- otherwise compute over the fraction field.
-    if hf =!= null then gb(JS, Hilbert=>hf) else gb JS;
+    if hf =!= null and degreesRing ring JS === ring hf then gb(JS, Hilbert=>hf) else gb JS;
     --gens gb IS;
     (JSF, coeffs) := minimalizeOverFrac(JS, SF);
     if coeffs == {} then (

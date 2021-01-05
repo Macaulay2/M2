@@ -39,13 +39,13 @@ doc ///
       of integers (a,b)
   Outputs
      p: ZZ
-          a prime in the specified range. The default range is (10^4,3*10^4)
+          a prime in the specified range. The default range is $(10^4,3*10^4)$
      r: ZZ
           a primitive n-th root of unity mod p
   Description
      Text
-       We compute the prime p as a larger prime factor of r1^n-1.
-       If the largest p in the desired range does not work, we pass to r1+1 and repeat.
+       We compute the prime p as a larger prime factor of $r1^n-1$.
+       If the largest p in the desired range does not work, we pass to $r1+1$ and repeat.
      Example
        n = 12
        (p,r) = getPrimeWithRootOfUnity(n,5)
@@ -72,7 +72,7 @@ doc ///
   Description
     Text
        Specifies an integral interval in which we search for a prime number with desired properties.
-       If $b< a+2*log a$ an error message will be returned. The default value is (10^4,3*10^4)
+       If $b< a+2*log a$ an error message will be returned. The default value is $(10^4,3*10^4)$
   SeeAlso
     nextPrime
     getPrimeWithRootOfUnity
@@ -114,44 +114,11 @@ doc ///
        codim I, degree I
        time randomKRationalPoint(I)
      Text
-       The claim that 63 % of the intersections contain a K-rational point can be experimentally tested:
+       The claim that $63 \%$ of the intersections contain a K-rational point can be experimentally tested:
      Example
        p=10007,kk=ZZ/p,R=kk[x_0..x_2]
        n=5; sum(1..n,j->(-1)^(j-1)*binomial(n,j)*(n-j)!/n!)+0.0
        I=ideal random(n,R); 
        time (#select(apply(100,i->(degs=apply(decompose(I+ideal random(1,R)),c->degree c); 
 		      #select(degs,d->d==1))),f->f>0))
-///
-	 
-
--- tests for nextprime
-TEST ///
-  assert( nextPrime(-10) == 2)
-  assert( nextPrime 100 == 101)
-  assert( nextPrime 1000 == 1009)
-///
-
-TEST ///
-     setRandomSeed("getPrimeOfUnity")
-     (p,r)=getPrimeWithRootOfUnity(2,3,Range=>(10^3,10^4))
-     assert( (p,r)==(3511,-1)) -- works if the random number generator is not unchanged 
-     (p,r)=getPrimeWithRootOfUnity(15,20)
-     assert((p,r)==(18181,21))
-     (p,r)=getPrimeWithRootOfUnity(12,2,Range=>(100,200))     	  
-     assert(r^12%p==1 and r^6%p !=1 and r^4%p != 1)
-/// 
-
-TEST ///
-     setRandomSeed 0
-     p=10007,kk=ZZ/p 
-     R=kk[x_0..x_2]
-     I=ideal(random(4,R)); 
-     time randomKRationalPoint(I)
-     R=kk[x_0..x_4]
-     I=minors(3,random(R^5,R^{3:-1}));
-     codim I
-     time pt = randomKRationalPoint(I)
-     -- The following is the answer given the above random seed.
-     ans = ideal(x_3+74*x_4,x_2+2336*x_4,x_1-4536*x_4,x_0-4976*x_4)
-     assert(pt == ans)
 ///

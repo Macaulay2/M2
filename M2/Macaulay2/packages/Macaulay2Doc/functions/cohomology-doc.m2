@@ -3,7 +3,21 @@
 --- notes: 
 
 undocumented {(cohomology,ZZ,Sequence)}
-
+-*
+-- this is the old version
+document {
+     Key => {cohomology,[cohomology,Degree]},
+     Headline => "general cohomology functor",
+     TT "cohomology", " -- a method name available for computing expressions
+     of the forms ", TT "HH^i(X)", " and ", TT "HH^i(M,N)", ".",
+     PARA{},
+     "If it is intended that ", TT "i", " be of class ", TO "ZZ", ", ", TT "M", " be of
+     class ", TT "A", ", and ", TT "N", " be of 
+     class ", TT "B", ", then the method can be installed with ",
+     PRE "     cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
+     SeeAlso => {"homology", "HH", "ScriptedFunctor"}
+     }
+*-
 document { 
      Key => cohomology,
      Headline => "general cohomology functor",
@@ -177,14 +191,6 @@ document {
 	  },
      SeeAlso => {"GradedModule", "HH"}
      }
-
-TEST ///
-needsPackage "SimplicialComplexes"
-R = QQ[a..d]
-D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}
-C = chainComplex D
-assert ( rank HH_2 C == 1 )
-///
 
 document { 
      Key => {(cohomology,ZZ,CoherentSheaf)},

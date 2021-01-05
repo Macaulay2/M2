@@ -107,8 +107,8 @@ lineSearch (Ideal, Matrix) := Matrix => opts -> (I, s) -> (
 		);
 		if debugLevel > 0 then print("Old: " | toString(F0) | ", new: " | toString(F1));
 		y = y + alpha*p;
-		if debugLevel > 0 and F1 < opts.Tolerance then (
-			print "Found solution to within tolerance";
+		if F1 < opts.Tolerance then (
+			if debugLevel > 0 then print "Found solution to within tolerance";
 			break;
 		);
 		if debugLevel > 0 and i % 25 == 0 then print("Completed " | toString i | " iterations");

@@ -22,7 +22,7 @@ isAlphaNumeric := s -> match("^[[:alnum:]]+$", s)
 isType     := is Type
 isKeyword  := is Keyword
 isFunction := is Function
-isConst    := (name, symb) -> (isAlpha name
+isConst    := (name, symb) -> (isAlphaNumeric name
     and not (isFunction or isType or isKeyword) (name, symb)
     and (symb === symbol null or value symb =!= null))
 

@@ -183,3 +183,17 @@ TEST /// -- unnecessary groebner bases should not be computed
   elapsedTime assert(saturate(module ideal J_*, I) == module J)
   elapsedTime assert(saturate(module ideal I_*, J) == R^1)
 ///
+
+TEST ///
+  -- Reported by Robert Lax, communicated by Dan Grayson
+  -- cf https://github.com/Macaulay2/M2/issues/1660
+  -- A = toField(QQ[w,DegreeRank=>0]/(w^3-1)); -- FIXME: this also causes a different issue
+  A = QQ[w,DegreeRank=>0]/(w^3-1);
+  R = A[x,y,z,Degrees=>{4,4,4}];
+  S = A[s,t];
+  qmap = map(S,R,{t^4-w*s^4,s*t*(t^2+s^2),s*t*(t^2-s^2)});
+  I = kernel qmap;
+  B = ideal gens R;
+  assert(#(quotient(ideal I_*, B, Strategy => Iterate))_* == 1)
+  -- assert(#(quotient(ideal I_*, B, Strategy => Quotient))_* == 1) -- FIXME
+///

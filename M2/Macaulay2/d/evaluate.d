@@ -1499,26 +1499,26 @@ breakFun(a:Code):Expr := (
 setupop(breakS,breakFun);
 
 assigntofun(lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
-     when left
-     is q:SymbolClosure do (
-	  if q.symbol.Protected then (
-	       buildErrorPacket("assignment to protected variable '" + q.symbol.word.name + "'")
-	       )
-	  else (
-	       value := eval(rhs);
-	       when value is Error do return value else nothing;
-	       enlargeThreadFrame();
-	       q.frame.values.(q.symbol.frameindex) = value;
-	       value))
-     is Error do left
-     else (
-	  method := lookup(Class(left),LeftArrowE); -- method for x <- y is looked up under (symbol <-, class x)
-	  if method == nullE then buildErrorPacket("'<-': no method for object on left")
-	  else (
-	       value := eval(rhs);
-	       when value is Error do return value else nothing;
-	       applyEEE(method,left,value))));
+    left := eval(lhs);
+    when left is Error do return left else (
+	right := eval(rhs);
+	when right is Error do return right else (
+	    when left is s:SymbolClosure do (
+		sym := s.symbol;
+		symbody := Expr(SymbolBody(sym));
+		-- see syms and store in actors5.d
+		if lookup1Q(globalAssignmentHooks, symbody) then (
+		    vals := (if sym.thread then enlargeThreadFrame() else globalFrame).values;
+		    globalAssignment(sym.frameindex, sym, right))
+		else if sym.Protected then buildErrorPacket("assignment to protected variable '" + sym.word.name + "'")
+		else (
+		    enlargeThreadFrame(); -- TODO: what does this do?
+		    s.frame.values.(sym.frameindex) = right;
+		    right))
+	    else (
+		assignmethod := lookup(Class(left), LeftArrowE); -- method for x <- y is looked up under (symbol <-, class x)
+		if assignmethod == nullE then buildErrorPacket("'<-': no method for object on left")
+		else applyEEE(assignmethod, left, right)))));
 setup(LeftArrowS,assigntofun);
 
 idfun(e:Expr):Expr := e;

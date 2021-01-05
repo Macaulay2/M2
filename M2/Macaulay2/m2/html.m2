@@ -3,6 +3,7 @@
 -- html output
 -----------------------------------------------------------------------------
 
+-- TODO: unify the definition of the tex macros so book/M2book.tex can use them
 KaTeX := () -> (
     katexPath := locateCorePackageFileRelative("Style",
 	layout -> replace("PKG", "Style", layout#"package") | "katex", installPrefix, htmlDirectory);
@@ -13,8 +14,6 @@ KaTeX := () -> (
     <script defer="defer" type="text/javascript">
       var macros = {
           "\\break": "\\\\",
-          "\\R": "\\mathbb{R}",
-          "\\C": "\\mathbb{C}",
           "\\ZZ": "\\mathbb{Z}",
           "\\NN": "\\mathbb{N}",
           "\\QQ": "\\mathbb{Q}",
@@ -26,9 +25,9 @@ KaTeX := () -> (
           { left: "\\[", right: "\\]", display: true},
           { left: "$",   right: "$",   display: false},
           { left: "\\(", right: "\\)", display: false}
-      ];
+      ], ignoredTags = ["tt", "script", "noscript", "style", "textarea", "pre", "code", "option"];
       document.addEventListener("DOMContentLoaded", function() {
-        renderMathInElement(document.body, { delimiters: delimiters, macros: macros, trust: true });
+        renderMathInElement(document.body, { delimiters: delimiters, macros: macros, ignoredTags: ignoredTags, trust: true });
       });
     </script>
     <style type="text/css">.katex { font-size: 1em; }</style>
@@ -132,8 +131,8 @@ html IMG := (lookup(html, IMG)) @@ treatImgSrc
 fixNewlines := x -> apply(x, y -> if class y === String then replace("\r\n","\n",y) else y)
 html PRE := (lookup(html, PRE)) @@ fixNewlines
 
-html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
-html COMMENT := x -> concatenate("<!--",x,"-->")
+html CDATA   := x -> concatenate("<![CDATA[", x ,"]]>", newline)
+html COMMENT := x -> concatenate("<!--", x, "-->", newline)
 
 html HREF := x -> (
      r := concatenate apply(splice if #x > 1 then drop(x, 1) else x, html1);

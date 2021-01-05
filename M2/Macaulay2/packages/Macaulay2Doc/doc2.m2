@@ -177,7 +177,7 @@ document {
 	  tally {1,1,2} ? tally {1,2,3}
 	  tally {1,1,2} ? tally {1,1,2,3}
      ///,
-     SeeAlso => {sort, rsort}
+     SeeAlso => {sort, rsort, (symbol?, Symbol)}
      }
 
 protect incomparable

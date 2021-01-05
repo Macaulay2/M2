@@ -46,11 +46,6 @@ scan({net, html, markdown, tex}, parser ->
 scan({net, info, html, markdown, tex}, parser ->
     parser LATER := node -> parser node#0() )
 
--- TODO: move somewhere else
--- Rendering by concatenation of inputs
-scan({mathML, tex, texMath},
-    parser -> setupRenderer(parser, concatenate, Hypertext))
-
 -- Rendering by horizontal join of inputs
 scan({net, info},
     parser -> setupRenderer(parser, horizontalJoin, Hypertext))
@@ -124,7 +119,9 @@ scan({net, info},
 	parser' HypertextContainer := x -> (BK, apply(toSequence x, parser'), BK);
 	-- rendering for special types
 	parser' String := identity;
-	parser' Option := x -> ();
+	parser' COMMENT :=
+	parser' LITERAL :=
+	parser' Option  := x -> ();
 	parser' BR     := x -> ("", BK);
 	-- and rendering for types that inherit from HypertextContainer, but
 	-- have special rendering rules which would lost with toSequence
