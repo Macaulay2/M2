@@ -452,8 +452,10 @@ viewHelp = new Command from viewHelp
 setAttribute(viewHelp#0, ReverseDictionary, symbol viewHelp)
 
 infoHelp = key -> (
-    tag := makeDocumentTag(key, Package => null);
-    chkrun ("info " | format infoTagConvert tag);)
+    tag := infoTagConvert makeDocumentTag(key, Package => null);
+    if getenv "INSIDE_EMACS" == "" then chkrun ("info " | format tag)
+    -- used by M2-info-help in M2.el
+    else print("-* infoHelp: " | tag | " *-");)
 
 -----------------------------------------------------------------------------
 -- View brief documentation within Macaulay2 using symbol?
