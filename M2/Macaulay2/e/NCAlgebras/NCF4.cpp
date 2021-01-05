@@ -25,7 +25,8 @@ NCF4::NCF4(const FreeAlgebra& A,
       mTopComputedDegree(-1),
       mHardDegreeLimit(hardDegreeLimit),
       mMonomEq(A.monoid()),
-      mColumnMonomials(mMonomEq)
+      mColumnMonomials(mMonomEq),
+      mPreviousColumnMonomials(mMonomEq)
 {
   if (M2_gbTrace >= 1)
     {
@@ -120,6 +121,14 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
       updateOverlaps(f);
     }
 
+  // copy the finished rows and columns into the holding areas
+  mPreviousRows.clear();
+  mPreviousColumns.clear();
+  mPreviousColumnMonomials.clear();  
+  mPreviousRows = std::move(mRows);
+  mPreviousColumns = std::move(mColumns); 
+  mPreviousColumnMonomials = std::move(mColumnMonomials);
+
 #if 0
   if (M2_gbTrace >= 2)
     {
@@ -129,8 +138,7 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
       emit(o.str());
     }
 #endif
-  
-  matrixReset();
+
 }
 
 void NCF4::addToGroebnerBasis(Poly * toAdd)
@@ -263,7 +271,9 @@ void NCF4::matrixReset()
   mRows.clear();
   mOverlaps.clear();
   mFirstOverlap = 0;
-  mMonomialSpace.deallocateAll();
+  // this was removed, because saving previous computation requires that
+  // we hold onto the Monoms
+  //mMonomialSpace.deallocateAll(); 
 }
 
 void NCF4::preRowsFromOverlap(const Overlap& o)
@@ -336,7 +346,6 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
     }
 
   // process each element in mReducersTodo
-
   for (int i=0 ; i < mReducersTodo.size(); ++i)
     {
       Row r = processPreRow(mReducersTodo[i]); // this often adds new elements to mReducersTodo
@@ -365,6 +374,59 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
     }
 }
 
+std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m) const
+{
+  return std::make_pair(false,-1);
+}
+
+
+std::pair<bool,int> NCF4::findPreviousReducerSuffix(const Monom& m) const
+{
+  return std::make_pair(false,-1);
+}
+
+void NCF4::processMonomInPreRow(Monom& m, int* nextcolloc) 
+{
+  auto usePreviousPrefix = findPreviousReducerPrefix(m);
+  if (usePreviousPrefix.first)
+    {
+      // here, we use a multiple of a previously reduced row
+      return;
+    }
+  auto usePreviousSuffix = findPreviousReducerSuffix(m);
+  if (usePreviousSuffix.first)
+    {
+      // here, we use a multiple of a previously reduced row
+      return;
+    }
+  //if we are here, then we process the term as usual.
+  auto it = mColumnMonomials.find(m);
+  if (it == mColumnMonomials.end())
+    { 
+      // if we are here, this monomial is not yet accounted for in the matrix
+      // so, check if the monomial is a multiple of a lead term of a gb element
+      auto divresult = findDivisor(m);
+      int divisornum = -1; // -1 indicates no divisor was found
+      if (divresult.first)
+        {
+          // if it is a divisor of a gb element,
+          // add that multiple of the GB element to mReducersToDo for processing
+          divisornum = mReducersTodo.size();
+          mReducersTodo.push_back(divresult.second);
+        }
+      // insert column information into mColumnMonomials,
+      // which provides us search/indexing of columns
+      int newColumnIndex = mColumnMonomials.size();
+      mColumnMonomials.insert({m, {newColumnIndex, divisornum}});
+      *nextcolloc = newColumnIndex;
+    }
+  else
+    {
+      // in this case, the monomial already has an associated column
+      *nextcolloc = (*it).second.first;
+    }
+}
+
 NCF4::Row NCF4::processPreRow(PreRow r)
 {
   // note: left and right should be the empty word if gbIndex < 0 indicating
@@ -387,11 +449,13 @@ NCF4::Row NCF4::processPreRow(PreRow r)
 
   // loop through all monomials of the product
   // for each monomial:
-  //  is it in the hash table?
-  //    if so: return the column index into the component for the new row.
-  //    if not: insert it, and return the new column index into same place
-  //        and place this monomial into mColumns.
-  //        and search for divisor for it.
+  //  is its prefix or suffix the lead term of a row from the previous degree?
+  //    if so: insert the information from this row in the appropriate places
+  //    if not: is the monomial in the hash table?
+  //      if so: return the column index into the component for the new row.
+  //      if not: insert it, and return the new column index into same place
+  //          and place this monomial into mColumns.
+  //          and search for divisor for it.
   //        
   int nterms = elem->numTerms();
   auto componentRange = mMonomialSpace.allocateArray<int>(nterms);
@@ -399,31 +463,47 @@ NCF4::Row NCF4::processPreRow(PreRow r)
   for (auto i = elem->cbegin(); i != elem->cend(); ++i)
     {
       Monom m = freeAlgebra().monoid().wordProductAsMonom(left,i.monom(),right,mMonomialSpace);
-      auto it = mColumnMonomials.find(m);
-      if (it == mColumnMonomials.end())
-        { 
-          auto prevReducer = findPreviousReducer(m);
-          if (prevReducer) // look for previous reducers first....
-          {
-          }
-          else  // if previous reducer is not found:
-          {
-            auto divresult = findDivisor(m);
-            int divisornum = -1; // -1 indicates no divisor was found
-            if (divresult.first)
-              {
-                divisornum = mReducersTodo.size();
-                mReducersTodo.push_back(divresult.second);
-              }
-            int newColumnIndex = mColumnMonomials.size();
-            mColumnMonomials.insert({m, {newColumnIndex, divisornum}});
-            *nextcolloc++ = newColumnIndex;
-          }
-        }
-      else
-        {
-          *nextcolloc++ = (*it).second.first;
-        }
+      processMonomInPreRow(m,nextcolloc++);
+
+      // Monom m = freeAlgebra().monoid().wordProductAsMonom(left,i.monom(),right,mMonomialSpace);
+      // auto usePreviousPrefix = findPreviousReducerPrefix(m);
+      // if (usePreviousPrefix.first)
+      // {
+      //   // here, we use a multiple of a previously reduced row
+      //   continue;
+      // }
+      // auto usePreviousSuffix = findPreviousReducerSuffix(m);
+      // if (usePreviousSuffix.first)
+      // {
+      //   // here, we use a multiple of a previously reduced row
+      //   continue;
+      // }
+      // //if we are here, then we process the term as usual.
+      // auto it = mColumnMonomials.find(m);
+      // if (it == mColumnMonomials.end())
+      //   { 
+      //     // if we are here, this monomial is not yet accounted for in the matrix
+      //     // so, check if the monomial is a multiple of a lead term of a gb element
+      //     auto divresult = findDivisor(m);
+      //     int divisornum = -1; // -1 indicates no divisor was found
+      //     if (divresult.first)
+      //       {
+      //         // if it is a divisor of a gb element,
+      //         // add that multiple of the GB element to mReducersToDo for processing
+      //         divisornum = mReducersTodo.size();
+      //         mReducersTodo.push_back(divresult.second);
+      //       }
+      //     // insert column information into mColumnMonomials,
+      //     // which provides us search/indexing of columns
+      //     int newColumnIndex = mColumnMonomials.size();
+      //     mColumnMonomials.insert({m, {newColumnIndex, divisornum}});
+      //     *nextcolloc++ = newColumnIndex;
+      //   }
+      // else
+      //   {
+      //     // in this case, the monomial already has an associated column
+      //     *nextcolloc++ = (*it).second.first;
+      //   }
     }
   ring_elem* ptr = newarray(ring_elem, elem->getCoeffVector().size());
   Range<ring_elem> coeffrange(ptr, ptr + elem->getCoeffVector().size());
@@ -445,11 +525,6 @@ int NCF4::prerowInReducersTodo(PreRow pr) const
         }
     }
   return retval;
-}
-
-bool NCF4::findPreviousReducer(Monom mon)
-{
-  return false;
 }
 
 std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
@@ -495,10 +570,52 @@ void NCF4::sortF4Matrix()
     }
 }
 
+void NCF4::reduceF4Row(int index,
+                       int first,
+                       int firstcol,
+                       long& numCancellations,
+                       Range<ring_elem>& dense)
+{
+  VectorArithmetic V(freeAlgebra().coefficientRing());
+
+  int sz = mRows[index].second.size();
+  //assert(sz > 0);  this may be zero when autoreducing the new gb elements
+  if (sz <= 1 && firstcol != -1) return;
+
+  int last = mRows[index].second[sz-1];
+
+  V.sparseRowToDenseRow(dense, mRows[index].first, mRows[index].second);
+  do {
+    int pivotrow = mColumns[first].second;
+    if (pivotrow >= 0)
+      {
+        numCancellations++;
+        V.denseRowCancelFromSparse(dense, mRows[pivotrow].first, mRows[pivotrow].second);
+        // last component in the row corresponding to pivotrow
+        int last1 = mRows[pivotrow].second.cend()[-1];
+        last = (last1 > last ? last1 : last);
+      }
+    else if (firstcol == -1)
+      {
+        firstcol = first;
+      }
+    first = V.denseRowNextNonzero(dense, first+1, last);
+  } while (first <= last);
+  V.denseRowToSparseRow(dense,
+                        mRows[index].first,
+                        mRows[index].second,
+                        firstcol,
+                        last);
+  if (mRows[index].first.size() > 0)
+    {
+      V.sparseRowMakeMonic(mRows[index].first);
+      mColumns[firstcol].second = index;
+    }
+}
+
 void NCF4::reduceF4Matrix()
 {
   long numCancellations = 0;
-  VectorArithmetic V(freeAlgebra().coefficientRing());
 
   // Create the dense array.
   ring_elem zero = freeAlgebra().coefficientRing()->zero();
@@ -507,108 +624,20 @@ void NCF4::reduceF4Matrix()
 
   // do we want to backsolve?  This slows things down a lot, but
   // we are not yet re-using this information for the next iteration at all.
-  // for (int i = mFirstOverlap - 1; i >= 0; --i)
-  // {
-  //   int sz = mRows[i].second.size();
-  //   assert(sz > 0);
-  //   if (sz == 1) continue;
-  //   int firstcol = mRows[i].second[0];  
-  //   int first = mRows[i].second[1];
-  //   int last = mRows[i].second[sz-1];
-
-  //   V.sparseRowToDenseRow(dense, mRows[i].first, mRows[i].second);
-  //   do {
-  //     int pivotrow = mColumns[first].second;
-  //     if (pivotrow >= 0)
-  //       {
-  //         numCancellations++;
-  //         V.denseRowCancelFromSparse(dense, mRows[pivotrow].first, mRows[pivotrow].second);
-  //         // last component in the row corresponding to pivotrow
-  //         int last1 = mRows[pivotrow].second.cend()[-1];
-  //         last = (last1 > last ? last1 : last);
-  //       }
-  //     first = V.denseRowNextNonzero(dense, first+1, last);
-  //   } while (first <= last);
-  //   V.denseRowToSparseRow(dense,
-  //                         mRows[i].first,
-  //                         mRows[i].second,
-  //                         firstcol,
-  //                         last);
-  //   if (mRows[i].first.size() > 0)
-  //     {
-  //       V.sparseRowMakeMonic(mRows[i].first);
-  //       mColumns[firstcol].second = i;
-  //     }
-  // }
+  #if 0
+  for (int i = mFirstOverlap - 1; i >= 0; --i)
+    reduceF4Row(i,mRows[i].second[1],mRows[i].second[0],numCancellations,dense);
+  #endif
 
   // reduce each overlap row by mRows.
-  for (int i=mFirstOverlap; i < mRows.size(); ++i)
-    {
-      int sz = mRows[i].second.size();
-      assert(sz > 0);
-      int firstcol = -1; // will be set to the first non-zero value in the result
-      int first = mRows[i].second[0];
-      int last = mRows[i].second[sz-1];
-
-      V.sparseRowToDenseRow(dense, mRows[i].first, mRows[i].second);
-      do {
-        int pivotrow = mColumns[first].second;
-        if (pivotrow >= 0)
-          {
-            numCancellations++;
-            V.denseRowCancelFromSparse(dense, mRows[pivotrow].first, mRows[pivotrow].second);
-            // last component in the row corresponding to pivotrow
-            int last1 = mRows[pivotrow].second.cend()[-1];
-            last = (last1 > last ? last1 : last);
-          }
-        else if (firstcol == -1)
-          {
-            firstcol = first;
-          }
-        first = V.denseRowNextNonzero(dense, first+1, last);
-      } while (first <= last);
-      V.denseRowToSparseRow(dense,
-                            mRows[i].first,
-                            mRows[i].second,
-                            firstcol,
-                            last);
-      if (mRows[i].first.size() > 0)
-        {
-          V.sparseRowMakeMonic(mRows[i].first);
-          mColumns[firstcol].second = i;
-        }
-    }
+  for (int i = mFirstOverlap; i < mRows.size(); ++i)
+    reduceF4Row(i,mRows[i].second[0],-1,numCancellations,dense); 
 
   // interreduce the overlaps
-  // #if 0
+  //#if 0
   for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
-  {
-    int sz = mRows[i].second.size();
-    if (sz <= 1) continue;
-    int firstcol = mRows[i].second[0];  
-    int first = mRows[i].second[1];
-    int last = mRows[i].second[sz-1];
-
-    V.sparseRowToDenseRow(dense, mRows[i].first, mRows[i].second);
-    do {
-      int pivotrow = mColumns[first].second;
-      if (pivotrow >= 0)
-        {
-          numCancellations++;
-          V.denseRowCancelFromSparse(dense, mRows[pivotrow].first, mRows[pivotrow].second);
-          // last component in the row corresponding to pivotrow
-          int last1 = mRows[pivotrow].second.cend()[-1];
-          last = (last1 > last ? last1 : last);
-        }
-      first = V.denseRowNextNonzero(dense, first+1, last);
-    } while (first <= last);
-    V.denseRowToSparseRow(dense,
-                          mRows[i].first,
-                          mRows[i].second,
-                          firstcol,
-                          last);
-  }
-  // #endif
+    reduceF4Row(i,mRows[i].second[1],mRows[i].second[0],numCancellations,dense);
+  //#endif
 
   std::cout << "Number of cancellations: " << numCancellations << std::endl;
 }

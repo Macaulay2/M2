@@ -898,7 +898,7 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "Naive"); -- (with auto
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"F4");    -- 2220 seconds, I think? (now 380 sec on FMs machine)
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"Naive"); -- 
 
-I = ideal I_*; elapsedTime Igb = NCGB(I, 6);
+gbTrace = 50; I = ideal I_*; elapsedTime Igb = NCGB(I, 3);
 I = ideal I_*; elapsedTime Igb = NCGB(I, 10); -- (with autoreduction) .9 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 11); -- (with autoreduction) 3.5 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12); -- (with autoreduction) 17.7 sec
@@ -910,7 +910,7 @@ time Igb = NCGB(I, 10, Strategy=>"Naive");
 S = R/I;
 #(flatten entries ncBasis(12,S)) == binomial(12+3,3)
 flatten entries Igb / degree
-all(11, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
+all(13, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
 apply(11, i -> #(flatten entries ncBasis(i, S)))
 
 getMons = f -> terms f / leadMonomial

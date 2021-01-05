@@ -46,6 +46,9 @@ private:
 
   MemoryBlock mMonomialSpace;
   MonomEq mMonomEq;
+  // The pair in this map is (i,j) where:
+  //    i is the column number
+  //    j is the row that reduces it (and -1 if there is no such row).
   std::map<Monom, std::pair<int,int>, MonomEq> mColumnMonomials;
   std::vector<PreRow> mReducersTodo;
   std::vector<PreRow> mOverlapsTodo;
@@ -54,12 +57,19 @@ private:
   VECTOR(Row) mOverlaps;
   int mFirstOverlap; // First non pivot row row (and all later ones are also non-pivot rows).
 
+  // storing previous F4 information
+  VECTOR(Row) mPreviousRows;
+  std::vector<Column> mPreviousColumns;
+  std::map<Monom, std::pair<int,int>, MonomEq> mPreviousColumnMonomials;  
+
 public:
   NCF4(const FreeAlgebra& A,
        const ConstPolyList& input,
        int hardDegreeLimit,
        int strategy
        );
+
+  ~NCF4() { mMonomialSpace.deallocateAll(); }
 
   const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; }
 
@@ -104,18 +114,26 @@ private:
   PolyList newGBelements();  // From current F4 matrix.
 
   Row processPreRow(PreRow r);
+  void processMonomInPreRow(Monom& m, int* nextcolloc);
 
   void preRowsFromOverlap(const Overlap& o);
 
   std::pair<bool, PreRow> findDivisor(Monom mon);
-
-  bool findPreviousReducer(Monom mon);
 
   void autoreduceByLastElement();
   ring_elem getCoeffOfMonom(const Poly& f, const Monom& m);
 
   void performBackSolve(VECTOR(ring_elem) denseVector, int i);
 
+  void reduceF4Row(int index,
+                   int first,
+                   int firstcol,
+                   long &numCancellations,
+                   Range<ring_elem>& dense);
+  
+  // return value is isFound, columnIndexOfFound
+  std::pair<bool,int> findPreviousReducerPrefix(const Monom& m) const;
+  std::pair<bool,int> findPreviousReducerSuffix(const Monom& m) const;
 };
 
 #endif

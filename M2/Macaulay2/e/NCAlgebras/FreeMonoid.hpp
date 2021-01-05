@@ -156,15 +156,20 @@ private:
 class MonomEq
 {
 public:
-  MonomEq(const FreeMonoid& M) : mMonoid(M) {}
+  MonomEq() : mMonoid(nullptr) {}
+  MonomEq(const FreeMonoid& M) : mMonoid(&M) {}
+  MonomEq(const MonomEq& M) : mMonoid(M.mMonoid) {}
+  MonomEq(MonomEq& M) : mMonoid(M.mMonoid) {}
+  ~MonomEq() {}
 
   bool operator() (const Monom a, const Monom b) const
   {
-    int retval = mMonoid.compare(a, b);
+    int retval = mMonoid->compare(a, b);
     return (retval == GT);
   }
+
 private:
-  const FreeMonoid& mMonoid;
+  const FreeMonoid* mMonoid;
 };
 
 #endif
