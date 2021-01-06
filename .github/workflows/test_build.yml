@@ -219,6 +219,7 @@ jobs:
            path: |
              # Autotools
              M2/BUILD/build/config.log
+             M2/BUILD/build/include/*
              M2/BUILD/build/libraries/*/build/*/config.log
              # CMake
              M2/BUILD/build/CMakeFiles/CMakeCache.txt
