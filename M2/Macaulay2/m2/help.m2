@@ -453,10 +453,12 @@ setAttribute(viewHelp#0, ReverseDictionary, symbol viewHelp)
 
 infoHelp = method(Dispatch => Thing)
 infoHelp Thing := key -> (
+    if key === () then infoHelp "Macaulay2Doc";
     tag := infoTagConvert makeDocumentTag(key, Package => null);
     if getenv "INSIDE_EMACS" == "" then chkrun ("info " | format tag)
     else print("-* infoHelp: " | tag | " *-");)
 infoHelp ZZ := i -> seeAbout(infoHelp, i)
+infoHelp = new Command from infoHelp
 
 -----------------------------------------------------------------------------
 -- View brief documentation within Macaulay2 using symbol?
