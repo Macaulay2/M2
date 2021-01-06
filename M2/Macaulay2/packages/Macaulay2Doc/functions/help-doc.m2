@@ -236,7 +236,7 @@ Node
       The documentation corresponding to the keys in the list returned can be displayed by applying the function
       @TO "help"@ to it. To see the documentation corresponding to just one or some of the keys, give @TO "help"@
       an integer or a list of integers to be used as indices in the list returned by the most recent application
-      of @TO "about"@. The functions @TO "viewHelp" and @TO "infoHelp"@ can also be given an integer for viewing
+      of @TO "about"@. The functions @TO "viewHelp"@ and @TO "infoHelp"@ can also be given an integer for viewing
       the documentation.
 
       The packages searched are the loaded packages and the packages installed under one of the prefixes listed
