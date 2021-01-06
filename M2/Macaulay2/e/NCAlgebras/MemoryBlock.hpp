@@ -29,6 +29,11 @@ public:
   }
 
   size_t getMemoryUsedInBytes() { return mArena.getMemoryUse(); } 
+
+  //void moveFrom(MemoryBlock& source) {
+  //  
+  //}
+
 private:
   memt::Arena mArena;
 };

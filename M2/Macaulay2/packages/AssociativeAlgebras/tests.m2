@@ -910,7 +910,7 @@ time Igb = NCGB(I, 10, Strategy=>"Naive");
 S = R/I;
 #(flatten entries ncBasis(12,S)) == binomial(12+3,3)
 flatten entries Igb / degree
-all(13, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
+all(11, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
 apply(11, i -> #(flatten entries ncBasis(i, S)))
 
 getMons = f -> terms f / leadMonomial

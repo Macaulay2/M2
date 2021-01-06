@@ -13,6 +13,7 @@
 #include <deque>                       // for deque
 #include <iosfwd>                      // for ostream
 #include <map>                         // for map
+#include <unordered_map>               // for unordered_map
 #include <tuple>                       // for tuple
 #include <utility>                     // for pair
 #include <vector>                      // for vector
@@ -67,6 +68,7 @@ private:
   VECTOR(Row) mPreviousRows;
   std::vector<Column> mPreviousColumns;
   std::map<Monom, std::pair<int,int>, MonomEq> mPreviousColumnMonomials;  
+  MemoryBlock mPreviousMonomialSpace;
 
 public:
   NCF4(const FreeAlgebra& A,
@@ -75,7 +77,7 @@ public:
        int strategy
        );
 
-  ~NCF4() { mMonomialSpace.deallocateAll(); }
+  ~NCF4() { mMonomialSpace.deallocateAll(); mPreviousMonomialSpace.deallocateAll(); }
 
   const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; }
 
@@ -118,7 +120,10 @@ private:
   auto overlapHeft(Overlap o) const -> int;
   auto insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void;
 
-  void reducedRowToPoly(Poly* result, int i) const;
+  void reducedRowToPoly(Poly* result,
+                        const VECTOR(Row)& rows,
+                        const std::vector<Column>& cols,
+                        int i) const;
   PolyList newGBelements() const;  // From current F4 matrix.
 
   Row processPreRow(PreRow r);
@@ -142,6 +147,8 @@ private:
   // return value is isFound, columnIndexOfFound
   std::pair<bool,int> findPreviousReducerPrefix(const Monom& m) const;
   std::pair<bool,int> findPreviousReducerSuffix(const Monom& m) const;
+
+  void processPreviousF4Matrix();
 };
 
 #endif

@@ -121,14 +121,9 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
       updateOverlaps(f);
     }
 
-  // copy the finished rows and columns into the holding areas
-  mPreviousRows.clear();
-  mPreviousColumns.clear();
-  mPreviousColumnMonomials.clear();  
-  mPreviousRows = std::move(mRows);
-  mPreviousColumns = std::move(mColumns); 
-  mPreviousColumnMonomials = std::move(mColumnMonomials);
-
+  // prepare reduced matrix for use in the next degree
+  processPreviousF4Matrix();
+  
 #if 0
   if (M2_gbTrace >= 2)
     {
@@ -139,6 +134,22 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
     }
 #endif
 
+}
+
+void NCF4::processPreviousF4Matrix()
+{
+  // copy the finished rows and columns into the holding areas
+  mPreviousRows.clear();
+  mPreviousColumns.clear();
+  mPreviousColumnMonomials.clear();
+  mPreviousMonomialSpace.deallocateAll();
+  mPreviousRows = std::move(mRows);
+  mPreviousColumns = std::move(mColumns); 
+  mPreviousColumnMonomials = std::move(mColumnMonomials);
+  // need to move mMonomialSpace to a holding area since all the monomials
+  // and int arrays in mPrevious data types are allocated there.
+  // not sure how to do a move of an arena
+  //mPreviousMonomialSpace.moveFrom(mMonomialSpace);
 }
 
 void NCF4::addToGroebnerBasis(Poly * toAdd)
@@ -228,19 +239,22 @@ PolyList NCF4::newGBelements() const // From current F4 matrix.
     {
       if (mRows[i].second.size() == 0) continue;
       Poly* f = new Poly;
-      reducedRowToPoly(f,i);
+      reducedRowToPoly(f,mRows,mColumns,i);
       result.push_back(f);
     }
   return result;
 }
 
-void NCF4::reducedRowToPoly(Poly* result, int i) const
+void NCF4::reducedRowToPoly(Poly* result,
+                            const VECTOR(Row)& rows,
+                            const std::vector<Column>& cols,
+                            int i) const
 {
   // this function places the elements of the ith row of the
   // (reduced!) F4 matrix in result.  This assumes that the first
   // term of the ith row is after the last entry of result (or that result is empty).
-  for (int j = 0; j < mRows[i].second.size(); j++)
-    freeAlgebra().add_to_end(*result, mRows[i].first[j], mColumns[mRows[i].second[j]].first);  
+  for (int j = 0; j < rows[i].second.size(); j++)
+    freeAlgebra().add_to_end(*result, rows[i].first[j], cols[rows[i].second[j]].first);  
 }
 
 ring_elem NCF4::getCoeffOfMonom(const Poly& f, const Monom& m)
@@ -279,9 +293,7 @@ void NCF4::matrixReset()
   mRows.clear();
   mOverlaps.clear();
   mFirstOverlap = 0;
-  // this was removed, because saving previous computation requires that
-  // we hold onto the Monoms
-  //mMonomialSpace.deallocateAll(); 
+  mMonomialSpace.deallocateAll(); 
 }
 
 void NCF4::preRowsFromOverlap(const Overlap& o)
@@ -384,12 +396,33 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
 
 std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m) const
 {
+  // build the largest proper prefix of m and look it up in previous
+  // mColumnMonomials table.  we will return (true, row index) if
+  // found and (false, -1) if not.
+
+  // note that just because the second coordinate of an
+  // mColumnMonomials entry is -1 does not mean there isn't a reducer
+  // in the row -- in this case it is a new GB element and already
+  // added to the mGroebner list.  In this case, we will be using that
+  // entry anyway so no need to make the additional effort to find it
+  // in the mRows table.
+
+  // get prefix of m
+  // search for prefix in mPreviousColumnMonomials
+  // if it.second.second != -1, then return (true,it.second.first)
+  // else return (false, -1)
   return std::make_pair(false,-1);
 }
 
 
 std::pair<bool,int> NCF4::findPreviousReducerSuffix(const Monom& m) const
 {
+  // basically the same as above, except with suffixes
+
+  // get suffix of m
+  // search for suffix in mPreviousColumnMonomials
+  // if it.second.second != -1, then return (true,it.second.first)
+  // else return (false, -1)
   return std::make_pair(false,-1);
 }
 
@@ -429,6 +462,7 @@ NCF4::Row NCF4::processPreRow(PreRow r)
   Word left = std::get<0>(r);
   int gbIndex = std::get<1>(r);
   Word right = std::get<2>(r);
+  bool prevReducer = std::get<3>(r);
 
   if (M2_gbTrace >= 100) 
     std::cout << "Processing PreRow: ("
@@ -437,12 +471,26 @@ NCF4::Row NCF4::processPreRow(PreRow r)
 
   // construct the elem corresponding to this prerow
   // it will either be:
-  //  an element of the input (if gbIndex < 0)
+  //  a multiple of a previously reduced row (if prevReducer)
+  //  an element of the input (if gbIndex < 0 and not prevReducer)
+  //  a multiple of a gb element (if gbIndex >= 0 and not prevReducer)
   const Poly* elem;
-  if (gbIndex < 0)
-      elem = mInput[-gbIndex-1];
+  if (prevReducer)
+  {
+    // in this case, we construct the poly locally for processing in this
+    // function.  We will destroy it at the end, as the new monomials for reduction
+    // are created and inserted into mMonomialSpace
+    Poly* tempelem = new Poly;
+    reducedRowToPoly(tempelem,mPreviousRows,mPreviousColumns,gbIndex);
+    elem = tempelem;
+  }
   else
+  {
+    if (gbIndex < 0)
+      elem = mInput[-gbIndex-1];
+    else
       elem = mGroebner[gbIndex];
+  }
 
   // loop through all monomials of the product
   // for each monomial:
@@ -467,6 +515,8 @@ NCF4::Row NCF4::processPreRow(PreRow r)
   ring_elem* ptr = newarray(ring_elem, elem->getCoeffVector().size());
   Range<ring_elem> coeffrange(ptr, ptr + elem->getCoeffVector().size());
   std::copy(elem->getCoeffVector().cbegin(), elem->getCoeffVector().cend(), coeffrange.begin());
+  // delete the poly created for prevReducer case, if necessary.
+  if (prevReducer) delete elem;
   return(Row(coeffrange, componentRange));
 }
 
@@ -486,22 +536,44 @@ int NCF4::prerowInReducersTodo(PreRow pr) const
   return retval;
 }
 
+static long findDivisorCalls = 0;
+static long previousPrefixesFound = 0;
+static long previousSuffixesFound = 0;
+
 std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
 {
   Word newword;
+
+  findDivisorCalls++;
+  if (M2_gbTrace >= 2 && findDivisorCalls % 100000 == 0)
+     std::cout << "Total findDivisorCalls    : " << findDivisorCalls << std::endl
+               << "  Prevoius prefixes found : " << previousPrefixesFound << std::endl
+               << "  Prevoius suffixes found : " << previousSuffixesFound << std::endl;       
 
   // look in previous F4 matrix for Monom before checking mWordTable
   auto usePreviousPrefix = findPreviousReducerPrefix(mon);
   if (usePreviousPrefix.first)
     {
       // here, we use a multiple of a previously reduced row
-      return std::make_pair(false, PreRow(Word(), 0, Word(), true));
+      previousPrefixesFound++;
+      return std::make_pair(true, PreRow(Word(),0,Word(),true));
+      // will eventually be:
+      //return std::make_pair(true, PreRow(Word(),
+      //                                   usePreviousPrefix.second,
+      //                                   freeAlgebra().monoid().lastVar(mon),
+      //                                   true));
     }
   auto usePreviousSuffix = findPreviousReducerSuffix(mon);
   if (usePreviousSuffix.first)
     {
       // here, we use a multiple of a previously reduced row
-      return std::make_pair(false, PreRow(Word(), 0, Word(), true));
+      previousPrefixesFound++;
+      return std::make_pair(true, PreRow(Word(),0,Word(),true));
+      // will eventually be:
+      //return std::make_pair(true, PreRow(freeAlgebra().monoid().firstVar(mon),
+      //                                   usePreviousSuffix.second,
+      //                                   Word(),
+      //                                   true));
     }
   // if we are here, then the Monom does not have a prefix/suffix
   // that was processed previously.
