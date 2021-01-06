@@ -135,14 +135,19 @@ file(MAKE_DIRECTORY ${M2_INSTALL_LICENSESDIR})
 # See https://cmake.org/cmake/help/latest/module/ExternalProject.html
 
 # http://eigen.tuxfamily.org/
+if(CMAKE_BUILD_TYPE MATCHES "(Debug|Release|RelWithDebInfo)")
+  set(EIGEN_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+else()
+  set(EIGEN_BUILD_TYPE Release)
+endif()
 ExternalProject_Add(build-eigen
-  URL               https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz
-  URL_HASH          SHA256=d56fbad95abf993f8af608484729e3d87ef611dd85b3380a8bad1d5cbc373a57
+  URL               https://gitlab.com/libeigen/eigen/-/archive/3.3.9/eigen-3.3.9.tar.bz2
+  URL_HASH          SHA256=0fa5cafe78f66d2b501b43016858070d52ba47bd9b1016b0165a7b8e04675677
   PREFIX            libraries/eigen
   BINARY_DIR        libraries/eigen/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
-                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                    -DCMAKE_BUILD_TYPE=${EIGEN_BUILD_TYPE}
                     -DBUILD_TESTING=${BUILD_TESTING}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
