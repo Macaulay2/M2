@@ -12,7 +12,7 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "1.0", 
-    Date => "January 5, 2021",
+    Date => "January 6, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -354,6 +354,14 @@ multirationalMap (MultirationalMap,MultiprojectiveVariety) := (Phi,Y) -> (
     return Psi;
 );
 
+check MultirationalMap := o -> Phi -> (
+    Y := target Phi;
+    L := factor Phi;
+    P := apply(projections Y,L,(p,f) -> if target p === target f then p else rationalMap(source p,ambient target f,matrix p));
+    for i to #L -1 do if not isSubset(image P_i,image L_i) then error "the target variety is not compatible with the maps";
+    Phi
+);
+
 source MultirationalMap := Phi -> Phi#"source";
 
 target MultirationalMap := Phi -> Phi#"target";
@@ -563,6 +571,34 @@ isIsomorphism MultirationalMap := Phi -> (
     isMorphism inverse(Phi,MathMode=>true)
 );
 
+MultirationalMap | MultiprojectiveVariety := (Phi,X) -> (
+    if X === source Phi then return Phi;
+    if ring ideal source Phi =!= ring ideal X then error "expected a subvariety in the ambient space of the source";
+    if not isSubset(X,source Phi) then error "expected a subvariety of the source";
+    I := multirationalMap(apply(multigens ring X,rationalMap),source Phi);
+    try assert(ring source I === ring X) else error "internal error encountered: bad source found";
+    I#"source" = X;
+    I * Phi
+);
+
+MultirationalMap | List := (Phi,d) -> ( -- undocumented
+    if not(# d == # (source Phi)#"dimAmbientSpaces" and all(d,i->instance(i,ZZ) and i>=0)) then error("expected a list of "|toString(# (source Phi)#"dimAmbientSpaces")|" non-negative integer(s) to indicate the degree of a hypersurface in the source"); 
+    Phi|((source Phi) * projectiveVariety ideal random(d,ring ambient source Phi))
+);
+
+MultirationalMap || MultiprojectiveVariety := (Phi,Y) -> (
+    if Y === target Phi then return Phi;
+    X := Phi^* Y;
+    I := multirationalMap(apply(multigens ring X,rationalMap),source Phi);
+    try assert(ring source I === ring X) else error "internal error encountered: bad source found";
+    I#"source" = X;
+    multirationalMap(I * Phi,Y)
+);
+
+MultirationalMap || List := (Phi,d) -> ( -- undocumented
+    if not(# d == # (target Phi)#"dimAmbientSpaces" and all(d,i->instance(i,ZZ) and i>=0)) then error("expected a list of "|toString(# (target Phi)#"dimAmbientSpaces")|" non-negative integer(s) to indicate the degree of a hypersurface in the target"); 
+    Phi||((target Phi) * projectiveVariety ideal random(d,ring ambient target Phi))
+);
 
 beginDocumentation() 
 
@@ -826,11 +862,11 @@ Caveat => {"At the moment there are just a few functions implemented."}}
 document { 
 Key => {multirationalMap, (multirationalMap,List,MultiprojectiveVariety), (multirationalMap,List)}, 
 Headline => "the multi-rational map defined by a list of rational maps", 
-Usage => "multirationalMap(Phi,Y)
-multirationalMap Phi", 
+Usage => "multirationalMap Phi
+check multirationalMap(Phi,Y)", 
 Inputs => { "Phi" => {ofClass List," of ",TO2{RationalMap,"rational maps"},", ",TEX///$\{\Phi_1:X\dashrightarrow Y_1\subseteq\mathbb{P}^{s_1},\ldots,\Phi_m:X\dashrightarrow Y_m\subseteq\mathbb{P}^{s_m}\}$///,", all having the same ",TO2{(source,RationalMap),"source"}," ",TEX///$X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}$///},
 "Y" => {ofClass MultiprojectiveVariety," ",TEX///$Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m}$///," (if omitted, then the ",TO2{(symbol **,MultiprojectiveVariety,MultiprojectiveVariety),"product"}," ",TEX///$Y_1\times\cdots \times Y_m$///," is taken)"}},
-Outputs => {MultirationalMap => {"the unique rational map ",TEX///$\Phi:X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}\dashrightarrow Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m}$///," such that ",TEX///$pr_i\circ\Phi = \Phi_i$///,", where ",TEX///$pr_i:Y\subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m} \to Y_i\subseteq \mathbb{P}^{s_i}$///," denotes the i-th projection (a check is performed on the consistency of ",TEX///$Y$///,")"}},
+Outputs => {MultirationalMap => {"the unique rational map ",TEX///$\Phi:X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}\dashrightarrow Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m}$///," such that ",TEX///$pr_i\circ\Phi = \Phi_i$///,", where ",TEX///$pr_i:Y\subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m} \to Y_i\subseteq \mathbb{P}^{s_i}$///," denotes the i-th projection"}},
 EXAMPLE {
 "ZZ/65521[x_0..x_4];",
 "f = rationalMap {x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2};",
@@ -844,9 +880,27 @@ EXAMPLE {
 "multirationalMap {h};",
 "multirationalMap {h,h};",
 "multirationalMap({h,h,h},Y ** projectiveVariety(target h));"},
-SeeAlso => {rationalMap,(symbol **,MultiprojectiveVariety,MultiprojectiveVariety),(graph,RationalMap)}}
+SeeAlso => {rationalMap,(symbol **,MultiprojectiveVariety,MultiprojectiveVariety),(graph,RationalMap)},
+Caveat => {"Be careful when you pass the target ",TT"Y"," as input, because it must be compatible with the maps but for efficiency reasons a full check is not done automatically. See ",TO (check,MultirationalMap),"."}}
 
 undocumented {(expression,MultirationalMap),(net,MultirationalMap)};
+
+document { 
+Key => {(check,MultirationalMap)}, 
+Headline => "check that a multi-rational map is well-defined", 
+Usage => "check Phi", 
+Inputs => {MultirationalMap}, 
+Outputs => {MultirationalMap => {"the same object passed as input, but an error is thrown if the target of the map is not compatible."}},
+EXAMPLE {
+"ZZ/65521[x_0..x_4], f = rationalMap {x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2};",
+"Phi = multirationalMap {f}",
+"check Phi",
+"Y = image Phi",
+"Psi = multirationalMap({f},Y)",
+"check Psi",
+"p = point Y;",
+"Eta = multirationalMap({f},p);",
+"try check Eta else <<\"meaningless object!\";"}}
 
 document { 
 Key => {(target,MultirationalMap)}, 
@@ -968,7 +1022,7 @@ MultirationalMap => "Phi"},
 Outputs => { 
 MultirationalMap => {"the first projection from the graph of ",TT"Phi"},
 MultirationalMap => {"the second projection from the graph of ",TT"Phi"}}, 
-PARA{"The equation ",TT"(first graph Phi) * Phi == last graph Phi"," is always satisfied."},
+PARA{"The equalities ",TT"(first graph Phi) * Phi == last graph Phi"," and ",TT"(first graph Phi)^-1 * (last graph Phi) == Phi"," are always satisfied."},
 EXAMPLE { 
 "ZZ/333331[x_0..x_4];",
 "Phi = multirationalMap {rationalMap(minors(2,matrix{{x_0..x_3},{x_1..x_4}}),Dominant=>true)}",
@@ -986,7 +1040,7 @@ source Phi1 == source Phi2 and target Phi1 == source Phi and target Phi2 == targ
 source Phi21 == source Phi22 and target Phi21 == source Phi2 and target Phi22 == target Phi2 and 
 source Phi211 == source Phi212 and target Phi211 == source Phi21 and target Phi212 == target Phi21)",
 "assert(Phi1 * Phi == Phi2 and Phi21 * Phi2 == Phi22 and Phi211 * Phi21 == Phi212)"},
-SeeAlso => {(graph,RationalMap),(symbol *,MultirationalMap,MultirationalMap),(symbol ==,MultirationalMap,MultirationalMap)}}
+SeeAlso => {(graph,RationalMap),(symbol *,MultirationalMap,MultirationalMap),(symbol ==,MultirationalMap,MultirationalMap),(inverse,MultirationalMap)}}
 
 document { 
 Key => {(symbol *,MultirationalMap,MultirationalMap),(compose,MultirationalMap,MultirationalMap)}, 
@@ -1155,7 +1209,7 @@ Headline => "the multi-projective variety defined by a multi-dimensional matrix"
 Usage => "projectiveVariety A", 
 Inputs => {MultidimensionalMatrix => "A" => {"an ",TEX///$n$///,"-dimensional matrix of shape ",TEX///$(k_1+1)\times\cdots\times (k_n+1)$///}}, 
 Outputs => {MultiprojectiveVariety => {"the corresponding hypersurface of multi-degree ",TEX///$(1,\ldots,1)$///," on the product of projective spaces ",TEX///$\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///}},
-PARA {"In particular, we have ",TO2{(determinant,MultidimensionalMatrix),"det"},TT" A == 0"," if and only if ",TO2{(dim,MultiprojectiveVariety),"dim"}," ",TO2{(singularLocus,MultiprojectiveVariety),"singularLocus"},TT"(projectiveVariety A) == -1","."},
+PARA {"In particular, we have ",TO2{(determinant,MultidimensionalMatrix),"det"},TT" A != 0"," if and only if ",TO2{(dim,MultiprojectiveVariety),"dim"}," ",TO2{(singularLocus,MultiprojectiveVariety),"singularLocus"},TT"(projectiveVariety A) == -1","."},
 EXAMPLE {
 "K = ZZ/33331;",
 "A = randomMultidimensionalMatrix({2,2,3},CoefficientRing=>K)",
@@ -1167,6 +1221,49 @@ EXAMPLE {
 "Y = projectiveVariety B;",
 "dim singularLocus Y"},
 SeeAlso => {(det,MultidimensionalMatrix),(singularLocus,MultiprojectiveVariety)}}
+
+document { 
+Key => {(symbol |,MultirationalMap,MultiprojectiveVariety)}, 
+Headline => "restriction of a multi-rational map", 
+Usage => "Phi | Z", 
+Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
+MultiprojectiveVariety => "Z" => {"a subvariety of ",TEX///$X$///}}, 
+Outputs => {MultirationalMap => {"the restriction of ",TEX///$\Phi$///," to ",TEX///$Z$///,", ",TEX///$\phi|_{Z}: Z \dashrightarrow Y$///}}, 
+EXAMPLE {
+"ZZ/33331[x_0..x_3], f = rationalMap {x_2^2-x_1*x_3,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2}, g = rationalMap {x_2^2-x_1*x_3,x_1*x_2-x_0*x_3};",
+"Phi = last graph multirationalMap {f,g};",
+"Z = (source Phi) * projectiveVariety ideal random({1,1,2},ring ambient source Phi);",
+"Phi' = Phi|Z;",
+"source Phi'",
+"assert(image Phi' == Phi Z)"},
+PARA{"The following is a shortcut to take restrictions on random hypersurfaces as above."},
+EXAMPLE {"Phi|{1,1,2};"},
+SeeAlso => {(symbol ||,MultirationalMap,MultiprojectiveVariety),(symbol |,RationalMap,Ideal),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety)}}
+
+document { 
+Key => {(symbol ||,MultirationalMap,MultiprojectiveVariety)}, 
+Headline => "restriction of a multi-rational map", 
+Usage => "Phi || Z", 
+Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
+MultiprojectiveVariety => "Z" => {"a subvariety of ",TEX///$Y$///}}, 
+Outputs => { 
+MultirationalMap => {"the restriction of ",TEX///$\Phi$///," to ",TEX///${\Phi}^{(-1)} Z$///,", ",TEX///${{\Phi}|}_{{\Phi}^{(-1)} Z}: {\Phi}^{(-1)} Z \dashrightarrow Z$///}}, 
+EXAMPLE {
+"ZZ/33331[x_0..x_3], f = rationalMap {x_2^2-x_1*x_3,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2}, g = rationalMap {x_2^2-x_1*x_3,x_1*x_2-x_0*x_3};",
+"Phi = last graph multirationalMap {f,g};",
+"Z = projectiveVariety ideal random({1,2},ring target Phi);",
+"Phi' = Phi||Z;",
+"target Phi'",
+"assert(source Phi' == Phi^* Z)"},
+PARA{"The following is a shortcut to take restrictions on random hypersurfaces as above."},
+EXAMPLE {"Phi||{1,2};"},
+SeeAlso => {(symbol |,MultirationalMap,MultiprojectiveVariety),(symbol ||,RationalMap,Ideal),(symbol ^*,MultirationalMap)}}
+
+undocumented {(symbol |,MultirationalMap,List),(symbol ||,MultirationalMap,List)}
+
+---------------
+---- Tests ----
+---------------
 
 TEST ///
 ZZ/300007[x_0..x_3], f = rationalMap {x_2^2-x_1*x_3, x_1*x_2-x_0*x_3, x_1^2-x_0*x_2}, g = rationalMap {x_1^2-x_0*x_2, x_0*x_3, x_1*x_3, x_2*x_3, x_3^2};
