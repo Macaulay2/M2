@@ -221,18 +221,26 @@ Word NCF4::createOverlapLeadWord(Overlap o)
   return Word(rg.first, rg.second);
 }
 
-PolyList NCF4::newGBelements()  // From current F4 matrix.
+PolyList NCF4::newGBelements() const // From current F4 matrix.
 {
   PolyList result;
   for (int i = mFirstOverlap; i < mRows.size(); i++)
     {
       if (mRows[i].second.size() == 0) continue;
       Poly* f = new Poly;
-      for (int j = 0; j < mRows[i].second.size(); j++)
-        freeAlgebra().add_to_end(*f, mRows[i].first[j], mColumns[mRows[i].second[j]].first);
+      reducedRowToPoly(f,i);
       result.push_back(f);
     }
   return result;
+}
+
+void NCF4::reducedRowToPoly(Poly* result, int i) const
+{
+  // this function places the elements of the ith row of the
+  // (reduced!) F4 matrix in result.  This assumes that the first
+  // term of the ith row is after the last entry of result (or that result is empty).
+  for (int j = 0; j < mRows[i].second.size(); j++)
+    freeAlgebra().add_to_end(*result, mRows[i].first[j], mColumns[mRows[i].second[j]].first);  
 }
 
 ring_elem NCF4::getCoeffOfMonom(const Poly& f, const Monom& m)
@@ -290,7 +298,7 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   if (overlapPos < 0)
     {
       // Sneaky trick: a PreRow with index a < 0 refers to generator with index -a-1
-      mOverlapsTodo.push_back(PreRow(Word(), - gbLeftIndex - 1, Word()));
+      mOverlapsTodo.push_back(PreRow(Word(), - gbLeftIndex - 1, Word(), false));
       return;
     }
   
@@ -326,13 +334,13 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   // not be sorted in term order.
   if (gbLeftIndex > gbRightIndex)
     {
-      mReducersTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2));
-      mOverlapsTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1));
+      mReducersTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2, false));
+      mOverlapsTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1, false));
     }
   else
     {  
-      mReducersTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1));
-      mOverlapsTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2));
+      mReducersTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1, false));
+      mOverlapsTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2, false));
     }
 }
 
@@ -387,19 +395,6 @@ std::pair<bool,int> NCF4::findPreviousReducerSuffix(const Monom& m) const
 
 void NCF4::processMonomInPreRow(Monom& m, int* nextcolloc) 
 {
-  auto usePreviousPrefix = findPreviousReducerPrefix(m);
-  if (usePreviousPrefix.first)
-    {
-      // here, we use a multiple of a previously reduced row
-      return;
-    }
-  auto usePreviousSuffix = findPreviousReducerSuffix(m);
-  if (usePreviousSuffix.first)
-    {
-      // here, we use a multiple of a previously reduced row
-      return;
-    }
-  //if we are here, then we process the term as usual.
   auto it = mColumnMonomials.find(m);
   if (it == mColumnMonomials.end())
     { 
@@ -440,6 +435,9 @@ NCF4::Row NCF4::processPreRow(PreRow r)
               << left << "," << gbIndex << "," << right << ")"
               << std::endl;
 
+  // construct the elem corresponding to this prerow
+  // it will either be:
+  //  an element of the input (if gbIndex < 0)
   const Poly* elem;
   if (gbIndex < 0)
       elem = mInput[-gbIndex-1];
@@ -457,7 +455,6 @@ NCF4::Row NCF4::processPreRow(PreRow r)
   //          and place this monomial into mColumns.
   //          and search for divisor for it.
   //        
-
   int nterms = elem->numTerms();
   auto componentRange = mMonomialSpace.allocateArray<int>(nterms);
   int* nextcolloc = componentRange.first;
@@ -492,20 +489,47 @@ int NCF4::prerowInReducersTodo(PreRow pr) const
 std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
 {
   Word newword;
+
+  // look in previous F4 matrix for Monom before checking mWordTable
+  auto usePreviousPrefix = findPreviousReducerPrefix(mon);
+  if (usePreviousPrefix.first)
+    {
+      // here, we use a multiple of a previously reduced row
+      return std::make_pair(false, PreRow(Word(), 0, Word(), true));
+    }
+  auto usePreviousSuffix = findPreviousReducerSuffix(mon);
+  if (usePreviousSuffix.first)
+    {
+      // here, we use a multiple of a previously reduced row
+      return std::make_pair(false, PreRow(Word(), 0, Word(), true));
+    }
+  // if we are here, then the Monom does not have a prefix/suffix
+  // that was processed previously.
+
+  // look in mWordTable for Monom
   freeAlgebra().monoid().wordFromMonom(newword, mon);
   std::pair<int,int> divisorInfo;
+  
+  // TODO: for certain inputs (e.g. Monoms that we *know* are of
+  //       the form xm or mx for m a standard monomial and x a
+  //       variable, one needs only to check prefixes or
+  //       suffixes, not all subwords.  Not sure how to utilize that
+  //       just yet.
+
   bool found = mWordTable.subword(newword, divisorInfo);
+  
   // if newword = x^a x^b x^c, with x^b in the word table, then:
   //  divisorInfo.first = index of the GB element with x^b as lead monomial.
   //  divisorInfo.second = position of the start of x^b in newword
   //   (that is, the length of x^a).
   if (not found)
-    return std::make_pair(false, PreRow(Word(), 0, Word()));
+    return std::make_pair(false, PreRow(Word(), 0, Word(), false));
+  // if found, then return this information to caller
   Word prefix = Word(newword.begin(), newword.begin() + divisorInfo.second);
   Word divisorWord = mWordTable[divisorInfo.first];
   Word suffix = Word(newword.begin() + divisorInfo.second + divisorWord.size(),
                      newword.end());
-  return std::make_pair(true, PreRow(prefix, divisorInfo.first, suffix));
+  return std::make_pair(true, PreRow(prefix, divisorInfo.first, suffix, false));
 }
 
 void NCF4::sortF4Matrix()

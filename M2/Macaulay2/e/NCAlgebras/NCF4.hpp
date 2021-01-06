@@ -38,8 +38,14 @@ private:
   // and data for the matrix itself.
 
   // memory space for monomials and words for F4 matrix.
-  // PreRow is the prefix, gb element and suffix for a reducer or overlap.
-  using PreRow = std::tuple<Word, int, Word>;
+  // PreRow is left, index of poly, right, prevReducer
+  // where the entries depend on the value of prevReducer.
+  // prevReducer = false: if index \geq 0, then left*mGroebner[index]*right
+  //                      is the lead term of a reducer.
+  //                      if index < 0, then left*mInput[-index-1]*right
+  //                      is the lead term of a reducer.
+  // prevReducer = true : left*mRows[i]*right is the lead term of a reducer
+  using PreRow = std::tuple<Word, int, Word, bool>;
   using Row = std::pair<Range<ring_elem>,
                         Range<int>>; // components corresponding to monomials appearing
   using Column = std::pair<Monom, int>; // monomial, pivot row for this monomial (if not -1).
@@ -111,7 +117,9 @@ private:
   void updateOverlaps(const Poly * toAdd);
   auto overlapHeft(Overlap o) const -> int;
   auto insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void;
-  PolyList newGBelements();  // From current F4 matrix.
+
+  void reducedRowToPoly(Poly* result, int i) const;
+  PolyList newGBelements() const;  // From current F4 matrix.
 
   Row processPreRow(PreRow r);
   void processMonomInPreRow(Monom& m, int* nextcolloc);
