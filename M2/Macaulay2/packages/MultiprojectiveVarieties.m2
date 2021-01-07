@@ -788,7 +788,7 @@ Usage => "segre X",
 Inputs => {"X" => MultiprojectiveVariety}, 
 Outputs => {{"the map returned by ",TO segre," ",TO2{(ring,MultiprojectiveVariety),"ring"}," ", TEX///$X$///}}, 
 EXAMPLE {"X = projectiveVariety ideal random({2,1},ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}]);","segre X"}, 
-SeeAlso => {segre}}
+SeeAlso => {segre,(segre,MultirationalMap)}}
 
 document {Key => {(point,MultiprojectiveVariety)}, 
 Headline => "pick a random rational point on a projective variety", 
@@ -803,7 +803,7 @@ Headline => "the singular locus of the variety",
 Usage => "singularLocus X", 
 Inputs => {"X" => MultiprojectiveVariety => {"which is assumed to be equidimensional"}}, 
 Outputs => { MultiprojectiveVariety => {"the singular locus of ", TEX///$X$///}}, 
-EXAMPLE {"X = projectiveVariety ideal random({2,1},ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}]);","singularLocus X;","Y = projectiveVariety intersect(ideal X,ideal random({1,1},ring ambient X));","singularLocus Y;"}} 
+EXAMPLE {"X = projectiveVariety ideal random({2,1},ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}]);","singularLocus X;","Y = X + projectiveVariety (ideal random({1,1},ring ambient X));","singularLocus Y;"}} 
 
 document {Key => {(symbol ==,MultiprojectiveVariety,MultiprojectiveVariety)}, 
 Headline => "equality of projective varieties", 
@@ -902,15 +902,21 @@ Inputs => {
 "psi" => {"another ",TO2{RationalMap,"morphism"}," ",TEX///$Y\to Z$///,", with the same target ",TEX///$Z$///}}, 
 Outputs => { 
 MultiprojectiveVariety => {"the fiber product ",TEX///$X\times_{Z} Y$///}},
-PARA {"The natural morphisms ",TEX///$X\times_{Z} Y\to X$///," and ",TEX///$X\times_{Z} Y\to Y$///," can be obtained using ",TO projections,"."},
+PARA {"The natural morphisms ",TEX///$X\times_{Z} Y\to X$///," and ",TEX///$X\times_{Z} Y\to Y$///," can be easily obtained using ",TO projections," and ",TO multirationalMap,"."},
 PARA {"As an example, we calculate the fiber product of the blowing up ",TEX///$\phi:Bl_{C}(\mathbb{P}^3)\to\mathbb{P}^3$///," of ",TEX///$\mathbb{P}^3$///," along a twisted cubic curve ",TEX///$C\subset\mathbb{P}^3$///," and the inclusion ",TEX///$\psi:L\to \PP^3$///," of a secant line ",TEX///$L\subset\mathbb{P}^3$///," to ",TEX///$C$///,"."},
 EXAMPLE {
 "ringP3 = ZZ/33331[a..d]; C = ideal(c^2-b*d,b*c-a*d,b^2-a*c), L = ideal(b+c+d,a-d)", 
 "phi = first graph rationalMap C;",
 "psi = parametrize L;",
 "F = fiberProduct(phi,psi);",
-"describe F"},
-SeeAlso => {(symbol **,MultiprojectiveVariety,MultiprojectiveVariety)}}
+"describe F",
+"p = projections F;",
+"-- first natural morphism
+phi' = check multirationalMap({p_0,p_1},projectiveVariety source phi);",
+"-- second natural morphism
+psi' = check multirationalMap({p_2},projectiveVariety source psi);",
+"assert(phi' * phi == psi' * psi)"},
+SeeAlso => {(symbol **,MultiprojectiveVariety,MultiprojectiveVariety),(symbol ^**,MultirationalMap,MultiprojectiveVariety)}}
 
 document { 
 Key => {(euler,MultiprojectiveVariety)}, 
@@ -957,7 +963,7 @@ EXAMPLE {
 "multirationalMap {h,h};",
 "multirationalMap({h,h,h},Y ** projectiveVariety(target h));",
 "describe oo!"},
-SeeAlso => {rationalMap,(symbol **,MultiprojectiveVariety,MultiprojectiveVariety),(graph,RationalMap)},
+SeeAlso => {rationalMap,(graph,MultirationalMap),(image,MultirationalMap),(baseLocus,MultirationalMap),(inverse,MultirationalMap)},
 Caveat => {"Be careful when you pass the target ",TT"Y"," as input, because it must be compatible with the maps but for efficiency reasons a full check is not done automatically. See ",TO (check,MultirationalMap),"."}}
 
 undocumented {(expression,MultirationalMap),(net,MultirationalMap),(describe,MultirationalMap),(symbol !,MultirationalMap)};
@@ -1070,7 +1076,7 @@ EXAMPLE {
 "Y = projectiveVariety ideal(random({1,1},ring target Phi), random({1,1},ring target Phi));",
 "time X = Phi^* Y;",
 "dim X, degree X, degrees X"},
-SeeAlso => {(symbol SPACE,MultirationalMap,MultiprojectiveVariety),(symbol ^*,RationalMap)}}
+SeeAlso => {(symbol SPACE,MultirationalMap,MultiprojectiveVariety),(symbol ^*,RationalMap),(symbol ||,MultirationalMap,MultiprojectiveVariety)}}
 
 document {Key => {(segre,MultirationalMap)}, 
 Headline => "the composition of a multi-rational map with the Segre embedding of the target", 
@@ -1104,14 +1110,14 @@ EXAMPLE {
 "ZZ/333331[x_0..x_4];",
 "Phi = multirationalMap {rationalMap(minors(2,matrix{{x_0..x_3},{x_1..x_4}}),Dominant=>true)}",
 "time (Phi1,Phi2) = graph Phi",
-"Phi1",
-"Phi2",
+"Phi1;",
+"Phi2;",
 "time (Phi21,Phi22) = graph Phi2", 
-"Phi21",
-"Phi22",
+"Phi21;",
+"Phi22;",
 "time (Phi211,Phi212) = graph Phi21",
-"Phi211",
-"Phi212",
+"Phi211;",
+"Phi212;",
 "assert(
 source Phi1 == source Phi2 and target Phi1 == source Phi and target Phi2 == target Phi and
 source Phi21 == source Phi22 and target Phi21 == source Phi2 and target Phi22 == target Phi2 and 
