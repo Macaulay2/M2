@@ -373,7 +373,7 @@ We also define r0 and r1 following the formulas given in Notation 5.2 of BEKS.  
 construction r0 is always 0.  Our restriction on w essentially amounts to the condition
 that r1 must equal 1 or 2.  The code thus gives an error message when r1<1 or r1>2.
 
-The desired map will be constructued as a composite g5 * g4 * g3 * g2 * g1 * g0 from
+The desired map will be constructed as a composite g5 * g4 * g3 * g2 * g1 * g0 from
 F1->G1->G2->G3->G4->G5->F0.  This follows the construction outlined in Section 4 of BEKS.
 
 The modules are defined as follows.  The definition of F1 and F0 can be found in Theorem 5.3
@@ -530,7 +530,7 @@ tensorComplex1 (LabeledModuleMap,List) := LabeledModuleMap => (f,w) -> (
 tensorComplex1 LabeledModuleMap := LabeledModuleMap => f -> (
   -- The output is the first map F0 <- F1 of the balanced tensor complex.
   -- If f is not balanced this outputs an error.  
-  -- If f is balanced, then this computes the appopriate weight w, and calls the other
+  -- If f is balanced, then this computes the appropriate weight w, and calls the other
   -- version of this method.
   if not isBalanced f then error "The map f is not a balanced tensor. Need to add a weight vector as a second input.";
   S := ring f;
@@ -1112,7 +1112,7 @@ doc ///
      : LabeledModuleMap
    Description
     Text
-      Given a degree sequence $d\in \mathbb Z^{n+1}$ and a field $k$ of arbtirary characteristic, 
+      Given a degree sequence $d\in \mathbb Z^{n+1}$ and a field $k$ of arbitrary characteristic, 
       this produces the first map of pure resolution of type d as constructed by
       Eisenbud and Schreyer in Section 5 of ``Betti numbers of graded modules and cohomology 
       of vector bundles''.  The cokernel of this map is a module of finite of length over a
@@ -1177,7 +1177,7 @@ doc ///
      : LabeledModuleMap
    Description
     Text
-      Given a degree sequence $d\in \mathbb Z^{n+1}$ and a field $k$ of arbtirary characteristic, 
+      Given a degree sequence $d\in \mathbb Z^{n+1}$ and a field $k$ of arbitrary characteristic, 
       this produces the first map of a balanced tensor complex with a 
       pure resolution of type d, as constructed in Section 3
       of the paper ``Tensor Complexes: Multilinear free resolutions constructed from higher tensors
