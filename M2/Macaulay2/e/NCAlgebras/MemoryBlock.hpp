@@ -32,6 +32,12 @@ public:
     return result;
   }
 
+  template<typename T>
+  void freeTopArray(T* begin, T*end)
+  {
+    mArena->freeTopArray(begin,end);
+  }
+
   void deallocateAll()
   {
     mArena->freeAllAllocs();

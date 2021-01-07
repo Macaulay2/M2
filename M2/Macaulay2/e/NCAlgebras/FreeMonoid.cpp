@@ -273,6 +273,40 @@ void FreeMonoid::wordSuffixFromMonom(Word& result, const Monom& m, int beginInde
   result.init(m.begin() + mNumWeights + 1 + beginIndex, m.end());
 }
 
+void FreeMonoid::monomPrefixFromMonom(MonomialInserter& result,
+                                      const Monom& m,
+                                      int toDrop) const
+{
+  if (is_one(m)) {   // if the monomial is the empty monomial
+    for (auto i : m) result.push_back(i);
+    return;
+  }  
+  result.push_back(m.size()-toDrop);
+  int monomOffset = numWeights() + 1;
+  for (int i = 0; i < numWeights(); ++i) result.push_back(0);
+  for (int i = 0; i < m.size()-toDrop; ++i)
+    result.push_back(m[monomOffset + i]);
+  Monom tmp(result.data());
+  setWeights(tmp);
+}
+
+void FreeMonoid::monomSuffixFromMonom(MonomialInserter& result,
+                                      const Monom& m,
+                                      int toDrop) const
+{
+  if (is_one(m)) {   // if the monomial is the empty monomial
+    for (auto i : m) result.push_back(i);
+    return;
+  }  
+  result.push_back(m.size()-toDrop);
+  int monomOffset = numWeights() + 1;
+  for (int i = 0; i < numWeights(); ++i) result.push_back(0);
+  for (int i = toDrop; i < m.size(); ++i)
+    result.push_back(m[monomOffset + i]);
+  Monom tmp(result.data());
+  setWeights(tmp);
+}
+
 void FreeMonoid::monomInsertFromWord(MonomialInserter& result, const Word& word) const
 {
   result.push_back(word.size() + mNumWeights + 1);
@@ -375,6 +409,19 @@ void FreeMonoid::support(const Monom& m, std::vector<int> &result) const
   for (auto i = 0; i < numVars(); i++)
     if (varsFound[i] > 0) result.push_back(i);
 } 
+
+Word FreeMonoid::firstVar(const Monom& m) const
+{
+  if (is_one(m)) return Word();
+  int monomOffset = numWeights() + 1;
+  return Word(m.begin() + monomOffset,m.begin() + monomOffset + 1);
+}
+
+Word FreeMonoid::lastVar(const Monom& m) const
+{
+  if (is_one(m)) return Word();
+  return Word(m.begin() + m.size() - 1, m.begin() + m.size());
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

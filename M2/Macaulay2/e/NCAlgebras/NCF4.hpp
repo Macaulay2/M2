@@ -154,8 +154,9 @@ private:
                    Range<ring_elem>& dense);
   
   // return value is isFound, columnIndexOfFound
-  std::pair<bool,int> findPreviousReducerPrefix(const Monom& m) const;
-  std::pair<bool,int> findPreviousReducerSuffix(const Monom& m) const;
+  // discard const qualifier here again because this creates a monom in mMonomialSpace
+  std::pair<bool,int> findPreviousReducerPrefix(const Monom& m);
+  std::pair<bool,int> findPreviousReducerSuffix(const Monom& m);
 
   void processPreviousF4Matrix();
 };

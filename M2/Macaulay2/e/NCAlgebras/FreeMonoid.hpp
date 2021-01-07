@@ -128,6 +128,8 @@ public:
   void wordFromMonom(Word& result, const Monom& m) const;
   void wordPrefixFromMonom(Word& result, const Monom& m, int endIndex) const;
   void wordSuffixFromMonom(Word& result, const Monom& m, int beginIndex) const;
+  void monomPrefixFromMonom(MonomialInserter& result, const Monom& m, int toDrop) const;
+  void monomSuffixFromMonom(MonomialInserter& result, const Monom& m, int toDrop) const;
   void monomInsertFromWord(MonomialInserter& result, const Word& w) const;
 
   // some functions to create monoms from words and monoms, placing result in
@@ -141,6 +143,10 @@ public:
 
   // monomial support functions
   void support(const Monom& m, std::vector<int>& result) const;
+
+  // first and last variable functions
+  Word firstVar(const Monom& m) const;
+  Word lastVar(const Monom& m) const;
 
 private:
   int wordLength(const Monom&m) const { return m[0] - mNumWeights - 1; }
