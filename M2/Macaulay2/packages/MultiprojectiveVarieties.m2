@@ -430,6 +430,12 @@ multirationalMap MultiprojectiveVariety := X -> (
     I
 );
 
+multirationalMap (MultiprojectiveVariety,MultiprojectiveVariety) := (X,Y) -> (
+    if X === Y then return multirationalMap X;
+    I := multirationalMap(super multirationalMap X,Y);
+    try return check I else error "not able to define a natural map between the two varieties";
+);
+
 MultirationalMap == ZZ := (Phi,n) -> (
     if n =!= 1 then error "encountered integer other than 1 in comparison with a multi-rational map";
     if source Phi =!= target Phi then error "source and target are different";
@@ -674,7 +680,7 @@ beginDocumentation()
 
 document {Key => {MultiprojectiveVarieties}, 
 Headline => "Multi-projective varieties and multi-rational maps",
-PARA{"This is a work in progress package to handling multi-projective varieties, that is, closed subvarieties of products of projective spaces. Most of the functions come from the package ",TO Cremona,", which treats ",TO2{RationalMap,"rational maps"}," from multi-projective varieties to ",EM"standard"," projective varieties, ",TEX///$X\subseteq \mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}\dashrightarrow Y\subseteq\mathbb{P}^N$///,"."}}
+PARA{"This is a work in progress package to handling multi-projective varieties, that is, closed subvarieties of products of projective spaces, and rational maps between them. This extends the package ",TO Cremona,", which treats ",TO2{RationalMap,"rational maps"}," from multi-projective varieties to ",EM"standard"," projective varieties, ",TEX///$X\subseteq \mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}\dashrightarrow Y\subseteq\mathbb{P}^N$///,"."}}
 
 document {Key => {MultiprojectiveVariety}, 
 Headline => "the class of all multi-projective varieties", 
@@ -1201,7 +1207,23 @@ Key => {(multirationalMap,MultiprojectiveVariety)},
 Headline => "identity map", 
 Usage => "multirationalMap X", 
 Inputs => {MultiprojectiveVariety => "X"}, 
-Outputs => {MultirationalMap => {"the identity map on ",TT"X"}}}
+Outputs => {MultirationalMap => {"the identity map on ",TT"X"}},
+SeeAlso => {(multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety)}}
+
+document { 
+Key => {(multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety)}, 
+Headline => "get the natural inclusion", 
+Usage => "multirationalMap(X,Y)", 
+Inputs => {MultiprojectiveVariety => "X",MultiprojectiveVariety => "Y" => {"with ",TEX///$X\subseteq Y$///," (after identifying the ambient spaces)"}}, 
+Outputs => {MultirationalMap => {"the natural inclusion of ",TEX///$X$///," into ",TEX///$Y$///}},
+EXAMPLE {
+"R = ZZ/101[a_0,a_1,b_0..b_2,Degrees=>{2:{1,0},3:{0,1}}], S = ZZ/101[c_0,c_1,d_0..d_2,Degrees=>{2:{1,0},3:{0,1}}]",
+"I = ideal (random({0,1},R),random({1,1},R)), J = sub(I,vars S)",
+"X = projectiveVariety I, Y = projectiveVariety J",
+"multirationalMap(X,ambient X);",
+"multirationalMap(X,Y);",
+"try multirationalMap(ambient X,X) else <<\"not able to construct it!\";"},
+SeeAlso => {(multirationalMap,MultiprojectiveVariety)}}
 
 document { 
 Key => {(multirationalMap,MultirationalMap,MultiprojectiveVariety)}, 
