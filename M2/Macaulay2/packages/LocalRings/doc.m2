@@ -31,7 +31,7 @@ Description
     D = C ** RM;
     E = pruneComplex D
   Text
-    That is to say, the rational quartic curve is not locally Cohen-Macaulay at the origin
+    That is to say, the rational quartic curve is not locally Cohen-Macaulay at the origin.
     Therefore the curve is not Cohen-Macaulay
   Example
     RP = localRing(R, P);
