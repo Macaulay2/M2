@@ -330,8 +330,8 @@ multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
         "target" => Y,
         "source" => projectiveVariety(R,Saturate=>false),
         "image" => null,
-        "isDominant" => if #L == 1 then (first L)#"isDominant" else null,
-        "isBirational" => if #L == 1 then (first L)#"isBirational" else null,
+        "isDominant" => null,
+        "isBirational" => null,
         "compositionWithSegreEmbedding" => null,
         "graph" => null,
         "baseLocus" => null,
@@ -343,12 +343,14 @@ multirationalMap List := L -> (
     if not (# L > 0 and all(L,f -> instance(f,RationalMap) or instance(f,MultihomogeneousRationalMap))) then error "expected a list of rational maps";
     Y := projectiveVariety(target first L,Saturate=>false);
     for i from 1 to #L-1 do Y = Y ** (projectiveVariety(target L_i,Saturate=>false));
-    multirationalMap(L,Y)
+    Phi := multirationalMap(L,Y);
+    if #L == 1 then Phi#"isDominant" = (first L)#"isDominant";
+    if #L == 1 then Phi#"isBirational" = (first L)#"isBirational";
+    Phi
 );
 
 multirationalMap (MultirationalMap,MultiprojectiveVariety) := (Phi,Y) -> (
     if Y === target Phi then return Phi;
-    if not isSubset(Y,target Phi) then error "expected a subvariety of the target";
     Psi := multirationalMap(factor Phi,Y);
     if Phi#"image" === Y then Psi#"isDominant" = true;
     return Psi;
@@ -1206,8 +1208,8 @@ Key => {(multirationalMap,MultirationalMap,MultiprojectiveVariety)},
 Headline => "change the target of a rational map", 
 Usage => "multirationalMap(Phi,Y)
 check multirationalMap(Phi,Y)", 
-Inputs => {MultirationalMap => "Phi",MultiprojectiveVariety => "Y" => {"a ",TO2{(isSubset,MultiprojectiveVariety,MultiprojectiveVariety),"subvariety"}," of the target of ",TT"Phi"}}, 
-Outputs => {MultirationalMap => {"which is defined in the same way but with ",TT"Y"," as target"}},
+Inputs => {MultirationalMap => "Phi",MultiprojectiveVariety => "Y" => {"which must be compatible with ",TT"Phi"}}, 
+Outputs => {MultirationalMap => {"defined in the same way as ",TT"Phi"," but with ",TT"Y"," as target"}},
 EXAMPLE {
 "Phi = multirationalMap {super specialQuadraticTransformation 1}",
 "Y = image Phi",
