@@ -628,6 +628,7 @@ TEST ///
 
   elapsedTime NCGB(I, 23); 
     -- 27/12/2019, Mike MBP: 12.2 sec
+    -- 6/1/2021, Frank MBP: 2.1 sec
   *-
 ///
 

@@ -5,13 +5,15 @@
 #include "ringelem.hpp"          // for ring_elem
 
 #include <iostream>
+#include <execution>
 
 void VectorArithmetic::sparseRowToDenseRow(Range<ring_elem> dense,
                                            const Range<ring_elem>& coeffs,
                                            const Range<int>& comps) const
 {
   // FM: Do we have to set these to zero before filling?  If not, why not?
-  std::fill(dense.begin(),dense.end(),mRing->zero());
+  //std::fill(dense.begin(),dense.end(),mRing->zero());
+  // dense is zeroed out in denseRowToSparseRow after moving it out.
   for (int i = 0; i < comps.size(); i++) dense[comps[i]] = coeffs[i];
 }
 
@@ -38,10 +40,12 @@ void VectorArithmetic::denseRowCancelFromSparse(Range<ring_elem> dense,
   //                                     mRing->mult(a,p.first));
   // }
 
-  // std::for_each
+  // std::for_each with parallel?
   // ring_elem a = dense[comps[0]];
-  // std::for_each(pairRange.cbegin(),
-  //               pairRange.cend(),
+  // PairRange<ring_elem,int> pairRange(coeffs,comps);
+  // std::for_each( // std::execution::par,  // not available yet...
+  //               pairRange.begin(),
+  //               pairRange.end(),
   //               [&dense,a,this](std::pair<ring_elem,int> p) {
   //                 dense[p.second] = this->mRing->subtract(dense[p.second], 
   //                                                         this->mRing->mult(a,p.first));
