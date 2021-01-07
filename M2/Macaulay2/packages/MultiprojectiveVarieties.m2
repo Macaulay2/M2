@@ -600,6 +600,51 @@ MultirationalMap || List := (Phi,d) -> ( -- undocumented
     Phi||((target Phi) * projectiveVariety ideal random(d,ring ambient target Phi))
 );
 
+describeInt (MutableHashTable,ZZ,ZZ) := (Phi,I,N) -> (
+    d := max degrees ideal compress matrix Phi; 
+    isStandardMap := false; if class Phi#"dimAmbientTarget" === ZZ then (d = first d; isStandardMap = true);
+    descr:="rational map ("|toString(I)|"/"|toString(N)|") defined by "|(if not isStandardMap then "multiforms" else "forms")|" of degree "|toString(d)|newline;
+    descr=descr|"target variety: "|expressionVar(ideal source Phi#"map",Phi#"dimSource",Phi#"dimAmbientSource")|newline;
+    if Phi#"isDominant" =!= true and Phi#"idealImage" =!= null then descr=descr|"image: "|expressionVar(if Phi#"dimAmbientSource" == Phi#"dimSource" then Phi#"idealImage" else (lift(Phi#"idealImage",ambient source Phi#"map") + ideal source Phi#"map"))|newline;
+    if Phi#"isDominant" =!= null then descr=descr|"dominance: "|toString(Phi#"isDominant")|newline;
+    if Phi#"isBirational" =!= null then descr=descr|"birationality: "|toString(Phi#"isBirational")|newline;
+    if Phi#"isBirational" =!= true and Phi#"degree" =!= null then descr=descr|"degree of map: "|toString(Phi#"degree")|newline;
+    if Phi#"projectiveDegrees" =!= {} then descr=descr|"projective degrees: "|toString(Phi#"projectiveDegrees")|newline;
+    if Phi#"maps" =!= null then (
+                 descr=descr|"number of minimal representatives: "|toString(# Phi#"maps");
+                 if # Phi#"maps" >1 then descr=descr|", with degrees "|toString(toSequence apply(Phi#"maps",F-> max degrees ideal compress toMatrix F));
+                 descr=descr|newline;
+                 B:=ideal Phi; dimB:=max(dim B - (# heft ambient source Phi),-1);
+                 descr=descr|"dimension base locus: "|toString(dimB)|newline;    
+    );
+    descr
+);
+
+describe MultirationalMap := Phi -> (
+    F := factor Phi;
+    descr:="multi-rational map consisting of "|(if #F == 1 then "one single rational map" else (toString(#F))|" rational maps")|newline;
+    descr=descr|"source variety: "|(? source Phi)|newline;
+    descr=descr|"target variety: "|(? target Phi)|newline;
+    if Phi#"baseLocus" =!= null then descr=descr|"base locus: "|(? baseLocus Phi)|newline;
+    if Phi#"isDominant" =!= true and Phi#"image" =!= null then descr=descr|"image: "|(? image Phi)|newline;
+    if Phi#"isDominant" =!= null then descr=descr|"dominance: "|toString(Phi#"isDominant")|newline;
+    if Phi#"isBirational" =!= null then descr=descr|"birationality: "|toString(Phi#"isBirational")|newline;
+    for i to #F-1 do (
+        descr=descr|"--"|newline;
+        descr=descr|describeInt(F_i,i+1,#F)
+    );
+    descr = descr|"--"|newline;
+    descr=descr|"coefficient ring: "|toString(coefficientRing Phi);
+    net expression descr
+);
+
+MultirationalMap ! := Phi -> (
+    apply(factor Phi,f -> f!);
+    image Phi;
+    isMorphism Phi;
+    Phi
+);
+
 beginDocumentation() 
 
 document {Key => {MultiprojectiveVarieties}, 
@@ -863,7 +908,7 @@ document {
 Key => {multirationalMap, (multirationalMap,List,MultiprojectiveVariety), (multirationalMap,List)}, 
 Headline => "the multi-rational map defined by a list of rational maps", 
 Usage => "multirationalMap Phi
-check multirationalMap(Phi,Y)", 
+multirationalMap(Phi,Y)", 
 Inputs => { "Phi" => {ofClass List," of ",TO2{RationalMap,"rational maps"},", ",TEX///$\{\Phi_1:X\dashrightarrow Y_1\subseteq\mathbb{P}^{s_1},\ldots,\Phi_m:X\dashrightarrow Y_m\subseteq\mathbb{P}^{s_m}\}$///,", all having the same ",TO2{(source,RationalMap),"source"}," ",TEX///$X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}$///},
 "Y" => {ofClass MultiprojectiveVariety," ",TEX///$Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m}$///," (if omitted, then the ",TO2{(symbol **,MultiprojectiveVariety,MultiprojectiveVariety),"product"}," ",TEX///$Y_1\times\cdots \times Y_m$///," is taken)"}},
 Outputs => {MultirationalMap => {"the unique rational map ",TEX///$\Phi:X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}\dashrightarrow Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m}$///," such that ",TEX///$pr_i\circ\Phi = \Phi_i$///,", where ",TEX///$pr_i:Y\subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m} \to Y_i\subseteq \mathbb{P}^{s_i}$///," denotes the i-th projection"}},
@@ -879,11 +924,12 @@ EXAMPLE {
 "h = last graph f;",
 "multirationalMap {h};",
 "multirationalMap {h,h};",
-"multirationalMap({h,h,h},Y ** projectiveVariety(target h));"},
+"multirationalMap({h,h,h},Y ** projectiveVariety(target h));",
+"describe oo!"},
 SeeAlso => {rationalMap,(symbol **,MultiprojectiveVariety,MultiprojectiveVariety),(graph,RationalMap)},
 Caveat => {"Be careful when you pass the target ",TT"Y"," as input, because it must be compatible with the maps but for efficiency reasons a full check is not done automatically. See ",TO (check,MultirationalMap),"."}}
 
-undocumented {(expression,MultirationalMap),(net,MultirationalMap)};
+undocumented {(expression,MultirationalMap),(net,MultirationalMap),(describe,MultirationalMap),(symbol !,MultirationalMap)};
 
 document { 
 Key => {(check,MultirationalMap)}, 
@@ -1135,14 +1181,16 @@ Outputs => {MultirationalMap => {"the identity map on ",TT"X"}}}
 document { 
 Key => {(multirationalMap,MultirationalMap,MultiprojectiveVariety)}, 
 Headline => "change the target of a rational map", 
-Usage => "multirationalMap(Phi,Y)", 
+Usage => "multirationalMap(Phi,Y)
+check multirationalMap(Phi,Y)", 
 Inputs => {MultirationalMap => "Phi",MultiprojectiveVariety => "Y" => {"a ",TO2{(isSubset,MultiprojectiveVariety,MultiprojectiveVariety),"subvariety"}," of the target of ",TT"Phi"}}, 
 Outputs => {MultirationalMap => {"which is defined in the same way but with ",TT"Y"," as target"}},
 EXAMPLE {
 "Phi = multirationalMap {super specialQuadraticTransformation 1}",
 "Y = image Phi",
 "Psi = multirationalMap(Phi,Y)",
-"target Psi"}}
+"target Psi"},
+SeeAlso => {(check,MultirationalMap)}}
 
 document { 
 Key => {(inverse,MultirationalMap)}, 
@@ -1163,7 +1211,7 @@ Phi = multirationalMap(Phi,image Phi);",
 "time inverse Psi;",
 "Eta = first graph Psi;",
 "time inverse Eta;", 
-"for i to 2 do <<\"map n. \"<<i+1<<endl<<describe ((factor inverse Eta)_i)!<<endl<<endl;",
+"describe oo!",
 "assert(Phi * Phi^-1 == 1 and Phi^-1 * Phi == 1)",
 "assert(Psi * Psi^-1 == 1 and Psi^-1 * Psi == 1)",
 "assert(Eta * Eta^-1 == 1 and Eta^-1 * Eta == 1)"},
@@ -1189,7 +1237,8 @@ ZZ/33331[a..d]; f = rationalMap {c^2-b*d,b*c-a*d,b^2-a*c};",
 "time isIsomorphism Psi",
 "Eta = first graph Psi;",
 "time isIsomorphism Eta",
-"describe last factor Eta",
+"describe Eta!",
+"describe (inverse Eta)!",
 "assert(o8 and (not o6) and (not o4))"},
 SeeAlso => {(inverse,MultirationalMap),(isMorphism,MultirationalMap)}}
 
