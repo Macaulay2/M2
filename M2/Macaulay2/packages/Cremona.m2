@@ -711,8 +711,6 @@ inverse (RationalMap,Option) := (Phi,opt) -> (
 
 inverse (RationalMap) := (Phi) -> inverse(Phi,MathMode=>false);
 
-inverse (MultihomogeneousRationalMap) := (Phi) -> error "not implemented yet: inverse map of a birational map from a multi-projective variety";
-
 RationalMap ! := (Phi) -> (
      toMap Phi;
      try inverse Phi;
