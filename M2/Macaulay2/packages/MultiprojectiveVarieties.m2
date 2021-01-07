@@ -12,7 +12,7 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "1.0", 
-    Date => "January 6, 2021",
+    Date => "January 7, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -599,6 +599,26 @@ MultirationalMap || List := (Phi,d) -> ( -- undocumented
     if not(# d == # (target Phi)#"dimAmbientSpaces" and all(d,i->instance(i,ZZ) and i>=0)) then error("expected a list of "|toString(# (target Phi)#"dimAmbientSpaces")|" non-negative integer(s) to indicate the degree of a hypersurface in the target"); 
     Phi||((target Phi) * projectiveVariety ideal random(d,ring ambient target Phi))
 );
+
+super MultirationalMap := Phi -> (
+    if target Phi == ambient target Phi then return Phi; 
+    multirationalMap(apply(factor Phi,super),ambient target Phi)
+);
+
+MultirationalMap | MultirationalMap := (Phi,Psi) -> (
+    if source Phi != source Psi then error "expected multi-rational maps with the same source";
+    multirationalMap((factor Phi)|(factor Psi),(target Phi) ** (target Psi))
+);
+
+RationalMap | MultirationalMap := (Phi,Psi) -> (multirationalMap {Phi})|Psi;
+MultirationalMap | RationalMap := (Phi,Psi) -> Phi|(multirationalMap {Psi});
+MultihomogeneousRationalMap | MultirationalMap := (Phi,Psi) -> (multirationalMap {Phi})|Psi;
+MultirationalMap | MultihomogeneousRationalMap := (Phi,Psi) -> Phi|(multirationalMap {Psi});
+
+RationalMap | RationalMap := (Phi,Psi) -> (multirationalMap {Phi})|(multirationalMap {Psi});
+MultihomogeneousRationalMap | RationalMap := (Phi,Psi) -> (multirationalMap {Phi})|(multirationalMap {Psi});
+RationalMap | MultihomogeneousRationalMap := (Phi,Psi) -> (multirationalMap {Phi})|(multirationalMap {Psi});
+MultihomogeneousRationalMap | MultihomogeneousRationalMap := (Phi,Psi) -> (multirationalMap {Phi})|(multirationalMap {Psi});
 
 describeInt (MutableHashTable,ZZ,ZZ) := (Phi,I,N) -> (
     d := max degrees ideal compress matrix Phi; 
@@ -1309,6 +1329,38 @@ EXAMPLE {"Phi||{1,2};"},
 SeeAlso => {(symbol |,MultirationalMap,MultiprojectiveVariety),(symbol ||,RationalMap,Ideal),(symbol ^*,MultirationalMap)}}
 
 undocumented {(symbol |,MultirationalMap,List),(symbol ||,MultirationalMap,List)}
+
+document { 
+Key => {(symbol |,MultirationalMap,MultirationalMap)}, 
+Headline => "product of multi-rational maps", 
+Usage => "Phi | Psi", 
+Inputs => {MultirationalMap => "Phi" => { TEX///$X \dashrightarrow Y$///},
+MultirationalMap => "Psi" => { TEX///$X \dashrightarrow Z$///}}, 
+Outputs => {MultirationalMap => {TEX///$X \dashrightarrow Y\times Z$///,", defined by the ",TO2{(symbol |,List,List),"join"}," of ",TO2{(factor,MultirationalMap),"factor"},TT" Phi"," with ",TO2{(factor,MultirationalMap),"factor"},TT" Psi"}}, 
+EXAMPLE {
+"Phi = rationalMap(veronese(1,2,ZZ/33331),Dominant=>true);",
+"Psi = rationalMap veronese(1,3,ZZ/33331);",
+"Eta = Phi | Psi;",
+"Eta | Phi;",
+"Phi | Psi | Eta;",
+"super oo;",
+"multirationalMap(oo,image oo);"},
+SeeAlso => {(symbol |,List,List),(factor,MultirationalMap),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(super,MultirationalMap)}}
+
+undocumented {(symbol |,RationalMap,MultirationalMap),(symbol |,MultirationalMap,RationalMap),(symbol |,RationalMap,RationalMap)}
+
+document { 
+Key => {(super,MultirationalMap)}, 
+Headline => "get the multi-rational map whose target is a product of projective spaces", 
+Usage => "super Phi", 
+Inputs => {MultirationalMap => "Phi" => {"whose target is a subvariety ",TEX///$Y\subseteq\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///}}, 
+Outputs => {MultirationalMap => {"the composition of ",TT"Phi"," with the inclusion of ",TEX///$Y$///," into ",TEX///$\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///}},
+EXAMPLE {
+"Phi = multirationalMap{rationalMap(veronese(1,2,ZZ/33331),Dominant=>true),rationalMap(veronese(1,3,ZZ/33331),Dominant=>true)};",
+"super Phi;",
+"Psi = multirationalMap(Phi,image Phi);",
+"super Psi == super Phi"},
+SeeAlso => {(target,MultirationalMap),(ambient,MultiprojectiveVariety),(super,RationalMap)}}
 
 ---------------
 ---- Tests ----
