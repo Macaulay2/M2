@@ -565,6 +565,9 @@ inverse (MultirationalMap,Option) := (Phi,opt) -> (
 
 inverse MultirationalMap := Phi -> inverse(Phi,MathMode=>false);
 
+inverse (MultihomogeneousRationalMap,Option) := (Phi,opt) -> inverse(multirationalMap {Phi},opt);
+inverse MultihomogeneousRationalMap := Phi -> inverse(Phi,MathMode=>false);
+
 isIsomorphism MultirationalMap := Phi -> (
     if dim source Phi != dim target Phi or Phi#"isBirational" === false or Phi#"isDominant" === false then return false;
     if not isMorphism Phi then return false;
