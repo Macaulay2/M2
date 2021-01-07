@@ -8,34 +8,45 @@
 class MemoryBlock
 {
 public:
+  MemoryBlock() { mArena = new memt::Arena; }
+  ~MemoryBlock() { delete mArena; }
+  //MemoryBlock(MemoryBlock&& source) : mArena(std::move(source.mArena)) {}
+
+  //MemoryBlock& operator=(MemoryBlock&& source) {
+    // mArena = std::move(source.mArena);
+    // return (*this);
+  //}
+
   template<typename T>
   std::pair<T*, T*> allocateArray(size_t nelems)
   {
-    return mArena.allocArrayNoCon<T>(nelems);
+    return mArena->allocArrayNoCon<T>(nelems);
   }
 
   template<typename T>
   std::pair<T*, T*> shrinkLastAllocate(T* begin, T* end, T* newtop)
   {
-    mArena.freeTopArray(begin, end);
-    std::pair<T*, T*> result = mArena.allocArrayNoCon<T>(newtop - begin);
+    mArena->freeTopArray(begin, end);
+    std::pair<T*, T*> result = mArena->allocArrayNoCon<T>(newtop - begin);
     if (result.first != begin) std::cout << "ooops: location changed" << std::endl;
     return result;
   }
 
   void deallocateAll()
   {
-    mArena.freeAllAllocs();
+    mArena->freeAllAllocs();
   }
 
-  size_t getMemoryUsedInBytes() { return mArena.getMemoryUse(); } 
+  void swap(MemoryBlock& source) {
+    memt::Arena* temp = mArena;
+    mArena = source.mArena;
+    source.mArena = temp;
+  }
 
-  //void moveFrom(MemoryBlock& source) {
-  //  
-  //}
+  size_t getMemoryUsedInBytes() { return mArena->getMemoryUse(); } 
 
 private:
-  memt::Arena mArena;
+  memt::Arena* mArena;
 };
   
 #endif

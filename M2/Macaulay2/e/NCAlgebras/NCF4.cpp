@@ -25,8 +25,11 @@ NCF4::NCF4(const FreeAlgebra& A,
       mTopComputedDegree(-1),
       mHardDegreeLimit(hardDegreeLimit),
       mMonomEq(A.monoid()),
-      mColumnMonomials(mMonomEq),
-      mPreviousColumnMonomials(mMonomEq)
+      mMonomHashEqual(A.monoid()),
+      mColumnMonomials(10,mMonomHash,mMonomHashEqual),
+      mPreviousColumnMonomials(10,mMonomHash,mMonomHashEqual)
+      //mColumnMonomials(mMonomEq),  // when using std::map not std::unordered_map
+      //mPreviousColumnMonomials(mMonomEq)
 {
   if (M2_gbTrace >= 1)
     {
@@ -148,8 +151,7 @@ void NCF4::processPreviousF4Matrix()
   mPreviousColumnMonomials = std::move(mColumnMonomials);
   // need to move mMonomialSpace to a holding area since all the monomials
   // and int arrays in mPrevious data types are allocated there.
-  // not sure how to do a move of an arena
-  //mPreviousMonomialSpace.moveFrom(mMonomialSpace);
+  mPreviousMonomialSpace.swap(mMonomialSpace);
 }
 
 void NCF4::addToGroebnerBasis(Poly * toAdd)
@@ -608,14 +610,33 @@ void NCF4::sortF4Matrix()
 // Besides sorting the columns (using 'perm'), this also sets the
 // pivot rows of each column index (in the new sorted order).
 {
+  size_t sz = mColumnMonomials.size();
+  std::vector<int> indices;
+  std::vector<Monom> tempMonoms;
+  tempMonoms.reserve(sz);
+  indices.reserve(sz);
+  for (int i = 0; i < sz; ++i) indices.push_back(i);
+ 
+  // mColumnMonomials are not randomly accessible.  Since we have to put
+  // the monoms in mColumns anyway, we will put them in there unsorted,
+  // sort them, and then fix mColumnMonomials too
+  tempMonoms.reserve(sz);
+  for (auto& i : mColumnMonomials)
+   tempMonoms.push_back(i.first);
+
+  // create the monomial sorter object
+  MonomSort<std::vector<Monom>> monomialSorter(&freeAlgebra().monoid(),&tempMonoms);
+  std::stable_sort(indices.begin(),indices.end(),monomialSorter);
+  
   std::vector<int> perm (static_cast<size_t>(mColumnMonomials.size()), -1);
   int count = 0;
-  for (auto& i : mColumnMonomials)
+  //for (auto& i : mColumnMonomials)
+  for (int i = 0; i < sz; ++i)
     {
-      int origIndex = i.second.first;
-      perm[origIndex] = count;
-      mColumns.push_back(Column(i.first, i.second.second));
-      i.second.first = count;
+      auto& val = mColumnMonomials[tempMonoms[indices[i]]];
+      perm[val.first] = count;
+      mColumns.push_back(Column(tempMonoms[indices[i]],val.second));
+      val.first = count;
       ++count;
     }
 
@@ -691,8 +712,9 @@ void NCF4::reduceF4Matrix()
   for (int i = mFirstOverlap; i < mRows.size(); ++i)
     reduceF4Row(i,mRows[i].second[0],-1,numCancellations,dense); 
 
-  // interreduce the overlaps
+  // interreduce the matrix with respect to these overlaps.
   //#if 0
+  //for (int i = mRows.size()-1; i >= 0; --i)
   for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
     reduceF4Row(i,mRows[i].second[1],mRows[i].second[0],numCancellations,dense);
   //#endif
@@ -723,7 +745,6 @@ void NCF4::displayF4MatrixSize(std::ostream & o) const
   o << "#entries: (" << numReducerEntries << "," << numSPairEntries << ")"
     << std::endl;
 }
-
 
 void NCF4::displayF4Matrix(std::ostream& o) const
 {

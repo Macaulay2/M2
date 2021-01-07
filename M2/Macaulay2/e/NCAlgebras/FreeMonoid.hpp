@@ -172,14 +172,51 @@ private:
   const FreeMonoid* mMonoid;
 };
 
-struct MonomHash {
-    int operator()(const Monom &V) const {
-        int hash = V.size();
-        for(auto &i : V) {
-            hash ^= i + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-        }
-        return hash;
-    }
+class MonomHash {
+public:
+  int operator()(const Monom &V) const {
+      int hash = V.size();
+      for(auto &i : V) {
+          hash ^= i + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+      }
+      return hash;
+  }
+};
+
+class MonomHashEqual {
+public:
+  MonomHashEqual() : mMonoid(nullptr) {}
+  MonomHashEqual(const FreeMonoid& M) : mMonoid(&M) {}
+  MonomHashEqual(const MonomHashEqual& M) : mMonoid(M.mMonoid) {}
+  MonomHashEqual(MonomHashEqual& M) : mMonoid(M.mMonoid) {}
+  ~MonomHashEqual() {}
+
+  bool operator() (const Monom a, const Monom b) const
+  {
+    int retval = mMonoid->compare(a, b);
+    return (retval == EQ);
+  }
+private:
+  const FreeMonoid* mMonoid;
+};
+
+template<class T>
+struct MonomSort {
+  const FreeMonoid* mMonoid;
+  const T* mMonomContainer;
+
+  MonomSort(const FreeMonoid* monoid, const T* container) :
+    mMonoid(monoid),
+    mMonomContainer(container) {}
+
+  bool operator() (int a, int b) const
+  {
+    // this function determines whether the monomial in position
+    // a of the container is less than than the monomial in position b
+    // of the container
+    int retval = mMonoid->compare((*mMonomContainer)[a], (*mMonomContainer)[b]);
+    return (retval == GT);
+  }
 };
 
 #endif

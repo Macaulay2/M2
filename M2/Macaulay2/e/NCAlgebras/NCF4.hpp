@@ -53,10 +53,18 @@ private:
 
   MemoryBlock mMonomialSpace;
   MonomEq mMonomEq;
+  MonomHashEqual mMonomHashEqual;
+  MonomHash mMonomHash;
+
   // The pair in this map is (i,j) where:
   //    i is the column number
   //    j is the row that reduces it (and -1 if there is no such row).
-  std::map<Monom, std::pair<int,int>, MonomEq> mColumnMonomials;
+
+  // change this to an unordered_map?  abstract it into a separate class
+  // so we can experiment with the container
+  // to do this, need to rewrite sort function to operate on a list of integers
+  //std::map<Monom, std::pair<int,int>, MonomEq> mColumnMonomials;
+  std::unordered_map<Monom, std::pair<int,int>, MonomHash, MonomHashEqual> mColumnMonomials;
   std::vector<PreRow> mReducersTodo;
   std::vector<PreRow> mOverlapsTodo;
   std::vector<Column> mColumns; // mColumns[c].second is the row which will reduce the c'th monomial (unless it is -1).
@@ -67,7 +75,8 @@ private:
   // storing previous F4 information
   VECTOR(Row) mPreviousRows;
   std::vector<Column> mPreviousColumns;
-  std::map<Monom, std::pair<int,int>, MonomEq> mPreviousColumnMonomials;  
+  //std::map<Monom, std::pair<int,int>, MonomEq> mPreviousColumnMonomials;  
+  std::unordered_map<Monom, std::pair<int,int>, MonomHash, MonomHashEqual> mPreviousColumnMonomials;  
   MemoryBlock mPreviousMonomialSpace;
 
 public:
