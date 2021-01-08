@@ -868,7 +868,7 @@ lcmLatticeRecursive = G -> (
     )
 
 -- Portions of code for generating NCPartitions contributed by Andrew Hoefel.
--- New Type for Noncrossing Partitions to improve diplay of results.
+-- New Type for Noncrossing Partitions to improve display of results.
 NCPartition = new Type of List
 
 ncPartition = L -> new NCPartition from toList \ L
@@ -4108,7 +4108,7 @@ doc ///
             P = gapConvertPoset S
             P == augmentPoset booleanLattice 3
         Text
-            When convering to GAP format, the method automatically augments the poset.  In this example,
+            When converting to GAP format, the method automatically augments the poset.  In this example,
             the $3$ chain becomes a $5$ chain in GAP format.
         Example
             gapConvertPoset chain 3

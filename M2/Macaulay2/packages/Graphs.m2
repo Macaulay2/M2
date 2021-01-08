@@ -34,7 +34,7 @@ newPackage select((
             {Name => "Caroline Jansen", Email => "cjansen@nd.edu"},
             	{Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"},
             {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"},
-            {Name => "Contributers of note: Carlos Amendola, Alex Diaz, Luis David Garcia Puente, Roser Homs Pons, Olga Kuznetsova,  Shaowei Lin, Sonja Mapes, Harshit J Motwani, Mike Stillman, Doug Torrance"}
+            {Name => "Contributors of note: Carlos Amendola, Alex Diaz, Luis David Garcia Puente, Roser Homs Pons, Olga Kuznetsova,  Shaowei Lin, Sonja Mapes, Harshit J Motwani, Mike Stillman, Doug Torrance"}
         },
         Headline => "graphs and directed graphs (digraphs)",
 	Keywords => {"Graph Theory"},
@@ -1884,7 +1884,7 @@ doc ///
         A:Matrix
     Description
         Text
-            The adjacency matrix is the n by n matrix (where n is the number of vertices in graph/digraph G) with rows and columns indexed by the vertices of G. Entry A_(u,v) is 1 if and only if {u,v} is an edge of G and 0 otherwise. It is easy to observe that if we just use a simple graph G, then its adjacency matrix must be symmetric, but if we us a digraph, then it is not necesarrily symmetric.
+            The adjacency matrix is the n by n matrix (where n is the number of vertices in graph/digraph G) with rows and columns indexed by the vertices of G. Entry A_(u,v) is 1 if and only if {u,v} is an edge of G and 0 otherwise. It is easy to observe that if we just use a simple graph G, then its adjacency matrix must be symmetric, but if we use a digraph, then it is not necessarily symmetric.
         Example
             D = digraph({{1,2},{2,3},{3,4},{4,3}},EntryMode=>"edges");
             adjacencyMatrix D
@@ -2675,7 +2675,7 @@ doc ///
         G:Graph
     Description
         Text
-            The star graph is a special class of the general windmill graph class, in particular, it is windmill(2,n). A star graph is best visualized having one vertix in the center of a circle of other vertices.  The edge set is formed by connecting this center vertex to each of the outside vertices. The outside vertices are only connected to the center vertex.
+            The star graph is a special class of the general windmill graph class, in particular, it is windmill(2,n). A star graph is best visualized having one vertex in the center of a circle of other vertices.  The edge set is formed by connecting this center vertex to each of the outside vertices. The outside vertices are only connected to the center vertex.
         Example
             starGraph 5
     SeeAlso
@@ -3650,7 +3650,7 @@ doc ///
             the independence complex of G
     Description
         Text
-            The independece complex of a graph G is the set of all the independent sets of G.
+            The independence complex of a graph G is the set of all the independent sets of G.
         Example
             G = graph({{1,2},{2,3},{3,4},{4,5}},EntryMode=>"edges");
             independenceComplex G
@@ -4043,7 +4043,7 @@ doc ///
         L:List
     Description
         Text
-            The spectrum of a graph G is the set of the eigenvalues of the adjacency matrix A corresponding to G. For simple graphs, these eigenvalues are all real since A must be symmetric. The user should be aware that Macauly 2 does not give exact values for these eigenvalues, they are numerical approximations, but it is still a good tool to use to check if two graphs are isomorphic; isomorphic graphs share the same spectrum although the converse is not necesarrily true.
+            The spectrum of a graph G is the set of the eigenvalues of the adjacency matrix A corresponding to G. For simple graphs, these eigenvalues are all real since A must be symmetric. The user should be aware that Macaulay 2 does not give exact values for these eigenvalues, they are numerical approximations, but it is still a good tool to use to check if two graphs are isomorphic; isomorphic graphs share the same spectrum although the converse is not necessarily true.
         Example
             spectrum completeGraph 6
             spectrum graphLibrary "petersen"
@@ -4122,7 +4122,7 @@ doc ///
             whether G or D has an Eulerian trail
     Description
         Text
-            A graph has an Eulerian trail if there is a path in the graph that visits each edge exactly once.  A digraph has a Eulerian trail if tehre is a directed path in the graph that visits each edge exacly once.  An Eulerian trail is also called an Eulerian path.  Unconnected graphs can have a Eulerian trail, but all vertices of degree greater than 0 of a graph (or all vertices of degree greater than 0 in the underlying graph of a digraph) must belong to a single connected component.
+            A graph has an Eulerian trail if there is a path in the graph that visits each edge exactly once.  A digraph has a Eulerian trail if there is a directed path in the graph that visits each edge exactly once.  An Eulerian trail is also called an Eulerian path.  Unconnected graphs can have a Eulerian trail, but all vertices of degree greater than 0 of a graph (or all vertices of degree greater than 0 in the underlying graph of a digraph) must belong to a single connected component.
         Example
             G = cycleGraph 5;
             hasEulerianTrail G
@@ -4327,7 +4327,7 @@ doc ///
             whether G or D is Eulerian
     Description
         Text
-            A graph is Eulerian if it has a path in the graph that visits each vertex exactly once.  A digraph is Eulerian if it has a directed path in the graph that visits each vertex exactly once.  Such a path is called an Eulerian circut.  Unconnected graphs can be Eulerian, but all vertices of degree greater than 0 of a graph (or all vertices of degree greater than 0 in the underlying graph of a digraph) must belong to a single connected component.
+            A graph is Eulerian if it has a path in the graph that visits each vertex exactly once.  A digraph is Eulerian if it has a directed path in the graph that visits each vertex exactly once.  Such a path is called an Eulerian circuit.  Unconnected graphs can be Eulerian, but all vertices of degree greater than 0 of a graph (or all vertices of degree greater than 0 in the underlying graph of a digraph) must belong to a single connected component.
         Example
             bridges = graph ({{0,1},{0,2},{0,3},{1,3},{2,3}}, EntryMode => "edges");
             E = isEulerian bridges
@@ -5195,7 +5195,7 @@ doc ///
         (topSort, Digraph) 
 	(topSort, Digraph, String)
     Headline
-        outputs a hashtable containing orginal digraph, new digraph with vertices topologically sorted and a map from vertices of original digraph to new digraph.
+        outputs a hashtable containing original digraph, new digraph with vertices topologically sorted and a map from vertices of original digraph to new digraph.
     Usage
         topSort(D)
 	topSort(D,S)

@@ -165,7 +165,7 @@ indexLabelGraph MixedGraph := MixedGraph => G -> (
     );
 
 
--- Makes a partition U\cup W of the vertices V of a loopless mixed graph (inputed as a MixedGraph) 
+-- Makes a partition U\cup W of the vertices V of a loopless mixed graph (inputted as a MixedGraph) 
 -- such that U contains all the vertices adjacent to undirected edges, 
 -- W contains all the vertices adjacent to bidirected edges 
 -- and there are no directed edges from W to U
