@@ -260,7 +260,7 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
   const FreeAlgebra& A{ freeAlgebra() };
   const ConstPolyList& reducers{ currentValue() };
   const WordTable& W{ mWordTable };
-  // SuffixTree& W{ mWordTable };
+  //const SuffixTree& W{ mWordTable };
   
   // pair will be (i,j) where the ith word in wordtable appears in word in position j
   std::pair<int,int> subwordPos; 

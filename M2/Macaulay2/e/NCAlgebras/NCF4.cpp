@@ -141,11 +141,12 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
 
 void NCF4::processPreviousF4Matrix()
 {
-  if (M2_gbTrace >= 2)
-  {
-    // output some statistics
-    std::cout << "Monomial Hash Max Load : " << mColumnMonomials.max_load_factor() << std::endl;
-  }
+  // if (M2_gbTrace >= 2)
+  // {
+  //   // output some statistics
+  //   // the hash is good -- it seems to have a max_load_factor of 1
+  //   std::cout << "Monomial Hash Max Load : " << mColumnMonomials.max_load_factor() << std::endl;
+  // }
   // copy the finished rows and columns into the holding areas
   mPreviousRows.clear();
   mPreviousColumns.clear();
@@ -317,7 +318,7 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   if (overlapPos < 0)
     {
       // Sneaky trick: a PreRow with index a < 0 refers to generator with index -a-1
-      mOverlapsTodo.push_back(PreRow(Word(), - gbLeftIndex - 1, Word(), false));
+      mOverlapsTodo.emplace_back(PreRow(Word(), - gbLeftIndex - 1, Word(), false));
       return;
     }
   
@@ -345,7 +346,7 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   // Only have to add it in if it is not yet present.
   auto it = mColumnMonomials.find(newmon);
   if (it == mColumnMonomials.cend())
-    mColumnMonomials.insert({newmon, {mColumnMonomials.size(), mReducersTodo.size()}});
+    mColumnMonomials.emplace(newmon, std::make_pair(mColumnMonomials.size(), mReducersTodo.size()));
 
   // it *matters* which one is a reducer and which one is an overlap.
   // this is due to how the word table lookup works -- it searches them
@@ -353,13 +354,13 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   // not be sorted in term order.
   if (gbLeftIndex > gbRightIndex)
     {
-      mReducersTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2, false));
-      mOverlapsTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1, false));
+      mReducersTodo.emplace_back(PreRow(prefix2, gbRightIndex, suffix2, false));
+      mOverlapsTodo.emplace_back(PreRow(prefix1, gbLeftIndex, suffix1, false));
     }
   else
     {  
-      mReducersTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1, false));
-      mOverlapsTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2, false));
+      mReducersTodo.emplace_back(PreRow(prefix1, gbLeftIndex, suffix1, false));
+      mOverlapsTodo.emplace_back(PreRow(prefix2, gbRightIndex, suffix2, false));
     }
 }
 
@@ -372,32 +373,35 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
       preRowsFromOverlap(o);
     }
 
+  // can't do this loop as a range-based for loop since we are adding to it
+  // during the for loop
   // process each element in mReducersTodo
   for (int i=0 ; i < mReducersTodo.size(); ++i)
-    {
-      Row r = processPreRow(mReducersTodo[i]); // this often adds new elements to mReducersTodo
-      mRows.push_back(r);
-    }
+  {
+    mRows.emplace_back(processPreRow(mReducersTodo[i])); // this often adds new elements to mReducersTodo
+  }
+  
   int numReducersAtFirst = mReducersTodo.size();
+  
+  for (auto over : mOverlapsTodo)
+  {
+    mOverlaps.emplace_back(processPreRow(over));  // this often adds new elements to mReducersTodo
+  }
 
-  for (int i=0; i < mOverlapsTodo.size(); ++i)
-    {
-      Row r = processPreRow(mOverlapsTodo[i]); // this often adds new elements to mReducersTodo
-      mOverlaps.push_back(r);
-    }
-
+  // can't do this loop as a range-based for loop since we are adding
+  // to mReducersTodo during the for loop
   for (int i=numReducersAtFirst ; i < mReducersTodo.size(); ++i)
-    {
-      Row r = processPreRow(mReducersTodo[i]); // this often adds new elements to mReducersTodo
-      mRows.push_back(r);
-    }
+  {
+    mRows.emplace_back(processPreRow(mReducersTodo[i])); // this often adds new elements to mReducersTodo
+  }
 
   // Now we move the overlaps into mRows, and set mFirstOverlap.
+  // double range, so use a for loop
   mFirstOverlap = mRows.size();
   for (int i=0; i < mOverlapsTodo.size(); ++i)
     {
-      mRows.push_back(mOverlaps[i]);
-      mReducersTodo.push_back(mOverlapsTodo[i]);
+      mRows.emplace_back(mOverlaps[i]);
+      mReducersTodo.emplace_back(mOverlapsTodo[i]);
     }
 }
 
@@ -422,7 +426,7 @@ std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m)
   // if the monom is the empty monomial, return false
   if (freeAlgebra().monoid().is_one(m)) return std::make_pair(false,-1);
   
-  FreeMonoid::MonomialInserter prefixInserter;   // this is a VECTOR(int)...  don't really like this much.
+  FreeMonoid::MonomialInserter prefixInserter;   // this is a VECTOR(int).
   std::pair<bool,int> retval;
   
   freeAlgebra().monoid().monomPrefixFromMonom(prefixInserter,m,1);
@@ -433,8 +437,11 @@ std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m)
   else
   {
     if ((*it).second.second == -1)  // in table, but not a reducer monomial
+                                    // note, however, that the 'new' gb elements
+                                    // from the past iteration *are* reducers now
+                                    // but are not marked as such at this point.
       retval = std::make_pair(false,-1);
-    else                            // in table and a reducer monomial
+    else  // in table and a reducer monomial
     {
       retval = std::make_pair(true,(*it).second.second);
     }
@@ -492,7 +499,7 @@ void NCF4::processMonomInPreRow(Monom& m, int* nextcolloc)
       // insert column information into mColumnMonomials,
       // which provides us search/indexing of columns
       int newColumnIndex = mColumnMonomials.size();
-      mColumnMonomials.insert({m, {newColumnIndex, divisornum}});
+      mColumnMonomials.emplace(m, std::make_pair(newColumnIndex, divisornum));
       *nextcolloc = newColumnIndex;
     }
   else
@@ -592,11 +599,11 @@ std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
   Word newword;
 
   findDivisorCalls++;
-  // if (M2_gbTrace >= 2 && findDivisorCalls % 100000 == 0)
-  //    std::cout << "Total findDivisorCalls    : " << findDivisorCalls << std::endl
-  //              << "  Previous prefixes found : " << previousPrefixesFound << std::endl
-  //              << "  Previous suffixes found : " << previousSuffixesFound << std::endl;       
-
+  if (M2_gbTrace >= 2 && findDivisorCalls % 100000 == 0)
+     std::cout << "Total findDivisorCalls      : " << findDivisorCalls << std::endl
+               << "  Previous prefixes found   : " << previousPrefixesFound << std::endl
+               << "  Previous suffixes found   : " << previousSuffixesFound << std::endl       
+               << "  Elements in Previous Rows : " << mPreviousRows.size() << std::endl; 
   // look in previous F4 matrix for Monom before checking mWordTable
   auto usePreviousSuffix = findPreviousReducerSuffix(mon);
   if (usePreviousSuffix.first)
@@ -658,17 +665,16 @@ void NCF4::sortF4Matrix()
   std::vector<Monom> tempMonoms;
   tempMonoms.reserve(sz);
   indices.reserve(sz);
-  for (int i = 0; i < sz; ++i) indices.push_back(i);
+  for (int i = 0; i < sz; ++i) indices.emplace_back(i);
  
-  // mColumnMonomials are not randomly accessible.  Since we have to put
-  // the monoms in mColumns anyway, we will put them in there unsorted,
-  // sort them, and then fix mColumnMonomials too
+  // store all the column monomials in a temporary to sort them
   tempMonoms.reserve(sz);
   for (auto& i : mColumnMonomials)
-   tempMonoms.push_back(i.first);
+   tempMonoms.emplace_back(i.first);
 
   // create the monomial sorter object
   MonomSort<std::vector<Monom>> monomialSorter(&freeAlgebra().monoid(),&tempMonoms);
+  // parallel?
   std::stable_sort(indices.begin(),indices.end(),monomialSorter);
   
   std::vector<int> perm (static_cast<size_t>(mColumnMonomials.size()), -1);
@@ -677,7 +683,7 @@ void NCF4::sortF4Matrix()
     {
       auto& val = mColumnMonomials[tempMonoms[indices[i]]];
       perm[val.first] = count;
-      mColumns.push_back(Column(tempMonoms[indices[i]],val.second));
+      mColumns.emplace_back(Column(tempMonoms[indices[i]],val.second));
       val.first = count;
       ++count;
     }
@@ -752,7 +758,9 @@ void NCF4::reduceF4Matrix()
 
   // reduce each overlap row by mRows.
   for (int i = mFirstOverlap; i < mRows.size(); ++i)
-    reduceF4Row(i,mRows[i].second[0],-1,numCancellations,dense); 
+  {
+    reduceF4Row(i,mRows[i].second[0],-1,numCancellations,dense);
+  } 
 
   // interreduce the matrix with respect to these overlaps.
   //#if 0

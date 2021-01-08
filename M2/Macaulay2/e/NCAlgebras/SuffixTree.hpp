@@ -166,6 +166,14 @@ public:
 
   const Word operator[](int index) const;
 
+  void clear() {
+    destroyChildren(mRoot);  //also deletes mRoot
+    SuffixTreeNode* root = new SuffixTreeNode();
+    mRoot = root;
+    mMonomials.clear();
+  }
+
+
   // lookup routines
 
   // return all pairs (i,j), where
@@ -313,6 +321,8 @@ public: // TODO: remove this public.  These are private...  Here for testing
   // this is of type Label, these monomials will not have the word number
   // appended as a suffix when stored in this container.
   std::vector<Label> mMonomials;
+
+  void destroyChildren(SuffixTreeNode* node) const;
 
 };
 

@@ -129,7 +129,7 @@ public:
 
   ~WordWithDataTable() {}
 
-  void clear() { mMonomials.clear(); }
+  void clear() { mMonomials.clear(); mIndices.clear(); }
 
   size_t monomialCount() const { return mMonomials.size(); }
 

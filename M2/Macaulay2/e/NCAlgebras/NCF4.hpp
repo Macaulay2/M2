@@ -7,6 +7,7 @@
 #include "NCAlgebras/Word.hpp"         // for Word
 #include "NCAlgebras/OverlapTable.hpp" // for OverlapTable
 #include "NCAlgebras/WordTable.hpp"    // for Overlap, WordTable
+#include "NCAlgebras/SuffixTree.hpp"   // for experimental suffix tree code
 #include "Polynomial.hpp"              // for Monom, ConstPolyList, Poly
 #include "newdelete.hpp"               // for VECTOR, our_new_delete
 
@@ -28,6 +29,7 @@ private:
   const ConstPolyList mInput;
   
   WordTable mWordTable;
+  //SuffixTree mWordTable;
   OverlapTable mOverlapTable;
   PolyList mGroebner;
 

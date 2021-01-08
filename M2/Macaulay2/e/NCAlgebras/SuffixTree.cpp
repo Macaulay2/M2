@@ -120,7 +120,7 @@ SuffixTree::SuffixTree()
   mRoot = root;
 }
 
-void destroyChildren(SuffixTreeNode* p)
+void SuffixTree::destroyChildren(SuffixTreeNode* p) const
 {
   for (auto i = p->childrenBegin(); i != p->childrenEnd(); ++i)
       destroyChildren(i->second);

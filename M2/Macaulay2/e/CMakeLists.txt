@@ -143,6 +143,7 @@ set(SRCLIST
 	NCAlgebras/FreeAlgebra
 	NCAlgebras/FreeMonoid
 	NCAlgebras/WordTable
+	NCAlgebras/SuffixTree
 	NCAlgebras/NCGroebner
 	NCAlgebras/NCF4
 	NCAlgebras/OverlapTable

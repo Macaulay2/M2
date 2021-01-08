@@ -4,6 +4,7 @@
 #include "NCAlgebras/NCReduction.hpp"   // for PolynomialHeap
 #include "NCAlgebras/OverlapTable.hpp"  // for OverlapTable
 #include "NCAlgebras/WordTable.hpp"     // for Overlap, WordTable
+#include "NCAlgebras/SuffixTree.hpp"    // for experimental SuffixTree code
 #include "Polynomial.hpp"               // for Poly, ConstPolyList
 #include "newdelete.hpp"                // for our_new_delete
 
