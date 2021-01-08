@@ -54,9 +54,9 @@ public:
 
   MonomialMap(const PolyRing& ring):
     mMap(new FixedSizeMap(InitialBucketCount, ring)),
+    mRing(ring),
     mCapacityUntilGrowth
-    (maxEntries(mMap.load(std::memory_order_relaxed)->bucketCount())),
-    mRing(ring)
+    (maxEntries(mMap.load(std::memory_order_relaxed)->bucketCount()))
   {
     // We can load mMap as std::memory_order_relaxed because we just stored it
     // and the constructor cannot run concurrently.

@@ -17,13 +17,13 @@ public:
 private:
   friend struct GuardMaker;
   Guard(T&& action, const bool& active):
-    mAction(std::move(action)), mOwning(true), mActive(active) {}
+    mOwning(true), mActive(active), mAction(std::move(action)) {}
 
   // Most compilers should elide the call to this construtor, but it must be
   // here anyway and we should support even a crazy compiler that decides to
   // call it.
   Guard(Guard<T>&& guard):
-    mAction(std::move(guard.mAction)), mOwning(true), mActive(guard.mActive)
+    mOwning(true), mActive(guard.mActive), mAction(std::move(guard.mAction))
   {
     assert(guard.mActive);
     guard.mOwning = false; // to avoid calling mAction twice

@@ -11,8 +11,8 @@ F4MatrixProjection::F4MatrixProjection(
   const PolyRing& ring,
   ColIndex colCount
 ):
-  mRing(ring),
-  mColProjectTo(colCount)
+  mColProjectTo(colCount),
+  mRing(ring)
 {}
 
 void F4MatrixProjection::addColumn(
@@ -275,7 +275,7 @@ done:;
   qm.bottomLeft = bottom.moveLeft();
   qm.bottomRight = bottom.moveRight();
 
-  return std::move(qm);
+  return qm;
 }
 
 namespace {
@@ -352,7 +352,7 @@ QuadMatrix F4MatrixProjection::makeAndClearTwoStep(const size_t quantum) {
   qm.bottomRight = std::move(right.second);
   qm.leftColumnMonomials = std::move(mLeftMonomials);
   qm.rightColumnMonomials = std::move(mRightMonomials);
-  return std::move(qm);
+  return qm;
 }
 
 MATHICGB_NAMESPACE_END

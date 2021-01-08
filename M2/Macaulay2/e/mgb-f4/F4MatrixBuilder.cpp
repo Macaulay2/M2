@@ -52,14 +52,14 @@ F4MatrixBuilder::F4MatrixBuilder(
   const PolyBasis& basis,
   const size_t memoryQuantum
 ):
+  mLeftColCount(0),
+  mRightColCount(0),
   mTmp(basis.ring().monoid().alloc()),
   mBasis(basis),
-  mMap(basis.ring()),
   mMonomialsLeft(),
   mMonomialsRight(),
   mBuilder(basis.ring(), mMap, mMonomialsLeft, mMonomialsRight, memoryQuantum),
-  mLeftColCount(0),
-  mRightColCount(0)
+  mMap(basis.ring())
 {
   // This assert to be _NO_ASSUME since otherwise the compiler will assume that
   // the error checking branch here cannot be taken and optimize it away.
@@ -146,7 +146,7 @@ void F4MatrixBuilder::buildMatrixAndClear(QuadMatrix& matrix) {
       *monoid().alloc().release(),
       *monoid().alloc().release()
     };
-    return std::move(data);
+    return data;
   });
 
   mgb::mtbb::parallel_do(mTodo.begin(), mTodo.end(),

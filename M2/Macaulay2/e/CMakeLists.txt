@@ -82,6 +82,27 @@ set(HPPONLYFILES
   f4/res-memblock.hpp
   f4/res-monomial-types.hpp
   f4/res-schreyer-order.hpp
+  mgb-f4/Atomic.hpp
+  mgb-f4/PrimeField.hpp
+  mgb-f4/MonoMonoid.hpp
+  mgb-f4/Range.hpp
+  mgb-f4/Poly.hpp
+  mgb-f4/FixedSizeMonomialMap.h
+  mgb-f4/KoszulQueue.hpp
+  mgb-f4/MathicIO.hpp
+  mgb-f4/MonoArena.hpp
+  mgb-f4/MonoOrder.hpp
+  mgb-f4/MonoProcessor.hpp
+  mgb-f4/MonomialMap.hpp
+  mgb-f4/NonCopyable.hpp
+  mgb-f4/RawVector.hpp
+  mgb-f4/ReducerHelper.hpp
+  mgb-f4/ScopeExit.hpp
+  mgb-f4/StaticMonoMap.hpp
+  mgb-f4/Unchar.hpp
+  mgb-f4/mtbb.hpp
+  mgb-f4/stdinc.h
+  mgb-f4/mathicgb.h
   )
 
 # these files have .cpp file, but NOT .hpp file
@@ -129,6 +150,7 @@ set(CPPONLYFILES
   interface/ringelement.h
   interface/ringmap.cpp
   interface/ringmap.h
+  mgb-f4/mathicgb.cpp
   )
 
 # these files all have .hpp and .cpp files
@@ -297,6 +319,41 @@ set(SRCLIST
   f4/res-schreyer-frame
   f4/res-varpower-monomial
   f4/varpower-monomial
+  # local version of mathicgb
+  mgb-f4/CFile
+  mgb-f4/LogDomain
+  mgb-f4/LogDomainSet
+  mgb-f4/PolyRing
+  mgb-f4/Basis
+  mgb-f4/MonoLookup
+  mgb-f4/PolyBasis
+  mgb-f4/SparseMatrix
+  mgb-f4/QuadMatrix
+  mgb-f4/QuadMatrixBuilder
+  mgb-f4/Scanner
+  mgb-f4/ClassicGBAlg
+  mgb-f4/F4MatrixBuilder
+  mgb-f4/F4MatrixBuilder2
+  mgb-f4/F4MatrixProjection
+  mgb-f4/F4MatrixReducer
+  mgb-f4/F4ProtoMatrix
+  mgb-f4/F4Reducer
+  mgb-f4/Reducer
+  mgb-f4/TypicalReducer
+  mgb-f4/ReducerDedup
+  mgb-f4/ReducerHash
+  mgb-f4/ReducerHashPack
+  mgb-f4/ReducerNoDedup
+  mgb-f4/ReducerPack
+  mgb-f4/ReducerPackDedup
+  mgb-f4/ModuleMonoSet
+  mgb-f4/PolyHashTable
+  mgb-f4/SPairs
+  mgb-f4/SigPolyBasis
+  mgb-f4/SigSPairQueue
+  mgb-f4/SigSPairs
+  mgb-f4/SignatureGB
+  mgb-f4/io-util
   # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator

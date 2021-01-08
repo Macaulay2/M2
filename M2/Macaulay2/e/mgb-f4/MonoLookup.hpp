@@ -65,6 +65,7 @@ public:
   public:
     virtual std::unique_ptr<MonoLookup> make
       (bool preferSparseReducers, bool allowRemovals) const = 0;
+    virtual ~Factory() {}
   };
   static std::unique_ptr<Factory> makeFactory
     (const Monoid& monoid, int type);

@@ -17,13 +17,13 @@ QuadMatrixBuilder::QuadMatrixBuilder(
   Monomials& monomialsRight,
   const size_t memoryQuantum
 ):
+  mMonomialsLeft(monomialsLeft),
+  mMonomialsRight(monomialsRight),
   mMonomialToCol(map),
   mTopLeft(memoryQuantum),
   mTopRight(memoryQuantum),
   mBottomLeft(memoryQuantum),
-  mBottomRight(memoryQuantum),
-  mMonomialsLeft(monomialsLeft),
-  mMonomialsRight(monomialsRight)
+  mBottomRight(memoryQuantum)
 {}
 
 void QuadMatrixBuilder::takeRowsFrom(QuadMatrix&& matrix) {
@@ -130,7 +130,7 @@ QuadMatrix QuadMatrixBuilder::buildMatrixAndClear() {
   mBottomRight.clear();
 
   MATHICGB_ASSERT(out.debugAssertValid());
-  return std::move(out);
+  return out;
 }
 
 MATHICGB_NAMESPACE_END

@@ -247,7 +247,7 @@ QuadMatrix QuadMatrix::toCanonical() const {
   matrix.leftColumnMonomials = leftColumnMonomials;
   matrix.rightColumnMonomials = rightColumnMonomials;
   
-  return std::move(matrix);
+  return matrix;
 }
 
 std::ostream& operator<<(std::ostream& out, const QuadMatrix& qm) {
@@ -310,7 +310,7 @@ namespace {
       permutation[columns[col].second] = col;
     }
 
-    return std::move(permutation);
+    return permutation;
   }
 }
 

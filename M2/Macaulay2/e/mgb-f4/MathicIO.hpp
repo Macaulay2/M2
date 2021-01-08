@@ -355,7 +355,7 @@ Basis MathicIO<M, BF>::readBasis(
     *p = p->polyWithTermsDescending();
     basis.insert(std::move(p));
   }
-  return std::move(basis);
+  return basis;
 }
 
 template<class M, class BF>
@@ -391,7 +391,7 @@ Poly MathicIO<M, BF>::readPolyDoNotOrder(
 
   // also skips whitespace
   if (in.match('0') || in.match("+0") || in.match("-0"))
-    return std::move(p);
+    return p;
   MATHICGB_ASSERT(!in.peekWhite());
 
   auto mono = ring.monoid().alloc();
@@ -402,7 +402,7 @@ Poly MathicIO<M, BF>::readPolyDoNotOrder(
     readTerm(ring, readComponent, coef, mono, in);
     p.append(coef.value(), *mono);
   } while (!in.peekWhite() && !in.matchEOF());
-  return std::move(p);
+  return p;
 }
 
 template<class M, class BF>

@@ -126,7 +126,7 @@ private:
   // From elsewhere
   ModuleMonoSet *Hsyz; // we often modify this
   const SigPolyBasis *GB;
-  Reducer* mReducer;
+  //  Reducer* mReducer;
   const bool mPostponeKoszuls;
 
   typedef std::vector<PreSPair> PrePairContainer;

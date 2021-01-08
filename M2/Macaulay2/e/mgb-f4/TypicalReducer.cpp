@@ -133,7 +133,7 @@ std::unique_ptr<Poly> TypicalReducer::classicReduceSPoly(
   ring.freeMonomial(lcm);
   ring.freeMonomial(multiple1);
   ring.freeMonomial(multiple2);
-  return std::move(reduced);
+  return reduced;
 }
 
 void TypicalReducer::classicReduceSPolySet
@@ -216,7 +216,7 @@ std::unique_ptr<Poly> TypicalReducer::classicReduce
     std::cerr << "Classic reduction done." << std::endl;
 
   reset();
-  return std::move(result);
+  return result;
 }
 
 std::unique_ptr<Poly> TypicalReducer::classicReduce(const PolyBasis& basis) {

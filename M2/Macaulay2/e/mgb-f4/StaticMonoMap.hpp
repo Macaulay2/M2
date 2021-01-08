@@ -172,7 +172,7 @@ public:
     const auto& basis = sigBasis.basis();
 
     auto reducer = size_t(-1);
-    auto proceed = [&, this](const Entry& e) {
+    auto proceed = [&](const Entry& e) {
       if (ratioCmp.compare(e.data()) != GT)
         return true;
 

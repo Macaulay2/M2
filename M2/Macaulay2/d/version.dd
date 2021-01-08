@@ -30,7 +30,7 @@ header "
 
    #include <memtailor.h>
    #include <mathic.h>
-   #include <mathicgb.h>
+   #define MATHICGB_VERSION_STRING \"custom, in M2\"
 
    #include <frobby.h>
    #ifdef HAVE_FROBBY_VERSION

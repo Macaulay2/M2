@@ -24,8 +24,8 @@ public:
   {}
 
   KoszulQueue(KoszulQueue&& kq):
-    mQueue(std::move(kq.mQueue)),
-    mPool(std::move(kq.mPool))
+    mPool(std::move(kq.mPool)),
+    mQueue(std::move(kq.mQueue))
   {}
 
   ConstMonoRef top() const {

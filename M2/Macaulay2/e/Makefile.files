@@ -35,8 +35,30 @@ INTERFACE = \
 	mgb-f4/PolyBasis \
 	mgb-f4/SparseMatrix \
 	mgb-f4/QuadMatrix \
+	mgb-f4/QuadMatrixBuilder \
 	mgb-f4/Scanner \
 	mgb-f4/ClassicGBAlg \
+	mgb-f4/F4MatrixBuilder \
+	mgb-f4/F4MatrixBuilder2 \
+	mgb-f4/F4MatrixProjection \
+	mgb-f4/F4ProtoMatrix \
+	mgb-f4/F4Reducer \
+	mgb-f4/Reducer \
+	mgb-f4/TypicalReducer \
+	mgb-f4/ReducerDedup \
+	mgb-f4/ReducerHash \
+	mgb-f4/ReducerHashPack \
+	mgb-f4/ReducerNoDedup \
+	mgb-f4/ReducerPack \
+	mgb-f4/ReducerPackDedup \
+	mgb-f4/ModuleMonoSet \
+	mgb-f4/PolyHashTable \
+	mgb-f4/SPairs \
+	mgb-f4/SigPolyBasis \
+	mgb-f4/SigSPairQueue \
+	mgb-f4/SigSPairs \
+	mgb-f4/SignatureGB \
+	mgb-f4/io-util \
 	eigen \
 	monomial-sets \
 	mutablecomplex \
@@ -190,6 +212,7 @@ INTERFACE = \
 	weylalg
 
 COMMANDS = \
+	mgb-f4/mathicgb \
 	ntl-internal \
 	ntl-debugio \
 	matrix-kbasis \
@@ -223,6 +246,21 @@ NAMES_H = \
 	mgb-f4/MonoMonoid \
 	mgb-f4/Range \
 	mgb-f4/Poly \
+	mgb-f4/FixedSizeMonomialMap \
+	mgb-f4/KoszulQueue \
+	mgb-f4/MathicIO \
+	mgb-f4/MonoArena \
+	mgb-f4/MonoOrder \
+	mgb-f4/MonoProcessor \
+	mgb-f4/MonomialMap \
+	mgb-f4/NonCopyable \
+	mgb-f4/RawVector \
+	mgb-f4/ReducerHelper \
+	mgb-f4/ScopeExit \
+	mgb-f4/StaticMonoMap \
+	mgb-f4/Unchar \
+	mgb-f4/mtbb \
+	mgb-f4/stdinc \
 	ringelem \
 	style \
 	hash \

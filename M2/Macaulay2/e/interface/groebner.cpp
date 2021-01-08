@@ -27,6 +27,9 @@
 #include "interrupted.hpp"
 #include "f4/res-f4-computation.hpp"
 
+#include "mgb-f4/mathicgb.h"
+#include "matrix-stream.hpp"
+
 class FreeModule;
 struct MonomialOrdering;
 struct MutableMatrix;
@@ -1010,8 +1013,6 @@ Matrix /* or null */ *rawSubduction(int numparts, const Matrix *M,
   }
 }
 
-#include "mathicgb.h"
-#include "matrix-stream.hpp"
 void rawDisplayMatrixStream(const Matrix *inputMatrix)
 {
   const Ring *R = inputMatrix->get_ring();

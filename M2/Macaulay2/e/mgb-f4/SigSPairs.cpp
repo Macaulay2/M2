@@ -28,7 +28,7 @@ SigSPairs::SigSPairs(
   mUseHighBaseDivisors(useBaseDivisors),
   Hsyz(Hsyz0),
   GB(GB0),
-  mReducer(reducer),
+  //  mReducer(reducer),
   mPostponeKoszuls(postponeKoszuls),
   mQueue(SigSPairQueue::create(*GB))
 {}

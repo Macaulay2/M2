@@ -269,11 +269,11 @@ public:
   const Monoid& monoid() const {return ring().monoid();}
   const Field& field() const {return ring().field();}
 
-    Builder(const PolyBasis& basis, const size_t memoryQuantum):
+  Builder(const PolyBasis& basis, const size_t memoryQuantum):
     mMemoryQuantum(memoryQuantum),
     mTmp(basis.ring().monoid().alloc()),
-    mBasis(basis),
-    mMap(basis.ring())
+    mMap(basis.ring()),
+    mBasis(basis)
   {
     // This assert has to be _NO_ASSUME since otherwise the compiler will
     // assume that the error checking branch here cannot be taken and optimize
@@ -541,8 +541,8 @@ F4MatrixBuilder2::F4MatrixBuilder2(
   const PolyBasis& basis,
   const size_t memoryQuantum
 ):
-  mBasis(basis),
-  mMemoryQuantum(memoryQuantum)
+  mMemoryQuantum(memoryQuantum),
+  mBasis(basis)
 {}
 
 void F4MatrixBuilder2::addSPolynomialToMatrix(

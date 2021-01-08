@@ -738,7 +738,7 @@ ExternalProject_Add(build-mathicgb
 if(EXISTS ${M2_HOST_PREFIX}/bin/mgb)
   execute_process(COMMAND mv ${M2_HOST_PREFIX}/bin/mgb ${M2_INSTALL_PROGRAMSDIR}/)
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries mathicgb mathic MATHICGB_FOUND)
+#_ADD_COMPONENT_DEPENDENCY(libraries mathicgb mathic MATHICGB_FOUND)
 
 
 #############################################################################

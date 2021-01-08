@@ -70,8 +70,8 @@ public:
     mGradings(std::move(gradings)),
     mBaseOrder(baseOrder),
     mComponentBefore(componentBefore),
-    mComponentsAscendingDesired(componentsAscendingDesired),
-    mSchreyering(schreyering)
+    mSchreyering(schreyering),
+    mComponentsAscendingDesired(componentsAscendingDesired)
   {
     MATHICGB_ASSERT(debugAssertValid());
   }

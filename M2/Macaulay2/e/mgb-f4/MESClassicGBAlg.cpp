@@ -15,7 +15,7 @@
 #include <memory>
 #include <vector>
 
-namespace mgbf4 {
+namespace mgb {
   /// Calculates a classic Grobner basis using Buchberger's algorithm.
   class ClassicGBAlg {
   private:
@@ -462,4 +462,4 @@ namespace mgbf4 {
     return computeGBClassicAlg(std::move(inputBasis), params);
   }
 
-} // namespace mgbf4
+} // namespace mgb

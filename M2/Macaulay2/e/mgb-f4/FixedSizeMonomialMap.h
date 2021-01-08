@@ -255,7 +255,7 @@ private:
 
   class Node {
   public:
-    Node(Node* next, const mapped_type value): mNext(next), value(value) {}
+    Node(Node* next, const mapped_type value): value(value), mNext(next) {}
 
     MonoRef mono() {return Monoid::toRef(mMono);}
     ConstMonoRef mono() const {return Monoid::toRef(mMono);}

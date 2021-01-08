@@ -1,13 +1,13 @@
-#include "mathicgb/stdinc.h"
+#include "stdinc.h"
 #include "mathicgb.h"
 
-#include "mathicgb/Basis.hpp"
-#include "mathicgb/PolyRing.hpp"
-#include "mathicgb/Poly.hpp"
-#include "mathicgb/Reducer.hpp"
-#include "mathicgb/ClassicGBAlg.hpp"
-#include "mathicgb/mtbb.hpp"
-#include "mathicgb/LogDomainSet.hpp"
+#include "Basis.hpp"
+#include "PolyRing.hpp"
+#include "Poly.hpp"
+#include "Reducer.hpp"
+#include "ClassicGBAlg.hpp"
+#include "mtbb.hpp"
+#include "LogDomainSet.hpp"
 #include <mathic.h>
 
 #ifndef MATHICGB_ASSERT
@@ -38,7 +38,7 @@
 
 extern "C" {
   void libmathicgbIsPresent(void) {}
-  char MATHICGB_VERSION_STRING[] = VERSION;
+  char MATHICGB_VERSION_STRING[] = "custom, in M2"; // VERSION;
 }
 
 MATHICGB_NAMESPACE_BEGIN

@@ -55,6 +55,9 @@ namespace MonoMonoidInternal {
       mOrderIndexBegin(HasComponent + order.varCount()),
       mOrderIndexEnd(mOrderIndexBegin + StoreOrder * mGradingCount),
       mEntryCount(std::max<VarIndex>(mOrderIndexEnd + StoreHash, 1)),
+      mComponentGradingIndex(
+        reverseComponentGradingIndex(mGradingCount, order.componentBefore())
+      ),
       mHashCoefficients(makeHashCoefficients(order.varCount())),
       mOrderIsTotalDegreeRevLex(
         !order.hasLexBaseOrder() &&
@@ -63,9 +66,6 @@ namespace MonoMonoidInternal {
       ),
       mLexBaseOrder(order.hasLexBaseOrder()),
       mGradings(makeGradings(order)),
-      mComponentGradingIndex(
-        reverseComponentGradingIndex(mGradingCount, order.componentBefore())
-      ),
       mVarsReversed(order.hasFromLeftBaseOrder())
     {
       MATHICGB_ASSERT(order.isMonomialOrder());
@@ -722,7 +722,7 @@ public:
     MATHICGB_ASSERT(debugValid(div));
 
     for (auto i = exponentsIndexBegin(); i != exponentsIndexEnd(); ++i) {
-      const auto dive = access(div, i);
+      //const auto dive = access(div, i);
       if (access(div, i) > access(a, i) && access(div, i) > access(b, i))
         return false;
     }
