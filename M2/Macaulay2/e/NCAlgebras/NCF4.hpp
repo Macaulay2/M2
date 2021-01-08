@@ -72,7 +72,7 @@ private:
   std::vector<Column> mColumns; // mColumns[c].second is the row which will reduce the c'th monomial (unless it is -1).
   VECTOR(Row) mRows;
   VECTOR(Row) mOverlaps;
-  int mFirstOverlap; // First non pivot row row (and all later ones are also non-pivot rows).
+  size_t mFirstOverlap; // First non pivot row row (and all later ones are also non-pivot rows).
 
   // storing previous F4 information
   VECTOR(Row) mPreviousRows;
@@ -113,6 +113,7 @@ private:
   void sortF4Matrix();
 
   void reduceF4Matrix();
+  void parallelReduceF4Matrix();
   
   // FM : I had to discard const qualifiers here because I used mMonomialSpace.
   // Should I be doing this?  Two questions:  Should we make mMonomialSpace
@@ -153,7 +154,7 @@ private:
                    int first,
                    int firstcol,
                    long &numCancellations,
-                   Range<ring_elem>& dense);
+                   VECTOR(ring_elem)& denseVector);
   
   // return value is isFound, columnIndexOfFound
   // discard const qualifier here again because this creates a monom in mMonomialSpace

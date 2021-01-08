@@ -641,8 +641,10 @@ TEST ///
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2];
   I := ideal<F | B>;
+  GroebnerBasis(B,5);
   time Igb := GroebnerBasis(B,15);
   -- 8.73 secs d = 25, kk = ZZ/32003
+  -- 0.14s  d = 15, kk = ZZ/32003
   -- 10.990 secs d = 15, kk = QQ
   
   kk := Rationals();
@@ -906,7 +908,7 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "Naive"); -- (with auto
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"F4");    -- 2220 seconds, I think? (now 380 sec on FMs machine)
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"Naive"); -- 
 
-gbTrace = 50; I = ideal I_*; elapsedTime Igb = NCGB(I, 6);  
+gbTrace = 50; I = ideal I_*; elapsedTime Igb = NCGB(I, 7);  
 I = ideal I_*; elapsedTime Igb = NCGB(I, 10); -- (with autoreduction) .9 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 11); -- (with autoreduction) 3.5 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12); -- (with autoreduction) 17.7 sec                 --- 8 secs
