@@ -439,36 +439,19 @@ endif()
 _ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
 
 
-# https://www.broune.com/frobby/
-# https://github.com/Macaulay2/frobby
-# TODO: to use Frobby as a submodule, it needs to support out-of-tree builds
+# https://github.com/Macaulay2/frobby (previously https://www.broune.com/frobby)
 ExternalProject_Add(build-frobby
-#  GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/frobby/.git
-#  GIT_TAG           HEAD # WIP: 51c3e075
-  URL               https://github.com/Macaulay2/frobby/archive/v0.9.1.tar.gz
-  URL_HASH          SHA256=4bd699ff009973bc2d209ec9abdee33ef09e11de83914046fcc4ce68e7cc25b5
-  DOWNLOAD_NAME     frobby-v0.9.1.tar.gz
   PREFIX            libraries/frobby
-  SOURCE_DIR        libraries/frobby/build
-  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
-  BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND true
-  BUILD_COMMAND     ${MAKE} library -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
-                      GMP_INC_DIR=${MP_INCLUDE_DIRS}
-                      CPPFLAGS=${CPPFLAGS}
-                      CFLAGS=${CFLAGS}
-                      CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
-                      CXX=${CMAKE_CXX_COMPILER}
-                      AR=${CMAKE_AR}
-                      OBJDUMP=${CMAKE_OBJDUMP}
-                      STRIP=${CMAKE_STRIP}
-                      RANLIB=${CMAKE_RANLIB}
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy bin/libfrobby.a ${M2_HOST_PREFIX}/lib/libfrobby.a
-          COMMAND   ${CMAKE_COMMAND} -E copy src/frobby.h src/stdinc.h ${M2_HOST_PREFIX}/include/
-          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/frobby
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/frobby
-  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} test
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/frobby
+  BINARY_DIR        libraries/frobby/build
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
+                    -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
+                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                    -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
