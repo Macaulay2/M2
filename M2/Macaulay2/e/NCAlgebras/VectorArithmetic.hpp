@@ -14,25 +14,25 @@ private:
 public:
   VectorArithmetic(const Ring* R) : mRing(R) {}
 
-  void sparseRowToDenseRow(Range<ring_elem> dense,
+  virtual void sparseRowToDenseRow(Range<ring_elem> dense,
                            const Range<ring_elem>& coeffs,
                            const Range<int>& comps) const;
 
-  void denseRowCancelFromSparse(Range<ring_elem> dense,
+  virtual void denseRowCancelFromSparse(Range<ring_elem> dense,
                                 const Range<ring_elem>& coeffs,
                                 const Range<int>& comps) const;
 
-  int denseRowNextNonzero(const Range<ring_elem>& dense,
+  virtual int denseRowNextNonzero(const Range<ring_elem>& dense,
                           int first,
                           int last) const;
 
-  void denseRowToSparseRow(Range<ring_elem> dense,
+  virtual void denseRowToSparseRow(Range<ring_elem> dense,
                            Range<ring_elem>& coeffs,
                            Range<int>& comps,
                            int first,
                            int last) const;
 
-  void sparseRowMakeMonic(Range<ring_elem>& coeffs);
+  virtual void sparseRowMakeMonic(Range<ring_elem>& coeffs);
   
 };
   
