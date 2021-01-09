@@ -72,7 +72,7 @@ private:
   std::vector<Column> mColumns; // mColumns[c].second is the row which will reduce the c'th monomial (unless it is -1).
   VECTOR(Row) mRows;
   VECTOR(Row) mOverlaps;
-  size_t mFirstOverlap; // First non pivot row row (and all later ones are also non-pivot rows).
+  int mFirstOverlap; // First non pivot row row (and all later ones are also non-pivot rows).
 
   // storing previous F4 information
   VECTOR(Row) mPreviousRows;
