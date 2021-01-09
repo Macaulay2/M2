@@ -328,8 +328,20 @@ if(FACTORY_FOUND)
   check_cxx_source_compiles([[#include <factory/factory.h>
     int main(){Variable x; x = Variable(); std::cout << x;return 0;}]] FACTORY_STREAMIO)
   # whether Prem() from factory is public
+  # TODO: revert cb64eb37 once factory is updated above 4.0.3 everywhere
+  # see https://github.com/Macaulay2/M2/pull/1538#discussion_r537901750
   check_cxx_source_compiles([[#include <factory/factory.h>
     int main(){CanonicalForm p,q; Prem(p,q);return 0;}]] HAVE_FACTORY_PREM)
 else()
   unset(FACTORY_STREAMIO CACHE)
+endif()
+
+if(FROBBY_FOUND)
+  set(CMAKE_REQUIRED_INCLUDES "${FROBBY_INCLUDE_DIR}")
+  # whether frobby has constants::version <0.9.4 or frobby_version >=0.9.4
+  # TODO: remove when frobby is updated above 0.9.4 everywhere
+  check_cxx_source_compiles([[#include <frobby.h>
+    int main(){frobby_version;return 0;}]] HAVE_FROBBY_VERSION)
+else()
+  unset(HAVE_FROBBY_VERSION CACHE)
 endif()

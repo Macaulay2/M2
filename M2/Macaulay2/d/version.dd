@@ -18,8 +18,7 @@ header "
    #include <M2/math-include.h>
    #include \"distributed-packages.h\"
 
-   #define stringize0(a) #a
-   #define stringize(a) stringize0(a)
+   #define stringize(a) #a
 
    const char * M2_version () { return PACKAGE_VERSION; }
 
@@ -27,11 +26,18 @@ header "
    static int32_t endianness_string[2] = {0x61626364,0};
 
    #include <boost/version.hpp>
-   #include <mpfr.h>
+
    #include <memtailor.h>
    #include <mathic.h>
-   #include <frobby.h>
    #include <mathicgb.h>
+
+   #include <frobby.h>
+   #ifdef HAVE_FROBBY_VERSION
+     extern const char* const frobby_version;
+   #else
+     namespace constants { extern const char* const version; }
+     const char* const frobby_version = constants::version;
+   #endif
 
    #include <mps/version.h>
    #ifndef MPS_MAJOR_VERSION
@@ -51,7 +57,6 @@ header "
    #include <givaro/givconfig.h>
    Givaro::GivaroMain givaroMain;";
 
-
 header "
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored \"-Wconversion\"
@@ -65,14 +70,14 @@ gcversion():constcharstar := Ccode(returns,"
      unsigned micro = x & 0xff;
      if (micro == 0xff) sprintf(buf,\"%d.%d\", major, minor);
      else sprintf(buf,\"%d.%d.%d\", major, minor, micro);
-     return buf;");
+     return buf");
 
 header "#include <atomic_ops.h>";
 atomicopsversion():constcharstar := Ccode(returns,"
 #ifdef AO_VERSION_MICRO
      static char buf[40];
      sprintf(buf,\"%d.%d.%d\",AO_VERSION_MAJOR, AO_VERSION_MINOR, AO_VERSION_MICRO);
-     return buf;
+     return buf
 #else
      return \"version number not available\"
 #endif
@@ -99,8 +104,7 @@ header "#include <readline/readline.h>";
 readlineversion():constcharstar := Ccode(returns,"
      static char buf[8];
      sprintf(buf, \"%d.%d\", (rl_readline_version>>8)&0xff, rl_readline_version&0xff );
-     return buf;
-     ");
+     return buf");
 
 header "#include <gdbm.h>";
 gdbmversion():constcharstar := Ccode(returns, "return gdbm_version");
