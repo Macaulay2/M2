@@ -90,9 +90,8 @@ jobs:
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
                   libcdd-dev libgivaro-dev libboost-regex-dev fflas-ffpack w3c-markup-validator \
                   cohomcalg libflint-dev libmps-dev topcom \
-                  libsingular-dev libgtest-dev libmemtailor-dev libmathic-dev \
+                  libsingular-dev libfrobby-dev libgtest-dev libmemtailor-dev libmathic-dev \
                   libmathicgb-dev 4ti2 normaliz coinor-csdp nauty lrslib singular-data
-                  # TODO: add libfrobby-dev again when it is updated
 
 # ----------------------
 #   Steps common to all build variants
@@ -140,8 +139,6 @@ jobs:
       - name: Build libraries using Ninja
         if: matrix.build-system == 'cmake' # && steps.restore-cache.outputs.cache-hit != 'true'
         run: |
-          # TODO: remove this line soon
-          cmake --build . --target build-frobby
           cmake --build . --target build-libraries build-programs
 
       - name: Build Macaulay2 using Ninja
