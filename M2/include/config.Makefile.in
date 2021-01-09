@@ -71,8 +71,6 @@ CPPFLAGS :=									\
 	-I@abs_top_srcdir@/include						\
 	-I@abs_top_builddir@/include						\
 	-I$(BUILTLIBPATH)/include						\
-	-I$(BUILTLIBPATH)/include/cdd						\
-	-I$(BUILTLIBPATH)/include/cdd/cddlib					\
 	$(foreach S, @BUILDSUBLIST@, -I@abs_top_srcdir@/submodules/$S/src)	\
 	$(CPPFLAGS)
 # Actually, we need to include cdd and cdd/cddlib only if we build cddlib ourselves.  Fix that later.

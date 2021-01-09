@@ -9,7 +9,7 @@ VERSION = 0.94m
 # https://www.inf.ethz.ch/personal/fukudak/cdd_home/
 URL = http://macaulay2.com/Downloads/OtherSourceCode
 ALLOPTIONS     = SUBDIRS="lib-src" gmpdir=/nowhere
-CONFIGOPTIONS  = $(ALLOPTIONS) --includedir="$(LIBRARIESDIR)/include/cdd"
+CONFIGOPTIONS  = $(ALLOPTIONS) --includedir="$(LIBRARIESDIR)/include/cddlib"
 
 # we build mpir as gmp statically, so we can't make a shared library here
 CONFIGOPTIONS += --disable-shared

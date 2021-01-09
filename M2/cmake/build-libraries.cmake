@@ -817,6 +817,7 @@ _ADD_COMPONENT_DEPENDENCY(programs cohomcalg "" COHOMCALG)
 
 # https://users-math.au.dk/~jensen/software/gfan/gfan.html
 # gfan needs cddlib and is used by the packages gfanInterface and StatePolytopes
+# TODO: would gfan benefit from enabling the USEFACTORY option?
 ExternalProject_Add(build-gfan
   URL               ${M2_SOURCE_URL}/gfan0.6.2.tar.gz
   URL_HASH          SHA256=a674d5e5dc43634397de0d55dd5da3c32bd358d05f72b73a50e62c1a1686f10a
@@ -830,11 +831,9 @@ ExternalProject_Add(build-gfan
                       cddnoprefix=yes
                       "GMP_LINKOPTIONS=-L${MP_LIBRARY_DIRS} -lgmp"
                       "GMP_INCLUDEOPTIONS=-I${MP_INCLUDE_DIRS}"
-                      CC=${CMAKE_C_COMPILER}
-                      CXX=${CMAKE_CXX_COMPILER}
                       "OPTFLAGS=${CPPFLAGS} -DGMPRATIONAL -I${CDDLIB_INCLUDE_DIR}"
-                      "CLINKER=${CMAKE_C_COMPILER} ${LDFLAGS} -L${CDDLIB_LIBRARY_DIR}"
                       "CCLINKER=${CMAKE_CXX_COMPILER} ${LDFLAGS} -L${CDDLIB_LIBRARY_DIR}"
+                      "CXX=${CMAKE_CXX_COMPILER}"
   INSTALL_COMMAND   ${CMAKE_STRIP} gfan
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/gfan
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE COPYING ${M2_INSTALL_LICENSESDIR}/gfan
@@ -844,7 +843,7 @@ ExternalProject_Add(build-gfan
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(programs gfan "mp;cddlib;factory" GFAN)
+_ADD_COMPONENT_DEPENDENCY(programs gfan "mp;cddlib" GFAN)
 
 
 # http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html

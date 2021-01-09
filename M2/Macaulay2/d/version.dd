@@ -18,7 +18,8 @@ header "
    #include <M2/math-include.h>
    #include \"distributed-packages.h\"
 
-   #define stringize(a) #a
+   #define stringize0(a) #a
+   #define stringize(a) stringize0(a)
 
    const char * M2_version () { return PACKAGE_VERSION; }
 
