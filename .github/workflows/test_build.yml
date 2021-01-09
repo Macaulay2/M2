@@ -107,7 +107,6 @@ jobs:
         run: |
           echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
           echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=`brew --prefix`/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
           then echo "/usr/lib/ccache" >> $GITHUB_PATH
                # ccache doesn't seem to create the right symlink for clang-10 on ubuntu
@@ -138,9 +137,11 @@ jobs:
       - name: Configure Macaulay2 using CMake
         if: matrix.build-system == 'cmake'
         run: |
+          deps=`brew deps --1 --include-optional macaulay2 | tr '\n' ';'`
+          paths=$HOMEBREW_PREFIX/${deps//;/;$HOMEBREW_PREFIX/}
           cmake -S../.. -B. -GNinja \
             -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_NATIVE=OFF \
-            -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` \
+            -DCMAKE_PREFIX_PATH=$paths \
             -DCMAKE_INSTALL_PREFIX=/usr
 
       - name: Build libraries using Ninja
@@ -167,6 +168,8 @@ jobs:
         run: |
           make -C ../.. get-libtool get-automake get-autoconf
           make -C ../.. all
+          export CPPFLAGS=-I`brew --prefix`/include
+          export  LDFLAGS=-L`brew --prefix`/lib
           ../../configure --enable-download
 
       - name: Build Macaulay2 using Make
