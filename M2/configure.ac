@@ -171,6 +171,7 @@ AC_CHECK_PROGS(FIND,gfind find,false)
 AC_CHECK_PROGS(OBJDUMP,objdump,false)
 AC_CHECK_PROGS(OBJCOPY,objcopy,false)
 AC_CHECK_PROGS(LDD,ldd,false)
+AC_CHECK_PROGS(GIT,git,false)
 
 AC_CHECK_TOOL(AR,ar,false)
 AC_CHECK_TOOL(AS,as,false)
@@ -559,8 +560,8 @@ fi
 AC_SUBST(GIT_DESCRIPTION)
 # TODO: currently finds the last commit that changed the VERSION file
 # but ideally it should get the last release commit instead
-NEW_COMMITS=`git rev-list $(git rev-list -1 HEAD $srcdir/VERSION)..HEAD --count`
-GIT_COMMIT=`git describe --dirty --always --match HEAD`
+NEW_COMMITS=`$GIT rev-list $($GIT rev-list -1 HEAD $srcdir/VERSION)..HEAD --count`
+GIT_COMMIT=`$GIT describe --dirty --always --match HEAD`
 if test "$NEW_COMMITS-$GIT_COMMIT" = "-"
 then GIT_DESCRIPTION=version-$PACKAGE_VERSION-unknown
 else GIT_DESCRIPTION=version-$PACKAGE_VERSION-$NEW_COMMITS-$GIT_COMMIT
