@@ -32,7 +32,7 @@ jobs:
     name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false  # eventually make this true
+      fail-fast: true
       matrix:
         build-system:
           - cmake
@@ -54,11 +54,15 @@ jobs:
             cxx: clang++-10
             cc: clang-10
           # This build tests Clang rather than AppleClang (keep)
-          #- build-system: cmake
-          #  os: macos-latest
-          #  compiler: clang10
-          #  cxx: clang++
-          #  cc: clang
+          - build-system: cmake
+            os: macos-latest
+            compiler: clang10
+            cxx: clang++
+            cc: clang
+        exclude:
+          - build-system: cmake
+            os: macos-latest
+            compiler: default
 
     steps:
       - uses: actions/checkout@v2
@@ -71,9 +75,12 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew config
-          # autoconf, libtool are already in the virtual env
-          brew install automake ccache gnu-tar make ninja pkg-config yasm
-          brew install bdw-gc boost cddlib eigen flint glpk libatomic_ops libomp mpfr mpir ncurses ntl tbb
+          brew tap mahrud/tap
+          brew install autoconf automake bison ccache cmake gnu-tar libtool make ninja pkg-config yasm
+          brew install bdw-gc boost eigen gdbm readline libatomic_ops libxml2 libomp tbb
+          brew install gmp mpfr ntl flint@2.6.3 factory@4.1.3 mpsolve glpk
+          brew install frobby memtailor mathic mathicgb givaro fflas-ffpack
+          brew install 4ti2 cohomcalg csdp gfan lrs nauty normaliz topcom
 
 # ----------------------
 #   Install missing tools and libraries for Linux
@@ -88,10 +95,9 @@ jobs:
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
-                  libcdd-dev libgivaro-dev libboost-regex-dev fflas-ffpack w3c-markup-validator \
-                  cohomcalg libflint-dev libmps-dev topcom \
-                  libsingular-dev libfrobby-dev libgtest-dev libmemtailor-dev libmathic-dev \
-                  libmathicgb-dev 4ti2 normaliz coinor-csdp nauty lrslib singular-data
+                  libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
+                  libsingular-dev singular-data libmemtailor-dev libmathic-dev libmathicgb-dev libcdd-dev \
+                  cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib w3c-markup-validator
 
 # ----------------------
 #   Steps common to all build variants
@@ -101,7 +107,6 @@ jobs:
         run: |
           echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
           echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=`brew --prefix`/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
           then echo "/usr/lib/ccache" >> $GITHUB_PATH
                # ccache doesn't seem to create the right symlink for clang-10 on ubuntu
@@ -112,7 +117,7 @@ jobs:
           fi
 
       - uses: actions/cache@v2
-        if: matrix.build-system == 'cmake' # TODO: remove when autotools is more efficient with space
+        if: matrix.build-system == 'cmake'
         id: restore-cache
         with:
           path: |
@@ -132,12 +137,15 @@ jobs:
       - name: Configure Macaulay2 using CMake
         if: matrix.build-system == 'cmake'
         run: |
+          deps=`brew deps --1 --include-optional mahrud/tap/macaulay2 | tr '\n' ';'`
+          paths=$HOMEBREW_PREFIX/${deps//;/;$HOMEBREW_PREFIX/}
           cmake -S../.. -B. -GNinja \
-            -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` \
-            -DBUILD_NATIVE=OFF -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK" # TODO: remove when the packages are updated
+            -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_NATIVE=OFF \
+            -DCMAKE_PREFIX_PATH=$paths \
+            -DCMAKE_INSTALL_PREFIX=/usr
 
       - name: Build libraries using Ninja
-        if: matrix.build-system == 'cmake' # && steps.restore-cache.outputs.cache-hit != 'true'
+        if: matrix.build-system == 'cmake'
         run: |
           cmake --build . --target build-libraries build-programs
 
@@ -160,6 +168,8 @@ jobs:
         run: |
           make -C ../.. get-libtool get-automake get-autoconf
           make -C ../.. all
+          export CPPFLAGS=-I`brew --prefix`/include
+          export  LDFLAGS=-L`brew --prefix`/lib
           ../../configure --enable-download
 
       - name: Build Macaulay2 using Make
@@ -200,6 +210,7 @@ jobs:
            path: |
              # Autotools
              M2/BUILD/build/config.log
+             M2/BUILD/build/include/*
              M2/BUILD/build/libraries/*/build/*/config.log
              # CMake
              M2/BUILD/build/CMakeFiles/CMakeCache.txt
