@@ -460,6 +460,8 @@ infoHelp Thing := key -> (
     else print("-*" | " infoHelp: " | tag | " *-");)
 infoHelp ZZ := i -> seeAbout(infoHelp, i)
 infoHelp = new Command from infoHelp
+-- This ensures that "methods infoHelp" and "?infoHelp" work as expected
+setAttribute(infoHelp#0, ReverseDictionary, symbol infoHelp)
 
 -----------------------------------------------------------------------------
 -- View brief documentation within Macaulay2 using symbol?
