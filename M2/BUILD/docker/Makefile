@@ -12,7 +12,7 @@ always:; @cat README.md
 
 all: build run
 
-clean:;	rm -rf ${M2_REPO}/$(BUILD_DIR) $(STORAGE)/.ccache
+clean:; [[ "$(BUILD_DIR)" =~ "M2/BUILD/build".* ]] && rm -rf $(M2_REPO)/$(BUILD_DIR) $(STORAGE)/.ccache
 
 ###############################################################################
 # Build targets
