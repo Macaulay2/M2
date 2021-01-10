@@ -456,6 +456,7 @@ infoHelp Thing := key -> (
     if key === () then infoHelp "Macaulay2Doc";
     tag := infoTagConvert makeDocumentTag(key, Package => null);
     if getenv "INSIDE_EMACS" == "" then chkrun ("info " | format tag)
+    -- used by M2-info-help in M2.el
     else print("-* infoHelp: " | tag | " *-");)
 infoHelp ZZ := i -> seeAbout(infoHelp, i)
 infoHelp = new Command from infoHelp

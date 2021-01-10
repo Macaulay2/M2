@@ -58,10 +58,6 @@ do case $i in
    esac
 done
 
-dnl: homebrew-provided compilers don't look here:
-CPPFLAGS="$CPPFLAGS -I/usr/include -I/usr/local/include"
-LDFLAGS="$LDFLAGS -L/usr/lib -L/usr/local/lib"
-
 dnl AC_MSG_CHECKING(whether $FIND is GNU find)
 dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
 dnl then AC_MSG_RESULT(yes)
@@ -941,7 +937,7 @@ dnl factory needs to know:
 AC_SUBST(BUILD_flint)
 if test $BUILD_flint = no
 then AC_LANG(C)
-     AC_MSG_CHECKING([for flint >= 2.6.0])
+     AC_MSG_CHECKING([for flint >= 2.6.0 and < 2.7.0])
      AC_COMPILE_IFELSE(
         [AC_LANG_PROGRAM(
 	  [#include <flint/flint.h>
@@ -949,6 +945,9 @@ then AC_LANG(C)
 	  [
 #if __FLINT_VERSION < 2 || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR < 6)
 #error old flint
+#endif
+#if __FLINT_VERSION > 2 || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR >= 7)
+#error new flint
 #endif
 	  ])],
 	  AC_MSG_RESULT([yes])
@@ -1319,7 +1318,7 @@ if test $BUILD_fflas_ffpack = no
 then AC_MSG_CHECKING([for fflas_ffpack library, version at least 2])
      if test "`type -t fflas-ffpack-config`" = "file" && test "`fflas-ffpack-config --decimal-version`" -gt 20000
      then AC_MSG_RESULT(found)
-          FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) echo -n "$x " ;; esac done)
+          FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) /bin/echo -n "$x " ;; esac done)
 	  AC_MSG_NOTICE([adding fflas_ffpack flags $FFLAS_FFPACK_CXXFLAGS])
           M2_CXXFLAGS="$M2_CXXFLAGS $FFLAS_FFPACK_CXXFLAGS"
 	  LIBS="$LIBS `fflas-ffpack-config --libs`"
@@ -1859,7 +1858,7 @@ complement() {
     for i in $1
     do 	case "$y" in
 	    *" $i "*) ;;
-	    *) echo -n "$i " ;;
+	    *) /bin/echo -n "$i " ;;
 	esac
     done
     echo

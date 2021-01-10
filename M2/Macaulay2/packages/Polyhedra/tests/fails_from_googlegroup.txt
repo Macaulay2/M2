@@ -30,7 +30,7 @@ Fredrik Meyer
 
 Seth Sullivant 	
 Jun 28 (21 hours ago)
-I was trying to use the polyhedra pacakge to compute mixed volumes with the function "mixedVolume"
+I was trying to use the polyhedra package to compute mixed volumes with the function "mixedVolume"
 
 loadPackage "Polyhedra"
 M1 = matrix{{0,0,0,0,0},{1,1,0,0,0},{1,2,0,0,0}}

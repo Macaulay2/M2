@@ -433,7 +433,7 @@ dualizedChowForm (RingMap) := o -> (phi) -> (
    if dim kerPhi =!= r+1 then error("hypothesis not satisfied by the set of monomials (the dimension of the associated toric variety is less than "|toString(r)|")");
    mnr := o.AffineChartGrass;
    if mnr === true then mnr = (random toList(0..n))_{0..r};
-   try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and # unique mnr == r+1 and # mnr == r+1) else error("bad value for option AffineChartGrass: expected either 'true' or list of "|toString(r+1)|" distinct integers beetween 0 and "|toString(n)); 
+   try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and # unique mnr == r+1 and # mnr == r+1) else error("bad value for option AffineChartGrass: expected either 'true' or list of "|toString(r+1)|" distinct integers between 0 and "|toString(n)); 
    mnr = sort mnr; 
    x := local x; u := local u;
    R := K[x_0..x_r,u_(0,0)..u_(r,n),MonomialOrder=>Eliminate(r+1),Degrees=>{r+1:{1,0},(r+1)*(n+1):{0,1}}];

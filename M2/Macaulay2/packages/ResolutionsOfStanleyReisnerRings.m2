@@ -22,7 +22,6 @@ newPackage(
 -- Exports
 ------------------- 
 export {"colorfulSOP","universalSOP","colorfulPresentation","universalPresentation","barycentricSubdivision","sumBetti","equalBettiTally"}
-exportMutable("Colors")
 
 -------------------
 -- Exported Code
@@ -33,12 +32,12 @@ exportMutable("Colors")
 -----------------------------------------
 barycentricSubdivision = method(TypicalValue => SimplicialComplex)
 barycentricSubdivision (SimplicialComplex) := D -> (
-   return orderComplex(facePoset(D),CoefficientRing=>coefficientRing(ring(D)));
+   orderComplex(facePoset(D),CoefficientRing=>coefficientRing(ring(D)))
 );
 
 barycentricSubdivision (List) := F -> (
    D := simplicialComplex(F);
-   return orderComplex(facePoset(D),CoefficientRing=>coefficientRing(ring(D)));
+   orderComplex(facePoset(D),CoefficientRing=>coefficientRing(ring(D)))
 );
 
 ---------------------------------------------------
@@ -46,8 +45,8 @@ barycentricSubdivision (List) := F -> (
 ---------------------------------------------------
 
 -- Used in balancedColoring function, it returns the color of a vertex
-vertexColor = (a,Colors) -> (
-   for i from 0 to #Colors-1 do ( if member(a,Colors#i) then return i; );
+vertexColor = (a,colors) -> (
+   return position(toList(colors), c -> member(a,c));
 );
 
 -----------------------------------------
@@ -56,21 +55,22 @@ vertexColor = (a,Colors) -> (
 
 colorfulSOP = method(TypicalValue => List)
 colorfulSOP (SimplicialComplex,ZZ) := (B,n) -> (
-   R      := ring(B);
-   Colors := new MutableList from {};
-   for i from 0 to dim(B) do ( Colors = append(Colors,{}); );
-   for i from 1 to n do ( Colors#0 = append(Colors#0,R_i); );
+   R       := ring(B);
+   colors  := new MutableList from splice { dim(B)+1:{} };
+   H       := gens R;
+   colors#0 = H_{1..n};
+
    ColorsNotAllowed := {0};
-   AlreadyColored   := splice{1..#Colors#0};
-   NotColored       := splice{#Colors#0+1..#faces(0,B,useFaceClass=>true)};
+   AlreadyColored   := splice{1..#colors#0};
+   NotColored       := splice{#colors#0+1..#faces(0,B,useFaceClass=>true)};
    
    --Gives a proper coloring to the graph of B
-   for i from 1 to #Colors#0 do (
+   for i from 1 to #colors#0 do (
       for c in NotColored do (
          if isFaceOf(face{R_i,R_c},B) then (
             for a in AlreadyColored do (
                if isFaceOf(face{R_c,R_a},B) then (
-                  ColorOfVertA := vertexColor(R_a,Colors);
+                  ColorOfVertA := vertexColor(R_a,colors);
                      if not member(ColorOfVertA,ColorsNotAllowed) then (
                         ColorsNotAllowed = append(ColorsNotAllowed,ColorOfVertA);
                      );
@@ -78,55 +78,53 @@ colorfulSOP (SimplicialComplex,ZZ) := (B,n) -> (
              );
          );
          m  := max(ColorsNotAllowed) + 1;
-         Colors#m       = append(Colors#m,R_c);
+         colors#m       = append(colors#m,R_c);
          AlreadyColored = append(AlreadyColored,c);
          NotColored     = delete(c,NotColored);
       );
    );
-   C := {};
-   for j from 0 to dim(B) do (
-       C = append(C,(sum for i in Colors#j list i));
-   );
-   return C;
+   colors = apply(colors, c->sum(c));
+   return toList(colors);
 );
 
 
 colorfulSOP (SimplicialComplex) := (D) -> (
-   B0     := barycentricSubdivision(D);
-   R      := ring(B0);
-   B      := faceDelete(R_0,B0);
-   n      := #faces(0,D,useFaceClass=>true);
-   Colors := new MutableList from {};
-   for i from 0 to dim(B) do ( Colors = append(Colors,{}); );
-   for i from 1 to n do ( Colors#0 = append(Colors#0,R_i); );
+   B0      := barycentricSubdivision(D);
+   R       := ring(B0);
+   B       := faceDelete(R_0,B0);
+   n       := #faces(0,D,useFaceClass=>true);
+   colors  := new MutableList from splice { dim(B)+1:{} };
+   H       := gens R;
+   colors#0 = H_{1..n};
+
    ColorsNotAllowed := {0};
-   AlreadyColored   := splice{1..#Colors#0};
-   NotColored       := splice{#Colors#0+1..#faces(0,B,useFaceClass=>true)};
-   
+   AlreadyColored   := splice{1..#colors#0};
+   NotColored       := splice{#colors#0+1..#faces(0,B,useFaceClass=>true)};
+
    --Gives a proper coloring to the graph of B
-   for i from 1 to #Colors#0 do (
+   for i from 1 to #colors#0 do (
       for c in NotColored do (
          if isFaceOf(face{R_i,R_c},B) then (
             for a in AlreadyColored do (
                if isFaceOf(face{R_c,R_a},B) then (
-                  ColorOfVertA := vertexColor(R_a,Colors);
+                  ColorOfVertA := vertexColor(R_a,colors);
                      if not member(ColorOfVertA,ColorsNotAllowed) then (
                         ColorsNotAllowed = append(ColorsNotAllowed,ColorOfVertA);
                      );
                );
              );
          );
+
          m  := max(ColorsNotAllowed) + 1;
-         Colors#m       = append(Colors#m,R_c);
+         colors#m       = append(colors#m,R_c);
          AlreadyColored = append(AlreadyColored,c);
          NotColored     = delete(c,NotColored);
       );
    );
-   C := {};
-   for j from 0 to dim(B) do (
-       C = append(C,(sum for i in Colors#j list i));
-   );
-   return C;
+   
+
+   colors = apply(colors, c->sum(c));
+   return toList(colors);
 );
 -----------------------------------------
 --Main Function for Colorful Version
@@ -199,24 +197,22 @@ colorfulPresentation (List) := F -> (
 
 universalSOP = method(TypicalValue => List)
 universalSOP (SimplicialComplex) := D -> (
-   Theta    := {};
+   Theta    := new MutableList from {};
    for i from 0 to dim(D) do ( 
-     elts   := flatten(entries(faces(i,D)));
-     theta  := sum for j in elts list j;
-     Theta   = append(Theta,theta);
+     Theta#i = flatten(entries(faces(i,D)));
    );
-   return Theta;
+   Theta     = apply(Theta, t->sum(t));
+   return toList(Theta);
 );
 
 universalSOP (List) := F -> (
    D        := simplicialComplex(F);
-   Theta    := {};
+   Theta    := new MutableList from {};
    for i from 0 to dim(D) do ( 
-     elts   := flatten(entries(faces(i,D)));
-     theta  := sum for j in elts list j;
-     Theta   = append(Theta,theta);
+     Theta#i = flatten(entries(faces(i,D)));
    );
-   return Theta;
+   Theta     = apply(Theta, t->sum(t));
+   return toList(Theta);
 );
 
 
@@ -301,6 +297,8 @@ doc ///
 doc ///
     Key 
         barycentricSubdivision 
+        (barycentricSubdivision,SimplicialComplex)
+        (barycentricSubdivision,List)
     Headline
         the barycentric subdivision of a simplicial complex. 
     Usage 
@@ -319,9 +317,9 @@ doc ///
         Example
             S = QQ[a,b,c,d];
             F = {a*b,c*d};
-            D = simplicialComplex F;
-            barycentricSubdivision D;            
-            barycentricSubdivision F;            
+            D = simplicialComplex F
+            barycentricSubdivision D            
+            barycentricSubdivision F            
     SeeAlso
         SimplicialComplexes
         Posets 
@@ -331,6 +329,8 @@ doc ///
 doc ///
     Key 
         colorfulSOP
+        (colorfulSOP,SimplicialComplex,ZZ)
+        (colorfulSOP,SimplicialComplex)
     Headline
         Colorful System of Parameters (KSOP)
     Usage 
@@ -377,6 +377,8 @@ doc ///
 doc ///
     Key
         universalSOP
+        (universalSOP,SimplicialComplex)
+        (universalSOP,List)
     Headline
         Universal System of Parameters (USOP)
     Usage 
@@ -403,8 +405,9 @@ doc ///
 /// 
 
 doc ///
-      Key
+    Key
         sumBetti
+        (sumBetti,Module)
     Headline
         Computes the sum of Betti numbers.
     Usage
@@ -425,8 +428,9 @@ doc ///
 ///
 
 doc ///
-      Key
+    Key
         equalBettiTally
+        (equalBettiTally,Module,Module)
     Headline
         Computes the Betti table of two modules and compares for equality 
     Usage
@@ -450,7 +454,9 @@ doc ///
 
 doc ///
       Key
-        universalPresentation 
+        universalPresentation
+        (universalPresentation,SimplicialComplex)
+        (universalPresentation,List)
     Headline
         A presentation of the Stanley-Reisner ring over its universal parameter ring
     Usage
@@ -480,7 +486,9 @@ doc ///
 
 doc ///
       Key
-        colorfulPresentation 
+        colorfulPresentation
+        (colorfulPresentation,SimplicialComplex)
+        (colorfulPresentation,List)
     Headline
         A presentation of the Stanley-Reisner ring of the barycentric subdivision of a simplicial complex over its colorful parameter ring
     Usage
