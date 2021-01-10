@@ -1139,6 +1139,14 @@ AC_LANG(C++)
 AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby $LIBS",BUILD_frobby=yes)
 if test $BUILD_frobby = yes
 then BUILTLIBS="-lfrobby $BUILTLIBS"
+    dnl change this to [1] when frobby is built from a submodule
+    AC_DEFINE([HAVE_FROBBY_VERSION], [0], [whether frobby has frobby_version])
+else
+    AC_MSG_CHECKING([whether frobby has frobby_version])
+    AC_COMPILE_IFELSE(
+        [AC_LANG_PROGRAM([#include <frobby.h>], [frobby_version])],
+        [AC_MSG_RESULT([yes]) && AC_DEFINE([HAVE_FROBBY_VERSION], [1], [whether frobby has frobby_version])],
+        [AC_MSG_RESULT([no])])
 fi
 
 #############################################################################
