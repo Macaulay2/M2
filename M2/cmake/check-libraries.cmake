@@ -183,7 +183,7 @@ endif()
 #   Normaliz	affine monoids, lattice polytopes, and rational cones		(needs gmp, nauty, OpenMB)
 #   TOPCOM	triangulations of point configurations and oriented matroids	(needs cddlib)
 
-find_program(4TI2	NAMES	circuits)
+find_program(4TI2	NAMES	circuits 4ti2-circuits 4ti2_circuits)
 find_program(COHOMCALG	NAMES	cohomcalg)
 find_program(GFAN	NAMES	gfan)
 # TODO: library or program?
@@ -191,8 +191,8 @@ find_program(LRSLIB	NAMES	lrs)
 # TODO: check for alternatives as well: sdpa or mosek
 find_program(CSDP	NAMES	csdp)
 find_program(NORMALIZ	NAMES	normaliz)
-find_program(NAUTY	NAMES	dreadnaut)
-find_program(TOPCOM	NAMES	checkregularity)
+find_program(NAUTY	NAMES	dreadnaut nauty-dreadnaut)
+find_program(TOPCOM	NAMES	checkregularity topcom-checkregularity)
 # NOTE: we don't build the following by default, but some packages use them, so
 # we provide targets build-polymake, build-bertini, build-phcpack for building them.
 find_program(POLYMAKE	NAMES	polymake)

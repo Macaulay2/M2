@@ -73,8 +73,6 @@ CPPFLAGS :=									\
 	-I$(BUILTLIBPATH)/include						\
 	$(foreach S, @BUILDSUBLIST@, -I@abs_top_srcdir@/submodules/$S/src)	\
 	$(CPPFLAGS)
-# Actually, we need to include cdd and cdd/cddlib only if we build cddlib ourselves.  Fix that later.
-# And, depending on the version of cddlib, it's one or the other: 0.94m uses cdd/cddlib, and 094h uses cdd
 
 vpath %.h $(BUILTLIBPATH)/include
 
