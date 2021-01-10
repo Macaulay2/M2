@@ -112,9 +112,11 @@ doc ///
 doc ///
   Key
     infoHelp
+    (infoHelp, Thing)
   Headline
     view documentation in Info format
   Usage
+    infoHelp
     infoHelp X
   Inputs
     X:Thing
@@ -122,6 +124,8 @@ doc ///
   Consequences
     Item
       The given documentation page is displayed using info, if you are running Macaulay2 in a terminal window.
+      If you are running Macaulay2 in Emacs, then the page is opened in another window using Info mode.
+      If no argument is given to @TT "infoHelp"@, then the top node of the Macaulay2 documentation is displayed.
   Description
     Text
       Some example uses:
@@ -155,8 +159,7 @@ doc ///
 
     @HEADER2 "Viewing Info files in Emacs"@
 
-    Reading the info form of the documentation in Emacs is perhaps better than using @TO "infoHelp"@,
-    as the preferred way of running Macaulay2 is in Emacs. If you do so, we recommend configuring
+    If you read the info form of the documentation in Emacs, we recommend configuring
     the value of the Emacs variable @TT "Info-hide-note-references"@ to @TT "hide"@ in order to
     prevent Emacs from inserting a superfluous @TT "See"@ or @TT "see"@ in front of the hyperlinks.
   SeeAlso
@@ -211,6 +214,7 @@ Node
     [about, Body]
     (help, ZZ)
     (viewHelp, ZZ)
+    (infoHelp, ZZ)
     (about, Function)
     (about, String)
     (about, Symbol)
@@ -232,7 +236,8 @@ Node
       The documentation corresponding to the keys in the list returned can be displayed by applying the function
       @TO "help"@ to it. To see the documentation corresponding to just one or some of the keys, give @TO "help"@
       an integer or a list of integers to be used as indices in the list returned by the most recent application
-      of @TO "about"@. The function @TO "viewHelp"@ can also be given an integer for viewing the documentation.
+      of @TO "about"@. The functions @TO "viewHelp"@ and @TO "infoHelp"@ can also be given an integer for viewing
+      the documentation.
 
       The packages searched are the loaded packages and the packages installed under one of the prefixes listed
       in @TO "prefixPath"@. The first search will take a few seconds while it reads all the documentation keys

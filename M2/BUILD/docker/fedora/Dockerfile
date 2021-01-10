@@ -24,7 +24,7 @@ RUN microdnf install eigen3-devel glpk-devel gmp-devel mpfr-devel ntl-devel libf
 RUN microdnf install mlocate bash-completion
 
 # Add non-root user for building and running Macaulay2
-RUN useradd -G wheel -g root -u 1000 -m macaulay
+RUN useradd -G wheel -g root -u 1000 -m macaulay && echo "macaulay ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER 1000:0
 
 ENV PATH /home/macaulay/M2/M2/BUILD/build-docker:${PATH}

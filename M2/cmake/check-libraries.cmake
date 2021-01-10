@@ -128,7 +128,7 @@ find_package(Factory	4.1.0)
 find_package(MPSolve	3.2.0)
 # TODO: add minimum version checks
 find_package(Frobby	0.9.0)
-find_package(CDDLIB)  # 094h?
+find_package(CDDLIB)  # 0.94m?
 find_package(GTest	1.10)
 find_package(Memtailor	1.0.0)
 find_package(Mathic	1.0.0)
@@ -183,7 +183,7 @@ endif()
 #   Normaliz	affine monoids, lattice polytopes, and rational cones		(needs gmp, nauty, OpenMB)
 #   TOPCOM	triangulations of point configurations and oriented matroids	(needs cddlib)
 
-find_program(4TI2	NAMES	circuits)
+find_program(4TI2	NAMES	circuits 4ti2-circuits 4ti2_circuits)
 find_program(COHOMCALG	NAMES	cohomcalg)
 find_program(GFAN	NAMES	gfan)
 # TODO: library or program?
@@ -191,8 +191,8 @@ find_program(LRSLIB	NAMES	lrs)
 # TODO: check for alternatives as well: sdpa or mosek
 find_program(CSDP	NAMES	csdp)
 find_program(NORMALIZ	NAMES	normaliz)
-find_program(NAUTY	NAMES	dreadnaut)
-find_program(TOPCOM	NAMES	checkregularity)
+find_program(NAUTY	NAMES	dreadnaut nauty-dreadnaut)
+find_program(TOPCOM	NAMES	checkregularity topcom-checkregularity)
 # NOTE: we don't build the following by default, but some packages use them, so
 # we provide targets build-polymake, build-bertini, build-phcpack for building them.
 find_program(POLYMAKE	NAMES	polymake)
@@ -328,8 +328,20 @@ if(FACTORY_FOUND)
   check_cxx_source_compiles([[#include <factory/factory.h>
     int main(){Variable x; x = Variable(); std::cout << x;return 0;}]] FACTORY_STREAMIO)
   # whether Prem() from factory is public
+  # TODO: revert cb64eb37 once factory is updated above 4.0.3 everywhere
+  # see https://github.com/Macaulay2/M2/pull/1538#discussion_r537901750
   check_cxx_source_compiles([[#include <factory/factory.h>
     int main(){CanonicalForm p,q; Prem(p,q);return 0;}]] HAVE_FACTORY_PREM)
 else()
   unset(FACTORY_STREAMIO CACHE)
+endif()
+
+if(FROBBY_FOUND)
+  set(CMAKE_REQUIRED_INCLUDES "${FROBBY_INCLUDE_DIR}")
+  # whether frobby has constants::version <0.9.4 or frobby_version >=0.9.4
+  # TODO: remove when frobby is updated above 0.9.4 everywhere
+  check_cxx_source_compiles([[#include <frobby.h>
+    int main(){frobby_version;return 0;}]] HAVE_FROBBY_VERSION)
+else()
+  unset(HAVE_FROBBY_VERSION CACHE)
 endif()
