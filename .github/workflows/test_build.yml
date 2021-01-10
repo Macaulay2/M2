@@ -137,7 +137,7 @@ jobs:
       - name: Configure Macaulay2 using CMake
         if: matrix.build-system == 'cmake'
         run: |
-          deps=`brew deps --1 --include-optional macaulay2 | tr '\n' ';'`
+          deps=`brew deps --1 --include-optional mahrud/tap/macaulay2 | tr '\n' ';'`
           paths=$HOMEBREW_PREFIX/${deps//;/;$HOMEBREW_PREFIX/}
           cmake -S../.. -B. -GNinja \
             -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_NATIVE=OFF \
