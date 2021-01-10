@@ -18,11 +18,6 @@ Here is the procedure:
 	 - increment the version number in the file ./VERSION
 	 - add an entry to distributions/deb/changelog
 	 - commit the two files and push upstream
-	 - make a git tag of the form version-X.Y.Z and push it to github
-	      git tag version-X.Y.Z
-	      git push origin tag version-X.Y.Z
-	   (Replace "origin" here by the name of your remote that refers to
-	   the Macaulay2 M2 repository.)
 
     Things to do when developing a binary release for version X.Y
        - on the master branch:
