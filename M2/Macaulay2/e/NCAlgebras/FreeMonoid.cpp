@@ -72,36 +72,30 @@ int FreeMonoid::index_of_variable(const Monom& m) const
 
 void FreeMonoid::copy(const Monom& m, MonomialInserter& result) const
 {
-  for (auto v : m) result.push_back(v);
-  
-  //  for (auto i = m.begin(); i != m.end(); ++i)
-  //    result.push_back(*i);
-  //  std::copy(m.begin(), m.end(), result);
+  result.insert(result.end(),m.begin(),m.end());
 }
 
 void FreeMonoid::mult(const Monom& m1, const Monom& m2, MonomialInserter& result) const
 {
-  result.push_back(m1[0] + wordLength(m2));
+  int sz = m1[0] + wordLength(m2);
+  result.reserve(sz);
+  result.push_back(sz);
   for (int i=1; i<=mNumWeights; ++i)
     result.push_back(m1[i] + m2[i]);
-  // FM : Should we be using vector::insert?
-  for (auto i = m1.begin()+mNumWeights+1; i != m1.end(); ++i)
-    result.push_back(*i);
-  for (auto i = m2.begin()+mNumWeights+1; i != m2.end(); ++i)
-    result.push_back(*i);
+  result.insert(result.end(),m1.begin()+mNumWeights+1,m1.end());
+  result.insert(result.end(),m2.begin()+mNumWeights+1,m2.end());
 }
 
 void FreeMonoid::mult3(const Monom& m1, const Monom& m2, const Monom& m3, MonomialInserter& result) const
 {
+  int sz = m1[0] + wordLength(m2) + wordLength(m3);
+  result.reserve(sz);
   result.push_back(m1[0] + wordLength(m2) + wordLength(m3));
   for (int i=1; i<=mNumWeights; ++i)
     result.push_back(m1[i] + m2[i] + m3[i]);
-  for (auto i = m1.begin()+mNumWeights+1; i != m1.end(); ++i)
-    result.push_back(*i);
-  for (auto i = m2.begin()+mNumWeights+1; i != m2.end(); ++i)
-    result.push_back(*i);
-  for (auto i = m3.begin()+mNumWeights+1; i != m3.end(); ++i)
-    result.push_back(*i);
+  result.insert(result.end(),m1.begin()+mNumWeights+1,m1.end());
+  result.insert(result.end(),m2.begin()+mNumWeights+1,m2.end());
+  result.insert(result.end(),m3.begin()+mNumWeights+1,m3.end());
 }
 
 int FreeMonoid::compare(const Monom& m1, const Monom& m2) const

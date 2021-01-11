@@ -66,7 +66,7 @@ private:
   //    i is the column number
   //    j is the row that reduces it (and -1 if there is no such row).
 
-  // TODO: we should change this to have keys Words rather than Monoms since its unordered.
+  // TODO(?): we should change this to have keys 'Word's rather than 'Monom's since its unordered.
   // but we would have to update MonomHashEqual a bit
   std::unordered_map<Monom, std::pair<int,int>, MonomHash, MonomHashEqual> mColumnMonomials;
   std::vector<PreRow> mReducersTodo;
@@ -88,9 +88,6 @@ private:
                      MonomHash,
                      MonomHashEqual> mPreviousColumnMonomials;  
   MemoryBlock mPreviousMonomialSpace;
-  // records the new GB elements we can use as reducers in the next iteration
-  // (key,value) = (column index, row that reduces it)
-  std::unordered_map<int,int> mNewReducerColumns;
 
 public:
   NCF4(const FreeAlgebra& A,

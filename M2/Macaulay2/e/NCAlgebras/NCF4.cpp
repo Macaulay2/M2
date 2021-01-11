@@ -153,13 +153,14 @@ void NCF4::processPreviousF4Matrix()
   //   std::cout << "Monomial Hash Max Load : " << mColumnMonomials.max_load_factor() << std::endl;
   // }
   
-  // FM: this was not worth the trouble
-  // mNewReducerColumns.clear();
-  // for (int i = mFirstOverlap; i < mRows.size(); ++i)
-  // {
-  //   if (mRows[i].second.size() == 0) continue;
-  //   mNewReducerColumns.emplace(mRows[i].second[0],i);
-  // } 
+  // flag the columns correspond to lead terms of new GB elements as reducers
+  for (int i = mFirstOverlap; i < mRows.size(); ++i)
+  {
+    if (mRows[i].second.size() == 0) continue;
+    int newReducerCol = mRows[i].second[0];
+    mColumns[newReducerCol].second = i;
+    mPreviousColumnMonomials[mColumns[newReducerCol].first].second = i;
+  } 
   
   // copy the finished rows and columns into the holding areas
   mPreviousRows.clear();
@@ -450,25 +451,11 @@ std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m)
     retval = std::make_pair(false,-1);
   else
   {
-    if ((*it).second.second == -1)  // in column table and not known (a priori)
-                                    // to be a reducer monomial
-    {
-      // The following check involved looking in the previously reduced GB elements
-      // in case we needed them.  It turns out it is more trouble than it is worth,
-      // as most monomials miss this check so it's just extra work.
-
-      //auto it2 = mNewReducerColumns.find((*it).second.first);
-      //if (it2 == mNewReducerColumns.end())  // check the new GB elements.  if there, then ok
-      //  retval = std::make_pair(false,-1);
-      //else
-      //  retval = std::make_pair(true,(*it2).second);
-
+    int colNum = (*it).second.first;
+    if (mPreviousColumns[colNum].second == -1)  // in column table and not a reducer monomial
       retval = std::make_pair(false,-1);
-    }
     else  // in table and a reducer monomial
-    {
-      retval = std::make_pair(true,(*it).second.second);
-    }
+      retval = std::make_pair(true,mPreviousColumns[colNum].second);
   }
   return retval;
 }
@@ -494,12 +481,11 @@ std::pair<bool,int> NCF4::findPreviousReducerSuffix(const Monom& m)
     retval = std::make_pair(false,-1);
   else
   {
-    if ((*it).second.second == -1)  // in table, but not a reducer monomial
+    int colNum = (*it).second.first;
+    if (mPreviousColumns[colNum].second == -1)  // in column table and not a reducer monomial
       retval = std::make_pair(false,-1);
-    else                            // in table and a reducer monomial
-    {
-      retval = std::make_pair(true,(*it).second.second);
-    }
+    else  // in table and a reducer monomial
+      retval = std::make_pair(true,mPreviousColumns[colNum].second);
   }
   return retval;
 }
@@ -692,9 +678,8 @@ void NCF4::sortF4Matrix()
   for (int i = 0; i < sz; ++i) indices.emplace_back(i);
  
   // store all the column monomials in a temporary to sort them
-  tempMonoms.reserve(sz);
   for (auto& i : mColumnMonomials)
-   tempMonoms.emplace_back(i.first);
+    tempMonoms.emplace_back(i.first);
 
   // create the monomial sorter object
   MonomSort<std::vector<Monom>> monomialSorter(&freeAlgebra().monoid(),&tempMonoms);

@@ -1,17 +1,17 @@
 #ifndef _free_monoid_hpp_
 #define _free_monoid_hpp_
 
-#include "Polynomial.hpp"     // for Monom, IntVector
-#include "newdelete.hpp"      // for VECTOR, our_new_delete
-#include "polyring.hpp"       // for PolynomialRing
-#include "style.hpp"          // for GT
-
-#include <iosfwd>             // for string, ostream
-#include <vector>             // for vector
+#include "Polynomial.hpp"      // for Monom, IntVector
+#include "newdelete.hpp"       // for VECTOR, our_new_delete
+#include "polyring.hpp"        // for PolynomialRing
+#include "style.hpp"           // for GT
+#include "NCAlgebras/Word.hpp" // for Word
+#include <iosfwd>              // for string, ostream
+#include <vector>              // for vector
 
 class MemoryBlock;  // lines 14-14
 class Monoid;  // lines 15-15
-class Word;  // lines 16-16
+//class Word;  // lines 16-16
 class buffer;  // lines 17-17
 
 // TODO for weights in orders
@@ -187,6 +187,13 @@ public:
       }
       return hash;
   }
+  int operator()(const Word &V) const {
+      int hash = V.size();
+      for(auto &i : V) {
+          hash ^= i + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+      }
+      return hash;
+  }
 };
 
 class MonomHashEqual {
@@ -199,10 +206,16 @@ public:
 
   bool operator() (const Monom a, const Monom b) const
   {
-    int retval = mMonoid->compare(a, b);
-    return (retval == EQ);
+    //int retval = mMonoid->compare(a, b);
+    //return (retval == EQ);
+    return mMonoid->isEqual(a,b);
   }
   // should make an operator() that works on Words too
+  bool operator() (const Word a, const Word b) const
+  {
+    return std::equal(a.begin(),a.end(),b.begin(),b.end());
+  }
+
 
 private:
   const FreeMonoid* mMonoid;
