@@ -23,7 +23,7 @@
 class FreeAlgebra;
 union ring_elem;
 
-class NCF4 : public our_new_delete
+class NCF4
 {
 private:
   const FreeAlgebra& mFreeAlgebra;

@@ -913,7 +913,7 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 10); -- (with autoreduction) .9 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 11); -- (with autoreduction) 3.5 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12); -- (with autoreduction) 17.7 sec                 --- 8 secs
 I = ideal I_*; elapsedTime Igb = NCGB(I, 13); -- (with autoreduction) 79 sec (153 gens in GB)  --- 30 secs
-I = ideal I_*; elapsedTime Igb = NCGB(I, 14); -- (with autoreduction) 352 sec (177 gens in GB) --- 105 secs after previous F4 changes, about 2.5gb
+I = ideal I_*; elapsedTime Igb = NCGB(I, 14); -- (with autoreduction) 352 sec (177 gens in GB) --- 110 secs after previous F4 changes, about 2.5gb
 
 time Igb = NCGB(I, 20, Strategy=>"F4");
 time Igb = NCGB(I, 10, Strategy=>"Naive");

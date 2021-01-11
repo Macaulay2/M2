@@ -1175,7 +1175,7 @@ rightQuadraticMatrixFourDim Ideal := I -> (
    Id := id_(A^(numgens A));
    eHash := hashTable apply(numgens A, i -> (A_i, Id^{i}));
    myTable := apply(numgens I, i -> flatten entries sum apply(splitRels#i, t -> t#0*t#1#1*(eHash#(t#1#0))));
-   matrix myTable
+   transpose matrix myTable
 )
 rightQuadraticMatrixFourDim List := I -> rightQuadraticMatrixFourDim ideal I
 
@@ -1221,8 +1221,10 @@ pointSchemeFourDim (FreeAlgebraQuotient, Symbol) := (B, y) -> (
     R := QQ monR;
     phi := map(R,A,gens R);
     I := ideal B;
-    M1 := matrix applyTable(entries leftQuadraticMatrixFourDim I, g -> phi g);
-    minors(4,M1)
+    Mleft := matrix applyTable(entries leftQuadraticMatrixFourDim I, g -> phi g);
+    Mright := matrix applyTable(entries rightQuadraticMatrixFourDim I, g -> phi g);
+    error "err";
+    minors(4,Mleft)
 )
 
 --- load the tests
@@ -1546,3 +1548,19 @@ netList oo
 PP = pointSchemeFourDim(S,y)
 primaryDecomposition radical PP
 netList oo
+
+restart
+debug needsPackage "AssociativeAlgebras"
+R = QQ {x_4,x_1,x_2,x_3}
+I = ideal apply(subsets(4,2), p -> x_(p#0)*x_(p#1) - x_(p#1)*x_(p#0))
+I = ideal {x_3^2 - x_1*x_2, x_4^2 - x_2*x_1, x_1*x_3 - x_2*x_4, x_3*x_1 - x_2*x_3, x_1*x_4 - x_4*x_2, x_4*x_1 - x_3*x_2}
+Igb = NCGB(I, 14, Strategy => "Naive");
+S = R/I
+PP = pointSchemeFourDim(S,y)
+PPR = ring Mleft
+MleftSpecial = sub(Mleft, {PPR_0 => 1, PPR_1 => 2, PPR_2 => 0, PPR_3 => 0})
+MrightSpecial = sub(Mright, {PPR_0 => 1, PPR_1 => 2, PPR_2 => -1, PPR_3 => -2})
+C = first minimalPrimes minors(4,Mleft)
+Mleft % C
+ker (Mleft % C)
+rank MrightSpecial
