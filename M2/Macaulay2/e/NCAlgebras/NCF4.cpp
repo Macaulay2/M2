@@ -501,8 +501,10 @@ void NCF4::processMonomInPreRow(Monom& m, int* nextcolloc)
       int divisornum = -1; // -1 indicates no divisor was found
       if (divresult.first)
         {
-          // if it is a divisor of a gb element,
-          // add that multiple of the GB element to mReducersToDo for processing
+          // if it is a divisor of a gb element (or a left/right
+          // variable multiple of a previous reducer), add that
+          // multiple of the GB element to mReducersToDo for
+          // processing
           divisornum = mReducersTodo.size();
           mReducersTodo.push_back(divresult.second);
         }

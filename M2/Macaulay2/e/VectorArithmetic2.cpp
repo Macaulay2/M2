@@ -58,21 +58,20 @@ const VectorArithmetic2* vectorArithmetic2(const Ring* R)
 //////////////////////////////////////////////////////////////////////////////////
 // Notes: perhaps have two types: FieldElement is an int size of some sort.
 //   Make dense array an array of larger size integers?  I.e. delay modulus?
-class VectorArithmeticZZp : public VectorArithmetic2
+class VectorArithmeticZZpFlint : public VectorArithmetic2
 {
   // This class is valid for prime characteristic up to a certain size.
-  using FieldElement = int;
-  using DenseFieldElement = long;
+  using FieldElement = M2::ARingZZpFlint::ElementType;
+  using DenseFieldElement = FieldElement;
 private:
-  const M2::ARingZZp& mRing;
-  FieldElement mCharacteristic;
+  const M2::ARingZZpFlint& mRing;
 
   std::vector<FieldElement>* coefficientVector(CoefficientVector2 f) const
   {
     return reinterpret_cast<std::vector<FieldElement>*>(f.mValue);
   }
 
-  std::vector<DenseFieldElement>* coefficientVector(DenseCoefficientVector2 f) const
+  std::vector<DenseFieldElement>* denseCoefficientVector(DenseCoefficientVector2 f) const
   {
     return reinterpret_cast<std::vector<DenseFieldElement>*>(f.mValue);
   }
@@ -85,7 +84,7 @@ private:
     return result;
   }
 
-  DenseCoefficientVector2 coefficientVector(std::vector<DenseFieldElement>* vals) const
+  DenseCoefficientVector2 denseCoefficientVector(std::vector<DenseFieldElement>* vals) const
   {
     DenseCoefficientVector2 result;
     result.mValue = vals;
@@ -94,7 +93,7 @@ private:
   }
 
 public:
-  VectorArithmeticZZp(const M2::ARingZZp& R, int characteristic) : mRing(R), mCharacteristic(characteristic) {}
+  VectorArithmeticZZpFlint(const M2::ARingZZpFlint& R) : mRing(R) {}
   
   /////////////////////////////
   // Allocation/Deallocation //
@@ -105,19 +104,19 @@ public:
   }
   DenseCoefficientVector2 allocateDenseCoefficientVector(ComponentIndex nelems) const override
   {
-    return coefficientVector(new std::vector<DenseFieldElement>(nelems));
+    return denseCoefficientVector(new std::vector<DenseFieldElement>(nelems));
   }
-  CoefficientVector2 allocateCoefficientVector() const override
-  {
-    return coefficientVector(new std::vector<FieldElement>);
-  }
+  // CoefficientVector2 allocateCoefficientVector() const override
+  // {
+  //   return coefficientVector(new std::vector<FieldElement>);
+  // }
   void deallocateCoefficientVector(CoefficientVector2& coeffs) const override
   {
     delete coefficientVector(coeffs);
   }
   void deallocateCoefficientVector(DenseCoefficientVector2& coeffs) const override
   {
-    delete coefficientVector(coeffs);
+    delete denseCoefficientVector(coeffs);
   }
 
   
@@ -131,7 +130,7 @@ public:
   }
   size_t size(const DenseCoefficientVector2& coeffs) const override
   {
-    return coefficientVector(coeffs)->size();
+    return denseCoefficientVector(coeffs)->size();
   }
   
   // better name: fillDenseRow.
@@ -143,7 +142,7 @@ public:
     //   Other values are not touched.
     // In our intended uses, the input `dense` is the vector consisting of all zeros`.
     
-    auto& dvec = * coefficientVector(dense);
+    auto& dvec = * denseCoefficientVector(dense);
     auto& svec = * coefficientVector(sparse);
     
     assert(comps.size() == svec.size());
@@ -158,25 +157,26 @@ public:
                                 const Range<int>& comps) const override
   {
     // ASSUMPTION: svec[0] == 1.
-    auto& dvec = * coefficientVector(dense);
+    auto& dvec = * denseCoefficientVector(dense);
     auto& svec = * coefficientVector(sparse);
 
     DenseFieldElement a = dvec[comps[0]];
     for (int i=0; i < comps.size(); ++i)
-      dvec[comps[i]] += mCharacteristic - (a * svec[i]);
+      mRing.subtract_multiple(dvec[comps[i]], a, svec[i]);
   }
 
   int denseRowNextNonzero(DenseCoefficientVector2& dense,
                           int first,
                           int last) const override
   {
-    auto& dvec = * coefficientVector(dense);
+    auto& dvec = * denseCoefficientVector(dense);
     for (int i = first; i <= last; i++)
       {
         if (dvec[i] == 0) continue;
-        if (dvec[i] > mCharacteristic) dvec[i] %= mCharacteristic;
-        else if (dvec[i] < 0) dvec[i] %= mCharacteristic;
-        if (dvec[i] == 0) continue;
+        // these lines give the gist of how to handle delayed modulus
+        //if (dvec[i] > mCharacteristic) dvec[i] %= mCharacteristic;
+        //else if (dvec[i] < 0) dvec[i] %= mCharacteristic;
+        //if (dvec[i] == 0) continue;
         return i;
       }
     return last + 1;
@@ -189,7 +189,7 @@ public:
                            int first,
                            int last) const override // TODO: have a MemoryBlock2 entry for where to put comps (and perhaps coeffs?)
   {
-    auto& dvec = * coefficientVector(dense);
+    auto& dvec = * denseCoefficientVector(dense);
     
     int len = 0;
     
@@ -197,21 +197,18 @@ public:
     // not be accessing dense[i] for i negative.
     for (int i = first; i >= 0 and i <= last; i++)
       {
-        if (dvec[i] == 0) len++;
+        if (dvec[i] != 0) len++;
       }
 
-    // Redo these 2 lines
-    //    ring_elem* ptr = newarray(ring_elem, len);
-    //    coeffs = Range<ring_elem>(ptr, ptr + len);
-
-    // Fix this line
     comps = monomialSpace.allocateArray<int>(len);
-    
+    sparse = allocateCoefficientVector(len);
+    auto& svec = * coefficientVector(sparse);
+
     int next = 0;
     for (int i = first; i >= 0 and i <= last; i++)
       if (dvec[i] != 0)
         {
-          //TODO          svec[next] = dvec[i];
+          svec[next] = dvec[i];
           comps[next] = i;
           ++next;
           dvec[i] = 0;
@@ -222,23 +219,23 @@ public:
   {
     auto& svec = * coefficientVector(sparse);
 
-    // TODO: get the inverse of coeffs[0].
-    // FieldElement leadCoeff = coeffs[0];
+    FieldElement leadCoeffInv;
+    mRing.init(leadCoeffInv);
+    mRing.invert(leadCoeffInv,svec[0]);
 
-    // TODO
-    //    for (auto& c : svec) { c = mRing.divide(c, leadCoeff); }
+    for (auto& c : svec) { mRing.mult(c, c, leadCoeffInv); }
   }
 
 };
 
-const VectorArithmetic2* vectorArithmetic2(const M2::ARingZZp& R)
-{
-  new VectorArithmeticZZp(R, R.characteristic());
-}
-// const VectorArithmetic2* vectorArithmetic2(const M2::ARingZZpFlint& R)
+// const VectorArithmetic2* vectorArithmetic2(const M2::ARingZZp& R)
 // {
-//   new VectorArithmeticZZp(R, R.mCharacteristic());
+//   new VectorArithmeticZZp(R, R.characteristic());
 // }
+const VectorArithmetic2* vectorArithmetic2(const M2::ARingZZpFlint& R)
+{
+  return new VectorArithmeticZZpFlint(R);
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "

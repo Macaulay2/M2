@@ -6,12 +6,12 @@
 class Ring;
 union ring_elem;
 using ComponentIndex = long;
-class VectorArithmeticZZp;
+class VectorArithmeticZZpFlint;
 class MemoryBlock2;
 
 class CoefficientVector2
 {
-  friend class VectorArithmeticZZp;
+  friend class VectorArithmeticZZpFlint;
   // disallow copy...
  public:
   CoefficientVector2() : mValue(nullptr) {}
@@ -23,7 +23,7 @@ class CoefficientVector2
 
 class DenseCoefficientVector2
 {
-  friend class VectorArithmeticZZp;
+  friend class VectorArithmeticZZpFlint;
   // disallow copy...
  public:
   DenseCoefficientVector2() : mValue(nullptr) {}
@@ -47,7 +47,7 @@ public:
   virtual DenseCoefficientVector2 allocateDenseCoefficientVector(ComponentIndex nelems) const = 0;
 
   /// Create a coefficient vector with 0 elements.  Can be increased in size.
-  virtual CoefficientVector2 allocateCoefficientVector() const = 0;
+  // virtual CoefficientVector2 allocateCoefficientVector() const = 0;
 
   /// Deallocate all the coefficients, and the array itself.
   virtual void deallocateCoefficientVector(CoefficientVector2& coeffs) const = 0;
