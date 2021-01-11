@@ -154,6 +154,7 @@ class Polynomial : public our_new_delete
   friend class M2FreeAlgebra;
   friend class M2FreeAlgebraOrQuotient;
   friend class FreeAlgebra;
+  friend class NCF4;
   
   typedef typename CoefficientRingType::ElementType ElementType;
 public:  

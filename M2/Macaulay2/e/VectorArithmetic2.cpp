@@ -1,5 +1,5 @@
 #include "VectorArithmetic2.hpp"
-#include "MemoryBlock2.hpp"
+#include "NCAlgebras/MemoryBlock.hpp"
 #include "NCAlgebras/Range.hpp"  // for Range
 #include "newdelete.hpp"         // for newarray, newarray_atomic
 #include "ring.hpp"              // for Ring
@@ -104,7 +104,10 @@ public:
   }
   DenseCoefficientVector2 allocateDenseCoefficientVector(ComponentIndex nelems) const override
   {
-    return denseCoefficientVector(new std::vector<DenseFieldElement>(nelems));
+    // note that here we are using that 0 represents the 0 element in ZZpFlint
+    // if that is not the case in another class, need to change
+    auto tempPtr = new std::vector<DenseFieldElement>(nelems,0);
+    return denseCoefficientVector(tempPtr);    
   }
   // CoefficientVector2 allocateCoefficientVector() const override
   // {
@@ -185,9 +188,9 @@ public:
   void denseRowToSparseRow(DenseCoefficientVector2& dense,
                            CoefficientVector2& sparse, // output value: sets this value
                            Range<int>& comps, // output value: sets comps
-                           MemoryBlock2& monomialSpace,
                            int first,
-                           int last) const override // TODO: have a MemoryBlock2 entry for where to put comps (and perhaps coeffs?)
+                           int last,
+                           MemoryBlock& monomialSpace) const override
   {
     auto& dvec = * denseCoefficientVector(dense);
     
@@ -225,6 +228,40 @@ public:
 
     for (auto& c : svec) { mRing.mult(c, c, leadCoeffInv); }
   }
+
+  void appendSparseVectorToContainer(const CoefficientVector2& sparse,
+                                     VECTOR(ring_elem)& c) const override
+  {
+    auto& svec = * coefficientVector(sparse);
+    for (auto a : svec)
+    {
+      ring_elem tmp;
+      mRing.to_ring_elem(tmp,a);
+      c.push_back(tmp);
+    }
+  }
+  
+  CoefficientVector2 sparseVectorFromContainer(const VECTOR(ring_elem)& c) const override
+  {
+    CoefficientVector2 sparse = allocateCoefficientVector(c.size());
+    auto& svec = * coefficientVector(sparse);
+    for (int i = 0; i < c.size(); ++i)
+      {
+        mRing.init(svec[i]);
+        mRing.from_ring_elem(svec[i],c[i]);
+      }
+    return sparse;
+  }
+
+  ring_elem ringElemFromSparseVector(const CoefficientVector2& sparse,
+                                             int index) const override
+  {
+    auto& svec = * coefficientVector(sparse);
+    ring_elem tmp;
+    mRing.to_ring_elem(tmp,svec[index]);
+    return tmp;
+  }
+
 
 };
 

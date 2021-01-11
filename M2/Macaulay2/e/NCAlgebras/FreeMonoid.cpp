@@ -267,7 +267,7 @@ void FreeMonoid::wordSuffixFromMonom(Word& result, const Monom& m, int beginInde
   result.init(m.begin() + mNumWeights + 1 + beginIndex, m.end());
 }
 
-void FreeMonoid::monomPrefixFromMonom(MonomialInserter& result,
+void FreeMonoid::monomPrefixFromMonom(std::vector<int>& result,
                                       const Monom& m,
                                       int toDrop) const
 {
@@ -284,7 +284,7 @@ void FreeMonoid::monomPrefixFromMonom(MonomialInserter& result,
   setWeights(tmp);
 }
 
-void FreeMonoid::monomSuffixFromMonom(MonomialInserter& result,
+void FreeMonoid::monomSuffixFromMonom(std::vector<int>& result,
                                       const Monom& m,
                                       int toDrop) const
 {

@@ -4,6 +4,7 @@
 #include "NCAlgebras/FreeAlgebra.hpp"       // for FreeAlgebra
 #include "NCAlgebras/OverlapTable.hpp"      // for OverlapTable
 #include "NCAlgebras/VectorArithmetic.hpp"  // for VectorArithmetic
+#include "VectorArithmetic2.hpp"            // for VectorArithmetic2
 #include "NCAlgebras/WordTable.hpp"         // for Overlap, WordTable
 #include "buffer.hpp"                       // for buffer
 #include "engine-exports.h"                 // for M2_gbTrace
@@ -32,9 +33,8 @@ NCF4::NCF4(const FreeAlgebra& A,
       mMonomEq(A.monoid()),
       mMonomHashEqual(A.monoid()),
       mColumnMonomials(10,mMonomHash,mMonomHashEqual),
-      mPreviousColumnMonomials(10,mMonomHash,mMonomHashEqual)
-      //mColumnMonomials(mMonomEq),  // when using std::map not std::unordered_map
-      //mPreviousColumnMonomials(mMonomEq)
+      mPreviousColumnMonomials(10,mMonomHash,mMonomHashEqual),
+      mVectorArithmetic(vectorArithmetic2(A.coefficientRing()))
 {
   if (M2_gbTrace >= 1)
     {
@@ -60,6 +60,7 @@ NCF4::NCF4(const FreeAlgebra& A,
       o << (mIsGraded ? " homogeneous " : " inhomogeneous ");
       emit_wrapped(o.str());
     }
+  if (mVectorArithmetic == nullptr) std::cout << "OOoooooops" << std::endl;
 }
 
 void NCF4::compute(int softDegreeLimit)
@@ -120,6 +121,7 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
 
+  std::cout << "Entering: " << mColumnMonomials.size() << std::endl;
   // convert back to GB elements...
   PolyList newElems = newGBelements();
 
@@ -128,6 +130,8 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
       addToGroebnerBasis(f);
       updateOverlaps(f);
     }
+
+  std::cout << "Entering: " << mColumnMonomials.size() << std::endl;
 
   // prepare reduced matrix for use in the next degree
   processPreviousF4Matrix();
@@ -269,15 +273,21 @@ PolyList NCF4::newGBelements() const // From current F4 matrix.
 }
 
 void NCF4::reducedRowToPoly(Poly* result,
-                            const VECTOR(Row)& rows,
+                            const std::vector<Row>& rows,
                             const std::vector<Column>& cols,
                             int i) const
 {
   // this function places the elements of the ith row of the
   // (reduced!) F4 matrix in result.  This assumes that the first
   // term of the ith row is after the last entry of result (or that result is empty).
-  for (int j = 0; j < rows[i].second.size(); j++)
-    freeAlgebra().add_to_end(*result, rows[i].first[j], cols[rows[i].second[j]].first);  
+  auto resultCoeffInserter = result->getCoeffInserter();
+  auto resultMonomInserter = result->getMonomInserter();
+  mVectorArithmetic->appendSparseVectorToContainer(rows[i].first,resultCoeffInserter);
+  
+  for (const auto& col : rows[i].second)
+    resultMonomInserter.insert(resultMonomInserter.end(),
+                               cols[col].first.begin(),
+                               cols[col].first.end());
 }
 
 ring_elem NCF4::getCoeffOfMonom(const Poly& f, const Monom& m)
@@ -441,7 +451,7 @@ std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m)
   // if the monom is the empty monomial, return false
   if (freeAlgebra().monoid().is_one(m)) return std::make_pair(false,-1);
   
-  FreeMonoid::MonomialInserter prefixInserter;   // this is a VECTOR(int).
+  std::vector<int> prefixInserter;
   std::pair<bool,int> retval;
   
   freeAlgebra().monoid().monomPrefixFromMonom(prefixInserter,m,1);
@@ -471,7 +481,8 @@ std::pair<bool,int> NCF4::findPreviousReducerSuffix(const Monom& m)
   // else return (false, -1)
   if (freeAlgebra().monoid().is_one(m)) return std::make_pair(false,-1);
   
-  FreeMonoid::MonomialInserter suffixInserter;   // this is a VECTOR(int)...  don't really like this much.
+  std::vector<int> suffixInserter;
+
   std::pair<bool,int> retval;
   
   freeAlgebra().monoid().monomSuffixFromMonom(suffixInserter,m,1);
@@ -578,12 +589,12 @@ NCF4::Row NCF4::processPreRow(PreRow r)
       processMonomInPreRow(m,nextcolloc);
       nextcolloc++;
     }
-  ring_elem* ptr = newarray(ring_elem, elem->getCoeffVector().size());
-  Range<ring_elem> coeffrange(ptr, ptr + elem->getCoeffVector().size());
-  std::copy(elem->getCoeffVector().cbegin(), elem->getCoeffVector().cend(), coeffrange.begin());
+  CoefficientVector2 coeffs = mVectorArithmetic->sparseVectorFromContainer(elem->getCoeffVector());
+
   // delete the Poly created for prevReducer case, if necessary.
   if (prevReducer) delete elem;
-  return(Row(coeffrange, componentRange));
+
+  return(Row(coeffs, componentRange));
 }
 
 // this function is meant for debugging only
@@ -617,6 +628,7 @@ std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
                << "  Previous suffixes found   : " << previousSuffixesFound << std::endl       
                << "  Elements in Previous Rows : " << mPreviousRows.size() << std::endl; 
   // look in previous F4 matrix for Monom before checking mWordTable
+
   auto usePreviousSuffix = findPreviousReducerSuffix(mon);
   if (usePreviousSuffix.first)
     {
@@ -639,6 +651,7 @@ std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
                                          tmpWord,
                                          true));
     }
+
   // if we are here, then the Monom does not have a prefix/suffix
   // that was processed previously.
 
@@ -711,24 +724,23 @@ void NCF4::reduceF4Row(int index,
                        int first,
                        int firstcol,
                        long& numCancellations,
-                       VECTOR(ring_elem)& denseVector)
+                       DenseCoefficientVector2& dense)
 {
-  Range<ring_elem> dense(denseVector);
-  VectorArithmetic V(freeAlgebra().coefficientRing());
-
   int sz = mRows[index].second.size();
   //assert(sz > 0);  this may be zero when autoreducing the new gb elements
   if (sz <= 1 && firstcol != -1) return;
 
   int last = mRows[index].second[sz-1];
 
-  V.sparseRowToDenseRow(dense, mRows[index].first, mRows[index].second);
+  mVectorArithmetic->sparseRowToDenseRow(dense, mRows[index].first, mRows[index].second);
   do {
     int pivotrow = mColumns[first].second;
     if (pivotrow >= 0)
       {
         numCancellations++;
-        V.denseRowCancelFromSparse(dense, mRows[pivotrow].first, mRows[pivotrow].second);
+        mVectorArithmetic->denseRowCancelFromSparse(dense,
+                                                   mRows[pivotrow].first,
+                                                   mRows[pivotrow].second);
         // last component in the row corresponding to pivotrow
         int last1 = mRows[pivotrow].second.cend()[-1];
         last = (last1 > last ? last1 : last);
@@ -737,38 +749,40 @@ void NCF4::reduceF4Row(int index,
       {
         firstcol = first;
       }
-    first = V.denseRowNextNonzero(dense, first+1, last);
+    first = mVectorArithmetic->denseRowNextNonzero(dense, first+1, last);
   } while (first <= last);
-  V.denseRowToSparseRow(dense,
+  mVectorArithmetic->denseRowToSparseRow(dense,
                         mRows[index].first,
                         mRows[index].second,
                         firstcol,
-                        last);
-  if (mRows[index].first.size() > 0)
+                        last,
+                        mMonomialSpace);
+  if (mVectorArithmetic->size(mRows[index].first) > 0)
     {
-      V.sparseRowMakeMonic(mRows[index].first);
+      mVectorArithmetic->sparseRowMakeMonic(mRows[index].first);
       mColumns[firstcol].second = index;
     }
 }
 
-//#if 0
+#if 0
 void NCF4::parallelReduceF4Matrix()
 {
-  auto numThreads = tbb::task_scheduler_init::default_num_threads();
+  //auto numThreads = tbb::task_scheduler_init::default_num_threads();
   ring_elem zero = freeAlgebra().coefficientRing()->zero();
 
   long numCancellations = 0;
-  using threadLocalDense_t = tbb::enumerable_thread_specific<VECTOR(ring_elem)>;
+  using threadLocalDense_t = tbb::enumerable_thread_specific<DenseCoefficientVector2>;
   using threadLocalLong_t = tbb::enumerable_thread_specific<long>;
   using rwmutex_t = tbb::spin_rw_mutex;
 
-  tbb::task_scheduler_init init(numThreads);
+  //tbb::task_scheduler_init init(numThreads);
   rwmutex_t my_mutex;
 
   // create a dense array for each thread
-  threadLocalDense_t threadLocalDense{numThreads};
-  for (auto i : threadLocalDense)
-    i.resize(mColumnMonomials.size(),zero);
+  threadLocalDense_t threadLocalDense([&]);
+  for (auto tlDense : threadLocalDense)
+    tlDense = & mVectorArithmetic->allocateDenseCoefficientVector(mColumnMonomials.size());
+
   threadLocalLong_t numCancellationsLocal{numThreads};
   
   // do we want to backsolve?  This slows things down a lot, but
@@ -797,7 +811,7 @@ void NCF4::parallelReduceF4Matrix()
                       for (size_t i = r.begin(); i != r.end(); ++i)
                       {
                         rwmutex_t::scoped_lock my_lock{my_mutex,false};
-                        reduceF4Row(i,mRows[i].second[0],-1,my_accum,my_dense);
+                        reduceF4Row(i,mRows[i].second[0],-1,my_accum,*my_dense);
                       }
                     });
 
@@ -808,19 +822,20 @@ void NCF4::parallelReduceF4Matrix()
   // at this point.
 
   for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
-    reduceF4Row(i,mRows[i].second[1],mRows[i].second[0],numCancellations,*(threadLocalDense.begin()));
+    reduceF4Row(i,mRows[i].second[1],mRows[i].second[0],numCancellations,**(threadLocalDense.begin()));
+
+  for (auto tlDense : threadLocalDense)
+    mVectorArithmetic->deallocateDenseCoefficientVector(*tlDense);
 
   // std::cout << "Number of cancellations: " << numCancellations << std::endl;
 }
-//#endif
+#endif
 
 void NCF4::reduceF4Matrix()
 {
   long numCancellations = 0;
 
-  // create a dense array for each thread
-  ring_elem zero = freeAlgebra().coefficientRing()->zero();
-  VECTOR(ring_elem) denseVector(mColumnMonomials.size(),zero);
+  auto denseVector = mVectorArithmetic->allocateDenseCoefficientVector(mColumnMonomials.size());
 
   // do we want to backsolve?  This slows things down a lot, but
   // we are not yet re-using this information for the next iteration at all.
@@ -830,12 +845,6 @@ void NCF4::reduceF4Matrix()
   #endif
 
   // reduce each overlap row by mRows.
-  // make this parallel by creating a dense row for each thread?
-  // Should see how this does before going further in terms of parallelization
-
-  // really want a parallel_for here.  If we want to parallelize the reduction
-  // of a row as well, we would also want to use parallel_reduce, but this may be
-  // too much overhead.
   for (int i = mFirstOverlap; i < mRows.size(); ++i)
   {
     reduceF4Row(i,mRows[i].second[0],-1,numCancellations,denseVector);
@@ -865,10 +874,10 @@ void NCF4::displayF4MatrixSize(std::ostream & o) const
   for (long i = 0; i < mRows.size(); ++i)
   {
     if (i < mFirstOverlap) 
-       numReducerEntries += mRows[i].first.size();
+       numReducerEntries += mVectorArithmetic->size(mRows[i].first);
     else
-       numSPairEntries += mRows[i].first.size();
-    if (mRows[i].first.size() != mRows[i].second.size())
+       numSPairEntries += mVectorArithmetic->size(mRows[i].first);
+    if (mVectorArithmetic->size(mRows[i].first) != mRows[i].second.size())
       o << "***ERROR*** ring_elem and component ranges do not match!" << std::endl;
   }
   o << "#entries: (" << numReducerEntries << "," << numSPairEntries << ")"
@@ -902,16 +911,16 @@ void NCF4::displayF4Matrix(std::ostream& o) const
         << std::get<1>(pr) << ", "
         << std::get<2>(pr) << ", "
         << std::get<3>(pr) << ") "
-        << mRows[count].first.size() << ": ";
-      if (mRows[count].first.size() != mRows[count].second.size())
+        << mRows[count].second.size() << ": ";
+      if (mVectorArithmetic->size(mRows[count].first) != mRows[count].second.size())
         {
           o << "***ERROR*** expected coefficient array and components array to have the same length" << std::endl;
           exit(1);
         }
-      for (int i=0; i < mRows[count].first.size(); ++i)
+      for (int i=0; i < mVectorArithmetic->size(mRows[count].first); ++i)
         {
           buffer b;
-          kk->elem_text_out(b, mRows[count].first[i]);
+          kk->elem_text_out(b, mVectorArithmetic->ringElemFromSparseVector(mRows[count].first,i));
           o << "[" << mRows[count].second[i] << "," << b.str() << "] ";
         }
       o << std::endl;
@@ -946,14 +955,14 @@ void NCF4::displayFullF4Matrix(std::ostream& o) const
       int count2 = 0;
       for (int i=0; i < mColumnMonomials.size(); i++)
         {
-          if (count2 == mRows[count].first.size() or mRows[count].second[count2] != i)
+          if (count2 == mVectorArithmetic->size(mRows[count].first) or mRows[count].second[count2] != i)
             {
               o << " 0 ";
             }
           else
             {
               buffer b;
-              kk->elem_text_out(b,mRows[count].first[count2]);
+              kk->elem_text_out(b,mVectorArithmetic->ringElemFromSparseVector(mRows[count].first,count2));
               o << " " << b.str() << " ";
               count2++;
             }

@@ -22,6 +22,9 @@ public:
   T* begin() { return mFirst; }
   T* end() { return mLast; }
 
+  const T* begin() const { return mFirst; }
+  const T* end() const { return mLast; }
+
   T& operator[](int i) { return *(mFirst + i); }
   const T& operator[](int i) const { return *(mFirst + i); }
   

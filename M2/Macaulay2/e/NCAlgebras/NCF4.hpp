@@ -8,8 +8,9 @@
 #include "NCAlgebras/OverlapTable.hpp" // for OverlapTable
 #include "NCAlgebras/WordTable.hpp"    // for Overlap, WordTable
 #include "NCAlgebras/SuffixTree.hpp"   // for experimental suffix tree code
+#include "VectorArithmetic2.hpp"       // for VectorArithmetic2, CoefficientVector2, etc
 #include "Polynomial.hpp"              // for Monom, ConstPolyList, Poly
-#include "newdelete.hpp"               // for VECTOR, our_new_delete
+//#include "newdelete.hpp"               // for VECTOR, our_new_delete
 
 #include <deque>                       // for deque
 #include <iosfwd>                      // for ostream
@@ -52,7 +53,7 @@ private:
 
   // make this into a std::pair of <CoefficientVector,Range<int>>
   // CoefficientVector knows whether it owns it memory or not but has the similar interaface as a range
-  using Row = std::pair<Range<ring_elem>,
+  using Row = std::pair<CoefficientVector2,
                         Range<int>>; // components corresponding to monomials appearing
 
   using Column = std::pair<Monom, int>; // monomial, pivot row for this monomial (if not -1).
@@ -75,19 +76,25 @@ private:
   std::vector<Column> mColumns;
 
   // these should be std::vectors (or changeable)
-  VECTOR(Row) mRows;
-  VECTOR(Row) mOverlaps;
+  //VECTOR(Row) mRows;
+  //VECTOR(Row) mOverlaps;
+  std::vector<Row> mRows;
+  std::vector<Row> mOverlaps;
 
   int mFirstOverlap; // First non pivot row row (and all later ones are also non-pivot rows).
 
   // storing previous F4 information
-  VECTOR(Row) mPreviousRows;
+  //VECTOR(Row) mPreviousRows;
+  std::vector<Row> mPreviousRows;
   std::vector<Column> mPreviousColumns;
   std::unordered_map<Monom,
                      std::pair<int,int>,
                      MonomHash,
                      MonomHashEqual> mPreviousColumnMonomials;  
   MemoryBlock mPreviousMonomialSpace;
+
+  // vector arithmetic class for reduction
+  const VectorArithmetic2 *mVectorArithmetic;
 
 public:
   NCF4(const FreeAlgebra& A,
@@ -141,7 +148,7 @@ private:
   auto insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void;
 
   void reducedRowToPoly(Poly* result,
-                        const VECTOR(Row)& rows,
+                        const std::vector<Row>& rows,
                         const std::vector<Column>& cols,
                         int i) const;
   PolyList newGBelements() const;  // From current F4 matrix.
@@ -156,13 +163,11 @@ private:
   void autoreduceByLastElement();
   ring_elem getCoeffOfMonom(const Poly& f, const Monom& m);
 
-  void performBackSolve(VECTOR(ring_elem) denseVector, int i);
-
   void reduceF4Row(int index,
                    int first,
                    int firstcol,
                    long &numCancellations,
-                   VECTOR(ring_elem)& denseVector);
+                   DenseCoefficientVector2& dense);
   
   // return value is isFound, columnIndexOfFound
   // discard const qualifier here again because this creates a monom in mMonomialSpace

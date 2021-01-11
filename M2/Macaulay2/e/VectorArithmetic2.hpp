@@ -2,12 +2,13 @@
 #define __vector_arithmetic_2__
 
 #include "NCAlgebras/Range.hpp"  // for Range
+#include "newdelete.hpp"         // for VECTOR
 
 class Ring;
 union ring_elem;
-using ComponentIndex = long;
+using ComponentIndex = int;
 class VectorArithmeticZZpFlint;
-class MemoryBlock2;
+class MemoryBlock;
 
 class CoefficientVector2
 {
@@ -71,12 +72,36 @@ public:
   virtual void denseRowToSparseRow(DenseCoefficientVector2& dense,
                                    CoefficientVector2& coeffs, // sets coeffs
                                    Range<int>& comps, // sets comps
-                                   MemoryBlock2& monomialSpace,
                                    int first,
-                                   int last) const = 0; // TODO: have a MemoryBlock2 entry for where to put comps (and perhaps coeffs?)
+                                   int last,
+                                   MemoryBlock& monomialSpace) const = 0; 
 
   virtual void sparseRowMakeMonic(CoefficientVector2& coeffs) const = 0;
+
+  /////////////////////////////
+  /// Translation    //////////
+  /////////////////////////////
+
+  // want to do these...
+  // template<template<typename> class Container>
+  // virtual void appendSparseVectorToContainer(CoefficientVector2& coeffs,
+  //                                            Container<ring_elem>& c) const = 0;
+
+  // template<template<typename> class Container>
+  // virtual void fillSparseVectorFromContainer(CoefficientVector2& coeffs,
+  //                                            Container<ring_elem>& c) const = 0;
+
+  virtual void appendSparseVectorToContainer(const CoefficientVector2& coeffs,
+                                             VECTOR(ring_elem)& c) const = 0;
+
+  virtual CoefficientVector2 sparseVectorFromContainer(const VECTOR(ring_elem)& c) const = 0;
+
+  virtual ring_elem ringElemFromSparseVector(const CoefficientVector2& coeffs,
+                                             int index) const = 0;
+
 };
+
+const VectorArithmetic2* vectorArithmetic2(const Ring* R);
 
 #endif
 

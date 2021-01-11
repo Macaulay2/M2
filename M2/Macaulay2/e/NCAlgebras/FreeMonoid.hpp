@@ -128,8 +128,8 @@ public:
   void wordFromMonom(Word& result, const Monom& m) const;
   void wordPrefixFromMonom(Word& result, const Monom& m, int endIndex) const;
   void wordSuffixFromMonom(Word& result, const Monom& m, int beginIndex) const;
-  void monomPrefixFromMonom(MonomialInserter& result, const Monom& m, int toDrop) const;
-  void monomSuffixFromMonom(MonomialInserter& result, const Monom& m, int toDrop) const;
+  void monomPrefixFromMonom(std::vector<int>& result, const Monom& m, int toDrop) const;
+  void monomSuffixFromMonom(std::vector<int>& result, const Monom& m, int toDrop) const;
   void monomInsertFromWord(MonomialInserter& result, const Word& w) const;
 
   // some functions to create monoms from words and monoms, placing result in
