@@ -35,6 +35,7 @@ set(HFILES
 
 # these files are include only.
 set(HPPONLYFILES
+  	MemoryBlock2.hpp
 	NCAlgebras/MemoryBlock.hpp
 	NCAlgebras/Range.hpp
   newdelete.hpp
@@ -135,6 +136,7 @@ set(CPPONLYFILES
 set(SRCLIST
 	myalloc
 	matrix-ncbasis
+    VectorArithmetic2
 	NCAlgebras/VectorArithmetic
 	NCAlgebras/Word
 	NCAlgebras/NCReduction
