@@ -202,6 +202,8 @@ public:
     int retval = mMonoid->compare(a, b);
     return (retval == EQ);
   }
+  // should make an operator() that works on Words too
+
 private:
   const FreeMonoid* mMonoid;
 };

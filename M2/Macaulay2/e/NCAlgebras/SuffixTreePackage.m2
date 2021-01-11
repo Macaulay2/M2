@@ -88,6 +88,7 @@ suffixTreeInsert (SuffixTree, List) := (tree, w) -> (
       v = newv;
       if roRoot != {} then (
 	 tempRos := apply(patternLeaves(first roRoot), pl -> (last newLocus.label,pl#0,pl#1));
+	 -- XXXX
 	 tempRos = apply(tempRos, ro -> (tree.wordList#(ro#0),#(tree.wordList#(ro#0)) - #(ro#1),tree.wordList#(ro#2)));
 	 rightOverlaps = rightOverlaps | tempRos;
       );
@@ -311,7 +312,6 @@ suffixTreeSubwords (SuffixTree, List) := (tree, s) -> (
    pos := 0;
    while (s != {}) do (
       (newcLocus,newbeta,leaf,wasPattern) := suffixTreeSubwordsWorker(tree,cLocus,beta,s);
-      if (wasPattern) then error "err";
       if (wasPattern and isPrefix(drop(leaf.label,-1),s)) then
       (
 	  subwords = subwords | {(newcLocus.label | newbeta,pos,initialS)};
@@ -513,3 +513,35 @@ debug needsPackage "SuffixTreePackage"
 mons = {{Z,X},{Z,Y},{Z,Z},{Y,Y,X}}
 (tree,rightOverlaps) = suffixTree mons;
 subwords = suffixTreeSubwords(tree, {Y,Y,Z})
+
+restart
+debug needsPackage "AssociativeAlgebras"
+kk = ZZ/32003
+A = threeDimSklyanin(ZZ/32003,{random kk,random kk, random kk},{X,Y,Z})
+I = ideal A
+J = ideal gens I
+Jgb = NCGB(J, 12)
+JgbLT = (ideal Jgb)_* / leadTerm / toVariableList / last / last
+print toString JgbLT
+
+-- 'correct' term order
+restart
+debug needsPackage "SuffixTreePackage"
+mons = {{X, X}, {X, Z}, {X, Y}, {Y, Y, X}, {Y, Y, Z}, {Y, Z, Y, Y}, {Y, Y, Y, Y},
+        {Y, Z, Y, Z, Z}, {Y, Z, Y, Z, Y}, {Y, Z, Y, Z, X}, {Y, Z, Z, Y, Y, Y},
+	{Y, Z, Z, Y, Z, X}, {Y, Z, Z, Y, Z, Z}, {Y, Z, Z, Z, Y, Y, Y},
+	{Y, Z, Z, Y, Z, Y, Z}, {Y, Z, Z, Z, Y, Z, Y}, {Y, Z, Z, Y, Z, Y, X},
+	{Y, Z, Z, Z, Y, Z, Z, Z}, {Y, Z, Z, Z, Y, Z, Z, Y}, {Y, Z, Z, Z, Y, Z, Z, X},
+	{Y, Z, Z, Z, Z, Y, Y, Y}, {Y, Z, Z, Z, Z, Y, Z, Z, X}, {Y, Z, Z, Z, Z, Y, Z, Y, X},
+	{Y, Z, Z, Z, Z, Y, Z, Y, Z}, {Y, Z, Z, Z, Z, Z, Y, Y, Y}, {Y, Z, Z, Z, Z, Y, Z, Z, Z},
+	{Y, Z, Z, Z, Z, Y, Z, Z, Y, Y}, {Y, Z, Z, Z, Z, Y, Z, Z, Y, X}, {Y, Z, Z, Z, Z, Z, Y, Z, Y, X},
+	{Y, Z, Z, Z, Z, Z, Y, Z, Z, X}, {Y, Z, Z, Z, Z, Y, Z, Z, Y, Z}, {Y, Z, Z, Z, Z, Z, Y, Z, Y, Z}, 
+	{Y, Z, Z, Z, Z, Z, Y, Z, Z, Y}, {Y, Z, Z, Z, Z, Z, Y, Z, Z, Z, Z}, {Y, Z, Z, Z, Z, Z, Z, Y, Z, Y, X}, 
+	{Y, Z, Z, Z, Z, Z, Y, Z, Z, Z, X}, {Y, Z, Z, Z, Z, Z, Y, Z, Z, Z, Y}, {Y, Z, Z, Z, Z, Z, Z, Y, Z, Z, X}, 
+	{Y, Z, Z, Z, Z, Z, Z, Y, Z, Y, Z}, {Y, Z, Z, Z, Z, Z, Z, Y, Z, Z, Y, Z}, {Y, Z, Z, Z, Z, Z, Z, Y, Z, Z, Y, Y},
+	{Y, Z, Z, Z, Z, Z, Z, Y, Z, Z, Y, X}, {Y, Z, Z, Z, Z, Z, Z, Y, Z, Z, Z, Z},
+	{Y, Z, Z, Z, Z, Z, Z, Z, Y, Z, Y, X}, {Y, Z, Z, Z, Z, Z, Z, Y, Z, Z, Z, Y},
+	{Y, Z, Z, Z, Z, Z, Z, Y, Z, Z, Z, X}, {Y, Z, Z, Z, Z, Z, Z, Z, Y, Z, Z, X}}
+#mons
+(tree,rightOverlaps) = suffixTree mons;
+subwords = suffixTreeSubwords(tree, {Y,Z,Z,Z,Z,Y,Z,Y,X,X})

@@ -18,6 +18,7 @@
 #include <tbb/tbb.h>                        // for tbb 
 #include <tbb/enumerable_thread_specific.h> // for enumerable_thread_specific
 #include <tbb/combinable.h>                 // for combinable
+#include <tbb/spin_rw_mutex.h>
 
 NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,
@@ -125,7 +126,6 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   for (auto& f : newElems)
     {
       addToGroebnerBasis(f);
-      //autoreduceByLastElement();
       updateOverlaps(f);
     }
 
@@ -152,6 +152,15 @@ void NCF4::processPreviousF4Matrix()
   //   // the hash is good -- it seems to have a max_load_factor of 1
   //   std::cout << "Monomial Hash Max Load : " << mColumnMonomials.max_load_factor() << std::endl;
   // }
+  
+  // FM: this was not worth the trouble
+  // mNewReducerColumns.clear();
+  // for (int i = mFirstOverlap; i < mRows.size(); ++i)
+  // {
+  //   if (mRows[i].second.size() == 0) continue;
+  //   mNewReducerColumns.emplace(mRows[i].second[0],i);
+  // } 
+  
   // copy the finished rows and columns into the holding areas
   mPreviousRows.clear();
   mPreviousColumns.clear();
@@ -437,15 +446,25 @@ std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m)
   freeAlgebra().monoid().monomPrefixFromMonom(prefixInserter,m,1);
   Monom prefixM(prefixInserter.data());
   auto it = mPreviousColumnMonomials.find(prefixM);
-  if (it == mPreviousColumnMonomials.end()) //not in table
+  if (it == mPreviousColumnMonomials.end()) // not in table
     retval = std::make_pair(false,-1);
   else
   {
-    if ((*it).second.second == -1)  // in table, but not a reducer monomial
-                                    // note, however, that the 'new' gb elements
-                                    // from the past iteration *are* reducers now
-                                    // but are not marked as such at this point.
+    if ((*it).second.second == -1)  // in column table and not known (a priori)
+                                    // to be a reducer monomial
+    {
+      // The following check involved looking in the previously reduced GB elements
+      // in case we needed them.  It turns out it is more trouble than it is worth,
+      // as most monomials miss this check so it's just extra work.
+
+      //auto it2 = mNewReducerColumns.find((*it).second.first);
+      //if (it2 == mNewReducerColumns.end())  // check the new GB elements.  if there, then ok
+      //  retval = std::make_pair(false,-1);
+      //else
+      //  retval = std::make_pair(true,(*it2).second);
+
       retval = std::make_pair(false,-1);
+    }
     else  // in table and a reducer monomial
     {
       retval = std::make_pair(true,(*it).second.second);
@@ -745,7 +764,7 @@ void NCF4::reduceF4Row(int index,
     }
 }
 
-#if 0
+//#if 0
 void NCF4::parallelReduceF4Matrix()
 {
   auto numThreads = tbb::task_scheduler_init::default_num_threads();
@@ -754,15 +773,17 @@ void NCF4::parallelReduceF4Matrix()
   long numCancellations = 0;
   using threadLocalDense_t = tbb::enumerable_thread_specific<VECTOR(ring_elem)>;
   using threadLocalLong_t = tbb::enumerable_thread_specific<long>;
+  using rwmutex_t = tbb::spin_rw_mutex;
 
   tbb::task_scheduler_init init(numThreads);
+  rwmutex_t my_mutex;
+
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense{numThreads};
   for (auto i : threadLocalDense)
     i.resize(mColumnMonomials.size(),zero);
   threadLocalLong_t numCancellationsLocal{numThreads};
   
-
   // do we want to backsolve?  This slows things down a lot, but
   // we are not yet re-using this information for the next iteration at all.
   #if 0
@@ -771,12 +792,13 @@ void NCF4::parallelReduceF4Matrix()
   #endif
 
   // reduce each overlap row by mRows.
+
   // make this parallel by creating a dense row for each thread?
   // Should see how this does before going further in terms of parallelization
 
   // really want a parallel_for here.  If we want to parallelize the reduction
   // of a row as well, we would also want to use parallel_reduce, but this may be
-  // too much overhead.
+  // too much overhead.  We will see once we get it actually working.
    
   std::cout << "Number of threads: " << numThreads << std::endl;
 
@@ -786,7 +808,10 @@ void NCF4::parallelReduceF4Matrix()
                       threadLocalDense_t::reference my_dense = threadLocalDense.local();
                       threadLocalLong_t::reference my_accum = numCancellationsLocal.local();
                       for (size_t i = r.begin(); i != r.end(); ++i)
+                      {
+                        rwmutex_t::scoped_lock my_lock{my_mutex,false};
                         reduceF4Row(i,mRows[i].second[0],-1,my_accum,my_dense);
+                      }
                     });
 
   for (auto i : numCancellationsLocal)
@@ -800,7 +825,7 @@ void NCF4::parallelReduceF4Matrix()
 
   // std::cout << "Number of cancellations: " << numCancellations << std::endl;
 }
-#endif
+//#endif
 
 void NCF4::reduceF4Matrix()
 {
@@ -836,7 +861,7 @@ void NCF4::reduceF4Matrix()
     reduceF4Row(i,mRows[i].second[1],mRows[i].second[0],numCancellations,denseVector);
   //#endif
 
-  std::cout << "Number of cancellations: " << numCancellations << std::endl;
+  //std::cout << "Number of cancellations: " << numCancellations << std::endl;
 }
 
 void NCF4::displayF4MatrixSize(std::ostream & o) const

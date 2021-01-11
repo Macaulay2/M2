@@ -49,8 +49,12 @@ private:
   //                      is the lead term of a reducer.
   // prevReducer = true : left*mRows[i]*right is the lead term of a reducer
   using PreRow = std::tuple<Word, int, Word, bool>;
+
+  // make this into a std::pair of <CoefficientVector,Range<int>>
+  // CoefficientVector knows whether it owns it memory or not but has the similar interaface as a range
   using Row = std::pair<Range<ring_elem>,
                         Range<int>>; // components corresponding to monomials appearing
+
   using Column = std::pair<Monom, int>; // monomial, pivot row for this monomial (if not -1).
 
   MemoryBlock mMonomialSpace;
@@ -58,28 +62,35 @@ private:
   MonomHashEqual mMonomHashEqual;
   MonomHash mMonomHash;
 
-  // The pair in this map is (i,j) where:
+  // The pair in this unordered_map is (i,j) where:
   //    i is the column number
   //    j is the row that reduces it (and -1 if there is no such row).
 
-  // change this to an unordered_map?  abstract it into a separate class
-  // so we can experiment with the container
-  // to do this, need to rewrite sort function to operate on a list of integers
-  //std::map<Monom, std::pair<int,int>, MonomEq> mColumnMonomials;
+  // TODO: we should change this to have keys Words rather than Monoms since its unordered.
+  // but we would have to update MonomHashEqual a bit
   std::unordered_map<Monom, std::pair<int,int>, MonomHash, MonomHashEqual> mColumnMonomials;
   std::vector<PreRow> mReducersTodo;
   std::vector<PreRow> mOverlapsTodo;
-  std::vector<Column> mColumns; // mColumns[c].second is the row which will reduce the c'th monomial (unless it is -1).
+  // mColumns[c].second is the row which will reduce the c'th monomial (unless it is -1).
+  std::vector<Column> mColumns;
+
+  // these should be std::vectors (or changeable)
   VECTOR(Row) mRows;
   VECTOR(Row) mOverlaps;
+
   int mFirstOverlap; // First non pivot row row (and all later ones are also non-pivot rows).
 
   // storing previous F4 information
   VECTOR(Row) mPreviousRows;
   std::vector<Column> mPreviousColumns;
-  //std::map<Monom, std::pair<int,int>, MonomEq> mPreviousColumnMonomials;  
-  std::unordered_map<Monom, std::pair<int,int>, MonomHash, MonomHashEqual> mPreviousColumnMonomials;  
+  std::unordered_map<Monom,
+                     std::pair<int,int>,
+                     MonomHash,
+                     MonomHashEqual> mPreviousColumnMonomials;  
   MemoryBlock mPreviousMonomialSpace;
+  // records the new GB elements we can use as reducers in the next iteration
+  // (key,value) = (column index, row that reduces it)
+  std::unordered_map<int,int> mNewReducerColumns;
 
 public:
   NCF4(const FreeAlgebra& A,
