@@ -4,6 +4,8 @@
 #include "NCAlgebras/Range.hpp"  // for Range
 #include "newdelete.hpp"         // for VECTOR
 
+#include <tbb/tbb.h>
+
 class Ring;
 union ring_elem;
 using ComponentIndex = int;
@@ -75,6 +77,14 @@ public:
                                    int first,
                                    int last,
                                    MemoryBlock& monomialSpace) const = 0; 
+
+  virtual void safeDenseRowToSparseRow(DenseCoefficientVector2& dense,
+                                       CoefficientVector2& coeffs, // sets coeffs
+                                       Range<int>& comps, // sets comps
+                                       int first,
+                                       int last,
+                                       MemoryBlock& monomialSpace,
+                                       tbb::queuing_mutex& lock) const = 0; 
 
   virtual void sparseRowMakeMonic(CoefficientVector2& coeffs) const = 0;
 

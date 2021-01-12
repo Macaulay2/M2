@@ -20,10 +20,12 @@
 #include <utility>                     // for pair
 #include <vector>                      // for vector
 
+#include <tbb/tbb.h>                        // for tbb
+
 class FreeAlgebra;
 union ring_elem;
 
-class NCF4
+class NCF4 : public our_new_delete
 {
 private:
   const FreeAlgebra& mFreeAlgebra;
@@ -58,6 +60,9 @@ private:
 
   using Column = std::pair<Monom, int>; // monomial, pivot row for this monomial (if not -1).
 
+  //using ColumnsVector = tbb::concurrent_vector<Column>;
+  using ColumnsVector = std::vector<Column>;
+
   MemoryBlock mMonomialSpace;
   MonomEq mMonomEq;
   MonomHashEqual mMonomHashEqual;
@@ -73,7 +78,7 @@ private:
   std::vector<PreRow> mReducersTodo;
   std::vector<PreRow> mOverlapsTodo;
   // mColumns[c].second is the row which will reduce the c'th monomial (unless it is -1).
-  std::vector<Column> mColumns;
+  ColumnsVector mColumns;
 
   // these should be std::vectors (or changeable)
   //VECTOR(Row) mRows;
@@ -86,7 +91,7 @@ private:
   // storing previous F4 information
   //VECTOR(Row) mPreviousRows;
   std::vector<Row> mPreviousRows;
-  std::vector<Column> mPreviousColumns;
+  ColumnsVector mPreviousColumns;
   std::unordered_map<Monom,
                      std::pair<int,int>,
                      MonomHash,
@@ -149,7 +154,7 @@ private:
 
   void reducedRowToPoly(Poly* result,
                         const std::vector<Row>& rows,
-                        const std::vector<Column>& cols,
+                        const ColumnsVector& cols,
                         int i) const;
   PolyList newGBelements() const;  // From current F4 matrix.
 
@@ -168,6 +173,14 @@ private:
                    int firstcol,
                    long &numCancellations,
                    DenseCoefficientVector2& dense);
+
+  void parallelReduceF4Row(int index,
+                           int first,
+                           int firstcol,
+                           long &numCancellations,
+                           DenseCoefficientVector2& dense,
+                           tbb::queuing_mutex& lock);
+
   
   // return value is isFound, columnIndexOfFound
   // discard const qualifier here again because this creates a monom in mMonomialSpace

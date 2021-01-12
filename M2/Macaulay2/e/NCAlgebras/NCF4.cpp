@@ -3,7 +3,6 @@
 #include "text-io.hpp"                   // for emit_wrapped
 #include "NCAlgebras/FreeAlgebra.hpp"       // for FreeAlgebra
 #include "NCAlgebras/OverlapTable.hpp"      // for OverlapTable
-#include "NCAlgebras/VectorArithmetic.hpp"  // for VectorArithmetic
 #include "VectorArithmetic2.hpp"            // for VectorArithmetic2
 #include "NCAlgebras/WordTable.hpp"         // for Overlap, WordTable
 #include "buffer.hpp"                       // for buffer
@@ -15,11 +14,6 @@
 #include <cstdlib>                          // for exit, size_t
 #include <algorithm>                        // for copy
 #include <iostream>                         // for operator<<, basic_ostream
-
-#include <tbb/tbb.h>                        // for tbb 
-#include <tbb/enumerable_thread_specific.h> // for enumerable_thread_specific
-#include <tbb/combinable.h>                 // for combinable
-#include <tbb/spin_rw_mutex.h>
 
 NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,
@@ -108,14 +102,8 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
 
   // reduce the matrix
-  //reduceF4Matrix();
-  parallelReduceF4Matrix();
-
-  if (M2_gbTrace >= 2)
-    {
-      std::cout << "NC F4 GB: matrix size: ";
-      displayF4MatrixSize(std::cout);
-    }
+  reduceF4Matrix();
+  //parallelReduceF4Matrix();
 
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
@@ -184,7 +172,6 @@ void NCF4::updateOverlaps(const Poly * toAdd)
 {
    std::vector<Overlap> newOverlaps;
 
-   // crashes with new approach
    Word newLeadWord = freeAlgebra().lead_word(*toAdd);
 
    // the word table insert places the right overlaps into newOverlaps
@@ -196,6 +183,9 @@ void NCF4::updateOverlaps(const Poly * toAdd)
    // inserted word.
    mWordTable.leftOverlaps(newOverlaps);
    insertNewOverlaps(newOverlaps);
+
+   // can *also* remove previously added overlaps based on poly using
+   // the same criterion from before
 }
 
 auto NCF4::overlapHeft(Overlap o) const -> int
@@ -272,7 +262,7 @@ PolyList NCF4::newGBelements() const // From current F4 matrix.
 
 void NCF4::reducedRowToPoly(Poly* result,
                             const std::vector<Row>& rows,
-                            const std::vector<Column>& cols,
+                            const ColumnsVector& cols,
                             int i) const
 {
   // this function places the elements of the ith row of the
@@ -718,6 +708,7 @@ void NCF4::sortF4Matrix()
     }
 }
 
+// this is the sequential version without a lock
 void NCF4::reduceF4Row(int index,
                        int first,
                        int firstcol,
@@ -726,7 +717,8 @@ void NCF4::reduceF4Row(int index,
 {
   int sz = mRows[index].second.size();
   //assert(sz > 0);  this may be zero when autoreducing the new gb elements
-  if (sz <= 1 && firstcol != -1) return;
+  if (sz == 0) return;
+  if (sz == 1 && firstcol != -1) return;
 
   int last = mRows[index].second[sz-1];
 
@@ -737,8 +729,8 @@ void NCF4::reduceF4Row(int index,
       {
         numCancellations++;
         mVectorArithmetic->denseRowCancelFromSparse(dense,
-                                                   mRows[pivotrow].first,
-                                                   mRows[pivotrow].second);
+                                                    mRows[pivotrow].first,
+                                                    mRows[pivotrow].second);
         // last component in the row corresponding to pivotrow
         int last1 = mRows[pivotrow].second.cend()[-1];
         last = (last1 > last ? last1 : last);
@@ -749,12 +741,13 @@ void NCF4::reduceF4Row(int index,
       }
     first = mVectorArithmetic->denseRowNextNonzero(dense, first+1, last);
   } while (first <= last);
+  
   mVectorArithmetic->denseRowToSparseRow(dense,
-                        mRows[index].first,
-                        mRows[index].second,
-                        firstcol,
-                        last,
-                        mMonomialSpace);
+                                         mRows[index].first,
+                                         mRows[index].second,
+                                         firstcol,
+                                         last,
+                                         mMonomialSpace);
   if (mVectorArithmetic->size(mRows[index].first) > 0)
     {
       mVectorArithmetic->sparseRowMakeMonic(mRows[index].first);
@@ -762,67 +755,108 @@ void NCF4::reduceF4Row(int index,
     }
 }
 
+void NCF4::parallelReduceF4Row(int index,
+                               int first,
+                               int firstcol,
+                               long& numCancellations,
+                               DenseCoefficientVector2& dense,
+                               tbb::queuing_mutex& lock)
+{
+  int sz = mRows[index].second.size();
+  //assert(sz > 0);  this may be zero when autoreducing the new gb elements
+  if (sz == 0) return;
+  if (sz == 1 && firstcol != -1) return;
+
+  int last = mRows[index].second[sz-1];
+
+  mVectorArithmetic->sparseRowToDenseRow(dense, mRows[index].first, mRows[index].second);
+  do {
+    int pivotrow = mColumns[first].second;
+    if (pivotrow >= 0)
+      {
+        numCancellations++;
+        mVectorArithmetic->denseRowCancelFromSparse(dense,
+                                                    mRows[pivotrow].first,
+                                                    mRows[pivotrow].second);
+        // last component in the row corresponding to pivotrow
+        int last1 = mRows[pivotrow].second.cend()[-1];
+        last = (last1 > last ? last1 : last);
+      }
+    else if (firstcol == -1)
+      {
+        firstcol = first;
+      }
+    first = mVectorArithmetic->denseRowNextNonzero(dense, first+1, last);
+  } while (first <= last);
+  
+  mVectorArithmetic->safeDenseRowToSparseRow(dense,
+                                             mRows[index].first,
+                                             mRows[index].second,
+                                             firstcol,
+                                             last,
+                                             mMonomialSpace,
+                                             lock);
+  if (mVectorArithmetic->size(mRows[index].first) > 0)
+    {
+      mVectorArithmetic->sparseRowMakeMonic(mRows[index].first);
+      // don't do this in the parallel version
+      //mColumns[firstcol].second = index;
+    }
+}
+
 void NCF4::parallelReduceF4Matrix()
 {
-  //auto numThreads = tbb::task_scheduler_init::default_num_threads();
-  ring_elem zero = freeAlgebra().coefficientRing()->zero();
-
   long numCancellations = 0;
   using threadLocalDense_t = tbb::enumerable_thread_specific<DenseCoefficientVector2>;
   using threadLocalLong_t = tbb::enumerable_thread_specific<long>;
-  using rwmutex_t = tbb::spin_rw_mutex;
-
-  //tbb::task_scheduler_init init(numThreads);
-  rwmutex_t my_mutex;
 
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense([&]() { 
     return mVectorArithmetic->allocateDenseCoefficientVector(mColumnMonomials.size());
   });
+  auto denseVector = mVectorArithmetic->allocateDenseCoefficientVector(mColumnMonomials.size());
   
   threadLocalLong_t numCancellationsLocal;
   
-  // do we want to backsolve?  This slows things down a lot, but
-  // we are not yet re-using this information for the next iteration at all.
-  #if 0
-  for (auto i = mFirstOverlap - 1; i >= 0; --i)
-    reduceF4Row(i,mRows[i].second[1],mRows[i].second[0],numCancellations,*(threadLocalDense.begin()));
-  #endif
-
   // reduce each overlap row by mRows.
 
-  // make this parallel by creating a dense row for each thread?
-  // Should see how this does before going further in terms of parallelization
-
-  // really want a parallel_for here.  If we want to parallelize the reduction
-  // of a row as well, we would also want to use parallel_reduce, but this may be
-  // too much overhead.  We will see once we get it actually working.
-   
-  tbb::parallel_for(tbb::blocked_range<size_t>{(size_t)(mFirstOverlap),mRows.size()},
-                    [&](const tbb::blocked_range<size_t>& r)
+  tbb::queuing_mutex lock;
+  tbb::parallel_for(tbb::blocked_range<int>{mFirstOverlap,(int)mRows.size()},
+                    [&](const tbb::blocked_range<int>& r)
                     {
                       threadLocalDense_t::reference my_dense = threadLocalDense.local();
                       threadLocalLong_t::reference my_accum = numCancellationsLocal.local();
-                      for (size_t i = r.begin(); i != r.end(); ++i)
+                      for (auto i = r.begin(); i != r.end(); ++i)
                       {
-                        rwmutex_t::scoped_lock my_lock{my_mutex,false};
-                        reduceF4Row(i,mRows[i].second[0],-1,my_accum,my_dense);
+                        parallelReduceF4Row(i,mRows[i].second[0],-1,my_accum,my_dense,lock);
                       }
                     });
-
+  
+  int numThreads = 0;
   for (auto i : numCancellationsLocal)
+  {
+    ++numThreads;
     numCancellations += i;
+  }
 
-  // interreduce the matrix with respect to these overlaps.  This needs to be serial
-  // at this point.
+  // sequentially perform one more pass to reduce the spair rows down 
+  for (int i = mFirstOverlap; i < mRows.size(); ++i)
+    reduceF4Row(i,mRows[i].second[0],-1,numCancellations,denseVector);
 
+  // interreduce the matrix with respect to these overlaps.  This needs to be sequential.
   for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
-    reduceF4Row(i,mRows[i].second[1],mRows[i].second[0],numCancellations,*(threadLocalDense.begin()));
+    reduceF4Row(i,
+                mRows[i].second[1],
+                mRows[i].second[0],
+                numCancellations,
+                denseVector);
 
   for (auto tlDense : threadLocalDense)
     mVectorArithmetic->deallocateCoefficientVector(tlDense);
 
+  mVectorArithmetic->deallocateCoefficientVector(denseVector);
   // std::cout << "Number of cancellations: " << numCancellations << std::endl;
+  // std::cout << "Number of threads used: " << numThreads << std::endl;
 }
 
 void NCF4::reduceF4Matrix()
@@ -831,13 +865,6 @@ void NCF4::reduceF4Matrix()
 
   auto denseVector = mVectorArithmetic->allocateDenseCoefficientVector(mColumnMonomials.size());
 
-  // do we want to backsolve?  This slows things down a lot, but
-  // we are not yet re-using this information for the next iteration at all.
-  #if 0
-  for (int i = mFirstOverlap - 1; i >= 0; --i)
-    reduceF4Row(i,mRows[i].second[1],mRows[i].second[0],numCancellations,denseVector);
-  #endif
-
   // reduce each overlap row by mRows.
   for (int i = mFirstOverlap; i < mRows.size(); ++i)
   {
@@ -845,11 +872,8 @@ void NCF4::reduceF4Matrix()
   } 
 
   // interreduce the matrix with respect to these overlaps.
-  //#if 0
-  //for (int i = mRows.size()-1; i >= 0; --i)
   for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
     reduceF4Row(i,mRows[i].second[1],mRows[i].second[0],numCancellations,denseVector);
-  //#endif
 
   //std::cout << "Number of cancellations: " << numCancellations << std::endl;
 }

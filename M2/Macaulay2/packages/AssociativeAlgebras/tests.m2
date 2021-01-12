@@ -652,7 +652,8 @@ TEST ///
   F<x,y,z,w> := FreeAlgebra(kk,4);
   B := [x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x];
   I := ideal<F | B>;
-  time Igb := GroebnerBasis(B,12);
+  time Igb := GroebnerBasis(B,15);
+  -- at least 959 secs, d = 15, kk = ZZ/32003, 11gb ram!
   -- 258 secs, d = 14, kk = ZZ/32003 up to 2.7gb ram
   -- 105 secs, d = 12, kk = QQ
   -- 12.6s, d = 12, kk = ZZ/32003
@@ -901,26 +902,33 @@ kk = ZZ/32003
 R = kk{x,y,z,w}
 I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
 
-I = ideal I_*; elapsedTime Igb = NCGB(I, 10, Strategy => "Naive"); -- (with autoreduction) 5.2 sec
+I = ideal I_*; elapsedTime Igb2 = NCGB(I, 6, Strategy => "Naive"); -- (with autoreduction) 5.2 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 11, Strategy => "Naive"); -- (with autoreduction) 19.9 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "Naive"); -- (with autoreduction) 101 sec
 
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"F4");    -- 2220 seconds, I think? (now 380 sec on FMs machine)
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"Naive"); -- 
 
-gbTrace = 50; I = ideal I_*; elapsedTime Igb = NCGB(I, 7);  
-I = ideal I_*; elapsedTime Igb = NCGB(I, 10); -- (with autoreduction) .9 sec
+while (true) do (
+    I = ideal I_*; elapsedTime Igb = NCGB(I, 6);
+    assert(#(flatten entries Igb) == 18)
+)
+I = ideal I_*; elapsedTime Igb = NCGB(I, 6); -- (with autoreduction) .9 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 11); -- (with autoreduction) 3.5 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12); -- (with autoreduction) 17.7 sec                 --- 8 secs
 I = ideal I_*; elapsedTime Igb = NCGB(I, 13); -- (with autoreduction) 79 sec (153 gens in GB)  --- 30 secs
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14); -- (with autoreduction) 352 sec (177 gens in GB) --- 110 secs after previous F4 changes, about 2.5gb
+                                              -- 62 secs 
+I = ideal I_*; elapsedTime Igb = NCGB(I, 15); -- 381 sec, parallel 220 sec
+
+--- it seems like the timings slow down the more often we run the computation...
 
 time Igb = NCGB(I, 20, Strategy=>"F4");
 time Igb = NCGB(I, 10, Strategy=>"Naive");
 S = R/I;
 #(flatten entries ncBasis(12,S)) == binomial(12+3,3)
 flatten entries Igb / degree
-all(12, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
+all(16, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
 apply(11, i -> #(flatten entries ncBasis(i, S)))
 
 getMons = f -> terms f / leadMonomial

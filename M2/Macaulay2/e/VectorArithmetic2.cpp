@@ -218,6 +218,40 @@ public:
         }
   }
 
+  void safeDenseRowToSparseRow(DenseCoefficientVector2& dense,
+                               CoefficientVector2& sparse, // output value: sets this value
+                               Range<int>& comps, // output value: sets comps
+                               int first,
+                               int last,
+                               MemoryBlock& monomialSpace,
+                               tbb::queuing_mutex& lock) const override
+  {
+    auto& dvec = * denseCoefficientVector(dense);
+    
+    int len = 0;
+    
+    // first can be -1 if the row is zero.  in this case, we should
+    // not be accessing dense[i] for i negative.
+    for (int i = first; i >= 0 and i <= last; i++)
+      {
+        if (dvec[i] != 0) len++;
+      }
+
+    comps = monomialSpace.safeAllocateArray<int>(len,lock);
+    sparse = allocateCoefficientVector(len);
+    auto& svec = * coefficientVector(sparse);
+
+    int next = 0;
+    for (int i = first; i >= 0 and i <= last; i++)
+      if (dvec[i] != 0)
+        {
+          svec[next] = dvec[i];
+          comps[next] = i;
+          ++next;
+          dvec[i] = 0;
+        }
+  }
+
   void sparseRowMakeMonic(CoefficientVector2& sparse) const override
   {
     auto& svec = * coefficientVector(sparse);
@@ -254,15 +288,13 @@ public:
   }
 
   ring_elem ringElemFromSparseVector(const CoefficientVector2& sparse,
-                                             int index) const override
+                                     int index) const override
   {
     auto& svec = * coefficientVector(sparse);
     ring_elem tmp;
     mRing.to_ring_elem(tmp,svec[index]);
     return tmp;
   }
-
-
 };
 
 // const VectorArithmetic2* vectorArithmetic2(const M2::ARingZZp& R)

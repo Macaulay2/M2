@@ -5,6 +5,8 @@
 #include <iostream>           // for operator<<, endl, basic_ostream, cout
 #include <utility>            // for pair
 
+#include <tbb/tbb.h>
+
 class MemoryBlock
 {
 public:
@@ -20,6 +22,13 @@ public:
   template<typename T>
   std::pair<T*, T*> allocateArray(size_t nelems)
   {
+    return mArena->allocArrayNoCon<T>(nelems);
+  }
+
+  template<typename T>
+  std::pair<T*, T*> safeAllocateArray(size_t nelems, tbb::queuing_mutex& lock)
+  {
+    tbb::queuing_mutex::scoped_lock myLock(lock);
     return mArena->allocArrayNoCon<T>(nelems);
   }
 
