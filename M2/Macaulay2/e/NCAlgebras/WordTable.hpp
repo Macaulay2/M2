@@ -22,7 +22,7 @@ class WordWithData;
 //   retire(index): set index to -1, set word to null's.
 // move Word code to Word.hpp DONE
 
-using Overlap = std::tuple<int,int,int>;
+using Overlap = std::tuple<int,int,int,bool>;
 
 class WordTable
 {
@@ -88,15 +88,16 @@ public:
   // find (right) overlaps with most recent added word 'w'.
   void rightOverlaps(std::vector<Overlap>& newRightOverlaps) const; 
 
+  // moved to public for use in retiring unnecessary overlaps
+  static void subwordPositions(Word word1,
+                               Word word2,
+                               std::vector<int>& result_start_indices);
+
 private:
   // returns true if word1 is a prefix/suffix of word2
   static bool isPrefixOf(Word word1, Word word2);
   static bool isSuffixOf(Word word1, Word word2);
   
-  static void subwordPositions(Word word1,
-                               Word word2,
-                               std::vector<int>& result_start_indices);
-
   static bool subwordPosition(Word word1,
                                Word word2,
                                int& result_start_index);

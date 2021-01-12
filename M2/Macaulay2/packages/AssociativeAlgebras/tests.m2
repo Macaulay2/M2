@@ -808,6 +808,20 @@ assert(phi (x*y) == x*y^2)
 assert(phi ((1/x)*y) == (1/x)*y^2) -- fails
 ///
 
+TEST ///
+kk = ZZ/32003
+R = kk{x,y,z,w}
+I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
+
+I = ideal I_*; Igb = NCGB(I, 11, Strategy=>"F4Parallel");
+assert(numcols Igb == 99)
+I = ideal I_*; Igb = NCGB(I, 12, Strategy=>"F4Parallel");
+assert(numcols Igb == 122)
+I = ideal I_*; Igb = NCGB(I, 11, Strategy=>"F4Parallel");
+assert(numcols Igb == 99)
+///
+
+
 BUG ///
 --- things to get fixed:
 1) basis rather than ncBasis
@@ -833,8 +847,10 @@ I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
 gbTrace=2
-deg = 15
+deg = 30
 I = ideal I_*; elapsedTime J1 = ideal NCGB(I, deg, Strategy=>"F4"); -- this gives wrong answer every n times, for n = ??
+--- 53 sec d = 30, kk = ZZ/32003, sequential
+--- 45 sec d = 30, kk = ZZ/32003, parallel
 --- 5.37sec, d = 25, kk = ZZ/32003
 --- 60 sec, d = 15, kk = QQ
 numgens J1 == 78 -- this fails here and there... (run this and the the line before it over and over).
@@ -896,7 +912,7 @@ T = fourDimSklyanin(ZZ/32003,{x,y,z,w})
 -- XXX
 restart
 needsPackage "AssociativeAlgebras"
-gbTrace = 2
+gbTrace = 3
 kk = QQ
 kk = ZZ/32003
 R = kk{x,y,z,w}
@@ -916,19 +932,19 @@ while (true) do (
 I = ideal I_*; elapsedTime Igb = NCGB(I, 6); -- (with autoreduction) .9 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 11); -- (with autoreduction) 3.5 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12); -- (with autoreduction) 17.7 sec                 --- 8 secs
-I = ideal I_*; elapsedTime Igb = NCGB(I, 13); -- (with autoreduction) 79 sec (153 gens in GB)  --- 30 secs
+I = ideal I_*; elapsedTime Igb = NCGB(I, 13); -- (with autoreduction) 79 sec (153 gens in GB)  --- 29 secs
+I = ideal I_*; elapsedTime Igb = NCGB(I, 13, Strategy => "F4Parallel"); -- 18.84s
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14); -- (with autoreduction) 352 sec (177 gens in GB) --- 110 secs after previous F4 changes, about 2.5gb
-                                              -- 62 secs 
+                                              -- 102s after lazy 2nd criterion change.
+I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy => "F4Parallel"); -- 61s 
 I = ideal I_*; elapsedTime Igb = NCGB(I, 15); -- 381 sec, parallel 220 sec
-
---- it seems like the timings slow down the more often we run the computation...
 
 time Igb = NCGB(I, 20, Strategy=>"F4");
 time Igb = NCGB(I, 10, Strategy=>"Naive");
 S = R/I;
 #(flatten entries ncBasis(12,S)) == binomial(12+3,3)
 flatten entries Igb / degree
-all(16, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
+all(14, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
 apply(11, i -> #(flatten entries ncBasis(i, S)))
 
 getMons = f -> terms f / leadMonomial
@@ -1247,3 +1263,16 @@ A = QQ{x,y,z,w}
 I = ideal {z*w*z*w^2*z*w-303600/972977*z*w^2*z^4, z*w*z*w^2*z*w-303600/972977*z*w^2*z^4}
 NCGB(I,8)
 ///
+
+DEVELOPMENT ///
+restart
+needsPackage "AssociativeAlgebras"
+A = QQ{x,y,z}
+p = y*z + z*y - x^2
+q = x*z + z*x - y^2
+r = z^2 - x*y - y*x
+I = ideal{p,q,r}
+B = A/I
+bas = ncBasis(4,B)
+///
+

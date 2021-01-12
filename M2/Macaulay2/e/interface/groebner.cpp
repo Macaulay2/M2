@@ -1242,9 +1242,10 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg, int st
     {
       auto elems = matrixToVector(A, input);
       bool isF4 = strategy & 16;
+      bool isParallel = strategy & 32;
       if (isF4)
         {
-          NCF4 G(A->freeAlgebra(), elems, maxdeg, strategy);
+          NCF4 G(A->freeAlgebra(), elems, maxdeg, strategy, isParallel);
           G.compute(maxdeg); // this argument is actually the soft degree limit
           auto result = copyPolyVector(A, G.currentValue());
           return vectorToMatrix(A, result); // consumes the Poly's in result

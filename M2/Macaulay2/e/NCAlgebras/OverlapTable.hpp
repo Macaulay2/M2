@@ -12,7 +12,10 @@
 // tuple is (i,j,k) where i is index of first word,
 // j is position of overlap in first word and k is
 // index of the second word
-using Overlap = std::tuple<int,int,int>;
+// the bool at the end determines whether the overlap still needs to be computed
+using Overlap = std::tuple<int,int,int,bool>;
+
+using OverlapMap = std::map<std::pair<int,bool>,std::deque<Overlap>>;
     
 class OverlapTable
 {
@@ -22,7 +25,6 @@ public:
   OverlapTable() : mPolyList(nullptr) {};
   OverlapTable(ConstPolyList* polyList) : mPolyList(polyList) {};
 
-  
   // will call find to see if degree exists, and if not will call
   // insert.  If degree exists, append overlap to value of degree
   auto insert(int deg, bool isGenerator, Overlap o) -> void;
@@ -47,10 +49,12 @@ public:
   auto clear() -> void { mOverlapMap.clear(); };
 
   auto dump(std::ostream& ostr, bool outputDeques) const -> std::ostream&;
+
+  OverlapMap& overlapMap() { return mOverlapMap; }
   
 private:
   ConstPolyList* mPolyList;
-  std::map<std::pair<int,bool>,std::deque<Overlap>> mOverlapMap;
+  OverlapMap mOverlapMap;
 };
 
 std::ostream& operator<<(std::ostream& ostr, const OverlapTable& overlapTable);

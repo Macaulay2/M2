@@ -18,7 +18,8 @@
 NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,
            int hardDegreeLimit,
-           int strategy
+           int strategy,
+           bool isParallel
            )
     : mFreeAlgebra(A),
       mInput(input),
@@ -28,7 +29,8 @@ NCF4::NCF4(const FreeAlgebra& A,
       mMonomHashEqual(A.monoid()),
       mColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mPreviousColumnMonomials(10,mMonomHash,mMonomHashEqual),
-      mVectorArithmetic(vectorArithmetic2(A.coefficientRing()))
+      mVectorArithmetic(vectorArithmetic2(A.coefficientRing())),
+      mIsParallel(isParallel)
 {
   if (M2_gbTrace >= 1)
     {
@@ -46,7 +48,7 @@ NCF4::NCF4(const FreeAlgebra& A,
         mIsGraded = false;
       mOverlapTable.insert(d.first,
                            true,
-                           std::make_tuple(i,-1,-1));
+                           std::make_tuple(i,-1,-1,true));
     }
   if (M2_gbTrace >= 1)
     {
@@ -102,8 +104,10 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
 
   // reduce the matrix
-  reduceF4Matrix();
-  //parallelReduceF4Matrix();
+  if (mIsParallel)
+    parallelReduceF4Matrix();
+  else
+    reduceF4Matrix();
 
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
@@ -170,22 +174,26 @@ void NCF4::addToGroebnerBasis(Poly * toAdd)
 
 void NCF4::updateOverlaps(const Poly * toAdd)
 {
-   std::vector<Overlap> newOverlaps;
+   std::vector<Overlap> newLeftOverlaps;
+   std::vector<Overlap> newRightOverlaps;
 
    Word newLeadWord = freeAlgebra().lead_word(*toAdd);
 
    // the word table insert places the right overlaps into newOverlaps
-   mWordTable.insert(newLeadWord,newOverlaps);
-   insertNewOverlaps(newOverlaps);
+   mWordTable.insert(newLeadWord,newRightOverlaps);
 
-   newOverlaps.clear();
    // this function finds the left overlaps with the most recently
    // inserted word.
-   mWordTable.leftOverlaps(newOverlaps);
-   insertNewOverlaps(newOverlaps);
+   mWordTable.leftOverlaps(newLeftOverlaps);
 
    // can *also* remove previously added overlaps based on poly using
    // the same criterion from before
+   checkOldOverlaps(newLeadWord);
+
+   // finally, insert the new overlaps
+   insertNewOverlaps(newRightOverlaps);
+   insertNewOverlaps(newLeftOverlaps);
+
 }
 
 auto NCF4::overlapHeft(Overlap o) const -> int
@@ -208,8 +216,7 @@ auto NCF4::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
      if (std::get<1>(newOverlap) != -1 && !isOverlapNecessary(newOverlap))
        {
          if (M2_gbTrace >= 3)
-           std::cout << "Reduction avoided using 2nd criterion." << std::endl;
-         // TODO: is this logic correct?  Is the overlap actually skipped?
+           std::cout << "Reduction avoided using eager 2nd criterion." << std::endl;
          continue;
        }
      mOverlapTable.insert(overlapHeft(newOverlap),
@@ -218,7 +225,7 @@ auto NCF4::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
    }
 }
 
-auto NCF4::isOverlapNecessary(Overlap o) -> bool
+auto NCF4::isOverlapNecessary(const Overlap& o) -> bool
 {
   // this function tests if the lead word of the overlap polynomial
   // of o is a multiple of another pattern in the word table.
@@ -233,7 +240,41 @@ auto NCF4::isOverlapNecessary(Overlap o) -> bool
   return retval;
 }
 
-Word NCF4::createOverlapLeadWord(Overlap o) 
+auto NCF4::checkOldOverlaps(Word& newLeadWord) -> void
+{
+  // this function flags any previous overlaps that properly
+  // contain newLeadWord as no longer necessary.
+
+  // the newest overlaps are not yet added at this point
+  std::vector<int> startIndices;
+
+  for (auto& p : mOverlapTable.overlapMap())
+  {
+    for (auto& o : p.second)
+    {
+      if (not std::get<3>(o)) continue;
+      if (std::get<1>(o) == -1) continue;
+      int overlapLen = std::get<1>(o) + mWordTable[std::get<2>(o)].size();
+      if (overlapLen <= newLeadWord.size()) continue;
+      startIndices.clear();
+      // this is not optimal.  Should pass info to word table to avoid creation of another word
+      auto w = createOverlapLeadWord(o);
+      WordTable::subwordPositions(newLeadWord,w,startIndices);
+      for (auto j : startIndices)
+      {
+        if (j != 0 or j != w.size() - newLeadWord.size())
+        {
+          if (M2_gbTrace >= 3)
+             std::cout << "Reduction avoided using lazy 2nd criterion." << std::endl;        
+          std::get<3>(o) = false;
+          break;
+        }
+      }
+    }
+  }
+}
+
+Word NCF4::createOverlapLeadWord(const Overlap& o) 
 {
   // this function adds the return value to mMemoryBlock, so should only be used
   // when running a GB since it will be subsequently cleared.
@@ -383,7 +424,8 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
 
   for (auto o : overlapsToProcess)
     {
-      preRowsFromOverlap(o);
+      auto stillValid = std::get<3>(o);
+      if (stillValid) preRowsFromOverlap(o);
     }
 
   // can't do this loop as a range-based for loop since we are adding to it
@@ -610,7 +652,7 @@ std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
   Word newword;
 
   findDivisorCalls++;
-  if (M2_gbTrace >= 2 && findDivisorCalls % 100000 == 0)
+  if (M2_gbTrace >= 5 && findDivisorCalls % 100000 == 0)
      std::cout << "Total findDivisorCalls      : " << findDivisorCalls << std::endl
                << "  Previous prefixes found   : " << previousPrefixesFound << std::endl
                << "  Previous suffixes found   : " << previousSuffixesFound << std::endl       

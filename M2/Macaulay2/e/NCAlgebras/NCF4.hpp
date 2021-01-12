@@ -101,11 +101,14 @@ private:
   // vector arithmetic class for reduction
   const VectorArithmetic2 *mVectorArithmetic;
 
+  bool mIsParallel;
+
 public:
   NCF4(const FreeAlgebra& A,
        const ConstPolyList& input,
        int hardDegreeLimit,
-       int strategy
+       int strategy,
+       bool isParallel
        );
 
   ~NCF4() { mMonomialSpace.deallocateAll(); mPreviousMonomialSpace.deallocateAll(); }
@@ -139,8 +142,9 @@ private:
   // Should I be doing this?  Two questions:  Should we make mMonomialSpace
   // mutable so changes don't trigger const errors, and should I really be
   // using mMonomialSpace anyway?
-  Word createOverlapLeadWord(Overlap o);
-  auto isOverlapNecessary(Overlap o) -> bool;
+  Word createOverlapLeadWord(const Overlap& o);
+  auto isOverlapNecessary(const Overlap& o) -> bool;
+  auto checkOldOverlaps(Word& newLeadWord) -> void;
 
   void matrixReset();
 

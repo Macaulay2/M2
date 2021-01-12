@@ -211,7 +211,7 @@ checkHeft = (degs, heftvec) -> (
 freeAlgebra = method()
 freeAlgebra(Ring, List) := FreeAlgebra => (A, args)  -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
-   opts := new OptionTable from {Degrees => null, DegreeRank => null, Weights => {}, Heft => null, UseVariables => true};
+   opts := new OptionTable from {Degrees => null, DegreeRank => null, Weights => {}, Heft => null, UseVariables => false};
    (opts,args) = override(opts,toSequence args);
    --- for some reason, override returns the elt itself if there is only one variable
    varList := if class args === Sequence then args else {args};
@@ -325,6 +325,7 @@ isWellDefined FreeAlgebra := Boolean => R -> (
 
 setNCGBStrategy := stratStr -> (
    if stratStr == "F4" then 16
+   else if stratStr == "F4Parallel" then 48
    else if stratStr == "Naive" then 0
    else error "Unknown NCGB strategy provided."
 )
@@ -334,7 +335,9 @@ NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
     strat := opts#Strategy;
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
-	if (not isHomogeneous I and strat == "F4") then (
+	possField := ZZ/(char ultimate(coefficientRing, ring I));
+	overZZp := (possField === (coefficientRing ring I));
+	if (not isHomogeneous I or not overZZp and (strat == "F4" or strat == "F4Parallel")) then (
 	   -- need to change to Naive algorithm if I is not homogeneous at this point.
 	   strat = "Naive";
 	);

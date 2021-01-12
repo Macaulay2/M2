@@ -48,7 +48,7 @@ NCGroebner::NCGroebner(const FreeAlgebra& A,
       tmpWord = freeAlgebra().lead_word(*mInput[i]);
       mOverlapTable.insert(d.first, // previously: freeAlgebra().monoid().wordHeft(tmpWord),
                            true,
-                           std::make_tuple(i,-1,-1));
+                           std::make_tuple(i,-1,-1,true));
     }
   if (M2_gbTrace >= 1)
     {

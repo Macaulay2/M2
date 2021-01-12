@@ -10,7 +10,7 @@
 #include <vector>    // for vector, vector<>::iterator, operator<
 
 // used in return value for WordTable as well
-using Overlap = std::tuple<int,int,int>;
+using Overlap = std::tuple<int,int,int,bool>;
 
 // data type of an arc/vertex label
 using Label = std::vector<int>;

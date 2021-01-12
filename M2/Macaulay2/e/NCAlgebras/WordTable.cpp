@@ -242,7 +242,7 @@ void WordTable::leftOverlaps(std::vector<Overlap>& newLeftOverlaps) const
       overlap_indices.clear();
       overlaps(mMonomials[i], mMonomials[word_index], overlap_indices);
       for (auto j : overlap_indices)
-        newLeftOverlaps.push_back(std::make_tuple(i, j, word_index));
+        newLeftOverlaps.push_back(std::make_tuple(i, j, word_index,true));
     }
 
   // triples will be <dict word index, index into dict word where suffix starts, word_index>.
@@ -258,7 +258,7 @@ void WordTable::rightOverlaps(std::vector<Overlap>& newRightOverlaps) const
       overlap_indices.clear();
       overlaps(mMonomials[word_index], mMonomials[i], overlap_indices);
       for (auto j : overlap_indices)
-        newRightOverlaps.push_back(std::make_tuple(word_index, j, i));
+        newRightOverlaps.push_back(std::make_tuple(word_index, j, i,true));
     }
 }
 
@@ -509,7 +509,7 @@ void WordWithDataTable::leftOverlaps(std::vector<Overlap>& newLeftOverlaps) cons
       overlap_indices.clear();
       overlaps(mMonomials[i], mMonomials[word_index], overlap_indices);
       for (auto j : overlap_indices)
-        newLeftOverlaps.push_back(std::make_tuple(i, j, word_index));
+        newLeftOverlaps.push_back(std::make_tuple(i, j, word_index,true));
     }
   // triples will be <dict word index, index into dict word where suffix starts, word_index>.
 }
@@ -525,7 +525,7 @@ void WordWithDataTable::rightOverlaps(std::vector<Overlap>& newRightOverlaps) co
       overlap_indices.clear();
       overlaps(mMonomials[word_index], mMonomials[i], overlap_indices);
       for (auto j : overlap_indices)
-        newRightOverlaps.push_back(std::make_tuple(word_index, j, i));
+        newRightOverlaps.push_back(std::make_tuple(word_index, j, i,true));
     }
 }
 

@@ -169,7 +169,7 @@ auto SuffixTree::insert(const Word& w, std::vector<Overlap>& rightOverlaps) -> s
               auto ro0 = newLocus->getPatternNumber();
               auto ro1 = mMonomials[ro0].size() - roRoot->label().size();
               auto ro2 = pl;
-              rightOverlaps.push_back(std::make_tuple(ro0,ro1,ro2));
+              rightOverlaps.push_back(std::make_tuple(ro0,ro1,ro2,true));
             }
         }
       if (v != mRoot && s.size() == 2)
@@ -702,7 +702,7 @@ auto SuffixTree::leftOverlaps(std::vector<Overlap>& output) const -> void
   leftOverlaps(Word(tmpLabel),pairs,true);
   for (auto p : pairs)
     {
-      output.push_back(std::make_tuple(p.first, p.second, mMonomials.size()-1));
+      output.push_back(std::make_tuple(p.first, p.second, mMonomials.size()-1,true));
     }
   return;
 }  
