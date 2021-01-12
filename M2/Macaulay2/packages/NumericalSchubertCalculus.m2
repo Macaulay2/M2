@@ -12,12 +12,15 @@ newPackage(
 	{Name => "Frank Sottile", 
 	    Email => "sottile@math.tamu.edu", 
 	    HomePage => "http://www.math.tamu.edu/~sottile"},
+	{Name => "Ravi Vakil",
+		Email => "vakil@math.stanford.edu",
+		HomePage => "http://math.stanford.edu/~vakil"},
 	{Name => "Jan Verschelde",
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
     Headline => "numerical methods in Schubert Calculus",
-    Keywords => {"Numerical Algebraic Geometry"},
+--    Keywords => {"Numerical Algebraic Geometry"},
     PackageImports => {
 	"PHCpack",
 	"NumericalAlgebraicGeometry",

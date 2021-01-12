@@ -1,9 +1,11 @@
 document {
      Key => NumericalSchubertCalculus,
      Headline => "Numerical Algorithms for Schubert Calculus",
-     "Tools for solving Schubert problems on Grassmannians using numerical homotopy continuation.",
-     PARA {"The package NumericalSchubertCalculus implements the Littlewood-Richardson and Pieri homotopy algorithms."}, 
-     
+     EM "NumericalSchubertCalculus", " is a package that provides implementations of both the Littlewood-Richardson and Pieri homotopy algorithms for solving (instances of) Schubert problems on Grassmannians using numerical homotopy continuation.",
+     PARA{"A(n instance of a) Schubert problem on the Grassmannian ",TEX///$Gr(k,n)$///," is a list of Schubert subvarieties (assumed general) of ",TEX///$Gr(k,n)$///," whose codimensions add up to ",TEX///$k(n-k)$///,", the dimension of the Grassmannian. 
+     A Schubert variety is represented by a pair ",TEX///$(c,F)$///,", where ",TEX///$c$///," is a Schubert condition (represented as a partition or a bracket) and ",TEX///$F$///," is a flag, represented as an invertible ",TEX///$n\times n$///,"-matrix.
+       The Schubert variety for the pair ",TEX///$(c,F)$///," consists of all ",TEX///$k$///,"-planes that satisfy the incidence condition ",TEX///$c$///," imposed by the flag ",TEX///$F$///,". 
+       A Schubert problem is a list of conditions, the sum of whose codimensions is ",TEX///$k(n-k)$///,".  Flags, one for each condition, provide an instance of a given Schubert problem."},   
      HEADER3 {"General functions include:"},
      UL{
         TO randomSchubertProblemInstance, 
