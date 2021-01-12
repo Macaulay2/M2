@@ -927,77 +927,77 @@ export toRRi(n:RR,prec:ulong):RRi := (
 
 export toRRi(n:RR):RRi := toRRi(n,precision(n));
                                     
-export interval(a:ZZ,b:ZZ,prec:ulong):RRi := (
+export toRRi(a:ZZ,b:ZZ,prec:ulong):RRi := (
      x := newRRimutable(prec);
      Ccode( void, "mpfr_set_z( &", x, "->left," , a, ",GMP_RNDD)");
      Ccode( void, "mpfr_set_z( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
                                   
-export interval(a:ZZ,b:ZZ):RRi := interval(a,b,defaultPrecision);
+export toRRi(a:ZZ,b:ZZ):RRi := toRRi(a,b,defaultPrecision);
 
-export interval(a:ZZ,b:QQ,prec:ulong):RRi := (
+export toRRi(a:ZZ,b:QQ,prec:ulong):RRi := (
      x := newRRimutable(prec);
      Ccode( void, "mpfr_set_z( &", x, "->left," , a, ",GMP_RNDD)");
      Ccode( void, "mpfr_set_q( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
 
-export interval(a:ZZ, b:QQ):RRi := interval(a,b,defaultPrecision);
+export toRRi(a:ZZ, b:QQ):RRi := toRRi(a,b,defaultPrecision);
 
-export interval(a:ZZ,b:RR,prec:ulong):RRi := (
+export toRRi(a:ZZ,b:RR,prec:ulong):RRi := (
      x := newRRimutable(prec);
      Ccode( void, "mpfr_set_z( &", x, "->left," , a, ",GMP_RNDD)");
      Ccode( void, "mpfr_set( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
 
-export interval(a:ZZ, b:RR):RRi := interval(a,b,precision(b));
+export toRRi(a:ZZ, b:RR):RRi := toRRi(a,b,precision(b));
 
-export interval(a:QQ,b:ZZ,prec:ulong):RRi := (
+export toRRi(a:QQ,b:ZZ,prec:ulong):RRi := (
      x := newRRimutable(prec);
      Ccode( void, "mpfr_set_q( &", x, "->left," , a, ",GMP_RNDD)");
      Ccode( void, "mpfr_set_z( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
                                   
-export interval(a:QQ,b:ZZ):RRi := interval(a,b,defaultPrecision);
+export toRRi(a:QQ,b:ZZ):RRi := toRRi(a,b,defaultPrecision);
 
-export interval(a:QQ,b:QQ,prec:ulong):RRi := (
+export toRRi(a:QQ,b:QQ,prec:ulong):RRi := (
      x := newRRimutable(prec);
      Ccode( void, "mpfr_set_q( &", x, "->left," , a, ",GMP_RNDD)");
      Ccode( void, "mpfr_set_q( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
 
-export interval(a:QQ, b:QQ):RRi := interval(a,b,defaultPrecision);
+export toRRi(a:QQ, b:QQ):RRi := toRRi(a,b,defaultPrecision);
 
-export interval(a:QQ,b:RR,prec:ulong):RRi := (
+export toRRi(a:QQ,b:RR,prec:ulong):RRi := (
      x := newRRimutable(prec);
      Ccode( void, "mpfr_set_q( &", x, "->left," , a, ",GMP_RNDD)");
      Ccode( void, "mpfr_set( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
 
-export interval(a:QQ, b:RR):RRi := interval(a,b,precision(b));
+export toRRi(a:QQ, b:RR):RRi := toRRi(a,b,precision(b));
 
-export interval(a:RR,b:ZZ,prec:ulong):RRi := (
+export toRRi(a:RR,b:ZZ,prec:ulong):RRi := (
      x := newRRimutable(prec);
      Ccode( void, "mpfr_set( &", x, "->left," , a, ",GMP_RNDD)");
      Ccode( void, "mpfr_set_z( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
                                   
-export interval(a:RR,b:ZZ):RRi := interval(a,b,precision(a));
+export toRRi(a:RR,b:ZZ):RRi := toRRi(a,b,precision(a));
 
-export interval(a:RR,b:QQ,prec:ulong):RRi := (
+export toRRi(a:RR,b:QQ,prec:ulong):RRi := (
      x := newRRimutable(prec);
      Ccode( void, "mpfr_set( &", x, "->left," , a, ",GMP_RNDD)");
      Ccode( void, "mpfr_set_q( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
 
-export interval(a:RR, b:QQ):RRi := interval(a,b,precision(a));
+export toRRi(a:RR, b:QQ):RRi := toRRi(a,b,precision(a));
 
-export interval(a:RR,b:RR,prec:ulong):RRi := (
+export toRRi(a:RR,b:RR,prec:ulong):RRi := (
      x := newRRimutable(prec);
      Ccode( void, "mpfr_set( &", x, "->left," , a, ",GMP_RNDD)");
      Ccode( void, "mpfr_set( &", x, "->right," , b, ",GMP_RNDU)");
      moveToRRiandclear(x));
 
-export interval(a:RR, b:RR):RRi := interval(a,b,min(precision(a),precision(b)));
+export toRRi(a:RR, b:RR):RRi := toRRi(a,b,min(precision(a),precision(b)));
                                     
 export midpointRR(x:RRi):RR := (
      z := newRRmutable(precision0(x));
@@ -1626,7 +1626,7 @@ export (x:RRi) ^ (n:long) : RRi := (
     clear(right);
     clear(extra);
                                     
-    interval(moveToRRandclear(lower),moveToRRandclear(upper)));
+    toRRi(moveToRRandclear(lower),moveToRRandclear(upper)));
                                     
 export (x:RR) ^ (n:ulong) : RR := (
      z := newRRmutable(precision0(x));
@@ -1674,7 +1674,7 @@ export (x:RRi) ^ (n:ulong) : RRi := (
     clear(right);
     clear(extra);
                                     
-    interval(moveToRRandclear(lower),moveToRRandclear(upper)));
+    toRRi(moveToRRandclear(lower),moveToRRandclear(upper)));
 
 export pow10(n:ulong,prec:ulong):RR := (
      z := newRRmutable(prec);
@@ -1686,7 +1686,7 @@ export pow10RRi(n:ulong,prec:ulong):RRi := (
      right := newRRmutable(prec);
      Ccode( void, "mpfr_ui_pow_ui(",  left, ",", ulong(10), ",", n, ", GMP_RNDD)" );
      Ccode( void, "mpfr_ui_pow_ui(",  right, ",", ulong(10), ",", n, ", GMP_RNDU)" );
-     interval(moveToRRandclear(left),moveToRRandclear(right)));
+     toRRi(moveToRRandclear(left),moveToRRandclear(right)));
 
 export pow10(n:long,prec:ulong):RR := (
      if n < long(0)
@@ -1720,7 +1720,7 @@ export (n:ulong) ^ (x:RRi) : RRi := (
         Ccode( void, "mpfr_ui_pow(",  left, ",", n, ",", rightRR(x), ", GMP_RNDD)" );
         Ccode( void, "mpfr_ui_pow(",  right, ",", n, ",", leftRR(x), ", GMP_RNDU)" ));
                                      
-     interval(moveToRRandclear(left),moveToRRandclear(right)));
+     toRRi(moveToRRandclear(left),moveToRRandclear(right)));
 
 export (x:RR) ^ (y:ZZ) : RR := (
      z := newRRmutable(precision0(x));
@@ -1768,7 +1768,7 @@ export (x:RRi) ^ (y:ZZ) : RRi := (
     clear(right);
     clear(extra);
 
-    interval(moveToRRandclear(lower),moveToRRandclear(upper)));
+    toRRi(moveToRRandclear(lower),moveToRRandclear(upper)));
 
 export (x:RR) ^ (y:RR) : RR := (
      z := newRRmutable(precision0(x));
@@ -1789,7 +1789,7 @@ export (y:RR) ^ (x:RRi) : RRi := (
         Ccode( void, "mpfr_pow(",  left, ",", y, ",", rightRR(x), ", GMP_RNDD)" );
         Ccode( void, "mpfr_pow(",  right, ",", y, ",", leftRR(x), ", GMP_RNDU)" ));
                                      
-     interval(moveToRRandclear(left),moveToRRandclear(right)));
+     toRRi(moveToRRandclear(left),moveToRRandclear(right)));
                                     
 export (x:RRi) ^ (y:RR) : RRi := (
     if (y == toRR(0,precision0(y))) then return toRRi(1,min(precision0(x),precision0(y)));
@@ -1832,7 +1832,7 @@ export (x:RRi) ^ (y:RR) : RRi := (
     clear(right);
     clear(extra);
 
-    interval(moveToRRandclear(lower),moveToRRandclear(upper)));
+    toRRi(moveToRRandclear(lower),moveToRRandclear(upper)));
                                     
 export (y:RRi) ^ (x:RRi) : RRi := (
      -- Assumes that y >= 0
@@ -1899,7 +1899,7 @@ export (y:RRi) ^ (x:RRi) : RRi := (
      clear(upperright);
      clear(lowerright);
 
-     interval(moveToRRandclear(left),moveToRRandclear(right)));
+     toRRi(moveToRRandclear(left),moveToRRandclear(right)));
                                     
 export floor(x:RR) : ZZ := (
      if !isfinite0(x) then return zeroZZ;			    -- nothing else to do!
