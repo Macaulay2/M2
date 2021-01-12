@@ -202,3 +202,27 @@ TEST /// -- testing twisted modules
 --      (cohomologyMatrix(M,low,high), multigradedRegularity(S, M))
       )
 ///
+
+TEST /// -- example 5.8 of BES
+  debugLevel = 1
+  debug needsPackage "VirtualResolutions"
+  importFrom_LinearTruncations {"isQuasiLinear"}
+  (S, E) = productOfProjectiveSpaces {1, 3}
+  X = normalToricVarietyFromTateData S
+  -- already saturated
+  I = ideal(
+      x_(0,1) * x_(1,1)^2 + x_(0,0) * x_(1,0) * x_(1,2) + x_(0,1) * x_(1,1) * x_(1,3),
+      x_(0,0)^2 * x_(1,1)^2 + x_(0,0) * x_(0,1) * x_(1,2)^2 + x_(0,1)^2 * x_(1,0) * x_(1,3),
+      x_(0,0) * x_(1,1)^4 - x_(0,0) * x_(1,0) * x_(1,2)^3 + x_(0,0) * x_(1,1)^3 * x_(1,3)
+      - x_(0,1) * x_(1,0)^2 * x_(1,2) * x_(1,3),
+      x_(1,1)^6 - x_(1,0) * x_(1,1)^2 * x_(1,2)^3 + 2 * x_(1,1)^5 * x_(1,3) + x_(1,0)^3
+      * x_(1,2)^2 * x_(1,3) - x_(1,0) * x_(1,1) * x_(1,2)^3 * x_(1,3) + x_(1,1)^4 * x_(1,3)^2)
+  C = res truncate({1, 3}, comodule I)
+  assert isQuasiLinear({1, 3}, C)
+  assert(ann HH_0 C == I)
+
+  D = virtualOfPair(comodule I, {{2, 6}})
+  assert isVirtual(variety S, D)
+  assert(ann HH_0 D == I)
+  elapsedTime assert(multigradedRegularity(S, I) === {{1, 3}, {2, 2}}) -- 6.1s
+///
