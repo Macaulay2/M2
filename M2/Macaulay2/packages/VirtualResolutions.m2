@@ -456,6 +456,10 @@ gradedPolynomialRing = n -> (
     yy := flatten apply(#n, i -> apply(n_i+1, j -> y_(i,j)));
     ZZ/32003[yy])
 
+printRegion = (gt, low, high) -> (
+    printerr net matrix table(min(high - low) + 1, max(high - low) + 1,
+	(i, j) -> if gt#?{first high - i, j + first low} then 0 else 1))
+
 -- data for translating between NormalToricVarieties and TateOnProducts
 importFrom_TateOnProducts { "TateData", "TateRingData", "ringData" }
 
@@ -464,6 +468,7 @@ importFrom_TateOnProducts { "TateData", "TateRingData", "ringData" }
 normalToricVarietyWithTateData = X -> (
     if X.cache.?ring then if X.cache.ring.?TateData then return X
     -- TODO: remove getSymbols from NormalToricVarieties, or use X.cache.Variable?
+    -- TODO: allow imbuing an already existing Cox ring with TateData
     else error "use normalToricVarietyWithTateData before creating the Cox ring";
     -- TODO: also check that X is a product of toricProjectiveSpaces
     (S, E) := productOfProjectiveSpaces(dimVector X, CoefficientField => X.cache.CoefficientRing);
@@ -479,6 +484,7 @@ normalToricVarietyFromTateData = S -> (
 
 -- input: multigraded polynomial ring without Tate Data
 -- output: a new multigraded polynomial ring with Tate Data (the generators will be different!)
+-- TODO: change this to support arbitrary variable names
 imbueRingWithTateData = S0 -> (
     if S0.?TateData then return S0;
     (S, E) := productOfProjectiveSpaces(dimVector S0, CoefficientField => coefficientRing S0);
@@ -626,9 +632,7 @@ multigradedRegularityDefaultStrategy = (X, M, opts) -> (
                     j -> gt#(ell_0_0 + degree j) = true);
             ));
     debugInfo("Calculating minimal generators");
-    if debugLevel > 0 and n == 2 then (
-	printerr net matrix table(min(high - low) + 1, max(high - low) + 1,
-	    (i, j) -> if gt#?{first high - i, j + first low} then 0 else 1));
+    if debugLevel > 0 and n == 2 then printRegion(gt, low, high);
     -- TODO: use findMins here when it is mature
     I := ideal apply(L, ell ->
         if all(n, j -> ell_0_0_j >= mindegs_j)

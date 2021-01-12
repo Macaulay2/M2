@@ -115,7 +115,7 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
     debugInfo("Recalculating minimal generators by adding U");
     R = U + ideal apply(R, ell -> P_(ell - low));
     -- FIXME: maybe remove this before release?
-    if R != U then print concatenate(10:"💥", "\n💥💥 TELL LCH 💥💥\n", 10:"💥");
+    if R != U then error concatenate(10:"💥", "\n💥💥 TELL LCH 💥💥\n", 10:"💥");
     -- retrieve the container
     container := opts.cache;
     container.LowerLimit = low;
