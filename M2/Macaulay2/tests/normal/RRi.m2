@@ -1,5 +1,7 @@
 -- tests basic methods (e.g., arithmetic operations) for RRi implementation
 
+-*
+
 FF := RRi_1000
 assert(precision FF===1000)
 I = interval(1,3)
@@ -67,6 +69,8 @@ assert (leftRR atan I == atan 1)
 assert (rightRR atan I == atan 3)
 assert (leftRR sinh I == sinh 1)
 assert (acosh(I) >= 0)
+
+*-
 
 --- TO FIX: ---------------------------------------------
 
