@@ -3,7 +3,7 @@
 #include "text-io.hpp"                   // for emit_wrapped
 #include "NCAlgebras/FreeAlgebra.hpp"       // for FreeAlgebra
 #include "NCAlgebras/OverlapTable.hpp"      // for OverlapTable
-#include "VectorArithmetic2.hpp"            // for VectorArithmetic2
+#include "VectorArithmetic.hpp"            // for VectorArithmetic
 #include "NCAlgebras/WordTable.hpp"         // for Overlap, WordTable
 #include "buffer.hpp"                       // for buffer
 #include "engine-exports.h"                 // for M2_gbTrace
@@ -29,7 +29,7 @@ NCF4::NCF4(const FreeAlgebra& A,
       mMonomHashEqual(A.monoid()),
       mColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mPreviousColumnMonomials(10,mMonomHash,mMonomHashEqual),
-      mVectorArithmetic(vectorArithmetic2(A.coefficientRing())),
+      mVectorArithmetic(vectorArithmetic(A.coefficientRing())),
       mIsParallel(isParallel)
 {
   if (M2_gbTrace >= 1)
@@ -235,6 +235,7 @@ auto NCF4::isOverlapNecessary(const Overlap& o) -> bool
   bool retval;
   Word w;
   
+  // not optimal.  Should pass information to wordTable for checking.
   w = createOverlapLeadWord(o);
   retval = !mWordTable.isNontrivialSuperword(w, std::get<0>(o), std::get<2>(o));
   return retval;
@@ -619,7 +620,7 @@ NCF4::Row NCF4::processPreRow(PreRow r)
       processMonomInPreRow(m,nextcolloc);
       nextcolloc++;
     }
-  CoefficientVector2 coeffs = mVectorArithmetic->sparseVectorFromContainer(elem->getCoeffVector());
+  CoeffVector coeffs = mVectorArithmetic->sparseVectorFromContainer(elem->getCoeffVector());
 
   // delete the Poly created for prevReducer case, if necessary.
   if (prevReducer) delete elem;
@@ -755,7 +756,7 @@ void NCF4::reduceF4Row(int index,
                        int first,
                        int firstcol,
                        long& numCancellations,
-                       DenseCoefficientVector2& dense)
+                       DenseCoeffVector& dense)
 {
   int sz = mRows[index].second.size();
   //assert(sz > 0);  this may be zero when autoreducing the new gb elements
@@ -801,7 +802,7 @@ void NCF4::parallelReduceF4Row(int index,
                                int first,
                                int firstcol,
                                long& numCancellations,
-                               DenseCoefficientVector2& dense,
+                               DenseCoeffVector& dense,
                                tbb::queuing_mutex& lock)
 {
   int sz = mRows[index].second.size();
@@ -849,14 +850,14 @@ void NCF4::parallelReduceF4Row(int index,
 void NCF4::parallelReduceF4Matrix()
 {
   long numCancellations = 0;
-  using threadLocalDense_t = tbb::enumerable_thread_specific<DenseCoefficientVector2>;
+  using threadLocalDense_t = tbb::enumerable_thread_specific<DenseCoeffVector>;
   using threadLocalLong_t = tbb::enumerable_thread_specific<long>;
 
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense([&]() { 
-    return mVectorArithmetic->allocateDenseCoefficientVector(mColumnMonomials.size());
+    return mVectorArithmetic->allocateDenseCoeffVector(mColumnMonomials.size());
   });
-  auto denseVector = mVectorArithmetic->allocateDenseCoefficientVector(mColumnMonomials.size());
+  auto denseVector = mVectorArithmetic->allocateDenseCoeffVector(mColumnMonomials.size());
   
   threadLocalLong_t numCancellationsLocal;
   
@@ -894,9 +895,9 @@ void NCF4::parallelReduceF4Matrix()
                 denseVector);
 
   for (auto tlDense : threadLocalDense)
-    mVectorArithmetic->deallocateCoefficientVector(tlDense);
+    mVectorArithmetic->deallocateCoeffVector(tlDense);
 
-  mVectorArithmetic->deallocateCoefficientVector(denseVector);
+  mVectorArithmetic->deallocateCoeffVector(denseVector);
   // std::cout << "Number of cancellations: " << numCancellations << std::endl;
   // std::cout << "Number of threads used: " << numThreads << std::endl;
 }
@@ -905,13 +906,11 @@ void NCF4::reduceF4Matrix()
 {
   long numCancellations = 0;
 
-  auto denseVector = mVectorArithmetic->allocateDenseCoefficientVector(mColumnMonomials.size());
+  auto denseVector = mVectorArithmetic->allocateDenseCoeffVector(mColumnMonomials.size());
 
   // reduce each overlap row by mRows.
   for (int i = mFirstOverlap; i < mRows.size(); ++i)
-  {
     reduceF4Row(i,mRows[i].second[0],-1,numCancellations,denseVector);
-  } 
 
   // interreduce the matrix with respect to these overlaps.
   for (int i = mRows.size()-1; i >= mFirstOverlap; --i)

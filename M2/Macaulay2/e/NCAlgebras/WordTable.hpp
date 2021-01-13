@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 
-#include "NCAlgebras/MemoryBlock.hpp" // for MemoryBlock
+#include "MemoryBlock.hpp" // for MemoryBlock
 
 class Word;
 class WordWithData;

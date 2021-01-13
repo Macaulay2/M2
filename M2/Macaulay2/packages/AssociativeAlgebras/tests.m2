@@ -680,7 +680,7 @@ TEST ///
   -- with the variables adjoined.  I.e. QQ{x}{y} is the same as QQ[x,y]
   R = QQ[x,y]/ideal{x^2,x*y,y^2}
   S = R{a,b}
-  T = S{c,d}
+  T = S{c,d} -- TODO: should disallow GBs over such a ring.
   assert(a*c == c*a)
   assert(x*c == c*x)
   f = x*c + y*d
@@ -912,7 +912,7 @@ T = fourDimSklyanin(ZZ/32003,{x,y,z,w})
 -- XXX
 restart
 needsPackage "AssociativeAlgebras"
-gbTrace = 3
+gbTrace = 2
 kk = QQ
 kk = ZZ/32003
 R = kk{x,y,z,w}
@@ -937,14 +937,15 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 13, Strategy => "F4Parallel"); -- 18.84
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14); -- (with autoreduction) 352 sec (177 gens in GB) --- 110 secs after previous F4 changes, about 2.5gb
                                               -- 102s after lazy 2nd criterion change.
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy => "F4Parallel"); -- 61s 
-I = ideal I_*; elapsedTime Igb = NCGB(I, 15); -- 381 sec, parallel 220 sec
+I = ideal I_*; elapsedTime Igb = NCGB(I, 15); -- 381 sec
+I = ideal I_*; elapsedTime Igb = NCGB(I, 15, Strategy => "F4Parallel"); -- 220 sec
 
 time Igb = NCGB(I, 20, Strategy=>"F4");
 time Igb = NCGB(I, 10, Strategy=>"Naive");
 S = R/I;
 #(flatten entries ncBasis(12,S)) == binomial(12+3,3)
 flatten entries Igb / degree
-all(14, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
+all(16, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
 apply(11, i -> #(flatten entries ncBasis(i, S)))
 
 getMons = f -> terms f / leadMonomial
@@ -1267,12 +1268,38 @@ NCGB(I,8)
 DEVELOPMENT ///
 restart
 needsPackage "AssociativeAlgebras"
-A = QQ{x,y,z}
-p = y*z + z*y - x^2
-q = x*z + z*x - y^2
-r = z^2 - x*y - y*x
+kk = GF(27)
+kk = GF(3^10) -- this don't seem to work on "Naive"
+kk = GF(7^5)  -- this don't seem to work on "Naive"
+kk = QQ
+A = kk{x,y,z}
+setRandomSeed(34782734)
+alpha = random(kk)
+beta = random(kk)
+gamma = random(kk)
+p = alpha*y*z + beta*z*y + gamma*x^2
+q = alpha*z*x + beta*x*z + gamma*y^2
+r = alpha*x*y + beta*y*x + gamma*z^2
 I = ideal{p,q,r}
-B = A/I
-bas = ncBasis(4,B)
-///
+gbTrace = 100
+elapsedTime Igb = NCGB(I,10,Strategy=>"Naive"); --- crashes.  Not sure why...
+elapsedTime Igb = NCGB(I,12,Strategy=>"F4");
+I = ideal I_*; elapsedTime Igb = NCGB(I,15,Strategy=>"F4Parallel");
+B = A/I; all(13, i -> #(flatten entries ncBasis(i, B)) == binomial(i + 2,2))
+apply(16, i -> #(flatten entries ncBasis(i, B)))
+apply(16, i -> binomial(i+2,2))
 
+restart
+needsPackage "AssociativeAlgebras"
+kk = QQ
+A = QQ{x,y,z}
+p = y*z + z*y - 2*x^2
+q = z*x + x*z - 2*y^2
+r = x*y + y*x - 2*z^2
+I = ideal{p,q,r}
+Igb = NCGB(I, 10, Strategy=>"Naive")
+I = ideal I_*; Igb = NCGB(I, 10, Strategy=>"F4")
+I = ideal I_*; Igb = NCGB(I, 10, Strategy=>"F4Parallel")
+B = A/I
+ncHilbertSeries(B, Order => 15)
+///

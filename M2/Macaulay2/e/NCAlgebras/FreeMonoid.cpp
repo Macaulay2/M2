@@ -1,6 +1,6 @@
 #include "NCAlgebras/FreeMonoid.hpp"
 
-#include "NCAlgebras/MemoryBlock.hpp"  // for MemoryBlock
+#include "MemoryBlock.hpp"             // for MemoryBlock
 #include "NCAlgebras/Word.hpp"         // for Word
 #include "buffer.hpp"                  // for buffer
 #include "monoid.hpp"                  // for Monoid

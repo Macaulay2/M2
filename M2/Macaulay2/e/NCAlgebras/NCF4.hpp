@@ -2,13 +2,13 @@
 #define __nc_f4_hpp__
 
 #include "NCAlgebras/FreeMonoid.hpp"   // for MonomEq
-#include "NCAlgebras/MemoryBlock.hpp"  // for MemoryBlock
+#include "MemoryBlock.hpp"             // for MemoryBlock
 #include "NCAlgebras/Range.hpp"        // for Range
 #include "NCAlgebras/Word.hpp"         // for Word
 #include "NCAlgebras/OverlapTable.hpp" // for OverlapTable
 #include "NCAlgebras/WordTable.hpp"    // for Overlap, WordTable
 #include "NCAlgebras/SuffixTree.hpp"   // for experimental suffix tree code
-#include "VectorArithmetic2.hpp"       // for VectorArithmetic2, CoefficientVector2, etc
+#include "VectorArithmetic.hpp"        // for VectorArithmetic, CoeffVector, etc
 #include "Polynomial.hpp"              // for Monom, ConstPolyList, Poly
 //#include "newdelete.hpp"               // for VECTOR, our_new_delete
 
@@ -53,9 +53,9 @@ private:
   // prevReducer = true : left*mRows[i]*right is the lead term of a reducer
   using PreRow = std::tuple<Word, int, Word, bool>;
 
-  // make this into a std::pair of <CoefficientVector,Range<int>>
+  // make this into a std::pair of <CoeffVector,Range<int>>
   // CoefficientVector knows whether it owns it memory or not but has the similar interaface as a range
-  using Row = std::pair<CoefficientVector2,
+  using Row = std::pair<CoeffVector,
                         Range<int>>; // components corresponding to monomials appearing
 
   using Column = std::pair<Monom, int>; // monomial, pivot row for this monomial (if not -1).
@@ -99,7 +99,7 @@ private:
   MemoryBlock mPreviousMonomialSpace;
 
   // vector arithmetic class for reduction
-  const VectorArithmetic2 *mVectorArithmetic;
+  const VectorArithmetic *mVectorArithmetic;
 
   bool mIsParallel;
 
@@ -176,13 +176,13 @@ private:
                    int first,
                    int firstcol,
                    long &numCancellations,
-                   DenseCoefficientVector2& dense);
+                   DenseCoeffVector& dense);
 
   void parallelReduceF4Row(int index,
                            int first,
                            int firstcol,
                            long &numCancellations,
-                           DenseCoefficientVector2& dense,
+                           DenseCoeffVector& dense,
                            tbb::queuing_mutex& lock);
 
   

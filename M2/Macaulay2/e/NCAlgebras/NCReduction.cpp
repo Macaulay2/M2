@@ -2,7 +2,7 @@
 
 #include "NCAlgebras/FreeAlgebra.hpp"  // for FreeAlgebra
 #include "NCAlgebras/FreeMonoid.hpp"   // for MonomEq, FreeMonoid
-#include "NCAlgebras/MemoryBlock.hpp"  // for MemoryBlock
+#include "MemoryBlock.hpp"             // for MemoryBlock
 #include "NCAlgebras/NCGroebner.hpp"   // for tryOutMathicCode
 #include "NCAlgebras/Word.hpp"         // for Word
 #include "myalloc.hpp"                 // for StatsAllocator

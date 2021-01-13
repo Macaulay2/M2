@@ -330,16 +330,17 @@ setNCGBStrategy := stratStr -> (
    else error "Unknown NCGB strategy provided."
 )
 
-NCGB = method(Options => {Strategy=>"F4"})
+NCGB = method(Options => {Strategy=>"Naive"})
 NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
     strat := opts#Strategy;
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
 	possField := ZZ/(char ultimate(coefficientRing, ring I));
-	overZZp := (possField === (coefficientRing ring I));
-	if (not isHomogeneous I or not overZZp and (strat == "F4" or strat == "F4Parallel")) then (
+	f4Allowed := (possField === (coefficientRing ring I)) or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
+	if not isHomogeneous I or not f4Allowed and (strat == "F4" or strat == "F4Parallel") then (
 	   -- need to change to Naive algorithm if I is not homogeneous at this point.
-	   strat = "Naive";
+	   << "Warning:  F4 Algorithm not available over current coefficient ring." << endl;
+           strat = "Naive";
 	);
 	gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, setNCGBStrategy(strat)));
         I.cache.NCGB = {maxdeg, gbI};
