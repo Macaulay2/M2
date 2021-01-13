@@ -141,6 +141,11 @@ document {
 		       TT "installMinprimes", " routine. A new routine ", TO "MinimalPrimes :: radicalContainment", " has been added, and
 		       the function ", TO "MinimalPrimes :: radical", " is moved to this package.
 		       In addition, partial computations in this package are now cached."
+		       },
+		   LI {
+		      "Version 2.0 of ", TO "InvariantRing :: InvariantRing", " introduces types for different group actions as well as rings of invariants.
+		      It also contains new functionality for computing invariants of finite groups, diagonal actions (tori/abelian groups), and linearly
+		      reductive groups. The code from version 1.1.0 has been updated to work with the new types."
 		       }
 		   }
 	       },
