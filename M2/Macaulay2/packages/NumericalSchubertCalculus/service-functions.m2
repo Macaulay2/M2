@@ -6,7 +6,8 @@ export {
     "solutionsToAffineCoords", --Temporary! User shouldn't use this function
     "partition2bracket",
     "bracket2partition",
-    "randomSchubertProblemInstance"
+    "randomSchubertProblemInstance",
+    "LRNumber"              
     }
 ----------------
 --Functions contained here but not exported:
@@ -23,6 +24,36 @@ export {
 -- notAboveLambda(List,ZZ,ZZ) -- input(lambda, k,n)
 -- checkSchubertProblem(conds,k,n)  
 -- verifyInput
+
+
+----------------------
+--    LRNumber     ---
+--
+-- Computes the number of solutions to a Schubert 
+--   problem on a Grassmannian
+----------------------
+-- Input: 
+--    conds - list of partitions or brackets
+--    k,n   - integers that indicate the Grassmannian G(k,n)
+-- Output:
+--    number of solutions to given Schubert problem
+--------------------------------------------------------------------
+-- later:  strategy
+--------------------------------------------------------------------
+LRNumber = method()
+LRNumber (List,ZZ,ZZ) := (conds,k,n) -> (
+    -- First check if it is a Schubert problem
+    checkSchubertProblem(conds,k,n);
+    -- sets up the cohomology ring of the Grassmannian
+    G := flagBundle({k,n-k});
+    (S,T,U) := schubertRing G;
+    a := 1;
+    -- detects if brackets or partitions
+    if (#conds#0 == k) and (conds#0#0 < conds#0#(k-1)) then
+      apply( conds, b -> a = a * (schubertCycle(bracket2partition(b,n),G)) ) else 
+      apply( conds, p -> a = a * (schubertCycle(verifyLength(p,k),G)) );
+    integral a
+)
 
 ---------------------
 --   verifyLength  --
@@ -501,7 +532,7 @@ skewSchubertVariety(Sequence,List,List) := o->(kn,l,m)->(
 --------------------------------------------------------------------
 checkSchubertProblem = method()
 checkSchubertProblem (List,ZZ,ZZ) := (conds,k,n) -> (
-    -- detect if conds are partitions or brackets and transforms them in partitions if not
+    -- detect if conds are partitions or brackets and transforms them to partitions if not
     areAllBrackets:=apply(conds, c->(
 	    if #c == k and c == sort unique c then true else false
 	    ));

@@ -14,6 +14,8 @@ document {
 	 --(continues solutions from one instance to another),
 	 TO checkIncidenceSolution, 
 	 --(verifies that a solution satisfies the given incidence conditions).
+	 TO LRNumber,
+	 --(computes the number of solutions to a given Schubert problem).
      },
      HEADER3{"Functions implementing homotopies specific to Schubert calculus:"},
      UL{
@@ -543,7 +545,40 @@ doc ///
    Caveat
       This function was created for testing purposes and will be deleted later
       as it may not be numerically stable.
-///
+///;
+doc ///
+   Key 
+      LRNumber
+      (LRNumber,List,ZZ,ZZ)
+   Headline
+      Returns the number of solitions to the given Schubert problem using SchubertRings
+   Usage
+      LRNumber(conditions,k,n)
+   Inputs
+      conditions:List
+        which is a list of Schubert conditions that are either all partitions or all brackets (see @TO bracket2partition@ for details)
+      k:ZZ
+      n:ZZ
+         $k$ and $n$ define the Grassmannian $Gr(k,n)$ of $k$-planes in $n$-space
+   Outputs
+      :ZZ
+         The number of solutions to the given Schubert problem
+   Description
+      Text
+         This first verifies that the conditions are either all partitions or all brackets, and that they form a Schubert problem on $Gr(k,n)$.
+	 
+	 Then it computes the intersection number of the prodiuct of Schubert classes in the cohomology ring of the Grassmannnian
+      Example
+         -- the problem of 4 lines is given by 4 partitions {1}^4 in Gr(2,4) 
+	 LRNumber({{1},{1},{1},{1}},2,4)
+	 -- the same problem but using brackets instead of partitions
+	 LRNumber({{2,4},{2,4},{2,4},{2,4}},2,4)
+   Caveat
+      This uses the package Schubert2
+   SeeAlso
+         LRrule
+///;
+
 
 -*
 doc ///

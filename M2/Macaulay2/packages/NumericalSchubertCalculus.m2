@@ -24,7 +24,8 @@ newPackage(
     PackageImports => {
 	"PHCpack",
 	"NumericalAlgebraicGeometry",
-	"MonodromySolver"
+	"MonodromySolver",
+        "Schubert2"
 	},
     AuxiliaryFiles => true,
     CacheExampleOutput => true,
