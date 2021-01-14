@@ -1,6 +1,5 @@
 -- tests basic methods (e.g., arithmetic operations) for RRi implementation
 
-restart
 FF := RRi_1000
 assert(precision FF===1000)
 I = interval(1,3)
