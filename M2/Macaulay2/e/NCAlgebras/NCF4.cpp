@@ -36,6 +36,7 @@ NCF4::NCF4(const FreeAlgebra& A,
       mColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mPreviousColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mVectorArithmetic(vectorArithmetic(A.coefficientRing())),
+//      mVectorArithmetic(new VectorArithmetic2(A.coefficientRing())),
       mIsParallel(isParallel)
 {
   if (M2_gbTrace >= 1)
@@ -321,7 +322,10 @@ void NCF4::reducedRowToPoly(Poly* result,
   // term of the ith row is after the last entry of result (or that result is empty).
   auto& resultCoeffInserter = result->getCoeffInserter();
   auto& resultMonomInserter = result->getMonomInserter();
+  
   mVectorArithmetic->appendSparseVectorToContainer(rows[i].first,resultCoeffInserter);
+  //using ContainerType = decltype(resultCoeffInserter);
+  //mVectorArithmetic->appendSparseVectorToContainer<ContainerType>(rows[i].first,resultCoeffInserter);
   
   for (const auto& col : rows[i].second)
     resultMonomInserter.insert(resultMonomInserter.end(),
@@ -658,7 +662,8 @@ static long previousSuffixesFound = 0;
 
 std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
 {
-  // this function is thread-safe (except possibly the debugging information to follow)
+  // this function is thread-safe (except possibly the debugging
+  // information just after this comment)
   Word newword;
 
   findDivisorCalls++;
@@ -738,7 +743,9 @@ void NCF4::sortF4Matrix()
 
   // create the monomial sorter object
   MonomSort<std::vector<Monom>> monomialSorter(&freeAlgebra().monoid(),&tempMonoms);
-  std::stable_sort(indices.begin(),indices.end(),monomialSorter);
+  // stable sort was here before, but this sort is based on a total ordering
+  // with no ties so we can use an unstable (and hence parallel!) sort.
+  tbb::parallel_sort(indices.begin(),indices.end(),monomialSorter);
   
   std::vector<int> perm (static_cast<size_t>(mColumnMonomials.size()), -1);
   int count = 0;

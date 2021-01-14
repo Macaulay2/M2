@@ -9,6 +9,7 @@
 #include "NCAlgebras/WordTable.hpp"    // for Overlap, WordTable
 #include "NCAlgebras/SuffixTree.hpp"   // for experimental suffix tree code
 #include "VectorArithmetic.hpp"        // for VectorArithmetic, CoeffVector, etc
+//#include "VectorArithmetic2.hpp"       // for VectorArithmetic, CoeffVector, etc
 #include "Polynomial.hpp"              // for Monom, ConstPolyList, Poly
 //#include "newdelete.hpp"               // for VECTOR, our_new_delete
 
@@ -100,6 +101,7 @@ private:
 
   // vector arithmetic class for reduction
   const VectorArithmetic *mVectorArithmetic;
+  //const VectorArithmetic2 *mVectorArithmetic;
 
   bool mIsParallel;
 

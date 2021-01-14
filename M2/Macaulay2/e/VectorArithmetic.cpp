@@ -10,12 +10,6 @@
 #include <iostream>
 #include <execution>
 
-const VectorArithmetic* vectorArithmetic(const M2::ARingZZp&);
-const VectorArithmetic* vectorArithmetic(const M2::ARingZZpFlint&);
-const VectorArithmetic* vectorArithmetic(const M2::ARingGFM2&);
-const VectorArithmetic* vectorArithmetic(const M2::ARingGFFlint&);
-const VectorArithmetic* vectorArithmetic(const M2::ARingGFFlintBig&);
-
 template<typename RingType>
 const VectorArithmetic* vectorArithmetic(const RingType& R)
 {
@@ -29,7 +23,7 @@ const VectorArithmetic* vectorArithmetic(const RingType& R)
 // Notes: perhaps have two types: FieldElement is an int size of some sort.
 //   Make dense array an array of larger size integers?  I.e. delay modulus?
 template<typename RingType>
-class ConcreteVectorArithmetic : public VectorArithmetic
+class ConcreteVectorArithmetic : public AbstractVectorArithmetic
 {
   // This class is valid for prime characteristic up to a certain size.
   using RT = RingType;
@@ -307,13 +301,17 @@ const VectorArithmetic* vectorArithmetic(const Ring* R)
   switch (R->ringID())
     {
     case M2::ring_ZZpFlint:
-      return new ConcreteVectorArithmetic<M2::ARingZZpFlint>(dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFlint>* >(R)->ring());
+      return new ConcreteVectorArithmetic<M2::ARingZZpFlint>
+        (dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFlint>* >(R)->ring());
     case M2::ring_GFFlintBig:
-      return new ConcreteVectorArithmetic<M2::ARingGFFlintBig>(dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlintBig>* >(R)->ring());
+      return new ConcreteVectorArithmetic<M2::ARingGFFlintBig>
+        (dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlintBig>* >(R)->ring());
     case M2::ring_GFFlintZech:
-      return new ConcreteVectorArithmetic<M2::ARingGFFlint>(dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlint>* >(R)->ring());
+      return new ConcreteVectorArithmetic<M2::ARingGFFlint>
+        (dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlint>* >(R)->ring());
     case M2::ring_QQ:
-      return new ConcreteVectorArithmetic<M2::ARingQQGMP>(dynamic_cast< const M2::ConcreteRing<M2::ARingQQGMP>* >(R)->ring());
+      return new ConcreteVectorArithmetic<M2::ARingQQGMP>
+        (dynamic_cast< const M2::ConcreteRing<M2::ARingQQGMP>* >(R)->ring());
 #if 0      
     // Seldom used rings
     case M2::ring_ZZpFfpack:

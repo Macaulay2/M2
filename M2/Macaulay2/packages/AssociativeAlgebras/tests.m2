@@ -934,7 +934,7 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 11); -- (with autoreduction) 3.5 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12); -- (with autoreduction) 17.7 sec                 --- 8 secs
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "F4"); 
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "F4Parallel"); 
-I = ideal I_*; elapsedTime Igb = NCGB(I, 13); -- (with autoreduction) 79 sec (153 gens in GB)  --- 29 secs
+I = ideal I_*; elapsedTime Igb = NCGB(I, 13, Strategy => "F4"); -- (with autoreduction) 79 sec (153 gens in GB)  --- 29 secs
 I = ideal I_*; elapsedTime Igb = NCGB(I, 13, Strategy => "F4Parallel"); -- 18.84s
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14); -- (with autoreduction) 352 sec (177 gens in GB) --- 110 secs after previous F4 changes, about 2.5gb
                                               -- 102s after lazy 2nd criterion change.

@@ -3,18 +3,24 @@
 
 #include "NCAlgebras/Range.hpp"  // for Range
 #include "newdelete.hpp"         // for VECTOR
+#include "MemoryBlock.hpp"
+#include "ringelem.hpp"
+#include <variant>
+
+#include "aring-glue.hpp"
 
 #include <tbb/tbb.h>
 
 class Ring;
 union ring_elem;
 using ComponentIndex = int;
-class MemoryBlock;
 
 class CoeffVector
 {
   template<typename T>
   friend class ConcreteVectorArithmetic;
+  template<typename T>
+  friend class ConcreteVectorArithmetic2;
   // disallow copy...
  public:
   CoeffVector() : mValue(nullptr) {}
@@ -28,6 +34,8 @@ class DenseCoeffVector
 {
   template<typename T>
   friend class ConcreteVectorArithmetic;
+  template<typename T>
+  friend class ConcreteVectorArithmetic2;
   // disallow copy...
  public:
   DenseCoeffVector() : mValue(nullptr) {}
@@ -37,7 +45,7 @@ class DenseCoeffVector
   void* mValue;
 };
 
-class VectorArithmetic
+class AbstractVectorArithmetic
 {
 public:
   virtual size_t size(const CoeffVector& coeffs) const = 0;
@@ -79,6 +87,18 @@ public:
                                    int last,
                                    MemoryBlock& monomialSpace) const = 0; 
 
+  // want to do...
+  // template<typename LockType>
+  // virtual void safeDenseRowToSparseRow(DenseCoeffVector& dense,
+  //                                      CoeffVector& coeffs, // sets coeffs
+  //                                      Range<int>& comps, // sets comps
+  //                                      int first,
+  //                                      int last,
+  //                                      MemoryBlock& monomialSpace,
+  //                                      LockType& lock) const = 0;
+  
+  // but we can't because you can't have pure virtual function templates
+  // making the CRTP changes will avoid this.
   virtual void safeDenseRowToSparseRow(DenseCoeffVector& dense,
                                        CoeffVector& coeffs, // sets coeffs
                                        Range<int>& comps, // sets comps
@@ -110,6 +130,7 @@ public:
   // virtual void fillSparseVectorFromContainer(CoeffVector& coeffs,
   //                                            Container<ring_elem>& c) const = 0;
 
+  // will also allow to template off the container once CRTP changes made
   virtual void appendSparseVectorToContainer(const CoeffVector& coeffs,
                                              VECTOR(ring_elem)& c) const = 0;
 
@@ -120,6 +141,10 @@ public:
 
 };
 
+typedef AbstractVectorArithmetic VectorArithmetic;
+
+// this should really be the constructor for the VectorArithmetic class
+// which performs the various ConcreteVA class creations
 const VectorArithmetic* vectorArithmetic(const Ring* R);
 
 #endif
