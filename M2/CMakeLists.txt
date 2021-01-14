@@ -1,25 +1,21 @@
-################################## WARNING!! ##################################
-## This is not yet the official build system of Macaulay2. See INSTALL.
-## Why use CMake at all? See https://lwn.net/Articles/188693/ and
-## https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/Really-Cool-CMake-Features
+###############################################################################
+## CMake is a cross-platform system for generating build environments using
+## native tools such as Make and Ninja or IDEs such as Xcode and Visual Studio.
 ##
+## See INSTALL-CMake.md for a comprehensive guide to building M2 using CMake.
 ## Take a look at cmake/configure.cmake for a list of options
 ## and read cmake/check-libraries.cmake for a list of requirements.
 ##
-## Full instructions: INSTALL-CMake.md
 ## Short instructions:
-##  1. cd M2/BUILD/build-cmake
-##  2. cmake -GNinja ../..
-##  3. ninja build-libraries build-programs
-##  4. ninja M2-engine M2-binary M2-core M2-emacs
-##  5. ninja install-packages check-packages
-##  6. ninja install
-##
-## IDEs such as Xcode or vscode can also configure and build using CMake.
+##  1. cmake -GNinja -S . -B BUILD/cmake
+##  2. cmake --build BUILD/cmake --target build-libraries build-programs
+##  2. cmake --build BUILD/cmake --target M2-engine M2-binary M2-core M2-emacs
+##  2. cmake --build BUILD/cmake --target install-packages check-packages
+##  6. cmake --install BUILD/cmake
 ###############################################################################
 
-## Requires CMake version 3.15 and is tested with 3.17
-cmake_minimum_required(VERSION 3.15...3.17)
+## Requires CMake version 3.15 and is tested with 3.19
+cmake_minimum_required(VERSION 3.15...3.19)
 cmake_policy(VERSION 3.14)
 
 ## Use the C++14 standard
@@ -27,11 +23,8 @@ set(CMAKE_CXX_STANDARD 14)
 ## Use the C11 (C0X) standard
 set(CMAKE_C_STANDARD 11)
 
-## Source of truth for project version
-file(STRINGS VERSION VERSION)
-
 ###############################################################################
-## Set the defaultg build configuration
+## Set the default build configuration
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
@@ -48,7 +41,7 @@ endif()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 ## Enable ccache or distcc acceleration with Makefile and Ninja
-# TODO: libraries and programs aren't using ccache this way.
+# Note: libraries and programs aren't using ccache this way.
 find_program(CCACHE ccache)
 if(CCACHE)
   # run ccache -s to get the CCache statistics
@@ -57,8 +50,10 @@ if(CCACHE)
 endif()
 
 ###############################################################################
+## Source of truth for project version
+file(STRINGS VERSION VERSION)
+
 ## Set the project name, version, and languages
-## This is the source of truth for the version number
 project(Macaulay2
   VERSION	${VERSION}
   DESCRIPTION	"A software system for algebraic geometry research"
@@ -75,7 +70,6 @@ include(configure) ## CMake script for configuring various variables
 include(check-libraries) ## CMake script for checking which libraries exist and which need to be built
 include(build-libraries) ## CMake script for downloading, building, and installing external libraries
 include(startup) ## CMake script for messy substitutions in Macaulay2/bin/startup.c
-# Note: we separate the two so that check-libraries.cmake can be called by Macaulay2/bin/CMakeLists.txt
 
 ###############################################################################
 ## Configure M2/config.h

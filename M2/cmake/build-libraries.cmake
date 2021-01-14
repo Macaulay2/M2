@@ -434,7 +434,7 @@ if(GFTABLESDIR AND NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/facto
   message(STATUS "Copying gftables from ${GFTABLESDIR}/gftables")
   file(COPY ${GFTABLESDIR}/gftables DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory)
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries factory "mp;ntl;flint" FACTORY_FOUND)
 
 
 # https://github.com/Macaulay2/frobby (previously https://www.broune.com/frobby)
