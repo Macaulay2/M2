@@ -85,7 +85,15 @@ public:
                                        int first,
                                        int last,
                                        MemoryBlock& monomialSpace,
-                                       tbb::queuing_mutex& lock) const = 0; 
+                                       tbb::queuing_mutex& lock) const = 0;
+
+  virtual void safeDenseRowToSparseRow(DenseCoeffVector& dense,
+                                       CoeffVector& coeffs, // sets coeffs
+                                       Range<int>& comps, // sets comps
+                                       int first,
+                                       int last,
+                                       MemoryBlock& monomialSpace,
+                                       tbb::null_mutex& lock) const = 0;
 
   virtual void sparseRowMakeMonic(CoeffVector& coeffs) const = 0;
 

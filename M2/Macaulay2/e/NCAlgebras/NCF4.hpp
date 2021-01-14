@@ -132,6 +132,7 @@ private:
   void process(const std::deque<Overlap>& overlapsToProcess);
 
   void buildF4Matrix(const std::deque<Overlap>& overlapsToProcess);
+  void parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess);
 
   void sortF4Matrix();
 
@@ -166,24 +167,53 @@ private:
   void processMonomInPreRow(Monom& m, int* nextcolloc);
 
   void preRowsFromOverlap(const Overlap& o);
+  void parallelPreRowsFromOverlap(const Overlap& o);
 
   std::pair<bool, PreRow> findDivisor(Monom mon);
 
   void autoreduceByLastElement();
   ring_elem getCoeffOfMonom(const Poly& f, const Monom& m);
 
+  template<typename LockType>
+  void generalReduceF4Row(int index,
+                          int first,
+                          int firstcol,
+                          long &numCancellations,
+                          DenseCoeffVector& dense,
+                          bool updatColumnIndex,
+                          LockType& lock);
+
   void reduceF4Row(int index,
                    int first,
                    int firstcol,
                    long &numCancellations,
-                   DenseCoeffVector& dense);
-
+                   DenseCoeffVector& dense)
+  {
+    tbb::null_mutex noLock;
+    generalReduceF4Row<tbb::null_mutex>(index,
+                                        first,
+                                        firstcol,
+                                        numCancellations,
+                                        dense,
+                                        true,
+                                        noLock);
+  }
+  
   void parallelReduceF4Row(int index,
                            int first,
                            int firstcol,
                            long &numCancellations,
                            DenseCoeffVector& dense,
-                           tbb::queuing_mutex& lock);
+                           tbb::queuing_mutex& lock)
+  {
+    generalReduceF4Row<tbb::queuing_mutex>(index,
+                                           first,
+                                           firstcol,
+                                           numCancellations,
+                                           dense,
+                                           false,
+                                           lock);
+  }
 
   
   // return value is isFound, columnIndexOfFound

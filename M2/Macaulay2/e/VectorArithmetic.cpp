@@ -35,6 +35,7 @@ class ConcreteVectorArithmetic : public VectorArithmetic
   using RT = RingType;
   using FieldElement = typename RT::ElementType;
   using DenseFieldElement = FieldElement;
+
 private:
   const RT& mRing;
 
@@ -172,31 +173,15 @@ public:
                            int first,
                            int last,
                            MemoryBlock& monomialSpace) const override
-  {
-    auto& dvec = * denseCoeffVector(dense);
-    
-    int len = 0;
-    
-    // first can be -1 if the row is zero.  in this case, we should
-    // not be accessing dense[i] for i negative.
-    for (int i = first; i >= 0 and i <= last; i++)
-      {
-        if (not mRing.is_zero(dvec[i])) len++;
-      }
-
-    comps = monomialSpace.allocateArray<int>(len);
-    sparse = allocateCoeffVector(len);
-    auto& svec = * coeffVector(sparse);
-
-    int next = 0;
-    for (int i = first; i >= 0 and i <= last; i++)
-      if (not mRing.is_zero(dvec[i]))
-        {
-          mRing.init_set(svec[next],dvec[i]);
-          comps[next] = i;
-          ++next;
-          mRing.set_zero(dvec[i]);
-        }
+  { 
+    tbb::null_mutex noLock;
+    generalDenseRowToSparseRow<tbb::null_mutex>(dense,
+                                                sparse,
+                                                comps,
+                                                first,
+                                                last,
+                                                monomialSpace,
+                                                noLock);
   }
 
   void safeDenseRowToSparseRow(DenseCoeffVector& dense,
@@ -207,6 +192,42 @@ public:
                                MemoryBlock& monomialSpace,
                                tbb::queuing_mutex& lock) const override
   {
+    generalDenseRowToSparseRow<tbb::queuing_mutex>(dense,
+                                                   sparse,
+                                                   comps,
+                                                   first,
+                                                   last,
+                                                   monomialSpace,
+                                                   lock);
+  }
+
+  void safeDenseRowToSparseRow(DenseCoeffVector& dense,
+                               CoeffVector& sparse, // output value: sets this value
+                               Range<int>& comps, // output value: sets comps
+                               int first,
+                               int last,
+                               MemoryBlock& monomialSpace,
+                               tbb::null_mutex& noLock) const override
+  {
+    generalDenseRowToSparseRow<tbb::null_mutex>(dense,
+                                                sparse,
+                                                comps,
+                                                first,
+                                                last,
+                                                monomialSpace,
+                                                noLock);
+  }
+
+  // at this point, LockType can be tbb::null_mutex or tbb::queuing_mutex.
+  template<typename LockType>
+  void generalDenseRowToSparseRow(DenseCoeffVector& dense,
+                                  CoeffVector& sparse, // output value: sets this value
+                                  Range<int>& comps, // output value: sets comps
+                                  int first,
+                                  int last,
+                                  MemoryBlock& monomialSpace,
+                                  LockType& lock) const
+  {
     auto& dvec = * denseCoeffVector(dense);
     
     int len = 0;
@@ -218,7 +239,7 @@ public:
         if (not mRing.is_zero(dvec[i])) len++;
       }
 
-    comps = monomialSpace.safeAllocateArray<int>(len,lock);
+    comps = monomialSpace.safeAllocateArray<int,LockType>(len,lock);
     sparse = allocateCoeffVector(len);
     auto& svec = * coeffVector(sparse);
 

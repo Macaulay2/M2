@@ -25,10 +25,10 @@ public:
     return mArena->allocArrayNoCon<T>(nelems);
   }
 
-  template<typename T>
-  std::pair<T*, T*> safeAllocateArray(size_t nelems, tbb::queuing_mutex& lock)
+  template<typename T, typename LockType>
+  std::pair<T*, T*> safeAllocateArray(size_t nelems, LockType& lock)
   {
-    tbb::queuing_mutex::scoped_lock myLock(lock);
+    typename LockType::scoped_lock myLock(lock);
     return mArena->allocArrayNoCon<T>(nelems);
   }
 

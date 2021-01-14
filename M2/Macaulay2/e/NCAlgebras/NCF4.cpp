@@ -1,9 +1,9 @@
 #include "NCAlgebras/NCF4.hpp"
 
-#include "text-io.hpp"                   // for emit_wrapped
+#include "text-io.hpp"                      // for emit_wrapped
 #include "NCAlgebras/FreeAlgebra.hpp"       // for FreeAlgebra
 #include "NCAlgebras/OverlapTable.hpp"      // for OverlapTable
-#include "VectorArithmetic.hpp"            // for VectorArithmetic
+#include "VectorArithmetic.hpp"             // for VectorArithmetic
 #include "NCAlgebras/WordTable.hpp"         // for Overlap, WordTable
 #include "buffer.hpp"                       // for buffer
 #include "engine-exports.h"                 // for M2_gbTrace
@@ -14,6 +14,12 @@
 #include <cstdlib>                          // for exit, size_t
 #include <algorithm>                        // for copy
 #include <iostream>                         // for operator<<, basic_ostream
+
+/*
+
+Changes to build matrix necessary for parallelization:
+
+*/
 
 NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,
@@ -88,8 +94,11 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
 #endif
   
   // build the F4 matrix
-  buildF4Matrix(overlapsToProcess);
-
+  // if (mIsParallel)
+  //   parallelBuildF4Matrix(overlapsToProcess);
+  // else
+    buildF4Matrix(overlapsToProcess);
+    
   if (M2_gbTrace >= 2)
     {
       std::cout << "NC F4 GB: matrix size: ";
@@ -433,23 +442,17 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   // during the for loop
   // process each element in mReducersTodo
   for (int i=0 ; i < mReducersTodo.size(); ++i)
-  {
     mRows.emplace_back(processPreRow(mReducersTodo[i])); // this often adds new elements to mReducersTodo
-  }
   
   int numReducersAtFirst = mReducersTodo.size();
   
   for (auto over : mOverlapsTodo)
-  {
     mOverlaps.emplace_back(processPreRow(over));  // this often adds new elements to mReducersTodo
-  }
 
   // can't do this loop as a range-based for loop since we are adding
   // to mReducersTodo during the for loop
   for (int i=numReducersAtFirst ; i < mReducersTodo.size(); ++i)
-  {
     mRows.emplace_back(processPreRow(mReducersTodo[i])); // this often adds new elements to mReducersTodo
-  }
 
   // Now we move the overlaps into mRows, and set mFirstOverlap.
   // double range, so use a for loop
@@ -459,6 +462,11 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
       mRows.emplace_back(mOverlaps[i]);
       mReducersTodo.emplace_back(mOverlapsTodo[i]);
     }
+}
+
+void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
+{
+  matrixReset();
 }
 
 std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m)
@@ -650,6 +658,7 @@ static long previousSuffixesFound = 0;
 
 std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
 {
+  // this function is thread-safe (except possibly the debugging information to follow)
   Word newword;
 
   findDivisorCalls++;
@@ -751,59 +760,18 @@ void NCF4::sortF4Matrix()
     }
 }
 
-// this is the sequential version without a lock
-void NCF4::reduceF4Row(int index,
-                       int first,
-                       int firstcol,
-                       long& numCancellations,
-                       DenseCoeffVector& dense)
-{
-  int sz = mRows[index].second.size();
-  //assert(sz > 0);  this may be zero when autoreducing the new gb elements
-  if (sz == 0) return;
-  if (sz == 1 && firstcol != -1) return;
-
-  int last = mRows[index].second[sz-1];
-
-  mVectorArithmetic->sparseRowToDenseRow(dense, mRows[index].first, mRows[index].second);
-  do {
-    int pivotrow = mColumns[first].second;
-    if (pivotrow >= 0)
-      {
-        numCancellations++;
-        mVectorArithmetic->denseRowCancelFromSparse(dense,
-                                                    mRows[pivotrow].first,
-                                                    mRows[pivotrow].second);
-        // last component in the row corresponding to pivotrow
-        int last1 = mRows[pivotrow].second.cend()[-1];
-        last = (last1 > last ? last1 : last);
-      }
-    else if (firstcol == -1)
-      {
-        firstcol = first;
-      }
-    first = mVectorArithmetic->denseRowNextNonzero(dense, first+1, last);
-  } while (first <= last);
-  
-  mVectorArithmetic->denseRowToSparseRow(dense,
-                                         mRows[index].first,
-                                         mRows[index].second,
-                                         firstcol,
-                                         last,
-                                         mMonomialSpace);
-  if (mVectorArithmetic->size(mRows[index].first) > 0)
-    {
-      mVectorArithmetic->sparseRowMakeMonic(mRows[index].first);
-      mColumns[firstcol].second = index;
-    }
-}
-
-void NCF4::parallelReduceF4Row(int index,
-                               int first,
-                               int firstcol,
-                               long& numCancellations,
-                               DenseCoeffVector& dense,
-                               tbb::queuing_mutex& lock)
+// both reduceF4Row and parallelReduceF4Row call this function
+// with the appropriate mutexes inserted for lock.
+//         reduceF4Row: tbb::null_mutex (a do-nothing mutex)
+// parallelReduceF4Row: tbb::queuing_mutex (for now)
+template<typename LockType>
+void NCF4::generalReduceF4Row(int index,
+                              int first,
+                              int firstcol,
+                              long& numCancellations,
+                              DenseCoeffVector& dense,
+                              bool updateColumnIndex,
+                              LockType& lock)
 {
   int sz = mRows[index].second.size();
   //assert(sz > 0);  this may be zero when autoreducing the new gb elements
@@ -843,7 +811,7 @@ void NCF4::parallelReduceF4Row(int index,
     {
       mVectorArithmetic->sparseRowMakeMonic(mRows[index].first);
       // don't do this in the parallel version
-      //mColumns[firstcol].second = index;
+      if (updateColumnIndex) mColumns[firstcol].second = index;
     }
 }
 
@@ -870,9 +838,12 @@ void NCF4::parallelReduceF4Matrix()
                       threadLocalDense_t::reference my_dense = threadLocalDense.local();
                       threadLocalLong_t::reference my_accum = numCancellationsLocal.local();
                       for (auto i = r.begin(); i != r.end(); ++i)
-                      {
-                        parallelReduceF4Row(i,mRows[i].second[0],-1,my_accum,my_dense,lock);
-                      }
+                        parallelReduceF4Row(i,
+                                            mRows[i].second[0],
+                                            -1,
+                                            my_accum,
+                                            my_dense,
+                                            lock);
                     });
   
   int numThreads = 0;
@@ -884,7 +855,11 @@ void NCF4::parallelReduceF4Matrix()
 
   // sequentially perform one more pass to reduce the spair rows down 
   for (int i = mFirstOverlap; i < mRows.size(); ++i)
-    reduceF4Row(i,mRows[i].second[0],-1,numCancellations,denseVector);
+    reduceF4Row(i,
+                mRows[i].second[0],
+                -1,
+                numCancellations,
+                denseVector);
 
   // interreduce the matrix with respect to these overlaps.  This needs to be sequential.
   for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
@@ -908,13 +883,23 @@ void NCF4::reduceF4Matrix()
 
   auto denseVector = mVectorArithmetic->allocateDenseCoeffVector(mColumnMonomials.size());
 
+  tbb::null_mutex noLock;
+
   // reduce each overlap row by mRows.
   for (int i = mFirstOverlap; i < mRows.size(); ++i)
-    reduceF4Row(i,mRows[i].second[0],-1,numCancellations,denseVector);
+    reduceF4Row(i,
+                mRows[i].second[0],
+                -1,
+                numCancellations,
+                denseVector);
 
   // interreduce the matrix with respect to these overlaps.
   for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
-    reduceF4Row(i,mRows[i].second[1],mRows[i].second[0],numCancellations,denseVector);
+    reduceF4Row(i,
+                mRows[i].second[1],
+                mRows[i].second[0],
+                numCancellations,
+                denseVector);
 
   //std::cout << "Number of cancellations: " << numCancellations << std::endl;
 }
