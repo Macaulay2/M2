@@ -936,11 +936,13 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "F4");
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "F4Parallel"); 
 I = ideal I_*; elapsedTime Igb = NCGB(I, 13, Strategy => "F4"); -- (with autoreduction) 79 sec (153 gens in GB)  --- 29 secs
 I = ideal I_*; elapsedTime Igb = NCGB(I, 13, Strategy => "F4Parallel"); -- 18.84s
-I = ideal I_*; elapsedTime Igb = NCGB(I, 14); -- (with autoreduction) 352 sec (177 gens in GB) --- 110 secs after previous F4 changes, about 2.5gb
+I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy => "F4"); -- (with autoreduction) 352 sec (177 gens in GB) --- 110 secs after previous F4 changes, about 2.5gb
                                               -- 102s after lazy 2nd criterion change.
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy => "F4Parallel"); -- 61s 
-I = ideal I_*; elapsedTime Igb = NCGB(I, 15); -- 381 sec
-I = ideal I_*; elapsedTime Igb = NCGB(I, 15, Strategy => "F4Parallel"); -- 220 sec
+I = ideal I_*; elapsedTime Igb = NCGB(I, 15, Strategy => "F4"); -- 381 sec (354s after VA changes) 7.37gb
+I = ideal I_*; elapsedTime Igb = NCGB(I, 15, Strategy => "F4Parallel"); -- 220 sec (195s after VA changes) 8.21gb
+I = ideal I_*; elapsedTime Igb = NCGB(I, 16, Strategy => "F4"); --
+I = ideal I_*; elapsedTime Igb = NCGB(I, 16, Strategy => "F4Parallel"); -- 
 
 time Igb = NCGB(I, 20, Strategy=>"F4");
 time Igb = NCGB(I, 10, Strategy=>"Naive");
@@ -1270,10 +1272,15 @@ NCGB(I,8)
 DEVELOPMENT ///
 restart
 needsPackage "AssociativeAlgebras"
+debug Core
 kk = GF(27)
 kk = GF(3^10) -- this don't seem to work on "Naive"
 kk = GF(7^5)  -- this don't seem to work on "Naive"
 kk = QQ
+kk = GF(13^2,Strategy=>"New")     -- not working yet (but not crashing)
+kk = GF(27,Strategy=>"Givaro")
+kk = ZZp(32003,Strategy=>"Ffpack")
+kk = ZZp(32003,Strategy=>"Aring")
 A = kk{x,y,z}
 setRandomSeed(34782734)
 alpha = random(kk)

@@ -567,7 +567,7 @@ ExternalProject_Add(build-givaro
                       --with-gmp=${MP_ROOT}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
-                      CXXFLAGS=${CXXFLAGS}
+                      "CXXFLAGS=${CXXFLAGS} -std=c++17"
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
@@ -606,7 +606,7 @@ ExternalProject_Add(build-fflas_ffpack
                       $<$<NOT:$<BOOL:${BUILD_NATIVE}>>:--without-archnative>
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
-                      CXXFLAGS=${CXXFLAGS}
+                      "CXXFLAGS=${CXXFLAGS} -std=c++17"
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}

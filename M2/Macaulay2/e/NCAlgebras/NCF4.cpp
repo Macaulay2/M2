@@ -15,12 +15,6 @@
 #include <algorithm>                        // for copy
 #include <iostream>                         // for operator<<, basic_ostream
 
-/*
-
-Changes to build matrix necessary for parallelization:
-
-*/
-
 NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,
            int hardDegreeLimit,
@@ -35,8 +29,8 @@ NCF4::NCF4(const FreeAlgebra& A,
       mMonomHashEqual(A.monoid()),
       mColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mPreviousColumnMonomials(10,mMonomHash,mMonomHashEqual),
-      mVectorArithmetic(vectorArithmetic(A.coefficientRing())),
-//      mVectorArithmetic(new VectorArithmetic2(A.coefficientRing())),
+//      mVectorArithmetic(vectorArithmetic(A.coefficientRing())),
+      mVectorArithmetic(new VectorArithmetic2(A.coefficientRing())),
       mIsParallel(isParallel)
 {
   if (M2_gbTrace >= 1)
@@ -114,10 +108,14 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
 
   // reduce the matrix
+  tbb::tick_count t0 = tbb::tick_count::now();
   if (mIsParallel)
     parallelReduceF4Matrix();
   else
     reduceF4Matrix();
+  tbb::tick_count t1 = tbb::tick_count::now();
+  if (M2_gbTrace >= 2) 
+    std::cout << "Time spent on reduction step: " << (t1-t0).seconds() << std::endl;
 
   if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
@@ -323,9 +321,9 @@ void NCF4::reducedRowToPoly(Poly* result,
   auto& resultCoeffInserter = result->getCoeffInserter();
   auto& resultMonomInserter = result->getMonomInserter();
   
-  mVectorArithmetic->appendSparseVectorToContainer(rows[i].first,resultCoeffInserter);
-  //using ContainerType = decltype(resultCoeffInserter);
-  //mVectorArithmetic->appendSparseVectorToContainer<ContainerType>(rows[i].first,resultCoeffInserter);
+  //mVectorArithmetic->appendSparseVectorToContainer(rows[i].first,resultCoeffInserter);
+  using ContainerType = decltype(resultCoeffInserter);
+  mVectorArithmetic->appendSparseVectorToContainer<ContainerType>(rows[i].first,resultCoeffInserter);
   
   for (const auto& col : rows[i].second)
     resultMonomInserter.insert(resultMonomInserter.end(),

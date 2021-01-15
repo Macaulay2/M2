@@ -301,6 +301,10 @@ class VectorArithmetic2
                                           ConcreteVectorArithmetic2<M2::ARingGFFlintBig>*,
                                           ConcreteVectorArithmetic2<M2::ARingGFFlint>*,
                                           ConcreteVectorArithmetic2<M2::ARingQQGMP>*,
+                                          ConcreteVectorArithmetic2<M2::ARingZZpFFPACK>*,
+                                          ConcreteVectorArithmetic2<M2::ARingZZp>*,
+                                          ConcreteVectorArithmetic2<M2::ARingGFM2>*,
+                                          ConcreteVectorArithmetic2<M2::ARingGFGivaro>*,
 					  ConcreteVectorArithmetic2<M2::DummyRing>*>;
 
 private:
@@ -309,6 +313,9 @@ private:
 public:
   VectorArithmetic2(const Ring* R)
   {
+    // if the rings coming in are defined in a similar way, we could avoid the switch
+    // statement here as well and make it compile time.  It would make the class templated
+    // on the variant class describing all the rings.
     switch (R->ringID())
       {
       case M2::ring_ZZpFlint:
@@ -326,20 +333,26 @@ public:
       case M2::ring_QQ:
         mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingQQGMP>
           (&dynamic_cast< const M2::ConcreteRing<M2::ARingQQGMP>* >(R)->ring());
-        break;
-#if 0      
-        // Seldom used rings
+	break;
       case M2::ring_ZZpFfpack:
-        return vectorArithmetic(* dynamic_cast<const M2::ConcreteRing<M2::ARingZZpFFPACK*>>(R)->ring());
+        mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingZZpFFPACK>
+          (&dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFFPACK>* >(R)->ring());
+	break;
       case M2::ring_ZZp:
-        return vectorArithmetic(* dynamic_cast<const M2::ConcreteRing<M2::ARingZZp*>>(R)->ring());
+        mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingZZp>
+          (&dynamic_cast< const M2::ConcreteRing<M2::ARingZZp>* >(R)->ring());
+        break;
       case M2::ring_GFM2:
-        return vectorArithmetic(* dynamic_cast<const M2::ConcreteRing<M2::ARingGFM2*>>(R)->ring());
+        mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingGFM2>
+          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFM2>* >(R)->ring());
+        break;
       case M2::ring_GFGivaro:
-        return vectorArithmetic(* dynamic_cast<const M2::ConcreteRing<M2::ARingGFGivaro*>>(R)->ring());
-#endif
+        mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingGFGivaro>
+          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFGivaro>* >(R)->ring());
+        break;
       default:
         // dummy ring type for default
+	// throw an error here...
         mConcreteVector = new ConcreteVectorArithmetic2<M2::DummyRing>();
       }
   }
