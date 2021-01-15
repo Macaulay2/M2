@@ -300,7 +300,8 @@ class VectorArithmetic2
   using ConcreteVectorType = std::variant<ConcreteVectorArithmetic2<M2::ARingZZpFlint>*,
                                           ConcreteVectorArithmetic2<M2::ARingGFFlintBig>*,
                                           ConcreteVectorArithmetic2<M2::ARingGFFlint>*,
-                                          ConcreteVectorArithmetic2<M2::ARingQQGMP>* >;
+                                          ConcreteVectorArithmetic2<M2::ARingQQGMP>*,
+					  ConcreteVectorArithmetic2<M2::DummyRing>*>;
 
 private:
   ConcreteVectorType mConcreteVector;
@@ -338,13 +339,12 @@ public:
         return vectorArithmetic(* dynamic_cast<const M2::ConcreteRing<M2::ARingGFGivaro*>>(R)->ring());
 #endif
       default:
-        std::cout << "Oooops" << std::endl;
-        // should have a 'dummy' ring type here
-        mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingZZpFlint>(nullptr);
+        // dummy ring type for default
+        mConcreteVector = new ConcreteVectorArithmetic2<M2::DummyRing>();
       }
   }
 
-  // provide simple visitor interface to the different variants
+  // provide simple visitor interface to underlying std::variant types
   size_t size(const CoeffVector& coeffs) const {
     return std::visit([&](auto& arg) -> size_t { return arg->size(coeffs); }, mConcreteVector);
   }
