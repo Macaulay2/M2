@@ -7,6 +7,7 @@
 #include "aring-glue.hpp"
 #include "VectorArithmetic.hpp"
 #include <variant>
+#include <functional>
 
 #include <tbb/tbb.h>
 
@@ -14,6 +15,8 @@ class Ring;
 union ring_elem;
 using ComponentIndex = int;
 class MemoryBlock;
+
+using namespace std::placeholders;  // for _1, _2, _3 in dispatcher
 
 /*
 class CoeffVector
@@ -291,6 +294,7 @@ public:
 };
 
 // this is the dispatching class using std::variant
+// this class
 class VectorArithmetic2
 {
   using ConcreteVectorType = std::variant<ConcreteVectorArithmetic2<M2::ARingZZpFlint>*,
@@ -340,94 +344,58 @@ public:
       }
   }
 
-  size_t size(const CoeffVector& coeffs) const
-  {
-    size_t result;
-    std::visit([&](auto& arg) {
-      result = arg->size(coeffs);
-    }, mConcreteVector);
-    return result;
+  // provide simple visitor interface to the different variants
+  size_t size(const CoeffVector& coeffs) const {
+    return std::visit([&](auto& arg) -> size_t { return arg->size(coeffs); }, mConcreteVector);
   }
-
-  size_t size(const DenseCoeffVector& coeffs) const
-  {
-    size_t result;
-    std::visit([&](auto& arg) {
-      result = arg->size(coeffs);
-    }, mConcreteVector);
-    return result;
+  
+  size_t size(const DenseCoeffVector& coeffs) const {
+    return std::visit([&](auto& arg) -> size_t { return arg->size(coeffs); }, mConcreteVector);
   }
 
   /////////////////////////////
   // Allocation/Deallocation //
   /////////////////////////////
   /// Create a coefficient vector with room for `nelems` coefficients
-  CoeffVector allocateCoeffVector(ComponentIndex nelems) const
-  {
-    CoeffVector result;
-    std::visit([&](auto& arg) {
-      result = arg->allocateCoeffVector(nelems);
-    }, mConcreteVector);
-    return result;
+  CoeffVector allocateCoeffVector(ComponentIndex nelems) const {
+    return std::visit([&](auto& arg) -> CoeffVector { return arg->allocateCoeffVector(nelems);}, mConcreteVector);
   }
 
-  DenseCoeffVector allocateDenseCoeffVector(ComponentIndex nelems) const
-  {
-    DenseCoeffVector result;
-    std::visit([&](auto& arg) {
-      result = arg->allocateDenseCoeffVector(nelems);
-    }, mConcreteVector);
-    return result;
+  DenseCoeffVector allocateDenseCoeffVector(ComponentIndex nelems) const {
+    return std::visit([&](auto& arg) -> DenseCoeffVector { return arg->allocateDenseCoeffVector(nelems);}, mConcreteVector);
   }
 
   /// Create a coefficient vector with 0 elements.  Can be increased in size.
   // CoeffVector allocateCoeffVector() const = 0;
 
   /// Deallocate all the coefficients, and the array itself.
-  void deallocateCoeffVector(CoeffVector& coeffs) const
-  {
-    std::visit([&](auto& arg) {
-      delete arg->coeffVector(coeffs);
-    }, mConcreteVector);
+  void deallocateCoeffVector(CoeffVector& coeffs) const {
+    std::visit([&](auto& arg) { delete arg->coeffVector(coeffs); }, mConcreteVector);
   }
   
-  void deallocateCoeffVector(DenseCoeffVector& coeffs) const
-  {
-    std::visit([&](auto& arg) {
-      delete arg->denseCoeffVector(coeffs);
-    }, mConcreteVector);
+  void deallocateCoeffVector(DenseCoeffVector& coeffs) const {
+    std::visit([&](auto& arg) { delete arg->denseCoeffVector(coeffs); }, mConcreteVector);
   }
 
   ////////////////////////
   /// Linear Algebra /////
   ////////////////////////
   void sparseRowToDenseRow(DenseCoeffVector& dense,
-                                   const CoeffVector& coeffs,
-                                   const Range<int>& comps) const
-  {
-    std::visit([&](auto& arg) {
-      arg->sparseRowToDenseRow(dense,coeffs,comps);
-    }, mConcreteVector);
+			   const CoeffVector& coeffs,
+			   const Range<int>& comps) const {
+    std::visit([&](auto& arg) { arg->sparseRowToDenseRow(dense,coeffs,comps); }, mConcreteVector);
   }
 
   void denseRowCancelFromSparse(DenseCoeffVector& dense,
                                 const CoeffVector& coeffs,
-                                const Range<int>& comps) const
-  {
-    std::visit([&](auto& arg) {
-      arg->denseRowCancelFromSparse(dense,coeffs,comps);
-    }, mConcreteVector);
+                                const Range<int>& comps) const {
+    std::visit([&](auto& arg) { arg->denseRowCancelFromSparse(dense,coeffs,comps); }, mConcreteVector);
   }
 
   int denseRowNextNonzero(DenseCoeffVector& dense,
                           int first,
-                          int last) const
-  {
-    int result;
-    std::visit([&](auto& arg) {
-      result = arg->denseRowNextNonzero(dense,first,last);
-    }, mConcreteVector);
-    return result;
+                          int last) const {
+    return std::visit([&](auto& arg) -> int { return arg->denseRowNextNonzero(dense,first,last); }, mConcreteVector);
   }
 
   void denseRowToSparseRow(DenseCoeffVector& dense,
@@ -435,11 +403,8 @@ public:
                            Range<int>& comps, // sets comps
                            int first,
                            int last,
-                           MemoryBlock& monomialSpace) const
-  {
-    std::visit([&](auto& arg) {
-      arg->denseRowToSparseRow(dense,coeffs,comps,first,last,monomialSpace);
-    }, mConcreteVector);  
+                           MemoryBlock& monomialSpace) const {
+    std::visit([&](auto& arg) { arg->denseRowToSparseRow(dense,coeffs,comps,first,last,monomialSpace); }, mConcreteVector);  
   }
 
   template<typename LockType>
@@ -449,20 +414,14 @@ public:
                                int first,
                                int last,
                                MemoryBlock& monomialSpace,
-                               LockType& lock) const
-  {
+                               LockType& lock) const {
     // the existence of 'template' here is a bit jarring to me, but it tells the compiler
     // that safeDenseRowToSparseRow is a template function
-    std::visit([&](auto& arg) {
-      arg->template safeDenseRowToSparseRow<LockType>(dense,coeffs,comps,first,last,monomialSpace,lock);
-    }, mConcreteVector);      
+    std::visit([&](auto& arg) { arg->template safeDenseRowToSparseRow<LockType>(dense,coeffs,comps,first,last,monomialSpace,lock); }, mConcreteVector);      
   }
   
-  void sparseRowMakeMonic(CoeffVector& coeffs) const
-  {
-    std::visit([&](auto& arg) {
-      arg->sparseRowMakeMonic(coeffs);
-    }, mConcreteVector);      
+  void sparseRowMakeMonic(CoeffVector& coeffs) const {
+    std::visit([&](auto& arg) { arg->sparseRowMakeMonic(coeffs); }, mConcreteVector);      
   }
 
   /////////////////////////////
@@ -471,31 +430,18 @@ public:
 
   template<class Container>
   void appendSparseVectorToContainer(const CoeffVector& coeffs,
-                                     Container& c) const
-  {
-    std::visit([&](auto& arg) {
-      arg->template appendSparseVectorToContainer<Container>(coeffs, c);
-    }, mConcreteVector);      
+                                     Container& c) const {
+    std::visit([&](auto& arg) { arg->template appendSparseVectorToContainer<Container>(coeffs, c); }, mConcreteVector);      
   }
 
   template<class Container>
-  CoeffVector sparseVectorFromContainer(const Container& c) const
-  {
-    CoeffVector result;
-    std::visit([&](auto& arg) {
-      result = arg->template sparseVectorFromContainer<Container>(c);
-    }, mConcreteVector);
-    return result;
+  CoeffVector sparseVectorFromContainer(const Container& c) const {
+    return std::visit([&](auto& arg) -> CoeffVector { return arg->template sparseVectorFromContainer<Container>(c); }, mConcreteVector);
   }
 
   ring_elem ringElemFromSparseVector(const CoeffVector& coeffs,
-                                     int index) const
-  {
-    ring_elem result;
-    std::visit([&](auto& arg) {
-      result = arg->ringElemFromSparseVector(coeffs,index);
-    }, mConcreteVector);
-    return result;    
+                                     int index) const {
+    return std::visit([&](auto& arg) -> ring_elem { return arg->ringElemFromSparseVector(coeffs,index); }, mConcreteVector);
   }
 };
 
