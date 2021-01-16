@@ -1248,7 +1248,7 @@ doc ///
      (projectiveProduct, Ring, List)
      (projectiveProduct, Matrix, List)
    Headline
-     Makes a product of projective spaces and a system of paramters
+     Makes a product of projective spaces and a system of parameters
    Usage
      (S, params) = projectiveProduct(A,dimList)
    Inputs 
@@ -1258,7 +1258,7 @@ doc ///
    Outputs
      S: Ring
      params: Matrix
-       S is the iterated tower ring A[x_(0,0)..x_(0,d1)]..[..x_(n,dn)] reprsenting the product
+       S is the iterated tower ring A[x_(0,0)..x_(0,d1)]..[..x_(n,dn)] representing the product
        P_A^{d1} x ..x P_A^{dn}, where the products are relative to A, and params is a system
        of multilinear forms in S. They are sparse if M is not present, or determined by M
        if it is.
