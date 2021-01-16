@@ -70,7 +70,7 @@ document { --Chordal
         N
     ///,
 
-    "Several properties of an ideal can be computed efficiently given a chordal representation; for instance, its dimention. ",
+    "Several properties of an ideal can be computed efficiently given a chordal representation; for instance, its dimension. ",
     EXAMPLE lines ///
         dim N
     ///,
@@ -742,7 +742,7 @@ doc /// --chordalNet digraph
     Consequences
     Description
       Text
-        This mehtod constructs a chordal network from the digraph of its nodes.
+        This method constructs a chordal network from the digraph of its nodes.
       Example
         R = QQ[a,b,c,d,MonomialOrder=>Lex];
         DG = digraph {{"a0","b0"}, {"a0","b1"}, {"a1","b2"}, {"b0","c1"}, {"b1","c0"}, {"b2","c0"}, {"c0","d0"}, {"c1","d1"}}

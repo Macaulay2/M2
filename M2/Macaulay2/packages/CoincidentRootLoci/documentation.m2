@@ -15,7 +15,7 @@ Headline => "makes a coincident root locus",
 Usage => "coincidentRootLocus(l,K) 
 coincidentRootLocus l", 
 Inputs => {"l" => VisibleList => {"a partition of a number ",TEX///$n$///,", i.e., a list of ",TEX///$d$///," positive integers ",TEX///$l_1,\ldots,l_d$///," satisfying ",TEX///${\sum}_{i} l_i = n$///}, "K" => Ring => {"the coefficient ring (optional with default value ",TO QQ,")"}}, 
-Outputs => {CoincidentRootLocus => {"the coincident root locus associated with the partition ",TEX///$l$///," over ",TEX///$K$///,", i.e., the subvariety of the projective ",TEX///$n$///,"-space ",TEX///$\mathbb{P}(Sym^n(K^2))$///," of all binary forms whose linear factors are distribuited according to ",TEX///$l$///}}, 
+Outputs => {CoincidentRootLocus => {"the coincident root locus associated with the partition ",TEX///$l$///," over ",TEX///$K$///,", i.e., the subvariety of the projective ",TEX///$n$///,"-space ",TEX///$\mathbb{P}(Sym^n(K^2))$///," of all binary forms whose linear factors are distributed according to ",TEX///$l$///}}, 
 EXAMPLE {"X = coincidentRootLocus {6,4,3,3,2}","describe X","describe dual X"}}
 undocumented {(coincidentRootLocus,Thing)}
 document { 

@@ -455,7 +455,7 @@ makeCI List := degs ->  (
 
 ---- helper method, not for export ----
 --  input:  BettiTally of a Cohen-Macaulay Module
--- output:  List, differnce of degree sequence in decomposeDegreesHK
+-- output:  List, difference of degree sequence in decomposeDegreesHK
 degreeDiff = method();
 degreeDiff BettiTally := B -> (
      local D; 
@@ -1169,7 +1169,7 @@ supportFunctional=method()
 
 supportFunctional(ChainComplex, ChainComplex):=(E,F)->(
      --E should be a chain complex starting in degree 0 and going to negative degrees.
-     --F should be a chain complex starting in a postive degree and going to degree 0
+     --F should be a chain complex starting in a positive degree and going to degree 0
      -- the code is meant to execute 
      --\langle E, \beta\rangle = \sum_{j\leq i}(-1)^{i-j}\sum_k\beta_{i,k}h_{-k}(H^j(E)),
      --
@@ -1566,7 +1566,7 @@ document {
 	  "B"
 	  },
      Outputs => {
-	  List => "of lowest degree shifts occuring in B"
+	  List => "of lowest degree shifts occurring in B"
 	  },
      EXAMPLE lines ///
      	  R = ZZ/101[a..e];
@@ -1585,7 +1585,7 @@ document {
 	  "B"
 	  },
      Outputs => {
-	  List => "of highest degree shifts occuring in B"
+	  List => "of highest degree shifts occurring in B"
 	  },
      EXAMPLE lines ///
      	  R = ZZ/101[a..e];
@@ -1823,7 +1823,7 @@ document {
 
 document { 
      Key => decomposeDegrees,
-     Headline => "Find the degree sequences of pure diagrams occuring in a Boij-Soederberg decomposition of B",
+     Headline => "Find the degree sequences of pure diagrams occurring in a Boij-Soederberg decomposition of B",
      Usage => "decomposeDegrees B",
      Inputs => {
 	  "B" => "not necessarily Cohen-Macaulay"
