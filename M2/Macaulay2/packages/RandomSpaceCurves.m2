@@ -76,7 +76,7 @@ TEST ///
 -- ring of t must be over ZZ or QQ
 -- and singly graded
 --
--- this funciton is needed to construct
+-- this function is needed to construct
 -- expected betti tables from
 -- a HilberNumerator
 termToBettiKey = (mon) -> (
@@ -103,7 +103,7 @@ expectedBetti=method()
 -- For this every term a_i*t^i will represent a summand R^{abs(a_i):-i}
 -- in the ChainComplex represented by the desired BettiTableau
 -- The step where this summand is used depends on the number of
--- sign switches that occur in the hilbert numerator befor this monomial
+-- sign switches that occur in the hilbert numerator before this monomial
 --
 -- the ring of the hilbert numerator is expected to singly graded
 -- and contain only one variable
@@ -121,7 +121,7 @@ expectedBetti(RingElement):= (hilbNum) ->(
      -- step through all keys and calculate which step a
      -- given entry must go based on the number of sign-changes
      L := for b in bettiKeys list (
-	  -- has a sign change occured?
+	  -- has a sign change occurred?
      	  if (b#0*previousCoefficient) < 0 then (
 	       -- sign change => next step in the resolution
 	       j = j+1;
@@ -202,7 +202,7 @@ TEST ///
 
 
 -- given a betti Table b and a Ring R make a chainComplex
--- with zero maps over R  that has betti diagramm b.
+-- with zero maps over R  that has betti diagram b.
 --
 -- negative entries are ignored
 -- rational entries produce an error
@@ -261,21 +261,21 @@ randomHartshorneRaoModuleDiameter3oneDirection = (HRao,R) -> (
      -- construct a chain complex with expected betti tableau
      -- and 0 differentials
      --
-     -- calculate the expectd betti diagramm to find out wether linear syzygies
-     -- are requried (this is the difficult part in the construction)
+     -- calculate the expected betti diagram to find out whether linear syzygies
+     -- are required (this is the difficult part in the construction)
      e := expectedBetti(HRao|{0,0,0,0},3);
      F := R^e;
      -- find betti Numbers of the linear strand
      linearStrand := for i from 0 list (if e#?(i,{i},i) then e#(i,{i},i) else break);
-     -- construction depends on lenth of linear strand.
-     if #linearStrand == 0 then error"linear Stand has lenght 0. This should never happen";
+     -- construction depends on length of linear strand.
+     if #linearStrand == 0 then error"linear Stand has length 0. This should never happen";
      if #linearStrand == 1 then (
 	  -- first matrix can neither have nor be required to have linear syzygies
 	  -- choose first matrix randomly
      	  return coker random (F_0,F_1)
 	  );
      if #linearStrand == 2 then (
-	  -- no linear syzygies of the first matrix are requried
+	  -- no linear syzygies of the first matrix are required
 	  -- check if first matrix always has unwanted syzygies
 	  if expectedLinearSyzygies(linearStrand#0,linearStrand#1,R) <= 0 then (
 	       -- no unwanted syzygies
@@ -345,13 +345,13 @@ randomHartshorneRaoModuleDiameter3 = (HRao,R)->(
 -- this ring has 4 variables and is singly graded.
 randomHartshorneRaoModuleDiameter2 = (HRao,R)->(
      if #HRao != 2 then error"Hilbert function has to have length 2";
-     -- some special cases with non expected resoluton
+     -- some special cases with non expected resolution
      --
      --if HRao == {1,1} then return coker random(R^{0},R^{3:-1,1:-2});
      --if HRao == {1,2} then return coker random(R^{0},R^{2:-1,3:-2});
      --if HRao == {2,1} then return coker random(R^{2:0},R^{7:-1});
      --
-     -- the standart construction still works since the unexpected
+     -- the standard construction still works since the unexpected
      -- part is not in the first 2 steps.
      --
      -- now assume expected resolution
@@ -362,7 +362,7 @@ randomHartshorneRaoModuleDiameter2 = (HRao,R)->(
      )
 
 -- Construct a random Hartshorne-Rau module of
--- length 1. This allways works
+-- length 1. This always works
 --
 -- HRau = {h1} the Hilbertfunction of the desired module
 -- R the ring where the module should live. It is assumed, that
@@ -378,7 +378,7 @@ constructHartshorneRaoModule=method(Options=>{Certify=>false})
 constructHartshorneRaoModule(ZZ,List,PolynomialRing):=opt->(e,HRao,R)->(
      if dim R != 4 then error "expected a polynomial ring in 4 variables";
      if degrees R !={{1}, {1}, {1}, {1}} then error "polynomial ring is not standard graded";
-     if #HRao > 3 then error "no method implemented for Hartshorne Rao modue of diameter >3";
+     if #HRao > 3 then error "no method implemented for Hartshorne Rao module of diameter >3";
      M := null;
      if #HRao == 1 then M = randomHartshorneRaoModuleDiameter1(HRao,R);
      if #HRao == 2 then M = randomHartshorneRaoModuleDiameter2(HRao,R);
@@ -410,7 +410,7 @@ hartshorneRaoModule = new RandomObject from {
 -- the cokernel of the transpose of the last map
 -- in a minimal free resolution of a curve
 --
--- conversly one can construct a curve, by first
+-- conversely one can construct a curve, by first
 -- constructing the Harshorne Rao Module an therefore
 -- the last matrix in the minimal free resolution of
 -- the curve
@@ -529,7 +529,7 @@ doc ///
      dimension and the constructed curve is smooth and actually has the desired degree d and genus g
 
    Text
-     There are 63 possible families satifying the four conditions above.
+     There are 63 possible families satisfying the four conditions above.
      Our method can provide random curves in 60 of these families, simultaneously proving the unirationality of each of these 60 components of the
      Hilbert scheme.
 
