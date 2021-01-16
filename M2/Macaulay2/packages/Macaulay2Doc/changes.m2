@@ -74,7 +74,7 @@ document {
 		   LI { "The option ", TO Boxes, " of ", TO netList,
 		       " has been made more flexible to allow customization of the box;",
 		       " it now accepts as input a pair of lists of rows and columns." },
-                   LI { "A brief documentation of various types of objects can be viewed usin ", TO (symbol?, Symbol), "." },
+                   LI { "A brief documentation of various types of objects can be viewed using ", TO (symbol?, Symbol), "." },
                    LI { "The ", TO document, " function now accepts three new options: ", TO "Acknowledgement", ", ",
 		       TO "Contributors", ", and ", TO "References", ". The content of each will appear under a subsection
 		       of the same name in the documentation. Moreover, ", TO "SimpleDoc :: document(String)", " is now a synonym for ",
@@ -449,7 +449,7 @@ document {
 	       	    LI { TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been added." },
 	       	    LI { TO "SLnEquivariantMatrices::SLnEquivariantMatrices", ", a package by Ada Boralevi, Daniele Faenzi and Paolo Lella for computations related to the paper \"A construction of equivariant bundles on the space of symmetric forms\", has been added." },
 		    LI { TO "CorrespondenceScrolls::CorrespondenceScrolls", ", a package by David Eisenbud, Frank-Olaf Schreyer, and Alessio Sammartano, to compute and analyze examples of correspondence scrolls, has been added." },
-		    LI { TO "NCAlgebra::NCAlgebra", ", a package by Frank Moore, Andrew Conner, and Courtney Gibbons, implementating data types for noncommutative algebras, has been added." },
+		    LI { TO "NCAlgebra::NCAlgebra", ", a package by Frank Moore, Andrew Conner, and Courtney Gibbons, implementing data types for noncommutative algebras, has been added." },
 		    LI { TO "SpaceCurves::SpaceCurves", ", a package by Frank Schreyer, Mike Stillman, and Mengyuan Zhang, for generation of space curves, has been added." },
      	       	    LI { TO "ExteriorIdeals::ExteriorIdeals", ", a package by Marilena Crupi and Luca Amata for manipulating monomial ideals over exterior algebras, has been added." }
 		    }
@@ -1691,7 +1691,7 @@ document {
 			 "The function ", TO "Elimination::eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring,
 			 with no quotient elements, and also quietly assumed that the ring was commutative.  Now error
 			 messages are given when it would have produced incorrect answers, and it handles Weyl and skew 
-			 commutative poly rings correctly.  Addtionally, this function now uses an elimination order 
+			 commutative poly rings correctly.  Additionally, this function now uses an elimination order 
 			 rather than a product order, improving performance in many cases."
 			 },
 		    LI {
@@ -2255,13 +2255,13 @@ document {
      ///,
      PARA ///
      The speed of computation of projective resolutions when the first
-     components of the degrees of the variables are not necesarily positive has
+     components of the degrees of the variables are not necessarily positive has
      been improved.
      ///,
      PARA ///
      The interpreter has been fixed so it more often detects extreme recursion;
      one case was omitted that allowed the machine stack to overflow with a
-     segmenation fault.
+     segmentation fault.
      ///,
      PARA ///
      The function "betti" now returns a new type of object of class BettiTally,
