@@ -732,8 +732,9 @@ void NCF4::sortF4Matrix()
   std::vector<int> indices;
   std::vector<Monom> tempMonoms;
   tempMonoms.reserve(sz);
-  indices.reserve(sz);
-  for (int i = 0; i < sz; ++i) indices.emplace_back(i);
+
+  indices.resize(sz);
+  std::iota(indices.begin(), indices.end(), 0);
  
   // store all the column monomials in a temporary to sort them
   for (auto& i : mColumnMonomials)
@@ -746,23 +747,32 @@ void NCF4::sortF4Matrix()
   tbb::parallel_sort(indices.begin(),indices.end(),monomialSorter);
   
   std::vector<int> perm (static_cast<size_t>(mColumnMonomials.size()), -1);
-  int count = 0;
-  for (int i = 0; i < sz; ++i)
-    {
-      auto& val = mColumnMonomials[tempMonoms[indices[i]]];
-      perm[val.first] = count;
-      mColumns.emplace_back(Column(tempMonoms[indices[i]],val.second));
-      val.first = count;
-      ++count;
-    }
+  
+  // apply the relabeling to the columns
+  mColumns.resize(sz);
+  tbb::parallel_for(tbb::blocked_range<int>{0,(int)sz},
+         [&](const tbb::blocked_range<int>& r)
+         {
+           for (auto count = r.begin(); count != r.end(); ++count)
+             {
+               auto& val = mColumnMonomials[tempMonoms[indices[count]]];
+               perm[val.first] = count;
+               mColumns[count] = Column(tempMonoms[indices[count]],val.second);
+               val.first = count;
+             }
+         });
 
-  // Now we run through the rows
-  for (auto& r : mRows)
-    {
-      auto& comps = r.second;
-      for (int i=0; i < comps.size(); ++i)
-        comps[i] = perm[comps[i]];
-    }
+  // now fix the column labels in the rows
+  tbb::parallel_for(tbb::blocked_range<int>{0,(int)mRows.size()},
+        [&](const tbb::blocked_range<int>& r)
+        {
+          for (auto i = r.begin(); i != r.end(); ++i)
+          {
+            auto& comps = mRows[i].second;
+            for (int j=0; j < comps.size(); ++j)
+              comps[j] = perm[comps[j]];
+          }
+        });
 }
 
 // both reduceF4Row and parallelReduceF4Row call this function
