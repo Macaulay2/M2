@@ -3644,7 +3644,7 @@ isIsomorphism(LieAlgebraMap):=f->(
 -------------------------------------
 -- coefficients
 --------------------------------------
--- this gives the list of coeffients and the list of Lie monomials 
+-- this gives the list of coefficients and the list of Lie monomials 
 -- of a LieElement. This element may be non-normalized, in case the
 -- input will change to normal form. If one wants to keep the non-normal
 -- expression one has to use the formal Lie operators @,/,++.

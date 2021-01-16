@@ -815,9 +815,9 @@ document {
 
     PARA {}, "[BEM01] ", ITALIC "Laurent Busé, Mohamed Elkadi and Bernard Mourrain",", Resultant over the residual of a complete intersection, Journal of Pure and Applied Algebra 164 (2001), no. 1-2, 35–57.",
 
-    PARA {}, "[Bus01a] ", ITALIC "Laurent Busé",", Residual resultant over the projective plane and the implicitization problem, Internation Symposium on Symbolic and Algebraic Computing (ISSAC), ACM, (2001). Please, see the errata.pdf attached file., pp. 48–55.", 
+    PARA {}, "[Bus01a] ", ITALIC "Laurent Busé",", Residual resultant over the projective plane and the implicitization problem, International Symposium on Symbolic and Algebraic Computing (ISSAC), ACM, (2001). Please, see the errata.pdf attached file., pp. 48–55.", 
 
---    PARA {}, "[Bus01b] ", ITALIC "Laurent Busé",", Étude du resultant sur une variété algébrique. phd thesis. (2001) ", 
+--    PARA {}, "[Bus01b] ", ITALIC "Laurent Busé",", Étude du résultant sur une variété algébrique. phd thesis. (2001) ", 
 
     PARA {}, "[Bus04] ", ITALIC "Laurent Busé",", Resultants of determinantal varieties, J.Pure Appl. Algebra193 (2004), no.1-3, 71–97.", 
 
