@@ -1270,6 +1270,83 @@ NCGB(I,8)
 ///
 
 DEVELOPMENT ///
+  restart
+  needsPackage "AssociativeAlgebras"
+  debug Core
+  createIdeal = (kk) -> (
+    A = kk{x,y,z};
+    setRandomSeed(34782734);
+    alpha = random(kk);
+    beta = random(kk);
+    gamma = random(kk);
+    p = alpha*y*z + beta*z*y + gamma*x^2;
+    q = alpha*z*x + beta*x*z + gamma*y^2;
+    r = alpha*x*y + beta*y*x + gamma*z^2;
+    ideal{p,q,r}
+    )
+  runIdeal = (I, deg, strategy) -> (
+    I = ideal I_*;
+    elapsedTime Igb = NCGB(I,deg,Strategy=>strategy);
+    B = A/I; 
+    if deg <= 16 then (
+      if not all(deg+1, i -> #(flatten entries ncBasis(i, B)) == binomial(i + 2,2)) then (
+          print ("***ERROR***",
+                 apply(deg+1, i -> #(flatten entries ncBasis(i, B))),
+                 apply(deg+1, i -> binomial(i+2,2))
+          )));
+    Igb
+    )
+  runGBs = (I) -> (
+      runIdeal(I, 10, "Naive");
+      runIdeal(I, 10, "F4");
+      runIdeal(I, 10, "F4Parallel");
+      runIdeal(I, 12, "Naive");
+      runIdeal(I, 12, "F4");
+      runIdeal(I, 12, "F4Parallel");
+      runIdeal(I, 14, "Naive");
+      runIdeal(I, 14, "F4");
+      runIdeal(I, 14, "F4Parallel");
+      runIdeal(I, 16, "Naive");
+      runIdeal(I, 16, "F4");
+      runIdeal(I, 16, "F4Parallel");
+      runIdeal(I, 20, "Naive");
+      runIdeal(I, 20, "F4");
+      runIdeal(I, 20, "F4Parallel");
+      )
+  runGBs(I = createIdeal GF(27)) -- OK
+
+  I = createIdeal GF(3^10) -- FlintBig
+  runGBs I -- crashes on runIdeal(I, 20, "Naive")
+  runIdeal(I, 20, "Naive") -- CRASH
+
+  I = createIdeal GF(7^5) -- FlintBig
+  runGBs I -- OK
+  runIdeal(I, 14, "Naive"); -- WRONG
+  runIdeal(I, 16, "Naive"); -- WRONG
+  runIdeal(I, 20, "Naive"); -- CRASH
+  
+  I = createIdeal GF(27, Strategy => "Givaro")
+  runGBs I -- OK
+
+  I = createIdeal GF(27, Strategy => "New")
+  runGBs I -- F4, F4Parallel: seem to have 0 GB's. Naive seems ok.
+
+  I = createIdeal ZZp(32003,Strategy=>"Ffpack")
+  runGBs I -- OK
+
+  I = createIdeal ZZp(32003,Strategy=>"Aring")
+  runGBs I -- OK
+
+  I = createIdeal QQ
+    runIdeal(I, 10, "Naive"); -- CRASH
+    runIdeal(I, 10, "F4"); -- 33 gens
+    runIdeal(I, 10, "F4Parallel"); -- 33 gens
+    runIdeal(I, 12, "Naive"); -- CRASH
+    runIdeal(I, 14, "F4"); -- hmmm, very long...! 87 sec! Mikes MBP
+    runIdeal(I, 14, "F4Parallel"); -- 19.83 sec Mikes MBP
+///
+
+DEVELOPMENT ///
 restart
 needsPackage "AssociativeAlgebras"
 debug Core
