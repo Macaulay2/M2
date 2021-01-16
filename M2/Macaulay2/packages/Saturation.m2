@@ -150,7 +150,7 @@ Ideal  : RingElement          := Ideal  =>         (I, f) -> quotient(I, f)
 -- TODO: why is this the right thing to do?
 quotient(MonomialIdeal, RingElement) := MonomialIdeal => opts -> (I, f) -> (
     quotient(I, if size f === 1 and leadCoefficient f == 1 then monomialIdeal f else ideal f, opts))
-MonomialIdeal : RingElement          := MonomialIdeal => opts -> (I, f) -> quotient(I, f)
+MonomialIdeal : RingElement          := MonomialIdeal =>         (I, f) -> quotient(I, f)
 
 quotient(Module, Ideal)       := Module => opts -> (M, I) -> quotientHelper(M, I, (quotient, Module, Ideal), opts)
 quotient(Module, Number)      :=
