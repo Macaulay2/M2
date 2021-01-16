@@ -36,11 +36,10 @@ find_program(ETAGS NAMES etags)
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
 find_package(Boost	REQUIRED QUIET COMPONENTS regex ${Boost_stacktrace})
+# TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
-# TODO: replace gdbm with capnproto.org or msgpack.org
-# Alternatively protobuf: https://developers.google.com/protocol-buffers/docs/proto#maps
+# TODO: replace libatomic_ops, see https://github.com/Macaulay2/M2/issues/1113
 find_package(AtomicOps	REQUIRED QUIET) # See FindAtomicOps.cmake
-# TODO: remove libatomic_ops
 
 ###############################################################################
 ## Optional	Debian package	RPM package 	Homebrew package
@@ -71,9 +70,9 @@ endif()
 #   readline, history, termcap, ...
 #    (provided by libreadline-dev on Ubuntu and readline )
 
+# TODO: replace these two with libedit, see https://github.com/Macaulay2/M2/issues/825
 find_package(Readline	REQUIRED QUIET) # See FindReadline.cmake
 find_package(History	REQUIRED QUIET) # See FindHistory.cmake
-# TODO: replace Readline with https://github.com/AmokHuginnsson/replxx
 
 ###############################################################################
 ## Multi-precision arithmetic requirements:
@@ -255,12 +254,6 @@ foreach(_program IN LISTS PROGRAM_OPTIONS)
       unset(${_name} CACHE) # Unlike libraries, programs are set in cache
     else()
       # exists on the system
-      # TODO: Make a symbolic link to the existing executable in the programs directory
-      # if(${program} AND NOT ${program} MATCHES ${M2_INSTALL_PROGRAMSDIR})
-      #   get_filename_component(program_name ${${program}} NAME)
-      #   file(CREATE_LINK ${${program}} ${M2_INSTALL_PROGRAMSDIR}/${program_name} SYMBOLIC)
-      # endif()
-      # TODO: alternatively, fix M2 to look for programs on PATH
     endif()
   else()
     # was not found

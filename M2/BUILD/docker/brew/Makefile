@@ -24,7 +24,7 @@ build-image:; docker build --tag $(TAG) .
 ###############################################################################
 # Terminal targets
 
-shell: shell-Linux
+shell: shell-linux
 
 # Run this on Linux
 shell-linux:; docker run $(VOLUME-A) $(VOLUME-C) -it --entrypoint bash $(TAG)

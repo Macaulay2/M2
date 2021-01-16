@@ -8,6 +8,6 @@ changelog = markdown help("changes, " | ver);
 changelog = replace("/home/.*?/common/share", illinois, changelog);
 changelog = replace("common/share", illinois, changelog);
 changelog = replace("https://faculty.math.illinois.edu", "http://www2.macaulay2.com", changelog);
-("changelog-" | ver | ".md") << changelog
+("changelog-" | ver | ".md") << changelog << close
 
 
