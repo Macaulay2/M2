@@ -395,6 +395,10 @@ dotemacsFix0 = ///
 ; want to use your f12 key for something else.  However, this action
 ; will be undone the next time you run setup() or setupEmacs().
 (global-set-key [ f12 ] 'M2)
+
+; Prevent Emacs from inserting a superfluous "See" or "see" in front
+; of the hyperlinks when reading documentation in Info mode.
+(setq Info-hide-note-references 'hide)
 ///
 
 emacsHeader := ";-*-emacs-lisp-*-\n"
