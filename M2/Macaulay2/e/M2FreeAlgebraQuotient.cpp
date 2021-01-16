@@ -10,18 +10,18 @@
 #include "ring.hpp"
 #include "stdinc-m2.hpp"
 
-std::unique_ptr<ConstPolyList> copyMatrixToVector(const M2FreeAlgebra& F,
+ConstPolyList copyMatrixToVector(const M2FreeAlgebra& F,
                              const Matrix* input)
 {
-  auto result = make_unique<ConstPolyList>();
-  result->reserve(input->n_cols());
+  ConstPolyList result;
+  result.reserve(input->n_cols());
   for (int i=0; i<input->n_cols(); i++)
     {
       ring_elem a = input->elem(0,i);
       auto f = reinterpret_cast<const Poly*>(a.get_Poly());
       auto g = new Poly;
       F.freeAlgebra().copy(*g, *f);
-      result->push_back(g);
+      result.push_back(g);
     }
   return result;
 }
@@ -32,8 +32,8 @@ M2FreeAlgebraQuotient* M2FreeAlgebraQuotient::create(
                                                      int maxdeg // TODO: need to handle use of 'maxdeg' in the class
                                                      )
 {
-  std::unique_ptr<ConstPolyList> gbElements = copyMatrixToVector(F, GB);
-  auto A = std::unique_ptr<FreeAlgebraQuotient> (new FreeAlgebraQuotient(F.freeAlgebra(), *gbElements, maxdeg));
+  auto gbElements = copyMatrixToVector(F, GB);
+  auto A = std::unique_ptr<FreeAlgebraQuotient> (new FreeAlgebraQuotient(F.freeAlgebra(), gbElements, maxdeg));
   M2FreeAlgebraQuotient* result = new M2FreeAlgebraQuotient(F, std::move(A));
   result->initialize_ring(F.coefficientRing()->characteristic(), F.degreeRing(), nullptr);
   result->zeroV = result->from_long(0);
