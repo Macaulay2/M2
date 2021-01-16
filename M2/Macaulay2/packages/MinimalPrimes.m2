@@ -410,7 +410,7 @@ legacyMinimalPrimes = J -> (
 --   input: KR, a ring of the form kk(t)[u] (t and u sets of variables)
 --          RU, kk[u,t] (with some monomial ordering)
 --   consequence: sets information in KR so that
---     'factors' and 'numerator', 'denominator' work for elemnts of KR
+--     'factors' and 'numerator', 'denominator' work for elements of KR
 --     sets KR.toAmbientField, KR.fromAmbientField
 setAmbientField = method()
 setAmbientField(Ring, Ring) := (KR, RU) -> (

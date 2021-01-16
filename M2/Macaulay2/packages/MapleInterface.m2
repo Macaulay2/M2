@@ -167,7 +167,7 @@ doc ///
 
       If you are using Macaulay 2 in cygwin and the Windows native Maple version
       best put the complete path to the Maple command line
-      executeable, e.g., StringWithMapleCommand could be (depending on the Maple version)
+      executable, e.g., StringWithMapleCommand could be (depending on the Maple version)
       
       "C:/Program Files/Maple 9.5/bin.win/cmaple9.5.exe"
 

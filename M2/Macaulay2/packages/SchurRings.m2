@@ -290,9 +290,9 @@ symmetricRing (Ring,ZZ) := opts -> (A,n) -> (
      	  exteriorPower(ZZ,R) := opts -> (n,r) -> plethysm(splice{n:1},r);
 --the degrees of e_i,p_i,h_i are equal to i 
 	  degsEHP := toList(1..n);
---blocks#0 are indeces for e-variables
---blocks#1 are indeces for p-variables
---blocks#2 are indeces for h-variables
+--blocks#0 are indices for e-variables
+--blocks#1 are indices for p-variables
+--blocks#2 are indices for h-variables
      	  blocks := {toList(0..(n-1)),toList(n..(2*n-1)),toList(2*n..(3*n-1))};
 --new variables for the E,H,P polynomials
      	  vrs := symbol vrs;

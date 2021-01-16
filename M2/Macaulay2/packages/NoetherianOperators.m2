@@ -1779,7 +1779,7 @@ doc ///
 	       gCorners(p, I)
 	  Text
 	       If the optional argument @TT "ProduceSB"@ is set to true, the output is instead a matrix of elements of the ideal
-	       with the p translated to the origin such that the lead terms generate the inital ideal, i.e. a standard basis.
+	       with the p translated to the origin such that the lead terms generate the initial ideal, i.e. a standard basis.
 	       Note that the coordinates of the standard basis elements are translated to be centered at the point p.
 	  Example
 	       S = gCorners(p, I, ProduceSB=>true)
@@ -3076,7 +3076,7 @@ Description
         @UL { TO noetherianOperators, TO specializedNoetherianOperators, TO numericalNoetherianOperators} @
 
         pass to a polynomial ring in the dependent variables, with the coefficient field being the fraction field
-        of a polynomial ring in the independent varaibles. Because of this, computing Noetherian operators requires
+        of a polynomial ring in the independent variables. Because of this, computing Noetherian operators requires
         a knowledge of a dependent set of variables, which can be set using the option {\tt DependentSet}. Note that
         the $dx$-monomials will only involve dependent variables.
     Example

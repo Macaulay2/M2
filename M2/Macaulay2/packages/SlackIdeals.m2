@@ -40,7 +40,7 @@ export {"slackMatrix",
     "FlagIndices"
     }  
     -- INTERNAL
-    -- auxillary functions
+    -- auxiliary functions
 --    nonzeroEntries,
 --    polytopeSlack,
 --    matroidSlack,
@@ -1995,7 +1995,7 @@ doc ///
     Description
     	Text
 	    This function creates a matrix whose columns correspond to the edges of the 
-	    non-incidence graph of a slack matrix. They are orderd by variable index.
+	    non-incidence graph of a slack matrix. They are ordered by variable index.
 	    The first n rows correspond to rows of the slack matrix (vertices/ground
 	    set elements) and the remaining rows correspond to columns of the slack matrix 
 	    (facets/hyperplanes).

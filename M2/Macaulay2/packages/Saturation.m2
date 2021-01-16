@@ -749,7 +749,7 @@ ans2 = elapsedTime saturationByGRevLex(saturationByGRevLex(I, B1), B0); -- 22.93
 elapsedTime saturationByGRevLex(I, x_0); -- 9.01s
 elapsedTime saturationByGRevLex(I, x_1); -- 8.77s
 
--- TODO: what a discrepency
+-- TODO: what a discrepancy
 ans3 = elapsedTime saturationByElimination(saturationByElimination(I, B0), B1); -- 49.22s
 ans4 = elapsedTime saturationByElimination(saturationByElimination(I, B1), B0); -- 28.63
 
