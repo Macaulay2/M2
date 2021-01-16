@@ -344,7 +344,7 @@ onlyPlanar (List, Boolean) := List => (L, non) -> (
 )
 onlyPlanar List := List => L -> onlyPlanar(L, false)
 
--- Reorders a bipartite graph so all vertices of each color are continguous.
+-- Reorders a bipartite graph so all vertices of each color are contiguous.
 relabelBipartite = method()
 relabelBipartite List := List => L -> (
     r := callNauty("biplabg -q", L);
@@ -527,7 +527,7 @@ doc ///
             (See @TO "Comparison of Graph6 and Sparse6 formats"@.)
             
             It is recommended to work with graphs represented as strings while using nauty-provided
-            methods and then converting the graphs to instances fo the class @TO "Graph"@ for further work 
+            methods and then converting the graphs to instances of the class @TO "Graph"@ for further work 
             (e.g., computing the chromatic number).
 
             The theoretical underpinnings of nauty are in the paper:
@@ -626,7 +626,7 @@ doc ///
             whether the two graphs are isomorphic
     Description
         Text
-            A very efficient method for determing whether two graphs (of the same format) are isomorphic.
+            A very efficient method for determining whether two graphs (of the same format) are isomorphic.
         Example
             R = QQ[a..e];
             areIsomorphic(cycle R, graph {a*c, c*e, e*b, b*d, d*a})

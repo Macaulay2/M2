@@ -327,7 +327,7 @@ onlyPlanar (List, Boolean) := List => (L, non) -> (
 )
 onlyPlanar List := List => L -> onlyPlanar(L, false)
 
--- Reorders a bipartite graph so all vertices of each color are continguous.
+-- Reorders a bipartite graph so all vertices of each color are contiguous.
 relabelBipartite = method()
 relabelBipartite List := List => L -> (
     r := callNauty("biplabg -q", L);
@@ -619,7 +619,7 @@ doc ///
             whether the two graphs are isomorphic
     Description
         Text
-            A very efficient method for determing whether two graphs (of the same format) are isomorphic.
+            A very efficient method for determining whether two graphs (of the same format) are isomorphic.
         Example
             G = graph {{1,2},{2,3},{3,4},{4,5},{1,5}};
             H = graph {{1,3},{3,5},{5,2},{2,4},{4,1}};

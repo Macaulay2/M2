@@ -481,7 +481,7 @@ buchbergerComplex(MonomialIdeal) := (I) -> (
 
 isSuperficial = method()
 isSuperficial List := (L) -> (
--- isSuperficial cheks if a list of monomials is already superficially oredred
+-- isSuperficial checks if a list of monomials is already superficially oredred
 -- that is every monomial in the list does not strictly divide the lcm of the previous ones
      R := ring(L_0);
      all(1..#L-1, i-> (previous:=lcmMonomials(take(L,i)); 
@@ -753,7 +753,7 @@ document {
      ", EM "facets", ".  The function ", TO "simplicialComplex", " accepts either
      the ideal of nonfaces or the list of facets as input.",
      PARA{},
-     "In our first example we construct the octahedron by specfying its
+     "In our first example we construct the octahedron by specifying its
      ideal of nonfaces.",
      EXAMPLE {
 	  "R = ZZ[a..f];",
