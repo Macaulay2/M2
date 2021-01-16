@@ -453,13 +453,15 @@ setAttribute(viewHelp#0, ReverseDictionary, symbol viewHelp)
 
 infoHelp = method(Dispatch => Thing)
 infoHelp Thing := key -> (
-    if key === () then infoHelp "Macaulay2Doc";
+    if key === () then return infoHelp "Macaulay2Doc";
     tag := infoTagConvert makeDocumentTag(key, Package => null);
     if getenv "INSIDE_EMACS" == "" then chkrun ("info " | format tag)
     -- used by M2-info-help in M2.el
-    else print("-* infoHelp: " | tag | " *-");)
+    else print("-*" | " infoHelp: " | tag | " *-");)
 infoHelp ZZ := i -> seeAbout(infoHelp, i)
 infoHelp = new Command from infoHelp
+-- This ensures that "methods infoHelp" and "?infoHelp" work as expected
+setAttribute(infoHelp#0, ReverseDictionary, symbol infoHelp)
 
 -----------------------------------------------------------------------------
 -- View brief documentation within Macaulay2 using symbol?

@@ -1248,7 +1248,7 @@ document {
 	SUBSECTION "Basic Constructors",
 	PARA { 
 		"The main way of constructing ", TO "Graph", " and " , TO "HyperGraph", " objects is to use the ",
-		TO "graph", " and ", TO "hyperGraph", " methods. These methods are overriden to provide many ways ",
+		TO "graph", " and ", TO "hyperGraph", " methods. These methods are overridden to provide many ways ",
 		"of specifying edges." },
 	PARA { "For the purposes of the EdgeIdeals package, every graph and hypergraph is associated to a ring ",
 		"whose variables correspond to the vertices of the (hyper)graph. Thus, the most explicit way to ",
@@ -1522,12 +1522,12 @@ doc ///
 		Text 
 			The function {\tt hyperGraph} is a constructor for @TO HyperGraph @.  The user
 			can input a hypergraph in a number of different ways, which we describe below.
-			The information decribing the hypergraph is stored in a hash table. We require that
+			The information describing the hypergraph is stored in a hash table. We require that
 			there be no inclusion relations between the edges of a hypergraph; that is, that it
 			be a clutter. The reason is that this package is designed for edge ideals, which would
 			lose any information about edges that are supersets of other edges.
 
-			For the first possiblity, the user inputs a polynomial ring, which specifices the vertices
+			For the first possibility, the user inputs a polynomial ring, which specifies the vertices
 			of graph, and a list of the edges of the graph.  The edges are represented as lists.
 		Example
 			R = QQ[a..f]
@@ -1616,7 +1616,7 @@ doc ///
 			can input a graph in a number of different ways, which we describe below.  The information
 			describing the graph is stored in a hash table.
 			
-			For the first possiblity, the user inputs a polynomial ring, which specifices the vertices
+			For the first possibility, the user inputs a polynomial ring, which specifies the vertices
 			of graph, and a list of the edges of the graph.  The edges are represented as lists.
 		Example
 		        R = QQ[a..f];
@@ -3447,7 +3447,7 @@ doc ///
 		  An edge in a graph is a leaf if it contains a vertex of degree one.
 		  An edge {\tt E} in a hypergraph is a leaf if there is another edge {\tt B} with the
 	          property that for all edges {\tt F} (other than {\tt E}), the intersection of {\tt F} 
-		  with {\tt E} is contained in the interesection of {\tt B} with {\tt E}.
+		  with {\tt E} is contained in the intersection of {\tt B} with {\tt E}.
 
 		  A vertex of a graph is a leaf if it has degree one.
 		  A vertex of a hypergraph is a leaf if it is contained in precisely one
@@ -3603,7 +3603,7 @@ doc ///
 	     Text
 	     	  The line graph {\tt L} of a hypergraph {\tt H} has a vertex for each edge in {\tt H}. 
 		  Two vertices in {\tt L} are adjacent if their edges in {\tt H} share a vertex.
-		  The order of the vertices in {\tt L} are determined by the implict order 
+		  The order of the vertices in {\tt L} are determined by the implicit order 
 		  on the edges of {\tt H}. See @TO edges@.
 	     Example
      	       	  R = QQ[a..e];

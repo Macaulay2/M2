@@ -921,7 +921,7 @@ document {
 document { 
      Key => (coefficients,Arrangement),     
      Headline => "create a matrix from the coefficients of the
-     equations of an arrangment",
+     equations of an arrangement",
      Usage => "coefficients A",
      Inputs => {
 	  "A" => Arrangement

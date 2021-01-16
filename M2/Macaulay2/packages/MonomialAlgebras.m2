@@ -1032,7 +1032,7 @@ doc ///
 
       {\bf Tests:}
 
-      The following files contain the tuples (regularity, degree, codim) for every semigroup B in \mathbb{N}^d with fixed {\bf d} and fixed coodinate sum {\bf a}.
+      The following files contain the tuples (regularity, degree, codim) for every semigroup B in \mathbb{N}^d with fixed {\bf d} and fixed coordinate sum {\bf a}.
       Using this data we have verified the Eisenbud-Goto conjecture in these cases.
 
       {\bf d = 3:}
@@ -1259,7 +1259,7 @@ doc ///
      - a multigraded polynomial ring R with @TO Degrees@ R = B.
 
 
-     Specifing B:
+     Specifying B:
 
    Example
      B = {{1,2},{3,0},{0,4},{0,5}}
@@ -1341,7 +1341,7 @@ doc ///
     :Net
   Description
    Text
-      Pretty print for monomial algebras. Prints the assocated polynomial ring of M.
+      Pretty print for monomial algebras. Prints the associated polynomial ring of M.
 
    Example
      M = monomialAlgebra {1,4,8,9,11}
@@ -1858,7 +1858,7 @@ doc ///
 
      Note that this condition does not depend on K.
 
-     For the defintion of Buchsbaum see:
+     For the definition of Buchsbaum see:
 
      J. Stueckrad, W. Vogel: Castelnuovo Bounds for Certain Subvarieties in \mathbb{P}^n, Math. Ann. 276 (1987), 341-352.
 

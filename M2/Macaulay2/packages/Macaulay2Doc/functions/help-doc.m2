@@ -162,6 +162,7 @@ doc ///
     If you read the info form of the documentation in Emacs, we recommend configuring
     the value of the Emacs variable @TT "Info-hide-note-references"@ to @TT "hide"@ in order to
     prevent Emacs from inserting a superfluous @TT "See"@ or @TT "see"@ in front of the hyperlinks.
+    This is done automatically for you by running @TO setup@ or @TO setupEmacs@.
   SeeAlso
     viewHelp
     help

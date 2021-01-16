@@ -367,7 +367,6 @@ ExternalProject_Add(build-flint
                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
-                    -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
                     -DWITH_MPIR=${USING_MPIR}
                     # TODO: force SIMD flags off for distribution
@@ -394,13 +393,12 @@ _ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
 # https://service.mathematik.uni-kl.de/ftp/pub/Math/Singular/Factory/
 # TODO: what is ftmpl_inst.o?
 ExternalProject_Add(build-factory
-  URL               ${M2_SOURCE_URL}/factory-4.1.3.tar.gz
-  URL_HASH          SHA256=d004dd7e3aafc9881b2bf42b7bc935afac1326f73ad29d7eef0ad33eb72ee158
+  URL               https://service.mathematik.uni-kl.de/ftp/pub/Math/Factory/factory-4.2.0.tar.gz
+  URL_HASH          SHA256=b66c4c78847e24b71386a42ea2fb368b721f5cb03966c8c78801f1677c45e6c0
   PREFIX            libraries/factory
   SOURCE_DIR        libraries/factory/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.1.3
   CONFIGURE_COMMAND autoreconf -vif &&
                     ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
@@ -436,7 +434,7 @@ if(GFTABLESDIR AND NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/facto
   message(STATUS "Copying gftables from ${GFTABLESDIR}/gftables")
   file(COPY ${GFTABLESDIR}/gftables DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory)
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries factory "mp;ntl;flint" FACTORY_FOUND)
 
 
 # https://github.com/Macaulay2/frobby (previously https://www.broune.com/frobby)

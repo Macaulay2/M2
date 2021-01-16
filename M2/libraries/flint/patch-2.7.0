@@ -1,0 +1,21 @@
+diff -ur --unidirectional-new-file /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-release-1.17/libraries/flint/tmp/flint2-2.7.0/fmpz_mod_mpoly/test/t-foo.c flint2-2.7.0/fmpz_mod_mpoly/test/t-foo.c
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-release-1.17/libraries/flint/tmp/flint2-2.7.0/fmpz_mod_mpoly/test/t-foo.c	1969-12-31 18:00:00.000000000 -0600
++++ flint2-2.7.0/fmpz_mod_mpoly/test/t-foo.c	2021-01-12 16:12:07.000000000 -0600
+@@ -0,0 +1,3 @@
++int main () {
++     return 0;
++     }
+diff -ur --unidirectional-new-file /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-release-1.17/libraries/flint/tmp/flint2-2.7.0/fq_zech_mpoly/test/t-foo.c flint2-2.7.0/fq_zech_mpoly/test/t-foo.c
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-release-1.17/libraries/flint/tmp/flint2-2.7.0/fq_zech_mpoly/test/t-foo.c	1969-12-31 18:00:00.000000000 -0600
++++ flint2-2.7.0/fq_zech_mpoly/test/t-foo.c	2021-01-12 16:12:07.000000000 -0600
+@@ -0,0 +1,3 @@
++int main () {
++     return 0;
++     }
+diff -ur --unidirectional-new-file /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-release-1.17/libraries/flint/tmp/flint2-2.7.0/fq_zech_mpoly_factor/test/t-foo.c flint2-2.7.0/fq_zech_mpoly_factor/test/t-foo.c
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-release-1.17/libraries/flint/tmp/flint2-2.7.0/fq_zech_mpoly_factor/test/t-foo.c	1969-12-31 18:00:00.000000000 -0600
++++ flint2-2.7.0/fq_zech_mpoly_factor/test/t-foo.c	2021-01-12 16:12:07.000000000 -0600
+@@ -0,0 +1,3 @@
++int main () {
++     return 0;
++     }
