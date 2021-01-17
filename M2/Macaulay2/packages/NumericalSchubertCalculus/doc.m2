@@ -30,8 +30,10 @@ document {
 	 --(how talkative the functions are)
 	 TO bracket2partition,
 	 --(converts a bracket into a partition)
-	 TO partition2bracket
-	 --(converts a parition into a beacket)
+	 TO partition2bracket,
+	 --(converts a parition into a bracket)
+	 TO NSC2phc
+	 --(converts between list of brackets/partitions and phc notation for a Schubert problem)
 	 },
      HEADER3{"Using PHCpack:"},
      "An alternative implementation using PHCpack (download from ",
@@ -348,6 +350,54 @@ doc ///
    SeeAlso
       partition2bracket
 ///
+
+
+doc ///
+   Key
+      NSC2phc
+      (NSC2phc,List,ZZ,ZZ)
+   Headline
+      dictionary between different notations for Schubert problems.
+   Usage
+      M = NSC2phc(conds,k,n)
+   Inputs
+      conds:List
+         of Schubert conditions, either partitions or brackets, that constitutes a Schubert problem on the Grassmannian $Gr(k,n)$
+      k:ZZ
+      n:ZZ
+         k and n represent the Grassmannian Gr(k,n)
+   Outputs
+       :Matrix
+         the corresponding Schubert problem in notation for PHCPack implementation of Littlewood-Richardson rule and homotopies.
+         Its rows encode Schubert conditions with multiplicities.
+         Each row is a $k+1$-tuple, {m,b}, where $m$ is a nonegative integer and $b$ a bracket (see  @TO bracket2partition@ for details).
+         The bracket $b$ represents a Schubert condition and $m$ is its multiplicity in this Schubert intersection problem.
+
+   Description
+    Text
+       A Schubert problem in the Grassmannian $Gr(k,n)$ is encoded by either a list 
+       of partitions or brackets whose codimensions sum to $k(n-k)$. (see @TO bracket2partition@ for details on brackets and partitions)
+       
+       The PHCPack implementations of the geometric Littlewood-Richardson rule encode the brackets in a matrix,
+       where each row has the form ${m, b}$ with $m$ the multiplicity of the bracket $b$, which is a strictly increasing
+       sequence of $k$ integers between $1$ and $n$.
+
+    Example
+       k=4; 
+       n = 8;
+       SchubProbP = {{2,2},{2,2},{2,2},{1},{1},{1},{1}}
+       NSC2phc(SchubProbP,k,n)
+       
+       k=4; 
+       n = 8;
+       SchubProbB = {{3,4,7,8},{3,4,7,8},{3,4,7,8},{4,6,7,8},{4,6,7,8},{4,6,7,8},{4,6,7,8}}
+       NSC2phc(SchubProbB,4,8)
+
+   SeeAlso
+      LRrule
+///
+
+
 document{
     Key => setVerboseLevel,
     Headline => "Set different levels of information printed on screen",
@@ -529,7 +579,7 @@ doc ///
       checkIncidenceSolution(s, P)
    Inputs
       P:List
-         A Schubert problem as a list {($l_1,F_1$),...,($l_m,F_m$)}
+         An incidence of a Schubert problem as a list {($l_1,F_1$),...,($l_m,F_m$)}
       s:Matrix
          A matrix of size $k$ by $n$ representing a solution to the Schubert problem P
    Outputs
@@ -551,12 +601,12 @@ doc ///
       LRNumber
       (LRNumber,List,ZZ,ZZ)
    Headline
-      Returns the number of solitions to the given Schubert problem using SchubertRings
+      Returns the number of solutions to the given Schubert problem
    Usage
       LRNumber(conditions,k,n)
    Inputs
       conditions:List
-        which is a list of Schubert conditions that are either all partitions or all brackets (see @TO bracket2partition@ for details)
+        of Schubert conditions, either partitions or brackets, that constitutes a Schubert problem on the Grassmannian $Gr(k,n)$.
       k:ZZ
       n:ZZ
          $k$ and $n$ define the Grassmannian $Gr(k,n)$ of $k$-planes in $n$-space
@@ -577,8 +627,28 @@ doc ///
       This uses the package Schubert2
    SeeAlso
          LRrule
-///;
+///
 
+doc ///
+   Key
+      [LRNumber, Strategy]
+   Headline
+      Strategy for computing the number of solutions to a Schubert problem
+   Usage
+      LRNumber(...,Strategy=>S)
+   Inputs
+      S:String
+        "Schubert2", the default value,xs or "phc".
+   Description
+    Text
+     Determines which method to compute the number of solutions is created.
+     
+        "Schubert2" uses the SchubertRings command from the package @TO Schubert2@ [default] 
+
+	"phc" uses @TO LRrule@, the implementation of the geometric Littlewood-Richardson rule in PHCPack.
+     
+     
+///
 
 -*
 doc ///

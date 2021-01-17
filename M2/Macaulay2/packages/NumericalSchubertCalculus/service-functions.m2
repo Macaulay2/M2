@@ -1,17 +1,18 @@
 export {
     --"skewSchubertVariety", -- for Pieri Homotopies
     "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
-    "verifyLength", --this is only for Frank's devloping use of Schuert Rings... shouldn't be used by the user
     "checkSchubertProblem", --this is only for  Frank's devloping use of Schuert Rings... shouldn't be used by the user
     "solutionsToAffineCoords", --Temporary! User shouldn't use this function
     "partition2bracket",
     "bracket2partition",
     "randomSchubertProblemInstance",
+    "NSC2phc", 
     "LRNumber"              
     }
 ----------------
 --Functions contained here but not exported:
 ----------------
+-- NSC2phc(List, ZZ,ZZ) -- converts numerical Schubert Calculus input (list of partitions/brackets) to phc input
 -- verifyLength(List, ZZ)
 -- partition2bracket(List,ZZ,ZZ)
 -- output2partition(List) --input redcheckers
@@ -38,22 +39,69 @@ export {
 -- Output:
 --    number of solutions to given Schubert problem
 --------------------------------------------------------------------
--- later:  strategy
+-- Strategy for computing this intersection number
+--   Schubert2  uses the SchubertRing command in the Schubert2 intersection theory package
+--   phc        uses PHCPack's implementation of the geometric Littlewood-Richardson rule
 --------------------------------------------------------------------
-LRNumber = method()
-LRNumber (List,ZZ,ZZ) := (conds,k,n) -> (
+LRNumber = method(Options=>{Strategy=>"Schubert2"})
+LRNumber (List,ZZ,ZZ) := o -> (conds,k,n) -> (
     -- First check if it is a Schubert problem
     checkSchubertProblem(conds,k,n);
-    -- sets up the cohomology ring of the Grassmannian
-    G := flagBundle({k,n-k});
-    (S,T,U) := schubertRing G;
-    a := 1;
-    -- detects if brackets or partitions
-    if (#conds#0 == k) and (conds#0#0 < conds#0#(k-1)) then
-      apply( conds, b -> a = a * (schubertCycle(bracket2partition(b,n),G)) ) else 
-      apply( conds, p -> a = a * (schubertCycle(verifyLength(p,k),G)) );
-    integral a
+       if o.Strategy == "phc" then (
+           -- obfuscatory snippet of code to call LRrule and parse the output (a string) into a number
+           A := (separate("[",(separate("+", LRrule(n,NSC2phc(conds,k,n)) ))#1))#0 ;
+           dgt := reverse( apply(ascii(A), i-> i-48 ) );
+           X:={};
+           for i from 0 to #dgt-1 do (X = append(X,10^i*dgt#i) );
+           sum(X) )  else   (
+            -- sets up the cohomology ring of the Grassmannian
+            G := flagBundle({k,n-k});
+            (S,T,U) := schubertRing G;
+            a := 1;
+            -- detects if brackets or partitions
+            if (#conds#0 == k) and (conds#0 == sort unique conds#0) then
+              apply( conds, b -> a = a * (schubertCycle(bracket2partition(b,n),G)) ) else 
+              apply( conds, p -> a = a * (schubertCycle(verifyLength(p,k),G)) );
+            integral a)
 )
+
+
+------------------------------------------
+--  NSC2phc
+-- converts from numerical Schubert Calculus data for a Schubert problem
+--  (partitions or brackets) to input for PHCPack's data (matrix of multiplcities and brackets)
+------------------------------------------
+-- Input: 
+--    conds - list of partitions or brackets 
+--    k,n   - integers that indicate the Grassmannian G(k,n)
+-- Output:
+--    matrix with ewach row an integer vector with first entry a multiplicity
+--     and remaining entries constituting a bracket
+------------------------------------------
+-- First checks if it is a Schubert problem, then
+--  converts to brackets (if needed) and then
+--  to the phc input matrix format
+------------------------------------------
+
+------------------------------------------
+NSC2phc = method ()
+NSC2phc (List,ZZ,ZZ) := (conds,k,n) -> (
+    -- First check if it is a Schubert problem
+    checkSchubertProblem(conds,k,n);
+    -- if partitions, convert to a list of brackets 
+    if (#conds#0 != k) or (conds#0 != sort unique conds#0) then
+       conds = apply(conds, p -> partition2bracket(p,k,n));
+
+    -- convert list of brackets to matrix with each row {m, b}, where
+    --  m is the multiplicity of the bracket b (which is opened in this row)
+    mults := new MutableHashTable;
+    scan((unique conds), b -> mults#b = 0 );
+    scan(conds, b -> mults#b=mults#b+1);
+    matrix(apply((unique conds), b -> prepend( mults#b,b) ))
+)
+--------------------------
+
+
 
 ---------------------
 --   verifyLength  --
