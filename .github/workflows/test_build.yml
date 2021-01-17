@@ -9,6 +9,7 @@
 name: Build and Test Macaulay2
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - pre-master # when we're ready to merge 'development' into 'master', we merge it first into 'pre-master', so it can be tested
