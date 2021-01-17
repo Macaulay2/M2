@@ -32,9 +32,9 @@ doc ///
      S = ring X;
      B = ideal X;
      J = saturate(intersect(
-         ideal(x_(0,1) - x_(0,0), x_(1,1) - 4*x_(1,0)),
-         ideal(x_(0,1) - 2*x_(0,0), x_(1,1) - 5*x_(1,0)),
-         ideal(x_(0,1) - 3*x_(0,0), x_(1,1) - 6*x_(1,0))), B);
+         ideal(x_1 - x_0, x_3 - 4*x_2),
+         ideal(x_1 - 2*x_0, x_3 - 5*x_2),
+         ideal(x_1 - 3*x_0, x_3 - 6*x_2)), B);
      minres = res J;
      multigraded betti minres
     Text
@@ -552,9 +552,9 @@ doc ///
           of [BES20] (see @arXiv "1703.07631"@). We consider the example of a hyperelliptic curve of genus 4 in $\PP^1\times\PP^2$.
         Example
           X = toricProjectiveSpace(1)**toricProjectiveSpace(2)
-	  X = normalToricVarietyWithTateData X
+          X = normalToricVarietyWithTateData X
           S = ring X; B = ideal X;
-          I = ideal(x_(0,0)^2*x_(1,0)^2+x_(0,1)^2*x_(1,1)^2+x_(0,0)*x_(0,1)*x_(1,2)^2, x_(0,0)^3*x_(1,2)+x_(0,1)^3*(x_(1,0)+x_(1,1)))
+          I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3))
         Text
           After saturating the defining ideal by the irrelevant ideal we may compute its multigraded regularity.
         Example
