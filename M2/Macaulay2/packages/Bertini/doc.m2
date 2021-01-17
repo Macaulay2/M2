@@ -228,7 +228,7 @@ doc ///
      A list of numbers that will be written to the file.
  Description
    Text
-     To do a paremeter homotopy one must have a start_parameters file and a final_parameters file.
+     To do a parameter homotopy one must have a start_parameters file and a final_parameters file.
    Example
      R=QQ[x,y,t]
      makeB'InputFile(storeBM2Files,

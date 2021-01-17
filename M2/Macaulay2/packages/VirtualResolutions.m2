@@ -123,7 +123,7 @@ virtualOfPair (ChainComplex, List) := ChainComplex => opts -> (F, alphas) -> (
 ----- subscheme and irr is the irrelevant ideal
 ----- Output: A virtual resolution of S/J, which is potentially short.
 ----- Description: This function implements Theorem 4.1 of [BES].
------ In particular, it computes a virutal resolution of S/J by
+----- In particular, it computes a virtual resolution of S/J by
 ----- computing a graded minimal free resolution of S/(J\cap B^A).
 ----- By the theorem this might be a short virtual resolution
 --------------------------------------------------------------------
@@ -388,7 +388,7 @@ randomCurveP1P2 (ZZ,ZZ,Ring) := Ideal => opts -> (d,g,F) -> (
     z := getSymbol "z";
     R := F(monoid[z_0,z_1,z_2,z_3]);
     rVars := flatten entries vars R;
-    --- Base locus of porjection
+    --- Base locus of projection
     BL1 := ideal(rVars#0,rVars#1);
     BL2 := ideal(rVars#1,rVars#2,rVars#3);
     BL := intersect(BL1,BL2);
@@ -650,7 +650,7 @@ resolveTail(ChainComplex) := ChainComplex => C -> (
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
------ Begining of the tests and the documentation
+----- Beginning of the tests and the documentation
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 
@@ -662,7 +662,7 @@ end--
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
------ Begining of the development section
+----- Beginning of the development section
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 

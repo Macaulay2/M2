@@ -5,7 +5,8 @@
 CMAKE_BUILD_DIR       = $(shell pwd)/../build
 
 # Set the exec_prefix here in order to also find the programs
-ARCH                  = x86_64-Linux-Fedora-32
+# TODO: perhaps store the distribution architecture in a file
+ARCH                  = $(shell basename $(CMAKE_BUILD_DIR)/usr-dist/x*)
 
 export CPPFLAGS       = -I$(CMAKE_BUILD_DIR)/usr-host/include
 export LDFLAGS        = -L$(CMAKE_BUILD_DIR)/usr-host/lib

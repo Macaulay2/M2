@@ -66,7 +66,7 @@ eigSolveP1P1 Ideal := List => opts -> J -> ( -- currently assumes dim R = 2 et 2
     E1 := homogenize(homogenize(sub(J_1,nR),xx0,{1,1,0,0}),yy0,{0,0,1,1});
     JnR := ideal(E0,E1); -- homogenized equations
     nnR := FF[xx0,Lvar_(0,0),yy0,Lvar_(0,1),Degrees=>{{1,0},{1,0},{0,1},{0,1}}];
-    JnnR := sub(JnR,nnR); -- homogeneized equations in the bigraded ring
+    JnnR := sub(JnR,nnR); -- homogenized equations in the bigraded ring
     deg := degrees JnnR;
     satind := {(deg_0)_0+(deg_1)_0-1,(deg_0)_1+(deg_1)_1-1};
     psi := map(nnR^{{0,0}}, nnR^(-(JnnR_*/degree)), gens JnnR);
@@ -104,7 +104,7 @@ eigSolveP2 Ideal := List => opts -> J -> ( -- currently assumes dim R = 2 et 2 (
     preB0 := select(B, b -> member(nR_1*b // nR_0, B));
     B0 := {first preB0};
     D0 := K^{H#(B0_0)}; -- assumption here
-    i := 0; -- intialization
+    i := 0; -- initialization
     -- to be optimized
     while (numericalRank(D0) < numroots) and (i < numrows K) do (
 	i=i+1;
@@ -122,7 +122,7 @@ eigSolveP2 Ideal := List => opts -> J -> ( -- currently assumes dim R = 2 et 2 (
     (EVal,EVec) := eigenvectors (inverse(D0)*D1); -- NEED GENERALIZED EIGENVALUES (provisionally assume no solutions at infinity, separated by x_1)
     EVect := D0*EVec; 
     << "numerical rank of D0=" << numericalRank D0 << endl;
-    apply(#EVal, i -> point{{EVal_i,EVect_(2,i)/EVect_(0,i)}}) -- BE CAREFULL: we are assuming that the three rows are indexed by 1,x1,x2.
+    apply(#EVal, i -> point{{EVal_i,EVect_(2,i)/EVect_(0,i)}}) -- BE CAREFUL: we are assuming that the three rows are indexed by 1,x1,x2.
 )
 
 -- needs "laurent-eigensolving.m2"

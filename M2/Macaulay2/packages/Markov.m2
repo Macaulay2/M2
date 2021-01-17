@@ -602,7 +602,7 @@ document {
 	  J = gaussIdeal(R,G)
           ///,
      PARA{},
-     "A list of independence statments (as for example returned by globalMarkovStmts)
+     "A list of independence statements (as for example returned by globalMarkovStmts)
      can be provided instead of a graph.",
      PARA{},
      "The ideal corresponding to a conditional independence statement {A,B,C} (where A,B,C,

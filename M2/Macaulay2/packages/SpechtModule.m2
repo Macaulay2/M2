@@ -1689,7 +1689,7 @@ multidoc ///
     	Key
 	    (symbol ==,YoungTableau,YoungTableau)
     	Headline
-    	    checks wheter two tableaux are equivalent	 
+    	    checks whether two tableaux are equivalent	 
         Usage
     	    y1 == y2	
         Inputs
@@ -1797,7 +1797,7 @@ multidoc ///
     	    	The order implemented checks where is the first row descent of the tableau. Then it applies
 		lexicographical order to the coordinates of these cells.
 		
-		If the row descent is in the same cell then the lexicographical order for the filling is outputed.
+		If the row descent is in the same cell then the lexicographical order for the filling is outputted.
 		
 		This order is implemented for th net of SpechtModuleElement
 		so that the terms with some row descent appear last.
@@ -1846,7 +1846,7 @@ multidoc ///
     	    Text
             	This type represents a list of tableaux of the same size. They are represented as a MutableHashTable.
 		A matrix in this hash table stores the filling of every tableau in the list. This representation
-		is particularly usefull when only the filling of the tableau is needed.
+		is particularly useful when only the filling of the tableau is needed.
   	    Example
     	    	p = new Partition from {2,1}
     		y1 = youngTableau(p,{0,1,2})
@@ -2095,7 +2095,7 @@ multidoc ///
 	    Text
     	    	This list of tableaux is used to calculate more efficiently higher Specht polynomials.
 		If any of the columns has a repetition then the associated term in the higher Specht polynomial
-		for this row permutation is zero. This is why such permutations are ommited. 	
+		for this row permutation is zero. This is why such permutations are omitted. 	
 
 	    Example
 		p = new Partition from {3,2}
@@ -2344,7 +2344,7 @@ multidoc ///
 		y = youngTableau(p,{2,0,3,4,5,1})
 		e = spechtModuleElement(y,-2)
 	    Text
-	    	More complex elements can be made by adding or substracting previously build elements
+	    	More complex elements can be made by adding or subtracting previously build elements
 		and multiplying by any element of the base field (which is assumed to be \mathbb{Q}).
 	    Example
 	    	y2 = youngTableau(p,{5,0,2,4,1,3})
@@ -2570,7 +2570,7 @@ multidoc ///
     	Description
 	    Text	
     	    	A row descent is defined to be a cell (a,b) in a tableau $T$ such that T_(a,b)>T_(a,b+1).
-		This method reads by columns from left to rigth and each column is read from the top down until the first row descent is found.
+		This method reads by columns from left to right and each column is read from the top down until the first row descent is found.
 		If no row descent is found the pair (a,b)= (-1,-1) is returned.
 	    Example
 		p = new Partition from {3,2,1}
@@ -2759,7 +2759,7 @@ multidoc ///
     	Description
 	    Text	
     	    	The optional argument AsExpression specifies whether the polynomials
-		should be outputed as RingElement objects or as elements of type Expression 
+		should be outputted as RingElement objects or as elements of type Expression 
 		  
 	    Example
 		R = QQ[x_0..x_3]
@@ -3071,7 +3071,7 @@ multidoc ///
 	    generalizedVandermondeMatrix(indices,exponents,R)
 	Inputs
 	    indices:List
-	    	a lits of the variables that appear in each column of the matrix
+	    	a list of the variables that appear in each column of the matrix
 	    exponents:List
 	    	a list of the powers that appear in each row of the matrix
 	    R:PolynomialRing
@@ -3102,7 +3102,7 @@ multidoc ///
 	    schurPolynomial(indices,parti,R)
 	Inputs
 	    indices:List
-	    	a lits of the variables that appear in each column of the matrix
+	    	a list of the variables that appear in each column of the matrix
 	    parti:Partition
 	    	a partition that indexes the schur polynomial
 	    R:PolynomialRing
@@ -3180,7 +3180,7 @@ multidoc ///
 		$Cl(H)$ is the set of conjugacy classes of $H$, $|C|$ is the size of the conjugacy class and $\sigma_c$ is a representative
 		of the conjugacy class $C$ and $X$ is the character of the representation.
 		
-		Therefore it is neccesary to calculate the cardinality of each conjugacy class. This is done by checking the conjugacy class of each element
+		Therefore it is necessary to calculate the cardinality of each conjugacy class. This is done by checking the conjugacy class of each element
 		in the group. For the following example a subgroup of $S_6$ isomorphic to $S_4$ is taken.	
 	   Example
 	    	genList = {{1,2,3,0,5,4},{0,4,2,5,1,3}}
@@ -3188,7 +3188,7 @@ multidoc ///
 		
 	   Text
     	    	For the given group a tally with the size of each conjugacy class must be provided. This tally
-		is inputed to the representationMultiplicityMethod
+		is inputted to the representationMultiplicityMethod
     	   Example
 	       tal := tally apply (H,h->conjugacyClass h);
 	   Text
@@ -3203,7 +3203,7 @@ multidoc ///
 	   Text
 	      The submodules where the multiplicity is zero will not be taken into account when applying the secondaryInvariants
 	      algorithm.
-      	      The character table can be inputed to the method as well. This is made to avoid calculating the same character table for every partition of $n$. 	
+      	      The character table can be inputted to the method as well. This is made to avoid calculating the same character table for every partition of $n$. 	
 	    Example
 	    	charTable = characterTable 6
 		time multi2 = hashTable apply (partis, p-> p=> representationMultiplicity(tal,p,charTable))

@@ -798,7 +798,7 @@ doc ///
 	    
 	    of the irreducible $SL(2)$-subrepresentation of highest weight $md-2$, where $\PP^d = \PP(S^dV)$ as $V=<v_0,v_1>$.
     	    In the paper {\em A construction of equivariant bundles on the space of symmetric forms}, the entries of the matrix $\Phi$ 
-	    are explicitely described.
+	    are explicitly described.
 	Example
 	    d = 4, m = 3 
 	    M = sl2EquivariantConstantRankMatrix(d,m)
@@ -851,7 +851,7 @@ doc ///
 	    of the irreducible $SL(2)$-subrepresentation of highest weight $md-2$, where $\PP^d = \PP(S^dV)$ as $V=<v_0,v_1>$.
 	    
 	    In the paper {\em A construction of equivariant bundles on the space of symmetric forms}, it is proved that the matrix $\Phi$ has constant co-rank 1, 
-	    so that the kernel $W = ker \Phi$ turns out to be a vector bundle, and the entries of the matrix $\Phi$ are explicitely describred.	
+	    so that the kernel $W = ker \Phi$ turns out to be a vector bundle, and the entries of the matrix $\Phi$ are explicitly describred.	
 	Example
 	    d = 3, m = 2 
 	    W = sl2EquivariantVectorBundle(d,m)

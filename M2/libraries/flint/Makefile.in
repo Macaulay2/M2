@@ -1,8 +1,9 @@
+LIBNAME = flint2
 HOMEPAGE = http://flintlib.org
 # git://github.com/wbhart/flint2.git
 URL = http://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 2.6.0
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 2.7.0
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PARALLEL = yes
 
 # Many other tests keep failing, so disable them all:
@@ -16,7 +17,7 @@ endif
 CFLAGS += -std=c90 -pedantic-errors
 # the flint configure script does not accept CPPFLAGS
 # CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure  --with-gc --with-blas --disable-tls
-CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure --with-blas --disable-tls \
+CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure --without-blas --disable-tls \
 			--prefix='$(PREFIX)' --disable-shared CC='$(CC)' \
 			CFLAGS='$(CFLAGS) $(CPPFLAGS)'
 

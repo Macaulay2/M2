@@ -58,10 +58,6 @@ do case $i in
    esac
 done
 
-dnl: homebrew-provided compilers don't look here:
-CPPFLAGS="$CPPFLAGS -I/usr/local/include -I/usr/include"
-LDFLAGS="$LDFLAGS -L/usr/local/lib -L/usr/lib"
-
 dnl AC_MSG_CHECKING(whether $FIND is GNU find)
 dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
 dnl then AC_MSG_RESULT(yes)
@@ -171,6 +167,7 @@ AC_CHECK_PROGS(FIND,gfind find,false)
 AC_CHECK_PROGS(OBJDUMP,objdump,false)
 AC_CHECK_PROGS(OBJCOPY,objcopy,false)
 AC_CHECK_PROGS(LDD,ldd,false)
+AC_CHECK_PROGS(GIT,git,false)
 
 AC_CHECK_TOOL(AR,ar,false)
 AC_CHECK_TOOL(AS,as,false)
@@ -559,8 +556,8 @@ fi
 AC_SUBST(GIT_DESCRIPTION)
 # TODO: currently finds the last commit that changed the VERSION file
 # but ideally it should get the last release commit instead
-NEW_COMMITS=`git rev-list $(git rev-list -1 HEAD $srcdir/VERSION)..HEAD --count`
-GIT_COMMIT=`git describe --dirty --always --match HEAD`
+NEW_COMMITS=`$GIT rev-list $($GIT rev-list -1 HEAD $srcdir/VERSION)..HEAD --count`
+GIT_COMMIT=`$GIT describe --dirty --always --match HEAD`
 if test "$NEW_COMMITS-$GIT_COMMIT" = "-"
 then GIT_DESCRIPTION=version-$PACKAGE_VERSION-unknown
 else GIT_DESCRIPTION=version-$PACKAGE_VERSION-$NEW_COMMITS-$GIT_COMMIT
@@ -1142,6 +1139,14 @@ AC_LANG(C++)
 AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby $LIBS",BUILD_frobby=yes)
 if test $BUILD_frobby = yes
 then BUILTLIBS="-lfrobby $BUILTLIBS"
+    dnl change this to [1] when frobby is built from a submodule
+    AC_DEFINE([HAVE_FROBBY_VERSION], [0], [whether frobby has frobby_version])
+else
+    AC_MSG_CHECKING([whether frobby has frobby_version])
+    AC_COMPILE_IFELSE(
+        [AC_LANG_PROGRAM([#include <frobby.h>], [frobby_version])],
+        [AC_MSG_RESULT([yes]) && AC_DEFINE([HAVE_FROBBY_VERSION], [1], [whether frobby has frobby_version])],
+        [AC_MSG_RESULT([no])])
 fi
 
 #############################################################################

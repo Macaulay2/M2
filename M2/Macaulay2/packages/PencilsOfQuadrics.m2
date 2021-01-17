@@ -1338,7 +1338,7 @@ ExtIntoK(Ideal, Module) := (I,M) -> (
 	  -- algebra over 
 	  --a polynomial subring T (eg R = k[s,t][x_0...x_n]/s*q1(x)+t*q2(x))
           --and I is an ideal such that T = R/I,
-	  --the scritp returns 
+	  --the script returns 
           --Ext^*(M,R/I)
           --graded in POSITIVE degrees
           --as a module over T[X_0...X_c]
@@ -1450,7 +1450,7 @@ doc ///
     X:Matrix
      row matrix of linear forms with constant coefficients
     Y:Matrix
-     row matrix of linear forms with linear coefficents of same length as X
+     row matrix of linear forms with linear coefficients of same length as X
    Outputs
     M1:Matrix
     M2:Matrix
@@ -1626,11 +1626,11 @@ doc ///
      The variables of S that are entries of X:= matrix \{\{x_0..y_{(g-1)},z_1,z_2\}\} 
      \, represent coordinates on PP_R^{2g+1}.
      
-     M1, M2 are consecutive high syzygy matrices in the miminal (periodic) resolution
+     M1, M2 are consecutive high syzygy matrices in the minimal (periodic) resolution
      of kk[s,t] = S/(ideal X) as a module over S/qq. These are used to construct the
      Clifford algebra of qq.
 
-     Mu1, Mu2 are consecutive high syzygy matrices in the miminal (periodic) resolution
+     Mu1, Mu2 are consecutive high syzygy matrices in the minimal (periodic) resolution
      of S/(ideal u) as a module over S/qq. These are used to construct a Morita bundle
      between the even Clifford algebra of qq and the hyperelliptic curve
      branched over the degeneracy locus of the pencil,
@@ -1707,7 +1707,7 @@ doc ///
      polynomial ring of the form kk[U], 
      where U are parameter variables
     M1:Matrix
-     over an auxilliary ring S = kk[X,Y,Z,U]
+     over an auxiliary ring S = kk[X,Y,Z,U]
     M2:Matrix
      M1, M2 a matrix factorization: M1*M2- qq*id = 0 for a quadratic form qq on S
    Outputs

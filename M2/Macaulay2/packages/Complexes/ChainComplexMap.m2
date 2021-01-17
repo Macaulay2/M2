@@ -1300,7 +1300,7 @@ connectingMap(ComplexMap, ComplexMap) := ComplexMap => (g, f) -> (
 horseshoeResolution = method(Options => {LengthLimit=>infinity})
 horseshoeResolution Complex := Sequence => opts -> ses -> (
     -- check that ses is a short exact sequence of modules
-    -- occuring in homological degrees 0,1,2.
+    -- occurring in homological degrees 0,1,2.
     -- at least check that the length is correct.
     f := yonedaExtension' ses;
     g := yonedaMap(f, LengthLimit => opts.LengthLimit);

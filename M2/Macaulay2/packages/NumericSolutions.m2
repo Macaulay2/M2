@@ -177,7 +177,7 @@ solveSystem(Ideal) := opts -> (I) -> (
   -- the columns are arranged according to the order of the variables in the ring R.
   solutions := new MutableMatrix from random(CC^m,CC^n);
   
-  -- computation ot the companion matrices of the ideal I.
+  -- computation of the companion matrices of the ideal I.
   for kk from 1 to n do (
    solMat = append(solMat,substitute(compMatr(I,var_(kk-1)),coeffRing));
   );
@@ -256,7 +256,7 @@ NSolve = (R,I,M,toll) -> (
  -- inputs: the ring R where the ideal is defined,
  --          the ideal I,
  --          the companion matrices M of the ideal I
- --          the tollerance toll.
+ --          the tolerance toll.
  
  -- output: the list vecSol containing the solutions,
  --         the list multSol containing the multiplicity of each solution.
@@ -383,7 +383,7 @@ jFor = (A,toll) -> (
  -- compute the Jordan canonical form of a given matrix
  
  -- inputs: the matrix A,
- --         the tollerance toll.
+ --         the tolerance toll.
  
  -- output: the matrix chBasMatr that transforms A in Jordan form,
  --         the generalized eigenvectors sepEigen, 
@@ -634,7 +634,7 @@ enumSolve = (R,I,M,toll) -> (
   -- inputs: the ring R where the ideal is defined,
  --          the ideal I,
  --          the companion matrices M of the ideal I
- --          the tollerance toll.
+ --          the tolerance toll.
  
  -- output: a list contining the solutions
  
