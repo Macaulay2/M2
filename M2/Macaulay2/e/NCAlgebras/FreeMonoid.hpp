@@ -6,10 +6,10 @@
 #include "polyring.hpp"        // for PolynomialRing
 #include "style.hpp"           // for GT
 #include "NCAlgebras/Word.hpp" // for Word
+#include "MemoryBlock.hpp"     // for MemoryBlock
 #include <iosfwd>              // for string, ostream
 #include <vector>              // for vector
 
-class MemoryBlock;  // lines 14-14
 class Monoid;  // lines 15-15
 //class Word;  // lines 16-16
 class buffer;  // lines 17-17
@@ -135,9 +135,16 @@ public:
   // some functions to create monoms from words and monoms, placing result in
   // a MemoryBlock object.  This is primarily for NCF4.
   Monom wordProductAsMonom(const Word& left, const Word& right, MemoryBlock& memBlock) const;
-  Monom wordProductAsMonom(const Word& left, const Monom& mid, const Word& right, MemoryBlock & memBlock) const;
   Monom wordProductAsMonom(const Word& left, const Word& mid, const Word& right, MemoryBlock & memBlock) const;
- 
+
+  // since this is a template, it needs to be available at call site, hence in the header.
+  template<typename LockType>
+  Monom wordProductAsMonom(const Word& left,
+                           const Monom& mid,
+                           const Word& right,
+                           MemoryBlock & memBlock,
+                           LockType& lock) const;
+  
   int wordHeft(Word& word) const { return wordWeight(word, mHeftDegrees, 0); }
   int wordHeft(Word& word, int start_index) const { return wordWeight(word, mHeftDegrees, start_index); }
 

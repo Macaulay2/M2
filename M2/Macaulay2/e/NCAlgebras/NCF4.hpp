@@ -1,17 +1,17 @@
 #ifndef __nc_f4_hpp__
 #define __nc_f4_hpp__
 
-#include "NCAlgebras/FreeMonoid.hpp"   // for MonomEq
-#include "MemoryBlock.hpp"             // for MemoryBlock
-#include "NCAlgebras/Range.hpp"        // for Range
-#include "NCAlgebras/Word.hpp"         // for Word
-#include "NCAlgebras/OverlapTable.hpp" // for OverlapTable
-#include "NCAlgebras/WordTable.hpp"    // for Overlap, WordTable
-#include "NCAlgebras/SuffixTree.hpp"   // for experimental suffix tree code
-//#include "VectorArithmetic.hpp"        // for VectorArithmetic, CoeffVector, etc
-#include "VectorArithmetic2.hpp"       // for VectorArithmetic, CoeffVector, etc
-#include "Polynomial.hpp"              // for Monom, ConstPolyList, Poly
-//#include "newdelete.hpp"               // for VECTOR, our_new_delete
+#include "NCAlgebras/FreeMonoid.hpp"      // for MonomEq
+#include "MemoryBlock.hpp"                // for MemoryBlock
+#include "NCAlgebras/Range.hpp"           // for Range
+#include "NCAlgebras/Word.hpp"            // for Word
+#include "NCAlgebras/OverlapTable.hpp"    // for OverlapTable
+#include "NCAlgebras/WordTable.hpp"       // for Overlap, WordTable
+#include "NCAlgebras/SuffixTree.hpp"      // for experimental suffix tree code
+//#include "VectorArithmetic.hpp"         // for VectorArithmetic, CoeffVector, etc
+#include "VectorArithmetic2.hpp"          // for VectorArithmetic, CoeffVector, etc
+#include "Polynomial.hpp"                 // for Monom, ConstPolyList, Poly
+#include "newdelete.hpp"                  // for VECTOR, our_new_delete
 
 #include <deque>                       // for deque
 #include <iosfwd>                      // for ostream
@@ -26,9 +26,49 @@
 class FreeAlgebra;
 union ring_elem;
 
+// this class contains an NCGB calculation using the F4 algorithm.
+// subclasses needed:
+//   WordTable/SuffixTree (used for this class and Naive algorithm)
+//   OverlapTable         (used for this class and Naive algorithm)
+//   F4MatrixBuilder
+//   F4Matrix
+
 class NCF4 : public our_new_delete
 {
 private:
+  // Data structures for construction of each spair matrix
+  // and data for the matrix itself.
+
+  // memory space for monomials and words for F4 matrix.
+  // PreRow is left, index of poly, right, prevReducer
+  // where the entries depend on the value of prevReducer.
+  // prevReducer = false: if index \geq 0, then left*mGroebner[index]*right
+  //                      is the lead term of a reducer.
+  //                      if index < 0, then left*mInput[-index-1]*right
+  //                      is the lead term of a reducer.
+  // prevReducer = true : left*mRows[i]*right is the lead term of a reducer
+  // the int at the end is the index of the PreRow in the
+  // corresponding vector it belongs to, which will eventually
+  // be the corresponding row.
+  using PreRow = std::tuple<Word, int, Word, bool,int>;
+
+  // the int keeps track of where to put the row upon completion of the task
+  using PreRowTask = std::pair<PreRow,int>;
+
+  // make this into a std::pair of <CoeffVector,Range<int>>
+  // CoefficientVector knows whether it owns it memory or not but has the similar interaface as a range
+  using Row = std::pair<CoeffVector,
+                        Range<int>>; // components corresponding to monomials appearing
+
+  using Column = std::pair<Monom, int>; // monomial, pivot row for this monomial (if not -1).
+
+  //using ColumnsVector = tbb::concurrent_vector<Column>;
+  using ColumnsVector = std::vector<Column>;
+  using RowsVector = tbb::concurrent_vector<Row>;
+  using PreRowFeeder = tbb::parallel_do_feeder<NCF4::PreRow>;
+  using MonomialHash = tbb::concurrent_unordered_map<Monom, std::pair<int,int>, MonomHash, MonomHashEqual>;
+
+  // data
   const FreeAlgebra& mFreeAlgebra;
   const ConstPolyList mInput;
   
@@ -41,28 +81,6 @@ private:
   int mTopComputedDegree;
   int mHardDegreeLimit;
 
-  // Data structures for construction of each spair matrix
-  // and data for the matrix itself.
-
-  // memory space for monomials and words for F4 matrix.
-  // PreRow is left, index of poly, right, prevReducer
-  // where the entries depend on the value of prevReducer.
-  // prevReducer = false: if index \geq 0, then left*mGroebner[index]*right
-  //                      is the lead term of a reducer.
-  //                      if index < 0, then left*mInput[-index-1]*right
-  //                      is the lead term of a reducer.
-  // prevReducer = true : left*mRows[i]*right is the lead term of a reducer
-  using PreRow = std::tuple<Word, int, Word, bool>;
-
-  // make this into a std::pair of <CoeffVector,Range<int>>
-  // CoefficientVector knows whether it owns it memory or not but has the similar interaface as a range
-  using Row = std::pair<CoeffVector,
-                        Range<int>>; // components corresponding to monomials appearing
-
-  using Column = std::pair<Monom, int>; // monomial, pivot row for this monomial (if not -1).
-
-  //using ColumnsVector = tbb::concurrent_vector<Column>;
-  using ColumnsVector = std::vector<Column>;
 
   MemoryBlock mMonomialSpace;
   MonomEq mMonomEq;
@@ -75,28 +93,24 @@ private:
 
   // TODO(?): we should change this to have keys 'Word's rather than 'Monom's since its unordered.
   // but we would have to update MonomHashEqual a bit
-  std::unordered_map<Monom, std::pair<int,int>, MonomHash, MonomHashEqual> mColumnMonomials;
+  MonomialHash mColumnMonomials;
   std::vector<PreRow> mReducersTodo;
   std::vector<PreRow> mOverlapsTodo;
   // mColumns[c].second is the row which will reduce the c'th monomial (unless it is -1).
   ColumnsVector mColumns;
 
   // these should be std::vectors (or changeable)
-  //VECTOR(Row) mRows;
-  //VECTOR(Row) mOverlaps;
-  std::vector<Row> mRows;
-  std::vector<Row> mOverlaps;
+  RowsVector mRows;
+  RowsVector mOverlaps;
 
   int mFirstOverlap; // First non pivot row row (and all later ones are also non-pivot rows).
 
   // storing previous F4 information
   //VECTOR(Row) mPreviousRows;
-  std::vector<Row> mPreviousRows;
+  //std::vector<Row> mPreviousRows;
+  RowsVector mPreviousRows;
   ColumnsVector mPreviousColumns;
-  std::unordered_map<Monom,
-                     std::pair<int,int>,
-                     MonomHash,
-                     MonomHashEqual> mPreviousColumnMonomials;  
+  MonomialHash mPreviousColumnMonomials;
   MemoryBlock mPreviousMonomialSpace;
 
   // vector arithmetic class for reduction
@@ -160,13 +174,24 @@ private:
   auto insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void;
 
   void reducedRowToPoly(Poly* result,
-                        const std::vector<Row>& rows,
+                        const RowsVector& rows,
                         const ColumnsVector& cols,
                         int i) const;
   PolyList newGBelements() const;  // From current F4 matrix.
 
-  Row processPreRow(PreRow r);
-  void processMonomInPreRow(Monom& m, int* nextcolloc);
+  template<typename MemBlockLockType, typename MatrixLockType>
+  void processPreRow(PreRow r,
+                     MemBlockLockType& memBlockLock,
+                     MatrixLockType& matrixLock,
+                     PreRowFeeder* feeder,
+                     bool isOverlapPreRow);
+  void processPreRow(PreRow r, bool isOverlapPreRow);
+
+  template<typename MatrixLockType>
+  void processMonomInPreRow(Monom& m,
+                            int* nextcolloc,
+                            MatrixLockType& matrixLock,
+                            PreRowFeeder* feeder);
 
   void preRowsFromOverlap(const Overlap& o);
   void parallelPreRowsFromOverlap(const Overlap& o);

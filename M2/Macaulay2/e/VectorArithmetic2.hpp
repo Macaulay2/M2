@@ -16,8 +16,6 @@ union ring_elem;
 using ComponentIndex = int;
 class MemoryBlock;
 
-using namespace std::placeholders;  // for _1, _2, _3 in dispatcher
-
 /*
 class CoeffVector
 {

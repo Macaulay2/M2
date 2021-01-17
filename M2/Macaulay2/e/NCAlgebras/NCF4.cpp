@@ -89,10 +89,14 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
 #endif
   
   // build the F4 matrix
-  // if (mIsParallel)
-  //   parallelBuildF4Matrix(overlapsToProcess);
-  // else
+  tbb::tick_count t0 = tbb::tick_count::now();
+  //if (mIsParallel)
+  //  parallelBuildF4Matrix(overlapsToProcess);
+  //else
     buildF4Matrix(overlapsToProcess);
+  tbb::tick_count t1 = tbb::tick_count::now();
+  if (M2_gbTrace >= 2) 
+    std::cout << "Time spent on build step: " << (t1-t0).seconds() << std::endl;
     
   if (M2_gbTrace >= 2)
     {
@@ -108,12 +112,12 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
 
   // reduce the matrix
-  tbb::tick_count t0 = tbb::tick_count::now();
+  t0 = tbb::tick_count::now();
   if (mIsParallel)
     parallelReduceF4Matrix();
   else
     reduceF4Matrix();
-  tbb::tick_count t1 = tbb::tick_count::now();
+  t1 = tbb::tick_count::now();
   if (M2_gbTrace >= 2) 
     std::cout << "Time spent on reduction step: " << (t1-t0).seconds() << std::endl;
 
@@ -311,7 +315,7 @@ PolyList NCF4::newGBelements() const // From current F4 matrix.
 }
 
 void NCF4::reducedRowToPoly(Poly* result,
-                            const std::vector<Row>& rows,
+                            const RowsVector& rows,
                             const ColumnsVector& cols,
                             int i) const
 {
@@ -384,7 +388,12 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   if (overlapPos < 0)
     {
       // Sneaky trick: a PreRow with index a < 0 refers to generator with index -a-1
-      mOverlapsTodo.emplace_back(PreRow(Word(), - gbLeftIndex - 1, Word(), false));
+      mOverlaps.grow_by(1);
+      mOverlapsTodo.emplace_back(PreRow(Word(),
+                                        - gbLeftIndex - 1,
+                                        Word(),
+                                        false,
+                                        mOverlapsTodo.size()));
       return;
     }
   
@@ -420,13 +429,33 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   // not be sorted in term order.
   if (gbLeftIndex > gbRightIndex)
     {
-      mReducersTodo.emplace_back(PreRow(prefix2, gbRightIndex, suffix2, false));
-      mOverlapsTodo.emplace_back(PreRow(prefix1, gbLeftIndex, suffix1, false));
+      mRows.grow_by(1);
+      mReducersTodo.emplace_back(PreRow(prefix2,
+                                        gbRightIndex,
+                                        suffix2,
+                                        false,
+                                        mReducersTodo.size()));
+      mOverlaps.grow_by(1);
+      mOverlapsTodo.emplace_back(PreRow(prefix1,
+                                        gbLeftIndex,
+                                        suffix1,
+                                        false,
+                                        mOverlapsTodo.size()));
     }
   else
     {  
-      mReducersTodo.emplace_back(PreRow(prefix1, gbLeftIndex, suffix1, false));
-      mOverlapsTodo.emplace_back(PreRow(prefix2, gbRightIndex, suffix2, false));
+      mRows.grow_by(1);
+      mReducersTodo.emplace_back(PreRow(prefix1,
+                                        gbLeftIndex,
+                                        suffix1,
+                                        false,
+                                        mReducersTodo.size()));
+      mOverlaps.grow_by(1);
+      mOverlapsTodo.emplace_back(PreRow(prefix2,
+                                        gbRightIndex,
+                                        suffix2,
+                                        false,
+                                        mOverlapsTodo.size()));
     }
 }
 
@@ -442,19 +471,20 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
 
   // can't do this loop as a range-based for loop since we are adding to it
   // during the for loop
-  // process each element in mReducersTodo
+  // process each element in mReducersTodo (false indicates a reducer row)
   for (int i=0 ; i < mReducersTodo.size(); ++i)
-    mRows.emplace_back(processPreRow(mReducersTodo[i])); // this often adds new elements to mReducersTodo
+    processPreRow(mReducersTodo[i],false); // this often adds new elements to mReducersTodo
   
   int numReducersAtFirst = mReducersTodo.size();
   
+  // process the overlap rows (true indicates an overlap row)
   for (auto over : mOverlapsTodo)
-    mOverlaps.emplace_back(processPreRow(over));  // this often adds new elements to mReducersTodo
+    processPreRow(over,true);  // this often adds new elements to mReducersTodo
 
   // can't do this loop as a range-based for loop since we are adding
   // to mReducersTodo during the for loop
   for (int i=numReducersAtFirst ; i < mReducersTodo.size(); ++i)
-    mRows.emplace_back(processPreRow(mReducersTodo[i])); // this often adds new elements to mReducersTodo
+    processPreRow(mReducersTodo[i],false); // this often adds new elements to mReducersTodo
 
   // Now we move the overlaps into mRows, and set mFirstOverlap.
   // double range, so use a for loop
@@ -469,6 +499,272 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
 void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
 {
   matrixReset();
+
+  for (auto o : overlapsToProcess)
+    {
+      auto stillValid = std::get<3>(o);
+      if (stillValid) preRowsFromOverlap(o);
+    }
+
+  tbb::queuing_mutex memBlockLock;
+  tbb::queuing_mutex matrixLock;
+
+  // can't do this loop as a range-based for loop since we are adding to it
+  // during the for loop
+  // process each element in mReducersTodo
+  tbb::parallel_do(mReducersTodo.begin(), mReducersTodo.end(),
+      [&](const PreRow& prerow, PreRowFeeder& feeder)
+      {
+        processPreRow(prerow,memBlockLock,matrixLock,&feeder,false);
+      });
+
+  // WARNING: The feeder doesn't actually add things to mReducersTodo
+  //          so there is now a disconnect between the sizes of mReducersTodo
+  //          and mRows.
+
+  int numReducersAtFirst = mReducersTodo.size();
+  
+  // this can be a parallel_for
+  for (auto over : mOverlapsTodo)
+    processPreRow(over,true);  // this often adds new elements to mReducersTodo
+
+  // this must be a parallel_do
+  // can't do this loop as a range-based for loop since we are adding
+  // to mReducersTodo during the for loop
+  for (int i=numReducersAtFirst ; i < mReducersTodo.size(); ++i)
+    processPreRow(mReducersTodo[i],false); // this often adds new elements to mReducersTodo
+
+  // Now we move the overlaps into mRows, and set mFirstOverlap.
+  // double range, so use a for loop
+  mFirstOverlap = mRows.size();
+  for (int i=0; i < mOverlapsTodo.size(); ++i)
+    {
+      mRows.emplace_back(mOverlaps[i]);
+      //mReducersTodo.emplace_back(mOverlapsTodo[i]);
+    }
+}
+
+template<typename MemBlockLockType, typename MatrixLockType>
+void NCF4::processPreRow(PreRow r,
+                         MemBlockLockType& memBlockLock,
+                         MatrixLockType& matrixLock,
+                         PreRowFeeder* feeder,
+                         bool isOverlapPreRow)
+{
+  // note: left and right should be the empty word if gbIndex < 0 indicating
+  // an input polynomial.
+  Word left = std::get<0>(r);
+  int gbIndex = std::get<1>(r);
+  Word right = std::get<2>(r);
+  bool prevReducer = std::get<3>(r);
+  int divisorNum = std::get<4>(r);
+
+  if (M2_gbTrace >= 100) 
+    std::cout << "Processing PreRow: ("
+              << left << "," << gbIndex << "," << right << ")"
+              << std::endl;
+
+  // construct the elem corresponding to this prerow
+  // it will either be:
+  //  a multiple of a previously reduced row (if prevReducer)
+  //  an element of the input (if gbIndex < 0 and not prevReducer)
+  //  a multiple of a gb element (if gbIndex >= 0 and not prevReducer)
+  const Poly* elem;
+  if (prevReducer)
+  {
+    // in this case, we construct the poly locally for processing in this
+    // function.  We will destroy it at the end, as the new monomials for reduction
+    // are created and inserted into mMonomialSpace
+    Poly* tempelem = new Poly;
+    reducedRowToPoly(tempelem,mPreviousRows,mPreviousColumns,gbIndex);
+    elem = tempelem;
+  }
+  else
+  {
+    if (gbIndex < 0)
+      elem = mInput[-gbIndex-1];
+    else
+      elem = mGroebner[gbIndex];
+  }
+
+  // loop through all monomials of the product
+  // for each monomial:
+  //  (the below steps are now in processMonomInPreRow)
+  //  is its prefix or suffix the lead term of a row from the previous degree?
+  //    if so: insert the information from this row in the appropriate places
+  //    if not: is the monomial in the hash table?
+  //      if so: return the column index into the component for the new row.
+  //      if not: insert it, and return the new column index into same place
+  //          and place this monomial into mColumns.
+  //          and search for divisor for it.
+  //        
+  int nterms = elem->numTerms();
+
+  auto componentRange = mMonomialSpace.safeAllocateArray<int,MemBlockLockType>(nterms,
+                                                                               memBlockLock);
+  int* nextcolloc = componentRange.first;
+  for (auto i = elem->cbegin(); i != elem->cend(); ++i)
+    {
+      Monom m = freeAlgebra().monoid().wordProductAsMonom<MemBlockLockType>(left,
+                                                                            i.monom(),
+                                                                            right,
+                                                                            mMonomialSpace,
+                                                                            memBlockLock);
+      processMonomInPreRow<MatrixLockType>(m,nextcolloc,matrixLock,feeder);
+      ++nextcolloc;
+    }
+  CoeffVector coeffs = mVectorArithmetic->sparseVectorFromContainer(elem->getCoeffVector());
+
+  // delete the Poly created for prevReducer case, if necessary.
+  if (prevReducer) delete elem;
+
+  // add the processed row to the appropriate list (not correct yet)
+  if (isOverlapPreRow)
+    mOverlaps[divisorNum] = Row(coeffs, componentRange);
+  else
+    mRows[divisorNum] = Row(coeffs, componentRange);
+}
+
+void NCF4::processPreRow(PreRow r, bool isOverlapPreRow)
+{
+  tbb::null_mutex noLock;
+  PreRowFeeder* nullFeeder = nullptr;
+  processPreRow<tbb::null_mutex,tbb::null_mutex>(r,noLock,noLock,nullFeeder,isOverlapPreRow);
+}
+
+template<typename MatrixLockType>
+void NCF4::processMonomInPreRow(Monom& m,
+                                int* nextcolloc,
+                                MatrixLockType& matrixLock,
+                                PreRowFeeder* feeder) 
+{
+  auto it = mColumnMonomials.find(m);
+  if (it == mColumnMonomials.end())
+    { 
+      // we must freeze all access to the containers at this point
+      // to ensure that the sizes used correspond to the correct column
+      // and row numbers
+
+      // Unfortunately this lock is quite onerous, and means we need to
+      // rethink the flow of the algorithm to avoid such a hard lock.
+
+      typename MatrixLockType::scoped_lock myMatrixLock(matrixLock);
+      // make sure the column wasn't created between the search and the lock
+      it = mColumnMonomials.find(m);
+      if (it != mColumnMonomials.end())
+      {
+        *nextcolloc = it->second.first;
+        return;
+      }
+      // if we are here, this monomial is not yet accounted for in the matrix
+      // so, check if the monomial is a multiple of a lead term of a gb element
+      auto divresult = findDivisor(m);
+      int divisornum = -1; // -1 indicates no divisor was found
+      if (divresult.first)
+        {
+          // if m is a divisor of a gb element (or a left/right
+          // variable multiple of a previous reducer), add that
+          // multiple of the GB element to mReducersToDo for
+          // processing
+
+          // get the index where we will place this row eventually
+          divisornum = mRows.size();
+          std::get<4>(divresult.second) = divisornum;
+          mRows.grow_by(1);
+
+          // if feeder is nullptr, then this is a computation on a list
+          // not being added to during the loop.
+          // e.g. either F4 serial or overlaps processing
+          // otherwise, we must use the feeder to add more work.
+          if (feeder == nullptr)
+            mReducersTodo.push_back(divresult.second);
+          else
+            feeder->add(divresult.second);
+        }
+      // insert column information into mColumnMonomials,
+      // which provides us search/indexing of columns
+      int newColumnIndex = mColumnMonomials.size();
+      mColumnMonomials.emplace(m,std::make_pair(newColumnIndex,
+                                                divisornum));
+      *nextcolloc = newColumnIndex;
+    }
+  else
+    {
+      // in this case, the monomial already has an associated column
+      *nextcolloc = it->second.first;
+    }
+}
+
+// this function is meant for debugging only
+// prerows should not be inserted twice
+int NCF4::prerowInReducersTodo(PreRow pr) const
+{
+  int retval = -1;
+  for (int i = 0; i < mReducersTodo.size(); i++)
+    {
+      if (pr == mReducersTodo[i])
+        {
+          retval = i;
+          break;
+        }
+    }
+  return retval;
+}
+
+std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
+{
+  Word newword;
+
+  // look in previous F4 matrix for Monom before checking mWordTable
+
+  auto usePreviousSuffix = findPreviousReducerSuffix(mon);
+  if (usePreviousSuffix.first)
+    {
+      // here, we use a multiple of a previously reduced row
+      Word tmpWord = freeAlgebra().monoid().firstVar(mon);
+      return std::make_pair(true, PreRow(tmpWord,
+                                         usePreviousSuffix.second,
+                                         Word(),
+                                         true));
+    }
+  auto usePreviousPrefix = findPreviousReducerPrefix(mon);
+  if (usePreviousPrefix.first)
+    {
+      // here, we use a multiple of a previously reduced row
+      Word tmpWord = freeAlgebra().monoid().lastVar(mon);
+      return std::make_pair(true, PreRow(Word(),
+                                         usePreviousPrefix.second,
+                                         tmpWord,
+                                         true));
+    }
+
+  // if we are here, then the Monom does not have a prefix/suffix
+  // that was processed previously.
+
+  // look in mWordTable for Monom
+  freeAlgebra().monoid().wordFromMonom(newword, mon);
+  std::pair<int,int> divisorInfo;
+  
+  // TODO: for certain inputs (e.g. Monoms that we *know* are of
+  //       the form xm or mx for m a standard monomial and x a
+  //       variable, one needs only to check prefixes or
+  //       suffixes, not all subwords.  Not sure how to utilize that
+  //       just yet.
+
+  bool found = mWordTable.subword(newword, divisorInfo);
+  
+  // if newword = x^a x^b x^c, with x^b in the word table, then:
+  //  divisorInfo.first = index of the GB element with x^b as lead monomial.
+  //  divisorInfo.second = position of the start of x^b in newword
+  //   (that is, the length of x^a).
+  if (not found)
+    return std::make_pair(false, PreRow(Word(), 0, Word(), false));
+  // if found, then return this information to caller
+  Word prefix = Word(newword.begin(), newword.begin() + divisorInfo.second);
+  Word divisorWord = mWordTable[divisorInfo.first];
+  Word suffix = Word(newword.begin() + divisorInfo.second + divisorWord.size(),
+                     newword.end());
+  return std::make_pair(true, PreRow(prefix, divisorInfo.first, suffix, false));
 }
 
 std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m)
@@ -542,188 +838,6 @@ std::pair<bool,int> NCF4::findPreviousReducerSuffix(const Monom& m)
   return retval;
 }
 
-void NCF4::processMonomInPreRow(Monom& m, int* nextcolloc) 
-{
-  auto it = mColumnMonomials.find(m);
-  if (it == mColumnMonomials.end())
-    { 
-      // if we are here, this monomial is not yet accounted for in the matrix
-      // so, check if the monomial is a multiple of a lead term of a gb element
-      auto divresult = findDivisor(m);
-      int divisornum = -1; // -1 indicates no divisor was found
-      if (divresult.first)
-        {
-          // if it is a divisor of a gb element (or a left/right
-          // variable multiple of a previous reducer), add that
-          // multiple of the GB element to mReducersToDo for
-          // processing
-          divisornum = mReducersTodo.size();
-          mReducersTodo.push_back(divresult.second);
-        }
-      // insert column information into mColumnMonomials,
-      // which provides us search/indexing of columns
-      int newColumnIndex = mColumnMonomials.size();
-      mColumnMonomials.emplace(m, std::make_pair(newColumnIndex, divisornum));
-      *nextcolloc = newColumnIndex;
-    }
-  else
-    {
-      // in this case, the monomial already has an associated column
-      *nextcolloc = (*it).second.first;
-    }
-}
-
-NCF4::Row NCF4::processPreRow(PreRow r)
-{
-  // note: left and right should be the empty word if gbIndex < 0 indicating
-  // an input polynomial.
-  Word left = std::get<0>(r);
-  int gbIndex = std::get<1>(r);
-  Word right = std::get<2>(r);
-  bool prevReducer = std::get<3>(r);
-
-  if (M2_gbTrace >= 100) 
-    std::cout << "Processing PreRow: ("
-              << left << "," << gbIndex << "," << right << ")"
-              << std::endl;
-
-  // construct the elem corresponding to this prerow
-  // it will either be:
-  //  a multiple of a previously reduced row (if prevReducer)
-  //  an element of the input (if gbIndex < 0 and not prevReducer)
-  //  a multiple of a gb element (if gbIndex >= 0 and not prevReducer)
-  const Poly* elem;
-  if (prevReducer)
-  {
-    // in this case, we construct the poly locally for processing in this
-    // function.  We will destroy it at the end, as the new monomials for reduction
-    // are created and inserted into mMonomialSpace
-    Poly* tempelem = new Poly;
-    reducedRowToPoly(tempelem,mPreviousRows,mPreviousColumns,gbIndex);
-    elem = tempelem;
-  }
-  else
-  {
-    if (gbIndex < 0)
-      elem = mInput[-gbIndex-1];
-    else
-      elem = mGroebner[gbIndex];
-  }
-
-  // loop through all monomials of the product
-  // for each monomial:
-  //  (the below steps are now in processMonomInPreRow)
-  //  is its prefix or suffix the lead term of a row from the previous degree?
-  //    if so: insert the information from this row in the appropriate places
-  //    if not: is the monomial in the hash table?
-  //      if so: return the column index into the component for the new row.
-  //      if not: insert it, and return the new column index into same place
-  //          and place this monomial into mColumns.
-  //          and search for divisor for it.
-  //        
-  int nterms = elem->numTerms();
-  auto componentRange = mMonomialSpace.allocateArray<int>(nterms);
-  int* nextcolloc = componentRange.first;
-  for (auto i = elem->cbegin(); i != elem->cend(); ++i)
-    {
-      Monom m = freeAlgebra().monoid().wordProductAsMonom(left,i.monom(),right,mMonomialSpace);
-      processMonomInPreRow(m,nextcolloc);
-      nextcolloc++;
-    }
-  CoeffVector coeffs = mVectorArithmetic->sparseVectorFromContainer(elem->getCoeffVector());
-
-  // delete the Poly created for prevReducer case, if necessary.
-  if (prevReducer) delete elem;
-
-  return(Row(coeffs, componentRange));
-}
-
-// this function is meant for debugging only
-// prerows should not be inserted twice
-int NCF4::prerowInReducersTodo(PreRow pr) const
-{
-  int retval = -1;
-  for (int i = 0; i < mReducersTodo.size(); i++)
-    {
-      if (pr == mReducersTodo[i])
-        {
-          retval = i;
-          break;
-        }
-    }
-  return retval;
-}
-
-static long findDivisorCalls = 0;
-static long previousPrefixesFound = 0;
-static long previousSuffixesFound = 0;
-
-std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
-{
-  // this function is thread-safe (except possibly the debugging
-  // information just after this comment)
-  Word newword;
-
-  findDivisorCalls++;
-  if (M2_gbTrace >= 5 && findDivisorCalls % 100000 == 0)
-     std::cout << "Total findDivisorCalls      : " << findDivisorCalls << std::endl
-               << "  Previous prefixes found   : " << previousPrefixesFound << std::endl
-               << "  Previous suffixes found   : " << previousSuffixesFound << std::endl       
-               << "  Elements in Previous Rows : " << mPreviousRows.size() << std::endl; 
-  // look in previous F4 matrix for Monom before checking mWordTable
-
-  auto usePreviousSuffix = findPreviousReducerSuffix(mon);
-  if (usePreviousSuffix.first)
-    {
-      // here, we use a multiple of a previously reduced row
-      previousSuffixesFound++;
-      Word tmpWord = freeAlgebra().monoid().firstVar(mon);
-      return std::make_pair(true, PreRow(tmpWord,
-                                         usePreviousSuffix.second,
-                                         Word(),
-                                         true));
-    }
-  auto usePreviousPrefix = findPreviousReducerPrefix(mon);
-  if (usePreviousPrefix.first)
-    {
-      // here, we use a multiple of a previously reduced row
-      previousPrefixesFound++;
-      Word tmpWord = freeAlgebra().monoid().lastVar(mon);
-      return std::make_pair(true, PreRow(Word(),
-                                         usePreviousPrefix.second,
-                                         tmpWord,
-                                         true));
-    }
-
-  // if we are here, then the Monom does not have a prefix/suffix
-  // that was processed previously.
-
-  // look in mWordTable for Monom
-  freeAlgebra().monoid().wordFromMonom(newword, mon);
-  std::pair<int,int> divisorInfo;
-  
-  // TODO: for certain inputs (e.g. Monoms that we *know* are of
-  //       the form xm or mx for m a standard monomial and x a
-  //       variable, one needs only to check prefixes or
-  //       suffixes, not all subwords.  Not sure how to utilize that
-  //       just yet.
-
-  bool found = mWordTable.subword(newword, divisorInfo);
-  
-  // if newword = x^a x^b x^c, with x^b in the word table, then:
-  //  divisorInfo.first = index of the GB element with x^b as lead monomial.
-  //  divisorInfo.second = position of the start of x^b in newword
-  //   (that is, the length of x^a).
-  if (not found)
-    return std::make_pair(false, PreRow(Word(), 0, Word(), false));
-  // if found, then return this information to caller
-  Word prefix = Word(newword.begin(), newword.begin() + divisorInfo.second);
-  Word divisorWord = mWordTable[divisorInfo.first];
-  Word suffix = Word(newword.begin() + divisorInfo.second + divisorWord.size(),
-                     newword.end());
-  return std::make_pair(true, PreRow(prefix, divisorInfo.first, suffix, false));
-}
-
 // Besides sorting the columns (using 'perm'), this also sets the
 // pivot rows of each column index (in the new sorted order).
 void NCF4::sortF4Matrix()
@@ -795,7 +909,9 @@ void NCF4::generalReduceF4Row(int index,
 
   int last = mRows[index].second[sz-1];
 
-  mVectorArithmetic->sparseRowToDenseRow(dense, mRows[index].first, mRows[index].second);
+  mVectorArithmetic->sparseRowToDenseRow(dense,
+                                         mRows[index].first,
+                                         mRows[index].second);
   do {
     int pivotrow = mColumns[first].second;
     if (pivotrow >= 0)
@@ -898,8 +1014,6 @@ void NCF4::reduceF4Matrix()
 
   auto denseVector = mVectorArithmetic->allocateDenseCoeffVector(mColumnMonomials.size());
 
-  tbb::null_mutex noLock;
-
   // reduce each overlap row by mRows.
   for (int i = mFirstOverlap; i < mRows.size(); ++i)
     reduceF4Row(i,
@@ -930,6 +1044,14 @@ void NCF4::displayF4MatrixSize(std::ostream & o) const
   long numReducerEntries = 0;
   long numSPairEntries = 0;
  
+  // if (mRows.size() != mReducersTodo.size())
+  //   {
+  //     o << std::endl;
+  //     o << "***ERROR*** expected mRows and mReducersTodo to have the same length!" << std::endl;
+  //     o << "        mRows size: " << mRows.size() << std::endl;
+  //     o << "mReducersTodo size: " << mReducersTodo.size() << std::endl;
+  //     exit(1);
+  //   }
   for (long i = 0; i < mRows.size(); ++i)
   {
     if (i < mFirstOverlap) 
@@ -949,28 +1071,46 @@ void NCF4::displayF4Matrix(std::ostream& o) const
   // Now column monomials
   for (auto i : mColumnMonomials)
     {
+      // each i is a pair (const Monom, pair(int,int)).
       buffer b;
       freeAlgebra().monoid().elem_text_out(b, i.first);
       o << b.str() << "(" << i.second.first << ", " << i.second.second << ") ";
-      // each i is a pair (const Monom, pair(int,int)).
+      if (i.second.second != -1 and
+          (mRows[i.second.second].second.begin() == nullptr or
+           mRows[i.second.second].second[0] != i.second.first))
+      {
+        std::cout << "Oops (" << mRows[i.second.second].second.begin()
+                  << "," << mRows[i.second.second].second[0] << ","
+                  << i.second.first << ")";
+      }
     }
   o << std::endl;
   
   // For each row, and each overlap row, display the non-zero comps, non-zero coeffs.
-  if (mRows.size() != mReducersTodo.size())
-    {
-      o << "***ERROR*** expected mRows and mReducersTodo to have the same length!" << std::endl;
-      exit(1);
-    }
+  // if (mRows.size() != mReducersTodo.size())
+  //   {
+  //     o << std::endl;
+  //     o << "***ERROR*** expected mRows and mReducersTodo to have the same length!" << std::endl;
+  //     o << "        mRows size: " << mRows.size() << std::endl;
+  //     o << "mReducersTodo size: " << mReducersTodo.size() << std::endl;
+  //     exit(1);
+  //   }
   const Ring* kk = freeAlgebra().coefficientRing();
   for (int count = 0; count < mRows.size(); ++count)
     {
-      PreRow pr = mReducersTodo[count];
-      o << count << " ("<< std::get<0>(pr) << ", "
-        << std::get<1>(pr) << ", "
-        << std::get<2>(pr) << ", "
-        << std::get<3>(pr) << ") "
-        << mRows[count].second.size() << ": ";
+      // PreRow pr = mReducersTodo[count];
+      // o << count << " ("<< std::get<0>(pr) << ", "
+      //   << std::get<1>(pr) << ", "
+      //   << std::get<2>(pr) << ", "
+      //   << std::get<3>(pr) << ") "
+      if (mRows[count].second.begin() == nullptr)
+      {
+        o << "Row " << count
+          << " is empty.  This may indicate an error depending on the current state."
+          << std::endl;
+        continue;
+      }
+      o << "Row " << count << ";" << mRows[count].second.size() << ": ";
       if (mVectorArithmetic->size(mRows[count].first) != mRows[count].second.size())
         {
           o << "***ERROR*** expected coefficient array and components array to have the same length" << std::endl;

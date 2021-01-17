@@ -909,6 +909,13 @@ T = fourDimSklyanin(QQ,{x,y,z,w},DegreeLimit => 4)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w},DegreeLimit => 4)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w})
 
+Row 30;3: [9,1] [30,3] [42,4] 
+Row 31;3: [10,1] [31,3] [43,4] 
+Row 32;3: [11,1] [32,3] [44,4] 
+Row 33;3: [0,1] [5,3] [8,4] 
+Row 34;3: [2,1] [3,-4571] [7,4572] 
+Row 35;3: [1,1] [4,-3429] [6,-3430] 
+
 -- XXX
 restart
 needsPackage "AssociativeAlgebras"
@@ -917,7 +924,14 @@ kk = QQ
 kk = ZZ/32003
 R = kk{x,y,z,w}
 I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
+-- Should be 10 gens, 108 rows in last matrix, 35, 61 new gb elts
+I = ideal I_*; elapsedTime Igb = NCGB(I, 6, Strategy=> "F4");
+while (true) do (
+    I = ideal I_*; elapsedTime Igb = NCGB(I, 6, Strategy=> "F4Parallel");
+    assert(#(flatten entries Igb) == 18)
+)
 
+gbTrace = 50; I = ideal I_*; elapsedTime Igb = NCGB(I, 3, Strategy=> "F4Parallel");
 I = ideal I_*; elapsedTime Igb2 = NCGB(I, 6, Strategy => "Naive"); -- (with autoreduction) 5.2 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 11, Strategy => "Naive"); -- (with autoreduction) 19.9 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "Naive"); -- (with autoreduction) 101 sec
@@ -925,11 +939,7 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "Naive"); -- (with auto
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"F4");    -- 2220 seconds, I think? (now 380 sec on FMs machine)
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy=>"Naive"); -- 
 
-while (true) do (
-    I = ideal I_*; elapsedTime Igb = NCGB(I, 6);
-    assert(#(flatten entries Igb) == 18)
-)
-I = ideal I_*; elapsedTime Igb = NCGB(I, 6); -- (with autoreduction) .9 sec
+gbTrace = 50; I = ideal I_*; elapsedTime Igb = NCGB(I, 4, Strategy=> "F4Parallel"); -- (with autoreduction) .9 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 11); -- (with autoreduction) 3.5 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12); -- (with autoreduction) 17.7 sec                 --- 8 secs
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "F4"); 
@@ -949,7 +959,7 @@ time Igb = NCGB(I, 10, Strategy=>"Naive");
 S = R/I;
 #(flatten entries ncBasis(12,S)) == binomial(12+3,3)
 flatten entries Igb / degree
-all(16, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
+all(13, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
 apply(11, i -> #(flatten entries ncBasis(i, S)))
 
 getMons = f -> terms f / leadMonomial

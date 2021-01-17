@@ -12,6 +12,7 @@ private:
   T* mFirst;
   T* mLast;
 public:
+  Range() : mFirst(nullptr), mLast(nullptr) {}
   Range(T* first, T* last) : mFirst(first), mLast(last) {}
   Range(std::pair<T*, T*> a) : mFirst(a.first), mLast(a.second) {}
   
