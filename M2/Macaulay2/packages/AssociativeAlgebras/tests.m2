@@ -1295,15 +1295,16 @@ DEVELOPMENT ///
     ideal{p,q,r}
     )
   runIdeal = (I, deg, strategy) -> (
+    << "---- strategy: " << strategy << " deg: " << deg << "---------------" << endl;
     I = ideal I_*;
     elapsedTime Igb = NCGB(I,deg,Strategy=>strategy);
+    if numcols Igb == 0 then (<< "***error*** obtained zero gb generators..." << endl; return Igb;);
     B = A/I; 
-    if deg <= 16 then (
-      if not all(deg+1, i -> #(flatten entries ncBasis(i, B)) == binomial(i + 2,2)) then (
-          print ("***ERROR***",
-                 apply(deg+1, i -> #(flatten entries ncBasis(i, B))),
-                 apply(deg+1, i -> binomial(i+2,2))
-          )));
+    vals := apply(deg+1, i -> numcols ncBasis(i, B));
+    ans := apply(deg+1, i -> binomial(i+2,2));
+    if vals != ans then (
+        << "***ERROR*** expected: " << ans << " but got " << vals << endl;
+        );
     Igb
     )
   runGBs = (I) -> (
@@ -1323,23 +1324,25 @@ DEVELOPMENT ///
       runIdeal(I, 20, "F4");
       runIdeal(I, 20, "F4Parallel");
       )
+
+  runGBs(I = createIdeal (ZZ/32003)) -- OK
+
   runGBs(I = createIdeal GF(27)) -- OK
 
   I = createIdeal GF(3^10) -- FlintBig
-  runGBs I -- crashes on runIdeal(I, 20, "Naive")
-  runIdeal(I, 20, "Naive") -- CRASH
+  runGBs I -- sometimes gives wrong number in Naive, different wrong numbers.
 
   I = createIdeal GF(7^5) -- FlintBig
-  runGBs I -- OK
-  runIdeal(I, 14, "Naive"); -- WRONG
-  runIdeal(I, 16, "Naive"); -- WRONG
-  runIdeal(I, 20, "Naive"); -- CRASH
-  
-  I = createIdeal GF(27, Strategy => "Givaro")
+  runGBs I -- Naive gives wrong number of generators sometimes
+
+  I = createIdeal GF(3^10, SizeLimit => 60000) -- FlintZech
   runGBs I -- OK
 
-  I = createIdeal GF(27, Strategy => "New")
-  runGBs I -- F4, F4Parallel: seem to have 0 GB's. Naive seems ok.
+  I = createIdeal GF(7^5, SizeLimit => 60000) -- FlintZech
+  runGBs I -- OK
+
+  I = createIdeal GF(27, Strategy => "Givaro") -- OK
+  runGBs I -- OK
 
   I = createIdeal ZZp(32003,Strategy=>"Ffpack")
   runGBs I -- OK
@@ -1347,13 +1350,49 @@ DEVELOPMENT ///
   I = createIdeal ZZp(32003,Strategy=>"Aring")
   runGBs I -- OK
 
+  I = createIdeal GF(27, Strategy => "New")
+  runGBs I -- OK
+
+  I = createIdeal GF(7^5, Strategy => "New", SizeLimit => 60000)
+  runGBs I -- OK
+
+  kk = ZZ/34359738421 -- 2^35 + 53
+  runGBs(I = createIdeal kk) -- OK
+
+  kk = ZZ/4611686018427388039 -- 2^62 + 135
+  runGBs(I = createIdeal kk) -- OK
+
+  kk = ZZ/9223372036854775837 -- 2^63 + 29
+  runGBs(I = createIdeal kk) -- OK
+
+  kk = ZZ/18446744073709551521 -- 2^64 - 95
+  runGBs(I = createIdeal kk) -- OK
+
+  kk = ZZ/18446744073709551557 -- 2^64 - 59 -- largest prime less than 2^64.
+  runGBs(I = createIdeal kk) -- OK
+  
+  -- What about ffpack integers?  How well do they work?
+  kk = ZZp(32749, Strategy => "Ffpack") -- largest prime with ffpack.
+  elapsedTime runGBs(I = createIdeal kk) -- OK  
+
+  kk = ZZp(32749, Strategy => "Aring")
+  elapsedTime runGBs(I = createIdeal kk) -- OK  
+
+  kk = ZZp(32749, Strategy => "Flint")
+  elapsedTime runGBs(I = createIdeal kk) -- OK  
+
   I = createIdeal QQ
     runIdeal(I, 10, "Naive"); -- CRASH
-    runIdeal(I, 10, "F4"); -- 33 gens
-    runIdeal(I, 10, "F4Parallel"); -- 33 gens
+    runIdeal(I, 10, "F4"); -- 33 gens -- OK
+    runIdeal(I, 10, "F4Parallel"); -- 33 gens OK
     runIdeal(I, 12, "Naive"); -- CRASH
     runIdeal(I, 14, "F4"); -- hmmm, very long...! 87 sec! Mikes MBP
     runIdeal(I, 14, "F4Parallel"); -- 19.83 sec Mikes MBP
+    
+  kk = GF(27, Strategy => "New")    
+  S = kk[x,y,z]
+  I = ideal random(S^1, S^{-2,-2,-2})
+  gens gb I
 ///
 
 DEVELOPMENT ///
@@ -1398,4 +1437,21 @@ I = ideal I_*; Igb = NCGB(I, 10, Strategy=>"F4")
 I = ideal I_*; Igb = NCGB(I, 10, Strategy=>"F4Parallel")
 B = A/I
 ncHilbertSeries(B, Order => 15)
+
+kk = GF(7^5) -- FlintBig
+kk = GF(27, Strategy => "New")
+kk = ZZ/101; a = 4
+
+restart
+needsPackage "AssociativeAlgebras"
+kk = GF(27, Strategy => "New")
+A = kk{x,y,z}
+p = a*y*z + z*y - 2*x^2
+q = a*z*x + x*z - 2*y^2
+r = a*x*y + y*x - 2*z^2
+I = ideal{p,q,r}
+elapsedTime Igb = NCGB(I, 15, Strategy=>"F4Parallel");
+
+
+
 ///

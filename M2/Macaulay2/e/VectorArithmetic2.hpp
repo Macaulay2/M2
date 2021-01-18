@@ -272,10 +272,9 @@ public:
   {
     CoeffVector sparse = allocateCoeffVector(c.size());
     auto& svec = * coeffVector(sparse);
-    for (int i = 0; i < c.size(); ++i)
+    for (auto i = 0; i < c.size(); ++i)
       {
-	mRing->init(svec[i]);
-	mRing->from_ring_elem(svec[i],c[i]);
+	mRing->from_ring_elem(svec[i], c[i]);
       }
     return sparse;
   }
@@ -289,6 +288,26 @@ public:
     return tmp;
   }
 
+  std::ostream& displayVector(std::ostream& o, const CoeffVector& v) const
+  {
+    auto& svec = * coeffVector(v);
+
+    bool first = true;
+    o << "[(" << svec.size() << ")";
+    for (const auto& a : svec)
+      {
+        buffer b;
+        mRing->elem_text_out(b, a, true, true, true);
+        if (first)
+          first = false;
+        else
+          o << ",";
+        o << b.str();
+      }
+    o << "]" << std::endl;
+    return o;
+  }
+  
 };
 
 // this is the dispatching class using std::variant
@@ -351,6 +370,7 @@ public:
       default:
         // dummy ring type for default
 	// throw an error here...
+        std::cerr << "*** error! *** ring ID not found....!" << std::endl;
         mConcreteVector = new ConcreteVectorArithmetic2<M2::DummyRing>();
       }
   }
@@ -453,6 +473,11 @@ public:
   ring_elem ringElemFromSparseVector(const CoeffVector& coeffs,
                                      int index) const {
     return std::visit([&](auto& arg) -> ring_elem { return arg->ringElemFromSparseVector(coeffs,index); }, mConcreteVector);
+  }
+
+  std::ostream& displayVector(std::ostream& o, const CoeffVector& v) const
+  {
+    return std::visit([&](auto& arg) -> std::ostream& { return arg->displayVector(o, v); }, mConcreteVector);
   }
 };
 
