@@ -23,6 +23,9 @@
 
 #include <tbb/tbb.h>                        // for tbb
 
+//#define TBB_PREVIEW_MEMORY_POOL 1
+//#include <tbb/memory_pool.h>                // for memory_pool (preview)
+
 class FreeAlgebra;
 union ring_elem;
 
@@ -50,10 +53,7 @@ private:
   // the int at the end is the index of the PreRow in the
   // corresponding vector it belongs to, which will eventually
   // be the corresponding row.
-  using PreRow = std::tuple<Word, int, Word, bool,int>;
-
-  // the int keeps track of where to put the row upon completion of the task
-  using PreRowTask = std::pair<PreRow,int>;
+  using PreRow = std::tuple<Word, int, Word, bool>;
 
   // make this into a std::pair of <CoeffVector,Range<int>>
   // CoefficientVector knows whether it owns it memory or not but has the similar interaface as a range
@@ -64,8 +64,9 @@ private:
 
   //using ColumnsVector = tbb::concurrent_vector<Column>;
   using ColumnsVector = std::vector<Column>;
-  using RowsVector = tbb::concurrent_vector<Row>;
+  using RowsVector = std::vector<Row>;
   using PreRowFeeder = tbb::parallel_do_feeder<NCF4::PreRow>;
+  // I think at this point this also doesn't have to be concurrent...
   using MonomialHash = tbb::concurrent_unordered_map<Monom, std::pair<int,int>, MonomHash, MonomHashEqual>;
 
   // data
@@ -118,6 +119,10 @@ private:
   const VectorArithmetic2 *mVectorArithmetic;
 
   bool mIsParallel;
+ 
+  // these are pointers to the MemoryBlocks used in creating the various structures.
+  std::vector<MemoryBlock*> mMemoryBlocks;
+  std::vector<MemoryBlock*> mPreviousMemoryBlocks;
 
 public:
   NCF4(const FreeAlgebra& A,
@@ -179,18 +184,18 @@ private:
                         int i) const;
   PolyList newGBelements() const;  // From current F4 matrix.
 
-  template<typename MemBlockLockType, typename MatrixLockType>
+  template<typename ColumnLockType>
   void processPreRow(PreRow r,
-                     MemBlockLockType& memBlockLock,
-                     MatrixLockType& matrixLock,
-                     PreRowFeeder* feeder,
-                     bool isOverlapPreRow);
-  void processPreRow(PreRow r, bool isOverlapPreRow);
+                     RowsVector& rowsVector,
+                     MemoryBlock& memoryBlock,
+                     ColumnLockType& columnLock,
+                     PreRowFeeder* feeder);
+  void processPreRow(PreRow r, RowsVector& rowsVector);
 
-  template<typename MatrixLockType>
+  template<typename ColumnLockType>
   void processMonomInPreRow(Monom& m,
                             int* nextcolloc,
-                            MatrixLockType& matrixLock,
+                            ColumnLockType& matrixLock,
                             PreRowFeeder* feeder);
 
   void preRowsFromOverlap(const Overlap& o);

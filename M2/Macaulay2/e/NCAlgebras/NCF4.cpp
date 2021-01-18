@@ -171,9 +171,15 @@ void NCF4::processPreviousF4Matrix()
   mPreviousColumns.clear();
   mPreviousColumnMonomials.clear();
   mPreviousMonomialSpace.deallocateAll();
+
+  for (auto p : mPreviousMemoryBlocks)
+    p->deallocateAll();
+  mPreviousMemoryBlocks.clear();
+
   mPreviousRows = std::move(mRows);
   mPreviousColumns = std::move(mColumns); 
   mPreviousColumnMonomials = std::move(mColumnMonomials);
+  mPreviousMemoryBlocks = std::move(mMemoryBlocks);
   // need to move mMonomialSpace to a holding area since all the monomials
   // and int arrays in mPrevious data types are allocated there.
   mPreviousMonomialSpace.swap(mMonomialSpace);
@@ -371,7 +377,11 @@ void NCF4::matrixReset()
   mRows.clear();
   mOverlaps.clear();
   mFirstOverlap = 0;
-  mMonomialSpace.deallocateAll(); 
+  mMonomialSpace.deallocateAll();
+
+  // the MemoryBlock objects that were in this vector
+  // have been passed to mPreviousMemoryBlocks at this point.
+  mMemoryBlocks.clear();
 }
 
 void NCF4::preRowsFromOverlap(const Overlap& o)
@@ -388,12 +398,10 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   if (overlapPos < 0)
     {
       // Sneaky trick: a PreRow with index a < 0 refers to generator with index -a-1
-      mOverlaps.grow_by(1);
       mOverlapsTodo.emplace_back(PreRow(Word(),
                                         - gbLeftIndex - 1,
                                         Word(),
-                                        false,
-                                        mOverlapsTodo.size()));
+                                        false));
       return;
     }
   
@@ -429,33 +437,25 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   // not be sorted in term order.
   if (gbLeftIndex > gbRightIndex)
     {
-      mRows.grow_by(1);
       mReducersTodo.emplace_back(PreRow(prefix2,
                                         gbRightIndex,
                                         suffix2,
-                                        false,
-                                        mReducersTodo.size()));
-      mOverlaps.grow_by(1);
+                                        false));
       mOverlapsTodo.emplace_back(PreRow(prefix1,
                                         gbLeftIndex,
                                         suffix1,
-                                        false,
-                                        mOverlapsTodo.size()));
+                                        false));
     }
   else
     {  
-      mRows.grow_by(1);
       mReducersTodo.emplace_back(PreRow(prefix1,
                                         gbLeftIndex,
                                         suffix1,
-                                        false,
-                                        mReducersTodo.size()));
-      mOverlaps.grow_by(1);
+                                        false));
       mOverlapsTodo.emplace_back(PreRow(prefix2,
                                         gbRightIndex,
                                         suffix2,
-                                        false,
-                                        mOverlapsTodo.size()));
+                                        false));
     }
 }
 
@@ -473,18 +473,18 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   // during the for loop
   // process each element in mReducersTodo (false indicates a reducer row)
   for (int i=0 ; i < mReducersTodo.size(); ++i)
-    processPreRow(mReducersTodo[i],false); // this often adds new elements to mReducersTodo
+    processPreRow(mReducersTodo[i],mRows); // this often adds new elements to mReducersTodo
   
   int numReducersAtFirst = mReducersTodo.size();
   
   // process the overlap rows (true indicates an overlap row)
   for (auto over : mOverlapsTodo)
-    processPreRow(over,true);  // this often adds new elements to mReducersTodo
+    processPreRow(over,mOverlaps);  // this often adds new elements to mReducersTodo
 
   // can't do this loop as a range-based for loop since we are adding
   // to mReducersTodo during the for loop
   for (int i=numReducersAtFirst ; i < mReducersTodo.size(); ++i)
-    processPreRow(mReducersTodo[i],false); // this often adds new elements to mReducersTodo
+    processPreRow(mReducersTodo[i],mRows); // this often adds new elements to mReducersTodo
 
   // Now we move the overlaps into mRows, and set mFirstOverlap.
   // double range, so use a for loop
@@ -494,6 +494,15 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
       mRows.emplace_back(mOverlaps[i]);
       mReducersTodo.emplace_back(mOverlapsTodo[i]);
     }
+
+  // find which rows are the reducers
+  std::vector<int> rowLeadTerms(mColumnMonomials.size(), -1);
+  for (int i = 0; i < mFirstOverlap; ++i)
+    rowLeadTerms[mRows[i].second[0]] = i;
+
+  // set the reducer rows accordingly
+  for (auto& i : mColumnMonomials)
+    i.second.second = rowLeadTerms[i.second.first];
 }
 
 void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
@@ -506,8 +515,21 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
       if (stillValid) preRowsFromOverlap(o);
     }
 
-  tbb::queuing_mutex memBlockLock;
-  tbb::queuing_mutex matrixLock;
+  tbb::queuing_mutex columnLock;
+
+  struct ThreadData {
+    RowsVector rowsVector;
+    MemoryBlock* memoryBlock;
+  };
+
+  tbb::enumerable_thread_specific<ThreadData> threadData([&](){  
+      // We need to grab a lock since monoid isn't internally synchronized.
+      tbb::queuing_mutex::scoped_lock myColumnLock(columnLock);
+      ThreadData data;
+      data.memoryBlock = new MemoryBlock;
+      mMemoryBlocks.push_back(data.memoryBlock);
+      return data;
+    });
 
   // can't do this loop as a range-based for loop since we are adding to it
   // during the for loop
@@ -515,8 +537,15 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   tbb::parallel_do(mReducersTodo.begin(), mReducersTodo.end(),
       [&](const PreRow& prerow, PreRowFeeder& feeder)
       {
-        processPreRow(prerow,memBlockLock,matrixLock,&feeder,false);
+        auto& data = threadData.local();
+        processPreRow(prerow,data.rowsVector,*data.memoryBlock,columnLock,&feeder);
       });
+
+  // combine the thread local rows into mRows
+  // could make this a std::move, but for now just see about a copy
+  // we also have to consolidate the memory from the thread local memory blocks
+  for (const auto& data : threadData)
+    mRows.insert(mRows.end(),data.rowsVector.begin(),data.rowsVector.end());
 
   // WARNING: The feeder doesn't actually add things to mReducersTodo
   //          so there is now a disconnect between the sizes of mReducersTodo
@@ -526,13 +555,13 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   
   // this can be a parallel_for
   for (auto over : mOverlapsTodo)
-    processPreRow(over,true);  // this often adds new elements to mReducersTodo
+    processPreRow(over,mOverlaps);  // this often adds new elements to mReducersTodo
 
   // this must be a parallel_do
   // can't do this loop as a range-based for loop since we are adding
   // to mReducersTodo during the for loop
   for (int i=numReducersAtFirst ; i < mReducersTodo.size(); ++i)
-    processPreRow(mReducersTodo[i],false); // this often adds new elements to mReducersTodo
+    processPreRow(mReducersTodo[i],mRows); // this often adds new elements to mReducersTodo
 
   // Now we move the overlaps into mRows, and set mFirstOverlap.
   // double range, so use a for loop
@@ -540,16 +569,25 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   for (int i=0; i < mOverlapsTodo.size(); ++i)
     {
       mRows.emplace_back(mOverlaps[i]);
-      //mReducersTodo.emplace_back(mOverlapsTodo[i]);
+      mReducersTodo.emplace_back(mOverlapsTodo[i]);
     }
+
+  // find which rows are the reducers
+  std::vector<int> rowLeadTerms(mColumnMonomials.size(), -1);
+  for (int i = 0; i < mFirstOverlap; ++i)
+    rowLeadTerms[mRows[i].second[0]] = i;
+
+  // set the reducer rows accordingly
+  for (auto& i : mColumnMonomials)
+    i.second.second = rowLeadTerms[i.second.first];
 }
 
-template<typename MemBlockLockType, typename MatrixLockType>
+template<typename ColumnLockType>
 void NCF4::processPreRow(PreRow r,
-                         MemBlockLockType& memBlockLock,
-                         MatrixLockType& matrixLock,
-                         PreRowFeeder* feeder,
-                         bool isOverlapPreRow)
+                         RowsVector& rowsVector,
+                         MemoryBlock& memoryBlock,
+                         ColumnLockType& columnLock,
+                         PreRowFeeder* feeder)
 {
   // note: left and right should be the empty word if gbIndex < 0 indicating
   // an input polynomial.
@@ -557,8 +595,7 @@ void NCF4::processPreRow(PreRow r,
   int gbIndex = std::get<1>(r);
   Word right = std::get<2>(r);
   bool prevReducer = std::get<3>(r);
-  int divisorNum = std::get<4>(r);
-
+  
   if (M2_gbTrace >= 100) 
     std::cout << "Processing PreRow: ("
               << left << "," << gbIndex << "," << right << ")"
@@ -600,99 +637,95 @@ void NCF4::processPreRow(PreRow r,
   //        
   int nterms = elem->numTerms();
 
-  auto componentRange = mMonomialSpace.safeAllocateArray<int,MemBlockLockType>(nterms,
-                                                                               memBlockLock);
+  auto componentRange = memoryBlock.allocateArray<int>(nterms);
+  // int* componentAlloc = (int*)mMemoryPool.malloc(nterms*sizeof(int));
+  // Range<int> componentRange(componentAlloc,componentAlloc + nterms);
+  // for (auto& i : componentRange) i = 0;
+
   int* nextcolloc = componentRange.first;
+
   for (auto i = elem->cbegin(); i != elem->cend(); ++i)
-    {
-      Monom m = freeAlgebra().monoid().wordProductAsMonom<MemBlockLockType>(left,
-                                                                            i.monom(),
-                                                                            right,
-                                                                            mMonomialSpace,
-                                                                            memBlockLock);
-      processMonomInPreRow<MatrixLockType>(m,nextcolloc,matrixLock,feeder);
-      ++nextcolloc;
-    }
+  {
+    // int newMonLen = left.size() + i.monom().size() + right.size();
+    // int* monAlloc = (int*)mMemoryPool.malloc(newMonLen*sizeof(int));
+    // freeAlgebra().monoid().mult3(left,i.monom(),right,monAlloc);
+    // Monom m(monAlloc);
+    Monom m = freeAlgebra().monoid().wordProductAsMonom(left,
+                                                        i.monom(),
+                                                        right,
+                                                        memoryBlock);
+    processMonomInPreRow<ColumnLockType>(m,nextcolloc,columnLock,feeder);
+    ++nextcolloc;
+  }
   CoeffVector coeffs = mVectorArithmetic->sparseVectorFromContainer(elem->getCoeffVector());
 
   // delete the Poly created for prevReducer case, if necessary.
   if (prevReducer) delete elem;
 
   // add the processed row to the appropriate list (not correct yet)
-  if (isOverlapPreRow)
-    mOverlaps[divisorNum] = Row(coeffs, componentRange);
-  else
-    mRows[divisorNum] = Row(coeffs, componentRange);
+  rowsVector.emplace_back(Row(coeffs, componentRange));
 }
 
-void NCF4::processPreRow(PreRow r, bool isOverlapPreRow)
+void NCF4::processPreRow(PreRow r, RowsVector& rowsVector)
 {
   tbb::null_mutex noLock;
   PreRowFeeder* nullFeeder = nullptr;
-  processPreRow<tbb::null_mutex,tbb::null_mutex>(r,noLock,noLock,nullFeeder,isOverlapPreRow);
+  processPreRow<tbb::null_mutex>(r,
+                                 rowsVector,
+                                 mMonomialSpace,
+                                 noLock,
+                                 nullFeeder);
 }
 
-template<typename MatrixLockType>
+template<typename ColumnLockType>
 void NCF4::processMonomInPreRow(Monom& m,
                                 int* nextcolloc,
-                                MatrixLockType& matrixLock,
+                                ColumnLockType& columnLock,
                                 PreRowFeeder* feeder) 
 {
   auto it = mColumnMonomials.find(m);
   if (it == mColumnMonomials.end())
-    { 
-      // we must freeze all access to the containers at this point
-      // to ensure that the sizes used correspond to the correct column
-      // and row numbers
-
-      // Unfortunately this lock is quite onerous, and means we need to
-      // rethink the flow of the algorithm to avoid such a hard lock.
-
-      typename MatrixLockType::scoped_lock myMatrixLock(matrixLock);
-      // make sure the column wasn't created between the search and the lock
-      it = mColumnMonomials.find(m);
-      if (it != mColumnMonomials.end())
+  { 
+    // we must freeze all access to the columns at this point
+    // to ensure we get the numbering on the columns correct
+    typename ColumnLockType::scoped_lock myColumnLock(columnLock);
+    // make sure the column wasn't created between the search and the lock
+    it = mColumnMonomials.find(m);
+    if (it != mColumnMonomials.end())
       {
         *nextcolloc = it->second.first;
         return;
       }
-      // if we are here, this monomial is not yet accounted for in the matrix
-      // so, check if the monomial is a multiple of a lead term of a gb element
-      auto divresult = findDivisor(m);
-      int divisornum = -1; // -1 indicates no divisor was found
-      if (divresult.first)
-        {
-          // if m is a divisor of a gb element (or a left/right
-          // variable multiple of a previous reducer), add that
-          // multiple of the GB element to mReducersToDo for
-          // processing
+    // if we are here, this monomial is not yet accounted for in the matrix
+    // so, check if the monomial is a multiple of a lead term of a gb element
+    auto divresult = findDivisor(m);
+    if (divresult.first)
+      {
+        // if m is a divisor of a gb element (or a left/right
+        // variable multiple of a previous reducer), add that
+        // multiple of the GB element to mReducersToDo for
+        // processing
 
-          // get the index where we will place this row eventually
-          divisornum = mRows.size();
-          std::get<4>(divresult.second) = divisornum;
-          mRows.grow_by(1);
-
-          // if feeder is nullptr, then this is a computation on a list
-          // not being added to during the loop.
-          // e.g. either F4 serial or overlaps processing
-          // otherwise, we must use the feeder to add more work.
-          if (feeder == nullptr)
-            mReducersTodo.push_back(divresult.second);
-          else
-            feeder->add(divresult.second);
-        }
-      // insert column information into mColumnMonomials,
-      // which provides us search/indexing of columns
-      int newColumnIndex = mColumnMonomials.size();
-      mColumnMonomials.emplace(m,std::make_pair(newColumnIndex,
-                                                divisornum));
-      *nextcolloc = newColumnIndex;
-    }
+        // if feeder is nullptr, then this is a computation on a list
+        // not being added to during the loop.
+        // e.g. either F4 serial or overlaps processing
+        // otherwise, we must use the feeder to add more work.
+        if (feeder == nullptr)
+          mReducersTodo.push_back(divresult.second);
+        else
+          feeder->add(divresult.second);
+      }
+    // insert column information into mColumnMonomials,
+    // which provides us search/indexing of columns
+    int newColumnIndex = mColumnMonomials.size();
+    mColumnMonomials.emplace(m,std::make_pair(newColumnIndex,-1));
+    *nextcolloc = newColumnIndex;
+  }
   else
-    {
-      // in this case, the monomial already has an associated column
-      *nextcolloc = it->second.first;
-    }
+  {
+    // in this case, the monomial already has an associated column
+    *nextcolloc = it->second.first;
+  }
 }
 
 // this function is meant for debugging only
@@ -843,14 +876,15 @@ std::pair<bool,int> NCF4::findPreviousReducerSuffix(const Monom& m)
 void NCF4::sortF4Matrix()
 {
   size_t sz = mColumnMonomials.size();
-  std::vector<int> indices;
+  std::vector<int> columnIndices;
   std::vector<Monom> tempMonoms;
+  
   tempMonoms.reserve(sz);
-
-  indices.resize(sz);
-  std::iota(indices.begin(), indices.end(), 0);
- 
+  columnIndices.resize(sz);
+  std::iota(columnIndices.begin(), columnIndices.end(), 0);
+  
   // store all the column monomials in a temporary to sort them
+  // and also set the reducer column for them on the same pass
   for (auto& i : mColumnMonomials)
     tempMonoms.emplace_back(i.first);
 
@@ -858,7 +892,7 @@ void NCF4::sortF4Matrix()
   MonomSort<std::vector<Monom>> monomialSorter(&freeAlgebra().monoid(),&tempMonoms);
   // stable sort was here before, but this sort is based on a total ordering
   // with no ties so we can use an unstable (and hence parallel!) sort.
-  tbb::parallel_sort(indices.begin(),indices.end(),monomialSorter);
+  tbb::parallel_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
   
   std::vector<int> perm (static_cast<size_t>(mColumnMonomials.size()), -1);
   
@@ -869,9 +903,9 @@ void NCF4::sortF4Matrix()
          {
            for (auto count = r.begin(); count != r.end(); ++count)
              {
-               auto& val = mColumnMonomials[tempMonoms[indices[count]]];
+               auto& val = mColumnMonomials[tempMonoms[columnIndices[count]]];
                perm[val.first] = count;
-               mColumns[count] = Column(tempMonoms[indices[count]],val.second);
+               mColumns[count] = Column(tempMonoms[columnIndices[count]],val.second);
                val.first = count;
              }
          });

@@ -372,16 +372,14 @@ Monom FreeMonoid::wordProductAsMonom(const Word& left, const Word& mid, const Wo
   return newmon;
 }
 
-template<typename LockType>
 Monom FreeMonoid::wordProductAsMonom(const Word& left,
                                      const Monom& mid,
                                      const Word& right,
-                                     MemoryBlock & memBlock,
-                                     LockType& lock) const
+                                     MemoryBlock & memBlock) const
 {
   int monomOffset = numWeights() + 1;
   int sz = left.size() + mid.size() + right.size();
-  auto rg = memBlock.safeAllocateArray<int,LockType>(sz,lock);
+  auto rg = memBlock.allocateArray<int>(sz);
   rg.first[0] = sz;
   std::copy(left.begin(), left.end(), rg.first + monomOffset);
   std::copy(mid.begin()+monomOffset, mid.end(), rg.first + left.size() + monomOffset);
@@ -392,23 +390,23 @@ Monom FreeMonoid::wordProductAsMonom(const Word& left,
 }
 
 // help the linker know to create these versions
-template Monom FreeMonoid::wordProductAsMonom<tbb::null_mutex>(const Word& left,
-                                                               const Monom& mid,
-                                                               const Word& right,
-                                                               MemoryBlock & memBlock,
-                                                               tbb::null_mutex& noLock) const;
+// template Monom FreeMonoid::wordProductAsMonom<tbb::null_mutex>(const Word& left,
+//                                                                const Monom& mid,
+//                                                                const Word& right,
+//                                                                MemoryBlock & memBlock,
+//                                                                tbb::null_mutex& noLock) const;
 
-template Monom FreeMonoid::wordProductAsMonom<tbb::queuing_mutex>(const Word& left,
-                                                                  const Monom& mid,
-                                                                  const Word& right,
-                                                                  MemoryBlock & memBlock,
-                                                                  tbb::queuing_mutex& lock) const;
+// template Monom FreeMonoid::wordProductAsMonom<tbb::queuing_mutex>(const Word& left,
+//                                                                   const Monom& mid,
+//                                                                   const Word& right,
+//                                                                   MemoryBlock & memBlock,
+//                                                                   tbb::queuing_mutex& lock) const;
 
-template Monom FreeMonoid::wordProductAsMonom<tbb::mutex>(const Word& left,
-                                                          const Monom& mid,
-                                                          const Word& right,
-                                                          MemoryBlock & memBlock,
-                                                          tbb::mutex& lock) const;
+// template Monom FreeMonoid::wordProductAsMonom<tbb::mutex>(const Word& left,
+//                                                           const Monom& mid,
+//                                                           const Word& right,
+//                                                           MemoryBlock & memBlock,
+//                                                           tbb::mutex& lock) const;
 
 // we are just placing the answer in result.  it is up to the caller
 // to clean it up.

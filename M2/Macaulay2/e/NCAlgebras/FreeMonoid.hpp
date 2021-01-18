@@ -137,13 +137,10 @@ public:
   Monom wordProductAsMonom(const Word& left, const Word& right, MemoryBlock& memBlock) const;
   Monom wordProductAsMonom(const Word& left, const Word& mid, const Word& right, MemoryBlock & memBlock) const;
 
-  // since this is a template, it needs to be available at call site, hence in the header.
-  template<typename LockType>
   Monom wordProductAsMonom(const Word& left,
                            const Monom& mid,
                            const Word& right,
-                           MemoryBlock & memBlock,
-                           LockType& lock) const;
+                           MemoryBlock & memBlock) const;
   
   int wordHeft(Word& word) const { return wordWeight(word, mHeftDegrees, 0); }
   int wordHeft(Word& word, int start_index) const { return wordWeight(word, mHeftDegrees, start_index); }
