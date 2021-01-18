@@ -937,17 +937,14 @@ dnl factory needs to know:
 AC_SUBST(BUILD_flint)
 if test $BUILD_flint = no
 then AC_LANG(C)
-     AC_MSG_CHECKING([for flint >= 2.6.0 and < 2.7.0])
+     AC_MSG_CHECKING([for flint >= 2.7.0])
      AC_COMPILE_IFELSE(
         [AC_LANG_PROGRAM(
 	  [#include <flint/flint.h>
 	  ],
 	  [
-#if __FLINT_VERSION < 2 || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR < 6)
+#if __FLINT_VERSION < 2 || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR < 7)
 #error old flint
-#endif
-#if __FLINT_VERSION > 2 || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR >= 7)
-#error new flint
 #endif
 	  ])],
 	  AC_MSG_RESULT([yes])
@@ -1358,7 +1355,7 @@ SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
 then
     AC_MSG_CHECKING([whether factory library is installed])
-    FACTORY_MINVERSION=4.0.0
+    FACTORY_MINVERSION=4.2.0
     if $PKG_CONFIG --exists "factory >= $FACTORY_MINVERSION"
     then
 	FACTORY_NAME=factory
@@ -1370,7 +1367,8 @@ then
     elif $PKG_CONFIG --exists factory || $PKG_CONFIG --exists singular-factory
     then
 	BUILD_factory=yes
-	AC_MSG_RESULT([yes, but version $FACTORY_MINVERSION required; will build])
+	FACVER=`pkg-config --modversion factory`
+	AC_MSG_RESULT([yes, version $FACVER is installed, but version $FACTORY_MINVERSION is required: will build])
     else
 	BUILD_factory=yes
 	AC_MSG_RESULT([no; will build])
