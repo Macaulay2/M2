@@ -270,7 +270,7 @@ chainComplexMap=method(
 )
 chainComplexMap(ChainComplex,ChainComplex,List):= o -> (D,C,maps) -> (
    --- the code commented out should also work, and is in some sense
-   --- more desireable as it uses map in the code.  However, something squirly
+   --- more desirable as it uses map in the code.  However, something squirly
    --- happens in the map code.
    ---    startDeg := min C;
    ---    if (o.InitialDegree != -infinity) then startDeg = o.InitialDegree;

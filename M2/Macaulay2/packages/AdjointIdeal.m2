@@ -82,7 +82,7 @@ matrix {ibl});
 
 -- we use as pivotfunction the vanishing order at 0 (not the degree)
 -- i.e. we look for the entry with the minimal vanishing
--- so 0 get assiged infinity (not -infinity)
+-- so 0 get assigned infinity (not -infinity)
 
 vanishingOrder=(p)->(
 if p==0 then return(infinity);
