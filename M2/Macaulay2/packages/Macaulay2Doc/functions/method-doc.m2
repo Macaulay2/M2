@@ -127,7 +127,7 @@ document {
      ///,
      Subnodes => {
 	 TO "specifying typical values",
-	 ":Types of method funcions",
+	 ":Types of method functions",
 	 TO MethodFunction,
 	 TO MethodFunctionSingle,
 	 TO MethodFunctionBinary,

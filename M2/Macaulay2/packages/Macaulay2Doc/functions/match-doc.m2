@@ -63,7 +63,7 @@ doc ///
       match({"Cat", "Dog"}, "CatDog")
       match({"Cat", "Dog"}, "Catfish")
     Text
-      Optinally, @TT "Strategy => all"@ indicates that the string should match every pattern in the list
+      Optionally, @TT "Strategy => all"@ indicates that the string should match every pattern in the list
       to be a match.
     Example
       match({"Cat", "Dog"}, "CatDog", Strategy => all)
