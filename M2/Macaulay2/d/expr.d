@@ -280,6 +280,7 @@ export visibleListClass := newtypeof(basicListClass);
 export listClass := newtypeof(visibleListClass);
 export sequenceClass := newtypeof(visibleListClass);
 export arrayClass := newtypeof(visibleListClass);
+export angleBarListClass := newtypeof(visibleListClass);
 export errorMessageClass := newtypeof(basicListClass);
 export missingMethodClass := newtypeof(errorMessageClass);
 
