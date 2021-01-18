@@ -53,19 +53,35 @@ private:
   // the int at the end is the index of the PreRow in the
   // corresponding vector it belongs to, which will eventually
   // be the corresponding row.
-  using PreRow = std::tuple<Word, int, Word, bool>;
 
-  // make this into a std::pair of <CoeffVector,Range<int>>
-  // CoefficientVector knows whether it owns it memory or not but has the similar interaface as a range
-  using Row = std::pair<CoeffVector,
-                        Range<int>>; // components corresponding to monomials appearing
+  struct PreRow
+  {
+    Word left;
+    int preRowIndex;
+    Word right;
+    bool prevReducer;
+  };
 
-  using Column = std::pair<Monom, int>; // monomial, pivot row for this monomial (if not -1).
+  struct Row
+  {
+    CoeffVector coeffVector;     // vector of coefficients
+    Range<int> columnIndices;    // column indices used in the row.  Valid only after sortF4Matrix, as they are
+                                 // not known during creation.
+    Range<Monom> columnMonoms;   // monoms used in the row.  Valid only *before* reduction begins, as reduction
+                                 // does not update this field
+  };
+
+  struct Column
+  {
+    Monom monom;                 // Monom corresponding to the column
+    int pivotRow;                // pivot row corresponding to this monomial
+  };
+  // the index of a Column in a ColumnsVector is the column index and is used in Row.columnIndices.
 
   //using ColumnsVector = tbb::concurrent_vector<Column>;
   using ColumnsVector = std::vector<Column>;
   using RowsVector = std::vector<Row>;
-  using PreRowFeeder = tbb::parallel_do_feeder<NCF4::PreRow>;
+  using PreRowFeeder = tbb::parallel_do_feeder<PreRow>;
   // I think at this point this also doesn't have to be concurrent...
   using MonomialHash = tbb::concurrent_unordered_map<Monom, std::pair<int,int>, MonomHash, MonomHashEqual>;
 
@@ -169,8 +185,6 @@ private:
   auto checkOldOverlaps(Word& newLeadWord) -> void;
 
   void matrixReset();
-
-  int prerowInReducersTodo(PreRow pr) const;
 
   // These functions are essentially from NCGroebner
   void addToGroebnerBasis(Poly * toAdd);

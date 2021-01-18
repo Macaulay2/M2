@@ -160,10 +160,10 @@ void NCF4::processPreviousF4Matrix()
   // flag the columns correspond to lead terms of new GB elements as reducers
   for (int i = mFirstOverlap; i < mRows.size(); ++i)
   {
-    if (mRows[i].second.size() == 0) continue;
-    int newReducerCol = mRows[i].second[0];
-    mColumns[newReducerCol].second = i;
-    mPreviousColumnMonomials[mColumns[newReducerCol].first].second = i;
+    if (mRows[i].columnIndices.size() == 0) continue;
+    int newReducerCol = mRows[i].columnIndices[0];
+    mColumns[newReducerCol].pivotRow = i;
+    mPreviousColumnMonomials[mColumns[newReducerCol].monom].second = i;
   } 
   
   // copy the finished rows and columns into the holding areas
@@ -312,7 +312,7 @@ PolyList NCF4::newGBelements() const // From current F4 matrix.
   PolyList result;
   for (int i = mFirstOverlap; i < mRows.size(); i++)
     {
-      if (mRows[i].second.size() == 0) continue;
+      if (mRows[i].columnIndices.size() == 0) continue;
       Poly* f = new Poly;
       reducedRowToPoly(f,mRows,mColumns,i);
       result.push_back(f);
@@ -333,12 +333,12 @@ void NCF4::reducedRowToPoly(Poly* result,
   
   //mVectorArithmetic->appendSparseVectorToContainer(rows[i].first,resultCoeffInserter);
   using ContainerType = decltype(resultCoeffInserter);
-  mVectorArithmetic->appendSparseVectorToContainer<ContainerType>(rows[i].first,resultCoeffInserter);
+  mVectorArithmetic->appendSparseVectorToContainer<ContainerType>(rows[i].coeffVector,resultCoeffInserter);
   
-  for (const auto& col : rows[i].second)
+  for (const auto& col : rows[i].columnIndices)
     resultMonomInserter.insert(resultMonomInserter.end(),
-                               cols[col].first.begin(),
-                               cols[col].first.end());
+                               cols[col].monom.begin(),
+                               cols[col].monom.end());
 }
 
 ring_elem NCF4::getCoeffOfMonom(const Poly& f, const Monom& m)
@@ -398,10 +398,10 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   if (overlapPos < 0)
     {
       // Sneaky trick: a PreRow with index a < 0 refers to generator with index -a-1
-      mOverlapsTodo.emplace_back(PreRow(Word(),
-                                        - gbLeftIndex - 1,
-                                        Word(),
-                                        false));
+      mOverlapsTodo.emplace_back(PreRow {Word(),
+                                         - gbLeftIndex - 1,
+                                         Word(),
+                                         false});
       return;
     }
   
@@ -437,25 +437,25 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   // not be sorted in term order.
   if (gbLeftIndex > gbRightIndex)
     {
-      mReducersTodo.emplace_back(PreRow(prefix2,
-                                        gbRightIndex,
-                                        suffix2,
-                                        false));
-      mOverlapsTodo.emplace_back(PreRow(prefix1,
-                                        gbLeftIndex,
-                                        suffix1,
-                                        false));
+      mReducersTodo.emplace_back(PreRow {prefix2,
+                                         gbRightIndex,
+                                         suffix2,
+                                         false});
+      mOverlapsTodo.emplace_back(PreRow {prefix1,
+                                         gbLeftIndex,
+                                         suffix1,
+                                         false});
     }
   else
     {  
-      mReducersTodo.emplace_back(PreRow(prefix1,
-                                        gbLeftIndex,
-                                        suffix1,
-                                        false));
-      mOverlapsTodo.emplace_back(PreRow(prefix2,
-                                        gbRightIndex,
-                                        suffix2,
-                                        false));
+      mReducersTodo.emplace_back(PreRow {prefix1,
+                                         gbLeftIndex,
+                                         suffix1,
+                                         false});
+      mOverlapsTodo.emplace_back(PreRow {prefix2,
+                                         gbRightIndex,
+                                         suffix2,
+                                         false});
     }
 }
 
@@ -498,7 +498,7 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   // find which rows are the reducers
   std::vector<int> rowLeadTerms(mColumnMonomials.size(), -1);
   for (int i = 0; i < mFirstOverlap; ++i)
-    rowLeadTerms[mRows[i].second[0]] = i;
+    rowLeadTerms[mRows[i].columnIndices[0]] = i;
 
   // set the reducer rows accordingly
   for (auto& i : mColumnMonomials)
@@ -575,7 +575,7 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   // find which rows are the reducers
   std::vector<int> rowLeadTerms(mColumnMonomials.size(), -1);
   for (int i = 0; i < mFirstOverlap; ++i)
-    rowLeadTerms[mRows[i].second[0]] = i;
+    rowLeadTerms[mRows[i].columnIndices[0]] = i;
 
   // set the reducer rows accordingly
   for (auto& i : mColumnMonomials)
@@ -591,10 +591,10 @@ void NCF4::processPreRow(PreRow r,
 {
   // note: left and right should be the empty word if gbIndex < 0 indicating
   // an input polynomial.
-  Word left = std::get<0>(r);
-  int gbIndex = std::get<1>(r);
-  Word right = std::get<2>(r);
-  bool prevReducer = std::get<3>(r);
+  Word left = r.left;
+  int gbIndex = r.preRowIndex;
+  Word right = r.right;
+  bool prevReducer = r.prevReducer;
   
   if (M2_gbTrace >= 100) 
     std::cout << "Processing PreRow: ("
@@ -662,8 +662,8 @@ void NCF4::processPreRow(PreRow r,
   // delete the Poly created for prevReducer case, if necessary.
   if (prevReducer) delete elem;
 
-  // add the processed row to the appropriate list (not correct yet)
-  rowsVector.emplace_back(Row(coeffs, componentRange));
+  // add the processed row to the appropriate list
+  rowsVector.emplace_back(Row {coeffs, componentRange, Range<Monom>()});
 }
 
 void NCF4::processPreRow(PreRow r, RowsVector& rowsVector)
@@ -728,22 +728,6 @@ void NCF4::processMonomInPreRow(Monom& m,
   }
 }
 
-// this function is meant for debugging only
-// prerows should not be inserted twice
-int NCF4::prerowInReducersTodo(PreRow pr) const
-{
-  int retval = -1;
-  for (int i = 0; i < mReducersTodo.size(); i++)
-    {
-      if (pr == mReducersTodo[i])
-        {
-          retval = i;
-          break;
-        }
-    }
-  return retval;
-}
-
 std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
 {
   Word newword;
@@ -755,20 +739,20 @@ std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
     {
       // here, we use a multiple of a previously reduced row
       Word tmpWord = freeAlgebra().monoid().firstVar(mon);
-      return std::make_pair(true, PreRow(tmpWord,
-                                         usePreviousSuffix.second,
-                                         Word(),
-                                         true));
+      return std::make_pair(true, PreRow {tmpWord,
+                                          usePreviousSuffix.second,
+                                          Word(),
+                                          true});
     }
   auto usePreviousPrefix = findPreviousReducerPrefix(mon);
   if (usePreviousPrefix.first)
     {
       // here, we use a multiple of a previously reduced row
       Word tmpWord = freeAlgebra().monoid().lastVar(mon);
-      return std::make_pair(true, PreRow(Word(),
-                                         usePreviousPrefix.second,
-                                         tmpWord,
-                                         true));
+      return std::make_pair(true, PreRow {Word(),
+                                          usePreviousPrefix.second,
+                                          tmpWord,
+                                          true});
     }
 
   // if we are here, then the Monom does not have a prefix/suffix
@@ -791,13 +775,13 @@ std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
   //  divisorInfo.second = position of the start of x^b in newword
   //   (that is, the length of x^a).
   if (not found)
-    return std::make_pair(false, PreRow(Word(), 0, Word(), false));
+    return std::make_pair(false, PreRow {Word(), 0, Word(), false});
   // if found, then return this information to caller
   Word prefix = Word(newword.begin(), newword.begin() + divisorInfo.second);
   Word divisorWord = mWordTable[divisorInfo.first];
   Word suffix = Word(newword.begin() + divisorInfo.second + divisorWord.size(),
                      newword.end());
-  return std::make_pair(true, PreRow(prefix, divisorInfo.first, suffix, false));
+  return std::make_pair(true, PreRow {prefix, divisorInfo.first, suffix, false});
 }
 
 std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m)
@@ -832,10 +816,10 @@ std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m)
   else
   {
     int colNum = (*it).second.first;
-    if (mPreviousColumns[colNum].second == -1)  // in column table and not a reducer monomial
+    if (mPreviousColumns[colNum].pivotRow == -1)  // in column table and not a reducer monomial
       retval = std::make_pair(false,-1);
     else  // in table and a reducer monomial
-      retval = std::make_pair(true,mPreviousColumns[colNum].second);
+      retval = std::make_pair(true,mPreviousColumns[colNum].pivotRow);
   }
   return retval;
 }
@@ -863,10 +847,10 @@ std::pair<bool,int> NCF4::findPreviousReducerSuffix(const Monom& m)
   else
   {
     int colNum = (*it).second.first;
-    if (mPreviousColumns[colNum].second == -1)  // in column table and not a reducer monomial
+    if (mPreviousColumns[colNum].pivotRow == -1)  // in column table and not a reducer monomial
       retval = std::make_pair(false,-1);
     else  // in table and a reducer monomial
-      retval = std::make_pair(true,mPreviousColumns[colNum].second);
+      retval = std::make_pair(true,mPreviousColumns[colNum].pivotRow);
   }
   return retval;
 }
@@ -905,7 +889,7 @@ void NCF4::sortF4Matrix()
              {
                auto& val = mColumnMonomials[tempMonoms[columnIndices[count]]];
                perm[val.first] = count;
-               mColumns[count] = Column(tempMonoms[columnIndices[count]],val.second);
+               mColumns[count] = Column {tempMonoms[columnIndices[count]],val.second};
                val.first = count;
              }
          });
@@ -916,7 +900,7 @@ void NCF4::sortF4Matrix()
         {
           for (auto i = r.begin(); i != r.end(); ++i)
           {
-            auto& comps = mRows[i].second;
+            auto& comps = mRows[i].columnIndices;
             for (int j=0; j < comps.size(); ++j)
               comps[j] = perm[comps[j]];
           }
@@ -936,26 +920,26 @@ void NCF4::generalReduceF4Row(int index,
                               bool updateColumnIndex,
                               LockType& lock)
 {
-  int sz = mRows[index].second.size();
+  int sz = mRows[index].columnIndices.size();
   //assert(sz > 0);  this may be zero when autoreducing the new gb elements
   if (sz == 0) return;
   if (sz == 1 && firstcol != -1) return;
 
-  int last = mRows[index].second[sz-1];
+  int last = mRows[index].columnIndices[sz-1];
 
   mVectorArithmetic->sparseRowToDenseRow(dense,
-                                         mRows[index].first,
-                                         mRows[index].second);
+                                         mRows[index].coeffVector,
+                                         mRows[index].columnIndices);
   do {
-    int pivotrow = mColumns[first].second;
+    int pivotrow = mColumns[first].pivotRow;
     if (pivotrow >= 0)
       {
         numCancellations++;
         mVectorArithmetic->denseRowCancelFromSparse(dense,
-                                                    mRows[pivotrow].first,
-                                                    mRows[pivotrow].second);
+                                                    mRows[pivotrow].coeffVector,
+                                                    mRows[pivotrow].columnIndices);
         // last component in the row corresponding to pivotrow
-        int last1 = mRows[pivotrow].second.cend()[-1];
+        int last1 = mRows[pivotrow].columnIndices.cend()[-1];
         last = (last1 > last ? last1 : last);
       }
     else if (firstcol == -1)
@@ -966,17 +950,17 @@ void NCF4::generalReduceF4Row(int index,
   } while (first <= last);
   
   mVectorArithmetic->safeDenseRowToSparseRow(dense,
-                                             mRows[index].first,
-                                             mRows[index].second,
+                                             mRows[index].coeffVector,
+                                             mRows[index].columnIndices,
                                              firstcol,
                                              last,
                                              mMonomialSpace,
                                              lock);
-  if (mVectorArithmetic->size(mRows[index].first) > 0)
+  if (mVectorArithmetic->size(mRows[index].coeffVector) > 0)
     {
-      mVectorArithmetic->sparseRowMakeMonic(mRows[index].first);
+      mVectorArithmetic->sparseRowMakeMonic(mRows[index].coeffVector);
       // don't do this in the parallel version
-      if (updateColumnIndex) mColumns[firstcol].second = index;
+      if (updateColumnIndex) mColumns[firstcol].pivotRow = index;
     }
 }
 
@@ -1004,7 +988,7 @@ void NCF4::parallelReduceF4Matrix()
                       threadLocalLong_t::reference my_accum = numCancellationsLocal.local();
                       for (auto i = r.begin(); i != r.end(); ++i)
                         parallelReduceF4Row(i,
-                                            mRows[i].second[0],
+                                            mRows[i].columnIndices[0],
                                             -1,
                                             my_accum,
                                             my_dense,
@@ -1021,7 +1005,7 @@ void NCF4::parallelReduceF4Matrix()
   // sequentially perform one more pass to reduce the spair rows down 
   for (int i = mFirstOverlap; i < mRows.size(); ++i)
     reduceF4Row(i,
-                mRows[i].second[0],
+                mRows[i].columnIndices[0],
                 -1,
                 numCancellations,
                 denseVector);
@@ -1029,8 +1013,8 @@ void NCF4::parallelReduceF4Matrix()
   // interreduce the matrix with respect to these overlaps.  This needs to be sequential.
   for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
     reduceF4Row(i,
-                mRows[i].second[1],
-                mRows[i].second[0],
+                mRows[i].columnIndices[1],
+                mRows[i].columnIndices[0],
                 numCancellations,
                 denseVector);
 
@@ -1051,7 +1035,7 @@ void NCF4::reduceF4Matrix()
   // reduce each overlap row by mRows.
   for (int i = mFirstOverlap; i < mRows.size(); ++i)
     reduceF4Row(i,
-                mRows[i].second[0],
+                mRows[i].columnIndices[0],
                 -1,
                 numCancellations,
                 denseVector);
@@ -1059,8 +1043,8 @@ void NCF4::reduceF4Matrix()
   // interreduce the matrix with respect to these overlaps.
   for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
     reduceF4Row(i,
-                mRows[i].second[1],
-                mRows[i].second[0],
+                mRows[i].columnIndices[1],
+                mRows[i].columnIndices[0],
                 numCancellations,
                 denseVector);
 
@@ -1089,10 +1073,10 @@ void NCF4::displayF4MatrixSize(std::ostream & o) const
   for (long i = 0; i < mRows.size(); ++i)
   {
     if (i < mFirstOverlap) 
-       numReducerEntries += mVectorArithmetic->size(mRows[i].first);
+       numReducerEntries += mVectorArithmetic->size(mRows[i].coeffVector);
     else
-       numSPairEntries += mVectorArithmetic->size(mRows[i].first);
-    if (mVectorArithmetic->size(mRows[i].first) != mRows[i].second.size())
+       numSPairEntries += mVectorArithmetic->size(mRows[i].coeffVector);
+    if (mVectorArithmetic->size(mRows[i].coeffVector) != mRows[i].columnIndices.size())
       o << "***ERROR*** ring_elem and component ranges do not match!" << std::endl;
   }
   o << "#entries: (" << numReducerEntries << "," << numSPairEntries << ")"
@@ -1110,11 +1094,11 @@ void NCF4::displayF4Matrix(std::ostream& o) const
       freeAlgebra().monoid().elem_text_out(b, i.first);
       o << b.str() << "(" << i.second.first << ", " << i.second.second << ") ";
       if (i.second.second != -1 and
-          (mRows[i.second.second].second.begin() == nullptr or
-           mRows[i.second.second].second[0] != i.second.first))
+          (mRows[i.second.second].columnIndices.begin() == nullptr or
+           mRows[i.second.second].columnIndices[0] != i.second.first))
       {
-        std::cout << "Oops (" << mRows[i.second.second].second.begin()
-                  << "," << mRows[i.second.second].second[0] << ","
+        std::cout << "Oops (" << mRows[i.second.second].columnIndices.begin()
+                  << "," << mRows[i.second.second].columnIndices[0] << ","
                   << i.second.first << ")";
       }
     }
@@ -1137,24 +1121,24 @@ void NCF4::displayF4Matrix(std::ostream& o) const
       //   << std::get<1>(pr) << ", "
       //   << std::get<2>(pr) << ", "
       //   << std::get<3>(pr) << ") "
-      if (mRows[count].second.begin() == nullptr)
+      if (mRows[count].columnIndices.begin() == nullptr)
       {
         o << "Row " << count
           << " is empty.  This may indicate an error depending on the current state."
           << std::endl;
         continue;
       }
-      o << "Row " << count << ";" << mRows[count].second.size() << ": ";
-      if (mVectorArithmetic->size(mRows[count].first) != mRows[count].second.size())
+      o << "Row " << count << ";" << mRows[count].columnIndices.size() << ": ";
+      if (mVectorArithmetic->size(mRows[count].coeffVector) != mRows[count].columnIndices.size())
         {
           o << "***ERROR*** expected coefficient array and components array to have the same length" << std::endl;
           exit(1);
         }
-      for (int i=0; i < mVectorArithmetic->size(mRows[count].first); ++i)
+      for (int i=0; i < mVectorArithmetic->size(mRows[count].coeffVector); ++i)
         {
           buffer b;
-          kk->elem_text_out(b, mVectorArithmetic->ringElemFromSparseVector(mRows[count].first,i));
-          o << "[" << mRows[count].second[i] << "," << b.str() << "] ";
+          kk->elem_text_out(b, mVectorArithmetic->ringElemFromSparseVector(mRows[count].coeffVector,i));
+          o << "[" << mRows[count].columnIndices[i] << "," << b.str() << "] ";
         }
       o << std::endl;
     }
@@ -1182,20 +1166,21 @@ void NCF4::displayFullF4Matrix(std::ostream& o) const
   for (int count = 0; count < mRows.size(); ++count)
     {
       PreRow pr = mReducersTodo[count];
-      o << count << " ("<< std::get<0>(pr) << ", "
-        << std::get<1>(pr) << ", "
-        << std::get<2>(pr) << ")";
+      o << count << " ("<< pr.left << ", "
+        << pr.preRowIndex << ", "
+        << pr.right << ")";
       int count2 = 0;
       for (int i=0; i < mColumnMonomials.size(); i++)
         {
-          if (count2 == mVectorArithmetic->size(mRows[count].first) or mRows[count].second[count2] != i)
+          if (count2 == mVectorArithmetic->size(mRows[count].coeffVector) or 
+              mRows[count].columnIndices[count2] != i)
             {
               o << " 0 ";
             }
           else
             {
               buffer b;
-              kk->elem_text_out(b,mVectorArithmetic->ringElemFromSparseVector(mRows[count].first,count2));
+              kk->elem_text_out(b,mVectorArithmetic->ringElemFromSparseVector(mRows[count].coeffVector,count2));
               o << " " << b.str() << " ";
               count2++;
             }
