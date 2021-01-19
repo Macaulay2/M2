@@ -52,9 +52,9 @@ getstr(returnexponent:long, base:int, sigdigs:int, x:RR) ::= tostring(
      Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
 	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)"));
 
-getstr(returnexponent:long, base:int, sigdigs:int, x:RRi) ::= tostring(  -- Added for MPFI
+getstr(returnexponent:long, base:int, sigdigs:int, x:RRi) ::= tostring(
      Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
-	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)"));  -- End added for MPFI
+	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)"));
 
 export format(
      s:int,			  -- number of significant digits (0 means all)
@@ -158,7 +158,8 @@ export tostringRRi(x:RRi):string := concatenate(
        	tostringRR(leftRR(x)),
        	",",
        	tostringRR(rightRR(x)),
-       	"]"
+       	"]",
+        if isEmpty(x) then " (an empty interval)" else ""
        	));  
 tostringRRipointer = tostringRRi;  
 

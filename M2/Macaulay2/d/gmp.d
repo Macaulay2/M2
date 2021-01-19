@@ -787,6 +787,7 @@ isnan0 (x:RR) ::= Ccode(bool,"mpfr_nan_p(",x,")");
 isnan0 (x:RRi) ::= Ccode(bool,"mpfi_nan_p(",x,")");
 sign0(x:RR) ::= 0 != Ccode(int,"mpfr_signbit(",x,")");
 sign0(x:RRi) ::= 0 != Ccode(int,"mpfi_is_strictly_neg(",x,")");
+export isEmpty(x:RRi):bool := Ccode(bool,"mpfi_is_empty(",x,")");
                                     
 exponent0(x:RR) ::= Ccode(long,"(long)mpfr_get_exp(",x,")"); -- sometimes int, sometimes long, see gmp.h for type mp_exp_t
 exponent0(x:RRi) ::= min(exponent0(rightRR(x)),exponent0(leftRR(x)));
@@ -1296,21 +1297,23 @@ export (x:RRi) === (y:RR) : bool := rightRR(x) === y && leftRR(x) === y && !flag
                                     
 export (y:RR) === (x:RRi) : bool := rightRR(x) === y && leftRR(x) === y && !flagged0();
                                     
-export contains (x:RRi, y:ZZ):bool := (leftRR(x) <= y) && (rightRR(x) >= y);
+export contains (y:ZZ, x:RRi):bool := Ccode(int,"mpfi_is_inside_z(",y,",",x,")") > 0;
                                     
-export contains (x:RRi, y:QQ):bool := (leftRR(x) <= y) && (rightRR(x) >= y);
+export contains (y:QQ, x:RRi):bool := Ccode(int,"mpfi_is_inside_q(",y,",",x,")") > 0;
                                     
-export contains (x:RRi, y:RR):bool := (leftRR(x) <= y) && (rightRR(x) >= y);
+export contains (y:RR, x:RRi):bool := Ccode(int,"mpfi_is_inside_fr(",y,",",x,")") > 0;
                                     
-export contains (x:RRi, y:RRi):bool := (leftRR(x) <= leftRR(y)) && (rightRR(x) >= rightRR(y));
+export contains (y:RRi, x:RRi):bool := Ccode(int,"mpfi_is_inside(",y,",",x,")") > 0;
                                     
-export intersects (x:RRi, y:ZZ):bool := contains(x,y);
+export intersection (x:RRi, y:RRi):RRi := (
+     z := newRRimutable(min(precision0(x),precision0(y)));
+     Ccode( void, "mpfi_intersect(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
                                     
-export intersects (x:RRi, y:QQ):bool := contains(x,y);
-                                    
-export intersects (x:RRi, y:RR):bool := contains(x,y);
-                                    
-export intersects (x:RRi, y:RRi):bool := !((x<y) || (x>y));
+export intersection (x:RRi, y:RRi, prec:ulong):RRi := (
+     z := newRRimutable(prec);
+     Ccode( void, "mpfi_intersect(", z, ",",  x, ",",  y, ")" );
+     moveToRRiandclear(z));
 
 export hash(x:RR):int := int(precision0(x)) + Ccode(int, 
      "mpfr_hash(",					    -- see gmp_aux.c for this function
