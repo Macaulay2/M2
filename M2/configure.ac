@@ -943,9 +943,12 @@ then AC_LANG(C)
 	  [#include <flint/flint.h>
 	  ],
 	  [
-#if __FLINT_VERSION < 2 || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR < 7)
-#error old flint
-#endif
+	  /* version == __FLINT_VERSION . __FLINT_VERSION_MINOR . __FLINT_VERSION_PATCHLEVEL */
+	  #if    (__FLINT_VERSION < 2) \
+	      || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR < 6) \
+	      || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR == 6 && __FLINT_VERSION_PATCHLEVEL < 3)
+	  #error old flint
+	  #endif
 	  ])],
 	  AC_MSG_RESULT([yes])
 	  if test $SHARED = no -a $TRY_STATIC = yes
