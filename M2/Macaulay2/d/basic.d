@@ -143,6 +143,12 @@ export Array(e:Expr,f:Expr):Expr := Array(Sequence(e,f));
 export Array(e:Expr,f:Expr,g:Expr):Expr := Array(Sequence(e,f,g));
 export Array(e:Expr,f:Expr,g:Expr,h:Expr):Expr := Array(Sequence(e,f,g,h));
 
+export AngleBarList(a:Sequence):Expr := (
+     r := List(angleBarListClass,a,0,false);
+     r.hash = hash(r);
+     Expr(r));
+export emptyAngleBarList := AngleBarList(Sequence());
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d basic.o "
 -- End:
