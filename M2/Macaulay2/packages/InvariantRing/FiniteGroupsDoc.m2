@@ -310,7 +310,7 @@ document {
 	Usage => "permutationMatrix s, permutationMatrix(n , c)",
 	Inputs => {
 	    	"s" => String =>  {"an array or a list of arrays giving a one-line notation or cyclic notation of a permutation"},
-		"n" => ZZ => {"giving the number of intergers getting permuted"},
+		"n" => ZZ => {"giving the number of integers getting permuted"},
 		"c" => List => {"of arrays giving a cyclic notation of a permutation"}
 		},
 	Outputs => {

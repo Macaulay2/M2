@@ -502,7 +502,7 @@ fpt RingElement := o -> f ->
     (
 	guess := guessFPT( f, LB, UB, passOptions( o, { Attempts, Verbose, GuessStrategy, AtOrigin } ) );
 	if class guess =!= List then return guess; -- guessFPT was successful
-	-- if not sucessful, adjust bounds and their strictness
+	-- if not successful, adjust bounds and their strictness
 	( LB, UB ) = toSequence guess;
 	strictUB = true;
 	if o.Attempts >= 2 then strictLB = true
