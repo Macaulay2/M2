@@ -566,7 +566,7 @@ document {
 	 ( BLOCKQUOTE PRE s, value s )),
      PARA {
 	 TEX ///The macro can be used at any point after:
-	 $$ 0 \to 2\OO_{\\P^3}(-3) \to 3\OO_{\\P^3}(-2) \to \OO_{\\P^3} \to \OO_C \to 0 $$///},
+	 $$ 0 \to 2\OO_{\PP^3}(-3) \to 3\OO_{\PP^3}(-2) \to \OO_{\PP^3} \to \OO_C \to 0 $$///},
      SeeAlso => {tex, texMath, (show, TEX)}
      }
 
