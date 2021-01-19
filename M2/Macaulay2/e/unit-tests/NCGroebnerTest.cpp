@@ -2,11 +2,11 @@
 #include <memory>
 #include <gtest/gtest.h>
 
+#include "MemoryBlock.hpp"
 #include "interface/ring.h"
 
 #include "poly.hpp"
 #include "aring-glue.hpp"
-#include "NCAlgebras/MemoryBlock.hpp"
 #include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCAlgebras/FreeAlgebraQuotient.hpp"
 #include "NCAlgebras/WordTable.hpp"
@@ -454,9 +454,9 @@ TEST(FreeAlgebra, spairs)
 TEST(OverlapTable, insertion)
 {
   OverlapTable overlapTable;
-  overlapTable.insert(3,false,std::make_tuple(1,2,3));
-  overlapTable.insert(3,false,std::make_tuple(1,2,1));
-  overlapTable.insert(2,false,std::make_tuple(1,1,1));
+  overlapTable.insert(3,false,std::make_tuple(1,2,3,true));
+  overlapTable.insert(3,false,std::make_tuple(1,2,1,true));
+  overlapTable.insert(2,false,std::make_tuple(1,1,1,true));
   EXPECT_FALSE(overlapTable.isFinished());
   EXPECT_TRUE(overlapTable.isFinished(1));
   EXPECT_FALSE(overlapTable.isFinished(3));
@@ -712,9 +712,9 @@ TEST(WordTable, skylanin)
 
   W.insert(Word(m2), overlaps);
   std::vector<Overlap> ans {
-      std::make_tuple(2,1,0),
-      std::make_tuple(2,1,1),
-      std::make_tuple(2,1,2)
+      std::make_tuple(2,1,0,true),
+      std::make_tuple(2,1,1,true),
+      std::make_tuple(2,1,2,true)
       };
   std::sort(ans.begin(),ans.end());
   std::sort(overlaps.begin(),overlaps.end());
