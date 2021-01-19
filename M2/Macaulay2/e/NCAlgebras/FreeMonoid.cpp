@@ -107,7 +107,8 @@ int FreeMonoid::compare(const Monom& m1, const Monom& m2) const
   // then compare word length
   // then compare with lex
 
-  FreeMonoidLogger::logCompare();
+  // is this thread-safe?
+  //FreeMonoidLogger::logCompare();
   
   for (int j = 1; j <= mNumWeights; ++j)
     {
@@ -123,6 +124,34 @@ int FreeMonoid::compare(const Monom& m1, const Monom& m2) const
     {
       if (m1[j] > m2[j]) return LT;
       if (m1[j] < m2[j]) return GT;
+    }
+  // if we are here, the monomials are the same.
+  return EQ;
+}
+
+int FreeMonoid::compare(const Word& w1, const Word& w2) const
+{
+  int weight1;
+  int weight2;
+  // compute and compare weights
+  for (int i = 0; i < mNumWeights; ++i)
+  {
+    weight1 = 0;
+    weight2 = 0;
+    for (int j = 0; j < w1.size(); ++j)
+      weight1 += weightOfVar(w1[j],i);
+    for (int j = 0; j < w2.size(); ++j)
+      weight2 += weightOfVar(w2[j],i);
+    if (weight1 > weight2) return GT;
+    if (weight1 < weight2) return LT;
+  }
+  if (w1.size() > w2.size()) return GT;
+  if (w1.size() < w2.size()) return LT;
+  // at this stage, they have the same weights and word length, so use lex order
+  for (int i = 0; i < w1.size(); ++i)
+    {
+      if (w1[i] > w2[i]) return LT;
+      if (w1[i] < w2[i]) return GT;
     }
   // if we are here, the monomials are the same.
   return EQ;

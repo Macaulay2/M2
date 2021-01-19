@@ -8,38 +8,40 @@ class Word
 {
 public:
   // warning: the pointers begin, end, should not go out of scope while this Word is in use.
-  Word() : mBegin(nullptr), mEnd(nullptr) {}
+  Word() : mBegin(nullptr), mEnd(nullptr), mSize(0) {}
 
-  Word(const int* begin, const int* end) : mBegin(begin), mEnd(end) {}
+  Word(const int* begin, const int* end) : mBegin(begin), mEnd(end), mSize(end-begin) {}
 
   // keyword 'explicit' to prevent calling this constructor implicitly.  It
   // causes some strange behavior in debugging.
   // to be honest, we should only be using this in the unit-tests file ONLY
-  explicit Word(const std::vector<int>& val) : mBegin(val.data()), mEnd(val.data() + val.size()) {}
+  explicit Word(const std::vector<int>& val) : mBegin(val.data()), mEnd(val.data() + val.size()), mSize(val.size()) {}
 
-  void init(const int* begin, const int* end) { mBegin = begin; mEnd = end; }
+  void init(const int* begin, const int* end) { mBegin = begin; mEnd = end; mSize = end-begin; }
   // this constructor is a bit dangerous since we have several std::vector<int> types running around
   //void init(const std::vector<int>& val) { mBegin = val.data(); mEnd = val.data() + val.size(); }
                                  
   const int* begin() const { return mBegin; }
   const int* end() const { return mEnd; }
-
-  size_t size() const { return mEnd - mBegin; }
+  int size() const { return mSize; }
 
   bool operator==(Word rhs) const
   {
-    if (size() != rhs.size()) return false;
-    for (auto i=0; i<size(); ++i)
+    if (mSize != rhs.mSize) return false;
+    for (auto i=0; i<mSize; ++i)
       if (mBegin[i] != rhs.mBegin[i])
         return false;
     return true;
   }
+
+  int operator[](int i) const { return *(mBegin + i); }
 
 private:
   // Caution. We DO NOT own these pointers.
   // It is the responsibility of the calling code to not let these pointers expire.
   const int* mBegin;
   const int* mEnd;
+  int mSize;
 };
 
 std::ostream& operator<<(std::ostream& o, const Word& w);

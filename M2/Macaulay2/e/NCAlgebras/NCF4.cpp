@@ -93,7 +93,7 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   //if (mIsParallel)
   //  parallelBuildF4Matrix(overlapsToProcess);
   //else
-    buildF4Matrix(overlapsToProcess);
+  buildF4Matrix(overlapsToProcess);
   tbb::tick_count t1 = tbb::tick_count::now();
   if (M2_gbTrace >= 2) 
     std::cout << "Time spent on build step: " << (t1-t0).seconds() << std::endl;
@@ -155,7 +155,7 @@ void NCF4::processPreviousF4Matrix()
     if (mRows[i].columnIndices.size() == 0) continue;
     int newReducerCol = mRows[i].columnIndices[0];
     mColumns[newReducerCol].pivotRow = i;
-    mPreviousColumnMonomials[mColumns[newReducerCol].monom].second = i;
+    mPreviousColumnMonomials[mColumns[newReducerCol].word].second = i;
   } 
   
   // copy the finished rows and columns into the holding areas
@@ -332,9 +332,7 @@ void NCF4::reducedRowToPoly(Poly* result,
   mVectorArithmetic->appendSparseVectorToContainer<ContainerType>(rows[i].coeffVector,resultCoeffInserter);
   
   for (const auto& col : rows[i].columnIndices)
-    resultMonomInserter.insert(resultMonomInserter.end(),
-                               cols[col].monom.begin(),
-                               cols[col].monom.end());
+    freeAlgebra().monoid().monomInsertFromWord(resultMonomInserter,cols[col].word);
 }
 
 ring_elem NCF4::getCoeffOfMonom(const Poly& f, const Monom& m)
@@ -419,13 +417,13 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   
   // need to add in the lead monomial to the mColumnMonomials list now
   // so they know which row reduces them
-  Monom newmon = freeAlgebra().monoid().wordProductAsMonom(leadWordLeft, suffix1, mMonomialSpace);
+  Word newWord = freeAlgebra().monoid().wordProductAsWord(leadWordLeft, suffix1, mMonomialSpace);
 
   // This overlap may already have lead term in table.
   // Only have to add it in if it is not yet present.
-  auto it = mColumnMonomials.find(newmon);
+  auto it = mColumnMonomials.find(newWord);
   if (it == mColumnMonomials.cend())
-    mColumnMonomials.emplace(newmon, std::make_pair(-1,-1));
+    mColumnMonomials.emplace(newWord, std::make_pair(-1,-1));
 
   // it *matters* which one is a reducer and which one is an overlap.
   // this is due to how the word table lookup works -- it searches them
@@ -622,27 +620,22 @@ void NCF4::processPreRow(PreRow r,
   //        
   int nterms = elem->numTerms();
 
-  auto monomRange = memoryBlock.allocateArray<Monom>(nterms);
+  auto wordRange = memoryBlock.allocateArray<Word>(nterms);
   auto columnRange = memoryBlock.allocateArray<int>(nterms);
   // int* componentAlloc = (int*)mMemoryPool.malloc(nterms*sizeof(int));
   // Range<int> componentRange(componentAlloc,componentAlloc + nterms);
   // for (auto& i : componentRange) i = 0;
 
-  Monom* nextColMonom = monomRange.first;
+  Word* nextColWord = wordRange.first;
 
   for (auto i = elem->cbegin(); i != elem->cend(); ++i)
   {
-    // int newMonLen = left.size() + i.monom().size() + right.size();
-    // int* monAlloc = (int*)mMemoryPool.malloc(newMonLen*sizeof(int));
-    // freeAlgebra().monoid().mult3(left,i.monom(),right,monAlloc);
-    // Monom m(monAlloc);
-    Monom m = freeAlgebra().monoid().wordProductAsMonom(left,
-                                                        i.monom(),
-                                                        right,
-                                                        memoryBlock);
-    processMonomInPreRow(m,feeder);
-    *nextColMonom = m;
-    ++nextColMonom;
+    Word mid;
+    freeAlgebra().monoid().wordFromMonom(mid,i.monom());
+    Word w = freeAlgebra().monoid().wordProductAsWord(left,mid,right,memoryBlock);
+    processWordInPreRow(w,feeder);
+    *nextColWord = w;
+    ++nextColWord;
   }
   CoeffVector coeffs = mVectorArithmetic->sparseVectorFromContainer(elem->getCoeffVector());
 
@@ -650,7 +643,7 @@ void NCF4::processPreRow(PreRow r,
   if (preRowType == PreviousReducerPreRow) delete elem;
 
   // add the processed row to the appropriate list
-  rowsVector.emplace_back(Row {coeffs, columnRange, monomRange});
+  rowsVector.emplace_back(Row {coeffs, columnRange, wordRange});
 }
 
 void NCF4::processPreRow(PreRow r,
@@ -662,10 +655,10 @@ void NCF4::processPreRow(PreRow r,
                 nullptr);
 }
 
-void NCF4::processMonomInPreRow(Monom& m,
-                                PreRowFeeder* feeder)
+void NCF4::processWordInPreRow(Word& w,
+                               PreRowFeeder* feeder)
 {
-  const auto it = mColumnMonomials.find(m);
+  const auto it = mColumnMonomials.find(w);
   if (it == mColumnMonomials.end())
   {
     // if we are here, this monomial is not yet accounted for in the matrix
@@ -673,8 +666,8 @@ void NCF4::processMonomInPreRow(Monom& m,
 
     // insert column information into mColumnMonomials,
     // which provides us search (and eventually) indexing of columns
-    mColumnMonomials.emplace(m,std::make_pair(-1,-1));
-    auto divresult = findDivisor(m);
+    mColumnMonomials.emplace(w,std::make_pair(-1,-1));
+    auto divresult = findDivisor(w);
     if (divresult.first)
     {
       // if m is a divisor of a gb element (or a left/right
@@ -694,27 +687,31 @@ void NCF4::processMonomInPreRow(Monom& m,
   }
 }
 
-std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
+std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Word word)
 {
   Word newword;
 
   // look in previous F4 matrix for Monom before checking mWordTable
 
-  auto usePreviousSuffix = findPreviousReducerSuffix(mon);
+  auto usePreviousSuffix = findPreviousReducerSuffix(word);
   if (usePreviousSuffix.first)
     {
       // here, we use a multiple of a previously reduced row
-      Word tmpWord = freeAlgebra().monoid().firstVar(mon);
+      Word tmpWord;
+      if (word.size() != 0)
+        tmpWord.init(word.begin(), word.begin() + 1);
       return std::make_pair(true, PreRow {tmpWord,
                                           usePreviousSuffix.second,
                                           Word(),
                                           PreviousReducerPreRow});
     }
-  auto usePreviousPrefix = findPreviousReducerPrefix(mon);
+  auto usePreviousPrefix = findPreviousReducerPrefix(word);
   if (usePreviousPrefix.first)
     {
       // here, we use a multiple of a previously reduced row
-      Word tmpWord = freeAlgebra().monoid().lastVar(mon);
+      Word tmpWord;
+      if (word.size() != 0)
+        tmpWord.init(word.end()-1, word.end());
       return std::make_pair(true, PreRow {Word(),
                                           usePreviousPrefix.second,
                                           tmpWord,
@@ -725,7 +722,6 @@ std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
   // that was processed previously.
 
   // look in mWordTable for Monom
-  freeAlgebra().monoid().wordFromMonom(newword, mon);
   std::pair<int,int> divisorInfo;
   
   // TODO: for certain inputs (e.g. Monoms that we *know* are of
@@ -734,7 +730,7 @@ std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
   //       suffixes, not all subwords.  Not sure how to utilize that
   //       just yet.
 
-  bool found = mWordTable.subword(newword, divisorInfo);
+  bool found = mWordTable.subword(word, divisorInfo);
   
   // if newword = x^a x^b x^c, with x^b in the word table, then:
   //  divisorInfo.first = index of the GB element with x^b as lead monomial.
@@ -743,14 +739,14 @@ std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
   if (not found)
     return std::make_pair(false, PreRow {Word(), 0, Word(), ReducerPreRow});
   // if found, then return this information to caller
-  Word prefix = Word(newword.begin(), newword.begin() + divisorInfo.second);
+  Word prefix = Word(word.begin(), word.begin() + divisorInfo.second);
   Word divisorWord = mWordTable[divisorInfo.first];
-  Word suffix = Word(newword.begin() + divisorInfo.second + divisorWord.size(),
-                     newword.end());
+  Word suffix = Word(word.begin() + divisorInfo.second + divisorWord.size(),
+                     word.end());
   return std::make_pair(true, PreRow {prefix, divisorInfo.first, suffix, ReducerPreRow});
 }
 
-std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m)
+std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Word& w)
 {
   // build the largest proper prefix of m and look it up in previous
   // mColumnMonomials table.  we will return (true, row index) if
@@ -769,14 +765,12 @@ std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m)
   // else return (false, -1)
 
   // if the monom is the empty monomial, return false
-  if (freeAlgebra().monoid().is_one(m)) return std::make_pair(false,-1);
+  if (w.size() == 0) return std::make_pair(false,-1);
   
-  std::vector<int> prefixInserter;
   std::pair<bool,int> retval;
   
-  freeAlgebra().monoid().monomPrefixFromMonom(prefixInserter,m,1);
-  Monom prefixM(prefixInserter.data());
-  const auto it = mPreviousColumnMonomials.find(prefixM);
+  Word prefix(w.begin(),w.end()-1);
+  const auto it = mPreviousColumnMonomials.find(prefix);
   if (it == mPreviousColumnMonomials.end()) // not in table
     retval = std::make_pair(false,-1);
   else
@@ -791,7 +785,7 @@ std::pair<bool,int> NCF4::findPreviousReducerPrefix(const Monom& m)
 }
 
 
-std::pair<bool,int> NCF4::findPreviousReducerSuffix(const Monom& m)
+std::pair<bool,int> NCF4::findPreviousReducerSuffix(const Word& w)
 {
   // basically the same as above, except with suffixes
 
@@ -799,15 +793,12 @@ std::pair<bool,int> NCF4::findPreviousReducerSuffix(const Monom& m)
   // search for suffix in mPreviousColumnMonomials
   // if it.second.second != -1, then return (true,it.second.first)
   // else return (false, -1)
-  if (freeAlgebra().monoid().is_one(m)) return std::make_pair(false,-1);
+  if (w.size() == 0) return std::make_pair(false,-1);
   
-  std::vector<int> suffixInserter;
-
   std::pair<bool,int> retval;
   
-  freeAlgebra().monoid().monomSuffixFromMonom(suffixInserter,m,1);
-  Monom suffixM(suffixInserter.data());
-  const auto it = mPreviousColumnMonomials.find(suffixM);
+  Word suffix(w.begin()+1,w.end());
+  const auto it = mPreviousColumnMonomials.find(suffix);
   if (it == mPreviousColumnMonomials.end()) //not in table
     retval = std::make_pair(false,-1);
   else
@@ -827,19 +818,19 @@ void NCF4::labelAndSortF4Matrix()
 {
   size_t sz = mColumnMonomials.size();
   std::vector<int> columnIndices;
-  std::vector<Monom> tempMonoms;
+  std::vector<Word> tempWords;
   
-  tempMonoms.reserve(sz);
+  tempWords.reserve(sz);
   columnIndices.resize(sz);
   std::iota(columnIndices.begin(), columnIndices.end(), 0);
   
   // store all the column monomials in a temporary to sort them
   // and also set the reducer column for them on the same pass
   for (auto& i : mColumnMonomials)
-    tempMonoms.emplace_back(i.first);
+    tempWords.emplace_back(i.first);
 
   // create the monomial sorter object
-  MonomSort<std::vector<Monom>> monomialSorter(&freeAlgebra().monoid(),&tempMonoms);
+  MonomSort<std::vector<Word>> monomialSorter(&freeAlgebra().monoid(),&tempWords);
   // stable sort was here before, but this sort is based on a total ordering
   // with no ties so we can use an unstable (and hence parallel!) sort.
   tbb::parallel_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
@@ -851,9 +842,9 @@ void NCF4::labelAndSortF4Matrix()
          {
            for (auto count = r.begin(); count != r.end(); ++count)
              {
-               auto& val = mColumnMonomials[tempMonoms[columnIndices[count]]];               
+               auto& val = mColumnMonomials[tempWords[columnIndices[count]]];
                val.first = count;
-               mColumns[count].monom = tempMonoms[columnIndices[count]];
+               mColumns[count].word = tempWords[columnIndices[count]];
                mColumns[count].pivotRow = -1;
              }
          });
@@ -865,15 +856,15 @@ void NCF4::labelAndSortF4Matrix()
           for (auto i = r.begin(); i != r.end(); ++i)
           {
             auto& comps = mRows[i].columnIndices;
-            auto& monoms = mRows[i].columnMonoms;
+            auto& words = mRows[i].columnWords;
             // sets the pivot row in the column if this is a reducer row
             if (i < mFirstOverlap)
             {
-              mColumns[mColumnMonomials[monoms[0]].first].pivotRow = i;
-              mColumnMonomials[monoms[0]].second = i;
+              mColumns[mColumnMonomials[words[0]].first].pivotRow = i;
+              mColumnMonomials[words[0]].second = i;
             }
-            for (int j = 0; j < monoms.size(); ++j)
-              comps[j] = mColumnMonomials[monoms[j]].first;
+            for (int j = 0; j < words.size(); ++j)
+              comps[j] = mColumnMonomials[words[j]].first;
           }
         });
 }
@@ -1062,7 +1053,10 @@ void NCF4::displayF4Matrix(std::ostream& o) const
     {
       // each i is a pair (const Monom, pair(int,int)).
       buffer b;
-      freeAlgebra().monoid().elem_text_out(b, i.first);
+      FreeMonoid::MonomialInserter monomInserter;
+      freeAlgebra().monoid().monomInsertFromWord(monomInserter,i.first);
+      Monom m(monomInserter.data());
+      freeAlgebra().monoid().elem_text_out(b, m);
       o << b.str() << "(" << i.second.first << ", " << i.second.second << ") ";
       if (i.second.second != -1 and
           (mRows[i.second.second].columnIndices.begin() == nullptr or
@@ -1122,7 +1116,10 @@ void NCF4::displayFullF4Matrix(std::ostream& o) const
   for (auto i : mColumnMonomials)
     {
       buffer b;
-      freeAlgebra().monoid().elem_text_out(b, i.first);
+      FreeMonoid::MonomialInserter monomInserter;
+      freeAlgebra().monoid().monomInsertFromWord(monomInserter,i.first);
+      Monom m(monomInserter.data());
+      freeAlgebra().monoid().elem_text_out(b, m);
       o << b.str() << "(" << i.second.first << ", " << i.second.second << ") ";
       // each i is a pair (const Monom, pair(int,int)).
     }

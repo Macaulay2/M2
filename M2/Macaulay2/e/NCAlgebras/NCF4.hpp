@@ -69,13 +69,13 @@ private:
     CoeffVector coeffVector;     // vector of coefficients
     Range<int> columnIndices;    // column indices used in the row.  Valid *only* after labelAndSortF4Matrix, 
                                  // as the indices are not known during creation.
-    Range<Monom> columnMonoms;   // monoms used in the row.  Valid only *before* reduction begins, as reduction
+    Range<Word> columnWords;   // monoms used in the row.  Valid only *before* reduction begins, as reduction
                                  // does not update this field
   };
 
   struct Column
   {
-    Monom monom;                 // Monom corresponding to the column
+    Word word;                 // Monom corresponding to the column
     int pivotRow;              // pivot row corresponding to this monomial
   };
   // the index of a Column in a ColumnsVector is the column index and is used in Row.columnIndices.
@@ -89,7 +89,7 @@ private:
   //    i is the column number
   //    j is the row that reduces it
   //      (and -1 if there is no such row).
-  using MonomialHash = tbb::concurrent_unordered_map<Monom,std::pair<int,int>,MonomHash,MonomHashEqual>;
+  using MonomialHash = tbb::concurrent_unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
 
   // data
   const FreeAlgebra& mFreeAlgebra;
@@ -204,13 +204,13 @@ private:
   void processPreRow(PreRow r,
                      RowsVector& rowsVector);
 
-  void processMonomInPreRow(Monom& m,
-                            PreRowFeeder* feeder);
+  void processWordInPreRow(Word& w,
+                           PreRowFeeder* feeder);
 
   void preRowsFromOverlap(const Overlap& o);
   void parallelPreRowsFromOverlap(const Overlap& o);
 
-  std::pair<bool, PreRow> findDivisor(Monom mon);
+  std::pair<bool, PreRow> findDivisor(Word w);
 
   void autoreduceByLastElement();
   ring_elem getCoeffOfMonom(const Poly& f, const Monom& m);
@@ -259,8 +259,8 @@ private:
   
   // return value is isFound, columnIndexOfFound
   // discard const qualifier here again because this creates a monom in mMonomialSpace
-  std::pair<bool,int> findPreviousReducerPrefix(const Monom& m);
-  std::pair<bool,int> findPreviousReducerSuffix(const Monom& m);
+  std::pair<bool,int> findPreviousReducerPrefix(const Word& w);
+  std::pair<bool,int> findPreviousReducerSuffix(const Word& w);
 
   void processPreviousF4Matrix();
 };

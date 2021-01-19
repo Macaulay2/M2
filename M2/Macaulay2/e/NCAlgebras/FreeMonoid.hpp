@@ -91,6 +91,7 @@ public:
   void mult3(const Monom& m1, const Monom& m2, const Monom& m3, MonomialInserter& result) const;
 
   int compare(const Monom& m1, const Monom& m2) const;
+  int compare(const Word& w1, const Word& m2) const;
 
   bool isEqual(const Monom& m1, const Monom& m2) const;
 
@@ -227,6 +228,7 @@ private:
   const FreeMonoid* mMonoid;
 };
 
+// this works whether T = std::vector<Monom> or std::vector<Word>
 template<class T>
 struct MonomSort {
   const FreeMonoid* mMonoid;
