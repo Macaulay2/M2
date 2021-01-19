@@ -516,7 +516,7 @@ gfanParsePolyhedralFan String := o -> s -> (
 		S=fanFromGfan({myrays,mylinspace,mymaximalcones,P#"Dim",P#"Pure",P#"Simplicial",fVector});
 	    );	    
 
-	    --re-writing the  multiplicities according to thw new order of maximal cones 
+	    --re-writing the  multiplicities according to the new order of maximal cones 
 	    if  P#?"Multiplicities" then ( 
 		newMult:=multiplicitiesReorder({rays S,maxCones S,myrays,mymaximalcones,P#"Multiplicities"});
 		S,newMult
@@ -625,7 +625,7 @@ gfanSymbolToString = method()
 gfanSymbolToString Symbol := (X) -> (
 	toString(X) | "\n"
 	--- gfanToExternalString will write the word symbol if X is assigned
-	--- and this is not desireable
+	--- and this is not desirable
 )
 
 gfanIdealToString = method()
@@ -636,7 +636,7 @@ gfanPolynomialListToString = method()
 gfanPolynomialListToString List := (L) ->
 	joinStrings(L/gfanToExternalString, "," | newline, "{", "}" | newline)
 
---Takes a marked polynomial as a pair: {inital term, polynomial}
+--Takes a marked polynomial as a pair: {initial term, polynomial}
 gfanMarkedPolynomialToString = method()
 gfanMarkedPolynomialToString List := (L) -> (
 		out := gfanToExternalString(first L);
@@ -2749,7 +2749,7 @@ doc ///
 			of length two
 	Outputs
 		L:MarkedPolynomialList
-			containg polynomials from the second entry of {\tt P} marked by the first entry of {\tt P}
+			containing polynomials from the second entry of {\tt P} marked by the first entry of {\tt P}
 	Description
 		Text
 			A marked polynomial list is a list of polynomials in which
@@ -3022,7 +3022,7 @@ doc ///
 			This method takes two Fans and finds their common refinement.
 
 			In the following, {\tt F} is the fan with two cones partitions the plane along the line
-			@TEX "$y=x$"@ while {\tt G} has two cones that parition the plane along @TEX "$y = x/2$"@.
+			@TEX "$y=x$"@ while {\tt G} has two cones that partition the plane along @TEX "$y = x/2$"@.
 			The common refinement of these two fans is the fan of the four cones between these two lines.
 		Example
 			QQ[x,y];
@@ -3844,7 +3844,7 @@ doc ///
 
 		Text
 			Caution should be used as this method invokes {\tt use R} which changes the global
-			symbol table. It would be preferrable to use the map command which is built into
+			symbol table. It would be preferable to use the map command which is built into
 			Macaulay 2. A ring map can be applied directly to a marked polynomial list.
 
 		Example
@@ -4236,7 +4236,7 @@ doc ///
 		L:List
 			of polynomials, homogeneous with respect to a positive weight vector
 		I:Ideal
-			homogenous with respect to a positive weight vector
+			homogeneous with respect to a positive weight vector
 	Outputs
 		P:List
 			a pair of @TO MarkedPolynomialList@s

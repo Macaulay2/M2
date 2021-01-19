@@ -48,7 +48,7 @@ jump = (tp, H, epsilon) -> (
     l1
     )
 
--- first example seems to generate valid ouput, but gives weird "wrong # of inputs" error message
+-- first example seems to generate valid output, but gives weird "wrong # of inputs" error message
 solveRealSystem = method()
 solveRealSystem (PolySystem, PolySystem, List) := (f, g, startSols) -> (
     if ring f =!= ring g then error "expected systems from same ring";
