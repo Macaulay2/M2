@@ -89,7 +89,7 @@ doc ///
 	    Cox-Little-Schenck.
         Text
 	    To specify a map of normal toric varieties, the target and source
-	    normal toric varieties need to be specificied as well as a matrix
+	    normal toric varieties need to be specified as well as a matrix
 	    which maps from $N_X$ to $N_Y$.
 	Text
 	    The primary constructor of a toric map is
@@ -1169,7 +1169,7 @@ doc ///
 	    Given a toric map $f : X \to Y$ where $Y$ a smooth toric variety,
             this method returns the induced map of abelian groups from the
             group of torus-invariant Weil divisors on $Y$ to the group of
-            torus-invariant Weil divisors on $X$.  For arbitary normal toric
+            torus-invariant Weil divisors on $X$.  For arbitrary normal toric
             varieties, the @TO weilDivisorGroup@ is not a functor.  However,
             @TO weilDivisorGroup@ is a contravariant functor on the category
             of @TO2(isSmooth, "smooth")@ normal toric varieties.
@@ -1228,7 +1228,7 @@ doc ///
         Text
 	    Given a toric map $f : X \to Y$ where $Y$ a smooth toric variety,
             this method returns the induced map of abelian groups from the
-            class group of $Y$ to the class group of $X$.  For arbitary normal
+            class group of $Y$ to the class group of $X$.  For arbitrary normal
             toric varieties, the @TO classGroup@ is not a functor.  However,
             @TO classGroup@ is a contravariant functor on the category of
             @TO2(isSmooth, "smooth")@ normal toric varieties.

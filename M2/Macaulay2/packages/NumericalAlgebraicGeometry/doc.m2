@@ -277,7 +277,7 @@ document {Key => { (track, List, List, List), track, (track,PolySystem,PolySyste
 	track(S,T,solsS,Predictor=>Certified,Normalize=>true)
 	///,
 	PARA {
-	     "Note that the projective tracker is invoked either if the target system is a homogenous system or if ", TO "Projectivize", TT"=>true",
+	     "Note that the projective tracker is invoked either if the target system is a homogeneous system or if ", TO "Projectivize", TT"=>true",
 	     " is specified. "
 	     },
 	SeeAlso => {solveSystem, setDefault, Point},
@@ -293,7 +293,7 @@ document {
      Headline => "specifies whether to postprocess the solutions",
      "Postprocessing includes refinement and clustering the solutions.",
      Caveat=>{"Postprocessing is coded in top-level M2 language 
-	  and can be much slower than the homotopy contination done without postprocessing."},
+	  and can be much slower than the homotopy continuation done without postprocessing."},
      SeeAlso=>{refine}
      }
 
@@ -510,7 +510,7 @@ M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
 
 document {
 	Key => {(goodInitialPair, List), goodInitialPair, [goodInitialPair,GeneralPosition], GeneralPosition},
-	Headline => "make an intial pair conjectured to be good by Shub and Smale",
+	Headline => "make an initial pair conjectured to be good by Shub and Smale",
 	Usage => "(S,sol) = goodInitialPair T",
 	Inputs => { 
 	     "T" => {"contains homogeneous polynomials"},
@@ -579,7 +579,7 @@ document {
 	Usage => "Ws = regeneration F",
 	Inputs => { "F"=>"contains polynomials with complex coefficients" },
 	Outputs => { "Ws"=>{"contains ", TO2{WitnessSet,"witness sets"}, " for equidimensional components of the variety ", TT "{x|F(x)=0}" }},
-     	"Regeneration is a blackbox method that obtains a numerical describtion of an algebraic variety. ",
+     	"Regeneration is a blackbox method that obtains a numerical description of an algebraic variety. ",
 	"Note that ", TT "Ws", " are not necessarily irreducible witness sets; use ", 
 	TO (decompose, WitnessSet), " to decompose into irreducibles. ",
 	EXAMPLE lines ///
@@ -840,7 +840,7 @@ document {
     f2 = (x-11)*(x-12)*(x-13)
     try parameterHomotopy({f1,f2},{u1,u2,u3},{{1,0,0},{0,1+2*ii,0}}, Software=>BERTINI) else "need to install Bertini to run these lines"
 ///,
-    Caveat => {"Avalaible only with Software=>BERTINI at the moment..."}
+    Caveat => {"Available only with Software=>BERTINI at the moment..."}
     }
 
 -*
@@ -1025,8 +1025,8 @@ doc ///
 	points:MutableMatrix
     Description
     	Text 
-            Refines an approximation of a (singular) solution to a polynomial system which was obtained via homotopy contiuation.
-	    This method is used for posprocessing in the blackbox solver implmented in @TO solveSystem@.  
+            Refines an approximation of a (singular) solution to a polynomial system which was obtained via homotopy continuation.
+	    This method is used for posprocessing in the blackbox solver implemented in @TO solveSystem@.  
         Example
             CC[x,y]
 	    T = {(x-2)^3,y-x+x^2-x^3}

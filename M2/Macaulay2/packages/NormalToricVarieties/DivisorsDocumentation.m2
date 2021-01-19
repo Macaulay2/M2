@@ -1414,7 +1414,7 @@ doc ///
     Outputs
         : Boolean
 	    that is @TO true@ if the underlying varieties are equal and lists
-	    of coefficents are equal
+	    of coefficients are equal
     Description
         Text
 	    Two torus-invariant Weil divisors are equal when their underlying
@@ -1462,13 +1462,13 @@ doc ///
 	m : ZZ
     Outputs 
         : ToricDivisor
-	    that is obtain via the specific operation
+	    that is obtained via the specific operation
     Description
         Text	    
             The set of torus-invariant Weil divisors forms an abelian group
             under addition.  The basic operations arising from this structure,
-            including addition, substraction, negation, and scalar
-            multplication by integers, are available.
+            including addition, subtraction, negation, and scalar
+            multiplication by integers, are available.
 	Text
 	    We illustrate a few of the possibilities on one variety.
       	Example

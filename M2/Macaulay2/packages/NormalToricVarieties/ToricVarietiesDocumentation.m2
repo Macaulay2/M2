@@ -104,7 +104,7 @@ doc ///
 	    many additional methods for constructing other specific types of
 	    normal toric varieties.
     	Text
-    	    @SUBSECTION "Constuctors for normal toric varieties"@
+    	    @SUBSECTION "Constructors for normal toric varieties"@
 	Text
     	    @UL {
                 TO (normalToricVariety, List, List),
@@ -1181,7 +1181,7 @@ doc ///
 
 
 ------------------------------------------------------------------------------
--- Methods that inferface with the 'Polyhedra' package 
+-- Methods that interface with the 'Polyhedra' package 
 ------------------------------------------------------------------------------
 doc ///
     Key
