@@ -521,7 +521,7 @@ document {
      "that the output may have incorrect terms with total exponent greater than ", TEX "$ n $",
      ". If the input is positively ",
      "graded, all deformation parameters have strictly positive degree, and ",
-     TEX "$ n $", " is sufficently large, then no terms of degree greater than ",
+     TEX "$ n $", " is sufficiently large, then no terms of degree greater than ",
      TEX "$ n $", " appear in the output, and the result is versal. In this case, the maximum ",
      "of ", TEX "$ d / deg x $", " where ", TEX "$ d $", " is the degree of the equation of the ",
      "hypersurface and ", TEX "$ x $", " ranges over all variables in the ring of the hypersurface and ",

@@ -161,7 +161,7 @@ Node
     Text
       Creating a package is the most common way of contributing to Macaulay2. Packages can contain
       code for working with objects of a certain category, generating examples for testing a conjecture,
-      or an implemention of algorithms introduced in the literature.
+      or an implementation of algorithms introduced in the literature.
 
     Tree
       :There are five parts to a Macaulay2 package

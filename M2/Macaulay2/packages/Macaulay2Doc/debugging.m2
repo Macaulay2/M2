@@ -286,7 +286,7 @@ document {
 	  GenerateAssertions => Boolean => {
 	       "whether to print assertion statements that can be used as input to Macaulay2 to
 	       check the behavior of the function remains the same.  Arguments and values are prepared
-	       with ", TO "toExternalString", ", failure of which is sliently ignored."
+	       with ", TO "toExternalString", ", failure of which is silently ignored."
 	       }
 	  },
      Outputs => { Function => {"a new function that returns the same values that ", TT "f", " would have returned, but has a few side effects

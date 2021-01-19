@@ -7,7 +7,7 @@ Node
   Headline
     compute the inverse
 
--- TOOD: ModuleMap as well?
+-- TODO: ModuleMap as well?
 Node
   Key
     (inverse, Matrix)

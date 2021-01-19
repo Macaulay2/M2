@@ -21,7 +21,7 @@ doc ///
       with the ring, and its opposite ring, i.e. this switches left and right modules of the ring.
       
       This is implemented in the following simple manner: each monomial which has exactly $d$
-      skew commuting variables occuring (thus, with exponent 1 each), is multiplied by 
+      skew commuting variables occurring (thus, with exponent 1 each), is multiplied by 
       $(-1)^{(d-1)(d-2)/2}$.
     Example
       R = ZZ/32003[a..f, SkewCommutative => true]

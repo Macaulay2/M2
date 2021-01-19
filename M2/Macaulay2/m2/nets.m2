@@ -28,6 +28,7 @@ toString BasicList := s -> concatenate(
      "{", between(", ",apply(toList s,toStringn)), "}"
      )
 toString Array := s -> concatenate ( "[", between(", ",toStringn \ toList s), "]" )
+toString AngleBarList := s -> concatenate ( "<|", between(", ",toStringn \ toList s), "|>" )
 toString Sequence := s -> (
      if # s === 1 then concatenate("1 : (",toString s#0,")")
      else concatenate("(",between(",",toStringn \ s),")")
@@ -167,6 +168,10 @@ net Array := x -> horizontalJoin deepSplice (
      "[",
      toSequence between(comma,apply(x,netn)),
      "]")
+net AngleBarList := x -> horizontalJoin deepSplice (
+     "<|",
+     toSequence between(comma,apply(x,netn)),
+     "|>")
 net BasicList := x -> horizontalJoin deepSplice (
       net class x, 
       "{",

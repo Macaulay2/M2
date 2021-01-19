@@ -1338,7 +1338,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
   -- IN: T, target system to be solved;
   --     S, start system with solutions in Ssols;
   --     Ssols, solutions at the start of the paths.
-  -- OPT INTPUTS: gamma, constant for gamma trick
+  -- OPT INPUTS: gamma, constant for gamma trick
   --     tDegree, degree of continuation parameter      
   -- OUT: Tsols, solutions at the end of the paths.
   
@@ -1476,7 +1476,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
     ));
     totalN := #result;
     scan(result, s->(
-      if s#1#"mult">1 then error "mutiple root encountered";
+      if s#1#"mult">1 then error "multiple root encountered";
       if s#1#"mult"<0 then error "negative mutiplicity";
     ));			 
     result = select(result, 

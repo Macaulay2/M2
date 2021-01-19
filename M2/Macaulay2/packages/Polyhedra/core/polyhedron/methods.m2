@@ -83,10 +83,10 @@ facets Polyhedron := P -> getProperty(P, facets)
 -- PURPOSE : Scaling respectively the multiple Minkowski sum of a polyhedron
 --   INPUT : '(k,P)',  where 'k' is a strictly positive rational or integer number and 
 --     	    	             'P' is a Polyhedron
---  OUTPUT : The polyehdron 'P' scaled by 'k'
+--  OUTPUT : The polyhedron 'P' scaled by 'k'
 QQ * Polyhedron := (k,P) -> (
    -- Checking for input errors
-   if k <= 0 then error("The factor must be strictly positiv");
+   if k <= 0 then error("The factor must be strictly positive");
    vertP := vertices P;
    vertP = promote(vertP, QQ);
    raysP := promote(rays P, QQ);

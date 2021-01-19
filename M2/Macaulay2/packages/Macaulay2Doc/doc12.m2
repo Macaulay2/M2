@@ -13,7 +13,7 @@ document {
 document {
      Key => IndeterminateNumber,
      Headline => "the class of all indeterminate numbers",
-     "Indeterminate numbers result, for exmaple, from multiplying 0 by infinity.
+     "Indeterminate numbers result, for example, from multiplying 0 by infinity.
      There is only one instance of this class."
      }
 
@@ -252,7 +252,7 @@ document {
      Key => Holder,
      Headline => "the class of all holder expressions",
      PARA{},
-     "This type of expresssion is a container for a single, arbitrary, thing that
+     "This type of expression is a container for a single, arbitrary, thing that
      is basic enough that the correct method for printing does not depend
      on its neighbors in the containing expression.  A negative number would
      not be basic enough for this purpose, since as a member of a sum, it would

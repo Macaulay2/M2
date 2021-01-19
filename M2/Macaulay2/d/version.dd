@@ -13,54 +13,56 @@ declarations "
    ";
 
 header "
-   #include <atomic_ops.h>
-   #include <boost/version.hpp>
-   #include <mpfr.h>
-   #include <memtailor.h>
-   #include <mathic.h>
-   #include <gdbm.h>
-   #include <mathicgb.h>
-   #include <mps/version.h>
-       #ifndef MPS_MAJOR_VERSION
-       #error \"MPS_MAJOR_VERSION undefined\"
-       #endif
+   #include <M2/config.h>
+   #include <M2/gc-include.h>
+   #include <M2/math-include.h>
+   #include \"distributed-packages.h\"
+
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
-   namespace constants { extern const char* const version; } /* we have to copy this from frobby until they make it more accessible */
+
+   const char * M2_version () { return PACKAGE_VERSION; }
+
    extern char timestamp[];
+   static int32_t endianness_string[2] = {0x61626364,0};
+
+   #include <boost/version.hpp>
+
+   #include <memtailor.h>
+   #include <mathic.h>
+   #include <mathicgb.h>
+
+   #include <frobby.h>
+   #ifdef HAVE_FROBBY_VERSION
+     extern const char* const frobby_version;
+   #else
+     namespace constants { extern const char* const version; }
+     const char* const frobby_version = constants::version;
+   #endif
+
+   #include <mps/version.h>
+   #ifndef MPS_MAJOR_VERSION
+     #error \"MPS_MAJOR_VERSION undefined\"
+   #endif
+
    #undef ASSERT
    #ifdef HAVE_SCSCP
      #include <scscp.h>
      void scscp_dummy() { SCSCP_sc_init(NULL,NULL); /* just to force linking with the library */ }
    #endif
-   #include <stdio.h>
-   extern unsigned int GC_version; /* in libgc.a */
+
    #include <NTL/version.h>
+
    #undef ASSERT
-   static int32_t endianness_string[2] = {0x61626364,0};
-   #include <readline/readline.h>
    #include <givaro/givinit.h>
    #include <givaro/givconfig.h>
-   Givaro::GivaroMain givaroMain;
+   Givaro::GivaroMain givaroMain;";
 
-   // we want to get PACKAGE_VERSION from factory/factoryconf.h and then get it again from M2/config.h
-   const char * M2_version () { return PACKAGE_VERSION; }
-   #undef PACKAGE_VERSION
-   #include <factory/factoryconf.h>
-   const char * factory_version () { return PACKAGE_VERSION; }
-   extern const char factoryVersion[]; /* extracted from factory's factory.h */
-
-   // HAVE_LINBOX is in factory/factoryconf.h
-   #ifdef HAVE_LINBOX
-       #include <linbox/linbox-config.h>
-   #endif
-   // HAVE_FROBBY is in factory/factoryconf.h
-   #include <M2/gc-include.h>
-   #pragma GCC diagnostic push
-   #pragma GCC diagnostic ignored \"-Wconversion\"
-   #include <flint/flint.h>
-   #pragma GCC diagnostic pop
-   ";
+header "
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored \"-Wconversion\"
+#include <flint/flint.h>
+#pragma GCC diagnostic pop";
 gcversion():constcharstar := Ccode(returns,"
      static char buf[40];
      unsigned x = GC_get_version();
@@ -69,24 +71,29 @@ gcversion():constcharstar := Ccode(returns,"
      unsigned micro = x & 0xff;
      if (micro == 0xff) sprintf(buf,\"%d.%d\", major, minor);
      else sprintf(buf,\"%d.%d.%d\", major, minor, micro);
-     return buf;
-     ");
+     return buf");
 
+header "#include <atomic_ops.h>";
 atomicopsversion():constcharstar := Ccode(returns,"
 #ifdef AO_VERSION_MICRO
      static char buf[40];
      sprintf(buf,\"%d.%d.%d\",AO_VERSION_MAJOR, AO_VERSION_MINOR, AO_VERSION_MICRO);
-     return buf;
+     return buf
 #else
      return \"version number not available\"
 #endif
-     ");
+");
 
-header "#include <fflas-ffpack/fflas-ffpack-config.h>";
+header "#include <fflas-ffpack/config.h>";
 ffpackVersion():constcharstar := Ccode(constcharstar,"__FFLASFFPACK_PACKAGE_VERSION");
 
-header "#include <fflas-ffpack/fflas-ffpack-config.h>";
-
+header"
+#pragma push_macro(\"PACKAGE_VERSION\")
+#undef PACKAGE_VERSION
+#include <factory/factoryconf.h>
+const char * factory_version () { return PACKAGE_VERSION; }
+extern const char factoryVersion[]; /* extracted from factory's factory.h */
+#pragma pop_macro(\"PACKAGE_VERSION\")";
 factoryversion():constcharstar := Ccode(returns,"
      return factory_version();
      // the following way used to work, but now it gives 4.0.1 instead of 4.1.0:
@@ -94,15 +101,14 @@ factoryversion():constcharstar := Ccode(returns,"
      //   return p ? p+1 : factoryVersion;
      ");
 
+header "#include <readline/readline.h>";
 readlineversion():constcharstar := Ccode(returns,"
      static char buf[8];
      sprintf(buf, \"%d.%d\", (rl_readline_version>>8)&0xff, rl_readline_version&0xff );
-     return buf;
-     ");
+     return buf");
 
-gdbmversion():constcharstar := Ccode(returns,"
-     return gdbm_version;
-     ");
+header "#include <gdbm.h>";
+gdbmversion():constcharstar := Ccode(returns, "return gdbm_version");
 
 ic := Ccode(int, "
      #if defined(__INTEL_COMPILER)
@@ -134,8 +140,6 @@ compiler := (
 	    #endif
 	    ")));
 
-header "#include \"distributed-packages.h\"";
-
 setupconst("version", Expr(toHashTable(Sequence(
    "VERSION" => Ccode(constcharstar,"M2_version()"),
    "architecture" => Ccode(constcharstar,"ARCH"),
@@ -158,17 +162,10 @@ setupconst("version", Expr(toHashTable(Sequence(
 	  "),
    "givaro version" => Ccode(constcharstar, "stringize(GIVARO_MAJOR_VERSION) \".\" stringize(GIVARO_MINOR_VERSION) \".\" stringize(GIVARO_REVISION_VERSION)" ),
    "fflas_ffpack version" => ffpackVersion(),
-   "linbox version" => Ccode(constcharstar,"
-	  #ifdef HAVE_LINBOX
-	       __LINBOX_VERSION
-	  #else
-	       \"not present\"
-	  #endif
-	  "),
    "mpsolve version" => Ccode(constcharstar, "stringize(MPS_MAJOR_VERSION) \".\" stringize(MPS_MINOR_VERSION) \".\" stringize(MPS_PATCH_VERSION)" ),
    "python version" => Ccode(constcharstar,"
 	#ifdef WITH_PYTHON
-		 PY_VERSION				      
+		 PY_VERSION
 	#else
 		 \"not present\"
 	#endif
@@ -189,7 +186,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	#endif
 	"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
-   "frobby version" => Ccode(constcharstar,"constants::version"),
+   "frobby version" => Ccode(constcharstar,"frobby_version"),
    "flint version" => Ccode(constcharstar,"flint_version"),
    "scscp version" => Ccode(constcharstar,"
 	 #ifdef HAVE_SCSCP

@@ -208,7 +208,7 @@ document {
      most d. Suppose that Q_d is free of rank n. We then have a short
      exact sequence 0\to N_d\to S_d^p\to Q_d\to 0 where also N_d is
      free. Thus, N_d\otimes S_1\to S^p_{d+1}\to Q_{d+1}\to 0 is a free
-     presentation of Q_{d+1}. If the basis of Q_d can be choosen as a so
+     presentation of Q_{d+1}. If the basis of Q_d can be chosen as a so
      called Gotzmann set, then Q_{d+1} is free of rank n if and only if
      the (n-1)'th Fitting ideal of Q_{d+1} is zero.
      

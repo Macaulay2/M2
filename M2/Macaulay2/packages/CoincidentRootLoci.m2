@@ -700,7 +700,7 @@ isRealRootedViaQEPCAD (RingElement) := o -> (F) -> (
    (dir|"-input") << S << close;
    C := "qepcad +N"|toString(first o.QepcadOptions)|" +L"|toString(last o.QepcadOptions)|" < '"|dir|"-input'";
    if o.Verbose then << "--running " << C << endl;
-   try (Out := get("!"|C); if CLEAR then removeFile(dir|"-input")) else error "error occured while executing QEPCAD. Please make sure that it is installed and configured correctly.";
+   try (Out := get("!"|C); if CLEAR then removeFile(dir|"-input")) else error "error occurred while executing QEPCAD. Please make sure that it is installed and configured correctly.";
    jj := toList first regex("An equivalent quantifier-free formula:"|newline|newline,Out);
    V := substring(Out,sum jj,5);
    if V === "TRUE"|newline then return true else if V === "FALSE" then return false else (

@@ -475,7 +475,7 @@ doc ///
 	       whose columns parametrize the toric variety. The toric ideal $I_A$ is the kernel of the map defined by {\tt A}
      Description
      	  Text
-	       Very often the Graver basis consits of too many binomials, and one is only interested in their degrees. In this case,
+	       Very often the Graver basis consists of too many binomials, and one is only interested in their degrees. In this case,
 	       instead of looking at the Graver basis of $I_A$, we may just want to look for the degrees of binomials which show up:
 	  Example
 	       A = matrix "1,1,1,1; 1,2,3,4"
@@ -613,7 +613,7 @@ TEST ///
   R=CC[x_0,x_1,x_2,x_3]
   A = matrix "1,1,1,1; 1,2,3,4"
   C = toricCircuits(A)  --circuits returned by 4ti2
-  Icir = toBinomial(C,R) -- circuit ideal returend by 4ti2
+  Icir = toBinomial(C,R) -- circuit ideal returned by 4ti2
   Ctrue = matrix{{0,1,-2,1},{1,-2,1,0},{1,0,-3,2},{2,-3,0,1}} --known: all circuits
   IcirTrue = toBinomial(Ctrue,R) --known: circuit ideal
   Irnc3 = ideal(x_0*x_2-x_1^2,x_1*x_3-x_2^2,x_0*x_3-x_1*x_2)
@@ -788,7 +788,7 @@ rays, circuits, qsolve
 also: minimise, walk, normalform
 
 a.mat: m by n
-a.rel: 1 by m: symols: >, =, <  (means: >= 0, == 0, <= 0)
+a.rel: 1 by m: symbols: >, =, <  (means: >= 0, == 0, <= 0)
 a.sign: 1 by n matrix: 0,1,-1,2
 
 a.sign: 0:  x_i unrestricted in sign

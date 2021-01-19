@@ -693,7 +693,7 @@ iskCayleykEdges(Polyhedron):=P->(
 	     );
 	 );
      );
-  if (not boolean) then(return((P0,P1,minLen));)else(print("Condtions not met"););
+  if (not boolean) then(return((P0,P1,minLen));)else(print("Conditions not met"););
  )
 
 
@@ -910,7 +910,7 @@ doc ///
     :Polyhedron
   Description
    Text
-     Calculates the stellar subdivsion of height k of a polytope P at the face Q. This corresponds to constructing the embedding given by the global sections of L-kE for the blow-up at the torus invariant subvariety associated to Q. Here L is the ample line bundle on the toric variety corresponding to P and E is the exeptional divisor.   
+     Calculates the stellar subdivision of height k of a polytope P at the face Q. This corresponds to constructing the embedding given by the global sections of L-kE for the blow-up at the torus invariant subvariety associated to Q. Here L is the ample line bundle on the toric variety corresponding to P and E is the exceptional divisor.   
    Example
      P=cayley(matrix{{0,2,0}},matrix{{0,0,2}})
      vertices oo
@@ -1070,7 +1070,7 @@ doc ///
     (jetMatrix,Matrix,ZZ)
     (jetMatrix,List,ZZ)
   Headline
-     construct the matrix of k-jets evalutated at a given point.
+     construct the matrix of k-jets evaluated at a given point.
   Usage
      jetMatrix(A,k,pt)
   Inputs
@@ -1110,7 +1110,7 @@ document {
 	  List => {"a list of monomials giving the embedding"},
       	  },
      
-     PARA{}, TT "torusEmbedding", " is a funtion. It takes a set of lattice points as input and returns a list of monomials giving the corresponding torus embedding.",
+     PARA{}, TT "torusEmbedding", " is a function. It takes a set of lattice points as input and returns a list of monomials giving the corresponding torus embedding.",
      
      EXAMPLE {
 	  "torusEmbedding(matrix{{0,1,2},{0,3,4}})",
@@ -1120,7 +1120,7 @@ document {
  
  document {
      Key => {toricDiv, (toricDiv,Matrix), (toricDiv,Polyhedron)},
-     Headline => "constructs the toric Weil divisor associatied to a polytope",
+     Headline => "constructs the toric Weil divisor associated to a polytope",
      Usage => " toricDiv(X)",
      Inputs => {
 	  "X" => Matrix => {"of vertices or ",ofClass Polyhedron, "."},
@@ -1129,7 +1129,7 @@ document {
 	  ToricDivisor
       	  },
      
-     PARA{}, TT "toricDiv", " is a funtion. It returns ",ofClass ToricDivisor, " corresponding to a polytope P on the toric variety associated to the normal fan of P.",
+     PARA{}, TT "toricDiv", " is a function. It returns ",ofClass ToricDivisor, " corresponding to a polytope P on the toric variety associated to the normal fan of P.",
      
      EXAMPLE {
 	  "toricDiv(hypercube(2))",
@@ -1148,7 +1148,7 @@ document {
 	  ZZ => {"the codegree of X"}
       	  },
      
-     PARA{}, TT "codegree", " is a funtion that returns the codegree of a polytope. ",
+     PARA{}, TT "codegree", " is a function that returns the codegree of a polytope. ",
      
      EXAMPLE {
 	  "codegree(hypercube(4))",
@@ -1167,7 +1167,7 @@ document {
 	  Sequence => {"(A,b) where A is a ", ofClass Matrix, " and b is a column vector of class ", ofClass Matrix, " where each row corresponds to a halfspace."}
       	  },
      
-     PARA{}, TT "ambientHalfspaces", " is a function. It provides the halfspace desription of a polytope in the ambient space. The function ", TT "halfspaces", " instead gives the halfspace description in the affine span of the polytope.",
+     PARA{}, TT "ambientHalfspaces", " is a function. It provides the halfspace description of a polytope in the ambient space. The function ", TT "halfspaces", " instead gives the halfspace description in the affine span of the polytope.",
      
      EXAMPLE {
 	  "halfspaces(convexHull matrix{{0,1},{0,0}})",

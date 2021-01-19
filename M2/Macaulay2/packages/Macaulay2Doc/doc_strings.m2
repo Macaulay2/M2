@@ -221,7 +221,7 @@ document {
      TT "unstack x", " -- produces a list of strings, each containing the
      characters in one row of the ", TT "Net", " ", TT "x", ".",
      PARA{},
-     "The orginal net, adjusted so its height is 1, may be recovered
+     "The original net, adjusted so its height is 1, may be recovered
      with ", TO "stack", ". The individual strings will have
      all trailing spaces removed, unless this would make all of them
      narrower than the original net, in which case the first string

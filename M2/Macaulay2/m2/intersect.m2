@@ -33,8 +33,8 @@ intersect = method(
 	MinimalGenerators => true
 	}
     )
-intersect Ideal    := Ideal  => opts -> I -> identity --  (Ideal.intersect opts) sequence I
-intersect Module   := Module => opts -> M -> identity -- (Module.intersect opts) sequence M
+intersect Ideal    := Ideal  => opts -> identity
+intersect Module   := Module => opts -> identity
 
 intersect List     :=           opts -> L -> intersect(opts, toSequence L)
 intersect Sequence :=           opts -> L -> (

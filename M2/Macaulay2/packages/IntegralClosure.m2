@@ -752,7 +752,7 @@ icFracP Ring := List => o -> (R) -> (
      -- Returns: Fractions
      -- MES:
      --  ideal presentation R ==== ideal R
-     --  dosn't seem to handle towers
+     --  does not seem to handle towers
      --  this ring in the next line can't really be ZZ?
      if ring ideal presentation R === ZZ then (
 	  D := 1_R;
@@ -801,7 +801,7 @@ icFracP Ring := List => o -> (R) -> (
 icPIdeal = method()
 icPIdeal (RingElement, RingElement, ZZ) := Ideal => (a, D, N) -> (
      -- 3 arguments: An element in a ring of characteristic P that
-     -- generates the principal ideal we are intersted in, a
+     -- generates the principal ideal we are interested in, a
      -- non-zerodivisor of $ in the conductor, and the number of steps
      -- in icFracP to compute the integral closure of R using the
      -- conductor element given.  
@@ -1713,7 +1713,7 @@ doc ///
    Example
      assert(integralClosure(J, J_2, 2) == J2')
   Caveat
-    It is usally much faster to use {\tt integralClosure(J,d)}
+    It is usually much faster to use {\tt integralClosure(J,d)}
     rather than {\tt integralClosure(J^d)}.
     Also, the element {\tt f} (or the first generator of {\tt J}, if {\tt f} is not given)
     must be a nonzero divisor in the ring. This is not checked.
@@ -2342,7 +2342,7 @@ doc ///
   assert(R' === R)
 ///
 
--- MES TODO: remove this test, or at leat make it a better test.
+-- MES TODO: remove this test, or at least make it a better test.
 TEST ///
 -*
   restart
@@ -2366,7 +2366,7 @@ TEST ///
   makeS2 R
 ///
 
--- MES TODO: remove this test, or at leat make it a better test.
+-- MES TODO: remove this test, or at least make it a better test.
 TEST ///
 -*
   restart
@@ -2668,7 +2668,7 @@ TEST ///
   isNormal Q'
 ///
 
---Mike's inhomogenous test
+--Mike's inhomogeneous test
 TEST ///
 -*
   restart

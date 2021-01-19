@@ -146,8 +146,8 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `BUILD_TESTING:BOOL=ON`: build the testing targets
   - `SKIP_TESTS:STRING="mpsolve;googletest"`: tests to skip
   - `SLOW_TESTS:STRING="eigen;ntl;flint"`: slow tests to skip
-- `BUILD_LIBRARIES:STRING="GTest"`: build libraries, even if found on the system
-- `BUILD_PROGRAMS:STRING="4ti2;Nauty;TOPCOM"`: build programs, even if found on the system
+- `BUILD_LIBRARIES:STRING=""`: build libraries, even if found on the system
+- `BUILD_PROGRAMS:STRING=""`: build programs, even if found on the system
 - `CMAKE_BUILD_TYPE:STRING=RelWithDebInfo`: valid CMake build types are `Debug` `Release` `RelWithDebInfo` `MinSizeRel`
 - `CMAKE_INSTALL_PREFIX:PATH=/usr`: installation prefix
 - `M2_HOST_PREFIX:PATH=${CMAKE_BINARY_DIR}/usr-host`: host build prefix
@@ -299,6 +299,19 @@ Below are a list of common issues and errors. If you run into a problem not list
 On macOS CMake automatically finds libraries installed on the Homebrew prefix. In order to use Linuxbrew (which has the same interface and packages), use the following command to tell CMake to look under the right prefix:
 ```
 cmake -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` .
+```
+</details>
+
+<details>
+<summary>Building from the source code tarfile</summary>
+
+When building from a source code tarfile (e.g. downloaded from GitHub, rather than a git clone), you may see an error like this:
+```
+  No download info given for 'build-bdwgc' and its source directory: ...
+```
+To resolve this, you should download and extract the source tarfiles for each git submodule in the `M2/submodules` directory. Also, you may need to manually turn off submodule updates:
+```
+cmake -DGIT_SUBMODULE=off .
 ```
 </details>
 

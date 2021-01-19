@@ -1113,7 +1113,7 @@ doc ///
         [findANonZeroMinor, ExtendField]      
         [extendIdealByNonZeroMinor, ExtendField]  
     Headline
-        an option used to specify if extending the finite field is permissable here
+        an option used to specify if extending the finite field is permissible here
     Usage
         ExtendField => b
     Inputs
@@ -1360,7 +1360,7 @@ doc ///
         Replacement => Binomial
     Description
         Text
-            When calling {\tt randomCoordinateChange}, or functions that call it, setting {\tt Replacement => Full} will mean that coordinates are changed to a general degree 1 form.  If {\tt Replacement => Binomial}, the coordiates are only changed to bionomials, which can be much faster for certain applications.
+            When calling {\tt randomCoordinateChange}, or functions that call it, setting {\tt Replacement => Full} will mean that coordinates are changed to a general degree 1 form.  If {\tt Replacement => Binomial}, the coordinates are only changed to bionomials, which can be much faster for certain applications.
         Example
             R = ZZ/11[a,b,c];
             randomCoordinateChange(R, Replacement=>Full)

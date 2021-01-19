@@ -253,7 +253,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%-- We set AffVariableGroup and HomVariableGroup. If the user does not specify these groups then AffVariableGroup is taken to be the generators of the ring the first element of myPol.
   myAVG:= o.AffVariableGroup;
   myHVG:= o.HomVariableGroup;
---%%-- If the user does not specifiy variable groups then myAVG is set to the generators of the ring of the first polynomial.
+--%%-- If the user does not specify variable groups then myAVG is set to the generators of the ring of the first polynomial.
   if myAVG==={} and myHVG==={}
   then (
     if not member (class first myPol,{String,B'Section,B'Slice,Product,Symbol})
@@ -705,7 +705,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
       f << endl << "END;" << endl << endl;
       close f;
 
-      --Now we build auxilary files for various sorts of runs:
+      --Now we build auxiliary files for various sorts of runs:
 
       if member(o.runType,{1,6}) then ( -- writing out start file in the case of a param run
 	  f = openOut (dir|"/start"); -- the only name for Bertini's start solutions file
@@ -1124,7 +1124,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     --number of random numbers we want to skip next
     l = drop(l,numRands+1);   -- includes blank line after rands
     -- next we have the same number of integers
-    --(degrees needed ot keep homogenization right)
+    --(degrees needed to keep homogenization right)
     l = drop(l,numRands);
     -- next we have an integer and a list of row vectors
     --(the number of which is the initial integer).  Again related to
@@ -2554,7 +2554,7 @@ doc ///
       @HREF"http://bertini.nd.edu/"@. {\tt Bertini} is under ongoing development by
       D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
-      The user may place the executable program {\tt bertini} in the executation path.
+      The user may place the executable program {\tt bertini} in the execution path.
       Alternatively, the path to the executable needs to be specified, for instance,
     Example
       needsPackage("Bertini", Configuration=>{"BERTINIexecutable"=>"/folder/subfolder/bertini"})
@@ -2979,7 +2979,7 @@ doc ///
     Text
       This function writes a Bertini input file.
       The user can specify CONFIGS for the file using the BertiniInputConfiguration option.
-      The user should specify variable groups with the AffVariableGroup (affine variable group) option or HomVariableGroup (homogenous variable group) option.
+      The user should specify variable groups with the AffVariableGroup (affine variable group) option or HomVariableGroup (homogeneous variable group) option.
       The user should specify the polynomial system they want to solve with the  B'Polynomials option or B'Functions option.
       If B'Polynomials is not used then the user should use the  NamePolynomials option.
     Example
@@ -3144,7 +3144,7 @@ doc ///
      After running makeMembershipFile Bertini produces an incidence_matrix file.
      The incidence_matrix says which points belong to which components.
      Our incidence matrix is flattened to a list.
-     The number of elemenets in theIM is equal to the number of points in the solutions file.
+     The number of elements in theIM is equal to the number of points in the solutions file.
      Each element of theIM is a list of sequences of 2 elements (codim,component Number).
      Note that we follow the Bertini convention and switch from (dimension,component number) indexing to (codimension,component number) indexing.
    Text

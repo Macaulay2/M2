@@ -29,7 +29,7 @@ operator := binary + prefix + postfix
 -- Local utilities
 -----------------------------------------------------------------------------
 
--- used by help and viewHelp
+-- used by help, viewHelp, and infoHelp
 seeAbout := (f, i) -> (
     if     lastabout === null then error "no previous 'about' response";
     if not lastabout#?i       then error("previous 'about' response contains no entry numbered ", i);
@@ -451,10 +451,17 @@ viewHelp = new Command from viewHelp
 -- This ensures that "methods viewHelp" and "?viewHelp" work as expected
 setAttribute(viewHelp#0, ReverseDictionary, symbol viewHelp)
 
-infoHelp = key -> (
+infoHelp = method(Dispatch => Thing)
+infoHelp Thing := key -> (
+    if key === () then return infoHelp "Macaulay2Doc";
     tag := infoTagConvert makeDocumentTag(key, Package => null);
     if getenv "INSIDE_EMACS" == "" then chkrun ("info " | format tag)
-    else print("-* infoHelp: " | tag | " *-");)
+    -- used by M2-info-help in M2.el
+    else print("-*" | " infoHelp: " | tag | " *-");)
+infoHelp ZZ := i -> seeAbout(infoHelp, i)
+infoHelp = new Command from infoHelp
+-- This ensures that "methods infoHelp" and "?infoHelp" work as expected
+setAttribute(infoHelp#0, ReverseDictionary, symbol infoHelp)
 
 -----------------------------------------------------------------------------
 -- View brief documentation within Macaulay2 using symbol?

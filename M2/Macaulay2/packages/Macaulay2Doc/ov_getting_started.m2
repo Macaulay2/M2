@@ -128,7 +128,7 @@ document {
 	  init files so the directory containing M2 will the first one searched when
 	  looking for a program.  If you then try to use your account on different
 	  hardware, incorrect programs may be found, namely, those in the same
-	  directory as M2.  Similarly, incorrect sharable libraries may also be found."
+	  directory as M2.  Similarly, incorrect shareable libraries may also be found."
 	  },
      SeeAlso => {
 	  setupEmacs
@@ -362,7 +362,7 @@ document { Key => "teaching emacs how to find M2",
      directory.  Put the following command in your
      .emacs file.",
      PRE ///(setq M2-exe "/foo/bar/bin/M2")///,
-     "The next time you start emacs it wil know how to find M2."
+     "The next time you start emacs it will know how to find M2."
      }
 
 document {
@@ -583,7 +583,7 @@ doc ///
 	viewHelp
 	infoHelp
 	(symbol?, Symbol)
-      :Getting other information from documentaiton
+      :Getting other information from documentation
         examples
 
     Text
