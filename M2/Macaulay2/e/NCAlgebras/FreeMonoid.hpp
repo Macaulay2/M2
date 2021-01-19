@@ -136,6 +136,8 @@ public:
   // a MemoryBlock object.  This is primarily for NCF4.
   Monom wordProductAsMonom(const Word& left, const Word& right, MemoryBlock& memBlock) const;
   Monom wordProductAsMonom(const Word& left, const Word& mid, const Word& right, MemoryBlock & memBlock) const;
+  Word wordProductAsWord(const Word& left, const Word& right, MemoryBlock& memBlock) const;
+  Word wordProductAsWord(const Word& left, const Word& mid, const Word& right, MemoryBlock& memBlock) const;
 
   Monom wordProductAsMonom(const Word& left,
                            const Monom& mid,
@@ -185,14 +187,14 @@ private:
 class MonomHash {
 public:
   int operator()(const Monom &V) const {
-      int hash = V.size();
+      int hash = V[0];
       for(auto &i : V) {
           hash ^= i + 0x9e3779b9 + (hash << 6) + (hash >> 2);
       }
       return hash;
   }
   int operator()(const Word &V) const {
-      int hash = V.size();
+      int hash = V.begin()[0];
       for(auto &i : V) {
           hash ^= i + 0x9e3779b9 + (hash << 6) + (hash >> 2);
       }

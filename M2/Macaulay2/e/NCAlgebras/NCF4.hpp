@@ -54,19 +54,21 @@ private:
   // corresponding vector it belongs to, which will eventually
   // be the corresponding row.
 
+  enum PreRowType { ReducerPreRow, OverlapPreRow, PreviousReducerPreRow };
+
   struct PreRow
   {
     Word left;
     int preRowIndex;
     Word right;
-    bool prevReducer;
+    PreRowType preRowType;
   };
 
   struct Row
   {
     CoeffVector coeffVector;     // vector of coefficients
-    Range<int> columnIndices;    // column indices used in the row.  Valid only after sortF4Matrix, as they are
-                                 // not known during creation.
+    Range<int> columnIndices;    // column indices used in the row.  Valid *only* after labelAndSortF4Matrix, 
+                                 // as the indices are not known during creation.
     Range<Monom> columnMonoms;   // monoms used in the row.  Valid only *before* reduction begins, as reduction
                                  // does not update this field
   };
@@ -74,16 +76,20 @@ private:
   struct Column
   {
     Monom monom;                 // Monom corresponding to the column
-    int pivotRow;                // pivot row corresponding to this monomial
+    int pivotRow;              // pivot row corresponding to this monomial
   };
   // the index of a Column in a ColumnsVector is the column index and is used in Row.columnIndices.
 
   //using ColumnsVector = tbb::concurrent_vector<Column>;
   using ColumnsVector = std::vector<Column>;
+  //using RowsVector = tbb::concurrent_vector<Row>;
   using RowsVector = std::vector<Row>;
   using PreRowFeeder = tbb::parallel_do_feeder<PreRow>;
-  // I think at this point this also doesn't have to be concurrent...
-  using MonomialHash = tbb::concurrent_unordered_map<Monom, std::pair<int,int>, MonomHash, MonomHashEqual>;
+  // The pair in this unordered_map is (i,j) where:
+  //    i is the column number
+  //    j is the row that reduces it
+  //      (and -1 if there is no such row).
+  using MonomialHash = tbb::concurrent_unordered_map<Monom,std::pair<int,int>,MonomHash,MonomHashEqual>;
 
   // data
   const FreeAlgebra& mFreeAlgebra;
@@ -98,37 +104,29 @@ private:
   int mTopComputedDegree;
   int mHardDegreeLimit;
 
-
   MemoryBlock mMonomialSpace;
+  MemoryBlock mPreviousMonomialSpace;
+
   MonomEq mMonomEq;
   MonomHashEqual mMonomHashEqual;
   MonomHash mMonomHash;
 
-  // The pair in this unordered_map is (i,j) where:
-  //    i is the column number
-  //    j is the row that reduces it (and -1 if there is no such row).
-
   // TODO(?): we should change this to have keys 'Word's rather than 'Monom's since its unordered.
-  // but we would have to update MonomHashEqual a bit
   MonomialHash mColumnMonomials;
+  MonomialHash mPreviousColumnMonomials;
+
   std::vector<PreRow> mReducersTodo;
   std::vector<PreRow> mOverlapsTodo;
-  // mColumns[c].second is the row which will reduce the c'th monomial (unless it is -1).
   ColumnsVector mColumns;
+  ColumnsVector mPreviousColumns;
 
   // these should be std::vectors (or changeable)
   RowsVector mRows;
+  RowsVector mPreviousRows;
+
   RowsVector mOverlaps;
 
-  int mFirstOverlap; // First non pivot row row (and all later ones are also non-pivot rows).
-
-  // storing previous F4 information
-  //VECTOR(Row) mPreviousRows;
-  //std::vector<Row> mPreviousRows;
-  RowsVector mPreviousRows;
-  ColumnsVector mPreviousColumns;
-  MonomialHash mPreviousColumnMonomials;
-  MemoryBlock mPreviousMonomialSpace;
+  int mFirstOverlap; // First non pivot row (and all later ones are also non-pivot rows).
 
   // vector arithmetic class for reduction
   //const VectorArithmetic *mVectorArithmetic;
@@ -139,6 +137,7 @@ private:
   // these are pointers to the MemoryBlocks used in creating the various structures.
   std::vector<MemoryBlock*> mMemoryBlocks;
   std::vector<MemoryBlock*> mPreviousMemoryBlocks;
+  tbb::queuing_mutex mColumnMutex;
 
 public:
   NCF4(const FreeAlgebra& A,
@@ -171,7 +170,7 @@ private:
   void buildF4Matrix(const std::deque<Overlap>& overlapsToProcess);
   void parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess);
 
-  void sortF4Matrix();
+  void labelAndSortF4Matrix();
 
   void reduceF4Matrix();
   void parallelReduceF4Matrix();
@@ -198,18 +197,14 @@ private:
                         int i) const;
   PolyList newGBelements() const;  // From current F4 matrix.
 
-  template<typename ColumnLockType>
   void processPreRow(PreRow r,
                      RowsVector& rowsVector,
                      MemoryBlock& memoryBlock,
-                     ColumnLockType& columnLock,
                      PreRowFeeder* feeder);
-  void processPreRow(PreRow r, RowsVector& rowsVector);
+  void processPreRow(PreRow r,
+                     RowsVector& rowsVector);
 
-  template<typename ColumnLockType>
   void processMonomInPreRow(Monom& m,
-                            int* nextcolloc,
-                            ColumnLockType& matrixLock,
                             PreRowFeeder* feeder);
 
   void preRowsFromOverlap(const Overlap& o);

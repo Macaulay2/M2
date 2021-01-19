@@ -358,6 +358,16 @@ Monom FreeMonoid::wordProductAsMonom(const Word& left, const Word& right, Memory
   return newmon;
 }
 
+Word FreeMonoid::wordProductAsWord(const Word& left, const Word& right, MemoryBlock& memBlock) const
+{
+  int sz = left.size() + right.size();
+  auto rg = memBlock.allocateArray<int>(sz);
+  std::copy(left.begin(), left.end(), rg.first);
+  std::copy(right.begin(), right.end(), rg.first + left.size());
+  Word newword(rg.first, rg.second);
+  return newword;
+}
+
 Monom FreeMonoid::wordProductAsMonom(const Word& left, const Word& mid, const Word& right, MemoryBlock & memBlock) const
 {
   int monomOffset = numWeights() + 1;
@@ -370,6 +380,20 @@ Monom FreeMonoid::wordProductAsMonom(const Word& left, const Word& mid, const Wo
   Monom newmon = Monom(rg.first);
   setWeights(newmon);
   return newmon;
+}
+
+Word FreeMonoid::wordProductAsWord(const Word& left,
+                                   const Word& mid,
+                                   const Word& right,
+                                   MemoryBlock& memBlock) const
+{
+  int sz = left.size() + mid.size() + right.size();
+  auto rg = memBlock.allocateArray<int>(sz);
+  std::copy(left.begin(), left.end(), rg.first);
+  std::copy(mid.begin(), mid.end(), rg.first + left.size());
+  std::copy(right.begin(), right.end(), rg.first + left.size() + mid.size());
+  Word newword(rg.first, rg.second);
+  return newword;
 }
 
 Monom FreeMonoid::wordProductAsMonom(const Word& left,
