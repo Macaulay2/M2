@@ -9,23 +9,23 @@ TEST ///
 *-
   --- generators test
   debug Core -- for generatorSymbols
-  R = QQ{a,b,c}; assert(R#generatorSymbols == splice {vars(0,1,2)})
+  R = QQ<|a,b,c|>; assert(R#generatorSymbols == splice {vars(0,1,2)})
   assert isWellDefined R
     
-  R = QQ{a,b,c}; assert(R#generatorSymbols == splice {vars(0,1,2)})
+  R = QQ<|a,b,c|>; assert(R#generatorSymbols == splice {vars(0,1,2)})
   assert isWellDefined R
 
-  R = QQ{a,b, x_1..x_3, c, y_1..y_4}
+  R = QQ<|a,b, x_1..x_3, c, y_1..y_4|>
   assert(numgens R == 10)
   debugLevel = 1
   isWellDefined R
 
-  R = QQ{{a,b,c},{d,e}}; assert(R#generatorSymbols == splice {vars(0,1,2,3,4)})
-  R = QQ{(a,b,c),{d,e}}; assert(R#generatorSymbols == splice {vars(0,1,2,3,4)})
-  R = QQ{(a,b,c),(d,e)}; assert(R#generatorSymbols == splice {vars(0,1,2,3,4)})
-  R = QQ{b..f}; assert(R#generatorSymbols == splice {vars(1,2,3,4,5)})
-  R = QQ{a,b,c}; assert(R#generatorSymbols == splice {vars(0,1,2)})
-  R = QQ{x_1..x_100, y_1..y_100}; assert(numgens R == 200)
+  R = QQ<|{a,b,c},{d,e}|>; assert(R#generatorSymbols == splice {vars(0,1,2,3,4)})
+  R = QQ<|(a,b,c),{d,e}|>; assert(R#generatorSymbols == splice {vars(0,1,2,3,4)})
+  R = QQ<|(a,b,c),(d,e)|>; assert(R#generatorSymbols == splice {vars(0,1,2,3,4)})
+  R = QQ<|b..f|>; assert(R#generatorSymbols == splice {vars(1,2,3,4,5)})
+  R = QQ<|a,b,c|>; assert(R#generatorSymbols == splice {vars(0,1,2)})
+  R = QQ<|x_1..x_100, y_1..y_100|>; assert(numgens R == 200)
   debugLevel = 1
   isWellDefined R
 ///
@@ -36,20 +36,20 @@ TEST ///
   -- expression
   -- net
   -- describe
-  R = QQ{a,b, x_1..x_3, c, y_1..y_4}
+  R = QQ<|a,b, x_1..x_3, c, y_1..y_4|>
   isWellDefined R
-  unstack describe R === {"QQ {a, b, x , x , x , c, y , y , y , y }", 
+  unstack describe R === {"QQ <|a, b, x , x , x , c, y , y , y , y |>", 
                             "           1   2   3      1   2   3   4"}
   assert(net R === "R")
   assert(net R == net expression R)
   assert((depth describe R, height describe R, width describe R) == (1,1,40))
   assert(toString R === "R")
-  assert(toExternalString R === "QQ {a, b, x_1, x_2, x_3, c, y_1, y_2, y_3, y_4}")
+  assert(toExternalString R === "QQ <|a, b, x_1, x_2, x_3, c, y_1, y_2, y_3, y_4|>")
 ///
 
 TEST ///
   --- equality
-  R = QQ{a,b,c}
+  R = QQ<|a,b,c|>
   assert(a != b)
   assert(a == a)
   assert(b*a + a*b + b*a == 2*b*a + a*b)
@@ -62,7 +62,7 @@ TEST ///
 
 TEST ///
   -- printing tests
-  R = QQ{a,b,c}
+  R = QQ<|a,b,c|>
   f = a^2*b*a^2*b+a^3*b+a^2*b*a+2*a^2*b+a^2+2*a+1
   g = (a*a*b+a+1)*(a*a*b+a+1)
   assert(toExternalString(f - g) == "0")
@@ -109,7 +109,7 @@ o3 = a b*a b + a b + a b*a + 2a b + a  + 2a + 1
 
 BENCHMARK ///
 -- this takes currently about 2 GB, so can't be run as a test
-  R = QQ{a,b,c,d}
+  R = QQ<|a,b,c,d|>
   g = a+b+c+d
   elapsedTime for i from 0 to 11 list (elapsedTime size (h = g^i))
   g3 = g^3
@@ -119,7 +119,7 @@ BENCHMARK ///
 ///
 
 TEST ///
-  R = QQ{a,b,c,d}
+  R = QQ<|a,b,c,d|>
   g1 = a^2-b*c+c^3
   g2 = a*b*a+c*d*b+3*a*b*c*d
   g3 = a*b+b*c+c*d+d*a-1
@@ -139,7 +139,7 @@ TEST ///
 
 TEST ///
   needsPackage "AssociativeAlgebras"
-  R = QQ{a,b,c,d}
+  R = QQ<|a,b,c,d|>
   g1 = a^2-b*c+c^3
   g2 = a*b*a+c*d*b+3*a*b*c*d
   g3 = a*b+b*c+c*d+d*a-1
@@ -152,7 +152,7 @@ TEST ///
 ///
 
 BENCHMARK ///
-  R = QQ{a,b,c,d}
+  R = QQ<|a,b,c,d|>
   g1 = a^2-b*c+c^3
   g2 = a*b*a+c*d*b+3*a*b*c*d
   g3 = a*b+b*c+c*d+d*a-1
@@ -167,7 +167,7 @@ BENCHMARK ///
 
 BENCHMARK ///
 -- This one uses too much memory (about 1.7 GB)
-  R = QQ{a,b,c,d}
+  R = QQ<|a,b,c,d|>
   g1 = a^2-b*c+c^3
   g2 = a*b*a+c*d*b+3*a*b*c*d
   g3 = a*b+b*c+c*d+d*a-1
@@ -182,7 +182,7 @@ BENCHMARK ///
 
 BENCHMARK ///
 -- this examples uses 2.2 GB
-  R = QQ{a,b,c,d,e,f,g}
+  R = QQ<|a,b,c,d,e,f,g|>
   G = a+b+c+d+e+f+g
   elapsedTime for i from 0 to 8 list (elapsedTime size (H = G^i))
 ///
@@ -192,21 +192,21 @@ BENCHMARK ///
 
 TEST ///
   --- promote/lift tests
-  R = QQ{a,b,c}
+  R = QQ<|a,b,c|>
   3_R
   assert(promote(3,R) == 3_R)
   assert(promote(23423/324,R) == (23423/324)_R)
   
   debug Core
   A = ZZ/101[s,t]
-  B = A{x,y,z}
+  B = A<|x,y,z|>
   promote(s,B)
   f = (s + x + y)^2
   (coeff, monoms) = rawPairs(raw A, raw f)
   peek first monoms
 
   A = ZZ/101[t]/t^2
-  B = A{x,y,z}
+  B = A<|x,y,z|>
   promote(t,B)
   t_B
 ///
@@ -219,7 +219,7 @@ TEST ///
   debug Core
   -- basic arithmetic
   A = ZZ/101[t]/t^2
-  B = A{x,y,z}
+  B = A<|x,y,z|>
   f = 0_A * x
   raw f 
   
@@ -233,7 +233,7 @@ TEST ///
 ///
 
 TEST /// 
-  R = QQ{b,c,d}
+  R = QQ<|b,c,d|>
   f = 3*b^2*c*b + 2*b^4
   assert(size (b+c) == 2)
   terms f == {2*b^4, 3*b^2*c*b}
@@ -246,7 +246,7 @@ TEST ///
   restart
   needsPackage "AssociativeAlgebras"
 *-
-  R = QQ{b,c,d}
+  R = QQ<|b,c,d|>
   assert instance(R, FreeAlgebra)
 
   f = 3*b^2*c*b + 2*b^4
@@ -261,7 +261,7 @@ TEST ///
   assert not isHomogeneous g
   
   A = QQ[a]
-  B = A{b,c,d}
+  B = A<|b,c,d|>
   f = 3*(a^2-a-1)*b^2*c*b + 2*(a^3-a-1)*b^4
   g = (a+2*b+3*c)^3
   assert(leadCoefficient f == 2*(a^3-a-1))
@@ -270,7 +270,7 @@ TEST ///
   assert(size g == 15)
 
   A = frac(QQ[a])
-  B = A{b,c,d}
+  B = A<|b,c,d|>
   f = 3/(a^2-a-1)*b^2*c*b + 2/(a^3-a-1)*b^4
   assert(leadCoefficient f == 2/(a^3-a-1))
   assert(leadTerm f == 2/(a^3-a-1)*b^4)
@@ -281,7 +281,7 @@ TEST ///
   restart
   needsPackage "AssociativeAlgebras"
 *-
-  R = QQ{b,c,d, Degrees=>{2,3,4}}
+  R = QQ<|b,c,d, Degrees=>{2,3,4}|>
   degree b
   degree c
   degree d
@@ -289,7 +289,7 @@ TEST ///
   assert isHomogeneous(b^2-d)
   assert not isHomogeneous(b^2-c)
 
-  R = QQ{b,c,d, Degrees=>{{1,0},{0,1},{3,-4}}, Heft=>{2,1}}
+  R = QQ<|b,c,d, Degrees=>{{1,0},{0,1},{3,-4}}, Heft=>{2,1}|>
   degree b
   degree c
   degree d
@@ -306,7 +306,7 @@ TEST ///
 ///
 
 TEST ///
-  R = QQ{a,b,c,d}
+  R = QQ<|a,b,c,d|>
   {b*c}
   e = {{b,c,d,b*c,c*b,b^2,a*c-1}}
   M = matrix for j from 1 to 10 list for i from 1 to 10 list a*b-i*a-j*b
@@ -320,7 +320,7 @@ TEST ///
 ///
 
 TEST ///
-  R = QQ{b,c,d}
+  R = QQ<|b,c,d|>
   M = R^2
   B = matrix {{b}}
   C = matrix {{c}}
@@ -341,7 +341,7 @@ TEST ///
 *-
 
   A = QQ[s,t]
-  R = QQ{b,c,d}
+  R = QQ<|b,c,d|>
   F = map(R,A,{b*c,d*c})
   G = map(A,R,{s,t,s*t})
   assert(G b == s)
@@ -364,7 +364,7 @@ TEST ///
   use R
   H2 (b*c)
   
-  R = QQ{b,c,d}
+  R = QQ<|b,c,d|>
   a1 = (3/4)_R
   lift(a1,QQ) -- ok
   a2 = 3_R
@@ -372,7 +372,7 @@ TEST ///
   promote(3/4, R)  -- ok
   
   A = ZZ/32003[t]/t^2
-  B = A{x,y,z}
+  B = A<|x,y,z|>
   promote(t_A, B) == t_B
   promote(3, B)
   assert(coefficientRing B === A)
@@ -381,7 +381,7 @@ TEST ///
   kk = QQ
   A = kk[a]
   B = A[b]
-  C = B{c,d}
+  C = B<|c,d|>
   assert(lift(a_C, B) == a_B)
   assert(lift(a_C, A) == a_A)
   assert(try (lift(a_C, kk); false) else true)
@@ -393,7 +393,7 @@ TEST ///
       map(target f, source g, apply(gens source g, x -> f g x))
       )
 
-  R = QQ{b,c,d}
+  R = QQ<|b,c,d|>
   F1 = map(R,R,{c,b,d})
   F2 = map(R,R,{c+b,c,d})  
   F3 = map(R,R,{b*d-1, c*c-c, b-d})
@@ -411,7 +411,7 @@ TEST ///
   restart
   needsPackage "AssociativeAlgebras"
 *-
-  R = QQ{a,b,c,d}
+  R = QQ<|a,b,c,d|>
   M = matrix{{a*b*c-2*a*a*b*a}}
   assert(monomials M == matrix{{a^2*b*a, a*b*c}})
   coefficients M
@@ -425,7 +425,7 @@ TEST ///
   A = QQ[a..d]
   M = matrix{{a,b},{c,d}}
   monomials(M*M*M)
-  R = QQ{a,b,c,d}
+  R = QQ<|a,b,c,d|>
   M = matrix{{a*b+b*a, a*b+c*d, a*a+b*a}}
   monomials M
   coefficients M
@@ -455,7 +455,7 @@ TEST ///
   restart
   debug needsPackage "AssociativeAlgebras"
 *-
-  R = QQ{a..d}
+  R = QQ<|a..d|>
   I = ideal(a*b*a-a*c*b)
   I2 = ideal(a*b*a-a*c*b, d*a*c*b)
   I3 = ideal(a*b - b*a, a*c - c*a, a*d - d*a, b*c - c*b, b*d - d*b, c*d - d*c)
@@ -482,7 +482,7 @@ TEST ///
   restart
   needsPackage "AssociativeAlgebras"
 *-
-  R = QQ{a,b}
+  R = QQ<|a,b|>
   I = ideal(a^2 - b^2)
   gbTrace=3
   debug Core
@@ -495,7 +495,7 @@ TEST ///
   restart
   needsPackage "AssociativeAlgebras"
 *-
-  R = QQ{a,b}
+  R = QQ<|a,b|>
   I = ideal(a^2 - b^2)
   A = R/I
 
@@ -523,7 +523,7 @@ TEST ///
   assert(5 == # unique for e in (0,0,0,0)..(1,1,1,1) list product for i in e list A_i)
   assert(6 == # unique for e in (0,0,0,0,0)..(1,1,1,1,1) list product for i in e list A_i)
 
-  R = QQ{a,b,c}
+  R = QQ<|a,b,c|>
   I = ideal"aba-bab, ac-ca, ab+ba"
   J = gens ideal NCGB(I, 10)  
 
@@ -577,7 +577,7 @@ TEST ///
   restart
   needsPackage "AssociativeAlgebras"
 *-
-  R = QQ{a,b}
+  R = QQ<|a,b|>
   I = ideal(a^2 - b^2)
   NCGB(I, 1000)
   A = R/I
@@ -585,7 +585,7 @@ TEST ///
   ncBasis({500},{500},A); -- Duplicate large block deallocation?
   elapsedTime assert(numcols ncBasis({1000},{1000},A) == 1001)
 
-  S = QQ{u,v,Degrees=>{2,3}}
+  S = QQ<|u,v,Degrees=>{2,3}|>
   I = ideal(u*v + v*u)
   T = S/I
   assert(ncBasis({15},{15},T) == matrix{{v*u^6, v^3*u^3, v^5}})
@@ -597,8 +597,8 @@ TEST ///
   restart
   needsPackage "AssociativeAlgebras"
 *-
-  R = QQ{a,b,c}
-  R = (ZZ/32003){a,b,c}
+  R = QQ<|a,b,c|>
+  R = (ZZ/32003)<|a,b,c|>
   I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
@@ -664,7 +664,7 @@ TEST ///
   restart
   debug needsPackage "AssociativeAlgebras"
 *-
-  R = QQ{a,b,c, Degrees=>{{1,0,0},{0,1,0},{0,0,1}}}
+  R = QQ<|a,b,c, Degrees=>{{1,0,0},{0,1,0},{0,0,1}}|>
   assert(degree a == {1,0,0})
   assert(degree (a^2 + b^2 + c^2) == {2,2,2})
   assert not isHomogeneous (a^2 + b^2 + c^2)
@@ -679,8 +679,8 @@ TEST ///
   -- note that variables in the base of a FreeAlgebra commute
   -- with the variables adjoined.  I.e. QQ{x}{y} is the same as QQ[x,y]
   R = QQ[x,y]/ideal{x^2,x*y,y^2}
-  S = R{a,b}
-  T = S{c,d} -- TODO: should disallow GBs over such a ring.
+  S = R<|a,b|>
+  T = S<|c,d|> -- TODO: should disallow GBs over such a ring.
   assert(a*c == c*a)
   assert(x*c == c*x)
   f = x*c + y*d
@@ -702,7 +702,7 @@ TEST ///
   restart
   debug needsPackage "AssociativeAlgebras"
 *-
-  R = QQ{a,b,c,t, Weights=>{{1,1,1,0}}}
+  R = QQ<|a,b,c,t, Weights=>{{1,1,1,0}}|>
   I = ideal {a*b - c*t, b*c - a*t, c*a - b*t, a*t - t*a, b*t - t*b, c*t - t*c}
   J2 = NCGB(I,2) 
   J3 = NCGB(I,3)
@@ -715,14 +715,14 @@ TEST ///
   J6 = NCGB(I3,6)
   compress sub(J6, {t => 1}) -- looks like it is working :)
   
-  R = QQ{a,b,Degrees=>{2,3}}
+  R = QQ<|a,b,Degrees=>{2,3}|>
   assert(leadTerm (a+b) == b)  -- should be b
   assert(leadTerm (a^3 + b^2) == a^3)-- should be a^3 (which it is)
 
-  R = QQ{a,b,Degrees=>{2,3}, Weights=>{{1,0},{0,1}}}
+  R = QQ<|a,b,Degrees=>{2,3}, Weights=>{{1,0},{0,1}}|>
   -- The following two ring definitions are supposed to give errors.
-  assert try (R = QQ{a,b,Degrees=>{2,3}, Weights=>{{1,0},{0,1,1}}}; false) else true
-  assert try (R = QQ{a,b,Degrees=>{2,3}, Weights=>{{-1,0},{0,-1}}}; false) else true
+  assert try (R = QQ<|a,b,Degrees=>{2,3}, Weights=>{{1,0},{0,1,1}}|>; false) else true
+  assert try (R = QQ<|a,b,Degrees=>{2,3}, Weights=>{{-1,0},{0,-1}}|>; false) else true
 ///
 
 TEST ///
@@ -731,7 +731,7 @@ TEST ///
   debug needsPackage "AssociativeAlgebras"
 *-
 --- test of an "elimination" order for kernels
-R = QQ{a,b,c,x,y, Degrees => {3,3,2,1,1}, Weights => {{0,0,0,1,1}} }
+R = QQ<|a,b,c,x,y, Degrees => {3,3,2,1,1}, Weights => {{0,0,0,1,1}} |>
 I = ideal{x*y - c, x*y*x-a, y*x*y-b}
 isHomogeneous I
 assert(degrees source gens I === {{2},{3},{3}})
@@ -754,7 +754,7 @@ TEST ///
   restart
   needsPackage "AssociativeAlgebras"
 *-
-  R = QQ{b,c}
+  R = QQ<|b,c|>
   I = ideal"bc"
   assert(NCGB(I, 10) == matrix{{b*c}})
 ///
@@ -764,7 +764,7 @@ TEST ///
   restart
   needsPackage "AssociativeAlgebras"
 *-
-R = QQ{x,y}
+R = QQ<|x,y|>
 I = ideal {x^2-y^2}
 S = R/I
 gbS = NCGB(ideal S)
@@ -779,7 +779,7 @@ restart
 needsPackage "AssociativeAlgebras"
 *-
 A = QQ[x,y]
-R = A{b,c,d}
+R = A<|b,c,d|>
 f = 3*x*y*b^2*c*b + 2*b^4
 assert(leadMonomial f == b^4)
 assert(ring leadCoefficient f === A)
@@ -802,7 +802,7 @@ TEST ///
 -- ring homs defined on algebras over fraction fields were
 -- ignoring denominators of coefficients at some point
 kk = frac(QQ[x])
-A = kk {y}
+A = kk <|y|>
 phi = map(A,A,{y^2})
 assert(phi (x*y) == x*y^2)
 assert(phi ((1/x)*y) == (1/x)*y^2) -- fails
@@ -810,7 +810,7 @@ assert(phi ((1/x)*y) == (1/x)*y^2) -- fails
 
 TEST ///
 kk = ZZ/32003
-R = kk{x,y,z,w}
+R = kk<|x,y,z,w|>
 I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
 
 I = ideal I_*; Igb = NCGB(I, 11, Strategy=>"F4Parallel");
@@ -834,7 +834,7 @@ needsPackage "AssociativeAlgebras"
 --needsPackage "NCAlgebra"
 kk = ZZ/32003
 A = kk[x,y]
-R = kk{a,b,c}
+R = kk<|a,b,c|>
 promote(kk^3, R)
 promote(kk^3, A)
 
@@ -842,7 +842,7 @@ restart
 needsPackage "AssociativeAlgebras"
 kk = QQ
 kk = ZZ/32003
-R = kk{a,b,c}
+R = kk<|a,b,c|>
 I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
@@ -896,7 +896,7 @@ I = ideal I_*; NCGB(I, 10, Strategy=>"Naive");
 
 restart
 needsPackage "AssociativeAlgebras"
-R = QQ{a,b,c,d}
+R = QQ<|a,b,c,d|>
 J = ideal{ a*c - 1, b*d - 1, a^2 - b^3, a^3 - b^5, a*c - c*a, b*d - d*b }
 J' = ideal flatten entries NCGB(J,50)
 
@@ -922,7 +922,7 @@ needsPackage "AssociativeAlgebras"
 gbTrace = 2
 kk = QQ
 kk = ZZ/32003
-R = kk{x,y,z,w}
+R = kk<|x,y,z,w|>
 I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
 -- Should be 10 gens, 108 rows in last matrix, 35, 61 new gb elts
 I = ideal I_*; elapsedTime Igb = NCGB(I, 6, Strategy=> "F4");
@@ -982,14 +982,14 @@ J10 = select(J_*, f -> sum degree f == 10)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w}, DegreeLimit => 20);
 ideal T
 --- playing with ore extensions
-R = QQ {x,Degrees=>{1}}
+R = QQ <|x,Degrees=>{1}|>
 f = map(R,R,{-x})
 S = oreExtension(R,f,y,Degree=>{2})
 g = map(S,S,{-x,-y})
 T = oreExtension(S,g,z,Degree=>{3})
 -- free products
-R1 = QQ {x,Degrees=>{1}}
-R2 = QQ {y,Degrees=>{2}}
+R1 = QQ <|x,Degrees=>{1}|>
+R2 = QQ <|y,Degrees=>{2}|>
 S = freeProduct(R1,R2)
 T = qTensorProduct(R1,R2,-1)
 --- homog dual
@@ -1002,7 +1002,7 @@ ideal S3
 --- getting promote to work
 kk = ZZ/32003
 A = kk[x,y]
-B = A{z,w, DegreeRank=>2}
+B = A<|z,w, DegreeRank=>2|>
 promote(A^{1,2,3}, B) -- this is not an optimal situation.  We need to allow DegreeMap...
 assert(ring promote(kk^3, B) === B) -- fails at the moment.
 ///
@@ -1013,7 +1013,7 @@ BUG ///
   needsPackage "AssociativeAlgebras"
 *-
   R = QQ[u,v]
-  S = R{x,y,z}
+  S = R<|x,y,z|>
   -- TODO: need to incorporate the degree information of base when creating such a ring.
   f = u*x*y^2 + v^2*x*y*x
   NCGB(ideal f, 5) -- BUG!
@@ -1042,7 +1042,7 @@ TEST ///
 *-
 --- more robust test of an "elimination" order for kernels
 kk = toField(QQ[x]/(x^2+x+1))   -- these examples fail if you use frac instead of toField
-R = kk{y_1,y_2,y_3}
+R = kk<|y_1,y_2,y_3|>
 S = skewPolynomialRing(kk,(-1)_kk,{z_1,z_2,z_3})
 f_1 = z_1 + z_2 + z_3
 f_2 = z_1 + x^2*z_2 + x*z_3
@@ -1078,9 +1078,9 @@ TEST ///
   needsPackage "AssociativeAlgebras"
 *-
 --- a simpler example
-A = QQ{a,b,c,Degrees=>{3,3,2}}
-A' = QQ{a,b,c,Degrees=>{2,2,2}}
-B = QQ{x,y}
+A = QQ<|a,b,c,Degrees=>{3,3,2}|>
+A' = QQ<|a,b,c,Degrees=>{2,2,2}|>
+B = QQ<|x,y|>
 phi = map(B,A,{x*y*x,y*x*y,x*y})
 phi' = map(B,A',{x^2,x*y,y^2})
 assert(ncKernel phi' == 0)
@@ -1099,7 +1099,7 @@ DEVELOPMENT ///
 --- more robust test of an "elimination" order for kernels
 ---xxx---
 kk = toField(QQ[x]/(x^2+x+1))   -- these examples fail if you use frac instead of toField
-R = kk{y_1,y_2,y_3}
+R = kk<|y_1,y_2,y_3|>
 S = skewPolynomialRing(kk,(-1)_kk,{z_1,z_2,z_3})
 f_1 = z_1 + z_2 + z_3
 f_2 = z_1 + x^2*z_2 + x*z_3
@@ -1119,10 +1119,10 @@ apply(15, i -> binomial(i+2,2))
 --- the below calculations compute a GB of the kernel of the above
 --- ring map.  
 kk = toField(QQ[x]/(x^2+x+1))
-A = kk{y_1,y_2,y_3}
-B = kk{z_1,z_2,z_3}
+A = kk<|y_1,y_2,y_3|>
+B = kk<|z_1,z_2,z_3|>
 J = ideal apply(subsets(gens B, 2), p -> product p + product reverse p)
-C = kk{z_1,z_2,z_3,y_1,y_2,y_3,Weights=>{1,1,1,0,0,0}}
+C = kk<|z_1,z_2,z_3,y_1,y_2,y_3,Weights=>{1,1,1,0,0,0}|>
 -- BUG!!! sub(J,C) does not work, so K's definition below is more complicated
 f1 = z_1 + z_2 + z_3
 f2 = z_1 + x^2*z_2 + x*z_3
@@ -1135,13 +1135,13 @@ netList flatten entries Kgb
 -- The elements of Kgb that are in y_i are a GB of the kernel.
 
 --- a simpler example
-A = QQ{a,b,c,Degrees=>{3,3,2}}
-B = QQ{x,y}
+A = QQ<|a,b,c,Degrees=>{3,3,2}|>
+B = QQ<|x,y|>
 phi = map(B,A,{x*y*x,y*x*y,x*y})
 K = ncKernel phi
 C = A/K
 
-R = QQ{x,y,a,b,c, Degrees => {1,1,3,3,2}, Weights => {{1,1,0,0,0}} }
+R = QQ<|x,y,a,b,c, Degrees => {1,1,3,3,2}, Weights => {{1,1,0,0,0}} |>
 I = ideal{x*y - c, x*y*x-a, y*x*y-b}
 isHomogeneous I
 assert(degrees source gens I === {{2},{3},{3}})
@@ -1168,7 +1168,7 @@ BUG ///
 restart
 needsPackage "AssociativeAlgebras"
 kk = frac( ZZ/32003[a,b,c] )
-A = kk {x,y,z}
+A = kk <|x,y,z|>
 I = ideal {c*x^2+a*y*z+b*z*y, b*x*z+c*y^2+a*z*x, a*x*y+b*y*x+c*z^2}
 Igb = elapsedTime NCGB(I, 3, Strategy=>"F4");
 Igb = elapsedTime NCGB(I, 4, Strategy=>"F4");
@@ -1191,35 +1191,35 @@ restart
 needsPackage "AssociativeAlgebras"
 *-
 -- S_4
-R = QQ{a,b,c}
+R = QQ<|a,b,c|>
 I = ideal {a^2 - 1, b^2 - 1, c^2 - 1, a*b*a - b*a*b, b*c*b - c*b*c, a*c - c*a}
 NCGB(I,20)
 S = R/I
 assert(sum apply(20, i -> numgens source ncBasis(i,S)) == 4!)
 
 -- S_5
-R = QQ{a,b,c,d}
+R = QQ<|a,b,c,d|>
 I = ideal {a^2 - 1, b^2 - 1, c^2 - 1, d^2 - 1, a*b*a - b*a*b, b*c*b - c*b*c, a*c - c*a, a*d - d*a, b*d - d*b, c*d*c - d*c*d}
 NCGB(I,20)
 S = R/I
 assert(sum apply(20, i -> numgens source ncBasis(i,S)) == 5!)
 
 -- S_6
-R = QQ{a,b,c,d,e}
+R = QQ<|a,b,c,d,e|>
 I = ideal {a^2 - 1, b^2 - 1, c^2 - 1, d^2 - 1, e^2 - 1, a*b*a - b*a*b, b*c*b - c*b*c, c*d*c - d*c*d, d*e*d - e*d*e, a*c - c*a, a*d - d*a, a*e - e*a, b*d - d*b, b*e - e*b, c*e - e*c}
 NCGB(I,20)
 S = R/I
 assert(sum apply(20, i -> numgens source ncBasis(i,S)) == 6!)
 
 -- S_7
-R = QQ{a,b,c,d,e,f}
+R = QQ<|a,b,c,d,e,f|>
 I = ideal {a^2 - 1, b^2 - 1, c^2 - 1, d^2 - 1, e^2 - 1, f^2 - 1, a*b*a - b*a*b, b*c*b - c*b*c, c*d*c - d*c*d, d*e*d - e*d*e, e*f*e - f*e*f, a*c - c*a, a*d - d*a, a*e - e*a, a*f - f*a, b*d - d*b, b*e - e*b, b*f - f*b, c*e - e*c, c*f - f*c, d*f - f*d}
 NCGB(I,30)
 S = R/I
 assert(sum apply(30, i -> numgens source ncBasis(i,S)) == 7!)
 
 -- S_8
-R = QQ{a,b,c,d,e,f,g}
+R = QQ<|a,b,c,d,e,f,g|>
 I = ideal {a^2 - 1, b^2 - 1, c^2 - 1, d^2 - 1, e^2 - 1, f^2 - 1, g^2 - 1, a*b*a - b*a*b, b*c*b - c*b*c, c*d*c - d*c*d, d*e*d - e*d*e, e*f*e - f*e*f, f*g*f - g*f*g,
            a*c - c*a, a*d - d*a, a*e - e*a, a*f - f*a, a*g - g*a, b*d - d*b, b*e - e*b, b*f - f*b, b*g - g*b, c*e - e*c, c*f - f*c, c*g - g*c, d*f - f*d, d*g - g*d, e*g - g*e}
 NCGB(I,30)
@@ -1233,7 +1233,7 @@ TEST ///
 restart
 needsPackage "AssociativeAlgebras"
 *-
-R = QQ{x,y,z}
+R = QQ<|x,y,z|>
 assert(support (0_R) == {})
 assert(support (x) == {x})
 assert(support (y) == {y})
@@ -1274,7 +1274,7 @@ assert(support M_{2} == {x,y,z})
 DEVELOPMENT ///
 restart
 needsPackage "AssociativeAlgebras"
-A = QQ{x,y,z,w}
+A = QQ<|x,y,z,w|>
 I = ideal {z*w*z*w^2*z*w-303600/972977*z*w^2*z^4, z*w*z*w^2*z*w-303600/972977*z*w^2*z^4}
 NCGB(I,8)
 ///
@@ -1284,7 +1284,7 @@ DEVELOPMENT ///
   needsPackage "AssociativeAlgebras"
   debug Core
   createIdeal = (kk) -> (
-    A = kk{x,y,z};
+    A = kk<|x,y,z|>;
     setRandomSeed(34782734);
     alpha = random(kk);
     beta = random(kk);
@@ -1407,7 +1407,7 @@ kk = GF(13^2,Strategy=>"New")     -- not working yet (but not crashing)
 kk = GF(27,Strategy=>"Givaro")
 kk = ZZp(32003,Strategy=>"Ffpack")
 kk = ZZp(32003,Strategy=>"Aring")
-A = kk{x,y,z}
+A = kk<|x,y,z|>
 setRandomSeed(34782734)
 alpha = random(kk)
 beta = random(kk)
@@ -1427,7 +1427,7 @@ apply(16, i -> binomial(i+2,2))
 restart
 needsPackage "AssociativeAlgebras"
 kk = QQ
-A = QQ{x,y,z}
+A = QQ<|x,y,z|>
 p = y*z + z*y - 2*x^2
 q = z*x + x*z - 2*y^2
 r = x*y + y*x - 2*z^2
@@ -1445,7 +1445,7 @@ kk = ZZ/101; a = 4
 restart
 needsPackage "AssociativeAlgebras"
 kk = GF(27, Strategy => "New")
-A = kk{x,y,z}
+A = kk<|x,y,z|>
 p = a*y*z + z*y - 2*x^2
 q = a*z*x + x*z - 2*y^2
 r = a*x*y + y*x - 2*z^2

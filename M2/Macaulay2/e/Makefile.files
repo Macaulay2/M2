@@ -11,18 +11,19 @@ INTERFACE2 = interrupted
 INTERFACE = \
 	myalloc \
 	matrix-ncbasis \
-	NCAlgebras/VectorArithmetic \
+	M2FreeAlgebraQuotient \
+	M2FreeAlgebra \
+	VectorArithmetic \
 	NCAlgebras/Word \
 	NCAlgebras/NCReduction \
 	NCAlgebras/FreeAlgebraQuotient \
-	M2FreeAlgebraQuotient \
 	NCAlgebras/FreeAlgebra \
 	NCAlgebras/FreeMonoid \
 	NCAlgebras/WordTable \
+	NCAlgebras/SuffixTree \
 	NCAlgebras/NCGroebner \
 	NCAlgebras/NCF4 \
 	NCAlgebras/OverlapTable \
-	M2FreeAlgebra \
 	Polynomial \
 	monomial-collection \
 	eigen \
@@ -206,7 +207,8 @@ COMMANDS = \
 	franzi-interface
 
 NAMES_H = \
-	NCAlgebras/MemoryBlock \
+	VectorArithmetic2 \
+	MemoryBlock \
 	NCAlgebras/Range \
 	ringelem \
 	style \

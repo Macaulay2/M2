@@ -209,7 +209,7 @@ checkHeft = (degs, heftvec) -> (
 --   - add in e.g. leadMonomial, support.  
 
 freeAlgebra = method()
-freeAlgebra(Ring, List) := FreeAlgebra => (A, args)  -> (
+freeAlgebra(Ring, BasicList) := FreeAlgebra => (A, args)  -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
    opts := new OptionTable from {Degrees => null, DegreeRank => null, Weights => {}, Heft => null, UseVariables => false};
    (opts,args) = override(opts,toSequence args);
@@ -282,9 +282,11 @@ freeAlgebra(Ring, List) := FreeAlgebra => (A, args)  -> (
    );
 
 -- WARNING, TODO!!  This breaks local rings
-Ring List := Ring => (R,variables) -> (
+Ring AngleBarList := Ring => (R,variables) -> (
     use freeAlgebra(R, variables)
     )
+
+Ring List := Ring => (R,variables) -> error "I should not occur"
 
 FreeAlgebra _ ZZ := (R, n) -> (R.generators)#n
 coefficientRing FreeAlgebra := R -> last R.baseRings
@@ -722,7 +724,7 @@ skewPolynomialRing (Ring,Matrix,List) := (R,skewMatrix,varList) -> (
    if not validSkewMatrix skewMatrix then
       error "Expected a matrix M such that M_ij = M_ji^(-1).";
    if ring skewMatrix =!= R then error "Expected skewing matrix over base ring.";
-   A := R varList;
+   A := freeAlgebra(R, varList);
    gensA := gens A;
    I := ideal apply(subsets(numgens A, 2), p -> 
             (gensA_(p#0))*(gensA_(p#1)) - (skewMatrix_(p#0)_(p#1))*(gensA_(p#1))*(gensA_(p#0)));
@@ -734,7 +736,7 @@ skewPolynomialRing (Ring,ZZ,List) :=
 skewPolynomialRing (Ring,QQ,List) := 
 skewPolynomialRing (Ring,RingElement,List) := (R,skewElt,varList) -> (
    -- if class skewElt =!= R then error "Expected ring element over base ring.";
-   A := R varList;
+   A := freeAlgebra(R, varList);
    gensA := gens A;
    I := ideal apply(subsets(numgens A, 2), p ->
             (gensA_(p#0))*(gensA_(p#1)) - promote(skewElt,R)*(gensA_(p#1))*(gensA_(p#0)));
@@ -747,7 +749,7 @@ threeDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    if #params != 3 or #varList != 3 then error "Expected lists of length 3.";
    if instance(varList#0, R) or instance(varList#0,ZZ) or instance(varList#0,QQ) then
       error "Expected list of variables in third argument.";
-   A := R varList;
+   A := freeAlgebra(R, varList);
    gensA := gens A;
    I := ideal {params#0*gensA#1*gensA#2+params#1*gensA#2*gensA#1+params#2*(gensA#0)^2,
        params#0*gensA#2*gensA#0+params#1*gensA#0*gensA#2+params#2*(gensA#1)^2,
@@ -766,7 +768,7 @@ fourDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    if #params != 3 or #varList != 4 then error "Expected three parameters and four variables.";
    if instance(varList#0, R) or instance(varList#0,ZZ) or instance(varList#0,QQ) then
       error "Expected list of variables in third argument.";
-   A := R varList;
+   A := freeAlgebra(R, varList);
    gensA := gens A;
    varList = gens A;
    f1 := (varList#0*varList#1 - varList#1*varList#0) - params#0*(varList#2*varList#3 + varList#3*varList#2);
@@ -801,7 +803,7 @@ oreIdeal (Ring,RingMap,RingMap,Symbol) := opts -> (B,sigma,delta,X) -> (
    kk := coefficientRing B;
    varsList := ((gens B) / baseName) | {X};
    A := ambient B;
-   C := kk (varsList | {Degrees => (degrees A | {opts.Degree})});
+   C := freeAlgebra(kk, (varsList | {Degrees => (degrees A | {opts.Degree})}));
    fromBtoC := map(C,B,drop(gens C, -1));
    fromAtoC := map(C,A,drop(gens C, -1));
    X = value X;
@@ -848,7 +850,7 @@ freeProduct (Ring,Ring) := (A,B) -> (
    B' := ambient B;
     
    --- bring over heft vectors, etc, of the factors as well? 
-   C := R (newgens | {Degrees => (degrees A | degrees B)});
+   C := freeAlgebra(R, (newgens | {Degrees => (degrees A | degrees B)}));
    gensAinC := take(gens C, #gensA);
    gensBinC := drop(gens C, #gensA);
    incA := map(C,A',gensAinC);
@@ -948,7 +950,7 @@ oppositeRing FreeAlgebra :=
 oppositeRing FreeAlgebraQuotient := B -> (
    gensB := gens B;
    R := coefficientRing B;
-   oppA := R gensB;
+   oppA := freeAlgebra(R, gensB);
    if class B === FreeAlgebra then return oppA;
    idealB := flatten entries gens ideal B;
    phi := map(oppA,ambient B, gens oppA);

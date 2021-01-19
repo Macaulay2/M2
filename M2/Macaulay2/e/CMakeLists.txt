@@ -137,10 +137,11 @@ set(SRCLIST
 	myalloc
 	matrix-ncbasis
     	VectorArithmetic
+	M2FreeAlgebraQuotient
+	M2FreeAlgebra
 	NCAlgebras/Word
 	NCAlgebras/NCReduction
 	NCAlgebras/FreeAlgebraQuotient
-	M2FreeAlgebraQuotient
 	NCAlgebras/FreeAlgebra
 	NCAlgebras/FreeMonoid
 	NCAlgebras/WordTable
@@ -148,7 +149,6 @@ set(SRCLIST
 	NCAlgebras/NCGroebner
 	NCAlgebras/NCF4
 	NCAlgebras/OverlapTable
-	M2FreeAlgebra
 	Polynomial
 	monomial-collection
   Eschreyer
