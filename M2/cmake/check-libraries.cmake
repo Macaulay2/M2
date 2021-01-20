@@ -16,10 +16,13 @@ message(CHECK_START " Checking for existing libraries and programs")
 ###############################################################################
 ## Program requirements: (git and bison are checked for elsewhere)
 find_package(PkgConfig	REQUIRED QUIET)
-find_package(Doxygen)
-find_package(Sphinx)
-find_program(MAKE  NAMES make gmake nmake)
+find_program(MAKE  NAMES gmake make)
 find_program(ETAGS NAMES etags)
+
+if(BUILD_DOCS)
+  find_package(Doxygen)
+  find_package(Sphinx)
+endif()
 
 ###############################################################################
 ## Requirement	Debian package	RPM package	Homebrew package
