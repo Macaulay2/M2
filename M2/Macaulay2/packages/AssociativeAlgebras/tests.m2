@@ -1452,3 +1452,43 @@ r = a*x*y + y*x - 2*z^2
 I = ideal{p,q,r}
 elapsedTime Igb = NCGB(I, 15, Strategy=>"F4Parallel");
 ///
+
+DEVELOPMENT ///
+restart
+needsPackage "AssociativeAlgebras"
+-- computes A*B correctly
+goodMult = (A,B) -> (
+   if (numcols A != numrows B) then
+       error "Maps not composable.";
+   matrix table (numrows A, numcols B, (i,j) -> sum apply(numcols A, k -> A_(i,k)*B_(k,j)))
+)
+
+B = QQ[X,Y,Z]
+resB = res coker vars B
+resB.dd
+
+-- playing with resolutions...
+A = ZZ/32003<|x,y,z,a,b,c,d,e,f,g,h, Degrees=>{1,1,1,1,2,2,2,3,3,3,4}|>
+I = ideal {x*y + y*x - 2*z^2,
+    	    y*z + z*y - 2*x^2,
+	    z*x + x*z - 2*y^2}
+I1 = I + ideal {b - a*x,
+                c - a*y,
+	    	d - a*z}
+d0 = matrix {{x,y,z}};
+I1gb = NCGB(I1,10)
+rels = select(flatten entries I1gb, t -> (not member(a, support t)) and (member(b,support t) or member(c,support t) or member(d,support t)))
+coefficients(matrix{rels}, Variables=>{b,c,d})  -- hmmm
+d1 = matrix {{y, x, z}, {x, 16001*z, -2*y}, {-2*z, 16001*y, x}};
+net d0 || " " || net d1
+NCReductionTwoSided(goodMult(d0,d1),I) -- should be zero
+(1/2)_A  ----- BUG!!!
+I2 = I + ideal {e - (b*y + c*x - 2*d*z),
+                f - (b*x + 16001*c*z + 16001*d*y),
+		g - (b*z - 2*c*y + d*x)}
+NCGB(I2,10)
+d2 = matrix {{z},{-2*x},{y}}
+NCReductionTwoSided(goodMult(d1,d2),I) -- BUG!
+NCReductionTwoSided(matrix {flatten entries goodMult(d1,d2)},I)
+net d0 || " " || net d1 || " " || net d2
+///
