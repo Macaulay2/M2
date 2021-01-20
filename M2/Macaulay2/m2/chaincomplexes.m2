@@ -907,7 +907,7 @@ hilbertSeries(ZZ,BettiTally) := o -> (n,B) -> (
 -----------------------------------------------------------------------------
 Ring ^ BettiTally := (R,b) -> (
    -- donated by Hans-Christian von Bothmer
-   -- given a betti Table b and a Ring R make a chainComplex -- with zero maps over R  that has betti diagramm b. --
+   -- given a betti Table b and a Ring R make a chainComplex -- with zero maps over R  that has betti diagram b. --
    -- negative entries are ignored
    -- rational entries produce an error
    -- multigraded R's work only if the betti Tally contains degrees of the correct degree length
