@@ -35,7 +35,7 @@ add_custom_command(OUTPUT ${GRAMMAR_FILES}
 
 # TODO: only the emacs target is installed in usr-dist by default
 set(M2_INSTALL_EMACSDIR
-  ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp/Macaulay2)
+  ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp/macaulay2)
 file(COPY emacs/ DESTINATION ${M2_INSTALL_EMACSDIR}
   FILES_MATCHING PATTERN "M2*" PATTERN "*.in" EXCLUDE)
 
