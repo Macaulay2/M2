@@ -89,7 +89,7 @@ export {
     "endomorphismRingIdeal",
     "leftQuadraticMatrix",
     "rightQuadraticMatrix",
-    "pointSchemeFourDim",
+    "pointScheme",
     "lineSchemeFourDim",
     "ncMatrixMult"
     }
@@ -352,11 +352,10 @@ NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
 NCGB Ideal := opts -> (I) -> (
     if I.cache.?NCGB then I.cache.NCGB#1
     else (
-        maxdegI := first max(degrees source gens I); -- TODO: change once multidegrees are allowed.
+        maxdegI := max((degrees source gens I) / sum); -- TODO: change once multidegrees are allowed.
         NCGB(I, 2*maxdegI, opts)
         )
     )
-    
 
 NCReductionTwoSided = method()
 NCReductionTwoSided(Matrix, Matrix) := (M, I) -> (
@@ -1192,7 +1191,6 @@ rightQuadraticMatrix Ideal := I -> (
 rightQuadraticMatrix List := I -> rightQuadraticMatrix ideal I
 
 lineSchemeFourDim = method()
-lineSchemeFourDim (FreeAlgebra, Symbol) := 
 lineSchemeFourDim (FreeAlgebraQuotient, Symbol) := (B,M) -> (
    if not isHomogeneous B or
       numgens ideal B != 6 or
@@ -1222,21 +1220,16 @@ lineSchemeFourDim (FreeAlgebraQuotient, Symbol) := (B,M) -> (
    IM
 )
 
-pointSchemeFourDim = method()
-pointSchemeFourDim (FreeAlgebra, Symbol) := 
-pointSchemeFourDim (FreeAlgebraQuotient, Symbol) := (B, y) -> (
-   if not isHomogeneous B or
-      numgens ideal B != 6 or
-      numgens B != 4 then error "Expected an algebra on four generators and six relations.";
+pointScheme = method()
+pointScheme (FreeAlgebraQuotient, Symbol) := (B, y) -> (
     A := ambient B;
-    monR := monoid [y_1..y_4];
-    R := QQ monR;
+    n := numgens A;
+    monR := monoid [y_1..y_n];
+    R := (coefficientRing B) monR;
     phi := map(R,A,gens R);
     I := ideal B;
     Mleft := matrix applyTable(entries leftQuadraticMatrix I, g -> phi g);
-    Mright := matrix applyTable(entries rightQuadraticMatrix I, g -> phi g);
-    error "err";
-    minors(4,Mleft)
+    minors(n,Mleft)
 )
 
 ncMatrixMult = method()
@@ -1564,7 +1557,7 @@ all(15, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
 LL = lineSchemeFourDim(S,M)
 primaryDecomposition radical LL
 netList oo
-PP = pointSchemeFourDim(S,y)
+PP = pointScheme(S,y)
 primaryDecomposition radical PP
 netList oo
 
@@ -1573,7 +1566,10 @@ needsPackage "AssociativeAlgebras"
 R = ZZ/32003 <|x_4,x_1,x_2,x_3|>
 I = ideal {x_3^2 - x_1*x_2, x_4^2 - x_2*x_1, x_1*x_3 - x_2*x_4,
            x_3*x_1 - x_2*x_3, x_1*x_4 - x_4*x_2, x_4*x_1 - x_3*x_2}
-PP = pointSchemeFourDim(S,y)
+S = R/I
+PP = pointScheme(S,y)
+netList minimalPrimes PP
+
 PPR = ring Mleft
 MleftSpecial = sub(Mleft, {PPR_0 => 1, PPR_1 => 2, PPR_2 => 0, PPR_3 => 0})
 MrightSpecial = sub(Mright, {PPR_0 => 1, PPR_1 => 2, PPR_2 => -1, PPR_3 => -2})
@@ -1581,3 +1577,73 @@ C = first minimalPrimes minors(4,Mleft)
 Mleft % C
 ker (Mleft % C)
 rank MrightSpecial
+
+restart
+needsPackage "AssociativeAlgebras"
+S1 = skewPolynomialRing(QQ,(-1)_QQ,{x_1,x_2})
+P = pointScheme(S1,a)
+netList minimalPrimes P
+S1 = skewPolynomialRing(QQ,(-1)_QQ,{x_1,x_2,x_3})
+P = pointScheme(S1,a)
+netList minimalPrimes P
+S1 = skewPolynomialRing(QQ,(-1)_QQ,{x_1..x_4})
+P = pointScheme(S1,a)
+netList minimalPrimes P
+S2 = threeDimSklyanin (QQ,{3,5,7},{x,y,z})
+P = pointScheme(S2,a)
+netList minimalPrimes P
+minimalPrimes ideal singularLocus P
+S3 = threeDimSklyanin (QQ,{1,1,-2},{x,y,z})
+P = pointScheme(S3,a)
+netList minimalPrimes P
+minimalPrimes ideal singularLocus P
+
+R = QQ[zz,a_1,a_2,a_3]
+PP = sub(P,R) + ideal {zz^2 + zz + 1}
+minPP = minimalPrimes PP
+minPP / degree
+
+x = baseName x
+R = ZZ/32003 <|x_4,x_1,x_2,x_3|>
+I = ideal {x_3^2 - x_1*x_2, x_4^2 - x_2*x_1, x_1*x_3 - x_2*x_4,
+           x_3*x_1 - x_2*x_3, x_1*x_4 - x_4*x_2, x_4*x_1 - x_3*x_2}
+S4 = R/I
+P = pointScheme(S4,a)
+A = ring P
+dim (A/P)
+reduceHilbert hilbertSeries (A/P)
+netList minimalPrimes P
+
+a = 1
+b = 1
+c = -2
+
+(3*a*b*c)^3 - (a^3 + b^3 + c^3)^3
+
+S = threeDimSklyanin (frac(QQ[a,b,c]),{a,b,c},{x,y,z}, DegreeLimit => 3)
+P = pointScheme(S,X)
+
+R = frac(QQ[a,b,c])[X_1,X_2,X_3]
+phi = map(R,ambient S,gens R)
+lQ = leftQuadraticMatrix ideal S
+phi lQ
+det phi lQ
+P = pointScheme(S,X)
+netList minimalPrimes P
+
+restart
+needsPackage "AssociativeAlgebras"
+S = skewPolynomialRing(QQ,1_QQ,{x_1,x_2,x_3,x_4})
+L = lineSchemeFourDim(S,M);
+netList minimalPrimes L
+S = skewPolynomialRing(QQ,(-1)_QQ,{x_1,x_2,x_3,x_4})
+L = lineSchemeFourDim(S,M);
+netList minimalPrimes L
+R = QQ <|x_4,x_1,x_2,x_3|>
+I = ideal {x_3^2 - x_1*x_2, x_4^2 - x_2*x_1, x_1*x_3 - x_2*x_4, x_3*x_1 - x_2*x_3, x_1*x_4 - x_4*x_2, x_4*x_1 - x_3*x_2}
+Igb = NCGB(I, 10);
+S = R/I
+all(15, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
+L = lineSchemeFourDim(S,M);
+netList minimalPrimes L
+

@@ -12,6 +12,7 @@ undocumented {sequenceToVariableSymbols,
 	      (isWellDefined, FreeAlgebra),
 	      (toString, FreeAlgebra),
 	      (toExternalString, FreeAlgebra),
+	      (NewFromMethod, FreeAlgebra, List),
 	      (coefficientRing, FreeAlgebra)}
 
 doc ///
@@ -1316,6 +1317,153 @@ doc ///
        kRes = res(coker vars A, LengthLimit => 10);
        kBetti = apply(10, i -> numcols kRes.dd_i)
        toRationalFunction kBetti
+///
+
+doc ///
+   Key
+     pointScheme
+     (pointScheme,FreeAlgebraQuotient,Symbol)
+   Headline
+     Compute the point scheme of the quadratic algebra B
+   Usage
+     I = pointScheme B
+   Inputs
+     B : FreeAlgebraQuotient
+   Outputs
+     I : Ideal
+   Description
+    Text
+      This method computes the ideal defining the point scheme of the
+      (assumed to be Artin-Schelter regular) algebra B.  This amounts
+      to computing the ideal of maximal minors of the left quadratic
+      matrix corresponding to the generators of the defining ideal of B.
+      
+      The point scheme parameterizes the point modules over the algebra B.
+      A $B$-point module is a module $M$ that is generated in degree zero
+      and whose Hilbert function is one for every nonnegative integer.
+      In the commutative case, the point scheme of a graded ring $R$ generated
+      in degree one is simply $\operatorname{Proj}(R)$, so this object serves
+      as a way to introduce geometry in a noncommutative context.
+
+      A straightforward calculation shows that a skew commutative polynomial
+      ring in two variables still has point scheme given by $\mathbb{P}^1$,
+      for example:
+    Example
+      S = skewPolynomialRing(QQ,(-1)_QQ,{x_1,x_2})
+      P = pointScheme(S,a)
+    Text
+      In higher variables, one gets smaller point schemes, however.  Indeed, the point scheme
+      of the skew polynomial ring in four variables is a two-dimensional reducible scheme
+      given by a union of six lines.
+    Example
+      S = skewPolynomialRing(QQ,(-1)_QQ,{x_1..x_4})
+      P = pointScheme(S,a)
+      netList minimalPrimes P
+    Text
+      Three-dimensional Sklyanin algebras were shown by Artin-Tate-Van den Bergh
+      to generically have point scheme given by a smooth elliptic curve, a defining
+      equation of which we may obtain using this method.
+    Example
+      S = threeDimSklyanin (frac(QQ[a,b,c]),{a,b,c},{x,y,z}, DegreeLimit => 3)
+      P = pointScheme(S,X)
+    Text
+      The genericity condition $(3abc)^3 \neq (a^3 + b^3 + c^3)^3$ is somewhat visible
+      here.  Some non-generic Sklyanin algebras are still AS-regular:
+    Example     
+      S = threeDimSklyanin (QQ,{1,1,-2},{x,y,z})
+      P = pointScheme(S,X)
+      netList minimalPrimes P
+    Text
+      But as you can see, the point scheme is not a smooth elliptic curve.  In fact,
+      if we add a cube root of unity to the base ring, we can see that it is a union of
+      three lines (although M2 has trouble detecting this outright):
+    Example
+      R = QQ[zz,X_1,X_2,X_3]
+      PP = sub(P,R) + ideal {zz^2 + zz + 1}
+      minPP = minimalPrimes PP; netList minPP
+      minPP / degree
+    Text
+      Indeed, this Sklyanin algebra is isomorphic to a skew polynomial algebra
+      in three variables if the base field contains a cube root of unity.
+///
+
+doc ///
+   Key
+     NCGB
+     (NCGB, Ideal)
+     (NCGB, Ideal, ZZ)
+     [NCGB,Strategy]
+   Headline
+     Compute a two-sided Groebner basis of an ideal to a specified degree
+   Usage
+     Igb = NCGB(I,n)
+   Inputs
+     I : Ideal
+     n : ZZ
+   Outputs
+     Igb : Matrix
+   Description
+     Text
+       This method performs a two-sided Groebner basis calculation of the ideal
+       $I$ to the degree $n$ given.  Possible strategies are "Naive", "F4" and "F4Parallel".
+       If no integer is given, the Groebner basis is computed to twice the maximal degree
+       of a generator.  As usual, one must take care not to provide too high of
+       a degree here, as Groebner bases may be infinite in the noncommutative case.
+       
+       The current state of the algorithm requires the FreeAlgebra to be defined over
+       a field, and the "F4" or "F4Parallel" strategies require the base ring to be
+       either QQ, ZZ/p or GF(q).
+     Example
+       A = QQ<|x,y,z|>
+       I = ideal { x*y + y*x - 2*z^2,
+	           y*z + z*y - 2*x^2,
+		   z*x + x*z - 2*y^2}
+       Igb = NCGB(I,10)
+///
+
+doc ///
+   Key
+     lineSchemeFourDim
+     (lineSchemeFourDim,FreeAlgebraQuotient,Symbol)
+   Headline
+     Compute the line scheme of a four-dimensional AS regular algebra
+   Usage
+     L = lineSchemeFourDim B
+   Inputs
+     B : FreeAlgebraQuotient
+   Outputs
+     L : Ideal
+   Description
+     Text
+       This method computes the scheme that parameterizes the set of
+       line modules over an AS-regular algebra B due to Shelton and Vancliff.
+       More precisely, it computes the image of this scheme under the Plucker
+       embedding.
+     
+       As a first example, we see that the line scheme of the commutative
+       polynomial ring is just the image of the Grassmannian Gr(4,2) in $\mathbb{P}^5$:
+     Example
+       S = skewPolynomialRing(QQ,1_QQ,{x_1,x_2,x_3,x_4})
+       L = lineSchemeFourDim(S,M);
+       netList minimalPrimes L
+     Text
+       Next, we compute the line scheme of a (-1)-skew polynomial ring.
+       We see that it is a union of four planes and three quadric surfaces.
+     Example
+       S = skewPolynomialRing(QQ,(-1)_QQ,{x_1,x_2,x_3,x_4})
+       L = lineSchemeFourDim(S,M);
+       netList minimalPrimes L
+     Text
+       Finally, we consider the following AS-regular algebra of dimension four.
+       Its line scheme is dimension one and degree 20, and is a union of
+       10 conics.
+     Example
+       R = QQ <|x_4,x_1,x_2,x_3|>
+       I = ideal {x_3^2 - x_1*x_2, x_4^2 - x_2*x_1, x_1*x_3 - x_2*x_4, x_3*x_1 - x_2*x_3, x_1*x_4 - x_4*x_2, x_4*x_1 - x_3*x_2}
+       Igb = NCGB(I, 10);
+       S = R/I
+       L = lineSchemeFourDim(S,M);
+       netList minimalPrimes L
 ///
 
 -*
