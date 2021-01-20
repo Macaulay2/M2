@@ -195,7 +195,7 @@ TEST ///
   debug needsPackage "MinimalPrimes"
   R = ZZ/32003[a,b,c,d,e,f,g,h]
   (S,SF) = makeFiberRings {c}
-  -- TODO NOTE: S whould contain ringmaps S-->R, R-->S, S-->SF,
+  -- TODO NOTE: S should contain ringmaps S-->R, R-->S, S-->SF,
   --          : Frank has done this now.  They are all stashed in S.
   --  note: for SF-->S we have numerator, denominator
   assert ( first sort gens S == c )

@@ -562,7 +562,7 @@ Node
       To use this strategy, the field @TT "Strategy"@ should be a list of two integers, indicating the
       strategy to use for finding associated primes and localizing, respectively.
 
-      {\bf Warning:} Setting the second paramter to 1 works only if the ideal is homogeneous and equidimensional.
+      {\bf Warning:} Setting the second parameter to 1 works only if the ideal is homogeneous and equidimensional.
     Example
       Q = QQ[x,y];
       I = intersect(ideal(x^2), ideal(y^2))

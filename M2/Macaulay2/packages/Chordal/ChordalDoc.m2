@@ -915,7 +915,7 @@ doc /// --chordalElim
 
         {\bf Example 3.1 of [CP'16]}
       Text
-        (chordalElim succeds in computing the elimination ideals)
+        (chordalElim succeeds in computing the elimination ideals)
       Example
         R = QQ[x_0..x_3, MonomialOrder=>Lex];
         I = ideal {x_0^4-1, x_0^2+x_2, x_1^2+x_2, x_2^2+x_3};
@@ -937,7 +937,7 @@ doc /// --chordalElim
       Text
         {\bf Example: } 3-chromatic ideal of the cycle graph
       Text
-        (chordalElim succeds)
+        (chordalElim succeeds)
       Example
         I = chromaticIdeal(QQ, cycleGraph 10, 3);
         N = chordalNet I;
