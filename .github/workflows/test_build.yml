@@ -183,15 +183,16 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'default'
+        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang10'
         run: |
+          ./M2 -q --check 1 -e 'exit 0'
+          ./M2 -q --check 2 -e 'exit 0'
+          ./M2 -q --check 3 -e 'exit 0'
           cmake --build . --target M2-tests
           cmake --build . --target M2-unit-tests
           ctest -j1 --output-on-failure -R "unit-tests"
-          # TODO: remove the excluded normal tests
-          ctest -j4 --output-on-failure -R "normal/" -E "command|program|threads"
           ctest -j4 --output-on-failure -R "ComputationsBook"
-          # TODO: add engine tests
+          # TODO: add Macaulay2/tests/engine when https://github.com/Macaulay2/M2/issues/1213 is fixed
 
       - name: Run Tests using Autotools
         if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'default'
