@@ -38,13 +38,13 @@ TEST ///
   -- describe
   R = QQ<|a,b, x_1..x_3, c, y_1..y_4|>
   isWellDefined R
-  unstack describe R === {"QQ <|a, b, x , x , x , c, y , y , y , y |>", 
+  unstack describe R === {"QQ<|a, b, x , x , x , c, y , y , y , y |>", 
                             "           1   2   3      1   2   3   4"}
   assert(net R === "R")
   assert(net R == net expression R)
-  assert((depth describe R, height describe R, width describe R) == (1,1,40))
+  assert((depth describe R, height describe R, width describe R) == (1,1,41))
   assert(toString R === "R")
-  assert(toExternalString R === "QQ <|a, b, x_1, x_2, x_3, c, y_1, y_2, y_3, y_4|>")
+  assert(toExternalString R === "QQ<|a, b, x_1, x_2, x_3, c, y_1, y_2, y_3, y_4|>")
 ///
 
 TEST ///
@@ -1451,7 +1451,4 @@ q = a*z*x + x*z - 2*y^2
 r = a*x*y + y*x - 2*z^2
 I = ideal{p,q,r}
 elapsedTime Igb = NCGB(I, 15, Strategy=>"F4Parallel");
-
-
-
 ///

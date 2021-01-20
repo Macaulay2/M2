@@ -148,19 +148,19 @@ getNameIfAny = (k) -> expression if hasAttribute(k,ReverseDictionary) then getAt
 expression FreeAlgebra := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
-     (getNameIfAny k) (R#generatorSymbols)
+     (getNameIfAny k) new AngleBarList from (R#generatorSymbols)
      )
 net FreeAlgebra := R -> (
      if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
      else net expression R)
 describe FreeAlgebra := R -> (
      k := last R.baseRings;
-     net ((getNameIfAny k) R#generatorSymbols)
+     net (getNameIfAny k) | net (new AngleBarList from R#generatorSymbols)
      )
 toExternalString FreeAlgebra := R -> (
     --toString describe R
      k := last R.baseRings;
-     toString ((getNameIfAny k) R#generatorSymbols)
+     toString (getNameIfAny k) | toString(new AngleBarList from R#generatorSymbols)
      )
 toString FreeAlgebra := R -> (
     toString expression R
@@ -281,7 +281,6 @@ freeAlgebra(Ring, BasicList) := FreeAlgebra => (A, args)  -> (
    R
    );
 
--- WARNING, TODO!!  This breaks local rings
 Ring AngleBarList := Ring => (R,variables) -> (
     use freeAlgebra(R, variables)
     )
@@ -667,7 +666,8 @@ toFreeAlgebraQuotient = method()
 toFreeAlgebraQuotient Ring := FreeAlgebraQuotient => R -> (
    --- generate the (skew)commutivity relations
    Q := coefficientRing R;
-   A := Q ((gens R) / baseName | {Degrees=> degrees R});
+   gensA := new AngleBarList from ((gens R) / baseName | {Degrees=> degrees R});
+   A := Q gensA;
    phi := map(A,ambient R,gens A);
    skewCommIndices := if R.?SkewCommutative then R.SkewCommutative else {};
    bothExter := (i,j) -> member(i,skewCommIndices) and member(j,skewCommIndices);
@@ -804,6 +804,7 @@ oreIdeal (Ring,RingMap,RingMap,Symbol) := opts -> (B,sigma,delta,X) -> (
    varsList := ((gens B) / baseName) | {X};
    A := ambient B;
    C := freeAlgebra(kk, (varsList | {Degrees => (degrees A | {opts.Degree})}));
+   use C;
    fromBtoC := map(C,B,drop(gens C, -1));
    fromAtoC := map(C,A,drop(gens C, -1));
    X = value X;

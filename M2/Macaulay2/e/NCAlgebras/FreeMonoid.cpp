@@ -80,7 +80,6 @@ void FreeMonoid::copy(const Monom& m, MonomialInserter& result) const
 void FreeMonoid::mult(const Monom& m1, const Monom& m2, MonomialInserter& result) const
 {
   int sz = m1[0] + wordLength(m2);
-  result.reserve(sz);
   result.push_back(sz);
   for (int i=1; i<=mNumWeights; ++i)
     result.push_back(m1[i] + m2[i]);
@@ -91,7 +90,6 @@ void FreeMonoid::mult(const Monom& m1, const Monom& m2, MonomialInserter& result
 void FreeMonoid::mult3(const Monom& m1, const Monom& m2, const Monom& m3, MonomialInserter& result) const
 {
   int sz = m1[0] + wordLength(m2) + wordLength(m3);
-  result.reserve(sz);
   result.push_back(m1[0] + wordLength(m2) + wordLength(m3));
   for (int i=1; i<=mNumWeights; ++i)
     result.push_back(m1[i] + m2[i] + m3[i]);
@@ -338,8 +336,8 @@ void FreeMonoid::monomInsertFromWord(MonomialInserter& result, const Word& word)
   for (int j = 0; j < mNumWeights; ++j)
     result.push_back(0);
   for (auto a : word) result.push_back(a);
-  Monom tmpMon(result.data());
-  setWeights(tmpMon);
+  Monom tmpMonom(&*(result.end()-1-mNumWeights-word.size()));
+  setWeights(tmpMonom);
 }
 
 void FreeMonoid::setWeights(Monom& m) const
