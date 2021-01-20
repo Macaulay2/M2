@@ -87,10 +87,11 @@ export {
     "ncKernel",
     "ncGraphIdeal",
     "endomorphismRingIdeal",
-    "leftQuadraticMatrixFourDim",
-    "rightQuadraticMatrixFourDim",
+    "leftQuadraticMatrix",
+    "rightQuadraticMatrix",
     "pointSchemeFourDim",
-    "lineSchemeFourDim"
+    "lineSchemeFourDim",
+    "ncMatrixMult"
     }
 
 -- symbols into hash table for ring
@@ -364,7 +365,10 @@ NCReductionTwoSided(Matrix, Matrix) := (M, I) -> (
     map(R, rawNCReductionTwoSided(raw M, raw I))
     )
 NCReductionTwoSided(Matrix, Ideal) := (M, I) -> NCReductionTwoSided(M, gens I)
+NCReductionTwoSided(Matrix, List) := (M, L) -> NCReductionTwoSided(M, ideal L)
 NCReductionTwoSided(RingElement, Ideal) := (F, I) -> (NCReductionTwoSided(matrix{{F}}, gens I))_(0,0)
+NCReductionTwoSided(RingElement, Matrix) := (F, M) -> (NCReductionTwoSided(matrix{{F}}, M))_(0,0)
+NCReductionTwoSided(RingElement, List) := (F,L) -> NCReductionTwoSided(F, ideal L)
 
 FreeAlgebra / Ideal := FreeAlgebraQuotient => (R,I) -> (
      if ring I =!= R then error "expected ideal of the same ring";
@@ -1113,6 +1117,7 @@ endomorphismRingIdeal (Module,Symbol) := (M,X) -> (
    identM := homomorphism' id_M;
    ff := 1_A - first flatten entries (ncBasis(1,A)*(matrix entries identM));
    I = I + ideal ff;
+   I.cache#"EndomorphismRingIdealGens" = endGens;
    I
 )
 
@@ -1151,8 +1156,8 @@ evaluateAt (List,RingElement) := (mats,f) -> (
 -------------------------------------------------------------------------
 ---- Point and line scheme code (in the sense of Artin-Tate-Van den Bergh
 -------------------------------------------------------------------------
-leftQuadraticMatrixFourDim = method()
-leftQuadraticMatrixFourDim Ideal := I -> (
+leftQuadraticMatrix = method()
+leftQuadraticMatrix Ideal := I -> (
    A := ring I;
    if class A =!= FreeAlgebra then 
       error "Expected an ideal in a free algebra.";
@@ -1166,10 +1171,10 @@ leftQuadraticMatrixFourDim Ideal := I -> (
    myTable := apply(numgens I, i -> flatten entries sum apply(splitRels#i, t -> t#0*t#1#0*(eHash#(t#1#1))));
    matrix myTable
 )
-leftQuadraticMatrixFourDim List := I -> leftQuadraticMatrixFourDim ideal I
+leftQuadraticMatrix List := I -> leftQuadraticMatrix ideal I
 
-rightQuadraticMatrixFourDim = method()
-rightQuadraticMatrixFourDim Ideal := I -> (
+rightQuadraticMatrix = method()
+rightQuadraticMatrix Ideal := I -> (
    -- almost the same as above, just the myTable is built differently at the end.
    A := ring I;
    if class A =!= FreeAlgebra then 
@@ -1182,9 +1187,9 @@ rightQuadraticMatrixFourDim Ideal := I -> (
    Id := id_(A^(numgens A));
    eHash := hashTable apply(numgens A, i -> (A_i, Id^{i}));
    myTable := apply(numgens I, i -> flatten entries sum apply(splitRels#i, t -> t#0*t#1#1*(eHash#(t#1#0))));
-   transpose matrix myTable
+   matrix transpose myTable
 )
-rightQuadraticMatrixFourDim List := I -> rightQuadraticMatrixFourDim ideal I
+rightQuadraticMatrix List := I -> rightQuadraticMatrix ideal I
 
 lineSchemeFourDim = method()
 lineSchemeFourDim (FreeAlgebra, Symbol) := 
@@ -1195,7 +1200,7 @@ lineSchemeFourDim (FreeAlgebraQuotient, Symbol) := (B,M) -> (
    Bd := homogDual B;
    J := ideal Bd;
    A := ring J;
-   lqJ := leftQuadraticMatrixFourDim J;
+   lqJ := leftQuadraticMatrix J;
    N := getSymbol "N";
    u := getSymbol "u";
    v := getSymbol "v";
@@ -1228,11 +1233,18 @@ pointSchemeFourDim (FreeAlgebraQuotient, Symbol) := (B, y) -> (
     R := QQ monR;
     phi := map(R,A,gens R);
     I := ideal B;
-    Mleft := matrix applyTable(entries leftQuadraticMatrixFourDim I, g -> phi g);
-    Mright := matrix applyTable(entries rightQuadraticMatrixFourDim I, g -> phi g);
+    Mleft := matrix applyTable(entries leftQuadraticMatrix I, g -> phi g);
+    Mright := matrix applyTable(entries rightQuadraticMatrix I, g -> phi g);
     error "err";
     minors(4,Mleft)
 )
+
+ncMatrixMult = method()
+ncMatrixMult (Matrix, Matrix) := (A,B) -> (
+   if (numcols A != numrows B) then
+       error "Maps not composable.";
+   matrix table (numrows A, numcols B, (i,j) -> sum apply(numcols A, k -> A_(i,k)*B_(k,j)))
+);
 
 --- load the tests
 load "./AssociativeAlgebras/tests.m2"
@@ -1557,12 +1569,10 @@ primaryDecomposition radical PP
 netList oo
 
 restart
-debug needsPackage "AssociativeAlgebras"
-R = QQ {x_4,x_1,x_2,x_3}
-I = ideal apply(subsets(4,2), p -> x_(p#0)*x_(p#1) - x_(p#1)*x_(p#0))
-I = ideal {x_3^2 - x_1*x_2, x_4^2 - x_2*x_1, x_1*x_3 - x_2*x_4, x_3*x_1 - x_2*x_3, x_1*x_4 - x_4*x_2, x_4*x_1 - x_3*x_2}
-Igb = NCGB(I, 14, Strategy => "Naive");
-S = R/I
+needsPackage "AssociativeAlgebras"
+R = ZZ/32003 <|x_4,x_1,x_2,x_3|>
+I = ideal {x_3^2 - x_1*x_2, x_4^2 - x_2*x_1, x_1*x_3 - x_2*x_4,
+           x_3*x_1 - x_2*x_3, x_1*x_4 - x_4*x_2, x_4*x_1 - x_3*x_2}
 PP = pointSchemeFourDim(S,y)
 PPR = ring Mleft
 MleftSpecial = sub(Mleft, {PPR_0 => 1, PPR_1 => 2, PPR_2 => 0, PPR_3 => 0})

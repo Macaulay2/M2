@@ -1456,12 +1456,6 @@ elapsedTime Igb = NCGB(I, 15, Strategy=>"F4Parallel");
 DEVELOPMENT ///
 restart
 needsPackage "AssociativeAlgebras"
--- computes A*B correctly
-goodMult = (A,B) -> (
-   if (numcols A != numrows B) then
-       error "Maps not composable.";
-   matrix table (numrows A, numcols B, (i,j) -> sum apply(numcols A, k -> A_(i,k)*B_(k,j)))
-)
 
 B = QQ[X,Y,Z]
 resB = res coker vars B
@@ -1477,18 +1471,27 @@ I1 = I + ideal {b - a*x,
 	    	d - a*z}
 d0 = matrix {{x,y,z}};
 I1gb = NCGB(I1,10)
-rels = select(flatten entries I1gb, t -> (not member(a, support t)) and (member(b,support t) or member(c,support t) or member(d,support t)))
-coefficients(matrix{rels}, Variables=>{b,c,d})  -- hmmm
 d1 = matrix {{y, x, z}, {x, 16001*z, -2*y}, {-2*z, 16001*y, x}};
 net d0 || " " || net d1
-NCReductionTwoSided(goodMult(d0,d1),I) -- should be zero
-(1/2)_A  ----- BUG!!!
+NCReductionTwoSided(ncMatrixMult(d0,d1),I) -- should be zero
+(2/5)_A  ----- BUG: in promote?  Throwing away denominators.
+sub(1/2,A)
 I2 = I + ideal {e - (b*y + c*x - 2*d*z),
                 f - (b*x + 16001*c*z + 16001*d*y),
 		g - (b*z - 2*c*y + d*x)}
 NCGB(I2,10)
 d2 = matrix {{z},{-2*x},{y}}
-NCReductionTwoSided(goodMult(d1,d2),I) -- BUG!
-NCReductionTwoSided(matrix {flatten entries goodMult(d1,d2)},I)
+NCReductionTwoSided(ncMatrixMult(d1,d2),I)
 net d0 || " " || net d1 || " " || net d2
+///
+
+DEVELOPMENT ///
+restart
+needsPackage "AssociativeAlgebras"
+R = QQ[x]
+A = R<|a,b|>
+I = ideal {a}
+A = R<|c,d|>
+I   --- BUG: why are these parenthesis here?
+-- how can we get describe to give the 
 ///

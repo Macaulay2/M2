@@ -1,37 +1,18 @@
 -- warnings still to fix:
 
- -- warning: there is no documentation for NCGB
- -- warning: symbol has no documentation: AssociativeAlgebras :: NCGB, package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: NCGB(Ideal), key (NCGB,Ideal), package AssociativeAlgebras
- -- warning: method has no documentation: AssociativeAlgebras :: NCGB(Ideal,ZZ), key (NCGB,Ideal,ZZ), package AssociativeAlgebras
- -- warning: missing node: coefficientRing(FreeAlgebra) cited by FreeAlgebra
- -- warning: missing node: degreesRing(FreeAlgebra) cited by FreeAlgebra
- -- warning: missing node: describe(FreeAlgebra) cited by FreeAlgebra
- -- warning: missing node: expression(FreeAlgebra) cited by FreeAlgebra
- -- warning: missing node: FreeAlgebra _ ZZ cited by FreeAlgebra
- -- warning: missing node: isWellDefined(FreeAlgebra) cited by FreeAlgebra
- -- warning: missing node: net(FreeAlgebra) cited by FreeAlgebra
- -- warning: missing node: new FreeAlgebra from List cited by FreeAlgebra
- -- warning: missing node: toExternalString(FreeAlgebra) cited by FreeAlgebra
- -- warning: missing node: toString(FreeAlgebra) cited by FreeAlgebra
-
 undocumented {sequenceToVariableSymbols,
-              freeAlgebra,
-	      (freeAlgebra,Ring,BasicList),
 	      isFreeAlgebraOrQuotient,
 	      (isFreeAlgebraOrQuotient, Ring),
 	      (ambient, FreeAlgebra),
 	      (net, FreeAlgebra),
 	      (symbol _, FreeAlgebra, ZZ),
+	      (degreesRing, FreeAlgebra),
+	      (describe, FreeAlgebra),
+	      (expression, FreeAlgebra),
+	      (isWellDefined, FreeAlgebra),
+	      (toString, FreeAlgebra),
+	      (toExternalString, FreeAlgebra),
 	      (coefficientRing, FreeAlgebra)}
-
--- not sure if we want to export:
--*
-NCReductionTwoSided,
-(NCReductionTwoSided,Matrix,Ideal),
-(NCReductionTwoSided,Matrix,Matrix),
-(NCReductionTwoSided,RingElement,Ideal),
-*-    
 
 doc ///
 Key
@@ -1024,8 +1005,10 @@ doc ///
 
 doc ///
    Key
+      ncHilbertSeries
       (ncHilbertSeries, FreeAlgebraQuotient)
       (ncHilbertSeries, FreeAlgebra)
+      [ncHilbertSeries, Order]
    Headline
       Computes the Hilbert series of a noncommutative ring
    Usage
@@ -1045,8 +1028,8 @@ doc ///
 	 basis is returned.  The degree to which one computes the
 	 Hilbert series is controlled with the Order option.  The
 	 output is returned as either an expression (if a rational
-	 representation can be found) or as an element of the degrees
-         ring of the input.
+	 representation can be found using @ TO toRationalFunction @)
+         or as an element of the @ TO degreesRing @ of the input.
       Example
 	 A = QQ<|x,y,z|>
 	 ncHilbertSeries(A,Order=>10)
@@ -1056,7 +1039,308 @@ doc ///
 	 ncHilbertSeries(B,Order=>10)
 ///
 
+doc ///
+   Key
+      endomorphismRingIdeal
+      (endomorphismRingIdeal,Module,Symbol)
+   Headline
+      Find the relations of an endomorphism ring
+   Usage
+      I = endomorphismRingIdeal(M,X)
+   Inputs
+      M : Module
+      X : Symbol
+          the base name for the indexed variables serving as generators for the output ring
+   Outputs
+      I : Ideal
+      	  in a FreeAlgebra with variables with base name X
+   Description
+      Text
+         This method computes the multiplication table of the endomorphism ring
+	 of a module $M$ over a commutative ring $R$, and returns this information
+	 as an ideal.  Since Groebner bases do not (yet!) work for a FreeAlgebra with
+	 coefficients in a commutative ring, minimizing these generators and relations
+	 must be performed by the user.  This will be fixed in a future release.
+      Example
+         Q = QQ[a,b,c]
+         R = Q/ideal{a*b-c^2}
+         kRes = res(coker vars R, LengthLimit=>7)
+         M = coker kRes.dd_5
+         I = endomorphismRingIdeal(M,X)
+      Text
+         The endomorphisms corresponding to the variables chosen are cached in the
+	 ideal returned by this method, and can be accessed using the key "EndomorphismRingIdealGens".
+      Example
+         maps = I.cache#"EndomorphismRingIdealGens"
+	 assert(maps_0*maps_2 == maps_3)
+///
+
+doc ///
+   Key
+      NCReductionTwoSided
+      (NCReductionTwoSided, RingElement, List)
+      (NCReductionTwoSided, RingElement, Ideal)
+      (NCReductionTwoSided, RingElement, Matrix)
+      (NCReductionTwoSided, Matrix, List)
+      (NCReductionTwoSided, Matrix, Ideal)
+      (NCReductionTwoSided, Matrix, Matrix)
+   Headline
+      Reduces the entries of an Matrix with respect to an ideal
+   Usage
+      L = NCReductionTwoSided(M,I)
+   Inputs
+     M : Matrix
+     I : Ideal
+   Outputs
+     L : Matrix
+   Description
+      Text
+         This command reduces the entries of a RingElement or Matrix
+	 with respect to an Ideal or a single row matrix.  A Groebner
+	 basis is not computed for the input ideal.  If one wishes to
+	 use this function for normal forms, one must first call @ TO
+	 NCGB @ and pass the result to this function.
+      Example
+         A = QQ<|x,y,z|>
+	 f = y*z + z*y - x^2
+	 g = x*z + z*x - y^2
+	 h = z^2 - x*y - y*x
+	 I = ideal {f,g,h}
+	 Igb = NCGB(I,10)
+	 NCReductionTwoSided(x^4,I)
+	 NCReductionTwoSided(x^4,Igb)
+///
+
+doc ///
+   Key
+     leftQuadraticMatrix
+     (leftQuadraticMatrix,List)
+     (leftQuadraticMatrix,Ideal)
+     rightQuadraticMatrix
+     (rightQuadraticMatrix,List)
+     (rightQuadraticMatrix,Ideal)
+   Headline
+     Factors the quadratic ideal on the left or on the right.
+   Usage
+     M = leftQuadraticMatrix I
+   Inputs
+     I : Ideal
+     	 or @ TO List @
+   Outputs
+     M : Matrix
+   Description
+      Text
+        This function expresses the generators of the quadratic ideal
+	I as a product of a row or column vector of the variables times
+	a matrix with linear entries.
+      Example
+        R = ZZ/32003 <|x_4,x_1,x_2,x_3|>
+	I = ideal {x_3^2 - x_1*x_2, x_4^2 - x_2*x_1, x_1*x_3 - x_2*x_4,
+                   x_3*x_1 - x_2*x_3, x_1*x_4 - x_4*x_2, x_4*x_1 - x_3*x_2}
+	lQ = leftQuadraticMatrix I
+	rQ = rightQuadraticMatrix I
+	d = matrix {{x_4,x_1,x_2,x_3}}
+	e = matrix transpose {{x_4,x_1,x_2,x_3}}
+	NCReductionTwoSided(ncMatrixMult(d,rQ),I)
+	NCReductionTwoSided(ncMatrixMult(lQ,e),I)
+      Text
+      	We can perform these products over the quotient to verify that the
+	composite is zero there.
+      Example
+	S = R/I
+	(lQS,dS) = (sub(lQ,S),sub(d,S));
+	(rQS,eS) = (sub(rQ,S),sub(e,S));
+	ncMatrixMult(dS,rQS)
+	ncMatrixMult(lQS,eS)
+///
+
+doc ///
+   Key
+     ncMatrixMult
+     (ncMatrixMult, Matrix, Matrix)
+   Headline
+     Correctly multiplies matrices from noncommutative rings.
+   Usage
+     L = ncMatrixMult(M,N)
+   Inputs
+     M : Matrix
+     N : Matrix
+   Outputs
+     L : Matrix
+   Description
+      Text
+        This function is provided as a temporary band-aid for
+	matrix multiplication over a noncommutative ring,
+	as well as a reminder that it must be repaired eventually.
+      Example
+      	A = QQ<|x,y|>
+	M = matrix {{x}}
+	N = matrix {{y}}
+	M*N
+	assert(ncMatrixMult(M,N) == matrix {{x*y}})
+///
+
+doc ///
+   Key
+     freeAlgebra
+     (freeAlgebra,Ring,BasicList)
+     UseVariables
+   Headline
+     Create a FreeAlgebra
+   Usage
+     A = freeAlgebra(R,xs)
+   Inputs
+     R : Ring
+     varsAndOpts : BasicList
+   Outputs
+     A : FreeAlgebra
+   Description
+      Text
+        This function creates a free algebra over $R$ with variables
+	from the BasicList xs.  Options are also passed as part of the BasicList.
+	The variables are not in scope after a call to this function by default.
+	If you wish to have them in scope, one may @ TO use @ the return value,
+	or pass the option true to UseVariables.
+      Example
+        A = freeAlgebra(QQ,{x,y,z})
+	--assert(class x == Symbol)  Somehow the x is leaking out still...
+	use A
+	assert(x == A_0)
+      Text
+	Other options are @ TO Degrees @, @ TO DegreeRank @, @ TO
+	Weights @, and @ TO Heft @ which use the same syntax and play
+	the same role as in the case of a commutative polynomial ring.
+        
+	In particular, to create noncommutative elimination orders, one must
+	use @ TO Weights @ that are chosen accordingly.  The following
+	example is the graph ideal of the ring homomorphism from
+	$\mathbb{Q}\langle a,b,c\rangle$ to $\mathbb{Q}\langle x,y\rangle$
+	satisfying $a \mapsto xyx$, $b \mapsto yxy$ and $c \mapsto xy$.
+      Example
+	B = freeAlgebra(QQ,{x,y,a,b,c,Weights=>{1,1,0,0,0},Degrees=>{1,1,3,3,2}})
+        I = ideal {a - x*y*x, b - y*x*y, c - x*y}
+	Igb = NCGB(I,10)
+      Text
+      	This general construction is automated in @ TO ncGraphIdeal @ and @ TO ncKernel @.
+///
+
+doc ///
+   Key
+     ncGraphIdeal
+     (ncGraphIdeal,RingMap)
+   Headline
+     Compute the graph ideal of a ring map between noncommutative rings.
+   Usage
+     I = ncGraphIdeal f
+   Inputs
+     f : RingMap
+   Outputs
+     I : Ideal
+   Description
+      Text
+        This function creates the graph ideal of a ring map between noncommutative
+	rings.  It creates the free product of the source and target, and forms
+	the ideal generated by $v - f(v)$ for all variables $v$ in the source.
+      Example
+      	A = QQ<|a,b,c|>
+	B = QQ<|x,y|>
+	f = map(B,A,{x*y*x,y*x*y,x*y})
+	I = ncGraphIdeal f
+	Igb = NCGB(I,10)
+      Text
+      	Those generators of the Groebner basis that involve only the variables in
+	the domain are a Groebner basis of the kernel of the ring map.
+///
+
+doc ///
+   Key
+     ncKernel
+     (ncKernel,RingMap)
+     [ncKernel,DegreeLimit]
+     [ncKernel,Strategy]
+   Headline
+     Compute the graph ideal of a ring map between noncommutative rings.
+   Usage
+     I = ncKernel f
+   Inputs
+     f : RingMap
+   Outputs
+     I : Ideal
+   Description
+      Text      
+        This function computes (a Groebner basis of) the kernel of a
+	ring map between noncommutative rings.  
+      Example
+      	A = QQ<|a,b,c|>
+	B = QQ<|x,y|>
+	f = map(B,A,{x*y*x,y*x*y,x*y})
+	K = ncKernel f
+      Text
+        The generators returned by this function are in fact a Groebner basis
+	of the kernel, so it may not be a minimal generating set.
+      Text
+      	The @ TO DegreeLimit @ and @ TO Strategy @ options are forwarded on
+	to the call to the Groebner basis routine @ TO NCGB @.
+///
+
+doc ///
+   Key
+     toRationalFunction
+     (toRationalFunction, List)
+   Headline
+     Attempt to find a rational function representation.
+   Usage
+     output = toRationalFunction coeffs
+   Inputs
+     coeffs : List
+   Outputs
+     output : Sequence
+   Description
+     Text
+       This function attempts to find a rational function representation
+       of the (ordinary) generating function given by the list of integers
+       input in coeffs.  The return value is an ordered triple, given by the numerator
+       of the rational function, the denominator of the rational function,
+       and an expression representing the quotient of these two items.
+       
+       If no rational representation could be found, null is returned.
+     Example
+       toRationalFunction {1,3,6,10,15,21}
+       toRationalFunction {1,3,6,10,15,21,28}
+       toRationalFunction apply(10, i -> binomial(i+3,3))
+     Text
+       This method is used in the @ TO ncHilbertSeries @ method, but may also
+       be used to find rational expressions of Poincare series:
+     Example
+       A = QQ[x,y]/ideal{x^2,x*y}
+       kRes = res(coker vars A, LengthLimit => 10);
+       kBetti = apply(10, i -> numcols kRes.dd_i)
+       toRationalFunction kBetti
+///
+
 -*
+
+restart
+needsPackage "AssociativeAlgebras"
+
+doc ///
+   Key
+
+   Headline
+
+   Usage
+
+   Inputs
+
+   Outputs
+
+   Description
+      Text
+
+      Example
+
+///
+
 doc ///
   Key
     freeProduct
