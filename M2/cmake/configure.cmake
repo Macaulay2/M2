@@ -79,7 +79,15 @@ if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
     OUTPUT_VARIABLE   COMMIT_COUNT)
   set(GIT_DESCRIPTION version-${PROJECT_VERSION}-${COMMIT_COUNT}-${GIT_COMMIT})
 else()
+  message(NOTICE "## Not building from a git repository; submodules may need to be manually populated")
   set(GIT_DESCRIPTION version-${PROJECT_VERSION} CACHE INTERNAL "state of the repository")
+  file(GLOB _submodules LIST_DIRECTORIES true ${CMAKE_SOURCE_DIR}/submodules/*)
+  foreach(_submodule IN LISTS _submodules)
+    if(IS_DIRECTORY ${_submodule})
+      # CMake doesn't like empty source directories for ExternalProject_Add
+      file(TOUCH ${_submodule}/.nogit)
+    endif()
+  endforeach()
 endif()
 
 message("## Configure Macaulay2

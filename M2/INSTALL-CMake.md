@@ -303,19 +303,6 @@ cmake -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` .
 </details>
 
 <details>
-<summary>Building from the source code tarfile</summary>
-
-When building from a source code tarfile (e.g. downloaded from GitHub, rather than a git clone), you may see an error like this:
-```
-  No download info given for 'build-bdwgc' and its source directory: ...
-```
-To resolve this, you should download and extract the source tarfiles for each git submodule in the `M2/submodules` directory. Also, you may need to manually turn off submodule updates:
-```
-cmake -DGIT_SUBMODULE=off .
-```
-</details>
-
-<details>
 <summary><code>/usr/include/c++/10.1.0/bits/unique_ptr.h:594:9: error: no matching function for call to std::__uniq_ptr_data</code> when using GCC 10 or Clang 10</summary>
 
 This issue is due to an old version of FFLAS_FFPACK or Givaro libraries inserting an unnecessary `-fabi-version=6` flag to the compile command. Try uninstalling the packaged version of those libraries and building them using the `build-givaro` and `build-fflas_ffpack` targets.
