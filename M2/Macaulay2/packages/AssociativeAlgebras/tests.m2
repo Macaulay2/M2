@@ -1383,7 +1383,7 @@ DEVELOPMENT ///
   elapsedTime runGBs(I = createIdeal kk) -- OK  
 
   I = createIdeal QQ
-    runIdeal(I, 10, "Naive"); -- CRASH
+    runIdeal(I, 10, "Naive"); -- incorrect answer - off by in high degree
     runIdeal(I, 10, "F4"); -- 33 gens -- OK
     runIdeal(I, 10, "F4Parallel"); -- 33 gens OK
     runIdeal(I, 12, "Naive"); -- CRASH
@@ -1564,3 +1564,11 @@ A = R<|c,d|>
 I   --- BUG: why are these parenthesis here?
 -- how can we get describe to give the 
 ///
+
+DEVELOPMENT ///
+restart
+needsPackage "AssociativeAlgebras"
+S = threeDimSklyanin (frac(QQ[a,b]),{a,b,c},{x,y,z}, DegreeLimit => 2)
+S = threeDimSklyanin (frac(QQ[a,b]),{a,b,1},{x,y,z}, DegreeLimit => 2)
+I = ideal S
+Igb = NCGB(I, 5)

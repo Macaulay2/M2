@@ -664,7 +664,8 @@ public:
 private:
   FreeAlgebra mRing;
   MonomEq mMonomEq;
-  std::map<Monom, ring_elem, MonomEq, StatsAllocator<ConstEntry>> mMap;
+  //std::map<Monom, ring_elem, MonomEq, StatsAllocator<ConstEntry>> mMap;
+  std::map<Monom, ring_elem, MonomEq, gc_allocator<std::pair<const Monom,ring_elem>>> mMap;
   MemoryBlock mMonomialSpace;
 };
 

@@ -833,40 +833,77 @@ void NCF4::labelAndSortF4Matrix()
   MonomSort<std::vector<Word>> monomialSorter(&freeAlgebra().monoid(),&tempWords);
   // stable sort was here before, but this sort is based on a total ordering
   // with no ties so we can use an unstable (and hence parallel!) sort.
-  tbb::parallel_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
-  
+  if (mIsParallel)
+    tbb::parallel_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
+  else
+    std::stable_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
+
+  // rewrite this with lambdas
+
   // apply the sorted labeling to the columns
   mColumns.resize(sz);
-  tbb::parallel_for(tbb::blocked_range<int>{0,(int)sz},
-         [&](const tbb::blocked_range<int>& r)
-         {
-           for (auto count = r.begin(); count != r.end(); ++count)
-             {
-               auto& val = mColumnMonomials[tempWords[columnIndices[count]]];
-               val.first = count;
-               mColumns[count].word = tempWords[columnIndices[count]];
-               mColumns[count].pivotRow = -1;
-             }
-         });
+  if (mIsParallel)
+  {
+    tbb::parallel_for(tbb::blocked_range<int>{0,(int)sz},
+                      [&](const tbb::blocked_range<int>& r)
+                      {
+                        for (auto count = r.begin(); count != r.end(); ++count)
+                          {
+                            auto& val = mColumnMonomials[tempWords[columnIndices[count]]];
+                            val.first = count;
+                            mColumns[count].word = tempWords[columnIndices[count]];
+                            mColumns[count].pivotRow = -1;
+                          }
+                      });
+  }
+  else
+  {
+    for (auto count = 0; count != sz; ++count)
+      {
+        auto& val = mColumnMonomials[tempWords[columnIndices[count]]];
+        val.first = count;
+        mColumns[count].word = tempWords[columnIndices[count]];
+        mColumns[count].pivotRow = -1;
+      }
+  }
 
   // now fix the column labels in the rows and set pivot rows in columns
-  tbb::parallel_for(tbb::blocked_range<int>{0,(int)mRows.size()},
-        [&](const tbb::blocked_range<int>& r)
-        {
-          for (auto i = r.begin(); i != r.end(); ++i)
+  if (mIsParallel)
+  {
+    tbb::parallel_for(tbb::blocked_range<int>{0,(int)mRows.size()},
+                      [&](const tbb::blocked_range<int>& r)
+                      {
+                        for (auto i = r.begin(); i != r.end(); ++i)
+                          {
+                            auto& comps = mRows[i].columnIndices;
+                            auto& words = mRows[i].columnWords;
+                            // sets the pivot row in the column if this is a reducer row
+                            if (i < mFirstOverlap)
+                              {
+                                mColumns[mColumnMonomials[words[0]].first].pivotRow = i;
+                                mColumnMonomials[words[0]].second = i;
+                              }
+                            for (int j = 0; j < words.size(); ++j)
+                              comps[j] = mColumnMonomials[words[j]].first;
+                          }
+                      });
+  }
+  else
+  {
+    for (auto i = 0; i != mRows.size(); ++i)
+      {
+        auto& comps = mRows[i].columnIndices;
+        auto& words = mRows[i].columnWords;
+        // sets the pivot row in the column if this is a reducer row
+        if (i < mFirstOverlap)
           {
-            auto& comps = mRows[i].columnIndices;
-            auto& words = mRows[i].columnWords;
-            // sets the pivot row in the column if this is a reducer row
-            if (i < mFirstOverlap)
-            {
-              mColumns[mColumnMonomials[words[0]].first].pivotRow = i;
-              mColumnMonomials[words[0]].second = i;
-            }
-            for (int j = 0; j < words.size(); ++j)
-              comps[j] = mColumnMonomials[words[j]].first;
+            mColumns[mColumnMonomials[words[0]].first].pivotRow = i;
+            mColumnMonomials[words[0]].second = i;
           }
-        });
+        for (int j = 0; j < words.size(); ++j)
+          comps[j] = mColumnMonomials[words[j]].first;
+      }
+  }
 }
 
 // both reduceF4Row and parallelReduceF4Row call this function

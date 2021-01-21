@@ -47,7 +47,6 @@ class DenseCoeffVector
 template<typename RingType>
 class ConcreteVectorArithmetic2
 {
-  // This class is valid for prime characteristic up to a certain size.
   using RT = RingType;
   using FieldElement = typename RT::ElementType;
   using DenseFieldElement = FieldElement;
@@ -310,6 +309,278 @@ public:
   
 };
 
+template<typename T>
+struct GCVector : public our_new_delete
+{
+  template<typename... Args>
+  GCVector(Args&&... args) : mVector(args...) {}
+
+  //VECTOR(T)& operator() () { return mVector; }
+  VECTOR(T)* value() { return &mVector; }
+
+  
+
+  VECTOR(T) mVector;
+};
+
+template<> 
+class ConcreteVectorArithmetic2<Ring>
+{
+  using FieldElement = ring_elem;
+  using DenseFieldElement = FieldElement;
+
+  friend class VectorArithmetic2;
+
+  ConcreteVectorArithmetic2() : mRing(nullptr) {}
+
+private:
+  const Ring* mRing;
+
+  VECTOR(FieldElement)* coeffVector(CoeffVector f) const
+  {
+    return (reinterpret_cast<GCVector<FieldElement>*>(f.mValue))->value();
+  }
+
+  VECTOR(DenseFieldElement)* denseCoeffVector(DenseCoeffVector f) const
+  {
+    return (reinterpret_cast<GCVector<DenseFieldElement>*>(f.mValue))->value();
+  }
+  
+  CoeffVector coeffVector(GCVector<FieldElement>* vals) const
+  {
+    CoeffVector result;
+    result.mValue = vals;
+    vals = nullptr;
+    return result;
+  }
+
+  DenseCoeffVector denseCoeffVector(GCVector<DenseFieldElement>* vals) const
+  {
+    DenseCoeffVector result;
+    result.mValue = vals;
+    vals = nullptr;
+    return result;
+  }
+
+public:
+  ConcreteVectorArithmetic2(const Ring* R) : mRing(R) {}
+  
+  /////////////////////////////
+  // Allocation/Deallocation //
+  /////////////////////////////
+  CoeffVector allocateCoeffVector(ComponentIndex nelems) const
+  {
+    auto tempPtr = new GCVector<FieldElement>(nelems);
+    for (auto& d : *tempPtr->value())
+      {
+	d = mRing->zero();
+      }
+    return coeffVector(tempPtr);    
+  }
+
+  DenseCoeffVector allocateDenseCoeffVector(ComponentIndex nelems) const
+  {
+    auto tempPtr = new GCVector<DenseFieldElement>(nelems);
+    for (auto& d : *tempPtr->value())
+      {
+        d = mRing->zero();
+      }
+    return denseCoeffVector(tempPtr);    
+  }
+  // CoeffVector allocateCoeffVector() const
+  // {
+  //   return coeffVector(new VECTOR(FieldElement));
+  // }
+  void deallocateCoeffVector(CoeffVector& coeffs) const
+  {
+    delete coeffVector(coeffs);
+  }
+
+  void deallocateCoeffVector(DenseCoeffVector& coeffs) const
+  {
+    delete denseCoeffVector(coeffs);
+  }
+  
+  ////////////////////////
+  /// Linear Algebra /////
+  ////////////////////////
+
+  size_t size(const CoeffVector& coeffs) const
+  {
+    return coeffVector(coeffs)->size();
+  }
+
+  size_t size(const DenseCoeffVector& coeffs) const
+  {
+    return denseCoeffVector(coeffs)->size();
+  }
+  
+  // better name: fillDenseRow.
+  void sparseRowToDenseRow(DenseCoeffVector& dense,
+                           const CoeffVector& sparse,
+                           const Range<int>& comps) const
+  {
+    // Note: this function simply fills in the values coming from '(sparse, comps)'.
+    //   Other values are not touched.
+    // In our intended uses, the input `dense` is the vector consisting of all zeros`.
+    
+    auto& dvec = * denseCoeffVector(dense);
+    auto& svec = * coeffVector(sparse);
+    
+    assert(comps.size() == svec.size());
+    assert(comps[comps.size()-1] < dense.size());
+    
+    auto len = comps.size();
+    for (ComponentIndex i = 0; i < len; i++) 
+      dvec[comps[i]] = svec[i];
+  }
+
+  void denseRowCancelFromSparse(DenseCoeffVector& dense,
+                                const CoeffVector& sparse,
+                                const Range<int>& comps) const
+  {
+    // ASSUMPTION: svec[0] == 1.
+    auto& dvec = * denseCoeffVector(dense);
+    auto& svec = * coeffVector(sparse);
+
+    ring_elem a = dvec[comps[0]];
+    for (int i=0; i < comps.size(); ++i)
+    {
+      ring_elem b = mRing->mult(a,svec[i]);
+      dvec[comps[i]] = mRing->subtract(dvec[comps[i]],b);
+    }
+  }
+
+  int denseRowNextNonzero(DenseCoeffVector& dense,
+                          int first,
+                          int last) const
+  {
+    auto& dvec = * denseCoeffVector(dense);
+    for (int i = first; i <= last; i++)
+      {
+	if (mRing->is_zero(dvec[i])) continue;
+	// these lines give the gist of how to handle delayed modulus
+	//if (dvec[i] > mCharacteristic) dvec[i] %= mCharacteristic;
+	//else if (dvec[i] < 0) dvec[i] %= mCharacteristic;
+	//if (dvec[i] == 0) continue;
+	return i;
+      }
+    return last + 1;
+  }
+
+  void denseRowToSparseRow(DenseCoeffVector& dense,
+                           CoeffVector& sparse, // output value: sets this value
+                           Range<int>& comps, // output value: sets comps
+                           int first,
+                           int last,
+                           MemoryBlock& monomialSpace) const
+  { 
+    tbb::null_mutex noLock;
+    safeDenseRowToSparseRow<tbb::null_mutex>(dense,
+					     sparse,
+					     comps,
+					     first,
+					     last,
+					     monomialSpace,
+					     noLock);
+  }
+
+  template<typename LockType>
+  void safeDenseRowToSparseRow(DenseCoeffVector& dense,
+                               CoeffVector& sparse, // output value: sets this value
+                               Range<int>& comps, // output value: sets comps
+                               int first,
+                               int last,
+                               MemoryBlock& monomialSpace,
+                               LockType& lock) const
+  {
+    auto& dvec = * denseCoeffVector(dense);
+    
+    int len = 0;
+    
+    // first can be -1 if the row is zero.  in this case, we should
+    // not be accessing dense[i] for i negative.
+    for (int i = first; i >= 0 and i <= last; i++)
+      {
+	if (not mRing->is_zero(dvec[i])) len++;
+      }
+
+    comps = monomialSpace.safeAllocateArray<int,LockType>(len,lock);
+    sparse = allocateCoeffVector(len);
+    auto& svec = * coeffVector(sparse);
+
+    int next = 0;
+    for (int i = first; i >= 0 and i <= last; i++)
+      if (not mRing->is_zero(dvec[i]))
+	{
+          svec[next] = dvec[i];
+	  comps[next] = i;
+	  ++next;
+	  dvec[i] = mRing->zero();
+	}
+  }
+
+  void sparseRowMakeMonic(CoeffVector& sparse) const
+  {
+    auto& svec = * coeffVector(sparse);
+
+    FieldElement leadCoeffInv = mRing->invert(svec[0]);
+
+    for (auto& c : svec) { c = mRing->mult(c, leadCoeffInv); }
+  }
+  
+  template<typename Container>
+  void appendSparseVectorToContainer(const CoeffVector& sparse,
+                                     Container& c) const
+  {
+    auto& svec = * coeffVector(sparse);
+    for (auto a : svec)
+      {
+	c.push_back(a);
+      }
+  }
+
+  template<typename Container>
+  CoeffVector sparseVectorFromContainer(const Container& c) const
+  {
+    CoeffVector sparse = allocateCoeffVector(c.size());
+    auto& svec = * coeffVector(sparse);
+    for (auto i = 0; i < c.size(); ++i)
+      {
+        svec[i] = c[i];
+      }
+    return sparse;
+  }
+
+  ring_elem ringElemFromSparseVector(const CoeffVector& sparse,
+                                     int index) const
+  {
+    auto& svec = * coeffVector(sparse);
+    return svec[index];
+  }
+
+  std::ostream& displayVector(std::ostream& o, const CoeffVector& v) const
+  {
+    auto& svec = * coeffVector(v);
+
+    bool first = true;
+    o << "[(" << svec.size() << ")";
+    for (const auto& a : svec)
+      {
+        buffer b;
+        mRing->elem_text_out(b, a, true, true, true);
+        if (first)
+          first = false;
+        else
+          o << ",";
+        o << b.str();
+      }
+    o << "]" << std::endl;
+    return o;
+  }
+  
+};
+
 // this is the dispatching class using std::variant
 // this class
 class VectorArithmetic2
@@ -322,6 +593,7 @@ class VectorArithmetic2
                                           ConcreteVectorArithmetic2<M2::ARingZZp>*,
                                           ConcreteVectorArithmetic2<M2::ARingGFM2>*,
                                           ConcreteVectorArithmetic2<M2::ARingGFGivaro>*,
+                                          ConcreteVectorArithmetic2<Ring>*,
 					  ConcreteVectorArithmetic2<M2::DummyRing>*>;
 
 private:
@@ -366,6 +638,10 @@ public:
       case M2::ring_GFGivaro:
         mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingGFGivaro>
           (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFGivaro>* >(R)->ring());
+        break;
+      case M2::ring_old:
+        std::cout << "Using 'Old' rings in VectorArithmetic." << std::endl;
+        mConcreteVector = new ConcreteVectorArithmetic2<Ring>(R);
         break;
       default:
         // dummy ring type for default
