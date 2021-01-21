@@ -90,6 +90,15 @@ else()
   endforeach()
 endif()
 
+## Detect brew prefix
+find_program(BREW NAMES brew)
+if(EXISTS ${BREW})
+  execute_process(
+    COMMAND ${BREW} --prefix
+    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
+    OUTPUT_VARIABLE HOMEBREW_PREFIX)
+endif()
+
 message("## Configure Macaulay2
      M2 version        = ${PROJECT_VERSION}
      Git description   = ${GIT_DESCRIPTION}

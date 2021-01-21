@@ -23,7 +23,7 @@
 
 find_path(READLINE_ROOT_DIR
     NAMES include/readline/readline.h
-    PATHS $ENV{HOMEBREW_PREFIX}/opt/readline /opt/local /usr/local /usr
+    PATHS ${HOMEBREW_PREFIX}/opt/readline /opt/local /usr/local /usr
     NO_DEFAULT_PATH
 )
 

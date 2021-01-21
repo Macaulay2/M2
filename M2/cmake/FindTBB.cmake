@@ -57,7 +57,7 @@ FIND_PATH (TBB_ROOT_DIR
         ENV TBB22_INSTALL_DIR
         ENV TBB21_INSTALL_DIR
         ENV TBB_ROOT_DIR
-       $ENV{HOMEBREW_PREFIX}/opt/tbb
+        ${HOMEBREW_PREFIX}/opt/tbb
   DOC "TBB root directory")
 
 FIND_PATH (TBB_INCLUDE_DIR
