@@ -1,7 +1,9 @@
 #include "interface/factory.h"
 #include "interface/ring.h"
 
+#define register
 #include <mps/mps.h>
+#undef register
 #include <stdlib.h>
 
 #include "aring-CCC.hpp"
