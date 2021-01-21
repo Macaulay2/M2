@@ -1524,13 +1524,28 @@ restart
 debug needsPackage "AssociativeAlgebras"
 kk = ZZ/32003
 R = kk<|x,y,z,w|>
-I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
+I = ideal {x*y-y*x-7*z*w-7*w*z,
+           3*x*z-4*y*w-3*z*x-4*w*y,
+	   31*x*w+25*y*z+25*z*y-31*w*x,
+	   x*y+y*x-z*w+w*z,
+	   x*z+y*w+z*x-w*y,
+	   x*w-y*z+z*y+w*x}
 S = R/I
 d0 = matrix {{x,y,z,w}}
 d1 = rightKernel d0
 d2 = rightKernel d1
 d3 = rightKernel d2
 d4 = rightKernel d3
+
+-- Koszul dual of S
+T = homogDual S
+NCGB(ideal T, 10) -- finite GB
+d0 = matrix {{x,y,z,w}}
+d1 = rightKernel d0
+d2 = rightKernel d1
+d3 = rightKernel d2
+d4 = rightKernel d3
+d5 = rightKernel d4
 ///
 
 DEVELOPMENT ///
