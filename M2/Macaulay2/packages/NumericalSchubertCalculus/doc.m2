@@ -393,7 +393,7 @@ doc ///
        SchubProbB = {{3,4,7,8},{3,4,7,8},{3,4,7,8},{4,6,7,8},{4,6,7,8},{4,6,7,8},{4,6,7,8}}
        NSC2phc(SchubProbB,4,8)
 
-   SeeAlso
+    SeeAlso
       LRrule
 ///
 
@@ -624,7 +624,7 @@ doc ///
 	 -- the same problem but using brackets instead of partitions
 	 LRNumber({{2,4},{2,4},{2,4},{2,4}},2,4)
    Caveat
-      This uses the package Schubert2
+      This uses the package Schubert2 and the Strategy "phc" requires the string parsing capabilities of Macaulay2 version 1.17 or later
    SeeAlso
          LRrule
 ///
@@ -646,7 +646,8 @@ doc ///
         "Schubert2" uses the SchubertRings command from the package @TO Schubert2@ [default] 
 
 	"phc" uses @TO LRrule@, the implementation of the geometric Littlewood-Richardson rule in PHCPack.
-     
+              This also requires the string parsing capabilities of Macaulay2 version 1.17 or later
+   SeeAlso
      
 ///
 

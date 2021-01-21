@@ -26,7 +26,7 @@ doc ///
     LRrule
     (LRrule,ZZ,Matrix)
   Headline
-    uses the geometric Littlewood-Richardson rule to resolve a Schubert intersection problem.
+    uses the geometric Littlewood-Richardson rule to compute the number of solutions to a Schubert problem.
   Usage
     s = LRrule(n,M)
   Inputs

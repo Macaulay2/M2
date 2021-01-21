@@ -49,7 +49,7 @@ LRNumber (List,ZZ,ZZ) := o -> (conds,k,n) -> (
     checkSchubertProblem(conds,k,n);
        if o.Strategy == "phc" then (
            -- obfuscatory snippet of code to call LRrule and parse the output (a string) into a number
-           A := (separate("[",(separate("+", LRrule(n,NSC2phc(conds,k,n)) ))#1))#0 ;
+           A := (separate("\\[",(separate("\\+", LRrule(n,NSC2phc(conds,k,n)) ))#1))#0 ;
            dgt := reverse( apply(ascii(A), i-> i-48 ) );
            X:={};
            for i from 0 to #dgt-1 do (X = append(X,10^i*dgt#i) );
