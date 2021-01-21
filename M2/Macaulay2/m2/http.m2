@@ -95,7 +95,7 @@ hexdigits = new HashTable from {
 hex = (str) -> (
     -- str: String, coming from getWWW
     -- each char of str should be 0..9,a..f, or A..F
-    -- transform this string into the corresponding hexidecimal number
+    -- transform this string into the corresponding hexadecimal number
     result := 0;
     for c in characters str do result = 16*result + hexdigits#c;
     result
@@ -112,7 +112,7 @@ extractChunk = (offset,str) -> (
     -- str: String, coming from getWWW
     --
     -- format of a chunk
-    -- hexidecimal digits giving the length n
+    -- hexadecimal digits giving the length n
     -- \r\n
     -- n characters
     -- \r\n
