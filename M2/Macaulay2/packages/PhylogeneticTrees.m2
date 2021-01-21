@@ -1098,14 +1098,14 @@ doc///
     Key
 	"CFNmodel"
     Headline
-	The model corresponging to the Cavender-Farris-Neyman model or binary Jukes Cantor
+	The model corresponding to the Cavender-Farris-Neyman model or binary Jukes Cantor
     Description
 	Text
 	    The Cavender-Farris-Neyman (CFN) Model is a Markov model of base substitution. It also known as the binary Jukes-Cantor model.
 	    It assumes the root distribution vectors describe all bases occurring uniformly in the ancestral sequence.
 	    It also assumes that the rate of all specific base changes is the same.
 
-            The transistion matrix has the form
+            The transition matrix has the form
             $$\begin{pmatrix} \alpha&\beta\\
                               \beta&\alpha \end{pmatrix}$$
 	--Example
@@ -1130,7 +1130,7 @@ doc///
 	    It also assumes that the rate of all specific base changes is the same.
 	    Thus the rates of bases changes A-G, A-T and A-C are the same.
 
-            The transistion matrix has the form
+            The transition matrix has the form
             $$\begin{pmatrix} \alpha&\beta&\beta&\beta\\ 
                               \beta&\alpha&\beta&\beta\\
                               \beta&\beta&\alpha&\beta\\
@@ -1150,7 +1150,7 @@ doc///
     Key
 	"K2Pmodel"
     Headline
-	The model corresponging to the Kimura 2-parameter model
+	The model corresponding to the Kimura 2-parameter model
     Description
         Text
 	    The Kimura 2-parameter (K2P) Model is a Markov model of base substitution. It assumes the root distribution vectors describe
@@ -1158,7 +1158,7 @@ doc///
 	    This means that the rate of base changes A-C and A-T are the same (transversions), and the rate of
 	    base change A-G can differ (transitions).
 
-            The transistion matrix has the form
+            The transition matrix has the form
             $$\begin{pmatrix} \alpha&\gamma&\beta&\beta\\ 
                               \gamma&\alpha&\beta&\beta\\
                               \beta&\beta&\alpha&\gamma\\
@@ -1178,7 +1178,7 @@ doc///
     Key
 	"K3Pmodel"
     Headline
-	The model corresponging to the Kimura 3-parameter model
+	The model corresponding to the Kimura 3-parameter model
     Description
         Text
 	    The Kimura 3-parameter (K3P) Model is a Markov model of base substitution. 
@@ -1186,7 +1186,7 @@ doc///
 	    It allows different probabilities of the base changes A-G, A-C and A-T.  
 	    This is the most general group based model on group $(\mathbb{Z}/2\mathbb{Z})^2$.
 
-            The transistion matrix has the form
+            The transition matrix has the form
             $$\begin{pmatrix} \alpha&\gamma&\beta&\delta\\ 
                               \gamma&\alpha&\delta&\beta\\
                               \beta&\delta&\alpha&\gamma\\
@@ -1414,7 +1414,7 @@ doc///
 	B:List
 	    A list of lists of which group elements have identified parameters
 	aut:List
-	    A list of pairs, assigning pairs of indentified group elements to automorphisms of the group that switch the pair
+	    A list of pairs, assigning pairs of identified group elements to automorphisms of the group that switch the pair
     Description
         Text
             The elements of $G$ must have an addition operation.  The usual choices for $G$ are the list of elements of
@@ -1674,7 +1674,7 @@ doc///
 	    A list of two @TO LeafTree@s that are subtrees of {\tt T}
     Description
         Text
-	    The funtion outputs the two subtrees of $T$ obtained by deleting edge $e$ from $T$ and then re-adding the edge
+	    The function outputs the two subtrees of $T$ obtained by deleting edge $e$ from $T$ and then re-adding the edge
 	    to each of the two resulting subtrees. Both subtrees share a copy of the edge $e$
 	    and the newly labeled leaf adjacent to $e$. Other than this overlap, they are disjoint.
 
@@ -1828,7 +1828,7 @@ assert( L == l)
 --the correct SETS. We check that leafColorings(4,CFNmodel) gives the correct
 --output set. We also check that leafColorings gives the same output
 --for the JCmodel, the K2Pmodel, and the K3Pmodel on the tree with 4 leaves,
---as this method should only depend on the group, and not the acutal model.
+--as this method should only depend on the group, and not the actual model.
 
 
 TEST ///
@@ -2250,7 +2250,7 @@ TEST ///
 --the ideal in Fourier coordinates and then forming an ideal by 
 --converting each of the generators into probablity coordinates. 
 --We assert the two ideals are equal modulo the certain linear invariants
---that are supressed when computing in the ring of Fourier coordinates.
+--that are suppressed when computing in the ring of Fourier coordinates.
 
 S = pRing(4,CFNmodel);
 L = ideal apply(8,i->(S_i - S_(15-i)))

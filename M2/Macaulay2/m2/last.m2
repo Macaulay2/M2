@@ -77,7 +77,7 @@ addStartFunction( () -> if not noinitfile then (
 		    ));
 	  ))
 
-addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our sharable library is not being found" )
+addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our shareable library is not being found" )
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
 noinitfile' := noinitfile
 Function.GlobalReleaseHook = (X,x) -> (

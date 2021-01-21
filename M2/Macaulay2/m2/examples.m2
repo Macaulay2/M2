@@ -49,7 +49,7 @@ EXAMPLE VisibleList := x -> (
 -----------------------------------------------------------------------------
 
 -- TODO: the output format is provisional
--- TODO: does't capture stderr
+-- TODO: doesn't capture stderr
 capture' := capture
 capture = method(Options => { UserMode => true, PackageExports => null })
 capture Net    := opts -> s -> capture(toString s,       opts)
@@ -67,7 +67,7 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
     hasmode := m -> argmode & m == m;
     pushvar(symbol randomSeed, if hasmode ArgNoRandomize then 0 else randomSeed);
-    -- TODO: these two are overriden in interp.dd at the moment
+    -- TODO: these two are overridden in interp.dd at the moment
     --if hasmode ArgStop        then (stopIfError, debuggingMode) = (true, false);
     --if hasmode ArgNoDebug     then debuggingMode = false;
     if hasmode ArgPrintWidth  then printWidth = ArgPrintWidthN;

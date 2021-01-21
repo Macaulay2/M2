@@ -71,7 +71,7 @@ Outputs
 Description
   Text
     Given an object, for instance an ideal IP, over a local ring (RP, P), this method returns the
-    preimage of that object under the cannonical map R -> RP after clearing denominators of IP.
+    preimage of that object under the canonical map R -> RP after clearing denominators of IP.
 
     For matrices (hence most other objects as well), clearing denominators is performed columnwise.
 
