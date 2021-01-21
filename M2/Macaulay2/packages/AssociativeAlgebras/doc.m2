@@ -16,23 +16,41 @@ undocumented {sequenceToVariableSymbols,
 	      (coefficientRing, FreeAlgebra)}
 
 -- TODO: Update this default page 
-
 doc ///
-Key
-  AssociativeAlgebras
-Headline
-  Noncommutative algebra computations
-Description
-  Text
-    This code is in active development.
-  Example
-    R = QQ<|a..c|>
-    R_0
-    R_1
-    R_2
-Caveat
-  Not yet fully functional.
-SeeAlso
+    Key
+        AssociativeAlgebras
+    Headline
+        Noncommutative algebra computations
+    Description
+        Text
+            This code is in active development.  Currently 2-sided
+            Groebner bases (up to some degree) are implemented, and
+            most features of @TO "NCAlgebra"@ are available.
+        Text
+            This package implements natively (i.e., in the Macaulay2
+            engine) non-commutative rings (associative algebras),
+            their (2-sided) Groebner bases, bases, and a number of
+            other features.
+        Example
+            R = (ZZ/32003)<|a,b,c|>
+            I = ideal(2*a*b + 3*b*a + 5*c^2,
+                2*b*c + 3*c*b + 5*a^2,
+                2*c*a + 3*a*c + 5*b^2)
+            gbI = NCGB(I, 6);
+            netList (ideal gbI)_*
+            A = R/I -- only uses the Groebner basis already constructed, so only valid in degrees <= 6
+            ncBasis(3, A)
+    Caveat
+        Not yet fully functional.  This package is a current work in
+        progress.  The interface will change (even basic things like
+        Groebner bases and the basis command still need to be hooked
+        into the Macaulay2 groebnerBasis, basis commands), and more
+        functionality is expected to be added.
+    SeeAlso
+        "Defining a noncommutative ring"
+        "Basic operations on noncommutative algebras"
+        NCGB
+        ncBasis
 ///
 
 doc ///
@@ -55,7 +73,7 @@ doc ///
 	 f = y*z + z*y - x^2
 	 g = x*z + z*x - y^2
 	 h = z^2 - x*y - y*x
-     	 I=ideal{f,g,h}
+     	 I = ideal{f,g,h}
       Text
          Next, we will define the quotient ring (as well as try a few functions on this new ring).
 	 Note that when the quotient ring is defined, Macaulay2 computes the Groebner basis
@@ -67,7 +85,7 @@ doc ///
 	 isCommutative B
 	 coefficientRing B
       Text
-	 As we can see, x is now an element of the quotient B.
+	 As we can see, $x$ is now an element of the quotient $B$.
       Example
          x
       Text
