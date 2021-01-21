@@ -142,7 +142,7 @@ GroebnerBasisOptions.synonym = "Gröbner basis options"
 -- m:    a Matrix
 -- type: an GroebnerBasisOptions
 -- opts: an OptionTable
--- TOOD: document this
+-- TODO: document this
 new GroebnerBasis from Sequence := (GB, S) -> (
     (m, type, opts) := if #S === 3 then S else error "GroebnerBasis: expected three initial values";
     -- TODO: implement recursive type checking

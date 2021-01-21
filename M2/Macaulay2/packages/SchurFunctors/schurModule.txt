@@ -27,7 +27,7 @@
 	  }
 
       Tableaux are represented with objects of class Filling, 
-      which is a doble list whose entries are lists giving the fillings of the corresponding columns.          
+      which is a double list whose entries are lists giving the fillings of the corresponding columns.          
     Example
       M=QQ^3;
       scan(4, i-> << i+1 << "-th symmetric power of M = " << schurModule({i+1},M) << endl)
