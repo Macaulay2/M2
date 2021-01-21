@@ -1462,7 +1462,7 @@ resB = res coker vars B
 resB.dd
 
 -- playing with resolutions...
-A = ZZ/32003<|x,y,z,a,b,c,d,e,f,g,h, Degrees=>{1,1,1,1,2,2,2,3,3,3,4}|>
+A = ZZ/32003<|x,y,z,a,b,c,d,e,f,g,h, Degrees=>{{1},{1},{1},{1},{2},{2},{2},{3},{3},{3},{4}}|>
 I = ideal {x*y + y*x - 2*z^2,
     	    y*z + z*y - 2*x^2,
 	    z*x + x*z - 2*y^2}
@@ -1471,8 +1471,15 @@ I1 = I + ideal {b - a*x,
 	    	d - a*z}
 d0 = matrix {{x,y,z}};
 I1gb = NCGB(I1,10)
+I1new = ideal I1gb_{8..12}
+I1gbSub = I + I1new*x + I1new*y + I1new*z
+I1gbSubGB = NCGB(I1gbSub,10)
+NCReductionTwoSided(I1gb,I1gbSubGB)
+-- the elements in this list in only b,c,d,x,y,z are the minimal
+-- elements
 d1 = matrix {{y, x, z}, {x, 16001*z, -2*y}, {-2*z, 16001*y, x}};
 net d0 || " " || net d1
+-- how to find a minimal generating set?
 NCReductionTwoSided(ncMatrixMult(d0,d1),I) -- should be zero
 (2/5)_A  ----- BUG: in promote?  Throwing away denominators.
 sub(1/2,A)
@@ -1483,6 +1490,47 @@ NCGB(I2,10)
 d2 = matrix {{z},{-2*x},{y}}
 NCReductionTwoSided(ncMatrixMult(d1,d2),I)
 net d0 || " " || net d1 || " " || net d2
+
+--- trying to do this in general:
+--- works on a small example
+restart
+debug needsPackage "AssociativeAlgebras"
+B = threeDimSklyanin(QQ,{1,1,-2},{x,y,z})
+d0 = matrix {{x,y,z}}
+d1 = rightKernel d0
+d2 = rightKernel d1
+d3 = rightKernel d2
+use B
+g = -y^3+(1/2)*y*z*x-(1/2)*z*y*x+z^3
+isCentral g
+-- hypersurface example
+-- but not this one... (should be periodic, but it
+-- doesn't look like it
+A = ambient B
+C = A/(ideal B + ideal lift(g,A))
+use C
+d0' = matrix {{x,y,z}}
+d1' = rightKernel d0'
+d2' = rightKernel d1'
+d3' = rightKernel d2'
+d4' = rightKernel d3'
+d5' = rightKernel d4'
+d6' = rightKernel d5'
+d7' = rightKernel d6'
+d8' = rightKernel d7'
+
+-- cool example
+restart
+debug needsPackage "AssociativeAlgebras"
+kk = ZZ/32003
+R = kk<|x,y,z,w|>
+I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
+S = R/I
+d0 = matrix {{x,y,z,w}}
+d1 = rightKernel d0
+d2 = rightKernel d1
+d3 = rightKernel d2
+d4 = rightKernel d3
 ///
 
 DEVELOPMENT ///

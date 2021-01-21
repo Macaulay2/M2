@@ -15,6 +15,8 @@ undocumented {sequenceToVariableSymbols,
 	      (NewFromMethod, FreeAlgebra, List),
 	      (coefficientRing, FreeAlgebra)}
 
+-- TODO: Update this default page 
+
 doc ///
 Key
   AssociativeAlgebras

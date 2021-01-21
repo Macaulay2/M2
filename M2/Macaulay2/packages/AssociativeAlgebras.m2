@@ -1239,6 +1239,54 @@ ncMatrixMult (Matrix, Matrix) := (A,B) -> (
    matrix table (numrows A, numcols B, (i,j) -> sum apply(numcols A, k -> A_(i,k)*B_(k,j)))
 );
 
+rightKernel = method(Options=>{DegreeLimit=>10})
+rightKernel Matrix := opts -> M -> (
+   -- this function computes the right kernel of a map between free
+   -- modules over a noncommutative ring.
+   if not isHomogeneous M then error "Expected a homogeneous matrix.";
+   if numgens degreesRing ring M != 1 then error "Expected a singly graded algebra.";
+   col := getSymbol "col";
+   row := getSymbol "row";
+   B := ring M;
+   A := ambient B;
+   I := ideal B;
+   liftM := lift(M,A);
+   config := gens A | toList(row_0..row_(numrows M-1)) | toList(col_0..col_(numcols M-1));
+   config = config | {Degrees=>(degrees A |
+	                        apply(degrees target M, d -> d + {1}) |
+	                        apply(degrees source M, d -> d + {1}))};
+   AA := freeAlgebra(coefficientRing A, config);  -- doesn't 'use' variables
+   gensAVars := apply(toList(0..(numgens A - 1)), i -> AA_i);
+   rowVars := apply(toList(numgens A..(numgens A + numrows M - 1)), i -> AA_i);
+   colVars := apply(toList((numgens A + numrows M)..(numgens AA-1)), i -> AA_i);
+   phi := map(AA,A,apply(numgens A, i -> AA_i));
+   psi := map(A,AA,gens A | toList(numrows M : 0) | toList(numcols M : 0));
+   diagMat := diagonalMatrix rowVars;
+   outputs := matrix {(entries transpose ncMatrixMult(diagMat,phi liftM)) / sum};
+   inputs := matrix {colVars};
+   IM := phi I + ideal (inputs - outputs);
+   IMgb := NCGB(IM, opts#DegreeLimit);
+   kerGens := ideal select(flatten entries IMgb, f -> isSubset(support f,gensAVars | colVars) and not isSubset(support f, gensAVars));
+   if kerGens == 0 then return map(source M, (ring M)^0,0);
+   mkerGens := phi I + sum apply(gensAVars, v -> kerGens*v);
+   mkerGensGB := NCGB(mkerGens,opts#DegreeLimit);
+   minKerGens := flatten entries compress NCReductionTwoSided(gens kerGens,mkerGensGB);
+   ident := id_(AA^(numcols M));
+   identColHash := hashTable apply(numcols M, i -> (colVars_i,ident_{i}));
+   tempKerMat := matrix {
+       apply(minKerGens, f -> 
+             sum apply(terms f, t -> (
+	                (coeff, monList) := first toVariableList t;
+	                coeff*identColHash#(first monList)*(product drop(monList,1))
+	              ))
+            )
+	};
+   targetDeg := (degrees source M) / (d -> -d);
+   sourceDeg := (minKerGens / degree) / (d -> -d+{1});
+   kerMat := map(AA^targetDeg,AA^sourceDeg,tempKerMat);
+   sub(psi kerMat,B)
+)
+
 --- load the tests
 load "./AssociativeAlgebras/tests.m2"
 
