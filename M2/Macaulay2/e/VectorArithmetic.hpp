@@ -19,7 +19,7 @@ class CoeffVector : public our_new_delete
 {
   template<typename T>
   friend class ConcreteVectorArithmetic;
-  template<typename T>
+  template<typename RingType>
   friend class ConcreteVectorArithmetic2;
   // disallow copy...
  public:
@@ -34,7 +34,7 @@ class DenseCoeffVector : public our_new_delete
 {
   template<typename T>
   friend class ConcreteVectorArithmetic;
-  template<typename T>
+  template<typename RingType>
   friend class ConcreteVectorArithmetic2;
   // disallow copy...
  public:

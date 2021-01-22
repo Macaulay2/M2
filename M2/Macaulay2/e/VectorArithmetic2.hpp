@@ -638,7 +638,8 @@ public:
         break;
       case M2::ring_old:
         std::cout << "Using 'Old' rings in VectorArithmetic." << std::endl;
-        mConcreteVector = new ConcreteVectorArithmetic2<Ring>(R);
+        mConcreteVector = new ConcreteVectorArithmetic2(R);
+//        mConcreteVector = new ConcreteVectorArithmetic2(R->getCoefficientRingR());
         break;
       default:
         // dummy ring type for default
