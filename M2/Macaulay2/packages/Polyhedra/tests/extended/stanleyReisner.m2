@@ -22,5 +22,5 @@ TEST ///
 Phi = normalFan hypercube 2;
 SR = stanleyReisnerRing Phi;
 assert(toExternalString monoid SR == "monoid[x_0..x_3, Degrees => {4:1}, Heft => {1}, MonomialOrder => VerticalList{MonomialSize => 32, GRevLex => {4:1}, Position => Up}, DegreeRank => 1]")
-assert(toString toExternalString SR == "QQ[x_0, x_1, x_2, x_3]/(x_0*x_1,x_2*x_3)")
+assert(toString toExternalString SR == "QQ[x_0..x_3]/(x_0*x_1,x_2*x_3)")
 ///

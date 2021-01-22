@@ -1,9 +1,11 @@
 // Copyright 2011 Michael E. Stillman
 
 #include "aring-gf-givaro.hpp"
-#include "error.h"
 
+#include "interface/random.h"
+#include "error.h"
 #include "ringmap.hpp"
+#include "monoid.hpp"
 
 // Uncomment the following line to see debugging output
 //#define DEBUG_GF

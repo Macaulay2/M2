@@ -1,273 +1,44 @@
+"" Auto-generated for Macaulay2-1.17. Do not modify this file manually.
+
 " Vim syntax file
 " Language: Macaulay2
-" author: Manoj Kummini.
 
-"if exists("b:current_syntax")
-"  finish
-"endif
+if exists("b:current_syntax")
+  finish
+endif
 
-syn keyword m2Command clearAll clearOutput edit exit help listLocalSymbols
-syn keyword m2Command clistUserSymbols profileSummary quit restart
-syn keyword m2Command cshowClassStructure showStructure showUserStructure
-syn keyword m2Command viewHelp
+syn region m2String  start=/\/\/\// skip=/\(\/\/\)*\/\/[^\/]/ end=/\/\/\//
+syn region m2String  start=/"/ skip=/[^\\]\(\\\\\)*\\"/ end=/"/
+
+syn match  m2Comment /--.*$/
+syn region m2Comment start=/-\*/ end=/\*-/
+
+syn case match
 
 syn keyword m2Boolean true false
 
-syn keyword m2CompiledFunction BesselJ BesselY Gamma abs acos agm alarm
-syn keyword m2CompiledFunction ancestor any append apply applyKeys
-syn keyword m2CompiledFunction atEndOfFile atan atan2 characters class
-syn keyword m2CompiledFunction commandInterpreter concatenate
-syn keyword m2CompiledFunction cpuTime csc csch currentDirectory
-syn keyword m2CompiledFunction deepSplice difference disassemble drop
-syn keyword m2CompiledFunction erf erfc exec exp expm1 fileExists
-syn keyword m2CompiledFunction flagLookup floor fork format frames
-syn keyword m2CompiledFunction getNetFile getc getenv groupID hash
-syn keyword m2CompiledFunction imaginaryPart installMethod instance
-syn keyword m2CompiledFunction isGlobalSymbol isInfinite isInputFile
-syn keyword m2CompiledFunction isReady isRegularFile join keys kill
-syn keyword m2CompiledFunction locate log log1p lookup lookupCount merge
-syn keyword m2CompiledFunction minimizeFilename minus mkdir mutable
-syn keyword m2CompiledFunction openDatabase openDatabaseOut openFiles
-syn keyword m2CompiledFunction openOut openOutAppend override pack pairs
-syn keyword m2CompiledFunction prepend printString processID protect
-syn keyword m2CompiledFunction readlink realPart realpath recursionDepth
-syn keyword m2CompiledFunction relativizeFilename remove removeDirectory
-syn keyword m2CompiledFunction scan scanPairs sec sech select separate
-syn keyword m2CompiledFunction sinh size2 sleep splice sqrt stack substring
-syn keyword m2CompiledFunction tanh times toCC toList toRR toSequence
-syn keyword m2CompiledFunction values wait wrap xor youngest zeta EXAMPLE
-syn keyword m2CompiledFunction gradedModuleMap hold html hypertext ideal
-syn keyword m2CompiledFunction length makePackageIndex mathML max
-syn keyword m2CompiledFunction monomialIdeal net options package pretty
-syn keyword m2CompiledFunction toExternalString toString transpose
-syn keyword m2CompiledFunction pseudocode read readDirectory regex
-syn keyword m2CompiledFunction registerFinalizer removeFile reorganize
-syn keyword m2CompiledFunction reverse run sequence set setEcho setGroupID
-syn keyword m2CompiledFunction sin symlinkFile take tally tan uncurry
-syn keyword m2CompiledFunction unsequence unstack utf8 chainComplex code
-syn keyword m2CompiledFunction export exportMutable expression flatten gcd
-syn keyword m2CompiledFunction gradedModule info intersect isSorted lcm
-syn keyword m2CompiledFunction maxPosition commonest directSum examples
-syn keyword m2CompiledFunction methods min minPosition runLengthEncode tex
-syn keyword m2CompiledFunction texMath undocumented unique vars applyPairs
-syn keyword m2CompiledFunction applyValues ascii asin clearEcho
-syn keyword m2CompiledFunction collectGarbage combine connectionCount copy
-syn keyword m2CompiledFunction cos cosh cot coth currentLineNumber
-syn keyword m2CompiledFunction currentTime debugError echoOff
-syn keyword m2CompiledFunction echoOn eint erase fileLength fileMode
-syn keyword m2CompiledFunction fileTime firstkey functionBody get
-syn keyword m2CompiledFunction getGlobalSymbol hashTable horizontalJoin
-syn keyword m2CompiledFunction identity isANumber isDirectory isFinite
-syn keyword m2CompiledFunction isListener isOpen isOutputFile linkFile
-syn keyword m2CompiledFunction localDictionaries mergePairs mingle
-syn keyword m2CompiledFunction newClass newNetFile nextkey openIn openInOut
-syn keyword m2CompiledFunction openListener parent plus power powermod
+syn keyword m2Keyword contained
+            \ and break catch continue do elapsedTime elapsedTiming else for from global if in list local new not of or return shield SPACE step symbol then threadVariable throw time timing to try when while
 
-syn keyword m2Constant EulerConstant Constant ii Constant pi infinity
+syn keyword m2Datatype contained
+            \ Adjacent AffineVariety Analyzer ANCHOR Array AssociativeExpression Bag BasicList BettiTally BinaryOperation BLOCKQUOTE BODY BOLD Boolean BR CacheFunction CacheTable CC CDATA ChainComplex ChainComplexMap CODE CoherentSheaf Command COMMENT CompiledFunction CompiledFunctionBody CompiledFunctionClosure ComplexField Constant Database DD Descent Describe Dictionary DIV Divide DL DocumentTag DT Eliminate EM EngineRing Equation ExampleItem Expression File FilePosition FractionField Function FunctionApplication FunctionBody FunctionClosure GaloisField GeneralOrderedMonoid GlobalDictionary GradedModule GradedModuleMap GroebnerBasis GroebnerBasisOptions HashTable HEAD HEADER1 HEADER2 HEADER3 HEADER4 HEADER5 HEADER6 HeaderType Holder HR HREF HTML Hybrid Hypertext HypertextContainer HypertextParagraph Ideal IMG ImmutableType IndeterminateNumber IndexedVariable IndexedVariableTable InexactField InexactFieldFamily InexactNumber InfiniteNumber IntermediateMarkUpType ITALIC Keyword LABEL LATER LI LINK List LITERAL LocalDictionary LowerBound Manipulator MapExpression MarkUpType Matrix MatrixDegreeExpression MatrixExpression MENU META MethodFunction MethodFunctionBinary MethodFunctionSingle MethodFunctionWithOptions Minus Module ModuleMap Monoid MonoidElement MonomialIdeal MultigradedBettiTally MutableHashTable MutableList MutableMatrix Net NetFile NonAssociativeProduct Nothing Number NumberedVerticalList OL OneExpression Option OptionTable OrderedMonoid Package PARA Parenthesize Parser Partition PolynomialRing Power PRE Product ProductOrder Program ProgramRun ProjectiveHilbertPolynomial ProjectiveVariety Pseudocode PushforwardComputation QQ QuotientRing RealField Resolution Ring RingElement RingFamily RingMap RowExpression RR ScriptedFunctor SelfInitializingType Sequence Set SheafExpression SheafOfRings SMALL SPAN SparseMonomialVectorExpression SparseVectorExpression String STRONG STYLE SUB Subscript SUBSECTION Sum SumOfTwists SUP Superscript Symbol SymbolBody TABLE Table Tally Task TD TEX TH Thing Time TITLE TO TO2 TOH TR TT Type UL URL Variety Vector VectorExpression VerticalList VirtualTally VisibleList WrapperType ZeroExpression ZZ
 
-syn keyword m2File stderr stdio
+syn keyword m2Function container
+            \ about abs accumulate acos acosh acot addCancelTask addDependencyTask addEndFunction addHook addStartFunction addStartTask adjoint agm alarm all ambient analyticSpread ancestor ancestors andP ann annihilator antipode any append applicationDirectory apply applyKeys applyPairs applyTable applyValues apropos arXiv ascii asin asinh ass assert associatedGradedRing associatedPrimes atan atan2 atEndOfFile autoload baseFilename baseName baseRing basis beginDocumentation benchmark BesselJ BesselY betti between binomial borel cacheValue cancelTask capture ceiling centerString chainComplex char characters charAnalyzer check chi class clean clearEcho code codim coefficient coefficientRing coefficients cohomology coimage coker cokernel collectGarbage columnAdd columnate columnMult columnPermute columnRankProfile columnSwap combine commandInterpreter commonest commonRing comodule complement complete components compose compositions compress concatenate conductor cone conjugate connectionCount constParser content contract conwayPolynomial copy copyDirectory copyFile cos cosh cot cotangentSheaf coth cover coverMap cpuTime createTask csc csch currentDirectory currentLineNumber currentTime deadParser debug debugError decompose deepSplice default degree degreeLength degrees degreesMonoid degreesRing delete demark denominator depth describe det determinant diagonalMatrix dictionary diff difference dim directSum disassemble discriminant dismiss distinguished divideByVariable doc document drop dual eagonNorthcott echoOff echoOn eigenvalues eigenvectors eint elements eliminate End endPackage entries erase erf erfc error euler eulers even EXAMPLE examples exec exp expectedReesIdeal expm1 exponents export exportFrom exportMutable expression extend exteriorPower factor Fano fileExecutable fileExists fileLength fileMode fileReadable fileTime fileWritable fillMatrix findFiles findHeft findProgram findSynonyms first firstkey fittingIdeal flagLookup flatten flattenRing flip floor fold forceGB fork format formation frac fraction frames fromDividedPowers fromDual functionBody futureParser Gamma gb gbRemove gbSnapshot gcd gcdCoefficients gcdLLL GCstats genera generateAssertions generator generators genericMatrix genericSkewMatrix genericSymmetricMatrix gens genus get getc getChangeMatrix getenv getGlobalSymbol getNetFile getNonUnit getPrimeWithRootOfUnity getSymbol getWWW GF globalAssign globalAssignFunction globalAssignment globalReleaseFunction gradedModule gradedModuleMap gramm graphIdeal graphRing Grassmannian groebnerBasis groupID hash hashTable heft height hermite hilbertFunction hilbertPolynomial hilbertSeries hold Hom homogenize homology homomorphism hooks horizontalJoin html httpHeaders hypertext icFracP icFractions icMap icPIdeal ideal idealizer identity image imaginaryPart importFrom independentSets index indices inducedMap inducesWellDefinedMap info infoHelp input insert installAssignmentMethod installedPackages installHilbertFunction installMethod installMinprimes installPackage instance instances integralClosure integrate intersect intersectInP inverse inversePermutation inverseSystem irreducibleCharacteristicSeries irreducibleDecomposition isAffineRing isANumber isBorel isCanceled isCommutative isConstant isDirectory isDirectSum isField isFinite isFinitePrimeField isFreeModule isGlobalSymbol isHomogeneous isIdeal isInfinite isInjective isInputFile isIsomorphism isLinearType isListener isLLL isModule isMonomialIdeal isNormal isOpen isOutputFile isPolynomialRing isPrimary isPrime isPrimitive isPseudoprime isQuotientModule isQuotientOf isQuotientRing isReady isReal isReduction isRegularFile isRing isSkewCommutative isSorted isSquareFree isStandardGradedPolynomialRing isSubmodule isSubquotient isSubset isSupportedInZeroLocus isSurjective isTable isUnit isWellDefined isWeylAlgebra jacobian jacobianDual join ker kernel kernelLLL kernelOfLocalization keys kill koszul last lcm leadCoefficient leadComponent leadMonomial leadTerm length letterParser lift liftable limitFiles limitProcesses lines linkFile listForm listSymbols LLL lngamma load loadPackage localDictionaries localize locate log log1p lookup lookupCount LUdecomposition makeDirectory makeDocumentTag makePackageIndex makeS2 map markedGB match mathML matrix max maxPosition member memoize merge mergePairs method methodOptions methods min mingens mingle minimalBetti minimalPresentation minimalPrimes minimalReduction minimizeFilename minors minPosition minPres minprimes minus mkdir mod module modulo monoid monomialCurveIdeal monomialIdeal monomials monomialSubideal moveFile multidegree multidoc multigraded multiplicity mutable mutableIdentity mutableMatrix nanosleep needs needsPackage net netList newClass newCoordinateSystem newNetFile newPackage newRing nextkey nextPrime NNParser nonspaceAnalyzer norm normalCone notImplemented nullhomotopy nullParser nullSpace number numcols numColumns numerator numeric numgens numRows numrows odd ofClass on openDatabase openDatabaseOut openFiles openIn openInOut openListener openOut openOutAppend optionalSignParser options optP orP override pack package packageTemplate pad pager pairs parent part partition partitions parts pdim peek permanents permutations pfaffians pivots plus poincare poincareN polarize poly position positions power powermod precision preimage prepend presentation pretty primaryComponent primaryDecomposition print printString processID product profile Proj projectiveHilbertPolynomial promote protect prune pseudocode pseudoRemainder pushForward QQParser QRDecomposition quotient quotientRemainder radical radicalContainment random randomKRationalPoint randomMutableMatrix rank read readDirectory readlink readPackage realPart realpath recursionDepth reducedRowEchelonForm reduceHilbert reductionNumber reesAlgebra reesAlgebraIdeal reesIdeal regex regexQuote registerFinalizer regSeqInIdeal regularity relations relativizeFilename remainder remove removeDirectory removeFile removeLowestDimension reorganize replace res reshape resolution resultant reverse ring ringFromFractions roots rotate round rowAdd rowMult rowPermute rowRankProfile rowSwap rsort run runHooks runLengthEncode runProgram same saturate scan scanKeys scanLines scanPairs scanValues schedule schreyerOrder Schubert searchPath sec sech seeParsing select selectInSubring selectVariables separate separateRegexp sequence serialNumber set setEcho setGroupID setIOExclusive setIOSynchronized setIOUnSynchronized setRandomSeed setup setupEmacs sheaf sheafHom show showHtml showTex simpleDocFrob sin singularLocus sinh size size2 sleep smithNormalForm solve someTerms sort sortColumns source Spec specialFiber specialFiberIdeal splice splitWWW sqrt stack stacksProject standardForm standardPairs stashValue status style sub sublists submatrix submatrixByDegrees subquotient subsets substitute substring subtable sum super support SVD switch sylvesterMatrix symbolBody symlinkDirectory symlinkFile symmetricAlgebra symmetricAlgebraIdeal symmetricKernel symmetricPower synonym SYNOPSIS syz syzygyScheme table take tally tan tangentCone tangentSheaf tanh target taskResult temporaryFileName tensor tensorAssociativity terminalParser terms TEST testHunekeQuestion tex texMath times toAbsolutePath toCC toDividedPowers toDual toExternalString toField toList toLower top topCoefficients topComponents toRR toSequence toString toUpper trace transpose trim truncate truncateOutput tutorial ultimate unbag uncurry undocumented uniform uninstallAllPackages uninstallPackage unique unsequence unstack use userSymbols utf8 utf8check validate value values variety vars vector versalEmbedding wait wedgeProduct weightRange whichGm width wikipedia wrap xor youngest zero zeta ZZParser
 
-syn keyword m2FnClosure End SYNOPSIS addEndFunction addStartFunction
-syn keyword m2FnClosure ancestors applicationDirectory
-syn keyword m2FnClosure baseFilename beginDocumentation benchmark
-syn keyword m2FnClosure columnate delete demark error even first getNonUnit
-syn keyword m2FnClosure globalAssignFunction globalAssignment
-syn keyword m2FnClosure load makeDocumentTag method mod monoid
-syn keyword m2FnClosure notImplemented number odd on pager peek print same
-syn keyword m2FnClosure stashValue subtable synonym syzygyScheme table
-syn keyword m2FnClosure isPrimitive isTable last lines
-syn keyword m2FnClosure applicationDirectorySuffix applyTable assert
-syn keyword m2FnClosure cacheValue ceiling centerString
-syn keyword m2FnClosure getSymbol globalAssign
-syn keyword m2FnClosure globalReleaseFunction groebnerBasis
-syn keyword m2FnClosure infoHelp input integrate inversePermutation
-syn keyword m2FnClosure toAbsolutePath toLower toUpper tutorial uniform
-syn keyword m2FnClosure monomialCurveIdeal needs seeParsing showHtml
-syn keyword m2FnClosure temporaryFileName userSymbols vector zero
+syn keyword m2Constant container
+            \ AbstractToricVarieties Acknowledgement AdditionalPaths AdjointIdeal AfterEval AfterNoPrint AfterPrint AlgebraicSplines Algorithm Alignment AllCodimensions allowableThreads applicationDirectorySuffix argument Ascending Authors AuxiliaryFiles backtrace Bareiss BaseFunction baseRings BaseRow BasisElementLimit Bayer BeforePrint Benchmark Bertini BGG BIBasis Binary Binomial BinomialEdgeIdeals Binomials BKZ Body BoijSoederberg BooleanGB Boxes Browse Bruns cache CacheExampleOutput CallLimit CannedExample Caveat Center Certification ChainComplexExtras ChainComplexOperations ChangeMatrix CharacteristicClasses CheckDocumentation Chordal Classic clearAll clearOutput close closeIn closeOut ClosestFit Code CodimensionLimit CoefficientRing Cofactor CohenEngine CohenTopLevel CohomCalg CoincidentRootLoci commandLine compactMatrixForm Complement CompleteIntersection CompleteIntersectionResolutions Complexes ConductorElement Configuration ConformalBlocks Consequences Constants Contributors ConvexInterface ConwayPolynomials copyright Core CorrespondenceScrolls Cremona currentFileDirectory currentFileName currentLayout currentPackage Cyclotomic Date dd DebuggingMode debuggingMode debugLevel DecomposableSparseSystems Decompose Default defaultPrecision Degree DegreeLift DegreeLimit DegreeMap DegreeOrder DegreeRank Degrees Dense Density Depth Descending Description DeterminantalRepresentations DGAlgebras dictionaryPath DiffAlg Dispatch DivideConquer DividedPowers Divisor Dmodules docExample docTemplate Down EagonResolution EdgeIdeals edit EigenSolver EisenbudHunekeVasconcelos Elimination EliminationMatrices EllipticCurves EllipticIntegrals Email end endl Engine engineDebugLevel EngineTests EnumerationCurves environment EquivariantGB errorDepth EulerConstant Example ExampleFiles ExampleSystems Exclude exit Ext ExteriorIdeals false FastLinAlg FastNonminimal FGLM fileDictionaries fileExitHooks FileName FindOne FiniteFittingIdeals First FirstPackage FlatMonoid Flexible flush FollowLinks FormalGroupLaws Format FourierMotzkin FourTiTwo fpLLL FrobeniusThresholds GBDegrees gbTrace GenerateAssertions Generic GenericInitialIdeal gfanInterface Givens GKMVarieties GLex Global GlobalAssignHook globalAssignmentHooks GlobalHookStore GlobalReleaseHook Gorenstein GradedLieAlgebras GraphicalModels GraphicalModelsMLE Graphics Graphs GRevLex GroebnerWalk GroupLex GroupRevLex GTZ Hadamard handleInterrupts HardDegreeLimit Heading Headline Heft Height help Hermite Hermitian HH hh HigherCIOperators HighestWeights Hilbert HodgeIntegrals homeDirectory HomePage Homogeneous HorizontalSpace HyperplaneArrangements id IgnoreExampleErrors ii incomparable Increment indeterminate Index indexComponents infinity InfoDirSection Inhomogeneous Inputs InstallPrefix IntegralClosure interpreterDepth Intersection InvariantRing InverseMethod Inverses InverseSystems Invertible InvolutiveBases Item Iterate Jacobian Join Jupyter Keep KeepFiles KeepZeroes Key Keywords Kronecker KustinMiller lastMatch LatticePolytopes Layout Left LengthLimit Lex LexIdeals Licenses LieTypes Limit Linear LinearAlgebra lineNumber listLocalSymbols listUserSymbols LLLBases loadDepth LoadDocumentation loadedFiles loadedPackages Local LocalRings LongPolynomial MakeDocumentation MakeHTML MakeInfo MakeLinks MapleInterface Markov Matroids maxAllowableThreads maxExponent MaximalRank MaxReductionCount MCMApproximations minExponent MinimalGenerators MinimalMatrix minimalPresentationMap minimalPresentationMapInv MinimalPrimes Minimize MinimumVersion Miura MixedMultiplicity ModuleDeformations MonodromySolver Monomial MonomialAlgebras MonomialOrder Monomials MonomialSize MultiGradedRationalMap MultiplicitySequence MultiplierIdeals NAGtypes Name Nauty NautyGraphs NCAlgebra NCLex NewFromMethod newline NewMethod NewOfFromMethod NewOfMethod nil Node NoetherianOperators NoetherNormalization NonminimalComplexes NoPrint Normaliz NormalToricVarieties notify NTL null nullaryMethods NumericalAlgebraicGeometry NumericalCertification NumericalImplicitization NumericalLinearAlgebra NumericalSchubertCalculus NumericSolutions OldPolyhedra OldToricVectorBundles OO oo ooo oooo OpenMath operatorAttributes OptionalComponentsPresent Options Order order OutputDictionary Outputs PackageCitations PackageDictionary PackageExports PackageImports PackageTemplate PairLimit PairsRemaining Parametrization Parsing path PencilsOfQuadrics Permanents PHCpack PhylogeneticTrees pi PieriMaps PlaneCurveSingularities Points Polyhedra Polymake Posets Position PositivityToricBundles POSIX Postfix Pre Precision Prefix prefixDirectory prefixPath PrimaryDecomposition PrimaryTag PrimitiveElement Print printingAccuracy printingLeadLimit printingPrecision printingSeparator printingTimeLimit printingTrailLimit printWidth profileSummary programPaths Projective Prune PruneComplex pruningMap Pullback PushForward QthPower Quasidegrees QuillenSuslin quit Quotient Radical RaiseError RandomCanonicalCurves RandomComplexes RandomCurves RandomCurvesOverVerySmallFiniteFields RandomIdeals RandomMonomialIdeals RandomObjects RandomPlaneCurves RandomRationalPoints RandomSpaceCurves Range RationalMaps RationalPoints ReactionNetworks RealFP RealQP RealRR RealXD recursionLimit Reduce ReesAlgebra References ReflexivePolytopesDB Regularity RelativeCanonicalResolution Reload RemakeAllDocumentation RerunExamples ResidualIntersections ResLengthThree ResolutionsOfStanleyReisnerRings restart Result Resultants returnCode Reverse RevLex Right rootPath rootURI RunDirectory RunExamples Saturation SchurComplexes SchurFunctors SchurRings scriptCommandLine SCSCP SectionRing SeeAlso SegreClasses SemidefiniteProgramming Seminormalization SeparateExec Serialization sheafExt ShimoyamaYokoyama showClassStructure showStructure showUserStructure SimpleDoc SimplicialComplexes SimplicialDecomposability SimplicialPosets SimplifyFractions SizeLimit SkewCommutative SlackIdeals SLnEquivariantMatrices SLPexpressions Sort SortStrategy SourceCode SourceRing SpaceCurves SparseResultants SpechtModule SpecialFanoFourfolds SpectralSequences SRdeformations Standard StartWithOneMinor StatePolytope StatGraphs stderr stdio StopBeforeComputation stopIfError StopWithMinimalGenerators Strategy StronglyStableIdeals Style Subnodes SubringLimit subscript Sugarless SumsOfSquares superscript SVDComplexes SwitchingFields SymbolicPowers SymmetricPolynomials Syzygies SyzygyLimit SyzygyMatrix SyzygyRows TangentCone TateOnProducts TensorComplexes Test testExample TestIdeals TeXmacs Text ThreadedGB Threshold Topcom topLevelMode Tor TorAlgebra Toric ToricInvariants ToricTopology ToricVectorBundles TotalPairs Tree TriangularSets Tries Trim Triplets Tropical true Truncate Truncations TypicalValue typicalValues Undo Unique Units Unmixed Up UpdateOnly UpperTriangular Usage UseCachedExampleOutput UseHilbertFunction UserMode UseSyzygies Variable VariableBaseName Variables Vasconcelos VectorFields VectorGraphics Verbose Verbosity Verify VersalDeformations Version version VerticalSpace viewHelp VirtualResolutions Visualize WebApp Weights WeylAlgebra WeylGroups Wrap XML
 
-syn match m2Keyword /\A\+/
-syn keyword m2Keyword SPACE and break catch continue do else for
-syn keyword m2Keyword from global if in list local new not of or return
-syn keyword m2Keyword shield step symbol then throw time timing to try when
-syn keyword m2Keyword while
-
-syn keyword m2Method Fano Hom LUdecomposition Proj
-syn keyword m2Method Spec TEST Wikipedia accumulate acosh acot addHook
-syn keyword m2Method adjoint adjoint1 all ambient apropos asinh autoload
-syn keyword m2Method baseName between binomial borel capture char clean
-syn keyword m2Method coefficient coefficientRing coimage cokernel
-syn keyword m2Method columnAdd columnMult columnPermute columnSwap
-syn keyword m2Method commonRing comodule complement complete components
-syn keyword m2Method compositions compress cone conjugate content contract
-syn keyword m2Method contract' cover coverMap debug decompose default
-syn keyword m2Method degree degreeLength degrees degreesMonoid degreesRing
-syn keyword m2Method denominator depth describe diagonalMatrix dictionary
-syn keyword m2Method diff diff' dim dismiss divideByVariable
-syn keyword m2Method eagonNorthcott elements endPackage entries euler
-syn keyword m2Method eulers exponents findSynonyms fittingIdeal flip fold
-syn keyword m2Method frac fraction fromDual gbRemove gbSnapshot
-syn keyword m2Method gcdCoefficients genera generateAssertions generator
-syn keyword m2Method genericMatrix genericSkewMatrix
-syn keyword m2Method genericSymmetricMatrix genus getChangeMatrix getWWW
-syn keyword m2Method heft height hilbertFunction homogenize homomorphism
-syn keyword m2Method httpHeaders image index indices inducesWellDefinedMap
-syn keyword m2Method insert installAssignmentMethod installHilbertFunction
-syn keyword m2Method instances inverse irreducibleCharacteristicSeries
-syn keyword m2Method isAffineRing isBorel isCommutative isConstant
-syn keyword m2Method isDirectSum isField isFreeModule isHomogeneous
-syn keyword m2Method isIdeal isInjective isIsomorphism isModule
-syn keyword m2Method isMonomialIdeal isPolynomialRing isPrime
-syn keyword m2Method isProbablePrime isQuotientModule isQuotientOf
-syn keyword m2Method isQuotientRing isReal isRing isSkewCommutative
-syn keyword m2Method isSquareFree isSubmodule isSubquotient isSubset
-syn keyword m2Method isSurjective isUnit isWellDefined jacobian koszul
-syn keyword m2Method leadCoefficient leadComponent leadMonomial leadTerm
-syn keyword m2Method liftable listForm listSymbols lngamma makeDirectory
-syn keyword m2Method match member memoize methodOptions minimalPrimes
-syn keyword m2Method module monomialSubideal multidegree
-syn keyword m2Method newCoordinateSystem norm nullhomotopy numColumns
-syn keyword m2Method numRows numerator numeric numgens ofClass pad part
-syn keyword m2Method partition partitions parts pdim peek' permanents
-syn keyword m2Method permutations pfaffians pivots poincare poincareN
-syn keyword m2Method positions precision preimage presentation product
-syn keyword m2Method profile projectiveHilbertPolynomial promote
-syn keyword m2Method pseudoRemainder quotient' quotientRemainder
-syn keyword m2Method quotientRemainder' rank reduceHilbert relations
-syn keyword m2Method remainder remainder' removeHook removeLowestDimension
-syn keyword m2Method replace reshape ring rotate round rowAdd rowMult
-syn keyword m2Method rowPermute rowSwap runHooks scanKeys scanLines
-syn keyword m2Method scanValues schreyerOrder searchPath selectInSubring
-syn keyword m2Method selectVariables separateRegexp setRandomSeed setup
-syn keyword m2Method setupEmacs sheaf sheafHom show singularLocus size
-syn keyword m2Method someTerms source standardForm standardPairs sublists
-syn keyword m2Method submatrix submatrix' subquotient subsets substitute
-syn keyword m2Method sum super support switch symmetricPower target
-syn keyword m2Method tensorAssociativity terms toDual toField
-syn keyword m2Method topCoefficients topComponents trace truncate
-syn keyword m2Method truncateOutput ultimate unbag use value variety
-syn keyword m2Method wedgeProduct weightRange width GF Grassmannian SVD
-syn keyword m2Method Schubert annihilator associatedPrimes basis betti
-syn keyword m2Method check codim coefficients cohomology copyDirectory
-syn keyword m2Method copyFile cotangentSheaf determinant document dual
-syn keyword m2Method eigenvalues eigenvectors extend exteriorPower factor
-syn keyword m2Method fillMatrix findFiles flattenRing forceGB gb
-syn keyword m2Method generators getPackage graphIdeal graphRing
-syn keyword m2Method hilbertPolynomial hilbertSeries homology
-syn keyword m2Method independentSets inducedMap installPackage kernel lift
-syn keyword m2Method loadPackage map markedGB matrix mingens
-syn keyword m2Method minimalPresentation minors modulo monomials moveFile
-syn keyword m2Method mutableIdentity mutableMatrix needsPackage netList
-syn keyword m2Method newPackage newRing position prune pushForward
-syn keyword m2Method quotient radical random randomMutableMatrix
-syn keyword m2Method regularity res resolution rsort saturate showTex
-syn keyword m2Method smithNormalForm solve sort sortColumns status
-syn keyword m2Method symlinkDirectory symmetricAlgebra syz tangentSheaf
-syn keyword m2Method tensor trim uninstallPackage 
-
-syn keyword m2Ring QQ ZZ CC RR
-
-syn keyword m2ScriptedFunctor Ext HH OO Tor hh id sheafExt 
-
-syn keyword m2Symbol AbsoluteLinks AfterEval
-syn keyword m2Symbol AfterNoPrint AfterPrint Algorithm Alignment Ascending
-syn keyword m2Symbol Authors AuxiliaryFiles Bareiss BaseFunction BaseRow
-syn keyword m2Symbol BasisElementLimit Bayer BeforePrint Binary Binomial
-syn keyword m2Symbol Boxes CacheExampleOutput CallLimit Caveat Center
-syn keyword m2Symbol Certification ChangeMatrix CheckDocumentation
-syn keyword m2Symbol ClosestFit CodimensionLimit CoefficientRing Cofactor
-syn keyword m2Symbol Complement CompleteIntersection Configuration
-syn keyword m2Symbol Consequences CurrentVersion Date DebuggingMode
-syn keyword m2Symbol Decompose Degree DegreeLift DegreeLimit DegreeMap
-syn keyword m2Symbol DegreeOrder DegreeRank Degrees Dense Density
-syn keyword m2Symbol Descending Description Dispatch DivideConquer Down
-syn keyword m2Symbol Email Encapsulate EncapsulateDirectory Engine Exclude
-syn keyword m2Symbol FileName FindOne First FlatMonoid Flexible
-syn keyword m2Symbol FollowLinks Format GBDegrees GLex GRevLex Generic
-syn keyword m2Symbol Global GlobalAssignHook GlobalReleaseHook GroupLex
-syn keyword m2Symbol GroupRevLex HardDegreeLimit Heading Headline Heft
-syn keyword m2Symbol Height Hermitian Hilbert HomePage Homogeneous
-syn keyword m2Symbol Homogeneous2 HorizontalSpace IgnoreExampleErrors
-syn keyword m2Symbol InfoDirSection Inhomogeneous Inputs InstallPrefix
-syn keyword m2Symbol Intersection InverseMethod Inverses Iterate Join
-syn keyword m2Symbol KeepZeroes Key Left LengthLimit Lex Limit Linear
-syn keyword m2Symbol LinearAlgebra LoadDocumentation Local LongPolynomial
-syn keyword m2Symbol MakeDocumentation MakeInfo MakeLinks
-syn keyword m2Symbol MaxReductionCount MaximalRank MinimalGenerators
-syn keyword m2Symbol MinimalMatrix Minimize Monomial MonomialOrder
-syn keyword m2Symbol MonomialSize Monomials NCLex Name NewFromMethod
-syn keyword m2Symbol NewMethod NewOfFromMethod NewOfMethod NoPrint Options
-syn keyword m2Symbol Order Outputs PackagePrefix PairLimit PairsRemaining
-syn keyword m2Symbol Position Postfix Prefix PrimaryTag PrimitiveElement
-syn keyword m2Symbol Print Projective Quotient Reduce
-syn keyword m2Symbol RemakeAllDocumentation Repository RerunExamples
-syn keyword m2Symbol Result RevLex Reverse Right RunExamples SeeAlso
-syn keyword m2Symbol SeparateExec SizeLimit SkewCommutative Sort
-syn keyword m2Symbol SortStrategy SourceCode SourceRing Standard
-syn keyword m2Symbol StopBeforeComputation StopWithMinimalGenerators
-syn keyword m2Symbol Strategy Subnodes SubringLimit Sugarless Syzygies
-syn keyword m2Symbol SyzygyLimit SyzygyMatrix SyzygyRows TeXmacs Toric
-syn keyword m2Symbol TotalPairs Truncate TypicalValue Undo Unmixed Up
-syn keyword m2Symbol UpdateOnly UpperTriangular Usage UseHilbertFunction
-syn keyword m2Symbol UseSyzygies UserMode Variable VariableBaseName
-syn keyword m2Symbol Variables Verbose Verify Version VerticalSpace
-syn keyword m2Symbol Weights WeylAlgebra Wrap argument baseRings cache dd
-syn keyword m2Symbol end incomparable indexComponents
-syn keyword m2Symbol minimalPresentationMap minimalPresentationMapInv oo
-syn keyword m2Symbol ooo oooo order pruningMap returnCode subscript
-syn keyword m2Symbol superscript topLevelMode debugLevel defaultPrecision
-syn keyword m2Symbol engineDebugLevel errorDepth gbTrace interpreterDepth
-syn keyword m2Symbol lineNumber loadDepth maxExponent minExponent
-syn keyword m2Symbol printWidth printingAccuracy printingLeadLimit
-syn keyword m2Symbol printingPrecision printingTimeLimit
-syn keyword m2Symbol printingTrailLimit recursionLimit
-
-syn keyword m2Type AffineVariety Array
-syn keyword m2Type AssociativeExpression BasicList BettiTally Boolean
-syn keyword m2Type CacheFunction CacheTable ChainComplex ChainComplexMap
-syn keyword m2Type CoherentSheaf CompiledFunction CompiledFunctionBody
-syn keyword m2Type CompiledFunctionClosure ComplexField Constant
-syn keyword m2Type Database Descent Dictionary DocumentTag EngineRing
-syn keyword m2Type Expression File FilePosition ForestNode FractionField
-syn keyword m2Type Function FunctionBody FunctionClosure GaloisField
-syn keyword m2Type GeneralOrderedMonoid GlobalDictionary GradedModule
-syn keyword m2Type GradedModuleMap GroebnerBasis GroebnerBasisOptions
-syn keyword m2Type HashTable HeaderType Ideal ImmutableType
-syn keyword m2Type IndeterminateNumber IndexedVariable
-syn keyword m2Type IndexedVariableTable InexactField InexactFieldFamily
-syn keyword m2Type InexactNumber InexactNumber' InfiniteNumber Keyword
-syn keyword m2Type LibxmlAttribute LibxmlNode List LocalDictionary
-syn keyword m2Type Manipulator Matrix MethodFunction
-syn keyword m2Type MethodFunctionWithOptions Module ModuleMap Monoid
-syn keyword m2Type MonoidElement MonomialIdeal MutableHashTable
-syn keyword m2Type MutableList MutableMatrix Net NetFile Nothing Number
-syn keyword m2Type OneExpression Option OptionTable OrderedMonoid
-syn keyword m2Type Package Partition PolynomialRing
-syn keyword m2Type ProjectiveHilbertPolynomial ProjectiveVariety
-syn keyword m2Type Pseudocode QuotientRing RealField Resolution Ring
-syn keyword m2Type RingElement RingFamily RingMap ScriptedFunctor
-syn keyword m2Type SelfInitializingType Sequence Set SheafOfRings String
-syn keyword m2Type SumOfTwists Symbol Tally Thing Time TreeNode Type
-syn keyword m2Type Variety Vector VirtualTally VisibleList WrapperType
-syn keyword m2Type ZeroExpression Holder Minus NonAssociativeProduct
-syn keyword m2Type Parenthesize Product Sum
-
-"syn region m2String start=/"/ skip=/\\"/ end=/"/
-"syn match m2String /"[^"]*"/
-"syn region m2String start=/"/  end=/"/
-syn match m2Comment /--.*$/
+syn keyword m2Symbol contained
+            \ about abs AbstractToricVarieties accumulate Acknowledgement acos acosh acot addCancelTask addDependencyTask addEndFunction addHook AdditionalPaths addStartFunction addStartTask Adjacent adjoint AdjointIdeal AffineVariety AfterEval AfterNoPrint AfterPrint agm alarm AlgebraicSplines Algorithm Alignment all AllCodimensions allowableThreads ambient analyticSpread Analyzer AnalyzeSheafOnP1 ancestor ancestors ANCHOR and andP ann annihilator antipode any append applicationDirectory applicationDirectorySuffix apply applyKeys applyPairs applyTable applyValues apropos argument Array arXiv Ascending ascii asin asinh ass assert associatedGradedRing associatedPrimes AssociativeExpression atan atan2 atEndOfFile Authors autoload AuxiliaryFiles backtrace Bag Bareiss baseFilename BaseFunction baseName baseRing baseRings BaseRow BasicList basis BasisElementLimit Bayer BeforePrint beginDocumentation BeginningMacaulay2 Benchmark benchmark Bertini BesselJ BesselY betti BettiTally between BGG BIBasis Binary BinaryOperation Binomial binomial BinomialEdgeIdeals Binomials BKZ BLOCKQUOTE BODY Body BoijSoederberg BOLD Book3264Examples Boolean BooleanGB borel Boxes BR break Browse Bruns cache CacheExampleOutput CacheFunction CacheTable cacheValue CallLimit cancelTask capture catch Caveat CC CDATA ceiling Center centerString Certification ChainComplex chainComplex ChainComplexExtras ChainComplexMap ChainComplexOperations ChangeMatrix char CharacteristicClasses characters charAnalyzer check CheckDocumentation chi Chordal class Classic clean clearAll clearEcho clearOutput close closeIn closeOut ClosestFit CODE code codim CodimensionLimit coefficient CoefficientRing coefficientRing coefficients Cofactor CohenEngine CohenTopLevel CoherentSheaf CohomCalg cohomology coimage CoincidentRootLoci coker cokernel collectGarbage columnAdd columnate columnMult columnPermute columnRankProfile columnSwap combine Command commandInterpreter commandLine COMMENT commonest commonRing comodule compactMatrixForm CompiledFunction CompiledFunctionBody CompiledFunctionClosure Complement complement complete CompleteIntersection CompleteIntersectionResolutions Complexes ComplexField components compose compositions compress concatenate conductor ConductorElement cone Configuration ConformalBlocks conjugate connectionCount Consequences Constant Constants constParser content continue contract Contributors ConvexInterface conwayPolynomial ConwayPolynomials copy copyDirectory copyFile copyright Core CorrespondenceScrolls cos cosh cot cotangentSheaf coth cover coverMap cpuTime createTask Cremona csc csch current currentDirectory currentFileDirectory currentFileName currentLayout currentLineNumber currentPackage currentString currentTime Cyclotomic Database Date DD dd deadParser debug debugError DebuggingMode debuggingMode debugLevel DecomposableSparseSystems Decompose decompose deepSplice Default default defaultPrecision Degree degree degreeLength DegreeLift DegreeLimit DegreeMap DegreeOrder DegreeRank Degrees degrees degreesMonoid degreesRing delete demark denominator Dense Density Depth depth Descending Descent Describe describe Description det determinant DeterminantalRepresentations DGAlgebras diagonalMatrix Dictionary dictionary dictionaryPath diff DiffAlg difference dim directSum disassemble discriminant dismiss Dispatch distinguished DIV Divide divideByVariable DivideConquer DividedPowers Divisor DL Dmodules do doc docExample docTemplate document DocumentTag Down drop DT dual eagonNorthcott EagonResolution echoOff echoOn EdgeIdeals edit EigenSolver eigenvalues eigenvectors eint EisenbudHunekeVasconcelos elapsedTime elapsedTiming elements Eliminate eliminate Elimination EliminationMatrices EllipticCurves EllipticIntegrals else EM Email End end endl endPackage Engine engineDebugLevel EngineRing EngineTests entries EnumerationCurves environment Equation EquivariantGB erase erf erfc error errorDepth euler EulerConstant eulers even EXAMPLE ExampleFiles ExampleItem examples ExampleSystems Exclude exec exit exp expectedReesIdeal expm1 exponents export exportFrom exportMutable Expression expression Ext extend ExteriorIdeals exteriorPower factor false Fano FastLinAlg FastNonminimal FGLM File fileDictionaries fileExecutable fileExists fileExitHooks fileLength fileMode FileName FilePosition fileReadable fileTime fileWritable fillMatrix findFiles findHeft FindOne findProgram findSynonyms FiniteFittingIdeals First first firstkey FirstPackage fittingIdeal flagLookup FlatMonoid flatten flattenRing Flexible flip floor flush fold FollowLinks for forceGB fork FormalGroupLaws Format format formation FourierMotzkin FourTiTwo fpLLL frac fraction FractionField frames FrobeniusThresholds from fromDividedPowers fromDual Function FunctionApplication FunctionBody functionBody FunctionClosure futureParser GaloisField Gamma gb GBDegrees gbRemove gbSnapshot gbTrace gcd gcdCoefficients gcdLLL GCstats genera GeneralOrderedMonoid GenerateAssertions generateAssertions generator generators Generic GenericInitialIdeal genericMatrix genericSkewMatrix genericSymmetricMatrix gens genus get getc getChangeMatrix getenv getGlobalSymbol getNetFile getNonUnit getPrimeWithRootOfUnity getSymbol getWWW GF gfanInterface Givens GKMVarieties GLex Global global globalAssign globalAssignFunction GlobalAssignHook globalAssignment globalAssignmentHooks GlobalDictionary GlobalHookStore globalReleaseFunction GlobalReleaseHook Gorenstein GradedLieAlgebras GradedModule gradedModule GradedModuleMap gradedModuleMap gramm GraphicalModels GraphicalModelsMLE Graphics graphIdeal graphRing Graphs Grassmannian GRevLex GroebnerBasis groebnerBasis GroebnerBasisOptions GroebnerWalk groupID GroupLex GroupRevLex GTZ Hadamard handleInterrupts HardDegreeLimit hash HashTable hashTable HEAD HEADER1 HEADER2 HEADER3 HEADER4 HEADER5 HEADER6 HeaderType Heading Headline Heft heft Height height help Hermite hermite Hermitian HH hh HigherCIOperators HighestWeights Hilbert hilbertFunction hilbertPolynomial hilbertSeries HodgeIntegrals hold Holder Hom homeDirectory HomePage Homogeneous Homogeneous2 homogenize homology homomorphism hooks horizontalJoin HorizontalSpace HR HREF HTML html httpHeaders Hybrid HyperplaneArrangements Hypertext hypertext HypertextContainer HypertextParagraph icFracP icFractions icMap icPIdeal id Ideal ideal idealizer identity if IgnoreExampleErrors ii image imaginaryPart IMG ImmutableType importFrom in incomparable Increment independentSets indeterminate IndeterminateNumber Index index indexComponents IndexedVariable IndexedVariableTable indices inducedMap inducesWellDefinedMap InexactField InexactFieldFamily InexactNumber InfiniteNumber infinity info InfoDirSection infoHelp Inhomogeneous input Inputs insert installAssignmentMethod installedPackages installHilbertFunction installMethod installMinprimes installPackage InstallPrefix instance instances IntegralClosure integralClosure integrate IntermediateMarkUpType interpreterDepth intersect intersectInP Intersection InvariantRing inverse InverseMethod inversePermutation Inverses inverseSystem InverseSystems Invertible InvolutiveBases irreducibleCharacteristicSeries irreducibleDecomposition isAffineRing isANumber isBorel isCanceled isCommutative isConstant isDirectory isDirectSum isField isFinite isFinitePrimeField isFreeModule isGlobalSymbol isHomogeneous isIdeal isInfinite isInjective isInputFile isIsomorphism isLinearType isListener isLLL isModule isMonomialIdeal isNormal isOpen isOutputFile isPolynomialRing isPrimary isPrime isPrimitive isPseudoprime isQuotientModule isQuotientOf isQuotientRing isReady isReal isReduction isRegularFile isRing isSkewCommutative isSorted isSquareFree isStandardGradedPolynomialRing isSubmodule isSubquotient isSubset isSupportedInZeroLocus isSurjective isTable isUnit isWellDefined isWeylAlgebra ITALIC Iterate Jacobian jacobian jacobianDual Join join Jupyter K3Carpets Keep KeepFiles KeepZeroes ker kernel kernelLLL kernelOfLocalization Key keys Keyword Keywords kill koszul Kronecker KustinMiller LABEL last lastMatch LATER LatticePolytopes Layout lcm leadCoefficient leadComponent leadMonomial leadTerm Left length LengthLimit letterParser Lex LexIdeals LI Licenses LieTypes lift liftable Limit limitFiles limitProcesses Linear LinearAlgebra lineNumber lines LINK linkFile List list listForm listLocalSymbols listSymbols listUserSymbols LITERAL LLL LLLBases lngamma load loadDepth LoadDocumentation loadedFiles loadedPackages loadPackage Local local localDictionaries LocalDictionary localize LocalRings locate log log1p LongPolynomial lookup lookupCount LowerBound LUdecomposition M0nbar Macaulay2Doc makeDirectory MakeDocumentation makeDocumentTag MakeHTML MakeInfo MakeLinks makePackageIndex makeS2 Manipulator map MapExpression MapleInterface markedGB Markov MarkUpType match mathML Matrix matrix MatrixDegreeExpression MatrixExpression Matroids max maxAllowableThreads maxExponent MaximalRank maxPosition MaxReductionCount MCMApproximations member memoize MENU merge mergePairs META method MethodFunction MethodFunctionBinary MethodFunctionSingle MethodFunctionWithOptions methodOptions methods min minExponent mingens mingle minimalBetti MinimalGenerators MinimalMatrix minimalPresentation minimalPresentationMap minimalPresentationMapInv MinimalPrimes minimalPrimes minimalReduction Minimize minimizeFilename MinimumVersion minors minPosition minPres minprimes Minus minus Miura MixedMultiplicity mkdir mod Module module ModuleDeformations ModuleMap modulo MonodromySolver Monoid monoid MonoidElement Monomial MonomialAlgebras monomialCurveIdeal MonomialIdeal monomialIdeal MonomialOrder Monomials monomials MonomialSize monomialSubideal moveFile multidegree multidoc multigraded MultigradedBettiTally MultiGradedRationalMap multiplicity MultiplicitySequence MultiplierIdeals MultiplierIdealsDim2 mutable MutableHashTable mutableIdentity MutableList MutableMatrix mutableMatrix NAGtypes Name nanosleep Nauty NautyGraphs NCAlgebra NCLex needs needsPackage Net net NetFile netList new newClass newCoordinateSystem NewFromMethod newline NewMethod newNetFile NewOfFromMethod NewOfMethod newPackage newRing nextkey nextPrime nil NNParser NoetherianOperators NoetherNormalization NonAssociativeProduct NonminimalComplexes nonspaceAnalyzer NoPrint norm normalCone Normaliz NormalToricVarieties not Nothing notify notImplemented NTL null nullaryMethods nullhomotopy nullParser nullSpace Number number NumberedVerticalList numcols numColumns numerator numeric NumericalAlgebraicGeometry NumericalCertification NumericalImplicitization NumericalLinearAlgebra NumericalSchubertCalculus NumericSolutions numgens numRows numrows odd of ofClass OL OldPolyhedra OldToricVectorBundles on OneExpression OO oo ooo oooo openDatabase openDatabaseOut openFiles openIn openInOut openListener OpenMath openOut openOutAppend operatorAttributes Option OptionalComponentsPresent optionalSignParser Options options OptionTable optP or Order order OrderedMonoid orP OutputDictionary Outputs override pack Package package PackageCitations PackageDictionary PackageExports PackageImports PackageTemplate packageTemplate pad pager PairLimit pairs PairsRemaining PARA Parametrization parent Parenthesize Parser Parsing part Partition partition partitions parts path pdim peek PencilsOfQuadrics Permanents permanents permutations pfaffians PHCpack PhylogeneticTrees pi PieriMaps pivots PlaneCurveSingularities plus poincare poincareN Points polarize poly Polyhedra Polymake PolynomialRing Posets Position position positions PositivityToricBundles POSIX Postfix Power power powermod PRE Precision precision Prefix prefixDirectory prefixPath preimage prepend presentation pretty primaryComponent PrimaryDecomposition primaryDecomposition PrimaryTag PrimitiveElement Print print printingAccuracy printingLeadLimit printingPrecision printingSeparator printingTimeLimit printingTrailLimit printString printWidth processID Product product ProductOrder profile profileSummary Program programPaths ProgramRun Proj Projective ProjectiveHilbertPolynomial projectiveHilbertPolynomial ProjectiveVariety promote protect Prune prune PruneComplex pruningMap Pseudocode pseudocode pseudoRemainder Pullback PushForward pushForward PushforwardComputation QQ QQParser QRDecomposition QthPower Quasidegrees QuillenSuslin quit Quotient quotient quotientRemainder QuotientRing Radical radical RadicalCodim1 radicalContainment RaiseError random RandomCanonicalCurves RandomComplexes RandomCurves RandomCurvesOverVerySmallFiniteFields RandomGenus14Curves RandomIdeals randomKRationalPoint RandomMonomialIdeals randomMutableMatrix RandomObjects RandomPlaneCurves RandomRationalPoints RandomSpaceCurves Range rank RationalMaps RationalPoints ReactionNetworks read readDirectory readlink readPackage RealField RealFP realPart realpath RealQP RealQP1 RealRR RealXD recursionDepth recursionLimit Reduce reducedRowEchelonForm reduceHilbert reductionNumber ReesAlgebra reesAlgebra reesAlgebraIdeal reesIdeal References ReflexivePolytopesDB regex regexQuote registerFinalizer regSeqInIdeal Regularity regularity relations RelativeCanonicalResolution relativizeFilename Reload remainder RemakeAllDocumentation remove removeDirectory removeFile removeLowestDimension reorganize replace RerunExamples res reshape ResidualIntersections ResLengthThree Resolution resolution ResolutionsOfStanleyReisnerRings restart Result resultant Resultants return returnCode Reverse reverse RevLex Right Ring ring RingElement RingFamily ringFromFractions RingMap rootPath roots rootURI rotate round rowAdd RowExpression rowMult rowPermute rowRankProfile rowSwap RR rsort run RunDirectory RunExamples RunExternalM2 runHooks runLengthEncode runProgram same saturate Saturation scan scanKeys scanLines scanPairs scanValues schedule schreyerOrder Schubert Schubert2 SchurComplexes SchurFunctors SchurRings scriptCommandLine ScriptedFunctor SCSCP searchPath sec sech SectionRing SeeAlso seeParsing SegreClasses select selectInSubring selectVariables SelfInitializingType SemidefiniteProgramming Seminormalization separate SeparateExec separateRegexp Sequence sequence Serialization serialNumber Set set setEcho setGroupID setIOExclusive setIOSynchronized setIOUnSynchronized setRandomSeed setup setupEmacs sheaf SheafExpression sheafExt sheafHom SheafOfRings shield ShimoyamaYokoyama show showClassStructure showHtml showStructure showTex showUserStructure SimpleDoc simpleDocFrob SimplicialComplexes SimplicialDecomposability SimplicialPosets SimplifyFractions sin singularLocus sinh size size2 SizeLimit SkewCommutative SlackIdeals sleep SLnEquivariantMatrices SLPexpressions SMALL smithNormalForm solve someTerms Sort sort sortColumns SortStrategy source SourceCode SourceRing SPACE SpaceCurves SPAN SparseMonomialVectorExpression SparseResultants SparseVectorExpression Spec SpechtModule SpecialFanoFourfolds specialFiber specialFiberIdeal SpectralSequences splice splitWWW sqrt SRdeformations stack stacksProject Standard standardForm standardPairs StartWithOneMinor stashValue StatePolytope StatGraphs status stderr stdio step StopBeforeComputation stopIfError StopWithMinimalGenerators Strategy String STRONG StronglyStableIdeals STYLE Style style SUB sub sublists submatrix submatrixByDegrees Subnodes subquotient SubringLimit Subscript subscript SUBSECTION subsets substitute substring subtable Sugarless Sum sum SumOfTwists SumsOfSquares SUP super Superscript superscript support SVD SVDComplexes switch SwitchingFields sylvesterMatrix Symbol symbol SymbolBody symbolBody SymbolicPowers symlinkDirectory symlinkFile symmetricAlgebra symmetricAlgebraIdeal symmetricKernel SymmetricPolynomials symmetricPower synonym SYNOPSIS syz Syzygies SyzygyLimit SyzygyMatrix SyzygyRows syzygyScheme TABLE Table table take Tally tally tan TangentCone tangentCone tangentSheaf tanh target Task taskResult TateOnProducts TD temporaryFileName tensor tensorAssociativity TensorComplexes terminalParser terms TEST Test testExample testHunekeQuestion TestIdeals TEX tex TeXmacs texMath Text TH then Thing ThreadedGB threadVariable Threshold throw Time time times timing TITLE TO to TO2 toAbsolutePath toCC toDividedPowers toDual toExternalString toField TOH toList toLower top topCoefficients Topcom topComponents topLevelMode Tor TorAlgebra Toric ToricInvariants ToricTopology ToricVectorBundles toRR toSequence toString TotalPairs toUpper TR trace transpose TriangularSets Tries Trim trim Triplets Tropical true Truncate truncate truncateOutput Truncations try TT tutorial Type TypicalValue typicalValues UL ultimate unbag uncurry Undo undocumented uniform uninstallAllPackages uninstallPackage Unique unique Units Unmixed unsequence unstack Up UpdateOnly UpperTriangular URL Usage use UseCachedExampleOutput UseHilbertFunction UserMode userSymbols UseSyzygies utf8 utf8check validate value values Variable VariableBaseName Variables Variety variety vars Vasconcelos Vector vector VectorExpression VectorFields VectorGraphics Verbose Verbosity Verify VersalDeformations versalEmbedding Version version VerticalList VerticalSpace viewHelp VirtualResolutions VirtualTally VisibleList Visualize wait WebApp wedgeProduct weightRange Weights WeylAlgebra WeylGroups when whichGm while width wikipedia Wrap wrap WrapperType XML xor youngest zero ZeroExpression zeta ZZ ZZParser
 
 let b:current_syntax = "m2"
-hi def link m2Command Function
-hi def link m2Boolean Boolean
-hi def link m2CompiledFunction Function
+
+hi def link m2String   String
+hi def link m2Comment  Comment
+hi def link m2Boolean  Boolean
+hi def link m2Symbol   Identifier
+hi def link m2Keyword  Keyword
+hi def link m2Datatype Type
+hi def link m2Function Function
 hi def link m2Constant Constant
-hi def link m2File Keyword
-hi def link m2FnClosure Function
-hi def link m2Keyword Keyword
-hi def link m2Method Function
-hi def link m2Ring Constant
-hi def link m2ScriptedFunctor Function
-hi def link m2Symbol Identifier
-hi def link m2Type Type
-hi def link m2String String
-hi def link m2Comment Comment

@@ -60,17 +60,6 @@ document {
       	  "prune M",
 	  }
      }
-
-TEST "
-S = ZZ/101[x,y,z]
-M = cokernel vars S
-assert ( 0 == HH_-1 res M )
-assert ( M == HH_0 res M )
-assert ( 0 == HH_1 res M )
-assert ( 0 == HH_2 res M )
-assert ( 0 == HH_3 res M )
-assert ( 0 == HH_4 res M )
-"
 document { 
      Key => (homology,Matrix,Matrix),
      Headline => "homology of a pair of maps",

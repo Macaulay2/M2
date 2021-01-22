@@ -100,6 +100,7 @@ Node
     (document, String)
     "multidoc"
     "docTemplate"
+     Description
   Headline
     a simple documentation function
   Usage
@@ -168,7 +169,7 @@ Node
             PARA {
                 "Each subsection of the this section should start with the keyword ",
                 TT "Item", "; the text in each item may include markup."}},
-        { TOH Description,
+        { TT "Description",
             PARA {"The text in this section occurs in subsections with keywords:"},
             UL {
                 { TT "Text", " -- prose containing markup or tex",

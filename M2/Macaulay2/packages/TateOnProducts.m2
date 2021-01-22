@@ -641,7 +641,7 @@ cornerComplex(ChainComplex,List) := (C,c) ->(
 
 cornerComplex1=method()
 cornerComplex1(ChainComplex,List) := (C,c) -> (
-    -- addded this line to make the function  work for the zero complex
+    -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
     t:= numFactors ring C; -- list from 0 to the number of factors -1.
@@ -815,7 +815,7 @@ firstQuadrantComplex(ChainComplex,List) := (C,c) -> (
 firstQuadrantComplex1=method()
 firstQuadrantComplex1(ChainComplex,List) := (C,c) -> (
     -- c index of upper corner of the complementary last quadrant
-    -- addded this line to make the function  work for the zero complex
+    -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
     s:=min C;
@@ -862,7 +862,7 @@ lastQuadrantComplex(ChainComplex,List) := (C,c) -> (
 lastQuadrantComplex1=method()
 lastQuadrantComplex1(ChainComplex,List) := (C,c) -> (
      -- c index of the upper corner of the last quadrant
-     -- addded this line to make the function  work for the zero complex
+     -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
     s:=min C;
@@ -874,7 +874,7 @@ lastQuadrantComplex1(ChainComplex,List) := (C,c) -> (
 
 cornerMap=method()
 cornerMap(ChainComplex,List,ZZ) := (C,c,d) -> (
-    -- addded this line to make the function  work for the zero complex
+    -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
     E := ring C;
@@ -1059,7 +1059,7 @@ chainComplexMap=method(
 )
 chainComplexMap(ChainComplex,ChainComplex,List):= o -> (D,C,maps) -> (
    --- the code commented out should also work, and is in some sense
-   --- more desireable as it uses map in the code.  However, something squirly
+   --- more desirable as it uses map in the code.  However, something squirly
    --- happens in the map code.
    ---    startDeg := min C;
    ---    if (o.InitialDegree != -infinity) then startDeg = o.InitialDegree;
@@ -3180,7 +3180,7 @@ isLinearizable=method()
 isLinearizable(Matrix):=M->(
     -- Input : M, a matrix presenting a graded module homomorphism
     -- If the original matrix and its linearized matrix induces the same Hilbert series
-    -- then this method retunrs true.
+    -- then this method returns true.
     
     R:=ring M;
     n:=(# gens R)-1;
@@ -4184,7 +4184,7 @@ doc ///
       The degrees of the variables for the i-th projective space are indexed
       x_(i,0),..,x_(i,n_i-1), and have degree (0..0,1,0,..0) with a 1 in the i-th place.
       The script also caches some values in S.TateData and
-      E.TateData, so that S and E can subsequently find eachother
+      E.TateData, so that S and E can subsequently find each other
       and also their cohomology ring.
      Example
         (S,E)=productOfProjectiveSpaces{1,2}
@@ -5013,7 +5013,7 @@ doc ///
         We compute the strand of T as defined in @
         HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @
 	Theorem 0.4. If T is (part of) the Tate resolution of a sheaf $F$, then the I-strand of $T$ through $c$
-	correponds to the Tate resolution $R{\pi_J}_*(F(c))$ where $J =\{0,\ldots,t-1\} - I$ is the complement and $\pi_J: \mathbb PP \to \prod_{j \in J} \mathbb P^{n_j}$
+	corresponds to the Tate resolution $R{\pi_J}_*(F(c))$ where $J =\{0,\ldots,t-1\} - I$ is the complement and $\pi_J: \mathbb PP \to \prod_{j \in J} \mathbb P^{n_j}$
 	denotes the projection.
      Example
         n={1,1};
@@ -5170,7 +5170,7 @@ doc ///
 	T=tateResolution( S^{{1,1}},low, high);
 	cohomologyMatrix(T,low,high)
      Text
-        The complex contains some trailing terms and superflous terms in a wider range, which can be removed
+        The complex contains some trailing terms and superfluous terms in a wider range, which can be removed
 	using trivial homological truncation.
      Example
 	cohomologyMatrix(T,2*low,2*high)
@@ -5395,7 +5395,7 @@ doc ///
        form U(W) with W a complex with terms in the
        Beilinson range only. The function computes with the algorithm (not!) described in section 4 of
        @ HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @
-       computes part of a suitable choosen corner complex of the Tate resolution T(F).
+       computes part of a suitable chosen corner complex of the Tate resolution T(F).
 
      Example
         n={1,1};
@@ -5447,7 +5447,7 @@ doc ///
        This function is the first step in our computation of the algorithm
         (not!) described in section 4 of
        @ HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @
-       that computes part of a suitable choosen corner complex of the Tate resolution T(F).
+       that computes part of a suitable chosen corner complex of the Tate resolution T(F).
      Example
         n={1,1};
         (S,E) = productOfProjectiveSpaces n;
@@ -5511,7 +5511,7 @@ doc ///
        @ HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @.
 
        In the function we compute from a complex of free E-modules the corresponding complex of graded S-modules, whose
-       sheafifications are the corresponding sheaves. The corresponding graded S-module are choosen as quotients of
+       sheafifications are the corresponding sheaves. The corresponding graded S-module are chosen as quotients of
        free S-modules in case of the default option BundleType=>PrunedQuotient, or as submodules of free S-modules.
        The true Beilinson functor is obtained by the sheafication of resulting the complex.
 

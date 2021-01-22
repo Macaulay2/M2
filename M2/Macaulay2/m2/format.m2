@@ -46,11 +46,6 @@ scan({net, html, markdown, tex}, parser ->
 scan({net, info, html, markdown, tex}, parser ->
     parser LATER := node -> parser node#0() )
 
--- TODO: move somewhere else
--- Rendering by concatenation of inputs
-scan({mathML, tex, texMath},
-    parser -> setupRenderer(parser, concatenate, Hypertext))
-
 -- Rendering by horizontal join of inputs
 scan({net, info},
     parser -> setupRenderer(parser, horizontalJoin, Hypertext))
@@ -124,7 +119,9 @@ scan({net, info},
 	parser' HypertextContainer := x -> (BK, apply(toSequence x, parser'), BK);
 	-- rendering for special types
 	parser' String := identity;
-	parser' Option := x -> ();
+	parser' COMMENT :=
+	parser' LITERAL :=
+	parser' Option  := x -> ();
 	parser' BR     := x -> ("", BK);
 	-- and rendering for types that inherit from HypertextContainer, but
 	-- have special rendering rules which would lost with toSequence
@@ -216,7 +213,11 @@ info HREF := x -> (
      if #x === 1 then x#0
      else if match ("^mailto:",x#0) then toString x#1
      -- x#0 is sometimes the relative path to the file, but not from the current directory
-     else toString x#1 | " (see " | x#0 | " )")
+     else (
+	  r := horizontalJoin \\ net \ toList splice drop(x, 1);
+	  r | " (see " | x#0 | " )"
+	  )
+     )
 
 net TABLE :=  x -> (
      (op,ag) := override(options TABLE, toSequence x);
@@ -254,7 +255,7 @@ infoTagConvert = method()
 infoTagConvert String      := tagConvert
 infoTagConvert DocumentTag := tag -> (
     tag = getPrimaryTag tag;
-    (pkgname, fkey) := (package tag, format tag);
+    (pkgname, fkey) := (tag.Package, format tag);
     fkey  = tagConvert if pkgname === fkey then "Top" else fkey;
     if pkgname =!= currentPackage#"pkgname" then concatenate("(",pkgname,")", fkey) else fkey)
 
@@ -262,7 +263,7 @@ infoTagConvert DocumentTag := tag -> (
 -- checking if doc is missing can be very slow if node is from another package
 info TO  := x -> info TO2{x#0, format x#0 | if x#?1 then x#1 else ""}
 info TO2 := x -> (
-     tag := x#0;
+     tag := fixup x#0;
      if isMissingDoc tag or isUndocumented tag then concatenate(x#1, " (missing documentation)")
      else concatenate("*note ", infoLinkConvert x#1, ": ", infoTagConvert tag, ","))
 info TOH := x -> (

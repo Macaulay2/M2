@@ -46,7 +46,7 @@ doc ///
 	    An element $h$ of $S$ determines a $p^{-e}$-linear map $\phi: S \to\ S$, obtained by premultiplying the $e^{th}$ Frobenius trace on $S$ by $h$. 
             The function {\tt ascendIdeal} finds the smallest $\phi$-stable ideal of $S$ containing $J$, which is the stable value of the ascending chain $J\subseteq J + \phi(J)\subseteq J + \phi(J) + \phi^2(J)\subseteq \cdots$.
 
-            If $J$ is not an ideal of a polynomial ring, but of a quotient of a polynomial ring, {\tt ascendIdeal} will do the computation with the $e^{th}$ Frobenius trace in the ambient polynomial ring, but will do the comparison, to see if stabilization has occured, inside the quotient ring.
+            If $J$ is not an ideal of a polynomial ring, but of a quotient of a polynomial ring, {\tt ascendIdeal} will do the computation with the $e^{th}$ Frobenius trace in the ambient polynomial ring, but will do the comparison, to see if stabilization has occurred, inside the quotient ring.
         Example
             S = ZZ/5[x,y,z];
             g = x^4 + y^4 + z^4;

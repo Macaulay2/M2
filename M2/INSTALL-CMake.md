@@ -146,8 +146,8 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `BUILD_TESTING:BOOL=ON`: build the testing targets
   - `SKIP_TESTS:STRING="mpsolve;googletest"`: tests to skip
   - `SLOW_TESTS:STRING="eigen;ntl;flint"`: slow tests to skip
-- `BUILD_LIBRARIES:STRING="GTest"`: build libraries, even if found on the system
-- `BUILD_PROGRAMS:STRING="4ti2;Nauty;TOPCOM"`: build programs, even if found on the system
+- `BUILD_LIBRARIES:STRING=""`: build libraries, even if found on the system
+- `BUILD_PROGRAMS:STRING=""`: build programs, even if found on the system
 - `CMAKE_BUILD_TYPE:STRING=RelWithDebInfo`: valid CMake build types are `Debug` `Release` `RelWithDebInfo` `MinSizeRel`
 - `CMAKE_INSTALL_PREFIX:PATH=/usr`: installation prefix
 - `M2_HOST_PREFIX:PATH=${CMAKE_BINARY_DIR}/usr-host`: host build prefix
@@ -303,6 +303,19 @@ cmake -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` .
 </details>
 
 <details>
+<summary>Building from the source code tarfile</summary>
+
+When building from a source code tarfile (e.g. downloaded from GitHub, rather than a git clone), you may see an error like this:
+```
+  No download info given for 'build-bdwgc' and its source directory: ...
+```
+To resolve this, you should download and extract the source tarfiles for each git submodule in the `M2/submodules` directory. Also, you may need to manually turn off submodule updates:
+```
+cmake -DGIT_SUBMODULE=off .
+```
+</details>
+
+<details>
 <summary><code>/usr/include/c++/10.1.0/bits/unique_ptr.h:594:9: error: no matching function for call to std::__uniq_ptr_data</code> when using GCC 10 or Clang 10</summary>
 
 This issue is due to an old version of FFLAS_FFPACK or Givaro libraries inserting an unnecessary `-fabi-version=6` flag to the compile command. Try uninstalling the packaged version of those libraries and building them using the `build-givaro` and `build-fflas_ffpack` targets.
@@ -416,6 +429,28 @@ Solution:
 <pre>
 cmake --build . --target build-bdwgc-install
 cmake -U*BDWGC* .
+</pre>
+</details>
+
+
+<details>
+<summary><code>error: Runtime CPU support is only available with GCC 4.6 or later.</code></summary>
+
+When compiling using Clang, the following error might occur if NTL was built with GCC instead:
+<pre>
+[ 25%] Building CXX object Macaulay2/e/CMakeFiles/M2-engine.dir/ntl-internal.cpp.o
+In file included from M2/Macaulay2/e/ntl-debugio.cpp:4:
+In file included from M2/Macaulay2/e/./ntl-interface.hpp:16:
+In file included from /usr/include/NTL/ZZ.h:18:
+In file included from /usr/include/NTL/lip.h:5:
+/usr/include/NTL/ctools.h:510:2: fatal error: Runtime CPU support is only available with GCC 4.6 or later.
+#error Runtime CPU support is only available with GCC 4.6 or later.
+ ^
+</pre>
+Solution:
+<pre>
+cmake --build . --target build-ntl-install
+cmake -U*NTL_* .
 </pre>
 </details>
 

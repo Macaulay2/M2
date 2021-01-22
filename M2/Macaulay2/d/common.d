@@ -7,6 +7,7 @@ export codePosition(c:Code):Position := (
      when c
      is f:adjacentCode do f.position
      is f:arrayCode do f.position
+     is f:angleBarListCode do f.position
      is f:binaryCode do f.position
      is f:catchCode do f.position
      is f:Error do f.position
@@ -52,6 +53,7 @@ export tostring(c:Code):string := (
      is x:Error do concatenate(array(string)( "(error \"", x.message, "\")"))
      is x:semiCode do concatenate(array(string)( "(semi ", between(" ",new array(string) len length(x.w) do foreach s in x.w do provide tostring(s)), ")"))
      is x:arrayCode do concatenate(array(string)( "(array ", between(" ",new array(string) len length(x.z) do foreach s in x.z do provide tostring(s)), ")"))
+     is x:angleBarListCode do concatenate(array(string)( "(angleBarList ", between(" ",new array(string) len length(x.t) do foreach s in x.t do provide tostring(s)), ")"))
      is x:binaryCode do concatenate(array(string)("(2-OP ",getBinopName(x.f)," ",tostring(x.lhs)," ",tostring(x.rhs),")"))
      is x:adjacentCode do concatenate(array(string)("(adjacent ",tostring(x.lhs)," ",tostring(x.rhs),")"))
      is x:forCode do concatenate(array(string)(

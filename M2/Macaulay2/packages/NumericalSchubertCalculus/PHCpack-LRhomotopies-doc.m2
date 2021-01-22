@@ -12,7 +12,7 @@ doc ///
       @HREF"http://www.math.uic.edu/~jan/download.html"@.
       The site provides source code and its executable versions {\tt phc}.
       The user must have the executable program {\tt phc} available,
-      preferably in the executation path.
+      preferably in the execution path.
   Caveat
     The program "phc" (at least version 2.4.27, but preferably higher)
     of PHCpack needs to in the path for execution.

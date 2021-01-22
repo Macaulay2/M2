@@ -64,6 +64,12 @@ expressionValue Symbol := value
 
 value Expression := expressionValue
 
+assert Expression := v -> (
+    val := value v;
+    if not instance(val, Boolean) then error "assert: expected true or false";
+    if not val then error toString("assertion failed:" || net v | " is false")
+)
+
 --Holder2 = new WrapperType of Expression			    -- Holder{ printable form, value form }
 --Holder2.synonym = "holder"
 --Holder = new WrapperType of Holder2			    -- Holder{ printable form, value form }, with printable form === value form
@@ -470,7 +476,13 @@ binaryOperatorFunctions := new HashTable from {
      symbol != => ((x,y) -> x != y),
      symbol and => ((x,y) -> x and y),
      symbol or => ((x,y) -> x or y),
-     symbol ^** => ((x,y) -> x^**y)
+     symbol ^** => ((x,y) -> x^**y),
+     symbol === => ((x,y) -> x === y),
+     symbol =!= => ((x,y) -> x =!= y),
+     symbol < => ((x,y) -> x < y),
+     symbol <= => ((x,y) -> x <= y),
+     symbol > => ((x,y) -> x > y),
+     symbol >= => ((x,y) -> x >= y)
      }
 
 expressionBinaryOperators =
@@ -570,7 +582,6 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol ** => "\\otimes ",
     symbol ++ => "\\oplus ",
     symbol != => "\\ne ",
-    symbol = => "=",
     symbol -> => "\\rightarrow ",
     symbol <- => "\\leftarrow ",
     symbol ===> => "{\\large\\Longrightarrow}",
@@ -582,20 +593,18 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol _ => "\\_ ",
     symbol | => "|",
     symbol || => "||",
-    symbol * => "*",
-    symbol + => "+",
-    symbol - => "-",
-    symbol / => "/",
-    symbol // => "//",
     symbol { => "\\{ ",
     symbol } => "\\} ",
     symbol \ => "\\backslash ",
     symbol \\ => "\\backslash\\backslash ",
-    symbol : => ":",
-    symbol ; => ";"
+    symbol SPACE => "\\texttt{SPACE}",
+    symbol # => "\\#",
+    symbol #? => "\\#?",
+    symbol % => "\\%",
+    symbol & => "\\&",
+    symbol ^ => "\\wedge",
+    symbol ^^ => "\\wedge\\wedge"
     }
-
-texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else texMath toString x
 
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"
@@ -1174,24 +1183,30 @@ texMath Table := m -> (
 	"\\end{array}}")
 )
 
-texMath MatrixExpression := m -> (
-    if all(m,r->all(r,i->class i===ZeroExpression)) then "0"
-    else if m#?0 then if #m#0>10 then "{\\left(" | texMath(new Table from toList m) | "\\right)}" -- the extra {} is to discourage line breaks
-     else concatenate(
-      	      "\\begin{pmatrix}" | newline,
-     	      between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
-	      "\\end{pmatrix}" -- notice the absence of final \\ -- so lame. no newline either in case last line is empty
-	      )
-	  )
-texMath MatrixDegreeExpression := x -> texMath MatrixExpression x#0 -- degrees not displayed atm
+texMath MatrixExpression := m -> if all(m,r->all(r,i->class i===ZeroExpression)) then "0" else concatenate(
+    "\\begin{pmatrix}" | newline,
+    between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,
+		    if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x)))),
+    "\\end{pmatrix}"
+    )
+texMath MatrixDegreeExpression := m -> if all(m#0,r->all(r,i->class i===ZeroExpression)) then "0" else concatenate(
+    mat := applyTable(m#0,if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x);
+    deg := apply(m#1,texMath);
+    "\\begin{matrix}",
+    between(///\\///,apply(#mat, i -> deg#i | "\\vphantom{" | concatenate mat#i | "}")),
+    "\\end{matrix}",
+    "\\begin{pmatrix}" | newline,
+    between(///\\/// | newline, apply(#mat, i -> "\\vphantom{"| deg#i | "}" | concatenate between("&",mat#i))),
+    "\\end{pmatrix}"
+    )
 
 texMath VectorExpression := v -> (
-     concatenate(
-	 "\\begin{pmatrix}" | newline,
-	 between(///\\///,apply(toList v,texMath)),
-	 "\\end{pmatrix}"
-	 )
-     )
+    concatenate(
+	"\\begin{pmatrix}" | newline,
+	between(///\\///,apply(toList v,if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x)),
+	"\\end{pmatrix}"
+	)
+    )
 
 ctr := 0
 showTex = method()
@@ -1227,19 +1242,19 @@ texMath Thing := x -> texMath net x -- if we're desperate (in particular, for ra
 
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
 suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
-suffixesRegExp := "("|demark("|",suffixes)|")\\'";
+suffixesRegExp := "\\w("|demark("|",suffixes)|")$";
 texVariable := x -> (
     if x === "" then return "";
     xx := separate("\\$",x); if #xx > 1 then return concatenate between("{\\char36}",texVariable\xx); -- avoid the use of "$" in tex output
     if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb "|x#0|"}";
     if last x === "'" then return texVariable substring(x,0,#x-1) | "'";
     r := regex(suffixesRegExp,x); if r =!= null then (
-	r = first r;
+	r = r#1;
 	return "\\"|substring(r,x)|"{"|texVariable substring(x,0,r#0)|"}"
 	);
     if #x === 1 or regex("[^[:alnum:]]",x) =!= null then x else "\\textit{"|x|"}"
     )
-texMath Symbol := x -> texVariable toString x;
+texMath Symbol :=  x -> if keywordTexMath#?x then keywordTexMath#x else texVariable toString x
 
 -----------------------------------------------------------------------------
 

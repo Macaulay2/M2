@@ -1,5 +1,6 @@
 -- -*- coding: utf-8 -*-
 -- TODO: add linter
+-- TODO: make Tree entries automatically join the Subnodes
 newPackage(
     "SimpleDoc",
     Version => "1.2",
@@ -10,7 +11,7 @@ newPackage(
 	{ Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "https://pi.math.cornell.edu/~mike/" },
 	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu", HomePage => "https://math.umn.edu/~mahrud/" }
 	},
-    Keywords => {"Miscellaneous"},
+    Keywords => {"Documentation"},
     PackageImports => { "Text" },
     DebuggingMode => false,
     AuxiliaryFiles => true
@@ -130,7 +131,7 @@ getIndentLevel = str -> (
 	else return level);
     infinity)
 
--- return list of intervals such that the start of all intervals has the same, minimum intentation
+-- return list of intervals such that the start of all intervals has the same, minimum indentation
 -- if empties is true then empty lines split intervals
 splitByIndent = (textlines, empties) -> (
     indents := for n in getIndent \ textlines list (if empties and n === infinity then -1 else n);
@@ -171,7 +172,7 @@ markup = (textlines, keylinenum) -> (
 singleString = (key, textlines, keylinenum) -> (
      if #textlines == 0 then
        error("line ", toString keylinenum, " of string: expected single indented line after ", toString key)
-     else if #textlines > 1 then
+     else if #textlines > 1 and 0 < #getNonempty drop(textlines, 1) then
        error("line ", toString getLinenum textlines#1, " of string: expected single indented line after ", toString key);
      getText textlines#0)
 

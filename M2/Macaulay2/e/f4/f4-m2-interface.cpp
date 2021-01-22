@@ -1,5 +1,6 @@
 // Copyright 2005 Michael E. Stillman
-#include <vector>
+
+#include "interface/mutable-matrix.h"
 #include "../polyring.hpp"
 #include "../freemod.hpp"
 #include "../matrix-con.hpp"

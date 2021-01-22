@@ -643,7 +643,7 @@ doc ///
 	    method computes the Hilbert polynomial of the corresponding
 	    coherent sheaf.  Given an ideal $I$ in the total coordinate ring,
 	    it computes the Hilbert polynomial of the coherent sheaf
-	    assoicated to $S^1/I$.
+	    associated to $S^1/I$.
     	Text
             The cotangent bundle on a smooth surface provides simple examples.
     	Example  

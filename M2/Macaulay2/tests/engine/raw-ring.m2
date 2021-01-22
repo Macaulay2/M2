@@ -35,8 +35,8 @@ errorDepth = 0
 
 assert(raw ZZ === rawZZ())
 assert(raw QQ === rawQQ())
-assert(raw RR === rawRR())
-assert(raw CC === rawCC())
+assert(raw RR_53 === rawRR(53))
+assert(raw CC_53 === rawCC(53))
 rawZZp 32003
 assert (raw (ZZ/32003) =!= rawZZp 32003)
 R = ZZ/5
@@ -65,7 +65,7 @@ assert(instance(rawDenominatorRing, Function))
 ----------------------------------
 needs "raw-util.m2"
 mo = rawMonomialOrdering { Lex => 2, GRevLex => {1,2,3}, Weights => {-1}, Position => Up }
-M = rawMonoid(mo, ("a","b","c","d","e"), degring 1, {1,1,1,2,3})
+M = rawMonoid(mo, ("a","b","c","d","e"), degring 1, {1,1,1,2,3}, {1})
 R = rawPolynomialRing(rawZZp 32003, M)
 a = rawRingVar(R,0)
 b = rawRingVar(R,1)
@@ -101,7 +101,7 @@ mo = rawMonomialOrdering {
 M = rawMonoid(mo, ("a","b","c",
 	           "d",
 		   "g","h","i","j"),
-	      degring 1, {1,1,1,1,1,1,1,1})
+	      degring 1, {1,1,1,1,1,1,1,1}, {1})
 R = rawPolynomialRing(rawZZ(), M)
 a = rawRingVar(R,0)
 b = rawRingVar(R,1)
@@ -132,8 +132,7 @@ needs "raw-util.m2"
 --------------
 mo = rawMonomialOrdering {
      Lex => 3 }
-M = rawMonoid(mo, ("a","b","c"),
-	      degring 1, 3:1)
+M = rawMonoid(mo, ("a","b","c"), degring 1, 3:1, {1})
 R = rawPolynomialRing(rawZZ(), M)
 a = rawRingVar(R,0)
 b = rawRingVar(R,1)
@@ -149,8 +148,7 @@ assert(toString(a^1000*b^41*c^513) === "a1000b41c513")
 -------------------
 mo = rawMonomialOrdering {
      LexSmall => 3 }
-M = rawMonoid(mo, ("a","b","c"),
-	      degring 1, 3:1)
+M = rawMonoid(mo, ("a","b","c"), degring 1, 3:1, {1})
 R = rawPolynomialRing(rawZZ(), M)
 a = rawRingVar(R,0)
 b = rawRingVar(R,1)
@@ -169,8 +167,7 @@ assert try (assert(toString(a^32768*b^41*c^513) === "a32768b41c513"); false) els
 -------------------
 mo = rawMonomialOrdering {
      LexTiny => 3 }
-M = rawMonoid(mo, ("a","b","c"),
-	      degring 1, 3:1)
+M = rawMonoid(mo, ("a","b","c"), degring 1, 3:1, {1})
 R = rawPolynomialRing(rawZZ(), M)
 a = rawRingVar(R,0)
 b = rawRingVar(R,1)
@@ -192,8 +189,7 @@ assert try(a*f;false) else true
 ------------------
 mo = rawMonomialOrdering {
      GRevLex => {1,1,1} }
-M = rawMonoid(mo, ("a","b","c"),
-	      degring 1, 3:1)
+M = rawMonoid(mo, ("a","b","c"), degring 1, 3:1, {1})
 R = rawPolynomialRing(rawZZ(), M)
 a = rawRingVar(R,0)
 b = rawRingVar(R,1)
@@ -210,8 +206,7 @@ toString(a^2312321*b^32352352*c^56464646) === "a2312321b32352352c56464646"
 -----------------------
 mo = rawMonomialOrdering {
      GRevLexSmall => {1,1,1} }
-M = rawMonoid(mo, ("a","b","c"),
-	      degring 1, 3:1)
+M = rawMonoid(mo, ("a","b","c"), degring 1, 3:1, {1})
 R = rawPolynomialRing(rawZZ(), M)
 a = rawRingVar(R,0)
 b = rawRingVar(R,1)
@@ -228,8 +223,7 @@ assert try(a^2312321*b^32352352*c^56464646;false) else true
 -----------------------
 mo = rawMonomialOrdering {
      GRevLexTiny => {1,1,1} }
-M = rawMonoid(mo, ("a","b","c"),
-	      degring 1, 3:1)
+M = rawMonoid(mo, ("a","b","c"), degring 1, 3:1, {1})
 R = rawPolynomialRing(rawZZ(), M)
 a = rawRingVar(R,0)
 b = rawRingVar(R,1)
@@ -246,8 +240,7 @@ assert try (toString(a^1000*b^41*c^513); false) else true
 -------------------
 mo = rawMonomialOrdering {
      GroupLex => 3 }
-M = rawMonoid(mo, ("a","b","c"),
-	      degring 1, 3:1)
+M = rawMonoid(mo, ("a","b","c"), degring 1, 3:1, {1})
 R = rawPolynomialRing(rawZZ(), M)
 a = rawRingVar(R,0)
 b = rawRingVar(R,1)
@@ -265,8 +258,7 @@ toString(a^-100000 * b * c^-5) === "a^(-100000)bc^(-5)"
 needs "raw-util.m2"
 mo = rawMonomialOrdering {
      GroupRevLex => 3 }
-M = rawMonoid(mo, ("a","b","c"),
-	      degring 1, 3:1)
+M = rawMonoid(mo, ("a","b","c"), degring 1, 3:1, {1})
 R = rawPolynomialRing(rawZZ(), M)
 a = rawRingVar(R,0)
 b = rawRingVar(R,1)
@@ -284,8 +276,7 @@ toString(a^-100000 * b * c^-5) === "a^(-100000)bc^(-5)"
 needs "raw-util.m2"
 mo = rawMonomialOrdering {
      GRevLex => {3,5,7} }
-M = rawMonoid(mo, ("a","b","c"),
-	      degring 1, 3:1)
+M = rawMonoid(mo, ("a","b","c"), degring 1, 3:1, {1})
 R = rawPolynomialRing(rawZZ(), M)
 a = rawRingVar(R,0)
 b = rawRingVar(R,1)
@@ -304,8 +295,7 @@ toString(a^2312321*b^32352352*c^56464646) === "a2312321b32352352c56464646"
 needs "raw-util.m2"
 mo = rawMonomialOrdering {
      GRevLexSmall => {3,5,7} }
-M = rawMonoid(mo, ("a","b","c"),
-	      degring 1, 3:1)
+M = rawMonoid(mo, ("a","b","c"), degring 1, 3:1, {1})
 R = rawPolynomialRing(rawZZ(), M)
 a = rawRingVar(R,0)
 b = rawRingVar(R,1)
@@ -324,8 +314,7 @@ assert try (a^2312321*b^32352352*c^56464646;false) else true
 -------------------------------
 mo = rawMonomialOrdering {
      GRevLexTiny => {3,5,7} }
-M = rawMonoid(mo, ("a","b","c"),
-	      degring 1, 3:1)
+M = rawMonoid(mo, ("a","b","c"), degring 1, 3:1, {1})
 R = rawPolynomialRing(rawZZ(), M)
 a = rawRingVar(R,0)
 b = rawRingVar(R,1)
@@ -356,7 +345,7 @@ M = rawMonoid(mo, ("a","b","c",
 		   "o","p",
 		   "q","r","s",
 		   "t","u","v"),
-	      degring 1, 19:1)
+	      degring 1, 19:1, {1})
 R = rawPolynomialRing(rawZZ(), M)
 
 a = rawRingVar(R,0)
@@ -406,7 +395,7 @@ mo = rawMonomialOrdering {
      }
 
 M = rawMonoid(mo, ("a","b","c","d","e","f"),
-	      degring 1, 6:1)
+	      degring 1, 6:1, {1})
 R = rawPolynomialRing(rawZZ(), M)
 
 a = rawRingVar(R,0)

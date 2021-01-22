@@ -1,3 +1,9 @@
+-- internal use only
+undocumented {
+    Format, PrimaryTag,
+    (NewFromMethod, DocumentTag, BasicList)
+    }
+
 doc ///
 Node
   Key
@@ -192,6 +198,9 @@ Node
     (makeDocumentTag, Thing)
     (makeDocumentTag, DocumentTag)
     (makeDocumentTag, String)
+    (format, DocumentTag)
+    (locate, DocumentTag)
+    (toExternalString, DocumentTag)
   Headline
     the class of all document tags
   Description

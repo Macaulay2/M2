@@ -73,7 +73,7 @@ AC_DEFUN([CHECK_GTEST],
   # 1.10.0 in the switch from the *_TEST_CASE to the *_TEST_SUITE naming
   # convention.  If this test fails, then an older googletest is
   # installed, so we instead download our own googletest.
-  AS_IF([test "x$have_gtest" = "xyes"],
+  AS_IF([test "x$have_gtest" = "xyes" -a "x$BUILD_mathicgb" = "xyes"],
         [AC_MSG_CHECKING([for gtest version])]
         [AC_COMPILE_IFELSE(
           [AC_LANG_PROGRAM(

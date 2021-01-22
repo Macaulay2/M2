@@ -370,33 +370,6 @@ document {
      SeeAlso => { "defaultPrecision" }
      }
 
-document {
-     Headline => "fill a mutable matrix with random numbers",
-     Key => {fillMatrix,(fillMatrix, MutableMatrix),(fillMatrix, MutableMatrix, ZZ),
-	  [fillMatrix, Height],[fillMatrix,Density],[fillMatrix,UpperTriangular]},
-     Usage => "fillMatrix M\nfillMatrix(M,n)",
-     BaseFunction => fillMatrix,
-     Inputs => {
-	  "M"=>MutableMatrix,
-	  "n" => ZZ => {"if specified, the maximum number of entries to replace"},
-	  Density => RR => {"the fraction of entries of ", TT "M", " to be replaced, if ", TT "n", " is
-	       not specified"},
-	  UpperTriangular => Boolean => "whether to fill entries only above the diagonal",
-	  Height => ZZ => "a bound on the absolute values of the generated random numbers"
-	  },
-     Outputs => {"M"},
-     Consequences => {{ "some entries of M are replaced with randomly generated numbers, whose
-	       size depends on the value of the option ", TT "Height" }},
-     EXAMPLE lines ///
-	  printingPrecision = 2
-	  fillMatrix(mutableMatrix(RR,5,10))
-	  fillMatrix(mutableMatrix(ZZ,5,10),UpperTriangular=>true)
-	  fillMatrix(mutableMatrix(QQ,5,10),Density=>.2,Height=>1000)
-	  fillMatrix(mutableMatrix(ZZ,5,10),25,Height=>1000)
-	  ///,
-     SeeAlso => {setRandomSeed, random, mutableMatrix}
-     }
-
 document { 
      Key => {norm,
 	  (norm, InfiniteNumber, Matrix),(norm, Matrix),(norm, RR, Matrix),(norm, InfiniteNumber, RingElement),(norm, MutableMatrix),
@@ -473,12 +446,6 @@ document { Key => {isInfinite, (isInfinite,Number)},
      isInfinite nan
      ///,
      SeeAlso => {isFinite, isANumber}
-     }
-
-document {
-     Key => associatedPrimes,
-     Headline => "find the associated primes of an ideal",
-     SeeAlso => { "PrimaryDecomposition :: PrimaryDecomposition"}     
      }
 
 document {
@@ -566,6 +533,7 @@ document {
 
 document {
      Key => {(quotientRemainder,RingElement,RingElement),
+	  (quotientRemainder,InexactNumber,RingElement), (quotientRemainder,RingElement,InexactNumber),
 	  (quotientRemainder,Number,RingElement), (quotientRemainder,RingElement,Number)},
      Headline => "quotient and remainder",
      Usage => "(q,r) = quotientRemainder(f,g)",
@@ -694,94 +662,6 @@ document { Key => (symbol ||,GradedModuleMap,GradedModuleMap),
      ///
      }
 
-for n in {BasisElementLimit, PairLimit, DegreeLimit} do document {
-     Key => [quotient,n],
-     PARA {
-     	  "The value for this optional argument is passed through to ", TO gb, " when
-     	  one of the following methods is used: ", TO (quotient,Ideal,Ideal), ", ", TO (quotient,Ideal,RingElement), ",
-     	  ", TO (quotient,Module,Ideal), ", ", TO (quotient,Module,Module), ", and ", TO (quotient,Module,RingElement), "."
-	  }
-     }
-
-for n in {BasisElementLimit,PairLimit} do document {
-     Key => [saturate,n],
-     PARA {
-     	  "The value for this optional argument is passed through to ", TO gb, " when
-     	  one of the following methods is used: ", TO (saturate,Ideal), ", ", TO (saturate,Ideal,Ideal), ",
-     	  ", TO (saturate,Ideal,RingElement), "."
-	  }
-     }
-
-document {
-     Key => [associatedPrimes,Strategy],
-     "The strategy option value is currently not considered while computing associated primes",
-     PARA{},
-     "There are three methods for 
-     computing associated primes in Macaulay2: If the ideal is a monomial ideal, use code that 
-     Greg Smith and Serkan Hosten wrote.  If a primary decomposition has already been found, use the
-     stashed associated primes found.  If neither of these is the case, then use Ext 
-     modules to find the associated primes (this is ", TT "Strategy=>1", ")",
-     PARA{},
-     "In order to use the monomial ideal algorithm, it is necessary
-     to make ", TT "I", " into a monomial ideal.",
-     EXAMPLE lines ///
-         S = QQ[a,b,c,d,e];
-     	 I1 = ideal(a,b,c);
-	 I2 = ideal(a,b,d);
-	 I3 = ideal(a,e);
-	 P = I1*I2*I3
-	 L1 = associatedPrimes P
-	 L2 = apply(associatedPrimes monomialIdeal P, J -> ideal J)
-	 M1 = set apply(L1, I -> sort flatten entries gens I)
-	 M2 = set apply(L2, I -> sort flatten entries gens I)
-	 assert(M1 === M2)
-     ///,
-     "The method using Ext modules comes from     
-     Eisenbud-Huneke-Vasconcelos, Invent. Math 110 (1992) 207-235."
-     }
-
-document {
-     Key => "rootPath",
-     Usage => "rootPath",
-     Outputs => {
-	  String => "the path, as seen by external programs, to the root of the file system seen by Macaulay2"
-	  },
-     PARA {
-	  "This string may be concatenated with an absolute path to get one understandable by external programs.
-	  Currently, this makes a difference only under Microsoft Windows with Cygwin, but there it's crucial
-	  for those external programs that are not part of Cygwin.  Fortunately, programs compiled under Cygwin
-	  know were to look for files whose paths start with something like ", TT "C:/", ", so it is safe
-	  always to concatenate with the value of ", TO "rootPath", ", even when it is unknown whether the
-	  external program has been compiled under Cygwin."
-	  },
-     EXAMPLE lines ///
-     fn = temporaryFileName()
-     rootPath | fn
-     ///,
-     SeeAlso => {"rootURI"}
-     }
-
-document {
-     Key => "rootURI",
-     Usage => "rootURI",
-     Outputs => {
-	  String => "the path, as seen by an external browser, to the root of the file system seen by Macaulay2"
-	  },
-     PARA {
-	  "This string may be concatenated with an absolute path to get one understandable by an external browser.
-	  Currently, this makes a difference only under Microsoft Windows with Cygwin, but there it's crucial
-	  for those external programs that are not part of Cygwin.  Fortunately, programs compiled under Cygwin
-	  know were to look for files whose paths start with something like ", TT "C:/", ", so it is safe
-	  always to concatenate with the value of ", TO "rootPath", ", even when it is unknown whether the
-	  external program has been compiled under Cygwin."
-	  },
-     EXAMPLE lines ///
-     fn = temporaryFileName()
-     rootURI | fn
-     ///,
-     SeeAlso => {"rootPath"}
-     }
-
 doc ///
    Key
      groebnerBasis
@@ -845,7 +725,7 @@ doc ///
       gbI = ideal groebnerBasis(I, Strategy=>"F4");
       netList gbI_*
    Caveat
-     (1) The MGB and F4 options are experimental, work only over a finite field of char < 2^{32}, not over
+     (1) The MGB and F4 options are experimental, work only over a finite field of char $< 2^{32}$, not over
      quotient rings, and not over exterior or Weyl algebras.  However, these versions can be much
      faster when they apply. (2) The experimental versions do not stash their results into the ideal
      or module. (3) The experimental version only works for ideals currently.

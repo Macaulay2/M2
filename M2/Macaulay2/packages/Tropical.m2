@@ -1282,7 +1282,7 @@ doc///
     Key
 	(fan,TropicalCycle)
     Headline
-	    outputs the fan assocated to the tropical cycle
+	    outputs the fan associated to the tropical cycle
     Usage
     	fan(T)
     Inputs

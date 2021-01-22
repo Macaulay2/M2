@@ -10,7 +10,7 @@ s=makeB'Section({x,y,z})
 assert(class s===B'Section)
 assert(#keys s==2)
 --The default is to create 2 keys.  
-----One of the keys is B'NumberCoefficients. This is a list of the coeffiecients of the inputed list.
+----One of the keys is B'NumberCoefficients. This is a list of the coefficients of the inputted list.
 ----The second key is a string which when evaluated is a linear equation with random coefficients and monomials determined by the list.
 --The coefficients can be randomly generated as the user sees fit. 
 --keys s
@@ -27,7 +27,7 @@ sInteger=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomIntegerCoeffici
 assert(class sInteger#B'NumberCoefficients_0===ZZ)
 
 ---These equations are homogeneous. 
---We can consider an affine system by appeneding a 1 to the inputed list.
+--We can consider an affine system by appeneding a 1 to the inputted list.
 affineSection=makeB'Section({x,y,z,1})
 
 --If we set the ContainsPoint option then we will create a linear equation.

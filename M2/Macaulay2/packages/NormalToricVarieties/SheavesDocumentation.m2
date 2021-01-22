@@ -239,7 +239,7 @@ doc ///
     	    sort apply (max Y, s -> select (# rays Y, i -> not member (i,s)))	    
 	    primaryDecomposition dual monomialIdeal Y
         Text
-            Since the irrelevent ideal is a monomial ideal, the command 
+            Since the irrelevant ideal is a monomial ideal, the command 
 	    @TO monomialIdeal@ also produces the irrelevant ideal.
         Example  
     	    code (monomialIdeal, NormalToricVariety)

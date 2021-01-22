@@ -186,22 +186,7 @@ o27 = -- code for method: dual(MonomialIdeal,List)
 i28 : code(primaryDecomposition, MonomialIdeal)
 
 o28 = -- code for method: primaryDecomposition(MonomialIdeal)
-      /Users/dan/src/M2/Macaulay2/packages/PrimaryDecomposition.m2:175:49-188:29: --source code:
-      primaryDecomposition MonomialIdeal := List => o -> (I) -> (
-           R := ring I;
-           aI := first exponents lcm I;
-           J := dual I;
-           if J == 1 then return {monomialIdeal(0_R)};
-           M := first entries generators J;
-           H := new MutableHashTable;
-           scan(M, m -> (
-                     s := first keys standardForm leadMonomial m;
-                     Q := monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v));
-                     ind := sort keys s;
-                     if not H#?ind then H#ind = Q
-                     else H#ind = intersect(H#ind,Q)));
-           apply(ass0 I, ind -> H#ind)
-           )
+      primaryDecomposition Ideal  := List => opts -> I -> primarydecompHelper(I, (primaryDecomposition, Ideal), opts)
 
 i29 : L = primaryDecomposition I;
 

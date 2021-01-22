@@ -3,6 +3,7 @@
 #ifndef _aring_RR_hpp_
 #define _aring_RR_hpp_
 
+#include "interface/random.h"
 #include "exceptions.hpp"
 #include "aring.hpp"
 #include "buffer.hpp"

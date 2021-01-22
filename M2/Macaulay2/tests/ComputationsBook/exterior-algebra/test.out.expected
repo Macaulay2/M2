@@ -1,4 +1,8 @@
 
+i1 : needsPackage "Truncations";
+
+i2 : lineNumber = 0;
+
 i1 : setRandomSeed();
 
 i2 : symExt = (m,E) ->(

@@ -8,6 +8,7 @@ Benchmark
 Text
 SimpleDoc
 PackageTemplate
+Saturation
 PrimaryDecomposition
 FourierMotzkin
 Dmodules
@@ -108,7 +109,6 @@ Book3264Examples
 Divisor
 EllipticCurves
 HighestWeights
-NumericalHilbert
 MinimalPrimes
 Bertini
 TorAlgebra
@@ -208,3 +208,14 @@ PencilsOfQuadrics
 ThreadedGB
 VectorGraphics
 GKMVarieties
+NoetherianOperators
+Hadamard
+StatGraphs
+GraphicalModelsMLE
+EigenSolver
+MultiplicitySequence
+ResolutionsOfStanleyReisnerRings
+NumericalLinearAlgebra
+ResLengthThree
+MonomialOrbits
+MultiprojectiveVarieties

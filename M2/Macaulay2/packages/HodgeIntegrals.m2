@@ -821,7 +821,7 @@ assert(wittenTau (3,{0,0,0,0,0,0,0,1}) == 1/82944)
 assert(wittenTau (5,{0,0,0,0,0,3}) == 41873/255467520)
 ///
 
--- Examples from the documetation for ch, lambda, kappa, and psi
+-- Examples from the documentation for ch, lambda, kappa, and psi
 TEST///
 R = hodgeRing (1, 1);
 assert(integral(1, 1, ch_1) == 1/24)

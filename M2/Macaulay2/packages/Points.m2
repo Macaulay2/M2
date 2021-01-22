@@ -958,16 +958,9 @@ document {
      monomialIdeal G == inG
      ///,
      PARA{},
-     "Next a larger example that shows that the Buchberger-Moeller algorithm in ",
+     "The Buchberger-Moeller algorithm in ",
      TT "points", " may be faster than the alternative method using the intersection
      of the ideals for each point.",
-     EXAMPLE lines ///
-     R = ZZ/32003[vars(0..4), MonomialOrder=>Lex]
-     M = random(ZZ^5, ZZ^150)
-     time J = affinePointsByIntersection(M,R);
-     time C = affinePoints(M,R);
-     J == C_2  
-     ///,
      SeeAlso => {affinePointsByIntersection}
      }
 
@@ -1148,15 +1141,6 @@ doc ///
     Text
      This algorithm may be faster than
      computing the intersection of the ideals of each projective point.
-
-    Example
-     K = ZZ/32003
-     R = K[z_0..z_5]
-     M = random(ZZ^6,ZZ^150)
-     elapsedTime (inG,G) = projectivePoints(M,R);
-     elapsedTime H = projectivePointsByIntersection(M,R);
-     G == H
-
    Caveat
     This function removes zero columns of @TT "M"@ and duplicate columns giving rise to the same projective point (which prevent the algorithm from terminating). The user can bypass this step with the option @TT "VerifyPoints"@.
    SeeAlso

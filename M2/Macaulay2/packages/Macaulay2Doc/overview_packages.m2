@@ -12,7 +12,10 @@ Node
     Code
       star := IMG {"src" => replace("PKG", "Style", currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
       categories := new MutableHashTable from {};
-      scan(separate_" " version#"packages", pkgname -> (
+      pkgs := separate_" " version#"packages";
+      oops := select(tally pkgs, v -> v > 1); -- are any packages listed twice?  If so, it will cause an inscrutable error below when sorting pairs
+      if #oops > 0 then error ("some packages listed more than once in `version#\"packages\"` : ", concatenate demark_"," keys oops);
+      scan(pkgs, pkgname -> (
 	      pkgopts := readPackage pkgname;
 	      -- populate categories
 	      scan(pkgopts.Keywords, keyword -> if not categories#?keyword
@@ -103,6 +106,7 @@ Node
         loadPackage
         needsPackage
         dismiss
+        importFrom
         "loadedPackages"
       :Creating a new package
         "creating a package"
@@ -139,6 +143,7 @@ Node
     uninstallPackage
     uninstallAllPackages
     :Interacting with packages
+    importFrom
     (use, Package)
     (check, Package)
     (debug, Package)
@@ -156,7 +161,7 @@ Node
     Text
       Creating a package is the most common way of contributing to Macaulay2. Packages can contain
       code for working with objects of a certain category, generating examples for testing a conjecture,
-      or an implemention of algorithms introduced in the literature.
+      or an implementation of algorithms introduced in the literature.
 
     Tree
       :There are five parts to a Macaulay2 package
@@ -197,6 +202,7 @@ Node
     :Components of a package
     newPackage
     export
+    exportFrom
     exportMutable
     beginDocumentation
     TEST
