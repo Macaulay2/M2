@@ -393,7 +393,7 @@ doc ///
        SchubProbB = {{3,4,7,8},{3,4,7,8},{3,4,7,8},{4,6,7,8},{4,6,7,8},{4,6,7,8},{4,6,7,8}}
        NSC2phc(SchubProbB,4,8)
 
-    SeeAlso
+  SeeAlso
       LRrule
 ///
 

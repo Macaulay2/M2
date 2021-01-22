@@ -1,6 +1,11 @@
+phcPresent := run ("type phc >/dev/null 2>&1") === 0
+phcVersion := if phcPresent then replace("PHCv([0-9.]+) .*\n","\\1",get "! phc --version")
+phcVersionNeeded := "2.4.77"
+phcPresentAndModern := phcPresent and match("^[0-9.]+$",phcVersion) and phcVersion >= phcVersionNeeded
+
 newPackage(
     "NumericalSchubertCalculus",
-    Version => "1.16", 
+    Version => "1.17", 
     Date => "Sep 2020",
     Authors => {
 	{Name => "Anton Leykin", 
@@ -29,6 +34,7 @@ newPackage(
 	},
     AuxiliaryFiles => true,
     CacheExampleOutput => true,
+    OptionalComponentsPresent => phcPresentAndModern,
     DebuggingMode => false
     )
 debug NumericalAlgebraicGeometry
