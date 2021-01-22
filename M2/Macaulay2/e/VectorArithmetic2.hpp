@@ -315,10 +315,7 @@ struct GCVector : public our_new_delete
   template<typename... Args>
   GCVector(Args&&... args) : mVector(args...) {}
 
-  //VECTOR(T)& operator() () { return mVector; }
   VECTOR(T)* value() { return &mVector; }
-
-  
 
   VECTOR(T) mVector;
 };

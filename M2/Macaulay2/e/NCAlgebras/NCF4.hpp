@@ -64,7 +64,7 @@ private:
     PreRowType preRowType;
   };
 
-  struct Row
+  struct Row : public our_new_delete
   {
     CoeffVector coeffVector;     // vector of coefficients
     Range<int> columnIndices;    // column indices used in the row.  Valid *only* after labelAndSortF4Matrix, 
@@ -83,7 +83,7 @@ private:
   //using ColumnsVector = tbb::concurrent_vector<Column>;
   using ColumnsVector = std::vector<Column>;
   //using RowsVector = tbb::concurrent_vector<Row>;
-  using RowsVector = std::vector<Row>;
+  using RowsVector = std::vector<Row,gc_allocator<Row>>;
   using PreRowFeeder = tbb::parallel_do_feeder<PreRow>;
   // The pair in this unordered_map is (i,j) where:
   //    i is the column number
@@ -221,7 +221,7 @@ private:
                           int firstcol,
                           long &numCancellations,
                           DenseCoeffVector& dense,
-                          bool updatColumnIndex,
+                          bool updateColumnIndex,
                           LockType& lock);
 
   void reduceF4Row(int index,

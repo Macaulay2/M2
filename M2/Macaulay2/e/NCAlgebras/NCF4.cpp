@@ -643,7 +643,7 @@ void NCF4::processPreRow(PreRow r,
   if (preRowType == PreviousReducerPreRow) delete elem;
 
   // add the processed row to the appropriate list
-  rowsVector.emplace_back(Row {coeffs, columnRange, wordRange});
+  rowsVector.emplace_back(Row {{},coeffs, columnRange, wordRange});
 }
 
 void NCF4::processPreRow(PreRow r,
@@ -929,6 +929,7 @@ void NCF4::generalReduceF4Row(int index,
   mVectorArithmetic->sparseRowToDenseRow(dense,
                                          mRows[index].coeffVector,
                                          mRows[index].columnIndices);
+
   do {
     int pivotrow = mColumns[first].pivotRow;
     if (pivotrow >= 0)
@@ -938,6 +939,7 @@ void NCF4::generalReduceF4Row(int index,
                                                     mRows[pivotrow].coeffVector,
                                                     mRows[pivotrow].columnIndices);
         // last component in the row corresponding to pivotrow
+        
         int last1 = mRows[pivotrow].columnIndices.cend()[-1];
         last = (last1 > last ? last1 : last);
       }
@@ -947,7 +949,7 @@ void NCF4::generalReduceF4Row(int index,
       }
     first = mVectorArithmetic->denseRowNextNonzero(dense, first+1, last);
   } while (first <= last);
-  
+
   mVectorArithmetic->safeDenseRowToSparseRow(dense,
                                              mRows[index].coeffVector,
                                              mRows[index].columnIndices,
@@ -1009,7 +1011,8 @@ void NCF4::parallelReduceF4Matrix()
                 numCancellations,
                 denseVector);
 
-  // interreduce the matrix with respect to these overlaps.  This needs to be sequential.
+  // interreduce the matrix with respect to these overlaps.
+  // This needs to be sequential as well
   for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
     reduceF4Row(i,
                 mRows[i].columnIndices[1],
