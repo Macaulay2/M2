@@ -1116,14 +1116,14 @@ specializedNoetherianOperators(Ideal, Matrix) := List => true >> opts -> (I,pt) 
     S := ring I;
     if precision ring pt == infinity and precision S == infinity then (
         depVars := if opts.?DependentSet then opts.DependentSet 
-            else if isPrimary I then getDepIndVars(I, opts)
+            else if isPrimary I then first getDepIndVars(I, opts)
             else error"expected option DependentSet";
         numNoethOpsAtPoint(I, pt, opts, DependentSet => depVars)
     )
     else if coefficientRing S === QQ then (
         T := (ultimate(coefficientRing, ring pt)) monoid S;
         depVars = if opts.?DependentSet then opts.DependentSet 
-            else if isPrimary I then getDepIndVars(I, opts)
+            else if isPrimary I then first getDepIndVars(I, opts)
             else error"expected option DependentSet";
         numNoethOpsAtPoint(sub(I,T), pt, opts, DependentSet => depVars / (x -> sub(x, T)))
     )
