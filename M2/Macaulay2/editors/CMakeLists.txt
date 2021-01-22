@@ -1,6 +1,6 @@
 ###############################################################################
 ## This directory contains the rules for generating grammar files for editors
-## and syntax highlighing engines as well as the M2-mode package for Emacs.
+## and syntax highlighting engines as well as the M2-mode package for Emacs.
 ## - M2-editors generates grammar files
 ## - M2-emacs   generates the M2-mode package for Emacs
 
