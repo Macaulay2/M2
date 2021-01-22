@@ -12,7 +12,7 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "1.1", 
-    Date => "January 17, 2021",
+    Date => "January 22, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -22,8 +22,11 @@ newPackage(
     Reload => false
 )
 
+if Cremona.Options.Version < "5.1" then error "your version of the Cremona package is outdated (required version 5.1 or newer); you can download the latest version from https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages";
+if SparseResultants.Options.Version < "1.1" then error "your version of the SparseResultants package is outdated (required version 1.1 or newer); you can download the latest version from https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages";
+
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct",
-       "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence"}
+       "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence", "inverse2"}
 
 debug Cremona;
 debug SparseResultants;
@@ -32,7 +35,7 @@ MultiprojectiveVariety = new Type of MutableHashTable;
 
 globalAssignment MultiprojectiveVariety;
 
-MultiprojectiveVariety.synonym = "projective variety";
+MultiprojectiveVariety.synonym = "multi-projective variety";
 
 projectiveVariety = method(TypicalValue => MultiprojectiveVariety, Options => {MinimalGenerators => true, Saturate => true});
 
@@ -60,19 +63,15 @@ projectiveVariety Ideal := o -> I -> (
         "parametrization" => null,
         "projections" => null,
         "euler" => null,
-        "expression" => null
+        "expression" => null,
+        "IsSaturationCalculated" => o.Saturate
     }
 );
 
 projectiveVariety Ring := o -> R -> (
     if not isPolynomialRing ambient R then error "expected the ambient ring to be polynomial";
     X := projVarFromRing R;
-    I := X#"idealVariety";
-    m := X#"multigens";
-    if o.Saturate then (
-        for x in m do I = saturate(I,ideal x,MinimalGenerators=>o.MinimalGenerators);
-        if I != X#"idealVariety" then error "the ideal is not multi-saturated";
-    );
+    if o.Saturate then if not isSatIdeal X then error "the ideal is not multi-saturated";
     X
 );
 
@@ -80,6 +79,13 @@ projVarFromRing = memoize (R -> (
     X := projectiveVariety(ideal R,MinimalGenerators=>false,Saturate=>false);
     X#"ringVariety" = R;
     X
+));
+
+isSatIdeal = memoize (X -> (
+    if X#"IsSaturationCalculated" then return true;
+    I := ideal X;
+    J := multisaturate I;
+    if I == J then (X#"IsSaturationCalculated" = true; return true) else return false;
 ));
 
 projectiveVariety MultidimensionalMatrix := o -> A -> projectiveVariety(ideal(A!),MinimalGenerators=>true,Saturate=>false);
@@ -345,6 +351,12 @@ random (List,MultiprojectiveVariety) := o -> (l,X) -> (
 
 random (ZZ,MultiprojectiveVariety) := o -> (i,X) -> random({i},X);
 
+MultiprojectiveVariety ** Ring := (X,K) -> (
+    if not isField K then error "expected a field";
+    if (char coefficientRing X =!= char K and char coefficientRing X =!= 0) then error "characteristic not valid";
+    projectiveVariety(sub(ideal X,vars ring projectiveVariety(shape X,K)),Saturate=>false,MinimalGenerators=>true)
+);
+
 
 MultirationalMap = new Type of MutableHashTable;
 
@@ -423,12 +435,51 @@ multirationalMap (MultirationalMap,MultiprojectiveVariety) := (Phi,Y) -> (
 );
 
 check MultirationalMap := o -> Phi -> (
-    Y := target Phi;
-    L := factor Phi;
-    P := apply(projections Y,L,(p,f) -> if target p === target f then p else rationalMap(source p,ambient target f,matrix p,Dominant=>"notSimplify"));
+    X := source Phi; Y := target Phi;
+    if not isSatIdeal X then error "the ideal of the source is not multi-saturated";
+    if not isSatIdeal Y then error "the ideal of the target is not multi-saturated";
+    L := apply(factor Phi,super);
+    P := apply(projections Y,L,(p,f) -> if target p === target f then p else rationalMap(source p,target f,matrix p,Dominant=>"notSimplify"));
     for i to #L -1 do if not isSubset(image P_i,image L_i) then error "the target variety is not compatible with the maps";
     Phi
 );
+
+checkRepresentatives = method();
+checkRepresentatives MultirationalMap := Phi -> (
+   local F;
+   for phi in factor Phi do (
+       F := phi#"maps";
+       if F =!= null then for i from 1 to #F -1 do assert(minors(2,(toMatrix F_i)||(toMatrix F_0)) == 0);
+   );
+);
+
+checkAndCompare = method();
+checkAndCompare (MultirationalMap,Boolean) := (Phi,recursive) -> (
+    try (checkRepresentatives Phi; check Phi) else error "found a wrong map";
+    if Phi#"image" =!= null then (if not isSatIdeal image Phi then error "found a wrong ideal for an image");
+    if Phi#"inverse" =!= null and recursive then (
+        if Phi * Phi^-1 != 1 then error "found a wrong inverse map";
+        if Phi#"isDominant" === false or Phi#"isBirational" === false or (inverse Phi)#"isDominant" === false or (inverse Phi)#"isBirational" === false then error "found wrong value for 'isDominant' or 'isBirational'";
+        if Phi#"multidegree" =!= null and (inverse Phi)#"multidegree" =!= null then if multidegree inverse Phi != reverse multidegree Phi then error "found a wrong multidegree";
+        checkAndCompare(inverse Phi,false));
+    if Phi#"graph" =!= null then (
+        checkAndCompare(first graph Phi,true); 
+        checkAndCompare(last graph Phi,true);
+        if (first graph Phi) * Phi != last graph Phi then error "found a wrong graph"); 
+);
+checkAndCompare (MultirationalMap,MultirationalMap) := (Phi,Psi) -> (
+    checkAndCompare(Phi,true);
+    checkAndCompare(Psi,true);
+    if Phi != Psi then return false;
+    if Phi#"image" =!= null and Psi#"image" =!= null then (if image Phi != image Psi then error "found wrong value for 'image'");
+    if Phi#"baseLocus" =!= null and Psi#"baseLocus" =!= null then (if baseLocus Phi != baseLocus Psi then error "found wrong value for 'baseLocus'");
+    if Phi#"multidegree" =!= null and Psi#"multidegree" =!= null then (if multidegree Phi != multidegree Psi then error "found wrong value for 'multidegree'");
+    if Phi#"isDominant" =!= null and Psi#"isDominant" =!= null then (if Phi#"isDominant" != Psi#"isDominant" then error "found wrong value for 'isDominant'");
+    if Phi#"isBirational" =!= null and Psi#"isBirational" =!= null then (if Phi#"isBirational" != Psi#"isBirational" then error "found wrong value for 'isBirational'");
+    if Phi#"graph" =!= null and Psi#"graph" =!= null then (if source graph Phi != source graph Psi then error "found wrong value for 'graph'");
+    return true;   
+);
+MultirationalMap <==> MultirationalMap := (Phi,Psi) -> checkAndCompare(Phi,Psi);
 
 source MultirationalMap := Phi -> Phi#"source";
 
@@ -454,10 +505,21 @@ segre MultirationalMap := Phi -> (
     Phi#"compositionWithSegreEmbedding" = rationalMap(f * (map s),Dominant=>"notSimplify")
 );
 
+compose0 = method(); -- this is the same as compose(RingMap,RingMap) but it needs the updated version of Cremona.m2 
+compose0 (RingMap,RingMap) := (f,g) -> (
+    if source f =!= target g then error "rational maps not composable: incompatible target and source";
+    L := toMatrix (f * g);
+    if L == 0 then error "rational maps may not be composable: got the empty map by composing chosen representatives";
+    D := try gcd flatten entries compress L else 1_(target f);
+    local Q;
+    M := if D != 0 and D != 1 then apply(flatten entries L,l -> (Q = quotientRemainder(l,D); assert(last Q == 0); first Q)) else flatten entries L;
+    return map(target f,source g,M);
+);
+
 compose (MultirationalMap,MultirationalMap) := (Phi,Psi) -> (
     if ring ambient target Phi =!= ring ambient source Psi or target Phi != source Psi then error "multi-rational maps not composable: the target of the first one is different from the source of the second one";
     f := toRingMap(Phi,ring source Psi);
-    Eta := multirationalMap(apply(factor Psi,g -> rationalMap(compose(f,map g),Dominant=>"notSimplify")),target Psi);
+    Eta := multirationalMap(apply(factor Psi,g -> rationalMap(compose0(f,map g),Dominant=>"notSimplify")),target Psi);
     if ring source Eta =!= ring source Phi then error "internal error encountered: bad source found";
     Eta#"source" = source Phi;
     if Phi#"isDominant" === true and Psi#"isDominant" === true then Eta#"isDominant" = true;
@@ -495,6 +557,8 @@ multirationalMap MultiprojectiveVariety := X -> (
     I#"isBirational" = true;
     I
 );
+
+ZZ _ MultiprojectiveVariety := (n,X) -> (if n =!= 1 then error "expected integer to be 1"; multirationalMap X);
 
 multirationalMap (MultiprojectiveVariety,MultiprojectiveVariety) := (X,Y) -> (
     if X === Y then return multirationalMap X;
@@ -562,24 +626,77 @@ MultirationalMap ^** MultiprojectiveVariety := (Phi,Z) -> (
     projectiveVariety trim lift((segre Phi)^** ((segre target Phi) ideal Z),ring ambient source Phi)
 );
 
-graph MultirationalMap := o -> Phi -> (
-    if Phi#"graph" =!= null then return Phi#"graph";
-    if o.BlowUpStrategy =!= "Eliminate" then error "given strategy is not available";
-    F := apply(factor Phi,f -> lift(matrix f,ring ambient source Phi));
-    s := # F;
+graphViaElim = Phi -> (
     n := apply((source Phi)#"dimAmbientSpaces",i->i+1);
     m := apply((target Phi)#"dimAmbientSpaces",i->i+1);
+    s := #m;
     K := coefficientRing Phi;
     R' := ring first first gensRing(K,n|m);
     t := local t;
     R := K[t_0 .. t_(s-1), gens R', MonomialOrder => Eliminate s];
     subx := map(R,ring ambient source Phi,submatrix(vars R,{s .. s + sum n - 1}));
     suby := map(R,ring ambient target Phi,submatrix(vars R,{s + sum n .. s + sum n + sum m - 1}));
-    yy := (target Phi)#"multigens";
-    I := subx(ideal source Phi) + sum(s,i -> ideal(suby(matrix{yy_i}) - t_i * subx(F_i)));
-    G := projectiveVariety(sub(ideal selectInSubring(1,gens gb I),R'),MinimalGenerators=>true,Saturate=>false);
+    yy := apply((target Phi)#"multigens",y -> suby matrix{y});
+    F := apply(factor Phi,f -> subx lift(matrix f,ring ambient source Phi));
+    I := subx(ideal source Phi) + sum(s,i -> ideal(yy_i - t_i * F_i));
+    projectiveVariety(sub(ideal selectInSubring(1,gens gb I),R'),MinimalGenerators=>true,Saturate=>false)
+);
+
+SymmIdeal = Phi -> (
+    n := apply((source Phi)#"dimAmbientSpaces",i->i+1);
+    r := #n;
+    m := apply((target Phi)#"dimAmbientSpaces",i->i+1);
+    s := #m;
+    K := coefficientRing Phi;
+    g := gensRing(K,n|m);
+    R := ring first first g;
+    subx := map(R,ring ambient source Phi,submatrix(vars R,{0 .. sum n - 1}));
+    suby := map(R,ring ambient target Phi,submatrix(vars R,{sum n .. sum n + sum m - 1}));
+    yy := apply((target Phi)#"multigens",y -> suby matrix{y});
+    F := apply(factor Phi,f -> subx lift(syz matrix f,ring ambient source Phi));
+    I := subx(ideal source Phi) + sum(s,i -> ideal(yy_i * F_i));
+    -- for i to r-1 do I = saturate(I,ideal g_i);
+    trim I -- this may not be multi-saturated
+);
+
+graphViaSyzygies = Phi -> (
+    I := SymmIdeal Phi;
+    n := apply((source Phi)#"dimAmbientSpaces",i->i+1);
+    subx := map(ring I,ring ambient source Phi,submatrix(vars ring I,{0 .. sum n - 1}));
+    F := apply(factor Phi,f -> subx lift(first flatten entries compress matrix f,ring ambient source Phi));
+    for i to #F-1 do I = saturate(I,F_i);
+    projectiveVariety(I,MinimalGenerators=>true,Saturate=>false)
+);
+
+graphViaKoszul = Phi -> (
+    n := apply((source Phi)#"dimAmbientSpaces",i->i+1);
+    m := apply((target Phi)#"dimAmbientSpaces",i->i+1);
+    s := #m;
+    K := coefficientRing Phi;
+    R := ring first first gensRing(K,n|m);
+    subx := map(R,ring ambient source Phi,submatrix(vars R,{0 .. sum n - 1}));
+    suby := map(R,ring ambient target Phi,submatrix(vars R,{sum n .. sum n + sum m - 1}));
+    yy := apply((target Phi)#"multigens",y -> suby matrix{y});
+    F := apply(factor Phi,f -> subx lift(matrix f,ring ambient source Phi));
+    I := subx(ideal source Phi) + sum(s,i -> minors(2,yy_i || F_i));
+    for i to s-1 do I = saturate(I,ideal F_i);
+    projectiveVariety(I,MinimalGenerators=>true,Saturate=>false)
+);
+
+graph MultirationalMap := o -> Phi -> (
+    if Phi#"graph" =!= null then return Phi#"graph";
+    local G;
+    if o.BlowUpStrategy === "Eliminate" then G = graphViaElim(Phi) else (
+        if o.BlowUpStrategy === "Syzygies" or o.BlowUpStrategy === "Saturate" then G = graphViaSyzygies(Phi) else (
+            if o.BlowUpStrategy === "Koszul" then G = graphViaKoszul(Phi) else (
+                error "possible values for the option BlowUpStrategy are: \"Eliminate\", \"Syzygies\", \"Koszul\"";
+            );
+        );
+    );
+    r := # (source Phi)#"dimAmbientSpaces";
+    s := # (target Phi)#"dimAmbientSpaces";
     pr := projections G;
-    psi1 := multirationalMap(take(pr,# n),source Phi);
+    psi1 := multirationalMap(take(pr,r),source Phi);
     psi2 := multirationalMap(take(pr,-s),target Phi);
     psi1#"isDominant" = true;
     psi1#"isBirational" = true;
@@ -671,13 +788,10 @@ degree (MultirationalMap,Option) := (Phi,opt) -> (
     );
 );
 
-
-baseLocusForMapFromProjectiveSpace = method(); 
-
 baseLocus = method(TypicalValue => MultiprojectiveVariety);
 baseLocus MultirationalMap := Phi -> (
     if Phi#"baseLocus" =!= null then return Phi#"baseLocus";
-    if isPolynomialRing ring source Phi then ( -- this is to fix a bug in Cremona.m2: ideal(RationalMap) may give a wrong answer for a constant map from a projective space
+    if isPolynomialRing ring source Phi then ( -- this is not needed with the updated version of Cremona.m2
         local w; local q;
         B := for f in factor Phi list (
             if ideal matrix f == 0 or codim ideal matrix f > 1 then ideal matrix f else (
@@ -694,43 +808,47 @@ baseLocus MultihomogeneousRationalMap := Phi -> baseLocus multirationalMap {Phi}
 isMorphism MultirationalMap := Phi -> dim baseLocus Phi == -1;
 
 inverse (MultirationalMap,Option) := (Phi,opt) -> (
-    o := toList opt;
-    if not(#o == 2 and first o === Verify) then error "Verify is the only available option for inverse(MultirationalMap)";
-    if not instance(last o,Boolean) then error "option Verify accepts true or false";
     if Phi#"inverse" =!= null then return Phi#"inverse";
     if Phi#"isBirational" === false or Phi#"isDominant" === false then error "expected a birational map";
     if Phi#"isBirational" === null then if dim source Phi != dim target Phi then (Phi#"isBirational" = false; error "expected a birational map"); 
-    Gr := source first graph Phi;
+    o := toList opt;
+    if not(#o == 2 and first o === Verify) then error "Verify is the only available option for inverse(MultirationalMap)";
+    b := last o;
+    if b === false then b = 0 else if b === true then b = 1;
+    if not (instance(b,ZZ) and b >= 0) then error "option Verify accepts true or false";
+    Gr := source graph Phi;
     Sub := map(ring target Phi,ring ambient Gr,matrix{toList((numgens ring ambient source Phi):0_(ring ambient target Phi))}|(vars ring ambient target Phi));
     r := # (source Phi)#"dimAmbientSpaces";
     x := apply(take(Gr#"multigens",r),g -> matrix{g});
     d := entries diagonalMatrix toList(r:1);
     gensGr := flatten entries gens ideal Gr;
-    local I; local J; local F; local phi;
+    local I; local J; local F; local psi;
     L := for i to r-1 list (
         I = select(gensGr,g -> take(degree g,r) == d_i);
         J = matrix apply(I,g -> flatten entries diff(x_i,g));
         F = entries transpose mingens kernel Sub J;
         if #F == 0 then (Phi#"isBirational" = false; error "the multi-rational map is not birational");
-        phi = rationalMap first F;
-        phi#"maps" = apply(F,f -> map(source phi,target phi,f));
-        phi#"map" = first phi#"maps";
-        -- if last o then (for f in phi#"maps" do try assert(rationalMap f == phi) else error "something went wrong in calculating the inverse map");
-        phi
+        psi = rationalMap(first F,Dominant=>"notSimplify");
+        psi#"maps" = apply(F,f -> map(source psi,target psi,f));
+        psi#"map" = first psi#"maps";
+        psi
     );
     Psi := multirationalMap(L,source Phi);
     if ring source Psi =!= ring target Phi then error "internal error encountered";  
     Psi#"source" = target Phi;
+    if b >= 2 then (check Psi; try checkRepresentatives Psi else error "something went wrong in calculating the inverse map: wrong representatives"; <<"-- representatives of "<<toString expression Psi<<" have been successfully checked!"<<endl);
     Psi#"isBirational" = true;
     Psi#"isDominant" = true;
-    if last o and Phi#"isBirational" === null and Phi#"isDominant" === null then (
+    if b >= 1 and Phi#"isBirational" === null and Phi#"isDominant" === null then (
         if image Phi != target Phi then (Phi#"isDominant" = false; Phi#"isBirational" = false; error "the multi-rational map is not dominant");
         Phi#"isDominant" = true;
     );
-    if last o and Phi#"isBirational" === null then (
+    if b >= 1 and Phi#"isBirational" === null then (
         if degree Phi != 1 then (Phi#"isBirational" = false; error("the multi-rational map is not birational, its degree is "|toString(degree Phi)));
         Phi#"isBirational" = true;
     );
+    if b >= 3 then (if Phi * Psi != 1 then error "something went wrong in calculating the inverse map: the composition of the maps is not identity"; <<"-- composition of "<<toString expression Phi<<" with "<<toString expression Psi<<" has been successfully verified!"<<endl);
+    if b >= 4 then (if Psi * Phi != 1 then error "something went wrong in calculating the inverse map: the composition of the maps is not identity"; <<"-- composition of "<<toString expression Psi<<" with "<<toString expression Phi<<" has been successfully verified!"<<endl);
     if Phi#"isBirational" === true then (
         (last graph Phi)#"isBirational" = true;
         (last graph Phi)#"isDominant" = true;
@@ -742,9 +860,37 @@ inverse (MultirationalMap,Option) := (Phi,opt) -> (
 );
 
 inverse MultirationalMap := Phi -> inverse(Phi,Verify=>true);
-
 inverse (MultihomogeneousRationalMap,Option) := (Phi,opt) -> inverse(multirationalMap {Phi},opt);
 inverse MultihomogeneousRationalMap := Phi -> inverse(Phi,Verify=>true);
+
+inverse2 = method(TypicalValue => MultirationalMap);
+inverse2 (MultirationalMap,Option) := (Phi,opt) -> (
+    if Phi#"inverse" =!= null or Phi#"graph" =!= null then return inverse(Phi,opt);
+    G := projectiveVariety(SymmIdeal Phi,MinimalGenerators=>false,Saturate=>false); -- warning: this may not be multi-saturated
+    (r,s) := (# (source Phi)#"dimAmbientSpaces", # (target Phi)#"dimAmbientSpaces");
+    Phi#"graph" = (multirationalMap(take(projections G,r),source Phi), multirationalMap(take(projections G,-s),target Phi));
+    isBir := Phi#"isBirational";
+    Phi#"isBirational" = null;
+    Psi := inverse(Phi,Verify=>false);
+    Phi#"graph" = null;
+    Phi#"isBirational" = isBir;
+    err := "not able to get an inverse map by using dedicated algorithm for the multi-linear type case; try using the general function inverse";
+    if last toList opt then (
+        try checkRepresentatives Psi else error(err|"(*)");
+        if not(Phi * Psi == 1 and Psi * Phi == 1) then error(err|"()"); 
+        Phi#"isBirational" = true;
+        Phi#"isDominant" = true;
+        Psi#"isBirational" = true;
+        Psi#"isDominant" = true;
+        Phi#"inverse" = Psi;
+        Psi#"inverse" = Phi;
+    );
+    return Psi;
+);
+
+inverse2 MultirationalMap := Phi -> inverse2(Phi,Verify=>true);
+inverse2 (MultihomogeneousRationalMap,Option) := (Phi,opt) -> inverse2(multirationalMap {Phi},opt);
+inverse2 MultihomogeneousRationalMap := Phi -> inverse2(Phi,Verify=>true);
 
 isIsomorphism MultirationalMap := Phi -> (
     if dim source Phi != dim target Phi or Phi#"isBirational" === false or Phi#"isDominant" === false then return false;
@@ -867,6 +1013,23 @@ rationalMap (MultiprojectiveVariety,List) := o -> (X,l) -> multirationalMap rati
 rationalMap (MultiprojectiveVariety,ZZ) := o -> (X,a) -> multirationalMap rationalMap(ideal X,a,Dominant=>o.Dominant);
 rationalMap (MultiprojectiveVariety,ZZ,ZZ) := o -> (X,a,b) -> multirationalMap rationalMap(ideal X,a,b,Dominant=>o.Dominant);
 
+clean MultirationalMap := Phi -> multirationalMap(apply(factor Phi,clean),target Phi);
+clean RationalMap := phi -> rationalMap(map phi,Dominant=>"notSimplify");
+clean MultihomogeneousRationalMap := phi -> rationalMap(map phi,Dominant=>"notSimplify");
+
+MultirationalMap ** Ring := (Phi,K) -> (
+   if not isField K then error "expected a field";
+   if (char coefficientRing Phi =!= char K and char coefficientRing Phi =!= 0) then error "characteristic not valid";
+   X := (source Phi) ** K;
+   Y := (target Phi) ** K;
+   F := apply(factor Phi,projections Y,(f,p) -> rationalMap(map(ring X,target p,sub(lift(matrix f,ring ambient source Phi),vars ring ambient X)),Dominant=>"notSimplify"));
+   Psi := multirationalMap(F,Y);
+   if ring source Psi =!= ring X then error "internal error encountered";
+   Psi#"source" = X;
+   Psi#"isDominant" = Phi#"isDominant";
+   Psi#"isBirational" = Phi#"isBirational";
+   return Psi;
+);
 
 beginDocumentation() 
 
@@ -878,8 +1041,14 @@ document {Key => {MultiprojectiveVariety},
 Headline => "the class of all multi-projective varieties", 
 PARA {"A ",EM"multi-projective variety"," is a closed subvariety of a product of projective spaces ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}$///,"."}}
 
+document {Key => {Saturate, [projectiveVariety,Saturate]},
+Headline => "whether to compute the multi-saturation of the ideal",
+Usage => "projectiveVariety(I,Saturate=>false)", 
+PARA{"Use this option only in the case you know that the ideal ",TT"I"," is already multi-saturated, otherwise nonsensical answers may result."},
+SeeAlso => {projectiveVariety}}
+
 document { 
-Key => {projectiveVariety, (projectiveVariety,Ideal), (projectiveVariety,Ring), [projectiveVariety,Saturate], [projectiveVariety,MinimalGenerators]}, 
+Key => {projectiveVariety, (projectiveVariety,Ideal), (projectiveVariety,Ring), [projectiveVariety,MinimalGenerators]}, 
 Headline => "the closed multi-projective subvariety defined by a multi-homogeneous ideal", 
 Usage => "projectiveVariety I", 
 Inputs => { "I" => Ideal => {"a homogeneous ideal in a polynomial ring ",TEX///$R$///," with the ",TEX///$\mathbb{Z}^n$///,"-grading where the degree of each variable is a standard basis vector, that is, ",TEX///$R$///," is the homogeneous coordinate ring of a product of ",TEX///$n$///," projective spaces ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}$///}},
@@ -946,7 +1115,7 @@ Usage => "coefficientRing X",
 Inputs => {"X" => MultiprojectiveVariety}, 
 Outputs => {Ring => {"the coefficient ring of ", TEX///$X$///}}, 
 EXAMPLE {"X = projectiveVariety ideal random({2,1},ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}]);","coefficientRing X"}, 
-SeeAlso => {(ring,MultiprojectiveVariety)}} 
+SeeAlso => {(ring,MultiprojectiveVariety),(symbol **,MultiprojectiveVariety,Ring)}} 
 
 document {Key => {(degree,MultiprojectiveVariety)}, 
 Headline => "the degree of the variety", 
@@ -987,7 +1156,7 @@ EXAMPLE {"X = projectiveVariety ideal random({2,1},ZZ/101[x_0,x_1,x_2,y_0,y_1,De
 SeeAlso => {segre,(segre,MultirationalMap)}}
 
 document {Key => {(point,MultiprojectiveVariety)}, 
-Headline => "pick a random rational point on a projective variety", 
+Headline => "pick a random rational point on a multi-projective variety", 
 Usage => "point X", 
 Inputs => {"X" => MultiprojectiveVariety => {"defined over a finite field"}}, 
 Outputs => {MultiprojectiveVariety => {"a random rational point on ", TEX///$X$///}}, 
@@ -1002,7 +1171,7 @@ Outputs => { MultiprojectiveVariety => {"the singular locus of ", TEX///$X$///}}
 EXAMPLE {"X = projectiveVariety ideal random({2,1},ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}]);","singularLocus X;","Y = X + projectiveVariety (ideal random({1,1},ring ambient X));","singularLocus Y;"}} 
 
 document {Key => {(symbol ==,MultiprojectiveVariety,MultiprojectiveVariety)}, 
-Headline => "equality of projective varieties", 
+Headline => "equality of multi-projective varieties", 
 Usage => "X == Y", 
 Inputs => { 
 MultiprojectiveVariety => "X",
@@ -1027,7 +1196,7 @@ Outputs => {
 Boolean => {"whether ",TT"X"," is contained in ",TT"Y"}}}
 
 document {Key => {(symbol **,MultiprojectiveVariety,MultiprojectiveVariety)}, 
-Headline => "product of projective varieties", 
+Headline => "product of multi-projective varieties", 
 Usage => "X ** Y", 
 Inputs => { 
 MultiprojectiveVariety => "X",
@@ -1045,7 +1214,7 @@ EXAMPLE {"R = ZZ/101[x_0..x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
 SeeAlso => {fiberProduct,(symbol ^,MultiprojectiveVariety,ZZ)}}
 
 document {Key => {(symbol ^,MultiprojectiveVariety,ZZ)}, 
-Headline => "power of a projective variety", 
+Headline => "power of a multi-projective variety", 
 Usage => "X^n", 
 Inputs => {"X" => MultiprojectiveVariety,"n" => ZZ}, 
 Outputs => {MultiprojectiveVariety => {"the product of ",TEX///$n$///," copies of ", TEX///$X$///}}, 
@@ -1058,7 +1227,7 @@ EXAMPLE {"X = projectiveVariety kernel veronese(1,3,ZZ/33331);",
 SeeAlso => {(symbol **,MultiprojectiveVariety,MultiprojectiveVariety)}} 
 
 document {Key => {(symbol *,MultiprojectiveVariety,MultiprojectiveVariety)}, 
-Headline => "intersection of projective varieties", 
+Headline => "intersection of multi-projective varieties", 
 Usage => "X * Y", 
 Inputs => { 
 MultiprojectiveVariety => "X",
@@ -1072,7 +1241,7 @@ EXAMPLE {"R = ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
 SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(symbol +,Ideal,Ideal)}}
 
 document {Key => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety)}, 
-Headline => "union of projective varieties", 
+Headline => "union of multi-projective varieties", 
 Usage => "X + Y", 
 Inputs => { 
 MultiprojectiveVariety => "X",
@@ -1087,7 +1256,7 @@ EXAMPLE {"R = ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
 SeeAlso => {(symbol -,MultiprojectiveVariety,MultiprojectiveVariety),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(intersect,List)}}
 
 document {Key => {(symbol -,MultiprojectiveVariety,MultiprojectiveVariety)}, 
-Headline => "difference of projective varieties", 
+Headline => "difference of multi-projective varieties", 
 Usage => "X - Y", 
 Inputs => { 
 MultiprojectiveVariety => "X",
@@ -1102,7 +1271,7 @@ EXAMPLE {"R = ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
 SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(quotient,Ideal,Ideal)}}
 
 document {Key => {fiberProduct,(fiberProduct,RationalMap,RationalMap)}, 
-Headline => "fiber product of projective varieties", 
+Headline => "fiber product of multi-projective varieties", 
 Usage => "fiberProduct(phi,psi)", 
 Inputs => { 
 "phi" => {"a ",TO2{RationalMap,"morphism"}," ",TEX///$X\to Z$///," (that is, ",ofClass RationalMap," that is everywhere defined)"},
@@ -1127,7 +1296,7 @@ SeeAlso => {(symbol **,MultiprojectiveVariety,MultiprojectiveVariety),(symbol ^*
 
 document { 
 Key => {(euler,MultiprojectiveVariety)}, 
-Headline => "topological Euler characteristic of a (smooth) projective variety", 
+Headline => "topological Euler characteristic of a (smooth) multi-projective variety", 
 Usage => "euler X
 euler(X,Verify=>b)", 
 Inputs => { 
@@ -1224,7 +1393,7 @@ Headline => "the coefficient ring of a multi-rational map",
 Usage => "coefficientRing Phi", 
 Inputs => {MultirationalMap => "Phi"}, 
 Outputs => {Ring => {"the coefficient ring of ",TT"Phi"}},
-SeeAlso => {(coefficientRing,MultiprojectiveVariety)}}
+SeeAlso => {(coefficientRing,MultiprojectiveVariety),(symbol **,MultirationalMap,Ring)}}
 
 document { 
 Key => {(image,MultirationalMap)}, 
@@ -1270,7 +1439,7 @@ Usage => "Phi^** Y
 Phi^* Y", 
 Inputs => { 
 MultirationalMap => "Phi",
-MultiprojectiveVariety => "Y" => {"a subvariety of the ",TO2{(target,MultirationalMap),"target"}," of ",TT "Phi"}}, 
+MultiprojectiveVariety => "Y" => {"a subvariety of the ambient of the ",TO2{(target,MultirationalMap),"target"}," of ",TT "Phi"}}, 
 Outputs => { 
 MultiprojectiveVariety => {"the (closure of the) inverse image of ", TT"Y", " via ",TT"Phi"}},
 EXAMPLE {
@@ -1300,10 +1469,10 @@ EXAMPLE {"ZZ/65521[x_0..x_4];",
 SeeAlso => {(segre,MultiprojectiveVariety)}}
 
 document {Key => {(parametrize,MultiprojectiveVariety)}, 
-Headline => "try to get a parametrization of a projective variety", 
+Headline => "try to get a parametrization of a multi-projective variety", 
 Usage => "parametrize X", 
 Inputs => {"X" => MultiprojectiveVariety => {"a rational ",TEX///$k$///,"-dimensional subvariety of ",TEX///$\mathbb{P}^{r_1}\times\cdots\times\mathbb{P}^{r_n}$///," (of some simple type)"}}, 
-Outputs => {{"a birational map from ",TEX///$\mathbb{P}^k$///," to ",TEX///$X$///}}, 
+Outputs => {MultirationalMap => {"a birational map from ",TEX///$\mathbb{P}^k$///," to ",TEX///$X$///}}, 
 EXAMPLE {"K = ZZ/65521;",
 "X = projectiveVariety({2,4,1,3},K);",
 "f = parametrize X;",
@@ -1372,7 +1541,19 @@ MultirationalMap => "Phi",
 MultirationalMap => "Psi"}, 
 Outputs => { 
 Boolean => {"whether ",TT"Phi"," and ",TT"Psi", " are the same multi-rational map"}},
-SeeAlso => {(symbol ==,RationalMap,RationalMap)}}
+SeeAlso => {(symbol ==,RationalMap,RationalMap),(symbol <==>,MultirationalMap,MultirationalMap)}}
+
+document { 
+Key => {(symbol <==>,MultirationalMap,MultirationalMap)}, 
+Headline => "equality of multi-rational maps with checks on internal data", 
+Usage => "Phi <==> Psi", 
+Inputs => { 
+MultirationalMap => "Phi",
+MultirationalMap => "Psi"}, 
+Outputs => { 
+Boolean => {"whether ",TT"Phi"," and ",TT"Psi", " are the same multi-rational map, by throwing an error if an inconsistency of the internal data is detected."}},
+PARA{"For example, if you have calculated the degree of the two maps before, it will be checked that it is the same for both."},
+SeeAlso => {(symbol ==,MultirationalMap,MultirationalMap)}}
 
 document { 
 Key => {(multidegree,ZZ,MultirationalMap)}, 
@@ -1460,11 +1641,13 @@ EXAMPLE {
 SeeAlso => {(isIsomorphism,MultirationalMap),(isMorphism,RationalMap)}}
 
 document { 
-Key => {(multirationalMap,MultiprojectiveVariety)}, 
+Key => {(multirationalMap,MultiprojectiveVariety),(symbol _,ZZ,MultiprojectiveVariety)}, 
 Headline => "identity map", 
-Usage => "multirationalMap X", 
+Usage => "multirationalMap X
+1_X", 
 Inputs => {MultiprojectiveVariety => "X"}, 
 Outputs => {MultirationalMap => {"the identity map on ",TT"X"}},
+EXAMPLE {"X = projectiveVariety({2,3,1},QQ);", "1_X;"},
 SeeAlso => {(multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety)}}
 
 document { 
@@ -1479,12 +1662,12 @@ EXAMPLE {
 "X = projectiveVariety I, Y = projectiveVariety J",
 "multirationalMap(X,ambient X);",
 "multirationalMap(X,Y);",
-"try multirationalMap(ambient X,X) else <<\"not able to construct it!\";"},
+"try multirationalMap(ambient X,X) else <<endl<<\"not able to construct it!\";"},
 SeeAlso => {(multirationalMap,MultiprojectiveVariety)}}
 
 document { 
 Key => {(multirationalMap,MultirationalMap,MultiprojectiveVariety)}, 
-Headline => "change the target of a rational map", 
+Headline => "change the target of a multi-rational map", 
 Usage => "multirationalMap(Phi,Y)
 check multirationalMap(Phi,Y)", 
 Inputs => {MultirationalMap => "Phi",MultiprojectiveVariety => "Y" => {"which must be compatible with ",TT"Phi"}}, 
@@ -1520,9 +1703,28 @@ Phi = multirationalMap(Phi,image Phi);",
 "assert(Phi * Phi^-1 == 1 and Phi^-1 * Phi == 1)",
 "assert(Psi * Psi^-1 == 1 and Psi^-1 * Psi == 1)",
 "assert(Eta * Eta^-1 == 1 and Eta^-1 * Eta == 1)"},
-SeeAlso => {(graph,MultirationalMap),(symbol *,MultirationalMap,MultirationalMap),(symbol ==,MultirationalMap,MultirationalMap),(degree,MultirationalMap),(image,MultirationalMap),(inverse,RationalMap)},
+SeeAlso => {(graph,MultirationalMap),(symbol *,MultirationalMap,MultirationalMap),(symbol ==,MultirationalMap,MultirationalMap),(degree,MultirationalMap),(image,MultirationalMap),(inverse,RationalMap),inverse2},
 Caveat => {"If the option ",TT"Verify"," is set to ",TT"false"," (which is preferable for efficiency), then no test is done to check that the map is birational, and if not then often the error is not thrown at all and a nonsense answer is returned."},
 References => {"ArXiv preprint: ",HREF{"https://arxiv.org/abs/2101.04503","Computations with rational maps between multi-projective varieties"},"."}}
+
+document { 
+Key => {inverse2,(inverse2,MultirationalMap)}, 
+Headline => "inverse of a birational map using a faster algorithm for a special class of maps", 
+Usage => "inverse2 Phi
+inverse2(Phi,Verify=>true)
+inverse2(Phi,Verify=>false)", 
+Inputs => {MultirationalMap => "Phi" => {"a birational map of so-called ",EM"multi-linear type"}}, 
+Outputs => {MultirationalMap => {"the inverse map of ",TT"Phi"}},
+PARA{"This assumes that the ",TO2{(graph,MultirationalMap),"graph"}," of the input map ",TT"Phi"," is defined by a ",EM "simplified"," system of equations, which may not be true. If the option ",TT"Verify"," is set to ",TT"true",", which is the default choice, then it is verified that the left and right composition of ",TT"Phi"," with the returned map is the identity, throwing an error if this is not the case."},
+EXAMPLE {
+"Phi = last graph multirationalMap quadroQuadricCremonaTransformation(11,1,ZZ/65521);",
+"time Psi = inverse2 Phi;",
+"Phi' = clean Phi;",
+"time Psi' = inverse Phi';",
+"assert(Psi == Psi' and describe Psi == describe Psi')",
+"describe Psi"},
+SeeAlso => {(inverse,MultirationalMap)},
+Caveat => {"This is an experimental function."}}
 
 document { 
 Key => {(isIsomorphism,MultirationalMap)}, 
@@ -1729,7 +1931,7 @@ SeeAlso => {(describe,MultiprojectiveVariety),(show,MultirationalMap)}}
 
 document { 
 Key => {(describe,MultiprojectiveVariety),(symbol ?,MultiprojectiveVariety)}, 
-Headline => "describe a projective variety", 
+Headline => "describe a multi-projective variety", 
 Usage => "describe X
 ? X", 
 Inputs => {"X" => MultiprojectiveVariety}, 
@@ -1742,6 +1944,50 @@ EXAMPLE {
 "? image segre X"},
 SeeAlso => {(describe,MultirationalMap)}}
 
+document { 
+Key => {(clean,MultirationalMap)}, 
+Headline => "clean the internal information of a multi-rational map", 
+Usage => "clean Phi", 
+Inputs => {"Phi" => MultirationalMap}, 
+Outputs => {MultirationalMap => {"which is identical to ",TT"Phi",", but new to the system"}},
+PARA{"This is only useful for comparing computation times for various algorithms."},
+EXAMPLE {"Phi = 1_(projectiveVariety({2},QQ));", "Psi = clean Phi;", "Phi == Psi", "Phi === Psi"}}
+
+document { 
+Key => {(symbol **,MultirationalMap,Ring)},
+Headline => "change the coefficient ring of a multi-rational map", 
+Usage => "Phi ** K", 
+Inputs => {MultirationalMap => "Phi" => {"defined over a coefficient ring ",TT"F"},
+Ring => "K" => {"the new coefficient ring (which must be a field)"}}, 
+Outputs => {MultirationalMap => {"a multi-rational map defined over ",TT"K",", obtained by coercing the coefficients of the multi-forms defining ",TT"Phi", " into ",TT"K"}}, 
+PARA {"It is necessary that all multi-forms in the old coefficient ring ",TT"F"," can be automatically coerced into the new coefficient ring ",TT"K","."},
+EXAMPLE {
+"Phi = inverse first graph rationalMap kernel veronese(2,2);",
+"describe Phi",
+"K = ZZ/65521;",
+"Phi' = Phi ** K;",
+"describe Phi'",
+"Phi'' = Phi ** frac(K[t]);",
+"describe Phi''"},
+SeeAlso => {(coefficientRing,MultirationalMap),(symbol **,RationalMap,Ring),(symbol **,MultiprojectiveVariety,Ring)}}
+
+document { 
+Key => {(symbol **,MultiprojectiveVariety,Ring)},
+Headline => "change the coefficient ring of a multi-projective variety", 
+Usage => "X ** K", 
+Inputs => {MultiprojectiveVariety => "X" => {"defined over a coefficient ring ",TT"F"},
+Ring => "K" => {"the new coefficient ring (which must be a field)"}}, 
+Outputs => {MultiprojectiveVariety => {"a multi-projective variety defined over ",TT"K",", obtained by coercing the coefficients of the multi-forms defining ",TT"X", " into ",TT"K"}}, 
+PARA {"It is necessary that all multi-forms in the old coefficient ring ",TT"F"," can be automatically coerced into the new coefficient ring ",TT"K","."},
+EXAMPLE {
+"use ring projectiveVariety({2,3},QQ);",
+"X = projectiveVariety ideal(x1_2^2-x1_1*x1_3,x1_1*x1_2-x1_0*x1_3,x1_1^2-x1_0*x1_2,x0_1^2-x0_0*x0_2);",
+"ideal X",
+"K = ZZ/65521;",
+"X' = X ** K;",
+"ideal X'"},
+SeeAlso => {(coefficientRing,MultiprojectiveVariety),(symbol **,MultirationalMap,Ring)}}
+
 undocumented {
 (expression,MultiprojectiveVariety),
 (net,MultiprojectiveVariety),
@@ -1750,7 +1996,6 @@ undocumented {
 (decompose,MultiprojectiveVariety),
 (degrees,MultiprojectiveVariety),
 (euler,MultiprojectiveVariety,Option),
-Saturate,
 (expression,MultirationalMap),
 (net,MultirationalMap),
 (multirationalMap,RationalMap),
@@ -1773,7 +2018,9 @@ Saturate,
 (multidegree,MultirationalMap,MultirationalMap),
 (multidegree,Nothing,MultirationalMap),
 (source,MultirationalMap,MultirationalMap),
+(clean,RationalMap),
 (inverse,MultirationalMap,Option),
+(inverse2,MultirationalMap,Option),
 (baseLocus,RationalMap),
 (symbol |,MultirationalMap,List),
 (symbol ||,MultirationalMap,List),
@@ -1897,5 +2144,33 @@ assert(g * g^-1 == 1 and g^-1 * g == 1)
 Z = projectiveVariety ideal(random({1,1,0,0},R),random({0,1,0,0},R),random({0,0,1,0},R),random({0,0,0,1},R),random({0,0,0,1},R));
 time h = parametrize Z
 assert(h * h^-1 == 1 and h^-1 * h == 1)
+///
+
+TEST ///
+z = gens ring projectiveVariety({3},ZZ/41)
+phi = multirationalMap rationalMap toMap minors(3,matrix{{-z_1,z_0,-z_1^2+z_0*z_3},{z_0,z_1,z_0^2-z_1*z_2},{0,z_2,z_0*z_1-z_1*z_3},{0,z_3,-z_0*z_1+z_0*z_2}})
+time G := source graph phi;
+time Gs := source graph(clean phi,BlowUpStrategy=>"Syzygies");
+time Gk := source graph(clean phi,BlowUpStrategy=>"Koszul");
+assert(G == Gs and Gs == Gk);
+psi = inverse phi;
+assert(phi * psi == 1 and psi * phi == 1);
+
+phi' = phi|multirationalMap(source phi);
+phi' = multirationalMap(phi',image phi');
+time G' := source graph phi';
+time Gs' := source graph(clean phi',BlowUpStrategy=>"Syzygies");
+time Gk' := source graph(clean phi',BlowUpStrategy=>"Koszul");
+assert(G' == Gs' and Gs' == Gk');
+psi' = inverse phi';
+assert(phi' * psi' == 1 and psi' * phi' == 1);
+
+phi'' = last graph phi;
+time G'' := source graph phi'';
+time Gs'' := source graph(clean phi'',BlowUpStrategy=>"Syzygies");
+time Gk'' := source graph(clean phi'',BlowUpStrategy=>"Koszul");
+assert(G'' == Gs'' and Gs'' == Gk'');
+psi'' = inverse phi'';
+assert(phi'' * psi'' == 1 and psi'' * phi'' == 1);
 ///
 
