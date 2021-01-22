@@ -33,9 +33,14 @@ add_custom_command(OUTPUT ${GRAMMAR_FILES}
 ###############################################################################
 ## Generating the M2-mode package for Emacs
 
+if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/emacs/make-M2-emacs-help.m2)
+  message(WARNING "Macaulay2/editors/emacs submodule is missing; skipping M2-emacs target")
+  return()
+endif()
+
 # TODO: only the emacs target is installed in usr-dist by default
 set(M2_INSTALL_EMACSDIR
-  ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp/Macaulay2)
+  ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp/macaulay2)
 file(COPY emacs/ DESTINATION ${M2_INSTALL_EMACSDIR}
   FILES_MATCHING PATTERN "M2*" PATTERN "*.in" EXCLUDE)
 
