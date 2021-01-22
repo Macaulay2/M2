@@ -8,7 +8,6 @@
 #include "aring-glue.hpp"
 
 #include <iostream>
-#include <execution>
 
 template<typename RingType>
 const VectorArithmetic* vectorArithmetic(const RingType& R)
