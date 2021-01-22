@@ -578,6 +578,7 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
    d = concatenate(d,"y\n");  -- use an efficient problem formulation
    d = concatenate(d,"y\n");  -- square the overdetermined homotopies
    d = concatenate(d,"0\n");  -- no multitasking
+   d = concatenate(d,"n\n");  -- no new path trackers (yet)
    d = concatenate(d,"0\n");  -- do not change default continuation parameters
    d = concatenate(d,"0\n");  -- no intermediate output during continuation
    stdio << "the input data for phc -e : " << endl <<  d;
